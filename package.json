@@ -1,0 +1,14 @@
+{
+  "name": "mmo-idle",
+  "private": true,
+  "version": "0.0.1",
+  "scripts": {
+    "dev:client": "pnpm --filter @mmo-idle/client dev",
+    "dev:server": "pnpm --filter @mmo-idle/server dev",
+    "build": "pnpm --filter @mmo-idle/shared build && pnpm --filter @mmo-idle/client build && pnpm --filter @mmo-idle/server build",
+    "typecheck": "pnpm -r exec tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.5"
+  }
+}
