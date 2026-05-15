@@ -6,8 +6,10 @@ import type {
   PlayerState,
   MonsterState,
   NodeSnapshot,
+  NodeDirection,
 } from '@mmo-idle/shared';
 import { GAME_CONFIG } from '@mmo-idle/shared';
+import { hudBus } from '../hudBus';
 
 type GameSocket = Socket<ServerToClientEvents, ClientToServerEvents>;
 
@@ -15,8 +17,24 @@ const SERVER_URL = 'http://localhost:4000';
 
 // ── Minimap layout constants ───────────────────────────────────────────────────
 const MM_W   = 160;  // minimap width  (px, screen-space)
-const MM_H   = 120;  // minimap height (px, screen-space) — matches NODE_WIDTH:NODE_HEIGHT ratio
+const MM_H   = 120;  // minimap height (px, screen-space)
 const MM_PAD = 8;    // gap from the screen edges
+
+// ── Client-side node exit registry ────────────────────────────────────────────
+// Mirrors server/src/world/nodeRegistry.ts exits.
+// Keep in sync when nodes are added or exits change.
+const NODE_EXITS: Record<string, Partial<Record<NodeDirection, string>>> = {
+  'node-1': { east: 'node-2', south: 'node-3' },
+  'node-2': { west: 'node-1' },
+  'node-3': { north: 'node-1' },
+};
+
+// ── Gate marker dimensions (world-space) ─────────────────────────────────────
+// GATE_THICK must equal EXIT_TRIGGER in server/src/systems/transitions.ts so
+// the visible gate exactly covers the trigger zone.
+const GATE_LEN   = 320;      // length along the edge wall
+const GATE_THICK = 20;       // thickness — must match server EXIT_TRIGGER
+const GATE_COLOR = 0x00ffdd; // bright cyan
 
 interface Visual {
   sprite: Phaser.GameObjects.Rectangle;
@@ -41,13 +59,18 @@ export class GameScene extends Phaser.Scene {
   private players  = new Map<string, Visual>();
   private monsters = new Map<string, Visual>();
   private myId     = '';
-  private statusText!: Phaser.GameObjects.Text;
+  /** Tracks own player's current node — used for gate rendering and snap detection. */
+  private myNodeId = '';
+  /** Gate markers are static world-space graphics; only redrawn when node changes. */
+  private lastDrawnNodeId = '';
   /** Yellow dot shown at the last click destination (world-space). */
   private targetMarker!: Phaser.GameObjects.Arc;
   private autoMode    = false;
-  private autoBtnBg!: Phaser.GameObjects.Rectangle;
-  private autoBtnText!: Phaser.GameObjects.Text;
   private minimap!: Phaser.GameObjects.Graphics;
+  /** World-space colored bars drawn at each active exit boundary. */
+  private exitMarkers!: Phaser.GameObjects.Graphics;
+  /** Bottom-left HUD text showing server position and transition debug info. */
+  private debugText!: Phaser.GameObjects.Text;
 
   constructor() {
     super({ key: 'GameScene' });
@@ -60,57 +83,45 @@ export class GameScene extends Phaser.Scene {
     // ── Grid background (world-space, rendered before everything else) ─────
     this.createGridBackground();
 
-    // ── HUD — all elements get scrollFactor(0) so they stay fixed on screen ──
-    this.statusText = this.add
-      .text(12, 12, 'Connecting to server…', {
-        color: '#aaaaaa', fontSize: '14px', fontFamily: 'monospace',
-      })
-      .setScrollFactor(0)
-      .setDepth(10);
-
-    this.add
-      .text(12, this.scale.height - 24, 'MMO Idle — click to move', {
-        color: '#444466', fontSize: '12px', fontFamily: 'monospace',
-      })
-      .setScrollFactor(0)
-      .setDepth(10);
-
     this.targetMarker = this.add
       .circle(0, 0, 5, 0xffff44, 0.8)
-      .setVisible(false);  // world-space — no scrollFactor override
+      .setVisible(false);
 
-    // ── Auto toggle button ─────────────────────────────────────────────────
-    const btnCx = this.scale.width - 58;
-    const btnCy = 18;
-    this.autoBtnBg = this.add
-      .rectangle(btnCx, btnCy, 96, 26, 0x333355)
-      .setInteractive()
-      .setScrollFactor(0)
-      .setDepth(10);
-    this.autoBtnText = this.add
-      .text(btnCx, btnCy, 'AUTO: OFF', {
-        color: '#666688', fontSize: '12px', fontFamily: 'monospace',
-      })
-      .setOrigin(0.5)
-      .setScrollFactor(0)
-      .setDepth(11);
-
-    this.autoBtnBg.on('pointerover', () =>
-      this.autoBtnBg.setFillStyle(this.autoMode ? 0x336644 : 0x444466));
-    this.autoBtnBg.on('pointerout', () =>
-      this.autoBtnBg.setFillStyle(this.autoMode ? 0x224433 : 0x333355));
-    this.autoBtnBg.on('pointerdown', () => this.setAutoMode(!this.autoMode));
+    // ── Exit gate markers (world-space; no scrollFactor — visible only near edges) ──
+    // Drawn once per node change, not every frame.
+    this.exitMarkers = this.add.graphics().setDepth(5);
 
     // ── Minimap ────────────────────────────────────────────────────────────────
     this.minimap = this.add.graphics().setScrollFactor(0).setDepth(20);
 
+    // ── Debug overlay (bottom-left, screen-space) ──────────────────────────
+    this.debugText = this.add
+      .text(8, this.scale.height - 8, '', {
+        color: '#ffff44',
+        fontSize: '10px',
+        fontFamily: 'monospace',
+        backgroundColor: '#000000bb',
+        padding: { x: 4, y: 3 },
+      })
+      .setScrollFactor(0)
+      .setDepth(30)
+      .setOrigin(0, 1);
+
+    // ── Auto toggle from HUD ───────────────────────────────────────────────
+    window.addEventListener('hud:toggleAuto', () => {
+      this.setAutoMode(!this.autoMode);
+    });
+
+    // ── Skill unlock from SkillTreePanel ───────────────────────────────────
+    window.addEventListener('hud:unlockSkill', (e: Event) => {
+      const skillId = (e as CustomEvent<string>).detail;
+      this.socket.emit('player:unlockSkill', skillId);
+    });
+
     // ── Click to move ──────────────────────────────────────────────────────
     this.input.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
       if (!this.myId) return;
-      // Ignore clicks that land on the HUD button (screen-space check).
-      if (this.autoBtnBg.getBounds().contains(pointer.x, pointer.y)) return;
 
-      // pointer.worldX/Y converts screen coords to world coords via camera.
       const tx = Math.round(pointer.worldX);
       const ty = Math.round(pointer.worldY);
 
@@ -132,16 +143,13 @@ export class GameScene extends Phaser.Scene {
 
     this.socket.on('connect', () => {
       this.myId = this.socket.id ?? '';
-      this.statusText.setText(`Connected  (id: ${this.myId.slice(0, 8)}…)`);
-      this.statusText.setColor('#44ff88');
-      // Handle reconnect: own sprite may already exist.
+      hudBus.emit({ status: 'connected' });
       const own = this.players.get(this.myId);
       if (own) this.cameras.main.startFollow(own.sprite, true, 0.1, 0.1);
     });
 
     this.socket.on('disconnect', () => {
-      this.statusText.setText('Disconnected — retrying…');
-      this.statusText.setColor('#ff4444');
+      hudBus.emit({ status: 'disconnected', player: null });
       this.myId = '';
     });
 
@@ -157,24 +165,45 @@ export class GameScene extends Phaser.Scene {
     this.stepEntities(this.monsters, dt);
     this.drawMinimap();
 
+    // Redraw exit gate markers only when the player's node changes.
+    // This avoids per-frame redraws of static world geometry.
+    if (this.myNodeId !== this.lastDrawnNodeId) {
+      this.drawExitMarkers();
+      this.lastDrawnNodeId = this.myNodeId;
+    }
+
     const own = this.players.get(this.myId);
     if (own && this.targetMarker.visible) {
       const dx = own.sprite.x - this.targetMarker.x;
       const dy = own.sprite.y - this.targetMarker.y;
       if (dx * dx + dy * dy < 16) this.targetMarker.setVisible(false);
     }
+
+    // Debug overlay — shows server-authoritative state and distance to each trigger zone.
+    const ownState = (own as (Visual & { _state?: PlayerState }) | undefined)?._state;
+    if (ownState) {
+      const exits = NODE_EXITS[ownState.nodeId] ?? {};
+      const W = GAME_CONFIG.NODE_WIDTH;
+      const H = GAME_CONFIG.NODE_HEIGHT;
+      const T = GATE_THICK; // trigger zone thickness (matches server EXIT_TRIGGER)
+      const lines: string[] = [
+        `node: ${ownState.nodeId}`,
+        `srv  x=${Math.round(ownState.x)}  y=${Math.round(ownState.y)}`,
+        `tgt  x=${Math.round(ownState.targetX)}  y=${Math.round(ownState.targetY)}`,
+      ];
+      if (exits.east)  lines.push(`east  fires@x>=${W - T}  dist=${Math.round(W - T - ownState.x)}`);
+      if (exits.west)  lines.push(`west  fires@x<=${T}  dist=${Math.round(ownState.x - T)}`);
+      if (exits.south) lines.push(`south fires@y>=${H - T}  dist=${Math.round(H - T - ownState.y)}`);
+      if (exits.north) lines.push(`north fires@y<=${T}  dist=${Math.round(ownState.y - T)}`);
+      this.debugText.setText(lines.join('\n'));
+    }
   }
 
   // ── Private helpers ───────────────────────────────────────────────────────
 
-  /**
-   * Generate a 64×64 grid-cell texture and tile it across the entire node.
-   * Two-tone: a dark fill with a slightly lighter border gives a subtle grid
-   * without overwhelming the game objects on top of it.
-   */
   private createGridBackground(): void {
     const cell = 64;
-    const g = this.make.graphics({ x: 0, y: 0, add: false });
+    const g = this.make.graphics({ x: 0, y: 0 }, false);
     g.fillStyle(0x1a1a2e);
     g.fillRect(0, 0, cell, cell);
     g.lineStyle(1, 0x252548, 1);
@@ -196,13 +225,11 @@ export class GameScene extends Phaser.Scene {
   private setAutoMode(enabled: boolean): void {
     this.autoMode = enabled;
     this.socket.emit('player:setAuto', enabled);
-    if (enabled) {
-      this.autoBtnText.setText('AUTO: ON').setColor('#44ff88');
-      this.autoBtnBg.setFillStyle(0x224433);
-      this.targetMarker.setVisible(false);
-    } else {
-      this.autoBtnText.setText('AUTO: OFF').setColor('#666688');
-      this.autoBtnBg.setFillStyle(0x333355);
+    if (enabled) this.targetMarker.setVisible(false);
+
+    const own = this.players.get(this.myId) as (Visual & { _state?: PlayerState }) | undefined;
+    if (own?._state) {
+      hudBus.emit({ player: { ...own._state, auto: enabled } });
     }
   }
 
@@ -235,21 +262,21 @@ export class GameScene extends Phaser.Scene {
       }
 
       // HP bar
-      const barY     = sprite.y - v.barOffsetY;
-      const hpPct    = v.maxHp > 0 ? Math.max(0, v.hp / v.maxHp) : 0;
-      const hpColor  = hpPct > 0.5 ? 0x44ee44 : hpPct > 0.25 ? 0xeeaa22 : 0xee3322;
+      const barY    = sprite.y - v.barOffsetY;
+      const hpPct   = v.maxHp > 0 ? Math.max(0, v.hp / v.maxHp) : 0;
+      const hpColor = hpPct > 0.5 ? 0x44ee44 : hpPct > 0.25 ? 0xeeaa22 : 0xee3322;
       hpBar.clear();
       hpBar.fillStyle(0x1a1a1a);
       hpBar.fillRect(sprite.x - 16, barY, 32, 4);
       hpBar.fillStyle(hpColor);
       hpBar.fillRect(sprite.x - 16, barY, Math.round(32 * hpPct), 4);
 
-      // Cooldown bar — only visible while attacking; fills 0 → 1 as next attack charges
+      // Cooldown bar — only visible while attacking
       cdBar.clear();
       if (v.attackTargetId !== null) {
-        const cdPct    = Math.min(1, (now - v.lastAttackAt) / Math.max(1, v.attackCooldown));
-        const cdColor  = cdPct >= 1 ? 0xffdd22 : 0x4466cc;
-        const cdBarY   = barY + 6;
+        const cdPct  = Math.min(1, (now - v.lastAttackAt) / Math.max(1, v.attackCooldown));
+        const cdColor = cdPct >= 1 ? 0xffdd22 : 0x4466cc;
+        const cdBarY  = barY + 6;
         cdBar.fillStyle(0x1a1a1a);
         cdBar.fillRect(sprite.x - 16, cdBarY, 32, 3);
         cdBar.fillStyle(cdColor);
@@ -261,34 +288,55 @@ export class GameScene extends Phaser.Scene {
   }
 
   private upsertPlayer(player: PlayerState) {
+    const isOwn = player.id === this.myId;
     let vp = this.players.get(player.id);
+
     if (!vp) {
-      const color  = player.id === this.myId ? 0x44ff88 : 0x4488ff;
+      const color  = isOwn ? 0x44ff88 : 0x4488ff;
       const sprite = this.add.rectangle(player.x, player.y, 32, 48, color);
       const label  = this.add.text(0, 0, player.name, {
         color: '#ffffff', fontSize: '10px', fontFamily: 'monospace',
       });
       const hpBar = this.add.graphics();
       const cdBar = this.add.graphics();
-      vp = { sprite, label, hpBar, cdBar,
-             targetX: player.targetX, targetY: player.targetY,
-             hp: player.hp, maxHp: player.maxHp,
-             speed: GAME_CONFIG.PLAYER_SPEED, barOffsetY: 34,
-             attackCooldown: player.attackCooldown,
-             lastAttackAt:   player.lastAttackAt,
-             attackTargetId: player.attackTargetId };
+      vp = Object.assign(
+        { sprite, label, hpBar, cdBar,
+          targetX: player.targetX, targetY: player.targetY,
+          hp: player.hp, maxHp: player.maxHp,
+          speed: GAME_CONFIG.PLAYER_SPEED, barOffsetY: 34,
+          attackCooldown: player.attackCooldown,
+          lastAttackAt:   player.lastAttackAt,
+          attackTargetId: player.attackTargetId },
+        { _state: player },
+      );
       this.players.set(player.id, vp);
 
-      if (player.id === this.myId) {
+      if (isOwn) {
         this.cameras.main.startFollow(sprite, true, 0.1, 0.1);
+        this.myNodeId = player.nodeId;
+        hudBus.emit({ player });
       }
       return;
     }
+
+    // Detect node transition for own player — snap sprite to the new position
+    // instead of letting the interpolator slide it across the full map width.
+    if (isOwn && player.nodeId !== this.myNodeId) {
+      vp.sprite.setPosition(player.x, player.y);
+    }
+
     vp.targetX        = player.targetX;
     vp.targetY        = player.targetY;
     vp.hp             = player.hp;
     vp.lastAttackAt   = player.lastAttackAt;
     vp.attackTargetId = player.attackTargetId;
+    (vp as Visual & { _state: PlayerState })._state = player;
+
+    if (isOwn) {
+      this.myNodeId = player.nodeId;
+      this.autoMode = player.auto;
+      hudBus.emit({ player });
+    }
   }
 
   private upsertMonster(monster: MonsterState) {
@@ -318,6 +366,35 @@ export class GameScene extends Phaser.Scene {
     vm.attackTargetId = monster.attackTargetId;
   }
 
+  /**
+   * Draw colored bars at each active exit boundary in world-space.
+   * Called once per node change, not every frame.
+   * The camera must scroll to the boundary for these to be visible.
+   */
+  private drawExitMarkers(): void {
+    this.exitMarkers.clear();
+
+    const exits = NODE_EXITS[this.myNodeId];
+    if (!exits) return;
+
+    const W = GAME_CONFIG.NODE_WIDTH;
+    const H = GAME_CONFIG.NODE_HEIGHT;
+
+    // Outer glow — wider, translucent halo around the gate
+    this.exitMarkers.fillStyle(GATE_COLOR, 0.22);
+    if (exits.north) this.exitMarkers.fillRect(W/2 - GATE_LEN/2 - 8, -6, GATE_LEN + 16, GATE_THICK + 10);
+    if (exits.south) this.exitMarkers.fillRect(W/2 - GATE_LEN/2 - 8, H - GATE_THICK - 4, GATE_LEN + 16, GATE_THICK + 10);
+    if (exits.west)  this.exitMarkers.fillRect(-6, H/2 - GATE_LEN/2 - 8, GATE_THICK + 10, GATE_LEN + 16);
+    if (exits.east)  this.exitMarkers.fillRect(W - GATE_THICK - 4, H/2 - GATE_LEN/2 - 8, GATE_THICK + 10, GATE_LEN + 16);
+
+    // Inner solid bar — right at the world boundary
+    this.exitMarkers.fillStyle(GATE_COLOR, 0.88);
+    if (exits.north) this.exitMarkers.fillRect(W/2 - GATE_LEN/2, 0,               GATE_LEN, GATE_THICK);
+    if (exits.south) this.exitMarkers.fillRect(W/2 - GATE_LEN/2, H - GATE_THICK,  GATE_LEN, GATE_THICK);
+    if (exits.west)  this.exitMarkers.fillRect(0,               H/2 - GATE_LEN/2, GATE_THICK, GATE_LEN);
+    if (exits.east)  this.exitMarkers.fillRect(W - GATE_THICK,  H/2 - GATE_LEN/2, GATE_THICK, GATE_LEN);
+  }
+
   private drawMinimap(): void {
     const mmX    = this.scale.width  - MM_W - MM_PAD;
     const mmY    = this.scale.height - MM_H - MM_PAD;
@@ -343,8 +420,6 @@ export class GameScene extends Phaser.Scene {
     }
 
     // Other players — blue 2×2 dots
-    // Adding more player types here in the future just means a new loop /
-    // color — the layer order (others below self) should stay the same.
     this.minimap.fillStyle(0x4488ff, 1);
     for (const [id, v] of this.players) {
       if (id === this.myId) continue;
@@ -361,6 +436,17 @@ export class GameScene extends Phaser.Scene {
       const dy = mmY + own.sprite.y * scaleY;
       this.minimap.fillRect(dx - 1, dy - 1, 3, 3);
     }
+
+    // Exit direction indicators — small colored bars at minimap edge midpoints.
+    // Drawn last so they appear on top of entity dots.
+    const exits = NODE_EXITS[this.myNodeId] ?? {};
+    const mcx = mmX + MM_W / 2;
+    const mcy = mmY + MM_H / 2;
+    this.minimap.fillStyle(GATE_COLOR, 1);
+    if (exits.north) this.minimap.fillRect(mcx - 4, mmY,              8, 5);
+    if (exits.south) this.minimap.fillRect(mcx - 4, mmY + MM_H - 5,   8, 5);
+    if (exits.east)  this.minimap.fillRect(mmX + MM_W - 5, mcy - 4,   5, 8);
+    if (exits.west)  this.minimap.fillRect(mmX,             mcy - 4,   5, 8);
   }
 
   private destroyVisual(map: Map<string, Visual>, id: string) {

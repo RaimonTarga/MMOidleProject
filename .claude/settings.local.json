@@ -1,1 +1,10 @@
-{}
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx tsc *)",
+      "Bash(Get-ChildItem -Recurse \"C:\\\\Users\\\\osaif\\\\Documents\\\\Claude\\\\Projects\\\\MMO idle\\\\client\\\\src\")",
+      "Bash(Select-Object FullName)",
+      "Bash(pnpm exec *)"
+    ]
+  }
+}

@@ -1,3 +1,5 @@
+export * from './skillTree';
+
 // ─── Entity shapes ────────────────────────────────────────────────────────────
 
 export interface PlayerState {
@@ -23,6 +25,22 @@ export interface PlayerState {
   /** Whether the server is driving this player toward the nearest monster. */
   auto: boolean;
   nodeId: string;
+  /** Accumulated essence resource — granted by server on monster kills. */
+  essence: number;
+  /** Flat progression counter — incremented by 1 per kill. */
+  level: number;
+  /** Unspent points available to invest in the skill tree. */
+  skillPoints: number;
+  /** IDs of all unlocked skill tree nodes. */
+  unlockedSkills: string[];
+  /** ID of the class root node that was first unlocked, or null before class selection. */
+  selectedClass: string | null;
+  /**
+   * The tier currently available to unlock. Starts at 0 (class root selection).
+   * Increments by 1 on each successful unlock. Nodes are only unlockable when
+   * node.tier === currentSkillTier.
+   */
+  currentSkillTier: number;
 }
 
 /**
@@ -66,6 +84,19 @@ export interface MonsterState {
   nodeId: string;
 }
 
+// ─── Node / zone definitions ──────────────────────────────────────────────────
+
+export type NodeDirection = 'north' | 'south' | 'east' | 'west';
+
+export interface NodeDefinition {
+  id: string;
+  name: string;
+  width: number;
+  height: number;
+  /** Adjacent node ids keyed by the direction of travel. Only present exits are listed. */
+  exits: Partial<Record<NodeDirection, string>>;
+}
+
 /** Full world state for a node, sent every tick and on join. */
 export interface NodeSnapshot {
   players: PlayerState[];
@@ -92,6 +123,8 @@ export interface ClientToServerEvents {
   'player:move': (position: { x: number; y: number }) => void;
   /** Enable or disable server-side auto-targeting for this player. */
   'player:setAuto': (enabled: boolean) => void;
+  /** Request to unlock a skill tree node by ID. Server validates and applies. */
+  'player:unlockSkill': (skillId: string) => void;
 }
 
 // ─── Game balance constants ───────────────────────────────────────────────────
