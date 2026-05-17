@@ -1,6 +1,7 @@
 import type { World } from '../world/World';
 import type { MonsterState, PlayerState } from '@mmo-idle/shared';
 import { getNodePlayers } from '../world/nodeQueries';
+import { NODE_REGISTRY } from '../world/nodeRegistry';
 
 function findAggro(monster: MonsterState, world: World): PlayerState | null {
   const pullSq = monster.pullRange ** 2;
@@ -45,15 +46,17 @@ export function updateMonsters(world: World, _dt: number, now: number) {
       const dx     = target.x - monster.x;
       const dy     = target.y - monster.y;
       const distSq = dx * dx + dy * dy;
-      const stopDist = monster.attackRange - 5;
+      const stopDist = monster.attackRange - 1;
 
       if (distSq <= stopDist * stopDist) {
         monster.targetX = monster.x;
         monster.targetY = monster.y;
         monster.state   = 'attacking';
       } else {
-        monster.targetX = target.x;
-        monster.targetY = target.y;
+        // Stop at stopDist px from the player rather than walking into the player's center.
+        const dist = Math.sqrt(distSq);
+        monster.targetX = target.x - (dx / dist) * stopDist;
+        monster.targetY = target.y - (dy / dist) * stopDist;
         monster.state   = 'chasing';
       }
 
@@ -97,10 +100,16 @@ export function updateMonsters(world: World, _dt: number, now: number) {
         case 'idle':
         default:
           if (now >= ai.idleUntil) {
-            const angle     = Math.random() * 2 * Math.PI;
-            const radius    = Math.random() * ai.wanderRadius;
-            monster.targetX = ai.spawnX + Math.cos(angle) * radius;
-            monster.targetY = ai.spawnY + Math.sin(angle) * radius;
+            const angle  = Math.random() * 2 * Math.PI;
+            const radius = Math.random() * ai.wanderRadius;
+            const node   = NODE_REGISTRY.get(monster.nodeId);
+            const margin = 40;
+            const minX = node ? margin : 0;
+            const maxX = node ? node.width  - margin : Infinity;
+            const minY = node ? margin : 0;
+            const maxY = node ? node.height - margin : Infinity;
+            monster.targetX = Math.max(minX, Math.min(maxX, ai.spawnX + Math.cos(angle) * radius));
+            monster.targetY = Math.max(minY, Math.min(maxY, ai.spawnY + Math.sin(angle) * radius));
             monster.state   = 'wandering';
           } else {
             monster.targetX = monster.x;

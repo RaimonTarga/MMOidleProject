@@ -41,7 +41,7 @@ function getNodeExits(nodeId: string): Partial<Record<NodeDirection, string>> {
 // ── Gate marker dimensions (world-space) ─────────────────────────────────────
 // GATE_THICK must equal EXIT_TRIGGER in server/src/systems/transitions.ts so
 // the visible gate exactly covers the trigger zone.
-const GATE_LEN   = 320;      // length along the edge wall
+// GATE_LEN must equal GAME_CONFIG.GATE_HALF * 2 so drawn gates match the server trigger zone.
 const GATE_THICK = 20;       // thickness — must match server EXIT_TRIGGER
 const GATE_COLOR = 0x00ffdd; // bright cyan
 
@@ -61,6 +61,7 @@ interface Visual {
   attackCooldown: number;
   lastAttackAt: number;
   attackTargetId: string | null;
+  attackStyle: string;
 }
 
 export class GameScene extends Phaser.Scene {
@@ -320,7 +321,8 @@ export class GameScene extends Phaser.Scene {
           speed: player.speed, barOffsetY: 34,
           attackCooldown: player.attackCooldown,
           lastAttackAt:   player.lastAttackAt,
-          attackTargetId: player.attackTargetId },
+          attackTargetId: player.attackTargetId,
+          attackStyle:    player.attackStyle },
         { _state: player },
       );
       this.players.set(player.id, vp);
@@ -339,13 +341,23 @@ export class GameScene extends Phaser.Scene {
       vp.sprite.setPosition(player.x, player.y);
     }
 
+    const prevPlayerAttackAt = vp.lastAttackAt;
     vp.targetX        = player.targetX;
     vp.targetY        = player.targetY;
     vp.hp             = player.hp;
+    vp.maxHp          = player.maxHp;
     vp.speed          = player.speed;
     vp.lastAttackAt   = player.lastAttackAt;
     vp.attackTargetId = player.attackTargetId;
+    vp.attackStyle    = player.attackStyle;
     (vp as Visual & { _state: PlayerState })._state = player;
+
+    if (player.lastAttackAt > prevPlayerAttackAt && player.attackTargetId) {
+      const targetVm = this.monsters.get(player.attackTargetId);
+      if (targetVm) {
+        this.spawnAttackEffect(vp.attackStyle, vp.sprite.x, vp.sprite.y, targetVm.sprite.x, targetVm.sprite.y);
+      }
+    }
 
     if (isOwn) {
       this.myNodeId = player.nodeId;
@@ -369,16 +381,26 @@ export class GameScene extends Phaser.Scene {
              speed: monster.speed, barOffsetY: 26,
              attackCooldown: monster.attackCooldown,
              lastAttackAt:   monster.lastAttackAt,
-             attackTargetId: monster.attackTargetId };
+             attackTargetId: monster.attackTargetId,
+             attackStyle:    monster.attackStyle };
       this.monsters.set(monster.id, vm);
       return;
     }
+    const prevMonsterAttackAt = vm.lastAttackAt;
     vm.targetX        = monster.targetX;
     vm.targetY        = monster.targetY;
     vm.hp             = monster.hp;
     vm.speed          = monster.speed;
     vm.lastAttackAt   = monster.lastAttackAt;
     vm.attackTargetId = monster.attackTargetId;
+    vm.attackStyle    = monster.attackStyle;
+
+    if (monster.lastAttackAt > prevMonsterAttackAt && monster.attackTargetId) {
+      const targetVp = this.players.get(monster.attackTargetId);
+      if (targetVp) {
+        this.spawnAttackEffect(vm.attackStyle, vm.sprite.x, vm.sprite.y, targetVp.sprite.x, targetVp.sprite.y);
+      }
+    }
   }
 
   /** Swap the background rectangle's fill color to match the current biome. */
@@ -404,19 +426,20 @@ export class GameScene extends Phaser.Scene {
     const W = GAME_CONFIG.NODE_WIDTH;
     const H = GAME_CONFIG.NODE_HEIGHT;
 
+    const G = GAME_CONFIG.GATE_HALF; // half gate opening width
     // Outer glow — wider, translucent halo around the gate
     this.exitMarkers.fillStyle(GATE_COLOR, 0.22);
-    if (exits.north) this.exitMarkers.fillRect(W/2 - GATE_LEN/2 - 8, -6, GATE_LEN + 16, GATE_THICK + 10);
-    if (exits.south) this.exitMarkers.fillRect(W/2 - GATE_LEN/2 - 8, H - GATE_THICK - 4, GATE_LEN + 16, GATE_THICK + 10);
-    if (exits.west)  this.exitMarkers.fillRect(-6, H/2 - GATE_LEN/2 - 8, GATE_THICK + 10, GATE_LEN + 16);
-    if (exits.east)  this.exitMarkers.fillRect(W - GATE_THICK - 4, H/2 - GATE_LEN/2 - 8, GATE_THICK + 10, GATE_LEN + 16);
+    if (exits.north) this.exitMarkers.fillRect(W/2 - G - 8, -6, G*2 + 16, GATE_THICK + 10);
+    if (exits.south) this.exitMarkers.fillRect(W/2 - G - 8, H - GATE_THICK - 4, G*2 + 16, GATE_THICK + 10);
+    if (exits.west)  this.exitMarkers.fillRect(-6, H/2 - G - 8, GATE_THICK + 10, G*2 + 16);
+    if (exits.east)  this.exitMarkers.fillRect(W - GATE_THICK - 4, H/2 - G - 8, GATE_THICK + 10, G*2 + 16);
 
     // Inner solid bar — right at the world boundary
     this.exitMarkers.fillStyle(GATE_COLOR, 0.88);
-    if (exits.north) this.exitMarkers.fillRect(W/2 - GATE_LEN/2, 0,               GATE_LEN, GATE_THICK);
-    if (exits.south) this.exitMarkers.fillRect(W/2 - GATE_LEN/2, H - GATE_THICK,  GATE_LEN, GATE_THICK);
-    if (exits.west)  this.exitMarkers.fillRect(0,               H/2 - GATE_LEN/2, GATE_THICK, GATE_LEN);
-    if (exits.east)  this.exitMarkers.fillRect(W - GATE_THICK,  H/2 - GATE_LEN/2, GATE_THICK, GATE_LEN);
+    if (exits.north) this.exitMarkers.fillRect(W/2 - G, 0,              G*2, GATE_THICK);
+    if (exits.south) this.exitMarkers.fillRect(W/2 - G, H - GATE_THICK, G*2, GATE_THICK);
+    if (exits.west)  this.exitMarkers.fillRect(0,              H/2 - G, GATE_THICK, G*2);
+    if (exits.east)  this.exitMarkers.fillRect(W - GATE_THICK, H/2 - G, GATE_THICK, G*2);
   }
 
   private drawMinimap(): void {
@@ -511,6 +534,75 @@ export class GameScene extends Phaser.Scene {
         onComplete: () => { bg.destroy(); text.destroy(); sub.destroy(); },
       });
     });
+  }
+
+  /**
+   * Spawn a one-shot attack animation between two world-space points.
+   * style controls the look; add new cases here to support more attack types.
+   */
+  private spawnAttackEffect(style: string, fromX: number, fromY: number, toX: number, toY: number): void {
+    const dx = toX - fromX;
+    const dy = toY - fromY;
+    const angle = Math.atan2(dy, dx);
+
+    switch (style) {
+      case 'slash': {
+        // Two short crossing lines near the attacker, perpendicular to attack direction
+        const cx = fromX + Math.cos(angle) * 22;
+        const cy = fromY + Math.sin(angle) * 22;
+        const g = this.add.graphics({ x: cx, y: cy }).setDepth(10);
+        const len = 20;
+        const perp = angle + Math.PI / 2;
+        g.lineStyle(2, 0xffffaa, 1);
+        g.lineBetween(
+          -Math.cos(perp) * len, -Math.sin(perp) * len,
+           Math.cos(perp) * len,  Math.sin(perp) * len,
+        );
+        g.lineStyle(1.5, 0xffffff, 0.6);
+        const diag = angle + Math.PI / 3;
+        g.lineBetween(
+          -Math.cos(diag) * len * 0.65, -Math.sin(diag) * len * 0.65,
+           Math.cos(diag) * len * 0.65,  Math.sin(diag) * len * 0.65,
+        );
+        this.tweens.add({ targets: g, alpha: 0, duration: 160, onComplete: () => g.destroy() });
+        break;
+      }
+      case 'poison': {
+        // Expanding green ring at target + small dot
+        const g = this.add.graphics({ x: toX, y: toY }).setDepth(10);
+        g.lineStyle(2, 0x44ff88, 1);
+        g.strokeCircle(0, 0, 5);
+        this.tweens.add({ targets: g, alpha: 0, scaleX: 3, scaleY: 3, duration: 300, ease: 'Power2', onComplete: () => g.destroy() });
+        const dot = this.add.circle(toX, toY, 3, 0x44ff88, 0.8).setDepth(10);
+        this.tweens.add({ targets: dot, alpha: 0, duration: 200, onComplete: () => dot.destroy() });
+        break;
+      }
+      case 'magic': {
+        // Purple orb travels from attacker to target, then a ring pops at impact
+        const orb = this.add.circle(fromX, fromY, 4, 0xaa44ff).setDepth(10);
+        this.tweens.add({
+          targets: orb, x: toX, y: toY, alpha: 0,
+          duration: 200, ease: 'Quad.easeIn',
+          onComplete: () => {
+            orb.destroy();
+            const ring = this.add.graphics({ x: toX, y: toY }).setDepth(10);
+            ring.lineStyle(2, 0xcc88ff, 1);
+            ring.strokeCircle(0, 0, 4);
+            this.tweens.add({ targets: ring, alpha: 0, scaleX: 2, scaleY: 2, duration: 200, onComplete: () => ring.destroy() });
+          },
+        });
+        break;
+      }
+      case 'impact':
+      default: {
+        // Expanding orange ring at target position
+        const g = this.add.graphics({ x: toX, y: toY }).setDepth(10);
+        g.lineStyle(2, 0xff7744, 1);
+        g.strokeCircle(0, 0, 6);
+        this.tweens.add({ targets: g, alpha: 0, scaleX: 2.5, scaleY: 2.5, duration: 250, ease: 'Power2', onComplete: () => g.destroy() });
+        break;
+      }
+    }
   }
 
   private destroyVisual(map: Map<string, Visual>, id: string) {

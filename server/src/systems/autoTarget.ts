@@ -23,15 +23,21 @@ export function updateAutoTargets(world: World) {
 
     if (!nearest) continue;
 
-    const stopDistSq = (player.attackRange - 5) ** 2;
-    const distSq = (nearest.x - player.x) ** 2 + (nearest.y - player.y) ** 2;
+    const dx = nearest.x - player.x;
+    const dy = nearest.y - player.y;
+    const distSq = dx * dx + dy * dy;
+    const stopDist = player.attackRange - 1;
 
-    if (distSq <= stopDistSq) {
+    if (distSq <= stopDist * stopDist) {
+      // Already in range — hold position
       player.targetX = player.x;
       player.targetY = player.y;
     } else {
-      player.targetX = nearest.x;
-      player.targetY = nearest.y;
+      // Move toward a point exactly stopDist px from the monster so the player
+      // stops at melee range rather than walking into the monster's center.
+      const dist = Math.sqrt(distSq);
+      player.targetX = nearest.x - (dx / dist) * stopDist;
+      player.targetY = nearest.y - (dy / dist) * stopDist;
     }
   }
 }

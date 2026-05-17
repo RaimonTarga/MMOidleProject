@@ -1,4 +1,5 @@
 import type { World } from '../world/World';
+import { NODE_REGISTRY } from '../world/nodeRegistry';
 
 interface Movable {
   x: number;
@@ -30,6 +31,9 @@ function moveToward(entity: Movable, dt: number, speed: number) {
   }
 }
 
+// Monsters stay this many pixels from the node edge at all times.
+const MONSTER_MARGIN = 40;
+
 export function updateMovement(world: World, dt: number) {
   for (const p of world.players.values()) {
     moveToward(p, dt, p.speed);
@@ -37,5 +41,11 @@ export function updateMovement(world: World, dt: number) {
 
   for (const m of world.monsters.values()) {
     moveToward(m, dt, m.speed);
+
+    const node = NODE_REGISTRY.get(m.nodeId);
+    if (node) {
+      m.x = Math.max(MONSTER_MARGIN, Math.min(node.width  - MONSTER_MARGIN, m.x));
+      m.y = Math.max(MONSTER_MARGIN, Math.min(node.height - MONSTER_MARGIN, m.y));
     }
+  }
 }

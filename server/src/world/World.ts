@@ -100,6 +100,7 @@ export class World {
       lastAttackAt:   0,
       attackTargetId: null,
       nodeId,
+      attackStyle: def.attackStyle,
     };
 
     this.monsters.set(id, monster);

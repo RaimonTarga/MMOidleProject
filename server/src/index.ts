@@ -98,6 +98,7 @@ io.on('connection', (socket) => {
     currentSkillTier: 0,
     hpRegen: GAME_CONFIG.PLAYER_HP_REGEN,
     speed: GAME_CONFIG.PLAYER_SPEED,
+    attackStyle: 'slash',
     inventory: ['basic-sword'],
     equipment: emptyEquipment(),
     biomeKills: {},

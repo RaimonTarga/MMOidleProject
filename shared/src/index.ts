@@ -52,6 +52,8 @@ export interface PlayerState {
   hpRegen: number;
   /** Movement speed in px/s. Modified by equipment. */
   speed: number;
+  /** Visual style used for attack animations on the client. */
+  attackStyle: string;
   /** Definition IDs of items carried but not equipped. */
   inventory: string[];
   /** Currently equipped items, one per slot. Null means nothing equipped. */
@@ -113,6 +115,8 @@ export interface MonsterState {
   /** Player ID currently being attacked, or null when not in melee contact. */
   attackTargetId: string | null;
   nodeId: string;
+  /** Visual style used for attack animations on the client. */
+  attackStyle: string;
 }
 
 // ─── Node / zone definitions ──────────────────────────────────────────────────
@@ -226,6 +230,8 @@ export const GAME_CONFIG = {
   /** Logical pixel dimensions of a single node (the scrollable world area) */
   NODE_WIDTH:  3200,
   NODE_HEIGHT: 2400,
+  /** Half-width of each cardinal gate opening along the border edge */
+  GATE_HALF: 160,
   /** Server authoritative tick rate in Hz */
   TICK_RATE: 2,
   /** Player movement speed in pixels per second */
