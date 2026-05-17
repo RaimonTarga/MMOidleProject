@@ -7,6 +7,7 @@ import type {
   MonsterState,
   NodeSnapshot,
   NodeDirection,
+  EquipmentSlot,
 } from '@mmo-idle/shared';
 import { GAME_CONFIG } from '@mmo-idle/shared';
 import { hudBus } from '../hudBus';
@@ -118,6 +119,22 @@ export class GameScene extends Phaser.Scene {
       this.socket.emit('player:unlockSkill', skillId);
     });
 
+    // ── Inventory actions from InventoryPanel ──────────────────────────────
+    window.addEventListener('hud:equipItem', (e: Event) => {
+      const definitionId = (e as CustomEvent<string>).detail;
+      this.socket.emit('inventory:equipItem', definitionId);
+    });
+
+    window.addEventListener('hud:unequipItem', (e: Event) => {
+      const slot = (e as CustomEvent<EquipmentSlot>).detail;
+      this.socket.emit('inventory:unequip', slot);
+    });
+
+    window.addEventListener('hud:craftRecipe', (e: Event) => {
+      const recipeId = (e as CustomEvent<string>).detail;
+      this.socket.emit('crafting:craftRecipe', recipeId);
+    });
+
     // ── Click to move ──────────────────────────────────────────────────────
     this.input.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
       if (!this.myId) return;
@@ -157,6 +174,10 @@ export class GameScene extends Phaser.Scene {
     this.socket.on('node:state',  (snapshot) => this.applySnapshot(snapshot));
     this.socket.on('player:joined', (player)  => this.upsertPlayer(player));
     this.socket.on('player:left',   (playerId) => this.destroyVisual(this.players, playerId));
+
+    this.socket.on('crafting:result', (result) => {
+      window.dispatchEvent(new CustomEvent('hud:craftResult', { detail: result }));
+    });
   }
 
   update(_time: number, delta: number) {

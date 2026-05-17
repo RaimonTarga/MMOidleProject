@@ -1,0 +1,43 @@
+// ─── Equipment slots ──────────────────────────────────────────────────────────
+
+export type EquipmentSlot = 'weapon' | 'armor' | 'recovery' | 'mobility' | 'ring1' | 'ring2';
+
+export const EQUIPMENT_SLOTS: EquipmentSlot[] = [
+  'weapon', 'armor', 'recovery', 'mobility', 'ring1', 'ring2',
+];
+
+/** Null in a slot means nothing is equipped there. */
+export type EquipmentMap = Record<EquipmentSlot, string | null>;
+
+export function emptyEquipment(): EquipmentMap {
+  return { weapon: null, armor: null, recovery: null, mobility: null, ring1: null, ring2: null };
+}
+
+// ─── Item stat modifiers ──────────────────────────────────────────────────────
+
+/** Typed stat keys that items can modify. Mirrors relevant PlayerState fields. */
+export interface ItemStats {
+  attack?: number;
+  defense?: number;
+  maxHp?: number;
+  hpRegen?: number;
+  speed?: number;
+  attackRange?: number;
+  attackCooldown?: number;
+}
+
+// ─── Item definition ──────────────────────────────────────────────────────────
+
+/**
+ * A static item template shared by all instances of that item.
+ * statModifiers keys map directly to PlayerState stat field names:
+ *   attack | defense | attackRange | attackCooldown | maxHp | hpRegen | speed
+ */
+export interface ItemDefinition {
+  id: string;
+  name: string;
+  slot: EquipmentSlot;
+  tier: number;
+  statModifiers: Record<string, number>;
+  description?: string;
+}

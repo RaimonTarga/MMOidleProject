@@ -6,11 +6,15 @@ import cors from 'cors';
 import { World } from './world/World';
 import { GAME_CONFIG } from '@mmo-idle/shared';
 import { unlockSkill } from './systems/skills';
+import { equipItem, unequipItem } from './systems/inventory';
+import { craftRecipe } from './systems/crafting';
 import type {
   ServerToClientEvents,
   ClientToServerEvents,
   PlayerState,
+  EquipmentSlot,
 } from '@mmo-idle/shared';
+import { emptyEquipment } from '@mmo-idle/shared';
 
 // ── Setup ─────────────────────────────────────────────
 
@@ -86,7 +90,15 @@ io.on('connection', (socket) => {
     unlockedSkills: [],
     selectedClass: null,
     currentSkillTier: 0,
+    hpRegen: GAME_CONFIG.PLAYER_HP_REGEN,
+    speed: GAME_CONFIG.PLAYER_SPEED,
+    inventory: ['basic-sword'],
+    equipment: emptyEquipment(),
+    recipeProgress: { forest: 1 },
   };
+
+  // Auto-equip the starter weapon so new players immediately benefit from it
+  equipItem(player, 'basic-sword');
 
   world.players.set(socket.id, player);
 
@@ -109,6 +121,25 @@ io.on('connection', (socket) => {
     const p = world.players.get(socket.id);
     if (!p) return;
     unlockSkill(p, skillId);
+  });
+
+  socket.on('inventory:equipItem', (definitionId) => {
+    const p = world.players.get(socket.id);
+    if (!p) return;
+    equipItem(p, definitionId);
+  });
+
+  socket.on('inventory:unequip', (slot: EquipmentSlot) => {
+    const p = world.players.get(socket.id);
+    if (!p) return;
+    unequipItem(p, slot);
+  });
+
+  socket.on('crafting:craftRecipe', (recipeId: string) => {
+    const p = world.players.get(socket.id);
+    if (!p) return;
+    const result = craftRecipe(p, recipeId);
+    socket.emit('crafting:result', result);
   });
 
   socket.on('disconnect', () => {

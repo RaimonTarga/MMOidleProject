@@ -4,7 +4,8 @@
       "Bash(npx tsc *)",
       "Bash(Get-ChildItem -Recurse \"C:\\\\Users\\\\osaif\\\\Documents\\\\Claude\\\\Projects\\\\MMO idle\\\\client\\\\src\")",
       "Bash(Select-Object FullName)",
-      "Bash(pnpm exec *)"
+      "Bash(pnpm exec *)",
+      "Bash(pnpm --filter @mmo-idle/shared tsc --noEmit)"
     ]
   }
 }

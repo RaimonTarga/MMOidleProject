@@ -1,4 +1,4 @@
-import type { PlayerState } from '@mmo-idle/shared';
+import type { PlayerState, EquipmentSlot } from '@mmo-idle/shared';
 
 export type ConnectionStatus = 'connecting' | 'connected' | 'disconnected';
 
@@ -32,5 +32,20 @@ export const hudBus = {
   /** Called by SkillTreePanel — GameScene picks this up and emits the socket event. */
   requestSkillUnlock(skillId: string): void {
     window.dispatchEvent(new CustomEvent('hud:unlockSkill', { detail: skillId }));
+  },
+
+  /** Called by InventoryPanel — GameScene picks this up and emits the socket event. */
+  requestEquipItem(definitionId: string): void {
+    window.dispatchEvent(new CustomEvent('hud:equipItem', { detail: definitionId }));
+  },
+
+  /** Called by InventoryPanel — GameScene picks this up and emits the socket event. */
+  requestUnequipItem(slot: EquipmentSlot): void {
+    window.dispatchEvent(new CustomEvent('hud:unequipItem', { detail: slot }));
+  },
+
+  /** Called by CraftingPanel — GameScene picks this up and emits the socket event. */
+  requestCraftRecipe(recipeId: string): void {
+    window.dispatchEvent(new CustomEvent('hud:craftRecipe', { detail: recipeId }));
   },
 };

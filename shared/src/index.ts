@@ -1,4 +1,9 @@
 export * from './skillTree';
+export * from './items';
+export * from './itemDatabase';
+export * from './recipeDatabase';
+
+import type { EquipmentMap, EquipmentSlot } from './items';
 
 // ─── Entity shapes ────────────────────────────────────────────────────────────
 
@@ -41,6 +46,20 @@ export interface PlayerState {
    * node.tier === currentSkillTier.
    */
   currentSkillTier: number;
+  /** HP recovered per second when out of combat. Modified by equipment. */
+  hpRegen: number;
+  /** Movement speed in px/s. Modified by equipment. */
+  speed: number;
+  /** Definition IDs of items carried but not equipped. */
+  inventory: string[];
+  /** Currently equipped items, one per slot. Null means nothing equipped. */
+  equipment: EquipmentMap;
+  /**
+   * Crafting progression per recipe group. Value is the maximum tier the
+   * player can access in that group (e.g. { forest: 1 } unlocks all forest
+   * tier-1 recipes). Missing key means the group is locked.
+   */
+  recipeProgress: Record<string, number>;
 }
 
 /**
@@ -115,6 +134,8 @@ export interface ServerToClientEvents {
   'player:joined': (player: PlayerState) => void;
   /** Broadcast when any player leaves the node */
   'player:left': (playerId: string) => void;
+  /** Immediate result of a crafting attempt — success or reason for failure. */
+  'crafting:result': (result: { success: boolean; reason?: string }) => void;
 }
 
 /** Events clients send to the server */
@@ -125,6 +146,12 @@ export interface ClientToServerEvents {
   'player:setAuto': (enabled: boolean) => void;
   /** Request to unlock a skill tree node by ID. Server validates and applies. */
   'player:unlockSkill': (skillId: string) => void;
+  /** Equip an item from inventory by its definition ID. */
+  'inventory:equipItem': (definitionId: string) => void;
+  /** Move the item in the given slot back to inventory. */
+  'inventory:unequip': (slot: EquipmentSlot) => void;
+  /** Attempt to craft a recipe by ID. Server validates and applies. */
+  'crafting:craftRecipe': (recipeId: string) => void;
 }
 
 // ─── Game balance constants ───────────────────────────────────────────────────

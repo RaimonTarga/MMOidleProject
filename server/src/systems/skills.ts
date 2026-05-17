@@ -1,32 +1,6 @@
 import type { PlayerState } from '@mmo-idle/shared';
 import { SKILL_TREE } from '@mmo-idle/shared';
-import type { StatEffects } from '@mmo-idle/shared';
-
-// ── Stat application ──────────────────────────────────────────────────────────
-
-/**
- * Apply stat deltas from a skill node to the player's live stats.
- * attackCooldown is clamped to 200ms minimum so the game stays playable.
- * maxHp changes adjust current hp: increases heal, decreases damage (min 1).
- */
-function applyStatEffects(player: PlayerState, effects: StatEffects): void {
-  player.attack      += effects.attack      ?? 0;
-  player.defense     += effects.defense     ?? 0;
-  player.attackRange += effects.attackRange ?? 0;
-
-  if (effects.maxHp !== undefined) {
-    player.maxHp += effects.maxHp;
-    if (effects.maxHp > 0) {
-      player.hp = Math.min(player.hp + effects.maxHp, player.maxHp);
-    } else {
-      player.hp = Math.max(1, player.hp + effects.maxHp);
-    }
-  }
-
-  if (effects.attackCooldown !== undefined) {
-    player.attackCooldown = Math.max(200, player.attackCooldown + effects.attackCooldown);
-  }
-}
+import { recalculatePlayerStats } from './stats';
 
 // ── Public API ────────────────────────────────────────────────────────────────
 
@@ -79,6 +53,6 @@ export function unlockSkill(player: PlayerState, skillId: string): boolean {
     player.selectedClass = skillId;
   }
 
-  applyStatEffects(player, node.statEffects);
+  recalculatePlayerStats(player);
   return true;
 }

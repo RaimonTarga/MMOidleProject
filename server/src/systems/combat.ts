@@ -40,7 +40,7 @@ export function updateCombat(world: World, dt: number, now: number) {
       if (now - lastHit > GAME_CONFIG.COMBAT_REGEN_DELAY) {
         player.hp = Math.min(
           player.maxHp,
-          player.hp + GAME_CONFIG.PLAYER_HP_REGEN * (dt / 1000)
+          player.hp + player.hpRegen * (dt / 1000)
         );
       }
     }

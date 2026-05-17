@@ -1,5 +1,4 @@
 import type { World } from '../world/World';
-import { GAME_CONFIG } from '@mmo-idle/shared';
 
 interface Movable {
   x: number;
@@ -33,7 +32,7 @@ function moveToward(entity: Movable, dt: number, speed: number) {
 
 export function updateMovement(world: World, dt: number) {
   for (const p of world.players.values()) {
-    moveToward(p, dt, GAME_CONFIG.PLAYER_SPEED);
+    moveToward(p, dt, p.speed);
   }
 
   for (const m of world.monsters.values()) {
