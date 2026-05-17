@@ -70,29 +70,147 @@
   flex-direction: column;
 }
 
-/* ── Essence indicator ───────────────────────────────────────────────────── */
-.craft-essence {
+/* ── Essence summary (all 5 types, top of forge) ─────────────────────────── */
+.craft-essence-summary {
   display: flex;
-  align-items: center;
-  gap: 10px;
+  gap: 6px;
+  flex-wrap: wrap;
   margin-bottom: 14px;
-  padding: 6px 10px;
+  padding: 7px 10px;
   background: #0a0a20;
   border: 1px solid rgba(60, 60, 96, 0.2);
   border-radius: 3px;
 }
 
-.craft-essence__label {
+.craft-essence-chip {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+  padding: 2px 7px;
+}
+
+.craft-essence-chip__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.craft-essence-chip__value {
+  font-size: 12px;
+  font-weight: bold;
+  font-family: monospace;
+}
+
+/* ── Per-recipe cost row ─────────────────────────────────────────────────── */
+.craft-cost {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+
+.craft-cost__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
   font-size: 10px;
+  font-family: monospace;
+  padding: 1px 6px;
+  border-radius: 3px;
+  border: 1px solid transparent;
+}
+
+.craft-cost__chip--ok {
+  border-color: rgba(68, 221, 136, 0.2);
+  background: rgba(68, 221, 136, 0.05);
+}
+
+.craft-cost__chip--low {
+  border-color: rgba(255, 85, 68, 0.3);
+  background: rgba(255, 85, 68, 0.07);
+}
+
+.craft-cost__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.craft-cost__amount {
+  color: #aaaacc;
+}
+
+.craft-cost__chip--low .craft-cost__amount {
+  color: #ff7766;
+}
+
+.craft-cost__held {
   color: #444466;
+  font-size: 9px;
+}
+
+/* ── Biome progress ──────────────────────────────────────────────────────── */
+.craft-biome {
+  margin-bottom: 14px;
+  padding: 8px 10px;
+  background: #080818;
+  border: 1px solid rgba(60, 60, 96, 0.2);
+  border-radius: 3px;
+}
+
+.craft-biome__title {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.craft-biome__name {
+  font-size: 11px;
+  color: #667799;
+  font-weight: bold;
   text-transform: uppercase;
   letter-spacing: 0.8px;
 }
 
-.craft-essence__value {
-  font-size: 13px;
+.craft-biome__kills {
+  font-size: 10px;
   color: #bb88ff;
   font-weight: bold;
+}
+
+.craft-biome__progress {
+  position: relative;
+  height: 4px;
+  background: #0e0e24;
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 5px;
+}
+
+.craft-biome__bar {
+  height: 100%;
+  background: #4455bb;
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+.craft-biome__label {
+  display: block;
+  font-size: 9px;
+  color: #333355;
+  margin-top: 4px;
+  letter-spacing: 0.3px;
+}
+
+.craft-biome__maxed {
+  font-size: 9px;
+  color: #44aa66;
+  letter-spacing: 0.3px;
 }
 
 /* ── Recipe list ─────────────────────────────────────────────────────────── */
@@ -124,6 +242,21 @@
 }
 
 .craft-recipe--unaffordable { opacity: 0.4; }
+
+.craft-recipe--locked {
+  opacity: 0.35;
+  border-color: #111120;
+  background: #090915;
+  pointer-events: none;
+}
+
+.craft-recipe__locked-label {
+  flex-shrink: 0;
+  font-size: 9px;
+  color: #2e2e4a;
+  font-style: italic;
+  letter-spacing: 0.3px;
+}
 
 .craft-recipe__top {
   display: flex;

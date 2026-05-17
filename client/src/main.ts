@@ -7,10 +7,12 @@ import { RightSidebar } from './hud/MenuButtons';
 
 const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
-  width: 800,
-  height: 600,
   backgroundColor: '#1a1a2e',
   parent: 'game-wrapper',
+  scale: {
+    mode: Phaser.Scale.RESIZE,
+    autoCenter: Phaser.Scale.CENTER_BOTH,
+  },
   scene: [GameScene],
 };
 

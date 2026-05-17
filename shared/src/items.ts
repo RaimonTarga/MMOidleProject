@@ -1,3 +1,30 @@
+// ─── Essence types ────────────────────────────────────────────────────────────
+
+export type EssenceType = 'red' | 'blue' | 'green' | 'yellow' | 'purple';
+export const ESSENCE_TYPES: readonly EssenceType[] = ['red', 'blue', 'green', 'yellow', 'purple'] as const;
+
+export const ESSENCE_COLORS: Record<EssenceType, string> = {
+  red:    '#ff5544',
+  blue:   '#4488ff',
+  green:  '#44dd88',
+  yellow: '#ffdd44',
+  purple: '#bb55ff',
+};
+
+/** Primary essence produced by each biome — used by recipes for their main cost. */
+export const BIOME_PRIMARY_ESSENCE: Record<string, EssenceType> = {
+  clearing: 'green',
+  forest:   'green',
+  mountain: 'blue',
+  plains:   'yellow',
+  swamp:    'purple',
+  cave:     'blue',
+  jungle:   'green',
+  tundra:   'blue',
+  desert:   'yellow',
+  volcanic: 'red',
+};
+
 // ─── Equipment slots ──────────────────────────────────────────────────────────
 
 export type EquipmentSlot = 'weapon' | 'armor' | 'recovery' | 'mobility' | 'ring1' | 'ring2';

@@ -1,4 +1,5 @@
 import type { PlayerState, MonsterState } from '@mmo-idle/shared';
+import { NODE_BIOMES, BIOME_UNLOCK_THRESHOLDS, MONSTER_DATABASE } from '@mmo-idle/shared';
 import type { World } from '../world/World';
 
 /**
@@ -7,28 +8,39 @@ import type { World } from '../world/World';
  */
 export interface KillRewards {
   essence: number;
+  essenceType: string;
   level: number;
 }
 
-/**
- * Reward table keyed by monster name.
- * Add entries as new monster types are introduced.
- */
-const MONSTER_REWARD_TABLE: Record<string, KillRewards> = {
-  Slime: { essence: 5, level: 1 },
-};
+const FALLBACK_REWARDS: KillRewards = { essence: 1, essenceType: 'green', level: 1 };
 
-const FALLBACK_REWARDS: KillRewards = { essence: 1, level: 1 };
-
-/**
- * Apply a reward bundle directly to a player.
- * All resource mutations go through here so party-splitting and
- * bonus multipliers have a single place to hook into later.
- */
 export function rewardPlayer(player: PlayerState, rewards: KillRewards): void {
-  player.essence     += rewards.essence;
+  const type = rewards.essenceType as keyof typeof player.essences;
+  if (type in player.essences) player.essences[type] += rewards.essence;
   player.level       += rewards.level;
-  player.skillPoints += rewards.level; // 1 skill point per level gained
+  player.skillPoints += rewards.level;
+}
+
+/**
+ * Increment biomeKills for the node where the kill happened, then
+ * re-derive recipeProgress from BIOME_UNLOCK_THRESHOLDS.
+ * Called after every monster death.
+ */
+function applyBiomeProgression(player: PlayerState, nodeId: string): void {
+  const biomeInfo = NODE_BIOMES[nodeId];
+  if (!biomeInfo) return;
+
+  const { biomeGroup } = biomeInfo;
+  player.biomeKills[biomeGroup] = (player.biomeKills[biomeGroup] ?? 0) + 1;
+
+  const kills = player.biomeKills[biomeGroup];
+  const thresholds = BIOME_UNLOCK_THRESHOLDS[biomeGroup] ?? [];
+
+  let maxTier = player.recipeProgress[biomeGroup] ?? 0;
+  for (const { tier, killsRequired } of thresholds) {
+    if (kills >= killsRequired && tier > maxTier) maxTier = tier;
+  }
+  player.recipeProgress[biomeGroup] = maxTier;
 }
 
 /**
@@ -48,6 +60,8 @@ export function grantMonsterRewards(
   const killer = world.players.get(killerPlayerId);
   if (!killer) return;
 
-  const rewards = MONSTER_REWARD_TABLE[monster.name] ?? FALLBACK_REWARDS;
+  const def = MONSTER_DATABASE.get(monster.monsterTypeId);
+  const rewards = def?.rewards ?? FALLBACK_REWARDS;
   rewardPlayer(killer, rewards);
+  applyBiomeProgression(killer, monster.nodeId);
 }

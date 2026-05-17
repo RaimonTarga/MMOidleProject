@@ -2,8 +2,10 @@ export * from './skillTree';
 export * from './items';
 export * from './itemDatabase';
 export * from './recipeDatabase';
+export * from './monsterDatabase';
+export * from './biomeDatabase';
 
-import type { EquipmentMap, EquipmentSlot } from './items';
+import type { EquipmentMap, EquipmentSlot, EssenceType } from './items';
 
 // ─── Entity shapes ────────────────────────────────────────────────────────────
 
@@ -30,8 +32,8 @@ export interface PlayerState {
   /** Whether the server is driving this player toward the nearest monster. */
   auto: boolean;
   nodeId: string;
-  /** Accumulated essence resource — granted by server on monster kills. */
-  essence: number;
+  /** Accumulated essence resources — keyed by type, granted by server on monster kills. */
+  essences: Record<EssenceType, number>;
   /** Flat progression counter — incremented by 1 per kill. */
   level: number;
   /** Unspent points available to invest in the skill tree. */
@@ -55,9 +57,15 @@ export interface PlayerState {
   /** Currently equipped items, one per slot. Null means nothing equipped. */
   equipment: EquipmentMap;
   /**
-   * Crafting progression per recipe group. Value is the maximum tier the
-   * player can access in that group (e.g. { forest: 1 } unlocks all forest
-   * tier-1 recipes). Missing key means the group is locked.
+   * Raw kill count per biome group — the progression metric that drives recipe
+   * unlocks. Incremented server-side on every monster kill.
+   * e.g. { forest: 12, mountain: 0 }
+   */
+  biomeKills: Record<string, number>;
+  /**
+   * Derived from biomeKills via BIOME_UNLOCK_THRESHOLDS. Value is the maximum
+   * recipe tier accessible in that group. Missing key means nothing unlocked.
+   * e.g. { forest: 1 } means T1 forest recipes are craftable.
    */
   recipeProgress: Record<string, number>;
 }
@@ -76,6 +84,10 @@ export type MonsterAIState =
 
 export interface MonsterState {
   id: string;
+  /** Key into MONSTER_DATABASE — drives stat lookup and reward lookup. */
+  monsterTypeId: string;
+  /** Placeholder rectangle color, copied from MonsterDefinition.color at spawn. */
+  color: number;
   name: string;
   x: number;
   y: number;
@@ -112,9 +124,61 @@ export interface NodeDefinition {
   name: string;
   width: number;
   height: number;
+  /** Which biome family this node belongs to (e.g. "forest", "mountain"). */
+  biomeGroup: string;
+  /** Difficulty tier within the biome family — higher tiers have harder mobs. */
+  biomeTier: number;
   /** Adjacent node ids keyed by the direction of travel. Only present exits are listed. */
   exits: Partial<Record<NodeDirection, string>>;
 }
+
+/**
+ * Flat lookup from node ID to its biome info.
+ * Mirrors nodeRegistry on the server; both client and server import from here
+ * so the mapping has a single source of truth.
+ */
+/**
+ * 5×5 grid map. Center is node-2-2 (ring 0).
+ * Chebyshev distance from center determines ring: 0 = clearing, 1 = tier 1, 2 = tier 2.
+ *
+ * Geographic layout:
+ *   North  — tundra / mountain
+ *   West   — swamp
+ *   East   — plains → desert
+ *   South  — cave / jungle / volcanic
+ */
+export const NODE_BIOMES: Record<string, { biomeGroup: string; biomeTier: number }> = {
+  // row 0 — ring 2
+  'node-0-0': { biomeGroup: 'tundra',   biomeTier: 2 },
+  'node-0-1': { biomeGroup: 'tundra',   biomeTier: 2 },
+  'node-0-2': { biomeGroup: 'mountain', biomeTier: 2 },
+  'node-0-3': { biomeGroup: 'mountain', biomeTier: 2 },
+  'node-0-4': { biomeGroup: 'tundra',   biomeTier: 2 },
+  // row 1
+  'node-1-0': { biomeGroup: 'swamp',    biomeTier: 2 },
+  'node-1-1': { biomeGroup: 'forest',   biomeTier: 1 },
+  'node-1-2': { biomeGroup: 'forest',   biomeTier: 1 },
+  'node-1-3': { biomeGroup: 'plains',   biomeTier: 1 },
+  'node-1-4': { biomeGroup: 'desert',   biomeTier: 2 },
+  // row 2
+  'node-2-0': { biomeGroup: 'swamp',    biomeTier: 2 },
+  'node-2-1': { biomeGroup: 'swamp',    biomeTier: 1 },
+  'node-2-2': { biomeGroup: 'clearing', biomeTier: 0 },
+  'node-2-3': { biomeGroup: 'plains',   biomeTier: 1 },
+  'node-2-4': { biomeGroup: 'desert',   biomeTier: 2 },
+  // row 3
+  'node-3-0': { biomeGroup: 'jungle',   biomeTier: 2 },
+  'node-3-1': { biomeGroup: 'cave',     biomeTier: 1 },
+  'node-3-2': { biomeGroup: 'cave',     biomeTier: 1 },
+  'node-3-3': { biomeGroup: 'jungle',   biomeTier: 1 },
+  'node-3-4': { biomeGroup: 'volcanic', biomeTier: 2 },
+  // row 4 — ring 2
+  'node-4-0': { biomeGroup: 'jungle',   biomeTier: 2 },
+  'node-4-1': { biomeGroup: 'cave',     biomeTier: 2 },
+  'node-4-2': { biomeGroup: 'jungle',   biomeTier: 2 },
+  'node-4-3': { biomeGroup: 'volcanic', biomeTier: 2 },
+  'node-4-4': { biomeGroup: 'volcanic', biomeTier: 2 },
+};
 
 /** Full world state for a node, sent every tick and on join. */
 export interface NodeSnapshot {
@@ -136,6 +200,8 @@ export interface ServerToClientEvents {
   'player:left': (playerId: string) => void;
   /** Immediate result of a crafting attempt — success or reason for failure. */
   'crafting:result': (result: { success: boolean; reason?: string }) => void;
+  /** Sent to a player whose HP reached zero — they are simultaneously respawned server-side. */
+  'player:died': () => void;
 }
 
 /** Events clients send to the server */

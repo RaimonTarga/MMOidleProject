@@ -31,7 +31,7 @@ export function updateCombat(world: World, dt: number, now: number) {
         if (target.hp <= 0) {
           grantMonsterRewards(world, player.id, target);
           world.monsters.delete(target.id);
-          world.slimeAI.delete(target.id);
+          world.monsterAI.delete(target.id);
         }
       }
     } else {
@@ -48,7 +48,7 @@ export function updateCombat(world: World, dt: number, now: number) {
 
   // MONSTER → PLAYER
   for (const monster of world.monsters.values()) {
-    const ai = world.slimeAI.get(monster.id);
+    const ai = world.monsterAI.get(monster.id);
     if (!ai) continue;
 
     if (monster.state !== 'attacking') continue;
@@ -75,7 +75,11 @@ export function updateCombat(world: World, dt: number, now: number) {
       target.hp -= dmg;
       monster.lastAttackAt = now;
 
-      world.playerCombatAt.set(target.id, now);
+      if (target.hp <= 0) {
+        world.respawnPlayer(target.id);
+      } else {
+        world.playerCombatAt.set(target.id, now);
+      }
     }
   }
 }

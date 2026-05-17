@@ -1,6 +1,5 @@
 import type { World } from '../world/World';
 import type { MonsterState, PlayerState } from '@mmo-idle/shared';
-import { GAME_CONFIG } from '@mmo-idle/shared';
 import { getNodePlayers } from '../world/nodeQueries';
 
 function findAggro(monster: MonsterState, world: World): PlayerState | null {
@@ -24,7 +23,7 @@ function findAggro(monster: MonsterState, world: World): PlayerState | null {
 
 export function updateMonsters(world: World, _dt: number, now: number) {
   for (const [id, monster] of world.monsters) {
-    const ai = world.slimeAI.get(id);
+    const ai = world.monsterAI.get(id);
     if (!ai) continue;
 
     const target = findAggro(monster, world);
@@ -49,25 +48,21 @@ export function updateMonsters(world: World, _dt: number, now: number) {
       const stopDist = monster.attackRange - 5;
 
       if (distSq <= stopDist * stopDist) {
-        // In melee range — stop and swing.
         monster.targetX = monster.x;
         monster.targetY = monster.y;
         monster.state   = 'attacking';
       } else {
-        // Move toward target.
         monster.targetX = target.x;
         monster.targetY = target.y;
         monster.state   = 'chasing';
       }
 
     } else {
-      // ── No aggro target ─────────────────────────────────────────────────────
       ai.aggroTargetId = null;
 
       switch (monster.state) {
         case 'chasing':
         case 'attacking':
-          // Target gone — head back to spawn.
           monster.state   = 'returning';
           monster.targetX = ai.spawnX;
           monster.targetY = ai.spawnY;
@@ -77,15 +72,13 @@ export function updateMonsters(world: World, _dt: number, now: number) {
           const dx = monster.x - ai.spawnX;
           const dy = monster.y - ai.spawnY;
           if (dx * dx + dy * dy < 16) {
-            // Arrived at spawn — snap and enter idle.
             monster.x       = ai.spawnX;
             monster.y       = ai.spawnY;
             monster.targetX = ai.spawnX;
             monster.targetY = ai.spawnY;
             monster.state   = 'idle';
-            ai.idleUntil = now + randBetween(GAME_CONFIG.SLIME_IDLE_MIN, GAME_CONFIG.SLIME_IDLE_MAX);
+            ai.idleUntil    = now + randBetween(ai.idleMinMs, ai.idleMaxMs);
           }
-          // Movement system advances the monster toward targetX/Y each tick.
           break;
         }
 
@@ -93,27 +86,23 @@ export function updateMonsters(world: World, _dt: number, now: number) {
           const dx = monster.x - monster.targetX;
           const dy = monster.y - monster.targetY;
           if (dx * dx + dy * dy < 16) {
-            // Reached wander destination.
             monster.targetX = monster.x;
             monster.targetY = monster.y;
             monster.state   = 'idle';
-            ai.idleUntil = now + randBetween(GAME_CONFIG.SLIME_IDLE_MIN, GAME_CONFIG.SLIME_IDLE_MAX);
+            ai.idleUntil    = now + randBetween(ai.idleMinMs, ai.idleMaxMs);
           }
-          // Movement system advances the monster each tick.
           break;
         }
 
         case 'idle':
         default:
           if (now >= ai.idleUntil) {
-            // Pick a random destination within wanderRadius of spawn.
-            const angle    = Math.random() * 2 * Math.PI;
-            const radius   = Math.random() * ai.wanderRadius;
+            const angle     = Math.random() * 2 * Math.PI;
+            const radius    = Math.random() * ai.wanderRadius;
             monster.targetX = ai.spawnX + Math.cos(angle) * radius;
             monster.targetY = ai.spawnY + Math.sin(angle) * radius;
-            monster.state  = 'wandering';
+            monster.state   = 'wandering';
           } else {
-            // Still waiting — stay in place.
             monster.targetX = monster.x;
             monster.targetY = monster.y;
           }

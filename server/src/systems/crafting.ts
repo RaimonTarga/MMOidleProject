@@ -1,4 +1,4 @@
-import type { PlayerState } from '@mmo-idle/shared';
+import type { PlayerState, EssenceType } from '@mmo-idle/shared';
 import { RECIPE_DATABASE } from '@mmo-idle/shared';
 
 export interface CraftResult {
@@ -18,15 +18,23 @@ export function craftRecipe(player: PlayerState, recipeId: string): CraftResult 
     };
   }
 
-  if (player.essence < recipe.cost.essence) {
-    return {
-      success: false,
-      reason: `Not enough essence. Need ${recipe.cost.essence}, have ${player.essence}.`,
-    };
+  // Check every essence type in the cost.
+  const costEntries = Object.entries(recipe.cost) as [EssenceType, number][];
+  for (const [type, amount] of costEntries) {
+    const held = player.essences[type] ?? 0;
+    if (held < amount) {
+      return {
+        success: false,
+        reason: `Not enough ${type} essence. Need ${amount}, have ${held}.`,
+      };
+    }
   }
 
-  player.essence -= recipe.cost.essence;
-  player.inventory = [...player.inventory, recipe.id];
+  // Deduct all.
+  for (const [type, amount] of costEntries) {
+    player.essences[type] -= amount;
+  }
 
+  player.inventory = [...player.inventory, recipe.id];
   return { success: true };
 }

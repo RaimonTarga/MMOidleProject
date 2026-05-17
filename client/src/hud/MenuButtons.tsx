@@ -4,16 +4,17 @@ import type { HudState } from '../hudBus';
 import { SkillTreePanel } from '../ui/SkillTreePanel';
 import { InventoryPanel } from '../ui/InventoryPanel';
 import { CraftingPanel } from '../ui/CraftingPanel';
+import { MapPanel } from '../ui/MapPanel';
+import { EssencePanel } from './EssencePanel';
 import { SKILL_TREE } from '@mmo-idle/shared';
 import './hud.css';
-
-const PLACEHOLDER_PANELS = ['Skills', 'Map'] as const;
 
 export function RightSidebar() {
   const [hud, setHud]               = useState<HudState>({ status: 'connecting', player: null });
   const [treeOpen, setTreeOpen]     = useState(false);
   const [invOpen, setInvOpen]       = useState(false);
   const [craftOpen, setCraftOpen]   = useState(false);
+  const [mapOpen, setMapOpen]       = useState(false);
 
   useEffect(() => hudBus.subscribe(setHud), []);
 
@@ -59,6 +60,9 @@ export function RightSidebar() {
         )}
       </div>
 
+      {/* Essence panel */}
+      <EssencePanel player={player} />
+
       {/* Inventory panel */}
       <div className="sidebar-panel">
         <div className="panel-title">Inventory</div>
@@ -99,23 +103,19 @@ export function RightSidebar() {
           {craftOpen ? 'CLOSE FORGE' : 'OPEN FORGE'}
         </button>
 
-        {player && (
-          <div className="stat-section">
-            <div className="stat-row">
-              <span className="stat-label">Essence</span>
-              <span className="stat-value" style={{ color: '#bb88ff' }}>{player.essence}</span>
-            </div>
-          </div>
-        )}
       </div>
 
-      {/* Placeholder panels */}
-      {PLACEHOLDER_PANELS.map(name => (
-        <div key={name} className="sidebar-panel">
-          <div className="panel-title">{name}</div>
-          <div className="panel-placeholder">Not yet implemented</div>
-        </div>
-      ))}
+      {/* Map panel */}
+      <div className="sidebar-panel">
+        <div className="panel-title">Map</div>
+
+        <button
+          className={`auto-btn${mapOpen ? ' active' : ''}`}
+          onClick={() => setMapOpen(v => !v)}
+        >
+          {mapOpen ? 'CLOSE MAP' : 'OPEN MAP'}
+        </button>
+      </div>
 
       {/* Overlays — rendered via portal in document.body */}
       {treeOpen && (
@@ -134,6 +134,12 @@ export function RightSidebar() {
         <CraftingPanel
           player={player}
           onClose={() => setCraftOpen(false)}
+        />
+      )}
+      {mapOpen && (
+        <MapPanel
+          player={player}
+          onClose={() => setMapOpen(false)}
         />
       )}
     </div>

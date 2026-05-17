@@ -1,5 +1,5 @@
 import type { PlayerState } from '@mmo-idle/shared';
-import { GAME_CONFIG } from '@mmo-idle/shared';
+import { NODE_BIOMES, BIOME_DATABASE } from '@mmo-idle/shared';
 import type { ConnectionStatus } from '../hudBus';
 import { hudBus } from '../hudBus';
 
@@ -12,6 +12,15 @@ export function StatPanel({ player, status }: Props) {
   const hpPct = player && player.maxHp > 0 ? (player.hp / player.maxHp) * 100 : 0;
   const hpBarColor = hpPct > 50 ? '#44ee44' : hpPct > 25 ? '#eeaa22' : '#ee3322';
   const cdSec = player ? (player.attackCooldown / 1000).toFixed(1) : '—';
+
+  const zoneLabel = (() => {
+    if (!player) return '—';
+    const info = NODE_BIOMES[player.nodeId];
+    if (!info) return player.nodeId;
+    const biome = BIOME_DATABASE.get(info.biomeGroup);
+    const name = biome?.name ?? info.biomeGroup;
+    return `${name} T${info.biomeTier}`;
+  })();
 
   return (
     <div className="sidebar-panel">
@@ -44,15 +53,15 @@ export function StatPanel({ player, status }: Props) {
         <StatRow label="Defense"    value={player?.defense   ?? '—'} />
         <StatRow label="Atk Speed"  value={`${cdSec}s cd`} />
         <StatRow label="Atk Range"  value={player ? `${player.attackRange}px` : '—'} />
-        <StatRow label="Move Speed" value={`${GAME_CONFIG.PLAYER_SPEED}px/s`} />
+        <StatRow label="Move Speed" value={player ? `${player.speed}px/s` : '—'} />
+        <StatRow label="HP Regen"   value={player ? `${player.hpRegen}/s` : '—'} />
       </div>
 
       {/* World */}
       <div className="stat-section">
         <StatRow label="Level"      value={player?.level      ?? 0} />
         <StatRow label="Skill Pts"  value={player?.skillPoints ?? 0} />
-        <StatRow label="Essence"    value={player?.essence    ?? 0} />
-        <StatRow label="Zone"       value={player?.nodeId     ?? '—'} />
+        <StatRow label="Zone"       value={zoneLabel} />
         {player?.selectedClass && (
           <StatRow label="Class" value={player.selectedClass} />
         )}

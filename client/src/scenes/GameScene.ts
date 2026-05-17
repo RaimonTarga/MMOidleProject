@@ -9,7 +9,7 @@ import type {
   NodeDirection,
   EquipmentSlot,
 } from '@mmo-idle/shared';
-import { GAME_CONFIG } from '@mmo-idle/shared';
+import { GAME_CONFIG, NODE_BIOMES, BIOME_DATABASE } from '@mmo-idle/shared';
 import { hudBus } from '../hudBus';
 
 type GameSocket = Socket<ServerToClientEvents, ClientToServerEvents>;
@@ -21,14 +21,22 @@ const MM_W   = 160;  // minimap width  (px, screen-space)
 const MM_H   = 120;  // minimap height (px, screen-space)
 const MM_PAD = 8;    // gap from the screen edges
 
-// ── Client-side node exit registry ────────────────────────────────────────────
-// Mirrors server/src/world/nodeRegistry.ts exits.
-// Keep in sync when nodes are added or exits change.
-const NODE_EXITS: Record<string, Partial<Record<NodeDirection, string>>> = {
-  'node-1': { east: 'node-2', south: 'node-3' },
-  'node-2': { west: 'node-1' },
-  'node-3': { north: 'node-1' },
-};
+// ── Node exit computation ──────────────────────────────────────────────────────
+// Node IDs follow the format "node-{row}-{col}" in a 5×5 grid.
+// Exits are derived from coordinates so no registry duplication is needed.
+function getNodeExits(nodeId: string): Partial<Record<NodeDirection, string>> {
+  const parts = nodeId.split('-');
+  if (parts.length !== 3) return {};
+  const r = parseInt(parts[1], 10);
+  const c = parseInt(parts[2], 10);
+  if (isNaN(r) || isNaN(c)) return {};
+  const exits: Partial<Record<NodeDirection, string>> = {};
+  if (r > 0) exits.north = `node-${r - 1}-${c}`;
+  if (r < 4) exits.south = `node-${r + 1}-${c}`;
+  if (c > 0) exits.west  = `node-${r}-${c - 1}`;
+  if (c < 4) exits.east  = `node-${r}-${c + 1}`;
+  return exits;
+}
 
 // ── Gate marker dimensions (world-space) ─────────────────────────────────────
 // GATE_THICK must equal EXIT_TRIGGER in server/src/systems/transitions.ts so
@@ -70,8 +78,8 @@ export class GameScene extends Phaser.Scene {
   private minimap!: Phaser.GameObjects.Graphics;
   /** World-space colored bars drawn at each active exit boundary. */
   private exitMarkers!: Phaser.GameObjects.Graphics;
-  /** Bottom-left HUD text showing server position and transition debug info. */
-  private debugText!: Phaser.GameObjects.Text;
+  /** Full-world rectangle tinted with the current biome background color. */
+  private bgRect!: Phaser.GameObjects.Rectangle;
 
   constructor() {
     super({ key: 'GameScene' });
@@ -81,7 +89,18 @@ export class GameScene extends Phaser.Scene {
     // ── World / camera setup ───────────────────────────────────────────────
     this.cameras.main.setBounds(0, 0, GAME_CONFIG.NODE_WIDTH, GAME_CONFIG.NODE_HEIGHT);
 
-    // ── Grid background (world-space, rendered before everything else) ─────
+    // ── Biome background (solid rect at depth -12; color swapped on node change) ──
+    this.bgRect = this.add
+      .rectangle(
+        GAME_CONFIG.NODE_WIDTH  / 2,
+        GAME_CONFIG.NODE_HEIGHT / 2,
+        GAME_CONFIG.NODE_WIDTH,
+        GAME_CONFIG.NODE_HEIGHT,
+        0x101a10, // default clearing color; updated on first state:sync
+      )
+      .setDepth(-12);
+
+    // ── Grid overlay (world-space, transparent cells so bgRect shows through) ──
     this.createGridBackground();
 
     this.targetMarker = this.add
@@ -94,19 +113,6 @@ export class GameScene extends Phaser.Scene {
 
     // ── Minimap ────────────────────────────────────────────────────────────────
     this.minimap = this.add.graphics().setScrollFactor(0).setDepth(20);
-
-    // ── Debug overlay (bottom-left, screen-space) ──────────────────────────
-    this.debugText = this.add
-      .text(8, this.scale.height - 8, '', {
-        color: '#ffff44',
-        fontSize: '10px',
-        fontFamily: 'monospace',
-        backgroundColor: '#000000bb',
-        padding: { x: 4, y: 3 },
-      })
-      .setScrollFactor(0)
-      .setDepth(30)
-      .setOrigin(0, 1);
 
     // ── Auto toggle from HUD ───────────────────────────────────────────────
     window.addEventListener('hud:toggleAuto', () => {
@@ -178,6 +184,10 @@ export class GameScene extends Phaser.Scene {
     this.socket.on('crafting:result', (result) => {
       window.dispatchEvent(new CustomEvent('hud:craftResult', { detail: result }));
     });
+
+    this.socket.on('player:died', () => {
+      this.showDeathOverlay();
+    });
   }
 
   update(_time: number, delta: number) {
@@ -186,10 +196,10 @@ export class GameScene extends Phaser.Scene {
     this.stepEntities(this.monsters, dt);
     this.drawMinimap();
 
-    // Redraw exit gate markers only when the player's node changes.
-    // This avoids per-frame redraws of static world geometry.
+    // Redraw exit gate markers and update biome background only when node changes.
     if (this.myNodeId !== this.lastDrawnNodeId) {
       this.drawExitMarkers();
+      this.updateBiomeBackground();
       this.lastDrawnNodeId = this.myNodeId;
     }
 
@@ -200,24 +210,6 @@ export class GameScene extends Phaser.Scene {
       if (dx * dx + dy * dy < 16) this.targetMarker.setVisible(false);
     }
 
-    // Debug overlay — shows server-authoritative state and distance to each trigger zone.
-    const ownState = (own as (Visual & { _state?: PlayerState }) | undefined)?._state;
-    if (ownState) {
-      const exits = NODE_EXITS[ownState.nodeId] ?? {};
-      const W = GAME_CONFIG.NODE_WIDTH;
-      const H = GAME_CONFIG.NODE_HEIGHT;
-      const T = GATE_THICK; // trigger zone thickness (matches server EXIT_TRIGGER)
-      const lines: string[] = [
-        `node: ${ownState.nodeId}`,
-        `srv  x=${Math.round(ownState.x)}  y=${Math.round(ownState.y)}`,
-        `tgt  x=${Math.round(ownState.targetX)}  y=${Math.round(ownState.targetY)}`,
-      ];
-      if (exits.east)  lines.push(`east  fires@x>=${W - T}  dist=${Math.round(W - T - ownState.x)}`);
-      if (exits.west)  lines.push(`west  fires@x<=${T}  dist=${Math.round(ownState.x - T)}`);
-      if (exits.south) lines.push(`south fires@y>=${H - T}  dist=${Math.round(H - T - ownState.y)}`);
-      if (exits.north) lines.push(`north fires@y<=${T}  dist=${Math.round(ownState.y - T)}`);
-      this.debugText.setText(lines.join('\n'));
-    }
   }
 
   // ── Private helpers ───────────────────────────────────────────────────────
@@ -225,9 +217,10 @@ export class GameScene extends Phaser.Scene {
   private createGridBackground(): void {
     const cell = 64;
     const g = this.make.graphics({ x: 0, y: 0 }, false);
-    g.fillStyle(0x1a1a2e);
+    // Transparent fill so the biome bgRect (depth -12) shows through the cells.
+    g.fillStyle(0x000000, 0);
     g.fillRect(0, 0, cell, cell);
-    g.lineStyle(1, 0x252548, 1);
+    g.lineStyle(1, 0x2a2a4a, 0.45);
     g.strokeRect(0.5, 0.5, cell - 1, cell - 1);
     g.generateTexture('grid-cell', cell, cell);
     g.destroy();
@@ -324,7 +317,7 @@ export class GameScene extends Phaser.Scene {
         { sprite, label, hpBar, cdBar,
           targetX: player.targetX, targetY: player.targetY,
           hp: player.hp, maxHp: player.maxHp,
-          speed: GAME_CONFIG.PLAYER_SPEED, barOffsetY: 34,
+          speed: player.speed, barOffsetY: 34,
           attackCooldown: player.attackCooldown,
           lastAttackAt:   player.lastAttackAt,
           attackTargetId: player.attackTargetId },
@@ -349,6 +342,7 @@ export class GameScene extends Phaser.Scene {
     vp.targetX        = player.targetX;
     vp.targetY        = player.targetY;
     vp.hp             = player.hp;
+    vp.speed          = player.speed;
     vp.lastAttackAt   = player.lastAttackAt;
     vp.attackTargetId = player.attackTargetId;
     (vp as Visual & { _state: PlayerState })._state = player;
@@ -363,7 +357,7 @@ export class GameScene extends Phaser.Scene {
   private upsertMonster(monster: MonsterState) {
     let vm = this.monsters.get(monster.id);
     if (!vm) {
-      const sprite = this.add.rectangle(monster.x, monster.y, 32, 32, 0xff4444);
+      const sprite = this.add.rectangle(monster.x, monster.y, 32, 32, monster.color);
       const label  = this.add.text(0, 0, monster.name, {
         color: '#ffaaaa', fontSize: '10px', fontFamily: 'monospace',
       });
@@ -387,6 +381,15 @@ export class GameScene extends Phaser.Scene {
     vm.attackTargetId = monster.attackTargetId;
   }
 
+  /** Swap the background rectangle's fill color to match the current biome. */
+  private updateBiomeBackground(): void {
+    const biomeInfo = NODE_BIOMES[this.myNodeId];
+    if (!biomeInfo) return;
+    const biome = BIOME_DATABASE.get(biomeInfo.biomeGroup);
+    if (!biome) return;
+    this.bgRect.setFillStyle(biome.backgroundColor);
+  }
+
   /**
    * Draw colored bars at each active exit boundary in world-space.
    * Called once per node change, not every frame.
@@ -395,7 +398,7 @@ export class GameScene extends Phaser.Scene {
   private drawExitMarkers(): void {
     this.exitMarkers.clear();
 
-    const exits = NODE_EXITS[this.myNodeId];
+    const exits = getNodeExits(this.myNodeId);
     if (!exits) return;
 
     const W = GAME_CONFIG.NODE_WIDTH;
@@ -460,7 +463,7 @@ export class GameScene extends Phaser.Scene {
 
     // Exit direction indicators — small colored bars at minimap edge midpoints.
     // Drawn last so they appear on top of entity dots.
-    const exits = NODE_EXITS[this.myNodeId] ?? {};
+    const exits = getNodeExits(this.myNodeId) ?? {};
     const mcx = mmX + MM_W / 2;
     const mcy = mmY + MM_H / 2;
     this.minimap.fillStyle(GATE_COLOR, 1);
@@ -468,6 +471,46 @@ export class GameScene extends Phaser.Scene {
     if (exits.south) this.minimap.fillRect(mcx - 4, mmY + MM_H - 5,   8, 5);
     if (exits.east)  this.minimap.fillRect(mmX + MM_W - 5, mcy - 4,   5, 8);
     if (exits.west)  this.minimap.fillRect(mmX,             mcy - 4,   5, 8);
+  }
+
+  private showDeathOverlay(): void {
+    const w = this.scale.width;
+    const h = this.scale.height;
+
+    const bg = this.add
+      .rectangle(w / 2, h / 2, w, h, 0x000000, 0.7)
+      .setScrollFactor(0)
+      .setDepth(50);
+
+    const text = this.add
+      .text(w / 2, h / 2, 'YOU DIED', {
+        color: '#cc2222',
+        fontSize: '52px',
+        fontFamily: 'monospace',
+        fontStyle: 'bold',
+      })
+      .setScrollFactor(0)
+      .setDepth(51)
+      .setOrigin(0.5);
+
+    const sub = this.add
+      .text(w / 2, h / 2 + 60, 'Respawning at the Clearing…', {
+        color: '#886666',
+        fontSize: '14px',
+        fontFamily: 'monospace',
+      })
+      .setScrollFactor(0)
+      .setDepth(51)
+      .setOrigin(0.5);
+
+    this.time.delayedCall(2200, () => {
+      this.tweens.add({
+        targets: [bg, text, sub],
+        alpha: 0,
+        duration: 600,
+        onComplete: () => { bg.destroy(); text.destroy(); sub.destroy(); },
+      });
+    });
   }
 
   private destroyVisual(map: Map<string, Visual>, id: string) {

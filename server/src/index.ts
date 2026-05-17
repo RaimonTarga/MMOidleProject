@@ -55,6 +55,12 @@ setInterval(() => {
 
   world.tick(dt, now);
 
+  // Notify dying players before broadcasting state so the overlay shows first.
+  for (const playerId of world.pendingDeaths) {
+    io.sockets.sockets.get(playerId)?.emit('player:died');
+  }
+  world.pendingDeaths = [];
+
   for (const [socketId, player] of world.players) {
     const sock = io.sockets.sockets.get(socketId);
     if (sock) sock.emit('node:state', world.buildSnapshot(player.nodeId));
@@ -84,7 +90,7 @@ io.on('connection', (socket) => {
     attackTargetId: null,
     auto: false,
     nodeId: world.nodeId,
-    essence: 0,
+    essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
     level: 0,
     skillPoints: 0,
     unlockedSkills: [],
@@ -94,7 +100,8 @@ io.on('connection', (socket) => {
     speed: GAME_CONFIG.PLAYER_SPEED,
     inventory: ['basic-sword'],
     equipment: emptyEquipment(),
-    recipeProgress: { forest: 1 },
+    biomeKills: {},
+    recipeProgress: {},
   };
 
   // Auto-equip the starter weapon so new players immediately benefit from it
