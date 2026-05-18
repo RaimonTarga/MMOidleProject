@@ -342,6 +342,7 @@ export class GameScene extends Phaser.Scene {
     }
 
     const prevPlayerAttackAt = vp.lastAttackAt;
+    const prevPlayerHp = vp.hp;
     vp.targetX        = player.targetX;
     vp.targetY        = player.targetY;
     vp.hp             = player.hp;
@@ -351,6 +352,11 @@ export class GameScene extends Phaser.Scene {
     vp.attackTargetId = player.attackTargetId;
     vp.attackStyle    = player.attackStyle;
     (vp as Visual & { _state: PlayerState })._state = player;
+
+    if (player.hp < prevPlayerHp) {
+      const dmgColor = isOwn ? '#ff4444' : '#ff8844';
+      this.spawnDamageNumber(vp.sprite.x, vp.sprite.y, vp.barOffsetY, Math.round(prevPlayerHp - player.hp), dmgColor);
+    }
 
     if (player.lastAttackAt > prevPlayerAttackAt && player.attackTargetId) {
       const targetVm = this.monsters.get(player.attackTargetId);
@@ -387,6 +393,7 @@ export class GameScene extends Phaser.Scene {
       return;
     }
     const prevMonsterAttackAt = vm.lastAttackAt;
+    const prevMonsterHp = vm.hp;
     vm.targetX        = monster.targetX;
     vm.targetY        = monster.targetY;
     vm.hp             = monster.hp;
@@ -394,6 +401,10 @@ export class GameScene extends Phaser.Scene {
     vm.lastAttackAt   = monster.lastAttackAt;
     vm.attackTargetId = monster.attackTargetId;
     vm.attackStyle    = monster.attackStyle;
+
+    if (monster.hp < prevMonsterHp) {
+      this.spawnDamageNumber(vm.sprite.x, vm.sprite.y, vm.barOffsetY, Math.round(prevMonsterHp - monster.hp), '#ffffff');
+    }
 
     if (monster.lastAttackAt > prevMonsterAttackAt && monster.attackTargetId) {
       const targetVp = this.players.get(monster.attackTargetId);
@@ -603,6 +614,36 @@ export class GameScene extends Phaser.Scene {
         break;
       }
     }
+  }
+
+  /**
+   * Spawn a damage number that floats upward and fades out over ~900ms.
+   * barOffsetY is the same value used to position the HP bar above the sprite,
+   * so the number starts just above the bar.
+   */
+  private spawnDamageNumber(spriteX: number, spriteY: number, barOffsetY: number, amount: number, color: string): void {
+    const jitter = (Math.random() - 0.5) * 18;
+    const startY = spriteY - barOffsetY - 6;
+    const text = this.add
+      .text(spriteX + jitter, startY, String(amount), {
+        color,
+        fontSize: '14px',
+        fontFamily: 'monospace',
+        fontStyle: 'bold',
+        stroke: '#000000',
+        strokeThickness: 3,
+      })
+      .setDepth(15)
+      .setOrigin(0.5, 1);
+
+    this.tweens.add({
+      targets: text,
+      y: startY - 40,
+      alpha: 0,
+      duration: 900,
+      ease: 'Power2',
+      onComplete: () => text.destroy(),
+    });
   }
 
   private destroyVisual(map: Map<string, Visual>, id: string) {

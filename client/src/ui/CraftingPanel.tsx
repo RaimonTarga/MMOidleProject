@@ -19,11 +19,15 @@ const STAT_LABELS: Record<string, string> = {
   hpRegen: 'REGEN', speed: 'SPD', attackRange: 'RNG', attackCooldown: 'CD ms',
 };
 
-function formatStats(stats: Partial<ItemStats>): string {
-  return Object.entries(stats)
-    .filter(([, v]) => v !== undefined)
-    .map(([k, v]) => `${(v as number) >= 0 ? '+' : ''}${v} ${STAT_LABELS[k] ?? k}`)
-    .join('  ');
+function formatStats(stats: Partial<ItemStats>, aps?: number): string {
+  const parts: string[] = [];
+  if (aps !== undefined) parts.push(`${aps} APS`);
+  parts.push(
+    ...Object.entries(stats)
+      .filter(([, v]) => v !== undefined)
+      .map(([k, v]) => `${(v as number) >= 0 ? '+' : ''}${v} ${STAT_LABELS[k] ?? k}`),
+  );
+  return parts.join('  ');
 }
 
 interface EssenceSummaryProps {
@@ -194,7 +198,9 @@ export function CraftingPanel({ player, onClose }: Props) {
                             <span className="craft-recipe__tier">T{recipe.tier}</span>
                           </div>
 
-                          <div className="craft-recipe__stats">{formatStats(recipe.stats)}</div>
+                          <div className="craft-recipe__stats">
+                            {formatStats(recipe.stats, recipe.slot === 'weapon' ? recipe.attacksPerSecond : undefined)}
+                          </div>
 
                           {unlocked && (
                             <CostDisplay cost={recipe.cost} essences={essences} />

@@ -12,7 +12,8 @@
       "Bash(node -e ' *)",
       "Bash(node --input-type=module -e ' *)",
       "Bash(pnpm --filter client exec tsc --noEmit)",
-      "Bash(pnpm --filter server exec tsc --noEmit)"
+      "Bash(pnpm --filter server exec tsc --noEmit)",
+      "Bash(pnpm --filter @mmo-idle/server exec tsc --noEmit)"
     ]
   }
 }

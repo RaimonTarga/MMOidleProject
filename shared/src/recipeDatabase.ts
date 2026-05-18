@@ -12,6 +12,11 @@ export interface Recipe {
   cost: Partial<Record<EssenceType, number>>;
   stats: Partial<ItemStats>;
   tier: number;
+  /**
+   * Weapon slots only. Sets the player's base attack cooldown to round(1000 / aps) ms.
+   * See ItemDefinition.attacksPerSecond for full semantics.
+   */
+  attacksPerSecond?: number;
   description?: string;
 }
 
@@ -45,11 +50,11 @@ export const BIOME_UNLOCK_THRESHOLDS: Record<string, { tier: number; killsRequir
 export const RECIPE_DATABASE: Map<string, Recipe> = new Map([
 
   // ── Clearing (tutorial tier 1) — single green essence ────────────────────
-  ['clearing-blade-t1', {
-    id: 'clearing-blade-t1', name: 'Sapling Blade',
+  ['primordial-club', {
+    id: 'primordial-club', name: 'Primordial Club',
     recipeGroup: 'clearing', requiredTier: 1, slot: 'weapon',
-    cost: { green: 8 }, stats: { attack: 5 }, tier: 1,
-    description: 'A sharpened sapling — good enough to start.',
+    cost: { green: 8 }, stats: { attack: 5 }, attacksPerSecond: 0.70, tier: 1,
+    description: 'A crude but reliable club — forged on the cheap, never lets you down.',
   }],
   ['clearing-vest-t1', {
     id: 'clearing-vest-t1', name: 'Bark Wrap',
@@ -71,11 +76,11 @@ export const RECIPE_DATABASE: Map<string, Recipe> = new Map([
   }],
 
   // ── Forest T1 — green only ─────────────────────────────────────────────────
-  ['forest-blade-t1', {
-    id: 'forest-blade-t1', name: 'Forest Blade',
+  ['flash-rapier', {
+    id: 'flash-rapier', name: 'Flash Rapier',
     recipeGroup: 'forest', requiredTier: 1, slot: 'weapon',
-    cost: { green: 20 }, stats: { attack: 8 }, tier: 1,
-    description: 'A blade carved from dense forest ironwood.',
+    cost: { green: 20 }, stats: { attack: 4 }, attacksPerSecond: 1.50, tier: 1,
+    description: 'A needle-thin blade that strikes faster than the eye can follow, but each sting barely bites.',
   }],
   ['forest-vest-t1', {
     id: 'forest-vest-t1', name: 'Bark Vest',
@@ -100,7 +105,7 @@ export const RECIPE_DATABASE: Map<string, Recipe> = new Map([
   ['forest-blade-t2', {
     id: 'forest-blade-t2', name: 'Ironwood Blade',
     recipeGroup: 'forest', requiredTier: 2, slot: 'weapon',
-    cost: { green: 48, yellow: 12 }, stats: { attack: 18 }, tier: 2,
+    cost: { green: 48, yellow: 12 }, stats: { attack: 18 }, attacksPerSecond: 1.0, tier: 2,
     description: 'Forged from the heartwood of an ancient iron-oak.',
   }],
   ['forest-vest-t2', {
@@ -123,11 +128,11 @@ export const RECIPE_DATABASE: Map<string, Recipe> = new Map([
   }],
 
   // ── Mountain T1 — blue only ────────────────────────────────────────────────
-  ['mountain-blade-t1', {
-    id: 'mountain-blade-t1', name: 'Stone Axe',
+  ['heavy-hammer', {
+    id: 'heavy-hammer', name: 'Heavy Hammer',
     recipeGroup: 'mountain', requiredTier: 1, slot: 'weapon',
-    cost: { blue: 22 }, stats: { attack: 10 }, tier: 1,
-    description: 'A heavy axe head split from granite.',
+    cost: { blue: 22 }, stats: { attack: 16 }, attacksPerSecond: 0.40, tier: 1,
+    description: 'A war hammer so heavy it takes both hands — but when it lands, it lands.',
   }],
   ['mountain-vest-t1', {
     id: 'mountain-vest-t1', name: 'Rock Plate',
@@ -152,7 +157,7 @@ export const RECIPE_DATABASE: Map<string, Recipe> = new Map([
   ['mountain-blade-t2', {
     id: 'mountain-blade-t2', name: 'Peak Blade',
     recipeGroup: 'mountain', requiredTier: 2, slot: 'weapon',
-    cost: { blue: 52, purple: 13 }, stats: { attack: 22 }, tier: 2,
+    cost: { blue: 52, purple: 13 }, stats: { attack: 22 }, attacksPerSecond: 1.0, tier: 2,
     description: 'Folded high-altitude steel; holds an edge in any cold.',
   }],
   ['mountain-vest-t2', {
@@ -175,11 +180,11 @@ export const RECIPE_DATABASE: Map<string, Recipe> = new Map([
   }],
 
   // ── Plains T1 — yellow only ────────────────────────────────────────────────
-  ['plains-blade-t1', {
-    id: 'plains-blade-t1', name: 'Wind Blade',
+  ['sacred-cross', {
+    id: 'sacred-cross', name: 'Sacred Cross',
     recipeGroup: 'plains', requiredTier: 1, slot: 'weapon',
-    cost: { yellow: 20 }, stats: { attack: 9 }, tier: 1,
-    description: 'A long, thin blade that cuts like an open-plain gust.',
+    cost: { yellow: 20 }, stats: { attack: 6 }, attacksPerSecond: 0.50, tier: 1,
+    description: 'A blessed weapon that pulses with divine energy — slow to strike, but every 12s it unleashes a devastating burst.',
   }],
   ['plains-vest-t1', {
     id: 'plains-vest-t1', name: 'Leather Vest',
@@ -204,7 +209,7 @@ export const RECIPE_DATABASE: Map<string, Recipe> = new Map([
   ['plains-blade-t2', {
     id: 'plains-blade-t2', name: 'Storm Blade',
     recipeGroup: 'plains', requiredTier: 2, slot: 'weapon',
-    cost: { yellow: 50, red: 12 }, stats: { attack: 20 }, tier: 2,
+    cost: { yellow: 50, red: 12 }, stats: { attack: 20 }, attacksPerSecond: 1.0, tier: 2,
     description: 'Charged with static from a plains thunderstorm.',
   }],
   ['plains-vest-t2', {
@@ -227,11 +232,11 @@ export const RECIPE_DATABASE: Map<string, Recipe> = new Map([
   }],
 
   // ── Swamp T1 — purple only ─────────────────────────────────────────────────
-  ['swamp-blade-t1', {
-    id: 'swamp-blade-t1', name: 'Bog Blade',
+  ['ashbrand-blade', {
+    id: 'ashbrand-blade', name: 'Ashbrand Blade',
     recipeGroup: 'swamp', requiredTier: 1, slot: 'weapon',
-    cost: { purple: 22 }, stats: { attack: 10 }, tier: 1,
-    description: 'Bog-iron blade corroded to a wicked edge.',
+    cost: { purple: 22 }, stats: { attack: 7 }, attacksPerSecond: 0.75, tier: 1,
+    description: 'A blade wreathed in smoldering runes — your strikes leave no wound, only fire that eats from within.',
   }],
   ['swamp-vest-t1', {
     id: 'swamp-vest-t1', name: 'Toad Shell',
@@ -256,7 +261,7 @@ export const RECIPE_DATABASE: Map<string, Recipe> = new Map([
   ['swamp-blade-t2', {
     id: 'swamp-blade-t2', name: 'Venom Blade',
     recipeGroup: 'swamp', requiredTier: 2, slot: 'weapon',
-    cost: { purple: 54, green: 14 }, stats: { attack: 24 }, tier: 2,
+    cost: { purple: 54, green: 14 }, stats: { attack: 24 }, attacksPerSecond: 1.0, tier: 2,
     description: 'Dipped in hydra venom until the steel itself is poisonous.',
   }],
   ['swamp-vest-t2', {
@@ -279,11 +284,11 @@ export const RECIPE_DATABASE: Map<string, Recipe> = new Map([
   }],
 
   // ── Cave T1 — blue only ────────────────────────────────────────────────────
-  ['cave-blade-t1', {
-    id: 'cave-blade-t1', name: 'Stalactite Blade',
+  ['chaotic-axe', {
+    id: 'chaotic-axe', name: 'Chaotic Axe',
     recipeGroup: 'cave', requiredTier: 1, slot: 'weapon',
-    cost: { blue: 22 }, stats: { attack: 11 }, tier: 1,
-    description: 'Ground from a sharp stalactite tip.',
+    cost: { blue: 22 }, stats: { attack: 10 }, attacksPerSecond: 1.10, tier: 1,
+    description: 'An axe that swings with wild abandon — two in every three strikes land hard, but the third flies wide.',
   }],
   ['cave-vest-t1', {
     id: 'cave-vest-t1', name: 'Spider Chitin',
@@ -308,7 +313,7 @@ export const RECIPE_DATABASE: Map<string, Recipe> = new Map([
   ['cave-blade-t2', {
     id: 'cave-blade-t2', name: 'Troll Club',
     recipeGroup: 'cave', requiredTier: 2, slot: 'weapon',
-    cost: { blue: 54, purple: 14 }, stats: { attack: 25 }, tier: 2,
+    cost: { blue: 54, purple: 14 }, stats: { attack: 25 }, attacksPerSecond: 1.0, tier: 2,
     description: 'A cave-troll femur carved into a devastating weapon.',
   }],
   ['cave-vest-t2', {
@@ -334,7 +339,7 @@ export const RECIPE_DATABASE: Map<string, Recipe> = new Map([
   ['jungle-blade-t1', {
     id: 'jungle-blade-t1', name: 'Fang Blade',
     recipeGroup: 'jungle', requiredTier: 1, slot: 'weapon',
-    cost: { green: 22 }, stats: { attack: 12 }, tier: 1,
+    cost: { green: 22 }, stats: { attack: 12 }, attacksPerSecond: 0.75, tier: 1,
     description: 'A jungle-snake fang set in a hardwood hilt.',
   }],
   ['jungle-vest-t1', {
@@ -360,7 +365,7 @@ export const RECIPE_DATABASE: Map<string, Recipe> = new Map([
   ['jungle-blade-t2', {
     id: 'jungle-blade-t2', name: 'Anaconda Fang',
     recipeGroup: 'jungle', requiredTier: 2, slot: 'weapon',
-    cost: { green: 54, yellow: 14 }, stats: { attack: 26 }, tier: 2,
+    cost: { green: 54, yellow: 14 }, stats: { attack: 26 }, attacksPerSecond: 1.0, tier: 2,
     description: 'An anaconda fang the length of a shortsword.',
   }],
   ['jungle-vest-t2', {
@@ -386,7 +391,7 @@ export const RECIPE_DATABASE: Map<string, Recipe> = new Map([
   ['tundra-blade-t1', {
     id: 'tundra-blade-t1', name: 'Frost Blade',
     recipeGroup: 'tundra', requiredTier: 1, slot: 'weapon',
-    cost: { blue: 70 }, stats: { attack: 28 }, tier: 1,
+    cost: { blue: 70 }, stats: { attack: 28 }, attacksPerSecond: 1.25, tier: 1,
     description: 'Tempered in glacial water until the edge never dulls.',
   }],
   ['tundra-vest-t1', {
@@ -412,7 +417,7 @@ export const RECIPE_DATABASE: Map<string, Recipe> = new Map([
   ['tundra-blade-t2', {
     id: 'tundra-blade-t2', name: 'Blizzard Edge',
     recipeGroup: 'tundra', requiredTier: 2, slot: 'weapon',
-    cost: { blue: 84, purple: 24, green: 12 }, stats: { attack: 50 }, tier: 2,
+    cost: { blue: 84, purple: 24, green: 12 }, stats: { attack: 50 }, attacksPerSecond: 1.5, tier: 2,
     description: 'Forged from the eye of a permanent tundra blizzard.',
   }],
   ['tundra-vest-t2', {
@@ -438,7 +443,7 @@ export const RECIPE_DATABASE: Map<string, Recipe> = new Map([
   ['desert-blade-t1', {
     id: 'desert-blade-t1', name: 'Scorpion Blade',
     recipeGroup: 'desert', requiredTier: 1, slot: 'weapon',
-    cost: { yellow: 70 }, stats: { attack: 28 }, tier: 1,
+    cost: { yellow: 70 }, stats: { attack: 28 }, attacksPerSecond: 1.25, tier: 1,
     description: 'A sand-scorpion stinger sharpened to a piercing point.',
   }],
   ['desert-vest-t1', {
@@ -464,7 +469,7 @@ export const RECIPE_DATABASE: Map<string, Recipe> = new Map([
   ['desert-blade-t2', {
     id: 'desert-blade-t2', name: 'Sandstorm Blade',
     recipeGroup: 'desert', requiredTier: 2, slot: 'weapon',
-    cost: { yellow: 84, red: 24, blue: 12 }, stats: { attack: 50 }, tier: 2,
+    cost: { yellow: 84, red: 24, blue: 12 }, stats: { attack: 50 }, attacksPerSecond: 1.5, tier: 2,
     description: 'A blade shaped by a thousand-year sandstorm.',
   }],
   ['desert-vest-t2', {
@@ -490,7 +495,7 @@ export const RECIPE_DATABASE: Map<string, Recipe> = new Map([
   ['volcanic-blade-t1', {
     id: 'volcanic-blade-t1', name: 'Ember Blade',
     recipeGroup: 'volcanic', requiredTier: 1, slot: 'weapon',
-    cost: { red: 72 }, stats: { attack: 30 }, tier: 1,
+    cost: { red: 72 }, stats: { attack: 30 }, attacksPerSecond: 1.25, tier: 1,
     description: 'Quenched in volcanic slag — stays warm to the touch.',
   }],
   ['volcanic-vest-t1', {
@@ -516,7 +521,7 @@ export const RECIPE_DATABASE: Map<string, Recipe> = new Map([
   ['volcanic-blade-t2', {
     id: 'volcanic-blade-t2', name: 'Inferno Edge',
     recipeGroup: 'volcanic', requiredTier: 2, slot: 'weapon',
-    cost: { red: 88, yellow: 25, purple: 12 }, stats: { attack: 55 }, tier: 2,
+    cost: { red: 88, yellow: 25, purple: 12 }, stats: { attack: 55 }, attacksPerSecond: 1.5, tier: 2,
     description: 'Folded in a live magma vent a thousand times over.',
   }],
   ['volcanic-vest-t2', {

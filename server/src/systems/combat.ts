@@ -2,6 +2,10 @@ import type { World } from '../world/World';
 import { GAME_CONFIG } from '@mmo-idle/shared';
 import { grantMonsterRewards } from './rewards';
 import { getNodeMonsters } from '../world/nodeQueries';
+import {
+  makeCombatContext,
+  emitCombatEvent,
+} from './combatPipeline';
 
 export function updateCombat(world: World, dt: number, now: number) {
   // PLAYER → MONSTER
@@ -24,14 +28,29 @@ export function updateCombat(world: World, dt: number, now: number) {
 
     if (target) {
       if (now - player.lastAttackAt >= player.attackCooldown) {
-        const dmg = Math.max(1, player.attack - target.defense);
-        target.hp -= dmg;
+        const ctx = makeCombatContext(player, 'player', target, 'monster');
+
+        emitCombatEvent('beforeAttack', ctx, world);
+        if (ctx.cancelled) continue;
+
+        emitCombatEvent('onAttack', ctx, world);
+
+        ctx.damage = Math.max(1, player.attack - target.defense);
+
+        emitCombatEvent('onHit', ctx, world);
+        emitCombatEvent('onDamageTaken', ctx, world);
+
+        target.hp -= ctx.damage;
         player.lastAttackAt = now;
 
+        emitCombatEvent('afterHit', ctx, world);
+
         if (target.hp <= 0) {
+          emitCombatEvent('onKill', ctx, world);
           grantMonsterRewards(world, player.id, target);
           world.monsters.delete(target.id);
           world.monsterAI.delete(target.id);
+          world.monsterCombatState.delete(target.id);
         }
       }
     } else {
@@ -71,11 +90,25 @@ export function updateCombat(world: World, dt: number, now: number) {
     if (d > monster.attackRange) continue;
 
     if (now - monster.lastAttackAt >= monster.attackCooldown) {
-      const dmg = Math.max(1, monster.attack - target.defense);
-      target.hp -= dmg;
+      const ctx = makeCombatContext(monster, 'monster', target, 'player');
+
+      emitCombatEvent('beforeAttack', ctx, world);
+      if (ctx.cancelled) continue;
+
+      emitCombatEvent('onAttack', ctx, world);
+
+      ctx.damage = Math.max(1, monster.attack - target.defense);
+
+      emitCombatEvent('onHit', ctx, world);
+      emitCombatEvent('onDamageTaken', ctx, world);
+
+      target.hp -= ctx.damage;
       monster.lastAttackAt = now;
 
+      emitCombatEvent('afterHit', ctx, world);
+
       if (target.hp <= 0) {
+        emitCombatEvent('onKill', ctx, world);
         world.respawnPlayer(target.id);
       } else {
         world.playerCombatAt.set(target.id, now);

@@ -66,5 +66,11 @@ export interface ItemDefinition {
   slot: EquipmentSlot;
   tier: number;
   statModifiers: Record<string, number>;
+  /**
+   * Weapons only. Sets the player's base attack cooldown to `round(1000 / aps)` ms
+   * when this weapon is equipped. Skills and other equipment still modify the result
+   * as additive deltas. Omit on non-weapon items.
+   */
+  attacksPerSecond?: number;
   description?: string;
 }

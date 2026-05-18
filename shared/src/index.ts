@@ -7,6 +7,15 @@ export * from './biomeDatabase';
 
 import type { EquipmentMap, EquipmentSlot, EssenceType } from './items';
 
+// ─── Combat archetype ─────────────────────────────────────────────────────────
+
+/**
+ * Determines which server-side combat mechanic module governs an entity.
+ * null  = vanilla behavior (no archetype-specific mechanics).
+ * Extend this union as new archetypes are implemented.
+ */
+export type CombatArchetype = 'cadence' | 'cooldown' | 'energy' | 'reload' | 'dot' | null;
+
 // ─── Entity shapes ────────────────────────────────────────────────────────────
 
 export interface PlayerState {
@@ -70,6 +79,40 @@ export interface PlayerState {
    * e.g. { forest: 1 } means T1 forest recipes are craftable.
    */
   recipeProgress: Record<string, number>;
+  /**
+   * Which server-side combat mechanic module governs this player.
+   * null = vanilla behavior; set server-side only, sent to client for future UI use.
+   */
+  combatArchetype: CombatArchetype;
+  /**
+   * Current position in the cadence cycle (0 … cadenceThreshold-1).
+   * Reset to 0 after each trigger. Mirrored to PlayerState every hit so
+   * the client can display a live progress bar without extra network overhead.
+   */
+  cadenceCount: number;
+  /**
+   * Hits required to complete one cadence cycle.
+   * 0 means this player is not using the cadence archetype.
+   */
+  cadenceThreshold: number;
+  /** Current ammo count for reload-archetype players. 0 = reloading. */
+  ammoCount: number;
+  /** Max ammo capacity. 0 means this player is not using the reload archetype. */
+  ammoMax: number;
+  /** Cooldown archetype: true when the execution strike is armed and the next hit will trigger it. */
+  executionReady: boolean;
+  /** Cooldown archetype: preparation progress 0–100 toward the next execution window. 100 = ready. */
+  executionCooldownPct: number;
+  /** Energy archetype: current energy level, 0–100. Fills on hits; empowers at 100. */
+  energyCount: number;
+  /** Energy archetype: true when an empowered attack is armed (consumed on next hit). */
+  empoweredReady: boolean;
+  /** DoT archetype: number of DoT stacks currently on the player's attack target (0 if no target). */
+  targetDotStacks: number;
+  /** Sacred Cross weapon: true while the divine burst buff is active. */
+  sacredBuffActive: boolean;
+  /** Sacred Cross weapon: 0–100 progress toward the next buff window (100 = buff active). */
+  sacredBuffPct: number;
 }
 
 /**
@@ -117,6 +160,8 @@ export interface MonsterState {
   nodeId: string;
   /** Visual style used for attack animations on the client. */
   attackStyle: string;
+  /** Future: allows elite/boss monsters to use archetype mechanics. */
+  combatArchetype?: CombatArchetype;
 }
 
 // ─── Node / zone definitions ──────────────────────────────────────────────────
@@ -242,8 +287,8 @@ export const GAME_CONFIG = {
   // ── Combat ──────────────────────────────────────────────────────────────────
   /** Pixel radius within which a player can hit a monster */
   PLAYER_ATTACK_RANGE: 60,
-  /** Milliseconds between player discrete attacks */
-  PLAYER_ATTACK_COOLDOWN: 2000,
+  /** Milliseconds between attacks when unarmed. Overridden by weapon attacksPerSecond when a weapon is equipped. */
+  PLAYER_ATTACK_COOLDOWN: 3000,
 
   /** Pixel radius within which a slime notices and begins chasing a player */
   SLIME_PULL_RANGE: 200,

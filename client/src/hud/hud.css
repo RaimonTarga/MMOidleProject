@@ -93,6 +93,119 @@
   transition: width 0.4s ease, background 0.4s ease;
 }
 
+/* ── Ammo bar (reload archetype) ─────────────────────────────────────────── */
+.ammo-bar-track {
+  height: 4px;
+  background: rgba(255, 255, 255, 0.07);
+  border-radius: 2px;
+  margin-top: 4px;
+  overflow: hidden;
+}
+
+.ammo-bar-fill {
+  height: 100%;
+  border-radius: 2px;
+  background: #44ccff;
+  transition: width 0.1s ease;
+}
+
+.ammo-bar-fill--reloading {
+  background: #ff8844;
+  width: 100% !important;
+  animation: reload-pulse 0.6s ease-in-out infinite alternate;
+}
+
+@keyframes reload-pulse {
+  from { opacity: 0.4; }
+  to   { opacity: 1.0; }
+}
+
+/* ── Generic mechanic bar (cadence / cooldown / energy) ─────────────────── */
+.mech-bar-track {
+  height: 4px;
+  background: rgba(255, 255, 255, 0.07);
+  border-radius: 2px;
+  margin-top: 4px;
+  overflow: hidden;
+}
+
+.mech-bar-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.25s ease;
+}
+
+.mech-bar-fill--cadence  { background: #ffcc44; }
+.mech-bar-fill--cooldown { background: #aa44ff; transition: width 0.4s ease; }
+.mech-bar-fill--energy   { background: #ffdd44; }
+
+.mech-bar-fill--ready {
+  background: #44ff88;
+  animation: ready-pulse 0.7s ease-in-out infinite alternate;
+}
+
+.mech-bar-fill--empowered {
+  background: #ffaa22;
+  animation: empowered-pulse 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes ready-pulse {
+  from { opacity: 0.6; }
+  to   { opacity: 1.0; }
+}
+
+@keyframes empowered-pulse {
+  from { opacity: 0.55; }
+  to   { opacity: 1.0; }
+}
+
+/* Stat value label states for mechanic readiness */
+.stat-value.mech-label--ready     { color: #44ff88; font-weight: bold; }
+.stat-value.mech-label--empowered { color: #ffaa22; font-weight: bold; }
+
+/* ── Weapon buff bars (BuffBar component — add one block per new buff) ──────── */
+/* Sacred Cross: amber while charging → bright gold burst when active */
+.mech-bar-fill--sacred {
+  background: #cc8800;
+  transition: width 0.4s ease;
+}
+
+.mech-bar-fill--sacred-active {
+  background: #ffee44;
+  animation: sacred-burst 0.35s ease-in-out infinite alternate;
+}
+
+@keyframes sacred-burst {
+  from { opacity: 0.6; }
+  to   { opacity: 1.0; }
+}
+
+.mech-label--sacred-active {
+  color: #ffee44;
+  font-weight: bold;
+}
+
+/* ── DoT stack pips ──────────────────────────────────────────────────────── */
+.dot-pips {
+  display: flex;
+  gap: 4px;
+  margin-top: 5px;
+}
+
+.dot-pip {
+  flex: 1;
+  height: 6px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 80, 40, 0.25);
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.dot-pip--active {
+  background: #ff5522;
+  border-color: #ff7744;
+}
+
 /* ── Connection status dot ───────────────────────────────────────────────── */
 .status-dot {
   width: 7px;

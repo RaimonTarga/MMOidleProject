@@ -5,6 +5,13 @@ import { updateMovement } from '../systems/movement';
 import { updateMonsters } from '../systems/ai';
 import { updateCombat } from '../systems/combat';
 import { updateTransitions } from '../systems/transitions';
+import { updateCombatState, makeCombatState, resetCombatState } from '../systems/combatState';
+import type { CombatState } from '../systems/combatState';
+import { updateCooldownArchetype } from '../systems/cooldownPrototype';
+import { updateEnergyArchetype } from '../systems/energyPrototype';
+import { updateReloadArchetype } from '../systems/reloadPrototype';
+import { updateDotArchetype } from '../systems/dotPrototype';
+import { updateWeaponEffects } from '../systems/weaponEffects';
 import { NODE_REGISTRY } from './nodeRegistry';
 
 export interface MonsterAI {
@@ -29,6 +36,10 @@ export class World {
   monsters     = new Map<string, MonsterState>();
   monsterAI    = new Map<string, MonsterAI>();
   playerCombatAt = new Map<string, number>();
+  /** Server-side only combat state for players. Never serialized or sent to clients. */
+  playerCombatState  = new Map<string, CombatState>();
+  /** Server-side only combat state for monsters. Never serialized or sent to clients. */
+  monsterCombatState = new Map<string, CombatState>();
   /** Player IDs that died this tick. Drained by the server loop after each tick. */
   pendingDeaths: string[] = [];
 
@@ -53,6 +64,12 @@ export class World {
   // ── SYSTEM ENTRY POINT ─────────────────────────────
 
   tick(dt: number, now: number) {
+    updateCombatState(this, dt);
+    updateCooldownArchetype(this);
+    updateEnergyArchetype(this);
+    updateReloadArchetype(this);
+    updateDotArchetype(this);
+    updateWeaponEffects(this, dt);
     updateAutoTargets(this);
     updateMovement(this, dt);
     updateTransitions(this);
@@ -114,6 +131,7 @@ export class World {
       idleMaxMs:     def.ai.idleMaxMs,
       aggroTargetId: null,
     });
+    this.monsterCombatState.set(id, makeCombatState());
 
     return monster;
   }
@@ -176,6 +194,9 @@ export class World {
     player.auto         = false;
 
     this.playerCombatAt.delete(playerId);
+
+    const combatState = this.playerCombatState.get(playerId);
+    if (combatState) resetCombatState(combatState);
 
     for (const ai of this.monsterAI.values()) {
       if (ai.aggroTargetId === playerId) ai.aggroTargetId = null;

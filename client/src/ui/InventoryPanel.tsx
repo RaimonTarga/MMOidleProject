@@ -25,10 +25,13 @@ const STAT_LABELS: Record<string, string> = {
   attackCooldown: 'CD ms',
 };
 
-function formatMods(mods: Record<string, number>): string {
-  return Object.entries(mods)
-    .map(([k, v]) => `${v > 0 ? '+' : ''}${v} ${STAT_LABELS[k] ?? k}`)
-    .join('   ');
+function formatMods(mods: Record<string, number>, aps?: number): string {
+  const parts: string[] = [];
+  if (aps !== undefined) parts.push(`${aps} APS`);
+  parts.push(
+    ...Object.entries(mods).map(([k, v]) => `${v > 0 ? '+' : ''}${v} ${STAT_LABELS[k] ?? k}`),
+  );
+  return parts.join('   ');
 }
 
 // ── Equipment slots (left column) ─────────────────────────────────────────────
@@ -53,7 +56,7 @@ function EquipmentSlots({ player }: { player: PlayerState }) {
             {filled ? (
               <span className="inv-slot__item">
                 <span className="inv-slot__name">{def!.name}</span>
-                <span className="inv-slot__mods">{formatMods(def!.statModifiers)}</span>
+                <span className="inv-slot__mods">{formatMods(def!.statModifiers, def!.attacksPerSecond)}</span>
                 <span className="inv-slot__unequip-hint">click to unequip</span>
               </span>
             ) : (
@@ -96,7 +99,7 @@ function InventoryList({ player }: { player: PlayerState }) {
                   <span className="inv-item__name">{def.name}</span>
                   <span className="inv-item__slot">{SLOT_LABELS[def.slot]}</span>
                 </div>
-                <div className="inv-item__mods">{formatMods(def.statModifiers)}</div>
+                <div className="inv-item__mods">{formatMods(def.statModifiers, def.attacksPerSecond)}</div>
               </div>
             );
           })}

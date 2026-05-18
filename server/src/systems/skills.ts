@@ -1,6 +1,16 @@
-import type { PlayerState } from '@mmo-idle/shared';
+import type { PlayerState, CombatArchetype } from '@mmo-idle/shared';
 import { SKILL_TREE } from '@mmo-idle/shared';
 import { recalculatePlayerStats } from './stats';
+
+// Maps the four skill-tree class root IDs to their server-side combat archetype.
+// null means the class has no active archetype mechanic yet.
+const CLASS_ARCHETYPES: Record<string, CombatArchetype> = {
+  'cadence-root':  'cadence',
+  'cooldown-root': 'cooldown',
+  'reload-root':   'reload',
+  'energy-root':   'energy',
+  'dot-root':      'dot',
+};
 
 // ── Public API ────────────────────────────────────────────────────────────────
 
@@ -50,7 +60,8 @@ export function unlockSkill(player: PlayerState, skillId: string): boolean {
   player.currentSkillTier++;
 
   if (node.tier === 0) {
-    player.selectedClass = skillId;
+    player.selectedClass   = skillId;
+    player.combatArchetype = CLASS_ARCHETYPES[skillId] ?? null;
   }
 
   recalculatePlayerStats(player);

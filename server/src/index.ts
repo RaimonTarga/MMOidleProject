@@ -15,6 +15,14 @@ import type {
   EquipmentSlot,
 } from '@mmo-idle/shared';
 import { emptyEquipment } from '@mmo-idle/shared';
+import { makeCombatState } from './systems/combatState';
+import { initEnergyArchetype } from './systems/energyPrototype';
+import { initCooldownArchetype } from './systems/cooldownPrototype';
+import { initReloadArchetype } from './systems/reloadPrototype';
+import { initDotArchetype } from './systems/dotPrototype';
+import { registerClassMechanic, activateClassMechanics } from './systems/classMechanics';
+import { initCadenceArchetype } from './systems/cadencePrototype';
+import { initWeaponEffects } from './systems/weaponEffects';
 
 // ── Setup ─────────────────────────────────────────────
 
@@ -27,6 +35,29 @@ const httpServer = createServer(app);
 const io = new Server<ClientToServerEvents, ServerToClientEvents>(httpServer, {
   cors: { origin: 'http://localhost:3000' },
 });
+
+// ── COMBAT EFFECTS ────────────────────────────────────
+// Phase 1: declare which mechanics belong to each class.
+
+registerClassMechanic('cadence',  initCadenceArchetype);
+registerClassMechanic('cooldown', initCooldownArchetype);
+registerClassMechanic('energy',   initEnergyArchetype);
+registerClassMechanic('reload',   initReloadArchetype);
+registerClassMechanic('dot',      initDotArchetype);
+
+// Phase 2: activate — calls each registered init, which registers combat
+// pipeline listeners. Add a new class here when it is ready to go live.
+activateClassMechanics('cadence');
+activateClassMechanics('cooldown');
+activateClassMechanics('energy');
+activateClassMechanics('reload');
+activateClassMechanics('dot');
+
+// ── WEAPON EFFECTS ────────────────────────────────────────────────────────────
+// Registers combat pipeline hooks for weapon-specific mechanics (Chaotic Axe,
+// Sacred Cross, Ashbrand Blade). Works for any class — weapon and class effects
+// layer independently.
+initWeaponEffects();
 
 // ── WORLD ─────────────────────────────────────────────
 
@@ -94,7 +125,6 @@ io.on('connection', (socket) => {
     level: 0,
     skillPoints: 0,
     unlockedSkills: [],
-    selectedClass: null,
     currentSkillTier: 0,
     hpRegen: GAME_CONFIG.PLAYER_HP_REGEN,
     speed: GAME_CONFIG.PLAYER_SPEED,
@@ -103,12 +133,26 @@ io.on('connection', (socket) => {
     equipment: emptyEquipment(),
     biomeKills: {},
     recipeProgress: {},
+    combatArchetype:      null,
+    selectedClass:        null,
+    cadenceCount:         0,
+    cadenceThreshold:     0,
+    ammoCount:            0,
+    ammoMax:              0,
+    executionReady:       false,
+    executionCooldownPct: 0,
+    energyCount:          0,
+    empoweredReady:       false,
+    targetDotStacks:      0,
+    sacredBuffActive:     false,
+    sacredBuffPct:        0,
   };
 
   // Auto-equip the starter weapon so new players immediately benefit from it
   equipItem(player, 'basic-sword');
 
   world.players.set(socket.id, player);
+  world.playerCombatState.set(socket.id, makeCombatState());
 
   socket.emit('state:sync', world.buildSnapshot(player.nodeId));
 
@@ -153,6 +197,7 @@ io.on('connection', (socket) => {
   socket.on('disconnect', () => {
     world.players.delete(socket.id);
     world.playerCombatAt.delete(socket.id);
+    world.playerCombatState.delete(socket.id);
   });
 });
 

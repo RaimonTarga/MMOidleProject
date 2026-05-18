@@ -14,7 +14,7 @@ function applyStatMod(player: PlayerState, stat: string, value: number): void {
 }
 
 /**
- * Deterministic full stat rebuild: base constants → skill effects → equipment modifiers.
+ * Deterministic full stat rebuild: base constants → weapon aps → skill effects → equipment modifiers.
  * Call this whenever unlockedSkills or equipment changes instead of applying deltas.
  */
 export function recalculatePlayerStats(player: PlayerState): void {
@@ -26,6 +26,14 @@ export function recalculatePlayerStats(player: PlayerState): void {
   player.maxHp          = GAME_CONFIG.PLAYER_MAX_HP;
   player.hpRegen        = GAME_CONFIG.PLAYER_HP_REGEN;
   player.speed          = GAME_CONFIG.PLAYER_SPEED;
+
+  // 1b. Weapon attack rate: if a weapon with attacksPerSecond is equipped, its value
+  //     replaces the unarmed base cooldown before any skill deltas are applied.
+  const weaponId = player.equipment.weapon;
+  const weapon   = weaponId ? ITEM_DATABASE.get(weaponId) : undefined;
+  if (weapon?.attacksPerSecond) {
+    player.attackCooldown = Math.round(1000 / weapon.attacksPerSecond);
+  }
 
   // 2. Apply unlocked skill effects
   for (const skillId of player.unlockedSkills) {
