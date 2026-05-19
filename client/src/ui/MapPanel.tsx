@@ -106,7 +106,7 @@ function NodeInfo({ nodeId, player }: NodeInfoProps) {
               <span className="map-monster-dot" style={{ background: hexDot(m.color) }} />
               <span className="map-monster-name">{m.name}</span>
               <span className="map-monster-stats">
-                HP {m.stats.hp} · ATK {m.stats.attack} · DEF {m.stats.defense} · SPD {m.stats.speed}
+                HP {m.stats.hp} · ATK {m.stats.attack} · PLT {m.stats.plating} · SPD {m.stats.speed}
               </span>
               <span
                 className="map-monster-drop"

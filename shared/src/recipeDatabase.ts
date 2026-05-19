@@ -59,7 +59,7 @@ export const RECIPE_DATABASE: Map<string, Recipe> = new Map([
   ['clearing-vest-t1', {
     id: 'clearing-vest-t1', name: 'Bark Wrap',
     recipeGroup: 'clearing', requiredTier: 1, slot: 'armor',
-    cost: { green: 8 }, stats: { defense: 4 }, tier: 1,
+    cost: { green: 8 }, stats: { plating: 4 }, tier: 1,
     description: 'Strips of bark bound with twine.',
   }],
   ['clearing-boots-t1', {
@@ -85,7 +85,7 @@ export const RECIPE_DATABASE: Map<string, Recipe> = new Map([
   ['forest-vest-t1', {
     id: 'forest-vest-t1', name: 'Bark Vest',
     recipeGroup: 'forest', requiredTier: 1, slot: 'armor',
-    cost: { green: 20 }, stats: { defense: 7 }, tier: 1,
+    cost: { green: 20 }, stats: { plating: 7 }, tier: 1,
     description: 'Hardened bark bound together with forest vines.',
   }],
   ['forest-boots-t1', {
@@ -111,7 +111,7 @@ export const RECIPE_DATABASE: Map<string, Recipe> = new Map([
   ['forest-vest-t2', {
     id: 'forest-vest-t2', name: 'Thornweave Vest',
     recipeGroup: 'forest', requiredTier: 2, slot: 'armor',
-    cost: { green: 48, yellow: 12 }, stats: { defense: 16 }, tier: 2,
+    cost: { green: 48, yellow: 12 }, stats: { plating: 16 }, tier: 2,
     description: 'Layers of razor-thorn woven into a protective shell.',
   }],
   ['forest-boots-t2', {
@@ -137,7 +137,7 @@ export const RECIPE_DATABASE: Map<string, Recipe> = new Map([
   ['mountain-vest-t1', {
     id: 'mountain-vest-t1', name: 'Rock Plate',
     recipeGroup: 'mountain', requiredTier: 1, slot: 'armor',
-    cost: { blue: 22 }, stats: { defense: 10 }, tier: 1,
+    cost: { blue: 22 }, stats: { plating: 10 }, tier: 1,
     description: 'Flat stone plates lashed over leather.',
   }],
   ['mountain-boots-t1', {
@@ -163,7 +163,7 @@ export const RECIPE_DATABASE: Map<string, Recipe> = new Map([
   ['mountain-vest-t2', {
     id: 'mountain-vest-t2', name: 'Summit Plate',
     recipeGroup: 'mountain', requiredTier: 2, slot: 'armor',
-    cost: { blue: 52, purple: 13 }, stats: { defense: 22 }, tier: 2,
+    cost: { blue: 52, purple: 13 }, stats: { plating: 22 }, tier: 2,
     description: 'A full plate crafted from compressed mountain granite.',
   }],
   ['mountain-boots-t2', {
@@ -189,7 +189,7 @@ export const RECIPE_DATABASE: Map<string, Recipe> = new Map([
   ['plains-vest-t1', {
     id: 'plains-vest-t1', name: 'Leather Vest',
     recipeGroup: 'plains', requiredTier: 1, slot: 'armor',
-    cost: { yellow: 20 }, stats: { defense: 8 }, tier: 1,
+    cost: { yellow: 20 }, stats: { plating: 8 }, tier: 1,
     description: 'Tanned boar hide — light and durable.',
   }],
   ['plains-boots-t1', {
@@ -215,7 +215,7 @@ export const RECIPE_DATABASE: Map<string, Recipe> = new Map([
   ['plains-vest-t2', {
     id: 'plains-vest-t2', name: 'Buffalo Hide',
     recipeGroup: 'plains', requiredTier: 2, slot: 'armor',
-    cost: { yellow: 50, red: 12 }, stats: { defense: 18 }, tier: 2,
+    cost: { yellow: 50, red: 12 }, stats: { plating: 18 }, tier: 2,
     description: 'Stampede-bull hide; thick enough to stop a charge.',
   }],
   ['plains-boots-t2', {
@@ -241,7 +241,7 @@ export const RECIPE_DATABASE: Map<string, Recipe> = new Map([
   ['swamp-vest-t1', {
     id: 'swamp-vest-t1', name: 'Toad Shell',
     recipeGroup: 'swamp', requiredTier: 1, slot: 'armor',
-    cost: { purple: 22 }, stats: { defense: 11 }, tier: 1,
+    cost: { purple: 22 }, stats: { plating: 11 }, tier: 1,
     description: 'A giant mud-toad carapace shaped into a breastplate.',
   }],
   ['swamp-boots-t1', {
@@ -267,7 +267,7 @@ export const RECIPE_DATABASE: Map<string, Recipe> = new Map([
   ['swamp-vest-t2', {
     id: 'swamp-vest-t2', name: 'Hydra Scale',
     recipeGroup: 'swamp', requiredTier: 2, slot: 'armor',
-    cost: { purple: 54, green: 14 }, stats: { defense: 25 }, tier: 2,
+    cost: { purple: 54, green: 14 }, stats: { plating: 25 }, tier: 2,
     description: 'Regenerating scale mesh — self-repairs minor scratches.',
   }],
   ['swamp-boots-t2', {
@@ -293,7 +293,7 @@ export const RECIPE_DATABASE: Map<string, Recipe> = new Map([
   ['cave-vest-t1', {
     id: 'cave-vest-t1', name: 'Spider Chitin',
     recipeGroup: 'cave', requiredTier: 1, slot: 'armor',
-    cost: { blue: 22 }, stats: { defense: 9 }, tier: 1,
+    cost: { blue: 22 }, stats: { plating: 9 }, tier: 1,
     description: 'Layered cave-spider exoskeleton — light and strong.',
   }],
   ['cave-boots-t1', {
@@ -319,7 +319,7 @@ export const RECIPE_DATABASE: Map<string, Recipe> = new Map([
   ['cave-vest-t2', {
     id: 'cave-vest-t2', name: 'Giant Carapace',
     recipeGroup: 'cave', requiredTier: 2, slot: 'armor',
-    cost: { blue: 54, purple: 14 }, stats: { defense: 28 }, tier: 2,
+    cost: { blue: 54, purple: 14 }, stats: { plating: 28 }, tier: 2,
     description: 'Half a giant spider shell fashioned into a full breastplate.',
   }],
   ['cave-boots-t2', {
@@ -345,7 +345,7 @@ export const RECIPE_DATABASE: Map<string, Recipe> = new Map([
   ['jungle-vest-t1', {
     id: 'jungle-vest-t1', name: 'Ape Pelt',
     recipeGroup: 'jungle', requiredTier: 1, slot: 'armor',
-    cost: { green: 22 }, stats: { defense: 10 }, tier: 1,
+    cost: { green: 22 }, stats: { plating: 10 }, tier: 1,
     description: 'Thick jungle-ape fur formed into a protective vest.',
   }],
   ['jungle-boots-t1', {
@@ -371,7 +371,7 @@ export const RECIPE_DATABASE: Map<string, Recipe> = new Map([
   ['jungle-vest-t2', {
     id: 'jungle-vest-t2', name: 'Titan Pelt',
     recipeGroup: 'jungle', requiredTier: 2, slot: 'armor',
-    cost: { green: 54, yellow: 14 }, stats: { defense: 26 }, tier: 2,
+    cost: { green: 54, yellow: 14 }, stats: { plating: 26 }, tier: 2,
     description: 'Jungle-titan fur — dense enough to deflect blades.',
   }],
   ['jungle-boots-t2', {
@@ -397,7 +397,7 @@ export const RECIPE_DATABASE: Map<string, Recipe> = new Map([
   ['tundra-vest-t1', {
     id: 'tundra-vest-t1', name: 'Bear Fur',
     recipeGroup: 'tundra', requiredTier: 1, slot: 'armor',
-    cost: { blue: 70 }, stats: { defense: 28 }, tier: 1,
+    cost: { blue: 70 }, stats: { plating: 28 }, tier: 1,
     description: 'Ice-bear fur with a layer of compressed snow beneath.',
   }],
   ['tundra-boots-t1', {
@@ -423,7 +423,7 @@ export const RECIPE_DATABASE: Map<string, Recipe> = new Map([
   ['tundra-vest-t2', {
     id: 'tundra-vest-t2', name: 'Glacial Plate',
     recipeGroup: 'tundra', requiredTier: 2, slot: 'armor',
-    cost: { blue: 84, purple: 24, green: 12 }, stats: { defense: 50 }, tier: 2,
+    cost: { blue: 84, purple: 24, green: 12 }, stats: { plating: 50 }, tier: 2,
     description: 'Solid glacier ice compressed into rigid plate armour.',
   }],
   ['tundra-boots-t2', {
@@ -449,7 +449,7 @@ export const RECIPE_DATABASE: Map<string, Recipe> = new Map([
   ['desert-vest-t1', {
     id: 'desert-vest-t1', name: 'Basilisk Scale',
     recipeGroup: 'desert', requiredTier: 1, slot: 'armor',
-    cost: { yellow: 70 }, stats: { defense: 28 }, tier: 1,
+    cost: { yellow: 70 }, stats: { plating: 28 }, tier: 1,
     description: 'Stone-basilisk hide — turns away most blows.',
   }],
   ['desert-boots-t1', {
@@ -475,7 +475,7 @@ export const RECIPE_DATABASE: Map<string, Recipe> = new Map([
   ['desert-vest-t2', {
     id: 'desert-vest-t2', name: 'Basilisk Crown',
     recipeGroup: 'desert', requiredTier: 2, slot: 'armor',
-    cost: { yellow: 84, red: 24, blue: 12 }, stats: { defense: 50 }, tier: 2,
+    cost: { yellow: 84, red: 24, blue: 12 }, stats: { plating: 50 }, tier: 2,
     description: 'A full suit of petrified basilisk hide.',
   }],
   ['desert-boots-t2', {
@@ -501,7 +501,7 @@ export const RECIPE_DATABASE: Map<string, Recipe> = new Map([
   ['volcanic-vest-t1', {
     id: 'volcanic-vest-t1', name: 'Magma Shell',
     recipeGroup: 'volcanic', requiredTier: 1, slot: 'armor',
-    cost: { red: 72 }, stats: { defense: 30 }, tier: 1,
+    cost: { red: 72 }, stats: { plating: 30 }, tier: 1,
     description: 'Cooled magma-golem crust hardened into plate.',
   }],
   ['volcanic-boots-t1', {
@@ -527,7 +527,7 @@ export const RECIPE_DATABASE: Map<string, Recipe> = new Map([
   ['volcanic-vest-t2', {
     id: 'volcanic-vest-t2', name: 'Volcanic Plate',
     recipeGroup: 'volcanic', requiredTier: 2, slot: 'armor',
-    cost: { red: 88, yellow: 25, purple: 12 }, stats: { defense: 55 }, tier: 2,
+    cost: { red: 88, yellow: 25, purple: 12 }, stats: { plating: 55 }, tier: 2,
     description: 'Compressed solidified magma — near indestructible.',
   }],
   ['volcanic-boots-t2', {

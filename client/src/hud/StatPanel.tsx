@@ -11,6 +11,8 @@ interface Props {
 export function StatPanel({ player, status }: Props) {
   const hpPct = player && player.maxHp > 0 ? (player.hp / player.maxHp) * 100 : 0;
   const hpBarColor = hpPct > 50 ? '#44ee44' : hpPct > 25 ? '#eeaa22' : '#ee3322';
+  const totalShield = player?.shields.reduce((s, sh) => s + sh.amount, 0) ?? 0;
+  const shieldPct   = player && player.maxHp > 0 ? Math.min(100 - hpPct, (totalShield / player.maxHp) * 100) : 0;
   const cdSec = player ? (player.attackCooldown / 1000).toFixed(2) : '—';
   const aps   = player ? (1000 / player.attackCooldown).toFixed(2) : '—';
 
@@ -37,26 +39,52 @@ export function StatPanel({ player, status }: Props) {
         <div className="stat-row">
           <span className="stat-label">HP</span>
           <span className="stat-value">
-            {player ? `${Math.ceil(player.hp)} / ${player.maxHp}` : '— / —'}
+            {player
+              ? totalShield > 0
+                ? `${Math.ceil(player.hp)} / ${player.maxHp}  (+${Math.ceil(totalShield)} shield)`
+                : `${Math.ceil(player.hp)} / ${player.maxHp}`
+              : '— / —'}
           </span>
         </div>
         <div className="hp-bar-track">
-          <div
-            className="hp-bar-fill"
-            style={{ width: `${hpPct}%`, background: hpBarColor }}
-          />
+          <div className="hp-bar-fill" style={{ width: `${hpPct}%`, background: hpBarColor }} />
+          {shieldPct > 0 && (
+            <div className="shield-bar-fill" style={{ width: `${shieldPct}%`, left: `${hpPct}%` }} />
+          )}
         </div>
       </div>
 
       {/* Combat stats */}
       <div className="stat-section">
         <StatRow label="Attack"     value={player?.attack    ?? '—'} />
-        <StatRow label="Defense"    value={player?.defense   ?? '—'} />
+        <StatRow label="Plating"    value={player?.plating   ?? '—'} />
+        {player && player.damageReduction > 0 && (
+          <StatRow label="Dmg Reduc." value={`${Math.round(player.damageReduction * 100)}%`} />
+        )}
+        {player && player.evasion > 0 && (
+          <StatRow label="Evasion" value={`every ${player.evasion} hits`} />
+        )}
         <StatRow label="Atk Speed"  value={player ? `${aps} APS (${cdSec}s)` : '—'} />
         <StatRow label="Atk Range"  value={player ? `${player.attackRange}px` : '—'} />
         <StatRow label="Move Speed" value={player ? `${player.speed}px/s` : '—'} />
         <StatRow label="HP Regen"   value={player ? `${player.hpRegen}/s` : '—'} />
       </div>
+
+      {/* Evasion progress bar — only when player has evasion stat */}
+      {player && player.evasion > 0 && (
+        <div className="stat-section">
+          <div className="stat-row">
+            <span className="stat-label">Dodge</span>
+            <span className="stat-value">{player.evasionCount} / {player.evasion}</span>
+          </div>
+          <div className="mech-bar-track">
+            <div
+              className="mech-bar-fill mech-bar-fill--evasion"
+              style={{ width: `${(player.evasionCount / player.evasion) * 100}%` }}
+            />
+          </div>
+        </div>
+      )}
 
       {/* World */}
       <div className="stat-section">

@@ -4,6 +4,7 @@ import { createElement } from 'react';
 import { GameScene } from './scenes/GameScene';
 import { LeftSidebar } from './hud/HUD';
 import { RightSidebar } from './hud/MenuButtons';
+import { BuffBar } from './hud/BuffBar';
 
 const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
@@ -20,3 +21,4 @@ new Phaser.Game(config);
 
 createRoot(document.getElementById('left-sidebar')!).render(createElement(LeftSidebar));
 createRoot(document.getElementById('right-sidebar')!).render(createElement(RightSidebar));
+createRoot(document.getElementById('buff-overlay')!).render(createElement(BuffBar));

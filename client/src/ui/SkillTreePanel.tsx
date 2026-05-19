@@ -10,18 +10,30 @@ import './skillTree.css';
 const CLASS_ROOTS = ['cadence-root', 'cooldown-root', 'reload-root', 'energy-root', 'dot-root'];
 
 const EFFECT_LABELS: Record<string, string> = {
-  attack: 'ATK',
-  defense: 'DEF',
-  attackRange: 'RNG',
-  attackCooldown: 'ms SPD',
-  maxHp: 'HP',
+  attack:          'ATK',
+  plating:         'PLT',
+  damageReduction: '% DR',
+  evasion:         'EVA',
+  attackRange:     'RNG',
+  attackCooldown:  'ms CD',
+  maxHp:           'HP',
+  hpRegen:         'REGEN',
+  speed:           'SPD',
 };
 
 function formatEffects(effects: StatEffects): string {
   return Object.entries(effects)
-    .filter(([, v]) => v !== undefined)
+    .filter(([, v]) => v !== undefined && v !== 0)
     .map(([k, v]) => `${(v as number) > 0 ? '+' : ''}${v} ${EFFECT_LABELS[k] ?? k}`)
     .join('  ');
+}
+
+function tierLabel(tier: number): string {
+  if (tier === 0) return 'Class';
+  if (tier === 1) return 'Style';
+  if (tier === 2) return 'Range';
+  if (tier === 3) return 'Path';
+  return `Tier ${tier}`;
 }
 
 type NodeStatus = 'unlocked' | 'available' | 'locked';
@@ -29,20 +41,58 @@ type NodeStatus = 'unlocked' | 'available' | 'locked';
 function getNodeStatus(node: SkillNode, player: PlayerState | null): NodeStatus {
   if (!player) return 'locked';
   if (player.unlockedSkills.includes(node.id)) return 'unlocked';
+  if (node.tier !== player.currentSkillTier)   return 'locked';
+  if (player.skillPoints < node.cost)          return 'locked';
 
-  // Only the exact current tier can be unlocked.
-  if (node.tier !== player.currentSkillTier) return 'locked';
-
-  // Tier 0: must not have a class yet.
-  if (node.tier === 0 && player.selectedClass !== null) return 'locked';
-
-  // Tier 1+: must belong to the player's chosen class.
-  if (node.tier > 0 && node.classId !== player.selectedClass) return 'locked';
-
-  // Must have enough skill points.
-  if (player.skillPoints < node.cost) return 'locked';
+  if (node.tier === 0) {
+    if (player.selectedClass !== null)         return 'locked';
+  } else if (node.tier === 1) {
+    if (node.classId !== player.selectedClass) return 'locked';
+  } else if (node.tier === 2) {
+    // Universal: available to all, but sub-variant must be chosen first.
+    if (player.selectedSubVariant === null)    return 'locked';
+  } else {
+    // Tier 3+: full 15-way path lock.
+    if (node.classId !== player.selectedClass)           return 'locked';
+    if (node.subVariantId !== player.selectedSubVariant) return 'locked';
+  }
 
   return 'available';
+}
+
+/**
+ * Collects nodes visible to this player in the ProgressionView.
+ *
+ * Rules:
+ *   - Tier 0: only the player's class root.
+ *   - Tier 1: all three sub-variants for the player's class (so the choice is visible).
+ *   - Tier 2: all three universal range nodes (null classId).
+ *   - Tier 3+: only nodes matching the player's class AND sub-variant.
+ */
+function getVisibleNodes(player: PlayerState): Map<number, SkillNode[]> {
+  const tierMap = new Map<number, SkillNode[]>();
+  const classId = player.selectedClass!;
+  const sub     = player.selectedSubVariant;
+
+  for (const node of SKILL_TREE.values()) {
+    // Tier 0: show only the player's own class root.
+    if (node.tier === 0) {
+      if (node.id !== classId) continue;
+    } else if (node.tier === 2) {
+      // Universal range nodes have null classId — always included.
+    } else {
+      // Tiers 1, 3+: must belong to player's class.
+      if (node.classId !== classId) continue;
+      // Tiers 3+: also filter to player's sub-variant.
+      if (node.tier >= 3 && node.subVariantId !== sub) continue;
+      // Tier 1: show all three sub-variants so the player can choose.
+    }
+
+    if (!tierMap.has(node.tier)) tierMap.set(node.tier, []);
+    tierMap.get(node.tier)!.push(node);
+  }
+
+  return tierMap;
 }
 
 // ── Shared node card ───────────────────────────────────────────────────────────
@@ -114,20 +164,21 @@ function ProgressionView({ player }: { player: PlayerState }) {
   const className = SKILL_TREE.get(classId)?.name ?? classId;
   const pts       = player.skillPoints;
 
-  // Collect all nodes for this class, grouped by tier, sorted ascending.
-  const tierMap = new Map<number, SkillNode[]>();
-  for (const node of SKILL_TREE.values()) {
-    if (node.classId !== classId) continue;
-    if (!tierMap.has(node.tier)) tierMap.set(node.tier, []);
-    tierMap.get(node.tier)!.push(node);
-  }
-  const tiers = Array.from(tierMap.entries()).sort(([a], [b]) => a - b);
+  const tierMap    = getVisibleNodes(player);
+  const tiers      = Array.from(tierMap.entries()).sort(([a], [b]) => a - b);
   const currentTier = player.currentSkillTier;
+
+  const subVariantLabel = player.selectedSubVariant
+    ? ` · ${player.selectedSubVariant.charAt(0).toUpperCase() + player.selectedSubVariant.slice(1)}`
+    : '';
+  const rangeLabel = player.selectedRange
+    ? ` · ${SKILL_TREE.get(player.selectedRange)?.name ?? player.selectedRange}`
+    : '';
 
   return (
     <>
       <div className="skill-progress-meta">
-        <span className="skill-progress-class">{className}</span>
+        <span className="skill-progress-class">{className}{subVariantLabel}{rangeLabel}</span>
         <span className="skill-progress-tier">Tier {currentTier}</span>
         <span className="skill-progress-pts">
           {pts} skill point{pts !== 1 ? 's' : ''}
@@ -136,7 +187,6 @@ function ProgressionView({ player }: { player: PlayerState }) {
 
       <div className="skill-tier-list">
         {tiers.map(([tier, nodes]) => {
-          // Future tiers are hidden.
           if (tier > currentTier) return null;
 
           const isCurrent = tier === currentTier;
@@ -147,9 +197,7 @@ function ProgressionView({ player }: { player: PlayerState }) {
               key={tier}
               className={`skill-tier-row${isCurrent ? ' skill-tier-row--current' : ''}${isPast ? ' skill-tier-row--past' : ''}`}
             >
-              <div className="skill-tier-label">
-                {tier === 0 ? 'Class' : `Tier ${tier}`}
-              </div>
+              <div className="skill-tier-label">{tierLabel(tier)}</div>
               <div className="skill-tier-nodes">
                 {nodes.map(node => (
                   <SkillNodeCard
@@ -167,9 +215,9 @@ function ProgressionView({ player }: { player: PlayerState }) {
         {/* Next-tier teaser */}
         {tierMap.has(currentTier + 1) && (
           <div className="skill-tier-row skill-tier-row--upcoming">
-            <div className="skill-tier-label">Tier {currentTier + 1}</div>
+            <div className="skill-tier-label">{tierLabel(currentTier + 1)}</div>
             <div className="skill-tier-upcoming-hint">
-              Unlock a skill above to reveal tier {currentTier + 1}.
+              Unlock a skill above to reveal {tierLabel(currentTier + 1).toLowerCase()}.
             </div>
           </div>
         )}

@@ -23,6 +23,8 @@ import { initDotArchetype } from './systems/dotPrototype';
 import { registerClassMechanic, activateClassMechanics } from './systems/classMechanics';
 import { initCadenceArchetype } from './systems/cadencePrototype';
 import { initWeaponEffects } from './systems/weaponEffects';
+import { initDefenseSystems } from './systems/defenseSystems';
+import { initDebuffMechanics } from './systems/debuffMechanics';
 
 // ── Setup ─────────────────────────────────────────────
 
@@ -58,6 +60,15 @@ activateClassMechanics('dot');
 // Sacred Cross, Ashbrand Blade). Works for any class — weapon and class effects
 // layer independently.
 initWeaponEffects();
+
+// ── DEFENSE SYSTEMS ───────────────────────────────────────────────────────────
+// Registers onDamageTaken listeners for evasion and shield absorption.
+// Must run after weapon effects (lower pipeline priority = runs later in order).
+initDefenseSystems();
+
+// ── DEBUFF MECHANICS ──────────────────────────────────────────────────────────
+// Registers onDamageTaken listeners that apply debuff multipliers (vulnerability).
+initDebuffMechanics();
 
 // ── WORLD ─────────────────────────────────────────────
 
@@ -114,7 +125,11 @@ io.on('connection', (socket) => {
     hp: GAME_CONFIG.PLAYER_MAX_HP,
     maxHp: GAME_CONFIG.PLAYER_MAX_HP,
     attack: GAME_CONFIG.PLAYER_ATTACK,
-    defense: GAME_CONFIG.PLAYER_DEFENSE,
+    plating: GAME_CONFIG.PLAYER_PLATING,
+    damageReduction: 0,
+    evasion: 0,
+    evasionCount: 0,
+    shields: [],
     attackRange: GAME_CONFIG.PLAYER_ATTACK_RANGE,
     attackCooldown: GAME_CONFIG.PLAYER_ATTACK_COOLDOWN,
     lastAttackAt: 0,
@@ -125,6 +140,8 @@ io.on('connection', (socket) => {
     level: 0,
     skillPoints: 0,
     unlockedSkills: [],
+    passives: {},
+    cadenceSpeedStacks: 0,
     currentSkillTier: 0,
     hpRegen: GAME_CONFIG.PLAYER_HP_REGEN,
     speed: GAME_CONFIG.PLAYER_SPEED,
@@ -135,6 +152,8 @@ io.on('connection', (socket) => {
     recipeProgress: {},
     combatArchetype:      null,
     selectedClass:        null,
+    selectedSubVariant:   null,
+    selectedRange:        null,
     cadenceCount:         0,
     cadenceThreshold:     0,
     ammoCount:            0,
@@ -146,6 +165,7 @@ io.on('connection', (socket) => {
     targetDotStacks:      0,
     sacredBuffActive:     false,
     sacredBuffPct:        0,
+    activeBuffs:          [],
   };
 
   // Auto-equip the starter weapon so new players immediately benefit from it

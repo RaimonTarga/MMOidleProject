@@ -2,8 +2,6 @@ import type { PlayerState, CombatArchetype } from '@mmo-idle/shared';
 import { SKILL_TREE } from '@mmo-idle/shared';
 import { recalculatePlayerStats } from './stats';
 
-// Maps the four skill-tree class root IDs to their server-side combat archetype.
-// null means the class has no active archetype mechanic yet.
 const CLASS_ARCHETYPES: Record<string, CombatArchetype> = {
   'cadence-root':  'cadence',
   'cooldown-root': 'cooldown',
@@ -22,12 +20,13 @@ export interface UnlockResult {
 /**
  * Pure validation — does not mutate the player.
  *
- * Unlock rules (tier-based, no parent traversal):
- *   1. Node must exist and not already be unlocked.
- *   2. Player must have enough skill points.
- *   3. node.tier must equal player.currentSkillTier (strict tier gate).
- *   4. Tier 0 nodes (class roots): only before class is chosen.
- *   5. Tier 1+ nodes: node.classId must match player.selectedClass.
+ * Unlock rules by tier:
+ *   0 — class roots: no class chosen yet; any root is valid.
+ *   1 — sub-variants: must match player's selectedClass.
+ *   2 — range nodes: universal; player must have a class and sub-variant (tier 1 done).
+ *   3+ — path nodes: must match both selectedClass AND selectedSubVariant (full 15-way lock).
+ *
+ * Across all tiers: node.tier must equal player.currentSkillTier (strict sequential gate).
  */
 export function canUnlockSkill(player: PlayerState, skillId: string): UnlockResult {
   const node = SKILL_TREE.get(skillId);
@@ -37,9 +36,16 @@ export function canUnlockSkill(player: PlayerState, skillId: string): UnlockResu
   if (node.tier !== player.currentSkillTier)   return { ok: false, reason: 'Not the current tier' };
 
   if (node.tier === 0) {
-    if (player.selectedClass !== null)         return { ok: false, reason: 'Class already chosen' };
+    if (player.selectedClass !== null)          return { ok: false, reason: 'Class already chosen' };
+  } else if (node.tier === 1) {
+    if (node.classId !== player.selectedClass)  return { ok: false, reason: 'Wrong class' };
+  } else if (node.tier === 2) {
+    // Universal range nodes — open to all classes, but requires sub-variant chosen first.
+    if (player.selectedSubVariant === null)     return { ok: false, reason: 'Sub-variant not chosen' };
   } else {
-    if (node.classId !== player.selectedClass) return { ok: false, reason: 'Wrong class' };
+    // Tier 3+: full 15-way path lock (class × sub-variant).
+    if (node.classId !== player.selectedClass)             return { ok: false, reason: 'Wrong class' };
+    if (node.subVariantId !== player.selectedSubVariant)   return { ok: false, reason: 'Wrong sub-variant' };
   }
 
   return { ok: true };
@@ -60,8 +66,12 @@ export function unlockSkill(player: PlayerState, skillId: string): boolean {
   player.currentSkillTier++;
 
   if (node.tier === 0) {
-    player.selectedClass   = skillId;
-    player.combatArchetype = CLASS_ARCHETYPES[skillId] ?? null;
+    player.selectedClass    = skillId;
+    player.combatArchetype  = CLASS_ARCHETYPES[skillId] ?? null;
+  } else if (node.tier === 1) {
+    player.selectedSubVariant = node.subVariantId!;
+  } else if (node.tier === 2) {
+    player.selectedRange = skillId;
   }
 
   recalculatePlayerStats(player);

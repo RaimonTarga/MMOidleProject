@@ -18,14 +18,14 @@ const EMPOWERED_MULT = 3;    // damage multiplier when empowerment fires
 
 /**
  * Register the energy accumulation and empowered-attack listeners for the
- * cooldown class. Called by activateClassMechanics('cooldown') at startup.
+ * energy class. Called by activateClassMechanics('energy') at startup.
  *
  * Guards: both listeners early-return immediately for any player whose
- * selectedClass is not 'cooldown', so no energy state is touched for
+ * combatArchetype is not 'energy', so no energy state is touched for
  * other classes.
  *
  * Behavior:
- *   afterHit  → grant +ENERGY_PER_HIT to the attacker (cooldown class only)
+ *   afterHit  → grant +ENERGY_PER_HIT to the attacker (energy class only)
  *             → if energy reaches ENERGY_MAX: reset to 0, arm empoweredAttack
  *   onHit     → if empoweredAttack armed: apply EMPOWERED_MULT× damage, consume flag
  *

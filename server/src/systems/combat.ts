@@ -6,6 +6,7 @@ import {
   makeCombatContext,
   emitCombatEvent,
 } from './combatPipeline';
+import { getStatusEffect } from './statusEffects';
 
 export function updateCombat(world: World, dt: number, now: number) {
   // PLAYER → MONSTER
@@ -35,7 +36,17 @@ export function updateCombat(world: World, dt: number, now: number) {
 
         emitCombatEvent('onAttack', ctx, world);
 
-        ctx.damage = Math.max(1, player.attack - target.defense);
+        const monsterCombatState = world.monsterCombatState.get(target.id);
+        const shredEffect = monsterCombatState
+          ? getStatusEffect(monsterCombatState, 'plating-shred')
+          : undefined;
+        const effectivePlating = Math.max(0,
+          target.plating - (shredEffect ? shredEffect.stacks * shredEffect.data['platingReduction'] : 0),
+        );
+
+        ctx.damage = Math.max(1, Math.round(
+          Math.max(0, player.attack - effectivePlating) * (1 - target.damageReduction),
+        ));
 
         emitCombatEvent('onHit', ctx, world);
         emitCombatEvent('onDamageTaken', ctx, world);
@@ -97,7 +108,9 @@ export function updateCombat(world: World, dt: number, now: number) {
 
       emitCombatEvent('onAttack', ctx, world);
 
-      ctx.damage = Math.max(1, monster.attack - target.defense);
+      ctx.damage = Math.max(1, Math.round(
+        Math.max(0, monster.attack - target.plating) * (1 - target.damageReduction),
+      ));
 
       emitCombatEvent('onHit', ctx, world);
       emitCombatEvent('onDamageTaken', ctx, world);

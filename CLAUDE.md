@@ -78,7 +78,8 @@ pnpm dev:client   # http://localhost:3000
 
 **Everything that crosses the client/server boundary lives here.**
 
-- Entity shapes: `PlayerState`, `MonsterState` (when added)
+- Entity shapes: `PlayerState`, `MonsterState`, `NodeSnapshot`
+- Databases (read-only): `ITEM_DATABASE`, `MONSTER_DATABASE`, `BIOME_DATABASE`, `RECIPE_DATABASE`, `SKILL_TREE`
 - Socket event maps: `ServerToClientEvents`, `ClientToServerEvents`
 - Game constants: `GAME_CONFIG`
 
@@ -94,31 +95,57 @@ and propagate outward.** Never define entity shapes inline on client or server.
 
 | Event | Direction | Description |
 |---|---|---|
-| `state:sync` | S→C | Full snapshot on connect |
-| `state:tick` | S→C | Authoritative world state, every tick |
-| `player:joined` | S→C | Another player entered the node |
-| `player:left` | S→C | Another player left |
-| `player:moved` | S→C | Position update (between ticks) |
+| `state:sync` | S→C | Full node snapshot sent to a newly connected player |
+| `node:state` | S→C | Authoritative world snapshot broadcast every server tick |
+| `player:died` | S→C | Sent to the player whose HP reached zero (before respawn) |
+| `crafting:result` | S→C | Success or failure response to a craft attempt |
 | `player:move` | C→S | Client requests movement to (x, y) |
+| `player:setAuto` | C→S | Enable/disable server-side auto-targeting |
+| `player:unlockSkill` | C→S | Unlock a skill tree node by ID |
+| `inventory:equipItem` | C→S | Equip an item from inventory |
+| `inventory:unequip` | C→S | Move equipped item back to inventory |
+| `crafting:craftRecipe` | C→S | Attempt to craft a recipe |
 
 New events must be typed in `ServerToClientEvents` or `ClientToServerEvents`
-before being emitted.
+before being emitted. Player join/leave is communicated implicitly — players
+that appear in or disappear from `node:state` snapshots are added/removed by
+the client's `applySnapshot`, so no dedicated events are needed.
 
 ---
 
 ## Server architecture
 
-`server/src/index.ts` is intentionally one file for now. It contains:
+`server/src/index.ts` is intentionally flat. It contains:
 
 1. **Express setup** — CORS, JSON body parser, health endpoint at `GET /health`
 2. **Socket.IO setup** — typed with shared event maps
-3. **In-memory state** — `Map<string, PlayerState>` (will move to SQLite later)
-4. **Game loop** — `setInterval` at `GAME_CONFIG.TICK_RATE` Hz; calls `tick(dt)`
-   then broadcasts `state:tick` to all connected clients
-5. **Socket handlers** — `connection`, `disconnect`, `player:move`
+3. **Combat mechanics registration** — class archetypes and weapon effects registered at startup
+4. **Game loop** — `setInterval` at `GAME_CONFIG.TICK_RATE` Hz; calls `world.tick(dt, now)`
+   then broadcasts `node:state` per-player (each player only sees their own node)
+5. **Socket handlers** — `connection`, `disconnect`, and all `ClientToServerEvents`
 
-The `tick(dt)` function is where all server-side game logic goes:
-movement, combat resolution, monster AI, respawns, etc.
+`server/src/world/World.ts` owns all mutable state and orchestrates system calls in `tick()`.
+`server/src/systems/` contains one file per system (combat, movement, AI, transitions, etc.).
+
+### Combat pipeline
+
+All damage flows through `combatPipeline.ts` — a simple event bus with phases:
+`beforeAttack` → `onAttack` → `onHit` → `onDamageTaken` → `afterHit` → `onKill`
+
+Register listeners via `registerCombatListener`. Class archetypes and weapon effects
+hook into these phases. `CombatContext` is a mutable bag that flows through all handlers
+for a single attack; handlers can read and write `ctx.damage`, `ctx.cancelled`, and
+`ctx.metadata` freely.
+
+### Combat state
+
+Per-entity server-only state lives in `CombatState` (`combatState.ts`). It has typed
+buckets: `counters`, `resources`, `cooldowns`, `flags`, `stacks`, `strings`, `burns`.
+Use the accessor helpers — never read/write the raw object fields directly. All cooldowns
+are decremented by `updateCombatState` at the top of every tick.
+
+For "every N hits do X" mechanics, use `registerAttackThreshold` from `attackCounter.ts`
+rather than rolling custom counter logic.
 
 ---
 
@@ -127,11 +154,12 @@ movement, combat resolution, monster AI, respawns, etc.
 `GameScene.ts` is the main (and currently only) Phaser scene.
 
 - Connects to `http://localhost:4000` via Socket.IO on `create()`
-- Maintains a `Map<string, Phaser.GameObjects.Rectangle>` for player entities
-- `upsertPlayer()` creates or repositions a rectangle for a given PlayerState
-- Server tick snapshots (`state:tick`) reconcile all positions each tick
-- Click-to-move: player can click to send `player:move` to the server,
-  overriding server-driven auto-movement (Step 2 feature)
+- Maintains `Map<string, Visual>` for players and monsters
+- `Visual` holds the sprite, labels, HP/CD bars, interpolation targets, and
+  `playerState?: PlayerState` (the latest authoritative snapshot for player visuals)
+- `applySnapshot()` is called on both `state:sync` and `node:state`; it reconciles
+  all entities including removing ones no longer in the snapshot
+- Click-to-move: sends `player:move`, updates local target optimistically for smooth feel
 
 **No React. All in-game UI is Phaser objects.** Login/character-select pages
 will be plain HTML files served by Express.
@@ -145,22 +173,32 @@ Do not introduce an asset pipeline or loader until art is decided.
 
 - Own player: green `0x44ff88`
 - Other players: blue `0x4488ff`
-- Monsters (planned): red `0xff4444`
+- Monsters: color defined per-monster in `MONSTER_DATABASE`
 
 ---
+
+## What is built
+
+- Multi-node world (5×5 grid) with biome-specific monster pools
+- Monster AI (wander / chase / attack / return)
+- Player combat (attack range, cooldown, auto-targeting)
+- Class system: cadence, cooldown, energy, reload, dot archetypes
+- Weapon effects: Chaotic Axe, Sacred Cross, Ashbrand Blade
+- Inventory and equipment (4 slots: weapon, armor, recovery, mobility)
+- Crafting system with biome-kill unlock gates
+- Skill tree with tier-gated unlock flow
+- Node transitions (walk through gate edges)
+- Death and respawn (back to clearing)
+- Client: minimap, biome backgrounds, gate markers, damage numbers, attack animations
 
 ## What is NOT built yet (do not hallucinate these)
 
 - [ ] Discord OAuth
-- [ ] SQLite / Drizzle (database is wired but not used)
-- [ ] Monsters / NPC entities
-- [ ] Combat system
-- [ ] Stats (HP, attack, defense)
-- [ ] XP / leveling
-- [ ] Inventory
-- [ ] Multiple nodes / node routing
-- [ ] Character select screen
+- [ ] SQLite / Drizzle (database is wired but not used — all state is in-memory)
+- [ ] Multiple World instances / node routing (current: one World with all 25 nodes)
+- [ ] Character select / login screen
 - [ ] Deployment (Caddy, PM2, Hetzner)
+- [ ] Passive skill tree expansion (planned next)
 
 ---
 

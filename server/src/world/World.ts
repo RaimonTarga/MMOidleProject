@@ -11,7 +11,11 @@ import { updateCooldownArchetype } from '../systems/cooldownPrototype';
 import { updateEnergyArchetype } from '../systems/energyPrototype';
 import { updateReloadArchetype } from '../systems/reloadPrototype';
 import { updateDotArchetype } from '../systems/dotPrototype';
+import { updateCadenceEffects } from '../systems/cadencePrototype';
 import { updateWeaponEffects } from '../systems/weaponEffects';
+import { updateShields } from '../systems/defenseSystems';
+import { recalculatePlayerStats } from '../systems/stats';
+import { syncPlayerBuffs } from '../systems/buffSync';
 import { NODE_REGISTRY } from './nodeRegistry';
 
 export interface MonsterAI {
@@ -25,8 +29,6 @@ export interface MonsterAI {
   aggroTargetId: string | null;
 }
 
-// Minimum pixel distance between two monsters at spawn time.
-const MIN_SPAWN_DIST = 120;
 
 export class World {
   readonly nodeId: string;
@@ -65,16 +67,19 @@ export class World {
 
   tick(dt: number, now: number) {
     updateCombatState(this, dt);
+    updateShields(this, dt);
     updateCooldownArchetype(this);
     updateEnergyArchetype(this);
     updateReloadArchetype(this);
-    updateDotArchetype(this);
+    updateDotArchetype(this, dt);
+    updateCadenceEffects(this, dt);
     updateWeaponEffects(this, dt);
     updateAutoTargets(this);
     updateMovement(this, dt);
     updateTransitions(this);
     updateMonsters(this, dt, now);
     updateCombat(this, dt, now);
+    syncPlayerBuffs(this);
 
     for (const nodeId of NODE_REGISTRY.keys()) {
       this.ensurePopulation(nodeId);
@@ -105,10 +110,11 @@ export class World {
       x, y,
       targetX: x,
       targetY: y,
-      hp:      def.stats.hp,
-      maxHp:   def.stats.hp,
-      attack:  def.stats.attack,
-      defense: def.stats.defense,
+      hp:             def.stats.hp,
+      maxHp:          def.stats.hp,
+      attack:         def.stats.attack,
+      plating:        def.stats.plating,
+      damageReduction: def.stats.damageReduction,
       speed:   def.stats.speed,
       state:   'idle',
       pullRange:      def.stats.pullRange,
@@ -151,7 +157,7 @@ export class World {
 
     const typeId = pool[Math.floor(Math.random() * pool.length)];
     const node   = NODE_REGISTRY.get(nodeId) ?? this.node;
-    const minDistSq = MIN_SPAWN_DIST ** 2;
+    const minDistSq = GAME_CONFIG.MONSTER_MIN_SPAWN_DIST ** 2;
 
     for (let attempt = 0; attempt < 15; attempt++) {
       const x = Math.floor(Math.random() * (node.width  - 128)) + 64;
@@ -189,9 +195,15 @@ export class World {
     player.y            = spawnY;
     player.targetX      = spawnX;
     player.targetY      = spawnY;
-    player.hp           = player.maxHp;
     player.attackTargetId = null;
     player.auto         = false;
+
+    // Rebuild stats from scratch — resets attackCooldown, cadenceSpeedStacks, etc.
+    recalculatePlayerStats(player);
+    player.hp = player.maxHp;
+
+    player.evasionCount = 0;
+    player.shields      = [];
 
     this.playerCombatAt.delete(playerId);
 

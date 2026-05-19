@@ -62,6 +62,8 @@ interface Visual {
   lastAttackAt: number;
   attackTargetId: string | null;
   attackStyle: string;
+  /** Full authoritative state snapshot — only present on player visuals, not monsters. */
+  playerState?: PlayerState;
 }
 
 export class GameScene extends Phaser.Scene {
@@ -179,16 +181,12 @@ export class GameScene extends Phaser.Scene {
 
     this.socket.on('state:sync', (snapshot) => this.applySnapshot(snapshot));
     this.socket.on('node:state',  (snapshot) => this.applySnapshot(snapshot));
-    this.socket.on('player:joined', (player)  => this.upsertPlayer(player));
-    this.socket.on('player:left',   (playerId) => this.destroyVisual(this.players, playerId));
 
     this.socket.on('crafting:result', (result) => {
       window.dispatchEvent(new CustomEvent('hud:craftResult', { detail: result }));
     });
 
-    this.socket.on('player:died', () => {
-      this.showDeathOverlay();
-    });
+    this.socket.on('player:died', () => { this.showDeathOverlay(); });
   }
 
   update(_time: number, delta: number) {
@@ -242,18 +240,22 @@ export class GameScene extends Phaser.Scene {
     this.socket.emit('player:setAuto', enabled);
     if (enabled) this.targetMarker.setVisible(false);
 
-    const own = this.players.get(this.myId) as (Visual & { _state?: PlayerState }) | undefined;
-    if (own?._state) {
-      hudBus.emit({ player: { ...own._state, auto: enabled } });
+    const own = this.players.get(this.myId);
+    if (own?.playerState) {
+      hudBus.emit({ player: { ...own.playerState, auto: enabled } });
     }
   }
 
   private applySnapshot(snapshot: NodeSnapshot) {
+    const livePlayers = new Set(snapshot.players.map((p) => p.id));
+    for (const id of this.players.keys()) {
+      if (id !== this.myId && !livePlayers.has(id)) this.destroyVisual(this.players, id);
+    }
     snapshot.players.forEach((p) => this.upsertPlayer(p));
 
-    const live = new Set(snapshot.monsters.map((m) => m.id));
+    const liveMonsters = new Set(snapshot.monsters.map((m) => m.id));
     for (const id of this.monsters.keys()) {
-      if (!live.has(id)) this.destroyVisual(this.monsters, id);
+      if (!liveMonsters.has(id)) this.destroyVisual(this.monsters, id);
     }
     snapshot.monsters.forEach((m) => this.upsertMonster(m));
   }
@@ -286,6 +288,19 @@ export class GameScene extends Phaser.Scene {
       hpBar.fillStyle(hpColor);
       hpBar.fillRect(sprite.x - 16, barY, Math.round(32 * hpPct), 4);
 
+      // Shield layer — teal segment extending from the HP fill edge, capped at bar width
+      const shields = v.playerState?.shields;
+      if (shields && shields.length > 0) {
+        const totalShield = shields.reduce((sum, s) => sum + s.amount, 0);
+        const shieldPct   = v.maxHp > 0 ? totalShield / v.maxHp : 0;
+        const shieldStart = Math.round(32 * hpPct);
+        const shieldWidth = Math.min(32 - shieldStart, Math.round(32 * shieldPct));
+        if (shieldWidth > 0) {
+          hpBar.fillStyle(0x44ccdd, 0.9);
+          hpBar.fillRect(sprite.x - 16 + shieldStart, barY, shieldWidth, 4);
+        }
+      }
+
       // Cooldown bar — only visible while attacking
       cdBar.clear();
       if (v.attackTargetId !== null) {
@@ -314,17 +329,17 @@ export class GameScene extends Phaser.Scene {
       });
       const hpBar = this.add.graphics();
       const cdBar = this.add.graphics();
-      vp = Object.assign(
-        { sprite, label, hpBar, cdBar,
-          targetX: player.targetX, targetY: player.targetY,
-          hp: player.hp, maxHp: player.maxHp,
-          speed: player.speed, barOffsetY: 34,
-          attackCooldown: player.attackCooldown,
-          lastAttackAt:   player.lastAttackAt,
-          attackTargetId: player.attackTargetId,
-          attackStyle:    player.attackStyle },
-        { _state: player },
-      );
+      vp = {
+        sprite, label, hpBar, cdBar,
+        targetX: player.targetX, targetY: player.targetY,
+        hp: player.hp, maxHp: player.maxHp,
+        speed: player.speed, barOffsetY: 34,
+        attackCooldown: player.attackCooldown,
+        lastAttackAt:   player.lastAttackAt,
+        attackTargetId: player.attackTargetId,
+        attackStyle:    player.attackStyle,
+        playerState:    player,
+      };
       this.players.set(player.id, vp);
 
       if (isOwn) {
@@ -348,10 +363,11 @@ export class GameScene extends Phaser.Scene {
     vp.hp             = player.hp;
     vp.maxHp          = player.maxHp;
     vp.speed          = player.speed;
+    vp.attackCooldown = player.attackCooldown;
     vp.lastAttackAt   = player.lastAttackAt;
     vp.attackTargetId = player.attackTargetId;
     vp.attackStyle    = player.attackStyle;
-    (vp as Visual & { _state: PlayerState })._state = player;
+    vp.playerState    = player;
 
     if (player.hp < prevPlayerHp) {
       const dmgColor = isOwn ? '#ff4444' : '#ff8844';

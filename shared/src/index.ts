@@ -6,6 +6,34 @@ export * from './monsterDatabase';
 export * from './biomeDatabase';
 
 import type { EquipmentMap, EquipmentSlot, EssenceType } from './items';
+import type { SubVariant } from './skillTree';
+
+// ─── Buff display ─────────────────────────────────────────────────────────────
+
+/**
+ * A single active buff entry, populated server-side each tick and sent to the
+ * client for display. Only player buffs are tracked here — debuffs on monsters
+ * are server-only.
+ *
+ * Resilience notes:
+ *   - `id` will be used as the sprite key when icons are added later.
+ *   - `durationPct` of -1 means the buff has no timer (permanent or count-based).
+ *   - `stacks` of 1 means no stack badge is shown.
+ *   - `color` is a CSS hex string used for the placeholder shape; replace with
+ *     icon textures later without changing any other code.
+ */
+export interface PlayerBuff {
+  /** Unique identifier — will double as the future icon sprite key. */
+  id: string;
+  /** Short label shown beneath the icon (3–6 chars). */
+  label: string;
+  /** Stack count; 1 = single instance (no badge shown). */
+  stacks: number;
+  /** 0–100 remaining duration percentage; -1 = no timer. */
+  durationPct: number;
+  /** CSS hex color string for the placeholder shape, e.g. '#00ffaa'. */
+  color: string;
+}
 
 // ─── Combat archetype ─────────────────────────────────────────────────────────
 
@@ -15,6 +43,25 @@ import type { EquipmentMap, EquipmentSlot, EssenceType } from './items';
  * Extend this union as new archetypes are implemented.
  */
 export type CombatArchetype = 'cadence' | 'cooldown' | 'energy' | 'reload' | 'dot' | null;
+
+// ─── Shield ───────────────────────────────────────────────────────────────────
+
+/**
+ * A temporary hit-point buffer that absorbs damage before real HP.
+ * Sent to the client so the HP bar can render the shield layer.
+ */
+export interface ShieldState {
+  /** Current remaining shield HP. */
+  amount: number;
+  /** Shield HP at creation — used for proportional bar rendering. */
+  maxAmount: number;
+  /**
+   * Remaining duration in milliseconds.
+   * -1 = permanent: never expires by timer, depletes only via damage.
+   * >0 = timed: decremented each tick; shield is removed when this reaches 0.
+   */
+  remainingMs: number;
+}
 
 // ─── Entity shapes ────────────────────────────────────────────────────────────
 
@@ -29,7 +76,19 @@ export interface PlayerState {
   hp: number;
   maxHp: number;
   attack: number;
-  defense: number;
+  /** Flat damage reduction — subtracted from incoming damage before percentage. */
+  plating: number;
+  /** Percentage damage reduction applied after plating (0.0–1.0). */
+  damageReduction: number;
+  /**
+   * Hit counter threshold for evasion. 0 = disabled.
+   * Every N incoming hits, the Nth is fully nullified.
+   */
+  evasion: number;
+  /** Current hit count toward the next evasion trigger. Mirrored from CombatState. */
+  evasionCount: number;
+  /** Active temporary shields. Damage is absorbed here before reaching HP. */
+  shields: ShieldState[];
   /** Pixel radius within which this player can attack a monster. */
   attackRange: number;
   /** Milliseconds between discrete attacks. */
@@ -49,8 +108,25 @@ export interface PlayerState {
   skillPoints: number;
   /** IDs of all unlocked skill tree nodes. */
   unlockedSkills: string[];
+  /**
+   * Accumulated numeric mechanic modifiers from skill nodes' mechanicEffects.
+   * Rebuilt by recalculatePlayerStats from scratch on every stat recalculation.
+   * Archetype systems read these at runtime to adjust behavior.
+   * e.g. passives['cadence.threshold-mod'] = -2 means the cadence threshold is reduced by 2.
+   */
+  passives: Record<string, number>;
+  /**
+   * Active cadence speed stacks (Accelerando passive).
+   * Each stack reduces attackCooldown by a fixed amount, up to a cap.
+   * Reset to 0 by recalculatePlayerStats (on equip/skill change) and on respawn.
+   */
+  cadenceSpeedStacks: number;
   /** ID of the class root node that was first unlocked, or null before class selection. */
   selectedClass: string | null;
+  /** Which sub-variant (light / balanced / heavy) was chosen at tier 1, or null before that choice. */
+  selectedSubVariant: SubVariant | null;
+  /** ID of the range node chosen at tier 2 (range-close / range-mid / range-far), or null before that choice. */
+  selectedRange: string | null;
   /**
    * The tier currently available to unlock. Starts at 0 (class root selection).
    * Increments by 1 on each successful unlock. Nodes are only unlockable when
@@ -113,6 +189,12 @@ export interface PlayerState {
   sacredBuffActive: boolean;
   /** Sacred Cross weapon: 0–100 progress toward the next buff window (100 = buff active). */
   sacredBuffPct: number;
+  /**
+   * Active buffs on this player, populated server-side each tick by syncPlayerBuffs.
+   * Only buffs are tracked here — monster debuffs are server-only.
+   * The client renders these verbatim; no client-side buff logic is needed.
+   */
+  activeBuffs: PlayerBuff[];
 }
 
 /**
@@ -142,7 +224,10 @@ export interface MonsterState {
   hp: number;
   maxHp: number;
   attack: number;
-  defense: number;
+  /** Flat damage reduction — subtracted from incoming damage before percentage. */
+  plating: number;
+  /** Percentage damage reduction applied after plating (0.0–1.0). Default 0. */
+  damageReduction: number;
   /** Movement speed in px/s — clients use this for accurate interpolation. */
   speed: number;
   /** Current AI state — clients can use for animation/visual cues. */
@@ -243,10 +328,6 @@ export interface ServerToClientEvents {
   'state:sync': (snapshot: NodeSnapshot) => void;
   /** Authoritative world snapshot broadcast every server tick */
   'node:state': (snapshot: NodeSnapshot) => void;
-  /** Broadcast when any player joins the node */
-  'player:joined': (player: PlayerState) => void;
-  /** Broadcast when any player leaves the node */
-  'player:left': (playerId: string) => void;
   /** Immediate result of a crafting attempt — success or reason for failure. */
   'crafting:result': (result: { success: boolean; reason?: string }) => void;
   /** Sent to a player whose HP reached zero — they are simultaneously respawned server-side. */
@@ -284,46 +365,20 @@ export const GAME_CONFIG = {
   /** Maximum number of monsters alive in a node at any time */
   MONSTERS_PER_NODE: 12,
 
-  // ── Combat ──────────────────────────────────────────────────────────────────
+  // ── Player base stats ────────────────────────────────────────────────────────
+  PLAYER_MAX_HP:  100,
+  PLAYER_ATTACK:  15,  // damage per hit (before plating)
+  PLAYER_PLATING: 2,
   /** Pixel radius within which a player can hit a monster */
   PLAYER_ATTACK_RANGE: 60,
   /** Milliseconds between attacks when unarmed. Overridden by weapon attacksPerSecond when a weapon is equipped. */
   PLAYER_ATTACK_COOLDOWN: 3000,
-
-  /** Pixel radius within which a slime notices and begins chasing a player */
-  SLIME_PULL_RANGE: 200,
-  /** Pixel radius within which a slime deals damage to its target */
-  SLIME_ATTACK_RANGE: 60,
-  /** Pixel radius from spawn before a chasing slime gives up and returns */
-  SLIME_LEASH_RANGE: 600,
-  /** Milliseconds between slime discrete attacks */
-  SLIME_ATTACK_COOLDOWN: 2500,
-
-  // Player base stats
-  PLAYER_MAX_HP:  100,
-  PLAYER_ATTACK:  15,  // damage per hit (before defense); 2 s cooldown ≈ 7 effective DPS
-  PLAYER_DEFENSE: 2,
   /** HP recovered per second when out of combat */
   PLAYER_HP_REGEN: 5,
   /** Milliseconds after last hit before regen starts */
   COMBAT_REGEN_DELAY: 3000,
 
-  // Monster base stats
-  MONSTER_HP:      50,
-  MONSTER_ATTACK:  8,  // damage per hit (before defense); 2.5 s cooldown ≈ 3 effective DPS
-  MONSTER_DEFENSE: 1,
-  /** Milliseconds after death before a new monster is spawned */
-  MONSTER_RESPAWN_DELAY: 8000,
-
-  // ── Slime AI ─────────────────────────────────────────────────────────────────
-  /** Slime movement speed in px/s */
-  SLIME_SPEED: 40,
-  /** How far from its spawn point a slime will wander (px) */
-  SLIME_WANDER_RADIUS: 220,
-  /** Minimum idle time between wanders (ms) */
-  SLIME_IDLE_MIN: 1500,
-  /** Maximum idle time between wanders (ms) */
-  SLIME_IDLE_MAX: 4500,
-  /** Minimum distance between spawn positions when placing a new slime (px) */
-  SLIME_MIN_SPAWN_DIST: 120,
+  // ── Spawn ─────────────────────────────────────────────────────────────────────
+  /** Minimum pixel distance between two monsters at spawn time */
+  MONSTER_MIN_SPAWN_DIST: 120,
 } as const;

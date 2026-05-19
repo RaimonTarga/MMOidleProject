@@ -1,69 +1,59 @@
 import { registerCombatListener } from './combatPipeline';
-import { getStack, addStack, isCooldownActive, setCooldown, setString, getString } from './combatState';
+import { applyStatusEffect, getStatusEffects, getTotalStacks, pruneStatusEffects } from './statusEffects';
 import { grantMonsterRewards } from './rewards';
 import type { World } from '../world/World';
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
 export const DOT_MAX_STACKS       = 5;
-export const DOT_DAMAGE_PER_STACK = 3;    // damage dealt per stack per tick
+export const DOT_DAMAGE_PER_STACK = 3;    // damage per stack per tick
 export const DOT_TICK_INTERVAL_MS = 1000; // ms between damage ticks
 
-// combatState keys — reserved by this module (stored on monster combat state)
-const DOT_STACKS_KEY   = 'dotStacks';
-const DOT_TICK_TIMER   = 'dotTickTimer';
-const DOT_ATTACKER_KEY = 'dotAttackerId';
+const DOT_EFFECT_ID = 'dot';
 
 // ── Tick-driven DoT application ───────────────────────────────────────────────
 
 /**
- * Run once per world tick, AFTER updateCombatState (so the tick timer is
- * already decremented before we check it).
+ * Run once per world tick (after updateCombatState so durations are already ticked).
  *
- * For every monster that has active DoT stacks:
- *   - When the tick timer expires: deal stacks × DOT_DAMAGE_PER_STACK damage.
- *   - If the monster dies: grant kill rewards to the player who last applied a stack.
- *   - Otherwise: reset the tick timer for the next interval.
+ * For every monster with active DoT stacks:
+ *   - Advance the per-effect tick timer.
+ *   - When the timer fires: deal stacks × DOT_DAMAGE_PER_STACK damage.
+ *   - If the monster dies: grant kill rewards to the last attacker.
  */
-export function updateDotArchetype(world: World): void {
-  // Collect kills separately to avoid mutating the map while iterating.
-  const toKill: string[] = [];
+export function updateDotArchetype(world: World, dt: number): void {
+  const toKill: Array<{ monsterId: string; sourceId: string }> = [];
 
   for (const [monsterId, state] of world.monsterCombatState) {
-    const stacks = getStack(state, DOT_STACKS_KEY);
-    if (stacks <= 0) continue;
-    if (isCooldownActive(state, DOT_TICK_TIMER)) continue;
+    const effect = getStatusEffects(state, DOT_EFFECT_ID)[0];
+    if (!effect) continue;
+
+    // Advance tick timer
+    effect.data.nextTickIn -= dt;
+    if (effect.data.nextTickIn > 0) continue;
 
     const monster = world.monsters.get(monsterId);
     if (!monster) continue;
 
-    const damage = stacks * DOT_DAMAGE_PER_STACK;
+    const damage = effect.stacks * effect.data.damagePerStack;
     monster.hp -= damage;
 
-    console.log(
-      `[DoT] ${monsterId}: ${stacks} stack${stacks !== 1 ? 's' : ''} → ${damage} dmg, hp=${Math.max(0, monster.hp)}`,
-    );
-
     if (monster.hp <= 0) {
-      toKill.push(monsterId);
+      toKill.push({ monsterId, sourceId: effect.sourceId });
     } else {
-      setCooldown(state, DOT_TICK_TIMER, DOT_TICK_INTERVAL_MS);
+      effect.data.nextTickIn = effect.data.tickIntervalMs;
     }
   }
 
-  for (const monsterId of toKill) {
-    const state   = world.monsterCombatState.get(monsterId);
+  for (const { monsterId, sourceId } of toKill) {
     const monster = world.monsters.get(monsterId);
-    if (state && monster) {
-      const attackerId = getString(state, DOT_ATTACKER_KEY);
-      if (attackerId) grantMonsterRewards(world, attackerId, monster);
-    }
+    if (monster && sourceId) grantMonsterRewards(world, sourceId, monster);
     world.monsters.delete(monsterId);
     world.monsterAI.delete(monsterId);
     world.monsterCombatState.delete(monsterId);
   }
 
-  // Mirror target stacks to PlayerState so the client can show them in the HUD.
+  // Mirror target stacks to PlayerState for the HUD.
   for (const player of world.players.values()) {
     if (player.combatArchetype !== 'dot') continue;
     if (!player.attackTargetId) {
@@ -71,7 +61,7 @@ export function updateDotArchetype(world: World): void {
       continue;
     }
     const targetState = world.monsterCombatState.get(player.attackTargetId);
-    player.targetDotStacks = targetState ? getStack(targetState, DOT_STACKS_KEY) : 0;
+    player.targetDotStacks = targetState ? getTotalStacks(targetState, DOT_EFFECT_ID) : 0;
   }
 }
 
@@ -81,10 +71,10 @@ export function updateDotArchetype(world: World): void {
  * Register the onHit listener that applies DoT stacks to the defender.
  * Called once at server startup via registerClassMechanic / activateClassMechanics.
  *
- * Behavior on each confirmed hit by a DoT player:
- *   - Add one stack to the target (up to DOT_MAX_STACKS).
- *   - Start the tick timer if it is not already running.
- *   - Record the attacker ID for kill credit if DoT delivers the killing blow.
+ * Each hit by a DoT player:
+ *   - Adds one stack to the target (up to DOT_MAX_STACKS).
+ *   - Starts the tick timer on the first stack; subsequent hits do not reset it.
+ *   - Updates kill-credit attribution to the most recent attacker.
  */
 export function initDotArchetype(): void {
   registerCombatListener('onHit', (ctx, world) => {
@@ -95,18 +85,18 @@ export function initDotArchetype(): void {
     const state = world.monsterCombatState.get(ctx.defender.id);
     if (!state) return;
 
-    const current = getStack(state, DOT_STACKS_KEY);
-    if (current < DOT_MAX_STACKS) {
-      addStack(state, DOT_STACKS_KEY, 1);
-      console.log(`[DoT] ${ctx.defender.id}: stack ${current + 1}/${DOT_MAX_STACKS}`);
-    }
-
-    // Start the tick timer on the first stack; subsequent hits don't reset it.
-    if (!isCooldownActive(state, DOT_TICK_TIMER)) {
-      setCooldown(state, DOT_TICK_TIMER, DOT_TICK_INTERVAL_MS);
-    }
-
-    // Update kill-credit attribution to the most recent attacker.
-    setString(state, DOT_ATTACKER_KEY, ctx.attacker.id);
+    applyStatusEffect(state, {
+      id:         DOT_EFFECT_ID,
+      maxStacks:  DOT_MAX_STACKS,
+      instanced:  false,
+      sourceId:   ctx.attacker.id,
+      // data is only used when creating the initial effect entry;
+      // subsequent calls (adding stacks) preserve the existing nextTickIn.
+      data: {
+        damagePerStack:  DOT_DAMAGE_PER_STACK,
+        nextTickIn:      DOT_TICK_INTERVAL_MS,
+        tickIntervalMs:  DOT_TICK_INTERVAL_MS,
+      },
+    });
   });
 }

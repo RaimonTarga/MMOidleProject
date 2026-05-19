@@ -48,13 +48,23 @@
         justify-content: center;
         overflow: auto;
         background: #000;
+        position: relative; /* anchor for #buff-overlay */
+      }
+
+      /* Buff bar overlay — sits on top of the Phaser canvas, pointer-events managed per-component */
+      #buff-overlay {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
       }
     </style>
   </head>
   <body>
     <div id="app">
       <div id="left-sidebar"></div>
-      <div id="game-wrapper"></div>
+      <div id="game-wrapper">
+        <div id="buff-overlay"></div>
+      </div>
       <div id="right-sidebar"></div>
     </div>
     <script type="module" src="/src/main.ts"></script>

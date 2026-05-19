@@ -5,6 +5,7 @@ import {
   isCooldownActive, setCooldown, getCooldown,
   getString, setString,
 } from './combatState';
+import { applyStatusEffect, getStatusEffects, pruneStatusEffects } from './statusEffects';
 import { grantMonsterRewards } from './rewards';
 import type { World } from '../world/World';
 import type { PlayerState } from '@mmo-idle/shared';
@@ -66,7 +67,7 @@ export function initWeaponEffects(): void {
     ctx.metadata['sacredBurst'] = true;
   });
 
-  // ── Ashbrand Blade: convert direct hit into independent fire burn on target ──
+  // ── Ashbrand Blade: convert direct hit into an independent fire burn on target ──
   registerCombatListener('onHit', (ctx, world) => {
     if (ctx.attackerType !== 'player') return;
     if (ctx.defenderType !== 'monster') return;
@@ -77,11 +78,16 @@ export function initWeaponEffects(): void {
     if (!monsterState) return;
 
     const damagePerTick = Math.max(1, Math.round(ctx.damage * ASHBRAND_TOTAL_MULT / ASHBRAND_TICKS));
-    monsterState.burns.push({
-      damagePerTick,
-      ticksLeft:  ASHBRAND_TICKS,
-      nextTickIn: ASHBRAND_TICK_MS,
-      attackerId: player.id,
+    applyStatusEffect(monsterState, {
+      id:        'ashbrand-burn',
+      instanced: true,  // each hit is an independent burn running in parallel
+      sourceId:  player.id,
+      data: {
+        damagePerTick,
+        ticksLeft:     ASHBRAND_TICKS,
+        nextTickIn:    ASHBRAND_TICK_MS,
+        tickIntervalMs: ASHBRAND_TICK_MS,
+      },
     });
     ctx.damage = 0; // direct damage suppressed; burn delivers the total
 
@@ -154,40 +160,41 @@ function updateSacredCrossBuff(world: World): void {
 // ── Ashbrand burn ticks ────────────────────────────────────────────────────────
 
 function updateAshbrandBurns(world: World, dt: number): void {
-  const toKill: Array<{ id: string; attackerId: string }> = [];
+  const toKill: Array<{ monsterId: string; sourceId: string }> = [];
 
   for (const [monsterId, state] of world.monsterCombatState) {
-    if (state.burns.length === 0) continue;
+    const burns = getStatusEffects(state, 'ashbrand-burn');
+    if (burns.length === 0) continue;
 
     const monster = world.monsters.get(monsterId);
     if (!monster) continue;
 
-    let lastAttackerId = '';
+    let lastSourceId = '';
 
-    for (const burn of state.burns) {
-      burn.nextTickIn -= dt;
-      if (burn.nextTickIn <= 0) {
-        burn.nextTickIn = ASHBRAND_TICK_MS;
-        burn.ticksLeft--;
-        monster.hp -= burn.damagePerTick;
-        lastAttackerId = burn.attackerId;
+    for (const burn of burns) {
+      burn.data.nextTickIn -= dt;
+      if (burn.data.nextTickIn <= 0) {
+        burn.data.nextTickIn = burn.data.tickIntervalMs;
+        burn.data.ticksLeft--;
+        monster.hp -= burn.data.damagePerTick;
+        lastSourceId = burn.sourceId;
         console.log(
-          `[Ashbrand] ${monsterId}: ${burn.damagePerTick} fire dmg, ${burn.ticksLeft} ticks left, hp=${Math.max(0, monster.hp)}`,
+          `[Ashbrand] ${monsterId}: ${burn.data.damagePerTick} fire dmg, ${burn.data.ticksLeft} ticks left, hp=${Math.max(0, monster.hp)}`,
         );
       }
     }
 
-    // Prune expired burns
-    state.burns = state.burns.filter(b => b.ticksLeft > 0);
+    // Remove exhausted burn instances.
+    pruneStatusEffects(state, e => e.id === 'ashbrand-burn' && e.data.ticksLeft <= 0);
 
     if (monster.hp <= 0) {
-      toKill.push({ id: monsterId, attackerId: lastAttackerId });
+      toKill.push({ monsterId, sourceId: lastSourceId });
     }
   }
 
-  for (const { id: monsterId, attackerId } of toKill) {
+  for (const { monsterId, sourceId } of toKill) {
     const monster = world.monsters.get(monsterId);
-    if (monster && attackerId) grantMonsterRewards(world, attackerId, monster);
+    if (monster && sourceId) grantMonsterRewards(world, sourceId, monster);
     world.monsters.delete(monsterId);
     world.monsterAI.delete(monsterId);
     world.monsterCombatState.delete(monsterId);

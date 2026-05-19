@@ -80,6 +80,7 @@
 
 /* ── HP bar ──────────────────────────────────────────────────────────────── */
 .hp-bar-track {
+  position: relative;
   height: 4px;
   background: rgba(255, 255, 255, 0.07);
   border-radius: 2px;
@@ -91,6 +92,23 @@
   height: 100%;
   border-radius: 2px;
   transition: width 0.4s ease, background 0.4s ease;
+}
+
+/* Shield segment — renders at the right edge of the HP fill */
+.shield-bar-fill {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  background: #44ccdd;
+  opacity: 0.85;
+  border-radius: 0 2px 2px 0;
+  transition: width 0.3s ease, left 0.3s ease;
+  animation: shield-shimmer 1.8s ease-in-out infinite alternate;
+}
+
+@keyframes shield-shimmer {
+  from { opacity: 0.65; }
+  to   { opacity: 0.95; }
 }
 
 /* ── Ammo bar (reload archetype) ─────────────────────────────────────────── */
@@ -138,6 +156,8 @@
 .mech-bar-fill--cadence  { background: #ffcc44; }
 .mech-bar-fill--cooldown { background: #aa44ff; transition: width 0.4s ease; }
 .mech-bar-fill--energy   { background: #ffdd44; }
+/* Evasion: teal, dims when no progress, brightens near trigger */
+.mech-bar-fill--evasion  { background: #44ccdd; transition: width 0.2s ease; }
 
 .mech-bar-fill--ready {
   background: #44ff88;

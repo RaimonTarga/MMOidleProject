@@ -45,7 +45,11 @@ export function emptyEquipment(): EquipmentMap {
 /** Typed stat keys that items can modify. Mirrors relevant PlayerState fields. */
 export interface ItemStats {
   attack?: number;
-  defense?: number;
+  plating?: number;
+  /** Percentage reduction added (0.0–1.0 range; items should use small values like 0.05). */
+  damageReduction?: number;
+  /** Hit threshold for evasion. Lower = more frequent dodge. */
+  evasion?: number;
   maxHp?: number;
   hpRegen?: number;
   speed?: number;
@@ -58,7 +62,7 @@ export interface ItemStats {
 /**
  * A static item template shared by all instances of that item.
  * statModifiers keys map directly to PlayerState stat field names:
- *   attack | defense | attackRange | attackCooldown | maxHp | hpRegen | speed
+ *   attack | plating | damageReduction | evasion | attackRange | attackCooldown | maxHp | hpRegen | speed
  */
 export interface ItemDefinition {
   id: string;

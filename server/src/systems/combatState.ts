@@ -1,17 +1,58 @@
 import type { World } from '../world/World';
 
-// ── Burn state (Ashbrand Blade weapon effect) ─────────────────────────────────
+// ── Status effects ─────────────────────────────────────────────────────────────
 
-/** One independent fire burn tick applied by the Ashbrand Blade. */
-export interface BurnState {
-  /** Damage dealt to the target each tick. */
-  damagePerTick: number;
-  /** Number of ticks remaining before the burn expires. */
-  ticksLeft: number;
-  /** Milliseconds until the next tick fires; decremented by dt each world tick. */
-  nextTickIn: number;
-  /** Player ID to credit if this burn deals the killing blow. */
-  attackerId: string;
+/**
+ * A named buff or debuff on an entity. Lives in CombatState.statusEffects.
+ * Never sent to the client directly — client-visible state (e.g. DoT stack count)
+ * is mirrored to PlayerState/MonsterState in each system's update function.
+ */
+export interface StatusEffect {
+  /** Effect type identifier — e.g. 'dot', 'ashbrand-burn', 'slow'. */
+  id: string;
+  /** Current stack count. For non-stacking effects, always 1. */
+  stacks: number;
+  /** Maximum stacks allowed. 0 = no cap. Ignored for instanced effects. */
+  maxStacks: number;
+  /**
+   * Remaining duration in ms. -1 = permanent (never expires by timer).
+   * Decremented by tickStatusEffectDurations each world tick.
+   * When it reaches 0 the effect is automatically removed.
+   */
+  remainingMs: number;
+  /**
+   * If true, re-applying this effect resets remainingMs to the configured value.
+   * No effect on instanced effects (each application is always a new entry).
+   */
+  refreshable: boolean;
+  /**
+   * If true, every application creates a new independent entry even when one
+   * with the same id already exists (used for Ashbrand burns running in parallel).
+   * If false, applications add a stack to the existing entry instead.
+   */
+  instanced: boolean;
+  /** Entity that applied this effect — used for kill-credit attribution. */
+  sourceId: string;
+  /**
+   * Effect-specific numeric payload. No enforced schema per-type.
+   * Tick-based effects should store:
+   *   nextTickIn    — ms until the next tick fires (decremented by the owner system).
+   *   tickIntervalMs — reset value for nextTickIn after each tick.
+   * Finite-tick effects additionally store:
+   *   ticksLeft — remaining ticks; owner system removes the effect when this hits 0.
+   */
+  data: Record<string, number>;
+}
+
+/** Input shape for applyStatusEffect. All optional fields have sensible defaults. */
+export interface StatusEffectConfig {
+  id: string;
+  maxStacks?: number;    // default: 0 (no cap)
+  remainingMs?: number;  // default: -1 (permanent)
+  refreshable?: boolean; // default: false
+  instanced?: boolean;   // default: false
+  sourceId: string;
+  data?: Record<string, number>;
 }
 
 // ── Shape ─────────────────────────────────────────────────────────────────────
@@ -26,7 +67,9 @@ export interface BurnState {
  *   resourceMaxes — maximum capacity per resource key; absent = uncapped
  *   cooldowns     — remaining milliseconds; decremented each tick; 0 = ready
  *   flags         — boolean states (stunned, shielded, empowered, etc.)
- *   stacks        — non-negative accumulations (burn stacks, poison, etc.)
+ *   stacks        — non-negative accumulations (legacy; prefer statusEffects for new mechanics)
+ *   strings       — arbitrary string values; used for attacker attribution, state labels, etc.
+ *   statusEffects — unified buff/debuff list; managed via statusEffects.ts API
  */
 export interface CombatState {
   counters:      Record<string, number>;
@@ -35,10 +78,8 @@ export interface CombatState {
   cooldowns:     Record<string, number>;
   flags:         Record<string, boolean>;
   stacks:        Record<string, number>;
-  /** Arbitrary string values — used for attacker attribution, state labels, etc. */
   strings:       Record<string, string>;
-  /** Active fire burns from the Ashbrand Blade (stored on monster combat state). */
-  burns:         BurnState[];
+  statusEffects: StatusEffect[];
 }
 
 // ── Factory ───────────────────────────────────────────────────────────────────
@@ -52,7 +93,7 @@ export function makeCombatState(): CombatState {
     flags:         {},
     stacks:        {},
     strings:       {},
-    burns:         [],
+    statusEffects: [],
   };
 }
 
@@ -65,7 +106,7 @@ export function resetCombatState(state: CombatState): void {
   state.flags         = {};
   state.stacks        = {};
   state.strings       = {};
-  state.burns         = [];
+  state.statusEffects = [];
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -112,7 +153,7 @@ export function setFlag(state: CombatState, key: string, value: boolean): void {
   state.flags[key] = value;
 }
 
-// Stacks
+// Stacks (legacy — prefer StatusEffect for new mechanics)
 
 export function getStack(state: CombatState, key: string): number {
   return state.stacks[key] ?? 0;
@@ -150,9 +191,8 @@ export function isCooldownActive(state: CombatState, key: string): boolean {
   return (state.cooldowns[key] ?? 0) > 0;
 }
 
-// ── Per-tick update ───────────────────────────────────────────────────────────
+// ── Per-tick updates ──────────────────────────────────────────────────────────
 
-/** Advance all remaining-duration cooldowns by dt ms. */
 function tickCooldowns(state: CombatState, dt: number): void {
   for (const key of Object.keys(state.cooldowns)) {
     const remaining = state.cooldowns[key] - dt;
@@ -161,14 +201,39 @@ function tickCooldowns(state: CombatState, dt: number): void {
 }
 
 /**
- * Run at the top of every world tick so cooldowns are decremented before
- * any combat or AI system reads them.
+ * Decrement remainingMs on all duration-based status effects and prune expired ones.
+ * Permanent effects (remainingMs === -1) are unaffected.
+ * Per-effect tick timers (data.nextTickIn) are NOT touched here —
+ * each archetype system is responsible for its own tick logic.
+ */
+function tickStatusEffectDurations(state: CombatState, dt: number): void {
+  for (const effect of state.statusEffects) {
+    if (effect.remainingMs > 0) {
+      effect.remainingMs -= dt;
+      if (effect.remainingMs < 0) effect.remainingMs = 0;
+    }
+  }
+  // remainingMs === 0 means just-expired; -1 means permanent → keep both
+  // Wait: after decrement, expired effects have remainingMs === 0.
+  // Permanent effects have remainingMs === -1 (never decremented).
+  // We remove only those that have expired (reached 0 from a positive starting value).
+  // Problem: how do we distinguish "expired" (was positive, became 0) from "no duration" (-1)?
+  // The initial value is either > 0 (timed) or -1 (permanent), never 0.
+  // So: any effect with remainingMs === 0 has just expired and should be removed.
+  state.statusEffects = state.statusEffects.filter(e => e.remainingMs !== 0);
+}
+
+/**
+ * Run at the top of every world tick so cooldowns and status effect durations are
+ * decremented before any combat or AI system reads them.
  */
 export function updateCombatState(world: World, dt: number): void {
   for (const state of world.playerCombatState.values()) {
     tickCooldowns(state, dt);
+    tickStatusEffectDurations(state, dt);
   }
   for (const state of world.monsterCombatState.values()) {
     tickCooldowns(state, dt);
+    tickStatusEffectDurations(state, dt);
   }
 }
