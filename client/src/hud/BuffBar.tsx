@@ -1,28 +1,75 @@
 import { useState, useEffect } from 'react';
 import { hudBus } from '../hudBus';
 import type { PlayerBuff } from '@mmo-idle/shared';
+import '../hud/hud.css';
 
 // Slot dimensions
-const ICON_SIZE  = 32; // px — square placeholder shape
-const BAR_HEIGHT = 3;  // px — duration bar below icon
-const SLOT_GAP   = 6;  // px — gap between slots
+const ICON_SIZE  = 32;
+const BAR_HEIGHT = 3;
+const SLOT_GAP   = 6;
+
+type BuffCategory =
+  | 'cadence'
+  | 'cooldown'
+  | 'energy'
+  | 'dot-poison'
+  | 'dot-fire'
+  | 'dot-frost'
+  | 'dot-frozen'
+  | 'weapon';
+
+function getBuffCategory(id: string): BuffCategory | null {
+  if (id.startsWith('cadence-'))  return 'cadence';
+  if (id.startsWith('cooldown-')) return 'cooldown';
+  if (id.startsWith('energy-'))   return 'energy';
+  if (id === 'dot-vigor')         return 'dot-poison'; // Invigorating Toxins
+  if (id === 'dot-conflag')       return 'dot-fire';   // Conflagration
+  if (id === 'dot-chill')         return 'dot-frost';  // Freezing Cold chill
+  if (id === 'dot-frozen')        return 'dot-frozen'; // Freezing Cold frozen
+  if (id === 'sacred-burst')      return 'weapon';
+  return null;
+}
+
+/** Extra CSS shape properties applied per buff to visually distinguish DoT paths. */
+function getIconShapeStyle(id: string): React.CSSProperties {
+  if (id === 'dot-vigor') {
+    // Poison — circular/organic
+    return { borderRadius: '50%' };
+  }
+  if (id === 'dot-conflag') {
+    // Fire — diamond
+    return { borderRadius: 2, clipPath: 'polygon(50% 2%, 98% 50%, 50% 98%, 2% 50%)' };
+  }
+  if (id === 'dot-frozen') {
+    // Frozen — sharp crystalline corners
+    return { borderRadius: 1 };
+  }
+  return {};
+}
 
 function BuffIcon({ buff }: { buff: PlayerBuff }) {
+  const category = getBuffCategory(buff.id);
+  const shapeStyle = getIconShapeStyle(buff.id);
+  const catClass = category ? `buff-icon buff-cat-${category}` : 'buff-icon';
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
 
-      {/* Placeholder icon square */}
-      <div style={{
-        position:        'relative',
-        width:           ICON_SIZE,
-        height:          ICON_SIZE,
-        backgroundColor: buff.color,
-        borderRadius:    5,
-        border:          '1.5px solid rgba(255,255,255,0.25)',
-        boxShadow:       `0 0 6px ${buff.color}88`,
-        flexShrink:      0,
-      }}>
-        {/* Stack count badge — bottom-right corner, only when > 1 */}
+      {/* Icon — shape + color + category animation */}
+      <div
+        className={catClass}
+        style={{
+          position:        'relative',
+          width:           ICON_SIZE,
+          height:          ICON_SIZE,
+          backgroundColor: buff.color,
+          border:          '1.5px solid rgba(255,255,255,0.22)',
+          boxShadow:       `0 0 7px ${buff.color}99, 0 0 2px rgba(0,0,0,0.6)`,
+          flexShrink:      0,
+          ...shapeStyle,
+        }}
+      >
+        {/* Stack count badge — bottom-right, only when > 1 */}
         {buff.stacks > 1 && (
           <span style={{
             position:   'absolute',
@@ -40,7 +87,7 @@ function BuffIcon({ buff }: { buff: PlayerBuff }) {
         )}
       </div>
 
-      {/* Duration bar — only for timed buffs (durationPct >= 0) */}
+      {/* Duration bar — only for timed buffs */}
       {buff.durationPct >= 0 && (
         <div style={{
           width:           ICON_SIZE,

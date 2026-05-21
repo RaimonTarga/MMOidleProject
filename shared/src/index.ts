@@ -171,6 +171,12 @@ export interface PlayerState {
    * 0 means this player is not using the cadence archetype.
    */
   cadenceThreshold: number;
+  /**
+   * True when an empowered (finisher) attack has been armed and will fire on
+   * the next hit. The cadenceCount is reset to 0 at arming time, so without
+   * this flag the client cannot distinguish "start of cycle" from "finisher next".
+   */
+  cadenceEmpoweredArmed: boolean;
   /** Current ammo count for reload-archetype players. 0 = reloading. */
   ammoCount: number;
   /** Max ammo capacity. 0 means this player is not using the reload archetype. */
@@ -185,16 +191,44 @@ export interface PlayerState {
   empoweredReady: boolean;
   /** DoT archetype: number of DoT stacks currently on the player's attack target (0 if no target). */
   targetDotStacks: number;
+  /** DoT archetype (Freezing Cold): chill stacks on the attack target (0 if no target or no chill). */
+  targetChillStacks: number;
   /** Sacred Cross weapon: true while the divine burst buff is active. */
   sacredBuffActive: boolean;
   /** Sacred Cross weapon: 0–100 progress toward the next buff window (100 = buff active). */
   sacredBuffPct: number;
+  /**
+   * Cooldown Channeled Beam: true while the channel is active.
+   * Server locks movement and skips auto-attacks while this is true.
+   * Client should display a channel bar and block move inputs.
+   */
+  isChanneling: boolean;
+  /** Channeled Beam progress 0–100 through the channel window. 0 when not channeling. */
+  channelingPct: number;
   /**
    * Active buffs on this player, populated server-side each tick by syncPlayerBuffs.
    * Only buffs are tracked here — monster debuffs are server-only.
    * The client renders these verbatim; no client-side buff logic is needed.
    */
   activeBuffs: PlayerBuff[];
+
+  // ── Quest progression ────────────────────────────────────────────────────
+
+  /**
+   * Kill count toward each active quest. Key = questId, value = kills so far.
+   * Missing key = 0 progress. Quest is complete when value >= quest.killsRequired.
+   */
+  questProgress: Record<string, number>;
+  /**
+   * Accumulated progression XP from completed quests.
+   * Resets (modulo XP_PER_LEVEL) each time a level is gained.
+   */
+  progressionXP: number;
+  /**
+   * Progression level gained via completed quests. Each level grants 1 skill point.
+   * Separate from the flat kill-count `level` field.
+   */
+  progressionLevel: number;
 }
 
 /**
@@ -245,6 +279,8 @@ export interface MonsterState {
   nodeId: string;
   /** Visual style used for attack animations on the client. */
   attackStyle: string;
+  /** True for dungeon boss monsters — clients render them larger with a distinct label. */
+  isBoss: boolean;
   /** Future: allows elite/boss monsters to use archetype mechanics. */
   combatArchetype?: CombatArchetype;
 }
@@ -264,54 +300,120 @@ export interface NodeDefinition {
   biomeTier: number;
   /** Adjacent node ids keyed by the direction of travel. Only present exits are listed. */
   exits: Partial<Record<NodeDirection, string>>;
+  /**
+   * True for dungeon variant nodes. Enemies within deal extra damage and have more HP.
+   * One boss monster is maintained alongside the normal population.
+   */
+  isDungeon: boolean;
 }
 
 /**
- * Flat lookup from node ID to its biome info.
- * Mirrors nodeRegistry on the server; both client and server import from here
- * so the mapping has a single source of truth.
- */
-/**
- * 5×5 grid map. Center is node-2-2 (ring 0).
- * Chebyshev distance from center determines ring: 0 = clearing, 1 = tier 1, 2 = tier 2.
+ * 9×9 grid map. Center is node-4-4 (T0 clearing).
+ * Chebyshev distance from center determines tier band:
+ *   0 — clearing (T0)
+ *   1 — T1 biomes (8 nodes)
+ *   2 — T2 biomes (16 nodes)
+ *   3 — T3 biomes (24 nodes)
+ *   4 — T4 biomes (32 nodes)
  *
+ * Each tier has at least one dungeon node. Dungeons are marked isDungeon: true.
  * Geographic layout:
- *   North  — tundra / mountain
- *   West   — swamp
- *   East   — plains → desert
- *   South  — cave / jungle / volcanic
+ *   North (rows 0-3) — tundra / mountain
+ *   West  (cols 0-3) — swamp / cave / necropolis / abyss
+ *   East  (cols 5-8) — plains / desert / forest / jungle
+ *   South (rows 5-8) — jungle / volcanic / necropolis / abyss
  */
-export const NODE_BIOMES: Record<string, { biomeGroup: string; biomeTier: number }> = {
-  // row 0 — ring 2
-  'node-0-0': { biomeGroup: 'tundra',   biomeTier: 2 },
-  'node-0-1': { biomeGroup: 'tundra',   biomeTier: 2 },
-  'node-0-2': { biomeGroup: 'mountain', biomeTier: 2 },
-  'node-0-3': { biomeGroup: 'mountain', biomeTier: 2 },
-  'node-0-4': { biomeGroup: 'tundra',   biomeTier: 2 },
-  // row 1
-  'node-1-0': { biomeGroup: 'swamp',    biomeTier: 2 },
-  'node-1-1': { biomeGroup: 'forest',   biomeTier: 1 },
-  'node-1-2': { biomeGroup: 'forest',   biomeTier: 1 },
-  'node-1-3': { biomeGroup: 'plains',   biomeTier: 1 },
-  'node-1-4': { biomeGroup: 'desert',   biomeTier: 2 },
-  // row 2
-  'node-2-0': { biomeGroup: 'swamp',    biomeTier: 2 },
-  'node-2-1': { biomeGroup: 'swamp',    biomeTier: 1 },
-  'node-2-2': { biomeGroup: 'clearing', biomeTier: 0 },
-  'node-2-3': { biomeGroup: 'plains',   biomeTier: 1 },
-  'node-2-4': { biomeGroup: 'desert',   biomeTier: 2 },
-  // row 3
-  'node-3-0': { biomeGroup: 'jungle',   biomeTier: 2 },
-  'node-3-1': { biomeGroup: 'cave',     biomeTier: 1 },
-  'node-3-2': { biomeGroup: 'cave',     biomeTier: 1 },
-  'node-3-3': { biomeGroup: 'jungle',   biomeTier: 1 },
-  'node-3-4': { biomeGroup: 'volcanic', biomeTier: 2 },
-  // row 4 — ring 2
-  'node-4-0': { biomeGroup: 'jungle',   biomeTier: 2 },
-  'node-4-1': { biomeGroup: 'cave',     biomeTier: 2 },
-  'node-4-2': { biomeGroup: 'jungle',   biomeTier: 2 },
-  'node-4-3': { biomeGroup: 'volcanic', biomeTier: 2 },
-  'node-4-4': { biomeGroup: 'volcanic', biomeTier: 2 },
+export const NODE_BIOMES: Record<string, { biomeGroup: string; biomeTier: number; isDungeon?: boolean }> = {
+  // ── Row 0 — T4 outer ring (north) ─────────────────────────────────────────
+  'node-0-0': { biomeGroup: 'tundra',     biomeTier: 4 },
+  'node-0-1': { biomeGroup: 'tundra',     biomeTier: 4 },
+  'node-0-2': { biomeGroup: 'tundra',     biomeTier: 4 },
+  'node-0-3': { biomeGroup: 'mountain',   biomeTier: 4 },
+  'node-0-4': { biomeGroup: 'mountain',   biomeTier: 4, isDungeon: true },
+  'node-0-5': { biomeGroup: 'mountain',   biomeTier: 4 },
+  'node-0-6': { biomeGroup: 'tundra',     biomeTier: 4 },
+  'node-0-7': { biomeGroup: 'tundra',     biomeTier: 4 },
+  'node-0-8': { biomeGroup: 'forest',     biomeTier: 4 },
+  // ── Row 1 — T3/T4 ──────────────────────────────────────────────────────────
+  'node-1-0': { biomeGroup: 'necropolis', biomeTier: 4, isDungeon: true },
+  'node-1-1': { biomeGroup: 'tundra',     biomeTier: 3 },
+  'node-1-2': { biomeGroup: 'tundra',     biomeTier: 3 },
+  'node-1-3': { biomeGroup: 'mountain',   biomeTier: 3 },
+  'node-1-4': { biomeGroup: 'mountain',   biomeTier: 3 },
+  'node-1-5': { biomeGroup: 'mountain',   biomeTier: 3 },
+  'node-1-6': { biomeGroup: 'tundra',     biomeTier: 3 },
+  'node-1-7': { biomeGroup: 'tundra',     biomeTier: 3 },
+  'node-1-8': { biomeGroup: 'plains',     biomeTier: 4 },
+  // ── Row 2 — T2/T3 ──────────────────────────────────────────────────────────
+  'node-2-0': { biomeGroup: 'swamp',      biomeTier: 4 },
+  'node-2-1': { biomeGroup: 'swamp',      biomeTier: 3 },
+  'node-2-2': { biomeGroup: 'mountain',   biomeTier: 2 },
+  'node-2-3': { biomeGroup: 'tundra',     biomeTier: 2 },
+  'node-2-4': { biomeGroup: 'tundra',     biomeTier: 2, isDungeon: true },
+  'node-2-5': { biomeGroup: 'mountain',   biomeTier: 2 },
+  'node-2-6': { biomeGroup: 'mountain',   biomeTier: 2 },
+  'node-2-7': { biomeGroup: 'plains',     biomeTier: 3 },
+  'node-2-8': { biomeGroup: 'plains',     biomeTier: 4 },
+  // ── Row 3 — T1/T2/T3 ───────────────────────────────────────────────────────
+  'node-3-0': { biomeGroup: 'abyss',      biomeTier: 4 },
+  'node-3-1': { biomeGroup: 'swamp',      biomeTier: 3 },
+  'node-3-2': { biomeGroup: 'swamp',      biomeTier: 2 },
+  'node-3-3': { biomeGroup: 'forest',     biomeTier: 1 },
+  'node-3-4': { biomeGroup: 'forest',     biomeTier: 1 },
+  'node-3-5': { biomeGroup: 'plains',     biomeTier: 1 },
+  'node-3-6': { biomeGroup: 'plains',     biomeTier: 2 },
+  'node-3-7': { biomeGroup: 'forest',     biomeTier: 3 },
+  'node-3-8': { biomeGroup: 'desert',     biomeTier: 4 },
+  // ── Row 4 — T0 center + T1 ring ────────────────────────────────────────────
+  'node-4-0': { biomeGroup: 'abyss',      biomeTier: 4, isDungeon: true },
+  'node-4-1': { biomeGroup: 'necropolis', biomeTier: 3, isDungeon: true },
+  'node-4-2': { biomeGroup: 'swamp',      biomeTier: 1 },
+  'node-4-3': { biomeGroup: 'swamp',      biomeTier: 1 },
+  'node-4-4': { biomeGroup: 'clearing',   biomeTier: 0 },
+  'node-4-5': { biomeGroup: 'plains',     biomeTier: 1 },
+  'node-4-6': { biomeGroup: 'desert',     biomeTier: 2 },
+  'node-4-7': { biomeGroup: 'desert',     biomeTier: 3 },
+  'node-4-8': { biomeGroup: 'desert',     biomeTier: 4 },
+  // ── Row 5 — T1/T2/T3 ───────────────────────────────────────────────────────
+  'node-5-0': { biomeGroup: 'abyss',      biomeTier: 4 },
+  'node-5-1': { biomeGroup: 'cave',       biomeTier: 3 },
+  'node-5-2': { biomeGroup: 'cave',       biomeTier: 2 },
+  'node-5-3': { biomeGroup: 'cave',       biomeTier: 1 },
+  'node-5-4': { biomeGroup: 'jungle',     biomeTier: 1 },
+  'node-5-5': { biomeGroup: 'jungle',     biomeTier: 1 },
+  'node-5-6': { biomeGroup: 'volcanic',   biomeTier: 2 },
+  'node-5-7': { biomeGroup: 'jungle',     biomeTier: 3 },
+  'node-5-8': { biomeGroup: 'jungle',     biomeTier: 4 },
+  // ── Row 6 — T2/T3 ──────────────────────────────────────────────────────────
+  'node-6-0': { biomeGroup: 'cave',       biomeTier: 4 },
+  'node-6-1': { biomeGroup: 'cave',       biomeTier: 3 },
+  'node-6-2': { biomeGroup: 'jungle',     biomeTier: 2 },
+  'node-6-3': { biomeGroup: 'volcanic',   biomeTier: 2, isDungeon: true },
+  'node-6-4': { biomeGroup: 'volcanic',   biomeTier: 2 },
+  'node-6-5': { biomeGroup: 'volcanic',   biomeTier: 2 },
+  'node-6-6': { biomeGroup: 'jungle',     biomeTier: 2 },
+  'node-6-7': { biomeGroup: 'volcanic',   biomeTier: 3 },
+  'node-6-8': { biomeGroup: 'jungle',     biomeTier: 4 },
+  // ── Row 7 — T3/T4 ──────────────────────────────────────────────────────────
+  'node-7-0': { biomeGroup: 'volcanic',   biomeTier: 4 },
+  'node-7-1': { biomeGroup: 'volcanic',   biomeTier: 3 },
+  'node-7-2': { biomeGroup: 'volcanic',   biomeTier: 3 },
+  'node-7-3': { biomeGroup: 'desert',     biomeTier: 3 },
+  'node-7-4': { biomeGroup: 'necropolis', biomeTier: 3 },
+  'node-7-5': { biomeGroup: 'desert',     biomeTier: 3 },
+  'node-7-6': { biomeGroup: 'volcanic',   biomeTier: 3 },
+  'node-7-7': { biomeGroup: 'volcanic',   biomeTier: 3 },
+  'node-7-8': { biomeGroup: 'volcanic',   biomeTier: 4 },
+  // ── Row 8 — T4 outer ring (south) ─────────────────────────────────────────
+  'node-8-0': { biomeGroup: 'volcanic',   biomeTier: 4 },
+  'node-8-1': { biomeGroup: 'volcanic',   biomeTier: 4 },
+  'node-8-2': { biomeGroup: 'volcanic',   biomeTier: 4 },
+  'node-8-3': { biomeGroup: 'necropolis', biomeTier: 4 },
+  'node-8-4': { biomeGroup: 'abyss',      biomeTier: 4, isDungeon: true },
+  'node-8-5': { biomeGroup: 'necropolis', biomeTier: 4 },
+  'node-8-6': { biomeGroup: 'volcanic',   biomeTier: 4 },
+  'node-8-7': { biomeGroup: 'volcanic',   biomeTier: 4 },
+  'node-8-8': { biomeGroup: 'volcanic',   biomeTier: 4 },
 };
 
 /** Full world state for a node, sent every tick and on join. */
@@ -319,6 +421,31 @@ export interface NodeSnapshot {
   players: PlayerState[];
   monsters: MonsterState[];
 }
+
+// ─── Quest system ─────────────────────────────────────────────────────────────
+
+/**
+ * A quest that requires the player to kill a set number of specific monsters.
+ * Completing the quest awards progressionXP, which accumulates toward level-ups
+ * that convert into skill points.
+ */
+export interface QuestDefinition {
+  id: string;
+  name: string;
+  description: string;
+  /** Monster type IDs (keys in MONSTER_DATABASE) that count toward this quest. */
+  targetMonsterTypes: string[];
+  /** Total kills required to complete the quest. */
+  killsRequired: number;
+  /** Progression XP awarded on completion. */
+  xpReward: number;
+}
+
+/** All available quests. Empty at launch — add entries to populate quests. */
+export const QUEST_DATABASE = new Map<string, QuestDefinition>();
+
+/** XP required to gain one progression level (and thus one skill point). */
+export const XP_PER_LEVEL = 100;
 
 // ─── Socket.IO event maps ─────────────────────────────────────────────────────
 

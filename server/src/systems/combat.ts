@@ -11,6 +11,12 @@ import { getStatusEffect } from './statusEffects';
 export function updateCombat(world: World, dt: number, now: number) {
   // PLAYER → MONSTER
   for (const player of world.players.values()) {
+    // Channeled Beam locks all auto-attacks; the beam system handles targeting + damage.
+    if (player.isChanneling) {
+      player.lastAttackAt = now; // keep the cooldown hot so attacks resume promptly
+      continue;
+    }
+
     let target = null;
     let best = Infinity;
 

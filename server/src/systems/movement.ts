@@ -36,6 +36,12 @@ const MONSTER_MARGIN = 40;
 
 export function updateMovement(world: World, dt: number) {
   for (const p of world.players.values()) {
+    if (p.isChanneling) {
+      // Lock position in place — cancel any pending move target each tick
+      p.targetX = p.x;
+      p.targetY = p.y;
+      continue;
+    }
     moveToward(p, dt, p.speed);
   }
 

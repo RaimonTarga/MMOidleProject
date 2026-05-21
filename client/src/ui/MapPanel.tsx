@@ -1,5 +1,5 @@
 import { createPortal } from 'react-dom';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import type { PlayerState } from '@mmo-idle/shared';
 import type { ItemStats } from '@mmo-idle/shared';
 import {
@@ -9,37 +9,37 @@ import {
 import type { EssenceType } from '@mmo-idle/shared';
 import './map.css';
 
-const ROWS = 5;
-const COLS = 5;
+const GRID_ROWS  = 9;
+const GRID_COLS  = 9;
+const VIEWPORT   = 5;   // visible tiles per axis
+const MAX_VIEW_R = GRID_ROWS - VIEWPORT; // 4
+const MAX_VIEW_C = GRID_COLS - VIEWPORT; // 4
 
-// Handpicked tile colors for map readability — distinct from each other
-// while retaining the biome's visual identity.
 const BIOME_TILE_COLORS: Record<string, string> = {
-  clearing: '#2e5e2e',
-  forest:   '#1a4018',
-  mountain: '#3e3e50',
-  plains:   '#4e5e1a',
-  swamp:    '#1a3a0c',
-  cave:     '#1a1a24',
-  jungle:   '#0c3014',
-  tundra:   '#222e48',
-  desert:   '#5a4010',
-  volcanic: '#4a1010',
+  clearing:   '#2e5e2e',
+  forest:     '#1a4018',
+  mountain:   '#3e3e50',
+  plains:     '#4e5e1a',
+  swamp:      '#1a3a0c',
+  cave:       '#1a1a24',
+  jungle:     '#0c3014',
+  tundra:     '#222e48',
+  desert:     '#5a4010',
+  volcanic:   '#4a1010',
+  necropolis: '#1e0e2a',
+  abyss:      '#0a0612',
 };
 
 function tileColor(biomeGroup: string): string {
   return BIOME_TILE_COLORS[biomeGroup] ?? '#1a1a2e';
 }
-
 function hexDot(hex: number): string {
   return `#${hex.toString(16).padStart(6, '0')}`;
 }
-
 const STAT_LABELS: Record<string, string> = {
   attack: 'ATK', defense: 'DEF', maxHp: 'HP',
   hpRegen: 'REGEN', speed: 'SPD', attackRange: 'RNG', attackCooldown: 'CD',
 };
-
 function formatStat(stats: Partial<ItemStats>): string {
   return Object.entries(stats)
     .filter(([, v]) => v !== undefined)
@@ -47,15 +47,29 @@ function formatStat(stats: Partial<ItemStats>): string {
     .join(' · ');
 }
 
-// ── Sub-component: info panel shown when hovering a node ────────────────────
-
-interface NodeInfoProps {
-  nodeId: string;
-  player: PlayerState | null;
+// Parse "node-{r}-{c}" → [r, c] or null
+function parseNodeId(id: string): [number, number] | null {
+  const p = id.split('-');
+  if (p.length !== 3) return null;
+  const r = parseInt(p[1], 10);
+  const c = parseInt(p[2], 10);
+  return isNaN(r) || isNaN(c) ? null : [r, c];
 }
 
+// Clamp viewport so player node is visible
+function clampView(r: number, c: number): [number, number] {
+  return [
+    Math.max(0, Math.min(MAX_VIEW_R, r)),
+    Math.max(0, Math.min(MAX_VIEW_C, c)),
+  ];
+}
+
+// ── NodeInfo ─────────────────────────────────────────────────────────────────
+
+interface NodeInfoProps { nodeId: string; player: PlayerState | null; }
+
 function NodeInfo({ nodeId, player }: NodeInfoProps) {
-  const info = NODE_BIOMES[nodeId];
+  const info  = NODE_BIOMES[nodeId];
   const biome = info ? BIOME_DATABASE.get(info.biomeGroup) : null;
 
   const recipes = useMemo(() =>
@@ -65,25 +79,23 @@ function NodeInfo({ nodeId, player }: NodeInfoProps) {
     [info?.biomeGroup],
   );
 
-  if (!info || !biome) {
-    return <div className="map-info__empty">Unknown zone.</div>;
-  }
+  if (!info || !biome) return <div className="map-info__empty">Unknown zone.</div>;
 
   const { biomeGroup, biomeTier } = info;
-  const accentColor = tileColor(biomeGroup);
+  const isDungeon   = info.isDungeon === true;
+  const accentColor = isDungeon ? '#882222' : tileColor(biomeGroup);
 
   const monsterIds = biome.monsterPoolByTier[biomeTier] ?? [];
-  const monsters = monsterIds
-    .map(id => MONSTER_DATABASE.get(id))
-    .filter((m): m is NonNullable<typeof m> => m !== undefined);
+  const monsters   = monsterIds.map(id => MONSTER_DATABASE.get(id)).filter((m): m is NonNullable<typeof m> => m !== undefined);
 
-  const thresholds = BIOME_UNLOCK_THRESHOLDS[biomeGroup] ?? [];
-  const kills = player ? (player.biomeKills[biomeGroup] ?? 0) : 0;
+  const bossIds = isDungeon ? (biome.bossPoolByTier?.[biomeTier] ?? []) : [];
+  const bosses  = bossIds.map(id => MONSTER_DATABASE.get(id)).filter((m): m is NonNullable<typeof m> => m !== undefined);
+
+  const thresholds  = BIOME_UNLOCK_THRESHOLDS[biomeGroup] ?? [];
+  const kills       = player ? (player.biomeKills[biomeGroup] ?? 0) : 0;
   const unlockedTier = player ? (player.recipeProgress[biomeGroup] ?? 0) : 0;
+  const tierLabel   = biomeTier === 0 ? 'Starting Zone' : `Tier ${biomeTier}`;
 
-  const tierLabel = biomeTier === 0 ? 'Starting Zone' : `Tier ${biomeTier}`;
-
-  // Group recipes by requiredTier
   const recipesByTier = recipes.reduce<Record<number, typeof recipes>>((acc, r) => {
     (acc[r.requiredTier] ??= []).push(r);
     return acc;
@@ -91,13 +103,28 @@ function NodeInfo({ nodeId, player }: NodeInfoProps) {
 
   return (
     <div className="map-node-info">
-
       <div className="map-node-info__header" style={{ borderLeftColor: accentColor }}>
         <span className="map-node-info__name">{biome.name}</span>
         <span className="map-node-info__tier">{tierLabel}</span>
+        {isDungeon && <span className="map-node-info__dungeon-tag">DUNGEON</span>}
       </div>
 
-      {/* Monsters */}
+      {isDungeon && <div className="map-dungeon-warning">Enemies: ×2 HP · ×1.6 ATK</div>}
+
+      {bosses.length > 0 && (
+        <section className="map-info-section">
+          <div className="map-info-section__title map-info-section__title--boss">Boss</div>
+          {bosses.map(m => (
+            <div key={m.id} className="map-monster-row map-monster-row--boss">
+              <span className="map-monster-dot" style={{ background: hexDot(m.color) }} />
+              <span className="map-monster-name map-monster-name--boss">{m.name}</span>
+              <span className="map-monster-stats">HP {m.stats.hp} · ATK {m.stats.attack} · PLT {m.stats.plating}</span>
+              <span className="map-monster-drop" style={{ color: ESSENCE_COLORS[m.rewards.essenceType as EssenceType] }}>+{m.rewards.essence}</span>
+            </div>
+          ))}
+        </section>
+      )}
+
       {monsters.length > 0 && (
         <section className="map-info-section">
           <div className="map-info-section__title">Monsters</div>
@@ -105,21 +132,13 @@ function NodeInfo({ nodeId, player }: NodeInfoProps) {
             <div key={m.id} className="map-monster-row">
               <span className="map-monster-dot" style={{ background: hexDot(m.color) }} />
               <span className="map-monster-name">{m.name}</span>
-              <span className="map-monster-stats">
-                HP {m.stats.hp} · ATK {m.stats.attack} · PLT {m.stats.plating} · SPD {m.stats.speed}
-              </span>
-              <span
-                className="map-monster-drop"
-                style={{ color: ESSENCE_COLORS[m.rewards.essenceType as EssenceType] }}
-              >
-                +{m.rewards.essence}
-              </span>
+              <span className="map-monster-stats">HP {m.stats.hp} · ATK {m.stats.attack} · PLT {m.stats.plating} · SPD {m.stats.speed}</span>
+              <span className="map-monster-drop" style={{ color: ESSENCE_COLORS[m.rewards.essenceType as EssenceType] }}>+{m.rewards.essence}</span>
             </div>
           ))}
         </section>
       )}
 
-      {/* Crafting progress */}
       {thresholds.length > 0 && (
         <section className="map-info-section">
           <div className="map-info-section__title">
@@ -132,10 +151,7 @@ function NodeInfo({ nodeId, player }: NodeInfoProps) {
             return (
               <div key={tier} className="map-progress-row">
                 <div className="map-progress-bar-wrap">
-                  <div
-                    className={`map-progress-bar${unlocked ? ' map-progress-bar--done' : ''}`}
-                    style={{ width: `${pct}%` }}
-                  />
+                  <div className={`map-progress-bar${unlocked ? ' map-progress-bar--done' : ''}`} style={{ width: `${pct}%` }} />
                 </div>
                 <span className={`map-progress-label${unlocked ? ' map-progress-label--done' : ''}`}>
                   T{tier} {unlocked ? '✓' : `${kills}/${killsRequired}`}
@@ -146,7 +162,6 @@ function NodeInfo({ nodeId, player }: NodeInfoProps) {
         </section>
       )}
 
-      {/* Recipes */}
       {recipes.length > 0 && (
         <section className="map-info-section">
           <div className="map-info-section__title">Recipes</div>
@@ -157,11 +172,7 @@ function NodeInfo({ nodeId, player }: NodeInfoProps) {
             return (
               <div key={tier} className="map-recipe-group">
                 <div className={`map-recipe-group__header${tierUnlocked ? ' unlocked' : ''}`}>
-                  T{tier} — {tierUnlocked
-                    ? 'Unlocked'
-                    : threshold
-                      ? `${threshold.killsRequired} kills to unlock`
-                      : 'Locked'}
+                  T{tier} — {tierUnlocked ? 'Unlocked' : threshold ? `${threshold.killsRequired} kills to unlock` : 'Locked'}
                 </div>
                 {group.map(r => (
                   <div key={r.id} className={`map-recipe-row${tierUnlocked ? '' : ' locked'}`}>
@@ -169,9 +180,7 @@ function NodeInfo({ nodeId, player }: NodeInfoProps) {
                     <span className="map-recipe-stat">{formatStat(r.stats)}</span>
                     <span className="map-recipe-cost">
                       {(Object.entries(r.cost) as [EssenceType, number][]).map(([type, amt]) => (
-                        <span key={type} style={{ color: ESSENCE_COLORS[type], marginRight: 4 }}>
-                          {amt} {type}
-                        </span>
+                        <span key={type} style={{ color: ESSENCE_COLORS[type], marginRight: 4 }}>{amt} {type}</span>
                       ))}
                     </span>
                   </div>
@@ -182,69 +191,149 @@ function NodeInfo({ nodeId, player }: NodeInfoProps) {
         </section>
       )}
 
-      {monsters.length === 0 && recipes.length === 0 && (
+      {monsters.length === 0 && recipes.length === 0 && !isDungeon && (
         <div className="map-info__empty">No content in this zone yet.</div>
       )}
-
     </div>
   );
 }
 
-// ── Main component ───────────────────────────────────────────────────────────
+// ── Overview minimap ──────────────────────────────────────────────────────────
 
-interface Props {
-  player: PlayerState | null;
-  onClose: () => void;
+interface OverviewProps {
+  viewRow: number; viewCol: number;
+  playerNodeId: string | null;
 }
+
+function OverviewMap({ viewRow, viewCol, playerNodeId }: OverviewProps) {
+  const playerPos = playerNodeId ? parseNodeId(playerNodeId) : null;
+  return (
+    <div className="map-overview">
+      {Array.from({ length: GRID_ROWS * GRID_COLS }, (_, i) => {
+        const r = Math.floor(i / GRID_COLS);
+        const c = i % GRID_COLS;
+        const id   = `node-${r}-${c}`;
+        const info = NODE_BIOMES[id];
+        const inView  = r >= viewRow && r < viewRow + VIEWPORT && c >= viewCol && c < viewCol + VIEWPORT;
+        const isPlayer = playerPos?.[0] === r && playerPos?.[1] === c;
+        return (
+          <div
+            key={id}
+            className={[
+              'map-overview-cell',
+              inView   ? 'map-overview-cell--inview' : '',
+              isPlayer ? 'map-overview-cell--player' : '',
+              info?.isDungeon ? 'map-overview-cell--dungeon' : '',
+            ].filter(Boolean).join(' ')}
+            style={{ background: tileColor(info?.biomeGroup ?? '') }}
+          />
+        );
+      })}
+    </div>
+  );
+}
+
+// ── Main component ────────────────────────────────────────────────────────────
+
+interface Props { player: PlayerState | null; onClose: () => void; }
 
 export function MapPanel({ player, onClose }: Props) {
   const [hoveredId, setHoveredId] = useState<string | null>(null);
+
+  // Derive player grid position
+  const playerPos = player?.nodeId ? parseNodeId(player.nodeId) : null;
+
+  // Initialise viewport centered on player
+  const [viewRow, setViewRow] = useState<number>(() => {
+    const r = playerPos ? Math.max(0, Math.min(MAX_VIEW_R, playerPos[0] - Math.floor(VIEWPORT / 2))) : 2;
+    return r;
+  });
+  const [viewCol, setViewCol] = useState<number>(() => {
+    const c = playerPos ? Math.max(0, Math.min(MAX_VIEW_C, playerPos[1] - Math.floor(VIEWPORT / 2))) : 2;
+    return c;
+  });
+
+  // Re-center when player's node changes
+  useEffect(() => {
+    if (!playerPos) return;
+    const [pr, pc] = playerPos;
+    // Only re-center if player walked outside the current viewport
+    const outOfView = pr < viewRow || pr >= viewRow + VIEWPORT || pc < viewCol || pc >= viewCol + VIEWPORT;
+    if (outOfView) {
+      const [nr, nc] = clampView(pr - Math.floor(VIEWPORT / 2), pc - Math.floor(VIEWPORT / 2));
+      setViewRow(nr);
+      setViewCol(nc);
+    }
+  }, [player?.nodeId]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  function pan(dr: number, dc: number) {
+    setViewRow(r => Math.max(0, Math.min(MAX_VIEW_R, r + dr)));
+    setViewCol(c => Math.max(0, Math.min(MAX_VIEW_C, c + dc)));
+  }
 
   function handleOverlayClick(e: React.MouseEvent) {
     if (e.target === e.currentTarget) onClose();
   }
 
+  const visibleTiles = useMemo(() =>
+    Array.from({ length: VIEWPORT * VIEWPORT }, (_, i) => {
+      const r = viewRow + Math.floor(i / VIEWPORT);
+      const c = viewCol + (i % VIEWPORT);
+      return { r, c, id: `node-${r}-${c}` };
+    }),
+    [viewRow, viewCol],
+  );
+
   return createPortal(
     <div className="map-overlay" onClick={handleOverlayClick}>
-      <div className="map-panel">
+      <div className="map-panel map-panel--large">
 
         <div className="map-header">
           <span className="map-title">World Map</span>
+          <OverviewMap viewRow={viewRow} viewCol={viewCol} playerNodeId={player?.nodeId ?? null} />
           <button className="map-close" onClick={onClose}>✕</button>
         </div>
 
         <div className="map-body">
 
-          {/* 5×5 tile grid */}
-          <div className="map-grid">
-            {Array.from({ length: ROWS * COLS }, (_, i) => {
-              const r = Math.floor(i / COLS);
-              const c = i % COLS;
-              const id = `node-${r}-${c}`;
-              const info = NODE_BIOMES[id];
-              const biome = info ? BIOME_DATABASE.get(info.biomeGroup) : null;
-              const isCurrent = player?.nodeId === id;
-              const isHovered = hoveredId === id;
-              const tierBadge = info?.biomeTier === 0 ? '★' : `T${info?.biomeTier ?? '?'}`;
+          {/* Grid + nav arrows */}
+          <div className="map-grid-wrap">
+            <button className="map-nav map-nav--up"    onClick={() => pan(-1,  0)} disabled={viewRow === 0}>▲</button>
+            <button className="map-nav map-nav--left"  onClick={() => pan( 0, -1)} disabled={viewCol === 0}>◀</button>
 
-              return (
-                <div
-                  key={id}
-                  className={[
-                    'map-tile',
-                    isCurrent ? 'map-tile--current' : '',
-                    isHovered && !isCurrent ? 'map-tile--hovered' : '',
-                  ].filter(Boolean).join(' ')}
-                  style={{ background: tileColor(info?.biomeGroup ?? '') }}
-                  onMouseEnter={() => setHoveredId(id)}
-                  onMouseLeave={() => setHoveredId(null)}
-                >
-                  <span className="map-tile__tier">{tierBadge}</span>
-                  <span className="map-tile__name">{biome?.name ?? '?'}</span>
-                  {isCurrent && <span className="map-tile__you">▼ YOU</span>}
-                </div>
-              );
-            })}
+            <div className="map-grid">
+              {visibleTiles.map(({ r, c, id }) => {
+                const info      = NODE_BIOMES[id];
+                const biome     = info ? BIOME_DATABASE.get(info.biomeGroup) : null;
+                const isCurrent = player?.nodeId === id;
+                const isHovered = hoveredId === id;
+                const isDungeon = info?.isDungeon === true;
+                const tierBadge = info?.biomeTier === 0 ? '★' : `T${info?.biomeTier ?? '?'}`;
+
+                return (
+                  <div
+                    key={id}
+                    className={[
+                      'map-tile',
+                      isDungeon   ? 'map-tile--dungeon' : '',
+                      isCurrent   ? 'map-tile--current' : '',
+                      isHovered && !isCurrent ? 'map-tile--hovered' : '',
+                    ].filter(Boolean).join(' ')}
+                    style={{ background: tileColor(info?.biomeGroup ?? '') }}
+                    onMouseEnter={() => setHoveredId(id)}
+                    onMouseLeave={() => setHoveredId(null)}
+                  >
+                    <span className="map-tile__tier">{tierBadge}</span>
+                    <span className="map-tile__name">{biome?.name ?? '?'}</span>
+                    {isDungeon  && <span className="map-tile__dungeon-badge">DUNGEON</span>}
+                    {isCurrent  && <span className="map-tile__you">▼ YOU</span>}
+                  </div>
+                );
+              })}
+            </div>
+
+            <button className="map-nav map-nav--right" onClick={() => pan( 0,  1)} disabled={viewCol === MAX_VIEW_C}>▶</button>
+            <button className="map-nav map-nav--down"  onClick={() => pan( 1,  0)} disabled={viewRow === MAX_VIEW_R}>▼</button>
           </div>
 
           {/* Hover info */}

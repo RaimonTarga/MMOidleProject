@@ -16,7 +16,10 @@
       "Bash(pnpm --filter @mmo-idle/server exec tsc --noEmit)",
       "Bash(pnpm --filter @mmo-idle/shared exec tsc --noEmit)",
       "Bash(pnpm --filter @mmo-idle/client exec tsc --noEmit)",
-      "Bash(node -e \"const {SKILL_TREE} = require\\('./shared/src/index.ts'\\); console.log\\('Total nodes:', SKILL_TREE.size\\); console.log\\('Tier 0:', [...SKILL_TREE.values\\(\\)].filter\\(n=>n.tier===0\\).map\\(n=>n.id\\)\\); console.log\\('Tier 2:', [...SKILL_TREE.values\\(\\)].filter\\(n=>n.tier===2\\).map\\(n=>n.id\\)\\); console.log\\('Tier 4 sample:', [...SKILL_TREE.values\\(\\)].filter\\(n=>n.tier===4\\).slice\\(0,3\\).map\\(n=>n.id\\)\\);\")"
+      "Bash(node -e \"const {SKILL_TREE} = require\\('./shared/src/index.ts'\\); console.log\\('Total nodes:', SKILL_TREE.size\\); console.log\\('Tier 0:', [...SKILL_TREE.values\\(\\)].filter\\(n=>n.tier===0\\).map\\(n=>n.id\\)\\); console.log\\('Tier 2:', [...SKILL_TREE.values\\(\\)].filter\\(n=>n.tier===2\\).map\\(n=>n.id\\)\\); console.log\\('Tier 4 sample:', [...SKILL_TREE.values\\(\\)].filter\\(n=>n.tier===4\\).slice\\(0,3\\).map\\(n=>n.id\\)\\);\")",
+      "Bash(node *)",
+      "Bash(pnpm --filter @mmo-idle/server tsc --noEmit)",
+      "Bash(pnpm --filter shared exec tsc --noEmit)"
     ]
   }
 }

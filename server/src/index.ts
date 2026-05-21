@@ -15,7 +15,7 @@ import type {
   EquipmentSlot,
 } from '@mmo-idle/shared';
 import { emptyEquipment } from '@mmo-idle/shared';
-import { makeCombatState } from './systems/combatState';
+import { makeCombatState, setCounter } from './systems/combatState';
 import { initEnergyArchetype } from './systems/energyPrototype';
 import { initCooldownArchetype } from './systems/cooldownPrototype';
 import { initReloadArchetype } from './systems/reloadPrototype';
@@ -156,6 +156,7 @@ io.on('connection', (socket) => {
     selectedRange:        null,
     cadenceCount:         0,
     cadenceThreshold:     0,
+    cadenceEmpoweredArmed: false,
     ammoCount:            0,
     ammoMax:              0,
     executionReady:       false,
@@ -163,9 +164,15 @@ io.on('connection', (socket) => {
     energyCount:          0,
     empoweredReady:       false,
     targetDotStacks:      0,
+    targetChillStacks:    0,
     sacredBuffActive:     false,
     sacredBuffPct:        0,
+    isChanneling:         false,
+    channelingPct:        0,
     activeBuffs:          [],
+    questProgress:        {},
+    progressionXP:        0,
+    progressionLevel:     0,
   };
 
   // Auto-equip the starter weapon so new players immediately benefit from it
@@ -179,6 +186,7 @@ io.on('connection', (socket) => {
   socket.on('player:move', ({ x, y }) => {
     const p = world.players.get(socket.id);
     if (!p) return;
+    if (p.isChanneling) return; // position locked during Channeled Beam
     p.targetX = x;
     p.targetY = y;
   });
@@ -193,6 +201,14 @@ io.on('connection', (socket) => {
     const p = world.players.get(socket.id);
     if (!p) return;
     unlockSkill(p, skillId);
+    // recalculatePlayerStats (called inside unlockSkill) always resets
+    // player.cadenceCount to 0 for cadence players — including when picking a
+    // T2 range node that doesn't change the threshold. Mirror that reset into
+    // the authoritative CombatState counter so display and combat logic agree.
+    if (p.combatArchetype === 'cadence') {
+      const cs = world.playerCombatState.get(socket.id);
+      if (cs) setCounter(cs, 'cadenceCount', 0);
+    }
   });
 
   socket.on('inventory:equipItem', (definitionId) => {

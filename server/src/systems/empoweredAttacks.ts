@@ -1,3 +1,4 @@
+import type { PlayerState } from '@mmo-idle/shared';
 import type { CombatState } from './combatState';
 import { registerCombatListener } from './combatPipeline';
 import { isClassActive } from './classMechanics';
@@ -41,6 +42,18 @@ export interface EmpoweredMultiplierOptions {
    * class mechanics because it uses selectedClass as the source of truth.
    */
   attackerClass?: string;
+  /**
+   * If set, reads the base multiplier from player.passives[passiveKey] at runtime
+   * instead of using the static `multiplier` argument.
+   * Falls back to the static argument when the passive is absent or zero.
+   */
+  passiveKey?: string;
+  /**
+   * If set alongside passiveKey, adds player.passives[passiveAddKey] to the
+   * effective multiplier. Useful when a tier-3 node stacks an additive bonus
+   * on top of the frame-set base (e.g. cadence.damage-mult-add).
+   */
+  passiveAddKey?: string;
 }
 
 /**
@@ -72,15 +85,39 @@ export function registerEmpoweredMultiplier(
 
     if (!consumeEmpoweredAttack(state)) return;
 
+    // Some T4 mechanics suppress the standard multiplier but still need the
+    // empoweredAttack metadata set so their own onHit handlers can detect the trigger.
+    if (ctx.metadata['suppressEmpoweredMult']) {
+      ctx.metadata['empoweredAttack']     = true;
+      ctx.metadata['empoweredMultiplier'] = 1;
+      ctx.metadata['empoweredBonus']      = 0;
+      return;
+    }
+
+    // Resolve effective multiplier: use passives at runtime when passiveKey is given.
+    let effectiveMult = multiplier;
+    if (options.passiveKey && ctx.attackerType === 'player') {
+      const player = world.players.get(ctx.attacker.id) as PlayerState | undefined;
+      if (player) {
+        const base = player.passives[options.passiveKey];
+        if (base !== undefined && base > 0) {
+          effectiveMult = base;
+          if (options.passiveAddKey) {
+            effectiveMult += player.passives[options.passiveAddKey] ?? 0;
+          }
+        }
+      }
+    }
+
     const base     = ctx.damage;
-    ctx.damage     = Math.floor(base * multiplier);
+    ctx.damage     = Math.floor(base * effectiveMult);
 
     ctx.metadata['empoweredAttack']    = true;
-    ctx.metadata['empoweredMultiplier'] = multiplier;
+    ctx.metadata['empoweredMultiplier'] = effectiveMult;
     ctx.metadata['empoweredBonus']      = ctx.damage - base;
 
     console.log(
-      `[Empowered] ${ctx.attacker.id}: ${multiplier}x hit on ${ctx.defender.id} — ` +
+      `[Empowered] ${ctx.attacker.id}: ${effectiveMult}x hit on ${ctx.defender.id} — ` +
       `${base} → ${ctx.damage} dmg (+${ctx.damage - base})`,
     );
   });

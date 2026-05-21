@@ -74,12 +74,17 @@ export interface SkillNode {
 export const SKILL_TREE: Map<string, SkillNode> = new Map([
 
   // ── Tier 0: Class roots ────────────────────────────────────────────────────
+  //
+  // Each root establishes the class mechanic AND a baseline lean on the
+  // heavy ↔ light spectrum. Order from heaviest to lightest:
+  //   cooldown > dot > cadence > reload > energy
+  // Frame choices at tier 1 then amplify this direction, scaled per-class.
 
   ['cadence-root', {
     id: 'cadence-root', name: 'Cadence', tier: 0,
     classId: 'cadence-root', subVariantId: null,
     parent: null, children: [],
-    description: 'Find the rhythm of battle. Every few hits your attack surges with accumulated force.',
+    description: 'Find the rhythm of battle. Every few hits your attack surges with accumulated force. A middle-ground fighter — balanced between mobility and durability.',
     cost: 1, statEffects: { attack: 3 },
   }],
 
@@ -87,186 +92,201 @@ export const SKILL_TREE: Map<string, SkillNode> = new Map([
     id: 'cooldown-root', name: 'Cooldown', tier: 0,
     classId: 'cooldown-root', subVariantId: null,
     parent: null, children: [],
-    description: 'Patience is power. Prepare a devastating strike that triggers on a set cycle.',
-    cost: 1, statEffects: { attack: 4 },
+    description: 'Patience is power. Prepare a devastating strike on a set cycle. Your heavy bearing brings natural durability and recovery.',
+    cost: 1, statEffects: { attack: 4, maxHp: 15, plating: 3, hpRegen: 2, speed: -10 },
   }],
 
   ['reload-root', {
     id: 'reload-root', name: 'Reload', tier: 0,
     classId: 'reload-root', subVariantId: null,
     parent: null, children: [],
-    description: 'Unleash a rapid clip of attacks, then reload. High burst with a built-in pause.',
-    cost: 1, statEffects: { attackCooldown: -800 },
+    description: 'Unleash a rapid clip of attacks, then reload. High burst with a built-in pause. Your light frame keeps you quick on your feet.',
+    cost: 1, statEffects: { attackCooldown: -800, speed: 8, maxHp: -5 },
   }],
 
   ['energy-root', {
     id: 'energy-root', name: 'Energy', tier: 0,
     classId: 'energy-root', subVariantId: null,
     parent: null, children: [],
-    description: 'Channel the force of each blow into a building surge of power.',
-    cost: 1, statEffects: { attack: 2 },
+    description: 'Channel the force of each blow into a building surge of power. Your light frame moves with effortless speed.',
+    cost: 1, statEffects: { attack: 2, speed: 12, attackCooldown: -150, maxHp: -10 },
   }],
 
   ['dot-root', {
     id: 'dot-root', name: 'DoT', tier: 0,
     classId: 'dot-root', subVariantId: null,
     parent: null, children: [],
-    description: 'Your strikes leave lingering wounds. Stack the pain until nothing survives.',
-    cost: 1, statEffects: { attack: 2 },
+    description: 'Your strikes leave lingering wounds. Stack the pain until nothing survives. A durable attacker who wins through attrition.',
+    cost: 1, statEffects: { attack: 2, maxHp: 10, plating: 2, hpRegen: 1 },
   }],
 
   // ── Tier 1: Sub-variants ───────────────────────────────────────────────────
   //
-  // Three styles available for every class. Immediate stat effects reflect the
-  // thematic identity — light trades HP for speed, heavy trades speed for bulk.
+  // Frame choice amplifies the class's heaviness identity. Heavier classes get
+  // larger heavy bonuses and steeper light penalties, and vice versa.
   //
-  // cadence ──────────────────────────────────────────────────────────────────
+  // cadence — neutral midpoint class ─────────────────────────────────────────
 
   ['cadence-light', {
-    id: 'cadence-light', name: 'Light', tier: 1,
+    id: 'cadence-light', name: 'Light Frame', tier: 1,
     classId: 'cadence-root', subVariantId: 'light',
     parent: 'cadence-root', children: [],
-    description: 'Swift and agile. Sacrifices resilience for speed and attack pace.',
-    cost: 1, statEffects: { attackCooldown: -300, maxHp: -20, speed: 15 },
+    description: 'Swift and agile. Sacrifices resilience for speed and attack pace. Empowered finisher triggers every 4 hits at 1.5× — frequency over raw power.',
+    cost: 1, statEffects: { speed: 15, maxHp: -20, attackCooldown: -300 },
+    mechanicEffects: { 'cadence.empowered-threshold': 4, 'cadence.empowered-mult': 1.5 } as Record<string, number>,
   }],
   ['cadence-balanced', {
-    id: 'cadence-balanced', name: 'Balanced', tier: 1,
+    id: 'cadence-balanced', name: 'Balanced Frame', tier: 1,
     classId: 'cadence-root', subVariantId: 'balanced',
     parent: 'cadence-root', children: [],
-    description: 'A measured approach. Modest gains across the board.',
-    cost: 1, statEffects: { attack: 3, maxHp: 10 },
+    description: 'A measured approach. Modest gains across the board without committing to an extreme. Empowered finisher every 5 hits at 2×.',
+    cost: 1, statEffects: { attack: 2, maxHp: 10, hpRegen: 1 },
+    mechanicEffects: { 'cadence.empowered-threshold': 5, 'cadence.empowered-mult': 2.0 } as Record<string, number>,
   }],
   ['cadence-heavy', {
-    id: 'cadence-heavy', name: 'Heavy', tier: 1,
+    id: 'cadence-heavy', name: 'Heavy Frame', tier: 1,
     classId: 'cadence-root', subVariantId: 'heavy',
     parent: 'cadence-root', children: [],
-    description: 'Endurance over speed. High survivability at the cost of attack pace.',
-    cost: 1, statEffects: { maxHp: 35, plating: 5, attackCooldown: 300, speed: -15 },
+    description: 'Endurance over speed. Significant bulk and recovery at the cost of mobility and attack pace. Empowered finisher every 6 hits at 4× — patience rewarded with power.',
+    cost: 1, statEffects: { maxHp: 35, plating: 6, hpRegen: 4, speed: -18, attackCooldown: 250 },
+    mechanicEffects: { 'cadence.empowered-threshold': 6, 'cadence.empowered-mult': 4.0 } as Record<string, number>,
   }],
 
-  // cooldown ─────────────────────────────────────────────────────────────────
+  // cooldown — heaviest class ────────────────────────────────────────────────
 
   ['cooldown-light', {
-    id: 'cooldown-light', name: 'Light', tier: 1,
+    id: 'cooldown-light', name: 'Light Frame', tier: 1,
     classId: 'cooldown-root', subVariantId: 'light',
     parent: 'cooldown-root', children: [],
-    description: 'Swift and agile. Sacrifices resilience for speed and attack pace.',
-    cost: 1, statEffects: { attackCooldown: -300, maxHp: -20, speed: 15 },
+    description: 'An unusual choice for such a slow mechanic — trading away armor for speed creates a glass cannon who hits hard but can barely survive a counterattack. Execution recharges in 5 s at 1.5×.',
+    cost: 1, statEffects: { speed: 22, maxHp: -30, plating: -4, attackCooldown: -300 },
+    mechanicEffects: { 'cooldown.empowered-cd-ms': 5000, 'cooldown.empowered-mult': 1.5 } as Record<string, number>,
   }],
   ['cooldown-balanced', {
-    id: 'cooldown-balanced', name: 'Balanced', tier: 1,
+    id: 'cooldown-balanced', name: 'Balanced Frame', tier: 1,
     classId: 'cooldown-root', subVariantId: 'balanced',
     parent: 'cooldown-root', children: [],
-    description: 'A measured approach. Modest gains across the board.',
-    cost: 1, statEffects: { attack: 3, maxHp: 10 },
+    description: 'A sturdy foundation. Meaningful HP and armor gains tempered by reduced mobility. Execution recharges in 7 s at 2×.',
+    cost: 1, statEffects: { maxHp: 20, plating: 4, hpRegen: 3, speed: -8 },
+    mechanicEffects: { 'cooldown.empowered-cd-ms': 7000, 'cooldown.empowered-mult': 2.0 } as Record<string, number>,
   }],
   ['cooldown-heavy', {
-    id: 'cooldown-heavy', name: 'Heavy', tier: 1,
+    id: 'cooldown-heavy', name: 'Heavy Frame', tier: 1,
     classId: 'cooldown-root', subVariantId: 'heavy',
     parent: 'cooldown-root', children: [],
-    description: 'Endurance over speed. High survivability at the cost of attack pace.',
-    cost: 1, statEffects: { maxHp: 35, plating: 5, attackCooldown: 300, speed: -15 },
+    description: 'Fortress of patience. Extreme resilience and regeneration make you nearly unkillable — but you move like a boulder and attack even slower. Execution recharges in 9 s at 3×.',
+    cost: 1, statEffects: { maxHp: 55, plating: 10, hpRegen: 6, speed: -30, attackCooldown: 400 },
+    mechanicEffects: { 'cooldown.empowered-cd-ms': 9000, 'cooldown.empowered-mult': 3.0 } as Record<string, number>,
   }],
 
-  // reload ───────────────────────────────────────────────────────────────────
-
-  ['reload-light', {
-    id: 'reload-light', name: 'Light', tier: 1,
-    classId: 'reload-root', subVariantId: 'light',
-    parent: 'reload-root', children: [],
-    description: 'Swift and agile. Sacrifices resilience for speed and attack pace.',
-    cost: 1, statEffects: { attackCooldown: -300, maxHp: -20, speed: 15 },
-  }],
-  ['reload-balanced', {
-    id: 'reload-balanced', name: 'Balanced', tier: 1,
-    classId: 'reload-root', subVariantId: 'balanced',
-    parent: 'reload-root', children: [],
-    description: 'A measured approach. Modest gains across the board.',
-    cost: 1, statEffects: { attack: 3, maxHp: 10 },
-  }],
-  ['reload-heavy', {
-    id: 'reload-heavy', name: 'Heavy', tier: 1,
-    classId: 'reload-root', subVariantId: 'heavy',
-    parent: 'reload-root', children: [],
-    description: 'Endurance over speed. High survivability at the cost of attack pace.',
-    cost: 1, statEffects: { maxHp: 35, plating: 5, attackCooldown: 300, speed: -15 },
-  }],
-
-  // energy ───────────────────────────────────────────────────────────────────
-
-  ['energy-light', {
-    id: 'energy-light', name: 'Light', tier: 1,
-    classId: 'energy-root', subVariantId: 'light',
-    parent: 'energy-root', children: [],
-    description: 'Swift and agile. Sacrifices resilience for speed and attack pace.',
-    cost: 1, statEffects: { attackCooldown: -300, maxHp: -20, speed: 15 },
-  }],
-  ['energy-balanced', {
-    id: 'energy-balanced', name: 'Balanced', tier: 1,
-    classId: 'energy-root', subVariantId: 'balanced',
-    parent: 'energy-root', children: [],
-    description: 'A measured approach. Modest gains across the board.',
-    cost: 1, statEffects: { attack: 3, maxHp: 10 },
-  }],
-  ['energy-heavy', {
-    id: 'energy-heavy', name: 'Heavy', tier: 1,
-    classId: 'energy-root', subVariantId: 'heavy',
-    parent: 'energy-root', children: [],
-    description: 'Endurance over speed. High survivability at the cost of attack pace.',
-    cost: 1, statEffects: { maxHp: 35, plating: 5, attackCooldown: 300, speed: -15 },
-  }],
-
-  // dot ──────────────────────────────────────────────────────────────────────
+  // dot — heavy-ish class ────────────────────────────────────────────────────
 
   ['dot-light', {
-    id: 'dot-light', name: 'Light', tier: 1,
+    id: 'dot-light', name: 'Light Frame', tier: 1,
     classId: 'dot-root', subVariantId: 'light',
     parent: 'dot-root', children: [],
-    description: 'Swift and agile. Sacrifices resilience for speed and attack pace.',
-    cost: 1, statEffects: { attackCooldown: -300, maxHp: -20, speed: 15 },
+    description: 'Apply wounds quickly and stay mobile. Up to 8 stacks at 2 damage each — ramps fast, bleeds steadily.',
+    cost: 1, statEffects: { speed: 18, maxHp: -25, plating: -2, attackCooldown: -300 },
+    mechanicEffects: { 'dot.max-stacks': 8, 'dot.damage-per-stack': 2 } as Record<string, number>,
   }],
   ['dot-balanced', {
-    id: 'dot-balanced', name: 'Balanced', tier: 1,
+    id: 'dot-balanced', name: 'Balanced Frame', tier: 1,
     classId: 'dot-root', subVariantId: 'balanced',
     parent: 'dot-root', children: [],
-    description: 'A measured approach. Modest gains across the board.',
-    cost: 1, statEffects: { attack: 3, maxHp: 10 },
+    description: 'A deliberate fighter. Enough durability to let your damage-over-time do its work. Up to 6 stacks at 3 damage each.',
+    cost: 1, statEffects: { maxHp: 15, plating: 3, hpRegen: 2, speed: -5 },
+    mechanicEffects: { 'dot.max-stacks': 6, 'dot.damage-per-stack': 3 } as Record<string, number>,
   }],
   ['dot-heavy', {
-    id: 'dot-heavy', name: 'Heavy', tier: 1,
+    id: 'dot-heavy', name: 'Heavy Frame', tier: 1,
     classId: 'dot-root', subVariantId: 'heavy',
     parent: 'dot-root', children: [],
-    description: 'Endurance over speed. High survivability at the cost of attack pace.',
-    cost: 1, statEffects: { maxHp: 35, plating: 5, attackCooldown: 300, speed: -15 },
+    description: 'A war of attrition. Heavy plating and strong recovery let you outlast anything. Up to 3 stacks at 7 damage each — fewer wounds, but each one runs deep.',
+    cost: 1, statEffects: { maxHp: 45, plating: 8, hpRegen: 5, speed: -25, attackCooldown: 350 },
+    mechanicEffects: { 'dot.max-stacks': 3, 'dot.damage-per-stack': 7 } as Record<string, number>,
+  }],
+
+  // reload — light-ish class ─────────────────────────────────────────────────
+
+  ['reload-light', {
+    id: 'reload-light', name: 'Light Frame', tier: 1,
+    classId: 'reload-root', subVariantId: 'light',
+    parent: 'reload-root', children: [],
+    description: 'All-in on burst. Small clip (5 rounds) but reloads in 1.5 s — maximum uptime, minimal downtime.',
+    cost: 1, statEffects: { speed: 15, maxHp: -15, attackCooldown: -200 },
+    mechanicEffects: { 'reload.max-ammo': 5, 'reload.reload-time-ms': 1500 } as Record<string, number>,
+  }],
+  ['reload-balanced', {
+    id: 'reload-balanced', name: 'Balanced Frame', tier: 1,
+    classId: 'reload-root', subVariantId: 'balanced',
+    parent: 'reload-root', children: [],
+    description: 'A steady burst fighter. Standard 8-round clip with a 2.5 s reload — tempo and damage in balance.',
+    cost: 1, statEffects: { attack: 2, maxHp: 5, speed: 5, hpRegen: 1 },
+    mechanicEffects: { 'reload.max-ammo': 8, 'reload.reload-time-ms': 2500 } as Record<string, number>,
+  }],
+  ['reload-heavy', {
+    id: 'reload-heavy', name: 'Heavy Frame', tier: 1,
+    classId: 'reload-root', subVariantId: 'heavy',
+    parent: 'reload-root', children: [],
+    description: 'Slower but harder to put down. Large 12-round clip for sustained bursting, but reloading takes 4 s — plan your downtime.',
+    cost: 1, statEffects: { maxHp: 22, plating: 4, hpRegen: 2, speed: -12, attackCooldown: 200 },
+    mechanicEffects: { 'reload.max-ammo': 12, 'reload.reload-time-ms': 4000 } as Record<string, number>,
+  }],
+
+  // energy — lightest class ──────────────────────────────────────────────────
+
+  ['energy-light', {
+    id: 'energy-light', name: 'Light Frame', tier: 1,
+    classId: 'energy-root', subVariantId: 'light',
+    parent: 'energy-root', children: [],
+    description: 'Pure momentum. Blazing speed and rapid attacks at the cost of any meaningful defense. Gains 20 energy per hit, empowered at 1.5× — fires often.',
+    cost: 1, statEffects: { speed: 20, maxHp: -20, attackCooldown: -350 },
+    mechanicEffects: { 'energy.per-hit': 20, 'energy.empowered-mult': 1.5 } as Record<string, number>,
+  }],
+  ['energy-balanced', {
+    id: 'energy-balanced', name: 'Balanced Frame', tier: 1,
+    classId: 'energy-root', subVariantId: 'balanced',
+    parent: 'energy-root', children: [],
+    description: 'Fast and capable. A bit of extra punch and movement without sacrificing too much. Gains 14 energy per hit, empowered at 2×.',
+    cost: 1, statEffects: { attack: 2, speed: 8, attackCooldown: -150, maxHp: -5 },
+    mechanicEffects: { 'energy.per-hit': 14, 'energy.empowered-mult': 2.0 } as Record<string, number>,
+  }],
+  ['energy-heavy', {
+    id: 'energy-heavy', name: 'Heavy Frame', tier: 1,
+    classId: 'energy-root', subVariantId: 'heavy',
+    parent: 'energy-root', children: [],
+    description: 'Measured power. A light class wearing heavier armor — modest durability gains without fully abandoning speed. Gains 10 energy per hit, empowered at 6× — builds slowly, hits very hard.',
+    cost: 1, statEffects: { maxHp: 18, plating: 2, hpRegen: 2, speed: -8, attackCooldown: 100 },
+    mechanicEffects: { 'energy.per-hit': 10, 'energy.empowered-mult': 6.0 } as Record<string, number>,
   }],
 
   // ── Tier 2: Universal range nodes ─────────────────────────────────────────
   //
-  // Identical choices offered to ALL classes and sub-variants.
-  // Also adjusts related stats to reflect the combat style shift.
+  // Identical base node for ALL classes and sub-variants. Additional class-
+  // specific bonuses for range-close are applied in recalculatePlayerStats.
 
   ['range-close', {
-    id: 'range-close', name: 'Close', tier: 2,
+    id: 'range-close', name: 'Close Range', tier: 2,
     classId: null, subVariantId: null,
     parent: null, children: [],
-    description: 'Fight at point-blank range. Reduced reach is offset by higher damage and faster attacks.',
-    cost: 1, statEffects: { attackRange: -20, attack: 4, attackCooldown: -150 },
+    description: 'Fight at point-blank range. Reduced reach is offset by faster attacks, more damage, and the fortification that comes with fighting in the thick of it.',
+    cost: 1, statEffects: { attackRange: -20, attack: 3, attackCooldown: -200, plating: 2, damageReduction: 0.04, maxHp: 8 },
   }],
 
   ['range-mid', {
-    id: 'range-mid', name: 'Mid', tier: 2,
+    id: 'range-mid', name: 'Mid Range', tier: 2,
     classId: null, subVariantId: null,
     parent: null, children: [],
-    description: 'The standard fighting distance. No stat tradeoffs — a neutral baseline.',
+    description: 'The standard fighting distance. No tradeoffs — a neutral baseline.',
     cost: 1, statEffects: {},
   }],
 
   ['range-far', {
-    id: 'range-far', name: 'Far', tier: 2,
+    id: 'range-far', name: 'Far Range', tier: 2,
     classId: null, subVariantId: null,
     parent: null, children: [],
-    description: 'Strike from a safe distance. Greater reach at the cost of raw damage and speed.',
-    cost: 1, statEffects: { attackRange: 60, attack: -3, attackCooldown: 200 },
+    description: 'Strike from a safe distance. Extended reach at a meaningful cost to raw damage and attack speed.',
+    cost: 1, statEffects: { attackRange: 60, attack: -5, attackCooldown: 300 },
   }],
 
   // ── Tier 3: Path modifiers (cadence-light — fully implemented) ────────────
@@ -362,13 +382,338 @@ export const SKILL_TREE: Map<string, SkillNode> = new Map([
     mechanicEffects: { 'cadence.charge-buildup': 0.30 } as Record<string, number>,
   }],
 
+  // ── Tier 3: Cooldown — Light ──────────────────────────────────────────────────
+
+  ['cooldown-light-t3-a', {
+    id: 'cooldown-light-t3-a', name: 'Overdrive', tier: 3,
+    classId: 'cooldown-root', subVariantId: 'light',
+    parent: 'cooldown-light', children: [],
+    description: 'Your execution strikes no harder than usual — instead, it triggers a burst of speed: 50% faster attacks for 2.5 s. Roughly half-uptime by default. Pending balance.',
+    cost: 1, statEffects: {},
+    mechanicEffects: { 'cooldown.overdrive': 1 } as Record<string, number>,
+  }],
+  ['cooldown-light-t3-b', {
+    id: 'cooldown-light-t3-b', name: 'Eternal Cycle', tier: 3,
+    classId: 'cooldown-root', subVariantId: 'light',
+    parent: 'cooldown-light', children: [],
+    description: 'Your execution cycle stretches to 10 s, but each attack builds charge that increases attack damage while active (falls off after 10 s idle). The execution deals no inherent multiplier — instead it deals attack × stacks, then resets the charge.',
+    cost: 1, statEffects: {},
+    mechanicEffects: { 'cooldown.eternal-cycle': 1, 'cooldown.empowered-cd-ms': 5000 } as Record<string, number>,
+  }],
+  ['cooldown-light-t3-c', {
+    id: 'cooldown-light-t3-c', name: 'Temporal Extension', tier: 3,
+    classId: 'cooldown-root', subVariantId: 'light',
+    parent: 'cooldown-light', children: [],
+    description: 'Your execution deals no extra damage. Instead it grants a buff that adds flat on-hit damage to every attack. Each attack extends the buff by 1 second — keep fighting to keep it alive.',
+    cost: 1, statEffects: {},
+    mechanicEffects: { 'cooldown.temporal-extension': 1 } as Record<string, number>,
+  }],
+
+  // ── Tier 3: Cooldown — Balanced ───────────────────────────────────────────────
+
+  ['cooldown-balanced-t3-a', {
+    id: 'cooldown-balanced-t3-a', name: 'Acceleration', tier: 3,
+    classId: 'cooldown-root', subVariantId: 'balanced',
+    parent: 'cooldown-balanced', children: [],
+    description: 'Each attack shaves 1 second off your execution cooldown. Your timing still matters — the reduction is real, not a reset.',
+    cost: 1, statEffects: {},
+    mechanicEffects: { 'cooldown.acceleration-ms': 1000 } as Record<string, number>,
+  }],
+  ['cooldown-balanced-t3-b', {
+    id: 'cooldown-balanced-t3-b', name: 'Battery', tier: 3,
+    classId: 'cooldown-root', subVariantId: 'balanced',
+    parent: 'cooldown-balanced', children: [],
+    description: 'Every second your execution cooldown ticks down, you gain a stack of accumulated power that increases attack damage. The execution spends all stacks.',
+    cost: 1, statEffects: {},
+    mechanicEffects: { 'cooldown.battery': 1 } as Record<string, number>,
+  }],
+  ['cooldown-balanced-t3-c', {
+    id: 'cooldown-balanced-t3-c', name: 'Alignment', tier: 3,
+    classId: 'cooldown-root', subVariantId: 'balanced',
+    parent: 'cooldown-balanced', children: [],
+    description: 'After your execution fires, a 2-second attack speed surge follows (+50%). When that window closes, the remaining cooldown is halved — creating a fast-slow-fast rhythm unique to this path.',
+    cost: 1, statEffects: {},
+    mechanicEffects: { 'cooldown.alignment': 1 } as Record<string, number>,
+  }],
+
+  // ── Tier 3: Reload — Light ───────────────────────────────────────────────────
+
+  ['reload-light-t3-a', {
+    id: 'reload-light-t3-a', name: 'Exploding Clip', tier: 3,
+    classId: 'reload-root', subVariantId: 'light',
+    parent: 'reload-light', children: [],
+    description: 'The last bullet in every clip explodes outward for 3× damage. A high spike on an already aggressive rhythm.',
+    cost: 1, statEffects: {},
+    mechanicEffects: { 'reload.exploding-clip': 1 } as Record<string, number>,
+  }],
+  ['reload-light-t3-b', {
+    id: 'reload-light-t3-b', name: 'Preemptive Strike', tier: 3,
+    classId: 'reload-root', subVariantId: 'light',
+    parent: 'reload-light', children: [],
+    description: 'The first bullet in every fresh clip is loaded with extra force — dealing 2.5× damage before the fight has even settled in.',
+    cost: 1, statEffects: {},
+    mechanicEffects: { 'reload.preemptive-strike': 1 } as Record<string, number>,
+  }],
+  ['reload-light-t3-c', {
+    id: 'reload-light-t3-c', name: 'High Powered', tier: 3,
+    classId: 'reload-root', subVariantId: 'light',
+    parent: 'reload-light', children: [],
+    description: 'Tight 3-round clip, but each empty chamber adds 50% more damage to the next shot. Shot 1 is normal. Shot 2 hits 50% harder. Shot 3 hits 100% harder.',
+    cost: 1, statEffects: {},
+    // reload.max-ammo is additive: light frame gives +5, this node gives -2 → net 3 rounds.
+    mechanicEffects: { 'reload.high-powered': 1, 'reload.max-ammo': -2 } as Record<string, number>,
+  }],
+
+  // ── Tier 3: Reload — Balanced ─────────────────────────────────────────────────
+
+  ['reload-balanced-t3-a', {
+    id: 'reload-balanced-t3-a', name: 'Death Mark', tier: 3,
+    classId: 'reload-root', subVariantId: 'balanced',
+    parent: 'reload-balanced', children: [],
+    description: 'Each attack applies a Death Mark stack to the target (up to 10). Reloading detonates all stacks on the current target for attack × stacks × 0.5 bonus damage.',
+    cost: 1, statEffects: {},
+    mechanicEffects: { 'reload.death-mark': 1 } as Record<string, number>,
+  }],
+  ['reload-balanced-t3-b', {
+    id: 'reload-balanced-t3-b', name: 'Continuous Firing', tier: 3,
+    classId: 'reload-root', subVariantId: 'balanced',
+    parent: 'reload-balanced', children: [],
+    description: 'Each attack builds up to 4 reload speed stacks (200 ms each, reset on reload). Reloading also grants a 30% attack damage buff for 3 s.',
+    cost: 1, statEffects: {},
+    mechanicEffects: { 'reload.cont-firing': 1 } as Record<string, number>,
+  }],
+  ['reload-balanced-t3-c', {
+    id: 'reload-balanced-t3-c', name: 'Finishing Strike', tier: 3,
+    classId: 'reload-root', subVariantId: 'balanced',
+    parent: 'reload-balanced', children: [],
+    description: 'The last bullet in every clip scales with the target\'s missing HP. 1.5× at full health, rising to 3× at 90% missing. An execution mechanic that rewards letting enemies bleed low.',
+    cost: 1, statEffects: {},
+    mechanicEffects: { 'reload.finishing-strike': 1 } as Record<string, number>,
+  }],
+
+  // ── Tier 3: Reload — Heavy ────────────────────────────────────────────────────
+
+  ['reload-heavy-t3-a', {
+    id: 'reload-heavy-t3-a', name: 'Momentum', tier: 3,
+    classId: 'reload-root', subVariantId: 'heavy',
+    parent: 'reload-heavy', children: [],
+    description: 'Each attack builds momentum (up to 8 stacks): +5% attack damage and +3% attack speed per stack. Reloading resets everything.',
+    cost: 1, statEffects: {},
+    mechanicEffects: { 'reload.momentum': 1 } as Record<string, number>,
+  }],
+  ['reload-heavy-t3-b', {
+    id: 'reload-heavy-t3-b', name: 'Heat', tier: 3,
+    classId: 'reload-root', subVariantId: 'heavy',
+    parent: 'reload-heavy', children: [],
+    description: 'Attacks deal 30% less damage but apply Heat stacks (up to clip size) that tick 15% attack damage per second per stack. Reloading detonates all stacks for attack × stacks × 0.5 bonus damage.',
+    cost: 1, statEffects: {},
+    mechanicEffects: { 'reload.heat': 1 } as Record<string, number>,
+  }],
+  ['reload-heavy-t3-c', {
+    id: 'reload-heavy-t3-c', name: 'Burst', tier: 3,
+    classId: 'reload-root', subVariantId: 'heavy',
+    parent: 'reload-heavy', children: [],
+    description: 'After every reload, gain damage stacks equal to clip size (+15% per stack). Each attack converts one into a speed stack instead. Both bonuses expire when all stacks are spent.',
+    cost: 1, statEffects: {},
+    mechanicEffects: { 'reload.burst': 1 } as Record<string, number>,
+  }],
+
+  // ── Tier 3: Cooldown — Heavy ──────────────────────────────────────────────────
+
+  ['cooldown-heavy-t3-a', {
+    id: 'cooldown-heavy-t3-a', name: 'Entropy Collapse', tier: 3,
+    classId: 'cooldown-root', subVariantId: 'heavy',
+    parent: 'cooldown-heavy', children: [],
+    description: 'Your execution deals no direct damage. Instead it inflicts a wound that ticks every second for 8 s. Each tick scales with the target\'s missing health — the weaker they are, the harder it burns. 4× multiplier at 90% missing HP.',
+    cost: 1, statEffects: {},
+    mechanicEffects: { 'cooldown.entropy-collapse': 1 } as Record<string, number>,
+  }],
+  ['cooldown-heavy-t3-b', {
+    id: 'cooldown-heavy-t3-b', name: 'Singular Extraction', tier: 3,
+    classId: 'cooldown-root', subVariantId: 'heavy',
+    parent: 'cooldown-heavy', children: [],
+    description: 'Normal attacks deal no damage. Your execution fires on a greatly shortened cooldown and hits for significantly more. Leaving combat for 4 s resets your preparation — patience earns nothing here.',
+    cost: 1, statEffects: {},
+    mechanicEffects: { 'cooldown.singular-extraction': 1, 'cooldown.empowered-cd-ms': -6000 } as Record<string, number>,
+  }],
+  ['cooldown-heavy-t3-c', {
+    id: 'cooldown-heavy-t3-c', name: 'Channeled Beam', tier: 3,
+    classId: 'cooldown-root', subVariantId: 'heavy',
+    parent: 'cooldown-heavy', children: [],
+    description: 'Your execution becomes a 3-second concentrated channel: you stand still and continuously deal damage to your target. If the target dies mid-channel, you briefly attempt to reacquire before the beam ends.',
+    cost: 1, statEffects: {},
+    mechanicEffects: { 'cooldown.channeled-beam': 1 } as Record<string, number>,
+  }],
+
+  // ── Tier 3: Energy — Light ────────────────────────────────────────────────────
+
+  ['energy-light-t3-a', {
+    id: 'energy-light-t3-a', name: 'The Accumulator', tier: 3,
+    classId: 'energy-root', subVariantId: 'light',
+    parent: 'energy-light', children: [],
+    description: 'Reaching max energy no longer fires a discharge. Energy constantly drains over time. Each hit grants a stacking attack damage buff, but each stack accelerates the drain. Reaching 0 energy resets all stacks.',
+    cost: 1, statEffects: {},
+    mechanicEffects: { 'energy.accumulator': 1 } as Record<string, number>,
+  }],
+  ['energy-light-t3-b', {
+    id: 'energy-light-t3-b', name: 'Micro-Venting', tier: 3,
+    classId: 'energy-root', subVariantId: 'light',
+    parent: 'energy-light', children: [],
+    description: 'The max-energy discharge is disabled. While your energy pool is above 50%, each basic attack consumes a portion of energy to deal flat bonus on-hit damage.',
+    cost: 1, statEffects: {},
+    mechanicEffects: { 'energy.micro-venting': 1 } as Record<string, number>,
+  }],
+  ['energy-light-t3-c', {
+    id: 'energy-light-t3-c', name: 'Polarity Decay', tier: 3,
+    classId: 'energy-root', subVariantId: 'light',
+    parent: 'energy-light', children: [],
+    description: 'Reaching max energy triggers a reduced-damage discharge that clears the pool and grants 5 temporary overcharge stacks. Basic attacks consume stacks for flat bonus damage before they decay.',
+    cost: 1, statEffects: {},
+    mechanicEffects: { 'energy.polarity-decay': 1 } as Record<string, number>,
+  }],
+
+  // ── Tier 3: Energy — Balanced ─────────────────────────────────────────────────
+
+  ['energy-balanced-t3-a', {
+    id: 'energy-balanced-t3-a', name: 'Alternating Currents', tier: 3,
+    classId: 'energy-root', subVariantId: 'balanced',
+    parent: 'energy-balanced', children: [],
+    description: 'Automatically loops between two phases: Charge (doubled energy gain, +20% attack damage) and Discharge (energy drains over 3 s dealing passive tick damage, +50% attack speed).',
+    cost: 1, statEffects: {},
+    mechanicEffects: { 'energy.alternating-currents': 1 } as Record<string, number>,
+  }],
+  ['energy-balanced-t3-b', {
+    id: 'energy-balanced-t3-b', name: 'Harmonic Equilibrium', tier: 3,
+    classId: 'energy-root', subVariantId: 'balanced',
+    parent: 'energy-balanced', children: [],
+    description: 'Grants +60% damage to all hits, but only while the natural energy cycle keeps the pool strictly between 40% and 60%. Both too empty and too full breaks the bonus.',
+    cost: 1, statEffects: {},
+    mechanicEffects: { 'energy.harmonic-equilibrium': 1 } as Record<string, number>,
+  }],
+  ['energy-balanced-t3-c', {
+    id: 'energy-balanced-t3-c', name: 'Capacitor Shunt', tier: 3,
+    classId: 'energy-root', subVariantId: 'balanced',
+    parent: 'energy-balanced', children: [],
+    description: 'Energy generation is split 50/50 between the active bar and a persistent reservoir (cap 500). The discharge fires normally at max energy, but its damage is amplified by the total power in the reservoir.',
+    cost: 1, statEffects: {},
+    mechanicEffects: { 'energy.capacitor-shunt': 1 } as Record<string, number>,
+  }],
+
+  // ── Tier 3: Energy — Heavy ────────────────────────────────────────────────────
+
+  ['energy-heavy-t3-a', {
+    id: 'energy-heavy-t3-a', name: 'Singularity Execute', tier: 3,
+    classId: 'energy-root', subVariantId: 'heavy',
+    parent: 'energy-heavy', children: [],
+    description: 'Doubles max energy capacity. Energy generation accelerates the fuller the pool. If a basic hit detects the target\'s health is lower than the discharge\'s projected damage, it triggers an immediate early discharge.',
+    cost: 1, statEffects: {},
+    mechanicEffects: { 'energy.singularity-execute': 1 } as Record<string, number>,
+  }],
+  ['energy-heavy-t3-b', {
+    id: 'energy-heavy-t3-b', name: 'Cascading Induction', tier: 3,
+    classId: 'energy-root', subVariantId: 'heavy',
+    parent: 'energy-heavy', children: [],
+    description: 'Basic attacks deal 1 damage but plant Induction tags on the target (15 s duration). The discharge consumes all active tags and deals exponentially scaling burst damage based on the tag count.',
+    cost: 1, statEffects: {},
+    mechanicEffects: { 'energy.cascading-induction': 1 } as Record<string, number>,
+  }],
+  ['energy-heavy-t3-c', {
+    id: 'energy-heavy-t3-c', name: 'Superconducting Mass', tier: 3,
+    classId: 'energy-root', subVariantId: 'heavy',
+    parent: 'energy-heavy', children: [],
+    description: 'Basic attacks deal no damage but accumulate raw attack power into a charge pool. On discharge, applies your empowered multiplier to the base hit, then adds the entire stored charge as bonus true damage bypassing all defenses. The pool resets on each discharge.',
+    cost: 1, statEffects: {},
+    mechanicEffects: { 'energy.superconducting-mass': 1 } as Record<string, number>,
+  }],
+
+  // ── Tier 3: DoT — Light (Poison) ─────────────────────────────────────────────
+
+  ['dot-light-t3-a', {
+    id: 'dot-light-t3-a', name: 'Poison Explosion', tier: 3,
+    classId: 'dot-root', subVariantId: 'light',
+    parent: 'dot-light', children: [],
+    description: 'Your poison can stack up to 20. Reaching 20 stacks detonates them all instantly, dealing the equivalent of 10 full ticks of damage in a single burst, then clearing all stacks.',
+    cost: 1, statEffects: {},
+    mechanicEffects: { 'dot.poison-explosion': 1 } as Record<string, number>,
+  }],
+  ['dot-light-t3-b', {
+    id: 'dot-light-t3-b', name: 'Eternal Doom', tier: 3,
+    classId: 'dot-root', subVariantId: 'light',
+    parent: 'dot-light', children: [],
+    description: 'Your poison has no stack limit. The first 8 stacks deal full damage per tick. Each additional stack beyond 8 adds damage at 50% effectiveness, naturally plateauing around 30–40 stacks. Rewards long, sustained fights.',
+    cost: 1, statEffects: {},
+    mechanicEffects: { 'dot.eternal-doom': 1 } as Record<string, number>,
+  }],
+  ['dot-light-t3-c', {
+    id: 'dot-light-t3-c', name: 'Invigorating Toxins', tier: 3,
+    classId: 'dot-root', subVariantId: 'light',
+    parent: 'dot-light', children: [],
+    description: 'While attacking a poisoned enemy, you gain +2 flat attack damage and +2% attack speed per poison stack on the target. The bonus updates continuously and drops immediately when you switch targets.',
+    cost: 1, statEffects: {},
+    mechanicEffects: { 'dot.invigorating-toxins': 1 } as Record<string, number>,
+  }],
+
+  // ── Tier 3: DoT — Balanced (Fire) ────────────────────────────────────────────
+
+  ['dot-balanced-t3-a', {
+    id: 'dot-balanced-t3-a', name: 'Fan the Flames', tier: 3,
+    classId: 'dot-root', subVariantId: 'balanced',
+    parent: 'dot-balanced', children: [],
+    description: 'Each hit applies 2 burn stacks instead of 1, but each stack deals 50% of normal tick damage. Hitting a target already at max stacks deals bonus direct damage equal to 3× the max-stack DoT damage.',
+    cost: 1, statEffects: {},
+    mechanicEffects: { 'dot.fan-the-flames': 1 } as Record<string, number>,
+  }],
+  ['dot-balanced-t3-b', {
+    id: 'dot-balanced-t3-b', name: 'Smoldering Ember', tier: 3,
+    classId: 'dot-root', subVariantId: 'balanced',
+    parent: 'dot-balanced', children: [],
+    description: 'Each burn stack also applies a smolder debuff that increases all damage the target takes by 3% per stack, up to 18% at max stacks. Affects both your direct hits and your burn ticks.',
+    cost: 1, statEffects: {},
+    mechanicEffects: { 'dot.smoldering-ember': 1 } as Record<string, number>,
+  }],
+  ['dot-balanced-t3-c', {
+    id: 'dot-balanced-t3-c', name: 'Conflagration', tier: 3,
+    classId: 'dot-root', subVariantId: 'balanced',
+    parent: 'dot-balanced', children: [],
+    description: 'When a target reaches max burn stacks, all stacks are consumed and replaced with Conflagration: a single intense burn that delivers the same total damage in half the time at double the tick rate. Cannot stack further while Conflagration burns.',
+    cost: 1, statEffects: {},
+    mechanicEffects: { 'dot.conflagration': 1 } as Record<string, number>,
+  }],
+
+  // ── Tier 3: DoT — Heavy (Frost) ──────────────────────────────────────────────
+
+  ['dot-heavy-t3-a', {
+    id: 'dot-heavy-t3-a', name: 'Permafrost', tier: 3,
+    classId: 'dot-root', subVariantId: 'heavy',
+    parent: 'dot-heavy', children: [],
+    description: 'Your frost is limited to 1 stack, but it ramps up each tick: starting at 3 damage and increasing by 3 per tick, capped at 35. The ramp persists as long as the monster lives. Rewards staying on a single target.',
+    cost: 1, statEffects: {},
+    mechanicEffects: { 'dot.permafrost': 1 } as Record<string, number>,
+  }],
+  ['dot-heavy-t3-b', {
+    id: 'dot-heavy-t3-b', name: 'Freezing Cold', tier: 3,
+    classId: 'dot-root', subVariantId: 'heavy',
+    parent: 'dot-heavy', children: [],
+    description: 'Each frost stack also applies a Chill stack (up to 3). Each Chill reduces the target\'s movement and attack speed by 12%. At 3 Chill stacks, the target is Frozen for 2 seconds and takes 35% bonus damage from all sources.',
+    cost: 1, statEffects: {},
+    mechanicEffects: { 'dot.freezing-cold': 1 } as Record<string, number>,
+  }],
+  ['dot-heavy-t3-c', {
+    id: 'dot-heavy-t3-c', name: 'Glacial Fracture', tier: 3,
+    classId: 'dot-root', subVariantId: 'heavy',
+    parent: 'dot-heavy', children: [],
+    description: 'Your frost stacks make the target brittle. When you hit a target already at max frost stacks, all stacks shatter: deal bonus burst damage equal to maxStacks² × damage-per-stack, clear the stacks, then apply 1 fresh stack. Creates a build-then-shatter rhythm.',
+    cost: 1, statEffects: {},
+    mechanicEffects: { 'dot.glacial-fracture': 1 } as Record<string, number>,
+  }],
+
 ]);
 
 // ── Generated placeholder nodes ────────────────────────────────────────────────
 //
-// Tier 3: remaining 9 paths (cadence is fully hand-authored above; skip it here).
 // Tiers 4–7: all 15 paths × 3 choices per tier = 180 nodes.
 // IDs: {class}-{subVariant}-t{tier}-{a|b|c}
+// Tier 3 is fully hand-authored above for all classes.
 //
 // Tiers 8–9 are reserved for expansion — add nodes here when ready.
 
@@ -379,25 +724,6 @@ const CHOICES = ['a', 'b', 'c'] as const;
 for (const cls of CLASSES) {
   const classId = `${cls}-root`;
   for (const sub of SUB_VARIANTS) {
-    // Tier 3 placeholders — skip cadence (all three sub-variants hand-authored above)
-    if (cls !== 'cadence') {
-      for (const choice of CHOICES) {
-        const id = `${cls}-${sub}-t3-${choice}`;
-        SKILL_TREE.set(id, {
-          id,
-          name: `[Path] Option ${choice.toUpperCase()}`,
-          description: '[Placeholder] To be designed.',
-          cost: 1,
-          tier: 3,
-          classId,
-          subVariantId: sub,
-          parent: null,
-          children: [],
-          statEffects: {},
-          mechanicEffects: {},
-        });
-      }
-    }
 
     // Tiers 4–7
     for (let tier = 4; tier <= 7; tier++) {

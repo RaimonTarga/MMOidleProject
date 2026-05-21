@@ -4,10 +4,10 @@ import { getResource, setResource, isCooldownActive, setCooldown } from './comba
 import { setMaxResource } from './resourceMechanics';
 import type { World } from '../world/World';
 
-// ── Constants ─────────────────────────────────────────────────────────────────
+// ── Fallback constants (balanced-frame defaults, used when no frame is unlocked) ─
 
-export const RELOAD_MAX_AMMO = 8;
-export const RELOAD_TIME_MS  = 2500; // ms to fully reload an empty clip
+const RELOAD_MAX_AMMO = 8;
+const RELOAD_TIME_MS  = 2500;
 
 // combatState keys — reserved by this module
 const AMMO_KEY   = 'ammo';
@@ -20,8 +20,9 @@ const RELOAD_KEY = 'reloadCooldown';
  * is already decremented before this checks it).
  *
  * For every reload-archetype player:
- *   1. First call: initialise the ammo resource and mirror to PlayerState.
- *   2. When reload cooldown expires and ammo is 0: refill to max.
+ *   1. First call: initialise the ammo resource from reload.max-ammo passive and
+ *      mirror to PlayerState.
+ *   2. When reload cooldown expires and ammo is 0: refill to the stored max.
  */
 export function updateReloadArchetype(world: World): void {
   for (const player of world.players.values()) {
@@ -30,19 +31,38 @@ export function updateReloadArchetype(world: World): void {
     const state = world.playerCombatState.get(player.id);
     if (!state) continue;
 
-    // Lazy-init on first tick (also fires after respawn, which resets resourceMaxes).
-    if (state.resourceMaxes[AMMO_KEY] === undefined) {
-      setMaxResource(state, AMMO_KEY, RELOAD_MAX_AMMO);
-      setResource(state, AMMO_KEY, RELOAD_MAX_AMMO);
-      player.ammoCount = RELOAD_MAX_AMMO;
-      player.ammoMax   = RELOAD_MAX_AMMO;
+    const maxAmmo = Math.round(player.passives['reload.max-ammo'] ?? RELOAD_MAX_AMMO);
+    
+    // Lazy-init on first tick, or update when max-ammo passive changes
+    if (state.resourceMaxes[AMMO_KEY] !== maxAmmo) {
+      const isFirstInit = state.resourceMaxes[AMMO_KEY] === undefined;
+      setMaxResource(state, AMMO_KEY, maxAmmo);
+      
+      // If setting max ammo for the first time, or if current ammo exceeds new max, adjust it
+      const current = getResource(state, AMMO_KEY);
+      if (isFirstInit || current > maxAmmo) {
+        setResource(state, AMMO_KEY, maxAmmo);
+        player.ammoCount = maxAmmo;
+      }
+      player.ammoMax = maxAmmo;
     }
 
     // Reload complete: refill when timer expired and clip is empty.
     if (!isCooldownActive(state, RELOAD_KEY) && getResource(state, AMMO_KEY) === 0) {
-      setResource(state, AMMO_KEY, RELOAD_MAX_AMMO);
-      player.ammoCount = RELOAD_MAX_AMMO;
-      console.log(`[Reload] ${player.id}: reload complete — ${RELOAD_MAX_AMMO} rounds`);
+      const maxAmmo = state.resourceMaxes[AMMO_KEY] ?? RELOAD_MAX_AMMO;
+      setResource(state, AMMO_KEY, maxAmmo);
+      player.ammoCount = maxAmmo;
+      player.ammoMax   = maxAmmo;
+      console.log(`[Reload] ${player.id}: reload complete — ${maxAmmo} rounds`);
+    }
+
+    // Always mirror the authoritative CombatState values to PlayerState so the
+    // client sees the correct ammo on every tick, regardless of which code path
+    // updated the underlying resource.
+    const syncedMax = state.resourceMaxes[AMMO_KEY];
+    if (syncedMax !== undefined) {
+      player.ammoMax   = syncedMax;
+      player.ammoCount = getResource(state, AMMO_KEY);
     }
   }
 }
@@ -55,7 +75,8 @@ export function updateReloadArchetype(world: World): void {
  *
  * Behavior:
  *   - If the reload cooldown is active or ammo is 0: cancel the attack.
- *   - Otherwise: consume one round; if that empties the clip, start the reload timer.
+ *   - Otherwise: consume one round; if that empties the clip, start the reload
+ *     timer (duration from reload.reload-time-ms passive, or fallback constant).
  */
 export function initReloadArchetype(): void {
   registerCombatListener('beforeAttack', (ctx, world) => {
@@ -77,8 +98,9 @@ export function initReloadArchetype(): void {
     if (player) player.ammoCount = remaining;
 
     if (remaining === 0) {
-      setCooldown(state, RELOAD_KEY, RELOAD_TIME_MS);
-      console.log(`[Reload] ${ctx.attacker.id}: clip empty — reloading (${RELOAD_TIME_MS}ms)`);
+      const reloadTimeMs = Math.round(player?.passives['reload.reload-time-ms'] ?? RELOAD_TIME_MS);
+      setCooldown(state, RELOAD_KEY, reloadTimeMs);
+      console.log(`[Reload] ${ctx.attacker.id}: clip empty — reloading (${reloadTimeMs}ms)`);
     }
   });
 }

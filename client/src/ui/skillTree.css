@@ -3,7 +3,9 @@
   position: fixed;
   inset: 0;
   z-index: 1000;
-  background: rgba(0, 0, 0, 0.9);
+  background: rgba(0, 0, 10, 0.88);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -13,14 +15,15 @@
 
 /* ── Panel ───────────────────────────────────────────────────────────────── */
 .skill-tree-panel {
-  background: #080816;
-  border: 1px solid rgba(60, 60, 120, 0.55);
-  border-radius: 5px;
+  background: linear-gradient(155deg, rgba(14, 12, 36, 0.98), rgba(7, 5, 20, 0.99));
+  border: 1px solid rgba(80, 68, 178, 0.18);
+  border-radius: 7px;
   width: 100%;
   max-width: 860px;
   max-height: 90vh;
   overflow-y: auto;
   padding: 16px 20px 24px;
+  box-shadow: 0 8px 40px rgba(40, 28, 100, 0.38), 0 0 0 1px rgba(255, 255, 255, 0.025);
 }
 
 /* ── Header ──────────────────────────────────────────────────────────────── */
@@ -29,7 +32,7 @@
   align-items: center;
   gap: 12px;
   padding-bottom: 10px;
-  border-bottom: 1px solid rgba(60, 60, 96, 0.35);
+  border-bottom: 1px solid rgba(80, 65, 170, 0.18);
   margin-bottom: 16px;
 }
 
@@ -37,7 +40,7 @@
   flex: 1;
   font-size: 12px;
   font-weight: bold;
-  color: #8888aa;
+  color: #9988cc;
   text-transform: uppercase;
   letter-spacing: 1.5px;
 }
@@ -48,23 +51,23 @@
   font-size: 10px;
 }
 
-.legend-item        { color: #33334a; }
+.legend-item            { color: #2e2e48; }
 .legend-item--unlocked  { color: #44ff88; }
 .legend-item--available { color: #4499cc; }
-.legend-item--locked    { color: #252535; }
+.legend-item--locked    { color: #1e1e32; }
 
 .skill-tree-close {
-  background: none;
-  border: 1px solid rgba(60, 60, 96, 0.5);
-  color: #444466;
+  background: linear-gradient(135deg, rgba(32, 26, 68, 0.85), rgba(18, 14, 46, 0.92));
+  border: 1px solid rgba(100, 85, 190, 0.2);
+  color: #555577;
   font-family: monospace;
   font-size: 12px;
   padding: 3px 9px;
-  border-radius: 3px;
+  border-radius: 4px;
   cursor: pointer;
-  transition: border-color 0.12s, color 0.12s;
+  transition: border-color 0.12s, color 0.12s, background 0.12s;
 }
-.skill-tree-close:hover { border-color: #ff4444; color: #ff4444; }
+.skill-tree-close:hover { border-color: rgba(255, 70, 70, 0.5); color: #ff5555; background: rgba(60, 15, 15, 0.7); }
 
 /* ── Class selection ─────────────────────────────────────────────────────── */
 .skill-tree-instruction {

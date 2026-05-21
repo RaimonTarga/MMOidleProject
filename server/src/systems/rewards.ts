@@ -1,6 +1,7 @@
 import type { PlayerState, MonsterState } from '@mmo-idle/shared';
 import { NODE_BIOMES, BIOME_UNLOCK_THRESHOLDS, MONSTER_DATABASE } from '@mmo-idle/shared';
 import type { World } from '../world/World';
+import { registerKillForQuests } from './questSystem';
 
 /**
  * Resource amounts awarded for a single kill event.
@@ -64,4 +65,5 @@ export function grantMonsterRewards(
   const rewards = def?.rewards ?? FALLBACK_REWARDS;
   rewardPlayer(killer, rewards);
   applyBiomeProgression(killer, monster.nodeId);
+  registerKillForQuests(killer, monster.monsterTypeId);
 }

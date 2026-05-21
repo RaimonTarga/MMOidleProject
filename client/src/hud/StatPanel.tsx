@@ -3,6 +3,30 @@ import { NODE_BIOMES, BIOME_DATABASE } from '@mmo-idle/shared';
 import type { ConnectionStatus } from '../hudBus';
 import { hudBus } from '../hudBus';
 
+const CADENCE_TICKS = 8;
+
+function CadenceTimeline({ count, threshold, armed }: { count: number; threshold: number; armed: boolean }) {
+  // When armed=true the empowered is queued — the very next hit (index 0) is
+  // the finisher regardless of count (which was reset to 0 at arm time).
+  // When armed=false, compute normally: (threshold-1) - count remaining hits.
+  const hitsUntilFinisher = armed ? 0 : (threshold - 1) - count;
+
+  return (
+    <div className="cadence-timeline">
+      {Array.from({ length: CADENCE_TICKS }, (_, i) => {
+        const delta      = i - hitsUntilFinisher;
+        const isFinisher = delta >= 0 && delta % threshold === 0;
+        return (
+          <div
+            key={i}
+            className={`cadence-tick${isFinisher ? ' cadence-tick--finisher' : ''}${i === 0 ? ' cadence-tick--next' : ''}`}
+          />
+        );
+      })}
+    </div>
+  );
+}
+
 interface Props {
   player: PlayerState | null;
   status: ConnectionStatus;
@@ -114,19 +138,11 @@ export function StatPanel({ player, status }: Props) {
         </div>
       )}
 
-      {/* Cadence rhythm bar */}
+      {/* Cadence hit timeline */}
       {player?.combatArchetype === 'cadence' && player.cadenceThreshold > 0 && (
         <div className="stat-section">
-          <div className="stat-row">
-            <span className="stat-label">Cadence</span>
-            <span className="stat-value">{player.cadenceCount} / {player.cadenceThreshold}</span>
-          </div>
-          <div className="mech-bar-track">
-            <div
-              className="mech-bar-fill mech-bar-fill--cadence"
-              style={{ width: `${(player.cadenceCount / player.cadenceThreshold) * 100}%` }}
-            />
-          </div>
+          <span className="stat-label">Cadence</span>
+          <CadenceTimeline count={player.cadenceCount} threshold={player.cadenceThreshold} armed={player.cadenceEmpoweredArmed} />
         </div>
       )}
 
@@ -166,25 +182,86 @@ export function StatPanel({ player, status }: Props) {
         </div>
       )}
 
-      {/* DoT stacks — dot archetype */}
-      {player?.combatArchetype === 'dot' && (
-        <div className="stat-section">
-          <div className="stat-row">
-            <span className="stat-label">Target Stacks</span>
-            <span className={`stat-value${!player.attackTargetId ? ' dim' : ''}`}>
-              {player.attackTargetId ? `${player.targetDotStacks} / 5` : 'No target'}
-            </span>
+      {/* DoT stacks — dot archetype, path-aware */}
+      {player?.combatArchetype === 'dot' && (() => {
+        const p = player.passives ?? {};
+        const isPoison = (p['dot.poison-explosion'] ?? 0) > 0
+          || (p['dot.eternal-doom'] ?? 0) > 0
+          || (p['dot.invigorating-toxins'] ?? 0) > 0;
+        const isFire   = (p['dot.fan-the-flames'] ?? 0) > 0
+          || (p['dot.smoldering-ember'] ?? 0) > 0
+          || (p['dot.conflagration'] ?? 0) > 0;
+        const isFrost  = (p['dot.permafrost'] ?? 0) > 0
+          || (p['dot.freezing-cold'] ?? 0) > 0
+          || (p['dot.glacial-fracture'] ?? 0) > 0;
+        const path = isPoison ? 'poison' : isFire ? 'fire' : isFrost ? 'frost' : 'default';
+
+        const dotMax = (p['dot.poison-explosion'] ?? 0) > 0 ? 20
+          : (p['dot.eternal-doom'] ?? 0) > 0 ? 50
+          : (p['dot.conflagration'] ?? 0) > 0 ? 8
+          : (p['dot.permafrost'] ?? 0) > 0 ? 1
+          : Math.round(p['dot.max-stacks'] ?? 5);
+
+        const stackLabel = isFire ? 'Burn Stacks'
+          : isFrost ? 'Frost Stacks'
+          : isPoison ? 'Poison Stacks'
+          : 'Target Stacks';
+
+        const pipClass = path !== 'default' ? ` dot-pip--${path}` : '';
+        const usePips  = dotMax <= 10;
+
+        return (
+          <div className="stat-section">
+            <div className="stat-row">
+              <span className="stat-label">{stackLabel}</span>
+              <span className={`stat-value${!player.attackTargetId ? ' dim' : ''}`}>
+                {player.attackTargetId ? `${player.targetDotStacks} / ${dotMax}` : 'No target'}
+              </span>
+            </div>
+
+            {usePips ? (
+              <div className="dot-pips">
+                {Array.from({ length: dotMax }, (_, i) => (
+                  <div
+                    key={i}
+                    className={`dot-pip${pipClass}${i < player.targetDotStacks ? ` dot-pip--active${pipClass}` : ''}`}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="dot-stack-bar-track">
+                <div
+                  className={`dot-stack-bar-fill dot-stack-bar-fill--${path}`}
+                  style={{ width: `${Math.min(100, (player.targetDotStacks / dotMax) * 100)}%` }}
+                />
+              </div>
+            )}
+
+            {/* Frost path — chill stacks + frozen indicator */}
+            {isFrost && (p['dot.freezing-cold'] ?? 0) > 0 && (
+              <>
+                <div className="stat-row" style={{ marginTop: 6 }}>
+                  <span className="stat-label">Chill</span>
+                  <span className="stat-value">
+                    {player.attackTargetId ? `${player.targetChillStacks ?? 0} / 3` : '—'}
+                  </span>
+                </div>
+                <div className="chill-pips">
+                  {[0, 1, 2].map(i => (
+                    <div
+                      key={i}
+                      className={`chill-pip${i < (player.targetChillStacks ?? 0) ? ' chill-pip--active' : ''}`}
+                    />
+                  ))}
+                </div>
+                {(player.targetChillStacks ?? 0) >= 3 && (
+                  <div className="chill-frozen-label">— FROZEN —</div>
+                )}
+              </>
+            )}
           </div>
-          <div className="dot-pips">
-            {Array.from({ length: 5 }, (_, i) => (
-              <div
-                key={i}
-                className={`dot-pip${i < player.targetDotStacks ? ' dot-pip--active' : ''}`}
-              />
-            ))}
-          </div>
-        </div>
-      )}
+        );
+      })()}
 
       {/* Sacred Cross weapon buff bar */}
       {player?.equipment.weapon === 'sacred-cross' && (

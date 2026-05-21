@@ -1,6 +1,17 @@
 import type { PlayerState } from '@mmo-idle/shared';
 import { SKILL_TREE, GAME_CONFIG, EQUIPMENT_SLOTS, ITEM_DATABASE } from '@mmo-idle/shared';
 
+// Class-specific bonus applied when the player chose close range (range-close).
+// Heavier classes get more plating; lighter classes get more hpRegen.
+// Total bonus is equal across all classes — only the composition differs.
+const CLOSE_RANGE_CLASS_BONUS: Record<string, { plating: number; hpRegen: number }> = {
+  'cooldown-root': { plating: 5, hpRegen: 1 },
+  'dot-root':      { plating: 4, hpRegen: 2 },
+  'cadence-root':  { plating: 3, hpRegen: 3 },
+  'reload-root':   { plating: 2, hpRegen: 4 },
+  'energy-root':   { plating: 1, hpRegen: 5 },
+};
+
 function applyStatMod(player: PlayerState, stat: string, value: number): void {
   switch (stat) {
     case 'attack':          player.attack          += value; break;
@@ -64,9 +75,30 @@ export function recalculatePlayerStats(player: PlayerState): void {
   player.attackCooldown  = Math.max(200, player.attackCooldown);
   player.damageReduction = Math.min(0.9, Math.max(0, player.damageReduction));
 
-  // 2b. Reset dynamic combat counters so they sync with new passives
+  // 2b. Class-specific close-range bonus (applied after all skill deltas so it
+  //     stacks cleanly on top of the universal range-close node's stat effects).
+  if (player.selectedRange === 'range-close' && player.selectedClass) {
+    const bonus = CLOSE_RANGE_CLASS_BONUS[player.selectedClass];
+    if (bonus) {
+      player.plating  += bonus.plating;
+      player.hpRegen  += bonus.hpRegen;
+    }
+  }
+
+  // 2c. Reset dynamic combat counters and update archetype values
   player.cadenceSpeedStacks = 0;
-  player.cadenceThreshold   = 0; // re-initialized lazily on first cadence trigger
+  if (player.combatArchetype === 'cadence') {
+    const base = Math.round(player.passives['cadence.empowered-threshold'] ?? 5);
+    const mod  = Math.round(player.passives['cadence.threshold-mod'] ?? 0);
+    player.cadenceThreshold = Math.max(2, base + mod);
+    // Reset the display counter so the client immediately reflects the new threshold.
+    // The CombatState counter is reset separately in the skill-unlock handler when
+    // the threshold actually changes, so both display and combat logic stay in sync.
+    player.cadenceCount = 0;
+  } else {
+    player.cadenceThreshold = 0;
+    player.cadenceCount = 0;
+  }
 
   // 3. Apply equipped item stat modifiers
   for (const slot of EQUIPMENT_SLOTS) {

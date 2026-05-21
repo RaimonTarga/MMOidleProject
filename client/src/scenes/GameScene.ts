@@ -11,6 +11,7 @@ import type {
 } from '@mmo-idle/shared';
 import { GAME_CONFIG, NODE_BIOMES, BIOME_DATABASE } from '@mmo-idle/shared';
 import { hudBus } from '../hudBus';
+import { combatLog } from '../combatLog';
 
 type GameSocket = Socket<ServerToClientEvents, ClientToServerEvents>;
 
@@ -22,7 +23,7 @@ const MM_H   = 120;  // minimap height (px, screen-space)
 const MM_PAD = 8;    // gap from the screen edges
 
 // ── Node exit computation ──────────────────────────────────────────────────────
-// Node IDs follow the format "node-{row}-{col}" in a 5×5 grid.
+// Node IDs follow the format "node-{row}-{col}" in a 9×9 grid.
 // Exits are derived from coordinates so no registry duplication is needed.
 function getNodeExits(nodeId: string): Partial<Record<NodeDirection, string>> {
   const parts = nodeId.split('-');
@@ -32,9 +33,9 @@ function getNodeExits(nodeId: string): Partial<Record<NodeDirection, string>> {
   if (isNaN(r) || isNaN(c)) return {};
   const exits: Partial<Record<NodeDirection, string>> = {};
   if (r > 0) exits.north = `node-${r - 1}-${c}`;
-  if (r < 4) exits.south = `node-${r + 1}-${c}`;
+  if (r < 8) exits.south = `node-${r + 1}-${c}`;
   if (c > 0) exits.west  = `node-${r}-${c - 1}`;
-  if (c < 4) exits.east  = `node-${r}-${c + 1}`;
+  if (c < 8) exits.east  = `node-${r}-${c + 1}`;
   return exits;
 }
 
@@ -62,6 +63,8 @@ interface Visual {
   lastAttackAt: number;
   attackTargetId: string | null;
   attackStyle: string;
+  /** Raw name used for combat-log attribution (monsters only). */
+  entityName?: string;
   /** Full authoritative state snapshot — only present on player visuals, not monsters. */
   playerState?: PlayerState;
 }
@@ -77,7 +80,9 @@ export class GameScene extends Phaser.Scene {
   private lastDrawnNodeId = '';
   /** Yellow dot shown at the last click destination (world-space). */
   private targetMarker!: Phaser.GameObjects.Arc;
-  private autoMode    = false;
+  private autoMode       = false;
+  /** Own player's attackTargetId from the previous snapshot — used to attribute kills/damage. */
+  private prevMyTargetId: string | null = null;
   private minimap!: Phaser.GameObjects.Graphics;
   /** World-space colored bars drawn at each active exit boundary. */
   private exitMarkers!: Phaser.GameObjects.Graphics;
@@ -89,6 +94,8 @@ export class GameScene extends Phaser.Scene {
   }
 
   create() {
+    this.initParticleTextures();
+
     // ── World / camera setup ───────────────────────────────────────────────
     this.cameras.main.setBounds(0, 0, GAME_CONFIG.NODE_WIDTH, GAME_CONFIG.NODE_HEIGHT);
 
@@ -186,7 +193,10 @@ export class GameScene extends Phaser.Scene {
       window.dispatchEvent(new CustomEvent('hud:craftResult', { detail: result }));
     });
 
-    this.socket.on('player:died', () => { this.showDeathOverlay(); });
+    this.socket.on('player:died', () => {
+      combatLog.push('death', 'You were defeated');
+      this.showDeathOverlay();
+    });
   }
 
   update(_time: number, delta: number) {
@@ -247,6 +257,11 @@ export class GameScene extends Phaser.Scene {
   }
 
   private applySnapshot(snapshot: NodeSnapshot) {
+    // Capture own player's current target BEFORE this snapshot updates it.
+    // Used for kill attribution and damage-out detection in this same pass.
+    const ownVpBefore = this.players.get(this.myId);
+    this.prevMyTargetId = ownVpBefore?.attackTargetId ?? null;
+
     const livePlayers = new Set(snapshot.players.map((p) => p.id));
     for (const id of this.players.keys()) {
       if (id !== this.myId && !livePlayers.has(id)) this.destroyVisual(this.players, id);
@@ -255,7 +270,13 @@ export class GameScene extends Phaser.Scene {
 
     const liveMonsters = new Set(snapshot.monsters.map((m) => m.id));
     for (const id of this.monsters.keys()) {
-      if (!liveMonsters.has(id)) this.destroyVisual(this.monsters, id);
+      if (!liveMonsters.has(id)) {
+        if (id === this.prevMyTargetId) {
+          const vm = this.monsters.get(id);
+          if (vm) combatLog.push('kill', `${vm.entityName ?? id} defeated`);
+        }
+        this.destroyVisual(this.monsters, id);
+      }
     }
     snapshot.monsters.forEach((m) => this.upsertMonster(m));
   }
@@ -367,17 +388,29 @@ export class GameScene extends Phaser.Scene {
     vp.lastAttackAt   = player.lastAttackAt;
     vp.attackTargetId = player.attackTargetId;
     vp.attackStyle    = player.attackStyle;
+    const prevEmpoweredReady = vp.playerState?.empoweredReady ?? false;
+    const prevExecutionReady = vp.playerState?.executionReady ?? false;
     vp.playerState    = player;
 
     if (player.hp < prevPlayerHp) {
       const dmgColor = isOwn ? '#ff4444' : '#ff8844';
       this.spawnDamageNumber(vp.sprite.x, vp.sprite.y, vp.barOffsetY, Math.round(prevPlayerHp - player.hp), dmgColor);
+      if (isOwn) combatLog.push('damage-in', `Took ${Math.round(prevPlayerHp - player.hp)} damage`);
+    }
+
+    // Only log heals above the regen threshold to avoid log spam from passive HP regen.
+    if (isOwn && player.hp > prevPlayerHp && prevPlayerHp > 0 && Math.round(player.hp - prevPlayerHp) >= 5) {
+      combatLog.push('heal', `Recovered ${Math.round(player.hp - prevPlayerHp)} HP`);
     }
 
     if (player.lastAttackAt > prevPlayerAttackAt && player.attackTargetId) {
       const targetVm = this.monsters.get(player.attackTargetId);
       if (targetVm) {
-        this.spawnAttackEffect(vp.attackStyle, vp.sprite.x, vp.sprite.y, targetVm.sprite.x, targetVm.sprite.y);
+        const empowered = prevEmpoweredReady && !player.empoweredReady;
+        const execution = prevExecutionReady && !player.executionReady;
+        this.spawnAttackEffect(vp.attackStyle, vp.sprite.x, vp.sprite.y, targetVm.sprite.x, targetVm.sprite.y, { empowered, execution });
+        if (isOwn && empowered) combatLog.push('empowered', `Empowered strike → ${targetVm.entityName ?? 'target'}`);
+        if (isOwn && execution) combatLog.push('execution', `Execution strike → ${targetVm.entityName ?? 'target'}`);
       }
     }
 
@@ -391,20 +424,24 @@ export class GameScene extends Phaser.Scene {
   private upsertMonster(monster: MonsterState) {
     let vm = this.monsters.get(monster.id);
     if (!vm) {
-      const sprite = this.add.rectangle(monster.x, monster.y, 32, 32, monster.color);
-      const label  = this.add.text(0, 0, monster.name, {
-        color: '#ffaaaa', fontSize: '10px', fontFamily: 'monospace',
+      const spriteSize = monster.isBoss ? 54 : 32;
+      const labelColor = monster.isBoss ? '#ffcc44' : '#ffaaaa';
+      const sprite = this.add.rectangle(monster.x, monster.y, spriteSize, spriteSize, monster.color);
+      const label  = this.add.text(0, 0, monster.isBoss ? `⚠ ${monster.name}` : monster.name, {
+        color: labelColor, fontSize: monster.isBoss ? '11px' : '10px', fontFamily: 'monospace',
+        fontStyle: monster.isBoss ? 'bold' : 'normal',
       });
       const hpBar = this.add.graphics();
       const cdBar = this.add.graphics();
       vm = { sprite, label, hpBar, cdBar,
              targetX: monster.targetX, targetY: monster.targetY,
              hp: monster.hp, maxHp: monster.maxHp,
-             speed: monster.speed, barOffsetY: 26,
+             speed: monster.speed, barOffsetY: monster.isBoss ? 38 : 26,
              attackCooldown: monster.attackCooldown,
              lastAttackAt:   monster.lastAttackAt,
              attackTargetId: monster.attackTargetId,
-             attackStyle:    monster.attackStyle };
+             attackStyle:    monster.attackStyle,
+             entityName:     monster.name };
       this.monsters.set(monster.id, vm);
       return;
     }
@@ -419,7 +456,11 @@ export class GameScene extends Phaser.Scene {
     vm.attackStyle    = monster.attackStyle;
 
     if (monster.hp < prevMonsterHp) {
-      this.spawnDamageNumber(vm.sprite.x, vm.sprite.y, vm.barOffsetY, Math.round(prevMonsterHp - monster.hp), '#ffffff');
+      const dmg = Math.round(prevMonsterHp - monster.hp);
+      this.spawnDamageNumber(vm.sprite.x, vm.sprite.y, vm.barOffsetY, dmg, '#ffffff');
+      if (this.myId && this.prevMyTargetId === monster.id) {
+        combatLog.push('damage-out', `${vm.entityName ?? monster.name} −${dmg}`);
+      }
     }
 
     if (monster.lastAttackAt > prevMonsterAttackAt && monster.attackTargetId) {
@@ -563,72 +604,286 @@ export class GameScene extends Phaser.Scene {
     });
   }
 
-  /**
-   * Spawn a one-shot attack animation between two world-space points.
-   * style controls the look; add new cases here to support more attack types.
-   */
-  private spawnAttackEffect(style: string, fromX: number, fromY: number, toX: number, toY: number): void {
-    const dx = toX - fromX;
-    const dy = toY - fromY;
-    const angle = Math.atan2(dy, dx);
+  private initParticleTextures(): void {
+    // White circle — tinted per-emitter to any color
+    const dotG = this.make.graphics({ x: 0, y: 0 }, false);
+    dotG.fillStyle(0xffffff, 1);
+    dotG.fillCircle(8, 8, 8);
+    dotG.generateTexture('ptx-dot', 16, 16);
+    dotG.destroy();
+
+    // Thin white rectangle — used for sparks and embers
+    const sparkG = this.make.graphics({ x: 0, y: 0 }, false);
+    sparkG.fillStyle(0xffffff, 1);
+    sparkG.fillRect(0, 0, 12, 3);
+    sparkG.generateTexture('ptx-spark', 12, 3);
+    sparkG.destroy();
+  }
+
+  private burstFx(
+    texture: string,
+    x: number, y: number,
+    count: number,
+    lifespan: number,
+    config: Phaser.Types.GameObjects.Particles.ParticleEmitterConfig,
+  ): void {
+    const emitter = this.add.particles(x, y, texture, {
+      ...config,
+      lifespan,
+      quantity: count,
+      emitting: false,
+    });
+    emitter.setDepth(12);
+    emitter.explode(count);
+    this.time.delayedCall(lifespan + 200, () => { if (emitter.active) emitter.destroy(); });
+  }
+
+  private fxSlash(fromX: number, fromY: number, toX: number, toY: number, empowered: boolean): void {
+    const angle = Math.atan2(toY - fromY, toX - fromX);
+    const perp  = angle + Math.PI / 2;
+    const color = empowered ? 0xffdd22 : 0xffffff;
+    const lineW = empowered ? 3.5 : 2.5;
+    const len   = empowered ? 62 : 48;
+
+    // Three sweep lines with slight angular spread, centered at the impact point
+    for (let i = 0; i < 3; i++) {
+      const a = perp + (i - 1) * 0.3;
+      this.time.delayedCall(i * 35, () => {
+        const g = this.add.graphics({ x: toX, y: toY }).setDepth(12);
+        g.lineStyle(lineW, color, 1);
+        g.lineBetween(-Math.cos(a) * len, -Math.sin(a) * len, Math.cos(a) * len, Math.sin(a) * len);
+        // Offset shadow line for depth
+        g.lineStyle(lineW * 0.5, 0xffffcc, 0.6);
+        const off = 7;
+        g.lineBetween(
+          -Math.cos(a) * (len * 0.7) + Math.cos(angle) * off,
+          -Math.sin(a) * (len * 0.7) + Math.sin(angle) * off,
+           Math.cos(a) * (len * 0.7) + Math.cos(angle) * off,
+           Math.sin(a) * (len * 0.7) + Math.sin(angle) * off,
+        );
+        this.tweens.add({ targets: g, alpha: 0, duration: 210, ease: 'Quad.easeOut', onComplete: () => g.destroy() });
+      });
+    }
+
+    this.burstFx('ptx-spark', toX, toY, empowered ? 14 : 9, 280, {
+      tint:   empowered ? 0xffdd22 : 0xffffff,
+      speed:  { min: 60,  max: 220 },
+      angle:  { min: 0,   max: 360 },
+      scale:  { start: 0.9, end: 0.1 },
+      alpha:  { start: 1,   end: 0   },
+      rotate: { min: 0, max: 360 },
+    });
+
+    if (empowered) {
+      const ring = this.add.graphics({ x: toX, y: toY }).setDepth(12);
+      ring.lineStyle(3, 0xffdd22, 1);
+      ring.strokeCircle(0, 0, 12);
+      this.tweens.add({ targets: ring, scaleX: 3.8, scaleY: 3.8, alpha: 0, duration: 320, ease: 'Quad.easeOut', onComplete: () => ring.destroy() });
+    }
+  }
+
+  private fxImpact(toX: number, toY: number, execution: boolean): void {
+    // Flash
+    const flash = this.add.graphics({ x: toX, y: toY }).setDepth(13);
+    flash.fillStyle(execution ? 0xffffff : 0xff8844, execution ? 0.9 : 0.8);
+    flash.fillCircle(0, 0, execution ? 28 : 16);
+    this.tweens.add({ targets: flash, alpha: 0, scaleX: 1.6, scaleY: 1.6, duration: 90, onComplete: () => flash.destroy() });
+
+    // Two expanding rings
+    for (let i = 0; i < 2; i++) {
+      const ringColor = execution ? (i === 0 ? 0xffffff : 0xaabbff) : (i === 0 ? 0xff7744 : 0xffaa22);
+      const ring = this.add.graphics({ x: toX, y: toY }).setDepth(11);
+      ring.lineStyle(3 - i * 0.5, ringColor, 1);
+      ring.strokeCircle(0, 0, 10 + i * 8);
+      this.tweens.add({ targets: ring, scaleX: 4.5 + i, scaleY: 4.5 + i, alpha: 0, duration: 320 + i * 60, ease: 'Power2', onComplete: () => ring.destroy() });
+    }
+
+    this.burstFx('ptx-dot', toX, toY, execution ? 14 : 8, 380, {
+      tint:     execution ? 0xddeeff : 0xff7744,
+      speed:    { min: 80,  max: 240 },
+      angle:    { min: 0,   max: 360 },
+      scale:    { start: 0.55, end: 0 },
+      alpha:    { start: 1,    end: 0 },
+      gravityY: 180,
+    });
+
+    if (execution) {
+      // Silver X + plus cross
+      const cross = this.add.graphics({ x: toX, y: toY }).setDepth(13);
+      const cLen  = 42;
+      cross.lineStyle(3, 0xeeeeff, 1);
+      cross.lineBetween(-cLen, -cLen,  cLen,  cLen);
+      cross.lineBetween( cLen, -cLen, -cLen,  cLen);
+      cross.lineStyle(3, 0xffffff, 0.9);
+      cross.lineBetween(-cLen, 0, cLen, 0);
+      cross.lineBetween(0, -cLen, 0, cLen);
+      this.tweens.add({ targets: cross, alpha: 0, scaleX: 1.9, scaleY: 1.9, duration: 380, ease: 'Quad.easeOut', onComplete: () => cross.destroy() });
+    }
+  }
+
+  private fxPoison(toX: number, toY: number): void {
+    const ring = this.add.graphics({ x: toX, y: toY }).setDepth(12);
+    ring.lineStyle(2.5, 0x44ff66, 1);
+    ring.strokeCircle(0, 0, 8);
+    this.tweens.add({ targets: ring, scaleX: 4.2, scaleY: 4.2, alpha: 0, duration: 380, ease: 'Power2', onComplete: () => ring.destroy() });
+
+    this.burstFx('ptx-dot', toX, toY, 9, 520, {
+      tint:     0x44ff66,
+      speed:    { min: 30,  max: 110 },
+      angle:    { min: 200, max: 340 }, // mostly upward
+      scale:    { start: 0.65, end: 0 },
+      alpha:    { start: 1,    end: 0 },
+      gravityY: -70,
+    });
+  }
+
+  private fxMagic(fromX: number, fromY: number, toX: number, toY: number): void {
+    const orb = this.add.circle(fromX, fromY, 6, 0xaa44ff).setDepth(12);
+
+    for (let i = 0; i < 3; i++) {
+      this.time.delayedCall(i * 45, () => {
+        const trail = this.add.circle(orb.x, orb.y, 3 - i * 0.5, 0xcc88ff, 0.75).setDepth(11);
+        this.tweens.add({ targets: trail, alpha: 0, scaleX: 0.1, scaleY: 0.1, duration: 180, onComplete: () => trail.destroy() });
+      });
+    }
+
+    this.tweens.add({
+      targets: orb, x: toX, y: toY, duration: 200, ease: 'Quad.easeIn',
+      onComplete: () => {
+        orb.destroy();
+        const ring = this.add.graphics({ x: toX, y: toY }).setDepth(12);
+        ring.lineStyle(2.5, 0xcc88ff, 1);
+        ring.strokeCircle(0, 0, 6);
+        this.tweens.add({ targets: ring, scaleX: 3.5, scaleY: 3.5, alpha: 0, duration: 260, onComplete: () => ring.destroy() });
+
+        this.burstFx('ptx-dot', toX, toY, 10, 320, {
+          tint:  0xaa44ff,
+          speed: { min: 50,  max: 180 },
+          angle: { min: 0,   max: 360 },
+          scale: { start: 0.65, end: 0 },
+          alpha: { start: 1,    end: 0 },
+        });
+      },
+    });
+  }
+
+  private fxFrost(toX: number, toY: number): void {
+    // Six ice spokes at 60° intervals, each with a small perpendicular tick at the tip
+    const spokes = this.add.graphics({ x: toX, y: toY }).setDepth(12);
+    const sLen   = 40;
+    for (let i = 0; i < 6; i++) {
+      const a    = (i / 6) * Math.PI * 2;
+      const perpA = a + Math.PI / 2;
+      const tx   = Math.cos(a) * sLen;
+      const ty   = Math.sin(a) * sLen;
+      spokes.lineStyle(2, 0xaaddff, 1);
+      spokes.lineBetween(0, 0, tx, ty);
+      spokes.lineStyle(1.5, 0xddeeff, 0.85);
+      spokes.lineBetween(tx - Math.cos(perpA) * 7, ty - Math.sin(perpA) * 7, tx + Math.cos(perpA) * 7, ty + Math.sin(perpA) * 7);
+    }
+    this.tweens.add({ targets: spokes, alpha: 0, duration: 300, ease: 'Quad.easeOut', onComplete: () => spokes.destroy() });
+
+    const ring = this.add.graphics({ x: toX, y: toY }).setDepth(11);
+    ring.lineStyle(2.5, 0x66ccff, 1);
+    ring.strokeCircle(0, 0, 10);
+    this.tweens.add({ targets: ring, scaleX: 3.8, scaleY: 3.8, alpha: 0, duration: 340, ease: 'Power2', onComplete: () => ring.destroy() });
+
+    this.burstFx('ptx-dot', toX, toY, 7, 330, {
+      tint:  0xaaddff,
+      speed: { min: 50,  max: 140 },
+      angle: { min: 0,   max: 360 },
+      scale: { start: 0.7, end: 0 },
+      alpha: { start: 1,   end: 0 },
+    });
+  }
+
+  private fxFire(toX: number, toY: number): void {
+    // Flash
+    const flash = this.add.graphics({ x: toX, y: toY }).setDepth(13);
+    flash.fillStyle(0xffffff, 0.88);
+    flash.fillCircle(0, 0, 14);
+    this.tweens.add({ targets: flash, alpha: 0, scaleX: 1.5, scaleY: 1.5, duration: 85, onComplete: () => flash.destroy() });
+
+    // Expanding orange ring
+    const ring = this.add.graphics({ x: toX, y: toY }).setDepth(12);
+    ring.lineStyle(3, 0xff6600, 1);
+    ring.strokeCircle(0, 0, 12);
+    this.tweens.add({ targets: ring, scaleX: 3.8, scaleY: 3.8, alpha: 0, duration: 320, ease: 'Power2', onComplete: () => ring.destroy() });
+
+    // Upward burst — fire particles rise against gravity
+    this.burstFx('ptx-dot', toX, toY, 12, 460, {
+      tint:     0xff6600,
+      speed:    { min: 80,  max: 230 },
+      angle:    { min: 220, max: 320 }, // upward arc
+      scale:    { start: 0.75, end: 0  },
+      alpha:    { start: 1,    end: 0  },
+      gravityY: -110,
+    });
+
+    // Ember scatter — sparks fall back down
+    this.burstFx('ptx-spark', toX, toY, 8, 560, {
+      tint:     0xff8800,
+      speed:    { min: 50,  max: 150 },
+      angle:    { min: 0,   max: 360 },
+      scale:    { start: 0.9, end: 0 },
+      alpha:    { start: 1,   end: 0 },
+      gravityY: 130,
+      rotate:   { min: 0, max: 360 },
+    });
+  }
+
+  private fxVoid(toX: number, toY: number): void {
+    // Phase 1: dark circle collapses inward (implosion feel)
+    const dark = this.add.graphics({ x: toX, y: toY }).setDepth(12);
+    dark.fillStyle(0x220033, 0.82);
+    dark.fillCircle(0, 0, 28);
+    dark.lineStyle(2.5, 0x6600cc, 1);
+    dark.strokeCircle(0, 0, 28);
+    dark.setScale(2.5);
+    this.tweens.add({
+      targets: dark, scaleX: 0.15, scaleY: 0.15, alpha: 0.2, duration: 230, ease: 'Back.easeIn',
+      onComplete: () => {
+        dark.destroy();
+        // Phase 2: burst outward
+        const burst = this.add.graphics({ x: toX, y: toY }).setDepth(13);
+        burst.fillStyle(0x9933ff, 0.88);
+        burst.fillCircle(0, 0, 16);
+        this.tweens.add({ targets: burst, alpha: 0, scaleX: 2.8, scaleY: 2.8, duration: 190, onComplete: () => burst.destroy() });
+
+        const ring = this.add.graphics({ x: toX, y: toY }).setDepth(12);
+        ring.lineStyle(3, 0xaa44ff, 1);
+        ring.strokeCircle(0, 0, 12);
+        this.tweens.add({ targets: ring, scaleX: 4.5, scaleY: 4.5, alpha: 0, duration: 340, ease: 'Power2', onComplete: () => ring.destroy() });
+
+        this.burstFx('ptx-dot', toX, toY, 12, 360, {
+          tint:  0x9933ff,
+          speed: { min: 60,  max: 190 },
+          angle: { min: 0,   max: 360 },
+          scale: { start: 0.7, end: 0 },
+          alpha: { start: 1,   end: 0 },
+        });
+      },
+    });
+  }
+
+  private spawnAttackEffect(
+    style: string,
+    fromX: number, fromY: number,
+    toX: number, toY: number,
+    flags?: { empowered?: boolean; execution?: boolean },
+  ): void {
+    const empowered = flags?.empowered ?? false;
+    const execution = flags?.execution ?? false;
 
     switch (style) {
-      case 'slash': {
-        // Two short crossing lines near the attacker, perpendicular to attack direction
-        const cx = fromX + Math.cos(angle) * 22;
-        const cy = fromY + Math.sin(angle) * 22;
-        const g = this.add.graphics({ x: cx, y: cy }).setDepth(10);
-        const len = 20;
-        const perp = angle + Math.PI / 2;
-        g.lineStyle(2, 0xffffaa, 1);
-        g.lineBetween(
-          -Math.cos(perp) * len, -Math.sin(perp) * len,
-           Math.cos(perp) * len,  Math.sin(perp) * len,
-        );
-        g.lineStyle(1.5, 0xffffff, 0.6);
-        const diag = angle + Math.PI / 3;
-        g.lineBetween(
-          -Math.cos(diag) * len * 0.65, -Math.sin(diag) * len * 0.65,
-           Math.cos(diag) * len * 0.65,  Math.sin(diag) * len * 0.65,
-        );
-        this.tweens.add({ targets: g, alpha: 0, duration: 160, onComplete: () => g.destroy() });
-        break;
-      }
-      case 'poison': {
-        // Expanding green ring at target + small dot
-        const g = this.add.graphics({ x: toX, y: toY }).setDepth(10);
-        g.lineStyle(2, 0x44ff88, 1);
-        g.strokeCircle(0, 0, 5);
-        this.tweens.add({ targets: g, alpha: 0, scaleX: 3, scaleY: 3, duration: 300, ease: 'Power2', onComplete: () => g.destroy() });
-        const dot = this.add.circle(toX, toY, 3, 0x44ff88, 0.8).setDepth(10);
-        this.tweens.add({ targets: dot, alpha: 0, duration: 200, onComplete: () => dot.destroy() });
-        break;
-      }
-      case 'magic': {
-        // Purple orb travels from attacker to target, then a ring pops at impact
-        const orb = this.add.circle(fromX, fromY, 4, 0xaa44ff).setDepth(10);
-        this.tweens.add({
-          targets: orb, x: toX, y: toY, alpha: 0,
-          duration: 200, ease: 'Quad.easeIn',
-          onComplete: () => {
-            orb.destroy();
-            const ring = this.add.graphics({ x: toX, y: toY }).setDepth(10);
-            ring.lineStyle(2, 0xcc88ff, 1);
-            ring.strokeCircle(0, 0, 4);
-            this.tweens.add({ targets: ring, alpha: 0, scaleX: 2, scaleY: 2, duration: 200, onComplete: () => ring.destroy() });
-          },
-        });
-        break;
-      }
+      case 'slash':  return this.fxSlash(fromX, fromY, toX, toY, empowered);
+      case 'poison': return this.fxPoison(toX, toY);
+      case 'magic':  return this.fxMagic(fromX, fromY, toX, toY);
+      case 'frost':  return this.fxFrost(toX, toY);
+      case 'fire':   return this.fxFire(toX, toY);
+      case 'void':   return this.fxVoid(toX, toY);
       case 'impact':
-      default: {
-        // Expanding orange ring at target position
-        const g = this.add.graphics({ x: toX, y: toY }).setDepth(10);
-        g.lineStyle(2, 0xff7744, 1);
-        g.strokeCircle(0, 0, 6);
-        this.tweens.add({ targets: g, alpha: 0, scaleX: 2.5, scaleY: 2.5, duration: 250, ease: 'Power2', onComplete: () => g.destroy() });
-        break;
-      }
+      default:       return this.fxImpact(toX, toY, execution);
     }
   }
 

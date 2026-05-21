@@ -1,5 +1,9 @@
 import type { PlayerState, MonsterState, NodeDefinition } from '@mmo-idle/shared';
 import { GAME_CONFIG, NODE_BIOMES, MONSTER_DATABASE, BIOME_DATABASE } from '@mmo-idle/shared';
+
+// Regular monsters in dungeon nodes are scaled up; boss stats come from the database directly.
+const DUNGEON_HP_MULT  = 2.0;
+const DUNGEON_ATK_MULT = 1.6;
 import { updateAutoTargets } from '../systems/autoTarget';
 import { updateMovement } from '../systems/movement';
 import { updateMonsters } from '../systems/ai';
@@ -8,9 +12,12 @@ import { updateTransitions } from '../systems/transitions';
 import { updateCombatState, makeCombatState, resetCombatState } from '../systems/combatState';
 import type { CombatState } from '../systems/combatState';
 import { updateCooldownArchetype } from '../systems/cooldownPrototype';
+import { updateCooldownT3 } from '../systems/cooldownT3';
 import { updateEnergyArchetype } from '../systems/energyPrototype';
+import { updateEnergyT3 } from '../systems/energyT3';
 import { updateReloadArchetype } from '../systems/reloadPrototype';
 import { updateDotArchetype } from '../systems/dotPrototype';
+import { updateDotT3 } from '../systems/dotT3';
 import { updateCadenceEffects } from '../systems/cadencePrototype';
 import { updateWeaponEffects } from '../systems/weaponEffects';
 import { updateShields } from '../systems/defenseSystems';
@@ -47,7 +54,7 @@ export class World {
 
   nextMonsterId = 1;
 
-  constructor(nodeId = 'node-2-2') {
+  constructor(nodeId = 'node-4-4') {
     const node = NODE_REGISTRY.get(nodeId);
     if (!node) throw new Error(`Unknown node id: "${nodeId}"`);
     this.nodeId = nodeId;
@@ -60,6 +67,7 @@ export class World {
       for (let i = 0; i < GAME_CONFIG.MONSTERS_PER_NODE; i++) {
         this.spawnMonster(nodeId);
       }
+      this.ensureBoss(nodeId);
     }
   }
 
@@ -69,8 +77,11 @@ export class World {
     updateCombatState(this, dt);
     updateShields(this, dt);
     updateCooldownArchetype(this);
+    updateCooldownT3(this, dt);
+    updateEnergyT3(this, dt);
     updateEnergyArchetype(this);
     updateReloadArchetype(this);
+    updateDotT3(this, dt);
     updateDotArchetype(this, dt);
     updateCadenceEffects(this, dt);
     updateWeaponEffects(this, dt);
@@ -83,6 +94,7 @@ export class World {
 
     for (const nodeId of NODE_REGISTRY.keys()) {
       this.ensurePopulation(nodeId);
+      this.ensureBoss(nodeId);
     }
   }
 
@@ -102,6 +114,14 @@ export class World {
 
     const id = `monster-${this.nextMonsterId++}`;
 
+    const isBoss = def.isBoss ?? false;
+    const nodeDef = NODE_REGISTRY.get(nodeId);
+    const isDungeon = nodeDef?.isDungeon ?? false;
+
+    // Apply dungeon stat multipliers to regular (non-boss) monsters.
+    const hpBase  = (!isBoss && isDungeon) ? Math.round(def.stats.hp     * DUNGEON_HP_MULT)  : def.stats.hp;
+    const atkBase = (!isBoss && isDungeon) ? Math.round(def.stats.attack  * DUNGEON_ATK_MULT) : def.stats.attack;
+
     const monster: MonsterState = {
       id,
       monsterTypeId: typeId,
@@ -110,9 +130,9 @@ export class World {
       x, y,
       targetX: x,
       targetY: y,
-      hp:             def.stats.hp,
-      maxHp:          def.stats.hp,
-      attack:         def.stats.attack,
+      hp:             hpBase,
+      maxHp:          hpBase,
+      attack:         atkBase,
       plating:        def.stats.plating,
       damageReduction: def.stats.damageReduction,
       speed:   def.stats.speed,
@@ -124,6 +144,7 @@ export class World {
       attackTargetId: null,
       nodeId,
       attackStyle: def.attackStyle,
+      isBoss,
     };
 
     this.monsters.set(id, monster);
@@ -179,7 +200,7 @@ export class World {
   }
 
   /**
-   * Teleport a player to the starting clearing (node-2-2), restore full HP,
+   * Teleport a player to the starting clearing (node-4-4), restore full HP,
    * clear movement and combat state, and drop all monster aggro targeting them.
    * Queues the player ID in pendingDeaths so the server loop can emit the event.
    */
@@ -190,7 +211,7 @@ export class World {
     const spawnX = GAME_CONFIG.NODE_WIDTH  / 2;
     const spawnY = GAME_CONFIG.NODE_HEIGHT / 2;
 
-    player.nodeId       = 'node-2-2';
+    player.nodeId       = 'node-4-4';
     player.x            = spawnX;
     player.y            = spawnY;
     player.targetX      = spawnX;
@@ -202,8 +223,10 @@ export class World {
     recalculatePlayerStats(player);
     player.hp = player.maxHp;
 
-    player.evasionCount = 0;
-    player.shields      = [];
+    player.evasionCount  = 0;
+    player.shields       = [];
+    player.isChanneling  = false;
+    player.channelingPct = 0;
 
     this.playerCombatAt.delete(playerId);
 
@@ -220,12 +243,33 @@ export class World {
   ensurePopulation(nodeId: string) {
     let count = 0;
     for (const m of this.monsters.values()) {
-      if (m.nodeId === nodeId) count++;
+      if (m.nodeId === nodeId && !m.isBoss) count++;
     }
     while (count < GAME_CONFIG.MONSTERS_PER_NODE) {
       if (!this.spawnMonster(nodeId)) break;
       count++;
     }
+  }
+
+  /**
+   * Maintain exactly one boss in each dungeon node. If no boss is present,
+   * picks from the biome's bossPoolByTier and spawns near the node center.
+   */
+  ensureBoss(nodeId: string): void {
+    const nodeDef = NODE_REGISTRY.get(nodeId);
+    if (!nodeDef?.isDungeon) return;
+
+    const hasBoss = [...this.monsters.values()].some(m => m.nodeId === nodeId && m.isBoss);
+    if (hasBoss) return;
+
+    const biome = BIOME_DATABASE.get(nodeDef.biomeGroup);
+    const pool  = biome?.bossPoolByTier?.[nodeDef.biomeTier];
+    if (!pool || pool.length === 0) return;
+
+    const typeId = pool[Math.floor(Math.random() * pool.length)];
+    const x = nodeDef.width  / 2 + (Math.random() - 0.5) * 200;
+    const y = nodeDef.height / 2 + (Math.random() - 0.5) * 200;
+    this.createMonster(nodeId, typeId, x, y);
   }
 
   // ── SNAPSHOT ───────────────────────────────────────
