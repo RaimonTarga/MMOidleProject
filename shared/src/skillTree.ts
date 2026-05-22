@@ -71,7 +71,7 @@ export interface SkillNode {
 //
 // Tiers 8–9 reserved for expansion — add nodes to SKILL_TREE when ready.
 
-export const SKILL_TREE: Map<string, SkillNode> = new Map([
+export const SKILL_TREE: Map<string, SkillNode> = new Map<string, SkillNode>([
 
   // ── Tier 0: Class roots ────────────────────────────────────────────────────
   //
@@ -84,40 +84,44 @@ export const SKILL_TREE: Map<string, SkillNode> = new Map([
     id: 'cadence-root', name: 'Cadence', tier: 0,
     classId: 'cadence-root', subVariantId: null,
     parent: null, children: [],
-    description: 'Find the rhythm of battle. Every few hits your attack surges with accumulated force. A middle-ground fighter — balanced between mobility and durability.',
-    cost: 1, statEffects: { attack: 3 },
+    description: 'Find the rhythm of battle. Every few hits your attack surges with accumulated force. A balanced fighter — periodic bursts of healing sustain you through prolonged engagements.',
+    cost: 1, statEffects: { attack: 4, maxHp: 12, plating: 2, damageReduction: 0.02 },
+    mechanicEffects: { 'defense.regen-burst-pct': 0.08, 'defense.regen-burst-interval-ms': 10000 } as Record<string, number>,
   }],
 
   ['cooldown-root', {
     id: 'cooldown-root', name: 'Cooldown', tier: 0,
     classId: 'cooldown-root', subVariantId: null,
     parent: null, children: [],
-    description: 'Patience is power. Prepare a devastating strike on a set cycle. Your heavy bearing brings natural durability and recovery.',
-    cost: 1, statEffects: { attack: 4, maxHp: 15, plating: 3, hpRegen: 2, speed: -10 },
+    description: 'Patience is power. Prepare a devastating strike on a set cycle. Your heavy bearing brings substantial bulk and damage reduction, and 12% of your regen rate applies even while you fight.',
+    cost: 1, statEffects: { attack: 2, maxHp: 20, plating: 2, damageReduction: 0.04, speed: -10 },
+    mechanicEffects: { 'defense.in-combat-regen-pct': 0.12 } as Record<string, number>,
   }],
 
   ['reload-root', {
     id: 'reload-root', name: 'Reload', tier: 0,
     classId: 'reload-root', subVariantId: null,
     parent: null, children: [],
-    description: 'Unleash a rapid clip of attacks, then reload. High burst with a built-in pause. Your light frame keeps you quick on your feet.',
-    cost: 1, statEffects: { attackCooldown: -800, speed: 8, maxHp: -5 },
+    description: 'Unleash a rapid clip then reload. Your speed is doubled and damage per shot halved as a fundamental multiplier — fights from range naturally and weaves around incoming blows.',
+    cost: 1, statEffects: { speed: 10, maxHp: -10, attackRange: 50, evasion: 8 },
   }],
 
   ['energy-root', {
     id: 'energy-root', name: 'Energy', tier: 0,
     classId: 'energy-root', subVariantId: null,
     parent: null, children: [],
-    description: 'Channel the force of each blow into a building surge of power. Your light frame moves with effortless speed.',
-    cost: 1, statEffects: { attack: 2, speed: 12, attackCooldown: -150, maxHp: -10 },
+    description: 'Channel each blow into a building surge of power. Your light build fights from range and your energy feeds a periodic shield that absorbs the hits that do reach you.',
+    cost: 1, statEffects: { attack: 2, speed: 12, attackCooldown: -150, maxHp: -5, attackRange: 40, plating: 1 },
+    mechanicEffects: { 'defense.shield-pct': 0.06, 'defense.shield-interval-ms': 14000, 'defense.shield-duration-ms': 14000 } as Record<string, number>,
   }],
 
   ['dot-root', {
     id: 'dot-root', name: 'DoT', tier: 0,
     classId: 'dot-root', subVariantId: null,
     parent: null, children: [],
-    description: 'Your strikes leave lingering wounds. Stack the pain until nothing survives. A durable attacker who wins through attrition.',
-    cost: 1, statEffects: { attack: 2, maxHp: 10, plating: 2, hpRegen: 1 },
+    description: 'Your strikes leave lingering wounds. Stack the pain until nothing survives. Your toxin-hardened body resists DoT damage by 12% and converts 10% of incoming direct hits into delayed damage you can outlast.',
+    cost: 1, statEffects: { attack: 3, maxHp: 15, plating: 2, damageReduction: 0.03, hpRegen: 1 },
+    mechanicEffects: { 'defense.dot-resistance': 0.12, 'defense.hit-to-dot-pct': 0.10 } as Record<string, number>,
   }],
 
   // ── Tier 1: Sub-variants ───────────────────────────────────────────────────
@@ -148,7 +152,7 @@ export const SKILL_TREE: Map<string, SkillNode> = new Map([
     classId: 'cadence-root', subVariantId: 'heavy',
     parent: 'cadence-root', children: [],
     description: 'Endurance over speed. Significant bulk and recovery at the cost of mobility and attack pace. Empowered finisher every 6 hits at 4× — patience rewarded with power.',
-    cost: 1, statEffects: { maxHp: 35, plating: 6, hpRegen: 4, speed: -18, attackCooldown: 250 },
+    cost: 1, statEffects: { maxHp: 16, plating: 6, hpRegen: 3, speed: -18, attackCooldown: 250 },
     mechanicEffects: { 'cadence.empowered-threshold': 6, 'cadence.empowered-mult': 4.0 } as Record<string, number>,
   }],
 
@@ -158,24 +162,24 @@ export const SKILL_TREE: Map<string, SkillNode> = new Map([
     id: 'cooldown-light', name: 'Light Frame', tier: 1,
     classId: 'cooldown-root', subVariantId: 'light',
     parent: 'cooldown-root', children: [],
-    description: 'An unusual choice for such a slow mechanic — trading away armor for speed creates a glass cannon who hits hard but can barely survive a counterattack. Execution recharges in 5 s at 1.5×.',
-    cost: 1, statEffects: { speed: 22, maxHp: -30, plating: -4, attackCooldown: -300 },
+    description: 'An unusual choice — stripping away the tank stats for speed creates a glass cannon who still carries some damage reduction but little else to survive on. Execution recharges in 5 s at 1.5×.',
+    cost: 1, statEffects: { speed: 22, maxHp: -20, plating: -3, damageReduction: -0.02, attackCooldown: -300 },
     mechanicEffects: { 'cooldown.empowered-cd-ms': 5000, 'cooldown.empowered-mult': 1.5 } as Record<string, number>,
   }],
   ['cooldown-balanced', {
     id: 'cooldown-balanced', name: 'Balanced Frame', tier: 1,
     classId: 'cooldown-root', subVariantId: 'balanced',
     parent: 'cooldown-root', children: [],
-    description: 'A sturdy foundation. Meaningful HP and armor gains tempered by reduced mobility. Execution recharges in 7 s at 2×.',
-    cost: 1, statEffects: { maxHp: 20, plating: 4, hpRegen: 3, speed: -8 },
+    description: 'A sturdy foundation. Substantial HP, armor, and added damage reduction amplify the class\'s defensive identity. Execution recharges in 7 s at 2×.',
+    cost: 1, statEffects: { maxHp: 15, plating: 4, hpRegen: 3, damageReduction: 0.04, speed: -8 },
     mechanicEffects: { 'cooldown.empowered-cd-ms': 7000, 'cooldown.empowered-mult': 2.0 } as Record<string, number>,
   }],
   ['cooldown-heavy', {
     id: 'cooldown-heavy', name: 'Heavy Frame', tier: 1,
     classId: 'cooldown-root', subVariantId: 'heavy',
     parent: 'cooldown-root', children: [],
-    description: 'Fortress of patience. Extreme resilience and regeneration make you nearly unkillable — but you move like a boulder and attack even slower. Execution recharges in 9 s at 3×.',
-    cost: 1, statEffects: { maxHp: 55, plating: 10, hpRegen: 6, speed: -30, attackCooldown: 400 },
+    description: 'Fortress of patience. Maximum bulk and full 10% damage reduction make you a wall — but you move like a boulder and attack even slower. Execution recharges in 9 s at 3×.',
+    cost: 1, statEffects: { maxHp: 30, plating: 6, hpRegen: 5, damageReduction: 0.06, speed: -25, attackCooldown: 400 },
     mechanicEffects: { 'cooldown.empowered-cd-ms': 9000, 'cooldown.empowered-mult': 3.0 } as Record<string, number>,
   }],
 
@@ -186,7 +190,7 @@ export const SKILL_TREE: Map<string, SkillNode> = new Map([
     classId: 'dot-root', subVariantId: 'light',
     parent: 'dot-root', children: [],
     description: 'Apply wounds quickly and stay mobile. Up to 8 stacks at 2 damage each — ramps fast, bleeds steadily.',
-    cost: 1, statEffects: { speed: 18, maxHp: -25, plating: -2, attackCooldown: -300 },
+    cost: 1, statEffects: { speed: 18, maxHp: -20, plating: -2, attackCooldown: -300 },
     mechanicEffects: { 'dot.max-stacks': 8, 'dot.damage-per-stack': 2 } as Record<string, number>,
   }],
   ['dot-balanced', {
@@ -194,7 +198,7 @@ export const SKILL_TREE: Map<string, SkillNode> = new Map([
     classId: 'dot-root', subVariantId: 'balanced',
     parent: 'dot-root', children: [],
     description: 'A deliberate fighter. Enough durability to let your damage-over-time do its work. Up to 6 stacks at 3 damage each.',
-    cost: 1, statEffects: { maxHp: 15, plating: 3, hpRegen: 2, speed: -5 },
+    cost: 1, statEffects: { attack: 2, maxHp: 10, plating: 3, hpRegen: 2, speed: -5 },
     mechanicEffects: { 'dot.max-stacks': 6, 'dot.damage-per-stack': 3 } as Record<string, number>,
   }],
   ['dot-heavy', {
@@ -202,7 +206,7 @@ export const SKILL_TREE: Map<string, SkillNode> = new Map([
     classId: 'dot-root', subVariantId: 'heavy',
     parent: 'dot-root', children: [],
     description: 'A war of attrition. Heavy plating and strong recovery let you outlast anything. Up to 3 stacks at 7 damage each — fewer wounds, but each one runs deep.',
-    cost: 1, statEffects: { maxHp: 45, plating: 8, hpRegen: 5, speed: -25, attackCooldown: 350 },
+    cost: 1, statEffects: { maxHp: 23, plating: 7, hpRegen: 4, damageReduction: 0.05, speed: -25, attackCooldown: 350 },
     mechanicEffects: { 'dot.max-stacks': 3, 'dot.damage-per-stack': 7 } as Record<string, number>,
   }],
 
@@ -212,16 +216,16 @@ export const SKILL_TREE: Map<string, SkillNode> = new Map([
     id: 'reload-light', name: 'Light Frame', tier: 1,
     classId: 'reload-root', subVariantId: 'light',
     parent: 'reload-root', children: [],
-    description: 'All-in on burst. Small clip (5 rounds) but reloads in 1.5 s — maximum uptime, minimal downtime.',
-    cost: 1, statEffects: { speed: 15, maxHp: -15, attackCooldown: -200 },
+    description: 'All-in on mobility. Small clip (5 rounds), 1.5 s reload, and extra dodge chance — maximum uptime, minimum profile to hit.',
+    cost: 1, statEffects: { speed: 15, maxHp: -15, attackCooldown: -200, evasion: 4 },
     mechanicEffects: { 'reload.max-ammo': 5, 'reload.reload-time-ms': 1500 } as Record<string, number>,
   }],
   ['reload-balanced', {
     id: 'reload-balanced', name: 'Balanced Frame', tier: 1,
     classId: 'reload-root', subVariantId: 'balanced',
     parent: 'reload-root', children: [],
-    description: 'A steady burst fighter. Standard 8-round clip with a 2.5 s reload — tempo and damage in balance.',
-    cost: 1, statEffects: { attack: 2, maxHp: 5, speed: 5, hpRegen: 1 },
+    description: 'A steady burst fighter. Standard 8-round clip, 2.5 s reload, modest avoidance — tempo and staying power in balance.',
+    cost: 1, statEffects: { attack: 2, maxHp: 5, speed: 5, hpRegen: 1, evasion: 2 },
     mechanicEffects: { 'reload.max-ammo': 8, 'reload.reload-time-ms': 2500 } as Record<string, number>,
   }],
   ['reload-heavy', {
@@ -247,16 +251,16 @@ export const SKILL_TREE: Map<string, SkillNode> = new Map([
     id: 'energy-balanced', name: 'Balanced Frame', tier: 1,
     classId: 'energy-root', subVariantId: 'balanced',
     parent: 'energy-root', children: [],
-    description: 'Fast and capable. A bit of extra punch and movement without sacrificing too much. Gains 14 energy per hit, empowered at 2×.',
-    cost: 1, statEffects: { attack: 2, speed: 8, attackCooldown: -150, maxHp: -5 },
+    description: 'Fast and capable. A bit of extra punch and some light armor without sacrificing mobility. Gains 14 energy per hit, empowered at 2×.',
+    cost: 1, statEffects: { attack: 2, speed: 8, attackCooldown: -150, maxHp: -5, plating: 1 },
     mechanicEffects: { 'energy.per-hit': 14, 'energy.empowered-mult': 2.0 } as Record<string, number>,
   }],
   ['energy-heavy', {
     id: 'energy-heavy', name: 'Heavy Frame', tier: 1,
     classId: 'energy-root', subVariantId: 'heavy',
     parent: 'energy-root', children: [],
-    description: 'Measured power. A light class wearing heavier armor — modest durability gains without fully abandoning speed. Gains 10 energy per hit, empowered at 6× — builds slowly, hits very hard.',
-    cost: 1, statEffects: { maxHp: 18, plating: 2, hpRegen: 2, speed: -8, attackCooldown: 100 },
+    description: 'Measured power. A light class wearing heavier armor — modest durability and a sliver of damage reduction, without fully abandoning speed. Gains 10 energy per hit, empowered at 6× — builds slowly, hits very hard.',
+    cost: 1, statEffects: { maxHp: 18, plating: 3, hpRegen: 2, damageReduction: 0.02, speed: -8, attackCooldown: 100 },
     mechanicEffects: { 'energy.per-hit': 10, 'energy.empowered-mult': 6.0 } as Record<string, number>,
   }],
 
@@ -269,8 +273,8 @@ export const SKILL_TREE: Map<string, SkillNode> = new Map([
     id: 'range-close', name: 'Close Range', tier: 2,
     classId: null, subVariantId: null,
     parent: null, children: [],
-    description: 'Fight at point-blank range. Reduced reach is offset by faster attacks, more damage, and the fortification that comes with fighting in the thick of it.',
-    cost: 1, statEffects: { attackRange: -20, attack: 3, attackCooldown: -200, plating: 2, damageReduction: 0.04, maxHp: 8 },
+    description: 'Fight at point-blank range. Significantly reduced reach is offset by faster attacks, more damage, and the fortification that comes from fighting in the thick of it.',
+    cost: 1, statEffects: { attackRange: -40, attack: 5, attackCooldown: -300, plating: 3, damageReduction: 0.06, maxHp: 12 },
   }],
 
   ['range-mid', {
@@ -285,8 +289,8 @@ export const SKILL_TREE: Map<string, SkillNode> = new Map([
     id: 'range-far', name: 'Far Range', tier: 2,
     classId: null, subVariantId: null,
     parent: null, children: [],
-    description: 'Strike from a safe distance. Extended reach at a meaningful cost to raw damage and attack speed.',
-    cost: 1, statEffects: { attackRange: 60, attack: -5, attackCooldown: 300 },
+    description: 'Strike from a substantial distance. Major range extension at the cost of raw damage and attack speed — opponents may not even reach you.',
+    cost: 1, statEffects: { attackRange: 120, attack: -8, attackCooldown: 400 },
   }],
 
   // ── Tier 3: Path modifiers (cadence-light — fully implemented) ────────────

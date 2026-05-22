@@ -1,6 +1,7 @@
 import type { PlayerBuff } from '@mmo-idle/shared';
 import { getCounter, getResource } from './combatState';
 import { getTotalStacks } from './statusEffects';
+import { getDefenseAbsorbPool, getDefenseBurstPool, getDefenseDebtPool } from './defenseSystems';
 import {
   getOverdrivePct,
   getEternalChargeStacks,
@@ -211,6 +212,24 @@ export function syncPlayerBuffs(world: World): void {
 
       // Glacial Fracture: show current frost stacks building toward shatter
       // (Covered by targetDotStacks HUD bar — no extra buff entry needed.)
+    }
+
+    // ── Defensive system pools ─────────────────────────────────────────────────
+    if (cs) {
+      // Life leech HoT: healing incoming from damage taken
+      if (getDefenseAbsorbPool(cs) > 0) {
+        buffs.push({ id: 'defense-absorb', label: 'Absrb', stacks: 1, durationPct: -1, color: '#ff88aa' });
+      }
+
+      // Regen burst: periodic healing pool draining in
+      if (getDefenseBurstPool(cs) > 0) {
+        buffs.push({ id: 'defense-burst', label: 'Burst', stacks: 1, durationPct: -1, color: '#aaffaa' });
+      }
+
+      // Damage debt: delayed damage coming in (shown as a debuff-style indicator)
+      if (getDefenseDebtPool(cs) > 0) {
+        buffs.push({ id: 'defense-debt', label: 'Debt', stacks: 1, durationPct: -1, color: '#ff4444' });
+      }
     }
 
     player.activeBuffs = buffs;

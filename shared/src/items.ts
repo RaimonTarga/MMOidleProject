@@ -27,17 +27,17 @@ export const BIOME_PRIMARY_ESSENCE: Record<string, EssenceType> = {
 
 // ─── Equipment slots ──────────────────────────────────────────────────────────
 
-export type EquipmentSlot = 'weapon' | 'armor' | 'recovery' | 'mobility' | 'ring1' | 'ring2';
+export type EquipmentSlot = 'weapon' | 'armor' | 'recovery' | 'mobility';
 
 export const EQUIPMENT_SLOTS: EquipmentSlot[] = [
-  'weapon', 'armor', 'recovery', 'mobility', 'ring1', 'ring2',
+  'weapon', 'armor', 'recovery', 'mobility',
 ];
 
 /** Null in a slot means nothing is equipped there. */
 export type EquipmentMap = Record<EquipmentSlot, string | null>;
 
 export function emptyEquipment(): EquipmentMap {
-  return { weapon: null, armor: null, recovery: null, mobility: null, ring1: null, ring2: null };
+  return { weapon: null, armor: null, recovery: null, mobility: null };
 }
 
 // ─── Item stat modifiers ──────────────────────────────────────────────────────
@@ -70,6 +70,25 @@ export interface ItemDefinition {
   slot: EquipmentSlot;
   tier: number;
   statModifiers: Record<string, number>;
+  /**
+   * Named mechanic modifiers accumulated into player.passives during stat rebuild,
+   * exactly like skill node mechanicEffects. Use for defensive / recovery stats that
+   * don't map to a direct PlayerState field:
+   *   defense.max-hit-pct          — clamp single hit to X% of maxHp
+   *   defense.hit-to-dot-pct       — redirect X% of hit damage to 4s debt
+   *   defense.dot-resistance        — mitigate incoming DoT damage by X (0–1)
+   *   defense.debuff-resistance     — reduce non-DoT debuff magnitude by X (0–1)
+   *   defense.in-combat-regen-pct  — fraction of OOC regen applied while in combat
+   *   defense.regen-burst-pct      — % maxHp healed per burst (needs interval)
+   *   defense.regen-burst-interval-ms — ms between regen bursts
+   *   defense.absorb-pct           — fraction of damage taken converted to HoT pool
+   *   defense.shield-pct           — % maxHp shield applied on combat entry/cooldown
+   *   defense.shield-interval-ms   — ms between shield applications (needs shield-pct)
+   *   defense.shield-duration-ms   — ms before a shield expires even if not depleted; omit for permanent shields
+   *   defense.cleanse-stacks       — stacks removed per cleanse trigger
+   *   defense.cleanse-interval-ms  — ms between cleanse triggers
+   */
+  mechanicEffects?: Record<string, number>;
   /**
    * Weapons only. Sets the player's base attack cooldown to `round(1000 / aps)` ms
    * when this weapon is equipped. Skills and other equipment still modify the result

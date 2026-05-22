@@ -11,8 +11,6 @@ const SLOT_LABELS: Record<EquipmentSlot, string> = {
   armor:    'Armor',
   recovery: 'Recovery',
   mobility: 'Boots',
-  ring1:    'Ring 1',
-  ring2:    'Ring 2',
 };
 
 const STAT_LABELS: Record<string, string> = {

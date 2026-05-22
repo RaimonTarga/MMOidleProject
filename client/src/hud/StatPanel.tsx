@@ -112,9 +112,8 @@ export function StatPanel({ player, status }: Props) {
 
       {/* World */}
       <div className="stat-section">
-        <StatRow label="Level"      value={player?.level      ?? 0} />
-        <StatRow label="Skill Pts"  value={player?.skillPoints ?? 0} />
-        <StatRow label="Zone"       value={zoneLabel} />
+        <StatRow label="Tier"  value={player?.playerTier ?? 0} />
+        <StatRow label="Zone"  value={zoneLabel} />
         {player?.selectedClass && (
           <StatRow label="Class" value={player.selectedClass} />
         )}

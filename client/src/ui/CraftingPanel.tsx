@@ -11,7 +11,7 @@ import './crafting.css';
 
 const SLOT_LABELS: Record<string, string> = {
   weapon: 'Weapon', armor: 'Armor', recovery: 'Recovery',
-  mobility: 'Boots', ring1: 'Ring 1', ring2: 'Ring 2',
+  mobility: 'Boots',
 };
 
 const STAT_LABELS: Record<string, string> = {

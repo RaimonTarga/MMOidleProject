@@ -26,6 +26,7 @@ Key design axioms:
 ```
 /
 ├── CLAUDE.md               ← you are here
+├── map-editor.html         ← standalone biome editor (open in browser, no build needed)
 ├── package.json            ← root (scripts only, no runtime deps)
 ├── pnpm-workspace.yaml     ← three packages: client, server, shared
 ├── tsconfig.base.json      ← shared TS compiler base
@@ -45,25 +46,26 @@ Key design axioms:
 │       ├── hudBus.ts       ← reactive event bus for HUD state
 │       ├── hud/
 │       │   ├── HUD.tsx / hud.css   ← sidebars, StatPanel, BuffBar, EssencePanel
-│       │   └── MenuButtons.tsx     ← right sidebar panel toggles
+│       │   └── MenuButtons.tsx     ← right sidebar panel toggles + debug range overlay toggles
 │       ├── ui/
 │       │   ├── SkillTreePanel.tsx / skillTree.css
 │       │   ├── InventoryPanel.tsx / inventory.css
 │       │   ├── CraftingPanel.tsx / crafting.css
-│       │   └── MapPanel.tsx / map.css  ← dungeon tile visuals, boss info panel
+│       │   ├── QuestPanel.tsx      ← quest progress display
+│       │   └── MapPanel.tsx / map.css  ← 11×11 tile grid, dungeon tile visuals, boss info
 │       └── scenes/
-│           └── GameScene.ts ← main scene: socket connection, entity rendering
+│           └── GameScene.ts ← main scene: socket connection, entity rendering, debug overlays
 └── server/
     └── src/
         ├── index.ts        ← Express + Socket.IO + game loop
         ├── world/
         │   ├── World.ts        ← mutable state + tick() + ensureBoss() for dungeons
-        │   └── nodeRegistry.ts ← 5×5 node grid built from NODE_BIOMES
+        │   └── nodeRegistry.ts ← 11×11 node grid built from NODE_BIOMES
         └── systems/
             ├── combat.ts, combatPipeline.ts, combatState.ts, attackCounter.ts
             ├── stats.ts, movement.ts, ai.ts, autoTarget.ts, transitions.ts
             ├── rewards.ts, statusEffects.ts, defenseSystems.ts, weaponEffects.ts
-            ├── questSystem.ts  ← kill-count quest infrastructure + XP leveling
+            ├── questSystem.ts  ← kill-count quest system + XP leveling
             ├── cadencePrototype.ts   ← all 9 cadence T3 mechanics live here
             ├── cooldownPrototype.ts, cooldownT3.ts
             ├── energyPrototype.ts, energyT3.ts, reloadPrototype.ts
@@ -99,6 +101,9 @@ pnpm install
 # Dev — run in two separate terminals
 pnpm dev:server   # http://localhost:4000
 pnpm dev:client   # http://localhost:3000
+
+# Map editor — open directly in browser (no server needed)
+# open map-editor.html
 ```
 
 ---
@@ -112,8 +117,8 @@ pnpm dev:client   # http://localhost:3000
 - Socket event maps: `ServerToClientEvents`, `ClientToServerEvents`
 - Game constants: `GAME_CONFIG`
 - `NODE_BIOMES`: record keyed by `node-{row}-{col}` mapping to `{ biomeGroup, biomeTier, isDungeon? }`
-- `QUEST_DATABASE`: empty `Map<string, QuestDefinition>` — add quest entries here when ready
-- `XP_PER_LEVEL = 100`: progression XP required per skill point from quests
+- `QUEST_DATABASE`: `Map<string, QuestDefinition>` with populated tier-0 through tier-4 quests
+- `XP_PER_LEVEL = 100`: XP required per progression level; each level grants 1 skill point
 
 The package exports TypeScript source directly (`main: ./src/index.ts`).
 Both Vite and tsx resolve it without a build step.
@@ -198,11 +203,16 @@ specific mechanics. Add new buff entries here as mechanics are implemented.
 - Connects to `http://localhost:4000` via Socket.IO on `create()`
 - Maintains `Map<string, Visual>` for players and monsters
 - `Visual` holds the sprite, labels, HP/CD bars, interpolation targets, and
-  `playerState?: PlayerState` (the latest authoritative snapshot for player visuals)
+  `playerState?: PlayerState` (the latest authoritative snapshot for player visuals).
+  Monster visuals also carry `pullRange`, `leashRange`, `monsterAttackRange`.
 - `applySnapshot()` is called on both `state:sync` and `node:state`; it reconciles
   all entities including removing ones no longer in the snapshot
 - Click-to-move: sends `player:move`, updates local target optimistically for smooth feel
 - Boss monsters render at 54×54 with a `⚠ {name}` label in bold `#ffcc44`
+- **Debug range overlay**: `debugGraphics` layer (depth 8) redrawn every frame.
+  Two flags — `debugPlayerRange` (own attack range, yellow-green) and `debugEnemyRanges`
+  (per-monster: pull=orange, leash=dim blue, attack=red). Toggled via the Debug panel
+  in the right sidebar; HUD dispatches `CustomEvent`s that GameScene listens for.
 
 **The React HUD** is overlaid on the Phaser canvas (positioned absolutely). It uses
 `hudBus.ts` (a simple pub/sub singleton) for state. It is **not** React roots inside
@@ -217,10 +227,25 @@ get distinct CSS animation classes (`buff-cat-{category}`) and shapes via inline
 keys and renders path-appropriate pip colors (green/orange/blue) and correct max stacks.
 Frost path also shows `player.targetChillStacks` with chill pips + "FROZEN" indicator.
 
-**MapPanel.tsx** — 5×5 tile grid. Dungeon tiles (`NODE_BIOMES[id].isDungeon === true`)
-receive the `map-tile--dungeon` class (red border, darkened filter) and show a "DUNGEON"
-badge. The hover info panel shows a boss section from `biome.bossPoolByTier` when the
-node is a dungeon, plus a warning line with the stat multipliers (×2 HP · ×1.6 ATK).
+**MapPanel.tsx** — 11×11 tile grid (center node-5-5 = clearing). Dungeon tiles
+(`NODE_BIOMES[id].isDungeon === true`) receive the `map-tile--dungeon` class (red border,
+darkened filter) and show a "DUNGEON" badge. The hover info panel shows a boss section
+from `biome.bossPoolByTier` when the node is a dungeon, plus a warning line with the
+stat multipliers (×2 HP · ×1.6 ATK).
+
+**QuestPanel.tsx** — always-visible panel in the right sidebar showing current quest
+progress (kill counts) and XP/level toward the next skill point.
+
+---
+
+## Map editor
+
+`map-editor.html` at the repo root is a standalone browser tool — open directly, no build.
+It renders an 11×11 tile grid that mirrors `NODE_BIOMES` in `shared/src/index.ts`.
+Use it to visually design biome assignments, then copy the generated `NODE_BIOMES` output
+back into `shared/src/index.ts`. The server and client both read `NODE_BIOMES` to derive
+node properties (exits, biome, tier, dungeon flag), so the editor is the canonical
+way to plan map layout without hand-editing the raw record.
 
 ---
 
@@ -235,30 +260,95 @@ Do not introduce an asset pipeline or loader until art is decided.
 
 ---
 
+## World map layout
+
+The world is an **11×11 grid** of nodes. Center `node-5-5` is the starting clearing (T0).
+Chebyshev distance from center determines tier band:
+
+| Distance | Tier | Content |
+|---|---|---|
+| 0 | T0 | Starting clearing |
+| 1–2 | T1 | Basic biomes (forest, mountain, plains, cave, swamp, jungle) |
+| 3 | T2 | Harder biomes + first dungeons (tundra, desert, volcanic, etc.) |
+| 4 | T3 | Elite biomes + tier-3 dungeons |
+| 5 | T4 | Edge — T4 biomes (content partially planned) |
+
+`nodeRegistry.ts` generates all 121 node definitions from `NODE_BIOMES` automatically.
+Exits are computed from coordinates (no manual wiring needed).
+
+---
+
 ## Dungeon system
 
-Two dungeon nodes exist: `node-0-0` (tundra T2) and `node-4-4` (volcanic T2).
+Multiple dungeon nodes exist across the map at tiers 1–3.
 
 **Dungeon rules:**
 - Non-boss monsters in dungeon nodes have stats scaled by `DUNGEON_HP_MULT = 2.0` and
   `DUNGEON_ATK_MULT = 1.6` applied in `World.createMonster()`.
 - `MonsterState.isBoss` is `true` for boss monsters and `false` for all others.
+- `MonsterState.leashRange` is serialized and sent to clients (used by the debug overlay).
 - `World.ensureBoss(nodeId)` maintains exactly one boss per dungeon node; called in
   both `init()` and each `tick()`. Bosses do not count toward the regular `MONSTERS_PER_NODE` cap.
 - Boss monsters are defined in `MONSTER_DATABASE` with `isBoss: true` and listed
   in `BiomeDefinition.bossPoolByTier` (keyed by biomeTier).
-- Current bosses: **Glacial Colossus** (tundra, HP 2600, ATK 55, PLT 28) and
-  **Infernal Tyrant** (volcanic, HP 2200, ATK 68, DR 0.12).
+- Notable bosses: **Glacial Colossus** (tundra T2), **Infernal Tyrant** (volcanic T2).
+
+---
+
+## Equipment slots
+
+Four slots: `weapon`, `armor`, `recovery`, `mobility`.
+Ring slots (`ring1`, `ring2`) were removed and do not exist anywhere in the codebase.
+
+`EquipmentSlot = 'weapon' | 'armor' | 'recovery' | 'mobility'`
+
+### Recovery slot archetypes
+
+Recovery items follow five design archetypes (implemented via `mechanicEffects` passives):
+
+| Archetype | Key passive | Example items |
+|---|---|---|
+| In-combat regen | `defense.in-combat-regen-pct` | Plains Core, Stalwart Core, Ember Core |
+| Periodic shield | `defense.shield-pct` + `defense.shield-interval-ms` + `defense.shield-duration-ms` | Granite Barrier, Frost Barrier |
+| Damage absorption | `defense.absorb-pct` | Murk Eye, Sand Golem Eye |
+| Burst HP regen | `defense.regen-burst-pct` + `defense.regen-burst-interval-ms` | Pulse Stone, Resonant Gem |
+| Pure OOC regen | `hpRegen` only | Heartroot Amulet, Verdant Amulet |
+
+All recovery items also provide some base OOC `hpRegen`.
+
+**Shield duration:** `defense.shield-duration-ms` — if set, shields expire after that many ms
+even if not depleted. Set equal to `defense.shield-interval-ms` for clean 1:1 rotation
+(old shield expires exactly when the next fires). Omit or set to -1 for permanent shields.
+
+---
+
+## Defense and recovery passive system
+
+`defenseSystems.ts` reads `player.passives` each tick to apply recovery effects.
+`player.passives` is rebuilt by `recalculatePlayerStats()` from skills + equipped items.
+
+| Passive key | Effect |
+|---|---|
+| `defense.in-combat-regen-pct` | Fraction of normal OOC regen applied even while in combat |
+| `defense.regen-burst-pct` | HP % restored in a burst on a timer |
+| `defense.regen-burst-interval-ms` | Cooldown between burst regen ticks |
+| `defense.shield-pct` | HP % applied as a shield on a timer |
+| `defense.shield-interval-ms` | Cooldown between shield applications |
+| `defense.shield-duration-ms` | How long a periodic shield lasts before expiring |
+| `defense.absorb-pct` | Fraction of incoming damage diverted to a time-delay absorb pool |
+| `defense.dot-resistance` | Fraction by which DoT damage is reduced |
+| `defense.hit-to-dot-pct` | Fraction of direct damage taken that is instead dealt as DoT |
+| `defense.debuff-resistance` | Reduces duration or potency of debuffs |
+| `defense.cleanse-stacks` / `defense.cleanse-interval-ms` | Periodic stack removal |
 
 ---
 
 ## Quest system
 
-Infrastructure only — `QUEST_DATABASE` is empty at launch. No quests have been written yet.
+Quests are fully wired and populated.
 
 **How it works:**
-- `QuestDefinition` fields: `id`, `name`, `description`, `targetMonsterTypes: string[]`,
-  `killsRequired: number`, `xpReward: number`.
+- `QuestDefinition` fields: `id`, `name`, `description`, `tierRequired`, `targetMonsterTypes: string[]`, `killsRequired: number`.
 - `PlayerState` tracks: `questProgress: Record<string, number>` (kill count per quest),
   `progressionXP: number`, `progressionLevel: number`.
 - `registerKillForQuests(player, monsterTypeId)` in `questSystem.ts` is called after
@@ -267,6 +357,13 @@ Infrastructure only — `QUEST_DATABASE` is empty at launch. No quests have been
 - Quests are one-time — completed quests are not re-incremented.
 - To add a quest: add a `QuestDefinition` entry to `QUEST_DATABASE` in `shared/src/index.ts`.
 
+**Current quests in `QUEST_DATABASE`:**
+- `tier-0` — *First Blood*: slay 10 Tiny Slimes in the Clearing
+- `tier-1` — *Dungeon Delver*: defeat any T1 dungeon boss (1 kill)
+- `tier-2` — *Zone Conqueror*: defeat any T2 dungeon boss (1 kill)
+- `tier-3` — *Veteran's Trial*: defeat any T3 dungeon boss (1 kill)
+- (Additional quests may exist — check `QUEST_DATABASE` directly)
+
 ---
 
 ## Class mechanics and skill tree
@@ -274,7 +371,7 @@ Infrastructure only — `QUEST_DATABASE` is empty at launch. No quests have been
 ### Skill tree layout (shared/src/skillTree.ts)
 
 ```
-Tier 0  — 5 class roots        (choose archetype)
+Tier 0  — 5 class roots        (choose archetype + identity defense/recovery)
 Tier 1  — 15 sub-variant nodes  (light / balanced / heavy per class)
 Tier 2  — 3 universal range nodes (close / mid / far — same for ALL paths)
 Tier 3  — 45 path modifier nodes  (3 per class×variant, ALL hand-authored)
@@ -296,13 +393,52 @@ The archetype systems then read `player.passives` at combat time — no separate
 Stat deltas (`node.statEffects`) are also summed during this rebuild, along with
 base constants, weapon APS override, range-close class bonus, and equipped item modifiers.
 
+### Class root identities (Tier 0)
+
+Each root grants archetype selection + a signature recovery/defense mechanic:
+
+| Class | Stats (root) | Identity passive |
+|---|---|---|
+| **Cadence** | +4 ATK, +12 HP, +2 PLT, +2% DR | `defense.regen-burst-pct: 0.08` every 10 s |
+| **Cooldown** | +2 ATK, +20 HP, +2 PLT, +4% DR, −10 SPD | `defense.in-combat-regen-pct: 0.12` |
+| **Energy** | +2 ATK, +12 SPD, −150ms CD, −5 HP, +40 range, +1 PLT | `defense.shield-pct: 0.06` every 14 s |
+| **DoT** | +3 ATK, +15 HP, +2 PLT, +3% DR, +1 hpRegen | `defense.dot-resistance: 0.12`, `defense.hit-to-dot-pct: 0.10` |
+| **Reload** | +10 SPD, −10 HP, +50 range, +8 evasion | Evasion/avoidance identity; ranged baseline |
+
+Energy and Reload are **ranged baseline** — they start with bonus attack range at the root.
+
+### T1 stat profiles (cumulative with root)
+
+Heavy frames are the tankiest; light frames sacrifice durability for speed/offense.
+
+| Class | Light net | Heavy net |
+|---|---|---|
+| Cooldown | ~0 HP, −1 PLT, +2% DR | +50 HP, +4 PLT, 10% DR, +3 hpRegen |
+| Cadence | low HP, high speed | +28 HP, modest PLT |
+| DoT | −5 HP bonus, glass | +38 HP, +5 PLT, 8% DR |
+| Energy | lowest HP | moderate PLT |
+| Reload | −15 HP, +12 evasion | +2 HP, +4 evasion |
+
 ### Tier 2 — Range nodes
 
 Three universal nodes available to all classes at tier 2 (only one can be chosen):
-- **range-close**: −20 range, +3 ATK, −200ms CD, +2 PLT, +4% DR, +8 maxHP,
+- **range-close**: −40 range, +5 ATK, −300ms CD, +3 PLT, +6% DR, +12 maxHP,
   plus a class-specific bonus (more plating for heavier classes, more hpRegen for lighter).
 - **range-mid**: no stat changes — neutral baseline.
-- **range-far**: +60 range, −5 ATK, +300ms CD.
+- **range-far**: +120 range, −8 ATK, +400ms CD.
+
+### Reload multiplier layer
+
+The reload class uses **double attack speed / half damage** as a final multiplier applied
+*after* all additive bonuses (skills + items + range node). In `stats.ts`:
+```typescript
+if (player.combatArchetype === 'reload') {
+  player.attack         = Math.max(1, Math.floor(player.attack * 0.5));
+  player.attackCooldown = Math.max(200, Math.round(player.attackCooldown * 0.5));
+}
+```
+This means weapons, skills, and items use their normal values; the 0.5× factor scales
+the final result. Do not add the halving additively into any stat delta.
 
 ### Archetype mechanics
 
@@ -437,6 +573,8 @@ T3 paths change how energy accumulates and discharges.
 #### Reload (`reloadPrototype.ts`)
 Magazine system: fire a burst of shots then reload. Ammo depletes each hit;
 at 0 the player enters a reload window and cannot attack until it completes.
+The reload class has **double attack speed and half damage** applied as a final multiplier
+layer in `stats.ts` after all other bonuses — see "Reload multiplier layer" above.
 
 **Tier 1 variants set clip size and reload duration:**
 - Light: 5 rounds, 1500 ms reload
@@ -529,30 +667,35 @@ the hit it sets `ctx.metadata['dotHandled'] = 1` to suppress the base stack appl
 
 ## What is built
 
-- Multi-node world (5×5 grid) with biome-specific monster pools
+- Multi-node world (**11×11 grid**, 121 nodes) with biome-specific monster pools
 - Monster AI (wander / chase / attack / return)
 - Player combat (attack range, cooldown, auto-targeting)
-- Dungeon biome variant: two dungeon nodes (`node-0-0` tundra, `node-4-4` volcanic)
-  with scaled enemies, one persistent boss each (Glacial Colossus, Infernal Tyrant)
-- Quest system infrastructure: `QUEST_DATABASE`, XP→level→skill-point pipeline,
-  kill tracking per player — no quests authored yet
+- Dungeon nodes across T1–T3 with scaled enemies and one persistent boss each
+- Quest system with populated quests (tier-0 through tier-3 dungeon kill quests);
+  XP→level→skill-point pipeline fully wired
+- QuestPanel in the HUD showing live progress
+- Map editor (`map-editor.html`) for visual biome layout design
 - Class system: cadence, cooldown, energy, reload, dot archetypes
-  - **Cadence T3**: all 9 paths implemented (Accelerando, Cursed Finale, Double Time,
-    Rapid Tempo, Rising Tide, Delayed Verdict, Overwhelming Force, Hemorrhage, Iron Patience)
+  - Distinct root identities with signature defense/recovery mechanics at T0
+  - Energy and Reload are ranged-baseline; Reload uses a multiplier layer (not additive)
+  - **Cadence T3**: all 9 paths implemented
   - **Cooldown T3**: light + balanced (6 paths) implemented; heavy (3 paths) designed only
   - **Energy T3**: all 9 paths implemented
   - **DoT T3**: all 9 paths implemented
   - **Reload T3**: all 9 paths designed in skill tree; none yet implemented on server
+- Defense/recovery system: in-combat regen, periodic shields with expiry, damage absorb,
+  burst regen, DoT resistance — all driven by `defense.*` passives from skills and items
+- Recovery slot with 5 distinct archetypes; ring slots removed
 - Weapon effects: Chaotic Axe, Sacred Cross, Ashbrand Blade
 - Inventory and equipment (4 slots: weapon, armor, recovery, mobility)
 - Crafting system with biome-kill unlock gates
 - Skill tree with tier-gated unlock flow (tiers 0–7 defined; tiers 4–7 are generated placeholders)
 - Node transitions (walk through gate edges)
 - Death and respawn (back to clearing)
-- Client HUD (React): stat panel, buff bar with per-category animations and shapes,
-  essence display, inventory, crafting, map (with dungeon tile treatment + boss info), skill tree overlays
+- Client HUD (React): stat panel, buff bar, essence display, inventory, crafting,
+  map (11×11 with dungeon treatment + boss info), skill tree, quest panel
 - Client (Phaser): minimap, biome backgrounds, gate markers, damage numbers, attack animations,
-  boss sprite scaling + warning label
+  boss sprite scaling, **debug range overlay** (player attack range + per-monster pull/leash/attack rings)
 - Ethereal glass-morphism UI theme: backdrop-blur sidebars, gradient panels, shimmer bars,
   animated buff icons with category-distinct shapes and keyframes
 
@@ -560,15 +703,14 @@ the hit it sets `ctx.metadata['dotHandled'] = 1` to suppress the base stack appl
 
 - [ ] Discord OAuth
 - [ ] SQLite / Drizzle (database is wired but not used — all state is in-memory)
-- [ ] Multiple World instances / node routing (current: one World with all 25 nodes)
+- [ ] Multiple World instances / node routing (current: one World with all 121 nodes)
 - [ ] Character select / login screen
 - [ ] Deployment (Caddy, PM2, Hetzner)
-- [ ] Map expansion to 9×9 grid (T3/T4 biomes) — planned
 - [ ] World map click-to-navigate / BFS auto-traverse — planned
 - [ ] Cooldown heavy T3 mechanics (Entropy Collapse, Singular Extraction, Channeled Beam)
 - [ ] Reload T3 mechanics (all 9 paths designed, none implemented)
-- [ ] Actual quest entries in QUEST_DATABASE (infrastructure exists, no quests written)
 - [ ] Tiers 4–7 mechanics (all generated placeholder nodes)
+- [ ] StatPanel update to reflect new defense/recovery stats (evasion, shields, absorb, burst regen)
 
 ---
 
@@ -586,3 +728,9 @@ the hit it sets `ctx.metadata['dotHandled'] = 1` to suppress the base stack appl
 - **Passives are rebuilt on every stat recalc** — never apply `mechanicEffects` imperatively;
   they accumulate into `player.passives` during `recalculatePlayerStats()` and archetype
   systems read them at combat time
+- **Map inference on TypeScript Maps** — use explicit generics (`new Map<string, Recipe>([...])`)
+  to prevent TypeScript inferring union types with `undefined` from object literals with
+  varying keys; applies to `RECIPE_DATABASE`, `SKILL_TREE`, `QUEST_DATABASE`
+- **Reload multiplier is a final layer** — do not fold it into additive deltas; apply
+  `* 0.5` to `attack` and `attackCooldown` at the end of `recalculatePlayerStats()`
+  after all other bonuses

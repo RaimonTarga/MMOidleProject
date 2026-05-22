@@ -633,6 +633,130 @@ export const MONSTER_DATABASE: Map<string, MonsterDefinition> = new Map([
   // exclusively by World.ensureBoss() in dungeon nodes. Stats are much higher
   // than regular monsters; no dungeon multiplier is applied on top.
 
+  // ── Tier 1 dungeon bosses ────────────────────────────────────────────────
+  ['plains-champion', {
+    id: 'plains-champion', name: 'Plains Champion', color: 0xddaa44,
+    isBoss: true,
+    stats: {
+      hp: 1000, attack: 44, plating: 12, damageReduction: 0.04,
+      speed: 55, attackRange: 65, attackCooldown: 2400, pullRange: 280,
+    },
+    behavior: 'melee', attackStyle: 'impact', biome: 'plains',
+    rewards: { essence: 100, essenceType: 'yellow', level: 5 },
+    ai: { wanderRadius: 120, leashRange: 750, idleMinMs: 1500, idleMaxMs: 4500 },
+  }],
+
+  ['bog-sovereign', {
+    id: 'bog-sovereign', name: 'Bog Sovereign', color: 0x1e3d1e,
+    isBoss: true,
+    stats: {
+      hp: 850, attack: 40, plating: 15, damageReduction: 0.05,
+      speed: 28, attackRange: 68, attackCooldown: 2800, pullRange: 260,
+    },
+    behavior: 'melee', attackStyle: 'poison', biome: 'swamp',
+    rewards: { essence: 90, essenceType: 'green', level: 5 },
+    ai: { wanderRadius: 100, leashRange: 700, idleMinMs: 2000, idleMaxMs: 5500 },
+  }],
+
+  ['cave-sentinel', {
+    id: 'cave-sentinel', name: 'Cave Sentinel', color: 0x334455,
+    isBoss: true,
+    stats: {
+      hp: 1100, attack: 38, plating: 18, damageReduction: 0.07,
+      speed: 18, attackRange: 65, attackCooldown: 3200, pullRange: 240,
+    },
+    behavior: 'melee', attackStyle: 'impact', biome: 'cave',
+    rewards: { essence: 110, essenceType: 'blue', level: 5 },
+    ai: { wanderRadius: 80, leashRange: 680, idleMinMs: 2500, idleMaxMs: 6500 },
+  }],
+
+  ['jungle-guardian', {
+    id: 'jungle-guardian', name: 'Jungle Guardian', color: 0x118833,
+    isBoss: true,
+    stats: {
+      hp: 750, attack: 50, plating: 10, damageReduction: 0.03,
+      speed: 68, attackRange: 62, attackCooldown: 2000, pullRange: 300,
+    },
+    behavior: 'melee', attackStyle: 'slash', biome: 'jungle',
+    rewards: { essence: 95, essenceType: 'green', level: 5 },
+    ai: { wanderRadius: 140, leashRange: 800, idleMinMs: 1500, idleMaxMs: 4000 },
+  }],
+
+  // ── Tier 2 dungeon bosses ────────────────────────────────────────────────
+  ['stone-warden', {
+    id: 'stone-warden', name: 'Stone Warden', color: 0x667788,
+    isBoss: true,
+    stats: {
+      hp: 2400, attack: 62, plating: 32, damageReduction: 0.10,
+      speed: 20, attackRange: 72, attackCooldown: 4000, pullRange: 320,
+    },
+    behavior: 'melee', attackStyle: 'impact', biome: 'mountain',
+    rewards: { essence: 160, essenceType: 'blue', level: 5 },
+    ai: { wanderRadius: 120, leashRange: 850, idleMinMs: 3000, idleMaxMs: 7500 },
+  }],
+
+  ['mire-lord', {
+    id: 'mire-lord', name: 'Mire Lord', color: 0x2a4011,
+    isBoss: true,
+    stats: {
+      hp: 2100, attack: 58, plating: 22, damageReduction: 0.09,
+      speed: 30, attackRange: 68, attackCooldown: 3000, pullRange: 300,
+    },
+    behavior: 'melee', attackStyle: 'poison', biome: 'swamp',
+    rewards: { essence: 155, essenceType: 'green', level: 5 },
+    ai: { wanderRadius: 110, leashRange: 800, idleMinMs: 2500, idleMaxMs: 6000 },
+  }],
+
+  ['desert-pharaoh', {
+    id: 'desert-pharaoh', name: 'Desert Pharaoh', color: 0xddcc44,
+    isBoss: true,
+    stats: {
+      hp: 1900, attack: 74, plating: 18, damageReduction: 0.10,
+      speed: 40, attackRange: 74, attackCooldown: 2600, pullRange: 340,
+    },
+    behavior: 'melee', attackStyle: 'magic', biome: 'desert',
+    rewards: { essence: 150, essenceType: 'yellow', level: 5 },
+    ai: { wanderRadius: 140, leashRange: 880, idleMinMs: 2000, idleMaxMs: 5500 },
+  }],
+
+  // ── Tier 3 dungeon bosses ────────────────────────────────────────────────
+  ['frost-colossus', {
+    id: 'frost-colossus', name: 'Frost Colossus', color: 0x88ccee,
+    isBoss: true,
+    stats: {
+      hp: 4000, attack: 95, plating: 40, damageReduction: 0.14,
+      speed: 20, attackRange: 82, attackCooldown: 4200, pullRange: 360,
+    },
+    behavior: 'melee', attackStyle: 'frost', biome: 'tundra',
+    rewards: { essence: 350, essenceType: 'blue', level: 5 },
+    ai: { wanderRadius: 100, leashRange: 900, idleMinMs: 3000, idleMaxMs: 8000 },
+  }],
+
+  ['volcanic-titan', {
+    id: 'volcanic-titan', name: 'Volcanic Titan', color: 0xee4400,
+    isBoss: true,
+    stats: {
+      hp: 3800, attack: 105, plating: 30, damageReduction: 0.12,
+      speed: 32, attackRange: 76, attackCooldown: 3400, pullRange: 340,
+    },
+    behavior: 'melee', attackStyle: 'fire', biome: 'volcanic',
+    rewards: { essence: 360, essenceType: 'red', level: 5 },
+    ai: { wanderRadius: 120, leashRange: 920, idleMinMs: 2500, idleMaxMs: 7000 },
+  }],
+
+  // ── Tier 4 dungeon bosses ────────────────────────────────────────────────
+  ['mountain-titan', {
+    id: 'mountain-titan', name: 'Mountain Titan', color: 0x99aacc,
+    isBoss: true,
+    stats: {
+      hp: 7500, attack: 170, plating: 65, damageReduction: 0.20,
+      speed: 12, attackRange: 80, attackCooldown: 5200, pullRange: 400,
+    },
+    behavior: 'melee', attackStyle: 'impact', biome: 'mountain',
+    rewards: { essence: 600, essenceType: 'blue', level: 5 },
+    ai: { wanderRadius: 80, leashRange: 950, idleMinMs: 4000, idleMaxMs: 10000 },
+  }],
+
   ['infernal-tyrant', {
     id: 'infernal-tyrant', name: 'Infernal Tyrant', color: 0xff2200,
     isBoss: true,
@@ -691,5 +815,261 @@ export const MONSTER_DATABASE: Map<string, MonsterDefinition> = new Map([
     behavior: 'melee', attackStyle: 'void', biome: 'abyss',
     rewards: { essence: 2000, essenceType: 'purple', level: 25 },
     ai: { wanderRadius: 140, leashRange: 950, idleMinMs: 3000, idleMaxMs: 7000 },
+  }],
+
+  // ── New T1 dungeon boss ──────────────────────────────────────────────────
+  ['mountain-sentinel', {
+    id: 'mountain-sentinel', name: 'Mountain Sentinel', color: 0x8899bb,
+    isBoss: true,
+    stats: {
+      hp: 1000, attack: 40, plating: 16, damageReduction: 0.05,
+      speed: 20, attackRange: 68, attackCooldown: 3400, pullRange: 260,
+    },
+    behavior: 'melee', attackStyle: 'impact', biome: 'mountain',
+    rewards: { essence: 105, essenceType: 'blue', level: 5 },
+    ai: { wanderRadius: 100, leashRange: 720, idleMinMs: 2500, idleMaxMs: 6000 },
+  }],
+
+  // ── New T2 dungeon bosses ────────────────────────────────────────────────
+  ['forest-elder', {
+    id: 'forest-elder', name: 'Forest Elder', color: 0x226622,
+    isBoss: true,
+    stats: {
+      hp: 2200, attack: 58, plating: 22, damageReduction: 0.08,
+      speed: 26, attackRange: 74, attackCooldown: 3000, pullRange: 310,
+    },
+    behavior: 'melee', attackStyle: 'slash', biome: 'forest',
+    rewards: { essence: 155, essenceType: 'green', level: 5 },
+    ai: { wanderRadius: 130, leashRange: 830, idleMinMs: 2500, idleMaxMs: 6500 },
+  }],
+
+  ['plains-overlord', {
+    id: 'plains-overlord', name: 'Plains Overlord', color: 0xcc9922,
+    isBoss: true,
+    stats: {
+      hp: 2000, attack: 64, plating: 20, damageReduction: 0.08,
+      speed: 46, attackRange: 70, attackCooldown: 2700, pullRange: 320,
+    },
+    behavior: 'melee', attackStyle: 'impact', biome: 'plains',
+    rewards: { essence: 150, essenceType: 'yellow', level: 5 },
+    ai: { wanderRadius: 140, leashRange: 850, idleMinMs: 2000, idleMaxMs: 5500 },
+  }],
+
+  ['jungle-colossus', {
+    id: 'jungle-colossus', name: 'Jungle Colossus', color: 0x117722,
+    isBoss: true,
+    stats: {
+      hp: 1800, attack: 68, plating: 17, damageReduction: 0.07,
+      speed: 56, attackRange: 66, attackCooldown: 2400, pullRange: 320,
+    },
+    behavior: 'melee', attackStyle: 'slash', biome: 'jungle',
+    rewards: { essence: 145, essenceType: 'green', level: 5 },
+    ai: { wanderRadius: 150, leashRange: 840, idleMinMs: 1800, idleMaxMs: 4500 },
+  }],
+
+  ['cave-terror', {
+    id: 'cave-terror', name: 'Cave Terror', color: 0x442244,
+    isBoss: true,
+    stats: {
+      hp: 2400, attack: 56, plating: 28, damageReduction: 0.10,
+      speed: 18, attackRange: 72, attackCooldown: 4000, pullRange: 280,
+    },
+    behavior: 'melee', attackStyle: 'impact', biome: 'cave',
+    rewards: { essence: 160, essenceType: 'blue', level: 5 },
+    ai: { wanderRadius: 90, leashRange: 800, idleMinMs: 3000, idleMaxMs: 7500 },
+  }],
+
+  // ── New T3 dungeon bosses ────────────────────────────────────────────────
+  ['peak-titan', {
+    id: 'peak-titan', name: 'Peak Titan', color: 0x6688cc,
+    isBoss: true,
+    stats: {
+      hp: 4200, attack: 100, plating: 42, damageReduction: 0.14,
+      speed: 18, attackRange: 80, attackCooldown: 4500, pullRange: 360,
+    },
+    behavior: 'melee', attackStyle: 'impact', biome: 'mountain',
+    rewards: { essence: 340, essenceType: 'blue', level: 5 },
+    ai: { wanderRadius: 100, leashRange: 920, idleMinMs: 3500, idleMaxMs: 8500 },
+  }],
+
+  ['elder-forest-warden', {
+    id: 'elder-forest-warden', name: 'Elder Forest Warden', color: 0x1a6622,
+    isBoss: true,
+    stats: {
+      hp: 4500, attack: 102, plating: 38, damageReduction: 0.13,
+      speed: 22, attackRange: 78, attackCooldown: 4000, pullRange: 350,
+    },
+    behavior: 'melee', attackStyle: 'slash', biome: 'forest',
+    rewards: { essence: 360, essenceType: 'green', level: 5 },
+    ai: { wanderRadius: 110, leashRange: 910, idleMinMs: 3000, idleMaxMs: 8000 },
+  }],
+
+  ['plains-warlord', {
+    id: 'plains-warlord', name: 'Plains Warlord', color: 0xdd8800,
+    isBoss: true,
+    stats: {
+      hp: 3800, attack: 108, plating: 32, damageReduction: 0.12,
+      speed: 50, attackRange: 75, attackCooldown: 3000, pullRange: 340,
+    },
+    behavior: 'melee', attackStyle: 'impact', biome: 'plains',
+    rewards: { essence: 330, essenceType: 'yellow', level: 5 },
+    ai: { wanderRadius: 130, leashRange: 900, idleMinMs: 2000, idleMaxMs: 6000 },
+  }],
+
+  ['sand-emperor', {
+    id: 'sand-emperor', name: 'Sand Emperor', color: 0xccaa22,
+    isBoss: true,
+    stats: {
+      hp: 4000, attack: 112, plating: 34, damageReduction: 0.13,
+      speed: 42, attackRange: 80, attackCooldown: 3200, pullRange: 350,
+    },
+    behavior: 'melee', attackStyle: 'magic', biome: 'desert',
+    rewards: { essence: 345, essenceType: 'yellow', level: 5 },
+    ai: { wanderRadius: 140, leashRange: 900, idleMinMs: 2200, idleMaxMs: 6500 },
+  }],
+
+  ['jungle-titan-lord', {
+    id: 'jungle-titan-lord', name: 'Jungle Titan Lord', color: 0x115522,
+    isBoss: true,
+    stats: {
+      hp: 3900, attack: 110, plating: 30, damageReduction: 0.12,
+      speed: 60, attackRange: 76, attackCooldown: 2800, pullRange: 340,
+    },
+    behavior: 'melee', attackStyle: 'slash', biome: 'jungle',
+    rewards: { essence: 340, essenceType: 'green', level: 5 },
+    ai: { wanderRadius: 140, leashRange: 920, idleMinMs: 2000, idleMaxMs: 6000 },
+  }],
+
+  ['cave-overlord', {
+    id: 'cave-overlord', name: 'Cave Overlord', color: 0x332244,
+    isBoss: true,
+    stats: {
+      hp: 4800, attack: 96, plating: 48, damageReduction: 0.15,
+      speed: 16, attackRange: 82, attackCooldown: 5000, pullRange: 330,
+    },
+    behavior: 'melee', attackStyle: 'impact', biome: 'cave',
+    rewards: { essence: 355, essenceType: 'blue', level: 5 },
+    ai: { wanderRadius: 85, leashRange: 890, idleMinMs: 4000, idleMaxMs: 10000 },
+  }],
+
+  ['bog-ancient', {
+    id: 'bog-ancient', name: 'Bog Ancient', color: 0x1a3311,
+    isBoss: true,
+    stats: {
+      hp: 4200, attack: 98, plating: 36, damageReduction: 0.13,
+      speed: 28, attackRange: 78, attackCooldown: 3500, pullRange: 330,
+    },
+    behavior: 'melee', attackStyle: 'poison', biome: 'swamp',
+    rewards: { essence: 345, essenceType: 'green', level: 5 },
+    ai: { wanderRadius: 105, leashRange: 880, idleMinMs: 2800, idleMaxMs: 7000 },
+  }],
+
+  // ── New T4 dungeon bosses ────────────────────────────────────────────────
+  ['glacial-titan', {
+    id: 'glacial-titan', name: 'Glacial Titan', color: 0x55aadd,
+    isBoss: true,
+    stats: {
+      hp: 7500, attack: 168, plating: 64, damageReduction: 0.20,
+      speed: 18, attackRange: 88, attackCooldown: 5500, pullRange: 400,
+    },
+    behavior: 'melee', attackStyle: 'frost', biome: 'tundra',
+    rewards: { essence: 580, essenceType: 'blue', level: 5 },
+    ai: { wanderRadius: 85, leashRange: 950, idleMinMs: 4000, idleMaxMs: 10000 },
+  }],
+
+  ['elder-treant-lord', {
+    id: 'elder-treant-lord', name: 'Elder Treant Lord', color: 0x112a08,
+    isBoss: true,
+    stats: {
+      hp: 7000, attack: 158, plating: 60, damageReduction: 0.19,
+      speed: 14, attackRange: 85, attackCooldown: 5200, pullRange: 390,
+    },
+    behavior: 'melee', attackStyle: 'impact', biome: 'forest',
+    rewards: { essence: 560, essenceType: 'green', level: 5 },
+    ai: { wanderRadius: 80, leashRange: 940, idleMinMs: 4500, idleMaxMs: 11000 },
+  }],
+
+  ['stampede-emperor', {
+    id: 'stampede-emperor', name: 'Stampede Emperor', color: 0xff4400,
+    isBoss: true,
+    stats: {
+      hp: 6500, attack: 175, plating: 52, damageReduction: 0.18,
+      speed: 68, attackRange: 80, attackCooldown: 2800, pullRange: 380,
+    },
+    behavior: 'melee', attackStyle: 'impact', biome: 'plains',
+    rewards: { essence: 550, essenceType: 'yellow', level: 5 },
+    ai: { wanderRadius: 120, leashRange: 940, idleMinMs: 1500, idleMaxMs: 5000 },
+  }],
+
+  ['desert-eternal', {
+    id: 'desert-eternal', name: 'Desert Eternal', color: 0xddbb33,
+    isBoss: true,
+    stats: {
+      hp: 7200, attack: 165, plating: 58, damageReduction: 0.20,
+      speed: 32, attackRange: 86, attackCooldown: 4200, pullRange: 400,
+    },
+    behavior: 'melee', attackStyle: 'magic', biome: 'desert',
+    rewards: { essence: 570, essenceType: 'yellow', level: 5 },
+    ai: { wanderRadius: 100, leashRange: 950, idleMinMs: 3000, idleMaxMs: 8500 },
+  }],
+
+  ['jungle-ancient-lord', {
+    id: 'jungle-ancient-lord', name: 'Jungle Ancient Lord', color: 0x0d4419,
+    isBoss: true,
+    stats: {
+      hp: 6800, attack: 172, plating: 55, damageReduction: 0.18,
+      speed: 76, attackRange: 82, attackCooldown: 3000, pullRange: 390,
+    },
+    behavior: 'melee', attackStyle: 'slash', biome: 'jungle',
+    rewards: { essence: 560, essenceType: 'green', level: 5 },
+    ai: { wanderRadius: 115, leashRange: 950, idleMinMs: 2000, idleMaxMs: 6000 },
+  }],
+
+  ['inferno-lord', {
+    id: 'inferno-lord', name: 'Inferno Lord', color: 0xcc1100,
+    isBoss: true,
+    stats: {
+      hp: 8000, attack: 182, plating: 62, damageReduction: 0.21,
+      speed: 26, attackRange: 84, attackCooldown: 4000, pullRange: 380,
+    },
+    behavior: 'melee', attackStyle: 'fire', biome: 'volcanic',
+    rewards: { essence: 600, essenceType: 'red', level: 5 },
+    ai: { wanderRadius: 100, leashRange: 940, idleMinMs: 3000, idleMaxMs: 8000 },
+  }],
+
+  ['undying-lord', {
+    id: 'undying-lord', name: 'Undying Lord', color: 0x6611aa,
+    isBoss: true,
+    stats: {
+      hp: 7500, attack: 178, plating: 58, damageReduction: 0.21,
+      speed: 24, attackRange: 88, attackCooldown: 4500, pullRange: 390,
+    },
+    behavior: 'melee', attackStyle: 'magic', biome: 'necropolis',
+    rewards: { essence: 590, essenceType: 'purple', level: 5 },
+    ai: { wanderRadius: 90, leashRange: 940, idleMinMs: 3500, idleMaxMs: 9000 },
+  }],
+
+  ['cave-titan', {
+    id: 'cave-titan', name: 'Cave Titan', color: 0x223344,
+    isBoss: true,
+    stats: {
+      hp: 8500, attack: 162, plating: 70, damageReduction: 0.22,
+      speed: 14, attackRange: 90, attackCooldown: 5500, pullRange: 370,
+    },
+    behavior: 'melee', attackStyle: 'impact', biome: 'cave',
+    rewards: { essence: 610, essenceType: 'blue', level: 5 },
+    ai: { wanderRadius: 80, leashRange: 940, idleMinMs: 4500, idleMaxMs: 11000 },
+  }],
+
+  ['swamp-sovereign', {
+    id: 'swamp-sovereign', name: 'Swamp Sovereign', color: 0x0d2a0a,
+    isBoss: true,
+    stats: {
+      hp: 7200, attack: 170, plating: 56, damageReduction: 0.20,
+      speed: 30, attackRange: 86, attackCooldown: 4200, pullRange: 385,
+    },
+    behavior: 'melee', attackStyle: 'poison', biome: 'swamp',
+    rewards: { essence: 575, essenceType: 'green', level: 5 },
+    ai: { wanderRadius: 95, leashRange: 940, idleMinMs: 3500, idleMaxMs: 9000 },
   }],
 ]);

@@ -8,6 +8,7 @@ import type {
   NodeSnapshot,
   NodeDirection,
   EquipmentSlot,
+  CombatArchetype,
 } from '@mmo-idle/shared';
 import { GAME_CONFIG, NODE_BIOMES, BIOME_DATABASE } from '@mmo-idle/shared';
 import { hudBus } from '../hudBus';
@@ -23,7 +24,7 @@ const MM_H   = 120;  // minimap height (px, screen-space)
 const MM_PAD = 8;    // gap from the screen edges
 
 // ── Node exit computation ──────────────────────────────────────────────────────
-// Node IDs follow the format "node-{row}-{col}" in a 9×9 grid.
+// Node IDs follow the format "node-{row}-{col}" in an 11×11 grid.
 // Exits are derived from coordinates so no registry duplication is needed.
 function getNodeExits(nodeId: string): Partial<Record<NodeDirection, string>> {
   const parts = nodeId.split('-');
@@ -67,6 +68,10 @@ interface Visual {
   entityName?: string;
   /** Full authoritative state snapshot — only present on player visuals, not monsters. */
   playerState?: PlayerState;
+  /** Monster range values — only present on monster visuals. */
+  pullRange?: number;
+  leashRange?: number;
+  monsterAttackRange?: number;
 }
 
 export class GameScene extends Phaser.Scene {
@@ -88,6 +93,10 @@ export class GameScene extends Phaser.Scene {
   private exitMarkers!: Phaser.GameObjects.Graphics;
   /** Full-world rectangle tinted with the current biome background color. */
   private bgRect!: Phaser.GameObjects.Rectangle;
+  /** Reusable graphics layer for debug range circles — cleared and redrawn each frame. */
+  private debugGraphics!: Phaser.GameObjects.Graphics;
+  private debugPlayerRange = false;
+  private debugEnemyRanges = false;
 
   constructor() {
     super({ key: 'GameScene' });
@@ -121,6 +130,9 @@ export class GameScene extends Phaser.Scene {
     // Drawn once per node change, not every frame.
     this.exitMarkers = this.add.graphics().setDepth(5);
 
+    // ── Debug range overlay (depth 8 — above entities, below minimap) ─────────
+    this.debugGraphics = this.add.graphics().setDepth(8);
+
     // ── Minimap ────────────────────────────────────────────────────────────────
     this.minimap = this.add.graphics().setScrollFactor(0).setDepth(20);
 
@@ -149,6 +161,14 @@ export class GameScene extends Phaser.Scene {
     window.addEventListener('hud:craftRecipe', (e: Event) => {
       const recipeId = (e as CustomEvent<string>).detail;
       this.socket.emit('crafting:craftRecipe', recipeId);
+    });
+
+    window.addEventListener('hud:debugPlayerRange', () => {
+      this.debugPlayerRange = !this.debugPlayerRange;
+    });
+
+    window.addEventListener('hud:debugEnemyRanges', () => {
+      this.debugEnemyRanges = !this.debugEnemyRanges;
     });
 
     // ── Click to move ──────────────────────────────────────────────────────
@@ -219,6 +239,7 @@ export class GameScene extends Phaser.Scene {
       if (dx * dx + dy * dy < 16) this.targetMarker.setVisible(false);
     }
 
+    this.drawDebugRanges();
   }
 
   // ── Private helpers ───────────────────────────────────────────────────────
@@ -408,7 +429,13 @@ export class GameScene extends Phaser.Scene {
       if (targetVm) {
         const empowered = prevEmpoweredReady && !player.empoweredReady;
         const execution = prevExecutionReady && !player.executionReady;
-        this.spawnAttackEffect(vp.attackStyle, vp.sprite.x, vp.sprite.y, targetVm.sprite.x, targetVm.sprite.y, { empowered, execution });
+        const dotPath   = player.combatArchetype === 'dot' ? this.getDotPath(player) : undefined;
+        this.spawnAttackEffect(vp.attackStyle, vp.sprite.x, vp.sprite.y, targetVm.sprite.x, targetVm.sprite.y, {
+          empowered,
+          execution,
+          archetype: player.combatArchetype ?? undefined,
+          dotPath,
+        });
         if (isOwn && empowered) combatLog.push('empowered', `Empowered strike → ${targetVm.entityName ?? 'target'}`);
         if (isOwn && execution) combatLog.push('execution', `Execution strike → ${targetVm.entityName ?? 'target'}`);
       }
@@ -437,11 +464,14 @@ export class GameScene extends Phaser.Scene {
              targetX: monster.targetX, targetY: monster.targetY,
              hp: monster.hp, maxHp: monster.maxHp,
              speed: monster.speed, barOffsetY: monster.isBoss ? 38 : 26,
-             attackCooldown: monster.attackCooldown,
-             lastAttackAt:   monster.lastAttackAt,
-             attackTargetId: monster.attackTargetId,
-             attackStyle:    monster.attackStyle,
-             entityName:     monster.name };
+             attackCooldown:     monster.attackCooldown,
+             lastAttackAt:       monster.lastAttackAt,
+             attackTargetId:     monster.attackTargetId,
+             attackStyle:        monster.attackStyle,
+             entityName:         monster.name,
+             pullRange:          monster.pullRange,
+             leashRange:         monster.leashRange,
+             monsterAttackRange: monster.attackRange };
       this.monsters.set(monster.id, vm);
       return;
     }
@@ -638,22 +668,24 @@ export class GameScene extends Phaser.Scene {
     this.time.delayedCall(lifespan + 200, () => { if (emitter.active) emitter.destroy(); });
   }
 
-  private fxSlash(fromX: number, fromY: number, toX: number, toY: number, empowered: boolean): void {
-    const angle = Math.atan2(toY - fromY, toX - fromX);
-    const perp  = angle + Math.PI / 2;
-    const color = empowered ? 0xffdd22 : 0xffffff;
+  // blueEmpowered=true → cadence finisher (azure); false → default golden empowered
+  private fxSlash(fromX: number, fromY: number, toX: number, toY: number, empowered: boolean, blueEmpowered = false): void {
+    const angle       = Math.atan2(toY - fromY, toX - fromX);
+    const perp        = angle + Math.PI / 2;
+    const empColor    = blueEmpowered ? 0x4499ff : 0xffdd22;
+    const shadowColor = blueEmpowered ? 0xaaccff : 0xffffcc;
+    const mainColor   = empowered ? empColor    : 0xffffff;
+    const shadow      = empowered ? shadowColor : 0xeeeeff;
     const lineW = empowered ? 3.5 : 2.5;
     const len   = empowered ? 62 : 48;
 
-    // Three sweep lines with slight angular spread, centered at the impact point
     for (let i = 0; i < 3; i++) {
       const a = perp + (i - 1) * 0.3;
       this.time.delayedCall(i * 35, () => {
         const g = this.add.graphics({ x: toX, y: toY }).setDepth(12);
-        g.lineStyle(lineW, color, 1);
+        g.lineStyle(lineW, mainColor, 1);
         g.lineBetween(-Math.cos(a) * len, -Math.sin(a) * len, Math.cos(a) * len, Math.sin(a) * len);
-        // Offset shadow line for depth
-        g.lineStyle(lineW * 0.5, 0xffffcc, 0.6);
+        g.lineStyle(lineW * 0.5, shadow, 0.6);
         const off = 7;
         g.lineBetween(
           -Math.cos(a) * (len * 0.7) + Math.cos(angle) * off,
@@ -666,7 +698,7 @@ export class GameScene extends Phaser.Scene {
     }
 
     this.burstFx('ptx-spark', toX, toY, empowered ? 14 : 9, 280, {
-      tint:   empowered ? 0xffdd22 : 0xffffff,
+      tint:   mainColor,
       speed:  { min: 60,  max: 220 },
       angle:  { min: 0,   max: 360 },
       scale:  { start: 0.9, end: 0.1 },
@@ -676,7 +708,7 @@ export class GameScene extends Phaser.Scene {
 
     if (empowered) {
       const ring = this.add.graphics({ x: toX, y: toY }).setDepth(12);
-      ring.lineStyle(3, 0xffdd22, 1);
+      ring.lineStyle(3, mainColor, 1);
       ring.strokeCircle(0, 0, 12);
       this.tweens.add({ targets: ring, scaleX: 3.8, scaleY: 3.8, alpha: 0, duration: 320, ease: 'Quad.easeOut', onComplete: () => ring.destroy() });
     }
@@ -866,15 +898,245 @@ export class GameScene extends Phaser.Scene {
     });
   }
 
+  // ── Class-specific player attack effects ─────────────────────────────────
+
+  // Reload: sharp tracer line + directional impact sparks.
+  private fxGunshot(fromX: number, fromY: number, toX: number, toY: number, empowered: boolean): void {
+    const color = empowered ? 0xffee66 : 0xddeeff;
+    const width = empowered ? 2.5 : 1.5;
+
+    // Draw glow layer then bright core
+    const g = this.add.graphics().setDepth(12);
+    g.lineStyle(width + 3, color, 0.15);
+    g.lineBetween(fromX, fromY, toX, toY);
+    g.lineStyle(width, color, 1);
+    g.lineBetween(fromX, fromY, toX, toY);
+    this.tweens.add({ targets: g, alpha: 0, duration: 90, ease: 'Quad.easeIn', onComplete: () => g.destroy() });
+
+    // Small muzzle flash at origin
+    const muzzle = this.add.graphics({ x: fromX, y: fromY }).setDepth(12);
+    muzzle.fillStyle(color, 0.7);
+    muzzle.fillCircle(0, 0, empowered ? 7 : 4);
+    this.tweens.add({ targets: muzzle, alpha: 0, scaleX: 2, scaleY: 2, duration: 80, onComplete: () => muzzle.destroy() });
+
+    // Impact flash at target
+    const flash = this.add.graphics({ x: toX, y: toY }).setDepth(13);
+    flash.fillStyle(color, 0.88);
+    flash.fillCircle(0, 0, empowered ? 16 : 8);
+    this.tweens.add({ targets: flash, alpha: 0, scaleX: 2.5, scaleY: 2.5, duration: 150, onComplete: () => flash.destroy() });
+
+    // Impact sparks spray backwards (opposite travel direction)
+    const travelAngleDeg = Math.atan2(toY - fromY, toX - fromX) * 180 / Math.PI;
+    const backDeg = (travelAngleDeg + 180 + 360) % 360;
+    this.burstFx('ptx-spark', toX, toY, empowered ? 10 : 5, empowered ? 280 : 190, {
+      tint:   color,
+      speed:  { min: 80, max: empowered ? 260 : 180 },
+      angle:  { min: backDeg - 40, max: backDeg + 40 },
+      scale:  { start: empowered ? 1.0 : 0.65, end: 0 },
+      alpha:  { start: 1, end: 0 },
+      rotate: { min: 0, max: 360 },
+    });
+  }
+
+  // Helper: generate zigzag waypoints for lightning bolts.
+  private zigzagPoints(
+    fromX: number, fromY: number,
+    toX: number, toY: number,
+    segments: number, spread: number,
+  ): Array<{ x: number; y: number }> {
+    const dx = toX - fromX;
+    const dy = toY - fromY;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    const perpX = dist > 0 ? -dy / dist : 0;
+    const perpY = dist > 0 ?  dx / dist : 0;
+    const pts: Array<{ x: number; y: number }> = [{ x: fromX, y: fromY }];
+    for (let i = 1; i < segments; i++) {
+      const t = i / segments;
+      const jitter = (Math.random() - 0.5) * 2 * spread;
+      pts.push({ x: fromX + dx * t + perpX * jitter, y: fromY + dy * t + perpY * jitter });
+    }
+    pts.push({ x: toX, y: toY });
+    return pts;
+  }
+
+  // Energy: lightning bolt; discharge = much flashier.
+  private fxLightning(fromX: number, fromY: number, toX: number, toY: number, discharge: boolean): void {
+    const color   = discharge ? 0xffffff : 0x88aaff;
+    const glowCol = discharge ? 0xaaccff : 0x3355cc;
+    const segs    = discharge ? 9 : 6;
+    const spread  = discharge ? 28 : 14;
+
+    const pts = this.zigzagPoints(fromX, fromY, toX, toY, segs, spread);
+
+    const g = this.add.graphics().setDepth(12);
+    // Glow beneath
+    g.lineStyle(discharge ? 6 : 4, glowCol, 0.22);
+    for (let i = 1; i < pts.length; i++) g.lineBetween(pts[i-1].x, pts[i-1].y, pts[i].x, pts[i].y);
+    // Bright core
+    g.lineStyle(discharge ? 2.5 : 1.5, color, 1);
+    for (let i = 1; i < pts.length; i++) g.lineBetween(pts[i-1].x, pts[i-1].y, pts[i].x, pts[i].y);
+    this.tweens.add({ targets: g, alpha: 0, duration: discharge ? 220 : 130, onComplete: () => g.destroy() });
+
+    if (discharge) {
+      // Two additional branching bolts
+      for (let b = 0; b < 2; b++) {
+        this.time.delayedCall(b * 28, () => {
+          const bpts = this.zigzagPoints(fromX, fromY, toX, toY, segs - 1, spread * 1.5);
+          const gb = this.add.graphics().setDepth(11);
+          gb.lineStyle(1.5, 0x88ccff, 0.65);
+          for (let i = 1; i < bpts.length; i++) gb.lineBetween(bpts[i-1].x, bpts[i-1].y, bpts[i].x, bpts[i].y);
+          this.tweens.add({ targets: gb, alpha: 0, duration: 170, onComplete: () => gb.destroy() });
+        });
+      }
+      const flash = this.add.graphics({ x: toX, y: toY }).setDepth(13);
+      flash.fillStyle(0xffffff, 0.92);
+      flash.fillCircle(0, 0, 28);
+      this.tweens.add({ targets: flash, alpha: 0, scaleX: 3, scaleY: 3, duration: 180, onComplete: () => flash.destroy() });
+      const ring = this.add.graphics({ x: toX, y: toY }).setDepth(12);
+      ring.lineStyle(3, 0xaaddff, 1);
+      ring.strokeCircle(0, 0, 10);
+      this.tweens.add({ targets: ring, scaleX: 5.5, scaleY: 5.5, alpha: 0, duration: 340, ease: 'Power2', onComplete: () => ring.destroy() });
+      this.burstFx('ptx-spark', toX, toY, 18, 400, {
+        tint: 0x88ccff, speed: { min: 120, max: 380 }, angle: { min: 0, max: 360 },
+        scale: { start: 1.1, end: 0 }, alpha: { start: 1, end: 0 }, rotate: { min: 0, max: 360 },
+      });
+      this.burstFx('ptx-dot', toX, toY, 9, 280, {
+        tint: 0xffffff, speed: { min: 60, max: 220 }, angle: { min: 0, max: 360 },
+        scale: { start: 0.65, end: 0 }, alpha: { start: 1, end: 0 },
+      });
+    } else {
+      this.burstFx('ptx-spark', toX, toY, 5, 180, {
+        tint: 0x88aaff, speed: { min: 60, max: 160 }, angle: { min: 0, max: 360 },
+        scale: { start: 0.7, end: 0 }, alpha: { start: 1, end: 0 }, rotate: { min: 0, max: 360 },
+      });
+    }
+  }
+
+  // DoT — Poison path: slow green smog cloud.
+  private fxPoisonSmog(toX: number, toY: number, empowered: boolean): void {
+    const ring = this.add.graphics({ x: toX, y: toY }).setDepth(12);
+    ring.lineStyle(2, 0x33dd55, 0.75);
+    ring.strokeCircle(0, 0, 8);
+    this.tweens.add({ targets: ring, scaleX: empowered ? 5 : 3.5, scaleY: empowered ? 5 : 3.5, alpha: 0, duration: 520, ease: 'Power1', onComplete: () => ring.destroy() });
+
+    this.burstFx('ptx-dot', toX, toY, empowered ? 16 : 9, 750, {
+      tint:     0x33dd66,
+      speed:    { min: 12, max: empowered ? 70 : 50 },
+      angle:    { min: 200, max: 340 },
+      scale:    { start: empowered ? 1.2 : 0.85, end: 0 },
+      alpha:    { start: 0.88, end: 0 },
+      gravityY: -50,
+    });
+
+    if (empowered) {
+      this.burstFx('ptx-dot', toX, toY, 10, 900, {
+        tint: 0x22aa44, speed: { min: 6, max: 30 }, angle: { min: 180, max: 360 },
+        scale: { start: 1.5, end: 0 }, alpha: { start: 0.7, end: 0 }, gravityY: -30,
+      });
+    }
+  }
+
+  // DoT — Fire path: deep-red flame burst.
+  private fxFireFlame(toX: number, toY: number, empowered: boolean): void {
+    const flash = this.add.graphics({ x: toX, y: toY }).setDepth(13);
+    flash.fillStyle(0xffffff, empowered ? 0.9 : 0.72);
+    flash.fillCircle(0, 0, empowered ? 18 : 11);
+    this.tweens.add({ targets: flash, alpha: 0, scaleX: 1.8, scaleY: 1.8, duration: 75, onComplete: () => flash.destroy() });
+
+    const ring = this.add.graphics({ x: toX, y: toY }).setDepth(12);
+    ring.lineStyle(3, 0xdd1100, 1);
+    ring.strokeCircle(0, 0, empowered ? 14 : 9);
+    this.tweens.add({ targets: ring, scaleX: empowered ? 4.5 : 3.2, scaleY: empowered ? 4.5 : 3.2, alpha: 0, duration: 300, ease: 'Power2', onComplete: () => ring.destroy() });
+
+    this.burstFx('ptx-dot', toX, toY, empowered ? 16 : 10, 560, {
+      tint:     0xff2200,
+      speed:    { min: 80, max: empowered ? 280 : 200 },
+      angle:    { min: 210, max: 330 },
+      scale:    { start: empowered ? 0.9 : 0.65, end: 0 },
+      alpha:    { start: 1, end: 0 },
+      gravityY: -135,
+    });
+
+    this.burstFx('ptx-spark', toX, toY, empowered ? 10 : 5, 460, {
+      tint: 0xff4422, speed: { min: 50, max: 150 }, angle: { min: 0, max: 360 },
+      scale: { start: 0.8, end: 0 }, alpha: { start: 1, end: 0 },
+      gravityY: 100, rotate: { min: 0, max: 360 },
+    });
+  }
+
+  // DoT — Frost path: detailed snowflake crystal (6 or 8 spokes with branch ticks).
+  private fxFrostSnowflake(toX: number, toY: number, empowered: boolean): void {
+    const sLen  = empowered ? 54 : 36;
+    const spokes = empowered ? 8 : 6;
+    const g = this.add.graphics({ x: toX, y: toY }).setDepth(12);
+    for (let i = 0; i < spokes; i++) {
+      const a     = (i / spokes) * Math.PI * 2;
+      const perpA = a + Math.PI / 2;
+      const tx = Math.cos(a) * sLen;
+      const ty = Math.sin(a) * sLen;
+      // Main spoke
+      g.lineStyle(empowered ? 2.5 : 2, empowered ? 0xddeeff : 0xaaddff, 1);
+      g.lineBetween(0, 0, tx, ty);
+      // Mid-spoke branch ticks
+      const bx = Math.cos(a) * sLen * 0.58;
+      const by = Math.sin(a) * sLen * 0.58;
+      const tk = empowered ? 10 : 7;
+      g.lineStyle(1.5, empowered ? 0xffffff : 0xddeeff, 0.85);
+      g.lineBetween(bx - Math.cos(perpA) * tk, by - Math.sin(perpA) * tk, bx + Math.cos(perpA) * tk, by + Math.sin(perpA) * tk);
+      // Tip ticks
+      g.lineBetween(tx - Math.cos(perpA) * 5, ty - Math.sin(perpA) * 5, tx + Math.cos(perpA) * 5, ty + Math.sin(perpA) * 5);
+    }
+    this.tweens.add({ targets: g, alpha: 0, duration: empowered ? 420 : 280, ease: 'Quad.easeOut', onComplete: () => g.destroy() });
+
+    const cFlash = this.add.graphics({ x: toX, y: toY }).setDepth(13);
+    cFlash.fillStyle(0xffffff, empowered ? 0.88 : 0.65);
+    cFlash.fillCircle(0, 0, empowered ? 10 : 6);
+    this.tweens.add({ targets: cFlash, alpha: 0, scaleX: 2, scaleY: 2, duration: 110, onComplete: () => cFlash.destroy() });
+
+    this.burstFx('ptx-dot', toX, toY, empowered ? 10 : 5, 350, {
+      tint: 0xaaddff, speed: { min: 35, max: 120 }, angle: { min: 0, max: 360 },
+      scale: { start: 0.55, end: 0 }, alpha: { start: 1, end: 0 },
+    });
+  }
+
+  // Helper: resolve which DoT path the player is on from their passives + sub-variant.
+  private getDotPath(player: PlayerState): 'poison' | 'fire' | 'frost' {
+    const p = player.passives;
+    if ((p['dot.fan-the-flames'] ?? 0) > 0 || (p['dot.smoldering-ember'] ?? 0) > 0 || (p['dot.conflagration'] ?? 0) > 0) return 'fire';
+    if ((p['dot.permafrost'] ?? 0) > 0 || (p['dot.freezing-cold'] ?? 0) > 0 || (p['dot.glacial-fracture'] ?? 0) > 0) return 'frost';
+    if ((p['dot.poison-explosion'] ?? 0) > 0 || (p['dot.eternal-doom'] ?? 0) > 0 || (p['dot.invigorating-toxins'] ?? 0) > 0) return 'poison';
+    // Fall back to tier-1 sub-variant choice
+    if (player.selectedSubVariant === 'balanced') return 'fire';
+    if (player.selectedSubVariant === 'heavy')    return 'frost';
+    return 'poison';
+  }
+
   private spawnAttackEffect(
     style: string,
     fromX: number, fromY: number,
     toX: number, toY: number,
-    flags?: { empowered?: boolean; execution?: boolean },
+    flags?: { empowered?: boolean; execution?: boolean; archetype?: CombatArchetype; dotPath?: 'poison' | 'fire' | 'frost' },
   ): void {
     const empowered = flags?.empowered ?? false;
     const execution = flags?.execution ?? false;
+    const archetype = flags?.archetype;
+    const dotPath   = flags?.dotPath;
 
+    // Class-mechanic dispatch — own player attacks only (flags.archetype is set).
+    // Each class uses its own visual language regardless of equipped weapon style.
+    if (archetype === 'cadence')  return this.fxSlash(fromX, fromY, toX, toY, empowered, true);
+    if (archetype === 'cooldown') return this.fxImpact(toX, toY, execution);
+    if (archetype === 'reload')   return this.fxGunshot(fromX, fromY, toX, toY, empowered);
+    if (archetype === 'energy')   return this.fxLightning(fromX, fromY, toX, toY, empowered);
+    if (archetype === 'dot') {
+      switch (dotPath) {
+        case 'fire':  return this.fxFireFlame(toX, toY, empowered);
+        case 'frost': return this.fxFrostSnowflake(toX, toY, empowered);
+        default:      return this.fxPoisonSmog(toX, toY, empowered);
+      }
+    }
+
+    // No archetype (pre-class player or monster) — fall back to weapon style.
     switch (style) {
       case 'slash':  return this.fxSlash(fromX, fromY, toX, toY, empowered);
       case 'poison': return this.fxPoison(toX, toY);
@@ -915,6 +1177,44 @@ export class GameScene extends Phaser.Scene {
       ease: 'Power2',
       onComplete: () => text.destroy(),
     });
+  }
+
+  /**
+   * Draw debug range circles each frame.
+   * Player attack range — yellow-green.
+   * Monster pull range — orange, leash range — dim blue, attack range — red.
+   */
+  private drawDebugRanges(): void {
+    this.debugGraphics.clear();
+
+    if (this.debugPlayerRange) {
+      const own = this.players.get(this.myId);
+      if (own?.playerState) {
+        const r = own.playerState.attackRange;
+        this.debugGraphics.lineStyle(1.5, 0xaaff44, 0.55);
+        this.debugGraphics.strokeCircle(own.sprite.x, own.sprite.y, r);
+      }
+    }
+
+    if (this.debugEnemyRanges) {
+      for (const vm of this.monsters.values()) {
+        const cx = vm.sprite.x;
+        const cy = vm.sprite.y;
+
+        if (vm.pullRange != null) {
+          this.debugGraphics.lineStyle(1, 0xff8844, 0.5);
+          this.debugGraphics.strokeCircle(cx, cy, vm.pullRange);
+        }
+        if (vm.leashRange != null) {
+          this.debugGraphics.lineStyle(1, 0x4466cc, 0.35);
+          this.debugGraphics.strokeCircle(cx, cy, vm.leashRange);
+        }
+        if (vm.monsterAttackRange != null) {
+          this.debugGraphics.lineStyle(1, 0xff4444, 0.6);
+          this.debugGraphics.strokeCircle(cx, cy, vm.monsterAttackRange);
+        }
+      }
+    }
   }
 
   private destroyVisual(map: Map<string, Visual>, id: string) {

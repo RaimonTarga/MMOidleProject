@@ -75,8 +75,8 @@
 
 .map-overview {
   display: grid;
-  grid-template-columns: repeat(9, 8px);
-  grid-template-rows: repeat(9, 8px);
+  grid-template-columns: repeat(11, 8px);
+  grid-template-rows: repeat(11, 8px);
   gap: 1px;
   padding: 3px;
   background: rgba(0,0,0,0.35);

@@ -6,6 +6,7 @@ import { InventoryPanel } from '../ui/InventoryPanel';
 import { CraftingPanel } from '../ui/CraftingPanel';
 import { MapPanel } from '../ui/MapPanel';
 import { EssencePanel } from './EssencePanel';
+import { QuestPanel } from '../ui/QuestPanel';
 import { SKILL_TREE } from '@mmo-idle/shared';
 import './hud.css';
 
@@ -15,6 +16,8 @@ export function RightSidebar() {
   const [invOpen, setInvOpen]       = useState(false);
   const [craftOpen, setCraftOpen]   = useState(false);
   const [mapOpen, setMapOpen]       = useState(false);
+  const [dbgPlayer, setDbgPlayer]   = useState(false);
+  const [dbgEnemy, setDbgEnemy]     = useState(false);
 
   useEffect(() => hudBus.subscribe(setHud), []);
 
@@ -25,6 +28,9 @@ export function RightSidebar() {
 
   return (
     <div className="sidebar sidebar-right">
+
+      {/* Quest / Tier panel — always visible */}
+      <QuestPanel player={player} />
 
       {/* Passive Tree panel */}
       <div className="sidebar-panel">
@@ -114,6 +120,24 @@ export function RightSidebar() {
           onClick={() => setMapOpen(v => !v)}
         >
           {mapOpen ? 'CLOSE MAP' : 'OPEN MAP'}
+        </button>
+      </div>
+
+      {/* Debug panel */}
+      <div className="sidebar-panel">
+        <div className="panel-title">Debug</div>
+        <button
+          className={`auto-btn${dbgPlayer ? ' active' : ''}`}
+          onClick={() => { setDbgPlayer(v => !v); hudBus.toggleDebugPlayerRange(); }}
+        >
+          {dbgPlayer ? 'HIDE MY RANGE' : 'SHOW MY RANGE'}
+        </button>
+        <button
+          className={`auto-btn${dbgEnemy ? ' active' : ''}`}
+          style={{ marginTop: 4 }}
+          onClick={() => { setDbgEnemy(v => !v); hudBus.toggleDebugEnemyRanges(); }}
+        >
+          {dbgEnemy ? 'HIDE ENEMY RANGES' : 'SHOW ENEMY RANGES'}
         </button>
       </div>
 

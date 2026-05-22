@@ -641,6 +641,70 @@
   text-overflow: ellipsis;
 }
 
+/* ── Quest / Tier panel ──────────────────────────────────────────────────── */
+
+.quest-panel {
+  /* same shell as sidebar-panel — no extra overrides needed */
+}
+
+.quest-tier-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.quest-tier-badge {
+  font-size: 13px;
+  font-weight: bold;
+  color: #ffcc44;
+  text-shadow: 0 0 8px rgba(255, 200, 60, 0.4);
+}
+
+.quest-name {
+  color: #aabbff;
+  font-size: 10px;
+  font-weight: bold;
+  letter-spacing: 0.06em;
+  margin-bottom: 2px;
+}
+
+.quest-desc {
+  color: #444466;
+  font-size: 9px;
+  line-height: 1.4;
+  margin-bottom: 6px;
+}
+
+.quest-progress-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 3px;
+}
+
+.quest-bar-track {
+  height: 5px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.quest-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #5566cc, #aabbff);
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+.quest-empty,
+.quest-complete {
+  color: #33334a;
+  font-size: 10px;
+  text-align: center;
+  padding: 6px 0;
+}
+
 /* ── Debug panel (click header to expand) ───────────────────────────────── */
 
 .debug-panel {

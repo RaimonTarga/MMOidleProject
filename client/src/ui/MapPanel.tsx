@@ -9,11 +9,11 @@ import {
 import type { EssenceType } from '@mmo-idle/shared';
 import './map.css';
 
-const GRID_ROWS  = 9;
-const GRID_COLS  = 9;
+const GRID_ROWS  = 11;
+const GRID_COLS  = 11;
 const VIEWPORT   = 5;   // visible tiles per axis
-const MAX_VIEW_R = GRID_ROWS - VIEWPORT; // 4
-const MAX_VIEW_C = GRID_COLS - VIEWPORT; // 4
+const MAX_VIEW_R = GRID_ROWS - VIEWPORT; // 6
+const MAX_VIEW_C = GRID_COLS - VIEWPORT; // 6
 
 const BIOME_TILE_COLORS: Record<string, string> = {
   clearing:   '#2e5e2e',

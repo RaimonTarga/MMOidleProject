@@ -20,6 +20,7 @@ for (const recipe of RECIPE_DATABASE.values()) {
     statModifiers: Object.fromEntries(
       Object.entries(recipe.stats).filter(([, v]) => v !== undefined),
     ) as Record<string, number>,
+    mechanicEffects: recipe.mechanicEffects,
     attacksPerSecond: recipe.attacksPerSecond,
     description: recipe.description,
   });

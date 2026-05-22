@@ -48,4 +48,14 @@ export const hudBus = {
   requestCraftRecipe(recipeId: string): void {
     window.dispatchEvent(new CustomEvent('hud:craftRecipe', { detail: recipeId }));
   },
+
+  /** Toggle the player attack-range debug overlay in GameScene. */
+  toggleDebugPlayerRange(): void {
+    window.dispatchEvent(new CustomEvent('hud:debugPlayerRange'));
+  },
+
+  /** Toggle the enemy range (pull / leash / attack) debug overlay in GameScene. */
+  toggleDebugEnemyRanges(): void {
+    window.dispatchEvent(new CustomEvent('hud:debugEnemyRanges'));
+  },
 };

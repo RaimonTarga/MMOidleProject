@@ -171,8 +171,7 @@ io.on('connection', (socket) => {
     channelingPct:        0,
     activeBuffs:          [],
     questProgress:        {},
-    progressionXP:        0,
-    progressionLevel:     0,
+    playerTier:           0,
   };
 
   // Auto-equip the starter weapon so new players immediately benefit from it

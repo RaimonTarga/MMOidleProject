@@ -220,15 +220,10 @@ export interface PlayerState {
    */
   questProgress: Record<string, number>;
   /**
-   * Accumulated progression XP from completed quests.
-   * Resets (modulo XP_PER_LEVEL) each time a level is gained.
+   * Player tier, advanced by completing the tier quest for the current tier.
+   * Each tier grants 1 skill point. Starts at 0.
    */
-  progressionXP: number;
-  /**
-   * Progression level gained via completed quests. Each level grants 1 skill point.
-   * Separate from the flat kill-count `level` field.
-   */
-  progressionLevel: number;
+  playerTier: number;
 }
 
 /**
@@ -268,6 +263,8 @@ export interface MonsterState {
   state: MonsterAIState;
   /** Pixel radius within which this monster notices and chases a player. */
   pullRange: number;
+  /** Pixel radius at which this monster gives up and returns to spawn. */
+  leashRange: number;
   /** Pixel radius within which this monster deals damage to its target. */
   attackRange: number;
   /** Milliseconds between discrete attacks. */
@@ -308,112 +305,222 @@ export interface NodeDefinition {
 }
 
 /**
- * 9×9 grid map. Center is node-4-4 (T0 clearing).
+ * 11×11 grid map. Center is node-5-5 (T0 clearing).
  * Chebyshev distance from center determines tier band:
- *   0 — clearing (T0)
- *   1 — T1 biomes (8 nodes)
- *   2 — T2 biomes (16 nodes)
- *   3 — T3 biomes (24 nodes)
- *   4 — T4 biomes (32 nodes)
+ *   0        — clearing (T0)                    1 node
+ *   1–2      — T1 biomes (24 nodes)             forest, mountain, plains, swamp, cave, jungle
+ *   3        — T2 biomes (24 nodes)             + tundra, desert
+ *   4        — T3 biomes (32 nodes)             + volcanic, necropolis (first appearance)
+ *   5        — T4 biomes (40 nodes)             + abyss (first appearance)
  *
- * Each tier has at least one dungeon node. Dungeons are marked isDungeon: true.
+ * Each tier has exactly one dungeon per biome present at that tier.
  * Geographic layout:
- *   North (rows 0-3) — tundra / mountain
- *   West  (cols 0-3) — swamp / cave / necropolis / abyss
- *   East  (cols 5-8) — plains / desert / forest / jungle
- *   South (rows 5-8) — jungle / volcanic / necropolis / abyss
+ *   North (rows 0–2)         — tundra / mountain
+ *   NE   (rows 0–4, cols 7+) — forest / plains
+ *   East (col 10)            — plains / desert / jungle
+ *   SE   (rows 8–10, cols 7+)— jungle
+ *   South (rows 9–10)        — volcanic / necropolis / abyss
+ *   West  (col 0)            — swamp / cave / abyss
+ *   NW   (rows 0–4, cols 0–4)— swamp / tundra
  */
 export const NODE_BIOMES: Record<string, { biomeGroup: string; biomeTier: number; isDungeon?: boolean }> = {
-  // ── Row 0 — T4 outer ring (north) ─────────────────────────────────────────
+
+  // ── T0 center — starting clearing ─────────────────────────────────────────
+  'node-5-5': { biomeGroup: 'clearing',   biomeTier: 0 },
+
+  // ── T1 band (Chebyshev distance 1–2) — 6 biomes × 4 nodes ────────────────
+  // Forest T1 — NE quadrant
+  'node-4-6': { biomeGroup: 'forest',     biomeTier: 1 },
+  'node-4-7': { biomeGroup: 'forest',     biomeTier: 1 },
+  'node-3-6': { biomeGroup: 'forest',     biomeTier: 1 },
+  'node-3-7': { biomeGroup: 'forest',     biomeTier: 1, isDungeon: true },   // forest-warden
+
+  // Mountain T1 — North
+  'node-4-5': { biomeGroup: 'mountain',   biomeTier: 1 },
+  'node-3-5': { biomeGroup: 'mountain',   biomeTier: 1, isDungeon: true },   // mountain-sentinel
+  'node-4-4': { biomeGroup: 'mountain',   biomeTier: 1 },
+  'node-3-4': { biomeGroup: 'mountain',   biomeTier: 1 },
+
+  // Plains T1 — East
+  'node-5-6': { biomeGroup: 'plains',     biomeTier: 1 },
+  'node-5-7': { biomeGroup: 'plains',     biomeTier: 1, isDungeon: true },   // plains-champion
+  'node-6-6': { biomeGroup: 'plains',     biomeTier: 1 },
+  'node-6-7': { biomeGroup: 'plains',     biomeTier: 1 },
+
+  // Swamp T1 — NW
+  'node-5-4': { biomeGroup: 'swamp',      biomeTier: 1 },
+  'node-5-3': { biomeGroup: 'swamp',      biomeTier: 1, isDungeon: true },   // bog-sovereign
+  'node-4-3': { biomeGroup: 'swamp',      biomeTier: 1 },
+  'node-3-3': { biomeGroup: 'swamp',      biomeTier: 1 },
+
+  // Cave T1 — West
+  'node-6-4': { biomeGroup: 'cave',       biomeTier: 1 },
+  'node-6-3': { biomeGroup: 'cave',       biomeTier: 1, isDungeon: true },   // cave-sentinel
+  'node-7-3': { biomeGroup: 'cave',       biomeTier: 1 },
+  'node-7-4': { biomeGroup: 'cave',       biomeTier: 1 },
+
+  // Jungle T1 — SE
+  'node-6-5': { biomeGroup: 'jungle',     biomeTier: 1 },
+  'node-7-5': { biomeGroup: 'jungle',     biomeTier: 1 },
+  'node-7-6': { biomeGroup: 'jungle',     biomeTier: 1, isDungeon: true },   // jungle-guardian
+  'node-7-7': { biomeGroup: 'jungle',     biomeTier: 1 },
+
+  // ── T2 band (Chebyshev distance 3) — 8 biomes × 3 nodes ──────────────────
+  // Tundra T2 — North-west
+  'node-2-2': { biomeGroup: 'tundra',     biomeTier: 2 },
+  'node-2-3': { biomeGroup: 'tundra',     biomeTier: 2 },
+  'node-2-4': { biomeGroup: 'tundra',     biomeTier: 2, isDungeon: true },   // glacial-colossus
+
+  // Mountain T2 — North
+  'node-2-5': { biomeGroup: 'mountain',   biomeTier: 2 },
+  'node-2-6': { biomeGroup: 'mountain',   biomeTier: 2, isDungeon: true },   // stone-warden
+  'node-2-7': { biomeGroup: 'mountain',   biomeTier: 2 },
+
+  // Forest T2 — NE
+  'node-2-8': { biomeGroup: 'forest',     biomeTier: 2 },
+  'node-3-8': { biomeGroup: 'forest',     biomeTier: 2, isDungeon: true },   // forest-elder
+  'node-4-8': { biomeGroup: 'forest',     biomeTier: 2 },
+
+  // Plains T2 — East
+  'node-5-8': { biomeGroup: 'plains',     biomeTier: 2 },
+  'node-6-8': { biomeGroup: 'plains',     biomeTier: 2, isDungeon: true },   // plains-overlord
+  'node-7-8': { biomeGroup: 'plains',     biomeTier: 2 },
+
+  // Desert T2 — SE
+  'node-8-8': { biomeGroup: 'desert',     biomeTier: 2 },
+  'node-8-7': { biomeGroup: 'desert',     biomeTier: 2, isDungeon: true },   // desert-pharaoh
+  'node-8-6': { biomeGroup: 'desert',     biomeTier: 2 },
+
+  // Jungle T2 — South
+  'node-8-5': { biomeGroup: 'jungle',     biomeTier: 2 },
+  'node-8-4': { biomeGroup: 'jungle',     biomeTier: 2, isDungeon: true },   // jungle-colossus
+  'node-8-3': { biomeGroup: 'jungle',     biomeTier: 2 },
+
+  // Cave T2 — SW
+  'node-8-2': { biomeGroup: 'cave',       biomeTier: 2 },
+  'node-7-2': { biomeGroup: 'cave',       biomeTier: 2, isDungeon: true },   // cave-terror
+  'node-6-2': { biomeGroup: 'cave',       biomeTier: 2 },
+
+  // Swamp T2 — NW
+  'node-5-2': { biomeGroup: 'swamp',      biomeTier: 2 },
+  'node-4-2': { biomeGroup: 'swamp',      biomeTier: 2, isDungeon: true },   // mire-lord
+  'node-3-2': { biomeGroup: 'swamp',      biomeTier: 2 },
+
+  // ── T3 band (Chebyshev distance 4) — 10 biomes ────────────────────────────
+  // Tundra T3 — North (4 nodes)
+  'node-1-1': { biomeGroup: 'tundra',     biomeTier: 3 },
+  'node-1-2': { biomeGroup: 'tundra',     biomeTier: 3, isDungeon: true },   // frost-colossus
+  'node-1-3': { biomeGroup: 'tundra',     biomeTier: 3 },
+  'node-2-1': { biomeGroup: 'tundra',     biomeTier: 3 },
+
+  // Mountain T3 — North
+  'node-1-4': { biomeGroup: 'mountain',   biomeTier: 3 },
+  'node-1-5': { biomeGroup: 'mountain',   biomeTier: 3, isDungeon: true },   // peak-titan
+  'node-1-6': { biomeGroup: 'mountain',   biomeTier: 3 },
+
+  // Forest T3 — NE
+  'node-1-7': { biomeGroup: 'forest',     biomeTier: 3 },
+  'node-1-8': { biomeGroup: 'forest',     biomeTier: 3, isDungeon: true },   // elder-forest-warden
+  'node-1-9': { biomeGroup: 'forest',     biomeTier: 3 },
+
+  // Plains T3 — East
+  'node-2-9': { biomeGroup: 'plains',     biomeTier: 3 },
+  'node-3-9': { biomeGroup: 'plains',     biomeTier: 3, isDungeon: true },   // plains-warlord
+  'node-4-9': { biomeGroup: 'plains',     biomeTier: 3 },
+
+  // Desert T3 — East-SE
+  'node-5-9': { biomeGroup: 'desert',     biomeTier: 3 },
+  'node-6-9': { biomeGroup: 'desert',     biomeTier: 3, isDungeon: true },   // sand-emperor
+  'node-7-9': { biomeGroup: 'desert',     biomeTier: 3 },
+
+  // Jungle T3 — SE
+  'node-8-9': { biomeGroup: 'jungle',     biomeTier: 3 },
+  'node-9-9': { biomeGroup: 'jungle',     biomeTier: 3 },
+  'node-9-8': { biomeGroup: 'jungle',     biomeTier: 3, isDungeon: true },   // jungle-titan-lord
+
+  // Volcanic T3 — South (first appearance)
+  'node-9-7': { biomeGroup: 'volcanic',   biomeTier: 3 },
+  'node-9-6': { biomeGroup: 'volcanic',   biomeTier: 3, isDungeon: true },   // volcanic-titan
+  'node-9-5': { biomeGroup: 'volcanic',   biomeTier: 3 },
+
+  // Necropolis T3 — SW (first appearance)
+  'node-9-4': { biomeGroup: 'necropolis', biomeTier: 3 },
+  'node-9-3': { biomeGroup: 'necropolis', biomeTier: 3, isDungeon: true },   // lich-king
+  'node-9-2': { biomeGroup: 'necropolis', biomeTier: 3 },
+
+  // Cave T3 — West
+  'node-9-1': { biomeGroup: 'cave',       biomeTier: 3 },
+  'node-8-1': { biomeGroup: 'cave',       biomeTier: 3, isDungeon: true },   // cave-overlord
+  'node-7-1': { biomeGroup: 'cave',       biomeTier: 3 },
+
+  // Swamp T3 — NW (4 nodes)
+  'node-6-1': { biomeGroup: 'swamp',      biomeTier: 3 },
+  'node-5-1': { biomeGroup: 'swamp',      biomeTier: 3, isDungeon: true },   // bog-ancient
+  'node-4-1': { biomeGroup: 'swamp',      biomeTier: 3 },
+  'node-3-1': { biomeGroup: 'swamp',      biomeTier: 3 },
+
+  // ── T4 band (Chebyshev distance 5) — 11 biomes ────────────────────────────
+  // Tundra T4 — NW corner (row 0, cols 0–3)
   'node-0-0': { biomeGroup: 'tundra',     biomeTier: 4 },
   'node-0-1': { biomeGroup: 'tundra',     biomeTier: 4 },
-  'node-0-2': { biomeGroup: 'tundra',     biomeTier: 4 },
-  'node-0-3': { biomeGroup: 'mountain',   biomeTier: 4 },
-  'node-0-4': { biomeGroup: 'mountain',   biomeTier: 4, isDungeon: true },
-  'node-0-5': { biomeGroup: 'mountain',   biomeTier: 4 },
-  'node-0-6': { biomeGroup: 'tundra',     biomeTier: 4 },
-  'node-0-7': { biomeGroup: 'tundra',     biomeTier: 4 },
-  'node-0-8': { biomeGroup: 'forest',     biomeTier: 4 },
-  // ── Row 1 — T3/T4 ──────────────────────────────────────────────────────────
-  'node-1-0': { biomeGroup: 'necropolis', biomeTier: 4, isDungeon: true },
-  'node-1-1': { biomeGroup: 'tundra',     biomeTier: 3 },
-  'node-1-2': { biomeGroup: 'tundra',     biomeTier: 3 },
-  'node-1-3': { biomeGroup: 'mountain',   biomeTier: 3 },
-  'node-1-4': { biomeGroup: 'mountain',   biomeTier: 3 },
-  'node-1-5': { biomeGroup: 'mountain',   biomeTier: 3 },
-  'node-1-6': { biomeGroup: 'tundra',     biomeTier: 3 },
-  'node-1-7': { biomeGroup: 'tundra',     biomeTier: 3 },
-  'node-1-8': { biomeGroup: 'plains',     biomeTier: 4 },
-  // ── Row 2 — T2/T3 ──────────────────────────────────────────────────────────
+  'node-0-2': { biomeGroup: 'tundra',     biomeTier: 4, isDungeon: true },   // glacial-titan
+  'node-0-3': { biomeGroup: 'tundra',     biomeTier: 4 },
+
+  // Mountain T4 — North center (row 0, cols 4–6)
+  'node-0-4': { biomeGroup: 'mountain',   biomeTier: 4 },
+  'node-0-5': { biomeGroup: 'mountain',   biomeTier: 4, isDungeon: true },   // mountain-titan
+  'node-0-6': { biomeGroup: 'mountain',   biomeTier: 4 },
+
+  // Forest T4 — NE (row 0, cols 7–10)
+  'node-0-7':  { biomeGroup: 'forest',    biomeTier: 4 },
+  'node-0-8':  { biomeGroup: 'forest',    biomeTier: 4 },
+  'node-0-9':  { biomeGroup: 'forest',    biomeTier: 4, isDungeon: true },   // elder-treant-lord
+  'node-0-10': { biomeGroup: 'forest',    biomeTier: 4 },
+
+  // Plains T4 — East (col 10, rows 1–4)
+  'node-1-10': { biomeGroup: 'plains',    biomeTier: 4 },
+  'node-2-10': { biomeGroup: 'plains',    biomeTier: 4 },
+  'node-3-10': { biomeGroup: 'plains',    biomeTier: 4, isDungeon: true },   // stampede-emperor
+  'node-4-10': { biomeGroup: 'plains',    biomeTier: 4 },
+
+  // Desert T4 — East (col 10, rows 5–7)
+  'node-5-10': { biomeGroup: 'desert',    biomeTier: 4 },
+  'node-6-10': { biomeGroup: 'desert',    biomeTier: 4, isDungeon: true },   // desert-eternal
+  'node-7-10': { biomeGroup: 'desert',    biomeTier: 4 },
+
+  // Jungle T4 — SE (col 10 rows 8–10 + row 10 cols 8–9)
+  'node-8-10':  { biomeGroup: 'jungle',   biomeTier: 4 },
+  'node-9-10':  { biomeGroup: 'jungle',   biomeTier: 4, isDungeon: true },   // jungle-ancient-lord
+  'node-10-10': { biomeGroup: 'jungle',   biomeTier: 4 },
+  'node-10-9':  { biomeGroup: 'jungle',   biomeTier: 4 },
+  'node-10-8':  { biomeGroup: 'jungle',   biomeTier: 4 },
+
+  // Volcanic T4 — South (row 10, cols 5–7)
+  'node-10-7': { biomeGroup: 'volcanic',  biomeTier: 4 },
+  'node-10-6': { biomeGroup: 'volcanic',  biomeTier: 4, isDungeon: true },   // inferno-lord
+  'node-10-5': { biomeGroup: 'volcanic',  biomeTier: 4 },
+
+  // Necropolis T4 — SW (row 10, cols 2–4)
+  'node-10-4': { biomeGroup: 'necropolis', biomeTier: 4 },
+  'node-10-3': { biomeGroup: 'necropolis', biomeTier: 4, isDungeon: true },  // undying-lord
+  'node-10-2': { biomeGroup: 'necropolis', biomeTier: 4 },
+
+  // Abyss T4 — SW corner (row 10 cols 0–1 + col 0 rows 8–9; first appearance)
+  'node-10-1': { biomeGroup: 'abyss',     biomeTier: 4 },
+  'node-10-0': { biomeGroup: 'abyss',     biomeTier: 4 },
+  'node-9-0':  { biomeGroup: 'abyss',     biomeTier: 4, isDungeon: true },   // void-titan
+  'node-8-0':  { biomeGroup: 'abyss',     biomeTier: 4 },
+
+  // Cave T4 — West (col 0, rows 5–7)
+  'node-7-0': { biomeGroup: 'cave',       biomeTier: 4 },
+  'node-6-0': { biomeGroup: 'cave',       biomeTier: 4, isDungeon: true },   // cave-titan
+  'node-5-0': { biomeGroup: 'cave',       biomeTier: 4 },
+
+  // Swamp T4 — NW (col 0, rows 1–4)
+  'node-4-0': { biomeGroup: 'swamp',      biomeTier: 4 },
+  'node-3-0': { biomeGroup: 'swamp',      biomeTier: 4, isDungeon: true },   // swamp-sovereign
   'node-2-0': { biomeGroup: 'swamp',      biomeTier: 4 },
-  'node-2-1': { biomeGroup: 'swamp',      biomeTier: 3 },
-  'node-2-2': { biomeGroup: 'mountain',   biomeTier: 2 },
-  'node-2-3': { biomeGroup: 'tundra',     biomeTier: 2 },
-  'node-2-4': { biomeGroup: 'tundra',     biomeTier: 2, isDungeon: true },
-  'node-2-5': { biomeGroup: 'mountain',   biomeTier: 2 },
-  'node-2-6': { biomeGroup: 'mountain',   biomeTier: 2 },
-  'node-2-7': { biomeGroup: 'plains',     biomeTier: 3 },
-  'node-2-8': { biomeGroup: 'plains',     biomeTier: 4 },
-  // ── Row 3 — T1/T2/T3 ───────────────────────────────────────────────────────
-  'node-3-0': { biomeGroup: 'abyss',      biomeTier: 4 },
-  'node-3-1': { biomeGroup: 'swamp',      biomeTier: 3 },
-  'node-3-2': { biomeGroup: 'swamp',      biomeTier: 2 },
-  'node-3-3': { biomeGroup: 'forest',     biomeTier: 1 },
-  'node-3-4': { biomeGroup: 'forest',     biomeTier: 1 },
-  'node-3-5': { biomeGroup: 'plains',     biomeTier: 1 },
-  'node-3-6': { biomeGroup: 'plains',     biomeTier: 2 },
-  'node-3-7': { biomeGroup: 'forest',     biomeTier: 3 },
-  'node-3-8': { biomeGroup: 'desert',     biomeTier: 4 },
-  // ── Row 4 — T0 center + T1 ring ────────────────────────────────────────────
-  'node-4-0': { biomeGroup: 'abyss',      biomeTier: 4, isDungeon: true },
-  'node-4-1': { biomeGroup: 'necropolis', biomeTier: 3, isDungeon: true },
-  'node-4-2': { biomeGroup: 'swamp',      biomeTier: 1 },
-  'node-4-3': { biomeGroup: 'swamp',      biomeTier: 1 },
-  'node-4-4': { biomeGroup: 'clearing',   biomeTier: 0 },
-  'node-4-5': { biomeGroup: 'plains',     biomeTier: 1 },
-  'node-4-6': { biomeGroup: 'desert',     biomeTier: 2 },
-  'node-4-7': { biomeGroup: 'desert',     biomeTier: 3 },
-  'node-4-8': { biomeGroup: 'desert',     biomeTier: 4 },
-  // ── Row 5 — T1/T2/T3 ───────────────────────────────────────────────────────
-  'node-5-0': { biomeGroup: 'abyss',      biomeTier: 4 },
-  'node-5-1': { biomeGroup: 'cave',       biomeTier: 3 },
-  'node-5-2': { biomeGroup: 'cave',       biomeTier: 2 },
-  'node-5-3': { biomeGroup: 'cave',       biomeTier: 1 },
-  'node-5-4': { biomeGroup: 'jungle',     biomeTier: 1 },
-  'node-5-5': { biomeGroup: 'jungle',     biomeTier: 1 },
-  'node-5-6': { biomeGroup: 'volcanic',   biomeTier: 2 },
-  'node-5-7': { biomeGroup: 'jungle',     biomeTier: 3 },
-  'node-5-8': { biomeGroup: 'jungle',     biomeTier: 4 },
-  // ── Row 6 — T2/T3 ──────────────────────────────────────────────────────────
-  'node-6-0': { biomeGroup: 'cave',       biomeTier: 4 },
-  'node-6-1': { biomeGroup: 'cave',       biomeTier: 3 },
-  'node-6-2': { biomeGroup: 'jungle',     biomeTier: 2 },
-  'node-6-3': { biomeGroup: 'volcanic',   biomeTier: 2, isDungeon: true },
-  'node-6-4': { biomeGroup: 'volcanic',   biomeTier: 2 },
-  'node-6-5': { biomeGroup: 'volcanic',   biomeTier: 2 },
-  'node-6-6': { biomeGroup: 'jungle',     biomeTier: 2 },
-  'node-6-7': { biomeGroup: 'volcanic',   biomeTier: 3 },
-  'node-6-8': { biomeGroup: 'jungle',     biomeTier: 4 },
-  // ── Row 7 — T3/T4 ──────────────────────────────────────────────────────────
-  'node-7-0': { biomeGroup: 'volcanic',   biomeTier: 4 },
-  'node-7-1': { biomeGroup: 'volcanic',   biomeTier: 3 },
-  'node-7-2': { biomeGroup: 'volcanic',   biomeTier: 3 },
-  'node-7-3': { biomeGroup: 'desert',     biomeTier: 3 },
-  'node-7-4': { biomeGroup: 'necropolis', biomeTier: 3 },
-  'node-7-5': { biomeGroup: 'desert',     biomeTier: 3 },
-  'node-7-6': { biomeGroup: 'volcanic',   biomeTier: 3 },
-  'node-7-7': { biomeGroup: 'volcanic',   biomeTier: 3 },
-  'node-7-8': { biomeGroup: 'volcanic',   biomeTier: 4 },
-  // ── Row 8 — T4 outer ring (south) ─────────────────────────────────────────
-  'node-8-0': { biomeGroup: 'volcanic',   biomeTier: 4 },
-  'node-8-1': { biomeGroup: 'volcanic',   biomeTier: 4 },
-  'node-8-2': { biomeGroup: 'volcanic',   biomeTier: 4 },
-  'node-8-3': { biomeGroup: 'necropolis', biomeTier: 4 },
-  'node-8-4': { biomeGroup: 'abyss',      biomeTier: 4, isDungeon: true },
-  'node-8-5': { biomeGroup: 'necropolis', biomeTier: 4 },
-  'node-8-6': { biomeGroup: 'volcanic',   biomeTier: 4 },
-  'node-8-7': { biomeGroup: 'volcanic',   biomeTier: 4 },
-  'node-8-8': { biomeGroup: 'volcanic',   biomeTier: 4 },
+  'node-1-0': { biomeGroup: 'swamp',      biomeTier: 4 },
 };
 
 /** Full world state for a node, sent every tick and on join. */
@@ -426,26 +533,88 @@ export interface NodeSnapshot {
 
 /**
  * A quest that requires the player to kill a set number of specific monsters.
- * Completing the quest awards progressionXP, which accumulates toward level-ups
- * that convert into skill points.
+ * Completing the quest advances the player's tier by 1 and grants 1 skill point.
  */
 export interface QuestDefinition {
   id: string;
   name: string;
   description: string;
+  /**
+   * The player tier at which this quest is active.
+   * Completing it advances the player to tierRequired + 1.
+   */
+  tierRequired: number;
   /** Monster type IDs (keys in MONSTER_DATABASE) that count toward this quest. */
   targetMonsterTypes: string[];
   /** Total kills required to complete the quest. */
   killsRequired: number;
-  /** Progression XP awarded on completion. */
-  xpReward: number;
 }
 
-/** All available quests. Empty at launch — add entries to populate quests. */
-export const QUEST_DATABASE = new Map<string, QuestDefinition>();
-
-/** XP required to gain one progression level (and thus one skill point). */
-export const XP_PER_LEVEL = 100;
+/**
+ * All tier-advancement quests — one per tier.
+ * Each quest requires slaying any ONE of the dungeon bosses found at that tier.
+ * Boss list matches bossPoolByTier entries in biomeDatabase for that biomeTier.
+ */
+export const QUEST_DATABASE = new Map<string, QuestDefinition>([
+  ['tier-0', {
+    id: 'tier-0',
+    name: 'First Blood',
+    description: 'Prove yourself in the Clearing by slaying 10 Tiny Slimes.',
+    tierRequired: 0,
+    targetMonsterTypes: ['tiny-slime'],
+    killsRequired: 10,
+  }],
+  ['tier-1', {
+    id: 'tier-1',
+    name: 'Dungeon Delver',
+    description: 'Seek out a Tier 1 dungeon and slay its guardian boss.',
+    tierRequired: 1,
+    // All T1 dungeon bosses — one per biome at biomeTier 1
+    targetMonsterTypes: [
+      'forest-warden', 'mountain-sentinel', 'plains-champion',
+      'bog-sovereign', 'cave-sentinel', 'jungle-guardian',
+    ],
+    killsRequired: 1,
+  }],
+  ['tier-2', {
+    id: 'tier-2',
+    name: 'Zone Conqueror',
+    description: 'Conquer a Tier 2 dungeon by defeating its mighty guardian.',
+    tierRequired: 2,
+    // All T2 dungeon bosses — one per biome at biomeTier 2
+    targetMonsterTypes: [
+      'glacial-colossus', 'stone-warden', 'forest-elder', 'plains-overlord',
+      'desert-pharaoh', 'jungle-colossus', 'cave-terror', 'mire-lord',
+    ],
+    killsRequired: 1,
+  }],
+  ['tier-3', {
+    id: 'tier-3',
+    name: "Veteran's Trial",
+    description: 'Prove your might against an elite Tier 3 dungeon lord.',
+    tierRequired: 3,
+    // All T3 dungeon bosses — one per biome at biomeTier 3
+    targetMonsterTypes: [
+      'frost-colossus', 'peak-titan', 'elder-forest-warden', 'plains-warlord',
+      'sand-emperor', 'jungle-titan-lord', 'volcanic-titan', 'lich-king',
+      'cave-overlord', 'bog-ancient',
+    ],
+    killsRequired: 1,
+  }],
+  ['tier-4', {
+    id: 'tier-4',
+    name: 'Final Reckoning',
+    description: 'Face the most fearsome dungeon lords of Tier 4 and emerge victorious.',
+    tierRequired: 4,
+    // All T4 dungeon bosses — one per biome at biomeTier 4
+    targetMonsterTypes: [
+      'glacial-titan', 'mountain-titan', 'elder-treant-lord', 'stampede-emperor',
+      'desert-eternal', 'jungle-ancient-lord', 'inferno-lord', 'undying-lord',
+      'void-titan', 'cave-titan', 'swamp-sovereign',
+    ],
+    killsRequired: 1,
+  }],
+]);
 
 // ─── Socket.IO event maps ─────────────────────────────────────────────────────
 
@@ -500,8 +669,8 @@ export const GAME_CONFIG = {
   PLAYER_ATTACK_RANGE: 60,
   /** Milliseconds between attacks when unarmed. Overridden by weapon attacksPerSecond when a weapon is equipped. */
   PLAYER_ATTACK_COOLDOWN: 3000,
-  /** HP recovered per second when out of combat */
-  PLAYER_HP_REGEN: 5,
+  /** Out-of-combat HP regen as a percentage of maxHp per second (10 = 10%/s). */
+  PLAYER_HP_REGEN: 10,
   /** Milliseconds after last hit before regen starts */
   COMBAT_REGEN_DELAY: 3000,
 

@@ -20,7 +20,7 @@ import { updateDotArchetype } from '../systems/dotPrototype';
 import { updateDotT3 } from '../systems/dotT3';
 import { updateCadenceEffects } from '../systems/cadencePrototype';
 import { updateWeaponEffects } from '../systems/weaponEffects';
-import { updateShields } from '../systems/defenseSystems';
+import { updateShields, updateDefensiveSystems } from '../systems/defenseSystems';
 import { recalculatePlayerStats } from '../systems/stats';
 import { syncPlayerBuffs } from '../systems/buffSync';
 import { NODE_REGISTRY } from './nodeRegistry';
@@ -54,7 +54,7 @@ export class World {
 
   nextMonsterId = 1;
 
-  constructor(nodeId = 'node-4-4') {
+  constructor(nodeId = 'node-5-5') {
     const node = NODE_REGISTRY.get(nodeId);
     if (!node) throw new Error(`Unknown node id: "${nodeId}"`);
     this.nodeId = nodeId;
@@ -90,6 +90,7 @@ export class World {
     updateTransitions(this);
     updateMonsters(this, dt, now);
     updateCombat(this, dt, now);
+    updateDefensiveSystems(this, dt, now);
     syncPlayerBuffs(this);
 
     for (const nodeId of NODE_REGISTRY.keys()) {
@@ -138,6 +139,7 @@ export class World {
       speed:   def.stats.speed,
       state:   'idle',
       pullRange:      def.stats.pullRange,
+      leashRange:     def.ai.leashRange,
       attackRange:    def.stats.attackRange,
       attackCooldown: def.stats.attackCooldown,
       lastAttackAt:   0,
@@ -200,7 +202,7 @@ export class World {
   }
 
   /**
-   * Teleport a player to the starting clearing (node-4-4), restore full HP,
+   * Teleport a player to the starting clearing (node-5-5), restore full HP,
    * clear movement and combat state, and drop all monster aggro targeting them.
    * Queues the player ID in pendingDeaths so the server loop can emit the event.
    */
@@ -211,7 +213,7 @@ export class World {
     const spawnX = GAME_CONFIG.NODE_WIDTH  / 2;
     const spawnY = GAME_CONFIG.NODE_HEIGHT / 2;
 
-    player.nodeId       = 'node-4-4';
+    player.nodeId       = 'node-5-5';
     player.x            = spawnX;
     player.y            = spawnY;
     player.targetX      = spawnX;

@@ -7,6 +7,7 @@ import {
   emitCombatEvent,
 } from './combatPipeline';
 import { getStatusEffect } from './statusEffects';
+import { getAntiHealMult } from './defenseSystems';
 
 export function updateCombat(world: World, dt: number, now: number) {
   // PLAYER → MONSTER
@@ -74,10 +75,10 @@ export function updateCombat(world: World, dt: number, now: number) {
       const lastHit = world.playerCombatAt.get(player.id) ?? 0;
 
       if (now - lastHit > GAME_CONFIG.COMBAT_REGEN_DELAY) {
-        player.hp = Math.min(
-          player.maxHp,
-          player.hp + player.hpRegen * (dt / 1000)
-        );
+        const cs = world.playerCombatState.get(player.id);
+        const rawRegen = player.maxHp * (player.hpRegen / 100) * (dt / 1000);
+        const healAmount = cs ? rawRegen * getAntiHealMult(cs) : rawRegen;
+        player.hp = Math.min(player.maxHp, player.hp + healAmount);
       }
     }
   }

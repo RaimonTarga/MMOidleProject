@@ -100,7 +100,7 @@ export function recalculatePlayerStats(player: PlayerState): void {
     player.cadenceCount = 0;
   }
 
-  // 3. Apply equipped item stat modifiers
+  // 3. Apply equipped item stat modifiers and mechanic effects
   for (const slot of EQUIPMENT_SLOTS) {
     const defId = player.equipment[slot];
     if (!defId) continue;
@@ -109,6 +109,18 @@ export function recalculatePlayerStats(player: PlayerState): void {
     for (const [stat, value] of Object.entries(def.statModifiers)) {
       applyStatMod(player, stat, value);
     }
+    if (def.mechanicEffects) {
+      for (const [key, val] of Object.entries(def.mechanicEffects)) {
+        player.passives[key] = (player.passives[key] ?? 0) + val;
+      }
+    }
+  }
+
+  // 3b. Reload archetype: double attack speed and half damage as a final multiplier layer.
+  //     Applied after all additive bonuses (skills + items) so it scales with gear correctly.
+  if (player.combatArchetype === 'reload') {
+    player.attack         = Math.max(1, Math.floor(player.attack * 0.5));
+    player.attackCooldown = Math.max(200, Math.round(player.attackCooldown * 0.5));
   }
 
   // 4. Clamp current hp to the new max (don't auto-heal, but don't exceed cap)

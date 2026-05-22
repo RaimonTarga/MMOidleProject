@@ -18,8 +18,9 @@ const FALLBACK_REWARDS: KillRewards = { essence: 1, essenceType: 'green', level:
 export function rewardPlayer(player: PlayerState, rewards: KillRewards): void {
   const type = rewards.essenceType as keyof typeof player.essences;
   if (type in player.essences) player.essences[type] += rewards.essence;
-  player.level       += rewards.level;
-  player.skillPoints += rewards.level;
+  // Skill points are granted exclusively via tier advancement (questSystem).
+  // The `level` field is kept as a flat kill counter for future use.
+  player.level += rewards.level;
 }
 
 /**

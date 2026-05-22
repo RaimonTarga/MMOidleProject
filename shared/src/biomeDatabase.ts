@@ -26,7 +26,7 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
 
   ['clearing', {
     id: 'clearing', name: 'Clearing',
-    backgroundColor: 0x101a10,   // soft dim green — safe starting area
+    backgroundColor: 0x101a10,
     monsterPoolByTier: { 0: ['tiny-slime'] },
     essenceType: 'essence',
   }],
@@ -42,6 +42,9 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
     },
     bossPoolByTier: {
       1: ['forest-warden'],
+      2: ['forest-elder'],
+      3: ['elder-forest-warden'],
+      4: ['elder-treant-lord'],
     },
     essenceType: 'essence',
   }],
@@ -55,6 +58,12 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
       3: ['rune-golem', 'storm-eagle'],
       4: ['colossal-titan', 'thunder-condor'],
     },
+    bossPoolByTier: {
+      1: ['mountain-sentinel'],
+      2: ['stone-warden'],
+      3: ['peak-titan'],
+      4: ['mountain-titan'],
+    },
     essenceType: 'essence',
   }],
 
@@ -66,6 +75,12 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
       2: ['stampede-bull', 'prairie-wolf'],
       3: ['war-mammoth', 'dire-wolf'],
       4: ['ancient-guardian', 'stampede-king'],
+    },
+    bossPoolByTier: {
+      1: ['plains-champion'],
+      2: ['plains-overlord'],
+      3: ['plains-warlord'],
+      4: ['stampede-emperor'],
     },
     essenceType: 'essence',
   }],
@@ -79,6 +94,12 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
       3: ['bog-horror', 'plague-witch'],
       4: ['hydra-elder', 'shadow-toad'],
     },
+    bossPoolByTier: {
+      1: ['bog-sovereign'],
+      2: ['mire-lord'],
+      3: ['bog-ancient'],
+      4: ['swamp-sovereign'],
+    },
     essenceType: 'essence',
   }],
 
@@ -91,6 +112,12 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
       3: ['cave-behemoth', 'venom-queen'],
       4: ['stone-colossus', 'abyss-crawler'],
     },
+    bossPoolByTier: {
+      1: ['cave-sentinel'],
+      2: ['cave-terror'],
+      3: ['cave-overlord'],
+      4: ['cave-titan'],
+    },
     essenceType: 'essence',
   }],
 
@@ -102,6 +129,12 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
       2: ['anaconda', 'jungle-titan'],
       3: ['feral-gorilla', 'pit-viper'],
       4: ['ancient-titan', 'jungle-wyvern'],
+    },
+    bossPoolByTier: {
+      1: ['jungle-guardian'],
+      2: ['jungle-colossus'],
+      3: ['jungle-titan-lord'],
+      4: ['jungle-ancient-lord'],
     },
     essenceType: 'essence',
   }],
@@ -116,6 +149,8 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
     },
     bossPoolByTier: {
       2: ['glacial-colossus'],
+      3: ['frost-colossus'],
+      4: ['glacial-titan'],
     },
     essenceType: 'essence',
   }],
@@ -128,39 +163,48 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
       3: ['sand-kraken', 'bone-drake'],
       4: ['pharaoh-construct', 'desert-wyrm'],
     },
+    bossPoolByTier: {
+      2: ['desert-pharaoh'],
+      3: ['sand-emperor'],
+      4: ['desert-eternal'],
+    },
     essenceType: 'essence',
   }],
 
+  // Volcanic first appears at T3 — not available in T1 or T2 zones.
   ['volcanic', {
     id: 'volcanic', name: 'Volcanic',
     backgroundColor: 0x1a0808,
     monsterPoolByTier: {
-      2: ['ember-slime', 'magma-golem'],
-      3: ['lava-titan', 'fire-elemental'],
+      3: ['ember-slime', 'magma-golem', 'lava-titan', 'fire-elemental'],
       4: ['infernal-drake', 'magma-colossus'],
     },
     bossPoolByTier: {
-      2: ['infernal-tyrant'],
+      3: ['volcanic-titan'],
+      4: ['inferno-lord'],
     },
     essenceType: 'essence',
   }],
 
+  // Necropolis first appears at T3 — deep undead territory.
   ['necropolis', {
     id: 'necropolis', name: 'Necropolis',
-    backgroundColor: 0x0c0810,   // deep purple-black
+    backgroundColor: 0x0c0810,
     monsterPoolByTier: {
       3: ['skeleton-warrior', 'lich'],
       4: ['bone-colossus', 'death-knight'],
     },
     bossPoolByTier: {
       3: ['lich-king'],
+      4: ['undying-lord'],
     },
     essenceType: 'essence',
   }],
 
+  // Abyss first appears at T4 — end-game void zones only.
   ['abyss', {
     id: 'abyss', name: 'Abyss',
-    backgroundColor: 0x060410,   // near-void, deep indigo-black
+    backgroundColor: 0x060410,
     monsterPoolByTier: {
       4: ['void-horror', 'abyssal-titan'],
     },

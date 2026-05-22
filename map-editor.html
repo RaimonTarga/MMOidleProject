@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Map Editor — MMO Idle</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #06040f;
+      color: #ccccee;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* ── Toolbar ────────────────────────────────────────────────────────────── */
+    #toolbar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 14px;
+      background: #0a0818;
+      border-bottom: 1px solid rgba(80,65,170,0.22);
+      flex-shrink: 0;
+    }
+    #toolbar h1 { font-size: 13px; color: #9988cc; letter-spacing: 0.1em; text-transform: uppercase; flex: 1; }
+
+    button {
+      background: rgba(32,26,68,0.9);
+      border: 1px solid rgba(100,85,190,0.3);
+      color: #aaaacc;
+      font-family: monospace;
+      font-size: 12px;
+      padding: 5px 13px;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.15s;
+    }
+    button:hover:not(:disabled) { border-color: rgba(130,110,220,0.65); color: #ccaaff; background: rgba(50,40,100,0.85); }
+    button:disabled { opacity: 0.28; cursor: default; }
+    #save-btn { border-color: rgba(55,130,75,0.35); color: #88aa88; }
+    #save-btn:not(:disabled):hover { border-color: rgba(60,200,100,0.7); color: #44ff88; }
+    #save-btn.dirty { border-color: rgba(60,200,100,0.55); color: #55ee88; }
+
+    #status { color: #444466; font-size: 11px; margin-left: 6px; min-width: 160px; }
+    #status.ok  { color: #44bb66; }
+    #status.err { color: #ff5555; }
+    #status.warn { color: #ddaa44; }
+
+    /* ── Main layout ────────────────────────────────────────────────────────── */
+    #main {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    /* ── Grid area ──────────────────────────────────────────────────────────── */
+    #grid-wrap {
+      flex: 1;
+      overflow: auto;
+      padding: 16px 16px 8px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    #grid-outer {
+      display: grid;
+      grid-template-columns: 20px auto;
+      grid-template-rows: 20px auto;
+      gap: 2px;
+    }
+    .corner { width: 20px; height: 20px; }
+
+    #col-labels {
+      display: flex;
+      gap: 2px;
+    }
+    #row-labels {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .axis-label {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9px;
+      color: #333355;
+    }
+
+    #grid {
+      display: grid;
+      gap: 2px;
+    }
+
+    .cell {
+      border-radius: 4px;
+      cursor: pointer;
+      border: 1px solid transparent;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1px;
+      transition: filter 0.1s, border-color 0.1s, box-shadow 0.1s;
+      padding: 2px;
+      position: relative;
+      user-select: none;
+    }
+    .cell:hover:not(.cell--selected) { filter: brightness(1.35); border-color: rgba(160,140,255,0.45); }
+    .cell--selected  { border-color: #44ff88 !important; box-shadow: 0 0 7px rgba(68,255,136,0.45) !important; filter: none !important; }
+    .cell--dungeon:not(.cell--selected) { filter: brightness(0.7) saturate(0.8); border-color: rgba(200,55,55,0.65); }
+    .cell--center    { border-color: rgba(80,80,200,0.5); }
+
+    .cell__tier  { font-size: 8px;  color: rgba(255,255,255,0.42); line-height: 1; }
+    .cell__biome { font-size: 9px;  color: rgba(255,255,255,0.82); text-align: center; line-height: 1.15; }
+    .cell__dmark {
+      position: absolute;
+      top: 3px; right: 3px;
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: rgba(255,75,75,0.9);
+    }
+
+    /* ── Legend ─────────────────────────────────────────────────────────────── */
+    #legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 6px 2px 0;
+    }
+    .legend-item { display: flex; align-items: center; gap: 4px; font-size: 9px; color: #444466; }
+    .legend-swatch { width: 10px; height: 10px; border-radius: 2px; border: 1px solid rgba(255,255,255,0.08); flex-shrink: 0; }
+
+    /* ── Right panel ────────────────────────────────────────────────────────── */
+    #panel {
+      width: 248px;
+      flex-shrink: 0;
+      background: #09071a;
+      border-left: 1px solid rgba(80,65,170,0.2);
+      padding: 14px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .panel-empty { color: #2a2a44; font-style: italic; font-size: 11px; text-align: center; margin: auto; }
+
+    .panel-section-title {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #444466;
+      border-bottom: 1px solid #16162a;
+      padding-bottom: 6px;
+    }
+
+    .panel-node-id { font-size: 13px; color: #9988cc; font-weight: bold; letter-spacing: 0.04em; }
+
+    .field { display: flex; flex-direction: column; gap: 5px; }
+    .field label { font-size: 10px; color: #555577; text-transform: uppercase; letter-spacing: 0.08em; }
+
+    select, input[type="number"] {
+      background: rgba(18,14,42,0.95);
+      border: 1px solid rgba(80,65,170,0.3);
+      color: #ccccee;
+      font-family: monospace;
+      font-size: 12px;
+      padding: 5px 8px;
+      border-radius: 4px;
+      width: 100%;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    select:focus, input:focus { border-color: rgba(120,100,220,0.6); }
+
+    .check-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      padding: 2px 0;
+    }
+    .check-row input[type="checkbox"] { width: 14px; height: 14px; accent-color: #dd4444; cursor: pointer; }
+    .check-row span { font-size: 12px; color: #ccccee; }
+
+    .boss-hint {
+      font-size: 10px;
+      color: rgba(255,115,85,0.8);
+      font-style: italic;
+      background: rgba(100,20,20,0.18);
+      border: 1px solid rgba(160,40,40,0.25);
+      border-radius: 3px;
+      padding: 4px 8px;
+    }
+
+    .biome-preview {
+      height: 28px;
+      border-radius: 4px;
+      border: 1px solid rgba(80,65,170,0.18);
+      transition: background 0.18s;
+    }
+
+    #apply-btn {
+      border-color: rgba(60,180,95,0.45);
+      color: #55dd88;
+      margin-top: 2px;
+    }
+    #apply-btn:hover { border-color: rgba(60,220,110,0.75); color: #44ff88; background: rgba(20,60,30,0.7); }
+
+    /* ── Fallback notice ────────────────────────────────────────────────────── */
+    #fallback-notice {
+      display: none;
+      font-size: 10px;
+      color: #aa8833;
+      background: rgba(80,55,10,0.3);
+      border: 1px solid rgba(160,110,20,0.35);
+      border-radius: 4px;
+      padding: 4px 10px;
+    }
+  </style>
+</head>
+<body>
+
+<div id="toolbar">
+  <h1>Map Editor</h1>
+  <span id="fallback-notice">No File System Access API — Save will download a file.</span>
+  <button id="open-btn" onclick="openFile()">Open index.ts</button>
+  <button id="save-btn" onclick="saveFile()" disabled>Save</button>
+  <span id="status">No file loaded</span>
+</div>
+
+<div id="main">
+  <div id="grid-wrap">
+    <div id="grid-outer">
+      <div class="corner"></div>
+      <div id="col-labels"></div>
+      <div id="row-labels"></div>
+      <div id="grid"></div>
+    </div>
+    <div id="legend"></div>
+  </div>
+
+  <div id="panel">
+    <div class="panel-empty">Open index.ts,<br>then click a cell.</div>
+  </div>
+</div>
+
+<script>
+// ── Config ─────────────────────────────────────────────────────────────────────
+
+const GRID_ROWS   = 11;
+const GRID_COLS   = 11;
+const CENTER_ROW  = 5;
+const CENTER_COL  = 5;
+const CELL_PX     = 50;
+
+const BIOMES = [
+  'clearing','forest','mountain','plains','swamp',
+  'cave','jungle','tundra','desert','volcanic','necropolis','abyss',
+];
+
+const BIOME_COLORS = {
+  clearing:   '#2e5e2e', forest:     '#1a4018', mountain:   '#3e3e50',
+  plains:     '#4e5e1a', swamp:      '#1a3a0c', cave:       '#1a1a24',
+  jungle:     '#0c3014', tundra:     '#222e48', desert:     '#5a4010',
+  volcanic:   '#4a1010', necropolis: '#1e0e2a', abyss:      '#0a0612',
+};
+
+// Boss names keyed by "biome-tier" so the panel can show which boss lives there
+const DUNGEON_BOSSES = {
+  'forest-1':'Forest Warden',       'forest-2':'Forest Elder',
+  'forest-3':'Elder Forest Warden', 'forest-4':'Elder Treant Lord',
+  'mountain-1':'Mountain Sentinel', 'mountain-2':'Stone Warden',
+  'mountain-3':'Peak Titan',        'mountain-4':'Mountain Titan',
+  'plains-1':'Plains Champion',     'plains-2':'Plains Overlord',
+  'plains-3':'Plains Warlord',      'plains-4':'Stampede Emperor',
+  'swamp-1':'Bog Sovereign',        'swamp-2':'Mire Lord',
+  'swamp-3':'Bog Ancient',          'swamp-4':'Swamp Sovereign',
+  'cave-1':'Cave Sentinel',         'cave-2':'Cave Terror',
+  'cave-3':'Cave Overlord',         'cave-4':'Cave Titan',
+  'jungle-1':'Jungle Guardian',     'jungle-2':'Jungle Colossus',
+  'jungle-3':'Jungle Titan Lord',   'jungle-4':'Jungle Ancient Lord',
+  'tundra-2':'Glacial Colossus',    'tundra-3':'Frost Colossus',
+  'tundra-4':'Glacial Titan',
+  'desert-2':'Desert Pharaoh',      'desert-3':'Sand Emperor',
+  'desert-4':'Desert Eternal',
+  'volcanic-3':'Volcanic Titan',    'volcanic-4':'Inferno Lord',
+  'necropolis-3':'Lich King',       'necropolis-4':'Undying Lord',
+  'abyss-4':'Void Titan',
+};
+
+// Short labels for the grid tiles
+const BIOME_ABBREV = {
+  clearing:'Clear', forest:'Forest', mountain:'Mtn',   plains:'Plains',
+  swamp:'Swamp',    cave:'Cave',      jungle:'Jungle',  tundra:'Tundra',
+  desert:'Desert',  volcanic:'Volc',  necropolis:'Necro', abyss:'Abyss',
+};
+
+// ── State ──────────────────────────────────────────────────────────────────────
+
+let fileHandle     = null;   // FileSystemFileHandle (Chrome) or null
+let originalContent = '';    // raw text of index.ts
+let mapData        = {};     // { 'node-r-c': { biomeGroup, biomeTier, isDungeon } }
+let selectedId     = null;
+let dirty          = false;
+
+const hasFileAPI = typeof window.showOpenFilePicker === 'function';
+
+// ── Boot ───────────────────────────────────────────────────────────────────────
+
+window.addEventListener('load', () => {
+  if (!hasFileAPI) {
+    document.getElementById('fallback-notice').style.display = 'inline';
+    document.getElementById('save-btn').textContent = 'Download';
+  }
+  buildLegend();
+});
+
+// ── File I/O ───────────────────────────────────────────────────────────────────
+
+async function openFile() {
+  try {
+    let text = '';
+    if (hasFileAPI) {
+      [fileHandle] = await window.showOpenFilePicker({
+        types: [{ description: 'TypeScript', accept: { 'text/plain': ['.ts'] } }],
+      });
+      const f = await fileHandle.getFile();
+      text = await f.text();
+    } else {
+      text = await fallbackReadFile();
+      fileHandle = null;
+    }
+
+    const parsed = parseNodeBiomes(text);
+    if (Object.keys(parsed).length === 0) {
+      setStatus('NODE_BIOMES not found.', 'err');
+      return;
+    }
+
+    originalContent = text;
+    mapData  = parsed;
+    dirty    = false;
+    selectedId = null;
+
+    renderGrid();
+    document.getElementById('save-btn').disabled = false;
+    setStatus(`Loaded — ${Object.keys(mapData).length} nodes`, 'ok');
+    updateDirty();
+    showEmptyPanel();
+  } catch (e) {
+    if (e.name !== 'AbortError') setStatus('Error: ' + e.message, 'err');
+  }
+}
+
+function fallbackReadFile() {
+  return new Promise((resolve, reject) => {
+    const inp = Object.assign(document.createElement('input'), { type: 'file', accept: '.ts' });
+    inp.onchange = async () => {
+      if (!inp.files[0]) return reject(new Error('No file'));
+      resolve(await inp.files[0].text());
+    };
+    inp.click();
+  });
+}
+
+async function saveFile() {
+  const newContent = serializeNodeBiomes();
+
+  if (hasFileAPI && fileHandle) {
+    try {
+      const w = await fileHandle.createWritable();
+      await w.write(newContent);
+      await w.close();
+      originalContent = newContent;
+      dirty = false;
+      updateDirty();
+      setStatus('Saved!', 'ok');
+      setTimeout(() => setStatus(`${Object.keys(mapData).length} nodes`), 2200);
+    } catch (e) {
+      setStatus('Save failed: ' + e.message, 'err');
+    }
+  } else {
+    // Fallback: download
+    const blob = new Blob([newContent], { type: 'text/plain' });
+    const a    = Object.assign(document.createElement('a'), {
+      href: URL.createObjectURL(blob), download: 'index.ts',
+    });
+    a.click();
+    setStatus('Downloaded index.ts', 'ok');
+  }
+}
+
+// ── Parsing NODE_BIOMES ────────────────────────────────────────────────────────
+
+function parseNodeBiomes(src) {
+  const result = {};
+  // Each entry may or may not have isDungeon: true
+  const re = /'(node-\d+-\d+)':\s*\{\s*biomeGroup:\s*'(\w+)',\s*biomeTier:\s*(\d+)(?:,\s*isDungeon:\s*(true))?\s*\}/g;
+  let m;
+  while ((m = re.exec(src)) !== null) {
+    result[m[1]] = {
+      biomeGroup: m[2],
+      biomeTier:  parseInt(m[3], 10),
+      isDungeon:  m[4] === 'true',
+    };
+  }
+  return result;
+}
+
+// ── Serialization ──────────────────────────────────────────────────────────────
+
+function serializeNodeBiomes() {
+  const entries = Object.entries(mapData).sort((a, b) => {
+    const [ar, ac] = a[0].split('-').slice(1).map(Number);
+    const [br, bc] = b[0].split('-').slice(1).map(Number);
+    return ar !== br ? ar - br : ac - bc;
+  });
+
+  let lines = '';
+  let lastRow = null;
+  for (const [id, info] of entries) {
+    const row = parseInt(id.split('-')[1], 10);
+    if (lastRow !== null && row !== lastRow) lines += '\n';
+    lastRow = row;
+
+    const dungProp = info.isDungeon ? ', isDungeon: true' : '';
+    const bossKey  = `${info.biomeGroup}-${info.biomeTier}`;
+    const comment  = info.isDungeon ? `   // ${DUNGEON_BOSSES[bossKey] ?? '???'}` : '';
+    lines += `  '${id}': { biomeGroup: '${info.biomeGroup}', biomeTier: ${info.biomeTier}${dungProp} },${comment}\n`;
+  }
+
+  const newBlock =
+    `export const NODE_BIOMES: Record<string, { biomeGroup: string; biomeTier: number; isDungeon?: boolean }> = {\n` +
+    lines + `};`;
+
+  const replaced = originalContent.replace(
+    /export const NODE_BIOMES[^=]+=\s*\{[\s\S]*?\n\};/,
+    newBlock,
+  );
+  return replaced === originalContent ? originalContent + '\n\n' + newBlock : replaced;
+}
+
+// ── Grid rendering ─────────────────────────────────────────────────────────────
+
+function renderGrid() {
+  const grid = document.getElementById('grid');
+  grid.style.gridTemplateColumns = `repeat(${GRID_COLS}, ${CELL_PX}px)`;
+  grid.style.gridTemplateRows    = `repeat(${GRID_ROWS}, ${CELL_PX}px)`;
+  grid.innerHTML = '';
+
+  // Column labels
+  const colLabels = document.getElementById('col-labels');
+  colLabels.innerHTML = '';
+  for (let c = 0; c < GRID_COLS; c++) {
+    const el = Object.assign(document.createElement('div'), {
+      className: 'axis-label', textContent: c,
+    });
+    el.style.cssText = `width:${CELL_PX}px;height:20px;`;
+    colLabels.appendChild(el);
+  }
+
+  // Row labels
+  const rowLabels = document.getElementById('row-labels');
+  rowLabels.innerHTML = '';
+  for (let r = 0; r < GRID_ROWS; r++) {
+    const el = Object.assign(document.createElement('div'), {
+      className: 'axis-label', textContent: r,
+    });
+    el.style.cssText = `width:20px;height:${CELL_PX}px;`;
+    rowLabels.appendChild(el);
+  }
+
+  for (let r = 0; r < GRID_ROWS; r++) {
+    for (let c = 0; c < GRID_COLS; c++) {
+      grid.appendChild(buildCell(r, c));
+    }
+  }
+}
+
+function buildCell(r, c) {
+  const id   = `node-${r}-${c}`;
+  const info = mapData[id] ?? { biomeGroup: 'clearing', biomeTier: 0, isDungeon: false };
+
+  const cell = document.createElement('div');
+  cell.id        = 'cell-' + id;
+  cell.className = 'cell';
+  cell.dataset.id = id;
+  cell.style.background = BIOME_COLORS[info.biomeGroup] ?? '#111';
+  cell.style.width  = cell.style.height = CELL_PX + 'px';
+
+  if (info.isDungeon)                      cell.classList.add('cell--dungeon');
+  if (r === CENTER_ROW && c === CENTER_COL) cell.classList.add('cell--center');
+  if (id === selectedId)                   cell.classList.add('cell--selected');
+
+  if (info.isDungeon) {
+    const dot = document.createElement('div');
+    dot.className = 'cell__dmark';
+    cell.appendChild(dot);
+  }
+
+  const tier  = document.createElement('div');
+  tier.className   = 'cell__tier';
+  tier.textContent = info.biomeTier === 0 ? '★' : `T${info.biomeTier}`;
+
+  const name  = document.createElement('div');
+  name.className   = 'cell__biome';
+  name.textContent = BIOME_ABBREV[info.biomeGroup] ?? info.biomeGroup;
+
+  cell.appendChild(tier);
+  cell.appendChild(name);
+  cell.addEventListener('click', () => selectCell(id));
+  return cell;
+}
+
+function refreshCell(id) {
+  const old  = document.getElementById('cell-' + id);
+  if (!old) return;
+  const [, rs, cs] = id.split('-');
+  const newCell = buildCell(parseInt(rs), parseInt(cs));
+  old.replaceWith(newCell);
+}
+
+// ── Selection & panel ──────────────────────────────────────────────────────────
+
+function selectCell(id) {
+  if (selectedId) document.getElementById('cell-' + selectedId)?.classList.remove('cell--selected');
+  selectedId = id;
+  document.getElementById('cell-' + id)?.classList.add('cell--selected');
+  renderPanel(id);
+}
+
+function renderPanel(id) {
+  const info    = mapData[id] ?? { biomeGroup: 'clearing', biomeTier: 0, isDungeon: false };
+  const bossKey = `${info.biomeGroup}-${info.biomeTier}`;
+  const boss    = info.isDungeon ? (DUNGEON_BOSSES[bossKey] ?? 'No boss defined for this biome/tier') : null;
+  const panel   = document.getElementById('panel');
+
+  panel.innerHTML = `
+    <div class="panel-section-title">Edit Node</div>
+    <div class="panel-node-id">${id}</div>
+
+    <div class="field">
+      <label>Biome preview</label>
+      <div id="biome-preview" class="biome-preview" style="background:${BIOME_COLORS[info.biomeGroup]??'#111'}"></div>
+    </div>
+
+    <div class="field">
+      <label>Biome</label>
+      <select id="sel-biome" onchange="onBiomeChange()">
+        ${BIOMES.map(b => `<option value="${b}"${b===info.biomeGroup?' selected':''}>${b}</option>`).join('')}
+      </select>
+    </div>
+
+    <div class="field">
+      <label>Tier</label>
+      <input type="number" id="inp-tier" min="0" max="10" value="${info.biomeTier}" oninput="onTierChange()">
+    </div>
+
+    <div class="field">
+      <label class="check-row">
+        <input type="checkbox" id="chk-dungeon"${info.isDungeon?' checked':''} onchange="onDungeonChange()">
+        <span>Dungeon node</span>
+      </label>
+      ${boss ? `<div class="boss-hint" id="boss-hint">Boss: ${boss}</div>` : '<div id="boss-hint"></div>'}
+    </div>
+
+    <button id="apply-btn" onclick="applyChanges()">Apply changes</button>
+  `;
+}
+
+function showEmptyPanel() {
+  document.getElementById('panel').innerHTML = `<div class="panel-empty">Click a cell to edit it.</div>`;
+}
+
+function onBiomeChange() {
+  const b = document.getElementById('sel-biome').value;
+  if (document.getElementById('biome-preview'))
+    document.getElementById('biome-preview').style.background = BIOME_COLORS[b] ?? '#111';
+  refreshBossHint();
+}
+function onTierChange()   { refreshBossHint(); }
+function onDungeonChange(){ refreshBossHint(); }
+
+function refreshBossHint() {
+  const biome = document.getElementById('sel-biome')?.value;
+  const tier  = document.getElementById('inp-tier')?.value;
+  const isDun = document.getElementById('chk-dungeon')?.checked;
+  const hint  = document.getElementById('boss-hint');
+  if (!hint) return;
+  if (isDun) {
+    const boss = DUNGEON_BOSSES[`${biome}-${tier}`] ?? 'No boss defined for this biome/tier';
+    hint.className = 'boss-hint';
+    hint.textContent = 'Boss: ' + boss;
+  } else {
+    hint.className = '';
+    hint.textContent = '';
+  }
+}
+
+function applyChanges() {
+  if (!selectedId) return;
+  const biome    = document.getElementById('sel-biome').value;
+  const tier     = Math.max(0, parseInt(document.getElementById('inp-tier').value, 10) || 0);
+  const isDungeon = document.getElementById('chk-dungeon').checked;
+
+  mapData[selectedId] = { biomeGroup: biome, biomeTier: tier, isDungeon };
+  refreshCell(selectedId);
+  document.getElementById('cell-' + selectedId)?.classList.add('cell--selected');
+  renderPanel(selectedId); // re-render to show updated boss hint
+
+  dirty = true;
+  updateDirty();
+}
+
+// ── Legend ─────────────────────────────────────────────────────────────────────
+
+function buildLegend() {
+  const el = document.getElementById('legend');
+  el.innerHTML = BIOMES.map(b => `
+    <div class="legend-item">
+      <div class="legend-swatch" style="background:${BIOME_COLORS[b]}"></div>
+      ${b}
+    </div>`).join('') +
+  `<div class="legend-item" style="margin-left:10px">
+    <div class="legend-swatch" style="background:rgba(180,40,40,0.35);border-color:rgba(200,60,60,0.7)"></div>
+    dungeon
+  </div>
+  <div class="legend-item">
+    <div class="legend-swatch" style="background:#3e3e50;border-color:rgba(80,80,200,0.6)"></div>
+    center (T0)
+  </div>`;
+}
+
+// ── Utilities ──────────────────────────────────────────────────────────────────
+
+function setStatus(msg, type = '') {
+  const el = document.getElementById('status');
+  el.textContent = msg;
+  el.className   = type;
+}
+
+function updateDirty() {
+  document.getElementById('save-btn').classList.toggle('dirty', dirty);
+  document.title = dirty ? '● Map Editor — MMO Idle' : 'Map Editor — MMO Idle';
+}
+
+// ── Keyboard ───────────────────────────────────────────────────────────────────
+
+document.addEventListener('keydown', e => {
+  // Ctrl/Cmd+S → save
+  if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+    e.preventDefault();
+    if (!document.getElementById('save-btn').disabled) saveFile();
+    return;
+  }
+
+  // Arrow keys navigate the grid (unless focus is inside an input/select)
+  if (['INPUT','SELECT','TEXTAREA'].includes(document.activeElement?.tagName)) return;
+  if (!selectedId) return;
+
+  const dirs = { ArrowUp:[-1,0], ArrowDown:[1,0], ArrowLeft:[0,-1], ArrowRight:[0,1] };
+  const delta = dirs[e.key];
+  if (!delta) return;
+  e.preventDefault();
+
+  const [, rs, cs] = selectedId.split('-');
+  const nr = parseInt(rs) + delta[0];
+  const nc = parseInt(cs) + delta[1];
+  if (nr >= 0 && nr < GRID_ROWS && nc >= 0 && nc < GRID_COLS) {
+    selectCell(`node-${nr}-${nc}`);
+  }
+});
+</script>
+</body>
+</html>
