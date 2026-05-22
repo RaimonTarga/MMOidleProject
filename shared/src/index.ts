@@ -372,11 +372,11 @@ export const NODE_BIOMES: Record<string, { biomeGroup: string; biomeTier: number
   'node-7-3': { biomeGroup: 'cave',       biomeTier: 1 },
   'node-7-4': { biomeGroup: 'cave',       biomeTier: 1 },
 
-  // Jungle T1 — SE
-  'node-6-5': { biomeGroup: 'jungle',     biomeTier: 1 },
-  'node-7-5': { biomeGroup: 'jungle',     biomeTier: 1 },
-  'node-7-6': { biomeGroup: 'jungle',     biomeTier: 1, isDungeon: true },   // jungle-guardian
-  'node-7-7': { biomeGroup: 'jungle',     biomeTier: 1 },
+  // Plains T1 — SE extension (jungle moved to T2+)
+  'node-6-5': { biomeGroup: 'plains',     biomeTier: 1 },
+  'node-7-5': { biomeGroup: 'plains',     biomeTier: 1 },
+  'node-7-6': { biomeGroup: 'plains',     biomeTier: 1 },
+  'node-7-7': { biomeGroup: 'plains',     biomeTier: 1 },
 
   // ── T2 band (Chebyshev distance 3) — 8 biomes × 3 nodes ──────────────────
   // Tundra T2 — North-west
@@ -584,10 +584,10 @@ export const QUEST_DATABASE = new Map<string, QuestDefinition>([
     name: 'Dungeon Delver',
     description: 'Seek out a Tier 1 dungeon and slay its guardian boss.',
     tierRequired: 1,
-    // All T1 dungeon bosses — one per biome at biomeTier 1
+    // All T1 dungeon bosses — one per biome at biomeTier 1 (5 biomes)
     targetMonsterTypes: [
       'forest-warden', 'mountain-sentinel', 'plains-champion',
-      'bog-sovereign', 'cave-sentinel', 'jungle-guardian',
+      'bog-sovereign', 'cave-sentinel',
     ],
     killsRequired: 1,
   }],

@@ -473,25 +473,25 @@ Each root grants archetype selection + a signature recovery/defense mechanic:
 
 | Class | Stats (root) | Identity passive |
 |---|---|---|
-| **Cadence** | +4 ATK, +12 HP, +2 PLT, +2% DR | `defense.regen-burst-pct: 0.08` every 10 s |
-| **Cooldown** | +2 ATK, +20 HP, +2 PLT, +4% DR, −10 SPD | `defense.in-combat-regen-pct: 0.12` |
-| **Energy** | +2 ATK, +12 SPD, −150ms CD, −5 HP, +115 range, +1 PLT | `defense.shield-pct: 0.06` every 14 s |
-| **DoT** | +3 ATK, +15 HP, +2 PLT, +3% DR, +1 hpRegen | `defense.dot-resistance: 0.12`, `defense.hit-to-dot-pct: 0.10` |
-| **Reload** | +10 SPD, −10 HP, +105 range, +8 evasion | Evasion/avoidance identity; ranged baseline |
+| **Cooldown** | +6 ATK, +28 HP, +3 PLT, +5% DR, −10 SPD | `defense.in-combat-regen-pct: 0.12` |
+| **Cadence** | +8 ATK, +18 HP, +2 PLT, +3% DR | `defense.regen-burst-pct: 0.08` every 10 s |
+| **DoT** | +6 ATK, +18 HP, +2 PLT, +3% DR, +1 hpRegen, +50 range | `defense.dot-resistance: 0.12`, `defense.hit-to-dot-pct: 0.10` |
+| **Reload** | +12 SPD, −8 HP, +105 range, +10 evasion | Evasion/avoidance identity; ranged baseline |
+| **Energy** | +5 ATK, +14 SPD, −200ms CD, −5 HP, +115 range, +1 PLT | `defense.shield-pct: 0.06` every 14 s |
 
-Energy and Reload are **ranged baseline** — they start with bonus attack range at the root.
+Energy and Reload are **ranged baseline** — they start with +115/+105 attack range at the root. DoT is **mid-range baseline** — +50 range at root puts it between melee and ranged. Cooldown and Cadence are **melee** — no built-in range bonus.
 
 ### T1 stat profiles (cumulative with root)
 
 Heavy frames are the tankiest; light frames sacrifice durability for speed/offense.
 
-| Class | Light net | Heavy net |
+| Class | Light net (root+variant) | Heavy net (root+variant) |
 |---|---|---|
-| Cooldown | ~0 HP, −1 PLT, +2% DR | +50 HP, +4 PLT, 10% DR, +3 hpRegen |
-| Cadence | low HP, high speed | +28 HP, modest PLT |
-| DoT | −5 HP bonus, glass | +38 HP, +5 PLT, 8% DR |
-| Energy | lowest HP | moderate PLT |
-| Reload | −15 HP, +12 evasion | +2 HP, +4 evasion |
+| Cooldown | +14 ATK, +6 HP, 0 PLT, +3% DR, high speed | +49 ATK, +98 HP, +13 PLT, +18% DR, +14 hpRegen |
+| Cadence | +22 ATK, −4 HP, +2 PLT, +3% DR, high speed | +38 ATK, +74 HP, +11 PLT, +7% DR, +5 hpRegen |
+| DoT | +30 ATK, −4 HP, +2 PLT, +3% DR, high speed | +34 ATK, +68 HP, +10 PLT, +12% DR, +7 hpRegen |
+| Reload | +18 ATK, −26 HP, 0 PLT, +15 evasion | +24 ATK, +24 HP, +5 PLT, +4 hpRegen |
+| Energy | +14 ATK, −27 HP, +2 PLT, high speed | +21 ATK, +19 HP, +4 PLT, +8% DR, +3 hpRegen |
 
 ### Tier 2 — Range nodes
 
@@ -801,123 +801,31 @@ the hit it sets `ctx.metadata['dotHandled'] = 1` to suppress the base stack appl
 
 ## Project state & immediate priorities
 
-### What is solid
-The mechanical foundation is genuinely complete. The combat pipeline, the five class archetypes with their T3 specializations, the full 121-node world, the defense/recovery system, the AI with retaliation and kite-prevention — all of this works and is architecturally clean. The HUD is polished. The code is consistent and LLM-maintainable.
-
-### What is missing before the game can be "played"
-The most blocking gap is **persistence**. All state is in-memory; every server restart wipes everyone's build. This makes balance testing impossible and makes showing the game to friends unrewarding. The Drizzle/SQLite scaffolding exists — it just needs to be wired up.
-
-Second gap: **deployment**. The game only runs locally right now.
-
-Third gap: **numerical balance** (see dedicated section below).
-
-The remaining mechanical gaps (Reload T3, Cooldown heavy T3, Tiers 4–7) are real but not blocking — the game is playable through T3 without them.
-
 ### Recommended priority order
-1. **Balance T0–T2** — next session. The mechanical foundation is solid and the combat
-   event queue now makes animation/log feedback reliable, so numbers are the real blocker.
-   Start from T1 regular monsters, work outward. See the dedicated balance section below.
-2. **Wire up SQLite persistence** (player state: stats, inventory, skills, position, quests)
-3. **Deploy** (Caddy + PM2 on Hetzner, or similar)
-4. **Implement Reload T3** (all 9 designed, just needs server-side code)
-5. **Implement Cooldown heavy T3** (3 paths designed)
-6. **Tune T3–T4 balance** once T1–T2 feel right
+1. **Wire up SQLite persistence** (player state: stats, inventory, skills, position, quests)
+2. **Deploy** (Caddy + PM2 on Hetzner, or similar)
+3. **Playtest T1 balance** — numbers are a first pass; expect a tuning session after hands-on play
+4. **Balance T2 biomes and monsters** — extend the same threat-profile design to T2
+5. **Implement Reload T3** (all 9 designed, just needs server-side code)
+6. **Implement Cooldown heavy T3** (3 paths designed)
 
----
+### T1 balance (complete — pending playtesting)
 
-## Numerical balance design
+**T1 biome threat profiles** — five biomes with distinct mechanical identities:
 
-This is the hardest unsolved problem in the project. The systems exist; the numbers inside them are guesses. The goal of this section is to give future work a framework rather than require re-derivation from scratch each session.
+Five T1 biomes, each with a distinct mechanical identity:
 
-### Design philosophy: each tier as a puzzle
-
-Each tier band should have a clear "lock" that the player's build must answer. A player who hasn't made good choices should feel the wall; a player who has should feel distinctly powerful.
-
-| Tier | Lock | Answer |
+| Biome | Threat profile | Plating |
 |---|---|---|
-| T0 | None — tutorial | Any build, auto-combat on |
-| T1 | Sustained DPS floor | Basic skill investment (any path) |
-| T1 dungeon | Burst DPS check | Empowered hits or DoT stack completion |
-| T2 | Incoming damage too fast for OOC regen | Defense/recovery item + in-combat regen or shields |
-| T2 dungeon | Enrage-style DPS race | T3 path unlocked or strong weapon effect |
-| T3 | Both DPS and EHP walls at once | Synergistic T3 path + matched recovery archetype |
-| T3 dungeon | Boss mechanics (kite, heavy hits) | Full build optimization |
+| Plains | Balanced, no specialization — jack of all trades | 0 |
+| Forest | Fast attacking, sustained damage, low defense — easy to burst | 0 |
+| Swamp | Attrition — slow, above-average defense, poison/DoT | 2 |
+| Caverns | High defense, hard slow hits — spiky damage; hardest T1 biome | 4–5 |
+| Mountain | Cliff Hoppers (fast, high pull range) + Ridge Archers (long attackRange) | 0 |
 
-### Target time-to-kill (TTK) per tier
+T1 bosses follow the same profiles at 400–700 HP, 14–22 ATK.
 
-TTK is the primary feel lever in an idle game. The player watches; the numbers matter.
-
-| Context | Target TTK (regular monster) | Target TTK (dungeon boss) |
-|---|---|---|
-| T0 | 3–4 s | — |
-| T1 | 5–8 s | 30–45 s |
-| T2 | 8–14 s | 60–90 s |
-| T3 | 12–20 s | 90–150 s |
-
-These targets are for a player with appropriate gear and a partially-developed skill tree. An underpowered player should struggle noticeably; an optimized player should beat the lower bound.
-
-### Stat scaling framework
-
-**Core formula:**
-```
-DPS_sustained  = ATK / (attackCooldown_ms / 1000)
-EHP            = HP × 1/(1 - damageReduction) + total_shield_pool
-TTK_player     = target_EHP / DPS_sustained  (ignoring plating for simplicity)
-```
-
-For burst archetypes (cadence finisher, cooldown execution, energy discharge):
-```
-DPS_effective = (base_hits_between_empowered × ATK + empowered_dmg) / cycle_duration_s
-```
-
-**Rough stat targets by tier** (starting point — tune from playtesting):
-
-| Tier | Player ATK | Player maxHP | Monster HP | Monster ATK |
-|---|---|---|---|---|
-| T0 | 6–10 | 80–110 | 25–40 | 4–7 |
-| T1 | 12–22 | 120–180 | 80–150 | 10–18 |
-| T2 | 25–50 | 180–280 | 250–500 | 22–40 |
-| T3 | 55–120 | 280–450 | 600–1400 | 45–90 |
-| T1 boss | — | — | 400–700 | 14–22 |
-| T2 boss | — | — | 1800–3500 | 30–55 |
-| T3 boss | — | — | 6000–12000 | 70–130 |
-
-These are *at gear/skill level appropriate to the tier*. A fresh T0 character entering T1 should be visibly weaker than these numbers.
-
-### Skill point budget analysis
-
-A fully-invested T3 build uses approximately:
-- 1 root (T0)
-- 1 T1 variant
-- 1 T2 range node
-- 1 T3 path node
-
-That is 4 skill points for the "core identity" investment. The player has additional skill points from quests (4 quests currently, each granting 1 point upon XP threshold). This means a player can unlock 5–8 nodes total by the time they're working through T2 content.
-
-**Implication:** the T2 range node and T3 path node choices should feel meaningful but not mandatory — a player who picks "wrong" should struggle more but not be blocked.
-
-### Balance testing procedure (for future sessions)
-
-1. Start a fresh character, note starting stats.
-2. Run the T0 clearing with auto-combat on, time kills, note feel.
-3. Unlock one root, note stat delta, re-test.
-4. Move to T1 biome — does OOC regen keep up between fights? Is TTK in the target range?
-5. Attempt T1 dungeon boss. Did it require any skill investment to win?
-6. Repeat for T2 after unlocking T1 variant + recovery item.
-
-The goal is not perfect balance on first pass — it is establishing a feedback loop before building more content on top of unvalidated numbers.
-
-### Balance variables to tune first
-
-In order of impact:
-1. **Monster HP per tier** (`MONSTER_DATABASE` stat `hp`) — most direct TTK lever
-2. **Monster ATK per tier** (`attack`) — controls survival pressure
-3. **Base player ATK at root** (`statEffects.attack` in `skillTree.ts`) — sets the floor
-4. **HP regen constants** (`GAME_CONFIG.COMBAT_REGEN_DELAY`, default `hpRegen` per class)
-5. **Dungeon multipliers** (`DUNGEON_HP_MULT`, `DUNGEON_ATK_MULT` in `World.ts`)
-6. **Empowered damage multipliers** per archetype (`cadence.empowered-mult`, energy per-hit, etc.)
-
-Do not tune items and T3 mechanics until base-class numbers feel right — otherwise you're layering balance on top of an unknown baseline.
+Jungle first appears at T2. The 4 ex-jungle T1 nodes (SE quadrant) are now extended Plains.
 
 ---
 

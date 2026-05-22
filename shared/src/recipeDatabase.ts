@@ -368,13 +368,7 @@ export const RECIPE_DATABASE: Map<string, Recipe> = new Map<string, Recipe>([
     description: 'A fully resonated cave gem — 15% max HP healed over 4 seconds, pulsing every 8 seconds.',
   }],
 
-  // ── Jungle T1 — green only ─────────────────────────────────────────────────
-  ['jungle-blade-t1', {
-    id: 'jungle-blade-t1', name: 'Fang Blade',
-    recipeGroup: 'jungle', requiredTier: 1, slot: 'weapon',
-    cost: { green: 22 }, stats: { attack: 12 }, attacksPerSecond: 0.75, tier: 1,
-    description: 'A jungle-snake fang set in a hardwood hilt.',
-  }],
+  // ── Jungle T1 — green only (jungle first appears at T2; items unlock via T2 kills) ──
   ['jungle-vest-t1', {
     id: 'jungle-vest-t1', name: 'Verdant Wraps',
     recipeGroup: 'jungle', requiredTier: 1, slot: 'armor',

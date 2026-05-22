@@ -31,6 +31,8 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
     essenceType: 'essence',
   }],
 
+  // ── T1 biomes ─────────────────────────────────────────────────────────────
+  // Threat profile: fast/sustained, low defense — easy to burst down
   ['forest', {
     id: 'forest', name: 'Forest',
     backgroundColor: 0x0a1a0a,
@@ -49,11 +51,13 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
     essenceType: 'essence',
   }],
 
+  // Threat profile: two varieties — fast skirmishers (high pull range, low defense)
+  // and pseudo-ranged attackers (long attack range, average stats)
   ['mountain', {
     id: 'mountain', name: 'Mountain',
     backgroundColor: 0x141418,
     monsterPoolByTier: {
-      1: ['stone-slime', 'rock-beetle'],
+      1: ['cliff-hopper', 'ridge-archer'],
       2: ['granite-titan', 'stone-eagle'],
       3: ['rune-golem', 'storm-eagle'],
       4: ['colossal-titan', 'thunder-condor'],
@@ -67,6 +71,7 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
     essenceType: 'essence',
   }],
 
+  // Threat profile: balanced, no specialization — jack of all trades
   ['plains', {
     id: 'plains', name: 'Plains',
     backgroundColor: 0x141a08,
@@ -85,6 +90,8 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
     essenceType: 'essence',
   }],
 
+  // Threat profile: attrition — DoT/poison attackers with above-average defense;
+  // slow but ramping damage output; higher tiers introduce debuffs
   ['swamp', {
     id: 'swamp', name: 'Swamp',
     backgroundColor: 0x0c1708,
@@ -103,11 +110,13 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
     essenceType: 'essence',
   }],
 
+  // Threat profile: high defense, hard and slow hits — damage spikiness;
+  // hardest T1 biome to farm due to plating; low pull range (ambush style)
   ['cave', {
-    id: 'cave', name: 'Cave',
+    id: 'cave', name: 'Caverns',
     backgroundColor: 0x0c0c0f,
     monsterPoolByTier: {
-      1: ['cave-bat', 'cave-spider'],
+      1: ['cave-lurker', 'cave-brute'],
       2: ['giant-spider', 'cave-troll'],
       3: ['cave-behemoth', 'venom-queen'],
       4: ['stone-colossus', 'abyss-crawler'],
@@ -121,17 +130,17 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
     essenceType: 'essence',
   }],
 
+  // ── T2+ biomes (not available at T1) ──────────────────────────────────────
+  // Jungle first appears at T2 — dense, aggressive, mixed threat profile
   ['jungle', {
     id: 'jungle', name: 'Jungle',
     backgroundColor: 0x081508,
     monsterPoolByTier: {
-      1: ['jungle-snake', 'jungle-ape'],
-      2: ['anaconda', 'jungle-titan'],
+      2: ['jungle-snake', 'jungle-ape'],
       3: ['feral-gorilla', 'pit-viper'],
       4: ['ancient-titan', 'jungle-wyvern'],
     },
     bossPoolByTier: {
-      1: ['jungle-guardian'],
       2: ['jungle-colossus'],
       3: ['jungle-titan-lord'],
       4: ['jungle-ancient-lord'],
