@@ -7,6 +7,7 @@ import {
   BIOME_UNLOCK_THRESHOLDS, ESSENCE_COLORS,
 } from '@mmo-idle/shared';
 import type { EssenceType } from '@mmo-idle/shared';
+import { hudBus } from '../hudBus';
 import './map.css';
 
 const GRID_ROWS  = 11;
@@ -62,6 +63,34 @@ function clampView(r: number, c: number): [number, number] {
     Math.max(0, Math.min(MAX_VIEW_R, r)),
     Math.max(0, Math.min(MAX_VIEW_C, c)),
   ];
+}
+
+// ── BFS shortest path ─────────────────────────────────────────────────────────
+// Returns the full path [from, ...intermediates, to], or null if unreachable.
+function bfsPath(from: string, to: string): string[] | null {
+  if (from === to) return [from];
+  const parent = new Map<string, string>([[from, '']]);
+  const queue: string[] = [from];
+  while (queue.length > 0) {
+    const cur = queue.shift()!;
+    const rc = parseNodeId(cur);
+    if (!rc) continue;
+    const [r, c] = rc;
+    for (const [nr, nc] of [[r-1,c],[r+1,c],[r,c-1],[r,c+1]] as [number,number][]) {
+      if (nr < 0 || nr > 10 || nc < 0 || nc > 10) continue;
+      const nid = `node-${nr}-${nc}`;
+      if (parent.has(nid) || !NODE_BIOMES[nid]) continue;
+      parent.set(nid, cur);
+      if (nid === to) {
+        const path: string[] = [];
+        let n: string = to;
+        while (n !== '') { path.unshift(n); n = parent.get(n)!; }
+        return path;
+      }
+      queue.push(nid);
+    }
+  }
+  return null;
 }
 
 // ── NodeInfo ─────────────────────────────────────────────────────────────────
@@ -203,9 +232,11 @@ function NodeInfo({ nodeId, player }: NodeInfoProps) {
 interface OverviewProps {
   viewRow: number; viewCol: number;
   playerNodeId: string | null;
+  pathSet: Set<string>;
+  destNode: string | null;
 }
 
-function OverviewMap({ viewRow, viewCol, playerNodeId }: OverviewProps) {
+function OverviewMap({ viewRow, viewCol, playerNodeId, pathSet, destNode }: OverviewProps) {
   const playerPos = playerNodeId ? parseNodeId(playerNodeId) : null;
   return (
     <div className="map-overview">
@@ -216,6 +247,8 @@ function OverviewMap({ viewRow, viewCol, playerNodeId }: OverviewProps) {
         const info = NODE_BIOMES[id];
         const inView  = r >= viewRow && r < viewRow + VIEWPORT && c >= viewCol && c < viewCol + VIEWPORT;
         const isPlayer = playerPos?.[0] === r && playerPos?.[1] === c;
+        const isDest  = id === destNode;
+        const isPath  = !isDest && pathSet.has(id);
         return (
           <div
             key={id}
@@ -224,6 +257,8 @@ function OverviewMap({ viewRow, viewCol, playerNodeId }: OverviewProps) {
               inView   ? 'map-overview-cell--inview' : '',
               isPlayer ? 'map-overview-cell--player' : '',
               info?.isDungeon ? 'map-overview-cell--dungeon' : '',
+              isPath   ? 'map-overview-cell--path' : '',
+              isDest   ? 'map-overview-cell--destination' : '',
             ].filter(Boolean).join(' ')}
             style={{ background: tileColor(info?.biomeGroup ?? '') }}
           />
@@ -239,6 +274,21 @@ interface Props { player: PlayerState | null; onClose: () => void; }
 
 export function MapPanel({ player, onClose }: Props) {
   const [hoveredId, setHoveredId] = useState<string | null>(null);
+  const [autoPath, setAutoPath] = useState<string[] | null>(null);
+
+  // Keep path state in sync with GameScene via hudBus
+  useEffect(() => hudBus.subscribe(s => setAutoPath(s.autoPath ?? null)), []);
+
+  const pathSet = useMemo(() => new Set(autoPath ?? []), [autoPath]);
+  const destNode = autoPath && autoPath.length > 0 ? autoPath[autoPath.length - 1] : null;
+
+  function handleTileClick(id: string, isCurrent: boolean) {
+    if (isCurrent || !player?.nodeId) return;
+    const path = bfsPath(player.nodeId, id);
+    if (!path || path.length <= 1) return;
+    hudBus.requestNavigateTo(path.slice(1)); // exclude the player's current node
+    onClose();
+  }
 
   // Derive player grid position
   const playerPos = player?.nodeId ? parseNodeId(player.nodeId) : null;
@@ -290,7 +340,7 @@ export function MapPanel({ player, onClose }: Props) {
 
         <div className="map-header">
           <span className="map-title">World Map</span>
-          <OverviewMap viewRow={viewRow} viewCol={viewCol} playerNodeId={player?.nodeId ?? null} />
+          <OverviewMap viewRow={viewRow} viewCol={viewCol} playerNodeId={player?.nodeId ?? null} pathSet={pathSet} destNode={destNode} />
           <button className="map-close" onClick={onClose}>✕</button>
         </div>
 
@@ -303,30 +353,37 @@ export function MapPanel({ player, onClose }: Props) {
 
             <div className="map-grid">
               {visibleTiles.map(({ r, c, id }) => {
-                const info      = NODE_BIOMES[id];
-                const biome     = info ? BIOME_DATABASE.get(info.biomeGroup) : null;
-                const isCurrent = player?.nodeId === id;
-                const isHovered = hoveredId === id;
-                const isDungeon = info?.isDungeon === true;
-                const tierBadge = info?.biomeTier === 0 ? '★' : `T${info?.biomeTier ?? '?'}`;
+                const info        = NODE_BIOMES[id];
+                const biome       = info ? BIOME_DATABASE.get(info.biomeGroup) : null;
+                const isCurrent   = player?.nodeId === id;
+                const isHovered   = hoveredId === id;
+                const isDungeon   = info?.isDungeon === true;
+                const isDestination = id === destNode;
+                const isPath      = !isDestination && !isCurrent && pathSet.has(id);
+                const tierBadge   = info?.biomeTier === 0 ? '★' : `T${info?.biomeTier ?? '?'}`;
 
                 return (
                   <div
                     key={id}
                     className={[
                       'map-tile',
-                      isDungeon   ? 'map-tile--dungeon' : '',
-                      isCurrent   ? 'map-tile--current' : '',
+                      isDungeon     ? 'map-tile--dungeon'     : '',
+                      isCurrent     ? 'map-tile--current'     : '',
                       isHovered && !isCurrent ? 'map-tile--hovered' : '',
+                      isPath        ? 'map-tile--path'        : '',
+                      isDestination ? 'map-tile--destination' : '',
                     ].filter(Boolean).join(' ')}
                     style={{ background: tileColor(info?.biomeGroup ?? '') }}
                     onMouseEnter={() => setHoveredId(id)}
                     onMouseLeave={() => setHoveredId(null)}
+                    onClick={() => handleTileClick(id, isCurrent)}
+                    title={isCurrent ? undefined : 'Click to navigate here'}
                   >
                     <span className="map-tile__tier">{tierBadge}</span>
                     <span className="map-tile__name">{biome?.name ?? '?'}</span>
-                    {isDungeon  && <span className="map-tile__dungeon-badge">DUNGEON</span>}
-                    {isCurrent  && <span className="map-tile__you">▼ YOU</span>}
+                    {isDungeon    && <span className="map-tile__dungeon-badge">DUNGEON</span>}
+                    {isCurrent    && <span className="map-tile__you">▼ YOU</span>}
+                    {isDestination && <span className="map-tile__dest">★ DEST</span>}
                   </div>
                 );
               })}

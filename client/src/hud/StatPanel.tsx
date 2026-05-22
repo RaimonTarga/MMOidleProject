@@ -1,14 +1,10 @@
+import { useState } from 'react';
 import type { PlayerState } from '@mmo-idle/shared';
-import { NODE_BIOMES, BIOME_DATABASE } from '@mmo-idle/shared';
 import type { ConnectionStatus } from '../hudBus';
-import { hudBus } from '../hudBus';
 
 const CADENCE_TICKS = 8;
 
 function CadenceTimeline({ count, threshold, armed }: { count: number; threshold: number; armed: boolean }) {
-  // When armed=true the empowered is queued — the very next hit (index 0) is
-  // the finisher regardless of count (which was reset to 0 at arm time).
-  // When armed=false, compute normally: (threshold-1) - count remaining hits.
   const hitsUntilFinisher = armed ? 0 : (threshold - 1) - count;
 
   return (
@@ -33,32 +29,26 @@ interface Props {
 }
 
 export function StatPanel({ player, status }: Props) {
-  const hpPct = player && player.maxHp > 0 ? (player.hp / player.maxHp) * 100 : 0;
-  const hpBarColor = hpPct > 50 ? '#44ee44' : hpPct > 25 ? '#eeaa22' : '#ee3322';
+  const [expanded, setExpanded] = useState(false);
+
+  const hpPct       = player && player.maxHp > 0 ? (player.hp / player.maxHp) * 100 : 0;
+  const hpBarColor  = hpPct > 50 ? '#44ee44' : hpPct > 25 ? '#eeaa22' : '#ee3322';
   const totalShield = player?.shields.reduce((s, sh) => s + sh.amount, 0) ?? 0;
   const shieldPct   = player && player.maxHp > 0 ? Math.min(100 - hpPct, (totalShield / player.maxHp) * 100) : 0;
-  const cdSec = player ? (player.attackCooldown / 1000).toFixed(2) : '—';
-  const aps   = player ? (1000 / player.attackCooldown).toFixed(2) : '—';
-
-  const zoneLabel = (() => {
-    if (!player) return '—';
-    const info = NODE_BIOMES[player.nodeId];
-    if (!info) return player.nodeId;
-    const biome = BIOME_DATABASE.get(info.biomeGroup);
-    const name = biome?.name ?? info.biomeGroup;
-    return `${name} T${info.biomeTier}`;
-  })();
+  const cdSec       = player ? (player.attackCooldown / 1000).toFixed(2) : '—';
+  const aps         = player ? (1000 / player.attackCooldown).toFixed(2) : '—';
 
   return (
     <div className="sidebar-panel">
       <div className="panel-title">Character</div>
 
+      {/* Name + connection dot */}
       <div className="stat-row name-row">
         <span>{player?.name ?? '—'}</span>
         <span className={`status-dot ${status}`} title={status} />
       </div>
 
-      {/* HP */}
+      {/* HP bar */}
       <div className="stat-section">
         <div className="stat-row">
           <span className="stat-label">HP</span>
@@ -78,15 +68,12 @@ export function StatPanel({ player, status }: Props) {
         </div>
       </div>
 
-      {/* Combat stats */}
+      {/* Core combat stats */}
       <div className="stat-section">
         <StatRow label="Attack"     value={player?.attack    ?? '—'} />
         <StatRow label="Plating"    value={player?.plating   ?? '—'} />
         {player && player.damageReduction > 0 && (
           <StatRow label="Dmg Reduc." value={`${Math.round(player.damageReduction * 100)}%`} />
-        )}
-        {player && player.evasion > 0 && (
-          <StatRow label="Evasion" value={`every ${player.evasion} hits`} />
         )}
         <StatRow label="Atk Speed"  value={player ? `${aps} APS (${cdSec}s)` : '—'} />
         <StatRow label="Atk Range"  value={player ? `${player.attackRange}px` : '—'} />
@@ -94,32 +81,7 @@ export function StatPanel({ player, status }: Props) {
         <StatRow label="HP Regen"   value={player ? `${player.hpRegen}/s` : '—'} />
       </div>
 
-      {/* Evasion progress bar — only when player has evasion stat */}
-      {player && player.evasion > 0 && (
-        <div className="stat-section">
-          <div className="stat-row">
-            <span className="stat-label">Dodge</span>
-            <span className="stat-value">{player.evasionCount} / {player.evasion}</span>
-          </div>
-          <div className="mech-bar-track">
-            <div
-              className="mech-bar-fill mech-bar-fill--evasion"
-              style={{ width: `${(player.evasionCount / player.evasion) * 100}%` }}
-            />
-          </div>
-        </div>
-      )}
-
-      {/* World */}
-      <div className="stat-section">
-        <StatRow label="Tier"  value={player?.playerTier ?? 0} />
-        <StatRow label="Zone"  value={zoneLabel} />
-        {player?.selectedClass && (
-          <StatRow label="Class" value={player.selectedClass} />
-        )}
-      </div>
-
-      {/* Ammo bar — only for reload players */}
+      {/* Ammo bar — reload archetype */}
       {player?.combatArchetype === 'reload' && player.ammoMax > 0 && (
         <div className="stat-section">
           <div className="stat-row">
@@ -273,16 +235,96 @@ export function StatPanel({ player, status }: Props) {
         />
       )}
 
+      {/* Expand / collapse toggle */}
       <button
-        className={`auto-btn${player?.auto ? ' active' : ''}`}
-        onClick={() => hudBus.requestAutoToggle()}
-        title="Toggle server-side auto combat"
+        className={`auto-btn${expanded ? ' active' : ''}`}
+        onClick={() => setExpanded(v => !v)}
+        style={{ marginTop: 8 }}
       >
-        AUTO: {player?.auto ? 'ON' : 'OFF'}
+        {expanded ? '▲ LESS' : '▼ MORE STATS'}
       </button>
+
+      {/* ── Expanded section ─────────────────────────────────────────────── */}
+      {expanded && (
+        <>
+          {/* Evasion */}
+          {player && player.evasion > 0 && (
+            <div className="stat-section">
+              <div className="stat-section-title">Evasion</div>
+              <StatRow label="Trigger" value={`every ${player.evasion} hits`} />
+              <div className="stat-row">
+                <span className="stat-label">Progress</span>
+                <span className="stat-value">{player.evasionCount} / {player.evasion}</span>
+              </div>
+              <div className="mech-bar-track">
+                <div
+                  className="mech-bar-fill mech-bar-fill--evasion"
+                  style={{ width: `${(player.evasionCount / player.evasion) * 100}%` }}
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Defense passives */}
+          {player && <DefensePassivesSection passives={player.passives ?? {}} />}
+
+        </>
+      )}
     </div>
   );
 }
+
+function DefensePassivesSection({ passives: p }: { passives: Record<string, number> }) {
+  const rows: { label: string; value: string }[] = [];
+
+  const inCombatRegen = p['defense.in-combat-regen-pct'] ?? 0;
+  if (inCombatRegen > 0)
+    rows.push({ label: 'In-combat Regen', value: `${Math.round(inCombatRegen * 100)}%` });
+
+  const burstRegen = p['defense.regen-burst-pct'] ?? 0;
+  if (burstRegen > 0) {
+    const iv = ((p['defense.regen-burst-interval-ms'] ?? 0) / 1000).toFixed(0);
+    rows.push({ label: 'Burst Regen', value: `${Math.round(burstRegen * 100)}% / ${iv}s` });
+  }
+
+  const shieldPct = p['defense.shield-pct'] ?? 0;
+  if (shieldPct > 0) {
+    const iv = ((p['defense.shield-interval-ms'] ?? 0) / 1000).toFixed(0);
+    rows.push({ label: 'Shield', value: `${Math.round(shieldPct * 100)}% / ${iv}s` });
+  }
+
+  const absorb = p['defense.absorb-pct'] ?? 0;
+  if (absorb > 0)
+    rows.push({ label: 'Dmg Absorb', value: `${Math.round(absorb * 100)}%` });
+
+  const dotRes = p['defense.dot-resistance'] ?? 0;
+  if (dotRes > 0)
+    rows.push({ label: 'DoT Resist', value: `${Math.round(dotRes * 100)}%` });
+
+  const hitToDot = p['defense.hit-to-dot-pct'] ?? 0;
+  if (hitToDot > 0)
+    rows.push({ label: 'Hit→DoT', value: `${Math.round(hitToDot * 100)}%` });
+
+  const debuffRes = p['defense.debuff-resistance'] ?? 0;
+  if (debuffRes > 0)
+    rows.push({ label: 'Debuff Resist', value: `${Math.round(debuffRes * 100)}%` });
+
+  const cleanseStacks = p['defense.cleanse-stacks'] ?? 0;
+  if (cleanseStacks > 0) {
+    const iv = ((p['defense.cleanse-interval-ms'] ?? 0) / 1000).toFixed(0);
+    rows.push({ label: 'Cleanse', value: `${cleanseStacks} stacks / ${iv}s` });
+  }
+
+  if (rows.length === 0) return null;
+
+  return (
+    <div className="stat-section">
+      <div className="stat-section-title">Defense Passives</div>
+      {rows.map(r => <StatRow key={r.label} label={r.label} value={r.value} />)}
+    </div>
+  );
+}
+
 
 function StatRow({
   label,
@@ -301,14 +343,6 @@ function StatRow({
   );
 }
 
-/**
- * Generic weapon/passive buff progress bar.
- *
- * Convention: for each new buff, add two CSS blocks in hud.css:
- *   .mech-bar-fill--{variant}         — charging/building color
- *   .mech-bar-fill--{variant}-active  — burst/active color + animation
- *   .mech-label--{variant}-active     — text highlight color when active
- */
 function BuffBar({
   label,
   pct,

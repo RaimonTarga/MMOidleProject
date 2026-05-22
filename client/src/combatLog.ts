@@ -1,7 +1,8 @@
 export type LogKind =
   | 'damage-out'  // player hit a monster
   | 'damage-in'   // player took damage
-  | 'heal'        // player recovered HP (non-trivial amount)
+  | 'heal'        // player recovered HP
+  | 'shield'      // player gained shield HP
   | 'kill'        // player's target was defeated
   | 'death'       // player died
   | 'empowered'   // empowered / finisher fired

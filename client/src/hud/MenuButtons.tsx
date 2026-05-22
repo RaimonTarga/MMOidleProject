@@ -7,7 +7,7 @@ import { CraftingPanel } from '../ui/CraftingPanel';
 import { MapPanel } from '../ui/MapPanel';
 import { EssencePanel } from './EssencePanel';
 import { QuestPanel } from '../ui/QuestPanel';
-import { SKILL_TREE } from '@mmo-idle/shared';
+import { SKILL_TREE, NODE_BIOMES, BIOME_DATABASE } from '@mmo-idle/shared';
 import './hud.css';
 
 export function RightSidebar() {
@@ -25,6 +25,14 @@ export function RightSidebar() {
   const className = player?.selectedClass
     ? (SKILL_TREE.get(player.selectedClass)?.name ?? player.selectedClass)
     : null;
+
+  const zoneLabel = (() => {
+    if (!player) return null;
+    const info  = NODE_BIOMES[player.nodeId];
+    if (!info)  return player.nodeId;
+    const biome = BIOME_DATABASE.get(info.biomeGroup);
+    return `${biome?.name ?? info.biomeGroup} T${info.biomeTier}`;
+  })();
 
   return (
     <div className="sidebar sidebar-right">
@@ -121,6 +129,15 @@ export function RightSidebar() {
         >
           {mapOpen ? 'CLOSE MAP' : 'OPEN MAP'}
         </button>
+
+        {zoneLabel && (
+          <div className="stat-section">
+            <div className="stat-row">
+              <span className="stat-label">Zone</span>
+              <span className="stat-value">{zoneLabel}</span>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Debug panel */}

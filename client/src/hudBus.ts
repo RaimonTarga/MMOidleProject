@@ -5,6 +5,8 @@ export type ConnectionStatus = 'connecting' | 'connected' | 'disconnected';
 export interface HudState {
   status: ConnectionStatus;
   player: PlayerState | null;
+  /** Remaining auto-path nodes to visit (excludes current node). Null when idle. */
+  autoPath?: string[] | null;
 }
 
 type Listener = (state: HudState) => void;
@@ -47,6 +49,12 @@ export const hudBus = {
   /** Called by CraftingPanel — GameScene picks this up and emits the socket event. */
   requestCraftRecipe(recipeId: string): void {
     window.dispatchEvent(new CustomEvent('hud:craftRecipe', { detail: recipeId }));
+  },
+
+  /** Navigate the player to a node via BFS auto-path. `path` is the sequence of
+   *  nodeIds to visit, NOT including the player's current node. */
+  requestNavigateTo(path: string[]): void {
+    window.dispatchEvent(new CustomEvent('hud:navigateTo', { detail: { path } }));
   },
 
   /** Toggle the player attack-range debug overlay in GameScene. */

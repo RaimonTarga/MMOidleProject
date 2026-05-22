@@ -3,6 +3,10 @@ import type { MonsterState, PlayerState } from '@mmo-idle/shared';
 import { getNodePlayers } from '../world/nodeQueries';
 import { NODE_REGISTRY } from '../world/nodeRegistry';
 
+const KITE_GRACE_MS  = 3_000;  // ms chasing before speed ramp begins
+const KITE_RAMP_RATE = 0.25;   // speed multiplier gain per second past grace
+const KITE_MAX_MULT  = 2.5;    // cap on kite speed multiplier
+
 function findAggro(monster: MonsterState, world: World): PlayerState | null {
   const pullSq = monster.pullRange ** 2;
   let best: PlayerState | null = null;
@@ -22,21 +26,44 @@ function findAggro(monster: MonsterState, world: World): PlayerState | null {
   return best;
 }
 
-export function updateMonsters(world: World, _dt: number, now: number) {
+export function updateMonsters(world: World, dt: number, now: number) {
   for (const [id, monster] of world.monsters) {
     const ai = world.monsterAI.get(id);
     if (!ai) continue;
 
-    const target = findAggro(monster, world);
+    // Only scan for pull-range aggro when we have no current target.
+    // This preserves retaliation aggro set by the combat system when a
+    // player attacks from outside pull range.
+    if (ai.aggroTargetId === null) {
+      const pulled = findAggro(monster, world);
+      if (pulled) {
+        ai.aggroTargetId = pulled.id;
+        ai.lastAggroAt   = now;
+      }
+    }
+
+    // Resolve and validate the current aggro target.
+    // Drop it only if the player left the node or disconnected.
+    let target: PlayerState | null = null;
+    if (ai.aggroTargetId !== null) {
+      const candidate = world.players.get(ai.aggroTargetId);
+      if (candidate && candidate.nodeId === monster.nodeId) {
+        target = candidate;
+      } else {
+        ai.aggroTargetId = null;
+      }
+    }
 
     if (target) {
-      ai.aggroTargetId = target.id;
+      ai.lastAggroAt = now;
 
-      // Leash check: if the monster has chased too far from its spawn, give up.
+      // Leash check: if too far from spawn, give up and return.
       const spawnDx = monster.x - ai.spawnX;
       const spawnDy = monster.y - ai.spawnY;
       if (spawnDx * spawnDx + spawnDy * spawnDy > ai.leashRange * ai.leashRange) {
         ai.aggroTargetId = null;
+        ai.kiteTimer     = 0;
+        monster.speed    = ai.baseSpeed;
         monster.state    = 'returning';
         monster.targetX  = ai.spawnX;
         monster.targetY  = ai.spawnY;
@@ -46,14 +73,25 @@ export function updateMonsters(world: World, _dt: number, now: number) {
       const dx     = target.x - monster.x;
       const dy     = target.y - monster.y;
       const distSq = dx * dx + dy * dy;
-      const stopDist = monster.attackRange - 1;
+      const stopDist = monster.attackRange * 0.80;
 
-      if (distSq <= stopDist * stopDist) {
+      if (distSq <= monster.attackRange * monster.attackRange) {
+        // Entered attack range — reset kite ramp and start attacking.
+        if (monster.state !== 'attacking') {
+          monster.lastAttackAt = now - monster.attackCooldown;
+        }
+        ai.kiteTimer    = 0;
+        monster.speed   = ai.baseSpeed;
         monster.targetX = monster.x;
         monster.targetY = monster.y;
         monster.state   = 'attacking';
       } else {
-        // Stop at stopDist px from the player rather than walking into the player's center.
+        // Still chasing — accumulate kite timer and ramp speed after grace period.
+        ai.kiteTimer += dt;
+        const excess = Math.max(0, ai.kiteTimer - KITE_GRACE_MS);
+        const mult   = Math.min(KITE_MAX_MULT, 1 + (excess / 1000) * KITE_RAMP_RATE);
+        monster.speed = Math.round(ai.baseSpeed * mult);
+
         const dist = Math.sqrt(distSq);
         monster.targetX = target.x - (dx / dist) * stopDist;
         monster.targetY = target.y - (dy / dist) * stopDist;
@@ -61,7 +99,9 @@ export function updateMonsters(world: World, _dt: number, now: number) {
       }
 
     } else {
-      ai.aggroTargetId = null;
+      // No valid aggro target — reset kite state and return/wander.
+      ai.kiteTimer  = 0;
+      monster.speed = ai.baseSpeed;
 
       switch (monster.state) {
         case 'chasing':

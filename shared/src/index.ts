@@ -35,6 +35,17 @@ export interface PlayerBuff {
   color: string;
 }
 
+// ─── Combat events ────────────────────────────────────────────────────────────
+
+/**
+ * Discrete combat events accumulated between broadcast ticks.
+ * Bundled with each NodeSnapshot so the client can fire animations and log
+ * entries reliably even when logic ticks outrun broadcast ticks.
+ */
+export type CombatEvent =
+  | { kind: 'player-hit';  playerId: string; targetId: string; targetName: string; damage: number; empowered: boolean; execution: boolean }
+  | { kind: 'player-kill'; playerId: string; targetId: string; targetName: string };
+
 // ─── Combat archetype ─────────────────────────────────────────────────────────
 
 /**
@@ -278,6 +289,8 @@ export interface MonsterState {
   attackStyle: string;
   /** True for dungeon boss monsters — clients render them larger with a distinct label. */
   isBoss: boolean;
+  /** Combat style — 'melee' lunges toward target on attack; extend union for 'ranged' / 'caster'. */
+  behavior: string;
   /** Future: allows elite/boss monsters to use archetype mechanics. */
   combatArchetype?: CombatArchetype;
 }
@@ -527,6 +540,8 @@ export const NODE_BIOMES: Record<string, { biomeGroup: string; biomeTier: number
 export interface NodeSnapshot {
   players: PlayerState[];
   monsters: MonsterState[];
+  /** Combat events accumulated since the last broadcast — used for client animations and combat log. */
+  events: CombatEvent[];
 }
 
 // ─── Quest system ─────────────────────────────────────────────────────────────
@@ -654,8 +669,10 @@ export const GAME_CONFIG = {
   NODE_HEIGHT: 2400,
   /** Half-width of each cardinal gate opening along the border edge */
   GATE_HALF: 160,
-  /** Server authoritative tick rate in Hz */
-  TICK_RATE: 2,
+  /** Simulation tick rate in Hz — controls attack timing, AI, movement precision */
+  LOGIC_TICK_RATE: 10,
+  /** State broadcast rate in Hz — controls how often clients receive snapshots */
+  BROADCAST_TICK_RATE: 5,
   /** Player movement speed in pixels per second */
   PLAYER_SPEED: 120,
   /** Maximum number of monsters alive in a node at any time */
@@ -671,10 +688,24 @@ export const GAME_CONFIG = {
   PLAYER_ATTACK_COOLDOWN: 3000,
   /** Out-of-combat HP regen as a percentage of maxHp per second (10 = 10%/s). */
   PLAYER_HP_REGEN: 10,
-  /** Milliseconds after last hit before regen starts */
-  COMBAT_REGEN_DELAY: 3000,
+  /** Milliseconds after leaving combat (no monster aggroed) before player regen starts */
+  COMBAT_REGEN_DELAY: 4000,
+  /** Milliseconds after last aggro drop before a monster starts regenerating */
+  MONSTER_REGEN_DELAY: 5000,
+  /** Monster OOC regen rate as a percentage of maxHp per second */
+  MONSTER_REGEN_RATE: 20,
 
   // ── Spawn ─────────────────────────────────────────────────────────────────────
   /** Minimum pixel distance between two monsters at spawn time */
   MONSTER_MIN_SPAWN_DIST: 120,
+
+  // ── AoE splash ────────────────────────────────────────────────────────────────
+  /** Pixel radius of the empowered-attack splash, centered on the primary target. */
+  EMPOWERED_AOE_RADIUS: 80,
+  /**
+   * Fraction of the attacker's raw `attack` stat dealt as splash damage to each
+   * secondary target. Using the attack stat (not the empowered hit damage) keeps
+   * splash independent of each archetype's multiplier.
+   */
+  EMPOWERED_AOE_MULT: 0.5,
 } as const;

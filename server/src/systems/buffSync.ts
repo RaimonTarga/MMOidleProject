@@ -59,7 +59,7 @@ export function syncPlayerBuffs(world: World): void {
     if (player.sacredBuffActive) {
       buffs.push({
         id:          'sacred-burst',
-        label:       'Burst',
+        label:       'Holy',
         stacks:      1,
         durationPct: player.sacredBuffPct,
         color:       '#ffdd44',
@@ -223,7 +223,7 @@ export function syncPlayerBuffs(world: World): void {
 
       // Regen burst: periodic healing pool draining in
       if (getDefenseBurstPool(cs) > 0) {
-        buffs.push({ id: 'defense-burst', label: 'Burst', stacks: 1, durationPct: -1, color: '#aaffaa' });
+        buffs.push({ id: 'defense-burst', label: 'Regen', stacks: 1, durationPct: -1, color: '#aaffaa' });
       }
 
       // Damage debt: delayed damage coming in (shown as a debuff-style indicator)

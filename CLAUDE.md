@@ -14,8 +14,9 @@ makes strategic decisions; no twitch input required.
 Key design axioms:
 - **Server is authoritative.** All game logic (movement, combat, damage, spawn)
   runs in the server tick. The client renders state it receives.
-- **Low tick rate is fine.** 2 Hz server tick is the baseline; auto-combat means
-  we don't need fast netcode.
+- **Split-tick architecture.** Logic runs at 10 Hz; broadcasts go out at 5 Hz.
+  Combat events are queued between broadcasts so animations and combat-log entries
+  are never lost to timing gaps.
 - **Simplicity over cleverness.** This is a hobby project maintained with LLM
   help. Prefer readable, obvious code over clever abstractions.
 
@@ -64,6 +65,7 @@ Key design axioms:
         └── systems/
             ├── combat.ts, combatPipeline.ts, combatState.ts, attackCounter.ts
             ├── stats.ts, movement.ts, ai.ts, autoTarget.ts, transitions.ts
+            ├── aoeDamage.ts    ← applyPlayerAoe / applyMonsterAoe helpers
             ├── rewards.ts, statusEffects.ts, defenseSystems.ts, weaponEffects.ts
             ├── questSystem.ts  ← kill-count quest system + XP leveling
             ├── cadencePrototype.ts   ← all 9 cadence T3 mechanics live here
@@ -113,6 +115,7 @@ pnpm dev:client   # http://localhost:3000
 **Everything that crosses the client/server boundary lives here.**
 
 - Entity shapes: `PlayerState`, `MonsterState`, `NodeSnapshot`
+- `CombatEvent` union type — `player-hit` and `player-kill` events queued per-node between broadcasts
 - Databases (read-only): `ITEM_DATABASE`, `MONSTER_DATABASE`, `BIOME_DATABASE`, `RECIPE_DATABASE`, `SKILL_TREE`
 - Socket event maps: `ServerToClientEvents`, `ClientToServerEvents`
 - Game constants: `GAME_CONFIG`
@@ -157,8 +160,9 @@ the client's `applySnapshot`, so no dedicated events are needed.
 1. **Express setup** — CORS, JSON body parser, health endpoint at `GET /health`
 2. **Socket.IO setup** — typed with shared event maps
 3. **Combat mechanics registration** — class archetypes and weapon effects registered at startup
-4. **Game loop** — `setInterval` at `GAME_CONFIG.TICK_RATE` Hz; calls `world.tick(dt, now)`
-   then broadcasts `node:state` per-player (each player only sees their own node)
+4. **Game loop** — two decoupled intervals:
+   - **Logic tick** at `GAME_CONFIG.LOGIC_TICK_RATE` (10 Hz / 100 ms): calls `world.tick(dt, now)` and drains `world.pendingDeaths`.
+   - **Broadcast tick** at `GAME_CONFIG.BROADCAST_TICK_RATE` (5 Hz / 200 ms): calls `world.buildSnapshot(nodeId)` once per occupied node and emits `node:state` to each player in that node. Building once per node ensures the combat-event queue is flushed exactly once so all players see the same events.
 5. **Socket handlers** — `connection`, `disconnect`, and all `ClientToServerEvents`
 
 `server/src/world/World.ts` owns all mutable state and orchestrates system calls in `tick()`.
@@ -173,6 +177,72 @@ Register listeners via `registerCombatListener`. Class archetypes and weapon eff
 hook into these phases. `CombatContext` is a mutable bag that flows through all handlers
 for a single attack; handlers can read and write `ctx.damage`, `ctx.cancelled`, and
 `ctx.metadata` freely.
+
+**Combat event queue:** Per-tick boolean flags on `PlayerState` were replaced by a
+`CombatEvent` queue to avoid events being lost between the 10 Hz logic tick and the
+5 Hz broadcast tick.
+
+- `world.pushEvent(nodeId, event)` — called by `combat.ts` after every player attack.
+  Emits a `player-hit` event (with exact damage, `empowered`, `execution` flags) and a
+  `player-kill` event on monster death.
+- `world.buildSnapshot(nodeId)` — returns queued events for the node and clears the queue.
+  Called once per node per broadcast cycle so every player in the node sees the same flush.
+- `NodeSnapshot.events: CombatEvent[]` — sent to the client alongside players/monsters.
+- Client `processCombatEvent()` — fires after `upsertPlayer` in each `applySnapshot` call.
+  Logs damage-out/empowered/execution to the combat log, spawns the correct attack effect,
+  and triggers the melee lunge — all with the exact flags from the server event.
+- Own player's attack animation comes entirely from events; other players' attacks still
+  use the `lastAttackAt > prevLastAttackAt` trigger (no empowered flags for others).
+
+Do **not** re-introduce per-tick booleans on `PlayerState` for animation signaling. Use
+`pushEvent` instead. `empoweredReady`/`executionReady` are HUD display fields only.
+
+**Retaliation aggro:** When a player hits a monster that has no current aggro target,
+`combat.ts` immediately sets `ai.aggroTargetId = player.id`. This fires even when the
+player attacked from outside the monster's pull range. The `ai.ts` system preserves this
+aggro (it only calls `findAggro` to acquire new targets, never to clear existing ones).
+
+### AoE damage (`aoeDamage.ts`)
+
+Two helpers exist for circle-area damage:
+- `applyPlayerAoe(world, attacker, centerX, centerY, radius, baseDamage, excludeId?)` —
+  hits all monsters in the node within `radius` of the center, applying per-target plating
+  and DR. Kills are cleaned up immediately.
+- `applyMonsterAoe(world, attacker, centerX, centerY, radius, baseDamage, excludeId?)` —
+  hits all players in the node within `radius`, respawning on lethal hits.
+
+AoE **bypasses the combat pipeline** intentionally — it is a bonus effect, not a primary
+attack, and skipping the pipeline prevents recursive AoE chains.
+
+**Empowered AoE:** Every empowered hit (cadence finisher, energy discharge, cooldown
+execution, reload empowered) automatically triggers `applyPlayerAoe` centered on the
+primary target. Constants in `GAME_CONFIG`:
+- `EMPOWERED_AOE_RADIUS: 80` — blast radius in pixels
+- `EMPOWERED_AOE_MULT: 0.5` — splash damage = `player.attack * 0.5` (raw stat, not
+  the empowered-multiplied damage, to keep splash proportional to base power)
+
+### Monster AI (`ai.ts`)
+
+**Aggro acquisition vs. retention** — these are separate concerns:
+- **Acquisition**: `findAggro` scans pull range and runs only when `ai.aggroTargetId === null`.
+  This means retaliation aggro set by the combat system is never overwritten by a failed
+  pull-range scan.
+- **Retention**: existing aggro is kept as long as the target is in the same node and the
+  monster hasn't exceeded its leash range. Only node change, disconnect, or leash break
+  clears aggro.
+
+**Kite prevention** — `MonsterAI` carries two extra fields:
+- `baseSpeed: number` — speed from `MONSTER_DATABASE`, never modified by buffs
+- `kiteTimer: number` — ms spent chasing without reaching attack range
+
+While a monster is in `chasing` state, `kiteTimer` accumulates. After `KITE_GRACE_MS`
+(3 000 ms) the monster's speed ramps at `KITE_RAMP_RATE` (25%/s) up to `KITE_MAX_MULT`
+(2.5×). When the monster enters attack range or drops aggro, both timer and speed reset
+to baseline.
+
+**Auto-target positioning** (`autoTarget.ts`) — players stop at `attackRange * 0.70`
+rather than `attackRange - 1`. The 30% buffer prevents stutter-stepping at the range
+edge when the target is moving.
 
 ### Combat state
 
@@ -205,8 +275,9 @@ specific mechanics. Add new buff entries here as mechanics are implemented.
 - `Visual` holds the sprite, labels, HP/CD bars, interpolation targets, and
   `playerState?: PlayerState` (the latest authoritative snapshot for player visuals).
   Monster visuals also carry `pullRange`, `leashRange`, `monsterAttackRange`.
-- `applySnapshot()` is called on both `state:sync` and `node:state`; it reconciles
-  all entities including removing ones no longer in the snapshot
+- `applySnapshot()` is called on both `state:sync` and `node:state`. Order: remove
+  gone players → upsert players → **process `snapshot.events`** → remove gone monsters
+  → upsert monsters. Events are processed after player upsert so `playerState` is current.
 - Click-to-move: sends `player:move`, updates local target optimistically for smooth feel
 - Boss monsters render at 54×54 with a `⚠ {name}` label in bold `#ffcc44`
 - **Debug range overlay**: `debugGraphics` layer (depth 8) redrawn every frame.
@@ -218,10 +289,13 @@ specific mechanics. Add new buff entries here as mechanics are implemented.
 `hudBus.ts` (a simple pub/sub singleton) for state. It is **not** React roots inside
 Phaser — it is a separate `<div>` in index.html rendered by ReactDOM.
 
-**BuffBar.tsx** — renders `player.activeBuffs` as colored icon tiles. Buff categories
-(`cadence`, `cooldown`, `energy`, `dot-poison`, `dot-fire`, `dot-frost`, `dot-frozen`, `weapon`)
-get distinct CSS animation classes (`buff-cat-{category}`) and shapes via inline
-`borderRadius`/`clipPath`. Category is inferred from the buff ID at render time.
+**BuffBar.tsx** — renders `player.activeBuffs` as 52 px colored icon tiles anchored to the
+top-left corner (not bottom-left). Each icon shows a clock-sweep overlay: a conic-gradient
+darkens the icon clockwise from 12 o'clock as the buff elapses (`durationPct` 100→0).
+Stack count shows as a badge in the bottom-right corner. A short label sits below each icon.
+Buff categories (`cadence`, `cooldown`, `energy`, `dot-poison`, `dot-fire`, `dot-frost`,
+`dot-frozen`, `weapon`) get distinct CSS animation classes (`buff-cat-{category}`) and shapes
+via inline `borderRadius`/`clipPath`. Category is inferred from the buff ID at render time.
 
 **StatPanel.tsx** — The DoT section detects the player's active T3 path from `player.passives`
 keys and renders path-appropriate pip colors (green/orange/blue) and correct max stacks.
@@ -401,9 +475,9 @@ Each root grants archetype selection + a signature recovery/defense mechanic:
 |---|---|---|
 | **Cadence** | +4 ATK, +12 HP, +2 PLT, +2% DR | `defense.regen-burst-pct: 0.08` every 10 s |
 | **Cooldown** | +2 ATK, +20 HP, +2 PLT, +4% DR, −10 SPD | `defense.in-combat-regen-pct: 0.12` |
-| **Energy** | +2 ATK, +12 SPD, −150ms CD, −5 HP, +40 range, +1 PLT | `defense.shield-pct: 0.06` every 14 s |
+| **Energy** | +2 ATK, +12 SPD, −150ms CD, −5 HP, +115 range, +1 PLT | `defense.shield-pct: 0.06` every 14 s |
 | **DoT** | +3 ATK, +15 HP, +2 PLT, +3% DR, +1 hpRegen | `defense.dot-resistance: 0.12`, `defense.hit-to-dot-pct: 0.10` |
-| **Reload** | +10 SPD, −10 HP, +50 range, +8 evasion | Evasion/avoidance identity; ranged baseline |
+| **Reload** | +10 SPD, −10 HP, +105 range, +8 evasion | Evasion/avoidance identity; ranged baseline |
 
 Energy and Reload are **ranged baseline** — they start with bonus attack range at the root.
 
@@ -668,8 +742,9 @@ the hit it sets `ctx.metadata['dotHandled'] = 1` to suppress the base stack appl
 ## What is built
 
 - Multi-node world (**11×11 grid**, 121 nodes) with biome-specific monster pools
-- Monster AI (wander / chase / attack / return)
-- Player combat (attack range, cooldown, auto-targeting)
+- Monster AI (wander / chase / attack / return) with retaliation aggro, kite prevention
+  (speed ramp after 3 s chasing), and leash-based aggro retention
+- Player combat (attack range, cooldown, auto-targeting with 70% range stop-distance)
 - Dungeon nodes across T1–T3 with scaled enemies and one persistent boss each
 - Quest system with populated quests (tier-0 through tier-3 dungeon kill quests);
   XP→level→skill-point pipeline fully wired
@@ -694,8 +769,18 @@ the hit it sets `ctx.metadata['dotHandled'] = 1` to suppress the base stack appl
 - Death and respawn (back to clearing)
 - Client HUD (React): stat panel, buff bar, essence display, inventory, crafting,
   map (11×11 with dungeon treatment + boss info), skill tree, quest panel
-- Client (Phaser): minimap, biome backgrounds, gate markers, damage numbers, attack animations,
-  boss sprite scaling, **debug range overlay** (player attack range + per-monster pull/leash/attack rings)
+- AoE damage framework (`aoeDamage.ts`): circle splash for both players and monsters;
+  empowered hits automatically deal AoE splash (radius 80 px, 0.5× base ATK)
+- Client (Phaser): minimap, biome backgrounds, gate markers, damage numbers, attack animations
+  (including flashier empowered variant driven by `CombatEvent` queue),
+  AoE ring visual on empowered hits, boss sprite scaling,
+  **debug range overlay** (player attack range + per-monster pull/leash/attack rings)
+- Split-tick game loop: 10 Hz logic, 5 Hz broadcast with per-node snapshot deduplication
+- Combat event queue (`CombatEvent`): `player-hit` + `player-kill` events bundled with each
+  snapshot; client uses them for attack effects, lunge, and combat-log entries — no more
+  per-tick booleans on `PlayerState`
+- Monster wander smoothing: dead-reckoning reconciliation threshold (only hard-snap client
+  position to server when error > 80 px; small drifts self-correct via interpolation)
 - Ethereal glass-morphism UI theme: backdrop-blur sidebars, gradient panels, shimmer bars,
   animated buff icons with category-distinct shapes and keyframes
 
@@ -711,6 +796,128 @@ the hit it sets `ctx.metadata['dotHandled'] = 1` to suppress the base stack appl
 - [ ] Reload T3 mechanics (all 9 paths designed, none implemented)
 - [ ] Tiers 4–7 mechanics (all generated placeholder nodes)
 - [ ] StatPanel update to reflect new defense/recovery stats (evasion, shields, absorb, burst regen)
+
+---
+
+## Project state & immediate priorities
+
+### What is solid
+The mechanical foundation is genuinely complete. The combat pipeline, the five class archetypes with their T3 specializations, the full 121-node world, the defense/recovery system, the AI with retaliation and kite-prevention — all of this works and is architecturally clean. The HUD is polished. The code is consistent and LLM-maintainable.
+
+### What is missing before the game can be "played"
+The most blocking gap is **persistence**. All state is in-memory; every server restart wipes everyone's build. This makes balance testing impossible and makes showing the game to friends unrewarding. The Drizzle/SQLite scaffolding exists — it just needs to be wired up.
+
+Second gap: **deployment**. The game only runs locally right now.
+
+Third gap: **numerical balance** (see dedicated section below).
+
+The remaining mechanical gaps (Reload T3, Cooldown heavy T3, Tiers 4–7) are real but not blocking — the game is playable through T3 without them.
+
+### Recommended priority order
+1. **Balance T0–T2** — next session. The mechanical foundation is solid and the combat
+   event queue now makes animation/log feedback reliable, so numbers are the real blocker.
+   Start from T1 regular monsters, work outward. See the dedicated balance section below.
+2. **Wire up SQLite persistence** (player state: stats, inventory, skills, position, quests)
+3. **Deploy** (Caddy + PM2 on Hetzner, or similar)
+4. **Implement Reload T3** (all 9 designed, just needs server-side code)
+5. **Implement Cooldown heavy T3** (3 paths designed)
+6. **Tune T3–T4 balance** once T1–T2 feel right
+
+---
+
+## Numerical balance design
+
+This is the hardest unsolved problem in the project. The systems exist; the numbers inside them are guesses. The goal of this section is to give future work a framework rather than require re-derivation from scratch each session.
+
+### Design philosophy: each tier as a puzzle
+
+Each tier band should have a clear "lock" that the player's build must answer. A player who hasn't made good choices should feel the wall; a player who has should feel distinctly powerful.
+
+| Tier | Lock | Answer |
+|---|---|---|
+| T0 | None — tutorial | Any build, auto-combat on |
+| T1 | Sustained DPS floor | Basic skill investment (any path) |
+| T1 dungeon | Burst DPS check | Empowered hits or DoT stack completion |
+| T2 | Incoming damage too fast for OOC regen | Defense/recovery item + in-combat regen or shields |
+| T2 dungeon | Enrage-style DPS race | T3 path unlocked or strong weapon effect |
+| T3 | Both DPS and EHP walls at once | Synergistic T3 path + matched recovery archetype |
+| T3 dungeon | Boss mechanics (kite, heavy hits) | Full build optimization |
+
+### Target time-to-kill (TTK) per tier
+
+TTK is the primary feel lever in an idle game. The player watches; the numbers matter.
+
+| Context | Target TTK (regular monster) | Target TTK (dungeon boss) |
+|---|---|---|
+| T0 | 3–4 s | — |
+| T1 | 5–8 s | 30–45 s |
+| T2 | 8–14 s | 60–90 s |
+| T3 | 12–20 s | 90–150 s |
+
+These targets are for a player with appropriate gear and a partially-developed skill tree. An underpowered player should struggle noticeably; an optimized player should beat the lower bound.
+
+### Stat scaling framework
+
+**Core formula:**
+```
+DPS_sustained  = ATK / (attackCooldown_ms / 1000)
+EHP            = HP × 1/(1 - damageReduction) + total_shield_pool
+TTK_player     = target_EHP / DPS_sustained  (ignoring plating for simplicity)
+```
+
+For burst archetypes (cadence finisher, cooldown execution, energy discharge):
+```
+DPS_effective = (base_hits_between_empowered × ATK + empowered_dmg) / cycle_duration_s
+```
+
+**Rough stat targets by tier** (starting point — tune from playtesting):
+
+| Tier | Player ATK | Player maxHP | Monster HP | Monster ATK |
+|---|---|---|---|---|
+| T0 | 6–10 | 80–110 | 25–40 | 4–7 |
+| T1 | 12–22 | 120–180 | 80–150 | 10–18 |
+| T2 | 25–50 | 180–280 | 250–500 | 22–40 |
+| T3 | 55–120 | 280–450 | 600–1400 | 45–90 |
+| T1 boss | — | — | 400–700 | 14–22 |
+| T2 boss | — | — | 1800–3500 | 30–55 |
+| T3 boss | — | — | 6000–12000 | 70–130 |
+
+These are *at gear/skill level appropriate to the tier*. A fresh T0 character entering T1 should be visibly weaker than these numbers.
+
+### Skill point budget analysis
+
+A fully-invested T3 build uses approximately:
+- 1 root (T0)
+- 1 T1 variant
+- 1 T2 range node
+- 1 T3 path node
+
+That is 4 skill points for the "core identity" investment. The player has additional skill points from quests (4 quests currently, each granting 1 point upon XP threshold). This means a player can unlock 5–8 nodes total by the time they're working through T2 content.
+
+**Implication:** the T2 range node and T3 path node choices should feel meaningful but not mandatory — a player who picks "wrong" should struggle more but not be blocked.
+
+### Balance testing procedure (for future sessions)
+
+1. Start a fresh character, note starting stats.
+2. Run the T0 clearing with auto-combat on, time kills, note feel.
+3. Unlock one root, note stat delta, re-test.
+4. Move to T1 biome — does OOC regen keep up between fights? Is TTK in the target range?
+5. Attempt T1 dungeon boss. Did it require any skill investment to win?
+6. Repeat for T2 after unlocking T1 variant + recovery item.
+
+The goal is not perfect balance on first pass — it is establishing a feedback loop before building more content on top of unvalidated numbers.
+
+### Balance variables to tune first
+
+In order of impact:
+1. **Monster HP per tier** (`MONSTER_DATABASE` stat `hp`) — most direct TTK lever
+2. **Monster ATK per tier** (`attack`) — controls survival pressure
+3. **Base player ATK at root** (`statEffects.attack` in `skillTree.ts`) — sets the floor
+4. **HP regen constants** (`GAME_CONFIG.COMBAT_REGEN_DELAY`, default `hpRegen` per class)
+5. **Dungeon multipliers** (`DUNGEON_HP_MULT`, `DUNGEON_ATK_MULT` in `World.ts`)
+6. **Empowered damage multipliers** per archetype (`cadence.empowered-mult`, energy per-hit, etc.)
+
+Do not tune items and T3 mechanics until base-class numbers feel right — otherwise you're layering balance on top of an unknown baseline.
 
 ---
 

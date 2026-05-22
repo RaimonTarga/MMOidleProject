@@ -1,4 +1,4 @@
-import type { PlayerState, MonsterState, NodeDefinition } from '@mmo-idle/shared';
+import type { PlayerState, MonsterState, NodeDefinition, CombatEvent, NodeSnapshot } from '@mmo-idle/shared';
 import { GAME_CONFIG, NODE_BIOMES, MONSTER_DATABASE, BIOME_DATABASE } from '@mmo-idle/shared';
 
 // Regular monsters in dungeon nodes are scaled up; boss stats come from the database directly.
@@ -34,6 +34,12 @@ export interface MonsterAI {
   idleMinMs: number;
   idleMaxMs: number;
   aggroTargetId: string | null;
+  /** Timestamp of the last tick this monster had an active aggro target. */
+  lastAggroAt: number;
+  /** Unmodified speed from the database — kite ramp restores to this. */
+  baseSpeed: number;
+  /** Ms spent chasing without landing an attack — drives the kite speed ramp. */
+  kiteTimer: number;
 }
 
 
@@ -51,6 +57,8 @@ export class World {
   monsterCombatState = new Map<string, CombatState>();
   /** Player IDs that died this tick. Drained by the server loop after each tick. */
   pendingDeaths: string[] = [];
+  /** Queued combat events per node, flushed into each broadcast snapshot. */
+  private nodeEvents = new Map<string, CombatEvent[]>();
 
   nextMonsterId = 1;
 
@@ -147,6 +155,7 @@ export class World {
       nodeId,
       attackStyle: def.attackStyle,
       isBoss,
+      behavior: def.behavior,
     };
 
     this.monsters.set(id, monster);
@@ -159,6 +168,9 @@ export class World {
       idleMinMs:     def.ai.idleMinMs,
       idleMaxMs:     def.ai.idleMaxMs,
       aggroTargetId: null,
+      lastAggroAt:   0,
+      baseSpeed:     def.stats.speed,
+      kiteTimer:     0,
     });
     this.monsterCombatState.set(id, makeCombatState());
 
@@ -274,12 +286,23 @@ export class World {
     this.createMonster(nodeId, typeId, x, y);
   }
 
+  // ── EVENTS ─────────────────────────────────────────
+
+  pushEvent(nodeId: string, event: CombatEvent): void {
+    let arr = this.nodeEvents.get(nodeId);
+    if (!arr) { arr = []; this.nodeEvents.set(nodeId, arr); }
+    arr.push(event);
+  }
+
   // ── SNAPSHOT ───────────────────────────────────────
 
-  buildSnapshot(nodeId: string) {
+  buildSnapshot(nodeId: string): NodeSnapshot {
+    const events = this.nodeEvents.get(nodeId) ?? [];
+    this.nodeEvents.set(nodeId, []);
     return {
       players:  Array.from(this.players.values()).filter(p => p.nodeId === nodeId),
       monsters: Array.from(this.monsters.values()).filter(m => m.nodeId === nodeId),
+      events,
     };
   }
 

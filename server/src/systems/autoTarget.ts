@@ -26,15 +26,18 @@ export function updateAutoTargets(world: World) {
     const dx = nearest.x - player.x;
     const dy = nearest.y - player.y;
     const distSq = dx * dx + dy * dy;
-    const stopDist = player.attackRange - 1;
+    // Stop at 70% of attack range so the player stays well within the attack
+    // threshold even when the target is moving. Avoids stutter-stepping at the
+    // range edge (the old `attackRange - 1` left no margin at all).
+    const stopDist = player.attackRange * 0.70;
 
     if (distSq <= stopDist * stopDist) {
-      // Already in range — hold position
+      // Already close enough — hold position.
       player.targetX = player.x;
       player.targetY = player.y;
     } else {
-      // Move toward a point exactly stopDist px from the monster so the player
-      // stops at melee range rather than walking into the monster's center.
+      // Move toward a point stopDist px from the monster so the player
+      // stays comfortably within attack range even if the target shifts.
       const dist = Math.sqrt(distSq);
       player.targetX = nearest.x - (dx / dist) * stopDist;
       player.targetY = nearest.y - (dy / dist) * stopDist;

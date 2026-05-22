@@ -13,6 +13,7 @@ import type {
   ClientToServerEvents,
   PlayerState,
   EquipmentSlot,
+  NodeSnapshot,
 } from '@mmo-idle/shared';
 import { emptyEquipment } from '@mmo-idle/shared';
 import { makeCombatState, setCounter } from './systems/combatState';
@@ -86,28 +87,42 @@ app.get('/health', (_req, res) => {
 
 // ── GAME LOOP ─────────────────────────────────────────
 
-const TICK_MS = Math.round(1000 / GAME_CONFIG.TICK_RATE);
+const LOGIC_MS     = Math.round(1000 / GAME_CONFIG.LOGIC_TICK_RATE);
+const BROADCAST_MS = Math.round(1000 / GAME_CONFIG.BROADCAST_TICK_RATE);
 
 let last = Date.now();
 
+// Simulation tick — 10 Hz. Drives all game logic: movement, combat, AI, DoT.
+// Running at 100 ms gives ≤99 ms attack quantization vs ≤499 ms at 2 Hz.
 setInterval(() => {
   const now = Date.now();
-  const dt = now - last;
+  const dt  = now - last;
   last = now;
 
   world.tick(dt, now);
 
-  // Notify dying players before broadcasting state so the overlay shows first.
+  // Emit death events immediately so the client overlay shows before the next snapshot.
   for (const playerId of world.pendingDeaths) {
     io.sockets.sockets.get(playerId)?.emit('player:died');
   }
   world.pendingDeaths = [];
+}, LOGIC_MS);
 
+// Broadcast tick — 5 Hz. Sends authoritative state snapshots to each player.
+// Decoupled from the simulation so network cost doesn't scale with logic rate.
+// buildSnapshot is called once per node so all players in a node share the same
+// event queue flush — without this, the first player drains events and others see none.
+setInterval(() => {
+  const nodeSnaps = new Map<string, NodeSnapshot>();
   for (const [socketId, player] of world.players) {
     const sock = io.sockets.sockets.get(socketId);
-    if (sock) sock.emit('node:state', world.buildSnapshot(player.nodeId));
+    if (!sock) continue;
+    if (!nodeSnaps.has(player.nodeId)) {
+      nodeSnaps.set(player.nodeId, world.buildSnapshot(player.nodeId));
+    }
+    sock.emit('node:state', nodeSnaps.get(player.nodeId)!);
   }
-}, TICK_MS);
+}, BROADCAST_MS);
 
 // ── SOCKETS ──────────────────────────────────────────
 

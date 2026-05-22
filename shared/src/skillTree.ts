@@ -103,7 +103,7 @@ export const SKILL_TREE: Map<string, SkillNode> = new Map<string, SkillNode>([
     classId: 'reload-root', subVariantId: null,
     parent: null, children: [],
     description: 'Unleash a rapid clip then reload. Your speed is doubled and damage per shot halved as a fundamental multiplier — fights from range naturally and weaves around incoming blows.',
-    cost: 1, statEffects: { speed: 10, maxHp: -10, attackRange: 50, evasion: 8 },
+    cost: 1, statEffects: { speed: 10, maxHp: -10, attackRange: 105, evasion: 8 },
   }],
 
   ['energy-root', {
@@ -111,7 +111,7 @@ export const SKILL_TREE: Map<string, SkillNode> = new Map<string, SkillNode>([
     classId: 'energy-root', subVariantId: null,
     parent: null, children: [],
     description: 'Channel each blow into a building surge of power. Your light build fights from range and your energy feeds a periodic shield that absorbs the hits that do reach you.',
-    cost: 1, statEffects: { attack: 2, speed: 12, attackCooldown: -150, maxHp: -5, attackRange: 40, plating: 1 },
+    cost: 1, statEffects: { attack: 2, speed: 12, attackCooldown: -150, maxHp: -5, attackRange: 115, plating: 1 },
     mechanicEffects: { 'defense.shield-pct': 0.06, 'defense.shield-interval-ms': 14000, 'defense.shield-duration-ms': 14000 } as Record<string, number>,
   }],
 

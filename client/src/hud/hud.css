@@ -70,6 +70,16 @@
   border-top: 1px solid rgba(60, 50, 130, 0.18);
 }
 
+.stat-section-title {
+  color: #585870;
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  margin-bottom: 4px;
+  padding-bottom: 3px;
+  border-bottom: 1px solid rgba(60, 50, 130, 0.14);
+}
+
 .stat-label {
   color: #585880;
   white-space: nowrap;

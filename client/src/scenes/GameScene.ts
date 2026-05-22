@@ -9,6 +9,7 @@ import type {
   NodeDirection,
   EquipmentSlot,
   CombatArchetype,
+  CombatEvent,
 } from '@mmo-idle/shared';
 import { GAME_CONFIG, NODE_BIOMES, BIOME_DATABASE } from '@mmo-idle/shared';
 import { hudBus } from '../hudBus';
@@ -54,6 +55,15 @@ interface Visual {
   cdBar: Phaser.GameObjects.Graphics;
   targetX: number;
   targetY: number;
+  /**
+   * Smooth interpolation base — updated by stepEntities each frame toward targetX/targetY.
+   * Kept separate from sprite.x/y so lunge offsets don't corrupt the interpolation math.
+   */
+  baseX: number;
+  baseY: number;
+  /** Client-only lunge offset, tweened to 0 after a melee attack. sprite renders at base+lunge. */
+  lungeOffsetX: number;
+  lungeOffsetY: number;
   hp: number;
   maxHp: number;
   /** Movement speed in px/s — used by stepEntities for per-entity interpolation. */
@@ -72,6 +82,8 @@ interface Visual {
   pullRange?: number;
   leashRange?: number;
   monsterAttackRange?: number;
+  /** 'melee' monsters play a lunge animation on attack. Only set for monster visuals. */
+  monsterBehavior?: string;
 }
 
 export class GameScene extends Phaser.Scene {
@@ -86,8 +98,7 @@ export class GameScene extends Phaser.Scene {
   /** Yellow dot shown at the last click destination (world-space). */
   private targetMarker!: Phaser.GameObjects.Arc;
   private autoMode       = false;
-  /** Own player's attackTargetId from the previous snapshot — used to attribute kills/damage. */
-  private prevMyTargetId: string | null = null;
+
   private minimap!: Phaser.GameObjects.Graphics;
   /** World-space colored bars drawn at each active exit boundary. */
   private exitMarkers!: Phaser.GameObjects.Graphics;
@@ -97,6 +108,11 @@ export class GameScene extends Phaser.Scene {
   private debugGraphics!: Phaser.GameObjects.Graphics;
   private debugPlayerRange = false;
   private debugEnemyRanges = false;
+  /** Remaining auto-path hops (nodeIds to visit, not including current node). */
+  private autoPath: string[] = [];
+  /** Invisible point the camera follows — positioned at the player's baseX/Y so
+   *  lunge offsets on the sprite don't cause the camera to jerk. */
+  private cameraTarget!: Phaser.GameObjects.Arc;
 
   constructor() {
     super({ key: 'GameScene' });
@@ -132,6 +148,9 @@ export class GameScene extends Phaser.Scene {
 
     // ── Debug range overlay (depth 8 — above entities, below minimap) ─────────
     this.debugGraphics = this.add.graphics().setDepth(8);
+
+    // ── Camera anchor (invisible; follows base position, not lunge-offset sprite) ──
+    this.cameraTarget = this.add.arc(0, 0, 1).setAlpha(0);
 
     // ── Minimap ────────────────────────────────────────────────────────────────
     this.minimap = this.add.graphics().setScrollFactor(0).setDepth(20);
@@ -171,6 +190,14 @@ export class GameScene extends Phaser.Scene {
       this.debugEnemyRanges = !this.debugEnemyRanges;
     });
 
+    window.addEventListener('hud:navigateTo', (e: Event) => {
+      const { path } = (e as CustomEvent<{ path: string[] }>).detail;
+      if (path.length === 0) return;
+      this.autoPath = path;
+      hudBus.emit({ autoPath: [...path] });
+      this.sendAutoPathMove(this.myNodeId);
+    });
+
     // ── Click to move ──────────────────────────────────────────────────────
     this.input.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
       if (!this.myId) return;
@@ -179,6 +206,7 @@ export class GameScene extends Phaser.Scene {
       const ty = Math.round(pointer.worldY);
 
       if (this.autoMode) this.setAutoMode(false);
+      if (this.autoPath.length > 0) this.cancelAutoPath();
 
       this.socket.emit('player:move', { x: tx, y: ty });
 
@@ -198,7 +226,7 @@ export class GameScene extends Phaser.Scene {
       this.myId = this.socket.id ?? '';
       hudBus.emit({ status: 'connected' });
       const own = this.players.get(this.myId);
-      if (own) this.cameras.main.startFollow(own.sprite, true, 0.1, 0.1);
+      if (own) this.cameras.main.startFollow(this.cameraTarget, true, 0.1, 0.1);
     });
 
     this.socket.on('disconnect', () => {
@@ -278,47 +306,80 @@ export class GameScene extends Phaser.Scene {
   }
 
   private applySnapshot(snapshot: NodeSnapshot) {
-    // Capture own player's current target BEFORE this snapshot updates it.
-    // Used for kill attribution and damage-out detection in this same pass.
-    const ownVpBefore = this.players.get(this.myId);
-    this.prevMyTargetId = ownVpBefore?.attackTargetId ?? null;
-
     const livePlayers = new Set(snapshot.players.map((p) => p.id));
     for (const id of this.players.keys()) {
       if (id !== this.myId && !livePlayers.has(id)) this.destroyVisual(this.players, id);
     }
     snapshot.players.forEach((p) => this.upsertPlayer(p));
 
+    // Process queued combat events after player upsert (need latest playerState).
+    // Events fire for own player only; other players' attacks are not tracked here.
+    for (const ev of snapshot.events) {
+      this.processCombatEvent(ev);
+    }
+
     const liveMonsters = new Set(snapshot.monsters.map((m) => m.id));
     for (const id of this.monsters.keys()) {
-      if (!liveMonsters.has(id)) {
-        if (id === this.prevMyTargetId) {
-          const vm = this.monsters.get(id);
-          if (vm) combatLog.push('kill', `${vm.entityName ?? id} defeated`);
-        }
-        this.destroyVisual(this.monsters, id);
-      }
+      if (!liveMonsters.has(id)) this.destroyVisual(this.monsters, id);
     }
     snapshot.monsters.forEach((m) => this.upsertMonster(m));
+  }
+
+  private processCombatEvent(ev: CombatEvent) {
+    if (ev.playerId !== this.myId) return;
+
+    if (ev.kind === 'player-hit') {
+      combatLog.push('damage-out', `${ev.targetName} −${ev.damage}`);
+      if (ev.empowered) combatLog.push('empowered', `Empowered strike → ${ev.targetName}`);
+      if (ev.execution) combatLog.push('execution', `Execution strike → ${ev.targetName}`);
+
+      const ownVp     = this.players.get(this.myId);
+      const targetVm  = this.monsters.get(ev.targetId);
+      if (ownVp && targetVm && ownVp.playerState) {
+        const p       = ownVp.playerState;
+        const dotPath = p.combatArchetype === 'dot' ? this.getDotPath(p) : undefined;
+        this.spawnAttackEffect(ownVp.attackStyle, ownVp.sprite.x, ownVp.sprite.y,
+          targetVm.sprite.x, targetVm.sprite.y, {
+            empowered: ev.empowered,
+            execution: ev.execution,
+            archetype: p.combatArchetype ?? undefined,
+            dotPath,
+          });
+        if (p.attackRange <= 150) this.playMeleeLunge(ownVp, targetVm.baseX, targetVm.baseY);
+      }
+    }
+
+    if (ev.kind === 'player-kill') {
+      combatLog.push('kill', `${ev.targetName} defeated`);
+    }
   }
 
   /** Interpolate sprites toward their targets and redraw HP + cooldown bars every frame. */
   private stepEntities(map: Map<string, Visual>, dt: number) {
     const now = Date.now();
+    const ownVp = this.players.get(this.myId);
 
     for (const v of map.values()) {
       const { sprite, label, hpBar, cdBar } = v;
 
-      const dx = v.targetX - sprite.x;
-      const dy = v.targetY - sprite.y;
+      // Move the interpolation base toward the authoritative target.
+      // sprite.x/y = baseX/Y + lungeOffset, so we never use sprite.x/y for math.
+      const dx = v.targetX - v.baseX;
+      const dy = v.targetY - v.baseY;
       const distSq = dx * dx + dy * dy;
       if (distSq > 1) {
         const dist = Math.sqrt(distSq);
         const step = Math.min(v.speed * dt, dist);
-        sprite.setPosition(sprite.x + (dx / dist) * step, sprite.y + (dy / dist) * step);
+        v.baseX += (dx / dist) * step;
+        v.baseY += (dy / dist) * step;
       } else {
-        sprite.setPosition(v.targetX, v.targetY);
+        v.baseX = v.targetX;
+        v.baseY = v.targetY;
       }
+      sprite.setPosition(v.baseX + v.lungeOffsetX, v.baseY + v.lungeOffsetY);
+
+      // Keep the camera anchor on the base position so lunge offsets don't move the camera.
+      if (v === ownVp) this.cameraTarget.setPosition(v.baseX, v.baseY);
 
       // HP bar
       const barY    = sprite.y - v.barOffsetY;
@@ -374,6 +435,8 @@ export class GameScene extends Phaser.Scene {
       vp = {
         sprite, label, hpBar, cdBar,
         targetX: player.targetX, targetY: player.targetY,
+        baseX: player.x, baseY: player.y,
+        lungeOffsetX: 0, lungeOffsetY: 0,
         hp: player.hp, maxHp: player.maxHp,
         speed: player.speed, barOffsetY: 34,
         attackCooldown: player.attackCooldown,
@@ -385,21 +448,39 @@ export class GameScene extends Phaser.Scene {
       this.players.set(player.id, vp);
 
       if (isOwn) {
-        this.cameras.main.startFollow(sprite, true, 0.1, 0.1);
+        this.cameraTarget.setPosition(player.x, player.y);
+        this.cameras.main.startFollow(this.cameraTarget, true, 0.1, 0.1);
         this.myNodeId = player.nodeId;
         hudBus.emit({ player });
       }
       return;
     }
 
-    // Detect node transition for own player — snap sprite to the new position
-    // instead of letting the interpolator slide it across the full map width.
+    // Detect node transition for own player — snap to the new position immediately.
     if (isOwn && player.nodeId !== this.myNodeId) {
+      vp.baseX = player.x;
+      vp.baseY = player.y;
       vp.sprite.setPosition(player.x, player.y);
+
+      // Advance auto-path when we enter the expected next node.
+      if (this.autoPath.length > 0) {
+        if (this.autoPath[0] === player.nodeId) {
+          this.autoPath.shift();
+          if (this.autoPath.length > 0) {
+            hudBus.emit({ autoPath: [...this.autoPath] });
+            this.sendAutoPathMove(player.nodeId);
+          } else {
+            this.cancelAutoPath(); // reached destination
+          }
+        } else {
+          this.cancelAutoPath(); // ended up somewhere unexpected
+        }
+      }
     }
 
-    const prevPlayerAttackAt = vp.lastAttackAt;
-    const prevPlayerHp = vp.hp;
+    const prevPlayerAttackAt  = vp.lastAttackAt;
+    const prevPlayerHp        = vp.hp;
+    const prevTotalShield     = vp.playerState?.shields.reduce((sum, s) => sum + s.amount, 0) ?? 0;
     vp.targetX        = player.targetX;
     vp.targetY        = player.targetY;
     vp.hp             = player.hp;
@@ -409,8 +490,6 @@ export class GameScene extends Phaser.Scene {
     vp.lastAttackAt   = player.lastAttackAt;
     vp.attackTargetId = player.attackTargetId;
     vp.attackStyle    = player.attackStyle;
-    const prevEmpoweredReady = vp.playerState?.empoweredReady ?? false;
-    const prevExecutionReady = vp.playerState?.executionReady ?? false;
     vp.playerState    = player;
 
     if (player.hp < prevPlayerHp) {
@@ -419,25 +498,28 @@ export class GameScene extends Phaser.Scene {
       if (isOwn) combatLog.push('damage-in', `Took ${Math.round(prevPlayerHp - player.hp)} damage`);
     }
 
-    // Only log heals above the regen threshold to avoid log spam from passive HP regen.
-    if (isOwn && player.hp > prevPlayerHp && prevPlayerHp > 0 && Math.round(player.hp - prevPlayerHp) >= 5) {
-      combatLog.push('heal', `Recovered ${Math.round(player.hp - prevPlayerHp)} HP`);
+    if (isOwn && player.hp > prevPlayerHp && prevPlayerHp > 0) {
+      const healed = Math.round(player.hp - prevPlayerHp);
+      if (healed >= 1) combatLog.push('heal', `Recovered ${healed} HP`);
     }
 
-    if (player.lastAttackAt > prevPlayerAttackAt && player.attackTargetId) {
+    if (isOwn) {
+      const newTotalShield = player.shields.reduce((sum, s) => sum + s.amount, 0);
+      if (newTotalShield > prevTotalShield) {
+        combatLog.push('shield', `Shield +${Math.round(newTotalShield - prevTotalShield)}`);
+      }
+    }
+
+    // Attack animations for OTHER players — own player uses event queue instead.
+    if (!isOwn && player.lastAttackAt > prevPlayerAttackAt && player.attackTargetId) {
       const targetVm = this.monsters.get(player.attackTargetId);
       if (targetVm) {
-        const empowered = prevEmpoweredReady && !player.empoweredReady;
-        const execution = prevExecutionReady && !player.executionReady;
-        const dotPath   = player.combatArchetype === 'dot' ? this.getDotPath(player) : undefined;
         this.spawnAttackEffect(vp.attackStyle, vp.sprite.x, vp.sprite.y, targetVm.sprite.x, targetVm.sprite.y, {
-          empowered,
-          execution,
+          empowered: false,
+          execution: false,
           archetype: player.combatArchetype ?? undefined,
-          dotPath,
         });
-        if (isOwn && empowered) combatLog.push('empowered', `Empowered strike → ${targetVm.entityName ?? 'target'}`);
-        if (isOwn && execution) combatLog.push('execution', `Execution strike → ${targetVm.entityName ?? 'target'}`);
+        if (player.attackRange <= 150) this.playMeleeLunge(vp, targetVm.baseX, targetVm.baseY);
       }
     }
 
@@ -462,6 +544,8 @@ export class GameScene extends Phaser.Scene {
       const cdBar = this.add.graphics();
       vm = { sprite, label, hpBar, cdBar,
              targetX: monster.targetX, targetY: monster.targetY,
+             baseX: monster.x, baseY: monster.y,
+             lungeOffsetX: 0, lungeOffsetY: 0,
              hp: monster.hp, maxHp: monster.maxHp,
              speed: monster.speed, barOffsetY: monster.isBoss ? 38 : 26,
              attackCooldown:     monster.attackCooldown,
@@ -471,12 +555,22 @@ export class GameScene extends Phaser.Scene {
              entityName:         monster.name,
              pullRange:          monster.pullRange,
              leashRange:         monster.leashRange,
-             monsterAttackRange: monster.attackRange };
+             monsterAttackRange: monster.attackRange,
+             monsterBehavior:    monster.behavior };
       this.monsters.set(monster.id, vm);
       return;
     }
     const prevMonsterAttackAt = vm.lastAttackAt;
     const prevMonsterHp = vm.hp;
+    // Only hard-snap when the server/client positions have diverged significantly
+    // (e.g. leash teleport, node transition, or large dead-reckoning error).
+    // For small drifts the normal interpolation toward targetX/Y self-corrects silently.
+    const snapDx = monster.x - vm.baseX;
+    const snapDy = monster.y - vm.baseY;
+    if (snapDx * snapDx + snapDy * snapDy > 80 * 80) {
+      vm.baseX = monster.x;
+      vm.baseY = monster.y;
+    }
     vm.targetX        = monster.targetX;
     vm.targetY        = monster.targetY;
     vm.hp             = monster.hp;
@@ -488,15 +582,16 @@ export class GameScene extends Phaser.Scene {
     if (monster.hp < prevMonsterHp) {
       const dmg = Math.round(prevMonsterHp - monster.hp);
       this.spawnDamageNumber(vm.sprite.x, vm.sprite.y, vm.barOffsetY, dmg, '#ffffff');
-      if (this.myId && this.prevMyTargetId === monster.id) {
-        combatLog.push('damage-out', `${vm.entityName ?? monster.name} −${dmg}`);
-      }
     }
 
     if (monster.lastAttackAt > prevMonsterAttackAt && monster.attackTargetId) {
       const targetVp = this.players.get(monster.attackTargetId);
       if (targetVp) {
         this.spawnAttackEffect(vm.attackStyle, vm.sprite.x, vm.sprite.y, targetVp.sprite.x, targetVp.sprite.y);
+
+        if (vm.monsterBehavior === 'melee') {
+          this.playMeleeLunge(vm, targetVp.baseX, targetVp.baseY);
+        }
       }
     }
   }
@@ -1111,6 +1206,45 @@ export class GameScene extends Phaser.Scene {
     return 'poison';
   }
 
+  private playMeleeLunge(vm: Visual, targetX: number, targetY: number): void {
+    const LUNGE_DIST = 26;
+    const dx = targetX - vm.baseX;
+    const dy = targetY - vm.baseY;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    if (dist < 1) return;
+
+    // Kill any lunge tween already in progress so they don't stack
+    this.tweens.killTweensOf(vm);
+
+    // Snap forward, then ease back
+    vm.lungeOffsetX = (dx / dist) * LUNGE_DIST;
+    vm.lungeOffsetY = (dy / dist) * LUNGE_DIST;
+    this.tweens.add({
+      targets: vm,
+      lungeOffsetX: 0,
+      lungeOffsetY: 0,
+      delay: 60,
+      duration: 200,
+      ease: 'Quad.easeOut',
+    });
+  }
+
+  /** Expanding translucent ring used to show AoE splash extent on empowered hits. */
+  private fxAoeRing(x: number, y: number, radius: number, color: number): void {
+    const ring = this.add.graphics({ x, y }).setDepth(11);
+    ring.lineStyle(2.5, color, 0.65);
+    ring.strokeCircle(0, 0, 1);
+    this.tweens.add({
+      targets:  ring,
+      scaleX:   radius,
+      scaleY:   radius,
+      alpha:    0,
+      duration: 420,
+      ease:     'Power2',
+      onComplete: () => ring.destroy(),
+    });
+  }
+
   private spawnAttackEffect(
     style: string,
     fromX: number, fromY: number,
@@ -1121,6 +1255,16 @@ export class GameScene extends Phaser.Scene {
     const execution = flags?.execution ?? false;
     const archetype = flags?.archetype;
     const dotPath   = flags?.dotPath;
+
+    // AoE ring on all empowered/execution hits — color matches archetype.
+    if (empowered || execution) {
+      const ringColor = archetype === 'cadence'  ? 0x4499ff
+                      : archetype === 'cooldown' ? 0xddeeff
+                      : archetype === 'energy'   ? 0x88aaff
+                      : archetype === 'reload'   ? 0xffeedd
+                      : 0xffdd22;
+      this.fxAoeRing(toX, toY, GAME_CONFIG.EMPOWERED_AOE_RADIUS, ringColor);
+    }
 
     // Class-mechanic dispatch — own player attacks only (flags.archetype is set).
     // Each class uses its own visual language regardless of equipped weapon style.
@@ -1217,9 +1361,38 @@ export class GameScene extends Phaser.Scene {
     }
   }
 
+  /** Emit a player:move command toward the exit that leads to autoPath[0]. */
+  private sendAutoPathMove(fromNodeId: string): void {
+    if (this.autoPath.length === 0 || !this.myId) return;
+    const [, curRStr, curCStr] = fromNodeId.split('-');
+    const [, nxtRStr, nxtCStr] = this.autoPath[0].split('-');
+    const dr = parseInt(nxtRStr, 10) - parseInt(curRStr, 10);
+    const dc = parseInt(nxtCStr, 10) - parseInt(curCStr, 10);
+
+    const W = GAME_CONFIG.NODE_WIDTH;
+    const H = GAME_CONFIG.NODE_HEIGHT;
+    let x: number, y: number;
+    if      (dr === -1) { x = W / 2; y = 5; }          // north
+    else if (dr ===  1) { x = W / 2; y = H - 5; }      // south
+    else if (dc === -1) { x = 5;     y = H / 2; }       // west
+    else if (dc ===  1) { x = W - 5; y = H / 2; }       // east
+    else { this.cancelAutoPath(); return; }              // shouldn't happen
+
+    x = Math.round(x); y = Math.round(y);
+    this.socket.emit('player:move', { x, y });
+    const vp = this.players.get(this.myId);
+    if (vp) { vp.targetX = x; vp.targetY = y; }
+  }
+
+  private cancelAutoPath(): void {
+    this.autoPath = [];
+    hudBus.emit({ autoPath: null });
+  }
+
   private destroyVisual(map: Map<string, Visual>, id: string) {
     const v = map.get(id);
     if (!v) return;
+    this.tweens.killTweensOf(v);
     v.sprite.destroy();
     v.label.destroy();
     v.hpBar.destroy();

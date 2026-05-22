@@ -193,6 +193,44 @@
   border-color: rgba(220, 80, 80, 0.8);
 }
 
+/* ── Auto-path route highlighting ────────────────────────────────────────── */
+
+.map-tile--path {
+  border-color: rgba(68, 170, 255, 0.75);
+  box-shadow: inset 0 0 0 1px rgba(68, 170, 255, 0.3), 0 0 8px rgba(68, 170, 255, 0.25);
+}
+
+.map-tile--destination {
+  border-color: rgba(255, 221, 34, 0.9);
+  box-shadow: inset 0 0 0 1px rgba(255, 221, 34, 0.4), 0 0 14px rgba(255, 221, 34, 0.35);
+  animation: map-dest-pulse 1.2s ease-in-out infinite alternate;
+}
+
+@keyframes map-dest-pulse {
+  from { box-shadow: inset 0 0 0 1px rgba(255, 221, 34, 0.35), 0 0 8px  rgba(255, 221, 34, 0.25); }
+  to   { box-shadow: inset 0 0 0 1px rgba(255, 221, 34, 0.8), 0 0 20px rgba(255, 221, 34, 0.55); }
+}
+
+.map-tile__dest {
+  font-family: monospace;
+  font-size: 9px;
+  color: #ffdd22;
+  letter-spacing: 0.04em;
+}
+
+/* Overview minimap route indicators */
+.map-overview-cell--path {
+  outline: 1px solid rgba(68, 170, 255, 0.65);
+  outline-offset: -1px;
+  opacity: 1;
+}
+
+.map-overview-cell--destination {
+  outline: 2px solid rgba(255, 221, 34, 0.85);
+  outline-offset: -1px;
+  opacity: 1;
+}
+
 .map-tile__dungeon-badge {
   font-family: monospace;
   font-size: 10px;
