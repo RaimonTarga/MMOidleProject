@@ -15,10 +15,13 @@ import { GAME_CONFIG, NODE_BIOMES, BIOME_DATABASE } from '@mmo-idle/shared';
 import { hudBus } from '../hudBus';
 import { combatLog } from '../combatLog';
 import { ATLAS_KEY, getPlayerFrame, getMonsterFrame, getPlayerShadowColor, getPlayerShadowOffset, getMonsterShadowOffset, BIOME_TEXTURES } from '../sprites';
+import { accountId, displayName } from '../clientAuth';
 
 type GameSocket = Socket<ServerToClientEvents, ClientToServerEvents>;
 
-const SERVER_URL = 'http://localhost:4000';
+// In dev (Vite server on :3000), point explicitly at the Express server.
+// In production (client served by Express on :4000), use the same origin.
+const SERVER_URL = import.meta.env.DEV ? 'http://localhost:4000' : window.location.origin;
 
 // ── Minimap layout constants ───────────────────────────────────────────────────
 const MM_W   = 220;  // minimap width  (px, screen-space)
@@ -239,7 +242,9 @@ export class GameScene extends Phaser.Scene {
     });
 
     // ── Socket.IO ──────────────────────────────────────────────────────────
-    this.socket = io(SERVER_URL) as GameSocket;
+    this.socket = io(SERVER_URL, {
+      auth: { accountId, displayName },
+    }) as GameSocket;
 
     this.socket.on('connect', () => {
       this.myId = this.socket.id ?? '';

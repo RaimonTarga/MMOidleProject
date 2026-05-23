@@ -186,28 +186,28 @@ export const SKILL_TREE: Map<string, SkillNode> = new Map<string, SkillNode>([
   // dot — heavy-ish class ────────────────────────────────────────────────────
 
   ['dot-light', {
-    id: 'dot-light', name: 'Light Frame', tier: 1,
+    id: 'dot-light', name: 'Light Frame (Poison)', tier: 1,
     classId: 'dot-root', subVariantId: 'light',
     parent: 'dot-root', children: [],
-    description: 'Apply wounds quickly and stay mobile. Up to 8 stacks at 2 damage each — ramps fast, bleeds steadily.',
+    description: 'Poison path. Apply wounds quickly and stay mobile. Up to 8 poison stacks — each hit converts 30% of your attack into lingering poison damage.',
     cost: 1, statEffects: { attack: 6, speed: 20, maxHp: -22, plating: -2, attackCooldown: -300 },
-    mechanicEffects: { 'dot.max-stacks': 8, 'dot.damage-per-stack': 2 } as Record<string, number>,
+    mechanicEffects: { 'dot.max-stacks': 8, 'dot.conversion-pct': 0.30 } as Record<string, number>,
   }],
   ['dot-balanced', {
-    id: 'dot-balanced', name: 'Balanced Frame', tier: 1,
+    id: 'dot-balanced', name: 'Balanced Frame (Fire)', tier: 1,
     classId: 'dot-root', subVariantId: 'balanced',
     parent: 'dot-root', children: [],
-    description: 'A deliberate fighter. Enough durability to let your damage-over-time do its work. Up to 6 stacks at 3 damage each.',
+    description: 'Fire path. A deliberate fighter. Up to 6 burn stacks — each hit converts 50% of your attack into damage over time.',
     cost: 1, statEffects: { attack: 9, maxHp: 16, plating: 3, hpRegen: 3, speed: -5 },
-    mechanicEffects: { 'dot.max-stacks': 6, 'dot.damage-per-stack': 3 } as Record<string, number>,
+    mechanicEffects: { 'dot.max-stacks': 6, 'dot.conversion-pct': 0.50 } as Record<string, number>,
   }],
   ['dot-heavy', {
-    id: 'dot-heavy', name: 'Heavy Frame', tier: 1,
+    id: 'dot-heavy', name: 'Heavy Frame (Frost)', tier: 1,
     classId: 'dot-root', subVariantId: 'heavy',
     parent: 'dot-root', children: [],
-    description: 'A war of attrition. Heavy plating and strong recovery let you outlast anything. Up to 3 stacks at 7 damage each — fewer wounds, but each one runs deep.',
+    description: 'Frost path. A war of attrition. Up to 3 frost stacks — each hit converts 70% of your attack into deep, lingering wounds.',
     cost: 1, statEffects: { attack: 10, maxHp: 32, plating: 6, hpRegen: 6, damageReduction: 0.06, speed: -28, attackCooldown: 400 },
-    mechanicEffects: { 'dot.max-stacks': 3, 'dot.damage-per-stack': 7 } as Record<string, number>,
+    mechanicEffects: { 'dot.max-stacks': 3, 'dot.conversion-pct': 0.70 } as Record<string, number>,
   }],
 
   // reload — light-ish class ─────────────────────────────────────────────────

@@ -257,22 +257,26 @@ export function updateDefensiveSystems(world: World, dt: number, now: number): v
       (now - lastCombatAt) < GAME_CONFIG.COMBAT_REGEN_DELAY;
 
     // ── Damage debt drain ──────────────────────────────────────────────────
-    // Deferred damage from hit-to-DoT conversion. Pool depletes over POOL_DRAIN_MS.
-    // defense.dot-resistance reduces the actual HP damage taken (pool still drains
-    // at full rate, so resistance doesn't extend the duration).
+    // Deferred damage from hit-to-DoT conversion. Fires once per second to
+    // avoid sub-1 damage spam at 10 Hz. Each tick drains 1 s worth of the pool.
     const debtPool = getResource(cs, DEBT_POOL_KEY);
     if (debtPool > 0) {
-      const drainAmount = debtPool * (dt / POOL_DRAIN_MS);
-      setResource(cs, DEBT_POOL_KEY, Math.max(0, debtPool - drainAmount));
+      if (!isCooldownActive(cs, 'debtTick')) {
+        setCooldown(cs, 'debtTick', 1000);
+        const drainAmount = debtPool * (1000 / POOL_DRAIN_MS);
+        const remaining   = debtPool - drainAmount;
+        setResource(cs, DEBT_POOL_KEY, remaining < 0.5 ? 0 : remaining);
 
-      const dotResist  = Math.min(0.9, player.passives['defense.dot-resistance'] ?? 0);
-      const debtDamage = drainAmount * (1 - dotResist);
-      player.hp        = Math.max(0, player.hp - debtDamage);
-
-      if (player.hp <= 0) {
-        setResource(cs, DEBT_POOL_KEY, 0);
-        world.respawnPlayer(player.id);
-        continue;
+        const dotResist  = Math.min(0.9, player.passives['defense.dot-resistance'] ?? 0);
+        const debtDamage = Math.round(drainAmount * (1 - dotResist));
+        if (debtDamage >= 1) {
+          player.hp = Math.max(0, player.hp - debtDamage);
+          if (player.hp <= 0) {
+            setResource(cs, DEBT_POOL_KEY, 0);
+            world.respawnPlayer(player.id);
+            continue;
+          }
+        }
       }
     }
 
@@ -281,9 +285,10 @@ export function updateDefensiveSystems(world: World, dt: number, now: number): v
     // POOL_DRAIN_MS. Antiheal is applied on each drain tick.
     const absorbPool = getResource(cs, ABSORB_POOL_KEY);
     if (absorbPool > 0) {
-      const healAmount = absorbPool * (dt / POOL_DRAIN_MS);
-      setResource(cs, ABSORB_POOL_KEY, Math.max(0, absorbPool - healAmount));
-      applyHealToPlayer(player, cs, healAmount);
+      const healAmount  = absorbPool * (dt / POOL_DRAIN_MS);
+      const absorbLeft  = absorbPool - healAmount;
+      setResource(cs, ABSORB_POOL_KEY, absorbLeft < 0.5 ? 0 : absorbLeft);
+      if (healAmount >= 0.5) applyHealToPlayer(player, cs, healAmount);
     }
 
     // ── Regen burst ────────────────────────────────────────────────────────
@@ -300,8 +305,9 @@ export function updateDefensiveSystems(world: World, dt: number, now: number): v
       const burstPool = getResource(cs, BURST_POOL_KEY);
       if (burstPool > 0) {
         const healAmount = burstPool * (dt / POOL_DRAIN_MS);
-        setResource(cs, BURST_POOL_KEY, Math.max(0, burstPool - healAmount));
-        applyHealToPlayer(player, cs, healAmount);
+        const burstLeft  = burstPool - healAmount;
+        setResource(cs, BURST_POOL_KEY, burstLeft < 0.5 ? 0 : burstLeft);
+        if (healAmount >= 0.5) applyHealToPlayer(player, cs, healAmount);
       }
     }
 

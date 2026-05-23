@@ -19,7 +19,23 @@
       "Bash(node -e \"const {SKILL_TREE} = require\\('./shared/src/index.ts'\\); console.log\\('Total nodes:', SKILL_TREE.size\\); console.log\\('Tier 0:', [...SKILL_TREE.values\\(\\)].filter\\(n=>n.tier===0\\).map\\(n=>n.id\\)\\); console.log\\('Tier 2:', [...SKILL_TREE.values\\(\\)].filter\\(n=>n.tier===2\\).map\\(n=>n.id\\)\\); console.log\\('Tier 4 sample:', [...SKILL_TREE.values\\(\\)].filter\\(n=>n.tier===4\\).slice\\(0,3\\).map\\(n=>n.id\\)\\);\")",
       "Bash(node *)",
       "Bash(pnpm --filter @mmo-idle/server tsc --noEmit)",
-      "Bash(pnpm --filter shared exec tsc --noEmit)"
+      "Bash(pnpm --filter shared exec tsc --noEmit)",
+      "Bash(pnpm add *)",
+      "Bash(pnpm approve-builds *)",
+      "Bash(pnpm install *)",
+      "Bash(pnpm *)",
+      "Bash(npx drizzle-kit *)",
+      "Bash(node_modules\\\\.pnpm\\\\better-sqlite3@12.10.0\\\\node_modules\\\\better-sqlite3\\\\node_modules\\\\.bin\\\\prebuild-install --runtime napi)",
+      "Bash(node_modules\\\\.pnpm\\\\better-sqlite3@12.10.0\\\\node_modules\\\\better-sqlite3\\\\node_modules\\\\.bin\\\\node-pre-gyp install *)",
+      "PowerShell(Test-Path *)",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(d.get\\('scripts',{}\\)\\)\")",
+      "PowerShell($pkg = Get-Content \"C:\\\\Users\\\\osaif\\\\Documents\\\\Claude\\\\Projects\\\\MMO idle\\\\node_modules\\\\.pnpm\\\\better-sqlite3@12.10.0\\\\node_modules\\\\better-sqlite3\\\\package.json\" | ConvertFrom-Json; $pkg.scripts)",
+      "Bash(winget install *)",
+      "Bash(ngrok config *)",
+      "PowerShell(ngrok config *)",
+      "PowerShell($ngrokPath = \\(Get-ChildItem \"C:\\\\Users\\\\osaif\\\\AppData\\\\Local\\\\Microsoft\\\\WinGet\\\\Packages\" -Recurse -Filter \"ngrok.exe\" -ErrorAction SilentlyContinue | Select-Object -First 1\\).FullName; if \\(-not $ngrokPath\\) { $ngrokPath = \\(Get-ChildItem \"C:\\\\ProgramData\\\\ngrok\" -Filter \"ngrok.exe\" -ErrorAction SilentlyContinue | Select-Object -First 1\\).FullName }; Write-Host $ngrokPath)",
+      "PowerShell(& \"C:\\\\Users\\\\osaif\\\\AppData\\\\Local\\\\Microsoft\\\\WinGet\\\\Packages\\\\Ngrok.Ngrok_Microsoft.Winget.Source_8wekyb3d8bbwe\\\\ngrok.exe\" config add-authtoken 3E7XwyQgRVXhmkBBH7yXWmMlBl6_4ggZHNeqL6HJPSB6XiYZm 2>&1)",
+      "PowerShell(& \"C:\\\\Users\\\\osaif\\\\AppData\\\\Local\\\\Microsoft\\\\WinGet\\\\Packages\\\\Ngrok.Ngrok_Microsoft.Winget.Source_8wekyb3d8bbwe\\\\ngrok.exe\" update 2>&1)"
     ]
   }
 }

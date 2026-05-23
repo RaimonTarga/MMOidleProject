@@ -825,3 +825,256 @@
   padding: 4px 0 1px;
   letter-spacing: 0.04em;
 }
+
+/* ── Mobile HUD ────────────────────────────────────────────────────── */
+
+.mob-topbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 48px;
+  z-index: 30;
+  background: rgba(5, 4, 16, 0.9);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(50, 50, 80, 0.45);
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  gap: 8px;
+  pointer-events: auto;
+  font-family: monospace;
+  user-select: none;
+}
+
+.mob-topbar__name {
+  color: #44ff88;
+  font-size: 12px;
+  font-weight: bold;
+  white-space: nowrap;
+  flex-shrink: 0;
+  max-width: 90px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mob-topbar__hpblock {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.mob-topbar__hptext {
+  color: #888899;
+  font-size: 9px;
+  text-align: right;
+}
+
+.mob-topbar__zone {
+  color: #5577aa;
+  font-size: 9px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  max-width: 80px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: right;
+}
+
+/* ── Bottom bar: AUTO button ───────────────────────────────────────── */
+
+.mob-bottombar {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  height: 64px;
+  /* extra space for Android gesture bar / iOS home indicator */
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  z-index: 30;
+  background: rgba(5, 4, 16, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-top: 1px solid rgba(80, 70, 140, 0.5);
+  display: flex;
+  align-items: stretch;
+  padding-left: 12px;
+  padding-right: 12px;
+  padding-top: 8px;
+  pointer-events: auto;
+}
+
+.mob-auto-btn {
+  flex: 1;
+  background: rgba(20, 14, 50, 0.95);
+  border: 2px solid rgba(130, 100, 220, 0.45);
+  border-radius: 10px;
+  color: #aaaadd;
+  font-family: monospace;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  transition: background 0.15s, border-color 0.15s, box-shadow 0.15s;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  box-shadow: 0 2px 12px rgba(100, 80, 200, 0.2);
+}
+
+.mob-auto-btn__label {
+  font-size: 15px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  color: #ccccff;
+}
+
+.mob-auto-btn__state {
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  color: #7777aa;
+}
+
+.mob-auto-btn:active {
+  background: rgba(40, 32, 90, 0.98);
+}
+
+.mob-auto-btn.active {
+  background: rgba(6, 28, 14, 0.97);
+  border-color: #44ee88;
+  box-shadow: 0 0 20px rgba(68, 238, 136, 0.35), inset 0 0 24px rgba(68, 238, 136, 0.06);
+}
+
+.mob-auto-btn.active .mob-auto-btn__label {
+  color: #55ff99;
+  text-shadow: 0 0 10px rgba(68, 255, 136, 0.5);
+}
+
+.mob-auto-btn.active .mob-auto-btn__state {
+  color: #33cc66;
+}
+
+/* ── Right-side menu drawer ────────────────────────────────────────── */
+
+.mob-drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 19;
+  pointer-events: auto;
+}
+
+/* Drawer is wider than the visible menu panel — the leftmost 36px is the handle tab.
+   Closed: translateX(148px) leaves just the 36px handle peeking at the right edge.
+   Open:   translateX(0)     reveals the full drawer. */
+.mob-drawer {
+  position: fixed;
+  top: 48px;
+  bottom: calc(64px + env(safe-area-inset-bottom, 0px));
+  right: 0;
+  width: 184px; /* 36px handle + 148px menu */
+  transform: translateX(148px);
+  transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: row;
+  z-index: 20;
+  pointer-events: auto;
+}
+
+.mob-drawer--open {
+  transform: translateX(0);
+}
+
+.mob-drawer-handle {
+  width: 36px;
+  flex-shrink: 0;
+  background: rgba(14, 10, 36, 0.92);
+  border: 1px solid rgba(90, 75, 160, 0.3);
+  border-right: none;
+  border-radius: 8px 0 0 8px;
+  color: #7777bb;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  transition: color 0.12s, border-color 0.12s;
+}
+
+.mob-drawer-handle:active { color: #aaaaee; }
+
+.mob-drawer-menu {
+  flex: 1;
+  background: rgba(8, 6, 22, 0.97);
+  border-left: 1px solid rgba(90, 75, 160, 0.18);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  display: flex;
+  flex-direction: column;
+  padding: 10px 8px;
+  gap: 7px;
+  overflow-y: auto;
+}
+
+.mob-drawer-btn {
+  width: 100%;
+  padding: 11px 10px;
+  background: rgba(20, 16, 50, 0.7);
+  border: 1px solid rgba(90, 75, 160, 0.18);
+  border-radius: 5px;
+  color: #6666aa;
+  font-family: monospace;
+  font-size: 10px;
+  letter-spacing: 0.8px;
+  text-align: center;
+  cursor: pointer;
+  transition: background 0.12s, border-color 0.12s, color 0.12s;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.mob-drawer-btn:active {
+  background: rgba(40, 32, 90, 0.9);
+}
+
+.mob-drawer-btn.active {
+  background: rgba(12, 36, 22, 0.88);
+  border-color: rgba(52, 178, 90, 0.3);
+  color: #44ff88;
+}
+
+/* ── Panel overlays (full-screen, e.g. quest) ──────────────────────── */
+
+.mob-panel-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(5, 4, 16, 0.97);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  pointer-events: auto;
+  overflow-y: auto;
+}
+
+.mob-panel-overlay__inner {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mob-panel-close {
+  align-self: flex-end;
+  background: rgba(30, 24, 70, 0.85);
+  border: 1px solid rgba(90, 75, 160, 0.25);
+  border-radius: 4px;
+  color: #8888bb;
+  font-family: monospace;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  padding: 7px 16px;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}

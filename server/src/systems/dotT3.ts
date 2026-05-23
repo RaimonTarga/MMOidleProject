@@ -10,9 +10,13 @@ import { grantMonsterRewards } from './rewards';
 import type { CombatState } from './combatState';
 import type { World } from '../world/World';
 
-// ── Shared constants (must match dotPrototype.ts) ─────────────────────────────
-const DOT_EFFECT_ID = 'dot';
-const DOT_TICK_MS   = 1_000;
+// ── Shared constants (fallback — must match dotPrototype.ts) ──────────────────
+const DOT_EFFECT_ID      = 'dot';
+const DOT_TICK_MS        = 1_000;
+// Fallback conversion fraction when no T1 path is unlocked (mirrors dotPrototype.ts).
+const DOT_CONVERSION_PCT = 0.40;
+// Default DoT duration — refreshed on every hit (mirrors dotPrototype.ts).
+const DOT_DURATION_MS    = 4_500;
 
 // ── Effect IDs ────────────────────────────────────────────────────────────────
 export const SMOLDER_EFFECT = 'dot-smolder';
@@ -98,6 +102,10 @@ export function getFrozenMult(monsterState: CombatState): number {
  * Register all DoT T3 combat pipeline listeners.
  * Called from initDotArchetype() BEFORE the base onHit listener so that
  * T3 mechanics can set ctx.metadata['dotHandled'] to suppress the base handler.
+ *
+ * The T3 handler always applies the conversion damage reduction (setting
+ * ctx.metadata['dotConvApplied']) so the base handler can skip it when the
+ * T3 handler already ran.
  */
 export function initDotT3(): void {
 
@@ -116,10 +124,19 @@ export function initDotT3(): void {
       return;
     }
 
-    const maxStacks   = Math.round(player.passives['dot.max-stacks']   ?? 6);
-    const dmgPerStack = player.passives['dot.damage-per-stack']         ?? 3;
+    const maxStacks      = Math.round(player.passives['dot.max-stacks']                     ?? 6);
+    const convPct        = player.passives['dot.conversion-pct']                            ?? DOT_CONVERSION_PCT;
+    const tickIntervalMs = Math.max(100, Math.round(player.passives['dot.tick-interval-ms'] ?? DOT_TICK_MS));
+    const durationMs     = Math.round(player.passives['dot.duration-ms']                    ?? DOT_DURATION_MS);
+    const dmgPerStack    = Math.max(1, Math.round(player.attack * convPct / maxStacks));
 
-    // ── Invigorating Toxins: flat damage bonus (base prototype still applies the stack) ─
+    // Redirect convPct of direct hit damage into DoT ticks.
+    // Flag prevents the base handler from double-applying this reduction for
+    // paths (like Invigorating Toxins) that fall through without setting dotHandled.
+    ctx.damage = Math.max(1, Math.round(ctx.damage * (1 - convPct)));
+    ctx.metadata['dotConvApplied'] = true;
+
+    // ── Invigorating Toxins: flat damage bonus per poison stack ──────────────
     if (hasPassive(player, 'dot.invigorating-toxins')) {
       const stacks = getTotalStacks(monsterState, DOT_EFFECT_ID);
       if (stacks > 0) ctx.damage += stacks * IT_ATK_PER_STACK;
@@ -128,11 +145,13 @@ export function initDotT3(): void {
 
     // ── Poison Explosion ──────────────────────────────────────────────────────
     if (hasPassive(player, 'dot.poison-explosion')) {
-      applyStatusEffect(monsterState, {
+      const pe = applyStatusEffect(monsterState, {
         id: DOT_EFFECT_ID, maxStacks: PE_MAX_STACKS, instanced: false,
-        sourceId: player.id,
-        data: { damagePerStack: dmgPerStack, nextTickIn: DOT_TICK_MS, tickIntervalMs: DOT_TICK_MS },
+        sourceId: player.id, remainingMs: durationMs, refreshable: true,
+        data: { damagePerStack: dmgPerStack, nextTickIn: tickIntervalMs, tickIntervalMs },
       });
+      pe.data.damagePerStack = dmgPerStack;
+      pe.data.tickIntervalMs = tickIntervalMs;
       if (getTotalStacks(monsterState, DOT_EFFECT_ID) >= PE_MAX_STACKS) {
         const burst = PE_MAX_STACKS * dmgPerStack * PE_BURST_TICKS;
         ctx.damage += burst;
@@ -145,34 +164,44 @@ export function initDotT3(): void {
 
     // ── Eternal Doom ──────────────────────────────────────────────────────────
     if (hasPassive(player, 'dot.eternal-doom')) {
-      applyStatusEffect(monsterState, {
+      const ed = applyStatusEffect(monsterState, {
         id: DOT_EFFECT_ID, maxStacks: ED_MAX_STACKS, instanced: false,
-        sourceId: player.id,
+        sourceId: player.id, remainingMs: durationMs, refreshable: true,
         data: {
-          damagePerStack: dmgPerStack, nextTickIn: DOT_TICK_MS, tickIntervalMs: DOT_TICK_MS,
+          damagePerStack: dmgPerStack, nextTickIn: tickIntervalMs, tickIntervalMs,
           isEternalDoom: 1, edBaseStacks: ED_BASE_STACKS,
         },
       });
+      ed.data.damagePerStack = dmgPerStack;
+      ed.data.tickIntervalMs = tickIntervalMs;
       ctx.metadata['dotHandled'] = true;
       return;
     }
 
     // ── Fan the Flames ────────────────────────────────────────────────────────
     if (hasPassive(player, 'dot.fan-the-flames')) {
-      const ftfDmg       = dmgPerStack * FTF_DMG_MULT;
+      const ftfDmg        = dmgPerStack * FTF_DMG_MULT;
       const currentStacks = getTotalStacks(monsterState, DOT_EFFECT_ID);
       if (currentStacks >= maxStacks) {
         ctx.damage += Math.floor(maxStacks * dmgPerStack * FTF_BONUS_MULT);
         console.log(`[FanTheFlames] ${player.id}: at max — +${Math.floor(maxStacks * dmgPerStack * FTF_BONUS_MULT)} bonus`);
       } else {
         const toApply = Math.min(FTF_STACKS_PER_HIT, maxStacks - currentStacks);
-        for (let i = 0; i < toApply; i++) {
-          applyStatusEffect(monsterState, {
+        let ftfEff = applyStatusEffect(monsterState, {
+          id: DOT_EFFECT_ID, maxStacks, instanced: false,
+          sourceId: player.id, remainingMs: durationMs, refreshable: true,
+          data: { damagePerStack: ftfDmg, nextTickIn: tickIntervalMs, tickIntervalMs },
+        });
+        for (let i = 1; i < toApply; i++) {
+          ftfEff = applyStatusEffect(monsterState, {
             id: DOT_EFFECT_ID, maxStacks, instanced: false,
-            sourceId: player.id,
-            data: { damagePerStack: ftfDmg, nextTickIn: DOT_TICK_MS, tickIntervalMs: DOT_TICK_MS },
+            sourceId: player.id, remainingMs: durationMs, refreshable: true,
+            data: { damagePerStack: ftfDmg, nextTickIn: tickIntervalMs, tickIntervalMs },
           });
         }
+        ftfEff.data.damagePerStack = ftfDmg;
+        ftfEff.data.tickIntervalMs = tickIntervalMs;
+        if (ftfEff.stacks >= maxStacks) ftfEff.data.nextTickIn = tickIntervalMs;
       }
       ctx.metadata['dotHandled'] = true;
       return;
@@ -180,20 +209,25 @@ export function initDotT3(): void {
 
     // ── Smoldering Ember ──────────────────────────────────────────────────────
     if (hasPassive(player, 'dot.smoldering-ember')) {
-      applyStatusEffect(monsterState, {
+      const se = applyStatusEffect(monsterState, {
         id: DOT_EFFECT_ID, maxStacks, instanced: false,
-        sourceId: player.id,
-        data: { damagePerStack: dmgPerStack, nextTickIn: DOT_TICK_MS, tickIntervalMs: DOT_TICK_MS },
+        sourceId: player.id, remainingMs: durationMs, refreshable: true,
+        data: { damagePerStack: dmgPerStack, nextTickIn: tickIntervalMs, tickIntervalMs },
       });
+      se.data.damagePerStack = dmgPerStack;
+      se.data.tickIntervalMs = tickIntervalMs;
+      if (se.stacks >= maxStacks) se.data.nextTickIn = tickIntervalMs;
+
       const burnStacks = getTotalStacks(monsterState, DOT_EFFECT_ID);
       let smolder = getStatusEffect(monsterState, SMOLDER_EFFECT);
       if (!smolder) {
         smolder = applyStatusEffect(monsterState, {
           id: SMOLDER_EFFECT, maxStacks: 0, instanced: false,
-          remainingMs: -1, sourceId: player.id, data: {},
+          remainingMs: durationMs, sourceId: player.id, data: {},
         });
       }
       smolder.stacks = burnStacks;
+      smolder.remainingMs = durationMs; // refresh alongside the dot
       ctx.metadata['dotHandled'] = true;
       return;
     }
@@ -221,11 +255,14 @@ export function initDotT3(): void {
         });
         console.log(`[Conflagration] ${player.id}: triggered — ${confDmg}/tick × ${CONF_TICKS}`);
       } else {
-        applyStatusEffect(monsterState, {
+        const cf = applyStatusEffect(monsterState, {
           id: DOT_EFFECT_ID, maxStacks, instanced: false,
-          sourceId: player.id,
-          data: { damagePerStack: dmgPerStack, nextTickIn: DOT_TICK_MS, tickIntervalMs: DOT_TICK_MS },
+          sourceId: player.id, remainingMs: durationMs, refreshable: true,
+          data: { damagePerStack: dmgPerStack, nextTickIn: tickIntervalMs, tickIntervalMs },
         });
+        cf.data.damagePerStack = dmgPerStack;
+        cf.data.tickIntervalMs = tickIntervalMs;
+        if (cf.stacks >= maxStacks) cf.data.nextTickIn = tickIntervalMs;
       }
       ctx.metadata['dotHandled'] = true;
       return;
@@ -242,8 +279,8 @@ export function initDotT3(): void {
           remainingMs: -1, sourceId: player.id,
           data: {
             damagePerStack: PERM_START_DMG,
-            nextTickIn:     DOT_TICK_MS,
-            tickIntervalMs: DOT_TICK_MS,
+            nextTickIn:     tickIntervalMs,
+            tickIntervalMs,
             t3Perm:         1,
             currentDmg:     PERM_START_DMG,
           },
@@ -255,11 +292,15 @@ export function initDotT3(): void {
 
     // ── Freezing Cold ─────────────────────────────────────────────────────────
     if (hasPassive(player, 'dot.freezing-cold')) {
-      applyStatusEffect(monsterState, {
+      const fc = applyStatusEffect(monsterState, {
         id: DOT_EFFECT_ID, maxStacks, instanced: false,
-        sourceId: player.id,
-        data: { damagePerStack: dmgPerStack, nextTickIn: DOT_TICK_MS, tickIntervalMs: DOT_TICK_MS },
+        sourceId: player.id, remainingMs: durationMs, refreshable: true,
+        data: { damagePerStack: dmgPerStack, nextTickIn: tickIntervalMs, tickIntervalMs },
       });
+      fc.data.damagePerStack = dmgPerStack;
+      fc.data.tickIntervalMs = tickIntervalMs;
+      if (fc.stacks >= maxStacks) fc.data.nextTickIn = tickIntervalMs;
+
       if (!hasStatusEffect(monsterState, FROZEN_EFFECT)) {
         applyStatusEffect(monsterState, {
           id: CHILL_EFFECT, maxStacks: CHILL_MAX, instanced: false,
@@ -289,11 +330,13 @@ export function initDotT3(): void {
         removeStatusEffect(monsterState, DOT_EFFECT_ID);
         console.log(`[GlacialFract] ${player.id}: shatter ${currentStacks} stacks → +${burst}`);
       }
-      applyStatusEffect(monsterState, {
+      const gf = applyStatusEffect(monsterState, {
         id: DOT_EFFECT_ID, maxStacks, instanced: false,
-        sourceId: player.id,
-        data: { damagePerStack: dmgPerStack, nextTickIn: DOT_TICK_MS, tickIntervalMs: DOT_TICK_MS },
+        sourceId: player.id, remainingMs: durationMs, refreshable: true,
+        data: { damagePerStack: dmgPerStack, nextTickIn: tickIntervalMs, tickIntervalMs },
       });
+      gf.data.damagePerStack = dmgPerStack;
+      gf.data.tickIntervalMs = tickIntervalMs;
       ctx.metadata['dotHandled'] = true;
       return;
     }
@@ -337,7 +380,7 @@ function updatePermafrost(world: World, dt: number): void {
     effect.data.nextTickIn -= dt;
     if (effect.data.nextTickIn > 0) continue;
 
-    effect.data.nextTickIn = DOT_TICK_MS;
+    effect.data.nextTickIn = effect.data.tickIntervalMs ?? DOT_TICK_MS;
     effect.data.currentDmg = Math.min(PERM_MAX_DMG, effect.data.currentDmg + PERM_RAMP);
 
     const monster = world.monsters.get(monsterId);

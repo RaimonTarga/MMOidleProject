@@ -2,6 +2,7 @@ import express from 'express';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 import cors from 'cors';
+import path from 'path';
 
 import { World } from './world/World';
 import { GAME_CONFIG } from '@mmo-idle/shared';
@@ -11,12 +12,12 @@ import { craftRecipe } from './systems/crafting';
 import type {
   ServerToClientEvents,
   ClientToServerEvents,
-  PlayerState,
   EquipmentSlot,
   NodeSnapshot,
 } from '@mmo-idle/shared';
-import { emptyEquipment } from '@mmo-idle/shared';
 import { makeCombatState, setCounter } from './systems/combatState';
+import { db, runMigrations } from './db/index';
+import { findOrCreateAccount, getOrCreateCharacter, saveCharacter } from './db/playerRepo';
 import { initEnergyArchetype } from './systems/energyPrototype';
 import { initCooldownArchetype } from './systems/cooldownPrototype';
 import { initReloadArchetype } from './systems/reloadPrototype';
@@ -30,13 +31,19 @@ import { initDebuffMechanics } from './systems/debuffMechanics';
 // ── Setup ─────────────────────────────────────────────
 
 const app = express();
-app.use(cors({ origin: 'http://localhost:3000' }));
+// Allow all origins — this is a private LAN/friends game, no auth tokens in cookies.
+app.use(cors({ origin: true }));
 app.use(express.json());
+
+// Serve the production client build when it exists.
+// Run `pnpm --filter @mmo-idle/client build` to generate it.
+const clientDist = path.resolve(__dirname, '../../client/dist');
+app.use(express.static(clientDist));
 
 const httpServer = createServer(app);
 
 const io = new Server<ClientToServerEvents, ServerToClientEvents>(httpServer, {
-  cors: { origin: 'http://localhost:3000' },
+  cors: { origin: true },
 });
 
 // ── COMBAT EFFECTS ────────────────────────────────────
@@ -70,6 +77,13 @@ initDefenseSystems();
 // ── DEBUFF MECHANICS ──────────────────────────────────────────────────────────
 // Registers onDamageTaken listeners that apply debuff multipliers (vulnerability).
 initDebuffMechanics();
+
+// ── DATABASE ──────────────────────────────────────────
+
+runMigrations();
+
+// accountId → socketId map for the auto-save interval
+const socketByAccount = new Map<string, string>();
 
 // ── WORLD ─────────────────────────────────────────────
 
@@ -124,74 +138,26 @@ setInterval(() => {
   }
 }, BROADCAST_MS);
 
+// ── AUTO-SAVE ─────────────────────────────────────────
+// Persist every connected player every 30 s as a crash safety net.
+setInterval(() => {
+  for (const [accountId, socketId] of socketByAccount) {
+    const player = world.players.get(socketId);
+    if (player) saveCharacter(db, accountId, player);
+  }
+}, 30_000);
+
 // ── SOCKETS ──────────────────────────────────────────
 
 io.on('connection', (socket) => {
-  const spawnX = Math.random() * GAME_CONFIG.NODE_WIDTH;
-  const spawnY = Math.random() * GAME_CONFIG.NODE_HEIGHT;
+  const auth = socket.handshake.auth as { accountId?: string; displayName?: string };
+  const accId      = auth.accountId   ?? socket.id;
+  const playerName = (auth.displayName ?? `Hero_${socket.id.slice(0, 5)}`).slice(0, 32);
 
-  const player: PlayerState = {
-    id: socket.id,
-    name: `Hero_${socket.id.slice(0, 5)}`,
-    x: spawnX,
-    y: spawnY,
-    targetX: spawnX,
-    targetY: spawnY,
-    hp: GAME_CONFIG.PLAYER_MAX_HP,
-    maxHp: GAME_CONFIG.PLAYER_MAX_HP,
-    attack: GAME_CONFIG.PLAYER_ATTACK,
-    plating: GAME_CONFIG.PLAYER_PLATING,
-    damageReduction: 0,
-    evasion: 0,
-    evasionCount: 0,
-    shields: [],
-    attackRange: GAME_CONFIG.PLAYER_ATTACK_RANGE,
-    attackCooldown: GAME_CONFIG.PLAYER_ATTACK_COOLDOWN,
-    lastAttackAt: 0,
-    attackTargetId: null,
-    auto: false,
-    nodeId: world.nodeId,
-    essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
-    level: 0,
-    skillPoints: 0,
-    unlockedSkills: [],
-    passives: {},
-    cadenceSpeedStacks: 0,
-    currentSkillTier: 0,
-    hpRegen: GAME_CONFIG.PLAYER_HP_REGEN,
-    speed: GAME_CONFIG.PLAYER_SPEED,
-    attackStyle: 'slash',
-    inventory: ['basic-sword'],
-    equipment: emptyEquipment(),
-    biomeKills: {},
-    recipeProgress: {},
-    combatArchetype:      null,
-    selectedClass:        null,
-    selectedSubVariant:   null,
-    selectedRange:        null,
-    cadenceCount:         0,
-    cadenceThreshold:     0,
-    cadenceEmpoweredArmed: false,
-    ammoCount:            0,
-    ammoMax:              0,
-    executionReady:       false,
-    executionCooldownPct: 0,
-    energyCount:          0,
-    empoweredReady:       false,
-    targetDotStacks:      0,
-    targetChillStacks:    0,
-    sacredBuffActive:     false,
-    sacredBuffPct:        0,
-    isChanneling:         false,
-    channelingPct:        0,
-    activeBuffs:          [],
-    questProgress:        {},
-    playerTier:           0,
-  };
+  findOrCreateAccount(db, accId, playerName);
+  const player = getOrCreateCharacter(db, accId, playerName, socket.id);
 
-  // Auto-equip the starter weapon so new players immediately benefit from it
-  equipItem(player, 'basic-sword');
-
+  socketByAccount.set(accId, socket.id);
   world.players.set(socket.id, player);
   world.playerCombatState.set(socket.id, makeCombatState());
 
@@ -200,7 +166,7 @@ io.on('connection', (socket) => {
   socket.on('player:move', ({ x, y }) => {
     const p = world.players.get(socket.id);
     if (!p) return;
-    if (p.isChanneling) return; // position locked during Channeled Beam
+    if (p.isChanneling) return;
     p.targetX = x;
     p.targetY = y;
   });
@@ -245,6 +211,9 @@ io.on('connection', (socket) => {
   });
 
   socket.on('disconnect', () => {
+    const p = world.players.get(socket.id);
+    if (p) saveCharacter(db, accId, p);
+    socketByAccount.delete(accId);
     world.players.delete(socket.id);
     world.playerCombatAt.delete(socket.id);
     world.playerCombatState.delete(socket.id);

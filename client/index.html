@@ -57,12 +57,42 @@
         inset: 0;
         pointer-events: none;
       }
+
+      /* Mobile HUD mount — hidden on desktop, covers canvas on mobile */
+      #mobile-hud {
+        display: none;
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        z-index: 15;
+      }
+
+      /* ── Mobile/tablet layout (≤ 1100px) ───────────────────────────── */
+      @media (max-width: 1100px) {
+        #left-sidebar,
+        #right-sidebar   { display: none !important; }
+
+        #auto-btn-overlay { display: none !important; }
+
+        #mobile-hud { display: block; }
+
+        /* Buff bar — fixed so it tracks the same bars as MobileHUD */
+        #buff-overlay {
+          position: fixed !important;
+          inset: unset !important;
+          top: 48px;
+          bottom: calc(64px + env(safe-area-inset-bottom, 0px));
+          left: 0;
+          right: 0;
+        }
+      }
     </style>
   </head>
   <body>
     <div id="app">
       <div id="left-sidebar"></div>
       <div id="game-wrapper">
+        <div id="mobile-hud"></div>
         <div id="buff-overlay"></div>
         <div id="auto-btn-overlay" style="position:absolute;inset:0;pointer-events:none;z-index:20"></div>
       </div>

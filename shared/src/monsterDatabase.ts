@@ -30,6 +30,18 @@ export interface MonsterDefinition {
   };
   /** True for dungeon boss monsters — affects spawn logic and client visuals. */
   isBoss?: boolean;
+  /**
+   * If set, this monster applies a DoT effect on every hit.
+   * damagePerStack: damage dealt per stack per tick.
+   * maxStacks: maximum stacks that can be on the target simultaneously.
+   * tickIntervalMs: time between DoT ticks in milliseconds.
+   */
+  dotEffect?: {
+    damagePerStack: number;
+    maxStacks: number;
+    tickIntervalMs: number;
+    durationMs?: number;
+  };
 }
 
 export const MONSTER_DATABASE: Map<string, MonsterDefinition> = new Map([
@@ -163,6 +175,7 @@ export const MONSTER_DATABASE: Map<string, MonsterDefinition> = new Map([
     behavior: 'melee', attackStyle: 'poison', biome: 'swamp',
     rewards: { essence: 7, essenceType: 'purple', level: 1 },
     ai: { wanderRadius: 160, leashRange: 530, idleMinMs: 2000, idleMaxMs: 5500 },
+    dotEffect: { damagePerStack: 2, maxStacks: 3, tickIntervalMs: 1000 },
   }],
   ['mud-toad', {
     id: 'mud-toad', name: 'Mud Toad', color: 0x778844,
@@ -171,6 +184,7 @@ export const MONSTER_DATABASE: Map<string, MonsterDefinition> = new Map([
     behavior: 'melee', attackStyle: 'poison', biome: 'swamp',
     rewards: { essence: 8, essenceType: 'purple', level: 1 },
     ai: { wanderRadius: 180, leashRange: 550, idleMinMs: 1800, idleMaxMs: 5000 },
+    dotEffect: { damagePerStack: 3, maxStacks: 3, tickIntervalMs: 1000 },
   }],
 
   // ── Swamp T2 ───────────────────────────────────────────────────────────────
@@ -672,6 +686,7 @@ export const MONSTER_DATABASE: Map<string, MonsterDefinition> = new Map([
     behavior: 'melee', attackStyle: 'poison', biome: 'swamp',
     rewards: { essence: 100, essenceType: 'purple', level: 5 },
     ai: { wanderRadius: 100, leashRange: 700, idleMinMs: 2000, idleMaxMs: 5500 },
+    dotEffect: { damagePerStack: 4, maxStacks: 4, tickIntervalMs: 1000 },
   }],
 
   // Caverns: most defensive T1 boss — serious plating, hits hardest, very slow
