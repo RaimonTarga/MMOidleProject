@@ -35,7 +35,8 @@
       "PowerShell(ngrok config *)",
       "PowerShell($ngrokPath = \\(Get-ChildItem \"C:\\\\Users\\\\osaif\\\\AppData\\\\Local\\\\Microsoft\\\\WinGet\\\\Packages\" -Recurse -Filter \"ngrok.exe\" -ErrorAction SilentlyContinue | Select-Object -First 1\\).FullName; if \\(-not $ngrokPath\\) { $ngrokPath = \\(Get-ChildItem \"C:\\\\ProgramData\\\\ngrok\" -Filter \"ngrok.exe\" -ErrorAction SilentlyContinue | Select-Object -First 1\\).FullName }; Write-Host $ngrokPath)",
       "PowerShell(& \"C:\\\\Users\\\\osaif\\\\AppData\\\\Local\\\\Microsoft\\\\WinGet\\\\Packages\\\\Ngrok.Ngrok_Microsoft.Winget.Source_8wekyb3d8bbwe\\\\ngrok.exe\" config add-authtoken 3E7XwyQgRVXhmkBBH7yXWmMlBl6_4ggZHNeqL6HJPSB6XiYZm 2>&1)",
-      "PowerShell(& \"C:\\\\Users\\\\osaif\\\\AppData\\\\Local\\\\Microsoft\\\\WinGet\\\\Packages\\\\Ngrok.Ngrok_Microsoft.Winget.Source_8wekyb3d8bbwe\\\\ngrok.exe\" update 2>&1)"
+      "PowerShell(& \"C:\\\\Users\\\\osaif\\\\AppData\\\\Local\\\\Microsoft\\\\WinGet\\\\Packages\\\\Ngrok.Ngrok_Microsoft.Winget.Source_8wekyb3d8bbwe\\\\ngrok.exe\" update 2>&1)",
+      "Bash(Test-Path *)"
     ]
   }
 }

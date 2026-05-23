@@ -66,7 +66,7 @@ Key design axioms:
 | Client build | Vite 5 | Dev server on port 3000 |
 | Server runtime | Node.js + tsx | No compile step in dev |
 | Realtime | Socket.IO 4 | One room per node instance |
-| Database | SQLite + Drizzle ORM | Not yet wired up |
+| Database | SQLite + Drizzle ORM | `server/src/db/` — wired up |
 | Package manager | pnpm workspaces | Always `pnpm install` from repo root |
 
 ---
@@ -77,6 +77,7 @@ Key design axioms:
 pnpm install              # once, or after adding deps
 pnpm dev:server           # http://localhost:4000
 pnpm dev:client           # http://localhost:3000
+pnpm play                 # build client + start server (LAN / production mode)
 # map-editor.html — open directly in browser
 ```
 
@@ -167,6 +168,8 @@ Runs end of every tick; populates `player.activeBuffs: PlayerBuff[]` from combat
 
 Components: `HUD.tsx` (sidebars, StatPanel, BuffBar, EssencePanel), `BuffBar.tsx` (52px icon tiles, clock-sweep overlay, stack badges), `StatPanel.tsx` (DoT pip display, chill/frozen indicators), `MapPanel.tsx` (11×11 grid, dungeon tiles, boss info), `QuestPanel.tsx` (kill counts, XP/level).
 
+**Mobile/tablet layout (≤ 1100px):** Sidebars hidden; `MobileHUD` takes over — `position: fixed` top bar (HP, name, zone), large AUTO COMBAT button fixed at bottom, right-side slide-out drawer for SKILL/BAG/FORGE/MAP/QUEST. All mobile bars use `position: fixed` (not `absolute`) to avoid being hidden by browser chrome on Android/iOS. Map panel stacks vertically and scales tile size to `(100vw - 68px) / 5`. `clientAuth.ts` falls back from `crypto.randomUUID()` to `crypto.getRandomValues()` so account IDs generate over plain HTTP (LAN play).
+
 **Debug range overlay:** `debugGraphics` layer (depth 8). `debugPlayerRange` = yellow-green, `debugEnemyRanges` = orange/blue/red per monster. Toggled via Debug panel via `CustomEvent`.
 
 ---
@@ -207,6 +210,8 @@ Shield `duration-ms` = `interval-ms` for clean 1:1 rotation. Omit/-1 for permane
 | `defense.hit-to-dot-pct` | Fraction of incoming direct damage deferred as DoT |
 | `defense.debuff-resistance` | Reduces debuff duration/potency |
 | `defense.cleanse-stacks/interval-ms` | Periodic stack removal |
+
+**Damage debt drain** (`defenseSystems.ts`): fires once per second (via `debtTick` cooldown) — not proportionally every tick. Each second drains 25% of the current pool; `Math.round(damage) < 1` is skipped. Absorb and burst pools use proportional per-tick drain but zero out when the pool falls below 0.5 to avoid asymptotic trickle.
 
 ---
 
@@ -330,7 +335,9 @@ Each player hit applies 1 DoT stack; stacks tick damage at configurable interval
 
 **Max-stacks refresh:** Hitting a maxed target resets `nextTickIn` to the full interval instead of silently capping.
 
-**Monster → Player DoT:** `MonsterDefinition.dotEffect?: { damagePerStack, maxStacks, tickIntervalMs }`. Any monster with this field applies DoT stacks on each hit. The player-side tick loop in `updateDotArchetype` processes `playerCombatState`; DoT bypasses plating but `damageReduction` (%) and `dot-resistance` both apply. Respawn clears all status effects via `resetCombatState`. Currently wired: `bog-slime` (2/3/1000), `mud-toad` (3/3/1000), `bog-sovereign` (4/4/1000).
+**DoT duration:** Player-applied DoT stacks expire after `DOT_DURATION_MS = 4500 ms` of no hits. Duration is refreshed (not stacked) on every hit via `remainingMs + refreshable: true` in `applyStatusEffect`. Permafrost is the only exception (`remainingMs: -1`, truly permanent). Duration is tunable per-skill-node via `dot.duration-ms` passive; monster-applied DoTs use `monsterDef.dotEffect.durationMs ?? 4500`.
+
+**Monster → Player DoT:** `MonsterDefinition.dotEffect?: { damagePerStack, maxStacks, tickIntervalMs, durationMs? }`. Any monster with this field applies DoT stacks on each hit. The player-side tick loop in `updateDotArchetype` processes `playerCombatState`; DoT bypasses plating but `damageReduction` (%) and `dot-resistance` both apply. Respawn clears all status effects via `resetCombatState`. Currently wired: `bog-slime` (2/3/1000), `mud-toad` (3/3/1000), `bog-sovereign` (4/4/1000).
 
 **T3 paths:**
 - Poison: Poison Explosion (20-stack cap → 10-tick burst), Eternal Doom (no cap, diminishing returns formula), Invigorating Toxins (stacks boost player ATK+speed)
@@ -357,16 +364,19 @@ Each player hit applies 1 DoT stack; stacks tick damage at configurable interval
 - Skill tree T0–T7 (T4–7 generated placeholders)
 - Death/respawn; node transitions
 - Client HUD: stat panel, buff bar (category-distinct icons), map (11×11 + dungeon/boss), skill tree, inventory, crafting, quest panel
+- Mobile/tablet responsive HUD (≤ 1100px): fixed top bar, fixed AUTO button, slide-out menu drawer
 - AoE framework; empowered AoE splash (80px, 0.5× ATK); debug range overlay
 - Split-tick loop (10 Hz logic, 5 Hz broadcast); combat event queue for animations
 - Monster wander smoothing (80px hard-snap threshold)
+- SQLite persistence (`server/src/db/`) — accounts + characters, load on connect, save on disconnect + 30 s auto-save
+- DoT duration system — stacks expire after 4.5 s without a hit; damage debt drains once/second
+- LAN play — client served as static files from Express; `pnpm play` builds + starts
 
 ## What is NOT built (do not hallucinate these)
 
 - [ ] Discord OAuth / login screen / character select
-- [x] SQLite persistence — `server/src/db/` (Drizzle + better-sqlite3). `accounts` + `characters` tables. Load on connect, save on disconnect + 30 s auto-save. Client sends `accountId` UUID (localStorage) + `displayName` in socket auth.
 - [ ] Multiple World instances / node routing
-- [ ] Deployment
+- [ ] Deployment (Caddy + PM2 on Hetzner — next priority after playtesting)
 - [ ] World map click-to-navigate
 - [ ] Cooldown heavy T3 (Entropy Collapse, Singular Extraction, Channeled Beam)
 - [ ] Reload T3 server logic (all 9 designed, none implemented)
@@ -378,12 +388,11 @@ Each player hit applies 1 DoT stack; stacks tick damage at configurable interval
 ## Project state
 
 **Priority order:**
-1. SQLite persistence (player state: stats, inventory, skills, position, quests)
-2. Deploy (Caddy + PM2 on Hetzner)
-3. Playtest T1 balance
-4. T2 biome/monster design
-5. Implement Reload T3
-6. Implement Cooldown heavy T3
+1. Deploy (Caddy + PM2 on Hetzner)
+2. Playtest T1 balance
+3. T2 biome/monster design
+4. Implement Reload T3
+5. Implement Cooldown heavy T3
 
 **T1 biome threat profiles:**
 
