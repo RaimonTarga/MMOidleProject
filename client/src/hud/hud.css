@@ -512,7 +512,7 @@
 .auto-btn {
   width: 100%;
   margin-top: 10px;
-  padding: 7px 8px;
+  padding: 11px 10px;
   background: linear-gradient(135deg, rgba(32, 26, 70, 0.85), rgba(18, 14, 48, 0.92));
   border: 1px solid rgba(105, 88, 195, 0.18);
   box-shadow:
@@ -520,10 +520,10 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.04);
   color: #8888bb;
   font-family: monospace;
-  font-size: 11px;
+  font-size: 13px;
   cursor: pointer;
   border-radius: 4px;
-  letter-spacing: 0.8px;
+  letter-spacing: 1px;
   transition: all 0.18s ease;
 }
 

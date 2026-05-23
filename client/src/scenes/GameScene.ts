@@ -14,14 +14,15 @@ import type {
 import { GAME_CONFIG, NODE_BIOMES, BIOME_DATABASE } from '@mmo-idle/shared';
 import { hudBus } from '../hudBus';
 import { combatLog } from '../combatLog';
+import { ATLAS_KEY, getPlayerFrame, getMonsterFrame, getPlayerShadowColor, getPlayerShadowOffset, getMonsterShadowOffset, BIOME_TEXTURES } from '../sprites';
 
 type GameSocket = Socket<ServerToClientEvents, ClientToServerEvents>;
 
 const SERVER_URL = 'http://localhost:4000';
 
 // ── Minimap layout constants ───────────────────────────────────────────────────
-const MM_W   = 160;  // minimap width  (px, screen-space)
-const MM_H   = 120;  // minimap height (px, screen-space)
+const MM_W   = 220;  // minimap width  (px, screen-space)
+const MM_H   = 165;  // minimap height (px, screen-space)
 const MM_PAD = 8;    // gap from the screen edges
 
 // ── Node exit computation ──────────────────────────────────────────────────────
@@ -49,7 +50,15 @@ const GATE_THICK = 20;       // thickness — must match server EXIT_TRIGGER
 const GATE_COLOR = 0x00ffdd; // bright cyan
 
 interface Visual {
-  sprite: Phaser.GameObjects.Rectangle;
+  sprite: Phaser.GameObjects.Image | Phaser.GameObjects.Rectangle;
+  /** Last frame name used — tracked so sprite can be swapped when a player unlocks a class. */
+  currentFrame?: string | null;
+  /** Ellipse drawn below the sprite — black for monsters, level-colored for players. */
+  shadow: Phaser.GameObjects.Ellipse;
+  /** Px below sprite center where the shadow sits — set at creation, read every frame. */
+  shadowOffsetY: number;
+  /** Last playerTier used to color the player shadow — skips redundant setFillStyle calls. */
+  shadowLevel?: number;
   label: Phaser.GameObjects.Text;
   hpBar: Phaser.GameObjects.Graphics;
   cdBar: Phaser.GameObjects.Graphics;
@@ -104,6 +113,9 @@ export class GameScene extends Phaser.Scene {
   private exitMarkers!: Phaser.GameObjects.Graphics;
   /** Full-world rectangle tinted with the current biome background color. */
   private bgRect!: Phaser.GameObjects.Rectangle;
+  private bgGrid!: Phaser.GameObjects.TileSprite;
+  /** TileSprite for biomes that have a texture — null when the current biome uses the solid rect. */
+  private bgTile: Phaser.GameObjects.TileSprite | null = null;
   /** Reusable graphics layer for debug range circles — cleared and redrawn each frame. */
   private debugGraphics!: Phaser.GameObjects.Graphics;
   private debugPlayerRange = false;
@@ -116,6 +128,13 @@ export class GameScene extends Phaser.Scene {
 
   constructor() {
     super({ key: 'GameScene' });
+  }
+
+  preload() {
+    this.load.atlas(ATLAS_KEY, '/assets/sprites.png', '/assets/sprites.json');
+    for (const key of Object.values(BIOME_TEXTURES)) {
+      this.load.image(key, `/assets/${key}.png`);
+    }
   }
 
   create() {
@@ -283,7 +302,7 @@ export class GameScene extends Phaser.Scene {
     g.generateTexture('grid-cell', cell, cell);
     g.destroy();
 
-    this.add
+    this.bgGrid = this.add
       .tileSprite(
         GAME_CONFIG.NODE_WIDTH  / 2,
         GAME_CONFIG.NODE_HEIGHT / 2,
@@ -377,9 +396,19 @@ export class GameScene extends Phaser.Scene {
         v.baseY = v.targetY;
       }
       sprite.setPosition(v.baseX + v.lungeOffsetX, v.baseY + v.lungeOffsetY);
+      v.shadow.setPosition(v.baseX + v.lungeOffsetX, v.baseY + v.lungeOffsetY + v.shadowOffsetY);
 
       // Keep the camera anchor on the base position so lunge offsets don't move the camera.
       if (v === ownVp) this.cameraTarget.setPosition(v.baseX, v.baseY);
+
+      // Update player shadow style when tier changes (level 0 = fill, 1+ = stroke).
+      if (v.playerState) {
+        const lvl = v.playerState.playerTier;
+        if (lvl !== v.shadowLevel) {
+          this.applyPlayerShadowStyle(v.shadow, lvl);
+          v.shadowLevel = lvl;
+        }
+      }
 
       // HP bar
       const barY    = sprite.y - v.barOffsetY;
@@ -404,6 +433,10 @@ export class GameScene extends Phaser.Scene {
         }
       }
 
+      // HP bar border
+      hpBar.lineStyle(1, 0x000000, 0.75);
+      hpBar.strokeRect(sprite.x - 16.5, barY - 0.5, 33, 5);
+
       // Cooldown bar — only visible while attacking
       cdBar.clear();
       if (v.attackTargetId !== null) {
@@ -414,9 +447,38 @@ export class GameScene extends Phaser.Scene {
         cdBar.fillRect(sprite.x - 16, cdBarY, 32, 3);
         cdBar.fillStyle(cdColor);
         cdBar.fillRect(sprite.x - 16, cdBarY, Math.round(32 * cdPct), 3);
+        cdBar.lineStyle(1, 0x000000, 0.75);
+        cdBar.strokeRect(sprite.x - 16.5, cdBarY - 0.5, 33, 4);
       }
 
       label.setPosition(sprite.x - 16, barY - 12);
+    }
+  }
+
+  /**
+   * Attempts to create an Image from the game atlas for the given frame.
+   * Returns null if the atlas isn't loaded or the frame doesn't exist,
+   * so the caller can fall back to a placeholder rectangle.
+   */
+  private tryMakeImage(
+    x: number, y: number,
+    frame: string | null,
+    displayW: number, displayH: number,
+  ): Phaser.GameObjects.Image | null {
+    if (!frame) return null;
+    if (!this.textures.exists(ATLAS_KEY)) return null;
+    if (!this.textures.get(ATLAS_KEY).has(frame)) return null;
+    return this.add.image(x, y, ATLAS_KEY, frame).setDisplaySize(displayW, displayH);
+  }
+
+  /** Level 0 → black filled ellipse (same as monsters). Level 1+ → bright stroke outline, no fill. */
+  private applyPlayerShadowStyle(shadow: Phaser.GameObjects.Ellipse, level: number): void {
+    if (level === 0) {
+      shadow.setFillStyle(0x000000, 0.45);
+      shadow.setStrokeStyle();
+    } else {
+      shadow.setFillStyle();
+      shadow.setStrokeStyle(3, getPlayerShadowColor(level), 1);
     }
   }
 
@@ -425,20 +487,28 @@ export class GameScene extends Phaser.Scene {
     let vp = this.players.get(player.id);
 
     if (!vp) {
+      const frame  = getPlayerFrame(player);
       const color  = isOwn ? 0x44ff88 : 0x4488ff;
-      const sprite = this.add.rectangle(player.x, player.y, 32, 48, color);
+      const shadowOffsetY = getPlayerShadowOffset();
+      const shadow = this.add.ellipse(player.x, player.y + shadowOffsetY, 52, 14).setDepth(3);
+      this.applyPlayerShadowStyle(shadow, player.playerTier);
+      const sprite = (this.tryMakeImage(player.x, player.y, frame, 64, 64)
+        ?? this.add.rectangle(player.x, player.y, 64, 64, color)).setDepth(4);
       const label  = this.add.text(0, 0, player.name, {
         color: '#ffffff', fontSize: '10px', fontFamily: 'monospace',
-      });
-      const hpBar = this.add.graphics();
-      const cdBar = this.add.graphics();
+        stroke: '#000000', strokeThickness: 3,
+      }).setDepth(5);
+      const hpBar = this.add.graphics().setDepth(5);
+      const cdBar = this.add.graphics().setDepth(5);
       vp = {
-        sprite, label, hpBar, cdBar,
+        sprite, shadow, shadowOffsetY, label, hpBar, cdBar,
+        currentFrame:   frame,
+        shadowLevel:    player.playerTier,
         targetX: player.targetX, targetY: player.targetY,
         baseX: player.x, baseY: player.y,
         lungeOffsetX: 0, lungeOffsetY: 0,
         hp: player.hp, maxHp: player.maxHp,
-        speed: player.speed, barOffsetY: 34,
+        speed: player.speed, barOffsetY: 40,
         attackCooldown: player.attackCooldown,
         lastAttackAt:   player.lastAttackAt,
         attackTargetId: player.attackTargetId,
@@ -476,6 +546,16 @@ export class GameScene extends Phaser.Scene {
           this.cancelAutoPath(); // ended up somewhere unexpected
         }
       }
+    }
+
+    // Swap sprite when the player's class/variant changes (e.g. after unlocking a root node).
+    const newFrame = getPlayerFrame(player);
+    if (newFrame !== vp.currentFrame) {
+      vp.sprite.destroy();
+      const color = isOwn ? 0x44ff88 : 0x4488ff;
+      vp.sprite = (this.tryMakeImage(vp.baseX, vp.baseY, newFrame, 64, 64)
+        ?? this.add.rectangle(vp.baseX, vp.baseY, 64, 64, color)).setDepth(4);
+      vp.currentFrame = newFrame;
     }
 
     const prevPlayerAttackAt  = vp.lastAttackAt;
@@ -533,21 +613,29 @@ export class GameScene extends Phaser.Scene {
   private upsertMonster(monster: MonsterState) {
     let vm = this.monsters.get(monster.id);
     if (!vm) {
-      const spriteSize = monster.isBoss ? 54 : 32;
-      const labelColor = monster.isBoss ? '#ffcc44' : '#ffaaaa';
-      const sprite = this.add.rectangle(monster.x, monster.y, spriteSize, spriteSize, monster.color);
+      const spriteSize  = monster.isBoss ? 80 : 64;
+      const shadowW     = monster.isBoss ? 64 : 52;
+      const shadowH     = monster.isBoss ? 18 : 14;
+      const labelColor  = monster.isBoss ? '#ffcc44' : '#ffaaaa';
+      const frame  = getMonsterFrame(monster.monsterTypeId);
+      const shadowOffsetY = getMonsterShadowOffset(monster.monsterTypeId);
+      const shadow = this.add.ellipse(monster.x, monster.y + shadowOffsetY, shadowW, shadowH,
+        0x000000, monster.isBoss ? 0.55 : 0.45).setDepth(0);
+      const sprite = (this.tryMakeImage(monster.x, monster.y, frame, spriteSize, spriteSize)
+        ?? this.add.rectangle(monster.x, monster.y, spriteSize, spriteSize, monster.color)).setDepth(1);
       const label  = this.add.text(0, 0, monster.isBoss ? `⚠ ${monster.name}` : monster.name, {
         color: labelColor, fontSize: monster.isBoss ? '11px' : '10px', fontFamily: 'monospace',
         fontStyle: monster.isBoss ? 'bold' : 'normal',
-      });
-      const hpBar = this.add.graphics();
-      const cdBar = this.add.graphics();
-      vm = { sprite, label, hpBar, cdBar,
+        stroke: '#000000', strokeThickness: 3,
+      }).setDepth(2);
+      const hpBar = this.add.graphics().setDepth(2);
+      const cdBar = this.add.graphics().setDepth(2);
+      vm = { sprite, shadow, shadowOffsetY, label, hpBar, cdBar,
              targetX: monster.targetX, targetY: monster.targetY,
              baseX: monster.x, baseY: monster.y,
              lungeOffsetX: 0, lungeOffsetY: 0,
              hp: monster.hp, maxHp: monster.maxHp,
-             speed: monster.speed, barOffsetY: monster.isBoss ? 38 : 26,
+             speed: monster.speed, barOffsetY: monster.isBoss ? 50 : 40,
              attackCooldown:     monster.attackCooldown,
              lastAttackAt:       monster.lastAttackAt,
              attackTargetId:     monster.attackTargetId,
@@ -602,7 +690,31 @@ export class GameScene extends Phaser.Scene {
     if (!biomeInfo) return;
     const biome = BIOME_DATABASE.get(biomeInfo.biomeGroup);
     if (!biome) return;
-    this.bgRect.setFillStyle(biome.backgroundColor);
+
+    const textureKey = BIOME_TEXTURES[biomeInfo.biomeGroup];
+
+    // Destroy the old tile whenever the biome changes — recreate below if needed.
+    if (this.bgTile) {
+      this.bgTile.destroy();
+      this.bgTile = null;
+    }
+
+    if (textureKey && this.textures.exists(textureKey)) {
+      this.bgTile = this.add
+        .tileSprite(
+          GAME_CONFIG.NODE_WIDTH  / 2,
+          GAME_CONFIG.NODE_HEIGHT / 2,
+          GAME_CONFIG.NODE_WIDTH,
+          GAME_CONFIG.NODE_HEIGHT,
+          textureKey,
+        )
+        .setDepth(-11);
+      this.bgRect.setVisible(false);
+      this.bgGrid.setVisible(false);
+    } else {
+      this.bgRect.setVisible(true).setFillStyle(biome.backgroundColor);
+      this.bgGrid.setVisible(true);
+    }
   }
 
   /**
@@ -1393,6 +1505,7 @@ export class GameScene extends Phaser.Scene {
     const v = map.get(id);
     if (!v) return;
     this.tweens.killTweensOf(v);
+    v.shadow.destroy();
     v.sprite.destroy();
     v.label.destroy();
     v.hpBar.destroy();

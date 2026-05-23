@@ -22,7 +22,7 @@ export function AutoCombatButton() {
     }}>
       <button
         className={`auto-btn${player.auto ? ' active' : ''}`}
-        style={{ width: 'auto', padding: '8px 22px', fontSize: 12, letterSpacing: '1.2px', marginTop: 0 }}
+        style={{ width: 'auto', padding: '12px 36px', fontSize: 14, letterSpacing: '1.5px', marginTop: 0 }}
         onClick={() => hudBus.requestAutoToggle()}
         title="Toggle server-side auto combat"
       >
