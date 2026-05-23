@@ -109,13 +109,22 @@ export function updateCombat(world: World, dt: number, now: number) {
         } else {
           // Retaliation aggro: if the monster had no target (e.g. player attacked from
           // outside pull range), it now fixates on the player who hit it.
+          // Guard: only aggro if the player is within leash range of the monster's
+          // spawn. Beyond that the monster can't reach them — it would immediately
+          // leash and return, enabling safe static-range cheese.
           const ai = world.monsterAI.get(target.id);
           if (ai && ai.aggroTargetId === null) {
-            ai.aggroTargetId = player.id;
-            ai.lastAggroAt   = now;
-            // Keep the attacker's combat timer fresh so OOC regen doesn't tick while
-            // the monster is chasing them toward attack range.
-            world.playerCombatAt.set(player.id, now);
+            const pdx = player.x - ai.spawnX;
+            const pdy = player.y - ai.spawnY;
+            if (pdx * pdx + pdy * pdy <= ai.leashRange * ai.leashRange) {
+              ai.aggroTargetId = player.id;
+              ai.lastAggroAt   = now;
+              // Keep the attacker's combat timer fresh so OOC regen doesn't tick
+              // while the monster is chasing them toward attack range.
+              world.playerCombatAt.set(player.id, now);
+            }
+            // Outside leash range: hit dealt, monster ignores the attacker.
+            // Monster regen continues uninterrupted so whittling is not viable.
           }
         }
       }

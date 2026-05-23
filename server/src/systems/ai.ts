@@ -3,9 +3,10 @@ import type { MonsterState, PlayerState } from '@mmo-idle/shared';
 import { getNodePlayers } from '../world/nodeQueries';
 import { NODE_REGISTRY } from '../world/nodeRegistry';
 
-const KITE_GRACE_MS  = 3_000;  // ms chasing before speed ramp begins
-const KITE_RAMP_RATE = 0.25;   // speed multiplier gain per second past grace
-const KITE_MAX_MULT  = 2.5;    // cap on kite speed multiplier
+const KITE_GRACE_MS  = 1_500;  // ms chasing before speed ramp begins
+const KITE_RAMP_RATE = 0.50;   // speed multiplier gain per second past grace
+const KITE_MAX_MULT  = 3.0;    // cap on kite speed multiplier
+const RETURN_SPEED_MULT = 1.6; // how fast monsters snap back to spawn
 
 function findAggro(monster: MonsterState, world: World): PlayerState | null {
   const pullSq = monster.pullRange ** 2;
@@ -101,7 +102,10 @@ export function updateMonsters(world: World, dt: number, now: number) {
     } else {
       // No valid aggro target — reset kite state and return/wander.
       ai.kiteTimer  = 0;
-      monster.speed = ai.baseSpeed;
+      // Run at boosted speed while returning so the re-engage window is small.
+      monster.speed = monster.state === 'returning'
+        ? Math.round(ai.baseSpeed * RETURN_SPEED_MULT)
+        : ai.baseSpeed;
 
       switch (monster.state) {
         case 'chasing':
@@ -119,6 +123,7 @@ export function updateMonsters(world: World, dt: number, now: number) {
             monster.y       = ai.spawnY;
             monster.targetX = ai.spawnX;
             monster.targetY = ai.spawnY;
+            monster.speed   = ai.baseSpeed;
             monster.state   = 'idle';
             ai.idleUntil    = now + randBetween(ai.idleMinMs, ai.idleMaxMs);
           }

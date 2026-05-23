@@ -118,13 +118,15 @@ function SkillNodeCard({
     <div
       className={`skill-node skill-node--${status}${compact ? ' skill-node--compact' : ''}`}
       onClick={handleClick}
-      title={node.description}
     >
       <div className="skill-node__name">{node.name}</div>
       <div className="skill-node__meta">
         <span className="skill-node__cost">{node.cost} pt{node.cost !== 1 ? 's' : ''}</span>
         {effects && <span className="skill-node__effects">{effects}</span>}
       </div>
+      {!compact && node.description && (
+        <div className="skill-node__desc">{node.description}</div>
+      )}
     </div>
   );
 }
