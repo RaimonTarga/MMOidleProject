@@ -5,7 +5,7 @@ import cors from 'cors';
 import path from 'path';
 
 import { World } from './world/World';
-import { GAME_CONFIG, TEST_ROOM_NODE_ID, ESSENCE_TYPES } from '@mmo-idle/shared';
+import { GAME_CONFIG, TEST_ROOM_NODE_ID, ESSENCE_TYPES, emptyEquipment } from '@mmo-idle/shared';
 import { unlockSkill } from './systems/skills';
 import { equipItem, unequipItem } from './systems/inventory';
 import { craftRecipe } from './systems/crafting';
@@ -15,7 +15,7 @@ import type {
   EquipmentSlot,
   NodeSnapshot,
 } from '@mmo-idle/shared';
-import { makeCombatState, setCounter } from './systems/combatState';
+import { makeCombatState, resetCombatState, setCounter } from './systems/combatState';
 import { db, runMigrations } from './db/index';
 import { findOrCreateAccount, getOrCreateCharacter, saveCharacter } from './db/playerRepo';
 import { initEnergyArchetype } from './systems/energyPrototype';
@@ -25,6 +25,7 @@ import { initDotArchetype } from './systems/dotPrototype';
 import { registerClassMechanic, activateClassMechanics } from './systems/classMechanics';
 import { initCadenceArchetype } from './systems/cadencePrototype';
 import { initWeaponEffects } from './systems/weaponEffects';
+import { recalculatePlayerStats } from './systems/stats';
 import { initDefenseSystems } from './systems/defenseSystems';
 import { initDebuffMechanics } from './systems/debuffMechanics';
 import { IS_DEV } from './env';
@@ -248,6 +249,47 @@ io.on('connection', (socket) => {
       world.respawnPlayer(socket.id);
     });
   }
+
+  socket.on('debug:resetProgress', () => {
+    const p = world.players.get(socket.id);
+    if (!p) return;
+
+    // Wipe all progression
+    p.unlockedSkills   = [];
+    p.passives         = {};
+    p.skillPoints      = 0;
+    p.selectedClass    = null;
+    p.selectedSubVariant = null;
+    p.selectedRange    = null;
+    p.currentSkillTier = 0;
+    p.combatArchetype  = null;
+
+    p.biomeXP          = {};
+    p.biomeLevel       = {};
+    p.unlockedRecipes  = [];
+
+    p.inventory        = [];
+    p.equipment        = emptyEquipment();
+
+    // Reset archetype runtime state
+    p.cadenceCount           = 0;
+    p.cadenceThreshold       = 0;
+    p.cadenceEmpoweredArmed  = false;
+    p.cadenceSpeedStacks     = 0;
+    p.ammoCount              = 0;
+    p.ammoMax                = 0;
+    p.executionReady         = false;
+    p.executionCooldownPct   = 0;
+    p.energyCount            = 0;
+    p.empoweredReady         = false;
+
+    // Rebuild stats from scratch and reset combat state
+    recalculatePlayerStats(p);
+    const cs = world.playerCombatState.get(socket.id);
+    if (cs) resetCombatState(cs);
+
+    world.respawnPlayer(socket.id);
+  });
 
   socket.on('disconnect', () => {
     const p = world.players.get(socket.id);

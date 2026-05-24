@@ -383,7 +383,7 @@ export const NODE_BIOMES: Record<string, { biomeGroup: string; biomeTier: number
 
   // Plains T1 — East
   'node-5-6': { biomeGroup: 'plains',     biomeTier: 1 },
-  'node-5-7': { biomeGroup: 'plains',     biomeTier: 1, isDungeon: true },   // plains-champion
+  'node-5-7': { biomeGroup: 'plains',     biomeTier: 1 },   // no boss for now
   'node-6-6': { biomeGroup: 'plains',     biomeTier: 1 },
   'node-6-7': { biomeGroup: 'plains',     biomeTier: 1 },
 
@@ -688,6 +688,8 @@ export interface ClientToServerEvents {
   'debug:goToTestRoom': () => void;
   /** Dev-only: leave the debug test room and return to the clearing. Server ignores in production. */
   'debug:leaveTestRoom': () => void;
+  /** Dev-only: wipe all character progression (skills, items, biome XP, recipes) and respawn. Server ignores in production. */
+  'debug:resetProgress': () => void;
 }
 
 // ─── Game balance constants ───────────────────────────────────────────────────

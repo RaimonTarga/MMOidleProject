@@ -249,6 +249,10 @@ export class GameScene extends Phaser.Scene {
       this.socket.emit('debug:leaveTestRoom');
     });
 
+    window.addEventListener('hud:resetProgress', () => {
+      this.socket.emit('debug:resetProgress');
+    });
+
     // ── Click to move ──────────────────────────────────────────────────────
     this.input.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
       if (!this.myId) return;
