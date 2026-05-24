@@ -232,6 +232,23 @@ export function syncPlayerBuffs(world: World): void {
       }
     }
 
+    // ── Slow / root debuff ────────────────────────────────────────────────────
+    if (cs) {
+      const slow = getStatusEffect(cs, 'slow');
+      if (slow) {
+        const isRoot    = slow.data['speedMult'] === 0;
+        const totalMs   = slow.data['totalMs'] ?? 1;
+        const durationPct = slow.remainingMs >= 0 ? (slow.remainingMs / totalMs) * 100 : -1;
+        buffs.push({
+          id:          isRoot ? 'debuff-root' : 'debuff-slow',
+          label:       isRoot ? 'Root' : 'Slow',
+          stacks:      1,
+          durationPct,
+          color:       isRoot ? '#9944ff' : '#44aaff',
+        });
+      }
+    }
+
     player.activeBuffs = buffs;
   }
 }

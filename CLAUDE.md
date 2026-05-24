@@ -26,8 +26,8 @@ Key design axioms:
 ├── shared/src/
 │   ├── index.ts            ← ALL shared types, socket event maps, constants
 │   ├── skillTree.ts        ← SKILL_TREE map (tiers 0-3 hand-authored, 4-7 generated)
-│   ├── biomeDatabase.ts    ← BiomeDefinition, BIOME_DATABASE, bossPoolByTier
-│   ├── monsterDatabase.ts  ← MonsterDefinition (isBoss?, dotEffect?, bossScript?), MONSTER_DATABASE; BossAction/BossPhase/BossScript types
+│   ├── biomeDatabase.ts    ← BiomeDefinition (mobDensity?), BIOME_DATABASE, bossPoolByTier
+│   ├── monsterDatabase.ts  ← MonsterDefinition (isBoss?, dotEffect?, chargeOnAggro?, slowEffect?, evadeEvery?, bossScript?), MONSTER_DATABASE; BossAction/BossPhase/BossScript types
 │   ├── itemDatabase.ts
 │   └── recipeDatabase.ts
 ├── client/src/
@@ -89,7 +89,7 @@ pnpm play                 # build client + start server (LAN / production mode)
 Everything that crosses the client/server boundary lives here. Start here for any new entity or socket event.
 
 - `PlayerState`, `MonsterState`, `NodeSnapshot` — entity shapes
-- `CombatEvent` — `player-hit` and `player-kill` queued per-node between broadcasts
+- `CombatEvent` — `player-hit`, `player-kill`, `monster-dodge` queued per-node between broadcasts
 - Databases (read-only): `ITEM_DATABASE`, `MONSTER_DATABASE`, `BIOME_DATABASE`, `RECIPE_DATABASE`, `SKILL_TREE`
 - `ServerToClientEvents`, `ClientToServerEvents` — socket event maps
 - `GAME_CONFIG` — all tuning constants
@@ -183,7 +183,24 @@ Components: `HUD.tsx` (sidebars, StatPanel, BuffBar, EssencePanel), `BuffBar.tsx
 
 **11×11 grid**, center `node-5-5` is T0 clearing. Chebyshev distance → tier (0=T0, 1–2=T1, 3=T2, 4=T3, 5=T4). `nodeRegistry.ts` auto-generates all 121 nodes from `NODE_BIOMES`; exits computed from coordinates.
 
-**Dungeons:** Non-boss monsters scaled ×2 HP, ×1.6 ATK in `World.createMonster()`. `World.ensureBoss(nodeId)` keeps exactly one boss per dungeon node (doesn't count toward `MONSTERS_PER_NODE`). Bosses: `isBoss: true` in `MONSTER_DATABASE`, listed in `BiomeDefinition.bossPoolByTier`.
+**Dungeons:** Non-boss monsters scaled ×2 HP, ×1.6 ATK in `World.createMonster()`. `World.ensureBoss(nodeId)` keeps exactly one boss per dungeon node (doesn't count toward mob density). Bosses: `isBoss: true` in `MONSTER_DATABASE`, listed in `BiomeDefinition.bossPoolByTier`.
+
+**Mob density:** `BiomeDefinition.mobDensity?: number` sets the spawn target per node. Falls back to `GAME_CONFIG.MONSTERS_PER_NODE` (12) when absent. `World.getMobDensity(nodeId)` reads it via `NODE_BIOMES → BIOME_DATABASE`. Both `init()` and `ensurePopulation()` use it. Density values: plains 16, forest 13, swamp 10, mountain 7, cave 5, jungle 15, tundra 6, desert 14, volcanic 5, necropolis 13, abyss 5, clearing 6.
+
+**Boss respawn timer:** Bosses respawn 30 s after death. `World.bossRespawnAt: Map<string, number>` maps `nodeId → earliest respawn timestamp`. Set in `grantMonsterRewards` on every boss kill. `ensureBoss` skips spawning until `Date.now() >= bossRespawnAt`.
+
+---
+
+## Monster mechanics
+
+### Charge on aggro (`chargeOnAggro`)
+`MonsterDefinition.chargeOnAggro?: { speedMult: number; durationMs: number }` — burst speed when the monster first acquires an aggro target (both pull-range and retaliation). Stored as `ai.chargeRemainingMs` in `MonsterAI`. During the charge, kite ramp does **not** accumulate (`ai.kiteTimer` stays frozen) so the ramp starts fresh from zero after the burst. Currently wired: boar (3.5×, 1.2 s), ancient-wolf (3×, 1 s), stone-eagle (3.5×, 1 s), stampede-bull (2.5×, 1 s), jungle-ape (2.8×, 1.1 s).
+
+### Slow / root (`slowEffect`)
+`MonsterDefinition.slowEffect?: { speedMult: number; durationMs: number }` — applied as a refreshing `'slow'` status effect in `playerCombatState` on every successful hit. `movement.ts` reads it and scales the player's effective speed by `speedMult`. `speedMult: 0` = full root (complete stop); `0 < speedMult < 1` = partial slow. Effect stores `{ speedMult, totalMs }` in `data` so `buffSync.ts` can compute the clock-sweep percentage. Displayed as a blue "Slow" or purple "Root" tile in the buff bar. Currently wired: sand-scorpion (0.5×, 2.5 s), stone-basilisk (root, 1.2 s).
+
+### Deterministic evasion (`evadeEvery`)
+`MonsterDefinition.evadeEvery?: number` — the monster dodges every Nth incoming player hit. Tracked in `monsterCombatState.counters['hitsTaken']`, which persists for the monster's entire lifetime and resets only on death. The evasion check runs before `makeCombatContext`; the attack cooldown is still consumed. Pushes a `{ kind: 'monster-dodge', monsterId }` event (client-side display not yet implemented — hit silently produces no damage number). Convention: `evadeEvery` must be ≥ 5 (maximum 1-in-5 dodge rate). Currently wired: giant-spider (5), mire-stalker (5), dune-asp (5).
 
 ---
 
@@ -387,7 +404,7 @@ Each player hit applies 1 DoT stack; stacks tick damage at configurable interval
 
 **DoT duration:** Player-applied DoT stacks expire after `DOT_DURATION_MS = 4500 ms` of no hits. Duration is refreshed (not stacked) on every hit via `remainingMs + refreshable: true` in `applyStatusEffect`. Permafrost is the only exception (`remainingMs: -1`, truly permanent). Duration is tunable per-skill-node via `dot.duration-ms` passive; monster-applied DoTs use `monsterDef.dotEffect.durationMs ?? 4500`.
 
-**Monster → Player DoT:** `MonsterDefinition.dotEffect?: { damagePerStack, maxStacks, tickIntervalMs, durationMs? }`. Any monster with this field applies DoT stacks on each hit. The player-side tick loop in `updateDotArchetype` processes `playerCombatState`; DoT bypasses plating but `damageReduction` (%) and `dot-resistance` both apply. Respawn clears all status effects via `resetCombatState`. Currently wired: `bog-slime` (2/3/1000), `mud-toad` (3/3/1000), `bog-sovereign` (4/4/1000).
+**Monster → Player DoT:** `MonsterDefinition.dotEffect?: { damagePerStack, maxStacks, tickIntervalMs, durationMs? }`. Any monster with this field applies DoT stacks on each hit. The player-side tick loop in `updateDotArchetype` processes `playerCombatState`; DoT bypasses plating but `damageReduction` (%) and `dot-resistance` both apply. Respawn clears all status effects via `resetCombatState`. Currently wired: `bog-slime` (2/3/1000), `mud-toad` (3/3/1000), `bog-sovereign` (4/4/1000), `swamp-hydra` (4/4/1000), `jungle-snake` (3/4/1000), `jungle-blowdarter` (2/5/1000).
 
 **T3 paths:**
 - Poison: Poison Explosion (20-stack cap → 10-tick burst), Eternal Doom (no cap, diminishing returns formula), Invigorating Toxins (stacks boost player ATK+speed)
@@ -405,17 +422,20 @@ Each player hit applies 1 DoT stack; stacks tick damage at configurable interval
 ## What is built
 
 - 11×11 world, monster AI (aggro, kite prevention, leash), auto-targeting
-- Dungeon nodes T1–T3 with scaled enemies and persistent bosses
+- Dungeon nodes T1–T3 with scaled enemies and persistent bosses; 30 s boss respawn timer
+- Per-biome mob density (`mobDensity`); `World.getMobDensity(nodeId)` helper
+- Monster charge-on-aggro (`chargeOnAggro`), player slow/root (`slowEffect`), deterministic evasion (`evadeEvery`) — see Monster mechanics section
 - Boss fight scripting framework (`bossScripts.ts`) — data-driven phases, repeating timers, enrage/regen/shield/summon/stat-buff actions
 - Quest system (kill-count quests → XP → skill points); QuestPanel
 - All 5 class archetypes with T0 roots and T1–T2 nodes; T3 fully implemented for Cadence, Energy, DoT; Cooldown light+balanced; Reload designed only
 - Defense/recovery system (5 recovery archetypes, all `defense.*` passives)
-- Weapon effects: Chaotic Axe, Sacred Cross, Ashbrand Blade (30% DoT conversion, 5 non-instanced stacks, `computeScaledDotDamage`)
+- Weapon families: Chaotic (axe + greataxe), Sacred (cross + consecrated), Burn (ashbrand + cinderfang + frostmourne); `onHitDamage` stat for flat on-hit weapons (Stinger Fang)
+- T1 and T2 weapons (8 T2 weapons at biome level 9)
 - Inventory/equipment (4 slots), crafting with biome XP unlock gates
 - Biome XP power-curve system (`biomeXpForLevel`); two-tab crafting panel (Biome Progress + Forge)
 - Skill tree T0–T7 (T4–7 generated placeholders)
 - Death/respawn; node transitions
-- Client HUD: stat panel, buff bar (category-distinct icons), map (11×11 + dungeon/boss), skill tree, inventory, crafting, quest panel
+- Client HUD: stat panel, buff bar (category-distinct icons, slow/root debuff tiles), map (11×11 + dungeon/boss), skill tree, inventory, crafting, quest panel
 - Mobile/tablet responsive HUD (≤ 1100px): fixed top bar, fixed AUTO button, slide-out menu drawer
 - AoE framework; empowered AoE splash (80px, 0.5× ATK); debug range overlay
 - Generic 5×5 spritesheet effect animation pipeline for status overlays and one-shot effects
@@ -424,6 +444,7 @@ Each player hit applies 1 DoT stack; stacks tick damage at configurable interval
 - SQLite persistence (`server/src/db/`) — accounts + characters, load on connect, save on disconnect + 30 s auto-save
 - DoT duration system — stacks expire after 4.5 s without a hit; damage debt drains once/second
 - LAN play — client served as static files from Express; `pnpm play` builds + starts
+- T1 density-based balance pass; full T2 monster redesign (7 biomes × 3 mobs each, all new mechanics)
 
 ## What is NOT built (do not hallucinate these)
 
@@ -435,6 +456,8 @@ Each player hit applies 1 DoT stack; stacks tick damage at configurable interval
 - [ ] Reload T3 server logic (all 9 designed, none implemented)
 - [ ] T4–7 mechanics (all placeholders)
 - [ ] StatPanel update for evasion/shields/absorb/burst-regen display
+- [ ] Client-side `monster-dodge` visual (server pushes the event; client ignores it — no floating DODGE text yet)
+- [ ] T3 monster balance pass (tundra T3 mobs are placeholder stats)
 
 ---
 
@@ -442,22 +465,36 @@ Each player hit applies 1 DoT stack; stacks tick damage at configurable interval
 
 **Priority order:**
 1. Deploy (Caddy + PM2 on Hetzner)
-2. Playtest T1 balance
-3. T2 biome/monster design
-4. Implement Reload T3
-5. Implement Cooldown heavy T3
+2. Playtest T1/T2 balance
+3. Implement Reload T3
+4. Implement Cooldown heavy T3
+5. T3 biome/monster design
 
-**T1 biome threat profiles:**
+**T1 biome threat profiles (density-balanced):**
 
-| Biome | Threat profile | Plating |
-|---|---|---|
-| Plains | Balanced jack-of-all-trades | 0 |
-| Forest | Fast attacks, low defense — burst it | 0 |
-| Swamp | Attrition — slow, defensive, applies poison DoT | 2 |
-| Caverns | High defense, hard slow hits — spikiest T1 | 4–5 |
-| Mountain | Cliff Hoppers (fast+pull) + Ridge Archers (long range) | 0 |
+| Biome | Density | Threat profile | Key defense | eHP range |
+|---|---|---|---|---|
+| Plains | 16 | Balanced, no specialization; boar charges on aggro | none | 55–75 |
+| Forest | 13 | Fast sustained attacks, low defense — burst-able | none | 60–70 |
+| Swamp | 10 | Attrition — DoT on every hit, defensive stats | PLT 2–3, DR 4% | 120–175 |
+| Mountain | 7 | Cliff Hoppers (fast+high pull) + Ridge Archers (130 range) | none | 175–200 |
+| Caverns | 5 | High defense, hard slow hits — spikiest T1 | PLT 4–7, DR 5–10% | 230–340 |
 
-T1 bosses: 400–700 HP, 14–22 ATK. Jungle first appears T2; ex-jungle T1 nodes (SE quadrant) are extended Plains.
+**T2 biome threat profiles:**
+
+| Biome | Density | Threat profile | New mechanics |
+|---|---|---|---|
+| Plains | 16 | Low-eHP speedsters + aerial ranged threat | stampede-bull charges, savanna-hawk (range 165) |
+| Forest | 13 | Charging wolves + DR sentinel + long-range sprite | ancient-wolf charges, canopy-sprite (range 190) |
+| Swamp | 10 | Multi-head DoT tank + ranged witch + evasive stalker | hydra DoT (4×4), bog-witch (range 180), mire-stalker (evade/5) |
+| Mountain | 7 | DR bruiser + dive-bombing charger + extreme-range archer | peak-archer (range 240 — longest in game) |
+| Caverns | 5 | Evasive spider + colossal troll + ranged gargoyle | spider (evade/5), cave-gargoyle (range 200) |
+| Jungle | 15 | Dense DoT — snake, charging ape, ranged blowdarter | all three apply poison DoT |
+| Desert | 14 | Control biome — scorpion slows, basilisk roots, asp evades | slowEffect + evadeEvery; tundra moved to T3 |
+
+Tundra is T3-minimum (no T2 tundra nodes). Desert fills the control-biome slot at T2.
+
+T1 bosses: 400–700 HP, 14–22 ATK. T2 bosses: not yet balanced (stats inherited from original design).
 
 ---
 
@@ -475,3 +512,6 @@ T1 bosses: 400–700 HP, 14–22 ATK. Jungle first appears T2; ex-jungle T1 node
 - **Reload multiplier is a final layer** — apply `* 0.5` to `attack` and `attackCooldown` at the end of `recalculatePlayerStats()`, never additively
 - **Boss script stat modifications use save-original pattern** — `ActiveBossEffect` stores the pre-buff stat value; restored on expiry. Overlapping same-stat effects from multiple sources are not supported (last write wins)
 - **`biomeXpForLevel` is the only XP threshold function** — `BIOME_XP_PER_LEVEL` no longer exists; never use flat XP per level
+- **Slow effect stores `totalMs` in data** — when applying `'slow'` status effect, always include `data: { speedMult, totalMs }` so `buffSync.ts` can compute the clock-sweep `durationPct`
+- **`evadeEvery` minimum is 5** — never set lower; convention is max 1-in-5 dodge rate
+- **Per-biome density via `mobDensity`** — never hardcode `GAME_CONFIG.MONSTERS_PER_NODE` in spawn loops; always go through `World.getMobDensity(nodeId)`
