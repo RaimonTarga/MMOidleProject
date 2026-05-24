@@ -299,6 +299,12 @@ export interface MonsterState {
   behavior: string;
   /** Future: allows elite/boss monsters to use archetype mechanics. */
   combatArchetype?: CombatArchetype;
+  /**
+   * Names of currently active boss script effects (e.g. 'enrage', 'shield', 'regen').
+   * Populated by bossScripts.ts each tick; only present on isBoss monsters.
+   * Clients can use this to render buff icons or visual indicators.
+   */
+  bossEffects?: string[];
 }
 
 // ─── Node / zone definitions ──────────────────────────────────────────────────
