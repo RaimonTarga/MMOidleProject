@@ -826,6 +826,34 @@
   letter-spacing: 0.04em;
 }
 
+.debug-btn {
+  width: 100%;
+  margin: 3px 0;
+  padding: 4px 6px;
+  background: linear-gradient(135deg, rgba(60, 12, 8, 0.85), rgba(36, 6, 4, 0.92));
+  border: 1px solid rgba(180, 45, 25, 0.28);
+  color: #bb4422;
+  font-family: monospace;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  cursor: pointer;
+  border-radius: 3px;
+  transition: all 0.15s ease;
+}
+
+.debug-btn:hover {
+  background: linear-gradient(135deg, rgba(90, 18, 10, 0.92), rgba(54, 10, 6, 0.96));
+  border-color: rgba(220, 70, 40, 0.42);
+  color: #ff5533;
+}
+
+.debug-btn.active {
+  background: linear-gradient(135deg, rgba(120, 24, 12, 0.92), rgba(80, 14, 8, 0.96));
+  border-color: rgba(255, 85, 51, 0.5);
+  color: #ff7755;
+  text-shadow: 0 0 6px rgba(255, 85, 51, 0.32);
+}
+
 /* ── Mobile HUD ────────────────────────────────────────────────────── */
 
 .mob-topbar {

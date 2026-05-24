@@ -3,7 +3,7 @@ import { useState, useEffect, useMemo } from 'react';
 import type { PlayerState, EssenceType } from '@mmo-idle/shared';
 import {
   RECIPE_DATABASE, NODE_BIOMES, BIOME_UNLOCK_THRESHOLDS,
-  ESSENCE_TYPES, ESSENCE_COLORS,
+  ESSENCE_TYPES, ESSENCE_COLORS, TEST_ROOM_NODE_ID,
 } from '@mmo-idle/shared';
 import type { ItemStats } from '@mmo-idle/shared';
 import { hudBus } from '../hudBus';
@@ -105,18 +105,30 @@ export function CraftingPanel({ player, onClose }: Props) {
 
   const biomeGroup = player ? (NODE_BIOMES[player.nodeId]?.biomeGroup ?? null) : null;
   const biomeTier  = player ? (NODE_BIOMES[player.nodeId]?.biomeTier  ?? null) : null;
+  const isTestRoom = player?.nodeId === TEST_ROOM_NODE_ID;
   const kills      = (player && biomeGroup) ? (player.biomeKills[biomeGroup] ?? 0) : 0;
-  const unlockedTier = (player && biomeGroup) ? (player.recipeProgress[biomeGroup] ?? 0) : 0;
+  const unlockedTier = isTestRoom
+    ? (player?.playerTier ?? 0)
+    : ((player && biomeGroup) ? (player.recipeProgress[biomeGroup] ?? 0) : 0);
 
   const thresholds = biomeGroup ? (BIOME_UNLOCK_THRESHOLDS[biomeGroup] ?? []) : [];
   const nextThreshold = thresholds.find(t => t.tier > unlockedTier);
 
   const recipes = useMemo(() => {
+    if (isTestRoom) {
+      return Array.from(RECIPE_DATABASE.values())
+        .filter(r => r.requiredTier <= unlockedTier)
+        .sort((a, b) =>
+          a.requiredTier - b.requiredTier ||
+          a.recipeGroup.localeCompare(b.recipeGroup) ||
+          a.slot.localeCompare(b.slot),
+        );
+    }
     if (!biomeGroup) return [];
     return Array.from(RECIPE_DATABASE.values())
       .filter(r => r.recipeGroup === biomeGroup)
       .sort((a, b) => a.requiredTier - b.requiredTier || a.slot.localeCompare(b.slot));
-  }, [biomeGroup]);
+  }, [biomeGroup, isTestRoom, unlockedTier]);
 
   function handleOverlayClick(e: React.MouseEvent) {
     if (e.target === e.currentTarget) onClose();
@@ -150,11 +162,17 @@ export function CraftingPanel({ player, onClose }: Props) {
                 <div className="craft-biome">
                   <div className="craft-biome__title">
                     <span className="craft-biome__name">
-                      {biomeGroup.charAt(0).toUpperCase() + biomeGroup.slice(1)} T{biomeTier}
+                      {isTestRoom
+                        ? `Test Forge T${unlockedTier}`
+                        : `${biomeGroup.charAt(0).toUpperCase() + biomeGroup.slice(1)} T${biomeTier}`}
                     </span>
-                    <span className="craft-biome__kills">{kills} kills</span>
+                    <span className="craft-biome__kills">
+                      {isTestRoom ? 'Infinite essence' : `${kills} kills`}
+                    </span>
                   </div>
-                  {nextThreshold ? (
+                  {isTestRoom ? (
+                    <div className="craft-biome__maxed">All recipes up to your current tier are available.</div>
+                  ) : nextThreshold ? (
                     <div className="craft-biome__progress">
                       <div
                         className="craft-biome__bar"
@@ -170,7 +188,9 @@ export function CraftingPanel({ player, onClose }: Props) {
                 </div>
 
                 {recipes.length === 0 ? (
-                  <div className="craft-empty">No recipes for this biome.</div>
+                  <div className="craft-empty">
+                    {isTestRoom ? 'Gain a tier point to unlock test forge recipes.' : 'No recipes for this biome.'}
+                  </div>
                 ) : (
                   <div className="craft-list">
                     {recipes.map(recipe => {

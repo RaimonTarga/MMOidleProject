@@ -317,6 +317,8 @@ export interface NodeDefinition {
   isDungeon: boolean;
 }
 
+export const TEST_ROOM_NODE_ID = 'node-test-room';
+
 /**
  * 11×11 grid map. Center is node-5-5 (T0 clearing).
  * Chebyshev distance from center determines tier band:
@@ -340,6 +342,7 @@ export const NODE_BIOMES: Record<string, { biomeGroup: string; biomeTier: number
 
   // ── T0 center — starting clearing ─────────────────────────────────────────
   'node-5-5': { biomeGroup: 'clearing',   biomeTier: 0 },
+  [TEST_ROOM_NODE_ID]: { biomeGroup: 'testroom', biomeTier: 0 },
 
   // ── T1 band (Chebyshev distance 1–2) — 6 biomes × 4 nodes ────────────────
   // Forest T1 — NE quadrant
@@ -659,6 +662,10 @@ export interface ClientToServerEvents {
   'inventory:unequip': (slot: EquipmentSlot) => void;
   /** Attempt to craft a recipe by ID. Server validates and applies. */
   'crafting:craftRecipe': (recipeId: string) => void;
+  /** Dev-only: teleport the player to the debug test room. Server ignores in production. */
+  'debug:goToTestRoom': () => void;
+  /** Dev-only: leave the debug test room and return to the clearing. Server ignores in production. */
+  'debug:leaveTestRoom': () => void;
 }
 
 // ─── Game balance constants ───────────────────────────────────────────────────

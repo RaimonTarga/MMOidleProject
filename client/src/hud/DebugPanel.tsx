@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import type { PlayerState } from '@mmo-idle/shared';
+import { TEST_ROOM_NODE_ID } from '@mmo-idle/shared';
+import { hudBus } from '../hudBus';
 
 // ── Entry model ───────────────────────────────────────────────────────────────
 // Add new section builders below; the component renders any DebugSection[]
@@ -107,12 +109,28 @@ export function DebugPanel({ player }: Props) {
     });
   }
 
+  const inTestRoom = player?.nodeId === TEST_ROOM_NODE_ID;
+
   return (
     <div className="debug-panel">
       <button className="debug-panel__toggle" onClick={() => setOpen(o => !o)}>
         <span className="debug-panel__title">DEBUG</span>
         <span className="debug-panel__chevron">{open ? '▼' : '▶'}</span>
       </button>
+
+      {open && import.meta.env.DEV && (
+        <div className="debug-section">
+          <button
+            className={`debug-btn${inTestRoom ? ' active' : ''}`}
+            onClick={() => {
+              if (inTestRoom) hudBus.requestLeaveTestRoom();
+              else            hudBus.requestGoToTestRoom();
+            }}
+          >
+            {inTestRoom ? 'LEAVE TEST ROOM' : 'GO TO TEST ROOM'}
+          </button>
+        </div>
+      )}
 
       {open && sections.map(section => (
         <div key={section.id} className="debug-section">
