@@ -55,24 +55,31 @@ export function updateAutoTargets(world: World) {
       continue;
     }
 
-    // Monster is actively chasing this player — stand still and let it walk
-    // into attack range. Counter-moving toward an approaching monster:
-    //   • causes positional oscillation (both close, both move, overshoot)
-    //   • eliminates the ranged advantage for Energy/Reload builds
-    //   • wastes movement budget that the player can't cancel
+    // If the monster is chasing this player, decide whether to hold or advance
+    // based on whether it will stop within the player's own attack range.
+    // Monsters stop at ~80% of their attackRange (matching the ai.ts stopDist).
+    //
+    // Example — melee (60px) vs ranged archer (130px):
+    //   archer stops at 130 * 0.80 = 104px. 104 > 60 → player MUST advance.
+    //   Holding still means getting sniped without being able to hit back.
+    //
+    // Example — ranged (190px) vs any monster:
+    //   worst case 130 * 0.80 = 104px ≤ 190 → player holds, monster walks in.
+    //   Advancing would just push the ranged player into unnecessary melee range.
     const targetAI = world.monsterAI.get(target.id);
-    if (
+    const monsterApproaching =
       targetAI?.aggroTargetId === player.id &&
-      (target.state === 'chasing' || target.state === 'attacking')
-    ) {
+      (target.state === 'chasing' || target.state === 'attacking');
+
+    if (monsterApproaching && target.attackRange * 0.80 <= player.attackRange) {
+      // Monster will walk into our range — stand still and let it come.
       player.targetX = player.x;
       player.targetY = player.y;
       continue;
     }
 
-    // Monster is not approaching — close to a comfortable attack position.
-    // 75% of attack range gives enough buffer for monster movement between
-    // ticks without requiring the player to constantly re-close the gap.
+    // Need to close distance: monster is not approaching, or it's ranged and
+    // will stop outside our reach. Move to 75% of our attack range for buffer.
     const dist     = Math.sqrt(distSq);
     const stopDist = player.attackRange * 0.75;
     player.targetX = target.x - (dx / dist) * stopDist;
