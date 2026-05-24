@@ -1,4 +1,4 @@
-import type { PlayerState, MonsterState } from '@mmo-idle/shared';
+import type { PlayerState } from '@mmo-idle/shared';
 import { MONSTER_DATABASE } from '@mmo-idle/shared';
 import { registerCombatListener } from './combatPipeline';
 import { getFlag, setFlag, getResource, setResource } from './combatState';
@@ -7,6 +7,7 @@ import {
   getTotalStacks, hasStatusEffect,
 } from './statusEffects';
 import { grantMonsterRewards } from './rewards';
+import { applyKnockback } from './knockback';
 import type { CombatState } from './combatState';
 import type { World } from '../world/World';
 
@@ -23,6 +24,17 @@ export const SMOLDER_EFFECT = 'dot-smolder';
 export const CHILL_EFFECT   = 'dot-chill';
 export const FROZEN_EFFECT  = 'dot-frozen';
 export const CONF_EFFECT_ID = 'dot-conf';
+
+const STATUS_EFFECT_TO_CLIENT_ID: Array<[string, string]> = [
+  [FROZEN_EFFECT, 'freeze'],
+];
+const GLACIAL_FRACTURE_EFFECT_ID = 'glacial-fracture';
+const GLACIAL_FRACTURE_BUILDUP_FRAMES = 10;
+const GLACIAL_FRACTURE_KNOCKBACK_PX = 120;
+const GLACIAL_FRACTURE_KNOCKBACK_MS = 350;
+const PERMAFROST_EFFECT_ID = 'permafrost';
+const PERMAFROST_TIERS = 5;
+const PERMAFROST_FRAMES_PER_TIER = 5;
 
 // ── Light: Poison Explosion (dot-light-t3-a) ──────────────────────────────────
 const PE_MAX_STACKS  = 20;
@@ -54,10 +66,9 @@ const CONF_TICK_MS       = 500;
 const CONF_DMG_FACTOR    = 2;
 
 // ── Heavy: Permafrost (dot-heavy-t3-a) ───────────────────────────────────────
-const PERM_MAX_STACKS = 1;
-const PERM_START_DMG  = 3;
-const PERM_RAMP       = 3;
-const PERM_MAX_DMG    = 35;
+const PERM_MAX_STACKS    = 1;
+const PERM_MAX_HITS      = 35;   // hits to reach max damage (35% of ATK)
+const PERM_PCT_PER_HIT   = 0.01; // +1% of ATK per hit
 
 // ── Heavy: Freezing Cold (dot-heavy-t3-b) ────────────────────────────────────
 const CHILL_MAX        = 3;
@@ -94,6 +105,11 @@ export function getSmolderMult(monsterState: CombatState): number {
 /** Damage multiplier from Frozen status (1.35 if frozen, 1.0 otherwise). */
 export function getFrozenMult(monsterState: CombatState): number {
   return hasStatusEffect(monsterState, FROZEN_EFFECT) ? (1 + FREEZE_BONUS) : 1;
+}
+
+export function isMonsterFrozen(world: World, monsterId: string): boolean {
+  const monsterState = world.monsterCombatState.get(monsterId);
+  return monsterState ? hasStatusEffect(monsterState, FROZEN_EFFECT) : false;
 }
 
 // ── Init ──────────────────────────────────────────────────────────────────────
@@ -273,16 +289,16 @@ export function initDotT3(): void {
       const existing = getStatusEffect(monsterState, DOT_EFFECT_ID);
       if (existing && existing.data.t3Perm) {
         existing.sourceId = player.id; // update kill credit
+        existing.data.hits = Math.min(PERM_MAX_HITS, (existing.data.hits ?? 0) + 1);
       } else if (!existing) {
         applyStatusEffect(monsterState, {
           id: DOT_EFFECT_ID, maxStacks: PERM_MAX_STACKS, instanced: false,
           remainingMs: -1, sourceId: player.id,
           data: {
-            damagePerStack: PERM_START_DMG,
             nextTickIn:     tickIntervalMs,
             tickIntervalMs,
             t3Perm:         1,
-            currentDmg:     PERM_START_DMG,
+            hits:           1,
           },
         });
       }
@@ -328,7 +344,15 @@ export function initDotT3(): void {
         const burst = maxStacks * maxStacks * dmgPerStack;
         ctx.damage += burst;
         removeStatusEffect(monsterState, DOT_EFFECT_ID);
-        console.log(`[GlacialFract] ${player.id}: shatter ${currentStacks} stacks → +${burst}`);
+        const effects = ctx.metadata['clientEffects'];
+        ctx.metadata['clientEffects'] = Array.isArray(effects)
+          ? [...effects, 'glacial-fracture']
+          : ['glacial-fracture'];
+        if (ctx.defenderType === 'monster') {
+          applyKnockback(world, ctx.defender.id, player.x, player.y,
+            GLACIAL_FRACTURE_KNOCKBACK_PX, GLACIAL_FRACTURE_KNOCKBACK_MS);
+        }
+        console.log(`[GlacialFract] ${player.id}: shatter ${currentStacks} stacks → +${burst} (knockback ${GLACIAL_FRACTURE_KNOCKBACK_PX}px over ${GLACIAL_FRACTURE_KNOCKBACK_MS}ms)`);
       }
       const gf = applyStatusEffect(monsterState, {
         id: DOT_EFFECT_ID, maxStacks, instanced: false,
@@ -366,6 +390,7 @@ export function updateDotT3(world: World, dt: number): void {
   updateConflagration(world, dt);
   updateChillAndFreeze(world);
   mirrorDotT3PlayerState(world);
+  mirrorStatusEffectsToClient(world);
 }
 
 // ── Permafrost: ramp damage tick ──────────────────────────────────────────────
@@ -381,15 +406,19 @@ function updatePermafrost(world: World, dt: number): void {
     if (effect.data.nextTickIn > 0) continue;
 
     effect.data.nextTickIn = effect.data.tickIntervalMs ?? DOT_TICK_MS;
-    effect.data.currentDmg = Math.min(PERM_MAX_DMG, effect.data.currentDmg + PERM_RAMP);
 
     const monster = world.monsters.get(monsterId);
     if (!monster) continue;
 
-    const base   = Math.round(effect.data.currentDmg);
+    const source = world.players.get(effect.sourceId);
+    if (!source) continue;
+
+    const hits   = Math.min(PERM_MAX_HITS, effect.data.hits ?? 0);
+    const pct    = hits * PERM_PCT_PER_HIT;
+    const base   = Math.max(1, Math.round(source.attack * pct));
     const damage = Math.round(base * getSmolderMult(monsterState) * getFrozenMult(monsterState));
     monster.hp -= damage;
-    console.log(`[Permafrost] ${monsterId}: ${damage} tick (ramp=${Math.round(effect.data.currentDmg)})`);
+    console.log(`[Permafrost] ${monsterId}: ${damage} tick (${hits}/${PERM_MAX_HITS} hits = ${Math.round(pct * 100)}% ATK)`);
 
     if (monster.hp <= 0) toKill.push({ monsterId, sourceId: effect.sourceId });
   }
@@ -501,6 +530,66 @@ function mirrorDotT3PlayerState(world: World): void {
         }
       }
     }
+  }
+}
+
+function collectClientEffects(combatState: CombatState | undefined): Record<string, number> {
+  const activeEffects: Record<string, number> = {};
+  if (!combatState) return activeEffects;
+
+  for (const [serverId, clientId] of STATUS_EFFECT_TO_CLIENT_ID) {
+    const effect = getStatusEffect(combatState, serverId);
+    if (effect && effect.remainingMs > 0) activeEffects[clientId] = effect.remainingMs;
+  }
+
+  return activeEffects;
+}
+
+function collectClientEffectFrames(world: World, combatState: CombatState | undefined): Record<string, number> {
+  const activeEffectFrames: Record<string, number> = {};
+  if (!combatState) return activeEffectFrames;
+
+  const dot = getStatusEffect(combatState, DOT_EFFECT_ID);
+  if (!dot || dot.stacks <= 0 || !dot.sourceId) return activeEffectFrames;
+
+  const source = world.players.get(dot.sourceId);
+  if (!source) return activeEffectFrames;
+
+  // Glacial Fracture: stack-buildup overlay (static frame per stack count).
+  if (hasPassive(source, 'dot.glacial-fracture')) {
+    const maxStacks = Math.max(1, dot.maxStacks);
+    const frame = Math.min(
+      GLACIAL_FRACTURE_BUILDUP_FRAMES - 1,
+      Math.max(0, Math.floor((dot.stacks / maxStacks) * GLACIAL_FRACTURE_BUILDUP_FRAMES) - 1),
+    );
+    activeEffectFrames[GLACIAL_FRACTURE_EFFECT_ID] = frame;
+  }
+
+  // Permafrost: hit-ramp tier picks which 5-frame band the client loops.
+  // Tier = floor(hits / maxHits * 5), clamped to [0, 4]. Base frame = tier * 5.
+  if (hasPassive(source, 'dot.permafrost') && dot.data.t3Perm) {
+    const hits = Math.max(0, Math.min(PERM_MAX_HITS, dot.data.hits ?? 0));
+    const tier = Math.max(
+      0,
+      Math.min(PERMAFROST_TIERS - 1, Math.floor((hits / PERM_MAX_HITS) * PERMAFROST_TIERS)),
+    );
+    activeEffectFrames[PERMAFROST_EFFECT_ID] = tier * PERMAFROST_FRAMES_PER_TIER;
+  }
+
+  return activeEffectFrames;
+}
+
+function mirrorStatusEffectsToClient(world: World): void {
+  for (const monster of world.monsters.values()) {
+    const monsterState = world.monsterCombatState.get(monster.id);
+    monster.activeEffects = collectClientEffects(monsterState);
+    monster.activeEffectFrames = collectClientEffectFrames(world, monsterState);
+  }
+
+  for (const player of world.players.values()) {
+    const playerState = world.playerCombatState.get(player.id);
+    player.activeEffects = collectClientEffects(playerState);
+    player.activeEffectFrames = collectClientEffectFrames(world, playerState);
   }
 }
 

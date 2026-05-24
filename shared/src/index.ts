@@ -43,7 +43,7 @@ export interface PlayerBuff {
  * entries reliably even when logic ticks outrun broadcast ticks.
  */
 export type CombatEvent =
-  | { kind: 'player-hit';  playerId: string; targetId: string; targetName: string; damage: number; empowered: boolean; execution: boolean }
+  | { kind: 'player-hit';  playerId: string; targetId: string; targetName: string; damage: number; empowered: boolean; execution: boolean; effects?: string[] }
   | { kind: 'player-kill'; playerId: string; targetId: string; targetName: string };
 
 // ─── Combat archetype ─────────────────────────────────────────────────────────
@@ -222,6 +222,10 @@ export interface PlayerState {
   isChanneling: boolean;
   /** Channeled Beam progress 0–100 through the channel window. 0 when not channeling. */
   channelingPct: number;
+  /** Client effect overlays currently active on this player, keyed by effect id with remaining ms. */
+  activeEffects?: Record<string, number>;
+  /** Client effect overlays pinned to a specific frame, keyed by effect id. */
+  activeEffectFrames?: Record<string, number>;
   /**
    * Active buffs on this player, populated server-side each tick by syncPlayerBuffs.
    * Only buffs are tracked here — monster debuffs are server-only.
@@ -253,7 +257,8 @@ export type MonsterAIState =
   | 'wandering'
   | 'chasing'
   | 'attacking'
-  | 'returning';
+  | 'returning'
+  | 'knocked-back';
 
 export interface MonsterState {
   id: string;
@@ -299,6 +304,10 @@ export interface MonsterState {
   behavior: string;
   /** Future: allows elite/boss monsters to use archetype mechanics. */
   combatArchetype?: CombatArchetype;
+  /** Client effect overlays currently active on this monster, keyed by effect id with remaining ms. */
+  activeEffects?: Record<string, number>;
+  /** Client effect overlays pinned to a specific frame, keyed by effect id. */
+  activeEffectFrames?: Record<string, number>;
   /**
    * Names of currently active boss script effects (e.g. 'enrage', 'shield', 'regen').
    * Populated by bossScripts.ts each tick; only present on isBoss monsters.

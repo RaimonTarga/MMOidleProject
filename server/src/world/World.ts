@@ -19,6 +19,7 @@ import { updateWeaponEffects } from '../systems/weaponEffects';
 import { updateBossScripts } from '../systems/bossScripts';
 import type { BossRuntimeState } from '../systems/bossScripts';
 import { updateShields, updateDefensiveSystems } from '../systems/defenseSystems';
+import { updateKnockback, type KnockbackComponent } from '../systems/knockback';
 import { recalculatePlayerStats } from '../systems/stats';
 import { syncPlayerBuffs } from '../systems/buffSync';
 import { updateTestRoomInteract } from '../systems/testRoomInteract';
@@ -30,6 +31,22 @@ const DUNGEON_HP_MULT  = 2.0;
 const DUNGEON_ATK_MULT = 1.6;
 const TEST_ROOM_TARGET_RESET = 'test-target-reset';
 const TEST_ROOM_TARGET_GAIN_POINT = 'test-target-gain-point';
+
+/**
+ * Stationary training dummies for the dev test room — one per enemy tier (T0–T4).
+ * HP comes from each dummy's MonsterDefinition (median boss HP for the tier).
+ * Laid out in a row along the north wall of the test room so the player can
+ * walk up to any of them to test animations, range, or sustained damage.
+ */
+const TEST_ROOM_TRAINING_DUMMY_TYPES = [
+  'training-dummy-t0',
+  'training-dummy-t1',
+  'training-dummy-t2',
+  'training-dummy-t3',
+  'training-dummy-t4',
+] as const;
+const TEST_ROOM_TRAINING_DUMMY_Y = 240;
+const TEST_ROOM_TRAINING_DUMMY_SPACING = 500;
 
 export interface MonsterAI {
   spawnX: number;
@@ -63,10 +80,19 @@ export class World {
   playerCombatState  = new Map<string, CombatState>();
   /** Server-side only combat state for monsters. Never serialized or sent to clients. */
   monsterCombatState = new Map<string, CombatState>();
+  /** Active knockback components per monster — see systems/knockback.ts. */
+  monsterKnockback   = new Map<string, KnockbackComponent>();
   /** Player IDs that died this tick. Drained by the server loop after each tick. */
   pendingDeaths: string[] = [];
   /** Queued combat events per node, flushed into each broadcast snapshot. */
   private nodeEvents = new Map<string, CombatEvent[]>();
+  /**
+   * ID of the test-room boss that has been attacked by a player.
+   * While set (and the boss still exists), the boss-rotation loop is paused so
+   * the dummy doesn't get swapped out from under the player mid-test.
+   * Cleared automatically when the engaged boss is no longer in the world.
+   */
+  testRoomEngagedBossId: string | null = null;
 
   nextMonsterId = 1;
 
@@ -106,6 +132,7 @@ export class World {
     updateWeaponEffects(this, dt);
     updateBossScripts(this, dt);
     updateAutoTargets(this);
+    updateKnockback(this, dt);
     updateMovement(this, dt);
     updateTransitions(this);
     if (IS_DEV) updateTestRoomInteract(this, now);
@@ -116,6 +143,7 @@ export class World {
 
     if (IS_DEV) {
       this.ensureCurrentTestRoomBoss();
+      this.ensureTrainingDummies();
     }
 
     for (const nodeId of NODE_REGISTRY.keys()) {
@@ -291,9 +319,45 @@ export class World {
     this.createMonster(TEST_ROOM_NODE_ID, TEST_ROOM_TARGET_RESET, GAME_CONFIG.NODE_WIDTH / 2 - 180, y);
     this.createMonster(TEST_ROOM_NODE_ID, TEST_ROOM_TARGET_GAIN_POINT, GAME_CONFIG.NODE_WIDTH / 2 + 180, y);
     this.ensureTestRoomBoss(0);
+    this.ensureTrainingDummies();
+  }
+
+  /**
+   * One stationary training dummy per enemy tier (T0–T4), arranged along the
+   * north wall of the test room. Idempotent — respawns any dummy that has
+   * been killed since the last call.
+   */
+  private ensureTrainingDummies(): void {
+    const present = new Set<string>();
+    for (const monster of this.monsters.values()) {
+      if (monster.nodeId !== TEST_ROOM_NODE_ID) continue;
+      present.add(monster.monsterTypeId);
+    }
+
+    const count   = TEST_ROOM_TRAINING_DUMMY_TYPES.length;
+    const startX  = GAME_CONFIG.NODE_WIDTH / 2 - (TEST_ROOM_TRAINING_DUMMY_SPACING * (count - 1)) / 2;
+    for (let i = 0; i < count; i++) {
+      const typeId = TEST_ROOM_TRAINING_DUMMY_TYPES[i];
+      if (present.has(typeId)) continue;
+      this.createMonster(
+        TEST_ROOM_NODE_ID,
+        typeId,
+        startX + i * TEST_ROOM_TRAINING_DUMMY_SPACING,
+        TEST_ROOM_TRAINING_DUMMY_Y,
+      );
+    }
   }
 
   private ensureCurrentTestRoomBoss(): void {
+    // If a previously engaged boss has been killed/removed, clear the lock so a
+    // fresh dummy can be rolled for the player's current tier.
+    if (this.testRoomEngagedBossId && !this.monsters.has(this.testRoomEngagedBossId)) {
+      this.testRoomEngagedBossId = null;
+    }
+    // While the engaged boss is alive, freeze the rotation — the player is
+    // actively using it as a test dummy.
+    if (this.testRoomEngagedBossId) return;
+
     let targetTier: number | null = null;
     for (const player of this.players.values()) {
       if (player.nodeId !== TEST_ROOM_NODE_ID) continue;

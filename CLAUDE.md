@@ -342,7 +342,7 @@ Each player hit applies 1 DoT stack; stacks tick damage at configurable interval
 **T3 paths:**
 - Poison: Poison Explosion (20-stack cap → 10-tick burst), Eternal Doom (no cap, diminishing returns formula), Invigorating Toxins (stacks boost player ATK+speed)
 - Fire: Fan the Flames (2 stacks/hit at 50% dmg; max→burst), Smoldering Ember (stacks add % vuln), Conflagration (max stacks → 5×500ms fast ticks)
-- Frost: Permafrost (1 permanent stack ramping dmg), Freezing Cold (frost+chill; 3 chill → Freeze 2s), Glacial Fracture (max stacks → shatter burst)
+- Frost: Permafrost (1 permanent stack ramping +1% ATK/hit, max 35% at 35 hits), Freezing Cold (frost+chill; 3 chill → Freeze 2s), Glacial Fracture (max stacks → shatter burst)
 
 **Key implementation flags:**
 - `ctx.metadata['dotHandled']` — T3 handler sets this to suppress base stack application
@@ -366,6 +366,7 @@ Each player hit applies 1 DoT stack; stacks tick damage at configurable interval
 - Client HUD: stat panel, buff bar (category-distinct icons), map (11×11 + dungeon/boss), skill tree, inventory, crafting, quest panel
 - Mobile/tablet responsive HUD (≤ 1100px): fixed top bar, fixed AUTO button, slide-out menu drawer
 - AoE framework; empowered AoE splash (80px, 0.5× ATK); debug range overlay
+- Generic 5×5 spritesheet effect animation pipeline for status overlays and one-shot effects
 - Split-tick loop (10 Hz logic, 5 Hz broadcast); combat event queue for animations
 - Monster wander smoothing (80px hard-snap threshold)
 - SQLite persistence (`server/src/db/`) — accounts + characters, load on connect, save on disconnect + 30 s auto-save
