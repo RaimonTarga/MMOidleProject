@@ -24,6 +24,15 @@ export const CHILL_EFFECT   = 'dot-chill';
 export const FROZEN_EFFECT  = 'dot-frozen';
 export const CONF_EFFECT_ID = 'dot-conf';
 
+const STATUS_EFFECT_TO_CLIENT_ID: Array<[string, string]> = [
+  [FROZEN_EFFECT, 'freeze'],
+];
+const GLACIAL_FRACTURE_EFFECT_ID = 'glacial-fracture';
+const GLACIAL_FRACTURE_BUILDUP_FRAMES = 10;
+const PERMAFROST_EFFECT_ID = 'permafrost';
+const PERMAFROST_TIERS = 5;
+const PERMAFROST_FRAMES_PER_TIER = 5;
+
 // ── Light: Poison Explosion (dot-light-t3-a) ──────────────────────────────────
 const PE_MAX_STACKS  = 20;
 const PE_BURST_TICKS = 10; // burst = maxStacks × dmgPerStack × 10
@@ -94,6 +103,11 @@ export function getSmolderMult(monsterState: CombatState): number {
 /** Damage multiplier from Frozen status (1.35 if frozen, 1.0 otherwise). */
 export function getFrozenMult(monsterState: CombatState): number {
   return hasStatusEffect(monsterState, FROZEN_EFFECT) ? (1 + FREEZE_BONUS) : 1;
+}
+
+export function isMonsterFrozen(world: World, monsterId: string): boolean {
+  const monsterState = world.monsterCombatState.get(monsterId);
+  return monsterState ? hasStatusEffect(monsterState, FROZEN_EFFECT) : false;
 }
 
 // ── Init ──────────────────────────────────────────────────────────────────────
@@ -328,6 +342,10 @@ export function initDotT3(): void {
         const burst = maxStacks * maxStacks * dmgPerStack;
         ctx.damage += burst;
         removeStatusEffect(monsterState, DOT_EFFECT_ID);
+        const effects = ctx.metadata['clientEffects'];
+        ctx.metadata['clientEffects'] = Array.isArray(effects)
+          ? [...effects, 'glacial-fracture']
+          : ['glacial-fracture'];
         console.log(`[GlacialFract] ${player.id}: shatter ${currentStacks} stacks → +${burst}`);
       }
       const gf = applyStatusEffect(monsterState, {
@@ -366,6 +384,7 @@ export function updateDotT3(world: World, dt: number): void {
   updateConflagration(world, dt);
   updateChillAndFreeze(world);
   mirrorDotT3PlayerState(world);
+  mirrorStatusEffectsToClient(world);
 }
 
 // ── Permafrost: ramp damage tick ──────────────────────────────────────────────
@@ -501,6 +520,66 @@ function mirrorDotT3PlayerState(world: World): void {
         }
       }
     }
+  }
+}
+
+function collectClientEffects(combatState: CombatState | undefined): Record<string, number> {
+  const activeEffects: Record<string, number> = {};
+  if (!combatState) return activeEffects;
+
+  for (const [serverId, clientId] of STATUS_EFFECT_TO_CLIENT_ID) {
+    const effect = getStatusEffect(combatState, serverId);
+    if (effect && effect.remainingMs > 0) activeEffects[clientId] = effect.remainingMs;
+  }
+
+  return activeEffects;
+}
+
+function collectClientEffectFrames(world: World, combatState: CombatState | undefined): Record<string, number> {
+  const activeEffectFrames: Record<string, number> = {};
+  if (!combatState) return activeEffectFrames;
+
+  const dot = getStatusEffect(combatState, DOT_EFFECT_ID);
+  if (!dot || dot.stacks <= 0 || !dot.sourceId) return activeEffectFrames;
+
+  const source = world.players.get(dot.sourceId);
+  if (!source) return activeEffectFrames;
+
+  // Glacial Fracture: stack-buildup overlay (static frame per stack count).
+  if (hasPassive(source, 'dot.glacial-fracture')) {
+    const maxStacks = Math.max(1, dot.maxStacks);
+    const frame = Math.min(
+      GLACIAL_FRACTURE_BUILDUP_FRAMES - 1,
+      Math.max(0, Math.floor((dot.stacks / maxStacks) * GLACIAL_FRACTURE_BUILDUP_FRAMES) - 1),
+    );
+    activeEffectFrames[GLACIAL_FRACTURE_EFFECT_ID] = frame;
+  }
+
+  // Permafrost: ramp-damage tier picks which 5-frame band the client loops.
+  // Tier = floor(currentDmg / maxDmg * 5), clamped to [0, 4]. Base frame = tier * 5.
+  if (hasPassive(source, 'dot.permafrost') && dot.data.t3Perm) {
+    const currentDmg = dot.data.currentDmg ?? PERM_START_DMG;
+    const tier = Math.max(
+      0,
+      Math.min(PERMAFROST_TIERS - 1, Math.floor((currentDmg / PERM_MAX_DMG) * PERMAFROST_TIERS)),
+    );
+    activeEffectFrames[PERMAFROST_EFFECT_ID] = tier * PERMAFROST_FRAMES_PER_TIER;
+  }
+
+  return activeEffectFrames;
+}
+
+function mirrorStatusEffectsToClient(world: World): void {
+  for (const monster of world.monsters.values()) {
+    const monsterState = world.monsterCombatState.get(monster.id);
+    monster.activeEffects = collectClientEffects(monsterState);
+    monster.activeEffectFrames = collectClientEffectFrames(world, monsterState);
+  }
+
+  for (const player of world.players.values()) {
+    const playerState = world.playerCombatState.get(player.id);
+    player.activeEffects = collectClientEffects(playerState);
+    player.activeEffectFrames = collectClientEffectFrames(world, playerState);
   }
 }
 

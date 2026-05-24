@@ -2,6 +2,7 @@ import type { World } from '../world/World';
 import type { MonsterState, PlayerState } from '@mmo-idle/shared';
 import { getNodePlayers } from '../world/nodeQueries';
 import { NODE_REGISTRY } from '../world/nodeRegistry';
+import { isMonsterFrozen } from './dotT3';
 
 const KITE_GRACE_MS  = 3_000;  // ms chasing before speed ramp begins
 const KITE_RAMP_RATE = 0.25;   // speed multiplier gain per second past grace
@@ -30,6 +31,14 @@ export function updateMonsters(world: World, dt: number, now: number) {
   for (const [id, monster] of world.monsters) {
     const ai = world.monsterAI.get(id);
     if (!ai) continue;
+
+    if (isMonsterFrozen(world, id)) {
+      monster.targetX = monster.x;
+      monster.targetY = monster.y;
+      monster.lastAttackAt = now;
+      ai.kiteTimer = 0;
+      continue;
+    }
 
     // Only scan for pull-range aggro when we have no current target.
     // This preserves retaliation aggro set by the combat system when a

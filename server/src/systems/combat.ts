@@ -1,5 +1,5 @@
 import type { World } from '../world/World';
-import { GAME_CONFIG } from '@mmo-idle/shared';
+import { GAME_CONFIG, TEST_ROOM_NODE_ID } from '@mmo-idle/shared';
 import { grantMonsterRewards } from './rewards';
 import { getNodeMonsters } from '../world/nodeQueries';
 import {
@@ -9,6 +9,7 @@ import {
 import { getStatusEffect } from './statusEffects';
 import { getAntiHealMult } from './defenseSystems';
 import { applyPlayerAoe } from './aoeDamage';
+import { isMonsterFrozen } from './dotT3';
 
 export function updateCombat(world: World, dt: number, now: number) {
   // PLAYER → MONSTER
@@ -80,8 +81,19 @@ export function updateCombat(world: World, dt: number, now: number) {
         target.hp -= ctx.damage;
         player.lastAttackAt = now;
 
+        // Lock the test-room boss rotation once a player has actually engaged
+        // the dummy — it should stick around as a stable target instead of
+        // cycling on the next tier change.
+        if (target.isBoss && target.nodeId === TEST_ROOM_NODE_ID) {
+          world.testRoomEngagedBossId = target.id;
+        }
+
         // Queue combat event so the client can animate and log this hit reliably,
         // even when logic ticks outrun broadcast ticks.
+        const clientEffectsRaw = ctx.metadata['clientEffects'];
+        const clientEffects = Array.isArray(clientEffectsRaw)
+          ? clientEffectsRaw.filter((effect): effect is string => typeof effect === 'string')
+          : undefined;
         world.pushEvent(player.nodeId, {
           kind: 'player-hit',
           playerId:   player.id,
@@ -90,6 +102,7 @@ export function updateCombat(world: World, dt: number, now: number) {
           damage:     ctx.damage,
           empowered:  isEmpowered,
           execution:  isExecution,
+          effects:    clientEffects && clientEffects.length > 0 ? clientEffects : undefined,
         });
 
         emitCombatEvent('afterHit', ctx, world);
@@ -169,7 +182,7 @@ export function updateCombat(world: World, dt: number, now: number) {
     // Monster is in contact — mark as targeting so the client shows the cooldown bar.
     monster.attackTargetId = target.id;
 
-    if (now - monster.lastAttackAt >= monster.attackCooldown) {
+    if (now - monster.lastAttackAt >= monster.attackCooldown && !isMonsterFrozen(world, monster.id)) {
       const ctx = makeCombatContext(monster, 'monster', target, 'player');
 
       emitCombatEvent('beforeAttack', ctx, world);

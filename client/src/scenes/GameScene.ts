@@ -16,6 +16,7 @@ import { hudBus } from '../hudBus';
 import { combatLog } from '../combatLog';
 import { ATLAS_KEY, getPlayerFrame, getMonsterFrame, getPlayerShadowColor, getPlayerShadowOffset, getMonsterShadowOffset, BIOME_TEXTURES } from '../sprites';
 import { accountId, displayName } from '../clientAuth';
+import { EFFECT_BY_ID, EFFECT_DEFS, EFFECT_FRAME_COUNT, EFFECT_GRID } from '../effects';
 
 type GameSocket = Socket<ServerToClientEvents, ClientToServerEvents>;
 
@@ -96,6 +97,12 @@ interface Visual {
   monsterAttackRange?: number;
   /** 'melee' monsters play a lunge animation on attack. Only set for monster visuals. */
   monsterBehavior?: string;
+  /** World-space status overlays keyed by client effect id. */
+  effectOverlays: Map<string, Phaser.GameObjects.Sprite>;
+  /** Active server-driven effects keyed by client effect id; value is remaining milliseconds. */
+  activeEffects: Record<string, number>;
+  /** Active server-driven effects keyed by client effect id; value is an exact spritesheet frame. */
+  activeEffectFrames: Record<string, number>;
 }
 
 export class GameScene extends Phaser.Scene {
@@ -135,6 +142,19 @@ export class GameScene extends Phaser.Scene {
 
   preload() {
     this.load.atlas(ATLAS_KEY, '/assets/sprites.png', '/assets/sprites.json');
+    for (const def of EFFECT_DEFS) {
+      // Sheets with non-uniform row heights are loaded as plain images and
+      // sliced into frames manually in create(); uniform 5×5 sheets use the
+      // simple spritesheet loader.
+      if (def.rowSlices) {
+        this.load.image(def.key, def.file);
+      } else {
+        this.load.spritesheet(def.key, def.file, {
+          frameWidth: def.frameSize,
+          frameHeight: def.frameSize,
+        });
+      }
+    }
     for (const key of Object.values(BIOME_TEXTURES)) {
       this.load.image(key, `/assets/${key}.png`);
     }
@@ -142,6 +162,7 @@ export class GameScene extends Phaser.Scene {
 
   create() {
     this.initParticleTextures();
+    this.initEffectFrames();
 
     // ── World / camera setup ───────────────────────────────────────────────
     this.cameras.main.setBounds(0, 0, GAME_CONFIG.NODE_WIDTH, GAME_CONFIG.NODE_HEIGHT);
@@ -370,6 +391,7 @@ export class GameScene extends Phaser.Scene {
       if (ownVp && targetVm && ownVp.playerState) {
         const p       = ownVp.playerState;
         const dotPath = p.combatArchetype === 'dot' ? this.getDotPath(p) : undefined;
+        const targetEffectScale = this.getEffectScaleForVisual(targetVm);
         this.spawnAttackEffect(ownVp.attackStyle, ownVp.sprite.x, ownVp.sprite.y,
           targetVm.sprite.x, targetVm.sprite.y, {
             empowered: ev.empowered,
@@ -377,6 +399,9 @@ export class GameScene extends Phaser.Scene {
             archetype: p.combatArchetype ?? undefined,
             dotPath,
           });
+        for (const effectId of ev.effects ?? []) {
+          this.playOneShotEffect(effectId, targetVm.sprite.x, targetVm.sprite.y, { scale: targetEffectScale });
+        }
         if (p.attackRange <= 150) this.playMeleeLunge(ownVp, targetVm.baseX, targetVm.baseY);
       }
     }
@@ -410,6 +435,7 @@ export class GameScene extends Phaser.Scene {
       }
       sprite.setPosition(v.baseX + v.lungeOffsetX, v.baseY + v.lungeOffsetY);
       v.shadow.setPosition(v.baseX + v.lungeOffsetX, v.baseY + v.lungeOffsetY + v.shadowOffsetY);
+      this.updateStatusOverlays(v, dt);
 
       // Keep the camera anchor on the base position so lunge offsets don't move the camera.
       if (v === ownVp) this.cameraTarget.setPosition(v.baseX, v.baseY);
@@ -468,6 +494,74 @@ export class GameScene extends Phaser.Scene {
     }
   }
 
+  private updateStatusOverlays(v: Visual, dt: number): void {
+    for (const [id, overlay] of v.effectOverlays) {
+      const remainingMs = v.activeEffects[id] ?? 0;
+      const frame = v.activeEffectFrames[id];
+      if (remainingMs <= 0 && frame == null) {
+        overlay.destroy();
+        v.effectOverlays.delete(id);
+      }
+    }
+
+    const effectIds = new Set([
+      ...Object.keys(v.activeEffects),
+      ...Object.keys(v.activeEffectFrames),
+    ]);
+
+    for (const id of effectIds) {
+      const def = EFFECT_BY_ID.get(id);
+      const explicitFrame = v.activeEffectFrames[id];
+      const remainingMsRaw = v.activeEffects[id] ?? 0;
+      const remainingMs = Math.max(0, remainingMsRaw);
+      if (!def || (remainingMs <= 0 && explicitFrame == null)) {
+        v.activeEffects[id] = 0;
+        continue;
+      }
+
+      let overlay = v.effectOverlays.get(id);
+      if (!overlay) {
+        overlay = this.add
+          .sprite(v.sprite.x, v.sprite.y, def.key)
+          .setDepth(def.depth ?? Math.max(3, v.sprite.depth + 2));
+        v.effectOverlays.set(id, overlay);
+      }
+
+      let rawFrame: number;
+      if (explicitFrame != null && def.loopFrames != null && def.loopFrames > 0) {
+        const t = (this.time.now / def.durationMs) % 1;
+        const offset = Math.min(def.loopFrames - 1, Math.floor(t * def.loopFrames));
+        rawFrame = explicitFrame + offset;
+      } else if (explicitFrame != null) {
+        rawFrame = explicitFrame;
+      } else {
+        rawFrame = Math.floor((remainingMs / def.durationMs) * EFFECT_FRAME_COUNT);
+      }
+      const frame = Math.max(0, Math.min(EFFECT_FRAME_COUNT - 1, rawFrame));
+      overlay.setFrame(frame);
+
+      // Compute display size from the active frame's natural aspect ratio.
+      // Sheets with rowSlices have non-square frames per row, so a fixed
+      // square `setDisplaySize` would squash rows of differing height.
+      const baseW = (def.baseSize ?? 96) * this.getEffectScaleForVisual(v, def.scale);
+      const fw = overlay.frame.width  || def.frameSize;
+      const fh = overlay.frame.height || def.frameSize;
+      overlay.setDisplaySize(baseW, baseW * (fh / fw));
+
+      overlay
+        .setPosition(v.sprite.x, v.sprite.y + (def.anchorYPx ?? -4))
+        .setVisible(true);
+      if (explicitFrame == null) {
+        v.activeEffects[id] = Math.max(0, remainingMs - dt * 1000);
+      }
+    }
+  }
+
+  private getEffectScaleForVisual(v: Visual, baseScale = 1.5): number {
+    const bossScale = Math.max(v.sprite.displayWidth, v.sprite.displayHeight) > 64 ? 1.33 : 1;
+    return baseScale * bossScale;
+  }
+
   /**
    * Attempts to create an Image from the game atlas for the given frame.
    * Returns null if the atlas isn't loaded or the frame doesn't exist,
@@ -522,6 +616,9 @@ export class GameScene extends Phaser.Scene {
         lungeOffsetX: 0, lungeOffsetY: 0,
         hp: player.hp, maxHp: player.maxHp,
         speed: player.speed, barOffsetY: 40,
+        effectOverlays: new Map<string, Phaser.GameObjects.Sprite>(),
+        activeEffects:  player.activeEffects ?? {},
+        activeEffectFrames: player.activeEffectFrames ?? {},
         attackCooldown: player.attackCooldown,
         lastAttackAt:   player.lastAttackAt,
         attackTargetId: player.attackTargetId,
@@ -579,6 +676,8 @@ export class GameScene extends Phaser.Scene {
     vp.hp             = player.hp;
     vp.maxHp          = player.maxHp;
     vp.speed          = player.speed;
+    vp.activeEffects  = player.activeEffects ?? {};
+    vp.activeEffectFrames = player.activeEffectFrames ?? {};
     vp.attackCooldown = player.attackCooldown;
     vp.lastAttackAt   = player.lastAttackAt;
     vp.attackTargetId = player.attackTargetId;
@@ -649,6 +748,9 @@ export class GameScene extends Phaser.Scene {
              lungeOffsetX: 0, lungeOffsetY: 0,
              hp: monster.hp, maxHp: monster.maxHp,
              speed: monster.speed, barOffsetY: monster.isBoss ? 50 : 40,
+             effectOverlays:     new Map<string, Phaser.GameObjects.Sprite>(),
+             activeEffects:      monster.activeEffects ?? {},
+             activeEffectFrames: monster.activeEffectFrames ?? {},
              attackCooldown:     monster.attackCooldown,
              lastAttackAt:       monster.lastAttackAt,
              attackTargetId:     monster.attackTargetId,
@@ -676,6 +778,8 @@ export class GameScene extends Phaser.Scene {
     vm.targetY        = monster.targetY;
     vm.hp             = monster.hp;
     vm.speed          = monster.speed;
+    vm.activeEffects  = monster.activeEffects ?? {};
+    vm.activeEffectFrames = monster.activeEffectFrames ?? {};
     vm.lastAttackAt   = monster.lastAttackAt;
     vm.attackTargetId = monster.attackTargetId;
     vm.attackStyle    = monster.attackStyle;
@@ -868,6 +972,33 @@ export class GameScene extends Phaser.Scene {
     sparkG.fillRect(0, 0, 12, 3);
     sparkG.generateTexture('ptx-spark', 12, 3);
     sparkG.destroy();
+  }
+
+  /**
+   * Carve numbered frames (`"0"`..`"24"`) for any effect sheet that opted into
+   * `rowSlices`. Sheets without slices were already loaded as a uniform
+   * spritesheet in `preload()` and need no further setup.
+   *
+   * Rows use the per-row `{y, h}` from the def; columns are uniform width
+   * `frameSize` placed left-to-right starting at x=0. Frame names match what
+   * `setFrame(n)` expects after a regular spritesheet load.
+   */
+  private initEffectFrames(): void {
+    const cols = EFFECT_GRID;
+    for (const def of EFFECT_DEFS) {
+      if (!def.rowSlices) continue;
+      const texture = this.textures.get(def.key);
+      if (!texture) continue;
+      for (let row = 0; row < def.rowSlices.length; row++) {
+        const { y, h } = def.rowSlices[row];
+        for (let col = 0; col < cols; col++) {
+          const idx = row * cols + col;
+          const name = `${idx}`;
+          if (texture.has(name)) continue; // idempotent across HMR
+          texture.add(name, 0, col * def.frameSize, y, def.frameSize, h);
+        }
+      }
+    }
   }
 
   private burstFx(
@@ -1370,6 +1501,32 @@ export class GameScene extends Phaser.Scene {
     });
   }
 
+  private playOneShotEffect(id: string, x: number, y: number, opts?: { scale?: number; depth?: number }): void {
+    const def = EFFECT_BY_ID.get(id);
+    if (!def) return;
+
+    const size = (def.baseSize ?? 96) * (opts?.scale ?? def.scale ?? 1.5);
+    const startFrame = def.startFrame ?? 0;
+    const endFrame = def.endFrame ?? EFFECT_FRAME_COUNT - 1;
+    const sprite = this.add
+      .sprite(x, y + (def.anchorYPx ?? 0), def.key)
+      .setDepth(opts?.depth ?? def.depth ?? 12)
+      .setDisplaySize(size, size)
+      .setFrame(startFrame);
+    const proxy = { frame: startFrame };
+
+    this.tweens.add({
+      targets: proxy,
+      frame: endFrame,
+      duration: def.durationMs,
+      ease: 'Linear',
+      onUpdate: () => {
+        sprite.setFrame(Math.max(startFrame, Math.min(endFrame, Math.floor(proxy.frame))));
+      },
+      onComplete: () => sprite.destroy(),
+    });
+  }
+
   private spawnAttackEffect(
     style: string,
     fromX: number, fromY: number,
@@ -1523,6 +1680,7 @@ export class GameScene extends Phaser.Scene {
     v.label.destroy();
     v.hpBar.destroy();
     v.cdBar.destroy();
+    for (const overlay of v.effectOverlays.values()) overlay.destroy();
     map.delete(id);
   }
 }

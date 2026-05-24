@@ -358,6 +358,7 @@ Each player hit applies 1 DoT stack; stacks tick damage at configurable interval
 - Death/respawn; node transitions
 - Client HUD: stat panel, buff bar (category-distinct icons), map (11×11 + dungeon/boss), skill tree, inventory, crafting, quest panel
 - AoE framework; empowered AoE splash (80px, 0.5× ATK); debug range overlay
+- Generic 5×5 spritesheet effect animation pipeline for status overlays and one-shot effects
 - Split-tick loop (10 Hz logic, 5 Hz broadcast); combat event queue for animations
 - Monster wander smoothing (80px hard-snap threshold)
 
