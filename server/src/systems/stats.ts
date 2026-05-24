@@ -15,6 +15,7 @@ const CLOSE_RANGE_CLASS_BONUS: Record<string, { plating: number; hpRegen: number
 function applyStatMod(player: PlayerState, stat: string, value: number): void {
   switch (stat) {
     case 'attack':          player.attack          += value; break;
+    case 'onHitDamage':     player.onHitDamage     += value; break;
     case 'plating':         player.plating         += value; break;
     case 'damageReduction': player.damageReduction += value; break;
     case 'evasion':         player.evasion         += value; break;
@@ -33,6 +34,7 @@ function applyStatMod(player: PlayerState, stat: string, value: number): void {
 export function recalculatePlayerStats(player: PlayerState): void {
   // 1. Reset to base
   player.attack          = GAME_CONFIG.PLAYER_ATTACK;
+  player.onHitDamage     = 0;
   player.plating         = GAME_CONFIG.PLAYER_PLATING;
   player.damageReduction = 0;
   player.evasion         = 0;

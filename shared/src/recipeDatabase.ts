@@ -176,6 +176,22 @@ export const RECIPE_DATABASE: Map<string, Recipe> = new Map<string, Recipe>([
   }],
 
   // ── Plains T1 — yellow only ────────────────────────────────────────────────
+  ['iron-broadsword', {
+      id: 'iron-broadsword',
+      name: 'Iron Broadsword',
+      recipeGroup: 'plains',
+      requiredBiomeLevel: 1,
+      slot: 'weapon',
+
+      cost: { yellow: 14 },
+
+      stats: { attack: 8 },
+      attacksPerSecond: 0.65,
+
+      tier: 1,
+
+      description: 'A dependable iron blade carried by soldiers, travelers, and adventurers alike. It lacks flair, but never fails its wielder.',
+  }],
   ['sacred-cross', {
     id: 'sacred-cross', name: 'Sacred Cross',
     recipeGroup: 'plains', requiredBiomeLevel: 1, slot: 'weapon',

@@ -162,6 +162,7 @@ function buildFreshPlayer(id: string, name: string, x: number, y: number): Playe
     hp:                   GAME_CONFIG.PLAYER_MAX_HP,
     maxHp:                GAME_CONFIG.PLAYER_MAX_HP,
     attack:               GAME_CONFIG.PLAYER_ATTACK,
+    onHitDamage:          0,
     plating:              GAME_CONFIG.PLAYER_PLATING,
     damageReduction:      0,
     evasion:              0,

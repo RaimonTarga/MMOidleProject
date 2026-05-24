@@ -59,6 +59,12 @@ export function updateCombat(world: World, dt: number, now: number) {
 
         emitCombatEvent('onHit', ctx, world);
 
+        // Flat on-hit bonus: added after the empowered multiplier so it never scales
+        // with finisher damage, but still applies to every direct attack including finishers.
+        if (player.onHitDamage > 0) {
+          ctx.damage += player.onHitDamage;
+        }
+
         // ctx.metadata['empoweredAttack'] is set by registerEmpoweredMultiplier during onHit.
         const isEmpowered = !!ctx.metadata['empoweredAttack'];
         const isExecution = isEmpowered && player.combatArchetype === 'cooldown';

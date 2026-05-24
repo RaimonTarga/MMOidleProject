@@ -19,13 +19,14 @@ export const CHAOTIC_MISS_EVERY = 3;
 
 // ── Sacred Cross ──────────────────────────────────────────────────────────────
 
-export const SACRED_CD_MS       = 12_000; // ms between buff windows
-export const SACRED_BUFF_MS     = 3_000;  // ms the buff lasts
+export const SACRED_CD_MS       = 6_000; // ms between buff windows
+export const SACRED_BUFF_MS     = 2_000;  // ms the buff lasts
 export const SACRED_DMG_MULT    = 3;      // damage multiplier during buff
 export const SACRED_APS_MULT    = 2;      // APS multiplier during buff (halves cooldown)
 
 const SACRED_STARTED    = 'sacredStarted';
 const SACRED_BUFF_FLAG  = 'sacredBuffActive';
+const SACRED_READY      = 'sacredReady';
 const SACRED_CD_KEY     = 'sacredCd';
 const SACRED_BUFF_TIMER = 'sacredBufTimer';
 const SACRED_ORIG_CD    = 'sacredOrigCd';
@@ -57,13 +58,27 @@ export function initWeaponEffects(): void {
   });
 
   // ── Sacred Cross: 3× damage multiplier during the buff window ────────────────
+  // Buff only procs (activates) when the player makes an attack, even if the
+  // cooldown has already expired — prevents it from firing outside of combat.
   registerCombatListener('onHit', (ctx, world) => {
     if (ctx.attackerType !== 'player') return;
     const player = world.players.get(ctx.attacker.id) as PlayerState | undefined;
     if (!player || player.equipment.weapon !== 'sacred-cross') return;
 
     const state = world.playerCombatState.get(player.id);
-    if (!state || !getFlag(state, SACRED_BUFF_FLAG)) return;
+    if (!state) return;
+
+    // If armed and ready, proc on this hit (triggering attack also gets the bonus).
+    if (getFlag(state, SACRED_READY) && !getFlag(state, SACRED_BUFF_FLAG)) {
+      setString(state, SACRED_ORIG_CD, String(player.attackCooldown));
+      player.attackCooldown = Math.max(200, Math.round(player.attackCooldown / SACRED_APS_MULT));
+      setFlag(state, SACRED_BUFF_FLAG, true);
+      setFlag(state, SACRED_READY, false);
+      setCooldown(state, SACRED_BUFF_TIMER, SACRED_BUFF_MS);
+      console.log(`[Sacred] ${player.id}: BURST activated (cd=${player.attackCooldown}ms)`);
+    }
+
+    if (!getFlag(state, SACRED_BUFF_FLAG)) return;
 
     ctx.damage = Math.round(ctx.damage * SACRED_DMG_MULT);
     ctx.metadata['sacredBurst'] = true;
@@ -127,6 +142,7 @@ function updateSacredCrossBuff(world: World): void {
         setCooldown(state, SACRED_CD_KEY, 0);
         setCooldown(state, SACRED_BUFF_TIMER, 0);
       }
+      setFlag(state, SACRED_READY, false);
       if (getFlag(state, SACRED_STARTED)) setFlag(state, SACRED_STARTED, false);
       player.sacredBuffActive = false;
       player.sacredBuffPct    = 0;
@@ -148,13 +164,9 @@ function updateSacredCrossBuff(world: World): void {
         setCooldown(state, SACRED_CD_KEY, SACRED_CD_MS);
         console.log(`[Sacred] ${player.id}: buff ended, next in ${SACRED_CD_MS}ms`);
       }
-    } else if (!isCooldownActive(state, SACRED_CD_KEY)) {
-      // Cooldown expired — activate buff
-      setString(state, SACRED_ORIG_CD, String(player.attackCooldown));
-      player.attackCooldown = Math.max(200, Math.round(player.attackCooldown / SACRED_APS_MULT));
-      setFlag(state, SACRED_BUFF_FLAG, true);
-      setCooldown(state, SACRED_BUFF_TIMER, SACRED_BUFF_MS);
-      console.log(`[Sacred] ${player.id}: BURST activated (cd=${player.attackCooldown}ms)`);
+    } else if (!isCooldownActive(state, SACRED_CD_KEY) && !getFlag(state, SACRED_READY)) {
+      // Cooldown expired — arm the buff; it procs on the next attack hit.
+      setFlag(state, SACRED_READY, true);
     }
 
     // Mirror to PlayerState for HUD display
