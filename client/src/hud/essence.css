@@ -21,7 +21,7 @@
 .essence-name {
   flex: 1;
   font-size: 11px;
-  color: #555577;
+  color: var(--hud-text-muted, #a7a2d8);
   font-family: monospace;
 }
 
@@ -31,4 +31,5 @@
   font-weight: bold;
   min-width: 28px;
   text-align: right;
+  color: var(--hud-text, #e5e2ff);
 }
