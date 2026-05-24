@@ -71,4 +71,8 @@ export function grantMonsterRewards(
   rewardPlayer(killer, rewards);
   applyBiomeXP(killer, monster.nodeId);
   registerKillForQuests(killer, monster.monsterTypeId);
+
+  if (monster.isBoss) {
+    world.bossRespawnAt.set(monster.nodeId, Date.now() + 30_000);
+  }
 }

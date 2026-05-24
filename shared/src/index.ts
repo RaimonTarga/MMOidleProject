@@ -43,8 +43,9 @@ export interface PlayerBuff {
  * entries reliably even when logic ticks outrun broadcast ticks.
  */
 export type CombatEvent =
-  | { kind: 'player-hit';  playerId: string; targetId: string; targetName: string; damage: number; empowered: boolean; execution: boolean; effects?: string[] }
-  | { kind: 'player-kill'; playerId: string; targetId: string; targetName: string };
+  | { kind: 'player-hit';    playerId: string; targetId: string; targetName: string; damage: number; empowered: boolean; execution: boolean; effects?: string[] }
+  | { kind: 'player-kill';   playerId: string; targetId: string; targetName: string }
+  | { kind: 'monster-dodge'; monsterId: string };
 
 // ─── Combat archetype ─────────────────────────────────────────────────────────
 

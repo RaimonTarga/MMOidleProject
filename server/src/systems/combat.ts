@@ -1,12 +1,12 @@
 import type { World } from '../world/World';
-import { GAME_CONFIG, TEST_ROOM_NODE_ID } from '@mmo-idle/shared';
+import { GAME_CONFIG, TEST_ROOM_NODE_ID, MONSTER_DATABASE } from '@mmo-idle/shared';
 import { grantMonsterRewards } from './rewards';
 import { getNodeMonsters } from '../world/nodeQueries';
 import {
   makeCombatContext,
   emitCombatEvent,
 } from './combatPipeline';
-import { getStatusEffect } from './statusEffects';
+import { getStatusEffect, applyStatusEffect } from './statusEffects';
 import { getAntiHealMult } from './defenseSystems';
 import { applyPlayerAoe } from './aoeDamage';
 import { isMonsterFrozen } from './dotT3';
@@ -38,6 +38,20 @@ export function updateCombat(world: World, dt: number, now: number) {
 
     if (target) {
       if (now - player.lastAttackAt >= player.attackCooldown) {
+        // Deterministic monster evasion — every evadeEvery-th incoming hit is dodged.
+        const targetDef = MONSTER_DATABASE.get(target.monsterTypeId);
+        if (targetDef?.evadeEvery) {
+          const mcs = world.monsterCombatState.get(target.id);
+          if (mcs) {
+            mcs.counters['hitsTaken'] = (mcs.counters['hitsTaken'] ?? 0) + 1;
+            if (mcs.counters['hitsTaken'] % targetDef.evadeEvery === 0) {
+              player.lastAttackAt = now;
+              world.pushEvent(player.nodeId, { kind: 'monster-dodge', monsterId: target.id });
+              continue;
+            }
+          }
+        }
+
         const ctx = makeCombatContext(player, 'player', target, 'monster');
 
         emitCombatEvent('beforeAttack', ctx, world);
@@ -138,6 +152,8 @@ export function updateCombat(world: World, dt: number, now: number) {
             if (pdx * pdx + pdy * pdy <= ai.leashRange * ai.leashRange) {
               ai.aggroTargetId = player.id;
               ai.lastAggroAt   = now;
+              const def = MONSTER_DATABASE.get(target.monsterTypeId);
+              if (def?.chargeOnAggro) ai.chargeRemainingMs = def.chargeOnAggro.durationMs;
               // Keep the attacker's combat timer fresh so OOC regen doesn't tick
               // while the monster is chasing them toward attack range.
               world.playerCombatAt.set(player.id, now);
@@ -214,6 +230,25 @@ export function updateCombat(world: World, dt: number, now: number) {
 
       target.hp -= ctx.damage;
       monster.lastAttackAt = now;
+
+      // Apply slow / root if this monster type has one.
+      const monsterDef = MONSTER_DATABASE.get(monster.monsterTypeId);
+      if (monsterDef?.slowEffect) {
+        const pcs = world.playerCombatState.get(target.id);
+        if (pcs) {
+          applyStatusEffect(pcs, {
+            id:          'slow',
+            maxStacks:   1,
+            remainingMs: monsterDef.slowEffect.durationMs,
+            refreshable: true,
+            sourceId:    monster.id,
+            data: {
+              speedMult: monsterDef.slowEffect.speedMult,
+              totalMs:   monsterDef.slowEffect.durationMs,
+            },
+          });
+        }
+      }
 
       emitCombatEvent('afterHit', ctx, world);
 

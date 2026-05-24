@@ -18,7 +18,7 @@ export const BIOME_PRIMARY_ESSENCE: Record<string, EssenceType> = {
   mountain: 'blue',
   plains:   'yellow',
   swamp:    'purple',
-  cave:     'blue',
+  cave:     'red',
   jungle:   'green',
   tundra:   'blue',
   desert:   'yellow',
@@ -45,6 +45,7 @@ export function emptyEquipment(): EquipmentMap {
 /** Typed stat keys that items can modify. Mirrors relevant PlayerState fields. */
 export interface ItemStats {
   attack?: number;
+  onHitDamage?: number;
   plating?: number;
   /** Percentage reduction added (0.0–1.0 range; items should use small values like 0.05). */
   damageReduction?: number;

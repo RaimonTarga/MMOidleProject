@@ -42,7 +42,10 @@ export function updateMovement(world: World, dt: number) {
       p.targetY = p.y;
       continue;
     }
-    moveToward(p, dt, p.speed);
+    const pcs   = world.playerCombatState.get(p.id);
+    const slow  = pcs?.statusEffects.find(e => e.id === 'slow');
+    const speed = slow ? p.speed * (slow.data['speedMult'] ?? 1) : p.speed;
+    moveToward(p, dt, speed);
   }
 
   for (const m of world.monsters.values()) {

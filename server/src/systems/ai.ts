@@ -1,5 +1,6 @@
 import type { World } from '../world/World';
 import type { MonsterState, PlayerState } from '@mmo-idle/shared';
+import { MONSTER_DATABASE } from '@mmo-idle/shared';
 import { getNodePlayers } from '../world/nodeQueries';
 import { NODE_REGISTRY } from '../world/nodeRegistry';
 import { isMonsterFrozen } from './dotT3';
@@ -60,6 +61,8 @@ export function updateMonsters(world: World, dt: number, now: number) {
       if (pulled) {
         ai.aggroTargetId = pulled.id;
         ai.lastAggroAt   = now;
+        const def = MONSTER_DATABASE.get(monster.monsterTypeId);
+        if (def?.chargeOnAggro) ai.chargeRemainingMs = def.chargeOnAggro.durationMs;
       }
     }
 
@@ -108,13 +111,19 @@ export function updateMonsters(world: World, dt: number, now: number) {
         monster.targetY = monster.y;
         monster.state   = 'attacking';
       } else {
-        // Still chasing — accumulate kite timer and ramp speed after grace period.
-        ai.kiteTimer += dt;
-        const excess = Math.max(0, ai.kiteTimer - KITE_GRACE_MS);
-        const mult   = Math.min(KITE_MAX_MULT, 1 + (excess / 1000) * KITE_RAMP_RATE);
-        const rawSpeed = ai.baseSpeed * mult;
-        // Once ramp is active enforce a minimum so even slow bosses become threatening.
-        monster.speed = Math.round(excess > 0 ? Math.max(rawSpeed, KITE_MIN_SPEED) : rawSpeed);
+        // Still chasing. Charge burst takes priority over kite ramp for its duration.
+        if (ai.chargeRemainingMs > 0) {
+          ai.chargeRemainingMs = Math.max(0, ai.chargeRemainingMs - dt);
+          const def = MONSTER_DATABASE.get(monster.monsterTypeId);
+          monster.speed = Math.round(ai.baseSpeed * (def?.chargeOnAggro?.speedMult ?? 1));
+          // Don't accumulate kite timer during charge so ramp starts fresh after burst.
+        } else {
+          ai.kiteTimer += dt;
+          const excess = Math.max(0, ai.kiteTimer - KITE_GRACE_MS);
+          const mult   = Math.min(KITE_MAX_MULT, 1 + (excess / 1000) * KITE_RAMP_RATE);
+          const rawSpeed = ai.baseSpeed * mult;
+          monster.speed = Math.round(excess > 0 ? Math.max(rawSpeed, KITE_MIN_SPEED) : rawSpeed);
+        }
 
         const dist = Math.sqrt(distSq);
         monster.targetX = target.x - (dx / dist) * stopDist;
@@ -123,8 +132,9 @@ export function updateMonsters(world: World, dt: number, now: number) {
       }
 
     } else {
-      // No valid aggro target — reset kite state and return/wander.
-      ai.kiteTimer  = 0;
+      // No valid aggro target — reset kite and charge state, return/wander.
+      ai.kiteTimer         = 0;
+      ai.chargeRemainingMs = 0;
       // Run at boosted speed while returning so the re-engage window is small.
       monster.speed = monster.state === 'returning'
         ? Math.round(ai.baseSpeed * RETURN_SPEED_MULT)

@@ -63,6 +63,8 @@ export interface MonsterAI {
   baseSpeed: number;
   /** Ms spent chasing without landing an attack — drives the kite speed ramp. */
   kiteTimer: number;
+  /** Remaining ms of an active charge burst; 0 when not charging. */
+  chargeRemainingMs: number;
 }
 
 
@@ -75,6 +77,8 @@ export class World {
   monsterAI    = new Map<string, MonsterAI>();
   /** Server-only boss fight state. Keyed by monster.id, pruned when the boss dies. */
   bossState    = new Map<string, BossRuntimeState>();
+  /** nodeId → earliest timestamp at which the boss may respawn after being killed. */
+  bossRespawnAt = new Map<string, number>();
   playerCombatAt = new Map<string, number>();
   /** Server-side only combat state for players. Never serialized or sent to clients. */
   playerCombatState  = new Map<string, CombatState>();
@@ -107,13 +111,21 @@ export class World {
   private init() {
     for (const nodeId of NODE_REGISTRY.keys()) {
       if (nodeId === TEST_ROOM_NODE_ID) continue;
-      for (let i = 0; i < GAME_CONFIG.MONSTERS_PER_NODE; i++) {
+      const target = this.getMobDensity(nodeId);
+      for (let i = 0; i < target; i++) {
         this.spawnMonster(nodeId);
       }
       this.ensureBoss(nodeId);
     }
 
     if (IS_DEV) this.initTestRoom();
+  }
+
+  private getMobDensity(nodeId: string): number {
+    const biomeInfo = NODE_BIOMES[nodeId];
+    if (!biomeInfo) return GAME_CONFIG.MONSTERS_PER_NODE;
+    const biome = BIOME_DATABASE.get(biomeInfo.biomeGroup);
+    return biome?.mobDensity ?? GAME_CONFIG.MONSTERS_PER_NODE;
   }
 
   // ── SYSTEM ENTRY POINT ─────────────────────────────
@@ -216,10 +228,11 @@ export class World {
       leashRange:    def.ai.leashRange,
       idleMinMs:     def.ai.idleMinMs,
       idleMaxMs:     def.ai.idleMaxMs,
-      aggroTargetId: null,
-      lastAggroAt:   0,
-      baseSpeed:     def.stats.speed,
-      kiteTimer:     0,
+      aggroTargetId:    null,
+      lastAggroAt:      0,
+      baseSpeed:        def.stats.speed,
+      kiteTimer:        0,
+      chargeRemainingMs: 0,
     });
     this.monsterCombatState.set(id, makeCombatState());
 
@@ -304,11 +317,12 @@ export class World {
   }
 
   ensurePopulation(nodeId: string) {
+    const target = this.getMobDensity(nodeId);
     let count = 0;
     for (const m of this.monsters.values()) {
       if (m.nodeId === nodeId && !m.isBoss) count++;
     }
-    while (count < GAME_CONFIG.MONSTERS_PER_NODE) {
+    while (count < target) {
       if (!this.spawnMonster(nodeId)) break;
       count++;
     }
@@ -412,6 +426,9 @@ export class World {
 
     const hasBoss = [...this.monsters.values()].some(m => m.nodeId === nodeId && m.isBoss);
     if (hasBoss) return;
+
+    const respawnAt = this.bossRespawnAt.get(nodeId) ?? 0;
+    if (respawnAt > Date.now()) return;
 
     const biome = BIOME_DATABASE.get(nodeDef.biomeGroup);
     const pool  = biome?.bossPoolByTier?.[nodeDef.biomeTier];

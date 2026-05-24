@@ -1,6 +1,6 @@
 import type { PlayerBuff } from '@mmo-idle/shared';
 import { getCounter, getResource } from './combatState';
-import { getTotalStacks } from './statusEffects';
+import { getTotalStacks, getStatusEffect } from './statusEffects';
 import { getDefenseAbsorbPool, getDefenseBurstPool, getDefenseDebtPool } from './defenseSystems';
 import {
   getOverdrivePct,
