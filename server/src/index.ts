@@ -5,7 +5,7 @@ import cors from 'cors';
 import path from 'path';
 
 import { World } from './world/World';
-import { GAME_CONFIG } from '@mmo-idle/shared';
+import { GAME_CONFIG, TEST_ROOM_NODE_ID, ESSENCE_TYPES } from '@mmo-idle/shared';
 import { unlockSkill } from './systems/skills';
 import { equipItem, unequipItem } from './systems/inventory';
 import { craftRecipe } from './systems/crafting';
@@ -27,6 +27,9 @@ import { initCadenceArchetype } from './systems/cadencePrototype';
 import { initWeaponEffects } from './systems/weaponEffects';
 import { initDefenseSystems } from './systems/defenseSystems';
 import { initDebuffMechanics } from './systems/debuffMechanics';
+import { IS_DEV } from './env';
+
+export { IS_DEV };
 
 // ── Setup ─────────────────────────────────────────────
 
@@ -209,6 +212,39 @@ io.on('connection', (socket) => {
     const result = craftRecipe(p, recipeId);
     socket.emit('crafting:result', result);
   });
+
+  if (IS_DEV) {
+    socket.on('debug:goToTestRoom', () => {
+      const p = world.players.get(socket.id);
+      if (!p) return;
+
+      const spawnX = GAME_CONFIG.NODE_WIDTH / 2;
+      const spawnY = GAME_CONFIG.NODE_HEIGHT / 2 - 200;
+
+      p.nodeId = TEST_ROOM_NODE_ID;
+      p.x = spawnX;
+      p.y = spawnY;
+      p.targetX = spawnX;
+      p.targetY = spawnY;
+      p.auto = false;
+      p.attackTargetId = null;
+      p.isChanneling = false;
+      p.channelingPct = 0;
+
+      world.playerCombatAt.delete(socket.id);
+      for (const ai of world.monsterAI.values()) {
+        if (ai.aggroTargetId === socket.id) ai.aggroTargetId = null;
+      }
+    });
+
+    socket.on('debug:leaveTestRoom', () => {
+      const p = world.players.get(socket.id);
+      if (!p) return;
+      // Wipe the infinite test-room essence stockpile so it can't leak into the live world.
+      for (const type of ESSENCE_TYPES) p.essences[type] = 0;
+      world.respawnPlayer(socket.id);
+    });
+  }
 
   socket.on('disconnect', () => {
     const p = world.players.get(socket.id);

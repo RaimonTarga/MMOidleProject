@@ -1,5 +1,7 @@
 import type { PlayerState, EssenceType } from '@mmo-idle/shared';
-import { RECIPE_DATABASE } from '@mmo-idle/shared';
+import { ESSENCE_TYPES, RECIPE_DATABASE, TEST_ROOM_NODE_ID } from '@mmo-idle/shared';
+
+const TEST_ROOM_ESSENCE_AMOUNT = 1_000_000_000;
 
 export interface CraftResult {
   success: boolean;
@@ -10,12 +12,26 @@ export function craftRecipe(player: PlayerState, recipeId: string): CraftResult 
   const recipe = RECIPE_DATABASE.get(recipeId);
   if (!recipe) return { success: false, reason: 'Unknown recipe.' };
 
-  const progress = player.recipeProgress[recipe.recipeGroup] ?? 0;
-  if (progress < recipe.requiredTier) {
-    return {
-      success: false,
-      reason: `Recipe locked — need ${recipe.recipeGroup} tier ${recipe.requiredTier}.`,
-    };
+  const isTestRoom = player.nodeId === TEST_ROOM_NODE_ID;
+  if (isTestRoom) {
+    if (player.playerTier < recipe.requiredTier) {
+      return {
+        success: false,
+        reason: `Test forge tier ${player.playerTier} cannot craft tier ${recipe.requiredTier}.`,
+      };
+    }
+
+    for (const type of ESSENCE_TYPES) {
+      player.essences[type] = TEST_ROOM_ESSENCE_AMOUNT;
+    }
+  } else {
+    const progress = player.recipeProgress[recipe.recipeGroup] ?? 0;
+    if (progress < recipe.requiredTier) {
+      return {
+        success: false,
+        reason: `Recipe locked — need ${recipe.recipeGroup} tier ${recipe.requiredTier}.`,
+      };
+    }
   }
 
   // Check every essence type in the cost.
