@@ -429,3 +429,227 @@
   padding: 24px 0;
   letter-spacing: 0.3px;
 }
+
+/* ── Tab bar ─────────────────────────────────────────────────────────────── */
+.craft-tabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: 16px;
+  border-bottom: 1px solid rgba(80, 70, 160, 0.30);
+}
+
+.craft-tab {
+  flex: 1;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: #6868a0;
+  font-family: monospace;
+  font-size: 11px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  padding: 8px 0 6px;
+  cursor: pointer;
+  transition: color 0.12s, border-color 0.12s;
+  margin-bottom: -1px;
+}
+
+.craft-tab:hover:not(.craft-tab--active) {
+  color: #9898c8;
+}
+
+.craft-tab--active {
+  color: #b0a8e8;
+  border-bottom-color: rgba(140, 120, 220, 0.80);
+}
+
+/* ── Biome section ───────────────────────────────────────────────────────── */
+.craft-biome-section {
+  margin-bottom: 14px;
+  padding: 10px 12px;
+  background: rgba(6, 5, 20, 0.95);
+  border: 1px solid rgba(60, 55, 120, 0.30);
+  border-radius: 5px;
+}
+
+.craft-biome-section--current {
+  border-color: rgba(100, 88, 200, 0.55);
+  background: rgba(10, 8, 28, 0.98);
+}
+
+.craft-biome-section__header {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.craft-biome-section__name {
+  font-size: 12px;
+  font-weight: bold;
+  color: #aaa8d8;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  flex: 1;
+}
+
+.craft-biome-section__tag {
+  font-size: 8px;
+  font-weight: bold;
+  color: #88aaff;
+  background: rgba(80, 100, 220, 0.18);
+  border: 1px solid rgba(80, 100, 220, 0.35);
+  border-radius: 3px;
+  padding: 1px 5px;
+  letter-spacing: 0.5px;
+}
+
+.craft-biome-section__level {
+  font-size: 11px;
+  color: #8888cc;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+/* ── Unlock path ─────────────────────────────────────────────────────────── */
+.craft-unlock-path {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-top: 10px;
+}
+
+.craft-unlock-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 6px;
+  border-radius: 3px;
+  border: 1px solid rgba(50, 45, 100, 0.30);
+  background: rgba(8, 6, 22, 0.85);
+  opacity: 0.70;
+}
+
+.craft-unlock-row--unlocked {
+  border-color: rgba(68, 190, 100, 0.30);
+  background: rgba(8, 30, 16, 0.85);
+  opacity: 1;
+}
+
+.craft-unlock-row--tier-locked {
+  opacity: 0.38;
+}
+
+.craft-unlock-row__level {
+  font-size: 9px;
+  font-weight: bold;
+  color: #6868a0;
+  width: 28px;
+  flex-shrink: 0;
+  text-align: right;
+}
+
+.craft-unlock-row--unlocked .craft-unlock-row__level {
+  color: #5577aa;
+}
+
+.craft-unlock-row__name {
+  flex: 1;
+  font-size: 10px;
+  color: #9090c0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.craft-unlock-row--unlocked .craft-unlock-row__name {
+  color: #b0c8e8;
+}
+
+.craft-unlock-row__slot {
+  font-size: 8px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  padding: 1px 5px;
+  border-radius: 2px;
+  flex-shrink: 0;
+  border: 1px solid rgba(70, 70, 140, 0.30);
+  color: #6868a0;
+  background: rgba(15, 14, 35, 0.70);
+}
+
+.craft-unlock-row__slot[data-slot="weapon"]   { color: #b07050; border-color: rgba(160,90,40,0.35); }
+.craft-unlock-row__slot[data-slot="armor"]    { color: #4488bb; border-color: rgba(50,100,190,0.35); }
+.craft-unlock-row__slot[data-slot="recovery"] { color: #44aa66; border-color: rgba(40,150,90,0.35); }
+.craft-unlock-row__slot[data-slot="mobility"] { color: #8855cc; border-color: rgba(130,70,210,0.35); }
+
+.craft-unlock-row__tier {
+  font-size: 8px;
+  color: #505075;
+  flex-shrink: 0;
+}
+
+.craft-unlock-row__status {
+  font-size: 9px;
+  font-weight: bold;
+  color: #484868;
+  width: 28px;
+  flex-shrink: 0;
+  text-align: center;
+}
+
+.craft-unlock-row__status--ok   { color: #44bb77; }
+.craft-unlock-row__status--tier { color: #886644; font-size: 7px; letter-spacing: 0.3px; }
+
+/* ── Filter chips ────────────────────────────────────────────────────────── */
+.craft-filters {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 12px;
+}
+
+.craft-filter-row {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.craft-filter-chip {
+  background: rgba(12, 10, 30, 0.85);
+  border: 1px solid rgba(60, 55, 120, 0.40);
+  color: #6868a0;
+  font-family: monospace;
+  font-size: 9px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 3px 9px;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: border-color 0.10s, color 0.10s, background 0.10s;
+  white-space: nowrap;
+}
+
+.craft-filter-chip:hover:not(.craft-filter-chip--active) {
+  border-color: rgba(90, 80, 170, 0.60);
+  color: #9090c8;
+}
+
+.craft-filter-chip--active {
+  border-color: rgba(110, 100, 210, 0.70);
+  background: rgba(20, 18, 50, 0.95);
+  color: #b0a8e8;
+}
+
+.craft-filter-chip--slot[data-slot="weapon"]   { color: #886644; border-color: rgba(140,80,30,0.35); }
+.craft-filter-chip--slot[data-slot="armor"]    { color: #336699; border-color: rgba(40,80,160,0.35); }
+.craft-filter-chip--slot[data-slot="recovery"] { color: #337755; border-color: rgba(30,120,70,0.35); }
+.craft-filter-chip--slot[data-slot="mobility"] { color: #664499; border-color: rgba(100,55,170,0.35); }
+
+.craft-filter-chip--slot.craft-filter-chip--active[data-slot="weapon"]   { color: #cc7730; background: rgba(45,16,5,0.85); border-color: rgba(180,100,40,0.60); }
+.craft-filter-chip--slot.craft-filter-chip--active[data-slot="armor"]    { color: #4488bb; background: rgba(8,22,55,0.85);  border-color: rgba(50,100,190,0.60); }
+.craft-filter-chip--slot.craft-filter-chip--active[data-slot="recovery"] { color: #44aa66; background: rgba(5,35,18,0.85);  border-color: rgba(40,150,90,0.60);  }
+.craft-filter-chip--slot.craft-filter-chip--active[data-slot="mobility"] { color: #8855cc; background: rgba(28,8,50,0.85);  border-color: rgba(130,70,210,0.60); }

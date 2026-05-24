@@ -4,7 +4,7 @@ import type { PlayerState } from '@mmo-idle/shared';
 import type { ItemStats } from '@mmo-idle/shared';
 import {
   NODE_BIOMES, BIOME_DATABASE, MONSTER_DATABASE, RECIPE_DATABASE,
-  BIOME_UNLOCK_THRESHOLDS, ESSENCE_COLORS,
+  GAME_CONFIG, ESSENCE_COLORS,
 } from '@mmo-idle/shared';
 import type { EssenceType } from '@mmo-idle/shared';
 import { hudBus } from '../hudBus';
@@ -104,7 +104,7 @@ function NodeInfo({ nodeId, player }: NodeInfoProps) {
   const recipes = useMemo(() =>
     Array.from(RECIPE_DATABASE.values())
       .filter(r => r.recipeGroup === info?.biomeGroup)
-      .sort((a, b) => a.requiredTier - b.requiredTier || a.slot.localeCompare(b.slot)),
+      .sort((a, b) => a.requiredBiomeLevel - b.requiredBiomeLevel || a.slot.localeCompare(b.slot)),
     [info?.biomeGroup],
   );
 
@@ -120,13 +120,13 @@ function NodeInfo({ nodeId, player }: NodeInfoProps) {
   const bossIds = isDungeon ? (biome.bossPoolByTier?.[biomeTier] ?? []) : [];
   const bosses  = bossIds.map(id => MONSTER_DATABASE.get(id)).filter((m): m is NonNullable<typeof m> => m !== undefined);
 
-  const thresholds  = BIOME_UNLOCK_THRESHOLDS[biomeGroup] ?? [];
-  const kills       = player ? (player.biomeKills[biomeGroup] ?? 0) : 0;
-  const unlockedTier = player ? (player.recipeProgress[biomeGroup] ?? 0) : 0;
-  const tierLabel   = biomeTier === 0 ? 'Starting Zone' : `Tier ${biomeTier}`;
+  const biomeXP    = player ? (player.biomeXP[biomeGroup] ?? 0) : 0;
+  const biomeLevel = player ? (player.biomeLevel[biomeGroup] ?? 0) : 0;
+  const levelCap   = GAME_CONFIG.BIOME_LEVEL_CAP_BY_TIER[player?.playerTier ?? 0] ?? 999;
+  const tierLabel  = biomeTier === 0 ? 'Starting Zone' : `Tier ${biomeTier}`;
 
-  const recipesByTier = recipes.reduce<Record<number, typeof recipes>>((acc, r) => {
-    (acc[r.requiredTier] ??= []).push(r);
+  const recipesByLevel = recipes.reduce<Record<number, typeof recipes>>((acc, r) => {
+    (acc[r.requiredBiomeLevel] ??= []).push(r);
     return acc;
   }, {});
 
@@ -168,43 +168,42 @@ function NodeInfo({ nodeId, player }: NodeInfoProps) {
         </section>
       )}
 
-      {thresholds.length > 0 && (
+      {recipes.length > 0 && (
         <section className="map-info-section">
           <div className="map-info-section__title">
-            Crafting Progress
-            {kills > 0 && <span className="map-kills-badge">{kills} kills</span>}
+            Biome Progress
+            <span className="map-kills-badge">Lv {biomeLevel}{biomeLevel >= levelCap ? ' (max)' : ''}</span>
           </div>
-          {thresholds.map(({ tier, killsRequired }) => {
-            const pct = Math.min(100, (kills / killsRequired) * 100);
-            const unlocked = kills >= killsRequired;
+          {biomeLevel < levelCap && (() => {
+            const xpInLevel = biomeXP - biomeLevel * GAME_CONFIG.BIOME_XP_PER_LEVEL;
+            const pct = Math.min(100, (xpInLevel / GAME_CONFIG.BIOME_XP_PER_LEVEL) * 100);
             return (
-              <div key={tier} className="map-progress-row">
+              <div className="map-progress-row">
                 <div className="map-progress-bar-wrap">
-                  <div className={`map-progress-bar${unlocked ? ' map-progress-bar--done' : ''}`} style={{ width: `${pct}%` }} />
+                  <div className="map-progress-bar" style={{ width: `${pct}%` }} />
                 </div>
-                <span className={`map-progress-label${unlocked ? ' map-progress-label--done' : ''}`}>
-                  T{tier} {unlocked ? '✓' : `${kills}/${killsRequired}`}
+                <span className="map-progress-label">
+                  {xpInLevel} / {GAME_CONFIG.BIOME_XP_PER_LEVEL} XP to Lv {biomeLevel + 1}
                 </span>
               </div>
             );
-          })}
+          })()}
         </section>
       )}
 
       {recipes.length > 0 && (
         <section className="map-info-section">
           <div className="map-info-section__title">Recipes</div>
-          {Object.entries(recipesByTier).map(([tierStr, group]) => {
-            const tier = Number(tierStr);
-            const tierUnlocked = unlockedTier >= tier;
-            const threshold = thresholds.find(t => t.tier === tier);
+          {Object.entries(recipesByLevel).map(([lvlStr, group]) => {
+            const reqLevel    = Number(lvlStr);
+            const lvlUnlocked = biomeLevel >= reqLevel;
             return (
-              <div key={tier} className="map-recipe-group">
-                <div className={`map-recipe-group__header${tierUnlocked ? ' unlocked' : ''}`}>
-                  T{tier} — {tierUnlocked ? 'Unlocked' : threshold ? `${threshold.killsRequired} kills to unlock` : 'Locked'}
+              <div key={reqLevel} className="map-recipe-group">
+                <div className={`map-recipe-group__header${lvlUnlocked ? ' unlocked' : ''}`}>
+                  {lvlUnlocked ? `Lv ${reqLevel} — Unlocked` : `Lv ${reqLevel} required`}
                 </div>
                 {group.map(r => (
-                  <div key={r.id} className={`map-recipe-row${tierUnlocked ? '' : ' locked'}`}>
+                  <div key={r.id} className={`map-recipe-row${lvlUnlocked ? '' : ' locked'}`}>
                     <span className="map-recipe-name">{r.name}</span>
                     <span className="map-recipe-stat">{formatStat(r.stats)}</span>
                     <span className="map-recipe-cost">

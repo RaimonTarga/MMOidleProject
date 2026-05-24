@@ -3,9 +3,11 @@ import type { MonsterState, PlayerState } from '@mmo-idle/shared';
 import { getNodePlayers } from '../world/nodeQueries';
 import { NODE_REGISTRY } from '../world/nodeRegistry';
 
-const KITE_GRACE_MS  = 1_500;  // ms chasing before speed ramp begins
-const KITE_RAMP_RATE = 0.50;   // speed multiplier gain per second past grace
-const KITE_MAX_MULT  = 3.0;    // cap on kite speed multiplier
+const KITE_GRACE_MS   = 500;   // ms chasing before speed ramp begins
+const KITE_RAMP_RATE  = 1.5;   // speed multiplier gain per second past grace
+const KITE_MAX_MULT   = 6.0;   // cap on kite speed multiplier
+const KITE_MIN_SPEED  = 150;   // absolute floor once ramp is active (beats base player speed of 120)
+const KITE_DECAY_RATE = 2.0;   // drains 2× faster than it builds while monster is in attack range
 const RETURN_SPEED_MULT = 1.6; // how fast monsters snap back to spawn
 
 function findAggro(monster: MonsterState, world: World): PlayerState | null {
@@ -77,11 +79,12 @@ export function updateMonsters(world: World, dt: number, now: number) {
       const stopDist = monster.attackRange * 0.80;
 
       if (distSq <= monster.attackRange * monster.attackRange) {
-        // Entered attack range — reset kite ramp and start attacking.
+        // In attack range — drain kite ramp slowly rather than resetting it.
+        // Hard-resetting to 0 lets players exploit touch-and-run to wipe the penalty.
         if (monster.state !== 'attacking') {
           monster.lastAttackAt = now - monster.attackCooldown;
         }
-        ai.kiteTimer    = 0;
+        ai.kiteTimer    = Math.max(0, ai.kiteTimer - dt * KITE_DECAY_RATE);
         monster.speed   = ai.baseSpeed;
         monster.targetX = monster.x;
         monster.targetY = monster.y;
@@ -91,7 +94,9 @@ export function updateMonsters(world: World, dt: number, now: number) {
         ai.kiteTimer += dt;
         const excess = Math.max(0, ai.kiteTimer - KITE_GRACE_MS);
         const mult   = Math.min(KITE_MAX_MULT, 1 + (excess / 1000) * KITE_RAMP_RATE);
-        monster.speed = Math.round(ai.baseSpeed * mult);
+        const rawSpeed = ai.baseSpeed * mult;
+        // Once ramp is active enforce a minimum so even slow bosses become threatening.
+        monster.speed = Math.round(excess > 0 ? Math.max(rawSpeed, KITE_MIN_SPEED) : rawSpeed);
 
         const dist = Math.sqrt(distSq);
         monster.targetX = target.x - (dx / dist) * stopDist;

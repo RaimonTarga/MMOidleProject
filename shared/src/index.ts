@@ -155,17 +155,23 @@ export interface PlayerState {
   /** Currently equipped items, one per slot. Null means nothing equipped. */
   equipment: EquipmentMap;
   /**
-   * Raw kill count per biome group — the progression metric that drives recipe
-   * unlocks. Incremented server-side on every monster kill.
-   * e.g. { forest: 12, mountain: 0 }
+   * Accumulated XP per biome group. Incremented server-side on every kill;
+   * capped when biomeLevel[group] reaches GAME_CONFIG.BIOME_LEVEL_CAP_BY_TIER[playerTier].
+   * e.g. { forest: 350 }
    */
-  biomeKills: Record<string, number>;
+  biomeXP: Record<string, number>;
   /**
-   * Derived from biomeKills via BIOME_UNLOCK_THRESHOLDS. Value is the maximum
-   * recipe tier accessible in that group. Missing key means nothing unlocked.
-   * e.g. { forest: 1 } means T1 forest recipes are craftable.
+   * Current level per biome group, derived from biomeXP.
+   * Each level unlocks one or more recipes in that group.
+   * e.g. { forest: 3 } means forest biome level 3 has been reached.
    */
-  recipeProgress: Record<string, number>;
+  biomeLevel: Record<string, number>;
+  /**
+   * Recipe IDs the player has unlocked. A recipe is added automatically when
+   * the required biomeLevel is reached. Recipes can be crafted from anywhere
+   * once unlocked.
+   */
+  unlockedRecipes: string[];
   /**
    * Which server-side combat mechanic module governs this player.
    * null = vanilla behavior; set server-side only, sent to client for future UI use.
@@ -717,4 +723,12 @@ export const GAME_CONFIG = {
    * splash independent of each archetype's multiplier.
    */
   EMPOWERED_AOE_MULT: 0.5,
+
+  // ── Biome XP / recipe unlock system ──────────────────────────────────────
+  /** XP required to gain one biome level. */
+  BIOME_XP_PER_LEVEL: 100,
+  /** XP granted per kill, indexed by the node's biomeTier (0–5). */
+  BIOME_XP_BY_NODE_TIER: [5, 10, 20, 35, 55, 80] as unknown as readonly number[],
+  /** Maximum biome level attainable at each playerTier (index = playerTier). T2 recipes start at level 6. */
+  BIOME_LEVEL_CAP_BY_TIER: [2, 5, 10, 15, 20, 25, 30, 35] as unknown as readonly number[],
 } as const;
