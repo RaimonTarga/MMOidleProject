@@ -269,6 +269,10 @@ export class GameScene extends Phaser.Scene {
       combatLog.push('death', 'You were defeated');
       this.showDeathOverlay();
     });
+
+    this.socket.on('player:ascended', (tier) => {
+      this.showAscensionOverlay(tier);
+    });
   }
 
   update(_time: number, delta: number) {
@@ -843,6 +847,66 @@ export class GameScene extends Phaser.Scene {
         duration: 600,
         onComplete: () => { bg.destroy(); text.destroy(); sub.destroy(); },
       });
+    });
+  }
+
+  private showAscensionOverlay(tier: number): void {
+    const MESSAGES: Record<number, string> = {
+      1: 'Humble beginnings. Your path is chosen.',
+      2: 'A style takes shape. You learn to fight on your terms.',
+      3: 'Distance and discipline become your allies.',
+      4: 'A true warrior emerges. Power yields to you.',
+      5: 'Your name is spoken in darker circles.',
+      6: 'The land itself begins to remember your deeds.',
+      7: 'Legends are made of lesser feats.',
+    };
+    const sub = MESSAGES[tier] ?? 'You press on, into the unknown.';
+
+    const w = this.scale.width;
+    const h = this.scale.height;
+
+    const bg = this.add
+      .rectangle(w / 2, h / 2, w, h, 0x05030f, 0.72)
+      .setScrollFactor(0)
+      .setDepth(50);
+
+    const label = this.add
+      .text(w / 2, h / 2 - 10, 'ASCENSION', {
+        color: '#e8c84a',
+        fontSize: '46px',
+        fontFamily: 'monospace',
+        fontStyle: 'bold',
+      })
+      .setScrollFactor(0)
+      .setDepth(51)
+      .setOrigin(0.5);
+
+    const subText = this.add
+      .text(w / 2, h / 2 + 52, sub, {
+        color: '#a888dd',
+        fontSize: '13px',
+        fontFamily: 'monospace',
+      })
+      .setScrollFactor(0)
+      .setDepth(51)
+      .setOrigin(0.5);
+
+    // Fade in then hold, then fade out.
+    [bg, label, subText].forEach(obj => obj.setAlpha(0));
+    this.tweens.add({
+      targets: [bg, label, subText],
+      alpha: 1,
+      duration: 350,
+      onComplete: () => {
+        this.time.delayedCall(2000, () => {
+          this.tweens.add({
+            targets: [bg, label, subText],
+            alpha: 0,
+            duration: 600,
+            onComplete: () => { bg.destroy(); label.destroy(); subText.destroy(); },
+          });
+        });
+      },
     });
   }
 

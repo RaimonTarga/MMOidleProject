@@ -643,6 +643,8 @@ export interface ServerToClientEvents {
   'crafting:result': (result: { success: boolean; reason?: string }) => void;
   /** Sent to a player whose HP reached zero — they are simultaneously respawned server-side. */
   'player:died': () => void;
+  /** Sent when a player unlocks a skill and advances to the next tier. */
+  'player:ascended': (tier: number) => void;
 }
 
 /** Events clients send to the server */
