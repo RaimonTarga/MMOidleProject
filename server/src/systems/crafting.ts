@@ -14,27 +14,24 @@ export function craftRecipe(player: PlayerState, recipeId: string): CraftResult 
 
   const isTestRoom = player.nodeId === TEST_ROOM_NODE_ID;
   if (isTestRoom) {
-    if (player.playerTier < recipe.requiredTier) {
+    if (player.playerTier < recipe.tier) {
       return {
         success: false,
-        reason: `Test forge tier ${player.playerTier} cannot craft tier ${recipe.requiredTier}.`,
+        reason: `Test forge tier ${player.playerTier} cannot craft tier ${recipe.tier} recipes.`,
       };
     }
-
     for (const type of ESSENCE_TYPES) {
       player.essences[type] = TEST_ROOM_ESSENCE_AMOUNT;
     }
   } else {
-    const progress = player.recipeProgress[recipe.recipeGroup] ?? 0;
-    if (progress < recipe.requiredTier) {
+    if (!player.unlockedRecipes.includes(recipeId)) {
       return {
         success: false,
-        reason: `Recipe locked — need ${recipe.recipeGroup} tier ${recipe.requiredTier}.`,
+        reason: `Recipe locked — reach ${recipe.recipeGroup} level ${recipe.requiredBiomeLevel}.`,
       };
     }
   }
 
-  // Check every essence type in the cost.
   const costEntries = Object.entries(recipe.cost) as [EssenceType, number][];
   for (const [type, amount] of costEntries) {
     const held = player.essences[type] ?? 0;
@@ -46,7 +43,6 @@ export function craftRecipe(player: PlayerState, recipeId: string): CraftResult 
     }
   }
 
-  // Deduct all.
   for (const [type, amount] of costEntries) {
     player.essences[type] -= amount;
   }

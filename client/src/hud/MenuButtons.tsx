@@ -12,12 +12,12 @@ import './hud.css';
 
 export function RightSidebar() {
   const [hud, setHud]               = useState<HudState>({ status: 'connecting', player: null });
-  const [treeOpen, setTreeOpen]     = useState(false);
-  const [invOpen, setInvOpen]       = useState(false);
-  const [craftOpen, setCraftOpen]   = useState(false);
-  const [mapOpen, setMapOpen]       = useState(false);
-  const [dbgPlayer, setDbgPlayer]   = useState(false);
-  const [dbgEnemy, setDbgEnemy]     = useState(false);
+  const [treeOpen, setTreeOpen]             = useState(false);
+  const [invOpen, setInvOpen]               = useState(false);
+  const [craftTab, setCraftTab]             = useState<'biome' | 'forge' | null>(null);
+  const [mapOpen, setMapOpen]               = useState(false);
+  const [dbgPlayer, setDbgPlayer]           = useState(false);
+  const [dbgEnemy, setDbgEnemy]             = useState(false);
 
   useEffect(() => hudBus.subscribe(setHud), []);
 
@@ -111,10 +111,17 @@ export function RightSidebar() {
         <div className="panel-title">Crafting</div>
 
         <button
-          className={`auto-btn${craftOpen ? ' active' : ''}`}
-          onClick={() => setCraftOpen(v => !v)}
+          className={`auto-btn${craftTab === 'biome' ? ' active' : ''}`}
+          onClick={() => setCraftTab(t => t === 'biome' ? null : 'biome')}
         >
-          {craftOpen ? 'CLOSE FORGE' : 'OPEN FORGE'}
+          {craftTab === 'biome' ? 'CLOSE BIOME' : 'BIOME PROGRESS'}
+        </button>
+        <button
+          className={`auto-btn${craftTab === 'forge' ? ' active' : ''}`}
+          style={{ marginTop: 4 }}
+          onClick={() => setCraftTab(t => t === 'forge' ? null : 'forge')}
+        >
+          {craftTab === 'forge' ? 'CLOSE FORGE' : 'OPEN FORGE'}
         </button>
 
       </div>
@@ -171,10 +178,12 @@ export function RightSidebar() {
           onClose={() => setInvOpen(false)}
         />
       )}
-      {craftOpen && (
+      {craftTab !== null && (
         <CraftingPanel
           player={player}
-          onClose={() => setCraftOpen(false)}
+          tab={craftTab}
+          onTabChange={setCraftTab}
+          onClose={() => setCraftTab(null)}
         />
       )}
       {mapOpen && (

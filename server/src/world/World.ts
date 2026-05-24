@@ -16,6 +16,8 @@ import { updateDotArchetype } from '../systems/dotPrototype';
 import { updateDotT3 } from '../systems/dotT3';
 import { updateCadenceEffects } from '../systems/cadencePrototype';
 import { updateWeaponEffects } from '../systems/weaponEffects';
+import { updateBossScripts } from '../systems/bossScripts';
+import type { BossRuntimeState } from '../systems/bossScripts';
 import { updateShields, updateDefensiveSystems } from '../systems/defenseSystems';
 import { updateKnockback, type KnockbackComponent } from '../systems/knockback';
 import { recalculatePlayerStats } from '../systems/stats';
@@ -71,6 +73,8 @@ export class World {
   players      = new Map<string, PlayerState>();
   monsters     = new Map<string, MonsterState>();
   monsterAI    = new Map<string, MonsterAI>();
+  /** Server-only boss fight state. Keyed by monster.id, pruned when the boss dies. */
+  bossState    = new Map<string, BossRuntimeState>();
   playerCombatAt = new Map<string, number>();
   /** Server-side only combat state for players. Never serialized or sent to clients. */
   playerCombatState  = new Map<string, CombatState>();
@@ -126,6 +130,7 @@ export class World {
     updateDotArchetype(this, dt);
     updateCadenceEffects(this, dt);
     updateWeaponEffects(this, dt);
+    updateBossScripts(this, dt);
     updateAutoTargets(this);
     updateKnockback(this, dt);
     updateMovement(this, dt);

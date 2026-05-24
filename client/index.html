@@ -7,6 +7,33 @@
     <style>
       * { margin: 0; padding: 0; box-sizing: border-box; }
 
+      * {
+        scrollbar-width: thin;
+        scrollbar-color: rgba(132, 112, 235, 0.55) rgba(8, 6, 22, 0.45);
+      }
+
+      *::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+
+      *::-webkit-scrollbar-track {
+        background: rgba(8, 6, 22, 0.45);
+      }
+
+      *::-webkit-scrollbar-thumb {
+        background: linear-gradient(180deg, rgba(185, 173, 255, 0.70), rgba(100, 85, 210, 0.62));
+        border-radius: 999px;
+      }
+
+      *::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(180deg, rgba(216, 210, 255, 0.88), rgba(132, 112, 235, 0.78));
+      }
+
+      *::-webkit-scrollbar-corner {
+        background: transparent;
+      }
+
       body {
         background: #050510;
         height: 100vh;

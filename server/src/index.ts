@@ -183,7 +183,10 @@ io.on('connection', (socket) => {
   socket.on('player:unlockSkill', (skillId) => {
     const p = world.players.get(socket.id);
     if (!p) return;
-    unlockSkill(p, skillId);
+    const succeeded = unlockSkill(p, skillId);
+    if (succeeded) {
+      socket.emit('player:ascended', p.currentSkillTier);
+    }
     // recalculatePlayerStats (called inside unlockSkill) always resets
     // player.cadenceCount to 0 for cadence players — including when picking a
     // T2 range node that doesn't change the threshold. Mirror that reset into

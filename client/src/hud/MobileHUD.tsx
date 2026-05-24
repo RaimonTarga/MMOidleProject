@@ -13,7 +13,7 @@ export function MobileHUD() {
   const [hud, setHud]             = useState<HudState>({ status: 'connecting', player: null });
   const [treeOpen, setTreeOpen]   = useState(false);
   const [invOpen, setInvOpen]     = useState(false);
-  const [craftOpen, setCraftOpen] = useState(false);
+  const [craftTab, setCraftTab]   = useState<'biome' | 'forge' | null>(null);
   const [mapOpen, setMapOpen]     = useState(false);
   const [questOpen, setQuestOpen] = useState(false);
   const [menuOpen, setMenuOpen]   = useState(false);
@@ -84,7 +84,7 @@ export function MobileHUD() {
         <div className="mob-drawer-menu">
           <DrawerBtn label="SKILL TREE" active={treeOpen}  onClick={() => openPanel(setTreeOpen, treeOpen)} />
           <DrawerBtn label="INVENTORY"  active={invOpen}   onClick={() => openPanel(setInvOpen, invOpen)} />
-          <DrawerBtn label="CRAFTING"   active={craftOpen} onClick={() => openPanel(setCraftOpen, craftOpen)} />
+          <DrawerBtn label="CRAFTING"   active={craftTab !== null} onClick={() => { setCraftTab(t => t ? null : 'forge'); setMenuOpen(false); }} />
           <DrawerBtn label="MAP"        active={mapOpen}   onClick={() => openPanel(setMapOpen, mapOpen)} />
           <DrawerBtn label="QUESTS"     active={questOpen} onClick={() => openPanel(setQuestOpen, questOpen)} />
         </div>
@@ -93,7 +93,7 @@ export function MobileHUD() {
       {/* ── Panel overlays ──────────────────────────────────────────────── */}
       {treeOpen  && <SkillTreePanel player={player} onClose={() => setTreeOpen(false)} />}
       {invOpen   && <InventoryPanel player={player} onClose={() => setInvOpen(false)} />}
-      {craftOpen && <CraftingPanel  player={player} onClose={() => setCraftOpen(false)} />}
+      {craftTab !== null && <CraftingPanel player={player} tab={craftTab} onTabChange={setCraftTab} onClose={() => setCraftTab(null)} />}
       {mapOpen   && <MapPanel       player={player} onClose={() => setMapOpen(false)} />}
       {questOpen && (
         <div className="mob-panel-overlay">

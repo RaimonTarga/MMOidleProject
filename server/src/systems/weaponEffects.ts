@@ -5,7 +5,8 @@ import {
   isCooldownActive, setCooldown, getCooldown,
   getString, setString,
 } from './combatState';
-import { applyStatusEffect, getStatusEffects, pruneStatusEffects } from './statusEffects';
+import { applyStatusEffect, getStatusEffect } from './statusEffects';
+import { computeScaledDotDamage } from './dotPrototype';
 import { grantMonsterRewards } from './rewards';
 import type { World } from '../world/World';
 import type { PlayerState } from '@mmo-idle/shared';
@@ -31,9 +32,10 @@ const SACRED_ORIG_CD    = 'sacredOrigCd';
 
 // ── Ashbrand Blade ────────────────────────────────────────────────────────────
 
-export const ASHBRAND_TICKS      = 4;     // number of burn ticks per stack
-export const ASHBRAND_TICK_MS    = 1_000; // ms between burn ticks
-export const ASHBRAND_TOTAL_MULT = 1.5;   // total burn damage = base × this
+export const ASHBRAND_CONV_PCT    = 0.30;  // fraction of hit converted to burn
+export const ASHBRAND_MAX_STACKS  = 5;     // max burn stacks on a target
+export const ASHBRAND_TICK_MS     = 1_000; // ms between burn ticks
+export const ASHBRAND_DURATION_MS = 4_500; // stacks expire after this many ms without a hit
 
 // ── Init — registers combat pipeline listeners ────────────────────────────────
 
@@ -67,7 +69,7 @@ export function initWeaponEffects(): void {
     ctx.metadata['sacredBurst'] = true;
   });
 
-  // ── Ashbrand Blade: convert direct hit into an independent fire burn on target ──
+  // ── Ashbrand Blade: 30% of hit → stacking burn (max 5), 70% dealt directly ──
   registerCombatListener('onHit', (ctx, world) => {
     if (ctx.attackerType !== 'player') return;
     if (ctx.defenderType !== 'monster') return;
@@ -77,21 +79,28 @@ export function initWeaponEffects(): void {
     const monsterState = world.monsterCombatState.get(ctx.defender.id);
     if (!monsterState) return;
 
-    const damagePerTick = Math.max(1, Math.round(ctx.damage * ASHBRAND_TOTAL_MULT / ASHBRAND_TICKS));
-    applyStatusEffect(monsterState, {
-      id:        'ashbrand-burn',
-      instanced: true,  // each hit is an independent burn running in parallel
-      sourceId:  player.id,
+    const damagePerStack = Math.max(1, Math.round(player.attack * ASHBRAND_CONV_PCT / ASHBRAND_MAX_STACKS));
+    const effect = applyStatusEffect(monsterState, {
+      id:          'ashbrand-burn',
+      maxStacks:   ASHBRAND_MAX_STACKS,
+      instanced:   false,
+      sourceId:    player.id,
+      remainingMs: ASHBRAND_DURATION_MS,
+      refreshable: true,
       data: {
-        damagePerTick,
-        ticksLeft:     ASHBRAND_TICKS,
+        damagePerStack,
         nextTickIn:    ASHBRAND_TICK_MS,
         tickIntervalMs: ASHBRAND_TICK_MS,
       },
     });
-    ctx.damage = 0; // direct damage suppressed; burn delivers the total
+    // Keep per-stack damage in sync with current attack so buffs apply immediately.
+    effect.data.damagePerStack = damagePerStack;
+    if (effect.stacks >= ASHBRAND_MAX_STACKS) {
+      effect.data.nextTickIn = ASHBRAND_TICK_MS;
+    }
 
-    console.log(`[Ashbrand] ${ctx.defender.id}: +burn ${damagePerTick}×${ASHBRAND_TICKS}`);
+    // Reduce direct hit by the converted fraction.
+    ctx.damage = Math.max(1, Math.round(ctx.damage * (1 - ASHBRAND_CONV_PCT)));
   });
 }
 
@@ -163,32 +172,21 @@ function updateAshbrandBurns(world: World, dt: number): void {
   const toKill: Array<{ monsterId: string; sourceId: string }> = [];
 
   for (const [monsterId, state] of world.monsterCombatState) {
-    const burns = getStatusEffects(state, 'ashbrand-burn');
-    if (burns.length === 0) continue;
+    const effect = getStatusEffect(state, 'ashbrand-burn');
+    if (!effect) continue;
 
     const monster = world.monsters.get(monsterId);
     if (!monster) continue;
 
-    let lastSourceId = '';
+    effect.data.nextTickIn -= dt;
+    if (effect.data.nextTickIn <= 0) {
+      effect.data.nextTickIn = effect.data.tickIntervalMs;
+      const damage = computeScaledDotDamage(effect);
+      monster.hp -= damage;
 
-    for (const burn of burns) {
-      burn.data.nextTickIn -= dt;
-      if (burn.data.nextTickIn <= 0) {
-        burn.data.nextTickIn = burn.data.tickIntervalMs;
-        burn.data.ticksLeft--;
-        monster.hp -= burn.data.damagePerTick;
-        lastSourceId = burn.sourceId;
-        console.log(
-          `[Ashbrand] ${monsterId}: ${burn.data.damagePerTick} fire dmg, ${burn.data.ticksLeft} ticks left, hp=${Math.max(0, monster.hp)}`,
-        );
+      if (monster.hp <= 0) {
+        toKill.push({ monsterId, sourceId: effect.sourceId });
       }
-    }
-
-    // Remove exhausted burn instances.
-    pruneStatusEffects(state, e => e.id === 'ashbrand-burn' && e.data.ticksLeft <= 0);
-
-    if (monster.hp <= 0) {
-      toKill.push({ monsterId, sourceId: lastSourceId });
     }
   }
 

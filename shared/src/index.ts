@@ -155,17 +155,23 @@ export interface PlayerState {
   /** Currently equipped items, one per slot. Null means nothing equipped. */
   equipment: EquipmentMap;
   /**
-   * Raw kill count per biome group — the progression metric that drives recipe
-   * unlocks. Incremented server-side on every monster kill.
-   * e.g. { forest: 12, mountain: 0 }
+   * Accumulated XP per biome group. Incremented server-side on every kill;
+   * capped when biomeLevel[group] reaches GAME_CONFIG.BIOME_LEVEL_CAP_BY_TIER[playerTier].
+   * e.g. { forest: 350 }
    */
-  biomeKills: Record<string, number>;
+  biomeXP: Record<string, number>;
   /**
-   * Derived from biomeKills via BIOME_UNLOCK_THRESHOLDS. Value is the maximum
-   * recipe tier accessible in that group. Missing key means nothing unlocked.
-   * e.g. { forest: 1 } means T1 forest recipes are craftable.
+   * Current level per biome group, derived from biomeXP.
+   * Each level unlocks one or more recipes in that group.
+   * e.g. { forest: 3 } means forest biome level 3 has been reached.
    */
-  recipeProgress: Record<string, number>;
+  biomeLevel: Record<string, number>;
+  /**
+   * Recipe IDs the player has unlocked. A recipe is added automatically when
+   * the required biomeLevel is reached. Recipes can be crafted from anywhere
+   * once unlocked.
+   */
+  unlockedRecipes: string[];
   /**
    * Which server-side combat mechanic module governs this player.
    * null = vanilla behavior; set server-side only, sent to client for future UI use.
@@ -302,6 +308,12 @@ export interface MonsterState {
   activeEffects?: Record<string, number>;
   /** Client effect overlays pinned to a specific frame, keyed by effect id. */
   activeEffectFrames?: Record<string, number>;
+  /**
+   * Names of currently active boss script effects (e.g. 'enrage', 'shield', 'regen').
+   * Populated by bossScripts.ts each tick; only present on isBoss monsters.
+   * Clients can use this to render buff icons or visual indicators.
+   */
+  bossEffects?: string[];
 }
 
 // ─── Node / zone definitions ──────────────────────────────────────────────────
@@ -655,6 +667,8 @@ export interface ServerToClientEvents {
   'crafting:result': (result: { success: boolean; reason?: string }) => void;
   /** Sent to a player whose HP reached zero — they are simultaneously respawned server-side. */
   'player:died': () => void;
+  /** Sent when a player unlocks a skill and advances to the next tier. */
+  'player:ascended': (tier: number) => void;
 }
 
 /** Events clients send to the server */
@@ -724,4 +738,36 @@ export const GAME_CONFIG = {
    * splash independent of each archetype's multiplier.
    */
   EMPOWERED_AOE_MULT: 0.5,
+
+  // ── Biome XP / recipe unlock system ──────────────────────────────────────
+  /**
+   * XP needed to reach level 1. Higher levels cost BASE * level^EXPONENT total XP.
+   * Use biomeXpForLevel(n) from this package to compute thresholds.
+   */
+  BIOME_XP_BASE: 80,
+  /**
+   * Power-curve exponent. 1.7 means each level costs noticeably more than the last.
+   * Tune alongside BIOME_XP_BASE and BIOME_XP_BY_NODE_TIER.
+   */
+  BIOME_XP_EXPONENT: 1.7,
+  /** XP granted per kill, indexed by the node's biomeTier (0–5). */
+  BIOME_XP_BY_NODE_TIER: [5, 10, 20, 35, 55, 80] as unknown as readonly number[],
+  /** Maximum biome level attainable at each playerTier (index = playerTier). T2 recipes start at level 6. */
+  BIOME_LEVEL_CAP_BY_TIER: [2, 5, 10, 15, 20, 25, 30, 35] as unknown as readonly number[],
 } as const;
+
+/**
+ * Total XP required to reach biome level `n` (from 0).
+ * Formula: round(BASE × n ^ EXPONENT)
+ * Example with defaults (BASE=80, EXP=1.7):
+ *   Lv 1 →   80 XP   (8 T1 kills)
+ *   Lv 2 →  260 XP   (26 T1 kills total)
+ *   Lv 3 →  518 XP   (52 T1 kills total)
+ *   Lv 4 →  845 XP   (85 T1 kills total)
+ *   Lv 6 → 1831 XP   (92 T2 kills total)
+ *   Lv 9 → 3848 XP   (192 T2 kills total)
+ */
+export function biomeXpForLevel(n: number): number {
+  if (n <= 0) return 0;
+  return Math.round(GAME_CONFIG.BIOME_XP_BASE * Math.pow(n, GAME_CONFIG.BIOME_XP_EXPONENT));
+}

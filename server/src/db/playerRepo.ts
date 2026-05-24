@@ -62,8 +62,9 @@ export function getOrCreateCharacter(
     inventory:          '["basic-sword"]',
     equipment:          JSON.stringify(emptyEquipment()),
     essences:           JSON.stringify({ red: 0, blue: 0, green: 0, yellow: 0, purple: 0 }),
-    biomeKills:         '{}',
-    recipeProgress:     '{}',
+    biomeXP:            '{}',
+    biomeLevel:         '{}',
+    unlockedRecipes:    '[]',
     questProgress:      '{}',
     combatArchetype:    null,
     selectedClass:      null,
@@ -91,8 +92,9 @@ export function saveCharacter(db: DB, accountId: string, player: PlayerState): v
       inventory:          JSON.stringify(player.inventory),
       equipment:          JSON.stringify(player.equipment),
       essences:           JSON.stringify(player.essences),
-      biomeKills:         JSON.stringify(player.biomeKills),
-      recipeProgress:     JSON.stringify(player.recipeProgress),
+      biomeXP:            JSON.stringify(player.biomeXP),
+      biomeLevel:         JSON.stringify(player.biomeLevel),
+      unlockedRecipes:    JSON.stringify(player.unlockedRecipes),
       questProgress:      JSON.stringify(player.questProgress),
       combatArchetype:    player.combatArchetype,
       selectedClass:      player.selectedClass,
@@ -120,8 +122,9 @@ function hydratePlayer(row: CharacterRow, socketId: string): PlayerState {
   player.inventory          = JSON.parse(row.inventory) as string[];
   player.equipment          = JSON.parse(row.equipment) as PlayerState['equipment'];
   player.essences           = JSON.parse(row.essences) as PlayerState['essences'];
-  player.biomeKills         = JSON.parse(row.biomeKills) as PlayerState['biomeKills'];
-  player.recipeProgress     = JSON.parse(row.recipeProgress) as PlayerState['recipeProgress'];
+  player.biomeXP            = JSON.parse(row.biomeXP) as PlayerState['biomeXP'];
+  player.biomeLevel         = JSON.parse(row.biomeLevel) as PlayerState['biomeLevel'];
+  player.unlockedRecipes    = JSON.parse(row.unlockedRecipes) as PlayerState['unlockedRecipes'];
   player.questProgress      = JSON.parse(row.questProgress) as PlayerState['questProgress'];
   player.combatArchetype    = (row.combatArchetype as PlayerState['combatArchetype']) ?? null;
   player.selectedClass      = row.selectedClass ?? null;
@@ -182,8 +185,9 @@ function buildFreshPlayer(id: string, name: string, x: number, y: number): Playe
     attackStyle:          'slash',
     inventory:            ['basic-sword'],
     equipment:            emptyEquipment(),
-    biomeKills:           {},
-    recipeProgress:       {},
+    biomeXP:              {},
+    biomeLevel:           {},
+    unlockedRecipes:      [],
     combatArchetype:      null,
     selectedClass:        null,
     selectedSubVariant:   null,
