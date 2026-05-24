@@ -229,11 +229,19 @@
   border-radius: 5px;
   padding: 12px 14px;
   background: rgba(10, 8, 26, 0.95);
-  min-height: 110px;
+  box-sizing: border-box;
+  height: 174px;
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: 8px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(120, 105, 220, 0.45) transparent;
 }
+
+.inv-desc::-webkit-scrollbar       { width: 5px; }
+.inv-desc::-webkit-scrollbar-track { background: transparent; }
+.inv-desc::-webkit-scrollbar-thumb { background: rgba(120, 105, 220, 0.45); border-radius: 3px; }
 
 .inv-desc--empty {
   align-items: center;

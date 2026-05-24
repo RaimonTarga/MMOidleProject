@@ -367,8 +367,16 @@
   border-top: 1px solid rgba(80, 68, 160, 0.22);
   padding: 11px 20px 14px;
   background: rgba(8, 6, 20, 0.97);
-  min-height: 76px;
+  box-sizing: border-box;
+  height: 116px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(120, 105, 220, 0.45) transparent;
 }
+
+.skill-desc::-webkit-scrollbar       { width: 5px; }
+.skill-desc::-webkit-scrollbar-track { background: transparent; }
+.skill-desc::-webkit-scrollbar-thumb { background: rgba(120, 105, 220, 0.45); border-radius: 3px; }
 
 .skill-desc--empty {
   display: flex;
@@ -377,7 +385,6 @@
   font-size: 11px;
   color: #8c87b8;
   font-style: italic;
-  min-height: 76px;
 }
 
 .skill-desc__header {
