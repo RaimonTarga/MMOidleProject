@@ -146,4 +146,10 @@ export const BIOME_TEXTURES: Record<string, string> = {
   'plains':   'biome_plains',
   'swamp':    'biome_swamp',
   'cave':     'biome_cave',
+  'jungle':   'biome_jungle',
+  'tundra':   'biome_tundra',
+  'desert':   'biome_desert',
+  'volcanic': 'biome_volcano',
+  'necropolis': 'biome_necropolis',
+  'abyss':    'biome_abyss',
 };
