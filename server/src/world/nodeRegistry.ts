@@ -1,5 +1,5 @@
 import type { NodeDefinition, NodeDirection } from '@mmo-idle/shared';
-import { GAME_CONFIG, NODE_BIOMES } from '@mmo-idle/shared';
+import { GAME_CONFIG, NODE_BIOMES, TEST_ROOM_NODE_ID } from '@mmo-idle/shared';
 
 /** Build a single node definition from its grid coordinates. */
 function buildNode(row: number, col: number): [string, NodeDefinition] {
@@ -45,3 +45,14 @@ export const NODE_REGISTRY = new Map<string, NodeDefinition>([
   buildNode(9,0),  buildNode(9,1),  buildNode(9,2),  buildNode(9,3),  buildNode(9,4),  buildNode(9,5),  buildNode(9,6),  buildNode(9,7),  buildNode(9,8),  buildNode(9,9),  buildNode(9,10),
   buildNode(10,0), buildNode(10,1), buildNode(10,2), buildNode(10,3), buildNode(10,4), buildNode(10,5), buildNode(10,6), buildNode(10,7), buildNode(10,8), buildNode(10,9), buildNode(10,10),
 ]);
+
+NODE_REGISTRY.set(TEST_ROOM_NODE_ID, {
+  id: TEST_ROOM_NODE_ID,
+  name: 'Test Room',
+  biomeGroup: 'testroom',
+  biomeTier: 0,
+  width: GAME_CONFIG.NODE_WIDTH,
+  height: GAME_CONFIG.NODE_HEIGHT,
+  exits: {},
+  isDungeon: false,
+});

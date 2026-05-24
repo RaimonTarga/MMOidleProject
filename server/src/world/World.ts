@@ -1,9 +1,5 @@
 import type { PlayerState, MonsterState, NodeDefinition, CombatEvent, NodeSnapshot } from '@mmo-idle/shared';
-import { GAME_CONFIG, NODE_BIOMES, MONSTER_DATABASE, BIOME_DATABASE } from '@mmo-idle/shared';
-
-// Regular monsters in dungeon nodes are scaled up; boss stats come from the database directly.
-const DUNGEON_HP_MULT  = 2.0;
-const DUNGEON_ATK_MULT = 1.6;
+import { GAME_CONFIG, NODE_BIOMES, MONSTER_DATABASE, BIOME_DATABASE, TEST_ROOM_NODE_ID } from '@mmo-idle/shared';
 import { updateAutoTargets } from '../systems/autoTarget';
 import { updateMovement } from '../systems/movement';
 import { updateMonsters } from '../systems/ai';
@@ -23,7 +19,15 @@ import { updateWeaponEffects } from '../systems/weaponEffects';
 import { updateShields, updateDefensiveSystems } from '../systems/defenseSystems';
 import { recalculatePlayerStats } from '../systems/stats';
 import { syncPlayerBuffs } from '../systems/buffSync';
+import { updateTestRoomInteract } from '../systems/testRoomInteract';
 import { NODE_REGISTRY } from './nodeRegistry';
+import { IS_DEV } from '../env';
+
+// Regular monsters in dungeon nodes are scaled up; boss stats come from the database directly.
+const DUNGEON_HP_MULT  = 2.0;
+const DUNGEON_ATK_MULT = 1.6;
+const TEST_ROOM_TARGET_RESET = 'test-target-reset';
+const TEST_ROOM_TARGET_GAIN_POINT = 'test-target-gain-point';
 
 export interface MonsterAI {
   spawnX: number;
@@ -72,11 +76,14 @@ export class World {
 
   private init() {
     for (const nodeId of NODE_REGISTRY.keys()) {
+      if (nodeId === TEST_ROOM_NODE_ID) continue;
       for (let i = 0; i < GAME_CONFIG.MONSTERS_PER_NODE; i++) {
         this.spawnMonster(nodeId);
       }
       this.ensureBoss(nodeId);
     }
+
+    if (IS_DEV) this.initTestRoom();
   }
 
   // ── SYSTEM ENTRY POINT ─────────────────────────────
@@ -96,12 +103,18 @@ export class World {
     updateAutoTargets(this);
     updateMovement(this, dt);
     updateTransitions(this);
+    if (IS_DEV) updateTestRoomInteract(this, now);
     updateMonsters(this, dt, now);
     updateCombat(this, dt, now);
     updateDefensiveSystems(this, dt, now);
     syncPlayerBuffs(this);
 
+    if (IS_DEV) {
+      this.ensureCurrentTestRoomBoss();
+    }
+
     for (const nodeId of NODE_REGISTRY.keys()) {
+      if (nodeId === TEST_ROOM_NODE_ID) continue;
       this.ensurePopulation(nodeId);
       this.ensureBoss(nodeId);
     }
@@ -130,6 +143,9 @@ export class World {
     // Apply dungeon stat multipliers to regular (non-boss) monsters.
     const hpBase  = (!isBoss && isDungeon) ? Math.round(def.stats.hp     * DUNGEON_HP_MULT)  : def.stats.hp;
     const atkBase = (!isBoss && isDungeon) ? Math.round(def.stats.attack  * DUNGEON_ATK_MULT) : def.stats.attack;
+    const isTestRoom = nodeId === TEST_ROOM_NODE_ID;
+    const pullRange = isTestRoom ? 0 : def.stats.pullRange;
+    const wanderRadius = isTestRoom ? 0 : def.ai.wanderRadius;
 
     const monster: MonsterState = {
       id,
@@ -146,7 +162,7 @@ export class World {
       damageReduction: def.stats.damageReduction,
       speed:   def.stats.speed,
       state:   'idle',
-      pullRange:      def.stats.pullRange,
+      pullRange,
       leashRange:     def.ai.leashRange,
       attackRange:    def.stats.attackRange,
       attackCooldown: def.stats.attackCooldown,
@@ -162,7 +178,7 @@ export class World {
     this.monsterAI.set(id, {
       spawnX: x,
       spawnY: y,
-      wanderRadius:  def.ai.wanderRadius,
+      wanderRadius,
       idleUntil:     Date.now(),
       leashRange:    def.ai.leashRange,
       idleMinMs:     def.ai.idleMinMs,
@@ -263,6 +279,58 @@ export class World {
       if (!this.spawnMonster(nodeId)) break;
       count++;
     }
+  }
+
+  private initTestRoom(): void {
+    const y = GAME_CONFIG.NODE_HEIGHT / 2 - 260;
+    this.createMonster(TEST_ROOM_NODE_ID, TEST_ROOM_TARGET_RESET, GAME_CONFIG.NODE_WIDTH / 2 - 180, y);
+    this.createMonster(TEST_ROOM_NODE_ID, TEST_ROOM_TARGET_GAIN_POINT, GAME_CONFIG.NODE_WIDTH / 2 + 180, y);
+    this.ensureTestRoomBoss(0);
+  }
+
+  private ensureCurrentTestRoomBoss(): void {
+    let targetTier: number | null = null;
+    for (const player of this.players.values()) {
+      if (player.nodeId !== TEST_ROOM_NODE_ID) continue;
+      targetTier = Math.max(targetTier ?? 0, player.playerTier);
+    }
+    if (targetTier !== null) this.ensureTestRoomBoss(targetTier);
+  }
+
+  ensureTestRoomBoss(targetTier: number): void {
+    const typeId = this.pickTestRoomBossType(targetTier);
+    if (!typeId) return;
+
+    for (const monster of this.monsters.values()) {
+      if (monster.nodeId !== TEST_ROOM_NODE_ID || !monster.isBoss) continue;
+      if (monster.monsterTypeId === typeId) return;
+      this.monsters.delete(monster.id);
+      this.monsterAI.delete(monster.id);
+      this.monsterCombatState.delete(monster.id);
+    }
+
+    const boss = this.createMonster(
+      TEST_ROOM_NODE_ID,
+      typeId,
+      GAME_CONFIG.NODE_WIDTH / 2,
+      GAME_CONFIG.NODE_HEIGHT / 2 + 120,
+    );
+    if (boss) {
+      boss.name = `Test Dummy T${Math.max(0, targetTier)} (${boss.name})`;
+      boss.isBoss = true;
+    }
+  }
+
+  private pickTestRoomBossType(targetTier: number): string | null {
+    if (targetTier <= 0) return 'tiny-slime';
+
+    const exactTierBosses: string[] = [];
+    for (const biome of BIOME_DATABASE.values()) {
+      exactTierBosses.push(...(biome.bossPoolByTier?.[targetTier] ?? []));
+    }
+    if (exactTierBosses.length === 0) return null;
+
+    return exactTierBosses[Math.floor(Math.random() * exactTierBosses.length)];
   }
 
   /**

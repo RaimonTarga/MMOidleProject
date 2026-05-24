@@ -3,9 +3,9 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "dev": "tsx watch src/index.ts",
+    "dev": "NODE_ENV=development tsx watch src/index.ts",
     "build": "tsc",
-    "start": "node dist/index.js"
+    "start": "NODE_ENV=production node dist/index.js"
   },
   "dependencies": {
     "@mmo-idle/shared": "workspace:*",

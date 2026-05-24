@@ -220,6 +220,14 @@ export class GameScene extends Phaser.Scene {
       this.sendAutoPathMove(this.myNodeId);
     });
 
+    window.addEventListener('hud:goToTestRoom', () => {
+      this.socket.emit('debug:goToTestRoom');
+    });
+
+    window.addEventListener('hud:leaveTestRoom', () => {
+      this.socket.emit('debug:leaveTestRoom');
+    });
+
     // ── Click to move ──────────────────────────────────────────────────────
     this.input.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
       if (!this.myId) return;

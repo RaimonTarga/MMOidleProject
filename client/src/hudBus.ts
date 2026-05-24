@@ -57,6 +57,14 @@ export const hudBus = {
     window.dispatchEvent(new CustomEvent('hud:navigateTo', { detail: { path } }));
   },
 
+  requestGoToTestRoom(): void {
+    window.dispatchEvent(new CustomEvent('hud:goToTestRoom'));
+  },
+
+  requestLeaveTestRoom(): void {
+    window.dispatchEvent(new CustomEvent('hud:leaveTestRoom'));
+  },
+
   /** Toggle the player attack-range debug overlay in GameScene. */
   toggleDebugPlayerRange(): void {
     window.dispatchEvent(new CustomEvent('hud:debugPlayerRange'));

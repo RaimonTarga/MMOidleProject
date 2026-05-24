@@ -31,6 +31,13 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
     essenceType: 'essence',
   }],
 
+  ['testroom', {
+    id: 'testroom', name: 'Test Room',
+    backgroundColor: 0x1a1a2a,
+    monsterPoolByTier: {},
+    essenceType: 'essence',
+  }],
+
   // ── T1 biomes ─────────────────────────────────────────────────────────────
   // Threat profile: fast/sustained, low defense — easy to burst down
   ['forest', {

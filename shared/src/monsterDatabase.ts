@@ -30,6 +30,8 @@ export interface MonsterDefinition {
   };
   /** True for dungeon boss monsters — affects spawn logic and client visuals. */
   isBoss?: boolean;
+  /** Dev test-room target behavior. These monsters are interacted with by standing in attack range. */
+  interactKind?: 'reset' | 'gainPoint';
   /**
    * If set, this monster applies a DoT effect on every hit.
    * damagePerStack: damage dealt per stack per tick.
@@ -53,6 +55,24 @@ export const MONSTER_DATABASE: Map<string, MonsterDefinition> = new Map([
     behavior: 'melee', attackStyle: 'impact', biome: 'clearing',
     rewards: { essence: 2, essenceType: 'green', level: 1 },
     ai: { wanderRadius: 140, leashRange: 380, idleMinMs: 2000, idleMaxMs: 5000 },
+  }],
+
+  // ── Dev test room targets ─────────────────────────────────────────────────
+  ['test-target-reset', {
+    id: 'test-target-reset', name: 'Reset', color: 0xff5555,
+    stats: { hp: 9_999_999, attack: 0, plating: 0, damageReduction: 1, speed: 0, attackRange: 0, attackCooldown: 999_999, pullRange: 0 },
+    behavior: 'melee', attackStyle: 'impact', biome: 'testroom',
+    rewards: { essence: 0, essenceType: 'red', level: 0 },
+    ai: { wanderRadius: 0, leashRange: 0, idleMinMs: 999_999, idleMaxMs: 999_999 },
+    interactKind: 'reset',
+  }],
+  ['test-target-gain-point', {
+    id: 'test-target-gain-point', name: 'Gain Point', color: 0x55aaff,
+    stats: { hp: 9_999_999, attack: 0, plating: 0, damageReduction: 1, speed: 0, attackRange: 0, attackCooldown: 999_999, pullRange: 0 },
+    behavior: 'melee', attackStyle: 'magic', biome: 'testroom',
+    rewards: { essence: 0, essenceType: 'blue', level: 0 },
+    ai: { wanderRadius: 0, leashRange: 0, idleMinMs: 999_999, idleMaxMs: 999_999 },
+    interactKind: 'gainPoint',
   }],
 
   // ── Forest T1 ──────────────────────────────────────────────────────────────

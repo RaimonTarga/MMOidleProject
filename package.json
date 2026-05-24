@@ -3,7 +3,9 @@
   "private": true,
   "version": "0.0.1",
   "pnpm": {
-    "onlyBuiltDependencies": ["better-sqlite3"]
+    "onlyBuiltDependencies": [
+      "better-sqlite3"
+    ]
   },
   "scripts": {
     "dev:client": "pnpm --filter @mmo-idle/client dev",
@@ -14,6 +16,6 @@
     "typecheck": "pnpm -r exec tsc --noEmit"
   },
   "devDependencies": {
-    "typescript": "^5.4.5"
+    "typescript": "^5.9.3"
   }
 }
