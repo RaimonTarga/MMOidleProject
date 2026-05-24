@@ -152,7 +152,7 @@
 
 .craft-cost__held {
   font-size: 9px;
-  color: #6868a8;
+  color: #aaa8dc;
 }
 
 /* ── Biome progress ──────────────────────────────────────────────────────── */
@@ -203,7 +203,7 @@
 .craft-biome__label {
   display: block;
   font-size: 10px;
-  color: #7070a8;
+  color: #aaa8dc;
   margin-top: 4px;
   letter-spacing: 0.3px;
 }
@@ -269,7 +269,7 @@
   font-size: 8px;
   font-weight: bold;
   letter-spacing: 0.5px;
-  color: #5a5890;
+  color: #aaa8dc;
 }
 
 .craft-recipe__icon[data-slot="weapon"] {
@@ -338,7 +338,7 @@
 
 .craft-recipe__tier-badge {
   font-size: 9px;
-  color: #6868a0;
+  color: #aaa8dc;
   font-weight: bold;
   flex-shrink: 0;
 }
@@ -367,7 +367,7 @@
 }
 
 .craft-stat-pill__label {
-  color: #6868a0;
+  color: #aaa8dc;
 }
 
 /* ── Footer (desc + button / lock) ──────────────────────────────────────── */
@@ -384,14 +384,14 @@
   flex: 1;
   min-width: 0;
   font-size: 10px;
-  color: #8080b0;
+  color: #b8b5dc;
   font-style: italic;
 }
 
 .craft-recipe__locked-label {
   flex-shrink: 0;
   font-size: 10px;
-  color: #8080b8;
+  color: #aaa8dc;
   font-style: italic;
   letter-spacing: 0.3px;
 }
@@ -424,7 +424,7 @@
 /* ── Empty / disconnected ────────────────────────────────────────────────── */
 .craft-empty {
   font-size: 11px;
-  color: #484868;
+  color: var(--hud-text-dim, #77729e);
   text-align: center;
   padding: 24px 0;
   letter-spacing: 0.3px;
