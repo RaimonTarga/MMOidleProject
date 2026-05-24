@@ -96,7 +96,7 @@
 
 .skill-tree-instruction {
   font-size: 11px;
-  color: #9090c8;
+  color: #b8b6e8;
   margin: 0 0 20px;
   line-height: 1.55;
   text-align: center;
@@ -120,7 +120,7 @@
 
 .skill-class-desc {
   font-size: 10px;
-  color: #8080b8;
+  color: #aaa8dc;
   margin: 0;
   line-height: 1.45;
   text-align: center;
@@ -144,7 +144,7 @@
 
 .skill-progress-tier {
   font-size: 11px;
-  color: #6868a0;
+  color: #aaa8dc;
 }
 
 .skill-progress-pts {
@@ -205,7 +205,7 @@
 .skill-tier-badge {
   font-size: 9px;
   font-weight: bold;
-  color: #606090;
+  color: #9692c8;
   text-transform: uppercase;
   letter-spacing: 2px;
   padding: 3px 12px;
@@ -215,19 +215,19 @@
 }
 
 .skill-tier-section--current .skill-tier-badge {
-  color: #9090cc;
+  color: #c8c4ff;
   border-color: rgba(100, 110, 200, 0.50);
   background: rgba(18, 16, 48, 0.90);
   box-shadow: 0 0 8px rgba(80, 90, 180, 0.18);
 }
 
 .skill-tier-section--past .skill-tier-badge {
-  color: #484870;
+  color: #77739e;
   border-color: rgba(48, 44, 95, 0.22);
 }
 
 .skill-tier-section--upcoming .skill-tier-badge {
-  color: #383860;
+  color: #6f6a98;
   border-color: rgba(42, 40, 85, 0.20);
   background: transparent;
 }
@@ -294,7 +294,7 @@
 .skill-node--locked {
   background: radial-gradient(circle at 40% 38%, #111030, #08061a);
   border-color: rgba(58, 52, 112, 0.50);
-  color: #5a5685;
+  color: #8c87b8;
 }
 
 .skill-node--available {
@@ -355,7 +355,7 @@
 /* ── Upcoming hint (fallback text) ───────────────────────────────────────── */
 .skill-tier-upcoming-hint {
   font-size: 10px;
-  color: #484870;
+  color: #8b86b8;
   font-style: italic;
   text-align: center;
   padding: 6px 0;
@@ -367,17 +367,24 @@
   border-top: 1px solid rgba(80, 68, 160, 0.22);
   padding: 11px 20px 14px;
   background: rgba(8, 6, 20, 0.97);
-  min-height: 76px;
+  box-sizing: border-box;
+  height: 116px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(120, 105, 220, 0.45) transparent;
 }
+
+.skill-desc::-webkit-scrollbar       { width: 5px; }
+.skill-desc::-webkit-scrollbar-track { background: transparent; }
+.skill-desc::-webkit-scrollbar-thumb { background: rgba(120, 105, 220, 0.45); border-radius: 3px; }
 
 .skill-desc--empty {
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 11px;
-  color: #3e3a62;
+  color: #8c87b8;
   font-style: italic;
-  min-height: 76px;
 }
 
 .skill-desc__header {
@@ -399,7 +406,7 @@
 
 .skill-desc__tier {
   font-size: 10px;
-  color: #6868a8;
+  color: #aaa8dc;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -424,7 +431,7 @@
 
 .skill-desc__text {
   font-size: 10px;
-  color: #8888b0;
+  color: #b8b5dc;
   line-height: 1.5;
   font-style: italic;
 }

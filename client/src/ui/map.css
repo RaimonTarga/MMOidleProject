@@ -21,6 +21,7 @@
   width: 860px;
   max-width: 96vw;
   max-height: 88vh;
+  height: 620px;
   overflow: hidden;
   box-shadow: 0 10px 48px rgba(40, 28, 100, 0.42), 0 0 0 1px rgba(255, 255, 255, 0.025);
 }
@@ -53,7 +54,7 @@
 .map-close {
   background: linear-gradient(135deg, rgba(32, 26, 68, 0.85), rgba(18, 14, 46, 0.92));
   border: 1px solid rgba(100, 85, 190, 0.2);
-  color: #555577;
+  color: #aaa8dc;
   font-family: monospace;
   font-size: 13px;
   cursor: pointer;
@@ -68,6 +69,7 @@
 .map-body {
   display: flex;
   flex: 1;
+  min-height: 0;
   overflow: hidden;
 }
 
@@ -122,7 +124,7 @@
 .map-nav {
   background: rgba(20, 16, 48, 0.7);
   border: 1px solid rgba(80, 65, 170, 0.2);
-  color: #665599;
+  color: #aaa8dc;
   font-size: 10px;
   cursor: pointer;
   border-radius: 3px;
@@ -242,7 +244,7 @@
 .map-tile__tier {
   font-family: monospace;
   font-size: 9px;
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.72);
   letter-spacing: 0.05em;
 }
 
@@ -265,16 +267,25 @@
 
 .map-info-panel {
   flex: 1;
+  min-width: 0;
+  min-height: 0;
+  align-self: stretch;
   overflow-y: auto;
   padding: 12px;
   border-left: 1px solid #1e1e36;
   font-family: monospace;
   font-size: 11px;
-  color: #aaaacc;
+  color: #d0cef0;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(120, 105, 220, 0.45) transparent;
 }
 
+.map-info-panel::-webkit-scrollbar       { width: 5px; }
+.map-info-panel::-webkit-scrollbar-track { background: transparent; }
+.map-info-panel::-webkit-scrollbar-thumb { background: rgba(120, 105, 220, 0.45); border-radius: 3px; }
+
 .map-info__empty {
-  color: #44445a;
+  color: #8c87b8;
   font-style: italic;
   font-size: 11px;
   font-family: monospace;
@@ -306,7 +317,7 @@
 
 .map-node-info__tier {
   font-size: 10px;
-  color: #666688;
+  color: #aaa8dc;
 }
 
 .map-node-info__dungeon-tag {
@@ -360,7 +371,7 @@
   font-size: 10px;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: #555577;
+  color: #aaa8dc;
   display: flex;
   align-items: center;
   gap: 6px;
@@ -391,7 +402,7 @@
 }
 
 .map-monster-stats {
-  color: #555566;
+  color: #aaa8bc;
   font-size: 10px;
   flex: 1;
 }
@@ -440,7 +451,7 @@
 
 .map-progress-label {
   font-size: 10px;
-  color: #555577;
+  color: #aaa8dc;
   min-width: 60px;
   text-align: right;
 }
@@ -460,44 +471,57 @@
 
 .map-recipe-group__header {
   font-size: 10px;
-  color: #444466;
+  color: #cbc8f4;
   padding: 2px 0;
-  border-bottom: 1px solid #1a1a2e;
+  border-bottom: 1px solid rgba(132, 112, 235, 0.22);
   margin-bottom: 2px;
 }
 
 .map-recipe-group__header.unlocked {
-  color: #44bb66;
+  color: #66ee99;
 }
 
 .map-recipe-row {
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 2px 4px;
+  padding: 3px 5px;
   border-radius: 3px;
+  background: rgba(255, 255, 255, 0.025);
 }
 
 .map-recipe-row.locked {
-  opacity: 0.4;
+  background: rgba(255, 255, 255, 0.012);
 }
 
 .map-recipe-name {
-  color: #aaaacc;
+  color: #e2ddff;
   min-width: 100px;
 }
 
+.map-recipe-row.locked .map-recipe-name {
+  color: #aaa6cf;
+}
+
 .map-recipe-stat {
-  color: #8888aa;
+  color: #c3c0e4;
   font-size: 10px;
   flex: 1;
 }
 
+.map-recipe-row.locked .map-recipe-stat {
+  color: #9d99be;
+}
+
 .map-recipe-cost {
-  color: #bb88ff;
+  color: #d9bbff;
   font-size: 10px;
   min-width: 50px;
   text-align: right;
+}
+
+.map-recipe-row.locked .map-recipe-cost span {
+  filter: saturate(0.7) brightness(1.25);
 }
 
 /* ── Mobile overrides (≤ 899px) ──────────────────────────────────── */
@@ -505,6 +529,7 @@
 @media (max-width: 1100px) {
   .map-panel--large {
     width: 100%;
+    height: 100dvh;
     max-width: 100vw;
     max-height: 100dvh;
     border-radius: 0;
@@ -513,7 +538,7 @@
   /* Stack grid on top, info panel below */
   .map-body {
     flex-direction: column;
-    overflow-y: auto;
+    overflow: hidden;
   }
 
   /* Shrink the overview minimap cells so the header doesn't overflow */
@@ -550,7 +575,7 @@
   .map-info-panel {
     border-left: none;
     border-top: 1px solid #1e1e36;
-    min-height: 180px;
+    min-height: 0;
   }
 
   .map-monster-stats {

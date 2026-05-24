@@ -1,3 +1,17 @@
+:root {
+  --hud-bg: rgba(7, 6, 20, 0.94);
+  --hud-panel-bg: linear-gradient(155deg, rgba(24, 18, 55, 0.96), rgba(10, 8, 28, 0.98));
+  --hud-panel-border: rgba(132, 112, 235, 0.36);
+  --hud-primary: #b9adff;
+  --hud-primary-strong: #d8d2ff;
+  --hud-text: #e5e2ff;
+  --hud-text-muted: #a7a2d8;
+  --hud-text-dim: #77729e;
+  --hud-success: #55ff99;
+  --hud-warning: #ffcc55;
+  --hud-danger: #ff7766;
+}
+
 /* ── Sidebar shells ──────────────────────────────────────────────────────── */
 .sidebar {
   display: flex;
@@ -5,7 +19,7 @@
   gap: 8px;
   padding: 8px;
   height: 100%;
-  background: rgba(5, 4, 16, 0.88);
+  background: var(--hud-bg);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   font-family: monospace;
@@ -18,28 +32,28 @@
 
 /* ── Panel shell ─────────────────────────────────────────────────────────── */
 .sidebar-panel {
-  background: linear-gradient(155deg, rgba(16, 12, 40, 0.92), rgba(8, 6, 22, 0.96));
-  border: 1px solid rgba(90, 75, 180, 0.14);
+  background: var(--hud-panel-bg);
+  border: 1px solid var(--hud-panel-border);
   border-radius: 6px;
   padding: 10px 12px;
   box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.025),
-    inset 0 1px 0 rgba(255, 255, 255, 0.04),
-    0 2px 18px rgba(50, 35, 120, 0.12);
+    0 0 0 1px rgba(255, 255, 255, 0.045),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 2px 18px rgba(50, 35, 120, 0.22);
 }
 
 .panel-title {
-  color: #8877cc;
+  color: var(--hud-primary-strong);
   font-size: 9px;
   text-transform: uppercase;
   letter-spacing: 1.5px;
   margin-bottom: 8px;
   padding-bottom: 5px;
-  border-bottom: 1px solid rgba(80, 65, 170, 0.18);
+  border-bottom: 1px solid rgba(132, 112, 235, 0.32);
 }
 
 .panel-placeholder {
-  color: #1e1e38;
+  color: var(--hud-text-dim);
   font-size: 11px;
   padding: 8px 0 2px;
   text-align: center;
@@ -67,33 +81,33 @@
 .stat-section {
   margin-top: 6px;
   padding-top: 6px;
-  border-top: 1px solid rgba(60, 50, 130, 0.18);
+  border-top: 1px solid rgba(132, 112, 235, 0.24);
 }
 
 .stat-section-title {
-  color: #585870;
+  color: var(--hud-text-muted);
   font-size: 9px;
   text-transform: uppercase;
   letter-spacing: 1.2px;
   margin-bottom: 4px;
   padding-bottom: 3px;
-  border-bottom: 1px solid rgba(60, 50, 130, 0.14);
+  border-bottom: 1px solid rgba(132, 112, 235, 0.18);
 }
 
 .stat-label {
-  color: #585880;
+  color: var(--hud-text-muted);
   white-space: nowrap;
   flex-shrink: 0;
 }
 
 .stat-value {
-  color: #c0c0d8;
+  color: var(--hud-text);
   white-space: nowrap;
   text-align: right;
 }
 
 .stat-value.dim {
-  color: #28283c;
+  color: var(--hud-text-dim);
 }
 
 /* ── HP bar ──────────────────────────────────────────────────────────────── */
@@ -514,11 +528,11 @@
   margin-top: 10px;
   padding: 11px 10px;
   background: linear-gradient(135deg, rgba(32, 26, 70, 0.85), rgba(18, 14, 48, 0.92));
-  border: 1px solid rgba(105, 88, 195, 0.18);
+  border: 1px solid rgba(132, 112, 235, 0.38);
   box-shadow:
     0 0 12px rgba(65, 48, 148, 0.08),
     inset 0 1px 0 rgba(255, 255, 255, 0.04);
-  color: #8888bb;
+  color: var(--hud-primary);
   font-family: monospace;
   font-size: 13px;
   cursor: pointer;
@@ -529,11 +543,11 @@
 
 .auto-btn:hover {
   background: linear-gradient(135deg, rgba(52, 42, 110, 0.9), rgba(30, 22, 78, 0.96));
-  border-color: rgba(145, 125, 240, 0.28);
+  border-color: rgba(177, 158, 255, 0.55);
   box-shadow:
     0 0 16px rgba(85, 62, 185, 0.14),
     inset 0 1px 0 rgba(255, 255, 255, 0.06);
-  color: #ccccee;
+  color: var(--hud-primary-strong);
 }
 
 .auto-btn.active {
@@ -578,7 +592,7 @@
 }
 
 .combat-log__title {
-  color: #5566aa;
+  color: #9cadff;
   font-size: 9px;
   letter-spacing: 0.18em;
   font-weight: bold;
@@ -586,7 +600,7 @@
 }
 
 .combat-log__count {
-  color: #334;
+  color: var(--hud-text-dim);
   font-size: 9px;
   background: rgba(255, 255, 255, 0.04);
   padding: 0 4px;
@@ -594,7 +608,7 @@
 }
 
 .combat-log__chevron {
-  color: #334466;
+  color: #8794d8;
   font-size: 9px;
 }
 
@@ -611,7 +625,7 @@
 .combat-log__body::-webkit-scrollbar-thumb  { background: rgba(60, 75, 160, 0.35); border-radius: 2px; }
 
 .combat-log__empty {
-  color: #222234;
+  color: var(--hud-text-dim);
   font-size: 10px;
   padding: 8px;
   text-align: center;
@@ -630,7 +644,7 @@
 }
 
 .combat-log__time {
-  color: #2a2a44;
+  color: #7e7aa8;
   font-size: 9px;
   flex-shrink: 0;
   width: 32px;
@@ -680,7 +694,7 @@
 }
 
 .quest-desc {
-  color: #444466;
+  color: var(--hud-text-muted);
   font-size: 9px;
   line-height: 1.4;
   margin-bottom: 6px;
@@ -709,7 +723,7 @@
 
 .quest-empty,
 .quest-complete {
-  color: #33334a;
+  color: var(--hud-text-dim);
   font-size: 10px;
   text-align: center;
   padding: 6px 0;
@@ -861,10 +875,10 @@
   top: 0; left: 0; right: 0;
   height: 48px;
   z-index: 30;
-  background: rgba(5, 4, 16, 0.9);
+  background: var(--hud-bg);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(50, 50, 80, 0.45);
+  border-bottom: 1px solid var(--hud-panel-border);
   display: flex;
   align-items: center;
   padding: 0 10px;
@@ -894,13 +908,13 @@
 }
 
 .mob-topbar__hptext {
-  color: #888899;
+  color: var(--hud-text-muted);
   font-size: 9px;
   text-align: right;
 }
 
 .mob-topbar__zone {
-  color: #5577aa;
+  color: #a9c2ff;
   font-size: 9px;
   white-space: nowrap;
   flex-shrink: 0;
@@ -919,7 +933,7 @@
   /* extra space for Android gesture bar / iOS home indicator */
   padding-bottom: env(safe-area-inset-bottom, 0px);
   z-index: 30;
-  background: rgba(5, 4, 16, 0.95);
+  background: var(--hud-bg);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-top: 1px solid rgba(80, 70, 140, 0.5);
@@ -1016,10 +1030,10 @@
   width: 36px;
   flex-shrink: 0;
   background: rgba(14, 10, 36, 0.92);
-  border: 1px solid rgba(90, 75, 160, 0.3);
+  border: 1px solid var(--hud-panel-border);
   border-right: none;
   border-radius: 8px 0 0 8px;
-  color: #7777bb;
+  color: var(--hud-primary);
   font-size: 16px;
   cursor: pointer;
   display: flex;
@@ -1049,9 +1063,9 @@
   width: 100%;
   padding: 11px 10px;
   background: rgba(20, 16, 50, 0.7);
-  border: 1px solid rgba(90, 75, 160, 0.18);
+  border: 1px solid rgba(132, 112, 235, 0.36);
   border-radius: 5px;
-  color: #6666aa;
+  color: var(--hud-primary);
   font-family: monospace;
   font-size: 10px;
   letter-spacing: 0.8px;
@@ -1097,7 +1111,7 @@
   background: rgba(30, 24, 70, 0.85);
   border: 1px solid rgba(90, 75, 160, 0.25);
   border-radius: 4px;
-  color: #8888bb;
+  color: var(--hud-primary);
   font-family: monospace;
   font-size: 11px;
   letter-spacing: 0.5px;

@@ -73,7 +73,7 @@
 /* ── Section labels ──────────────────────────────────────────────────────── */
 .inv-section-label {
   font-size: 10px;
-  color: #6868a8;
+  color: var(--hud-text-muted, #a7a2d8);
   text-transform: uppercase;
   letter-spacing: 1.2px;
   margin-bottom: 8px;
@@ -133,7 +133,7 @@
 
 .inv-equip-slot__dash {
   font-size: 18px;
-  color: #3a3460;
+  color: #746f9e;
 }
 
 /* Footer — label + item name */
@@ -150,10 +150,10 @@
   font-size: 8px;
   text-transform: uppercase;
   letter-spacing: 0.6px;
-  color: #5858a0;
+  color: #aaa8dc;
 }
 
-.inv-equip-slot--filled .inv-equip-slot__type { color: #508868; }
+.inv-equip-slot--filled .inv-equip-slot__type { color: #86d8a4; }
 
 .inv-equip-slot__name {
   font-size: 10px;
@@ -213,7 +213,7 @@
 
 .inv-item-slot__name {
   font-size: 9px;
-  color: #9898cc;
+  color: #c2c0ec;
   text-align: center;
   white-space: nowrap;
   overflow: hidden;
@@ -229,17 +229,25 @@
   border-radius: 5px;
   padding: 12px 14px;
   background: rgba(10, 8, 26, 0.95);
-  min-height: 110px;
+  box-sizing: border-box;
+  height: 174px;
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: 8px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(120, 105, 220, 0.45) transparent;
 }
+
+.inv-desc::-webkit-scrollbar       { width: 5px; }
+.inv-desc::-webkit-scrollbar-track { background: transparent; }
+.inv-desc::-webkit-scrollbar-thumb { background: rgba(120, 105, 220, 0.45); border-radius: 3px; }
 
 .inv-desc--empty {
   align-items: center;
   justify-content: center;
   font-size: 11px;
-  color: #484468;
+  color: var(--hud-text-dim, #77729e);
   font-style: italic;
 }
 
@@ -258,7 +266,7 @@
 
 .inv-desc__slot {
   font-size: 10px;
-  color: #7070b0;
+  color: #aaa8dc;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   flex-shrink: 0;
@@ -293,12 +301,12 @@
 
 .inv-desc__stat-label {
   font-size: 10px;
-  color: #8888c0;
+  color: #bab8e8;
 }
 
 .inv-desc__text {
   font-size: 10px;
-  color: #9090b8;
+  color: #bab8dc;
   line-height: 1.5;
   font-style: italic;
 }
@@ -337,7 +345,7 @@
 /* ── Placeholder ─────────────────────────────────────────────────────────── */
 .inv-placeholder {
   font-size: 11px;
-  color: #484468;
+  color: var(--hud-text-dim, #77729e);
   text-align: center;
   padding: 32px 0;
 }
