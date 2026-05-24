@@ -1,5 +1,5 @@
 import type { PlayerState, MonsterState } from '@mmo-idle/shared';
-import { NODE_BIOMES, MONSTER_DATABASE, RECIPE_DATABASE, GAME_CONFIG } from '@mmo-idle/shared';
+import { NODE_BIOMES, MONSTER_DATABASE, RECIPE_DATABASE, GAME_CONFIG, biomeXpForLevel } from '@mmo-idle/shared';
 import type { World } from '../world/World';
 import { registerKillForQuests } from './questSystem';
 
@@ -35,8 +35,9 @@ function applyBiomeXP(player: PlayerState, nodeId: string): void {
   const newXP   = (player.biomeXP[biomeGroup] ?? 0) + xpGain;
   player.biomeXP[biomeGroup] = newXP;
 
-  const rawLevel = Math.floor(newXP / GAME_CONFIG.BIOME_XP_PER_LEVEL);
-  const newLevel = Math.min(levelCap, rawLevel);
+  let rawLevel = prevLevel;
+  while (rawLevel < levelCap && newXP >= biomeXpForLevel(rawLevel + 1)) rawLevel++;
+  const newLevel = rawLevel;
   if (newLevel > prevLevel) {
     player.biomeLevel[biomeGroup] = newLevel;
     checkRecipeUnlocks(player, biomeGroup, newLevel);

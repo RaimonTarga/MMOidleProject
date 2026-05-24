@@ -4,6 +4,7 @@ import type { PlayerState, EssenceType } from '@mmo-idle/shared';
 import {
   RECIPE_DATABASE, NODE_BIOMES, GAME_CONFIG,
   ESSENCE_TYPES, ESSENCE_COLORS, TEST_ROOM_NODE_ID, BIOME_DATABASE,
+  biomeXpForLevel,
 } from '@mmo-idle/shared';
 import type { ItemStats } from '@mmo-idle/shared';
 import type { Recipe } from '@mmo-idle/shared';
@@ -99,10 +100,13 @@ function BiomeSection({ biomeGroup, player, recipes, isCurrent }: BiomeSectionPr
   const level    = player.biomeLevel[biomeGroup] ?? 0;
   const xp       = player.biomeXP[biomeGroup] ?? 0;
   const levelCap = GAME_CONFIG.BIOME_LEVEL_CAP_BY_TIER[player.playerTier] ?? 999;
-  const xpInLevel = xp - level * GAME_CONFIG.BIOME_XP_PER_LEVEL;
+  const xpThisTier  = biomeXpForLevel(level);
+  const xpNextTier  = biomeXpForLevel(level + 1);
+  const xpInLevel   = xp - xpThisTier;
+  const xpNeeded    = xpNextTier - xpThisTier;
   const pct = level >= levelCap
     ? 100
-    : Math.min(100, (xpInLevel / GAME_CONFIG.BIOME_XP_PER_LEVEL) * 100);
+    : Math.min(100, (xpInLevel / xpNeeded) * 100);
   const label = biomeName(biomeGroup);
 
   return (
@@ -118,7 +122,7 @@ function BiomeSection({ biomeGroup, player, recipes, isCurrent }: BiomeSectionPr
       <div className="craft-biome__progress">
         <div className="craft-biome__bar" style={{ width: `${pct}%` }} />
         {level < levelCap && (
-          <span className="craft-biome__label">{xpInLevel} / {GAME_CONFIG.BIOME_XP_PER_LEVEL} XP</span>
+          <span className="craft-biome__label">{xpInLevel} / {xpNeeded} XP</span>
         )}
       </div>
 

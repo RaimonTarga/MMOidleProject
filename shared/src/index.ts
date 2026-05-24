@@ -725,10 +725,34 @@ export const GAME_CONFIG = {
   EMPOWERED_AOE_MULT: 0.5,
 
   // ── Biome XP / recipe unlock system ──────────────────────────────────────
-  /** XP required to gain one biome level. */
-  BIOME_XP_PER_LEVEL: 100,
+  /**
+   * XP needed to reach level 1. Higher levels cost BASE * level^EXPONENT total XP.
+   * Use biomeXpForLevel(n) from this package to compute thresholds.
+   */
+  BIOME_XP_BASE: 80,
+  /**
+   * Power-curve exponent. 1.7 means each level costs noticeably more than the last.
+   * Tune alongside BIOME_XP_BASE and BIOME_XP_BY_NODE_TIER.
+   */
+  BIOME_XP_EXPONENT: 1.7,
   /** XP granted per kill, indexed by the node's biomeTier (0–5). */
   BIOME_XP_BY_NODE_TIER: [5, 10, 20, 35, 55, 80] as unknown as readonly number[],
   /** Maximum biome level attainable at each playerTier (index = playerTier). T2 recipes start at level 6. */
   BIOME_LEVEL_CAP_BY_TIER: [2, 5, 10, 15, 20, 25, 30, 35] as unknown as readonly number[],
 } as const;
+
+/**
+ * Total XP required to reach biome level `n` (from 0).
+ * Formula: round(BASE × n ^ EXPONENT)
+ * Example with defaults (BASE=80, EXP=1.7):
+ *   Lv 1 →   80 XP   (8 T1 kills)
+ *   Lv 2 →  260 XP   (26 T1 kills total)
+ *   Lv 3 →  518 XP   (52 T1 kills total)
+ *   Lv 4 →  845 XP   (85 T1 kills total)
+ *   Lv 6 → 1831 XP   (92 T2 kills total)
+ *   Lv 9 → 3848 XP   (192 T2 kills total)
+ */
+export function biomeXpForLevel(n: number): number {
+  if (n <= 0) return 0;
+  return Math.round(GAME_CONFIG.BIOME_XP_BASE * Math.pow(n, GAME_CONFIG.BIOME_XP_EXPONENT));
+}

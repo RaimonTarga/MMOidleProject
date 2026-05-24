@@ -4,7 +4,7 @@ import type { PlayerState } from '@mmo-idle/shared';
 import type { ItemStats } from '@mmo-idle/shared';
 import {
   NODE_BIOMES, BIOME_DATABASE, MONSTER_DATABASE, RECIPE_DATABASE,
-  GAME_CONFIG, ESSENCE_COLORS,
+  GAME_CONFIG, ESSENCE_COLORS, biomeXpForLevel,
 } from '@mmo-idle/shared';
 import type { EssenceType } from '@mmo-idle/shared';
 import { hudBus } from '../hudBus';
@@ -175,15 +175,18 @@ function NodeInfo({ nodeId, player }: NodeInfoProps) {
             <span className="map-kills-badge">Lv {biomeLevel}{biomeLevel >= levelCap ? ' (max)' : ''}</span>
           </div>
           {biomeLevel < levelCap && (() => {
-            const xpInLevel = biomeXP - biomeLevel * GAME_CONFIG.BIOME_XP_PER_LEVEL;
-            const pct = Math.min(100, (xpInLevel / GAME_CONFIG.BIOME_XP_PER_LEVEL) * 100);
+            const xpThisTier = biomeXpForLevel(biomeLevel);
+            const xpNextTier = biomeXpForLevel(biomeLevel + 1);
+            const xpInLevel  = biomeXP - xpThisTier;
+            const xpNeeded   = xpNextTier - xpThisTier;
+            const pct = Math.min(100, (xpInLevel / xpNeeded) * 100);
             return (
               <div className="map-progress-row">
                 <div className="map-progress-bar-wrap">
                   <div className="map-progress-bar" style={{ width: `${pct}%` }} />
                 </div>
                 <span className="map-progress-label">
-                  {xpInLevel} / {GAME_CONFIG.BIOME_XP_PER_LEVEL} XP to Lv {biomeLevel + 1}
+                  {xpInLevel} / {xpNeeded} XP to Lv {biomeLevel + 1}
                 </span>
               </div>
             );
