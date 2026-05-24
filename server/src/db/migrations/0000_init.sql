@@ -18,14 +18,16 @@ CREATE TABLE `characters` (
 	`inventory` text DEFAULT '["basic-sword"]' NOT NULL,
 	`equipment` text DEFAULT '{}' NOT NULL,
 	`essences` text DEFAULT '{"red":0,"blue":0,"green":0,"yellow":0,"purple":0}' NOT NULL,
-	`biome_kills` text DEFAULT '{}' NOT NULL,
-	`recipe_progress` text DEFAULT '{}' NOT NULL,
+	`biome_xp` text DEFAULT '{}' NOT NULL,
+	`biome_level` text DEFAULT '{}' NOT NULL,
+	`unlocked_recipes` text DEFAULT '[]' NOT NULL,
 	`quest_progress` text DEFAULT '{}' NOT NULL,
 	`combat_archetype` text,
 	`selected_class` text,
 	`selected_sub_variant` text,
 	`selected_range` text,
 	`current_skill_tier` integer DEFAULT 0 NOT NULL,
+	`player_tier` integer DEFAULT 0 NOT NULL,
 	`updated_at` integer DEFAULT 0 NOT NULL,
 	FOREIGN KEY (`account_id`) REFERENCES `accounts`(`id`) ON UPDATE no action ON DELETE no action
 );

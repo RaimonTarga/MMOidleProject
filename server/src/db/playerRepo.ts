@@ -198,6 +198,8 @@ function buildFreshPlayer(id: string, name: string, x: number, y: number): Playe
     cadenceEmpoweredArmed: false,
     ammoCount:            0,
     ammoMax:              0,
+    heatPct:              0,
+    laserOverheated:      false,
     executionReady:       false,
     executionCooldownPct: 0,
     energyCount:          0,

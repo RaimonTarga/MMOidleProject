@@ -3,6 +3,7 @@ import { registerCombatListener } from './combatPipeline';
 import { getResource, setResource, isCooldownActive, setCooldown } from './combatState';
 import { setMaxResource } from './resourceMechanics';
 import type { World } from '../world/World';
+import { initReloadT3 } from './reloadT3';
 
 // ── Fallback constants (balanced-frame defaults, used when no frame is unlocked) ─
 
@@ -79,6 +80,8 @@ export function updateReloadArchetype(world: World): void {
  *     timer (duration from reload.reload-time-ms passive, or fallback constant).
  */
 export function initReloadArchetype(): void {
+  initReloadT3();
+
   registerCombatListener('beforeAttack', (ctx, world) => {
     if (ctx.attackerType !== 'player') return;
     if (ctx.attacker.combatArchetype !== 'reload') return;

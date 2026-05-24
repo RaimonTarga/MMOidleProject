@@ -498,28 +498,43 @@ export const SKILL_TREE: Map<string, SkillNode> = new Map<string, SkillNode>([
   // ── Tier 3: Reload — Heavy ────────────────────────────────────────────────────
 
   ['reload-heavy-t3-a', {
-    id: 'reload-heavy-t3-a', name: 'Momentum', tier: 3,
+    id: 'reload-heavy-t3-a', name: 'Laser', tier: 3,
     classId: 'reload-root', subVariantId: 'heavy',
     parent: 'reload-heavy', children: [],
-    description: 'Each attack builds momentum (up to 8 stacks): +5% attack damage and +3% attack speed per stack. Reloading resets everything.',
+    description: 'Replaces your magazine with a continuous laser. It fires every server tick while a target is in range, building Heat from 0% to 100%. At 100% Heat it overheats and cannot fire again until fully cooled.',
     cost: 1, statEffects: {},
-    mechanicEffects: { 'reload.momentum': 1 } as Record<string, number>,
+    mechanicEffects: {
+      'reload.laser': 1,
+      'reload.laser-damage-per-tick-pct': 0.15,
+      'reload.laser-heat-per-tick': 2,
+      'reload.laser-cool-per-tick': 2.5,
+    } as Record<string, number>,
   }],
   ['reload-heavy-t3-b', {
-    id: 'reload-heavy-t3-b', name: 'Heat', tier: 3,
+    id: 'reload-heavy-t3-b', name: 'Snipe', tier: 3,
     classId: 'reload-root', subVariantId: 'heavy',
     parent: 'reload-heavy', children: [],
-    description: 'Attacks deal 30% less damage but apply Heat stacks (up to clip size) that tick 15% attack damage per second per stack. Reloading detonates all stacks for attack × stacks × 0.5 bonus damage.',
+    description: 'Loads only 3 heavy shells. Your firing cadence is fixed and slow, ignoring attack speed, but attack speed instead scales shot damage. Shots deal extra damage against enemies still at full health.',
     cost: 1, statEffects: {},
-    mechanicEffects: { 'reload.heat': 1 } as Record<string, number>,
+    mechanicEffects: {
+      'reload.snipe': 1,
+      'reload.max-ammo': -9,
+      'reload.snipe-cooldown-ms': 2500,
+      'reload.snipe-baseline-cd-ms': 1000,
+      'reload.snipe-fullhp-mult': 2,
+    } as Record<string, number>,
   }],
   ['reload-heavy-t3-c', {
-    id: 'reload-heavy-t3-c', name: 'Burst', tier: 3,
+    id: 'reload-heavy-t3-c', name: 'Gatling', tier: 3,
     classId: 'reload-root', subVariantId: 'heavy',
     parent: 'reload-heavy', children: [],
-    description: 'After every reload, gain damage stacks equal to clip size (+15% per stack). Each attack converts one into a speed stack instead. Both bonuses expire when all stacks are spent.',
+    description: 'Doubles your magazine and doubles your attack speed again, turning the reload path into sustained suppressive fire. Each hit applies a very small knockback, but the enlarged weapon doubles your reload recovery window.',
     cost: 1, statEffects: {},
-    mechanicEffects: { 'reload.burst': 1 } as Record<string, number>,
+    mechanicEffects: {
+      'reload.gatling': 1,
+      'reload.max-ammo': 12,
+      'reload.reload-time-ms': 4000,
+    } as Record<string, number>,
   }],
 
   // ── Tier 3: Cooldown — Heavy ──────────────────────────────────────────────────

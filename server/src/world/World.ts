@@ -12,6 +12,7 @@ import { updateCooldownT3 } from '../systems/cooldownT3';
 import { updateEnergyArchetype } from '../systems/energyPrototype';
 import { updateEnergyT3 } from '../systems/energyT3';
 import { updateReloadArchetype } from '../systems/reloadPrototype';
+import { updateReloadT3 } from '../systems/reloadT3';
 import { updateDotArchetype } from '../systems/dotPrototype';
 import { updateDotT3 } from '../systems/dotT3';
 import { updateCadenceEffects } from '../systems/cadencePrototype';
@@ -125,6 +126,7 @@ export class World {
     updateCooldownT3(this, dt);
     updateEnergyT3(this, dt);
     updateEnergyArchetype(this);
+    updateReloadT3(this, dt, now);
     updateReloadArchetype(this);
     updateDotT3(this, dt);
     updateDotArchetype(this, dt);

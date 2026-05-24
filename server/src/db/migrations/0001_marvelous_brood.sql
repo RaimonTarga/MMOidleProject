@@ -1,1 +1,0 @@
-ALTER TABLE `characters` ADD `player_tier` integer DEFAULT 0 NOT NULL;

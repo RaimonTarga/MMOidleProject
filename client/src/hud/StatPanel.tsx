@@ -81,8 +81,25 @@ export function StatPanel({ player, status }: Props) {
         <StatRow label="HP Regen"   value={player ? `${player.hpRegen}/s` : '—'} />
       </div>
 
-      {/* Ammo bar — reload archetype */}
-      {player?.combatArchetype === 'reload' && player.ammoMax > 0 && (
+      {/* Ammo / Heat bar — reload archetype */}
+      {player?.combatArchetype === 'reload' && (player.passives['reload.laser'] ?? 0) > 0 && (
+        <div className="stat-section">
+          <div className="stat-row">
+            <span className="stat-label">Heat</span>
+            <span className={`stat-value${player.laserOverheated ? ' mech-label--empowered' : ''}`}>
+              {player.laserOverheated ? `OVERHEAT - Cooling (${player.heatPct}%)` : `${player.heatPct}%`}
+            </span>
+          </div>
+          <div className="ammo-bar-track">
+            <div
+              className={`ammo-bar-fill ammo-bar-fill--heat${player.laserOverheated ? ' ammo-bar-fill--overheated' : ''}`}
+              style={{ width: `${player.heatPct}%` }}
+            />
+          </div>
+        </div>
+      )}
+
+      {player?.combatArchetype === 'reload' && (player.passives['reload.laser'] ?? 0) <= 0 && player.ammoMax > 0 && (
         <div className="stat-section">
           <div className="stat-row">
             <span className="stat-label">Ammo</span>

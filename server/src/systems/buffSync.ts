@@ -24,6 +24,7 @@ import {
   getConflagrationPct,
   isConflagrationActive,
 } from './dotT3';
+import { getSnipeReady } from './reloadT3';
 import type { World } from '../world/World';
 
 // Must match the key used in cadencePrototype.ts
@@ -230,6 +231,11 @@ export function syncPlayerBuffs(world: World): void {
       if (getDefenseDebtPool(cs) > 0) {
         buffs.push({ id: 'defense-debt', label: 'Debt', stacks: 1, durationPct: -1, color: '#ff4444' });
       }
+    }
+
+    // ── Reload T3: Snipe full-health bonus ────────────────────────────────────
+    if (player.combatArchetype === 'reload' && getSnipeReady(player, world)) {
+      buffs.push({ id: 'reload-snipe-ready', label: 'Snipe', stacks: 1, durationPct: -1, color: '#ffcc88' });
     }
 
     player.activeBuffs = buffs;

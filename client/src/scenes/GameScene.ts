@@ -130,6 +130,10 @@ export class GameScene extends Phaser.Scene {
   private debugGraphics!: Phaser.GameObjects.Graphics;
   private debugPlayerRange = false;
   private debugEnemyRanges = false;
+  /** Sustained client-side beam for Reload Laser; refreshed by server hit events. */
+  private laserBeamGraphics: Phaser.GameObjects.Graphics | null = null;
+  private laserBeamTargetId: string | null = null;
+  private laserBeamUntil = 0;
   /** Remaining auto-path hops (nodeIds to visit, not including current node). */
   private autoPath: string[] = [];
   /** Invisible point the camera follows — positioned at the player's baseX/Y so
@@ -308,6 +312,7 @@ export class GameScene extends Phaser.Scene {
     const dt = delta / 1000;
     this.stepEntities(this.players,  dt);
     this.stepEntities(this.monsters, dt);
+    this.updateLaserBeam();
     this.drawMinimap();
 
     // Redraw exit gate markers and update biome background only when node changes.
@@ -396,17 +401,22 @@ export class GameScene extends Phaser.Scene {
         const p       = ownVp.playerState;
         const dotPath = p.combatArchetype === 'dot' ? this.getDotPath(p) : undefined;
         const targetEffectScale = this.getEffectScaleForVisual(targetVm);
-        this.spawnAttackEffect(ownVp.attackStyle, ownVp.sprite.x, ownVp.sprite.y,
-          targetVm.sprite.x, targetVm.sprite.y, {
-            empowered: ev.empowered,
-            execution: ev.execution,
-            archetype: p.combatArchetype ?? undefined,
-            dotPath,
-          });
+        const isLaser = p.combatArchetype === 'reload' && (p.passives['reload.laser'] ?? 0) > 0;
+        if (isLaser) {
+          this.activateLaserBeam(ev.targetId);
+        } else {
+          this.spawnAttackEffect(ownVp.attackStyle, ownVp.sprite.x, ownVp.sprite.y,
+            targetVm.sprite.x, targetVm.sprite.y, {
+              empowered: ev.empowered,
+              execution: ev.execution,
+              archetype: p.combatArchetype ?? undefined,
+              dotPath,
+            });
+        }
         for (const effectId of ev.effects ?? []) {
           this.playOneShotEffect(effectId, targetVm.sprite.x, targetVm.sprite.y, { scale: targetEffectScale });
         }
-        if (p.attackRange <= 150) this.playMeleeLunge(ownVp, targetVm.baseX, targetVm.baseY);
+        if (!isLaser && p.attackRange <= 150) this.playMeleeLunge(ownVp, targetVm.baseX, targetVm.baseY);
       }
     }
 
@@ -1351,6 +1361,59 @@ export class GameScene extends Phaser.Scene {
       alpha:  { start: 1, end: 0 },
       rotate: { min: 0, max: 360 },
     });
+  }
+
+  private activateLaserBeam(targetId: string): void {
+    this.laserBeamTargetId = targetId;
+    // Broadcasts arrive every ~200ms; keep the beam alive across snapshots.
+    this.laserBeamUntil = Date.now() + 320;
+
+    if (!this.laserBeamGraphics) {
+      this.laserBeamGraphics = this.add.graphics().setDepth(12);
+    }
+  }
+
+  private updateLaserBeam(): void {
+    if (!this.laserBeamGraphics) return;
+
+    const now = Date.now();
+    const ownVp = this.players.get(this.myId);
+    const targetVm = this.laserBeamTargetId ? this.monsters.get(this.laserBeamTargetId) : undefined;
+    const player = ownVp?.playerState;
+
+    if (
+      now > this.laserBeamUntil ||
+      !ownVp ||
+      !targetVm ||
+      !player ||
+      player.combatArchetype !== 'reload' ||
+      (player.passives['reload.laser'] ?? 0) <= 0 ||
+      player.laserOverheated
+    ) {
+      this.laserBeamGraphics.clear();
+      this.laserBeamTargetId = null;
+      return;
+    }
+
+    const fromX = ownVp.sprite.x;
+    const fromY = ownVp.sprite.y;
+    const toX = targetVm.sprite.x;
+    const toY = targetVm.sprite.y;
+    const pulse = 0.75 + Math.sin(now / 45) * 0.18;
+
+    this.laserBeamGraphics.clear();
+    this.laserBeamGraphics.lineStyle(10, 0xff5533, 0.16 * pulse);
+    this.laserBeamGraphics.lineBetween(fromX, fromY, toX, toY);
+    this.laserBeamGraphics.lineStyle(5, 0xffaa44, 0.34 * pulse);
+    this.laserBeamGraphics.lineBetween(fromX, fromY, toX, toY);
+    this.laserBeamGraphics.lineStyle(2, 0xffffdd, 0.92);
+    this.laserBeamGraphics.lineBetween(fromX, fromY, toX, toY);
+
+    const impactRadius = 5 + Math.sin(now / 55) * 1.5;
+    this.laserBeamGraphics.fillStyle(0xffffcc, 0.7);
+    this.laserBeamGraphics.fillCircle(toX, toY, impactRadius);
+    this.laserBeamGraphics.fillStyle(0xff6633, 0.24);
+    this.laserBeamGraphics.fillCircle(toX, toY, impactRadius * 2.4);
   }
 
   // Helper: generate zigzag waypoints for lightning bolts.

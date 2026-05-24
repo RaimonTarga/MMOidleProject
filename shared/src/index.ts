@@ -200,6 +200,10 @@ export interface PlayerState {
   ammoCount: number;
   /** Max ammo capacity. 0 means this player is not using the reload archetype. */
   ammoMax: number;
+  /** Reload Laser T3: current heat percentage, 0-100. */
+  heatPct: number;
+  /** Reload Laser T3: true while the laser is locked out and cooling to 0%. */
+  laserOverheated: boolean;
   /** Cooldown archetype: true when the execution strike is armed and the next hit will trigger it. */
   executionReady: boolean;
   /** Cooldown archetype: preparation progress 0–100 toward the next execution window. 100 = ready. */

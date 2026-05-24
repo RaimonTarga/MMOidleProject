@@ -123,6 +123,9 @@ export function recalculatePlayerStats(player: PlayerState): void {
   if (player.combatArchetype === 'reload') {
     player.attack         = Math.max(1, Math.floor(player.attack * 0.5));
     player.attackCooldown = Math.max(200, Math.round(player.attackCooldown * 0.5));
+    if ((player.passives['reload.gatling'] ?? 0) > 0) {
+      player.attackCooldown = Math.max(100, Math.round(player.attackCooldown * 0.5));
+    }
   }
 
   // 4. Clamp current hp to the new max (don't auto-heal, but don't exceed cap)
