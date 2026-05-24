@@ -27,7 +27,7 @@ Key design axioms:
 │   ├── index.ts            ← ALL shared types, socket event maps, constants
 │   ├── skillTree.ts        ← SKILL_TREE map (tiers 0-3 hand-authored, 4-7 generated)
 │   ├── biomeDatabase.ts    ← BiomeDefinition, BIOME_DATABASE, bossPoolByTier
-│   ├── monsterDatabase.ts  ← MonsterDefinition (isBoss?, dotEffect?), MONSTER_DATABASE
+│   ├── monsterDatabase.ts  ← MonsterDefinition (isBoss?, dotEffect?, bossScript?), MONSTER_DATABASE; BossAction/BossPhase/BossScript types
 │   ├── itemDatabase.ts
 │   └── recipeDatabase.ts
 ├── client/src/
@@ -45,6 +45,7 @@ Key design axioms:
         ├── combat.ts, combatPipeline.ts, combatState.ts, attackCounter.ts
         ├── stats.ts, movement.ts, ai.ts, autoTarget.ts, transitions.ts
         ├── aoeDamage.ts, rewards.ts, statusEffects.ts, defenseSystems.ts, weaponEffects.ts
+        ├── bossScripts.ts
         ├── questSystem.ts
         ├── cadencePrototype.ts
         ├── cooldownPrototype.ts, cooldownT3.ts
@@ -94,6 +95,8 @@ Everything that crosses the client/server boundary lives here. Start here for an
 - `GAME_CONFIG` — all tuning constants
 - `NODE_BIOMES` — record `node-{row}-{col}` → `{ biomeGroup, biomeTier, isDungeon? }`
 - `QUEST_DATABASE`, `XP_PER_LEVEL = 100`
+- `biomeXpForLevel(n)` — XP threshold for biome level `n`; uses `BIOME_XP_BASE` + `BIOME_XP_EXPONENT` from GAME_CONFIG
+- `BossAction`, `BossPhase`, `RepeatingAction`, `BossScript` — boss scripting types (in `monsterDatabase.ts`)
 
 ---
 
@@ -142,7 +145,7 @@ AoE bypasses the combat pipeline intentionally. Every empowered hit auto-trigger
 
 Aggro acquisition (`findAggro`) only runs when `ai.aggroTargetId === null` — retaliation aggro is never overwritten. Retention: cleared only on node change, disconnect, or leash break.
 
-**Kite prevention:** `kiteTimer` accumulates while chasing. After `KITE_GRACE_MS` (3 s) speed ramps 25%/s up to 2.5×. Resets on attack range entry or aggro drop.
+**Kite prevention:** `kiteTimer` accumulates while chasing. After `KITE_GRACE_MS` (500 ms) speed ramps at `KITE_RAMP_RATE` (1.5×/s) up to `KITE_MAX_MULT` (6.0×), floored at `KITE_MIN_SPEED` (150). Timer decays at `KITE_DECAY_RATE` (2.0×) while monster is in attack range. Resets on attack range entry or aggro drop.
 
 **Auto-target stop distance:** `attackRange * 0.70` to prevent stutter-stepping.
 
@@ -166,7 +169,9 @@ Runs end of every tick; populates `player.activeBuffs: PlayerBuff[]` from combat
 
 **React HUD** is a separate `<div>` in index.html, not inside Phaser. Uses `hudBus.ts` (pub/sub singleton).
 
-Components: `HUD.tsx` (sidebars, StatPanel, BuffBar, EssencePanel), `BuffBar.tsx` (52px icon tiles, clock-sweep overlay, stack badges), `StatPanel.tsx` (DoT pip display, chill/frozen indicators), `MapPanel.tsx` (11×11 grid, dungeon tiles, boss info), `QuestPanel.tsx` (kill counts, XP/level).
+Components: `HUD.tsx` (sidebars, StatPanel, BuffBar, EssencePanel), `BuffBar.tsx` (52px icon tiles, clock-sweep overlay, stack badges), `StatPanel.tsx` (DoT pip display, chill/frozen indicators), `MapPanel.tsx` (11×11 grid, dungeon tiles, boss info), `QuestPanel.tsx` (kill counts, XP/level), `CraftingPanel.tsx` (two-tab: Biome Progress + Forge).
+
+**Crafting panel:** Two sidebar buttons — BIOME PROGRESS and OPEN FORGE — open `CraftingPanel` at the corresponding tab. `craftTab: 'biome' | 'forge' | null` state lives in `MenuButtons.tsx` (parent); clicking the active tab's button closes. Biome tab shows biome-level XP bars and recipe unlock paths using `biomeXpForLevel`. Forge tab has filter chips (by biome / slot) and lists unlocked recipes only.
 
 **Mobile/tablet layout (≤ 1100px):** Sidebars hidden; `MobileHUD` takes over — `position: fixed` top bar (HP, name, zone), large AUTO COMBAT button fixed at bottom, right-side slide-out drawer for SKILL/BAG/FORGE/MAP/QUEST. All mobile bars use `position: fixed` (not `absolute`) to avoid being hidden by browser chrome on Android/iOS. Map panel stacks vertically and scales tile size to `(100vw - 68px) / 5`. `clientAuth.ts` falls back from `crypto.randomUUID()` to `crypto.getRandomValues()` so account IDs generate over plain HTTP (LAN play).
 
@@ -179,6 +184,51 @@ Components: `HUD.tsx` (sidebars, StatPanel, BuffBar, EssencePanel), `BuffBar.tsx
 **11×11 grid**, center `node-5-5` is T0 clearing. Chebyshev distance → tier (0=T0, 1–2=T1, 3=T2, 4=T3, 5=T4). `nodeRegistry.ts` auto-generates all 121 nodes from `NODE_BIOMES`; exits computed from coordinates.
 
 **Dungeons:** Non-boss monsters scaled ×2 HP, ×1.6 ATK in `World.createMonster()`. `World.ensureBoss(nodeId)` keeps exactly one boss per dungeon node (doesn't count toward `MONSTERS_PER_NODE`). Bosses: `isBoss: true` in `MONSTER_DATABASE`, listed in `BiomeDefinition.bossPoolByTier`.
+
+---
+
+## Biome XP system
+
+Players earn biome XP for kills in a biome; XP accumulates in `player.biomeXP` (a `Record<biomeGroup, number>`). `player.biomeLevel` is the current level of the active biome.
+
+**Power curve:** `biomeXpForLevel(n) = round(BIOME_XP_BASE × n^BIOME_XP_EXPONENT)`
+- `BIOME_XP_BASE = 80`, `BIOME_XP_EXPONENT = 1.7` (both in GAME_CONFIG)
+- Level table: Lv1 → 80 XP, Lv2 → 260, Lv3 → 518, Lv4 → 845, Lv6 → 1831, Lv9 → 3848
+
+Each level-up in a biome unlocks recipes tied to that biome+level. `unlockedRecipes` on `PlayerState` is the authoritative set. XP per kill is set in `BIOME_XP_BY_NODE_TIER` in `shared/src/index.ts`.
+
+The helper `biomeXpForLevel` is exported from `@mmo-idle/shared` and used in both `rewards.ts` (level-up logic) and the client UI (`CraftingPanel`, `MapPanel`). Never use `BIOME_XP_PER_LEVEL` — that constant no longer exists.
+
+---
+
+## Boss fight scripting (`bossScripts.ts`)
+
+Bosses opt in by setting `bossScript` on their `MonsterDefinition`. The script is data-driven — no per-boss server code.
+
+**Script shape:**
+```typescript
+interface BossScript {
+  phases?:    BossPhase[];        // HP-threshold triggers, fire once per boss life
+  repeating?: RepeatingAction[];  // periodic timers, run while engaged
+}
+interface BossPhase      { hpPct: number; actions: BossAction[]; }
+interface RepeatingAction { intervalMs: number; initialDelayMs?: number; actions: BossAction[]; }
+```
+
+**Action types (`BossAction` discriminated union):**
+| type | effect |
+|---|---|
+| `enrage` | Multiply attack (`atkMult`) and halve cooldown (`cdMult`); optional `durationMs` |
+| `regen` | Heal `hpPctPerSec × maxHp` per second; optional `durationMs` |
+| `shield` | Add `drAdd` flat damage reduction (capped at 0.95) for `durationMs` ms |
+| `summon` | Spawn `count` copies of `monsterTypeId` near the boss |
+| `stat-buff` | Multiply any one stat (`attack`, `speed`, `plating`, `damageReduction`); optional `durationMs` |
+
+**Runtime state:** `World.bossState: Map<string, BossRuntimeState>` — per-boss tracking (engaged flag, phase triggers, repeating timers, active effects). Pruned automatically when boss dies. Never serialized.
+
+**`monster.bossEffects: string[]`** — populated each tick from active effect names; sent to client for HUD display.
+
+Timers don't tick until a player aggros the boss (`state.engaged = true`). Active timed effects save original stat values and restore them on expiry.
 
 ---
 
@@ -356,11 +406,13 @@ Each player hit applies 1 DoT stack; stacks tick damage at configurable interval
 
 - 11×11 world, monster AI (aggro, kite prevention, leash), auto-targeting
 - Dungeon nodes T1–T3 with scaled enemies and persistent bosses
+- Boss fight scripting framework (`bossScripts.ts`) — data-driven phases, repeating timers, enrage/regen/shield/summon/stat-buff actions
 - Quest system (kill-count quests → XP → skill points); QuestPanel
 - All 5 class archetypes with T0 roots and T1–T2 nodes; T3 fully implemented for Cadence, Energy, DoT; Cooldown light+balanced; Reload designed only
 - Defense/recovery system (5 recovery archetypes, all `defense.*` passives)
-- Weapon effects: Chaotic Axe, Sacred Cross, Ashbrand Blade
-- Inventory/equipment (4 slots), crafting with biome-kill unlock gates
+- Weapon effects: Chaotic Axe, Sacred Cross, Ashbrand Blade (30% DoT conversion, 5 non-instanced stacks, `computeScaledDotDamage`)
+- Inventory/equipment (4 slots), crafting with biome XP unlock gates
+- Biome XP power-curve system (`biomeXpForLevel`); two-tab crafting panel (Biome Progress + Forge)
 - Skill tree T0–T7 (T4–7 generated placeholders)
 - Death/respawn; node transitions
 - Client HUD: stat panel, buff bar (category-distinct icons), map (11×11 + dungeon/boss), skill tree, inventory, crafting, quest panel
@@ -421,3 +473,5 @@ T1 bosses: 400–700 HP, 14–22 ATK. Jungle first appears T2; ex-jungle T1 node
 - **DoT damage-per-stack is derived, never hardcoded** — use `attack × dot.conversion-pct / maxStacks`; never set `dot.damage-per-stack` directly
 - **Map TypeScript inference** — use explicit generics (`new Map<string, Recipe>([...])`) for `RECIPE_DATABASE`, `SKILL_TREE`, `QUEST_DATABASE`
 - **Reload multiplier is a final layer** — apply `* 0.5` to `attack` and `attackCooldown` at the end of `recalculatePlayerStats()`, never additively
+- **Boss script stat modifications use save-original pattern** — `ActiveBossEffect` stores the pre-buff stat value; restored on expiry. Overlapping same-stat effects from multiple sources are not supported (last write wins)
+- **`biomeXpForLevel` is the only XP threshold function** — `BIOME_XP_PER_LEVEL` no longer exists; never use flat XP per level
