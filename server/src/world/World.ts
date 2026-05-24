@@ -17,6 +17,7 @@ import { updateDotT3 } from '../systems/dotT3';
 import { updateCadenceEffects } from '../systems/cadencePrototype';
 import { updateWeaponEffects } from '../systems/weaponEffects';
 import { updateShields, updateDefensiveSystems } from '../systems/defenseSystems';
+import { updateKnockback, type KnockbackComponent } from '../systems/knockback';
 import { recalculatePlayerStats } from '../systems/stats';
 import { syncPlayerBuffs } from '../systems/buffSync';
 import { updateTestRoomInteract } from '../systems/testRoomInteract';
@@ -75,6 +76,8 @@ export class World {
   playerCombatState  = new Map<string, CombatState>();
   /** Server-side only combat state for monsters. Never serialized or sent to clients. */
   monsterCombatState = new Map<string, CombatState>();
+  /** Active knockback components per monster — see systems/knockback.ts. */
+  monsterKnockback   = new Map<string, KnockbackComponent>();
   /** Player IDs that died this tick. Drained by the server loop after each tick. */
   pendingDeaths: string[] = [];
   /** Queued combat events per node, flushed into each broadcast snapshot. */
@@ -124,6 +127,7 @@ export class World {
     updateCadenceEffects(this, dt);
     updateWeaponEffects(this, dt);
     updateAutoTargets(this);
+    updateKnockback(this, dt);
     updateMovement(this, dt);
     updateTransitions(this);
     if (IS_DEV) updateTestRoomInteract(this, now);

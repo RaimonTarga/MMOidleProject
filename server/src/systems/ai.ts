@@ -3,6 +3,7 @@ import type { MonsterState, PlayerState } from '@mmo-idle/shared';
 import { getNodePlayers } from '../world/nodeQueries';
 import { NODE_REGISTRY } from '../world/nodeRegistry';
 import { isMonsterFrozen } from './dotT3';
+import { isMonsterKnockedBack } from './knockback';
 
 const KITE_GRACE_MS  = 3_000;  // ms chasing before speed ramp begins
 const KITE_RAMP_RATE = 0.25;   // speed multiplier gain per second past grace
@@ -35,6 +36,14 @@ export function updateMonsters(world: World, dt: number, now: number) {
     if (isMonsterFrozen(world, id)) {
       monster.targetX = monster.x;
       monster.targetY = monster.y;
+      monster.lastAttackAt = now;
+      ai.kiteTimer = 0;
+      continue;
+    }
+
+    // Knockback owns position, target, speed, and state for the duration of the
+    // slide. AI resumes naturally once the component clears.
+    if (isMonsterKnockedBack(world, id)) {
       monster.lastAttackAt = now;
       ai.kiteTimer = 0;
       continue;

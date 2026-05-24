@@ -335,7 +335,7 @@ Each player hit applies 1 DoT stack; stacks tick damage at configurable interval
 **T3 paths:**
 - Poison: Poison Explosion (20-stack cap → 10-tick burst), Eternal Doom (no cap, diminishing returns formula), Invigorating Toxins (stacks boost player ATK+speed)
 - Fire: Fan the Flames (2 stacks/hit at 50% dmg; max→burst), Smoldering Ember (stacks add % vuln), Conflagration (max stacks → 5×500ms fast ticks)
-- Frost: Permafrost (1 permanent stack ramping dmg), Freezing Cold (frost+chill; 3 chill → Freeze 2s), Glacial Fracture (max stacks → shatter burst)
+- Frost: Permafrost (1 permanent stack ramping +1% ATK/hit, max 35% at 35 hits), Freezing Cold (frost+chill; 3 chill → Freeze 2s), Glacial Fracture (max stacks → shatter burst)
 
 **Key implementation flags:**
 - `ctx.metadata['dotHandled']` — T3 handler sets this to suppress base stack application

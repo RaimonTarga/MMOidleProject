@@ -251,7 +251,8 @@ export type MonsterAIState =
   | 'wandering'
   | 'chasing'
   | 'attacking'
-  | 'returning';
+  | 'returning'
+  | 'knocked-back';
 
 export interface MonsterState {
   id: string;
