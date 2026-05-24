@@ -1,4 +1,5 @@
 import { createPortal } from 'react-dom';
+import { useState } from 'react';
 import { SKILL_TREE } from '@mmo-idle/shared';
 import type { SkillNode, StatEffects } from '@mmo-idle/shared';
 import type { PlayerState } from '@mmo-idle/shared';
@@ -45,47 +46,32 @@ function getNodeStatus(node: SkillNode, player: PlayerState | null): NodeStatus 
   if (player.skillPoints < node.cost)          return 'locked';
 
   if (node.tier === 0) {
-    if (player.selectedClass !== null)         return 'locked';
+    if (player.selectedClass !== null)                       return 'locked';
   } else if (node.tier === 1) {
-    if (node.classId !== player.selectedClass) return 'locked';
+    if (node.classId !== player.selectedClass)               return 'locked';
   } else if (node.tier === 2) {
-    // Universal: available to all, but sub-variant must be chosen first.
-    if (player.selectedSubVariant === null)    return 'locked';
+    if (player.selectedSubVariant === null)                  return 'locked';
   } else {
-    // Tier 3+: full 15-way path lock.
-    if (node.classId !== player.selectedClass)           return 'locked';
-    if (node.subVariantId !== player.selectedSubVariant) return 'locked';
+    if (node.classId !== player.selectedClass)               return 'locked';
+    if (node.subVariantId !== player.selectedSubVariant)     return 'locked';
   }
 
   return 'available';
 }
 
-/**
- * Collects nodes visible to this player in the ProgressionView.
- *
- * Rules:
- *   - Tier 0: only the player's class root.
- *   - Tier 1: all three sub-variants for the player's class (so the choice is visible).
- *   - Tier 2: all three universal range nodes (null classId).
- *   - Tier 3+: only nodes matching the player's class AND sub-variant.
- */
 function getVisibleNodes(player: PlayerState): Map<number, SkillNode[]> {
   const tierMap = new Map<number, SkillNode[]>();
   const classId = player.selectedClass!;
   const sub     = player.selectedSubVariant;
 
   for (const node of SKILL_TREE.values()) {
-    // Tier 0: show only the player's own class root.
     if (node.tier === 0) {
       if (node.id !== classId) continue;
     } else if (node.tier === 2) {
-      // Universal range nodes have null classId — always included.
+      // universal
     } else {
-      // Tiers 1, 3+: must belong to player's class.
       if (node.classId !== classId) continue;
-      // Tiers 3+: also filter to player's sub-variant.
       if (node.tier >= 3 && node.subVariantId !== sub) continue;
-      // Tier 1: show all three sub-variants so the player can choose.
     }
 
     if (!tierMap.has(node.tier)) tierMap.set(node.tier, []);
@@ -95,19 +81,20 @@ function getVisibleNodes(player: PlayerState): Map<number, SkillNode[]> {
   return tierMap;
 }
 
-// ── Shared node card ───────────────────────────────────────────────────────────
+// ── Node card (circular) ───────────────────────────────────────────────────────
 
 function SkillNodeCard({
   node,
   player,
   compact = false,
+  onHover,
 }: {
-  node: SkillNode;
-  player: PlayerState | null;
+  node:     SkillNode;
+  player:   PlayerState | null;
   compact?: boolean;
+  onHover:  (node: SkillNode | null) => void;
 }) {
-  const status  = getNodeStatus(node, player);
-  const effects = formatEffects(node.statEffects);
+  const status = getNodeStatus(node, player);
 
   function handleClick() {
     if (status !== 'available') return;
@@ -116,30 +103,66 @@ function SkillNodeCard({
 
   return (
     <div
-      className={`skill-node skill-node--${status}${compact ? ' skill-node--compact' : ''}`}
+      className={[
+        'skill-node',
+        `skill-node--${status}`,
+        compact ? 'skill-node--compact' : '',
+      ].filter(Boolean).join(' ')}
       onClick={handleClick}
+      onMouseEnter={() => onHover(node)}
+      onMouseLeave={() => onHover(null)}
     >
+      <span className="skill-node__cost">{node.cost}pt</span>
       <div className="skill-node__name">{node.name}</div>
-      <div className="skill-node__meta">
-        <span className="skill-node__cost">{node.cost} pt{node.cost !== 1 ? 's' : ''}</span>
-        {effects && <span className="skill-node__effects">{effects}</span>}
-      </div>
-      {!compact && node.description && (
-        <div className="skill-node__desc">{node.description}</div>
+      {status === 'unlocked' && !compact && (
+        <div className="skill-node__check">✓</div>
       )}
     </div>
   );
 }
 
-// ── Class selection view (tier 0 not yet chosen) ───────────────────────────────
+// ── Description panel (sticky bottom) ─────────────────────────────────────────
 
-function ClassSelectionView({ player }: { player: PlayerState | null }) {
+function NodeDesc({ node, player }: { node: SkillNode | null; player: PlayerState | null }) {
+  if (!node) {
+    return (
+      <div className="skill-desc skill-desc--empty">
+        Hover a node to see details
+      </div>
+    );
+  }
+
+  const effects = formatEffects(node.statEffects);
+  const status  = getNodeStatus(node, player);
+
+  return (
+    <div className={`skill-desc skill-desc--${status}`}>
+      <div className="skill-desc__header">
+        <span className="skill-desc__name">{node.name}</span>
+        <span className="skill-desc__tier">{tierLabel(node.tier)}</span>
+        <span className="skill-desc__cost">{node.cost} pt{node.cost !== 1 ? 's' : ''}</span>
+      </div>
+      {effects && <div className="skill-desc__effects">{effects}</div>}
+      {node.description && <div className="skill-desc__text">{node.description}</div>}
+    </div>
+  );
+}
+
+// ── Class selection view ───────────────────────────────────────────────────────
+
+function ClassSelectionView({
+  player,
+  onHover,
+}: {
+  player:  PlayerState | null;
+  onHover: (node: SkillNode | null) => void;
+}) {
   const pts = player?.skillPoints ?? 0;
 
   return (
-    <>
+    <div className="skill-class-view">
       <p className="skill-tree-instruction">
-        Choose your class to begin progression.
+        Choose your class to begin.
         {pts > 0
           ? ` You have ${pts} skill point${pts !== 1 ? 's' : ''}.`
           : ' Earn skill points by defeating monsters.'}
@@ -149,25 +172,30 @@ function ClassSelectionView({ player }: { player: PlayerState | null }) {
           const root = SKILL_TREE.get(rootId)!;
           return (
             <div key={rootId} className="skill-class-card">
-              <SkillNodeCard node={root} player={player} />
+              <SkillNodeCard node={root} player={player} onHover={onHover} />
               <p className="skill-class-desc">{root.description}</p>
             </div>
           );
         })}
       </div>
-    </>
+    </div>
   );
 }
 
-// ── Progression view (class chosen) ───────────────────────────────────────────
+// ── Progression view ───────────────────────────────────────────────────────────
 
-function ProgressionView({ player }: { player: PlayerState }) {
-  const classId   = player.selectedClass!;
-  const className = SKILL_TREE.get(classId)?.name ?? classId;
-  const pts       = player.skillPoints;
-
-  const tierMap    = getVisibleNodes(player);
-  const tiers      = Array.from(tierMap.entries()).sort(([a], [b]) => a - b);
+function ProgressionView({
+  player,
+  onHover,
+}: {
+  player:  PlayerState;
+  onHover: (node: SkillNode | null) => void;
+}) {
+  const classId     = player.selectedClass!;
+  const className   = SKILL_TREE.get(classId)?.name ?? classId;
+  const pts         = player.skillPoints;
+  const tierMap     = getVisibleNodes(player);
+  const tiers       = Array.from(tierMap.entries()).sort(([a], [b]) => a - b);
   const currentTier = player.currentSkillTier;
 
   const subVariantLabel = player.selectedSubVariant
@@ -188,38 +216,50 @@ function ProgressionView({ player }: { player: PlayerState }) {
       </div>
 
       <div className="skill-tier-list">
-        {tiers.map(([tier, nodes]) => {
+        {tiers.map(([tier, nodes], idx) => {
           if (tier > currentTier) return null;
 
           const isCurrent = tier === currentTier;
           const isPast    = tier < currentTier;
 
           return (
-            <div
-              key={tier}
-              className={`skill-tier-row${isCurrent ? ' skill-tier-row--current' : ''}${isPast ? ' skill-tier-row--past' : ''}`}
-            >
-              <div className="skill-tier-label">{tierLabel(tier)}</div>
-              <div className="skill-tier-nodes">
-                {nodes.map(node => (
-                  <SkillNodeCard
-                    key={node.id}
-                    node={node}
-                    player={player}
-                    compact={isPast}
-                  />
-                ))}
+            <div key={tier} className="skill-tier-block">
+              {idx > 0 && (
+                <div className={`skill-connector${isPast || isCurrent ? ' skill-connector--lit' : ''}`} />
+              )}
+              <div className={[
+                'skill-tier-section',
+                isCurrent ? 'skill-tier-section--current' : '',
+                isPast    ? 'skill-tier-section--past'    : '',
+              ].filter(Boolean).join(' ')}>
+                <div className="skill-tier-badge">{tierLabel(tier)}</div>
+                <div className="skill-tier-nodes">
+                  {nodes.map(node => (
+                    <SkillNodeCard
+                      key={node.id}
+                      node={node}
+                      player={player}
+                      compact={isPast}
+                      onHover={onHover}
+                    />
+                  ))}
+                </div>
               </div>
             </div>
           );
         })}
 
-        {/* Next-tier teaser */}
+        {/* Next-tier teaser: placeholder circles, not plain text */}
         {tierMap.has(currentTier + 1) && (
-          <div className="skill-tier-row skill-tier-row--upcoming">
-            <div className="skill-tier-label">{tierLabel(currentTier + 1)}</div>
-            <div className="skill-tier-upcoming-hint">
-              Unlock a skill above to reveal {tierLabel(currentTier + 1).toLowerCase()}.
+          <div className="skill-tier-block">
+            <div className="skill-connector" />
+            <div className="skill-tier-section skill-tier-section--upcoming">
+              <div className="skill-tier-badge">{tierLabel(currentTier + 1)}</div>
+              <div className="skill-tier-nodes">
+                {[0, 1, 2].map(i => (
+                  <div key={i} className="skill-node skill-node--placeholder" />
+                ))}
+              </div>
             </div>
           </div>
         )}
@@ -236,6 +276,7 @@ interface Props {
 }
 
 export function SkillTreePanel({ player, onClose }: Props) {
+  const [hoveredNode, setHoveredNode] = useState<SkillNode | null>(null);
   const classChosen = player !== null && player.selectedClass !== null;
 
   function handleOverlayClick(e: React.MouseEvent) {
@@ -249,16 +290,20 @@ export function SkillTreePanel({ player, onClose }: Props) {
         <div className="skill-tree-header">
           <span className="skill-tree-title">Passive Skill Tree</span>
           <div className="skill-tree-legend">
-            <span className="legend-item legend-item--unlocked">● selected</span>
+            <span className="legend-item legend-item--unlocked">● unlocked</span>
             <span className="legend-item legend-item--available">● available</span>
             <span className="legend-item legend-item--locked">● locked</span>
           </div>
           <button className="skill-tree-close" onClick={onClose}>✕</button>
         </div>
 
-        {classChosen
-          ? <ProgressionView player={player!} />
-          : <ClassSelectionView player={player} />}
+        <div className="skill-tree-body">
+          {classChosen
+            ? <ProgressionView player={player!} onHover={setHoveredNode} />
+            : <ClassSelectionView player={player} onHover={setHoveredNode} />}
+        </div>
+
+        <NodeDesc node={hoveredNode} player={player} />
 
       </div>
     </div>,

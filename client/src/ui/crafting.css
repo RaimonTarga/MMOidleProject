@@ -230,9 +230,13 @@
 
 /* ── Recipe card ─────────────────────────────────────────────────────────── */
 .craft-recipe {
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  align-items: flex-start;
   padding: 10px 12px;
   border: 1px solid rgba(60, 55, 120, 0.45);
-  border-radius: 4px;
+  border-radius: 5px;
   background: rgba(10, 10, 28, 0.95);
   transition: border-color 0.1s, background 0.1s;
 }
@@ -251,11 +255,57 @@
   pointer-events: none;
 }
 
-.craft-recipe__top {
+/* ── Icon placeholder ────────────────────────────────────────────────────── */
+.craft-recipe__icon {
+  width: 52px;
+  height: 52px;
+  flex-shrink: 0;
+  border-radius: 5px;
+  border: 1px solid rgba(80, 80, 160, 0.35);
+  background: rgba(12, 10, 30, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 8px;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  color: #5a5890;
+}
+
+.craft-recipe__icon[data-slot="weapon"] {
+  border-color: rgba(180, 100, 40, 0.50);
+  background: rgba(60, 24, 6, 0.50);
+  color: #b06030;
+}
+.craft-recipe__icon[data-slot="armor"] {
+  border-color: rgba(50, 100, 190, 0.50);
+  background: rgba(12, 32, 70, 0.50);
+  color: #4488bb;
+}
+.craft-recipe__icon[data-slot="recovery"] {
+  border-color: rgba(40, 150, 90, 0.50);
+  background: rgba(8, 50, 28, 0.50);
+  color: #44aa66;
+}
+.craft-recipe__icon[data-slot="mobility"] {
+  border-color: rgba(130, 70, 210, 0.50);
+  background: rgba(40, 14, 70, 0.50);
+  color: #8855cc;
+}
+
+/* ── Card content ────────────────────────────────────────────────────────── */
+.craft-recipe__content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.craft-recipe__header {
   display: flex;
   align-items: baseline;
-  gap: 8px;
-  margin-bottom: 5px;
+  gap: 6px;
 }
 
 .craft-recipe__name {
@@ -268,34 +318,66 @@
   text-overflow: ellipsis;
 }
 
-.craft-recipe__slot {
-  font-size: 9px;
-  color: #7070a8;
+.craft-recipe__slot-badge {
+  font-size: 8px;
+  font-weight: bold;
   text-transform: uppercase;
-  letter-spacing: 0.4px;
+  letter-spacing: 0.5px;
+  padding: 1px 6px;
+  border-radius: 3px;
   flex-shrink: 0;
+  border: 1px solid rgba(80, 80, 160, 0.35);
+  color: #7070a8;
+  background: rgba(20, 18, 45, 0.80);
 }
 
-.craft-recipe__tier {
-  font-size: 10px;
+.craft-recipe__slot-badge[data-slot="weapon"]   { color: #cc7730; border-color: rgba(180,100,40,0.40); background: rgba(50,18,6,0.60); }
+.craft-recipe__slot-badge[data-slot="armor"]    { color: #4488bb; border-color: rgba(50,100,190,0.40); background: rgba(10,26,60,0.60); }
+.craft-recipe__slot-badge[data-slot="recovery"] { color: #44aa66; border-color: rgba(40,150,90,0.40);  background: rgba(6,40,22,0.60);  }
+.craft-recipe__slot-badge[data-slot="mobility"] { color: #8855cc; border-color: rgba(130,70,210,0.40); background: rgba(32,10,56,0.60); }
+
+.craft-recipe__tier-badge {
+  font-size: 9px;
   color: #6868a0;
   font-weight: bold;
   flex-shrink: 0;
 }
 
+/* ── Stat pills ──────────────────────────────────────────────────────────── */
 .craft-recipe__stats {
-  font-size: 11px;
-  color: #8899cc;
-  margin-bottom: 7px;
-  letter-spacing: 0.2px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
 }
 
-.craft-recipe__bottom {
+.craft-stat-pill {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 3px;
+  background: rgba(12, 10, 32, 0.85);
+  border: 1px solid rgba(60, 58, 120, 0.40);
+  border-radius: 3px;
+  padding: 1px 6px;
+  font-size: 10px;
+}
+
+.craft-stat-pill__value {
+  color: #88aaff;
+  font-weight: bold;
+}
+
+.craft-stat-pill__label {
+  color: #6868a0;
+}
+
+/* ── Footer (desc + button / lock) ──────────────────────────────────────── */
+.craft-recipe__footer {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: 10px;
   flex-wrap: wrap;
+  margin-top: 1px;
 }
 
 .craft-recipe__desc {
@@ -321,7 +403,7 @@
   color: #8899ee;
   font-family: monospace;
   font-size: 10px;
-  padding: 5px 14px;
+  padding: 4px 14px;
   border-radius: 3px;
   cursor: pointer;
   white-space: nowrap;

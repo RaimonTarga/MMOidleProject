@@ -14,20 +14,24 @@ const SLOT_LABELS: Record<string, string> = {
   mobility: 'Boots',
 };
 
+const SLOT_ABBR: Record<string, string> = {
+  weapon: 'WPN', armor: 'ARM', recovery: 'RCV', mobility: 'MOB',
+};
+
 const STAT_LABELS: Record<string, string> = {
   attack: 'ATK', defense: 'DEF', maxHp: 'HP',
   hpRegen: 'REGEN', speed: 'SPD', attackRange: 'RNG', attackCooldown: 'CD ms',
 };
 
-function formatStats(stats: Partial<ItemStats>, aps?: number): string {
-  const parts: string[] = [];
-  if (aps !== undefined) parts.push(`${aps} APS`);
-  parts.push(
-    ...Object.entries(stats)
-      .filter(([, v]) => v !== undefined)
-      .map(([k, v]) => `${(v as number) >= 0 ? '+' : ''}${v} ${STAT_LABELS[k] ?? k}`),
-  );
-  return parts.join('  ');
+function getStatEntries(stats: Partial<ItemStats>, aps?: number): { value: string; label: string }[] {
+  const entries: { value: string; label: string }[] = [];
+  if (aps !== undefined) entries.push({ value: String(aps), label: 'APS' });
+  for (const [k, v] of Object.entries(stats)) {
+    if (v !== undefined) {
+      entries.push({ value: `${(v as number) >= 0 ? '+' : ''}${v}`, label: STAT_LABELS[k] ?? k });
+    }
+  }
+  return entries;
 }
 
 interface EssenceSummaryProps {
@@ -181,50 +185,68 @@ export function CraftingPanel({ player, onClose }: Props) {
                       );
                       const tierInfo = thresholds.find(t => t.tier === recipe.requiredTier);
 
+                      const statEntries = getStatEntries(
+                        recipe.stats,
+                        recipe.slot === 'weapon' ? recipe.attacksPerSecond : undefined,
+                      );
+
                       return (
                         <div
                           key={recipe.id}
                           className={[
                             'craft-recipe',
-                            !unlocked             ? 'craft-recipe--locked'       : '',
+                            !unlocked              ? 'craft-recipe--locked'       : '',
                             unlocked && !canAfford ? 'craft-recipe--unaffordable' : '',
                           ].filter(Boolean).join(' ')}
                         >
-                          <div className="craft-recipe__top">
-                            <span className="craft-recipe__name">{recipe.name}</span>
-                            <span className="craft-recipe__slot">
-                              {SLOT_LABELS[recipe.slot] ?? recipe.slot}
-                            </span>
-                            <span className="craft-recipe__tier">T{recipe.tier}</span>
+                          <div className="craft-recipe__icon" data-slot={recipe.slot}>
+                            {SLOT_ABBR[recipe.slot] ?? recipe.slot.slice(0, 3).toUpperCase()}
                           </div>
 
-                          <div className="craft-recipe__stats">
-                            {formatStats(recipe.stats, recipe.slot === 'weapon' ? recipe.attacksPerSecond : undefined)}
-                          </div>
-
-                          {unlocked && (
-                            <CostDisplay cost={recipe.cost} essences={essences} />
-                          )}
-
-                          <div className="craft-recipe__bottom">
-                            {recipe.description && (
-                              <span className="craft-recipe__desc">{recipe.description}</span>
-                            )}
-                            {unlocked ? (
-                              <button
-                                className="craft-recipe__btn"
-                                disabled={!canAfford}
-                                onClick={() => hudBus.requestCraftRecipe(recipe.id)}
-                              >
-                                {canAfford ? 'Craft' : 'Insufficient'}
-                              </button>
-                            ) : (
-                              <span className="craft-recipe__locked-label">
-                                {tierInfo
-                                  ? `${tierInfo.killsRequired} kills to unlock`
-                                  : `Tier ${recipe.requiredTier} required`}
+                          <div className="craft-recipe__content">
+                            <div className="craft-recipe__header">
+                              <span className="craft-recipe__name">{recipe.name}</span>
+                              <span className="craft-recipe__slot-badge" data-slot={recipe.slot}>
+                                {SLOT_LABELS[recipe.slot] ?? recipe.slot}
                               </span>
+                              <span className="craft-recipe__tier-badge">T{recipe.tier}</span>
+                            </div>
+
+                            {statEntries.length > 0 && (
+                              <div className="craft-recipe__stats">
+                                {statEntries.map((e, i) => (
+                                  <span key={i} className="craft-stat-pill">
+                                    <span className="craft-stat-pill__value">{e.value}</span>
+                                    <span className="craft-stat-pill__label">{e.label}</span>
+                                  </span>
+                                ))}
+                              </div>
                             )}
+
+                            {unlocked && (
+                              <CostDisplay cost={recipe.cost} essences={essences} />
+                            )}
+
+                            <div className="craft-recipe__footer">
+                              {recipe.description && (
+                                <span className="craft-recipe__desc">{recipe.description}</span>
+                              )}
+                              {unlocked ? (
+                                <button
+                                  className="craft-recipe__btn"
+                                  disabled={!canAfford}
+                                  onClick={() => hudBus.requestCraftRecipe(recipe.id)}
+                                >
+                                  {canAfford ? 'Craft' : 'Insufficient'}
+                                </button>
+                              ) : (
+                                <span className="craft-recipe__locked-label">
+                                  {tierInfo
+                                    ? `${tierInfo.killsRequired} kills to unlock`
+                                    : `Tier ${recipe.requiredTier} required`}
+                                </span>
+                              )}
+                            </div>
                           </div>
                         </div>
                       );
