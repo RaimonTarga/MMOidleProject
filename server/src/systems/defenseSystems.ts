@@ -165,6 +165,20 @@ export function initDefenseSystems(): void {
     addResource(cs, DEBT_POOL_KEY, debtAmount);
   });
 
+  // ── Kill-triggered regen burst ────────────────────────────────────────────
+  // When defense.kill-burst-pct > 0, each kill deposits that fraction of
+  // maxHp into the burst pool. Drains back over POOL_DRAIN_MS the same as the
+  // timer-based burst. Multiple kills stack (accumulate) in the pool.
+  registerCombatListener('onKill', (ctx, world) => {
+    if (ctx.attackerType !== 'player') return;
+    const player = ctx.attacker as PlayerState;
+    const killBurstPct = player.passives['defense.kill-burst-pct'] ?? 0;
+    if (killBurstPct <= 0) return;
+    const cs = world.playerCombatState.get(player.id);
+    if (!cs) return;
+    addResource(cs, BURST_POOL_KEY, player.maxHp * killBurstPct);
+  });
+
   // ── 5. Damage absorb ───────────────────────────────────────────────────────
   // Converts defense.absorb-pct of the final damage taken into a HoT pool
   // that drains back to the player over POOL_DRAIN_MS (antiheal applied on drain).
@@ -298,7 +312,7 @@ export function updateDefensiveSystems(world: World, dt: number, now: number): v
     const burstPct        = player.passives['defense.regen-burst-pct'] ?? 0;
     const burstIntervalMs = player.passives['defense.regen-burst-interval-ms'] ?? 0;
     if (burstPct > 0 && burstIntervalMs > 0) {
-      if (!isCooldownActive(cs, 'regenBurst')) {
+      if (!isCooldownActive(cs, 'regenBurst') && inCombat) {
         addResource(cs, BURST_POOL_KEY, player.maxHp * burstPct);
         setCooldown(cs, 'regenBurst', burstIntervalMs);
       }

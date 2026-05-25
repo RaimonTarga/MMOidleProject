@@ -327,19 +327,23 @@ Energy and Reload start ranged. DoT is mid-range (+50 range). Cooldown and Caden
 
 ### T1 stat profiles (cumulative root+variant)
 
+Attack speed shown as `attackSpeedPct` total across root+variant. Positive = faster; values stack additively then apply as `round(baseCooldown / (1 + total))`.
+
 | Class | Light | Heavy |
 |---|---|---|
-| Cooldown | +14 ATK, +6 HP, high speed | +49 ATK, +98 HP, +13 PLT, +18% DR |
-| Cadence | +22 ATK, −4 HP, high speed | +38 ATK, +74 HP, +11 PLT |
-| DoT | +30 ATK, −4 HP, high speed | +34 ATK, +68 HP, +10 PLT, +12% DR |
-| Reload | +18 ATK, −26 HP | +24 ATK, +24 HP, +5 PLT |
-| Energy | +14 ATK, −27 HP, high speed | +21 ATK, +19 HP, +4 PLT |
+| Cooldown | +14 ATK, +6 HP, +15% AtkSpd | +49 ATK, +98 HP, +13 PLT, +18% DR, −20% AtkSpd |
+| Cadence | +22 ATK, −4 HP, +20% AtkSpd | +38 ATK, +74 HP, +11 PLT, −15% AtkSpd |
+| DoT | +30 ATK, −4 HP, +20% AtkSpd | +34 ATK, +68 HP, +10 PLT, +12% DR, −20% AtkSpd |
+| Reload | +18 ATK, −26 HP, +15% AtkSpd | +24 ATK, +24 HP, +5 PLT, −10% AtkSpd |
+| Energy | +14 ATK, −27 HP, +30% AtkSpd | +21 ATK, +19 HP, +4 PLT, +5% AtkSpd |
+
+Energy light has +30% because the root already contributes +10% — the only T0 root with an attack speed bonus.
 
 ### T2 range nodes (universal)
 
-- **range-close**: −40 range, +5 ATK, −300ms CD, +3 PLT, +6% DR, +12 HP + class bonus
+- **range-close**: −40 range, +5 ATK, +15% AtkSpd, +3 PLT, +6% DR, +12 HP + class bonus
 - **range-mid**: no changes
-- **range-far**: +120 range, −8 ATK, +400ms CD
+- **range-far**: +120 range, −8 ATK, −20% AtkSpd
 
 ### Reload multiplier (final layer in `stats.ts`)
 
@@ -350,6 +354,8 @@ if (player.combatArchetype === 'reload') {
 }
 ```
 Never fold the 0.5× into additive deltas.
+
+**Plating compensation:** Because each shot deals half damage, flat plating would take a proportionally double bite. The `beforeAttack` listener in `reloadPrototype.ts` sets `ctx.platingMult = 0.5`, which halves the monster's effective plating in the damage formula (`player.attack - effectivePlating * ctx.platingMult`). This keeps reload throughput against plated targets equivalent to other archetypes at the same tier. `platingMult` lives on `CombatContext` (default `1.0`) — other archetypes ignore it.
 
 ---
 
@@ -519,6 +525,8 @@ T1 bosses: 400–700 HP, 14–22 ATK. T2 bosses: not yet balanced (stats inherit
 - **DoT damage-per-stack is derived, never hardcoded** — use `attack × dot.conversion-pct / maxStacks`; never set `dot.damage-per-stack` directly
 - **Map TypeScript inference** — use explicit generics (`new Map<string, Recipe>([...])`) for `RECIPE_DATABASE`, `SKILL_TREE`, `QUEST_DATABASE`
 - **Reload multiplier is a final layer** — apply `* 0.5` to `attack` and `attackCooldown` at the end of `recalculatePlayerStats()`, never additively
+- **Attack speed in skill nodes is `attackSpeedPct`** — percentage modifier (e.g. `0.15` = +15%); all unlocked nodes sum additively, applied once as `round(baseCooldown / (1 + total))`. Never use flat ms deltas in `StatEffects`; flat ms only belongs in temporary runtime buffs (Overdrive, etc.)
+- **Reload plating compensation** — `reloadPrototype.ts` sets `ctx.platingMult = 0.5` in `beforeAttack`; `combat.ts` applies `effectivePlating * ctx.platingMult`. Never add an archetype check inside the damage formula itself.
 - **Boss script stat modifications use save-original pattern** — `ActiveBossEffect` stores the pre-buff stat value; restored on expiry. Overlapping same-stat effects from multiple sources are not supported (last write wins)
 - **`biomeXpForLevel` is the only XP threshold function** — `BIOME_XP_PER_LEVEL` no longer exists; never use flat XP per level
 - **`biomeLevelCap` takes two args** — `(playerTier, biomeGroup)`. No `biomeTier` parameter. Cap = `Math.max(4, playerTier * 4)`. Never pass three args.

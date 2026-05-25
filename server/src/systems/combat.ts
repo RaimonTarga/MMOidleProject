@@ -68,7 +68,7 @@ export function updateCombat(world: World, dt: number, now: number) {
         );
 
         ctx.damage = Math.max(1, Math.round(
-          Math.max(0, player.attack - effectivePlating) * (1 - target.damageReduction),
+          Math.max(0, player.attack - effectivePlating * ctx.platingMult) * (1 - target.damageReduction),
         ));
 
         emitCombatEvent('onHit', ctx, world);

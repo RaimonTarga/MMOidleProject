@@ -343,7 +343,7 @@ export const MONSTER_DATABASE: Map<string, MonsterDefinition> = new Map([
     behavior: 'melee', attackStyle: 'poison', biome: 'swamp',
     rewards: { essence: 10, essenceType: 'purple', level: 1, biomeXp: 35 },
     ai: { wanderRadius: 160, leashRange: 530, idleMinMs: 2000, idleMaxMs: 5500 },
-    dotEffect: { damagePerStack: 2, maxStacks: 3, tickIntervalMs: 1000 },
+    dotEffect: { damagePerStack: 1, maxStacks: 3, tickIntervalMs: 1200 },
   }],
   ['mud-toad', {
     id: 'mud-toad', name: 'Mud Toad', color: 0x778844,
@@ -352,7 +352,7 @@ export const MONSTER_DATABASE: Map<string, MonsterDefinition> = new Map([
     behavior: 'melee', attackStyle: 'poison', biome: 'swamp',
     rewards: { essence: 12, essenceType: 'purple', level: 1, biomeXp: 42 },
     ai: { wanderRadius: 180, leashRange: 550, idleMinMs: 1800, idleMaxMs: 5000 },
-    dotEffect: { damagePerStack: 3, maxStacks: 3, tickIntervalMs: 1000 },
+    dotEffect: { damagePerStack: 1, maxStacks: 4, tickIntervalMs: 1000 },
   }],
 
   // ── Swamp T2 ───────────────────────────────────────────────────────────────
@@ -384,23 +384,21 @@ export const MONSTER_DATABASE: Map<string, MonsterDefinition> = new Map([
   }],
 
   // ── Cave T1 ────────────────────────────────────────────────────────────────
-  // Threat profile: high defense, hard and slow hits — damage spikiness.
-  // Plating eats into player ATK; hardest T1 biome for low-ATK builds.
-  // Low pull range simulates ambush predator lurking in shadows.
+  // Threat profile: Elite Encounters.
+  //   Cave Lurker — Agile, fast-striking, heavily armored; tests armor-shred/high flat damage.
+  //   Cave Brute  — Massive HP pool, slow devastating swings; tests burst mitigation/shields.
   ['cave-lurker', {
     id: 'cave-lurker', name: 'Cave Lurker', color: 0x664466,
-    // Solid plating, slow but hits hard — plating is the core challenge here
-    stats: { hp: 230, attack: 18, plating: 4, damageReduction: 0.05, speed: 22, attackRange: 60, attackCooldown: 3200, pullRange: 145 },
+    stats: { hp: 210, attack: 13, plating: 6, damageReduction: 0.02, speed: 55, attackRange: 60, attackCooldown: 1400, pullRange: 145 },
     behavior: 'melee', attackStyle: 'impact', biome: 'cave',
-    rewards: { essence: 18, essenceType: 'red', level: 1, biomeXp: 63 },
+    rewards: { essence: 20, essenceType: 'red', level: 1, biomeXp: 70 },
     ai: { wanderRadius: 130, leashRange: 460, idleMinMs: 2500, idleMaxMs: 7000 },
   }],
   ['cave-brute', {
     id: 'cave-brute', name: 'Cave Brute', color: 0x443344,
-    // Even slower, even thicker; each swing deals serious damage if it lands
-    stats: { hp: 290, attack: 22, plating: 5, damageReduction: 0.10, speed: 17, attackRange: 60, attackCooldown: 3600, pullRange: 125 },
+    stats: { hp: 360, attack: 32, plating: 1, damageReduction: 0.15, speed: 15, attackRange: 60, attackCooldown: 4000, pullRange: 125 },
     behavior: 'melee', attackStyle: 'impact', biome: 'cave',
-    rewards: { essence: 22, essenceType: 'red', level: 1, biomeXp: 77 },
+    rewards: { essence: 26, essenceType: 'red', level: 1, biomeXp: 90 },
     ai: { wanderRadius: 110, leashRange: 430, idleMinMs: 3000, idleMaxMs: 8000 },
   }],
 

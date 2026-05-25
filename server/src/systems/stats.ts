@@ -54,6 +54,7 @@ export function recalculatePlayerStats(player: PlayerState): void {
 
   // 2. Apply unlocked skill effects (stat deltas + mechanic passives)
   player.passives = {};
+  let totalAtkSpeedPct = 0;
   for (const skillId of player.unlockedSkills) {
     const node = SKILL_TREE.get(skillId);
     if (!node) continue;
@@ -63,7 +64,7 @@ export function recalculatePlayerStats(player: PlayerState): void {
     player.damageReduction += e.damageReduction ?? 0;
     player.evasion         += e.evasion         ?? 0;
     player.attackRange     += e.attackRange     ?? 0;
-    player.attackCooldown  += e.attackCooldown  ?? 0;
+    totalAtkSpeedPct       += e.attackSpeedPct  ?? 0;
     player.maxHp           += e.maxHp           ?? 0;
     player.hpRegen         += e.hpRegen         ?? 0;
     player.speed           += e.speed           ?? 0;
@@ -73,6 +74,11 @@ export function recalculatePlayerStats(player: PlayerState): void {
         player.passives[key] = (player.passives[key] ?? 0) + val;
       }
     }
+  }
+  // Apply attack speed percentage: multiplicative with weapon base APS so a given
+  // percentage gives equal proportional benefit regardless of weapon speed.
+  if (totalAtkSpeedPct !== 0) {
+    player.attackCooldown = Math.round(player.attackCooldown / (1 + totalAtkSpeedPct));
   }
   player.attackCooldown  = Math.max(200, player.attackCooldown);
   player.damageReduction = Math.min(0.9, Math.max(0, player.damageReduction));

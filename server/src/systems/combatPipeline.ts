@@ -28,6 +28,12 @@ export interface CombatContext {
   defenderType: 'player' | 'monster';
   /** Computed raw damage; hooks may increase or clamp it. */
   damage: number;
+  /**
+   * Multiplier applied to the defender's plating before the damage formula.
+   * Default 1.0 (full plating). Set below 1.0 to reduce plating effectiveness
+   * (e.g. reload archetype uses 0.5 to compensate for its halved per-shot damage).
+   */
+  platingMult: number;
   /** Set to true in a beforeAttack handler to skip the entire attack. */
   cancelled: boolean;
   /**
@@ -107,6 +113,7 @@ export function makeCombatContext(
     defender,
     defenderType,
     damage: 0,
+    platingMult: 1.0,
     cancelled: false,
     metadata: {},
   };

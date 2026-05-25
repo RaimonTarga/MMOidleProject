@@ -79,6 +79,14 @@ export const RECIPE_DATABASE: Map<string, Recipe> = new Map<string, Recipe>([
     cost: { green: 15 }, stats: { hpRegen: 6 }, tier: 1,
     description: 'Dried heartroot steeped in forest spring water — the fastest out-of-combat recovery in ring 1.',
   }],
+  ['forest-pulse-t1', {
+    id: 'forest-pulse-t1', name: 'Vitalbloom Charm',
+    recipeGroup: 'forest', requiredBiomeLevel: 2, slot: 'recovery',
+    cost: { green: 15 }, stats: { hpRegen: 3 },
+    mechanicEffects: { 'defense.kill-burst-pct': 0.08 },
+    tier: 1,
+    description: 'A bloom that feeds on the life force of fallen prey — each kill restores 8% of your max HP over 4 seconds.',
+  }],
   ['forest-vest-t1', {
     id: 'forest-vest-t1', name: 'Shaded Bindings',
     recipeGroup: 'forest', requiredBiomeLevel: 3, slot: 'armor',
@@ -222,7 +230,7 @@ export const RECIPE_DATABASE: Map<string, Recipe> = new Map<string, Recipe>([
     id: 'sacred-cross', name: 'Sacred Cross',
     recipeGroup: 'plains', requiredBiomeLevel: 4, slot: 'weapon',
     cost: { yellow: 20 }, stats: { attack: 6 }, attacksPerSecond: 0.50, tier: 1,
-    description: 'A simple iron cross bearing ward runes — strikes are unhurried, but the stored energy discharges in a reliable burst every 12 seconds.',
+    description: 'A simple iron cross bearing ward runes — strikes are unhurried, but the stored energy discharges in a reliable burst every 6 seconds.',
   }],
 
   // ── Plains T2 — yellow (primary) + red (boar/bull) ────────────────────────
@@ -429,6 +437,14 @@ export const RECIPE_DATABASE: Map<string, Recipe> = new Map<string, Recipe>([
     recipeGroup: 'jungle', requiredBiomeLevel: 6, slot: 'recovery',
     cost: { green: 44, yellow: 11 }, stats: { hpRegen: 8 }, tier: 3,
     description: 'A living amulet woven from thousand-year jungle vines — exceptional raw recovery for those who want no strings attached.',
+  }],
+  ['jungle-hunter-t2', {
+    id: 'jungle-hunter-t2', name: "Hunter's Talisman",
+    recipeGroup: 'jungle', requiredBiomeLevel: 6, slot: 'recovery',
+    cost: { green: 44, yellow: 11 }, stats: { hpRegen: 5 },
+    mechanicEffects: { 'defense.kill-burst-pct': 0.12 },
+    tier: 3,
+    description: "A predator's trophy that floods the wearer with life energy on each kill — 12% of max HP healed over 4 seconds per kill. Stacks with rapid kills.",
   }],
   ['jungle-vest-t2', {
     id: 'jungle-vest-t2', name: 'Primal Wraps',

@@ -30,9 +30,11 @@ items, and monsters for use in external balance modelling. Focus tier is **T2 de
 
 ```
 effectivePlating = max(0, monster.plating - platingShredStacks × shredPerStack)
-rawDamage        = max(0, player.attack - effectivePlating)
+rawDamage        = max(0, player.attack - effectivePlating × ctx.platingMult)
 finalDamage      = max(1, round(rawDamage × (1 - monster.damageReduction)))
 ```
+
+`ctx.platingMult` defaults to `1.0` for all archetypes. Reload sets it to `0.5` to compensate for halved per-shot damage — without this, flat plating would take a proportionally double bite against reload's smaller hits. Plating shred stacks are applied before the mult.
 
 ### Monster → Player
 
@@ -79,7 +81,8 @@ Applied deterministically whenever skills or equipment change:
 
 1. **Reset** to base constants above.
 2. **Weapon APS:** if weapon has `attacksPerSecond`, set `attackCooldown = round(1000 / aps)` before skill deltas.
-3. **Skill stat effects:** iterate `unlockedSkills`, apply additive deltas; accumulate `mechanicEffects` into `player.passives`.
+3. **Skill stat effects:** iterate `unlockedSkills`, apply additive stat deltas; accumulate `attackSpeedPct` values into `totalAtkSpeedPct`; accumulate `mechanicEffects` into `player.passives`.
+3b. **Apply attack speed:** `attackCooldown = round(attackCooldown / (1 + totalAtkSpeedPct))`. This is multiplicative with weapon APS — a given percentage gives equal proportional benefit on fast and slow weapons. Positive values = faster; negative = slower.
 4. **Clamp:** `attackCooldown ≥ 200ms`; `damageReduction` clamp 0–0.9.
 5. **Close-range class bonus** (if `selectedRange === 'range-close'`):
 
@@ -205,9 +208,9 @@ Mechanic effects use dot-separated namespaces. Values accumulate additively acro
 
 | Sub-Variant | Threshold | Mult | Stat Changes |
 |---|---|---|---|
-| Light | 4 hits | 1.5× | +6 ATK, +18 SPD, −22 HP, −400ms CD |
+| Light | 4 hits | 1.5× | +6 ATK, +18 SPD, −22 HP, +20% AtkSpd |
 | Balanced | 5 hits | 2× | +9 ATK, +16 HP, +1 PLT, +2 hpRegen |
-| Heavy | 6 hits | 4× | +12 ATK, +38 HP, +7 PLT, +5 hpRegen, +4% DR, −20 SPD, +300ms CD |
+| Heavy | 6 hits | 4× | +12 ATK, +38 HP, +7 PLT, +5 hpRegen, +4% DR, −20 SPD, −15% AtkSpd |
 
 ### T3 Paths
 
@@ -239,9 +242,9 @@ Mechanic effects use dot-separated namespaces. Values accumulate additively acro
 
 | Sub-Variant | CD | Mult | Stat Changes |
 |---|---|---|---|
-| Light | 5 s | 1.5× | +8 ATK, +22 SPD, −22 HP, −3 PLT, −2% DR, −300ms CD |
+| Light | 5 s | 1.5× | +8 ATK, +22 SPD, −22 HP, −3 PLT, −2% DR, +15% AtkSpd |
 | Balanced | 7 s | 2× | +10 ATK, +22 HP, +5 PLT, +5 hpRegen, +5% DR, −8 SPD |
-| Heavy | 9 s | 3× | +15 ATK, +42 HP, +7 PLT, +7 hpRegen, +8% DR, −28 SPD, +450ms CD |
+| Heavy | 9 s | 3× | +15 ATK, +42 HP, +7 PLT, +7 hpRegen, +8% DR, −28 SPD, −20% AtkSpd |
 
 ### T3 Paths
 
@@ -266,16 +269,16 @@ Mechanic effects use dot-separated namespaces. Values accumulate additively acro
 
 **Identity:** Energy 0–100 fills on hits. At 100, next attack is Empowered (pool resets to 0).
 
-**T0 Base Stats:** +5 ATK, +14 SPD, −200ms CD, −5 HP, +115 range, +1 PLT
+**T0 Base Stats:** +5 ATK, +14 SPD, +10% AtkSpd, −5 HP, +115 range, +1 PLT
 **T0 Defense Passive:** `defense.shield-pct: 0.06, defense.shield-interval-ms: 14000, defense.shield-duration-ms: 14000`
 
 ### T1 Sub-Variants
 
 | Sub-Variant | Energy/Hit | Mult | Stat Changes |
 |---|---|---|---|
-| Light | 20 | 1.5× | +4 ATK, +22 SPD, −22 HP, −400ms CD |
-| Balanced | 14 | 2× | +6 ATK, +10 SPD, −200ms CD, −5 HP, +1 PLT |
-| Heavy | 10 | 6× | +8 ATK, +24 HP, +3 PLT, +3 hpRegen, +3% DR, −10 SPD, +100ms CD |
+| Light | 20 | 1.5× | +4 ATK, +22 SPD, −22 HP, +20% AtkSpd (+30% cumulative with root) |
+| Balanced | 14 | 2× | +6 ATK, +10 SPD, +10% AtkSpd (+20% cumulative), −5 HP, +1 PLT |
+| Heavy | 10 | 6× | +8 ATK, +24 HP, +3 PLT, +3 hpRegen, +3% DR, −10 SPD, −5% AtkSpd (+5% net with root) |
 
 ### T3 Paths (all implemented)
 
@@ -306,13 +309,15 @@ Mechanic effects use dot-separated namespaces. Values accumulate additively acro
 
 This means Reload attacks twice as fast at half damage per shot, as a fundamental layer applied after all additive bonuses. Never include this in additive design.
 
+**Plating compensation:** Reload's `beforeAttack` listener sets `ctx.platingMult = 0.5`, halving the monster's effective plating in the damage formula. This keeps reload throughput against plated targets equivalent to other archetypes at the same tier (a 20-ATK equivalent player vs 5 plating: non-reload does 15/hit; reload without fix does 5×2=10/cycle; with fix does ~8×2=16/cycle).
+
 ### T1 Sub-Variants
 
 | Sub-Variant | Magazine | Reload Time | Stat Changes |
 |---|---|---|---|
-| Light | 5 rounds | 1500 ms | +6 ATK, +18 SPD, −18 HP, −200ms CD, evasion +5 |
+| Light | 5 rounds | 1500 ms | +6 ATK, +18 SPD, −18 HP, +15% AtkSpd, evasion +5 |
 | Balanced | 8 rounds | 2500 ms | +9 ATK, +10 HP, +6 SPD, +2 hpRegen, evasion +3 |
-| Heavy | 12 rounds | 4000 ms | +12 ATK, +32 HP, +5 PLT, +4 hpRegen, −12 SPD, +200ms CD |
+| Heavy | 12 rounds | 4000 ms | +12 ATK, +32 HP, +5 PLT, +4 hpRegen, −12 SPD, −10% AtkSpd |
 
 ### T3 Paths (DESIGNED — none implemented yet)
 
@@ -364,9 +369,9 @@ tickDamage = damagePerStack × sqrt(currentStacks × maxStacks)
 
 | Sub-Variant | Element | convPct | maxStacks | Stat Changes |
 |---|---|---|---|---|
-| Light | Poison | 30% | 8 | +6 ATK, +20 SPD, −22 HP, −2 PLT, −300ms CD |
+| Light | Poison | 30% | 8 | +6 ATK, +20 SPD, −22 HP, −2 PLT, +20% AtkSpd |
 | Balanced | Fire | 50% | 6 | +9 ATK, +16 HP, +3 PLT, +3 hpRegen, −5 SPD |
-| Heavy | Frost | 70% | 3 | +10 ATK, +32 HP, +6 PLT, +6 hpRegen, +6% DR, −28 SPD, +400ms CD |
+| Heavy | Frost | 70% | 3 | +10 ATK, +32 HP, +6 PLT, +6 hpRegen, +6% DR, −28 SPD, −20% AtkSpd |
 
 ### T3 Paths (all implemented)
 
@@ -394,11 +399,11 @@ Monsters with `dotEffect` apply stacks on every hit. These bypass the player com
 
 Applied identically for all classes. One must be chosen before T3 unlocks.
 
-| Node | Range Δ | Attack Δ | CD Δ | Other |
+| Node | Range Δ | Attack Δ | AtkSpd Δ | Other |
 |---|---|---|---|---|
-| range-close | −40 px | +5 | −300ms | +3 PLT, +6% DR, +12 HP; **plus class close-range bonus** |
+| range-close | −40 px | +5 | +15% | +3 PLT, +6% DR, +12 HP; **plus class close-range bonus** |
 | range-mid | — | — | — | Nothing |
-| range-far | +120 px | −8 | +400ms | Nothing |
+| range-far | +120 px | −8 | −20% | Nothing |
 
 ---
 

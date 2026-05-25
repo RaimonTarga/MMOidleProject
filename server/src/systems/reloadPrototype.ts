@@ -91,6 +91,8 @@ export function initReloadArchetype(): void {
       return;
     }
 
+    ctx.platingMult = 0.5;
+
     const remaining = getResource(state, AMMO_KEY) - 1;
     setResource(state, AMMO_KEY, remaining);
 
