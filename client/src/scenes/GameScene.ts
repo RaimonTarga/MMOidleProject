@@ -482,7 +482,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   private processCombatEvent(ev: CombatEvent) {
-    // if (ev.playerId !== this.myId) return;
+    if (!('playerId' in ev) || ev.playerId !== this.myId) return;
 
     if (ev.kind === 'player-hit') {
       combatLog.push('damage-out', `${ev.targetName} −${ev.damage}`);

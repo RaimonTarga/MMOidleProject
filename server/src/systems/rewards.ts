@@ -29,16 +29,15 @@ export function rewardPlayer(player: PlayerState, rewards: KillRewards): void {
  * XP gain stops once the level cap for the current playerTier is reached.
  * Returns the XP actually granted (0 if already at cap).
  */
-function applyBiomeXP(player: PlayerState, nodeId: string): number {
+function applyBiomeXP(player: PlayerState, nodeId: string, xpGain: number): number {
   const biomeInfo = NODE_BIOMES[nodeId];
   if (!biomeInfo) return 0;
 
-  const { biomeGroup, biomeTier } = biomeInfo;
+  const { biomeGroup } = biomeInfo;
   const levelCap  = biomeLevelCap(player.playerTier, biomeGroup);
   const prevLevel = player.biomeLevel[biomeGroup] ?? 0;
   if (prevLevel >= levelCap) return 0;
 
-  const xpGain  = GAME_CONFIG.BIOME_XP_BY_NODE_TIER[biomeTier] ?? 5;
   const newXP   = (player.biomeXP[biomeGroup] ?? 0) + xpGain;
   player.biomeXP[biomeGroup] = newXP;
 
@@ -77,7 +76,10 @@ export function grantMonsterRewards(
   const def = MONSTER_DATABASE.get(monster.monsterTypeId);
   const rewards = def?.rewards ?? FALLBACK_REWARDS;
   rewardPlayer(killer, rewards);
-  const biomeXpGained = applyBiomeXP(killer, monster.nodeId);
+  const biomeTier = NODE_BIOMES[monster.nodeId]?.biomeTier ?? 0;
+  const tierMult  = GAME_CONFIG.BIOME_XP_ESSENCE_MULT[biomeTier] ?? 1.0;
+  const biomeXpGain = def?.rewards.biomeXp ?? Math.round((def?.rewards.essence ?? 5) * tierMult);
+  const biomeXpGained = applyBiomeXP(killer, monster.nodeId, biomeXpGain);
   const tierAdvanced  = registerKillForQuests(killer, monster.monsterTypeId);
   if (tierAdvanced) {
     world.pendingAscensions.push({ playerId: killerPlayerId, tier: killer.playerTier });

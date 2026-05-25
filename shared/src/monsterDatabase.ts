@@ -76,7 +76,7 @@ export interface MonsterDefinition {
   attackStyle: string;
   /** Biome group this monster belongs to — must match a BiomeDefinition id. */
   biome: string;
-  rewards: { essence: number; essenceType: EssenceType; level: number };
+  rewards: { essence: number; essenceType: EssenceType; level: number; biomeXp?: number };
   ai: {
     wanderRadius: number;
     leashRange: number;
@@ -129,7 +129,7 @@ export const MONSTER_DATABASE: Map<string, MonsterDefinition> = new Map([
     id: 'tiny-slime', name: 'Tiny Slime', color: 0x99ff99,
     stats: { hp: 22, attack: 3, plating: 0, damageReduction: 0, speed: 30, attackRange: 50, attackCooldown: 3000, pullRange: 140 },
     behavior: 'melee', attackStyle: 'impact', biome: 'clearing',
-    rewards: { essence: 2, essenceType: 'green', level: 1 },
+    rewards: { essence: 2, essenceType: 'green', level: 1, biomeXp: 43 },
     ai: { wanderRadius: 140, leashRange: 380, idleMinMs: 2000, idleMaxMs: 5000 },
   }],
 
@@ -200,7 +200,7 @@ export const MONSTER_DATABASE: Map<string, MonsterDefinition> = new Map([
     // Soft and squishy — dies fast but attacks quickly
     stats: { hp: 70, attack: 10, plating: 0, damageReduction: 0, speed: 52, attackRange: 60, attackCooldown: 1800, pullRange: 210 },
     behavior: 'melee', attackStyle: 'impact', biome: 'forest',
-    rewards: { essence: 5, essenceType: 'green', level: 1 },
+    rewards: { essence: 5, essenceType: 'green', level: 1, biomeXp: 18 },
     ai: { wanderRadius: 230, leashRange: 620, idleMinMs: 1200, idleMaxMs: 4000 },
   }],
   ['wolf', {
@@ -208,7 +208,7 @@ export const MONSTER_DATABASE: Map<string, MonsterDefinition> = new Map([
     // High speed, high pull range — closes distance fast; zero armor, easy to burst
     stats: { hp: 60, attack: 12, plating: 0, damageReduction: 0, speed: 78, attackRange: 60, attackCooldown: 1400, pullRange: 255 },
     behavior: 'melee', attackStyle: 'slash', biome: 'forest',
-    rewards: { essence: 7, essenceType: 'green', level: 1 },
+    rewards: { essence: 7, essenceType: 'green', level: 1, biomeXp: 25 },
     ai: { wanderRadius: 290, leashRange: 720, idleMinMs: 700, idleMaxMs: 2800 },
   }],
 
@@ -218,7 +218,7 @@ export const MONSTER_DATABASE: Map<string, MonsterDefinition> = new Map([
     // Explosive charger — lunges the moment it spots you, then bites fast
     stats: { hp: 195, attack: 25, plating: 0, damageReduction: 0, speed: 95, attackRange: 60, attackCooldown: 1300, pullRange: 280 },
     behavior: 'melee', attackStyle: 'slash', biome: 'forest',
-    rewards: { essence: 16, essenceType: 'green', level: 1 },
+    rewards: { essence: 16, essenceType: 'green', level: 1, biomeXp: 45 },
     ai: { wanderRadius: 300, leashRange: 750, idleMinMs: 600, idleMaxMs: 2500 },
     chargeOnAggro: { speedMult: 3.0, durationMs: 1000 },
   }],
@@ -227,7 +227,7 @@ export const MONSTER_DATABASE: Map<string, MonsterDefinition> = new Map([
     // Bark-armored sentinel; DR replaces plating so shred doesn't trivialize it
     stats: { hp: 280, attack: 18, plating: 0, damageReduction: 0.22, speed: 16, attackRange: 65, attackCooldown: 3800, pullRange: 140 },
     behavior: 'melee', attackStyle: 'impact', biome: 'forest',
-    rewards: { essence: 20, essenceType: 'green', level: 1 },
+    rewards: { essence: 20, essenceType: 'green', level: 1, biomeXp: 58 },
     ai: { wanderRadius: 120, leashRange: 480, idleMinMs: 3000, idleMaxMs: 8000 },
   }],
   ['canopy-sprite', {
@@ -235,7 +235,7 @@ export const MONSTER_DATABASE: Map<string, MonsterDefinition> = new Map([
     // Hurls thorn volleys from the treetops; long range but lightly armored
     stats: { hp: 150, attack: 23, plating: 0, damageReduction: 0.05, speed: 48, attackRange: 190, attackCooldown: 2800, pullRange: 250 },
     behavior: 'melee', attackStyle: 'impact', biome: 'forest',
-    rewards: { essence: 17, essenceType: 'green', level: 1 },
+    rewards: { essence: 17, essenceType: 'green', level: 1, biomeXp: 50 },
     ai: { wanderRadius: 240, leashRange: 650, idleMinMs: 1200, idleMaxMs: 3500 },
   }],
 
@@ -248,7 +248,7 @@ export const MONSTER_DATABASE: Map<string, MonsterDefinition> = new Map([
     // Sprint-attacks from far away; high HP for a fast mob
     stats: { hp: 175, attack: 15, plating: 0, damageReduction: 0, speed: 80, attackRange: 60, attackCooldown: 1500, pullRange: 275 },
     behavior: 'melee', attackStyle: 'slash', biome: 'mountain',
-    rewards: { essence: 12, essenceType: 'blue', level: 1 },
+    rewards: { essence: 12, essenceType: 'blue', level: 1, biomeXp: 42 },
     ai: { wanderRadius: 310, leashRange: 720, idleMinMs: 600, idleMaxMs: 2500 },
   }],
   ['ridge-archer', {
@@ -256,7 +256,7 @@ export const MONSTER_DATABASE: Map<string, MonsterDefinition> = new Map([
     // Longer attack range simulates a thrown-rock / sling attack; high HP and punishing damage
     stats: { hp: 200, attack: 16, plating: 0, damageReduction: 0, speed: 35, attackRange: 200, attackCooldown: 2800, pullRange: 350 },
     behavior: 'melee', attackStyle: 'impact', biome: 'mountain',
-    rewards: { essence: 15, essenceType: 'blue', level: 1 },
+    rewards: { essence: 15, essenceType: 'blue', level: 1, biomeXp: 52 },
     ai: { wanderRadius: 210, leashRange: 600, idleMinMs: 1500, idleMaxMs: 4500 },
   }],
 
@@ -266,7 +266,7 @@ export const MONSTER_DATABASE: Map<string, MonsterDefinition> = new Map([
     // Pure DR tank — attrition fight; plating swapped for dense stone hide
     stats: { hp: 400, attack: 22, plating: 0, damageReduction: 0.22, speed: 16, attackRange: 65, attackCooldown: 3800, pullRange: 145 },
     behavior: 'melee', attackStyle: 'impact', biome: 'mountain',
-    rewards: { essence: 28, essenceType: 'blue', level: 1 },
+    rewards: { essence: 28, essenceType: 'blue', level: 1, biomeXp: 80 },
     ai: { wanderRadius: 110, leashRange: 460, idleMinMs: 3500, idleMaxMs: 9000 },
   }],
   ['stone-eagle', {
@@ -274,7 +274,7 @@ export const MONSTER_DATABASE: Map<string, MonsterDefinition> = new Map([
     // Dive-bombs from full speed on aggro; no armor but hits devastatingly hard
     stats: { hp: 215, attack: 28, plating: 0, damageReduction: 0, speed: 98, attackRange: 60, attackCooldown: 1300, pullRange: 285 },
     behavior: 'melee', attackStyle: 'slash', biome: 'mountain',
-    rewards: { essence: 24, essenceType: 'blue', level: 1 },
+    rewards: { essence: 24, essenceType: 'blue', level: 1, biomeXp: 68 },
     ai: { wanderRadius: 320, leashRange: 800, idleMinMs: 500, idleMaxMs: 2000 },
     chargeOnAggro: { speedMult: 3.5, durationMs: 1000 },
   }],
@@ -283,7 +283,7 @@ export const MONSTER_DATABASE: Map<string, MonsterDefinition> = new Map([
     // Hurls boulders from extreme range; slow but devastating if you stand still
     stats: { hp: 280, attack: 30, plating: 0, damageReduction: 0.05, speed: 28, attackRange: 240, attackCooldown: 3500, pullRange: 265 },
     behavior: 'melee', attackStyle: 'impact', biome: 'mountain',
-    rewards: { essence: 26, essenceType: 'blue', level: 1 },
+    rewards: { essence: 26, essenceType: 'blue', level: 1, biomeXp: 75 },
     ai: { wanderRadius: 200, leashRange: 600, idleMinMs: 2000, idleMaxMs: 5000 },
   }],
 
@@ -294,14 +294,14 @@ export const MONSTER_DATABASE: Map<string, MonsterDefinition> = new Map([
     id: 'plains-slime', name: 'Plains Slime', color: 0xddee55,
     stats: { hp: 55, attack: 9, plating: 0, damageReduction: 0, speed: 42, attackRange: 60, attackCooldown: 2200, pullRange: 190 },
     behavior: 'melee', attackStyle: 'impact', biome: 'plains',
-    rewards: { essence: 3, essenceType: 'yellow', level: 1 },
+    rewards: { essence: 3, essenceType: 'yellow', level: 1, biomeXp: 10 },
     ai: { wanderRadius: 250, leashRange: 640, idleMinMs: 1200, idleMaxMs: 4000 },
   }],
   ['boar', {
     id: 'boar', name: 'Boar', color: 0xcc8844,
     stats: { hp: 75, attack: 12, plating: 0, damageReduction: 0, speed: 48, attackRange: 60, attackCooldown: 2000, pullRange: 205 },
     behavior: 'melee', attackStyle: 'impact', biome: 'plains',
-    rewards: { essence: 5, essenceType: 'yellow', level: 1 },
+    rewards: { essence: 5, essenceType: 'yellow', level: 1, biomeXp: 18 },
     ai: { wanderRadius: 260, leashRange: 660, idleMinMs: 1000, idleMaxMs: 3500 },
     chargeOnAggro: { speedMult: 3.5, durationMs: 1200 },
   }],
@@ -312,7 +312,7 @@ export const MONSTER_DATABASE: Map<string, MonsterDefinition> = new Map([
     // Charges on aggro; slight DR from thick hide; straightforward threat
     stats: { hp: 130, attack: 22, plating: 0, damageReduction: 0.05, speed: 62, attackRange: 60, attackCooldown: 1800, pullRange: 235 },
     behavior: 'melee', attackStyle: 'impact', biome: 'plains',
-    rewards: { essence: 14, essenceType: 'yellow', level: 1 },
+    rewards: { essence: 14, essenceType: 'yellow', level: 1, biomeXp: 40 },
     ai: { wanderRadius: 260, leashRange: 680, idleMinMs: 800, idleMaxMs: 3000 },
     chargeOnAggro: { speedMult: 2.5, durationMs: 1000 },
   }],
@@ -321,7 +321,7 @@ export const MONSTER_DATABASE: Map<string, MonsterDefinition> = new Map([
     // Pack hunter — fastest T2 mob in its tier; glass cannon
     stats: { hp: 105, attack: 20, plating: 0, damageReduction: 0, speed: 92, attackRange: 60, attackCooldown: 1300, pullRange: 275 },
     behavior: 'melee', attackStyle: 'slash', biome: 'plains',
-    rewards: { essence: 12, essenceType: 'yellow', level: 1 },
+    rewards: { essence: 12, essenceType: 'yellow', level: 1, biomeXp: 35 },
     ai: { wanderRadius: 290, leashRange: 720, idleMinMs: 700, idleMaxMs: 2800 },
   }],
   ['savanna-hawk', {
@@ -329,7 +329,7 @@ export const MONSTER_DATABASE: Map<string, MonsterDefinition> = new Map([
     // Aerial predator; swoops from distance and retreats — the ranged threat of the plains
     stats: { hp: 90, attack: 22, plating: 0, damageReduction: 0, speed: 50, attackRange: 165, attackCooldown: 2600, pullRange: 245 },
     behavior: 'melee', attackStyle: 'slash', biome: 'plains',
-    rewards: { essence: 13, essenceType: 'yellow', level: 1 },
+    rewards: { essence: 13, essenceType: 'yellow', level: 1, biomeXp: 38 },
     ai: { wanderRadius: 280, leashRange: 680, idleMinMs: 1000, idleMaxMs: 3200 },
   }],
 
@@ -341,7 +341,7 @@ export const MONSTER_DATABASE: Map<string, MonsterDefinition> = new Map([
     // Sluggish and toxic; tests player patience with sustained drip damage
     stats: { hp: 120, attack: 10, plating: 2, damageReduction: 0, speed: 28, attackRange: 60, attackCooldown: 2800, pullRange: 165 },
     behavior: 'melee', attackStyle: 'poison', biome: 'swamp',
-    rewards: { essence: 10, essenceType: 'purple', level: 1 },
+    rewards: { essence: 10, essenceType: 'purple', level: 1, biomeXp: 35 },
     ai: { wanderRadius: 160, leashRange: 530, idleMinMs: 2000, idleMaxMs: 5500 },
     dotEffect: { damagePerStack: 2, maxStacks: 3, tickIntervalMs: 1000 },
   }],
@@ -350,7 +350,7 @@ export const MONSTER_DATABASE: Map<string, MonsterDefinition> = new Map([
     // Sturdier than it looks; plating and DR make burst less effective
     stats: { hp: 145, attack: 11, plating: 3, damageReduction: 0.04, speed: 30, attackRange: 60, attackCooldown: 2600, pullRange: 180 },
     behavior: 'melee', attackStyle: 'poison', biome: 'swamp',
-    rewards: { essence: 12, essenceType: 'purple', level: 1 },
+    rewards: { essence: 12, essenceType: 'purple', level: 1, biomeXp: 42 },
     ai: { wanderRadius: 180, leashRange: 550, idleMinMs: 1800, idleMaxMs: 5000 },
     dotEffect: { damagePerStack: 3, maxStacks: 3, tickIntervalMs: 1000 },
   }],
@@ -361,7 +361,7 @@ export const MONSTER_DATABASE: Map<string, MonsterDefinition> = new Map([
     // Multi-headed DoT engine; DR replaces plating; fights long enough to stack poison deep
     stats: { hp: 340, attack: 16, plating: 0, damageReduction: 0.12, speed: 28, attackRange: 65, attackCooldown: 2500, pullRange: 185 },
     behavior: 'melee', attackStyle: 'poison', biome: 'swamp',
-    rewards: { essence: 24, essenceType: 'purple', level: 1 },
+    rewards: { essence: 24, essenceType: 'purple', level: 1, biomeXp: 68 },
     ai: { wanderRadius: 170, leashRange: 560, idleMinMs: 2500, idleMaxMs: 7000 },
     dotEffect: { damagePerStack: 4, maxStacks: 4, tickIntervalMs: 1000, durationMs: 4500 },
   }],
@@ -370,7 +370,7 @@ export const MONSTER_DATABASE: Map<string, MonsterDefinition> = new Map([
     // Curses from range; much longer attack range than T1 counterpart
     stats: { hp: 190, attack: 26, plating: 0, damageReduction: 0.05, speed: 38, attackRange: 180, attackCooldown: 2000, pullRange: 215 },
     behavior: 'melee', attackStyle: 'magic', biome: 'swamp',
-    rewards: { essence: 22, essenceType: 'purple', level: 1 },
+    rewards: { essence: 22, essenceType: 'purple', level: 1, biomeXp: 62 },
     ai: { wanderRadius: 200, leashRange: 580, idleMinMs: 1500, idleMaxMs: 4500 },
   }],
   ['mire-stalker', {
@@ -378,7 +378,7 @@ export const MONSTER_DATABASE: Map<string, MonsterDefinition> = new Map([
     // Ambush predator; heavy DR + occasional dodge makes it surprisingly hard to put down
     stats: { hp: 295, attack: 20, plating: 0, damageReduction: 0.18, speed: 30, attackRange: 62, attackCooldown: 2800, pullRange: 155 },
     behavior: 'melee', attackStyle: 'poison', biome: 'swamp',
-    rewards: { essence: 26, essenceType: 'purple', level: 1 },
+    rewards: { essence: 26, essenceType: 'purple', level: 1, biomeXp: 75 },
     ai: { wanderRadius: 170, leashRange: 540, idleMinMs: 2000, idleMaxMs: 6000 },
     evadeEvery: 5,
   }],
@@ -392,7 +392,7 @@ export const MONSTER_DATABASE: Map<string, MonsterDefinition> = new Map([
     // Solid plating, slow but hits hard — plating is the core challenge here
     stats: { hp: 230, attack: 18, plating: 4, damageReduction: 0.05, speed: 22, attackRange: 60, attackCooldown: 3200, pullRange: 145 },
     behavior: 'melee', attackStyle: 'impact', biome: 'cave',
-    rewards: { essence: 18, essenceType: 'red', level: 1 },
+    rewards: { essence: 18, essenceType: 'red', level: 1, biomeXp: 63 },
     ai: { wanderRadius: 130, leashRange: 460, idleMinMs: 2500, idleMaxMs: 7000 },
   }],
   ['cave-brute', {
@@ -400,7 +400,7 @@ export const MONSTER_DATABASE: Map<string, MonsterDefinition> = new Map([
     // Even slower, even thicker; each swing deals serious damage if it lands
     stats: { hp: 290, attack: 22, plating: 5, damageReduction: 0.10, speed: 17, attackRange: 60, attackCooldown: 3600, pullRange: 125 },
     behavior: 'melee', attackStyle: 'impact', biome: 'cave',
-    rewards: { essence: 22, essenceType: 'red', level: 1 },
+    rewards: { essence: 22, essenceType: 'red', level: 1, biomeXp: 77 },
     ai: { wanderRadius: 110, leashRange: 430, idleMinMs: 3000, idleMaxMs: 8000 },
   }],
 
@@ -410,7 +410,7 @@ export const MONSTER_DATABASE: Map<string, MonsterDefinition> = new Map([
     // Fast ambush hunter; DR hide + evasion makes it slippery despite its size
     stats: { hp: 360, attack: 26, plating: 0, damageReduction: 0.08, speed: 72, attackRange: 62, attackCooldown: 1900, pullRange: 220 },
     behavior: 'melee', attackStyle: 'poison', biome: 'cave',
-    rewards: { essence: 30, essenceType: 'red', level: 1 },
+    rewards: { essence: 30, essenceType: 'red', level: 1, biomeXp: 85 },
     ai: { wanderRadius: 260, leashRange: 680, idleMinMs: 800, idleMaxMs: 3200 },
     evadeEvery: 5,
   }],
@@ -419,7 +419,7 @@ export const MONSTER_DATABASE: Map<string, MonsterDefinition> = new Map([
     // Colossal slow bruiser; DR replaces plating; each hit is an event
     stats: { hp: 640, attack: 34, plating: 0, damageReduction: 0.18, speed: 15, attackRange: 65, attackCooldown: 3600, pullRange: 150 },
     behavior: 'melee', attackStyle: 'impact', biome: 'cave',
-    rewards: { essence: 40, essenceType: 'red', level: 1 },
+    rewards: { essence: 40, essenceType: 'red', level: 1, biomeXp: 115 },
     ai: { wanderRadius: 130, leashRange: 470, idleMinMs: 3000, idleMaxMs: 8500 },
   }],
   ['cave-gargoyle', {
@@ -427,7 +427,7 @@ export const MONSTER_DATABASE: Map<string, MonsterDefinition> = new Map([
     // Perches in darkness and hurls stalactites — the only ranged threat in the caverns
     stats: { hp: 430, attack: 30, plating: 0, damageReduction: 0.10, speed: 22, attackRange: 200, attackCooldown: 3200, pullRange: 185 },
     behavior: 'melee', attackStyle: 'impact', biome: 'cave',
-    rewards: { essence: 35, essenceType: 'red', level: 1 },
+    rewards: { essence: 35, essenceType: 'red', level: 1, biomeXp: 100 },
     ai: { wanderRadius: 130, leashRange: 460, idleMinMs: 2500, idleMaxMs: 7000 },
   }],
 
@@ -439,7 +439,7 @@ export const MONSTER_DATABASE: Map<string, MonsterDefinition> = new Map([
     // Fast venomous ambusher — racks up DoT stacks quickly
     stats: { hp: 145, attack: 18, plating: 0, damageReduction: 0, speed: 72, attackRange: 60, attackCooldown: 1900, pullRange: 215 },
     behavior: 'melee', attackStyle: 'poison', biome: 'jungle',
-    rewards: { essence: 12, essenceType: 'green', level: 1 },
+    rewards: { essence: 12, essenceType: 'green', level: 1, biomeXp: 35 },
     ai: { wanderRadius: 260, leashRange: 660, idleMinMs: 1000, idleMaxMs: 3500 },
     dotEffect: { damagePerStack: 3, maxStacks: 4, tickIntervalMs: 1000, durationMs: 4500 },
   }],
@@ -448,7 +448,7 @@ export const MONSTER_DATABASE: Map<string, MonsterDefinition> = new Map([
     // Charges from the canopy; hits surprisingly hard for a high-density mob
     stats: { hp: 185, attack: 22, plating: 0, damageReduction: 0.05, speed: 58, attackRange: 60, attackCooldown: 2000, pullRange: 225 },
     behavior: 'melee', attackStyle: 'impact', biome: 'jungle',
-    rewards: { essence: 14, essenceType: 'yellow', level: 1 },
+    rewards: { essence: 14, essenceType: 'yellow', level: 1, biomeXp: 40 },
     ai: { wanderRadius: 240, leashRange: 640, idleMinMs: 1200, idleMaxMs: 4000 },
     chargeOnAggro: { speedMult: 2.8, durationMs: 1100 },
   }],
@@ -457,7 +457,7 @@ export const MONSTER_DATABASE: Map<string, MonsterDefinition> = new Map([
     // Hidden in foliage; fires poisoned darts from long range
     stats: { hp: 130, attack: 19, plating: 0, damageReduction: 0, speed: 42, attackRange: 195, attackCooldown: 2500, pullRange: 245 },
     behavior: 'melee', attackStyle: 'poison', biome: 'jungle',
-    rewards: { essence: 13, essenceType: 'green', level: 1 },
+    rewards: { essence: 13, essenceType: 'green', level: 1, biomeXp: 38 },
     ai: { wanderRadius: 250, leashRange: 660, idleMinMs: 1200, idleMaxMs: 4000 },
     dotEffect: { damagePerStack: 2, maxStacks: 5, tickIntervalMs: 1000, durationMs: 4500 },
   }],
@@ -486,7 +486,7 @@ export const MONSTER_DATABASE: Map<string, MonsterDefinition> = new Map([
     // Venomous sting slows movement; fights become longer as you struggle to reposition
     stats: { hp: 160, attack: 20, plating: 0, damageReduction: 0.10, speed: 50, attackRange: 60, attackCooldown: 2200, pullRange: 210 },
     behavior: 'melee', attackStyle: 'poison', biome: 'desert',
-    rewards: { essence: 13, essenceType: 'yellow', level: 1 },
+    rewards: { essence: 13, essenceType: 'yellow', level: 1, biomeXp: 38 },
     ai: { wanderRadius: 240, leashRange: 640, idleMinMs: 1500, idleMaxMs: 4500 },
     slowEffect: { speedMult: 0.5, durationMs: 2500 },
   }],
@@ -495,7 +495,7 @@ export const MONSTER_DATABASE: Map<string, MonsterDefinition> = new Map([
     // Petrifying gaze — its hit roots the player briefly; tough hide adds DR
     stats: { hp: 255, attack: 24, plating: 0, damageReduction: 0.12, speed: 28, attackRange: 62, attackCooldown: 2600, pullRange: 175 },
     behavior: 'melee', attackStyle: 'impact', biome: 'desert',
-    rewards: { essence: 16, essenceType: 'yellow', level: 1 },
+    rewards: { essence: 16, essenceType: 'yellow', level: 1, biomeXp: 45 },
     ai: { wanderRadius: 180, leashRange: 560, idleMinMs: 2000, idleMaxMs: 5500 },
     slowEffect: { speedMult: 0, durationMs: 1200 },
   }],
@@ -504,7 +504,7 @@ export const MONSTER_DATABASE: Map<string, MonsterDefinition> = new Map([
     // Strikes from distance and writhes unpredictably — evasion + range is a dangerous combo
     stats: { hp: 135, attack: 22, plating: 0, damageReduction: 0.05, speed: 48, attackRange: 185, attackCooldown: 2400, pullRange: 250 },
     behavior: 'melee', attackStyle: 'poison', biome: 'desert',
-    rewards: { essence: 14, essenceType: 'yellow', level: 1 },
+    rewards: { essence: 14, essenceType: 'yellow', level: 1, biomeXp: 40 },
     ai: { wanderRadius: 260, leashRange: 660, idleMinMs: 1200, idleMaxMs: 4000 },
     evadeEvery: 5,
   }],
@@ -514,14 +514,14 @@ export const MONSTER_DATABASE: Map<string, MonsterDefinition> = new Map([
     id: 'ember-slime', name: 'Ember Slime', color: 0xff4422,
     stats: { hp: 110, attack: 18, plating: 5, damageReduction: 0, speed: 52, attackRange: 60, attackCooldown: 2300, pullRange: 210 },
     behavior: 'melee', attackStyle: 'fire', biome: 'volcanic',
-    rewards: { essence: 20, essenceType: 'red', level: 1 },
+    rewards: { essence: 20, essenceType: 'red', level: 1, biomeXp: 58 },
     ai: { wanderRadius: 220, leashRange: 600, idleMinMs: 1200, idleMaxMs: 4000 },
   }],
   ['magma-golem', {
     id: 'magma-golem', name: 'Magma Golem', color: 0xcc2200,
     stats: { hp: 260, attack: 24, plating: 12, damageReduction: 0, speed: 18, attackRange: 65, attackCooldown: 3800, pullRange: 150 },
     behavior: 'melee', attackStyle: 'fire', biome: 'volcanic',
-    rewards: { essence: 28, essenceType: 'red', level: 1 },
+    rewards: { essence: 28, essenceType: 'red', level: 1, biomeXp: 80 },
     ai: { wanderRadius: 110, leashRange: 460, idleMinMs: 3500, idleMaxMs: 9500 },
   }],
 
@@ -877,7 +877,7 @@ export const MONSTER_DATABASE: Map<string, MonsterDefinition> = new Map([
       speed: 50, attackRange: 65, attackCooldown: 2200, pullRange: 280,
     },
     behavior: 'melee', attackStyle: 'impact', biome: 'plains',
-    rewards: { essence: 100, essenceType: 'yellow', level: 5 },
+    rewards: { essence: 100, essenceType: 'yellow', level: 5, biomeXp: 150 },
     ai: { wanderRadius: 120, leashRange: 750, idleMinMs: 1500, idleMaxMs: 4500 },
   }],
 
@@ -890,7 +890,7 @@ export const MONSTER_DATABASE: Map<string, MonsterDefinition> = new Map([
       speed: 52, attackRange: 68, attackCooldown: 2000, pullRange: 300,
     },
     behavior: 'melee', attackStyle: 'slash', biome: 'forest',
-    rewards: { essence: 100, essenceType: 'green', level: 5 },
+    rewards: { essence: 100, essenceType: 'green', level: 5, biomeXp: 150 },
     ai: { wanderRadius: 160, leashRange: 800, idleMinMs: 1200, idleMaxMs: 4000 },
   }],
 
@@ -903,7 +903,7 @@ export const MONSTER_DATABASE: Map<string, MonsterDefinition> = new Map([
       speed: 28, attackRange: 68, attackCooldown: 2800, pullRange: 260,
     },
     behavior: 'melee', attackStyle: 'poison', biome: 'swamp',
-    rewards: { essence: 100, essenceType: 'purple', level: 5 },
+    rewards: { essence: 100, essenceType: 'purple', level: 5, biomeXp: 150 },
     ai: { wanderRadius: 100, leashRange: 700, idleMinMs: 2000, idleMaxMs: 5500 },
     dotEffect: { damagePerStack: 4, maxStacks: 4, tickIntervalMs: 1000 },
   }],
@@ -917,7 +917,7 @@ export const MONSTER_DATABASE: Map<string, MonsterDefinition> = new Map([
       speed: 18, attackRange: 65, attackCooldown: 3200, pullRange: 240,
     },
     behavior: 'melee', attackStyle: 'impact', biome: 'cave',
-    rewards: { essence: 110, essenceType: 'red', level: 5 },
+    rewards: { essence: 110, essenceType: 'red', level: 5, biomeXp: 165 },
     ai: { wanderRadius: 80, leashRange: 680, idleMinMs: 2500, idleMaxMs: 6500 },
   }],
 
@@ -930,7 +930,7 @@ export const MONSTER_DATABASE: Map<string, MonsterDefinition> = new Map([
       speed: 58, attackRange: 68, attackCooldown: 1800, pullRange: 280,
     },
     behavior: 'melee', attackStyle: 'slash', biome: 'mountain',
-    rewards: { essence: 105, essenceType: 'blue', level: 5 },
+    rewards: { essence: 105, essenceType: 'blue', level: 5, biomeXp: 158 },
     ai: { wanderRadius: 160, leashRange: 750, idleMinMs: 1000, idleMaxMs: 3500 },
   }],
 
@@ -943,7 +943,7 @@ export const MONSTER_DATABASE: Map<string, MonsterDefinition> = new Map([
       speed: 20, attackRange: 72, attackCooldown: 4000, pullRange: 320,
     },
     behavior: 'melee', attackStyle: 'impact', biome: 'mountain',
-    rewards: { essence: 160, essenceType: 'blue', level: 5 },
+    rewards: { essence: 160, essenceType: 'blue', level: 5, biomeXp: 240 },
     ai: { wanderRadius: 120, leashRange: 850, idleMinMs: 3000, idleMaxMs: 7500 },
   }],
 
@@ -955,7 +955,7 @@ export const MONSTER_DATABASE: Map<string, MonsterDefinition> = new Map([
       speed: 30, attackRange: 68, attackCooldown: 3000, pullRange: 300,
     },
     behavior: 'melee', attackStyle: 'poison', biome: 'swamp',
-    rewards: { essence: 155, essenceType: 'purple', level: 5 },
+    rewards: { essence: 155, essenceType: 'purple', level: 5, biomeXp: 232 },
     ai: { wanderRadius: 110, leashRange: 800, idleMinMs: 2500, idleMaxMs: 6000 },
   }],
 
@@ -967,7 +967,7 @@ export const MONSTER_DATABASE: Map<string, MonsterDefinition> = new Map([
       speed: 40, attackRange: 74, attackCooldown: 2600, pullRange: 340,
     },
     behavior: 'melee', attackStyle: 'magic', biome: 'desert',
-    rewards: { essence: 150, essenceType: 'yellow', level: 5 },
+    rewards: { essence: 150, essenceType: 'yellow', level: 5, biomeXp: 225 },
     ai: { wanderRadius: 140, leashRange: 880, idleMinMs: 2000, idleMaxMs: 5500 },
   }],
 
@@ -979,7 +979,7 @@ export const MONSTER_DATABASE: Map<string, MonsterDefinition> = new Map([
       speed: 26, attackRange: 74, attackCooldown: 3000, pullRange: 310,
     },
     behavior: 'melee', attackStyle: 'slash', biome: 'forest',
-    rewards: { essence: 155, essenceType: 'green', level: 5 },
+    rewards: { essence: 155, essenceType: 'green', level: 5, biomeXp: 232 },
     ai: { wanderRadius: 130, leashRange: 830, idleMinMs: 2500, idleMaxMs: 6500 },
   }],
 
@@ -991,7 +991,7 @@ export const MONSTER_DATABASE: Map<string, MonsterDefinition> = new Map([
       speed: 46, attackRange: 70, attackCooldown: 2700, pullRange: 320,
     },
     behavior: 'melee', attackStyle: 'impact', biome: 'plains',
-    rewards: { essence: 150, essenceType: 'yellow', level: 5 },
+    rewards: { essence: 150, essenceType: 'yellow', level: 5, biomeXp: 225 },
     ai: { wanderRadius: 140, leashRange: 850, idleMinMs: 2000, idleMaxMs: 5500 },
   }],
 
@@ -1003,7 +1003,7 @@ export const MONSTER_DATABASE: Map<string, MonsterDefinition> = new Map([
       speed: 56, attackRange: 66, attackCooldown: 2400, pullRange: 320,
     },
     behavior: 'melee', attackStyle: 'slash', biome: 'jungle',
-    rewards: { essence: 145, essenceType: 'green', level: 5 },
+    rewards: { essence: 145, essenceType: 'green', level: 5, biomeXp: 218 },
     ai: { wanderRadius: 150, leashRange: 840, idleMinMs: 1800, idleMaxMs: 4500 },
   }],
 
@@ -1015,7 +1015,7 @@ export const MONSTER_DATABASE: Map<string, MonsterDefinition> = new Map([
       speed: 18, attackRange: 72, attackCooldown: 4000, pullRange: 280,
     },
     behavior: 'melee', attackStyle: 'impact', biome: 'cave',
-    rewards: { essence: 160, essenceType: 'red', level: 5 },
+    rewards: { essence: 160, essenceType: 'red', level: 5, biomeXp: 240 },
     ai: { wanderRadius: 90, leashRange: 800, idleMinMs: 3000, idleMaxMs: 7500 },
   }],
 
@@ -1028,7 +1028,7 @@ export const MONSTER_DATABASE: Map<string, MonsterDefinition> = new Map([
       speed: 18, attackRange: 90, attackCooldown: 3600, pullRange: 280,
     },
     behavior: 'melee', attackStyle: 'frost', biome: 'tundra',
-    rewards: { essence: 140, essenceType: 'blue', level: 5 },
+    rewards: { essence: 140, essenceType: 'blue', level: 5, biomeXp: 210 },
     ai: { wanderRadius: 140, leashRange: 800, idleMinMs: 3000, idleMaxMs: 6500 },
   }],
 

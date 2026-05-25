@@ -1,4 +1,4 @@
-export * from './skillTree';
+﻿export * from './skillTree';
 export * from './items';
 export * from './itemDatabase';
 export * from './recipeDatabase';
@@ -8,11 +8,11 @@ export * from './biomeDatabase';
 import type { EquipmentMap, EquipmentSlot, EssenceType } from './items';
 import type { SubVariant } from './skillTree';
 
-// ─── Buff display ─────────────────────────────────────────────────────────────
+// â”€â”€â”€ Buff display â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 /**
  * A single active buff entry, populated server-side each tick and sent to the
- * client for display. Only player buffs are tracked here — debuffs on monsters
+ * client for display. Only player buffs are tracked here â€” debuffs on monsters
  * are server-only.
  *
  * Resilience notes:
@@ -23,19 +23,19 @@ import type { SubVariant } from './skillTree';
  *     icon textures later without changing any other code.
  */
 export interface PlayerBuff {
-  /** Unique identifier — will double as the future icon sprite key. */
+  /** Unique identifier â€” will double as the future icon sprite key. */
   id: string;
-  /** Short label shown beneath the icon (3–6 chars). */
+  /** Short label shown beneath the icon (3â€“6 chars). */
   label: string;
   /** Stack count; 1 = single instance (no badge shown). */
   stacks: number;
-  /** 0–100 remaining duration percentage; -1 = no timer. */
+  /** 0â€“100 remaining duration percentage; -1 = no timer. */
   durationPct: number;
   /** CSS hex color string for the placeholder shape, e.g. '#00ffaa'. */
   color: string;
 }
 
-// ─── Combat events ────────────────────────────────────────────────────────────
+// â”€â”€â”€ Combat events â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 /**
  * Discrete combat events accumulated between broadcast ticks.
@@ -47,7 +47,7 @@ export type CombatEvent =
   | { kind: 'player-kill'; playerId: string; targetId: string; targetName: string; biomeXpGained: number; essenceGained: number; essenceType: string }
   | { kind: 'monster-dodge'; monsterId: string };
 
-// ─── Combat archetype ─────────────────────────────────────────────────────────
+// â”€â”€â”€ Combat archetype â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 /**
  * Determines which server-side combat mechanic module governs an entity.
@@ -56,7 +56,7 @@ export type CombatEvent =
  */
 export type CombatArchetype = 'cadence' | 'cooldown' | 'energy' | 'reload' | 'dot' | null;
 
-// ─── Shield ───────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Shield â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 /**
  * A temporary hit-point buffer that absorbs damage before real HP.
@@ -65,7 +65,7 @@ export type CombatArchetype = 'cadence' | 'cooldown' | 'energy' | 'reload' | 'do
 export interface ShieldState {
   /** Current remaining shield HP. */
   amount: number;
-  /** Shield HP at creation — used for proportional bar rendering. */
+  /** Shield HP at creation â€” used for proportional bar rendering. */
   maxAmount: number;
   /**
    * Remaining duration in milliseconds.
@@ -75,7 +75,7 @@ export interface ShieldState {
   remainingMs: number;
 }
 
-// ─── Entity shapes ────────────────────────────────────────────────────────────
+// â”€â”€â”€ Entity shapes â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export interface PlayerState {
   id: string;
@@ -90,9 +90,9 @@ export interface PlayerState {
   attack: number;
   /** Flat bonus damage added to each direct attack hit; not scaled by finisher multipliers or DoT. */
   onHitDamage: number;
-  /** Flat damage reduction — subtracted from incoming damage before percentage. */
+  /** Flat damage reduction â€” subtracted from incoming damage before percentage. */
   plating: number;
-  /** Percentage damage reduction applied after plating (0.0–1.0). */
+  /** Percentage damage reduction applied after plating (0.0â€“1.0). */
   damageReduction: number;
   /**
    * Hit counter threshold for evasion. 0 = disabled.
@@ -107,16 +107,16 @@ export interface PlayerState {
   attackRange: number;
   /** Milliseconds between discrete attacks. */
   attackCooldown: number;
-  /** Server timestamp (ms) of the last attack — clients use for cooldown-bar progress. */
+  /** Server timestamp (ms) of the last attack â€” clients use for cooldown-bar progress. */
   lastAttackAt: number;
   /** Monster ID currently being attacked, or null when idle. */
   attackTargetId: string | null;
   /** Whether the server is driving this player toward the nearest monster. */
   auto: boolean;
   nodeId: string;
-  /** Accumulated essence resources — keyed by type, granted by server on monster kills. */
+  /** Accumulated essence resources â€” keyed by type, granted by server on monster kills. */
   essences: Record<EssenceType, number>;
-  /** Flat progression counter — incremented by 1 per kill. */
+  /** Flat progression counter â€” incremented by 1 per kill. */
   level: number;
   /** Unspent points available to invest in the skill tree. */
   skillPoints: number;
@@ -181,7 +181,7 @@ export interface PlayerState {
    */
   combatArchetype: CombatArchetype;
   /**
-   * Current position in the cadence cycle (0 … cadenceThreshold-1).
+   * Current position in the cadence cycle (0 â€¦ cadenceThreshold-1).
    * Reset to 0 after each trigger. Mirrored to PlayerState every hit so
    * the client can display a live progress bar without extra network overhead.
    */
@@ -203,9 +203,9 @@ export interface PlayerState {
   ammoMax: number;
   /** Cooldown archetype: true when the execution strike is armed and the next hit will trigger it. */
   executionReady: boolean;
-  /** Cooldown archetype: preparation progress 0–100 toward the next execution window. 100 = ready. */
+  /** Cooldown archetype: preparation progress 0â€“100 toward the next execution window. 100 = ready. */
   executionCooldownPct: number;
-  /** Energy archetype: current energy level, 0–100. Fills on hits; empowers at 100. */
+  /** Energy archetype: current energy level, 0â€“100. Fills on hits; empowers at 100. */
   energyCount: number;
   /** Energy archetype: true when an empowered attack is armed (consumed on next hit). */
   empoweredReady: boolean;
@@ -215,7 +215,7 @@ export interface PlayerState {
   targetChillStacks: number;
   /** Sacred Cross weapon: true while the divine burst buff is active. */
   sacredBuffActive: boolean;
-  /** Sacred Cross weapon: 0–100 progress toward the next buff window (100 = buff active). */
+  /** Sacred Cross weapon: 0â€“100 progress toward the next buff window (100 = buff active). */
   sacredBuffPct: number;
   /**
    * Cooldown Channeled Beam: true while the channel is active.
@@ -223,7 +223,7 @@ export interface PlayerState {
    * Client should display a channel bar and block move inputs.
    */
   isChanneling: boolean;
-  /** Channeled Beam progress 0–100 through the channel window. 0 when not channeling. */
+  /** Channeled Beam progress 0â€“100 through the channel window. 0 when not channeling. */
   channelingPct: number;
   /** Client effect overlays currently active on this player, keyed by effect id with remaining ms. */
   activeEffects?: Record<string, number>;
@@ -231,12 +231,12 @@ export interface PlayerState {
   activeEffectFrames?: Record<string, number>;
   /**
    * Active buffs on this player, populated server-side each tick by syncPlayerBuffs.
-   * Only buffs are tracked here — monster debuffs are server-only.
+   * Only buffs are tracked here â€” monster debuffs are server-only.
    * The client renders these verbatim; no client-side buff logic is needed.
    */
   activeBuffs: PlayerBuff[];
 
-  // ── Quest progression ────────────────────────────────────────────────────
+  // â”€â”€ Quest progression â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   /**
    * Kill count toward each active quest. Key = questId, value = kills so far.
@@ -265,7 +265,7 @@ export type MonsterAIState =
 
 export interface MonsterState {
   id: string;
-  /** Key into MONSTER_DATABASE — drives stat lookup and reward lookup. */
+  /** Key into MONSTER_DATABASE â€” drives stat lookup and reward lookup. */
   monsterTypeId: string;
   /** Placeholder rectangle color, copied from MonsterDefinition.color at spawn. */
   color: number;
@@ -278,13 +278,13 @@ export interface MonsterState {
   hp: number;
   maxHp: number;
   attack: number;
-  /** Flat damage reduction — subtracted from incoming damage before percentage. */
+  /** Flat damage reduction â€” subtracted from incoming damage before percentage. */
   plating: number;
-  /** Percentage damage reduction applied after plating (0.0–1.0). Default 0. */
+  /** Percentage damage reduction applied after plating (0.0â€“1.0). Default 0. */
   damageReduction: number;
-  /** Movement speed in px/s — clients use this for accurate interpolation. */
+  /** Movement speed in px/s â€” clients use this for accurate interpolation. */
   speed: number;
-  /** Current AI state — clients can use for animation/visual cues. */
+  /** Current AI state â€” clients can use for animation/visual cues. */
   state: MonsterAIState;
   /** Pixel radius within which this monster notices and chases a player. */
   pullRange: number;
@@ -294,16 +294,16 @@ export interface MonsterState {
   attackRange: number;
   /** Milliseconds between discrete attacks. */
   attackCooldown: number;
-  /** Server timestamp (ms) of the last attack — clients use for cooldown-bar progress. */
+  /** Server timestamp (ms) of the last attack â€” clients use for cooldown-bar progress. */
   lastAttackAt: number;
   /** Player ID currently being attacked, or null when not in melee contact. */
   attackTargetId: string | null;
   nodeId: string;
   /** Visual style used for attack animations on the client. */
   attackStyle: string;
-  /** True for dungeon boss monsters — clients render them larger with a distinct label. */
+  /** True for dungeon boss monsters â€” clients render them larger with a distinct label. */
   isBoss: boolean;
-  /** Combat style — 'melee' lunges toward target on attack; extend union for 'ranged' / 'caster'. */
+  /** Combat style â€” 'melee' lunges toward target on attack; extend union for 'ranged' / 'caster'. */
   behavior: string;
   /** Future: allows elite/boss monsters to use archetype mechanics. */
   combatArchetype?: CombatArchetype;
@@ -319,7 +319,7 @@ export interface MonsterState {
   bossEffects?: string[];
 }
 
-// ─── Node / zone definitions ──────────────────────────────────────────────────
+// â”€â”€â”€ Node / zone definitions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export type NodeDirection = 'north' | 'south' | 'east' | 'west';
 
@@ -330,7 +330,7 @@ export interface NodeDefinition {
   height: number;
   /** Which biome family this node belongs to (e.g. "forest", "mountain"). */
   biomeGroup: string;
-  /** Difficulty tier within the biome family — higher tiers have harder mobs. */
+  /** Difficulty tier within the biome family â€” higher tiers have harder mobs. */
   biomeTier: number;
   /** Adjacent node ids keyed by the direction of travel. Only present exits are listed. */
   exits: Partial<Record<NodeDirection, string>>;
@@ -344,230 +344,167 @@ export interface NodeDefinition {
 export const TEST_ROOM_NODE_ID = 'node-test-room';
 
 /**
- * 11×11 grid map. Center is node-5-5 (T0 clearing).
+ * 11Ã—11 grid map. Center is node-5-5 (T0 clearing).
  * Chebyshev distance from center determines tier band:
- *   0        — clearing (T0)                    1 node
- *   1–2      — T1 biomes (24 nodes)             forest, mountain, plains, swamp, cave, jungle
- *   3        — T2 biomes (24 nodes)             + tundra, desert
- *   4        — T3 biomes (32 nodes)             + volcanic, necropolis (first appearance)
- *   5        — T4 biomes (40 nodes)             + abyss (first appearance)
+ *   0        â€” clearing (T0)                    1 node
+ *   1â€“2      â€” T1 biomes (24 nodes)             forest, mountain, plains, swamp, cave, jungle
+ *   3        â€” T2 biomes (24 nodes)             + tundra, desert
+ *   4        â€” T3 biomes (32 nodes)             + volcanic, necropolis (first appearance)
+ *   5        â€” T4 biomes (40 nodes)             + abyss (first appearance)
  *
  * Each tier has exactly one dungeon per biome present at that tier.
  * Geographic layout:
- *   North (rows 0–2)         — tundra / mountain
- *   NE   (rows 0–4, cols 7+) — forest / plains
- *   East (col 10)            — plains / desert / jungle
- *   SE   (rows 8–10, cols 7+)— jungle
- *   South (rows 9–10)        — volcanic / necropolis / abyss
- *   West  (col 0)            — swamp / cave / abyss
- *   NW   (rows 0–4, cols 0–4)— swamp / tundra
+ *   North (rows 0â€“2)         â€” tundra / mountain
+ *   NE   (rows 0â€“4, cols 7+) â€” forest / plains
+ *   East (col 10)            â€” plains / desert / jungle
+ *   SE   (rows 8â€“10, cols 7+)â€” jungle
+ *   South (rows 9â€“10)        â€” volcanic / necropolis / abyss
+ *   West  (col 0)            â€” swamp / cave / abyss
+ *   NW   (rows 0â€“4, cols 0â€“4)â€” swamp / tundra
  */
 export const NODE_BIOMES: Record<string, { biomeGroup: string; biomeTier: number; isDungeon?: boolean }> = {
+  'node-0-0': { biomeGroup: 'abyss', biomeTier: 4, isDungeon: true },   // Void Titan
+  'node-0-1': { biomeGroup: 'abyss', biomeTier: 4 },
+  'node-0-2': { biomeGroup: 'swamp', biomeTier: 4 },
+  'node-0-3': { biomeGroup: 'jungle', biomeTier: 4 },
+  'node-0-4': { biomeGroup: 'jungle', biomeTier: 4 },
+  'node-0-5': { biomeGroup: 'jungle', biomeTier: 4 },
+  'node-0-6': { biomeGroup: 'jungle', biomeTier: 4 },
+  'node-0-7': { biomeGroup: 'jungle', biomeTier: 4 },
+  'node-0-8': { biomeGroup: 'volcanic', biomeTier: 3 },
+  'node-0-9': { biomeGroup: 'volcanic', biomeTier: 4 },
+  'node-0-10': { biomeGroup: 'volcanic', biomeTier: 4, isDungeon: true },   // Inferno Lord
 
-  // ── T0 center — starting clearing ─────────────────────────────────────────
-  'node-5-5': { biomeGroup: 'clearing',   biomeTier: 0 },
-  [TEST_ROOM_NODE_ID]: { biomeGroup: 'testroom', biomeTier: 0 },
+  'node-1-0': { biomeGroup: 'abyss', biomeTier: 4 },
+  'node-1-1': { biomeGroup: 'swamp', biomeTier: 4 },
+  'node-1-2': { biomeGroup: 'swamp', biomeTier: 3 },
+  'node-1-3': { biomeGroup: 'swamp', biomeTier: 3, isDungeon: true },   // Bog Ancient
+  'node-1-4': { biomeGroup: 'jungle', biomeTier: 3 },
+  'node-1-5': { biomeGroup: 'jungle', biomeTier: 2, isDungeon: true },   // Jungle Colossus
+  'node-1-6': { biomeGroup: 'jungle', biomeTier: 3 },
+  'node-1-7': { biomeGroup: 'jungle', biomeTier: 3, isDungeon: true },   // Jungle Titan Lord
+  'node-1-8': { biomeGroup: 'volcanic', biomeTier: 3 },
+  'node-1-9': { biomeGroup: 'volcanic', biomeTier: 3 },
+  'node-1-10': { biomeGroup: 'volcanic', biomeTier: 4 },
 
-  // ── T1 band (Chebyshev distance 1–2) — 6 biomes × 4 nodes ────────────────
-  // Forest T1 — NE quadrant
-  'node-4-6': { biomeGroup: 'forest',     biomeTier: 1 },
-  'node-4-7': { biomeGroup: 'forest',     biomeTier: 1 },
-  'node-3-6': { biomeGroup: 'forest',     biomeTier: 1 },
-  'node-3-7': { biomeGroup: 'forest',     biomeTier: 1, isDungeon: true },   // forest-warden
+  'node-2-0': { biomeGroup: 'swamp', biomeTier: 4 },
+  'node-2-1': { biomeGroup: 'swamp', biomeTier: 3 },
+  'node-2-2': { biomeGroup: 'swamp', biomeTier: 3 },
+  'node-2-3': { biomeGroup: 'swamp', biomeTier: 3 },
+  'node-2-4': { biomeGroup: 'swamp', biomeTier: 3 },
+  'node-2-5': { biomeGroup: 'jungle', biomeTier: 2 },
+  'node-2-6': { biomeGroup: 'jungle', biomeTier: 2 },
+  'node-2-7': { biomeGroup: 'forest', biomeTier: 2 },
+  'node-2-8': { biomeGroup: 'forest', biomeTier: 2, isDungeon: true },   // Forest Elder
+  'node-2-9': { biomeGroup: 'volcanic', biomeTier: 3 },
+  'node-2-10': { biomeGroup: 'volcanic', biomeTier: 3, isDungeon: true },   // Volcanic Titan
 
-  // Mountain T1 — North
-  'node-4-5': { biomeGroup: 'mountain',   biomeTier: 1 },
-  'node-3-5': { biomeGroup: 'mountain',   biomeTier: 1, isDungeon: true },   // mountain-sentinel
-  'node-4-4': { biomeGroup: 'mountain',   biomeTier: 1 },
-  'node-3-4': { biomeGroup: 'mountain',   biomeTier: 1 },
+  'node-3-0': { biomeGroup: 'swamp', biomeTier: 4 },
+  'node-3-1': { biomeGroup: 'swamp', biomeTier: 3 },
+  'node-3-2': { biomeGroup: 'swamp', biomeTier: 3 },
+  'node-3-3': { biomeGroup: 'swamp', biomeTier: 2 },
+  'node-3-4': { biomeGroup: 'swamp', biomeTier: 2 },
+  'node-3-5': { biomeGroup: 'swamp', biomeTier: 1, isDungeon: true },   // Bog Sovereign
+  'node-3-6': { biomeGroup: 'forest', biomeTier: 1 },
+  'node-3-7': { biomeGroup: 'forest', biomeTier: 1 },
+  'node-3-8': { biomeGroup: 'forest', biomeTier: 2 },
+  'node-3-9': { biomeGroup: 'forest', biomeTier: 3 },
+  'node-3-10': { biomeGroup: 'forest', biomeTier: 4 },
 
-  // Plains T1 — East
-  'node-5-6': { biomeGroup: 'plains',     biomeTier: 1 },
-  'node-5-7': { biomeGroup: 'plains',     biomeTier: 1 },   // no boss for now
-  'node-6-6': { biomeGroup: 'plains',     biomeTier: 1 },
-  'node-6-7': { biomeGroup: 'plains',     biomeTier: 1 },
+  'node-4-0': { biomeGroup: 'cave', biomeTier: 4 },
+  'node-4-1': { biomeGroup: 'cave', biomeTier: 3 },
+  'node-4-2': { biomeGroup: 'cave', biomeTier: 2, isDungeon: true },   // Cave Terror
+  'node-4-3': { biomeGroup: 'swamp', biomeTier: 2 },
+  'node-4-4': { biomeGroup: 'swamp', biomeTier: 1 },
+  'node-4-5': { biomeGroup: 'swamp', biomeTier: 1 },
+  'node-4-6': { biomeGroup: 'forest', biomeTier: 1 },
+  'node-4-7': { biomeGroup: 'forest', biomeTier: 1, isDungeon: true },   // Forest Warden
+  'node-4-8': { biomeGroup: 'forest', biomeTier: 2 },
+  'node-4-9': { biomeGroup: 'forest', biomeTier: 3 },
+  'node-4-10': { biomeGroup: 'forest', biomeTier: 4 },
 
-  // Swamp T1 — NW
-  'node-5-4': { biomeGroup: 'swamp',      biomeTier: 1 },
-  'node-5-3': { biomeGroup: 'swamp',      biomeTier: 1, isDungeon: true },   // bog-sovereign
-  'node-4-3': { biomeGroup: 'swamp',      biomeTier: 1 },
-  'node-3-3': { biomeGroup: 'swamp',      biomeTier: 1 },
+  'node-5-0': { biomeGroup: 'cave', biomeTier: 4 },
+  'node-5-1': { biomeGroup: 'cave', biomeTier: 3 },
+  'node-5-2': { biomeGroup: 'cave', biomeTier: 2 },
+  'node-5-3': { biomeGroup: 'cave', biomeTier: 1 },
+  'node-5-4': { biomeGroup: 'cave', biomeTier: 1 },
+  'node-5-5': { biomeGroup: 'clearing', biomeTier: 0 },
+  'node-5-6': { biomeGroup: 'forest', biomeTier: 1 },
+  'node-5-7': { biomeGroup: 'plains', biomeTier: 1 },
+  'node-5-8': { biomeGroup: 'plains', biomeTier: 2 },
+  'node-5-9': { biomeGroup: 'plains', biomeTier: 3 },
+  'node-5-10': { biomeGroup: 'plains', biomeTier: 4 },
 
-  // Cave T1 — West
-  'node-6-4': { biomeGroup: 'cave',       biomeTier: 1 },
-  'node-6-3': { biomeGroup: 'cave',       biomeTier: 1, isDungeon: true },   // cave-sentinel
-  'node-7-3': { biomeGroup: 'cave',       biomeTier: 1 },
-  'node-7-4': { biomeGroup: 'cave',       biomeTier: 1 },
+  'node-6-0': { biomeGroup: 'cave', biomeTier: 4 },
+  'node-6-1': { biomeGroup: 'cave', biomeTier: 3 },
+  'node-6-2': { biomeGroup: 'cave', biomeTier: 2 },
+  'node-6-3': { biomeGroup: 'cave', biomeTier: 1, isDungeon: true },   // Cave Sentinel
+  'node-6-4': { biomeGroup: 'cave', biomeTier: 1 },
+  'node-6-5': { biomeGroup: 'plains', biomeTier: 1 },
+  'node-6-6': { biomeGroup: 'plains', biomeTier: 1 },
+  'node-6-7': { biomeGroup: 'plains', biomeTier: 1 },
+  'node-6-8': { biomeGroup: 'plains', biomeTier: 2, isDungeon: true },   // Plains Overlord
+  'node-6-9': { biomeGroup: 'plains', biomeTier: 3 },
+  'node-6-10': { biomeGroup: 'plains', biomeTier: 4 },
 
-  // Plains T1 — SE extension (jungle moved to T2+)
-  'node-6-5': { biomeGroup: 'plains',     biomeTier: 1 },
-  'node-7-5': { biomeGroup: 'plains',     biomeTier: 1 },
-  'node-7-6': { biomeGroup: 'plains',     biomeTier: 1 },
-  'node-7-7': { biomeGroup: 'plains',     biomeTier: 1 },
+  'node-7-0': { biomeGroup: 'tundra', biomeTier: 3 },
+  'node-7-1': { biomeGroup: 'cave', biomeTier: 3, isDungeon: true },   // Cave Overlord
+  'node-7-2': { biomeGroup: 'cave', biomeTier: 2 },
+  'node-7-3': { biomeGroup: 'cave', biomeTier: 1 },
+  'node-7-4': { biomeGroup: 'mountain', biomeTier: 1, isDungeon: true },   // Mountain Sentinel
+  'node-7-5': { biomeGroup: 'mountain', biomeTier: 1 },
+  'node-7-6': { biomeGroup: 'desert', biomeTier: 2 },
+  'node-7-7': { biomeGroup: 'desert', biomeTier: 2 },
+  'node-7-8': { biomeGroup: 'desert', biomeTier: 2 },
+  'node-7-9': { biomeGroup: 'plains', biomeTier: 3 },
+  'node-7-10': { biomeGroup: 'plains', biomeTier: 4 },
 
-  // ── T2 band (Chebyshev distance 3) — 7 biomes, 4 dungeons ──────────────────
-  // Swamp T2 — NW (5 nodes: 3 original + 2 ex-tundra slots folded in)
-  'node-2-2': { biomeGroup: 'swamp',      biomeTier: 2 },
-  'node-2-3': { biomeGroup: 'swamp',      biomeTier: 2 },
-  'node-3-2': { biomeGroup: 'swamp',      biomeTier: 2 },
-  'node-4-2': { biomeGroup: 'swamp',      biomeTier: 2 },
-  'node-5-2': { biomeGroup: 'swamp',      biomeTier: 2 },
+  'node-8-0': { biomeGroup: 'tundra', biomeTier: 3 },
+  'node-8-1': { biomeGroup: 'tundra', biomeTier: 3 },
+  'node-8-2': { biomeGroup: 'tundra', biomeTier: 3 },
+  'node-8-3': { biomeGroup: 'mountain', biomeTier: 2 },
+  'node-8-4': { biomeGroup: 'mountain', biomeTier: 2 },
+  'node-8-5': { biomeGroup: 'mountain', biomeTier: 2 },
+  'node-8-6': { biomeGroup: 'mountain', biomeTier: 2 },
+  'node-8-7': { biomeGroup: 'desert', biomeTier: 2, isDungeon: true },   // Desert Pharaoh
+  'node-8-8': { biomeGroup: 'desert', biomeTier: 2 },
+  'node-8-9': { biomeGroup: 'desert', biomeTier: 3 },
+  'node-8-10': { biomeGroup: 'plains', biomeTier: 4 },
 
-  // Mountain T2 — North (4 nodes: 3 original + 1 ex-tundra slot folded in)
-  'node-2-4': { biomeGroup: 'mountain',   biomeTier: 2 },
-  'node-2-5': { biomeGroup: 'mountain',   biomeTier: 2 },
-  'node-2-6': { biomeGroup: 'mountain',   biomeTier: 2, isDungeon: true },
-  'node-2-7': { biomeGroup: 'mountain',   biomeTier: 2 },
+  'node-9-0': { biomeGroup: 'tundra', biomeTier: 4 },
+  'node-9-1': { biomeGroup: 'tundra', biomeTier: 3 },
+  'node-9-2': { biomeGroup: 'tundra', biomeTier: 3 },
+  'node-9-3': { biomeGroup: 'mountain', biomeTier: 3 },
+  'node-9-4': { biomeGroup: 'mountain', biomeTier: 3 },
+  'node-9-5': { biomeGroup: 'mountain', biomeTier: 3, isDungeon: true },   // Peak Titan
+  'node-9-6': { biomeGroup: 'mountain', biomeTier: 3 },
+  'node-9-7': { biomeGroup: 'mountain', biomeTier: 3 },
+  'node-9-8': { biomeGroup: 'desert', biomeTier: 3 },
+  'node-9-9': { biomeGroup: 'desert', biomeTier: 4 },
+  'node-9-10': { biomeGroup: 'necropolis', biomeTier: 4 },
 
-  // Forest T2 — NE
-  'node-2-8': { biomeGroup: 'forest',     biomeTier: 2 },
-  'node-3-8': { biomeGroup: 'forest',     biomeTier: 2, isDungeon: true },
-  'node-4-8': { biomeGroup: 'forest',     biomeTier: 2 },
-
-  // Plains T2 — East
-  'node-5-8': { biomeGroup: 'plains',     biomeTier: 2 },
-  'node-6-8': { biomeGroup: 'plains',     biomeTier: 2 },
-  'node-7-8': { biomeGroup: 'plains',     biomeTier: 2 },
-
-  // Desert T2 — SE (new biome)
-  'node-8-6': { biomeGroup: 'desert',     biomeTier: 2 },
-  'node-8-7': { biomeGroup: 'desert',     biomeTier: 2, isDungeon: true },
-  'node-8-8': { biomeGroup: 'desert',     biomeTier: 2 },
-
-  // Jungle T2 — South (new biome)
-  'node-8-3': { biomeGroup: 'jungle',     biomeTier: 2 },
-  'node-8-4': { biomeGroup: 'jungle',     biomeTier: 2, isDungeon: true },
-  'node-8-5': { biomeGroup: 'jungle',     biomeTier: 2 },
-
-  // Cave T2 — SW
-  'node-6-2': { biomeGroup: 'cave',       biomeTier: 2 },
-  'node-7-2': { biomeGroup: 'cave',       biomeTier: 2 },
-  'node-8-2': { biomeGroup: 'cave',       biomeTier: 2 },
-
-  // ── T3 band (Chebyshev distance 4) — 9 biomes, 4 dungeons ──────────────────
-  // Tundra T3 — NW (new biome, 4 nodes)
-  'node-1-1': { biomeGroup: 'tundra',     biomeTier: 3 },
-  'node-1-2': { biomeGroup: 'tundra',     biomeTier: 3, isDungeon: true },
-  'node-1-3': { biomeGroup: 'tundra',     biomeTier: 3 },
-  'node-2-1': { biomeGroup: 'tundra',     biomeTier: 3 },
-
-  // Mountain T3 — North
-  'node-1-4': { biomeGroup: 'mountain',   biomeTier: 3 },
-  'node-1-5': { biomeGroup: 'mountain',   biomeTier: 3, isDungeon: true },
-  'node-1-6': { biomeGroup: 'mountain',   biomeTier: 3 },
-
-  // Forest T3 — NE
-  'node-1-7': { biomeGroup: 'forest',     biomeTier: 3 },
-  'node-1-8': { biomeGroup: 'forest',     biomeTier: 3 },
-  'node-1-9': { biomeGroup: 'forest',     biomeTier: 3 },
-
-  // Plains T3 — East
-  'node-2-9': { biomeGroup: 'plains',     biomeTier: 3 },
-  'node-3-9': { biomeGroup: 'plains',     biomeTier: 3 },
-  'node-4-9': { biomeGroup: 'plains',     biomeTier: 3 },
-
-  // Desert T3 — East-SE
-  'node-5-9': { biomeGroup: 'desert',     biomeTier: 3 },
-  'node-6-9': { biomeGroup: 'desert',     biomeTier: 3 },
-  'node-7-9': { biomeGroup: 'desert',     biomeTier: 3 },
-
-  // Jungle T3 — SE
-  'node-8-9': { biomeGroup: 'jungle',     biomeTier: 3 },
-  'node-9-8': { biomeGroup: 'jungle',     biomeTier: 3 },
-  'node-9-9': { biomeGroup: 'jungle',     biomeTier: 3 },
-
-  // Volcanic T3 — South (new biome, 5 nodes: 3 original + 2 ex-necropolis slots)
-  'node-9-3': { biomeGroup: 'volcanic',   biomeTier: 3 },
-  'node-9-4': { biomeGroup: 'volcanic',   biomeTier: 3 },
-  'node-9-5': { biomeGroup: 'volcanic',   biomeTier: 3 },
-  'node-9-6': { biomeGroup: 'volcanic',   biomeTier: 3, isDungeon: true },
-  'node-9-7': { biomeGroup: 'volcanic',   biomeTier: 3 },
-
-  // Cave T3 — West (4 nodes: 3 original + 1 ex-necropolis slot)
-  'node-7-1': { biomeGroup: 'cave',       biomeTier: 3 },
-  'node-8-1': { biomeGroup: 'cave',       biomeTier: 3, isDungeon: true },
-  'node-9-1': { biomeGroup: 'cave',       biomeTier: 3 },
-  'node-9-2': { biomeGroup: 'cave',       biomeTier: 3 },
-
-  // Swamp T3 — NW
-  'node-3-1': { biomeGroup: 'swamp',      biomeTier: 3 },
-  'node-4-1': { biomeGroup: 'swamp',      biomeTier: 3 },
-  'node-5-1': { biomeGroup: 'swamp',      biomeTier: 3 },
-  'node-6-1': { biomeGroup: 'swamp',      biomeTier: 3 },
-
-  // ── T4 band (Chebyshev distance 5) — 11 biomes, 4 dungeons ────────────────
-  // Tundra T4 — NW corner (row 0, cols 0–3)
-  'node-0-0': { biomeGroup: 'tundra',     biomeTier: 4 },
-  'node-0-1': { biomeGroup: 'tundra',     biomeTier: 4 },
-  'node-0-2': { biomeGroup: 'tundra',     biomeTier: 4 },
-  'node-0-3': { biomeGroup: 'tundra',     biomeTier: 4 },
-
-  // Mountain T4 — North center (row 0, cols 4–6)
-  'node-0-4': { biomeGroup: 'mountain',   biomeTier: 4 },
-  'node-0-5': { biomeGroup: 'mountain',   biomeTier: 4, isDungeon: true },
-  'node-0-6': { biomeGroup: 'mountain',   biomeTier: 4 },
-
-  // Forest T4 — NE (row 0, cols 7–10)
-  'node-0-7':  { biomeGroup: 'forest',    biomeTier: 4 },
-  'node-0-8':  { biomeGroup: 'forest',    biomeTier: 4 },
-  'node-0-9':  { biomeGroup: 'forest',    biomeTier: 4, isDungeon: true },
-  'node-0-10': { biomeGroup: 'forest',    biomeTier: 4 },
-
-  // Plains T4 — East (col 10, rows 1–4)
-  'node-1-10': { biomeGroup: 'plains',    biomeTier: 4 },
-  'node-2-10': { biomeGroup: 'plains',    biomeTier: 4 },
-  'node-3-10': { biomeGroup: 'plains',    biomeTier: 4 },
-  'node-4-10': { biomeGroup: 'plains',    biomeTier: 4 },
-
-  // Desert T4 — East (col 10, rows 5–7)
-  'node-5-10': { biomeGroup: 'desert',    biomeTier: 4 },
-  'node-6-10': { biomeGroup: 'desert',    biomeTier: 4 },
-  'node-7-10': { biomeGroup: 'desert',    biomeTier: 4 },
-
-  // Jungle T4 — SE (col 10 rows 8–10 + row 10 cols 8–9)
-  'node-8-10':  { biomeGroup: 'jungle',   biomeTier: 4 },
-  'node-9-10':  { biomeGroup: 'jungle',   biomeTier: 4 },
-  'node-10-10': { biomeGroup: 'jungle',   biomeTier: 4 },
-  'node-10-9':  { biomeGroup: 'jungle',   biomeTier: 4 },
-  'node-10-8':  { biomeGroup: 'jungle',   biomeTier: 4 },
-
-  // Volcanic T4 — South (row 10, cols 5–7)
-  'node-10-5': { biomeGroup: 'volcanic',  biomeTier: 4 },
-  'node-10-6': { biomeGroup: 'volcanic',  biomeTier: 4 },
-  'node-10-7': { biomeGroup: 'volcanic',  biomeTier: 4 },
-
-  // Necropolis T4 — SW (row 10, cols 2–4; first appearance)
-  'node-10-2': { biomeGroup: 'necropolis', biomeTier: 4 },
-  'node-10-3': { biomeGroup: 'necropolis', biomeTier: 4, isDungeon: true },
-  'node-10-4': { biomeGroup: 'necropolis', biomeTier: 4 },
-
-  // Abyss T4 — SW corner (row 10 cols 0–1 + col 0 rows 8–9; first appearance)
-  'node-10-0': { biomeGroup: 'abyss',     biomeTier: 4 },
-  'node-10-1': { biomeGroup: 'abyss',     biomeTier: 4 },
-  'node-9-0':  { biomeGroup: 'abyss',     biomeTier: 4, isDungeon: true },
-  'node-8-0':  { biomeGroup: 'abyss',     biomeTier: 4 },
-
-  // Cave T4 — West (col 0, rows 5–7)
-  'node-5-0': { biomeGroup: 'cave',       biomeTier: 4 },
-  'node-6-0': { biomeGroup: 'cave',       biomeTier: 4 },
-  'node-7-0': { biomeGroup: 'cave',       biomeTier: 4 },
-
-  // Swamp T4 — NW (col 0, rows 1–4)
-  'node-1-0': { biomeGroup: 'swamp',      biomeTier: 4 },
-  'node-2-0': { biomeGroup: 'swamp',      biomeTier: 4 },
-  'node-3-0': { biomeGroup: 'swamp',      biomeTier: 4 },
-  'node-4-0': { biomeGroup: 'swamp',      biomeTier: 4 },
+  'node-10-0': { biomeGroup: 'tundra', biomeTier: 4, isDungeon: true },   // Glacial Titan
+  'node-10-1': { biomeGroup: 'tundra', biomeTier: 4 },
+  'node-10-2': { biomeGroup: 'tundra', biomeTier: 3 },
+  'node-10-3': { biomeGroup: 'tundra', biomeTier: 3 },
+  'node-10-4': { biomeGroup: 'mountain', biomeTier: 4 },
+  'node-10-5': { biomeGroup: 'mountain', biomeTier: 4 },
+  'node-10-6': { biomeGroup: 'mountain', biomeTier: 4 },
+  'node-10-7': { biomeGroup: 'mountain', biomeTier: 4 },
+  'node-10-8': { biomeGroup: 'desert', biomeTier: 4 },
+  'node-10-9': { biomeGroup: 'necropolis', biomeTier: 4 },
+  'node-10-10': { biomeGroup: 'necropolis', biomeTier: 4, isDungeon: true },   // Undying Lord
 };
 
 /** Full world state for a node, sent every tick and on join. */
 export interface NodeSnapshot {
   players: PlayerState[];
   monsters: MonsterState[];
-  /** Combat events accumulated since the last broadcast — used for client animations and combat log. */
+  /** Combat events accumulated since the last broadcast â€” used for client animations and combat log. */
   events: CombatEvent[];
 }
 
-// ─── Quest system ─────────────────────────────────────────────────────────────
+// â”€â”€â”€ Quest system â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 /**
  * A quest that requires the player to kill a set number of specific monsters.
@@ -589,7 +526,7 @@ export interface QuestDefinition {
 }
 
 /**
- * All tier-advancement quests — one per tier.
+ * All tier-advancement quests â€” one per tier.
  * Each quest requires slaying any ONE of the dungeon bosses found at that tier.
  * Boss list matches bossPoolByTier entries in biomeDatabase for that biomeTier.
  */
@@ -607,7 +544,7 @@ export const QUEST_DATABASE = new Map<string, QuestDefinition>([
     name: 'Dungeon Delver',
     description: 'Seek out a Tier 1 dungeon and slay its guardian boss.',
     tierRequired: 1,
-    // All T1 dungeon bosses — one per biome at biomeTier 1 (5 biomes)
+    // All T1 dungeon bosses â€” one per biome at biomeTier 1 (5 biomes)
     targetMonsterTypes: [
       'forest-warden', 'mountain-sentinel', 'plains-champion',
       'bog-sovereign', 'cave-sentinel',
@@ -619,7 +556,7 @@ export const QUEST_DATABASE = new Map<string, QuestDefinition>([
     name: 'Zone Conqueror',
     description: 'Conquer a Tier 2 dungeon by defeating its mighty guardian.',
     tierRequired: 2,
-    // All T2 dungeon bosses — one per biome at biomeTier 2
+    // All T2 dungeon bosses â€” one per biome at biomeTier 2
     targetMonsterTypes: [
       'glacial-colossus', 'stone-warden', 'forest-elder', 'plains-overlord',
       'desert-pharaoh', 'jungle-colossus', 'cave-terror', 'mire-lord',
@@ -631,7 +568,7 @@ export const QUEST_DATABASE = new Map<string, QuestDefinition>([
     name: "Veteran's Trial",
     description: 'Prove your might against an elite Tier 3 dungeon lord.',
     tierRequired: 3,
-    // All T3 dungeon bosses — one per biome at biomeTier 3
+    // All T3 dungeon bosses â€” one per biome at biomeTier 3
     targetMonsterTypes: [
       'frost-colossus', 'peak-titan', 'elder-forest-warden', 'plains-warlord',
       'sand-emperor', 'jungle-titan-lord', 'volcanic-titan', 'lich-king',
@@ -644,7 +581,7 @@ export const QUEST_DATABASE = new Map<string, QuestDefinition>([
     name: 'Final Reckoning',
     description: 'Face the most fearsome dungeon lords of Tier 4 and emerge victorious.',
     tierRequired: 4,
-    // All T4 dungeon bosses — one per biome at biomeTier 4
+    // All T4 dungeon bosses â€” one per biome at biomeTier 4
     targetMonsterTypes: [
       'glacial-titan', 'mountain-titan', 'elder-treant-lord', 'stampede-emperor',
       'desert-eternal', 'jungle-ancient-lord', 'inferno-lord', 'undying-lord',
@@ -654,7 +591,7 @@ export const QUEST_DATABASE = new Map<string, QuestDefinition>([
   }],
 ]);
 
-// ─── Socket.IO event maps ─────────────────────────────────────────────────────
+// â”€â”€â”€ Socket.IO event maps â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 /** Events the server sends to clients */
 export interface ServerToClientEvents {
@@ -662,9 +599,9 @@ export interface ServerToClientEvents {
   'state:sync': (snapshot: NodeSnapshot) => void;
   /** Authoritative world snapshot broadcast every server tick */
   'node:state': (snapshot: NodeSnapshot) => void;
-  /** Immediate result of a crafting attempt — success or reason for failure. */
+  /** Immediate result of a crafting attempt â€” success or reason for failure. */
   'crafting:result': (result: { success: boolean; reason?: string }) => void;
-  /** Sent to a player whose HP reached zero — they are simultaneously respawned server-side. */
+  /** Sent to a player whose HP reached zero â€” they are simultaneously respawned server-side. */
   'player:died': () => void;
   /** Sent when a player unlocks a skill and advances to the next tier. */
   'player:ascended': (tier: number) => void;
@@ -694,7 +631,7 @@ export interface ClientToServerEvents {
   'debug:refreshRecipes': () => void;
 }
 
-// ─── Game balance constants ───────────────────────────────────────────────────
+// â”€â”€â”€ Game balance constants â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export const GAME_CONFIG = {
   /** Logical pixel dimensions of a single node (the scrollable world area) */
@@ -702,16 +639,16 @@ export const GAME_CONFIG = {
   NODE_HEIGHT: 2400,
   /** Half-width of each cardinal gate opening along the border edge */
   GATE_HALF: 160,
-  /** Simulation tick rate in Hz — controls attack timing, AI, movement precision */
+  /** Simulation tick rate in Hz â€” controls attack timing, AI, movement precision */
   LOGIC_TICK_RATE: 10,
-  /** State broadcast rate in Hz — controls how often clients receive snapshots */
+  /** State broadcast rate in Hz â€” controls how often clients receive snapshots */
   BROADCAST_TICK_RATE: 5,
   /** Player movement speed in pixels per second */
   PLAYER_SPEED: 120,
   /** Maximum number of monsters alive in a node at any time */
   MONSTERS_PER_NODE: 12,
 
-  // ── Player base stats ────────────────────────────────────────────────────────
+  // â”€â”€ Player base stats â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   PLAYER_MAX_HP:  100,
   PLAYER_ATTACK:  15,  // damage per hit (before plating)
   PLAYER_PLATING: 2,
@@ -728,11 +665,11 @@ export const GAME_CONFIG = {
   /** Monster OOC regen rate as a percentage of maxHp per second */
   MONSTER_REGEN_RATE: 20,
 
-  // ── Spawn ─────────────────────────────────────────────────────────────────────
+  // â”€â”€ Spawn â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   /** Minimum pixel distance between two monsters at spawn time */
   MONSTER_MIN_SPAWN_DIST: 120,
 
-  // ── AoE splash ────────────────────────────────────────────────────────────────
+  // â”€â”€ AoE splash â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   /** Pixel radius of the empowered-attack splash, centered on the primary target. */
   EMPOWERED_AOE_RADIUS: 80,
   /**
@@ -742,7 +679,7 @@ export const GAME_CONFIG = {
    */
   EMPOWERED_AOE_MULT: 0.5,
 
-  // ── Biome XP / recipe unlock system ──────────────────────────────────────
+  // â”€â”€ Biome XP / recipe unlock system â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   /**
    * XP needed to reach level 1. Higher levels cost BASE * level^EXPONENT total XP.
    * Use biomeXpForLevel(n) from this package to compute thresholds.
@@ -753,36 +690,43 @@ export const GAME_CONFIG = {
    * Tune alongside BIOME_XP_BASE and BIOME_XP_BY_NODE_TIER.
    */
   BIOME_XP_EXPONENT: 1.7,
-  /** XP granted per kill, indexed by the node's biomeTier (0–5). */
+  /** @deprecated No longer used by the rewards system â€” see BIOME_XP_ESSENCE_MULT. */
   BIOME_XP_BY_NODE_TIER: [25, 10, 20, 35, 55, 80] as unknown as readonly number[],
+  /**
+   * Per-kill biome XP = round(monster.essence Ã— BIOME_XP_ESSENCE_MULT[biomeTier]).
+   * Monsters with an explicit rewards.biomeXp bypass this multiplier.
+   * Targets: T0 clearing ~20 kills, T1 ~5 min (40 kills), T2 ~15 min (120 kills).
+   * T3+ will be rebalanced separately.
+   */
+  BIOME_XP_ESSENCE_MULT: [1.0, 2.0, 1.1, 1.0, 1.0, 1.0] as unknown as readonly number[],
   /** Maximum biome level attainable at each playerTier (index = playerTier). T2 recipes start at level 6. */
   BIOME_LEVEL_CAP_BY_TIER: [2, 5, 10, 15, 20, 25, 30, 35] as unknown as readonly number[],
 } as const;
 
 /**
  * Total XP required to reach biome level `n` (from 0).
- * Formula: round(BASE × n ^ EXPONENT)
+ * Formula: round(BASE Ã— n ^ EXPONENT)
  * Example with defaults (BASE=80, EXP=1.7):
- *   Lv 1 →   80 XP   (8 T1 kills)
- *   Lv 2 →  260 XP   (26 T1 kills total)
- *   Lv 3 →  518 XP   (52 T1 kills total)
- *   Lv 4 →  845 XP   (85 T1 kills total)
- *   Lv 6 → 1831 XP   (92 T2 kills total)
- *   Lv 9 → 3848 XP   (192 T2 kills total)
+ *   Lv 1 â†’   80 XP   (8 T1 kills)
+ *   Lv 2 â†’  260 XP   (26 T1 kills total)
+ *   Lv 3 â†’  518 XP   (52 T1 kills total)
+ *   Lv 4 â†’  845 XP   (85 T1 kills total)
+ *   Lv 6 â†’ 1831 XP   (92 T2 kills total)
+ *   Lv 9 â†’ 3848 XP   (192 T2 kills total)
  */
 export function biomeXpForLevel(n: number): number {
   if (n <= 0) return 0;
   return Math.round(GAME_CONFIG.BIOME_XP_BASE * Math.pow(n, GAME_CONFIG.BIOME_XP_EXPONENT));
 }
 
-/** Maps biomeGroup → biomeTier, derived from NODE_BIOMES. */
+/** Maps biomeGroup â†’ biomeTier, derived from NODE_BIOMES. */
 export const BIOME_TIER_BY_GROUP: Record<string, number> = Object.fromEntries(
   Object.values(NODE_BIOMES).map(v => [v.biomeGroup, v.biomeTier]),
 );
 
 /**
  * Returns the maximum biome level a player of `playerTier` can reach.
- * Cap = playerTier × 4, minimum 4. Clearing is always capped at 4.
+ * Cap = playerTier Ã— 4, minimum 4. Clearing is always capped at 4.
  */
 export function biomeLevelCap(playerTier: number, biomeGroup: string): number {
   if (biomeGroup === 'clearing') return 4;
