@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import type { PlayerState } from '@mmo-idle/shared';
+import type { PlayerSnapshot } from '@mmo-idle/shared';
 import { TEST_ROOM_NODE_ID } from '@mmo-idle/shared';
 import { hudBus } from '../hudBus';
 
@@ -23,7 +23,7 @@ const div = (label: string):                  DebugEntry => ({ kind: 'divider', 
 
 // ── Section builders ──────────────────────────────────────────────────────────
 
-function buildCadenceSection(p: PlayerState): DebugSection {
+function buildCadenceSection(p: PlayerSnapshot): DebugSection {
   const count     = p.cadenceCount;
   const threshold = p.cadenceThreshold;
   const armed     = p.cadenceEmpoweredArmed;
@@ -60,7 +60,7 @@ function buildCadenceSection(p: PlayerState): DebugSection {
   return { id: 'cadence', label: 'CADENCE', entries };
 }
 
-function buildPlayerSection(p: PlayerState): DebugSection {
+function buildPlayerSection(p: PlayerSnapshot): DebugSection {
   const sinceAtk = p.lastAttackAt > 0 ? `${Date.now() - p.lastAttackAt}ms ago` : '—';
   return {
     id: 'player', label: 'PLAYER',
@@ -80,7 +80,7 @@ function buildPlayerSection(p: PlayerState): DebugSection {
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
-interface Props { player: PlayerState | null; }
+interface Props { player: PlayerSnapshot | null; }
 
 function fmt(v: DebugValue): string {
   if (v === null || v === undefined) return '—';

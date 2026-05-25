@@ -1,7 +1,8 @@
 import type { World } from '../world/World';
 import type { MonsterEntity } from '../ecs/components/monster';
-import { distanceSq, vectorTo, zeroMotion } from '@mmo-idle/shared';
+import { distanceSq } from '@mmo-idle/shared';
 import { NODE_REGISTRY } from '../world/nodeRegistry';
+import { setEntityMotion, stopEntity } from './movement';
 
 const NODE_MARGIN = 40;
 
@@ -43,8 +44,7 @@ export function updateAutoTargets(world: World) {
     let bestDist = Infinity;
 
     for (const monster of monsters) {
-      const ai = monster.controlsMonster;
-      const aggroedOnPlayer = ai.aggroTargetId === player.isPlayer.id;
+      const aggroedOnPlayer = monster.hasAggroTarget?.playerId === player.isPlayer.id;
       const d = distanceSq(monster.hasPosition.current, playerPos);
 
       if (aggroedOnPlayer) {
@@ -82,12 +82,12 @@ export function updateAutoTargets(world: World) {
           targetPos.x - (dx / dist) * idealDist,
           targetPos.y - (dy / dist) * idealDist,
         );
-        player.isMoving.motion = vectorTo(playerPos, pos);
+        setEntityMotion(world, player, pos);
         continue;
       }
 
       if (dist <= maxFireDist) {
-        player.isMoving.motion = zeroMotion();
+        stopEntity(world, player);
         continue;
       }
 
@@ -97,13 +97,13 @@ export function updateAutoTargets(world: World) {
         targetPos.x - (dx / dist) * idealDist,
         targetPos.y - (dy / dist) * idealDist,
       );
-      player.isMoving.motion = vectorTo(playerPos, pos);
+      setEntityMotion(world, player, pos);
       continue;
     }
 
     // Within attack range — hold position, no need to step closer.
     if (distSqV <= attackRange * attackRange) {
-      player.isMoving.motion = zeroMotion();
+      stopEntity(world, player);
       continue;
     }
 
@@ -115,6 +115,6 @@ export function updateAutoTargets(world: World) {
       x: targetPos.x - (dx / dist) * stopDist,
       y: targetPos.y - (dy / dist) * stopDist,
     };
-    player.isMoving.motion = vectorTo(playerPos, targetPoint);
+    setEntityMotion(world, player, targetPoint);
   }
 }

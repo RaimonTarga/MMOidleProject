@@ -13,6 +13,8 @@ import { applyPlayerAoe } from '../../aoeDamage';
 import type { UsesReload } from '@mmo-idle/shared';
 import type { PlayerEntity } from '../../../ecs/components/player';
 import type { MonsterEntity } from '../../../ecs/components/monster';
+import { setAggroTarget, setAttackTarget } from '../../targeting';
+import { markEngaged } from '../../engagement';
 
 const DEFAULT_LASER_DAMAGE_PER_TICK_PCT = 0.15;
 const DEFAULT_LASER_HEAT_PER_TICK = 2;
@@ -52,7 +54,7 @@ export function updateReloadT3(world: World, dt: number, now: number = Date.now(
 
 export function getSnipeReady(entity: PlayerEntity, world: World): boolean {
   if ((entity.usesSkills.passives['reload.snipe'] ?? 0) <= 0) return false;
-  const targetId = entity.performsAttack.attackTargetId;
+  const targetId = entity.hasAttackTarget?.targetId;
   const target = targetId ? world.getMonsterEntity(targetId) : undefined;
   return !!target && target.hasHealth.hp >= target.hasHealth.maxHp * FULL_HP_THRESHOLD;
 }
@@ -140,7 +142,7 @@ function updateLaserPlayer(
   const coolPerTick = player.usesSkills.passives['reload.laser-cool-per-tick'] ?? DEFAULT_LASER_COOL_PER_TICK;
 
   const target = findNearestTarget(world, player);
-  player.performsAttack.attackTargetId = target?.isMonster.id ?? null;
+  setAttackTarget(world, player, target?.isMonster.id ?? null);
 
   if (target && !reload.laserOverheated) {
     applyLaserTick(world, player, target, now);
@@ -245,11 +247,11 @@ function applyLaserTick(world: World, player: PlayerEntity, target: MonsterEntit
     return;
   }
 
-  const ai = world.getMonsterEntity(target.isMonster.id)?.controlsMonster;
-  if (ai && ai.aggroTargetId === null) {
-    ai.aggroTargetId = player.isPlayer.id;
-    ai.lastAggroAt = now;
-    player.tracksEngagement = now;
+  const monster = world.getMonsterEntity(target.isMonster.id);
+  const ai = monster?.controlsMonster;
+  if (monster && ai && !monster.hasAggroTarget) {
+    setAggroTarget(world, monster, player.isPlayer.id, now);
+    markEngaged(world, player, now);
   }
 }
 

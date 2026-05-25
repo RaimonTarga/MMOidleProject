@@ -5,7 +5,7 @@ import cors from 'cors';
 import path from 'path';
 
 import { World } from './world/World';
-import { GAME_CONFIG, TEST_ROOM_NODE_ID, ESSENCE_TYPES, vectorTo, zeroMotion } from '@mmo-idle/shared';
+import { GAME_CONFIG, TEST_ROOM_NODE_ID, ESSENCE_TYPES } from '@mmo-idle/shared';
 import { unlockSkill } from './systems/skills';
 import { equipItem, unequipItem } from './systems/inventory';
 import { craftRecipe } from './systems/crafting';
@@ -16,14 +16,19 @@ import type {
   NodeSnapshot,
 } from '@mmo-idle/shared';
 import { db, runMigrations } from './db/index';
-import { findOrCreateAccount, getOrCreateCharacter, saveCharacterFromEntity } from './db/playerRepo';
+import { findOrCreateAccount, getOrCreateCharacter, saveCharacter } from './db/playerRepo';
 import { initAllMechanics } from './systems/classes/registry';
 import { initWeaponEffects } from './systems/weaponEffects';
 import { initDefenseSystems } from './systems/defenseSystems';
 import { initDebuffMechanics } from './systems/debuffMechanics';
-import { assembleMonsterSnapshot, diffMonsterRoundTrip, diffPlayerRoundTrip } from './ecs/projection';
 import { IS_DEV } from './env';
 import { assertMarkerInvariants } from './ecs/markerInvariants';
+import { setEntityMotion, stopEntity } from './systems/movement';
+import { setAggroTarget, setAttackTarget } from './systems/targeting';
+import { clearEngagement } from './systems/engagement';
+import { detachComponent } from './ecs/markerHelpers';
+import { syncArchetypeSlices } from './ecs/archetypeSliceSync';
+import { recalculatePlayerEntityStats } from './ecs/playerSnapshotAdapter';
 
 export { IS_DEV };
 
@@ -78,26 +83,8 @@ const socketByAccount = new Map<string, string>();
 
 const world = new World();
 
-// ── WIRE PARITY CHECK (dev only) ──────────────────────
-//
-// Server Phase 4: validate that `decompose → assemble` round-trips every
-// active monster snapshot. A non-empty diff means a slice or projection
-// helper is missing a field; failing fast here prevents broken broadcasts.
+// ── MARKER INVARIANT CHECK (dev only) ─────────────────
 if (IS_DEV) {
-  let totalChecked = 0;
-  const failures: { id: string; fields: string[] }[] = [];
-  for (const e of world.monsterEntities) {
-    const snapshot = assembleMonsterSnapshot(e);
-    const diff = diffMonsterRoundTrip(snapshot);
-    totalChecked++;
-    if (diff.length > 0) failures.push({ id: e.isMonster.id, fields: diff });
-  }
-  if (failures.length > 0) {
-    console.error('[wire-parity] MonsterSnapshot round-trip failed:', failures);
-  } else {
-    console.log(`[wire-parity] MonsterSnapshot round-trip OK (${totalChecked} monsters)`);
-  }
-
   const markerViolations = assertMarkerInvariants(world);
   if (markerViolations.length > 0) {
     console.error('[marker-invariants] Marker/status mismatch:', markerViolations);
@@ -160,7 +147,7 @@ setInterval(() => {
 setInterval(() => {
   for (const [accountId, socketId] of socketByAccount) {
     const player = world.getPlayerEntity(socketId);
-    if (player) saveCharacterFromEntity(db, accountId, player);
+    if (player) saveCharacter(db, accountId, player);
   }
 }, 30_000);
 
@@ -172,25 +159,22 @@ io.on('connection', (socket) => {
   const playerName = (auth.displayName ?? `Hero_${socket.id.slice(0, 5)}`).slice(0, 32);
 
   findOrCreateAccount(db, accId, playerName);
-  const player = getOrCreateCharacter(db, accId, playerName, socket.id);
+  const player = getOrCreateCharacter(db, accId, playerName);
 
   socketByAccount.set(accId, socket.id);
-  world.attachPlayerEntity(player);
+  const entity = world.attachPlayerEntity(player, socket.id);
+  syncArchetypeSlices(world, entity);
+  recalculatePlayerEntityStats(world, entity);
+  syncArchetypeSlices(world, entity);
+  entity.hasHealth.hp = entity.hasHealth.maxHp;
 
-  if (IS_DEV) {
-    const diff = diffPlayerRoundTrip(player);
-    if (diff.length > 0) {
-      console.error(`[wire-parity] PlayerSnapshot round-trip failed for ${player.id}:`, diff);
-    }
-  }
-
-  socket.emit('state:sync', world.buildSnapshot(player.nodeId));
+  socket.emit('state:sync', world.buildSnapshot(entity.hasPosition.nodeId));
 
   socket.on('player:move', ({ x, y }) => {
     const p = world.getPlayerEntity(socket.id);
     if (!p) return;
-    if (p.usesCooldown?.isChanneling) return;
-    p.isMoving.motion = vectorTo(p.hasPosition.current, { x, y });
+    if (p.isChanneling) return;
+    setEntityMotion(world, p, { x, y });
   });
 
   socket.on('player:setAuto', (enabled) => {
@@ -237,17 +221,13 @@ io.on('connection', (socket) => {
 
       p.hasPosition.nodeId = TEST_ROOM_NODE_ID;
       p.hasPosition.current = { x: spawnX, y: spawnY };
-      p.isMoving.motion = zeroMotion();
+      stopEntity(world, p);
       p.usesAutocombat.auto = false;
-      p.performsAttack.attackTargetId = null;
-      if (p.usesCooldown) {
-        p.usesCooldown.isChanneling = false;
-        p.usesCooldown.channelingPct = 0;
-      }
-
-      p.tracksEngagement = 0;
-      for (const e of world.monsterEntities) {
-        if (e.controlsMonster.aggroTargetId === socket.id) e.controlsMonster.aggroTargetId = null;
+      setAttackTarget(world, p, null);
+      detachComponent(world, p, 'isChanneling');
+      clearEngagement(world, p);
+      for (const e of world.aggroedMonsters) {
+        if (e.hasAggroTarget.playerId === socket.id) setAggroTarget(world, e, null, Date.now());
       }
     });
 
@@ -264,7 +244,7 @@ io.on('connection', (socket) => {
 
   socket.on('disconnect', () => {
     const p = world.getPlayerEntity(socket.id);
-    if (p) saveCharacterFromEntity(db, accId, p);
+    if (p) saveCharacter(db, accId, p);
     socketByAccount.delete(accId);
     world.detachPlayerEntity(socket.id);
   });

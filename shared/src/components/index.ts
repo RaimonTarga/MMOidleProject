@@ -18,4 +18,14 @@ export * from './hasFrozen';
 export * from './hasEntropy';
 export * from './hasAshbrandBurn';
 export * from './scriptsBoss';
+export * from './holdsShields';
+export * from './hasAggroTarget';
+export * from './hasAttackTarget';
+export * from './isBossEngaged';
+export * from './hasEmpoweredAttack';
+export * from './isChanneling';
+export * from './hasOverdrive';
+export * from './hasAlignment';
+export * from './inAcChargePhase';
+export * from './inAcDischarge';
 // effects and buffs already exported from shared index separately

@@ -1,5 +1,5 @@
-import type { With } from 'miniplex';
-import type { ServerEntity } from '../entity';
+import type { With } from "miniplex";
+import type { ServerEntity } from "../entity";
 
 /**
  * A miniplex entity carrying per-player combat state and the core typed
@@ -8,24 +8,21 @@ import type { ServerEntity } from '../entity';
  */
 export type PlayerEntity = With<
   ServerEntity,
-  | 'tracksCombat'
-  | 'tracksEngagement'
-  | 'isPlayer'
-  | 'hasPosition'
-  | 'isMoving'
-  | 'hasHealth'
-  | 'dealsDamage'
-  | 'performsAttack'
-  | 'mitigatesDamage'
-  | 'evadesHits'
-  | 'hasStatus'
-  | 'usesAutocombat'
-  | 'tracksProgression'
-  | 'holdsInventory'
-  | 'usesSkills'
-  | 'showsSacred'
+  | "tracksCombat"
+  | "isPlayer"
+  | "hasPosition"
+  | "hasHealth"
+  | "dealsDamage"
+  | "performsAttack"
+  | "mitigatesDamage"
+  | "hasStatus"
+  | "usesAutocombat"
+  | "tracksProgression"
+  | "holdsInventory"
+  | "usesSkills"
+  | "showsSacred"
 >;
 
 export function isPlayerEntity(e: ServerEntity): e is PlayerEntity {
-  return 'isPlayer' in e;
+  return "isPlayer" in e;
 }

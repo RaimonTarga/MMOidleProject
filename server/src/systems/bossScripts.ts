@@ -24,6 +24,7 @@ import type { World } from '../world/World';
 import type { MonsterEntity } from '../ecs/components/monster';
 import type { ActiveBossEffect, ScriptsBoss } from '@mmo-idle/shared';
 import { initScriptsBoss } from '@mmo-idle/shared';
+import { attachComponent } from '../ecs/markerHelpers';
 
 export type { ScriptsBoss, BossRuntimeState, ActiveBossEffect } from '@mmo-idle/shared';
 export { initScriptsBoss, initBossState } from '@mmo-idle/shared';
@@ -38,11 +39,11 @@ export function updateBossScripts(world: World, dt: number): void {
     const script = def.bossScript;
     const state = e.scriptsBoss!;
 
-    if (e.controlsMonster.aggroTargetId !== null) state.engaged = true;
+    if (e.hasAggroTarget) attachComponent(world, e, 'isBossEngaged', {});
 
     tickActiveEffects(state, e, dt);
 
-    if (state.engaged) {
+    if (e.isBossEngaged) {
       if (script.phases)    checkPhaseTransitions(state, script.phases,    e, world);
       if (script.repeating) tickRepeatingActions(state,  script.repeating,  e, world, dt);
     }

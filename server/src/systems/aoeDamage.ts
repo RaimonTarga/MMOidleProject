@@ -3,6 +3,7 @@ import type { MonsterEntity } from '../ecs/components/monster';
 import type { PlayerEntity } from '../ecs/components/player';
 import type { World } from '../world/World';
 import { grantMonsterRewards } from './rewards';
+import { markEngaged } from './engagement';
 
 /**
  * Apply splash AoE damage from a player to all monsters within radius of a
@@ -87,7 +88,7 @@ export function applyMonsterAoe(
     if (player.hasHealth.hp <= 0) {
       world.respawnPlayer(player.isPlayer.id);
     } else {
-      player.tracksEngagement = Date.now();
+      markEngaged(world, player, Date.now());
     }
   }
 }

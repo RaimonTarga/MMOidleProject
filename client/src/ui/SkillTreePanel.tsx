@@ -2,7 +2,7 @@ import { createPortal } from 'react-dom';
 import { useState } from 'react';
 import { SKILL_TREE, canUnlockSkillFromSnapshot } from '@mmo-idle/shared';
 import type { SkillNode, StatEffects } from '@mmo-idle/shared';
-import type { PlayerState } from '@mmo-idle/shared';
+import type { PlayerSnapshot } from '@mmo-idle/shared';
 import { hudBus } from '../hudBus';
 import './skillTree.css';
 
@@ -39,13 +39,13 @@ function tierLabel(tier: number): string {
 
 type NodeStatus = 'unlocked' | 'available' | 'locked';
 
-function getNodeStatus(node: SkillNode, player: PlayerState | null): NodeStatus {
+function getNodeStatus(node: SkillNode, player: PlayerSnapshot | null): NodeStatus {
   if (!player) return 'locked';
   if (player.unlockedSkills.includes(node.id)) return 'unlocked';
   return canUnlockSkillFromSnapshot(player, node.id).ok ? 'available' : 'locked';
 }
 
-function getVisibleNodes(player: PlayerState): Map<number, SkillNode[]> {
+function getVisibleNodes(player: PlayerSnapshot): Map<number, SkillNode[]> {
   const tierMap = new Map<number, SkillNode[]>();
   const classId = player.selectedClass!;
   const sub     = player.selectedSubVariant;
@@ -76,7 +76,7 @@ function SkillNodeCard({
   onHover,
 }: {
   node:     SkillNode;
-  player:   PlayerState | null;
+  player:   PlayerSnapshot | null;
   compact?: boolean;
   onHover:  (node: SkillNode | null) => void;
 }) {
@@ -109,7 +109,7 @@ function SkillNodeCard({
 
 // ── Description panel (sticky bottom) ─────────────────────────────────────────
 
-function NodeDesc({ node, player }: { node: SkillNode | null; player: PlayerState | null }) {
+function NodeDesc({ node, player }: { node: SkillNode | null; player: PlayerSnapshot | null }) {
   if (!node) {
     return (
       <div className="skill-desc skill-desc--empty">
@@ -140,7 +140,7 @@ function ClassSelectionView({
   player,
   onHover,
 }: {
-  player:  PlayerState | null;
+  player:  PlayerSnapshot | null;
   onHover: (node: SkillNode | null) => void;
 }) {
   const pts = player?.skillPoints ?? 0;
@@ -174,7 +174,7 @@ function ProgressionView({
   player,
   onHover,
 }: {
-  player:  PlayerState;
+  player:  PlayerSnapshot;
   onHover: (node: SkillNode | null) => void;
 }) {
   const classId     = player.selectedClass!;
@@ -257,7 +257,7 @@ function ProgressionView({
 // ── Panel ──────────────────────────────────────────────────────────────────────
 
 interface Props {
-  player: PlayerState | null;
+  player: PlayerSnapshot | null;
   onClose: () => void;
 }
 

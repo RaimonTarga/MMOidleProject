@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import type { PlayerState } from '@mmo-idle/shared';
+import type { PlayerSnapshot } from '@mmo-idle/shared';
 import type { ConnectionStatus } from '../hudBus';
 
 const CADENCE_TICKS = 8;
@@ -24,7 +24,7 @@ function CadenceTimeline({ count, threshold, armed }: { count: number; threshold
 }
 
 interface Props {
-  player: PlayerState | null;
+  player: PlayerSnapshot | null;
   status: ConnectionStatus;
 }
 

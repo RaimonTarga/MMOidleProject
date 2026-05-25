@@ -5,21 +5,10 @@ export interface AppliesDots {
   itBaseCd: number;
 }
 
-export function makeAppliesDotsFromSnapshot(snapshot: {
-  targetDotStacks: number;
-}): AppliesDots {
+export function initAppliesDots(): AppliesDots {
   return {
-    targetDotStacks: snapshot.targetDotStacks,
+    targetDotStacks: 0,
     itInitialized:   false,
     itBaseCd:        0,
   };
-}
-
-export function refreshAppliesDotsFromSnapshot(
-  slice: AppliesDots,
-  snapshot: { targetDotStacks: number },
-): void {
-  slice.targetDotStacks = snapshot.targetDotStacks;
-  slice.itInitialized   = false;
-  slice.itBaseCd        = 0;
 }

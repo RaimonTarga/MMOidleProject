@@ -25,7 +25,6 @@ const EXECUTION_MULTIPLIER         = 2.0;    // damage multiplier on execution s
  */
 export function updateCooldownArchetype(world: World, dt: number): void {
   for (const entity of world.cooldownPlayers) {
-    const state  = entity.tracksCombat;
     const cd     = entity.usesCooldown;
 
     // First encounter (or after respawn):
@@ -34,7 +33,6 @@ export function updateCooldownArchetype(world: World, dt: number): void {
       const cdMs = entity.usesSkills.passives['cooldown.empowered-cd-ms'] ?? EXECUTION_COOLDOWN_MS;
       cd.executionCooldownMs = cdMs;
       cd.initialized         = true;
-      cd.executionReady      = false;
       cd.executionCooldownPct = 0;
       console.log(`[Cooldown] ${entity.isPlayer.id}: execution cycle started (${cdMs}ms)`);
       continue;
@@ -46,15 +44,14 @@ export function updateCooldownArchetype(world: World, dt: number): void {
     }
 
     // Cycle expired and no empowered attack pending → arm execution.
-    if (cd.executionCooldownMs <= 0 && !isEmpoweredAttack(state)) {
-      setEmpoweredAttack(state);
+    if (cd.executionCooldownMs <= 0 && !isEmpoweredAttack(entity)) {
+      setEmpoweredAttack(world, entity);
       console.log(`[Cooldown] ${entity.isPlayer.id}: execution ready!`);
     }
 
-    // Mirror to PlayerSnapshot so the client can display preparation progress.
+    // Mirror to the entity slice so projection can expose preparation progress.
     const cdMs = entity.usesSkills.passives['cooldown.empowered-cd-ms'] ?? EXECUTION_COOLDOWN_MS;
-    cd.executionReady       = isEmpoweredAttack(state);
-    cd.executionCooldownPct = cd.executionReady
+    cd.executionCooldownPct = isEmpoweredAttack(entity)
       ? 100
       : Math.round((1 - cd.executionCooldownMs / cdMs) * 100);
   }

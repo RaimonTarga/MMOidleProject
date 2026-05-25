@@ -19,7 +19,7 @@ import type { EquipmentMap, EssenceType } from '../items';
 import type { PassiveMap } from '../passives';
 import type { PlayerBuff } from './buffs';
 import type { SubVariant } from '../skillTree';
-import type { CombatArchetype, MonsterAIState, ShieldState } from '../types/combat';
+import type { CombatArchetype, MonsterAIState } from '../types/combat';
 
 // ─── Shared by players and monsters ──────────────────────────────────────────
 
@@ -44,8 +44,6 @@ export interface HasHealth {
   maxHp: number;
   /** Optional regen rate (px/s); only players currently use this. */
   hpRegen?: number;
-  /** Optional shield stack; only players currently use this. */
-  shields?: ShieldState[];
 }
 
 /** Outgoing damage values and visual attack style. */
@@ -61,7 +59,6 @@ export interface PerformsAttack {
   attackRange: number;
   attackCooldown: number;
   lastAttackAt: number;
-  attackTargetId: string | null;
 }
 
 /** Flat plating + percentage damage reduction. */

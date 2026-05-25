@@ -135,7 +135,7 @@ Register via `registerCombatListener`. `CombatContext` is a mutable bag — hand
 
 **Combat event queue:** `world.pushEvent(nodeId, event)` emits `player-hit`/`player-kill` after each attack. `world.buildSnapshot` flushes once per node per broadcast. Do **not** use per-tick booleans on `PlayerState` for animation — use `pushEvent`.
 
-**Retaliation aggro:** On player hit, if monster has no aggro target, `combat.ts` sets `ai.aggroTargetId` immediately. `ai.ts` never overwrites existing aggro.
+**Retaliation aggro:** On player hit, if monster has no `hasAggroTarget` component, `combat.ts` attaches one immediately. `ai.ts` never overwrites existing aggro.
 
 ### AoE damage (`aoeDamage.ts`)
 
@@ -146,7 +146,7 @@ AoE bypasses the combat pipeline intentionally. Every empowered hit auto-trigger
 
 ### Monster AI (`ai.ts`)
 
-Aggro acquisition (`findAggro`) only runs when `ai.aggroTargetId === null` — retaliation aggro is never overwritten. Retention: cleared only on node change, disconnect, or leash break.
+Aggro acquisition (`findAggro`) only runs when `hasAggroTarget` is absent — retaliation aggro is never overwritten. Retention: cleared only on node change, disconnect, or leash break.
 
 **Kite prevention:** `kiteTimer` accumulates while chasing. After `KITE_GRACE_MS` (500 ms) speed ramps at `KITE_RAMP_RATE` (1.5×/s) up to `KITE_MAX_MULT` (6.0×), floored at `KITE_MIN_SPEED` (150). Timer decays at `KITE_DECAY_RATE` (2.0×) while monster is in attack range. Resets on attack range entry or aggro drop.
 
@@ -481,10 +481,12 @@ T1 bosses: 400–700 HP, 14–22 ATK. Jungle first appears T2; ex-jungle T1 node
 
 ### ECS conventions (server)
 
-- **Component shapes live in `shared/src/components/`** — slice interfaces, status helpers, marker components, and pure factories (`makeUsesCadenceFromSnapshot`, etc.). Import from `@mmo-idle/shared`; do not add server re-export shims.
-- **Server owns miniplex wiring** — `ServerEntity` in `server/src/ecs/entity.ts`, typed queries on `World.ts` (`playerEntities`, `dottedMonsters`, `bossScriptedMonsters`, …), and `projection.ts` assemble/decompose at wire boundaries only.
-- **Entity-native game logic** — systems mutate slice fields on `PlayerEntity` / `MonsterEntity` directly. No `withPlayerSnapshotDraft` round-trip. DB hydrate may use `recalculatePlayerStatsFromSnapshot` / `equipItemOnSnapshot` before entity attach.
-- **Component presence gates archetypes** — `if (entity.usesCadence)`, not `combatArchetype === 'cadence'`. Same for status iteration: attach a marker (`hasDot`, `hasDetonation`, …) when applying a tick-driven effect; iterate the narrow query; detach when the effect expires.
+- **Component shapes live in `shared/src/components/`** — slice interfaces, status helpers, marker components, and pure factories (`initUsesCadence`, etc.). Import from `@mmo-idle/shared`; do not add server re-export shims.
+- **Server owns miniplex wiring** — `ServerEntity` in `server/src/ecs/entity.ts`, typed queries on `World.ts` (`playerEntities`, `dottedMonsters`, `bossScriptedMonsters`, …), and `projection.ts` assembles legacy wire snapshots only at the broadcast boundary.
+- **Entity-native game logic** — systems mutate slice fields on `PlayerEntity` / `MonsterEntity` directly. No snapshot round-trip for stat recalc, archetype slice sync, DB hydrate, persistence, or monster spawn.
+- **Persistence is component-shaped** — `characters` stores one JSON blob per persisted player slice (`isPlayer`, `hasPosition`, `hasHealth`, `tracksProgression`, `holdsInventory`, `usesSkills`). Runtime-only slices and `usesSkills.passives` are rebuilt on attach/recalc, not persisted.
+- **Component presence gates behavior** — `if (entity.usesCadence)`, not `combatArchetype === 'cadence'`; `entity.isMoving` exists only while motion is active; `hasAttackTarget` / `hasAggroTarget` exist only while a target is active; shield/evasion/channel/empowered/boss-engaged states are presence components, not disabled sentinels inside always-present slices.
+- **Detach absent behavior promptly** — use `attachComponent` / `detachComponent` (or focused helpers like `setEntityMotion`, `stopEntity`, `setAttackTarget`, `setAggroTarget`) when behavior starts/stops. Do not encode absence as zero motion, empty shield arrays, null target ids, false channel flags, or zero-duration sub-state.
 - **Lookup-only status effects** stay in `tracksCombat.statusEffects` without markers — see `.cursor/design/status.md`.
 - **`syncPlayerBuffs` is entity-native** — `BuffProjectionContext.player` is `PlayerEntity`; descriptors read slices, not assembled snapshots.
-- **Dev boot checks** — `[wire-parity]` snapshot round-trip + `[marker-invariants]` (`assertMarkerInvariants`) run on server start in dev mode.
+- **Dev boot checks** — `[marker-invariants]` (`assertMarkerInvariants`) runs on server start in dev mode and verifies status markers plus archetype slice presence.

@@ -6,6 +6,7 @@ export * from './monsterDatabase';
 export * from './biomeDatabase';
 export * from './passives';
 export * from './components/effects';
+export * from './registries/effects';
 export * from './components/buffs';
 export * from './systems/stats';
 export * from './systems/skills';
@@ -268,20 +269,6 @@ export interface MonsterSnapshot {
    */
   bossEffects?: string[];
 }
-
-/**
- * @deprecated Use `PlayerSnapshot`. This alias exists only to keep the
- * unmodified client building during the server ECS migration; it is removed
- * by `client.md` C7 after C1–C6 finish migrating client imports.
- */
-export type PlayerState = PlayerSnapshot;
-
-/**
- * @deprecated Use `MonsterSnapshot`. This alias exists only to keep the
- * unmodified client building during the server ECS migration; it is removed
- * by `client.md` C7 after C1–C6 finish migrating client imports.
- */
-export type MonsterState = MonsterSnapshot;
 
 // ─── Node / zone definitions ──────────────────────────────────────────────────
 

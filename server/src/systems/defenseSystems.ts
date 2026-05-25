@@ -10,6 +10,7 @@ import {
 import type { CombatState } from './combatState';
 import { removeStatusEffectStacks } from '@mmo-idle/shared';
 import type { World } from '../world/World';
+import { attachComponent, detachComponent } from '../ecs/markerHelpers';
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
@@ -95,7 +96,7 @@ export function initDefenseSystems(): void {
   registerCombatListener('onDamageTaken', (ctx, _world) => {
     if (ctx.defenderType !== 'player') return;
     const player = ctx.defender;
-    if (player.evadesHits.threshold <= 0) return;
+    if (!player.evadesHits) return;
 
     const state = player.tracksCombat;
 
@@ -133,17 +134,17 @@ export function initDefenseSystems(): void {
     if (ctx.damage <= 0) return;
 
     const player = ctx.defender;
-    const shields = player.hasHealth.shields ?? [];
-    if (shields.length === 0) return;
+    const shieldComponent = player.holdsShields;
+    if (!shieldComponent) return;
 
     let remaining = ctx.damage;
-    for (const shield of shields) {
+    for (const shield of shieldComponent.shields) {
       if (remaining <= 0) break;
       const absorbed = Math.min(shield.amount, remaining);
       shield.amount -= absorbed;
       remaining     -= absorbed;
     }
-    player.hasHealth.shields = shields.filter(s => s.amount > 0);
+    shieldComponent.shields = shieldComponent.shields.filter(s => s.amount > 0);
     ctx.damage     = Math.max(0, remaining);
   });
 
@@ -194,14 +195,18 @@ export function initDefenseSystems(): void {
  * @param amount     Shield HP. Caller is responsible for scaling by maxHp if needed.
  * @param durationMs Duration in ms. 0 or negative = permanent until fully depleted.
  */
-export function applyShield(player: PlayerEntity, amount: number, durationMs: number): void {
+export function applyShield(world: World, player: PlayerEntity, amount: number, durationMs: number): void {
   if (amount <= 0) return;
-  const shields = player.hasHealth.shields ??= [];
-  shields.push({
+  const shield = {
     amount,
     maxAmount: amount,
     remainingMs: durationMs > 0 ? durationMs : -1,
-  });
+  };
+  if (player.holdsShields) {
+    player.holdsShields.shields.push(shield);
+  } else {
+    attachComponent(world, player, 'holdsShields', { shields: [shield] });
+  }
 }
 
 /**
@@ -209,11 +214,12 @@ export function applyShield(player: PlayerEntity, amount: number, durationMs: nu
  * e.g. applyShieldPercent(player, 0.20, 5000) → 20% maxHp shield for 5 s.
  */
 export function applyShieldPercent(
+  world: World,
   player: PlayerEntity,
   pct: number,
   durationMs: number,
 ): void {
-  applyShield(player, Math.round(player.hasHealth.maxHp * pct), durationMs);
+  applyShield(world, player, Math.round(player.hasHealth.maxHp * pct), durationMs);
 }
 
 /**
@@ -222,9 +228,8 @@ export function applyShieldPercent(
  * expire mid-tick are gone before they can absorb damage in that tick.
  */
 export function updateShields(world: World, dt: number): void {
-  for (const player of world.playerEntities) {
-    const shields = player.hasHealth.shields ?? [];
-    if (shields.length === 0) continue;
+  for (const player of world.shieldedPlayers) {
+    const shields = player.holdsShields.shields;
 
     for (const shield of shields) {
       if (shield.remainingMs > 0) {
@@ -232,9 +237,14 @@ export function updateShields(world: World, dt: number): void {
       }
     }
 
-    player.hasHealth.shields = shields.filter(
+    const active = shields.filter(
       s => s.amount > 0 && (s.remainingMs === -1 || s.remainingMs > 0),
     );
+    if (active.length > 0) {
+      player.holdsShields.shields = active;
+    } else {
+      detachComponent(world, player, 'holdsShields');
+    }
   }
 }
 
@@ -256,8 +266,8 @@ export function updateDefensiveSystems(world: World, dt: number, now: number): v
     const cs = player.tracksCombat;
 
     const lastCombatAt = player.tracksEngagement;
-    const inCombat = player.performsAttack.attackTargetId !== null ||
-      (now - lastCombatAt) < GAME_CONFIG.COMBAT_REGEN_DELAY;
+    const inCombat = player.hasAttackTarget !== undefined ||
+      (lastCombatAt !== undefined && (now - lastCombatAt) < GAME_CONFIG.COMBAT_REGEN_DELAY);
 
     // ── Damage debt drain ──────────────────────────────────────────────────
     // Deferred damage from hit-to-DoT conversion. Fires once per second to
@@ -326,7 +336,7 @@ export function updateDefensiveSystems(world: World, dt: number, now: number): v
     if (shieldPct > 0 && shieldIntervalMs > 0 && inCombat) {
       if (!isCooldownActive(cs, 'shieldRegen')) {
         const shieldDurationMs = player.usesSkills.passives['defense.shield-duration-ms'] ?? -1;
-        applyShieldPercent(player, shieldPct, shieldDurationMs);
+        applyShieldPercent(world, player, shieldPct, shieldDurationMs);
         setCooldown(cs, 'shieldRegen', shieldIntervalMs);
       }
     }
@@ -356,7 +366,7 @@ export function updateDefensiveSystems(world: World, dt: number, now: number): v
     // While the player has an active attack target, applies defense.in-combat-regen-pct
     // fraction of the out-of-combat regen rate. Antiheal applies.
     const inCombatRegenPct = player.usesSkills.passives['defense.in-combat-regen-pct'] ?? 0;
-    if (inCombatRegenPct > 0 && player.performsAttack.attackTargetId !== null) {
+    if (inCombatRegenPct > 0 && player.hasAttackTarget !== undefined) {
       const baseRegenPerMs = player.hasHealth.maxHp * ((player.hasHealth.hpRegen ?? 0) / 100) / 1000;
       applyHealToPlayer(player, cs, baseRegenPerMs * inCombatRegenPct * dt);
     }

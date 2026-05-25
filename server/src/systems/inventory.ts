@@ -1,32 +1,9 @@
-import type { PlayerSnapshot, EquipmentSlot } from '@mmo-idle/shared';
+import type { EquipmentSlot } from '@mmo-idle/shared';
 import { ITEM_DATABASE } from '@mmo-idle/shared';
-import { recalculatePlayerStatsFromSnapshot } from './stats';
 import type { World } from '../world/World';
 import type { PlayerEntity } from '../ecs/components/player';
 import { syncArchetypeSlices } from '../ecs/archetypeSliceSync';
 import { recalculatePlayerEntityStats } from '../ecs/playerSnapshotAdapter';
-
-/** DB hydrate boundary — equips on a wire snapshot before entity attach. */
-export function equipItemOnSnapshot(player: PlayerSnapshot, definitionId: string): boolean {
-  const def = ITEM_DATABASE.get(definitionId);
-  if (!def) return false;
-
-  const idx = player.inventory.indexOf(definitionId);
-  if (idx === -1) return false;
-
-  const slot = def.slot;
-  player.inventory = [
-    ...player.inventory.slice(0, idx),
-    ...player.inventory.slice(idx + 1),
-  ];
-
-  const displaced = player.equipment[slot];
-  if (displaced) player.inventory = [...player.inventory, displaced];
-
-  player.equipment[slot] = definitionId;
-  recalculatePlayerStatsFromSnapshot(player);
-  return true;
-}
 
 export function equipItem(world: World, entity: PlayerEntity, definitionId: string): boolean {
   const def = ITEM_DATABASE.get(definitionId);

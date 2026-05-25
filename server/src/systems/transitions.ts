@@ -1,7 +1,8 @@
 import type { World } from '../world/World';
 import type { NodeDirection } from '@mmo-idle/shared';
-import { GAME_CONFIG, pointFromMotion, vectorTo, zeroMotion } from '@mmo-idle/shared';
+import { GAME_CONFIG, pointFromMotion } from '@mmo-idle/shared';
 import { NODE_REGISTRY } from '../world/nodeRegistry';
+import { setEntityMotion, stopEntity } from './movement';
 
 // Pixels from the boundary that fire a transition. Must match GATE_THICK in GameScene.
 const EXIT_TRIGGER = 20;
@@ -54,7 +55,9 @@ export function updateTransitions(world: World): void {
 
     if (!targetNodeId) {
       // Solid wall (or not in gate zone) — clamp player back inside.
-      const target = pointFromMotion(position.current, entity.isMoving.motion);
+      const target = entity.isMoving
+        ? pointFromMotion(position.current, entity.isMoving.motion)
+        : position.current;
       if (direction === 'west') {
         position.current.x = EXIT_TRIGGER + 1;
         target.x = Math.max(EXIT_TRIGGER + 1, target.x);
@@ -71,7 +74,7 @@ export function updateTransitions(world: World): void {
         position.current.y = H - EXIT_TRIGGER - 1;
         target.y = Math.min(H - EXIT_TRIGGER - 1, target.y);
       }
-      entity.isMoving.motion = vectorTo(position.current, target);
+      setEntityMotion(world, entity, target);
       continue;
     }
 
@@ -100,7 +103,7 @@ export function updateTransitions(world: World): void {
         break;
     }
 
-    entity.isMoving.motion = zeroMotion();
+    stopEntity(world, entity);
 
     console.log(`[trans] ✓ ${entity.isPlayer.name} ${fromNodeId} → ${targetNodeId} via ${direction}  pos=(${Math.round(position.current.x)}, ${Math.round(position.current.y)})`);
   }

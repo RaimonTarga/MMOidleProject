@@ -170,7 +170,7 @@ function updateSacredCrossBuff(world: World): void {
       setFlag(state, SACRED_READY, true);
     }
 
-    // Mirror to PlayerSnapshot for HUD display
+    // Mirror to the entity slice for HUD projection.
     const isBuff = getFlag(state, SACRED_BUFF_FLAG);
     player.showsSacred.sacredBuffActive = isBuff;
     player.showsSacred.sacredBuffPct    = isBuff

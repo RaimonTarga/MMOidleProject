@@ -31,7 +31,7 @@ const HEMORRHAGE_TICK_MS  = 1_000;
 const HEMORRHAGE_MULT     = 1.5;
 
 // ── Init — registers combat pipeline listeners ─────────────────────────────────
-// Per-archetype state (count/threshold/empoweredArmed/speedStacks/seqDmg/charge/echo)
+// Per-archetype state (count/threshold/speedStacks/seqDmg/charge/echo)
 // lives on the usesCadence slice (see ecs/components/usesCadence.ts), not on
 // CombatState counters/resources. The CombatState empowered-attack flag is
 // shared across archetypes and is still set via setEmpoweredAttack.
@@ -89,8 +89,6 @@ export function initCadenceArchetype(): void {
     // Empowered hits do NOT increment the cadence counter.
 
     if (ctx.metadata['empoweredAttack']) {
-      cadence.empoweredArmed = false;
-
       // Double Time: multiply again for extra hits (already multiplied once above)
       const triggerCount = Math.max(1, Math.round(passives['cadence.trigger-count'] ?? 1));
       if (triggerCount > 1) {
@@ -229,9 +227,8 @@ export function initCadenceArchetype(): void {
     // threshold is the full cycle length N. After (N-1) normal hits the counter
     // arms empowered for the next attack.
     if (cadence.count >= cadence.threshold - 1) {
-      setEmpoweredAttack(state);
+      setEmpoweredAttack(world, entity);
       cadence.count = 0;
-      cadence.empoweredArmed = true;
     }
 
   });

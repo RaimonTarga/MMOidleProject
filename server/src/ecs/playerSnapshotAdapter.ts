@@ -4,12 +4,16 @@
 import { canUnlockSkill, recalculatePlayerStats } from '@mmo-idle/shared';
 import type { World } from '../world/World';
 import type { PlayerEntity } from './components/player';
+import { attachComponent, detachComponent } from './markerHelpers';
 
-export function recalculatePlayerEntityStats(_world: World, entity: PlayerEntity): void {
+export function recalculatePlayerEntityStats(world: World, entity: PlayerEntity): void {
+  const evadesHits = entity.evadesHits
+    ? { ...entity.evadesHits }
+    : { threshold: 0, count: 0 };
   recalculatePlayerStats({
     dealsDamage:     entity.dealsDamage,
     mitigatesDamage: entity.mitigatesDamage,
-    evadesHits:      entity.evadesHits,
+    evadesHits,
     performsAttack:  entity.performsAttack,
     hasHealth:       entity.hasHealth,
     hasPosition:     entity.hasPosition,
@@ -22,6 +26,11 @@ export function recalculatePlayerEntityStats(_world: World, entity: PlayerEntity
       entity.usesCadence.count       = 0;
     },
   });
+  if (evadesHits.threshold > 0) {
+    attachComponent(world, entity, 'evadesHits', evadesHits);
+  } else {
+    detachComponent(world, entity, 'evadesHits');
+  }
 }
 
 export function canUnlockEntitySkill(

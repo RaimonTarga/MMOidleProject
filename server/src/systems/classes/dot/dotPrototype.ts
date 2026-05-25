@@ -111,10 +111,11 @@ export function updateDotArchetype(world: World, dt: number): void {
   // ── Mirror target stacks to the dot component and the HUD snapshot ──────────
   for (const entity of world.dotPlayers) {
     const dot    = entity.appliesDots;
-    if (!entity.performsAttack.attackTargetId) {
+    const targetId = entity.hasAttackTarget?.targetId;
+    if (!targetId) {
       dot.targetDotStacks = 0;
     } else {
-      const targetState   = world.getMonsterEntity(entity.performsAttack.attackTargetId)?.tracksCombat;
+      const targetState   = world.getMonsterEntity(targetId)?.tracksCombat;
       dot.targetDotStacks = targetState ? getTotalStacks(targetState, DOT_EFFECT_ID) : 0;
     }
   }

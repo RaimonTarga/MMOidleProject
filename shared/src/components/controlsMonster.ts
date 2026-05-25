@@ -9,7 +9,6 @@ export interface ControlsMonster {
   leashRange: number;
   idleMinMs: number;
   idleMaxMs: number;
-  aggroTargetId: string | null;
   /** Timestamp of the last tick this monster had an active aggro target. */
   lastAggroAt: number;
   /** Unmodified speed from the database — kite ramp restores to this. */

@@ -1,28 +1,56 @@
-import type { ServerEntity } from './entity';
-import type { World } from '../world/World';
-import type { CombatState } from '../systems/combatState';
-import { getStatusEffect, getStatusEffects } from '@mmo-idle/shared';
+import type { ServerEntity } from "./entity";
+import type { World } from "../world/World";
+import type { CombatState } from "../systems/combatState";
+import { getStatusEffect, getStatusEffects } from "@mmo-idle/shared";
 
 const MARKER = {};
 
 type MarkerKey =
-  | 'hasDetonation'
-  | 'hasHemorrhage'
-  | 'hasDot'
-  | 'hasConflagration'
-  | 'hasChill'
-  | 'hasFrozen'
-  | 'hasEntropy'
-  | 'hasAshbrandBurn';
+  | "hasDetonation"
+  | "hasHemorrhage"
+  | "hasDot"
+  | "hasConflagration"
+  | "hasChill"
+  | "hasFrozen"
+  | "hasEntropy"
+  | "hasAshbrandBurn";
 
-export function attachMarker(world: World, entity: ServerEntity, key: MarkerKey): void {
-  if (entity[key]) return;
-  world.ecs.addComponent(entity, key, MARKER);
+export function attachComponent<K extends keyof ServerEntity>(
+  world: World,
+  entity: ServerEntity,
+  key: K,
+  value: NonNullable<ServerEntity[K]>,
+): void {
+  if (entity[key] !== undefined) {
+    entity[key] = value;
+    return;
+  }
+  world.ecs.addComponent(entity, key, value);
 }
 
-export function detachMarker(world: World, entity: ServerEntity, key: MarkerKey): void {
-  if (!entity[key]) return;
+export function detachComponent<K extends keyof ServerEntity>(
+  world: World,
+  entity: ServerEntity,
+  key: K,
+): void {
+  if (entity[key] === undefined) return;
   world.ecs.removeComponent(entity, key);
+}
+
+export function attachMarker(
+  world: World,
+  entity: ServerEntity,
+  key: MarkerKey,
+): void {
+  attachComponent(world, entity, key, MARKER);
+}
+
+export function detachMarker(
+  world: World,
+  entity: ServerEntity,
+  key: MarkerKey,
+): void {
+  detachComponent(world, entity, key);
 }
 
 /** Detach marker when no matching status effect remains on combat state. */
@@ -33,9 +61,8 @@ export function detachMarkerIfNoEffect(
   state: CombatState,
   effectId: string,
 ): void {
-  if (!entity[key]) return;
   if (!getStatusEffect(state, effectId)) {
-    world.ecs.removeComponent(entity, key);
+    detachComponent(world, entity, key);
   }
 }
 
@@ -47,8 +74,7 @@ export function detachMarkerIfNoEffects(
   state: CombatState,
   effectId: string,
 ): void {
-  if (!entity[key]) return;
   if (getStatusEffects(state, effectId).length === 0) {
-    world.ecs.removeComponent(entity, key);
+    detachComponent(world, entity, key);
   }
 }

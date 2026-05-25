@@ -1,42 +1,55 @@
-import type { PlayerSnapshot, MonsterSnapshot, NodeDefinition, CombatEvent, NodeSnapshot } from '@mmo-idle/shared';
-import { GAME_CONFIG, BIOME_DATABASE, TEST_ROOM_NODE_ID } from '@mmo-idle/shared';
-import { updateAutoTargets } from '../systems/autoTarget';
-import { updateMovement } from '../systems/movement';
-import { updateMonsters } from '../systems/ai';
-import { updateCombat } from '../systems/combat';
-import { updateTransitions } from '../systems/transitions';
-import { updateCombatState } from '../systems/combatState';
-import { makeTracksCombat } from '@mmo-idle/shared';
-import { tickAllMechanics } from '../systems/classes/registry';
-import { updateWeaponEffects } from '../systems/weaponEffects';
-import { updateBossScripts } from '../systems/bossScripts';
-import { updateShields, updateDefensiveSystems } from '../systems/defenseSystems';
-import { updateKnockback, type HasKnockback } from '../systems/knockback';
-import { syncPlayerBuffs } from '../systems/buffSync';
+import type {
+  PlayerSnapshot,
+  MonsterSnapshot,
+  NodeDefinition,
+  CombatEvent,
+  NodeSnapshot,
+} from "@mmo-idle/shared";
+import {
+  GAME_CONFIG,
+  BIOME_DATABASE,
+  TEST_ROOM_NODE_ID,
+} from "@mmo-idle/shared";
+import { updateAutoTargets } from "../systems/autoTarget";
+import { updateMovement } from "../systems/movement";
+import { updateMonsters } from "../systems/ai";
+import { updateCombat } from "../systems/combat";
+import { updateTransitions } from "../systems/transitions";
+import { updateCombatState } from "../systems/combatState";
+import { makeTracksCombat } from "@mmo-idle/shared";
+import { tickAllMechanics } from "../systems/classes/registry";
+import { updateWeaponEffects } from "../systems/weaponEffects";
+import { updateBossScripts } from "../systems/bossScripts";
+import {
+  updateShields,
+  updateDefensiveSystems,
+} from "../systems/defenseSystems";
+import { updateKnockback, type HasKnockback } from "../systems/knockback";
+import { syncPlayerBuffs } from "../systems/buffSync";
 import {
   createMonster as createMonsterInWorld,
   spawnMonster as spawnMonsterInWorld,
   respawnPlayer as respawnPlayerInWorld,
   ensurePopulation as ensurePopulationInWorld,
   ensureBoss as ensureBossInWorld,
-} from '../systems/spawning';
-import { updateTestRoomInteract } from '../systems/testRoomInteract';
-import { NODE_REGISTRY } from './nodeRegistry';
-import { IS_DEV } from '../env';
-import { createEcsWorld, type EcsWorld } from '../ecs/world';
-import type { MonsterEntity } from '../ecs/components/monster';
-import { isMonsterEntity } from '../ecs/components/monster';
-import type { PlayerEntity } from '../ecs/components/player';
-import { isPlayerEntity } from '../ecs/components/player';
+} from "../systems/spawning";
+import { updateTestRoomInteract } from "../systems/testRoomInteract";
+import { NODE_REGISTRY } from "./nodeRegistry";
+import { IS_DEV } from "../env";
+import { createEcsWorld, type EcsWorld } from "../ecs/world";
+import type { MonsterEntity } from "../ecs/components/monster";
+import { isMonsterEntity } from "../ecs/components/monster";
+import type { PlayerEntity } from "../ecs/components/player";
+import { isPlayerEntity } from "../ecs/components/player";
 import {
-  decomposePlayerSnapshot,
   assemblePlayerSnapshot,
   assembleMonsterSnapshot,
-} from '../ecs/projection';
-import type { EntityId, ServerEntity } from '../ecs/entity';
+} from "../ecs/projection";
+import type { EntityId, ServerEntity } from "../ecs/entity";
+import type { PersistedPlayerSlices } from "../db/playerRepo";
 
-const TEST_ROOM_TARGET_RESET = 'test-target-reset';
-const TEST_ROOM_TARGET_GAIN_POINT = 'test-target-gain-point';
+const TEST_ROOM_TARGET_RESET = "test-target-reset";
+const TEST_ROOM_TARGET_GAIN_POINT = "test-target-gain-point";
 
 /**
  * Stationary training dummies for the dev test room — one per enemy tier (T0–T4).
@@ -45,11 +58,11 @@ const TEST_ROOM_TARGET_GAIN_POINT = 'test-target-gain-point';
  * walk up to any of them to test animations, range, or sustained damage.
  */
 const TEST_ROOM_TRAINING_DUMMY_TYPES = [
-  'training-dummy-t0',
-  'training-dummy-t1',
-  'training-dummy-t2',
-  'training-dummy-t3',
-  'training-dummy-t4',
+  "training-dummy-t0",
+  "training-dummy-t1",
+  "training-dummy-t2",
+  "training-dummy-t3",
+  "training-dummy-t4",
 ] as const;
 const TEST_ROOM_TRAINING_DUMMY_Y = 240;
 const TEST_ROOM_TRAINING_DUMMY_SPACING = 500;
@@ -67,60 +80,71 @@ export class World {
   readonly ecs: EcsWorld = createEcsWorld();
 
   readonly monsterEntities = this.ecs.with(
-    'controlsMonster',
-    'tracksCombat',
-    'isMonster',
-    'hasPosition',
-    'isMoving',
-    'hasHealth',
-    'dealsDamage',
-    'performsAttack',
-    'mitigatesDamage',
-    'hasAwareness',
-    'hasStatus',
+    "controlsMonster",
+    "tracksCombat",
+    "isMonster",
+    "hasPosition",
+    "hasHealth",
+    "dealsDamage",
+    "performsAttack",
+    "mitigatesDamage",
+    "hasAwareness",
+    "hasStatus",
   );
 
-  readonly knockbackedMonsters = this.monsterEntities.with('hasKnockback');
-  readonly bossScriptedMonsters = this.monsterEntities.with('scriptsBoss');
-  readonly detonatedMonsters = this.monsterEntities.with('hasDetonation');
-  readonly hemorrhagedMonsters = this.monsterEntities.with('hasHemorrhage');
-  readonly dottedMonsters = this.monsterEntities.with('hasDot');
-  readonly conflagrationMonsters = this.monsterEntities.with('hasConflagration');
-  readonly chilledMonsters = this.monsterEntities.with('hasChill');
-  readonly frozenMonsters = this.monsterEntities.with('hasFrozen');
-  readonly entropyMonsters = this.monsterEntities.with('hasEntropy');
-  readonly ashbrandMonsters = this.monsterEntities.with('hasAshbrandBurn');
+  readonly knockbackedMonsters = this.monsterEntities.with("hasKnockback");
+  readonly bossScriptedMonsters = this.monsterEntities.with("scriptsBoss");
+  readonly movingMonsters = this.monsterEntities.with("isMoving");
+  readonly aggroedMonsters = this.monsterEntities.with("hasAggroTarget");
+  readonly attackingMonsters = this.monsterEntities.with("hasAttackTarget");
+  readonly engagedBosses = this.bossScriptedMonsters.with("isBossEngaged");
+  readonly detonatedMonsters = this.monsterEntities.with("hasDetonation");
+  readonly hemorrhagedMonsters = this.monsterEntities.with("hasHemorrhage");
+  readonly dottedMonsters = this.monsterEntities.with("hasDot");
+  readonly conflagrationMonsters =
+    this.monsterEntities.with("hasConflagration");
+  readonly chilledMonsters = this.monsterEntities.with("hasChill");
+  readonly frozenMonsters = this.monsterEntities.with("hasFrozen");
+  readonly entropyMonsters = this.monsterEntities.with("hasEntropy");
+  readonly ashbrandMonsters = this.monsterEntities.with("hasAshbrandBurn");
 
   /**
    * Canonical player query. All required slice components are stamped together
    * in `attachPlayerEntity`, so the return type matches `PlayerEntity`.
    */
   readonly playerEntities = this.ecs.with(
-    'tracksCombat',
-    'tracksEngagement',
-    'isPlayer',
-    'hasPosition',
-    'isMoving',
-    'hasHealth',
-    'dealsDamage',
-    'performsAttack',
-    'mitigatesDamage',
-    'evadesHits',
-    'hasStatus',
-    'usesAutocombat',
-    'tracksProgression',
-    'holdsInventory',
-    'usesSkills',
-    'showsSacred',
+    "tracksCombat",
+    "isPlayer",
+    "hasPosition",
+    "hasHealth",
+    "dealsDamage",
+    "performsAttack",
+    "mitigatesDamage",
+    "hasStatus",
+    "usesAutocombat",
+    "tracksProgression",
+    "holdsInventory",
+    "usesSkills",
+    "showsSacred",
   );
 
-  readonly cadencePlayers  = this.playerEntities.with('usesCadence');
-  readonly energyPlayers   = this.playerEntities.with('usesEnergy');
-  readonly dotPlayers      = this.playerEntities.with('appliesDots');
-  readonly chillingPlayers = this.playerEntities.with('chillsTarget');
-  readonly cooldownPlayers = this.playerEntities.with('usesCooldown');
-  readonly reloadPlayers   = this.playerEntities.with('usesReload');
-  readonly dottedPlayers   = this.playerEntities.with('hasDot');
+  readonly cadencePlayers = this.playerEntities.with("usesCadence");
+  readonly energyPlayers = this.playerEntities.with("usesEnergy");
+  readonly dotPlayers = this.playerEntities.with("appliesDots");
+  readonly chillingPlayers = this.playerEntities.with("chillsTarget");
+  readonly cooldownPlayers = this.playerEntities.with("usesCooldown");
+  readonly reloadPlayers = this.playerEntities.with("usesReload");
+  readonly dottedPlayers = this.playerEntities.with("hasDot");
+  readonly movingPlayers = this.playerEntities.with("isMoving");
+  readonly shieldedPlayers = this.playerEntities.with("holdsShields");
+  readonly evasivePlayers = this.playerEntities.with("evadesHits");
+  readonly engagedPlayers = this.playerEntities.with("tracksEngagement");
+  readonly attackingPlayers = this.playerEntities.with("hasAttackTarget");
+  readonly channelingPlayers = this.cooldownPlayers.with("isChanneling");
+  readonly overdrivenPlayers = this.cooldownPlayers.with("hasOverdrive");
+  readonly alignedPlayers = this.cooldownPlayers.with("hasAlignment");
+  readonly acChargingPlayers = this.energyPlayers.with("inAcChargePhase");
+  readonly acDischargingPlayers = this.energyPlayers.with("inAcDischarge");
   /** Player IDs that died this tick. Drained by the server loop after each tick. */
   pendingDeaths: string[] = [];
   /** Queued combat events per node, flushed into each broadcast snapshot. */
@@ -137,11 +161,11 @@ export class World {
 
   private readonly entityIndex = new Map<EntityId, ServerEntity>();
 
-  constructor(nodeId = 'node-5-5') {
+  constructor(nodeId = "node-5-5") {
     const node = NODE_REGISTRY.get(nodeId);
     if (!node) throw new Error(`Unknown node id: "${nodeId}"`);
     this.nodeId = nodeId;
-    this.node   = node;
+    this.node = node;
     this.wireEntityIndex();
     this.init();
   }
@@ -208,7 +232,12 @@ export class World {
    * All stats and AI parameters come from MONSTER_DATABASE.
    * Returns null if the type ID is unknown.
    */
-  createMonster(nodeId: string, typeId: string, x: number, y: number): MonsterSnapshot | null {
+  createMonster(
+    nodeId: string,
+    typeId: string,
+    x: number,
+    y: number,
+  ): MonsterEntity | null {
     return createMonsterInWorld(this, nodeId, typeId, x, y);
   }
 
@@ -246,14 +275,14 @@ export class World {
     if (e.hasKnockback) {
       e.hasKnockback = kb;
     } else {
-      this.ecs.addComponent(e, 'hasKnockback', kb);
+      this.ecs.addComponent(e, "hasKnockback", kb);
     }
   }
 
   clearMonsterKnockback(id: string): void {
     const e = this.getMonsterEntity(id);
     if (!e || !e.hasKnockback) return;
-    this.ecs.removeComponent(e, 'hasKnockback');
+    this.ecs.removeComponent(e, "hasKnockback");
   }
 
   /**
@@ -269,19 +298,52 @@ export class World {
   // ── PLAYER ENTITY HELPERS ─────────────────────────────
 
   /**
-   * Attach a hydrated `PlayerSnapshot` to the ECS world along with a fresh
-   * `CombatState`. The `combatAt` component starts at 0 (the OOC regen path
-   * treats it as never-engaged, which is correct on fresh connect).
-   *
-   * Returns the entity so callers (the socket connect handler) can keep a
-   * direct reference if they need one.
+   * Attach hydrated player slices to the ECS world with a fresh CombatState.
+   * The socket id is runtime identity; persisted row ids stay in the DB only.
    */
-  attachPlayerEntity(player: PlayerSnapshot): PlayerEntity {
+  attachPlayerEntity(
+    player: PersistedPlayerSlices,
+    socketId: string,
+  ): PlayerEntity {
     const entity: PlayerEntity = {
-      entityId:       player.id,
-      tracksCombat:    makeTracksCombat(),
-      tracksEngagement:       0,
-      ...decomposePlayerSnapshot(player),
+      entityId: socketId,
+      tracksCombat: makeTracksCombat(),
+      isPlayer: {
+        ...player.isPlayer,
+        id: socketId,
+      },
+      hasPosition: player.hasPosition,
+      hasHealth: player.hasHealth,
+      dealsDamage: {
+        attack:      GAME_CONFIG.PLAYER_ATTACK,
+        onHitDamage: 0,
+        attackStyle: 'slash',
+      },
+      performsAttack: {
+        attackRange:    GAME_CONFIG.PLAYER_ATTACK_RANGE,
+        attackCooldown: GAME_CONFIG.PLAYER_ATTACK_COOLDOWN,
+        lastAttackAt:   0,
+      },
+      mitigatesDamage: {
+        plating:         GAME_CONFIG.PLAYER_PLATING,
+        damageReduction: 0,
+      },
+      hasStatus: {
+        activeBuffs: [],
+      },
+      usesAutocombat: {
+        auto: false,
+      },
+      tracksProgression: player.tracksProgression,
+      holdsInventory: player.holdsInventory,
+      usesSkills: {
+        ...player.usesSkills,
+        passives: {},
+      },
+      showsSacred: {
+        sacredBuffActive: false,
+        sacredBuffPct:    0,
+      },
     };
     this.ecs.add(entity);
     return entity;
@@ -331,8 +393,18 @@ export class World {
 
   private initTestRoom(): void {
     const y = GAME_CONFIG.NODE_HEIGHT / 2 - 260;
-    this.createMonster(TEST_ROOM_NODE_ID, TEST_ROOM_TARGET_RESET, GAME_CONFIG.NODE_WIDTH / 2 - 180, y);
-    this.createMonster(TEST_ROOM_NODE_ID, TEST_ROOM_TARGET_GAIN_POINT, GAME_CONFIG.NODE_WIDTH / 2 + 180, y);
+    this.createMonster(
+      TEST_ROOM_NODE_ID,
+      TEST_ROOM_TARGET_RESET,
+      GAME_CONFIG.NODE_WIDTH / 2 - 180,
+      y,
+    );
+    this.createMonster(
+      TEST_ROOM_NODE_ID,
+      TEST_ROOM_TARGET_GAIN_POINT,
+      GAME_CONFIG.NODE_WIDTH / 2 + 180,
+      y,
+    );
     this.ensureTestRoomBoss(0);
     this.ensureTrainingDummies();
   }
@@ -349,8 +421,10 @@ export class World {
       present.add(e.isMonster.monsterTypeId);
     }
 
-    const count   = TEST_ROOM_TRAINING_DUMMY_TYPES.length;
-    const startX  = GAME_CONFIG.NODE_WIDTH / 2 - (TEST_ROOM_TRAINING_DUMMY_SPACING * (count - 1)) / 2;
+    const count = TEST_ROOM_TRAINING_DUMMY_TYPES.length;
+    const startX =
+      GAME_CONFIG.NODE_WIDTH / 2 -
+      (TEST_ROOM_TRAINING_DUMMY_SPACING * (count - 1)) / 2;
     for (let i = 0; i < count; i++) {
       const typeId = TEST_ROOM_TRAINING_DUMMY_TYPES[i];
       if (present.has(typeId)) continue;
@@ -366,7 +440,10 @@ export class World {
   private ensureCurrentTestRoomBoss(): void {
     // If a previously engaged boss has been killed/removed, clear the lock so a
     // fresh dummy can be rolled for the player's current tier.
-    if (this.testRoomEngagedBossId && !this.hasMonster(this.testRoomEngagedBossId)) {
+    if (
+      this.testRoomEngagedBossId &&
+      !this.hasMonster(this.testRoomEngagedBossId)
+    ) {
       this.testRoomEngagedBossId = null;
     }
     // While the engaged boss is alive, freeze the rotation — the player is
@@ -376,7 +453,10 @@ export class World {
     let targetTier: number | null = null;
     for (const player of this.playerEntities) {
       if (player.hasPosition.nodeId !== TEST_ROOM_NODE_ID) continue;
-      targetTier = Math.max(targetTier ?? 0, player.tracksProgression.playerTier);
+      targetTier = Math.max(
+        targetTier ?? 0,
+        player.tracksProgression.playerTier,
+      );
     }
     if (targetTier !== null) this.ensureTestRoomBoss(targetTier);
   }
@@ -386,7 +466,8 @@ export class World {
     if (!typeId) return;
 
     for (const e of this.monsterEntities) {
-      if (e.hasPosition.nodeId !== TEST_ROOM_NODE_ID || !e.isMonster.isBoss) continue;
+      if (e.hasPosition.nodeId !== TEST_ROOM_NODE_ID || !e.isMonster.isBoss)
+        continue;
       if (e.isMonster.monsterTypeId === typeId) return;
       this.removeMonsterEntity(e.isMonster.id);
     }
@@ -398,7 +479,7 @@ export class World {
       GAME_CONFIG.NODE_HEIGHT / 2 + 120,
     );
     if (boss) {
-      const entity = this.getMonsterEntity(boss.id);
+      const entity = this.getMonsterEntity(boss.isMonster.id);
       if (entity) {
         entity.isMonster.name = `Test Dummy T${Math.max(0, targetTier)} (${entity.isMonster.name})`;
         entity.isMonster.isBoss = true;
@@ -407,7 +488,7 @@ export class World {
   }
 
   private pickTestRoomBossType(targetTier: number): string | null {
-    if (targetTier <= 0) return 'tiny-slime';
+    if (targetTier <= 0) return "tiny-slime";
 
     const exactTierBosses: string[] = [];
     for (const biome of BIOME_DATABASE.values()) {
@@ -430,7 +511,10 @@ export class World {
 
   pushEvent(nodeId: string, event: CombatEvent): void {
     let arr = this.nodeEvents.get(nodeId);
-    if (!arr) { arr = []; this.nodeEvents.set(nodeId, arr); }
+    if (!arr) {
+      arr = [];
+      this.nodeEvents.set(nodeId, arr);
+    }
     arr.push(event);
   }
 

@@ -8,6 +8,13 @@
       "when": 1779657365249,
       "tag": "0000_init",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1779659520000,
+      "tag": "0001_slice_blobs",
+      "breakpoints": true
     }
   ]
 }

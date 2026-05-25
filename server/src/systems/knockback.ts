@@ -1,7 +1,8 @@
 import type { World } from '../world/World';
-import { zeroMotion } from '@mmo-idle/shared';
 import { NODE_REGISTRY } from '../world/nodeRegistry';
 import type { HasKnockback } from '@mmo-idle/shared';
+import { stopEntity } from './movement';
+import { setAttackTarget } from './targeting';
 
 // Matches MONSTER_MARGIN in movement.ts — keep monsters inside the playable area.
 const MONSTER_BOUND_MARGIN = 40;
@@ -63,8 +64,8 @@ export function applyKnockback(
   const avgPxPerSec  = (distance / durationMs) * 1000;
   entity.hasPosition.speed = Math.max(100, Math.round(avgPxPerSec * 3));
   entity.hasAwareness.state = 'knocked-back';
-  entity.isMoving.motion = zeroMotion();
-  entity.performsAttack.attackTargetId = null;
+  stopEntity(world, entity);
+  setAttackTarget(world, entity, null);
 }
 
 /** True while the monster has an active knockback component. */
@@ -87,11 +88,11 @@ export function updateKnockback(world: World, dt: number): void {
     const newX = kb.startX + (kb.endX - kb.startX) * ease;
     const newY = kb.startY + (kb.endY - kb.startY) * ease;
     entity.hasPosition.current = { x: newX, y: newY };
-    entity.isMoving.motion = zeroMotion();
+    stopEntity(world, entity);
 
     if (t >= 1) {
       entity.hasPosition.current = { x: kb.endX, y: kb.endY };
-      entity.isMoving.motion = zeroMotion();
+      stopEntity(world, entity);
       world.clearMonsterKnockback(entity.isMonster.id);
     }
   }

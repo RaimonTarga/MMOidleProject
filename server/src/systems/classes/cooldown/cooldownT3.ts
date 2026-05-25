@@ -12,7 +12,8 @@ import type { UsesCooldown } from '@mmo-idle/shared';
 import type { World } from '../../../world/World';
 import type { PlayerEntity } from '../../../ecs/components/player';
 import type { MonsterEntity } from '../../../ecs/components/monster';
-import { attachMarker, detachMarkerIfNoEffect } from '../../../ecs/markerHelpers';
+import { attachComponent, attachMarker, detachComponent, detachMarkerIfNoEffect } from '../../../ecs/markerHelpers';
+import { setAttackTarget } from '../../targeting';
 
 // ── Fallback constants ─────────────────────────────────────────────────────────
 //
@@ -74,12 +75,9 @@ function hasPassive(player: PlayerEntity, key: PassiveKey): boolean {
   return (player.usesSkills.passives[key] ?? 0) > 0;
 }
 
-function endChannel(cd: UsesCooldown): void {
-  cd.isChanneling     = false;
-  cd.channelingPct    = 0;
-  cd.beamRemainingMs  = 0;
-  cd.beamNextTickMs   = 0;
-  cd.beamTargetId     = '';
+function endChannel(world: World, player: PlayerEntity): void {
+  detachComponent(world, player, 'isChanneling');
+  setAttackTarget(world, player, null);
 }
 
 // ── Init ──────────────────────────────────────────────────────────────────────
@@ -105,8 +103,7 @@ export function initCooldownT3(): void {
     const entity = ctx.attacker;
     if (!entity?.usesCooldown) return;
 
-    const state  = entity.tracksCombat;
-    if (!isEmpoweredAttack(state)) return;
+    if (!isEmpoweredAttack(entity)) return;
 
     const player = entity;
     if (
@@ -135,12 +132,14 @@ export function initCooldownT3(): void {
 
     // Overdrive: grant attack speed buff; empowered deals normal unmultiplied damage.
     if (hasPassive(player, 'cooldown.overdrive')) {
-      if (!cd.odActive) {
-        cd.odBaseCd = player.performsAttack.attackCooldown;
+      const active = player.hasOverdrive;
+      if (!active) {
+        const baseCd = player.performsAttack.attackCooldown;
         player.performsAttack.attackCooldown = Math.max(200, Math.round(player.performsAttack.attackCooldown * OVERDRIVE_SPEED_FACTOR));
+        attachComponent(world, player, 'hasOverdrive', { remainingMs: OVERDRIVE_BUFF_MS, baseCd });
+      } else {
+        active.remainingMs = OVERDRIVE_BUFF_MS;
       }
-      cd.odRemainingMs = OVERDRIVE_BUFF_MS;
-      cd.odActive      = true;
       console.log(`[Overdrive] ${player.isPlayer.id}: speed buff started (${OVERDRIVE_BUFF_MS}ms)`);
       return;
     }
@@ -194,12 +193,13 @@ export function initCooldownT3(): void {
 
     // Channeled Beam: begin channel; no direct damage, beam ticks handle damage.
     if (hasPassive(player, 'cooldown.channeled-beam') && ctx.defenderType === 'monster') {
-      cd.isChanneling    = true;
-      cd.channelingPct   = 0;
-      cd.beamRemainingMs = BEAM_DURATION_MS;
-      cd.beamNextTickMs  = BEAM_TICK_MS;
-      cd.beamTargetId    = ctx.defender.isMonster.id;
-      player.performsAttack.attackTargetId = ctx.defender.isMonster.id;
+      attachComponent(world, player, 'isChanneling', {
+        remainingMs: BEAM_DURATION_MS,
+        nextTickMs: BEAM_TICK_MS,
+        targetId: ctx.defender.isMonster.id,
+        pct: 0,
+      });
+      setAttackTarget(world, player, ctx.defender.isMonster.id);
       ctx.damage = 0;
       console.log(`[BeamChannel] ${player.isPlayer.id}: channel started on ${ctx.defender.isMonster.id}`);
       return;
@@ -290,12 +290,13 @@ export function initCooldownT3(): void {
 
     // Alignment: grant attack speed buff after the execution fires.
     if (hasPassive(player, 'cooldown.alignment')) {
-      if (!cd.alActive) {
-        cd.alBaseCd = player.performsAttack.attackCooldown;
+      if (!player.hasAlignment) {
+        const baseCd = player.performsAttack.attackCooldown;
         player.performsAttack.attackCooldown = Math.max(200, Math.round(player.performsAttack.attackCooldown * ALIGNMENT_SPEED_FACTOR));
+        attachComponent(_world, player, 'hasAlignment', { remainingMs: ALIGNMENT_BUFF_MS, baseCd });
+      } else {
+        player.hasAlignment.remainingMs = ALIGNMENT_BUFF_MS;
       }
-      cd.alRemainingMs = ALIGNMENT_BUFF_MS;
-      cd.alActive      = true;
       console.log(`[Alignment] ${player.isPlayer.id}: speed buff started (${ALIGNMENT_BUFF_MS}ms)`);
     }
   });
@@ -319,18 +320,15 @@ export function updateCooldownT3(world: World, dt: number): void {
 // ── Overdrive update ──────────────────────────────────────────────────────────
 
 function updateOverdrive(world: World, dt: number): void {
-  for (const entity of world.cooldownPlayers) {
-    const cd     = entity.usesCooldown;
+  for (const entity of world.overdrivenPlayers) {
+    const od = entity.hasOverdrive;
     if (!hasPassive(entity, 'cooldown.overdrive')) continue;
 
-    if (cd.odActive) {
-      cd.odRemainingMs = Math.max(0, cd.odRemainingMs - dt);
-      if (cd.odRemainingMs <= 0) {
-        entity.performsAttack.attackCooldown = cd.odBaseCd || entity.performsAttack.attackCooldown;
-        cd.odActive  = false;
-        cd.odBaseCd  = 0;
-        console.log(`[Overdrive] ${entity.isPlayer.id}: buff expired - speed restored`);
-      }
+    od.remainingMs = Math.max(0, od.remainingMs - dt);
+    if (od.remainingMs <= 0) {
+      entity.performsAttack.attackCooldown = od.baseCd || entity.performsAttack.attackCooldown;
+      detachComponent(world, entity, 'hasOverdrive');
+      console.log(`[Overdrive] ${entity.isPlayer.id}: buff expired - speed restored`);
     }
   }
 }
@@ -338,22 +336,20 @@ function updateOverdrive(world: World, dt: number): void {
 // ── Alignment update ──────────────────────────────────────────────────────────
 
 function updateAlignment(world: World, dt: number): void {
-  for (const entity of world.cooldownPlayers) {
+  for (const entity of world.alignedPlayers) {
     const cd     = entity.usesCooldown;
+    const alignment = entity.hasAlignment;
     if (!hasPassive(entity, 'cooldown.alignment')) continue;
 
-    if (cd.alActive) {
-      cd.alRemainingMs = Math.max(0, cd.alRemainingMs - dt);
-      if (cd.alRemainingMs <= 0) {
-        entity.performsAttack.attackCooldown = cd.alBaseCd || entity.performsAttack.attackCooldown;
-        cd.alActive = false;
-        cd.alBaseCd = 0;
+    alignment.remainingMs = Math.max(0, alignment.remainingMs - dt);
+    if (alignment.remainingMs <= 0) {
+      entity.performsAttack.attackCooldown = alignment.baseCd || entity.performsAttack.attackCooldown;
+      detachComponent(world, entity, 'hasAlignment');
 
-        if (cd.executionCooldownMs > 0) {
-          const halved = Math.round(cd.executionCooldownMs * 0.5);
-          console.log(`[Alignment] ${entity.isPlayer.id}: buff expired - CD halved (${cd.executionCooldownMs} -> ${halved}ms)`);
-          cd.executionCooldownMs = halved;
-        }
+      if (cd.executionCooldownMs > 0) {
+        const halved = Math.round(cd.executionCooldownMs * 0.5);
+        console.log(`[Alignment] ${entity.isPlayer.id}: buff expired - CD halved (${cd.executionCooldownMs} -> ${halved}ms)`);
+        cd.executionCooldownMs = halved;
       }
     }
   }
@@ -396,11 +392,10 @@ function updateBattery(world: World, dt: number): void {
 
 function updateSingularExtraction(world: World, dt: number): void {
   for (const entity of world.cooldownPlayers) {
-    const state  = entity.tracksCombat;
     const cd     = entity.usesCooldown;
     if (!hasPassive(entity, 'cooldown.singular-extraction')) continue;
 
-    if (entity.performsAttack.attackTargetId !== null) {
+    if (entity.hasAttackTarget) {
       cd.singularNoTargetMs = 0;
     } else {
       cd.singularNoTargetMs += dt;
@@ -408,8 +403,7 @@ function updateSingularExtraction(world: World, dt: number): void {
       if (cd.singularNoTargetMs >= SINGULAR_NO_TARGET_MS) {
         const cdMs = entity.usesSkills.passives['cooldown.empowered-cd-ms'] ?? EXECUTION_COOLDOWN_MS;
         cd.executionCooldownMs = cdMs;
-        consumeEmpoweredAttack(state); // disarm if already armed
-        cd.executionReady     = false;
+        consumeEmpoweredAttack(world, entity); // disarm if already armed
         cd.singularNoTargetMs = 0;
         console.log(`[SingExtract] ${entity.isPlayer.id}: out of combat - cycle reset (${cdMs}ms)`);
       }
@@ -469,43 +463,42 @@ function updateEntropyCollapse(world: World, dt: number): void {
 function updateChanneledBeam(world: World, dt: number): void {
   const toKill: Array<{ monsterId: string; sourceId: string }> = [];
 
-  for (const entity of world.cooldownPlayers) {
+  for (const entity of world.channelingPlayers) {
     const player = entity;
-    const cd     = entity.usesCooldown;
-    if (!cd.isChanneling) continue;
+    const channel = entity.isChanneling;
 
-    const remaining = cd.beamRemainingMs - dt;
+    const remaining = channel.remainingMs - dt;
     if (remaining <= 0) {
-      endChannel(cd);
+      endChannel(world, player);
       console.log(`[BeamChannel] ${player.isPlayer.id}: channel complete`);
       continue;
     }
 
-    cd.beamRemainingMs = remaining;
-    cd.channelingPct   = Math.round((1 - remaining / BEAM_DURATION_MS) * 100);
+    channel.remainingMs = remaining;
+    channel.pct = Math.round((1 - remaining / BEAM_DURATION_MS) * 100);
 
     // Validate target — it may have been killed by another player
-    if (!cd.beamTargetId) { endChannel(cd); continue; }
+    if (!channel.targetId) { endChannel(world, player); continue; }
 
-    let monster = world.getMonsterEntity(cd.beamTargetId);
+    let monster = world.getMonsterEntity(channel.targetId);
     if (!monster || monster.hasPosition.nodeId !== player.hasPosition.nodeId) {
       const newTarget = findBeamTarget(world, player);
       if (newTarget) {
-        cd.beamTargetId       = newTarget.isMonster.id;
-        player.performsAttack.attackTargetId = newTarget.isMonster.id;
+        channel.targetId = newTarget.isMonster.id;
+        setAttackTarget(world, player, newTarget.isMonster.id);
         monster = newTarget;
         console.log(`[BeamChannel] ${player.isPlayer.id}: target lost - reacquired ${newTarget.isMonster.id}`);
       } else {
-        endChannel(cd);
+        endChannel(world, player);
         console.log(`[BeamChannel] ${player.isPlayer.id}: target gone, no reacquisition - channel ended`);
         continue;
       }
     }
 
     // Beam damage tick
-    const nextTick = cd.beamNextTickMs - dt;
+    const nextTick = channel.nextTickMs - dt;
     if (nextTick <= 0) {
-      cd.beamNextTickMs = nextTick + BEAM_TICK_MS;
+      channel.nextTickMs = nextTick + BEAM_TICK_MS;
 
       const dmgPerTick = Math.max(1, Math.round(player.dealsDamage.attack * BEAM_DMG_PER_TICK_MULT));
       monster.hasHealth.hp -= dmgPerTick;
@@ -517,16 +510,16 @@ function updateChanneledBeam(world: World, dt: number): void {
         toKill.push({ monsterId: monster.isMonster.id, sourceId: player.isPlayer.id });
         const newTarget = findBeamTarget(world, player, monster.isMonster.id);
         if (newTarget) {
-          cd.beamTargetId       = newTarget.isMonster.id;
-          player.performsAttack.attackTargetId = newTarget.isMonster.id;
+          channel.targetId = newTarget.isMonster.id;
+          setAttackTarget(world, player, newTarget.isMonster.id);
           console.log(`[BeamChannel] ${player.isPlayer.id}: kill-reacquire -> ${newTarget.isMonster.id}`);
         } else {
-          endChannel(cd);
+          endChannel(world, player);
           console.log(`[BeamChannel] ${player.isPlayer.id}: target killed, no reacquisition - channel ended`);
         }
       }
     } else {
-      cd.beamNextTickMs = nextTick;
+      channel.nextTickMs = nextTick;
     }
   }
 
@@ -557,9 +550,9 @@ function findBeamTarget(world: World, player: PlayerEntity, excludeId?: string):
 
 // ── buffSync helpers ──────────────────────────────────────────────────────────
 
-export function getOverdrivePct(cd: UsesCooldown): number {
-  if (!cd.odActive) return 0;
-  return Math.round((cd.odRemainingMs / OVERDRIVE_BUFF_MS) * 100);
+export function getOverdrivePct(player: PlayerEntity): number {
+  if (!player.hasOverdrive) return 0;
+  return Math.round((player.hasOverdrive.remainingMs / OVERDRIVE_BUFF_MS) * 100);
 }
 
 export function getEternalChargeStacks(state: CombatState): number {
@@ -577,22 +570,20 @@ export function getBatteryStacks(state: CombatState): number {
   return getStatusEffect(state, BAT_CHARGE_FX)?.stacks ?? 0;
 }
 
-export function getAlignmentPct(cd: UsesCooldown): number {
-  if (!cd.alActive) return 0;
-  return Math.round((cd.alRemainingMs / ALIGNMENT_BUFF_MS) * 100);
+export function getAlignmentPct(player: PlayerEntity): number {
+  if (!player.hasAlignment) return 0;
+  return Math.round((player.hasAlignment.remainingMs / ALIGNMENT_BUFF_MS) * 100);
 }
 
 // ── Buff descriptors ──────────────────────────────────────────────────────────
 
-function getChannelingRemainingPct(cd: UsesCooldown): number {
-  return Math.max(0, Math.min(100, 100 - cd.channelingPct));
+function getChannelingRemainingPct(player: PlayerEntity): number {
+  return Math.max(0, Math.min(100, 100 - (player.isChanneling?.pct ?? 0)));
 }
 
 export const COOLDOWN_T3_BUFFS = [
   defineBuff('cooldown-overdrive', ({ player }) => {
-    const cd = player.usesCooldown;
-    if (!cd) return null;
-    const pct = getOverdrivePct(cd);
+    const pct = getOverdrivePct(player);
     return pct > 0 ? { id: 'cooldown-overdrive', label: 'Ovrdv', stacks: 1, durationPct: pct, color: '#ff6622' } : null;
   }),
   defineBuff('cooldown-eternal-charge', ({ playerCs }) => {
@@ -611,14 +602,11 @@ export const COOLDOWN_T3_BUFFS = [
     return stacks > 0 ? { id: 'cooldown-battery', label: 'Batry', stacks, durationPct: -1, color: '#aaffaa' } : null;
   }),
   defineBuff('cooldown-alignment', ({ player }) => {
-    const cd = player.usesCooldown;
-    if (!cd) return null;
-    const pct = getAlignmentPct(cd);
+    const pct = getAlignmentPct(player);
     return pct > 0 ? { id: 'cooldown-alignment', label: 'Algn', stacks: 1, durationPct: pct, color: '#cc44ff' } : null;
   }),
   defineBuff('cooldown-channel', ({ player }) => {
-    const cd = player.usesCooldown;
-    if (!cd?.isChanneling) return null;
-    return { id: 'cooldown-channel', label: 'Beam', stacks: 1, durationPct: getChannelingRemainingPct(cd), color: '#ff44aa' };
+    if (!player.isChanneling) return null;
+    return { id: 'cooldown-channel', label: 'Beam', stacks: 1, durationPct: getChannelingRemainingPct(player), color: '#ff44aa' };
   }),
 ] as const satisfies readonly BuffDescriptor[];

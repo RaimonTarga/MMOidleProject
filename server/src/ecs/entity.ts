@@ -13,11 +13,21 @@ import type {
   HasConflagration,
   HasChill,
   HasFrozen,
+  HasAggroTarget,
   HasEntropy,
+  HasEmpoweredAttack,
   HasAshbrandBurn,
+  HasAlignment,
+  HasAttackTarget,
+  HasOverdrive,
   HasPosition,
   HasStatus,
+  HoldsShields,
   HoldsInventory,
+  InAcChargePhase,
+  InAcDischarge,
+  IsBossEngaged,
+  IsChanneling,
   IsMonster,
   IsMoving,
   IsPlayer,
@@ -67,6 +77,7 @@ export interface ServerEntity {
   // Shared by players and monsters
   hasPosition?:     HasPosition;
   isMoving?:        IsMoving;
+  hasAttackTarget?: HasAttackTarget;
   hasHealth?:       HasHealth;
   dealsDamage?:     DealsDamage;
   performsAttack?:  PerformsAttack;
@@ -76,6 +87,7 @@ export interface ServerEntity {
   // Player-only slices
   isPlayer?:           IsPlayer;
   evadesHits?:         EvadesHits;
+  holdsShields?:       HoldsShields;
   usesAutocombat?:     UsesAutocombat;
   tracksProgression?:  TracksProgression;
   holdsInventory?:     HoldsInventory;
@@ -87,10 +99,17 @@ export interface ServerEntity {
   chillsTarget?:       ChillsTarget;
   usesCooldown?:       UsesCooldown;
   usesReload?:         UsesReload;
+  isChanneling?:       IsChanneling;
+  hasOverdrive?:       HasOverdrive;
+  hasAlignment?:       HasAlignment;
+  inAcChargePhase?:    InAcChargePhase;
+  inAcDischarge?:      InAcDischarge;
+  hasEmpoweredAttack?: HasEmpoweredAttack;
 
   // Monster-only slices
   isMonster?:    IsMonster;
   hasAwareness?: HasAwareness;
+  hasAggroTarget?: HasAggroTarget;
 
   // ── Monster (S7) ──────────────────────────────────────────────
   controlsMonster?: ControlsMonster;
@@ -104,6 +123,7 @@ export interface ServerEntity {
   hasEntropy?:      HasEntropy;
   hasAshbrandBurn?: HasAshbrandBurn;
   scriptsBoss?:     ScriptsBoss;
+  isBossEngaged?:   IsBossEngaged;
 
   // ── Player (S8) ───────────────────────────────────────────────
   tracksEngagement?: number;

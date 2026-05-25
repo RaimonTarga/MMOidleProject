@@ -3,17 +3,8 @@ export interface ChillsTarget {
   targetChillStacks: number;
 }
 
-export function makeChillsTargetFromSnapshot(snapshot: {
-  targetChillStacks: number;
-}): ChillsTarget {
+export function initChillsTarget(): ChillsTarget {
   return {
-    targetChillStacks: snapshot.targetChillStacks,
+    targetChillStacks: 0,
   };
-}
-
-export function refreshChillsTargetFromSnapshot(
-  slice: ChillsTarget,
-  snapshot: { targetChillStacks: number },
-): void {
-  slice.targetChillStacks = snapshot.targetChillStacks;
 }

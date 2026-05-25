@@ -1,21 +1,19 @@
 import type { PassiveKey } from '@mmo-idle/shared';
-import type { CombatState } from './combatState';
 import { registerCombatListener } from './combatPipeline';
 import { isClassActive } from './classMechanics';
-
-// Flag key is an internal constant — consumers use the helper functions
-// rather than writing the string directly.
-const EMPOWERED_FLAG = 'empoweredAttack';
+import type { ServerEntity } from '../ecs/entity';
+import type { World } from '../world/World';
+import { attachComponent, detachComponent } from '../ecs/markerHelpers';
 
 // ── Flag helpers ──────────────────────────────────────────────────────────────
 
 /** Mark the entity's next attack as empowered. */
-export function setEmpoweredAttack(state: CombatState): void {
-  state.flags[EMPOWERED_FLAG] = true;
+export function setEmpoweredAttack(world: World, entity: ServerEntity): void {
+  attachComponent(world, entity, 'hasEmpoweredAttack', {});
 }
 
-export function isEmpoweredAttack(state: CombatState): boolean {
-  return state.flags[EMPOWERED_FLAG] === true;
+export function isEmpoweredAttack(entity: ServerEntity): boolean {
+  return entity.hasEmpoweredAttack !== undefined;
 }
 
 /**
@@ -23,9 +21,9 @@ export function isEmpoweredAttack(state: CombatState): boolean {
  * Returns false (and makes no change) if the entity was not empowered.
  * Designed for single-use: empowerment is spent exactly once.
  */
-export function consumeEmpoweredAttack(state: CombatState): boolean {
-  if (!state.flags[EMPOWERED_FLAG]) return false;
-  state.flags[EMPOWERED_FLAG] = false;
+export function consumeEmpoweredAttack(world: World, entity: ServerEntity): boolean {
+  if (!isEmpoweredAttack(entity)) return false;
+  detachComponent(world, entity, 'hasEmpoweredAttack');
   return true;
 }
 
@@ -86,9 +84,7 @@ export function registerEmpoweredMultiplier(
       if (!isClassActive(world, ctx.attacker.isPlayer.id, options.attackerClass)) return;
     }
 
-    const state = ctx.attacker.tracksCombat;
-
-    if (!consumeEmpoweredAttack(state)) return;
+    if (!consumeEmpoweredAttack(world, ctx.attacker)) return;
 
     // Some T4 mechanics suppress the standard multiplier but still need the
     // empoweredAttack metadata set so their own onHit handlers can detect the trigger.

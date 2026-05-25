@@ -1,6 +1,6 @@
 import { createPortal } from 'react-dom';
 import { useState, useMemo, useEffect } from 'react';
-import type { PlayerState } from '@mmo-idle/shared';
+import type { PlayerSnapshot } from '@mmo-idle/shared';
 import type { ItemStats } from '@mmo-idle/shared';
 import {
   NODE_BIOMES, BIOME_DATABASE, MONSTER_DATABASE, RECIPE_DATABASE,
@@ -95,7 +95,7 @@ function bfsPath(from: string, to: string): string[] | null {
 
 // ── NodeInfo ─────────────────────────────────────────────────────────────────
 
-interface NodeInfoProps { nodeId: string; player: PlayerState | null; }
+interface NodeInfoProps { nodeId: string; player: PlayerSnapshot | null; }
 
 function NodeInfo({ nodeId, player }: NodeInfoProps) {
   const info  = NODE_BIOMES[nodeId];
@@ -272,7 +272,7 @@ function OverviewMap({ viewRow, viewCol, playerNodeId, pathSet, destNode }: Over
 
 // ── Main component ────────────────────────────────────────────────────────────
 
-interface Props { player: PlayerState | null; onClose: () => void; }
+interface Props { player: PlayerSnapshot | null; onClose: () => void; }
 
 export function MapPanel({ player, onClose }: Props) {
   const [hoveredId, setHoveredId] = useState<string | null>(null);

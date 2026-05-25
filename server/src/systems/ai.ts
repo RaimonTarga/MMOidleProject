@@ -1,10 +1,12 @@
 import type { World } from '../world/World';
 import type { PlayerEntity } from '../ecs/components/player';
 import type { MonsterEntity } from '../ecs/components/monster';
-import { distanceSq, pointFromMotion, vectorTo, zeroMotion } from '@mmo-idle/shared';
+import { distanceSq, pointFromMotion } from '@mmo-idle/shared';
 import { NODE_REGISTRY } from '../world/nodeRegistry';
 import { isMonsterFrozen } from './classes/dot/dotT3';
 import { isMonsterKnockedBack } from './knockback';
+import { setEntityMotion, stopEntity } from './movement';
+import { setAggroTarget, setAttackTarget } from './targeting';
 
 const KITE_GRACE_MS   = 500;   // ms chasing before speed ramp begins
 const KITE_RAMP_RATE  = 1.5;   // speed multiplier gain per second past grace
@@ -30,12 +32,12 @@ function findAggro(monster: MonsterEntity, world: World): PlayerEntity | null {
   return best;
 }
 
-function setMonsterTarget(entity: MonsterEntity, target: { x: number; y: number }): void {
-  entity.isMoving.motion = vectorTo(entity.hasPosition.current, target);
+function setMonsterTarget(world: World, entity: MonsterEntity, target: { x: number; y: number }): void {
+  setEntityMotion(world, entity, target);
 }
 
-function stopMonster(entity: MonsterEntity): void {
-  entity.isMoving.motion = zeroMotion();
+function stopMonster(world: World, entity: MonsterEntity): void {
+  stopEntity(world, entity);
 }
 
 export function updateMonsters(world: World, dt: number, now: number) {
@@ -44,7 +46,7 @@ export function updateMonsters(world: World, dt: number, now: number) {
     const id      = e.isMonster.id;
 
     if (isMonsterFrozen(world, id)) {
-      e.isMoving.motion = zeroMotion();
+      stopMonster(world, e);
       e.performsAttack.lastAttackAt = now;
       ai.kiteTimer = 0;
       continue;
@@ -61,23 +63,22 @@ export function updateMonsters(world: World, dt: number, now: number) {
     // Only scan for pull-range aggro when we have no current target.
     // This preserves retaliation aggro set by the combat system when a
     // player attacks from outside pull range.
-    if (ai.aggroTargetId === null) {
+    if (!e.hasAggroTarget) {
       const pulled = findAggro(e, world);
       if (pulled) {
-        ai.aggroTargetId = pulled.isPlayer.id;
-        ai.lastAggroAt   = now;
+        setAggroTarget(world, e, pulled.isPlayer.id, now);
       }
     }
 
     // Resolve and validate the current aggro target.
     // Drop it only if the player left the node or disconnected.
     let target: PlayerEntity | null = null;
-    if (ai.aggroTargetId !== null) {
-      const candidate = world.getPlayerEntity(ai.aggroTargetId);
+    if (e.hasAggroTarget) {
+      const candidate = world.getPlayerEntity(e.hasAggroTarget.playerId);
       if (candidate && candidate.hasPosition.nodeId === e.hasPosition.nodeId) {
         target = candidate;
       } else {
-        ai.aggroTargetId = null;
+        setAggroTarget(world, e, null, now);
       }
     }
 
@@ -86,12 +87,12 @@ export function updateMonsters(world: World, dt: number, now: number) {
 
       // Leash check: if too far from spawn, give up and return.
       if (distanceSq(e.hasPosition.current, { x: ai.spawnX, y: ai.spawnY }) > ai.leashRange * ai.leashRange) {
-        ai.aggroTargetId = null;
+        setAggroTarget(world, e, null, now);
         ai.kiteTimer     = 0;
         e.hasPosition.speed  = ai.baseSpeed;
         e.hasAwareness.state = 'returning';
-        e.performsAttack.attackTargetId = null;
-        setMonsterTarget(e, { x: ai.spawnX, y: ai.spawnY });
+        setAttackTarget(world, e, null);
+        setMonsterTarget(world, e, { x: ai.spawnX, y: ai.spawnY });
         continue;
       }
 
@@ -109,8 +110,8 @@ export function updateMonsters(world: World, dt: number, now: number) {
         ai.kiteTimer          = Math.max(0, ai.kiteTimer - dt * KITE_DECAY_RATE);
         e.hasPosition.speed   = ai.baseSpeed;
         e.hasAwareness.state  = 'attacking';
-        e.performsAttack.attackTargetId = target.isPlayer.id;
-        stopMonster(e);
+        setAttackTarget(world, e, target.isPlayer.id);
+        stopMonster(world, e);
       } else {
         // Still chasing — accumulate kite timer and ramp speed after grace period.
         ai.kiteTimer += dt;
@@ -122,8 +123,8 @@ export function updateMonsters(world: World, dt: number, now: number) {
 
         const dist = Math.sqrt(distSq);
         e.hasAwareness.state = 'chasing';
-        e.performsAttack.attackTargetId = target.isPlayer.id;
-        setMonsterTarget(e, {
+        setAttackTarget(world, e, target.isPlayer.id);
+        setMonsterTarget(world, e, {
           x: target.hasPosition.current.x - (dx / dist) * stopDist,
           y: target.hasPosition.current.y - (dy / dist) * stopDist,
         });
@@ -136,13 +137,13 @@ export function updateMonsters(world: World, dt: number, now: number) {
       e.hasPosition.speed = e.hasAwareness.state === 'returning'
         ? Math.round(ai.baseSpeed * RETURN_SPEED_MULT)
         : ai.baseSpeed;
-      e.performsAttack.attackTargetId = null;
+      setAttackTarget(world, e, null);
 
       switch (e.hasAwareness.state) {
         case 'chasing':
         case 'attacking':
           e.hasAwareness.state = 'returning';
-          setMonsterTarget(e, { x: ai.spawnX, y: ai.spawnY });
+          setMonsterTarget(world, e, { x: ai.spawnX, y: ai.spawnY });
           break;
 
         case 'returning': {
@@ -151,19 +152,21 @@ export function updateMonsters(world: World, dt: number, now: number) {
             e.hasPosition.speed   = ai.baseSpeed;
             e.hasAwareness.state  = 'idle';
             ai.idleUntil          = now + randBetween(ai.idleMinMs, ai.idleMaxMs);
-            stopMonster(e);
+            stopMonster(world, e);
           } else {
-            setMonsterTarget(e, { x: ai.spawnX, y: ai.spawnY });
+            setMonsterTarget(world, e, { x: ai.spawnX, y: ai.spawnY });
           }
           break;
         }
 
         case 'wandering': {
-          const targetPoint = pointFromMotion(e.hasPosition.current, e.isMoving.motion);
+          const targetPoint = e.isMoving
+            ? pointFromMotion(e.hasPosition.current, e.isMoving.motion)
+            : e.hasPosition.current;
           if (distanceSq(e.hasPosition.current, targetPoint) < 16) {
             e.hasAwareness.state = 'idle';
             ai.idleUntil         = now + randBetween(ai.idleMinMs, ai.idleMaxMs);
-            stopMonster(e);
+            stopMonster(world, e);
           }
           break;
         }
@@ -180,12 +183,12 @@ export function updateMonsters(world: World, dt: number, now: number) {
             const minY = node ? margin : 0;
             const maxY = node ? node.height - margin : Infinity;
             e.hasAwareness.state = 'wandering';
-            setMonsterTarget(e, {
+            setMonsterTarget(world, e, {
               x: Math.max(minX, Math.min(maxX, ai.spawnX + Math.cos(angle) * radius)),
               y: Math.max(minY, Math.min(maxY, ai.spawnY + Math.sin(angle) * radius)),
             });
           } else {
-            stopMonster(e);
+            stopMonster(world, e);
           }
           break;
       }

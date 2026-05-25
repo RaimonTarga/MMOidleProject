@@ -1,4 +1,4 @@
-import type { PlayerSnapshot, PassiveKey } from '@mmo-idle/shared';
+import type { PassiveKey } from '@mmo-idle/shared';
 import { MONSTER_DATABASE, computeEternalDoomDamage } from '@mmo-idle/shared';
 import type { PlayerEntity } from '../../../ecs/components/player';
 import { defineBuff, type BuffDescriptor } from '../../registry/buffs';
@@ -406,7 +406,7 @@ export function updateDotT3(world: World, dt: number): void {
   updatePermafrost(world, dt);
   updateConflagration(world, dt);
   updateChillAndFreeze(world);
-  mirrorDotT3PlayerSnapshot(world);
+  mirrorDotT3PlayerSlices(world);
   mirrorStatusEffectsToClient(world);
 }
 
@@ -525,12 +525,13 @@ function updateChillAndFreeze(world: World): void {
   }
 }
 
-// ── Player-state mirroring for DoT T3 ────────────────────────────────────────
+// ── Player-slice mirroring for DoT T3 ────────────────────────────────────────
 
-function mirrorDotT3PlayerSnapshot(world: World): void {
+function mirrorDotT3PlayerSlices(world: World): void {
   for (const entity of world.chillingPlayers) {
-    const targetState = entity.performsAttack.attackTargetId
-      ? world.getMonsterEntity(entity.performsAttack.attackTargetId)?.tracksCombat
+    const targetId = entity.hasAttackTarget?.targetId;
+    const targetState = targetId
+      ? world.getMonsterEntity(targetId)?.tracksCombat
       : undefined;
     entity.chillsTarget.targetChillStacks = targetState
       ? getTotalStacks(targetState, CHILL_EFFECT)
@@ -540,8 +541,9 @@ function mirrorDotT3PlayerSnapshot(world: World): void {
   for (const entity of world.dotPlayers) {
     const dot = entity.appliesDots;
 
-    const targetState = entity.performsAttack.attackTargetId
-      ? world.getMonsterEntity(entity.performsAttack.attackTargetId)?.tracksCombat
+    const targetId = entity.hasAttackTarget?.targetId;
+    const targetState = targetId
+      ? world.getMonsterEntity(targetId)?.tracksCombat
       : undefined;
 
     // Invigorating Toxins: attack speed modifier.

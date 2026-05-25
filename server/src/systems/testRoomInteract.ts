@@ -4,6 +4,7 @@ import type { World } from '../world/World';
 import { syncArchetypeSlices } from '../ecs/archetypeSliceSync';
 import { recalculatePlayerEntityStats } from '../ecs/playerSnapshotAdapter';
 import { resetTracksCombat } from './combatState';
+import { setAttackTarget } from './targeting';
 
 const INTERACT_COOLDOWN_MS = 2_000;
 const TEST_ROOM_ESSENCE_AMOUNT = 1_000_000_000;
@@ -54,7 +55,7 @@ function resetPlayerProgression(world: World, player: PlayerEntity): void {
   player.usesSkills.selectedRange      = null;
   player.usesSkills.combatArchetype    = null;
   player.tracksProgression.questProgress = {};
-  player.performsAttack.attackTargetId = null;
+  setAttackTarget(world, player, null);
   player.usesAutocombat.auto = false;
 
   recalculatePlayerEntityStats(world, player);

@@ -1,19 +1,19 @@
-import type { MonsterSnapshot } from '@mmo-idle/shared';
 import {
   GAME_CONFIG,
   NODE_BIOMES,
   MONSTER_DATABASE,
   BIOME_DATABASE,
   TEST_ROOM_NODE_ID,
-  zeroMotion,
 } from '@mmo-idle/shared';
 import type { World } from '../../world/World';
 import { NODE_REGISTRY } from '../../world/nodeRegistry';
 import { makeTracksCombat, resetTracksCombat, initScriptsBoss } from '@mmo-idle/shared';
 import type { MonsterEntity } from '../../ecs/components/monster';
-import { decomposeMonsterSnapshot } from '../../ecs/projection';
 import { recalculatePlayerEntityStats } from '../../ecs/playerSnapshotAdapter';
 import { syncArchetypeSlices } from '../../ecs/archetypeSliceSync';
+import { detachComponent } from '../../ecs/markerHelpers';
+import { stopEntity } from '../movement';
+import { setAggroTarget, setAttackTarget } from '../targeting';
 
 // Regular monsters in dungeon nodes are scaled up; boss stats come from the database directly.
 const DUNGEON_HP_MULT  = 2.0;
@@ -30,7 +30,7 @@ export function createMonster(
   typeId: string,
   x: number,
   y: number,
-): MonsterSnapshot | null {
+): MonsterEntity | null {
   const def = MONSTER_DATABASE.get(typeId);
   if (!def) {
     console.warn(`[World] Unknown monster type: "${typeId}"`);
@@ -49,35 +49,45 @@ export function createMonster(
   const pullRange = isTestRoom ? 0 : def.stats.pullRange;
   const wanderRadius = isTestRoom ? 0 : def.ai.wanderRadius;
 
-  const monster: MonsterSnapshot = {
-    id,
-    monsterTypeId: typeId,
-    color: def.color,
-    name: def.name,
-    x, y,
-    targetX: x,
-    targetY: y,
-    hp:             hpBase,
-    maxHp:          hpBase,
-    attack:         atkBase,
-    plating:        def.stats.plating,
-    damageReduction: def.stats.damageReduction,
-    speed:   def.stats.speed,
-    state:   'idle',
-    pullRange,
-    leashRange:     def.ai.leashRange,
-    attackRange:    def.stats.attackRange,
-    attackCooldown: def.stats.attackCooldown,
-    lastAttackAt:   0,
-    attackTargetId: null,
-    nodeId,
-    attackStyle: def.attackStyle,
-    isBoss,
-    behavior: def.behavior,
-  };
-
   const entity: MonsterEntity = {
     entityId:    id,
+    isMonster: {
+      id,
+      monsterTypeId:   typeId,
+      color:           def.color,
+      name:            def.name,
+      isBoss,
+      behavior:        def.behavior,
+    },
+    hasPosition: {
+      current: { x, y },
+      nodeId,
+      speed:   def.stats.speed,
+    },
+    hasHealth: {
+      hp:    hpBase,
+      maxHp: hpBase,
+    },
+    dealsDamage: {
+      attack:      atkBase,
+      onHitDamage: 0,
+      attackStyle: def.attackStyle,
+    },
+    performsAttack: {
+      attackRange:    def.stats.attackRange,
+      attackCooldown: def.stats.attackCooldown,
+      lastAttackAt:   0,
+    },
+    mitigatesDamage: {
+      plating:         def.stats.plating,
+      damageReduction: def.stats.damageReduction,
+    },
+    hasAwareness: {
+      state:      'idle',
+      pullRange,
+      leashRange: def.ai.leashRange,
+    },
+    hasStatus: {},
     controlsMonster: {
       spawnX: x,
       spawnY: y,
@@ -86,13 +96,11 @@ export function createMonster(
       leashRange:    def.ai.leashRange,
       idleMinMs:     def.ai.idleMinMs,
       idleMaxMs:     def.ai.idleMaxMs,
-      aggroTargetId: null,
       lastAggroAt:   0,
       baseSpeed:     def.stats.speed,
       kiteTimer:     0,
     },
     tracksCombat: makeTracksCombat(),
-    ...decomposeMonsterSnapshot(monster),
   };
   world.ecs.add(entity);
 
@@ -100,7 +108,7 @@ export function createMonster(
     world.ecs.addComponent(entity, 'scriptsBoss', initScriptsBoss(def.bossScript));
   }
 
-  return monster;
+  return entity;
 }
 
 /**
@@ -153,27 +161,28 @@ export function respawnPlayer(world: World, playerId: string): void {
 
   entity.hasPosition.nodeId = 'node-5-5';
   entity.hasPosition.current = { x: spawnX, y: spawnY };
-  entity.isMoving.motion = zeroMotion();
-  entity.performsAttack.attackTargetId = null;
+  stopEntity(world, entity);
+  setAttackTarget(world, entity, null);
   entity.usesAutocombat.auto = false;
 
   recalculatePlayerEntityStats(world, entity);
   syncArchetypeSlices(world, entity);
   entity.hasHealth.hp = entity.hasHealth.maxHp;
 
-  entity.evadesHits.count = 0;
-  entity.hasHealth.shields = [];
-  if (entity.usesCooldown) {
-    entity.usesCooldown.isChanneling = false;
-    entity.usesCooldown.channelingPct = 0;
-  }
-
-  entity.tracksEngagement = 0;
+  if (entity.evadesHits) entity.evadesHits.count = 0;
+  detachComponent(world, entity, 'holdsShields');
+  detachComponent(world, entity, 'tracksEngagement');
+  detachComponent(world, entity, 'hasEmpoweredAttack');
+  detachComponent(world, entity, 'isChanneling');
+  detachComponent(world, entity, 'hasOverdrive');
+  detachComponent(world, entity, 'hasAlignment');
+  detachComponent(world, entity, 'inAcChargePhase');
+  detachComponent(world, entity, 'inAcDischarge');
 
   resetTracksCombat(entity.tracksCombat);
 
-  for (const e of world.monsterEntities) {
-    if (e.controlsMonster.aggroTargetId === playerId) e.controlsMonster.aggroTargetId = null;
+  for (const e of world.aggroedMonsters) {
+    if (e.hasAggroTarget.playerId === playerId) setAggroTarget(world, e, null, Date.now());
   }
 
   world.pendingDeaths.push(playerId);

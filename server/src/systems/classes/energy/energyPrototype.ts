@@ -1,5 +1,5 @@
 import { registerCombatListener } from '../../combatPipeline';
-import { setEmpoweredAttack, registerEmpoweredMultiplier, isEmpoweredAttack } from '../../empoweredAttacks';
+import { setEmpoweredAttack, registerEmpoweredMultiplier } from '../../empoweredAttacks';
 import { initEnergyT3 } from './energyT3';
 import type { World } from '../../../world/World';
 
@@ -57,7 +57,6 @@ export function initEnergyArchetype(): void {
     if (ctx.metadata['empoweredAttack']) return; // empowered hits never generate energy
     if (ctx.metadata['energyHandled']) return;   // T3 mechanic already handled this hit
 
-    const state   = entity.tracksCombat;
     const energy  = entity.usesEnergy;
 
     if (energy.energyMax === 0) energy.energyMax = ENERGY_MAX_DEFAULT;
@@ -67,7 +66,7 @@ export function initEnergyArchetype(): void {
 
     if (energy.energy >= energy.energyMax) {
       energy.energy = 0;
-      setEmpoweredAttack(state);
+      setEmpoweredAttack(_world, entity);
     }
 
   });
@@ -76,11 +75,9 @@ export function initEnergyArchetype(): void {
 // ── Per-tick update ───────────────────────────────────────────────────────────
 
 /**
- * Run once per world tick to mirror energy state to PlayerSnapshot so the
+ * Run once per world tick to mirror energy state to the entity slice so the
  * client can display the energy bar and empowered flag without extra events.
  */
 export function updateEnergyArchetype(world: World): void {
-  for (const entity of world.energyPlayers) {
-    entity.usesEnergy.empoweredReady = isEmpoweredAttack(entity.tracksCombat);
-  }
+  void world;
 }

@@ -9,12 +9,14 @@ import { getStatusEffect } from '@mmo-idle/shared';
 import { getAntiHealMult } from './defenseSystems';
 import { applyPlayerAoe } from './aoeDamage';
 import { isMonsterFrozen } from './classes/dot/dotT3';
+import { setAggroTarget, setAttackTarget } from './targeting';
+import { markEngaged } from './engagement';
 
 export function updateCombat(world: World, dt: number, now: number) {
   // PLAYER → MONSTER
   for (const player of world.playerEntities) {
     // Channeled Beam locks all auto-attacks; the beam system handles targeting + damage.
-    if (player.usesCooldown?.isChanneling ?? false) {
+    if (player.isChanneling) {
       player.performsAttack.lastAttackAt = now; // keep the cooldown hot so attacks resume promptly
       continue;
     }
@@ -32,7 +34,7 @@ export function updateCombat(world: World, dt: number, now: number) {
       }
     }
 
-    player.performsAttack.attackTargetId = target?.isMonster.id ?? null;
+    setAttackTarget(world, player, target?.isMonster.id ?? null);
 
     if (target) {
       if (now - player.performsAttack.lastAttackAt >= player.performsAttack.attackCooldown) {
@@ -128,14 +130,13 @@ export function updateCombat(world: World, dt: number, now: number) {
           // spawn. Beyond that the monster can't reach them — it would immediately
           // leash and return, enabling safe static-range cheese.
           const ai = target.controlsMonster;
-          if (ai && ai.aggroTargetId === null) {
+          if (!target.hasAggroTarget) {
             if (distanceSq(player.hasPosition.current, { x: ai.spawnX, y: ai.spawnY }) <= ai.leashRange * ai.leashRange) {
-              ai.aggroTargetId = player.isPlayer.id;
-              ai.lastAggroAt   = now;
+              setAggroTarget(world, target, player.isPlayer.id, now);
               // Keep the attacker's combat timer fresh so OOC regen doesn't tick
               // while the monster is chasing them toward attack range.
               const attacker = world.getPlayerEntity(player.isPlayer.id);
-              if (attacker) attacker.tracksEngagement = now;
+              if (attacker) markEngaged(world, attacker, now);
             }
             // Outside leash range: hit dealt, monster ignores the attacker.
             // Monster regen continues uninterrupted so whittling is not viable.
@@ -145,16 +146,16 @@ export function updateCombat(world: World, dt: number, now: number) {
     } else {
       // Refresh combat timer while any monster still has this player in aggro,
       // so regen doesn't tick while being actively chased.
-      for (const e of world.monsterEntities) {
-        if (e.controlsMonster.aggroTargetId === player.isPlayer.id) {
+      for (const e of world.aggroedMonsters) {
+        if (e.hasAggroTarget.playerId === player.isPlayer.id) {
           const p = world.getPlayerEntity(player.isPlayer.id);
-          if (p) p.tracksEngagement = now;
+          if (p) markEngaged(world, p, now);
           break;
         }
       }
 
       const lastCombat = player.tracksEngagement;
-      if (now - lastCombat > GAME_CONFIG.COMBAT_REGEN_DELAY) {
+      if (lastCombat === undefined || now - lastCombat > GAME_CONFIG.COMBAT_REGEN_DELAY) {
         const cs = player.tracksCombat;
         const rawRegen = player.hasHealth.maxHp * ((player.hasHealth.hpRegen ?? 0) / 100) * (dt / 1000);
         const healAmount = cs ? rawRegen * getAntiHealMult(cs) : rawRegen;
@@ -164,29 +165,25 @@ export function updateCombat(world: World, dt: number, now: number) {
   }
 
   // MONSTER → PLAYER
-  for (const e of world.monsterEntities) {
-    const ai      = e.controlsMonster;
-
+  for (const e of world.aggroedMonsters) {
     if (e.hasAwareness.state !== 'attacking') continue;
 
-    const target = ai.aggroTargetId
-      ? world.getPlayerEntity(ai.aggroTargetId)
-      : null;
+    const target = world.getPlayerEntity(e.hasAggroTarget.playerId) ?? null;
 
     // Player may have transitioned to a different node — drop aggro if so.
     if (!target || target.hasPosition.nodeId !== e.hasPosition.nodeId) {
-      ai.aggroTargetId = null;
-      e.performsAttack.attackTargetId = null;
+      setAggroTarget(world, e, null, now);
+      setAttackTarget(world, e, null);
       continue;
     }
 
     if (distanceSq(target.hasPosition.current, e.hasPosition.current) > e.performsAttack.attackRange * e.performsAttack.attackRange) {
-      e.performsAttack.attackTargetId = null;
+      setAttackTarget(world, e, null);
       continue;
     }
 
     // Monster is in contact — mark as targeting so the client shows the cooldown bar.
-    e.performsAttack.attackTargetId = target.isPlayer.id;
+    setAttackTarget(world, e, target.isPlayer.id);
 
     if (now - e.performsAttack.lastAttackAt >= e.performsAttack.attackCooldown && !isMonsterFrozen(world, e.isMonster.id)) {
       const ctx = makeCombatContext(e, 'monster', target, 'player');
@@ -213,7 +210,7 @@ export function updateCombat(world: World, dt: number, now: number) {
         world.respawnPlayer(target.isPlayer.id);
       } else {
         const t = world.getPlayerEntity(target.isPlayer.id);
-        if (t) t.tracksEngagement = now;
+        if (t) markEngaged(world, t, now);
       }
     }
   }
@@ -224,7 +221,7 @@ export function updateCombat(world: World, dt: number, now: number) {
   for (const e of world.monsterEntities) {
     if (e.hasHealth.hp >= e.hasHealth.maxHp) continue;
     const ai = e.controlsMonster;
-    if (ai.aggroTargetId !== null) continue;
+    if (e.hasAggroTarget) continue;
     if (now - ai.lastAggroAt < GAME_CONFIG.MONSTER_REGEN_DELAY) continue;
     e.hasHealth.hp = Math.min(
       e.hasHealth.maxHp,

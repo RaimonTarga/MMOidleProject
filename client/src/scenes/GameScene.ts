@@ -1,28 +1,36 @@
 import Phaser from 'phaser';
-import { io, Socket } from 'socket.io-client';
 import type {
-  ServerToClientEvents,
-  ClientToServerEvents,
-  PlayerState,
-  MonsterState,
+  PlayerSnapshot,
   NodeSnapshot,
   NodeDirection,
   EquipmentSlot,
   CombatArchetype,
   CombatEvent,
 } from '@mmo-idle/shared';
-import { GAME_CONFIG, NODE_BIOMES, BIOME_DATABASE } from '@mmo-idle/shared';
+import { GAME_CONFIG, NODE_BIOMES, BIOME_DATABASE, EFFECT_BY_ID, EFFECT_DEFS, EFFECT_FRAME_COUNT, EFFECT_GRID } from '@mmo-idle/shared';
 import { hudBus } from '../hudBus';
 import { combatLog } from '../combatLog';
-import { ATLAS_KEY, getPlayerFrame, getMonsterFrame, getPlayerShadowColor, getPlayerShadowOffset, getMonsterShadowOffset, BIOME_TEXTURES } from '../sprites';
+import { ATLAS_KEY, BIOME_TEXTURES } from '../sprites';
 import { accountId, displayName } from '../clientAuth';
-import { EFFECT_BY_ID, EFFECT_DEFS, EFFECT_FRAME_COUNT, EFFECT_GRID } from '../effects';
-
-type GameSocket = Socket<ServerToClientEvents, ClientToServerEvents>;
-
-// In dev (Vite server on :3000), point explicitly at the Express server.
-// In production (client served by Express on :4000), use the same origin.
-const SERVER_URL = import.meta.env.DEV ? 'http://localhost:4000' : window.location.origin;
+import { connectGameSocket, wireSocketHandlers, type GameSocket } from '../net/socket';
+import {
+  sendMove,
+  sendSetAuto,
+  sendUnlockSkill,
+  sendEquipItem,
+  sendUnequip,
+  sendCraftRecipe,
+  sendGoToTestRoom,
+  sendLeaveTestRoom,
+} from '../net/intents';
+import { applySnapshot } from '../net/snapshotApplier';
+import { createRenderState, getOwnSnapshot, type RenderState } from '../render/state';
+import { stepInterpolation, getOwnBase, applyLunge } from '../render/interpolation';
+import { drawShadows } from '../render/shadows';
+import { drawLabels } from '../render/labels';
+import { drawHealthBars } from '../render/healthBars';
+import { drawCooldownBars } from '../render/cooldownBars';
+import { updateEffectOverlays } from '../render/effectOverlays';
 
 // ── Minimap layout constants ───────────────────────────────────────────────────
 const MM_W   = 220;  // minimap width  (px, screen-space)
@@ -53,71 +61,14 @@ function getNodeExits(nodeId: string): Partial<Record<NodeDirection, string>> {
 const GATE_THICK = 20;       // thickness — must match server EXIT_TRIGGER
 const GATE_COLOR = 0x00ffdd; // bright cyan
 
-interface Visual {
-  sprite: Phaser.GameObjects.Image | Phaser.GameObjects.Rectangle;
-  /** Last frame name used — tracked so sprite can be swapped when a player unlocks a class. */
-  currentFrame?: string | null;
-  /** Ellipse drawn below the sprite — black for monsters, level-colored for players. */
-  shadow: Phaser.GameObjects.Ellipse;
-  /** Px below sprite center where the shadow sits — set at creation, read every frame. */
-  shadowOffsetY: number;
-  /** Last playerTier used to color the player shadow — skips redundant setFillStyle calls. */
-  shadowLevel?: number;
-  label: Phaser.GameObjects.Text;
-  hpBar: Phaser.GameObjects.Graphics;
-  cdBar: Phaser.GameObjects.Graphics;
-  targetX: number;
-  targetY: number;
-  /**
-   * Smooth interpolation base — updated by stepEntities each frame toward targetX/targetY.
-   * Kept separate from sprite.x/y so lunge offsets don't corrupt the interpolation math.
-   */
-  baseX: number;
-  baseY: number;
-  /** Client-only lunge offset, tweened to 0 after a melee attack. sprite renders at base+lunge. */
-  lungeOffsetX: number;
-  lungeOffsetY: number;
-  hp: number;
-  maxHp: number;
-  /** Movement speed in px/s — used by stepEntities for per-entity interpolation. */
-  speed: number;
-  /** Distance from sprite.y to the top edge of the HP bar (px). */
-  barOffsetY: number;
-  attackCooldown: number;
-  lastAttackAt: number;
-  attackTargetId: string | null;
-  attackStyle: string;
-  /** Raw name used for combat-log attribution (monsters only). */
-  entityName?: string;
-  /** Full authoritative state snapshot — only present on player visuals, not monsters. */
-  playerState?: PlayerState;
-  /** Monster range values — only present on monster visuals. */
-  pullRange?: number;
-  leashRange?: number;
-  monsterAttackRange?: number;
-  /** 'melee' monsters play a lunge animation on attack. Only set for monster visuals. */
-  monsterBehavior?: string;
-  /** World-space status overlays keyed by client effect id. */
-  effectOverlays: Map<string, Phaser.GameObjects.Sprite>;
-  /** Active server-driven effects keyed by client effect id; value is remaining milliseconds. */
-  activeEffects: Record<string, number>;
-  /** Active server-driven effects keyed by client effect id; value is an exact spritesheet frame. */
-  activeEffectFrames: Record<string, number>;
-}
-
 export class GameScene extends Phaser.Scene {
   private socket!: GameSocket;
-  private players  = new Map<string, Visual>();
-  private monsters = new Map<string, Visual>();
-  private myId     = '';
-  /** Tracks own player's current node — used for gate rendering and snap detection. */
-  private myNodeId = '';
+  readonly state: RenderState = createRenderState();
+  myId = '';
   /** Gate markers are static world-space graphics; only redrawn when node changes. */
   private lastDrawnNodeId = '';
   /** Yellow dot shown at the last click destination (world-space). */
   private targetMarker!: Phaser.GameObjects.Arc;
-  private autoMode       = false;
-
   private minimap!: Phaser.GameObjects.Graphics;
   /** World-space colored bars drawn at each active exit boundary. */
   private exitMarkers!: Phaser.GameObjects.Graphics;
@@ -135,10 +86,11 @@ export class GameScene extends Phaser.Scene {
   private laserBeamTargetId: string | null = null;
   private laserBeamUntil = 0;
   /** Remaining auto-path hops (nodeIds to visit, not including current node). */
-  private autoPath: string[] = [];
+  autoPath: string[] = [];
+  autoMode = false;
   /** Invisible point the camera follows — positioned at the player's baseX/Y so
    *  lunge offsets on the sprite don't cause the camera to jerk. */
-  private cameraTarget!: Phaser.GameObjects.Arc;
+  cameraTarget!: Phaser.GameObjects.Arc;
 
   constructor() {
     super({ key: 'GameScene' });
@@ -210,23 +162,23 @@ export class GameScene extends Phaser.Scene {
     // ── Skill unlock from SkillTreePanel ───────────────────────────────────
     window.addEventListener('hud:unlockSkill', (e: Event) => {
       const skillId = (e as CustomEvent<string>).detail;
-      this.socket.emit('player:unlockSkill', skillId);
+      sendUnlockSkill(this.socket, skillId);
     });
 
     // ── Inventory actions from InventoryPanel ──────────────────────────────
     window.addEventListener('hud:equipItem', (e: Event) => {
       const definitionId = (e as CustomEvent<string>).detail;
-      this.socket.emit('inventory:equipItem', definitionId);
+      sendEquipItem(this.socket, definitionId);
     });
 
     window.addEventListener('hud:unequipItem', (e: Event) => {
       const slot = (e as CustomEvent<EquipmentSlot>).detail;
-      this.socket.emit('inventory:unequip', slot);
+      sendUnequip(this.socket, slot);
     });
 
     window.addEventListener('hud:craftRecipe', (e: Event) => {
       const recipeId = (e as CustomEvent<string>).detail;
-      this.socket.emit('crafting:craftRecipe', recipeId);
+      sendCraftRecipe(this.socket, recipeId);
     });
 
     window.addEventListener('hud:debugPlayerRange', () => {
@@ -242,15 +194,15 @@ export class GameScene extends Phaser.Scene {
       if (path.length === 0) return;
       this.autoPath = path;
       hudBus.emit({ autoPath: [...path] });
-      this.sendAutoPathMove(this.myNodeId);
+      this.sendAutoPathMove(this.state.ownNodeId);
     });
 
     window.addEventListener('hud:goToTestRoom', () => {
-      this.socket.emit('debug:goToTestRoom');
+      sendGoToTestRoom(this.socket);
     });
 
     window.addEventListener('hud:leaveTestRoom', () => {
-      this.socket.emit('debug:leaveTestRoom');
+      sendLeaveTestRoom(this.socket);
     });
 
     // ── Click to move ──────────────────────────────────────────────────────
@@ -263,69 +215,71 @@ export class GameScene extends Phaser.Scene {
       if (this.autoMode) this.setAutoMode(false);
       if (this.autoPath.length > 0) this.cancelAutoPath();
 
-      this.socket.emit('player:move', { x: tx, y: ty });
+      sendMove(this.socket, tx, ty);
 
-      const vp = this.players.get(this.myId);
-      if (vp) {
-        vp.targetX = tx;
-        vp.targetY = ty;
+      const transform = this.state.ownId ? this.state.transform.get(this.state.ownId) : undefined;
+      if (transform) {
+        transform.targetX = tx;
+        transform.targetY = ty;
       }
 
       this.targetMarker.setPosition(tx, ty).setVisible(true);
     });
 
     // ── Socket.IO ──────────────────────────────────────────────────────────
-    this.socket = io(SERVER_URL, {
-      auth: { accountId, displayName },
-    }) as GameSocket;
+    this.socket = connectGameSocket({ accountId, displayName });
 
-    this.socket.on('connect', () => {
-      this.myId = this.socket.id ?? '';
-      hudBus.emit({ status: 'connected' });
-      const own = this.players.get(this.myId);
-      if (own) this.cameras.main.startFollow(this.cameraTarget, true, 0.1, 0.1);
-    });
-
-    this.socket.on('disconnect', () => {
-      hudBus.emit({ status: 'disconnected', player: null });
-      this.myId = '';
-    });
-
-    this.socket.on('state:sync', (snapshot) => this.applySnapshot(snapshot));
-    this.socket.on('node:state',  (snapshot) => this.applySnapshot(snapshot));
-
-    this.socket.on('crafting:result', (result) => {
-      window.dispatchEvent(new CustomEvent('hud:craftResult', { detail: result }));
-    });
-
-    this.socket.on('player:died', () => {
-      combatLog.push('death', 'You were defeated');
-      this.showDeathOverlay();
-    });
-
-    this.socket.on('player:ascended', (tier) => {
-      this.showAscensionOverlay(tier);
+    wireSocketHandlers(this.socket, {
+      onConnect: (socket) => {
+        this.myId = socket.id ?? '';
+        hudBus.emit({ status: 'connected' });
+        if (this.state.ownId) this.cameras.main.startFollow(this.cameraTarget, true, 0.1, 0.1);
+      },
+      onDisconnect: () => {
+        hudBus.emit({ status: 'disconnected', player: null });
+        this.myId = '';
+        this.state.ownId = null;
+      },
+      onSnapshot: (snapshot) => applySnapshot(this.state, snapshot, this),
+      onCraftResult: (result) => {
+        window.dispatchEvent(new CustomEvent('hud:craftResult', { detail: result }));
+      },
+      onPlayerDied: () => {
+        combatLog.push('death', 'You were defeated');
+        this.showDeathOverlay();
+      },
+      onPlayerAscended: (tier) => {
+        this.showAscensionOverlay(tier);
+      },
     });
   }
 
   update(_time: number, delta: number) {
     const dt = delta / 1000;
-    this.stepEntities(this.players,  dt);
-    this.stepEntities(this.monsters, dt);
+
+    stepInterpolation(this.state, dt);
+    drawShadows(this.state);
+    drawLabels(this.state);
+    drawHealthBars(this.state);
+    drawCooldownBars(this.state);
+    updateEffectOverlays(this.state, this, dt);
+
     this.updateLaserBeam();
     this.drawMinimap();
 
-    // Redraw exit gate markers and update biome background only when node changes.
-    if (this.myNodeId !== this.lastDrawnNodeId) {
+    if (this.state.ownNodeId !== this.lastDrawnNodeId) {
       this.drawExitMarkers();
       this.updateBiomeBackground();
-      this.lastDrawnNodeId = this.myNodeId;
+      this.lastDrawnNodeId = this.state.ownNodeId;
     }
 
-    const own = this.players.get(this.myId);
-    if (own && this.targetMarker.visible) {
-      const dx = own.sprite.x - this.targetMarker.x;
-      const dy = own.sprite.y - this.targetMarker.y;
+    const base = getOwnBase(this.state);
+    if (base) this.cameraTarget.setPosition(base.x, base.y);
+
+    const ownSprite = this.state.ownId ? this.state.sprite.get(this.state.ownId) : undefined;
+    if (ownSprite && this.targetMarker.visible) {
+      const dx = ownSprite.x - this.targetMarker.x;
+      const dy = ownSprite.y - this.targetMarker.y;
       if (dx * dx + dy * dy < 16) this.targetMarker.setVisible(false);
     }
 
@@ -358,36 +312,16 @@ export class GameScene extends Phaser.Scene {
 
   private setAutoMode(enabled: boolean): void {
     this.autoMode = enabled;
-    this.socket.emit('player:setAuto', enabled);
+    sendSetAuto(this.socket, enabled);
     if (enabled) this.targetMarker.setVisible(false);
 
-    const own = this.players.get(this.myId);
-    if (own?.playerState) {
-      hudBus.emit({ player: { ...own.playerState, auto: enabled } });
+    const own = getOwnSnapshot(this.state);
+    if (own) {
+      hudBus.emit({ player: { ...own, auto: enabled } });
     }
   }
 
-  private applySnapshot(snapshot: NodeSnapshot) {
-    const livePlayers = new Set(snapshot.players.map((p) => p.id));
-    for (const id of this.players.keys()) {
-      if (id !== this.myId && !livePlayers.has(id)) this.destroyVisual(this.players, id);
-    }
-    snapshot.players.forEach((p) => this.upsertPlayer(p));
-
-    // Process queued combat events after player upsert (need latest playerState).
-    // Events fire for own player only; other players' attacks are not tracked here.
-    for (const ev of snapshot.events) {
-      this.processCombatEvent(ev);
-    }
-
-    const liveMonsters = new Set(snapshot.monsters.map((m) => m.id));
-    for (const id of this.monsters.keys()) {
-      if (!liveMonsters.has(id)) this.destroyVisual(this.monsters, id);
-    }
-    snapshot.monsters.forEach((m) => this.upsertMonster(m));
-  }
-
-  private processCombatEvent(ev: CombatEvent) {
+  processCombatEventViaApplier(state: RenderState, ev: CombatEvent): void {
     if (ev.playerId !== this.myId) return;
 
     if (ev.kind === 'player-hit') {
@@ -395,28 +329,40 @@ export class GameScene extends Phaser.Scene {
       if (ev.empowered) combatLog.push('empowered', `Empowered strike → ${ev.targetName}`);
       if (ev.execution) combatLog.push('execution', `Execution strike → ${ev.targetName}`);
 
-      const ownVp     = this.players.get(this.myId);
-      const targetVm  = this.monsters.get(ev.targetId);
-      if (ownVp && targetVm && ownVp.playerState) {
-        const p       = ownVp.playerState;
-        const dotPath = p.combatArchetype === 'dot' ? this.getDotPath(p) : undefined;
-        const targetEffectScale = this.getEffectScaleForVisual(targetVm);
-        const isLaser = p.combatArchetype === 'reload' && (p.passives['reload.laser'] ?? 0) > 0;
+      const ownSprite = state.ownId ? state.sprite.get(state.ownId) : undefined;
+      const targetSprite = state.sprite.get(ev.targetId);
+      const player = state.ownId ? (state.snapshot.get(state.ownId) as PlayerSnapshot | undefined) : undefined;
+      const targetInterp = state.interpolation.get(ev.targetId);
+
+      if (ownSprite && targetSprite && player) {
+        const dotPath = player.combatArchetype === 'dot' ? this.getDotPath(player) : undefined;
+        const targetSpriteObj = state.sprite.get(ev.targetId);
+        const bossScale = targetSpriteObj && Math.max(targetSpriteObj.displayWidth, targetSpriteObj.displayHeight) > 64 ? 1.33 : 1;
+        const targetEffectScale = 1.5 * bossScale;
+        const isLaser = player.combatArchetype === 'reload' && (player.passives['reload.laser'] ?? 0) > 0;
         if (isLaser) {
           this.activateLaserBeam(ev.targetId);
         } else {
-          this.spawnAttackEffect(ownVp.attackStyle, ownVp.sprite.x, ownVp.sprite.y,
-            targetVm.sprite.x, targetVm.sprite.y, {
+          this.spawnAttackEffect(
+            player.attackStyle,
+            ownSprite.x,
+            ownSprite.y,
+            targetSprite.x,
+            targetSprite.y,
+            {
               empowered: ev.empowered,
               execution: ev.execution,
-              archetype: p.combatArchetype ?? undefined,
+              archetype: player.combatArchetype ?? undefined,
               dotPath,
-            });
+            },
+          );
         }
         for (const effectId of ev.effects ?? []) {
-          this.playOneShotEffect(effectId, targetVm.sprite.x, targetVm.sprite.y, { scale: targetEffectScale });
+          this.playOneShotEffect(effectId, targetSprite.x, targetSprite.y, { scale: targetEffectScale });
         }
-        if (!isLaser && p.attackRange <= 150) this.playMeleeLunge(ownVp, targetVm.baseX, targetVm.baseY);
+        if (!isLaser && player.attackRange <= 150 && state.ownId && targetInterp) {
+          applyLunge(state, state.ownId, targetInterp.baseX, targetInterp.baseY, this);
+        }
       }
     }
 
@@ -425,399 +371,9 @@ export class GameScene extends Phaser.Scene {
     }
   }
 
-  /** Interpolate sprites toward their targets and redraw HP + cooldown bars every frame. */
-  private stepEntities(map: Map<string, Visual>, dt: number) {
-    const now = Date.now();
-    const ownVp = this.players.get(this.myId);
-
-    for (const v of map.values()) {
-      const { sprite, label, hpBar, cdBar } = v;
-
-      // Move the interpolation base toward the authoritative target.
-      // sprite.x/y = baseX/Y + lungeOffset, so we never use sprite.x/y for math.
-      const dx = v.targetX - v.baseX;
-      const dy = v.targetY - v.baseY;
-      const distSq = dx * dx + dy * dy;
-      if (distSq > 1) {
-        const dist = Math.sqrt(distSq);
-        const step = Math.min(v.speed * dt, dist);
-        v.baseX += (dx / dist) * step;
-        v.baseY += (dy / dist) * step;
-      } else {
-        v.baseX = v.targetX;
-        v.baseY = v.targetY;
-      }
-      sprite.setPosition(v.baseX + v.lungeOffsetX, v.baseY + v.lungeOffsetY);
-      v.shadow.setPosition(v.baseX + v.lungeOffsetX, v.baseY + v.lungeOffsetY + v.shadowOffsetY);
-      this.updateStatusOverlays(v, dt);
-
-      // Keep the camera anchor on the base position so lunge offsets don't move the camera.
-      if (v === ownVp) this.cameraTarget.setPosition(v.baseX, v.baseY);
-
-      // Update player shadow style when tier changes (level 0 = fill, 1+ = stroke).
-      if (v.playerState) {
-        const lvl = v.playerState.playerTier;
-        if (lvl !== v.shadowLevel) {
-          this.applyPlayerShadowStyle(v.shadow, lvl);
-          v.shadowLevel = lvl;
-        }
-      }
-
-      // HP bar
-      const barY    = sprite.y - v.barOffsetY;
-      const hpPct   = v.maxHp > 0 ? Math.max(0, v.hp / v.maxHp) : 0;
-      const hpColor = hpPct > 0.5 ? 0x44ee44 : hpPct > 0.25 ? 0xeeaa22 : 0xee3322;
-      hpBar.clear();
-      hpBar.fillStyle(0x1a1a1a);
-      hpBar.fillRect(sprite.x - 16, barY, 32, 4);
-      hpBar.fillStyle(hpColor);
-      hpBar.fillRect(sprite.x - 16, barY, Math.round(32 * hpPct), 4);
-
-      // Shield layer — teal segment extending from the HP fill edge, capped at bar width
-      const shields = v.playerState?.shields;
-      if (shields && shields.length > 0) {
-        const totalShield = shields.reduce((sum, s) => sum + s.amount, 0);
-        const shieldPct   = v.maxHp > 0 ? totalShield / v.maxHp : 0;
-        const shieldStart = Math.round(32 * hpPct);
-        const shieldWidth = Math.min(32 - shieldStart, Math.round(32 * shieldPct));
-        if (shieldWidth > 0) {
-          hpBar.fillStyle(0x44ccdd, 0.9);
-          hpBar.fillRect(sprite.x - 16 + shieldStart, barY, shieldWidth, 4);
-        }
-      }
-
-      // HP bar border
-      hpBar.lineStyle(1, 0x000000, 0.75);
-      hpBar.strokeRect(sprite.x - 16.5, barY - 0.5, 33, 5);
-
-      // Cooldown bar — only visible while attacking
-      cdBar.clear();
-      if (v.attackTargetId !== null) {
-        const cdPct  = Math.min(1, (now - v.lastAttackAt) / Math.max(1, v.attackCooldown));
-        const cdColor = cdPct >= 1 ? 0xffdd22 : 0x4466cc;
-        const cdBarY  = barY + 6;
-        cdBar.fillStyle(0x1a1a1a);
-        cdBar.fillRect(sprite.x - 16, cdBarY, 32, 3);
-        cdBar.fillStyle(cdColor);
-        cdBar.fillRect(sprite.x - 16, cdBarY, Math.round(32 * cdPct), 3);
-        cdBar.lineStyle(1, 0x000000, 0.75);
-        cdBar.strokeRect(sprite.x - 16.5, cdBarY - 0.5, 33, 4);
-      }
-
-      label.setPosition(sprite.x - 16, barY - 12);
-    }
-  }
-
-  private updateStatusOverlays(v: Visual, dt: number): void {
-    for (const [id, overlay] of v.effectOverlays) {
-      const remainingMs = v.activeEffects[id] ?? 0;
-      const frame = v.activeEffectFrames[id];
-      if (remainingMs <= 0 && frame == null) {
-        overlay.destroy();
-        v.effectOverlays.delete(id);
-      }
-    }
-
-    const effectIds = new Set([
-      ...Object.keys(v.activeEffects),
-      ...Object.keys(v.activeEffectFrames),
-    ]);
-
-    for (const id of effectIds) {
-      const def = EFFECT_BY_ID.get(id);
-      const explicitFrame = v.activeEffectFrames[id];
-      const remainingMsRaw = v.activeEffects[id] ?? 0;
-      const remainingMs = Math.max(0, remainingMsRaw);
-      if (!def || (remainingMs <= 0 && explicitFrame == null)) {
-        v.activeEffects[id] = 0;
-        continue;
-      }
-
-      let overlay = v.effectOverlays.get(id);
-      if (!overlay) {
-        overlay = this.add
-          .sprite(v.sprite.x, v.sprite.y, def.key)
-          .setDepth(def.depth ?? Math.max(3, v.sprite.depth + 2));
-        v.effectOverlays.set(id, overlay);
-      }
-
-      let rawFrame: number;
-      if (explicitFrame != null && def.loopFrames != null && def.loopFrames > 0) {
-        const t = (this.time.now / def.durationMs) % 1;
-        const offset = Math.min(def.loopFrames - 1, Math.floor(t * def.loopFrames));
-        rawFrame = explicitFrame + offset;
-      } else if (explicitFrame != null) {
-        rawFrame = explicitFrame;
-      } else {
-        rawFrame = Math.floor((remainingMs / def.durationMs) * EFFECT_FRAME_COUNT);
-      }
-      const frame = Math.max(0, Math.min(EFFECT_FRAME_COUNT - 1, rawFrame));
-      overlay.setFrame(frame);
-
-      // Compute display size from the active frame's natural aspect ratio.
-      // Sheets with rowSlices have non-square frames per row, so a fixed
-      // square `setDisplaySize` would squash rows of differing height.
-      const baseW = (def.baseSize ?? 96) * this.getEffectScaleForVisual(v, def.scale);
-      const fw = overlay.frame.width  || def.frameSize;
-      const fh = overlay.frame.height || def.frameSize;
-      overlay.setDisplaySize(baseW, baseW * (fh / fw));
-
-      overlay
-        .setPosition(v.sprite.x, v.sprite.y + (def.anchorYPx ?? -4))
-        .setVisible(true);
-      if (explicitFrame == null) {
-        v.activeEffects[id] = Math.max(0, remainingMs - dt * 1000);
-      }
-    }
-  }
-
-  private getEffectScaleForVisual(v: Visual, baseScale = 1.5): number {
-    const bossScale = Math.max(v.sprite.displayWidth, v.sprite.displayHeight) > 64 ? 1.33 : 1;
-    return baseScale * bossScale;
-  }
-
-  /**
-   * Attempts to create an Image from the game atlas for the given frame.
-   * Returns null if the atlas isn't loaded or the frame doesn't exist,
-   * so the caller can fall back to a placeholder rectangle.
-   */
-  private tryMakeImage(
-    x: number, y: number,
-    frame: string | null,
-    displayW: number, displayH: number,
-  ): Phaser.GameObjects.Image | null {
-    if (!frame) return null;
-    if (!this.textures.exists(ATLAS_KEY)) return null;
-    if (!this.textures.get(ATLAS_KEY).has(frame)) return null;
-    return this.add.image(x, y, ATLAS_KEY, frame).setDisplaySize(displayW, displayH);
-  }
-
-  /** Level 0 → black filled ellipse (same as monsters). Level 1+ → bright stroke outline, no fill. */
-  private applyPlayerShadowStyle(shadow: Phaser.GameObjects.Ellipse, level: number): void {
-    if (level === 0) {
-      shadow.setFillStyle(0x000000, 0.45);
-      shadow.setStrokeStyle();
-    } else {
-      shadow.setFillStyle();
-      shadow.setStrokeStyle(3, getPlayerShadowColor(level), 1);
-    }
-  }
-
-  private upsertPlayer(player: PlayerState) {
-    const isOwn = player.id === this.myId;
-    let vp = this.players.get(player.id);
-
-    if (!vp) {
-      const frame  = getPlayerFrame(player);
-      const color  = isOwn ? 0x44ff88 : 0x4488ff;
-      const shadowOffsetY = getPlayerShadowOffset();
-      const shadow = this.add.ellipse(player.x, player.y + shadowOffsetY, 52, 14).setDepth(3);
-      this.applyPlayerShadowStyle(shadow, player.playerTier);
-      const sprite = (this.tryMakeImage(player.x, player.y, frame, 64, 64)
-        ?? this.add.rectangle(player.x, player.y, 64, 64, color)).setDepth(4);
-      const label  = this.add.text(0, 0, player.name, {
-        color: '#ffffff', fontSize: '10px', fontFamily: 'monospace',
-        stroke: '#000000', strokeThickness: 3,
-      }).setDepth(5);
-      const hpBar = this.add.graphics().setDepth(5);
-      const cdBar = this.add.graphics().setDepth(5);
-      vp = {
-        sprite, shadow, shadowOffsetY, label, hpBar, cdBar,
-        currentFrame:   frame,
-        shadowLevel:    player.playerTier,
-        targetX: player.targetX, targetY: player.targetY,
-        baseX: player.x, baseY: player.y,
-        lungeOffsetX: 0, lungeOffsetY: 0,
-        hp: player.hp, maxHp: player.maxHp,
-        speed: player.speed, barOffsetY: 40,
-        effectOverlays: new Map<string, Phaser.GameObjects.Sprite>(),
-        activeEffects:  player.activeEffects ?? {},
-        activeEffectFrames: player.activeEffectFrames ?? {},
-        attackCooldown: player.attackCooldown,
-        lastAttackAt:   player.lastAttackAt,
-        attackTargetId: player.attackTargetId,
-        attackStyle:    player.attackStyle,
-        playerState:    player,
-      };
-      this.players.set(player.id, vp);
-
-      if (isOwn) {
-        this.cameraTarget.setPosition(player.x, player.y);
-        this.cameras.main.startFollow(this.cameraTarget, true, 0.1, 0.1);
-        this.myNodeId = player.nodeId;
-        hudBus.emit({ player });
-      }
-      return;
-    }
-
-    // Detect node transition for own player — snap to the new position immediately.
-    if (isOwn && player.nodeId !== this.myNodeId) {
-      vp.baseX = player.x;
-      vp.baseY = player.y;
-      vp.sprite.setPosition(player.x, player.y);
-
-      // Advance auto-path when we enter the expected next node.
-      if (this.autoPath.length > 0) {
-        if (this.autoPath[0] === player.nodeId) {
-          this.autoPath.shift();
-          if (this.autoPath.length > 0) {
-            hudBus.emit({ autoPath: [...this.autoPath] });
-            this.sendAutoPathMove(player.nodeId);
-          } else {
-            this.cancelAutoPath(); // reached destination
-          }
-        } else {
-          this.cancelAutoPath(); // ended up somewhere unexpected
-        }
-      }
-    }
-
-    // Swap sprite when the player's class/variant changes (e.g. after unlocking a root node).
-    const newFrame = getPlayerFrame(player);
-    if (newFrame !== vp.currentFrame) {
-      vp.sprite.destroy();
-      const color = isOwn ? 0x44ff88 : 0x4488ff;
-      vp.sprite = (this.tryMakeImage(vp.baseX, vp.baseY, newFrame, 64, 64)
-        ?? this.add.rectangle(vp.baseX, vp.baseY, 64, 64, color)).setDepth(4);
-      vp.currentFrame = newFrame;
-    }
-
-    const prevPlayerAttackAt  = vp.lastAttackAt;
-    const prevPlayerHp        = vp.hp;
-    const prevTotalShield     = vp.playerState?.shields.reduce((sum, s) => sum + s.amount, 0) ?? 0;
-    vp.targetX        = player.targetX;
-    vp.targetY        = player.targetY;
-    vp.hp             = player.hp;
-    vp.maxHp          = player.maxHp;
-    vp.speed          = player.speed;
-    vp.activeEffects  = player.activeEffects ?? {};
-    vp.activeEffectFrames = player.activeEffectFrames ?? {};
-    vp.attackCooldown = player.attackCooldown;
-    vp.lastAttackAt   = player.lastAttackAt;
-    vp.attackTargetId = player.attackTargetId;
-    vp.attackStyle    = player.attackStyle;
-    vp.playerState    = player;
-
-    if (player.hp < prevPlayerHp) {
-      const dmgColor = isOwn ? '#ff4444' : '#ff8844';
-      this.spawnDamageNumber(vp.sprite.x, vp.sprite.y, vp.barOffsetY, Math.round(prevPlayerHp - player.hp), dmgColor);
-      if (isOwn) combatLog.push('damage-in', `Took ${Math.round(prevPlayerHp - player.hp)} damage`);
-    }
-
-    if (isOwn && player.hp > prevPlayerHp && prevPlayerHp > 0) {
-      const healed = Math.round(player.hp - prevPlayerHp);
-      if (healed >= 1) combatLog.push('heal', `Recovered ${healed} HP`);
-    }
-
-    if (isOwn) {
-      const newTotalShield = player.shields.reduce((sum, s) => sum + s.amount, 0);
-      if (newTotalShield > prevTotalShield) {
-        combatLog.push('shield', `Shield +${Math.round(newTotalShield - prevTotalShield)}`);
-      }
-    }
-
-    // Attack animations for OTHER players — own player uses event queue instead.
-    if (!isOwn && player.lastAttackAt > prevPlayerAttackAt && player.attackTargetId) {
-      const targetVm = this.monsters.get(player.attackTargetId);
-      if (targetVm) {
-        this.spawnAttackEffect(vp.attackStyle, vp.sprite.x, vp.sprite.y, targetVm.sprite.x, targetVm.sprite.y, {
-          empowered: false,
-          execution: false,
-          archetype: player.combatArchetype ?? undefined,
-        });
-        if (player.attackRange <= 150) this.playMeleeLunge(vp, targetVm.baseX, targetVm.baseY);
-      }
-    }
-
-    if (isOwn) {
-      this.myNodeId = player.nodeId;
-      this.autoMode = player.auto;
-      hudBus.emit({ player });
-    }
-  }
-
-  private upsertMonster(monster: MonsterState) {
-    let vm = this.monsters.get(monster.id);
-    if (!vm) {
-      const spriteSize  = monster.isBoss ? 80 : 64;
-      const shadowW     = monster.isBoss ? 64 : 52;
-      const shadowH     = monster.isBoss ? 18 : 14;
-      const labelColor  = monster.isBoss ? '#ffcc44' : '#ffaaaa';
-      const frame  = getMonsterFrame(monster.monsterTypeId);
-      const shadowOffsetY = getMonsterShadowOffset(monster.monsterTypeId);
-      const shadow = this.add.ellipse(monster.x, monster.y + shadowOffsetY, shadowW, shadowH,
-        0x000000, monster.isBoss ? 0.55 : 0.45).setDepth(0);
-      const sprite = (this.tryMakeImage(monster.x, monster.y, frame, spriteSize, spriteSize)
-        ?? this.add.rectangle(monster.x, monster.y, spriteSize, spriteSize, monster.color)).setDepth(1);
-      const label  = this.add.text(0, 0, monster.isBoss ? `⚠ ${monster.name}` : monster.name, {
-        color: labelColor, fontSize: monster.isBoss ? '11px' : '10px', fontFamily: 'monospace',
-        fontStyle: monster.isBoss ? 'bold' : 'normal',
-        stroke: '#000000', strokeThickness: 3,
-      }).setDepth(2);
-      const hpBar = this.add.graphics().setDepth(2);
-      const cdBar = this.add.graphics().setDepth(2);
-      vm = { sprite, shadow, shadowOffsetY, label, hpBar, cdBar,
-             targetX: monster.targetX, targetY: monster.targetY,
-             baseX: monster.x, baseY: monster.y,
-             lungeOffsetX: 0, lungeOffsetY: 0,
-             hp: monster.hp, maxHp: monster.maxHp,
-             speed: monster.speed, barOffsetY: monster.isBoss ? 50 : 40,
-             effectOverlays:     new Map<string, Phaser.GameObjects.Sprite>(),
-             activeEffects:      monster.activeEffects ?? {},
-             activeEffectFrames: monster.activeEffectFrames ?? {},
-             attackCooldown:     monster.attackCooldown,
-             lastAttackAt:       monster.lastAttackAt,
-             attackTargetId:     monster.attackTargetId,
-             attackStyle:        monster.attackStyle,
-             entityName:         monster.name,
-             pullRange:          monster.pullRange,
-             leashRange:         monster.leashRange,
-             monsterAttackRange: monster.attackRange,
-             monsterBehavior:    monster.behavior };
-      this.monsters.set(monster.id, vm);
-      return;
-    }
-    const prevMonsterAttackAt = vm.lastAttackAt;
-    const prevMonsterHp = vm.hp;
-    // Only hard-snap when the server/client positions have diverged significantly
-    // (e.g. leash teleport, node transition, or large dead-reckoning error).
-    // For small drifts the normal interpolation toward targetX/Y self-corrects silently.
-    const snapDx = monster.x - vm.baseX;
-    const snapDy = monster.y - vm.baseY;
-    if (snapDx * snapDx + snapDy * snapDy > 80 * 80) {
-      vm.baseX = monster.x;
-      vm.baseY = monster.y;
-    }
-    vm.targetX        = monster.targetX;
-    vm.targetY        = monster.targetY;
-    vm.hp             = monster.hp;
-    vm.speed          = monster.speed;
-    vm.activeEffects  = monster.activeEffects ?? {};
-    vm.activeEffectFrames = monster.activeEffectFrames ?? {};
-    vm.lastAttackAt   = monster.lastAttackAt;
-    vm.attackTargetId = monster.attackTargetId;
-    vm.attackStyle    = monster.attackStyle;
-
-    if (monster.hp < prevMonsterHp) {
-      const dmg = Math.round(prevMonsterHp - monster.hp);
-      this.spawnDamageNumber(vm.sprite.x, vm.sprite.y, vm.barOffsetY, dmg, '#ffffff');
-    }
-
-    if (monster.lastAttackAt > prevMonsterAttackAt && monster.attackTargetId) {
-      const targetVp = this.players.get(monster.attackTargetId);
-      if (targetVp) {
-        this.spawnAttackEffect(vm.attackStyle, vm.sprite.x, vm.sprite.y, targetVp.sprite.x, targetVp.sprite.y);
-
-        if (vm.monsterBehavior === 'melee') {
-          this.playMeleeLunge(vm, targetVp.baseX, targetVp.baseY);
-        }
-      }
-    }
-  }
-
   /** Swap the background rectangle's fill color to match the current biome. */
   private updateBiomeBackground(): void {
-    const biomeInfo = NODE_BIOMES[this.myNodeId];
+    const biomeInfo = NODE_BIOMES[this.state.ownNodeId];
     if (!biomeInfo) return;
     const biome = BIOME_DATABASE.get(biomeInfo.biomeGroup);
     if (!biome) return;
@@ -856,7 +412,7 @@ export class GameScene extends Phaser.Scene {
   private drawExitMarkers(): void {
     this.exitMarkers.clear();
 
-    const exits = getNodeExits(this.myNodeId);
+    const exits = getNodeExits(this.state.ownNodeId);
     if (!exits) return;
 
     const W = GAME_CONFIG.NODE_WIDTH;
@@ -896,33 +452,38 @@ export class GameScene extends Phaser.Scene {
 
     // Monsters — red 2×2 dots, drawn first so player dots render on top
     this.minimap.fillStyle(0xff4444, 1);
-    for (const v of this.monsters.values()) {
-      const dx = mmX + v.sprite.x * scaleX;
-      const dy = mmY + v.sprite.y * scaleY;
+    for (const id of this.state.ids) {
+      if (this.state.kind.get(id) !== 'monster') continue;
+      const sprite = this.state.sprite.get(id);
+      if (!sprite) continue;
+      const dx = mmX + sprite.x * scaleX;
+      const dy = mmY + sprite.y * scaleY;
       this.minimap.fillRect(dx - 1, dy - 1, 2, 2);
     }
 
     // Other players — blue 2×2 dots
     this.minimap.fillStyle(0x4488ff, 1);
-    for (const [id, v] of this.players) {
-      if (id === this.myId) continue;
-      const dx = mmX + v.sprite.x * scaleX;
-      const dy = mmY + v.sprite.y * scaleY;
+    for (const id of this.state.ids) {
+      if (this.state.kind.get(id) !== 'player' || id === this.myId) continue;
+      const sprite = this.state.sprite.get(id);
+      if (!sprite) continue;
+      const dx = mmX + sprite.x * scaleX;
+      const dy = mmY + sprite.y * scaleY;
       this.minimap.fillRect(dx - 1, dy - 1, 2, 2);
     }
 
     // Own player — bright green 3×3, always on top
-    const own = this.players.get(this.myId);
-    if (own) {
+    const ownSprite = this.state.ownId ? this.state.sprite.get(this.state.ownId) : undefined;
+    if (ownSprite) {
       this.minimap.fillStyle(0x44ff88, 1);
-      const dx = mmX + own.sprite.x * scaleX;
-      const dy = mmY + own.sprite.y * scaleY;
+      const dx = mmX + ownSprite.x * scaleX;
+      const dy = mmY + ownSprite.y * scaleY;
       this.minimap.fillRect(dx - 1, dy - 1, 3, 3);
     }
 
     // Exit direction indicators — small colored bars at minimap edge midpoints.
     // Drawn last so they appear on top of entity dots.
-    const exits = getNodeExits(this.myNodeId) ?? {};
+    const exits = getNodeExits(this.state.ownNodeId) ?? {};
     const mcx = mmX + MM_W / 2;
     const mcy = mmY + MM_H / 2;
     this.minimap.fillStyle(GATE_COLOR, 1);
@@ -1377,14 +938,16 @@ export class GameScene extends Phaser.Scene {
     if (!this.laserBeamGraphics) return;
 
     const now = Date.now();
-    const ownVp = this.players.get(this.myId);
-    const targetVm = this.laserBeamTargetId ? this.monsters.get(this.laserBeamTargetId) : undefined;
-    const player = ownVp?.playerState;
+    const ownSprite = this.state.ownId ? this.state.sprite.get(this.state.ownId) : undefined;
+    const targetSprite = this.laserBeamTargetId ? this.state.sprite.get(this.laserBeamTargetId) : undefined;
+    const player = this.state.ownId
+      ? (this.state.snapshot.get(this.state.ownId) as PlayerSnapshot | undefined)
+      : undefined;
 
     if (
       now > this.laserBeamUntil ||
-      !ownVp ||
-      !targetVm ||
+      !ownSprite ||
+      !targetSprite ||
       !player ||
       player.combatArchetype !== 'reload' ||
       (player.passives['reload.laser'] ?? 0) <= 0 ||
@@ -1395,10 +958,10 @@ export class GameScene extends Phaser.Scene {
       return;
     }
 
-    const fromX = ownVp.sprite.x;
-    const fromY = ownVp.sprite.y;
-    const toX = targetVm.sprite.x;
-    const toY = targetVm.sprite.y;
+    const fromX = ownSprite.x;
+    const fromY = ownSprite.y;
+    const toX = targetSprite.x;
+    const toY = targetSprite.y;
     const pulse = 0.75 + Math.sin(now / 45) * 0.18;
 
     this.laserBeamGraphics.clear();
@@ -1578,7 +1141,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   // Helper: resolve which DoT path the player is on from their passives + sub-variant.
-  private getDotPath(player: PlayerState): 'poison' | 'fire' | 'frost' {
+  private getDotPath(player: PlayerSnapshot): 'poison' | 'fire' | 'frost' {
     const p = player.passives;
     if ((p['dot.fan-the-flames'] ?? 0) > 0 || (p['dot.smoldering-ember'] ?? 0) > 0 || (p['dot.conflagration'] ?? 0) > 0) return 'fire';
     if ((p['dot.permafrost'] ?? 0) > 0 || (p['dot.freezing-cold'] ?? 0) > 0 || (p['dot.glacial-fracture'] ?? 0) > 0) return 'frost';
@@ -1587,29 +1150,6 @@ export class GameScene extends Phaser.Scene {
     if (player.selectedSubVariant === 'balanced') return 'fire';
     if (player.selectedSubVariant === 'heavy')    return 'frost';
     return 'poison';
-  }
-
-  private playMeleeLunge(vm: Visual, targetX: number, targetY: number): void {
-    const LUNGE_DIST = 26;
-    const dx = targetX - vm.baseX;
-    const dy = targetY - vm.baseY;
-    const dist = Math.sqrt(dx * dx + dy * dy);
-    if (dist < 1) return;
-
-    // Kill any lunge tween already in progress so they don't stack
-    this.tweens.killTweensOf(vm);
-
-    // Snap forward, then ease back
-    vm.lungeOffsetX = (dx / dist) * LUNGE_DIST;
-    vm.lungeOffsetY = (dy / dist) * LUNGE_DIST;
-    this.tweens.add({
-      targets: vm,
-      lungeOffsetX: 0,
-      lungeOffsetY: 0,
-      delay: 60,
-      duration: 200,
-      ease: 'Quad.easeOut',
-    });
   }
 
   /** Expanding translucent ring used to show AoE splash extent on empowered hits. */
@@ -1654,7 +1194,7 @@ export class GameScene extends Phaser.Scene {
     });
   }
 
-  private spawnAttackEffect(
+  spawnAttackEffect(
     style: string,
     fromX: number, fromY: number,
     toX: number, toY: number,
@@ -1707,7 +1247,7 @@ export class GameScene extends Phaser.Scene {
    * barOffsetY is the same value used to position the HP bar above the sprite,
    * so the number starts just above the bar.
    */
-  private spawnDamageNumber(spriteX: number, spriteY: number, barOffsetY: number, amount: number, color: string): void {
+  spawnDamageNumber(spriteX: number, spriteY: number, barOffsetY: number, amount: number, color: string): void {
     const jitter = (Math.random() - 0.5) * 18;
     const startY = spriteY - barOffsetY - 6;
     const text = this.add
@@ -1741,37 +1281,43 @@ export class GameScene extends Phaser.Scene {
     this.debugGraphics.clear();
 
     if (this.debugPlayerRange) {
-      const own = this.players.get(this.myId);
-      if (own?.playerState) {
-        const r = own.playerState.attackRange;
+      const ownSprite = this.state.ownId ? this.state.sprite.get(this.state.ownId) : undefined;
+      const player = getOwnSnapshot(this.state);
+      if (ownSprite && player) {
+        const r = player.attackRange;
         this.debugGraphics.lineStyle(1.5, 0xaaff44, 0.55);
-        this.debugGraphics.strokeCircle(own.sprite.x, own.sprite.y, r);
+        this.debugGraphics.strokeCircle(ownSprite.x, ownSprite.y, r);
       }
     }
 
     if (this.debugEnemyRanges) {
-      for (const vm of this.monsters.values()) {
-        const cx = vm.sprite.x;
-        const cy = vm.sprite.y;
+      for (const id of this.state.ids) {
+        if (this.state.kind.get(id) !== 'monster') continue;
+        const sprite = this.state.sprite.get(id);
+        const ranges = this.state.debugRanges.get(id);
+        if (!sprite || !ranges) continue;
 
-        if (vm.pullRange != null) {
+        const cx = sprite.x;
+        const cy = sprite.y;
+
+        if (ranges.pullRange != null) {
           this.debugGraphics.lineStyle(1, 0xff8844, 0.5);
-          this.debugGraphics.strokeCircle(cx, cy, vm.pullRange);
+          this.debugGraphics.strokeCircle(cx, cy, ranges.pullRange);
         }
-        if (vm.leashRange != null) {
+        if (ranges.leashRange != null) {
           this.debugGraphics.lineStyle(1, 0x4466cc, 0.35);
-          this.debugGraphics.strokeCircle(cx, cy, vm.leashRange);
+          this.debugGraphics.strokeCircle(cx, cy, ranges.leashRange);
         }
-        if (vm.monsterAttackRange != null) {
+        if (ranges.attackRange != null) {
           this.debugGraphics.lineStyle(1, 0xff4444, 0.6);
-          this.debugGraphics.strokeCircle(cx, cy, vm.monsterAttackRange);
+          this.debugGraphics.strokeCircle(cx, cy, ranges.attackRange);
         }
       }
     }
   }
 
   /** Emit a player:move command toward the exit that leads to autoPath[0]. */
-  private sendAutoPathMove(fromNodeId: string): void {
+  sendAutoPathMove(fromNodeId: string): void {
     if (this.autoPath.length === 0 || !this.myId) return;
     const [, curRStr, curCStr] = fromNodeId.split('-');
     const [, nxtRStr, nxtCStr] = this.autoPath[0].split('-');
@@ -1788,26 +1334,17 @@ export class GameScene extends Phaser.Scene {
     else { this.cancelAutoPath(); return; }              // shouldn't happen
 
     x = Math.round(x); y = Math.round(y);
-    this.socket.emit('player:move', { x, y });
-    const vp = this.players.get(this.myId);
-    if (vp) { vp.targetX = x; vp.targetY = y; }
+    sendMove(this.socket, x, y);
+    const transform = this.state.ownId ? this.state.transform.get(this.state.ownId) : undefined;
+    if (transform) {
+      transform.targetX = x;
+      transform.targetY = y;
+    }
   }
 
-  private cancelAutoPath(): void {
+  cancelAutoPath(): void {
     this.autoPath = [];
     hudBus.emit({ autoPath: null });
   }
 
-  private destroyVisual(map: Map<string, Visual>, id: string) {
-    const v = map.get(id);
-    if (!v) return;
-    this.tweens.killTweensOf(v);
-    v.shadow.destroy();
-    v.sprite.destroy();
-    v.label.destroy();
-    v.hpBar.destroy();
-    v.cdBar.destroy();
-    for (const overlay of v.effectOverlays.values()) overlay.destroy();
-    map.delete(id);
-  }
 }

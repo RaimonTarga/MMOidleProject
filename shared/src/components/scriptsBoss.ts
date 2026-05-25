@@ -23,8 +23,6 @@ export interface ActiveBossEffect {
  * Created on first encounter, removed when the monster entity is despawned.
  */
 export interface ScriptsBoss {
-  /** True once any player has aggro'd this boss this life. Timers don't tick before this. */
-  engaged: boolean;
   /** Parallel array to BossScript.phases — true once that phase has fired. */
   phaseTriggered: boolean[];
   /** Countdown timers per RepeatingAction (ms until next fire), in script order. */
@@ -35,7 +33,6 @@ export interface ScriptsBoss {
 
 export function initScriptsBoss(script: BossScript): ScriptsBoss {
   return {
-    engaged:         false,
     phaseTriggered:  new Array(script.phases?.length ?? 0).fill(false) as boolean[],
     repeatingTimers: (script.repeating ?? []).map(r => r.initialDelayMs ?? r.intervalMs),
     activeEffects:   [],

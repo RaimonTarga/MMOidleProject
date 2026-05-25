@@ -62,9 +62,6 @@ export const EFFECT_DEFS: EffectDef[] = [
     frameSize: 256,
     durationMs: 600,
     loopFrames: 5,
-    // Source rows have non-uniform heights (small whisps → tall cyclones), so a
-    // uniform 256-tall grid bleeds row N+1's content into row N. Slice bounds
-    // are taken at the empty-row gutter midpoints in the source PNG.
     rowSlices: [
       { y: 0, h: 270 },
       { y: 245, h: 221 },

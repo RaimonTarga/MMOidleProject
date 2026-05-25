@@ -6,6 +6,15 @@ Improve the network protocol after the server-side ECS migration is stable. The 
 
 The server remains authoritative. Netcode improvements must reduce bandwidth and boilerplate without introducing client-side simulation authority.
 
+## Prerequisites Complete
+
+The server-side prep work needed before the protocol cutover is complete:
+
+- Component presence now gates behavior (`isMoving`, `hasAttackTarget`, `hasAggroTarget`, shields, evasion, channeling, empowered attacks, boss engagement, and timed sub-states).
+- Stat recalc, archetype-slice sync, player persistence, player hydrate, and monster spawn are component-native and no longer round-trip through `PlayerSnapshot` / `MonsterSnapshot`.
+- The `characters` table persists one JSON blob per long-lived player slice (`isPlayer`, `hasPosition`, `hasHealth`, `tracksProgression`, `holdsInventory`, `usesSkills`); runtime-only slices are rebuilt on attach.
+- The remaining snapshot surface is the legacy wire boundary: `World.buildSnapshot()` calls `assemblePlayerSnapshot()` / `assembleMonsterSnapshot()` for `state:sync` and `node:state`.
+
 ## Problem
 
 The current protocol broadcasts full node snapshots at 5 Hz:
@@ -129,3 +138,10 @@ Clients can initially continue consuming `node:state`. Once delta application is
 - Transport replacement.
 - Client-side prediction.
 - Gameplay balance changes.
+- Per-component dirty tracking implementation.
+- `networkId` indexing on server and client.
+- Networked-component allowlist and server-only component serialization assertions.
+- `node:delta` socket event, delta encoder, and client delta applier.
+- Slim `state:sync` full-component resync payload for connect, reconnect, and node transition.
+- Final deletion of `NodeSnapshot`, `PlayerSnapshot`, `MonsterSnapshot`, `assemblePlayerSnapshot()`, and `assembleMonsterSnapshot()`.
+- Snapshot payload-size measurement and full-vs-delta render-state equivalence testing.

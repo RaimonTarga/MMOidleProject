@@ -1,4 +1,4 @@
-import type { PlayerSnapshot, PassiveKey } from '@mmo-idle/shared';
+import type { PassiveKey } from '@mmo-idle/shared';
 import { defineBuff, type BuffDescriptor } from '../../registry/buffs';
 import { registerCombatListener } from '../../combatPipeline';
 import { isEmpoweredAttack, setEmpoweredAttack } from '../../empoweredAttacks';
@@ -10,6 +10,7 @@ import type { CombatState } from '../../combatState';
 import type { World } from '../../../world/World';
 import type { UsesEnergy } from '@mmo-idle/shared';
 import type { PlayerEntity } from '../../../ecs/components/player';
+import { attachComponent, detachComponent } from '../../../ecs/markerHelpers';
 
 // ── Light: Accumulator (energy-light-t3-a) ────────────────────────────────────
 const ACC_BASE_DRAIN_PER_SEC = 8;   // energy drained/sec at 0 stacks
@@ -63,14 +64,12 @@ function hasPassive(player: PlayerEntity, key: PassiveKey): boolean {
   return (player.usesSkills.passives[key] ?? 0) > 0;
 }
 
-function endACDischarge(player: PlayerEntity, energy: UsesEnergy): void {
-  if (energy.acSpeedActive && energy.acSpeedBase > 0) {
-    player.performsAttack.attackCooldown = energy.acSpeedBase;
-    energy.acSpeedActive = false;
+function endACDischarge(world: World, player: PlayerEntity): void {
+  if (player.inAcDischarge) {
+    player.performsAttack.attackCooldown = player.inAcDischarge.baseCd;
   }
-  energy.acChargePhase = true;
-  energy.acDischargeMs = 0;
-  energy.acTickNext    = 0;
+  detachComponent(world, player, 'inAcDischarge');
+  attachComponent(world, player, 'inAcChargePhase', {});
   console.log(`[AltCurrents] ${player.isPlayer.id}: discharge → charge phase`);
 }
 
@@ -98,12 +97,11 @@ export function initEnergyT3(): void {
     const entity = ctx.attacker;
     if (!entity?.usesEnergy) return;
 
-    const state  = entity.tracksCombat;
     const player = entity;
     const passives = player.usesSkills.passives;
 
     // Suppress the standard empowered multiplier for mechanics with custom discharge.
-    if (isEmpoweredAttack(state) && (
+    if (isEmpoweredAttack(entity) && (
       hasPassive(player, 'energy.polarity-decay')       ||
       hasPassive(player, 'energy.cascading-induction')  ||
       hasPassive(player, 'energy.superconducting-mass') ||
@@ -116,12 +114,12 @@ export function initEnergyT3(): void {
     if (
       hasPassive(player, 'energy.singularity-execute') &&
       ctx.defenderType === 'monster' &&
-      !isEmpoweredAttack(state)
+      !isEmpoweredAttack(entity)
     ) {
       const empMult   = passives['energy.empowered-mult'] ?? 6.0;
       const projected = Math.floor(player.dealsDamage.attack * empMult);
       if (ctx.defender.hasHealth.hp <= projected) {
-        setEmpoweredAttack(state);
+        setEmpoweredAttack(_world, entity);
         console.log(`[SingularityExec] ${player.isPlayer.id}: execute — ${ctx.defender.hasHealth.hp} HP <= ${projected} projected`);
       }
     }
@@ -137,7 +135,7 @@ export function initEnergyT3(): void {
     if (!entity?.usesEnergy) return;
 
     const state  = entity.tracksCombat;
-    if (!isEmpoweredAttack(state)) return;
+    if (!isEmpoweredAttack(entity)) return;
 
     const player = entity;
     const passives = player.usesSkills.passives;
@@ -202,7 +200,7 @@ export function initEnergyT3(): void {
     if (!entity?.usesEnergy) return;
 
     const state = entity.tracksCombat;
-    if (isEmpoweredAttack(state)) return; // skip empowered hits
+    if (isEmpoweredAttack(entity)) return; // skip empowered hits
 
     const player = entity;
     const energy = entity.usesEnergy;
@@ -234,7 +232,7 @@ export function initEnergyT3(): void {
     }
 
     // Alternating Currents: bonus damage during charge phase.
-    if (hasPassive(player, 'energy.alternating-currents') && energy.acChargePhase) {
+    if (hasPassive(player, 'energy.alternating-currents') && player.inAcChargePhase) {
       ctx.damage = Math.round(ctx.damage * AC_CHARGE_DMG_MULT);
     }
 
@@ -310,24 +308,23 @@ export function initEnergyT3(): void {
     // Alternating Currents: doubled gain in charge phase; no gain in discharge phase.
     if (hasPassive(player, 'energy.alternating-currents')) {
       // Always start in charge phase until something flips us into discharge.
-      // (acChargePhase defaults to false in makeUsesEnergy — flip it on first hit.)
-      if (energy.acDischargeMs <= 0 && !energy.acChargePhase) {
-        energy.acChargePhase = true;
+      if (!player.inAcDischarge && !player.inAcChargePhase) {
+        attachComponent(_world, player, 'inAcChargePhase', {});
       }
-      if (energy.acChargePhase) {
+      if (player.inAcChargePhase) {
         const gain      = Math.round(baseGain * AC_ENERGY_GAIN_MULT);
         const newEnergy = Math.min(energy.energy + gain, energy.energyMax);
         energy.energy   = newEnergy;
         if (newEnergy >= energy.energyMax) {
           energy.energy        = 0;
-          energy.acChargePhase = false;
-          if (!energy.acSpeedActive) {
-            energy.acSpeedBase   = player.performsAttack.attackCooldown;
-            player.performsAttack.attackCooldown = Math.max(200, Math.round(player.performsAttack.attackCooldown * AC_SPEED_FACTOR));
-            energy.acSpeedActive = true;
-          }
-          energy.acDischargeMs = AC_DISCHARGE_TOTAL_MS;
-          energy.acTickNext    = AC_TICK_INTERVAL_MS;
+          detachComponent(_world, player, 'inAcChargePhase');
+          const baseCd = player.performsAttack.attackCooldown;
+          player.performsAttack.attackCooldown = Math.max(200, Math.round(player.performsAttack.attackCooldown * AC_SPEED_FACTOR));
+          attachComponent(_world, player, 'inAcDischarge', {
+            remainingMs: AC_DISCHARGE_TOTAL_MS,
+            tickNext: AC_TICK_INTERVAL_MS,
+            baseCd,
+          });
           console.log(`[AltCurrents] ${player.isPlayer.id}: charge -> discharge (speed boosted)`);
         }
       }
@@ -343,7 +340,7 @@ export function initEnergyT3(): void {
       energy.csReservoir = Math.min(energy.csReservoir + reservoirGain, CS_RESERVOIR_MAX);
       if (energy.energy >= energy.energyMax) {
         energy.energy = 0;
-        setEmpoweredAttack(state);
+        setEmpoweredAttack(_world, player);
         console.log(`[CapacitorShunt] ${player.isPlayer.id}: discharge armed (reservoir=${Math.round(energy.csReservoir)})`);
       }
       ctx.metadata['energyHandled'] = true;
@@ -361,7 +358,7 @@ export function initEnergyT3(): void {
       energy.energy    = Math.min(energy.energy + scaledGain, energy.energyMax);
       if (energy.energy >= energy.energyMax) {
         energy.energy = 0;
-        setEmpoweredAttack(state);
+        setEmpoweredAttack(_world, player);
         console.log(`[SingularityExec] ${player.isPlayer.id}: max energy (${SE_ENERGY_MAX}) - discharge armed`);
       }
       ctx.metadata['energyHandled'] = true;
@@ -408,18 +405,18 @@ function updateAlternatingCurrents(world: World, dt: number): void {
     if (!hasPassive(player, 'energy.alternating-currents')) continue;
 
     const energy = entity.usesEnergy;
+    const discharge = entity.inAcDischarge;
+    if (!discharge) continue;
 
-    if (energy.acDischargeMs <= 0) continue;
-
-    const newMs = Math.max(0, energy.acDischargeMs - dt);
-    energy.acDischargeMs = newMs;
+    const newMs = Math.max(0, discharge.remainingMs - dt);
+    discharge.remainingMs = newMs;
 
     energy.energy = Math.max(0, energy.energy - energy.energyMax * (dt / AC_DISCHARGE_TOTAL_MS));
 
-    const tickNext = energy.acTickNext - dt;
+    const tickNext = discharge.tickNext - dt;
     if (tickNext <= 0) {
-      energy.acTickNext = tickNext + AC_TICK_INTERVAL_MS;
-      const targetId = player.performsAttack.attackTargetId;
+      discharge.tickNext = tickNext + AC_TICK_INTERVAL_MS;
+      const targetId = player.hasAttackTarget?.targetId;
       if (targetId) {
         const monster = world.getMonsterEntity(targetId);
         if (monster && monster.hasPosition.nodeId === player.hasPosition.nodeId) {
@@ -430,10 +427,10 @@ function updateAlternatingCurrents(world: World, dt: number): void {
         }
       }
     } else {
-      energy.acTickNext = tickNext;
+      discharge.tickNext = tickNext;
     }
 
-    if (newMs <= 0) endACDischarge(player, energy);
+    if (newMs <= 0) endACDischarge(world, player);
   }
 
   for (const { monsterId, sourceId } of toKill) {
@@ -454,13 +451,18 @@ export function getOverchargeStacks(state: CombatState): number {
 }
 
 export function getACPhase(energy: UsesEnergy): 'charge' | 'discharge' | 'idle' {
-  if (energy.acDischargeMs > 0) return 'discharge';
-  if (energy.acChargePhase) return 'charge';
+  void energy;
   return 'idle';
 }
 
-export function getACDischargeRemainingPct(energy: UsesEnergy): number {
-  const ms = energy.acDischargeMs;
+export function getACPhaseForPlayer(player: PlayerEntity): 'charge' | 'discharge' | 'idle' {
+  if (player.inAcDischarge) return 'discharge';
+  if (player.inAcChargePhase) return 'charge';
+  return 'idle';
+}
+
+export function getACDischargeRemainingPct(player: PlayerEntity): number {
+  const ms = player.inAcDischarge?.remainingMs ?? 0;
   if (ms <= 0) return 0;
   return Math.round((ms / AC_DISCHARGE_TOTAL_MS) * 100);
 }
@@ -488,18 +490,14 @@ export const ENERGY_T3_BUFFS = [
   }),
   defineBuff('energy-ac-charge', ({ player }) => {
     if (player.usesSkills.combatArchetype !== 'energy') return null;
-    const energy = player.usesEnergy;
-    if (!energy) return null;
-    return getACPhase(energy) === 'charge'
+    return getACPhaseForPlayer(player) === 'charge'
       ? { id: 'energy-ac-charge', label: 'Chrge', stacks: 1, durationPct: -1, color: '#44ccff' }
       : null;
   }),
   defineBuff('energy-ac-discharge', ({ player }) => {
     if (player.usesSkills.combatArchetype !== 'energy') return null;
-    const energy = player.usesEnergy;
-    if (!energy) return null;
-    if (getACPhase(energy) !== 'discharge') return null;
-    return { id: 'energy-ac-discharge', label: 'Disch', stacks: 1, durationPct: getACDischargeRemainingPct(energy), color: '#ff6622' };
+    if (getACPhaseForPlayer(player) !== 'discharge') return null;
+    return { id: 'energy-ac-discharge', label: 'Disch', stacks: 1, durationPct: getACDischargeRemainingPct(player), color: '#ff6622' };
   }),
   defineBuff('energy-reservoir', ({ player }) => {
     if (player.usesSkills.combatArchetype !== 'energy') return null;

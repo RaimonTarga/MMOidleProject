@@ -31,8 +31,9 @@ export type ServerBuffId = typeof ALL_BUFFS[number]['id'];
 export function syncPlayerBuffs(world: World): void {
   for (const entity of world.playerEntities) {
     const playerCs = entity.tracksCombat;
-    const targetCs = entity.performsAttack.attackTargetId
-      ? world.getMonsterEntity(entity.performsAttack.attackTargetId)?.tracksCombat
+    const targetId = entity.hasAttackTarget?.targetId;
+    const targetCs = targetId
+      ? world.getMonsterEntity(targetId)?.tracksCombat
       : undefined;
 
     const buffs: PlayerBuff[] = [];

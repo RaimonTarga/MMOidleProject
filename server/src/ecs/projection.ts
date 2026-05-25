@@ -1,15 +1,13 @@
 /**
- * Boundary helpers between wire DTOs (`PlayerSnapshot` / `MonsterSnapshot`)
- * and the typed ECS slice components.
+ * Boundary helpers from typed ECS slice components to legacy wire DTOs
+ * (`PlayerSnapshot` / `MonsterSnapshot`).
  *
- *   decompose*Snapshot — convert an incoming DTO (DB hydrate, monster spawn)
- *                         into the slice components used by the ECS.
  *   assemble*Snapshot  — produce a fresh, byte-identical wire DTO from the
  *                         current slice state.
  *
  * Slices owned by their respective archetype modules (`UsesCadence`,
  * `UsesEnergy`, …) are also assembled here; their runtime components keep
- * mirrors in sync via `project*ToSnapshot` helpers.
+ * mirrors in sync on the entity slices.
  *
  * Motion is the only field where the wire shape differs from the ECS shape:
  *   wire:   `x`, `y`, `targetX`, `targetY`
@@ -20,175 +18,11 @@ import type {
   MonsterSnapshot,
   PlayerSnapshot,
 } from '@mmo-idle/shared';
-import { pointFromMotion, vectorTo } from '@mmo-idle/shared';
+import { pointFromMotion } from '@mmo-idle/shared';
 import type { MonsterEntity } from './components/monster';
 import type { PlayerEntity } from './components/player';
-import type {
-  DealsDamage,
-  EvadesHits,
-  HasAwareness,
-  HasHealth,
-  HasPosition,
-  HasStatus,
-  HoldsInventory,
-  IsMonster,
-  IsMoving,
-  IsPlayer,
-  MitigatesDamage,
-  PerformsAttack,
-  ShowsSacred,
-  TracksProgression,
-  UsesAutocombat,
-  UsesSkills,
-  UsesCadence,
-  UsesEnergy,
-  AppliesDots,
-  ChillsTarget,
-  UsesCooldown,
-  UsesReload,
-} from '@mmo-idle/shared';
-import {
-  makeUsesCadenceFromSnapshot,
-  makeUsesEnergyFromSnapshot,
-  makeAppliesDotsFromSnapshot,
-  makeChillsTargetFromSnapshot,
-  makeUsesCooldownFromSnapshot,
-  makeUsesReloadFromSnapshot,
-} from '@mmo-idle/shared';
 
 // ─── Player ──────────────────────────────────────────────────────────────────
-
-/** Set of slice keys that `decomposePlayerSnapshot` populates. */
-export type PlayerSliceStamp = {
-  isPlayer:          IsPlayer;
-  hasPosition:       HasPosition;
-  isMoving:          IsMoving;
-  hasHealth:         HasHealth;
-  dealsDamage:       DealsDamage;
-  performsAttack:    PerformsAttack;
-  mitigatesDamage:   MitigatesDamage;
-  evadesHits:        EvadesHits;
-  usesAutocombat:    UsesAutocombat;
-  tracksProgression: TracksProgression;
-  holdsInventory:    HoldsInventory;
-  usesSkills:        UsesSkills;
-  hasStatus:         HasStatus;
-  showsSacred:       ShowsSacred;
-  usesCadence?:      UsesCadence;
-  usesEnergy?:       UsesEnergy;
-  appliesDots?:      AppliesDots;
-  chillsTarget?:     ChillsTarget;
-  usesCooldown?:     UsesCooldown;
-  usesReload?:       UsesReload;
-};
-
-/**
- * Decompose a wire `PlayerSnapshot` DTO into ECS slice components.
- *
- * The caller spreads the result into a `PlayerEntity`. Motion is recovered
- * from `targetX` / `targetY` via `vectorTo(current, target)` so that a
- * subsequent `assemblePlayerSnapshot` reproduces the original DTO exactly.
- */
-export function decomposePlayerSnapshot(snapshot: PlayerSnapshot): PlayerSliceStamp {
-  const stamp: PlayerSliceStamp = {
-    isPlayer: {
-      id:   snapshot.id,
-      name: snapshot.name,
-    },
-    hasPosition: {
-      current: { x: snapshot.x, y: snapshot.y },
-      nodeId:  snapshot.nodeId,
-      speed:   snapshot.speed,
-    },
-    isMoving: {
-      motion: vectorTo(
-        { x: snapshot.x,       y: snapshot.y },
-        { x: snapshot.targetX, y: snapshot.targetY },
-      ),
-    },
-    hasHealth: {
-      hp:      snapshot.hp,
-      maxHp:   snapshot.maxHp,
-      hpRegen: snapshot.hpRegen,
-      shields: snapshot.shields,
-    },
-    dealsDamage: {
-      attack:      snapshot.attack,
-      onHitDamage: snapshot.onHitDamage,
-      attackStyle: snapshot.attackStyle,
-    },
-    performsAttack: {
-      attackRange:    snapshot.attackRange,
-      attackCooldown: snapshot.attackCooldown,
-      lastAttackAt:   snapshot.lastAttackAt,
-      attackTargetId: snapshot.attackTargetId,
-    },
-    mitigatesDamage: {
-      plating:         snapshot.plating,
-      damageReduction: snapshot.damageReduction,
-    },
-    evadesHits: {
-      threshold: snapshot.evasion,
-      count:     snapshot.evasionCount,
-    },
-    usesAutocombat: {
-      auto: snapshot.auto,
-    },
-    tracksProgression: {
-      level:            snapshot.level,
-      skillPoints:      snapshot.skillPoints,
-      essences:         snapshot.essences,
-      biomeXP:          snapshot.biomeXP,
-      biomeLevel:       snapshot.biomeLevel,
-      unlockedRecipes:  snapshot.unlockedRecipes,
-      questProgress:    snapshot.questProgress,
-      playerTier:       snapshot.playerTier,
-      currentSkillTier: snapshot.currentSkillTier,
-    },
-    holdsInventory: {
-      inventory: snapshot.inventory,
-      equipment: snapshot.equipment,
-    },
-    usesSkills: {
-      unlockedSkills:     snapshot.unlockedSkills,
-      passives:           snapshot.passives,
-      selectedClass:      snapshot.selectedClass,
-      selectedSubVariant: snapshot.selectedSubVariant,
-      selectedRange:      snapshot.selectedRange,
-      combatArchetype:    snapshot.combatArchetype,
-    },
-    hasStatus: {
-      activeEffects:      snapshot.activeEffects,
-      activeEffectFrames: snapshot.activeEffectFrames,
-      activeBuffs:        snapshot.activeBuffs,
-    },
-    showsSacred: {
-      sacredBuffActive: snapshot.sacredBuffActive,
-      sacredBuffPct:    snapshot.sacredBuffPct,
-    },
-  };
-
-  if (snapshot.combatArchetype === 'cadence') {
-    stamp.usesCadence = makeUsesCadenceFromSnapshot(snapshot);
-  }
-  if (snapshot.combatArchetype === 'energy') {
-    stamp.usesEnergy = makeUsesEnergyFromSnapshot(snapshot);
-  }
-  if (snapshot.combatArchetype === 'dot') {
-    stamp.appliesDots = makeAppliesDotsFromSnapshot(snapshot);
-    if ((snapshot.passives['dot.freezing-cold'] ?? 0) > 0) {
-      stamp.chillsTarget = makeChillsTargetFromSnapshot(snapshot);
-    }
-  }
-  if (snapshot.combatArchetype === 'cooldown') {
-    stamp.usesCooldown = makeUsesCooldownFromSnapshot(snapshot);
-  }
-  if (snapshot.combatArchetype === 'reload') {
-    stamp.usesReload = makeUsesReloadFromSnapshot(snapshot);
-  }
-
-  return stamp;
-}
 
 /**
  * Reassemble a byte-identical `PlayerSnapshot` from a fully stamped entity.
@@ -198,13 +32,13 @@ export function decomposePlayerSnapshot(snapshot: PlayerSnapshot): PlayerSliceSt
 export function assemblePlayerSnapshot(entity: PlayerEntity): PlayerSnapshot {
   const identity    = entity.isPlayer;
   const position    = entity.hasPosition;
-  const motion      = entity.isMoving;
-  const target      = pointFromMotion(position.current, motion.motion);
+  const target      = entity.isMoving
+    ? pointFromMotion(position.current, entity.isMoving.motion)
+    : position.current;
   const health      = entity.hasHealth;
   const output      = entity.dealsDamage;
   const timing      = entity.performsAttack;
   const mitigation  = entity.mitigatesDamage;
-  const evasion     = entity.evadesHits;
   const autocombat  = entity.usesAutocombat;
   const progression = entity.tracksProgression;
   const inventory   = entity.holdsInventory;
@@ -225,13 +59,13 @@ export function assemblePlayerSnapshot(entity: PlayerEntity): PlayerSnapshot {
     onHitDamage:           output.onHitDamage,
     plating:               mitigation.plating,
     damageReduction:       mitigation.damageReduction,
-    evasion:               evasion.threshold,
-    evasionCount:          evasion.count,
-    shields:               health.shields ?? [],
+    evasion:               entity.evadesHits?.threshold ?? 0,
+    evasionCount:          entity.evadesHits?.count ?? 0,
+    shields:               entity.holdsShields?.shields ?? [],
     attackRange:           timing.attackRange,
     attackCooldown:        timing.attackCooldown,
     lastAttackAt:          timing.lastAttackAt,
-    attackTargetId:        timing.attackTargetId,
+    attackTargetId:        entity.hasAttackTarget?.targetId ?? null,
     auto:                  autocombat.auto,
     nodeId:                position.nodeId,
     essences:              progression.essences,
@@ -255,21 +89,21 @@ export function assemblePlayerSnapshot(entity: PlayerEntity): PlayerSnapshot {
     combatArchetype:       skills.combatArchetype,
     cadenceCount:          entity.usesCadence?.count          ?? 0,
     cadenceThreshold:      entity.usesCadence?.threshold      ?? 0,
-    cadenceEmpoweredArmed: entity.usesCadence?.empoweredArmed ?? false,
+    cadenceEmpoweredArmed: entity.hasEmpoweredAttack !== undefined,
     ammoCount:             entity.usesReload?.ammo            ?? 0,
     ammoMax:               entity.usesReload?.ammoMax         ?? 0,
     heatPct:               entity.usesReload ? Math.round(entity.usesReload.laserHeat) : 0,
     laserOverheated:       entity.usesReload?.laserOverheated ?? false,
-    executionReady:        entity.usesCooldown?.executionReady       ?? false,
+    executionReady:        entity.hasEmpoweredAttack !== undefined,
     executionCooldownPct:  entity.usesCooldown?.executionCooldownPct ?? 0,
     energyCount:           entity.usesEnergy?.energy          ?? 0,
-    empoweredReady:        entity.usesEnergy?.empoweredReady  ?? false,
+    empoweredReady:        entity.hasEmpoweredAttack !== undefined,
     targetDotStacks:       entity.appliesDots?.targetDotStacks ?? 0,
     targetChillStacks:     entity.chillsTarget?.targetChillStacks ?? 0,
     sacredBuffActive:      sacred.sacredBuffActive,
     sacredBuffPct:         sacred.sacredBuffPct,
-    isChanneling:          entity.usesCooldown?.isChanneling  ?? false,
-    channelingPct:         entity.usesCooldown?.channelingPct ?? 0,
+    isChanneling:          entity.isChanneling !== undefined,
+    channelingPct:         entity.isChanneling?.pct ?? 0,
     activeEffects:         status.activeEffects,
     activeEffectFrames:    status.activeEffectFrames,
     activeBuffs:           status.activeBuffs ?? [],
@@ -280,155 +114,6 @@ export function assemblePlayerSnapshot(entity: PlayerEntity): PlayerSnapshot {
 
 // ─── Monster ─────────────────────────────────────────────────────────────────
 
-/** Set of slice keys that `decomposeMonsterSnapshot` populates. */
-export type MonsterSliceStamp = {
-  isMonster:       IsMonster;
-  hasPosition:     HasPosition;
-  isMoving:        IsMoving;
-  hasHealth:       HasHealth;
-  dealsDamage:     DealsDamage;
-  performsAttack:  PerformsAttack;
-  mitigatesDamage: MitigatesDamage;
-  hasAwareness:    HasAwareness;
-  hasStatus:       HasStatus;
-};
-
-/** Decompose a wire `MonsterSnapshot` DTO into ECS slice components. */
-export function decomposeMonsterSnapshot(snapshot: MonsterSnapshot): MonsterSliceStamp {
-  return {
-    isMonster: {
-      id:              snapshot.id,
-      monsterTypeId:   snapshot.monsterTypeId,
-      color:           snapshot.color,
-      name:            snapshot.name,
-      isBoss:          snapshot.isBoss,
-      behavior:        snapshot.behavior,
-      combatArchetype: snapshot.combatArchetype,
-    },
-    hasPosition: {
-      current: { x: snapshot.x, y: snapshot.y },
-      nodeId:  snapshot.nodeId,
-      speed:   snapshot.speed,
-    },
-    isMoving: {
-      motion: vectorTo(
-        { x: snapshot.x,       y: snapshot.y },
-        { x: snapshot.targetX, y: snapshot.targetY },
-      ),
-    },
-    hasHealth: {
-      hp:    snapshot.hp,
-      maxHp: snapshot.maxHp,
-    },
-    dealsDamage: {
-      attack:      snapshot.attack,
-      onHitDamage: 0,
-      attackStyle: snapshot.attackStyle,
-    },
-    performsAttack: {
-      attackRange:    snapshot.attackRange,
-      attackCooldown: snapshot.attackCooldown,
-      lastAttackAt:   snapshot.lastAttackAt,
-      attackTargetId: snapshot.attackTargetId,
-    },
-    mitigatesDamage: {
-      plating:         snapshot.plating,
-      damageReduction: snapshot.damageReduction,
-    },
-    hasAwareness: {
-      state:      snapshot.state,
-      pullRange:  snapshot.pullRange,
-      leashRange: snapshot.leashRange,
-    },
-    hasStatus: {
-      activeEffects:      snapshot.activeEffects,
-      activeEffectFrames: snapshot.activeEffectFrames,
-      bossEffects:        snapshot.bossEffects,
-    },
-  };
-}
-
-// ─── Wire parity validation ──────────────────────────────────────────────────
-//
-// A round trip `snapshot → decompose → (synthesised entity) → assemble` must
-// reproduce the original DTO byte-for-byte (modulo floating-point tolerance on
-// motion fields). The harness is exported for use in dev-boot checks or tests
-// and is intentionally light — it does not allocate ECS entities.
-
-const MOTION_EPSILON = 1e-6;
-
-function approxEqual(a: number, b: number): boolean {
-  return Math.abs(a - b) <= MOTION_EPSILON;
-}
-
-/** Player wire-parity check; returns the list of field names that differ. */
-export function diffPlayerRoundTrip(snapshot: PlayerSnapshot): string[] {
-  const stamp = decomposePlayerSnapshot(snapshot);
-  const synthetic = {
-    entityId: snapshot.id,
-    tracksCombat: undefined,
-    tracksEngagement: 0,
-    ...stamp,
-  } as unknown as PlayerEntity;
-  const rebuilt = assemblePlayerSnapshot(synthetic);
-  return diffSnapshotKeys(snapshot as unknown as Record<string, unknown>, rebuilt as unknown as Record<string, unknown>);
-}
-
-/** Monster wire-parity check; returns the list of field names that differ. */
-export function diffMonsterRoundTrip(snapshot: MonsterSnapshot): string[] {
-  const stamp = decomposeMonsterSnapshot(snapshot);
-  const synthetic = {
-    entityId: snapshot.id,
-    tracksCombat: undefined,
-    controlsMonster: undefined,
-    ...stamp,
-  } as unknown as MonsterEntity;
-  const rebuilt = assembleMonsterSnapshot(synthetic);
-  return diffSnapshotKeys(snapshot as unknown as Record<string, unknown>, rebuilt as unknown as Record<string, unknown>);
-}
-
-function diffSnapshotKeys(a: Record<string, unknown>, b: Record<string, unknown>): string[] {
-  const out: string[] = [];
-  const keys = new Set([...Object.keys(a), ...Object.keys(b)]);
-  for (const k of keys) {
-    const av = a[k];
-    const bv = b[k];
-    // Allow tiny floating-point drift on the motion-derived fields.
-    if ((k === 'targetX' || k === 'targetY' || k === 'x' || k === 'y') &&
-        typeof av === 'number' && typeof bv === 'number') {
-      if (!approxEqual(av, bv)) out.push(k);
-      continue;
-    }
-    if (!deepEqual(av, bv)) out.push(k);
-  }
-  return out;
-}
-
-function deepEqual(a: unknown, b: unknown): boolean {
-  if (a === b) return true;
-  if (typeof a !== typeof b) return false;
-  if (a === null || b === null) return false;
-  if (Array.isArray(a) && Array.isArray(b)) {
-    if (a.length !== b.length) return false;
-    for (let i = 0; i < a.length; i++) {
-      if (!deepEqual(a[i], b[i])) return false;
-    }
-    return true;
-  }
-  if (typeof a === 'object' && typeof b === 'object') {
-    const ao = a as Record<string, unknown>;
-    const bo = b as Record<string, unknown>;
-    const ak = Object.keys(ao);
-    const bk = Object.keys(bo);
-    if (ak.length !== bk.length) return false;
-    for (const k of ak) {
-      if (!deepEqual(ao[k], bo[k])) return false;
-    }
-    return true;
-  }
-  return false;
-}
-
 /**
  * Reassemble a byte-identical `MonsterSnapshot` from a fully stamped entity.
  * Never mutates the entity. `targetX` / `targetY` are computed from the
@@ -437,8 +122,9 @@ function deepEqual(a: unknown, b: unknown): boolean {
 export function assembleMonsterSnapshot(entity: MonsterEntity): MonsterSnapshot {
   const identity   = entity.isMonster;
   const position   = entity.hasPosition;
-  const motion     = entity.isMoving;
-  const target     = pointFromMotion(position.current, motion.motion);
+  const target     = entity.isMoving
+    ? pointFromMotion(position.current, entity.isMoving.motion)
+    : position.current;
   const health     = entity.hasHealth;
   const output     = entity.dealsDamage;
   const timing     = entity.performsAttack;
@@ -467,7 +153,7 @@ export function assembleMonsterSnapshot(entity: MonsterEntity): MonsterSnapshot 
     attackRange:        timing.attackRange,
     attackCooldown:     timing.attackCooldown,
     lastAttackAt:       timing.lastAttackAt,
-    attackTargetId:     timing.attackTargetId,
+    attackTargetId:     entity.hasAttackTarget?.targetId ?? null,
     nodeId:             position.nodeId,
     attackStyle:        output.attackStyle,
     isBoss:             identity.isBoss,
