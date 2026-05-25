@@ -752,7 +752,7 @@ export const GAME_CONFIG = {
    */
   BIOME_XP_EXPONENT: 1.7,
   /** XP granted per kill, indexed by the node's biomeTier (0–5). */
-  BIOME_XP_BY_NODE_TIER: [5, 10, 20, 35, 55, 80] as unknown as readonly number[],
+  BIOME_XP_BY_NODE_TIER: [25, 10, 20, 35, 55, 80] as unknown as readonly number[],
   /** Maximum biome level attainable at each playerTier (index = playerTier). T2 recipes start at level 6. */
   BIOME_LEVEL_CAP_BY_TIER: [2, 5, 10, 15, 20, 25, 30, 35] as unknown as readonly number[],
 } as const;

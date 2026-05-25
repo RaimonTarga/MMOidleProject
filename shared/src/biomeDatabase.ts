@@ -35,7 +35,7 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
     backgroundColor: 0x101a10,
     monsterPoolByTier: { 0: ['tiny-slime'] },
     essenceType: 'essence',
-    mobDensity: 6,
+    mobDensity: 12,
   }],
 
   ['testroom', {

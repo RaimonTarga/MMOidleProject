@@ -268,6 +268,10 @@ io.on('connection', (socket) => {
     p.biomeLevel       = {};
     p.unlockedRecipes  = [];
 
+    p.questProgress    = {};
+    p.playerTier       = 0;
+    p.essences         = { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 };
+
     p.inventory        = [];
     p.equipment        = emptyEquipment();
 
