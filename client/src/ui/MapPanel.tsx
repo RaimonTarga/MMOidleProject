@@ -4,7 +4,7 @@ import type { PlayerState } from '@mmo-idle/shared';
 import type { ItemStats } from '@mmo-idle/shared';
 import {
   NODE_BIOMES, BIOME_DATABASE, MONSTER_DATABASE, RECIPE_DATABASE,
-  GAME_CONFIG, ESSENCE_COLORS, biomeXpForLevel,
+  GAME_CONFIG, ESSENCE_COLORS, biomeXpForLevel, biomeLevelCap,
 } from '@mmo-idle/shared';
 import type { EssenceType } from '@mmo-idle/shared';
 import { hudBus } from '../hudBus';
@@ -122,7 +122,7 @@ function NodeInfo({ nodeId, player }: NodeInfoProps) {
 
   const biomeXP    = player ? (player.biomeXP[biomeGroup] ?? 0) : 0;
   const biomeLevel = player ? (player.biomeLevel[biomeGroup] ?? 0) : 0;
-  const levelCap   = GAME_CONFIG.BIOME_LEVEL_CAP_BY_TIER[player?.playerTier ?? 0] ?? 999;
+  const levelCap   = biomeLevelCap(player?.playerTier ?? 0, biomeGroup);
   const tierLabel  = biomeTier === 0 ? 'Starting Zone' : `Tier ${biomeTier}`;
 
   const recipesByLevel = recipes.reduce<Record<number, typeof recipes>>((acc, r) => {

@@ -169,6 +169,17 @@ export function DebugPanel({ player }: Props) {
         </div>
       )}
 
+      {open && (
+        <div className="debug-section">
+          <button
+            className="debug-btn"
+            onClick={() => hudBus.requestRefreshRecipes()}
+          >
+            REFRESH RECIPES
+          </button>
+        </div>
+      )}
+
       {open && sections.map(section => (
         <div key={section.id} className="debug-section">
           <button className="debug-section__hdr" onClick={() => toggle(section.id)}>

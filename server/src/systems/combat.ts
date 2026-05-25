@@ -129,13 +129,16 @@ export function updateCombat(world: World, dt: number, now: number) {
 
         if (target.hp <= 0) {
           emitCombatEvent('onKill', ctx, world);
+          const killInfo = grantMonsterRewards(world, player.id, target);
           world.pushEvent(player.nodeId, {
-            kind:       'player-kill',
-            playerId:   player.id,
-            targetId:   target.id,
-            targetName: target.name,
+            kind:          'player-kill',
+            playerId:      player.id,
+            targetId:      target.id,
+            targetName:    target.name,
+            biomeXpGained: killInfo.biomeXpGained,
+            essenceGained: killInfo.essenceGained,
+            essenceType:   killInfo.essenceType,
           });
-          grantMonsterRewards(world, player.id, target);
           world.monsters.delete(target.id);
           world.monsterAI.delete(target.id);
           world.monsterCombatState.delete(target.id);

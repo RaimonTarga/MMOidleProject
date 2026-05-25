@@ -254,7 +254,7 @@ export const MONSTER_DATABASE: Map<string, MonsterDefinition> = new Map([
   ['ridge-archer', {
     id: 'ridge-archer', name: 'Ridge Archer', color: 0x778899,
     // Longer attack range simulates a thrown-rock / sling attack; high HP and punishing damage
-    stats: { hp: 200, attack: 16, plating: 0, damageReduction: 0, speed: 35, attackRange: 130, attackCooldown: 2800, pullRange: 230 },
+    stats: { hp: 200, attack: 16, plating: 0, damageReduction: 0, speed: 35, attackRange: 200, attackCooldown: 2800, pullRange: 350 },
     behavior: 'melee', attackStyle: 'impact', biome: 'mountain',
     rewards: { essence: 15, essenceType: 'blue', level: 1 },
     ai: { wanderRadius: 210, leashRange: 600, idleMinMs: 1500, idleMaxMs: 4500 },

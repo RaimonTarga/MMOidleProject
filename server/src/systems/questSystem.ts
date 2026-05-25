@@ -8,7 +8,9 @@ import { QUEST_DATABASE } from '@mmo-idle/shared';
  * Quests are one-time per tier: once the tier has advanced, the completed quest
  * is no longer incremented (player's tier moves past its tierRequired).
  */
-export function registerKillForQuests(player: PlayerState, monsterTypeId: string): void {
+/** Returns true if the player's tier advanced (quest completed). */
+export function registerKillForQuests(player: PlayerState, monsterTypeId: string): boolean {
+  let tierAdvanced = false;
   for (const [questId, quest] of QUEST_DATABASE) {
     if (quest.tierRequired !== player.playerTier) continue;
     if (!quest.targetMonsterTypes.includes(monsterTypeId)) continue;
@@ -22,6 +24,8 @@ export function registerKillForQuests(player: PlayerState, monsterTypeId: string
     if (next >= quest.killsRequired) {
       player.playerTier  += 1;
       player.skillPoints += 1;
+      tierAdvanced = true;
     }
   }
+  return tierAdvanced;
 }

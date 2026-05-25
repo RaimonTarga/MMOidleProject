@@ -88,6 +88,8 @@ export class World {
   monsterKnockback   = new Map<string, KnockbackComponent>();
   /** Player IDs that died this tick. Drained by the server loop after each tick. */
   pendingDeaths: string[] = [];
+  /** Quest completions this tick — { playerId, tier }. Drained by the server loop. */
+  pendingAscensions: Array<{ playerId: string; tier: number }> = [];
   /** Queued combat events per node, flushed into each broadcast snapshot. */
   private nodeEvents = new Map<string, CombatEvent[]>();
   /**

@@ -11,7 +11,8 @@ import type {
   CombatArchetype,
   CombatEvent,
 } from '@mmo-idle/shared';
-import { GAME_CONFIG, NODE_BIOMES, BIOME_DATABASE } from '@mmo-idle/shared';
+import { GAME_CONFIG, NODE_BIOMES, BIOME_DATABASE, biomeXpForLevel, ESSENCE_COLORS, biomeLevelCap, RECIPE_DATABASE } from '@mmo-idle/shared';
+import type { EssenceType } from '@mmo-idle/shared';
 import { hudBus } from '../hudBus';
 import { combatLog } from '../combatLog';
 import { ATLAS_KEY, getPlayerFrame, getMonsterFrame, getPlayerShadowColor, getPlayerShadowOffset, getMonsterShadowOffset, BIOME_TEXTURES } from '../sprites';
@@ -28,6 +29,25 @@ const SERVER_URL = import.meta.env.DEV ? 'http://localhost:4000' : window.locati
 const MM_W   = 220;  // minimap width  (px, screen-space)
 const MM_H   = 165;  // minimap height (px, screen-space)
 const MM_PAD = 8;    // gap from the screen edges
+
+// ── Biome XP bar constants ─────────────────────────────────────────────────────
+const XP_WIDGET_H = 56;  // total widget height (px, screen-space)
+const XP_FILL_H   = 16;  // fill bar height (px)
+
+const BIOME_BAR_COLORS: Record<string, number> = {
+  plains:     0x6daa3a,
+  forest:     0x2d8b3a,
+  swamp:      0x4a7a2a,
+  mountain:   0x7899aa,
+  cave:       0x7a5a3a,
+  jungle:     0x1a7a30,
+  desert:     0xd4922a,
+  tundra:     0x7ab8d4,
+  volcanic:   0xcc3a1a,
+  necropolis: 0x8a3aaa,
+  abyss:      0x3a2a7a,
+  clearing:   0x5aaa5a,
+};
 
 // ── Node exit computation ──────────────────────────────────────────────────────
 // Node IDs follow the format "node-{row}-{col}" in an 11×11 grid.
@@ -52,6 +72,38 @@ function getNodeExits(nodeId: string): Partial<Record<NodeDirection, string>> {
 // GATE_LEN must equal GAME_CONFIG.GATE_HALF * 2 so drawn gates match the server trigger zone.
 const GATE_THICK = 20;       // thickness — must match server EXIT_TRIGGER
 const GATE_COLOR = 0x00ffdd; // bright cyan
+
+// ── Depth layer system ────────────────────────────────────────────────────────
+// Entities use Y-sorted depths: depth = BAND + entity.baseY, updated every frame
+// in stepEntities. Band spacing (3000) > NODE_HEIGHT (2400) so bands never overlap.
+// Transient FX and HUD objects use fixed depths outside the entity bands.
+const DEPTH = {
+  // World-space backgrounds (negative = behind all entities)
+  BG:            -300,
+  BG_TILE:       -200,
+  BG_GRID:       -100,
+
+  // Y-sorted entity bands (base + entity.baseY gives final depth)
+  SHADOW:           0,   //   0 + y — ground shadow ellipses
+  SPRITE:        3000,   //  3000 + y — entity sprites
+  FX_OVERLAY:    6000,   //  6000 + y — persistent status effect overlays
+  UI:            9000,   //  9000 + y — labels, HP bars, cooldown bars
+
+  // Transient world-space objects (fixed depths — short-lived, not Y-sorted)
+  FLOATER:      12000,   // damage numbers, kill reward texts
+  FX:           12500,   // attack animations, one-shot effects
+
+  // Static world-space markers
+  GATE:         13000,   // exit gate markers
+  DEBUG:        14000,   // debug range circles
+
+  // Screen-space HUD (scrollFactor 0 — these never scroll with the camera)
+  MINIMAP:      15000,
+  XP_BAR:       16000,   // +100 = text layer, +200 = flash overlay
+
+  // Full-screen modal overlays (death, ascension)
+  SCREEN:       50000,
+} as const;
 
 interface Visual {
   sprite: Phaser.GameObjects.Image | Phaser.GameObjects.Rectangle;
@@ -119,6 +171,15 @@ export class GameScene extends Phaser.Scene {
   private autoMode       = false;
 
   private minimap!: Phaser.GameObjects.Graphics;
+  private biomeXpGraphics!:   Phaser.GameObjects.Graphics;
+  private biomeXpFlash!:      Phaser.GameObjects.Rectangle;
+  private biomeXpLabelText!:  Phaser.GameObjects.Text;
+  private biomeXpStatusText!: Phaser.GameObjects.Text;
+  private biomeXpNumsText!:   Phaser.GameObjects.Text;
+  private biomeXpFlashTween:      Phaser.Tweens.Tween | null = null;
+  private lastBiomeXp           = -1;
+  private lastBiomeGroup        = '';
+  private displayedFillFraction = 0;
   /** World-space colored bars drawn at each active exit boundary. */
   private exitMarkers!: Phaser.GameObjects.Graphics;
   /** Full-world rectangle tinted with the current biome background color. */
@@ -176,7 +237,7 @@ export class GameScene extends Phaser.Scene {
         GAME_CONFIG.NODE_HEIGHT,
         0x101a10, // default clearing color; updated on first state:sync
       )
-      .setDepth(-12);
+      .setDepth(DEPTH.BG);
 
     // ── Grid overlay (world-space, transparent cells so bgRect shows through) ──
     this.createGridBackground();
@@ -187,16 +248,30 @@ export class GameScene extends Phaser.Scene {
 
     // ── Exit gate markers (world-space; no scrollFactor — visible only near edges) ──
     // Drawn once per node change, not every frame.
-    this.exitMarkers = this.add.graphics().setDepth(5);
+    this.exitMarkers = this.add.graphics().setDepth(DEPTH.GATE);
 
-    // ── Debug range overlay (depth 8 — above entities, below minimap) ─────────
-    this.debugGraphics = this.add.graphics().setDepth(8);
+    // ── Debug range overlay (above all entities, below minimap) ───────────────
+    this.debugGraphics = this.add.graphics().setDepth(DEPTH.DEBUG);
 
     // ── Camera anchor (invisible; follows base position, not lunge-offset sprite) ──
     this.cameraTarget = this.add.arc(0, 0, 1).setAlpha(0);
 
     // ── Minimap ────────────────────────────────────────────────────────────────
-    this.minimap = this.add.graphics().setScrollFactor(0).setDepth(20);
+    this.minimap = this.add.graphics().setScrollFactor(0).setDepth(DEPTH.MINIMAP);
+
+    // ── Biome XP bar ──────────────────────────────────────────────────────────
+    this.biomeXpGraphics   = this.add.graphics().setScrollFactor(0).setDepth(DEPTH.XP_BAR);
+    this.biomeXpFlash      = this.add.rectangle(0, 0, 1, 1, 0xffffff, 0)
+      .setScrollFactor(0).setDepth(DEPTH.XP_BAR + 200).setOrigin(0, 0);
+    this.biomeXpLabelText  = this.add.text(0, 0, '', {
+      color: '#aabbcc', fontSize: '11px', fontFamily: 'monospace', fontStyle: 'bold',
+    }).setScrollFactor(0).setDepth(DEPTH.XP_BAR + 100).setOrigin(0, 0);
+    this.biomeXpStatusText = this.add.text(0, 0, '', {
+      color: '#c8d8e8', fontSize: '11px', fontFamily: 'monospace', fontStyle: 'bold',
+    }).setScrollFactor(0).setDepth(DEPTH.XP_BAR + 100).setOrigin(1, 0);
+    this.biomeXpNumsText   = this.add.text(0, 0, '', {
+      color: '#778899', fontSize: '10px', fontFamily: 'monospace',
+    }).setScrollFactor(0).setDepth(DEPTH.XP_BAR + 100).setOrigin(0.5, 0);
 
     // ── Auto toggle from HUD ───────────────────────────────────────────────
     window.addEventListener('hud:toggleAuto', () => {
@@ -253,6 +328,10 @@ export class GameScene extends Phaser.Scene {
       this.socket.emit('debug:resetProgress');
     });
 
+    window.addEventListener('hud:refreshRecipes', () => {
+      this.socket.emit('debug:refreshRecipes');
+    });
+
     // ── Click to move ──────────────────────────────────────────────────────
     this.input.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
       if (!this.myId) return;
@@ -272,6 +351,19 @@ export class GameScene extends Phaser.Scene {
       }
 
       this.targetMarker.setPosition(tx, ty).setVisible(true);
+    });
+
+    // ── Tab visibility snap ────────────────────────────────────────────────
+    // When the browser un-throttles the tab, snap every entity to its last
+    // authoritative position so they don't slide in from a stale spot.
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) return;
+      for (const v of [...this.players.values(), ...this.monsters.values()]) {
+        v.baseX = v.targetX;
+        v.baseY = v.targetY;
+        v.lungeOffsetX = 0;
+        v.lungeOffsetY = 0;
+      }
     });
 
     // ── Socket.IO ──────────────────────────────────────────────────────────
@@ -309,10 +401,13 @@ export class GameScene extends Phaser.Scene {
   }
 
   update(_time: number, delta: number) {
-    const dt = delta / 1000;
+    // Cap dt to 100 ms so a backgrounded tab returning doesn't teleport entities
+    // or instantly expire all status effects on the first resumed frame.
+    const dt = Math.min(delta, 100) / 1000;
     this.stepEntities(this.players,  dt);
     this.stepEntities(this.monsters, dt);
     this.drawMinimap();
+    this.drawBiomeXpBar(dt);
 
     // Redraw exit gate markers and update biome background only when node changes.
     if (this.myNodeId !== this.lastDrawnNodeId) {
@@ -352,7 +447,7 @@ export class GameScene extends Phaser.Scene {
         GAME_CONFIG.NODE_HEIGHT,
         'grid-cell',
       )
-      .setDepth(-10);
+      .setDepth(DEPTH.BG_GRID);
   }
 
   private setAutoMode(enabled: boolean): void {
@@ -416,6 +511,20 @@ export class GameScene extends Phaser.Scene {
 
     if (ev.kind === 'player-kill') {
       combatLog.push('kill', `${ev.targetName} defeated`);
+      if (ev.playerId === this.myId) {
+        const vm        = this.monsters.get(ev.targetId);
+        const biomeInfo = NODE_BIOMES[this.myNodeId];
+        if (vm && biomeInfo) {
+          this.spawnKillRewards(
+            vm.sprite.x, vm.sprite.y, vm.barOffsetY,
+            ev.biomeXpGained, biomeInfo.biomeGroup,
+            ev.essenceGained, ev.essenceType,
+          );
+        }
+        if (ev.essenceGained > 0) {
+          window.dispatchEvent(new CustomEvent('hud:essenceGained', { detail: ev.essenceType }));
+        }
+      }
     }
   }
 
@@ -443,6 +552,15 @@ export class GameScene extends Phaser.Scene {
       }
       sprite.setPosition(v.baseX + v.lungeOffsetX, v.baseY + v.lungeOffsetY);
       v.shadow.setPosition(v.baseX + v.lungeOffsetX, v.baseY + v.lungeOffsetY + v.shadowOffsetY);
+
+      // Y-sort: update depths every frame so entities lower on screen draw in front.
+      const sortY = v.baseY;
+      v.shadow.setDepth(DEPTH.SHADOW + sortY);
+      sprite.setDepth(DEPTH.SPRITE + sortY);
+      label.setDepth(DEPTH.UI + sortY);
+      hpBar.setDepth(DEPTH.UI + sortY);
+      cdBar.setDepth(DEPTH.UI + sortY);
+
       this.updateStatusOverlays(v, dt);
 
       // Keep the camera anchor on the base position so lunge offsets don't move the camera.
@@ -531,9 +649,10 @@ export class GameScene extends Phaser.Scene {
       if (!overlay) {
         overlay = this.add
           .sprite(v.sprite.x, v.sprite.y, def.key)
-          .setDepth(def.depth ?? Math.max(3, v.sprite.depth + 2));
+          .setDepth(DEPTH.FX_OVERLAY + v.baseY);
         v.effectOverlays.set(id, overlay);
       }
+      overlay.setDepth(DEPTH.FX_OVERLAY + v.baseY);
 
       let rawFrame: number;
       if (explicitFrame != null && def.loopFrames != null && def.loopFrames > 0) {
@@ -605,16 +724,16 @@ export class GameScene extends Phaser.Scene {
       const frame  = getPlayerFrame(player);
       const color  = isOwn ? 0x44ff88 : 0x4488ff;
       const shadowOffsetY = getPlayerShadowOffset();
-      const shadow = this.add.ellipse(player.x, player.y + shadowOffsetY, 52, 14).setDepth(3);
+      const shadow = this.add.ellipse(player.x, player.y + shadowOffsetY, 52, 14).setDepth(DEPTH.SHADOW + player.y);
       this.applyPlayerShadowStyle(shadow, player.playerTier);
       const sprite = (this.tryMakeImage(player.x, player.y, frame, 64, 64)
-        ?? this.add.rectangle(player.x, player.y, 64, 64, color)).setDepth(4);
+        ?? this.add.rectangle(player.x, player.y, 64, 64, color)).setDepth(DEPTH.SPRITE + player.y);
       const label  = this.add.text(0, 0, player.name, {
         color: '#ffffff', fontSize: '10px', fontFamily: 'monospace',
         stroke: '#000000', strokeThickness: 3,
-      }).setDepth(5);
-      const hpBar = this.add.graphics().setDepth(5);
-      const cdBar = this.add.graphics().setDepth(5);
+      }).setDepth(DEPTH.UI + player.y);
+      const hpBar = this.add.graphics().setDepth(DEPTH.UI + player.y);
+      const cdBar = this.add.graphics().setDepth(DEPTH.UI + player.y);
       vp = {
         sprite, shadow, shadowOffsetY, label, hpBar, cdBar,
         currentFrame:   frame,
@@ -672,13 +791,14 @@ export class GameScene extends Phaser.Scene {
       vp.sprite.destroy();
       const color = isOwn ? 0x44ff88 : 0x4488ff;
       vp.sprite = (this.tryMakeImage(vp.baseX, vp.baseY, newFrame, 64, 64)
-        ?? this.add.rectangle(vp.baseX, vp.baseY, 64, 64, color)).setDepth(4);
+        ?? this.add.rectangle(vp.baseX, vp.baseY, 64, 64, color)).setDepth(DEPTH.SPRITE + vp.baseY);
       vp.currentFrame = newFrame;
     }
 
     const prevPlayerAttackAt  = vp.lastAttackAt;
     const prevPlayerHp        = vp.hp;
     const prevTotalShield     = vp.playerState?.shields.reduce((sum, s) => sum + s.amount, 0) ?? 0;
+    const prevRecipes         = new Set(vp.playerState?.unlockedRecipes ?? []);
     vp.targetX        = player.targetX;
     vp.targetY        = player.targetY;
     vp.hp             = player.hp;
@@ -726,6 +846,14 @@ export class GameScene extends Phaser.Scene {
     if (isOwn) {
       this.myNodeId = player.nodeId;
       this.autoMode = player.auto;
+
+      for (const id of player.unlockedRecipes) {
+        if (!prevRecipes.has(id)) {
+          const recipe = RECIPE_DATABASE.get(id);
+          if (recipe) hudBus.notifyRecipeUnlock(recipe.name, recipe.recipeGroup);
+        }
+      }
+
       hudBus.emit({ player });
     }
   }
@@ -740,16 +868,16 @@ export class GameScene extends Phaser.Scene {
       const frame  = getMonsterFrame(monster.monsterTypeId);
       const shadowOffsetY = getMonsterShadowOffset(monster.monsterTypeId);
       const shadow = this.add.ellipse(monster.x, monster.y + shadowOffsetY, shadowW, shadowH,
-        0x000000, monster.isBoss ? 0.55 : 0.45).setDepth(0);
+        0x000000, monster.isBoss ? 0.55 : 0.45).setDepth(DEPTH.SHADOW + monster.y);
       const sprite = (this.tryMakeImage(monster.x, monster.y, frame, spriteSize, spriteSize)
-        ?? this.add.rectangle(monster.x, monster.y, spriteSize, spriteSize, monster.color)).setDepth(1);
+        ?? this.add.rectangle(monster.x, monster.y, spriteSize, spriteSize, monster.color)).setDepth(DEPTH.SPRITE + monster.y);
       const label  = this.add.text(0, 0, monster.isBoss ? `⚠ ${monster.name}` : monster.name, {
         color: labelColor, fontSize: monster.isBoss ? '11px' : '10px', fontFamily: 'monospace',
         fontStyle: monster.isBoss ? 'bold' : 'normal',
         stroke: '#000000', strokeThickness: 3,
-      }).setDepth(2);
-      const hpBar = this.add.graphics().setDepth(2);
-      const cdBar = this.add.graphics().setDepth(2);
+      }).setDepth(DEPTH.UI + monster.y);
+      const hpBar = this.add.graphics().setDepth(DEPTH.UI + monster.y);
+      const cdBar = this.add.graphics().setDepth(DEPTH.UI + monster.y);
       vm = { sprite, shadow, shadowOffsetY, label, hpBar, cdBar,
              targetX: monster.targetX, targetY: monster.targetY,
              baseX: monster.x, baseY: monster.y,
@@ -833,7 +961,7 @@ export class GameScene extends Phaser.Scene {
           GAME_CONFIG.NODE_HEIGHT,
           textureKey,
         )
-        .setDepth(-11);
+        .setDepth(DEPTH.BG_TILE);
       this.bgRect.setVisible(false);
       this.bgGrid.setVisible(false);
     } else {
@@ -926,6 +1054,137 @@ export class GameScene extends Phaser.Scene {
     if (exits.west)  this.minimap.fillRect(mmX,             mcy - 4,   5, 8);
   }
 
+  private drawBiomeXpBar(dt: number): void {
+    const ownVp = this.players.get(this.myId);
+    const g     = this.biomeXpGraphics;
+    g.clear();
+
+    if (!ownVp?.playerState || !this.myNodeId) {
+      this.biomeXpLabelText.setVisible(false);
+      this.biomeXpStatusText.setVisible(false);
+      this.biomeXpNumsText.setVisible(false);
+      return;
+    }
+    this.biomeXpLabelText.setVisible(true);
+    this.biomeXpStatusText.setVisible(true);
+    this.biomeXpNumsText.setVisible(true);
+
+    const p         = ownVp.playerState;
+    const biomeInfo = NODE_BIOMES[this.myNodeId];
+    if (!biomeInfo) return;
+
+    const { biomeGroup, biomeTier } = biomeInfo;
+    const currentLevel   = p.biomeLevel[biomeGroup] ?? 0;
+    const currentXp      = p.biomeXP[biomeGroup] ?? 0;
+    const tierCap        = biomeLevelCap(p.playerTier, biomeGroup);
+    const absoluteMax    = biomeLevelCap(7, biomeGroup);
+
+    const isMaxed  = currentLevel >= absoluteMax;
+    const isCapped = !isMaxed && currentLevel >= tierCap;
+
+    let fillFraction: number;
+    let numsStr: string;
+    if (isMaxed) {
+      fillFraction = 1;
+      numsStr      = 'MASTERED';
+    } else if (isCapped) {
+      fillFraction = 1;
+      numsStr      = 'advance tier to continue';
+    } else {
+      const xpBase   = biomeXpForLevel(currentLevel);
+      const xpTarget = biomeXpForLevel(currentLevel + 1);
+      const span     = xpTarget - xpBase;
+      fillFraction   = span > 0 ? Math.min((currentXp - xpBase) / span, 1) : 1;
+      numsStr        = `${currentXp - xpBase} / ${span}`;
+    }
+
+    // ── Smooth fill animation ─────────────────────────────────────────────────
+    // Snap on biome change or level-up (fill fraction drops sharply).
+    if (biomeGroup !== this.lastBiomeGroup || fillFraction < this.displayedFillFraction - 0.1) {
+      this.displayedFillFraction = fillFraction;
+    } else {
+      const t = 1 - Math.exp(-dt * 3.5);
+      this.displayedFillFraction += (fillFraction - this.displayedFillFraction) * t;
+      if (this.displayedFillFraction > fillFraction) this.displayedFillFraction = fillFraction;
+    }
+
+    // ── Layout ───────────────────────────────────────────────────────────────
+    const wx     = this.scale.width - MM_W - MM_PAD;
+    const wy     = MM_PAD;
+    const trackX = wx + 10;
+    const trackY = wy + 26;
+    const trackW = MM_W - 20;
+    const fillW  = Math.floor(trackW * this.displayedFillFraction);
+
+    // Background
+    g.fillStyle(0x08091a, 0.88);
+    g.fillRoundedRect(wx, wy, MM_W, XP_WIDGET_H, 4);
+
+    // Border
+    g.lineStyle(1, 0x2a3a5a, 1);
+    g.strokeRoundedRect(wx, wy, MM_W, XP_WIDGET_H, 4);
+
+    // Bar track (empty background)
+    g.fillStyle(0x0d0e22, 1);
+    g.fillRect(trackX, trackY, trackW, XP_FILL_H);
+
+    // Fill
+    const fillColor = isMaxed   ? 0xf5c842
+      : isCapped                ? 0xe89820
+      : (BIOME_BAR_COLORS[biomeGroup] ?? 0x4488aa);
+    if (fillW > 0) {
+      g.fillStyle(fillColor, 1);
+      g.fillRect(trackX, trackY, fillW, XP_FILL_H);
+      // Subtle top-sheen highlight
+      g.fillStyle(0xffffff, 0.15);
+      g.fillRect(trackX, trackY, fillW, 4);
+    }
+
+    // Track border
+    g.lineStyle(1, 0x3a4a6a, 1);
+    g.strokeRect(trackX, trackY, trackW, XP_FILL_H);
+
+    // Outer glow ring when at a cap
+    if (isCapped || isMaxed) {
+      g.lineStyle(2, fillColor, 0.45);
+      g.strokeRect(trackX - 1, trackY - 1, trackW + 2, XP_FILL_H + 2);
+    }
+
+    // ── Text ─────────────────────────────────────────────────────────────────
+    this.biomeXpLabelText
+      .setText(`${biomeGroup.toUpperCase()} XP`)
+      .setPosition(wx + 10, wy + 8);
+
+    const statusStr   = isMaxed ? 'MAXED' : isCapped ? 'TIER CAP' : `Lv ${currentLevel}`;
+    const statusColor = isMaxed ? '#f5c842' : isCapped ? '#e89820' : '#c8d8e8';
+    this.biomeXpStatusText
+      .setStyle({ color: statusColor })
+      .setText(statusStr)
+      .setPosition(wx + MM_W - 10, wy + 8);
+
+    this.biomeXpNumsText
+      .setText(numsStr)
+      .setPosition(wx + MM_W / 2, wy + 45);
+
+    // ── Flash on XP gain ─────────────────────────────────────────────────────
+    if (biomeGroup === this.lastBiomeGroup && currentXp > this.lastBiomeXp && this.lastBiomeXp >= 0) {
+      if (this.biomeXpFlashTween) this.biomeXpFlashTween.stop();
+      this.biomeXpFlash
+        .setPosition(trackX, trackY)
+        .setSize(Math.max(fillW, 4), XP_FILL_H)
+        .setAlpha(0.55);
+      this.biomeXpFlashTween = this.tweens.add({
+        targets:  this.biomeXpFlash,
+        alpha:    0,
+        duration: 450,
+        ease:     'Power2',
+        onComplete: () => { this.biomeXpFlashTween = null; },
+      });
+    }
+    this.lastBiomeGroup = biomeGroup;
+    this.lastBiomeXp    = currentXp;
+  }
+
   private showDeathOverlay(): void {
     const w = this.scale.width;
     const h = this.scale.height;
@@ -933,7 +1192,7 @@ export class GameScene extends Phaser.Scene {
     const bg = this.add
       .rectangle(w / 2, h / 2, w, h, 0x000000, 0.7)
       .setScrollFactor(0)
-      .setDepth(50);
+      .setDepth(DEPTH.SCREEN);
 
     const text = this.add
       .text(w / 2, h / 2, 'YOU DIED', {
@@ -943,7 +1202,7 @@ export class GameScene extends Phaser.Scene {
         fontStyle: 'bold',
       })
       .setScrollFactor(0)
-      .setDepth(51)
+      .setDepth(DEPTH.SCREEN + 100)
       .setOrigin(0.5);
 
     const sub = this.add
@@ -953,7 +1212,7 @@ export class GameScene extends Phaser.Scene {
         fontFamily: 'monospace',
       })
       .setScrollFactor(0)
-      .setDepth(51)
+      .setDepth(DEPTH.SCREEN + 100)
       .setOrigin(0.5);
 
     this.time.delayedCall(2200, () => {
@@ -984,7 +1243,7 @@ export class GameScene extends Phaser.Scene {
     const bg = this.add
       .rectangle(w / 2, h / 2, w, h, 0x05030f, 0.72)
       .setScrollFactor(0)
-      .setDepth(50);
+      .setDepth(DEPTH.SCREEN);
 
     const label = this.add
       .text(w / 2, h / 2 - 10, 'ASCENSION', {
@@ -994,7 +1253,7 @@ export class GameScene extends Phaser.Scene {
         fontStyle: 'bold',
       })
       .setScrollFactor(0)
-      .setDepth(51)
+      .setDepth(DEPTH.SCREEN + 100)
       .setOrigin(0.5);
 
     const subText = this.add
@@ -1004,7 +1263,7 @@ export class GameScene extends Phaser.Scene {
         fontFamily: 'monospace',
       })
       .setScrollFactor(0)
-      .setDepth(51)
+      .setDepth(DEPTH.SCREEN + 100)
       .setOrigin(0.5);
 
     // Fade in then hold, then fade out.
@@ -1082,7 +1341,7 @@ export class GameScene extends Phaser.Scene {
       quantity: count,
       emitting: false,
     });
-    emitter.setDepth(12);
+    emitter.setDepth(DEPTH.FX);
     emitter.explode(count);
     this.time.delayedCall(lifespan + 200, () => { if (emitter.active) emitter.destroy(); });
   }
@@ -1101,7 +1360,7 @@ export class GameScene extends Phaser.Scene {
     for (let i = 0; i < 3; i++) {
       const a = perp + (i - 1) * 0.3;
       this.time.delayedCall(i * 35, () => {
-        const g = this.add.graphics({ x: toX, y: toY }).setDepth(12);
+        const g = this.add.graphics({ x: toX, y: toY }).setDepth(DEPTH.FX);
         g.lineStyle(lineW, mainColor, 1);
         g.lineBetween(-Math.cos(a) * len, -Math.sin(a) * len, Math.cos(a) * len, Math.sin(a) * len);
         g.lineStyle(lineW * 0.5, shadow, 0.6);
@@ -1126,7 +1385,7 @@ export class GameScene extends Phaser.Scene {
     });
 
     if (empowered) {
-      const ring = this.add.graphics({ x: toX, y: toY }).setDepth(12);
+      const ring = this.add.graphics({ x: toX, y: toY }).setDepth(DEPTH.FX);
       ring.lineStyle(3, mainColor, 1);
       ring.strokeCircle(0, 0, 12);
       this.tweens.add({ targets: ring, scaleX: 3.8, scaleY: 3.8, alpha: 0, duration: 320, ease: 'Quad.easeOut', onComplete: () => ring.destroy() });
@@ -1135,7 +1394,7 @@ export class GameScene extends Phaser.Scene {
 
   private fxImpact(toX: number, toY: number, execution: boolean): void {
     // Flash
-    const flash = this.add.graphics({ x: toX, y: toY }).setDepth(13);
+    const flash = this.add.graphics({ x: toX, y: toY }).setDepth(DEPTH.FX + 100);
     flash.fillStyle(execution ? 0xffffff : 0xff8844, execution ? 0.9 : 0.8);
     flash.fillCircle(0, 0, execution ? 28 : 16);
     this.tweens.add({ targets: flash, alpha: 0, scaleX: 1.6, scaleY: 1.6, duration: 90, onComplete: () => flash.destroy() });
@@ -1143,7 +1402,7 @@ export class GameScene extends Phaser.Scene {
     // Two expanding rings
     for (let i = 0; i < 2; i++) {
       const ringColor = execution ? (i === 0 ? 0xffffff : 0xaabbff) : (i === 0 ? 0xff7744 : 0xffaa22);
-      const ring = this.add.graphics({ x: toX, y: toY }).setDepth(11);
+      const ring = this.add.graphics({ x: toX, y: toY }).setDepth(DEPTH.FX - 100);
       ring.lineStyle(3 - i * 0.5, ringColor, 1);
       ring.strokeCircle(0, 0, 10 + i * 8);
       this.tweens.add({ targets: ring, scaleX: 4.5 + i, scaleY: 4.5 + i, alpha: 0, duration: 320 + i * 60, ease: 'Power2', onComplete: () => ring.destroy() });
@@ -1160,7 +1419,7 @@ export class GameScene extends Phaser.Scene {
 
     if (execution) {
       // Silver X + plus cross
-      const cross = this.add.graphics({ x: toX, y: toY }).setDepth(13);
+      const cross = this.add.graphics({ x: toX, y: toY }).setDepth(DEPTH.FX + 100);
       const cLen  = 42;
       cross.lineStyle(3, 0xeeeeff, 1);
       cross.lineBetween(-cLen, -cLen,  cLen,  cLen);
@@ -1173,7 +1432,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   private fxPoison(toX: number, toY: number): void {
-    const ring = this.add.graphics({ x: toX, y: toY }).setDepth(12);
+    const ring = this.add.graphics({ x: toX, y: toY }).setDepth(DEPTH.FX);
     ring.lineStyle(2.5, 0x44ff66, 1);
     ring.strokeCircle(0, 0, 8);
     this.tweens.add({ targets: ring, scaleX: 4.2, scaleY: 4.2, alpha: 0, duration: 380, ease: 'Power2', onComplete: () => ring.destroy() });
@@ -1189,11 +1448,11 @@ export class GameScene extends Phaser.Scene {
   }
 
   private fxMagic(fromX: number, fromY: number, toX: number, toY: number): void {
-    const orb = this.add.circle(fromX, fromY, 6, 0xaa44ff).setDepth(12);
+    const orb = this.add.circle(fromX, fromY, 6, 0xaa44ff).setDepth(DEPTH.FX);
 
     for (let i = 0; i < 3; i++) {
       this.time.delayedCall(i * 45, () => {
-        const trail = this.add.circle(orb.x, orb.y, 3 - i * 0.5, 0xcc88ff, 0.75).setDepth(11);
+        const trail = this.add.circle(orb.x, orb.y, 3 - i * 0.5, 0xcc88ff, 0.75).setDepth(DEPTH.FX - 100);
         this.tweens.add({ targets: trail, alpha: 0, scaleX: 0.1, scaleY: 0.1, duration: 180, onComplete: () => trail.destroy() });
       });
     }
@@ -1202,7 +1461,7 @@ export class GameScene extends Phaser.Scene {
       targets: orb, x: toX, y: toY, duration: 200, ease: 'Quad.easeIn',
       onComplete: () => {
         orb.destroy();
-        const ring = this.add.graphics({ x: toX, y: toY }).setDepth(12);
+        const ring = this.add.graphics({ x: toX, y: toY }).setDepth(DEPTH.FX);
         ring.lineStyle(2.5, 0xcc88ff, 1);
         ring.strokeCircle(0, 0, 6);
         this.tweens.add({ targets: ring, scaleX: 3.5, scaleY: 3.5, alpha: 0, duration: 260, onComplete: () => ring.destroy() });
@@ -1220,7 +1479,7 @@ export class GameScene extends Phaser.Scene {
 
   private fxFrost(toX: number, toY: number): void {
     // Six ice spokes at 60° intervals, each with a small perpendicular tick at the tip
-    const spokes = this.add.graphics({ x: toX, y: toY }).setDepth(12);
+    const spokes = this.add.graphics({ x: toX, y: toY }).setDepth(DEPTH.FX);
     const sLen   = 40;
     for (let i = 0; i < 6; i++) {
       const a    = (i / 6) * Math.PI * 2;
@@ -1234,7 +1493,7 @@ export class GameScene extends Phaser.Scene {
     }
     this.tweens.add({ targets: spokes, alpha: 0, duration: 300, ease: 'Quad.easeOut', onComplete: () => spokes.destroy() });
 
-    const ring = this.add.graphics({ x: toX, y: toY }).setDepth(11);
+    const ring = this.add.graphics({ x: toX, y: toY }).setDepth(DEPTH.FX - 100);
     ring.lineStyle(2.5, 0x66ccff, 1);
     ring.strokeCircle(0, 0, 10);
     this.tweens.add({ targets: ring, scaleX: 3.8, scaleY: 3.8, alpha: 0, duration: 340, ease: 'Power2', onComplete: () => ring.destroy() });
@@ -1250,13 +1509,13 @@ export class GameScene extends Phaser.Scene {
 
   private fxFire(toX: number, toY: number): void {
     // Flash
-    const flash = this.add.graphics({ x: toX, y: toY }).setDepth(13);
+    const flash = this.add.graphics({ x: toX, y: toY }).setDepth(DEPTH.FX + 100);
     flash.fillStyle(0xffffff, 0.88);
     flash.fillCircle(0, 0, 14);
     this.tweens.add({ targets: flash, alpha: 0, scaleX: 1.5, scaleY: 1.5, duration: 85, onComplete: () => flash.destroy() });
 
     // Expanding orange ring
-    const ring = this.add.graphics({ x: toX, y: toY }).setDepth(12);
+    const ring = this.add.graphics({ x: toX, y: toY }).setDepth(DEPTH.FX);
     ring.lineStyle(3, 0xff6600, 1);
     ring.strokeCircle(0, 0, 12);
     this.tweens.add({ targets: ring, scaleX: 3.8, scaleY: 3.8, alpha: 0, duration: 320, ease: 'Power2', onComplete: () => ring.destroy() });
@@ -1285,7 +1544,7 @@ export class GameScene extends Phaser.Scene {
 
   private fxVoid(toX: number, toY: number): void {
     // Phase 1: dark circle collapses inward (implosion feel)
-    const dark = this.add.graphics({ x: toX, y: toY }).setDepth(12);
+    const dark = this.add.graphics({ x: toX, y: toY }).setDepth(DEPTH.FX);
     dark.fillStyle(0x220033, 0.82);
     dark.fillCircle(0, 0, 28);
     dark.lineStyle(2.5, 0x6600cc, 1);
@@ -1296,12 +1555,12 @@ export class GameScene extends Phaser.Scene {
       onComplete: () => {
         dark.destroy();
         // Phase 2: burst outward
-        const burst = this.add.graphics({ x: toX, y: toY }).setDepth(13);
+        const burst = this.add.graphics({ x: toX, y: toY }).setDepth(DEPTH.FX + 100);
         burst.fillStyle(0x9933ff, 0.88);
         burst.fillCircle(0, 0, 16);
         this.tweens.add({ targets: burst, alpha: 0, scaleX: 2.8, scaleY: 2.8, duration: 190, onComplete: () => burst.destroy() });
 
-        const ring = this.add.graphics({ x: toX, y: toY }).setDepth(12);
+        const ring = this.add.graphics({ x: toX, y: toY }).setDepth(DEPTH.FX);
         ring.lineStyle(3, 0xaa44ff, 1);
         ring.strokeCircle(0, 0, 12);
         this.tweens.add({ targets: ring, scaleX: 4.5, scaleY: 4.5, alpha: 0, duration: 340, ease: 'Power2', onComplete: () => ring.destroy() });
@@ -1325,7 +1584,7 @@ export class GameScene extends Phaser.Scene {
     const width = empowered ? 2.5 : 1.5;
 
     // Draw glow layer then bright core
-    const g = this.add.graphics().setDepth(12);
+    const g = this.add.graphics().setDepth(DEPTH.FX);
     g.lineStyle(width + 3, color, 0.15);
     g.lineBetween(fromX, fromY, toX, toY);
     g.lineStyle(width, color, 1);
@@ -1333,13 +1592,13 @@ export class GameScene extends Phaser.Scene {
     this.tweens.add({ targets: g, alpha: 0, duration: 90, ease: 'Quad.easeIn', onComplete: () => g.destroy() });
 
     // Small muzzle flash at origin
-    const muzzle = this.add.graphics({ x: fromX, y: fromY }).setDepth(12);
+    const muzzle = this.add.graphics({ x: fromX, y: fromY }).setDepth(DEPTH.FX);
     muzzle.fillStyle(color, 0.7);
     muzzle.fillCircle(0, 0, empowered ? 7 : 4);
     this.tweens.add({ targets: muzzle, alpha: 0, scaleX: 2, scaleY: 2, duration: 80, onComplete: () => muzzle.destroy() });
 
     // Impact flash at target
-    const flash = this.add.graphics({ x: toX, y: toY }).setDepth(13);
+    const flash = this.add.graphics({ x: toX, y: toY }).setDepth(DEPTH.FX + 100);
     flash.fillStyle(color, 0.88);
     flash.fillCircle(0, 0, empowered ? 16 : 8);
     this.tweens.add({ targets: flash, alpha: 0, scaleX: 2.5, scaleY: 2.5, duration: 150, onComplete: () => flash.destroy() });
@@ -1387,7 +1646,7 @@ export class GameScene extends Phaser.Scene {
 
     const pts = this.zigzagPoints(fromX, fromY, toX, toY, segs, spread);
 
-    const g = this.add.graphics().setDepth(12);
+    const g = this.add.graphics().setDepth(DEPTH.FX);
     // Glow beneath
     g.lineStyle(discharge ? 6 : 4, glowCol, 0.22);
     for (let i = 1; i < pts.length; i++) g.lineBetween(pts[i-1].x, pts[i-1].y, pts[i].x, pts[i].y);
@@ -1401,17 +1660,17 @@ export class GameScene extends Phaser.Scene {
       for (let b = 0; b < 2; b++) {
         this.time.delayedCall(b * 28, () => {
           const bpts = this.zigzagPoints(fromX, fromY, toX, toY, segs - 1, spread * 1.5);
-          const gb = this.add.graphics().setDepth(11);
+          const gb = this.add.graphics().setDepth(DEPTH.FX - 100);
           gb.lineStyle(1.5, 0x88ccff, 0.65);
           for (let i = 1; i < bpts.length; i++) gb.lineBetween(bpts[i-1].x, bpts[i-1].y, bpts[i].x, bpts[i].y);
           this.tweens.add({ targets: gb, alpha: 0, duration: 170, onComplete: () => gb.destroy() });
         });
       }
-      const flash = this.add.graphics({ x: toX, y: toY }).setDepth(13);
+      const flash = this.add.graphics({ x: toX, y: toY }).setDepth(DEPTH.FX + 100);
       flash.fillStyle(0xffffff, 0.92);
       flash.fillCircle(0, 0, 28);
       this.tweens.add({ targets: flash, alpha: 0, scaleX: 3, scaleY: 3, duration: 180, onComplete: () => flash.destroy() });
-      const ring = this.add.graphics({ x: toX, y: toY }).setDepth(12);
+      const ring = this.add.graphics({ x: toX, y: toY }).setDepth(DEPTH.FX);
       ring.lineStyle(3, 0xaaddff, 1);
       ring.strokeCircle(0, 0, 10);
       this.tweens.add({ targets: ring, scaleX: 5.5, scaleY: 5.5, alpha: 0, duration: 340, ease: 'Power2', onComplete: () => ring.destroy() });
@@ -1433,7 +1692,7 @@ export class GameScene extends Phaser.Scene {
 
   // DoT — Poison path: slow green smog cloud.
   private fxPoisonSmog(toX: number, toY: number, empowered: boolean): void {
-    const ring = this.add.graphics({ x: toX, y: toY }).setDepth(12);
+    const ring = this.add.graphics({ x: toX, y: toY }).setDepth(DEPTH.FX);
     ring.lineStyle(2, 0x33dd55, 0.75);
     ring.strokeCircle(0, 0, 8);
     this.tweens.add({ targets: ring, scaleX: empowered ? 5 : 3.5, scaleY: empowered ? 5 : 3.5, alpha: 0, duration: 520, ease: 'Power1', onComplete: () => ring.destroy() });
@@ -1457,12 +1716,12 @@ export class GameScene extends Phaser.Scene {
 
   // DoT — Fire path: deep-red flame burst.
   private fxFireFlame(toX: number, toY: number, empowered: boolean): void {
-    const flash = this.add.graphics({ x: toX, y: toY }).setDepth(13);
+    const flash = this.add.graphics({ x: toX, y: toY }).setDepth(DEPTH.FX + 100);
     flash.fillStyle(0xffffff, empowered ? 0.9 : 0.72);
     flash.fillCircle(0, 0, empowered ? 18 : 11);
     this.tweens.add({ targets: flash, alpha: 0, scaleX: 1.8, scaleY: 1.8, duration: 75, onComplete: () => flash.destroy() });
 
-    const ring = this.add.graphics({ x: toX, y: toY }).setDepth(12);
+    const ring = this.add.graphics({ x: toX, y: toY }).setDepth(DEPTH.FX);
     ring.lineStyle(3, 0xdd1100, 1);
     ring.strokeCircle(0, 0, empowered ? 14 : 9);
     this.tweens.add({ targets: ring, scaleX: empowered ? 4.5 : 3.2, scaleY: empowered ? 4.5 : 3.2, alpha: 0, duration: 300, ease: 'Power2', onComplete: () => ring.destroy() });
@@ -1487,7 +1746,7 @@ export class GameScene extends Phaser.Scene {
   private fxFrostSnowflake(toX: number, toY: number, empowered: boolean): void {
     const sLen  = empowered ? 54 : 36;
     const spokes = empowered ? 8 : 6;
-    const g = this.add.graphics({ x: toX, y: toY }).setDepth(12);
+    const g = this.add.graphics({ x: toX, y: toY }).setDepth(DEPTH.FX);
     for (let i = 0; i < spokes; i++) {
       const a     = (i / spokes) * Math.PI * 2;
       const perpA = a + Math.PI / 2;
@@ -1507,7 +1766,7 @@ export class GameScene extends Phaser.Scene {
     }
     this.tweens.add({ targets: g, alpha: 0, duration: empowered ? 420 : 280, ease: 'Quad.easeOut', onComplete: () => g.destroy() });
 
-    const cFlash = this.add.graphics({ x: toX, y: toY }).setDepth(13);
+    const cFlash = this.add.graphics({ x: toX, y: toY }).setDepth(DEPTH.FX + 100);
     cFlash.fillStyle(0xffffff, empowered ? 0.88 : 0.65);
     cFlash.fillCircle(0, 0, empowered ? 10 : 6);
     this.tweens.add({ targets: cFlash, alpha: 0, scaleX: 2, scaleY: 2, duration: 110, onComplete: () => cFlash.destroy() });
@@ -1531,6 +1790,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   private playMeleeLunge(vm: Visual, targetX: number, targetY: number): void {
+    if (document.hidden) return;
     const LUNGE_DIST = 26;
     const dx = targetX - vm.baseX;
     const dy = targetY - vm.baseY;
@@ -1555,7 +1815,7 @@ export class GameScene extends Phaser.Scene {
 
   /** Expanding translucent ring used to show AoE splash extent on empowered hits. */
   private fxAoeRing(x: number, y: number, radius: number, color: number): void {
-    const ring = this.add.graphics({ x, y }).setDepth(11);
+    const ring = this.add.graphics({ x, y }).setDepth(DEPTH.FX - 100);
     ring.lineStyle(2.5, color, 0.65);
     ring.strokeCircle(0, 0, 1);
     this.tweens.add({
@@ -1570,6 +1830,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   private playOneShotEffect(id: string, x: number, y: number, opts?: { scale?: number; depth?: number }): void {
+    if (document.hidden) return;
     const def = EFFECT_BY_ID.get(id);
     if (!def) return;
 
@@ -1578,7 +1839,7 @@ export class GameScene extends Phaser.Scene {
     const endFrame = def.endFrame ?? EFFECT_FRAME_COUNT - 1;
     const sprite = this.add
       .sprite(x, y + (def.anchorYPx ?? 0), def.key)
-      .setDepth(opts?.depth ?? def.depth ?? 12)
+      .setDepth(opts?.depth ?? def.depth ?? DEPTH.FX)
       .setDisplaySize(size, size)
       .setFrame(startFrame);
     const proxy = { frame: startFrame };
@@ -1601,6 +1862,7 @@ export class GameScene extends Phaser.Scene {
     toX: number, toY: number,
     flags?: { empowered?: boolean; execution?: boolean; archetype?: CombatArchetype; dotPath?: 'poison' | 'fire' | 'frost' },
   ): void {
+    if (document.hidden) return;
     const empowered = flags?.empowered ?? false;
     const execution = flags?.execution ?? false;
     const archetype = flags?.archetype;
@@ -1649,6 +1911,7 @@ export class GameScene extends Phaser.Scene {
    * so the number starts just above the bar.
    */
   private spawnDamageNumber(spriteX: number, spriteY: number, barOffsetY: number, amount: number, color: string): void {
+    if (document.hidden) return;
     const jitter = (Math.random() - 0.5) * 18;
     const startY = spriteY - barOffsetY - 6;
     const text = this.add
@@ -1660,7 +1923,7 @@ export class GameScene extends Phaser.Scene {
         stroke: '#000000',
         strokeThickness: 3,
       })
-      .setDepth(15)
+      .setDepth(DEPTH.FLOATER)
       .setOrigin(0.5, 1);
 
     this.tweens.add({
@@ -1671,6 +1934,52 @@ export class GameScene extends Phaser.Scene {
       ease: 'Power2',
       onComplete: () => text.destroy(),
     });
+  }
+
+  private spawnKillRewards(
+    spriteX: number, spriteY: number, barOffsetY: number,
+    biomeXpGained: number, biomeGroup: string,
+    essenceGained: number, essenceType: string,
+  ): void {
+    if (document.hidden) return;
+    const startY = spriteY - barOffsetY - 6;
+
+    if (biomeXpGained > 0) {
+      const xpColor  = this.biomeGroupColor(biomeGroup);
+      const startX   = spriteX - 8 - Math.random() * 8;
+      const xpText   = this.add
+        .text(startX, startY, `+${biomeXpGained} XP`, {
+          color: xpColor, fontSize: '12px', fontFamily: 'monospace',
+          fontStyle: 'bold', stroke: '#000000', strokeThickness: 2,
+        })
+        .setDepth(DEPTH.FLOATER).setOrigin(0.5, 1);
+      this.tweens.add({
+        targets: xpText, y: startY - 36, x: startX - 10,
+        alpha: 0, duration: 1800, ease: 'Power2',
+        onComplete: () => xpText.destroy(),
+      });
+    }
+
+    if (essenceGained > 0) {
+      const essColor = ESSENCE_COLORS[essenceType as EssenceType] ?? '#ffffff';
+      const startX   = spriteX + 8 + Math.random() * 8;
+      const essText  = this.add
+        .text(startX, startY, `+${essenceGained} ●`, {
+          color: essColor, fontSize: '12px', fontFamily: 'monospace',
+          fontStyle: 'bold', stroke: '#000000', strokeThickness: 2,
+        })
+        .setDepth(DEPTH.FLOATER).setOrigin(0.5, 1);
+      this.tweens.add({
+        targets: essText, y: startY - 36, x: startX + 10,
+        alpha: 0, duration: 1800, ease: 'Power2',
+        onComplete: () => essText.destroy(),
+      });
+    }
+  }
+
+  private biomeGroupColor(biomeGroup: string): string {
+    const hex = BIOME_BAR_COLORS[biomeGroup] ?? 0x88aacc;
+    return '#' + hex.toString(16).padStart(6, '0');
   }
 
   /**

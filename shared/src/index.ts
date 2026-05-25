@@ -44,7 +44,7 @@ export interface PlayerBuff {
  */
 export type CombatEvent =
   | { kind: 'player-hit';    playerId: string; targetId: string; targetName: string; damage: number; empowered: boolean; execution: boolean; effects?: string[] }
-  | { kind: 'player-kill';   playerId: string; targetId: string; targetName: string }
+  | { kind: 'player-kill'; playerId: string; targetId: string; targetName: string; biomeXpGained: number; essenceGained: number; essenceType: string }
   | { kind: 'monster-dodge'; monsterId: string };
 
 // ─── Combat archetype ─────────────────────────────────────────────────────────
@@ -159,7 +159,7 @@ export interface PlayerState {
   equipment: EquipmentMap;
   /**
    * Accumulated XP per biome group. Incremented server-side on every kill;
-   * capped when biomeLevel[group] reaches GAME_CONFIG.BIOME_LEVEL_CAP_BY_TIER[playerTier].
+   * capped when biomeLevel[group] reaches biomeLevelCap(playerTier, biomeGroup).
    * e.g. { forest: 350 }
    */
   biomeXP: Record<string, number>;
@@ -690,6 +690,8 @@ export interface ClientToServerEvents {
   'debug:leaveTestRoom': () => void;
   /** Dev-only: wipe all character progression (skills, items, biome XP, recipes) and respawn. Server ignores in production. */
   'debug:resetProgress': () => void;
+  /** Dev-only: re-check recipe unlocks against current biome levels without resetting. */
+  'debug:refreshRecipes': () => void;
 }
 
 // ─── Game balance constants ───────────────────────────────────────────────────
@@ -771,4 +773,18 @@ export const GAME_CONFIG = {
 export function biomeXpForLevel(n: number): number {
   if (n <= 0) return 0;
   return Math.round(GAME_CONFIG.BIOME_XP_BASE * Math.pow(n, GAME_CONFIG.BIOME_XP_EXPONENT));
+}
+
+/** Maps biomeGroup → biomeTier, derived from NODE_BIOMES. */
+export const BIOME_TIER_BY_GROUP: Record<string, number> = Object.fromEntries(
+  Object.values(NODE_BIOMES).map(v => [v.biomeGroup, v.biomeTier]),
+);
+
+/**
+ * Returns the maximum biome level a player of `playerTier` can reach.
+ * Cap = playerTier × 4, minimum 4. Clearing is always capped at 4.
+ */
+export function biomeLevelCap(playerTier: number, biomeGroup: string): number {
+  if (biomeGroup === 'clearing') return 4;
+  return Math.max(4, playerTier * 4);
 }

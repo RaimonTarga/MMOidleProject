@@ -4,7 +4,7 @@ import type { PlayerState, EssenceType } from '@mmo-idle/shared';
 import {
   RECIPE_DATABASE, NODE_BIOMES, GAME_CONFIG,
   ESSENCE_TYPES, ESSENCE_COLORS, TEST_ROOM_NODE_ID, BIOME_DATABASE,
-  biomeXpForLevel,
+  biomeXpForLevel, biomeLevelCap,
 } from '@mmo-idle/shared';
 import type { ItemStats } from '@mmo-idle/shared';
 import type { Recipe } from '@mmo-idle/shared';
@@ -99,7 +99,7 @@ interface BiomeSectionProps {
 function BiomeSection({ biomeGroup, player, recipes, isCurrent }: BiomeSectionProps) {
   const level    = player.biomeLevel[biomeGroup] ?? 0;
   const xp       = player.biomeXP[biomeGroup] ?? 0;
-  const levelCap = GAME_CONFIG.BIOME_LEVEL_CAP_BY_TIER[player.playerTier] ?? 999;
+  const levelCap = biomeLevelCap(player.playerTier, biomeGroup);
   const xpThisTier  = biomeXpForLevel(level);
   const xpNextTier  = biomeXpForLevel(level + 1);
   const xpInLevel   = xp - xpThisTier;

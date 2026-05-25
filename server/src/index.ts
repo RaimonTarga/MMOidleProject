@@ -29,6 +29,7 @@ import { recalculatePlayerStats } from './systems/stats';
 import { initDefenseSystems } from './systems/defenseSystems';
 import { initDebuffMechanics } from './systems/debuffMechanics';
 import { IS_DEV } from './env';
+import { checkRecipeUnlocks } from './systems/rewards';
 
 export { IS_DEV };
 
@@ -124,6 +125,12 @@ setInterval(() => {
     io.sockets.sockets.get(playerId)?.emit('player:died');
   }
   world.pendingDeaths = [];
+
+  // Emit quest-completion ascension events.
+  for (const { playerId, tier } of world.pendingAscensions) {
+    io.sockets.sockets.get(playerId)?.emit('player:ascended', tier);
+  }
+  world.pendingAscensions = [];
 }, LOGIC_MS);
 
 // Broadcast tick — 5 Hz. Sends authoritative state snapshots to each player.
@@ -185,9 +192,6 @@ io.on('connection', (socket) => {
     const p = world.players.get(socket.id);
     if (!p) return;
     const succeeded = unlockSkill(p, skillId);
-    if (succeeded) {
-      socket.emit('player:ascended', p.currentSkillTier);
-    }
     // recalculatePlayerStats (called inside unlockSkill) always resets
     // player.cadenceCount to 0 for cadence players — including when picking a
     // T2 range node that doesn't change the threshold. Mirror that reset into
@@ -293,6 +297,14 @@ io.on('connection', (socket) => {
     if (cs) resetCombatState(cs);
 
     world.respawnPlayer(socket.id);
+  });
+
+  socket.on('debug:refreshRecipes', () => {
+    const p = world.players.get(socket.id);
+    if (!p) return;
+    for (const [biomeGroup, level] of Object.entries(p.biomeLevel)) {
+      checkRecipeUnlocks(p, biomeGroup, level);
+    }
   });
 
   socket.on('disconnect', () => {

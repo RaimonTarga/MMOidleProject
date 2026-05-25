@@ -30,7 +30,7 @@ export interface Recipe {
 }
 
 // ─── Stat scale reference ──────────────────────────────────────────────────────
-// Unlock order within every biome tier: boots (1/6) → charm (2/7) → armor (3/8) → weapon (4/9)
+// Unlock order within every biome tier: boots (1/5) → charm (2/6) → armor (3/7) → weapon (4/8)
 // T1 ring-1 biomes:  ATK/DEF  8–12,  SPD 20–28,  REGEN 3–5,   cost 15–25 ess
 // T2 ring-1 biomes:  ATK/DEF 16–26,  SPD 40–55,  REGEN 7–12,  cost 45–70 ess
 // T1 ring-2 biomes:  ATK/DEF 28–32,  SPD 55–62,  REGEN 12–14, cost 65–75 ess
@@ -95,19 +95,19 @@ export const RECIPE_DATABASE: Map<string, Recipe> = new Map<string, Recipe>([
   // ── Forest T2 — green (primary) + yellow (wolves) ─────────────────────────
   ['forest-boots-t2', {
     id: 'forest-boots-t2', name: 'Windstep Wraps',
-    recipeGroup: 'forest', requiredBiomeLevel: 6, slot: 'mobility',
+    recipeGroup: 'forest', requiredBiomeLevel: 5, slot: 'mobility',
     cost: { green: 38, yellow: 10 }, stats: { speed: 40 }, tier: 2,
     description: 'Enchanted wraps that carry the speed of forest winds.',
   }],
   ['forest-charm-t2', {
     id: 'forest-charm-t2', name: 'Ancient Heartroot Amulet',
-    recipeGroup: 'forest', requiredBiomeLevel: 7, slot: 'recovery',
+    recipeGroup: 'forest', requiredBiomeLevel: 6, slot: 'recovery',
     cost: { green: 38, yellow: 10 }, stats: { hpRegen: 10 }, tier: 2,
     description: 'A century-aged heartroot amulet — recovery so fast others mistake it for sorcery.',
   }],
   ['forest-vest-t2', {
     id: 'forest-vest-t2', name: 'Phantom Bindings',
-    recipeGroup: 'forest', requiredBiomeLevel: 8, slot: 'armor',
+    recipeGroup: 'forest', requiredBiomeLevel: 7, slot: 'armor',
     cost: { green: 48, yellow: 12 }, stats: { maxHp: 18, plating: 4, evasion: 5 },
     mechanicEffects: { 'defense.max-hit-pct': 0.25 },
     tier: 2,
@@ -115,13 +115,13 @@ export const RECIPE_DATABASE: Map<string, Recipe> = new Map<string, Recipe>([
   }],
   ['forest-blade-t2', {
     id: 'forest-blade-t2', name: 'Ironwood Blade',
-    recipeGroup: 'forest', requiredBiomeLevel: 9, slot: 'weapon',
+    recipeGroup: 'forest', requiredBiomeLevel: 8, slot: 'weapon',
     cost: { green: 48, yellow: 12 }, stats: { attack: 18 }, attacksPerSecond: 1.0, tier: 2,
     description: 'Forged from the heartwood of an ancient iron-oak.',
   }],
   ['gale-needle', {
     id: 'gale-needle', name: 'Gale Needle',
-    recipeGroup: 'forest', requiredBiomeLevel: 9, slot: 'weapon',
+    recipeGroup: 'forest', requiredBiomeLevel: 8, slot: 'weapon',
     cost: { green: 48, yellow: 12 }, stats: { attack: 16 }, attacksPerSecond: 1.50, tier: 2,
     description: 'A precision-machined fencing blade — every technique from the Flash Rapier, refined and improved at every point.',
   }],
@@ -158,13 +158,13 @@ export const RECIPE_DATABASE: Map<string, Recipe> = new Map<string, Recipe>([
   // ── Mountain T2 — blue (primary) + purple (stone eagle) ───────────────────
   ['mountain-boots-t2', {
     id: 'mountain-boots-t2', name: 'Mountain Stride',
-    recipeGroup: 'mountain', requiredBiomeLevel: 6, slot: 'mobility',
+    recipeGroup: 'mountain', requiredBiomeLevel: 5, slot: 'mobility',
     cost: { blue: 42, purple: 10 }, stats: { speed: 45 }, tier: 2,
     description: 'Enchanted treads that turn slopes into flat ground.',
   }],
   ['mountain-charm-t2', {
     id: 'mountain-charm-t2', name: 'Iron Bulwark',
-    recipeGroup: 'mountain', requiredBiomeLevel: 7, slot: 'recovery',
+    recipeGroup: 'mountain', requiredBiomeLevel: 6, slot: 'recovery',
     cost: { blue: 42, purple: 10 }, stats: { hpRegen: 6 },
     mechanicEffects: { 'defense.shield-pct': 0.15, 'defense.shield-interval-ms': 8000, 'defense.shield-duration-ms': 8000 },
     tier: 2,
@@ -172,7 +172,7 @@ export const RECIPE_DATABASE: Map<string, Recipe> = new Map<string, Recipe>([
   }],
   ['mountain-vest-t2', {
     id: 'mountain-vest-t2', name: 'Iron Crusader Plate',
-    recipeGroup: 'mountain', requiredBiomeLevel: 8, slot: 'armor',
+    recipeGroup: 'mountain', requiredBiomeLevel: 7, slot: 'armor',
     cost: { blue: 52, purple: 13 }, stats: { maxHp: 15, plating: 18, damageReduction: 0.08 },
     mechanicEffects: { 'defense.hit-to-dot-pct': 0.12 },
     tier: 2,
@@ -180,13 +180,13 @@ export const RECIPE_DATABASE: Map<string, Recipe> = new Map<string, Recipe>([
   }],
   ['mountain-blade-t2', {
     id: 'mountain-blade-t2', name: 'Peak Blade',
-    recipeGroup: 'mountain', requiredBiomeLevel: 9, slot: 'weapon',
+    recipeGroup: 'mountain', requiredBiomeLevel: 8, slot: 'weapon',
     cost: { blue: 52, purple: 13 }, stats: { attack: 22 }, attacksPerSecond: 1.0, tier: 2,
     description: 'Folded high-altitude steel; holds an edge in any cold.',
   }],
   ['quake-hammer', {
     id: 'quake-hammer', name: 'Quake Hammer',
-    recipeGroup: 'mountain', requiredBiomeLevel: 9, slot: 'weapon',
+    recipeGroup: 'mountain', requiredBiomeLevel: 8, slot: 'weapon',
     cost: { blue: 52, purple: 13 }, stats: { attack: 32 }, attacksPerSecond: 0.40, tier: 2,
     description: 'A quality war-hammer built for maximum force delivery — every landing sends tremors through whatever it strikes.',
   }],
@@ -228,13 +228,13 @@ export const RECIPE_DATABASE: Map<string, Recipe> = new Map<string, Recipe>([
   // ── Plains T2 — yellow (primary) + red (boar/bull) ────────────────────────
   ['plains-boots-t2', {
     id: 'plains-boots-t2', name: 'Gale Boots',
-    recipeGroup: 'plains', requiredBiomeLevel: 6, slot: 'mobility',
+    recipeGroup: 'plains', requiredBiomeLevel: 5, slot: 'mobility',
     cost: { yellow: 40, red: 10 }, stats: { speed: 48 }, tier: 2,
     description: 'Wind-woven leather that carries you with every step.',
   }],
   ['plains-charm-t2', {
     id: 'plains-charm-t2', name: 'Stalwart Core',
-    recipeGroup: 'plains', requiredBiomeLevel: 7, slot: 'recovery',
+    recipeGroup: 'plains', requiredBiomeLevel: 6, slot: 'recovery',
     cost: { yellow: 40, red: 10 }, stats: { hpRegen: 7 },
     mechanicEffects: { 'defense.in-combat-regen-pct': 0.30 },
     tier: 2,
@@ -242,7 +242,7 @@ export const RECIPE_DATABASE: Map<string, Recipe> = new Map<string, Recipe>([
   }],
   ['plains-vest-t2', {
     id: 'plains-vest-t2', name: 'Enduring Robe',
-    recipeGroup: 'plains', requiredBiomeLevel: 8, slot: 'armor',
+    recipeGroup: 'plains', requiredBiomeLevel: 7, slot: 'armor',
     cost: { yellow: 50, red: 12 }, stats: { maxHp: 25, plating: 5, damageReduction: 0.20 },
     mechanicEffects: { 'defense.absorb-pct': 0.08 },
     tier: 2,
@@ -250,19 +250,19 @@ export const RECIPE_DATABASE: Map<string, Recipe> = new Map<string, Recipe>([
   }],
   ['plains-blade-t2', {
     id: 'plains-blade-t2', name: 'Storm Blade',
-    recipeGroup: 'plains', requiredBiomeLevel: 9, slot: 'weapon',
+    recipeGroup: 'plains', requiredBiomeLevel: 8, slot: 'weapon',
     cost: { yellow: 50, red: 12 }, stats: { attack: 20 }, attacksPerSecond: 1.0, tier: 2,
     description: 'Charged with static from a plains thunderstorm.',
   }],
   ['knight-steelsword', {
     id: 'knight-steelsword', name: "Knight's Steelsword",
-    recipeGroup: 'plains', requiredBiomeLevel: 9, slot: 'weapon',
+    recipeGroup: 'plains', requiredBiomeLevel: 8, slot: 'weapon',
     cost: { yellow: 35, red: 8 }, stats: { attack: 20 }, attacksPerSecond: 0.80, tier: 2,
     description: 'A well-maintained soldier\'s blade — balanced, reliable, and cheaper to forge than most. Lacks flair; never fails.',
   }],
   ['consecrated-cross', {
     id: 'consecrated-cross', name: 'Consecrated Cross',
-    recipeGroup: 'plains', requiredBiomeLevel: 9, slot: 'weapon',
+    recipeGroup: 'plains', requiredBiomeLevel: 8, slot: 'weapon',
     cost: { yellow: 50, red: 12 }, stats: { attack: 8 }, attacksPerSecond: 0.50, tier: 2,
     description: 'An iron cross etched with amplified ward glyphs — the burst window lasts twice as long as lesser models, with only a slightly longer recovery.',
   }],
@@ -300,13 +300,13 @@ export const RECIPE_DATABASE: Map<string, Recipe> = new Map<string, Recipe>([
   // ── Swamp T2 — purple (primary) + green (bog slime) ───────────────────────
   ['swamp-boots-t2', {
     id: 'swamp-boots-t2', name: 'Wetland Wraps',
-    recipeGroup: 'swamp', requiredBiomeLevel: 6, slot: 'mobility',
+    recipeGroup: 'swamp', requiredBiomeLevel: 5, slot: 'mobility',
     cost: { purple: 44, green: 11 }, stats: { speed: 50 }, tier: 2,
     description: 'Enchanted wrappings that treat mud like solid ground.',
   }],
   ['swamp-charm-t2', {
     id: 'swamp-charm-t2', name: 'Void Eye',
-    recipeGroup: 'swamp', requiredBiomeLevel: 7, slot: 'recovery',
+    recipeGroup: 'swamp', requiredBiomeLevel: 6, slot: 'recovery',
     cost: { purple: 44, green: 11 }, stats: { hpRegen: 6 },
     mechanicEffects: { 'defense.absorb-pct': 0.15 },
     tier: 2,
@@ -314,7 +314,7 @@ export const RECIPE_DATABASE: Map<string, Recipe> = new Map<string, Recipe>([
   }],
   ['swamp-vest-t2', {
     id: 'swamp-vest-t2', name: 'Void Wrappings',
-    recipeGroup: 'swamp', requiredBiomeLevel: 8, slot: 'armor',
+    recipeGroup: 'swamp', requiredBiomeLevel: 7, slot: 'armor',
     cost: { purple: 54, green: 14 }, stats: { maxHp: 20, plating: 6 },
     mechanicEffects: { 'defense.dot-resistance': 0.30, 'defense.debuff-resistance': 0.12 },
     tier: 2,
@@ -322,19 +322,19 @@ export const RECIPE_DATABASE: Map<string, Recipe> = new Map<string, Recipe>([
   }],
   ['swamp-blade-t2', {
     id: 'swamp-blade-t2', name: 'Venom Blade',
-    recipeGroup: 'swamp', requiredBiomeLevel: 9, slot: 'weapon',
+    recipeGroup: 'swamp', requiredBiomeLevel: 8, slot: 'weapon',
     cost: { purple: 54, green: 14 }, stats: { attack: 24 }, attacksPerSecond: 1.0, tier: 2,
     description: 'Dipped in hydra venom until the steel itself is poisonous.',
   }],
   ['cinderfang-saber', {
     id: 'cinderfang-saber', name: 'Cinderfang Saber',
-    recipeGroup: 'swamp', requiredBiomeLevel: 9, slot: 'weapon',
+    recipeGroup: 'swamp', requiredBiomeLevel: 8, slot: 'weapon',
     cost: { purple: 54, green: 14 }, stats: { attack: 22 }, attacksPerSecond: 0.75, tier: 2,
     description: 'A quality saber whose runes burn deeper wounds — strikes stack seven layers of smoldering heat, building to a sustained inferno.',
   }],
   ['frostmourne-mace', {
     id: 'frostmourne-mace', name: 'Frostmourne Mace',
-    recipeGroup: 'swamp', requiredBiomeLevel: 9, slot: 'weapon',
+    recipeGroup: 'swamp', requiredBiomeLevel: 8, slot: 'weapon',
     cost: { purple: 54, green: 14 }, stats: { attack: 26 }, attacksPerSecond: 0.55, tier: 2,
     description: 'A dense mace with frost-slag inlay — fewer burn stacks than its kin, but the direct impact of each blow is noticeably heavier.',
   }],
@@ -370,13 +370,13 @@ export const RECIPE_DATABASE: Map<string, Recipe> = new Map<string, Recipe>([
   // ── Cave T2 — blue (primary) + purple (bats/giant spider) ─────────────────
   ['cave-boots-t2', {
     id: 'cave-boots-t2', name: 'Cavern Sprints',
-    recipeGroup: 'cave', requiredBiomeLevel: 6, slot: 'mobility',
+    recipeGroup: 'cave', requiredBiomeLevel: 5, slot: 'mobility',
     cost: { red: 44, purple: 11 }, stats: { speed: 55 }, tier: 2,
     description: 'Enchanted leather that makes tight tunnels feel wide open.',
   }],
   ['cave-charm-t2', {
     id: 'cave-charm-t2', name: 'Resonant Gem',
-    recipeGroup: 'cave', requiredBiomeLevel: 7, slot: 'recovery',
+    recipeGroup: 'cave', requiredBiomeLevel: 6, slot: 'recovery',
     cost: { red: 44, purple: 11 }, stats: { hpRegen: 6 },
     mechanicEffects: { 'defense.regen-burst-pct': 0.15, 'defense.regen-burst-interval-ms': 8000 },
     tier: 2,
@@ -384,7 +384,7 @@ export const RECIPE_DATABASE: Map<string, Recipe> = new Map<string, Recipe>([
   }],
   ['cave-vest-t2', {
     id: 'cave-vest-t2', name: 'Dire Bestial Hide',
-    recipeGroup: 'cave', requiredBiomeLevel: 8, slot: 'armor',
+    recipeGroup: 'cave', requiredBiomeLevel: 7, slot: 'armor',
     cost: { red: 54, purple: 14 }, stats: { maxHp: 38, plating: 6, damageReduction: 0.12 },
     mechanicEffects: { 'defense.in-combat-regen-pct': 0.15 },
     tier: 2,
@@ -392,7 +392,7 @@ export const RECIPE_DATABASE: Map<string, Recipe> = new Map<string, Recipe>([
   }],
   ['cave-blade-t2', {
     id: 'cave-blade-t2', name: 'Troll Club',
-    recipeGroup: 'cave', requiredBiomeLevel: 9, slot: 'weapon',
+    recipeGroup: 'cave', requiredBiomeLevel: 8, slot: 'weapon',
     cost: { red: 54, purple: 14 }, stats: { attack: 25 }, attacksPerSecond: 1.0, tier: 2,
     description: 'A cave-troll femur carved into a devastating weapon.',
   }],
@@ -420,19 +420,19 @@ export const RECIPE_DATABASE: Map<string, Recipe> = new Map<string, Recipe>([
   // ── Jungle T2 — green (primary) + yellow (apes) ───────────────────────────
   ['jungle-boots-t2', {
     id: 'jungle-boots-t2', name: 'Predator Boots',
-    recipeGroup: 'jungle', requiredBiomeLevel: 6, slot: 'mobility',
+    recipeGroup: 'jungle', requiredBiomeLevel: 5, slot: 'mobility',
     cost: { green: 44, yellow: 11 }, stats: { speed: 52 }, tier: 3,
     description: 'Fitted from anaconda scale — silent and swift.',
   }],
   ['jungle-charm-t2', {
     id: 'jungle-charm-t2', name: 'Life Weave Amulet',
-    recipeGroup: 'jungle', requiredBiomeLevel: 7, slot: 'recovery',
+    recipeGroup: 'jungle', requiredBiomeLevel: 6, slot: 'recovery',
     cost: { green: 44, yellow: 11 }, stats: { hpRegen: 8 }, tier: 3,
     description: 'A living amulet woven from thousand-year jungle vines — exceptional raw recovery for those who want no strings attached.',
   }],
   ['jungle-vest-t2', {
     id: 'jungle-vest-t2', name: 'Primal Wraps',
-    recipeGroup: 'jungle', requiredBiomeLevel: 8, slot: 'armor',
+    recipeGroup: 'jungle', requiredBiomeLevel: 7, slot: 'armor',
     cost: { green: 54, yellow: 14 }, stats: { maxHp: 22, plating: 5, evasion: 5 },
     mechanicEffects: { 'defense.absorb-pct': 0.06 },
     tier: 3,
@@ -440,7 +440,7 @@ export const RECIPE_DATABASE: Map<string, Recipe> = new Map<string, Recipe>([
   }],
   ['stinger-fang', {
     id: 'stinger-fang', name: 'Stinger Fang',
-    recipeGroup: 'jungle', requiredBiomeLevel: 9, slot: 'weapon',
+    recipeGroup: 'jungle', requiredBiomeLevel: 8, slot: 'weapon',
     cost: { green: 64, yellow: 18 }, stats: { attack: 7, onHitDamage: 11 }, attacksPerSecond: 1.50, tier: 2,
     description: 'A slender blade coated in with magic, dealing significant damage on hit.',
   }],
@@ -478,13 +478,13 @@ export const RECIPE_DATABASE: Map<string, Recipe> = new Map<string, Recipe>([
   // ── Desert T2 — yellow + red + blue (cross-biome, 3 types) ───────────────
   ['desert-boots-t2', {
     id: 'desert-boots-t2', name: 'Dune Stride',
-    recipeGroup: 'desert', requiredBiomeLevel: 6, slot: 'mobility',
+    recipeGroup: 'desert', requiredBiomeLevel: 5, slot: 'mobility',
     cost: { yellow: 68, red: 20, blue: 10 }, stats: { speed: 92 }, tier: 3,
     description: 'Worn by desert nomads who outrun storms on foot.',
   }],
   ['desert-charm-t2', {
     id: 'desert-charm-t2', name: 'Stone Colossus Eye',
-    recipeGroup: 'desert', requiredBiomeLevel: 7, slot: 'recovery',
+    recipeGroup: 'desert', requiredBiomeLevel: 6, slot: 'recovery',
     cost: { yellow: 68, red: 20, blue: 10 }, stats: { hpRegen: 16 },
     mechanicEffects: { 'defense.absorb-pct': 0.28 },
     tier: 3,
@@ -492,7 +492,7 @@ export const RECIPE_DATABASE: Map<string, Recipe> = new Map<string, Recipe>([
   }],
   ['desert-vest-t2', {
     id: 'desert-vest-t2', name: 'Ancient Sunbaked Wrappings',
-    recipeGroup: 'desert', requiredBiomeLevel: 8, slot: 'armor',
+    recipeGroup: 'desert', requiredBiomeLevel: 7, slot: 'armor',
     cost: { yellow: 84, red: 24, blue: 12 }, stats: { maxHp: 42, plating: 24 },
     mechanicEffects: { 'defense.dot-resistance': 0.42, 'defense.debuff-resistance': 0.22, 'defense.cleanse-stacks': 1, 'defense.cleanse-interval-ms': 8000 },
     tier: 3,
@@ -500,7 +500,7 @@ export const RECIPE_DATABASE: Map<string, Recipe> = new Map<string, Recipe>([
   }],
   ['desert-blade-t2', {
     id: 'desert-blade-t2', name: 'Sandstorm Blade',
-    recipeGroup: 'desert', requiredBiomeLevel: 9, slot: 'weapon',
+    recipeGroup: 'desert', requiredBiomeLevel: 8, slot: 'weapon',
     cost: { yellow: 84, red: 24, blue: 12 }, stats: { attack: 50 }, attacksPerSecond: 1.5, tier: 3,
     description: 'A blade shaped by a thousand-year sandstorm.',
   }],
@@ -536,13 +536,13 @@ export const RECIPE_DATABASE: Map<string, Recipe> = new Map<string, Recipe>([
   // ── Tundra T2 — blue + purple + green (cross-biome, 3 types) ──────────────
   ['tundra-boots-t2', {
     id: 'tundra-boots-t2', name: 'Frost Wind Wraps',
-    recipeGroup: 'tundra', requiredBiomeLevel: 6, slot: 'mobility',
+    recipeGroup: 'tundra', requiredBiomeLevel: 5, slot: 'mobility',
     cost: { blue: 68, purple: 20, green: 10 }, stats: { speed: 92 }, tier: 4,
     description: 'Woven from the breath of a permafrost storm.',
   }],
   ['tundra-charm-t2', {
     id: 'tundra-charm-t2', name: 'Glacial Bulwark',
-    recipeGroup: 'tundra', requiredBiomeLevel: 7, slot: 'recovery',
+    recipeGroup: 'tundra', requiredBiomeLevel: 6, slot: 'recovery',
     cost: { blue: 68, purple: 20, green: 10 }, stats: { hpRegen: 16 },
     mechanicEffects: { 'defense.shield-pct': 0.22, 'defense.shield-interval-ms': 8000, 'defense.shield-duration-ms': 8000 },
     tier: 4,
@@ -550,7 +550,7 @@ export const RECIPE_DATABASE: Map<string, Recipe> = new Map<string, Recipe>([
   }],
   ['tundra-vest-t2', {
     id: 'tundra-vest-t2', name: 'Glacial Crusader Plate',
-    recipeGroup: 'tundra', requiredBiomeLevel: 8, slot: 'armor',
+    recipeGroup: 'tundra', requiredBiomeLevel: 7, slot: 'armor',
     cost: { blue: 84, purple: 24, green: 12 }, stats: { maxHp: 35, plating: 36, damageReduction: 0.12 },
     mechanicEffects: { 'defense.hit-to-dot-pct': 0.18 },
     tier: 4,
@@ -558,7 +558,7 @@ export const RECIPE_DATABASE: Map<string, Recipe> = new Map<string, Recipe>([
   }],
   ['tundra-blade-t2', {
     id: 'tundra-blade-t2', name: 'Blizzard Edge',
-    recipeGroup: 'tundra', requiredBiomeLevel: 9, slot: 'weapon',
+    recipeGroup: 'tundra', requiredBiomeLevel: 8, slot: 'weapon',
     cost: { blue: 84, purple: 24, green: 12 }, stats: { attack: 50 }, attacksPerSecond: 1.5, tier: 4,
     description: 'Shaped at the heart of a permanent tundra blizzard — a pinnacle of arctic smithing, impossible to replicate elsewhere.',
   }],
@@ -594,13 +594,13 @@ export const RECIPE_DATABASE: Map<string, Recipe> = new Map<string, Recipe>([
   // ── Volcanic T2 — red + yellow + purple (cross-biome, 3 types) ────────────
   ['volcanic-boots-t2', {
     id: 'volcanic-boots-t2', name: 'Magma Stride',
-    recipeGroup: 'volcanic', requiredBiomeLevel: 6, slot: 'mobility',
+    recipeGroup: 'volcanic', requiredBiomeLevel: 5, slot: 'mobility',
     cost: { red: 74, yellow: 21, purple: 10 }, stats: { speed: 98 }, tier: 4,
     description: 'Boots from the oldest magma-golem — carries volcanic fury.',
   }],
   ['volcanic-charm-t2', {
     id: 'volcanic-charm-t2', name: 'Infernal Core',
-    recipeGroup: 'volcanic', requiredBiomeLevel: 7, slot: 'recovery',
+    recipeGroup: 'volcanic', requiredBiomeLevel: 6, slot: 'recovery',
     cost: { red: 74, yellow: 21, purple: 10 }, stats: { hpRegen: 20 },
     mechanicEffects: { 'defense.in-combat-regen-pct': 0.45 },
     tier: 4,
@@ -608,7 +608,7 @@ export const RECIPE_DATABASE: Map<string, Recipe> = new Map<string, Recipe>([
   }],
   ['volcanic-vest-t2', {
     id: 'volcanic-vest-t2', name: 'Infernal Bestial Plate',
-    recipeGroup: 'volcanic', requiredBiomeLevel: 8, slot: 'armor',
+    recipeGroup: 'volcanic', requiredBiomeLevel: 7, slot: 'armor',
     cost: { red: 88, yellow: 25, purple: 12 }, stats: { maxHp: 65, plating: 22, damageReduction: 0.14 },
     mechanicEffects: { 'defense.in-combat-regen-pct': 0.25, 'defense.shield-pct': 0.08, 'defense.shield-interval-ms': 12000 },
     tier: 4,
@@ -616,7 +616,7 @@ export const RECIPE_DATABASE: Map<string, Recipe> = new Map<string, Recipe>([
   }],
   ['volcanic-blade-t2', {
     id: 'volcanic-blade-t2', name: 'Inferno Edge',
-    recipeGroup: 'volcanic', requiredBiomeLevel: 9, slot: 'weapon',
+    recipeGroup: 'volcanic', requiredBiomeLevel: 8, slot: 'weapon',
     cost: { red: 88, yellow: 25, purple: 12 }, stats: { attack: 55 }, attacksPerSecond: 1.5, tier: 4,
     description: 'Folded in a live magma vent a thousand times over — an elite weapon that carries a fragment of volcanic fury in every swing.',
   }],

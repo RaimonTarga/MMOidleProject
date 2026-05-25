@@ -18,8 +18,10 @@ export function RightSidebar() {
   const [mapOpen, setMapOpen]               = useState(false);
   const [dbgPlayer, setDbgPlayer]           = useState(false);
   const [dbgEnemy, setDbgEnemy]             = useState(false);
+  const [forgeBadge, setForgeBadge]         = useState(0);
 
   useEffect(() => hudBus.subscribe(setHud), []);
+  useEffect(() => hudBus.subscribeRecipeUnlock(() => setForgeBadge(n => n + 1)), []);
 
   const player = hud.player;
   const className = player?.selectedClass
@@ -118,10 +120,19 @@ export function RightSidebar() {
         </button>
         <button
           className={`auto-btn${craftTab === 'forge' ? ' active' : ''}`}
-          style={{ marginTop: 4 }}
-          onClick={() => setCraftTab(t => t === 'forge' ? null : 'forge')}
+          style={{ marginTop: 4, position: 'relative' }}
+          onClick={() => { setCraftTab(t => t === 'forge' ? null : 'forge'); setForgeBadge(0); }}
         >
           {craftTab === 'forge' ? 'CLOSE FORGE' : 'OPEN FORGE'}
+          {forgeBadge > 0 && craftTab !== 'forge' && (
+            <span style={{
+              position: 'absolute', top: 4, right: 6,
+              width: 8, height: 8, borderRadius: '50%',
+              background: '#44ff88',
+              boxShadow: '0 0 6px #44ff88',
+              display: 'inline-block',
+            }} />
+          )}
         </button>
 
       </div>

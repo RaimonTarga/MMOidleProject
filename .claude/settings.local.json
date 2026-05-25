@@ -40,7 +40,8 @@
       "Bash(xargs grep -l \"keydown\\\\|keyup\\\\|keyboard\")",
       "Bash(xargs grep -l \"keydown\")",
       "Bash(Get-Content \"C:\\\\Users\\\\osaif\\\\Documents\\\\Claude\\\\Projects\\\\MMO idle\\\\client\\\\src\\\\hud\\\\MenuButtons.tsx\")",
-      "Bash(Select-Object -First 30)"
+      "Bash(Select-Object -First 30)",
+      "Bash(sqlite3 game.db \"SELECT player_tier, biome_level, biome_xp, quest_progress FROM characters LIMIT 5;\")"
     ]
   }
 }

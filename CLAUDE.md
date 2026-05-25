@@ -96,6 +96,7 @@ Everything that crosses the client/server boundary lives here. Start here for an
 - `NODE_BIOMES` — record `node-{row}-{col}` → `{ biomeGroup, biomeTier, isDungeon? }`
 - `QUEST_DATABASE`, `XP_PER_LEVEL = 100`
 - `biomeXpForLevel(n)` — XP threshold for biome level `n`; uses `BIOME_XP_BASE` + `BIOME_XP_EXPONENT` from GAME_CONFIG
+- `biomeLevelCap(playerTier, biomeGroup)` — max biome level = `Math.max(4, playerTier × 4)`; clearing always 4. Two args only — no `biomeTier` param.
 - `BossAction`, `BossPhase`, `RepeatingAction`, `BossScript` — boss scripting types (in `monsterDatabase.ts`)
 
 ---
@@ -175,7 +176,11 @@ Components: `HUD.tsx` (sidebars, StatPanel, BuffBar, EssencePanel), `BuffBar.tsx
 
 **Mobile/tablet layout (≤ 1100px):** Sidebars hidden; `MobileHUD` takes over — `position: fixed` top bar (HP, name, zone), large AUTO COMBAT button fixed at bottom, right-side slide-out drawer for SKILL/BAG/FORGE/MAP/QUEST. All mobile bars use `position: fixed` (not `absolute`) to avoid being hidden by browser chrome on Android/iOS. Map panel stacks vertically and scales tile size to `(100vw - 68px) / 5`. `clientAuth.ts` falls back from `crypto.randomUUID()` to `crypto.getRandomValues()` so account IDs generate over plain HTTP (LAN play).
 
-**Debug range overlay:** `debugGraphics` layer (depth 8). `debugPlayerRange` = yellow-green, `debugEnemyRanges` = orange/blue/red per monster. Toggled via Debug panel via `CustomEvent`.
+**Y-sort draw order:** `GameScene.ts` uses a `DEPTH` constant object (BG/SHADOW/SPRITE/FX_OVERLAY/UI/FLOATER/FX/GATE/DEBUG/MINIMAP/XP_BAR/SCREEN) with bands spaced 3000 units apart (wider than NODE_HEIGHT=2400). Every frame in `stepEntities`, each entity calls `setDepth(BAND + entity.baseY)` so southern entities render in front of northern ones. Never use raw integer depths — always reference `DEPTH.*`.
+
+**Tab-switch desync:** Three-part fix — `dt` capped to 100 ms in `update()`; `document.visibilitychange` listener snaps all entity positions to target and clears lunge offsets on tab return; all tween-creating functions (`playMeleeLunge`, `playOneShotEffect`, `spawnAttackEffect`, `spawnDamageNumber`, `spawnKillRewards`) are guarded with `if (document.hidden) return` to prevent animation queue buildup while the tab is backgrounded.
+
+**Debug range overlay:** `debugGraphics` layer (`DEPTH.DEBUG`). `debugPlayerRange` = yellow-green, `debugEnemyRanges` = orange/blue/red per monster. Toggled via Debug panel via `CustomEvent`.
 
 ---
 
@@ -214,7 +219,9 @@ Players earn biome XP for kills in a biome; XP accumulates in `player.biomeXP` (
 
 Each level-up in a biome unlocks recipes tied to that biome+level. `unlockedRecipes` on `PlayerState` is the authoritative set. XP per kill is set in `BIOME_XP_BY_NODE_TIER` in `shared/src/index.ts`.
 
-The helper `biomeXpForLevel` is exported from `@mmo-idle/shared` and used in both `rewards.ts` (level-up logic) and the client UI (`CraftingPanel`, `MapPanel`). Never use `BIOME_XP_PER_LEVEL` — that constant no longer exists.
+The helpers `biomeXpForLevel` and `biomeLevelCap` are exported from `@mmo-idle/shared` and used in both `rewards.ts` (level-up logic) and the client UI (`CraftingPanel`, `MapPanel`, `GameScene`). Never use `BIOME_XP_PER_LEVEL` — that constant no longer exists.
+
+**Level cap formula:** `biomeLevelCap(playerTier, biomeGroup)` = `Math.max(4, playerTier * 4)`. The cap is a flat function of player tier only — it does not vary by the biome's native tier. Clearing is always 4. Minimum is 4 (so Tier 0 players still have a cap of 4 in non-clearing biomes). The function takes **two arguments** — there is no `biomeTier` parameter.
 
 ---
 
@@ -445,6 +452,8 @@ Each player hit applies 1 DoT stack; stacks tick damage at configurable interval
 - DoT duration system — stacks expire after 4.5 s without a hit; damage debt drains once/second
 - LAN play — client served as static files from Express; `pnpm play` builds + starts
 - T1 density-based balance pass; full T2 monster redesign (7 biomes × 3 mobs each, all new mechanics)
+- Y-sort draw order (`DEPTH` constant bands in `GameScene.ts`; per-frame `setDepth(BAND + baseY)` in `stepEntities`)
+- Tab-switch desync fix (dt cap 100 ms, position snap on `visibilitychange`, `document.hidden` guards on all tween functions)
 
 ## What is NOT built (do not hallucinate these)
 
@@ -512,6 +521,7 @@ T1 bosses: 400–700 HP, 14–22 ATK. T2 bosses: not yet balanced (stats inherit
 - **Reload multiplier is a final layer** — apply `* 0.5` to `attack` and `attackCooldown` at the end of `recalculatePlayerStats()`, never additively
 - **Boss script stat modifications use save-original pattern** — `ActiveBossEffect` stores the pre-buff stat value; restored on expiry. Overlapping same-stat effects from multiple sources are not supported (last write wins)
 - **`biomeXpForLevel` is the only XP threshold function** — `BIOME_XP_PER_LEVEL` no longer exists; never use flat XP per level
+- **`biomeLevelCap` takes two args** — `(playerTier, biomeGroup)`. No `biomeTier` parameter. Cap = `Math.max(4, playerTier * 4)`. Never pass three args.
 - **Slow effect stores `totalMs` in data** — when applying `'slow'` status effect, always include `data: { speedMult, totalMs }` so `buffSync.ts` can compute the clock-sweep `durationPct`
 - **`evadeEvery` minimum is 5** — never set lower; convention is max 1-in-5 dodge rate
 - **Per-biome density via `mobDensity`** — never hardcode `GAME_CONFIG.MONSTERS_PER_NODE` in spawn loops; always go through `World.getMobDensity(nodeId)`
