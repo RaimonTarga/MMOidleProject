@@ -1,11 +1,35 @@
 import type { PlayerState } from '@mmo-idle/shared';
-import { QUEST_DATABASE } from '@mmo-idle/shared';
+import { QUEST_DATABASE, NODE_BIOMES } from '@mmo-idle/shared';
 
 interface Props {
   player: PlayerState | null;
+  onFindDungeon?: (nodeIds: string[]) => void;
 }
 
-export function QuestPanel({ player }: Props) {
+function parseCoords(id: string): [number, number] | null {
+  const p = id.split('-');
+  if (p.length !== 3) return null;
+  const r = parseInt(p[1], 10), c = parseInt(p[2], 10);
+  return isNaN(r) || isNaN(c) ? null : [r, c];
+}
+
+// Returns all dungeon nodes for the given tier, sorted nearest-to-player first.
+function findDungeonsForTier(playerNodeId: string, tier: number): string[] {
+  const playerPos = parseCoords(playerNodeId);
+  if (!playerPos) return [];
+  const [pr, pc] = playerPos;
+  const results: { nodeId: string; dist: number }[] = [];
+  for (const [nodeId, info] of Object.entries(NODE_BIOMES)) {
+    if (!info.isDungeon || info.biomeTier !== tier) continue;
+    const pos = parseCoords(nodeId);
+    if (!pos) continue;
+    results.push({ nodeId, dist: Math.abs(pos[0] - pr) + Math.abs(pos[1] - pc) });
+  }
+  results.sort((a, b) => a.dist - b.dist);
+  return results.map(r => r.nodeId);
+}
+
+export function QuestPanel({ player, onFindDungeon }: Props) {
   if (!player) {
     return (
       <div className="sidebar-panel quest-panel">
@@ -15,7 +39,6 @@ export function QuestPanel({ player }: Props) {
     );
   }
 
-  // Find the quest active at the player's current tier.
   let activeQuest = null;
   for (const [, quest] of QUEST_DATABASE) {
     if (quest.tierRequired === player.playerTier) {
@@ -24,14 +47,23 @@ export function QuestPanel({ player }: Props) {
     }
   }
 
-  const progress = activeQuest
-    ? (player.questProgress[activeQuest.id] ?? 0)
-    : 0;
+  const progress = activeQuest ? (player.questProgress[activeQuest.id] ?? 0) : 0;
   const required = activeQuest?.killsRequired ?? 1;
   const pct = Math.min(100, (progress / required) * 100);
 
+  const dungeons = (activeQuest && onFindDungeon)
+    ? findDungeonsForTier(player.nodeId, player.playerTier)
+    : [];
+
+  function handleClick() {
+    if (dungeons.length > 0 && onFindDungeon) onFindDungeon(dungeons);
+  }
+
   return (
-    <div className="sidebar-panel quest-panel">
+    <div
+      className={`sidebar-panel quest-panel${dungeons.length > 0 ? ' quest-panel--clickable' : ''}`}
+      onClick={dungeons.length > 0 ? handleClick : undefined}
+    >
       <div className="panel-title">Tier Quest</div>
 
       <div className="quest-tier-row">
@@ -51,6 +83,10 @@ export function QuestPanel({ player }: Props) {
           <div className="quest-bar-track">
             <div className="quest-bar-fill" style={{ width: `${pct}%` }} />
           </div>
+
+          {dungeons.length > 0 && (
+            <div className="quest-find-hint">▶ locate dungeons on map</div>
+          )}
         </>
       ) : (
         <div className="quest-complete">

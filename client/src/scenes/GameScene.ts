@@ -311,6 +311,7 @@ export class GameScene extends Phaser.Scene {
     window.addEventListener('hud:navigateTo', (e: Event) => {
       const { path } = (e as CustomEvent<{ path: string[] }>).detail;
       if (path.length === 0) return;
+      if (this.autoMode) this.setAutoMode(false);
       this.autoPath = path;
       hudBus.emit({ autoPath: [...path] });
       this.sendAutoPathMove(this.myNodeId);

@@ -16,6 +16,7 @@ export function RightSidebar() {
   const [invOpen, setInvOpen]               = useState(false);
   const [craftTab, setCraftTab]             = useState<'biome' | 'forge' | null>(null);
   const [mapOpen, setMapOpen]               = useState(false);
+  const [mapHighlightNodes, setMapHighlightNodes] = useState<string[]>([]);
   const [dbgPlayer, setDbgPlayer]           = useState(false);
   const [dbgEnemy, setDbgEnemy]             = useState(false);
   const [forgeBadge, setForgeBadge]         = useState(0);
@@ -40,14 +41,17 @@ export function RightSidebar() {
     <div className="sidebar sidebar-right">
 
       {/* Quest / Tier panel — always visible */}
-      <QuestPanel player={player} />
+      <QuestPanel
+        player={player}
+        onFindDungeon={nodeIds => { setMapHighlightNodes(nodeIds); setMapOpen(true); }}
+      />
 
       {/* Passive Tree panel */}
       <div className="sidebar-panel">
         <div className="panel-title">Passive Tree</div>
 
         <button
-          className={`auto-btn${treeOpen ? ' active' : ''}`}
+          className={`auto-btn${treeOpen ? ' active' : ''}${!treeOpen && (player?.skillPoints ?? 0) > 0 ? ' auto-btn--has-points' : ''}`}
           onClick={() => setTreeOpen(v => !v)}
         >
           {treeOpen ? 'CLOSE TREE' : 'OPEN TREE'}
@@ -200,7 +204,9 @@ export function RightSidebar() {
       {mapOpen && (
         <MapPanel
           player={player}
-          onClose={() => setMapOpen(false)}
+          highlightNodes={mapHighlightNodes}
+          focusNodeId={mapHighlightNodes[0] ?? null}
+          onClose={() => { setMapOpen(false); setMapHighlightNodes([]); }}
         />
       )}
     </div>

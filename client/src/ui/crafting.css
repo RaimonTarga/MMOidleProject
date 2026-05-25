@@ -248,6 +248,12 @@
 
 .craft-recipe--unaffordable { opacity: 0.50; }
 
+.craft-recipe--owned {
+  border-color: rgba(60, 55, 100, 0.35);
+  background: rgba(8, 8, 20, 0.85);
+  opacity: 0.62;
+}
+
 .craft-recipe--locked {
   opacity: 0.55;
   border-color: rgba(40, 36, 80, 0.40);
@@ -343,6 +349,18 @@
   flex-shrink: 0;
 }
 
+.craft-recipe__owned-badge {
+  font-size: 8px;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  padding: 1px 5px;
+  border-radius: 3px;
+  flex-shrink: 0;
+  color: #8888aa;
+  border: 1px solid rgba(90, 85, 140, 0.40);
+  background: rgba(20, 18, 40, 0.70);
+}
+
 /* ── Stat pills ──────────────────────────────────────────────────────────── */
 .craft-recipe__stats {
   display: flex;
@@ -419,6 +437,12 @@
 .craft-recipe__btn:disabled {
   cursor: not-allowed;
   opacity: 0.40;
+}
+
+.craft-recipe--owned .craft-recipe__btn:disabled {
+  opacity: 0.55;
+  color: #7070a8;
+  border-color: rgba(70, 65, 120, 0.35);
 }
 
 /* ── Empty / disconnected ────────────────────────────────────────────────── */
@@ -653,3 +677,6 @@
 .craft-filter-chip--slot.craft-filter-chip--active[data-slot="armor"]    { color: #4488bb; background: rgba(8,22,55,0.85);  border-color: rgba(50,100,190,0.60); }
 .craft-filter-chip--slot.craft-filter-chip--active[data-slot="recovery"] { color: #44aa66; background: rgba(5,35,18,0.85);  border-color: rgba(40,150,90,0.60);  }
 .craft-filter-chip--slot.craft-filter-chip--active[data-slot="mobility"] { color: #8855cc; background: rgba(28,8,50,0.85);  border-color: rgba(130,70,210,0.60); }
+
+.craft-filter-chip--tier { color: #aa9944; border-color: rgba(180,160,40,0.35); }
+.craft-filter-chip--tier.craft-filter-chip--active { color: #ffdd44; background: rgba(40,32,6,0.88); border-color: rgba(220,190,40,0.65); }

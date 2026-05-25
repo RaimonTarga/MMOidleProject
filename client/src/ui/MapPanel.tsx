@@ -1,5 +1,5 @@
 import { createPortal } from 'react-dom';
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import type { PlayerState } from '@mmo-idle/shared';
 import type { ItemStats } from '@mmo-idle/shared';
 import {
@@ -272,9 +272,14 @@ function OverviewMap({ viewRow, viewCol, playerNodeId, pathSet, destNode }: Over
 
 // ── Main component ────────────────────────────────────────────────────────────
 
-interface Props { player: PlayerState | null; onClose: () => void; }
+interface Props {
+  player: PlayerState | null;
+  onClose: () => void;
+  highlightNodes?: string[];
+  focusNodeId?: string | null;
+}
 
-export function MapPanel({ player, onClose }: Props) {
+export function MapPanel({ player, onClose, highlightNodes, focusNodeId }: Props) {
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [autoPath, setAutoPath] = useState<string[] | null>(null);
 
@@ -295,21 +300,23 @@ export function MapPanel({ player, onClose }: Props) {
   // Derive player grid position
   const playerPos = player?.nodeId ? parseNodeId(player.nodeId) : null;
 
-  // Initialise viewport centered on player
+  // Initialise viewport centered on focusNodeId if provided, otherwise on player
   const [viewRow, setViewRow] = useState<number>(() => {
-    const r = playerPos ? Math.max(0, Math.min(MAX_VIEW_R, playerPos[0] - Math.floor(VIEWPORT / 2))) : 2;
-    return r;
+    const anchor = (focusNodeId ? parseNodeId(focusNodeId) : null) ?? playerPos;
+    return anchor ? Math.max(0, Math.min(MAX_VIEW_R, anchor[0] - Math.floor(VIEWPORT / 2))) : 2;
   });
   const [viewCol, setViewCol] = useState<number>(() => {
-    const c = playerPos ? Math.max(0, Math.min(MAX_VIEW_C, playerPos[1] - Math.floor(VIEWPORT / 2))) : 2;
-    return c;
+    const anchor = (focusNodeId ? parseNodeId(focusNodeId) : null) ?? playerPos;
+    return anchor ? Math.max(0, Math.min(MAX_VIEW_C, anchor[1] - Math.floor(VIEWPORT / 2))) : 2;
   });
 
-  // Re-center when player's node changes
+  // Re-center when player's node changes — but skip the initial fire if we opened
+  // focused on a specific node (focusNodeId), so that node stays centered on mount.
+  const skipFirstRecenter = useRef(!!focusNodeId);
   useEffect(() => {
+    if (skipFirstRecenter.current) { skipFirstRecenter.current = false; return; }
     if (!playerPos) return;
     const [pr, pc] = playerPos;
-    // Only re-center if player walked outside the current viewport
     const outOfView = pr < viewRow || pr >= viewRow + VIEWPORT || pc < viewCol || pc >= viewCol + VIEWPORT;
     if (outOfView) {
       const [nr, nc] = clampView(pr - Math.floor(VIEWPORT / 2), pc - Math.floor(VIEWPORT / 2));
@@ -362,6 +369,7 @@ export function MapPanel({ player, onClose }: Props) {
                 const isDungeon   = info?.isDungeon === true;
                 const isDestination = id === destNode;
                 const isPath      = !isDestination && !isCurrent && pathSet.has(id);
+                const isHighlight = !!highlightNodes?.includes(id);
                 const tierBadge   = info?.biomeTier === 0 ? '★' : `T${info?.biomeTier ?? '?'}`;
 
                 return (
@@ -374,6 +382,7 @@ export function MapPanel({ player, onClose }: Props) {
                       isHovered && !isCurrent ? 'map-tile--hovered' : '',
                       isPath        ? 'map-tile--path'        : '',
                       isDestination ? 'map-tile--destination' : '',
+                      isHighlight   ? 'map-tile--highlight'   : '',
                     ].filter(Boolean).join(' ')}
                     style={{ background: tileColor(info?.biomeGroup ?? '') }}
                     onMouseEnter={() => setHoveredId(id)}

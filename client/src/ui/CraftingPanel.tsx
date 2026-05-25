@@ -234,6 +234,7 @@ interface ForgeTabProps {
 function ForgeTab({ player, essences }: ForgeTabProps) {
   const [filterBiome, setFilterBiome] = useState<string | null>(null);
   const [filterSlot,  setFilterSlot]  = useState<string | null>(null);
+  const [filterTier,  setFilterTier]  = useState<number | null>(null);
 
   const isTestRoom = player.nodeId === TEST_ROOM_NODE_ID;
 
@@ -262,16 +263,34 @@ function ForgeTab({ player, essences }: ForgeTabProps) {
     return Array.from(groups).sort();
   }, [unlockedRecipes]);
 
+  const tiers = useMemo(() => {
+    const ts = new Set<number>();
+    for (const r of unlockedRecipes) ts.add(r.tier);
+    return Array.from(ts).sort((a, b) => a - b);
+  }, [unlockedRecipes]);
+
+  const ownedIds = useMemo(() => {
+    const ids = new Set(player.inventory);
+    for (const id of Object.values(player.equipment)) {
+      if (id) ids.add(id);
+    }
+    return ids;
+  }, [player.inventory, player.equipment]);
+
   const filtered = useMemo(() =>
-    unlockedRecipes.filter(r =>
-      (!filterBiome || r.recipeGroup === filterBiome) &&
-      (!filterSlot  || r.slot        === filterSlot),
-    ),
-    [unlockedRecipes, filterBiome, filterSlot],
+    unlockedRecipes
+      .filter(r =>
+        (!filterBiome || r.recipeGroup === filterBiome) &&
+        (!filterSlot  || r.slot        === filterSlot) &&
+        (!filterTier  || r.tier        === filterTier),
+      )
+      .sort((a, b) => (ownedIds.has(a.id) ? 1 : 0) - (ownedIds.has(b.id) ? 1 : 0)),
+    [unlockedRecipes, filterBiome, filterSlot, filterTier, ownedIds],
   );
 
   const toggleBiome = (g: string) => setFilterBiome(v => v === g ? null : g);
   const toggleSlot  = (s: string) => setFilterSlot(v  => v === s ? null : s);
+  const toggleTier  = (t: number) => setFilterTier(v  => v === t ? null : t);
 
   return (
     <div className="craft-body">
@@ -314,6 +333,25 @@ function ForgeTab({ player, essences }: ForgeTabProps) {
             </button>
           ))}
         </div>
+        {tiers.length > 1 && (
+          <div className="craft-filter-row">
+            <button
+              className={`craft-filter-chip${!filterTier ? ' craft-filter-chip--active' : ''}`}
+              onClick={() => setFilterTier(null)}
+            >
+              All Tiers
+            </button>
+            {tiers.map(t => (
+              <button
+                key={t}
+                className={`craft-filter-chip craft-filter-chip--tier${filterTier === t ? ' craft-filter-chip--active' : ''}`}
+                onClick={() => toggleTier(t)}
+              >
+                T{t}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Recipe list */}
@@ -326,6 +364,8 @@ function ForgeTab({ player, essences }: ForgeTabProps) {
           {filtered.map(recipe => {
             const costEntries = Object.entries(recipe.cost) as [EssenceType, number][];
             const canAfford = costEntries.every(([type, amount]) => (essences[type] ?? 0) >= amount);
+            const alreadyOwned = ownedIds.has(recipe.id);
+            const isEquipped   = player.equipment[recipe.slot] === recipe.id;
             const statEntries = getStatEntries(
               recipe.stats,
               recipe.slot === 'weapon' ? recipe.attacksPerSecond : undefined,
@@ -334,7 +374,11 @@ function ForgeTab({ player, essences }: ForgeTabProps) {
             return (
               <div
                 key={recipe.id}
-                className={`craft-recipe${!canAfford ? ' craft-recipe--unaffordable' : ''}`}
+                className={[
+                  'craft-recipe',
+                  alreadyOwned                    ? 'craft-recipe--owned'        : '',
+                  !alreadyOwned && !canAfford     ? 'craft-recipe--unaffordable' : '',
+                ].filter(Boolean).join(' ')}
               >
                 <div className="craft-recipe__icon" data-slot={recipe.slot}>
                   {SLOT_ABBR[recipe.slot] ?? recipe.slot.slice(0, 3).toUpperCase()}
@@ -347,6 +391,11 @@ function ForgeTab({ player, essences }: ForgeTabProps) {
                       {SLOT_LABELS[recipe.slot] ?? recipe.slot}
                     </span>
                     <span className="craft-recipe__tier-badge">T{recipe.tier}</span>
+                    {alreadyOwned && (
+                      <span className="craft-recipe__owned-badge">
+                        {isEquipped ? 'EQUIPPED' : 'OWNED'}
+                      </span>
+                    )}
                   </div>
 
                   {statEntries.length > 0 && (
@@ -368,10 +417,10 @@ function ForgeTab({ player, essences }: ForgeTabProps) {
                     )}
                     <button
                       className="craft-recipe__btn"
-                      disabled={!canAfford}
+                      disabled={!canAfford || alreadyOwned}
                       onClick={() => hudBus.requestCraftRecipe(recipe.id)}
                     >
-                      {canAfford ? 'Craft' : 'Insufficient'}
+                      {alreadyOwned ? (isEquipped ? 'Equipped' : 'In bag') : canAfford ? 'Craft' : 'Insufficient'}
                     </button>
                   </div>
                 </div>

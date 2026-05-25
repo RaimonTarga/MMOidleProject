@@ -82,7 +82,7 @@ export function MobileHUD() {
           {menuOpen ? '✕' : '☰'}
         </button>
         <div className="mob-drawer-menu">
-          <DrawerBtn label="SKILL TREE" active={treeOpen}  onClick={() => openPanel(setTreeOpen, treeOpen)} />
+          <DrawerBtn label="SKILL TREE" active={treeOpen} highlight={!treeOpen && (player?.skillPoints ?? 0) > 0} onClick={() => openPanel(setTreeOpen, treeOpen)} />
           <DrawerBtn label="INVENTORY"  active={invOpen}   onClick={() => openPanel(setInvOpen, invOpen)} />
           <DrawerBtn label="CRAFTING"   active={craftTab !== null} onClick={() => { setCraftTab(t => t ? null : 'forge'); setMenuOpen(false); }} />
           <DrawerBtn label="MAP"        active={mapOpen}   onClick={() => openPanel(setMapOpen, mapOpen)} />
@@ -113,15 +113,16 @@ export function MobileHUD() {
 }
 
 function DrawerBtn({
-  label, active, onClick,
+  label, active, highlight, onClick,
 }: {
   label: string;
   active: boolean;
+  highlight?: boolean;
   onClick: () => void;
 }) {
   return (
     <button
-      className={`mob-drawer-btn${active ? ' active' : ''}`}
+      className={`mob-drawer-btn${active ? ' active' : ''}${highlight ? ' mob-drawer-btn--has-points' : ''}`}
       onClick={onClick}
     >
       {label}

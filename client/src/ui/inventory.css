@@ -81,6 +81,76 @@
   border-bottom: 1px solid rgba(80, 68, 160, 0.22);
 }
 
+/* ── Filters ─────────────────────────────────────────────────────────────── */
+.inv-filters {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 10px;
+}
+
+.inv-filter-row {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.inv-filter-chip {
+  background: rgba(12, 10, 30, 0.85);
+  border: 1px solid rgba(60, 55, 120, 0.40);
+  color: #6868a0;
+  font-family: monospace;
+  font-size: 9px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 3px 9px;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: border-color 0.10s, color 0.10s, background 0.10s;
+  white-space: nowrap;
+}
+
+.inv-filter-chip:hover:not(.inv-filter-chip--active) {
+  border-color: rgba(90, 80, 170, 0.60);
+  color: #9090c8;
+}
+
+.inv-filter-chip--active {
+  border-color: rgba(110, 100, 210, 0.70);
+  background: rgba(20, 18, 50, 0.95);
+  color: #b0a8e8;
+}
+
+.inv-filter-chip--slot[data-slot="weapon"]   { color: #886644; border-color: rgba(140,80,30,0.35); }
+.inv-filter-chip--slot[data-slot="armor"]    { color: #336699; border-color: rgba(40,80,160,0.35); }
+.inv-filter-chip--slot[data-slot="recovery"] { color: #337755; border-color: rgba(30,120,70,0.35); }
+.inv-filter-chip--slot[data-slot="mobility"] { color: #664499; border-color: rgba(100,55,170,0.35); }
+
+.inv-filter-chip--slot.inv-filter-chip--active[data-slot="weapon"]   { color: #cc7730; background: rgba(45,16,5,0.85);  border-color: rgba(180,100,40,0.60); }
+.inv-filter-chip--slot.inv-filter-chip--active[data-slot="armor"]    { color: #4488bb; background: rgba(8,22,55,0.85);   border-color: rgba(50,100,190,0.60); }
+.inv-filter-chip--slot.inv-filter-chip--active[data-slot="recovery"] { color: #44aa66; background: rgba(5,35,18,0.85);   border-color: rgba(40,150,90,0.60);  }
+.inv-filter-chip--slot.inv-filter-chip--active[data-slot="mobility"] { color: #8855cc; background: rgba(28,8,50,0.85);   border-color: rgba(130,70,210,0.60); }
+
+.inv-filter-empty {
+  font-size: 11px;
+  color: var(--hud-text-dim, #77729e);
+  text-align: center;
+  padding: 16px 0;
+  font-style: italic;
+}
+
+/* ── Tier color pip (top-right corner of item icon area) ─────────────────── */
+.inv-slot-tier-pip {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
 /* ── Equipment column ────────────────────────────────────────────────────── */
 .inv-equip-grid {
   display: grid;
@@ -121,6 +191,7 @@
 /* Icon area — future item icon goes here */
 .inv-equip-slot__icon {
   flex: 1;
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -208,6 +279,7 @@
 /* Icon area — future item icon goes here */
 .inv-item-slot__icon {
   flex: 1;
+  position: relative;
   background: rgba(80, 90, 180, 0.04);
 }
 
@@ -262,6 +334,23 @@
   font-size: 14px;
   font-weight: bold;
   color: #ccc0ee;
+}
+
+.inv-desc__tier-badge {
+  font-size: 9px;
+  font-weight: bold;
+  padding: 1px 5px;
+  border-radius: 3px;
+  flex-shrink: 0;
+  border: 1px solid;
+}
+
+.inv-desc__biome {
+  font-size: 9px;
+  color: #7070a0;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-top: -4px;
 }
 
 .inv-desc__slot {
