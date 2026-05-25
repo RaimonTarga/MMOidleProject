@@ -17,8 +17,10 @@ const DEBT_POOL_KEY   = 'damageDebtPool';
 const ABSORB_POOL_KEY = 'absorbPool';
 const BURST_POOL_KEY  = 'regenBurstPool';
 
-/** Duration over which hit-to-DoT debt and leech/burst pools drain (ms). */
+/** Duration over which hit-to-DoT debt and absorb pools drain (ms). */
 const POOL_DRAIN_MS = 4000;
+/** Duration over which regen burst pools drain (ms). Shorter = snappier burst feel. */
+const BURST_DRAIN_MS = 2000;
 
 // ── Antiheal / healing helpers ─────────────────────────────────────────────────
 
@@ -302,13 +304,12 @@ export function updateDefensiveSystems(world: World, dt: number, now: number): v
       const healAmount  = absorbPool * (dt / POOL_DRAIN_MS);
       const absorbLeft  = absorbPool - healAmount;
       setResource(cs, ABSORB_POOL_KEY, absorbLeft < 0.5 ? 0 : absorbLeft);
-      if (healAmount >= 0.5) applyHealToPlayer(player, cs, healAmount);
+      applyHealToPlayer(player, cs, healAmount);
     }
 
-    // ── Regen burst ────────────────────────────────────────────────────────
+    // ── Regen burst trigger ────────────────────────────────────────────────
     // Every defense.regen-burst-interval-ms, deposit defense.regen-burst-pct × maxHp
-    // into a healing pool that drains back over POOL_DRAIN_MS (antiheal applies).
-    // Both keys must be > 0 for the mechanic to activate.
+    // into the burst pool (in-combat only). Both keys must be > 0 to activate.
     const burstPct        = player.passives['defense.regen-burst-pct'] ?? 0;
     const burstIntervalMs = player.passives['defense.regen-burst-interval-ms'] ?? 0;
     if (burstPct > 0 && burstIntervalMs > 0) {
@@ -316,13 +317,16 @@ export function updateDefensiveSystems(world: World, dt: number, now: number): v
         addResource(cs, BURST_POOL_KEY, player.maxHp * burstPct);
         setCooldown(cs, 'regenBurst', burstIntervalMs);
       }
-      const burstPool = getResource(cs, BURST_POOL_KEY);
-      if (burstPool > 0) {
-        const healAmount = burstPool * (dt / POOL_DRAIN_MS);
-        const burstLeft  = burstPool - healAmount;
-        setResource(cs, BURST_POOL_KEY, burstLeft < 0.5 ? 0 : burstLeft);
-        if (healAmount >= 0.5) applyHealToPlayer(player, cs, healAmount);
-      }
+    }
+
+    // ── Burst pool drain ──────────────────────────────────────────────────
+    // Drains over BURST_DRAIN_MS regardless of source (timer burst or kill burst).
+    const burstPool = getResource(cs, BURST_POOL_KEY);
+    if (burstPool > 0) {
+      const healAmount = burstPool * (dt / BURST_DRAIN_MS);
+      const burstLeft  = burstPool - healAmount;
+      setResource(cs, BURST_POOL_KEY, burstLeft < 0.5 ? 0 : burstLeft);
+      applyHealToPlayer(player, cs, healAmount);
     }
 
     // ── Periodic combat shield ─────────────────────────────────────────────
