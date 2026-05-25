@@ -184,10 +184,6 @@ export function initDotArchetype(): void {
     // Refresh dynamic stat values on every hit so buffs take effect immediately.
     effect.data.damagePerStack = damagePerStack;
     effect.data.tickIntervalMs = tickIntervalMs;
-    // At max stacks: refresh the tick timer so re-applying doesn't silently no-op.
-    if (effect.stacks >= maxStacks) {
-      effect.data.nextTickIn = tickIntervalMs;
-    }
   });
 
   // ── Monster → Player: DoT stack application ───────────────────────────────
@@ -219,8 +215,5 @@ export function initDotArchetype(): void {
       },
     });
 
-    if (effect.stacks >= maxStacks) {
-      effect.data.nextTickIn = tickIntervalMs;
-    }
   });
 }

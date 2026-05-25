@@ -217,7 +217,6 @@ export function initDotT3(): void {
         }
         ftfEff.data.damagePerStack = ftfDmg;
         ftfEff.data.tickIntervalMs = tickIntervalMs;
-        if (ftfEff.stacks >= maxStacks) ftfEff.data.nextTickIn = tickIntervalMs;
       }
       ctx.metadata['dotHandled'] = true;
       return;
@@ -232,7 +231,6 @@ export function initDotT3(): void {
       });
       se.data.damagePerStack = dmgPerStack;
       se.data.tickIntervalMs = tickIntervalMs;
-      if (se.stacks >= maxStacks) se.data.nextTickIn = tickIntervalMs;
 
       const burnStacks = getTotalStacks(monsterState, DOT_EFFECT_ID);
       let smolder = getStatusEffect(monsterState, SMOLDER_EFFECT);
@@ -278,7 +276,6 @@ export function initDotT3(): void {
         });
         cf.data.damagePerStack = dmgPerStack;
         cf.data.tickIntervalMs = tickIntervalMs;
-        if (cf.stacks >= maxStacks) cf.data.nextTickIn = tickIntervalMs;
       }
       ctx.metadata['dotHandled'] = true;
       return;
@@ -315,7 +312,6 @@ export function initDotT3(): void {
       });
       fc.data.damagePerStack = dmgPerStack;
       fc.data.tickIntervalMs = tickIntervalMs;
-      if (fc.stacks >= maxStacks) fc.data.nextTickIn = tickIntervalMs;
 
       if (!hasStatusEffect(monsterState, FROZEN_EFFECT)) {
         applyStatusEffect(monsterState, {

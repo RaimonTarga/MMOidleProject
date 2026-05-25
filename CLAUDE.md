@@ -407,7 +407,7 @@ Each player hit applies 1 DoT stack; stacks tick damage at configurable interval
 
 **Tick rate:** `dot.tick-interval-ms` passive changes tick frequency. Faster ticks = more DPS (not normalized). Default 1000 ms.
 
-**Max-stacks refresh:** Hitting a maxed target resets `nextTickIn` to the full interval instead of silently capping.
+**Max-stacks refresh:** Hitting a maxed target only refreshes `damagePerStack` and `tickIntervalMs` — `nextTickIn` is never reset by the hit handler so fast attackers don't push the tick timer indefinitely into the future. The tick timer runs independently and resets only when a tick fires.
 
 **DoT duration:** Player-applied DoT stacks expire after `DOT_DURATION_MS = 4500 ms` of no hits. Duration is refreshed (not stacked) on every hit via `remainingMs + refreshable: true` in `applyStatusEffect`. Permafrost is the only exception (`remainingMs: -1`, truly permanent). Duration is tunable per-skill-node via `dot.duration-ms` passive; monster-applied DoTs use `monsterDef.dotEffect.durationMs ?? 4500`.
 
