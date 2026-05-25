@@ -1,5 +1,4 @@
 import { distanceSq } from '@mmo-idle/shared';
-import type { MonsterSnapshot, PlayerSnapshot } from '@mmo-idle/shared';
 import type { MonsterEntity } from '../ecs/components/monster';
 import type { PlayerEntity } from '../ecs/components/player';
 import type { World } from '../world/World';
@@ -21,7 +20,7 @@ import { grantMonsterRewards } from './rewards';
  */
 export function applyPlayerAoe(
   world: World,
-  attacker: PlayerEntity | PlayerSnapshot,
+  attacker: PlayerEntity,
   centerX: number,
   centerY: number,
   radius: number,
@@ -31,8 +30,8 @@ export function applyPlayerAoe(
   const radiusSq = radius * radius;
   const center = { x: centerX, y: centerY };
   const toKill: MonsterEntity[] = [];
-  const attackerNodeId = 'hasPosition' in attacker ? attacker.hasPosition.nodeId : attacker.nodeId;
-  const attackerId = 'isPlayer' in attacker ? attacker.isPlayer.id : attacker.id;
+  const attackerNodeId = attacker.hasPosition.nodeId;
+  const attackerId = attacker.isPlayer.id;
 
   for (const monster of world.monsterEntitiesInNode(attackerNodeId)) {
     if (monster.isMonster.id === excludeId) continue;
@@ -63,7 +62,7 @@ export function applyPlayerAoe(
  */
 export function applyMonsterAoe(
   world: World,
-  attacker: MonsterEntity | MonsterSnapshot,
+  attacker: MonsterEntity,
   centerX: number,
   centerY: number,
   radius: number,
@@ -72,7 +71,7 @@ export function applyMonsterAoe(
 ): void {
   const radiusSq = radius * radius;
   const center = { x: centerX, y: centerY };
-  const attackerNodeId = 'hasPosition' in attacker ? attacker.hasPosition.nodeId : attacker.nodeId;
+  const attackerNodeId = attacker.hasPosition.nodeId;
 
   for (const player of world.playerEntitiesInNode(attackerNodeId)) {
     if (player.isPlayer.id === excludeId) continue;

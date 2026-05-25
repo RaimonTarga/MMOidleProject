@@ -1,18 +1,20 @@
-import type { ControlsMonster } from './components/controlsMonster';
-import type { TracksCombat } from './components/tracksCombat';
-import type { HasKnockback } from './components/hasKnockback';
-import type { ScriptsBoss } from './components/scriptsBoss';
-import type { UsesCadence } from './components/usesCadence';
-import type { UsesEnergy } from './components/usesEnergy';
-import type { AppliesDots } from './components/appliesDots';
-import type { ChillsTarget } from './components/chillsTarget';
-import type { UsesCooldown } from './components/usesCooldown';
-import type { UsesReload } from './components/usesReload';
 import type {
+  AppliesDots,
+  ChillsTarget,
+  ControlsMonster,
   DealsDamage,
   EvadesHits,
   HasAwareness,
   HasHealth,
+  HasKnockback,
+  HasDetonation,
+  HasHemorrhage,
+  HasDot,
+  HasConflagration,
+  HasChill,
+  HasFrozen,
+  HasEntropy,
+  HasAshbrandBurn,
   HasPosition,
   HasStatus,
   HoldsInventory,
@@ -21,11 +23,17 @@ import type {
   IsPlayer,
   MitigatesDamage,
   PerformsAttack,
+  ScriptsBoss,
   ShowsSacred,
+  TracksCombat,
   TracksProgression,
   UsesAutocombat,
+  UsesCadence,
+  UsesCooldown,
+  UsesEnergy,
+  UsesReload,
   UsesSkills,
-} from './components/snapshotSlices';
+} from '@mmo-idle/shared';
 
 export type EntityId = string;
 
@@ -87,6 +95,14 @@ export interface ServerEntity {
   // ── Monster (S7) ──────────────────────────────────────────────
   controlsMonster?: ControlsMonster;
   hasKnockback?:    HasKnockback;
+  hasDetonation?:   HasDetonation;
+  hasHemorrhage?:   HasHemorrhage;
+  hasDot?:          HasDot;
+  hasConflagration?: HasConflagration;
+  hasChill?:        HasChill;
+  hasFrozen?:       HasFrozen;
+  hasEntropy?:      HasEntropy;
+  hasAshbrandBurn?: HasAshbrandBurn;
   scriptsBoss?:     ScriptsBoss;
 
   // ── Player (S8) ───────────────────────────────────────────────

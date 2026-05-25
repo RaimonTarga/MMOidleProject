@@ -1,8 +1,4 @@
-import type { StatusEffect } from '@mmo-idle/shared';
-
-// StatusEffect type lives in @mmo-idle/shared/components/effects so pure DoT
-// damage formulas can take it as input. Re-exported here for ECS consumers.
-export type { StatusEffect } from '@mmo-idle/shared';
+import type { StatusEffect } from './effects';
 
 /** Input shape for applyStatusEffect. All optional fields have sensible defaults. */
 export interface StatusEffectConfig {

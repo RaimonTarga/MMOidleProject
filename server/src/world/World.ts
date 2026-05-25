@@ -6,7 +6,7 @@ import { updateMonsters } from '../systems/ai';
 import { updateCombat } from '../systems/combat';
 import { updateTransitions } from '../systems/transitions';
 import { updateCombatState } from '../systems/combatState';
-import { makeTracksCombat } from '../ecs/components/tracksCombat';
+import { makeTracksCombat } from '@mmo-idle/shared';
 import { tickAllMechanics } from '../systems/classes/registry';
 import { updateWeaponEffects } from '../systems/weaponEffects';
 import { updateBossScripts } from '../systems/bossScripts';
@@ -81,6 +81,15 @@ export class World {
   );
 
   readonly knockbackedMonsters = this.monsterEntities.with('hasKnockback');
+  readonly bossScriptedMonsters = this.monsterEntities.with('scriptsBoss');
+  readonly detonatedMonsters = this.monsterEntities.with('hasDetonation');
+  readonly hemorrhagedMonsters = this.monsterEntities.with('hasHemorrhage');
+  readonly dottedMonsters = this.monsterEntities.with('hasDot');
+  readonly conflagrationMonsters = this.monsterEntities.with('hasConflagration');
+  readonly chilledMonsters = this.monsterEntities.with('hasChill');
+  readonly frozenMonsters = this.monsterEntities.with('hasFrozen');
+  readonly entropyMonsters = this.monsterEntities.with('hasEntropy');
+  readonly ashbrandMonsters = this.monsterEntities.with('hasAshbrandBurn');
 
   /**
    * Canonical player query. All required slice components are stamped together
@@ -111,6 +120,7 @@ export class World {
   readonly chillingPlayers = this.playerEntities.with('chillsTarget');
   readonly cooldownPlayers = this.playerEntities.with('usesCooldown');
   readonly reloadPlayers   = this.playerEntities.with('usesReload');
+  readonly dottedPlayers   = this.playerEntities.with('hasDot');
   /** Player IDs that died this tick. Drained by the server loop after each tick. */
   pendingDeaths: string[] = [];
   /** Queued combat events per node, flushed into each broadcast snapshot. */

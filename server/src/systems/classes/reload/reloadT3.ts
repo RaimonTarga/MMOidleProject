@@ -1,4 +1,3 @@
-import type { PlayerSnapshot } from '@mmo-idle/shared';
 import { GAME_CONFIG, TEST_ROOM_NODE_ID } from '@mmo-idle/shared';
 import { defineBuff, type BuffDescriptor } from '../../registry/buffs';
 import type { World } from '../../../world/World';
@@ -9,9 +8,9 @@ import {
   makeCombatContext,
   registerCombatListener,
 } from '../../combatPipeline';
-import { getStatusEffect } from '../../statusEffects';
+import { getStatusEffect } from '@mmo-idle/shared';
 import { applyPlayerAoe } from '../../aoeDamage';
-import type { UsesReload } from '../../../ecs/components/usesReload';
+import type { UsesReload } from '@mmo-idle/shared';
 import type { PlayerEntity } from '../../../ecs/components/player';
 import type { MonsterEntity } from '../../../ecs/components/monster';
 
@@ -51,9 +50,10 @@ export function updateReloadT3(world: World, dt: number, now: number = Date.now(
   }
 }
 
-export function getSnipeReady(player: PlayerSnapshot, world: World): boolean {
-  if ((player.passives['reload.snipe'] ?? 0) <= 0) return false;
-  const target = player.attackTargetId ? world.getMonsterEntity(player.attackTargetId) : undefined;
+export function getSnipeReady(entity: PlayerEntity, world: World): boolean {
+  if ((entity.usesSkills.passives['reload.snipe'] ?? 0) <= 0) return false;
+  const targetId = entity.performsAttack.attackTargetId;
+  const target = targetId ? world.getMonsterEntity(targetId) : undefined;
   return !!target && target.hasHealth.hp >= target.hasHealth.maxHp * FULL_HP_THRESHOLD;
 }
 
@@ -257,7 +257,7 @@ function applyLaserTick(world: World, player: PlayerEntity, target: MonsterEntit
 
 export const RELOAD_T3_BUFFS = [
   defineBuff('reload-snipe-ready', ({ player, world }) => {
-    if (player.combatArchetype !== 'reload') return null;
+    if (player.usesSkills.combatArchetype !== 'reload') return null;
     return getSnipeReady(player, world)
       ? { id: 'reload-snipe-ready', label: 'Snipe', stacks: 1, durationPct: -1, color: '#ffcc88' }
       : null;

@@ -4,11 +4,11 @@ import { registerCombatListener } from '../../combatPipeline';
 import { isEmpoweredAttack, setEmpoweredAttack } from '../../empoweredAttacks';
 import {
   applyStatusEffect, removeStatusEffect, getStatusEffect, getTotalStacks,
-} from '../../statusEffects';
+} from '@mmo-idle/shared';
 import { grantMonsterRewards } from '../../rewards';
 import type { CombatState } from '../../combatState';
 import type { World } from '../../../world/World';
-import type { UsesEnergy } from '../../../ecs/components/usesEnergy';
+import type { UsesEnergy } from '@mmo-idle/shared';
 import type { PlayerEntity } from '../../../ecs/components/player';
 
 // ── Light: Accumulator (energy-light-t3-a) ────────────────────────────────────
@@ -59,9 +59,8 @@ const CI_BASE_MULT = 1.3; // burst = player.attack × 1.3^tagCount
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
-function hasPassive(player: PlayerSnapshot | PlayerEntity, key: PassiveKey): boolean {
-  const passives = 'entityId' in player ? player.usesSkills.passives : player.passives;
-  return (passives[key] ?? 0) > 0;
+function hasPassive(player: PlayerEntity, key: PassiveKey): boolean {
+  return (player.usesSkills.passives[key] ?? 0) > 0;
 }
 
 function endACDischarge(player: PlayerEntity, energy: UsesEnergy): void {
@@ -476,61 +475,53 @@ export function getSMChargePool(energy: UsesEnergy): number {
 
 // ── Buff descriptors ──────────────────────────────────────────────────────────
 
-/**
- * Fetch the energy component from the world view. Returns null when there is
- * no world reference, no player entity, or no energy component attached.
- */
-function getEnergyForBuff(world: World, playerId: string): UsesEnergy | null {
-  return world.getPlayerEntity(playerId)?.usesEnergy ?? null;
-}
-
 export const ENERGY_T3_BUFFS = [
   defineBuff('energy-acc', ({ player, playerCs }) => {
-    if (!playerCs || player.combatArchetype !== 'energy') return null;
+    if (!playerCs || player.usesSkills.combatArchetype !== 'energy') return null;
     const stacks = getAccumulatorStacks(playerCs);
     return stacks > 0 ? { id: 'energy-acc', label: 'Surge', stacks, durationPct: -1, color: '#ffdd44' } : null;
   }),
   defineBuff('energy-overcharge', ({ player, playerCs }) => {
-    if (!playerCs || player.combatArchetype !== 'energy') return null;
+    if (!playerCs || player.usesSkills.combatArchetype !== 'energy') return null;
     const stacks = getOverchargeStacks(playerCs);
     return stacks > 0 ? { id: 'energy-overcharge', label: 'Overch', stacks, durationPct: -1, color: '#ff88ff' } : null;
   }),
-  defineBuff('energy-ac-charge', ({ player, world }) => {
-    if (player.combatArchetype !== 'energy') return null;
-    const energy = getEnergyForBuff(world, player.id);
+  defineBuff('energy-ac-charge', ({ player }) => {
+    if (player.usesSkills.combatArchetype !== 'energy') return null;
+    const energy = player.usesEnergy;
     if (!energy) return null;
     return getACPhase(energy) === 'charge'
       ? { id: 'energy-ac-charge', label: 'Chrge', stacks: 1, durationPct: -1, color: '#44ccff' }
       : null;
   }),
-  defineBuff('energy-ac-discharge', ({ player, world }) => {
-    if (player.combatArchetype !== 'energy') return null;
-    const energy = getEnergyForBuff(world, player.id);
+  defineBuff('energy-ac-discharge', ({ player }) => {
+    if (player.usesSkills.combatArchetype !== 'energy') return null;
+    const energy = player.usesEnergy;
     if (!energy) return null;
     if (getACPhase(energy) !== 'discharge') return null;
     return { id: 'energy-ac-discharge', label: 'Disch', stacks: 1, durationPct: getACDischargeRemainingPct(energy), color: '#ff6622' };
   }),
-  defineBuff('energy-reservoir', ({ player, world }) => {
-    if (player.combatArchetype !== 'energy') return null;
-    const energy = getEnergyForBuff(world, player.id);
+  defineBuff('energy-reservoir', ({ player }) => {
+    if (player.usesSkills.combatArchetype !== 'energy') return null;
+    const energy = player.usesEnergy;
     if (!energy) return null;
     const pct = getCapacitorReservoirPct(energy);
     return pct > 0 ? { id: 'energy-reservoir', label: 'Resvr', stacks: 1, durationPct: pct, color: '#88ddff' } : null;
   }),
-  defineBuff('energy-equilibrium', ({ player, world }) => {
-    if (player.combatArchetype !== 'energy') return null;
-    if ((player.passives['energy.harmonic-equilibrium'] ?? 0) <= 0) return null;
-    const energy = getEnergyForBuff(world, player.id);
+  defineBuff('energy-equilibrium', ({ player }) => {
+    if (player.usesSkills.combatArchetype !== 'energy') return null;
+    if ((player.usesSkills.passives['energy.harmonic-equilibrium'] ?? 0) <= 0) return null;
+    const energy = player.usesEnergy;
     if (!energy) return null;
     const pct = energyPercent(energy);
     return pct > 0.40 && pct < 0.60
       ? { id: 'energy-equilibrium', label: 'Equil', stacks: 1, durationPct: -1, color: '#aaffcc' }
       : null;
   }),
-  defineBuff('energy-sm-pool', ({ player, world }) => {
-    if (player.combatArchetype !== 'energy') return null;
-    if ((player.passives['energy.superconducting-mass'] ?? 0) <= 0) return null;
-    const energy = getEnergyForBuff(world, player.id);
+  defineBuff('energy-sm-pool', ({ player }) => {
+    if (player.usesSkills.combatArchetype !== 'energy') return null;
+    if ((player.usesSkills.passives['energy.superconducting-mass'] ?? 0) <= 0) return null;
+    const energy = player.usesEnergy;
     if (!energy) return null;
     const pool = getSMChargePool(energy);
     return pool > 0 ? { id: 'energy-sm-pool', label: 'Chrge', stacks: pool, durationPct: -1, color: '#ff4488' } : null;

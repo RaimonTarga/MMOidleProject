@@ -1,9 +1,9 @@
 import { ESSENCE_TYPES, MONSTER_DATABASE, TEST_ROOM_NODE_ID } from '@mmo-idle/shared';
 import type { PlayerEntity } from '../ecs/components/player';
-import { withPlayerSnapshotDraft } from '../ecs/playerSnapshotAdapter';
 import type { World } from '../world/World';
+import { syncArchetypeSlices } from '../ecs/archetypeSliceSync';
+import { recalculatePlayerEntityStats } from '../ecs/playerSnapshotAdapter';
 import { resetTracksCombat } from './combatState';
-import { recalculatePlayerStats } from './stats';
 
 const INTERACT_COOLDOWN_MS = 2_000;
 const TEST_ROOM_ESSENCE_AMOUNT = 1_000_000_000;
@@ -45,22 +45,21 @@ function grantTestRoomEssences(player: PlayerEntity): void {
 }
 
 function resetPlayerProgression(world: World, player: PlayerEntity): void {
-  withPlayerSnapshotDraft(world, player, draft => {
-    draft.unlockedSkills = [];
-    draft.skillPoints = 0;
-    draft.playerTier = 0;
-    draft.currentSkillTier = 0;
-    draft.selectedClass = null;
-    draft.selectedSubVariant = null;
-    draft.selectedRange = null;
-    draft.combatArchetype = null;
-    draft.questProgress = {};
-    draft.attackTargetId = null;
-    draft.auto = false;
+  player.usesSkills.unlockedSkills     = [];
+  player.tracksProgression.skillPoints = 0;
+  player.tracksProgression.playerTier  = 0;
+  player.tracksProgression.currentSkillTier = 0;
+  player.usesSkills.selectedClass      = null;
+  player.usesSkills.selectedSubVariant = null;
+  player.usesSkills.selectedRange      = null;
+  player.usesSkills.combatArchetype    = null;
+  player.tracksProgression.questProgress = {};
+  player.performsAttack.attackTargetId = null;
+  player.usesAutocombat.auto = false;
 
-    recalculatePlayerStats(draft);
-    draft.hp = draft.maxHp;
-  });
+  recalculatePlayerEntityStats(world, player);
+  syncArchetypeSlices(world, player);
+  player.hasHealth.hp = player.hasHealth.maxHp;
 
   resetTracksCombat(player.tracksCombat);
 }

@@ -11,38 +11,14 @@ export * from './systems/stats';
 export * from './systems/skills';
 export * from './systems/damage';
 export * from './systems/spatial';
+export * from './types/combat';
+export * from './components';
 
 import type { EquipmentMap, EquipmentSlot, EssenceType } from './items';
 import type { SubVariant } from './skillTree';
 import type { PassiveMap } from './passives';
-import type { BuffId } from './components/buffs';
-
-// ─── Buff display ─────────────────────────────────────────────────────────────
-
-/**
- * A single active buff entry, populated server-side each tick and sent to the
- * client for display. Only player buffs are tracked here — debuffs on monsters
- * are server-only.
- *
- * Resilience notes:
- *   - `id` will be used as the sprite key when icons are added later.
- *   - `durationPct` of -1 means the buff has no timer (permanent or count-based).
- *   - `stacks` of 1 means no stack badge is shown.
- *   - `color` is a CSS hex string used for the placeholder shape; replace with
- *     icon textures later without changing any other code.
- */
-export interface PlayerBuff {
-  /** Unique identifier — will double as the future icon sprite key. */
-  id: BuffId;
-  /** Short label shown beneath the icon (3–6 chars). */
-  label: string;
-  /** Stack count; 1 = single instance (no badge shown). */
-  stacks: number;
-  /** 0–100 remaining duration percentage; -1 = no timer. */
-  durationPct: number;
-  /** CSS hex color string for the placeholder shape, e.g. '#00ffaa'. */
-  color: string;
-}
+import type { BuffId, PlayerBuff } from './components/buffs';
+import type { CombatArchetype, MonsterAIState, ShieldState } from './types/combat';
 
 // ─── Combat events ────────────────────────────────────────────────────────────
 
@@ -54,34 +30,6 @@ export interface PlayerBuff {
 export type CombatEvent =
   | { kind: 'player-hit';  playerId: string; targetId: string; targetName: string; damage: number; empowered: boolean; execution: boolean; effects?: string[] }
   | { kind: 'player-kill'; playerId: string; targetId: string; targetName: string };
-
-// ─── Combat archetype ─────────────────────────────────────────────────────────
-
-/**
- * Determines which server-side combat mechanic module governs an entity.
- * null  = vanilla behavior (no archetype-specific mechanics).
- * Extend this union as new archetypes are implemented.
- */
-export type CombatArchetype = 'cadence' | 'cooldown' | 'energy' | 'reload' | 'dot' | null;
-
-// ─── Shield ───────────────────────────────────────────────────────────────────
-
-/**
- * A temporary hit-point buffer that absorbs damage before real HP.
- * Sent to the client so the HP bar can render the shield layer.
- */
-export interface ShieldState {
-  /** Current remaining shield HP. */
-  amount: number;
-  /** Shield HP at creation — used for proportional bar rendering. */
-  maxAmount: number;
-  /**
-   * Remaining duration in milliseconds.
-   * -1 = permanent: never expires by timer, depletes only via damage.
-   * >0 = timed: decremented each tick; shield is removed when this reaches 0.
-   */
-  remainingMs: number;
-}
 
 // ─── Entity shapes ────────────────────────────────────────────────────────────
 
@@ -264,19 +212,6 @@ export interface PlayerSnapshot {
    */
   playerTier: number;
 }
-
-/**
- * All valid AI states for a monster.
- * The state machine starts at 'idle'; 'chasing', 'attacking', 'returning'
- * are plugged in when combat AI is added.
- */
-export type MonsterAIState =
-  | 'idle'
-  | 'wandering'
-  | 'chasing'
-  | 'attacking'
-  | 'returning'
-  | 'knocked-back';
 
 export interface MonsterSnapshot {
   id: string;

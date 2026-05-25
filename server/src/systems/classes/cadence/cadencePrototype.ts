@@ -1,9 +1,10 @@
 import { defineBuff, type BuffDescriptor } from '../../registry/buffs';
 import { registerCombatListener } from '../../combatPipeline';
-import { applyStatusEffect, removeStatusEffect, getStatusEffects, pruneStatusEffects } from '../../statusEffects';
+import { applyStatusEffect, removeStatusEffect, getStatusEffects, pruneStatusEffects } from '@mmo-idle/shared';
 import { grantMonsterRewards } from '../../rewards';
 import { setEmpoweredAttack, registerEmpoweredMultiplier } from '../../empoweredAttacks';
 import type { World } from '../../../world/World';
+import { attachMarker, detachMarkerIfNoEffects } from '../../../ecs/markerHelpers';
 
 // ── Fallback constants (balanced-frame values, used when no frame is unlocked) ─
 
@@ -126,6 +127,7 @@ export function initCadenceArchetype(): void {
             tickIntervalMs: HEMORRHAGE_TICK_MS,
           },
         });
+        attachMarker(world, ctx.defender, 'hasHemorrhage');
         ctx.damage = 0;
       }
 
@@ -143,6 +145,7 @@ export function initCadenceArchetype(): void {
             fuseMs: DETONATION_FUSE_MS,
           },
         });
+        attachMarker(world, ctx.defender, 'hasDetonation');
       }
       cadence.seqDmg = 0;
 
@@ -246,7 +249,7 @@ export function updateCadenceEffects(world: World, dt: number): void {
 function updateDetonations(world: World, dt: number): void {
   const toKill: Array<{ monsterId: string; sourceId: string }> = [];
 
-  for (const entity of world.monsterEntities) {
+  for (const entity of world.detonatedMonsters) {
     const monsterId = entity.isMonster.id;
     const state     = entity.tracksCombat;
     const tags = getStatusEffects(state, 'cadence-detonation');
@@ -264,6 +267,7 @@ function updateDetonations(world: World, dt: number): void {
     }
 
     pruneStatusEffects(state, e => e.id === 'cadence-detonation' && e.data['fuseMs'] <= 0);
+    detachMarkerIfNoEffects(world, entity, 'hasDetonation', state, 'cadence-detonation');
 
     if (entity.hasHealth.hp <= 0) {
       toKill.push({ monsterId, sourceId: lastSourceId });
@@ -282,7 +286,7 @@ function updateDetonations(world: World, dt: number): void {
 function updateHemorrhages(world: World, dt: number): void {
   const toKill: Array<{ monsterId: string; sourceId: string }> = [];
 
-  for (const entity of world.monsterEntities) {
+  for (const entity of world.hemorrhagedMonsters) {
     const monsterId = entity.isMonster.id;
     const state     = entity.tracksCombat;
     const bleeds = getStatusEffects(state, 'cadence-hemorrhage');
@@ -304,6 +308,7 @@ function updateHemorrhages(world: World, dt: number): void {
     }
 
     pruneStatusEffects(state, e => e.id === 'cadence-hemorrhage' && e.data['ticksLeft'] <= 0);
+    detachMarkerIfNoEffects(world, entity, 'hasHemorrhage', state, 'cadence-hemorrhage');
 
     if (entity.hasHealth.hp <= 0) {
       toKill.push({ monsterId, sourceId: lastSourceId });
@@ -322,15 +327,18 @@ function updateHemorrhages(world: World, dt: number): void {
 export const CADENCE_BUFFS = [
   defineBuff(
     'cadence-accelerando',
-    ({ player }) => player.cadenceSpeedStacks > 0
-      ? { id: 'cadence-accelerando', label: 'Accel', stacks: player.cadenceSpeedStacks, durationPct: -1, color: '#00ffaa' }
-      : null,
+    ({ player }) => {
+      const stacks = player.usesCadence?.speedStacks ?? 0;
+      return stacks > 0
+        ? { id: 'cadence-accelerando', label: 'Accel', stacks, durationPct: -1, color: '#00ffaa' }
+        : null;
+    },
     { label: 'Accel', color: '#00ffaa' },
   ),
   defineBuff(
     'cadence-echo',
-    ({ player, world }) => {
-      const echo = world.getPlayerEntity(player.id)?.usesCadence?.echo ?? 0;
+    ({ player }) => {
+      const echo = player.usesCadence?.echo ?? 0;
       return echo > 0
         ? { id: 'cadence-echo', label: 'Echo', stacks: echo, durationPct: -1, color: '#4488ff' }
         : null;

@@ -5,11 +5,12 @@ import {
   isCooldownActive, setCooldown, getCooldown,
   getString, setString,
 } from './combatState';
-import { applyStatusEffect, getStatusEffect } from './statusEffects';
+import { applyStatusEffect, getStatusEffect } from '@mmo-idle/shared';
 import { grantMonsterRewards } from './rewards';
 import type { World } from '../world/World';
 import { computeScaledDotDamage } from '@mmo-idle/shared';
 import { defineBuff, type BuffDescriptor } from './registry/buffs';
+import { attachMarker, detachMarkerIfNoEffect } from '../ecs/markerHelpers';
 
 // ── Chaotic Axe ───────────────────────────────────────────────────────────────
 
@@ -86,7 +87,7 @@ export function initWeaponEffects(): void {
   });
 
   // ── Ashbrand Blade: 30% of hit → stacking burn (max 5), 70% dealt directly ──
-  registerCombatListener('onHit', (ctx, _world) => {
+  registerCombatListener('onHit', (ctx, world) => {
     if (ctx.attackerType !== 'player') return;
     if (ctx.defenderType !== 'monster') return;
     const player = ctx.attacker;
@@ -113,6 +114,7 @@ export function initWeaponEffects(): void {
     if (effect.stacks >= ASHBRAND_MAX_STACKS) {
       effect.data.nextTickIn = ASHBRAND_TICK_MS;
     }
+    attachMarker(world, ctx.defender, 'hasAshbrandBurn');
 
     // Reduce direct hit by the converted fraction.
     ctx.damage = Math.max(1, Math.round(ctx.damage * (1 - ASHBRAND_CONV_PCT)));
@@ -182,11 +184,14 @@ function updateSacredCrossBuff(world: World): void {
 function updateAshbrandBurns(world: World, dt: number): void {
   const toKill: Array<{ monsterId: string; sourceId: string }> = [];
 
-  for (const e of world.monsterEntities) {
+  for (const e of world.ashbrandMonsters) {
     const monsterId = e.isMonster.id;
     const state     = e.tracksCombat;
     const effect = getStatusEffect(state, 'ashbrand-burn');
-    if (!effect) continue;
+    if (!effect) {
+      detachMarkerIfNoEffect(world, e, 'hasAshbrandBurn', state, 'ashbrand-burn');
+      continue;
+    }
 
     effect.data.nextTickIn -= dt;
     if (effect.data.nextTickIn <= 0) {
@@ -212,8 +217,8 @@ function updateAshbrandBurns(world: World, dt: number): void {
 export const WEAPON_BUFFS = [
   defineBuff(
     'sacred-burst',
-    ({ player }) => player.sacredBuffActive
-      ? { id: 'sacred-burst', label: 'Holy', stacks: 1, durationPct: player.sacredBuffPct, color: '#ffdd44' }
+    ({ player }) => player.showsSacred.sacredBuffActive
+      ? { id: 'sacred-burst', label: 'Holy', stacks: 1, durationPct: player.showsSacred.sacredBuffPct, color: '#ffdd44' }
       : null,
     { label: 'Holy', color: '#ffdd44' },
   ),

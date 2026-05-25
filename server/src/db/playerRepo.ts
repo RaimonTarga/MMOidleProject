@@ -6,8 +6,8 @@ import { GAME_CONFIG, emptyEquipment } from '@mmo-idle/shared';
 import type { PlayerEntity } from '../ecs/components/player';
 import { assemblePlayerSnapshot } from '../ecs/projection';
 import { accounts, characters } from './schema';
-import { recalculatePlayerStats } from '../systems/stats';
-import { equipItemSnapshot } from '../systems/inventory';
+import { recalculatePlayerStatsFromSnapshot } from '../systems/stats';
+import { equipItemOnSnapshot } from '../systems/inventory';
 import type * as schema from './schema';
 
 type DB = BetterSQLite3Database<typeof schema>;
@@ -77,7 +77,7 @@ export function getOrCreateCharacter(
   }).run();
 
   const fresh = buildFreshPlayer(socketId, characterName, spawnX, spawnY);
-  equipItemSnapshot(fresh, 'basic-sword');
+  equipItemOnSnapshot(fresh, 'basic-sword');
   return fresh;
 }
 
@@ -149,7 +149,7 @@ function hydratePlayer(row: CharacterRow, socketId: string): PlayerSnapshot {
   }
 
   // Rebuild all derived stats from restored skills + equipment
-  recalculatePlayerStats(player);
+  recalculatePlayerStatsFromSnapshot(player);
 
   // Always log in at full HP
   player.hp = player.maxHp;

@@ -14,18 +14,12 @@
  * direction + remaining magnitude. `targetX` / `targetY` are wire-only and
  * computed from this vector at projection time.
  */
-import type {
-  CombatArchetype,
-  EquipmentMap,
-  EssenceType,
-  MonsterAIState,
-  MotionVector,
-  PassiveMap,
-  PlayerBuff,
-  ShieldState,
-  SubVariant,
-  Vec2,
-} from '@mmo-idle/shared';
+import type { MotionVector, Vec2 } from '../systems/spatial';
+import type { EquipmentMap, EssenceType } from '../items';
+import type { PassiveMap } from '../passives';
+import type { PlayerBuff } from './buffs';
+import type { SubVariant } from '../skillTree';
+import type { CombatArchetype, MonsterAIState, ShieldState } from '../types/combat';
 
 // ─── Shared by players and monsters ──────────────────────────────────────────
 

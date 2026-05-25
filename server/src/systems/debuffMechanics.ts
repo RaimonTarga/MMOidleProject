@@ -1,5 +1,5 @@
 import { registerCombatListener } from './combatPipeline';
-import { getStatusEffect } from './statusEffects';
+import { getStatusEffect } from '@mmo-idle/shared';
 
 /**
  * Register generic debuff listeners that modify incoming damage.

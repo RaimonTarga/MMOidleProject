@@ -22,29 +22,20 @@ import { MONSTER_DATABASE, GAME_CONFIG } from '@mmo-idle/shared';
 import { NODE_REGISTRY } from '../world/nodeRegistry';
 import type { World } from '../world/World';
 import type { MonsterEntity } from '../ecs/components/monster';
-import {
-  initScriptsBoss,
-  type ActiveBossEffect,
-  type ScriptsBoss,
-} from '../ecs/components/scriptsBoss';
+import type { ActiveBossEffect, ScriptsBoss } from '@mmo-idle/shared';
+import { initScriptsBoss } from '@mmo-idle/shared';
 
-export type { ScriptsBoss, BossRuntimeState, ActiveBossEffect } from '../ecs/components/scriptsBoss';
-export { initScriptsBoss, initBossState } from '../ecs/components/scriptsBoss';
+export type { ScriptsBoss, BossRuntimeState, ActiveBossEffect } from '@mmo-idle/shared';
+export { initScriptsBoss, initBossState } from '@mmo-idle/shared';
 
 // ── Main update ───────────────────────────────────────────────────────────────
 
 export function updateBossScripts(world: World, dt: number): void {
-  for (const e of world.monsterEntities) {
-    if (!e.isMonster.isBoss) continue;
-
+  for (const e of world.bossScriptedMonsters) {
     const def = MONSTER_DATABASE.get(e.isMonster.monsterTypeId);
     if (!def?.bossScript) continue;
 
     const script = def.bossScript;
-
-    if (!e.scriptsBoss) {
-      world.ecs.addComponent(e, 'scriptsBoss', initScriptsBoss(script));
-    }
     const state = e.scriptsBoss!;
 
     if (e.controlsMonster.aggroTargetId !== null) state.engaged = true;

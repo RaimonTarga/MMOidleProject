@@ -1,9 +1,10 @@
-import type { PlayerBuff, PlayerSnapshot } from '@mmo-idle/shared';
+import type { PlayerBuff } from '@mmo-idle/shared';
 import type { World } from '../../world/World';
 import type { CombatState } from '../combatState';
+import type { PlayerEntity } from '../../ecs/components/player';
 
 export interface BuffProjectionContext {
-  player: PlayerSnapshot;
+  player: PlayerEntity;
   playerCs?: CombatState;
   targetCs?: CombatState;
   world: World;

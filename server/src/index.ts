@@ -23,6 +23,7 @@ import { initDefenseSystems } from './systems/defenseSystems';
 import { initDebuffMechanics } from './systems/debuffMechanics';
 import { assembleMonsterSnapshot, diffMonsterRoundTrip, diffPlayerRoundTrip } from './ecs/projection';
 import { IS_DEV } from './env';
+import { assertMarkerInvariants } from './ecs/markerInvariants';
 
 export { IS_DEV };
 
@@ -95,6 +96,13 @@ if (IS_DEV) {
     console.error('[wire-parity] MonsterSnapshot round-trip failed:', failures);
   } else {
     console.log(`[wire-parity] MonsterSnapshot round-trip OK (${totalChecked} monsters)`);
+  }
+
+  const markerViolations = assertMarkerInvariants(world);
+  if (markerViolations.length > 0) {
+    console.error('[marker-invariants] Marker/status mismatch:', markerViolations);
+  } else {
+    console.log('[marker-invariants] Marker components OK');
   }
 }
 

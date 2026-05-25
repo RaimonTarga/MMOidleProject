@@ -40,31 +40,21 @@ import type {
   TracksProgression,
   UsesAutocombat,
   UsesSkills,
-} from './components/snapshotSlices';
-import type { UsesCadence } from './components/usesCadence';
-import type { UsesEnergy } from './components/usesEnergy';
-import type { AppliesDots } from './components/appliesDots';
-import type { ChillsTarget } from './components/chillsTarget';
-import type { UsesCooldown } from './components/usesCooldown';
-import type { UsesReload } from './components/usesReload';
+  UsesCadence,
+  UsesEnergy,
+  AppliesDots,
+  ChillsTarget,
+  UsesCooldown,
+  UsesReload,
+} from '@mmo-idle/shared';
 import {
   makeUsesCadenceFromSnapshot,
-} from './components/usesCadence';
-import {
   makeUsesEnergyFromSnapshot,
-} from './components/usesEnergy';
-import {
   makeAppliesDotsFromSnapshot,
-} from './components/appliesDots';
-import {
   makeChillsTargetFromSnapshot,
-} from './components/chillsTarget';
-import {
   makeUsesCooldownFromSnapshot,
-} from './components/usesCooldown';
-import {
   makeUsesReloadFromSnapshot,
-} from './components/usesReload';
+} from '@mmo-idle/shared';
 
 // ─── Player ──────────────────────────────────────────────────────────────────
 

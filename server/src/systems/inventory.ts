@@ -1,18 +1,13 @@
 import type { PlayerSnapshot, EquipmentSlot } from '@mmo-idle/shared';
 import { ITEM_DATABASE } from '@mmo-idle/shared';
-import { recalculatePlayerStats } from './stats';
+import { recalculatePlayerStatsFromSnapshot } from './stats';
 import type { World } from '../world/World';
 import type { PlayerEntity } from '../ecs/components/player';
-import { withPlayerSnapshotDraft } from '../ecs/playerSnapshotAdapter';
+import { syncArchetypeSlices } from '../ecs/archetypeSliceSync';
+import { recalculatePlayerEntityStats } from '../ecs/playerSnapshotAdapter';
 
-export function equipItem(world: World, player: PlayerSnapshot | PlayerEntity, definitionId: string): boolean {
-  if ('entityId' in player) {
-    return withPlayerSnapshotDraft(world, player, draft => equipItemSnapshot(draft, definitionId));
-  }
-  return equipItemSnapshot(player, definitionId);
-}
-
-export function equipItemSnapshot(player: PlayerSnapshot, definitionId: string): boolean {
+/** DB hydrate boundary — equips on a wire snapshot before entity attach. */
+export function equipItemOnSnapshot(player: PlayerSnapshot, definitionId: string): boolean {
   const def = ITEM_DATABASE.get(definitionId);
   if (!def) return false;
 
@@ -20,35 +15,51 @@ export function equipItemSnapshot(player: PlayerSnapshot, definitionId: string):
   if (idx === -1) return false;
 
   const slot = def.slot;
-
-  // Remove item from inventory
   player.inventory = [
     ...player.inventory.slice(0, idx),
     ...player.inventory.slice(idx + 1),
   ];
 
-  // Return previously equipped item to inventory
   const displaced = player.equipment[slot];
   if (displaced) player.inventory = [...player.inventory, displaced];
 
   player.equipment[slot] = definitionId;
-  recalculatePlayerStats(player);
+  recalculatePlayerStatsFromSnapshot(player);
   return true;
 }
 
-export function unequipItem(world: World, player: PlayerSnapshot | PlayerEntity, slot: EquipmentSlot): boolean {
-  if ('entityId' in player) {
-    return withPlayerSnapshotDraft(world, player, draft => unequipItemSnapshot(draft, slot));
+export function equipItem(world: World, entity: PlayerEntity, definitionId: string): boolean {
+  const def = ITEM_DATABASE.get(definitionId);
+  if (!def) return false;
+
+  const idx = entity.holdsInventory.inventory.indexOf(definitionId);
+  if (idx === -1) return false;
+
+  const slot = def.slot;
+
+  entity.holdsInventory.inventory = [
+    ...entity.holdsInventory.inventory.slice(0, idx),
+    ...entity.holdsInventory.inventory.slice(idx + 1),
+  ];
+
+  const displaced = entity.holdsInventory.equipment[slot];
+  if (displaced) {
+    entity.holdsInventory.inventory = [...entity.holdsInventory.inventory, displaced];
   }
-  return unequipItemSnapshot(player, slot);
+
+  entity.holdsInventory.equipment[slot] = definitionId;
+  recalculatePlayerEntityStats(world, entity);
+  syncArchetypeSlices(world, entity);
+  return true;
 }
 
-function unequipItemSnapshot(player: PlayerSnapshot, slot: EquipmentSlot): boolean {
-  const current = player.equipment[slot];
+export function unequipItem(world: World, entity: PlayerEntity, slot: EquipmentSlot): boolean {
+  const current = entity.holdsInventory.equipment[slot];
   if (!current) return false;
 
-  player.equipment[slot] = null;
-  player.inventory = [...player.inventory, current];
-  recalculatePlayerStats(player);
+  entity.holdsInventory.equipment[slot] = null;
+  entity.holdsInventory.inventory = [...entity.holdsInventory.inventory, current];
+  recalculatePlayerEntityStats(world, entity);
+  syncArchetypeSlices(world, entity);
   return true;
 }

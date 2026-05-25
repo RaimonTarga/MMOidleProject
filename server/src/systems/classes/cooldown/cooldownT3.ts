@@ -1,17 +1,18 @@
-import type { PlayerSnapshot, PassiveKey } from '@mmo-idle/shared';
+import type { PassiveKey } from '@mmo-idle/shared';
 import { defineBuff, type BuffDescriptor } from '../../registry/buffs';
 import { registerCombatListener } from '../../combatPipeline';
 import { isEmpoweredAttack, consumeEmpoweredAttack } from '../../empoweredAttacks';
 import type { CombatState } from '../../combatState';
 import {
   applyStatusEffect, removeStatusEffect, getStatusEffect,
-} from '../../statusEffects';
+} from '@mmo-idle/shared';
 import { grantMonsterRewards } from '../../rewards';
 import { EXECUTION_COOLDOWN_MS } from './cooldownPrototype';
-import type { UsesCooldown } from '../../../ecs/components/usesCooldown';
+import type { UsesCooldown } from '@mmo-idle/shared';
 import type { World } from '../../../world/World';
 import type { PlayerEntity } from '../../../ecs/components/player';
 import type { MonsterEntity } from '../../../ecs/components/monster';
+import { attachMarker, detachMarkerIfNoEffect } from '../../../ecs/markerHelpers';
 
 // ── Fallback constants ─────────────────────────────────────────────────────────
 //
@@ -69,9 +70,8 @@ const ENT_DOT_FX = 'entropy-collapse-dot';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
-function hasPassive(player: PlayerSnapshot | PlayerEntity, key: PassiveKey): boolean {
-  const passives = 'entityId' in player ? player.usesSkills.passives : player.passives;
-  return (passives[key] ?? 0) > 0;
+function hasPassive(player: PlayerEntity, key: PassiveKey): boolean {
+  return (player.usesSkills.passives[key] ?? 0) > 0;
 }
 
 function endChannel(cd: UsesCooldown): void {
@@ -121,7 +121,7 @@ export function initCooldownT3(): void {
   });
 
   // ── 2. onHit (empowered hits): each mechanic with a unique empowered effect ─
-  registerCombatListener('onHit', (ctx, _world) => {
+  registerCombatListener('onHit', (ctx, world) => {
     if (ctx.attackerType !== 'player') return;
     if (!ctx.metadata['empoweredAttack']) return;
 
@@ -186,6 +186,7 @@ export function initCooldownT3(): void {
         sourceId:    player.isPlayer.id,
         data:        { baseDamagePerTick: baseDmg, nextTickIn: ENTROPY_TICK_MS, tickIntervalMs: ENTROPY_TICK_MS },
       });
+      attachMarker(world, ctx.defender, 'hasEntropy');
       console.log(`[EntropyColl] ${player.isPlayer.id}: DoT applied on ${ctx.defender.isMonster.id} (${baseDmg} base/tick)`);
       ctx.damage = 0;
       return;
@@ -421,11 +422,14 @@ function updateSingularExtraction(world: World, dt: number): void {
 function updateEntropyCollapse(world: World, dt: number): void {
   const toKill: Array<{ monsterId: string; sourceId: string }> = [];
 
-  for (const entity of world.monsterEntities) {
+  for (const entity of world.entropyMonsters) {
     const monsterId = entity.isMonster.id;
     const state     = entity.tracksCombat;
     const effect = getStatusEffect(state, ENT_DOT_FX);
-    if (!effect) continue;
+    if (!effect) {
+      detachMarkerIfNoEffect(world, entity, 'hasEntropy', state, ENT_DOT_FX);
+      continue;
+    }
 
     effect.data['nextTickIn'] -= dt;
     if (effect.data['nextTickIn'] > 0) continue;
@@ -447,6 +451,10 @@ function updateEntropyCollapse(world: World, dt: number): void {
     if (entity.hasHealth.hp <= 0) {
       toKill.push({ monsterId, sourceId: effect.sourceId });
     }
+  }
+
+  for (const entity of world.entropyMonsters) {
+    detachMarkerIfNoEffect(world, entity, 'hasEntropy', entity.tracksCombat, ENT_DOT_FX);
   }
 
   for (const { monsterId, sourceId } of toKill) {
@@ -576,21 +584,13 @@ export function getAlignmentPct(cd: UsesCooldown): number {
 
 // ── Buff descriptors ──────────────────────────────────────────────────────────
 
-/**
- * Fetch the cooldown component for buff descriptors. Returns null when no
- * world reference, no entity, or no cooldown component is attached.
- */
-function getCooldownForBuff(world: World, playerId: string): UsesCooldown | null {
-  return world.getPlayerEntity(playerId)?.usesCooldown ?? null;
-}
-
-function getChannelingRemainingPct(player: PlayerSnapshot): number {
-  return Math.max(0, Math.min(100, 100 - player.channelingPct));
+function getChannelingRemainingPct(cd: UsesCooldown): number {
+  return Math.max(0, Math.min(100, 100 - cd.channelingPct));
 }
 
 export const COOLDOWN_T3_BUFFS = [
-  defineBuff('cooldown-overdrive', ({ player, world }) => {
-    const cd = getCooldownForBuff(world, player.id);
+  defineBuff('cooldown-overdrive', ({ player }) => {
+    const cd = player.usesCooldown;
     if (!cd) return null;
     const pct = getOverdrivePct(cd);
     return pct > 0 ? { id: 'cooldown-overdrive', label: 'Ovrdv', stacks: 1, durationPct: pct, color: '#ff6622' } : null;
@@ -610,15 +610,15 @@ export const COOLDOWN_T3_BUFFS = [
     const stacks = getBatteryStacks(playerCs);
     return stacks > 0 ? { id: 'cooldown-battery', label: 'Batry', stacks, durationPct: -1, color: '#aaffaa' } : null;
   }),
-  defineBuff('cooldown-alignment', ({ player, world }) => {
-    const cd = getCooldownForBuff(world, player.id);
+  defineBuff('cooldown-alignment', ({ player }) => {
+    const cd = player.usesCooldown;
     if (!cd) return null;
     const pct = getAlignmentPct(cd);
     return pct > 0 ? { id: 'cooldown-alignment', label: 'Algn', stacks: 1, durationPct: pct, color: '#cc44ff' } : null;
   }),
   defineBuff('cooldown-channel', ({ player }) => {
-    return player.isChanneling
-      ? { id: 'cooldown-channel', label: 'Beam', stacks: 1, durationPct: getChannelingRemainingPct(player), color: '#ff44aa' }
-      : null;
+    const cd = player.usesCooldown;
+    if (!cd?.isChanneling) return null;
+    return { id: 'cooldown-channel', label: 'Beam', stacks: 1, durationPct: getChannelingRemainingPct(cd), color: '#ff44aa' };
   }),
 ] as const satisfies readonly BuffDescriptor[];

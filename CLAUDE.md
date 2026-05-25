@@ -25,6 +25,8 @@ Key design axioms:
 ├── map-editor.html         ← standalone biome editor (open in browser, no build needed)
 ├── shared/src/
 │   ├── index.ts            ← ALL shared types, socket event maps, constants
+│   ├── components/         ← ECS slice + marker component shapes
+│   ├── systems/            ← Pure formulas (stats, skills)
 │   ├── skillTree.ts        ← SKILL_TREE map (tiers 0-3 hand-authored, 4-7 generated)
 │   ├── biomeDatabase.ts    ← BiomeDefinition, BIOME_DATABASE, bossPoolByTier
 │   ├── monsterDatabase.ts  ← MonsterDefinition (isBoss?, dotEffect?, bossScript?), MONSTER_DATABASE; BossAction/BossPhase/BossScript types
@@ -38,13 +40,14 @@ Key design axioms:
 │   └── scenes/GameScene.ts ← main scene: socket, entity rendering, debug overlays
 └── server/src/
     ├── index.ts            ← Express + Socket.IO + game loop
+    ├── ecs/                ← entity.ts, projection.ts, marker helpers, player/monster types
     ├── world/
     │   ├── World.ts        ← mutable state + tick() + ensureBoss()
     │   └── nodeRegistry.ts ← 11×11 node grid from NODE_BIOMES
     └── systems/
         ├── combat.ts, combatPipeline.ts, combatState.ts, attackCounter.ts
         ├── stats.ts, movement.ts, ai.ts, autoTarget.ts, transitions.ts
-        ├── aoeDamage.ts, rewards.ts, statusEffects.ts, defenseSystems.ts, weaponEffects.ts
+        ├── aoeDamage.ts, rewards.ts, defenseSystems.ts, weaponEffects.ts
         ├── bossScripts.ts
         ├── questSystem.ts
         ├── cadencePrototype.ts
@@ -475,3 +478,13 @@ T1 bosses: 400–700 HP, 14–22 ATK. Jungle first appears T2; ex-jungle T1 node
 - **Reload multiplier is a final layer** — apply `* 0.5` to `attack` and `attackCooldown` at the end of `recalculatePlayerStats()`, never additively
 - **Boss script stat modifications use save-original pattern** — `ActiveBossEffect` stores the pre-buff stat value; restored on expiry. Overlapping same-stat effects from multiple sources are not supported (last write wins)
 - **`biomeXpForLevel` is the only XP threshold function** — `BIOME_XP_PER_LEVEL` no longer exists; never use flat XP per level
+
+### ECS conventions (server)
+
+- **Component shapes live in `shared/src/components/`** — slice interfaces, status helpers, marker components, and pure factories (`makeUsesCadenceFromSnapshot`, etc.). Import from `@mmo-idle/shared`; do not add server re-export shims.
+- **Server owns miniplex wiring** — `ServerEntity` in `server/src/ecs/entity.ts`, typed queries on `World.ts` (`playerEntities`, `dottedMonsters`, `bossScriptedMonsters`, …), and `projection.ts` assemble/decompose at wire boundaries only.
+- **Entity-native game logic** — systems mutate slice fields on `PlayerEntity` / `MonsterEntity` directly. No `withPlayerSnapshotDraft` round-trip. DB hydrate may use `recalculatePlayerStatsFromSnapshot` / `equipItemOnSnapshot` before entity attach.
+- **Component presence gates archetypes** — `if (entity.usesCadence)`, not `combatArchetype === 'cadence'`. Same for status iteration: attach a marker (`hasDot`, `hasDetonation`, …) when applying a tick-driven effect; iterate the narrow query; detach when the effect expires.
+- **Lookup-only status effects** stay in `tracksCombat.statusEffects` without markers — see `.cursor/design/status.md`.
+- **`syncPlayerBuffs` is entity-native** — `BuffProjectionContext.player` is `PlayerEntity`; descriptors read slices, not assembled snapshots.
+- **Dev boot checks** — `[wire-parity]` snapshot round-trip + `[marker-invariants]` (`assertMarkerInvariants`) run on server start in dev mode.

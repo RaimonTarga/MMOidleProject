@@ -1,35 +1,25 @@
 /**
  * Attach / detach optional archetype slices when combatArchetype or passives change.
- * Called only from `applyPlayerSnapshotDraft` at the equip / hydrate / respawn seam.
+ * Call after any path that mutates `usesSkills.combatArchetype` or archetype-relevant passives.
  */
-import type { PlayerSnapshot } from '@mmo-idle/shared';
 import type { World } from '../world/World';
 import type { ServerEntity } from './entity';
 import type { PlayerEntity } from './components/player';
+import { assemblePlayerSnapshot } from './projection';
 import {
   makeAppliesDotsFromSnapshot,
   refreshAppliesDotsFromSnapshot,
-} from './components/appliesDots';
-import {
   makeChillsTargetFromSnapshot,
   refreshChillsTargetFromSnapshot,
-} from './components/chillsTarget';
-import {
   makeUsesCadenceFromSnapshot,
   refreshUsesCadenceFromSnapshot,
-} from './components/usesCadence';
-import {
   makeUsesCooldownFromSnapshot,
   refreshUsesCooldownFromSnapshot,
-} from './components/usesCooldown';
-import {
   makeUsesEnergyFromSnapshot,
   refreshUsesEnergyFromSnapshot,
-} from './components/usesEnergy';
-import {
   makeUsesReloadFromSnapshot,
   refreshUsesReloadFromSnapshot,
-} from './components/usesReload';
+} from '@mmo-idle/shared';
 
 function syncArchetypeSlice<K extends keyof ServerEntity>(
   world: World,
@@ -50,58 +40,60 @@ function syncArchetypeSlice<K extends keyof ServerEntity>(
   }
 }
 
-export function syncArchetypeSlices(world: World, entity: PlayerEntity, draft: PlayerSnapshot): void {
+export function syncArchetypeSlices(world: World, entity: PlayerEntity): void {
+  const snap = assemblePlayerSnapshot(entity);
+
   syncArchetypeSlice(
     world,
     entity,
-    draft.combatArchetype === 'cadence',
+    snap.combatArchetype === 'cadence',
     'usesCadence',
-    () => makeUsesCadenceFromSnapshot(draft),
-    slice => refreshUsesCadenceFromSnapshot(slice, draft),
+    () => makeUsesCadenceFromSnapshot(snap),
+    slice => refreshUsesCadenceFromSnapshot(slice, snap),
   );
 
   syncArchetypeSlice(
     world,
     entity,
-    draft.combatArchetype === 'energy',
+    snap.combatArchetype === 'energy',
     'usesEnergy',
-    () => makeUsesEnergyFromSnapshot(draft),
-    slice => refreshUsesEnergyFromSnapshot(slice, draft),
+    () => makeUsesEnergyFromSnapshot(snap),
+    slice => refreshUsesEnergyFromSnapshot(slice, snap),
   );
 
   syncArchetypeSlice(
     world,
     entity,
-    draft.combatArchetype === 'dot',
+    snap.combatArchetype === 'dot',
     'appliesDots',
-    () => makeAppliesDotsFromSnapshot(draft),
-    slice => refreshAppliesDotsFromSnapshot(slice, draft),
+    () => makeAppliesDotsFromSnapshot(snap),
+    slice => refreshAppliesDotsFromSnapshot(slice, snap),
   );
 
   syncArchetypeSlice(
     world,
     entity,
-    draft.combatArchetype === 'dot' && (draft.passives['dot.freezing-cold'] ?? 0) > 0,
+    snap.combatArchetype === 'dot' && (snap.passives['dot.freezing-cold'] ?? 0) > 0,
     'chillsTarget',
-    () => makeChillsTargetFromSnapshot(draft),
-    slice => refreshChillsTargetFromSnapshot(slice, draft),
+    () => makeChillsTargetFromSnapshot(snap),
+    slice => refreshChillsTargetFromSnapshot(slice, snap),
   );
 
   syncArchetypeSlice(
     world,
     entity,
-    draft.combatArchetype === 'cooldown',
+    snap.combatArchetype === 'cooldown',
     'usesCooldown',
-    () => makeUsesCooldownFromSnapshot(draft),
-    slice => refreshUsesCooldownFromSnapshot(slice, draft),
+    () => makeUsesCooldownFromSnapshot(snap),
+    slice => refreshUsesCooldownFromSnapshot(slice, snap),
   );
 
   syncArchetypeSlice(
     world,
     entity,
-    draft.combatArchetype === 'reload',
+    snap.combatArchetype === 'reload',
     'usesReload',
-    () => makeUsesReloadFromSnapshot(draft),
-    slice => refreshUsesReloadFromSnapshot(slice, draft),
+    () => makeUsesReloadFromSnapshot(snap),
+    slice => refreshUsesReloadFromSnapshot(slice, snap),
   );
 }

@@ -1,9 +1,16 @@
 import type { PlayerSnapshot } from '../index';
+import type { TracksProgression, UsesSkills } from '../components/snapshotSlices';
 import { SKILL_TREE } from '../skillTree';
 
 export interface UnlockResult {
   ok: boolean;
   reason?: string;
+}
+
+/** Minimal slice view for skill-unlock validation. */
+export interface SkillUnlockTarget {
+  usesSkills:        Pick<UsesSkills, 'unlockedSkills' | 'selectedClass' | 'selectedSubVariant' | 'selectedRange'>;
+  tracksProgression: Pick<TracksProgression, 'skillPoints' | 'currentSkillTier'>;
 }
 
 /**
@@ -17,25 +24,42 @@ export interface UnlockResult {
  *
  * Across all tiers: node.tier must equal player.currentSkillTier (strict sequential gate).
  */
-export function canUnlockSkill(player: PlayerSnapshot, skillId: string): UnlockResult {
+export function canUnlockSkill(target: SkillUnlockTarget, skillId: string): UnlockResult {
   const node = SKILL_TREE.get(skillId);
-  if (!node)                                   return { ok: false, reason: 'Unknown skill' };
-  if (player.unlockedSkills.includes(skillId)) return { ok: false, reason: 'Already unlocked' };
-  if (player.skillPoints < node.cost)          return { ok: false, reason: 'Not enough skill points' };
-  if (node.tier !== player.currentSkillTier)   return { ok: false, reason: 'Not the current tier' };
+  if (!node) return { ok: false, reason: 'Unknown skill' };
+  if (target.usesSkills.unlockedSkills.includes(skillId)) return { ok: false, reason: 'Already unlocked' };
+  if (target.tracksProgression.skillPoints < node.cost) return { ok: false, reason: 'Not enough skill points' };
+  if (node.tier !== target.tracksProgression.currentSkillTier) return { ok: false, reason: 'Not the current tier' };
 
   if (node.tier === 0) {
-    if (player.selectedClass !== null)          return { ok: false, reason: 'Class already chosen' };
+    if (target.usesSkills.selectedClass !== null) return { ok: false, reason: 'Class already chosen' };
   } else if (node.tier === 1) {
-    if (node.classId !== player.selectedClass)  return { ok: false, reason: 'Wrong class' };
+    if (node.classId !== target.usesSkills.selectedClass) return { ok: false, reason: 'Wrong class' };
   } else if (node.tier === 2) {
-    // Universal range nodes — open to all classes, but requires sub-variant chosen first.
-    if (player.selectedSubVariant === null)     return { ok: false, reason: 'Sub-variant not chosen' };
+    if (target.usesSkills.selectedSubVariant === null) return { ok: false, reason: 'Sub-variant not chosen' };
   } else {
-    // Tier 3+: full 15-way path lock (class × sub-variant).
-    if (node.classId !== player.selectedClass)             return { ok: false, reason: 'Wrong class' };
-    if (node.subVariantId !== player.selectedSubVariant)   return { ok: false, reason: 'Wrong sub-variant' };
+    if (node.classId !== target.usesSkills.selectedClass) return { ok: false, reason: 'Wrong class' };
+    if (node.subVariantId !== target.usesSkills.selectedSubVariant) return { ok: false, reason: 'Wrong sub-variant' };
   }
 
   return { ok: true };
+}
+
+/** Validate unlock eligibility from a wire snapshot (client UI, legacy callers). */
+export function canUnlockSkillFromSnapshot(player: PlayerSnapshot, skillId: string): UnlockResult {
+  return canUnlockSkill(
+    {
+      usesSkills: {
+        unlockedSkills:     player.unlockedSkills,
+        selectedClass:      player.selectedClass,
+        selectedSubVariant: player.selectedSubVariant,
+        selectedRange:      player.selectedRange,
+      },
+      tracksProgression: {
+        skillPoints:      player.skillPoints,
+        currentSkillTier: player.currentSkillTier,
+      },
+    },
+    skillId,
+  );
 }

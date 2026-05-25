@@ -9,10 +9,11 @@ import {
 } from '@mmo-idle/shared';
 import type { World } from '../../world/World';
 import { NODE_REGISTRY } from '../../world/nodeRegistry';
-import { makeTracksCombat, resetTracksCombat } from '../../ecs/components/tracksCombat';
+import { makeTracksCombat, resetTracksCombat, initScriptsBoss } from '@mmo-idle/shared';
 import type { MonsterEntity } from '../../ecs/components/monster';
 import { decomposeMonsterSnapshot } from '../../ecs/projection';
 import { recalculatePlayerEntityStats } from '../../ecs/playerSnapshotAdapter';
+import { syncArchetypeSlices } from '../../ecs/archetypeSliceSync';
 
 // Regular monsters in dungeon nodes are scaled up; boss stats come from the database directly.
 const DUNGEON_HP_MULT  = 2.0;
@@ -95,6 +96,10 @@ export function createMonster(
   };
   world.ecs.add(entity);
 
+  if (def.bossScript) {
+    world.ecs.addComponent(entity, 'scriptsBoss', initScriptsBoss(def.bossScript));
+  }
+
   return monster;
 }
 
@@ -153,6 +158,7 @@ export function respawnPlayer(world: World, playerId: string): void {
   entity.usesAutocombat.auto = false;
 
   recalculatePlayerEntityStats(world, entity);
+  syncArchetypeSlices(world, entity);
   entity.hasHealth.hp = entity.hasHealth.maxHp;
 
   entity.evadesHits.count = 0;

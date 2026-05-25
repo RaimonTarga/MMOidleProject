@@ -4,7 +4,6 @@ import { collectMechanicBuffs } from './classes/registry';
 import { DEFENSE_BUFFS } from './defenseSystems';
 import { WEAPON_BUFFS } from './weaponEffects';
 import type { BuffDescriptor } from './registry/buffs';
-import { assemblePlayerSnapshot } from '../ecs/projection';
 
 /** Compile-time guard: shared BUFF_IDS must match server descriptor ids. */
 type AssertEqual<A, B> =
@@ -31,7 +30,6 @@ export type ServerBuffId = typeof ALL_BUFFS[number]['id'];
  */
 export function syncPlayerBuffs(world: World): void {
   for (const entity of world.playerEntities) {
-    const player = assemblePlayerSnapshot(entity);
     const playerCs = entity.tracksCombat;
     const targetCs = entity.performsAttack.attackTargetId
       ? world.getMonsterEntity(entity.performsAttack.attackTargetId)?.tracksCombat
@@ -39,7 +37,7 @@ export function syncPlayerBuffs(world: World): void {
 
     const buffs: PlayerBuff[] = [];
     for (const descriptor of ALL_BUFFS) {
-      const buff = descriptor.project({ player, playerCs, targetCs, world });
+      const buff = descriptor.project({ player: entity, playerCs, targetCs, world });
       if (buff) buffs.push(buff);
     }
 

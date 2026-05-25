@@ -3,7 +3,7 @@ import {
   tickCooldowns,
   tickStatusEffectDurations,
   type TracksCombat,
-} from '../ecs/components/tracksCombat';
+} from '@mmo-idle/shared';
 
 // Re-export component type and helpers for existing importers.
 export type {
@@ -11,7 +11,7 @@ export type {
   CombatState,
   StatusEffect,
   StatusEffectConfig,
-} from '../ecs/components/tracksCombat';
+} from '@mmo-idle/shared';
 
 export {
   makeTracksCombat,
@@ -37,7 +37,7 @@ export {
   isCooldownActive,
   tickCooldowns,
   tickStatusEffectDurations,
-} from '../ecs/components/tracksCombat';
+} from '@mmo-idle/shared';
 
 /**
  * Run at the top of every world tick so cooldowns and status effect durations are

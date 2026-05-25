@@ -1,6 +1,6 @@
 import { MONSTER_DATABASE, computeScaledDotDamage } from '@mmo-idle/shared';
 import { registerCombatListener } from '../../combatPipeline';
-import { applyStatusEffect, getStatusEffects, getTotalStacks } from '../../statusEffects';
+import { applyStatusEffect, getStatusEffects, getTotalStacks } from '@mmo-idle/shared';
 import { grantMonsterRewards } from '../../rewards';
 import {
   initDotT3,
@@ -9,6 +9,7 @@ import {
   getFrozenMult,
 } from './dotT3';
 import type { World } from '../../../world/World';
+import { attachMarker, detachMarkerIfNoEffect } from '../../../ecs/markerHelpers';
 
 // Re-export the pure tick formula from shared so existing importers don't change paths.
 export { computeScaledDotDamage };
@@ -38,11 +39,14 @@ export function updateDotArchetype(world: World, dt: number): void {
   // ── Monster-side: player-applied DoT ticking on monsters ─────────────────
   const monstersToKill: Array<{ monsterId: string; sourceId: string }> = [];
 
-  for (const entity of world.monsterEntities) {
+  for (const entity of world.dottedMonsters) {
     const monsterId = entity.isMonster.id;
     const state     = entity.tracksCombat;
     const effect = getStatusEffects(state, DOT_EFFECT_ID)[0];
-    if (!effect) continue;
+    if (!effect) {
+      detachMarkerIfNoEffect(world, entity, 'hasDot', state, DOT_EFFECT_ID);
+      continue;
+    }
     if (effect.data.t3Perm) continue; // Permafrost ticking managed by updateDotT3
 
     effect.data.nextTickIn -= dt;
@@ -75,11 +79,14 @@ export function updateDotArchetype(world: World, dt: number): void {
   // protection; dot-resistance is the dedicated counter that stacks on top.
   const playersToRespawn: string[] = [];
 
-  for (const entity of world.playerEntities) {
+  for (const entity of world.dottedPlayers) {
     const playerId  = entity.isPlayer.id;
     const state     = entity.tracksCombat;
     const effect = getStatusEffects(state, DOT_EFFECT_ID)[0];
-    if (!effect) continue;
+    if (!effect) {
+      detachMarkerIfNoEffect(world, entity, 'hasDot', state, DOT_EFFECT_ID);
+      continue;
+    }
 
     effect.data.nextTickIn -= dt;
     if (effect.data.nextTickIn > 0) continue;
@@ -128,7 +135,7 @@ export function initDotArchetype(): void {
 
   // ── Player → Monster: base stack application ─────────────────────────────
   // Fires only when no T3 mechanic has claimed the hit (dotHandled not set).
-  registerCombatListener('onHit', (ctx, _world) => {
+  registerCombatListener('onHit', (ctx, world) => {
     if (ctx.attackerType !== 'player') return;
     if (ctx.defenderType !== 'monster') return;
     if (ctx.metadata['dotHandled']) return;
@@ -172,11 +179,12 @@ export function initDotArchetype(): void {
     if (effect.stacks >= maxStacks) {
       effect.data.nextTickIn = tickIntervalMs;
     }
+    attachMarker(world, ctx.defender, 'hasDot');
   });
 
   // ── Monster → Player: DoT stack application ───────────────────────────────
   // Monsters with a dotEffect in MonsterDefinition apply stacks on every hit.
-  registerCombatListener('onHit', (ctx, _world) => {
+  registerCombatListener('onHit', (ctx, world) => {
     if (ctx.attackerType !== 'monster') return;
     if (ctx.defenderType !== 'player') return;
 
@@ -205,5 +213,6 @@ export function initDotArchetype(): void {
     if (effect.stacks >= maxStacks) {
       effect.data.nextTickIn = tickIntervalMs;
     }
+    attachMarker(world, ctx.defender, 'hasDot');
   });
 }

@@ -5,7 +5,7 @@ import {
   makeCombatContext,
   emitCombatEvent,
 } from './combatPipeline';
-import { getStatusEffect } from './statusEffects';
+import { getStatusEffect } from '@mmo-idle/shared';
 import { getAntiHealMult } from './defenseSystems';
 import { applyPlayerAoe } from './aoeDamage';
 import { isMonsterFrozen } from './classes/dot/dotT3';

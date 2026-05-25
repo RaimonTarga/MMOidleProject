@@ -1,4 +1,4 @@
-import type { BossScript } from '@mmo-idle/shared';
+import type { BossScript } from '../monsterDatabase';
 
 /**
  * An active timed effect on a boss.

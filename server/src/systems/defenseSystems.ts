@@ -1,4 +1,3 @@
-import type { PlayerSnapshot } from '@mmo-idle/shared';
 import { GAME_CONFIG } from '@mmo-idle/shared';
 import type { PlayerEntity } from '../ecs/components/player';
 import { defineBuff, type BuffDescriptor } from './registry/buffs';
@@ -9,7 +8,7 @@ import {
   isCooldownActive, setCooldown,
 } from './combatState';
 import type { CombatState } from './combatState';
-import { removeStatusEffectStacks } from './statusEffects';
+import { removeStatusEffectStacks } from '@mmo-idle/shared';
 import type { World } from '../world/World';
 
 // ── Constants ─────────────────────────────────────────────────────────────────
@@ -42,9 +41,8 @@ export function getAntiHealMult(cs: CombatState): number {
  * Future debuff-application code should multiply potency by this before applying.
  * Resistance is capped at 90% (multiplier floor 0.10).
  */
-export function getDebuffResistanceMult(player: PlayerSnapshot | PlayerEntity): number {
-  const passives = 'entityId' in player ? player.usesSkills.passives : player.passives;
-  const resist = Math.min(0.9, passives['defense.debuff-resistance'] ?? 0);
+export function getDebuffResistanceMult(player: PlayerEntity): number {
+  const resist = Math.min(0.9, player.usesSkills.passives['defense.debuff-resistance'] ?? 0);
   return 1 - resist;
 }
 
@@ -53,19 +51,15 @@ export function getDebuffResistanceMult(player: PlayerSnapshot | PlayerEntity): 
  * Use for every player heal source so antiheal is consistent.
  */
 export function applyHealToPlayer(
-  player: PlayerSnapshot | PlayerEntity,
+  player: PlayerEntity,
   cs: CombatState,
   amount: number,
 ): void {
   if (amount <= 0) return;
-  if ('entityId' in player) {
-    player.hasHealth.hp = Math.min(
-      player.hasHealth.maxHp,
-      player.hasHealth.hp + amount * getAntiHealMult(cs),
-    );
-    return;
-  }
-  player.hp = Math.min(player.maxHp, player.hp + amount * getAntiHealMult(cs));
+  player.hasHealth.hp = Math.min(
+    player.hasHealth.maxHp,
+    player.hasHealth.hp + amount * getAntiHealMult(cs),
+  );
 }
 
 // ── Pool accessors (for buffSync) ─────────────────────────────────────────────
@@ -200,11 +194,9 @@ export function initDefenseSystems(): void {
  * @param amount     Shield HP. Caller is responsible for scaling by maxHp if needed.
  * @param durationMs Duration in ms. 0 or negative = permanent until fully depleted.
  */
-export function applyShield(player: PlayerSnapshot | PlayerEntity, amount: number, durationMs: number): void {
+export function applyShield(player: PlayerEntity, amount: number, durationMs: number): void {
   if (amount <= 0) return;
-  const shields = 'entityId' in player
-    ? (player.hasHealth.shields ??= [])
-    : player.shields;
+  const shields = player.hasHealth.shields ??= [];
   shields.push({
     amount,
     maxAmount: amount,
@@ -217,12 +209,11 @@ export function applyShield(player: PlayerSnapshot | PlayerEntity, amount: numbe
  * e.g. applyShieldPercent(player, 0.20, 5000) → 20% maxHp shield for 5 s.
  */
 export function applyShieldPercent(
-  player: PlayerSnapshot | PlayerEntity,
+  player: PlayerEntity,
   pct: number,
   durationMs: number,
 ): void {
-  const maxHp = 'entityId' in player ? player.hasHealth.maxHp : player.maxHp;
-  applyShield(player, Math.round(maxHp * pct), durationMs);
+  applyShield(player, Math.round(player.hasHealth.maxHp * pct), durationMs);
 }
 
 /**
