@@ -1,57 +1,46 @@
+import { advanceMotion, zeroMotion } from '@mmo-idle/shared';
 import type { World } from '../world/World';
 import { NODE_REGISTRY } from '../world/nodeRegistry';
-
-interface Movable {
-  x: number;
-  y: number;
-  targetX: number;
-  targetY: number;
-}
-
-function moveToward(entity: Movable, dt: number, speed: number) {
-  const dx = entity.targetX - entity.x;
-  const dy = entity.targetY - entity.y;
-  const distSq = dx * dx + dy * dy;
-
-  if (distSq < 1) {
-    entity.x = entity.targetX;
-    entity.y = entity.targetY;
-    return;
-  }
-
-  const dist = Math.sqrt(distSq);
-  const step = speed * (dt / 1000);
-
-  if (step >= dist) {
-    entity.x = entity.targetX;
-    entity.y = entity.targetY;
-  } else {
-    entity.x += (dx / dist) * step;
-    entity.y += (dy / dist) * step;
-  }
-}
 
 // Monsters stay this many pixels from the node edge at all times.
 const MONSTER_MARGIN = 40;
 
 export function updateMovement(world: World, dt: number) {
-  for (const p of world.players.values()) {
-    if (p.isChanneling) {
+  for (const entity of world.playerEntities) {
+    if (entity.usesCooldown.isChanneling) {
       // Lock position in place — cancel any pending move target each tick
-      p.targetX = p.x;
-      p.targetY = p.y;
+      entity.isMoving.motion = zeroMotion();
       continue;
     }
-    moveToward(p, dt, p.speed);
+
+    const next = advanceMotion(
+      entity.hasPosition.current,
+      entity.isMoving.motion,
+      entity.hasPosition.speed * (dt / 1000),
+    );
+    entity.hasPosition.current = next.position;
+    entity.isMoving.motion     = next.motion;
   }
 
-  for (const m of world.monsters.values()) {
-    moveToward(m, dt, m.speed);
+  for (const e of world.monsterEntities) {
+    const next = advanceMotion(
+      e.hasPosition.current,
+      e.isMoving.motion,
+      e.hasPosition.speed * (dt / 1000),
+    );
+    e.hasPosition.current = next.position;
+    e.isMoving.motion     = next.motion;
 
-    const node = NODE_REGISTRY.get(m.nodeId);
+    const node = NODE_REGISTRY.get(e.hasPosition.nodeId);
     if (node) {
-      m.x = Math.max(MONSTER_MARGIN, Math.min(node.width  - MONSTER_MARGIN, m.x));
-      m.y = Math.max(MONSTER_MARGIN, Math.min(node.height - MONSTER_MARGIN, m.y));
+      e.hasPosition.current.x = Math.max(
+        MONSTER_MARGIN,
+        Math.min(node.width - MONSTER_MARGIN, e.hasPosition.current.x),
+      );
+      e.hasPosition.current.y = Math.max(
+        MONSTER_MARGIN,
+        Math.min(node.height - MONSTER_MARGIN, e.hasPosition.current.y),
+      );
     }
   }
 }

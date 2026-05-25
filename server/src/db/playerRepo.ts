@@ -1,8 +1,10 @@
 import { eq } from 'drizzle-orm';
 import { randomUUID } from 'crypto';
 import type { BetterSQLite3Database } from 'drizzle-orm/better-sqlite3';
-import type { PlayerState, SubVariant } from '@mmo-idle/shared';
+import type { PlayerSnapshot, SubVariant } from '@mmo-idle/shared';
 import { GAME_CONFIG, emptyEquipment } from '@mmo-idle/shared';
+import type { PlayerEntity } from '../ecs/components/player';
+import { assemblePlayerSnapshot } from '../ecs/projection';
 import { accounts, characters } from './schema';
 import { recalculatePlayerStats } from '../systems/stats';
 import { equipItem } from '../systems/inventory';
@@ -28,7 +30,7 @@ export function findOrCreateAccount(db: DB, accountId: string, displayName: stri
 
 /**
  * Returns the first character for the account, or creates a fresh one.
- * `socketId` is set as the runtime `id` on the returned PlayerState — the DB row
+ * `socketId` is set as the runtime `id` on the returned PlayerSnapshot — the DB row
  * keeps its own stable UUID so we can reload the same character next session.
  */
 export function getOrCreateCharacter(
@@ -36,7 +38,7 @@ export function getOrCreateCharacter(
   accountId: string,
   characterName: string,
   socketId: string,
-): PlayerState {
+): PlayerSnapshot {
   const row = db.select().from(characters)
     .where(eq(characters.accountId, accountId))
     .get();
@@ -79,7 +81,7 @@ export function getOrCreateCharacter(
   return fresh;
 }
 
-export function saveCharacter(db: DB, accountId: string, player: PlayerState): void {
+export function saveCharacter(db: DB, accountId: string, player: PlayerSnapshot): void {
   db.update(characters)
     .set({
       name:               player.name,
@@ -108,11 +110,15 @@ export function saveCharacter(db: DB, accountId: string, player: PlayerState): v
     .run();
 }
 
+export function saveCharacterFromEntity(db: DB, accountId: string, entity: PlayerEntity): void {
+  saveCharacter(db, accountId, assemblePlayerSnapshot(entity));
+}
+
 // ── Internals ─────────────────────────────────────────────────────────────────
 
 type CharacterRow = typeof characters.$inferSelect;
 
-function hydratePlayer(row: CharacterRow, socketId: string): PlayerState {
+function hydratePlayer(row: CharacterRow, socketId: string): PlayerSnapshot {
   const player = buildFreshPlayer(socketId, row.name, row.x, row.y);
 
   player.nodeId             = row.nodeId;
@@ -120,13 +126,13 @@ function hydratePlayer(row: CharacterRow, socketId: string): PlayerState {
   player.skillPoints        = row.skillPoints;
   player.unlockedSkills     = JSON.parse(row.unlockedSkills) as string[];
   player.inventory          = JSON.parse(row.inventory) as string[];
-  player.equipment          = JSON.parse(row.equipment) as PlayerState['equipment'];
-  player.essences           = JSON.parse(row.essences) as PlayerState['essences'];
-  player.biomeXP            = JSON.parse(row.biomeXP) as PlayerState['biomeXP'];
-  player.biomeLevel         = JSON.parse(row.biomeLevel) as PlayerState['biomeLevel'];
-  player.unlockedRecipes    = JSON.parse(row.unlockedRecipes) as PlayerState['unlockedRecipes'];
-  player.questProgress      = JSON.parse(row.questProgress) as PlayerState['questProgress'];
-  player.combatArchetype    = (row.combatArchetype as PlayerState['combatArchetype']) ?? null;
+  player.equipment          = JSON.parse(row.equipment) as PlayerSnapshot['equipment'];
+  player.essences           = JSON.parse(row.essences) as PlayerSnapshot['essences'];
+  player.biomeXP            = JSON.parse(row.biomeXP) as PlayerSnapshot['biomeXP'];
+  player.biomeLevel         = JSON.parse(row.biomeLevel) as PlayerSnapshot['biomeLevel'];
+  player.unlockedRecipes    = JSON.parse(row.unlockedRecipes) as PlayerSnapshot['unlockedRecipes'];
+  player.questProgress      = JSON.parse(row.questProgress) as PlayerSnapshot['questProgress'];
+  player.combatArchetype    = (row.combatArchetype as PlayerSnapshot['combatArchetype']) ?? null;
   player.selectedClass      = row.selectedClass ?? null;
   player.selectedSubVariant = (row.selectedSubVariant as SubVariant | null) ?? null;
   player.selectedRange      = row.selectedRange ?? null;
@@ -151,7 +157,7 @@ function hydratePlayer(row: CharacterRow, socketId: string): PlayerState {
   return player;
 }
 
-function buildFreshPlayer(id: string, name: string, x: number, y: number): PlayerState {
+function buildFreshPlayer(id: string, name: string, x: number, y: number): PlayerSnapshot {
   return {
     id,
     name,

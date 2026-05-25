@@ -1,6 +1,8 @@
-import type { PlayerState, MonsterState } from '@mmo-idle/shared';
+import { distanceSq } from '@mmo-idle/shared';
+import type { MonsterSnapshot, PlayerSnapshot } from '@mmo-idle/shared';
+import type { MonsterEntity } from '../ecs/components/monster';
+import type { PlayerEntity } from '../ecs/components/player';
 import type { World } from '../world/World';
-import { getNodeMonsters, getNodePlayers } from '../world/nodeQueries';
 import { grantMonsterRewards } from './rewards';
 
 /**
@@ -19,7 +21,7 @@ import { grantMonsterRewards } from './rewards';
  */
 export function applyPlayerAoe(
   world: World,
-  attacker: PlayerState,
+  attacker: PlayerEntity | PlayerSnapshot,
   centerX: number,
   centerY: number,
   radius: number,
@@ -27,29 +29,28 @@ export function applyPlayerAoe(
   excludeId?: string,
 ): void {
   const radiusSq = radius * radius;
-  const toKill: MonsterState[] = [];
+  const center = { x: centerX, y: centerY };
+  const toKill: MonsterEntity[] = [];
+  const attackerNodeId = 'hasPosition' in attacker ? attacker.hasPosition.nodeId : attacker.nodeId;
+  const attackerId = 'isPlayer' in attacker ? attacker.isPlayer.id : attacker.id;
 
-  for (const monster of getNodeMonsters(world, attacker.nodeId)) {
-    if (monster.id === excludeId) continue;
+  for (const monster of world.monsterEntitiesInNode(attackerNodeId)) {
+    if (monster.isMonster.id === excludeId) continue;
 
-    const dx = monster.x - centerX;
-    const dy = monster.y - centerY;
-    if (dx * dx + dy * dy > radiusSq) continue;
+    if (distanceSq(monster.hasPosition.current, center) > radiusSq) continue;
 
     const effectiveDmg = Math.max(1, Math.round(
-      Math.max(0, baseDamage - monster.plating) * (1 - monster.damageReduction),
+      Math.max(0, baseDamage - monster.mitigatesDamage.plating) * (1 - monster.mitigatesDamage.damageReduction),
     ));
 
-    monster.hp -= effectiveDmg;
+    monster.hasHealth.hp -= effectiveDmg;
 
-    if (monster.hp <= 0) toKill.push(monster);
+    if (monster.hasHealth.hp <= 0) toKill.push(monster);
   }
 
   for (const monster of toKill) {
-    grantMonsterRewards(world, attacker.id, monster);
-    world.monsters.delete(monster.id);
-    world.monsterAI.delete(monster.id);
-    world.monsterCombatState.delete(monster.id);
+    grantMonsterRewards(world, attackerId, monster);
+    world.removeMonsterEntity(monster.isMonster.id);
   }
 }
 
@@ -62,7 +63,7 @@ export function applyPlayerAoe(
  */
 export function applyMonsterAoe(
   world: World,
-  attacker: MonsterState,
+  attacker: MonsterEntity | MonsterSnapshot,
   centerX: number,
   centerY: number,
   radius: number,
@@ -70,24 +71,24 @@ export function applyMonsterAoe(
   excludeId?: string,
 ): void {
   const radiusSq = radius * radius;
+  const center = { x: centerX, y: centerY };
+  const attackerNodeId = 'hasPosition' in attacker ? attacker.hasPosition.nodeId : attacker.nodeId;
 
-  for (const player of getNodePlayers(world, attacker.nodeId)) {
-    if (player.id === excludeId) continue;
+  for (const player of world.playerEntitiesInNode(attackerNodeId)) {
+    if (player.isPlayer.id === excludeId) continue;
 
-    const dx = player.x - centerX;
-    const dy = player.y - centerY;
-    if (dx * dx + dy * dy > radiusSq) continue;
+    if (distanceSq(player.hasPosition.current, center) > radiusSq) continue;
 
     const effectiveDmg = Math.max(1, Math.round(
-      Math.max(0, baseDamage - player.plating) * (1 - player.damageReduction),
+      Math.max(0, baseDamage - player.mitigatesDamage.plating) * (1 - player.mitigatesDamage.damageReduction),
     ));
 
-    player.hp -= effectiveDmg;
+    player.hasHealth.hp -= effectiveDmg;
 
-    if (player.hp <= 0) {
-      world.respawnPlayer(player.id);
+    if (player.hasHealth.hp <= 0) {
+      world.respawnPlayer(player.isPlayer.id);
     } else {
-      world.playerCombatAt.set(player.id, Date.now());
+      world.setPlayerCombatAt(player.isPlayer.id, Date.now());
     }
   }
 }

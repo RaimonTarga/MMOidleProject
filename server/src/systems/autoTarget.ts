@@ -1,13 +1,19 @@
 import type { World } from '../world/World';
-import type { MonsterState } from '@mmo-idle/shared';
-import { getNodeMonsters } from '../world/nodeQueries';
+import type { MonsterEntity } from '../ecs/components/monster';
+import { distanceSq, vectorTo, zeroMotion } from '@mmo-idle/shared';
 import { NODE_REGISTRY } from '../world/nodeRegistry';
 
 const NODE_MARGIN = 40;
 
-function isRangedAutoPlayer(player: { attackRange: number; selectedRange: string | null; combatArchetype: string | null }): boolean {
-  return player.attackRange > 100 || player.selectedRange === 'range-mid' || player.selectedRange === 'range-far' ||
-    player.combatArchetype === 'reload' || player.combatArchetype === 'energy';
+function isRangedAutoPlayer(player: {
+  performsAttack: { attackRange: number };
+  usesSkills: { selectedRange: string | null; combatArchetype: string | null };
+}): boolean {
+  return player.performsAttack.attackRange > 100 ||
+    player.usesSkills.selectedRange === 'range-mid' ||
+    player.usesSkills.selectedRange === 'range-far' ||
+    player.usesSkills.combatArchetype === 'reload' ||
+    player.usesSkills.combatArchetype === 'energy';
 }
 
 function clampToNode(world: World, nodeId: string, x: number, y: number): { x: number; y: number } {
@@ -21,27 +27,25 @@ function clampToNode(world: World, nodeId: string, x: number, y: number): { x: n
 }
 
 export function updateAutoTargets(world: World) {
-  for (const player of world.players.values()) {
-    if (!player.auto) continue;
+  for (const player of world.playerEntities) {
+    if (!player.usesAutocombat.auto) continue;
 
-    const monsters = getNodeMonsters(world, player.nodeId);
+    const playerPos = player.hasPosition.current;
+    const monsters = world.monsterEntitiesInNode(player.hasPosition.nodeId);
 
     // ── Target selection ──────────────────────────────────────────────────
     // Priority 1: nearest monster with active aggro on this player.
     //   These are actively threatening us and the ones we're already trading
     //   hits with — always engage the thing hunting you first.
     // Priority 2: nearest monster in the node.
-    let target: MonsterState | null = null;
+    let target: MonsterEntity | null = null;
     let targetIsAggroed = false;
     let bestDist = Infinity;
 
     for (const monster of monsters) {
-      const ai = world.monsterAI.get(monster.id);
-      const aggroedOnPlayer = ai?.aggroTargetId === player.id;
-
-      const dx = monster.x - player.x;
-      const dy = monster.y - player.y;
-      const d  = dx * dx + dy * dy;
+      const ai = monster.monsterAi;
+      const aggroedOnPlayer = ai.aggroTargetId === player.isPlayer.id;
+      const d = distanceSq(monster.hasPosition.current, playerPos);
 
       if (aggroedOnPlayer) {
         if (!targetIsAggroed || d < bestDist) {
@@ -57,59 +61,60 @@ export function updateAutoTargets(world: World) {
 
     if (!target) continue;
 
-    const dx     = target.x - player.x;
-    const dy     = target.y - player.y;
-    const distSq = dx * dx + dy * dy;
-    const dist   = Math.sqrt(distSq);
+    const targetPos = target.hasPosition.current;
+    const dx     = targetPos.x - playerPos.x;
+    const dy     = targetPos.y - playerPos.y;
+    const distSqV = distanceSq(targetPos, playerPos);
+    const dist   = Math.sqrt(distSqV);
+    const attackRange = player.performsAttack.attackRange;
 
     // ── Movement decision ─────────────────────────────────────────────────
 
     if (isRangedAutoPlayer(player) && dist > 0) {
-      const minSafeDist = Math.min(player.attackRange * 0.82, target.attackRange + 45);
-      const idealDist   = Math.max(minSafeDist + 20, player.attackRange * 0.72);
-      const maxFireDist = player.attackRange * 0.92;
+      const minSafeDist = Math.min(attackRange * 0.82, target.performsAttack.attackRange + 45);
+      const idealDist   = Math.max(minSafeDist + 20, attackRange * 0.72);
+      const maxFireDist = attackRange * 0.92;
 
       if (dist < minSafeDist) {
         const pos = clampToNode(
           world,
-          player.nodeId,
-          target.x - (dx / dist) * idealDist,
-          target.y - (dy / dist) * idealDist,
+          player.hasPosition.nodeId,
+          targetPos.x - (dx / dist) * idealDist,
+          targetPos.y - (dy / dist) * idealDist,
         );
-        player.targetX = pos.x;
-        player.targetY = pos.y;
+        player.isMoving.motion = vectorTo(playerPos, pos);
         continue;
       }
 
       if (dist <= maxFireDist) {
-        player.targetX = player.x;
-        player.targetY = player.y;
+        player.isMoving.motion = zeroMotion();
         continue;
       }
 
       const pos = clampToNode(
         world,
-        player.nodeId,
-        target.x - (dx / dist) * idealDist,
-        target.y - (dy / dist) * idealDist,
+        player.hasPosition.nodeId,
+        targetPos.x - (dx / dist) * idealDist,
+        targetPos.y - (dy / dist) * idealDist,
       );
-      player.targetX = pos.x;
-      player.targetY = pos.y;
+      player.isMoving.motion = vectorTo(playerPos, pos);
       continue;
     }
 
     // Within attack range — hold position, no need to step closer.
-    if (distSq <= player.attackRange * player.attackRange) {
-      player.targetX = player.x;
-      player.targetY = player.y;
+    if (distSqV <= attackRange * attackRange) {
+      player.isMoving.motion = zeroMotion();
       continue;
     }
 
     // Outside attack range — always advance toward the target.
     // Stop at 75% of attack range so minor monster movement doesn't
     // immediately push the player back out of range.
-    const stopDist = player.attackRange * 0.75;
-    player.targetX = target.x - (dx / dist) * stopDist;
-    player.targetY = target.y - (dy / dist) * stopDist;
+    const stopDist = attackRange * 0.75;
+    const targetPoint = {
+      x: targetPos.x - (dx / dist) * stopDist,
+      y: targetPos.y - (dy / dist) * stopDist,
+    };
+    player.isMoving.motion = vectorTo(playerPos, targetPoint);
   }
 }

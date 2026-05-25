@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { hudBus } from '../hudBus';
-import type { PlayerBuff } from '@mmo-idle/shared';
+import type { PlayerBuff, BuffId } from '@mmo-idle/shared';
 import '../hud/hud.css';
 
 const ICON_SIZE = 52;
@@ -16,19 +16,38 @@ type BuffCategory =
   | 'dot-frozen'
   | 'weapon';
 
-function getBuffCategory(id: string): BuffCategory | null {
-  if (id.startsWith('cadence-'))  return 'cadence';
-  if (id.startsWith('cooldown-')) return 'cooldown';
-  if (id.startsWith('energy-'))   return 'energy';
-  if (id === 'dot-vigor')         return 'dot-poison';
-  if (id === 'dot-conflag')       return 'dot-fire';
-  if (id === 'dot-chill')         return 'dot-frost';
-  if (id === 'dot-frozen')        return 'dot-frozen';
-  if (id === 'sacred-burst')      return 'weapon';
-  return null;
+const BUFF_CATEGORY: Record<BuffId, BuffCategory | null> = {
+  'cadence-accelerando': 'cadence',
+  'cadence-echo':        'cadence',
+  'cooldown-overdrive':  'cooldown',
+  'cooldown-eternal-charge': 'cooldown',
+  'cooldown-temporal-ext':   'cooldown',
+  'cooldown-battery':        'cooldown',
+  'cooldown-alignment':      'cooldown',
+  'cooldown-channel':        'cooldown',
+  'energy-acc':          'energy',
+  'energy-overcharge':   'energy',
+  'energy-ac-charge':    'energy',
+  'energy-ac-discharge': 'energy',
+  'energy-reservoir':    'energy',
+  'energy-equilibrium':  'energy',
+  'energy-sm-pool':      'energy',
+  'dot-vigor':           'dot-poison',
+  'dot-conflag':         'dot-fire',
+  'dot-chill':           'dot-frost',
+  'dot-frozen':          'dot-frozen',
+  'reload-snipe-ready':  null,
+  'sacred-burst':        'weapon',
+  'defense-absorb':      null,
+  'defense-burst':       null,
+  'defense-debt':        null,
+};
+
+function getBuffCategory(id: BuffId): BuffCategory | null {
+  return BUFF_CATEGORY[id];
 }
 
-function getIconShapeStyle(id: string): React.CSSProperties {
+function getIconShapeStyle(id: BuffId): React.CSSProperties {
   if (id === 'dot-vigor') {
     return { borderRadius: '50%' };
   }

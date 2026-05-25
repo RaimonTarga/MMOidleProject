@@ -1,7 +1,6 @@
 import type { World } from '../world/World';
-import { GAME_CONFIG, TEST_ROOM_NODE_ID } from '@mmo-idle/shared';
+import { GAME_CONFIG, TEST_ROOM_NODE_ID, distanceSq } from '@mmo-idle/shared';
 import { grantMonsterRewards } from './rewards';
-import { getNodeMonsters } from '../world/nodeQueries';
 import {
   makeCombatContext,
   emitCombatEvent,
@@ -9,35 +8,34 @@ import {
 import { getStatusEffect } from './statusEffects';
 import { getAntiHealMult } from './defenseSystems';
 import { applyPlayerAoe } from './aoeDamage';
-import { isMonsterFrozen } from './dotT3';
+import { isMonsterFrozen } from './classes/dot/dotT3';
 
 export function updateCombat(world: World, dt: number, now: number) {
   // PLAYER → MONSTER
-  for (const player of world.players.values()) {
+  for (const player of world.playerEntities) {
     // Channeled Beam locks all auto-attacks; the beam system handles targeting + damage.
-    if (player.isChanneling) {
-      player.lastAttackAt = now; // keep the cooldown hot so attacks resume promptly
+    if (player.usesCooldown.isChanneling) {
+      player.performsAttack.lastAttackAt = now; // keep the cooldown hot so attacks resume promptly
       continue;
     }
 
     let target = null;
     let best = Infinity;
+    const attackRangeSq = player.performsAttack.attackRange * player.performsAttack.attackRange;
 
-    for (const m of getNodeMonsters(world, player.nodeId)) {
-      const dx = m.x - player.x;
-      const dy = m.y - player.y;
-      const d = Math.sqrt(dx * dx + dy * dy);
+    for (const m of world.monsterEntitiesInNode(player.hasPosition.nodeId)) {
+      const dSq = distanceSq(m.hasPosition.current, player.hasPosition.current);
 
-      if (d <= player.attackRange && d < best) {
-        best = d;
+      if (dSq <= attackRangeSq && dSq < best) {
+        best = dSq;
         target = m;
       }
     }
 
-    player.attackTargetId = target?.id ?? null;
+    player.performsAttack.attackTargetId = target?.isMonster.id ?? null;
 
     if (target) {
-      if (now - player.lastAttackAt >= player.attackCooldown) {
+      if (now - player.performsAttack.lastAttackAt >= player.performsAttack.attackCooldown) {
         const ctx = makeCombatContext(player, 'player', target, 'monster');
 
         emitCombatEvent('beforeAttack', ctx, world);
@@ -45,29 +43,29 @@ export function updateCombat(world: World, dt: number, now: number) {
 
         emitCombatEvent('onAttack', ctx, world);
 
-        const monsterCombatState = world.monsterCombatState.get(target.id);
+        const monsterCombatState = target.combatState;
         const shredEffect = monsterCombatState
           ? getStatusEffect(monsterCombatState, 'plating-shred')
           : undefined;
         const effectivePlating = Math.max(0,
-          target.plating - (shredEffect ? shredEffect.stacks * shredEffect.data['platingReduction'] : 0),
+          target.mitigatesDamage.plating - (shredEffect ? shredEffect.stacks * shredEffect.data['platingReduction'] : 0),
         );
 
         ctx.damage = Math.max(1, Math.round(
-          Math.max(0, player.attack - effectivePlating) * (1 - target.damageReduction),
+          Math.max(0, player.dealsDamage.attack - effectivePlating) * (1 - target.mitigatesDamage.damageReduction),
         ));
 
         emitCombatEvent('onHit', ctx, world);
 
         // Flat on-hit bonus: added after the empowered multiplier so it never scales
         // with finisher damage, but still applies to every direct attack including finishers.
-        if (player.onHitDamage > 0) {
-          ctx.damage += player.onHitDamage;
+        if (player.dealsDamage.onHitDamage > 0) {
+          ctx.damage += player.dealsDamage.onHitDamage;
         }
 
         // ctx.metadata['empoweredAttack'] is set by registerEmpoweredMultiplier during onHit.
         const isEmpowered = !!ctx.metadata['empoweredAttack'];
-        const isExecution = isEmpowered && player.combatArchetype === 'cooldown';
+        const isExecution = isEmpowered && player.usesSkills.combatArchetype === 'cooldown';
 
         if (isEmpowered) {
           // AoE splash on all empowered hits — centered on the primary target,
@@ -75,23 +73,23 @@ export function updateCombat(world: World, dt: number, now: number) {
           // the archetype's empowered multiplier.
           applyPlayerAoe(
             world, player,
-            target.x, target.y,
+            target.hasPosition.current.x, target.hasPosition.current.y,
             GAME_CONFIG.EMPOWERED_AOE_RADIUS,
-            Math.round(player.attack * GAME_CONFIG.EMPOWERED_AOE_MULT),
-            target.id,
+            Math.round(player.dealsDamage.attack * GAME_CONFIG.EMPOWERED_AOE_MULT),
+            target.isMonster.id,
           );
         }
 
         emitCombatEvent('onDamageTaken', ctx, world);
 
-        target.hp -= ctx.damage;
-        player.lastAttackAt = now;
+        target.hasHealth.hp -= ctx.damage;
+        player.performsAttack.lastAttackAt = now;
 
         // Lock the test-room boss rotation once a player has actually engaged
         // the dummy — it should stick around as a stable target instead of
         // cycling on the next tier change.
-        if (target.isBoss && target.nodeId === TEST_ROOM_NODE_ID) {
-          world.testRoomEngagedBossId = target.id;
+        if (target.isMonster.isBoss && target.hasPosition.nodeId === TEST_ROOM_NODE_ID) {
+          world.testRoomEngagedBossId = target.isMonster.id;
         }
 
         // Queue combat event so the client can animate and log this hit reliably,
@@ -100,11 +98,11 @@ export function updateCombat(world: World, dt: number, now: number) {
         const clientEffects = Array.isArray(clientEffectsRaw)
           ? clientEffectsRaw.filter((effect): effect is string => typeof effect === 'string')
           : undefined;
-        world.pushEvent(player.nodeId, {
+        world.pushEvent(player.hasPosition.nodeId, {
           kind: 'player-hit',
-          playerId:   player.id,
-          targetId:   target.id,
-          targetName: target.name,
+          playerId:   player.isPlayer.id,
+          targetId:   target.isMonster.id,
+          targetName: target.isMonster.name,
           damage:     ctx.damage,
           empowered:  isEmpowered,
           execution:  isExecution,
@@ -113,34 +111,30 @@ export function updateCombat(world: World, dt: number, now: number) {
 
         emitCombatEvent('afterHit', ctx, world);
 
-        if (target.hp <= 0) {
+        if (target.hasHealth.hp <= 0) {
           emitCombatEvent('onKill', ctx, world);
-          world.pushEvent(player.nodeId, {
+          world.pushEvent(player.hasPosition.nodeId, {
             kind:       'player-kill',
-            playerId:   player.id,
-            targetId:   target.id,
-            targetName: target.name,
+            playerId:   player.isPlayer.id,
+            targetId:   target.isMonster.id,
+            targetName: target.isMonster.name,
           });
-          grantMonsterRewards(world, player.id, target);
-          world.monsters.delete(target.id);
-          world.monsterAI.delete(target.id);
-          world.monsterCombatState.delete(target.id);
+          grantMonsterRewards(world, player.isPlayer.id, target);
+          world.removeMonsterEntity(target.isMonster.id);
         } else {
           // Retaliation aggro: if the monster had no target (e.g. player attacked from
           // outside pull range), it now fixates on the player who hit it.
           // Guard: only aggro if the player is within leash range of the monster's
           // spawn. Beyond that the monster can't reach them — it would immediately
           // leash and return, enabling safe static-range cheese.
-          const ai = world.monsterAI.get(target.id);
+          const ai = target.monsterAi;
           if (ai && ai.aggroTargetId === null) {
-            const pdx = player.x - ai.spawnX;
-            const pdy = player.y - ai.spawnY;
-            if (pdx * pdx + pdy * pdy <= ai.leashRange * ai.leashRange) {
-              ai.aggroTargetId = player.id;
+            if (distanceSq(player.hasPosition.current, { x: ai.spawnX, y: ai.spawnY }) <= ai.leashRange * ai.leashRange) {
+              ai.aggroTargetId = player.isPlayer.id;
               ai.lastAggroAt   = now;
               // Keep the attacker's combat timer fresh so OOC regen doesn't tick
               // while the monster is chasing them toward attack range.
-              world.playerCombatAt.set(player.id, now);
+              world.setPlayerCombatAt(player.isPlayer.id, now);
             }
             // Outside leash range: hit dealt, monster ignores the attacker.
             // Monster regen continues uninterrupted so whittling is not viable.
@@ -150,55 +144,50 @@ export function updateCombat(world: World, dt: number, now: number) {
     } else {
       // Refresh combat timer while any monster still has this player in aggro,
       // so regen doesn't tick while being actively chased.
-      for (const ai of world.monsterAI.values()) {
-        if (ai.aggroTargetId === player.id) {
-          world.playerCombatAt.set(player.id, now);
+      for (const e of world.monsterEntities) {
+        if (e.monsterAi.aggroTargetId === player.isPlayer.id) {
+          world.setPlayerCombatAt(player.isPlayer.id, now);
           break;
         }
       }
 
-      const lastCombat = world.playerCombatAt.get(player.id) ?? 0;
+      const lastCombat = world.getPlayerCombatAt(player.isPlayer.id);
       if (now - lastCombat > GAME_CONFIG.COMBAT_REGEN_DELAY) {
-        const cs = world.playerCombatState.get(player.id);
-        const rawRegen = player.maxHp * (player.hpRegen / 100) * (dt / 1000);
+        const cs = player.combatState;
+        const rawRegen = player.hasHealth.maxHp * ((player.hasHealth.hpRegen ?? 0) / 100) * (dt / 1000);
         const healAmount = cs ? rawRegen * getAntiHealMult(cs) : rawRegen;
-        player.hp = Math.min(player.maxHp, player.hp + healAmount);
+        player.hasHealth.hp = Math.min(player.hasHealth.maxHp, player.hasHealth.hp + healAmount);
       }
     }
   }
 
   // MONSTER → PLAYER
-  for (const monster of world.monsters.values()) {
-    const ai = world.monsterAI.get(monster.id);
-    if (!ai) continue;
+  for (const e of world.monsterEntities) {
+    const ai      = e.monsterAi;
 
-    if (monster.state !== 'attacking') continue;
+    if (e.hasAwareness.state !== 'attacking') continue;
 
     const target = ai.aggroTargetId
-      ? world.players.get(ai.aggroTargetId)
+      ? world.getPlayerEntity(ai.aggroTargetId)
       : null;
 
     // Player may have transitioned to a different node — drop aggro if so.
-    if (!target || target.nodeId !== monster.nodeId) {
+    if (!target || target.hasPosition.nodeId !== e.hasPosition.nodeId) {
       ai.aggroTargetId = null;
-      monster.attackTargetId = null;
+      e.performsAttack.attackTargetId = null;
       continue;
     }
 
-    const dx = target.x - monster.x;
-    const dy = target.y - monster.y;
-    const d = Math.sqrt(dx * dx + dy * dy);
-
-    if (d > monster.attackRange) {
-      monster.attackTargetId = null;
+    if (distanceSq(target.hasPosition.current, e.hasPosition.current) > e.performsAttack.attackRange * e.performsAttack.attackRange) {
+      e.performsAttack.attackTargetId = null;
       continue;
     }
 
     // Monster is in contact — mark as targeting so the client shows the cooldown bar.
-    monster.attackTargetId = target.id;
+    e.performsAttack.attackTargetId = target.isPlayer.id;
 
-    if (now - monster.lastAttackAt >= monster.attackCooldown && !isMonsterFrozen(world, monster.id)) {
-      const ctx = makeCombatContext(monster, 'monster', target, 'player');
+    if (now - e.performsAttack.lastAttackAt >= e.performsAttack.attackCooldown && !isMonsterFrozen(world, e.isMonster.id)) {
+      const ctx = makeCombatContext(e, 'monster', target, 'player');
 
       emitCombatEvent('beforeAttack', ctx, world);
       if (ctx.cancelled) continue;
@@ -206,22 +195,22 @@ export function updateCombat(world: World, dt: number, now: number) {
       emitCombatEvent('onAttack', ctx, world);
 
       ctx.damage = Math.max(1, Math.round(
-        Math.max(0, monster.attack - target.plating) * (1 - target.damageReduction),
+        Math.max(0, e.dealsDamage.attack - target.mitigatesDamage.plating) * (1 - target.mitigatesDamage.damageReduction),
       ));
 
       emitCombatEvent('onHit', ctx, world);
       emitCombatEvent('onDamageTaken', ctx, world);
 
-      target.hp -= ctx.damage;
-      monster.lastAttackAt = now;
+      target.hasHealth.hp -= ctx.damage;
+      e.performsAttack.lastAttackAt = now;
 
       emitCombatEvent('afterHit', ctx, world);
 
-      if (target.hp <= 0) {
+      if (target.hasHealth.hp <= 0) {
         emitCombatEvent('onKill', ctx, world);
-        world.respawnPlayer(target.id);
+        world.respawnPlayer(target.isPlayer.id);
       } else {
-        world.playerCombatAt.set(target.id, now);
+        world.setPlayerCombatAt(target.isPlayer.id, now);
       }
     }
   }
@@ -229,14 +218,14 @@ export function updateCombat(world: World, dt: number, now: number) {
   // MONSTER OOC REGEN
   // Monsters with no current aggro target regenerate rapidly after a short delay,
   // preventing players from attriting bosses across multiple engagements.
-  for (const monster of world.monsters.values()) {
-    if (monster.hp >= monster.maxHp) continue;
-    const ai = world.monsterAI.get(monster.id);
-    if (!ai || ai.aggroTargetId !== null) continue;
+  for (const e of world.monsterEntities) {
+    if (e.hasHealth.hp >= e.hasHealth.maxHp) continue;
+    const ai = e.monsterAi;
+    if (ai.aggroTargetId !== null) continue;
     if (now - ai.lastAggroAt < GAME_CONFIG.MONSTER_REGEN_DELAY) continue;
-    monster.hp = Math.min(
-      monster.maxHp,
-      monster.hp + monster.maxHp * (GAME_CONFIG.MONSTER_REGEN_RATE / 100) * (dt / 1000),
+    e.hasHealth.hp = Math.min(
+      e.hasHealth.maxHp,
+      e.hasHealth.hp + e.hasHealth.maxHp * (GAME_CONFIG.MONSTER_REGEN_RATE / 100) * (dt / 1000),
     );
   }
 }

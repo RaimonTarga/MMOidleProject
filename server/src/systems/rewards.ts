@@ -1,6 +1,9 @@
-import type { PlayerState, MonsterState } from '@mmo-idle/shared';
+import type { PlayerSnapshot, MonsterSnapshot } from '@mmo-idle/shared';
 import { NODE_BIOMES, MONSTER_DATABASE, RECIPE_DATABASE, GAME_CONFIG, biomeXpForLevel } from '@mmo-idle/shared';
+import type { PlayerEntity } from '../ecs/components/player';
+import type { MonsterEntity } from '../ecs/components/monster';
 import type { World } from '../world/World';
+import { withPlayerSnapshotDraft } from '../ecs/playerSnapshotAdapter';
 import { registerKillForQuests } from './questSystem';
 
 export interface KillRewards {
@@ -11,7 +14,15 @@ export interface KillRewards {
 
 const FALLBACK_REWARDS: KillRewards = { essence: 1, essenceType: 'green', level: 1 };
 
-export function rewardPlayer(player: PlayerState, rewards: KillRewards): void {
+export function rewardPlayer(player: PlayerSnapshot | PlayerEntity, rewards: KillRewards): void {
+  if ('entityId' in player) {
+    withPlayerSnapshotDraft(player, draft => rewardPlayerSnapshot(draft, rewards));
+    return;
+  }
+  rewardPlayerSnapshot(player, rewards);
+}
+
+function rewardPlayerSnapshot(player: PlayerSnapshot, rewards: KillRewards): void {
   const type = rewards.essenceType as keyof typeof player.essences;
   if (type in player.essences) player.essences[type] += rewards.essence;
   player.level += rewards.level;
@@ -22,7 +33,7 @@ export function rewardPlayer(player: PlayerState, rewards: KillRewards): void {
  * if the threshold is crossed, and auto-unlock any recipes that become available.
  * XP gain stops once the level cap for the current playerTier is reached.
  */
-function applyBiomeXP(player: PlayerState, nodeId: string): void {
+function applyBiomeXP(player: PlayerSnapshot, nodeId: string): void {
   const biomeInfo = NODE_BIOMES[nodeId];
   if (!biomeInfo) return;
 
@@ -45,7 +56,7 @@ function applyBiomeXP(player: PlayerState, nodeId: string): void {
 }
 
 function checkRecipeUnlocks(
-  player: PlayerState,
+  player: PlayerSnapshot,
   biomeGroup: string,
   newLevel: number,
 ): void {
@@ -61,14 +72,16 @@ function checkRecipeUnlocks(
 export function grantMonsterRewards(
   world: World,
   killerPlayerId: string,
-  monster: MonsterState,
+  monster: MonsterSnapshot | MonsterEntity,
 ): void {
-  const killer = world.players.get(killerPlayerId);
+  const killer = world.getPlayerEntity(killerPlayerId);
   if (!killer) return;
 
-  const def = MONSTER_DATABASE.get(monster.monsterTypeId);
+  const monsterTypeId = 'entityId' in monster ? monster.isMonster.monsterTypeId : monster.monsterTypeId;
+  const nodeId = 'entityId' in monster ? monster.hasPosition.nodeId : monster.nodeId;
+  const def = MONSTER_DATABASE.get(monsterTypeId);
   const rewards = def?.rewards ?? FALLBACK_REWARDS;
   rewardPlayer(killer, rewards);
-  applyBiomeXP(killer, monster.nodeId);
-  registerKillForQuests(killer, monster.monsterTypeId);
+  withPlayerSnapshotDraft(killer, draft => applyBiomeXP(draft, nodeId));
+  registerKillForQuests(killer, monsterTypeId);
 }

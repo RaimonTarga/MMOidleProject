@@ -6,10 +6,10 @@ import {
   getString, setString,
 } from './combatState';
 import { applyStatusEffect, getStatusEffect } from './statusEffects';
-import { computeScaledDotDamage } from './dotPrototype';
 import { grantMonsterRewards } from './rewards';
 import type { World } from '../world/World';
-import type { PlayerState } from '@mmo-idle/shared';
+import { computeScaledDotDamage } from '@mmo-idle/shared';
+import { defineBuff, type BuffDescriptor } from './registry/buffs';
 
 // ── Chaotic Axe ───────────────────────────────────────────────────────────────
 
@@ -42,13 +42,12 @@ export const ASHBRAND_DURATION_MS = 4_500; // stacks expire after this many ms w
 
 export function initWeaponEffects(): void {
   // ── Chaotic Axe: every 3rd hit misses (0 damage, on-hit effects still fire) ─
-  registerCombatListener('onHit', (ctx, world) => {
+  registerCombatListener('onHit', (ctx, _world) => {
     if (ctx.attackerType !== 'player') return;
-    const player = world.players.get(ctx.attacker.id) as PlayerState | undefined;
-    if (!player || player.equipment.weapon !== 'chaotic-axe') return;
+    const player = ctx.attacker;
+    if (player.holdsInventory.equipment.weapon !== 'chaotic-axe') return;
 
-    const state = world.playerCombatState.get(player.id);
-    if (!state) return;
+    const state = player.combatState;
 
     addCounter(state, CHAOTIC_HIT_KEY, 1);
     if (getCounter(state, CHAOTIC_HIT_KEY) % CHAOTIC_MISS_EVERY === 0) {
@@ -60,22 +59,24 @@ export function initWeaponEffects(): void {
   // ── Sacred Cross: 3× damage multiplier during the buff window ────────────────
   // Buff only procs (activates) when the player makes an attack, even if the
   // cooldown has already expired — prevents it from firing outside of combat.
-  registerCombatListener('onHit', (ctx, world) => {
+  registerCombatListener('onHit', (ctx, _world) => {
     if (ctx.attackerType !== 'player') return;
-    const player = world.players.get(ctx.attacker.id) as PlayerState | undefined;
-    if (!player || player.equipment.weapon !== 'sacred-cross') return;
+    const player = ctx.attacker;
+    if (player.holdsInventory.equipment.weapon !== 'sacred-cross') return;
 
-    const state = world.playerCombatState.get(player.id);
-    if (!state) return;
+    const state = player.combatState;
 
     // If armed and ready, proc on this hit (triggering attack also gets the bonus).
     if (getFlag(state, SACRED_READY) && !getFlag(state, SACRED_BUFF_FLAG)) {
-      setString(state, SACRED_ORIG_CD, String(player.attackCooldown));
-      player.attackCooldown = Math.max(200, Math.round(player.attackCooldown / SACRED_APS_MULT));
+      setString(state, SACRED_ORIG_CD, String(player.performsAttack.attackCooldown));
+      player.performsAttack.attackCooldown = Math.max(
+        200,
+        Math.round(player.performsAttack.attackCooldown / SACRED_APS_MULT),
+      );
       setFlag(state, SACRED_BUFF_FLAG, true);
       setFlag(state, SACRED_READY, false);
       setCooldown(state, SACRED_BUFF_TIMER, SACRED_BUFF_MS);
-      console.log(`[Sacred] ${player.id}: BURST activated (cd=${player.attackCooldown}ms)`);
+      console.log(`[Sacred] ${player.isPlayer.id}: BURST activated (cd=${player.performsAttack.attackCooldown}ms)`);
     }
 
     if (!getFlag(state, SACRED_BUFF_FLAG)) return;
@@ -85,21 +86,20 @@ export function initWeaponEffects(): void {
   });
 
   // ── Ashbrand Blade: 30% of hit → stacking burn (max 5), 70% dealt directly ──
-  registerCombatListener('onHit', (ctx, world) => {
+  registerCombatListener('onHit', (ctx, _world) => {
     if (ctx.attackerType !== 'player') return;
     if (ctx.defenderType !== 'monster') return;
-    const player = world.players.get(ctx.attacker.id) as PlayerState | undefined;
-    if (!player || player.equipment.weapon !== 'ashbrand-blade') return;
+    const player = ctx.attacker;
+    if (player.holdsInventory.equipment.weapon !== 'ashbrand-blade') return;
 
-    const monsterState = world.monsterCombatState.get(ctx.defender.id);
-    if (!monsterState) return;
+    const monsterState = ctx.defender.combatState;
 
-    const damagePerStack = Math.max(1, Math.round(player.attack * ASHBRAND_CONV_PCT / ASHBRAND_MAX_STACKS));
+    const damagePerStack = Math.max(1, Math.round(player.dealsDamage.attack * ASHBRAND_CONV_PCT / ASHBRAND_MAX_STACKS));
     const effect = applyStatusEffect(monsterState, {
       id:          'ashbrand-burn',
       maxStacks:   ASHBRAND_MAX_STACKS,
       instanced:   false,
-      sourceId:    player.id,
+      sourceId:    player.isPlayer.id,
       remainingMs: ASHBRAND_DURATION_MS,
       refreshable: true,
       data: {
@@ -129,23 +129,22 @@ export function updateWeaponEffects(world: World, dt: number): void {
 // ── Sacred Cross buff timer ────────────────────────────────────────────────────
 
 function updateSacredCrossBuff(world: World): void {
-  for (const player of world.players.values()) {
-    const state = world.playerCombatState.get(player.id);
-    if (!state) continue;
+  for (const player of world.playerEntities) {
+    const state = player.combatState;
 
-    if (player.equipment.weapon !== 'sacred-cross') {
+    if (player.holdsInventory.equipment.weapon !== 'sacred-cross') {
       // Weapon unequipped — clean up if buff was active (restore cooldown)
       if (getFlag(state, SACRED_BUFF_FLAG)) {
         const origCd = Number(getString(state, SACRED_ORIG_CD));
-        if (origCd > 0) player.attackCooldown = origCd;
+        if (origCd > 0) player.performsAttack.attackCooldown = origCd;
         setFlag(state, SACRED_BUFF_FLAG, false);
         setCooldown(state, SACRED_CD_KEY, 0);
         setCooldown(state, SACRED_BUFF_TIMER, 0);
       }
       setFlag(state, SACRED_READY, false);
       if (getFlag(state, SACRED_STARTED)) setFlag(state, SACRED_STARTED, false);
-      player.sacredBuffActive = false;
-      player.sacredBuffPct    = 0;
+      player.showsSacred.sacredBuffActive = false;
+      player.showsSacred.sacredBuffPct    = 0;
       continue;
     }
 
@@ -159,20 +158,20 @@ function updateSacredCrossBuff(world: World): void {
       if (!isCooldownActive(state, SACRED_BUFF_TIMER)) {
         // Buff window just closed — restore cooldown, arm next cycle
         const origCd = Number(getString(state, SACRED_ORIG_CD));
-        if (origCd > 0) player.attackCooldown = origCd;
+        if (origCd > 0) player.performsAttack.attackCooldown = origCd;
         setFlag(state, SACRED_BUFF_FLAG, false);
         setCooldown(state, SACRED_CD_KEY, SACRED_CD_MS);
-        console.log(`[Sacred] ${player.id}: buff ended, next in ${SACRED_CD_MS}ms`);
+        console.log(`[Sacred] ${player.isPlayer.id}: buff ended, next in ${SACRED_CD_MS}ms`);
       }
     } else if (!isCooldownActive(state, SACRED_CD_KEY) && !getFlag(state, SACRED_READY)) {
       // Cooldown expired — arm the buff; it procs on the next attack hit.
       setFlag(state, SACRED_READY, true);
     }
 
-    // Mirror to PlayerState for HUD display
+    // Mirror to PlayerSnapshot for HUD display
     const isBuff = getFlag(state, SACRED_BUFF_FLAG);
-    player.sacredBuffActive = isBuff;
-    player.sacredBuffPct    = isBuff
+    player.showsSacred.sacredBuffActive = isBuff;
+    player.showsSacred.sacredBuffPct    = isBuff
       ? 100
       : Math.round(Math.max(0, 1 - getCooldown(state, SACRED_CD_KEY) / SACRED_CD_MS) * 100);
   }
@@ -183,30 +182,39 @@ function updateSacredCrossBuff(world: World): void {
 function updateAshbrandBurns(world: World, dt: number): void {
   const toKill: Array<{ monsterId: string; sourceId: string }> = [];
 
-  for (const [monsterId, state] of world.monsterCombatState) {
+  for (const e of world.monsterEntities) {
+    const monsterId = e.isMonster.id;
+    const state     = e.combatState;
     const effect = getStatusEffect(state, 'ashbrand-burn');
     if (!effect) continue;
-
-    const monster = world.monsters.get(monsterId);
-    if (!monster) continue;
 
     effect.data.nextTickIn -= dt;
     if (effect.data.nextTickIn <= 0) {
       effect.data.nextTickIn = effect.data.tickIntervalMs;
       const damage = computeScaledDotDamage(effect);
-      monster.hp -= damage;
+      e.hasHealth.hp -= damage;
 
-      if (monster.hp <= 0) {
+      if (e.hasHealth.hp <= 0) {
         toKill.push({ monsterId, sourceId: effect.sourceId });
       }
     }
   }
 
   for (const { monsterId, sourceId } of toKill) {
-    const monster = world.monsters.get(monsterId);
+    const monster = world.getMonsterEntity(monsterId);
     if (monster && sourceId) grantMonsterRewards(world, sourceId, monster);
-    world.monsters.delete(monsterId);
-    world.monsterAI.delete(monsterId);
-    world.monsterCombatState.delete(monsterId);
+    world.removeMonsterEntity(monsterId);
   }
 }
+
+// ── Buff descriptors ──────────────────────────────────────────────────────────
+
+export const WEAPON_BUFFS = [
+  defineBuff(
+    'sacred-burst',
+    ({ player }) => player.sacredBuffActive
+      ? { id: 'sacred-burst', label: 'Holy', stacks: 1, durationPct: player.sacredBuffPct, color: '#ffdd44' }
+      : null,
+    { label: 'Holy', color: '#ffdd44' },
+  ),
+] as const satisfies readonly BuffDescriptor[];

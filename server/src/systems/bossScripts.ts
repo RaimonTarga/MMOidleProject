@@ -17,11 +17,11 @@
  * Dead bosses are pruned at the start of each tick.
  */
 
-import type { MonsterState } from '@mmo-idle/shared';
 import type { BossAction, BossPhase, BossScript, RepeatingAction } from '@mmo-idle/shared';
 import { MONSTER_DATABASE, GAME_CONFIG } from '@mmo-idle/shared';
 import { NODE_REGISTRY } from '../world/nodeRegistry';
 import type { World } from '../world/World';
+import type { MonsterEntity } from '../ecs/components/monster';
 
 // ── Runtime state (server-only) ───────────────────────────────────────────────
 
@@ -70,40 +70,35 @@ function initBossState(script: BossScript): BossRuntimeState {
 // ── Main update ───────────────────────────────────────────────────────────────
 
 export function updateBossScripts(world: World, dt: number): void {
-  // Prune stale state for bosses that died since last tick.
-  for (const monsterId of world.bossState.keys()) {
-    if (!world.monsters.has(monsterId)) world.bossState.delete(monsterId);
-  }
+  // Note: `removeMonsterEntity` cascades component removal, so stale bossState
+  // pruning is automatic post-S7 — no explicit prune loop needed here.
 
-  for (const [monsterId, monster] of world.monsters) {
-    if (!monster.isBoss) continue;
+  for (const e of world.monsterEntities) {
+    if (!e.isMonster.isBoss) continue;
 
-    const def = MONSTER_DATABASE.get(monster.monsterTypeId);
+    const def = MONSTER_DATABASE.get(e.isMonster.monsterTypeId);
     if (!def?.bossScript) continue;
 
     const script = def.bossScript;
 
-    // Lazy-init runtime state.
-    let state = world.bossState.get(monsterId);
-    if (!state) {
-      state = initBossState(script);
-      world.bossState.set(monsterId, state);
+    // Lazy-init runtime state on first encounter.
+    if (!e.bossState) {
+      world.setBossState(e.isMonster.id, initBossState(script));
     }
+    const state = e.bossState!;
 
     // Mark engaged on first aggro.
-    const ai = world.monsterAI.get(monsterId);
-    if (ai?.aggroTargetId !== null) state.engaged = true;
+    if (e.monsterAi.aggroTargetId !== null) state.engaged = true;
 
     // Advance and expire active effects (regen also ticks here).
-    tickActiveEffects(state, monster, dt);
+    tickActiveEffects(state, e, dt);
 
     if (state.engaged) {
-      if (script.phases)    checkPhaseTransitions(state, script.phases,    monster, world);
-      if (script.repeating) tickRepeatingActions(state,  script.repeating,  monster, world, dt);
+      if (script.phases)    checkPhaseTransitions(state, script.phases,    e, world);
+      if (script.repeating) tickRepeatingActions(state,  script.repeating,  e, world, dt);
     }
 
-    // Mirror active effect names to MonsterState for client display.
-    monster.bossEffects = [...new Set(state.activeEffects.map(e => e.type))];
+    e.hasStatus.bossEffects = [...new Set(state.activeEffects.map(e => e.type))];
   }
 }
 
@@ -111,7 +106,7 @@ export function updateBossScripts(world: World, dt: number): void {
 
 function tickActiveEffects(
   state: BossRuntimeState,
-  monster: MonsterState,
+  monster: MonsterEntity,
   dt: number,
 ): void {
   const toExpire: ActiveBossEffect[] = [];
@@ -119,9 +114,9 @@ function tickActiveEffects(
   for (const effect of state.activeEffects) {
     // Regen tick — runs every tick regardless of whether it expires this frame.
     if (effect.regenHpPctPerSec !== undefined) {
-      monster.hp = Math.min(
-        monster.maxHp,
-        monster.hp + monster.maxHp * effect.regenHpPctPerSec * (dt / 1000),
+      monster.hasHealth.hp = Math.min(
+        monster.hasHealth.maxHp,
+        monster.hasHealth.hp + monster.hasHealth.maxHp * effect.regenHpPctPerSec * (dt / 1000),
       );
     }
 
@@ -137,12 +132,12 @@ function tickActiveEffects(
 }
 
 /** Restore any stats that were modified when this effect was applied. */
-function restoreStats(effect: ActiveBossEffect, monster: MonsterState): void {
-  if (effect.savedAttack          !== undefined) monster.attack          = effect.savedAttack;
-  if (effect.savedCooldown        !== undefined) monster.attackCooldown  = effect.savedCooldown;
-  if (effect.savedPlating         !== undefined) monster.plating         = effect.savedPlating;
-  if (effect.savedDamageReduction !== undefined) monster.damageReduction = effect.savedDamageReduction;
-  if (effect.savedSpeed           !== undefined) monster.speed           = effect.savedSpeed;
+function restoreStats(effect: ActiveBossEffect, monster: MonsterEntity): void {
+  if (effect.savedAttack          !== undefined) monster.dealsDamage.attack = effect.savedAttack;
+  if (effect.savedCooldown        !== undefined) monster.performsAttack.attackCooldown = effect.savedCooldown;
+  if (effect.savedPlating         !== undefined) monster.mitigatesDamage.plating = effect.savedPlating;
+  if (effect.savedDamageReduction !== undefined) monster.mitigatesDamage.damageReduction = effect.savedDamageReduction;
+  if (effect.savedSpeed           !== undefined) monster.hasPosition.speed = effect.savedSpeed;
 }
 
 // ── Phase transitions ─────────────────────────────────────────────────────────
@@ -154,10 +149,10 @@ function restoreStats(effect: ActiveBossEffect, monster: MonsterState): void {
 function checkPhaseTransitions(
   state: BossRuntimeState,
   phases: BossPhase[],
-  monster: MonsterState,
+  monster: MonsterEntity,
   world: World,
 ): void {
-  const hpPct = monster.hp / monster.maxHp;
+  const hpPct = monster.hasHealth.hp / monster.hasHealth.maxHp;
   for (let i = 0; i < phases.length; i++) {
     if (state.phaseTriggered[i]) continue;
     if (hpPct > phases[i].hpPct) continue;
@@ -174,7 +169,7 @@ function checkPhaseTransitions(
 function tickRepeatingActions(
   state: BossRuntimeState,
   repeating: RepeatingAction[],
-  monster: MonsterState,
+  monster: MonsterEntity,
   world: World,
   dt: number,
 ): void {
@@ -193,7 +188,7 @@ function tickRepeatingActions(
 
 function applyAction(
   action: BossAction,
-  monster: MonsterState,
+  monster: MonsterEntity,
   world: World,
   state: BossRuntimeState,
 ): void {
@@ -203,11 +198,11 @@ function applyAction(
       const effect: ActiveBossEffect = {
         type:          'enrage',
         remainingMs:   action.durationMs ?? -1,
-        savedAttack:   monster.attack,
-        savedCooldown: monster.attackCooldown,
+        savedAttack:   monster.dealsDamage.attack,
+        savedCooldown: monster.performsAttack.attackCooldown,
       };
-      monster.attack         = Math.round(monster.attack * action.atkMult);
-      monster.attackCooldown = Math.max(200, Math.round(monster.attackCooldown * action.cdMult));
+      monster.dealsDamage.attack = Math.round(monster.dealsDamage.attack * action.atkMult);
+      monster.performsAttack.attackCooldown = Math.max(200, Math.round(monster.performsAttack.attackCooldown * action.cdMult));
       state.activeEffects.push(effect);
       break;
     }
@@ -226,9 +221,9 @@ function applyAction(
       const effect: ActiveBossEffect = {
         type:                 'shield',
         remainingMs:          action.durationMs,
-        savedDamageReduction: monster.damageReduction,
+        savedDamageReduction: monster.mitigatesDamage.damageReduction,
       };
-      monster.damageReduction = Math.min(0.95, monster.damageReduction + action.drAdd);
+      monster.mitigatesDamage.damageReduction = Math.min(0.95, monster.mitigatesDamage.damageReduction + action.drAdd);
       state.activeEffects.push(effect);
       break;
     }
@@ -240,20 +235,20 @@ function applyAction(
       };
       switch (action.stat) {
         case 'attack':
-          effect.savedAttack = monster.attack;
-          monster.attack     = Math.round(monster.attack * action.mult);
+          effect.savedAttack = monster.dealsDamage.attack;
+          monster.dealsDamage.attack = Math.round(monster.dealsDamage.attack * action.mult);
           break;
         case 'speed':
-          effect.savedSpeed = monster.speed;
-          monster.speed     = Math.round(monster.speed * action.mult);
+          effect.savedSpeed = monster.hasPosition.speed;
+          monster.hasPosition.speed = Math.round(monster.hasPosition.speed * action.mult);
           break;
         case 'plating':
-          effect.savedPlating = monster.plating;
-          monster.plating     = Math.round(monster.plating * action.mult);
+          effect.savedPlating = monster.mitigatesDamage.plating;
+          monster.mitigatesDamage.plating = Math.round(monster.mitigatesDamage.plating * action.mult);
           break;
         case 'damageReduction':
-          effect.savedDamageReduction = monster.damageReduction;
-          monster.damageReduction     = Math.min(0.95, monster.damageReduction * action.mult);
+          effect.savedDamageReduction = monster.mitigatesDamage.damageReduction;
+          monster.mitigatesDamage.damageReduction = Math.min(0.95, monster.mitigatesDamage.damageReduction * action.mult);
           break;
       }
       state.activeEffects.push(effect);
@@ -261,7 +256,7 @@ function applyAction(
     }
 
     case 'summon': {
-      const nodeDef     = NODE_REGISTRY.get(monster.nodeId);
+      const nodeDef     = NODE_REGISTRY.get(monster.hasPosition.nodeId);
       const nodeWidth   = nodeDef?.width  ?? GAME_CONFIG.NODE_WIDTH;
       const nodeHeight  = nodeDef?.height ?? GAME_CONFIG.NODE_HEIGHT;
       const offsetRange = action.offsetRange ?? 200;
@@ -269,9 +264,9 @@ function applyAction(
       for (let i = 0; i < action.count; i++) {
         const angle = Math.random() * Math.PI * 2;
         const dist  = Math.random() * offsetRange;
-        const x = Math.max(64, Math.min(nodeWidth  - 64, monster.x + Math.cos(angle) * dist));
-        const y = Math.max(64, Math.min(nodeHeight - 64, monster.y + Math.sin(angle) * dist));
-        world.createMonster(monster.nodeId, action.monsterTypeId, x, y);
+        const x = Math.max(64, Math.min(nodeWidth  - 64, monster.hasPosition.current.x + Math.cos(angle) * dist));
+        const y = Math.max(64, Math.min(nodeHeight - 64, monster.hasPosition.current.y + Math.sin(angle) * dist));
+        world.createMonster(monster.hasPosition.nodeId, action.monsterTypeId, x, y);
       }
       break;
     }

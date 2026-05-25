@@ -1,13 +1,10 @@
-import type { PlayerState } from '@mmo-idle/shared';
-import { registerCombatListener } from './combatPipeline';
-import {
-  addCounter, getCounter, setCounter,
-  getResource, setResource, addResource,
-} from './combatState';
-import { applyStatusEffect, removeStatusEffect, getStatusEffects, pruneStatusEffects } from './statusEffects';
-import { grantMonsterRewards } from './rewards';
-import { setEmpoweredAttack, registerEmpoweredMultiplier } from './empoweredAttacks';
-import type { World } from '../world/World';
+import { defineBuff, type BuffDescriptor } from '../../registry/buffs';
+import { registerCombatListener } from '../../combatPipeline';
+import { applyStatusEffect, removeStatusEffect, getStatusEffects, pruneStatusEffects } from '../../statusEffects';
+import { grantMonsterRewards } from '../../rewards';
+import { setEmpoweredAttack, registerEmpoweredMultiplier } from '../../empoweredAttacks';
+import type { World } from '../../../world/World';
+import { projectCadenceToSlice } from '../../../ecs/components/cadence';
 
 // ── Fallback constants (balanced-frame values, used when no frame is unlocked) ─
 
@@ -33,14 +30,11 @@ const HEMORRHAGE_TICKS    = 4;
 const HEMORRHAGE_TICK_MS  = 1_000;
 const HEMORRHAGE_MULT     = 1.5;
 
-// ── CombatState keys ───────────────────────────────────────────────────────────
-
-const CADENCE_KEY = 'cadenceCount';
-const SEQ_DMG_KEY = 'cadenceSeqDmg';
-const CHARGE_KEY  = 'cadenceCharge';
-const ECHO_KEY    = 'cadenceEcho';
-
 // ── Init — registers combat pipeline listeners ─────────────────────────────────
+// Per-archetype state (count/threshold/empoweredArmed/speedStacks/seqDmg/charge/echo)
+// lives on the cadence component (see ecs/components/cadence.ts), not on
+// CombatState counters/resources. The CombatState empowered-attack flag is
+// shared across archetypes and is still set via setEmpoweredAttack.
 
 /**
  * Register the cadence hit-counter mechanic for the 'cadence' class.
@@ -79,12 +73,15 @@ export function initCadenceArchetype(): void {
 
   registerCombatListener('onHit', (ctx, world) => {
     if (ctx.attackerType !== 'player') return;
-    if (ctx.attacker.combatArchetype !== 'cadence') return;
 
-    const state = world.playerCombatState.get(ctx.attacker.id);
-    if (!state) return;
-    const player = world.players.get(ctx.attacker.id) as PlayerState | undefined;
-    if (!player) return;
+    // Query by component presence, not by combatArchetype string.
+    const entity = ctx.attacker;
+    if (!entity?.cadence) return;
+
+    const state   = entity.combatState;
+    const player  = entity;
+    const cadence = entity.cadence;
+    const passives = player.usesSkills.passives;
 
     // ── EMPOWERED (FINISHER) HIT ───────────────────────────────────────────────
     // ctx.metadata['empoweredAttack'] is true when registerEmpoweredMultiplier
@@ -92,112 +89,109 @@ export function initCadenceArchetype(): void {
     // Empowered hits do NOT increment the cadence counter.
 
     if (ctx.metadata['empoweredAttack']) {
-      player.cadenceEmpoweredArmed = false;
+      cadence.empoweredArmed = false;
 
       // Double Time: multiply again for extra hits (already multiplied once above)
-      const triggerCount = Math.max(1, Math.round(player.passives['cadence.trigger-count'] ?? 1));
+      const triggerCount = Math.max(1, Math.round(passives['cadence.trigger-count'] ?? 1));
       if (triggerCount > 1) {
         ctx.damage = Math.round(ctx.damage * triggerCount);
       }
 
       // Rising Tide: additional multiplier based on how many normal hits built up to this finisher
-      const momentumPerHit = player.passives['cadence.momentum-buildup'] ?? 0;
+      const momentumPerHit = passives['cadence.momentum-buildup'] ?? 0;
       if (momentumPerHit > 0) {
-        const normalHits = (player.cadenceThreshold || CADENCE_THRESHOLD_DEFAULT) - 1;
+        const normalHits = (cadence.threshold || CADENCE_THRESHOLD_DEFAULT) - 1;
         ctx.damage = Math.round(ctx.damage * (1 + normalHits * momentumPerHit));
       }
 
       // Iron Patience: add all stored charge to finisher damage, then clear
-      if ((player.passives['cadence.charge-buildup'] ?? 0) > 0) {
-        ctx.damage += getResource(state, CHARGE_KEY);
-        setResource(state, CHARGE_KEY, 0);
+      if ((passives['cadence.charge-buildup'] ?? 0) > 0) {
+        ctx.damage += cadence.charge;
+        cadence.charge = 0;
       }
 
       // Hemorrhage: convert finisher damage to a non-stacking bleed DoT
-      if ((player.passives['cadence.hemorrhage'] ?? 0) > 0 && ctx.defenderType === 'monster') {
-        const monsterState = world.monsterCombatState.get(ctx.defender.id);
-        if (monsterState) {
-          const damagePerTick = Math.max(1, Math.round(ctx.damage * HEMORRHAGE_MULT / HEMORRHAGE_TICKS));
-          removeStatusEffect(monsterState, 'cadence-hemorrhage');
-          applyStatusEffect(monsterState, {
-            id:          'cadence-hemorrhage',
-            instanced:   false,
-            remainingMs: -1,
-            sourceId:    player.id,
-            data: {
-              damagePerTick,
-              ticksLeft:      HEMORRHAGE_TICKS,
-              nextTickIn:     HEMORRHAGE_TICK_MS,
-              tickIntervalMs: HEMORRHAGE_TICK_MS,
-            },
-          });
-          ctx.damage = 0;
-        }
+      if ((passives['cadence.hemorrhage'] ?? 0) > 0 && ctx.defenderType === 'monster') {
+        const monsterState = ctx.defender.combatState;
+        const damagePerTick = Math.max(1, Math.round(ctx.damage * HEMORRHAGE_MULT / HEMORRHAGE_TICKS));
+        removeStatusEffect(monsterState, 'cadence-hemorrhage');
+        applyStatusEffect(monsterState, {
+          id:          'cadence-hemorrhage',
+          instanced:   false,
+          remainingMs: -1,
+          sourceId:    player.isPlayer.id,
+          data: {
+            damagePerTick,
+            ticksLeft:      HEMORRHAGE_TICKS,
+            nextTickIn:     HEMORRHAGE_TICK_MS,
+            tickIntervalMs: HEMORRHAGE_TICK_MS,
+          },
+        });
+        ctx.damage = 0;
       }
 
       // Delayed Verdict: tag the target with accumulated pre-finisher damage
-      if ((player.passives['cadence.detonation'] ?? 0) > 0 && ctx.defenderType === 'monster') {
-        const monsterState = world.monsterCombatState.get(ctx.defender.id);
-        if (monsterState) {
-          const seqDmg = getResource(state, SEQ_DMG_KEY);
-          removeStatusEffect(monsterState, 'cadence-detonation');
-          applyStatusEffect(monsterState, {
-            id:          'cadence-detonation',
-            instanced:   false,
-            remainingMs: -1,
-            sourceId:    player.id,
-            data: {
-              damage: Math.round(seqDmg * DETONATION_MULT),
-              fuseMs: DETONATION_FUSE_MS,
-            },
-          });
-        }
+      if ((passives['cadence.detonation'] ?? 0) > 0 && ctx.defenderType === 'monster') {
+        const monsterState = ctx.defender.combatState;
+        removeStatusEffect(monsterState, 'cadence-detonation');
+        applyStatusEffect(monsterState, {
+          id:          'cadence-detonation',
+          instanced:   false,
+          remainingMs: -1,
+          sourceId:    player.isPlayer.id,
+          data: {
+            damage: Math.round(cadence.seqDmg * DETONATION_MULT),
+            fuseMs: DETONATION_FUSE_MS,
+          },
+        });
       }
-      setResource(state, SEQ_DMG_KEY, 0);
+      cadence.seqDmg = 0;
 
       // Accelerando: gain a speed stack on each finisher
-      if ((player.passives['cadence.speed-stack'] ?? 0) > 0) {
-        if (player.cadenceSpeedStacks < CADENCE_MAX_SPEED_STACKS) {
-          player.cadenceSpeedStacks++;
-          player.attackCooldown = Math.max(200, player.attackCooldown - CADENCE_SPEED_PER_STACK_MS);
+      if ((passives['cadence.speed-stack'] ?? 0) > 0) {
+        if (cadence.speedStacks < CADENCE_MAX_SPEED_STACKS) {
+          cadence.speedStacks++;
+          player.performsAttack.attackCooldown = Math.max(
+            200,
+            player.performsAttack.attackCooldown - CADENCE_SPEED_PER_STACK_MS,
+          );
         }
       }
 
       // Cursed Finale: vulnerability and plating-shred debuffs on the target
-      const vulnPct      = player.passives['cadence.debuff-vuln-pct']      ?? 0;
-      const vulnMs       = player.passives['cadence.debuff-vuln-ms']       ?? 5000;
-      const platingShred = player.passives['cadence.debuff-plating-shred'] ?? 0;
+      const vulnPct      = passives['cadence.debuff-vuln-pct']      ?? 0;
+      const vulnMs       = passives['cadence.debuff-vuln-ms']       ?? 5000;
+      const platingShred = passives['cadence.debuff-plating-shred'] ?? 0;
       if ((vulnPct > 0 || platingShred > 0) && ctx.defenderType === 'monster') {
-        const monsterState = world.monsterCombatState.get(ctx.defender.id);
-        if (monsterState) {
-          if (vulnPct > 0) {
-            applyStatusEffect(monsterState, {
-              id: 'vulnerability',
-              instanced: false,
-              refreshable: true,
-              remainingMs: vulnMs,
-              sourceId: player.id,
-              data: { damageMultiplier: 1 + vulnPct / 100 },
-            });
-          }
-          if (platingShred > 0) {
-            applyStatusEffect(monsterState, {
-              id: 'plating-shred',
-              instanced: false,
-              remainingMs: -1,
-              sourceId: player.id,
-              data: { platingReduction: platingShred },
-            });
-          }
+        const monsterState = ctx.defender.combatState;
+        if (vulnPct > 0) {
+          applyStatusEffect(monsterState, {
+            id: 'vulnerability',
+            instanced: false,
+            refreshable: true,
+            remainingMs: vulnMs,
+            sourceId: player.isPlayer.id,
+            data: { damageMultiplier: 1 + vulnPct / 100 },
+          });
+        }
+        if (platingShred > 0) {
+          applyStatusEffect(monsterState, {
+            id: 'plating-shred',
+            instanced: false,
+            remainingMs: -1,
+            sourceId: player.isPlayer.id,
+            data: { platingReduction: platingShred },
+          });
         }
       }
 
       // Rising Tide echo: arm the post-finisher echo counter for subsequent hits
-      if ((player.passives['cadence.momentum-echo'] ?? 0) > 0) {
-        setCounter(state, ECHO_KEY, MOMENTUM_ECHO_HITS);
+      if ((passives['cadence.momentum-echo'] ?? 0) > 0) {
+        cadence.echo = MOMENTUM_ECHO_HITS;
       }
 
       ctx.metadata['cadenceTrigger'] = true;
+      projectCadenceToSlice(cadence, entity);
       return;
     }
 
@@ -205,44 +199,41 @@ export function initCadenceArchetype(): void {
     // Empowered attacks never reach this branch, so only normal hits build
     // the cadence counter toward the next finisher.
 
-    // Lazily initialize cadenceThreshold on first hit if still 0 as fallback.
-    if (player.cadenceThreshold === 0) {
-      const base = Math.round(player.passives['cadence.empowered-threshold'] ?? CADENCE_THRESHOLD_DEFAULT);
-      const mod  = Math.round(player.passives['cadence.threshold-mod'] ?? 0);
-      player.cadenceThreshold = Math.max(2, base + mod);
+    // Lazily initialize threshold on first hit if still 0 (fallback path).
+    if (cadence.threshold === 0) {
+      const base = Math.round(passives['cadence.empowered-threshold'] ?? CADENCE_THRESHOLD_DEFAULT);
+      const mod  = Math.round(passives['cadence.threshold-mod'] ?? 0);
+      cadence.threshold = Math.max(2, base + mod);
     }
 
     // Rising Tide echo bonus: boost this hit if the echo counter is running
-    const echo = getCounter(state, ECHO_KEY);
-    if (echo > 0 && (player.passives['cadence.momentum-echo'] ?? 0) > 0) {
+    if (cadence.echo > 0 && (passives['cadence.momentum-echo'] ?? 0) > 0) {
       ctx.damage = Math.round(ctx.damage * (1 + MOMENTUM_ECHO_BONUS));
-      setCounter(state, ECHO_KEY, echo - 1);
+      cadence.echo--;
     }
 
     // Delayed Verdict: accumulate this hit's damage for the eventual detonation
-    if ((player.passives['cadence.detonation'] ?? 0) > 0) {
-      addResource(state, SEQ_DMG_KEY, ctx.damage);
+    if ((passives['cadence.detonation'] ?? 0) > 0) {
+      cadence.seqDmg += ctx.damage;
     }
 
     // Iron Patience: store a fraction of this hit as charge for the finisher
-    const chargePct = player.passives['cadence.charge-buildup'] ?? 0;
+    const chargePct = passives['cadence.charge-buildup'] ?? 0;
     if (chargePct > 0) {
-      addResource(state, CHARGE_KEY, Math.round(ctx.damage * chargePct));
+      cadence.charge += Math.round(ctx.damage * chargePct);
     }
 
-    addCounter(state, CADENCE_KEY, 1);
-    const newCount = getCounter(state, CADENCE_KEY);
-    player.cadenceCount = newCount;
+    cadence.count++;
 
-    // cadenceThreshold is the full cycle length N.
-    // After (N-1) normal hits the counter arms empowered for the next attack.
-    if (newCount >= player.cadenceThreshold - 1) {
+    // threshold is the full cycle length N. After (N-1) normal hits the counter
+    // arms empowered for the next attack.
+    if (cadence.count >= cadence.threshold - 1) {
       setEmpoweredAttack(state);
-      setCounter(state, CADENCE_KEY, 0);
-      player.cadenceCount = 0;
-      player.cadenceEmpoweredArmed = true;
-      console.log(`[Cadence] ${player.id}: finisher armed after ${newCount} hit(s)`);
+      cadence.count = 0;
+      cadence.empoweredArmed = true;
     }
+
+    projectCadenceToSlice(cadence, entity);
   });
 }
 
@@ -258,12 +249,11 @@ export function updateCadenceEffects(world: World, dt: number): void {
 function updateDetonations(world: World, dt: number): void {
   const toKill: Array<{ monsterId: string; sourceId: string }> = [];
 
-  for (const [monsterId, state] of world.monsterCombatState) {
+  for (const entity of world.monsterEntities) {
+    const monsterId = entity.isMonster.id;
+    const state     = entity.combatState;
     const tags = getStatusEffects(state, 'cadence-detonation');
     if (tags.length === 0) continue;
-
-    const monster = world.monsters.get(monsterId);
-    if (!monster) continue;
 
     let lastSourceId = '';
 
@@ -271,24 +261,22 @@ function updateDetonations(world: World, dt: number): void {
       tag.data['fuseMs'] -= dt;
       if (tag.data['fuseMs'] > 0) continue;
 
-      monster.hp -= tag.data['damage'];
+      entity.hasHealth.hp -= tag.data['damage'];
       lastSourceId = tag.sourceId;
-      console.log(`[Detonation] ${monsterId}: ${tag.data['damage']} damage, hp=${Math.max(0, monster.hp)}`);
+      console.log(`[Detonation] ${monsterId}: ${tag.data['damage']} damage, hp=${Math.max(0, entity.hasHealth.hp)}`);
     }
 
     pruneStatusEffects(state, e => e.id === 'cadence-detonation' && e.data['fuseMs'] <= 0);
 
-    if (monster.hp <= 0) {
+    if (entity.hasHealth.hp <= 0) {
       toKill.push({ monsterId, sourceId: lastSourceId });
     }
   }
 
   for (const { monsterId, sourceId } of toKill) {
-    const monster = world.monsters.get(monsterId);
+    const monster = world.getMonsterEntity(monsterId);
     if (monster && sourceId) grantMonsterRewards(world, sourceId, monster);
-    world.monsters.delete(monsterId);
-    world.monsterAI.delete(monsterId);
-    world.monsterCombatState.delete(monsterId);
+    world.removeMonsterEntity(monsterId);
   }
 }
 
@@ -297,12 +285,11 @@ function updateDetonations(world: World, dt: number): void {
 function updateHemorrhages(world: World, dt: number): void {
   const toKill: Array<{ monsterId: string; sourceId: string }> = [];
 
-  for (const [monsterId, state] of world.monsterCombatState) {
+  for (const entity of world.monsterEntities) {
+    const monsterId = entity.isMonster.id;
+    const state     = entity.combatState;
     const bleeds = getStatusEffects(state, 'cadence-hemorrhage');
     if (bleeds.length === 0) continue;
-
-    const monster = world.monsters.get(monsterId);
-    if (!monster) continue;
 
     let lastSourceId = '';
 
@@ -312,7 +299,7 @@ function updateHemorrhages(world: World, dt: number): void {
 
       bleed.data['nextTickIn'] = bleed.data['tickIntervalMs'];
       bleed.data['ticksLeft']--;
-      monster.hp -= bleed.data['damagePerTick'];
+      entity.hasHealth.hp -= bleed.data['damagePerTick'];
       lastSourceId = bleed.sourceId;
       console.log(
         `[Hemorrhage] ${monsterId}: ${bleed.data['damagePerTick']} bleed dmg, ${bleed.data['ticksLeft']} ticks left`,
@@ -321,16 +308,36 @@ function updateHemorrhages(world: World, dt: number): void {
 
     pruneStatusEffects(state, e => e.id === 'cadence-hemorrhage' && e.data['ticksLeft'] <= 0);
 
-    if (monster.hp <= 0) {
+    if (entity.hasHealth.hp <= 0) {
       toKill.push({ monsterId, sourceId: lastSourceId });
     }
   }
 
   for (const { monsterId, sourceId } of toKill) {
-    const monster = world.monsters.get(monsterId);
+    const monster = world.getMonsterEntity(monsterId);
     if (monster && sourceId) grantMonsterRewards(world, sourceId, monster);
-    world.monsters.delete(monsterId);
-    world.monsterAI.delete(monsterId);
-    world.monsterCombatState.delete(monsterId);
+    world.removeMonsterEntity(monsterId);
   }
 }
+
+// ── Buff descriptors ──────────────────────────────────────────────────────────
+
+export const CADENCE_BUFFS = [
+  defineBuff(
+    'cadence-accelerando',
+    ({ player }) => player.cadenceSpeedStacks > 0
+      ? { id: 'cadence-accelerando', label: 'Accel', stacks: player.cadenceSpeedStacks, durationPct: -1, color: '#00ffaa' }
+      : null,
+    { label: 'Accel', color: '#00ffaa' },
+  ),
+  defineBuff(
+    'cadence-echo',
+    ({ player, world }) => {
+      const echo = world.getPlayerEntity(player.id)?.cadence?.echo ?? 0;
+      return echo > 0
+        ? { id: 'cadence-echo', label: 'Echo', stacks: echo, durationPct: -1, color: '#4488ff' }
+        : null;
+    },
+    { label: 'Echo', color: '#4488ff' },
+  ),
+] as const satisfies readonly BuffDescriptor[];

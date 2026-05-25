@@ -1,4 +1,5 @@
 import type { World } from '../world/World';
+import { zeroMotion } from '@mmo-idle/shared';
 import { NODE_REGISTRY } from '../world/nodeRegistry';
 
 // Matches MONSTER_MARGIN in movement.ts — keep monsters inside the playable area.
@@ -45,27 +46,28 @@ export function applyKnockback(
   distance: number,
   durationMs: number = DEFAULT_KNOCKBACK_DURATION_MS,
 ): void {
-  const monster = world.monsters.get(monsterId);
-  if (!monster) return;
+  const entity = world.getMonsterEntity(monsterId);
+  if (!entity) return;
+  const position = entity.hasPosition;
 
-  const dx = monster.x - fromX;
-  const dy = monster.y - fromY;
+  const dx = position.current.x - fromX;
+  const dy = position.current.y - fromY;
   const distSq = dx * dx + dy * dy;
   if (distSq < 0.0001) return;
 
   const dist = Math.sqrt(distSq);
-  let endX = monster.x + (dx / dist) * distance;
-  let endY = monster.y + (dy / dist) * distance;
+  let endX = position.current.x + (dx / dist) * distance;
+  let endY = position.current.y + (dy / dist) * distance;
 
-  const node = NODE_REGISTRY.get(monster.nodeId);
+  const node = NODE_REGISTRY.get(position.nodeId);
   if (node) {
     endX = Math.max(MONSTER_BOUND_MARGIN, Math.min(node.width  - MONSTER_BOUND_MARGIN, endX));
     endY = Math.max(MONSTER_BOUND_MARGIN, Math.min(node.height - MONSTER_BOUND_MARGIN, endY));
   }
 
-  world.monsterKnockback.set(monsterId, {
-    startX:    monster.x,
-    startY:    monster.y,
+  world.setMonsterKnockback(monsterId, {
+    startX:    position.current.x,
+    startY:    position.current.y,
     endX,
     endY,
     elapsedMs: 0,
@@ -76,32 +78,29 @@ export function applyKnockback(
   // speed so its baseX → targetX interpolation can keep pace with the eased
   // slide we write to `monster.x` each tick (otherwise the client visibly lags).
   const avgPxPerSec  = (distance / durationMs) * 1000;
-  monster.speed      = Math.max(100, Math.round(avgPxPerSec * 3));
-  monster.state      = 'knocked-back';
-  monster.targetX    = monster.x;
-  monster.targetY    = monster.y;
-  monster.attackTargetId = null;
+  entity.hasPosition.speed = Math.max(100, Math.round(avgPxPerSec * 3));
+  entity.hasAwareness.state = 'knocked-back';
+  entity.isMoving.motion = zeroMotion();
+  entity.performsAttack.attackTargetId = null;
 }
 
 /** True while the monster has an active knockback component. */
 export function isMonsterKnockedBack(world: World, monsterId: string): boolean {
-  return world.monsterKnockback.has(monsterId);
+  return world.getMonsterKnockback(monsterId) !== undefined;
 }
 
 /**
  * Advance every active knockback by `dt` ms. Must run BEFORE `updateMovement`
  * and `updateMonsters` so that the position it writes wins for the tick.
  *
- * Stale entries (monster died / despawned) are cleaned up lazily here, so
- * monster-removal sites don't have to know about this system.
+ * Stale entries are cleaned up here, but after S7 removing the monster entity
+ * via `world.removeMonsterEntity` also drops the knockback component as part
+ * of the cascade, so the stale-cleanup path is mostly belt-and-suspenders.
  */
 export function updateKnockback(world: World, dt: number): void {
-  for (const [monsterId, kb] of world.monsterKnockback) {
-    const monster = world.monsters.get(monsterId);
-    if (!monster) {
-      world.monsterKnockback.delete(monsterId);
-      continue;
-    }
+  const kbQuery = world.monsterEntities.with('knockback');
+  for (const entity of kbQuery) {
+    const kb      = entity.knockback;
 
     kb.elapsedMs += dt;
     const t = Math.min(1, kb.elapsedMs / kb.durationMs);
@@ -110,17 +109,13 @@ export function updateKnockback(world: World, dt: number): void {
 
     const newX = kb.startX + (kb.endX - kb.startX) * ease;
     const newY = kb.startY + (kb.endY - kb.startY) * ease;
-    monster.x       = newX;
-    monster.y       = newY;
-    monster.targetX = newX;
-    monster.targetY = newY;
+    entity.hasPosition.current = { x: newX, y: newY };
+    entity.isMoving.motion = zeroMotion();
 
     if (t >= 1) {
-      monster.x       = kb.endX;
-      monster.y       = kb.endY;
-      monster.targetX = kb.endX;
-      monster.targetY = kb.endY;
-      world.monsterKnockback.delete(monsterId);
+      entity.hasPosition.current = { x: kb.endX, y: kb.endY };
+      entity.isMoving.motion = zeroMotion();
+      world.clearMonsterKnockback(entity.isMonster.id);
     }
   }
 }

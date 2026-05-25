@@ -1,15 +1,20 @@
-import type { PlayerState } from '@mmo-idle/shared';
-import { MONSTER_DATABASE } from '@mmo-idle/shared';
-import { registerCombatListener } from './combatPipeline';
-import { getFlag, setFlag, getResource, setResource } from './combatState';
+import type { PlayerSnapshot, PassiveKey } from '@mmo-idle/shared';
+import { MONSTER_DATABASE, computeEternalDoomDamage } from '@mmo-idle/shared';
+import type { PlayerEntity } from '../../../ecs/components/player';
+import { defineBuff, type BuffDescriptor } from '../../registry/buffs';
+import { registerCombatListener } from '../../combatPipeline';
+
+// Re-export the pure formula from shared so existing importers don't change paths.
+export { computeEternalDoomDamage };
+import { getFlag, setFlag } from '../../combatState';
 import {
   applyStatusEffect, removeStatusEffect, getStatusEffect,
   getTotalStacks, hasStatusEffect,
-} from './statusEffects';
-import { grantMonsterRewards } from './rewards';
-import { applyKnockback } from './knockback';
-import type { CombatState } from './combatState';
-import type { World } from '../world/World';
+} from '../../statusEffects';
+import { grantMonsterRewards } from '../../rewards';
+import { applyKnockback } from '../../knockback';
+import type { CombatState } from '../../combatState';
+import type { World } from '../../../world/World';
 
 // ── Shared constants (fallback — must match dotPrototype.ts) ──────────────────
 const DOT_EFFECT_ID      = 'dot';
@@ -49,8 +54,8 @@ const ED_MAX_STACKS           = 50;
 const IT_ATK_PER_STACK   = 2;    // flat damage bonus per stack on target
 const IT_SPEED_PER_STACK = 0.02; // attackCooldown reduction per stack (2%)
 const IT_SPEED_CAP       = 0.40; // maximum 40% reduction
-const IT_BASE_CD_KEY     = 'it-base-cd';
-const IT_INIT_FLAG       = 'it-initialized';
+// IT base-cd capture migrated from combatState resources to the DotComponent
+// (dot.itInitialized / dot.itBaseCd).
 
 // ── Balanced: Fan the Flames (dot-balanced-t3-a) ─────────────────────────────
 const FTF_STACKS_PER_HIT = 2;
@@ -81,20 +86,12 @@ const CHILL_FLAG          = 'dot-chill-applied';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
-function hasPassive(player: PlayerState, key: string): boolean {
-  return (player.passives[key] ?? 0) > 0;
+function hasPassive(player: PlayerSnapshot | PlayerEntity, key: PassiveKey): boolean {
+  const passives = 'entityId' in player ? player.usesSkills.passives : player.passives;
+  return (passives[key] ?? 0) > 0;
 }
 
 // ── Exported helpers for dotPrototype.ts and buffSync.ts ─────────────────────
-
-/** Tick damage for Eternal Doom: full rate for first 8 stacks, 50% per stack beyond that. */
-export function computeEternalDoomDamage(stacks: number, basePerStack: number): number {
-  if (stacks <= ED_BASE_STACKS) return stacks * basePerStack;
-  return Math.round(
-    ED_BASE_STACKS * basePerStack +
-    (stacks - ED_BASE_STACKS) * basePerStack * ED_DIMINISH_RATE,
-  );
-}
 
 /** Damage multiplier from Smoldering Ember debuff (1.0 if not present). */
 export function getSmolderMult(monsterState: CombatState): number {
@@ -108,7 +105,7 @@ export function getFrozenMult(monsterState: CombatState): number {
 }
 
 export function isMonsterFrozen(world: World, monsterId: string): boolean {
-  const monsterState = world.monsterCombatState.get(monsterId);
+  const monsterState = world.getMonsterCombatState(monsterId);
   return monsterState ? hasStatusEffect(monsterState, FROZEN_EFFECT) : false;
 }
 
@@ -128,23 +125,21 @@ export function initDotT3(): void {
   // ── 1. onHit — T3 stack application ───────────────────────────────────────
   registerCombatListener('onHit', (ctx, world) => {
     if (ctx.attackerType !== 'player') return;
-    if (ctx.attacker.combatArchetype !== 'dot') return;
     if (ctx.defenderType !== 'monster') return;
 
-    const player = world.players.get(ctx.attacker.id) as PlayerState | undefined;
-    if (!player) return;
+    // Query by component presence, not by combatArchetype string.
+    const attacker = ctx.attacker;
+    if (!attacker?.dot) return;
 
-    const monsterState = world.monsterCombatState.get(ctx.defender.id);
-    if (!monsterState) {
-      ctx.metadata['dotHandled'] = true;
-      return;
-    }
+    const player = attacker;
+    const passives = player.usesSkills.passives;
+    const monsterState = ctx.defender.combatState;
 
-    const maxStacks      = Math.round(player.passives['dot.max-stacks']                     ?? 6);
-    const convPct        = player.passives['dot.conversion-pct']                            ?? DOT_CONVERSION_PCT;
-    const tickIntervalMs = Math.max(100, Math.round(player.passives['dot.tick-interval-ms'] ?? DOT_TICK_MS));
-    const durationMs     = Math.round(player.passives['dot.duration-ms']                    ?? DOT_DURATION_MS);
-    const dmgPerStack    = Math.max(1, Math.round(player.attack * convPct / maxStacks));
+    const maxStacks      = Math.round(passives['dot.max-stacks']                     ?? 6);
+    const convPct        = passives['dot.conversion-pct']                            ?? DOT_CONVERSION_PCT;
+    const tickIntervalMs = Math.max(100, Math.round(passives['dot.tick-interval-ms'] ?? DOT_TICK_MS));
+    const durationMs     = Math.round(passives['dot.duration-ms']                    ?? DOT_DURATION_MS);
+    const dmgPerStack    = Math.max(1, Math.round(player.dealsDamage.attack * convPct / maxStacks));
 
     // Redirect convPct of direct hit damage into DoT ticks.
     // Flag prevents the base handler from double-applying this reduction for
@@ -163,7 +158,7 @@ export function initDotT3(): void {
     if (hasPassive(player, 'dot.poison-explosion')) {
       const pe = applyStatusEffect(monsterState, {
         id: DOT_EFFECT_ID, maxStacks: PE_MAX_STACKS, instanced: false,
-        sourceId: player.id, remainingMs: durationMs, refreshable: true,
+        sourceId: player.isPlayer.id, remainingMs: durationMs, refreshable: true,
         data: { damagePerStack: dmgPerStack, nextTickIn: tickIntervalMs, tickIntervalMs },
       });
       pe.data.damagePerStack = dmgPerStack;
@@ -172,7 +167,7 @@ export function initDotT3(): void {
         const burst = PE_MAX_STACKS * dmgPerStack * PE_BURST_TICKS;
         ctx.damage += burst;
         removeStatusEffect(monsterState, DOT_EFFECT_ID);
-        console.log(`[PoisonExplosion] ${player.id}: detonated → +${burst} burst`);
+        console.log(`[PoisonExplosion] ${player.isPlayer.id}: detonated → +${burst} burst`);
       }
       ctx.metadata['dotHandled'] = true;
       return;
@@ -182,7 +177,7 @@ export function initDotT3(): void {
     if (hasPassive(player, 'dot.eternal-doom')) {
       const ed = applyStatusEffect(monsterState, {
         id: DOT_EFFECT_ID, maxStacks: ED_MAX_STACKS, instanced: false,
-        sourceId: player.id, remainingMs: durationMs, refreshable: true,
+        sourceId: player.isPlayer.id, remainingMs: durationMs, refreshable: true,
         data: {
           damagePerStack: dmgPerStack, nextTickIn: tickIntervalMs, tickIntervalMs,
           isEternalDoom: 1, edBaseStacks: ED_BASE_STACKS,
@@ -200,18 +195,18 @@ export function initDotT3(): void {
       const currentStacks = getTotalStacks(monsterState, DOT_EFFECT_ID);
       if (currentStacks >= maxStacks) {
         ctx.damage += Math.floor(maxStacks * dmgPerStack * FTF_BONUS_MULT);
-        console.log(`[FanTheFlames] ${player.id}: at max — +${Math.floor(maxStacks * dmgPerStack * FTF_BONUS_MULT)} bonus`);
+        console.log(`[FanTheFlames] ${player.isPlayer.id}: at max — +${Math.floor(maxStacks * dmgPerStack * FTF_BONUS_MULT)} bonus`);
       } else {
         const toApply = Math.min(FTF_STACKS_PER_HIT, maxStacks - currentStacks);
         let ftfEff = applyStatusEffect(monsterState, {
           id: DOT_EFFECT_ID, maxStacks, instanced: false,
-          sourceId: player.id, remainingMs: durationMs, refreshable: true,
+          sourceId: player.isPlayer.id, remainingMs: durationMs, refreshable: true,
           data: { damagePerStack: ftfDmg, nextTickIn: tickIntervalMs, tickIntervalMs },
         });
         for (let i = 1; i < toApply; i++) {
           ftfEff = applyStatusEffect(monsterState, {
             id: DOT_EFFECT_ID, maxStacks, instanced: false,
-            sourceId: player.id, remainingMs: durationMs, refreshable: true,
+            sourceId: player.isPlayer.id, remainingMs: durationMs, refreshable: true,
             data: { damagePerStack: ftfDmg, nextTickIn: tickIntervalMs, tickIntervalMs },
           });
         }
@@ -227,7 +222,7 @@ export function initDotT3(): void {
     if (hasPassive(player, 'dot.smoldering-ember')) {
       const se = applyStatusEffect(monsterState, {
         id: DOT_EFFECT_ID, maxStacks, instanced: false,
-        sourceId: player.id, remainingMs: durationMs, refreshable: true,
+        sourceId: player.isPlayer.id, remainingMs: durationMs, refreshable: true,
         data: { damagePerStack: dmgPerStack, nextTickIn: tickIntervalMs, tickIntervalMs },
       });
       se.data.damagePerStack = dmgPerStack;
@@ -239,7 +234,7 @@ export function initDotT3(): void {
       if (!smolder) {
         smolder = applyStatusEffect(monsterState, {
           id: SMOLDER_EFFECT, maxStacks: 0, instanced: false,
-          remainingMs: durationMs, sourceId: player.id, data: {},
+          remainingMs: durationMs, sourceId: player.isPlayer.id, data: {},
         });
       }
       smolder.stacks = burnStacks;
@@ -261,7 +256,7 @@ export function initDotT3(): void {
         applyStatusEffect(monsterState, {
           id: CONF_EFFECT_ID, instanced: false, maxStacks: 1,
           remainingMs: CONF_TICKS * CONF_TICK_MS + 1,
-          sourceId: player.id,
+          sourceId: player.isPlayer.id,
           data: {
             damagePerTick:  confDmg,
             nextTickIn:     CONF_TICK_MS,
@@ -269,11 +264,11 @@ export function initDotT3(): void {
             ticksLeft:      CONF_TICKS,
           },
         });
-        console.log(`[Conflagration] ${player.id}: triggered — ${confDmg}/tick × ${CONF_TICKS}`);
+        console.log(`[Conflagration] ${player.isPlayer.id}: triggered — ${confDmg}/tick × ${CONF_TICKS}`);
       } else {
         const cf = applyStatusEffect(monsterState, {
           id: DOT_EFFECT_ID, maxStacks, instanced: false,
-          sourceId: player.id, remainingMs: durationMs, refreshable: true,
+          sourceId: player.isPlayer.id, remainingMs: durationMs, refreshable: true,
           data: { damagePerStack: dmgPerStack, nextTickIn: tickIntervalMs, tickIntervalMs },
         });
         cf.data.damagePerStack = dmgPerStack;
@@ -288,12 +283,12 @@ export function initDotT3(): void {
     if (hasPassive(player, 'dot.permafrost')) {
       const existing = getStatusEffect(monsterState, DOT_EFFECT_ID);
       if (existing && existing.data.t3Perm) {
-        existing.sourceId = player.id; // update kill credit
+        existing.sourceId = player.isPlayer.id; // update kill credit
         existing.data.hits = Math.min(PERM_MAX_HITS, (existing.data.hits ?? 0) + 1);
       } else if (!existing) {
         applyStatusEffect(monsterState, {
           id: DOT_EFFECT_ID, maxStacks: PERM_MAX_STACKS, instanced: false,
-          remainingMs: -1, sourceId: player.id,
+          remainingMs: -1, sourceId: player.isPlayer.id,
           data: {
             nextTickIn:     tickIntervalMs,
             tickIntervalMs,
@@ -310,7 +305,7 @@ export function initDotT3(): void {
     if (hasPassive(player, 'dot.freezing-cold')) {
       const fc = applyStatusEffect(monsterState, {
         id: DOT_EFFECT_ID, maxStacks, instanced: false,
-        sourceId: player.id, remainingMs: durationMs, refreshable: true,
+        sourceId: player.isPlayer.id, remainingMs: durationMs, refreshable: true,
         data: { damagePerStack: dmgPerStack, nextTickIn: tickIntervalMs, tickIntervalMs },
       });
       fc.data.damagePerStack = dmgPerStack;
@@ -320,17 +315,17 @@ export function initDotT3(): void {
       if (!hasStatusEffect(monsterState, FROZEN_EFFECT)) {
         applyStatusEffect(monsterState, {
           id: CHILL_EFFECT, maxStacks: CHILL_MAX, instanced: false,
-          remainingMs: CHILL_MS, refreshable: true, sourceId: player.id, data: {},
+          remainingMs: CHILL_MS, refreshable: true, sourceId: player.isPlayer.id, data: {},
         });
         if (getTotalStacks(monsterState, CHILL_EFFECT) >= CHILL_MAX) {
           const chillEffect = getStatusEffect(monsterState, CHILL_EFFECT);
-          const sid = chillEffect?.sourceId ?? player.id;
+          const sid = chillEffect?.sourceId ?? player.isPlayer.id;
           removeStatusEffect(monsterState, CHILL_EFFECT);
           applyStatusEffect(monsterState, {
             id: FROZEN_EFFECT, instanced: false, maxStacks: 1,
             remainingMs: FREEZE_MS, sourceId: sid, data: {},
           });
-          console.log(`[FreezingCold] ${player.id}: ${ctx.defender.id} frozen!`);
+          console.log(`[FreezingCold] ${player.isPlayer.id}: ${ctx.defender.isMonster.id} frozen!`);
         }
       }
       ctx.metadata['dotHandled'] = true;
@@ -349,14 +344,14 @@ export function initDotT3(): void {
           ? [...effects, 'glacial-fracture']
           : ['glacial-fracture'];
         if (ctx.defenderType === 'monster') {
-          applyKnockback(world, ctx.defender.id, player.x, player.y,
+          applyKnockback(world, ctx.defender.isMonster.id, player.hasPosition.current.x, player.hasPosition.current.y,
             GLACIAL_FRACTURE_KNOCKBACK_PX, GLACIAL_FRACTURE_KNOCKBACK_MS);
         }
-        console.log(`[GlacialFract] ${player.id}: shatter ${currentStacks} stacks → +${burst} (knockback ${GLACIAL_FRACTURE_KNOCKBACK_PX}px over ${GLACIAL_FRACTURE_KNOCKBACK_MS}ms)`);
+        console.log(`[GlacialFract] ${player.isPlayer.id}: shatter ${currentStacks} stacks → +${burst} (knockback ${GLACIAL_FRACTURE_KNOCKBACK_PX}px over ${GLACIAL_FRACTURE_KNOCKBACK_MS}ms)`);
       }
       const gf = applyStatusEffect(monsterState, {
         id: DOT_EFFECT_ID, maxStacks, instanced: false,
-        sourceId: player.id, remainingMs: durationMs, refreshable: true,
+        sourceId: player.isPlayer.id, remainingMs: durationMs, refreshable: true,
         data: { damagePerStack: dmgPerStack, nextTickIn: tickIntervalMs, tickIntervalMs },
       });
       gf.data.damagePerStack = dmgPerStack;
@@ -368,10 +363,9 @@ export function initDotT3(): void {
 
   // ── 2. onDamageTaken — Smoldering Ember vulnerability + Frozen bonus ─────────
   // Boosts direct-attack damage only; DoT tick bonuses are applied in updateDotArchetype.
-  registerCombatListener('onDamageTaken', (ctx, world) => {
+  registerCombatListener('onDamageTaken', (ctx, _world) => {
     if (ctx.defenderType !== 'monster') return;
-    const monsterState = world.monsterCombatState.get(ctx.defender.id);
-    if (!monsterState) return;
+    const monsterState = ctx.defender.combatState;
 
     const smolder = getStatusEffect(monsterState, SMOLDER_EFFECT);
     if (smolder) {
@@ -389,7 +383,7 @@ export function updateDotT3(world: World, dt: number): void {
   updatePermafrost(world, dt);
   updateConflagration(world, dt);
   updateChillAndFreeze(world);
-  mirrorDotT3PlayerState(world);
+  mirrorDotT3PlayerSnapshot(world);
   mirrorStatusEffectsToClient(world);
 }
 
@@ -398,7 +392,9 @@ export function updateDotT3(world: World, dt: number): void {
 function updatePermafrost(world: World, dt: number): void {
   const toKill: Array<{ monsterId: string; sourceId: string }> = [];
 
-  for (const [monsterId, monsterState] of world.monsterCombatState) {
+  for (const entity of world.monsterEntities) {
+    const monsterId    = entity.isMonster.id;
+    const monsterState = entity.combatState;
     const effect = getStatusEffect(monsterState, DOT_EFFECT_ID);
     if (!effect || !effect.data.t3Perm) continue;
 
@@ -407,28 +403,23 @@ function updatePermafrost(world: World, dt: number): void {
 
     effect.data.nextTickIn = effect.data.tickIntervalMs ?? DOT_TICK_MS;
 
-    const monster = world.monsters.get(monsterId);
-    if (!monster) continue;
-
-    const source = world.players.get(effect.sourceId);
+    const source = world.getPlayerEntity(effect.sourceId);
     if (!source) continue;
 
     const hits   = Math.min(PERM_MAX_HITS, effect.data.hits ?? 0);
     const pct    = hits * PERM_PCT_PER_HIT;
-    const base   = Math.max(1, Math.round(source.attack * pct));
+    const base   = Math.max(1, Math.round(source.dealsDamage.attack * pct));
     const damage = Math.round(base * getSmolderMult(monsterState) * getFrozenMult(monsterState));
-    monster.hp -= damage;
+    entity.hasHealth.hp -= damage;
     console.log(`[Permafrost] ${monsterId}: ${damage} tick (${hits}/${PERM_MAX_HITS} hits = ${Math.round(pct * 100)}% ATK)`);
 
-    if (monster.hp <= 0) toKill.push({ monsterId, sourceId: effect.sourceId });
+    if (entity.hasHealth.hp <= 0) toKill.push({ monsterId, sourceId: effect.sourceId });
   }
 
   for (const { monsterId, sourceId } of toKill) {
-    const monster = world.monsters.get(monsterId);
+    const monster = world.getMonsterEntity(monsterId);
     if (monster && sourceId) grantMonsterRewards(world, sourceId, monster);
-    world.monsters.delete(monsterId);
-    world.monsterAI.delete(monsterId);
-    world.monsterCombatState.delete(monsterId);
+    world.removeMonsterEntity(monsterId);
   }
 }
 
@@ -437,7 +428,9 @@ function updatePermafrost(world: World, dt: number): void {
 function updateConflagration(world: World, dt: number): void {
   const toKill: Array<{ monsterId: string; sourceId: string }> = [];
 
-  for (const [monsterId, monsterState] of world.monsterCombatState) {
+  for (const entity of world.monsterEntities) {
+    const monsterId    = entity.isMonster.id;
+    const monsterState = entity.combatState;
     const effect = getStatusEffect(monsterState, CONF_EFFECT_ID);
     if (!effect) continue;
 
@@ -447,13 +440,10 @@ function updateConflagration(world: World, dt: number): void {
     effect.data.nextTickIn = effect.data.tickIntervalMs;
     effect.data.ticksLeft--;
 
-    const monster = world.monsters.get(monsterId);
-    if (!monster) continue;
-
-    monster.hp -= Math.round(effect.data.damagePerTick);
+    entity.hasHealth.hp -= Math.round(effect.data.damagePerTick);
     console.log(`[Conflagration] ${monsterId}: ${effect.data.damagePerTick} tick (${effect.data.ticksLeft} left)`);
 
-    if (monster.hp <= 0) {
+    if (entity.hasHealth.hp <= 0) {
       toKill.push({ monsterId, sourceId: effect.sourceId });
       continue;
     }
@@ -461,36 +451,33 @@ function updateConflagration(world: World, dt: number): void {
   }
 
   for (const { monsterId, sourceId } of toKill) {
-    const monster = world.monsters.get(monsterId);
+    const monster = world.getMonsterEntity(monsterId);
     if (monster && sourceId) grantMonsterRewards(world, sourceId, monster);
-    world.monsters.delete(monsterId);
-    world.monsterAI.delete(monsterId);
-    world.monsterCombatState.delete(monsterId);
+    world.removeMonsterEntity(monsterId);
   }
 }
 
 // ── Chill and Freeze: stat modifications ─────────────────────────────────────
 
 function updateChillAndFreeze(world: World): void {
-  for (const [monsterId, monsterState] of world.monsterCombatState) {
-    const monster = world.monsters.get(monsterId);
-    if (!monster) continue;
+  for (const entity of world.monsterEntities) {
+    const monsterState = entity.combatState;
 
     const chillEffect = getStatusEffect(monsterState, CHILL_EFFECT);
     const wasChilled  = getFlag(monsterState, CHILL_FLAG);
 
     if (chillEffect) {
-      const def = MONSTER_DATABASE.get(monster.monsterTypeId);
+      const def = MONSTER_DATABASE.get(entity.isMonster.monsterTypeId);
       if (def) {
-        monster.speed          = Math.max(10, Math.round(def.stats.speed * (1 - chillEffect.stacks * CHILL_SPEED_MULT)));
-        monster.attackCooldown = Math.round(def.stats.attackCooldown * (1 + chillEffect.stacks * CHILL_ATK_MULT));
+        entity.hasPosition.speed = Math.max(10, Math.round(def.stats.speed * (1 - chillEffect.stacks * CHILL_SPEED_MULT)));
+        entity.performsAttack.attackCooldown = Math.round(def.stats.attackCooldown * (1 + chillEffect.stacks * CHILL_ATK_MULT));
       }
       if (!wasChilled) setFlag(monsterState, CHILL_FLAG, true);
     } else if (wasChilled) {
-      const def = MONSTER_DATABASE.get(monster.monsterTypeId);
+      const def = MONSTER_DATABASE.get(entity.isMonster.monsterTypeId);
       if (def) {
-        monster.speed          = def.stats.speed;
-        monster.attackCooldown = def.stats.attackCooldown;
+        entity.hasPosition.speed = def.stats.speed;
+        entity.performsAttack.attackCooldown = def.stats.attackCooldown;
       }
       setFlag(monsterState, CHILL_FLAG, false);
     }
@@ -499,35 +486,34 @@ function updateChillAndFreeze(world: World): void {
 
 // ── Player-state mirroring for DoT T3 ────────────────────────────────────────
 
-function mirrorDotT3PlayerState(world: World): void {
-  for (const player of world.players.values()) {
-    if (player.combatArchetype !== 'dot') continue;
+function mirrorDotT3PlayerSnapshot(world: World): void {
+  for (const entity of world.dotPlayers) {
+    const dot    = entity.dot;
 
-    const targetState = player.attackTargetId
-      ? world.monsterCombatState.get(player.attackTargetId)
+    const targetState = entity.performsAttack.attackTargetId
+      ? world.getMonsterCombatState(entity.performsAttack.attackTargetId)
       : undefined;
 
     // Freezing Cold: mirror chill stacks for HUD
-    if (hasPassive(player, 'dot.freezing-cold')) {
-      player.targetChillStacks = targetState ? getTotalStacks(targetState, CHILL_EFFECT) : 0;
+    if (hasPassive(entity, 'dot.freezing-cold')) {
+      dot.targetChillStacks = targetState ? getTotalStacks(targetState, CHILL_EFFECT) : 0;
     }
 
-    // Invigorating Toxins: attack speed modifier
-    if (hasPassive(player, 'dot.invigorating-toxins')) {
-      const ps = world.playerCombatState.get(player.id);
-      if (ps) {
-        if (!getFlag(ps, IT_INIT_FLAG)) {
-          setResource(ps, IT_BASE_CD_KEY, player.attackCooldown);
-          setFlag(ps, IT_INIT_FLAG, true);
-        }
-        const baseCD = getResource(ps, IT_BASE_CD_KEY);
-        const stacks = targetState ? getTotalStacks(targetState, DOT_EFFECT_ID) : 0;
-        if (stacks > 0) {
-          const reduction = Math.min(stacks * IT_SPEED_PER_STACK, IT_SPEED_CAP);
-          player.attackCooldown = Math.max(200, Math.round(baseCD * (1 - reduction)));
-        } else {
-          player.attackCooldown = Math.round(baseCD);
-        }
+    // Invigorating Toxins: attack speed modifier.
+    // Base cooldown is captured the first time we observe a player with this
+    // passive, and lives on the dot component so it survives across ticks.
+    if (hasPassive(entity, 'dot.invigorating-toxins')) {
+      if (!dot.itInitialized) {
+        dot.itBaseCd      = entity.performsAttack.attackCooldown;
+        dot.itInitialized = true;
+      }
+      const baseCD = dot.itBaseCd;
+      const stacks = targetState ? getTotalStacks(targetState, DOT_EFFECT_ID) : 0;
+      if (stacks > 0) {
+        const reduction = Math.min(stacks * IT_SPEED_PER_STACK, IT_SPEED_CAP);
+        entity.performsAttack.attackCooldown = Math.max(200, Math.round(baseCD * (1 - reduction)));
+      } else {
+        entity.performsAttack.attackCooldown = Math.round(baseCD);
       }
     }
   }
@@ -552,7 +538,7 @@ function collectClientEffectFrames(world: World, combatState: CombatState | unde
   const dot = getStatusEffect(combatState, DOT_EFFECT_ID);
   if (!dot || dot.stacks <= 0 || !dot.sourceId) return activeEffectFrames;
 
-  const source = world.players.get(dot.sourceId);
+  const source = world.getPlayerEntity(dot.sourceId);
   if (!source) return activeEffectFrames;
 
   // Glacial Fracture: stack-buildup overlay (static frame per stack count).
@@ -580,16 +566,14 @@ function collectClientEffectFrames(world: World, combatState: CombatState | unde
 }
 
 function mirrorStatusEffectsToClient(world: World): void {
-  for (const monster of world.monsters.values()) {
-    const monsterState = world.monsterCombatState.get(monster.id);
-    monster.activeEffects = collectClientEffects(monsterState);
-    monster.activeEffectFrames = collectClientEffectFrames(world, monsterState);
+  for (const entity of world.monsterEntities) {
+    entity.hasStatus.activeEffects = collectClientEffects(entity.combatState);
+    entity.hasStatus.activeEffectFrames = collectClientEffectFrames(world, entity.combatState);
   }
 
-  for (const player of world.players.values()) {
-    const playerState = world.playerCombatState.get(player.id);
-    player.activeEffects = collectClientEffects(playerState);
-    player.activeEffectFrames = collectClientEffectFrames(world, playerState);
+  for (const player of world.playerEntities) {
+    player.hasStatus.activeEffects = collectClientEffects(player.combatState);
+    player.hasStatus.activeEffectFrames = collectClientEffectFrames(world, player.combatState);
   }
 }
 
@@ -603,18 +587,53 @@ export function isTargetFrozen(monsterState: CombatState): boolean {
   return hasStatusEffect(monsterState, FROZEN_EFFECT);
 }
 
-export function getTargetFrozenPct(monsterState: CombatState): number {
+export function getTargetFrozenRemainingPct(monsterState: CombatState): number {
   const e = getStatusEffect(monsterState, FROZEN_EFFECT);
   if (!e || e.remainingMs <= 0) return 0;
-  return Math.round((1 - e.remainingMs / FREEZE_MS) * 100);
+  return Math.round((e.remainingMs / FREEZE_MS) * 100);
 }
 
-export function getConflagrationPct(monsterState: CombatState): number {
+export function getConflagrationRemainingPct(monsterState: CombatState): number {
   const e = getStatusEffect(monsterState, CONF_EFFECT_ID);
   if (!e) return 0;
-  return Math.round(((CONF_TICKS - e.data.ticksLeft) / CONF_TICKS) * 100);
+  return Math.round((e.data.ticksLeft / CONF_TICKS) * 100);
 }
 
 export function isConflagrationActive(monsterState: CombatState): boolean {
   return hasStatusEffect(monsterState, CONF_EFFECT_ID);
 }
+
+// ── Buff descriptors ──────────────────────────────────────────────────────────
+
+export const DOT_T3_BUFFS = [
+  defineBuff('dot-vigor', ({ player, targetCs }) => {
+    if (player.combatArchetype !== 'dot') return null;
+    if ((player.passives['dot.invigorating-toxins'] ?? 0) <= 0) return null;
+    if (!targetCs) return null;
+    const stacks = player.targetDotStacks;
+    return stacks > 0 ? { id: 'dot-vigor', label: 'Vigor', stacks, durationPct: -1, color: '#88ff44' } : null;
+  }),
+  defineBuff('dot-conflag', ({ player, targetCs }) => {
+    if (player.combatArchetype !== 'dot') return null;
+    if ((player.passives['dot.conflagration'] ?? 0) <= 0) return null;
+    if (!targetCs) return null;
+    return isConflagrationActive(targetCs)
+      ? { id: 'dot-conflag', label: 'Cflag', stacks: 1, durationPct: getConflagrationRemainingPct(targetCs), color: '#ff6600' }
+      : null;
+  }),
+  defineBuff('dot-chill', ({ player, targetCs }) => {
+    if (player.combatArchetype !== 'dot') return null;
+    if ((player.passives['dot.freezing-cold'] ?? 0) <= 0) return null;
+    if (!targetCs) return null;
+    const stacks = getTargetChillStacks(targetCs);
+    return stacks > 0 ? { id: 'dot-chill', label: 'Chll', stacks, durationPct: -1, color: '#88ddff' } : null;
+  }),
+  defineBuff('dot-frozen', ({ player, targetCs }) => {
+    if (player.combatArchetype !== 'dot') return null;
+    if ((player.passives['dot.freezing-cold'] ?? 0) <= 0) return null;
+    if (!targetCs) return null;
+    return isTargetFrozen(targetCs)
+      ? { id: 'dot-frozen', label: 'Frzn', stacks: 1, durationPct: getTargetFrozenRemainingPct(targetCs), color: '#ffffff' }
+      : null;
+  }),
+] as const satisfies readonly BuffDescriptor[];

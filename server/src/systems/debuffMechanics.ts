@@ -10,11 +10,10 @@ import { getStatusEffect } from './statusEffects';
  *                     Applied by Cursed Finale (cadence-light tier-3-b).
  */
 export function initDebuffMechanics(): void {
-  registerCombatListener('onDamageTaken', (ctx, world) => {
+  registerCombatListener('onDamageTaken', (ctx, _world) => {
     if (ctx.defenderType !== 'monster') return;
 
-    const monsterState = world.monsterCombatState.get(ctx.defender.id);
-    if (!monsterState) return;
+    const monsterState = ctx.defender.combatState;
 
     const vuln = getStatusEffect(monsterState, 'vulnerability');
     if (!vuln) return;

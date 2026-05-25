@@ -3,7 +3,7 @@ import type { EquipmentSlot, ItemStats, EssenceType } from './items';
 export interface Recipe {
   id: string;
   name: string;
-  /** Biome group this recipe belongs to — matches the key in PlayerState.biomeLevel. */
+  /** Biome group this recipe belongs to — matches the key in PlayerSnapshot.biomeLevel. */
   recipeGroup: string;
   /**
    * Biome level required in recipeGroup for this recipe to unlock.

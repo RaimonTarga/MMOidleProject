@@ -1,6 +1,6 @@
 import type { World } from '../world/World';
 import type { NodeDirection } from '@mmo-idle/shared';
-import { GAME_CONFIG } from '@mmo-idle/shared';
+import { GAME_CONFIG, pointFromMotion, vectorTo, zeroMotion } from '@mmo-idle/shared';
 import { NODE_REGISTRY } from '../world/nodeRegistry';
 
 // Pixels from the boundary that fire a transition. Must match GATE_THICK in GameScene.
@@ -22,71 +22,86 @@ export function resolveExit(nodeId: string, direction: NodeDirection): string | 
 export function updateTransitions(world: World): void {
   const G = GAME_CONFIG.GATE_HALF;
 
-  for (const player of world.players.values()) {
-    const node = NODE_REGISTRY.get(player.nodeId);
+  for (const entity of world.playerEntities) {
+    const position = entity.hasPosition;
+    const node = NODE_REGISTRY.get(position.nodeId);
     if (!node) continue;
 
     const W = node.width;
     const H = node.height;
+    const current = position.current;
 
     let direction: NodeDirection | null = null;
     let inGate = false;
 
-    if (player.x <= EXIT_TRIGGER) {
+    if (current.x <= EXIT_TRIGGER) {
       direction = 'west';
-      inGate = player.y >= H / 2 - G && player.y <= H / 2 + G;
-    } else if (player.x >= W - EXIT_TRIGGER) {
+      inGate = current.y >= H / 2 - G && current.y <= H / 2 + G;
+    } else if (current.x >= W - EXIT_TRIGGER) {
       direction = 'east';
-      inGate = player.y >= H / 2 - G && player.y <= H / 2 + G;
-    } else if (player.y <= EXIT_TRIGGER) {
+      inGate = current.y >= H / 2 - G && current.y <= H / 2 + G;
+    } else if (current.y <= EXIT_TRIGGER) {
       direction = 'north';
-      inGate = player.x >= W / 2 - G && player.x <= W / 2 + G;
-    } else if (player.y >= H - EXIT_TRIGGER) {
+      inGate = current.x >= W / 2 - G && current.x <= W / 2 + G;
+    } else if (current.y >= H - EXIT_TRIGGER) {
       direction = 'south';
-      inGate = player.x >= W / 2 - G && player.x <= W / 2 + G;
+      inGate = current.x >= W / 2 - G && current.x <= W / 2 + G;
     }
 
     if (!direction) continue;
 
-    const targetNodeId = inGate ? resolveExit(player.nodeId, direction) : null;
+    const targetNodeId = inGate ? resolveExit(position.nodeId, direction) : null;
 
     if (!targetNodeId) {
       // Solid wall (or not in gate zone) — clamp player back inside.
-      if (direction === 'west')  { player.x = EXIT_TRIGGER + 1;   player.targetX = Math.max(EXIT_TRIGGER + 1,   player.targetX); }
-      if (direction === 'east')  { player.x = W - EXIT_TRIGGER - 1; player.targetX = Math.min(W - EXIT_TRIGGER - 1, player.targetX); }
-      if (direction === 'north') { player.y = EXIT_TRIGGER + 1;   player.targetY = Math.max(EXIT_TRIGGER + 1,   player.targetY); }
-      if (direction === 'south') { player.y = H - EXIT_TRIGGER - 1; player.targetY = Math.min(H - EXIT_TRIGGER - 1, player.targetY); }
+      const target = pointFromMotion(position.current, entity.isMoving.motion);
+      if (direction === 'west') {
+        position.current.x = EXIT_TRIGGER + 1;
+        target.x = Math.max(EXIT_TRIGGER + 1, target.x);
+      }
+      if (direction === 'east') {
+        position.current.x = W - EXIT_TRIGGER - 1;
+        target.x = Math.min(W - EXIT_TRIGGER - 1, target.x);
+      }
+      if (direction === 'north') {
+        position.current.y = EXIT_TRIGGER + 1;
+        target.y = Math.max(EXIT_TRIGGER + 1, target.y);
+      }
+      if (direction === 'south') {
+        position.current.y = H - EXIT_TRIGGER - 1;
+        target.y = Math.min(H - EXIT_TRIGGER - 1, target.y);
+      }
+      entity.isMoving.motion = vectorTo(position.current, target);
       continue;
     }
 
     const targetNode = NODE_REGISTRY.get(targetNodeId)!;
-    const fromNodeId = player.nodeId;
+    const fromNodeId = position.nodeId;
 
-    player.nodeId = targetNodeId;
+    position.nodeId = targetNodeId;
 
     // Place the player just inside the opposite edge of the new node.
     switch (direction) {
       case 'west':
-        player.x = targetNode.width - EXIT_TRIGGER - 1;
-        player.y = Math.max(0, Math.min(player.y, targetNode.height));
+        position.current.x = targetNode.width - EXIT_TRIGGER - 1;
+        position.current.y = Math.max(0, Math.min(position.current.y, targetNode.height));
         break;
       case 'east':
-        player.x = EXIT_TRIGGER + 1;
-        player.y = Math.max(0, Math.min(player.y, targetNode.height));
+        position.current.x = EXIT_TRIGGER + 1;
+        position.current.y = Math.max(0, Math.min(position.current.y, targetNode.height));
         break;
       case 'north':
-        player.y = targetNode.height - EXIT_TRIGGER - 1;
-        player.x = Math.max(0, Math.min(player.x, targetNode.width));
+        position.current.y = targetNode.height - EXIT_TRIGGER - 1;
+        position.current.x = Math.max(0, Math.min(position.current.x, targetNode.width));
         break;
       case 'south':
-        player.y = EXIT_TRIGGER + 1;
-        player.x = Math.max(0, Math.min(player.x, targetNode.width));
+        position.current.y = EXIT_TRIGGER + 1;
+        position.current.x = Math.max(0, Math.min(position.current.x, targetNode.width));
         break;
     }
 
-    player.targetX = player.x;
-    player.targetY = player.y;
+    entity.isMoving.motion = zeroMotion();
 
-    console.log(`[trans] ✓ ${player.name} ${fromNodeId} → ${targetNodeId} via ${direction}  pos=(${Math.round(player.x)}, ${Math.round(player.y)})`);
+    console.log(`[trans] ✓ ${entity.isPlayer.name} ${fromNodeId} → ${targetNodeId} via ${direction}  pos=(${Math.round(position.current.x)}, ${Math.round(position.current.y)})`);
   }
 }

@@ -5,7 +5,7 @@ import cors from 'cors';
 import path from 'path';
 
 import { World } from './world/World';
-import { GAME_CONFIG, TEST_ROOM_NODE_ID, ESSENCE_TYPES } from '@mmo-idle/shared';
+import { GAME_CONFIG, TEST_ROOM_NODE_ID, ESSENCE_TYPES, vectorTo, zeroMotion } from '@mmo-idle/shared';
 import { unlockSkill } from './systems/skills';
 import { equipItem, unequipItem } from './systems/inventory';
 import { craftRecipe } from './systems/crafting';
@@ -15,18 +15,13 @@ import type {
   EquipmentSlot,
   NodeSnapshot,
 } from '@mmo-idle/shared';
-import { makeCombatState, setCounter } from './systems/combatState';
 import { db, runMigrations } from './db/index';
-import { findOrCreateAccount, getOrCreateCharacter, saveCharacter } from './db/playerRepo';
-import { initEnergyArchetype } from './systems/energyPrototype';
-import { initCooldownArchetype } from './systems/cooldownPrototype';
-import { initReloadArchetype } from './systems/reloadPrototype';
-import { initDotArchetype } from './systems/dotPrototype';
-import { registerClassMechanic, activateClassMechanics } from './systems/classMechanics';
-import { initCadenceArchetype } from './systems/cadencePrototype';
+import { findOrCreateAccount, getOrCreateCharacter, saveCharacterFromEntity } from './db/playerRepo';
+import { initAllMechanics } from './systems/classes/registry';
 import { initWeaponEffects } from './systems/weaponEffects';
 import { initDefenseSystems } from './systems/defenseSystems';
 import { initDebuffMechanics } from './systems/debuffMechanics';
+import { assembleMonsterSnapshot, diffMonsterRoundTrip, diffPlayerRoundTrip } from './ecs/projection';
 import { IS_DEV } from './env';
 
 export { IS_DEV };
@@ -50,21 +45,11 @@ const io = new Server<ClientToServerEvents, ServerToClientEvents>(httpServer, {
 });
 
 // ── COMBAT EFFECTS ────────────────────────────────────
-// Phase 1: declare which mechanics belong to each class.
-
-registerClassMechanic('cadence',  initCadenceArchetype);
-registerClassMechanic('cooldown', initCooldownArchetype);
-registerClassMechanic('energy',   initEnergyArchetype);
-registerClassMechanic('reload',   initReloadArchetype);
-registerClassMechanic('dot',      initDotArchetype);
-
-// Phase 2: activate — calls each registered init, which registers combat
-// pipeline listeners. Add a new class here when it is ready to go live.
-activateClassMechanics('cadence');
-activateClassMechanics('cooldown');
-activateClassMechanics('energy');
-activateClassMechanics('reload');
-activateClassMechanics('dot');
+// Each class mechanic is declared in server/src/systems/classes/<name>/index.ts
+// via `defineMechanic({ id, init, tick, buffs })`. The registry's
+// `initAllMechanics` calls every module's init in MODULES order — combat
+// pipeline listeners get registered exactly once.
+initAllMechanics();
 
 // ── WEAPON EFFECTS ────────────────────────────────────────────────────────────
 // Registers combat pipeline hooks for weapon-specific mechanics (Chaotic Axe,
@@ -92,13 +77,34 @@ const socketByAccount = new Map<string, string>();
 
 const world = new World();
 
+// ── WIRE PARITY CHECK (dev only) ──────────────────────
+//
+// Server Phase 4: validate that `decompose → assemble` round-trips every
+// active monster snapshot. A non-empty diff means a slice or projection
+// helper is missing a field; failing fast here prevents broken broadcasts.
+if (IS_DEV) {
+  let totalChecked = 0;
+  const failures: { id: string; fields: string[] }[] = [];
+  for (const e of world.monsterEntities) {
+    const snapshot = assembleMonsterSnapshot(e);
+    const diff = diffMonsterRoundTrip(snapshot);
+    totalChecked++;
+    if (diff.length > 0) failures.push({ id: e.isMonster.id, fields: diff });
+  }
+  if (failures.length > 0) {
+    console.error('[wire-parity] MonsterSnapshot round-trip failed:', failures);
+  } else {
+    console.log(`[wire-parity] MonsterSnapshot round-trip OK (${totalChecked} monsters)`);
+  }
+}
+
 // ── HEALTH ────────────────────────────────────────────
 
 app.get('/health', (_req, res) => {
   res.json({
     status: 'ok',
-    players: world.players.size,
-    monsters: world.monsters.size,
+    players: world.playerCount(),
+    monsters: world.monsterEntities.size,
   });
 });
 
@@ -131,13 +137,13 @@ setInterval(() => {
 // event queue flush — without this, the first player drains events and others see none.
 setInterval(() => {
   const nodeSnaps = new Map<string, NodeSnapshot>();
-  for (const [socketId, player] of world.players) {
-    const sock = io.sockets.sockets.get(socketId);
+  for (const player of world.playerEntities) {
+    const sock = io.sockets.sockets.get(player.isPlayer.id);
     if (!sock) continue;
-    if (!nodeSnaps.has(player.nodeId)) {
-      nodeSnaps.set(player.nodeId, world.buildSnapshot(player.nodeId));
+    if (!nodeSnaps.has(player.hasPosition.nodeId)) {
+      nodeSnaps.set(player.hasPosition.nodeId, world.buildSnapshot(player.hasPosition.nodeId));
     }
-    sock.emit('node:state', nodeSnaps.get(player.nodeId)!);
+    sock.emit('node:state', nodeSnaps.get(player.hasPosition.nodeId)!);
   }
 }, BROADCAST_MS);
 
@@ -145,8 +151,8 @@ setInterval(() => {
 // Persist every connected player every 30 s as a crash safety net.
 setInterval(() => {
   for (const [accountId, socketId] of socketByAccount) {
-    const player = world.players.get(socketId);
-    if (player) saveCharacter(db, accountId, player);
+    const player = world.getPlayerEntity(socketId);
+    if (player) saveCharacterFromEntity(db, accountId, player);
   }
 }, 30_000);
 
@@ -161,56 +167,59 @@ io.on('connection', (socket) => {
   const player = getOrCreateCharacter(db, accId, playerName, socket.id);
 
   socketByAccount.set(accId, socket.id);
-  world.players.set(socket.id, player);
-  world.playerCombatState.set(socket.id, makeCombatState());
+  world.attachPlayerEntity(player);
+
+  if (IS_DEV) {
+    const diff = diffPlayerRoundTrip(player);
+    if (diff.length > 0) {
+      console.error(`[wire-parity] PlayerSnapshot round-trip failed for ${player.id}:`, diff);
+    }
+  }
 
   socket.emit('state:sync', world.buildSnapshot(player.nodeId));
 
   socket.on('player:move', ({ x, y }) => {
-    const p = world.players.get(socket.id);
+    const p = world.getPlayerEntity(socket.id);
     if (!p) return;
-    if (p.isChanneling) return;
-    p.targetX = x;
-    p.targetY = y;
+    if (p.usesCooldown.isChanneling) return;
+    p.isMoving.motion = vectorTo(p.hasPosition.current, { x, y });
   });
 
   socket.on('player:setAuto', (enabled) => {
-    const p = world.players.get(socket.id);
+    const p = world.getPlayerEntity(socket.id);
     if (!p) return;
-    p.auto = enabled;
+    p.usesAutocombat.auto = enabled;
   });
 
   socket.on('player:unlockSkill', (skillId) => {
-    const p = world.players.get(socket.id);
+    const p = world.getPlayerEntity(socket.id);
     if (!p) return;
     const succeeded = unlockSkill(p, skillId);
     if (succeeded) {
-      socket.emit('player:ascended', p.currentSkillTier);
+      socket.emit('player:ascended', p.tracksProgression.currentSkillTier);
     }
-    // recalculatePlayerStats (called inside unlockSkill) always resets
-    // player.cadenceCount to 0 for cadence players — including when picking a
-    // T2 range node that doesn't change the threshold. Mirror that reset into
-    // the authoritative CombatState counter so display and combat logic agree.
-    if (p.combatArchetype === 'cadence') {
-      const cs = world.playerCombatState.get(socket.id);
-      if (cs) setCounter(cs, 'cadenceCount', 0);
-    }
+    // recalculatePlayerStats (called inside unlockSkill) resets snapshot mirror
+    // fields. refreshArchetypeComponents re-syncs the typed components so they
+    // stay the runtime source of truth.
+    world.refreshArchetypeComponents(socket.id);
   });
 
   socket.on('inventory:equipItem', (definitionId) => {
-    const p = world.players.get(socket.id);
+    const p = world.getPlayerEntity(socket.id);
     if (!p) return;
     equipItem(p, definitionId);
+    world.refreshArchetypeComponents(socket.id);
   });
 
   socket.on('inventory:unequip', (slot: EquipmentSlot) => {
-    const p = world.players.get(socket.id);
+    const p = world.getPlayerEntity(socket.id);
     if (!p) return;
     unequipItem(p, slot);
+    world.refreshArchetypeComponents(socket.id);
   });
 
   socket.on('crafting:craftRecipe', (recipeId: string) => {
-    const p = world.players.get(socket.id);
+    const p = world.getPlayerEntity(socket.id);
     if (!p) return;
     const result = craftRecipe(p, recipeId);
     socket.emit('crafting:result', result);
@@ -218,44 +227,42 @@ io.on('connection', (socket) => {
 
   if (IS_DEV) {
     socket.on('debug:goToTestRoom', () => {
-      const p = world.players.get(socket.id);
+      const p = world.getPlayerEntity(socket.id);
       if (!p) return;
 
       const spawnX = GAME_CONFIG.NODE_WIDTH / 2;
       const spawnY = GAME_CONFIG.NODE_HEIGHT / 2 - 200;
 
-      p.nodeId = TEST_ROOM_NODE_ID;
-      p.x = spawnX;
-      p.y = spawnY;
-      p.targetX = spawnX;
-      p.targetY = spawnY;
-      p.auto = false;
-      p.attackTargetId = null;
-      p.isChanneling = false;
-      p.channelingPct = 0;
+      p.hasPosition.nodeId = TEST_ROOM_NODE_ID;
+      p.hasPosition.current = { x: spawnX, y: spawnY };
+      p.isMoving.motion = zeroMotion();
+      p.usesAutocombat.auto = false;
+      p.performsAttack.attackTargetId = null;
+      p.usesCooldown.isChanneling = false;
+      p.usesCooldown.channelingPct = 0;
 
-      world.playerCombatAt.delete(socket.id);
-      for (const ai of world.monsterAI.values()) {
-        if (ai.aggroTargetId === socket.id) ai.aggroTargetId = null;
+      world.setPlayerCombatAt(socket.id, 0);
+      for (const e of world.monsterEntities) {
+        if (e.monsterAi.aggroTargetId === socket.id) e.monsterAi.aggroTargetId = null;
       }
     });
 
     socket.on('debug:leaveTestRoom', () => {
-      const p = world.players.get(socket.id);
+      const p = world.getPlayerEntity(socket.id);
       if (!p) return;
       // Wipe the infinite test-room essence stockpile so it can't leak into the live world.
-      for (const type of ESSENCE_TYPES) p.essences[type] = 0;
+      for (const type of ESSENCE_TYPES) {
+        p.tracksProgression.essences[type] = 0;
+      }
       world.respawnPlayer(socket.id);
     });
   }
 
   socket.on('disconnect', () => {
-    const p = world.players.get(socket.id);
-    if (p) saveCharacter(db, accId, p);
+    const p = world.getPlayerEntity(socket.id);
+    if (p) saveCharacterFromEntity(db, accId, p);
     socketByAccount.delete(accId);
-    world.players.delete(socket.id);
-    world.playerCombatAt.delete(socket.id);
-    world.playerCombatState.delete(socket.id);
+    world.detachPlayerEntity(socket.id);
   });
 });
 

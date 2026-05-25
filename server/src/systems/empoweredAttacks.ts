@@ -1,4 +1,4 @@
-import type { PlayerState } from '@mmo-idle/shared';
+import type { PassiveKey } from '@mmo-idle/shared';
 import type { CombatState } from './combatState';
 import { registerCombatListener } from './combatPipeline';
 import { isClassActive } from './classMechanics';
@@ -47,13 +47,13 @@ export interface EmpoweredMultiplierOptions {
    * instead of using the static `multiplier` argument.
    * Falls back to the static argument when the passive is absent or zero.
    */
-  passiveKey?: string;
+  passiveKey?: PassiveKey;
   /**
    * If set alongside passiveKey, adds player.passives[passiveAddKey] to the
    * effective multiplier. Useful when a tier-3 node stacks an additive bonus
    * on top of the frame-set base (e.g. cadence.damage-mult-add).
    */
-  passiveAddKey?: string;
+  passiveAddKey?: PassiveKey;
 }
 
 /**
@@ -75,13 +75,18 @@ export function registerEmpoweredMultiplier(
 ): void {
   registerCombatListener('onHit', (ctx, world) => {
     if (options.attackerType && ctx.attackerType !== options.attackerType) return;
-    if (options.attackerArchetype && ctx.attacker.combatArchetype !== options.attackerArchetype) return;
-    if (options.attackerClass && !isClassActive(world, ctx.attacker.id, options.attackerClass)) return;
+    if (options.attackerArchetype) {
+      const archetype = ctx.attackerType === 'player'
+        ? ctx.attacker.usesSkills.combatArchetype
+        : ctx.attacker.isMonster.combatArchetype;
+      if (archetype !== options.attackerArchetype) return;
+    }
+    if (options.attackerClass) {
+      if (ctx.attackerType !== 'player') return;
+      if (!isClassActive(world, ctx.attacker.isPlayer.id, options.attackerClass)) return;
+    }
 
-    const state = ctx.attackerType === 'player'
-      ? world.playerCombatState.get(ctx.attacker.id)
-      : world.monsterCombatState.get(ctx.attacker.id);
-    if (!state) return;
+    const state = ctx.attacker.combatState;
 
     if (!consumeEmpoweredAttack(state)) return;
 
@@ -97,14 +102,11 @@ export function registerEmpoweredMultiplier(
     // Resolve effective multiplier: use passives at runtime when passiveKey is given.
     let effectiveMult = multiplier;
     if (options.passiveKey && ctx.attackerType === 'player') {
-      const player = world.players.get(ctx.attacker.id) as PlayerState | undefined;
-      if (player) {
-        const base = player.passives[options.passiveKey];
-        if (base !== undefined && base > 0) {
-          effectiveMult = base;
-          if (options.passiveAddKey) {
-            effectiveMult += player.passives[options.passiveAddKey] ?? 0;
-          }
+      const base = ctx.attacker.usesSkills.passives[options.passiveKey];
+      if (base !== undefined && base > 0) {
+        effectiveMult = base;
+        if (options.passiveAddKey) {
+          effectiveMult += ctx.attacker.usesSkills.passives[options.passiveAddKey] ?? 0;
         }
       }
     }
@@ -117,7 +119,7 @@ export function registerEmpoweredMultiplier(
     ctx.metadata['empoweredBonus']      = ctx.damage - base;
 
     console.log(
-      `[Empowered] ${ctx.attacker.id}: ${effectiveMult}x hit on ${ctx.defender.id} — ` +
+      `[Empowered] ${ctx.attacker.entityId}: ${effectiveMult}x hit on ${ctx.defender.entityId} — ` +
       `${base} → ${ctx.damage} dmg (+${ctx.damage - base})`,
     );
   });

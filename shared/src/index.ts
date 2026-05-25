@@ -4,9 +4,18 @@ export * from './itemDatabase';
 export * from './recipeDatabase';
 export * from './monsterDatabase';
 export * from './biomeDatabase';
+export * from './passives';
+export * from './components/effects';
+export * from './components/buffs';
+export * from './systems/stats';
+export * from './systems/skills';
+export * from './systems/damage';
+export * from './systems/spatial';
 
 import type { EquipmentMap, EquipmentSlot, EssenceType } from './items';
 import type { SubVariant } from './skillTree';
+import type { PassiveMap } from './passives';
+import type { BuffId } from './components/buffs';
 
 // ─── Buff display ─────────────────────────────────────────────────────────────
 
@@ -24,7 +33,7 @@ import type { SubVariant } from './skillTree';
  */
 export interface PlayerBuff {
   /** Unique identifier — will double as the future icon sprite key. */
-  id: string;
+  id: BuffId;
   /** Short label shown beneath the icon (3–6 chars). */
   label: string;
   /** Stack count; 1 = single instance (no badge shown). */
@@ -76,7 +85,7 @@ export interface ShieldState {
 
 // ─── Entity shapes ────────────────────────────────────────────────────────────
 
-export interface PlayerState {
+export interface PlayerSnapshot {
   id: string;
   name: string;
   x: number;
@@ -126,8 +135,11 @@ export interface PlayerState {
    * Rebuilt by recalculatePlayerStats from scratch on every stat recalculation.
    * Archetype systems read these at runtime to adjust behavior.
    * e.g. passives['cadence.threshold-mod'] = -2 means the cadence threshold is reduced by 2.
+   *
+   * Keys are typed via the PassiveKey union derived from the per-namespace
+   * `*_KEYS` arrays in shared/src/passives.ts.
    */
-  passives: Record<string, number>;
+  passives: PassiveMap;
   /**
    * Active cadence speed stacks (Accelerando passive).
    * Each stack reduces attackCooldown by a fixed amount, up to a cap.
@@ -181,7 +193,7 @@ export interface PlayerState {
   combatArchetype: CombatArchetype;
   /**
    * Current position in the cadence cycle (0 … cadenceThreshold-1).
-   * Reset to 0 after each trigger. Mirrored to PlayerState every hit so
+   * Reset to 0 after each trigger. Mirrored to PlayerSnapshot every hit so
    * the client can display a live progress bar without extra network overhead.
    */
   cadenceCount: number;
@@ -266,7 +278,7 @@ export type MonsterAIState =
   | 'returning'
   | 'knocked-back';
 
-export interface MonsterState {
+export interface MonsterSnapshot {
   id: string;
   /** Key into MONSTER_DATABASE — drives stat lookup and reward lookup. */
   monsterTypeId: string;
@@ -321,6 +333,20 @@ export interface MonsterState {
    */
   bossEffects?: string[];
 }
+
+/**
+ * @deprecated Use `PlayerSnapshot`. This alias exists only to keep the
+ * unmodified client building during the server ECS migration; it is removed
+ * by `client.md` C7 after C1–C6 finish migrating client imports.
+ */
+export type PlayerState = PlayerSnapshot;
+
+/**
+ * @deprecated Use `MonsterSnapshot`. This alias exists only to keep the
+ * unmodified client building during the server ECS migration; it is removed
+ * by `client.md` C7 after C1–C6 finish migrating client imports.
+ */
+export type MonsterState = MonsterSnapshot;
 
 // ─── Node / zone definitions ──────────────────────────────────────────────────
 
@@ -564,8 +590,8 @@ export const NODE_BIOMES: Record<string, { biomeGroup: string; biomeTier: number
 
 /** Full world state for a node, sent every tick and on join. */
 export interface NodeSnapshot {
-  players: PlayerState[];
-  monsters: MonsterState[];
+  players: PlayerSnapshot[];
+  monsters: MonsterSnapshot[];
   /** Combat events accumulated since the last broadcast — used for client animations and combat log. */
   events: CombatEvent[];
 }

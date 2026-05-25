@@ -1,4 +1,5 @@
-import type { PlayerState, MonsterState } from '@mmo-idle/shared';
+import type { MonsterEntity } from '../ecs/components/monster';
+import type { PlayerEntity } from '../ecs/components/player';
 import type { World } from '../world/World';
 
 // ── Event names ───────────────────────────────────────────────────────────────
@@ -8,24 +9,28 @@ export type CombatEventName =
   | 'onAttack'       // attack confirmed, damage not yet calculated
   | 'onHit'          // damage calculated (attacker perspective); can modify ctx.damage
   | 'onDamageTaken'  // damage calculated (defender perspective); can modify ctx.damage
-  | 'afterHit'       // damage applied, entity still alive (or dead — check ctx.defender.hp)
+  | 'afterHit'       // damage applied, entity still alive (or dead — check ctx.defender.hasHealth.hp)
   | 'onKill';        // defender hp ≤ 0, before removal/respawn
 
 // ── Combat context ────────────────────────────────────────────────────────────
 
-export type CombatAttacker = PlayerState | MonsterState;
-export type CombatDefender = PlayerState | MonsterState;
+export type CombatParticipant =
+  | PlayerEntity
+  | MonsterEntity;
 
-/**
- * Mutable bag that flows through every hook in a single attack event.
- * Handlers read and write this object; the combat system applies the
- * final values after all hooks for a phase have run.
- */
-export interface CombatContext {
-  attacker: CombatAttacker;
-  attackerType: 'player' | 'monster';
-  defender: CombatDefender;
-  defenderType: 'player' | 'monster';
+type ParticipantKind = 'player' | 'monster';
+
+type ParticipantFor<Kind extends ParticipantKind> =
+  Kind extends 'player' ? PlayerEntity : MonsterEntity;
+
+interface CombatContextBase<
+  AttackerKind extends ParticipantKind,
+  DefenderKind extends ParticipantKind,
+> {
+  attacker: ParticipantFor<AttackerKind>;
+  attackerType: AttackerKind;
+  defender: ParticipantFor<DefenderKind>;
+  defenderType: DefenderKind;
   /** Computed raw damage; hooks may increase or clamp it. */
   damage: number;
   /** Set to true in a beforeAttack handler to skip the entire attack. */
@@ -37,6 +42,17 @@ export interface CombatContext {
    */
   metadata: Record<string, unknown>;
 }
+
+/**
+ * Mutable bag that flows through every hook in a single attack event.
+ * Handlers read and write this object; the combat system applies the
+ * final values after all hooks for a phase have run.
+ */
+export type CombatContext =
+  | CombatContextBase<'player', 'player'>
+  | CombatContextBase<'player', 'monster'>
+  | CombatContextBase<'monster', 'player'>
+  | CombatContextBase<'monster', 'monster'>;
 
 // ── Handler type ──────────────────────────────────────────────────────────────
 
@@ -96,10 +112,10 @@ export function emitCombatEvent(
 /** Build a fresh context for one attack. Damage starts at 0; the combat
  *  system sets it between onAttack and onHit. */
 export function makeCombatContext(
-  attacker: CombatAttacker,
-  attackerType: 'player' | 'monster',
-  defender: CombatDefender,
-  defenderType: 'player' | 'monster',
+  attacker: CombatParticipant,
+  attackerType: ParticipantKind,
+  defender: CombatParticipant,
+  defenderType: ParticipantKind,
 ): CombatContext {
   return {
     attacker,
@@ -109,5 +125,5 @@ export function makeCombatContext(
     damage: 0,
     cancelled: false,
     metadata: {},
-  };
+  } as CombatContext;
 }

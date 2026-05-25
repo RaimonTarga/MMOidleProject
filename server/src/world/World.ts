@@ -1,35 +1,63 @@
-import type { PlayerState, MonsterState, NodeDefinition, CombatEvent, NodeSnapshot } from '@mmo-idle/shared';
-import { GAME_CONFIG, NODE_BIOMES, MONSTER_DATABASE, BIOME_DATABASE, TEST_ROOM_NODE_ID } from '@mmo-idle/shared';
+import type { PlayerSnapshot, MonsterSnapshot, NodeDefinition, CombatEvent, NodeSnapshot } from '@mmo-idle/shared';
+import { GAME_CONFIG, BIOME_DATABASE, TEST_ROOM_NODE_ID } from '@mmo-idle/shared';
 import { updateAutoTargets } from '../systems/autoTarget';
 import { updateMovement } from '../systems/movement';
 import { updateMonsters } from '../systems/ai';
 import { updateCombat } from '../systems/combat';
 import { updateTransitions } from '../systems/transitions';
-import { updateCombatState, makeCombatState, resetCombatState } from '../systems/combatState';
+import { updateCombatState, makeCombatState } from '../systems/combatState';
 import type { CombatState } from '../systems/combatState';
-import { updateCooldownArchetype } from '../systems/cooldownPrototype';
-import { updateCooldownT3 } from '../systems/cooldownT3';
-import { updateEnergyArchetype } from '../systems/energyPrototype';
-import { updateEnergyT3 } from '../systems/energyT3';
-import { updateReloadArchetype } from '../systems/reloadPrototype';
-import { updateReloadT3 } from '../systems/reloadT3';
-import { updateDotArchetype } from '../systems/dotPrototype';
-import { updateDotT3 } from '../systems/dotT3';
-import { updateCadenceEffects } from '../systems/cadencePrototype';
+import { tickAllMechanics } from '../systems/classes/registry';
 import { updateWeaponEffects } from '../systems/weaponEffects';
 import { updateBossScripts } from '../systems/bossScripts';
 import type { BossRuntimeState } from '../systems/bossScripts';
 import { updateShields, updateDefensiveSystems } from '../systems/defenseSystems';
 import { updateKnockback, type KnockbackComponent } from '../systems/knockback';
-import { recalculatePlayerStats } from '../systems/stats';
 import { syncPlayerBuffs } from '../systems/buffSync';
+import {
+  createMonster as createMonsterInWorld,
+  spawnMonster as spawnMonsterInWorld,
+  respawnPlayer as respawnPlayerInWorld,
+  ensurePopulation as ensurePopulationInWorld,
+  ensureBoss as ensureBossInWorld,
+} from '../systems/spawning';
 import { updateTestRoomInteract } from '../systems/testRoomInteract';
 import { NODE_REGISTRY } from './nodeRegistry';
 import { IS_DEV } from '../env';
+import { createEcsWorld, type EcsWorld } from '../ecs/world';
+import type { MonsterEntity } from '../ecs/components/monster';
+import type { PlayerEntity } from '../ecs/components/player';
+import {
+  decomposePlayerSnapshot,
+  assemblePlayerSnapshot,
+  assembleMonsterSnapshot,
+} from '../ecs/projection';
+import {
+  makeCadenceComponent,
+  refreshCadenceFromSnapshot,
+  type CadencePlayerEntity,
+} from '../ecs/components/cadence';
+import {
+  makeEnergyComponent,
+  refreshEnergyFromSnapshot,
+  type EnergyPlayerEntity,
+} from '../ecs/components/energy';
+import {
+  makeDotComponent,
+  refreshDotFromSnapshot,
+  type DotPlayerEntity,
+} from '../ecs/components/dot';
+import {
+  makeCooldownComponent,
+  refreshCooldownFromSnapshot,
+  type CooldownPlayerEntity,
+} from '../ecs/components/cooldown';
+import {
+  makeReloadComponent,
+  refreshReloadFromSnapshot,
+  type ReloadPlayerEntity,
+} from '../ecs/components/reload';
 
-// Regular monsters in dungeon nodes are scaled up; boss stats come from the database directly.
-const DUNGEON_HP_MULT  = 2.0;
-const DUNGEON_ATK_MULT = 1.6;
 const TEST_ROOM_TARGET_RESET = 'test-target-reset';
 const TEST_ROOM_TARGET_GAIN_POINT = 'test-target-gain-point';
 
@@ -71,18 +99,71 @@ export class World {
   readonly nodeId: string;
   readonly node: NodeDefinition;
 
-  players      = new Map<string, PlayerState>();
-  monsters     = new Map<string, MonsterState>();
-  monsterAI    = new Map<string, MonsterAI>();
-  /** Server-only boss fight state. Keyed by monster.id, pruned when the boss dies. */
-  bossState    = new Map<string, BossRuntimeState>();
-  playerCombatAt = new Map<string, number>();
-  /** Server-side only combat state for players. Never serialized or sent to clients. */
-  playerCombatState  = new Map<string, CombatState>();
-  /** Server-side only combat state for monsters. Never serialized or sent to clients. */
-  monsterCombatState = new Map<string, CombatState>();
-  /** Active knockback components per monster — see systems/knockback.ts. */
-  monsterKnockback   = new Map<string, KnockbackComponent>();
+  /**
+   * Authoritative miniplex world. Entity migration:
+   *   S6 — empty scaffold
+   *   S7 — monsters move in (MonsterEntity)
+   *   S8 — players move in (PlayerEntity)
+   */
+  readonly ecs: EcsWorld = createEcsWorld();
+
+  /**
+   * Canonical monster query. All required slice components are stamped together
+   * in `createMonster`, so the query return type matches `MonsterEntity`.
+   */
+  readonly monsterEntities = this.ecs.with(
+    'monsterAi',
+    'combatState',
+    'isMonster',
+    'hasPosition',
+    'isMoving',
+    'hasHealth',
+    'dealsDamage',
+    'performsAttack',
+    'mitigatesDamage',
+    'hasAwareness',
+    'hasStatus',
+  );
+
+  /**
+   * Canonical player query. All required slice components are stamped together
+   * in `attachPlayerEntity`, so the return type matches `PlayerEntity`.
+   */
+  readonly playerEntities = this.ecs.with(
+    'combatState',
+    'combatAt',
+    'isPlayer',
+    'hasPosition',
+    'isMoving',
+    'hasHealth',
+    'dealsDamage',
+    'performsAttack',
+    'mitigatesDamage',
+    'evadesHits',
+    'hasStatus',
+    'usesAutocombat',
+    'tracksProgression',
+    'holdsInventory',
+    'usesSkills',
+    'showsSacred',
+    'usesCadence',
+    'usesEnergy',
+    'appliesDots',
+    'chillsTarget',
+    'usesCooldown',
+    'usesReload',
+  );
+
+  /** Players that have the cadence archetype component attached. */
+  readonly cadencePlayers  = this.playerEntities.with('cadence');
+  /** Players that have the energy archetype component attached. */
+  readonly energyPlayers   = this.playerEntities.with('energy');
+  /** Players that have the dot archetype component attached. */
+  readonly dotPlayers      = this.playerEntities.with('dot');
+  /** Players that have the cooldown archetype component attached. */
+  readonly cooldownPlayers = this.playerEntities.with('cooldown');
+  /** Players that have the reload archetype component attached. */
+  readonly reloadPlayers   = this.playerEntities.with('reload');
   /** Player IDs that died this tick. Drained by the server loop after each tick. */
   pendingDeaths: string[] = [];
   /** Queued combat events per node, flushed into each broadcast snapshot. */
@@ -122,15 +203,7 @@ export class World {
   tick(dt: number, now: number) {
     updateCombatState(this, dt);
     updateShields(this, dt);
-    updateCooldownArchetype(this);
-    updateCooldownT3(this, dt);
-    updateEnergyT3(this, dt);
-    updateEnergyArchetype(this);
-    updateReloadT3(this, dt, now);
-    updateReloadArchetype(this);
-    updateDotT3(this, dt);
-    updateDotArchetype(this, dt);
-    updateCadenceEffects(this, dt);
+    tickAllMechanics(this, dt, now);
     updateWeaponEffects(this, dt);
     updateBossScripts(this, dt);
     updateAutoTargets(this);
@@ -162,70 +235,259 @@ export class World {
    * All stats and AI parameters come from MONSTER_DATABASE.
    * Returns null if the type ID is unknown.
    */
-  createMonster(nodeId: string, typeId: string, x: number, y: number): MonsterState | null {
-    const def = MONSTER_DATABASE.get(typeId);
-    if (!def) {
-      console.warn(`[World] Unknown monster type: "${typeId}"`);
-      return null;
+  createMonster(nodeId: string, typeId: string, x: number, y: number): MonsterSnapshot | null {
+    return createMonsterInWorld(this, nodeId, typeId, x, y);
+  }
+
+  // ── MONSTER ENTITY HELPERS ────────────────────────────
+
+  /**
+   * O(N) entity lookup by monster id. Adequate at ~50 monsters; if profiling
+   * shows hot, swap to a `Map<string, MonsterEntity>` index maintained via
+   * `onEntityAdded` / `onEntityRemoved`.
+   */
+  getMonsterEntity(id: string): MonsterEntity | undefined {
+    for (const e of this.monsterEntities) {
+      if (e.isMonster.id === id) return e;
+    }
+    return undefined;
+  }
+
+  /** Iterate every monster entity in `nodeId`. Uses the `hasPosition` slice. */
+  *monsterEntitiesInNode(nodeId: string): IterableIterator<MonsterEntity> {
+    for (const e of this.monsterEntities) {
+      if (e.hasPosition.nodeId === nodeId) yield e;
+    }
+  }
+
+  getMonsterAi(id: string): MonsterAI | undefined {
+    return this.getMonsterEntity(id)?.monsterAi;
+  }
+
+  /** True if the monster currently exists in the world. */
+  hasMonster(id: string): boolean {
+    return this.getMonsterEntity(id) !== undefined;
+  }
+
+  getMonsterCombatState(id: string): CombatState | undefined {
+    return this.getMonsterEntity(id)?.combatState;
+  }
+
+  getMonsterKnockback(id: string): KnockbackComponent | undefined {
+    return this.getMonsterEntity(id)?.knockback;
+  }
+
+  setMonsterKnockback(id: string, kb: KnockbackComponent): void {
+    const e = this.getMonsterEntity(id);
+    if (!e) return;
+    if (e.knockback) {
+      // Already present — just overwrite the data; miniplex query membership
+      // is unchanged since the component key is still attached.
+      e.knockback = kb;
+    } else {
+      this.ecs.addComponent(e, 'knockback', kb);
+    }
+  }
+
+  clearMonsterKnockback(id: string): void {
+    const e = this.getMonsterEntity(id);
+    if (!e || !e.knockback) return;
+    this.ecs.removeComponent(e, 'knockback');
+  }
+
+  getBossState(id: string): BossRuntimeState | undefined {
+    return this.getMonsterEntity(id)?.bossState;
+  }
+
+  setBossState(id: string, state: BossRuntimeState): void {
+    const e = this.getMonsterEntity(id);
+    if (!e) return;
+    if (e.bossState) {
+      e.bossState = state;
+    } else {
+      this.ecs.addComponent(e, 'bossState', state);
+    }
+  }
+
+  /**
+   * Centralized monster despawn. Removes the entity from miniplex, which
+   * cascades component removal across every query in one call. Use this
+   * instead of multiple `world.<map>.delete(id)` lines.
+   */
+  removeMonsterEntity(id: string): void {
+    const e = this.getMonsterEntity(id);
+    if (e) this.ecs.remove(e);
+  }
+
+  // ── PLAYER ENTITY HELPERS ─────────────────────────────
+
+  /**
+   * Attach a hydrated `PlayerSnapshot` to the ECS world along with a fresh
+   * `CombatState`. The `combatAt` component starts at 0 (the OOC regen path
+   * treats it as never-engaged, which is correct on fresh connect).
+   *
+   * Returns the entity so callers (the socket connect handler) can keep a
+   * direct reference if they need one.
+   */
+  attachPlayerEntity(player: PlayerSnapshot): PlayerEntity {
+    const entity: PlayerEntity = {
+      entityId:       player.id,
+      combatState:    makeCombatState(),
+      combatAt:       0,
+      ...decomposePlayerSnapshot(player),
+    };
+    this.ecs.add(entity);
+    this.refreshArchetypeComponents(player.id);
+    return entity;
+  }
+
+  detachPlayerEntity(playerId: string): void {
+    const e = this.getPlayerEntity(playerId);
+    if (e) this.ecs.remove(e);
+  }
+
+  /** O(N) entity lookup by player id (socket id). N ≈ ~10 in practice. */
+  getPlayerEntity(playerId: string): PlayerEntity | undefined {
+    for (const e of this.playerEntities) {
+      if (e.isPlayer.id === playerId) return e;
+    }
+    return undefined;
+  }
+
+  /** Iterate every player entity in `nodeId`. Uses the `hasPosition` slice. */
+  *playerEntitiesInNode(nodeId: string): IterableIterator<PlayerEntity> {
+    for (const e of this.playerEntities) {
+      if (e.hasPosition.nodeId === nodeId) yield e;
+    }
+  }
+
+  hasPlayer(playerId: string): boolean {
+    return this.getPlayerEntity(playerId) !== undefined;
+  }
+
+  playerCount(): number {
+    return this.playerEntities.size;
+  }
+
+  getPlayerCombatState(playerId: string): CombatState | undefined {
+    return this.getPlayerEntity(playerId)?.combatState;
+  }
+
+  getPlayerCombatAt(playerId: string): number {
+    return this.getPlayerEntity(playerId)?.combatAt ?? 0;
+  }
+
+  setPlayerCombatAt(playerId: string, ts: number): void {
+    const e = this.getPlayerEntity(playerId);
+    if (e) e.combatAt = ts;
+  }
+
+  // ── ARCHETYPE COMPONENT HOOKS ─────────────────────────
+
+  /**
+   * Idempotent: attaches the cadence component when the player is currently
+   * cadence-archetype, refreshes it from the snapshot if already attached, or
+   * detaches it when the player has been respec'd off cadence.
+   *
+   * Call this after any mutation that may change `combatArchetype` or reset
+   * cadence snapshot fields (skill unlock, equip/unequip, respawn, hydrate,
+   * progression reset).
+   */
+  ensureCadenceComponent(playerId: string): void {
+    const entity = this.getPlayerEntity(playerId);
+    if (!entity) return;
+
+    const p = assemblePlayerSnapshot(entity);
+    if (p.combatArchetype !== 'cadence') {
+      if (entity.cadence) this.ecs.removeComponent(entity, 'cadence');
+      return;
     }
 
-    const id = `monster-${this.nextMonsterId++}`;
+    if (entity.cadence) {
+      refreshCadenceFromSnapshot(entity.cadence, p);
+    } else {
+      this.ecs.addComponent(entity, 'cadence', makeCadenceComponent(p));
+    }
+  }
 
-    const isBoss = def.isBoss ?? false;
-    const nodeDef = NODE_REGISTRY.get(nodeId);
-    const isDungeon = nodeDef?.isDungeon ?? false;
+  ensureEnergyComponent(playerId: string): void {
+    const entity = this.getPlayerEntity(playerId);
+    if (!entity) return;
 
-    // Apply dungeon stat multipliers to regular (non-boss) monsters.
-    const hpBase  = (!isBoss && isDungeon) ? Math.round(def.stats.hp     * DUNGEON_HP_MULT)  : def.stats.hp;
-    const atkBase = (!isBoss && isDungeon) ? Math.round(def.stats.attack  * DUNGEON_ATK_MULT) : def.stats.attack;
-    const isTestRoom = nodeId === TEST_ROOM_NODE_ID;
-    const pullRange = isTestRoom ? 0 : def.stats.pullRange;
-    const wanderRadius = isTestRoom ? 0 : def.ai.wanderRadius;
+    const p = assemblePlayerSnapshot(entity);
+    if (p.combatArchetype !== 'energy') {
+      if (entity.energy) this.ecs.removeComponent(entity, 'energy');
+      return;
+    }
 
-    const monster: MonsterState = {
-      id,
-      monsterTypeId: typeId,
-      color: def.color,
-      name: def.name,
-      x, y,
-      targetX: x,
-      targetY: y,
-      hp:             hpBase,
-      maxHp:          hpBase,
-      attack:         atkBase,
-      plating:        def.stats.plating,
-      damageReduction: def.stats.damageReduction,
-      speed:   def.stats.speed,
-      state:   'idle',
-      pullRange,
-      leashRange:     def.ai.leashRange,
-      attackRange:    def.stats.attackRange,
-      attackCooldown: def.stats.attackCooldown,
-      lastAttackAt:   0,
-      attackTargetId: null,
-      nodeId,
-      attackStyle: def.attackStyle,
-      isBoss,
-      behavior: def.behavior,
-    };
+    if (entity.energy) {
+      refreshEnergyFromSnapshot(entity.energy, p);
+    } else {
+      this.ecs.addComponent(entity, 'energy', makeEnergyComponent(p));
+    }
+  }
 
-    this.monsters.set(id, monster);
-    this.monsterAI.set(id, {
-      spawnX: x,
-      spawnY: y,
-      wanderRadius,
-      idleUntil:     Date.now(),
-      leashRange:    def.ai.leashRange,
-      idleMinMs:     def.ai.idleMinMs,
-      idleMaxMs:     def.ai.idleMaxMs,
-      aggroTargetId: null,
-      lastAggroAt:   0,
-      baseSpeed:     def.stats.speed,
-      kiteTimer:     0,
-    });
-    this.monsterCombatState.set(id, makeCombatState());
+  ensureDotComponent(playerId: string): void {
+    const entity = this.getPlayerEntity(playerId);
+    if (!entity) return;
 
-    return monster;
+    const p = assemblePlayerSnapshot(entity);
+    if (p.combatArchetype !== 'dot') {
+      if (entity.dot) this.ecs.removeComponent(entity, 'dot');
+      return;
+    }
+
+    if (entity.dot) {
+      refreshDotFromSnapshot(entity.dot, p);
+    } else {
+      this.ecs.addComponent(entity, 'dot', makeDotComponent(p));
+    }
+  }
+
+  ensureCooldownComponent(playerId: string): void {
+    const entity = this.getPlayerEntity(playerId);
+    if (!entity) return;
+
+    const p = assemblePlayerSnapshot(entity);
+    if (p.combatArchetype !== 'cooldown') {
+      if (entity.cooldown) this.ecs.removeComponent(entity, 'cooldown');
+      return;
+    }
+
+    if (entity.cooldown) {
+      refreshCooldownFromSnapshot(entity.cooldown, p);
+    } else {
+      this.ecs.addComponent(entity, 'cooldown', makeCooldownComponent(p));
+    }
+  }
+
+  ensureReloadComponent(playerId: string): void {
+    const entity = this.getPlayerEntity(playerId);
+    if (!entity) return;
+
+    const p = assemblePlayerSnapshot(entity);
+    if (p.combatArchetype !== 'reload') {
+      if (entity.reload) this.ecs.removeComponent(entity, 'reload');
+      return;
+    }
+
+    if (entity.reload) {
+      refreshReloadFromSnapshot(entity.reload, p);
+    } else {
+      this.ecs.addComponent(entity, 'reload', makeReloadComponent(p));
+    }
+  }
+
+  /**
+   * Single seam called after any place that runs `recalculatePlayerStats` for
+   * an attached player. All archetype components are wired in here.
+   */
+  refreshArchetypeComponents(playerId: string): void {
+    this.ensureCadenceComponent(playerId);
+    this.ensureEnergyComponent(playerId);
+    this.ensureDotComponent(playerId);
+    this.ensureCooldownComponent(playerId);
+    this.ensureReloadComponent(playerId);
   }
 
   /**
@@ -233,87 +495,15 @@ export class World {
    * place it at a position that respects minimum spacing. Returns true on success.
    */
   spawnMonster(nodeId: string): boolean {
-    const biomeInfo = NODE_BIOMES[nodeId];
-    if (!biomeInfo) return false;
-
-    const biome = BIOME_DATABASE.get(biomeInfo.biomeGroup);
-    if (!biome) return false;
-    const pool = biome.monsterPoolByTier[biomeInfo.biomeTier] ?? [];
-    if (pool.length === 0) return false;
-
-    const typeId = pool[Math.floor(Math.random() * pool.length)];
-    const node   = NODE_REGISTRY.get(nodeId) ?? this.node;
-    const minDistSq = GAME_CONFIG.MONSTER_MIN_SPAWN_DIST ** 2;
-
-    for (let attempt = 0; attempt < 15; attempt++) {
-      const x = Math.floor(Math.random() * (node.width  - 128)) + 64;
-      const y = Math.floor(Math.random() * (node.height - 128)) + 64;
-
-      let tooClose = false;
-      for (const m of this.monsters.values()) {
-        if (m.nodeId !== nodeId) continue;
-        const dx = m.x - x;
-        const dy = m.y - y;
-        if (dx * dx + dy * dy < minDistSq) { tooClose = true; break; }
-      }
-      if (tooClose) continue;
-
-      return this.createMonster(nodeId, typeId, x, y) !== null;
-    }
-
-    return false;
+    return spawnMonsterInWorld(this, nodeId);
   }
 
-  /**
-   * Teleport a player to the starting clearing (node-5-5), restore full HP,
-   * clear movement and combat state, and drop all monster aggro targeting them.
-   * Queues the player ID in pendingDeaths so the server loop can emit the event.
-   */
   respawnPlayer(playerId: string): void {
-    const player = this.players.get(playerId);
-    if (!player) return;
-
-    const spawnX = GAME_CONFIG.NODE_WIDTH  / 2;
-    const spawnY = GAME_CONFIG.NODE_HEIGHT / 2;
-
-    player.nodeId       = 'node-5-5';
-    player.x            = spawnX;
-    player.y            = spawnY;
-    player.targetX      = spawnX;
-    player.targetY      = spawnY;
-    player.attackTargetId = null;
-    player.auto         = false;
-
-    // Rebuild stats from scratch — resets attackCooldown, cadenceSpeedStacks, etc.
-    recalculatePlayerStats(player);
-    player.hp = player.maxHp;
-
-    player.evasionCount  = 0;
-    player.shields       = [];
-    player.isChanneling  = false;
-    player.channelingPct = 0;
-
-    this.playerCombatAt.delete(playerId);
-
-    const combatState = this.playerCombatState.get(playerId);
-    if (combatState) resetCombatState(combatState);
-
-    for (const ai of this.monsterAI.values()) {
-      if (ai.aggroTargetId === playerId) ai.aggroTargetId = null;
-    }
-
-    this.pendingDeaths.push(playerId);
+    respawnPlayerInWorld(this, playerId);
   }
 
-  ensurePopulation(nodeId: string) {
-    let count = 0;
-    for (const m of this.monsters.values()) {
-      if (m.nodeId === nodeId && !m.isBoss) count++;
-    }
-    while (count < GAME_CONFIG.MONSTERS_PER_NODE) {
-      if (!this.spawnMonster(nodeId)) break;
-      count++;
-    }
+  ensurePopulation(nodeId: string): void {
+    ensurePopulationInWorld(this, nodeId);
   }
 
   private initTestRoom(): void {
@@ -331,9 +521,9 @@ export class World {
    */
   private ensureTrainingDummies(): void {
     const present = new Set<string>();
-    for (const monster of this.monsters.values()) {
-      if (monster.nodeId !== TEST_ROOM_NODE_ID) continue;
-      present.add(monster.monsterTypeId);
+    for (const e of this.monsterEntities) {
+      if (e.hasPosition.nodeId !== TEST_ROOM_NODE_ID) continue;
+      present.add(e.isMonster.monsterTypeId);
     }
 
     const count   = TEST_ROOM_TRAINING_DUMMY_TYPES.length;
@@ -353,7 +543,7 @@ export class World {
   private ensureCurrentTestRoomBoss(): void {
     // If a previously engaged boss has been killed/removed, clear the lock so a
     // fresh dummy can be rolled for the player's current tier.
-    if (this.testRoomEngagedBossId && !this.monsters.has(this.testRoomEngagedBossId)) {
+    if (this.testRoomEngagedBossId && !this.hasMonster(this.testRoomEngagedBossId)) {
       this.testRoomEngagedBossId = null;
     }
     // While the engaged boss is alive, freeze the rotation — the player is
@@ -361,9 +551,9 @@ export class World {
     if (this.testRoomEngagedBossId) return;
 
     let targetTier: number | null = null;
-    for (const player of this.players.values()) {
-      if (player.nodeId !== TEST_ROOM_NODE_ID) continue;
-      targetTier = Math.max(targetTier ?? 0, player.playerTier);
+    for (const player of this.playerEntities) {
+      if (player.hasPosition.nodeId !== TEST_ROOM_NODE_ID) continue;
+      targetTier = Math.max(targetTier ?? 0, player.tracksProgression.playerTier);
     }
     if (targetTier !== null) this.ensureTestRoomBoss(targetTier);
   }
@@ -372,12 +562,10 @@ export class World {
     const typeId = this.pickTestRoomBossType(targetTier);
     if (!typeId) return;
 
-    for (const monster of this.monsters.values()) {
-      if (monster.nodeId !== TEST_ROOM_NODE_ID || !monster.isBoss) continue;
-      if (monster.monsterTypeId === typeId) return;
-      this.monsters.delete(monster.id);
-      this.monsterAI.delete(monster.id);
-      this.monsterCombatState.delete(monster.id);
+    for (const e of this.monsterEntities) {
+      if (e.hasPosition.nodeId !== TEST_ROOM_NODE_ID || !e.isMonster.isBoss) continue;
+      if (e.isMonster.monsterTypeId === typeId) return;
+      this.removeMonsterEntity(e.isMonster.id);
     }
 
     const boss = this.createMonster(
@@ -387,8 +575,11 @@ export class World {
       GAME_CONFIG.NODE_HEIGHT / 2 + 120,
     );
     if (boss) {
-      boss.name = `Test Dummy T${Math.max(0, targetTier)} (${boss.name})`;
-      boss.isBoss = true;
+      const entity = this.getMonsterEntity(boss.id);
+      if (entity) {
+        entity.isMonster.name = `Test Dummy T${Math.max(0, targetTier)} (${entity.isMonster.name})`;
+        entity.isMonster.isBoss = true;
+      }
     }
   }
 
@@ -409,20 +600,7 @@ export class World {
    * picks from the biome's bossPoolByTier and spawns near the node center.
    */
   ensureBoss(nodeId: string): void {
-    const nodeDef = NODE_REGISTRY.get(nodeId);
-    if (!nodeDef?.isDungeon) return;
-
-    const hasBoss = [...this.monsters.values()].some(m => m.nodeId === nodeId && m.isBoss);
-    if (hasBoss) return;
-
-    const biome = BIOME_DATABASE.get(nodeDef.biomeGroup);
-    const pool  = biome?.bossPoolByTier?.[nodeDef.biomeTier];
-    if (!pool || pool.length === 0) return;
-
-    const typeId = pool[Math.floor(Math.random() * pool.length)];
-    const x = nodeDef.width  / 2 + (Math.random() - 0.5) * 200;
-    const y = nodeDef.height / 2 + (Math.random() - 0.5) * 200;
-    this.createMonster(nodeId, typeId, x, y);
+    ensureBossInWorld(this, nodeId);
   }
 
   // ── EVENTS ─────────────────────────────────────────
@@ -438,9 +616,22 @@ export class World {
   buildSnapshot(nodeId: string): NodeSnapshot {
     const events = this.nodeEvents.get(nodeId) ?? [];
     this.nodeEvents.set(nodeId, []);
+
+    const monsters: MonsterSnapshot[] = [];
+    for (const e of this.monsterEntities) {
+      if (e.hasPosition.nodeId !== nodeId) continue;
+      monsters.push(assembleMonsterSnapshot(e));
+    }
+
+    const players: PlayerSnapshot[] = [];
+    for (const e of this.playerEntities) {
+      if (e.hasPosition.nodeId !== nodeId) continue;
+      players.push(assemblePlayerSnapshot(e));
+    }
+
     return {
-      players:  Array.from(this.players.values()).filter(p => p.nodeId === nodeId),
-      monsters: Array.from(this.monsters.values()).filter(m => m.nodeId === nodeId),
+      players,
+      monsters,
       events,
     };
   }

@@ -1,5 +1,7 @@
-import type { PlayerState, EssenceType } from '@mmo-idle/shared';
+import type { PlayerSnapshot, EssenceType } from '@mmo-idle/shared';
 import { ESSENCE_TYPES, RECIPE_DATABASE, TEST_ROOM_NODE_ID } from '@mmo-idle/shared';
+import type { PlayerEntity } from '../ecs/components/player';
+import { withPlayerSnapshotDraft } from '../ecs/playerSnapshotAdapter';
 
 const TEST_ROOM_ESSENCE_AMOUNT = 1_000_000_000;
 
@@ -8,7 +10,14 @@ export interface CraftResult {
   reason?: string;
 }
 
-export function craftRecipe(player: PlayerState, recipeId: string): CraftResult {
+export function craftRecipe(player: PlayerSnapshot | PlayerEntity, recipeId: string): CraftResult {
+  if ('entityId' in player) {
+    return withPlayerSnapshotDraft(player, draft => craftRecipeSnapshot(draft, recipeId));
+  }
+  return craftRecipeSnapshot(player, recipeId);
+}
+
+function craftRecipeSnapshot(player: PlayerSnapshot, recipeId: string): CraftResult {
   const recipe = RECIPE_DATABASE.get(recipeId);
   if (!recipe) return { success: false, reason: 'Unknown recipe.' };
 

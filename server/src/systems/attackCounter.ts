@@ -46,12 +46,14 @@ export function registerAttackThreshold(
 
   const handler = (ctx: CombatContext, world: World): void => {
     if (options.attackerType && ctx.attackerType !== options.attackerType) return;
-    if (options.attackerArchetype && ctx.attacker.combatArchetype !== options.attackerArchetype) return;
+    if (options.attackerArchetype) {
+      const archetype = ctx.attackerType === 'player'
+        ? ctx.attacker.usesSkills.combatArchetype
+        : ctx.attacker.isMonster.combatArchetype;
+      if (archetype !== options.attackerArchetype) return;
+    }
 
-    const state = ctx.attackerType === 'player'
-      ? world.playerCombatState.get(ctx.attacker.id)
-      : world.monsterCombatState.get(ctx.attacker.id);
-    if (!state) return;
+    const state = ctx.attacker.combatState;
 
     addCounter(state, key, 1);
     const count = getCounter(state, key);

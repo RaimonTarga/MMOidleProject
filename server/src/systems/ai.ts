@@ -1,8 +1,9 @@
 import type { World } from '../world/World';
-import type { MonsterState, PlayerState } from '@mmo-idle/shared';
-import { getNodePlayers } from '../world/nodeQueries';
+import type { PlayerEntity } from '../ecs/components/player';
+import type { MonsterEntity } from '../ecs/components/monster';
+import { distanceSq, pointFromMotion, vectorTo, zeroMotion } from '@mmo-idle/shared';
 import { NODE_REGISTRY } from '../world/nodeRegistry';
-import { isMonsterFrozen } from './dotT3';
+import { isMonsterFrozen } from './classes/dot/dotT3';
 import { isMonsterKnockedBack } from './knockback';
 
 const KITE_GRACE_MS   = 500;   // ms chasing before speed ramp begins
@@ -12,15 +13,13 @@ const KITE_MIN_SPEED  = 150;   // absolute floor once ramp is active (beats base
 const KITE_DECAY_RATE = 2.0;   // drains 2× faster than it builds while monster is in attack range
 const RETURN_SPEED_MULT = 1.6; // how fast monsters snap back to spawn
 
-function findAggro(monster: MonsterState, world: World): PlayerState | null {
-  const pullSq = monster.pullRange ** 2;
-  let best: PlayerState | null = null;
+function findAggro(monster: MonsterEntity, world: World): PlayerEntity | null {
+  const pullSq = monster.hasAwareness.pullRange ** 2;
+  let best: PlayerEntity | null = null;
   let bestDist = Infinity;
 
-  for (const p of getNodePlayers(world, monster.nodeId)) {
-    const dx = p.x - monster.x;
-    const dy = p.y - monster.y;
-    const d = dx * dx + dy * dy;
+  for (const p of world.playerEntitiesInNode(monster.hasPosition.nodeId)) {
+    const d = distanceSq(p.hasPosition.current, monster.hasPosition.current);
 
     if (d < pullSq && d < bestDist) {
       bestDist = d;
@@ -31,15 +30,22 @@ function findAggro(monster: MonsterState, world: World): PlayerState | null {
   return best;
 }
 
+function setMonsterTarget(entity: MonsterEntity, target: { x: number; y: number }): void {
+  entity.isMoving.motion = vectorTo(entity.hasPosition.current, target);
+}
+
+function stopMonster(entity: MonsterEntity): void {
+  entity.isMoving.motion = zeroMotion();
+}
+
 export function updateMonsters(world: World, dt: number, now: number) {
-  for (const [id, monster] of world.monsters) {
-    const ai = world.monsterAI.get(id);
-    if (!ai) continue;
+  for (const e of world.monsterEntities) {
+    const ai      = e.monsterAi;
+    const id      = e.isMonster.id;
 
     if (isMonsterFrozen(world, id)) {
-      monster.targetX = monster.x;
-      monster.targetY = monster.y;
-      monster.lastAttackAt = now;
+      e.isMoving.motion = zeroMotion();
+      e.performsAttack.lastAttackAt = now;
       ai.kiteTimer = 0;
       continue;
     }
@@ -47,7 +53,7 @@ export function updateMonsters(world: World, dt: number, now: number) {
     // Knockback owns position, target, speed, and state for the duration of the
     // slide. AI resumes naturally once the component clears.
     if (isMonsterKnockedBack(world, id)) {
-      monster.lastAttackAt = now;
+      e.performsAttack.lastAttackAt = now;
       ai.kiteTimer = 0;
       continue;
     }
@@ -56,19 +62,19 @@ export function updateMonsters(world: World, dt: number, now: number) {
     // This preserves retaliation aggro set by the combat system when a
     // player attacks from outside pull range.
     if (ai.aggroTargetId === null) {
-      const pulled = findAggro(monster, world);
+      const pulled = findAggro(e, world);
       if (pulled) {
-        ai.aggroTargetId = pulled.id;
+        ai.aggroTargetId = pulled.isPlayer.id;
         ai.lastAggroAt   = now;
       }
     }
 
     // Resolve and validate the current aggro target.
     // Drop it only if the player left the node or disconnected.
-    let target: PlayerState | null = null;
+    let target: PlayerEntity | null = null;
     if (ai.aggroTargetId !== null) {
-      const candidate = world.players.get(ai.aggroTargetId);
-      if (candidate && candidate.nodeId === monster.nodeId) {
+      const candidate = world.getPlayerEntity(ai.aggroTargetId);
+      if (candidate && candidate.hasPosition.nodeId === e.hasPosition.nodeId) {
         target = candidate;
       } else {
         ai.aggroTargetId = null;
@@ -79,34 +85,32 @@ export function updateMonsters(world: World, dt: number, now: number) {
       ai.lastAggroAt = now;
 
       // Leash check: if too far from spawn, give up and return.
-      const spawnDx = monster.x - ai.spawnX;
-      const spawnDy = monster.y - ai.spawnY;
-      if (spawnDx * spawnDx + spawnDy * spawnDy > ai.leashRange * ai.leashRange) {
+      if (distanceSq(e.hasPosition.current, { x: ai.spawnX, y: ai.spawnY }) > ai.leashRange * ai.leashRange) {
         ai.aggroTargetId = null;
         ai.kiteTimer     = 0;
-        monster.speed    = ai.baseSpeed;
-        monster.state    = 'returning';
-        monster.targetX  = ai.spawnX;
-        monster.targetY  = ai.spawnY;
+        e.hasPosition.speed  = ai.baseSpeed;
+        e.hasAwareness.state = 'returning';
+        e.performsAttack.attackTargetId = null;
+        setMonsterTarget(e, { x: ai.spawnX, y: ai.spawnY });
         continue;
       }
 
-      const dx     = target.x - monster.x;
-      const dy     = target.y - monster.y;
+      const dx     = target.hasPosition.current.x - e.hasPosition.current.x;
+      const dy     = target.hasPosition.current.y - e.hasPosition.current.y;
       const distSq = dx * dx + dy * dy;
-      const stopDist = monster.attackRange * 0.80;
+      const stopDist = e.performsAttack.attackRange * 0.80;
 
-      if (distSq <= monster.attackRange * monster.attackRange) {
+      if (distSq <= e.performsAttack.attackRange * e.performsAttack.attackRange) {
         // In attack range — drain kite ramp slowly rather than resetting it.
         // Hard-resetting to 0 lets players exploit touch-and-run to wipe the penalty.
-        if (monster.state !== 'attacking') {
-          monster.lastAttackAt = now - monster.attackCooldown;
+        if (e.hasAwareness.state !== 'attacking') {
+          e.performsAttack.lastAttackAt = now - e.performsAttack.attackCooldown;
         }
-        ai.kiteTimer    = Math.max(0, ai.kiteTimer - dt * KITE_DECAY_RATE);
-        monster.speed   = ai.baseSpeed;
-        monster.targetX = monster.x;
-        monster.targetY = monster.y;
-        monster.state   = 'attacking';
+        ai.kiteTimer          = Math.max(0, ai.kiteTimer - dt * KITE_DECAY_RATE);
+        e.hasPosition.speed   = ai.baseSpeed;
+        e.hasAwareness.state  = 'attacking';
+        e.performsAttack.attackTargetId = target.isPlayer.id;
+        stopMonster(e);
       } else {
         // Still chasing — accumulate kite timer and ramp speed after grace period.
         ai.kiteTimer += dt;
@@ -114,53 +118,52 @@ export function updateMonsters(world: World, dt: number, now: number) {
         const mult   = Math.min(KITE_MAX_MULT, 1 + (excess / 1000) * KITE_RAMP_RATE);
         const rawSpeed = ai.baseSpeed * mult;
         // Once ramp is active enforce a minimum so even slow bosses become threatening.
-        monster.speed = Math.round(excess > 0 ? Math.max(rawSpeed, KITE_MIN_SPEED) : rawSpeed);
+        e.hasPosition.speed = Math.round(excess > 0 ? Math.max(rawSpeed, KITE_MIN_SPEED) : rawSpeed);
 
         const dist = Math.sqrt(distSq);
-        monster.targetX = target.x - (dx / dist) * stopDist;
-        monster.targetY = target.y - (dy / dist) * stopDist;
-        monster.state   = 'chasing';
+        e.hasAwareness.state = 'chasing';
+        e.performsAttack.attackTargetId = target.isPlayer.id;
+        setMonsterTarget(e, {
+          x: target.hasPosition.current.x - (dx / dist) * stopDist,
+          y: target.hasPosition.current.y - (dy / dist) * stopDist,
+        });
       }
 
     } else {
       // No valid aggro target — reset kite state and return/wander.
       ai.kiteTimer  = 0;
       // Run at boosted speed while returning so the re-engage window is small.
-      monster.speed = monster.state === 'returning'
+      e.hasPosition.speed = e.hasAwareness.state === 'returning'
         ? Math.round(ai.baseSpeed * RETURN_SPEED_MULT)
         : ai.baseSpeed;
+      e.performsAttack.attackTargetId = null;
 
-      switch (monster.state) {
+      switch (e.hasAwareness.state) {
         case 'chasing':
         case 'attacking':
-          monster.state   = 'returning';
-          monster.targetX = ai.spawnX;
-          monster.targetY = ai.spawnY;
+          e.hasAwareness.state = 'returning';
+          setMonsterTarget(e, { x: ai.spawnX, y: ai.spawnY });
           break;
 
         case 'returning': {
-          const dx = monster.x - ai.spawnX;
-          const dy = monster.y - ai.spawnY;
-          if (dx * dx + dy * dy < 16) {
-            monster.x       = ai.spawnX;
-            monster.y       = ai.spawnY;
-            monster.targetX = ai.spawnX;
-            monster.targetY = ai.spawnY;
-            monster.speed   = ai.baseSpeed;
-            monster.state   = 'idle';
-            ai.idleUntil    = now + randBetween(ai.idleMinMs, ai.idleMaxMs);
+          if (distanceSq(e.hasPosition.current, { x: ai.spawnX, y: ai.spawnY }) < 16) {
+            e.hasPosition.current = { x: ai.spawnX, y: ai.spawnY };
+            e.hasPosition.speed   = ai.baseSpeed;
+            e.hasAwareness.state  = 'idle';
+            ai.idleUntil          = now + randBetween(ai.idleMinMs, ai.idleMaxMs);
+            stopMonster(e);
+          } else {
+            setMonsterTarget(e, { x: ai.spawnX, y: ai.spawnY });
           }
           break;
         }
 
         case 'wandering': {
-          const dx = monster.x - monster.targetX;
-          const dy = monster.y - monster.targetY;
-          if (dx * dx + dy * dy < 16) {
-            monster.targetX = monster.x;
-            monster.targetY = monster.y;
-            monster.state   = 'idle';
-            ai.idleUntil    = now + randBetween(ai.idleMinMs, ai.idleMaxMs);
+          const targetPoint = pointFromMotion(e.hasPosition.current, e.isMoving.motion);
+          if (distanceSq(e.hasPosition.current, targetPoint) < 16) {
+            e.hasAwareness.state = 'idle';
+            ai.idleUntil         = now + randBetween(ai.idleMinMs, ai.idleMaxMs);
+            stopMonster(e);
           }
           break;
         }
@@ -170,18 +173,19 @@ export function updateMonsters(world: World, dt: number, now: number) {
           if (now >= ai.idleUntil) {
             const angle  = Math.random() * 2 * Math.PI;
             const radius = Math.random() * ai.wanderRadius;
-            const node   = NODE_REGISTRY.get(monster.nodeId);
+            const node   = NODE_REGISTRY.get(e.hasPosition.nodeId);
             const margin = 40;
             const minX = node ? margin : 0;
             const maxX = node ? node.width  - margin : Infinity;
             const minY = node ? margin : 0;
             const maxY = node ? node.height - margin : Infinity;
-            monster.targetX = Math.max(minX, Math.min(maxX, ai.spawnX + Math.cos(angle) * radius));
-            monster.targetY = Math.max(minY, Math.min(maxY, ai.spawnY + Math.sin(angle) * radius));
-            monster.state   = 'wandering';
+            e.hasAwareness.state = 'wandering';
+            setMonsterTarget(e, {
+              x: Math.max(minX, Math.min(maxX, ai.spawnX + Math.cos(angle) * radius)),
+              y: Math.max(minY, Math.min(maxY, ai.spawnY + Math.sin(angle) * radius)),
+            });
           } else {
-            monster.targetX = monster.x;
-            monster.targetY = monster.y;
+            stopMonster(e);
           }
           break;
       }

@@ -1,6 +1,6 @@
 import { createPortal } from 'react-dom';
 import { useState } from 'react';
-import { SKILL_TREE } from '@mmo-idle/shared';
+import { SKILL_TREE, canUnlockSkill } from '@mmo-idle/shared';
 import type { SkillNode, StatEffects } from '@mmo-idle/shared';
 import type { PlayerState } from '@mmo-idle/shared';
 import { hudBus } from '../hudBus';
@@ -42,21 +42,7 @@ type NodeStatus = 'unlocked' | 'available' | 'locked';
 function getNodeStatus(node: SkillNode, player: PlayerState | null): NodeStatus {
   if (!player) return 'locked';
   if (player.unlockedSkills.includes(node.id)) return 'unlocked';
-  if (node.tier !== player.currentSkillTier)   return 'locked';
-  if (player.skillPoints < node.cost)          return 'locked';
-
-  if (node.tier === 0) {
-    if (player.selectedClass !== null)                       return 'locked';
-  } else if (node.tier === 1) {
-    if (node.classId !== player.selectedClass)               return 'locked';
-  } else if (node.tier === 2) {
-    if (player.selectedSubVariant === null)                  return 'locked';
-  } else {
-    if (node.classId !== player.selectedClass)               return 'locked';
-    if (node.subVariantId !== player.selectedSubVariant)     return 'locked';
-  }
-
-  return 'available';
+  return canUnlockSkill(player, node.id).ok ? 'available' : 'locked';
 }
 
 function getVisibleNodes(player: PlayerState): Map<number, SkillNode[]> {

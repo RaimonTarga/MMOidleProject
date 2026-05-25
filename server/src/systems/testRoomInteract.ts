@@ -1,5 +1,6 @@
 import { ESSENCE_TYPES, MONSTER_DATABASE, TEST_ROOM_NODE_ID } from '@mmo-idle/shared';
-import type { PlayerState } from '@mmo-idle/shared';
+import type { PlayerEntity } from '../ecs/components/player';
+import { withPlayerSnapshotDraft } from '../ecs/playerSnapshotAdapter';
 import type { World } from '../world/World';
 import { resetCombatState } from './combatState';
 import { recalculatePlayerStats } from './stats';
@@ -9,56 +10,60 @@ const TEST_ROOM_ESSENCE_AMOUNT = 1_000_000_000;
 const lastInteractionAt = new Map<string, number>();
 
 export function updateTestRoomInteract(world: World, now = Date.now()): void {
-  for (const player of world.players.values()) {
-    if (player.nodeId !== TEST_ROOM_NODE_ID) continue;
+  for (const player of world.playerEntities) {
+    if (player.hasPosition.nodeId !== TEST_ROOM_NODE_ID) continue;
     grantTestRoomEssences(player);
 
-    for (const monster of world.monsters.values()) {
-      if (monster.nodeId !== TEST_ROOM_NODE_ID) continue;
+    for (const e of world.monsterEntities) {
+      if (e.hasPosition.nodeId !== TEST_ROOM_NODE_ID) continue;
 
-      const interactKind = MONSTER_DATABASE.get(monster.monsterTypeId)?.interactKind;
+      const interactKind = MONSTER_DATABASE.get(e.isMonster.monsterTypeId)?.interactKind;
       if (!interactKind) continue;
 
-      const dx = monster.x - player.x;
-      const dy = monster.y - player.y;
-      if (dx * dx + dy * dy > player.attackRange * player.attackRange) continue;
+      const dx = e.hasPosition.current.x - player.hasPosition.current.x;
+      const dy = e.hasPosition.current.y - player.hasPosition.current.y;
+      if (dx * dx + dy * dy > player.performsAttack.attackRange * player.performsAttack.attackRange) continue;
 
-      const cooldownKey = `${player.id}:${monster.id}`;
+      const cooldownKey = `${player.isPlayer.id}:${e.isMonster.id}`;
       if (now - (lastInteractionAt.get(cooldownKey) ?? 0) < INTERACT_COOLDOWN_MS) continue;
       lastInteractionAt.set(cooldownKey, now);
 
       if (interactKind === 'reset') {
         resetPlayerProgression(world, player);
       } else {
-        player.playerTier += 1;
-        player.skillPoints += 1;
+        player.tracksProgression.playerTier += 1;
+        player.tracksProgression.skillPoints += 1;
       }
     }
   }
 }
 
-function grantTestRoomEssences(player: PlayerState): void {
+function grantTestRoomEssences(player: PlayerEntity): void {
   for (const type of ESSENCE_TYPES) {
-    player.essences[type] = TEST_ROOM_ESSENCE_AMOUNT;
+    player.tracksProgression.essences[type] = TEST_ROOM_ESSENCE_AMOUNT;
   }
 }
 
-function resetPlayerProgression(world: World, player: PlayerState): void {
-  player.unlockedSkills = [];
-  player.skillPoints = 0;
-  player.playerTier = 0;
-  player.currentSkillTier = 0;
-  player.selectedClass = null;
-  player.selectedSubVariant = null;
-  player.selectedRange = null;
-  player.combatArchetype = null;
-  player.questProgress = {};
-  player.attackTargetId = null;
-  player.auto = false;
+function resetPlayerProgression(world: World, player: PlayerEntity): void {
+  withPlayerSnapshotDraft(player, draft => {
+    draft.unlockedSkills = [];
+    draft.skillPoints = 0;
+    draft.playerTier = 0;
+    draft.currentSkillTier = 0;
+    draft.selectedClass = null;
+    draft.selectedSubVariant = null;
+    draft.selectedRange = null;
+    draft.combatArchetype = null;
+    draft.questProgress = {};
+    draft.attackTargetId = null;
+    draft.auto = false;
 
-  recalculatePlayerStats(player);
-  player.hp = player.maxHp;
+    recalculatePlayerStats(draft);
+    draft.hp = draft.maxHp;
+  });
 
-  const combatState = world.playerCombatState.get(player.id);
-  if (combatState) resetCombatState(combatState);
+  resetCombatState(player.combatState);
+
+  // Snapshot mirror fields were just reset — re-sync typed archetype components.
+  world.refreshArchetypeComponents(player.isPlayer.id);
 }
