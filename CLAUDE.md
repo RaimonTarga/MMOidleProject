@@ -224,7 +224,7 @@ interface RepeatingAction { intervalMs: number; initialDelayMs?: number; actions
 | `summon` | Spawn `count` copies of `monsterTypeId` near the boss |
 | `stat-buff` | Multiply any one stat (`attack`, `speed`, `plating`, `damageReduction`); optional `durationMs` |
 
-**Runtime state:** `World.bossState: Map<string, BossRuntimeState>` — per-boss tracking (engaged flag, phase triggers, repeating timers, active effects). Pruned automatically when boss dies. Never serialized.
+**Runtime state:** `entity.scriptsBoss: ScriptsBoss` — per-boss tracking on the monster entity (engaged flag, phase triggers, repeating timers, active effects). Removed when the monster entity is despawned. Never serialized.
 
 **`monster.bossEffects: string[]`** — populated each tick from active effect names; sent to client for HUD display.
 

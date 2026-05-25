@@ -14,9 +14,9 @@ export interface KillRewards {
 
 const FALLBACK_REWARDS: KillRewards = { essence: 1, essenceType: 'green', level: 1 };
 
-export function rewardPlayer(player: PlayerSnapshot | PlayerEntity, rewards: KillRewards): void {
+export function rewardPlayer(world: World, player: PlayerSnapshot | PlayerEntity, rewards: KillRewards): void {
   if ('entityId' in player) {
-    withPlayerSnapshotDraft(player, draft => rewardPlayerSnapshot(draft, rewards));
+    withPlayerSnapshotDraft(world, player, draft => rewardPlayerSnapshot(draft, rewards));
     return;
   }
   rewardPlayerSnapshot(player, rewards);
@@ -81,7 +81,7 @@ export function grantMonsterRewards(
   const nodeId = 'entityId' in monster ? monster.hasPosition.nodeId : monster.nodeId;
   const def = MONSTER_DATABASE.get(monsterTypeId);
   const rewards = def?.rewards ?? FALLBACK_REWARDS;
-  rewardPlayer(killer, rewards);
-  withPlayerSnapshotDraft(killer, draft => applyBiomeXP(draft, nodeId));
-  registerKillForQuests(killer, monsterTypeId);
+  rewardPlayer(world, killer, rewards);
+  withPlayerSnapshotDraft(world, killer, draft => applyBiomeXP(draft, nodeId));
+  registerKillForQuests(world, killer, monsterTypeId);
 }

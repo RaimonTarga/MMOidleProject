@@ -43,7 +43,7 @@ export function updateAutoTargets(world: World) {
     let bestDist = Infinity;
 
     for (const monster of monsters) {
-      const ai = monster.monsterAi;
+      const ai = monster.controlsMonster;
       const aggroedOnPlayer = ai.aggroTargetId === player.isPlayer.id;
       const d = distanceSq(monster.hasPosition.current, playerPos);
 

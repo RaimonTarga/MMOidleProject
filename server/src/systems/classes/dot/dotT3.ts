@@ -105,7 +105,7 @@ export function getFrozenMult(monsterState: CombatState): number {
 }
 
 export function isMonsterFrozen(world: World, monsterId: string): boolean {
-  const monsterState = world.getMonsterCombatState(monsterId);
+  const monsterState = world.getMonsterEntity(monsterId)?.tracksCombat;
   return monsterState ? hasStatusEffect(monsterState, FROZEN_EFFECT) : false;
 }
 
@@ -129,11 +129,11 @@ export function initDotT3(): void {
 
     // Query by component presence, not by combatArchetype string.
     const attacker = ctx.attacker;
-    if (!attacker?.dot) return;
+    if (!attacker?.appliesDots) return;
 
     const player = attacker;
     const passives = player.usesSkills.passives;
-    const monsterState = ctx.defender.combatState;
+    const monsterState = ctx.defender.tracksCombat;
 
     const maxStacks      = Math.round(passives['dot.max-stacks']                     ?? 6);
     const convPct        = passives['dot.conversion-pct']                            ?? DOT_CONVERSION_PCT;
@@ -365,7 +365,7 @@ export function initDotT3(): void {
   // Boosts direct-attack damage only; DoT tick bonuses are applied in updateDotArchetype.
   registerCombatListener('onDamageTaken', (ctx, _world) => {
     if (ctx.defenderType !== 'monster') return;
-    const monsterState = ctx.defender.combatState;
+    const monsterState = ctx.defender.tracksCombat;
 
     const smolder = getStatusEffect(monsterState, SMOLDER_EFFECT);
     if (smolder) {
@@ -394,7 +394,7 @@ function updatePermafrost(world: World, dt: number): void {
 
   for (const entity of world.monsterEntities) {
     const monsterId    = entity.isMonster.id;
-    const monsterState = entity.combatState;
+    const monsterState = entity.tracksCombat;
     const effect = getStatusEffect(monsterState, DOT_EFFECT_ID);
     if (!effect || !effect.data.t3Perm) continue;
 
@@ -430,7 +430,7 @@ function updateConflagration(world: World, dt: number): void {
 
   for (const entity of world.monsterEntities) {
     const monsterId    = entity.isMonster.id;
-    const monsterState = entity.combatState;
+    const monsterState = entity.tracksCombat;
     const effect = getStatusEffect(monsterState, CONF_EFFECT_ID);
     if (!effect) continue;
 
@@ -461,7 +461,7 @@ function updateConflagration(world: World, dt: number): void {
 
 function updateChillAndFreeze(world: World): void {
   for (const entity of world.monsterEntities) {
-    const monsterState = entity.combatState;
+    const monsterState = entity.tracksCombat;
 
     const chillEffect = getStatusEffect(monsterState, CHILL_EFFECT);
     const wasChilled  = getFlag(monsterState, CHILL_FLAG);
@@ -487,17 +487,21 @@ function updateChillAndFreeze(world: World): void {
 // ── Player-state mirroring for DoT T3 ────────────────────────────────────────
 
 function mirrorDotT3PlayerSnapshot(world: World): void {
+  for (const entity of world.chillingPlayers) {
+    const targetState = entity.performsAttack.attackTargetId
+      ? world.getMonsterEntity(entity.performsAttack.attackTargetId)?.tracksCombat
+      : undefined;
+    entity.chillsTarget.targetChillStacks = targetState
+      ? getTotalStacks(targetState, CHILL_EFFECT)
+      : 0;
+  }
+
   for (const entity of world.dotPlayers) {
-    const dot    = entity.dot;
+    const dot = entity.appliesDots;
 
     const targetState = entity.performsAttack.attackTargetId
-      ? world.getMonsterCombatState(entity.performsAttack.attackTargetId)
+      ? world.getMonsterEntity(entity.performsAttack.attackTargetId)?.tracksCombat
       : undefined;
-
-    // Freezing Cold: mirror chill stacks for HUD
-    if (hasPassive(entity, 'dot.freezing-cold')) {
-      dot.targetChillStacks = targetState ? getTotalStacks(targetState, CHILL_EFFECT) : 0;
-    }
 
     // Invigorating Toxins: attack speed modifier.
     // Base cooldown is captured the first time we observe a player with this
@@ -519,23 +523,23 @@ function mirrorDotT3PlayerSnapshot(world: World): void {
   }
 }
 
-function collectClientEffects(combatState: CombatState | undefined): Record<string, number> {
+function collectClientEffects(tracksCombat: CombatState | undefined): Record<string, number> {
   const activeEffects: Record<string, number> = {};
-  if (!combatState) return activeEffects;
+  if (!tracksCombat) return activeEffects;
 
   for (const [serverId, clientId] of STATUS_EFFECT_TO_CLIENT_ID) {
-    const effect = getStatusEffect(combatState, serverId);
+    const effect = getStatusEffect(tracksCombat, serverId);
     if (effect && effect.remainingMs > 0) activeEffects[clientId] = effect.remainingMs;
   }
 
   return activeEffects;
 }
 
-function collectClientEffectFrames(world: World, combatState: CombatState | undefined): Record<string, number> {
+function collectClientEffectFrames(world: World, tracksCombat: CombatState | undefined): Record<string, number> {
   const activeEffectFrames: Record<string, number> = {};
-  if (!combatState) return activeEffectFrames;
+  if (!tracksCombat) return activeEffectFrames;
 
-  const dot = getStatusEffect(combatState, DOT_EFFECT_ID);
+  const dot = getStatusEffect(tracksCombat, DOT_EFFECT_ID);
   if (!dot || dot.stacks <= 0 || !dot.sourceId) return activeEffectFrames;
 
   const source = world.getPlayerEntity(dot.sourceId);
@@ -567,13 +571,13 @@ function collectClientEffectFrames(world: World, combatState: CombatState | unde
 
 function mirrorStatusEffectsToClient(world: World): void {
   for (const entity of world.monsterEntities) {
-    entity.hasStatus.activeEffects = collectClientEffects(entity.combatState);
-    entity.hasStatus.activeEffectFrames = collectClientEffectFrames(world, entity.combatState);
+    entity.hasStatus.activeEffects = collectClientEffects(entity.tracksCombat);
+    entity.hasStatus.activeEffectFrames = collectClientEffectFrames(world, entity.tracksCombat);
   }
 
   for (const player of world.playerEntities) {
-    player.hasStatus.activeEffects = collectClientEffects(player.combatState);
-    player.hasStatus.activeEffectFrames = collectClientEffectFrames(world, player.combatState);
+    player.hasStatus.activeEffects = collectClientEffects(player.tracksCombat);
+    player.hasStatus.activeEffectFrames = collectClientEffectFrames(world, player.tracksCombat);
   }
 }
 

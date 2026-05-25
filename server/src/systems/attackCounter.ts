@@ -53,7 +53,7 @@ export function registerAttackThreshold(
       if (archetype !== options.attackerArchetype) return;
     }
 
-    const state = ctx.attacker.combatState;
+    const state = ctx.attacker.tracksCombat;
 
     addCounter(state, key, 1);
     const count = getCounter(state, key);

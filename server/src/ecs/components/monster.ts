@@ -16,8 +16,8 @@ import type { ServerEntity } from '../entity';
  */
 export type MonsterEntity = With<
   ServerEntity,
-  | 'monsterAi'
-  | 'combatState'
+  | 'controlsMonster'
+  | 'tracksCombat'
   | 'isMonster'
   | 'hasPosition'
   | 'isMoving'

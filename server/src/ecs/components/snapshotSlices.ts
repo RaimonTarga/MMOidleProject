@@ -146,54 +146,6 @@ export interface ShowsSacred {
   sacredBuffPct: number;
 }
 
-// ─── Player archetype mirror slices ───────────────────────────────────────────
-//
-// These slices hold the wire-only fields that mirror per-archetype runtime
-// components (`CadenceComponent`, `EnergyComponent`, etc.). The full archetype
-// runtime state continues to live on the existing component (`entity.cadence`,
-// `entity.energy`, …) until a future cleanup unifies them. Mirrors are written
-// by `project*ToSnapshot` helpers and read by `assemblePlayerSnapshot`.
-
-/** Cadence wire mirrors. */
-export interface UsesCadence {
-  cadenceSpeedStacks: number;
-  cadenceCount: number;
-  cadenceThreshold: number;
-  cadenceEmpoweredArmed: boolean;
-}
-
-/** Energy wire mirrors. */
-export interface UsesEnergy {
-  energyCount: number;
-  empoweredReady: boolean;
-}
-
-/** DoT wire mirror — stacks on the current attack target. */
-export interface AppliesDots {
-  targetDotStacks: number;
-}
-
-/** Freezing Cold chill stacks on the current attack target. */
-export interface ChillsTarget {
-  targetChillStacks: number;
-}
-
-/** Cooldown archetype wire mirrors. */
-export interface UsesCooldown {
-  executionReady: boolean;
-  executionCooldownPct: number;
-  isChanneling: boolean;
-  channelingPct: number;
-}
-
-/** Reload archetype wire mirrors (ammo + laser heat). */
-export interface UsesReload {
-  ammoCount: number;
-  ammoMax: number;
-  heatPct: number;
-  laserOverheated: boolean;
-}
-
 // ─── Monster-specific ─────────────────────────────────────────────────────────
 
 /** Static-ish monster identity. */

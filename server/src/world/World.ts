@@ -5,14 +5,13 @@ import { updateMovement } from '../systems/movement';
 import { updateMonsters } from '../systems/ai';
 import { updateCombat } from '../systems/combat';
 import { updateTransitions } from '../systems/transitions';
-import { updateCombatState, makeCombatState } from '../systems/combatState';
-import type { CombatState } from '../systems/combatState';
+import { updateCombatState } from '../systems/combatState';
+import { makeTracksCombat } from '../ecs/components/tracksCombat';
 import { tickAllMechanics } from '../systems/classes/registry';
 import { updateWeaponEffects } from '../systems/weaponEffects';
 import { updateBossScripts } from '../systems/bossScripts';
-import type { BossRuntimeState } from '../systems/bossScripts';
 import { updateShields, updateDefensiveSystems } from '../systems/defenseSystems';
-import { updateKnockback, type KnockbackComponent } from '../systems/knockback';
+import { updateKnockback, type HasKnockback } from '../systems/knockback';
 import { syncPlayerBuffs } from '../systems/buffSync';
 import {
   createMonster as createMonsterInWorld,
@@ -26,37 +25,15 @@ import { NODE_REGISTRY } from './nodeRegistry';
 import { IS_DEV } from '../env';
 import { createEcsWorld, type EcsWorld } from '../ecs/world';
 import type { MonsterEntity } from '../ecs/components/monster';
+import { isMonsterEntity } from '../ecs/components/monster';
 import type { PlayerEntity } from '../ecs/components/player';
+import { isPlayerEntity } from '../ecs/components/player';
 import {
   decomposePlayerSnapshot,
   assemblePlayerSnapshot,
   assembleMonsterSnapshot,
 } from '../ecs/projection';
-import {
-  makeCadenceComponent,
-  refreshCadenceFromSnapshot,
-  type CadencePlayerEntity,
-} from '../ecs/components/cadence';
-import {
-  makeEnergyComponent,
-  refreshEnergyFromSnapshot,
-  type EnergyPlayerEntity,
-} from '../ecs/components/energy';
-import {
-  makeDotComponent,
-  refreshDotFromSnapshot,
-  type DotPlayerEntity,
-} from '../ecs/components/dot';
-import {
-  makeCooldownComponent,
-  refreshCooldownFromSnapshot,
-  type CooldownPlayerEntity,
-} from '../ecs/components/cooldown';
-import {
-  makeReloadComponent,
-  refreshReloadFromSnapshot,
-  type ReloadPlayerEntity,
-} from '../ecs/components/reload';
+import type { EntityId, ServerEntity } from '../ecs/entity';
 
 const TEST_ROOM_TARGET_RESET = 'test-target-reset';
 const TEST_ROOM_TARGET_GAIN_POINT = 'test-target-gain-point';
@@ -77,24 +54,6 @@ const TEST_ROOM_TRAINING_DUMMY_TYPES = [
 const TEST_ROOM_TRAINING_DUMMY_Y = 240;
 const TEST_ROOM_TRAINING_DUMMY_SPACING = 500;
 
-export interface MonsterAI {
-  spawnX: number;
-  spawnY: number;
-  wanderRadius: number;
-  idleUntil: number;
-  leashRange: number;
-  idleMinMs: number;
-  idleMaxMs: number;
-  aggroTargetId: string | null;
-  /** Timestamp of the last tick this monster had an active aggro target. */
-  lastAggroAt: number;
-  /** Unmodified speed from the database — kite ramp restores to this. */
-  baseSpeed: number;
-  /** Ms spent chasing without landing an attack — drives the kite speed ramp. */
-  kiteTimer: number;
-}
-
-
 export class World {
   readonly nodeId: string;
   readonly node: NodeDefinition;
@@ -107,13 +66,9 @@ export class World {
    */
   readonly ecs: EcsWorld = createEcsWorld();
 
-  /**
-   * Canonical monster query. All required slice components are stamped together
-   * in `createMonster`, so the query return type matches `MonsterEntity`.
-   */
   readonly monsterEntities = this.ecs.with(
-    'monsterAi',
-    'combatState',
+    'controlsMonster',
+    'tracksCombat',
     'isMonster',
     'hasPosition',
     'isMoving',
@@ -125,13 +80,15 @@ export class World {
     'hasStatus',
   );
 
+  readonly knockbackedMonsters = this.monsterEntities.with('hasKnockback');
+
   /**
    * Canonical player query. All required slice components are stamped together
    * in `attachPlayerEntity`, so the return type matches `PlayerEntity`.
    */
   readonly playerEntities = this.ecs.with(
-    'combatState',
-    'combatAt',
+    'tracksCombat',
+    'tracksEngagement',
     'isPlayer',
     'hasPosition',
     'isMoving',
@@ -146,24 +103,14 @@ export class World {
     'holdsInventory',
     'usesSkills',
     'showsSacred',
-    'usesCadence',
-    'usesEnergy',
-    'appliesDots',
-    'chillsTarget',
-    'usesCooldown',
-    'usesReload',
   );
 
-  /** Players that have the cadence archetype component attached. */
-  readonly cadencePlayers  = this.playerEntities.with('cadence');
-  /** Players that have the energy archetype component attached. */
-  readonly energyPlayers   = this.playerEntities.with('energy');
-  /** Players that have the dot archetype component attached. */
-  readonly dotPlayers      = this.playerEntities.with('dot');
-  /** Players that have the cooldown archetype component attached. */
-  readonly cooldownPlayers = this.playerEntities.with('cooldown');
-  /** Players that have the reload archetype component attached. */
-  readonly reloadPlayers   = this.playerEntities.with('reload');
+  readonly cadencePlayers  = this.playerEntities.with('usesCadence');
+  readonly energyPlayers   = this.playerEntities.with('usesEnergy');
+  readonly dotPlayers      = this.playerEntities.with('appliesDots');
+  readonly chillingPlayers = this.playerEntities.with('chillsTarget');
+  readonly cooldownPlayers = this.playerEntities.with('usesCooldown');
+  readonly reloadPlayers   = this.playerEntities.with('usesReload');
   /** Player IDs that died this tick. Drained by the server loop after each tick. */
   pendingDeaths: string[] = [];
   /** Queued combat events per node, flushed into each broadcast snapshot. */
@@ -178,12 +125,28 @@ export class World {
 
   nextMonsterId = 1;
 
+  private readonly entityIndex = new Map<EntityId, ServerEntity>();
+
   constructor(nodeId = 'node-5-5') {
     const node = NODE_REGISTRY.get(nodeId);
     if (!node) throw new Error(`Unknown node id: "${nodeId}"`);
     this.nodeId = nodeId;
     this.node   = node;
+    this.wireEntityIndex();
     this.init();
+  }
+
+  private wireEntityIndex(): void {
+    this.ecs.onEntityAdded.subscribe((entity) => {
+      this.entityIndex.set(entity.entityId, entity);
+    });
+    this.ecs.onEntityRemoved.subscribe((entity) => {
+      this.entityIndex.delete(entity.entityId);
+    });
+  }
+
+  getEntity(id: EntityId): ServerEntity | undefined {
+    return this.entityIndex.get(id);
   }
 
   private init() {
@@ -247,10 +210,8 @@ export class World {
    * `onEntityAdded` / `onEntityRemoved`.
    */
   getMonsterEntity(id: string): MonsterEntity | undefined {
-    for (const e of this.monsterEntities) {
-      if (e.isMonster.id === id) return e;
-    }
-    return undefined;
+    const e = this.getEntity(id);
+    return e && isMonsterEntity(e) ? e : undefined;
   }
 
   /** Iterate every monster entity in `nodeId`. Uses the `hasPosition` slice. */
@@ -260,53 +221,29 @@ export class World {
     }
   }
 
-  getMonsterAi(id: string): MonsterAI | undefined {
-    return this.getMonsterEntity(id)?.monsterAi;
-  }
-
   /** True if the monster currently exists in the world. */
   hasMonster(id: string): boolean {
     return this.getMonsterEntity(id) !== undefined;
   }
 
-  getMonsterCombatState(id: string): CombatState | undefined {
-    return this.getMonsterEntity(id)?.combatState;
+  getMonsterKnockback(id: string): HasKnockback | undefined {
+    return this.getMonsterEntity(id)?.hasKnockback;
   }
 
-  getMonsterKnockback(id: string): KnockbackComponent | undefined {
-    return this.getMonsterEntity(id)?.knockback;
-  }
-
-  setMonsterKnockback(id: string, kb: KnockbackComponent): void {
+  setMonsterKnockback(id: string, kb: HasKnockback): void {
     const e = this.getMonsterEntity(id);
     if (!e) return;
-    if (e.knockback) {
-      // Already present — just overwrite the data; miniplex query membership
-      // is unchanged since the component key is still attached.
-      e.knockback = kb;
+    if (e.hasKnockback) {
+      e.hasKnockback = kb;
     } else {
-      this.ecs.addComponent(e, 'knockback', kb);
+      this.ecs.addComponent(e, 'hasKnockback', kb);
     }
   }
 
   clearMonsterKnockback(id: string): void {
     const e = this.getMonsterEntity(id);
-    if (!e || !e.knockback) return;
-    this.ecs.removeComponent(e, 'knockback');
-  }
-
-  getBossState(id: string): BossRuntimeState | undefined {
-    return this.getMonsterEntity(id)?.bossState;
-  }
-
-  setBossState(id: string, state: BossRuntimeState): void {
-    const e = this.getMonsterEntity(id);
-    if (!e) return;
-    if (e.bossState) {
-      e.bossState = state;
-    } else {
-      this.ecs.addComponent(e, 'bossState', state);
-    }
+    if (!e || !e.hasKnockback) return;
+    this.ecs.removeComponent(e, 'hasKnockback');
   }
 
   /**
@@ -332,12 +269,11 @@ export class World {
   attachPlayerEntity(player: PlayerSnapshot): PlayerEntity {
     const entity: PlayerEntity = {
       entityId:       player.id,
-      combatState:    makeCombatState(),
-      combatAt:       0,
+      tracksCombat:    makeTracksCombat(),
+      tracksEngagement:       0,
       ...decomposePlayerSnapshot(player),
     };
     this.ecs.add(entity);
-    this.refreshArchetypeComponents(player.id);
     return entity;
   }
 
@@ -348,10 +284,8 @@ export class World {
 
   /** O(N) entity lookup by player id (socket id). N ≈ ~10 in practice. */
   getPlayerEntity(playerId: string): PlayerEntity | undefined {
-    for (const e of this.playerEntities) {
-      if (e.isPlayer.id === playerId) return e;
-    }
-    return undefined;
+    const e = this.getEntity(playerId);
+    return e && isPlayerEntity(e) ? e : undefined;
   }
 
   /** Iterate every player entity in `nodeId`. Uses the `hasPosition` slice. */
@@ -367,127 +301,6 @@ export class World {
 
   playerCount(): number {
     return this.playerEntities.size;
-  }
-
-  getPlayerCombatState(playerId: string): CombatState | undefined {
-    return this.getPlayerEntity(playerId)?.combatState;
-  }
-
-  getPlayerCombatAt(playerId: string): number {
-    return this.getPlayerEntity(playerId)?.combatAt ?? 0;
-  }
-
-  setPlayerCombatAt(playerId: string, ts: number): void {
-    const e = this.getPlayerEntity(playerId);
-    if (e) e.combatAt = ts;
-  }
-
-  // ── ARCHETYPE COMPONENT HOOKS ─────────────────────────
-
-  /**
-   * Idempotent: attaches the cadence component when the player is currently
-   * cadence-archetype, refreshes it from the snapshot if already attached, or
-   * detaches it when the player has been respec'd off cadence.
-   *
-   * Call this after any mutation that may change `combatArchetype` or reset
-   * cadence snapshot fields (skill unlock, equip/unequip, respawn, hydrate,
-   * progression reset).
-   */
-  ensureCadenceComponent(playerId: string): void {
-    const entity = this.getPlayerEntity(playerId);
-    if (!entity) return;
-
-    const p = assemblePlayerSnapshot(entity);
-    if (p.combatArchetype !== 'cadence') {
-      if (entity.cadence) this.ecs.removeComponent(entity, 'cadence');
-      return;
-    }
-
-    if (entity.cadence) {
-      refreshCadenceFromSnapshot(entity.cadence, p);
-    } else {
-      this.ecs.addComponent(entity, 'cadence', makeCadenceComponent(p));
-    }
-  }
-
-  ensureEnergyComponent(playerId: string): void {
-    const entity = this.getPlayerEntity(playerId);
-    if (!entity) return;
-
-    const p = assemblePlayerSnapshot(entity);
-    if (p.combatArchetype !== 'energy') {
-      if (entity.energy) this.ecs.removeComponent(entity, 'energy');
-      return;
-    }
-
-    if (entity.energy) {
-      refreshEnergyFromSnapshot(entity.energy, p);
-    } else {
-      this.ecs.addComponent(entity, 'energy', makeEnergyComponent(p));
-    }
-  }
-
-  ensureDotComponent(playerId: string): void {
-    const entity = this.getPlayerEntity(playerId);
-    if (!entity) return;
-
-    const p = assemblePlayerSnapshot(entity);
-    if (p.combatArchetype !== 'dot') {
-      if (entity.dot) this.ecs.removeComponent(entity, 'dot');
-      return;
-    }
-
-    if (entity.dot) {
-      refreshDotFromSnapshot(entity.dot, p);
-    } else {
-      this.ecs.addComponent(entity, 'dot', makeDotComponent(p));
-    }
-  }
-
-  ensureCooldownComponent(playerId: string): void {
-    const entity = this.getPlayerEntity(playerId);
-    if (!entity) return;
-
-    const p = assemblePlayerSnapshot(entity);
-    if (p.combatArchetype !== 'cooldown') {
-      if (entity.cooldown) this.ecs.removeComponent(entity, 'cooldown');
-      return;
-    }
-
-    if (entity.cooldown) {
-      refreshCooldownFromSnapshot(entity.cooldown, p);
-    } else {
-      this.ecs.addComponent(entity, 'cooldown', makeCooldownComponent(p));
-    }
-  }
-
-  ensureReloadComponent(playerId: string): void {
-    const entity = this.getPlayerEntity(playerId);
-    if (!entity) return;
-
-    const p = assemblePlayerSnapshot(entity);
-    if (p.combatArchetype !== 'reload') {
-      if (entity.reload) this.ecs.removeComponent(entity, 'reload');
-      return;
-    }
-
-    if (entity.reload) {
-      refreshReloadFromSnapshot(entity.reload, p);
-    } else {
-      this.ecs.addComponent(entity, 'reload', makeReloadComponent(p));
-    }
-  }
-
-  /**
-   * Single seam called after any place that runs `recalculatePlayerStats` for
-   * an attached player. All archetype components are wired in here.
-   */
-  refreshArchetypeComponents(playerId: string): void {
-    this.ensureCadenceComponent(playerId);
-    this.ensureEnergyComponent(playerId);
-    this.ensureDotComponent(playerId);
-    this.ensureCooldownComponent(playerId);
-    this.ensureReloadComponent(playerId);
   }
 
   /**

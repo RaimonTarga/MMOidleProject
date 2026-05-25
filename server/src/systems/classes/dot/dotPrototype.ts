@@ -8,7 +8,6 @@ import {
   getSmolderMult,
   getFrozenMult,
 } from './dotT3';
-import { projectDotToSlice } from '../../../ecs/components/dot';
 import type { World } from '../../../world/World';
 
 // Re-export the pure tick formula from shared so existing importers don't change paths.
@@ -41,7 +40,7 @@ export function updateDotArchetype(world: World, dt: number): void {
 
   for (const entity of world.monsterEntities) {
     const monsterId = entity.isMonster.id;
-    const state     = entity.combatState;
+    const state     = entity.tracksCombat;
     const effect = getStatusEffects(state, DOT_EFFECT_ID)[0];
     if (!effect) continue;
     if (effect.data.t3Perm) continue; // Permafrost ticking managed by updateDotT3
@@ -78,7 +77,7 @@ export function updateDotArchetype(world: World, dt: number): void {
 
   for (const entity of world.playerEntities) {
     const playerId  = entity.isPlayer.id;
-    const state     = entity.combatState;
+    const state     = entity.tracksCombat;
     const effect = getStatusEffects(state, DOT_EFFECT_ID)[0];
     if (!effect) continue;
 
@@ -104,14 +103,13 @@ export function updateDotArchetype(world: World, dt: number): void {
 
   // ── Mirror target stacks to the dot component and the HUD snapshot ──────────
   for (const entity of world.dotPlayers) {
-    const dot    = entity.dot;
+    const dot    = entity.appliesDots;
     if (!entity.performsAttack.attackTargetId) {
       dot.targetDotStacks = 0;
     } else {
-      const targetState   = world.getMonsterCombatState(entity.performsAttack.attackTargetId);
+      const targetState   = world.getMonsterEntity(entity.performsAttack.attackTargetId)?.tracksCombat;
       dot.targetDotStacks = targetState ? getTotalStacks(targetState, DOT_EFFECT_ID) : 0;
     }
-    projectDotToSlice(dot, entity);
   }
 }
 
@@ -137,9 +135,9 @@ export function initDotArchetype(): void {
 
     // Query by component presence, not by combatArchetype string.
     const attacker = ctx.attacker;
-    if (!attacker?.dot) return;
+    if (!attacker?.appliesDots) return;
 
-    const state = ctx.defender.combatState;
+    const state = ctx.defender.tracksCombat;
     const passives = attacker.usesSkills.passives;
 
     const maxStacks      = Math.round(passives['dot.max-stacks']                       ?? DOT_MAX_STACKS);
@@ -185,7 +183,7 @@ export function initDotArchetype(): void {
     const monsterDef = MONSTER_DATABASE.get(ctx.attacker.isMonster.monsterTypeId);
     if (!monsterDef?.dotEffect) return;
 
-    const playerCombatState = ctx.defender.combatState;
+    const playerCombatState = ctx.defender.tracksCombat;
 
     const { damagePerStack, maxStacks, tickIntervalMs } = monsterDef.dotEffect;
     const durationMs = monsterDef.dotEffect.durationMs ?? DOT_DURATION_MS;

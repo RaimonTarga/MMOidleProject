@@ -47,7 +47,7 @@ export function initWeaponEffects(): void {
     const player = ctx.attacker;
     if (player.holdsInventory.equipment.weapon !== 'chaotic-axe') return;
 
-    const state = player.combatState;
+    const state = player.tracksCombat;
 
     addCounter(state, CHAOTIC_HIT_KEY, 1);
     if (getCounter(state, CHAOTIC_HIT_KEY) % CHAOTIC_MISS_EVERY === 0) {
@@ -64,7 +64,7 @@ export function initWeaponEffects(): void {
     const player = ctx.attacker;
     if (player.holdsInventory.equipment.weapon !== 'sacred-cross') return;
 
-    const state = player.combatState;
+    const state = player.tracksCombat;
 
     // If armed and ready, proc on this hit (triggering attack also gets the bonus).
     if (getFlag(state, SACRED_READY) && !getFlag(state, SACRED_BUFF_FLAG)) {
@@ -92,7 +92,7 @@ export function initWeaponEffects(): void {
     const player = ctx.attacker;
     if (player.holdsInventory.equipment.weapon !== 'ashbrand-blade') return;
 
-    const monsterState = ctx.defender.combatState;
+    const monsterState = ctx.defender.tracksCombat;
 
     const damagePerStack = Math.max(1, Math.round(player.dealsDamage.attack * ASHBRAND_CONV_PCT / ASHBRAND_MAX_STACKS));
     const effect = applyStatusEffect(monsterState, {
@@ -130,7 +130,7 @@ export function updateWeaponEffects(world: World, dt: number): void {
 
 function updateSacredCrossBuff(world: World): void {
   for (const player of world.playerEntities) {
-    const state = player.combatState;
+    const state = player.tracksCombat;
 
     if (player.holdsInventory.equipment.weapon !== 'sacred-cross') {
       // Weapon unequipped — clean up if buff was active (restore cooldown)
@@ -184,7 +184,7 @@ function updateAshbrandBurns(world: World, dt: number): void {
 
   for (const e of world.monsterEntities) {
     const monsterId = e.isMonster.id;
-    const state     = e.combatState;
+    const state     = e.tracksCombat;
     const effect = getStatusEffect(state, 'ashbrand-burn');
     if (!effect) continue;
 

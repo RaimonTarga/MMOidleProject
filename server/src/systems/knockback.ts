@@ -1,6 +1,7 @@
 import type { World } from '../world/World';
 import { zeroMotion } from '@mmo-idle/shared';
 import { NODE_REGISTRY } from '../world/nodeRegistry';
+import type { HasKnockback } from '../ecs/components/hasKnockback';
 
 // Matches MONSTER_MARGIN in movement.ts — keep monsters inside the playable area.
 const MONSTER_BOUND_MARGIN = 40;
@@ -8,22 +9,7 @@ const MONSTER_BOUND_MARGIN = 40;
 // Default slide duration when callers don't specify one.
 const DEFAULT_KNOCKBACK_DURATION_MS = 300;
 
-/**
- * Component data tracking an in-flight knockback slide for a single monster.
- *
- * Stored in `World.monsterKnockback` keyed by monster id. The presence of an
- * entry "registers" the monster as currently being knocked back; absence means
- * the monster is behaving normally. The `updateKnockback` system advances the
- * tween each tick and removes the entry when complete.
- */
-export interface KnockbackComponent {
-  startX: number;
-  startY: number;
-  endX: number;
-  endY: number;
-  elapsedMs: number;
-  durationMs: number;
-}
+export type { HasKnockback, KnockbackComponent } from '../ecs/components/hasKnockback';
 
 /**
  * Apply a sliding knockback to a monster. The monster is pushed from its
@@ -74,9 +60,6 @@ export function applyKnockback(
     durationMs,
   });
 
-  // Peak velocity of a cubic ease-out is ~3× the average. Pad the client-visible
-  // speed so its baseX → targetX interpolation can keep pace with the eased
-  // slide we write to `monster.x` each tick (otherwise the client visibly lags).
   const avgPxPerSec  = (distance / durationMs) * 1000;
   entity.hasPosition.speed = Math.max(100, Math.round(avgPxPerSec * 3));
   entity.hasAwareness.state = 'knocked-back';
@@ -92,19 +75,13 @@ export function isMonsterKnockedBack(world: World, monsterId: string): boolean {
 /**
  * Advance every active knockback by `dt` ms. Must run BEFORE `updateMovement`
  * and `updateMonsters` so that the position it writes wins for the tick.
- *
- * Stale entries are cleaned up here, but after S7 removing the monster entity
- * via `world.removeMonsterEntity` also drops the knockback component as part
- * of the cascade, so the stale-cleanup path is mostly belt-and-suspenders.
  */
 export function updateKnockback(world: World, dt: number): void {
-  const kbQuery = world.monsterEntities.with('knockback');
-  for (const entity of kbQuery) {
-    const kb      = entity.knockback;
+  for (const entity of world.knockbackedMonsters) {
+    const kb = entity.hasKnockback;
 
     kb.elapsedMs += dt;
     const t = Math.min(1, kb.elapsedMs / kb.durationMs);
-    // Cubic ease-out: fast initial slide, gentle settle.
     const ease = 1 - Math.pow(1 - t, 3);
 
     const newX = kb.startX + (kb.endX - kb.startX) * ease;

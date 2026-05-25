@@ -1,7 +1,6 @@
 import { registerCombatListener } from '../../combatPipeline';
 import { setEmpoweredAttack, registerEmpoweredMultiplier, isEmpoweredAttack } from '../../empoweredAttacks';
 import { initEnergyT3 } from './energyT3';
-import { projectEnergyToSlice } from '../../../ecs/components/energy';
 import type { World } from '../../../world/World';
 
 // ── Energy mechanic constants ─────────────────────────────────────────────────
@@ -53,13 +52,13 @@ export function initEnergyArchetype(): void {
 
     // Query by component presence, not by combatArchetype string.
     const entity = ctx.attacker;
-    if (!entity?.energy) return;
+    if (!entity?.usesEnergy) return;
 
     if (ctx.metadata['empoweredAttack']) return; // empowered hits never generate energy
     if (ctx.metadata['energyHandled']) return;   // T3 mechanic already handled this hit
 
-    const state   = entity.combatState;
-    const energy  = entity.energy;
+    const state   = entity.tracksCombat;
+    const energy  = entity.usesEnergy;
 
     if (energy.energyMax === 0) energy.energyMax = ENERGY_MAX_DEFAULT;
 
@@ -71,7 +70,6 @@ export function initEnergyArchetype(): void {
       setEmpoweredAttack(state);
     }
 
-    projectEnergyToSlice(energy, entity);
   });
 }
 
@@ -83,7 +81,6 @@ export function initEnergyArchetype(): void {
  */
 export function updateEnergyArchetype(world: World): void {
   for (const entity of world.energyPlayers) {
-    projectEnergyToSlice(entity.energy, entity);
-    entity.usesEnergy.empoweredReady = isEmpoweredAttack(entity.combatState);
+    entity.usesEnergy.empoweredReady = isEmpoweredAttack(entity.tracksCombat);
   }
 }

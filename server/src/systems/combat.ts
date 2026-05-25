@@ -14,7 +14,7 @@ export function updateCombat(world: World, dt: number, now: number) {
   // PLAYER → MONSTER
   for (const player of world.playerEntities) {
     // Channeled Beam locks all auto-attacks; the beam system handles targeting + damage.
-    if (player.usesCooldown.isChanneling) {
+    if (player.usesCooldown?.isChanneling ?? false) {
       player.performsAttack.lastAttackAt = now; // keep the cooldown hot so attacks resume promptly
       continue;
     }
@@ -43,7 +43,7 @@ export function updateCombat(world: World, dt: number, now: number) {
 
         emitCombatEvent('onAttack', ctx, world);
 
-        const monsterCombatState = target.combatState;
+        const monsterCombatState = target.tracksCombat;
         const shredEffect = monsterCombatState
           ? getStatusEffect(monsterCombatState, 'plating-shred')
           : undefined;
@@ -127,14 +127,15 @@ export function updateCombat(world: World, dt: number, now: number) {
           // Guard: only aggro if the player is within leash range of the monster's
           // spawn. Beyond that the monster can't reach them — it would immediately
           // leash and return, enabling safe static-range cheese.
-          const ai = target.monsterAi;
+          const ai = target.controlsMonster;
           if (ai && ai.aggroTargetId === null) {
             if (distanceSq(player.hasPosition.current, { x: ai.spawnX, y: ai.spawnY }) <= ai.leashRange * ai.leashRange) {
               ai.aggroTargetId = player.isPlayer.id;
               ai.lastAggroAt   = now;
               // Keep the attacker's combat timer fresh so OOC regen doesn't tick
               // while the monster is chasing them toward attack range.
-              world.setPlayerCombatAt(player.isPlayer.id, now);
+              const attacker = world.getPlayerEntity(player.isPlayer.id);
+              if (attacker) attacker.tracksEngagement = now;
             }
             // Outside leash range: hit dealt, monster ignores the attacker.
             // Monster regen continues uninterrupted so whittling is not viable.
@@ -145,15 +146,16 @@ export function updateCombat(world: World, dt: number, now: number) {
       // Refresh combat timer while any monster still has this player in aggro,
       // so regen doesn't tick while being actively chased.
       for (const e of world.monsterEntities) {
-        if (e.monsterAi.aggroTargetId === player.isPlayer.id) {
-          world.setPlayerCombatAt(player.isPlayer.id, now);
+        if (e.controlsMonster.aggroTargetId === player.isPlayer.id) {
+          const p = world.getPlayerEntity(player.isPlayer.id);
+          if (p) p.tracksEngagement = now;
           break;
         }
       }
 
-      const lastCombat = world.getPlayerCombatAt(player.isPlayer.id);
+      const lastCombat = player.tracksEngagement;
       if (now - lastCombat > GAME_CONFIG.COMBAT_REGEN_DELAY) {
-        const cs = player.combatState;
+        const cs = player.tracksCombat;
         const rawRegen = player.hasHealth.maxHp * ((player.hasHealth.hpRegen ?? 0) / 100) * (dt / 1000);
         const healAmount = cs ? rawRegen * getAntiHealMult(cs) : rawRegen;
         player.hasHealth.hp = Math.min(player.hasHealth.maxHp, player.hasHealth.hp + healAmount);
@@ -163,7 +165,7 @@ export function updateCombat(world: World, dt: number, now: number) {
 
   // MONSTER → PLAYER
   for (const e of world.monsterEntities) {
-    const ai      = e.monsterAi;
+    const ai      = e.controlsMonster;
 
     if (e.hasAwareness.state !== 'attacking') continue;
 
@@ -210,7 +212,8 @@ export function updateCombat(world: World, dt: number, now: number) {
         emitCombatEvent('onKill', ctx, world);
         world.respawnPlayer(target.isPlayer.id);
       } else {
-        world.setPlayerCombatAt(target.isPlayer.id, now);
+        const t = world.getPlayerEntity(target.isPlayer.id);
+        if (t) t.tracksEngagement = now;
       }
     }
   }
@@ -220,7 +223,7 @@ export function updateCombat(world: World, dt: number, now: number) {
   // preventing players from attriting bosses across multiple engagements.
   for (const e of world.monsterEntities) {
     if (e.hasHealth.hp >= e.hasHealth.maxHp) continue;
-    const ai = e.monsterAi;
+    const ai = e.controlsMonster;
     if (ai.aggroTargetId !== null) continue;
     if (now - ai.lastAggroAt < GAME_CONFIG.MONSTER_REGEN_DELAY) continue;
     e.hasHealth.hp = Math.min(

@@ -11,7 +11,7 @@ import {
 } from '../../combatPipeline';
 import { getStatusEffect } from '../../statusEffects';
 import { applyPlayerAoe } from '../../aoeDamage';
-import type { ReloadComponent } from '../../../ecs/components/reload';
+import type { UsesReload } from '../../../ecs/components/usesReload';
 import type { PlayerEntity } from '../../../ecs/components/player';
 import type { MonsterEntity } from '../../../ecs/components/monster';
 
@@ -34,7 +34,7 @@ export function initReloadT3(): void {
 
 export function updateReloadT3(world: World, dt: number, now: number = Date.now()): void {
   for (const entity of world.reloadPlayers) {
-    const reload = entity.reload;
+    const reload = entity.usesReload;
 
     // Tick down the snipe cooldown on every reload-archetype player.
     if (reload.snipeCooldownMs > 0) {
@@ -44,8 +44,6 @@ export function updateReloadT3(world: World, dt: number, now: number = Date.now(
     if ((entity.usesSkills.passives['reload.laser'] ?? 0) <= 0) {
       reload.laserHeat       = 0;
       reload.laserOverheated = false;
-      entity.usesReload.heatPct = 0;
-      entity.usesReload.laserOverheated = false;
       continue;
     }
 
@@ -64,9 +62,9 @@ function registerLaserGateAndSnipeCooldown(): void {
     if (ctx.attackerType !== 'player') return;
 
     const entity = ctx.attacker;
-    if (!entity?.reload) return;
+    if (!entity?.usesReload) return;
 
-    const reload = entity.reload;
+    const reload = entity.usesReload;
     const passives = entity.usesSkills.passives;
 
     // Laser path: standard auto-attack is cancelled — the laser fires its own
@@ -133,7 +131,7 @@ function registerGatlingKnockback(): void {
 function updateLaserPlayer(
   world: World,
   player: PlayerEntity,
-  reload: ReloadComponent,
+  reload: UsesReload,
   dt: number,
   now: number,
 ): void {
@@ -157,9 +155,6 @@ function updateLaserPlayer(
       reload.laserOverheated = false;
     }
   }
-
-  player.usesReload.heatPct = Math.round(reload.laserHeat);
-  player.usesReload.laserOverheated = reload.laserOverheated;
 }
 
 function findNearestTarget(world: World, player: PlayerEntity): MonsterEntity | null {
@@ -185,7 +180,7 @@ function applyLaserTick(world: World, player: PlayerEntity, target: MonsterEntit
 
   emitCombatEvent('onAttack', ctx, world);
 
-  const monsterCombatState = target.combatState;
+  const monsterCombatState = target.tracksCombat;
   const shredEffect = getStatusEffect(monsterCombatState, 'plating-shred');
   const effectivePlating = Math.max(0,
     target.mitigatesDamage.plating - (shredEffect ? shredEffect.stacks * shredEffect.data['platingReduction'] : 0),
@@ -250,11 +245,11 @@ function applyLaserTick(world: World, player: PlayerEntity, target: MonsterEntit
     return;
   }
 
-  const ai = world.getMonsterAi(target.isMonster.id);
+  const ai = world.getMonsterEntity(target.isMonster.id)?.controlsMonster;
   if (ai && ai.aggroTargetId === null) {
     ai.aggroTargetId = player.isPlayer.id;
     ai.lastAggroAt = now;
-    world.setPlayerCombatAt(player.isPlayer.id, now);
+    player.tracksEngagement = now;
   }
 }
 

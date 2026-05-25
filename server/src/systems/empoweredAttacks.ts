@@ -86,7 +86,7 @@ export function registerEmpoweredMultiplier(
       if (!isClassActive(world, ctx.attacker.isPlayer.id, options.attackerClass)) return;
     }
 
-    const state = ctx.attacker.combatState;
+    const state = ctx.attacker.tracksCombat;
 
     if (!consumeEmpoweredAttack(state)) return;
 

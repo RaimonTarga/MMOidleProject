@@ -1,15 +1,14 @@
-import type { MonsterAI } from '../world/World';
-import type { CombatState } from '../systems/combatState';
-import type { KnockbackComponent } from '../systems/knockback';
-import type { BossRuntimeState } from '../systems/bossScripts';
-import type { CadenceComponent } from './components/cadence';
-import type { EnergyComponent } from './components/energy';
-import type { DotComponent } from './components/dot';
-import type { CooldownComponent } from './components/cooldown';
-import type { ReloadComponent } from './components/reload';
+import type { ControlsMonster } from './components/controlsMonster';
+import type { TracksCombat } from './components/tracksCombat';
+import type { HasKnockback } from './components/hasKnockback';
+import type { ScriptsBoss } from './components/scriptsBoss';
+import type { UsesCadence } from './components/usesCadence';
+import type { UsesEnergy } from './components/usesEnergy';
+import type { AppliesDots } from './components/appliesDots';
+import type { ChillsTarget } from './components/chillsTarget';
+import type { UsesCooldown } from './components/usesCooldown';
+import type { UsesReload } from './components/usesReload';
 import type {
-  AppliesDots,
-  ChillsTarget,
   DealsDamage,
   EvadesHits,
   HasAwareness,
@@ -25,10 +24,6 @@ import type {
   ShowsSacred,
   TracksProgression,
   UsesAutocombat,
-  UsesCadence,
-  UsesCooldown,
-  UsesEnergy,
-  UsesReload,
   UsesSkills,
 } from './components/snapshotSlices';
 
@@ -90,20 +85,13 @@ export interface ServerEntity {
   hasAwareness?: HasAwareness;
 
   // ── Monster (S7) ──────────────────────────────────────────────
-  monsterAi?:       MonsterAI;
-  knockback?:       KnockbackComponent;
-  bossState?:       BossRuntimeState;
+  controlsMonster?: ControlsMonster;
+  hasKnockback?:    HasKnockback;
+  scriptsBoss?:     ScriptsBoss;
 
   // ── Player (S8) ───────────────────────────────────────────────
-  combatAt?:        number;
+  tracksEngagement?: number;
 
   // ── Shared by both (S7 + S8) ──────────────────────────────────
-  combatState?:     CombatState;
-
-  // ── Per-archetype components (S9 → S13) ───────────────────────
-  cadence?:  CadenceComponent;
-  energy?:   EnergyComponent;
-  dot?:      DotComponent;
-  cooldown?: CooldownComponent;
-  reload?:   ReloadComponent;
+  tracksCombat?:    TracksCombat;
 }

@@ -181,7 +181,7 @@ io.on('connection', (socket) => {
   socket.on('player:move', ({ x, y }) => {
     const p = world.getPlayerEntity(socket.id);
     if (!p) return;
-    if (p.usesCooldown.isChanneling) return;
+    if (p.usesCooldown?.isChanneling) return;
     p.isMoving.motion = vectorTo(p.hasPosition.current, { x, y });
   });
 
@@ -194,34 +194,28 @@ io.on('connection', (socket) => {
   socket.on('player:unlockSkill', (skillId) => {
     const p = world.getPlayerEntity(socket.id);
     if (!p) return;
-    const succeeded = unlockSkill(p, skillId);
+    const succeeded = unlockSkill(world, p, skillId);
     if (succeeded) {
       socket.emit('player:ascended', p.tracksProgression.currentSkillTier);
     }
-    // recalculatePlayerStats (called inside unlockSkill) resets snapshot mirror
-    // fields. refreshArchetypeComponents re-syncs the typed components so they
-    // stay the runtime source of truth.
-    world.refreshArchetypeComponents(socket.id);
   });
 
   socket.on('inventory:equipItem', (definitionId) => {
     const p = world.getPlayerEntity(socket.id);
     if (!p) return;
-    equipItem(p, definitionId);
-    world.refreshArchetypeComponents(socket.id);
+    equipItem(world, p, definitionId);
   });
 
   socket.on('inventory:unequip', (slot: EquipmentSlot) => {
     const p = world.getPlayerEntity(socket.id);
     if (!p) return;
-    unequipItem(p, slot);
-    world.refreshArchetypeComponents(socket.id);
+    unequipItem(world, p, slot);
   });
 
   socket.on('crafting:craftRecipe', (recipeId: string) => {
     const p = world.getPlayerEntity(socket.id);
     if (!p) return;
-    const result = craftRecipe(p, recipeId);
+    const result = craftRecipe(world, p, recipeId);
     socket.emit('crafting:result', result);
   });
 
@@ -238,12 +232,14 @@ io.on('connection', (socket) => {
       p.isMoving.motion = zeroMotion();
       p.usesAutocombat.auto = false;
       p.performsAttack.attackTargetId = null;
-      p.usesCooldown.isChanneling = false;
-      p.usesCooldown.channelingPct = 0;
+      if (p.usesCooldown) {
+        p.usesCooldown.isChanneling = false;
+        p.usesCooldown.channelingPct = 0;
+      }
 
-      world.setPlayerCombatAt(socket.id, 0);
+      p.tracksEngagement = 0;
       for (const e of world.monsterEntities) {
-        if (e.monsterAi.aggroTargetId === socket.id) e.monsterAi.aggroTargetId = null;
+        if (e.controlsMonster.aggroTargetId === socket.id) e.controlsMonster.aggroTargetId = null;
       }
     });
 

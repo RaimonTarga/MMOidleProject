@@ -1,7 +1,6 @@
 import { registerCombatListener } from '../../combatPipeline';
 import type { World } from '../../../world/World';
 import { initReloadT3 } from './reloadT3';
-import { projectReloadToSlice } from '../../../ecs/components/reload';
 
 // ── Fallback constants (balanced-frame defaults, used when no frame is unlocked) ─
 
@@ -23,7 +22,7 @@ const RELOAD_TIME_MS  = 2500;
  */
 export function updateReloadArchetype(world: World, dt: number): void {
   for (const entity of world.reloadPlayers) {
-    const reload = entity.reload;
+    const reload = entity.usesReload;
 
     const maxAmmo = Math.round(entity.usesSkills.passives['reload.max-ammo'] ?? RELOAD_MAX_AMMO);
 
@@ -47,7 +46,6 @@ export function updateReloadArchetype(world: World, dt: number): void {
       console.log(`[Reload] ${entity.isPlayer.id}: reload complete — ${reload.ammoMax} rounds`);
     }
 
-    projectReloadToSlice(reload, entity);
   }
 }
 
@@ -69,9 +67,9 @@ export function initReloadArchetype(): void {
     if (ctx.attackerType !== 'player') return;
 
     const entity = ctx.attacker;
-    if (!entity?.reload) return;
+    if (!entity?.usesReload) return;
 
-    const reload = entity.reload;
+    const reload = entity.usesReload;
 
     if (reload.reloadingMs > 0 || reload.ammo === 0) {
       ctx.cancelled = true;

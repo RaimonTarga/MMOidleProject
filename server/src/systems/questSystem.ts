@@ -1,5 +1,6 @@
 import type { PlayerSnapshot } from '@mmo-idle/shared';
 import { QUEST_DATABASE } from '@mmo-idle/shared';
+import type { World } from '../world/World';
 import type { PlayerEntity } from '../ecs/components/player';
 import { withPlayerSnapshotDraft } from '../ecs/playerSnapshotAdapter';
 
@@ -10,9 +11,9 @@ import { withPlayerSnapshotDraft } from '../ecs/playerSnapshotAdapter';
  * Quests are one-time per tier: once the tier has advanced, the completed quest
  * is no longer incremented (player's tier moves past its tierRequired).
  */
-export function registerKillForQuests(player: PlayerSnapshot | PlayerEntity, monsterTypeId: string): void {
+export function registerKillForQuests(world: World, player: PlayerSnapshot | PlayerEntity, monsterTypeId: string): void {
   if ('entityId' in player) {
-    withPlayerSnapshotDraft(player, draft => registerKillForQuestsSnapshot(draft, monsterTypeId));
+    withPlayerSnapshotDraft(world, player, draft => registerKillForQuestsSnapshot(draft, monsterTypeId));
     return;
   }
   registerKillForQuestsSnapshot(player, monsterTypeId);

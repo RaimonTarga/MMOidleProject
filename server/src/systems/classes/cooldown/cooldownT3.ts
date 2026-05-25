@@ -8,7 +8,7 @@ import {
 } from '../../statusEffects';
 import { grantMonsterRewards } from '../../rewards';
 import { EXECUTION_COOLDOWN_MS } from './cooldownPrototype';
-import type { CooldownComponent } from '../../../ecs/components/cooldown';
+import type { UsesCooldown } from '../../../ecs/components/usesCooldown';
 import type { World } from '../../../world/World';
 import type { PlayerEntity } from '../../../ecs/components/player';
 import type { MonsterEntity } from '../../../ecs/components/monster';
@@ -74,7 +74,7 @@ function hasPassive(player: PlayerSnapshot | PlayerEntity, key: PassiveKey): boo
   return (passives[key] ?? 0) > 0;
 }
 
-function endChannel(cd: CooldownComponent): void {
+function endChannel(cd: UsesCooldown): void {
   cd.isChanneling     = false;
   cd.channelingPct    = 0;
   cd.beamRemainingMs  = 0;
@@ -103,9 +103,9 @@ export function initCooldownT3(): void {
     if (ctx.attackerType !== 'player') return;
 
     const entity = ctx.attacker;
-    if (!entity?.cooldown) return;
+    if (!entity?.usesCooldown) return;
 
-    const state  = entity.combatState;
+    const state  = entity.tracksCombat;
     if (!isEmpoweredAttack(state)) return;
 
     const player = entity;
@@ -126,12 +126,12 @@ export function initCooldownT3(): void {
     if (!ctx.metadata['empoweredAttack']) return;
 
     const entity = ctx.attacker;
-    if (!entity?.cooldown) return;
+    if (!entity?.usesCooldown) return;
 
     const player = entity;
     const passives = player.usesSkills.passives;
-    const state  = entity.combatState;
-    const cd     = entity.cooldown;
+    const state  = entity.tracksCombat;
+    const cd     = entity.usesCooldown;
 
     // Overdrive: grant attack speed buff; empowered deals normal unmultiplied damage.
     if (hasPassive(player, 'cooldown.overdrive')) {
@@ -175,7 +175,7 @@ export function initCooldownT3(): void {
 
     // Entropy Collapse: apply scaling DoT; empowered deals 0 direct damage.
     if (hasPassive(player, 'cooldown.entropy-collapse') && ctx.defenderType === 'monster') {
-      const monsterState = ctx.defender.combatState;
+      const monsterState = ctx.defender.tracksCombat;
       const baseDmg = passives['cooldown.entropy-base-damage'] ?? ENTROPY_BASE_DMG;
       removeStatusEffect(monsterState, ENT_DOT_FX);
       applyStatusEffect(monsterState, {
@@ -211,12 +211,12 @@ export function initCooldownT3(): void {
     if (ctx.metadata['empoweredAttack']) return;
 
     const entity = ctx.attacker;
-    if (!entity?.cooldown) return;
+    if (!entity?.usesCooldown) return;
 
     const player = entity;
     const passives = player.usesSkills.passives;
-    const state  = entity.combatState;
-    const cd     = entity.cooldown;
+    const state  = entity.tracksCombat;
+    const cd     = entity.usesCooldown;
 
     // Eternal Cycle: add flat bonus from existing stacks, then grant a new stack.
     if (hasPassive(player, 'cooldown.eternal-cycle')) {
@@ -270,11 +270,11 @@ export function initCooldownT3(): void {
     if (!ctx.metadata['empoweredAttack']) return;
 
     const entity = ctx.attacker;
-    if (!entity?.cooldown) return;
+    if (!entity?.usesCooldown) return;
 
     const player = entity;
-    const state  = entity.combatState;
-    const cd     = entity.cooldown;
+    const state  = entity.tracksCombat;
+    const cd     = entity.usesCooldown;
 
     // Battery: bonus on empowered too, then reset stacks and timer.
     if (hasPassive(player, 'cooldown.battery')) {
@@ -319,7 +319,7 @@ export function updateCooldownT3(world: World, dt: number): void {
 
 function updateOverdrive(world: World, dt: number): void {
   for (const entity of world.cooldownPlayers) {
-    const cd     = entity.cooldown;
+    const cd     = entity.usesCooldown;
     if (!hasPassive(entity, 'cooldown.overdrive')) continue;
 
     if (cd.odActive) {
@@ -338,7 +338,7 @@ function updateOverdrive(world: World, dt: number): void {
 
 function updateAlignment(world: World, dt: number): void {
   for (const entity of world.cooldownPlayers) {
-    const cd     = entity.cooldown;
+    const cd     = entity.usesCooldown;
     if (!hasPassive(entity, 'cooldown.alignment')) continue;
 
     if (cd.alActive) {
@@ -362,8 +362,8 @@ function updateAlignment(world: World, dt: number): void {
 
 function updateBattery(world: World, dt: number): void {
   for (const entity of world.cooldownPlayers) {
-    const state  = entity.combatState;
-    const cd     = entity.cooldown;
+    const state  = entity.tracksCombat;
+    const cd     = entity.usesCooldown;
     if (!hasPassive(entity, 'cooldown.battery')) continue;
 
     // Only accumulate while the execution CD is actively ticking
@@ -395,8 +395,8 @@ function updateBattery(world: World, dt: number): void {
 
 function updateSingularExtraction(world: World, dt: number): void {
   for (const entity of world.cooldownPlayers) {
-    const state  = entity.combatState;
-    const cd     = entity.cooldown;
+    const state  = entity.tracksCombat;
+    const cd     = entity.usesCooldown;
     if (!hasPassive(entity, 'cooldown.singular-extraction')) continue;
 
     if (entity.performsAttack.attackTargetId !== null) {
@@ -423,7 +423,7 @@ function updateEntropyCollapse(world: World, dt: number): void {
 
   for (const entity of world.monsterEntities) {
     const monsterId = entity.isMonster.id;
-    const state     = entity.combatState;
+    const state     = entity.tracksCombat;
     const effect = getStatusEffect(state, ENT_DOT_FX);
     if (!effect) continue;
 
@@ -463,7 +463,7 @@ function updateChanneledBeam(world: World, dt: number): void {
 
   for (const entity of world.cooldownPlayers) {
     const player = entity;
-    const cd     = entity.cooldown;
+    const cd     = entity.usesCooldown;
     if (!cd.isChanneling) continue;
 
     const remaining = cd.beamRemainingMs - dt;
@@ -549,7 +549,7 @@ function findBeamTarget(world: World, player: PlayerEntity, excludeId?: string):
 
 // ── buffSync helpers ──────────────────────────────────────────────────────────
 
-export function getOverdrivePct(cd: CooldownComponent): number {
+export function getOverdrivePct(cd: UsesCooldown): number {
   if (!cd.odActive) return 0;
   return Math.round((cd.odRemainingMs / OVERDRIVE_BUFF_MS) * 100);
 }
@@ -569,7 +569,7 @@ export function getBatteryStacks(state: CombatState): number {
   return getStatusEffect(state, BAT_CHARGE_FX)?.stacks ?? 0;
 }
 
-export function getAlignmentPct(cd: CooldownComponent): number {
+export function getAlignmentPct(cd: UsesCooldown): number {
   if (!cd.alActive) return 0;
   return Math.round((cd.alRemainingMs / ALIGNMENT_BUFF_MS) * 100);
 }
@@ -580,8 +580,8 @@ export function getAlignmentPct(cd: CooldownComponent): number {
  * Fetch the cooldown component for buff descriptors. Returns null when no
  * world reference, no entity, or no cooldown component is attached.
  */
-function getCooldownForBuff(world: World, playerId: string): CooldownComponent | null {
-  return world.getPlayerEntity(playerId)?.cooldown ?? null;
+function getCooldownForBuff(world: World, playerId: string): UsesCooldown | null {
+  return world.getPlayerEntity(playerId)?.usesCooldown ?? null;
 }
 
 function getChannelingRemainingPct(player: PlayerSnapshot): number {

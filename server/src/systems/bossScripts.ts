@@ -13,8 +13,8 @@
  *   summon    — spawn N minions of a given type near the boss
  *   stat-buff — multiply any single stat, optional duration
  *
- * Runtime state is stored in World.bossState (server-only, never serialized).
- * Dead bosses are pruned at the start of each tick.
+ * Runtime state lives on `entity.scriptsBoss` (server-only, never serialized).
+ * Dead bosses are pruned when the monster entity is removed from the world.
  */
 
 import type { BossAction, BossPhase, BossScript, RepeatingAction } from '@mmo-idle/shared';
@@ -22,57 +22,18 @@ import { MONSTER_DATABASE, GAME_CONFIG } from '@mmo-idle/shared';
 import { NODE_REGISTRY } from '../world/nodeRegistry';
 import type { World } from '../world/World';
 import type { MonsterEntity } from '../ecs/components/monster';
+import {
+  initScriptsBoss,
+  type ActiveBossEffect,
+  type ScriptsBoss,
+} from '../ecs/components/scriptsBoss';
 
-// ── Runtime state (server-only) ───────────────────────────────────────────────
-
-/**
- * An active timed effect on a boss.
- * Stat fields hold the pre-buff values so they can be restored on expiry.
- */
-interface ActiveBossEffect {
-  type: string;
-  /** Remaining ms. -1 = permanent (lasts until boss dies). */
-  remainingMs: number;
-  /** For 'regen': HP fraction of maxHp to restore per second. */
-  regenHpPctPerSec?: number;
-  /** Saved stats — restored when effect expires. */
-  savedAttack?:          number;
-  savedCooldown?:        number;
-  savedPlating?:         number;
-  savedDamageReduction?: number;
-  savedSpeed?:           number;
-}
-
-/**
- * Per-boss runtime tracking. Stored in World.bossState, keyed by monster.id.
- * Created on first encounter, deleted when the monster is removed from World.monsters.
- */
-export interface BossRuntimeState {
-  /** True once any player has aggro'd this boss this life. Timers don't tick before this. */
-  engaged: boolean;
-  /** Parallel array to BossScript.phases — true once that phase has fired. */
-  phaseTriggered: boolean[];
-  /** Countdown timers per RepeatingAction (ms until next fire), in script order. */
-  repeatingTimers: number[];
-  /** Currently active timed effects. */
-  activeEffects: ActiveBossEffect[];
-}
-
-function initBossState(script: BossScript): BossRuntimeState {
-  return {
-    engaged:         false,
-    phaseTriggered:  new Array(script.phases?.length ?? 0).fill(false) as boolean[],
-    repeatingTimers: (script.repeating ?? []).map(r => r.initialDelayMs ?? r.intervalMs),
-    activeEffects:   [],
-  };
-}
+export type { ScriptsBoss, BossRuntimeState, ActiveBossEffect } from '../ecs/components/scriptsBoss';
+export { initScriptsBoss, initBossState } from '../ecs/components/scriptsBoss';
 
 // ── Main update ───────────────────────────────────────────────────────────────
 
 export function updateBossScripts(world: World, dt: number): void {
-  // Note: `removeMonsterEntity` cascades component removal, so stale bossState
-  // pruning is automatic post-S7 — no explicit prune loop needed here.
-
   for (const e of world.monsterEntities) {
     if (!e.isMonster.isBoss) continue;
 
@@ -81,16 +42,13 @@ export function updateBossScripts(world: World, dt: number): void {
 
     const script = def.bossScript;
 
-    // Lazy-init runtime state on first encounter.
-    if (!e.bossState) {
-      world.setBossState(e.isMonster.id, initBossState(script));
+    if (!e.scriptsBoss) {
+      world.ecs.addComponent(e, 'scriptsBoss', initScriptsBoss(script));
     }
-    const state = e.bossState!;
+    const state = e.scriptsBoss!;
 
-    // Mark engaged on first aggro.
-    if (e.monsterAi.aggroTargetId !== null) state.engaged = true;
+    if (e.controlsMonster.aggroTargetId !== null) state.engaged = true;
 
-    // Advance and expire active effects (regen also ticks here).
     tickActiveEffects(state, e, dt);
 
     if (state.engaged) {
@@ -98,21 +56,20 @@ export function updateBossScripts(world: World, dt: number): void {
       if (script.repeating) tickRepeatingActions(state,  script.repeating,  e, world, dt);
     }
 
-    e.hasStatus.bossEffects = [...new Set(state.activeEffects.map(e => e.type))];
+    e.hasStatus.bossEffects = [...new Set(state.activeEffects.map(fx => fx.type))];
   }
 }
 
 // ── Active-effect lifecycle ───────────────────────────────────────────────────
 
 function tickActiveEffects(
-  state: BossRuntimeState,
+  state: ScriptsBoss,
   monster: MonsterEntity,
   dt: number,
 ): void {
   const toExpire: ActiveBossEffect[] = [];
 
   for (const effect of state.activeEffects) {
-    // Regen tick — runs every tick regardless of whether it expires this frame.
     if (effect.regenHpPctPerSec !== undefined) {
       monster.hasHealth.hp = Math.min(
         monster.hasHealth.maxHp,
@@ -120,18 +77,17 @@ function tickActiveEffects(
       );
     }
 
-    if (effect.remainingMs === -1) continue;  // permanent — skip timer
+    if (effect.remainingMs === -1) continue;
     effect.remainingMs -= dt;
     if (effect.remainingMs <= 0) toExpire.push(effect);
   }
 
   for (const effect of toExpire) {
     restoreStats(effect, monster);
-    state.activeEffects = state.activeEffects.filter(e => e !== effect);
+    state.activeEffects = state.activeEffects.filter(fx => fx !== effect);
   }
 }
 
-/** Restore any stats that were modified when this effect was applied. */
 function restoreStats(effect: ActiveBossEffect, monster: MonsterEntity): void {
   if (effect.savedAttack          !== undefined) monster.dealsDamage.attack = effect.savedAttack;
   if (effect.savedCooldown        !== undefined) monster.performsAttack.attackCooldown = effect.savedCooldown;
@@ -140,14 +96,8 @@ function restoreStats(effect: ActiveBossEffect, monster: MonsterEntity): void {
   if (effect.savedSpeed           !== undefined) monster.hasPosition.speed = effect.savedSpeed;
 }
 
-// ── Phase transitions ─────────────────────────────────────────────────────────
-
-/**
- * Iterate phases in declaration order (author writes them high→low hpPct).
- * Each fires at most once per boss life.
- */
 function checkPhaseTransitions(
-  state: BossRuntimeState,
+  state: ScriptsBoss,
   phases: BossPhase[],
   monster: MonsterEntity,
   world: World,
@@ -164,10 +114,8 @@ function checkPhaseTransitions(
   }
 }
 
-// ── Repeating timers ──────────────────────────────────────────────────────────
-
 function tickRepeatingActions(
-  state: BossRuntimeState,
+  state: ScriptsBoss,
   repeating: RepeatingAction[],
   monster: MonsterEntity,
   world: World,
@@ -184,13 +132,11 @@ function tickRepeatingActions(
   }
 }
 
-// ── Action dispatch ───────────────────────────────────────────────────────────
-
 function applyAction(
   action: BossAction,
   monster: MonsterEntity,
   world: World,
-  state: BossRuntimeState,
+  state: ScriptsBoss,
 ): void {
   switch (action.type) {
 

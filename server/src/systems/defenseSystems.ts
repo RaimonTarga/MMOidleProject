@@ -103,7 +103,7 @@ export function initDefenseSystems(): void {
     const player = ctx.defender;
     if (player.evadesHits.threshold <= 0) return;
 
-    const state = player.combatState;
+    const state = player.tracksCombat;
 
     addCounter(state, EVASION_KEY, 1);
     const count = getCounter(state, EVASION_KEY);
@@ -167,7 +167,7 @@ export function initDefenseSystems(): void {
     const conversionPct = player.usesSkills.passives['defense.hit-to-dot-pct'] ?? 0;
     if (conversionPct <= 0) return;
 
-    const cs = player.combatState;
+    const cs = player.tracksCombat;
 
     const debtAmount = ctx.damage * conversionPct;
     ctx.damage      -= debtAmount;
@@ -186,7 +186,7 @@ export function initDefenseSystems(): void {
     const absorbPct = player.usesSkills.passives['defense.absorb-pct'] ?? 0;
     if (absorbPct <= 0) return;
 
-    const cs = player.combatState;
+    const cs = player.tracksCombat;
 
     addResource(cs, ABSORB_POOL_KEY, ctx.damage * absorbPct);
   });
@@ -262,9 +262,9 @@ export function updateShields(world: World, dt: number): void {
  */
 export function updateDefensiveSystems(world: World, dt: number, now: number): void {
   for (const player of world.playerEntities) {
-    const cs = player.combatState;
+    const cs = player.tracksCombat;
 
-    const lastCombatAt = world.getPlayerCombatAt(player.isPlayer.id);
+    const lastCombatAt = player.tracksEngagement;
     const inCombat = player.performsAttack.attackTargetId !== null ||
       (now - lastCombatAt) < GAME_CONFIG.COMBAT_REGEN_DELAY;
 

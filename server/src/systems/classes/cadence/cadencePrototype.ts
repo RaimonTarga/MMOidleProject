@@ -4,7 +4,6 @@ import { applyStatusEffect, removeStatusEffect, getStatusEffects, pruneStatusEff
 import { grantMonsterRewards } from '../../rewards';
 import { setEmpoweredAttack, registerEmpoweredMultiplier } from '../../empoweredAttacks';
 import type { World } from '../../../world/World';
-import { projectCadenceToSlice } from '../../../ecs/components/cadence';
 
 // ── Fallback constants (balanced-frame values, used when no frame is unlocked) ─
 
@@ -32,7 +31,7 @@ const HEMORRHAGE_MULT     = 1.5;
 
 // ── Init — registers combat pipeline listeners ─────────────────────────────────
 // Per-archetype state (count/threshold/empoweredArmed/speedStacks/seqDmg/charge/echo)
-// lives on the cadence component (see ecs/components/cadence.ts), not on
+// lives on the usesCadence slice (see ecs/components/usesCadence.ts), not on
 // CombatState counters/resources. The CombatState empowered-attack flag is
 // shared across archetypes and is still set via setEmpoweredAttack.
 
@@ -76,11 +75,11 @@ export function initCadenceArchetype(): void {
 
     // Query by component presence, not by combatArchetype string.
     const entity = ctx.attacker;
-    if (!entity?.cadence) return;
+    if (!entity?.usesCadence) return;
 
-    const state   = entity.combatState;
+    const state   = entity.tracksCombat;
     const player  = entity;
-    const cadence = entity.cadence;
+    const cadence = entity.usesCadence;
     const passives = player.usesSkills.passives;
 
     // ── EMPOWERED (FINISHER) HIT ───────────────────────────────────────────────
@@ -112,7 +111,7 @@ export function initCadenceArchetype(): void {
 
       // Hemorrhage: convert finisher damage to a non-stacking bleed DoT
       if ((passives['cadence.hemorrhage'] ?? 0) > 0 && ctx.defenderType === 'monster') {
-        const monsterState = ctx.defender.combatState;
+        const monsterState = ctx.defender.tracksCombat;
         const damagePerTick = Math.max(1, Math.round(ctx.damage * HEMORRHAGE_MULT / HEMORRHAGE_TICKS));
         removeStatusEffect(monsterState, 'cadence-hemorrhage');
         applyStatusEffect(monsterState, {
@@ -132,7 +131,7 @@ export function initCadenceArchetype(): void {
 
       // Delayed Verdict: tag the target with accumulated pre-finisher damage
       if ((passives['cadence.detonation'] ?? 0) > 0 && ctx.defenderType === 'monster') {
-        const monsterState = ctx.defender.combatState;
+        const monsterState = ctx.defender.tracksCombat;
         removeStatusEffect(monsterState, 'cadence-detonation');
         applyStatusEffect(monsterState, {
           id:          'cadence-detonation',
@@ -163,7 +162,7 @@ export function initCadenceArchetype(): void {
       const vulnMs       = passives['cadence.debuff-vuln-ms']       ?? 5000;
       const platingShred = passives['cadence.debuff-plating-shred'] ?? 0;
       if ((vulnPct > 0 || platingShred > 0) && ctx.defenderType === 'monster') {
-        const monsterState = ctx.defender.combatState;
+        const monsterState = ctx.defender.tracksCombat;
         if (vulnPct > 0) {
           applyStatusEffect(monsterState, {
             id: 'vulnerability',
@@ -191,7 +190,6 @@ export function initCadenceArchetype(): void {
       }
 
       ctx.metadata['cadenceTrigger'] = true;
-      projectCadenceToSlice(cadence, entity);
       return;
     }
 
@@ -233,7 +231,6 @@ export function initCadenceArchetype(): void {
       cadence.empoweredArmed = true;
     }
 
-    projectCadenceToSlice(cadence, entity);
   });
 }
 
@@ -251,7 +248,7 @@ function updateDetonations(world: World, dt: number): void {
 
   for (const entity of world.monsterEntities) {
     const monsterId = entity.isMonster.id;
-    const state     = entity.combatState;
+    const state     = entity.tracksCombat;
     const tags = getStatusEffects(state, 'cadence-detonation');
     if (tags.length === 0) continue;
 
@@ -287,7 +284,7 @@ function updateHemorrhages(world: World, dt: number): void {
 
   for (const entity of world.monsterEntities) {
     const monsterId = entity.isMonster.id;
-    const state     = entity.combatState;
+    const state     = entity.tracksCombat;
     const bleeds = getStatusEffects(state, 'cadence-hemorrhage');
     if (bleeds.length === 0) continue;
 
@@ -333,7 +330,7 @@ export const CADENCE_BUFFS = [
   defineBuff(
     'cadence-echo',
     ({ player, world }) => {
-      const echo = world.getPlayerEntity(player.id)?.cadence?.echo ?? 0;
+      const echo = world.getPlayerEntity(player.id)?.usesCadence?.echo ?? 0;
       return echo > 0
         ? { id: 'cadence-echo', label: 'Echo', stacks: echo, durationPct: -1, color: '#4488ff' }
         : null;

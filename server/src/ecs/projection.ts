@@ -24,8 +24,6 @@ import { pointFromMotion, vectorTo } from '@mmo-idle/shared';
 import type { MonsterEntity } from './components/monster';
 import type { PlayerEntity } from './components/player';
 import type {
-  AppliesDots,
-  ChillsTarget,
   DealsDamage,
   EvadesHits,
   HasAwareness,
@@ -41,12 +39,32 @@ import type {
   ShowsSacred,
   TracksProgression,
   UsesAutocombat,
-  UsesCadence,
-  UsesCooldown,
-  UsesEnergy,
-  UsesReload,
   UsesSkills,
 } from './components/snapshotSlices';
+import type { UsesCadence } from './components/usesCadence';
+import type { UsesEnergy } from './components/usesEnergy';
+import type { AppliesDots } from './components/appliesDots';
+import type { ChillsTarget } from './components/chillsTarget';
+import type { UsesCooldown } from './components/usesCooldown';
+import type { UsesReload } from './components/usesReload';
+import {
+  makeUsesCadenceFromSnapshot,
+} from './components/usesCadence';
+import {
+  makeUsesEnergyFromSnapshot,
+} from './components/usesEnergy';
+import {
+  makeAppliesDotsFromSnapshot,
+} from './components/appliesDots';
+import {
+  makeChillsTargetFromSnapshot,
+} from './components/chillsTarget';
+import {
+  makeUsesCooldownFromSnapshot,
+} from './components/usesCooldown';
+import {
+  makeUsesReloadFromSnapshot,
+} from './components/usesReload';
 
 // ─── Player ──────────────────────────────────────────────────────────────────
 
@@ -66,12 +84,12 @@ export type PlayerSliceStamp = {
   usesSkills:        UsesSkills;
   hasStatus:         HasStatus;
   showsSacred:       ShowsSacred;
-  usesCadence:       UsesCadence;
-  usesEnergy:        UsesEnergy;
-  appliesDots:       AppliesDots;
-  chillsTarget:      ChillsTarget;
-  usesCooldown:      UsesCooldown;
-  usesReload:        UsesReload;
+  usesCadence?:      UsesCadence;
+  usesEnergy?:       UsesEnergy;
+  appliesDots?:      AppliesDots;
+  chillsTarget?:     ChillsTarget;
+  usesCooldown?:     UsesCooldown;
+  usesReload?:       UsesReload;
 };
 
 /**
@@ -82,7 +100,7 @@ export type PlayerSliceStamp = {
  * subsequent `assemblePlayerSnapshot` reproduces the original DTO exactly.
  */
 export function decomposePlayerSnapshot(snapshot: PlayerSnapshot): PlayerSliceStamp {
-  return {
+  const stamp: PlayerSliceStamp = {
     isPlayer: {
       id:   snapshot.id,
       name: snapshot.name,
@@ -158,35 +176,28 @@ export function decomposePlayerSnapshot(snapshot: PlayerSnapshot): PlayerSliceSt
       sacredBuffActive: snapshot.sacredBuffActive,
       sacredBuffPct:    snapshot.sacredBuffPct,
     },
-    usesCadence: {
-      cadenceSpeedStacks:    snapshot.cadenceSpeedStacks,
-      cadenceCount:          snapshot.cadenceCount,
-      cadenceThreshold:      snapshot.cadenceThreshold,
-      cadenceEmpoweredArmed: snapshot.cadenceEmpoweredArmed,
-    },
-    usesEnergy: {
-      energyCount:    snapshot.energyCount,
-      empoweredReady: snapshot.empoweredReady,
-    },
-    appliesDots: {
-      targetDotStacks: snapshot.targetDotStacks,
-    },
-    chillsTarget: {
-      targetChillStacks: snapshot.targetChillStacks,
-    },
-    usesCooldown: {
-      executionReady:       snapshot.executionReady,
-      executionCooldownPct: snapshot.executionCooldownPct,
-      isChanneling:         snapshot.isChanneling,
-      channelingPct:        snapshot.channelingPct,
-    },
-    usesReload: {
-      ammoCount:       snapshot.ammoCount,
-      ammoMax:         snapshot.ammoMax,
-      heatPct:         snapshot.heatPct,
-      laserOverheated: snapshot.laserOverheated,
-    },
   };
+
+  if (snapshot.combatArchetype === 'cadence') {
+    stamp.usesCadence = makeUsesCadenceFromSnapshot(snapshot);
+  }
+  if (snapshot.combatArchetype === 'energy') {
+    stamp.usesEnergy = makeUsesEnergyFromSnapshot(snapshot);
+  }
+  if (snapshot.combatArchetype === 'dot') {
+    stamp.appliesDots = makeAppliesDotsFromSnapshot(snapshot);
+    if ((snapshot.passives['dot.freezing-cold'] ?? 0) > 0) {
+      stamp.chillsTarget = makeChillsTargetFromSnapshot(snapshot);
+    }
+  }
+  if (snapshot.combatArchetype === 'cooldown') {
+    stamp.usesCooldown = makeUsesCooldownFromSnapshot(snapshot);
+  }
+  if (snapshot.combatArchetype === 'reload') {
+    stamp.usesReload = makeUsesReloadFromSnapshot(snapshot);
+  }
+
+  return stamp;
 }
 
 /**
@@ -210,12 +221,6 @@ export function assemblePlayerSnapshot(entity: PlayerEntity): PlayerSnapshot {
   const skills      = entity.usesSkills;
   const status      = entity.hasStatus;
   const sacred      = entity.showsSacred;
-  const cadence     = entity.usesCadence;
-  const energy      = entity.usesEnergy;
-  const dot         = entity.appliesDots;
-  const chill       = entity.chillsTarget;
-  const cooldown    = entity.usesCooldown;
-  const reload      = entity.usesReload;
 
   return {
     id:                    identity.id,
@@ -244,7 +249,7 @@ export function assemblePlayerSnapshot(entity: PlayerEntity): PlayerSnapshot {
     skillPoints:           progression.skillPoints,
     unlockedSkills:        skills.unlockedSkills,
     passives:              skills.passives,
-    cadenceSpeedStacks:    cadence.cadenceSpeedStacks,
+    cadenceSpeedStacks:    entity.usesCadence?.speedStacks    ?? 0,
     selectedClass:         skills.selectedClass,
     selectedSubVariant:    skills.selectedSubVariant,
     selectedRange:         skills.selectedRange,
@@ -258,23 +263,23 @@ export function assemblePlayerSnapshot(entity: PlayerEntity): PlayerSnapshot {
     biomeLevel:            progression.biomeLevel,
     unlockedRecipes:       progression.unlockedRecipes,
     combatArchetype:       skills.combatArchetype,
-    cadenceCount:          cadence.cadenceCount,
-    cadenceThreshold:      cadence.cadenceThreshold,
-    cadenceEmpoweredArmed: cadence.cadenceEmpoweredArmed,
-    ammoCount:             reload.ammoCount,
-    ammoMax:               reload.ammoMax,
-    heatPct:               reload.heatPct,
-    laserOverheated:       reload.laserOverheated,
-    executionReady:        cooldown.executionReady,
-    executionCooldownPct:  cooldown.executionCooldownPct,
-    energyCount:           energy.energyCount,
-    empoweredReady:        energy.empoweredReady,
-    targetDotStacks:       dot.targetDotStacks,
-    targetChillStacks:     chill.targetChillStacks,
+    cadenceCount:          entity.usesCadence?.count          ?? 0,
+    cadenceThreshold:      entity.usesCadence?.threshold      ?? 0,
+    cadenceEmpoweredArmed: entity.usesCadence?.empoweredArmed ?? false,
+    ammoCount:             entity.usesReload?.ammo            ?? 0,
+    ammoMax:               entity.usesReload?.ammoMax         ?? 0,
+    heatPct:               entity.usesReload ? Math.round(entity.usesReload.laserHeat) : 0,
+    laserOverheated:       entity.usesReload?.laserOverheated ?? false,
+    executionReady:        entity.usesCooldown?.executionReady       ?? false,
+    executionCooldownPct:  entity.usesCooldown?.executionCooldownPct ?? 0,
+    energyCount:           entity.usesEnergy?.energy          ?? 0,
+    empoweredReady:        entity.usesEnergy?.empoweredReady  ?? false,
+    targetDotStacks:       entity.appliesDots?.targetDotStacks ?? 0,
+    targetChillStacks:     entity.chillsTarget?.targetChillStacks ?? 0,
     sacredBuffActive:      sacred.sacredBuffActive,
     sacredBuffPct:         sacred.sacredBuffPct,
-    isChanneling:          cooldown.isChanneling,
-    channelingPct:         cooldown.channelingPct,
+    isChanneling:          entity.usesCooldown?.isChanneling  ?? false,
+    channelingPct:         entity.usesCooldown?.channelingPct ?? 0,
     activeEffects:         status.activeEffects,
     activeEffectFrames:    status.activeEffectFrames,
     activeBuffs:           status.activeBuffs ?? [],
@@ -371,8 +376,8 @@ export function diffPlayerRoundTrip(snapshot: PlayerSnapshot): string[] {
   const stamp = decomposePlayerSnapshot(snapshot);
   const synthetic = {
     entityId: snapshot.id,
-    combatState: undefined,
-    combatAt: 0,
+    tracksCombat: undefined,
+    tracksEngagement: 0,
     ...stamp,
   } as unknown as PlayerEntity;
   const rebuilt = assemblePlayerSnapshot(synthetic);
@@ -384,8 +389,8 @@ export function diffMonsterRoundTrip(snapshot: MonsterSnapshot): string[] {
   const stamp = decomposeMonsterSnapshot(snapshot);
   const synthetic = {
     entityId: snapshot.id,
-    combatState: undefined,
-    monsterAi: undefined,
+    tracksCombat: undefined,
+    controlsMonster: undefined,
     ...stamp,
   } as unknown as MonsterEntity;
   const rebuilt = assembleMonsterSnapshot(synthetic);

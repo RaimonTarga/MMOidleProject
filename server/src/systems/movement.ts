@@ -7,7 +7,7 @@ const MONSTER_MARGIN = 40;
 
 export function updateMovement(world: World, dt: number) {
   for (const entity of world.playerEntities) {
-    if (entity.usesCooldown.isChanneling) {
+    if (entity.usesCooldown?.isChanneling) {
       // Lock position in place — cancel any pending move target each tick
       entity.isMoving.motion = zeroMotion();
       continue;

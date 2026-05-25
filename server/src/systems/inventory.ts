@@ -1,17 +1,18 @@
 import type { PlayerSnapshot, EquipmentSlot } from '@mmo-idle/shared';
 import { ITEM_DATABASE } from '@mmo-idle/shared';
 import { recalculatePlayerStats } from './stats';
+import type { World } from '../world/World';
 import type { PlayerEntity } from '../ecs/components/player';
 import { withPlayerSnapshotDraft } from '../ecs/playerSnapshotAdapter';
 
-export function equipItem(player: PlayerSnapshot | PlayerEntity, definitionId: string): boolean {
+export function equipItem(world: World, player: PlayerSnapshot | PlayerEntity, definitionId: string): boolean {
   if ('entityId' in player) {
-    return withPlayerSnapshotDraft(player, draft => equipItemSnapshot(draft, definitionId));
+    return withPlayerSnapshotDraft(world, player, draft => equipItemSnapshot(draft, definitionId));
   }
   return equipItemSnapshot(player, definitionId);
 }
 
-function equipItemSnapshot(player: PlayerSnapshot, definitionId: string): boolean {
+export function equipItemSnapshot(player: PlayerSnapshot, definitionId: string): boolean {
   const def = ITEM_DATABASE.get(definitionId);
   if (!def) return false;
 
@@ -35,9 +36,9 @@ function equipItemSnapshot(player: PlayerSnapshot, definitionId: string): boolea
   return true;
 }
 
-export function unequipItem(player: PlayerSnapshot | PlayerEntity, slot: EquipmentSlot): boolean {
+export function unequipItem(world: World, player: PlayerSnapshot | PlayerEntity, slot: EquipmentSlot): boolean {
   if ('entityId' in player) {
-    return withPlayerSnapshotDraft(player, draft => unequipItemSnapshot(draft, slot));
+    return withPlayerSnapshotDraft(world, player, draft => unequipItemSnapshot(draft, slot));
   }
   return unequipItemSnapshot(player, slot);
 }

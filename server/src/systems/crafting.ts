@@ -1,5 +1,6 @@
 import type { PlayerSnapshot, EssenceType } from '@mmo-idle/shared';
 import { ESSENCE_TYPES, RECIPE_DATABASE, TEST_ROOM_NODE_ID } from '@mmo-idle/shared';
+import type { World } from '../world/World';
 import type { PlayerEntity } from '../ecs/components/player';
 import { withPlayerSnapshotDraft } from '../ecs/playerSnapshotAdapter';
 
@@ -10,9 +11,9 @@ export interface CraftResult {
   reason?: string;
 }
 
-export function craftRecipe(player: PlayerSnapshot | PlayerEntity, recipeId: string): CraftResult {
+export function craftRecipe(world: World, player: PlayerSnapshot | PlayerEntity, recipeId: string): CraftResult {
   if ('entityId' in player) {
-    return withPlayerSnapshotDraft(player, draft => craftRecipeSnapshot(draft, recipeId));
+    return withPlayerSnapshotDraft(world, player, draft => craftRecipeSnapshot(draft, recipeId));
   }
   return craftRecipeSnapshot(player, recipeId);
 }

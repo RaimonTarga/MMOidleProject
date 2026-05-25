@@ -7,7 +7,7 @@ import type { PlayerEntity } from '../ecs/components/player';
 import { assemblePlayerSnapshot } from '../ecs/projection';
 import { accounts, characters } from './schema';
 import { recalculatePlayerStats } from '../systems/stats';
-import { equipItem } from '../systems/inventory';
+import { equipItemSnapshot } from '../systems/inventory';
 import type * as schema from './schema';
 
 type DB = BetterSQLite3Database<typeof schema>;
@@ -77,7 +77,7 @@ export function getOrCreateCharacter(
   }).run();
 
   const fresh = buildFreshPlayer(socketId, characterName, spawnX, spawnY);
-  equipItem(fresh, 'basic-sword');
+  equipItemSnapshot(fresh, 'basic-sword');
   return fresh;
 }
 

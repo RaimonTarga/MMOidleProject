@@ -40,7 +40,7 @@ function stopMonster(entity: MonsterEntity): void {
 
 export function updateMonsters(world: World, dt: number, now: number) {
   for (const e of world.monsterEntities) {
-    const ai      = e.monsterAi;
+    const ai      = e.controlsMonster;
     const id      = e.isMonster.id;
 
     if (isMonsterFrozen(world, id)) {

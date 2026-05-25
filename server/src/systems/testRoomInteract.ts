@@ -2,7 +2,7 @@ import { ESSENCE_TYPES, MONSTER_DATABASE, TEST_ROOM_NODE_ID } from '@mmo-idle/sh
 import type { PlayerEntity } from '../ecs/components/player';
 import { withPlayerSnapshotDraft } from '../ecs/playerSnapshotAdapter';
 import type { World } from '../world/World';
-import { resetCombatState } from './combatState';
+import { resetTracksCombat } from './combatState';
 import { recalculatePlayerStats } from './stats';
 
 const INTERACT_COOLDOWN_MS = 2_000;
@@ -45,7 +45,7 @@ function grantTestRoomEssences(player: PlayerEntity): void {
 }
 
 function resetPlayerProgression(world: World, player: PlayerEntity): void {
-  withPlayerSnapshotDraft(player, draft => {
+  withPlayerSnapshotDraft(world, player, draft => {
     draft.unlockedSkills = [];
     draft.skillPoints = 0;
     draft.playerTier = 0;
@@ -62,8 +62,5 @@ function resetPlayerProgression(world: World, player: PlayerEntity): void {
     draft.hp = draft.maxHp;
   });
 
-  resetCombatState(player.combatState);
-
-  // Snapshot mirror fields were just reset — re-sync typed archetype components.
-  world.refreshArchetypeComponents(player.isPlayer.id);
+  resetTracksCombat(player.tracksCombat);
 }

@@ -13,7 +13,7 @@ export function initDebuffMechanics(): void {
   registerCombatListener('onDamageTaken', (ctx, _world) => {
     if (ctx.defenderType !== 'monster') return;
 
-    const monsterState = ctx.defender.combatState;
+    const monsterState = ctx.defender.tracksCombat;
 
     const vuln = getStatusEffect(monsterState, 'vulnerability');
     if (!vuln) return;

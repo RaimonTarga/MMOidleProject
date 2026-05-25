@@ -9,7 +9,7 @@ import {
 } from '@mmo-idle/shared';
 import type { World } from '../../world/World';
 import { NODE_REGISTRY } from '../../world/nodeRegistry';
-import { makeCombatState, resetCombatState } from '../combatState';
+import { makeTracksCombat, resetTracksCombat } from '../../ecs/components/tracksCombat';
 import type { MonsterEntity } from '../../ecs/components/monster';
 import { decomposeMonsterSnapshot } from '../../ecs/projection';
 import { recalculatePlayerEntityStats } from '../../ecs/playerSnapshotAdapter';
@@ -77,7 +77,7 @@ export function createMonster(
 
   const entity: MonsterEntity = {
     entityId:    id,
-    monsterAi: {
+    controlsMonster: {
       spawnX: x,
       spawnY: y,
       wanderRadius,
@@ -90,7 +90,7 @@ export function createMonster(
       baseSpeed:     def.stats.speed,
       kiteTimer:     0,
     },
-    combatState: makeCombatState(),
+    tracksCombat: makeTracksCombat(),
     ...decomposeMonsterSnapshot(monster),
   };
   world.ecs.add(entity);
@@ -152,22 +152,22 @@ export function respawnPlayer(world: World, playerId: string): void {
   entity.performsAttack.attackTargetId = null;
   entity.usesAutocombat.auto = false;
 
-  recalculatePlayerEntityStats(entity);
+  recalculatePlayerEntityStats(world, entity);
   entity.hasHealth.hp = entity.hasHealth.maxHp;
 
   entity.evadesHits.count = 0;
   entity.hasHealth.shields = [];
-  entity.usesCooldown.isChanneling = false;
-  entity.usesCooldown.channelingPct = 0;
+  if (entity.usesCooldown) {
+    entity.usesCooldown.isChanneling = false;
+    entity.usesCooldown.channelingPct = 0;
+  }
 
-  world.setPlayerCombatAt(playerId, 0);
+  entity.tracksEngagement = 0;
 
-  resetCombatState(entity.combatState);
-
-  world.refreshArchetypeComponents(playerId);
+  resetTracksCombat(entity.tracksCombat);
 
   for (const e of world.monsterEntities) {
-    if (e.monsterAi.aggroTargetId === playerId) e.monsterAi.aggroTargetId = null;
+    if (e.controlsMonster.aggroTargetId === playerId) e.controlsMonster.aggroTargetId = null;
   }
 
   world.pendingDeaths.push(playerId);

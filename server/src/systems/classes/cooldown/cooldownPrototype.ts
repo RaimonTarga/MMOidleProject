@@ -1,7 +1,6 @@
 import { registerCombatListener } from '../../combatPipeline';
 import { setEmpoweredAttack, isEmpoweredAttack, registerEmpoweredMultiplier } from '../../empoweredAttacks';
 import { initCooldownT3 } from './cooldownT3';
-import { projectCooldownToSlice } from '../../../ecs/components/cooldown';
 import type { World } from '../../../world/World';
 
 // ── Fallback constants (balanced-frame values, used when no frame is unlocked) ─
@@ -26,10 +25,10 @@ const EXECUTION_MULTIPLIER         = 2.0;    // damage multiplier on execution s
  */
 export function updateCooldownArchetype(world: World, dt: number): void {
   for (const entity of world.cooldownPlayers) {
-    const state  = entity.combatState;
-    const cd     = entity.cooldown;
+    const state  = entity.tracksCombat;
+    const cd     = entity.usesCooldown;
 
-    // First encounter (or after respawn / refreshArchetypeComponents):
+    // First encounter (or after respawn):
     // start the preparation cycle. Read cd duration from passives.
     if (!cd.initialized) {
       const cdMs = entity.usesSkills.passives['cooldown.empowered-cd-ms'] ?? EXECUTION_COOLDOWN_MS;
@@ -37,7 +36,6 @@ export function updateCooldownArchetype(world: World, dt: number): void {
       cd.initialized         = true;
       cd.executionReady      = false;
       cd.executionCooldownPct = 0;
-      projectCooldownToSlice(cd, entity);
       console.log(`[Cooldown] ${entity.isPlayer.id}: execution cycle started (${cdMs}ms)`);
       continue;
     }
@@ -59,7 +57,6 @@ export function updateCooldownArchetype(world: World, dt: number): void {
     cd.executionCooldownPct = cd.executionReady
       ? 100
       : Math.round((1 - cd.executionCooldownMs / cdMs) * 100);
-    projectCooldownToSlice(cd, entity);
   }
 }
 
@@ -98,9 +95,9 @@ export function initCooldownArchetype(): void {
 
     // Query by component presence, not by combatArchetype string.
     const entity = ctx.attacker;
-    if (!entity?.cooldown) return;
+    if (!entity?.usesCooldown) return;
 
-    const cd     = entity.cooldown;
+    const cd     = entity.usesCooldown;
 
     const cdMs = entity.usesSkills.passives['cooldown.empowered-cd-ms'] ?? EXECUTION_COOLDOWN_MS;
     cd.executionCooldownMs = cdMs;

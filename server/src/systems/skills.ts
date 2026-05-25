@@ -1,5 +1,6 @@
 import type { PlayerSnapshot, CombatArchetype } from '@mmo-idle/shared';
 import { SKILL_TREE, canUnlockSkill, recalculatePlayerStats } from '@mmo-idle/shared';
+import type { World } from '../world/World';
 import type { PlayerEntity } from '../ecs/components/player';
 import { withPlayerSnapshotDraft } from '../ecs/playerSnapshotAdapter';
 
@@ -19,9 +20,9 @@ const CLASS_ARCHETYPES: Record<string, CombatArchetype> = {
  * Validate and apply a skill unlock to the player in-place.
  * Returns false (and does nothing) if validation fails.
  */
-export function unlockSkill(player: PlayerSnapshot | PlayerEntity, skillId: string): boolean {
+export function unlockSkill(world: World, player: PlayerSnapshot | PlayerEntity, skillId: string): boolean {
   if ('entityId' in player) {
-    return withPlayerSnapshotDraft(player, draft => unlockSkillSnapshot(draft, skillId));
+    return withPlayerSnapshotDraft(world, player, draft => unlockSkillSnapshot(draft, skillId));
   }
   return unlockSkillSnapshot(player, skillId);
 }

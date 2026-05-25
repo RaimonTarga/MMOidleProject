@@ -88,7 +88,7 @@ export function applyMonsterAoe(
     if (player.hasHealth.hp <= 0) {
       world.respawnPlayer(player.isPlayer.id);
     } else {
-      world.setPlayerCombatAt(player.isPlayer.id, Date.now());
+      player.tracksEngagement = Date.now();
     }
   }
 }
