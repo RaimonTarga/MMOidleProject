@@ -9,7 +9,7 @@ import type {
   TracksProgression,
   UsesSkills,
 } from '@mmo-idle/shared';
-import { GAME_CONFIG, emptyEquipment } from '@mmo-idle/shared';
+import { GAME_CONFIG, emptyEquipment, type Vec2 } from '@mmo-idle/shared';
 import type { PlayerEntity } from '../ecs/components/player';
 import { accounts, characters } from './schema';
 import type * as schema from './schema';
@@ -55,9 +55,11 @@ export function getOrCreateCharacter(
   }
 
   const charId = randomUUID();
-  const spawnX = GAME_CONFIG.NODE_WIDTH  / 2;
-  const spawnY = GAME_CONFIG.NODE_HEIGHT / 2;
-  const fresh = buildFreshSlices(charId, characterName, spawnX, spawnY);
+  const spawn: Vec2 = {
+    x: GAME_CONFIG.NODE_WIDTH  / 2,
+    y: GAME_CONFIG.NODE_HEIGHT / 2,
+  };
+  const fresh = buildFreshSlices(charId, characterName, spawn);
 
   db.insert(characters).values({
     id:                charId,
@@ -119,8 +121,7 @@ function hydratePlayerSlices(row: CharacterRow): PersistedPlayerSlices {
 function buildFreshSlices(
   id: string,
   name: string,
-  x: number,
-  y: number,
+  pos: Vec2,
 ): PersistedPlayerSlices {
   const equipment = emptyEquipment();
   equipment.weapon = 'basic-sword';
@@ -131,7 +132,7 @@ function buildFreshSlices(
       name,
     },
     hasPosition: {
-      current: { x, y },
+      current: pos,
       nodeId:  'node-5-5',
       speed:   GAME_CONFIG.PLAYER_SPEED,
     },

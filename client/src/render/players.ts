@@ -34,21 +34,17 @@ export function upsertPlayer(
     });
 
     state.transform.set(player.id, {
-      x: player.x,
-      y: player.y,
-      targetX: player.targetX,
-      targetY: player.targetY,
-      speed: player.speed,
+      pos:    { ...player.pos },
+      target: { ...player.target },
+      speed:  player.speed,
     });
     state.interpolation.set(player.id, {
-      baseX: player.x,
-      baseY: player.y,
-      lungeOffsetX: 0,
-      lungeOffsetY: 0,
+      base:        { ...player.pos },
+      lungeOffset: { x: 0, y: 0 },
     });
 
     const color = isOwn ? 0x44ff88 : 0x4488ff;
-    ensureShadow(state, player.id, player.x, player.y, shadowOffsetY, scene, {
+    ensureShadow(state, player.id, player.pos, shadowOffsetY, scene, {
       width: 52,
       height: 14,
       depth: 3,
@@ -68,7 +64,7 @@ export function upsertPlayer(
     if (isOwn) {
       state.ownId = player.id;
       state.ownNodeId = player.nodeId;
-      scene.cameraTarget.setPosition(player.x, player.y);
+      scene.cameraTarget.setPosition(player.pos.x, player.pos.y);
       scene.cameras.main.startFollow(scene.cameraTarget, true, 0.1, 0.1);
       hudBus.emit({ player });
     }
@@ -83,11 +79,10 @@ export function upsertPlayer(
   if (isOwn && player.nodeId !== state.ownNodeId) {
     const interp = state.interpolation.get(player.id);
     if (interp) {
-      interp.baseX = player.x;
-      interp.baseY = player.y;
+      interp.base = { ...player.pos };
     }
     const sprite = state.sprite.get(player.id);
-    sprite?.setPosition(player.x, player.y);
+    sprite?.setPosition(player.pos.x, player.pos.y);
 
     if (scene.autoPath.length > 0) {
       if (scene.autoPath[0] === player.nodeId) {
@@ -116,8 +111,7 @@ export function upsertPlayer(
   state.view.set(player.id, player);
   const transform = state.transform.get(player.id);
   if (transform) {
-    transform.targetX = player.targetX;
-    transform.targetY = player.targetY;
+    transform.target = { ...player.target };
     transform.speed = player.speed;
   }
 
@@ -127,8 +121,7 @@ export function upsertPlayer(
     if (sprite && meta) {
       const dmgColor = isOwn ? '#ff4444' : '#ff8844';
       scene.spawnDamageNumber(
-        sprite.x,
-        sprite.y,
+        { x: sprite.x, y: sprite.y },
         meta.barOffsetY,
         Math.round(prevHp - player.hp),
         dmgColor,
@@ -156,10 +149,8 @@ export function upsertPlayer(
     if (ownSprite && targetInterp && targetSprite) {
       scene.spawnAttackEffect(
         player.attackStyle,
-        ownSprite.x,
-        ownSprite.y,
-        targetSprite.x,
-        targetSprite.y,
+        { x: ownSprite.x, y: ownSprite.y },
+        { x: targetSprite.x, y: targetSprite.y },
         {
           empowered: false,
           execution: false,
@@ -167,7 +158,7 @@ export function upsertPlayer(
         },
       );
       if (player.attackRange <= 150) {
-        applyLunge(state, player.id, targetInterp.baseX, targetInterp.baseY, scene);
+        applyLunge(state, player.id, { ...targetInterp.base }, scene);
       }
     }
   }

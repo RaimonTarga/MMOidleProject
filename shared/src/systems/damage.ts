@@ -1,4 +1,4 @@
-import type { StatusEffect } from '../components/effects';
+import type { StatusEffect } from '../components/combat/effects';
 
 const ED_BASE_STACKS    = 8;
 const ED_DIMINISH_RATE  = 0.5;

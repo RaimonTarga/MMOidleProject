@@ -1,5 +1,5 @@
 import type Phaser from 'phaser';
-import type { NetworkedEntity, PlayerView, MonsterView } from '@mmo-idle/shared';
+import type { NetworkedEntity, PlayerView, MonsterView, Vec2 } from '@mmo-idle/shared';
 
 export type NetworkId = string;
 
@@ -12,10 +12,8 @@ export interface RenderState {
   transform: Map<
     NetworkId,
     {
-      x: number;
-      y: number;
-      targetX: number;
-      targetY: number;
+      pos: Vec2;
+      target: Vec2;
       speed: number;
     }
   >;
@@ -23,10 +21,8 @@ export interface RenderState {
   interpolation: Map<
     NetworkId,
     {
-      baseX: number;
-      baseY: number;
-      lungeOffsetX: number;
-      lungeOffsetY: number;
+      base: Vec2;
+      lungeOffset: Vec2;
     }
   >;
 

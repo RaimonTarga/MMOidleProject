@@ -1,5 +1,5 @@
 import type Phaser from 'phaser';
-import type { PlayerView } from '@mmo-idle/shared';
+import type { PlayerView, Vec2 } from '@mmo-idle/shared';
 import { getPlayerShadowColor } from '../sprites';
 import type { RenderState } from './state';
 import type { GameScene } from '../scenes/GameScene';
@@ -21,8 +21,7 @@ export function applyPlayerShadowStyle(
 export function ensureShadow(
   state: RenderState,
   id: string,
-  x: number,
-  y: number,
+  pos: Vec2,
   shadowOffsetY: number,
   scene: GameScene,
   opts: { width: number; height: number; depth: number; fillColor?: number; fillAlpha?: number; playerTier?: number },
@@ -30,7 +29,7 @@ export function ensureShadow(
   if (state.shadow.has(id)) return;
 
   const shadow = scene.add
-    .ellipse(x, y + shadowOffsetY, opts.width, opts.height)
+    .ellipse(pos.x, pos.y + shadowOffsetY, opts.width, opts.height)
     .setDepth(opts.depth);
 
   if (opts.playerTier !== undefined) {
@@ -68,8 +67,8 @@ export function drawShadows(state: RenderState): void {
     if (!sprite || !shadow || !interp || !meta) continue;
 
     shadow.setPosition(
-      interp.baseX + interp.lungeOffsetX,
-      interp.baseY + interp.lungeOffsetY + meta.shadowOffsetY,
+      interp.base.x + interp.lungeOffset.x,
+      interp.base.y + interp.lungeOffset.y + meta.shadowOffsetY,
     );
   }
 }

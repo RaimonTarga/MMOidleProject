@@ -1,3 +1,4 @@
+import type { Vec2 } from '@mmo-idle/shared';
 import type { RenderState } from './state';
 import type { GameScene } from '../scenes/GameScene';
 
@@ -8,57 +9,56 @@ export function stepInterpolation(state: RenderState, dt: number): void {
     const sprite = state.sprite.get(id);
     if (!transform || !interp || !sprite) continue;
 
-    const dx = transform.targetX - interp.baseX;
-    const dy = transform.targetY - interp.baseY;
+    const dx = transform.target.x - interp.base.x;
+    const dy = transform.target.y - interp.base.y;
     const distSq = dx * dx + dy * dy;
     if (distSq > 1) {
       const dist = Math.sqrt(distSq);
       const step = Math.min(transform.speed * dt, dist);
-      interp.baseX += (dx / dist) * step;
-      interp.baseY += (dy / dist) * step;
+      interp.base = {
+        x: interp.base.x + (dx / dist) * step,
+        y: interp.base.y + (dy / dist) * step,
+      };
     } else {
-      interp.baseX = transform.targetX;
-      interp.baseY = transform.targetY;
+      interp.base = { x: transform.target.x, y: transform.target.y };
     }
 
     sprite.setPosition(
-      interp.baseX + interp.lungeOffsetX,
-      interp.baseY + interp.lungeOffsetY,
+      interp.base.x + interp.lungeOffset.x,
+      interp.base.y + interp.lungeOffset.y,
     );
   }
 }
 
-export function getOwnBase(state: RenderState): { x: number; y: number } | null {
+export function getOwnBase(state: RenderState): Vec2 | null {
   if (!state.ownId) return null;
   const interp = state.interpolation.get(state.ownId);
   if (!interp) return null;
-  return { x: interp.baseX, y: interp.baseY };
+  return { x: interp.base.x, y: interp.base.y };
 }
 
 export function applyLunge(
   state: RenderState,
   id: string,
-  targetX: number,
-  targetY: number,
+  target: Vec2,
   scene: GameScene,
 ): void {
   const interp = state.interpolation.get(id);
   if (!interp) return;
 
   const LUNGE_DIST = 26;
-  const dx = targetX - interp.baseX;
-  const dy = targetY - interp.baseY;
+  const dx = target.x - interp.base.x;
+  const dy = target.y - interp.base.y;
   const dist = Math.sqrt(dx * dx + dy * dy);
   if (dist < 1) return;
 
-  scene.tweens.killTweensOf(interp);
+  scene.tweens.killTweensOf(interp.lungeOffset);
 
-  interp.lungeOffsetX = (dx / dist) * LUNGE_DIST;
-  interp.lungeOffsetY = (dy / dist) * LUNGE_DIST;
+  interp.lungeOffset = { x: (dx / dist) * LUNGE_DIST, y: (dy / dist) * LUNGE_DIST };
   scene.tweens.add({
-    targets: interp,
-    lungeOffsetX: 0,
-    lungeOffsetY: 0,
+    targets: interp.lungeOffset,
+    x: 0,
+    y: 0,
     delay: 60,
     duration: 200,
     ease: 'Quad.easeOut',

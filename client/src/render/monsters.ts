@@ -35,17 +35,13 @@ export function upsertMonster(
     });
 
     state.transform.set(monster.id, {
-      x: monster.x,
-      y: monster.y,
-      targetX: monster.targetX,
-      targetY: monster.targetY,
-      speed: monster.speed,
+      pos:    { ...monster.pos },
+      target: { ...monster.target },
+      speed:  monster.speed,
     });
     state.interpolation.set(monster.id, {
-      baseX: monster.x,
-      baseY: monster.y,
-      lungeOffsetX: 0,
-      lungeOffsetY: 0,
+      base:        { ...monster.pos },
+      lungeOffset: { x: 0, y: 0 },
     });
 
     state.debugRanges.set(monster.id, {
@@ -54,7 +50,7 @@ export function upsertMonster(
       attackRange: monster.attackRange,
     });
 
-    ensureShadow(state, monster.id, monster.x, monster.y, shadowOffsetY, scene, {
+    ensureShadow(state, monster.id, monster.pos, shadowOffsetY, scene, {
       width: shadowW,
       height: shadowH,
       depth: 0,
@@ -80,19 +76,17 @@ export function upsertMonster(
 
   const interp = state.interpolation.get(monster.id);
   if (interp) {
-    const snapDx = monster.x - interp.baseX;
-    const snapDy = monster.y - interp.baseY;
+    const snapDx = monster.pos.x - interp.base.x;
+    const snapDy = monster.pos.y - interp.base.y;
     if (snapDx * snapDx + snapDy * snapDy > 80 * 80) {
-      interp.baseX = monster.x;
-      interp.baseY = monster.y;
+      interp.base = { ...monster.pos };
     }
   }
 
   state.view.set(monster.id, monster);
   const transform = state.transform.get(monster.id);
   if (transform) {
-    transform.targetX = monster.targetX;
-    transform.targetY = monster.targetY;
+    transform.target = { ...monster.target };
     transform.speed = monster.speed;
   }
 
@@ -101,8 +95,7 @@ export function upsertMonster(
     const meta = state.spriteMeta.get(monster.id);
     if (sprite && meta) {
       scene.spawnDamageNumber(
-        sprite.x,
-        sprite.y,
+        { x: sprite.x, y: sprite.y },
         meta.barOffsetY,
         Math.round(prevHp - monster.hp),
         '#ffffff',
@@ -118,14 +111,12 @@ export function upsertMonster(
     if (vmSprite && targetInterp && targetSprite) {
       scene.spawnAttackEffect(
         monster.attackStyle,
-        vmSprite.x,
-        vmSprite.y,
-        targetSprite.x,
-        targetSprite.y,
+        { x: vmSprite.x, y: vmSprite.y },
+        { x: targetSprite.x, y: targetSprite.y },
       );
 
       if (meta?.monsterBehavior === 'melee') {
-        applyLunge(state, monster.id, targetInterp.baseX, targetInterp.baseY, scene);
+        applyLunge(state, monster.id, { ...targetInterp.base }, scene);
       }
     }
   }

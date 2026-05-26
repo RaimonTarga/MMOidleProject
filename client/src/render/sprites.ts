@@ -1,13 +1,12 @@
 import type Phaser from 'phaser';
-import type { PlayerView, MonsterView } from '@mmo-idle/shared';
+import type { PlayerView, MonsterView, Vec2 } from '@mmo-idle/shared';
 import { ATLAS_KEY, getPlayerFrame, getMonsterFrame } from '../sprites';
 import type { RenderState } from './state';
 import type { GameScene } from '../scenes/GameScene';
 
 export function tryMakeImage(
   scene: Phaser.Scene,
-  x: number,
-  y: number,
+  pos: Vec2,
   frame: string | null,
   displayW: number,
   displayH: number,
@@ -15,7 +14,7 @@ export function tryMakeImage(
   if (!frame) return null;
   if (!scene.textures.exists(ATLAS_KEY)) return null;
   if (!scene.textures.get(ATLAS_KEY).has(frame)) return null;
-  return scene.add.image(x, y, ATLAS_KEY, frame).setDisplaySize(displayW, displayH);
+  return scene.add.image(pos.x, pos.y, ATLAS_KEY, frame).setDisplaySize(displayW, displayH);
 }
 
 export function ensureSprite(
@@ -38,8 +37,8 @@ export function ensureSprite(
     : getMonsterFrame((snapshot as MonsterView).monsterTypeId);
 
   const sprite =
-    tryMakeImage(scene, snapshot.x, snapshot.y, frame, opts.displayW, opts.displayH) ??
-    scene.add.rectangle(snapshot.x, snapshot.y, opts.displayW, opts.displayH, opts.fallbackColor);
+    tryMakeImage(scene, snapshot.pos, frame, opts.displayW, opts.displayH) ??
+    scene.add.rectangle(snapshot.pos.x, snapshot.pos.y, opts.displayW, opts.displayH, opts.fallbackColor);
 
   sprite.setDepth(opts.depth);
   state.sprite.set(id, sprite);
@@ -69,13 +68,12 @@ export function updateSpriteFrame(
   if (!meta || newFrame === meta.currentFrame) return;
 
   const interp = state.interpolation.get(id);
-  const bx = interp?.baseX ?? snapshot.x;
-  const by = interp?.baseY ?? snapshot.y;
+  const base = interp?.base ?? snapshot.pos;
 
   state.sprite.get(id)?.destroy();
   const sprite =
-    tryMakeImage(scene, bx, by, newFrame, opts.displayW, opts.displayH) ??
-    scene.add.rectangle(bx, by, opts.displayW, opts.displayH, opts.fallbackColor);
+    tryMakeImage(scene, base, newFrame, opts.displayW, opts.displayH) ??
+    scene.add.rectangle(base.x, base.y, opts.displayW, opts.displayH, opts.fallbackColor);
   sprite.setDepth(opts.depth);
   state.sprite.set(id, sprite);
   meta.currentFrame = newFrame;

@@ -6,9 +6,9 @@ import path from 'path';
 
 import { World } from './world/World';
 import { GAME_CONFIG, TEST_ROOM_NODE_ID, ESSENCE_TYPES } from '@mmo-idle/shared';
-import { unlockSkill } from './systems/skills';
-import { equipItem, unequipItem } from './systems/inventory';
-import { craftRecipe } from './systems/crafting';
+import { unlockSkill } from './systems/player/progression/skills';
+import { equipItem, unequipItem } from './systems/player/economy/inventory';
+import { craftRecipe } from './systems/player/economy/crafting';
 import type {
   ServerToClientEvents,
   ClientToServerEvents,
@@ -18,17 +18,17 @@ import type {
 import { db, runMigrations } from './db/index';
 import { findOrCreateAccount, getOrCreateCharacter, saveCharacter } from './db/playerRepo';
 import { initAllMechanics } from './systems/classes/registry';
-import { initWeaponEffects } from './systems/weaponEffects';
-import { initDefenseSystems } from './systems/defenseSystems';
-import { initDebuffMechanics } from './systems/debuffMechanics';
+import { initWeaponEffects } from './systems/combat/damage/weaponEffects';
+import { initDefenseSystems } from './systems/defense';
+import { initDebuffMechanics } from './systems/classes/shared/debuffs';
 import { IS_DEV } from './env';
 import {
   assertMarkerInvariants,
   assertNetworkedComponentInvariants,
 } from './ecs/markerInvariants';
-import { setEntityMotion, stopEntity } from './systems/movement';
-import { setAggroTarget, setAttackTarget } from './systems/targeting';
-import { clearEngagement } from './systems/engagement';
+import { setEntityMotion, stopEntity } from './systems/world/movement';
+import { setAggroTarget, setAttackTarget } from './systems/combat/ai/targeting';
+import { clearEngagement } from './systems/combat/ai/engagement';
 import { detachComponent } from './ecs/markerHelpers';
 import { syncArchetypeSlices } from './ecs/archetypeSliceSync';
 import { recalculatePlayerEntityStats } from './ecs/playerEntityFormulas';
@@ -184,11 +184,11 @@ io.on('connection', (socket) => {
     { resync: true },
   ));
 
-  socket.on('player:move', ({ x, y }) => {
+  socket.on('player:move', (pos) => {
     const p = world.getPlayerEntity(socket.id);
     if (!p) return;
     if (p.isChanneling) return;
-    setEntityMotion(world, p, { x, y });
+    setEntityMotion(world, p, pos);
   });
 
   socket.on('player:setAuto', (enabled) => {
@@ -230,11 +230,13 @@ io.on('connection', (socket) => {
       const p = world.getPlayerEntity(socket.id);
       if (!p) return;
 
-      const spawnX = GAME_CONFIG.NODE_WIDTH / 2;
-      const spawnY = GAME_CONFIG.NODE_HEIGHT / 2 - 200;
+      const spawn = {
+        x: GAME_CONFIG.NODE_WIDTH / 2,
+        y: GAME_CONFIG.NODE_HEIGHT / 2 - 200,
+      };
 
       p.hasPosition.nodeId = TEST_ROOM_NODE_ID;
-      p.hasPosition.current = { x: spawnX, y: spawnY };
+      p.hasPosition.current = spawn;
       stopEntity(world, p);
       p.usesAutocombat.auto = false;
       setAttackTarget(world, p, null);

@@ -1,0 +1,56 @@
+import type { World } from "./World";
+import type { MonsterEntity } from "../ecs/components/monster";
+import { isMonsterEntity } from "../ecs/components/monster";
+import type { HasKnockback } from "../systems/combat/damage/knockback";
+
+/**
+ * O(N) entity lookup by monster id. Adequate at ~50 monsters; if profiling
+ * shows hot, swap to a `Map<string, MonsterEntity>` index maintained via
+ * `onEntityAdded` / `onEntityRemoved`.
+ */
+export function getMonsterEntity(world: World, id: string): MonsterEntity | undefined {
+  const e = world.getEntity(id);
+  return e && isMonsterEntity(e) ? e : undefined;
+}
+
+/** Iterate every monster entity in `nodeId`. Uses the `hasPosition` slice. */
+export function* monsterEntitiesInNode(world: World, nodeId: string): IterableIterator<MonsterEntity> {
+  for (const e of world.monsterEntities) {
+    if (e.hasPosition.nodeId === nodeId) yield e;
+  }
+}
+
+/** True if the monster currently exists in the world. */
+export function hasMonster(world: World, id: string): boolean {
+  return getMonsterEntity(world, id) !== undefined;
+}
+
+export function getMonsterKnockback(world: World, id: string): HasKnockback | undefined {
+  return getMonsterEntity(world, id)?.hasKnockback;
+}
+
+export function setMonsterKnockback(world: World, id: string, kb: HasKnockback): void {
+  const e = getMonsterEntity(world, id);
+  if (!e) return;
+  if (e.hasKnockback) {
+    e.hasKnockback = kb;
+  } else {
+    world.ecs.addComponent(e, "hasKnockback", kb);
+  }
+}
+
+export function clearMonsterKnockback(world: World, id: string): void {
+  const e = getMonsterEntity(world, id);
+  if (!e || !e.hasKnockback) return;
+  world.ecs.removeComponent(e, "hasKnockback");
+}
+
+/**
+ * Centralized monster despawn. Removes the entity from miniplex, which
+ * cascades component removal across every query in one call. Use this
+ * instead of multiple `world.<map>.delete(id)` lines.
+ */
+export function removeMonsterEntity(world: World, id: string): void {
+  const e = getMonsterEntity(world, id);
+  if (e) world.ecs.remove(e);
+}

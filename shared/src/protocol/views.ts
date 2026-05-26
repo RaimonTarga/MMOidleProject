@@ -1,18 +1,16 @@
 import type { EquipmentMap, EssenceType } from '../items';
 import type { PassiveMap } from '../passives';
 import type { SubVariant } from '../skillTree';
-import type { BuffId, PlayerBuff } from '../components/buffs';
+import type { BuffId, PlayerBuff } from '../components/combat/buffs';
 import type { CombatArchetype, MonsterAIState, ShieldState } from '../types/combat';
-import { pointFromMotion } from '../systems/spatial';
+import { pointFromMotion, type Vec2 } from '../systems/spatial';
 import type { NetworkedEntity } from './networkedEntity';
 
 export interface PlayerView {
   id: string;
   name: string;
-  x: number;
-  y: number;
-  targetX: number;
-  targetY: number;
+  pos: Vec2;
+  target: Vec2;
   hp: number;
   maxHp: number;
   attack: number;
@@ -76,10 +74,8 @@ export interface MonsterView {
   monsterTypeId: string;
   color: number;
   name: string;
-  x: number;
-  y: number;
-  targetX: number;
-  targetY: number;
+  pos: Vec2;
+  target: Vec2;
   hp: number;
   maxHp: number;
   attack: number;
@@ -124,13 +120,12 @@ export function composePlayerView(entity: NetworkedEntity): PlayerView | null {
   if (!progression || !inventory || !skills || !damage || !attack || !mitigation) {
     return null;
   }
+  const pos = entity.hasPosition.current;
   return {
     id: entity.isPlayer.id,
     name: entity.isPlayer.name,
-    x: entity.hasPosition.current.x,
-    y: entity.hasPosition.current.y,
-    targetX: target.x,
-    targetY: target.y,
+    pos,
+    target,
     hp: entity.hasHealth.hp,
     maxHp: entity.hasHealth.maxHp,
     attack: damage.attack,
@@ -205,15 +200,14 @@ export function composeMonsterView(entity: NetworkedEntity): MonsterView | null 
   const target = entity.isMoving
     ? pointFromMotion(entity.hasPosition.current, entity.isMoving.motion)
     : entity.hasPosition.current;
+  const pos = entity.hasPosition.current;
   return {
     id: entity.isMonster.id,
     monsterTypeId: entity.isMonster.monsterTypeId,
     color: entity.isMonster.color,
     name: entity.isMonster.name,
-    x: entity.hasPosition.current.x,
-    y: entity.hasPosition.current.y,
-    targetX: target.x,
-    targetY: target.y,
+    pos,
+    target,
     hp: entity.hasHealth.hp,
     maxHp: entity.hasHealth.maxHp,
     attack: entity.dealsDamage.attack,

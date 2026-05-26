@@ -1,8 +1,8 @@
-import type { EquipmentSlot } from '@mmo-idle/shared';
+import type { EquipmentSlot, Vec2 } from '@mmo-idle/shared';
 import type { GameSocket } from './socket';
 
-export function sendMove(socket: GameSocket, x: number, y: number): void {
-  socket.emit('player:move', { x, y });
+export function sendMove(socket: GameSocket, pos: Vec2): void {
+  socket.emit('player:move', pos);
 }
 
 export function sendSetAuto(socket: GameSocket, enabled: boolean): void {

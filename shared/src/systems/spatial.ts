@@ -1,25 +1,35 @@
+// ─── Vector primitives ────────────────────────────────────────────────────────
+
+export interface Vec2 {
+  x: number;
+  y: number;
+}
+
+export interface Vec3 {
+  x: number;
+  y: number;
+  z: number;
+}
+
+export function zeroVec2(): Vec2 {
+  return { x: 0, y: 0 };
+}
+
+export function zeroVec3(): Vec3 {
+  return { x: 0, y: 0, z: 0 };
+}
+
 /** Squared Euclidean distance between two points — cheaper than `distance` when
  *  only a comparison is needed. */
-export function distanceSq(a: { x: number; y: number }, b: { x: number; y: number }): number {
+export function distanceSq(a: Vec2, b: Vec2): number {
   const dx = a.x - b.x;
   const dy = a.y - b.y;
   return dx * dx + dy * dy;
 }
 
 /** True if `b` is within `range` pixels of `a`. Uses squared distance for speed. */
-export function isWithinRange(
-  a: { x: number; y: number },
-  b: { x: number; y: number },
-  range: number,
-): boolean {
+export function isWithinRange(a: Vec2, b: Vec2, range: number): boolean {
   return distanceSq(a, b) <= range * range;
-}
-
-// ─── Vector primitives ────────────────────────────────────────────────────────
-
-export interface Vec2 {
-  x: number;
-  y: number;
 }
 
 /**

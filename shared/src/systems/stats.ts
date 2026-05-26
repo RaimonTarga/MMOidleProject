@@ -7,7 +7,7 @@ import type {
   MitigatesDamage,
   PerformsAttack,
   UsesSkills,
-} from '../components/networkedSlices';
+} from '../components/core/networkedSlices';
 import { SKILL_TREE } from '../skillTree';
 import { ITEM_DATABASE } from '../itemDatabase';
 import { EQUIPMENT_SLOTS } from '../items';

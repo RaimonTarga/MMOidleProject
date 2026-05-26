@@ -2,69 +2,52 @@ import type {
   NodeDefinition,
   CombatEvent,
   DeltaSnapshot,
-  EntityDelta,
 } from "@mmo-idle/shared";
 import {
   GAME_CONFIG,
-  BIOME_DATABASE,
   TEST_ROOM_NODE_ID,
-  networkedKeysForKind,
+  type Vec2,
 } from "@mmo-idle/shared";
-import { updateAutoTargets } from "../systems/autoTarget";
-import { updateMovement } from "../systems/movement";
-import { updateMonsters } from "../systems/ai";
-import { updateCombat } from "../systems/combat";
-import { updateTransitions } from "../systems/transitions";
-import { updateCombatState } from "../systems/combatState";
-import { makeTracksCombat } from "@mmo-idle/shared";
+import { updateAutoTargets } from "../systems/combat/ai/autoTarget";
+import { updateMovement } from "../systems/world/movement";
+import { updateMonsters } from "../systems/combat/ai/ai";
+import { updateCombat } from "../systems/combat/engine/combat";
+import { updateTransitions } from "../systems/world/transitions";
+import { updateCombatState } from "../systems/combat/engine/combatState";
 import { tickAllMechanics } from "../systems/classes/registry";
-import { updateWeaponEffects } from "../systems/weaponEffects";
-import { updateBossScripts } from "../systems/bossScripts";
+import { updateWeaponEffects } from "../systems/combat/damage/weaponEffects";
+import { updateBossScripts } from "../systems/combat/ai/bossScripts";
 import {
   updateShields,
   updateDefensiveSystems,
-} from "../systems/defenseSystems";
-import { updateKnockback, type HasKnockback } from "../systems/knockback";
-import { syncPlayerBuffs } from "../systems/buffSync";
+} from "../systems/defense";
+import { updateKnockback } from "../systems/combat/damage/knockback";
+import { syncPlayerBuffs } from "../systems/combat/buffs/buffSync";
 import {
   createMonster as createMonsterInWorld,
   spawnMonster as spawnMonsterInWorld,
   respawnPlayer as respawnPlayerInWorld,
   ensurePopulation as ensurePopulationInWorld,
   ensureBoss as ensureBossInWorld,
-} from "../systems/spawning";
-import { updateTestRoomInteract } from "../systems/testRoomInteract";
+} from "../systems/world/spawning";
+import { updateTestRoomInteract } from "../systems/world/testRoomInteract";
 import { NODE_REGISTRY } from "./nodeRegistry";
 import { IS_DEV } from "../env";
 import { createEcsWorld, type EcsWorld } from "../ecs/world";
 import type { MonsterEntity } from "../ecs/components/monster";
-import { isMonsterEntity } from "../ecs/components/monster";
 import type { PlayerEntity } from "../ecs/components/player";
-import { isPlayerEntity } from "../ecs/components/player";
 import type { EntityId, ServerEntity } from "../ecs/entity";
-import { entityNetworkId, entityNetworkKind } from "../ecs/entity";
 import type { PersistedPlayerSlices } from "../db/playerRepo";
 import { DirtyTracker, type DirtyDrain } from "../ecs/dirtyTracker";
-import { encodeAdd, encodePatch } from "../ecs/deltaEncoder";
-
-const TEST_ROOM_TARGET_RESET = "test-target-reset";
-const TEST_ROOM_TARGET_GAIN_POINT = "test-target-gain-point";
-
-/**
- * Stationary training dummies for the dev test room — one per enemy tier (T0–T4).
- * HP comes from each dummy's MonsterDefinition (median boss HP for the tier).
- * Laid out in a row along the north wall of the test room so the player can
- * walk up to any of them to test animations, range, or sustained damage.
- */
-const TEST_ROOM_TRAINING_DUMMY_TYPES = [
-  "training-dummy-t0",
-  "training-dummy-t1",
-  "training-dummy-t2",
-  "training-dummy-t3",
-  "training-dummy-t4",
-] as const;
-const TEST_ROOM_TRAINING_DUMMY_Y = 240;
-const TEST_ROOM_TRAINING_DUMMY_SPACING = 500;
+import type { HasKnockback } from "../systems/combat/damage/knockback";
+import * as monsterLifecycle from "./monsterLifecycle";
+import * as playerLifecycle from "./playerLifecycle";
+import {
+  initTestRoom,
+  ensureCurrentTestRoomBoss,
+  ensureTrainingDummies,
+} from "./testRoom";
+import { buildNodeDelta } from "./nodeDelta";
 
 export class World {
   readonly nodeId: string;
@@ -150,7 +133,7 @@ export class World {
   testRoomEngagedBossId: string | null = null;
 
   nextMonsterId = 1;
-  private tickCounter = 0;
+  tickCounter = 0;
   readonly dirty = new DirtyTracker();
 
   private readonly entityIndex = new Map<EntityId, ServerEntity>();
@@ -191,7 +174,7 @@ export class World {
       this.ensureBoss(nodeId);
     }
 
-    if (IS_DEV) this.initTestRoom();
+    if (IS_DEV) initTestRoom(this);
   }
 
   // ── SYSTEM ENTRY POINT ─────────────────────────────
@@ -214,8 +197,8 @@ export class World {
     syncPlayerBuffs(this);
 
     if (IS_DEV) {
-      this.ensureCurrentTestRoomBoss();
-      this.ensureTrainingDummies();
+      ensureCurrentTestRoomBoss(this);
+      ensureTrainingDummies(this);
     }
 
     for (const nodeId of NODE_REGISTRY.keys()) {
@@ -225,160 +208,76 @@ export class World {
     }
   }
 
-  // ── ENTITY MANAGEMENT ─────────────────────────────
+  // ── ENTITY MANAGEMENT (thin delegators to spawning / lifecycle modules) ─
 
   /**
-   * Create a monster of the given type at (x, y) in nodeId.
+   * Create a monster of the given type at `pos` in nodeId.
    * All stats and AI parameters come from MONSTER_DATABASE.
    * Returns null if the type ID is unknown.
    */
   createMonster(
     nodeId: string,
     typeId: string,
-    x: number,
-    y: number,
+    pos: Vec2,
   ): MonsterEntity | null {
-    return createMonsterInWorld(this, nodeId, typeId, x, y);
+    return createMonsterInWorld(this, nodeId, typeId, pos);
   }
 
-  // ── MONSTER ENTITY HELPERS ────────────────────────────
-
-  /**
-   * O(N) entity lookup by monster id. Adequate at ~50 monsters; if profiling
-   * shows hot, swap to a `Map<string, MonsterEntity>` index maintained via
-   * `onEntityAdded` / `onEntityRemoved`.
-   */
   getMonsterEntity(id: string): MonsterEntity | undefined {
-    const e = this.getEntity(id);
-    return e && isMonsterEntity(e) ? e : undefined;
+    return monsterLifecycle.getMonsterEntity(this, id);
   }
 
-  /** Iterate every monster entity in `nodeId`. Uses the `hasPosition` slice. */
-  *monsterEntitiesInNode(nodeId: string): IterableIterator<MonsterEntity> {
-    for (const e of this.monsterEntities) {
-      if (e.hasPosition.nodeId === nodeId) yield e;
-    }
+  monsterEntitiesInNode(nodeId: string): IterableIterator<MonsterEntity> {
+    return monsterLifecycle.monsterEntitiesInNode(this, nodeId);
   }
 
-  /** True if the monster currently exists in the world. */
   hasMonster(id: string): boolean {
-    return this.getMonsterEntity(id) !== undefined;
+    return monsterLifecycle.hasMonster(this, id);
   }
 
   getMonsterKnockback(id: string): HasKnockback | undefined {
-    return this.getMonsterEntity(id)?.hasKnockback;
+    return monsterLifecycle.getMonsterKnockback(this, id);
   }
 
   setMonsterKnockback(id: string, kb: HasKnockback): void {
-    const e = this.getMonsterEntity(id);
-    if (!e) return;
-    if (e.hasKnockback) {
-      e.hasKnockback = kb;
-    } else {
-      this.ecs.addComponent(e, "hasKnockback", kb);
-    }
+    monsterLifecycle.setMonsterKnockback(this, id, kb);
   }
 
   clearMonsterKnockback(id: string): void {
-    const e = this.getMonsterEntity(id);
-    if (!e || !e.hasKnockback) return;
-    this.ecs.removeComponent(e, "hasKnockback");
+    monsterLifecycle.clearMonsterKnockback(this, id);
   }
 
-  /**
-   * Centralized monster despawn. Removes the entity from miniplex, which
-   * cascades component removal across every query in one call. Use this
-   * instead of multiple `world.<map>.delete(id)` lines.
-   */
   removeMonsterEntity(id: string): void {
-    const e = this.getMonsterEntity(id);
-    if (e) this.ecs.remove(e);
+    monsterLifecycle.removeMonsterEntity(this, id);
   }
 
-  // ── PLAYER ENTITY HELPERS ─────────────────────────────
-
-  /**
-   * Attach hydrated player slices to the ECS world with fresh combat tracking.
-   * The socket id is runtime identity; persisted row ids stay in the DB only.
-   */
   attachPlayerEntity(
     player: PersistedPlayerSlices,
     socketId: string,
   ): PlayerEntity {
-    const entity: PlayerEntity = {
-      entityId: socketId,
-      tracksCombat: makeTracksCombat(),
-      isPlayer: {
-        ...player.isPlayer,
-        id: socketId,
-      },
-      hasPosition: player.hasPosition,
-      hasHealth: player.hasHealth,
-      dealsDamage: {
-        attack:      GAME_CONFIG.PLAYER_ATTACK,
-        onHitDamage: 0,
-        attackStyle: 'slash',
-      },
-      performsAttack: {
-        attackRange:    GAME_CONFIG.PLAYER_ATTACK_RANGE,
-        attackCooldown: GAME_CONFIG.PLAYER_ATTACK_COOLDOWN,
-        lastAttackAt:   0,
-      },
-      mitigatesDamage: {
-        plating:         GAME_CONFIG.PLAYER_PLATING,
-        damageReduction: 0,
-      },
-      hasStatus: {
-        activeBuffs: [],
-      },
-      usesAutocombat: {
-        auto: false,
-      },
-      tracksProgression: player.tracksProgression,
-      holdsInventory: player.holdsInventory,
-      usesSkills: {
-        ...player.usesSkills,
-        passives: {},
-      },
-      showsSacred: {
-        sacredBuffActive: false,
-        sacredBuffPct:    0,
-      },
-    };
-    this.ecs.add(entity);
-    return entity;
+    return playerLifecycle.attachPlayerEntity(this, player, socketId);
   }
 
   detachPlayerEntity(playerId: string): void {
-    const e = this.getPlayerEntity(playerId);
-    if (e) this.ecs.remove(e);
+    playerLifecycle.detachPlayerEntity(this, playerId);
   }
 
-  /** O(N) entity lookup by player id (socket id). N ≈ ~10 in practice. */
   getPlayerEntity(playerId: string): PlayerEntity | undefined {
-    const e = this.getEntity(playerId);
-    return e && isPlayerEntity(e) ? e : undefined;
+    return playerLifecycle.getPlayerEntity(this, playerId);
   }
 
-  /** Iterate every player entity in `nodeId`. Uses the `hasPosition` slice. */
-  *playerEntitiesInNode(nodeId: string): IterableIterator<PlayerEntity> {
-    for (const e of this.playerEntities) {
-      if (e.hasPosition.nodeId === nodeId) yield e;
-    }
+  playerEntitiesInNode(nodeId: string): IterableIterator<PlayerEntity> {
+    return playerLifecycle.playerEntitiesInNode(this, nodeId);
   }
 
   hasPlayer(playerId: string): boolean {
-    return this.getPlayerEntity(playerId) !== undefined;
+    return playerLifecycle.hasPlayer(this, playerId);
   }
 
   playerCount(): number {
-    return this.playerEntities.size;
+    return playerLifecycle.playerCount(this);
   }
 
-  /**
-   * Pick a random monster type from the node's biome pool and attempt to
-   * place it at a position that respects minimum spacing. Returns true on success.
-   */
   spawnMonster(nodeId: string): boolean {
     return spawnMonsterInWorld(this, nodeId);
   }
@@ -391,118 +290,6 @@ export class World {
     ensurePopulationInWorld(this, nodeId);
   }
 
-  private initTestRoom(): void {
-    const y = GAME_CONFIG.NODE_HEIGHT / 2 - 260;
-    this.createMonster(
-      TEST_ROOM_NODE_ID,
-      TEST_ROOM_TARGET_RESET,
-      GAME_CONFIG.NODE_WIDTH / 2 - 180,
-      y,
-    );
-    this.createMonster(
-      TEST_ROOM_NODE_ID,
-      TEST_ROOM_TARGET_GAIN_POINT,
-      GAME_CONFIG.NODE_WIDTH / 2 + 180,
-      y,
-    );
-    this.ensureTestRoomBoss(0);
-    this.ensureTrainingDummies();
-  }
-
-  /**
-   * One stationary training dummy per enemy tier (T0–T4), arranged along the
-   * north wall of the test room. Idempotent — respawns any dummy that has
-   * been killed since the last call.
-   */
-  private ensureTrainingDummies(): void {
-    const present = new Set<string>();
-    for (const e of this.monsterEntities) {
-      if (e.hasPosition.nodeId !== TEST_ROOM_NODE_ID) continue;
-      present.add(e.isMonster.monsterTypeId);
-    }
-
-    const count = TEST_ROOM_TRAINING_DUMMY_TYPES.length;
-    const startX =
-      GAME_CONFIG.NODE_WIDTH / 2 -
-      (TEST_ROOM_TRAINING_DUMMY_SPACING * (count - 1)) / 2;
-    for (let i = 0; i < count; i++) {
-      const typeId = TEST_ROOM_TRAINING_DUMMY_TYPES[i];
-      if (present.has(typeId)) continue;
-      this.createMonster(
-        TEST_ROOM_NODE_ID,
-        typeId,
-        startX + i * TEST_ROOM_TRAINING_DUMMY_SPACING,
-        TEST_ROOM_TRAINING_DUMMY_Y,
-      );
-    }
-  }
-
-  private ensureCurrentTestRoomBoss(): void {
-    // If a previously engaged boss has been killed/removed, clear the lock so a
-    // fresh dummy can be rolled for the player's current tier.
-    if (
-      this.testRoomEngagedBossId &&
-      !this.hasMonster(this.testRoomEngagedBossId)
-    ) {
-      this.testRoomEngagedBossId = null;
-    }
-    // While the engaged boss is alive, freeze the rotation — the player is
-    // actively using it as a test dummy.
-    if (this.testRoomEngagedBossId) return;
-
-    let targetTier: number | null = null;
-    for (const player of this.playerEntities) {
-      if (player.hasPosition.nodeId !== TEST_ROOM_NODE_ID) continue;
-      targetTier = Math.max(
-        targetTier ?? 0,
-        player.tracksProgression.playerTier,
-      );
-    }
-    if (targetTier !== null) this.ensureTestRoomBoss(targetTier);
-  }
-
-  ensureTestRoomBoss(targetTier: number): void {
-    const typeId = this.pickTestRoomBossType(targetTier);
-    if (!typeId) return;
-
-    for (const e of this.monsterEntities) {
-      if (e.hasPosition.nodeId !== TEST_ROOM_NODE_ID || !e.isMonster.isBoss)
-        continue;
-      if (e.isMonster.monsterTypeId === typeId) return;
-      this.removeMonsterEntity(e.isMonster.id);
-    }
-
-    const boss = this.createMonster(
-      TEST_ROOM_NODE_ID,
-      typeId,
-      GAME_CONFIG.NODE_WIDTH / 2,
-      GAME_CONFIG.NODE_HEIGHT / 2 + 120,
-    );
-    if (boss) {
-      const entity = this.getMonsterEntity(boss.isMonster.id);
-      if (entity) {
-        entity.isMonster.name = `Test Dummy T${Math.max(0, targetTier)} (${entity.isMonster.name})`;
-        entity.isMonster.isBoss = true;
-      }
-    }
-  }
-
-  private pickTestRoomBossType(targetTier: number): string | null {
-    if (targetTier <= 0) return "tiny-slime";
-
-    const exactTierBosses: string[] = [];
-    for (const biome of BIOME_DATABASE.values()) {
-      exactTierBosses.push(...(biome.bossPoolByTier?.[targetTier] ?? []));
-    }
-    if (exactTierBosses.length === 0) return null;
-
-    return exactTierBosses[Math.floor(Math.random() * exactTierBosses.length)];
-  }
-
-  /**
-   * Maintain exactly one boss in each dungeon node. If no boss is present,
-   * picks from the biome's bossPoolByTier and spawns near the node center.
-   */
   ensureBoss(nodeId: string): void {
     ensureBossInWorld(this, nodeId);
   }
@@ -518,10 +305,27 @@ export class World {
     arr.push(event);
   }
 
+  /** Drain and return queued events for `nodeId`. Used by buildNodeDelta. */
+  takeNodeEvents(nodeId: string): CombatEvent[] {
+    const events = this.nodeEvents.get(nodeId) ?? [];
+    this.nodeEvents.set(nodeId, []);
+    return events;
+  }
+
   // ── NETWORK DELTA ──────────────────────────────────
 
   beginBroadcast(): DirtyDrain {
     return this.dirty.drain();
+  }
+
+  /** Lazily initialize and return the membership set for `nodeId`. */
+  getOrCreateNodeMembership(nodeId: string): Set<string> {
+    let members = this.nodeMembership.get(nodeId);
+    if (!members) {
+      members = new Set();
+      this.nodeMembership.set(nodeId, members);
+    }
+    return members;
   }
 
   buildNodeDelta(
@@ -529,68 +333,7 @@ export class World {
     dirty: DirtyDrain,
     opts: { resync?: boolean } = {},
   ): DeltaSnapshot {
-    const events = this.nodeEvents.get(nodeId) ?? [];
-    this.nodeEvents.set(nodeId, []);
-
-    const deltas: EntityDelta[] = [];
-    const liveIds = new Set<string>();
-    if (opts.resync) this.nodeMembership.delete(nodeId);
-    let members = this.nodeMembership.get(nodeId);
-    if (!members) {
-      members = new Set();
-      this.nodeMembership.set(nodeId, members);
-    }
-    const full = opts.resync || members.size === 0;
-
-    for (const e of this.monsterEntities) {
-      if (e.hasPosition.nodeId !== nodeId) continue;
-      this.encodeNodeEntityDelta(e, dirty, members, liveIds, deltas);
-    }
-
-    for (const e of this.playerEntities) {
-      if (e.hasPosition.nodeId !== nodeId) continue;
-      this.encodeNodeEntityDelta(e, dirty, members, liveIds, deltas);
-    }
-
-    for (const netId of [...members]) {
-      if (liveIds.has(netId)) continue;
-      deltas.push({ kind: 'remove', netId });
-      members.delete(netId);
-    }
-
-    return {
-      tick: this.tickCounter,
-      nodeId,
-      full,
-      deltas,
-      events,
-    };
-  }
-
-  private encodeNodeEntityDelta(
-    entity: ServerEntity,
-    dirty: DirtyDrain,
-    members: Set<string>,
-    liveIds: Set<string>,
-    deltas: EntityDelta[],
-  ): void {
-    const netId = entityNetworkId(entity);
-    if (!netId) return;
-    liveIds.add(netId);
-    if (!members.has(netId)) {
-      const add = encodeAdd(entity);
-      if (!add) return;
-      deltas.push(add);
-      members.add(netId);
-      return;
-    }
-
-    const entityKind = entityNetworkKind(entity);
-    if (!entityKind) return;
-    const patchKeys = new Set(networkedKeysForKind(entityKind));
-    for (const key of dirty.patched.get(netId) ?? []) patchKeys.add(key);
-    const patch = encodePatch(entity, patchKeys, dirty.detached.get(netId));
-    if (patch) deltas.push(patch);
+    return buildNodeDelta(this, nodeId, dirty, opts);
   }
 
   // ── UTIL ────────────────────────────────────────────

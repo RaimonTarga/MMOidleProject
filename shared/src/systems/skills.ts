@@ -1,5 +1,5 @@
 import type { PlayerView } from '../protocol/views';
-import type { TracksProgression, UsesSkills } from '../components/networkedSlices';
+import type { TracksProgression, UsesSkills } from '../components/core/networkedSlices';
 import { SKILL_TREE } from '../skillTree';
 
 export interface UnlockResult {

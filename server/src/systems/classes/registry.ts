@@ -1,10 +1,10 @@
-import type { BuffDescriptor } from '../registry/buffs';
+import type { BuffDescriptor } from '../combat/buffs/descriptor';
 import type { World } from '../../world/World';
-import cadenceModule  from './cadence';
-import cooldownModule from './cooldown';
-import energyModule   from './energy';
-import reloadModule   from './reload';
-import dotModule      from './dot';
+import cadenceModule  from './archetypes/cadence';
+import cooldownModule from './archetypes/cooldown';
+import energyModule   from './archetypes/energy';
+import reloadModule   from './archetypes/reload';
+import dotModule      from './archetypes/dot';
 
 /**
  * Order matches the legacy World.tick() ordering so that any cross-module
