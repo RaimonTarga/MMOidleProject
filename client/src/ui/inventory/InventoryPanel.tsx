@@ -1,17 +1,18 @@
 import { createPortal } from 'react-dom';
-import type { PlayerView } from '@mmo-idle/shared';
+import { useAtomValue } from 'jotai';
 import { BackpackGrid } from './BackpackGrid';
 import { EquipmentSlots } from './EquipmentSlots';
 import { ItemDesc } from './ItemDesc';
+import { playerIdAtom } from '../../hud/atoms';
 import { useFocusWithDelay } from './useFocus';
 import '../inventory.css';
 
 interface Props {
-  player: PlayerView | null;
   onClose: () => void;
 }
 
-export function InventoryPanel({ player, onClose }: Props) {
+export function InventoryPanel({ onClose }: Props) {
+  const playerId = useAtomValue(playerIdAtom);
   const { focused, focus } = useFocusWithDelay();
 
   function handleOverlayClick(e: React.MouseEvent) {
@@ -27,13 +28,13 @@ export function InventoryPanel({ player, onClose }: Props) {
           <button className="inv-close" onClick={onClose}>✕</button>
         </div>
 
-        {player ? (
+        {playerId ? (
           <div className="inv-body">
             <div className="inv-left">
-              <EquipmentSlots player={player} focused={focused} onFocus={focus} />
+              <EquipmentSlots focused={focused} onFocus={focus} />
             </div>
             <div className="inv-right">
-              <BackpackGrid player={player} focused={focused} onFocus={focus} />
+              <BackpackGrid focused={focused} onFocus={focus} />
               <ItemDesc focused={focused} onFocus={focus} />
             </div>
           </div>

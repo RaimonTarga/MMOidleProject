@@ -1,20 +1,26 @@
 import { useMemo, useState } from 'react';
-import type { EssenceType, PlayerView } from '@mmo-idle/shared';
+import { useAtomValue } from 'jotai';
+import type { EssenceType } from '@mmo-idle/shared';
 import { RECIPE_DATABASE, TEST_ROOM_NODE_ID } from '@mmo-idle/shared';
 import { hudBus } from '../../hudBus';
+import {
+  essencesAtom,
+  playerNodeIdAtom,
+  playerTierAtom,
+  unlockedRecipesAtom,
+} from '../../hud/atoms';
 import { SLOT_ABBR, SLOT_LABELS, biomeName, getStatEntries } from './common';
 import { CostDisplay, EssenceSummary } from './shared';
 
-interface ForgeTabProps {
-  player: PlayerView;
-  essences: Record<EssenceType, number>;
-}
-
-export function ForgeTab({ player, essences }: ForgeTabProps) {
+export function ForgeTab() {
   const [filterBiome, setFilterBiome] = useState<string | null>(null);
   const [filterSlot,  setFilterSlot]  = useState<string | null>(null);
+  const nodeId = useAtomValue(playerNodeIdAtom);
+  const playerTier = useAtomValue(playerTierAtom);
+  const unlockedRecipeIds = useAtomValue(unlockedRecipesAtom);
+  const essences = useAtomValue(essencesAtom);
 
-  const isTestRoom = player.nodeId === TEST_ROOM_NODE_ID;
+  const isTestRoom = nodeId === TEST_ROOM_NODE_ID;
 
   const allRecipes = useMemo(() =>
     Array.from(RECIPE_DATABASE.values()).sort((a, b) =>
@@ -29,10 +35,10 @@ export function ForgeTab({ player, essences }: ForgeTabProps) {
   const unlockedRecipes = useMemo(() =>
     allRecipes.filter(r =>
       isTestRoom
-        ? player.playerTier >= r.tier
-        : player.unlockedRecipes.includes(r.id),
+        ? playerTier >= r.tier
+        : unlockedRecipeIds.includes(r.id),
     ),
-    [allRecipes, player.unlockedRecipes, player.playerTier, isTestRoom],
+    [allRecipes, unlockedRecipeIds, playerTier, isTestRoom],
   );
 
   const biomeGroups = useMemo(() => {

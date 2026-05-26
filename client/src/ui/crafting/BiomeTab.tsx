@@ -1,19 +1,30 @@
 import { useMemo } from 'react';
-import type { PlayerView, Recipe } from '@mmo-idle/shared';
+import { useAtomValue } from 'jotai';
+import type { Recipe } from '@mmo-idle/shared';
 import { RECIPE_DATABASE, NODE_BIOMES, TEST_ROOM_NODE_ID, biomeLevelCap, biomeXpForLevel } from '@mmo-idle/shared';
+import {
+  biomeLevelAtom,
+  biomeXPAtom,
+  playerNodeIdAtom,
+  playerTierAtom,
+  unlockedRecipesAtom,
+} from '../../hud/atoms';
 import { SLOT_LABELS, biomeName } from './common';
 
 interface BiomeSectionProps {
   biomeGroup: string;
-  player: PlayerView;
+  biomeLevel: Record<string, number>;
+  biomeXP: Record<string, number>;
+  playerTier: number;
+  unlockedRecipes: string[];
   recipes: Recipe[];
   isCurrent: boolean;
 }
 
-function BiomeSection({ biomeGroup, player, recipes, isCurrent }: BiomeSectionProps) {
-  const level    = player.biomeLevel[biomeGroup] ?? 0;
-  const xp       = player.biomeXP[biomeGroup] ?? 0;
-  const levelCap = biomeLevelCap(player.playerTier, biomeGroup);
+function BiomeSection({ biomeGroup, biomeLevel, biomeXP, playerTier, unlockedRecipes, recipes, isCurrent }: BiomeSectionProps) {
+  const level    = biomeLevel[biomeGroup] ?? 0;
+  const xp       = biomeXP[biomeGroup] ?? 0;
+  const levelCap = biomeLevelCap(playerTier, biomeGroup);
   const xpThisTier  = biomeXpForLevel(level);
   const xpNextTier  = biomeXpForLevel(level + 1);
   const xpInLevel   = xp - xpThisTier;
@@ -43,8 +54,8 @@ function BiomeSection({ biomeGroup, player, recipes, isCurrent }: BiomeSectionPr
       {recipes.length > 0 && (
         <div className="craft-unlock-path">
           {recipes.map(r => {
-            const unlocked   = player.unlockedRecipes.includes(r.id);
-            const tierLocked = r.tier > player.playerTier;
+            const unlocked   = unlockedRecipes.includes(r.id);
+            const tierLocked = r.tier > playerTier;
             return (
               <div
                 key={r.id}
@@ -72,20 +83,23 @@ function BiomeSection({ biomeGroup, player, recipes, isCurrent }: BiomeSectionPr
   );
 }
 
-interface BiomeTabProps { player: PlayerView; }
-
-export function BiomeTab({ player }: BiomeTabProps) {
-  const isTestRoom = player.nodeId === TEST_ROOM_NODE_ID;
+export function BiomeTab() {
+  const nodeId = useAtomValue(playerNodeIdAtom);
+  const playerTier = useAtomValue(playerTierAtom);
+  const biomeXP = useAtomValue(biomeXPAtom);
+  const biomeLevel = useAtomValue(biomeLevelAtom);
+  const unlockedRecipes = useAtomValue(unlockedRecipesAtom);
+  const isTestRoom = nodeId === TEST_ROOM_NODE_ID;
 
   const currentBiomeGroup = isTestRoom
     ? null
-    : (NODE_BIOMES[player.nodeId]?.biomeGroup ?? null);
+    : (nodeId ? NODE_BIOMES[nodeId]?.biomeGroup : null);
 
   const trackedBiomes = useMemo(() => {
     const groups = new Set<string>(currentBiomeGroup ? [currentBiomeGroup] : []);
-    for (const g of Object.keys(player.biomeXP)) groups.add(g);
+    for (const g of Object.keys(biomeXP)) groups.add(g);
     return Array.from(groups).sort();
-  }, [player.biomeXP, currentBiomeGroup]);
+  }, [biomeXP, currentBiomeGroup]);
 
   const recipesByBiome = useMemo(() => {
     const map = new Map<string, Recipe[]>();
@@ -105,7 +119,7 @@ export function BiomeTab({ player }: BiomeTabProps) {
       <div className="craft-body">
         <div className="craft-biome-section">
           <div className="craft-biome__maxed">
-            {`Test Forge T${player.playerTier} — all T${player.playerTier} recipes available.`}
+            {`Test Forge T${playerTier} — all T${playerTier} recipes available.`}
           </div>
         </div>
       </div>
@@ -120,7 +134,10 @@ export function BiomeTab({ player }: BiomeTabProps) {
       {currentBiomeGroup && (
         <BiomeSection
           biomeGroup={currentBiomeGroup}
-          player={player}
+          biomeLevel={biomeLevel}
+          biomeXP={biomeXP}
+          playerTier={playerTier}
+          unlockedRecipes={unlockedRecipes}
           recipes={recipesByBiome.get(currentBiomeGroup) ?? []}
           isCurrent
         />
@@ -129,7 +146,10 @@ export function BiomeTab({ player }: BiomeTabProps) {
         <BiomeSection
           key={g}
           biomeGroup={g}
-          player={player}
+          biomeLevel={biomeLevel}
+          biomeXP={biomeXP}
+          playerTier={playerTier}
+          unlockedRecipes={unlockedRecipes}
           recipes={recipesByBiome.get(g) ?? []}
           isCurrent={false}
         />

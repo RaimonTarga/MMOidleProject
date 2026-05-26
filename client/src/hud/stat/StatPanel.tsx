@@ -1,15 +1,121 @@
 import { useState } from 'react';
-import type { PlayerView } from '@mmo-idle/shared';
-import type { ConnectionStatus } from '../../hudBus';
+import { useAtomValue } from 'jotai';
 import { BuffBar, CadenceTimeline, DefensePassivesSection, StatRow } from './components';
+import {
+  ammoCountAtom,
+  ammoMaxAtom,
+  attackAtom,
+  attackCooldownAtom,
+  attackRangeAtom,
+  attackTargetIdAtom,
+  cadenceCountAtom,
+  cadenceEmpoweredArmedAtom,
+  cadenceThresholdAtom,
+  combatArchetypeAtom,
+  damageReductionAtom,
+  energyCountAtom,
+  empoweredReadyAtom,
+  equipmentAtom,
+  evasionAtom,
+  evasionCountAtom,
+  executionCooldownPctAtom,
+  executionReadyAtom,
+  flashShiftPctAtom,
+  flashSpeedBonusPctAtom,
+  heatPctAtom,
+  hpAtom,
+  hpRegenAtom,
+  laserOverheatedAtom,
+  maxHpAtom,
+  passivesAtom,
+  platingAtom,
+  playerIdAtom,
+  playerNameAtom,
+  sacredBuffActiveAtom,
+  sacredBuffPctAtom,
+  shieldsAtom,
+  speedAtom,
+  statusAtom,
+  targetChillStacksAtom,
+  targetDotStacksAtom,
+} from '../atoms';
 
-interface Props {
-  player: PlayerView | null;
-  status: ConnectionStatus;
-}
-
-export function StatPanel({ player, status }: Props) {
+export function StatPanel() {
   const [expanded, setExpanded] = useState(false);
+  const playerId = useAtomValue(playerIdAtom);
+  const status = useAtomValue(statusAtom);
+  const name = useAtomValue(playerNameAtom);
+  const hp = useAtomValue(hpAtom);
+  const maxHp = useAtomValue(maxHpAtom);
+  const shields = useAtomValue(shieldsAtom);
+  const attack = useAtomValue(attackAtom);
+  const plating = useAtomValue(platingAtom);
+  const damageReduction = useAtomValue(damageReductionAtom);
+  const attackCooldown = useAtomValue(attackCooldownAtom);
+  const attackRange = useAtomValue(attackRangeAtom);
+  const speed = useAtomValue(speedAtom);
+  const hpRegen = useAtomValue(hpRegenAtom);
+  const combatArchetype = useAtomValue(combatArchetypeAtom);
+  const passives = useAtomValue(passivesAtom);
+  const flashShiftPct = useAtomValue(flashShiftPctAtom);
+  const flashSpeedBonusPct = useAtomValue(flashSpeedBonusPctAtom);
+  const laserOverheated = useAtomValue(laserOverheatedAtom);
+  const heatPct = useAtomValue(heatPctAtom);
+  const ammoMax = useAtomValue(ammoMaxAtom);
+  const ammoCount = useAtomValue(ammoCountAtom);
+  const cadenceThreshold = useAtomValue(cadenceThresholdAtom);
+  const cadenceCount = useAtomValue(cadenceCountAtom);
+  const cadenceEmpoweredArmed = useAtomValue(cadenceEmpoweredArmedAtom);
+  const executionReady = useAtomValue(executionReadyAtom);
+  const executionCooldownPct = useAtomValue(executionCooldownPctAtom);
+  const empoweredReady = useAtomValue(empoweredReadyAtom);
+  const energyCount = useAtomValue(energyCountAtom);
+  const attackTargetId = useAtomValue(attackTargetIdAtom);
+  const targetDotStacks = useAtomValue(targetDotStacksAtom);
+  const targetChillStacks = useAtomValue(targetChillStacksAtom);
+  const equipment = useAtomValue(equipmentAtom);
+  const sacredBuffPct = useAtomValue(sacredBuffPctAtom);
+  const sacredBuffActive = useAtomValue(sacredBuffActiveAtom);
+  const evasion = useAtomValue(evasionAtom);
+  const evasionCount = useAtomValue(evasionCountAtom);
+  const player = playerId
+    ? {
+      name,
+      hp,
+      maxHp,
+      shields,
+      attack,
+      plating,
+      damageReduction,
+      attackCooldown,
+      attackRange,
+      speed,
+      hpRegen,
+      combatArchetype,
+      passives,
+      flashShiftPct,
+      flashSpeedBonusPct,
+      laserOverheated,
+      heatPct,
+      ammoMax,
+      ammoCount,
+      cadenceThreshold,
+      cadenceCount,
+      cadenceEmpoweredArmed,
+      executionReady,
+      executionCooldownPct,
+      empoweredReady,
+      energyCount,
+      attackTargetId,
+      targetDotStacks,
+      targetChillStacks,
+      equipment,
+      sacredBuffPct,
+      sacredBuffActive,
+      evasion,
+      evasionCount,
+    }
+    : null;
 
   const hpPct       = player && player.maxHp > 0 ? (player.hp / player.maxHp) * 100 : 0;
   const hpBarColor  = hpPct > 50 ? '#44ee44' : hpPct > 25 ? '#eeaa22' : '#ee3322';

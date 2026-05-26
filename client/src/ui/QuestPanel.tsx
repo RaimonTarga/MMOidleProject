@@ -1,8 +1,13 @@
-import type { PlayerView } from '@mmo-idle/shared';
+import { useAtomValue } from 'jotai';
 import { QUEST_DATABASE, NODE_BIOMES } from '@mmo-idle/shared';
+import {
+  playerIdAtom,
+  playerNodeIdAtom,
+  playerTierAtom,
+  questProgressAtom,
+} from '../hud/atoms';
 
 interface Props {
-  player: PlayerView | null;
   onFindDungeon?: (nodeIds: string[]) => void;
 }
 
@@ -29,8 +34,13 @@ function findDungeonsForTier(playerNodeId: string, tier: number): string[] {
   return results.map(r => r.nodeId);
 }
 
-export function QuestPanel({ player, onFindDungeon }: Props) {
-  if (!player) {
+export function QuestPanel({ onFindDungeon }: Props) {
+  const playerId = useAtomValue(playerIdAtom);
+  const nodeId = useAtomValue(playerNodeIdAtom);
+  const playerTier = useAtomValue(playerTierAtom);
+  const questProgress = useAtomValue(questProgressAtom);
+
+  if (!playerId || !nodeId) {
     return (
       <div className="sidebar-panel quest-panel">
         <div className="panel-title">Tier Quest</div>
@@ -41,18 +51,18 @@ export function QuestPanel({ player, onFindDungeon }: Props) {
 
   let activeQuest = null;
   for (const [, quest] of QUEST_DATABASE) {
-    if (quest.tierRequired === player.playerTier) {
+    if (quest.tierRequired === playerTier) {
       activeQuest = quest;
       break;
     }
   }
 
-  const progress = activeQuest ? (player.questProgress[activeQuest.id] ?? 0) : 0;
+  const progress = activeQuest ? (questProgress[activeQuest.id] ?? 0) : 0;
   const required = activeQuest?.killsRequired ?? 1;
   const pct = Math.min(100, (progress / required) * 100);
 
   const dungeons = (activeQuest && onFindDungeon)
-    ? findDungeonsForTier(player.nodeId, player.playerTier)
+    ? findDungeonsForTier(nodeId, playerTier)
     : [];
 
   function handleClick() {
@@ -68,7 +78,7 @@ export function QuestPanel({ player, onFindDungeon }: Props) {
 
       <div className="quest-tier-row">
         <span className="stat-label">Tier</span>
-        <span className="stat-value quest-tier-badge">{player.playerTier}</span>
+        <span className="stat-value quest-tier-badge">{playerTier}</span>
       </div>
 
       {activeQuest ? (

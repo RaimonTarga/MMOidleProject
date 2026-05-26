@@ -1,22 +1,23 @@
-import type { PlayerView } from '@mmo-idle/shared';
+import { useAtomValue } from 'jotai';
 import { EQUIPMENT_SLOTS, ITEM_DATABASE } from '@mmo-idle/shared';
 import { hudBus } from '../../hudBus';
+import { equipmentAtom } from '../../hud/atoms';
 import { SLOT_LABELS, tierColor } from './constants';
 import type { FocusedItem } from './useFocus';
 
 interface Props {
-  player: PlayerView;
   focused: FocusedItem | null;
   onFocus: (item: FocusedItem | null) => void;
 }
 
-export function EquipmentSlots({ player, focused, onFocus }: Props) {
+export function EquipmentSlots({ focused, onFocus }: Props) {
+  const equipment = useAtomValue(equipmentAtom);
   return (
     <div className="inv-equip">
       <div className="inv-section-label">Equipped</div>
       <div className="inv-equip-grid">
         {EQUIPMENT_SLOTS.map(slot => {
-          const defId = player.equipment[slot];
+          const defId = equipment[slot];
           const def   = defId ? ITEM_DATABASE.get(defId) : null;
           const filled    = def != null;
           const isFocused = focused?.source === 'equipped' && focused.equipSlot === slot;

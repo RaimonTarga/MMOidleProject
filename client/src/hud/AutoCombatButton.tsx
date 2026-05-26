@@ -1,15 +1,12 @@
-import { useState, useEffect } from "react";
+import { useAtomValue } from "jotai";
 import { hudBus } from "../hudBus";
-import type { HudState } from "../hudBus";
+import { autoAtom, playerIdAtom } from "./atoms";
 import "./hud.css";
 
 export function AutoCombatButton() {
-  const [hud, setHud] = useState<HudState>({ status: "connecting", player: null });
-
-  useEffect(() => hudBus.subscribe(setHud), []);
-
-  const player = hud.player;
-  if (!player) return null;
+  const playerId = useAtomValue(playerIdAtom);
+  const auto = useAtomValue(autoAtom);
+  if (!playerId) return null;
 
   return (
     <div
@@ -23,12 +20,18 @@ export function AutoCombatButton() {
       }}
     >
       <button
-        className={`auto-btn${player.auto ? " active" : ""}`}
-        style={{ width: "auto", padding: "12px 36px", fontSize: 14, letterSpacing: "1.5px", marginTop: 0 }}
+        className={`auto-btn${auto ? " active" : ""}`}
+        style={{
+          width: "auto",
+          padding: "12px 36px",
+          fontSize: 14,
+          letterSpacing: "1.5px",
+          marginTop: 0,
+        }}
         onClick={() => hudBus.requestAutoToggle()}
         title="Toggle server-side auto combat"
       >
-        AUTO COMBAT: {player.auto ? "ON" : "OFF"}
+        AUTO COMBAT: {auto ? "ON" : "OFF"}
       </button>
     </div>
   );

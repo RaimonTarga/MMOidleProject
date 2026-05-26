@@ -1,16 +1,47 @@
 import { useState, useEffect } from 'react';
+import { useAtomValue } from 'jotai';
 import { hudBus } from '../hudBus';
-import type { HudState } from '../hudBus';
 import { SkillTreePanel } from '../ui/SkillTreePanel';
 import { InventoryPanel } from '../ui/InventoryPanel';
 import { CraftingPanel } from '../ui/CraftingPanel';
 import { MapPanel } from '../ui/MapPanel';
 import { QuestPanel } from '../ui/QuestPanel';
 import { NODE_BIOMES, BIOME_DATABASE } from '@mmo-idle/shared';
+import {
+  autoAtom,
+  hpAtom,
+  maxHpAtom,
+  playerNameAtom,
+  playerNodeIdAtom,
+  shieldsAtom,
+  skillPointsAtom,
+  statusAtom,
+} from './atoms';
 import './hud.css';
 
 export function MobileHUD() {
-  const [hud, setHud]             = useState<HudState>({ status: 'connecting', player: null });
+  const isMobile = useIsMobile();
+  if (!isMobile) return null;
+  return <MobileHUDContent />;
+}
+
+function useIsMobile(): boolean {
+  const [isMobile, setIsMobile] = useState(() =>
+    typeof window !== 'undefined' &&
+    window.matchMedia('(max-width: 1100px)').matches,
+  );
+
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 1100px)');
+    const handler = (event: MediaQueryListEvent) => setIsMobile(event.matches);
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
+  }, []);
+
+  return isMobile;
+}
+
+function MobileHUDContent() {
   const [treeOpen, setTreeOpen]   = useState(false);
   const [invOpen, setInvOpen]     = useState(false);
   const [craftTab, setCraftTab]   = useState<'biome' | 'forge' | null>(null);
@@ -18,20 +49,25 @@ export function MobileHUD() {
   const [questOpen, setQuestOpen] = useState(false);
   const [menuOpen, setMenuOpen]   = useState(false);
 
-  useEffect(() => hudBus.subscribe(setHud), []);
+  const status = useAtomValue(statusAtom);
+  const playerName = useAtomValue(playerNameAtom);
+  const hp = useAtomValue(hpAtom);
+  const maxHp = useAtomValue(maxHpAtom);
+  const shields = useAtomValue(shieldsAtom);
+  const auto = useAtomValue(autoAtom);
+  const skillPoints = useAtomValue(skillPointsAtom);
+  const nodeId = useAtomValue(playerNodeIdAtom);
 
-  const { player, status } = hud;
-
-  const hpPct       = player && player.maxHp > 0 ? (player.hp / player.maxHp) * 100 : 0;
+  const hpPct       = maxHp > 0 ? (hp / maxHp) * 100 : 0;
   const hpBarColor  = hpPct > 50 ? '#44ee44' : hpPct > 25 ? '#eeaa22' : '#ee3322';
-  const totalShield = player?.shields.reduce((s, sh) => s + sh.amount, 0) ?? 0;
-  const shieldPct   = player && player.maxHp > 0
-    ? Math.min(100 - hpPct, (totalShield / player.maxHp) * 100)
+  const totalShield = shields.reduce((s, sh) => s + sh.amount, 0);
+  const shieldPct   = maxHp > 0
+    ? Math.min(100 - hpPct, (totalShield / maxHp) * 100)
     : 0;
 
   const zoneLabel = (() => {
-    if (!player) return null;
-    const info  = NODE_BIOMES[player.nodeId];
+    if (!nodeId) return null;
+    const info  = NODE_BIOMES[nodeId];
     if (!info)  return null;
     const biome = BIOME_DATABASE.get(info.biomeGroup);
     return `${biome?.name ?? info.biomeGroup} T${info.biomeTier}`;
@@ -47,7 +83,7 @@ export function MobileHUD() {
       {/* ── Top bar ─────────────────────────────────────────────────────── */}
       <div className="mob-topbar">
         <span className={`status-dot ${status}`} />
-        <span className="mob-topbar__name">{player?.name ?? '…'}</span>
+        <span className="mob-topbar__name">{playerName ?? '…'}</span>
         <div className="mob-topbar__hpblock">
           <div className="hp-bar-track" style={{ margin: 0, height: 6 }}>
             <div className="hp-bar-fill" style={{ width: `${hpPct}%`, background: hpBarColor }} />
@@ -56,7 +92,7 @@ export function MobileHUD() {
             )}
           </div>
           <span className="mob-topbar__hptext">
-            {player ? `${Math.ceil(player.hp)}/${player.maxHp}` : '—'}
+            {nodeId ? `${Math.ceil(hp)}/${maxHp}` : '—'}
           </span>
         </div>
         {zoneLabel && <span className="mob-topbar__zone">{zoneLabel}</span>}
@@ -65,11 +101,11 @@ export function MobileHUD() {
       {/* ── AUTO combat button ──────────────────────────────────────────── */}
       <div className="mob-bottombar">
         <button
-          className={`mob-auto-btn${player?.auto ? ' active' : ''}`}
+          className={`mob-auto-btn${auto ? ' active' : ''}`}
           onClick={() => hudBus.requestAutoToggle()}
         >
           <span className="mob-auto-btn__label">AUTO COMBAT</span>
-          <span className="mob-auto-btn__state">{player?.auto ? '● ACTIVE' : '○ OFF'}</span>
+          <span className="mob-auto-btn__state">{auto ? '● ACTIVE' : '○ OFF'}</span>
         </button>
       </div>
 
@@ -82,7 +118,7 @@ export function MobileHUD() {
           {menuOpen ? '✕' : '☰'}
         </button>
         <div className="mob-drawer-menu">
-          <DrawerBtn label="SKILL TREE" active={treeOpen} highlight={!treeOpen && (player?.skillPoints ?? 0) > 0} onClick={() => openPanel(setTreeOpen, treeOpen)} />
+          <DrawerBtn label="SKILL TREE" active={treeOpen} highlight={!treeOpen && skillPoints > 0} onClick={() => openPanel(setTreeOpen, treeOpen)} />
           <DrawerBtn label="INVENTORY"  active={invOpen}   onClick={() => openPanel(setInvOpen, invOpen)} />
           <DrawerBtn label="CRAFTING"   active={craftTab !== null} onClick={() => { setCraftTab(t => t ? null : 'forge'); setMenuOpen(false); }} />
           <DrawerBtn label="MAP"        active={mapOpen}   onClick={() => openPanel(setMapOpen, mapOpen)} />
@@ -91,10 +127,10 @@ export function MobileHUD() {
       </div>
 
       {/* ── Panel overlays ──────────────────────────────────────────────── */}
-      {treeOpen  && <SkillTreePanel player={player} onClose={() => setTreeOpen(false)} />}
-      {invOpen   && <InventoryPanel player={player} onClose={() => setInvOpen(false)} />}
-      {craftTab !== null && <CraftingPanel player={player} tab={craftTab} onTabChange={setCraftTab} onClose={() => setCraftTab(null)} />}
-      {mapOpen   && <MapPanel       player={player} onClose={() => setMapOpen(false)} />}
+      {treeOpen  && <SkillTreePanel onClose={() => setTreeOpen(false)} />}
+      {invOpen   && <InventoryPanel onClose={() => setInvOpen(false)} />}
+      {craftTab !== null && <CraftingPanel tab={craftTab} onTabChange={setCraftTab} onClose={() => setCraftTab(null)} />}
+      {mapOpen   && <MapPanel       onClose={() => setMapOpen(false)} />}
       {questOpen && (
         <div className="mob-panel-overlay">
           <div className="mob-panel-overlay__inner">
@@ -104,7 +140,7 @@ export function MobileHUD() {
             >
               ✕ CLOSE
             </button>
-            <QuestPanel player={player} />
+            <QuestPanel />
           </div>
         </div>
       )}
