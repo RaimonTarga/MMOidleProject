@@ -15,8 +15,26 @@ export const PLAYER_FRAMES: Record<string, string> = {
   'energy':   'energy.png',
   'reload':   'reload.png',
 
-  // Add variant-specific entries here when you bake variant sprites, e.g.:
-  // 'cadence-heavy': 'cadence_heavy.png',
+  // T1 variant sprites (cadence-balanced falls back to 'cadence.png' — no medium_cadence exists)
+  'cadence-light':    'light_cadence.png',
+  'cadence-balanced': 'medium_cadence.png',
+  'cadence-heavy':    'heavy_cadence.png',
+
+  'cooldown-light':    'light_cooldown.png',
+  'cooldown-balanced': 'medium_cooldown.png',
+  'cooldown-heavy':    'heavy_cooldown.png',
+
+  'dot-light':    'light_dot.png',
+  'dot-balanced': 'medium_dot.png',
+  'dot-heavy':    'heavy_dot.png',
+
+  'energy-light':    'light_energy.png',
+  'energy-balanced': 'medium_energy.png',
+  'energy-heavy':    'heavy_energy.png',
+
+  'reload-light':    'light_reload.png',
+  'reload-balanced': 'medium_reload.png',
+  'reload-heavy':    'heavy_reload.png',
 };
 
 // ── Monster frames ────────────────────────────────────────────────────────────
@@ -44,7 +62,13 @@ export const MONSTER_FRAMES: Record<string, string> = {
 
   // T1 — cave
   'cave-lurker':  'crawler.png',
-  // 'cave-brute': no sprite yet — renders as rectangle
+  'cave-brute':   'brute.png',
+
+  // T1 dungeon bosses
+  'forest-warden':    'boss_forest.png',
+  'mountain-sentinel': 'boss_mountain.png',
+  'bog-sovereign':    'boss_swamp.png',
+  'cave-sentinel':    'boss_cave.png',
 
   // Add entries here as you bake T2+ sprites, e.g.:
   // 'ancient-wolf': 'ancient_wolf.png',
@@ -146,4 +170,10 @@ export const BIOME_TEXTURES: Record<string, string> = {
   'plains':   'biome_plains',
   'swamp':    'biome_swamp',
   'cave':     'biome_cave',
+  'jungle':   'biome_jungle',
+  'tundra':   'biome_tundra',
+  'desert':   'biome_desert',
+  'volcanic': 'biome_volcano',
+  'necropolis': 'biome_necropolis',
+  'abyss':    'biome_abyss',
 };

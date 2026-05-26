@@ -77,6 +77,7 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): void {
   }
 
   // 2. Apply unlocked skill effects
+  let attackSpeedPct = 0;
   p.usesSkills.passives = {};
   for (const skillId of p.usesSkills.unlockedSkills) {
     const node = SKILL_TREE.get(skillId);
@@ -87,12 +88,15 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): void {
     p.mitigatesDamage.damageReduction += e.damageReduction ?? 0;
     p.evadesHits.threshold        += e.evasion         ?? 0;
     p.performsAttack.attackRange  += e.attackRange     ?? 0;
-    p.performsAttack.attackCooldown += e.attackCooldown ?? 0;
+    attackSpeedPct                 += e.attackSpeedPct  ?? 0;
     p.hasHealth.maxHp             += e.maxHp           ?? 0;
     p.hasHealth.hpRegen           = (p.hasHealth.hpRegen ?? 0) + (e.hpRegen ?? 0);
     p.hasPosition.speed           += e.speed           ?? 0;
     mergePassives(p.usesSkills.passives, node.mechanicEffects);
   }
+  p.performsAttack.attackCooldown = Math.round(
+    p.performsAttack.attackCooldown / Math.max(0.1, 1 + attackSpeedPct),
+  );
   p.performsAttack.attackCooldown = Math.max(200, p.performsAttack.attackCooldown);
   p.mitigatesDamage.damageReduction = Math.min(0.9, Math.max(0, p.mitigatesDamage.damageReduction));
 

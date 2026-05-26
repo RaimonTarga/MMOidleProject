@@ -1,9 +1,38 @@
-import type { PlayerBuff, BuffId } from '@mmo-idle/shared';
+import { getStatusEffect, type PlayerBuff, type BuffId } from '@mmo-idle/shared';
 import type { World } from '../../../world/World';
 import { collectMechanicBuffs } from '../../classes/registry';
 import { DEFENSE_BUFFS } from '../../defense';
 import { WEAPON_BUFFS } from '../damage/weaponEffects';
-import type { BuffDescriptor } from './descriptor';
+import { defineBuff, type BuffDescriptor } from './descriptor';
+
+const DEBUFF_BUFFS = [
+  defineBuff('debuff-slow', ({ playerCs }) => {
+    if (!playerCs) return null;
+    const slow = getStatusEffect(playerCs, 'slow');
+    if (!slow || (slow.data['speedMult'] ?? 1) <= 0) return null;
+    const totalMs = slow.data['totalMs'] ?? slow.remainingMs;
+    return {
+      id: 'debuff-slow',
+      label: 'SLOW',
+      stacks: slow.stacks,
+      durationPct: totalMs > 0 && slow.remainingMs > 0 ? (slow.remainingMs / totalMs) * 100 : -1,
+      color: '#55aaff',
+    };
+  }, { category: 'neutral', shape: 'diamond', color: '#55aaff', label: 'SLOW' }),
+  defineBuff('debuff-root', ({ playerCs }) => {
+    if (!playerCs) return null;
+    const slow = getStatusEffect(playerCs, 'slow');
+    if (!slow || (slow.data['speedMult'] ?? 1) > 0) return null;
+    const totalMs = slow.data['totalMs'] ?? slow.remainingMs;
+    return {
+      id: 'debuff-root',
+      label: 'ROOT',
+      stacks: slow.stacks,
+      durationPct: totalMs > 0 && slow.remainingMs > 0 ? (slow.remainingMs / totalMs) * 100 : -1,
+      color: '#aa66ff',
+    };
+  }, { category: 'neutral', shape: 'diamond', color: '#aa66ff', label: 'ROOT' }),
+] as const satisfies readonly BuffDescriptor[];
 
 /** Compile-time guard: shared BUFF_IDS must match server descriptor ids. */
 type AssertEqual<A, B> =
@@ -20,6 +49,7 @@ export const ALL_BUFFS = [
   ...collectMechanicBuffs(),
   ...WEAPON_BUFFS,
   ...DEFENSE_BUFFS,
+  ...DEBUFF_BUFFS,
 ] as const satisfies readonly BuffDescriptor[];
 
 export type ServerBuffId = typeof ALL_BUFFS[number]['id'];

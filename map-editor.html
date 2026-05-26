@@ -10,7 +10,7 @@
       background: #06040f;
       color: #ccccee;
       font-family: 'Courier New', monospace;
-      font-size: 12px;
+      font-size: 13px;
       height: 100vh;
       display: flex;
       flex-direction: column;
@@ -27,29 +27,90 @@
       border-bottom: 1px solid rgba(80,65,170,0.22);
       flex-shrink: 0;
     }
-    #toolbar h1 { font-size: 13px; color: #9988cc; letter-spacing: 0.1em; text-transform: uppercase; flex: 1; }
+    #toolbar h1 { font-size: 14px; color: #aa99dd; letter-spacing: 0.1em; text-transform: uppercase; flex: 1; }
 
     button {
       background: rgba(32,26,68,0.9);
       border: 1px solid rgba(100,85,190,0.3);
-      color: #aaaacc;
+      color: #bbbbdd;
       font-family: monospace;
-      font-size: 12px;
+      font-size: 13px;
       padding: 5px 13px;
       cursor: pointer;
       border-radius: 4px;
       transition: all 0.15s;
     }
-    button:hover:not(:disabled) { border-color: rgba(130,110,220,0.65); color: #ccaaff; background: rgba(50,40,100,0.85); }
+    button:hover:not(:disabled) { border-color: rgba(130,110,220,0.65); color: #ddbbff; background: rgba(50,40,100,0.85); }
     button:disabled { opacity: 0.28; cursor: default; }
     #save-btn { border-color: rgba(55,130,75,0.35); color: #88aa88; }
     #save-btn:not(:disabled):hover { border-color: rgba(60,200,100,0.7); color: #44ff88; }
     #save-btn.dirty { border-color: rgba(60,200,100,0.55); color: #55ee88; }
 
-    #status { color: #444466; font-size: 11px; margin-left: 6px; min-width: 160px; }
-    #status.ok  { color: #44bb66; }
-    #status.err { color: #ff5555; }
+    #view-btn { border-color: rgba(80,130,200,0.45); color: #88aadd; }
+    #view-btn:hover { border-color: rgba(100,160,255,0.7); color: #aaccff; }
+    #view-btn.tier-mode { border-color: rgba(200,140,40,0.6); color: #ddbb55; background: rgba(50,35,5,0.7); }
+
+    #status { color: #5f5f88; font-size: 12px; margin-left: 6px; min-width: 180px; }
+    #status.ok   { color: #55cc77; }
+    #status.err  { color: #ff6666; }
     #status.warn { color: #ddaa44; }
+
+    /* ── Brush bar ──────────────────────────────────────────────────────────── */
+    #brush-bar {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 14px;
+      background: #07051a;
+      border-bottom: 1px solid rgba(80,65,170,0.14);
+      flex-shrink: 0;
+      flex-wrap: wrap;
+    }
+    .brush-label {
+      font-size: 11px;
+      color: #5555aa;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-right: 2px;
+    }
+    .brush-sep { width: 1px; height: 18px; background: rgba(80,65,170,0.2); margin: 0 4px; }
+
+    .brush-btn {
+      background: rgba(22,18,50,0.9);
+      border: 1px solid rgba(80,65,170,0.28);
+      color: #7777aa;
+      font-family: monospace;
+      font-size: 12px;
+      padding: 3px 10px;
+      cursor: pointer;
+      border-radius: 3px;
+      transition: all 0.12s;
+    }
+    .brush-btn:hover { border-color: rgba(120,100,200,0.55); color: #aaaacc; }
+    .brush-btn.b-active { border-color: rgba(80,170,255,0.65); color: #99ddff; background: rgba(15,35,75,0.8); }
+
+    .brush-tier-btn { padding: 3px 8px; }
+    .brush-tier-btn.b-active { border-color: rgba(120,220,90,0.7); color: #88ee55; background: rgba(15,45,10,0.8); }
+
+    .brush-dung-on.b-active  { border-color: rgba(220,60,60,0.7);  color: #ff7777; background: rgba(55,8,8,0.8); }
+    .brush-dung-off.b-active { border-color: rgba(90,90,180,0.6);  color: #aaaaee; background: rgba(20,20,55,0.8); }
+
+    #brush-biome-sel {
+      background: rgba(18,14,42,0.95);
+      border: 1px solid rgba(80,65,170,0.3);
+      color: #ccccee;
+      font-family: monospace;
+      font-size: 11px;
+      padding: 3px 6px;
+      border-radius: 3px;
+      outline: none;
+      display: none;
+    }
+    #brush-tier-btns  { display: none; gap: 3px; align-items: center; }
+    #brush-dung-btns  { display: none; gap: 3px; align-items: center; }
+
+    /* crosshair when a paint brush is active */
+    body.brush-painting #grid .cell { cursor: crosshair; }
 
     /* ── Main layout ────────────────────────────────────────────────────────── */
     #main {
@@ -77,27 +138,17 @@
     }
     .corner { width: 20px; height: 20px; }
 
-    #col-labels {
-      display: flex;
-      gap: 2px;
-    }
-    #row-labels {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
+    #col-labels { display: flex; gap: 2px; }
+    #row-labels { display: flex; flex-direction: column; gap: 2px; }
     .axis-label {
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 9px;
-      color: #333355;
+      font-size: 10px;
+      color: #4a4a77;
     }
 
-    #grid {
-      display: grid;
-      gap: 2px;
-    }
+    #grid { display: grid; gap: 2px; }
 
     .cell {
       border-radius: 4px;
@@ -118,14 +169,15 @@
     .cell--dungeon:not(.cell--selected) { filter: brightness(0.7) saturate(0.8); border-color: rgba(200,55,55,0.65); }
     .cell--center    { border-color: rgba(80,80,200,0.5); }
 
-    .cell__tier  { font-size: 8px;  color: rgba(255,255,255,0.42); line-height: 1; }
-    .cell__biome { font-size: 9px;  color: rgba(255,255,255,0.82); text-align: center; line-height: 1.15; }
+    .cell__tier  { font-size: 10px; font-weight: 500; color: rgba(255,255,255,0.70); line-height: 1; }
+    .cell__biome { font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.97); text-align: center; line-height: 1.2; text-shadow: 0 1px 4px rgba(0,0,0,0.85); }
     .cell__dmark {
       position: absolute;
       top: 3px; right: 3px;
-      width: 5px; height: 5px;
+      width: 6px; height: 6px;
       border-radius: 50%;
-      background: rgba(255,75,75,0.9);
+      background: rgba(255,80,80,0.95);
+      box-shadow: 0 0 4px rgba(255,60,60,0.6);
     }
 
     /* ── Legend ─────────────────────────────────────────────────────────────── */
@@ -135,8 +187,8 @@
       gap: 8px;
       padding: 6px 2px 0;
     }
-    .legend-item { display: flex; align-items: center; gap: 4px; font-size: 9px; color: #444466; }
-    .legend-swatch { width: 10px; height: 10px; border-radius: 2px; border: 1px solid rgba(255,255,255,0.08); flex-shrink: 0; }
+    .legend-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: #7777aa; }
+    .legend-swatch { width: 12px; height: 12px; border-radius: 2px; border: 1px solid rgba(255,255,255,0.12); flex-shrink: 0; }
 
     /* ── Right panel ────────────────────────────────────────────────────────── */
     #panel {
@@ -151,21 +203,21 @@
       gap: 14px;
     }
 
-    .panel-empty { color: #2a2a44; font-style: italic; font-size: 11px; text-align: center; margin: auto; }
+    .panel-empty { color: #5555aa; font-style: italic; font-size: 13px; text-align: center; margin: auto; }
 
     .panel-section-title {
-      font-size: 10px;
+      font-size: 11px;
       text-transform: uppercase;
       letter-spacing: 0.1em;
-      color: #444466;
-      border-bottom: 1px solid #16162a;
+      color: #6688aa;
+      border-bottom: 1px solid #1e1e38;
       padding-bottom: 6px;
     }
 
-    .panel-node-id { font-size: 13px; color: #9988cc; font-weight: bold; letter-spacing: 0.04em; }
+    .panel-node-id { font-size: 15px; color: #aa99ee; font-weight: bold; letter-spacing: 0.04em; }
 
     .field { display: flex; flex-direction: column; gap: 5px; }
-    .field label { font-size: 10px; color: #555577; text-transform: uppercase; letter-spacing: 0.08em; }
+    .field label { font-size: 11px; color: #7799bb; text-transform: uppercase; letter-spacing: 0.08em; }
 
     select, input[type="number"] {
       background: rgba(18,14,42,0.95);
@@ -180,6 +232,7 @@
       transition: border-color 0.15s;
     }
     select:focus, input:focus { border-color: rgba(120,100,220,0.6); }
+    input[type="number"].tier-warn { border-color: rgba(220,130,30,0.75) !important; color: #ddaa44; }
 
     .check-row {
       display: flex;
@@ -189,14 +242,28 @@
       padding: 2px 0;
     }
     .check-row input[type="checkbox"] { width: 14px; height: 14px; accent-color: #dd4444; cursor: pointer; }
-    .check-row span { font-size: 12px; color: #ccccee; }
+    .check-row span { font-size: 13px; color: #ddddff; }
 
     .boss-hint {
-      font-size: 10px;
-      color: rgba(255,115,85,0.8);
+      font-size: 11px;
+      color: rgba(255,130,100,0.95);
       font-style: italic;
       background: rgba(100,20,20,0.18);
       border: 1px solid rgba(160,40,40,0.25);
+      border-radius: 3px;
+      padding: 4px 8px;
+      line-height: 1.4;
+    }
+    .boss-hint--none {
+      color: rgba(200,130,60,0.85);
+      background: rgba(80,50,10,0.15);
+      border-color: rgba(140,90,20,0.25);
+    }
+    .tier-warn-msg {
+      font-size: 11px;
+      color: #ddaa44;
+      background: rgba(80,55,10,0.25);
+      border: 1px solid rgba(160,110,20,0.35);
       border-radius: 3px;
       padding: 4px 8px;
     }
@@ -231,10 +298,40 @@
 
 <div id="toolbar">
   <h1>Map Editor</h1>
+  <button id="view-btn" onclick="cycleColorMode()">⬡ Biome view</button>
   <span id="fallback-notice">No File System Access API — Save will download a file.</span>
   <button id="open-btn" onclick="openFile()">Open index.ts</button>
   <button id="save-btn" onclick="saveFile()" disabled>Save</button>
   <span id="status">No file loaded</span>
+</div>
+
+<div id="brush-bar">
+  <span class="brush-label">Brush</span>
+
+  <button class="brush-btn b-active" id="bmode-select"  onclick="setBrushMode('select')">✦ Select</button>
+
+  <div class="brush-sep"></div>
+
+  <button class="brush-btn" id="bmode-biome" onclick="setBrushMode('biome')">Biome</button>
+  <select id="brush-biome-sel"></select>
+
+  <div class="brush-sep"></div>
+
+  <button class="brush-btn" id="bmode-tier" onclick="setBrushMode('tier')">Tier</button>
+  <div id="brush-tier-btns">
+    <button class="brush-btn brush-tier-btn b-active" data-tier="1" onclick="setBrushTier(1)">T1</button>
+    <button class="brush-btn brush-tier-btn" data-tier="2" onclick="setBrushTier(2)">T2</button>
+    <button class="brush-btn brush-tier-btn" data-tier="3" onclick="setBrushTier(3)">T3</button>
+    <button class="brush-btn brush-tier-btn" data-tier="4" onclick="setBrushTier(4)">T4</button>
+  </div>
+
+  <div class="brush-sep"></div>
+
+  <button class="brush-btn" id="bmode-dungeon" onclick="setBrushMode('dungeon')">Dungeon</button>
+  <div id="brush-dung-btns">
+    <button class="brush-btn brush-dung-on  b-active" onclick="setBrushDungeon(true)">On</button>
+    <button class="brush-btn brush-dung-off"           onclick="setBrushDungeon(false)">Off</button>
+  </div>
 </div>
 
 <div id="main">
@@ -256,11 +353,11 @@
 <script>
 // ── Config ─────────────────────────────────────────────────────────────────────
 
-const GRID_ROWS   = 11;
-const GRID_COLS   = 11;
-const CENTER_ROW  = 5;
-const CENTER_COL  = 5;
-const CELL_PX     = 50;
+const GRID_ROWS  = 11;
+const GRID_COLS  = 11;
+const CENTER_ROW = 5;
+const CENTER_COL = 5;
+const CELL_PX    = 50;
 
 const BIOMES = [
   'clearing','forest','mountain','plains','swamp',
@@ -268,51 +365,88 @@ const BIOMES = [
 ];
 
 const BIOME_COLORS = {
-  clearing:   '#2e5e2e', forest:     '#1a4018', mountain:   '#3e3e50',
-  plains:     '#4e5e1a', swamp:      '#1a3a0c', cave:       '#1a1a24',
-  jungle:     '#0c3014', tundra:     '#222e48', desert:     '#5a4010',
-  volcanic:   '#4a1010', necropolis: '#1e0e2a', abyss:      '#0a0612',
+  clearing:   '#2e6030', forest:     '#1e4e1c', mountain:   '#464660',
+  plains:     '#566620', swamp:      '#1e441a', cave:       '#22223a',
+  jungle:     '#0e3e1c', tundra:     '#283858', desert:     '#685414',
+  volcanic:   '#601414', necropolis: '#221230', abyss:      '#0c0820',
 };
 
-// Boss names keyed by "biome-tier" so the panel can show which boss lives there
-const DUNGEON_BOSSES = {
-  'forest-1':'Forest Warden',       'forest-2':'Forest Elder',
-  'forest-3':'Elder Forest Warden', 'forest-4':'Elder Treant Lord',
-  'mountain-1':'Mountain Sentinel', 'mountain-2':'Stone Warden',
-  'mountain-3':'Peak Titan',        'mountain-4':'Mountain Titan',
-  'plains-1':'Plains Champion',     'plains-2':'Plains Overlord',
-  'plains-3':'Plains Warlord',      'plains-4':'Stampede Emperor',
-  'swamp-1':'Bog Sovereign',        'swamp-2':'Mire Lord',
-  'swamp-3':'Bog Ancient',          'swamp-4':'Swamp Sovereign',
-  'cave-1':'Cave Sentinel',         'cave-2':'Cave Terror',
-  'cave-3':'Cave Overlord',         'cave-4':'Cave Titan',
-  'jungle-1':'Jungle Guardian',     'jungle-2':'Jungle Colossus',
-  'jungle-3':'Jungle Titan Lord',   'jungle-4':'Jungle Ancient Lord',
-  'tundra-2':'Glacial Colossus',    'tundra-3':'Frost Colossus',
-  'tundra-4':'Glacial Titan',
-  'desert-2':'Desert Pharaoh',      'desert-3':'Sand Emperor',
-  'desert-4':'Desert Eternal',
-  'volcanic-3':'Volcanic Titan',    'volcanic-4':'Inferno Lord',
-  'necropolis-3':'Lich King',       'necropolis-4':'Undying Lord',
-  'abyss-4':'Void Titan',
+// Colors used in tier view mode — one per tier level (0–4).
+const TIER_COLORS = {
+  0: '#1e4e1e',  // T0 — muted green  (clearing safe zone)
+  1: '#0a5810',  // T1 — green        (starter areas)
+  2: '#0c2270',  // T2 — deep blue    (intermediate)
+  3: '#6a4400',  // T3 — amber/orange (advanced)
+  4: '#680808',  // T4 — crimson      (endgame)
 };
 
 // Short labels for the grid tiles
 const BIOME_ABBREV = {
   clearing:'Clear', forest:'Forest', mountain:'Mtn',   plains:'Plains',
-  swamp:'Swamp',    cave:'Cave',      jungle:'Jungle',  tundra:'Tundra',
-  desert:'Desert',  volcanic:'Volc',  necropolis:'Necro', abyss:'Abyss',
+  swamp:'Swamp',    cave:'Cave',     jungle:'Jungle',  tundra:'Tundra',
+  desert:'Desert',  volcanic:'Volc', necropolis:'Necro', abyss:'Abyss',
+};
+
+// Boss pools keyed by biome → tier, matching biomeDatabase.ts exactly.
+// First entry in each array is the primary boss spawned by ensureBoss().
+const BOSS_POOL_BY_TIER = {
+  forest:     { 1: ['forest-warden'],      2: ['forest-elder'],        3: ['elder-forest-warden'], 4: ['elder-treant-lord']   },
+  mountain:   { 1: ['mountain-sentinel'],  2: ['stone-warden'],        3: ['peak-titan'],          4: ['mountain-titan']      },
+  plains:     { 1: ['plains-champion'],    2: ['plains-overlord'],     3: ['plains-warlord'],      4: ['stampede-emperor']    },
+  swamp:      { 1: ['bog-sovereign'],      2: ['mire-lord'],           3: ['bog-ancient'],         4: ['swamp-sovereign']     },
+  cave:       { 1: ['cave-sentinel'],      2: ['cave-terror'],         3: ['cave-overlord'],       4: ['cave-titan']          },
+  jungle:     { 2: ['jungle-colossus'],    3: ['jungle-titan-lord'],   4: ['jungle-ancient-lord']                             },
+  tundra:     { 2: ['glacial-colossus'],   3: ['frost-colossus'],      4: ['glacial-titan']                                   },
+  desert:     { 2: ['desert-pharaoh'],     3: ['sand-emperor'],        4: ['desert-eternal']                                  },
+  volcanic:   { 3: ['volcanic-titan'],     4: ['inferno-lord']                                                                },
+  necropolis: { 3: ['lich-king'],          4: ['undying-lord']                                                                },
+  abyss:      { 4: ['void-titan']                                                                                             },
+};
+
+// Minimum tier each biome may appear at. Biomes not listed default to 1.
+const BIOME_MIN_TIER = {
+  clearing:   0,
+  jungle:     2,
+  desert:     2,
+  tundra:     3,
+  volcanic:   3,
+  abyss:      4,
+  necropolis: 4,
 };
 
 // ── State ──────────────────────────────────────────────────────────────────────
 
-let fileHandle     = null;   // FileSystemFileHandle (Chrome) or null
-let originalContent = '';    // raw text of index.ts
-let mapData        = {};     // { 'node-r-c': { biomeGroup, biomeTier, isDungeon } }
-let selectedId     = null;
-let dirty          = false;
+let fileHandle      = null;
+let originalContent = '';
+let mapData         = {};
+let selectedId      = null;
+let dirty           = false;
+
+// Color view mode
+let colorMode = 'biome';   // 'biome' | 'tier'
+
+// Brush state
+let brushMode    = 'select';   // 'select' | 'biome' | 'tier' | 'dungeon'
+let brushBiome   = 'forest';
+let brushTier    = 1;
+let brushDungeon = true;
+let isPainting   = false;
 
 const hasFileAPI = typeof window.showOpenFilePicker === 'function';
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+
+function bossDisplayName(id) {
+  return id.split('-').map(w => w[0].toUpperCase() + w.slice(1)).join(' ');
+}
+
+function getBossesForCell(biome, tier) {
+  return BOSS_POOL_BY_TIER[biome]?.[tier] ?? null;
+}
+
+function minTierFor(biome) {
+  return BIOME_MIN_TIER[biome] ?? 1;
+}
 
 // ── Boot ───────────────────────────────────────────────────────────────────────
 
@@ -322,6 +456,9 @@ window.addEventListener('load', () => {
     document.getElementById('save-btn').textContent = 'Download';
   }
   buildLegend();
+  buildBrushBiomeSelect();
+
+  document.addEventListener('mouseup', () => { isPainting = false; });
 });
 
 // ── File I/O ───────────────────────────────────────────────────────────────────
@@ -347,8 +484,8 @@ async function openFile() {
     }
 
     originalContent = text;
-    mapData  = parsed;
-    dirty    = false;
+    mapData    = parsed;
+    dirty      = false;
     selectedId = null;
 
     renderGrid();
@@ -389,9 +526,8 @@ async function saveFile() {
       setStatus('Save failed: ' + e.message, 'err');
     }
   } else {
-    // Fallback: download
     const blob = new Blob([newContent], { type: 'text/plain' });
-    const a    = Object.assign(document.createElement('a'), {
+    const a = Object.assign(document.createElement('a'), {
       href: URL.createObjectURL(blob), download: 'index.ts',
     });
     a.click();
@@ -403,7 +539,6 @@ async function saveFile() {
 
 function parseNodeBiomes(src) {
   const result = {};
-  // Each entry may or may not have isDungeon: true
   const re = /'(node-\d+-\d+)':\s*\{\s*biomeGroup:\s*'(\w+)',\s*biomeTier:\s*(\d+)(?:,\s*isDungeon:\s*(true))?\s*\}/g;
   let m;
   while ((m = re.exec(src)) !== null) {
@@ -433,8 +568,8 @@ function serializeNodeBiomes() {
     lastRow = row;
 
     const dungProp = info.isDungeon ? ', isDungeon: true' : '';
-    const bossKey  = `${info.biomeGroup}-${info.biomeTier}`;
-    const comment  = info.isDungeon ? `   // ${DUNGEON_BOSSES[bossKey] ?? '???'}` : '';
+    const bosses   = info.isDungeon ? (getBossesForCell(info.biomeGroup, info.biomeTier) ?? []) : [];
+    const comment  = bosses.length ? `   // ${bosses.map(bossDisplayName).join(', ')}` : '';
     lines += `  '${id}': { biomeGroup: '${info.biomeGroup}', biomeTier: ${info.biomeTier}${dungProp} },${comment}\n`;
   }
 
@@ -442,11 +577,40 @@ function serializeNodeBiomes() {
     `export const NODE_BIOMES: Record<string, { biomeGroup: string; biomeTier: number; isDungeon?: boolean }> = {\n` +
     lines + `};`;
 
-  const replaced = originalContent.replace(
-    /export const NODE_BIOMES[^=]+=\s*\{[\s\S]*?\n\};/,
-    newBlock,
-  );
-  return replaced === originalContent ? originalContent + '\n\n' + newBlock : replaced;
+  // Robust replacement using indexOf — avoids lazy-regex failures on CRLF files.
+  // 1. Locate the declaration by its unique header string.
+  // 2. Locate the assignment opening brace (= {) on that same declaration line.
+  // 3. Find the first bare \n}; (or \r\n};) after the opening brace — that is the
+  //    object's closing delimiter at column 0 (all entries are indented, so this
+  //    is always the correct close and never an inner entry).
+  const HEADER = 'export const NODE_BIOMES';
+  const startIdx = originalContent.indexOf(HEADER);
+  if (startIdx === -1) {
+    setStatus('NODE_BIOMES not found in file — save aborted', 'err');
+    return originalContent;
+  }
+
+  const openBrace = originalContent.indexOf('= {', startIdx);
+  if (openBrace === -1) {
+    setStatus('NODE_BIOMES opening brace not found — save aborted', 'err');
+    return originalContent;
+  }
+
+  // Search for the closing }; handling both LF and CRLF line endings.
+  const closerLF   = originalContent.indexOf('\n};', openBrace);
+  const closerCRLF = originalContent.indexOf('\r\n};', openBrace);
+
+  let endIdx;
+  if (closerCRLF !== -1 && (closerLF === -1 || closerCRLF <= closerLF)) {
+    endIdx = closerCRLF + '\r\n};'.length;
+  } else if (closerLF !== -1) {
+    endIdx = closerLF + '\n};'.length;
+  } else {
+    setStatus('NODE_BIOMES closing brace not found — save aborted', 'err');
+    return originalContent;
+  }
+
+  return originalContent.slice(0, startIdx) + newBlock + originalContent.slice(endIdx);
 }
 
 // ── Grid rendering ─────────────────────────────────────────────────────────────
@@ -457,24 +621,18 @@ function renderGrid() {
   grid.style.gridTemplateRows    = `repeat(${GRID_ROWS}, ${CELL_PX}px)`;
   grid.innerHTML = '';
 
-  // Column labels
   const colLabels = document.getElementById('col-labels');
   colLabels.innerHTML = '';
   for (let c = 0; c < GRID_COLS; c++) {
-    const el = Object.assign(document.createElement('div'), {
-      className: 'axis-label', textContent: c,
-    });
+    const el = Object.assign(document.createElement('div'), { className: 'axis-label', textContent: c });
     el.style.cssText = `width:${CELL_PX}px;height:20px;`;
     colLabels.appendChild(el);
   }
 
-  // Row labels
   const rowLabels = document.getElementById('row-labels');
   rowLabels.innerHTML = '';
   for (let r = 0; r < GRID_ROWS; r++) {
-    const el = Object.assign(document.createElement('div'), {
-      className: 'axis-label', textContent: r,
-    });
+    const el = Object.assign(document.createElement('div'), { className: 'axis-label', textContent: r });
     el.style.cssText = `width:20px;height:${CELL_PX}px;`;
     rowLabels.appendChild(el);
   }
@@ -491,15 +649,17 @@ function buildCell(r, c) {
   const info = mapData[id] ?? { biomeGroup: 'clearing', biomeTier: 0, isDungeon: false };
 
   const cell = document.createElement('div');
-  cell.id        = 'cell-' + id;
-  cell.className = 'cell';
+  cell.id         = 'cell-' + id;
+  cell.className  = 'cell';
   cell.dataset.id = id;
-  cell.style.background = BIOME_COLORS[info.biomeGroup] ?? '#111';
-  cell.style.width  = cell.style.height = CELL_PX + 'px';
+  cell.style.background = colorMode === 'tier'
+    ? (TIER_COLORS[info.biomeTier] ?? '#111')
+    : (BIOME_COLORS[info.biomeGroup] ?? '#111');
+  cell.style.width = cell.style.height = CELL_PX + 'px';
 
-  if (info.isDungeon)                      cell.classList.add('cell--dungeon');
+  if (info.isDungeon)                       cell.classList.add('cell--dungeon');
   if (r === CENTER_ROW && c === CENTER_COL) cell.classList.add('cell--center');
-  if (id === selectedId)                   cell.classList.add('cell--selected');
+  if (id === selectedId)                    cell.classList.add('cell--selected');
 
   if (info.isDungeon) {
     const dot = document.createElement('div');
@@ -507,26 +667,98 @@ function buildCell(r, c) {
     cell.appendChild(dot);
   }
 
-  const tier  = document.createElement('div');
+  const tier = document.createElement('div');
   tier.className   = 'cell__tier';
   tier.textContent = info.biomeTier === 0 ? '★' : `T${info.biomeTier}`;
 
-  const name  = document.createElement('div');
+  const name = document.createElement('div');
   name.className   = 'cell__biome';
   name.textContent = BIOME_ABBREV[info.biomeGroup] ?? info.biomeGroup;
 
   cell.appendChild(tier);
   cell.appendChild(name);
-  cell.addEventListener('click', () => selectCell(id));
+
+  cell.addEventListener('mousedown', e => {
+    if (e.button !== 0) return;
+    e.preventDefault();
+    isPainting = true;
+    if (brushMode === 'select') {
+      selectCell(id);
+    } else {
+      applyBrush(id);
+    }
+  });
+  cell.addEventListener('mouseenter', () => {
+    if (isPainting && brushMode !== 'select') applyBrush(id);
+  });
+
   return cell;
 }
 
 function refreshCell(id) {
-  const old  = document.getElementById('cell-' + id);
+  const old = document.getElementById('cell-' + id);
   if (!old) return;
   const [, rs, cs] = id.split('-');
   const newCell = buildCell(parseInt(rs), parseInt(cs));
   old.replaceWith(newCell);
+}
+
+// ── Brush tools ───────────────────────────────────────────────────────────────
+
+function setBrushMode(mode) {
+  brushMode = mode;
+  ['select','biome','tier','dungeon'].forEach(m => {
+    document.getElementById('bmode-' + m)?.classList.toggle('b-active', m === mode);
+  });
+  document.getElementById('brush-biome-sel').style.display  = mode === 'biome'   ? 'inline-block' : 'none';
+  document.getElementById('brush-tier-btns').style.display  = mode === 'tier'    ? 'flex'         : 'none';
+  document.getElementById('brush-dung-btns').style.display  = mode === 'dungeon' ? 'flex'         : 'none';
+  document.body.classList.toggle('brush-painting', mode !== 'select');
+}
+
+function setBrushTier(t) {
+  brushTier = t;
+  document.querySelectorAll('#brush-tier-btns [data-tier]').forEach(btn => {
+    btn.classList.toggle('b-active', parseInt(btn.dataset.tier) === t);
+  });
+}
+
+function setBrushDungeon(v) {
+  brushDungeon = v;
+  document.querySelector('.brush-dung-on')?.classList.toggle('b-active',  v);
+  document.querySelector('.brush-dung-off')?.classList.toggle('b-active', !v);
+}
+
+function buildBrushBiomeSelect() {
+  const sel = document.getElementById('brush-biome-sel');
+  sel.innerHTML = BIOMES.filter(b => b !== 'clearing').map(b =>
+    `<option value="${b}">${b}</option>`
+  ).join('');
+  sel.value = brushBiome;
+  sel.addEventListener('change', () => { brushBiome = sel.value; });
+}
+
+function applyBrush(id) {
+  if (!mapData[id]) return;
+  const info = { ...mapData[id] };
+
+  if (brushMode === 'biome') {
+    const minT = minTierFor(brushBiome);
+    info.biomeGroup = brushBiome;
+    if (info.biomeTier < minT) info.biomeTier = minT;
+  } else if (brushMode === 'tier') {
+    const minT = minTierFor(info.biomeGroup);
+    if (brushTier < minT) return; // skip — invalid for this biome
+    info.biomeTier = brushTier;
+  } else if (brushMode === 'dungeon') {
+    info.isDungeon = brushDungeon;
+  }
+
+  mapData[id] = info;
+  refreshCell(id);
+  if (id === selectedId) renderPanel(id);
+  dirty = true;
+  updateDirty();
 }
 
 // ── Selection & panel ──────────────────────────────────────────────────────────
@@ -540,9 +772,24 @@ function selectCell(id) {
 
 function renderPanel(id) {
   const info    = mapData[id] ?? { biomeGroup: 'clearing', biomeTier: 0, isDungeon: false };
-  const bossKey = `${info.biomeGroup}-${info.biomeTier}`;
-  const boss    = info.isDungeon ? (DUNGEON_BOSSES[bossKey] ?? 'No boss defined for this biome/tier') : null;
   const panel   = document.getElementById('panel');
+  const minT    = minTierFor(info.biomeGroup);
+  const bosses  = info.isDungeon ? getBossesForCell(info.biomeGroup, info.biomeTier) : null;
+
+  let bossHtml = '';
+  if (info.isDungeon) {
+    if (bosses) {
+      bossHtml = `<div class="boss-hint" id="boss-hint">Boss: ${bosses.map(bossDisplayName).join(', ')}</div>`;
+    } else {
+      bossHtml = `<div class="boss-hint boss-hint--none" id="boss-hint">No boss defined for ${info.biomeGroup} T${info.biomeTier}</div>`;
+    }
+  } else {
+    bossHtml = `<div id="boss-hint"></div>`;
+  }
+
+  const tierWarnHtml = info.biomeTier < minT
+    ? `<div class="tier-warn-msg" id="tier-warn">${info.biomeGroup} requires T${minT}+</div>`
+    : `<div id="tier-warn"></div>`;
 
   panel.innerHTML = `
     <div class="panel-section-title">Edit Node</div>
@@ -556,13 +803,19 @@ function renderPanel(id) {
     <div class="field">
       <label>Biome</label>
       <select id="sel-biome" onchange="onBiomeChange()">
-        ${BIOMES.map(b => `<option value="${b}"${b===info.biomeGroup?' selected':''}>${b}</option>`).join('')}
+        ${BIOMES.map(b => {
+          const mt = minTierFor(b);
+          const label = mt > 1 ? `${b}  (T${mt}+)` : b;
+          return `<option value="${b}"${b===info.biomeGroup?' selected':''}>${label}</option>`;
+        }).join('')}
       </select>
     </div>
 
     <div class="field">
       <label>Tier</label>
-      <input type="number" id="inp-tier" min="0" max="10" value="${info.biomeTier}" oninput="onTierChange()">
+      <input type="number" id="inp-tier" min="0" max="10" value="${info.biomeTier}"
+             class="${info.biomeTier < minT ? 'tier-warn' : ''}" oninput="onTierChange()">
+      ${tierWarnHtml}
     </div>
 
     <div class="field">
@@ -570,7 +823,7 @@ function renderPanel(id) {
         <input type="checkbox" id="chk-dungeon"${info.isDungeon?' checked':''} onchange="onDungeonChange()">
         <span>Dungeon node</span>
       </label>
-      ${boss ? `<div class="boss-hint" id="boss-hint">Boss: ${boss}</div>` : '<div id="boss-hint"></div>'}
+      ${bossHtml}
     </div>
 
     <button id="apply-btn" onclick="applyChanges()">Apply changes</button>
@@ -581,63 +834,145 @@ function showEmptyPanel() {
   document.getElementById('panel').innerHTML = `<div class="panel-empty">Click a cell to edit it.</div>`;
 }
 
+// ── Panel change handlers ─────────────────────────────────────────────────────
+
 function onBiomeChange() {
   const b = document.getElementById('sel-biome').value;
-  if (document.getElementById('biome-preview'))
-    document.getElementById('biome-preview').style.background = BIOME_COLORS[b] ?? '#111';
+  const biomePreview = document.getElementById('biome-preview');
+  if (biomePreview) biomePreview.style.background = BIOME_COLORS[b] ?? '#111';
+
+  // Auto-bump tier if below the new biome's minimum
+  const minT    = minTierFor(b);
+  const tierInp = document.getElementById('inp-tier');
+  if (tierInp && parseInt(tierInp.value) < minT) {
+    tierInp.value = minT;
+  }
+  refreshBossHint();
+  refreshTierWarn();
+}
+
+function onTierChange() {
+  refreshBossHint();
+  refreshTierWarn();
+}
+
+function onDungeonChange() {
   refreshBossHint();
 }
-function onTierChange()   { refreshBossHint(); }
-function onDungeonChange(){ refreshBossHint(); }
 
 function refreshBossHint() {
   const biome = document.getElementById('sel-biome')?.value;
-  const tier  = document.getElementById('inp-tier')?.value;
+  const tier  = parseInt(document.getElementById('inp-tier')?.value || '0', 10);
   const isDun = document.getElementById('chk-dungeon')?.checked;
   const hint  = document.getElementById('boss-hint');
   if (!hint) return;
+
   if (isDun) {
-    const boss = DUNGEON_BOSSES[`${biome}-${tier}`] ?? 'No boss defined for this biome/tier';
-    hint.className = 'boss-hint';
-    hint.textContent = 'Boss: ' + boss;
+    const bosses = getBossesForCell(biome, tier);
+    if (bosses) {
+      hint.className   = 'boss-hint';
+      hint.textContent = 'Boss: ' + bosses.map(bossDisplayName).join(', ');
+    } else {
+      hint.className   = 'boss-hint boss-hint--none';
+      hint.textContent = `No boss defined for ${biome} T${tier}`;
+    }
   } else {
-    hint.className = '';
+    hint.className   = '';
     hint.textContent = '';
+  }
+}
+
+function refreshTierWarn() {
+  const biome = document.getElementById('sel-biome')?.value;
+  const tier  = parseInt(document.getElementById('inp-tier')?.value || '0', 10);
+  const minT  = minTierFor(biome);
+  const warn  = document.getElementById('tier-warn');
+  const inp   = document.getElementById('inp-tier');
+  if (!warn || !inp) return;
+
+  if (tier < minT) {
+    inp.classList.add('tier-warn');
+    warn.className   = 'tier-warn-msg';
+    warn.textContent = `${biome} requires T${minT}+`;
+  } else {
+    inp.classList.remove('tier-warn');
+    warn.className   = '';
+    warn.textContent = '';
   }
 }
 
 function applyChanges() {
   if (!selectedId) return;
-  const biome    = document.getElementById('sel-biome').value;
-  const tier     = Math.max(0, parseInt(document.getElementById('inp-tier').value, 10) || 0);
+  const biome     = document.getElementById('sel-biome').value;
+  let   tier      = Math.max(0, parseInt(document.getElementById('inp-tier').value, 10) || 0);
   const isDungeon = document.getElementById('chk-dungeon').checked;
+
+  const minT = minTierFor(biome);
+  if (tier < minT) {
+    tier = minT;
+    document.getElementById('inp-tier').value = minT;
+    setStatus(`Tier bumped to T${minT} (${biome} minimum)`, 'warn');
+    setTimeout(() => setStatus(`${Object.keys(mapData).length} nodes`), 2500);
+  }
 
   mapData[selectedId] = { biomeGroup: biome, biomeTier: tier, isDungeon };
   refreshCell(selectedId);
   document.getElementById('cell-' + selectedId)?.classList.add('cell--selected');
-  renderPanel(selectedId); // re-render to show updated boss hint
+  renderPanel(selectedId);
 
   dirty = true;
   updateDirty();
+}
+
+// ── Color view ────────────────────────────────────────────────────────────────
+
+function cycleColorMode() {
+  colorMode = colorMode === 'biome' ? 'tier' : 'biome';
+  const btn = document.getElementById('view-btn');
+  btn.textContent = colorMode === 'biome' ? '⬡ Biome view' : '◈ Tier view';
+  btn.classList.toggle('tier-mode', colorMode === 'tier');
+  if (Object.keys(mapData).length > 0) {
+    renderGrid();
+    if (selectedId) {
+      document.getElementById('cell-' + selectedId)?.classList.add('cell--selected');
+    }
+  }
+  buildLegend();
 }
 
 // ── Legend ─────────────────────────────────────────────────────────────────────
 
 function buildLegend() {
   const el = document.getElementById('legend');
-  el.innerHTML = BIOMES.map(b => `
-    <div class="legend-item">
-      <div class="legend-swatch" style="background:${BIOME_COLORS[b]}"></div>
-      ${b}
-    </div>`).join('') +
-  `<div class="legend-item" style="margin-left:10px">
-    <div class="legend-swatch" style="background:rgba(180,40,40,0.35);border-color:rgba(200,60,60,0.7)"></div>
-    dungeon
-  </div>
-  <div class="legend-item">
-    <div class="legend-swatch" style="background:#3e3e50;border-color:rgba(80,80,200,0.6)"></div>
-    center (T0)
-  </div>`;
+  const dungeonSwatch = `
+    <div class="legend-item" style="margin-left:12px">
+      <div class="legend-swatch" style="background:rgba(180,40,40,0.4);border-color:rgba(220,70,70,0.75)"></div>
+      dungeon
+    </div>`;
+
+  if (colorMode === 'tier') {
+    el.innerHTML = [
+      [0, 'T0 — Clearing'],
+      [1, 'T1 — Starter'],
+      [2, 'T2 — Veteran'],
+      [3, 'T3 — Elite'],
+      [4, 'T4 — Endgame'],
+    ].map(([t, label]) => `
+      <div class="legend-item">
+        <div class="legend-swatch" style="background:${TIER_COLORS[t]}"></div>
+        ${label}
+      </div>`).join('') + dungeonSwatch;
+  } else {
+    el.innerHTML = BIOMES.map(b => `
+      <div class="legend-item">
+        <div class="legend-swatch" style="background:${BIOME_COLORS[b]}"></div>
+        ${b}
+      </div>`).join('') + dungeonSwatch +
+    `<div class="legend-item">
+      <div class="legend-swatch" style="background:#464660;border-color:rgba(90,90,210,0.65)"></div>
+      center (T0)
+    </div>`;
+  }
 }
 
 // ── Utilities ──────────────────────────────────────────────────────────────────
@@ -656,14 +991,12 @@ function updateDirty() {
 // ── Keyboard ───────────────────────────────────────────────────────────────────
 
 document.addEventListener('keydown', e => {
-  // Ctrl/Cmd+S → save
   if ((e.ctrlKey || e.metaKey) && e.key === 's') {
     e.preventDefault();
     if (!document.getElementById('save-btn').disabled) saveFile();
     return;
   }
 
-  // Arrow keys navigate the grid (unless focus is inside an input/select)
   if (['INPUT','SELECT','TEXTAREA'].includes(document.activeElement?.tagName)) return;
   if (!selectedId) return;
 

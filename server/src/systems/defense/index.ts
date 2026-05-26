@@ -5,7 +5,7 @@ import { registerDamageCap } from './mitigation/damageCap';
 import { registerShieldAbsorb } from './shields/shields';
 import { registerHitToDot, runDebtDrain } from './mitigation/hitToDot';
 import { registerDamageAbsorb, runAbsorbDrain } from './shields/damageAbsorb';
-import { runRegenBurst } from './regen/regenBurst';
+import { registerKillBurst, runRegenBurst } from './regen/regenBurst';
 import { runPeriodicShield } from './shields/periodicShield';
 import { runDebuffCleanse } from './mitigation/debuffCleanse';
 import { runInCombatRegen } from './regen/inCombatRegen';
@@ -28,6 +28,7 @@ export function initDefenseSystems(): void {
   registerShieldAbsorb();
   registerHitToDot();
   registerDamageAbsorb();
+  registerKillBurst();
 }
 
 /**
@@ -45,7 +46,7 @@ export function updateDefensiveSystems(world: World, dt: number, now: number): v
     if (runDebtDrain(world, player)) continue;   // player died → skip remaining
 
     runAbsorbDrain(player, dt);
-    runRegenBurst(player, dt);
+    runRegenBurst(player, dt, inCombat);
     runPeriodicShield(world, player, inCombat);
     runDebuffCleanse(player);
     runInCombatRegen(player, dt);

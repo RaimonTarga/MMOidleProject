@@ -34,4 +34,8 @@ export interface ClientToServerEvents {
   'debug:goToTestRoom': () => void;
   /** Dev-only: leave the debug test room and return to the clearing. Server ignores in production. */
   'debug:leaveTestRoom': () => void;
+  /** Dev-only: reset the current player's progression for playtesting. */
+  'debug:resetProgress': () => void;
+  /** Dev-only: re-run recipe unlock checks after data changes. */
+  'debug:refreshRecipes': () => void;
 }

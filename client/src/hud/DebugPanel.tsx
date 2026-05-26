@@ -92,6 +92,7 @@ function fmt(v: DebugValue): string {
 export function DebugPanel({ player }: Props) {
   const [open,      setOpen]      = useState(false);
   const [collapsed, setCollapsed] = useState(new Set<string>());
+  const [confirmReset, setConfirmReset] = useState(false);
 
   const sections: DebugSection[] = [];
   if (open && player) {
@@ -128,6 +129,53 @@ export function DebugPanel({ player }: Props) {
             }}
           >
             {inTestRoom ? 'LEAVE TEST ROOM' : 'GO TO TEST ROOM'}
+          </button>
+        </div>
+      )}
+
+      {open && (
+        <div className="debug-section">
+          {!confirmReset ? (
+            <button
+              className="debug-btn"
+              style={{ color: '#ff6666' }}
+              onClick={() => setConfirmReset(true)}
+            >
+              RESET PROGRESS
+            </button>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+              <div className="debug-div" style={{ padding: '4px 0', color: '#ff9944' }}>
+                Wipes skills, items &amp; biome XP. Confirm?
+              </div>
+              <div style={{ display: 'flex', gap: 4 }}>
+                <button
+                  className="debug-btn"
+                  style={{ flex: 1, color: '#ff4444' }}
+                  onClick={() => { hudBus.requestResetProgress(); setConfirmReset(false); }}
+                >
+                  YES, RESET
+                </button>
+                <button
+                  className="debug-btn"
+                  style={{ flex: 1 }}
+                  onClick={() => setConfirmReset(false)}
+                >
+                  CANCEL
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {open && (
+        <div className="debug-section">
+          <button
+            className="debug-btn"
+            onClick={() => hudBus.requestRefreshRecipes()}
+          >
+            REFRESH RECIPES
           </button>
         </div>
       )}

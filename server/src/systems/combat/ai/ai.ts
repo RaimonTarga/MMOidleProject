@@ -1,7 +1,7 @@
 import type { World } from '../../../world/World';
 import type { PlayerEntity } from '../../../ecs/components/player';
 import type { MonsterEntity } from '../../../ecs/components/monster';
-import { distanceSq, pointFromMotion, type Vec2 } from '@mmo-idle/shared';
+import { distanceSq, MONSTER_DATABASE, pointFromMotion, type Vec2 } from '@mmo-idle/shared';
 import { NODE_REGISTRY } from '../../../world/nodeRegistry';
 import { isMonsterFrozen } from '../../classes/archetypes/dot/t3';
 import { isMonsterKnockedBack } from '../damage/knockback';
@@ -113,13 +113,19 @@ export function updateMonsters(world: World, dt: number, now: number) {
         setAttackTarget(world, e, target.isPlayer.id);
         stopMonster(world, e);
       } else {
-        // Still chasing — accumulate kite timer and ramp speed after grace period.
-        ai.kiteTimer += dt;
-        const excess = Math.max(0, ai.kiteTimer - KITE_GRACE_MS);
-        const mult   = Math.min(KITE_MAX_MULT, 1 + (excess / 1000) * KITE_RAMP_RATE);
-        const rawSpeed = ai.baseSpeed * mult;
-        // Once ramp is active enforce a minimum so even slow bosses become threatening.
-        e.hasPosition.speed = Math.round(excess > 0 ? Math.max(rawSpeed, KITE_MIN_SPEED) : rawSpeed);
+        const charge = MONSTER_DATABASE.get(e.isMonster.monsterTypeId)?.chargeOnAggro;
+        if (charge && (ai.chargeRemainingMs ?? 0) > 0) {
+          ai.chargeRemainingMs = Math.max(0, (ai.chargeRemainingMs ?? 0) - dt);
+          e.hasPosition.speed = Math.round(ai.baseSpeed * charge.speedMult);
+        } else {
+          // Still chasing — accumulate kite timer and ramp speed after grace period.
+          ai.kiteTimer += dt;
+          const excess = Math.max(0, ai.kiteTimer - KITE_GRACE_MS);
+          const mult   = Math.min(KITE_MAX_MULT, 1 + (excess / 1000) * KITE_RAMP_RATE);
+          const rawSpeed = ai.baseSpeed * mult;
+          // Once ramp is active enforce a minimum so even slow bosses become threatening.
+          e.hasPosition.speed = Math.round(excess > 0 ? Math.max(rawSpeed, KITE_MIN_SPEED) : rawSpeed);
+        }
 
         const dist = Math.sqrt(distSq);
         e.hasAwareness.state = 'chasing';
@@ -133,6 +139,7 @@ export function updateMonsters(world: World, dt: number, now: number) {
     } else {
       // No valid aggro target — reset kite state and return/wander.
       ai.kiteTimer  = 0;
+      ai.chargeRemainingMs = 0;
       // Run at boosted speed while returning so the re-engage window is small.
       e.hasPosition.speed = e.hasAwareness.state === 'returning'
         ? Math.round(ai.baseSpeed * RETURN_SPEED_MULT)

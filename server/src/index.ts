@@ -5,8 +5,9 @@ import cors from 'cors';
 import path from 'path';
 
 import { World } from './world/World';
-import { GAME_CONFIG, TEST_ROOM_NODE_ID, ESSENCE_TYPES } from '@mmo-idle/shared';
+import { emptyEquipment, GAME_CONFIG, resetTracksCombat, TEST_ROOM_NODE_ID, ESSENCE_TYPES } from '@mmo-idle/shared';
 import { unlockSkill } from './systems/player/progression/skills';
+import { checkRecipeUnlocks } from './systems/player/progression/rewards';
 import { equipItem, unequipItem } from './systems/player/economy/inventory';
 import { craftRecipe } from './systems/player/economy/crafting';
 import type {
@@ -33,6 +34,7 @@ import { clearEngagement } from './systems/combat/ai/engagement';
 import { attachComponent, detachComponent } from './ecs/markerHelpers';
 import { syncArchetypeSlices } from './ecs/archetypeSliceSync';
 import { recalculatePlayerEntityStats } from './ecs/playerEntityFormulas';
+import { markSliceDirty } from './ecs/dirtyHelpers';
 
 export { IS_DEV };
 
@@ -134,6 +136,11 @@ setInterval(() => {
     io.sockets.sockets.get(playerId)?.emit('player:died');
   }
   world.pendingDeaths = [];
+  for (const playerId of world.pendingAscensions) {
+    const p = world.getPlayerEntity(playerId);
+    if (p) io.sockets.sockets.get(playerId)?.emit('player:ascended', p.tracksProgression.currentSkillTier);
+  }
+  world.pendingAscensions = [];
 }, LOGIC_MS);
 
 // Broadcast tick — 5 Hz. Sends authoritative component deltas to each player.
@@ -212,7 +219,8 @@ io.on('connection', (socket) => {
     if (!p) return;
     const succeeded = unlockSkill(world, p, skillId);
     if (succeeded) {
-      socket.emit('player:ascended', p.tracksProgression.currentSkillTier);
+      markSliceDirty(world, p, 'tracksProgression');
+      markSliceDirty(world, p, 'usesSkills');
     }
   });
 
@@ -265,6 +273,61 @@ io.on('connection', (socket) => {
         p.tracksProgression.essences[type] = 0;
       }
       world.respawnPlayer(socket.id);
+    });
+
+    socket.on('debug:refreshRecipes', () => {
+      const p = world.getPlayerEntity(socket.id);
+      if (!p) return;
+      checkRecipeUnlocks(p);
+      markSliceDirty(world, p, 'tracksProgression');
+    });
+
+    socket.on('debug:resetProgress', () => {
+      const p = world.getPlayerEntity(socket.id);
+      if (!p) return;
+
+      p.tracksProgression.level = 1;
+      p.tracksProgression.skillPoints = 1;
+      p.tracksProgression.biomeXP = {};
+      p.tracksProgression.biomeLevel = {};
+      p.tracksProgression.unlockedRecipes = [];
+      p.tracksProgression.questProgress = {};
+      p.tracksProgression.playerTier = 0;
+      p.tracksProgression.currentSkillTier = 0;
+      for (const type of ESSENCE_TYPES) {
+        p.tracksProgression.essences[type] = 0;
+      }
+
+      p.holdsInventory.inventory = [];
+      p.holdsInventory.equipment = emptyEquipment();
+      p.usesSkills.unlockedSkills = [];
+      p.usesSkills.passives = {};
+      p.usesSkills.selectedClass = null;
+      p.usesSkills.selectedSubVariant = null;
+      p.usesSkills.selectedRange = null;
+      p.usesSkills.combatArchetype = null;
+      p.usesAutocombat.auto = false;
+
+      stopEntity(world, p);
+      setAttackTarget(world, p, null);
+      detachComponent(world, p, 'hasEmpoweredAttack');
+      detachComponent(world, p, 'isChanneling');
+      detachComponent(world, p, 'hasOverdrive');
+      detachComponent(world, p, 'hasAlignment');
+      detachComponent(world, p, 'inAcChargePhase');
+      detachComponent(world, p, 'inAcDischarge');
+      detachComponent(world, p, 'holdsShields');
+      resetTracksCombat(p.tracksCombat);
+      syncArchetypeSlices(world, p);
+      recalculatePlayerEntityStats(world, p);
+      syncArchetypeSlices(world, p);
+      p.hasHealth.hp = p.hasHealth.maxHp;
+
+      markSliceDirty(world, p, 'tracksProgression');
+      markSliceDirty(world, p, 'holdsInventory');
+      markSliceDirty(world, p, 'usesSkills');
+      markSliceDirty(world, p, 'usesAutocombat');
+      markSliceDirty(world, p, 'hasHealth');
     });
   }
 

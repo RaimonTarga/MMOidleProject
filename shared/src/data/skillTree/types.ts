@@ -14,8 +14,12 @@ export interface StatEffects {
   /** Evasion hit threshold. Set via skill nodes; lower is more frequent. */
   evasion?: number;
   attackRange?: number;
-  /** Negative value reduces cooldown (faster attacks). Clamped on apply to ≥200ms. */
-  attackCooldown?: number;
+  /**
+   * Percentage attack speed modifier. Positive = faster (shorter cooldown), negative = slower.
+   * All unlocked nodes are summed additively, then applied as:
+   * finalCooldown = weaponBaseCooldown / (1 + totalAttackSpeedPct).
+   */
+  attackSpeedPct?: number;
   maxHp?: number;
   hpRegen?: number;
   speed?: number;

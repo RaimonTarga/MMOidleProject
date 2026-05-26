@@ -41,7 +41,6 @@ export function tryFanTheFlames(pc: DotT3PathContext): boolean {
     }
     ftfEff.data.damagePerStack = ftfDmg;
     ftfEff.data.tickIntervalMs = tickIntervalMs;
-    if (ftfEff.stacks >= maxStacks) ftfEff.data.nextTickIn = tickIntervalMs;
   }
   markMonsterDot(world, monster);
   ctx.metadata['dotHandled'] = true;
@@ -65,7 +64,6 @@ export function trySmolderingEmber(pc: DotT3PathContext): boolean {
   });
   se.data.damagePerStack = dmgPerStack;
   se.data.tickIntervalMs = tickIntervalMs;
-  if (se.stacks >= maxStacks) se.data.nextTickIn = tickIntervalMs;
 
   const burnStacks = getTotalStacks(monsterState, DOT_EFFECT_ID);
   let smolder = getStatusEffect(monsterState, SMOLDER_EFFECT);
@@ -122,7 +120,6 @@ export function tryConflagration(pc: DotT3PathContext): boolean {
     });
     cf.data.damagePerStack = dmgPerStack;
     cf.data.tickIntervalMs = tickIntervalMs;
-    if (cf.stacks >= maxStacks) cf.data.nextTickIn = tickIntervalMs;
     markMonsterDot(world, monster);
   }
   ctx.metadata['dotHandled'] = true;

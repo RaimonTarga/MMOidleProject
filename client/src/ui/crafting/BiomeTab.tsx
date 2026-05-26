@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import type { PlayerView, Recipe } from '@mmo-idle/shared';
-import { RECIPE_DATABASE, NODE_BIOMES, GAME_CONFIG, TEST_ROOM_NODE_ID, biomeXpForLevel } from '@mmo-idle/shared';
+import { RECIPE_DATABASE, NODE_BIOMES, TEST_ROOM_NODE_ID, biomeLevelCap, biomeXpForLevel } from '@mmo-idle/shared';
 import { SLOT_LABELS, biomeName } from './common';
 
 interface BiomeSectionProps {
@@ -13,7 +13,7 @@ interface BiomeSectionProps {
 function BiomeSection({ biomeGroup, player, recipes, isCurrent }: BiomeSectionProps) {
   const level    = player.biomeLevel[biomeGroup] ?? 0;
   const xp       = player.biomeXP[biomeGroup] ?? 0;
-  const levelCap = GAME_CONFIG.BIOME_LEVEL_CAP_BY_TIER[player.playerTier] ?? 999;
+  const levelCap = biomeLevelCap(player.playerTier, biomeGroup);
   const xpThisTier  = biomeXpForLevel(level);
   const xpNextTier  = biomeXpForLevel(level + 1);
   const xpInLevel   = xp - xpThisTier;

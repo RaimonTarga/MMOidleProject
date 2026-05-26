@@ -16,4 +16,6 @@ export interface ControlsMonster {
   baseSpeed: number;
   /** Ms spent chasing without landing an attack — drives the kite speed ramp. */
   kiteTimer: number;
+  /** Remaining milliseconds of a charge-on-aggro speed burst. */
+  chargeRemainingMs?: number;
 }

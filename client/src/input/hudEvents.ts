@@ -5,6 +5,8 @@ import {
   sendEquipItem,
   sendGoToTestRoom,
   sendLeaveTestRoom,
+  sendRefreshRecipes,
+  sendResetProgress,
   sendUnequip,
   sendUnlockSkill,
 } from '../net/intents';
@@ -43,6 +45,7 @@ export function attachHudEvents(scene: GameScene): void {
   window.addEventListener('hud:navigateTo', (e: Event) => {
     const { path } = (e as CustomEvent<{ path: string[] }>).detail;
     if (path.length === 0) return;
+    setAutoMode(scene, false);
     scene.autoPath = path;
     hudBus.emit({ autoPath: [...path] });
     sendAutoPathMove(scene, scene.state.ownNodeId);
@@ -54,5 +57,13 @@ export function attachHudEvents(scene: GameScene): void {
 
   window.addEventListener('hud:leaveTestRoom', () => {
     sendLeaveTestRoom(scene.socket);
+  });
+
+  window.addEventListener('hud:resetProgress', () => {
+    sendResetProgress(scene.socket);
+  });
+
+  window.addEventListener('hud:refreshRecipes', () => {
+    sendRefreshRecipes(scene.socket);
   });
 }

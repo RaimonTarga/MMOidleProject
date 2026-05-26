@@ -21,6 +21,35 @@ import type { RenderState } from './state';
 
 type NonNullArchetype = Exclude<CombatArchetype, null>;
 type PlayerHitEvent = CombatEvent & { kind: 'player-hit' };
+type PlayerKillEvent = CombatEvent & { kind: 'player-kill' };
+
+function spawnRewardFloaters(scene: GameScene, ev: PlayerKillEvent): void {
+  const target = scene.state.sprite.get(ev.targetId);
+  const x = target?.x ?? scene.cameras.main.worldView.centerX;
+  const y = target?.y ?? scene.cameras.main.worldView.centerY;
+  const lines = [
+    ev.biomeXpGained > 0 ? `+${ev.biomeXpGained} XP` : null,
+    ev.essenceGained > 0 ? `+${ev.essenceGained} ${ev.essenceType}` : null,
+  ].filter((line): line is string => line !== null);
+
+  lines.forEach((line, index) => {
+    const text = scene.add.text(x, y - 32 - index * 18, line, {
+      fontFamily: 'monospace',
+      fontSize: '14px',
+      color: index === 0 ? '#88ddff' : '#ffdd88',
+      stroke: '#000000',
+      strokeThickness: 3,
+    }).setOrigin(0.5).setDepth(40);
+    scene.tweens.add({
+      targets: text,
+      y: text.y - 34,
+      alpha: 0,
+      duration: 900,
+      ease: 'Power2',
+      onComplete: () => text.destroy(),
+    });
+  });
+}
 
 interface AttackFxArgs {
   scene: GameScene;
@@ -111,6 +140,23 @@ const ATTACK_FX_BY_STYLE: Record<string, AttackFxFn> = {
 };
 
 export function dispatchCombatEvent(state: RenderState, ev: CombatEvent, scene: GameScene): void {
+  if (ev.kind === 'monster-dodge') {
+    const target = ev.targetPos ?? (state.sprite.get(ev.monsterId)
+      ? { x: state.sprite.get(ev.monsterId)!.x, y: state.sprite.get(ev.monsterId)!.y }
+      : null);
+    if (target) {
+      const text = scene.add.text(target.x, target.y - 40, 'DODGE', {
+        fontFamily: 'monospace',
+        fontSize: '14px',
+        color: '#ddddff',
+        stroke: '#000000',
+        strokeThickness: 3,
+      }).setOrigin(0.5).setDepth(40);
+      scene.tweens.add({ targets: text, y: text.y - 28, alpha: 0, duration: 650, onComplete: () => text.destroy() });
+    }
+    return;
+  }
+
   if (ev.playerId !== scene.myId) return;
 
   if (ev.kind === 'player-hit') {
@@ -122,6 +168,7 @@ export function dispatchCombatEvent(state: RenderState, ev: CombatEvent, scene: 
 
   if (ev.kind === 'player-kill') {
     combatLog.push('kill', `${ev.targetName} defeated`);
+    spawnRewardFloaters(scene, ev);
   }
 }
 

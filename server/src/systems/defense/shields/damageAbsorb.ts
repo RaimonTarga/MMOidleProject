@@ -38,5 +38,5 @@ export function runAbsorbDrain(player: PlayerEntity, dt: number): void {
   const healAmount = absorbPool * (dt / POOL_DRAIN_MS);
   const absorbLeft = absorbPool - healAmount;
   setResource(cs, ABSORB_POOL_KEY, absorbLeft < 0.5 ? 0 : absorbLeft);
-  if (healAmount >= 0.5) applyHealToPlayer(player, cs, healAmount);
+  applyHealToPlayer(player, cs, healAmount);
 }

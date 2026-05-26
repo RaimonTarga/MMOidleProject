@@ -1,4 +1,5 @@
-import { NODE_BIOMES, MONSTER_DATABASE, RECIPE_DATABASE, GAME_CONFIG, biomeXpForLevel } from '@mmo-idle/shared';
+import { NODE_BIOMES, MONSTER_DATABASE, RECIPE_DATABASE, GAME_CONFIG, biomeLevelCap, biomeXpForLevel } from '@mmo-idle/shared';
+import type { EssenceType } from '@mmo-idle/shared';
 import type { PlayerEntity } from '../../../ecs/components/player';
 import type { MonsterEntity } from '../../../ecs/components/monster';
 import type { World } from '../../../world/World';
@@ -6,11 +7,19 @@ import { registerKillForQuests } from './questSystem';
 
 export interface KillRewards {
   essence: number;
-  essenceType: string;
+  essenceType: EssenceType;
   level: number;
+  biomeXp?: number;
 }
 
 const FALLBACK_REWARDS: KillRewards = { essence: 1, essenceType: 'green', level: 1 };
+
+export interface KillRewardInfo {
+  essenceGained: number;
+  essenceType: EssenceType;
+  biomeXpGained: number;
+  tierAdvanced: boolean;
+}
 
 export function rewardPlayer(entity: PlayerEntity, rewards: KillRewards): void {
   const type = rewards.essenceType as keyof typeof entity.tracksProgression.essences;
@@ -20,16 +29,20 @@ export function rewardPlayer(entity: PlayerEntity, rewards: KillRewards): void {
   entity.tracksProgression.level += rewards.level;
 }
 
-function applyBiomeXP(entity: PlayerEntity, nodeId: string): void {
+function fallbackBiomeXp(rewards: KillRewards, biomeTier: number): number {
+  const mult = GAME_CONFIG.BIOME_XP_ESSENCE_MULT[biomeTier] ?? 1;
+  return Math.max(1, Math.round(rewards.essence * mult));
+}
+
+function applyBiomeXP(entity: PlayerEntity, nodeId: string, xpGain: number): number {
   const biomeInfo = NODE_BIOMES[nodeId];
-  if (!biomeInfo) return;
+  if (!biomeInfo) return 0;
 
   const { biomeGroup, biomeTier } = biomeInfo;
-  const levelCap  = GAME_CONFIG.BIOME_LEVEL_CAP_BY_TIER[entity.tracksProgression.playerTier] ?? 999;
+  const levelCap  = biomeLevelCap(entity.tracksProgression.playerTier, biomeGroup);
   const prevLevel = entity.tracksProgression.biomeLevel[biomeGroup] ?? 0;
-  if (prevLevel >= levelCap) return;
+  if (prevLevel >= levelCap) return 0;
 
-  const xpGain = GAME_CONFIG.BIOME_XP_BY_NODE_TIER[biomeTier] ?? 5;
   const newXP  = (entity.tracksProgression.biomeXP[biomeGroup] ?? 0) + xpGain;
   entity.tracksProgression.biomeXP[biomeGroup] = newXP;
 
@@ -40,12 +53,14 @@ function applyBiomeXP(entity: PlayerEntity, nodeId: string): void {
     entity.tracksProgression.biomeLevel[biomeGroup] = newLevel;
     checkRecipeUnlocks(entity, biomeGroup, newLevel);
   }
+  return xpGain;
 }
 
-function checkRecipeUnlocks(entity: PlayerEntity, biomeGroup: string, newLevel: number): void {
+export function checkRecipeUnlocks(entity: PlayerEntity, biomeGroup?: string, newLevel?: number): void {
   for (const recipe of RECIPE_DATABASE.values()) {
-    if (recipe.recipeGroup !== biomeGroup) continue;
-    if (recipe.requiredBiomeLevel > newLevel) continue;
+    const level = newLevel ?? entity.tracksProgression.biomeLevel[recipe.recipeGroup] ?? 0;
+    if (biomeGroup !== undefined && recipe.recipeGroup !== biomeGroup) continue;
+    if (recipe.requiredBiomeLevel > level) continue;
     if (!entity.tracksProgression.unlockedRecipes.includes(recipe.id)) {
       entity.tracksProgression.unlockedRecipes.push(recipe.id);
     }
@@ -56,13 +71,31 @@ export function grantMonsterRewards(
   world: World,
   killerPlayerId: string,
   monster: MonsterEntity,
-): void {
+): KillRewardInfo | null {
   const killer = world.getPlayerEntity(killerPlayerId);
-  if (!killer) return;
+  if (!killer) return null;
 
   const def = MONSTER_DATABASE.get(monster.isMonster.monsterTypeId);
   const rewards = def?.rewards ?? FALLBACK_REWARDS;
   rewardPlayer(killer, rewards);
-  applyBiomeXP(killer, monster.hasPosition.nodeId);
-  registerKillForQuests(killer, monster.isMonster.monsterTypeId);
+  const biomeInfo = NODE_BIOMES[monster.hasPosition.nodeId];
+  const biomeTier = biomeInfo?.biomeTier ?? 0;
+  const biomeXpGained = applyBiomeXP(
+    killer,
+    monster.hasPosition.nodeId,
+    rewards.biomeXp ?? fallbackBiomeXp(rewards, biomeTier),
+  );
+  const tierAdvanced = registerKillForQuests(killer, monster.isMonster.monsterTypeId);
+  if (tierAdvanced) {
+    world.pendingAscensions.push(killer.isPlayer.id);
+  }
+  if (monster.isMonster.isBoss) {
+    world.bossRespawnAt.set(monster.hasPosition.nodeId, Date.now() + 30_000);
+  }
+  return {
+    essenceGained: rewards.essence,
+    essenceType: rewards.essenceType,
+    biomeXpGained,
+    tierAdvanced,
+  };
 }

@@ -77,7 +77,7 @@ export function createGameScene(scene: GameScene): void {
 }
 
 export function updateGameScene(scene: GameScene, delta: number): void {
-  const dt = delta / 1000;
+  const dt = Math.min(delta, 100) / 1000;
 
   stepInterpolation(scene.state, dt);
   drawShadows(scene.state);

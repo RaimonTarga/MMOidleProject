@@ -65,6 +65,8 @@ export interface RenderState {
     until: number;
   };
   movementEffectNextAt: Map<string, number>;
+  knownUnlockedRecipes: Set<string>;
+  knownUnlockedRecipesInitialized: boolean;
 
   ownId: NetworkId | null;
   ownNodeId: string;
@@ -92,6 +94,8 @@ export function createRenderState(): RenderState {
       until: 0,
     },
     movementEffectNextAt: new Map(),
+    knownUnlockedRecipes: new Set(),
+    knownUnlockedRecipesInitialized: false,
     ownId: null,
     ownNodeId: '',
   };

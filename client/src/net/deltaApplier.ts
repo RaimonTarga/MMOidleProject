@@ -1,5 +1,5 @@
 import type { DeltaSnapshot, NetworkedEntity } from '@mmo-idle/shared';
-import { composeMonsterView, composePlayerView } from '@mmo-idle/shared';
+import { composeMonsterView, composePlayerView, RECIPE_DATABASE } from '@mmo-idle/shared';
 import { hudBus } from '../hudBus';
 import type { GameScene } from '../scenes/GameScene';
 import type { RenderState } from '../render/state';
@@ -55,7 +55,20 @@ export function applyDelta(
   for (const ev of snapshot.events) dispatchCombatEvent(state, ev, scene);
 
   const own = getOwnView(state);
-  if (own) hudBus.emit({ player: own });
+  if (own) {
+    if (!state.knownUnlockedRecipesInitialized) {
+      state.knownUnlockedRecipes = new Set(own.unlockedRecipes);
+      state.knownUnlockedRecipesInitialized = true;
+    } else {
+      for (const recipeId of own.unlockedRecipes) {
+        if (state.knownUnlockedRecipes.has(recipeId)) continue;
+        state.knownUnlockedRecipes.add(recipeId);
+        const recipe = RECIPE_DATABASE.get(recipeId);
+        hudBus.notifyRecipeUnlock(recipe?.name ?? recipeId, recipe?.recipeGroup ?? 'unknown');
+      }
+    }
+    hudBus.emit({ player: own });
+  }
 }
 
 function upsertEntityView(

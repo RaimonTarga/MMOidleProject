@@ -1,22 +1,28 @@
-import { type Vec2 } from '@mmo-idle/shared';
-import { registerCombatListener, type CombatContext } from '../../../../../combat/engine/combatPipeline';
-import { isEmpoweredAttack, setEmpoweredAttack } from '../../../../../combat/engine/empoweredAttacks';
-import { markSliceDirty } from '../../../../../../ecs/dirtyHelpers';
-import { detachComponent } from '../../../../../../ecs/markerHelpers';
-import { stopEntity } from '../../../../../world/movement';
-import { NODE_REGISTRY } from '../../../../../../world/nodeRegistry';
-import type { World } from '../../../../../../world/World';
-import type { PlayerEntity } from '../../../../../../ecs/components/player';
-import type { MonsterEntity } from '../../../../../../ecs/components/monster';
-import { hasPassive } from '../core/helpers';
+import { type Vec2 } from "@mmo-idle/shared";
+import {
+  registerCombatListener,
+  type CombatContext,
+} from "../../../../../combat/engine/combatPipeline";
+import {
+  isEmpoweredAttack,
+  setEmpoweredAttack,
+} from "../../../../../combat/engine/empoweredAttacks";
+import { markSliceDirty } from "../../../../../../ecs/dirtyHelpers";
+import { detachComponent } from "../../../../../../ecs/markerHelpers";
+import { stopEntity } from "../../../../../world/movement";
+import { NODE_REGISTRY } from "../../../../../../world/nodeRegistry";
+import type { World } from "../../../../../../world/World";
+import type { PlayerEntity } from "../../../../../../ecs/components/player";
+import type { MonsterEntity } from "../../../../../../ecs/components/monster";
+import { hasPassive } from "../core/helpers";
 import {
   FLASH_OFFSET_MAX_PX,
   FLASH_OFFSET_MIN_PX,
   FLASH_OVERSHOOT_SPREAD_RAD,
-} from '../core/constants';
+} from "../core/constants";
 
 const NODE_MARGIN = 40;
-const FLASH_CLIENT_EFFECT = 'flash-teleport';
+const FLASH_CLIENT_EFFECT = "flash-teleport";
 
 function clampToNode(nodeId: string, pos: Vec2): Vec2 {
   const node = NODE_REGISTRY.get(nodeId);
@@ -28,12 +34,12 @@ function clampToNode(nodeId: string, pos: Vec2): Vec2 {
 }
 
 function pushClientEffect(ctx: CombatContext, effectId: string): void {
-  const effects = ctx.metadata['clientEffects'];
+  const effects = ctx.metadata["clientEffects"];
   if (Array.isArray(effects)) {
     effects.push(effectId);
     return;
   }
-  ctx.metadata['clientEffects'] = [effectId];
+  ctx.metadata["clientEffects"] = [effectId];
 }
 
 function tryFlashTeleport(
@@ -46,10 +52,12 @@ function tryFlashTeleport(
   const monsterPos = monster.hasPosition.current;
   const dx = monsterPos.x - playerPos.x;
   const dy = monsterPos.y - playerPos.y;
-  const approachAngle = Math.abs(dx) + Math.abs(dy) > 0.001
-    ? Math.atan2(dy, dx)
-    : Math.random() * Math.PI * 2;
-  const angle = approachAngle + (Math.random() - 0.5) * FLASH_OVERSHOOT_SPREAD_RAD;
+  const approachAngle =
+    Math.abs(dx) + Math.abs(dy) > 0.001
+      ? Math.atan2(dy, dx)
+      : Math.random() * Math.PI * 2;
+  const angle =
+    approachAngle + (Math.random() - 0.5) * FLASH_OVERSHOOT_SPREAD_RAD;
   const radius =
     FLASH_OFFSET_MIN_PX +
     Math.random() * (FLASH_OFFSET_MAX_PX - FLASH_OFFSET_MIN_PX);
@@ -59,7 +67,7 @@ function tryFlashTeleport(
   });
 
   player.hasPosition.current = landing;
-  markSliceDirty(world, player, 'hasPosition');
+  markSliceDirty(world, player, "hasPosition");
   stopEntity(world, player);
   pushClientEffect(ctx, FLASH_CLIENT_EFFECT);
 }
@@ -75,8 +83,8 @@ function tryFlashTeleport(
  *   3. Flash: teleport into melee range near the target before the hit resolves.
  */
 export function registerBeforeAttack(): void {
-  registerCombatListener('beforeAttack', (ctx, world) => {
-    if (ctx.attackerType !== 'player') return;
+  registerCombatListener("beforeAttack", (ctx, world) => {
+    if (ctx.attackerType !== "player") return;
 
     const entity = ctx.attacker;
     if (!entity?.usesEnergy) return;
@@ -84,35 +92,38 @@ export function registerBeforeAttack(): void {
     const player = entity;
     const passives = player.usesSkills.passives;
 
-    if (isEmpoweredAttack(entity) && (
-      hasPassive(player, 'energy.polarity-decay')       ||
-      hasPassive(player, 'energy.cascading-induction')  ||
-      hasPassive(player, 'energy.superconducting-mass') ||
-      hasPassive(player, 'energy.capacitor-shunt')
-    )) {
-      ctx.metadata['suppressEmpoweredMult'] = true;
+    if (
+      isEmpoweredAttack(entity) &&
+      (hasPassive(player, "energy.polarity-decay") ||
+        hasPassive(player, "energy.cascading-induction") ||
+        hasPassive(player, "energy.superconducting-mass") ||
+        hasPassive(player, "energy.capacitor-shunt"))
+    ) {
+      ctx.metadata["suppressEmpoweredMult"] = true;
     }
 
-    if (hasPassive(player, 'energy.flash') && ctx.defenderType === 'monster') {
+    if (hasPassive(player, "energy.flash") && ctx.defenderType === "monster") {
       if (player.isMoving || player.hasManualMoveIntent) {
         ctx.cancelled = true;
         return;
       }
-      detachComponent(world, player, 'hasEmpoweredAttack');
+      detachComponent(world, player, "hasEmpoweredAttack");
       tryFlashTeleport(world, player, ctx.defender, ctx);
       return;
     }
 
     if (
-      hasPassive(player, 'energy.singularity-execute') &&
-      ctx.defenderType === 'monster' &&
+      hasPassive(player, "energy.singularity-execute") &&
+      ctx.defenderType === "monster" &&
       !isEmpoweredAttack(entity)
     ) {
-      const empMult   = passives['energy.empowered-mult'] ?? 6.0;
+      const empMult = passives["energy.empowered-mult"] ?? 6.0;
       const projected = Math.floor(player.dealsDamage.attack * empMult);
       if (ctx.defender.hasHealth.hp <= projected) {
         setEmpoweredAttack(world, entity);
-        console.log(`[SingularityExec] ${player.isPlayer.id}: execute — ${ctx.defender.hasHealth.hp} HP <= ${projected} projected`);
+        console.log(
+          `[SingularityExec] ${player.isPlayer.id}: execute — ${ctx.defender.hasHealth.hp} HP <= ${projected} projected`,
+        );
       }
     }
   });

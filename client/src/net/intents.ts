@@ -32,3 +32,11 @@ export function sendGoToTestRoom(socket: GameSocket): void {
 export function sendLeaveTestRoom(socket: GameSocket): void {
   socket.emit('debug:leaveTestRoom');
 }
+
+export function sendResetProgress(socket: GameSocket): void {
+  socket.emit('debug:resetProgress');
+}
+
+export function sendRefreshRecipes(socket: GameSocket): void {
+  socket.emit('debug:refreshRecipes');
+}

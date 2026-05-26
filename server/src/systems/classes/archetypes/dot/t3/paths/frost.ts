@@ -61,7 +61,6 @@ export function tryFreezingCold(pc: DotT3PathContext): boolean {
   });
   fc.data.damagePerStack = dmgPerStack;
   fc.data.tickIntervalMs = tickIntervalMs;
-  if (fc.stacks >= maxStacks) fc.data.nextTickIn = tickIntervalMs;
 
   if (!hasStatusEffect(monsterState, FROZEN_EFFECT)) {
     applyStatusEffect(monsterState, {

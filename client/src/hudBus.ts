@@ -10,9 +10,11 @@ export interface HudState {
 }
 
 type Listener = (state: HudState) => void;
+type RecipeUnlockListener = (name: string, biomeGroup: string) => void;
 
 let state: HudState = { status: 'connecting', player: null };
 const listeners = new Set<Listener>();
+const recipeUnlockListeners = new Set<RecipeUnlockListener>();
 
 export const hudBus = {
   emit(partial: Partial<HudState>): void {
@@ -63,6 +65,23 @@ export const hudBus = {
 
   requestLeaveTestRoom(): void {
     window.dispatchEvent(new CustomEvent('hud:leaveTestRoom'));
+  },
+
+  requestResetProgress(): void {
+    window.dispatchEvent(new CustomEvent('hud:resetProgress'));
+  },
+
+  requestRefreshRecipes(): void {
+    window.dispatchEvent(new CustomEvent('hud:refreshRecipes'));
+  },
+
+  notifyRecipeUnlock(name: string, biomeGroup: string): void {
+    recipeUnlockListeners.forEach(fn => fn(name, biomeGroup));
+  },
+
+  subscribeRecipeUnlock(fn: RecipeUnlockListener): () => void {
+    recipeUnlockListeners.add(fn);
+    return () => recipeUnlockListeners.delete(fn);
   },
 
   /** Toggle the player attack-range debug overlay in GameScene. */

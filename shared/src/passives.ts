@@ -12,6 +12,7 @@ export const DEFENSE_KEYS = [
   'defense.in-combat-regen-pct',
   'defense.regen-burst-pct',
   'defense.regen-burst-interval-ms',
+  'defense.kill-burst-pct',
   'defense.shield-pct',
   'defense.shield-interval-ms',
   'defense.shield-duration-ms',

@@ -1,4 +1,4 @@
-import { advanceMotion, vectorTo, type Vec2 } from '@mmo-idle/shared';
+import { advanceMotion, getStatusEffect, vectorTo, type Vec2 } from '@mmo-idle/shared';
 import type { World } from '../../world/World';
 import { NODE_REGISTRY } from '../../world/nodeRegistry';
 import type { ServerEntity } from '../../ecs/entity';
@@ -32,10 +32,12 @@ export function updateMovement(world: World, dt: number) {
       continue;
     }
 
+    const slow = getStatusEffect(entity.tracksCombat, 'slow');
+    const speedMult = slow ? Math.max(0, slow.data['speedMult'] ?? 1) : 1;
     const next = advanceMotion(
       entity.hasPosition.current,
       entity.isMoving.motion,
-      entity.hasPosition.speed * (dt / 1000),
+      entity.hasPosition.speed * speedMult * (dt / 1000),
     );
     entity.hasPosition.current = next.position;
     if (next.motion.magnitude > 0) {

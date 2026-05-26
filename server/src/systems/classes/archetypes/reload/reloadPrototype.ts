@@ -69,6 +69,8 @@ export function initReloadArchetype(): void {
     const entity = ctx.attacker;
     if (!entity?.usesReload) return;
 
+    ctx.platingMult = 0.5;
+
     const reload = entity.usesReload;
 
     if (reload.reloadingMs > 0 || reload.ammo === 0) {

@@ -1,3 +1,5 @@
+import { NODE_BIOMES } from '../world/nodeBiomes';
+
 // ─── Game balance constants ───────────────────────────────────────────────────
 
 export const GAME_CONFIG = {
@@ -57,8 +59,13 @@ export const GAME_CONFIG = {
    * Tune alongside BIOME_XP_BASE and BIOME_XP_BY_NODE_TIER.
    */
   BIOME_XP_EXPONENT: 1.7,
-  /** XP granted per kill, indexed by the node's biomeTier (0–5). */
-  BIOME_XP_BY_NODE_TIER: [5, 10, 20, 35, 55, 80] as unknown as readonly number[],
+  /** @deprecated No longer used by the rewards system — see BIOME_XP_ESSENCE_MULT. */
+  BIOME_XP_BY_NODE_TIER: [25, 10, 20, 35, 55, 80] as unknown as readonly number[],
+  /**
+   * Per-kill biome XP = round(monster.essence * BIOME_XP_ESSENCE_MULT[biomeTier]).
+   * Monsters with an explicit rewards.biomeXp bypass this multiplier.
+   */
+  BIOME_XP_ESSENCE_MULT: [1.0, 2.0, 1.1, 1.0, 1.0, 1.0] as unknown as readonly number[],
   /** Maximum biome level attainable at each playerTier (index = playerTier). T2 recipes start at level 6. */
   BIOME_LEVEL_CAP_BY_TIER: [2, 5, 10, 15, 20, 25, 30, 35] as unknown as readonly number[],
 } as const;
@@ -77,4 +84,18 @@ export const GAME_CONFIG = {
 export function biomeXpForLevel(n: number): number {
   if (n <= 0) return 0;
   return Math.round(GAME_CONFIG.BIOME_XP_BASE * Math.pow(n, GAME_CONFIG.BIOME_XP_EXPONENT));
+}
+
+/** Maps biomeGroup -> biomeTier, derived from NODE_BIOMES. */
+export const BIOME_TIER_BY_GROUP: Record<string, number> = Object.fromEntries(
+  Object.values(NODE_BIOMES).map((v) => [v.biomeGroup, v.biomeTier]),
+);
+
+/**
+ * Returns the maximum biome level a player of `playerTier` can reach.
+ * Cap = playerTier * 4, minimum 4. Clearing is always capped at 4.
+ */
+export function biomeLevelCap(playerTier: number, biomeGroup: string): number {
+  if (biomeGroup === 'clearing') return 4;
+  return Math.max(4, playerTier * 4);
 }

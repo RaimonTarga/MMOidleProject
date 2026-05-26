@@ -1,11 +1,11 @@
 import type { World } from '../../../world/World';
-import { GAME_CONFIG, TEST_ROOM_NODE_ID, distanceSq } from '@mmo-idle/shared';
+import { applyStatusEffect, GAME_CONFIG, MONSTER_DATABASE, TEST_ROOM_NODE_ID, distanceSq } from '@mmo-idle/shared';
 import { grantMonsterRewards } from '../../player/progression/rewards';
 import {
   makeCombatContext,
   emitCombatEvent,
 } from './combatPipeline';
-import { getStatusEffect } from '@mmo-idle/shared';
+import { getCounter, getStatusEffect, setCounter } from '@mmo-idle/shared';
 import { getAntiHealMult } from '../../defense';
 import { applyPlayerAoe } from '../damage/aoeDamage';
 import { isMonsterFrozen } from '../../classes/archetypes/dot/t3';
@@ -45,6 +45,21 @@ export function updateCombat(world: World, dt: number, now: number) {
 
         emitCombatEvent('onAttack', ctx, world);
 
+        const evadeEvery = MONSTER_DATABASE.get(target.isMonster.monsterTypeId)?.evadeEvery;
+        if (evadeEvery !== undefined && evadeEvery >= 5) {
+          const hitsTaken = getCounter(target.tracksCombat, 'hitsTaken') + 1;
+          setCounter(target.tracksCombat, 'hitsTaken', hitsTaken);
+          if (hitsTaken % evadeEvery === 0) {
+            player.performsAttack.lastAttackAt = now;
+            world.pushEvent(player.hasPosition.nodeId, {
+              kind: 'monster-dodge',
+              monsterId: target.isMonster.id,
+              targetPos: { ...target.hasPosition.current },
+            });
+            continue;
+          }
+        }
+
         const monsterCombatState = target.tracksCombat;
         const shredEffect = monsterCombatState
           ? getStatusEffect(monsterCombatState, 'plating-shred')
@@ -54,7 +69,7 @@ export function updateCombat(world: World, dt: number, now: number) {
         );
 
         ctx.damage = Math.max(1, Math.round(
-          Math.max(0, player.dealsDamage.attack - effectivePlating) * (1 - target.mitigatesDamage.damageReduction),
+          Math.max(0, player.dealsDamage.attack - effectivePlating * ctx.platingMult) * (1 - target.mitigatesDamage.damageReduction),
         ));
 
         emitCombatEvent('onHit', ctx, world);
@@ -117,13 +132,16 @@ export function updateCombat(world: World, dt: number, now: number) {
 
         if (target.hasHealth.hp <= 0) {
           emitCombatEvent('onKill', ctx, world);
+          const rewardInfo = grantMonsterRewards(world, player.isPlayer.id, target);
           world.pushEvent(player.hasPosition.nodeId, {
             kind:       'player-kill',
             playerId:   player.isPlayer.id,
             targetId:   target.isMonster.id,
             targetName: target.isMonster.name,
+            biomeXpGained: rewardInfo?.biomeXpGained ?? 0,
+            essenceGained: rewardInfo?.essenceGained ?? 0,
+            essenceType: rewardInfo?.essenceType ?? 'green',
           });
-          grantMonsterRewards(world, player.isPlayer.id, target);
           world.removeMonsterEntity(target.isMonster.id);
         } else {
           // Retaliation aggro: if the monster had no target (e.g. player attacked from
@@ -208,6 +226,21 @@ export function updateCombat(world: World, dt: number, now: number) {
 
       target.hasHealth.hp -= ctx.damage;
       e.performsAttack.lastAttackAt = now;
+
+      const slow = MONSTER_DATABASE.get(e.isMonster.monsterTypeId)?.slowEffect;
+      if (slow) {
+        applyStatusEffect(target.tracksCombat, {
+          id: 'slow',
+          maxStacks: 1,
+          remainingMs: slow.durationMs,
+          refreshable: true,
+          sourceId: e.isMonster.id,
+          data: {
+            speedMult: slow.speedMult,
+            totalMs: slow.durationMs,
+          },
+        });
+      }
 
       emitCombatEvent('afterHit', ctx, world);
 

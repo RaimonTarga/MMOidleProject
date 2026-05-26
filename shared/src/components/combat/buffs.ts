@@ -23,6 +23,8 @@ export const BUFF_IDS = [
   'dot-frozen',
   'reload-snipe-ready',
   'sacred-burst',
+  'debuff-slow',
+  'debuff-root',
   'defense-absorb',
   'defense-burst',
   'defense-debt',

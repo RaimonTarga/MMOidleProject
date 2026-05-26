@@ -4,7 +4,9 @@ import type {
   DeltaSnapshot,
 } from "@mmo-idle/shared";
 import {
+  BIOME_DATABASE,
   GAME_CONFIG,
+  NODE_BIOMES,
   TEST_ROOM_NODE_ID,
   type Vec2,
 } from "@mmo-idle/shared";
@@ -123,6 +125,10 @@ export class World {
   readonly alignedPlayers = this.cooldownPlayers.with("hasAlignment");
   /** Player IDs that died this tick. Drained by the server loop after each tick. */
   pendingDeaths: string[] = [];
+  /** Player IDs whose quest completion advanced their tier. Drained by the server loop. */
+  pendingAscensions: string[] = [];
+  /** Dungeon boss respawn cooldowns keyed by node id. */
+  bossRespawnAt = new Map<string, number>();
   /** Queued combat events per node, flushed into each broadcast snapshot. */
   private nodeEvents = new Map<string, CombatEvent[]>();
   /**
@@ -171,7 +177,7 @@ export class World {
   private init() {
     for (const nodeId of NODE_REGISTRY.keys()) {
       if (nodeId === TEST_ROOM_NODE_ID) continue;
-      for (let i = 0; i < GAME_CONFIG.MONSTERS_PER_NODE; i++) {
+      for (let i = 0; i < this.getMobDensity(nodeId); i++) {
         this.spawnMonster(nodeId);
       }
       this.ensureBoss(nodeId);
@@ -295,6 +301,12 @@ export class World {
 
   ensureBoss(nodeId: string): void {
     ensureBossInWorld(this, nodeId);
+  }
+
+  getMobDensity(nodeId: string): number {
+    const biomeInfo = NODE_BIOMES[nodeId];
+    const biome = biomeInfo ? BIOME_DATABASE.get(biomeInfo.biomeGroup) : undefined;
+    return biome?.mobDensity ?? GAME_CONFIG.MONSTERS_PER_NODE;
   }
 
   // ── EVENTS ─────────────────────────────────────────

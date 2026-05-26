@@ -20,6 +20,12 @@ export interface BiomeDefinition {
    * reserved for a future multi-essence economy without a schema change.
    */
   essenceType: string;
+  /**
+   * How many non-boss monsters the server targets per node of this biome.
+   * Falls back to GAME_CONFIG.MONSTERS_PER_NODE when omitted.
+   * High density = more but weaker monsters; low density = fewer but tougher.
+   */
+  mobDensity?: number;
 }
 
 export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
@@ -29,6 +35,7 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
     backgroundColor: 0x101a10,
     monsterPoolByTier: { 0: ['tiny-slime'] },
     essenceType: 'essence',
+    mobDensity: 12,
   }],
 
   ['testroom', {
@@ -45,7 +52,7 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
     backgroundColor: 0x0a1a0a,
     monsterPoolByTier: {
       1: ['forest-slime', 'wolf'],
-      2: ['ancient-wolf', 'ironwood-golem'],
+      2: ['ancient-wolf', 'ironwood-golem', 'canopy-sprite'],
       3: ['cursed-wolf', 'treant'],
       4: ['elder-treant', 'spectral-wolf'],
     },
@@ -56,6 +63,7 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
       4: ['elder-treant-lord'],
     },
     essenceType: 'essence',
+    mobDensity: 13,
   }],
 
   // Threat profile: two varieties — fast skirmishers (high pull range, low defense)
@@ -65,7 +73,7 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
     backgroundColor: 0x141418,
     monsterPoolByTier: {
       1: ['cliff-hopper', 'ridge-archer'],
-      2: ['granite-titan', 'stone-eagle'],
+      2: ['granite-titan', 'stone-eagle', 'peak-archer'],
       3: ['rune-golem', 'storm-eagle'],
       4: ['colossal-titan', 'thunder-condor'],
     },
@@ -76,6 +84,7 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
       4: ['mountain-titan'],
     },
     essenceType: 'essence',
+    mobDensity: 7,
   }],
 
   // Threat profile: balanced, no specialization — jack of all trades
@@ -84,7 +93,7 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
     backgroundColor: 0x141a08,
     monsterPoolByTier: {
       1: ['plains-slime', 'boar'],
-      2: ['stampede-bull', 'prairie-wolf'],
+      2: ['stampede-bull', 'prairie-wolf', 'savanna-hawk'],
       3: ['war-mammoth', 'dire-wolf'],
       4: ['ancient-guardian', 'stampede-king'],
     },
@@ -95,6 +104,7 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
       4: ['stampede-emperor'],
     },
     essenceType: 'essence',
+    mobDensity: 16,
   }],
 
   // Threat profile: attrition — DoT/poison attackers with above-average defense;
@@ -104,7 +114,7 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
     backgroundColor: 0x0c1708,
     monsterPoolByTier: {
       1: ['bog-slime', 'mud-toad'],
-      2: ['swamp-hydra', 'bog-witch'],
+      2: ['swamp-hydra', 'bog-witch', 'mire-stalker'],
       3: ['bog-horror', 'plague-witch'],
       4: ['hydra-elder', 'shadow-toad'],
     },
@@ -115,6 +125,7 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
       4: ['swamp-sovereign'],
     },
     essenceType: 'essence',
+    mobDensity: 10,
   }],
 
   // Threat profile: high defense, hard and slow hits — damage spikiness;
@@ -124,7 +135,7 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
     backgroundColor: 0x0c0c0f,
     monsterPoolByTier: {
       1: ['cave-lurker', 'cave-brute'],
-      2: ['giant-spider', 'cave-troll'],
+      2: ['giant-spider', 'cave-troll', 'cave-gargoyle'],
       3: ['cave-behemoth', 'venom-queen'],
       4: ['stone-colossus', 'abyss-crawler'],
     },
@@ -135,6 +146,7 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
       4: ['cave-titan'],
     },
     essenceType: 'essence',
+    mobDensity: 5,
   }],
 
   // ── T2+ biomes (not available at T1) ──────────────────────────────────────
@@ -143,7 +155,7 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
     id: 'jungle', name: 'Jungle',
     backgroundColor: 0x081508,
     monsterPoolByTier: {
-      2: ['jungle-snake', 'jungle-ape'],
+      2: ['jungle-snake', 'jungle-ape', 'jungle-blowdarter'],
       3: ['feral-gorilla', 'pit-viper'],
       4: ['ancient-titan', 'jungle-wyvern'],
     },
@@ -153,14 +165,14 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
       4: ['jungle-ancient-lord'],
     },
     essenceType: 'essence',
+    mobDensity: 15,
   }],
 
   ['tundra', {
     id: 'tundra', name: 'Tundra',
     backgroundColor: 0x0e1218,
     monsterPoolByTier: {
-      2: ['frost-slime', 'ice-bear'],
-      3: ['frost-giant', 'blizzard-wolf'],
+      3: ['frost-slime', 'ice-bear', 'frost-giant', 'blizzard-wolf'],
       4: ['arctic-leviathan', 'ice-specter'],
     },
     bossPoolByTier: {
@@ -169,13 +181,14 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
       4: ['glacial-titan'],
     },
     essenceType: 'essence',
+    mobDensity: 6,
   }],
 
   ['desert', {
     id: 'desert', name: 'Desert',
     backgroundColor: 0x1a1608,
     monsterPoolByTier: {
-      2: ['sand-scorpion', 'stone-basilisk'],
+      2: ['sand-scorpion', 'stone-basilisk', 'dune-asp'],
       3: ['sand-kraken', 'bone-drake'],
       4: ['pharaoh-construct', 'desert-wyrm'],
     },
@@ -185,6 +198,7 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
       4: ['desert-eternal'],
     },
     essenceType: 'essence',
+    mobDensity: 14,
   }],
 
   // Volcanic first appears at T3 — not available in T1 or T2 zones.
@@ -200,9 +214,10 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
       4: ['inferno-lord'],
     },
     essenceType: 'essence',
+    mobDensity: 5,
   }],
 
-  // Necropolis first appears at T3 — deep undead territory.
+  // Necropolis first appears at T4 — deep undead territory.
   ['necropolis', {
     id: 'necropolis', name: 'Necropolis',
     backgroundColor: 0x0c0810,
@@ -215,6 +230,7 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
       4: ['undying-lord'],
     },
     essenceType: 'essence',
+    mobDensity: 13,
   }],
 
   // Abyss first appears at T4 — end-game void zones only.
@@ -228,5 +244,6 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
       4: ['void-titan'],
     },
     essenceType: 'essence',
+    mobDensity: 5,
   }],
 ]);

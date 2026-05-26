@@ -14,6 +14,7 @@ export const bossMonsterEntriesT3 = [
     ai: { wanderRadius: 100, leashRange: 900, idleMinMs: 3000, idleMaxMs: 8000 },
   }],
 
+
   ['volcanic-titan', {
     id: 'volcanic-titan', name: 'Volcanic Titan', color: 0xee4400,
     isBoss: true,
@@ -25,6 +26,7 @@ export const bossMonsterEntriesT3 = [
     rewards: { essence: 360, essenceType: 'red', level: 5 },
     ai: { wanderRadius: 120, leashRange: 920, idleMinMs: 2500, idleMaxMs: 7000 },
   }],
+
 
   ['peak-titan', {
     id: 'peak-titan', name: 'Peak Titan', color: 0x6688cc,
@@ -38,6 +40,7 @@ export const bossMonsterEntriesT3 = [
     ai: { wanderRadius: 100, leashRange: 920, idleMinMs: 3500, idleMaxMs: 8500 },
   }],
 
+
   ['elder-forest-warden', {
     id: 'elder-forest-warden', name: 'Elder Forest Warden', color: 0x1a6622,
     isBoss: true,
@@ -49,6 +52,7 @@ export const bossMonsterEntriesT3 = [
     rewards: { essence: 360, essenceType: 'green', level: 5 },
     ai: { wanderRadius: 110, leashRange: 910, idleMinMs: 3000, idleMaxMs: 8000 },
   }],
+
 
   ['plains-warlord', {
     id: 'plains-warlord', name: 'Plains Warlord', color: 0xdd8800,
@@ -62,6 +66,7 @@ export const bossMonsterEntriesT3 = [
     ai: { wanderRadius: 130, leashRange: 900, idleMinMs: 2000, idleMaxMs: 6000 },
   }],
 
+
   ['sand-emperor', {
     id: 'sand-emperor', name: 'Sand Emperor', color: 0xccaa22,
     isBoss: true,
@@ -73,6 +78,7 @@ export const bossMonsterEntriesT3 = [
     rewards: { essence: 345, essenceType: 'yellow', level: 5 },
     ai: { wanderRadius: 140, leashRange: 900, idleMinMs: 2200, idleMaxMs: 6500 },
   }],
+
 
   ['jungle-titan-lord', {
     id: 'jungle-titan-lord', name: 'Jungle Titan Lord', color: 0x115522,
@@ -86,6 +92,7 @@ export const bossMonsterEntriesT3 = [
     ai: { wanderRadius: 140, leashRange: 920, idleMinMs: 2000, idleMaxMs: 6000 },
   }],
 
+
   ['cave-overlord', {
     id: 'cave-overlord', name: 'Cave Overlord', color: 0x332244,
     isBoss: true,
@@ -94,9 +101,10 @@ export const bossMonsterEntriesT3 = [
       speed: 16, attackRange: 82, attackCooldown: 5000, pullRange: 330,
     },
     behavior: 'melee', attackStyle: 'impact', biome: 'cave',
-    rewards: { essence: 355, essenceType: 'blue', level: 5 },
+    rewards: { essence: 355, essenceType: 'red', level: 5 },
     ai: { wanderRadius: 85, leashRange: 890, idleMinMs: 4000, idleMaxMs: 10000 },
   }],
+
 
   ['bog-ancient', {
     id: 'bog-ancient', name: 'Bog Ancient', color: 0x1a3311,
@@ -109,6 +117,7 @@ export const bossMonsterEntriesT3 = [
     rewards: { essence: 345, essenceType: 'purple', level: 5 },
     ai: { wanderRadius: 105, leashRange: 880, idleMinMs: 2800, idleMaxMs: 7000 },
   }],
+
 
   ['lich-king', {
     id: 'lich-king', name: 'Lich King', color: 0x9933cc,

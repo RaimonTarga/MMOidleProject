@@ -99,6 +99,7 @@ export function createMonster(
       lastAggroAt:   0,
       baseSpeed:     def.stats.speed,
       kiteTimer:     0,
+      chargeRemainingMs: 0,
     },
     tracksCombat: makeTracksCombat(),
   };
@@ -195,7 +196,8 @@ export function ensurePopulation(world: World, nodeId: string): void {
   for (const e of world.monsterEntities) {
     if (e.hasPosition.nodeId === nodeId && !e.isMonster.isBoss) count++;
   }
-  while (count < GAME_CONFIG.MONSTERS_PER_NODE) {
+  const targetCount = world.getMobDensity(nodeId);
+  while (count < targetCount) {
     if (!spawnMonster(world, nodeId)) break;
     count++;
   }
@@ -208,6 +210,8 @@ export function ensurePopulation(world: World, nodeId: string): void {
 export function ensureBoss(world: World, nodeId: string): void {
   const nodeDef = NODE_REGISTRY.get(nodeId);
   if (!nodeDef?.isDungeon) return;
+  const respawnAt = world.bossRespawnAt.get(nodeId) ?? 0;
+  if (Date.now() < respawnAt) return;
 
   let hasBoss = false;
   for (const e of world.monsterEntities) {

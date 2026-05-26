@@ -14,6 +14,7 @@ export const bossMonsterEntriesT4 = [
     ai: { wanderRadius: 80, leashRange: 950, idleMinMs: 4000, idleMaxMs: 10000 },
   }],
 
+
   ['infernal-tyrant', {
     id: 'infernal-tyrant', name: 'Infernal Tyrant', color: 0xff2200,
     isBoss: true,
@@ -25,6 +26,7 @@ export const bossMonsterEntriesT4 = [
     rewards: { essence: 120, essenceType: 'red', level: 5 },
     ai: { wanderRadius: 180, leashRange: 900, idleMinMs: 2000, idleMaxMs: 5000 },
   }],
+
 
   ['glacial-titan', {
     id: 'glacial-titan', name: 'Glacial Titan', color: 0x55aadd,
@@ -38,6 +40,7 @@ export const bossMonsterEntriesT4 = [
     ai: { wanderRadius: 85, leashRange: 950, idleMinMs: 4000, idleMaxMs: 10000 },
   }],
 
+
   ['elder-treant-lord', {
     id: 'elder-treant-lord', name: 'Elder Treant Lord', color: 0x112a08,
     isBoss: true,
@@ -49,6 +52,7 @@ export const bossMonsterEntriesT4 = [
     rewards: { essence: 560, essenceType: 'green', level: 5 },
     ai: { wanderRadius: 80, leashRange: 940, idleMinMs: 4500, idleMaxMs: 11000 },
   }],
+
 
   ['stampede-emperor', {
     id: 'stampede-emperor', name: 'Stampede Emperor', color: 0xff4400,
@@ -62,6 +66,7 @@ export const bossMonsterEntriesT4 = [
     ai: { wanderRadius: 120, leashRange: 940, idleMinMs: 1500, idleMaxMs: 5000 },
   }],
 
+
   ['desert-eternal', {
     id: 'desert-eternal', name: 'Desert Eternal', color: 0xddbb33,
     isBoss: true,
@@ -73,6 +78,7 @@ export const bossMonsterEntriesT4 = [
     rewards: { essence: 570, essenceType: 'yellow', level: 5 },
     ai: { wanderRadius: 100, leashRange: 950, idleMinMs: 3000, idleMaxMs: 8500 },
   }],
+
 
   ['jungle-ancient-lord', {
     id: 'jungle-ancient-lord', name: 'Jungle Ancient Lord', color: 0x0d4419,
@@ -86,6 +92,7 @@ export const bossMonsterEntriesT4 = [
     ai: { wanderRadius: 115, leashRange: 950, idleMinMs: 2000, idleMaxMs: 6000 },
   }],
 
+
   ['inferno-lord', {
     id: 'inferno-lord', name: 'Inferno Lord', color: 0xcc1100,
     isBoss: true,
@@ -97,6 +104,7 @@ export const bossMonsterEntriesT4 = [
     rewards: { essence: 600, essenceType: 'red', level: 5 },
     ai: { wanderRadius: 100, leashRange: 940, idleMinMs: 3000, idleMaxMs: 8000 },
   }],
+
 
   ['undying-lord', {
     id: 'undying-lord', name: 'Undying Lord', color: 0x6611aa,
@@ -110,6 +118,7 @@ export const bossMonsterEntriesT4 = [
     ai: { wanderRadius: 90, leashRange: 940, idleMinMs: 3500, idleMaxMs: 9000 },
   }],
 
+
   ['cave-titan', {
     id: 'cave-titan', name: 'Cave Titan', color: 0x223344,
     isBoss: true,
@@ -118,9 +127,10 @@ export const bossMonsterEntriesT4 = [
       speed: 14, attackRange: 90, attackCooldown: 5500, pullRange: 370,
     },
     behavior: 'melee', attackStyle: 'impact', biome: 'cave',
-    rewards: { essence: 610, essenceType: 'blue', level: 5 },
+    rewards: { essence: 610, essenceType: 'red', level: 5 },
     ai: { wanderRadius: 80, leashRange: 940, idleMinMs: 4500, idleMaxMs: 11000 },
   }],
+
 
   ['swamp-sovereign', {
     id: 'swamp-sovereign', name: 'Swamp Sovereign', color: 0x0d2a0a,
@@ -133,6 +143,7 @@ export const bossMonsterEntriesT4 = [
     rewards: { essence: 575, essenceType: 'purple', level: 5 },
     ai: { wanderRadius: 95, leashRange: 940, idleMinMs: 3500, idleMaxMs: 9000 },
   }],
+
 
   ['void-titan', {
     id: 'void-titan', name: 'Void Titan', color: 0x440066,

@@ -235,13 +235,16 @@ function applyLaserTick(world: World, player: PlayerEntity, target: MonsterEntit
 
   if (target.hasHealth.hp <= 0) {
     emitCombatEvent('onKill', ctx, world);
+    const rewardInfo = grantMonsterRewards(world, player.isPlayer.id, target);
     world.pushEvent(player.hasPosition.nodeId, {
       kind: 'player-kill',
       playerId: player.isPlayer.id,
       targetId: target.isMonster.id,
       targetName: target.isMonster.name,
+      biomeXpGained: rewardInfo?.biomeXpGained ?? 0,
+      essenceGained: rewardInfo?.essenceGained ?? 0,
+      essenceType: rewardInfo?.essenceType ?? 'green',
     });
-    grantMonsterRewards(world, player.isPlayer.id, target);
     world.removeMonsterEntity(target.isMonster.id);
     return;
   }

@@ -33,3 +33,15 @@
   text-align: right;
   color: var(--hud-text, #e5e2ff);
 }
+
+@keyframes essence-flash {
+  0%   { background-color: transparent; }
+  15%  { background-color: var(--flash-color, rgba(255, 255, 255, 0.08)); }
+  60%  { background-color: var(--flash-color, rgba(255, 255, 255, 0.08)); }
+  100% { background-color: transparent; }
+}
+
+.essence-row--flash {
+  border-radius: 3px;
+  animation: essence-flash 1100ms ease-out forwards;
+}

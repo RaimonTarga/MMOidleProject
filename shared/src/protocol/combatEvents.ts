@@ -1,3 +1,4 @@
+import type { EssenceType } from '../items';
 import type { Vec2 } from '../systems/spatial';
 
 /**
@@ -7,4 +8,5 @@ import type { Vec2 } from '../systems/spatial';
  */
 export type CombatEvent =
   | { kind: 'player-hit';  playerId: string; targetId: string; targetName: string; damage: number; empowered: boolean; execution: boolean; effects?: string[]; playerPos?: Vec2; targetPos?: Vec2 }
-  | { kind: 'player-kill'; playerId: string; targetId: string; targetName: string };
+  | { kind: 'player-kill'; playerId: string; targetId: string; targetName: string; biomeXpGained: number; essenceGained: number; essenceType: EssenceType }
+  | { kind: 'monster-dodge'; monsterId: string; targetPos?: Vec2 };

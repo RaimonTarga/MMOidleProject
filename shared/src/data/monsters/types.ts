@@ -76,7 +76,7 @@ export interface MonsterDefinition {
   attackStyle: string;
   /** Biome group this monster belongs to — must match a BiomeDefinition id. */
   biome: string;
-  rewards: { essence: number; essenceType: EssenceType; level: number };
+  rewards: { essence: number; essenceType: EssenceType; level: number; biomeXp?: number };
   ai: {
     wanderRadius: number;
     leashRange: number;
@@ -87,6 +87,12 @@ export interface MonsterDefinition {
   isBoss?: boolean;
   /** Fight script — opt-in boss mechanics (phases, regen, enrage, summons, etc.). */
   bossScript?: BossScript;
+  /**
+   * If set, the monster bursts at speedMult x base speed for durationMs when it
+   * first acquires an aggro target (both pull-range and retaliation aggro).
+   * The charge overrides the kite ramp for its duration.
+   */
+  chargeOnAggro?: { speedMult: number; durationMs: number };
   /** Dev test-room target behavior. These monsters are interacted with by standing in attack range. */
   interactKind?: 'reset' | 'gainPoint';
   /**
@@ -101,4 +107,14 @@ export interface MonsterDefinition {
     tickIntervalMs: number;
     durationMs?: number;
   };
+  /**
+   * If set, this monster applies a movement slow (or root when speedMult = 0) to
+   * the player on every successful hit. The effect is refreshed on each hit.
+   */
+  slowEffect?: { speedMult: number; durationMs: number };
+  /**
+   * Deterministic evasion: this monster dodges every Nth incoming hit from players.
+   * Minimum useful value is 5; lower values should be ignored by combat logic.
+   */
+  evadeEvery?: number;
 }
