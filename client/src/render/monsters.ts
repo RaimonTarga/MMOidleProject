@@ -1,4 +1,4 @@
-import type { MonsterSnapshot } from '@mmo-idle/shared';
+import type { MonsterView } from '@mmo-idle/shared';
 import { getMonsterShadowOffset } from '../sprites';
 import type { RenderState } from './state';
 import type { GameScene } from '../scenes/GameScene';
@@ -11,15 +11,15 @@ import { applyLunge } from './interpolation';
 
 export function upsertMonster(
   state: RenderState,
-  monster: MonsterSnapshot,
+  monster: MonsterView,
   scene: GameScene,
 ): void {
-  const isNew = !state.ids.has(monster.id);
+  const isNew = !state.sprite.has(monster.id);
 
   if (isNew) {
     state.ids.add(monster.id);
     state.kind.set(monster.id, 'monster');
-    state.snapshot.set(monster.id, monster);
+    state.view.set(monster.id, monster);
 
     const spriteSize = monster.isBoss ? 80 : 64;
     const shadowW = monster.isBoss ? 64 : 52;
@@ -74,7 +74,7 @@ export function upsertMonster(
     return;
   }
 
-  const prev = state.snapshot.get(monster.id) as MonsterSnapshot | undefined;
+  const prev = state.view.get(monster.id) as MonsterView | undefined;
   const prevAttackAt = prev?.lastAttackAt ?? 0;
   const prevHp = prev?.hp ?? monster.hp;
 
@@ -88,7 +88,7 @@ export function upsertMonster(
     }
   }
 
-  state.snapshot.set(monster.id, monster);
+  state.view.set(monster.id, monster);
   const transform = state.transform.get(monster.id);
   if (transform) {
     transform.targetX = monster.targetX;

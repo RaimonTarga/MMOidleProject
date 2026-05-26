@@ -1,4 +1,4 @@
-import type { PlayerSnapshot } from '@mmo-idle/shared';
+import type { PlayerView } from '@mmo-idle/shared';
 import type { RenderState } from './state';
 import type { GameScene } from '../scenes/GameScene';
 
@@ -17,7 +17,7 @@ export function drawHealthBars(state: RenderState): void {
     const sprite = state.sprite.get(id);
     const hpBar = state.hpBar.get(id);
     const meta = state.spriteMeta.get(id);
-    const snap = state.snapshot.get(id);
+    const snap = state.view.get(id);
     if (!sprite || !hpBar || !meta || !snap) continue;
 
     const barY = sprite.y - meta.barOffsetY;
@@ -31,7 +31,7 @@ export function drawHealthBars(state: RenderState): void {
     hpBar.fillRect(sprite.x - 16, barY, Math.round(32 * hpPct), 4);
 
     if (state.kind.get(id) === 'player') {
-      const player = snap as PlayerSnapshot;
+      const player = snap as PlayerView;
       const shields = player.shields;
       if (shields.length > 0) {
         const totalShield = shields.reduce((sum, s) => sum + s.amount, 0);

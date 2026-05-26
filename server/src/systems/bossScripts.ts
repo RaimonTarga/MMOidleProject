@@ -26,8 +26,8 @@ import type { ActiveBossEffect, ScriptsBoss } from '@mmo-idle/shared';
 import { initScriptsBoss } from '@mmo-idle/shared';
 import { attachComponent } from '../ecs/markerHelpers';
 
-export type { ScriptsBoss, BossRuntimeState, ActiveBossEffect } from '@mmo-idle/shared';
-export { initScriptsBoss, initBossState } from '@mmo-idle/shared';
+export type { ScriptsBoss, ActiveBossEffect } from '@mmo-idle/shared';
+export { initScriptsBoss } from '@mmo-idle/shared';
 
 // ── Main update ───────────────────────────────────────────────────────────────
 

@@ -39,8 +39,3 @@ export function initScriptsBoss(script: BossScript): ScriptsBoss {
   };
 }
 
-/** @deprecated Use ScriptsBoss */
-export type BossRuntimeState = ScriptsBoss;
-
-/** @deprecated Use initScriptsBoss */
-export const initBossState = initScriptsBoss;

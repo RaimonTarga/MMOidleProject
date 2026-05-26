@@ -13,7 +13,7 @@ import type {
   ServerToClientEvents,
   ClientToServerEvents,
   EquipmentSlot,
-  NodeSnapshot,
+  DeltaSnapshot,
 } from '@mmo-idle/shared';
 import { db, runMigrations } from './db/index';
 import { findOrCreateAccount, getOrCreateCharacter, saveCharacter } from './db/playerRepo';
@@ -22,13 +22,16 @@ import { initWeaponEffects } from './systems/weaponEffects';
 import { initDefenseSystems } from './systems/defenseSystems';
 import { initDebuffMechanics } from './systems/debuffMechanics';
 import { IS_DEV } from './env';
-import { assertMarkerInvariants } from './ecs/markerInvariants';
+import {
+  assertMarkerInvariants,
+  assertNetworkedComponentInvariants,
+} from './ecs/markerInvariants';
 import { setEntityMotion, stopEntity } from './systems/movement';
 import { setAggroTarget, setAttackTarget } from './systems/targeting';
 import { clearEngagement } from './systems/engagement';
 import { detachComponent } from './ecs/markerHelpers';
 import { syncArchetypeSlices } from './ecs/archetypeSliceSync';
-import { recalculatePlayerEntityStats } from './ecs/playerSnapshotAdapter';
+import { recalculatePlayerEntityStats } from './ecs/playerEntityFormulas';
 
 export { IS_DEV };
 
@@ -91,6 +94,12 @@ if (IS_DEV) {
   } else {
     console.log('[marker-invariants] Marker components OK');
   }
+  const networkViolations = assertNetworkedComponentInvariants(world);
+  if (networkViolations.length > 0) {
+    console.error('[network-invariants] Networked component mismatch:', networkViolations);
+  } else {
+    console.log('[network-invariants] Networked components OK');
+  }
 }
 
 // ── HEALTH ────────────────────────────────────────────
@@ -126,19 +135,20 @@ setInterval(() => {
   world.pendingDeaths = [];
 }, LOGIC_MS);
 
-// Broadcast tick — 5 Hz. Sends authoritative state snapshots to each player.
+// Broadcast tick — 5 Hz. Sends authoritative component deltas to each player.
 // Decoupled from the simulation so network cost doesn't scale with logic rate.
-// buildSnapshot is called once per node so all players in a node share the same
+// buildDelta is called once per node so all players in a node share the same
 // event queue flush — without this, the first player drains events and others see none.
 setInterval(() => {
-  const nodeSnaps = new Map<string, NodeSnapshot>();
+  const dirty = world.beginBroadcast();
+  const nodeSnaps = new Map<string, DeltaSnapshot>();
   for (const player of world.playerEntities) {
     const sock = io.sockets.sockets.get(player.isPlayer.id);
     if (!sock) continue;
     if (!nodeSnaps.has(player.hasPosition.nodeId)) {
-      nodeSnaps.set(player.hasPosition.nodeId, world.buildSnapshot(player.hasPosition.nodeId));
+      nodeSnaps.set(player.hasPosition.nodeId, world.buildNodeDelta(player.hasPosition.nodeId, dirty));
     }
-    sock.emit('node:state', nodeSnaps.get(player.hasPosition.nodeId)!);
+    sock.emit('node:delta', nodeSnaps.get(player.hasPosition.nodeId)!);
   }
 }, BROADCAST_MS);
 
@@ -168,7 +178,11 @@ io.on('connection', (socket) => {
   syncArchetypeSlices(world, entity);
   entity.hasHealth.hp = entity.hasHealth.maxHp;
 
-  socket.emit('state:sync', world.buildSnapshot(entity.hasPosition.nodeId));
+  socket.emit('state:sync', world.buildNodeDelta(
+    entity.hasPosition.nodeId,
+    { patched: new Map(), detached: new Map() },
+    { resync: true },
+  ));
 
   socket.on('player:move', ({ x, y }) => {
     const p = world.getPlayerEntity(socket.id);

@@ -154,7 +154,7 @@ Aggro acquisition (`findAggro`) only runs when `hasAggroTarget` is absent — re
 
 ### Combat state
 
-`CombatState` (`combatState.ts`): `counters`, `resources`, `resourceMaxes`, `cooldowns`, `flags`, `stacks`, `strings`, `statusEffects`. Always use accessor helpers — never raw field access. All cooldowns decremented by `updateCombatState` each tick.
+`TracksCombat`: `counters`, `resources`, `resourceMaxes`, `cooldowns`, `flags`, `strings`, `statusEffects`. Always use accessor helpers — never raw field access. All cooldowns decremented by `updateCombatState` each tick.
 
 **StatusEffect API:** `applyStatusEffect` (stacking — adds 1 stack per call, `data` only set on creation), `removeStatusEffect`, `getTotalStacks`, `hasStatusEffect`. `data` is `Record<string, number>` — numeric flags only.
 
@@ -390,7 +390,7 @@ Each player hit applies 1 DoT stack; stacks tick damage at configurable interval
 
 **DoT duration:** Player-applied DoT stacks expire after `DOT_DURATION_MS = 4500 ms` of no hits. Duration is refreshed (not stacked) on every hit via `remainingMs + refreshable: true` in `applyStatusEffect`. Permafrost is the only exception (`remainingMs: -1`, truly permanent). Duration is tunable per-skill-node via `dot.duration-ms` passive; monster-applied DoTs use `monsterDef.dotEffect.durationMs ?? 4500`.
 
-**Monster → Player DoT:** `MonsterDefinition.dotEffect?: { damagePerStack, maxStacks, tickIntervalMs, durationMs? }`. Any monster with this field applies DoT stacks on each hit. The player-side tick loop in `updateDotArchetype` processes `playerCombatState`; DoT bypasses plating but `damageReduction` (%) and `dot-resistance` both apply. Respawn clears all status effects via `resetCombatState`. Currently wired: `bog-slime` (2/3/1000), `mud-toad` (3/3/1000), `bog-sovereign` (4/4/1000).
+**Monster → Player DoT:** `MonsterDefinition.dotEffect?: { damagePerStack, maxStacks, tickIntervalMs, durationMs? }`. Any monster with this field applies DoT stacks on each hit. The player-side tick loop in `updateDotArchetype` processes `tracksCombat`; DoT bypasses plating but `damageReduction` (%) and `dot-resistance` both apply. Respawn clears all status effects via `resetTracksCombat`. Currently wired: `bog-slime` (2/3/1000), `mud-toad` (3/3/1000), `bog-sovereign` (4/4/1000).
 
 **T3 paths:**
 - Poison: Poison Explosion (20-stack cap → 10-tick burst), Eternal Doom (no cap, diminishing returns formula), Invigorating Toxins (stacks boost player ATK+speed)
@@ -482,11 +482,12 @@ T1 bosses: 400–700 HP, 14–22 ATK. Jungle first appears T2; ex-jungle T1 node
 ### ECS conventions (server)
 
 - **Component shapes live in `shared/src/components/`** — slice interfaces, status helpers, marker components, and pure factories (`initUsesCadence`, etc.). Import from `@mmo-idle/shared`; do not add server re-export shims.
-- **Server owns miniplex wiring** — `ServerEntity` in `server/src/ecs/entity.ts`, typed queries on `World.ts` (`playerEntities`, `dottedMonsters`, `bossScriptedMonsters`, …), and `projection.ts` assembles legacy wire snapshots only at the broadcast boundary.
+- **Server owns miniplex wiring** — `ServerEntity` in `server/src/ecs/entity.ts`, typed queries on `World.ts` (`playerEntities`, `dottedMonsters`, `bossScriptedMonsters`, …), and `World.buildNodeDelta()` serializes allowlisted component slices at the broadcast boundary.
 - **Entity-native game logic** — systems mutate slice fields on `PlayerEntity` / `MonsterEntity` directly. No snapshot round-trip for stat recalc, archetype slice sync, DB hydrate, persistence, or monster spawn.
 - **Persistence is component-shaped** — `characters` stores one JSON blob per persisted player slice (`isPlayer`, `hasPosition`, `hasHealth`, `tracksProgression`, `holdsInventory`, `usesSkills`). Runtime-only slices and `usesSkills.passives` are rebuilt on attach/recalc, not persisted.
 - **Component presence gates behavior** — `if (entity.usesCadence)`, not `combatArchetype === 'cadence'`; `entity.isMoving` exists only while motion is active; `hasAttackTarget` / `hasAggroTarget` exist only while a target is active; shield/evasion/channel/empowered/boss-engaged states are presence components, not disabled sentinels inside always-present slices.
 - **Detach absent behavior promptly** — use `attachComponent` / `detachComponent` (or focused helpers like `setEntityMotion`, `stopEntity`, `setAttackTarget`, `setAggroTarget`) when behavior starts/stops. Do not encode absence as zero motion, empty shield arrays, null target ids, false channel flags, or zero-duration sub-state.
+- **Networked slice mutations mark dirty** — `attachComponent` / `detachComponent` notify the dirty tracker automatically; direct in-place networked slice writes should call `markSliceDirty` or go through `mutateSlice`.
 - **Lookup-only status effects** stay in `tracksCombat.statusEffects` without markers — see `.cursor/design/status.md`.
 - **`syncPlayerBuffs` is entity-native** — `BuffProjectionContext.player` is `PlayerEntity`; descriptors read slices, not assembled snapshots.
-- **Dev boot checks** — `[marker-invariants]` (`assertMarkerInvariants`) runs on server start in dev mode and verifies status markers plus archetype slice presence.
+- **Dev boot checks** — `[marker-invariants]` and `[network-invariants]` run on server start in dev mode and verify status markers, archetype slice presence, and networked component allowlists.

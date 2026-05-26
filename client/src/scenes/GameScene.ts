@@ -1,7 +1,6 @@
 import Phaser from 'phaser';
 import type {
-  PlayerSnapshot,
-  NodeSnapshot,
+  PlayerView,
   NodeDirection,
   EquipmentSlot,
   CombatArchetype,
@@ -23,8 +22,8 @@ import {
   sendGoToTestRoom,
   sendLeaveTestRoom,
 } from '../net/intents';
-import { applySnapshot } from '../net/snapshotApplier';
-import { createRenderState, getOwnSnapshot, type RenderState } from '../render/state';
+import { applyDelta } from '../net/deltaApplier';
+import { createRenderState, getOwnView, type RenderState } from '../render/state';
 import { stepInterpolation, getOwnBase, applyLunge } from '../render/interpolation';
 import { drawShadows } from '../render/shadows';
 import { drawLabels } from '../render/labels';
@@ -240,7 +239,7 @@ export class GameScene extends Phaser.Scene {
         this.myId = '';
         this.state.ownId = null;
       },
-      onSnapshot: (snapshot) => applySnapshot(this.state, snapshot, this),
+      onDelta: (snapshot) => applyDelta(this.state, snapshot, this),
       onCraftResult: (result) => {
         window.dispatchEvent(new CustomEvent('hud:craftResult', { detail: result }));
       },
@@ -315,7 +314,7 @@ export class GameScene extends Phaser.Scene {
     sendSetAuto(this.socket, enabled);
     if (enabled) this.targetMarker.setVisible(false);
 
-    const own = getOwnSnapshot(this.state);
+    const own = getOwnView(this.state);
     if (own) {
       hudBus.emit({ player: { ...own, auto: enabled } });
     }
@@ -331,7 +330,7 @@ export class GameScene extends Phaser.Scene {
 
       const ownSprite = state.ownId ? state.sprite.get(state.ownId) : undefined;
       const targetSprite = state.sprite.get(ev.targetId);
-      const player = state.ownId ? (state.snapshot.get(state.ownId) as PlayerSnapshot | undefined) : undefined;
+      const player = state.ownId ? (state.view.get(state.ownId) as PlayerView | undefined) : undefined;
       const targetInterp = state.interpolation.get(ev.targetId);
 
       if (ownSprite && targetSprite && player) {
@@ -941,7 +940,7 @@ export class GameScene extends Phaser.Scene {
     const ownSprite = this.state.ownId ? this.state.sprite.get(this.state.ownId) : undefined;
     const targetSprite = this.laserBeamTargetId ? this.state.sprite.get(this.laserBeamTargetId) : undefined;
     const player = this.state.ownId
-      ? (this.state.snapshot.get(this.state.ownId) as PlayerSnapshot | undefined)
+      ? (this.state.view.get(this.state.ownId) as PlayerView | undefined)
       : undefined;
 
     if (
@@ -1141,7 +1140,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   // Helper: resolve which DoT path the player is on from their passives + sub-variant.
-  private getDotPath(player: PlayerSnapshot): 'poison' | 'fire' | 'frost' {
+  private getDotPath(player: PlayerView): 'poison' | 'fire' | 'frost' {
     const p = player.passives;
     if ((p['dot.fan-the-flames'] ?? 0) > 0 || (p['dot.smoldering-ember'] ?? 0) > 0 || (p['dot.conflagration'] ?? 0) > 0) return 'fire';
     if ((p['dot.permafrost'] ?? 0) > 0 || (p['dot.freezing-cold'] ?? 0) > 0 || (p['dot.glacial-fracture'] ?? 0) > 0) return 'frost';
@@ -1282,7 +1281,7 @@ export class GameScene extends Phaser.Scene {
 
     if (this.debugPlayerRange) {
       const ownSprite = this.state.ownId ? this.state.sprite.get(this.state.ownId) : undefined;
-      const player = getOwnSnapshot(this.state);
+      const player = getOwnView(this.state);
       if (ownSprite && player) {
         const r = player.attackRange;
         this.debugGraphics.lineStyle(1.5, 0xaaff44, 0.55);

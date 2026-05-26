@@ -1,5 +1,5 @@
 import type Phaser from 'phaser';
-import type { PlayerSnapshot, MonsterSnapshot } from '@mmo-idle/shared';
+import type { PlayerView, MonsterView } from '@mmo-idle/shared';
 import { ATLAS_KEY, getPlayerFrame, getMonsterFrame } from '../sprites';
 import type { RenderState } from './state';
 import type { GameScene } from '../scenes/GameScene';
@@ -21,7 +21,7 @@ export function tryMakeImage(
 export function ensureSprite(
   state: RenderState,
   id: string,
-  snapshot: PlayerSnapshot | MonsterSnapshot,
+  snapshot: PlayerView | MonsterView,
   scene: GameScene,
   opts: {
     displayW: number;
@@ -34,8 +34,8 @@ export function ensureSprite(
   if (state.sprite.has(id)) return;
 
   const frame = opts.isPlayer
-    ? getPlayerFrame(snapshot as PlayerSnapshot)
-    : getMonsterFrame((snapshot as MonsterSnapshot).monsterTypeId);
+    ? getPlayerFrame(snapshot as PlayerView)
+    : getMonsterFrame((snapshot as MonsterView).monsterTypeId);
 
   const sprite =
     tryMakeImage(scene, snapshot.x, snapshot.y, frame, opts.displayW, opts.displayH) ??
@@ -51,7 +51,7 @@ export function ensureSprite(
 export function updateSpriteFrame(
   state: RenderState,
   id: string,
-  snapshot: PlayerSnapshot | MonsterSnapshot,
+  snapshot: PlayerView | MonsterView,
   scene: GameScene,
   opts: {
     displayW: number;
@@ -62,8 +62,8 @@ export function updateSpriteFrame(
   },
 ): void {
   const newFrame = opts.isPlayer
-    ? getPlayerFrame(snapshot as PlayerSnapshot)
-    : getMonsterFrame((snapshot as MonsterSnapshot).monsterTypeId);
+    ? getPlayerFrame(snapshot as PlayerView)
+    : getMonsterFrame((snapshot as MonsterView).monsterTypeId);
 
   const meta = state.spriteMeta.get(id);
   if (!meta || newFrame === meta.currentFrame) return;

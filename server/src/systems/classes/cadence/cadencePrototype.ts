@@ -66,7 +66,7 @@ export function initCadenceArchetype(): void {
   // is set to true, which the counter listener reads to detect the finisher hit.
   registerEmpoweredMultiplier(CADENCE_DAMAGE_MULT_DEFAULT, {
     attackerType:  'player',
-    attackerArchetype: 'cadence',
+    attackerSlice: 'usesCadence',
     passiveKey:    'cadence.empowered-mult',
     passiveAddKey: 'cadence.damage-mult-add',
   });

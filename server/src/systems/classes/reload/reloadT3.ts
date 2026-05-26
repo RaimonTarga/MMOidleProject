@@ -197,7 +197,7 @@ function applyLaserTick(world: World, player: PlayerEntity, target: MonsterEntit
   emitCombatEvent('onHit', ctx, world);
 
   const isEmpowered = !!ctx.metadata['empoweredAttack'];
-  const isExecution = isEmpowered && player.usesSkills.combatArchetype === 'cooldown';
+  const isExecution = isEmpowered && player.usesCooldown !== undefined;
   if (isEmpowered) {
     applyPlayerAoe(
       world, player,

@@ -1,9 +1,9 @@
-import type { PlayerSnapshot } from '@mmo-idle/shared';
+import type { PlayerView } from '@mmo-idle/shared';
 import { ESSENCE_TYPES, ESSENCE_COLORS } from '@mmo-idle/shared';
 import './essence.css';
 
 interface Props {
-  player: PlayerSnapshot | null;
+  player: PlayerView | null;
 }
 
 export function EssencePanel({ player }: Props) {

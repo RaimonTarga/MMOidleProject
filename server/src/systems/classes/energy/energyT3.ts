@@ -6,7 +6,7 @@ import {
   applyStatusEffect, removeStatusEffect, getStatusEffect, getTotalStacks,
 } from '@mmo-idle/shared';
 import { grantMonsterRewards } from '../../rewards';
-import type { CombatState } from '../../combatState';
+import type { TracksCombat } from '@mmo-idle/shared';
 import type { World } from '../../../world/World';
 import type { UsesEnergy } from '@mmo-idle/shared';
 import type { PlayerEntity } from '../../../ecs/components/player';
@@ -442,11 +442,11 @@ function updateAlternatingCurrents(world: World, dt: number): void {
 
 // ── buffSync helpers ──────────────────────────────────────────────────────────
 
-export function getAccumulatorStacks(state: CombatState): number {
+export function getAccumulatorStacks(state: TracksCombat): number {
   return getStatusEffect(state, ACC_BUFF_FX)?.stacks ?? 0;
 }
 
-export function getOverchargeStacks(state: CombatState): number {
+export function getOverchargeStacks(state: TracksCombat): number {
   return getStatusEffect(state, PD_OVERCHARGE_FX)?.stacks ?? 0;
 }
 

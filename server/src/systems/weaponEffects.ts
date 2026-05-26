@@ -1,14 +1,14 @@
 import { registerCombatListener } from './combatPipeline';
 import {
+  applyStatusEffect, getStatusEffect,
+  computeScaledDotDamage,
   getCounter, addCounter,
   getFlag, setFlag,
   isCooldownActive, setCooldown, getCooldown,
   getString, setString,
-} from './combatState';
-import { applyStatusEffect, getStatusEffect } from '@mmo-idle/shared';
+} from '@mmo-idle/shared';
 import { grantMonsterRewards } from './rewards';
 import type { World } from '../world/World';
-import { computeScaledDotDamage } from '@mmo-idle/shared';
 import { defineBuff, type BuffDescriptor } from './registry/buffs';
 import { attachMarker, detachMarkerIfNoEffect } from '../ecs/markerHelpers';
 

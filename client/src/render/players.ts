@@ -1,4 +1,4 @@
-import type { PlayerSnapshot } from '@mmo-idle/shared';
+import type { PlayerView } from '@mmo-idle/shared';
 import { hudBus } from '../hudBus';
 import { combatLog } from '../combatLog';
 import { getPlayerShadowOffset } from '../sprites';
@@ -13,16 +13,16 @@ import { applyLunge } from './interpolation';
 
 export function upsertPlayer(
   state: RenderState,
-  player: PlayerSnapshot,
+  player: PlayerView,
   scene: GameScene,
 ): void {
   const isOwn = player.id === scene.myId;
-  const isNew = !state.ids.has(player.id);
+  const isNew = !state.sprite.has(player.id);
 
   if (isNew) {
     state.ids.add(player.id);
     state.kind.set(player.id, 'player');
-    state.snapshot.set(player.id, player);
+    state.view.set(player.id, player);
 
     const shadowOffsetY = getPlayerShadowOffset();
     state.spriteMeta.set(player.id, {
@@ -75,7 +75,7 @@ export function upsertPlayer(
     return;
   }
 
-  const prev = state.snapshot.get(player.id) as PlayerSnapshot | undefined;
+  const prev = state.view.get(player.id) as PlayerView | undefined;
   const prevAttackAt = prev?.lastAttackAt ?? 0;
   const prevHp = prev?.hp ?? player.hp;
   const prevTotalShield = prev?.shields.reduce((sum, s) => sum + s.amount, 0) ?? 0;
@@ -113,7 +113,7 @@ export function upsertPlayer(
     isPlayer: true,
   });
 
-  state.snapshot.set(player.id, player);
+  state.view.set(player.id, player);
   const transform = state.transform.get(player.id);
   if (transform) {
     transform.targetX = player.targetX;

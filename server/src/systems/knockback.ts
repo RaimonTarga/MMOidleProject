@@ -10,7 +10,7 @@ const MONSTER_BOUND_MARGIN = 40;
 // Default slide duration when callers don't specify one.
 const DEFAULT_KNOCKBACK_DURATION_MS = 300;
 
-export type { HasKnockback, KnockbackComponent } from '@mmo-idle/shared';
+export type { HasKnockback } from '@mmo-idle/shared';
 
 /**
  * Apply a sliding knockback to a monster. The monster is pushed from its

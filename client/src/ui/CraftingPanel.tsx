@@ -1,6 +1,6 @@
 import { createPortal } from 'react-dom';
 import { useState, useEffect, useMemo } from 'react';
-import type { PlayerSnapshot, EssenceType } from '@mmo-idle/shared';
+import type { PlayerView, EssenceType } from '@mmo-idle/shared';
 import {
   RECIPE_DATABASE, NODE_BIOMES, GAME_CONFIG,
   ESSENCE_TYPES, ESSENCE_COLORS, TEST_ROOM_NODE_ID, BIOME_DATABASE,
@@ -91,7 +91,7 @@ function CostDisplay({ cost, essences }: CostDisplayProps) {
 
 interface BiomeSectionProps {
   biomeGroup: string;
-  player: PlayerSnapshot;
+  player: PlayerView;
   recipes: Recipe[];
   isCurrent: boolean;
 }
@@ -158,7 +158,7 @@ function BiomeSection({ biomeGroup, player, recipes, isCurrent }: BiomeSectionPr
   );
 }
 
-interface BiomeTabProps { player: PlayerSnapshot; }
+interface BiomeTabProps { player: PlayerView; }
 
 function BiomeTab({ player }: BiomeTabProps) {
   const isTestRoom = player.nodeId === TEST_ROOM_NODE_ID;
@@ -227,7 +227,7 @@ function BiomeTab({ player }: BiomeTabProps) {
 // ── Forge Tab ─────────────────────────────────────────────────────────────────
 
 interface ForgeTabProps {
-  player: PlayerSnapshot;
+  player: PlayerView;
   essences: Record<EssenceType, number>;
 }
 
@@ -387,7 +387,7 @@ function ForgeTab({ player, essences }: ForgeTabProps) {
 // ── Main panel ────────────────────────────────────────────────────────────────
 
 interface Props {
-  player: PlayerSnapshot | null;
+  player: PlayerView | null;
   tab: 'biome' | 'forge';
   onTabChange: (tab: 'biome' | 'forge') => void;
   onClose: () => void;

@@ -67,7 +67,7 @@ export function updateCombat(world: World, dt: number, now: number) {
 
         // ctx.metadata['empoweredAttack'] is set by registerEmpoweredMultiplier during onHit.
         const isEmpowered = !!ctx.metadata['empoweredAttack'];
-        const isExecution = isEmpowered && player.usesSkills.combatArchetype === 'cooldown';
+        const isExecution = isEmpowered && player.usesCooldown !== undefined;
 
         if (isEmpowered) {
           // AoE splash on all empowered hits — centered on the primary target,

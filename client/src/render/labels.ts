@@ -1,17 +1,17 @@
-import type { PlayerSnapshot, MonsterSnapshot } from '@mmo-idle/shared';
+import type { PlayerView, MonsterView } from '@mmo-idle/shared';
 import type { RenderState } from './state';
 import type { GameScene } from '../scenes/GameScene';
 
 export function ensureLabel(
   state: RenderState,
   id: string,
-  snapshot: PlayerSnapshot | MonsterSnapshot,
+  snapshot: PlayerView | MonsterView,
   scene: GameScene,
 ): void {
   if (state.label.has(id)) return;
 
   const isMonster = state.kind.get(id) === 'monster';
-  const monster = isMonster ? (snapshot as MonsterSnapshot) : null;
+  const monster = isMonster ? (snapshot as MonsterView) : null;
 
   const labelText = monster?.isBoss ? `⚠ ${monster.name}` : snapshot.name;
   const labelColor = isMonster

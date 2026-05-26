@@ -11,5 +11,3 @@ export interface HasKnockback {
   durationMs: number;
 }
 
-/** @deprecated Use HasKnockback */
-export type KnockbackComponent = HasKnockback;

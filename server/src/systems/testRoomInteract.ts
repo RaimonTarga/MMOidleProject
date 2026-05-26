@@ -1,9 +1,8 @@
-import { ESSENCE_TYPES, MONSTER_DATABASE, TEST_ROOM_NODE_ID } from '@mmo-idle/shared';
+import { ESSENCE_TYPES, MONSTER_DATABASE, TEST_ROOM_NODE_ID, resetTracksCombat } from '@mmo-idle/shared';
 import type { PlayerEntity } from '../ecs/components/player';
 import type { World } from '../world/World';
 import { syncArchetypeSlices } from '../ecs/archetypeSliceSync';
-import { recalculatePlayerEntityStats } from '../ecs/playerSnapshotAdapter';
-import { resetTracksCombat } from './combatState';
+import { recalculatePlayerEntityStats } from '../ecs/playerEntityFormulas';
 import { setAttackTarget } from './targeting';
 
 const INTERACT_COOLDOWN_MS = 2_000;

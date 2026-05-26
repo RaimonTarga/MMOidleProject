@@ -46,7 +46,7 @@ The result is that small visual changes ripple across `upsertPlayer`, `upsertMon
 
 ## Relationship to Other PRDs
 
-- `server.md` — the server miniplex/ECS refactor. Defines the protocol DTOs (`PlayerSnapshot`, `MonsterSnapshot`, `NodeSnapshot`, `CombatEvent`) the client consumes, and the shared registries the client reads.
+- `server.md` — the server miniplex/ECS refactor. Defines the protocol DTOs (`DeltaSnapshot`, `NetworkedEntity`, `CombatEvent`) the client consumes, and the shared registries the client reads.
 - `netcode.md` — deferred protocol/bandwidth work. The client refactor must keep snapshot ingestion behind a clear seam so a future delta protocol can swap in without rewriting render systems.
 
 ## Architectural Principles
@@ -105,7 +105,7 @@ client/src/
     GameScene.ts            ← thin: lifecycle, system schedule, scene-level Phaser setup
   net/
     socket.ts               ← Socket.IO connect + event dispatch
-    snapshotApplier.ts      ← turn NodeSnapshot into render state mutations
+    deltaApplier.ts         ← turn DeltaSnapshot into render state mutations
     intents.ts              ← outbound: player:move, player:setAuto, etc.
   render/
     state.ts                ← per-concern Map<NetworkId, T> registries
@@ -210,10 +210,10 @@ Each function is a pure-shaped iteration over its own map. None of them need to 
 
 ### Snapshot Ingestion
 
-`snapshotApplier.ts` is the only module that mutates render state from the network. It exposes a single function:
+`deltaApplier.ts` is the only module that mutates render state from the network. It exposes a single function:
 
 ```ts
-function applySnapshot(state: RenderState, snapshot: NodeSnapshot, scene: GameScene): void;
+function applyDelta(state: RenderState, snapshot: DeltaSnapshot, scene: GameScene): void;
 ```
 
 Internal steps:
@@ -224,7 +224,7 @@ Internal steps:
 4. Push queued combat events into the combat event queue for the FX dispatcher.
 5. Emit HUD updates via `hudBus.emit({ player })` for the local player only.
 
-This module is the seam where the `netcode.md` delta protocol can later swap in without touching render systems.
+This module is the protocol seam: it applies component add/patch/remove deltas to local `NetworkedEntity` state, composes `PlayerView` / `MonsterView`, then updates render systems.
 
 ### Combat FX Dispatcher
 
@@ -273,7 +273,7 @@ The client must not start computing buffs locally. It renders `PlayerSnapshot.ac
 
 The client imports from `shared/` for:
 
-- Protocol DTOs: `PlayerSnapshot`, `MonsterSnapshot`, `NodeSnapshot`, `CombatEvent`, socket event maps.
+- Protocol DTOs: `NetworkedEntity`, `DeltaSnapshot`, `PlayerView`, `MonsterView`, `CombatEvent`, socket event maps.
 - Effect descriptors: `EFFECT_DEFS`, `EFFECT_BY_ID` (moved from `client/src/effects.ts`).
 - Buff descriptor types (rendering metadata only — not server logic).
 - Pure formulas for tooltips and previews: stat recalculation, unlock validation, damage formulas.
@@ -368,8 +368,8 @@ flowchart TD
 
 Primary flow:
 
-1. Socket.IO emits a `state:sync` or `node:state` event.
-2. `snapshotApplier` mutates per-concern render state maps and pushes events to the combat queue.
+1. Socket.IO emits a `state:sync` or `node:delta` event.
+2. `deltaApplier` mutates per-concern render state maps and pushes events to the combat queue.
 3. Per-concern render systems run on the next Phaser update tick.
 4. Combat FX dispatcher consumes queued events and triggers one-shot visuals.
 5. Local-player snapshot is published to `hudBus`; React HUD re-renders.
@@ -390,7 +390,7 @@ The migration is segmented into 7 testable chunks (C1 – C7), with C5 split int
 
 Recommended sequence: `server.md` S1 → S13 first, then C1 → C7 here, then `netcode.md`. C7 removes the compatibility aliases added in `server.md` S1.
 
-### C1 — Shared Effect Descriptors
+### C1 — Shared Effect Descriptors — landed
 
 **Changes:**
 
@@ -400,7 +400,7 @@ Recommended sequence: `server.md` S1 → S13 first, then C1 → C7 here, then `n
 
 **Smoke test:** Every persistent effect overlay (chill, freeze, burn, poison, ember, etc.) plays correctly. Glacial fracture one-shot still triggers and animates.
 
-### C2 — Net Layer Extraction
+### C2 — Net Layer Extraction — landed
 
 **Changes:**
 
@@ -410,7 +410,7 @@ Recommended sequence: `server.md` S1 → S13 first, then C1 → C7 here, then `n
 
 **Smoke test:** Connect, snapshots arrive, every intent (`player:move`, `player:setAuto`, `player:unlockSkill`, `inventory:equipItem`, `inventory:unequip`, `crafting:craftRecipe`, dev debug events) round-trips successfully.
 
-### C3 — Render State Decomposition
+### C3 — Render State Decomposition — landed
 
 **Changes:**
 
@@ -421,7 +421,7 @@ Recommended sequence: `server.md` S1 → S13 first, then C1 → C7 here, then `n
 
 **Smoke test:** Visual smoke — sprites, shadows, labels, HP bars, CD bars all render and tear down correctly. No orphan Phaser objects on monster kill, node transition, or disconnect.
 
-### C4 — Render System Extraction
+### C4 — Render System Extraction — landed
 
 **Changes:**
 
@@ -431,7 +431,7 @@ Recommended sequence: `server.md` S1 → S13 first, then C1 → C7 here, then `n
 
 **Smoke test:** Movement interpolation is smooth. Lunge feel matches before. Animation cadence indistinguishable from before. Debug overlays toggle cleanly. Minimap scrolls correctly with player position.
 
-### C5a — Combat FX Dispatcher (Melee Styles)
+### C5a — Combat FX Dispatcher (Melee Styles) — partially landed
 
 **Changes:**
 
@@ -440,19 +440,19 @@ Recommended sequence: `server.md` S1 → S13 first, then C1 → C7 here, then `n
 
 **Smoke test:** Every melee attack style plays the same FX as before for both player and monster hits.
 
-### C5b — Combat FX Dispatcher (Ranged Styles)
+### C5b — Combat FX Dispatcher (Ranged Styles) — partially landed
 
 **Changes:** Same shape as C5a, applied to ranged styles (gunshot, arrow, laser, snipe, gatling).
 
 **Smoke test:** Every ranged style plays the same FX. Laser channel beam continues to render correctly across snapshots.
 
-### C5c — Combat FX Dispatcher (Magic and Empowered Styles)
+### C5c — Combat FX Dispatcher (Magic and Empowered Styles) — partially landed
 
 **Changes:** Same shape as C5a, applied to magic and empowered styles (frost, fire, lightning, freeze, glacial fracture, empowered ring, empowered AoE splash).
 
 **Smoke test:** Every magic style plays the same FX. Empowered hits trigger the ring and AoE splash. Glacial fracture still detonates frost stacks correctly.
 
-### C6 — Input Extraction
+### C6 — Input Extraction — partially landed
 
 **Changes:**
 
@@ -461,7 +461,7 @@ Recommended sequence: `server.md` S1 → S13 first, then C1 → C7 here, then `n
 
 **Smoke test:** Click-to-move works in world space and via the minimap. Autopath traverses across nodes correctly. Manual movement during autopath cancels it. Keyboard hotkeys, debug toggles, and dev hotkeys all work.
 
-### C7 — Cleanup
+### C7 — Cleanup — partially landed
 
 **Changes:**
 

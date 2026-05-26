@@ -1,4 +1,4 @@
-export * from './snapshotSlices';
+export * from './networkedSlices';
 export * from './usesCadence';
 export * from './usesEnergy';
 export * from './appliesDots';

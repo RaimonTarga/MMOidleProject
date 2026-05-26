@@ -1,13 +1,13 @@
 /**
  * Server-side runtime shape for a named buff/debuff on an entity.
  *
- * Lives in CombatState.statusEffects on the server and is never sent to clients
+ * Lives in TracksCombat.statusEffects on the server and is never sent to clients
  * directly — client-visible state (e.g. DoT stack count) is mirrored to
- * PlayerSnapshot/MonsterSnapshot in each system's update function.
+ * player/monster networked component views in each system's update function.
  *
  * Exported from `shared/` so pure damage formulas (computeScaledDotDamage,
  * computeEternalDoomDamage) can take StatusEffect as input without forcing
- * shared to depend on server-only CombatState machinery.
+ * shared to depend on server-only TracksCombat machinery.
  */
 export interface StatusEffect {
   /** Effect type identifier — e.g. 'dot', 'ashbrand-burn', 'slow'. */

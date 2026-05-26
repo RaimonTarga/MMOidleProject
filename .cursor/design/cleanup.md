@@ -10,7 +10,7 @@ Running list of follow-up items deferred from the server / client refactor PRDs.
 Spawning logic lives in [server/src/systems/spawning/index.ts](server/src/systems/spawning/index.ts). `World` keeps thin wrapper methods for backward compatibility.
 
 ### Remove buff descriptor casts — done
-`BuffDescriptor` / `defineBuff` moved to [server/src/systems/registry/buffs.ts](server/src/systems/registry/buffs.ts) with typed `World` and `CombatState` in `BuffProjectionContext`. No more `world as World` or `playerCs as CombatState` in descriptor bodies.
+`BuffDescriptor` / `defineBuff` moved to [server/src/systems/registry/buffs.ts](server/src/systems/registry/buffs.ts) with typed `World` and `TracksCombat` in `BuffProjectionContext`. No more `world as World` or combat-state casts in descriptor bodies.
 
 ### Replace empty `MechanicTickWorld` — done
 `MechanicModule` / `defineMechanic` moved to [server/src/systems/registry/mechanics.ts](server/src/systems/registry/mechanics.ts). Module `tick` bodies receive concrete `World` directly.
@@ -21,11 +21,14 @@ Spawning logic lives in [server/src/systems/spawning/index.ts](server/src/system
 ### Normalize `durationPct` on the 4 "elapsed" buffs — done
 `cooldown-channel`, `energy-ac-discharge`, `dot-frozen`, and `dot-conflag` now send remaining-time percentages matching the shared `PlayerBuff` contract.
 
-### Snapshot slice taxonomy + projection boundary — done (infrastructure)
-Server Phase 4 landed the typed slice taxonomy and the legacy wire-projection boundary. `World.buildSnapshot` produces wire DTOs by calling `assemblePlayerSnapshot` / `assembleMonsterSnapshot` over typed slices stamped at attach/spawn. Vector primitives (`Vec2`, `MotionVector`, `pointFromMotion`, `advanceMotion`) live in [shared/src/systems/spatial.ts](shared/src/systems/spatial.ts); the slice taxonomy lives in [shared/src/components/snapshotSlices.ts](shared/src/components/snapshotSlices.ts); projection helpers live in [server/src/ecs/projection.ts](server/src/ecs/projection.ts); the boundary adapter for `recalculatePlayerStats` / `canUnlockSkill` lives in [server/src/ecs/playerSnapshotAdapter.ts](server/src/ecs/playerSnapshotAdapter.ts). Snapshot round-trip parity checks were removed once hydrate, persistence, archetype sync, and monster spawn became component-native.
+### Networked slice taxonomy + component delta boundary — done (infrastructure)
+Server Phase 4 landed the typed slice taxonomy and the old snapshot projection boundary has since been removed. `World.buildDelta` produces component `DeltaSnapshot` payloads from allowlisted networked slices stamped at attach/spawn. Vector primitives (`Vec2`, `MotionVector`, `pointFromMotion`, `advanceMotion`) live in [shared/src/systems/spatial.ts](shared/src/systems/spatial.ts); networked slice shapes live in [shared/src/components/networkedSlices.ts](shared/src/components/networkedSlices.ts); client-facing view composition lives in [shared/src/protocol/views.ts](shared/src/protocol/views.ts). Snapshot round-trip parity checks were removed once hydrate, persistence, archetype sync, and monster spawn became component-native.
 
 ### Component-native snapshot-removal prep — done
-Internal server work no longer round-trips through `PlayerSnapshot` / `MonsterSnapshot`: archetype slice sync reads components directly, `characters` persists one JSON blob per long-lived player slice, player hydrate attaches slices directly, and monster spawning stamps `MonsterEntity` directly. The remaining snapshot objects are legacy wire DTOs only; final removal is tracked in [.cursor/design/netcode.md](.cursor/design/netcode.md).
+Internal server work no longer round-trips through `PlayerSnapshot` / `MonsterSnapshot`: archetype slice sync reads components directly, `characters` persists one JSON blob per long-lived player slice, player hydrate attaches slices directly, and monster spawning stamps `MonsterEntity` directly. The legacy `PlayerSnapshot`, `MonsterSnapshot`, and `NodeSnapshot` DTOs have been removed; component deltas are tracked in [.cursor/design/netcode.md](.cursor/design/netcode.md).
+
+### Rename legacy component keys to the verb-phrase taxonomy — done
+The pre-existing ECS keys now use the verb-phrase taxonomy: `tracksCombat`, `tracksEngagement`, `controlsMonster`, `hasKnockback`, `scriptsBoss`, `usesCadence`, `usesEnergy`, `appliesDots`, `chillsTarget`, `usesCooldown`, and `usesReload`. Archetype behavior is gated by component presence.
 
 ---
 
@@ -42,17 +45,14 @@ Source: [.cursor/plans/server-phase-3-miniplex-ecs_ac48b095.plan.md](.cursor/pla
 
 Source: [.cursor/plans/server-phase-4-snapshot-slices_f3c9a8d2.plan.md](.cursor/plans/server-phase-4-snapshot-slices_f3c9a8d2.plan.md)
 
-This phase is complete. Server systems, socket handlers, persistence, archetype sync, and monster spawning operate on typed slices directly. The remaining snapshot DTOs are a wire-compatibility layer for `state:sync` / `node:state`; final removal is tracked in [.cursor/design/netcode.md](.cursor/design/netcode.md).
+This phase is complete. Server systems, socket handlers, persistence, archetype sync, and monster spawning operate on typed slices directly. The snapshot DTO layer has been removed; `state:sync` and `node:delta` now send component `DeltaSnapshot` payloads.
 
 **Movement representation invariant.** `targetX` / `targetY` exist only inside `assemblePlayerSnapshot` / `assembleMonsterSnapshot`. They are computed via `pointFromMotion(hasPosition.current, isMoving.motion)`. To stop an entity in place, detach the `isMoving` component.
 
-**Adapter-misuse guardrail.** [server/src/ecs/playerSnapshotAdapter.ts](server/src/ecs/playerSnapshotAdapter.ts) `withPlayerSnapshotDraft` is for low-frequency boundary operations only (hydrate, skill unlock, equip / unequip, respawn, test-room reset). It must not appear in per-tick hot paths or combat-pipeline listeners — they should mutate slices directly.
+**Entity formula guardrail.** Player stat recalculation and skill-unlock checks are entity-native wrappers around shared pure formulas. They are for low-frequency boundary operations only (hydrate, skill unlock, equip / unequip, respawn, test-room reset). Per-tick hot paths and combat-pipeline listeners should mutate slices directly.
 
 ### Remove `playerSnapshot` / `monsterSnapshot` from `ServerEntity` — done
 The bridge fields and snapshot draft helpers are gone. `ServerEntity` lists component slices only; `World.buildSnapshot` assembles legacy wire DTOs from those slices.
-
-### Rename legacy component keys to the verb-phrase taxonomy
-Server Phase 4's naming table calls for renaming the pre-existing ECS components to match the new slice taxonomy: `combatState` → `tracksCombat`, `combatAt` → `tracksEngagement`, `monsterAi` → `controlsMonster`, `knockback` → `hasKnockback`, `bossState` → `scriptsBoss`, `cadence` → `usesCadence` (merge with the wire-mirror slice), `energy` → `usesEnergy` (merge), `dot` → `appliesDots` (merge, with chill mirrors split out into `chillsTarget`), `cooldown` → `usesCooldown` (merge), `reload` → `usesReload` (merge). These were left as-is during the slice-decomposition commits to avoid a cross-cutting rename on top of the migration. Land this only after the migration above is complete; the renames are mechanical and should be one commit per group.
 
 ### Optional: Map-backed `playerById` / `monsterById` indexes
 Same trade-off as the Phase 3 entry above. After Phase 4 removes the snapshot bridge, `getPlayerEntity` / `getMonsterEntity` are O(N) linear scans against `e.isPlayer.id` / `e.isMonster.id`. Still fine at ~10 players / ~50 monsters; add indexes only if profiling justifies.

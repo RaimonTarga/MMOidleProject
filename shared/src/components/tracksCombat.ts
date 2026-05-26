@@ -21,7 +21,6 @@ export interface StatusEffectConfig {
  *   resourceMaxes — maximum capacity per resource key; absent = uncapped
  *   cooldowns     — remaining milliseconds; decremented each tick; 0 = ready
  *   flags         — boolean states (stunned, shielded, empowered, etc.)
- *   stacks        — non-negative accumulations (legacy; prefer statusEffects for new mechanics)
  *   strings       — arbitrary string values; used for attacker attribution, state labels, etc.
  *   statusEffects — unified buff/debuff list; managed via statusEffects.ts API
  */
@@ -31,7 +30,6 @@ export interface TracksCombat {
   resourceMaxes: Record<string, number>;
   cooldowns:     Record<string, number>;
   flags:         Record<string, boolean>;
-  stacks:        Record<string, number>;
   strings:       Record<string, string>;
   statusEffects: StatusEffect[];
 }
@@ -43,7 +41,6 @@ export function makeTracksCombat(): TracksCombat {
     resourceMaxes: {},
     cooldowns:     {},
     flags:         {},
-    stacks:        {},
     strings:       {},
     statusEffects: [],
   };
@@ -56,7 +53,6 @@ export function resetTracksCombat(state: TracksCombat): void {
   state.resourceMaxes = {};
   state.cooldowns     = {};
   state.flags         = {};
-  state.stacks        = {};
   state.strings       = {};
   state.statusEffects = [];
 }
@@ -101,20 +97,6 @@ export function getFlag(state: TracksCombat, key: string): boolean {
 
 export function setFlag(state: TracksCombat, key: string, value: boolean): void {
   state.flags[key] = value;
-}
-
-// Stacks (legacy — prefer StatusEffect for new mechanics)
-
-export function getStack(state: TracksCombat, key: string): number {
-  return state.stacks[key] ?? 0;
-}
-
-export function addStack(state: TracksCombat, key: string, amount: number): void {
-  state.stacks[key] = Math.max(0, (state.stacks[key] ?? 0) + amount);
-}
-
-export function resetStack(state: TracksCombat, key: string): void {
-  state.stacks[key] = 0;
 }
 
 // Strings
@@ -164,11 +146,3 @@ export function tickStatusEffectDurations(state: TracksCombat, dt: number): void
   state.statusEffects = state.statusEffects.filter(e => e.remainingMs !== 0);
 }
 
-/** @deprecated Use TracksCombat */
-export type CombatState = TracksCombat;
-
-/** @deprecated Use makeTracksCombat */
-export const makeCombatState = makeTracksCombat;
-
-/** @deprecated Use resetTracksCombat */
-export const resetCombatState = resetTracksCombat;

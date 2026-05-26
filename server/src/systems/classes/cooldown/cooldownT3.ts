@@ -2,7 +2,7 @@ import type { PassiveKey } from '@mmo-idle/shared';
 import { defineBuff, type BuffDescriptor } from '../../registry/buffs';
 import { registerCombatListener } from '../../combatPipeline';
 import { isEmpoweredAttack, consumeEmpoweredAttack } from '../../empoweredAttacks';
-import type { CombatState } from '../../combatState';
+import type { TracksCombat } from '@mmo-idle/shared';
 import {
   applyStatusEffect, removeStatusEffect, getStatusEffect,
 } from '@mmo-idle/shared';
@@ -55,7 +55,7 @@ const BEAM_DURATION_MS       = 3_000;
 const BEAM_TICK_MS           = 500;
 const BEAM_DMG_PER_TICK_MULT = 1.0; // damage per tick = player.attack × this
 
-// ── Status effect IDs (these still live on CombatState as stack containers) ──
+// ── Status effect IDs (these still live on TracksCombat as stack containers) ──
 
 // Eternal Cycle: per-player charge stacks
 const EC_CHARGE_FX = 'eternal-cycle-charge';
@@ -555,18 +555,18 @@ export function getOverdrivePct(player: PlayerEntity): number {
   return Math.round((player.hasOverdrive.remainingMs / OVERDRIVE_BUFF_MS) * 100);
 }
 
-export function getEternalChargeStacks(state: CombatState): number {
+export function getEternalChargeStacks(state: TracksCombat): number {
   return getStatusEffect(state, EC_CHARGE_FX)?.stacks ?? 0;
 }
 
-export function getTemporalExtPct(state: CombatState): number {
+export function getTemporalExtPct(state: TracksCombat): number {
   const buff = getStatusEffect(state, TE_BUFF_FX);
   if (!buff || buff.remainingMs <= 0) return 0;
   const maxMs = buff.data['maxDurationMs'] ?? TEMPORAL_MAX_MS;
   return Math.round((buff.remainingMs / maxMs) * 100);
 }
 
-export function getBatteryStacks(state: CombatState): number {
+export function getBatteryStacks(state: TracksCombat): number {
   return getStatusEffect(state, BAT_CHARGE_FX)?.stacks ?? 0;
 }
 

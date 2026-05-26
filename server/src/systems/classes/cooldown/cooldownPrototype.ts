@@ -81,7 +81,7 @@ export function initCooldownArchetype(): void {
   // is set before the restart handler below checks it.
   registerEmpoweredMultiplier(EXECUTION_MULTIPLIER, {
     attackerType:      'player',
-    attackerArchetype: 'cooldown',
+    attackerSlice:     'usesCooldown',
     passiveKey:        'cooldown.empowered-mult',
   });
 

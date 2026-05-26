@@ -18,7 +18,7 @@ export function drawCooldownBars(state: RenderState): void {
     const sprite = state.sprite.get(id);
     const cdBar = state.cdBar.get(id);
     const meta = state.spriteMeta.get(id);
-    const snap = state.snapshot.get(id);
+    const snap = state.view.get(id);
     if (!sprite || !cdBar || !meta || !snap) continue;
 
     cdBar.clear();

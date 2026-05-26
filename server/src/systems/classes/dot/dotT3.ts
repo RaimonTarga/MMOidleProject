@@ -6,16 +6,15 @@ import { registerCombatListener } from '../../combatPipeline';
 
 // Re-export the pure formula from shared so existing importers don't change paths.
 export { computeEternalDoomDamage };
-import { getFlag, setFlag } from '../../combatState';
 import {
   applyStatusEffect, removeStatusEffect, getStatusEffect,
-  getTotalStacks, hasStatusEffect,
+  getTotalStacks, hasStatusEffect, getFlag, setFlag,
 } from '@mmo-idle/shared';
 import { grantMonsterRewards } from '../../rewards';
 import { applyKnockback } from '../../knockback';
 import { attachMarker, detachMarker, detachMarkerIfNoEffect } from '../../../ecs/markerHelpers';
 import type { MonsterEntity } from '../../../ecs/components/monster';
-import type { CombatState } from '../../combatState';
+import type { TracksCombat } from '@mmo-idle/shared';
 import type { World } from '../../../world/World';
 
 // ── Shared constants (fallback — must match dotPrototype.ts) ──────────────────
@@ -96,7 +95,7 @@ function markMonsterDot(world: World, monster: MonsterEntity): void {
   attachMarker(world, monster, 'hasDot');
 }
 
-function clearMonsterDot(world: World, monster: MonsterEntity, state: CombatState): void {
+function clearMonsterDot(world: World, monster: MonsterEntity, state: TracksCombat): void {
   removeStatusEffect(state, DOT_EFFECT_ID);
   detachMarker(world, monster, 'hasDot');
 }
@@ -104,13 +103,13 @@ function clearMonsterDot(world: World, monster: MonsterEntity, state: CombatStat
 // ── Exported helpers for dotPrototype.ts and buffSync.ts ─────────────────────
 
 /** Damage multiplier from Smoldering Ember debuff (1.0 if not present). */
-export function getSmolderMult(monsterState: CombatState): number {
+export function getSmolderMult(monsterState: TracksCombat): number {
   const s = getStatusEffect(monsterState, SMOLDER_EFFECT);
   return s ? (1 + s.stacks * SE_VULN_PER_STACK) : 1;
 }
 
 /** Damage multiplier from Frozen status (1.35 if frozen, 1.0 otherwise). */
-export function getFrozenMult(monsterState: CombatState): number {
+export function getFrozenMult(monsterState: TracksCombat): number {
   return hasStatusEffect(monsterState, FROZEN_EFFECT) ? (1 + FREEZE_BONUS) : 1;
 }
 
@@ -566,7 +565,7 @@ function mirrorDotT3PlayerSlices(world: World): void {
   }
 }
 
-function collectClientEffects(tracksCombat: CombatState | undefined): Record<string, number> {
+function collectClientEffects(tracksCombat: TracksCombat | undefined): Record<string, number> {
   const activeEffects: Record<string, number> = {};
   if (!tracksCombat) return activeEffects;
 
@@ -578,7 +577,7 @@ function collectClientEffects(tracksCombat: CombatState | undefined): Record<str
   return activeEffects;
 }
 
-function collectClientEffectFrames(world: World, tracksCombat: CombatState | undefined): Record<string, number> {
+function collectClientEffectFrames(world: World, tracksCombat: TracksCombat | undefined): Record<string, number> {
   const activeEffectFrames: Record<string, number> = {};
   if (!tracksCombat) return activeEffectFrames;
 
@@ -641,27 +640,27 @@ function mirrorStatusEffectsToClient(world: World): void {
 
 // ── buffSync helpers ──────────────────────────────────────────────────────────
 
-export function getTargetChillStacks(monsterState: CombatState): number {
+export function getTargetChillStacks(monsterState: TracksCombat): number {
   return getTotalStacks(monsterState, CHILL_EFFECT);
 }
 
-export function isTargetFrozen(monsterState: CombatState): boolean {
+export function isTargetFrozen(monsterState: TracksCombat): boolean {
   return hasStatusEffect(monsterState, FROZEN_EFFECT);
 }
 
-export function getTargetFrozenRemainingPct(monsterState: CombatState): number {
+export function getTargetFrozenRemainingPct(monsterState: TracksCombat): number {
   const e = getStatusEffect(monsterState, FROZEN_EFFECT);
   if (!e || e.remainingMs <= 0) return 0;
   return Math.round((e.remainingMs / FREEZE_MS) * 100);
 }
 
-export function getConflagrationRemainingPct(monsterState: CombatState): number {
+export function getConflagrationRemainingPct(monsterState: TracksCombat): number {
   const e = getStatusEffect(monsterState, CONF_EFFECT_ID);
   if (!e) return 0;
   return Math.round((e.data.ticksLeft / CONF_TICKS) * 100);
 }
 
-export function isConflagrationActive(monsterState: CombatState): boolean {
+export function isConflagrationActive(monsterState: TracksCombat): boolean {
   return hasStatusEffect(monsterState, CONF_EFFECT_ID);
 }
 

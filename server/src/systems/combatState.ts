@@ -2,41 +2,6 @@ import type { World } from '../world/World';
 import {
   tickCooldowns,
   tickStatusEffectDurations,
-  type TracksCombat,
-} from '@mmo-idle/shared';
-
-// Re-export component type and helpers for existing importers.
-export type {
-  TracksCombat,
-  CombatState,
-  StatusEffect,
-  StatusEffectConfig,
-} from '@mmo-idle/shared';
-
-export {
-  makeTracksCombat,
-  resetTracksCombat,
-  makeCombatState,
-  resetCombatState,
-  getCounter,
-  addCounter,
-  setCounter,
-  resetCounter,
-  getResource,
-  setResource,
-  addResource,
-  getFlag,
-  setFlag,
-  getStack,
-  addStack,
-  resetStack,
-  getString,
-  setString,
-  getCooldown,
-  setCooldown,
-  isCooldownActive,
-  tickCooldowns,
-  tickStatusEffectDurations,
 } from '@mmo-idle/shared';
 
 /**

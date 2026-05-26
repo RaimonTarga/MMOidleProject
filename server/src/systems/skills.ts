@@ -3,9 +3,9 @@ import { SKILL_TREE, canUnlockSkill } from '@mmo-idle/shared';
 import type { World } from '../world/World';
 import type { PlayerEntity } from '../ecs/components/player';
 import { syncArchetypeSlices } from '../ecs/archetypeSliceSync';
-import { canUnlockEntitySkill, recalculatePlayerEntityStats } from '../ecs/playerSnapshotAdapter';
+import { canUnlockEntitySkill, recalculatePlayerEntityStats } from '../ecs/playerEntityFormulas';
 
-export { canUnlockSkill, canUnlockSkillFromSnapshot } from '@mmo-idle/shared';
+export { canUnlockSkill, canUnlockSkillFromView } from '@mmo-idle/shared';
 export type { UnlockResult } from '@mmo-idle/shared';
 
 const CLASS_ARCHETYPES: Record<string, CombatArchetype> = {

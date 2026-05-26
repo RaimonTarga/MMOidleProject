@@ -17,5 +17,3 @@ export interface ControlsMonster {
   kiteTimer: number;
 }
 
-/** @deprecated Use ControlsMonster */
-export type MonsterAI = ControlsMonster;

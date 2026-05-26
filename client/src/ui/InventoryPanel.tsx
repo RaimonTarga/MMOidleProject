@@ -1,6 +1,6 @@
 import { createPortal } from 'react-dom';
 import { useState, useRef } from 'react';
-import type { PlayerSnapshot, EquipmentSlot } from '@mmo-idle/shared';
+import type { PlayerView, EquipmentSlot } from '@mmo-idle/shared';
 import { ITEM_DATABASE, EQUIPMENT_SLOTS } from '@mmo-idle/shared';
 import { hudBus } from '../hudBus';
 import './inventory.css';
@@ -118,7 +118,7 @@ function ItemDesc({ focused, onFocus }: {
 // ── Equipment slots ────────────────────────────────────────────────────────────
 
 function EquipmentSlots({ player, focused, onFocus }: {
-  player:  PlayerSnapshot;
+  player:  PlayerView;
   focused: FocusedItem | null;
   onFocus: (item: FocusedItem | null) => void;
 }) {
@@ -167,7 +167,7 @@ const COLS = 4;
 const MIN_ROWS = 3;
 
 function BackpackGrid({ player, focused, onFocus }: {
-  player:  PlayerSnapshot;
+  player:  PlayerView;
   focused: FocusedItem | null;
   onFocus: (item: FocusedItem | null) => void;
 }) {
@@ -217,7 +217,7 @@ function BackpackGrid({ player, focused, onFocus }: {
 // ── Panel ──────────────────────────────────────────────────────────────────────
 
 interface Props {
-  player: PlayerSnapshot | null;
+  player: PlayerView | null;
   onClose: () => void;
 }
 

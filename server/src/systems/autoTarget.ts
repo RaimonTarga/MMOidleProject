@@ -8,13 +8,15 @@ const NODE_MARGIN = 40;
 
 function isRangedAutoPlayer(player: {
   performsAttack: { attackRange: number };
-  usesSkills: { selectedRange: string | null; combatArchetype: string | null };
+  usesSkills: { selectedRange: string | null };
+  usesReload?: unknown;
+  usesEnergy?: unknown;
 }): boolean {
   return player.performsAttack.attackRange > 100 ||
     player.usesSkills.selectedRange === 'range-mid' ||
     player.usesSkills.selectedRange === 'range-far' ||
-    player.usesSkills.combatArchetype === 'reload' ||
-    player.usesSkills.combatArchetype === 'energy';
+    player.usesReload !== undefined ||
+    player.usesEnergy !== undefined;
 }
 
 function clampToNode(world: World, nodeId: string, x: number, y: number): { x: number; y: number } {

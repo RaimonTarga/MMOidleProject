@@ -1,13 +1,13 @@
-import { GAME_CONFIG } from '@mmo-idle/shared';
-import type { PlayerEntity } from '../ecs/components/player';
-import { defineBuff, type BuffDescriptor } from './registry/buffs';
-import { registerCombatListener } from './combatPipeline';
 import {
+  GAME_CONFIG,
   getCounter, addCounter, setCounter,
   getResource, setResource, addResource,
   isCooldownActive, setCooldown,
-} from './combatState';
-import type { CombatState } from './combatState';
+  type TracksCombat,
+} from '@mmo-idle/shared';
+import type { PlayerEntity } from '../ecs/components/player';
+import { defineBuff, type BuffDescriptor } from './registry/buffs';
+import { registerCombatListener } from './combatPipeline';
 import { removeStatusEffectStacks } from '@mmo-idle/shared';
 import type { World } from '../world/World';
 import { attachComponent, detachComponent } from '../ecs/markerHelpers';
@@ -30,7 +30,7 @@ const POOL_DRAIN_MS = 4000;
  * effect.data['reductionPerStack'] (default 0.20).
  * Apply this multiplier to every player heal source for consistency.
  */
-export function getAntiHealMult(cs: CombatState): number {
+export function getAntiHealMult(cs: TracksCombat): number {
   const effect = cs.statusEffects.find(e => e.id === 'antiheal');
   if (!effect) return 1;
   const reductionPerStack = effect.data['reductionPerStack'] ?? 0.20;
@@ -53,7 +53,7 @@ export function getDebuffResistanceMult(player: PlayerEntity): number {
  */
 export function applyHealToPlayer(
   player: PlayerEntity,
-  cs: CombatState,
+  cs: TracksCombat,
   amount: number,
 ): void {
   if (amount <= 0) return;
@@ -65,15 +65,15 @@ export function applyHealToPlayer(
 
 // ── Pool accessors (for buffSync) ─────────────────────────────────────────────
 
-export function getDefenseDebtPool(cs: CombatState): number {
+export function getDefenseDebtPool(cs: TracksCombat): number {
   return getResource(cs, DEBT_POOL_KEY);
 }
 
-export function getDefenseAbsorbPool(cs: CombatState): number {
+export function getDefenseAbsorbPool(cs: TracksCombat): number {
   return getResource(cs, ABSORB_POOL_KEY);
 }
 
-export function getDefenseBurstPool(cs: CombatState): number {
+export function getDefenseBurstPool(cs: TracksCombat): number {
   return getResource(cs, BURST_POOL_KEY);
 }
 

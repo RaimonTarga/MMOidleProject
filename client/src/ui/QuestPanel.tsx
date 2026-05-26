@@ -1,8 +1,8 @@
-import type { PlayerSnapshot } from '@mmo-idle/shared';
+import type { PlayerView } from '@mmo-idle/shared';
 import { QUEST_DATABASE } from '@mmo-idle/shared';
 
 interface Props {
-  player: PlayerSnapshot | null;
+  player: PlayerView | null;
 }
 
 export function QuestPanel({ player }: Props) {

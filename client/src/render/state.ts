@@ -1,12 +1,13 @@
 import type Phaser from 'phaser';
-import type { PlayerSnapshot, MonsterSnapshot } from '@mmo-idle/shared';
+import type { NetworkedEntity, PlayerView, MonsterView } from '@mmo-idle/shared';
 
 export type NetworkId = string;
 
 export interface RenderState {
   ids: Set<NetworkId>;
   kind: Map<NetworkId, 'player' | 'monster'>;
-  snapshot: Map<NetworkId, PlayerSnapshot | MonsterSnapshot>;
+  entity: Map<NetworkId, NetworkedEntity>;
+  view: Map<NetworkId, PlayerView | MonsterView>;
 
   transform: Map<
     NetworkId,
@@ -70,7 +71,8 @@ export function createRenderState(): RenderState {
   return {
     ids: new Set(),
     kind: new Map(),
-    snapshot: new Map(),
+    entity: new Map(),
+    view: new Map(),
     transform: new Map(),
     interpolation: new Map(),
     sprite: new Map(),
@@ -86,10 +88,10 @@ export function createRenderState(): RenderState {
   };
 }
 
-export function getOwnSnapshot(state: RenderState): PlayerSnapshot | null {
+export function getOwnView(state: RenderState): PlayerView | null {
   if (!state.ownId) return null;
-  const s = state.snapshot.get(state.ownId);
+  const s = state.view.get(state.ownId);
   return s && state.kind.get(state.ownId) === 'player'
-    ? (s as PlayerSnapshot)
+    ? (s as PlayerView)
     : null;
 }

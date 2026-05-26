@@ -82,6 +82,7 @@ export function updateTransitions(world: World): void {
     const fromNodeId = position.nodeId;
 
     position.nodeId = targetNodeId;
+    world.resetNodeDeltaState(targetNodeId);
 
     // Place the player just inside the opposite edge of the new node.
     switch (direction) {

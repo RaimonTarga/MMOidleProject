@@ -44,7 +44,7 @@ export function emptyEquipment(): EquipmentMap {
 
 // ─── Item stat modifiers ──────────────────────────────────────────────────────
 
-/** Typed stat keys that items can modify. Mirrors relevant PlayerSnapshot fields. */
+/** Typed stat keys that items can modify. Mirrors relevant player view fields. */
 export interface ItemStats {
   attack?: number;
   plating?: number;
@@ -63,7 +63,7 @@ export interface ItemStats {
 
 /**
  * A static item template shared by all instances of that item.
- * statModifiers keys map directly to PlayerSnapshot stat field names:
+ * statModifiers keys map directly to player stat field names:
  *   attack | plating | damageReduction | evasion | attackRange | attackCooldown | maxHp | hpRegen | speed
  */
 export interface ItemDefinition {
@@ -75,7 +75,7 @@ export interface ItemDefinition {
   /**
    * Named mechanic modifiers accumulated into player.passives during stat rebuild,
    * exactly like skill node mechanicEffects. Use for defensive / recovery stats that
-   * don't map to a direct PlayerSnapshot field:
+   * don't map to a direct player view field:
    *   defense.max-hit-pct          — clamp single hit to X% of maxHp
    *   defense.hit-to-dot-pct       — redirect X% of hit damage to 4s debt
    *   defense.dot-resistance        — mitigate incoming DoT damage by X (0–1)

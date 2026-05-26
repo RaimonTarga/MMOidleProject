@@ -1,5 +1,5 @@
-import type { PlayerSnapshot } from '../index';
-import type { TracksProgression, UsesSkills } from '../components/snapshotSlices';
+import type { PlayerView } from '../protocol/views';
+import type { TracksProgression, UsesSkills } from '../components/networkedSlices';
 import { SKILL_TREE } from '../skillTree';
 
 export interface UnlockResult {
@@ -45,8 +45,8 @@ export function canUnlockSkill(target: SkillUnlockTarget, skillId: string): Unlo
   return { ok: true };
 }
 
-/** Validate unlock eligibility from a wire snapshot (client UI, legacy callers). */
-export function canUnlockSkillFromSnapshot(player: PlayerSnapshot, skillId: string): UnlockResult {
+/** Validate unlock eligibility from the client-facing player view. */
+export function canUnlockSkillFromView(player: PlayerView, skillId: string): UnlockResult {
   return canUnlockSkill(
     {
       usesSkills: {

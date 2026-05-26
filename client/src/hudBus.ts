@@ -1,10 +1,10 @@
-import type { PlayerSnapshot, EquipmentSlot } from '@mmo-idle/shared';
+import type { PlayerView, EquipmentSlot } from '@mmo-idle/shared';
 
 export type ConnectionStatus = 'connecting' | 'connected' | 'disconnected';
 
 export interface HudState {
   status: ConnectionStatus;
-  player: PlayerSnapshot | null;
+  player: PlayerView | null;
   /** Remaining auto-path nodes to visit (excludes current node). Null when idle. */
   autoPath?: string[] | null;
 }

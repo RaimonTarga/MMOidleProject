@@ -1,14 +1,14 @@
 import type {
-  PlayerSnapshot,
-  MonsterSnapshot,
   NodeDefinition,
   CombatEvent,
-  NodeSnapshot,
+  DeltaSnapshot,
+  EntityDelta,
 } from "@mmo-idle/shared";
 import {
   GAME_CONFIG,
   BIOME_DATABASE,
   TEST_ROOM_NODE_ID,
+  networkedKeysForKind,
 } from "@mmo-idle/shared";
 import { updateAutoTargets } from "../systems/autoTarget";
 import { updateMovement } from "../systems/movement";
@@ -41,12 +41,11 @@ import type { MonsterEntity } from "../ecs/components/monster";
 import { isMonsterEntity } from "../ecs/components/monster";
 import type { PlayerEntity } from "../ecs/components/player";
 import { isPlayerEntity } from "../ecs/components/player";
-import {
-  assemblePlayerSnapshot,
-  assembleMonsterSnapshot,
-} from "../ecs/projection";
 import type { EntityId, ServerEntity } from "../ecs/entity";
+import { entityNetworkId, entityNetworkKind } from "../ecs/entity";
 import type { PersistedPlayerSlices } from "../db/playerRepo";
+import { DirtyTracker, type DirtyDrain } from "../ecs/dirtyTracker";
+import { encodeAdd, encodePatch } from "../ecs/deltaEncoder";
 
 const TEST_ROOM_TARGET_RESET = "test-target-reset";
 const TEST_ROOM_TARGET_GAIN_POINT = "test-target-gain-point";
@@ -96,8 +95,6 @@ export class World {
   readonly bossScriptedMonsters = this.monsterEntities.with("scriptsBoss");
   readonly movingMonsters = this.monsterEntities.with("isMoving");
   readonly aggroedMonsters = this.monsterEntities.with("hasAggroTarget");
-  readonly attackingMonsters = this.monsterEntities.with("hasAttackTarget");
-  readonly engagedBosses = this.bossScriptedMonsters.with("isBossEngaged");
   readonly detonatedMonsters = this.monsterEntities.with("hasDetonation");
   readonly hemorrhagedMonsters = this.monsterEntities.with("hasHemorrhage");
   readonly dottedMonsters = this.monsterEntities.with("hasDot");
@@ -137,14 +134,9 @@ export class World {
   readonly dottedPlayers = this.playerEntities.with("hasDot");
   readonly movingPlayers = this.playerEntities.with("isMoving");
   readonly shieldedPlayers = this.playerEntities.with("holdsShields");
-  readonly evasivePlayers = this.playerEntities.with("evadesHits");
-  readonly engagedPlayers = this.playerEntities.with("tracksEngagement");
-  readonly attackingPlayers = this.playerEntities.with("hasAttackTarget");
   readonly channelingPlayers = this.cooldownPlayers.with("isChanneling");
   readonly overdrivenPlayers = this.cooldownPlayers.with("hasOverdrive");
   readonly alignedPlayers = this.cooldownPlayers.with("hasAlignment");
-  readonly acChargingPlayers = this.energyPlayers.with("inAcChargePhase");
-  readonly acDischargingPlayers = this.energyPlayers.with("inAcDischarge");
   /** Player IDs that died this tick. Drained by the server loop after each tick. */
   pendingDeaths: string[] = [];
   /** Queued combat events per node, flushed into each broadcast snapshot. */
@@ -158,8 +150,11 @@ export class World {
   testRoomEngagedBossId: string | null = null;
 
   nextMonsterId = 1;
+  private tickCounter = 0;
+  readonly dirty = new DirtyTracker();
 
   private readonly entityIndex = new Map<EntityId, ServerEntity>();
+  private readonly nodeMembership = new Map<string, Set<string>>();
 
   constructor(nodeId = "node-5-5") {
     const node = NODE_REGISTRY.get(nodeId);
@@ -177,6 +172,10 @@ export class World {
     this.ecs.onEntityRemoved.subscribe((entity) => {
       this.entityIndex.delete(entity.entityId);
     });
+  }
+
+  resetNodeDeltaState(nodeId: string): void {
+    this.nodeMembership.delete(nodeId);
   }
 
   getEntity(id: EntityId): ServerEntity | undefined {
@@ -198,6 +197,7 @@ export class World {
   // ── SYSTEM ENTRY POINT ─────────────────────────────
 
   tick(dt: number, now: number) {
+    this.tickCounter++;
     updateCombatState(this, dt);
     updateShields(this, dt);
     tickAllMechanics(this, dt, now);
@@ -298,7 +298,7 @@ export class World {
   // ── PLAYER ENTITY HELPERS ─────────────────────────────
 
   /**
-   * Attach hydrated player slices to the ECS world with a fresh CombatState.
+   * Attach hydrated player slices to the ECS world with fresh combat tracking.
    * The socket id is runtime identity; persisted row ids stay in the DB only.
    */
   attachPlayerEntity(
@@ -518,29 +518,79 @@ export class World {
     arr.push(event);
   }
 
-  // ── SNAPSHOT ───────────────────────────────────────
+  // ── NETWORK DELTA ──────────────────────────────────
 
-  buildSnapshot(nodeId: string): NodeSnapshot {
+  beginBroadcast(): DirtyDrain {
+    return this.dirty.drain();
+  }
+
+  buildNodeDelta(
+    nodeId: string,
+    dirty: DirtyDrain,
+    opts: { resync?: boolean } = {},
+  ): DeltaSnapshot {
     const events = this.nodeEvents.get(nodeId) ?? [];
     this.nodeEvents.set(nodeId, []);
 
-    const monsters: MonsterSnapshot[] = [];
+    const deltas: EntityDelta[] = [];
+    const liveIds = new Set<string>();
+    if (opts.resync) this.nodeMembership.delete(nodeId);
+    let members = this.nodeMembership.get(nodeId);
+    if (!members) {
+      members = new Set();
+      this.nodeMembership.set(nodeId, members);
+    }
+    const full = opts.resync || members.size === 0;
+
     for (const e of this.monsterEntities) {
       if (e.hasPosition.nodeId !== nodeId) continue;
-      monsters.push(assembleMonsterSnapshot(e));
+      this.encodeNodeEntityDelta(e, dirty, members, liveIds, deltas);
     }
 
-    const players: PlayerSnapshot[] = [];
     for (const e of this.playerEntities) {
       if (e.hasPosition.nodeId !== nodeId) continue;
-      players.push(assemblePlayerSnapshot(e));
+      this.encodeNodeEntityDelta(e, dirty, members, liveIds, deltas);
+    }
+
+    for (const netId of [...members]) {
+      if (liveIds.has(netId)) continue;
+      deltas.push({ kind: 'remove', netId });
+      members.delete(netId);
     }
 
     return {
-      players,
-      monsters,
+      tick: this.tickCounter,
+      nodeId,
+      full,
+      deltas,
       events,
     };
+  }
+
+  private encodeNodeEntityDelta(
+    entity: ServerEntity,
+    dirty: DirtyDrain,
+    members: Set<string>,
+    liveIds: Set<string>,
+    deltas: EntityDelta[],
+  ): void {
+    const netId = entityNetworkId(entity);
+    if (!netId) return;
+    liveIds.add(netId);
+    if (!members.has(netId)) {
+      const add = encodeAdd(entity);
+      if (!add) return;
+      deltas.push(add);
+      members.add(netId);
+      return;
+    }
+
+    const entityKind = entityNetworkKind(entity);
+    if (!entityKind) return;
+    const patchKeys = new Set(networkedKeysForKind(entityKind));
+    for (const key of dirty.patched.get(netId) ?? []) patchKeys.add(key);
+    const patch = encodePatch(entity, patchKeys, dirty.detached.get(netId));
+    if (patch) deltas.push(patch);
   }
 
   // ── UTIL ────────────────────────────────────────────

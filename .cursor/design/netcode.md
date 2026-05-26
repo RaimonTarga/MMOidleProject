@@ -6,6 +6,15 @@ Improve the network protocol after the server-side ECS migration is stable. The 
 
 The server remains authoritative. Netcode improvements must reduce bandwidth and boilerplate without introducing client-side simulation authority.
 
+## Implementation Status
+
+Component-delta transport is now the active protocol: `state:sync` and
+`node:delta` carry `DeltaSnapshot` payloads made from allowlisted component
+slices. The legacy `PlayerSnapshot`, `MonsterSnapshot`, and `NodeSnapshot` DTOs
+have been removed from shared code. Payload-size measurement and deeper
+per-field compression remain follow-up work. Dirty tracking now feeds the delta
+encoder directly instead of being discarded at the broadcast boundary.
+
 ## Prerequisites Complete
 
 The server-side prep work needed before the protocol cutover is complete:
@@ -101,19 +110,9 @@ Primary flow:
 
 ## Compatibility Strategy
 
-Phase 1 should keep existing `NodeSnapshot` support while adding the delta encoder behind a feature flag or alternate event name.
-
-Possible events:
-
-```ts
-interface ServerToClientEvents {
-  'state:sync': (snapshot: NodeSnapshot) => void;
-  'node:state': (snapshot: NodeSnapshot) => void;
-  'node:delta': (snapshot: DeltaSnapshot) => void;
-}
-```
-
-Clients can initially continue consuming `node:state`. Once delta application is stable, switch regular broadcasts to `node:delta` while retaining `state:sync` as a full authoritative resync.
+The protocol cutover is complete. `state:sync` sends a full component resync as
+a `DeltaSnapshot` with `full: true`, and regular broadcasts use `node:delta`.
+The old `node:state` full-snapshot event has been removed.
 
 ## Risks
 
@@ -138,10 +137,5 @@ Clients can initially continue consuming `node:state`. Once delta application is
 - Transport replacement.
 - Client-side prediction.
 - Gameplay balance changes.
-- Per-component dirty tracking implementation.
-- `networkId` indexing on server and client.
-- Networked-component allowlist and server-only component serialization assertions.
-- `node:delta` socket event, delta encoder, and client delta applier.
-- Slim `state:sync` full-component resync payload for connect, reconnect, and node transition.
-- Final deletion of `NodeSnapshot`, `PlayerSnapshot`, `MonsterSnapshot`, `assemblePlayerSnapshot()`, and `assembleMonsterSnapshot()`.
-- Snapshot payload-size measurement and full-vs-delta render-state equivalence testing.
+- Snapshot payload-size measurement.
+- Full-vs-delta render-state equivalence testing.

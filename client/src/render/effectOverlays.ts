@@ -16,7 +16,7 @@ export function updateEffectOverlays(
 ): void {
   for (const id of state.ids) {
     const sprite = state.sprite.get(id);
-    const snap = state.snapshot.get(id);
+    const snap = state.view.get(id);
     if (!sprite || !snap) continue;
 
     const activeEffects = snap.activeEffects ?? {};

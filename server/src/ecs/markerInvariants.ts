@@ -1,6 +1,11 @@
 import { getStatusEffect, getStatusEffects } from "@mmo-idle/shared";
+import {
+  isNetworkedComponentKey,
+  networkedKeysForKind,
+} from "@mmo-idle/shared";
 import type { World } from "../world/World";
 import type { ServerEntity } from "./entity";
+import { entityNetworkKind } from "./entity";
 
 const ENT_DOT_FX = "entropy-collapse-dot";
 
@@ -153,5 +158,20 @@ export function assertMarkerInvariants(world: World): string[] {
     checkArchetypeSlices(entity, violations);
   }
 
+  return violations;
+}
+
+export function assertNetworkedComponentInvariants(world: World): string[] {
+  const violations: string[] = [];
+  for (const entity of [...world.playerEntities, ...world.monsterEntities]) {
+    const kind = entityNetworkKind(entity);
+    if (!kind) continue;
+    const allowed = new Set(networkedKeysForKind(kind));
+    for (const key of Object.keys(entity)) {
+      if (isNetworkedComponentKey(key) && !allowed.has(key)) {
+        violations.push(`${entity.entityId}: ${String(key)} is not networked for ${kind}`);
+      }
+    }
+  }
   return violations;
 }

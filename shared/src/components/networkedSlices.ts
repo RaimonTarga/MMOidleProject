@@ -1,18 +1,10 @@
 /**
- * Server-only ECS slice components.
+ * Networked ECS slice components.
  *
- * These components decompose the wire DTOs (`PlayerSnapshot` / `MonsterSnapshot`)
- * into focused, single-responsibility slices that are the entity-side source
- * of truth. The wire DTOs are reassembled byte-identical at broadcast time
- * via the helpers in `./projection.ts`.
- *
- * Naming scheme: two-word UpperCamelCase verb phrases (`HasPosition`,
- * `DealsDamage`, etc.) with corresponding lower-camel entity keys
- * (`hasPosition`, `dealsDamage`).
- *
- * Movement is stored as `HasPosition.current` plus `IsMoving.motion` — a
- * direction + remaining magnitude. `targetX` / `targetY` are wire-only and
- * computed from this vector at projection time.
+ * These are the component shapes allowed to cross the client/server boundary.
+ * Server-only runtime internals such as AI controllers, combat state, boss
+ * scripts, persistence metadata, and lookup-only status markers are intentionally
+ * excluded from the network protocol.
  */
 import type { MotionVector, Vec2 } from '../systems/spatial';
 import type { EquipmentMap, EssenceType } from '../items';
@@ -30,19 +22,15 @@ export interface HasPosition {
   speed: number;
 }
 
-/**
- * Remaining motion vector. `motion.magnitude === 0` means the entity is
- * stationary. The server is free to overwrite this each tick.
- */
+/** Remaining motion vector. Absent means stationary. */
 export interface IsMoving {
   motion: MotionVector;
 }
 
-/** Hit points and any temporary shield buffers. */
+/** Hit points and any player-only regen rate. */
 export interface HasHealth {
   hp: number;
   maxHp: number;
-  /** Optional regen rate (px/s); only players currently use this. */
   hpRegen?: number;
 }
 
@@ -54,7 +42,7 @@ export interface DealsDamage {
   attackStyle: string;
 }
 
-/** Attack range, cadence (cooldown), and current target. */
+/** Attack range, cadence (cooldown), and current target timing. */
 export interface PerformsAttack {
   attackRange: number;
   attackCooldown: number;
@@ -67,19 +55,13 @@ export interface MitigatesDamage {
   damageReduction: number;
 }
 
-/**
- * Hit-counter evasion. `threshold` of 0 disables the mechanic; every Nth
- * incoming hit is fully nullified.
- */
+/** Hit-counter evasion. Present only while enabled. */
 export interface EvadesHits {
   threshold: number;
   count: number;
 }
 
-/**
- * Client-facing status overlay slice. Holds the optional effect-overlay
- * maps that go on the wire, plus player-only buff/boss-effect lists.
- */
+/** Client-facing status overlay and buff slice. */
 export interface HasStatus {
   activeEffects?: Record<string, number>;
   activeEffectFrames?: Record<string, number>;

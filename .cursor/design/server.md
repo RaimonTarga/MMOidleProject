@@ -156,7 +156,8 @@ server/src/
   ecs/
     entity.ts
     world.ts
-    queries.ts
+    deltaEncoder.ts
+    dirtyTracker.ts
   systems/
     classes/
       cadence/
@@ -174,9 +175,6 @@ server/src/
     movement/
     transitions/
     spawning/
-  net/
-    snapshots.ts
-    socketHandlers.ts
   db/
 ```
 
@@ -186,7 +184,7 @@ Responsibilities:
 - Server-only components such as `monsterAi`, `combatState`, `passives`, `inventory`, `questProgress`, `knockback`, and persistence metadata.
 - System scheduling and tick order.
 - Combat pipeline and event emission.
-- Snapshot projection from ECS entities to shared protocol types.
+- Component-delta projection from ECS entities to shared protocol types.
 - Persistence hydration and save projection.
 
 ### Client Package
@@ -263,23 +261,33 @@ The client-side render entity model that consumes these snapshots — small per-
 
 ## Protocol Model
 
-### Current Protocol Retained
+### Current Protocol
 
-Keep the existing full snapshot model during the ECS migration:
+The legacy full snapshot model has been removed. The current wire protocol sends
+component-level deltas:
 
 ```ts
-interface NodeSnapshot {
-  players: PlayerSnapshot[];
-  monsters: MonsterSnapshot[];
+interface DeltaSnapshot {
+  tick: number;
+  nodeId: string;
+  full: boolean;
+  deltas: EntityDelta[];
   events: CombatEvent[];
 }
 ```
 
-Internally, the server projects ECS entities to `PlayerSnapshot` and `MonsterSnapshot`. The client applies snapshots into its renderer state. This keeps the migration focused on authoritative server architecture and code organization rather than bandwidth.
+`state:sync` sends a full component resync using `full: true`; `node:delta`
+sends regular broadcast patches. The client composes render-facing
+`PlayerView` / `MonsterView` objects from local `NetworkedEntity` state.
 
-Detailed netcode improvements are tracked separately in `netcode.md`. They are explicitly out of scope for the initial miniplex/server reorganization.
+Detailed bandwidth measurement and compression follow-ups are tracked separately
+in `netcode.md`.
 
-Protocol naming decision: rename the wire payload types to `PlayerSnapshot` and `MonsterSnapshot` immediately. This is a TypeScript/API boundary change, not a save-file change. SQLite persistence should keep its own projection layer, and any future persisted field or JSON-shape changes must include an explicit migration script.
+Protocol history: `PlayerSnapshot`, `MonsterSnapshot`, `NodeSnapshot`,
+`PlayerState`, and `MonsterState` compatibility aliases were removed during the
+delta-protocol cutover. SQLite persistence remains component-shaped and any
+future persisted field or JSON-shape changes must include an explicit migration
+script.
 
 Passive key decision: migrate `passives` from `Record<string, number>` to typed passive-key unions during the ECS/miniplex refactor. This should not require a save migration because passives are derived runtime state rebuilt from persisted `unlockedSkills`, `equipment`, selected class/path fields, and static skill/item definitions. If a later change persists passive data directly or changes the persisted skill/equipment JSON shape, that later change must include a migration script.
 

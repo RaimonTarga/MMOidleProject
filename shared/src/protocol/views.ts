@@ -1,0 +1,241 @@
+import type { EquipmentMap, EssenceType } from '../items';
+import type { PassiveMap } from '../passives';
+import type { SubVariant } from '../skillTree';
+import type { BuffId, PlayerBuff } from '../components/buffs';
+import type { CombatArchetype, MonsterAIState, ShieldState } from '../types/combat';
+import { pointFromMotion } from '../systems/spatial';
+import type { NetworkedEntity } from './networkedEntity';
+
+export interface PlayerView {
+  id: string;
+  name: string;
+  x: number;
+  y: number;
+  targetX: number;
+  targetY: number;
+  hp: number;
+  maxHp: number;
+  attack: number;
+  onHitDamage: number;
+  plating: number;
+  damageReduction: number;
+  evasion: number;
+  evasionCount: number;
+  shields: ShieldState[];
+  attackRange: number;
+  attackCooldown: number;
+  lastAttackAt: number;
+  attackTargetId: string | null;
+  auto: boolean;
+  nodeId: string;
+  essences: Record<EssenceType, number>;
+  level: number;
+  skillPoints: number;
+  unlockedSkills: string[];
+  passives: PassiveMap;
+  cadenceSpeedStacks: number;
+  selectedClass: string | null;
+  selectedSubVariant: SubVariant | null;
+  selectedRange: string | null;
+  currentSkillTier: number;
+  hpRegen: number;
+  speed: number;
+  attackStyle: string;
+  inventory: string[];
+  equipment: EquipmentMap;
+  biomeXP: Record<string, number>;
+  biomeLevel: Record<string, number>;
+  unlockedRecipes: string[];
+  combatArchetype: CombatArchetype;
+  cadenceCount: number;
+  cadenceThreshold: number;
+  cadenceEmpoweredArmed: boolean;
+  ammoCount: number;
+  ammoMax: number;
+  heatPct: number;
+  laserOverheated: boolean;
+  executionReady: boolean;
+  executionCooldownPct: number;
+  energyCount: number;
+  empoweredReady: boolean;
+  targetDotStacks: number;
+  targetChillStacks: number;
+  sacredBuffActive: boolean;
+  sacredBuffPct: number;
+  isChanneling: boolean;
+  channelingPct: number;
+  activeEffects?: Record<string, number>;
+  activeEffectFrames?: Record<string, number>;
+  activeBuffs: PlayerBuff[];
+  questProgress: Record<string, number>;
+  playerTier: number;
+}
+
+export interface MonsterView {
+  id: string;
+  monsterTypeId: string;
+  color: number;
+  name: string;
+  x: number;
+  y: number;
+  targetX: number;
+  targetY: number;
+  hp: number;
+  maxHp: number;
+  attack: number;
+  plating: number;
+  damageReduction: number;
+  speed: number;
+  state: MonsterAIState;
+  pullRange: number;
+  leashRange: number;
+  attackRange: number;
+  attackCooldown: number;
+  lastAttackAt: number;
+  attackTargetId: string | null;
+  nodeId: string;
+  attackStyle: string;
+  isBoss: boolean;
+  behavior: string;
+  combatArchetype?: CombatArchetype;
+  activeEffects?: Record<string, number>;
+  activeEffectFrames?: Record<string, number>;
+  bossEffects?: string[];
+}
+
+const EMPTY_EQUIPMENT = {
+  weapon: null,
+  armor: null,
+  recovery: null,
+  mobility: null,
+} as EquipmentMap;
+
+export function composePlayerView(entity: NetworkedEntity): PlayerView | null {
+  if (!entity.isPlayer || !entity.hasPosition || !entity.hasHealth) return null;
+  const target = entity.isMoving
+    ? pointFromMotion(entity.hasPosition.current, entity.isMoving.motion)
+    : entity.hasPosition.current;
+  const progression = entity.tracksProgression;
+  const inventory = entity.holdsInventory;
+  const skills = entity.usesSkills;
+  const damage = entity.dealsDamage;
+  const attack = entity.performsAttack;
+  const mitigation = entity.mitigatesDamage;
+  if (!progression || !inventory || !skills || !damage || !attack || !mitigation) {
+    return null;
+  }
+  return {
+    id: entity.isPlayer.id,
+    name: entity.isPlayer.name,
+    x: entity.hasPosition.current.x,
+    y: entity.hasPosition.current.y,
+    targetX: target.x,
+    targetY: target.y,
+    hp: entity.hasHealth.hp,
+    maxHp: entity.hasHealth.maxHp,
+    attack: damage.attack,
+    onHitDamage: damage.onHitDamage,
+    plating: mitigation.plating,
+    damageReduction: mitigation.damageReduction,
+    evasion: entity.evadesHits?.threshold ?? 0,
+    evasionCount: entity.evadesHits?.count ?? 0,
+    shields: entity.holdsShields?.shields ?? [],
+    attackRange: attack.attackRange,
+    attackCooldown: attack.attackCooldown,
+    lastAttackAt: attack.lastAttackAt,
+    attackTargetId: entity.hasAttackTarget?.targetId ?? null,
+    auto: entity.usesAutocombat?.auto ?? false,
+    nodeId: entity.hasPosition.nodeId,
+    essences: progression.essences,
+    level: progression.level,
+    skillPoints: progression.skillPoints,
+    unlockedSkills: skills.unlockedSkills,
+    passives: skills.passives,
+    cadenceSpeedStacks: entity.usesCadence?.speedStacks ?? 0,
+    selectedClass: skills.selectedClass,
+    selectedSubVariant: skills.selectedSubVariant,
+    selectedRange: skills.selectedRange,
+    currentSkillTier: progression.currentSkillTier,
+    hpRegen: entity.hasHealth.hpRegen ?? 0,
+    speed: entity.hasPosition.speed,
+    attackStyle: damage.attackStyle,
+    inventory: inventory.inventory,
+    equipment: inventory.equipment ?? EMPTY_EQUIPMENT,
+    biomeXP: progression.biomeXP,
+    biomeLevel: progression.biomeLevel,
+    unlockedRecipes: progression.unlockedRecipes,
+    combatArchetype: skills.combatArchetype,
+    cadenceCount: entity.usesCadence?.count ?? 0,
+    cadenceThreshold: entity.usesCadence?.threshold ?? 0,
+    cadenceEmpoweredArmed: entity.hasEmpoweredAttack !== undefined,
+    ammoCount: entity.usesReload?.ammo ?? 0,
+    ammoMax: entity.usesReload?.ammoMax ?? 0,
+    heatPct: entity.usesReload ? Math.round(entity.usesReload.laserHeat) : 0,
+    laserOverheated: entity.usesReload?.laserOverheated ?? false,
+    executionReady: entity.hasEmpoweredAttack !== undefined,
+    executionCooldownPct: entity.usesCooldown?.executionCooldownPct ?? 0,
+    energyCount: entity.usesEnergy?.energy ?? 0,
+    empoweredReady: entity.hasEmpoweredAttack !== undefined,
+    targetDotStacks: entity.appliesDots?.targetDotStacks ?? 0,
+    targetChillStacks: entity.chillsTarget?.targetChillStacks ?? 0,
+    sacredBuffActive: entity.showsSacred?.sacredBuffActive ?? false,
+    sacredBuffPct: entity.showsSacred?.sacredBuffPct ?? 0,
+    isChanneling: entity.isChanneling !== undefined,
+    channelingPct: entity.isChanneling?.pct ?? 0,
+    activeEffects: entity.hasStatus?.activeEffects,
+    activeEffectFrames: entity.hasStatus?.activeEffectFrames,
+    activeBuffs: entity.hasStatus?.activeBuffs ?? [],
+    questProgress: progression.questProgress,
+    playerTier: progression.playerTier,
+  };
+}
+
+export function composeMonsterView(entity: NetworkedEntity): MonsterView | null {
+  if (
+    !entity.isMonster ||
+    !entity.hasPosition ||
+    !entity.hasHealth ||
+    !entity.dealsDamage ||
+    !entity.performsAttack ||
+    !entity.mitigatesDamage ||
+    !entity.hasAwareness
+  ) {
+    return null;
+  }
+  const target = entity.isMoving
+    ? pointFromMotion(entity.hasPosition.current, entity.isMoving.motion)
+    : entity.hasPosition.current;
+  return {
+    id: entity.isMonster.id,
+    monsterTypeId: entity.isMonster.monsterTypeId,
+    color: entity.isMonster.color,
+    name: entity.isMonster.name,
+    x: entity.hasPosition.current.x,
+    y: entity.hasPosition.current.y,
+    targetX: target.x,
+    targetY: target.y,
+    hp: entity.hasHealth.hp,
+    maxHp: entity.hasHealth.maxHp,
+    attack: entity.dealsDamage.attack,
+    plating: entity.mitigatesDamage.plating,
+    damageReduction: entity.mitigatesDamage.damageReduction,
+    speed: entity.hasPosition.speed,
+    state: entity.hasAwareness.state,
+    pullRange: entity.hasAwareness.pullRange,
+    leashRange: entity.hasAwareness.leashRange,
+    attackRange: entity.performsAttack.attackRange,
+    attackCooldown: entity.performsAttack.attackCooldown,
+    lastAttackAt: entity.performsAttack.lastAttackAt,
+    attackTargetId: entity.hasAttackTarget?.targetId ?? null,
+    nodeId: entity.hasPosition.nodeId,
+    attackStyle: entity.dealsDamage.attackStyle,
+    isBoss: entity.isMonster.isBoss,
+    behavior: entity.isMonster.behavior,
+    combatArchetype: entity.isMonster.combatArchetype,
+    activeEffects: entity.hasStatus?.activeEffects,
+    activeEffectFrames: entity.hasStatus?.activeEffectFrames,
+    bossEffects: entity.hasStatus?.bossEffects,
+  };
+}
+
+export type EntityView = PlayerView | MonsterView;

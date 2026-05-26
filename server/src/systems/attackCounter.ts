@@ -1,5 +1,4 @@
-import { getCounter, addCounter, setCounter } from './combatState';
-import type { CombatState } from './combatState';
+import { getCounter, addCounter, setCounter, type TracksCombat } from '@mmo-idle/shared';
 import { registerCombatListener } from './combatPipeline';
 import type { CombatContext, CombatEventName } from './combatPipeline';
 import type { World } from '../world/World';
@@ -23,8 +22,6 @@ export interface AttackThresholdOptions {
    * Use 'afterHit' for side effects that must not touch damage.
    */
   event?: CombatEventName;
-  /** If set, only fires when attacker.combatArchetype matches this value. */
-  attackerArchetype?: string;
 }
 
 /**
@@ -39,20 +36,13 @@ export interface AttackThresholdOptions {
 export function registerAttackThreshold(
   key: string,
   threshold: number,
-  onTrigger: (ctx: CombatContext, world: World, state: CombatState) => void,
+  onTrigger: (ctx: CombatContext, world: World, state: TracksCombat) => void,
   options: AttackThresholdOptions = {},
 ): (ctx: CombatContext, world: World) => void {
   const phase = options.event ?? 'onHit';
 
   const handler = (ctx: CombatContext, world: World): void => {
     if (options.attackerType && ctx.attackerType !== options.attackerType) return;
-    if (options.attackerArchetype) {
-      const archetype = ctx.attackerType === 'player'
-        ? ctx.attacker.usesSkills.combatArchetype
-        : ctx.attacker.isMonster.combatArchetype;
-      if (archetype !== options.attackerArchetype) return;
-    }
-
     const state = ctx.attacker.tracksCombat;
 
     addCounter(state, key, 1);

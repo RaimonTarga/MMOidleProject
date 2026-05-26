@@ -131,3 +131,13 @@ export interface ServerEntity {
   // ── Shared by both (S7 + S8) ──────────────────────────────────
   tracksCombat?:    TracksCombat;
 }
+
+export function entityNetworkId(entity: ServerEntity): EntityId | null {
+  return entity.isPlayer?.id ?? entity.isMonster?.id ?? null;
+}
+
+export function entityNetworkKind(entity: ServerEntity): 'player' | 'monster' | null {
+  if (entity.isPlayer) return 'player';
+  if (entity.isMonster) return 'monster';
+  return null;
+}

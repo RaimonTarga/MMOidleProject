@@ -24,7 +24,8 @@ export function destroyEntity(
 
   state.ids.delete(id);
   state.kind.delete(id);
-  state.snapshot.delete(id);
+  state.entity.delete(id);
+  state.view.delete(id);
   state.transform.delete(id);
   state.interpolation.delete(id);
   state.spriteMeta.delete(id);

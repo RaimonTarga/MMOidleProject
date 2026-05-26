@@ -43,7 +43,7 @@ export function initEnergyArchetype(): void {
   // Register the empowered multiplier — reads energy.empowered-mult from passives at runtime.
   registerEmpoweredMultiplier(EMPOWERED_MULT_DEFAULT, {
     attackerType:      'player',
-    attackerArchetype: 'energy',
+    attackerSlice:     'usesEnergy',
     passiveKey:        'energy.empowered-mult',
   });
 

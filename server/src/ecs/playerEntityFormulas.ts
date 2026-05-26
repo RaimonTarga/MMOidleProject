@@ -5,6 +5,7 @@ import { canUnlockSkill, recalculatePlayerStats } from '@mmo-idle/shared';
 import type { World } from '../world/World';
 import type { PlayerEntity } from './components/player';
 import { attachComponent, detachComponent } from './markerHelpers';
+import { markSliceDirty } from './dirtyHelpers';
 
 export function recalculatePlayerEntityStats(world: World, entity: PlayerEntity): void {
   const evadesHits = entity.evadesHits
@@ -26,6 +27,13 @@ export function recalculatePlayerEntityStats(world: World, entity: PlayerEntity)
       entity.usesCadence.count       = 0;
     },
   });
+  markSliceDirty(world, entity, 'dealsDamage');
+  markSliceDirty(world, entity, 'mitigatesDamage');
+  markSliceDirty(world, entity, 'performsAttack');
+  markSliceDirty(world, entity, 'hasHealth');
+  markSliceDirty(world, entity, 'hasPosition');
+  markSliceDirty(world, entity, 'usesSkills');
+  if (entity.usesCadence) markSliceDirty(world, entity, 'usesCadence');
   if (evadesHits.threshold > 0) {
     attachComponent(world, entity, 'evadesHits', evadesHits);
   } else {

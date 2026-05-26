@@ -1,5 +1,5 @@
 import type Phaser from 'phaser';
-import type { PlayerSnapshot } from '@mmo-idle/shared';
+import type { PlayerView } from '@mmo-idle/shared';
 import { getPlayerShadowColor } from '../sprites';
 import type { RenderState } from './state';
 import type { GameScene } from '../scenes/GameScene';
@@ -46,7 +46,7 @@ export function updateShadowStyle(state: RenderState, id: string): void {
   const kind = state.kind.get(id);
   if (kind !== 'player') return;
 
-  const snap = state.snapshot.get(id) as PlayerSnapshot | undefined;
+  const snap = state.view.get(id) as PlayerView | undefined;
   const shadow = state.shadow.get(id);
   const meta = state.spriteMeta.get(id);
   if (!snap || !shadow || !meta) return;

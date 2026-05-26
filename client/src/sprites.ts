@@ -1,4 +1,4 @@
-import type { PlayerSnapshot } from '@mmo-idle/shared';
+import type { PlayerView } from '@mmo-idle/shared';
 
 export const ATLAS_KEY = 'game-atlas';
 
@@ -59,7 +59,7 @@ const VARIANTS = ['light', 'balanced', 'heavy'] as const;
  * Resolution order: '{archetype}-{variant}' → '{archetype}' → 'default' → null.
  * This means you only need to add variant-specific entries when you have distinct sprites for them.
  */
-export function getPlayerFrame(player: PlayerSnapshot): string | null {
+export function getPlayerFrame(player: PlayerView): string | null {
   if (player.combatArchetype) {
     const variant = VARIANTS.find(v =>
       player.unlockedSkills.includes(`${player.combatArchetype}-${v}`)

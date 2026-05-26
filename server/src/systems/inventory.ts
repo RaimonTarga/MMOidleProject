@@ -3,7 +3,7 @@ import { ITEM_DATABASE } from '@mmo-idle/shared';
 import type { World } from '../world/World';
 import type { PlayerEntity } from '../ecs/components/player';
 import { syncArchetypeSlices } from '../ecs/archetypeSliceSync';
-import { recalculatePlayerEntityStats } from '../ecs/playerSnapshotAdapter';
+import { recalculatePlayerEntityStats } from '../ecs/playerEntityFormulas';
 
 export function equipItem(world: World, entity: PlayerEntity, definitionId: string): boolean {
   const def = ITEM_DATABASE.get(definitionId);

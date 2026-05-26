@@ -29,14 +29,23 @@ export function consumeEmpoweredAttack(world: World, entity: ServerEntity): bool
 
 // ── Multiplier registration ───────────────────────────────────────────────────
 
+type EmpoweredAttackerSlice =
+  | 'usesCadence'
+  | 'usesCooldown'
+  | 'usesEnergy'
+  | 'usesReload'
+  | 'appliesDots';
+
 export interface EmpoweredMultiplierOptions {
   /** Restrict to one attacker side. Omit to apply to both players and monsters. */
   attackerType?: 'player' | 'monster';
-  /** If set, only fires when attacker.combatArchetype matches this value. */
-  attackerArchetype?: string;
+  /** Player-only: only fires when this archetype slice is attached. */
+  attackerSlice?: EmpoweredAttackerSlice;
+  /** Monster-only: monsters still expose their archetype as a compact discriminator. */
+  attackerMonsterArchetype?: string;
   /**
    * If set, only fires when the attacker's selectedClass matches this value.
-   * Checked via isClassActive — preferred over attackerArchetype for player
+   * Checked via isClassActive — preferred over archetype strings for player
    * class mechanics because it uses selectedClass as the source of truth.
    */
   attackerClass?: string;
@@ -73,11 +82,13 @@ export function registerEmpoweredMultiplier(
 ): void {
   registerCombatListener('onHit', (ctx, world) => {
     if (options.attackerType && ctx.attackerType !== options.attackerType) return;
-    if (options.attackerArchetype) {
-      const archetype = ctx.attackerType === 'player'
-        ? ctx.attacker.usesSkills.combatArchetype
-        : ctx.attacker.isMonster.combatArchetype;
-      if (archetype !== options.attackerArchetype) return;
+    if (options.attackerSlice) {
+      if (ctx.attackerType !== 'player') return;
+      if (ctx.attacker[options.attackerSlice] === undefined) return;
+    }
+    if (options.attackerMonsterArchetype) {
+      if (ctx.attackerType !== 'monster') return;
+      if (ctx.attacker.isMonster.combatArchetype !== options.attackerMonsterArchetype) return;
     }
     if (options.attackerClass) {
       if (ctx.attackerType !== 'player') return;
