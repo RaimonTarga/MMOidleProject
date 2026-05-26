@@ -1,5 +1,5 @@
 import { EFFECT_BY_ID, EFFECT_DEFS, EFFECT_FRAME_COUNT, EFFECT_GRID, type Vec2 } from '@mmo-idle/shared';
-import type { GameScene } from '../GameScene';
+import type { GameScene } from '../scenes/GameScene';
 
 export function initParticleTextures(scene: GameScene): void {
   const dotG = scene.make.graphics({ x: 0, y: 0 }, false);

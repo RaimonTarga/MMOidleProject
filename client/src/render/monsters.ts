@@ -8,6 +8,8 @@ import { ensureLabel } from './labels';
 import { ensureHpBar } from './healthBars';
 import { ensureCdBar } from './cooldownBars';
 import { applyLunge } from './interpolation';
+import { spawnAttackEffect } from '../fx/attackEffects';
+import { spawnDamageNumber } from '../fx/particles';
 
 export function upsertMonster(
   state: RenderState,
@@ -94,7 +96,8 @@ export function upsertMonster(
     const sprite = state.sprite.get(monster.id);
     const meta = state.spriteMeta.get(monster.id);
     if (sprite && meta) {
-      scene.spawnDamageNumber(
+      spawnDamageNumber(
+        scene,
         { x: sprite.x, y: sprite.y },
         meta.barOffsetY,
         Math.round(prevHp - monster.hp),
@@ -109,7 +112,8 @@ export function upsertMonster(
     const targetInterp = state.interpolation.get(monster.attackTargetId);
     const targetSprite = state.sprite.get(monster.attackTargetId);
     if (vmSprite && targetInterp && targetSprite) {
-      scene.spawnAttackEffect(
+      spawnAttackEffect(
+        scene,
         monster.attackStyle,
         { x: vmSprite.x, y: vmSprite.y },
         { x: targetSprite.x, y: targetSprite.y },

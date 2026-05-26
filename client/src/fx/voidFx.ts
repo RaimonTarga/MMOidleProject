@@ -1,4 +1,4 @@
-import type { GameScene } from '../GameScene';
+import type { GameScene } from '../scenes/GameScene';
 import { burstFx } from './particles';
 
 export function fxVoid(scene: GameScene, toX: number, toY: number): void {

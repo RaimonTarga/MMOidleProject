@@ -1,5 +1,5 @@
 import type { Vec2 } from '@mmo-idle/shared';
-import type { GameScene } from '../GameScene';
+import type { GameScene } from '../scenes/GameScene';
 import { burstFx } from './particles';
 
 function zigzagPoints(

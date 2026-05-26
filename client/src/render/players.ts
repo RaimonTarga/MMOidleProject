@@ -10,6 +10,9 @@ import { ensureLabel } from './labels';
 import { ensureHpBar } from './healthBars';
 import { ensureCdBar } from './cooldownBars';
 import { applyLunge } from './interpolation';
+import { spawnAttackEffect } from '../fx/attackEffects';
+import { spawnDamageNumber } from '../fx/particles';
+import { cancelAutoPath, sendAutoPathMove } from '../input/autoPath';
 
 export function upsertPlayer(
   state: RenderState,
@@ -89,12 +92,12 @@ export function upsertPlayer(
         scene.autoPath.shift();
         if (scene.autoPath.length > 0) {
           hudBus.emit({ autoPath: [...scene.autoPath] });
-          scene.sendAutoPathMove(player.nodeId);
+          sendAutoPathMove(scene, player.nodeId);
         } else {
-          scene.cancelAutoPath();
+          cancelAutoPath(scene);
         }
       } else {
-        scene.cancelAutoPath();
+        cancelAutoPath(scene);
       }
     }
   }
@@ -120,7 +123,8 @@ export function upsertPlayer(
     const meta = state.spriteMeta.get(player.id);
     if (sprite && meta) {
       const dmgColor = isOwn ? '#ff4444' : '#ff8844';
-      scene.spawnDamageNumber(
+      spawnDamageNumber(
+        scene,
         { x: sprite.x, y: sprite.y },
         meta.barOffsetY,
         Math.round(prevHp - player.hp),
@@ -147,7 +151,8 @@ export function upsertPlayer(
     const targetInterp = state.interpolation.get(player.attackTargetId);
     const targetSprite = state.sprite.get(player.attackTargetId);
     if (ownSprite && targetInterp && targetSprite) {
-      scene.spawnAttackEffect(
+      spawnAttackEffect(
+        scene,
         player.attackStyle,
         { x: ownSprite.x, y: ownSprite.y },
         { x: targetSprite.x, y: targetSprite.y },

@@ -1,8 +1,8 @@
 import { GAME_CONFIG, type Vec2 } from '@mmo-idle/shared';
-import { hudBus } from '../../hudBus';
-import { sendMove, sendSetAuto } from '../../net/intents';
-import { getOwnView } from '../../render/state';
-import type { GameScene } from './GameScene';
+import { hudBus } from '../hudBus';
+import { sendMove, sendSetAuto } from '../net/intents';
+import { getOwnView } from '../render/state';
+import type { GameScene } from '../scenes/GameScene';
 
 export function setAutoMode(scene: GameScene, enabled: boolean): void {
   scene.autoMode = enabled;

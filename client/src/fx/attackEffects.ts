@@ -1,5 +1,5 @@
 import { GAME_CONFIG, type CombatArchetype, type Vec2 } from '@mmo-idle/shared';
-import type { GameScene } from '../GameScene';
+import type { GameScene } from '../scenes/GameScene';
 import { fxFire, fxFrost, fxImpact, fxMagic, fxPoison, fxSlash } from './basic';
 import { fxFireFlame, fxFrostSnowflake, fxPoisonSmog, type DotPath } from './dot';
 import { fxLightning } from './energy';

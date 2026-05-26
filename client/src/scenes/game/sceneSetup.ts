@@ -1,17 +1,8 @@
-import { EFFECT_DEFS, GAME_CONFIG, type EquipmentSlot, type Vec2 } from '@mmo-idle/shared';
+import { EFFECT_DEFS, GAME_CONFIG } from '@mmo-idle/shared';
 import { combatLog } from '../../combatLog';
 import { hudBus } from '../../hudBus';
 import { accountId, displayName } from '../../clientAuth';
 import { connectGameSocket, wireSocketHandlers } from '../../net/socket';
-import {
-  sendCraftRecipe,
-  sendEquipItem,
-  sendGoToTestRoom,
-  sendLeaveTestRoom,
-  sendMove,
-  sendUnequip,
-  sendUnlockSkill,
-} from '../../net/intents';
 import { applyDelta } from '../../net/deltaApplier';
 import { ATLAS_KEY, BIOME_TEXTURES } from '../../sprites';
 import { stepInterpolation, getOwnBase } from '../../render/interpolation';
@@ -20,9 +11,11 @@ import { drawLabels } from '../../render/labels';
 import { drawHealthBars } from '../../render/healthBars';
 import { drawCooldownBars } from '../../render/cooldownBars';
 import { updateEffectOverlays } from '../../render/effectOverlays';
-import { initParticleTextures, initEffectFrames } from './fx/particles';
+import { initParticleTextures, initEffectFrames } from '../../fx/particles';
+import { updateLaserBeam } from '../../fx/laser';
+import { attachClickToMove } from '../../input/clickToMove';
+import { attachHudEvents } from '../../input/hudEvents';
 import { createGridBackground, drawDebugRanges, drawExitMarkers, drawMinimap, updateBiomeBackground } from './overlays';
-import { setAutoMode, cancelAutoPath, sendAutoPathMove } from './navigation';
 import { showAscensionOverlay, showDeathOverlay } from './screenOverlays';
 import type { GameScene } from './GameScene';
 
@@ -67,8 +60,8 @@ export function createGameScene(scene: GameScene): void {
   scene.cameraTarget = scene.add.arc(0, 0, 1).setAlpha(0);
   scene.minimap = scene.add.graphics().setScrollFactor(0).setDepth(20);
 
-  installHudEvents(scene);
-  installPointerInput(scene);
+  attachHudEvents(scene);
+  attachClickToMove(scene);
   connectSocket(scene);
 }
 
@@ -82,7 +75,7 @@ export function updateGameScene(scene: GameScene, delta: number): void {
   drawCooldownBars(scene.state);
   updateEffectOverlays(scene.state, scene, dt);
 
-  scene.updateLaserBeam();
+  updateLaserBeam(scene.state, scene);
   drawMinimap(scene);
 
   if (scene.state.ownNodeId !== scene.lastDrawnNodeId) {
@@ -102,72 +95,6 @@ export function updateGameScene(scene: GameScene, delta: number): void {
   }
 
   drawDebugRanges(scene);
-}
-
-function installHudEvents(scene: GameScene): void {
-  window.addEventListener('hud:toggleAuto', () => {
-    setAutoMode(scene, !scene.autoMode);
-  });
-
-  window.addEventListener('hud:unlockSkill', (e: Event) => {
-    sendUnlockSkill(scene.socket, (e as CustomEvent<string>).detail);
-  });
-
-  window.addEventListener('hud:equipItem', (e: Event) => {
-    sendEquipItem(scene.socket, (e as CustomEvent<string>).detail);
-  });
-
-  window.addEventListener('hud:unequipItem', (e: Event) => {
-    sendUnequip(scene.socket, (e as CustomEvent<EquipmentSlot>).detail);
-  });
-
-  window.addEventListener('hud:craftRecipe', (e: Event) => {
-    sendCraftRecipe(scene.socket, (e as CustomEvent<string>).detail);
-  });
-
-  window.addEventListener('hud:debugPlayerRange', () => {
-    scene.debugPlayerRange = !scene.debugPlayerRange;
-  });
-
-  window.addEventListener('hud:debugEnemyRanges', () => {
-    scene.debugEnemyRanges = !scene.debugEnemyRanges;
-  });
-
-  window.addEventListener('hud:navigateTo', (e: Event) => {
-    const { path } = (e as CustomEvent<{ path: string[] }>).detail;
-    if (path.length === 0) return;
-    scene.autoPath = path;
-    hudBus.emit({ autoPath: [...path] });
-    sendAutoPathMove(scene, scene.state.ownNodeId);
-  });
-
-  window.addEventListener('hud:goToTestRoom', () => {
-    sendGoToTestRoom(scene.socket);
-  });
-
-  window.addEventListener('hud:leaveTestRoom', () => {
-    sendLeaveTestRoom(scene.socket);
-  });
-}
-
-function installPointerInput(scene: GameScene): void {
-  scene.input.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
-    if (!scene.myId) return;
-
-    const dest: Vec2 = { x: Math.round(pointer.worldX), y: Math.round(pointer.worldY) };
-
-    if (scene.autoMode) setAutoMode(scene, false);
-    if (scene.autoPath.length > 0) cancelAutoPath(scene);
-
-    sendMove(scene.socket, dest);
-
-    const transform = scene.state.ownId ? scene.state.transform.get(scene.state.ownId) : undefined;
-    if (transform) {
-      transform.target = dest;
-    }
-
-    scene.targetMarker.setPosition(dest.x, dest.y).setVisible(true);
-  });
 }
 
 function connectSocket(scene: GameScene): void {

@@ -1,4 +1,4 @@
-import type { CombatEvent, DeltaSnapshot, NetworkedEntity } from '@mmo-idle/shared';
+import type { DeltaSnapshot, NetworkedEntity } from '@mmo-idle/shared';
 import { composeMonsterView, composePlayerView } from '@mmo-idle/shared';
 import { hudBus } from '../hudBus';
 import type { GameScene } from '../scenes/GameScene';
@@ -7,6 +7,7 @@ import { upsertPlayer } from '../render/players';
 import { upsertMonster } from '../render/monsters';
 import { destroyEntity } from '../render/destroy';
 import { getOwnView } from '../render/state';
+import { dispatchCombatEvent } from '../render/combatFx';
 
 export function applyDelta(
   state: RenderState,
@@ -75,12 +76,4 @@ function upsertEntityView(
     if (!monster) return;
     upsertMonster(state, monster, scene);
   }
-}
-
-export function dispatchCombatEvent(
-  state: RenderState,
-  ev: CombatEvent,
-  scene: GameScene,
-): void {
-  scene.processCombatEventViaApplier(state, ev);
 }

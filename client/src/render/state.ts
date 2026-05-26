@@ -59,6 +59,12 @@ export interface RenderState {
     }
   >;
 
+  laserBeam: {
+    graphics: Phaser.GameObjects.Graphics | null;
+    targetId: string | null;
+    until: number;
+  };
+
   ownId: NetworkId | null;
   ownNodeId: string;
 }
@@ -79,6 +85,11 @@ export function createRenderState(): RenderState {
     effectOverlays: new Map(),
     spriteMeta: new Map(),
     debugRanges: new Map(),
+    laserBeam: {
+      graphics: null,
+      targetId: null,
+      until: 0,
+    },
     ownId: null,
     ownNodeId: '',
   };

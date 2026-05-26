@@ -1,5 +1,6 @@
 import type { PlayerView } from '@mmo-idle/shared';
-import type { GameScene } from '../GameScene';
+import type { GameScene } from '../scenes/GameScene';
+import type { RenderState } from '../render/state';
 import { burstFx } from './particles';
 
 export function fxGunshot(scene: GameScene, fromX: number, fromY: number, toX: number, toY: number, empowered: boolean): void {
@@ -35,28 +36,29 @@ export function fxGunshot(scene: GameScene, fromX: number, fromY: number, toX: n
   });
 }
 
-export function activateLaserBeam(scene: GameScene, targetId: string): void {
-  scene.laserBeamTargetId = targetId;
+export function activateLaserBeam(state: RenderState, scene: GameScene, targetId: string): void {
+  state.laserBeam.targetId = targetId;
   // Broadcasts arrive every ~200ms; keep the beam alive across snapshots.
-  scene.laserBeamUntil = Date.now() + 320;
+  state.laserBeam.until = Date.now() + 320;
 
-  if (!scene.laserBeamGraphics) {
-    scene.laserBeamGraphics = scene.add.graphics().setDepth(12);
+  if (!state.laserBeam.graphics) {
+    state.laserBeam.graphics = scene.add.graphics().setDepth(12);
   }
 }
 
-export function updateLaserBeam(scene: GameScene): void {
-  if (!scene.laserBeamGraphics) return;
+export function updateLaserBeam(state: RenderState, scene: GameScene): void {
+  const beam = state.laserBeam;
+  if (!beam.graphics) return;
 
   const now = Date.now();
-  const ownSprite = scene.state.ownId ? scene.state.sprite.get(scene.state.ownId) : undefined;
-  const targetSprite = scene.laserBeamTargetId ? scene.state.sprite.get(scene.laserBeamTargetId) : undefined;
-  const player = scene.state.ownId
-    ? (scene.state.view.get(scene.state.ownId) as PlayerView | undefined)
+  const ownSprite = state.ownId ? state.sprite.get(state.ownId) : undefined;
+  const targetSprite = beam.targetId ? state.sprite.get(beam.targetId) : undefined;
+  const player = state.ownId
+    ? (state.view.get(state.ownId) as PlayerView | undefined)
     : undefined;
 
   if (
-    now > scene.laserBeamUntil ||
+    now > beam.until ||
     !ownSprite ||
     !targetSprite ||
     !player ||
@@ -64,8 +66,8 @@ export function updateLaserBeam(scene: GameScene): void {
     (player.passives['reload.laser'] ?? 0) <= 0 ||
     player.laserOverheated
   ) {
-    scene.laserBeamGraphics.clear();
-    scene.laserBeamTargetId = null;
+    beam.graphics.clear();
+    beam.targetId = null;
     return;
   }
 
@@ -75,17 +77,17 @@ export function updateLaserBeam(scene: GameScene): void {
   const toY = targetSprite.y;
   const pulse = 0.75 + Math.sin(now / 45) * 0.18;
 
-  scene.laserBeamGraphics.clear();
-  scene.laserBeamGraphics.lineStyle(10, 0xff5533, 0.16 * pulse);
-  scene.laserBeamGraphics.lineBetween(fromX, fromY, toX, toY);
-  scene.laserBeamGraphics.lineStyle(5, 0xffaa44, 0.34 * pulse);
-  scene.laserBeamGraphics.lineBetween(fromX, fromY, toX, toY);
-  scene.laserBeamGraphics.lineStyle(2, 0xffffdd, 0.92);
-  scene.laserBeamGraphics.lineBetween(fromX, fromY, toX, toY);
+  beam.graphics.clear();
+  beam.graphics.lineStyle(10, 0xff5533, 0.16 * pulse);
+  beam.graphics.lineBetween(fromX, fromY, toX, toY);
+  beam.graphics.lineStyle(5, 0xffaa44, 0.34 * pulse);
+  beam.graphics.lineBetween(fromX, fromY, toX, toY);
+  beam.graphics.lineStyle(2, 0xffffdd, 0.92);
+  beam.graphics.lineBetween(fromX, fromY, toX, toY);
 
   const impactRadius = 5 + Math.sin(now / 55) * 1.5;
-  scene.laserBeamGraphics.fillStyle(0xffffcc, 0.7);
-  scene.laserBeamGraphics.fillCircle(toX, toY, impactRadius);
-  scene.laserBeamGraphics.fillStyle(0xff6633, 0.24);
-  scene.laserBeamGraphics.fillCircle(toX, toY, impactRadius * 2.4);
+  beam.graphics.fillStyle(0xffffcc, 0.7);
+  beam.graphics.fillCircle(toX, toY, impactRadius);
+  beam.graphics.fillStyle(0xff6633, 0.24);
+  beam.graphics.fillCircle(toX, toY, impactRadius * 2.4);
 }

@@ -1,4 +1,4 @@
-import type { GameScene } from '../GameScene';
+import type { GameScene } from '../scenes/GameScene';
 import { burstFx } from './particles';
 
 export function fxSlash(scene: GameScene, fromX: number, fromY: number, toX: number, toY: number, empowered: boolean, blueEmpowered = false): void {
