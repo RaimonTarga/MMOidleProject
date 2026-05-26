@@ -2,7 +2,7 @@ import {
   addResource, getResource, setResource,
   isCooldownActive, setCooldown,
 } from '@mmo-idle/shared';
-import type { PlayerEntity } from '../../../ecs/components/player';
+import type { PlayerEntity } from '../../../ecs/entity';
 import type { World } from '../../../world/World';
 import { registerCombatListener } from '../../combat/engine/combatPipeline';
 import { DEBT_POOL_KEY, POOL_DRAIN_MS } from '../core/pools';

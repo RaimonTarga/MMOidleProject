@@ -1,9 +1,6 @@
 import { defineMechanic } from '../../mechanicModule';
-import {
-  initCadenceArchetype,
-  updateCadenceEffects,
-  CADENCE_BUFFS,
-} from './cadencePrototype';
+import { initCadenceArchetype, updateCadenceArchetype } from './cadencePrototype';
+import { updateCadenceT3, CADENCE_T3_BUFFS } from './t3';
 
 const cadenceModule = defineMechanic({
   id: 'cadence',
@@ -11,9 +8,10 @@ const cadenceModule = defineMechanic({
     initCadenceArchetype();
   },
   tick: (world, dt) => {
-    updateCadenceEffects(world, dt);
+    updateCadenceT3(world, dt);
+    updateCadenceArchetype(world, dt);
   },
-  buffs: CADENCE_BUFFS,
+  buffs: CADENCE_T3_BUFFS,
 });
 
 export default cadenceModule;

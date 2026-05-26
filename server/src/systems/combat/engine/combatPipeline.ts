@@ -1,5 +1,4 @@
-import type { MonsterEntity } from '../../../ecs/components/monster';
-import type { PlayerEntity } from '../../../ecs/components/player';
+import type { MonsterEntity, PlayerEntity } from '../../../ecs/entity';
 import type { World } from '../../../world/World';
 
 // ── Event names ───────────────────────────────────────────────────────────────

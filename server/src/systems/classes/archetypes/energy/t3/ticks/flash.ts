@@ -1,6 +1,6 @@
 import { detachComponent } from '../../../../../../ecs/markerHelpers';
 import { markSliceDirty } from '../../../../../../ecs/dirtyHelpers';
-import type { PlayerEntity } from '../../../../../../ecs/components/player';
+import type { PlayerEntity } from '../../../../../../ecs/entity';
 import type { World } from '../../../../../../world/World';
 import { hasPassive } from '../core/helpers';
 import {

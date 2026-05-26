@@ -3,7 +3,7 @@
  */
 import { canUnlockSkill, recalculatePlayerStats } from '@mmo-idle/shared';
 import type { World } from '../world/World';
-import type { PlayerEntity } from './components/player';
+import type { PlayerEntity } from './entity';
 import { attachComponent, detachComponent } from './markerHelpers';
 import { markSliceDirty } from './dirtyHelpers';
 

@@ -1,5 +1,5 @@
 import { QUEST_DATABASE } from '@mmo-idle/shared';
-import type { PlayerEntity } from '../../../ecs/components/player';
+import type { PlayerEntity } from '../../../ecs/entity';
 
 /**
  * Called after every monster kill. Finds the quest for the player's current tier,

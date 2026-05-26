@@ -3,8 +3,7 @@
  * Call after any path that mutates `usesSkills.combatArchetype` or archetype-relevant passives.
  */
 import type { World } from '../world/World';
-import type { ServerEntity } from './entity';
-import type { PlayerEntity } from './components/player';
+import type { PlayerEntity, ServerEntity } from './entity';
 import {
   initAppliesDots,
   initChillsTarget,

@@ -10,7 +10,7 @@ import {
 import type { World } from '../../../world/World';
 import { NODE_REGISTRY } from '../../../world/nodeRegistry';
 import { makeTracksCombat, resetTracksCombat, initScriptsBoss } from '@mmo-idle/shared';
-import type { MonsterEntity } from '../../../ecs/components/monster';
+import type { MonsterEntity } from '../../../ecs/entity';
 import { recalculatePlayerEntityStats } from '../../../ecs/playerEntityFormulas';
 import { syncArchetypeSlices } from '../../../ecs/archetypeSliceSync';
 import { detachComponent } from '../../../ecs/markerHelpers';

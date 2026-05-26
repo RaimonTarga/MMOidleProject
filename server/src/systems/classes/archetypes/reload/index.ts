@@ -6,7 +6,7 @@ import {
 import {
   updateReloadT3,
   RELOAD_T3_BUFFS,
-} from './reloadT3';
+} from './t3';
 
 const reloadModule = defineMechanic({
   id: 'reload',

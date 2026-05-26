@@ -1,5 +1,5 @@
 import { getStatusEffect, type TracksCombat } from '@mmo-idle/shared';
-import type { PlayerEntity } from '../../../../../../ecs/components/player';
+import type { PlayerEntity } from '../../../../../../ecs/entity';
 import {
   OVERDRIVE_BUFF_MS, ALIGNMENT_BUFF_MS, TEMPORAL_MAX_MS,
   EC_CHARGE_FX, TE_BUFF_FX, BAT_CHARGE_FX,

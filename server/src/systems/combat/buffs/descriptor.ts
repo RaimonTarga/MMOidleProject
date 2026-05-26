@@ -1,6 +1,6 @@
 import type { BuffCategory, BuffShape, PlayerBuff, TracksCombat } from '@mmo-idle/shared';
 import type { World } from '../../../world/World';
-import type { PlayerEntity } from '../../../ecs/components/player';
+import type { PlayerEntity } from '../../../ecs/entity';
 
 export interface BuffProjectionContext {
   player: PlayerEntity;

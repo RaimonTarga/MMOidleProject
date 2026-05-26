@@ -1,6 +1,6 @@
 import { registerCombatListener } from '../../../combat/engine/combatPipeline';
 import type { World } from '../../../../world/World';
-import { initReloadT3 } from './reloadT3';
+import { initReloadT3 } from './t3';
 
 // ── Fallback constants (balanced-frame defaults, used when no frame is unlocked) ─
 

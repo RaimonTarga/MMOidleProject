@@ -1,7 +1,6 @@
 import { NODE_BIOMES, MONSTER_DATABASE, RECIPE_DATABASE, GAME_CONFIG, biomeLevelCap, biomeXpForLevel } from '@mmo-idle/shared';
 import type { EssenceType } from '@mmo-idle/shared';
-import type { PlayerEntity } from '../../../ecs/components/player';
-import type { MonsterEntity } from '../../../ecs/components/monster';
+import type { MonsterEntity, PlayerEntity } from '../../../ecs/entity';
 import type { World } from '../../../world/World';
 import { registerKillForQuests } from './questSystem';
 

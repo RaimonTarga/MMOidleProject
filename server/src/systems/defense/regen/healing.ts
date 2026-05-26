@@ -1,5 +1,5 @@
 import type { TracksCombat } from '@mmo-idle/shared';
-import type { PlayerEntity } from '../../../ecs/components/player';
+import type { PlayerEntity } from '../../../ecs/entity';
 
 /**
  * Returns the healing multiplier for this entity (1 = full, 0.1 = hard floor).

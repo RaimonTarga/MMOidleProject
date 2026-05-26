@@ -1,6 +1,5 @@
 import type { CombatContext } from '../../../../../combat/engine/combatPipeline';
-import type { PlayerEntity } from '../../../../../../ecs/components/player';
-import type { MonsterEntity } from '../../../../../../ecs/components/monster';
+import type { MonsterEntity, PlayerEntity } from '../../../../../../ecs/entity';
 import type { TracksCombat } from '@mmo-idle/shared';
 import type { World } from '../../../../../../world/World';
 

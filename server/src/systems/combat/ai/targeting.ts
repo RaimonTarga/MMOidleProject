@@ -1,6 +1,6 @@
 import { attachComponent, detachComponent } from '../../../ecs/markerHelpers';
 import { MONSTER_DATABASE } from '@mmo-idle/shared';
-import type { MonsterEntity } from '../../../ecs/components/monster';
+import type { MonsterEntity } from '../../../ecs/entity';
 import type { ServerEntity } from '../../../ecs/entity';
 import type { World } from '../../../world/World';
 

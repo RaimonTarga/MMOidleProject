@@ -2,7 +2,7 @@ import {
   isCooldownActive, setCooldown,
   removeStatusEffectStacks,
 } from '@mmo-idle/shared';
-import type { PlayerEntity } from '../../../ecs/components/player';
+import type { PlayerEntity } from '../../../ecs/entity';
 
 /**
  * Per-tick debuff cleanse. Every `defense.cleanse-interval-ms`, removes

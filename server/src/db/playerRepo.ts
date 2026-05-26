@@ -10,7 +10,7 @@ import type {
   UsesSkills,
 } from '@mmo-idle/shared';
 import { GAME_CONFIG, emptyEquipment, type Vec2 } from '@mmo-idle/shared';
-import type { PlayerEntity } from '../ecs/components/player';
+import type { PlayerEntity } from '../ecs/entity';
 import { accounts, characters } from './schema';
 import type * as schema from './schema';
 

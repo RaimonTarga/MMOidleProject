@@ -1,6 +1,6 @@
 import { GAME_CONFIG, makeTracksCombat } from "@mmo-idle/shared";
 import type { World } from "./World";
-import type { PlayerEntity } from "../ecs/components/player";
+import type { PlayerEntity } from "../ecs/entity";
 import type { PersistedPlayerSlices } from "../db/playerRepo";
 
 /**

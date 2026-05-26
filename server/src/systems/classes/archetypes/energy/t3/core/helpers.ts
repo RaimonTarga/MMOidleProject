@@ -1,5 +1,5 @@
 import type { PassiveKey, UsesEnergy } from '@mmo-idle/shared';
-import type { PlayerEntity } from '../../../../../../ecs/components/player';
+import type { PlayerEntity } from '../../../../../../ecs/entity';
 import type { World } from '../../../../../../world/World';
 import { attachComponent, detachComponent } from '../../../../../../ecs/markerHelpers';
 

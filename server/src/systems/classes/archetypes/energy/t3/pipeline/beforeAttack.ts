@@ -12,8 +12,7 @@ import { detachComponent } from "../../../../../../ecs/markerHelpers";
 import { stopEntity } from "../../../../../world/movement";
 import { NODE_REGISTRY } from "../../../../../../world/nodeRegistry";
 import type { World } from "../../../../../../world/World";
-import type { PlayerEntity } from "../../../../../../ecs/components/player";
-import type { MonsterEntity } from "../../../../../../ecs/components/monster";
+import type { MonsterEntity, PlayerEntity } from "../../../../../../ecs/entity";
 import { hasPassive } from "../core/helpers";
 import {
   FLASH_OFFSET_MAX_PX,

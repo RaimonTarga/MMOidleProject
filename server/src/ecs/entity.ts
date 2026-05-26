@@ -45,6 +45,7 @@ import type {
   UsesReload,
   UsesSkills,
 } from '@mmo-idle/shared';
+import type { With } from 'miniplex';
 
 export type EntityId = string;
 
@@ -133,6 +134,54 @@ export interface ServerEntity {
 
   // ── Shared by both (S7 + S8) ──────────────────────────────────
   tracksCombat?:    TracksCombat;
+}
+
+/**
+ * A miniplex entity carrying per-player combat state and the core typed
+ * snapshot slices. Optional archetype slices (`usesCadence`, `usesEnergy`, ...)
+ * are attached only when the player has that archetype.
+ */
+export type PlayerEntity = With<
+  ServerEntity,
+  | "tracksCombat"
+  | "isPlayer"
+  | "hasPosition"
+  | "hasHealth"
+  | "dealsDamage"
+  | "performsAttack"
+  | "mitigatesDamage"
+  | "hasStatus"
+  | "usesAutocombat"
+  | "tracksProgression"
+  | "holdsInventory"
+  | "usesSkills"
+  | "showsSacred"
+>;
+
+export function isPlayerEntity(e: ServerEntity): e is PlayerEntity {
+  return "isPlayer" in e;
+}
+
+/**
+ * A miniplex entity carrying monster AI, combat state, and the full set of
+ * typed monster snapshot slices.
+ */
+export type MonsterEntity = With<
+  ServerEntity,
+  | "controlsMonster"
+  | "tracksCombat"
+  | "isMonster"
+  | "hasPosition"
+  | "hasHealth"
+  | "dealsDamage"
+  | "performsAttack"
+  | "mitigatesDamage"
+  | "hasAwareness"
+  | "hasStatus"
+>;
+
+export function isMonsterEntity(e: ServerEntity): e is MonsterEntity {
+  return "isMonster" in e;
 }
 
 export function entityNetworkId(entity: ServerEntity): EntityId | null {

@@ -1,5 +1,5 @@
 import { addResource, getResource, setResource } from '@mmo-idle/shared';
-import type { PlayerEntity } from '../../../ecs/components/player';
+import type { PlayerEntity } from '../../../ecs/entity';
 import { registerCombatListener } from '../../combat/engine/combatPipeline';
 import { ABSORB_POOL_KEY, POOL_DRAIN_MS } from '../core/pools';
 import { applyHealToPlayer } from '../regen/healing';

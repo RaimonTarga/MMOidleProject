@@ -1,5 +1,5 @@
 import type { World } from '../../../world/World';
-import type { MonsterEntity } from '../../../ecs/components/monster';
+import type { MonsterEntity } from '../../../ecs/entity';
 import { distanceSq, type Vec2 } from '@mmo-idle/shared';
 import { NODE_REGISTRY } from '../../../world/nodeRegistry';
 import { setEntityMotion, stopEntity } from '../../world/movement';

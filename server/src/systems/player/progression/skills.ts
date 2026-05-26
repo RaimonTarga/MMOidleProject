@@ -1,7 +1,7 @@
 import type { CombatArchetype } from '@mmo-idle/shared';
 import { SKILL_TREE, canUnlockSkill } from '@mmo-idle/shared';
 import type { World } from '../../../world/World';
-import type { PlayerEntity } from '../../../ecs/components/player';
+import type { PlayerEntity } from '../../../ecs/entity';
 import { syncArchetypeSlices } from '../../../ecs/archetypeSliceSync';
 import { canUnlockEntitySkill, recalculatePlayerEntityStats } from '../../../ecs/playerEntityFormulas';
 

@@ -2,7 +2,7 @@ import {
   addResource, getResource, setResource,
   isCooldownActive, setCooldown,
 } from '@mmo-idle/shared';
-import type { PlayerEntity } from '../../../ecs/components/player';
+import type { PlayerEntity } from '../../../ecs/entity';
 import { BURST_POOL_KEY } from '../core/pools';
 import { registerCombatListener } from '../../combat/engine/combatPipeline';
 import { applyHealToPlayer } from './healing';

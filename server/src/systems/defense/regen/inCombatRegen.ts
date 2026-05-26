@@ -1,4 +1,4 @@
-import type { PlayerEntity } from '../../../ecs/components/player';
+import type { PlayerEntity } from '../../../ecs/entity';
 import { applyHealToPlayer } from './healing';
 
 /**

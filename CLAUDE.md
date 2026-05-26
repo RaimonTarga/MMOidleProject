@@ -245,7 +245,7 @@ Players earn biome XP for kills in a biome; XP accumulates in `tracksProgression
 - `BIOME_XP_BASE = 80`, `BIOME_XP_EXPONENT = 1.7` (both in GAME_CONFIG)
 - Level table: Lv1 → 80 XP, Lv2 → 260, Lv3 → 518, Lv4 → 845, Lv6 → 1831, Lv9 → 3848
 
-Each level-up in a biome unlocks recipes tied to that biome+level. `unlockedRecipes` on `tracksProgression` is the authoritative set. XP per kill is set in `BIOME_XP_BY_NODE_TIER` in `shared/src/index.ts`.
+Each level-up in a biome unlocks recipes tied to that biome+level. `unlockedRecipes` on `tracksProgression` is the authoritative set.
 
 The helpers `biomeXpForLevel` and `biomeLevelCap` are exported from `@mmo-idle/shared` and used in both `rewards.ts` (level-up logic) and the client UI (`CraftingPanel`, `MapPanel`, `GameScene`). Never use `BIOME_XP_PER_LEVEL` — that constant no longer exists.
 

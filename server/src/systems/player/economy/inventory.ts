@@ -1,7 +1,7 @@
 import type { EquipmentSlot } from '@mmo-idle/shared';
 import { ITEM_DATABASE } from '@mmo-idle/shared';
 import type { World } from '../../../world/World';
-import type { PlayerEntity } from '../../../ecs/components/player';
+import type { PlayerEntity } from '../../../ecs/entity';
 import { syncArchetypeSlices } from '../../../ecs/archetypeSliceSync';
 import { recalculatePlayerEntityStats } from '../../../ecs/playerEntityFormulas';
 

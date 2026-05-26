@@ -1,6 +1,5 @@
 import type { World } from '../../../../../../../world/World';
-import type { PlayerEntity } from '../../../../../../../ecs/components/player';
-import type { MonsterEntity } from '../../../../../../../ecs/components/monster';
+import type { MonsterEntity, PlayerEntity } from '../../../../../../../ecs/entity';
 import { setAttackTarget } from '../../../../../../combat/ai/targeting';
 import { grantMonsterRewards } from '../../../../../../player/progression/rewards';
 import { endChannel } from '../../core/helpers';

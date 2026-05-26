@@ -1,5 +1,5 @@
 import type { PassiveKey } from '@mmo-idle/shared';
-import type { PlayerEntity } from '../../../../../../ecs/components/player';
+import type { PlayerEntity } from '../../../../../../ecs/entity';
 import type { World } from '../../../../../../world/World';
 import { detachComponent } from '../../../../../../ecs/markerHelpers';
 import { setAttackTarget } from '../../../../../combat/ai/targeting';

@@ -1,5 +1,5 @@
 import type { World } from "./World";
-import type { MonsterEntity } from "../ecs/components/monster";
+import type { MonsterEntity } from "../ecs/entity";
 import type { HasKnockback } from "../systems/combat/damage/knockback";
 
 /** O(1) typed lookup. Backed by world.monsterById, populated via onEntityAdded. */

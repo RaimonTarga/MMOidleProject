@@ -21,7 +21,7 @@ import type { BossAction, BossPhase, BossScript, RepeatingAction } from '@mmo-id
 import { MONSTER_DATABASE, GAME_CONFIG } from '@mmo-idle/shared';
 import { NODE_REGISTRY } from '../../../world/nodeRegistry';
 import type { World } from '../../../world/World';
-import type { MonsterEntity } from '../../../ecs/components/monster';
+import type { MonsterEntity } from '../../../ecs/entity';
 import type { ActiveBossEffect, ScriptsBoss } from '@mmo-idle/shared';
 import { initScriptsBoss } from '@mmo-idle/shared';
 import { attachComponent } from '../../../ecs/markerHelpers';

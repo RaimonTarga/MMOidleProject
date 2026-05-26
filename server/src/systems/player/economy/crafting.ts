@@ -1,7 +1,7 @@
 import type { EssenceType } from '@mmo-idle/shared';
 import { ESSENCE_TYPES, RECIPE_DATABASE, TEST_ROOM_NODE_ID } from '@mmo-idle/shared';
 import type { World } from '../../../world/World';
-import type { PlayerEntity } from '../../../ecs/components/player';
+import type { PlayerEntity } from '../../../ecs/entity';
 
 const TEST_ROOM_ESSENCE_AMOUNT = 1_000_000_000;
 

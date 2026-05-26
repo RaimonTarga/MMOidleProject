@@ -1,5 +1,5 @@
 import { ESSENCE_TYPES, MONSTER_DATABASE, TEST_ROOM_NODE_ID, resetTracksCombat } from '@mmo-idle/shared';
-import type { PlayerEntity } from '../../ecs/components/player';
+import type { PlayerEntity } from '../../ecs/entity';
 import type { World } from '../../world/World';
 import { syncArchetypeSlices } from '../../ecs/archetypeSliceSync';
 import { recalculatePlayerEntityStats } from '../../ecs/playerEntityFormulas';

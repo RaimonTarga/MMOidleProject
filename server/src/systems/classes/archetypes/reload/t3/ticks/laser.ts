@@ -1,39 +1,22 @@
-import { GAME_CONFIG, TEST_ROOM_NODE_ID } from '@mmo-idle/shared';
-import { defineBuff, type BuffDescriptor } from '../../../combat/buffs/descriptor';
-import type { World } from '../../../../world/World';
-import { grantMonsterRewards } from '../../../player/progression/rewards';
-import { applyKnockback } from '../../../combat/damage/knockback';
+import { GAME_CONFIG, TEST_ROOM_NODE_ID, getStatusEffect, type UsesReload } from '@mmo-idle/shared';
+import type { World } from '../../../../../../world/World';
+import type { MonsterEntity, PlayerEntity } from '../../../../../../ecs/entity';
 import {
   emitCombatEvent,
   makeCombatContext,
-  registerCombatListener,
-} from '../../../combat/engine/combatPipeline';
-import { getStatusEffect } from '@mmo-idle/shared';
-import { applyPlayerAoe } from '../../../combat/damage/aoeDamage';
-import type { UsesReload } from '@mmo-idle/shared';
-import type { PlayerEntity } from '../../../../ecs/components/player';
-import type { MonsterEntity } from '../../../../ecs/components/monster';
-import { setAggroTarget, setAttackTarget } from '../../../combat/ai/targeting';
-import { markEngaged } from '../../../combat/ai/engagement';
+} from '../../../../../combat/engine/combatPipeline';
+import { applyPlayerAoe } from '../../../../../combat/damage/aoeDamage';
+import { setAggroTarget, setAttackTarget } from '../../../../../combat/ai/targeting';
+import { markEngaged } from '../../../../../combat/ai/engagement';
+import { grantMonsterRewards } from '../../../../../player/progression/rewards';
+import {
+  DEFAULT_LASER_COOL_PER_TICK,
+  DEFAULT_LASER_DAMAGE_PER_TICK_PCT,
+  DEFAULT_LASER_HEAT_PER_TICK,
+  SERVER_TICK_MS,
+} from '../core/constants';
 
-const DEFAULT_LASER_DAMAGE_PER_TICK_PCT = 0.15;
-const DEFAULT_LASER_HEAT_PER_TICK = 2;
-const DEFAULT_LASER_COOL_PER_TICK = 2.5;
-const DEFAULT_SNIPE_COOLDOWN_MS = 2500;
-const DEFAULT_SNIPE_BASELINE_CD_MS = 1000;
-const DEFAULT_SNIPE_FULL_HP_MULT = 2;
-const FULL_HP_THRESHOLD = 0.95;
-const GATLING_KNOCKBACK_DISTANCE = 20;
-const GATLING_KNOCKBACK_MS = 150;
-const SERVER_TICK_MS = 100;
-
-export function initReloadT3(): void {
-  registerLaserGateAndSnipeCooldown();
-  registerSnipeDamage();
-  registerGatlingKnockback();
-}
-
-export function updateReloadT3(world: World, dt: number, now: number = Date.now()): void {
+export function updateReloadT3Ticks(world: World, dt: number, now: number): void {
   for (const entity of world.reloadPlayers) {
     const reload = entity.usesReload;
 
@@ -50,83 +33,6 @@ export function updateReloadT3(world: World, dt: number, now: number = Date.now(
 
     updateLaserPlayer(world, entity, reload, dt, now);
   }
-}
-
-export function getSnipeReady(entity: PlayerEntity, world: World): boolean {
-  if ((entity.usesSkills.passives['reload.snipe'] ?? 0) <= 0) return false;
-  const targetId = entity.hasAttackTarget?.targetId;
-  const target = targetId ? world.getMonsterEntity(targetId) : undefined;
-  return !!target && target.hasHealth.hp >= target.hasHealth.maxHp * FULL_HP_THRESHOLD;
-}
-
-function registerLaserGateAndSnipeCooldown(): void {
-  registerCombatListener('beforeAttack', (ctx, _world) => {
-    if (ctx.attackerType !== 'player') return;
-
-    const entity = ctx.attacker;
-    if (!entity?.usesReload) return;
-
-    const reload = entity.usesReload;
-    const passives = entity.usesSkills.passives;
-
-    // Laser path: standard auto-attack is cancelled — the laser fires its own
-    // damage ticks in updateLaserPlayer.
-    if ((passives['reload.laser'] ?? 0) > 0) {
-      ctx.cancelled = true;
-      return;
-    }
-
-    if ((passives['reload.snipe'] ?? 0) <= 0) return;
-
-    if (reload.snipeCooldownMs > 0) {
-      ctx.cancelled = true;
-      return;
-    }
-
-    if (reload.ammo <= 0) return;
-
-    reload.snipeCooldownMs = Math.round(passives['reload.snipe-cooldown-ms'] ?? DEFAULT_SNIPE_COOLDOWN_MS);
-  });
-}
-
-function registerSnipeDamage(): void {
-  registerCombatListener('onHit', (ctx, _world) => {
-    if (ctx.attackerType !== 'player') return;
-    if (ctx.defenderType !== 'monster') return;
-
-    const player = ctx.attacker;
-    const monster = ctx.defender;
-    if ((player.usesSkills.passives['reload.snipe'] ?? 0) <= 0) return;
-
-    const baselineCdMs = player.usesSkills.passives['reload.snipe-baseline-cd-ms'] ?? DEFAULT_SNIPE_BASELINE_CD_MS;
-    const attackSpeedDamageMult = baselineCdMs / Math.max(1, player.performsAttack.attackCooldown);
-    ctx.damage = Math.max(1, Math.round(ctx.damage * attackSpeedDamageMult));
-
-    if (monster.hasHealth.hp >= monster.hasHealth.maxHp * FULL_HP_THRESHOLD) {
-      const fullHpMult = player.usesSkills.passives['reload.snipe-fullhp-mult'] ?? DEFAULT_SNIPE_FULL_HP_MULT;
-      ctx.damage = Math.max(1, Math.round(ctx.damage * fullHpMult));
-      ctx.metadata['reloadSnipeFullHp'] = true;
-    }
-  });
-}
-
-function registerGatlingKnockback(): void {
-  registerCombatListener('onHit', (ctx, world) => {
-    if (ctx.attackerType !== 'player') return;
-    if (ctx.defenderType !== 'monster') return;
-
-    const player = ctx.attacker;
-    const monster = ctx.defender;
-    if ((player.usesSkills.passives['reload.gatling'] ?? 0) <= 0) return;
-
-    applyKnockback(
-      world,
-      monster.isMonster.id,
-      player.hasPosition.current,
-      GATLING_KNOCKBACK_DISTANCE,
-      GATLING_KNOCKBACK_MS,
-    );
-  });
 }
 
 function updateLaserPlayer(
@@ -256,14 +162,3 @@ function applyLaserTick(world: World, player: PlayerEntity, target: MonsterEntit
     markEngaged(world, player, now);
   }
 }
-
-// ── Buff descriptors ──────────────────────────────────────────────────────────
-
-export const RELOAD_T3_BUFFS = [
-  defineBuff('reload-snipe-ready', ({ player, world }) => {
-    if (player.usesSkills.combatArchetype !== 'reload') return null;
-    return getSnipeReady(player, world)
-      ? { id: 'reload-snipe-ready', label: 'Snipe', stacks: 1, durationPct: -1, color: '#ffcc88' }
-      : null;
-  }, { category: 'neutral', shape: 'square' }),
-] as const satisfies readonly BuffDescriptor[];

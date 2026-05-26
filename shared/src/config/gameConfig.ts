@@ -56,11 +56,9 @@ export const GAME_CONFIG = {
   BIOME_XP_BASE: 80,
   /**
    * Power-curve exponent. 1.7 means each level costs noticeably more than the last.
-   * Tune alongside BIOME_XP_BASE and BIOME_XP_BY_NODE_TIER.
+   * Tune alongside BIOME_XP_BASE and BIOME_XP_ESSENCE_MULT.
    */
   BIOME_XP_EXPONENT: 1.7,
-  /** @deprecated No longer used by the rewards system — see BIOME_XP_ESSENCE_MULT. */
-  BIOME_XP_BY_NODE_TIER: [25, 10, 20, 35, 55, 80] as unknown as readonly number[],
   /**
    * Per-kill biome XP = round(monster.essence * BIOME_XP_ESSENCE_MULT[biomeTier]).
    * Monsters with an explicit rewards.biomeXp bypass this multiplier.
