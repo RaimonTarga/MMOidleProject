@@ -378,9 +378,9 @@ Countdown timer fires empowered execution. T1: Light (5 s, 1.5×), Balanced (7 s
 ---
 
 #### Energy (`energyPrototype.ts`, `energyT3.ts`)
-Energy 0–100 fills on hits; at 100, next attack is Empowered. T1: Light (20/hit, 1.5×), Balanced (14/hit, 2×), Heavy (10/hit, 6×). **All 9 T3 paths implemented.**
+Energy 0–100 fills on hits; at 100, next attack is Empowered. T1: Light (20/hit, 1.5×), Balanced (14/hit, 2×), Heavy (10/hit, 6×). Flash overrides this payoff: it builds 5 energy per hit and uses a blue/red shift curve instead of firing an empowered AoE. **All 9 T3 paths implemented.**
 
-- Light: The Accumulator (drain-based stacking ATK buff), Micro-Venting (energy consumed for on-hit bonus at >50%), Polarity Decay (reduced discharge → overcharge stacks)
+- Light: Flash (teleport into melee; Blue Shift at 0 energy is +45% damage, Red Shift at 100 energy is -45% damage, +45% attack speed, +45% evasion; shift decays back to Blue over 2s on disengage), Micro-Venting (energy consumed for on-hit bonus at >50%), Polarity Decay (reduced discharge → overcharge stacks)
 - Balanced: Alternating Currents (charge/discharge phase loop), Harmonic Equilibrium (+60% dmg at 40–60% energy), Capacitor Shunt (reservoir amplifies discharge)
 - Heavy: Singularity Execute (doubled cap, early discharge), Cascading Induction (Induction tags → exponential burst), Superconducting Mass (no basic dmg → charge pool → true dmg)
 
@@ -513,6 +513,6 @@ T1 bosses: 400–700 HP, 14–22 ATK. Jungle first appears T2; ex-jungle T1 node
 - **Component presence gates behavior** — `if (entity.usesCadence)`, not `combatArchetype === 'cadence'`; `entity.isMoving` exists only while motion is active; `hasAttackTarget` / `hasAggroTarget` exist only while a target is active; shield/evasion/channel/empowered/boss-engaged states are presence components, not disabled sentinels inside always-present slices.
 - **Detach absent behavior promptly** — use `attachComponent` / `detachComponent` (or focused helpers like `setEntityMotion`, `stopEntity`, `setAttackTarget`, `setAggroTarget`) when behavior starts/stops. Do not encode absence as zero motion, empty shield arrays, null target ids, false channel flags, or zero-duration sub-state.
 - **Networked slice mutations mark dirty** — `attachComponent` / `detachComponent` notify the dirty tracker automatically; direct in-place networked slice writes should call `markSliceDirty` or go through `mutateSlice`.
-- **Lookup-only status effects** stay in `tracksCombat.statusEffects` without markers — see `.cursor/design/status.md`.
+- **Lookup-only status effects** stay in `tracksCombat.statusEffects` without markers. Add a `hasX` marker only when a tick loop must iterate every entity with the effect (see `design_docs/architecture.md` slice taxonomy).
 - **`syncPlayerBuffs` is entity-native** — `BuffProjectionContext.player` is `PlayerEntity`; descriptors read slices, not assembled snapshots.
 - **Dev boot checks** — `[marker-invariants]` and `[network-invariants]` run on server start in dev mode and verify status markers, archetype slice presence, and networked component allowlists.

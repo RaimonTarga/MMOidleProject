@@ -4,7 +4,7 @@ import { combatLog } from '../combatLog';
 import { getPlayerShadowOffset } from '../sprites';
 import type { RenderState } from './state';
 import type { GameScene } from '../scenes/GameScene';
-import { ensureSprite, updateSpriteFrame } from './sprites';
+import { applySpriteTint, ensureSprite, resetSpriteTint, updateSpriteFrame } from './sprites';
 import { ensureShadow } from './shadows';
 import { ensureLabel } from './labels';
 import { ensureHpBar } from './healthBars';
@@ -14,6 +14,10 @@ import { spawnAttackEffect } from './combatFx';
 import { getDotPath } from '../fx/dot';
 import { spawnDamageNumber } from '../fx/particles';
 import { cancelAutoPath, sendAutoPathMove } from '../input/autoPath';
+import {
+  flashShiftTint,
+  spawnFlashAttackAfterimage,
+} from './movementEffects';
 
 export function upsertPlayer(
   state: RenderState,
@@ -61,6 +65,9 @@ export function upsertPlayer(
       depth: 4,
       isPlayer: true,
     });
+    const sprite = state.sprite.get(player.id);
+    const tint = flashShiftTint(player);
+    if (sprite && tint !== null) applySpriteTint(sprite, tint);
     ensureLabel(state, player.id, player, scene);
     ensureHpBar(state, player.id, scene, 5);
     ensureCdBar(state, player.id, scene, 5);
@@ -111,6 +118,18 @@ export function upsertPlayer(
     depth: 4,
     isPlayer: true,
   });
+  const sprite = state.sprite.get(player.id);
+  const tint = flashShiftTint(player);
+  if (sprite) {
+    if (tint !== null) {
+      applySpriteTint(sprite, tint);
+    } else {
+      resetSpriteTint(sprite, color);
+    }
+    if (isOwn && tint !== null && player.lastAttackAt > prevAttackAt) {
+      spawnFlashAttackAfterimage(state, player, scene);
+    }
+  }
 
   state.view.set(player.id, player);
   const transform = state.transform.get(player.id);
@@ -171,6 +190,15 @@ export function upsertPlayer(
   }
 
   if (isOwn) {
+    const moving = player.pos.x !== player.target.x || player.pos.y !== player.target.y;
+    if (
+      moving ||
+      !player.attackTargetId ||
+      player.attackTargetId !== scene.flashCameraHoldTargetId
+    ) {
+      scene.flashCameraHold = false;
+      if (moving || !player.attackTargetId) scene.flashCameraHoldTargetId = null;
+    }
     state.ownNodeId = player.nodeId;
     scene.autoMode = player.auto;
     hudBus.emit({ player });

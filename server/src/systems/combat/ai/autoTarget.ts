@@ -8,10 +8,14 @@ const NODE_MARGIN = 40;
 
 function isRangedAutoPlayer(player: {
   performsAttack: { attackRange: number };
-  usesSkills: { selectedRange: string | null };
+  usesSkills: {
+    selectedRange: string | null;
+    passives: { 'energy.flash'?: number };
+  };
   usesReload?: unknown;
   usesEnergy?: unknown;
 }): boolean {
+  if ((player.usesSkills.passives['energy.flash'] ?? 0) > 0) return false;
   return player.performsAttack.attackRange > 100 ||
     player.usesSkills.selectedRange === 'range-mid' ||
     player.usesSkills.selectedRange === 'range-far' ||
@@ -32,6 +36,7 @@ function clampToNode(world: World, nodeId: string, pos: Vec2): Vec2 {
 export function updateAutoTargets(world: World) {
   for (const player of world.playerEntities) {
     if (!player.usesAutocombat.auto) continue;
+    if (player.hasManualMoveIntent) continue;
 
     const playerPos = player.hasPosition.current;
     const monsters = world.monsterEntitiesInNode(player.hasPosition.nodeId);

@@ -1,15 +1,11 @@
 import { getStatusEffect, type TracksCombat, type UsesEnergy } from '@mmo-idle/shared';
 import type { PlayerEntity } from '../../../../../../ecs/components/player';
 import {
-  ACC_BUFF_FX, PD_OVERCHARGE_FX,
+  PD_OVERCHARGE_FX,
   AC_DISCHARGE_TOTAL_MS, CS_RESERVOIR_MAX,
 } from './constants';
 
 // ── buffSync HUD selectors ───────────────────────────────────────────────────
-
-export function getAccumulatorStacks(state: TracksCombat): number {
-  return getStatusEffect(state, ACC_BUFF_FX)?.stacks ?? 0;
-}
 
 export function getOverchargeStacks(state: TracksCombat): number {
   return getStatusEffect(state, PD_OVERCHARGE_FX)?.stacks ?? 0;

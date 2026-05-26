@@ -1,7 +1,6 @@
 import { GAME_CONFIG, makeTracksCombat } from "@mmo-idle/shared";
 import type { World } from "./World";
 import type { PlayerEntity } from "../ecs/components/player";
-import { isPlayerEntity } from "../ecs/components/player";
 import type { PersistedPlayerSlices } from "../db/playerRepo";
 
 /**
@@ -62,10 +61,9 @@ export function detachPlayerEntity(world: World, playerId: string): void {
   if (e) world.ecs.remove(e);
 }
 
-/** O(N) entity lookup by player id (socket id). N ≈ ~10 in practice. */
+/** O(1) typed lookup. Backed by world.playerById, populated via onEntityAdded. */
 export function getPlayerEntity(world: World, playerId: string): PlayerEntity | undefined {
-  const e = world.getEntity(playerId);
-  return e && isPlayerEntity(e) ? e : undefined;
+  return world.playerById.get(playerId);
 }
 
 /** Iterate every player entity in `nodeId`. Uses the `hasPosition` slice. */

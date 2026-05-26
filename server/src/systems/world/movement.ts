@@ -22,6 +22,7 @@ export function setEntityMotion(world: World, entity: MovableEntity, target: Vec
 
 export function stopEntity(world: World, entity: ServerEntity): void {
   detachComponent(world, entity, 'isMoving');
+  detachComponent(world, entity, 'hasManualMoveIntent');
 }
 
 export function updateMovement(world: World, dt: number) {

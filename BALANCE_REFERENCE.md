@@ -280,7 +280,7 @@ Mechanic effects use dot-separated namespaces. Values accumulate additively acro
 ### T3 Paths (all implemented)
 
 **Energy Light:**
-- **The Accumulator** — No discharge at max. Energy drains passively over time. Each hit → stacking ATK buff; each stack accelerates drain. Pool hits 0 → all stacks reset.
+- **Flash** — Each attack teleports into melee range near the target (random offset per hit). `attackRange` is the engage distance; trades safe range for melee exposure. Blue Shift at 0 energy gives +45% damage. Red Shift at 100 energy gives -45% damage, +45% attack speed, +45% move speed, and +45% evasion (implemented as a lower evasion-hit threshold). Energy builds slowly (5/hit) and decays back to Blue Shift over 2 seconds on disengage instead of firing an AoE discharge.
 - **Micro-Venting** — No discharge. While energy >50%, each attack consumes energy to deal flat on-hit bonus damage.
 - **Polarity Decay** — Discharge fires at 50% damage (clears pool). Grants 5 overcharge stacks; basic attacks consume stacks for flat bonus before they decay.
 

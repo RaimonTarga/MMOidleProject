@@ -11,7 +11,6 @@ export const BUFF_IDS = [
   'cooldown-battery',
   'cooldown-alignment',
   'cooldown-channel',
-  'energy-acc',
   'energy-overcharge',
   'energy-ac-charge',
   'energy-ac-discharge',

@@ -6,6 +6,7 @@ import { destroyLabel } from './labels';
 import { destroyHpBar } from './healthBars';
 import { destroyCdBar } from './cooldownBars';
 import { destroyEffectOverlays } from './effectOverlays';
+import { clearMovementEffectsForEntity } from './movementEffects';
 
 export function destroyEntity(
   state: RenderState,
@@ -30,4 +31,5 @@ export function destroyEntity(
   state.interpolation.delete(id);
   state.spriteMeta.delete(id);
   state.debugRanges.delete(id);
+  clearMovementEffectsForEntity(state, id);
 }

@@ -1,4 +1,4 @@
-import type Phaser from 'phaser';
+import Phaser from 'phaser';
 import type { PlayerView, MonsterView, Vec2 } from '@mmo-idle/shared';
 import { ATLAS_KEY, getPlayerFrame, getMonsterFrame } from '../sprites';
 import type { RenderState } from './state';
@@ -77,6 +77,28 @@ export function updateSpriteFrame(
   sprite.setDepth(opts.depth);
   state.sprite.set(id, sprite);
   meta.currentFrame = newFrame;
+}
+
+export function applySpriteTint(
+  sprite: Phaser.GameObjects.Image | Phaser.GameObjects.Rectangle,
+  color: number,
+): void {
+  if (sprite instanceof Phaser.GameObjects.Image) {
+    sprite.setTint(color);
+    return;
+  }
+  sprite.setFillStyle(color, 1);
+}
+
+export function resetSpriteTint(
+  sprite: Phaser.GameObjects.Image | Phaser.GameObjects.Rectangle,
+  fallbackColor: number,
+): void {
+  if (sprite instanceof Phaser.GameObjects.Image) {
+    sprite.clearTint();
+    return;
+  }
+  sprite.setFillStyle(fallbackColor, 1);
 }
 
 export function destroySprite(state: RenderState, id: string): void {

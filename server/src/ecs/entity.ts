@@ -13,6 +13,7 @@ import type {
   HasConflagration,
   HasChill,
   HasFrozen,
+  HasSmolder,
   HasAggroTarget,
   HasEntropy,
   HasEmpoweredAttack,
@@ -120,6 +121,7 @@ export interface ServerEntity {
   hasConflagration?: HasConflagration;
   hasChill?:        HasChill;
   hasFrozen?:       HasFrozen;
+  hasSmolder?:      HasSmolder;
   hasEntropy?:      HasEntropy;
   hasAshbrandBurn?: HasAshbrandBurn;
   scriptsBoss?:     ScriptsBoss;
@@ -127,6 +129,7 @@ export interface ServerEntity {
 
   // ── Player (S8) ───────────────────────────────────────────────
   tracksEngagement?: number;
+  hasManualMoveIntent?: {};
 
   // ── Shared by both (S7 + S8) ──────────────────────────────────
   tracksCombat?:    TracksCombat;

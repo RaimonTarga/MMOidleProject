@@ -1,16 +1,10 @@
 import type { World } from "./World";
 import type { MonsterEntity } from "../ecs/components/monster";
-import { isMonsterEntity } from "../ecs/components/monster";
 import type { HasKnockback } from "../systems/combat/damage/knockback";
 
-/**
- * O(N) entity lookup by monster id. Adequate at ~50 monsters; if profiling
- * shows hot, swap to a `Map<string, MonsterEntity>` index maintained via
- * `onEntityAdded` / `onEntityRemoved`.
- */
+/** O(1) typed lookup. Backed by world.monsterById, populated via onEntityAdded. */
 export function getMonsterEntity(world: World, id: string): MonsterEntity | undefined {
-  const e = world.getEntity(id);
-  return e && isMonsterEntity(e) ? e : undefined;
+  return world.monsterById.get(id);
 }
 
 /** Iterate every monster entity in `nodeId`. Uses the `hasPosition` slice. */

@@ -3,8 +3,8 @@ import { registerBeforeAttack } from './pipeline/beforeAttack';
 import { registerEmpoweredHit } from './pipeline/empoweredHit';
 import { registerNormalHit } from './pipeline/normalHit';
 import { registerAfterHit } from './pipeline/afterHit';
-import { updateAccumulator } from './ticks/accumulator';
 import { updateAlternatingCurrents } from './ticks/alternatingCurrents';
+import { updateFlashSpeed } from './ticks/flash';
 
 /**
  * Register all tier-3 energy combat pipeline listeners.
@@ -16,13 +16,12 @@ import { updateAlternatingCurrents } from './ticks/alternatingCurrents';
  *     base energy gain in `energyPrototype`
  *
  * Registration order:
- *   1. beforeAttack  — suppression + Singularity Execute trigger
+ *   1. beforeAttack  — suppression + Singularity Execute trigger + Flash teleport
  *   2. onHit         — empowered discharge handlers (Polarity Decay, Cascading
  *                      Induction, Superconducting Mass, Capacitor Shunt)
- *   3. onHit         — non-empowered passive bonuses (Accumulator, MV, PD
- *                      stack consume, AC charge mult, HE window, CI tagging,
- *                      SM charge build)
- *   4. afterHit      — custom energy gain (Accumulator, MV, AC charge→discharge,
+ *   3. onHit         — non-empowered passive bonuses (MV, PD stack consume,
+ *                      AC charge mult, HE window, CI tagging, SM charge build)
+ *   4. afterHit      — custom energy gain (MV, AC charge→discharge,
  *                      CS reservoir split, SE accelerating fill)
  */
 export function initEnergyT3(): void {
@@ -33,17 +32,16 @@ export function initEnergyT3(): void {
 }
 
 /**
- * Run once per world tick. Order doesn't matter — Accumulator and
- * Alternating Currents read disjoint slice state.
+ * Run once per world tick. Flash resets its speed ramp on disengage, while
+ * Alternating Currents reads discharge slice state.
  */
 export function updateEnergyT3(world: World, dt: number): void {
-  updateAccumulator(world, dt);
+  updateFlashSpeed(world, dt);
   updateAlternatingCurrents(world, dt);
 }
 
 // ── Public re-exports (preserve energyT3 module API) ─────────────────────────
 export {
-  getAccumulatorStacks,
   getOverchargeStacks,
   getACPhase,
   getACPhaseForPlayer,

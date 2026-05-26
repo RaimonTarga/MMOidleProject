@@ -64,6 +64,7 @@ export interface RenderState {
     targetId: string | null;
     until: number;
   };
+  movementEffectNextAt: Map<string, number>;
 
   ownId: NetworkId | null;
   ownNodeId: string;
@@ -90,6 +91,7 @@ export function createRenderState(): RenderState {
       targetId: null,
       until: 0,
     },
+    movementEffectNextAt: new Map(),
     ownId: null,
     ownNodeId: '',
   };

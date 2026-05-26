@@ -5,6 +5,11 @@ export interface UsesEnergy {
   csReservoir: number;
   smChargePool: number;
   seInitialized: boolean;
+  flashBaseAttackCooldown: number;
+  flashBaseEvasionThreshold: number;
+  flashBaseMoveSpeed: number;
+  flashSpeedBonusPct: number;
+  flashEvasionBonusPct: number;
 }
 
 export function initUsesEnergy(): UsesEnergy {
@@ -14,5 +19,10 @@ export function initUsesEnergy(): UsesEnergy {
     csReservoir:   0,
     smChargePool:  0,
     seInitialized: false,
+    flashBaseAttackCooldown: 0,
+    flashBaseEvasionThreshold: 0,
+    flashBaseMoveSpeed: 0,
+    flashSpeedBonusPct:     0,
+    flashEvasionBonusPct:   0,
   };
 }

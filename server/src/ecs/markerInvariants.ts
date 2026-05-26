@@ -29,6 +29,7 @@ const MONSTER_MARKER_CHECKS: MarkerCheck[] = [
   { marker: "hasConflagration", effectId: "dot-conf" },
   { marker: "hasChill", effectId: "dot-chill" },
   { marker: "hasFrozen", effectId: "dot-frozen" },
+  { marker: "hasSmolder", effectId: "dot-smolder" },
   { marker: "hasEntropy", effectId: ENT_DOT_FX },
   { marker: "hasAshbrandBurn", effectId: "ashbrand-burn" },
 ];

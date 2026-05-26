@@ -36,7 +36,7 @@ import { IS_DEV } from "../env";
 import { createEcsWorld, type EcsWorld } from "../ecs/world";
 import type { MonsterEntity } from "../ecs/components/monster";
 import type { PlayerEntity } from "../ecs/components/player";
-import type { EntityId, ServerEntity } from "../ecs/entity";
+import type { EntityId } from "../ecs/entity";
 import type { PersistedPlayerSlices } from "../db/playerRepo";
 import { DirtyTracker, type DirtyDrain } from "../ecs/dirtyTracker";
 import type { HasKnockback } from "../systems/combat/damage/knockback";
@@ -87,6 +87,7 @@ export class World {
   readonly frozenMonsters = this.monsterEntities.with("hasFrozen");
   readonly entropyMonsters = this.monsterEntities.with("hasEntropy");
   readonly ashbrandMonsters = this.monsterEntities.with("hasAshbrandBurn");
+  readonly smolderMonsters = this.monsterEntities.with("hasSmolder");
 
   /**
    * Canonical player query. All required slice components are stamped together
@@ -136,7 +137,8 @@ export class World {
   tickCounter = 0;
   readonly dirty = new DirtyTracker();
 
-  private readonly entityIndex = new Map<EntityId, ServerEntity>();
+  readonly playerById = new Map<EntityId, PlayerEntity>();
+  readonly monsterById = new Map<EntityId, MonsterEntity>();
   private readonly nodeMembership = new Map<string, Set<string>>();
 
   constructor(nodeId = "node-5-5") {
@@ -150,19 +152,20 @@ export class World {
 
   private wireEntityIndex(): void {
     this.ecs.onEntityAdded.subscribe((entity) => {
-      this.entityIndex.set(entity.entityId, entity);
+      if (entity.isPlayer) {
+        this.playerById.set(entity.entityId, entity as PlayerEntity);
+      } else if (entity.isMonster) {
+        this.monsterById.set(entity.entityId, entity as MonsterEntity);
+      }
     });
     this.ecs.onEntityRemoved.subscribe((entity) => {
-      this.entityIndex.delete(entity.entityId);
+      this.playerById.delete(entity.entityId);
+      this.monsterById.delete(entity.entityId);
     });
   }
 
   resetNodeDeltaState(nodeId: string): void {
     this.nodeMembership.delete(nodeId);
-  }
-
-  getEntity(id: EntityId): ServerEntity | undefined {
-    return this.entityIndex.get(id);
   }
 
   private init() {

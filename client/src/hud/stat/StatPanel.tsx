@@ -17,6 +17,11 @@ export function StatPanel({ player, status }: Props) {
   const shieldPct   = player && player.maxHp > 0 ? Math.min(100 - hpPct, (totalShield / player.maxHp) * 100) : 0;
   const cdSec       = player ? (player.attackCooldown / 1000).toFixed(2) : '—';
   const aps         = player ? (1000 / player.attackCooldown).toFixed(2) : '—';
+  const isFlash     = player ? (player.passives['energy.flash'] ?? 0) > 0 : false;
+  const flashShiftLabel = player && player.flashShiftPct >= 50 ? 'Red Shift' : 'Blue Shift';
+  const flashShiftColor = player
+    ? `rgb(${Math.round(70 + player.flashShiftPct * 1.85)}, ${Math.round(130 - player.flashShiftPct * 0.65)}, ${Math.round(255 - player.flashShiftPct * 1.95)})`
+    : '#66aaff';
 
   return (
     <div className="sidebar-panel">
@@ -126,15 +131,26 @@ export function StatPanel({ player, status }: Props) {
       {player?.combatArchetype === 'energy' && (
         <div className="stat-section">
           <div className="stat-row">
-            <span className="stat-label">Energy</span>
-            <span className={`stat-value${player.empoweredReady ? ' mech-label--empowered' : ''}`}>
-              {player.empoweredReady ? 'EMPOWERED' : `${player.energyCount} / 100`}
+            <span className="stat-label">{isFlash ? flashShiftLabel : 'Energy'}</span>
+            <span
+              className={`stat-value${player.empoweredReady && !isFlash ? ' mech-label--empowered' : ''}`}
+              style={isFlash ? { color: flashShiftColor } : undefined}
+            >
+              {isFlash
+                ? `${Math.round(player.energyCount)} / 100`
+                : player.empoweredReady ? 'EMPOWERED' : `${player.energyCount} / 100`}
             </span>
           </div>
           <div className="mech-bar-track">
             <div
-              className={`mech-bar-fill mech-bar-fill--energy${player.empoweredReady ? ' mech-bar-fill--empowered' : ''}`}
-              style={{ width: `${player.empoweredReady ? 100 : player.energyCount}%` }}
+              className={`mech-bar-fill mech-bar-fill--energy${player.empoweredReady && !isFlash ? ' mech-bar-fill--empowered' : ''}`}
+              style={isFlash
+                ? {
+                  width: `${player.flashShiftPct}%`,
+                  background: 'linear-gradient(90deg, #4488ff 0%, #aa88ff 50%, #ff4433 100%)',
+                  boxShadow: `0 0 ${6 + player.flashSpeedBonusPct / 2}px ${flashShiftColor}`,
+                }
+                : { width: `${player.empoweredReady ? 100 : player.energyCount}%` }}
             />
           </div>
         </div>

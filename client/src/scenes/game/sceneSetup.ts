@@ -11,6 +11,7 @@ import { drawLabels } from '../../render/labels';
 import { drawHealthBars } from '../../render/healthBars';
 import { drawCooldownBars } from '../../render/cooldownBars';
 import { updateEffectOverlays } from '../../render/effectOverlays';
+import { updateMovementEffects } from '../../render/movementEffects';
 import { initParticleTextures, initEffectFrames } from '../../fx/particles';
 import { updateLaserBeam } from '../../fx/laser';
 import { attachClickToMove } from '../../input/clickToMove';
@@ -18,6 +19,16 @@ import { attachHudEvents } from '../../input/hudEvents';
 import { createGridBackground, drawDebugRanges, drawExitMarkers, drawMinimap, updateBiomeBackground } from './overlays';
 import { showAscensionOverlay, showDeathOverlay } from './screenOverlays';
 import type { GameScene } from './GameScene';
+
+const CAMERA_HOLD_MARGIN = 80;
+
+function isPointComfortablyOnScreen(scene: GameScene, x: number, y: number): boolean {
+  const view = scene.cameras.main.worldView;
+  return x >= view.x + CAMERA_HOLD_MARGIN &&
+    x <= view.right - CAMERA_HOLD_MARGIN &&
+    y >= view.y + CAMERA_HOLD_MARGIN &&
+    y <= view.bottom - CAMERA_HOLD_MARGIN;
+}
 
 export function preloadGameAssets(scene: GameScene): void {
   scene.load.atlas(ATLAS_KEY, '/assets/sprites.png', '/assets/sprites.json');
@@ -74,6 +85,7 @@ export function updateGameScene(scene: GameScene, delta: number): void {
   drawHealthBars(scene.state);
   drawCooldownBars(scene.state);
   updateEffectOverlays(scene.state, scene, dt);
+  updateMovementEffects(scene.state, scene);
 
   updateLaserBeam(scene.state, scene);
   drawMinimap(scene);
@@ -85,7 +97,13 @@ export function updateGameScene(scene: GameScene, delta: number): void {
   }
 
   const base = getOwnBase(scene.state);
-  if (base) scene.cameraTarget.setPosition(base.x, base.y);
+  if (base) {
+    const shouldHoldCamera = scene.flashCameraHold &&
+      isPointComfortablyOnScreen(scene, base.x, base.y);
+    if (!shouldHoldCamera) {
+      scene.cameraTarget.setPosition(base.x, base.y);
+    }
+  }
 
   const ownSprite = scene.state.ownId ? scene.state.sprite.get(scene.state.ownId) : undefined;
   if (ownSprite && scene.targetMarker.visible) {

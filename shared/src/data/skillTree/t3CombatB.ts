@@ -4,12 +4,12 @@ export const t3CombatEntriesB = [
   // ── Tier 3: Energy — Light ────────────────────────────────────────────────────
 
   ['energy-light-t3-a', {
-    id: 'energy-light-t3-a', name: 'The Accumulator', tier: 3,
+    id: 'energy-light-t3-a', name: 'Flash', tier: 3,
     classId: 'energy-root', subVariantId: 'light',
     parent: 'energy-light', children: [],
-    description: 'Reaching max energy no longer fires a discharge. Energy constantly drains over time. Each hit grants a stacking attack damage buff, but each stack accelerates the drain. Reaching 0 energy resets all stacks.',
-    cost: 1, statEffects: {},
-    mechanicEffects: { 'energy.accumulator': 1 },
+    description: 'Your lightning condenses into daggers. Blue Shift at low energy hits harder; Red Shift at high energy hits lighter but attacks faster, moves faster, and evades more. Energy builds slowly while you Flash the same fight and decays back to Blue Shift over 2 seconds when you disengage.',
+    cost: 1, statEffects: { evasion: 4 },
+    mechanicEffects: { 'energy.flash': 1 },
   }],
   ['energy-light-t3-b', {
     id: 'energy-light-t3-b', name: 'Micro-Venting', tier: 3,

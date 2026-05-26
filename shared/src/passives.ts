@@ -84,7 +84,7 @@ export const RELOAD_KEYS = [
 export const ENERGY_KEYS = [
   'energy.per-hit',
   'energy.empowered-mult',
-  'energy.accumulator',
+  'energy.flash',
   'energy.micro-venting',
   'energy.polarity-decay',
   'energy.alternating-currents',

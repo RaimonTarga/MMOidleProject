@@ -2,9 +2,9 @@ import {
   MONSTER_DATABASE,
   getStatusEffect, hasStatusEffect, getFlag, setFlag,
 } from '@mmo-idle/shared';
-import { detachMarker } from '../../../../../../ecs/markerHelpers';
+import { detachMarker, detachMarkerIfNoEffect } from '../../../../../../ecs/markerHelpers';
 import type { World } from '../../../../../../world/World';
-import { CHILL_EFFECT, FROZEN_EFFECT } from '../core/constants';
+import { CHILL_EFFECT, FROZEN_EFFECT, SMOLDER_EFFECT } from '../core/constants';
 import { CHILL_SPEED_MULT, CHILL_ATK_MULT, CHILL_FLAG } from '../paths/_constants';
 
 /**
@@ -44,5 +44,9 @@ export function updateChillAndFreeze(world: World): void {
     if (!hasStatusEffect(entity.tracksCombat, FROZEN_EFFECT)) {
       detachMarker(world, entity, 'hasFrozen');
     }
+  }
+
+  for (const entity of world.smolderMonsters) {
+    detachMarkerIfNoEffect(world, entity, 'hasSmolder', entity.tracksCombat, SMOLDER_EFFECT);
   }
 }

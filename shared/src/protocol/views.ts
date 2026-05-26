@@ -55,6 +55,10 @@ export interface PlayerView {
   executionReady: boolean;
   executionCooldownPct: number;
   energyCount: number;
+  flashShiftPct: number;
+  flashDamageShiftPct: number;
+  flashSpeedBonusPct: number;
+  flashEvasionBonusPct: number;
   empoweredReady: boolean;
   targetDotStacks: number;
   targetChillStacks: number;
@@ -121,6 +125,9 @@ export function composePlayerView(entity: NetworkedEntity): PlayerView | null {
     return null;
   }
   const pos = entity.hasPosition.current;
+  const flashShiftPct = entity.usesEnergy && entity.usesEnergy.energyMax > 0
+    ? Math.round((entity.usesEnergy.energy / entity.usesEnergy.energyMax) * 100)
+    : 0;
   return {
     id: entity.isPlayer.id,
     name: entity.isPlayer.name,
@@ -170,6 +177,16 @@ export function composePlayerView(entity: NetworkedEntity): PlayerView | null {
     executionReady: entity.hasEmpoweredAttack !== undefined,
     executionCooldownPct: entity.usesCooldown?.executionCooldownPct ?? 0,
     energyCount: entity.usesEnergy?.energy ?? 0,
+    flashShiftPct,
+    flashDamageShiftPct: entity.usesEnergy
+      ? Math.round((0.45 - (flashShiftPct / 100) * 0.9) * 100)
+      : 0,
+    flashSpeedBonusPct: entity.usesEnergy
+      ? Math.round(entity.usesEnergy.flashSpeedBonusPct * 100)
+      : 0,
+    flashEvasionBonusPct: entity.usesEnergy
+      ? Math.round(entity.usesEnergy.flashEvasionBonusPct * 100)
+      : 0,
     empoweredReady: entity.hasEmpoweredAttack !== undefined,
     targetDotStacks: entity.appliesDots?.targetDotStacks ?? 0,
     targetChillStacks: entity.chillsTarget?.targetChillStacks ?? 0,

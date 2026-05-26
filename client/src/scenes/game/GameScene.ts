@@ -26,6 +26,8 @@ export class GameScene extends Phaser.Scene {
   autoPath: string[] = [];
   autoMode = false;
   cameraTarget!: Phaser.GameObjects.Arc;
+  flashCameraHold = false;
+  flashCameraHoldTargetId: string | null = null;
 
   constructor() {
     super({ key: 'GameScene' });

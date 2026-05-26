@@ -1,6 +1,6 @@
 # MMO Idle Architecture
 
-This is the standing reference for how the codebase is structured. Read it end-to-end the first time, then use it as a lookup when adding new mechanics. Supplementary documents in `.cursor/design/` cover narrower topics (status-effect policy, component-delta protocol, tech debt).
+This is the standing reference for how the codebase is structured. Read it end-to-end the first time, then use it as a lookup when adding new mechanics.
 
 The architectural axioms that all rules below derive from:
 
@@ -122,9 +122,11 @@ These types are populated by canonical queries on `World` (`world.playerEntities
 | **Archetype slices** | `UsesCadence`, `UsesCooldown`, `UsesEnergy`, `UsesReload`, `AppliesDots`, `ChillsTarget` | Networked. Presence gates archetype behavior. |
 | **Target / link** | `HasAttackTarget`, `HasAggroTarget` | Presence means "currently has a target." Detach when target is dropped. |
 | **Transient state markers** | `IsMoving`, `IsChanneling`, `IsBossEngaged`, `InAcChargePhase`, `InAcDischarge`, `HasEmpoweredAttack` | Presence is the sub-state. No "disabled = true" sentinel. |
-| **Status effect markers** | `HasDot`, `HasChill`, `HasFrozen`, `HasConflagration`, `HasDetonation`, `HasHemorrhage`, `HasEntropy`, `HasAshbrandBurn`, `HasAlignment`, `HasOverdrive` | Attached when the matching `statusEffects` entry exists; iterated by tick drivers. |
+| **Status effect markers** | `HasDot`, `HasChill`, `HasFrozen`, `HasSmolder`, `HasConflagration`, `HasDetonation`, `HasHemorrhage`, `HasEntropy`, `HasAshbrandBurn`, `HasAlignment`, `HasOverdrive` | Attached when the matching `statusEffects` entry exists; iterated by tick drivers. |
 | **Server-only runtime** | `ControlsMonster` (AI), `HasKnockback`, `ScriptsBoss`, `TracksCombat`, `HoldsShields`, `EvadesHits` | Never networked. |
-| **Lookup-only effects** | `plating-shred`, `vulnerability`, `smolder`, energy/cooldown counters | Live inside `tracksCombat.statusEffects`, not as components. Promoted to markers only when a system needs to *iterate* the set. See `.cursor/design/status.md`. |
+| **Lookup-only effects** | `plating-shred`, `vulnerability`, energy/cooldown counters | Live inside `tracksCombat.statusEffects`, not as components. Promoted to markers only when a system needs to *iterate* the set. |
+
+**Heuristic for adding a new status effect.** If any tick loop needs to iterate every entity with the effect, add a `hasX` marker (attach on apply, detach in a once-per-tick sweep). If the effect is only read by id from one or two call sites that already have the entity, stay in `tracksCombat.statusEffects`. Stacking semantics, refreshable duration, and `sourceId` tracking always live in `statusEffects` regardless of marker presence.
 
 ### Presence is the contract
 

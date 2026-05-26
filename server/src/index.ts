@@ -30,7 +30,7 @@ import {
 import { setEntityMotion, stopEntity } from './systems/world/movement';
 import { setAggroTarget, setAttackTarget } from './systems/combat/ai/targeting';
 import { clearEngagement } from './systems/combat/ai/engagement';
-import { detachComponent } from './ecs/markerHelpers';
+import { attachComponent, detachComponent } from './ecs/markerHelpers';
 import { syncArchetypeSlices } from './ecs/archetypeSliceSync';
 import { recalculatePlayerEntityStats } from './ecs/playerEntityFormulas';
 
@@ -194,6 +194,11 @@ io.on('connection', (socket) => {
     if (!p) return;
     if (p.isChanneling) return;
     setEntityMotion(world, p, pos);
+    if (p.isMoving) {
+      attachComponent(world, p, 'hasManualMoveIntent', {});
+    } else {
+      detachComponent(world, p, 'hasManualMoveIntent');
+    }
   });
 
   socket.on('player:setAuto', (enabled) => {

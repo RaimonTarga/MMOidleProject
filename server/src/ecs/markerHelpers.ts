@@ -13,6 +13,7 @@ type MarkerKey =
   | "hasConflagration"
   | "hasChill"
   | "hasFrozen"
+  | "hasSmolder"
   | "hasEntropy"
   | "hasAshbrandBurn";
 

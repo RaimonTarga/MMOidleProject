@@ -1,12 +1,9 @@
 import { registerCombatListener } from '../../../../../combat/engine/combatPipeline';
 import { setEmpoweredAttack } from '../../../../../combat/engine/empoweredAttacks';
-import {
-  applyStatusEffect, getStatusEffect,
-} from '@mmo-idle/shared';
 import { attachComponent, detachComponent } from '../../../../../../ecs/markerHelpers';
 import { hasPassive, energyPercent } from '../core/helpers';
+import { applyFlashSpeedGain } from '../ticks/flash';
 import {
-  ACC_BUFF_FX, ACC_MAX_STACKS,
   AC_ENERGY_GAIN_MULT, AC_DISCHARGE_TOTAL_MS, AC_TICK_INTERVAL_MS, AC_SPEED_FACTOR,
   CS_SPLIT_RATIO, CS_RESERVOIR_MAX,
   SE_ENERGY_MAX, SE_ACCEL_SCALE,
@@ -20,7 +17,7 @@ import {
  * handler skips. Empowered hits never generate energy.
  *
  * Paths:
- *   - Accumulator             — gain energy (capped, no discharge); +1 buff stack
+ *   - Flash                   — slow energy gain, scaling attack speed, no discharge
  *   - Micro-Venting           — gain energy (capped, no discharge)
  *   - Alternating Currents    — 2× gain in charge phase; flip to discharge at cap
  *   - Capacitor Shunt         — split gain 50/50 between bar and reservoir
@@ -37,22 +34,14 @@ export function registerAfterHit(): void {
 
     const player = entity;
     const passives = player.usesSkills.passives;
-    const state  = entity.tracksCombat;
     const energy = entity.usesEnergy;
 
     if (energy.energyMax === 0) energy.energyMax = 100;
 
     const baseGain = Math.round(passives['energy.per-hit'] ?? 14);
 
-    if (hasPassive(player, 'energy.accumulator')) {
-      energy.energy = Math.min(energy.energy + baseGain, energy.energyMax);
-      const existing = getStatusEffect(state, ACC_BUFF_FX);
-      if (!existing || existing.stacks < ACC_MAX_STACKS) {
-        applyStatusEffect(state, {
-          id: ACC_BUFF_FX, instanced: false, maxStacks: ACC_MAX_STACKS,
-          remainingMs: -1, refreshable: false, sourceId: player.isPlayer.id, data: {},
-        });
-      }
+    if (hasPassive(player, 'energy.flash')) {
+      applyFlashSpeedGain(world, player);
       ctx.metadata['energyHandled'] = true;
       return;
     }

@@ -29,6 +29,7 @@ export * from './archetypes/dot/hasChill';
 export * from './archetypes/dot/hasConflagration';
 export * from './archetypes/dot/hasDot';
 export * from './archetypes/dot/hasFrozen';
+export * from './archetypes/dot/hasSmolder';
 export * from './archetypes/energy/inAcChargePhase';
 export * from './archetypes/energy/inAcDischarge';
 export * from './archetypes/energy/usesEnergy';

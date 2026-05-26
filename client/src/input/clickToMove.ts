@@ -11,6 +11,8 @@ export function attachClickToMove(scene: GameScene): void {
 
     if (scene.autoMode) setAutoMode(scene, false);
     if (scene.autoPath.length > 0) cancelAutoPath(scene);
+    scene.flashCameraHold = false;
+    scene.flashCameraHoldTargetId = null;
 
     sendMove(scene.socket, dest);
 

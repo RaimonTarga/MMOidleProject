@@ -5,7 +5,7 @@ import {
 } from '@mmo-idle/shared';
 import { hasPassive, energyPercent } from '../core/helpers';
 import {
-  ACC_BUFF_FX, ACC_FLAT_ATK_PER_STACK,
+  FLASH_MAX_DAMAGE_SHIFT_PCT,
   MV_THRESHOLD, MV_ENERGY_COST, MV_FLAT_DAMAGE,
   PD_OVERCHARGE_FX, PD_STACK_FLAT_DMG,
   AC_CHARGE_DMG_MULT,
@@ -18,11 +18,11 @@ import {
  *
  * Skips empowered hits (handled by the empowered-hit pipeline). Each path may
  * read/write `ctx.damage` cumulatively; some paths are mutually compatible
- * (Accumulator + Harmonic Equilibrium, for instance), and a few paths are
+ * (Micro-Venting + Harmonic Equilibrium, for instance), and a few paths are
  * mutually exclusive in practice but applied independently here.
  *
  * Paths:
- *   - Accumulator             — flat bonus per active buff stack
+ *   - Flash                   — blue/red shift damage curve
  *   - Micro-Venting           — consume energy for flat bonus
  *   - Polarity Decay          — consume overcharge stack for flat bonus
  *   - Alternating Currents    — bonus damage during charge phase
@@ -42,9 +42,11 @@ export function registerNormalHit(): void {
     const state  = entity.tracksCombat;
     const energy = entity.usesEnergy;
 
-    if (hasPassive(player, 'energy.accumulator')) {
-      const buff = getStatusEffect(state, ACC_BUFF_FX);
-      if (buff) ctx.damage += buff.stacks * ACC_FLAT_ATK_PER_STACK;
+    if (hasPassive(player, 'energy.flash')) {
+      const fillPct = energyPercent(energy);
+      const damageMult = 1 + FLASH_MAX_DAMAGE_SHIFT_PCT - fillPct * FLASH_MAX_DAMAGE_SHIFT_PCT * 2;
+      ctx.damage = Math.max(1, Math.round(ctx.damage * damageMult));
+      return;
     }
 
     if (hasPassive(player, 'energy.micro-venting')) {

@@ -1,11 +1,15 @@
 // ── Energy T3 constants ──────────────────────────────────────────────────────
 
-// Light — Accumulator (energy-light-t3-a)
-export const ACC_BASE_DRAIN_PER_SEC = 8;   // energy drained/sec at 0 stacks
-export const ACC_DRAIN_PER_STACK    = 3;   // extra drain/sec per stack
-export const ACC_FLAT_ATK_PER_STACK = 2;   // flat attack bonus per stack
-export const ACC_MAX_STACKS         = 10;
-export const ACC_BUFF_FX            = 'energy-acc-buff';
+// Light — Flash (energy-light-t3-a)
+export const FLASH_OFFSET_MIN_PX = 34;
+export const FLASH_OFFSET_MAX_PX = 46;
+export const FLASH_OVERSHOOT_SPREAD_RAD = 1.35;
+export const FLASH_ENERGY_PER_HIT = 5;
+export const FLASH_MAX_DAMAGE_SHIFT_PCT = 0.45;
+export const FLASH_MAX_SPEED_BONUS_PCT = 0.45;
+export const FLASH_MAX_EVASION_BONUS_PCT = 0.45;
+export const FLASH_MIN_ATTACK_COOLDOWN = 200;
+export const FLASH_SHIFT_DECAY_MS = 2_000;
 
 // Light — Micro-Venting (energy-light-t3-b)
 export const MV_ENERGY_COST = 15;   // energy consumed per vent

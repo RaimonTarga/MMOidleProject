@@ -109,6 +109,8 @@ export function updateCombat(world: World, dt: number, now: number) {
           empowered:  isEmpowered,
           execution:  isExecution,
           effects:    clientEffects && clientEffects.length > 0 ? clientEffects : undefined,
+          playerPos:  { ...player.hasPosition.current },
+          targetPos:  { ...target.hasPosition.current },
         });
 
         emitCombatEvent('afterHit', ctx, world);
@@ -146,7 +148,8 @@ export function updateCombat(world: World, dt: number, now: number) {
     } else {
       // Refresh combat timer while any monster still has this player in aggro,
       // so regen doesn't tick while being actively chased.
-      for (const e of world.aggroedMonsters) {
+      for (const e of [...world.aggroedMonsters]) {
+        if (!e?.hasAggroTarget) continue;
         if (e.hasAggroTarget.playerId === player.isPlayer.id) {
           const p = world.getPlayerEntity(player.isPlayer.id);
           if (p) markEngaged(world, p, now);
@@ -165,7 +168,10 @@ export function updateCombat(world: World, dt: number, now: number) {
   }
 
   // MONSTER → PLAYER
-  for (const e of world.aggroedMonsters) {
+  for (const e of [...world.aggroedMonsters]) {
+    if (!e?.hasAwareness || !e.hasAggroTarget || !e.hasPosition || !e.performsAttack || !e.dealsDamage) {
+      continue;
+    }
     if (e.hasAwareness.state !== 'attacking') continue;
 
     const target = world.getPlayerEntity(e.hasAggroTarget.playerId) ?? null;

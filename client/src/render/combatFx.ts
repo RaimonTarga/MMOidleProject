@@ -33,6 +33,29 @@ interface AttackFxArgs {
 
 type AttackFxFn = (args: AttackFxArgs) => void;
 
+const FLASH_CLIENT_EFFECT = 'flash-teleport';
+
+function snapOwnPlayerToServerTarget(
+  state: RenderState,
+  scene: GameScene,
+  targetId: string,
+  playerPos?: Vec2,
+): void {
+  if (!state.ownId) return;
+  const transform = state.transform.get(state.ownId);
+  const interp = state.interpolation.get(state.ownId);
+  const sprite = state.sprite.get(state.ownId);
+  if (!transform || !interp || !sprite) return;
+
+  scene.flashCameraHold = scene.flashCameraHoldTargetId === targetId;
+  scene.flashCameraHoldTargetId = targetId;
+  interp.base = playerPos ? { ...playerPos } : { ...transform.target };
+  sprite.setPosition(
+    interp.base.x + interp.lungeOffset.x,
+    interp.base.y + interp.lungeOffset.y,
+  );
+}
+
 function fxAoeRing(scene: GameScene, pos: Vec2, radius: number, color: number): void {
   const ring = scene.add.graphics({ x: pos.x, y: pos.y }).setDepth(11);
   ring.lineStyle(2.5, color, 0.65);
@@ -111,8 +134,16 @@ function runFxForAttackStyle(
   const targetSprite = state.sprite.get(ev.targetId);
   const player = state.ownId ? (state.view.get(state.ownId) as PlayerView | undefined) : undefined;
   const targetInterp = state.interpolation.get(ev.targetId);
+  const isFlashTeleport = ev.effects?.includes(FLASH_CLIENT_EFFECT) ?? false;
 
-  if (!ownSprite || !targetSprite || !player) return;
+  if (!targetSprite) {
+    if (isFlashTeleport) {
+      snapOwnPlayerToServerTarget(state, scene, ev.targetId, ev.playerPos);
+    }
+    return;
+  }
+
+  if (!ownSprite || !player) return;
 
   const dotPath = player.combatArchetype === 'dot' ? getDotPath(player) : undefined;
   const bossScale = Math.max(targetSprite.displayWidth, targetSprite.displayHeight) > 64 ? 1.33 : 1;
@@ -136,7 +167,12 @@ function runFxForAttackStyle(
     }
   }
 
+  if (isFlashTeleport) {
+    snapOwnPlayerToServerTarget(state, scene, ev.targetId, ev.playerPos);
+  }
+
   for (const effectId of ev.effects ?? []) {
+    if (effectId === FLASH_CLIENT_EFFECT) continue;
     playOneShotEffect(scene, effectId, to, { scale: targetEffectScale });
   }
 

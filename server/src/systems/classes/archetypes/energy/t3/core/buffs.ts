@@ -1,6 +1,5 @@
 import { defineBuff, type BuffDescriptor } from '../../../../../combat/buffs/descriptor';
 import {
-  getAccumulatorStacks,
   getOverchargeStacks,
   getACPhaseForPlayer,
   getACDischargeRemainingPct,
@@ -12,11 +11,6 @@ import { energyPercent } from './helpers';
 const ENERGY_OPTS = { category: 'energy' as const, shape: 'square' as const };
 
 export const ENERGY_T3_BUFFS = [
-  defineBuff('energy-acc', ({ player, playerCs }) => {
-    if (!playerCs || player.usesSkills.combatArchetype !== 'energy') return null;
-    const stacks = getAccumulatorStacks(playerCs);
-    return stacks > 0 ? { id: 'energy-acc', label: 'Surge', stacks, durationPct: -1, color: '#ffdd44' } : null;
-  }, ENERGY_OPTS),
   defineBuff('energy-overcharge', ({ player, playerCs }) => {
     if (!playerCs || player.usesSkills.combatArchetype !== 'energy') return null;
     const stacks = getOverchargeStacks(playerCs);

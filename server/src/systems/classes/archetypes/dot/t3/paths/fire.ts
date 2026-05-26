@@ -77,6 +77,7 @@ export function trySmolderingEmber(pc: DotT3PathContext): boolean {
   }
   smolder.stacks = burnStacks;
   smolder.remainingMs = durationMs; // refresh alongside the dot
+  attachMarker(world, monster, 'hasSmolder');
   markMonsterDot(world, monster);
   ctx.metadata['dotHandled'] = true;
   return true;
