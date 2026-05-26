@@ -1,11 +1,16 @@
 import { useMemo } from 'react';
-import type { EssenceType, PlayerView, ItemStats } from '@mmo-idle/shared';
+import { useAtomValue } from 'jotai';
+import type { EssenceType, ItemStats } from '@mmo-idle/shared';
 import { NODE_BIOMES, BIOME_DATABASE, MONSTER_DATABASE, RECIPE_DATABASE, ESSENCE_COLORS, biomeLevelCap, biomeXpForLevel } from '@mmo-idle/shared';
+import { biomeLevelAtom, biomeXPAtom, playerTierAtom } from '../../hud/atoms';
 import { formatStat, hexDot, tileColor } from './constants';
 
-interface NodeInfoProps { nodeId: string; player: PlayerView | null; }
+interface NodeInfoProps { nodeId: string; }
 
-export function NodeInfo({ nodeId, player }: NodeInfoProps) {
+export function NodeInfo({ nodeId }: NodeInfoProps) {
+  const playerTier = useAtomValue(playerTierAtom);
+  const biomeXPByGroup = useAtomValue(biomeXPAtom);
+  const biomeLevelByGroup = useAtomValue(biomeLevelAtom);
   const info  = NODE_BIOMES[nodeId];
   const biome = info ? BIOME_DATABASE.get(info.biomeGroup) : null;
 
@@ -28,9 +33,9 @@ export function NodeInfo({ nodeId, player }: NodeInfoProps) {
   const bossIds = isDungeon ? (biome.bossPoolByTier?.[biomeTier] ?? []) : [];
   const bosses  = bossIds.map(id => MONSTER_DATABASE.get(id)).filter((m): m is NonNullable<typeof m> => m !== undefined);
 
-  const biomeXP    = player ? (player.biomeXP[biomeGroup] ?? 0) : 0;
-  const biomeLevel = player ? (player.biomeLevel[biomeGroup] ?? 0) : 0;
-  const levelCap   = biomeLevelCap(player?.playerTier ?? 0, biomeGroup);
+  const biomeXP    = biomeXPByGroup[biomeGroup] ?? 0;
+  const biomeLevel = biomeLevelByGroup[biomeGroup] ?? 0;
+  const levelCap   = biomeLevelCap(playerTier, biomeGroup);
   const tierLabel  = biomeTier === 0 ? 'Starting Zone' : `Tier ${biomeTier}`;
 
   const recipesByLevel = recipes.reduce<Record<number, typeof recipes>>((acc, r) => {

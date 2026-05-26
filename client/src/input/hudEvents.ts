@@ -1,5 +1,5 @@
-import type { EquipmentSlot } from '@mmo-idle/shared';
-import { hudBus } from '../hudBus';
+import { setAutoPath } from "../hud/atoms";
+import { intents } from "../intents";
 import {
   sendCraftRecipe,
   sendEquipItem,
@@ -9,61 +9,60 @@ import {
   sendResetProgress,
   sendUnequip,
   sendUnlockSkill,
-} from '../net/intents';
-import type { GameScene } from '../scenes/GameScene';
-import { sendAutoPathMove, setAutoMode } from './autoPath';
+} from "../net/intents";
+import type { GameScene } from "../scenes/GameScene";
+import { sendAutoPathMove, setAutoMode } from "./autoPath";
 
 export function attachHudEvents(scene: GameScene): void {
-  window.addEventListener('hud:toggleAuto', () => {
+  intents.on("toggleAuto", () => {
     setAutoMode(scene, !scene.autoMode);
   });
 
-  window.addEventListener('hud:unlockSkill', (e: Event) => {
-    sendUnlockSkill(scene.socket, (e as CustomEvent<string>).detail);
+  intents.on("unlockSkill", (skillId) => {
+    sendUnlockSkill(scene.socket, skillId);
   });
 
-  window.addEventListener('hud:equipItem', (e: Event) => {
-    sendEquipItem(scene.socket, (e as CustomEvent<string>).detail);
+  intents.on("equipItem", (definitionId) => {
+    sendEquipItem(scene.socket, definitionId);
   });
 
-  window.addEventListener('hud:unequipItem', (e: Event) => {
-    sendUnequip(scene.socket, (e as CustomEvent<EquipmentSlot>).detail);
+  intents.on("unequipItem", (slot) => {
+    sendUnequip(scene.socket, slot);
   });
 
-  window.addEventListener('hud:craftRecipe', (e: Event) => {
-    sendCraftRecipe(scene.socket, (e as CustomEvent<string>).detail);
+  intents.on("craftRecipe", (recipeId) => {
+    sendCraftRecipe(scene.socket, recipeId);
   });
 
-  window.addEventListener('hud:debugPlayerRange', () => {
+  intents.on("debugPlayerRange", () => {
     scene.debugPlayerRange = !scene.debugPlayerRange;
   });
 
-  window.addEventListener('hud:debugEnemyRanges', () => {
+  intents.on("debugEnemyRanges", () => {
     scene.debugEnemyRanges = !scene.debugEnemyRanges;
   });
 
-  window.addEventListener('hud:navigateTo', (e: Event) => {
-    const { path } = (e as CustomEvent<{ path: string[] }>).detail;
+  intents.on("navigateTo", ({ path }) => {
     if (path.length === 0) return;
     setAutoMode(scene, false);
     scene.autoPath = path;
-    hudBus.emit({ autoPath: [...path] });
+    setAutoPath([...path]);
     sendAutoPathMove(scene, scene.state.ownNodeId);
   });
 
-  window.addEventListener('hud:goToTestRoom', () => {
+  intents.on("goToTestRoom", () => {
     sendGoToTestRoom(scene.socket);
   });
 
-  window.addEventListener('hud:leaveTestRoom', () => {
+  intents.on("leaveTestRoom", () => {
     sendLeaveTestRoom(scene.socket);
   });
 
-  window.addEventListener('hud:resetProgress', () => {
+  intents.on("resetProgress", () => {
     sendResetProgress(scene.socket);
   });
 
-  window.addEventListener('hud:refreshRecipes', () => {
+  intents.on("refreshRecipes", () => {
     sendRefreshRecipes(scene.socket);
   });
 }

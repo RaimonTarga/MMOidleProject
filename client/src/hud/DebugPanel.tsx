@@ -1,7 +1,26 @@
 import { useState } from 'react';
-import type { PlayerView } from '@mmo-idle/shared';
+import { useAtomValue } from 'jotai';
 import { TEST_ROOM_NODE_ID } from '@mmo-idle/shared';
 import { hudBus } from '../hudBus';
+import {
+  attackAtom,
+  attackCooldownAtom,
+  attackStyleAtom,
+  autoAtom,
+  cadenceCountAtom,
+  cadenceEmpoweredArmedAtom,
+  cadenceSpeedStacksAtom,
+  cadenceThresholdAtom,
+  combatArchetypeAtom,
+  hpAtom,
+  lastAttackAtAtom,
+  maxHpAtom,
+  passivesAtom,
+  playerIdAtom,
+  playerNodeIdAtom,
+  selectedRangeAtom,
+  selectedSubVariantAtom,
+} from './atoms';
 
 // ── Entry model ───────────────────────────────────────────────────────────────
 // Add new section builders below; the component renders any DebugSection[]
@@ -18,12 +37,31 @@ interface DebugSection {
   entries: DebugEntry[];
 }
 
+interface DebugPlayer {
+  cadenceCount: number;
+  cadenceThreshold: number;
+  cadenceEmpoweredArmed: boolean;
+  selectedSubVariant: string | null;
+  selectedRange: string | null;
+  cadenceSpeedStacks: number;
+  passives: Record<string, number | undefined>;
+  lastAttackAt: number;
+  combatArchetype: string | null;
+  nodeId: string;
+  auto: boolean;
+  attack: number;
+  attackCooldown: number;
+  attackStyle: string;
+  hp: number;
+  maxHp: number;
+}
+
 const row = (key: string, value: DebugValue): DebugEntry => ({ kind: 'row', key, value });
 const div = (label: string):                  DebugEntry => ({ kind: 'divider', label });
 
 // ── Section builders ──────────────────────────────────────────────────────────
 
-function buildCadenceSection(p: PlayerView): DebugSection {
+function buildCadenceSection(p: DebugPlayer): DebugSection {
   const count     = p.cadenceCount;
   const threshold = p.cadenceThreshold;
   const armed     = p.cadenceEmpoweredArmed;
@@ -60,7 +98,7 @@ function buildCadenceSection(p: PlayerView): DebugSection {
   return { id: 'cadence', label: 'CADENCE', entries };
 }
 
-function buildPlayerSection(p: PlayerView): DebugSection {
+function buildPlayerSection(p: DebugPlayer): DebugSection {
   const sinceAtk = p.lastAttackAt > 0 ? `${Date.now() - p.lastAttackAt}ms ago` : '—';
   return {
     id: 'player', label: 'PLAYER',
@@ -80,8 +118,6 @@ function buildPlayerSection(p: PlayerView): DebugSection {
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
-interface Props { player: PlayerView | null; }
-
 function fmt(v: DebugValue): string {
   if (v === null || v === undefined) return '—';
   if (typeof v === 'boolean') return v ? 'true' : 'false';
@@ -89,10 +125,45 @@ function fmt(v: DebugValue): string {
   return String(v);
 }
 
-export function DebugPanel({ player }: Props) {
+export function DebugPanel() {
   const [open,      setOpen]      = useState(false);
   const [collapsed, setCollapsed] = useState(new Set<string>());
   const [confirmReset, setConfirmReset] = useState(false);
+  const playerId = useAtomValue(playerIdAtom);
+  const nodeId = useAtomValue(playerNodeIdAtom);
+  const cadenceCount = useAtomValue(cadenceCountAtom);
+  const cadenceThreshold = useAtomValue(cadenceThresholdAtom);
+  const cadenceEmpoweredArmed = useAtomValue(cadenceEmpoweredArmedAtom);
+  const selectedSubVariant = useAtomValue(selectedSubVariantAtom);
+  const selectedRange = useAtomValue(selectedRangeAtom);
+  const cadenceSpeedStacks = useAtomValue(cadenceSpeedStacksAtom);
+  const passives = useAtomValue(passivesAtom);
+  const lastAttackAt = useAtomValue(lastAttackAtAtom);
+  const combatArchetype = useAtomValue(combatArchetypeAtom);
+  const auto = useAtomValue(autoAtom);
+  const attack = useAtomValue(attackAtom);
+  const attackCooldown = useAtomValue(attackCooldownAtom);
+  const attackStyle = useAtomValue(attackStyleAtom);
+  const hp = useAtomValue(hpAtom);
+  const maxHp = useAtomValue(maxHpAtom);
+  const player: DebugPlayer | null = playerId && nodeId ? {
+    cadenceCount,
+    cadenceThreshold,
+    cadenceEmpoweredArmed,
+    selectedSubVariant,
+    selectedRange,
+    cadenceSpeedStacks,
+    passives,
+    lastAttackAt,
+    combatArchetype,
+    nodeId,
+    auto,
+    attack,
+    attackCooldown,
+    attackStyle,
+    hp,
+    maxHp,
+  } : null;
 
   const sections: DebugSection[] = [];
   if (open && player) {

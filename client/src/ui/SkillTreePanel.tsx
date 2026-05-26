@@ -1,9 +1,17 @@
 import { createPortal } from 'react-dom';
 import { useState } from 'react';
-import { SKILL_TREE, canUnlockSkillFromView } from '@mmo-idle/shared';
-import type { SkillNode, StatEffects } from '@mmo-idle/shared';
-import type { PlayerView } from '@mmo-idle/shared';
+import { useAtomValue } from 'jotai';
+import { SKILL_TREE, canUnlockSkill } from '@mmo-idle/shared';
+import type { SkillNode, StatEffects, SubVariant } from '@mmo-idle/shared';
 import { hudBus } from '../hudBus';
+import {
+  currentSkillTierAtom,
+  selectedClassAtom,
+  selectedRangeAtom,
+  selectedSubVariantAtom,
+  skillPointsAtom,
+  unlockedSkillsAtom,
+} from '../hud/atoms';
 import './skillTree.css';
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
@@ -39,13 +47,36 @@ function tierLabel(tier: number): string {
 
 type NodeStatus = 'unlocked' | 'available' | 'locked';
 
-function getNodeStatus(node: SkillNode, player: PlayerView | null): NodeStatus {
-  if (!player) return 'locked';
-  if (player.unlockedSkills.includes(node.id)) return 'unlocked';
-  return canUnlockSkillFromView(player, node.id).ok ? 'available' : 'locked';
+interface SkillPlayer {
+  selectedClass: string | null;
+  selectedSubVariant: SubVariant | null;
+  selectedRange: string | null;
+  unlockedSkills: string[];
+  skillPoints: number;
+  currentSkillTier: number;
 }
 
-function getVisibleNodes(player: PlayerView): Map<number, SkillNode[]> {
+function getNodeStatus(node: SkillNode, player: SkillPlayer | null): NodeStatus {
+  if (!player) return 'locked';
+  if (player.unlockedSkills.includes(node.id)) return 'unlocked';
+  return canUnlockSkill(
+    {
+      usesSkills: {
+        unlockedSkills: player.unlockedSkills,
+        selectedClass: player.selectedClass,
+        selectedSubVariant: player.selectedSubVariant,
+        selectedRange: player.selectedRange,
+      },
+      tracksProgression: {
+        skillPoints: player.skillPoints,
+        currentSkillTier: player.currentSkillTier,
+      },
+    },
+    node.id,
+  ).ok ? 'available' : 'locked';
+}
+
+function getVisibleNodes(player: SkillPlayer): Map<number, SkillNode[]> {
   const tierMap = new Map<number, SkillNode[]>();
   const classId = player.selectedClass!;
   const sub     = player.selectedSubVariant;
@@ -76,7 +107,7 @@ function SkillNodeCard({
   onHover,
 }: {
   node:     SkillNode;
-  player:   PlayerView | null;
+  player:   SkillPlayer | null;
   compact?: boolean;
   onHover:  (node: SkillNode | null) => void;
 }) {
@@ -109,7 +140,7 @@ function SkillNodeCard({
 
 // ── Description panel (sticky bottom) ─────────────────────────────────────────
 
-function NodeDesc({ node, player }: { node: SkillNode | null; player: PlayerView | null }) {
+function NodeDesc({ node, player }: { node: SkillNode | null; player: SkillPlayer | null }) {
   if (!node) {
     return (
       <div className="skill-desc skill-desc--empty">
@@ -140,7 +171,7 @@ function ClassSelectionView({
   player,
   onHover,
 }: {
-  player:  PlayerView | null;
+  player:  SkillPlayer | null;
   onHover: (node: SkillNode | null) => void;
 }) {
   const pts = player?.skillPoints ?? 0;
@@ -174,7 +205,7 @@ function ProgressionView({
   player,
   onHover,
 }: {
-  player:  PlayerView;
+  player:  SkillPlayer;
   onHover: (node: SkillNode | null) => void;
 }) {
   const classId     = player.selectedClass!;
@@ -256,14 +287,25 @@ function ProgressionView({
 
 // ── Panel ──────────────────────────────────────────────────────────────────────
 
-interface Props {
-  player: PlayerView | null;
-  onClose: () => void;
-}
+interface Props { onClose: () => void; }
 
-export function SkillTreePanel({ player, onClose }: Props) {
+export function SkillTreePanel({ onClose }: Props) {
+  const selectedClass = useAtomValue(selectedClassAtom);
+  const selectedSubVariant = useAtomValue(selectedSubVariantAtom);
+  const selectedRange = useAtomValue(selectedRangeAtom);
+  const unlockedSkills = useAtomValue(unlockedSkillsAtom);
+  const skillPoints = useAtomValue(skillPointsAtom);
+  const currentSkillTier = useAtomValue(currentSkillTierAtom);
+  const player: SkillPlayer = {
+    selectedClass,
+    selectedSubVariant,
+    selectedRange,
+    unlockedSkills,
+    skillPoints,
+    currentSkillTier,
+  };
   const [hoveredNode, setHoveredNode] = useState<SkillNode | null>(null);
-  const classChosen = player !== null && player.selectedClass !== null;
+  const classChosen = player.selectedClass !== null;
 
   function handleOverlayClick(e: React.MouseEvent) {
     if (e.target === e.currentTarget) onClose();

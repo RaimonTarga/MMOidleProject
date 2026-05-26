@@ -83,6 +83,10 @@ export function drawExitMarkers(scene: GameScene): void {
 }
 
 export function drawMinimap(scene: GameScene): void {
+  const now = scene.time.now;
+  if (now - scene.state.throttles.minimapAt < 100) return;
+  scene.state.throttles.minimapAt = now;
+
   const mmX = scene.scale.width - MM_W - MM_PAD;
   const mmY = scene.scale.height - MM_H - MM_PAD;
   const scaleX = MM_W / GAME_CONFIG.NODE_WIDTH;
@@ -128,7 +132,17 @@ export function drawMinimap(scene: GameScene): void {
 }
 
 export function drawDebugRanges(scene: GameScene): void {
+  const showAny = scene.debugPlayerRange || scene.debugEnemyRanges;
+  if (!showAny) {
+    if (scene.state.throttles.debugClearedAt !== -1) {
+      scene.debugGraphics.clear();
+      scene.state.throttles.debugClearedAt = -1;
+    }
+    return;
+  }
+
   scene.debugGraphics.clear();
+  scene.state.throttles.debugClearedAt = scene.time.now;
 
   if (scene.debugPlayerRange) {
     const ownSprite = scene.state.ownId ? scene.state.sprite.get(scene.state.ownId) : undefined;

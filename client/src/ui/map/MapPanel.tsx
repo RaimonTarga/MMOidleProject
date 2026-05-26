@@ -1,8 +1,9 @@
 import { createPortal } from 'react-dom';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import type { PlayerView } from '@mmo-idle/shared';
+import { useAtomValue } from 'jotai';
 import { NODE_BIOMES, BIOME_DATABASE } from '@mmo-idle/shared';
 import { hudBus } from '../../hudBus';
+import { autoPathAtom, playerNodeIdAtom } from '../../hud/atoms';
 import { MAX_VIEW_C, MAX_VIEW_R, VIEWPORT, tileColor } from './constants';
 import { bfsPath, clampView, parseNodeId } from './pathing';
 import { NodeInfo } from './NodeInfo';
@@ -10,32 +11,33 @@ import { OverviewMap } from './OverviewMap';
 import '../map.css';
 
 interface Props {
-  player: PlayerView | null;
   onClose: () => void;
   highlightNodes?: string[];
   focusNodeId?: string | null;
 }
 
-export function MapPanel({ player, onClose, highlightNodes, focusNodeId }: Props) {
+export function MapPanel({ onClose, highlightNodes, focusNodeId }: Props) {
+  const playerNodeId = useAtomValue(playerNodeIdAtom);
+  const busAutoPath = useAtomValue(autoPathAtom);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [autoPath, setAutoPath] = useState<string[] | null>(null);
 
   // Keep path state in sync with GameScene via hudBus
-  useEffect(() => hudBus.subscribe(s => setAutoPath(s.autoPath ?? null)), []);
+  useEffect(() => setAutoPath(busAutoPath), [busAutoPath]);
 
   const pathSet = useMemo(() => new Set(autoPath ?? []), [autoPath]);
   const destNode = autoPath && autoPath.length > 0 ? autoPath[autoPath.length - 1] : null;
 
   function handleTileClick(id: string, isCurrent: boolean) {
-    if (isCurrent || !player?.nodeId) return;
-    const path = bfsPath(player.nodeId, id);
+    if (isCurrent || !playerNodeId) return;
+    const path = bfsPath(playerNodeId, id);
     if (!path || path.length <= 1) return;
     hudBus.requestNavigateTo(path.slice(1)); // exclude the player's current node
     onClose();
   }
 
   // Derive player grid position
-  const playerPos = player?.nodeId ? parseNodeId(player.nodeId) : null;
+  const playerPos = playerNodeId ? parseNodeId(playerNodeId) : null;
 
   // Initialise viewport centered on focusNodeId if provided, otherwise on player.
   const [viewRow, setViewRow] = useState<number>(() => {
@@ -60,7 +62,7 @@ export function MapPanel({ player, onClose, highlightNodes, focusNodeId }: Props
       setViewRow(nr);
       setViewCol(nc);
     }
-  }, [player?.nodeId]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [playerNodeId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   function pan(dr: number, dc: number) {
     setViewRow(r => Math.max(0, Math.min(MAX_VIEW_R, r + dr)));
@@ -86,7 +88,7 @@ export function MapPanel({ player, onClose, highlightNodes, focusNodeId }: Props
 
         <div className="map-header">
           <span className="map-title">World Map</span>
-          <OverviewMap viewRow={viewRow} viewCol={viewCol} playerNodeId={player?.nodeId ?? null} pathSet={pathSet} destNode={destNode} />
+          <OverviewMap viewRow={viewRow} viewCol={viewCol} playerNodeId={playerNodeId} pathSet={pathSet} destNode={destNode} />
           <button className="map-close" onClick={onClose}>✕</button>
         </div>
 
@@ -101,7 +103,7 @@ export function MapPanel({ player, onClose, highlightNodes, focusNodeId }: Props
               {visibleTiles.map(({ r, c, id }) => {
                 const info        = NODE_BIOMES[id];
                 const biome       = info ? BIOME_DATABASE.get(info.biomeGroup) : null;
-                const isCurrent   = player?.nodeId === id;
+                const isCurrent   = playerNodeId === id;
                 const isHovered   = hoveredId === id;
                 const isDungeon   = info?.isDungeon === true;
                 const isDestination = id === destNode;
@@ -144,7 +146,7 @@ export function MapPanel({ player, onClose, highlightNodes, focusNodeId }: Props
           {/* Hover info */}
           <div className="map-info-panel">
             {hoveredId
-              ? <NodeInfo nodeId={hoveredId} player={player} />
+              ? <NodeInfo nodeId={hoveredId} />
               : <div className="map-info__empty">Hover a zone to see details.</div>}
           </div>
 

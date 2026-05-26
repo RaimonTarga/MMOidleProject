@@ -34,6 +34,25 @@ export interface RenderState {
   label: Map<NetworkId, Phaser.GameObjects.Text>;
   hpBar: Map<NetworkId, Phaser.GameObjects.Graphics>;
   cdBar: Map<NetworkId, Phaser.GameObjects.Graphics>;
+  hpBarCache: Map<
+    NetworkId,
+    {
+      x: number;
+      y: number;
+      hpPct: number;
+      shieldPct: number;
+      shieldShown: boolean;
+    }
+  >;
+  cdBarCache: Map<
+    NetworkId,
+    {
+      x: number;
+      y: number;
+      bucket: number;
+      hasTarget: boolean;
+    }
+  >;
 
   effectOverlays: Map<NetworkId, Map<string, Phaser.GameObjects.Sprite>>;
 
@@ -67,6 +86,11 @@ export interface RenderState {
   movementEffectNextAt: Map<string, number>;
   knownUnlockedRecipes: Set<string>;
   knownUnlockedRecipesInitialized: boolean;
+  throttles: {
+    minimapAt: number;
+    effectOverlaysAt: number;
+    debugClearedAt: number;
+  };
 
   ownId: NetworkId | null;
   ownNodeId: string;
@@ -85,6 +109,8 @@ export function createRenderState(): RenderState {
     label: new Map(),
     hpBar: new Map(),
     cdBar: new Map(),
+    hpBarCache: new Map(),
+    cdBarCache: new Map(),
     effectOverlays: new Map(),
     spriteMeta: new Map(),
     debugRanges: new Map(),
@@ -96,6 +122,11 @@ export function createRenderState(): RenderState {
     movementEffectNextAt: new Map(),
     knownUnlockedRecipes: new Set(),
     knownUnlockedRecipesInitialized: false,
+    throttles: {
+      minimapAt: 0,
+      effectOverlaysAt: 0,
+      debugClearedAt: 0,
+    },
     ownId: null,
     ownNodeId: '',
   };

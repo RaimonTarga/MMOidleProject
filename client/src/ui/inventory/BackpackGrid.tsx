@@ -1,7 +1,9 @@
 import { useMemo, useState } from 'react';
-import type { EquipmentSlot, PlayerView } from '@mmo-idle/shared';
+import { useAtomValue } from 'jotai';
+import type { EquipmentSlot } from '@mmo-idle/shared';
 import { ITEM_DATABASE, RECIPE_DATABASE } from '@mmo-idle/shared';
 import { hudBus } from '../../hudBus';
+import { inventoryAtom } from '../../hud/atoms';
 import { SLOT_LABELS, biomeName, tierColor } from './constants';
 import type { FocusedItem } from './useFocus';
 
@@ -9,22 +11,22 @@ const COLS = 4;
 const MIN_ROWS = 3;
 
 interface Props {
-  player: PlayerView;
   focused: FocusedItem | null;
   onFocus: (item: FocusedItem | null) => void;
 }
 
-export function BackpackGrid({ player, focused, onFocus }: Props) {
+export function BackpackGrid({ focused, onFocus }: Props) {
+  const inventory = useAtomValue(inventoryAtom);
   const [filterBiome, setFilterBiome] = useState<string | null>(null);
   const [filterSlot,  setFilterSlot]  = useState<EquipmentSlot | null>(null);
   const [filterTier,  setFilterTier]  = useState<number | null>(null);
 
   // Build rich item list with recipe metadata
-  const items = useMemo(() => player.inventory.map((defId, i) => {
+  const items = useMemo(() => inventory.map((defId, i) => {
     const def    = ITEM_DATABASE.get(defId) ?? null;
     const recipe = def ? RECIPE_DATABASE.get(defId) : null;
     return { defId, def, recipe, invIndex: i };
-  }), [player.inventory]);
+  }), [inventory]);
 
   const biomeGroups = useMemo(() => {
     const groups = new Set<string>();
@@ -55,13 +57,13 @@ export function BackpackGrid({ player, focused, onFocus }: Props) {
   // Grid cells: filtered compact list or full padded grid
   const gridItems = useMemo(() => {
     if (isFiltered) return filtered;
-    const count = player.inventory.length;
+    const count = inventory.length;
     const rows  = Math.max(MIN_ROWS, Math.ceil(count / COLS));
     return Array.from({ length: rows * COLS }, (_, i) => {
       if (i < items.length) return items[i];
       return { defId: null, def: null, recipe: null, invIndex: i };
     });
-  }, [isFiltered, filtered, items, player.inventory.length]);
+  }, [isFiltered, filtered, items, inventory.length]);
 
   const toggleBiome = (g: string) => setFilterBiome(v => v === g ? null : g);
   const toggleSlot  = (s: EquipmentSlot) => setFilterSlot(v => v === s ? null : s);
@@ -70,7 +72,7 @@ export function BackpackGrid({ player, focused, onFocus }: Props) {
   return (
     <div className="inv-backpack">
       <div className="inv-section-label">
-        Backpack{player.inventory.length > 0 ? ` (${player.inventory.length})` : ''}
+        Backpack{inventory.length > 0 ? ` (${inventory.length})` : ''}
       </div>
 
       {/* Filters — only show when there's something to filter */}

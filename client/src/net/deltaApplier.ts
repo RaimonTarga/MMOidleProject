@@ -1,13 +1,18 @@
-import type { DeltaSnapshot, NetworkedEntity } from '@mmo-idle/shared';
-import { composeMonsterView, composePlayerView, RECIPE_DATABASE } from '@mmo-idle/shared';
-import { hudBus } from '../hudBus';
-import type { GameScene } from '../scenes/GameScene';
-import type { RenderState } from '../render/state';
-import { upsertPlayer } from '../render/players';
-import { upsertMonster } from '../render/monsters';
-import { destroyEntity } from '../render/destroy';
-import { getOwnView } from '../render/state';
-import { dispatchCombatEvent } from '../render/combatFx';
+import type { DeltaSnapshot, NetworkedEntity } from "@mmo-idle/shared";
+import {
+  composeMonsterView,
+  composePlayerView,
+  RECIPE_DATABASE,
+} from "@mmo-idle/shared";
+import { hudBus } from "../hudBus";
+import { syncPlayerAtoms } from "../hud/atoms";
+import type { GameScene } from "../scenes/GameScene";
+import type { RenderState } from "../render/state";
+import { upsertPlayer } from "../render/players";
+import { upsertMonster } from "../render/monsters";
+import { destroyEntity } from "../render/destroy";
+import { getOwnView } from "../render/state";
+import { dispatchCombatEvent } from "../render/combatFx";
 
 export function applyDelta(
   state: RenderState,
@@ -17,7 +22,7 @@ export function applyDelta(
   const liveIds = new Set<string>();
 
   for (const delta of snapshot.deltas) {
-    if (delta.kind === 'remove') {
+    if (delta.kind === "remove") {
       destroyEntity(state, delta.netId, scene);
       continue;
     }
@@ -28,7 +33,7 @@ export function applyDelta(
       state.entity.set(delta.netId, entity);
     }
 
-    if (delta.kind === 'add') {
+    if (delta.kind === "add") {
       state.ids.add(delta.netId);
       state.kind.set(delta.netId, delta.entityKind);
       liveIds.add(delta.netId);
@@ -37,7 +42,7 @@ export function applyDelta(
     if (delta.components) {
       Object.assign(entity, delta.components);
     }
-    if (delta.kind === 'patch') {
+    if (delta.kind === "patch") {
       for (const key of delta.removed ?? []) {
         delete (entity as Record<string, unknown>)[key];
       }
@@ -64,10 +69,13 @@ export function applyDelta(
         if (state.knownUnlockedRecipes.has(recipeId)) continue;
         state.knownUnlockedRecipes.add(recipeId);
         const recipe = RECIPE_DATABASE.get(recipeId);
-        hudBus.notifyRecipeUnlock(recipe?.name ?? recipeId, recipe?.recipeGroup ?? 'unknown');
+        hudBus.notifyRecipeUnlock(
+          recipe?.name ?? recipeId,
+          recipe?.recipeGroup ?? "unknown",
+        );
       }
     }
-    hudBus.emit({ player: own });
+    syncPlayerAtoms(own);
   }
 }
 
@@ -78,13 +86,13 @@ function upsertEntityView(
   scene: GameScene,
 ): void {
   const kind = state.kind.get(id);
-  if (kind === 'player') {
+  if (kind === "player") {
     const player = composePlayerView(entity);
     if (!player) return;
     upsertPlayer(state, player, scene);
     return;
   }
-  if (kind === 'monster') {
+  if (kind === "monster") {
     const monster = composeMonsterView(entity);
     if (!monster) return;
     upsertMonster(state, monster, scene);

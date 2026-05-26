@@ -67,10 +67,26 @@ export function updateSpriteFrame(
   const meta = state.spriteMeta.get(id);
   if (!meta || newFrame === meta.currentFrame) return;
 
+  const existing = state.sprite.get(id);
+  const canSwapInPlace =
+    existing instanceof Phaser.GameObjects.Image &&
+    !!newFrame &&
+    scene.textures.exists(ATLAS_KEY) &&
+    scene.textures.get(ATLAS_KEY).has(newFrame);
+
+  if (canSwapInPlace) {
+    existing
+      .setTexture(ATLAS_KEY, newFrame)
+      .setDisplaySize(opts.displayW, opts.displayH)
+      .setDepth(opts.depth);
+    meta.currentFrame = newFrame;
+    return;
+  }
+
   const interp = state.interpolation.get(id);
   const base = interp?.base ?? snapshot.pos;
 
-  state.sprite.get(id)?.destroy();
+  existing?.destroy();
   const sprite =
     tryMakeImage(scene, base, newFrame, opts.displayW, opts.displayH) ??
     scene.add.rectangle(base.x, base.y, opts.displayW, opts.displayH, opts.fallbackColor);

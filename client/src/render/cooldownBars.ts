@@ -21,12 +21,28 @@ export function drawCooldownBars(state: RenderState): void {
     const snap = state.view.get(id);
     if (!sprite || !cdBar || !meta || !snap) continue;
 
-    cdBar.clear();
-    if (snap.attackTargetId === null) continue;
-
-    const cdPct = Math.min(1, (now - snap.lastAttackAt) / Math.max(1, snap.attackCooldown));
-    const cdColor = cdPct >= 1 ? 0xffdd22 : 0x4466cc;
+    const hasTarget = snap.attackTargetId !== null;
     const barY = sprite.y - meta.barOffsetY + 6;
+    const cdPct = hasTarget
+      ? Math.min(1, (now - snap.lastAttackAt) / Math.max(1, snap.attackCooldown))
+      : 0;
+    const bucket = Math.round(cdPct * 64);
+    const prev = state.cdBarCache.get(id);
+    if (
+      prev &&
+      prev.x === sprite.x &&
+      prev.y === barY &&
+      prev.bucket === bucket &&
+      prev.hasTarget === hasTarget
+    ) {
+      continue;
+    }
+    state.cdBarCache.set(id, { x: sprite.x, y: barY, bucket, hasTarget });
+
+    cdBar.clear();
+    if (!hasTarget) continue;
+
+    const cdColor = cdPct >= 1 ? 0xffdd22 : 0x4466cc;
 
     cdBar.fillStyle(0x1a1a1a);
     cdBar.fillRect(sprite.x - 16, barY, 32, 3);
@@ -40,4 +56,5 @@ export function drawCooldownBars(state: RenderState): void {
 export function destroyCdBar(state: RenderState, id: string): void {
   state.cdBar.get(id)?.destroy();
   state.cdBar.delete(id);
+  state.cdBarCache.delete(id);
 }

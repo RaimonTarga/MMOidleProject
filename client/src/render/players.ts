@@ -1,23 +1,25 @@
-import type { PlayerView } from '@mmo-idle/shared';
-import { hudBus } from '../hudBus';
-import { combatLog } from '../combatLog';
-import { getPlayerShadowOffset } from '../sprites';
-import type { RenderState } from './state';
-import type { GameScene } from '../scenes/GameScene';
-import { applySpriteTint, ensureSprite, resetSpriteTint, updateSpriteFrame } from './sprites';
-import { ensureShadow } from './shadows';
-import { ensureLabel } from './labels';
-import { ensureHpBar } from './healthBars';
-import { ensureCdBar } from './cooldownBars';
-import { applyLunge } from './interpolation';
-import { spawnAttackEffect } from './combatFx';
-import { getDotPath } from '../fx/dot';
-import { spawnDamageNumber } from '../fx/particles';
-import { cancelAutoPath, sendAutoPathMove } from '../input/autoPath';
+import type { PlayerView } from "@mmo-idle/shared";
+import { setAutoPath, syncPlayerAtoms } from "../hud/atoms";
+import { combatLog } from "../combatLog";
+import { getPlayerShadowOffset } from "../sprites";
+import type { RenderState } from "./state";
+import type { GameScene } from "../scenes/GameScene";
 import {
-  flashShiftTint,
-  spawnFlashAttackAfterimage,
-} from './movementEffects';
+  applySpriteTint,
+  ensureSprite,
+  resetSpriteTint,
+  updateSpriteFrame,
+} from "./sprites";
+import { ensureShadow } from "./shadows";
+import { ensureLabel } from "./labels";
+import { ensureHpBar } from "./healthBars";
+import { ensureCdBar } from "./cooldownBars";
+import { applyLunge } from "./interpolation";
+import { spawnAttackEffect } from "./combatFx";
+import { getDotPath } from "../fx/dot";
+import { spawnDamageNumber } from "../fx/particles";
+import { cancelAutoPath, sendAutoPathMove } from "../input/autoPath";
+import { flashShiftTint, spawnFlashAttackAfterimage } from "./movementEffects";
 
 export function upsertPlayer(
   state: RenderState,
@@ -29,7 +31,7 @@ export function upsertPlayer(
 
   if (isNew) {
     state.ids.add(player.id);
-    state.kind.set(player.id, 'player');
+    state.kind.set(player.id, "player");
     state.view.set(player.id, player);
 
     const shadowOffsetY = getPlayerShadowOffset();
@@ -42,12 +44,12 @@ export function upsertPlayer(
     });
 
     state.transform.set(player.id, {
-      pos:    { ...player.pos },
+      pos: { ...player.pos },
       target: { ...player.target },
-      speed:  player.speed,
+      speed: player.speed,
     });
     state.interpolation.set(player.id, {
-      base:        { ...player.pos },
+      base: { ...player.pos },
       lungeOffset: { x: 0, y: 0 },
     });
 
@@ -77,7 +79,7 @@ export function upsertPlayer(
       state.ownNodeId = player.nodeId;
       scene.cameraTarget.setPosition(player.pos.x, player.pos.y);
       scene.cameras.main.startFollow(scene.cameraTarget, true, 0.1, 0.1);
-      hudBus.emit({ player });
+      syncPlayerAtoms(player);
     }
     return;
   }
@@ -85,7 +87,8 @@ export function upsertPlayer(
   const prev = state.view.get(player.id) as PlayerView | undefined;
   const prevAttackAt = prev?.lastAttackAt ?? 0;
   const prevHp = prev?.hp ?? player.hp;
-  const prevTotalShield = prev?.shields.reduce((sum, s) => sum + s.amount, 0) ?? 0;
+  const prevTotalShield =
+    prev?.shields.reduce((sum, s) => sum + s.amount, 0) ?? 0;
 
   if (isOwn && player.nodeId !== state.ownNodeId) {
     const interp = state.interpolation.get(player.id);
@@ -99,7 +102,7 @@ export function upsertPlayer(
       if (scene.autoPath[0] === player.nodeId) {
         scene.autoPath.shift();
         if (scene.autoPath.length > 0) {
-          hudBus.emit({ autoPath: [...scene.autoPath] });
+          setAutoPath([...scene.autoPath]);
           sendAutoPathMove(scene, player.nodeId);
         } else {
           cancelAutoPath(scene);
@@ -142,7 +145,7 @@ export function upsertPlayer(
     const sprite = state.sprite.get(player.id);
     const meta = state.spriteMeta.get(player.id);
     if (sprite && meta) {
-      const dmgColor = isOwn ? '#ff4444' : '#ff8844';
+      const dmgColor = isOwn ? "#ff4444" : "#ff8844";
       spawnDamageNumber(
         scene,
         { x: sprite.x, y: sprite.y },
@@ -150,19 +153,26 @@ export function upsertPlayer(
         Math.round(prevHp - player.hp),
         dmgColor,
       );
-      if (isOwn) combatLog.push('damage-in', `Took ${Math.round(prevHp - player.hp)} damage`);
+      if (isOwn)
+        combatLog.push(
+          "damage-in",
+          `Took ${Math.round(prevHp - player.hp)} damage`,
+        );
     }
   }
 
   if (isOwn && player.hp > prevHp && prevHp > 0) {
     const healed = Math.round(player.hp - prevHp);
-    if (healed >= 1) combatLog.push('heal', `Recovered ${healed} HP`);
+    if (healed >= 1) combatLog.push("heal", `Recovered ${healed} HP`);
   }
 
   if (isOwn) {
     const newTotalShield = player.shields.reduce((sum, s) => sum + s.amount, 0);
     if (newTotalShield > prevTotalShield) {
-      combatLog.push('shield', `Shield +${Math.round(newTotalShield - prevTotalShield)}`);
+      combatLog.push(
+        "shield",
+        `Shield +${Math.round(newTotalShield - prevTotalShield)}`,
+      );
     }
   }
 
@@ -180,7 +190,8 @@ export function upsertPlayer(
           empowered: false,
           execution: false,
           archetype: player.combatArchetype ?? undefined,
-          dotPath: player.combatArchetype === 'dot' ? getDotPath(player) : undefined,
+          dotPath:
+            player.combatArchetype === "dot" ? getDotPath(player) : undefined,
         },
       );
       if (player.attackRange <= 150) {
@@ -190,17 +201,19 @@ export function upsertPlayer(
   }
 
   if (isOwn) {
-    const moving = player.pos.x !== player.target.x || player.pos.y !== player.target.y;
+    const moving =
+      player.pos.x !== player.target.x || player.pos.y !== player.target.y;
     if (
       moving ||
       !player.attackTargetId ||
       player.attackTargetId !== scene.flashCameraHoldTargetId
     ) {
       scene.flashCameraHold = false;
-      if (moving || !player.attackTargetId) scene.flashCameraHoldTargetId = null;
+      if (moving || !player.attackTargetId)
+        scene.flashCameraHoldTargetId = null;
     }
     state.ownNodeId = player.nodeId;
     scene.autoMode = player.auto;
-    hudBus.emit({ player });
+    syncPlayerAtoms(player);
   }
 }

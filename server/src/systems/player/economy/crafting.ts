@@ -1,7 +1,11 @@
-import type { EssenceType } from '@mmo-idle/shared';
-import { ESSENCE_TYPES, RECIPE_DATABASE, TEST_ROOM_NODE_ID } from '@mmo-idle/shared';
-import type { World } from '../../../world/World';
-import type { PlayerEntity } from '../../../ecs/entity';
+import type { EssenceType } from "@mmo-idle/shared";
+import {
+  ESSENCE_TYPES,
+  RECIPE_DATABASE,
+  TEST_ROOM_NODE_ID,
+} from "@mmo-idle/shared";
+import type { World } from "../../../world/World";
+import type { PlayerEntity } from "../../../ecs/entity";
 
 const TEST_ROOM_ESSENCE_AMOUNT = 1_000_000_000;
 
@@ -10,9 +14,13 @@ export interface CraftResult {
   reason?: string;
 }
 
-export function craftRecipe(world: World, entity: PlayerEntity, recipeId: string): CraftResult {
+export function craftRecipe(
+  world: World,
+  entity: PlayerEntity,
+  recipeId: string,
+): CraftResult {
   const recipe = RECIPE_DATABASE.get(recipeId);
-  if (!recipe) return { success: false, reason: 'Unknown recipe.' };
+  if (!recipe) return { success: false, reason: "Unknown recipe." };
 
   const isTestRoom = entity.hasPosition.nodeId === TEST_ROOM_NODE_ID;
   if (isTestRoom) {
@@ -49,6 +57,9 @@ export function craftRecipe(world: World, entity: PlayerEntity, recipeId: string
     entity.tracksProgression.essences[type] -= amount;
   }
 
-  entity.holdsInventory.inventory = [...entity.holdsInventory.inventory, recipe.id];
+  entity.holdsInventory.inventory = [
+    ...entity.holdsInventory.inventory,
+    recipe.id,
+  ];
   return { success: true };
 }

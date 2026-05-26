@@ -1,18 +1,19 @@
 import { createPortal } from 'react-dom';
 import { useEffect, useState } from 'react';
-import type { EssenceType, PlayerView } from '@mmo-idle/shared';
+import { useAtomValue } from 'jotai';
 import { BiomeTab } from './BiomeTab';
 import { ForgeTab } from './ForgeTab';
+import { playerIdAtom } from '../../hud/atoms';
 import '../crafting.css';
 
 interface Props {
-  player: PlayerView | null;
   tab: 'biome' | 'forge';
   onTabChange: (tab: 'biome' | 'forge') => void;
   onClose: () => void;
 }
 
-export function CraftingPanel({ player, tab, onTabChange, onClose }: Props) {
+export function CraftingPanel({ tab, onTabChange, onClose }: Props) {
+  const playerId = useAtomValue(playerIdAtom);
   const [feedback, setFeedback]   = useState<string | null>(null);
   const [feedbackOk, setFeedbackOk] = useState(false);
 
@@ -37,8 +38,6 @@ export function CraftingPanel({ player, tab, onTabChange, onClose }: Props) {
   function handleOverlayClick(e: React.MouseEvent) {
     if (e.target === e.currentTarget) onClose();
   }
-
-  const essences = player?.essences ?? { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 };
 
   return createPortal(
     <div className="craft-overlay" onClick={handleOverlayClick}>
@@ -72,10 +71,10 @@ export function CraftingPanel({ player, tab, onTabChange, onClose }: Props) {
         </div>
 
         {/* Content */}
-        {player ? (
+        {playerId ? (
           tab === 'biome'
-            ? <BiomeTab player={player} />
-            : <ForgeTab player={player} essences={essences} />
+            ? <BiomeTab />
+            : <ForgeTab />
         ) : (
           <div className="craft-empty">Not connected.</div>
         )}
