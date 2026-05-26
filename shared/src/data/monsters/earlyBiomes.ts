@@ -32,6 +32,15 @@ export const earlyBiomeMonsterEntries = [
     chargeOnAggro: { speedMult: 3.0, durationMs: 1000 },
   }],
 
+  ['ironwood-golem', {
+    id: 'ironwood-golem', name: 'Ironwood Golem', color: 0x556633,
+    // Bark-armored sentinel; DR replaces plating so shred doesn't trivialize it
+    stats: { hp: 280, attack: 18, plating: 0, damageReduction: 0.22, speed: 16, attackRange: 65, attackCooldown: 3800, pullRange: 140 },
+    behavior: 'melee', attackStyle: 'impact', biome: 'forest',
+    rewards: { essence: 20, essenceType: 'green', level: 1, biomeXp: 58 },
+    ai: { wanderRadius: 120, leashRange: 480, idleMinMs: 3000, idleMaxMs: 8000 },
+  }],
+
   ['cliff-hopper', {
     id: 'cliff-hopper', name: 'Cliff Hopper', color: 0x99aacc,
     // Sprint-attacks from far away; high HP for a fast mob
