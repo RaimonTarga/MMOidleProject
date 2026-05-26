@@ -330,7 +330,7 @@ export const CADENCE_BUFFS = [
         ? { id: 'cadence-accelerando', label: 'Accel', stacks, durationPct: -1, color: '#00ffaa' }
         : null;
     },
-    { label: 'Accel', color: '#00ffaa' },
+    { label: 'Accel', color: '#00ffaa', category: 'cadence', shape: 'square' },
   ),
   defineBuff(
     'cadence-echo',
@@ -340,6 +340,6 @@ export const CADENCE_BUFFS = [
         ? { id: 'cadence-echo', label: 'Echo', stacks: echo, durationPct: -1, color: '#4488ff' }
         : null;
     },
-    { label: 'Echo', color: '#4488ff' },
+    { label: 'Echo', color: '#4488ff', category: 'cadence', shape: 'square' },
   ),
 ] as const satisfies readonly BuffDescriptor[];

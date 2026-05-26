@@ -10,7 +10,8 @@ import { ensureLabel } from './labels';
 import { ensureHpBar } from './healthBars';
 import { ensureCdBar } from './cooldownBars';
 import { applyLunge } from './interpolation';
-import { spawnAttackEffect } from '../fx/attackEffects';
+import { spawnAttackEffect } from './combatFx';
+import { getDotPath } from '../fx/dot';
 import { spawnDamageNumber } from '../fx/particles';
 import { cancelAutoPath, sendAutoPathMove } from '../input/autoPath';
 
@@ -160,6 +161,7 @@ export function upsertPlayer(
           empowered: false,
           execution: false,
           archetype: player.combatArchetype ?? undefined,
+          dotPath: player.combatArchetype === 'dot' ? getDotPath(player) : undefined,
         },
       );
       if (player.attackRange <= 150) {

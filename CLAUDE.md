@@ -1,7 +1,12 @@
 # MMO Idle — Project Context for Claude Code
 
 Read this file before touching any code. It is the single source of truth for
-architecture decisions and conventions.
+day-to-day conventions, gameplay tuning, and current project state.
+
+For the high-level architecture (package boundaries, ECS model, component
+naming, composability rules, where to put new mechanics), read
+[`design_docs/architecture.md`](design_docs/architecture.md) first. This file
+assumes that document as background and focuses on the specifics.
 
 ---
 
@@ -21,41 +26,50 @@ Key design axioms:
 
 ```
 /
-├── CLAUDE.md               ← you are here
-├── map-editor.html         ← standalone biome editor (open in browser, no build needed)
+├── CLAUDE.md                 ← you are here
+├── design_docs/architecture.md ← high-level architecture reference
+├── map-editor.html           ← standalone biome editor (open in browser)
 ├── shared/src/
-│   ├── index.ts            ← ALL shared types, socket event maps, constants
-│   ├── components/         ← ECS slice + marker component shapes
-│   ├── systems/            ← Pure formulas (stats, skills)
-│   ├── skillTree.ts        ← SKILL_TREE map (tiers 0-3 hand-authored, 4-7 generated)
-│   ├── biomeDatabase.ts    ← BiomeDefinition, BIOME_DATABASE, bossPoolByTier
-│   ├── monsterDatabase.ts  ← MonsterDefinition (isBoss?, dotEffect?, bossScript?), MONSTER_DATABASE; BossAction/BossPhase/BossScript types
-│   ├── itemDatabase.ts
-│   └── recipeDatabase.ts
+│   ├── index.ts              ← shared types, socket event maps, constants
+│   ├── components/           ← ECS slice + marker component shapes
+│   │   ├── core/             ← networked slice shapes (HasPosition, HasHealth, ...)
+│   │   ├── combat/           ← TracksCombat, StatusEffect, PlayerBuff
+│   │   ├── targeting/        ← HasAttackTarget, HasAggroTarget, ScriptsBoss, ...
+│   │   └── archetypes/       ← cadence/, cooldown/, dot/, energy/, reload/
+│   ├── protocol/             ← DeltaSnapshot, NetworkedEntity, PlayerView/MonsterView
+│   ├── systems/              ← pure formulas (stats, damage, skills, spatial)
+│   ├── registries/effects.ts ← EFFECT_DEFS, EFFECT_BY_ID
+│   ├── passives.ts           ← typed PassiveKey union
+│   ├── quests/               ← QUEST_DATABASE
+│   ├── skillTree.ts          ← SKILL_TREE map (T0–T3 hand-authored, T4–T7 generated)
+│   ├── biomeDatabase.ts      ← BiomeDefinition, BIOME_DATABASE, bossPoolByTier
+│   ├── monsterDatabase.ts    ← MonsterDefinition (isBoss?, dotEffect?, bossScript?)
+│   ├── itemDatabase.ts, items.ts, recipeDatabase.ts
 ├── client/src/
-│   ├── main.ts             ← Phaser bootstrap
-│   ├── hudBus.ts           ← reactive event bus for HUD state
-│   ├── hud/                ← HUD.tsx, hud.css, MenuButtons.tsx
-│   ├── ui/                 ← SkillTreePanel, InventoryPanel, CraftingPanel, QuestPanel, MapPanel
-│   └── scenes/GameScene.ts ← main scene: socket, entity rendering, debug overlays
+│   ├── main.ts               ← Phaser bootstrap
+│   ├── hudBus.ts             ← reactive event bus for HUD state
+│   ├── scenes/GameScene.ts   ← thin: lifecycle + per-frame schedule
+│   ├── net/                  ← socket.ts, deltaApplier.ts, intents.ts
+│   ├── render/               ← per-concern Maps + render systems (sprites, hp, fx)
+│   ├── fx/                   ← one file per attack style
+│   ├── input/                ← clickToMove, autoPath, keyboard, debug
+│   ├── hud/                  ← HUD.tsx, BuffBar.tsx, StatPanel.tsx, MenuButtons.tsx
+│   └── ui/                   ← SkillTree, Inventory, Crafting, Quest, Map panels
 └── server/src/
-    ├── index.ts            ← Express + Socket.IO + game loop
-    ├── ecs/                ← entity.ts, projection.ts, marker helpers, player/monster types
+    ├── index.ts              ← Express + Socket.IO + game loop
+    ├── ecs/                  ← entity.ts, world.ts, dirtyTracker.ts, deltaEncoder.ts,
+    │                            markerHelpers.ts, archetypeSliceSync.ts
     ├── world/
-    │   ├── World.ts        ← mutable state + tick() + ensureBoss()
-    │   └── nodeRegistry.ts ← 11×11 node grid from NODE_BIOMES
-    └── systems/
-        ├── combat.ts, combatPipeline.ts, combatState.ts, attackCounter.ts
-        ├── stats.ts, movement.ts, ai.ts, autoTarget.ts, transitions.ts
-        ├── aoeDamage.ts, rewards.ts, defenseSystems.ts, weaponEffects.ts
-        ├── bossScripts.ts
-        ├── questSystem.ts
-        ├── cadencePrototype.ts
-        ├── cooldownPrototype.ts, cooldownT3.ts
-        ├── energyPrototype.ts, energyT3.ts
-        ├── reloadPrototype.ts
-        ├── dotPrototype.ts, dotT3.ts
-        └── buffSync.ts
+    │   ├── world.ts          ← World class: queries, tick(), buildNodeDelta()
+    │   ├── nodeRegistry.ts   ← 11×11 node grid from NODE_BIOMES
+    │   └── nodeDelta.ts, monsterLifecycle.ts, playerLifecycle.ts, testRoom.ts
+    ├── systems/
+    │   ├── classes/          ← registry.ts + archetypes/{cadence,cooldown,dot,energy,reload}/
+    │   ├── combat/           ← engine/, ai/, damage/, buffs/
+    │   ├── defense/          ← regen/, shields/, mitigation/, core/
+    │   ├── player/           ← economy/ (inventory, crafting), progression/ (skills, rewards, quests)
+    │   └── world/            ← movement, spawning, transitions, testRoomInteract
+    └── db/                   ← Drizzle + SQLite, component-shaped persistence
 ```
 
 ---
@@ -89,17 +103,18 @@ pnpm play                 # build client + start server (LAN / production mode)
 
 ## Shared package (`@mmo-idle/shared`)
 
-Everything that crosses the client/server boundary lives here. Start here for any new entity or socket event.
+Everything that crosses the client/server boundary lives here. Start here for any new entity, socket event, or shared formula.
 
-- `PlayerState`, `MonsterState`, `NodeSnapshot` — entity shapes
-- `CombatEvent` — `player-hit` and `player-kill` queued per-node between broadcasts
-- Databases (read-only): `ITEM_DATABASE`, `MONSTER_DATABASE`, `BIOME_DATABASE`, `RECIPE_DATABASE`, `SKILL_TREE`
-- `ServerToClientEvents`, `ClientToServerEvents` — socket event maps
-- `GAME_CONFIG` — all tuning constants
-- `NODE_BIOMES` — record `node-{row}-{col}` → `{ biomeGroup, biomeTier, isDungeon? }`
-- `QUEST_DATABASE`, `XP_PER_LEVEL = 100`
-- `biomeXpForLevel(n)` — XP threshold for biome level `n`; uses `BIOME_XP_BASE` + `BIOME_XP_EXPONENT` from GAME_CONFIG
-- `BossAction`, `BossPhase`, `RepeatingAction`, `BossScript` — boss scripting types (in `monsterDatabase.ts`)
+- **Component slices** — `HasPosition`, `HasHealth`, `DealsDamage`, `PerformsAttack`, `MitigatesDamage`, `HasStatus`, `TracksProgression`, `HoldsInventory`, `UsesSkills`, archetype slices (`UsesCadence`, `UsesCooldown`, `UsesEnergy`, `UsesReload`, `AppliesDots`, `ChillsTarget`), and status markers. See `shared/src/components/`.
+- **Wire protocol** — `DeltaSnapshot`, `EntityDelta`, `NetworkedEntity`, `NETWORKED_PLAYER_KEYS`, `NETWORKED_MONSTER_KEYS`, `composePlayerView`, `composeMonsterView`. See `shared/src/protocol/`.
+- **Combat events** — `CombatEvent` (`player-hit`, `player-kill`) queued per-node between broadcasts.
+- **Databases (read-only)** — `ITEM_DATABASE`, `MONSTER_DATABASE`, `BIOME_DATABASE`, `RECIPE_DATABASE`, `SKILL_TREE`, `EFFECT_DEFS`, `BUFF_IDS`.
+- **Socket event maps** — `ServerToClientEvents`, `ClientToServerEvents`.
+- **Tuning** — `GAME_CONFIG`, `NODE_BIOMES` (record `node-{row}-{col}` → `{ biomeGroup, biomeTier, isDungeon? }`).
+- **Pure formulas** (`shared/src/systems/`) — stat recalculation, damage, skill validation, spatial vector math. Run on both server (for authority) and client (for tooltips).
+- **Quests** — `QUEST_DATABASE`, `XP_PER_LEVEL = 100`.
+- **Biome XP** — `biomeXpForLevel(n)` from `BIOME_XP_BASE` + `BIOME_XP_EXPONENT` in `GAME_CONFIG`.
+- **Boss scripting types** — `BossAction`, `BossPhase`, `RepeatingAction`, `BossScript` (in `monsterDatabase.ts`).
 
 ---
 
@@ -107,8 +122,8 @@ Everything that crosses the client/server boundary lives here. Start here for an
 
 | Event | Direction | Description |
 |---|---|---|
-| `state:sync` | S→C | Full snapshot on connect |
-| `node:state` | S→C | Authoritative broadcast every tick |
+| `state:sync` | S→C | Full component resync on connect / reconnect / node transition (`DeltaSnapshot` with `full: true`) |
+| `node:delta` | S→C | Authoritative component-delta broadcast every 200 ms |
 | `player:died` | S→C | Player HP hit zero (before respawn) |
 | `crafting:result` | S→C | Craft success/failure |
 | `player:move` | C→S | Movement request |
@@ -121,11 +136,11 @@ Everything that crosses the client/server boundary lives here. Start here for an
 
 ## Server architecture
 
-`server/src/index.ts`: Express setup → Socket.IO setup → class mechanic registration → two decoupled intervals:
+`server/src/index.ts`: Express setup → Socket.IO setup → mechanic / weapon / defense / debuff `init*` calls → two decoupled intervals:
 - **Logic tick** 10 Hz (100 ms): `world.tick(dt, now)` + drain `world.pendingDeaths`
-- **Broadcast tick** 5 Hz (200 ms): `world.buildSnapshot(nodeId)` once per occupied node → emits `node:state`
+- **Broadcast tick** 5 Hz (200 ms): `world.beginBroadcast()` drains the dirty tracker; then `world.buildNodeDelta(nodeId, dirty)` once per occupied node → emits `node:delta`
 
-`World.ts` owns all mutable state. `systems/` has one file per system.
+`server/src/world/world.ts` (`World` class) owns all mutable state via a miniplex ECS. Each system lives under `server/src/systems/<area>/` and queries the components it needs (`world.dottedMonsters`, `world.cadencePlayers`, etc.).
 
 ### Combat pipeline
 
@@ -133,16 +148,16 @@ Everything that crosses the client/server boundary lives here. Start here for an
 
 Register via `registerCombatListener`. `CombatContext` is a mutable bag — handlers read/write `ctx.damage`, `ctx.cancelled`, `ctx.metadata`.
 
-**Combat event queue:** `world.pushEvent(nodeId, event)` emits `player-hit`/`player-kill` after each attack. `world.buildSnapshot` flushes once per node per broadcast. Do **not** use per-tick booleans on `PlayerState` for animation — use `pushEvent`.
+**Combat event queue:** `world.pushEvent(nodeId, event)` queues `player-hit`/`player-kill` after each attack. `buildNodeDelta` calls `world.takeNodeEvents(nodeId)` once per node per broadcast. Do **not** use per-tick booleans on entity slices for animation — use `pushEvent`.
 
-**Retaliation aggro:** On player hit, if monster has no `hasAggroTarget` component, `combat.ts` attaches one immediately. `ai.ts` never overwrites existing aggro.
+**Retaliation aggro:** On player hit, if the monster has no `hasAggroTarget` component, `combat.ts` attaches one immediately. `ai.ts` never overwrites existing aggro.
 
 ### AoE damage (`aoeDamage.ts`)
 
 - `applyPlayerAoe(world, attacker, x, y, radius, damage, excludeId?)` — hits monsters
 - `applyMonsterAoe(world, attacker, x, y, radius, damage, excludeId?)` — hits players
 
-AoE bypasses the combat pipeline intentionally. Every empowered hit auto-triggers `applyPlayerAoe` at `EMPOWERED_AOE_RADIUS: 80` px, `EMPOWERED_AOE_MULT: 0.5 × player.attack`.
+AoE bypasses the combat pipeline intentionally. Every empowered hit auto-triggers `applyPlayerAoe` at `EMPOWERED_AOE_RADIUS: 80` px, `EMPOWERED_AOE_MULT: 0.5 × dealsDamage.attack`.
 
 ### Monster AI (`ai.ts`)
 
@@ -154,23 +169,33 @@ Aggro acquisition (`findAggro`) only runs when `hasAggroTarget` is absent — re
 
 ### Combat state
 
-`TracksCombat`: `counters`, `resources`, `resourceMaxes`, `cooldowns`, `flags`, `strings`, `statusEffects`. Always use accessor helpers — never raw field access. All cooldowns decremented by `updateCombatState` each tick.
+`TracksCombat` (server-only, never networked): `counters`, `resources`, `resourceMaxes`, `cooldowns`, `flags`, `strings`, `statusEffects`. Always use accessor helpers — never raw field access. All cooldowns decremented by `updateCombatState` each tick.
+
+Per-archetype runtime state (cadence count, energy charge, reload ammo, DoT bookkeeping, etc.) lives on its own component slice (`usesCadence`, `usesEnergy`, `usesReload`, `appliesDots`, …), not on `tracksCombat`. Slice presence gates archetype behavior. `tracksCombat` is reserved for cross-archetype scratch state (cooldown timers, status effects, lookup-only counters).
 
 **StatusEffect API:** `applyStatusEffect` (stacking — adds 1 stack per call, `data` only set on creation), `removeStatusEffect`, `getTotalStacks`, `hasStatusEffect`. `data` is `Record<string, number>` — numeric flags only.
 
 For "every N hits do X" use `registerAttackThreshold` from `attackCounter.ts`.
 
-### `buffSync.ts`
+### `buffSync.ts` and buff descriptors
 
-Runs end of every tick; populates `player.activeBuffs: PlayerBuff[]` from combat state. Add new buff entries here when implementing new mechanics.
+Buffs are declared via `defineBuff(...)` in the system file that owns them (see `server/src/systems/combat/buffs/descriptor.ts`). Each descriptor is `{ id, label, color, project(ctx) }`; `project` reads slices and returns a `PlayerBuff | null`. `syncPlayerBuffs` runs at the end of every tick, iterates `ALL_BUFFS` (mechanic-owned + weapon + defense), and writes the result to `hasStatus.activeBuffs`.
+
+To add a buff: add the `BuffId` literal to `BUFF_IDS` in `shared/src/components/combat/buffs.ts`, then add a `defineBuff(...)` in the owning module's descriptor array. The HUD renders it with no client changes.
 
 ---
 
 ## Client architecture
 
-`GameScene.ts`: connects to `:4000`, maintains `Map<string, Visual>`. `applySnapshot()` order: remove gone players → upsert players → **process events** → remove gone monsters → upsert monsters.
+`GameScene.ts` is thin: scene lifecycle, scene-level Phaser setup, and a fixed per-frame schedule that iterates per-concern render systems. The network seam is `client/src/net/deltaApplier.ts` — the only module that mutates render state from inbound `DeltaSnapshot` payloads.
 
-**React HUD** is a separate `<div>` in index.html, not inside Phaser. Uses `hudBus.ts` (pub/sub singleton).
+**Render state** (`client/src/render/state.ts`) is a set of per-concern `Map<NetworkId, T>` registries (sprite, shadow, label, hpBar, cdBar, effectOverlays, interpolation, debugRanges, …). An entity exists in a given map iff that visual concern currently applies. No `Visual` god record; each render module owns ensure/update/destroy for its own concern.
+
+**Inbound flow:** `socket.on('node:delta' | 'state:sync')` → `applyDelta(state, snapshot, scene)` → applies `add`/`patch`/`remove` deltas to local `NetworkedEntity` state → composes `PlayerView` / `MonsterView` via shared formulas → dispatches per-concern upserts → drains combat events into `combatFx` dispatcher → publishes local-player view to `hudBus`.
+
+**Outbound flow:** All `socket.emit(...)` calls go through `client/src/net/intents.ts`. React HUD CustomEvents call the same intent helpers.
+
+**React HUD** is a separate `<div>` in index.html, not inside Phaser. Uses `hudBus.ts` (pub/sub singleton) for state.
 
 Components: `HUD.tsx` (sidebars, StatPanel, BuffBar, EssencePanel), `BuffBar.tsx` (52px icon tiles, clock-sweep overlay, stack badges), `StatPanel.tsx` (DoT pip display, chill/frozen indicators), `MapPanel.tsx` (11×11 grid, dungeon tiles, boss info), `QuestPanel.tsx` (kill counts, XP/level), `CraftingPanel.tsx` (two-tab: Biome Progress + Forge).
 
@@ -192,13 +217,13 @@ Components: `HUD.tsx` (sidebars, StatPanel, BuffBar, EssencePanel), `BuffBar.tsx
 
 ## Biome XP system
 
-Players earn biome XP for kills in a biome; XP accumulates in `player.biomeXP` (a `Record<biomeGroup, number>`). `player.biomeLevel` is the current level of the active biome.
+Players earn biome XP for kills in a biome; XP accumulates in `tracksProgression.biomeXP` (a `Record<biomeGroup, number>`). `tracksProgression.biomeLevel` is the current level of the active biome.
 
 **Power curve:** `biomeXpForLevel(n) = round(BIOME_XP_BASE × n^BIOME_XP_EXPONENT)`
 - `BIOME_XP_BASE = 80`, `BIOME_XP_EXPONENT = 1.7` (both in GAME_CONFIG)
 - Level table: Lv1 → 80 XP, Lv2 → 260, Lv3 → 518, Lv4 → 845, Lv6 → 1831, Lv9 → 3848
 
-Each level-up in a biome unlocks recipes tied to that biome+level. `unlockedRecipes` on `PlayerState` is the authoritative set. XP per kill is set in `BIOME_XP_BY_NODE_TIER` in `shared/src/index.ts`.
+Each level-up in a biome unlocks recipes tied to that biome+level. `unlockedRecipes` on `tracksProgression` is the authoritative set. XP per kill is set in `BIOME_XP_BY_NODE_TIER` in `shared/src/index.ts`.
 
 The helper `biomeXpForLevel` is exported from `@mmo-idle/shared` and used in both `rewards.ts` (level-up logic) and the client UI (`CraftingPanel`, `MapPanel`). Never use `BIOME_XP_PER_LEVEL` — that constant no longer exists.
 
@@ -229,7 +254,7 @@ interface RepeatingAction { intervalMs: number; initialDelayMs?: number; actions
 
 **Runtime state:** `entity.scriptsBoss: ScriptsBoss` — per-boss tracking on the monster entity (engaged flag, phase triggers, repeating timers, active effects). Removed when the monster entity is despawned. Never serialized.
 
-**`monster.bossEffects: string[]`** — populated each tick from active effect names; sent to client for HUD display.
+**`hasStatus.bossEffects: string[]`** (boss monsters only) — populated each tick from active effect names; sent to client for HUD display.
 
 Timers don't tick until a player aggros the boss (`state.engaged = true`). Active timed effects save original stat values and restore them on expiry.
 
@@ -251,7 +276,7 @@ Timers don't tick until a player aggros the boss (`state.engaged = true`). Activ
 
 Shield `duration-ms` = `interval-ms` for clean 1:1 rotation. Omit/-1 for permanent.
 
-**Defense passives** (`player.passives`, rebuilt each stat recalc):
+**Defense passives** (`usesSkills.passives`, rebuilt each stat recalc):
 
 | Passive key | Effect |
 |---|---|
@@ -264,13 +289,13 @@ Shield `duration-ms` = `interval-ms` for clean 1:1 rotation. Omit/-1 for permane
 | `defense.debuff-resistance` | Reduces debuff duration/potency |
 | `defense.cleanse-stacks/interval-ms` | Periodic stack removal |
 
-**Damage debt drain** (`defenseSystems.ts`): fires once per second (via `debtTick` cooldown) — not proportionally every tick. Each second drains 25% of the current pool; `Math.round(damage) < 1` is skipped. Absorb and burst pools use proportional per-tick drain but zero out when the pool falls below 0.5 to avoid asymptotic trickle.
+**Damage debt drain** (`server/src/systems/defense/mitigation/hitToDot.ts`, `runDebtDrain`): fires once per second (via `debtTick` cooldown) — not proportionally every tick. Each second drains 25% of the current pool; `Math.round(damage) < 1` is skipped. Absorb and burst pools use proportional per-tick drain but zero out when the pool falls below 0.5 to avoid asymptotic trickle.
 
 ---
 
 ## Quest system
 
-`QuestDefinition`: `id`, `name`, `tierRequired`, `targetMonsterTypes[]`, `killsRequired`. `registerKillForQuests` called after every kill via `grantMonsterRewards`. Awards XP on completion; `XP_PER_LEVEL = 100`, each level → 1 skill point. Quests are one-time. Add new entries to `QUEST_DATABASE` in `shared/src/index.ts`.
+`QuestDefinition`: `id`, `name`, `tierRequired`, `targetMonsterTypes[]`, `killsRequired`. `registerKillForQuests` called after every kill via `grantMonsterRewards`. Awards XP on completion; `XP_PER_LEVEL = 100`, each level → 1 skill point. Quests are one-time. Add new entries to `QUEST_DATABASE` in `shared/src/quests/questDatabase.ts`.
 
 ---
 
@@ -290,7 +315,7 @@ T3 nodes are fully hand-authored. Generator produces T4–7 only.
 
 ### How passives flow
 
-`recalculatePlayerStats()` rebuilds `player.passives` from scratch on every skill unlock or equipment change. Iterates `player.unlockedSkills` → reads `node.mechanicEffects` → accumulates additively. Archetype systems read `player.passives` at combat time — no "apply on unlock" step.
+`recalculatePlayerEntityStats(world, entity)` (in `server/src/ecs/playerEntityFormulas.ts`, wrapping the shared formula) rebuilds `usesSkills.passives` from scratch on every skill unlock or equipment change. It iterates `usesSkills.unlockedSkills` → reads `node.mechanicEffects` → accumulates additively. Archetype systems read `usesSkills.passives` at combat time — no "apply on unlock" step.
 
 ### Class roots (T0)
 
@@ -320,12 +345,12 @@ Energy and Reload start ranged. DoT is mid-range (+50 range). Cooldown and Caden
 - **range-mid**: no changes
 - **range-far**: +120 range, −8 ATK, +400ms CD
 
-### Reload multiplier (final layer in `stats.ts`)
+### Reload multiplier (final layer in `shared/src/systems/stats.ts`)
 
 ```typescript
-if (player.combatArchetype === 'reload') {
-  player.attack         = Math.max(1, Math.floor(player.attack * 0.5));
-  player.attackCooldown = Math.max(200, Math.round(player.attackCooldown * 0.5));
+if (p.usesSkills.combatArchetype === 'reload') {
+  p.dealsDamage.attack = Math.max(1, Math.floor(p.dealsDamage.attack * 0.5));
+  p.performsAttack.attackCooldown = Math.max(200, Math.round(p.performsAttack.attackCooldown * 0.5));
 }
 ```
 Never fold the 0.5× into additive deltas.
@@ -380,7 +405,7 @@ Each player hit applies 1 DoT stack; stacks tick damage at configurable interval
 - T1 Balanced (Fire): `dot.conversion-pct: 0.50`, 6 stacks
 - T1 Heavy (Frost): `dot.conversion-pct: 0.70`, 3 stacks
 
-`dot.damage-per-stack` is **gone** — never set this passive. `damagePerStack` is always derived from `player.attack × convPct / maxStacks` at hit time.
+Never set a `dot.damage-per-stack` passive — `damagePerStack` is always derived from `dealsDamage.attack × convPct / maxStacks` at hit time.
 
 **Diminishing returns tick formula:** `computeScaledDotDamage(effect)` = `dmgPerStack × sqrt(stacks × maxStacks)`. Same damage as linear at full stacks; boosted above linear at low stacks.
 
@@ -472,12 +497,12 @@ T1 bosses: 400–700 HP, 14–22 ATK. Jungle first appears T2; ex-jungle T1 node
 - **One feature at a time** — implement shared → server → client
 - **StatusEffect data is `Record<string, number>`** — numeric flags (0/1), never strings
 - **T3 listener ordering** — call `initXxxT3()` before `registerCombatListener` inside `initXxxArchetype()` so T3 handlers fire before base prototype
-- **Passives are rebuilt on every stat recalc** — never apply `mechanicEffects` imperatively; they accumulate into `player.passives` during `recalculatePlayerStats()`
+- **Passives are rebuilt on every stat recalc** — never apply `mechanicEffects` imperatively; they accumulate into `usesSkills.passives` during `recalculatePlayerEntityStats()`
 - **DoT damage-per-stack is derived, never hardcoded** — use `attack × dot.conversion-pct / maxStacks`; never set `dot.damage-per-stack` directly
 - **Map TypeScript inference** — use explicit generics (`new Map<string, Recipe>([...])`) for `RECIPE_DATABASE`, `SKILL_TREE`, `QUEST_DATABASE`
-- **Reload multiplier is a final layer** — apply `* 0.5` to `attack` and `attackCooldown` at the end of `recalculatePlayerStats()`, never additively
+- **Reload multiplier is a final layer** — apply `* 0.5` to `dealsDamage.attack` and `performsAttack.attackCooldown` at the end of `recalculatePlayerStats()`, never additively
 - **Boss script stat modifications use save-original pattern** — `ActiveBossEffect` stores the pre-buff stat value; restored on expiry. Overlapping same-stat effects from multiple sources are not supported (last write wins)
-- **`biomeXpForLevel` is the only XP threshold function** — `BIOME_XP_PER_LEVEL` no longer exists; never use flat XP per level
+- **`biomeXpForLevel` is the only XP threshold function** — there is no flat `BIOME_XP_PER_LEVEL` constant; always go through the formula
 
 ### ECS conventions (server)
 

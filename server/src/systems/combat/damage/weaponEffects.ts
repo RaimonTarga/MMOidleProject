@@ -220,6 +220,6 @@ export const WEAPON_BUFFS = [
     ({ player }) => player.showsSacred.sacredBuffActive
       ? { id: 'sacred-burst', label: 'Holy', stacks: 1, durationPct: player.showsSacred.sacredBuffPct, color: '#ffdd44' }
       : null,
-    { label: 'Holy', color: '#ffdd44' },
+    { label: 'Holy', color: '#ffdd44', category: 'weapon', shape: 'square' },
   ),
 ] as const satisfies readonly BuffDescriptor[];

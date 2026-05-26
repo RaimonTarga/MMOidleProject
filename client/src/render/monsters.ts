@@ -8,7 +8,7 @@ import { ensureLabel } from './labels';
 import { ensureHpBar } from './healthBars';
 import { ensureCdBar } from './cooldownBars';
 import { applyLunge } from './interpolation';
-import { spawnAttackEffect } from '../fx/attackEffects';
+import { spawnAttackEffect } from './combatFx';
 import { spawnDamageNumber } from '../fx/particles';
 
 export function upsertMonster(

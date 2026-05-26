@@ -39,7 +39,14 @@ export function syncPlayerBuffs(world: World): void {
     const buffs: PlayerBuff[] = [];
     for (const descriptor of ALL_BUFFS) {
       const buff = descriptor.project({ player: entity, playerCs, targetCs, world });
-      if (buff) buffs.push(buff);
+      if (buff) {
+        buffs.push({
+          ...buff,
+          category: descriptor.category,
+          iconKey: descriptor.iconKey,
+          shape: descriptor.shape,
+        });
+      }
     }
 
     entity.hasStatus.activeBuffs = buffs;

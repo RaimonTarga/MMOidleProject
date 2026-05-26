@@ -11,8 +11,10 @@ The server remains authoritative. Netcode improvements must reduce bandwidth and
 Component-delta transport is now the active protocol: `state:sync` and
 `node:delta` carry `DeltaSnapshot` payloads made from allowlisted component
 slices. The legacy `PlayerSnapshot`, `MonsterSnapshot`, and `NodeSnapshot` DTOs
-have been removed from shared code. Payload-size measurement and deeper
-per-field compression remain follow-up work. Dirty tracking now feeds the delta
+have been removed from shared code. Payload-size instrumentation (`NETCODE_PROFILE=1`)
+and spatial wire quantization (1px rounding for `hasPosition` / `isMoving`) are
+landed. Deeper per-field compression (wire key maps, omit-unchanged scalars) is
+deferred — see Baseline Measurements below. Dirty tracking now feeds the delta
 encoder directly instead of being discarded at the broadcast boundary.
 
 ## Prerequisites Complete
@@ -23,6 +25,23 @@ The server-side prep work needed before the protocol cutover is complete:
 - Stat recalc, archetype-slice sync, player persistence, player hydrate, and monster spawn are component-native and no longer round-trip through `PlayerSnapshot` / `MonsterSnapshot`.
 - The `characters` table persists one JSON blob per long-lived player slice (`isPlayer`, `hasPosition`, `hasHealth`, `tracksProgression`, `holdsInventory`, `usesSkills`); runtime-only slices are rebuilt on attach.
 - The remaining snapshot surface is the legacy wire boundary: `World.buildSnapshot()` calls `assemblePlayerSnapshot()` / `assembleMonsterSnapshot()` for `state:sync` and `node:state`.
+
+## Baseline Measurements
+
+Captured offline via `server/scripts/netcode-baseline.ts` (reproducible, no live client required). Values are `JSON.stringify(DeltaSnapshot).length` in bytes. Broadcast rate is 5 Hz.
+
+| Scenario | Full resync | Steady delta | Est. bytes/sec @ 5 Hz | Top slice contributors |
+| --- | --- | --- | --- | --- |
+| Idle solo (12 monsters, node-5-5) | 7,150 B | 7,846 B | ~39 KB/s | `isMonster`, `isMoving`, `hasPosition` |
+| Solo combat (1 player + monsters) | 8,163 B | 8,837 B | ~44 KB/s | `isMonster`, `hasPosition`, `isMoving` |
+| Contested dungeon (2 players + boss, node-5-7) | 9,785 B | 10,530 B | ~53 KB/s | `isMonster`, `hasPosition`, `performsAttack` |
+| Reconnect storm (20 ticks then resync) | 8,779 B | 8,508 B | ~43 KB/s | `isMonster`, `hasPosition`, `performsAttack` |
+
+**Compression landed:** spatial wire quantization in `server/src/ecs/deltaEncoder.ts` — rounds `hasPosition.current` and `isMoving.motion.magnitude` to whole pixels before JSON encode. Saves ~500 B/tick on idle wander (~6% on steady delta).
+
+**Decision — defer deeper compression:** no single slice exceeds 50% of payload; bandwidth is ~40–53 KB/s per client at 5 Hz with ~12–15 entities — acceptable for the ~100-friends LAN target. Next optimization if needed: stop marking `isMoving` dirty when motion vector is unchanged, or introduce a wire-only component key map.
+
+**Live profiling:** set `NETCODE_PROFILE=1` when starting the server; `server/src/net/profiler.ts` logs p50/p95 and top slice contributors every 5 s.
 
 ## Problem
 

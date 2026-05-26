@@ -262,5 +262,5 @@ export const RELOAD_T3_BUFFS = [
     return getSnipeReady(player, world)
       ? { id: 'reload-snipe-ready', label: 'Snipe', stacks: 1, durationPct: -1, color: '#ffcc88' }
       : null;
-  }),
+  }, { category: 'neutral', shape: 'square' }),
 ] as const satisfies readonly BuffDescriptor[];

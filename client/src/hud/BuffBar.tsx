@@ -1,69 +1,21 @@
 import { useState, useEffect } from 'react';
 import { hudBus } from '../hudBus';
-import type { PlayerBuff, BuffId } from '@mmo-idle/shared';
+import type { PlayerBuff, BuffShape } from '@mmo-idle/shared';
 import '../hud/hud.css';
 
 const ICON_SIZE = 52;
 const SLOT_GAP  = 8;
 
-type BuffCategory =
-  | 'cadence'
-  | 'cooldown'
-  | 'energy'
-  | 'dot-poison'
-  | 'dot-fire'
-  | 'dot-frost'
-  | 'dot-frozen'
-  | 'weapon';
-
-const BUFF_CATEGORY: Record<BuffId, BuffCategory | null> = {
-  'cadence-accelerando': 'cadence',
-  'cadence-echo':        'cadence',
-  'cooldown-overdrive':  'cooldown',
-  'cooldown-eternal-charge': 'cooldown',
-  'cooldown-temporal-ext':   'cooldown',
-  'cooldown-battery':        'cooldown',
-  'cooldown-alignment':      'cooldown',
-  'cooldown-channel':        'cooldown',
-  'energy-acc':          'energy',
-  'energy-overcharge':   'energy',
-  'energy-ac-charge':    'energy',
-  'energy-ac-discharge': 'energy',
-  'energy-reservoir':    'energy',
-  'energy-equilibrium':  'energy',
-  'energy-sm-pool':      'energy',
-  'dot-vigor':           'dot-poison',
-  'dot-conflag':         'dot-fire',
-  'dot-chill':           'dot-frost',
-  'dot-frozen':          'dot-frozen',
-  'reload-snipe-ready':  null,
-  'sacred-burst':        'weapon',
-  'defense-absorb':      null,
-  'defense-burst':       null,
-  'defense-debt':        null,
+const SHAPE_STYLE: Record<BuffShape, React.CSSProperties> = {
+  'square':       {},
+  'circle':       { borderRadius: '50%' },
+  'diamond':      { borderRadius: 2, clipPath: 'polygon(50% 2%, 98% 50%, 50% 98%, 2% 50%)' },
+  'small-square': { borderRadius: 1 },
 };
 
-function getBuffCategory(id: BuffId): BuffCategory | null {
-  return BUFF_CATEGORY[id];
-}
-
-function getIconShapeStyle(id: BuffId): React.CSSProperties {
-  if (id === 'dot-vigor') {
-    return { borderRadius: '50%' };
-  }
-  if (id === 'dot-conflag') {
-    return { borderRadius: 2, clipPath: 'polygon(50% 2%, 98% 50%, 50% 98%, 2% 50%)' };
-  }
-  if (id === 'dot-frozen') {
-    return { borderRadius: 1 };
-  }
-  return {};
-}
-
 function BuffIcon({ buff }: { buff: PlayerBuff }) {
-  const category   = getBuffCategory(buff.id);
-  const shapeStyle = getIconShapeStyle(buff.id);
-  const catClass   = category ? `buff-icon buff-cat-${category}` : 'buff-icon';
+  const shapeStyle = SHAPE_STYLE[buff.shape];
+  const catClass   = buff.category === 'neutral' ? 'buff-icon' : `buff-icon buff-cat-${buff.category}`;
   const hasDuration = buff.durationPct >= 0;
 
   // Sweep overlay: darkened area sweeps clockwise from the top as the buff elapses.

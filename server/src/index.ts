@@ -18,6 +18,7 @@ import type {
 import { db, runMigrations } from './db/index';
 import { findOrCreateAccount, getOrCreateCharacter, saveCharacter } from './db/playerRepo';
 import { initAllMechanics } from './systems/classes/registry';
+import { recordBroadcast } from './net/profiler';
 import { initWeaponEffects } from './systems/combat/damage/weaponEffects';
 import { initDefenseSystems } from './systems/defense';
 import { initDebuffMechanics } from './systems/classes/shared/debuffs';
@@ -148,7 +149,9 @@ setInterval(() => {
     if (!nodeSnaps.has(player.hasPosition.nodeId)) {
       nodeSnaps.set(player.hasPosition.nodeId, world.buildNodeDelta(player.hasPosition.nodeId, dirty));
     }
-    sock.emit('node:delta', nodeSnaps.get(player.hasPosition.nodeId)!);
+    const snap = nodeSnaps.get(player.hasPosition.nodeId)!;
+    recordBroadcast(snap, 'node:delta');
+    sock.emit('node:delta', snap);
   }
 }, BROADCAST_MS);
 
@@ -178,11 +181,13 @@ io.on('connection', (socket) => {
   syncArchetypeSlices(world, entity);
   entity.hasHealth.hp = entity.hasHealth.maxHp;
 
-  socket.emit('state:sync', world.buildNodeDelta(
+  const syncSnap = world.buildNodeDelta(
     entity.hasPosition.nodeId,
     { patched: new Map(), detached: new Map() },
     { resync: true },
-  ));
+  );
+  recordBroadcast(syncSnap, 'state:sync');
+  socket.emit('state:sync', syncSnap);
 
   socket.on('player:move', (pos) => {
     const p = world.getPlayerEntity(socket.id);

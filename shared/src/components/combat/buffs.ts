@@ -31,6 +31,19 @@ export const BUFF_IDS = [
 
 export type BuffId = typeof BUFF_IDS[number];
 
+export type BuffCategory =
+  | 'cadence'
+  | 'cooldown'
+  | 'energy'
+  | 'dot-poison'
+  | 'dot-fire'
+  | 'dot-frost'
+  | 'dot-frozen'
+  | 'weapon'
+  | 'neutral';
+
+export type BuffShape = 'square' | 'circle' | 'diamond' | 'small-square';
+
 /**
  * A single active buff entry, populated server-side each tick and sent to the
  * client for display. Only player buffs are tracked here — debuffs on monsters
@@ -54,4 +67,10 @@ export interface PlayerBuff {
   durationPct: number;
   /** CSS hex color string for the placeholder shape, e.g. '#00ffaa'. */
   color: string;
+  /** Buff bar category for CSS animation class. */
+  category: BuffCategory;
+  /** Future sprite key; defaults to `id` until icon textures land. */
+  iconKey: string;
+  /** Placeholder shape token for inline CSS styling. */
+  shape: BuffShape;
 }
