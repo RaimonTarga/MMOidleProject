@@ -1,10 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
-import type { PlayerState } from '@mmo-idle/shared';
+import type { PlayerView } from '@mmo-idle/shared';
 import { ESSENCE_TYPES, ESSENCE_COLORS } from '@mmo-idle/shared';
 import './essence.css';
 
 interface Props {
-  player: PlayerState | null;
+  player: PlayerView | null;
 }
 
 export function EssencePanel({ player }: Props) {

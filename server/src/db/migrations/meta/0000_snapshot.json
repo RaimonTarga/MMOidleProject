@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "7f456dc7-06b4-4d2d-be5b-5d7a600d4df5",
+  "id": "890cf71b-870f-4555-bfc6-830db201aca7",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "accounts": {
@@ -138,21 +138,29 @@
           "autoincrement": false,
           "default": "'{\"red\":0,\"blue\":0,\"green\":0,\"yellow\":0,\"purple\":0}'"
         },
-        "biome_kills": {
-          "name": "biome_kills",
+        "biome_xp": {
+          "name": "biome_xp",
           "type": "text",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
           "default": "'{}'"
         },
-        "recipe_progress": {
-          "name": "recipe_progress",
+        "biome_level": {
+          "name": "biome_level",
           "type": "text",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
           "default": "'{}'"
+        },
+        "unlocked_recipes": {
+          "name": "unlocked_recipes",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'[]'"
         },
         "quest_progress": {
           "name": "quest_progress",
@@ -192,6 +200,14 @@
         },
         "current_skill_tier": {
           "name": "current_skill_tier",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 0
+        },
+        "player_tier": {
+          "name": "player_tier",
           "type": "integer",
           "primaryKey": false,
           "notNull": true,

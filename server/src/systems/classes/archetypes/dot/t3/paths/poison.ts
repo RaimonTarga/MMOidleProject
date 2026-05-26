@@ -1,0 +1,72 @@
+import { applyStatusEffect, getTotalStacks } from '@mmo-idle/shared';
+import { DOT_EFFECT_ID } from '../core/constants';
+import { hasPassive, markMonsterDot, clearMonsterDot } from '../core/helpers';
+import type { DotT3PathContext } from './_types';
+import {
+  PE_MAX_STACKS, PE_BURST_TICKS,
+  ED_MAX_STACKS, ED_BASE_STACKS,
+  IT_ATK_PER_STACK,
+} from './_constants';
+
+/**
+ * Invigorating Toxins (Light).
+ * Adds a flat damage bonus per existing DoT stack on the target. Falls
+ * through — does NOT set `dotHandled`, so the base prototype still applies
+ * a stack after this runs.
+ */
+export function applyInvigoratingToxins(pc: DotT3PathContext): void {
+  if (!hasPassive(pc.player, 'dot.invigorating-toxins')) return;
+  const stacks = getTotalStacks(pc.monsterState, DOT_EFFECT_ID);
+  if (stacks > 0) pc.ctx.damage += stacks * IT_ATK_PER_STACK;
+}
+
+/**
+ * Poison Explosion (Light).
+ * 20-stack cap; on hit at max, all stacks are consumed for a 10-tick burst.
+ */
+export function tryPoisonExplosion(pc: DotT3PathContext): boolean {
+  if (!hasPassive(pc.player, 'dot.poison-explosion')) return false;
+  const { ctx, world, player, monster, monsterState, dmgPerStack, durationMs, tickIntervalMs } = pc;
+
+  const pe = applyStatusEffect(monsterState, {
+    id: DOT_EFFECT_ID, maxStacks: PE_MAX_STACKS, instanced: false,
+    sourceId: player.isPlayer.id, remainingMs: durationMs, refreshable: true,
+    data: { damagePerStack: dmgPerStack, nextTickIn: tickIntervalMs, tickIntervalMs },
+  });
+  pe.data.damagePerStack = dmgPerStack;
+  pe.data.tickIntervalMs = tickIntervalMs;
+  if (getTotalStacks(monsterState, DOT_EFFECT_ID) >= PE_MAX_STACKS) {
+    const burst = PE_MAX_STACKS * dmgPerStack * PE_BURST_TICKS;
+    ctx.damage += burst;
+    clearMonsterDot(world, monster, monsterState);
+    console.log(`[PoisonExplosion] ${player.isPlayer.id}: detonated → +${burst} burst`);
+  } else {
+    markMonsterDot(world, monster);
+  }
+  ctx.metadata['dotHandled'] = true;
+  return true;
+}
+
+/**
+ * Eternal Doom (Light).
+ * No cap (50-stack ceiling for safety). Ticks use the diminishing-returns
+ * formula (`computeEternalDoomDamage`) in the prototype updater.
+ */
+export function tryEternalDoom(pc: DotT3PathContext): boolean {
+  if (!hasPassive(pc.player, 'dot.eternal-doom')) return false;
+  const { ctx, world, player, monster, monsterState, dmgPerStack, durationMs, tickIntervalMs } = pc;
+
+  const ed = applyStatusEffect(monsterState, {
+    id: DOT_EFFECT_ID, maxStacks: ED_MAX_STACKS, instanced: false,
+    sourceId: player.isPlayer.id, remainingMs: durationMs, refreshable: true,
+    data: {
+      damagePerStack: dmgPerStack, nextTickIn: tickIntervalMs, tickIntervalMs,
+      isEternalDoom: 1, edBaseStacks: ED_BASE_STACKS,
+    },
+  });
+  ed.data.damagePerStack = dmgPerStack;
+  ed.data.tickIntervalMs = tickIntervalMs;
+  markMonsterDot(world, monster);
+  ctx.metadata['dotHandled'] = true;
+  return true;
+}

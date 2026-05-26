@@ -1,0 +1,87 @@
+---
+description: Enforce strict planning artifacts that clearly define architecture, function boundaries, and exact change intent before implementation
+globs: .cursor/plans/**/*.md,**/*plan*.md,.cursor/rules/*.mdc
+alwaysApply: false
+---
+
+# Planning Change-Intent Rule
+
+When producing a plan, articulate code-change intent with zero ambiguity. Prefer the **walkthrough structure** below so implementers can read the document **top to bottom**: each step should depend on the previous one, and the **file index** gives a single lookup table for every touched path.
+
+---
+
+## Required top-level sections (order)
+
+Plans MUST include these sections in this order (subsection titles may vary slightly, but intent must match):
+
+1. **Architecture** (high level) — Optional but recommended for non-trivial work: one diagram (e.g. Mermaid sequence or flowchart) plus short bullets tying the design to project invariants (ECS, Node as source of truth, intents, etc.). State assumptions (e.g. working directories, IPC boundaries) here when they affect many steps.
+
+2. **Code Architecture (walkthrough)** — The main contract. See [Walkthrough requirements](#walkthrough-requirements) below. MUST end with a **File index**.
+
+3. **Data and Control Flow** — Before vs after behavior with diagrams where helpful; **numbered call paths** for the main flows (and sub-paths such as delete/cleanup when relevant). See [Data and control flow requirements](#data-and-control-flow-requirements).
+
+4. **Rule Alignment** — Bullet list mapping the change to relevant workspace rules (architecture ECS patterns, commandments, etc.). Omit only if the change is truly rule-neutral and say so in one line.
+
+5. **Risks and validation** — Known technical or product risks; what to validate (tests, manual steps, metrics). Use **Out of scope** for deferred work instead of hiding risk.
+
+6. **Out of scope (follow-ups)** — Explicit non-goals or later tickets so scope does not creep during implementation.
+
+Frontmatter (`name`, `overview`, `todos`) is encouraged for Cursor plans but not required by this rule.
+
+---
+
+## Walkthrough requirements
+
+The **Code Architecture (walkthrough)** section MUST:
+
+- **Intro line:** State that the section is read **top to bottom** and that steps are ordered by dependency. Point readers to the **file index** at the end for quick path lookup.
+
+- **Steps:** Use **### Step N — Short title** (numbered steps). Each step MUST open with a **Goal:** line (one paragraph or a few bullets) stating what this step achieves and why it exists in the sequence.
+
+- **Per-step content:** For each step, include as many of the following as apply:
+  - **Sub-steps** (e.g. **A.** / **B.**) when multiple concerns belong in one step (e.g. world vs renderer components).
+  - A **table** of changes. Use consistent columns; full rows are preferred:
+
+    | Column             | Meaning                                                          |
+    | ------------------ | ---------------------------------------------------------------- |
+    | **File**           | Repo path (markdown link to file when possible)                  |
+    | **Symbol**         | Function, class, component key, constant, or `—`                 |
+    | **Action**         | `add` \| `modify` \| `remove` \| `verify` \| `regenerate` (etc.) |
+    | **Inputs**         | Parameters, triggers, IPC payloads (or `n/a`)                    |
+    | **Outputs**        | Return type, written components, side effects (or `n/a`)         |
+    | **Logic**          | What the symbol does, in one row or short phrase                 |
+    | **Error handling** | Throws, catch behavior, user-visible errors (or `n/a`)           |
+    | **Dependencies**   | Imports, other symbols, ordering (or `n/a`)                      |
+
+    For dense steps, a shortened table is allowed: **File | Symbol | Action | Summary** (or **Logic**), provided **Inputs / Outputs / Error handling** appear in prose or code blocks immediately below the table for every **add** or **modify** that affects behavior.
+
+  - **Code blocks** with concrete shapes: signatures, component stamps, IPC handlers, or illustrative snippets (with `// ...` only where the full body is intentionally deferred). Point to the target file in a comment or the surrounding prose. IMPORTANT: Code blocks are ALWAYS required and must show the code you intend to write into these files.
+
+  - **Invariants**, **Ordering note**, or **Note** callouts when order between systems, duplicate watchers, or tricky semantics matter.
+
+- **File index (alphabetical):** After the last step, include a table **File | Purpose** listing **every** repo path touched or added, alphabetically by path. This is the canonical “what files exist in this plan” list.
+
+Function-level detail from the old rule still applies: for each **new** function, state signature, caller(s), and invariants; for each **modified** function, what changed, what stayed stable, and compatibility impact; include migration/rollout notes when behavior changes.
+
+---
+
+## Data and control flow requirements
+
+The **Data and Control Flow** section MUST include:
+
+- **Before changes** — How the relevant part of the system behaves today (diagram optional).
+
+- **After changes** — How it behaves when the plan is done (diagram optional).
+
+- **Call path** — Numbered steps for the primary flow (e.g. event → system → IPC → Node). Add subsections for alternate paths (errors, delete, startup) when they are non-obvious.
+
+---
+
+## Quality gate
+
+Do not start implementation until:
+
+- All [Required top-level sections](#required-top-level-sections-order) are present and specific.
+- The **Code Architecture (walkthrough)** has ordered **Step N** blocks each with a **Goal**, tables and/or code sufficient to implement without guessing, and a complete **File index (alphabetical)**.
+- **Data and Control Flow** includes before/after and numbered call path(s).
+- **Risks and validation** and **Out of scope** are filled in or explicitly marked N/A with a one-line justification.

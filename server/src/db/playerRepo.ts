@@ -1,14 +1,29 @@
 import { eq } from 'drizzle-orm';
 import { randomUUID } from 'crypto';
 import type { BetterSQLite3Database } from 'drizzle-orm/better-sqlite3';
-import type { PlayerState, SubVariant } from '@mmo-idle/shared';
-import { GAME_CONFIG, emptyEquipment } from '@mmo-idle/shared';
+import type {
+  HasHealth,
+  HasPosition,
+  HoldsInventory,
+  IsPlayer,
+  TracksProgression,
+  UsesSkills,
+} from '@mmo-idle/shared';
+import { GAME_CONFIG, emptyEquipment, type Vec2 } from '@mmo-idle/shared';
+import type { PlayerEntity } from '../ecs/entity';
 import { accounts, characters } from './schema';
-import { recalculatePlayerStats } from '../systems/stats';
-import { equipItem } from '../systems/inventory';
 import type * as schema from './schema';
 
 type DB = BetterSQLite3Database<typeof schema>;
+
+export interface PersistedPlayerSlices {
+  isPlayer:          IsPlayer;
+  hasPosition:       HasPosition;
+  hasHealth:         HasHealth;
+  tracksProgression: TracksProgression;
+  holdsInventory:    HoldsInventory;
+  usesSkills:        UsesSkills;
+}
 
 // ── Account ───────────────────────────────────────────────────────────────────
 
@@ -26,83 +41,54 @@ export function findOrCreateAccount(db: DB, accountId: string, displayName: stri
 
 // ── Character ─────────────────────────────────────────────────────────────────
 
-/**
- * Returns the first character for the account, or creates a fresh one.
- * `socketId` is set as the runtime `id` on the returned PlayerState — the DB row
- * keeps its own stable UUID so we can reload the same character next session.
- */
 export function getOrCreateCharacter(
   db: DB,
   accountId: string,
   characterName: string,
-  socketId: string,
-): PlayerState {
+): PersistedPlayerSlices {
   const row = db.select().from(characters)
     .where(eq(characters.accountId, accountId))
     .get();
 
   if (row) {
-    return hydratePlayer(row, socketId);
+    return hydratePlayerSlices(row);
   }
 
   const charId = randomUUID();
-  const spawnX = GAME_CONFIG.NODE_WIDTH  / 2;
-  const spawnY = GAME_CONFIG.NODE_HEIGHT / 2;
+  const spawn: Vec2 = {
+    x: GAME_CONFIG.NODE_WIDTH  / 2,
+    y: GAME_CONFIG.NODE_HEIGHT / 2,
+  };
+  const fresh = buildFreshSlices(charId, characterName, spawn);
 
   db.insert(characters).values({
-    id:                 charId,
+    id:                charId,
     accountId,
-    name:               characterName,
-    nodeId:             'node-5-5',
-    x:                  spawnX,
-    y:                  spawnY,
-    level:              0,
-    skillPoints:        0,
-    unlockedSkills:     '[]',
-    inventory:          '["basic-sword"]',
-    equipment:          JSON.stringify(emptyEquipment()),
-    essences:           JSON.stringify({ red: 0, blue: 0, green: 0, yellow: 0, purple: 0 }),
-    biomeXP:            '{}',
-    biomeLevel:         '{}',
-    unlockedRecipes:    '[]',
-    questProgress:      '{}',
-    combatArchetype:    null,
-    selectedClass:      null,
-    selectedSubVariant: null,
-    selectedRange:      null,
-    currentSkillTier:   0,
-    updatedAt:          Date.now(),
+    isPlayer:          JSON.stringify(fresh.isPlayer),
+    hasPosition:       JSON.stringify(fresh.hasPosition),
+    hasHealth:         JSON.stringify(fresh.hasHealth),
+    tracksProgression: JSON.stringify(fresh.tracksProgression),
+    holdsInventory:    JSON.stringify(fresh.holdsInventory),
+    usesSkills:        JSON.stringify(fresh.usesSkills),
+    updatedAt:         Date.now(),
   }).run();
 
-  const fresh = buildFreshPlayer(socketId, characterName, spawnX, spawnY);
-  equipItem(fresh, 'basic-sword');
   return fresh;
 }
 
-export function saveCharacter(db: DB, accountId: string, player: PlayerState): void {
+export function saveCharacter(db: DB, accountId: string, entity: PlayerEntity): void {
   db.update(characters)
     .set({
-      name:               player.name,
-      nodeId:             player.nodeId,
-      x:                  player.x,
-      y:                  player.y,
-      level:              player.level,
-      skillPoints:        player.skillPoints,
-      unlockedSkills:     JSON.stringify(player.unlockedSkills),
-      inventory:          JSON.stringify(player.inventory),
-      equipment:          JSON.stringify(player.equipment),
-      essences:           JSON.stringify(player.essences),
-      biomeXP:            JSON.stringify(player.biomeXP),
-      biomeLevel:         JSON.stringify(player.biomeLevel),
-      unlockedRecipes:    JSON.stringify(player.unlockedRecipes),
-      questProgress:      JSON.stringify(player.questProgress),
-      combatArchetype:    player.combatArchetype,
-      selectedClass:      player.selectedClass,
-      selectedSubVariant: player.selectedSubVariant,
-      selectedRange:      player.selectedRange,
-      currentSkillTier:   player.currentSkillTier,
-      playerTier:         player.playerTier,
-      updatedAt:          Date.now(),
+      isPlayer:          JSON.stringify(entity.isPlayer),
+      hasPosition:       JSON.stringify(entity.hasPosition),
+      hasHealth:         JSON.stringify(entity.hasHealth),
+      tracksProgression: JSON.stringify(entity.tracksProgression),
+      holdsInventory:    JSON.stringify(entity.holdsInventory),
+      usesSkills:        JSON.stringify({
+        ...entity.usesSkills,
+        passives: {},
+      }),
+      updatedAt:         Date.now(),
     })
     .where(eq(characters.accountId, accountId))
     .run();
@@ -112,104 +98,75 @@ export function saveCharacter(db: DB, accountId: string, player: PlayerState): v
 
 type CharacterRow = typeof characters.$inferSelect;
 
-function hydratePlayer(row: CharacterRow, socketId: string): PlayerState {
-  const player = buildFreshPlayer(socketId, row.name, row.x, row.y);
+function hydratePlayerSlices(row: CharacterRow): PersistedPlayerSlices {
+  const holdsInventory = parseSlice<HoldsInventory>(row.holdsInventory);
+  holdsInventory.equipment = {
+    ...emptyEquipment(),
+    ...holdsInventory.equipment,
+  };
 
-  player.nodeId             = row.nodeId;
-  player.level              = row.level;
-  player.skillPoints        = row.skillPoints;
-  player.unlockedSkills     = JSON.parse(row.unlockedSkills) as string[];
-  player.inventory          = JSON.parse(row.inventory) as string[];
-  player.equipment          = JSON.parse(row.equipment) as PlayerState['equipment'];
-  player.essences           = JSON.parse(row.essences) as PlayerState['essences'];
-  player.biomeXP            = JSON.parse(row.biomeXP) as PlayerState['biomeXP'];
-  player.biomeLevel         = JSON.parse(row.biomeLevel) as PlayerState['biomeLevel'];
-  player.unlockedRecipes    = JSON.parse(row.unlockedRecipes) as PlayerState['unlockedRecipes'];
-  player.questProgress      = JSON.parse(row.questProgress) as PlayerState['questProgress'];
-  player.combatArchetype    = (row.combatArchetype as PlayerState['combatArchetype']) ?? null;
-  player.selectedClass      = row.selectedClass ?? null;
-  player.selectedSubVariant = (row.selectedSubVariant as SubVariant | null) ?? null;
-  player.selectedRange      = row.selectedRange ?? null;
-  player.currentSkillTier   = row.currentSkillTier;
-  player.playerTier         = row.playerTier;
-
-  // Restore cadenceThreshold from the T1 skill node if unlocked
-  const t1Node = player.unlockedSkills.find(s => s.endsWith('-light') || s.endsWith('-balanced') || s.endsWith('-heavy'));
-  if (player.combatArchetype === 'cadence' && t1Node) {
-    const thresholds: Record<string, number> = {
-      'cadence-light': 4, 'cadence-balanced': 5, 'cadence-heavy': 6,
-    };
-    player.cadenceThreshold = thresholds[t1Node] ?? 0;
-  }
-
-  // Rebuild all derived stats from restored skills + equipment
-  recalculatePlayerStats(player);
-
-  // Always log in at full HP
-  player.hp = player.maxHp;
-
-  return player;
+  return {
+    isPlayer:          parseSlice<IsPlayer>(row.isPlayer),
+    hasPosition:       parseSlice<HasPosition>(row.hasPosition),
+    hasHealth:         parseSlice<HasHealth>(row.hasHealth),
+    tracksProgression: parseSlice<TracksProgression>(row.tracksProgression),
+    holdsInventory,
+    usesSkills:        {
+      ...parseSlice<UsesSkills>(row.usesSkills),
+      passives: {},
+    },
+  };
 }
 
-function buildFreshPlayer(id: string, name: string, x: number, y: number): PlayerState {
+function buildFreshSlices(
+  id: string,
+  name: string,
+  pos: Vec2,
+): PersistedPlayerSlices {
+  const equipment = emptyEquipment();
+  equipment.weapon = 'basic-sword';
+
   return {
-    id,
-    name,
-    x,
-    y,
-    targetX:              x,
-    targetY:              y,
-    hp:                   GAME_CONFIG.PLAYER_MAX_HP,
-    maxHp:                GAME_CONFIG.PLAYER_MAX_HP,
-    attack:               GAME_CONFIG.PLAYER_ATTACK,
-    onHitDamage:          0,
-    plating:              GAME_CONFIG.PLAYER_PLATING,
-    damageReduction:      0,
-    evasion:              0,
-    evasionCount:         0,
-    shields:              [],
-    attackRange:          GAME_CONFIG.PLAYER_ATTACK_RANGE,
-    attackCooldown:       GAME_CONFIG.PLAYER_ATTACK_COOLDOWN,
-    lastAttackAt:         0,
-    attackTargetId:       null,
-    auto:                 false,
-    nodeId:               'node-5-5',
-    essences:             { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
-    level:                0,
-    skillPoints:          0,
-    unlockedSkills:       [],
-    passives:             {},
-    cadenceSpeedStacks:   0,
-    currentSkillTier:     0,
-    hpRegen:              GAME_CONFIG.PLAYER_HP_REGEN,
-    speed:                GAME_CONFIG.PLAYER_SPEED,
-    attackStyle:          'slash',
-    inventory:            ['basic-sword'],
-    equipment:            emptyEquipment(),
-    biomeXP:              {},
-    biomeLevel:           {},
-    unlockedRecipes:      [],
-    combatArchetype:      null,
-    selectedClass:        null,
-    selectedSubVariant:   null,
-    selectedRange:        null,
-    cadenceCount:         0,
-    cadenceThreshold:     0,
-    cadenceEmpoweredArmed: false,
-    ammoCount:            0,
-    ammoMax:              0,
-    executionReady:       false,
-    executionCooldownPct: 0,
-    energyCount:          0,
-    empoweredReady:       false,
-    targetDotStacks:      0,
-    targetChillStacks:    0,
-    sacredBuffActive:     false,
-    sacredBuffPct:        0,
-    isChanneling:         false,
-    channelingPct:        0,
-    activeBuffs:          [],
-    questProgress:        {},
-    playerTier:           0,
+    isPlayer: {
+      id,
+      name,
+    },
+    hasPosition: {
+      current: pos,
+      nodeId:  'node-5-5',
+      speed:   GAME_CONFIG.PLAYER_SPEED,
+    },
+    hasHealth: {
+      hp:      GAME_CONFIG.PLAYER_MAX_HP,
+      maxHp:   GAME_CONFIG.PLAYER_MAX_HP,
+      hpRegen: GAME_CONFIG.PLAYER_HP_REGEN,
+    },
+    tracksProgression: {
+      level:            0,
+      skillPoints:      0,
+      essences:         { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
+      biomeXP:          {},
+      biomeLevel:       {},
+      unlockedRecipes:  [],
+      questProgress:    {},
+      playerTier:       0,
+      currentSkillTier: 0,
+    },
+    holdsInventory: {
+      inventory: [],
+      equipment,
+    },
+    usesSkills: {
+      unlockedSkills:     [],
+      passives:           {},
+      selectedClass:      null,
+      selectedSubVariant: null,
+      selectedRange:      null,
+      combatArchetype:    null,
+    },
   };
+}
+
+function parseSlice<T>(value: string): T {
+  return JSON.parse(value) as T;
 }

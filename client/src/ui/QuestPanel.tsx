@@ -1,8 +1,8 @@
-import type { PlayerState } from '@mmo-idle/shared';
+import type { PlayerView } from '@mmo-idle/shared';
 import { QUEST_DATABASE, NODE_BIOMES } from '@mmo-idle/shared';
 
 interface Props {
-  player: PlayerState | null;
+  player: PlayerView | null;
   onFindDungeon?: (nodeIds: string[]) => void;
 }
 

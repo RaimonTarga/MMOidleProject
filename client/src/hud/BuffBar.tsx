@@ -1,50 +1,21 @@
 import { useState, useEffect } from 'react';
 import { hudBus } from '../hudBus';
-import type { PlayerBuff } from '@mmo-idle/shared';
+import type { PlayerBuff, BuffShape } from '@mmo-idle/shared';
 import '../hud/hud.css';
 
 const ICON_SIZE = 52;
 const SLOT_GAP  = 8;
 
-type BuffCategory =
-  | 'cadence'
-  | 'cooldown'
-  | 'energy'
-  | 'dot-poison'
-  | 'dot-fire'
-  | 'dot-frost'
-  | 'dot-frozen'
-  | 'weapon';
-
-function getBuffCategory(id: string): BuffCategory | null {
-  if (id.startsWith('cadence-'))  return 'cadence';
-  if (id.startsWith('cooldown-')) return 'cooldown';
-  if (id.startsWith('energy-'))   return 'energy';
-  if (id === 'dot-vigor')         return 'dot-poison';
-  if (id === 'dot-conflag')       return 'dot-fire';
-  if (id === 'dot-chill')         return 'dot-frost';
-  if (id === 'dot-frozen')        return 'dot-frozen';
-  if (id === 'sacred-burst')      return 'weapon';
-  return null;
-}
-
-function getIconShapeStyle(id: string): React.CSSProperties {
-  if (id === 'dot-vigor') {
-    return { borderRadius: '50%' };
-  }
-  if (id === 'dot-conflag') {
-    return { borderRadius: 2, clipPath: 'polygon(50% 2%, 98% 50%, 50% 98%, 2% 50%)' };
-  }
-  if (id === 'dot-frozen') {
-    return { borderRadius: 1 };
-  }
-  return {};
-}
+const SHAPE_STYLE: Record<BuffShape, React.CSSProperties> = {
+  'square':       {},
+  'circle':       { borderRadius: '50%' },
+  'diamond':      { borderRadius: 2, clipPath: 'polygon(50% 2%, 98% 50%, 50% 98%, 2% 50%)' },
+  'small-square': { borderRadius: 1 },
+};
 
 function BuffIcon({ buff }: { buff: PlayerBuff }) {
-  const category   = getBuffCategory(buff.id);
-  const shapeStyle = getIconShapeStyle(buff.id);
-  const catClass   = category ? `buff-icon buff-cat-${category}` : 'buff-icon';
+  const shapeStyle = SHAPE_STYLE[buff.shape];
+  const catClass   = buff.category === 'neutral' ? 'buff-icon' : `buff-icon buff-cat-${buff.category}`;
   const hasDuration = buff.durationPct >= 0;
 
   // Sweep overlay: darkened area sweeps clockwise from the top as the buff elapses.

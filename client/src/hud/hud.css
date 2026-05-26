@@ -166,6 +166,15 @@
   animation: reload-pulse 0.6s ease-in-out infinite alternate;
 }
 
+.ammo-bar-fill--heat {
+  background: linear-gradient(90deg, #ffbb33, #ff5533);
+}
+
+.ammo-bar-fill--overheated {
+  background: linear-gradient(90deg, #aa2233, #ff3344);
+  animation: reload-pulse 0.6s ease-in-out infinite alternate;
+}
+
 @keyframes reload-pulse {
   from { opacity: 0.4; filter: brightness(0.8); }
   to   { opacity: 1.0; filter: brightness(1.1); }
