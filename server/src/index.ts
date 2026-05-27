@@ -40,6 +40,7 @@ import { syncArchetypeSlices } from './ecs/archetypeSliceSync';
 import { recalculatePlayerEntityStats } from './ecs/playerEntityFormulas';
 import { markSliceDirty } from './ecs/dirtyHelpers';
 import { thawNode } from './world/nodeLifecycle';
+import { ensurePopulation, ensureBoss } from './systems/world/spawning';
 
 export { IS_DEV };
 
@@ -317,6 +318,21 @@ io.on('connection', (socket) => {
       if (!p) return;
       checkRecipeUnlocks(p);
       markSliceDirty(world, p, 'tracksProgression');
+    });
+
+    socket.on('debug:respawnNode', () => {
+      const p = world.getPlayerEntity(socket.id);
+      if (!p) return;
+
+      const nodeId = p.hasPosition.nodeId;
+      for (const m of [...world.monsterEntitiesInNode(nodeId)]) {
+        world.removeMonsterEntity(m.isMonster.id);
+      }
+      world.nextMonsterIdByNode.delete(nodeId);
+      ensurePopulation(world, nodeId);
+      ensureBoss(world, nodeId);
+      world.reconcileMonsterCounts();
+      world.resetNodeDeltaState(nodeId);
     });
 
     socket.on('debug:resetProgress', () => {

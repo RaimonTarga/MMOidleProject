@@ -19,12 +19,6 @@ export const characters = sqliteTable('characters', {
   updatedAt:         integer('updated_at').notNull().default(0),
 });
 
-export const nodeStates = sqliteTable('node_states', {
-  nodeId:       text('node_id').primaryKey(),
-  snapshotJson: text('snapshot_json').notNull(),
-  updatedAt:    integer('updated_at').notNull(),
-});
-
 export const spriteHitboxMeta = sqliteTable('sprite_hitbox_meta', {
   key:       text('key').primaryKey(),
   atlasHash: text('atlas_hash').notNull(),

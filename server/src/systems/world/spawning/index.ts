@@ -40,7 +40,7 @@ export function createMonster(
     return null;
   }
 
-  const id = `monster-${world.nextMonsterId++}`;
+  const id = world.allocMonsterId(nodeId);
 
   const isBoss = def.isBoss ?? false;
   const nodeDef = NODE_REGISTRY.get(nodeId);
