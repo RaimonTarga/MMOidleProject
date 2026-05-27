@@ -1,5 +1,6 @@
 import { EFFECT_BY_ID, EFFECT_DEFS, EFFECT_FRAME_COUNT, EFFECT_GRID, type Vec2 } from '@mmo-idle/shared';
 import type { GameScene } from '../scenes/GameScene';
+import { shouldRunClientFx } from './guard';
 
 export function initParticleTextures(scene: GameScene): void {
   const dotG = scene.make.graphics({ x: 0, y: 0 }, false);
@@ -42,6 +43,7 @@ export function burstFx(
   lifespan: number,
   config: Phaser.Types.GameObjects.Particles.ParticleEmitterConfig,
 ): void {
+  if (!shouldRunClientFx()) return;
   const emitter = scene.add.particles(x, y, texture, {
     ...config,
     lifespan,
@@ -54,6 +56,7 @@ export function burstFx(
 }
 
 export function playOneShotEffect(scene: GameScene, id: string, pos: Vec2, opts?: { scale?: number; depth?: number }): void {
+  if (!shouldRunClientFx()) return;
   const def = EFFECT_BY_ID.get(id);
   if (!def) return;
 
@@ -80,6 +83,7 @@ export function playOneShotEffect(scene: GameScene, id: string, pos: Vec2, opts?
 }
 
 export function spawnDamageNumber(scene: GameScene, pos: Vec2, barOffsetY: number, amount: number, color: string): void {
+  if (!shouldRunClientFx()) return;
   const jitter = (Math.random() - 0.5) * 18;
   const startY = pos.y - barOffsetY - 6;
   const text = scene.add

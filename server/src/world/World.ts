@@ -48,6 +48,9 @@ import {
   ensureTrainingDummies,
 } from "./testRoom";
 import { buildNodeDelta } from "./nodeDelta";
+import { NodeTelemetry, timeSync } from "../telemetry/nodeTelemetry";
+import { POPULATION_INTERVAL_MS } from "../telemetry/constants";
+import { freezeNode } from "./nodeLifecycle";
 
 export class World {
   readonly nodeId: string;
@@ -140,6 +143,15 @@ export class World {
   nextMonsterId = 1;
   tickCounter = 0;
   readonly dirty = new DirtyTracker();
+  readonly telemetry = new NodeTelemetry();
+  readonly playersByNode = new Map<string, number>();
+  readonly monstersByNode = new Map<string, number>();
+  readonly bossesByNode = new Map<string, number>();
+  readonly frozenNodes = new Set<string>();
+  private populationCheckedAt = new Map<string, number>();
+
+  /** Optional hook set by index.ts to emit node:preparing before cold thaw. */
+  nodePreparingEmitter: ((playerId: string, nodeId: string) => void) | null = null;
 
   readonly playerById = new Map<EntityId, PlayerEntity>();
   readonly monsterById = new Map<EntityId, MonsterEntity>();
@@ -175,10 +187,7 @@ export class World {
   private init() {
     for (const nodeId of NODE_REGISTRY.keys()) {
       if (nodeId === TEST_ROOM_NODE_ID) continue;
-      for (let i = 0; i < this.getMobDensity(nodeId); i++) {
-        this.spawnMonster(nodeId);
-      }
-      this.ensureBoss(nodeId);
+      this.frozenNodes.add(nodeId);
     }
 
     if (IS_DEV) initTestRoom(this);
@@ -210,8 +219,18 @@ export class World {
 
     for (const nodeId of NODE_REGISTRY.keys()) {
       if (nodeId === TEST_ROOM_NODE_ID) continue;
-      this.ensurePopulation(nodeId);
-      this.ensureBoss(nodeId);
+      if (this.isNodeFrozen(nodeId)) continue;
+      if (this.countPlayersInNode(nodeId) === 0) continue;
+
+      const last = this.populationCheckedAt.get(nodeId) ?? 0;
+      if (now - last < POPULATION_INTERVAL_MS) continue;
+      this.populationCheckedAt.set(nodeId, now);
+
+      const { ms } = timeSync(() => {
+        ensurePopulationInWorld(this, nodeId);
+        ensureBossInWorld(this, nodeId);
+      });
+      this.telemetry.recordPopulationMs(nodeId, ms, true);
     }
   }
 
@@ -325,6 +344,29 @@ export class World {
     return events;
   }
 
+  clearNodeEvents(nodeId: string): void {
+    this.nodeEvents.delete(nodeId);
+  }
+
+  adjustMonsterCount(nodeId: string, delta: number, isBoss: boolean): void {
+    const map = isBoss ? this.bossesByNode : this.monstersByNode;
+    const next = (map.get(nodeId) ?? 0) + delta;
+    if (next <= 0) map.delete(nodeId);
+    else map.set(nodeId, next);
+  }
+
+  getMonsterCountInNode(nodeId: string): number {
+    return this.monstersByNode.get(nodeId) ?? 0;
+  }
+
+  getBossCountInNode(nodeId: string): number {
+    return this.bossesByNode.get(nodeId) ?? 0;
+  }
+
+  isNodeFrozen(nodeId: string): boolean {
+    return this.frozenNodes.has(nodeId);
+  }
+
   // ── NETWORK DELTA ──────────────────────────────────
 
   beginBroadcast(): DirtyDrain {
@@ -346,7 +388,61 @@ export class World {
     dirty: DirtyDrain,
     opts: { resync?: boolean } = {},
   ): DeltaSnapshot {
+    return buildNodeDelta(this, nodeId, dirty, opts).snapshot;
+  }
+
+  buildNodeDeltaWithStats(
+    nodeId: string,
+    dirty: DirtyDrain,
+    opts: { resync?: boolean } = {},
+  ) {
     return buildNodeDelta(this, nodeId, dirty, opts);
+  }
+
+  countPlayersInNode(nodeId: string): number {
+    return this.playersByNode.get(nodeId) ?? 0;
+  }
+
+  incrementPlayersInNode(nodeId: string): void {
+    this.playersByNode.set(nodeId, (this.playersByNode.get(nodeId) ?? 0) + 1);
+  }
+
+  decrementPlayersInNode(nodeId: string): void {
+    const next = (this.playersByNode.get(nodeId) ?? 0) - 1;
+    if (next <= 0) this.playersByNode.delete(nodeId);
+    else this.playersByNode.set(nodeId, next);
+  }
+
+  movePlayerNode(fromNodeId: string, toNodeId: string): void {
+    const fromBefore = this.countPlayersInNode(fromNodeId);
+    this.decrementPlayersInNode(fromNodeId);
+    if (fromBefore === 1) freezeNode(this, fromNodeId);
+
+    this.incrementPlayersInNode(toNodeId);
+  }
+
+  syncTelemetryOccupancy(): void {
+    const playerCounts = new Map<string, number>();
+    for (const nodeId of NODE_REGISTRY.keys()) {
+      playerCounts.set(nodeId, 0);
+    }
+    for (const p of this.playerEntities) {
+      const nodeId = p.hasPosition.nodeId;
+      playerCounts.set(nodeId, (playerCounts.get(nodeId) ?? 0) + 1);
+    }
+
+    for (const nodeId of NODE_REGISTRY.keys()) {
+      const players = playerCounts.get(nodeId) ?? 0;
+      const monsters = this.getMonsterCountInNode(nodeId);
+      const bosses = this.getBossCountInNode(nodeId);
+      this.telemetry.syncOccupancy(nodeId, players, monsters, bosses);
+      this.telemetry.syncFrozen(nodeId, this.isNodeFrozen(nodeId));
+    }
+
+    this.playersByNode.clear();
+    for (const p of this.playerEntities) {
+      this.incrementPlayersInNode(p.hasPosition.nodeId);
+    }
   }
 
   // ── UTIL ────────────────────────────────────────────

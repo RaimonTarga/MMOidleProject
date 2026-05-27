@@ -6,6 +6,7 @@ import type {
   EvadesHits,
   HasAwareness,
   HasHealth,
+  HasHitbox,
   HasKnockback,
   HasDetonation,
   HasHemorrhage,
@@ -78,6 +79,7 @@ export interface ServerEntity {
 
   // Shared by players and monsters
   hasPosition?:     HasPosition;
+  hasHitbox?:       HasHitbox;
   isMoving?:        IsMoving;
   hasAttackTarget?: HasAttackTarget;
   hasHealth?:       HasHealth;

@@ -15,6 +15,20 @@
       "when": 1779659520000,
       "tag": "0001_slice_blobs",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1779660000000,
+      "tag": "0002_sprite_hitboxes",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1779661000000,
+      "tag": "0003_node_states",
+      "breakpoints": true
     }
   ]
 }

@@ -8,6 +8,8 @@ import { BuffBar } from './hud/BuffBar';
 import { AutoCombatButton } from './hud/AutoCombatButton';
 import { MobileHUD } from './hud/MobileHUD';
 import { RecipeToastLayer } from './hud/RecipeToastLayer';
+import { NodeLoadingOverlay } from './hud/NodeLoadingOverlay';
+import { TabResyncOverlay } from './hud/TabResyncOverlay';
 
 function blockMouseHistoryButtons(event: Event) {
   if (!(event instanceof MouseEvent)) return;
@@ -30,10 +32,25 @@ const config: Phaser.Types.Core.GameConfig = {
     mode: Phaser.Scale.RESIZE,
     autoCenter: Phaser.Scale.CENTER_BOTH,
   },
+  input: { gamepad: true },
   scene: [GameScene],
 };
 
-new Phaser.Game(config);
+const game = new Phaser.Game(config);
+
+// Phaser's default behavior pauses the entire game loop on `window.blur`. That
+// fires whenever the canvas loses keyboard focus — including when the user
+// clicks any React HUD button outside the canvas (auto combat, inventory, map,
+// etc.). When the loop pauses, stepInterpolation stops running so the player's
+// rendered position freezes; once the canvas regains focus on the next click /
+// keypress the loop resumes and the sprite snaps to its caught-up server
+// target, producing visible rubber-banding. We only want the loop to pause on
+// genuine tab visibility changes (handled separately in guard.ts), so detach
+// the BLUR/FOCUS handlers Phaser auto-wires during boot.
+game.events.once(Phaser.Core.Events.READY, () => {
+  game.events.off(Phaser.Core.Events.BLUR);
+  game.events.off(Phaser.Core.Events.FOCUS);
+});
 
 createRoot(document.getElementById('left-sidebar')!).render(createElement(LeftSidebar));
 createRoot(document.getElementById('right-sidebar')!).render(createElement(RightSidebar));
@@ -41,3 +58,5 @@ createRoot(document.getElementById('buff-overlay')!).render(createElement(BuffBa
 createRoot(document.getElementById('auto-btn-overlay')!).render(createElement(AutoCombatButton));
 createRoot(document.getElementById('mobile-hud')!).render(createElement(MobileHUD));
 createRoot(document.getElementById('toast-overlay')!).render(createElement(RecipeToastLayer));
+createRoot(document.getElementById('node-loading-overlay')!).render(createElement(NodeLoadingOverlay));
+createRoot(document.getElementById('tab-resync-overlay')!).render(createElement(TabResyncOverlay));

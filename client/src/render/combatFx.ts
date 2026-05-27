@@ -15,6 +15,7 @@ import { fxMagic } from '../fx/magic';
 import { fxFrost } from '../fx/frost';
 import { fxFire } from '../fx/fire';
 import { fxVoid } from '../fx/voidFx';
+import { shouldRunClientFx } from '../fx/guard';
 import type { GameScene } from '../scenes/GameScene';
 import { applyLunge } from './interpolation';
 import type { RenderState } from './state';
@@ -78,11 +79,14 @@ function snapOwnPlayerToServerTarget(
 
   scene.flashCameraHold = scene.flashCameraHoldTargetId === targetId;
   scene.flashCameraHoldTargetId = targetId;
-  interp.base = playerPos ? { ...playerPos } : { ...transform.target };
-  sprite.setPosition(
-    interp.base.x + interp.lungeOffset.x,
-    interp.base.y + interp.lungeOffset.y,
-  );
+  scene.tweens.killTweensOf(interp.lungeOffset);
+  interp.lungeOffset.x = 0;
+  interp.lungeOffset.y = 0;
+  if (playerPos) {
+    interp.base.x = playerPos.x;
+    interp.base.y = playerPos.y;
+    transform.target = { ...playerPos };
+  }
 }
 
 function fxAoeRing(scene: GameScene, pos: Vec2, radius: number, color: number): void {
@@ -141,6 +145,7 @@ const ATTACK_FX_BY_STYLE: Record<string, AttackFxFn> = {
 
 export function dispatchCombatEvent(state: RenderState, ev: CombatEvent, scene: GameScene): void {
   if (ev.kind === 'monster-dodge') {
+    if (!shouldRunClientFx()) return;
     const target = ev.targetPos ?? (state.sprite.get(ev.monsterId)
       ? { x: state.sprite.get(ev.monsterId)!.x, y: state.sprite.get(ev.monsterId)!.y }
       : null);
@@ -163,12 +168,12 @@ export function dispatchCombatEvent(state: RenderState, ev: CombatEvent, scene: 
     combatLog.push('damage-out', `${ev.targetName} -${ev.damage}`);
     if (ev.empowered) combatLog.push('empowered', `Empowered strike -> ${ev.targetName}`);
     if (ev.execution) combatLog.push('execution', `Execution strike -> ${ev.targetName}`);
-    runFxForAttackStyle(state, ev, scene);
+    if (shouldRunClientFx()) runFxForAttackStyle(state, ev, scene);
   }
 
   if (ev.kind === 'player-kill') {
     combatLog.push('kill', `${ev.targetName} defeated`);
-    spawnRewardFloaters(scene, ev);
+    if (shouldRunClientFx()) spawnRewardFloaters(scene, ev);
   }
 }
 
@@ -223,7 +228,7 @@ function runFxForAttackStyle(
     playOneShotEffect(scene, effectId, to, { scale: targetEffectScale });
   }
 
-  if (!isLaser && player.attackRange <= 150 && state.ownId && targetInterp) {
+  if (!isLaser && !isFlashTeleport && player.attackRange <= 150 && state.ownId && targetInterp) {
     applyLunge(state, state.ownId, { ...targetInterp.base }, scene);
   }
 }
@@ -241,6 +246,7 @@ export function spawnAttackEffect(
     dotPath?: DotPath;
   },
 ): void {
+  if (!shouldRunClientFx()) return;
   const ev: PlayerHitEvent = {
     kind: 'player-hit',
     playerId: scene.myId,

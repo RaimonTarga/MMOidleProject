@@ -1,6 +1,8 @@
 import type { GameScene } from './GameScene';
+import { shouldRunClientFx } from '../../fx/guard';
 
 export function showDeathOverlay(scene: GameScene): void {
+  if (!shouldRunClientFx()) return;
   const w = scene.scale.width;
   const h = scene.scale.height;
 
@@ -41,6 +43,7 @@ export function showDeathOverlay(scene: GameScene): void {
 }
 
 export function showAscensionOverlay(scene: GameScene, tier: number): void {
+  if (!shouldRunClientFx()) return;
   const messages: Record<number, string> = {
     1: 'Humble beginnings. Your path is chosen.',
     2: 'A style takes shape. You learn to fight on your terms.',

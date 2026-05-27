@@ -1,5 +1,6 @@
 import type { World } from '../../../../../../../world/World';
 import type { MonsterEntity, PlayerEntity } from '../../../../../../../ecs/entity';
+import { hitboxGap, inAttackRange, posHitboxFromEntity } from '@mmo-idle/shared';
 import { setAttackTarget } from '../../../../../../combat/ai/targeting';
 import { grantMonsterRewards } from '../../../../../../player/progression/rewards';
 import { endChannel } from '../../core/helpers';
@@ -84,16 +85,18 @@ export function updateChanneledBeam(world: World, dt: number): void {
 /** Nearest monster within attack range on the player's node, excluding one ID. */
 function findBeamTarget(world: World, player: PlayerEntity, excludeId?: string): MonsterEntity | undefined {
   let best: MonsterEntity | undefined;
-  let bestDist = Infinity;
+  let bestGap = Infinity;
+  const playerPH = posHitboxFromEntity(player);
+  const attackRange = player.performsAttack.attackRange;
 
   for (const entity of world.monsterEntitiesInNode(player.hasPosition.nodeId)) {
     if (excludeId && entity.isMonster.id === excludeId) continue;
-    const dx   = entity.hasPosition.current.x - player.hasPosition.current.x;
-    const dy   = entity.hasPosition.current.y - player.hasPosition.current.y;
-    const dist = Math.sqrt(dx * dx + dy * dy);
-    if (dist <= player.performsAttack.attackRange && dist < bestDist) {
-      bestDist = dist;
-      best     = entity;
+    const monsterPH = posHitboxFromEntity(entity);
+    if (!inAttackRange(playerPH, monsterPH, attackRange)) continue;
+    const gap = hitboxGap(playerPH, monsterPH);
+    if (gap < bestGap) {
+      bestGap = gap;
+      best = entity;
     }
   }
   return best;

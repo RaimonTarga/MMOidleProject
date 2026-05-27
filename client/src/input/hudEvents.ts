@@ -1,4 +1,5 @@
 import { setAutoPath } from "../hud/atoms";
+import { hudBus } from "../hudBus";
 import { intents } from "../intents";
 import {
   sendCraftRecipe,
@@ -34,12 +35,9 @@ export function attachHudEvents(scene: GameScene): void {
     sendCraftRecipe(scene.socket, recipeId);
   });
 
-  intents.on("debugPlayerRange", () => {
-    scene.debugPlayerRange = !scene.debugPlayerRange;
-  });
-
-  intents.on("debugEnemyRanges", () => {
-    scene.debugEnemyRanges = !scene.debugEnemyRanges;
+  intents.on("tacticalView", () => {
+    scene.tacticalMode = !scene.tacticalMode;
+    hudBus.notifyTacticalView(scene.tacticalMode);
   });
 
   intents.on("navigateTo", ({ path }) => {

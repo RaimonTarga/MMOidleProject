@@ -7,7 +7,7 @@ export const bossMonsterEntriesT4 = [
     isBoss: true,
     stats: {
       hp: 7500, attack: 170, plating: 65, damageReduction: 0.20,
-      speed: 12, attackRange: 80, attackCooldown: 5200, pullRange: 400,
+      speed: 12, attackRange: 20, attackCooldown: 5200, pullRange: 400,
     },
     behavior: 'melee', attackStyle: 'impact', biome: 'mountain',
     rewards: { essence: 600, essenceType: 'blue', level: 5 },
@@ -20,7 +20,7 @@ export const bossMonsterEntriesT4 = [
     isBoss: true,
     stats: {
       hp: 2200, attack: 68, plating: 20, damageReduction: 0.12,
-      speed: 26, attackRange: 80, attackCooldown: 2800, pullRange: 320,
+      speed: 26, attackRange: 20, attackCooldown: 2800, pullRange: 320,
     },
     behavior: 'melee', attackStyle: 'fire', biome: 'volcanic',
     rewards: { essence: 120, essenceType: 'red', level: 5 },
@@ -59,7 +59,7 @@ export const bossMonsterEntriesT4 = [
     isBoss: true,
     stats: {
       hp: 6500, attack: 175, plating: 52, damageReduction: 0.18,
-      speed: 68, attackRange: 80, attackCooldown: 2800, pullRange: 380,
+      speed: 68, attackRange: 20, attackCooldown: 2800, pullRange: 380,
     },
     behavior: 'melee', attackStyle: 'impact', biome: 'plains',
     rewards: { essence: 550, essenceType: 'yellow', level: 5 },
@@ -85,7 +85,7 @@ export const bossMonsterEntriesT4 = [
     isBoss: true,
     stats: {
       hp: 6800, attack: 172, plating: 55, damageReduction: 0.18,
-      speed: 76, attackRange: 82, attackCooldown: 3000, pullRange: 390,
+      speed: 76, attackRange: 20, attackCooldown: 3000, pullRange: 390,
     },
     behavior: 'melee', attackStyle: 'slash', biome: 'jungle',
     rewards: { essence: 560, essenceType: 'green', level: 5 },
@@ -124,7 +124,7 @@ export const bossMonsterEntriesT4 = [
     isBoss: true,
     stats: {
       hp: 8500, attack: 162, plating: 70, damageReduction: 0.22,
-      speed: 14, attackRange: 90, attackCooldown: 5500, pullRange: 370,
+      speed: 14, attackRange: 22, attackCooldown: 5500, pullRange: 370,
     },
     behavior: 'melee', attackStyle: 'impact', biome: 'cave',
     rewards: { essence: 610, essenceType: 'red', level: 5 },

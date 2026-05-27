@@ -1,0 +1,41 @@
+.node-loading-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(5, 5, 16, 0.82);
+  pointer-events: all;
+}
+
+.node-loading-overlay__panel {
+  min-width: 220px;
+  padding: 24px 32px;
+  border: 1px solid rgba(132, 112, 235, 0.45);
+  border-radius: 8px;
+  background: rgba(12, 10, 28, 0.95);
+  text-align: center;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+}
+
+.node-loading-overlay__title {
+  font-family: system-ui, sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #c8b8ff;
+}
+
+.node-loading-overlay__subtitle {
+  margin-top: 8px;
+  font-family: system-ui, sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  color: #f0eeff;
+}
+
+.tab-resync-overlay {
+  z-index: 9999;
+}

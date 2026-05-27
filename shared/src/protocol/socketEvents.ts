@@ -1,5 +1,6 @@
 import type { EquipmentSlot } from '../items';
 import type { DeltaSnapshot } from './delta';
+import type { NodeTelemetrySnapshot } from './nodeTelemetry';
 import type { Vec2 } from '../systems/spatial';
 
 /** Events the server sends to clients */
@@ -14,6 +15,10 @@ export interface ServerToClientEvents {
   'player:died': () => void;
   /** Sent when a player unlocks a skill and advances to the next tier. */
   'player:ascended': (tier: number) => void;
+  /** Per-node server telemetry snapshot (CPU, memory proxies, leak heuristics). */
+  'world:telemetry': (snapshot: NodeTelemetrySnapshot) => void;
+  /** Sent before a cold-start thaw of a frozen node (loading overlay on client). */
+  'node:preparing': (payload: { nodeId: string }) => void;
 }
 
 /** Events clients send to the server */

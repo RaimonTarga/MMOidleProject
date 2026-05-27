@@ -1,6 +1,12 @@
 import type { World } from '../../../world/World';
 import type { MonsterEntity } from '../../../ecs/entity';
-import { distanceSq, type Vec2 } from '@mmo-idle/shared';
+import {
+  distanceSq,
+  hitboxGap,
+  inAttackRange,
+  posHitboxFromEntity,
+  type Vec2,
+} from '@mmo-idle/shared';
 import { NODE_REGISTRY } from '../../../world/nodeRegistry';
 import { setEntityMotion, stopEntity } from '../../world/movement';
 
@@ -41,11 +47,6 @@ export function updateAutoTargets(world: World) {
     const playerPos = player.hasPosition.current;
     const monsters = world.monsterEntitiesInNode(player.hasPosition.nodeId);
 
-    // ── Target selection ──────────────────────────────────────────────────
-    // Priority 1: nearest monster with active aggro on this player.
-    //   These are actively threatening us and the ones we're already trading
-    //   hits with — always engage the thing hunting you first.
-    // Priority 2: nearest monster in the node.
     let target: MonsterEntity | null = null;
     let targetIsAggroed = false;
     let bestDist = Infinity;
@@ -69,55 +70,52 @@ export function updateAutoTargets(world: World) {
     if (!target) continue;
 
     const targetPos = target.hasPosition.current;
-    const dx     = targetPos.x - playerPos.x;
-    const dy     = targetPos.y - playerPos.y;
-    const distSqV = distanceSq(targetPos, playerPos);
-    const dist   = Math.sqrt(distSqV);
+    const dx = targetPos.x - playerPos.x;
+    const dy = targetPos.y - playerPos.y;
+    const dist = Math.hypot(dx, dy);
     const attackRange = player.performsAttack.attackRange;
-
-    // ── Movement decision ─────────────────────────────────────────────────
+    const playerPH = posHitboxFromEntity(player);
+    const targetPH = posHitboxFromEntity(target);
+    const gap = hitboxGap(playerPH, targetPH);
 
     if (isRangedAutoPlayer(player) && dist > 0) {
-      const minSafeDist = Math.min(attackRange * 0.82, target.performsAttack.attackRange + 45);
-      const idealDist   = Math.max(minSafeDist + 20, attackRange * 0.72);
-      const maxFireDist = attackRange * 0.92;
+      const minSafeGap = Math.min(attackRange * 0.82, target.performsAttack.attackRange + 45);
+      const idealGap   = Math.max(minSafeGap + 20, attackRange * 0.72);
+      const maxFireGap = attackRange * 0.92;
 
-      if (dist < minSafeDist) {
+      if (gap < minSafeGap) {
         const candidate: Vec2 = {
-          x: targetPos.x - (dx / dist) * idealDist,
-          y: targetPos.y - (dy / dist) * idealDist,
+          x: targetPos.x - (dx / dist) * (idealGap + 32),
+          y: targetPos.y - (dy / dist) * (idealGap + 32),
         };
         setEntityMotion(world, player, clampToNode(world, player.hasPosition.nodeId, candidate));
         continue;
       }
 
-      if (dist <= maxFireDist) {
+      if (inAttackRange(playerPH, targetPH, attackRange) && gap <= maxFireGap) {
         stopEntity(world, player);
         continue;
       }
 
       const candidate: Vec2 = {
-        x: targetPos.x - (dx / dist) * idealDist,
-        y: targetPos.y - (dy / dist) * idealDist,
+        x: targetPos.x - (dx / dist) * (idealGap + 32),
+        y: targetPos.y - (dy / dist) * (idealGap + 32),
       };
       setEntityMotion(world, player, clampToNode(world, player.hasPosition.nodeId, candidate));
       continue;
     }
 
-    // Within attack range — hold position, no need to step closer.
-    if (distSqV <= attackRange * attackRange) {
+    if (inAttackRange(playerPH, targetPH, attackRange)) {
       stopEntity(world, player);
       continue;
     }
 
-    // Outside attack range — always advance toward the target.
-    // Stop at 75% of attack range so minor monster movement doesn't
-    // immediately push the player back out of range.
-    const stopDist = attackRange * 0.75;
-    const targetPoint: Vec2 = {
-      x: targetPos.x - (dx / dist) * stopDist,
-      y: targetPos.y - (dy / dist) * stopDist,
-    };
-    setEntityMotion(world, player, targetPoint);
+    if (dist > 0) {
+      const targetPoint: Vec2 = {
+        x: targetPos.x - (dx / dist) * Math.max(8, dist - 8),
+        y: targetPos.y - (dy / dist) * Math.max(8, dist - 8),
+      };
+      setEntityMotion(world, player, targetPoint);
+    }
   }
 }

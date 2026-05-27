@@ -16,6 +16,8 @@ import { syncArchetypeSlices } from '../../../ecs/archetypeSliceSync';
 import { detachComponent } from '../../../ecs/markerHelpers';
 import { stopEntity } from '../movement';
 import { setAggroTarget, setAttackTarget } from '../../combat/ai/targeting';
+import { resolveMonsterHitbox } from '../../../hitbox/resolve';
+import { thawNode } from '../../../world/nodeLifecycle';
 
 // Regular monsters in dungeon nodes are scaled up; boss stats come from the database directly.
 const DUNGEON_HP_MULT  = 2.0;
@@ -102,6 +104,7 @@ export function createMonster(
       chargeRemainingMs: 0,
     },
     tracksCombat: makeTracksCombat(),
+    hasHitbox: resolveMonsterHitbox(typeId, isBoss),
   };
   world.ecs.add(entity);
 
@@ -109,6 +112,7 @@ export function createMonster(
     world.ecs.addComponent(entity, 'scriptsBoss', initScriptsBoss(def.bossScript));
   }
 
+  world.adjustMonsterCount(nodeId, 1, isBoss);
   return entity;
 }
 
@@ -162,7 +166,14 @@ export function respawnPlayer(world: World, playerId: string): void {
     y: GAME_CONFIG.NODE_HEIGHT / 2,
   };
 
+  const fromNodeId = entity.hasPosition.nodeId;
+  if (world.isNodeFrozen('node-5-5')) {
+    thawNode(world, 'node-5-5');
+  }
   entity.hasPosition.nodeId = 'node-5-5';
+  if (fromNodeId !== 'node-5-5') {
+    world.movePlayerNode(fromNodeId, 'node-5-5');
+  }
   entity.hasPosition.current = spawn;
   // Force the next node:delta for the clearing to be a full snapshot so the
   // respawning client clears render state from the node where they died.
@@ -195,16 +206,14 @@ export function respawnPlayer(world: World, playerId: string): void {
   world.pendingDeaths.push(playerId);
 }
 
-export function ensurePopulation(world: World, nodeId: string): void {
-  let count = 0;
-  for (const e of world.monsterEntities) {
-    if (e.hasPosition.nodeId === nodeId && !e.isMonster.isBoss) count++;
-  }
+export function ensurePopulation(world: World, nodeId: string): number {
+  let count = world.getMonsterCountInNode(nodeId);
   const targetCount = world.getMobDensity(nodeId);
   while (count < targetCount) {
     if (!spawnMonster(world, nodeId)) break;
     count++;
   }
+  return 0;
 }
 
 /**
@@ -217,11 +226,7 @@ export function ensureBoss(world: World, nodeId: string): void {
   const respawnAt = world.bossRespawnAt.get(nodeId) ?? 0;
   if (Date.now() < respawnAt) return;
 
-  let hasBoss = false;
-  for (const e of world.monsterEntities) {
-    if (e.hasPosition.nodeId === nodeId && e.isMonster.isBoss) { hasBoss = true; break; }
-  }
-  if (hasBoss) return;
+  if (world.getBossCountInNode(nodeId) > 0) return;
 
   const biome = BIOME_DATABASE.get(nodeDef.biomeGroup);
   const pool  = biome?.bossPoolByTier?.[nodeDef.biomeTier];

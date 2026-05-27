@@ -14,7 +14,7 @@ export const bossMonsterEntriesT1T2 = [
     isBoss: true,
     stats: {
       hp: 520, attack: 18, plating: 2, damageReduction: 0.02,
-      speed: 50, attackRange: 65, attackCooldown: 2200, pullRange: 280,
+      speed: 50, attackRange: 15, attackCooldown: 2200, pullRange: 280,
     },
     behavior: 'melee', attackStyle: 'impact', biome: 'plains',
     rewards: { essence: 100, essenceType: 'yellow', level: 5, biomeXp: 150 },
@@ -26,7 +26,7 @@ export const bossMonsterEntriesT1T2 = [
     isBoss: true,
     stats: {
       hp: 450, attack: 22, plating: 0, damageReduction: 0,
-      speed: 52, attackRange: 68, attackCooldown: 2000, pullRange: 300,
+      speed: 52, attackRange: 15, attackCooldown: 2000, pullRange: 300,
     },
     behavior: 'melee', attackStyle: 'slash', biome: 'forest',
     rewards: { essence: 100, essenceType: 'green', level: 5, biomeXp: 150 },
@@ -38,7 +38,7 @@ export const bossMonsterEntriesT1T2 = [
     isBoss: true,
     stats: {
       hp: 500, attack: 16, plating: 4, damageReduction: 0.04,
-      speed: 28, attackRange: 68, attackCooldown: 2800, pullRange: 260,
+      speed: 28, attackRange: 15, attackCooldown: 2800, pullRange: 260,
     },
     behavior: 'melee', attackStyle: 'poison', biome: 'swamp',
     rewards: { essence: 100, essenceType: 'purple', level: 5, biomeXp: 150 },
@@ -51,7 +51,7 @@ export const bossMonsterEntriesT1T2 = [
     isBoss: true,
     stats: {
       hp: 650, attack: 22, plating: 7, damageReduction: 0.04,
-      speed: 18, attackRange: 65, attackCooldown: 3200, pullRange: 240,
+      speed: 18, attackRange: 15, attackCooldown: 3200, pullRange: 240,
     },
     behavior: 'melee', attackStyle: 'impact', biome: 'cave',
     rewards: { essence: 110, essenceType: 'red', level: 5, biomeXp: 165 },
@@ -63,7 +63,7 @@ export const bossMonsterEntriesT1T2 = [
     isBoss: true,
     stats: {
       hp: 480, attack: 20, plating: 0, damageReduction: 0,
-      speed: 58, attackRange: 68, attackCooldown: 1800, pullRange: 280,
+      speed: 58, attackRange: 15, attackCooldown: 1800, pullRange: 280,
     },
     behavior: 'melee', attackStyle: 'slash', biome: 'mountain',
     rewards: { essence: 105, essenceType: 'blue', level: 5, biomeXp: 158 },
@@ -88,7 +88,7 @@ export const bossMonsterEntriesT1T2 = [
     isBoss: true,
     stats: {
       hp: 2100, attack: 58, plating: 22, damageReduction: 0.09,
-      speed: 30, attackRange: 68, attackCooldown: 3000, pullRange: 300,
+      speed: 30, attackRange: 15, attackCooldown: 3000, pullRange: 300,
     },
     behavior: 'melee', attackStyle: 'poison', biome: 'swamp',
     rewards: { essence: 155, essenceType: 'purple', level: 5, biomeXp: 232 },
@@ -127,7 +127,7 @@ export const bossMonsterEntriesT1T2 = [
     isBoss: true,
     stats: {
       hp: 2000, attack: 64, plating: 20, damageReduction: 0.08,
-      speed: 46, attackRange: 70, attackCooldown: 2700, pullRange: 320,
+      speed: 46, attackRange: 15, attackCooldown: 2700, pullRange: 320,
     },
     behavior: 'melee', attackStyle: 'impact', biome: 'plains',
     rewards: { essence: 150, essenceType: 'yellow', level: 5, biomeXp: 225 },
@@ -165,7 +165,7 @@ export const bossMonsterEntriesT1T2 = [
     isBoss: true,
     stats: {
       hp: 2600, attack: 55, plating: 28, damageReduction: 0.10,
-      speed: 18, attackRange: 90, attackCooldown: 3600, pullRange: 280,
+      speed: 18, attackRange: 22, attackCooldown: 3600, pullRange: 280,
     },
     behavior: 'melee', attackStyle: 'frost', biome: 'tundra',
     rewards: { essence: 140, essenceType: 'blue', level: 5, biomeXp: 210 },

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useAtomValue } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 import { hudBus } from "../hudBus";
 import { SkillTreePanel } from "../ui/SkillTreePanel";
 import { InventoryPanel } from "../ui/InventoryPanel";
@@ -7,28 +7,41 @@ import { CraftingPanel } from "../ui/CraftingPanel";
 import { MapPanel } from "../ui/MapPanel";
 import { EssencePanel } from "./EssencePanel";
 import { QuestPanel } from "../ui/QuestPanel";
+import { SettingsPanel } from "./settings/SettingsPanel";
+import { QuestOverlay } from "./quest/QuestOverlay";
 import { SKILL_TREE, NODE_BIOMES, BIOME_DATABASE } from "@mmo-idle/shared";
 import {
+  craftTabAtom,
   equipmentAtom,
   inventoryAtom,
+  inventoryOpenAtom,
+  mapHighlightNodesAtom,
+  mapOpenAtom,
   playerNodeIdAtom,
   selectedClassAtom,
+  settingsOpenAtom,
   skillPointsAtom,
+  skillTreeOpenAtom,
 } from "./atoms";
 import "./hud.css";
 
 export function RightSidebar() {
-  const [treeOpen, setTreeOpen] = useState(false);
-  const [invOpen, setInvOpen] = useState(false);
-  const [craftTab, setCraftTab] = useState<"biome" | "forge" | null>(null);
-  const [mapOpen, setMapOpen] = useState(false);
-  const [mapHighlightNodes, setMapHighlightNodes] = useState<string[]>([]);
-  const [dbgPlayer, setDbgPlayer] = useState(false);
-  const [dbgEnemy, setDbgEnemy] = useState(false);
+  const [treeOpen, setTreeOpen] = useAtom(skillTreeOpenAtom);
+  const [invOpen, setInvOpen] = useAtom(inventoryOpenAtom);
+  const [craftTab, setCraftTab] = useAtom(craftTabAtom);
+  const [mapOpen, setMapOpen] = useAtom(mapOpenAtom);
+  const [mapHighlightNodes, setMapHighlightNodes] = useAtom(mapHighlightNodesAtom);
+  const [settingsOpen, setSettingsOpen] = useAtom(settingsOpenAtom);
+  const [tacticalMode, setTacticalMode] = useState(false);
   const [forgeBadge, setForgeBadge] = useState(0);
 
   useEffect(
     () => hudBus.subscribeRecipeUnlock(() => setForgeBadge((n) => n + 1)),
+    [],
+  );
+
+  useEffect(
+    () => hudBus.subscribeTacticalView(setTacticalMode),
     [],
   );
 
@@ -52,7 +65,6 @@ export function RightSidebar() {
 
   return (
     <div className="sidebar sidebar-right">
-      {/* Quest / Tier panel — always visible */}
       <QuestPanel
         onFindDungeon={(nodeIds) => {
           setMapHighlightNodes(nodeIds);
@@ -60,7 +72,6 @@ export function RightSidebar() {
         }}
       />
 
-      {/* Passive Tree panel */}
       <div className="sidebar-panel">
         <div className="panel-title">Passive Tree</div>
 
@@ -97,10 +108,8 @@ export function RightSidebar() {
         )}
       </div>
 
-      {/* Essence panel */}
       <EssencePanel />
 
-      {/* Inventory panel */}
       <div className="sidebar-panel">
         <div className="panel-title">Inventory</div>
 
@@ -134,7 +143,6 @@ export function RightSidebar() {
         )}
       </div>
 
-      {/* Crafting panel */}
       <div className="sidebar-panel">
         <div className="panel-title">Crafting</div>
 
@@ -171,7 +179,6 @@ export function RightSidebar() {
         </button>
       </div>
 
-      {/* Map panel */}
       <div className="sidebar-panel">
         <div className="panel-title">Map</div>
 
@@ -192,31 +199,25 @@ export function RightSidebar() {
         )}
       </div>
 
-      {/* Debug panel */}
       <div className="sidebar-panel">
-        <div className="panel-title">Debug</div>
+        <div className="panel-title">Settings</div>
         <button
-          className={`auto-btn${dbgPlayer ? " active" : ""}`}
-          onClick={() => {
-            setDbgPlayer((v) => !v);
-            hudBus.toggleDebugPlayerRange();
-          }}
+          className={`auto-btn${settingsOpen ? " active" : ""}`}
+          onClick={() => setSettingsOpen((v) => !v)}
         >
-          {dbgPlayer ? "HIDE MY RANGE" : "SHOW MY RANGE"}
-        </button>
-        <button
-          className={`auto-btn${dbgEnemy ? " active" : ""}`}
-          style={{ marginTop: 4 }}
-          onClick={() => {
-            setDbgEnemy((v) => !v);
-            hudBus.toggleDebugEnemyRanges();
-          }}
-        >
-          {dbgEnemy ? "HIDE ENEMY RANGES" : "SHOW ENEMY RANGES"}
+          {settingsOpen ? "CLOSE SETTINGS" : "OPEN SETTINGS"}
         </button>
       </div>
 
-      {/* Overlays — rendered via portal in document.body */}
+      <div className="sidebar-panel">
+        <button
+          className={`auto-btn${tacticalMode ? " active" : ""}`}
+          onClick={() => hudBus.toggleTacticalView()}
+        >
+          {tacticalMode ? "HIDE TACTICAL MODE" : "TACTICAL MODE"}
+        </button>
+      </div>
+
       {treeOpen && <SkillTreePanel onClose={() => setTreeOpen(false)} />}
       {invOpen && <InventoryPanel onClose={() => setInvOpen(false)} />}
       {craftTab !== null && (
@@ -236,6 +237,8 @@ export function RightSidebar() {
           }}
         />
       )}
+      {settingsOpen && <SettingsPanel onClose={() => setSettingsOpen(false)} />}
+      <QuestOverlay />
     </div>
   );
 }

@@ -2,6 +2,8 @@ import { GAME_CONFIG, makeTracksCombat } from "@mmo-idle/shared";
 import type { World } from "./World";
 import type { PlayerEntity } from "../ecs/entity";
 import type { PersistedPlayerSlices } from "../db/playerRepo";
+import { resolvePlayerHitbox } from "../hitbox/resolve";
+import { freezeNode } from "./nodeLifecycle";
 
 /**
  * Attach hydrated player slices to the ECS world with fresh combat tracking.
@@ -52,13 +54,21 @@ export function attachPlayerEntity(
       sacredBuffPct:    0,
     },
   };
+  entity.hasHitbox = resolvePlayerHitbox(entity);
   world.ecs.add(entity);
+  world.incrementPlayersInNode(entity.hasPosition.nodeId);
   return entity;
 }
 
 export function detachPlayerEntity(world: World, playerId: string): void {
   const e = getPlayerEntity(world, playerId);
-  if (e) world.ecs.remove(e);
+  if (e) {
+    const nodeId = e.hasPosition.nodeId;
+    const before = world.countPlayersInNode(nodeId);
+    world.decrementPlayersInNode(nodeId);
+    world.ecs.remove(e);
+    if (before === 1) freezeNode(world, nodeId);
+  }
 }
 
 /** O(1) typed lookup. Backed by world.playerById, populated via onEntityAdded. */

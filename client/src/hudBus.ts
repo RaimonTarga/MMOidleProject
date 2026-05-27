@@ -2,8 +2,10 @@ import type { EquipmentSlot } from '@mmo-idle/shared';
 import { intents } from './intents';
 
 type RecipeUnlockListener = (name: string, biomeGroup: string) => void;
+type TacticalViewListener = (enabled: boolean) => void;
 
 const recipeUnlockListeners = new Set<RecipeUnlockListener>();
+const tacticalViewListeners = new Set<TacticalViewListener>();
 
 export const hudBus = {
   /** Called by HUD components — GameScene listens for the resulting CustomEvent. */
@@ -62,13 +64,17 @@ export const hudBus = {
     return () => recipeUnlockListeners.delete(fn);
   },
 
-  /** Toggle the player attack-range debug overlay in GameScene. */
-  toggleDebugPlayerRange(): void {
-    intents.emit('debugPlayerRange', undefined);
+  /** Toggle tactical mode (ranges + hitboxes). */
+  toggleTacticalView(): void {
+    intents.emit('tacticalView', undefined);
   },
 
-  /** Toggle the enemy range (pull / leash / attack) debug overlay in GameScene. */
-  toggleDebugEnemyRanges(): void {
-    intents.emit('debugEnemyRanges', undefined);
+  subscribeTacticalView(fn: TacticalViewListener): () => void {
+    tacticalViewListeners.add(fn);
+    return () => tacticalViewListeners.delete(fn);
+  },
+
+  notifyTacticalView(enabled: boolean): void {
+    for (const fn of tacticalViewListeners) fn(enabled);
   },
 };

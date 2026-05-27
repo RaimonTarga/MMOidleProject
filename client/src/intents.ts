@@ -11,8 +11,7 @@ export interface IntentMap {
   leaveTestRoom: undefined;
   resetProgress: undefined;
   refreshRecipes: undefined;
-  debugPlayerRange: undefined;
-  debugEnemyRanges: undefined;
+  tacticalView: undefined;
 }
 
 type IntentKind = keyof IntentMap;
