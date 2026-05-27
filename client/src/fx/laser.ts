@@ -1,6 +1,7 @@
 import type { PlayerView } from '@mmo-idle/shared';
 import type { GameScene } from '../scenes/GameScene';
 import type { RenderState } from '../render/state';
+import { DEPTH } from '../render/depth';
 
 export function activateLaserBeam(state: RenderState, scene: GameScene, targetId: string): void {
   state.laserBeam.targetId = targetId;
@@ -8,7 +9,7 @@ export function activateLaserBeam(state: RenderState, scene: GameScene, targetId
   state.laserBeam.until = Date.now() + 320;
 
   if (!state.laserBeam.graphics) {
-    state.laserBeam.graphics = scene.add.graphics().setDepth(12);
+    state.laserBeam.graphics = scene.add.graphics().setDepth(DEPTH.FX);
   }
 }
 

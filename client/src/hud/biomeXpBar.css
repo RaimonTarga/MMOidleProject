@@ -1,0 +1,182 @@
+/* ── Biome XP Bar overlay ────────────────────────────────────────────────── */
+
+.biome-xp-bar {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 268px;
+  font-family: monospace;
+  user-select: none;
+  pointer-events: none;
+  background: rgba(7, 6, 20, 0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(132, 112, 235, 0.28);
+  border-radius: 6px;
+  padding: 8px 10px;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.03),
+    0 3px 18px rgba(20, 14, 60, 0.35);
+}
+
+/* ── Header row ──────────────────────────────────────────────────────────── */
+
+.biome-xp-bar__header {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.biome-xp-bar__biome {
+  color: var(--hud-text-muted);
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.biome-xp-bar__level {
+  font-size: 11px;
+  font-weight: bold;
+  color: var(--hud-primary-strong);
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.biome-xp-bar__level--max {
+  color: #ffcc44;
+  text-shadow: 0 0 10px rgba(255, 200, 60, 0.55);
+}
+
+.biome-xp-bar__level--capped {
+  color: #ff9944;
+  text-shadow: 0 0 8px rgba(255, 140, 40, 0.45);
+}
+
+.biome-xp-bar__xp {
+  color: var(--hud-text-dim);
+  font-size: 9px;
+  flex: 1;
+  text-align: right;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Track & fill ────────────────────────────────────────────────────────── */
+
+.biome-xp-bar__track {
+  position: relative;
+  height: 7px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow:
+    inset 0 1px 3px rgba(0, 0, 0, 0.55),
+    0 0 0 1px rgba(80, 65, 160, 0.28);
+}
+
+.biome-xp-bar__fill {
+  height: 100%;
+  background: linear-gradient(90deg, #3344aa, #7766ee, #aabbff);
+  border-radius: 4px 0 0 4px;
+  transition: width 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94), filter 0.7s ease-out;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Shimmer sweep on normal fill */
+.biome-xp-bar__fill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  width: 38%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.24), transparent);
+  animation: biome-shimmer 2.8s ease-in-out infinite;
+}
+
+@keyframes biome-shimmer {
+  0%   { left: -38%; }
+  100% { left: 110%; }
+}
+
+/* Disable transition when snapping (biome change or level-up reset) */
+.biome-xp-bar__fill--no-transition {
+  transition: none !important;
+}
+
+/* MAX state — gold/amber, pulsing */
+.biome-xp-bar__fill--max {
+  background: linear-gradient(90deg, #aa7700, #ffcc44, #ffe888);
+  animation: biome-max-pulse 2.2s ease-in-out infinite alternate;
+}
+
+.biome-xp-bar__fill--max::after {
+  background: linear-gradient(90deg, transparent, rgba(255, 240, 160, 0.28), transparent);
+}
+
+@keyframes biome-max-pulse {
+  from { filter: brightness(0.88); }
+  to   { filter: brightness(1.2); box-shadow: 0 0 10px rgba(255, 200, 60, 0.55); }
+}
+
+/* CAPPED state — orange/amber, subtle pulse */
+.biome-xp-bar__fill--capped {
+  background: linear-gradient(90deg, #663311, #bb5522, #ff8833);
+  animation: biome-capped-pulse 3s ease-in-out infinite alternate;
+}
+
+.biome-xp-bar__fill--capped::after {
+  background: linear-gradient(90deg, transparent, rgba(255, 180, 100, 0.2), transparent);
+}
+
+@keyframes biome-capped-pulse {
+  from { filter: brightness(0.85); }
+  to   { filter: brightness(1.1); }
+}
+
+/* ── Tick marks (9 dividers = 10 equal segments) ─────────────────────────── */
+
+.biome-xp-bar__ticks {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.biome-xp-bar__tick {
+  position: absolute;
+  top: 1px;
+  bottom: 1px;
+  width: 1px;
+  background: rgba(0, 0, 0, 0.45);
+}
+
+/* ── Status message (max / capped) ──────────────────────────────────────── */
+
+.biome-xp-bar__status {
+  font-size: 8px;
+  text-align: right;
+  margin-top: 4px;
+  letter-spacing: 0.3px;
+  line-height: 1.4;
+}
+
+.biome-xp-bar__status--max {
+  color: #cc9922;
+}
+
+.biome-xp-bar__status--capped {
+  color: #774422;
+}
+
+/* ── Hide on mobile (sidebar hidden, mobile HUD takes over) ──────────────── */
+
+@media (max-width: 1100px) {
+  .biome-xp-bar {
+    display: none;
+  }
+}

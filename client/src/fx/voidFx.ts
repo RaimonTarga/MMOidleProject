@@ -1,8 +1,9 @@
 import type { GameScene } from '../scenes/GameScene';
 import { burstFx } from './particles';
+import { DEPTH } from '../render/depth';
 
 export function fxVoid(scene: GameScene, toX: number, toY: number): void {
-  const dark = scene.add.graphics({ x: toX, y: toY }).setDepth(12);
+  const dark = scene.add.graphics({ x: toX, y: toY }).setDepth(DEPTH.FX);
   dark.fillStyle(0x220033, 0.82);
   dark.fillCircle(0, 0, 28);
   dark.lineStyle(2.5, 0x6600cc, 1);
@@ -12,12 +13,12 @@ export function fxVoid(scene: GameScene, toX: number, toY: number): void {
     targets: dark, scaleX: 0.15, scaleY: 0.15, alpha: 0.2, duration: 230, ease: 'Back.easeIn',
     onComplete: () => {
       dark.destroy();
-      const burst = scene.add.graphics({ x: toX, y: toY }).setDepth(13);
+      const burst = scene.add.graphics({ x: toX, y: toY }).setDepth(DEPTH.FX);
       burst.fillStyle(0x9933ff, 0.88);
       burst.fillCircle(0, 0, 16);
       scene.tweens.add({ targets: burst, alpha: 0, scaleX: 2.8, scaleY: 2.8, duration: 190, onComplete: () => burst.destroy() });
 
-      const ring = scene.add.graphics({ x: toX, y: toY }).setDepth(12);
+      const ring = scene.add.graphics({ x: toX, y: toY }).setDepth(DEPTH.FX);
       ring.lineStyle(3, 0xaa44ff, 1);
       ring.strokeCircle(0, 0, 12);
       scene.tweens.add({ targets: ring, scaleX: 4.5, scaleY: 4.5, alpha: 0, duration: 340, ease: 'Power2', onComplete: () => ring.destroy() });

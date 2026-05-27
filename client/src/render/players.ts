@@ -57,22 +57,20 @@ export function upsertPlayer(
     ensureShadow(state, player.id, player.pos, shadowOffsetY, scene, {
       width: 52,
       height: 14,
-      depth: 3,
       playerTier: player.playerTier,
     });
     ensureSprite(state, player.id, player, scene, {
       displayW: 64,
       displayH: 64,
       fallbackColor: color,
-      depth: 4,
       isPlayer: true,
     });
     const sprite = state.sprite.get(player.id);
     const tint = flashShiftTint(player);
     if (sprite && tint !== null) applySpriteTint(sprite, tint);
     ensureLabel(state, player.id, player, scene);
-    ensureHpBar(state, player.id, scene, 5);
-    ensureCdBar(state, player.id, scene, 5);
+    ensureHpBar(state, player.id, scene);
+    ensureCdBar(state, player.id, scene);
 
     if (isOwn) {
       state.ownId = player.id;
@@ -117,7 +115,6 @@ export function upsertPlayer(
     displayW: 64,
     displayH: 64,
     fallbackColor: color,
-    depth: 4,
     isPlayer: true,
   });
   const sprite = state.sprite.get(player.id);

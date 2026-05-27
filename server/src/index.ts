@@ -324,7 +324,7 @@ io.on('connection', (socket) => {
       if (!p) return;
 
       p.tracksProgression.level = 1;
-      p.tracksProgression.skillPoints = 1;
+      p.tracksProgression.skillPoints = 0;
       p.tracksProgression.biomeXP = {};
       p.tracksProgression.biomeLevel = {};
       p.tracksProgression.unlockedRecipes = [];

@@ -1,5 +1,6 @@
 import type { GameScene } from '../scenes/GameScene';
 import { burstFx } from './particles';
+import { DEPTH } from '../render/depth';
 
 export function fxSlash(scene: GameScene, fromX: number, fromY: number, toX: number, toY: number, empowered: boolean, blueEmpowered = false): void {
   const angle = Math.atan2(toY - fromY, toX - fromX);
@@ -14,7 +15,7 @@ export function fxSlash(scene: GameScene, fromX: number, fromY: number, toX: num
   for (let i = 0; i < 3; i++) {
     const a = perp + (i - 1) * 0.3;
     scene.time.delayedCall(i * 35, () => {
-      const g = scene.add.graphics({ x: toX, y: toY }).setDepth(12);
+      const g = scene.add.graphics({ x: toX, y: toY }).setDepth(DEPTH.FX);
       g.lineStyle(lineW, mainColor, 1);
       g.lineBetween(-Math.cos(a) * len, -Math.sin(a) * len, Math.cos(a) * len, Math.sin(a) * len);
       g.lineStyle(lineW * 0.5, shadow, 0.6);
@@ -39,7 +40,7 @@ export function fxSlash(scene: GameScene, fromX: number, fromY: number, toX: num
   });
 
   if (empowered) {
-    const ring = scene.add.graphics({ x: toX, y: toY }).setDepth(12);
+    const ring = scene.add.graphics({ x: toX, y: toY }).setDepth(DEPTH.FX);
     ring.lineStyle(3, mainColor, 1);
     ring.strokeCircle(0, 0, 12);
     scene.tweens.add({ targets: ring, scaleX: 3.8, scaleY: 3.8, alpha: 0, duration: 320, ease: 'Quad.easeOut', onComplete: () => ring.destroy() });

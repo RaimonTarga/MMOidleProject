@@ -1,5 +1,6 @@
 import type { GameScene } from './GameScene';
 import { shouldRunClientFx } from '../../fx/guard';
+import { DEPTH } from '../../render/depth';
 
 export function showDeathOverlay(scene: GameScene): void {
   if (!shouldRunClientFx()) return;
@@ -9,7 +10,7 @@ export function showDeathOverlay(scene: GameScene): void {
   const bg = scene.add
     .rectangle(w / 2, h / 2, w, h, 0x000000, 0.7)
     .setScrollFactor(0)
-    .setDepth(50);
+    .setDepth(DEPTH.SCREEN);
 
   const text = scene.add
     .text(w / 2, h / 2, 'YOU DIED', {
@@ -19,7 +20,7 @@ export function showDeathOverlay(scene: GameScene): void {
       fontStyle: 'bold',
     })
     .setScrollFactor(0)
-    .setDepth(51)
+    .setDepth(DEPTH.SCREEN + 1)
     .setOrigin(0.5);
 
   const sub = scene.add
@@ -29,7 +30,7 @@ export function showDeathOverlay(scene: GameScene): void {
       fontFamily: 'monospace',
     })
     .setScrollFactor(0)
-    .setDepth(51)
+    .setDepth(DEPTH.SCREEN + 1)
     .setOrigin(0.5);
 
   scene.time.delayedCall(2200, () => {
@@ -61,7 +62,7 @@ export function showAscensionOverlay(scene: GameScene, tier: number): void {
   const bg = scene.add
     .rectangle(w / 2, h / 2, w, h, 0x05030f, 0.72)
     .setScrollFactor(0)
-    .setDepth(50);
+    .setDepth(DEPTH.SCREEN);
 
   const label = scene.add
     .text(w / 2, h / 2 - 10, 'ASCENSION', {
@@ -71,7 +72,7 @@ export function showAscensionOverlay(scene: GameScene, tier: number): void {
       fontStyle: 'bold',
     })
     .setScrollFactor(0)
-    .setDepth(51)
+    .setDepth(DEPTH.SCREEN + 1)
     .setOrigin(0.5);
 
   const subText = scene.add
@@ -81,7 +82,7 @@ export function showAscensionOverlay(scene: GameScene, tier: number): void {
       fontFamily: 'monospace',
     })
     .setScrollFactor(0)
-    .setDepth(51)
+    .setDepth(DEPTH.SCREEN + 1)
     .setOrigin(0.5);
 
   [bg, label, subText].forEach((obj) => obj.setAlpha(0));

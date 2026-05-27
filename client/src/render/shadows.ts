@@ -3,6 +3,7 @@ import type { PlayerView, Vec2 } from '@mmo-idle/shared';
 import { getPlayerShadowColor } from '../sprites';
 import type { RenderState } from './state';
 import type { GameScene } from '../scenes/GameScene';
+import { DEPTH } from './depth';
 
 /** Level 0 → black filled ellipse. Level 1+ → bright stroke outline, no fill. */
 export function applyPlayerShadowStyle(
@@ -24,13 +25,13 @@ export function ensureShadow(
   pos: Vec2,
   shadowOffsetY: number,
   scene: GameScene,
-  opts: { width: number; height: number; depth: number; fillColor?: number; fillAlpha?: number; playerTier?: number },
+  opts: { width: number; height: number; fillColor?: number; fillAlpha?: number; playerTier?: number },
 ): void {
   if (state.shadow.has(id)) return;
 
   const shadow = scene.add
     .ellipse(pos.x, pos.y + shadowOffsetY, opts.width, opts.height)
-    .setDepth(opts.depth);
+    .setDepth(DEPTH.SHADOW);
 
   if (opts.playerTier !== undefined) {
     applyPlayerShadowStyle(shadow, opts.playerTier);
@@ -66,10 +67,12 @@ export function drawShadows(state: RenderState): void {
     const meta = state.spriteMeta.get(id);
     if (!sprite || !shadow || !interp || !meta) continue;
 
+    const sy = interp.base.y + interp.lungeOffset.y;
     shadow.setPosition(
       interp.base.x + interp.lungeOffset.x,
-      interp.base.y + interp.lungeOffset.y + meta.shadowOffsetY,
+      sy + meta.shadowOffsetY,
     );
+    shadow.setDepth(DEPTH.SHADOW + sy);
   }
 }
 

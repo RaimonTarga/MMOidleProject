@@ -1,6 +1,7 @@
 import type { PlayerView, MonsterView } from '@mmo-idle/shared';
 import type { RenderState } from './state';
 import type { GameScene } from '../scenes/GameScene';
+import { DEPTH } from './depth';
 
 export function ensureLabel(
   state: RenderState,
@@ -28,7 +29,7 @@ export function ensureLabel(
       stroke: '#000000',
       strokeThickness: 3,
     })
-    .setDepth(isMonster ? 2 : 5);
+    .setDepth(DEPTH.UI);
 
   state.label.set(id, label);
 }
@@ -42,6 +43,7 @@ export function drawLabels(state: RenderState): void {
 
     const barY = sprite.y - meta.barOffsetY;
     label.setPosition(sprite.x - 16, barY - 12);
+    label.setDepth(DEPTH.UI + sprite.y);
   }
 }
 

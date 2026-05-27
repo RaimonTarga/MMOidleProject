@@ -1,15 +1,16 @@
 import type { GameScene } from '../scenes/GameScene';
 import { burstFx } from './particles';
+import { DEPTH } from '../render/depth';
 
 export function fxImpact(scene: GameScene, toX: number, toY: number, execution: boolean): void {
-  const flash = scene.add.graphics({ x: toX, y: toY }).setDepth(13);
+  const flash = scene.add.graphics({ x: toX, y: toY }).setDepth(DEPTH.FX);
   flash.fillStyle(execution ? 0xffffff : 0xff8844, execution ? 0.9 : 0.8);
   flash.fillCircle(0, 0, execution ? 28 : 16);
   scene.tweens.add({ targets: flash, alpha: 0, scaleX: 1.6, scaleY: 1.6, duration: 90, onComplete: () => flash.destroy() });
 
   for (let i = 0; i < 2; i++) {
     const ringColor = execution ? (i === 0 ? 0xffffff : 0xaabbff) : (i === 0 ? 0xff7744 : 0xffaa22);
-    const ring = scene.add.graphics({ x: toX, y: toY }).setDepth(11);
+    const ring = scene.add.graphics({ x: toX, y: toY }).setDepth(DEPTH.FX);
     ring.lineStyle(3 - i * 0.5, ringColor, 1);
     ring.strokeCircle(0, 0, 10 + i * 8);
     scene.tweens.add({ targets: ring, scaleX: 4.5 + i, scaleY: 4.5 + i, alpha: 0, duration: 320 + i * 60, ease: 'Power2', onComplete: () => ring.destroy() });
@@ -25,7 +26,7 @@ export function fxImpact(scene: GameScene, toX: number, toY: number, execution: 
   });
 
   if (execution) {
-    const cross = scene.add.graphics({ x: toX, y: toY }).setDepth(13);
+    const cross = scene.add.graphics({ x: toX, y: toY }).setDepth(DEPTH.FX);
     const cLen = 42;
     cross.lineStyle(3, 0xeeeeff, 1);
     cross.lineBetween(-cLen, -cLen, cLen, cLen);

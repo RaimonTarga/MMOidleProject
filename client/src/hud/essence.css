@@ -34,14 +34,28 @@
   color: var(--hud-text, #e5e2ff);
 }
 
-@keyframes essence-flash {
+/* Two identical animations with different names — alternating them restarts the
+   animation even when the previous one is still playing (rapid essence gains). */
+@keyframes essence-flash-a {
   0%   { background-color: transparent; }
-  15%  { background-color: var(--flash-color, rgba(255, 255, 255, 0.08)); }
-  60%  { background-color: var(--flash-color, rgba(255, 255, 255, 0.08)); }
+  12%  { background-color: var(--flash-color); }
+  55%  { background-color: var(--flash-color); }
   100% { background-color: transparent; }
 }
 
-.essence-row--flash {
+@keyframes essence-flash-b {
+  0%   { background-color: transparent; }
+  12%  { background-color: var(--flash-color); }
+  55%  { background-color: var(--flash-color); }
+  100% { background-color: transparent; }
+}
+
+.essence-row--flash-a {
   border-radius: 3px;
-  animation: essence-flash 1100ms ease-out forwards;
+  animation: essence-flash-a 950ms ease-out forwards;
+}
+
+.essence-row--flash-b {
+  border-radius: 3px;
+  animation: essence-flash-b 950ms ease-out forwards;
 }

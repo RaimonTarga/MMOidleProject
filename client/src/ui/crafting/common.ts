@@ -29,3 +29,12 @@ export function biomeName(group: string): string {
   if (biome) return biome.name;
   return group.charAt(0).toUpperCase() + group.slice(1);
 }
+
+const TIER_COLORS: Record<number, string> = {
+  0: '#444444', 1: '#ff4444', 2: '#ff8800',
+  3: '#ffee00', 4: '#44ff88', 5: '#00ddcc', 6: '#4488ff',
+};
+
+export function tierColor(tier: number): string {
+  return TIER_COLORS[tier] ?? '#444444';
+}

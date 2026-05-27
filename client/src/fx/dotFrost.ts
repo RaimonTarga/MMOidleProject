@@ -1,10 +1,11 @@
 import type { GameScene } from '../scenes/GameScene';
 import { burstFx } from './particles';
+import { DEPTH } from '../render/depth';
 
 export function fxFrostSnowflake(scene: GameScene, toX: number, toY: number, empowered: boolean): void {
   const sLen = empowered ? 54 : 36;
   const spokes = empowered ? 8 : 6;
-  const g = scene.add.graphics({ x: toX, y: toY }).setDepth(12);
+  const g = scene.add.graphics({ x: toX, y: toY }).setDepth(DEPTH.FX);
   for (let i = 0; i < spokes; i++) {
     const a = (i / spokes) * Math.PI * 2;
     const perpA = a + Math.PI / 2;
@@ -21,7 +22,7 @@ export function fxFrostSnowflake(scene: GameScene, toX: number, toY: number, emp
   }
   scene.tweens.add({ targets: g, alpha: 0, duration: empowered ? 420 : 280, ease: 'Quad.easeOut', onComplete: () => g.destroy() });
 
-  const cFlash = scene.add.graphics({ x: toX, y: toY }).setDepth(13);
+  const cFlash = scene.add.graphics({ x: toX, y: toY }).setDepth(DEPTH.FX);
   cFlash.fillStyle(0xffffff, empowered ? 0.88 : 0.65);
   cFlash.fillCircle(0, 0, empowered ? 10 : 6);
   scene.tweens.add({ targets: cFlash, alpha: 0, scaleX: 2, scaleY: 2, duration: 110, onComplete: () => cFlash.destroy() });

@@ -3,6 +3,7 @@ import type { PlayerView, MonsterView, Vec2 } from '@mmo-idle/shared';
 import { ATLAS_KEY, getPlayerFrame, getMonsterFrame } from '../sprites';
 import type { RenderState } from './state';
 import type { GameScene } from '../scenes/GameScene';
+import { DEPTH } from './depth';
 
 export function tryMakeImage(
   scene: Phaser.Scene,
@@ -26,7 +27,6 @@ export function ensureSprite(
     displayW: number;
     displayH: number;
     fallbackColor: number;
-    depth: number;
     isPlayer: boolean;
   },
 ): void {
@@ -40,7 +40,7 @@ export function ensureSprite(
     tryMakeImage(scene, snapshot.pos, frame, opts.displayW, opts.displayH) ??
     scene.add.rectangle(snapshot.pos.x, snapshot.pos.y, opts.displayW, opts.displayH, opts.fallbackColor);
 
-  sprite.setDepth(opts.depth);
+  sprite.setDepth(DEPTH.SPRITE + snapshot.pos.y);
   state.sprite.set(id, sprite);
 
   const meta = state.spriteMeta.get(id);
@@ -56,7 +56,6 @@ export function updateSpriteFrame(
     displayW: number;
     displayH: number;
     fallbackColor: number;
-    depth: number;
     isPlayer: boolean;
   },
 ): void {
@@ -77,20 +76,21 @@ export function updateSpriteFrame(
   if (canSwapInPlace) {
     existing
       .setTexture(ATLAS_KEY, newFrame)
-      .setDisplaySize(opts.displayW, opts.displayH)
-      .setDepth(opts.depth);
+      .setDisplaySize(opts.displayW, opts.displayH);
+    // depth is managed per-frame by stepInterpolation; no reset needed
     meta.currentFrame = newFrame;
     return;
   }
 
   const interp = state.interpolation.get(id);
   const base = interp?.base ?? snapshot.pos;
+  const prevDepth = existing?.depth ?? (DEPTH.SPRITE + base.y);
 
   existing?.destroy();
   const sprite =
     tryMakeImage(scene, base, newFrame, opts.displayW, opts.displayH) ??
     scene.add.rectangle(base.x, base.y, opts.displayW, opts.displayH, opts.fallbackColor);
-  sprite.setDepth(opts.depth);
+  sprite.setDepth(prevDepth);
   state.sprite.set(id, sprite);
   meta.currentFrame = newFrame;
 }

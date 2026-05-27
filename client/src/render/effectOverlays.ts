@@ -79,7 +79,7 @@ function updateOverlayForEffect(
   if (!overlay) {
     overlay = scene.add
       .sprite(sprite.x, sprite.y, def.key)
-      .setDepth(def.depth ?? Math.max(3, sprite.depth + 2));
+      .setDepth(sprite.depth + 1);
     overlays.set(effectId, overlay);
   }
 
@@ -103,6 +103,7 @@ function updateOverlayForEffect(
 
   overlay
     .setPosition(sprite.x, sprite.y + (def.anchorYPx ?? -4))
+    .setDepth(sprite.depth + 1)
     .setVisible(true);
 
   if (explicitFrame == null && snap.activeEffects) {

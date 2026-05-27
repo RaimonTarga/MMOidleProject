@@ -1,6 +1,7 @@
 import { EFFECT_BY_ID, EFFECT_DEFS, EFFECT_FRAME_COUNT, EFFECT_GRID, type Vec2 } from '@mmo-idle/shared';
 import type { GameScene } from '../scenes/GameScene';
 import { shouldRunClientFx } from './guard';
+import { DEPTH } from '../render/depth';
 
 export function initParticleTextures(scene: GameScene): void {
   const dotG = scene.make.graphics({ x: 0, y: 0 }, false);
@@ -50,7 +51,7 @@ export function burstFx(
     quantity: count,
     emitting: false,
   });
-  emitter.setDepth(12);
+  emitter.setDepth(DEPTH.FX);
   emitter.explode(count);
   scene.time.delayedCall(lifespan + 200, () => { if (emitter.active) emitter.destroy(); });
 }
@@ -65,7 +66,7 @@ export function playOneShotEffect(scene: GameScene, id: string, pos: Vec2, opts?
   const endFrame = def.endFrame ?? EFFECT_FRAME_COUNT - 1;
   const sprite = scene.add
     .sprite(pos.x, pos.y + (def.anchorYPx ?? 0), def.key)
-    .setDepth(opts?.depth ?? def.depth ?? 12)
+    .setDepth(opts?.depth ?? def.depth ?? DEPTH.FX)
     .setDisplaySize(size, size)
     .setFrame(startFrame);
   const proxy = { frame: startFrame };
@@ -95,7 +96,7 @@ export function spawnDamageNumber(scene: GameScene, pos: Vec2, barOffsetY: numbe
       stroke: '#000000',
       strokeThickness: 3,
     })
-    .setDepth(15)
+    .setDepth(DEPTH.FX)
     .setOrigin(0.5, 1);
 
   scene.tweens.add({

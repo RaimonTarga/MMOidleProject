@@ -1,15 +1,15 @@
 import type { PlayerView } from '@mmo-idle/shared';
 import type { RenderState } from './state';
 import type { GameScene } from '../scenes/GameScene';
+import { DEPTH } from './depth';
 
 export function ensureHpBar(
   state: RenderState,
   id: string,
   scene: GameScene,
-  depth: number,
 ): void {
   if (state.hpBar.has(id)) return;
-  state.hpBar.set(id, scene.add.graphics().setDepth(depth));
+  state.hpBar.set(id, scene.add.graphics().setDepth(DEPTH.UI));
 }
 
 export function drawHealthBars(state: RenderState): void {
@@ -46,6 +46,7 @@ export function drawHealthBars(state: RenderState): void {
     }
     state.hpBarCache.set(id, { x: sprite.x, y: barY, hpPct, shieldPct, shieldShown });
 
+    hpBar.setDepth(DEPTH.UI + sprite.y);
     hpBar.clear();
     hpBar.fillStyle(0x1a1a1a);
     hpBar.fillRect(sprite.x - 16, barY, 32, 4);

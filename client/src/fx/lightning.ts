@@ -1,6 +1,7 @@
 import type { Vec2 } from '@mmo-idle/shared';
 import type { GameScene } from '../scenes/GameScene';
 import { burstFx } from './particles';
+import { DEPTH } from '../render/depth';
 
 function zigzagPoints(
   fromX: number,
@@ -32,7 +33,7 @@ export function fxLightning(scene: GameScene, fromX: number, fromY: number, toX:
   const spread = discharge ? 28 : 14;
   const pts = zigzagPoints(fromX, fromY, toX, toY, segs, spread);
 
-  const g = scene.add.graphics().setDepth(12);
+  const g = scene.add.graphics().setDepth(DEPTH.FX);
   g.lineStyle(discharge ? 6 : 4, glowCol, 0.22);
   for (let i = 1; i < pts.length; i++) g.lineBetween(pts[i - 1].x, pts[i - 1].y, pts[i].x, pts[i].y);
   g.lineStyle(discharge ? 2.5 : 1.5, color, 1);
@@ -50,18 +51,18 @@ export function fxLightning(scene: GameScene, fromX: number, fromY: number, toX:
   for (let b = 0; b < 2; b++) {
     scene.time.delayedCall(b * 28, () => {
       const bpts = zigzagPoints(fromX, fromY, toX, toY, segs - 1, spread * 1.5);
-      const gb = scene.add.graphics().setDepth(11);
+      const gb = scene.add.graphics().setDepth(DEPTH.FX);
       gb.lineStyle(1.5, 0x88ccff, 0.65);
       for (let i = 1; i < bpts.length; i++) gb.lineBetween(bpts[i - 1].x, bpts[i - 1].y, bpts[i].x, bpts[i].y);
       scene.tweens.add({ targets: gb, alpha: 0, duration: 170, onComplete: () => gb.destroy() });
     });
   }
 
-  const flash = scene.add.graphics({ x: toX, y: toY }).setDepth(13);
+  const flash = scene.add.graphics({ x: toX, y: toY }).setDepth(DEPTH.FX);
   flash.fillStyle(0xffffff, 0.92);
   flash.fillCircle(0, 0, 28);
   scene.tweens.add({ targets: flash, alpha: 0, scaleX: 3, scaleY: 3, duration: 180, onComplete: () => flash.destroy() });
-  const ring = scene.add.graphics({ x: toX, y: toY }).setDepth(12);
+  const ring = scene.add.graphics({ x: toX, y: toY }).setDepth(DEPTH.FX);
   ring.lineStyle(3, 0xaaddff, 1);
   ring.strokeCircle(0, 0, 10);
   scene.tweens.add({ targets: ring, scaleX: 5.5, scaleY: 5.5, alpha: 0, duration: 340, ease: 'Power2', onComplete: () => ring.destroy() });

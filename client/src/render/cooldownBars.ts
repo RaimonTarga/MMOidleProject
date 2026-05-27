@@ -1,14 +1,14 @@
 import type { RenderState } from './state';
 import type { GameScene } from '../scenes/GameScene';
+import { DEPTH } from './depth';
 
 export function ensureCdBar(
   state: RenderState,
   id: string,
   scene: GameScene,
-  depth: number,
 ): void {
   if (state.cdBar.has(id)) return;
-  state.cdBar.set(id, scene.add.graphics().setDepth(depth));
+  state.cdBar.set(id, scene.add.graphics().setDepth(DEPTH.UI));
 }
 
 export function drawCooldownBars(state: RenderState): void {
@@ -39,6 +39,7 @@ export function drawCooldownBars(state: RenderState): void {
     }
     state.cdBarCache.set(id, { x: sprite.x, y: barY, bucket, hasTarget });
 
+    cdBar.setDepth(DEPTH.UI + sprite.y);
     cdBar.clear();
     if (!hasTarget) continue;
 

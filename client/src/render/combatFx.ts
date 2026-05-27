@@ -19,6 +19,7 @@ import { shouldRunClientFx } from '../fx/guard';
 import type { GameScene } from '../scenes/GameScene';
 import { applyLunge } from './interpolation';
 import type { RenderState } from './state';
+import { DEPTH } from './depth';
 
 type NonNullArchetype = Exclude<CombatArchetype, null>;
 type PlayerHitEvent = CombatEvent & { kind: 'player-hit' };
@@ -40,7 +41,7 @@ function spawnRewardFloaters(scene: GameScene, ev: PlayerKillEvent): void {
       color: index === 0 ? '#88ddff' : '#ffdd88',
       stroke: '#000000',
       strokeThickness: 3,
-    }).setOrigin(0.5).setDepth(40);
+    }).setOrigin(0.5).setDepth(DEPTH.FX);
     scene.tweens.add({
       targets: text,
       y: text.y - 34,
@@ -90,7 +91,7 @@ function snapOwnPlayerToServerTarget(
 }
 
 function fxAoeRing(scene: GameScene, pos: Vec2, radius: number, color: number): void {
-  const ring = scene.add.graphics({ x: pos.x, y: pos.y }).setDepth(11);
+  const ring = scene.add.graphics({ x: pos.x, y: pos.y }).setDepth(DEPTH.FX);
   ring.lineStyle(2.5, color, 0.65);
   ring.strokeCircle(0, 0, 1);
   scene.tweens.add({
@@ -156,7 +157,7 @@ export function dispatchCombatEvent(state: RenderState, ev: CombatEvent, scene: 
         color: '#ddddff',
         stroke: '#000000',
         strokeThickness: 3,
-      }).setOrigin(0.5).setDepth(40);
+      }).setOrigin(0.5).setDepth(DEPTH.FX);
       scene.tweens.add({ targets: text, y: text.y - 28, alpha: 0, duration: 650, onComplete: () => text.destroy() });
     }
     return;

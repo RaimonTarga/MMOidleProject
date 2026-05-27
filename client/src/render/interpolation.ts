@@ -1,6 +1,7 @@
 import type { Vec2 } from '@mmo-idle/shared';
 import type { RenderState } from './state';
 import type { GameScene } from '../scenes/GameScene';
+import { DEPTH } from './depth';
 
 export function stepInterpolation(state: RenderState, dt: number): void {
   for (const id of state.ids) {
@@ -22,10 +23,10 @@ export function stepInterpolation(state: RenderState, dt: number): void {
       interp.base.y = transform.target.y;
     }
 
-    sprite.setPosition(
-      interp.base.x + interp.lungeOffset.x,
-      interp.base.y + interp.lungeOffset.y,
-    );
+    const sx = interp.base.x + interp.lungeOffset.x;
+    const sy = interp.base.y + interp.lungeOffset.y;
+    sprite.setPosition(sx, sy);
+    sprite.setDepth(DEPTH.SPRITE + sy);
   }
 }
 

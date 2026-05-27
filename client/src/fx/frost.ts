@@ -1,8 +1,9 @@
 import type { GameScene } from '../scenes/GameScene';
 import { burstFx } from './particles';
+import { DEPTH } from '../render/depth';
 
 export function fxFrost(scene: GameScene, toX: number, toY: number): void {
-  const spokes = scene.add.graphics({ x: toX, y: toY }).setDepth(12);
+  const spokes = scene.add.graphics({ x: toX, y: toY }).setDepth(DEPTH.FX);
   const sLen = 40;
   for (let i = 0; i < 6; i++) {
     const a = (i / 6) * Math.PI * 2;
@@ -16,7 +17,7 @@ export function fxFrost(scene: GameScene, toX: number, toY: number): void {
   }
   scene.tweens.add({ targets: spokes, alpha: 0, duration: 300, ease: 'Quad.easeOut', onComplete: () => spokes.destroy() });
 
-  const ring = scene.add.graphics({ x: toX, y: toY }).setDepth(11);
+  const ring = scene.add.graphics({ x: toX, y: toY }).setDepth(DEPTH.FX);
   ring.lineStyle(2.5, 0x66ccff, 1);
   ring.strokeCircle(0, 0, 10);
   scene.tweens.add({ targets: ring, scaleX: 3.8, scaleY: 3.8, alpha: 0, duration: 340, ease: 'Power2', onComplete: () => ring.destroy() });

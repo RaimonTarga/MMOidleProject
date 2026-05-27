@@ -1,8 +1,9 @@
 import type { GameScene } from '../scenes/GameScene';
 import { burstFx } from './particles';
+import { DEPTH } from '../render/depth';
 
 export function fxPoisonSmog(scene: GameScene, toX: number, toY: number, empowered: boolean): void {
-  const ring = scene.add.graphics({ x: toX, y: toY }).setDepth(12);
+  const ring = scene.add.graphics({ x: toX, y: toY }).setDepth(DEPTH.FX);
   ring.lineStyle(2, 0x33dd55, 0.75);
   ring.strokeCircle(0, 0, 8);
   scene.tweens.add({ targets: ring, scaleX: empowered ? 5 : 3.5, scaleY: empowered ? 5 : 3.5, alpha: 0, duration: 520, ease: 'Power1', onComplete: () => ring.destroy() });

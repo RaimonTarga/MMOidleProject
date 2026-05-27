@@ -111,11 +111,7 @@ export function updateAutoTargets(world: World) {
     }
 
     if (dist > 0) {
-      const targetPoint: Vec2 = {
-        x: targetPos.x - (dx / dist) * Math.max(8, dist - 8),
-        y: targetPos.y - (dy / dist) * Math.max(8, dist - 8),
-      };
-      setEntityMotion(world, player, targetPoint);
+      setEntityMotion(world, player, targetPos);
     }
   }
 }

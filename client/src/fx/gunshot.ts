@@ -1,23 +1,24 @@
 import type { GameScene } from '../scenes/GameScene';
 import { burstFx } from './particles';
+import { DEPTH } from '../render/depth';
 
 export function fxGunshot(scene: GameScene, fromX: number, fromY: number, toX: number, toY: number, empowered: boolean): void {
   const color = empowered ? 0xffee66 : 0xddeeff;
   const width = empowered ? 2.5 : 1.5;
 
-  const g = scene.add.graphics().setDepth(12);
+  const g = scene.add.graphics().setDepth(DEPTH.FX);
   g.lineStyle(width + 3, color, 0.15);
   g.lineBetween(fromX, fromY, toX, toY);
   g.lineStyle(width, color, 1);
   g.lineBetween(fromX, fromY, toX, toY);
   scene.tweens.add({ targets: g, alpha: 0, duration: 90, ease: 'Quad.easeIn', onComplete: () => g.destroy() });
 
-  const muzzle = scene.add.graphics({ x: fromX, y: fromY }).setDepth(12);
+  const muzzle = scene.add.graphics({ x: fromX, y: fromY }).setDepth(DEPTH.FX);
   muzzle.fillStyle(color, 0.7);
   muzzle.fillCircle(0, 0, empowered ? 7 : 4);
   scene.tweens.add({ targets: muzzle, alpha: 0, scaleX: 2, scaleY: 2, duration: 80, onComplete: () => muzzle.destroy() });
 
-  const flash = scene.add.graphics({ x: toX, y: toY }).setDepth(13);
+  const flash = scene.add.graphics({ x: toX, y: toY }).setDepth(DEPTH.FX);
   flash.fillStyle(color, 0.88);
   flash.fillCircle(0, 0, empowered ? 16 : 8);
   scene.tweens.add({ targets: flash, alpha: 0, scaleX: 2.5, scaleY: 2.5, duration: 150, onComplete: () => flash.destroy() });

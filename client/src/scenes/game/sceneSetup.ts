@@ -1,4 +1,5 @@
 import { EFFECT_DEFS, GAME_CONFIG } from "@mmo-idle/shared";
+import { DEPTH } from "../../render/depth";
 import { getDefaultStore } from "jotai";
 import { combatLog } from "../../combatLog";
 import { statusAtom, nodeTelemetryAtom, syncPlayerAtoms, nodeLoadingAtom } from "../../hud/atoms";
@@ -90,10 +91,10 @@ export function createGameScene(scene: GameScene): void {
   scene.targetMarker = scene.add
     .circle(0, 0, 5, 0xffff44, 0.8)
     .setVisible(false);
-  scene.exitMarkers = scene.add.graphics().setDepth(5);
-  scene.debugGraphics = scene.add.graphics().setDepth(8);
+  scene.exitMarkers = scene.add.graphics().setDepth(DEPTH.FX - 1);
+  scene.debugGraphics = scene.add.graphics().setDepth(DEPTH.FX + 1000);
   scene.cameraTarget = scene.add.arc(0, 0, 1).setAlpha(0);
-  scene.minimap = scene.add.graphics().setScrollFactor(0).setDepth(20);
+  scene.minimap = scene.add.graphics().setScrollFactor(0).setDepth(DEPTH.MINIMAP);
 
   attachHudEvents(scene);
   attachClickToMove(scene);

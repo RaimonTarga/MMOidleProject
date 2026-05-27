@@ -55,7 +55,6 @@ export function upsertMonster(
     ensureShadow(state, monster.id, monster.pos, shadowOffsetY, scene, {
       width: shadowW,
       height: shadowH,
-      depth: 0,
       fillColor: 0x000000,
       fillAlpha: monster.isBoss ? 0.55 : 0.45,
     });
@@ -63,12 +62,11 @@ export function upsertMonster(
       displayW: spriteSize,
       displayH: spriteSize,
       fallbackColor: monster.color,
-      depth: 1,
       isPlayer: false,
     });
     ensureLabel(state, monster.id, monster, scene);
-    ensureHpBar(state, monster.id, scene, 2);
-    ensureCdBar(state, monster.id, scene, 2);
+    ensureHpBar(state, monster.id, scene);
+    ensureCdBar(state, monster.id, scene);
     return;
   }
 

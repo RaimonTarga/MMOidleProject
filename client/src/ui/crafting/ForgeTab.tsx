@@ -5,22 +5,27 @@ import { RECIPE_DATABASE, TEST_ROOM_NODE_ID } from '@mmo-idle/shared';
 import { hudBus } from '../../hudBus';
 import {
   essencesAtom,
+  inventoryAtom,
   playerNodeIdAtom,
   playerTierAtom,
   unlockedRecipesAtom,
 } from '../../hud/atoms';
-import { SLOT_ABBR, SLOT_LABELS, biomeName, getStatEntries } from './common';
+import { SLOT_ABBR, SLOT_LABELS, biomeName, getStatEntries, tierColor } from './common';
 import { CostDisplay, EssenceSummary } from './shared';
 
 export function ForgeTab() {
   const [filterBiome, setFilterBiome] = useState<string | null>(null);
   const [filterSlot,  setFilterSlot]  = useState<string | null>(null);
-  const nodeId = useAtomValue(playerNodeIdAtom);
-  const playerTier = useAtomValue(playerTierAtom);
+  const [filterTier,  setFilterTier]  = useState<number | null>(null);
+  const nodeId           = useAtomValue(playerNodeIdAtom);
+  const playerTier       = useAtomValue(playerTierAtom);
   const unlockedRecipeIds = useAtomValue(unlockedRecipesAtom);
-  const essences = useAtomValue(essencesAtom);
+  const essences         = useAtomValue(essencesAtom);
+  const inventory        = useAtomValue(inventoryAtom);
 
   const isTestRoom = nodeId === TEST_ROOM_NODE_ID;
+
+  const ownedSet = useMemo(() => new Set(inventory), [inventory]);
 
   const allRecipes = useMemo(() =>
     Array.from(RECIPE_DATABASE.values()).sort((a, b) =>
@@ -47,16 +52,33 @@ export function ForgeTab() {
     return Array.from(groups).sort();
   }, [unlockedRecipes]);
 
-  const filtered = useMemo(() =>
-    unlockedRecipes.filter(r =>
+  const tiers = useMemo(() => {
+    const ts = new Set<number>();
+    for (const r of unlockedRecipes) ts.add(r.tier);
+    return Array.from(ts).sort((a, b) => a - b);
+  }, [unlockedRecipes]);
+
+  const filtered = useMemo(() => {
+    const base = unlockedRecipes.filter(r =>
       (!filterBiome || r.recipeGroup === filterBiome) &&
-      (!filterSlot  || r.slot        === filterSlot),
-    ),
-    [unlockedRecipes, filterBiome, filterSlot],
-  );
+      (!filterSlot  || r.slot        === filterSlot) &&
+      (!filterTier  || r.tier        === filterTier),
+    );
+
+    return base.slice().sort((a, b) => {
+      const cat = (r: typeof a) => {
+        if (ownedSet.has(r.id)) return 2;
+        const canAfford = (Object.entries(r.cost) as [EssenceType, number][])
+          .every(([type, amt]) => (essences[type] ?? 0) >= amt);
+        return canAfford ? 0 : 1;
+      };
+      return cat(a) - cat(b);
+    });
+  }, [unlockedRecipes, filterBiome, filterSlot, filterTier, ownedSet, essences]);
 
   const toggleBiome = (g: string) => setFilterBiome(v => v === g ? null : g);
   const toggleSlot  = (s: string) => setFilterSlot(v  => v === s ? null : s);
+  const toggleTier  = (t: number) => setFilterTier(v  => v === t ? null : t);
 
   return (
     <div className="craft-body">
@@ -99,6 +121,29 @@ export function ForgeTab() {
             </button>
           ))}
         </div>
+        {tiers.length > 1 && (
+          <div className="craft-filter-row">
+            <button
+              className={`craft-filter-chip${!filterTier ? ' craft-filter-chip--active' : ''}`}
+              onClick={() => setFilterTier(null)}
+            >
+              All Tiers
+            </button>
+            {tiers.map(t => (
+              <button
+                key={t}
+                className={`craft-filter-chip craft-filter-chip--tier${filterTier === t ? ' craft-filter-chip--active' : ''}`}
+                style={filterTier === t
+                  ? { color: tierColor(t), borderColor: `${tierColor(t)}aa`, background: `${tierColor(t)}18` }
+                  : { color: `${tierColor(t)}bb` }
+                }
+                onClick={() => toggleTier(t)}
+              >
+                T{t}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Recipe list */}
@@ -111,6 +156,7 @@ export function ForgeTab() {
           {filtered.map(recipe => {
             const costEntries = Object.entries(recipe.cost) as [EssenceType, number][];
             const canAfford = costEntries.every(([type, amount]) => (essences[type] ?? 0) >= amount);
+            const owned = ownedSet.has(recipe.id);
             const statEntries = getStatEntries(
               recipe.stats,
               recipe.slot === 'weapon' ? recipe.attacksPerSecond : undefined,
@@ -119,7 +165,11 @@ export function ForgeTab() {
             return (
               <div
                 key={recipe.id}
-                className={`craft-recipe${!canAfford ? ' craft-recipe--unaffordable' : ''}`}
+                className={[
+                  'craft-recipe',
+                  owned                  ? 'craft-recipe--owned'       : '',
+                  !owned && !canAfford   ? 'craft-recipe--unaffordable' : '',
+                ].filter(Boolean).join(' ')}
               >
                 <div className="craft-recipe__icon" data-slot={recipe.slot}>
                   {SLOT_ABBR[recipe.slot] ?? recipe.slot.slice(0, 3).toUpperCase()}
@@ -132,6 +182,9 @@ export function ForgeTab() {
                       {SLOT_LABELS[recipe.slot] ?? recipe.slot}
                     </span>
                     <span className="craft-recipe__tier-badge">T{recipe.tier}</span>
+                    {owned && (
+                      <span className="craft-recipe__owned-badge">IN BAG</span>
+                    )}
                   </div>
 
                   {statEntries.length > 0 && (
@@ -153,10 +206,10 @@ export function ForgeTab() {
                     )}
                     <button
                       className="craft-recipe__btn"
-                      disabled={!canAfford}
-                      onClick={() => hudBus.requestCraftRecipe(recipe.id)}
+                      disabled={!canAfford || owned}
+                      onClick={() => { if (!owned) hudBus.requestCraftRecipe(recipe.id); }}
                     >
-                      {canAfford ? 'Craft' : 'Insufficient'}
+                      {owned ? 'In inventory' : canAfford ? 'Craft' : 'Insufficient'}
                     </button>
                   </div>
                 </div>

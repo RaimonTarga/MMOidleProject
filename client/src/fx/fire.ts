@@ -1,13 +1,14 @@
 import type { GameScene } from '../scenes/GameScene';
 import { burstFx } from './particles';
+import { DEPTH } from '../render/depth';
 
 export function fxFire(scene: GameScene, toX: number, toY: number): void {
-  const flash = scene.add.graphics({ x: toX, y: toY }).setDepth(13);
+  const flash = scene.add.graphics({ x: toX, y: toY }).setDepth(DEPTH.FX);
   flash.fillStyle(0xffffff, 0.88);
   flash.fillCircle(0, 0, 14);
   scene.tweens.add({ targets: flash, alpha: 0, scaleX: 1.5, scaleY: 1.5, duration: 85, onComplete: () => flash.destroy() });
 
-  const ring = scene.add.graphics({ x: toX, y: toY }).setDepth(12);
+  const ring = scene.add.graphics({ x: toX, y: toY }).setDepth(DEPTH.FX);
   ring.lineStyle(3, 0xff6600, 1);
   ring.strokeCircle(0, 0, 12);
   scene.tweens.add({ targets: ring, scaleX: 3.8, scaleY: 3.8, alpha: 0, duration: 320, ease: 'Power2', onComplete: () => ring.destroy() });
