@@ -1,9 +1,12 @@
 import type { World } from '../../../world/World';
 import type { MonsterEntity } from '../../../ecs/entity';
 import {
+  areAllBiomeRecipesUnlocked,
   distanceSq,
   hitboxGap,
   inAttackRange,
+  isBiomeLevelCapped,
+  NODE_BIOMES,
   posHitboxFromEntity,
   type Vec2,
 } from '@mmo-idle/shared';
@@ -44,7 +47,18 @@ export function updateAutoTargets(world: World) {
     if (!player.usesAutocombat.auto) continue;
     if (player.hasManualMoveIntent) continue;
 
+    if (player.hasAutoTraversePath) {
+      if (player.hasAutoTraversePath.targetNodeId !== player.hasPosition.nodeId) continue;
+    }
+
     const playerPos = player.hasPosition.current;
+    const nodeInfo = NODE_BIOMES[player.hasPosition.nodeId];
+    const skipBosses =
+      player.usesAutocombat.autoTraverse &&
+      nodeInfo &&
+      (!isBiomeLevelCapped(player.tracksProgression, nodeInfo.biomeGroup) ||
+        !areAllBiomeRecipesUnlocked(player.tracksProgression, nodeInfo.biomeGroup));
+
     const monsters = world.monsterEntitiesInNode(player.hasPosition.nodeId);
 
     let target: MonsterEntity | null = null;
@@ -52,6 +66,7 @@ export function updateAutoTargets(world: World) {
     let bestDist = Infinity;
 
     for (const monster of monsters) {
+      if (skipBosses && monster.isMonster.isBoss) continue;
       const aggroedOnPlayer = monster.hasAggroTarget?.playerId === player.isPlayer.id;
       const d = distanceSq(monster.hasPosition.current, playerPos);
 

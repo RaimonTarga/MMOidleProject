@@ -27,6 +27,10 @@ export interface ClientToServerEvents {
   'player:move': (pos: Vec2) => void;
   /** Enable or disable server-side auto-targeting for this player. */
   'player:setAuto': (enabled: boolean) => void;
+  /** Enable or disable server-side auto-traverse when auto-combat is on. */
+  'player:setAutoTraverse': (enabled: boolean) => void;
+  /** Request a fresh authoritative full snapshot for the player's current node. */
+  'player:requestSync': () => void;
   /** Request to unlock a skill tree node by ID. Server validates and applies. */
   'player:unlockSkill': (skillId: string) => void;
   /** Equip an item from inventory by its definition ID. */

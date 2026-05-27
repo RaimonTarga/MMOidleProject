@@ -3,6 +3,8 @@ import { DEPTH } from "../../render/depth";
 import { getDefaultStore } from "jotai";
 import { combatLog } from "../../combatLog";
 import { statusAtom, nodeTelemetryAtom, syncPlayerAtoms, nodeLoadingAtom } from "../../hud/atoms";
+import { loadGameplaySettings } from "../../settings/gameplaySettings";
+import { sendRequestSync, sendSetAutoTraverse } from "../../net/intents";
 import { accountId, displayName } from "../../clientAuth";
 import { connectGameSocket, wireSocketHandlers } from "../../net/socket";
 import { applyDelta } from "../../net/deltaApplier";
@@ -107,6 +109,9 @@ export function createGameScene(scene: GameScene): void {
       onDocumentHidden();
       return;
     }
+    if (scene.socket.connected) {
+      sendRequestSync(scene.socket);
+    }
     beginTabResync(scene.state, scene);
   }
   document.addEventListener('visibilitychange', onVisibilityChange);
@@ -172,6 +177,7 @@ function connectSocket(scene: GameScene): void {
     onConnect: (socket) => {
       scene.myId = socket.id ?? "";
       atomStore.set(statusAtom, "connected");
+      sendSetAutoTraverse(socket, loadGameplaySettings().autoTraverseEnabled);
       if (scene.state.ownId)
         scene.cameras.main.startFollow(scene.cameraTarget, true, 0.1, 0.1);
     },
@@ -179,6 +185,7 @@ function connectSocket(scene: GameScene): void {
       atomStore.set(statusAtom, "disconnected");
       atomStore.set(nodeTelemetryAtom, null);
       syncPlayerAtoms(null);
+      scene.state.gameplaySettingsSynced = false;
       scene.myId = "";
       scene.state.ownId = null;
     },

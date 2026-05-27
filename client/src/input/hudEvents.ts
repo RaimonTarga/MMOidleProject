@@ -8,6 +8,7 @@ import {
   sendLeaveTestRoom,
   sendRefreshRecipes,
   sendResetProgress,
+  sendSetAutoTraverse,
   sendUnequip,
   sendUnlockSkill,
 } from "../net/intents";
@@ -17,6 +18,10 @@ import { sendAutoPathMove, setAutoMode } from "./autoPath";
 export function attachHudEvents(scene: GameScene): void {
   intents.on("toggleAuto", () => {
     setAutoMode(scene, !scene.autoMode);
+  });
+
+  intents.on("setAutoTraverse", (enabled) => {
+    sendSetAutoTraverse(scene.socket, enabled);
   });
 
   intents.on("unlockSkill", (skillId) => {

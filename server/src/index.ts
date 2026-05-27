@@ -38,7 +38,8 @@ import { clearEngagement } from './systems/combat/ai/engagement';
 import { attachComponent, detachComponent } from './ecs/markerHelpers';
 import { syncArchetypeSlices } from './ecs/archetypeSliceSync';
 import { recalculatePlayerEntityStats } from './ecs/playerEntityFormulas';
-import { markSliceDirty } from './ecs/dirtyHelpers';
+import { markSliceDirty, mutateSlice } from './ecs/dirtyHelpers';
+import { clearAutoTraversePath } from './systems/world/autoTraverse';
 import { thawNode } from './world/nodeLifecycle';
 import { ensurePopulation, ensureBoss } from './systems/world/spawning';
 
@@ -245,6 +246,27 @@ io.on('connection', (socket) => {
     p.usesAutocombat.auto = enabled;
   });
 
+  socket.on('player:setAutoTraverse', (enabled) => {
+    const p = world.getPlayerEntity(socket.id);
+    if (!p) return;
+    mutateSlice(world, p, 'usesAutocombat', (s) => {
+      s.autoTraverse = !!enabled;
+    });
+    if (!enabled) clearAutoTraversePath(world, p);
+  });
+
+  socket.on('player:requestSync', () => {
+    const p = world.getPlayerEntity(socket.id);
+    if (!p) return;
+    const snap = world.buildNodeDelta(
+      p.hasPosition.nodeId,
+      { patched: new Map(), detached: new Map() },
+      { resync: true },
+    );
+    recordBroadcast(snap, 'state:sync');
+    socket.emit('state:sync', snap);
+  });
+
   socket.on('player:unlockSkill', (skillId) => {
     const p = world.getPlayerEntity(socket.id);
     if (!p) return;
@@ -347,6 +369,8 @@ io.on('connection', (socket) => {
       p.tracksProgression.questProgress = {};
       p.tracksProgression.playerTier = 0;
       p.tracksProgression.currentSkillTier = 0;
+      p.tracksProgression.bossesCleared = [];
+      p.tracksProgression.clearedNodes = [];
       for (const type of ESSENCE_TYPES) {
         p.tracksProgression.essences[type] = 0;
       }
@@ -360,6 +384,7 @@ io.on('connection', (socket) => {
       p.usesSkills.selectedRange = null;
       p.usesSkills.combatArchetype = null;
       p.usesAutocombat.auto = false;
+      clearAutoTraversePath(world, p);
 
       stopEntity(world, p);
       setAttackTarget(world, p, null);

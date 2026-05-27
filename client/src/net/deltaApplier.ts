@@ -4,6 +4,8 @@ import {
   composePlayerView,
   RECIPE_DATABASE,
 } from "@mmo-idle/shared";
+import { loadGameplaySettings } from '../settings/gameplaySettings';
+import { sendSetAutoTraverse } from './intents';
 import { hudBus } from "../hudBus";
 import { syncPlayerAtoms, nodeLoadingAtom } from "../hud/atoms";
 import { getDefaultStore } from "jotai";
@@ -84,6 +86,10 @@ export function applyDelta(
       }
     }
     syncPlayerAtoms(own);
+    if (!state.gameplaySettingsSynced) {
+      sendSetAutoTraverse(scene.socket, loadGameplaySettings().autoTraverseEnabled);
+      state.gameplaySettingsSynced = true;
+    }
   }
 
   notifyDeltaAppliedDuringTabResync();

@@ -85,6 +85,7 @@ export interface IsPlayer {
 /** Auto-combat opt-in. */
 export interface UsesAutocombat {
   auto: boolean;
+  autoTraverse: boolean;
 }
 
 /** Per-player long-term progression state. */
@@ -98,6 +99,10 @@ export interface TracksProgression {
   questProgress: Record<string, number>;
   playerTier: number;
   currentSkillTier: number;
+  /** Persisted boss clears keyed as "biomeGroup:tier" (e.g. "forest:1"). */
+  bossesCleared: string[];
+  /** Persisted non-boss map clears keyed by node id. */
+  clearedNodes: string[];
 }
 
 /** Owned items, by inventory bag and equipment slot. */

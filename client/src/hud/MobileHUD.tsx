@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useAtomValue } from 'jotai';
+import { useAtom, useAtomValue } from 'jotai';
 import { hudBus } from '../hudBus';
 import { SkillTreePanel } from '../ui/SkillTreePanel';
 import { InventoryPanel } from '../ui/InventoryPanel';
@@ -7,12 +7,14 @@ import { CraftingPanel } from '../ui/CraftingPanel';
 import { MapPanel } from '../ui/MapPanel';
 import { QuestPanel } from '../ui/QuestPanel';
 import { NODE_BIOMES, BIOME_DATABASE } from '@mmo-idle/shared';
+import { SettingsPanel } from './settings/SettingsPanel';
 import {
   autoAtom,
   hpAtom,
   maxHpAtom,
   playerNameAtom,
   playerNodeIdAtom,
+  settingsOpenAtom,
   shieldsAtom,
   skillPointsAtom,
   statusAtom,
@@ -48,6 +50,7 @@ function MobileHUDContent() {
   const [mapOpen, setMapOpen]     = useState(false);
   const [questOpen, setQuestOpen] = useState(false);
   const [menuOpen, setMenuOpen]   = useState(false);
+  const [settingsOpen, setSettingsOpen] = useAtom(settingsOpenAtom);
 
   const status = useAtomValue(statusAtom);
   const playerName = useAtomValue(playerNameAtom);
@@ -123,6 +126,7 @@ function MobileHUDContent() {
           <DrawerBtn label="CRAFTING"   active={craftTab !== null} onClick={() => { setCraftTab(t => t ? null : 'forge'); setMenuOpen(false); }} />
           <DrawerBtn label="MAP"        active={mapOpen}   onClick={() => openPanel(setMapOpen, mapOpen)} />
           <DrawerBtn label="QUESTS"     active={questOpen} onClick={() => openPanel(setQuestOpen, questOpen)} />
+          <DrawerBtn label="SETTINGS"   active={settingsOpen} onClick={() => openPanel(setSettingsOpen, settingsOpen)} />
         </div>
       </div>
 
@@ -144,6 +148,7 @@ function MobileHUDContent() {
           </div>
         </div>
       )}
+      {settingsOpen && <SettingsPanel onClose={() => setSettingsOpen(false)} />}
     </>
   );
 }

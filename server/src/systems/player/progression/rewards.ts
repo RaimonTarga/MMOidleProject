@@ -1,7 +1,8 @@
-import { NODE_BIOMES, MONSTER_DATABASE, RECIPE_DATABASE, GAME_CONFIG, biomeLevelCap, biomeXpForLevel } from '@mmo-idle/shared';
+import { NODE_BIOMES, MONSTER_DATABASE, RECIPE_DATABASE, GAME_CONFIG, biomeLevelCap, biomeXpForLevel, bossClearKey } from '@mmo-idle/shared';
 import type { EssenceType } from '@mmo-idle/shared';
 import type { MonsterEntity, PlayerEntity } from '../../../ecs/entity';
 import type { World } from '../../../world/World';
+import { markSliceDirty } from '../../../ecs/dirtyHelpers';
 import { registerKillForQuests } from './questSystem';
 
 export interface KillRewards {
@@ -90,6 +91,14 @@ export function grantMonsterRewards(
   }
   if (monster.isMonster.isBoss) {
     world.bossRespawnAt.set(monster.hasPosition.nodeId, Date.now() + 30_000);
+    const info = NODE_BIOMES[monster.hasPosition.nodeId];
+    if (info) {
+      const key = bossClearKey(info.biomeGroup, info.biomeTier);
+      if (!killer.tracksProgression.bossesCleared.includes(key)) {
+        killer.tracksProgression.bossesCleared.push(key);
+        markSliceDirty(world, killer, 'tracksProgression');
+      }
+    }
   }
   return {
     essenceGained: rewards.essence,

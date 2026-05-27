@@ -104,12 +104,17 @@ function hydratePlayerSlices(row: CharacterRow): PersistedPlayerSlices {
     ...emptyEquipment(),
     ...holdsInventory.equipment,
   };
+  const tracksProgression = parseSlice<TracksProgression>(row.tracksProgression);
 
   return {
     isPlayer:          parseSlice<IsPlayer>(row.isPlayer),
     hasPosition:       parseSlice<HasPosition>(row.hasPosition),
     hasHealth:         parseSlice<HasHealth>(row.hasHealth),
-    tracksProgression: parseSlice<TracksProgression>(row.tracksProgression),
+    tracksProgression: {
+      ...tracksProgression,
+      bossesCleared: tracksProgression.bossesCleared ?? [],
+      clearedNodes:   tracksProgression.clearedNodes ?? [],
+    },
     holdsInventory,
     usesSkills:        {
       ...parseSlice<UsesSkills>(row.usesSkills),
@@ -151,6 +156,8 @@ function buildFreshSlices(
       questProgress:    {},
       playerTier:       0,
       currentSkillTier: 0,
+      bossesCleared:    [],
+      clearedNodes:     [],
     },
     holdsInventory: {
       inventory: [],

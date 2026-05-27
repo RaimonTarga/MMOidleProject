@@ -63,6 +63,8 @@ function makePlayer(id: string, nodeId: string, name: string): PersistedPlayerSl
       questProgress: {},
       playerTier: 0,
       currentSkillTier: 0,
+      bossesCleared: [],
+      clearedNodes: [],
     },
     holdsInventory: {
       inventory: [],

@@ -86,6 +86,7 @@ export interface RenderState {
   movementEffectNextAt: Map<string, number>;
   knownUnlockedRecipes: Set<string>;
   knownUnlockedRecipesInitialized: boolean;
+  gameplaySettingsSynced: boolean;
   throttles: {
     minimapAt: number;
     effectOverlaysAt: number;
@@ -122,6 +123,7 @@ export function createRenderState(): RenderState {
     movementEffectNextAt: new Map(),
     knownUnlockedRecipes: new Set(),
     knownUnlockedRecipesInitialized: false,
+    gameplaySettingsSynced: false,
     throttles: {
       minimapAt: 0,
       effectOverlaysAt: 0,

@@ -50,6 +50,12 @@ import type { With } from 'miniplex';
 
 export type EntityId = string;
 
+/** Server-only marker: player is walking a planned auto-traverse path. */
+export interface HasAutoTraversePath {
+  targetNodeId: string;
+  remainingPath: string[];
+}
+
 /**
  * The shape of any entity in the ECS world.
  *
@@ -133,6 +139,7 @@ export interface ServerEntity {
   // ── Player (S8) ───────────────────────────────────────────────
   tracksEngagement?: number;
   hasManualMoveIntent?: {};
+  hasAutoTraversePath?: HasAutoTraversePath;
 
   // ── Shared by both (S7 + S8) ──────────────────────────────────
   tracksCombat?:    TracksCombat;
