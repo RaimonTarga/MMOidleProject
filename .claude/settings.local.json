@@ -44,7 +44,10 @@
       "Bash(sqlite3 game.db \"SELECT player_tier, biome_level, biome_xp, quest_progress FROM characters LIMIT 5;\")",
       "Bash(git log *)",
       "Bash(sqlite3 *)",
-      "Bash(xargs grep -l \"grantMonsterRewards\")"
+      "Bash(xargs grep -l \"grantMonsterRewards\")",
+      "Bash(git checkout *)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)"
     ]
   }
 }
