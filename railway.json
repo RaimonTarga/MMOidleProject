@@ -1,8 +1,12 @@
 {
-  "$schema": "https://railway.app/railway.schema.json",
+  "$schema": "https://railway.com/railway.schema.json",
   "build": {
     "builder": "RAILPACK",
+<<<<<<< HEAD
     "buildCommand": "pnpm build:client && pnpm --filter @mmo-idle/server build"
+=======
+    "buildCommand": "pnpm build"
+>>>>>>> aead600abdbc0742a43f53bc3ad0173313a2abc0
   },
   "deploy": {
     "startCommand": "pnpm --filter @mmo-idle/server start",
