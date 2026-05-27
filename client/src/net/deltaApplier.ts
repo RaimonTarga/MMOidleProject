@@ -22,10 +22,12 @@ export function applyDelta(
   scene: GameScene,
 ): void {
   const liveIds = new Set<string>();
+  const pendingRemoves: string[] = [];
 
   for (const delta of snapshot.deltas) {
     if (delta.kind === "remove") {
-      destroyEntity(state, delta.netId, scene);
+      // Defer removes until after events so FX can read sprite positions
+      pendingRemoves.push(delta.netId);
       continue;
     }
 
@@ -53,14 +55,17 @@ export function applyDelta(
     upsertEntityView(state, delta.netId, entity, scene);
   }
 
+  // Events fire before removes: sprites still exist so reward/hit FX can read positions
+  for (const ev of snapshot.events) dispatchCombatEvent(state, ev, scene);
+
+  for (const netId of pendingRemoves) destroyEntity(state, netId, scene);
+
   if (snapshot.full) {
     for (const id of [...state.ids]) {
       if (!liveIds.has(id)) destroyEntity(state, id, scene);
     }
     getDefaultStore().set(nodeLoadingAtom, { active: false, nodeId: null });
   }
-
-  for (const ev of snapshot.events) dispatchCombatEvent(state, ev, scene);
 
   const own = getOwnView(state);
   if (own) {

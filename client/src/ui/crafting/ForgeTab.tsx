@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useAtomValue } from 'jotai';
 import type { EssenceType } from '@mmo-idle/shared';
 import { RECIPE_DATABASE, TEST_ROOM_NODE_ID } from '@mmo-idle/shared';
@@ -13,17 +13,39 @@ import {
 import { SLOT_ABBR, SLOT_LABELS, biomeName, getStatEntries, tierColor } from './common';
 import { CostDisplay, EssenceSummary } from './shared';
 
+interface CraftResult { recipeId: string; success: boolean; }
+
 export function ForgeTab() {
   const [filterBiome, setFilterBiome] = useState<string | null>(null);
   const [filterSlot,  setFilterSlot]  = useState<string | null>(null);
   const [filterTier,  setFilterTier]  = useState<number | null>(null);
-  const nodeId           = useAtomValue(playerNodeIdAtom);
-  const playerTier       = useAtomValue(playerTierAtom);
-  const unlockedRecipeIds = useAtomValue(unlockedRecipesAtom);
-  const essences         = useAtomValue(essencesAtom);
-  const inventory        = useAtomValue(inventoryAtom);
+  const [craftResult, setCraftResult] = useState<CraftResult | null>(null);
 
-  const isTestRoom = nodeId === TEST_ROOM_NODE_ID;
+  const nodeId            = useAtomValue(playerNodeIdAtom);
+  const playerTier        = useAtomValue(playerTierAtom);
+  const unlockedRecipeIds = useAtomValue(unlockedRecipesAtom);
+  const essences          = useAtomValue(essencesAtom);
+  const inventory         = useAtomValue(inventoryAtom);
+
+  const isTestRoom        = nodeId === TEST_ROOM_NODE_ID;
+  const lastCraftedIdRef  = useRef<string | null>(null);
+  const resultTimerRef    = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const result = (e as CustomEvent<{ success: boolean; reason?: string }>).detail;
+      const recipeId = lastCraftedIdRef.current;
+      if (!recipeId) return;
+      if (resultTimerRef.current) clearTimeout(resultTimerRef.current);
+      setCraftResult({ recipeId, success: result.success });
+      resultTimerRef.current = setTimeout(() => setCraftResult(null), 2200);
+    };
+    window.addEventListener('hud:craftResult', handler);
+    return () => {
+      window.removeEventListener('hud:craftResult', handler);
+      if (resultTimerRef.current) clearTimeout(resultTimerRef.current);
+    };
+  }, []);
 
   const ownedSet = useMemo(() => new Set(inventory), [inventory]);
 
@@ -64,7 +86,6 @@ export function ForgeTab() {
       (!filterSlot  || r.slot        === filterSlot) &&
       (!filterTier  || r.tier        === filterTier),
     );
-
     return base.slice().sort((a, b) => {
       const cat = (r: typeof a) => {
         if (ownedSet.has(r.id)) return 2;
@@ -90,35 +111,27 @@ export function ForgeTab() {
           <button
             className={`craft-filter-chip${!filterBiome ? ' craft-filter-chip--active' : ''}`}
             onClick={() => setFilterBiome(null)}
-          >
-            All
-          </button>
+          >All</button>
           {biomeGroups.map(g => (
             <button
               key={g}
               className={`craft-filter-chip${filterBiome === g ? ' craft-filter-chip--active' : ''}`}
               onClick={() => toggleBiome(g)}
-            >
-              {biomeName(g)}
-            </button>
+            >{biomeName(g)}</button>
           ))}
         </div>
         <div className="craft-filter-row">
           <button
             className={`craft-filter-chip${!filterSlot ? ' craft-filter-chip--active' : ''}`}
             onClick={() => setFilterSlot(null)}
-          >
-            All Slots
-          </button>
+          >All Slots</button>
           {(['weapon', 'armor', 'recovery', 'mobility'] as const).map(s => (
             <button
               key={s}
               className={`craft-filter-chip craft-filter-chip--slot${filterSlot === s ? ' craft-filter-chip--active' : ''}`}
               data-slot={s}
               onClick={() => toggleSlot(s)}
-            >
-              {SLOT_LABELS[s]}
-            </button>
+            >{SLOT_LABELS[s]}</button>
           ))}
         </div>
         {tiers.length > 1 && (
@@ -126,9 +139,7 @@ export function ForgeTab() {
             <button
               className={`craft-filter-chip${!filterTier ? ' craft-filter-chip--active' : ''}`}
               onClick={() => setFilterTier(null)}
-            >
-              All Tiers
-            </button>
+            >All Tiers</button>
             {tiers.map(t => (
               <button
                 key={t}
@@ -138,9 +149,7 @@ export function ForgeTab() {
                   : { color: `${tierColor(t)}bb` }
                 }
                 onClick={() => toggleTier(t)}
-              >
-                T{t}
-              </button>
+              >T{t}</button>
             ))}
           </div>
         )}
@@ -155,22 +164,33 @@ export function ForgeTab() {
         <div className="craft-list">
           {filtered.map(recipe => {
             const costEntries = Object.entries(recipe.cost) as [EssenceType, number][];
-            const canAfford = costEntries.every(([type, amount]) => (essences[type] ?? 0) >= amount);
-            const owned = ownedSet.has(recipe.id);
+            const canAfford   = costEntries.every(([type, amount]) => (essences[type] ?? 0) >= amount);
+            const owned       = ownedSet.has(recipe.id);
             const statEntries = getStatEntries(
               recipe.stats,
               recipe.slot === 'weapon' ? recipe.attacksPerSecond : undefined,
             );
+            const result = craftResult?.recipeId === recipe.id ? craftResult : null;
 
             return (
               <div
                 key={recipe.id}
                 className={[
                   'craft-recipe',
-                  owned                  ? 'craft-recipe--owned'       : '',
-                  !owned && !canAfford   ? 'craft-recipe--unaffordable' : '',
+                  owned                ? 'craft-recipe--owned'       : '',
+                  !owned && !canAfford ? 'craft-recipe--unaffordable' : '',
                 ].filter(Boolean).join(' ')}
               >
+                {/* Craft result overlay */}
+                {result && (
+                  <div className={`craft-card-result craft-card-result--${result.success ? 'ok' : 'err'}`}>
+                    <span className="craft-card-result__icon">{result.success ? '✓' : '✗'}</span>
+                    <span className="craft-card-result__text">
+                      {result.success ? 'Crafted!' : 'Not enough essence'}
+                    </span>
+                  </div>
+                )}
+
                 <div className="craft-recipe__icon" data-slot={recipe.slot}>
                   {SLOT_ABBR[recipe.slot] ?? recipe.slot.slice(0, 3).toUpperCase()}
                 </div>
@@ -182,9 +202,7 @@ export function ForgeTab() {
                       {SLOT_LABELS[recipe.slot] ?? recipe.slot}
                     </span>
                     <span className="craft-recipe__tier-badge">T{recipe.tier}</span>
-                    {owned && (
-                      <span className="craft-recipe__owned-badge">IN BAG</span>
-                    )}
+                    {owned && <span className="craft-recipe__owned-badge">IN BAG</span>}
                   </div>
 
                   {statEntries.length > 0 && (
@@ -207,7 +225,12 @@ export function ForgeTab() {
                     <button
                       className="craft-recipe__btn"
                       disabled={!canAfford || owned}
-                      onClick={() => { if (!owned) hudBus.requestCraftRecipe(recipe.id); }}
+                      onClick={() => {
+                        if (!owned) {
+                          lastCraftedIdRef.current = recipe.id;
+                          hudBus.requestCraftRecipe(recipe.id);
+                        }
+                      }}
                     >
                       {owned ? 'In inventory' : canAfford ? 'Craft' : 'Insufficient'}
                     </button>

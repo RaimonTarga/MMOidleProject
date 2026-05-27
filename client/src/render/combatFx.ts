@@ -1,7 +1,7 @@
 import { GAME_CONFIG, type CombatArchetype, type CombatEvent, type PlayerView, type Vec2 } from '@mmo-idle/shared';
 import { combatLog } from '../combatLog';
 import { activateLaserBeam } from '../fx/laser';
-import { playOneShotEffect } from '../fx/particles';
+import { playOneShotEffect, spawnDamageNumber } from '../fx/particles';
 import { getDotPath, type DotPath } from '../fx/dot';
 import { fxSlash } from '../fx/slash';
 import { fxImpact } from '../fx/impact';
@@ -174,7 +174,14 @@ export function dispatchCombatEvent(state: RenderState, ev: CombatEvent, scene: 
 
   if (ev.kind === 'player-kill') {
     combatLog.push('kill', `${ev.targetName} defeated`);
-    if (shouldRunClientFx()) spawnRewardFloaters(scene, ev);
+    if (shouldRunClientFx()) {
+      const target = scene.state.sprite.get(ev.targetId);
+      if (target && ev.damage > 0) {
+        const meta = scene.state.spriteMeta.get(ev.targetId);
+        spawnDamageNumber(scene, { x: target.x, y: target.y }, meta?.barOffsetY ?? 40, Math.round(ev.damage), '#ffffff');
+      }
+      spawnRewardFloaters(scene, ev);
+    }
   }
 }
 

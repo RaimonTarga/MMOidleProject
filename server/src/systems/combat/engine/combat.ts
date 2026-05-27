@@ -140,6 +140,7 @@ export function updateCombat(world: World, dt: number, now: number) {
             playerId:   player.isPlayer.id,
             targetId:   target.isMonster.id,
             targetName: target.isMonster.name,
+            damage:     ctx.damage,
             biomeXpGained: rewardInfo?.biomeXpGained ?? 0,
             essenceGained: rewardInfo?.essenceGained ?? 0,
             essenceType: rewardInfo?.essenceType ?? 'green',

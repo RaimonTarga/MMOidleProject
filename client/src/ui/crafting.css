@@ -230,6 +230,7 @@
 
 /* ── Recipe card ─────────────────────────────────────────────────────────── */
 .craft-recipe {
+  position: relative;
   display: flex;
   flex-direction: row;
   gap: 12px;
@@ -416,22 +417,30 @@
 
 .craft-recipe__btn {
   flex-shrink: 0;
-  background: rgba(12, 12, 38, 0.95);
-  border: 1px solid rgba(70, 80, 180, 0.55);
-  color: #8899ee;
+  background: rgba(14, 14, 44, 0.95);
+  border: 1px solid rgba(100, 110, 220, 0.65);
+  color: #99aaff;
   font-family: monospace;
-  font-size: 10px;
-  padding: 4px 14px;
-  border-radius: 3px;
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  padding: 8px 24px;
+  border-radius: 4px;
   cursor: pointer;
   white-space: nowrap;
-  transition: border-color 0.12s, color 0.12s, background 0.12s;
+  transition: border-color 0.12s, color 0.12s, background 0.12s, box-shadow 0.12s;
 }
 
 .craft-recipe__btn:hover:not(:disabled) {
-  border-color: rgba(100, 120, 230, 0.80);
-  color: #aabbff;
-  background: rgba(18, 18, 55, 0.98);
+  border-color: rgba(140, 160, 255, 0.85);
+  color: #bbccff;
+  background: rgba(22, 22, 66, 0.98);
+  box-shadow: 0 0 14px rgba(110, 140, 255, 0.30);
+}
+
+.craft-recipe__btn:active:not(:disabled) {
+  box-shadow: 0 0 20px rgba(120, 160, 255, 0.50);
+  background: rgba(28, 28, 80, 0.98);
 }
 
 .craft-recipe__btn:disabled {
@@ -680,3 +689,55 @@
 
 .craft-filter-chip--tier { color: #aa9944; border-color: rgba(180,160,40,0.35); }
 .craft-filter-chip--tier.craft-filter-chip--active { color: #ffdd44; background: rgba(40,32,6,0.88); border-color: rgba(220,190,40,0.65); }
+
+/* ── Craft result card overlay ───────────────────────────────────────────── */
+@keyframes craft-result-anim {
+  0%   { opacity: 0; }
+  12%  { opacity: 1; }
+  75%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+.craft-card-result {
+  position: absolute;
+  inset: 0;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  pointer-events: none;
+  z-index: 2;
+  animation: craft-result-anim 2.2s ease-out forwards;
+}
+
+.craft-card-result--ok {
+  background: rgba(6, 32, 16, 0.92);
+  border: 1px solid rgba(68, 200, 110, 0.50);
+  box-shadow: inset 0 0 24px rgba(68, 200, 110, 0.08);
+}
+
+.craft-card-result--err {
+  background: rgba(32, 6, 6, 0.92);
+  border: 1px solid rgba(220, 60, 60, 0.50);
+  box-shadow: inset 0 0 24px rgba(220, 60, 60, 0.08);
+}
+
+.craft-card-result__icon {
+  font-size: 24px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.craft-card-result--ok  .craft-card-result__icon { color: #44dd88; }
+.craft-card-result--err .craft-card-result__icon { color: #ff5555; }
+
+.craft-card-result__text {
+  font-size: 13px;
+  font-weight: bold;
+  font-family: monospace;
+  letter-spacing: 0.6px;
+}
+
+.craft-card-result--ok  .craft-card-result__text { color: #77eebb; }
+.craft-card-result--err .craft-card-result__text { color: #ff8877; }
