@@ -121,10 +121,7 @@ export function applyFlashSpeedGain(world: World, player: PlayerEntity): void {
 
 export function updateFlashSpeed(world: World, dt: number): void {
   for (const player of world.energyPlayers) {
-    if (!hasPassive(player, 'energy.flash')) {
-      resetFlashSpeed(world, player);
-      continue;
-    }
+    if (!hasPassive(player, 'energy.flash')) continue;
     if (player.hasManualMoveIntent || !player.hasAttackTarget) {
       decayFlashShift(world, player, dt);
     }
