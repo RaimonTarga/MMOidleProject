@@ -6,7 +6,7 @@
     "bake:hitboxes": "tsx src/hitbox/bakeCli.ts",
     "dev": "pnpm run bake:hitboxes && tsx watch src/index.ts",
     "build": "tsc",
-    "start": "pnpm run bake:hitboxes && NODE_ENV=production node dist/index.js",
+    "start": "pnpm run bake:hitboxes && NODE_ENV=production tsx src/index.ts",
     "bench": "tsx bench/run.ts"
   },
   "dependencies": {

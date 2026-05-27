@@ -419,8 +419,9 @@ io.on('connection', (socket) => {
 
 // ── START ────────────────────────────────────────────
 
-  httpServer.listen(4000, () => {
-    console.log('Server running on http://localhost:4000');
+  const port = Number(process.env.PORT) || 4000;
+  httpServer.listen(port, () => {
+    console.log(`Server running on port ${port}`);
   });
 }
 

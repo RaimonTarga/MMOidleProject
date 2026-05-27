@@ -4,7 +4,7 @@ import { migrate } from 'drizzle-orm/better-sqlite3/migrator';
 import path from 'path';
 import * as schema from './schema';
 
-const DB_PATH = path.join(process.cwd(), 'game.db');
+const DB_PATH = process.env.DB_PATH ?? path.join(process.cwd(), 'game.db');
 
 const sqlite = new Database(DB_PATH);
 sqlite.pragma('journal_mode = WAL');

@@ -17,7 +17,8 @@
     "test:spatial": "pnpm --filter @mmo-idle/server exec tsx ../shared/src/systems/spatialHitbox.test.ts",
     "bake:hitboxes": "pnpm --filter @mmo-idle/server bake:hitboxes",
     "typecheck": "pnpm -r exec tsc --noEmit",
-    "size:check": "node scripts/size-check.mjs"
+    "size:check": "node scripts/size-check.mjs",
+    "start": "pnpm --filter @mmo-idle/server start"
   },
   "devDependencies": {
     "cross-env": "^10.1.0",
