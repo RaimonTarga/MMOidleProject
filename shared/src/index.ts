@@ -1,4 +1,4 @@
-﻿export * from './skillTree';
+export * from './skillTree';
 export * from './items';
 export * from './itemDatabase';
 export * from './recipeDatabase';
@@ -12,6 +12,7 @@ export * from './systems/stats';
 export * from './systems/skills';
 export * from './systems/damage';
 export * from './systems/spatial';
+export * from './systems/biomeProgress';
 export * from './hitbox/types';
 export * from './hitbox/constants';
 export * from './sprites/frameMaps';

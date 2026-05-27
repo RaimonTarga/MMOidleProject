@@ -2,6 +2,7 @@ import type { EquipmentSlot } from '@mmo-idle/shared';
 
 export interface IntentMap {
   toggleAuto: undefined;
+  setAutoTraverse: boolean;
   unlockSkill: string;
   equipItem: string;
   unequipItem: EquipmentSlot;

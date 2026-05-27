@@ -13,6 +13,11 @@ export const hudBus = {
     intents.emit('toggleAuto', undefined);
   },
 
+  /** Persist and push auto-traverse preference to the server. */
+  requestSetAutoTraverse(enabled: boolean): void {
+    intents.emit('setAutoTraverse', enabled);
+  },
+
   /** Called by SkillTreePanel — GameScene picks this up and emits the socket event. */
   requestSkillUnlock(skillId: string): void {
     intents.emit('unlockSkill', skillId);

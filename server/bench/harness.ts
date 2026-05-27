@@ -1,13 +1,13 @@
-import { GAME_CONFIG, emptyEquipment, type Vec2 } from '@mmo-idle/shared';
-import type { PersistedPlayerSlices } from '../src/db/playerRepo';
-import { World } from '../src/world/World';
-import { initAllMechanics } from '../src/systems/classes/registry';
-import { initWeaponEffects } from '../src/systems/combat/damage/weaponEffects';
-import { initDefenseSystems } from '../src/systems/defense';
-import { initDebuffMechanics } from '../src/systems/classes/shared/debuffs';
-import { syncArchetypeSlices } from '../src/ecs/archetypeSliceSync';
-import { recalculatePlayerEntityStats } from '../src/ecs/playerEntityFormulas';
-import type { BenchScenario } from './scenarios';
+import { GAME_CONFIG, emptyEquipment, type Vec2 } from "@mmo-idle/shared";
+import type { PersistedPlayerSlices } from "../src/db/playerRepo";
+import { World } from "../src/world/World";
+import { initAllMechanics } from "../src/systems/classes/registry";
+import { initWeaponEffects } from "../src/systems/combat/damage/weaponEffects";
+import { initDefenseSystems } from "../src/systems/defense";
+import { initDebuffMechanics } from "../src/systems/classes/shared/debuffs";
+import { syncArchetypeSlices } from "../src/ecs/archetypeSliceSync";
+import { recalculatePlayerEntityStats } from "../src/ecs/playerEntityFormulas";
+import type { BenchScenario } from "./scenarios";
 
 let mechanicsInitialized = false;
 
@@ -25,9 +25,14 @@ export function createBenchWorld(): World {
   return new World();
 }
 
-function buildBenchPlayer(id: string, name: string, nodeId: string, pos: Vec2): PersistedPlayerSlices {
+function buildBenchPlayer(
+  id: string,
+  name: string,
+  nodeId: string,
+  pos: Vec2,
+): PersistedPlayerSlices {
   const equipment = emptyEquipment();
-  equipment.weapon = 'basic-sword';
+  equipment.weapon = "basic-sword";
   return {
     isPlayer: { id, name },
     hasPosition: { current: pos, nodeId, speed: GAME_CONFIG.PLAYER_SPEED },
@@ -46,6 +51,8 @@ function buildBenchPlayer(id: string, name: string, nodeId: string, pos: Vec2): 
       questProgress: {},
       playerTier: 0,
       currentSkillTier: 0,
+      bossesCleared: [],
+      clearedNodes: [],
     },
     holdsInventory: { inventory: [], equipment },
     usesSkills: {
@@ -59,7 +66,11 @@ function buildBenchPlayer(id: string, name: string, nodeId: string, pos: Vec2): 
   };
 }
 
-export function spawnBenchPlayers(world: World, scenario: BenchScenario, count: number): void {
+export function spawnBenchPlayers(
+  world: World,
+  scenario: BenchScenario,
+  count: number,
+): void {
   for (let i = 0; i < count; i++) {
     const nodeId = scenario.nodeForIndex(i, count);
     const pos: Vec2 = {
@@ -77,4 +88,6 @@ export function spawnBenchPlayers(world: World, scenario: BenchScenario, count: 
 }
 
 export const BENCH_DT_MS = Math.round(1000 / GAME_CONFIG.LOGIC_TICK_RATE);
-export const BENCH_BROADCAST_MS = Math.round(1000 / GAME_CONFIG.BROADCAST_TICK_RATE);
+export const BENCH_BROADCAST_MS = Math.round(
+  1000 / GAME_CONFIG.BROADCAST_TICK_RATE,
+);

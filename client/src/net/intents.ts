@@ -9,6 +9,14 @@ export function sendSetAuto(socket: GameSocket, enabled: boolean): void {
   socket.emit('player:setAuto', enabled);
 }
 
+export function sendSetAutoTraverse(socket: GameSocket, enabled: boolean): void {
+  socket.emit('player:setAutoTraverse', enabled);
+}
+
+export function sendRequestSync(socket: GameSocket): void {
+  socket.emit('player:requestSync');
+}
+
 export function sendUnlockSkill(socket: GameSocket, skillId: string): void {
   socket.emit('player:unlockSkill', skillId);
 }

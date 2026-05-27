@@ -27,6 +27,7 @@ export interface PlayerView {
   lastAttackAt: number;
   attackTargetId: string | null;
   auto: boolean;
+  autoTraverse: boolean;
   nodeId: string;
   essences: Record<EssenceType, number>;
   level: number;
@@ -73,6 +74,8 @@ export interface PlayerView {
   activeBuffs: PlayerBuff[];
   questProgress: Record<string, number>;
   playerTier: number;
+  bossesCleared: string[];
+  clearedNodes: string[];
   hitboxRects: HitboxRect[];
 }
 
@@ -151,6 +154,7 @@ export function composePlayerView(entity: NetworkedEntity): PlayerView | null {
     lastAttackAt: attack.lastAttackAt,
     attackTargetId: entity.hasAttackTarget?.targetId ?? null,
     auto: entity.usesAutocombat?.auto ?? false,
+    autoTraverse: entity.usesAutocombat?.autoTraverse ?? false,
     nodeId: entity.hasPosition.nodeId,
     essences: progression.essences,
     level: progression.level,
@@ -203,6 +207,8 @@ export function composePlayerView(entity: NetworkedEntity): PlayerView | null {
     activeBuffs: entity.hasStatus?.activeBuffs ?? [],
     questProgress: progression.questProgress,
     playerTier: progression.playerTier,
+    bossesCleared: progression.bossesCleared ?? [],
+    clearedNodes: progression.clearedNodes ?? [],
     hitboxRects: entity.hasHitbox?.rects ?? [FALLBACK_PLAYER_AABB],
   };
 }

@@ -15,6 +15,7 @@ import { recalculatePlayerEntityStats } from '../../../ecs/playerEntityFormulas'
 import { syncArchetypeSlices } from '../../../ecs/archetypeSliceSync';
 import { detachComponent } from '../../../ecs/markerHelpers';
 import { stopEntity } from '../movement';
+import { clearAutoTraversePath } from '../autoTraverse';
 import { setAggroTarget, setAttackTarget } from '../../combat/ai/targeting';
 import { resolveMonsterHitbox } from '../../../hitbox/resolve';
 import { thawNode } from '../../../world/nodeLifecycle';
@@ -182,6 +183,7 @@ export function respawnPlayer(world: World, playerId: string): void {
   stopEntity(world, entity);
   setAttackTarget(world, entity, null);
   entity.usesAutocombat.auto = false;
+  clearAutoTraversePath(world, entity);
 
   recalculatePlayerEntityStats(world, entity);
   syncArchetypeSlices(world, entity);

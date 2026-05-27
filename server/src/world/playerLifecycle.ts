@@ -42,6 +42,7 @@ export function attachPlayerEntity(
     },
     usesAutocombat: {
       auto: false,
+      autoTraverse: false,
     },
     tracksProgression: player.tracksProgression,
     holdsInventory: player.holdsInventory,
