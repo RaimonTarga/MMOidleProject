@@ -2,9 +2,9 @@ import type { MonsterView } from '@mmo-idle/shared';
 import { getMonsterShadowOffset } from '../sprites';
 import type { RenderState } from './state';
 import type { GameScene } from '../scenes/GameScene';
-import { ensureSprite } from './sprites';
-import { ensureShadow } from './shadows';
-import { ensureLabel } from './labels';
+import { ensureSprite, updateSpriteFrame } from './sprites';
+import { ensureShadow, destroyShadow } from './shadows';
+import { ensureLabel, destroyLabel } from './labels';
 import { ensureHpBar } from './healthBars';
 import { ensureCdBar } from './cooldownBars';
 import { applyLunge } from './interpolation';
@@ -90,9 +90,48 @@ export function upsertMonster(
     transform.speed = monster.speed;
   }
 
+  // Entity IDs can collide across node snapshots after a server restart —
+  // each node's saved snapshot has its own monster-N namespace, so the same
+  // client sprite ID can flip between monster types on a zone transition.
+  // Mirror players.ts: always refresh the sprite frame on patch (cheap
+  // early-out when the frame is unchanged), and rebuild type-dependent
+  // render state when the type actually changed.
+  const meta = state.spriteMeta.get(monster.id);
+  const typeChanged = prev !== undefined && prev.monsterTypeId !== monster.monsterTypeId;
+  if (typeChanged && meta) {
+    meta.barOffsetY = monster.isBoss ? 50 : 40;
+    meta.entityName = monster.name;
+    meta.monsterBehavior = monster.behavior;
+    meta.shadowOffsetY = getMonsterShadowOffset(monster.monsterTypeId);
+  }
+  if (typeChanged) {
+    state.debugRanges.set(monster.id, {
+      pullRange: monster.pullRange,
+      leashRange: monster.leashRange,
+      attackRange: monster.attackRange,
+    });
+    destroyShadow(state, monster.id);
+    destroyLabel(state, monster.id);
+    const shadowW = monster.isBoss ? 64 : 52;
+    const shadowH = monster.isBoss ? 18 : 14;
+    ensureShadow(state, monster.id, monster.pos, meta?.shadowOffsetY ?? 0, scene, {
+      width: shadowW,
+      height: shadowH,
+      fillColor: 0x000000,
+      fillAlpha: monster.isBoss ? 0.55 : 0.45,
+    });
+    ensureLabel(state, monster.id, monster, scene);
+  }
+  const spriteSize = monster.isBoss ? 80 : 64;
+  updateSpriteFrame(state, monster.id, monster, scene, {
+    displayW: spriteSize,
+    displayH: spriteSize,
+    fallbackColor: monster.color,
+    isPlayer: false,
+  });
+
   if (monster.hp < prevHp) {
     const sprite = state.sprite.get(monster.id);
-    const meta = state.spriteMeta.get(monster.id);
     if (sprite && meta) {
       spawnDamageNumber(
         scene,
@@ -104,7 +143,6 @@ export function upsertMonster(
     }
   }
 
-  const meta = state.spriteMeta.get(monster.id);
   if (monster.lastAttackAt > prevAttackAt && monster.attackTargetId) {
     const vmSprite = state.sprite.get(monster.id);
     const targetInterp = state.interpolation.get(monster.attackTargetId);

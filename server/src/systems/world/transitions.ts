@@ -82,13 +82,14 @@ export function updateTransitions(world: World): void {
     const targetNode = NODE_REGISTRY.get(targetNodeId)!;
     const fromNodeId = position.nodeId;
 
+    position.nodeId = targetNodeId;
+    world.movePlayerNode(fromNodeId, targetNodeId);
+
     if (world.isNodeFrozen(targetNodeId)) {
       world.nodePreparingEmitter?.(entity.isPlayer.id, targetNodeId);
       thawNode(world, targetNodeId);
     }
 
-    position.nodeId = targetNodeId;
-    world.movePlayerNode(fromNodeId, targetNodeId);
     world.resetNodeDeltaState(targetNodeId);
 
     // Place the player just inside the opposite edge of the new node.

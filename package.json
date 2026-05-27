@@ -12,7 +12,7 @@
     "dev:server": "pnpm --filter @mmo-idle/server dev",
     "build": "pnpm --filter @mmo-idle/shared build && pnpm --filter @mmo-idle/client build && pnpm --filter @mmo-idle/server build",
     "build:client": "pnpm --filter @mmo-idle/client build",
-    "play": "pnpm build:client && pnpm dev:server",
+    "play": "VITE_ENABLE_OPS_MAP=true pnpm build:client && pnpm dev:server",
     "bench:server": "pnpm --filter @mmo-idle/server bench",
     "test:spatial": "pnpm --filter @mmo-idle/server exec tsx ../shared/src/systems/spatialHitbox.test.ts",
     "bake:hitboxes": "pnpm --filter @mmo-idle/server bake:hitboxes",

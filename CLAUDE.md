@@ -482,7 +482,7 @@ Never set a `dot.damage-per-stack` passive — `damagePerStack` is always derive
 - Generic 5×5 spritesheet effect animation pipeline for status overlays and one-shot effects
 - Split-tick loop (10 Hz logic, 5 Hz broadcast); combat event queue for animations
 - Monster wander smoothing (80px hard-snap threshold)
-- SQLite persistence (`server/src/db/`) — accounts + characters (load on connect, save on disconnect + 30 s auto-save) **and node snapshots** (`node_states` table): monster state serialized when a node freezes, restored on thaw. Only `scriptsBoss` is persisted in `FrozenMonsterMarkers`; all transient combat markers (aggro/attack targets, movement, knockback, DoT stacks, freeze/chill/burn effects) are **intentionally dropped** on freeze — they hold stale player IDs or short-duration timer state that cannot meaningfully resume after an arbitrary freeze interval and caused immortal-mob bugs (permanent `hasFrozen` after deserialization).
+- SQLite persistence (`server/src/db/`) — accounts + characters (load on connect, save on disconnect + 30 s auto-save). Frozen nodes do not persist monster state; monsters are regenerated from biome definitions when a node thaws. Monster IDs use compound form `{nodeId}_monster-{N}` for global uniqueness.
 - DoT duration system — stacks expire after 4.5 s without a hit; damage debt drains once/second
 - DoT kills push `player-kill` combat events — `updateDotArchetype`, `updateConflagration`, and `updatePermafrost` all call `world.pushEvent('player-kill', ...)` after `grantMonsterRewards`, matching the regular-attack kill path so reward floaters and death effects display correctly on DoT kills
 - LAN play — client served as static files from Express; `pnpm play` builds + starts
@@ -561,7 +561,7 @@ T1 bosses: 400–700 HP, 14–22 ATK. T2 bosses: not yet balanced (stats inherit
 - **`biomeLevelCap` takes two args** — `(playerTier, biomeGroup)`. No `biomeTier` parameter. Cap = `Math.max(4, playerTier * 4)`. Never pass three args.
 - **Slow effect stores `totalMs` in data** — when applying `'slow'` status effect, always include `data: { speedMult, totalMs }` so `buffSync.ts` can compute the clock-sweep `durationPct`.
 - **`evadeEvery` minimum is 5** — never set lower; convention is max 1-in-5 dodge rate.
-- **Node snapshot markers — only `scriptsBoss`** — `FrozenMonsterMarkers` in `shared/src/protocol/nodeSnapshot.ts` intentionally only serializes `scriptsBoss`. Never add transient markers (freeze, chill, DoT stacks, aggro/attack targets, movement, knockback) to `MARKER_KEYS` in `nodeSnapshotCodec.ts`; they produce permanently-stuck monster state on thaw. If a stale immortal mob appears in a node, delete its row from `node_states` in `server/game.db`.
+- **Node freeze/thaw — monsters are ephemeral** — never serialize monster combat state (`tracksCombat`, aggro, movement, status effects, boss runtime markers, etc.). When the last player leaves a node, `freezeNode` removes all live monsters; `thawNode` regenerates population via `ensurePopulation` + `ensureBoss`. Use dev `debug:respawnNode` to force a fresh spawn in the current node.
 - **Per-biome density via `mobDensity`** — never hardcode `GAME_CONFIG.MONSTERS_PER_NODE` in spawn loops; always go through `World.getMobDensity(nodeId)`.
 
 ### ECS conventions (server)

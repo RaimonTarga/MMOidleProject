@@ -140,7 +140,7 @@ export class World {
    */
   testRoomEngagedBossId: string | null = null;
 
-  nextMonsterId = 1;
+  readonly nextMonsterIdByNode = new Map<string, number>();
   tickCounter = 0;
   readonly dirty = new DirtyTracker();
   readonly telemetry = new NodeTelemetry();
@@ -353,6 +353,21 @@ export class World {
     const next = (map.get(nodeId) ?? 0) + delta;
     if (next <= 0) map.delete(nodeId);
     else map.set(nodeId, next);
+  }
+
+  allocMonsterId(nodeId: string): string {
+    const next = (this.nextMonsterIdByNode.get(nodeId) ?? 0) + 1;
+    this.nextMonsterIdByNode.set(nodeId, next);
+    return `${nodeId}_monster-${next}`;
+  }
+
+  /** Rebuild monster count caches from live ECS state. */
+  reconcileMonsterCounts(): void {
+    this.monstersByNode.clear();
+    this.bossesByNode.clear();
+    for (const e of this.monsterEntities) {
+      this.adjustMonsterCount(e.hasPosition.nodeId, 1, e.isMonster.isBoss);
+    }
   }
 
   getMonsterCountInNode(nodeId: string): number {

@@ -22,7 +22,6 @@ export * from './protocol/delta';
 export * from './protocol/views';
 export * from './protocol/combatEvents';
 export * from './protocol/nodeTelemetry';
-export * from './protocol/nodeSnapshot';
 export * from './protocol/socketEvents';
 export * from './world/nodeBiomes';
 export * from './quests/questDatabase';

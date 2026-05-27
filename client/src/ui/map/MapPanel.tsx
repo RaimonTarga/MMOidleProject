@@ -21,6 +21,8 @@ interface Props {
 
 type OpsView = 'heat' | '3d';
 
+const SHOW_OPS_MAP = import.meta.env.DEV || import.meta.env.VITE_ENABLE_OPS_MAP === 'true';
+
 function heatOpacity(row: { tickCpuMs: number; idlePopulationMs: number } | undefined, maxCpu: number): number {
   if (!row || maxCpu <= 0) return 0;
   const load = row.tickCpuMs + row.idlePopulationMs;
@@ -42,7 +44,7 @@ export function MapPanel({ onClose, highlightNodes, focusNodeId }: Props) {
   useEffect(() => setAutoPath(busAutoPath), [busAutoPath]);
 
   useEffect(() => {
-    if (!opsMode) {
+    if (!opsMode || !SHOW_OPS_MAP) {
       setPinnedNodeId(null);
       setOpsView('heat');
       setMetric('tickCpuMs');
@@ -169,13 +171,15 @@ export function MapPanel({ onClose, highlightNodes, focusNodeId }: Props) {
             </div>
           )}
           <OverviewMap viewRow={viewRow} viewCol={viewCol} playerNodeId={playerNodeId} pathSet={pathSet} destNode={destNode} />
-          <button
-            type="button"
-            className={`map-ops-toggle${opsMode ? ' active' : ''}`}
-            onClick={() => setOpsMode(v => !v)}
-          >
-            OPS
-          </button>
+          {SHOW_OPS_MAP && (
+            <button
+              type="button"
+              className={`map-ops-toggle${opsMode ? ' active' : ''}`}
+              onClick={() => setOpsMode(v => !v)}
+            >
+              OPS
+            </button>
+          )}
           <button className="map-close" onClick={onClose}>✕</button>
         </div>
 

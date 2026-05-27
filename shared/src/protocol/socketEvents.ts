@@ -43,4 +43,6 @@ export interface ClientToServerEvents {
   'debug:resetProgress': () => void;
   /** Dev-only: re-run recipe unlock checks after data changes. */
   'debug:refreshRecipes': () => void;
+  /** Dev-only: remove and regenerate all monsters in the player's current node. */
+  'debug:respawnNode': () => void;
 }
