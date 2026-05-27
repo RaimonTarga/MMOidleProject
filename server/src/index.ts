@@ -255,6 +255,9 @@ io.on('connection', (socket) => {
 
       p.hasPosition.nodeId = TEST_ROOM_NODE_ID;
       p.hasPosition.current = spawn;
+      // Force a full snapshot for the test room so the client clears any
+      // render state lingering from the node they came from.
+      world.resetNodeDeltaState(TEST_ROOM_NODE_ID);
       stopEntity(world, p);
       p.usesAutocombat.auto = false;
       setAttackTarget(world, p, null);

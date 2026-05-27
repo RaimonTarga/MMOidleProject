@@ -164,6 +164,10 @@ export function respawnPlayer(world: World, playerId: string): void {
 
   entity.hasPosition.nodeId = 'node-5-5';
   entity.hasPosition.current = spawn;
+  // Force the next node:delta for the clearing to be a full snapshot so the
+  // respawning client clears render state from the node where they died.
+  // Mirrors the gate-transition path in `transitions.ts`.
+  world.resetNodeDeltaState('node-5-5');
   stopEntity(world, entity);
   setAttackTarget(world, entity, null);
   entity.usesAutocombat.auto = false;
