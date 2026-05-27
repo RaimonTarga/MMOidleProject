@@ -10,7 +10,7 @@ import { CONF_EFFECT_ID } from '../core/constants';
  * When `ticksLeft` reaches zero, the effect and marker are removed.
  */
 export function updateConflagration(world: World, dt: number): void {
-  const toKill: Array<{ monsterId: string; sourceId: string }> = [];
+  const toKill: Array<{ monsterId: string; sourceId: string; damage: number }> = [];
 
   for (const entity of world.conflagrationMonsters) {
     const monsterId    = entity.isMonster.id;
@@ -27,11 +27,12 @@ export function updateConflagration(world: World, dt: number): void {
     effect.data.nextTickIn = effect.data.tickIntervalMs;
     effect.data.ticksLeft--;
 
-    entity.hasHealth.hp -= Math.round(effect.data.damagePerTick);
-    console.log(`[Conflagration] ${monsterId}: ${effect.data.damagePerTick} tick (${effect.data.ticksLeft} left)`);
+    const damage = Math.round(effect.data.damagePerTick);
+    entity.hasHealth.hp -= damage;
+    console.log(`[Conflagration] ${monsterId}: ${damage} tick (${effect.data.ticksLeft} left)`);
 
     if (entity.hasHealth.hp <= 0) {
-      toKill.push({ monsterId, sourceId: effect.sourceId });
+      toKill.push({ monsterId, sourceId: effect.sourceId, damage });
       continue;
     }
     if (effect.data.ticksLeft <= 0) {
@@ -40,9 +41,24 @@ export function updateConflagration(world: World, dt: number): void {
     }
   }
 
-  for (const { monsterId, sourceId } of toKill) {
+  for (const { monsterId, sourceId, damage } of toKill) {
     const monster = world.getMonsterEntity(monsterId);
-    if (monster && sourceId) grantMonsterRewards(world, sourceId, monster);
+    if (monster && sourceId) {
+      const rewardInfo = grantMonsterRewards(world, sourceId, monster);
+      const player = world.getPlayerEntity(sourceId);
+      if (player) {
+        world.pushEvent(player.hasPosition.nodeId, {
+          kind:          'player-kill',
+          playerId:      sourceId,
+          targetId:      monster.isMonster.id,
+          targetName:    monster.isMonster.name,
+          damage,
+          biomeXpGained: rewardInfo?.biomeXpGained ?? 0,
+          essenceGained: rewardInfo?.essenceGained ?? 0,
+          essenceType:   rewardInfo?.essenceType   ?? 'green',
+        });
+      }
+    }
     world.removeMonsterEntity(monsterId);
   }
 }

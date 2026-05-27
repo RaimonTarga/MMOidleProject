@@ -9,40 +9,18 @@ import type {
   HasStatus,
   IsMonster,
   TracksCombat,
-  HasAggroTarget,
-  HasAttackTarget,
-  IsMoving,
-  HasKnockback,
   ScriptsBoss,
-  HasDot,
-  HasDetonation,
-  HasHemorrhage,
-  HasConflagration,
-  HasChill,
-  HasFrozen,
-  HasSmolder,
-  HasEntropy,
-  HasAshbrandBurn,
-  IsBossEngaged,
 } from '../components';
 
-/** All optional monster marker slices that may exist mid-fight. */
+/**
+ * Only boss-script state is persisted across freeze/thaw cycles.
+ * Transient combat markers (hasFrozen, hasChill, hasDot, aggro/attack targets,
+ * movement, knockback, etc.) are intentionally dropped — they reference
+ * per-session player IDs or short-duration timers that become stale and can
+ * produce permanently-stuck monster states (e.g. immortal frozen mobs).
+ */
 export interface FrozenMonsterMarkers {
-  hasAggroTarget?: HasAggroTarget;
-  hasAttackTarget?: HasAttackTarget;
-  isMoving?: IsMoving;
-  hasKnockback?: HasKnockback;
-  hasDot?: HasDot;
-  hasDetonation?: HasDetonation;
-  hasHemorrhage?: HasHemorrhage;
-  hasConflagration?: HasConflagration;
-  hasChill?: HasChill;
-  hasFrozen?: HasFrozen;
-  hasSmolder?: HasSmolder;
-  hasEntropy?: HasEntropy;
-  hasAshbrandBurn?: HasAshbrandBurn;
   scriptsBoss?: ScriptsBoss;
-  isBossEngaged?: IsBossEngaged;
 }
 
 export interface FrozenMonsterSnapshot {

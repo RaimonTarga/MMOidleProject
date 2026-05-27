@@ -9,21 +9,7 @@ import type { MonsterEntity } from '../ecs/entity';
 import { resolveMonsterHitbox } from '../hitbox/resolve';
 
 const MARKER_KEYS = [
-  'hasAggroTarget',
-  'hasAttackTarget',
-  'isMoving',
-  'hasKnockback',
-  'hasDot',
-  'hasDetonation',
-  'hasHemorrhage',
-  'hasConflagration',
-  'hasChill',
-  'hasFrozen',
-  'hasSmolder',
-  'hasEntropy',
-  'hasAshbrandBurn',
   'scriptsBoss',
-  'isBossEngaged',
 ] as const satisfies readonly (keyof FrozenMonsterMarkers)[];
 
 function collectMarkers(entity: MonsterEntity): FrozenMonsterMarkers {

@@ -37,7 +37,7 @@ const DOT_EFFECT_ID = 'dot';
 export function updateDotArchetype(world: World, dt: number): void {
 
   // ── Monster-side: player-applied DoT ticking on monsters ─────────────────
-  const monstersToKill: Array<{ monsterId: string; sourceId: string }> = [];
+  const monstersToKill: Array<{ monsterId: string; sourceId: string; damage: number }> = [];
 
   for (const entity of world.dottedMonsters) {
     const monsterId = entity.isMonster.id;
@@ -61,15 +61,30 @@ export function updateDotArchetype(world: World, dt: number): void {
     entity.hasHealth.hp -= damage;
 
     if (entity.hasHealth.hp <= 0) {
-      monstersToKill.push({ monsterId, sourceId: effect.sourceId });
+      monstersToKill.push({ monsterId, sourceId: effect.sourceId, damage });
     } else {
       effect.data.nextTickIn = effect.data.tickIntervalMs;
     }
   }
 
-  for (const { monsterId, sourceId } of monstersToKill) {
+  for (const { monsterId, sourceId, damage } of monstersToKill) {
     const monster = world.getMonsterEntity(monsterId);
-    if (monster && sourceId) grantMonsterRewards(world, sourceId, monster);
+    if (monster && sourceId) {
+      const rewardInfo = grantMonsterRewards(world, sourceId, monster);
+      const player = world.getPlayerEntity(sourceId);
+      if (player) {
+        world.pushEvent(player.hasPosition.nodeId, {
+          kind:          'player-kill',
+          playerId:      sourceId,
+          targetId:      monster.isMonster.id,
+          targetName:    monster.isMonster.name,
+          damage,
+          biomeXpGained: rewardInfo?.biomeXpGained ?? 0,
+          essenceGained: rewardInfo?.essenceGained ?? 0,
+          essenceType:   rewardInfo?.essenceType   ?? 'green',
+        });
+      }
+    }
     world.removeMonsterEntity(monsterId);
   }
 

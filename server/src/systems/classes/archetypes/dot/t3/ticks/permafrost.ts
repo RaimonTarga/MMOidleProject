@@ -14,7 +14,7 @@ import { PERM_MAX_HITS, PERM_PCT_PER_HIT } from '../paths/_constants';
  * removed.
  */
 export function updatePermafrost(world: World, dt: number): void {
-  const toKill: Array<{ monsterId: string; sourceId: string }> = [];
+  const toKill: Array<{ monsterId: string; sourceId: string; damage: number }> = [];
 
   for (const entity of world.dottedMonsters) {
     const monsterId    = entity.isMonster.id;
@@ -40,12 +40,27 @@ export function updatePermafrost(world: World, dt: number): void {
     entity.hasHealth.hp -= damage;
     console.log(`[Permafrost] ${monsterId}: ${damage} tick (${hits}/${PERM_MAX_HITS} hits = ${Math.round(pct * 100)}% ATK)`);
 
-    if (entity.hasHealth.hp <= 0) toKill.push({ monsterId, sourceId: effect.sourceId });
+    if (entity.hasHealth.hp <= 0) toKill.push({ monsterId, sourceId: effect.sourceId, damage });
   }
 
-  for (const { monsterId, sourceId } of toKill) {
+  for (const { monsterId, sourceId, damage } of toKill) {
     const monster = world.getMonsterEntity(monsterId);
-    if (monster && sourceId) grantMonsterRewards(world, sourceId, monster);
+    if (monster && sourceId) {
+      const rewardInfo = grantMonsterRewards(world, sourceId, monster);
+      const player = world.getPlayerEntity(sourceId);
+      if (player) {
+        world.pushEvent(player.hasPosition.nodeId, {
+          kind:          'player-kill',
+          playerId:      sourceId,
+          targetId:      monster.isMonster.id,
+          targetName:    monster.isMonster.name,
+          damage,
+          biomeXpGained: rewardInfo?.biomeXpGained ?? 0,
+          essenceGained: rewardInfo?.essenceGained ?? 0,
+          essenceType:   rewardInfo?.essenceType   ?? 'green',
+        });
+      }
+    }
     world.removeMonsterEntity(monsterId);
   }
 }
