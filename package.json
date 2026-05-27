@@ -2,6 +2,9 @@
   "name": "mmo-idle",
   "private": true,
   "version": "0.0.1",
+  "engines": {
+    "node": ">=20 <21"
+  },
   "pnpm": {
     "onlyBuiltDependencies": [
       "better-sqlite3"
