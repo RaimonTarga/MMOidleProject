@@ -1,6 +1,6 @@
 import type { World } from '../../../world/World';
 import type { MonsterEntity, PlayerEntity } from '../../../ecs/entity';
-import { distanceSq, MONSTER_DATABASE, pointFromMotion, type Vec2 } from '@mmo-idle/shared';
+import { distanceSq, inAttackRange, MONSTER_DATABASE, pointFromMotion, posHitboxFromEntity, type Vec2 } from '@mmo-idle/shared';
 import { NODE_REGISTRY } from '../../../world/nodeRegistry';
 import { isMonsterFrozen } from '../../classes/archetypes/dot/t3';
 import { isMonsterKnockedBack } from '../damage/knockback';
@@ -95,12 +95,10 @@ export function updateMonsters(world: World, dt: number, now: number) {
         continue;
       }
 
-      const dx     = target.hasPosition.current.x - e.hasPosition.current.x;
-      const dy     = target.hasPosition.current.y - e.hasPosition.current.y;
-      const distSq = dx * dx + dy * dy;
-      const stopDist = e.performsAttack.attackRange * 0.80;
+      const monsterPH = posHitboxFromEntity(e);
+      const playerPH = posHitboxFromEntity(target);
 
-      if (distSq <= e.performsAttack.attackRange * e.performsAttack.attackRange) {
+      if (inAttackRange(monsterPH, playerPH, e.performsAttack.attackRange)) {
         // In attack range — drain kite ramp slowly rather than resetting it.
         // Hard-resetting to 0 lets players exploit touch-and-run to wipe the penalty.
         if (e.hasAwareness.state !== 'attacking') {
@@ -126,13 +124,9 @@ export function updateMonsters(world: World, dt: number, now: number) {
           e.hasPosition.speed = Math.round(excess > 0 ? Math.max(rawSpeed, KITE_MIN_SPEED) : rawSpeed);
         }
 
-        const dist = Math.sqrt(distSq);
         e.hasAwareness.state = 'chasing';
         setAttackTarget(world, e, target.isPlayer.id);
-        setMonsterTarget(world, e, {
-          x: target.hasPosition.current.x - (dx / dist) * stopDist,
-          y: target.hasPosition.current.y - (dy / dist) * stopDist,
-        });
+        setMonsterTarget(world, e, target.hasPosition.current);
       }
 
     } else {

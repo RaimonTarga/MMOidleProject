@@ -15,12 +15,11 @@ export function stepInterpolation(state: RenderState, dt: number): void {
     if (distSq > 1) {
       const dist = Math.sqrt(distSq);
       const step = Math.min(transform.speed * dt, dist);
-      interp.base = {
-        x: interp.base.x + (dx / dist) * step,
-        y: interp.base.y + (dy / dist) * step,
-      };
+      interp.base.x += (dx / dist) * step;
+      interp.base.y += (dy / dist) * step;
     } else {
-      interp.base = { x: transform.target.x, y: transform.target.y };
+      interp.base.x = transform.target.x;
+      interp.base.y = transform.target.y;
     }
 
     sprite.setPosition(

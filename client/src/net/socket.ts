@@ -3,6 +3,7 @@ import type {
   ServerToClientEvents,
   ClientToServerEvents,
   DeltaSnapshot,
+  NodeTelemetrySnapshot,
 } from '@mmo-idle/shared';
 
 export type GameSocket = Socket<ServerToClientEvents, ClientToServerEvents>;
@@ -22,9 +23,11 @@ export interface SocketHandlers {
   onConnect(socket: GameSocket): void;
   onDisconnect(): void;
   onDelta(snapshot: DeltaSnapshot): void;
+  onNodePreparing(payload: { nodeId: string }): void;
   onCraftResult(result: { success: boolean; reason?: string }): void;
   onPlayerDied(): void;
   onPlayerAscended(tier: number): void;
+  onTelemetry(snapshot: NodeTelemetrySnapshot): void;
 }
 
 export function wireSocketHandlers(
@@ -35,7 +38,9 @@ export function wireSocketHandlers(
   socket.on('disconnect', () => h.onDisconnect());
   socket.on('state:sync', (s) => h.onDelta(s));
   socket.on('node:delta', (s) => h.onDelta(s));
+  socket.on('node:preparing', (p) => h.onNodePreparing(p));
   socket.on('crafting:result', (r) => h.onCraftResult(r));
   socket.on('player:died', () => h.onPlayerDied());
   socket.on('player:ascended', (t) => h.onPlayerAscended(t));
+  socket.on('world:telemetry', (s) => h.onTelemetry(s));
 }

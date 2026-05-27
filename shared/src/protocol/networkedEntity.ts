@@ -7,6 +7,7 @@ import type {
   HasAwareness,
   HasEmpoweredAttack,
   HasHealth,
+  HasHitbox,
   HasPosition,
   HasStatus,
   HoldsShields,
@@ -33,6 +34,7 @@ export type EntityKind = 'player' | 'monster';
 export const NETWORKED_PLAYER_KEYS = [
   'isPlayer',
   'hasPosition',
+  'hasHitbox',
   'isMoving',
   'hasAttackTarget',
   'hasEmpoweredAttack',
@@ -60,6 +62,7 @@ export const NETWORKED_PLAYER_KEYS = [
 export const NETWORKED_MONSTER_KEYS = [
   'isMonster',
   'hasPosition',
+  'hasHitbox',
   'isMoving',
   'hasAttackTarget',
   'hasHealth',
@@ -78,6 +81,7 @@ export interface NetworkedEntity {
   isPlayer?: IsPlayer;
   isMonster?: IsMonster;
   hasPosition?: HasPosition;
+  hasHitbox?: HasHitbox;
   isMoving?: IsMoving;
   hasAttackTarget?: HasAttackTarget;
   hasEmpoweredAttack?: HasEmpoweredAttack;

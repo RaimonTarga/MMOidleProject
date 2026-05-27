@@ -7,7 +7,7 @@ export const bossMonsterEntriesT3 = [
     isBoss: true,
     stats: {
       hp: 4000, attack: 95, plating: 40, damageReduction: 0.14,
-      speed: 20, attackRange: 82, attackCooldown: 4200, pullRange: 360,
+      speed: 20, attackRange: 20, attackCooldown: 4200, pullRange: 360,
     },
     behavior: 'melee', attackStyle: 'frost', biome: 'tundra',
     rewards: { essence: 350, essenceType: 'blue', level: 5 },
@@ -20,7 +20,7 @@ export const bossMonsterEntriesT3 = [
     isBoss: true,
     stats: {
       hp: 3800, attack: 105, plating: 30, damageReduction: 0.12,
-      speed: 32, attackRange: 76, attackCooldown: 3400, pullRange: 340,
+      speed: 32, attackRange: 18, attackCooldown: 3400, pullRange: 340,
     },
     behavior: 'melee', attackStyle: 'fire', biome: 'volcanic',
     rewards: { essence: 360, essenceType: 'red', level: 5 },
@@ -33,7 +33,7 @@ export const bossMonsterEntriesT3 = [
     isBoss: true,
     stats: {
       hp: 4200, attack: 100, plating: 42, damageReduction: 0.14,
-      speed: 18, attackRange: 80, attackCooldown: 4500, pullRange: 360,
+      speed: 18, attackRange: 20, attackCooldown: 4500, pullRange: 360,
     },
     behavior: 'melee', attackStyle: 'impact', biome: 'mountain',
     rewards: { essence: 340, essenceType: 'blue', level: 5 },
@@ -46,7 +46,7 @@ export const bossMonsterEntriesT3 = [
     isBoss: true,
     stats: {
       hp: 4500, attack: 102, plating: 38, damageReduction: 0.13,
-      speed: 22, attackRange: 78, attackCooldown: 4000, pullRange: 350,
+      speed: 22, attackRange: 18, attackCooldown: 4000, pullRange: 350,
     },
     behavior: 'melee', attackStyle: 'slash', biome: 'forest',
     rewards: { essence: 360, essenceType: 'green', level: 5 },
@@ -59,7 +59,7 @@ export const bossMonsterEntriesT3 = [
     isBoss: true,
     stats: {
       hp: 3800, attack: 108, plating: 32, damageReduction: 0.12,
-      speed: 50, attackRange: 75, attackCooldown: 3000, pullRange: 340,
+      speed: 50, attackRange: 18, attackCooldown: 3000, pullRange: 340,
     },
     behavior: 'melee', attackStyle: 'impact', biome: 'plains',
     rewards: { essence: 330, essenceType: 'yellow', level: 5 },
@@ -72,7 +72,7 @@ export const bossMonsterEntriesT3 = [
     isBoss: true,
     stats: {
       hp: 4000, attack: 112, plating: 34, damageReduction: 0.13,
-      speed: 42, attackRange: 80, attackCooldown: 3200, pullRange: 350,
+      speed: 42, attackRange: 20, attackCooldown: 3200, pullRange: 350,
     },
     behavior: 'melee', attackStyle: 'magic', biome: 'desert',
     rewards: { essence: 345, essenceType: 'yellow', level: 5 },
@@ -85,7 +85,7 @@ export const bossMonsterEntriesT3 = [
     isBoss: true,
     stats: {
       hp: 3900, attack: 110, plating: 30, damageReduction: 0.12,
-      speed: 60, attackRange: 76, attackCooldown: 2800, pullRange: 340,
+      speed: 60, attackRange: 18, attackCooldown: 2800, pullRange: 340,
     },
     behavior: 'melee', attackStyle: 'slash', biome: 'jungle',
     rewards: { essence: 340, essenceType: 'green', level: 5 },
@@ -98,7 +98,7 @@ export const bossMonsterEntriesT3 = [
     isBoss: true,
     stats: {
       hp: 4800, attack: 96, plating: 48, damageReduction: 0.15,
-      speed: 16, attackRange: 82, attackCooldown: 5000, pullRange: 330,
+      speed: 16, attackRange: 20, attackCooldown: 5000, pullRange: 330,
     },
     behavior: 'melee', attackStyle: 'impact', biome: 'cave',
     rewards: { essence: 355, essenceType: 'red', level: 5 },
@@ -111,7 +111,7 @@ export const bossMonsterEntriesT3 = [
     isBoss: true,
     stats: {
       hp: 4200, attack: 98, plating: 36, damageReduction: 0.13,
-      speed: 28, attackRange: 78, attackCooldown: 3500, pullRange: 330,
+      speed: 28, attackRange: 18, attackCooldown: 3500, pullRange: 330,
     },
     behavior: 'melee', attackStyle: 'poison', biome: 'swamp',
     rewards: { essence: 345, essenceType: 'purple', level: 5 },
@@ -124,7 +124,7 @@ export const bossMonsterEntriesT3 = [
     isBoss: true,
     stats: {
       hp: 5200, attack: 118, plating: 38, damageReduction: 0.16,
-      speed: 25, attackRange: 90, attackCooldown: 2600, pullRange: 340,
+      speed: 25, attackRange: 22, attackCooldown: 2600, pullRange: 340,
     },
     behavior: 'melee', attackStyle: 'magic', biome: 'necropolis',
     rewards: { essence: 800, essenceType: 'purple', level: 15 },

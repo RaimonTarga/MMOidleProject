@@ -104,3 +104,67 @@ export function advanceMotion(
       : zeroMotion(),
   };
 }
+
+// ─── Hitbox / attack-range gap math ───────────────────────────────────────────
+
+import type { HasHitbox, HitboxRect } from '../hitbox/types';
+import type { HasPosition } from '../components/core/networkedSlices';
+import { FALLBACK_PLAYER_AABB } from '../hitbox/constants';
+
+export interface PosHitbox {
+  pos: Vec2;
+  rects: HitboxRect[];
+}
+
+/** Closest separation between two axis-aligned boxes (0 when overlapping). */
+export function rectGap(
+  aPos: Vec2,
+  a: HitboxRect,
+  bPos: Vec2,
+  b: HitboxRect,
+): number {
+  const ax = aPos.x + a.offsetX;
+  const ay = aPos.y + a.offsetY;
+  const bx = bPos.x + b.offsetX;
+  const by = bPos.y + b.offsetY;
+  const dx = Math.max(0, Math.abs(ax - bx) - (a.halfW + b.halfW));
+  const dy = Math.max(0, Math.abs(ay - by) - (a.halfH + b.halfH));
+  return Math.hypot(dx, dy);
+}
+
+/** Minimum gap between any rect pair in two hitboxes. */
+export function hitboxGap(a: PosHitbox, b: PosHitbox): number {
+  if (a.rects.length === 0 || b.rects.length === 0) return Infinity;
+  let best = Infinity;
+  for (const ar of a.rects) {
+    for (const br of b.rects) {
+      best = Math.min(best, rectGap(a.pos, ar, b.pos, br));
+    }
+  }
+  return best;
+}
+
+/** True when edge-to-edge gap between hitboxes is within weapon reach. */
+export function inAttackRange(a: PosHitbox, b: PosHitbox, range: number): boolean {
+  return hitboxGap(a, b) <= range;
+}
+
+export function posHitboxFromEntity(entity: {
+  hasPosition: HasPosition;
+  hasHitbox?: HasHitbox;
+}): PosHitbox {
+  return {
+    pos: entity.hasPosition.current,
+    rects: entity.hasHitbox?.rects ?? [FALLBACK_PLAYER_AABB],
+  };
+}
+
+/** Max reach from entity center to outer hitbox edge (for range ring drawing). */
+export function outerReachHalfW(rects: HitboxRect[]): number {
+  let max = 0;
+  for (const r of rects) {
+    max = Math.max(max, Math.abs(r.offsetX) + r.halfW, Math.abs(r.offsetY) + r.halfW);
+  }
+  return max;
+}
+

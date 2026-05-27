@@ -3,6 +3,7 @@ import type { NodeDirection } from '@mmo-idle/shared';
 import { GAME_CONFIG, pointFromMotion } from '@mmo-idle/shared';
 import { NODE_REGISTRY } from '../../world/nodeRegistry';
 import { setEntityMotion, stopEntity } from './movement';
+import { thawNode } from '../../world/nodeLifecycle';
 
 // Pixels from the boundary that fire a transition. Must match GATE_THICK in GameScene.
 const EXIT_TRIGGER = 20;
@@ -81,7 +82,13 @@ export function updateTransitions(world: World): void {
     const targetNode = NODE_REGISTRY.get(targetNodeId)!;
     const fromNodeId = position.nodeId;
 
+    if (world.isNodeFrozen(targetNodeId)) {
+      world.nodePreparingEmitter?.(entity.isPlayer.id, targetNodeId);
+      thawNode(world, targetNodeId);
+    }
+
     position.nodeId = targetNodeId;
+    world.movePlayerNode(fromNodeId, targetNodeId);
     world.resetNodeDeltaState(targetNodeId);
 
     // Place the player just inside the opposite edge of the new node.

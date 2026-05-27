@@ -20,8 +20,8 @@ export class GameScene extends Phaser.Scene {
   bgGrid!: Phaser.GameObjects.TileSprite;
   bgTile: Phaser.GameObjects.TileSprite | null = null;
   debugGraphics!: Phaser.GameObjects.Graphics;
-  debugPlayerRange = false;
-  debugEnemyRanges = false;
+  /** Tactical mode: range rings + entity hitbox squares. */
+  tacticalMode = false;
 
   autoPath: string[] = [];
   autoMode = false;

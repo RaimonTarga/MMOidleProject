@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useAtomValue } from 'jotai';
+import { useAtom, useAtomValue } from 'jotai';
 import { TEST_ROOM_NODE_ID } from '@mmo-idle/shared';
 import { hudBus } from '../hudBus';
 import {
@@ -18,13 +18,14 @@ import {
   passivesAtom,
   playerIdAtom,
   playerNodeIdAtom,
+  debugPanelOpenAtom,
   selectedRangeAtom,
   selectedSubVariantAtom,
 } from './atoms';
 
 // ── Entry model ───────────────────────────────────────────────────────────────
 // Add new section builders below; the component renders any DebugSection[]
-// without changes.  Press ` (backtick) in-game to toggle the panel.
+// without changes.  Backtick (rebindable in Settings) toggles the panel.
 
 type DebugValue = string | number | boolean | null | undefined;
 type DebugEntry =
@@ -126,7 +127,20 @@ function fmt(v: DebugValue): string {
 }
 
 export function DebugPanel() {
-  const [open,      setOpen]      = useState(false);
+  const [open, setOpen] = useAtom(debugPanelOpenAtom);
+
+  return (
+    <div className="debug-panel">
+      <button className="debug-panel__toggle" onClick={() => setOpen(o => !o)}>
+        <span className="debug-panel__title">DEBUG</span>
+        <span className="debug-panel__chevron">{open ? '▼' : '▶'}</span>
+      </button>
+      {open && <DebugPanelContent />}
+    </div>
+  );
+}
+
+function DebugPanelContent() {
   const [collapsed, setCollapsed] = useState(new Set<string>());
   const [confirmReset, setConfirmReset] = useState(false);
   const playerId = useAtomValue(playerIdAtom);
@@ -166,7 +180,7 @@ export function DebugPanel() {
   } : null;
 
   const sections: DebugSection[] = [];
-  if (open && player) {
+  if (player) {
     if (player.combatArchetype === 'cadence' && player.cadenceThreshold > 0) {
       sections.push(buildCadenceSection(player));
     }
@@ -184,13 +198,8 @@ export function DebugPanel() {
   const inTestRoom = player?.nodeId === TEST_ROOM_NODE_ID;
 
   return (
-    <div className="debug-panel">
-      <button className="debug-panel__toggle" onClick={() => setOpen(o => !o)}>
-        <span className="debug-panel__title">DEBUG</span>
-        <span className="debug-panel__chevron">{open ? '▼' : '▶'}</span>
-      </button>
-
-      {open && import.meta.env.DEV && (
+    <>
+      {import.meta.env.DEV && (
         <div className="debug-section">
           <button
             className={`debug-btn${inTestRoom ? ' active' : ''}`}
@@ -204,54 +213,50 @@ export function DebugPanel() {
         </div>
       )}
 
-      {open && (
-        <div className="debug-section">
-          {!confirmReset ? (
-            <button
-              className="debug-btn"
-              style={{ color: '#ff6666' }}
-              onClick={() => setConfirmReset(true)}
-            >
-              RESET PROGRESS
-            </button>
-          ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-              <div className="debug-div" style={{ padding: '4px 0', color: '#ff9944' }}>
-                Wipes skills, items &amp; biome XP. Confirm?
-              </div>
-              <div style={{ display: 'flex', gap: 4 }}>
-                <button
-                  className="debug-btn"
-                  style={{ flex: 1, color: '#ff4444' }}
-                  onClick={() => { hudBus.requestResetProgress(); setConfirmReset(false); }}
-                >
-                  YES, RESET
-                </button>
-                <button
-                  className="debug-btn"
-                  style={{ flex: 1 }}
-                  onClick={() => setConfirmReset(false)}
-                >
-                  CANCEL
-                </button>
-              </div>
-            </div>
-          )}
-        </div>
-      )}
-
-      {open && (
-        <div className="debug-section">
+      <div className="debug-section">
+        {!confirmReset ? (
           <button
             className="debug-btn"
-            onClick={() => hudBus.requestRefreshRecipes()}
+            style={{ color: '#ff6666' }}
+            onClick={() => setConfirmReset(true)}
           >
-            REFRESH RECIPES
+            RESET PROGRESS
           </button>
-        </div>
-      )}
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+            <div className="debug-div" style={{ padding: '4px 0', color: '#ff9944' }}>
+              Wipes skills, items &amp; biome XP. Confirm?
+            </div>
+            <div style={{ display: 'flex', gap: 4 }}>
+              <button
+                className="debug-btn"
+                style={{ flex: 1, color: '#ff4444' }}
+                onClick={() => { hudBus.requestResetProgress(); setConfirmReset(false); }}
+              >
+                YES, RESET
+              </button>
+              <button
+                className="debug-btn"
+                style={{ flex: 1 }}
+                onClick={() => setConfirmReset(false)}
+              >
+                CANCEL
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
 
-      {open && sections.map(section => (
+      <div className="debug-section">
+        <button
+          className="debug-btn"
+          onClick={() => hudBus.requestRefreshRecipes()}
+        >
+          REFRESH RECIPES
+        </button>
+      </div>
+
+      {sections.map(section => (
         <div key={section.id} className="debug-section">
           <button className="debug-section__hdr" onClick={() => toggle(section.id)}>
             <span>{section.label}</span>
@@ -275,9 +280,9 @@ export function DebugPanel() {
         </div>
       ))}
 
-      {open && !player && (
+      {!player && (
         <div className="debug-div" style={{ padding: '6px 0' }}>No player data</div>
       )}
-    </div>
+    </>
   );
 }

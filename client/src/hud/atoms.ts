@@ -3,6 +3,7 @@ import type {
   CombatArchetype,
   EquipmentMap,
   EssenceType,
+  NodeTelemetrySnapshot,
   PassiveMap,
   PlayerBuff,
   PlayerView,
@@ -28,6 +29,15 @@ const DEFAULT_EQUIPMENT: EquipmentMap = {
 };
 
 export const statusAtom = atom<HudConnectionStatus>('connecting');
+export const nodeTelemetryAtom = atom<NodeTelemetrySnapshot | null>(null);
+export const nodeLoadingAtom = atom<{ active: boolean; nodeId: string | null }>({
+  active: false,
+  nodeId: null,
+});
+export const tabResyncAtom = atom<{ active: boolean; startedAt: number | null }>({
+  active: false,
+  startedAt: null,
+});
 
 export const playerIdAtom = atom<string | null>(null);
 export const playerNameAtom = atom<string | null>(null);
@@ -103,6 +113,22 @@ export const essencesAtom = atom<Record<EssenceType, number>>({ ...DEFAULT_ESSEN
 export const activeBuffsAtom = atom<PlayerBuff[]>([]);
 export const autoPathAtom = atom<string[] | null>(null);
 
+export const skillTreeOpenAtom = atom<boolean>(false);
+export const inventoryOpenAtom = atom<boolean>(false);
+export const mapOpenAtom = atom<boolean>(false);
+export const craftTabAtom = atom<'biome' | 'forge' | null>(null);
+export const questOpenAtom = atom<boolean>(false);
+export const settingsOpenAtom = atom<boolean>(false);
+export const debugPanelOpenAtom = atom<boolean>(false);
+export const mapHighlightNodesAtom = atom<string[]>([]);
+
+export interface GamepadStatus {
+  index: number;
+  id: string;
+  mapping: string;
+}
+export const gamepadStatusAtom = atom<GamepadStatus | null>(null);
+
 function shallowArrayEqual<T>(a: readonly T[], b: readonly T[]): boolean {
   if (a === b) return true;
   if (a.length !== b.length) return false;
@@ -152,6 +178,38 @@ export function setAutoPath(path: string[] | null): void {
   if (prev === null && path === null) return;
   if (prev !== null && path !== null && shallowArrayEqual(prev, path)) return;
   store.set(autoPathAtom, path);
+}
+
+function setIfChanged<T>(targetAtom: PrimitiveAtom<T>, next: T): void {
+  const store = getDefaultStore();
+  const prev = store.get(targetAtom);
+  if (Object.is(prev, next)) return;
+  store.set(targetAtom, next);
+}
+
+function buffsEqual(a: readonly PlayerBuff[], b: readonly PlayerBuff[]): boolean {
+  if (a === b) return true;
+  if (a.length !== b.length) return false;
+  for (let i = 0; i < a.length; i++) {
+    const x = a[i];
+    const y = b[i];
+    if (
+      x.id !== y.id ||
+      x.stacks !== y.stacks ||
+      x.durationPct !== y.durationPct ||
+      x.label !== y.label
+    ) {
+      return false;
+    }
+  }
+  return true;
+}
+
+function setIfBuffsEqual(targetAtom: PrimitiveAtom<PlayerBuff[]>, next: PlayerBuff[]): void {
+  const store = getDefaultStore();
+  const prev = store.get(targetAtom);
+  if (buffsEqual(prev, next)) return;
+  store.set(targetAtom, next);
 }
 
 function resetPlayerAtoms(): void {
@@ -222,6 +280,8 @@ function resetPlayerAtoms(): void {
   setIfShallowObjectEqual(questProgressAtom, {});
   setIfShallowObjectEqual(essencesAtom, { ...DEFAULT_ESSENCES });
   setAutoPath(null);
+  store.set(nodeLoadingAtom, { active: false, nodeId: null });
+  store.set(tabResyncAtom, { active: false, startedAt: null });
 }
 
 export function syncPlayerAtoms(player: PlayerView | null): void {
@@ -230,66 +290,64 @@ export function syncPlayerAtoms(player: PlayerView | null): void {
     return;
   }
 
-  const store = getDefaultStore();
+  setIfChanged(playerIdAtom, player.id);
+  setIfChanged(playerNameAtom, player.name);
+  setIfChanged(playerNodeIdAtom, player.nodeId);
+  setIfChanged(selectedClassAtom, player.selectedClass);
+  setIfChanged(selectedSubVariantAtom, player.selectedSubVariant);
+  setIfChanged(selectedRangeAtom, player.selectedRange);
+  setIfChanged(currentSkillTierAtom, player.currentSkillTier);
+  setIfChanged(playerTierAtom, player.playerTier);
+  setIfChanged(levelAtom, player.level);
 
-  store.set(playerIdAtom, player.id);
-  store.set(playerNameAtom, player.name);
-  store.set(playerNodeIdAtom, player.nodeId);
-  store.set(selectedClassAtom, player.selectedClass);
-  store.set(selectedSubVariantAtom, player.selectedSubVariant);
-  store.set(selectedRangeAtom, player.selectedRange);
-  store.set(currentSkillTierAtom, player.currentSkillTier);
-  store.set(playerTierAtom, player.playerTier);
-  store.set(levelAtom, player.level);
+  setIfChanged(hpAtom, player.hp);
+  setIfChanged(maxHpAtom, player.maxHp);
+  setIfChanged(hpRegenAtom, player.hpRegen);
+  setIfChanged(attackAtom, player.attack);
+  setIfChanged(onHitDamageAtom, player.onHitDamage);
+  setIfChanged(platingAtom, player.plating);
+  setIfChanged(damageReductionAtom, player.damageReduction);
+  setIfChanged(attackRangeAtom, player.attackRange);
+  setIfChanged(attackCooldownAtom, player.attackCooldown);
+  setIfChanged(speedAtom, player.speed);
+  setIfChanged(evasionAtom, player.evasion);
+  setIfChanged(evasionCountAtom, player.evasionCount);
 
-  store.set(hpAtom, player.hp);
-  store.set(maxHpAtom, player.maxHp);
-  store.set(hpRegenAtom, player.hpRegen);
-  store.set(attackAtom, player.attack);
-  store.set(onHitDamageAtom, player.onHitDamage);
-  store.set(platingAtom, player.plating);
-  store.set(damageReductionAtom, player.damageReduction);
-  store.set(attackRangeAtom, player.attackRange);
-  store.set(attackCooldownAtom, player.attackCooldown);
-  store.set(speedAtom, player.speed);
-  store.set(evasionAtom, player.evasion);
-  store.set(evasionCountAtom, player.evasionCount);
+  setIfChanged(combatArchetypeAtom, player.combatArchetype);
+  setIfChanged(attackStyleAtom, player.attackStyle);
+  setIfChanged(attackTargetIdAtom, player.attackTargetId);
+  setIfChanged(lastAttackAtAtom, player.lastAttackAt);
+  setIfChanged(autoAtom, player.auto);
 
-  store.set(combatArchetypeAtom, player.combatArchetype);
-  store.set(attackStyleAtom, player.attackStyle);
-  store.set(attackTargetIdAtom, player.attackTargetId);
-  store.set(lastAttackAtAtom, player.lastAttackAt);
-  store.set(autoAtom, player.auto);
-
-  store.set(cadenceCountAtom, player.cadenceCount);
-  store.set(cadenceThresholdAtom, player.cadenceThreshold);
-  store.set(cadenceEmpoweredArmedAtom, player.cadenceEmpoweredArmed);
-  store.set(cadenceSpeedStacksAtom, player.cadenceSpeedStacks);
-  store.set(executionReadyAtom, player.executionReady);
-  store.set(executionCooldownPctAtom, player.executionCooldownPct);
-  store.set(energyCountAtom, player.energyCount);
-  store.set(empoweredReadyAtom, player.empoweredReady);
-  store.set(flashShiftPctAtom, player.flashShiftPct);
-  store.set(flashDamageShiftPctAtom, player.flashDamageShiftPct);
-  store.set(flashSpeedBonusPctAtom, player.flashSpeedBonusPct);
-  store.set(flashEvasionBonusPctAtom, player.flashEvasionBonusPct);
-  store.set(ammoCountAtom, player.ammoCount);
-  store.set(ammoMaxAtom, player.ammoMax);
-  store.set(heatPctAtom, player.heatPct);
-  store.set(laserOverheatedAtom, player.laserOverheated);
-  store.set(targetDotStacksAtom, player.targetDotStacks);
-  store.set(targetChillStacksAtom, player.targetChillStacks);
-  store.set(sacredBuffPctAtom, player.sacredBuffPct);
-  store.set(sacredBuffActiveAtom, player.sacredBuffActive);
-  store.set(isChannelingAtom, player.isChanneling);
-  store.set(channelingPctAtom, player.channelingPct);
-  store.set(skillPointsAtom, player.skillPoints);
+  setIfChanged(cadenceCountAtom, player.cadenceCount);
+  setIfChanged(cadenceThresholdAtom, player.cadenceThreshold);
+  setIfChanged(cadenceEmpoweredArmedAtom, player.cadenceEmpoweredArmed);
+  setIfChanged(cadenceSpeedStacksAtom, player.cadenceSpeedStacks);
+  setIfChanged(executionReadyAtom, player.executionReady);
+  setIfChanged(executionCooldownPctAtom, player.executionCooldownPct);
+  setIfChanged(energyCountAtom, player.energyCount);
+  setIfChanged(empoweredReadyAtom, player.empoweredReady);
+  setIfChanged(flashShiftPctAtom, player.flashShiftPct);
+  setIfChanged(flashDamageShiftPctAtom, player.flashDamageShiftPct);
+  setIfChanged(flashSpeedBonusPctAtom, player.flashSpeedBonusPct);
+  setIfChanged(flashEvasionBonusPctAtom, player.flashEvasionBonusPct);
+  setIfChanged(ammoCountAtom, player.ammoCount);
+  setIfChanged(ammoMaxAtom, player.ammoMax);
+  setIfChanged(heatPctAtom, player.heatPct);
+  setIfChanged(laserOverheatedAtom, player.laserOverheated);
+  setIfChanged(targetDotStacksAtom, player.targetDotStacks);
+  setIfChanged(targetChillStacksAtom, player.targetChillStacks);
+  setIfChanged(sacredBuffPctAtom, player.sacredBuffPct);
+  setIfChanged(sacredBuffActiveAtom, player.sacredBuffActive);
+  setIfChanged(isChannelingAtom, player.isChanneling);
+  setIfChanged(channelingPctAtom, player.channelingPct);
+  setIfChanged(skillPointsAtom, player.skillPoints);
 
   setIfShallowArrayEqual(shieldsAtom, player.shields);
   setIfShallowArrayEqual(unlockedSkillsAtom, player.unlockedSkills);
   setIfShallowArrayEqual(inventoryAtom, player.inventory);
   setIfShallowArrayEqual(unlockedRecipesAtom, player.unlockedRecipes);
-  setIfShallowArrayEqual(activeBuffsAtom, player.activeBuffs);
+  setIfBuffsEqual(activeBuffsAtom, player.activeBuffs);
   setIfShallowObjectEqual(passivesAtom, player.passives);
   setIfShallowObjectEqual(equipmentAtom, player.equipment);
   setIfShallowObjectEqual(biomeLevelAtom, player.biomeLevel);

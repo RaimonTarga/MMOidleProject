@@ -6,6 +6,7 @@ import type { World } from '../world/World';
 import type { PlayerEntity } from './entity';
 import { attachComponent, detachComponent } from './markerHelpers';
 import { markSliceDirty } from './dirtyHelpers';
+import { hitboxEqual, resolvePlayerHitbox } from '../hitbox/resolve';
 
 export function recalculatePlayerEntityStats(world: World, entity: PlayerEntity): void {
   const evadesHits = entity.evadesHits
@@ -38,6 +39,11 @@ export function recalculatePlayerEntityStats(world: World, entity: PlayerEntity)
     attachComponent(world, entity, 'evadesHits', evadesHits);
   } else {
     detachComponent(world, entity, 'evadesHits');
+  }
+
+  const nextHitbox = resolvePlayerHitbox(entity);
+  if (!hitboxEqual(entity.hasHitbox?.rects, nextHitbox.rects)) {
+    attachComponent(world, entity, 'hasHitbox', nextHitbox);
   }
 }
 

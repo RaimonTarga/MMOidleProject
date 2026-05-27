@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import type { PlayerView } from '@mmo-idle/shared';
+import { shouldRunClientFx } from '../fx/guard';
 import type { GameScene } from '../scenes/GameScene';
 import type { NetworkId, RenderState } from './state';
 
@@ -37,6 +38,7 @@ function spawnFlashAfterimage(
   variant: 'attack' | 'move',
   offset?: { x: number; y: number },
 ): void {
+  if (!shouldRunClientFx()) return;
   if ((player.passives['energy.flash'] ?? 0) <= 0) return;
   const sprite = state.sprite.get(player.id);
   const tint = flashShiftTint(player);

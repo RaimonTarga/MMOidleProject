@@ -1,4 +1,4 @@
-import { BIOME_DATABASE, GAME_CONFIG, NODE_BIOMES } from '@mmo-idle/shared';
+import { BIOME_DATABASE, GAME_CONFIG, NODE_BIOMES, outerReachHalfW, type HitboxRect } from '@mmo-idle/shared';
 import { getOwnView } from '../../render/state';
 import { BIOME_TEXTURES } from '../../sprites';
 import type { GameScene } from './GameScene';
@@ -131,9 +131,29 @@ export function drawMinimap(scene: GameScene): void {
   if (exits.west) scene.minimap.fillRect(mmX, mcy - 4, 5, 8);
 }
 
-export function drawDebugRanges(scene: GameScene): void {
-  const showAny = scene.debugPlayerRange || scene.debugEnemyRanges;
-  if (!showAny) {
+const HITBOX_COLOR_ENEMY = 0xff3333;
+const HITBOX_COLOR_PLAYER = 0x44ff88;
+
+function strokeEntityHitboxes(
+  gfx: Phaser.GameObjects.Graphics,
+  spriteX: number,
+  spriteY: number,
+  rects: HitboxRect[],
+  color: number,
+): void {
+  gfx.lineStyle(2, color, 0.9);
+  for (const r of rects) {
+    gfx.strokeRect(
+      spriteX + r.offsetX - r.halfW,
+      spriteY + r.offsetY - r.halfH,
+      r.halfW * 2,
+      r.halfH * 2,
+    );
+  }
+}
+
+export function drawTacticalMode(scene: GameScene): void {
+  if (!scene.tacticalMode) {
     if (scene.state.throttles.debugClearedAt !== -1) {
       scene.debugGraphics.clear();
       scene.state.throttles.debugClearedAt = -1;
@@ -141,19 +161,9 @@ export function drawDebugRanges(scene: GameScene): void {
     return;
   }
 
-  scene.debugGraphics.clear();
+  const gfx = scene.debugGraphics;
+  gfx.clear();
   scene.state.throttles.debugClearedAt = scene.time.now;
-
-  if (scene.debugPlayerRange) {
-    const ownSprite = scene.state.ownId ? scene.state.sprite.get(scene.state.ownId) : undefined;
-    const player = getOwnView(scene.state);
-    if (ownSprite && player) {
-      scene.debugGraphics.lineStyle(1.5, 0xaaff44, 0.55);
-      scene.debugGraphics.strokeCircle(ownSprite.x, ownSprite.y, player.attackRange);
-    }
-  }
-
-  if (!scene.debugEnemyRanges) return;
 
   for (const id of scene.state.ids) {
     if (scene.state.kind.get(id) !== 'monster') continue;
@@ -162,16 +172,37 @@ export function drawDebugRanges(scene: GameScene): void {
     if (!sprite || !ranges) continue;
 
     if (ranges.pullRange != null) {
-      scene.debugGraphics.lineStyle(1, 0xff8844, 0.5);
-      scene.debugGraphics.strokeCircle(sprite.x, sprite.y, ranges.pullRange);
+      gfx.lineStyle(1, 0xff8844, 0.5);
+      gfx.strokeCircle(sprite.x, sprite.y, ranges.pullRange);
     }
     if (ranges.leashRange != null) {
-      scene.debugGraphics.lineStyle(1, 0x4466cc, 0.35);
-      scene.debugGraphics.strokeCircle(sprite.x, sprite.y, ranges.leashRange);
+      gfx.lineStyle(1, 0x4466cc, 0.35);
+      gfx.strokeCircle(sprite.x, sprite.y, ranges.leashRange);
     }
+    const view = scene.state.view.get(id);
     if (ranges.attackRange != null) {
-      scene.debugGraphics.lineStyle(1, 0xff4444, 0.6);
-      scene.debugGraphics.strokeCircle(sprite.x, sprite.y, ranges.attackRange);
+      gfx.lineStyle(1, 0xff4444, 0.6);
+      const reach = view && 'hitboxRects' in view
+        ? ranges.attackRange + outerReachHalfW(view.hitboxRects)
+        : ranges.attackRange;
+      gfx.strokeCircle(sprite.x, sprite.y, reach);
     }
+    if (view && 'hitboxRects' in view) {
+      strokeEntityHitboxes(gfx, sprite.x, sprite.y, view.hitboxRects, HITBOX_COLOR_ENEMY);
+    }
+  }
+
+  const ownSprite = scene.state.ownId
+    ? scene.state.sprite.get(scene.state.ownId)
+    : undefined;
+  const player = getOwnView(scene.state);
+  if (ownSprite && player) {
+    gfx.lineStyle(1.5, 0xaaff44, 0.55);
+    gfx.strokeCircle(
+      ownSprite.x,
+      ownSprite.y,
+      player.attackRange + outerReachHalfW(player.hitboxRects),
+    );
+    strokeEntityHitboxes(gfx, ownSprite.x, ownSprite.y, player.hitboxRects, HITBOX_COLOR_PLAYER);
   }
 }

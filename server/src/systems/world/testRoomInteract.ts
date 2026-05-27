@@ -1,4 +1,4 @@
-import { ESSENCE_TYPES, MONSTER_DATABASE, TEST_ROOM_NODE_ID, resetTracksCombat } from '@mmo-idle/shared';
+import { ESSENCE_TYPES, MONSTER_DATABASE, TEST_ROOM_NODE_ID, inAttackRange, posHitboxFromEntity, resetTracksCombat } from '@mmo-idle/shared';
 import type { PlayerEntity } from '../../ecs/entity';
 import type { World } from '../../world/World';
 import { syncArchetypeSlices } from '../../ecs/archetypeSliceSync';
@@ -20,9 +20,9 @@ export function updateTestRoomInteract(world: World, now = Date.now()): void {
       const interactKind = MONSTER_DATABASE.get(e.isMonster.monsterTypeId)?.interactKind;
       if (!interactKind) continue;
 
-      const dx = e.hasPosition.current.x - player.hasPosition.current.x;
-      const dy = e.hasPosition.current.y - player.hasPosition.current.y;
-      if (dx * dx + dy * dy > player.performsAttack.attackRange * player.performsAttack.attackRange) continue;
+      const playerPH = posHitboxFromEntity(player);
+      const monsterPH = posHitboxFromEntity(e);
+      if (!inAttackRange(playerPH, monsterPH, player.performsAttack.attackRange)) continue;
 
       const cooldownKey = `${player.isPlayer.id}:${e.isMonster.id}`;
       if (now - (lastInteractionAt.get(cooldownKey) ?? 0) < INTERACT_COOLDOWN_MS) continue;

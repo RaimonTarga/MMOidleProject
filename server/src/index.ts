@@ -17,9 +17,13 @@ import type {
   DeltaSnapshot,
 } from '@mmo-idle/shared';
 import { db, runMigrations } from './db/index';
+import { initHitboxCache } from './hitbox/cache';
+import { getAtlasPaths } from './hitbox/paths';
 import { findOrCreateAccount, getOrCreateCharacter, saveCharacter } from './db/playerRepo';
 import { initAllMechanics } from './systems/classes/registry';
 import { recordBroadcast } from './net/profiler';
+import { timeSync } from './telemetry/nodeTelemetry';
+import { TELEMETRY_WINDOW_MS } from './telemetry/constants';
 import { initWeaponEffects } from './systems/combat/damage/weaponEffects';
 import { initDefenseSystems } from './systems/defense';
 import { initDebuffMechanics } from './systems/classes/shared/debuffs';
@@ -35,6 +39,7 @@ import { attachComponent, detachComponent } from './ecs/markerHelpers';
 import { syncArchetypeSlices } from './ecs/archetypeSliceSync';
 import { recalculatePlayerEntityStats } from './ecs/playerEntityFormulas';
 import { markSliceDirty } from './ecs/dirtyHelpers';
+import { thawNode } from './world/nodeLifecycle';
 
 export { IS_DEV };
 
@@ -85,9 +90,17 @@ runMigrations();
 // accountId → socketId map for the auto-save interval
 const socketByAccount = new Map<string, string>();
 
-// ── WORLD ─────────────────────────────────────────────
+async function boot(): Promise<void> {
+  const { atlasPng, atlasJson } = getAtlasPaths();
+  await initHitboxCache(db, atlasPng, atlasJson);
 
-const world = new World();
+  // ── WORLD ─────────────────────────────────────────────
+
+  const world = new World();
+
+  world.nodePreparingEmitter = (playerId, nodeId) => {
+    io.sockets.sockets.get(playerId)?.emit('node:preparing', { nodeId });
+  };
 
 // ── MARKER INVARIANT CHECK (dev only) ─────────────────
 if (IS_DEV) {
@@ -153,14 +166,23 @@ setInterval(() => {
   for (const player of world.playerEntities) {
     const sock = io.sockets.sockets.get(player.isPlayer.id);
     if (!sock) continue;
-    if (!nodeSnaps.has(player.hasPosition.nodeId)) {
-      nodeSnaps.set(player.hasPosition.nodeId, world.buildNodeDelta(player.hasPosition.nodeId, dirty));
+    const nodeId = player.hasPosition.nodeId;
+    if (!nodeSnaps.has(nodeId)) {
+      const timed = timeSync(() => world.buildNodeDeltaWithStats(nodeId, dirty));
+      nodeSnaps.set(nodeId, timed.result.snapshot);
+      world.telemetry.recordBroadcast(nodeId, timed.ms, timed.result.stats);
     }
-    const snap = nodeSnaps.get(player.hasPosition.nodeId)!;
+    const snap = nodeSnaps.get(nodeId)!;
     recordBroadcast(snap, 'node:delta');
     sock.emit('node:delta', snap);
   }
 }, BROADCAST_MS);
+
+const TELEMETRY_MS = TELEMETRY_WINDOW_MS;
+setInterval(() => {
+  world.syncTelemetryOccupancy();
+  io.emit('world:telemetry', world.telemetry.flush(world.tickCounter));
+}, TELEMETRY_MS);
 
 // ── AUTO-SAVE ─────────────────────────────────────────
 // Persist every connected player every 30 s as a crash safety net.
@@ -181,6 +203,12 @@ io.on('connection', (socket) => {
   findOrCreateAccount(db, accId, playerName);
   const player = getOrCreateCharacter(db, accId, playerName);
 
+  const spawnNodeId = player.hasPosition.nodeId;
+  if (world.isNodeFrozen(spawnNodeId)) {
+    socket.emit('node:preparing', { nodeId: spawnNodeId });
+    thawNode(world, spawnNodeId);
+  }
+
   socketByAccount.set(accId, socket.id);
   const entity = world.attachPlayerEntity(player, socket.id);
   syncArchetypeSlices(world, entity);
@@ -195,6 +223,8 @@ io.on('connection', (socket) => {
   );
   recordBroadcast(syncSnap, 'state:sync');
   socket.emit('state:sync', syncSnap);
+  world.syncTelemetryOccupancy();
+  socket.emit('world:telemetry', world.telemetry.flush(world.tickCounter));
 
   socket.on('player:move', (pos) => {
     const p = world.getPlayerEntity(socket.id);
@@ -253,7 +283,11 @@ io.on('connection', (socket) => {
         y: GAME_CONFIG.NODE_HEIGHT / 2 - 200,
       };
 
+      const fromNodeId = p.hasPosition.nodeId;
       p.hasPosition.nodeId = TEST_ROOM_NODE_ID;
+      if (fromNodeId !== TEST_ROOM_NODE_ID) {
+        world.movePlayerNode(fromNodeId, TEST_ROOM_NODE_ID);
+      }
       p.hasPosition.current = spawn;
       // Force a full snapshot for the test room so the client clears any
       // render state lingering from the node they came from.
@@ -344,6 +378,12 @@ io.on('connection', (socket) => {
 
 // ── START ────────────────────────────────────────────
 
-httpServer.listen(4000, () => {
-  console.log('Server running on http://localhost:4000');
+  httpServer.listen(4000, () => {
+    console.log('Server running on http://localhost:4000');
+  });
+}
+
+boot().catch(err => {
+  console.error('[boot] failed:', err);
+  process.exit(1);
 });

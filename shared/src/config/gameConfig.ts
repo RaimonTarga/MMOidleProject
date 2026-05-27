@@ -21,8 +21,8 @@ export const GAME_CONFIG = {
   PLAYER_MAX_HP:  100,
   PLAYER_ATTACK:  15,  // damage per hit (before plating)
   PLAYER_PLATING: 2,
-  /** Pixel radius within which a player can hit a monster */
-  PLAYER_ATTACK_RANGE: 60,
+  /** Edge-to-edge weapon reach past body contact (pixels). */
+  PLAYER_ATTACK_RANGE: 12,
   /** Milliseconds between attacks when unarmed. Overridden by weapon attacksPerSecond when a weapon is equipped. */
   PLAYER_ATTACK_COOLDOWN: 3000,
   /** Out-of-combat HP regen as a percentage of maxHp per second (10 = 10%/s). */

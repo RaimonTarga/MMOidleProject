@@ -1,7 +1,7 @@
 import { EFFECT_DEFS, GAME_CONFIG } from "@mmo-idle/shared";
 import { getDefaultStore } from "jotai";
 import { combatLog } from "../../combatLog";
-import { statusAtom, syncPlayerAtoms } from "../../hud/atoms";
+import { statusAtom, nodeTelemetryAtom, syncPlayerAtoms, nodeLoadingAtom } from "../../hud/atoms";
 import { accountId, displayName } from "../../clientAuth";
 import { connectGameSocket, wireSocketHandlers } from "../../net/socket";
 import { applyDelta } from "../../net/deltaApplier";
@@ -13,13 +13,17 @@ import { drawHealthBars } from "../../render/healthBars";
 import { drawCooldownBars } from "../../render/cooldownBars";
 import { updateEffectOverlays } from "../../render/effectOverlays";
 import { updateMovementEffects } from "../../render/movementEffects";
+import { beginTabResync, isClientRenderPaused, onDocumentHidden } from "../../fx/guard";
 import { initParticleTextures, initEffectFrames } from "../../fx/particles";
 import { updateLaserBeam } from "../../fx/laser";
 import { attachClickToMove } from "../../input/clickToMove";
+import { attachGamepad } from "../../input/gamepad";
 import { attachHudEvents } from "../../input/hudEvents";
+import { attachKeyboard } from "../../input/keyboard";
+import { startMovementTick } from "../../input/movement";
 import {
   createGridBackground,
-  drawDebugRanges,
+  drawTacticalMode,
   drawExitMarkers,
   drawMinimap,
   updateBiomeBackground,
@@ -93,6 +97,25 @@ export function createGameScene(scene: GameScene): void {
 
   attachHudEvents(scene);
   attachClickToMove(scene);
+  const detachKb = attachKeyboard(scene);
+  const detachPad = attachGamepad(scene);
+  const stopMove = startMovementTick(scene);
+
+  function onVisibilityChange(): void {
+    if (document.hidden) {
+      onDocumentHidden();
+      return;
+    }
+    beginTabResync(scene.state, scene);
+  }
+  document.addEventListener('visibilitychange', onVisibilityChange);
+
+  scene.events.once('shutdown', () => {
+    document.removeEventListener('visibilitychange', onVisibilityChange);
+    detachKb();
+    detachPad();
+    stopMove();
+  });
   connectSocket(scene);
 }
 
@@ -103,12 +126,14 @@ export function updateGameScene(scene: GameScene, delta: number): void {
   drawShadows(scene.state);
   drawLabels(scene.state);
   drawHealthBars(scene.state);
-  drawCooldownBars(scene.state);
-  updateEffectOverlays(scene.state, scene, dt);
-  updateMovementEffects(scene.state, scene);
 
-  updateLaserBeam(scene.state, scene);
-  drawMinimap(scene);
+  if (!isClientRenderPaused()) {
+    drawCooldownBars(scene.state);
+    updateEffectOverlays(scene.state, scene, dt);
+    updateMovementEffects(scene.state, scene);
+    updateLaserBeam(scene.state, scene);
+    drawMinimap(scene);
+  }
 
   if (scene.state.ownNodeId !== scene.lastDrawnNodeId) {
     drawExitMarkers(scene);
@@ -135,7 +160,7 @@ export function updateGameScene(scene: GameScene, delta: number): void {
     if (dx * dx + dy * dy < 16) scene.targetMarker.setVisible(false);
   }
 
-  drawDebugRanges(scene);
+  drawTacticalMode(scene);
 }
 
 function connectSocket(scene: GameScene): void {
@@ -151,11 +176,15 @@ function connectSocket(scene: GameScene): void {
     },
     onDisconnect: () => {
       atomStore.set(statusAtom, "disconnected");
+      atomStore.set(nodeTelemetryAtom, null);
       syncPlayerAtoms(null);
       scene.myId = "";
       scene.state.ownId = null;
     },
     onDelta: (snapshot) => applyDelta(scene.state, snapshot, scene),
+    onNodePreparing: ({ nodeId }) => {
+      atomStore.set(nodeLoadingAtom, { active: true, nodeId });
+    },
     onCraftResult: (result) => {
       window.dispatchEvent(
         new CustomEvent("hud:craftResult", { detail: result }),
@@ -167,6 +196,9 @@ function connectSocket(scene: GameScene): void {
     },
     onPlayerAscended: (tier) => {
       showAscensionOverlay(scene, tier);
+    },
+    onTelemetry: (snapshot) => {
+      atomStore.set(nodeTelemetryAtom, snapshot);
     },
   });
 }

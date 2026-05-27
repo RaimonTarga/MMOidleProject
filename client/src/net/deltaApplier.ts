@@ -5,7 +5,8 @@ import {
   RECIPE_DATABASE,
 } from "@mmo-idle/shared";
 import { hudBus } from "../hudBus";
-import { syncPlayerAtoms } from "../hud/atoms";
+import { syncPlayerAtoms, nodeLoadingAtom } from "../hud/atoms";
+import { getDefaultStore } from "jotai";
 import type { GameScene } from "../scenes/GameScene";
 import type { RenderState } from "../render/state";
 import { upsertPlayer } from "../render/players";
@@ -13,6 +14,7 @@ import { upsertMonster } from "../render/monsters";
 import { destroyEntity } from "../render/destroy";
 import { getOwnView } from "../render/state";
 import { dispatchCombatEvent } from "../render/combatFx";
+import { notifyDeltaAppliedDuringTabResync } from "../fx/guard";
 
 export function applyDelta(
   state: RenderState,
@@ -55,6 +57,7 @@ export function applyDelta(
     for (const id of [...state.ids]) {
       if (!liveIds.has(id)) destroyEntity(state, id, scene);
     }
+    getDefaultStore().set(nodeLoadingAtom, { active: false, nodeId: null });
   }
 
   for (const ev of snapshot.events) dispatchCombatEvent(state, ev, scene);
@@ -77,6 +80,8 @@ export function applyDelta(
     }
     syncPlayerAtoms(own);
   }
+
+  notifyDeltaAppliedDuringTabResync();
 }
 
 function upsertEntityView(

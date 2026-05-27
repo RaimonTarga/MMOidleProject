@@ -46,5 +46,7 @@ export function clearMonsterKnockback(world: World, id: string): void {
  */
 export function removeMonsterEntity(world: World, id: string): void {
   const e = getMonsterEntity(world, id);
-  if (e) world.ecs.remove(e);
+  if (!e) return;
+  world.adjustMonsterCount(e.hasPosition.nodeId, -1, e.isMonster.isBoss);
+  world.ecs.remove(e);
 }

@@ -14,7 +14,10 @@ export function destroyEntity(
   scene: GameScene,
 ): void {
   const interp = state.interpolation.get(id);
-  if (interp) scene.tweens.killTweensOf(interp);
+  if (interp) {
+    scene.tweens.killTweensOf(interp);
+    scene.tweens.killTweensOf(interp.lungeOffset);
+  }
 
   destroySprite(state, id);
   destroyShadow(state, id);

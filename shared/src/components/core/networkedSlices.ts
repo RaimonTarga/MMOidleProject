@@ -12,6 +12,9 @@ import type { PassiveMap } from '../../passives';
 import type { PlayerBuff } from '../combat/buffs';
 import type { SubVariant } from '../../skillTree';
 import type { CombatArchetype, MonsterAIState } from '../../types/combat';
+import type { HasHitbox } from '../../hitbox/types';
+
+export type { HasHitbox };
 
 // ─── Shared by players and monsters ──────────────────────────────────────────
 

@@ -1,4 +1,4 @@
-import { GAME_CONFIG, TEST_ROOM_NODE_ID, getStatusEffect, type UsesReload } from '@mmo-idle/shared';
+import { GAME_CONFIG, TEST_ROOM_NODE_ID, getStatusEffect, hitboxGap, inAttackRange, posHitboxFromEntity, type UsesReload } from '@mmo-idle/shared';
 import type { World } from '../../../../../../world/World';
 import type { MonsterEntity, PlayerEntity } from '../../../../../../ecs/entity';
 import {
@@ -66,14 +66,16 @@ function updateLaserPlayer(
 
 function findNearestTarget(world: World, player: PlayerEntity): MonsterEntity | null {
   let target: MonsterEntity | null = null;
-  let best = Infinity;
+  let bestGap = Infinity;
+  const playerPH = posHitboxFromEntity(player);
+  const attackRange = player.performsAttack.attackRange;
 
   for (const entity of world.monsterEntitiesInNode(player.hasPosition.nodeId)) {
-    const dx = entity.hasPosition.current.x - player.hasPosition.current.x;
-    const dy = entity.hasPosition.current.y - player.hasPosition.current.y;
-    const distance = Math.sqrt(dx * dx + dy * dy);
-    if (distance <= player.performsAttack.attackRange && distance < best) {
-      best = distance;
+    const monsterPH = posHitboxFromEntity(entity);
+    if (!inAttackRange(playerPH, monsterPH, attackRange)) continue;
+    const gap = hitboxGap(playerPH, monsterPH);
+    if (gap < bestGap) {
+      bestGap = gap;
       target = entity;
     }
   }

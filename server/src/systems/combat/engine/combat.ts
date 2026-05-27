@@ -1,5 +1,5 @@
 import type { World } from '../../../world/World';
-import { applyStatusEffect, GAME_CONFIG, MONSTER_DATABASE, TEST_ROOM_NODE_ID, distanceSq } from '@mmo-idle/shared';
+import { applyStatusEffect, GAME_CONFIG, MONSTER_DATABASE, TEST_ROOM_NODE_ID, distanceSq, hitboxGap, inAttackRange, posHitboxFromEntity } from '@mmo-idle/shared';
 import { grantMonsterRewards } from '../../player/progression/rewards';
 import {
   makeCombatContext,
@@ -22,14 +22,16 @@ export function updateCombat(world: World, dt: number, now: number) {
     }
 
     let target = null;
-    let best = Infinity;
-    const attackRangeSq = player.performsAttack.attackRange * player.performsAttack.attackRange;
+    let bestGap = Infinity;
+    const playerPH = posHitboxFromEntity(player);
+    const attackRange = player.performsAttack.attackRange;
 
     for (const m of world.monsterEntitiesInNode(player.hasPosition.nodeId)) {
-      const dSq = distanceSq(m.hasPosition.current, player.hasPosition.current);
-
-      if (dSq <= attackRangeSq && dSq < best) {
-        best = dSq;
+      const monsterPH = posHitboxFromEntity(m);
+      if (!inAttackRange(playerPH, monsterPH, attackRange)) continue;
+      const gap = hitboxGap(playerPH, monsterPH);
+      if (gap < bestGap) {
+        bestGap = gap;
         target = m;
       }
     }
@@ -201,7 +203,9 @@ export function updateCombat(world: World, dt: number, now: number) {
       continue;
     }
 
-    if (distanceSq(target.hasPosition.current, e.hasPosition.current) > e.performsAttack.attackRange * e.performsAttack.attackRange) {
+    const monsterPH = posHitboxFromEntity(e);
+    const targetPH = posHitboxFromEntity(target);
+    if (!inAttackRange(monsterPH, targetPH, e.performsAttack.attackRange)) {
       setAttackTarget(world, e, null);
       continue;
     }

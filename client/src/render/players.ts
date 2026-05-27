@@ -1,5 +1,5 @@
 import type { PlayerView } from "@mmo-idle/shared";
-import { setAutoPath, syncPlayerAtoms } from "../hud/atoms";
+import { setAutoPath } from "../hud/atoms";
 import { combatLog } from "../combatLog";
 import { getPlayerShadowOffset } from "../sprites";
 import type { RenderState } from "./state";
@@ -79,7 +79,6 @@ export function upsertPlayer(
       state.ownNodeId = player.nodeId;
       scene.cameraTarget.setPosition(player.pos.x, player.pos.y);
       scene.cameras.main.startFollow(scene.cameraTarget, true, 0.1, 0.1);
-      syncPlayerAtoms(player);
     }
     return;
   }
@@ -214,6 +213,5 @@ export function upsertPlayer(
     }
     state.ownNodeId = player.nodeId;
     scene.autoMode = player.auto;
-    syncPlayerAtoms(player);
   }
 }

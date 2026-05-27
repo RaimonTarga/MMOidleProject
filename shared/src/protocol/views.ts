@@ -3,6 +3,8 @@ import type { PassiveMap } from '../passives';
 import type { SubVariant } from '../skillTree';
 import type { BuffId, PlayerBuff } from '../components/combat/buffs';
 import type { CombatArchetype, MonsterAIState, ShieldState } from '../types/combat';
+import type { HitboxRect } from '../hitbox/types';
+import { FALLBACK_MONSTER_AABB, FALLBACK_PLAYER_AABB } from '../hitbox/constants';
 import { pointFromMotion, type Vec2 } from '../systems/spatial';
 import type { NetworkedEntity } from './networkedEntity';
 
@@ -71,6 +73,7 @@ export interface PlayerView {
   activeBuffs: PlayerBuff[];
   questProgress: Record<string, number>;
   playerTier: number;
+  hitboxRects: HitboxRect[];
 }
 
 export interface MonsterView {
@@ -101,6 +104,7 @@ export interface MonsterView {
   activeEffects?: Record<string, number>;
   activeEffectFrames?: Record<string, number>;
   bossEffects?: string[];
+  hitboxRects: HitboxRect[];
 }
 
 const EMPTY_EQUIPMENT = {
@@ -199,6 +203,7 @@ export function composePlayerView(entity: NetworkedEntity): PlayerView | null {
     activeBuffs: entity.hasStatus?.activeBuffs ?? [],
     questProgress: progression.questProgress,
     playerTier: progression.playerTier,
+    hitboxRects: entity.hasHitbox?.rects ?? [FALLBACK_PLAYER_AABB],
   };
 }
 
@@ -246,6 +251,7 @@ export function composeMonsterView(entity: NetworkedEntity): MonsterView | null 
     activeEffects: entity.hasStatus?.activeEffects,
     activeEffectFrames: entity.hasStatus?.activeEffectFrames,
     bossEffects: entity.hasStatus?.bossEffects,
+    hitboxRects: entity.hasHitbox?.rects ?? [FALLBACK_MONSTER_AABB],
   };
 }
 

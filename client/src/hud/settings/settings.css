@@ -1,0 +1,120 @@
+.settings-status {
+  font-size: 11px;
+  color: var(--hud-text-muted);
+  margin-bottom: 14px;
+  padding: 8px 10px;
+  background: rgba(25, 20, 55, 0.6);
+  border-radius: 4px;
+  border: 1px solid rgba(100, 85, 200, 0.2);
+}
+
+.settings-status--connected {
+  color: var(--hud-success);
+}
+
+.settings-capture-hint {
+  font-size: 11px;
+  color: var(--hud-warning);
+  margin-bottom: 12px;
+  letter-spacing: 0.3px;
+}
+
+.settings-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+  margin-bottom: 16px;
+}
+
+.settings-table th {
+  text-align: left;
+  color: var(--hud-primary);
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 0 8px 8px 0;
+  border-bottom: 1px solid rgba(100, 85, 200, 0.25);
+}
+
+.settings-table th:nth-child(2),
+.settings-table th:nth-child(3) {
+  width: 38%;
+}
+
+.settings-table td {
+  padding: 8px 8px 8px 0;
+  vertical-align: middle;
+  border-bottom: 1px solid rgba(100, 85, 200, 0.1);
+}
+
+.settings-action-label {
+  color: var(--hud-text);
+  white-space: nowrap;
+}
+
+.settings-bind-col {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.settings-chip {
+  display: inline-block;
+  min-width: 28px;
+  padding: 3px 8px;
+  text-align: center;
+  background: rgba(30, 24, 70, 0.9);
+  border: 1px solid rgba(132, 112, 235, 0.35);
+  border-radius: 4px;
+  color: var(--hud-primary-strong);
+  font-size: 11px;
+}
+
+.settings-chip--capturing {
+  border-color: var(--hud-warning);
+  color: var(--hud-warning);
+  animation: settings-pulse 1s ease-in-out infinite alternate;
+}
+
+@keyframes settings-pulse {
+  from { opacity: 0.6; }
+  to { opacity: 1; }
+}
+
+.settings-btn-sm {
+  padding: 3px 8px;
+  font-size: 9px;
+  font-family: monospace;
+  letter-spacing: 0.5px;
+  background: rgba(25, 20, 55, 0.9);
+  border: 1px solid rgba(100, 85, 190, 0.3);
+  border-radius: 3px;
+  color: var(--hud-text-muted);
+  cursor: pointer;
+}
+
+.settings-btn-sm:hover {
+  color: var(--hud-primary-strong);
+  border-color: rgba(177, 158, 255, 0.5);
+}
+
+.settings-footnotes {
+  font-size: 10px;
+  color: var(--hud-text-dim);
+  line-height: 1.5;
+  margin-bottom: 14px;
+}
+
+.settings-reset {
+  width: 100%;
+  margin-top: 4px;
+}
+
+.quest-overlay-panel {
+  max-width: 420px;
+}
+
+.settings-panel-wide {
+  max-width: 640px;
+}
