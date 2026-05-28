@@ -43,15 +43,15 @@ export const bossMonsterEntriesT1T2 = [
     behavior: 'melee', attackStyle: 'poison', biome: 'swamp',
     rewards: { essence: 100, essenceType: 'purple', level: 5, biomeXp: 150 },
     ai: { wanderRadius: 100, leashRange: 700, idleMinMs: 2000, idleMaxMs: 5500 },
-    dotEffect: { damagePerStack: 4, maxStacks: 4, tickIntervalMs: 1000 },
+    dotEffect: { damagePerStack: 1, maxStacks: 4, tickIntervalMs: 1000 },
   }],
 
   ['cave-sentinel', {
     id: 'cave-sentinel', name: 'Cave Sentinel', color: 0x334455,
     isBoss: true,
     stats: {
-      hp: 650, attack: 22, plating: 7, damageReduction: 0.04,
-      speed: 18, attackRange: 15, attackCooldown: 3200, pullRange: 240,
+      hp: 650, attack: 22, plating: 6, damageReduction: 0.04,
+      speed: 18, attackRange: 15, attackCooldown: 2800, pullRange: 240,
     },
     behavior: 'melee', attackStyle: 'impact', biome: 'cave',
     rewards: { essence: 110, essenceType: 'red', level: 5, biomeXp: 165 },

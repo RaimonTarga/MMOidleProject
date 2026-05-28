@@ -142,7 +142,7 @@ const ATTACK_FX_BY_STYLE: Record<string, AttackFxFn> = {
   fire:   ({ scene, to }) => fxFire(scene, to.x, to.y),
   void:   ({ scene, to }) => fxVoid(scene, to.x, to.y),
   impact:   ({ scene, ev, to }) => fxImpact(scene, to.x, to.y, ev.execution),
-  gunshot:  ({ scene, from, to }) => fxGunshot(scene, from.x, from.y, to.x, to.y),
+  gunshot:  ({ scene, ev, from, to }) => fxGunshot(scene, from.x, from.y, to.x, to.y, ev.empowered),
 };
 
 export function dispatchCombatEvent(state: RenderState, ev: CombatEvent, scene: GameScene): void {

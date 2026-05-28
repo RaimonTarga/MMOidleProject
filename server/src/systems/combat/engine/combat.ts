@@ -102,6 +102,7 @@ export function updateCombat(world: World, dt: number, now: number) {
         emitCombatEvent('onDamageTaken', ctx, world);
 
         target.hasHealth.hp -= ctx.damage;
+        target.controlsMonster.spawn = { ...target.hasPosition.current };
         player.performsAttack.lastAttackAt = now;
 
         // Lock the test-room boss rotation once a player has actually engaged

@@ -43,7 +43,7 @@ Key design axioms:
 │   ├── quests/               ← QUEST_DATABASE
 │   ├── skillTree.ts          ← SKILL_TREE map (T0–T3 hand-authored, T4–T7 generated)
 │   ├── biomeDatabase.ts      ← BiomeDefinition, BIOME_DATABASE, bossPoolByTier
-│   ├── monsterDatabase.ts    ← MonsterDefinition (isBoss?, dotEffect?, chargeOnAggro?, slowEffect?, evadeEvery?, bossScript?)
+│   ├── monsterDatabase.ts    ← MonsterDefinition (isBoss?, isRanged?, dotEffect?, chargeOnAggro?, slowEffect?, evadeEvery?, bossScript?)
 │   ├── itemDatabase.ts, items.ts, recipeDatabase.ts
 ├── client/src/
 │   ├── main.ts               ← Phaser bootstrap
@@ -235,6 +235,15 @@ Components: `HUD.tsx` (sidebars, StatPanel, BuffBar, EssencePanel), `BuffBar.tsx
 ### Deterministic evasion (`evadeEvery`)
 `MonsterDefinition.evadeEvery?: number` — the monster dodges every Nth incoming player hit. Tracked in `monsterCombatState.counters['hitsTaken']`, which persists for the monster's entire lifetime and resets only on death. The evasion check runs before `makeCombatContext`; the attack cooldown is still consumed. Pushes a `{ kind: 'monster-dodge', monsterId }` event (client-side display not yet implemented — hit silently produces no damage number). Convention: `evadeEvery` must be ≥ 5 (maximum 1-in-5 dodge rate). Currently wired: giant-spider (5), mire-stalker (5), dune-asp (5).
 
+### Ranged monsters (`isRanged`)
+`MonsterDefinition.isRanged?: boolean` — marks a monster as ranged. Stored on `IsMonster` component and included in `MonsterView`. Client uses it to suppress the lunge animation (`!meta?.monsterIsRanged` gate in `monsters.ts`). Ranged monsters with a generic `impact` style should use `attackStyle: 'gunshot'` instead so they play the projectile FX. Monsters with a thematic special style (magic, poison, slash, etc.) keep it even when `isRanged: true`.
+
+Currently tagged ranged monsters:
+- `ridge-archer`, `canopy-sprite`, `peak-archer`, `cave-gargoyle` → `isRanged: true`, `attackStyle: 'gunshot'`
+- `bog-witch` → `isRanged: true`, `attackStyle: 'magic'`
+- `savanna-hawk` → `isRanged: true`, `attackStyle: 'slash'`
+- `jungle-blowdarter`, `dune-asp` → `isRanged: true`, `attackStyle: 'poison'`
+
 ---
 
 ## Biome XP system
@@ -417,7 +426,9 @@ Energy 0–100 fills on hits; at 100, next attack is Empowered. T1: Light (20/hi
 ---
 
 #### Reload (`reloadPrototype.ts`)
-Magazine system — burst then reload window. T1: Light (5 rounds, 1500 ms), Balanced (8, 2500 ms), Heavy (12, 4000 ms). Reload class uses double APS / half dmg final multiplier — see above. **All 9 T3 paths designed in skillTree.ts; none implemented yet.**
+Magazine system — burst then reload window. T1: Light (5 rounds, 1500 ms), Balanced (8, 2000 ms), Heavy (12, 4000 ms). Reload class uses double APS / half dmg final multiplier — see above. **All 9 T3 paths designed in skillTree.ts; none implemented yet.**
+
+**OOC auto-reload:** When the reload player leaves combat (`!inCombat` via `tracksEngagement` + `COMBAT_REGEN_DELAY`) with a partial clip (`ammo > 0 && ammo < ammoMax`) and no reload is already active, `updateReloadArchetype` immediately sets `ammo = 0` and starts a reload. OOC reloads (and any reload in progress when going OOC) tick at **2× speed**. Auto-combat AI (`autoTarget.ts`) stops the player from moving toward the next enemy while `usesReload.reloadingMs > 0 && !targetIsAggroed`; if an enemy aggros the player mid-reload, the normal ranged movement AI resumes immediately.
 
 - Light: Exploding Clip (last bullet 3×), Preemptive Strike (first bullet 2.5×), High Powered (3-round ramp)
 - Balanced: Death Mark (stacks → reload detonation), Continuous Firing (reload speed stacks + ATK buff), Finishing Strike (last bullet scales with missing HP)
@@ -465,7 +476,7 @@ Never set a `dot.damage-per-stack` passive — `damagePerStack` is always derive
 - 11×11 world, monster AI (aggro, kite prevention, leash), auto-targeting
 - Dungeon nodes T1–T3 with scaled enemies and persistent bosses; 30 s boss respawn timer
 - Per-biome mob density (`mobDensity`); `World.getMobDensity(nodeId)` helper
-- Monster charge-on-aggro (`chargeOnAggro`), player slow/root (`slowEffect`), deterministic evasion (`evadeEvery`) — see Monster mechanics section
+- Monster charge-on-aggro (`chargeOnAggro`), player slow/root (`slowEffect`), deterministic evasion (`evadeEvery`), ranged flag (`isRanged`) — see Monster mechanics section
 - Boss fight scripting framework (`bossScripts.ts`) — data-driven phases, repeating timers, enrage/regen/shield/summon/stat-buff actions
 - Quest system (kill-count quests → XP → skill points); QuestPanel
 - All 5 class archetypes with T0 roots and T1–T2 nodes; T3 fully implemented for Cadence, Energy, DoT; Cooldown light+balanced; Reload designed only
@@ -489,6 +500,11 @@ Never set a `dot.damage-per-stack` passive — `damagePerStack` is always derive
 - T1 density-based balance pass; full T2 monster redesign (7 biomes × 3 mobs each, all new mechanics)
 - Y-sort draw order (`DEPTH` constant bands in `GameScene.ts`; per-frame `setDepth(BAND + baseY)` in `stepEntities`)
 - Tab-switch desync fix (dt cap 100 ms, position snap on `visibilitychange`, `document.hidden` guards on all tween functions)
+- Evasion stacking fix — `evasion` stat values are combined as independent dodge probabilities (`1/N` per source, `threshold = round(1/sum)`); single-source behavior unchanged, stacking always improves evasion
+- `isMeleeArchetype(archetype, unlockedSkills?)` in `shared/src/data/skillTree/rootsAndFrames.ts` — cadence/cooldown/null are melee; range nodes override (range-close forces melee, range-mid/far forces ranged); used to gate player lunge in `players.ts` and `combatFx.ts`
+- Ranged monster lunge suppression — `isRanged` flag on `MonsterDefinition` flows to `MonsterView`; client skips lunge for ranged monsters; 8 monsters tagged; `gunshot` added to `ATTACK_FX_BY_STYLE`
+- Reload OOC auto-reload and movement hold — see Reload archetype section
+- Players start with no equipment (basic sword removed from `buildFreshSlices` in `playerRepo.ts`)
 
 ## What is NOT built (do not hallucinate these)
 
@@ -556,6 +572,9 @@ T1 bosses: 400–700 HP, 14–22 ATK. T2 bosses: not yet balanced (stats inherit
 - **Reload multiplier is a final layer** — apply `* 0.5` to `dealsDamage.attack` and `performsAttack.attackCooldown` at the end of `recalculatePlayerStats()`, never additively
 - **Attack speed in skill nodes is `attackSpeedPct`** — percentage modifier (e.g. `0.15` = +15%); all unlocked nodes sum additively, applied once as `round(baseCooldown / (1 + total))`. Never use flat ms deltas in `StatEffects`; flat ms only belongs in temporary runtime buffs.
 - **Reload plating compensation** — `reloadPrototype.ts` sets `ctx.platingMult = 0.5` in `beforeAttack`; `combat.ts` applies `effectivePlating * ctx.platingMult`. Never add an archetype check inside the damage formula itself.
+- **Evasion stacking is probability-based** — in `recalculatePlayerStats`, each `evasion: N` source contributes `1/N` to a probability accumulator; final `threshold = round(1 / totalChance)`. Single-source: `evasion: 10` → threshold 10. Two sources of 10: threshold 5. Never add raw N values together.
+- **`isMeleeArchetype(archetype, unlockedSkills?)` is the single source of truth for melee/ranged** — defined in `shared/src/data/skillTree/rootsAndFrames.ts`, exported from `@mmo-idle/shared`. Cadence, cooldown, and null (unclassed) are melee. Range nodes override: range-close forces melee, range-mid/far forces ranged. Use this function everywhere (player lunge, future stat multipliers) — do not re-derive from attackRange or archetype name.
+- **Ranged monster `attackStyle`** — ranged monsters that previously used generic `impact` should use `gunshot` instead. Monsters with a thematic style (magic, poison, slash) keep it even when `isRanged: true`.
 - **Boss script stat modifications use save-original pattern** — `ActiveBossEffect` stores the pre-buff stat value; restored on expiry. Overlapping same-stat effects from multiple sources are not supported (last write wins)
 - **`biomeXpForLevel` is the only XP threshold function** — there is no flat `BIOME_XP_PER_LEVEL` constant; always go through the formula
 - **`biomeLevelCap` takes two args** — `(playerTier, biomeGroup)`. No `biomeTier` parameter. Cap = `Math.max(4, playerTier * 4)`. Never pass three args.
