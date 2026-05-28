@@ -92,7 +92,13 @@ export function applyDelta(
       if (state.kind.get(id) !== "player") continue;
       const v = state.view.get(id) as PlayerView | undefined;
       if (!v || v.nodeId !== own.nodeId) continue;
-      zonePlayers.push({ id: v.id, name: v.name, partyLeaderId: v.partyLeaderId });
+      zonePlayers.push({
+        id: v.id,
+        name: v.name,
+        partyLeaderId: v.partyLeaderId,
+        hp: v.hp,
+        maxHp: v.maxHp,
+      });
     }
     zonePlayers.sort((a, b) => a.name.localeCompare(b.name));
     setZonePlayers(zonePlayers);

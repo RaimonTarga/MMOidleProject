@@ -119,6 +119,8 @@ export interface ZonePlayer {
   id: string;
   name: string;
   partyLeaderId: string | null;
+  hp: number;
+  maxHp: number;
 }
 /** Players in the local player's current zone (for the party panel). */
 export const zonePlayersAtom = atom<ZonePlayer[]>([]);
@@ -203,7 +205,13 @@ function zonePlayersEqual(a: readonly ZonePlayer[], b: readonly ZonePlayer[]): b
   if (a === b) return true;
   if (a.length !== b.length) return false;
   for (let i = 0; i < a.length; i++) {
-    if (a[i].id !== b[i].id || a[i].name !== b[i].name || a[i].partyLeaderId !== b[i].partyLeaderId) {
+    if (
+      a[i].id !== b[i].id ||
+      a[i].name !== b[i].name ||
+      a[i].partyLeaderId !== b[i].partyLeaderId ||
+      a[i].hp !== b[i].hp ||
+      a[i].maxHp !== b[i].maxHp
+    ) {
       return false;
     }
   }

@@ -264,9 +264,10 @@ to the killer; other members' essence rides their own `node:delta`. To split rew
 divide essence/biomeXp by recipient count inside `applyKillRewardsToPlayer` — single lever, not built.
 
 **Client:** `inParty` flows into `PlayerView.partyLeaderId` / `partyMembers`. `deltaApplier.ts`
-publishes `zonePlayersAtom` (same-zone players for the In-Zone join list) and `syncPlayerAtoms`
-sets `partyAtom` (own roster). `client/src/hud/PartyPanel.tsx` is an always-visible **left** sidebar
-panel (between StatPanel and the debug panel). Intents route Join/Leave through
+publishes `zonePlayersAtom` (same-zone players incl. `hp`/`maxHp`, for the In-Zone join list) and
+`syncPlayerAtoms` sets `partyAtom` (own roster). `client/src/hud/PartyPanel.tsx` is an always-visible
+**left** sidebar panel (between StatPanel and the debug panel); each roster row shows an HP bar looked
+up from `zonePlayersAtom` (members in another zone show "away" since HP is only known for same-zone players). Intents route Join/Leave through
 `hudBus.requestJoinParty/requestLeaveParty` → local `intents` bus → `hudEvents.ts` →
 `party:join`/`party:leave` socket events.
 

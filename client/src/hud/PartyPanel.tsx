@@ -12,6 +12,7 @@ export function PartyPanel() {
 
   const myLeaderId = party?.leaderId ?? null;
   const others = zonePlayers.filter((zp) => zp.id !== playerId);
+  const hpById = new Map(zonePlayers.map((zp) => [zp.id, zp]));
 
   return (
     <div className="sidebar-panel">
@@ -22,16 +23,45 @@ export function PartyPanel() {
           <div className="stat-section">
             {party.members.map((m) => {
               const isLeader = m.id === party.leaderId;
+              const isSelf = m.id === playerId;
+              const hpInfo = hpById.get(m.id);
+              // Skip the HP bar for yourself — it's already in the stat panel above.
+              const hasHp = !isSelf && hpInfo !== undefined && hpInfo.maxHp > 0;
+              const pct = hasHp
+                ? Math.max(0, Math.min(1, hpInfo.hp / hpInfo.maxHp)) * 100
+                : 0;
               return (
-                <div className="stat-row" key={m.id}>
-                  <span className="stat-label">
-                    {isLeader ? "★ " : ""}
-                    {m.name}
-                    {m.id === playerId ? " (you)" : ""}
-                  </span>
-                  <span className="stat-value" style={{ color: isLeader ? "#ffcc44" : undefined }}>
-                    {isLeader ? "Leader" : "Member"}
-                  </span>
+                <div key={m.id} style={{ marginBottom: 6 }}>
+                  <div className="stat-row">
+                    <span className="stat-label" style={{ color: isLeader ? "#ffcc44" : undefined }}>
+                      {isLeader ? "★ " : ""}
+                      {m.name}
+                      {m.id === playerId ? " (you)" : ""}
+                    </span>
+                    <span className="stat-value" style={{ fontSize: 10 }}>
+                      {hasHp ? `${Math.ceil(hpInfo.hp)}/${hpInfo.maxHp}` : isSelf ? "" : "away"}
+                    </span>
+                  </div>
+                  {hasHp && (
+                    <div
+                      style={{
+                        height: 5,
+                        borderRadius: 3,
+                        background: "#1a1a2a",
+                        overflow: "hidden",
+                        marginTop: 2,
+                      }}
+                    >
+                      <div
+                        style={{
+                          height: "100%",
+                          width: `${pct}%`,
+                          background: pct > 30 ? "#44ff88" : "#ff5555",
+                          transition: "width 120ms linear",
+                        }}
+                      />
+                    </div>
+                  )}
                 </div>
               );
             })}
