@@ -32,9 +32,9 @@ export const plainsSwampCaveRecipeEntries = [
     cost: { yellow: 20 }, stats: { maxHp: 12, plating: 3, damageReduction: 0.15 }, tier: 1,
     description: 'Reinforced field cloth built to endure sustained punishment — wide coverage and solid padding.',
     upgrades: [
-      { stats: { maxHp: 3, plating: 1 }, cost: { yellow: 10 }, requiredBiomeLevel: 5 },
-      { stats: { maxHp: 5, plating: 1 }, cost: { yellow: 22 }, requiredBiomeLevel: 6 },
-      { stats: { maxHp: 6, plating: 2 }, cost: { yellow: 42 }, requiredBiomeLevel: 7 },
+      { stats: { maxHp: 3, plating: 1 }, cost: { yellow: 10 }, requiredBiomeLevel: 4 },
+      { stats: { maxHp: 5, plating: 1 }, cost: { yellow: 22 }, requiredBiomeLevel: 4 },
+      { stats: { maxHp: 6, plating: 2 }, cost: { yellow: 42 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -45,8 +45,8 @@ export const plainsSwampCaveRecipeEntries = [
     description: 'Open-toe sandals built for sprinting across flat ground.',
     upgrades: [
       { stats: { speed: 5 }, cost: { yellow: 10 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 7 }, cost: { yellow: 22 }, requiredBiomeLevel: 5 },
-      { stats: { speed: 9 }, cost: { yellow: 42 }, requiredBiomeLevel: 6 },
+      { stats: { speed: 7 }, cost: { yellow: 22 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 9 }, cost: { yellow: 42 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -60,7 +60,7 @@ export const plainsSwampCaveRecipeEntries = [
     upgrades: [
       { stats: { hpRegen: 1 }, cost: { yellow: 10 }, requiredBiomeLevel: 3 },
       { stats: { hpRegen: 1 }, cost: { yellow: 22 }, requiredBiomeLevel: 4 },
-      { stats: { hpRegen: 2 }, cost: { yellow: 42 }, requiredBiomeLevel: 5 },
+      { stats: { hpRegen: 2 }, cost: { yellow: 42 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -72,9 +72,9 @@ export const plainsSwampCaveRecipeEntries = [
     tier: 2,
     description: 'Life-binding thread woven into field armor — 8% of damage taken is converted into healing over 4 seconds.',
     upgrades: [
-      { stats: { maxHp: 5, plating: 1 }, cost: { yellow: 24 }, requiredBiomeLevel: 9 },
-      { stats: { maxHp: 8, plating: 2 }, cost: { yellow: 50 }, requiredBiomeLevel: 10 },
-      { stats: { maxHp: 10, plating: 2 }, cost: { yellow: 90 }, requiredBiomeLevel: 11 },
+      { stats: { maxHp: 5, plating: 1 }, cost: { yellow: 24 }, requiredBiomeLevel: 8 },
+      { stats: { maxHp: 8, plating: 2 }, cost: { yellow: 50 }, requiredBiomeLevel: 8 },
+      { stats: { maxHp: 10, plating: 2 }, cost: { yellow: 90 }, requiredBiomeLevel: 8 },
     ],
   }],
 
@@ -85,8 +85,8 @@ export const plainsSwampCaveRecipeEntries = [
     description: 'Wind-woven leather that carries you with every step.',
     upgrades: [
       { stats: { speed: 7 },  cost: { yellow: 20 }, requiredBiomeLevel: 8 },
-      { stats: { speed: 10 }, cost: { yellow: 40 }, requiredBiomeLevel: 9 },
-      { stats: { speed: 14 }, cost: { yellow: 72 }, requiredBiomeLevel: 10 },
+      { stats: { speed: 10 }, cost: { yellow: 40 }, requiredBiomeLevel: 8 },
+      { stats: { speed: 14 }, cost: { yellow: 72 }, requiredBiomeLevel: 8 },
     ],
   }],
 
@@ -100,7 +100,7 @@ export const plainsSwampCaveRecipeEntries = [
     upgrades: [
       { stats: { hpRegen: 1 }, cost: { yellow: 20 }, requiredBiomeLevel: 7 },
       { stats: { hpRegen: 2 }, cost: { yellow: 40 }, requiredBiomeLevel: 8 },
-      { stats: { hpRegen: 3 }, cost: { yellow: 72 }, requiredBiomeLevel: 9 },
+      { stats: { hpRegen: 3 }, cost: { yellow: 72 }, requiredBiomeLevel: 8 },
     ],
   }],
 
@@ -124,9 +124,9 @@ export const plainsSwampCaveRecipeEntries = [
     tier: 1,
     description: 'Magically treated cloth that dampens toxins, burns, and corroding ailments — 18% reduction to all damage over time.',
     upgrades: [
-      { stats: { maxHp: 3, plating: 1 }, cost: { purple: 10 }, requiredBiomeLevel: 5 },
-      { stats: { maxHp: 4, plating: 1 }, cost: { purple: 22 }, requiredBiomeLevel: 6 },
-      { stats: { maxHp: 5, plating: 1 }, cost: { purple: 42 }, requiredBiomeLevel: 7 },
+      { stats: { maxHp: 3, plating: 1 }, cost: { purple: 10 }, requiredBiomeLevel: 4 },
+      { stats: { maxHp: 4, plating: 1 }, cost: { purple: 22 }, requiredBiomeLevel: 4 },
+      { stats: { maxHp: 5, plating: 1 }, cost: { purple: 42 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -137,8 +137,8 @@ export const plainsSwampCaveRecipeEntries = [
     description: 'Wide-soled boots that float on soft ground.',
     upgrades: [
       { stats: { speed: 4 }, cost: { purple: 10 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 6 }, cost: { purple: 22 }, requiredBiomeLevel: 5 },
-      { stats: { speed: 8 }, cost: { purple: 42 }, requiredBiomeLevel: 6 },
+      { stats: { speed: 6 }, cost: { purple: 22 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 8 }, cost: { purple: 42 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -152,7 +152,7 @@ export const plainsSwampCaveRecipeEntries = [
     upgrades: [
       { stats: { hpRegen: 1 }, cost: { purple: 10 }, requiredBiomeLevel: 3 },
       { stats: { hpRegen: 1 }, cost: { purple: 22 }, requiredBiomeLevel: 4 },
-      { stats: { hpRegen: 2 }, cost: { purple: 42 }, requiredBiomeLevel: 5 },
+      { stats: { hpRegen: 2 }, cost: { purple: 42 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -165,9 +165,9 @@ export const plainsSwampCaveRecipeEntries = [
     tier: 2,
     description: 'Deep-swamp cloth that nullifies 30% of incoming DoT and reduces the potency of all non-DoT debuffs by 12%.',
     upgrades: [
-      { stats: { maxHp: 5, plating: 1 }, cost: { purple: 26 }, requiredBiomeLevel: 9 },
-      { stats: { maxHp: 7, plating: 2 }, cost: { purple: 54 }, requiredBiomeLevel: 10 },
-      { stats: { maxHp: 9, plating: 2 }, cost: { purple: 96 }, requiredBiomeLevel: 11 },
+      { stats: { maxHp: 5, plating: 1 }, cost: { purple: 26 }, requiredBiomeLevel: 8 },
+      { stats: { maxHp: 7, plating: 2 }, cost: { purple: 54 }, requiredBiomeLevel: 8 },
+      { stats: { maxHp: 9, plating: 2 }, cost: { purple: 96 }, requiredBiomeLevel: 8 },
     ],
   }],
 
@@ -178,8 +178,8 @@ export const plainsSwampCaveRecipeEntries = [
     description: 'Enchanted wrappings that treat mud like solid ground.',
     upgrades: [
       { stats: { speed: 7 },  cost: { purple: 22 }, requiredBiomeLevel: 8 },
-      { stats: { speed: 10 }, cost: { purple: 44 }, requiredBiomeLevel: 9 },
-      { stats: { speed: 13 }, cost: { purple: 78 }, requiredBiomeLevel: 10 },
+      { stats: { speed: 10 }, cost: { purple: 44 }, requiredBiomeLevel: 8 },
+      { stats: { speed: 13 }, cost: { purple: 78 }, requiredBiomeLevel: 8 },
     ],
   }],
 
@@ -193,7 +193,7 @@ export const plainsSwampCaveRecipeEntries = [
     upgrades: [
       { stats: { hpRegen: 1 }, cost: { purple: 22 }, requiredBiomeLevel: 7 },
       { stats: { hpRegen: 2 }, cost: { purple: 44 }, requiredBiomeLevel: 8 },
-      { stats: { hpRegen: 3 }, cost: { purple: 78 }, requiredBiomeLevel: 9 },
+      { stats: { hpRegen: 3 }, cost: { purple: 78 }, requiredBiomeLevel: 8 },
     ],
   }],
 
@@ -215,9 +215,9 @@ export const plainsSwampCaveRecipeEntries = [
     cost: { red: 22 }, stats: { maxHp: 20, plating: 3, damageReduction: 0.08 }, tier: 1,
     description: 'Dense cave-beast hide that absorbs raw force through sheer bulk.',
     upgrades: [
-      { stats: { maxHp: 4, plating: 1 }, cost: { red: 10 }, requiredBiomeLevel: 5 },
-      { stats: { maxHp: 6, plating: 1 }, cost: { red: 22 }, requiredBiomeLevel: 6 },
-      { stats: { maxHp: 8, plating: 2 }, cost: { red: 42 }, requiredBiomeLevel: 7 },
+      { stats: { maxHp: 4, plating: 1 }, cost: { red: 10 }, requiredBiomeLevel: 4 },
+      { stats: { maxHp: 6, plating: 1 }, cost: { red: 22 }, requiredBiomeLevel: 4 },
+      { stats: { maxHp: 8, plating: 2 }, cost: { red: 42 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -228,8 +228,8 @@ export const plainsSwampCaveRecipeEntries = [
     description: 'Cave-bat membrane stretched over soles — near silent.',
     upgrades: [
       { stats: { speed: 5 }, cost: { red: 10 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 7 }, cost: { red: 22 }, requiredBiomeLevel: 5 },
-      { stats: { speed: 10 }, cost: { red: 42 }, requiredBiomeLevel: 6 },
+      { stats: { speed: 7 }, cost: { red: 22 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 10 }, cost: { red: 42 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -243,7 +243,7 @@ export const plainsSwampCaveRecipeEntries = [
     upgrades: [
       { stats: { hpRegen: 1 }, cost: { red: 10 }, requiredBiomeLevel: 3 },
       { stats: { hpRegen: 1 }, cost: { red: 22 }, requiredBiomeLevel: 4 },
-      { stats: { hpRegen: 1 }, cost: { red: 42 }, requiredBiomeLevel: 5 },
+      { stats: { hpRegen: 1 }, cost: { red: 42 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -256,8 +256,8 @@ export const plainsSwampCaveRecipeEntries = [
     description: 'Living hide from a dire beast — slowly seals wounds while you fight, applying 15% of your regen rate in combat.',
     upgrades: [
       { stats: { maxHp: 7, plating: 2 }, cost: { red: 26 }, requiredBiomeLevel: 8 },
-      { stats: { maxHp: 10, plating: 3 }, cost: { red: 54 }, requiredBiomeLevel: 9 },
-      { stats: { maxHp: 12, plating: 4 }, cost: { red: 96 }, requiredBiomeLevel: 10 },
+      { stats: { maxHp: 10, plating: 3 }, cost: { red: 54 }, requiredBiomeLevel: 8 },
+      { stats: { maxHp: 12, plating: 4 }, cost: { red: 96 }, requiredBiomeLevel: 8 },
     ],
   }],
 
@@ -268,8 +268,8 @@ export const plainsSwampCaveRecipeEntries = [
     description: 'Enchanted leather that makes tight tunnels feel wide open.',
     upgrades: [
       { stats: { speed: 7 },  cost: { red: 22 }, requiredBiomeLevel: 8 },
-      { stats: { speed: 11 }, cost: { red: 44 }, requiredBiomeLevel: 9 },
-      { stats: { speed: 14 }, cost: { red: 78 }, requiredBiomeLevel: 10 },
+      { stats: { speed: 11 }, cost: { red: 44 }, requiredBiomeLevel: 8 },
+      { stats: { speed: 14 }, cost: { red: 78 }, requiredBiomeLevel: 8 },
     ],
   }],
 
@@ -283,7 +283,7 @@ export const plainsSwampCaveRecipeEntries = [
     upgrades: [
       { stats: { hpRegen: 1 }, cost: { red: 22 }, requiredBiomeLevel: 7 },
       { stats: { hpRegen: 2 }, cost: { red: 44 }, requiredBiomeLevel: 8 },
-      { stats: { hpRegen: 3 }, cost: { red: 78 }, requiredBiomeLevel: 9 },
+      { stats: { hpRegen: 3 }, cost: { red: 78 }, requiredBiomeLevel: 8 },
     ],
   }],
 

@@ -20,9 +20,9 @@ export const clearingForestMountainRecipeEntries = [
     cost: { green: 8 }, stats: { plating: 4 }, tier: 0,
     description: 'Strips of bark bound with twine.',
     upgrades: [
-      { stats: { plating: 1 }, cost: { green: 4 }, requiredBiomeLevel: 5 },
-      { stats: { plating: 2 }, cost: { green: 8 }, requiredBiomeLevel: 6 },
-      { stats: { plating: 2 }, cost: { green: 16 }, requiredBiomeLevel: 7 },
+      { stats: { plating: 1 }, cost: { green: 4 }, requiredBiomeLevel: 4 },
+      { stats: { plating: 2 }, cost: { green: 8 }, requiredBiomeLevel: 4 },
+      { stats: { plating: 2 }, cost: { green: 16 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -33,8 +33,8 @@ export const clearingForestMountainRecipeEntries = [
     description: 'Comfortable footwear for early exploration.',
     upgrades: [
       { stats: { speed: 3 }, cost: { green: 4 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 4 }, cost: { green: 8 }, requiredBiomeLevel: 5 },
-      { stats: { speed: 5 }, cost: { green: 16 }, requiredBiomeLevel: 6 },
+      { stats: { speed: 4 }, cost: { green: 8 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 5 }, cost: { green: 16 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -46,7 +46,7 @@ export const clearingForestMountainRecipeEntries = [
     upgrades: [
       { stats: { hpRegen: 1 }, cost: { green: 4 }, requiredBiomeLevel: 3 },
       { stats: { hpRegen: 1 }, cost: { green: 8 }, requiredBiomeLevel: 4 },
-      { stats: { hpRegen: 1 }, cost: { green: 16 }, requiredBiomeLevel: 5 },
+      { stats: { hpRegen: 1 }, cost: { green: 16 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -68,9 +68,9 @@ export const clearingForestMountainRecipeEntries = [
     cost: { green: 20 }, stats: { maxHp: 10, plating: 2, evasion: 6 }, tier: 1,
     description: 'Shadowweave wrappings that let you slip between strikes — every 6th incoming attack passes through you entirely.',
     upgrades: [
-      { stats: { maxHp: 3, plating: 1 }, cost: { green: 10 }, requiredBiomeLevel: 5 },
-      { stats: { maxHp: 4, plating: 1 }, cost: { green: 22 }, requiredBiomeLevel: 6 },
-      { stats: { maxHp: 5, plating: 1 }, cost: { green: 42 }, requiredBiomeLevel: 7 },
+      { stats: { maxHp: 3, plating: 1 }, cost: { green: 10 }, requiredBiomeLevel: 4 },
+      { stats: { maxHp: 4, plating: 1 }, cost: { green: 22 }, requiredBiomeLevel: 4 },
+      { stats: { maxHp: 5, plating: 1 }, cost: { green: 42 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -81,8 +81,8 @@ export const clearingForestMountainRecipeEntries = [
     description: 'Light wrappings that free the ankle.',
     upgrades: [
       { stats: { speed: 4 }, cost: { green: 10 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 6 }, cost: { green: 22 }, requiredBiomeLevel: 5 },
-      { stats: { speed: 8 }, cost: { green: 42 }, requiredBiomeLevel: 6 },
+      { stats: { speed: 6 }, cost: { green: 22 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 8 }, cost: { green: 42 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -94,7 +94,7 @@ export const clearingForestMountainRecipeEntries = [
     upgrades: [
       { stats: { hpRegen: 1 }, cost: { green: 10 }, requiredBiomeLevel: 3 },
       { stats: { hpRegen: 2 }, cost: { green: 22 }, requiredBiomeLevel: 4 },
-      { stats: { hpRegen: 2 }, cost: { green: 42 }, requiredBiomeLevel: 5 },
+      { stats: { hpRegen: 2 }, cost: { green: 42 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -107,9 +107,9 @@ export const clearingForestMountainRecipeEntries = [
     tier: 2,
     description: 'Illusion-woven cloth that evades every 5th attack and softens any single hit exceeding 25% of your HP.',
     upgrades: [
-      { stats: { maxHp: 5, plating: 1 }, cost: { green: 22 }, requiredBiomeLevel: 9 },
-      { stats: { maxHp: 7, plating: 2 }, cost: { green: 45 }, requiredBiomeLevel: 10 },
-      { stats: { maxHp: 9, plating: 2 }, cost: { green: 80 }, requiredBiomeLevel: 11 },
+      { stats: { maxHp: 5, plating: 1 }, cost: { green: 22 }, requiredBiomeLevel: 8 },
+      { stats: { maxHp: 7, plating: 2 }, cost: { green: 45 }, requiredBiomeLevel: 8 },
+      { stats: { maxHp: 9, plating: 2 }, cost: { green: 80 }, requiredBiomeLevel: 8 },
     ],
   }],
 
@@ -120,8 +120,8 @@ export const clearingForestMountainRecipeEntries = [
     description: 'Enchanted wraps that carry the speed of forest winds.',
     upgrades: [
       { stats: { speed: 6 }, cost: { green: 18 }, requiredBiomeLevel: 8 },
-      { stats: { speed: 9 }, cost: { green: 38 }, requiredBiomeLevel: 9 },
-      { stats: { speed: 12 }, cost: { green: 68 }, requiredBiomeLevel: 10 },
+      { stats: { speed: 9 }, cost: { green: 38 }, requiredBiomeLevel: 8 },
+      { stats: { speed: 12 }, cost: { green: 68 }, requiredBiomeLevel: 8 },
     ],
   }],
 
@@ -133,7 +133,7 @@ export const clearingForestMountainRecipeEntries = [
     upgrades: [
       { stats: { hpRegen: 2 }, cost: { green: 18 }, requiredBiomeLevel: 7 },
       { stats: { hpRegen: 3 }, cost: { green: 38 }, requiredBiomeLevel: 8 },
-      { stats: { hpRegen: 4 }, cost: { green: 68 }, requiredBiomeLevel: 9 },
+      { stats: { hpRegen: 4 }, cost: { green: 68 }, requiredBiomeLevel: 8 },
     ],
   }],
 
@@ -155,9 +155,9 @@ export const clearingForestMountainRecipeEntries = [
     cost: { blue: 22 }, stats: { maxHp: 8, plating: 10, damageReduction: 0.05 }, tier: 1,
     description: 'Heavy stone-forged plate that shrugs off small hits through sheer mass.',
     upgrades: [
-      { stats: { maxHp: 2, plating: 2 }, cost: { blue: 10 }, requiredBiomeLevel: 5 },
-      { stats: { maxHp: 3, plating: 3 }, cost: { blue: 22 }, requiredBiomeLevel: 6 },
-      { stats: { maxHp: 4, plating: 4 }, cost: { blue: 42 }, requiredBiomeLevel: 7 },
+      { stats: { maxHp: 2, plating: 2 }, cost: { blue: 10 }, requiredBiomeLevel: 4 },
+      { stats: { maxHp: 3, plating: 3 }, cost: { blue: 22 }, requiredBiomeLevel: 4 },
+      { stats: { maxHp: 4, plating: 4 }, cost: { blue: 42 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -168,8 +168,8 @@ export const clearingForestMountainRecipeEntries = [
     description: 'Reinforced boots that grip loose rock.',
     upgrades: [
       { stats: { speed: 4 }, cost: { blue: 10 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 6 }, cost: { blue: 22 }, requiredBiomeLevel: 5 },
-      { stats: { speed: 8 }, cost: { blue: 42 }, requiredBiomeLevel: 6 },
+      { stats: { speed: 6 }, cost: { blue: 22 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 8 }, cost: { blue: 42 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -183,7 +183,7 @@ export const clearingForestMountainRecipeEntries = [
     upgrades: [
       { stats: { hpRegen: 1 }, cost: { blue: 10 }, requiredBiomeLevel: 3 },
       { stats: { hpRegen: 1 }, cost: { blue: 22 }, requiredBiomeLevel: 4 },
-      { stats: { hpRegen: 1 }, cost: { blue: 42 }, requiredBiomeLevel: 5 },
+      { stats: { hpRegen: 1 }, cost: { blue: 42 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -196,9 +196,9 @@ export const clearingForestMountainRecipeEntries = [
     tier: 2,
     description: 'Masterwork plate that distributes 12% of absorbed force into delayed damage — turns lethal bursts into survivable trickle.',
     upgrades: [
-      { stats: { maxHp: 4, plating: 3 }, cost: { blue: 26 }, requiredBiomeLevel: 9 },
-      { stats: { maxHp: 6, plating: 5 }, cost: { blue: 52 }, requiredBiomeLevel: 10 },
-      { stats: { maxHp: 8, plating: 6 }, cost: { blue: 92 }, requiredBiomeLevel: 11 },
+      { stats: { maxHp: 4, plating: 3 }, cost: { blue: 26 }, requiredBiomeLevel: 8 },
+      { stats: { maxHp: 6, plating: 5 }, cost: { blue: 52 }, requiredBiomeLevel: 8 },
+      { stats: { maxHp: 8, plating: 6 }, cost: { blue: 92 }, requiredBiomeLevel: 8 },
     ],
   }],
 
@@ -209,8 +209,8 @@ export const clearingForestMountainRecipeEntries = [
     description: 'Enchanted treads that turn slopes into flat ground.',
     upgrades: [
       { stats: { speed: 6 }, cost: { blue: 20 }, requiredBiomeLevel: 8 },
-      { stats: { speed: 9 }, cost: { blue: 42 }, requiredBiomeLevel: 9 },
-      { stats: { speed: 12 }, cost: { blue: 75 }, requiredBiomeLevel: 10 },
+      { stats: { speed: 9 }, cost: { blue: 42 }, requiredBiomeLevel: 8 },
+      { stats: { speed: 12 }, cost: { blue: 75 }, requiredBiomeLevel: 8 },
     ],
   }],
 
@@ -224,7 +224,7 @@ export const clearingForestMountainRecipeEntries = [
     upgrades: [
       { stats: { hpRegen: 2 }, cost: { blue: 20 }, requiredBiomeLevel: 7 },
       { stats: { hpRegen: 2 }, cost: { blue: 42 }, requiredBiomeLevel: 8 },
-      { stats: { hpRegen: 3 }, cost: { blue: 75 }, requiredBiomeLevel: 9 },
+      { stats: { hpRegen: 3 }, cost: { blue: 75 }, requiredBiomeLevel: 8 },
     ],
   }],
 
@@ -240,7 +240,7 @@ export const clearingForestMountainRecipeEntries = [
     upgrades: [
       { stats: { hpRegen: 1 }, cost: { green: 10 }, requiredBiomeLevel: 3 },
       { stats: { hpRegen: 1 }, cost: { green: 22 }, requiredBiomeLevel: 4 },
-      { stats: { hpRegen: 1 }, cost: { green: 42 }, requiredBiomeLevel: 5 },
+      { stats: { hpRegen: 1 }, cost: { green: 42 }, requiredBiomeLevel: 4 },
     ],
   }],
 

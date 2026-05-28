@@ -326,6 +326,37 @@ Shield `duration-ms` = `interval-ms` for clean 1:1 rotation. Omit/-1 for permane
 
 ---
 
+## Item upgrade system
+
+Items can be upgraded up to +3 (or however many steps are defined on that item). Upgrade state lives in `holdsInventory.itemUpgrades: Record<itemId, number>` (0 = not upgraded).
+
+**Authoring upgrades:** Each `Recipe` in `shared/src/data/recipes/` has an optional `upgrades: UpgradeStep[]` array. The array length sets that item's max upgrade level. Each step is incremental (applied on top of all prior steps):
+
+```typescript
+interface UpgradeStep {
+  stats?: Partial<ItemStats>;           // stat deltas (additive on base)
+  mechanicEffects?: Record<string, number>; // mechanic effect deltas (additive)
+  cost: Partial<Record<EssenceType, number>>; // can be multi-essence
+  requiredBiomeLevel: number;           // biome level gate for this step
+}
+```
+
+**Pipeline:** `Recipe.upgrades` → copied into `ItemDefinition.upgrades` by `itemDatabase.ts` → applied during `recalculatePlayerEntityStats` via `upgradeStatBonusTotal` + `upgradeMechanicEffectsTotal` from `shared/src/systems/itemUpgrades.ts`.
+
+**Key functions (`shared/src/systems/itemUpgrades.ts`):**
+- `getMaxUpgrade(item)` — `upgrades.length` or `MAX_UPGRADE` (3) for generic items
+- `upgradeStatBonusTotal(item, plus)` — returns `Record<string, number>` of cumulative stat deltas across steps 0..plus-1
+- `upgradeMechanicEffectsTotal(item, plus)` — same for mechanic effects
+- `upgradeCostFor(item, targetPlus)` — returns `Partial<Record<EssenceType, number>> | null`
+- `requiredBiomeLevelForUpgrade(item, targetPlus)` — reads from `item.upgrades[targetPlus-1].requiredBiomeLevel`
+- `checkUpgrade({item, currentPlus, biomeLevel, essences})` — shared authority check (server + client)
+
+Items without an `upgrades` array fall back to the old generic tier-based formula (still valid for legacy/starter items).
+
+**Server:** `server/src/systems/player/economy/itemUpgrade.ts` handles the `inventory:upgradeItem` intent — validates via `checkUpgrade`, deducts all essence types in the cost record, increments `itemUpgrades[itemId]`, triggers stat recalc.
+
+---
+
 ## Quest system
 
 `QuestDefinition`: `id`, `name`, `tierRequired`, `targetMonsterTypes[]`, `killsRequired`. `registerKillForQuests` called after every kill via `grantMonsterRewards`. Awards XP on completion; `XP_PER_LEVEL = 100`, each level → 1 skill point. Quests are one-time. Add new entries to `QUEST_DATABASE` in `shared/src/quests/questDatabase.ts`.
@@ -484,6 +515,7 @@ Never set a `dot.damage-per-stack` passive — `damagePerStack` is always derive
 - Weapon families: Chaotic (axe + greataxe), Sacred (cross + consecrated), Burn (ashbrand + cinderfang + frostmourne); `onHitDamage` stat for flat on-hit weapons (Stinger Fang)
 - T1 and T2 weapons (8 T2 weapons at biome level 9)
 - Inventory/equipment (4 slots), crafting with biome XP unlock gates
+- Item upgrade system (+1/+2/+3 per item, per-item stat+cost+biome-level defined in recipe files alongside the recipe); `UpgradeStep[]` on `Recipe` and `ItemDefinition`; `shared/src/systems/itemUpgrades.ts`
 - Biome XP power-curve system (`biomeXpForLevel`); two-tab crafting panel (Biome Progress + Forge)
 - Skill tree T0–T7 (T4–7 generated placeholders)
 - Death/respawn; node transitions
@@ -572,6 +604,10 @@ T1 bosses: 400–700 HP, 14–22 ATK. T2 bosses: not yet balanced (stats inherit
 - **Reload multiplier is a final layer** — apply `* 0.5` to `dealsDamage.attack` and `performsAttack.attackCooldown` at the end of `recalculatePlayerStats()`, never additively
 - **Attack speed in skill nodes is `attackSpeedPct`** — percentage modifier (e.g. `0.15` = +15%); all unlocked nodes sum additively, applied once as `round(baseCooldown / (1 + total))`. Never use flat ms deltas in `StatEffects`; flat ms only belongs in temporary runtime buffs.
 - **Reload plating compensation** — `reloadPrototype.ts` sets `ctx.platingMult = 0.5` in `beforeAttack`; `combat.ts` applies `effectivePlating * ctx.platingMult`. Never add an archetype check inside the damage formula itself.
+- **Upgrade steps are incremental, not cumulative** — each `UpgradeStep.stats` is the delta for that level only; `upgradeStatBonusTotal` sums steps 0..plus-1 to get the total. Never store cumulative totals in the step.
+- **`upgradeStatBonusTotal` returns a record** — signature is `(item: ItemDefinition, plus: number): Record<string, number>`. It is NOT `(slot, tier, plus)`. Callers that need the primary-slot stat pick it out: `upgradeStatBonusTotal(def, plus)[UPGRADE_STAT_BY_SLOT[slot]] ?? 0`.
+- **`upgradeCostFor` returns multi-essence** — `Partial<Record<EssenceType, number>> | null`, not `{ type, amount }`. The server iterates all entries to deduct; the client passes it directly to `CostDisplay`.
+- **Upgrade steps belong in the recipe file** — add `upgrades: UpgradeStep[]` next to the item's other fields in `shared/src/data/recipes/`. `itemDatabase.ts` copies it through automatically. Never define upgrade data elsewhere.
 - **Evasion stacking is probability-based** — in `recalculatePlayerStats`, each `evasion: N` source contributes `1/N` to a probability accumulator; final `threshold = round(1 / totalChance)`. Single-source: `evasion: 10` → threshold 10. Two sources of 10: threshold 5. Never add raw N values together.
 - **`isMeleeArchetype(archetype, unlockedSkills?)` is the single source of truth for melee/ranged** — defined in `shared/src/data/skillTree/rootsAndFrames.ts`, exported from `@mmo-idle/shared`. Cadence, cooldown, and null (unclassed) are melee. Range nodes override: range-close forces melee, range-mid/far forces ranged. Use this function everywhere (player lunge, future stat multipliers) — do not re-derive from attackRange or archetype name.
 - **Ranged monster `attackStyle`** — ranged monsters that previously used generic `impact` should use `gunshot` instead. Monsters with a thematic style (magic, poison, slash) keep it even when `isRanged: true`.
