@@ -1,4 +1,4 @@
-import type { EquipmentSlot, ItemStats, EssenceType } from '../../items';
+import type { EquipmentSlot, ItemStats, EssenceType, UpgradeStep } from '../../items';
 
 export interface Recipe {
   id: string;
@@ -27,4 +27,6 @@ export interface Recipe {
    */
   attacksPerSecond?: number;
   description?: string;
+  /** Per-item upgrade steps authored alongside the recipe. See UpgradeStep. */
+  upgrades?: UpgradeStep[];
 }

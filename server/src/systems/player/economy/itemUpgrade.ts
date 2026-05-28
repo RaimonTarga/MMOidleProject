@@ -2,8 +2,10 @@ import {
   ITEM_DATABASE,
   TEST_ROOM_NODE_ID,
   checkUpgrade,
+  getMaxUpgrade,
   upgradeCostFor,
 } from '@mmo-idle/shared';
+import type { EssenceType } from '@mmo-idle/shared';
 import type { World } from '../../../world/World';
 import type { PlayerEntity } from '../../../ecs/entity';
 import { recalculatePlayerEntityStats } from '../../../ecs/playerEntityFormulas';
@@ -49,7 +51,7 @@ export function upgradeItem(
     if (!check.ok) return fail(check.reason ?? 'Cannot upgrade.');
   } else if (!def.biomeGroup) {
     return fail('This item cannot be upgraded.');
-  } else if (current >= 3) {
+  } else if (current >= getMaxUpgrade(def)) {
     return fail('Already at maximum upgrade.');
   }
 
@@ -58,7 +60,10 @@ export function upgradeItem(
   if (!cost) return fail('This item cannot be upgraded.');
 
   if (!isTestRoom) {
-    entity.tracksProgression.essences[cost.type] -= cost.amount;
+    for (const [type, amount] of Object.entries(cost)) {
+      entity.tracksProgression.essences[type as EssenceType] =
+        (entity.tracksProgression.essences[type as EssenceType] ?? 0) - (amount ?? 0);
+    }
     markSliceDirty(world, entity, 'tracksProgression');
   }
 

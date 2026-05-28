@@ -3,10 +3,10 @@ import { useAtomValue } from 'jotai';
 import type { EquipmentSlot, EssenceType } from '@mmo-idle/shared';
 import {
   ITEM_DATABASE,
-  MAX_UPGRADE,
   TEST_ROOM_NODE_ID,
   UPGRADE_STAT_BY_SLOT,
   checkUpgrade,
+  getMaxUpgrade,
   requiredBiomeLevelForUpgrade,
   upgradeCostFor,
   upgradeStatBonusTotal,
@@ -177,13 +177,13 @@ export function UpgradeTab() {
           {filtered.map(def => {
             const slot        = def.slot as EquipmentSlot;
             const currentPlus = itemUpgrades[def.id] ?? 0;
-            const isMaxed     = currentPlus >= MAX_UPGRADE;
+            const isMaxed     = currentPlus >= getMaxUpgrade(def);
             const upStat      = UPGRADE_STAT_BY_SLOT[slot];
             const base        = (def.statModifiers[upStat] as number | undefined) ?? 0;
-            const curVal      = base + upgradeStatBonusTotal(slot, def.tier, currentPlus);
-            const nextVal     = base + upgradeStatBonusTotal(slot, def.tier, currentPlus + 1);
+            const curVal      = base + (upgradeStatBonusTotal(def, currentPlus)[upStat] ?? 0);
+            const nextVal     = base + (upgradeStatBonusTotal(def, currentPlus + 1)[upStat] ?? 0);
 
-            const reqLevel    = requiredBiomeLevelForUpgrade(def.tier, currentPlus + 1);
+            const reqLevel    = requiredBiomeLevelForUpgrade(def, currentPlus + 1);
             const haveLevel   = biomeLevel[def.biomeGroup!] ?? 0;
             const levelMet    = haveLevel >= reqLevel;
             const cost        = upgradeCostFor(def, currentPlus + 1);
@@ -232,11 +232,11 @@ export function UpgradeTab() {
                       </>
                     )}
                     <span className="craft-upgrade__stat-label">{STAT_LABEL[upStat] ?? upStat}</span>
-                    {isMaxed && <span className="craft-upgrade__max">MAX +{MAX_UPGRADE}</span>}
+                    {isMaxed && <span className="craft-upgrade__max">MAX +{getMaxUpgrade(def)}</span>}
                   </div>
 
                   {!isMaxed && cost && (
-                    <CostDisplay cost={{ [cost.type]: cost.amount } as Partial<Record<EssenceType, number>>} essences={essences} />
+                    <CostDisplay cost={cost} essences={essences} />
                   )}
 
                   {!isMaxed && (

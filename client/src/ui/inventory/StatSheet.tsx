@@ -5,7 +5,7 @@ import {
   ASHBRAND_DURATION_MS, ASHBRAND_TICK_MS,
   BURN_FAMILY, CHAOTIC_FAMILY, GAME_CONFIG,
   ITEM_DATABASE, RECIPE_DATABASE, SACRED_APS_MULT, SACRED_DMG_MULT,
-  SACRED_FAMILY, UPGRADE_STAT_BY_SLOT, upgradeStatBonusTotal,
+  SACRED_FAMILY, upgradeStatBonusTotal,
 } from '@mmo-idle/shared';
 import { hudBus } from '../../hudBus';
 import {
@@ -46,9 +46,9 @@ function getItemContribs(defId: string | null | undefined, upgrades: Record<stri
   const result: Record<string, number> = { ...def.statModifiers };
   const plus = upgrades[defId] ?? 0;
   if (plus > 0) {
-    const slot   = def.slot as EquipmentSlot;
-    const upStat = UPGRADE_STAT_BY_SLOT[slot];
-    result[upStat] = (result[upStat] ?? 0) + upgradeStatBonusTotal(slot, def.tier, plus);
+    for (const [k, v] of Object.entries(upgradeStatBonusTotal(def, plus))) {
+      result[k] = (result[k] ?? 0) + v;
+    }
   }
   return result;
 }

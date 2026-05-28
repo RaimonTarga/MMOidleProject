@@ -24,5 +24,6 @@ for (const recipe of RECIPE_DATABASE.values()) {
     mechanicEffects: recipe.mechanicEffects,
     attacksPerSecond: recipe.attacksPerSecond,
     description: recipe.description,
+    upgrades: recipe.upgrades,
   });
 }

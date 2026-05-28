@@ -60,6 +60,20 @@ export interface ItemStats {
   attackCooldown?: number;
 }
 
+// ─── Per-item upgrade steps ───────────────────────────────────────────────────
+
+/**
+ * One incremental upgrade level authored alongside the recipe.
+ * Index 0 = +1, index 1 = +2, etc.
+ * `stats` and `mechanicEffects` are additive deltas on top of base item values.
+ */
+export interface UpgradeStep {
+  stats?: Partial<ItemStats>;
+  mechanicEffects?: Record<string, number>;
+  cost: Partial<Record<EssenceType, number>>;
+  requiredBiomeLevel: number;
+}
+
 // ─── Item definition ──────────────────────────────────────────────────────────
 
 /**
@@ -102,4 +116,6 @@ export interface ItemDefinition {
    */
   attacksPerSecond?: number;
   description?: string;
+  /** Per-item upgrade steps. Length determines the max upgrade level for this item. */
+  upgrades?: UpgradeStep[];
 }

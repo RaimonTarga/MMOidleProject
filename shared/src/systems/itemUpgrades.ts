@@ -1,10 +1,10 @@
 import type { EquipmentSlot, EssenceType, ItemDefinition } from '../items';
 import { BIOME_PRIMARY_ESSENCE } from '../items';
 
-/** Highest upgrade level an item can reach (+0 → +MAX_UPGRADE). */
+/** Highest upgrade level for items without explicit upgrade definitions. */
 export const MAX_UPGRADE = 3;
 
-/** Primary stat each slot's upgrade buffs. Keys map to player stat fields. */
+/** Primary stat each slot's generic upgrade buffs. */
 export const UPGRADE_STAT_BY_SLOT: Record<EquipmentSlot, string> = {
   weapon:   'attack',
   armor:    'damageReduction',
@@ -12,42 +12,80 @@ export const UPGRADE_STAT_BY_SLOT: Record<EquipmentSlot, string> = {
   recovery: 'hpRegen',
 };
 
-// ─── Tunable balance values ─────────────────────────────────────────────────
-// EDIT THESE to tune upgrade strength + cost. All formulas below scale linearly
-// with item tier and upgrade level so a single +N table covers every tier.
+// ─── Generic formula tuning (fallback for items without explicit upgrades) ────
 
-/** Flat primary-stat bonus granted per +1 level, multiplied by item tier. */
 const BONUS_PER_LEVEL: Record<EquipmentSlot, number> = {
-  weapon:   2,     // +2 attack × tier per level
-  armor:    0.02,  // +2% damage reduction × tier per level
-  mobility: 5,     // +5 speed × tier per level
-  recovery: 1,     // +1 hp regen × tier per level
+  weapon:   2,
+  armor:    0.02,
+  mobility: 5,
+  recovery: 1,
 };
 
-/** Essence cost of reaching a given +level, multiplied by tier × targetLevel. */
 const COST_PER_LEVEL = 20;
-// ────────────────────────────────────────────────────────────────────────────
 
-/** Biome level needed to push an item of `tier` to `targetPlus` (+1..+MAX). */
-export function requiredBiomeLevelForUpgrade(tier: number, targetPlus: number): number {
-  return (tier - 1) * 4 + 1 + targetPlus;
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** Per-item max upgrade level — upgrades[].length or MAX_UPGRADE for generic items. */
+export function getMaxUpgrade(item: ItemDefinition): number {
+  return item.upgrades ? item.upgrades.length : MAX_UPGRADE;
 }
 
-/** Cumulative primary-stat bonus for an item sitting at `plus`. */
-export function upgradeStatBonusTotal(slot: EquipmentSlot, tier: number, plus: number): number {
-  if (plus <= 0) return 0;
-  return BONUS_PER_LEVEL[slot] * tier * plus;
+/** Biome level required to push an item to `targetPlus`. */
+export function requiredBiomeLevelForUpgrade(item: ItemDefinition, targetPlus: number): number {
+  if (item.upgrades) {
+    return item.upgrades[targetPlus - 1]?.requiredBiomeLevel ?? 999;
+  }
+  return (item.tier - 1) * 4 + 1 + targetPlus;
 }
 
-/** Essence type + amount to take an item from (targetPlus-1) → targetPlus. */
+/**
+ * Cumulative stat bonuses (additive deltas on base stats) for an item at `plus`.
+ * Returns a record of stat key → total bonus across all steps up to and including `plus`.
+ */
+export function upgradeStatBonusTotal(item: ItemDefinition, plus: number): Record<string, number> {
+  if (plus <= 0) return {};
+  if (item.upgrades) {
+    const totals: Record<string, number> = {};
+    for (let i = 0; i < plus && i < item.upgrades.length; i++) {
+      for (const [k, v] of Object.entries(item.upgrades[i].stats ?? {})) {
+        if (v !== undefined) totals[k] = (totals[k] ?? 0) + v;
+      }
+    }
+    return totals;
+  }
+  // Generic fallback: single primary stat for the slot.
+  const slot = item.slot;
+  return { [UPGRADE_STAT_BY_SLOT[slot]]: BONUS_PER_LEVEL[slot] * item.tier * plus };
+}
+
+/**
+ * Cumulative mechanic effect bonuses for an item at `plus`.
+ * Only applies to items with explicit upgrade definitions.
+ */
+export function upgradeMechanicEffectsTotal(item: ItemDefinition, plus: number): Record<string, number> {
+  if (plus <= 0 || !item.upgrades) return {};
+  const totals: Record<string, number> = {};
+  for (let i = 0; i < plus && i < item.upgrades.length; i++) {
+    for (const [k, v] of Object.entries(item.upgrades[i].mechanicEffects ?? {})) {
+      totals[k] = (totals[k] ?? 0) + v;
+    }
+  }
+  return totals;
+}
+
+/** Essence cost for going from (targetPlus-1) → targetPlus. */
 export function upgradeCostFor(
   item: ItemDefinition,
   targetPlus: number,
-): { type: EssenceType; amount: number } | null {
+): Partial<Record<EssenceType, number>> | null {
+  if (item.upgrades) {
+    const step = item.upgrades[targetPlus - 1];
+    return step ? step.cost : null;
+  }
   if (!item.biomeGroup) return null;
   const type = BIOME_PRIMARY_ESSENCE[item.biomeGroup];
   if (!type) return null;
-  return { type, amount: COST_PER_LEVEL * item.tier * targetPlus };
+  return { [type]: COST_PER_LEVEL * item.tier * targetPlus };
 }
 
 export interface UpgradeCheck {
@@ -64,18 +102,20 @@ export function checkUpgrade(params: {
 }): UpgradeCheck {
   const { item, currentPlus, biomeLevel, essences } = params;
   if (!item.biomeGroup) return { ok: false, reason: 'This item cannot be upgraded.' };
-  if (currentPlus >= MAX_UPGRADE) return { ok: false, reason: 'Already at maximum upgrade.' };
+  if (currentPlus >= getMaxUpgrade(item)) return { ok: false, reason: 'Already at maximum upgrade.' };
 
   const targetPlus = currentPlus + 1;
-  const reqLevel = requiredBiomeLevelForUpgrade(item.tier, targetPlus);
+  const reqLevel = requiredBiomeLevelForUpgrade(item, targetPlus);
   if (biomeLevel < reqLevel) {
     return { ok: false, reason: `Requires ${item.biomeGroup} level ${reqLevel}.` };
   }
 
   const cost = upgradeCostFor(item, targetPlus);
   if (!cost) return { ok: false, reason: 'This item cannot be upgraded.' };
-  if ((essences[cost.type] ?? 0) < cost.amount) {
-    return { ok: false, reason: `Not enough ${cost.type} essence (need ${cost.amount}).` };
+  for (const [type, amount] of Object.entries(cost)) {
+    if ((essences[type as EssenceType] ?? 0) < (amount ?? 0)) {
+      return { ok: false, reason: `Not enough ${type} essence (need ${amount}).` };
+    }
   }
   return { ok: true };
 }
