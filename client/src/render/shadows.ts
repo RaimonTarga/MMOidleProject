@@ -4,8 +4,16 @@ import { getPlayerShadowColor } from '../sprites';
 import type { RenderState } from './state';
 import type { GameScene } from '../scenes/GameScene';
 import { DEPTH } from './depth';
+import { getShadowDef } from './shadowDefs';
 
-/** Level 0 → black filled ellipse. Level 1+ → bright stroke outline, no fill. */
+const SHADOW_WIDTH_PAD = 1.05;
+const SHADOW_FLATTEN = 0.32;
+const SHADOW_FALLBACK_W_RATIO = 0.8;
+const SHADOW_FALLBACK_H_RATIO = 0.18;
+const PLAYER_MIN_SHADOW_W = 52;
+const PLAYER_MIN_SHADOW_H = 14;
+
+/** Level 0 → black filled ellipse. Level 1+ → bright ring with a faint ground fill. */
 export function applyPlayerShadowStyle(
   shadow: Phaser.GameObjects.Ellipse,
   level: number,
@@ -14,7 +22,7 @@ export function applyPlayerShadowStyle(
     shadow.setFillStyle(0x000000, 0.45);
     shadow.setStrokeStyle();
   } else {
-    shadow.setFillStyle();
+    shadow.setFillStyle(0x000000, 0.18);
     shadow.setStrokeStyle(3, getPlayerShadowColor(level), 1);
   }
 }
@@ -23,14 +31,13 @@ export function ensureShadow(
   state: RenderState,
   id: string,
   pos: Vec2,
-  shadowOffsetY: number,
   scene: GameScene,
-  opts: { width: number; height: number; fillColor?: number; fillAlpha?: number; playerTier?: number },
+  opts: { fillColor?: number; fillAlpha?: number; playerTier?: number },
 ): void {
   if (state.shadow.has(id)) return;
 
   const shadow = scene.add
-    .ellipse(pos.x, pos.y + shadowOffsetY, opts.width, opts.height)
+    .ellipse(pos.x, pos.y, 1, 1)
     .setDepth(DEPTH.SHADOW);
 
   if (opts.playerTier !== undefined) {
@@ -67,11 +74,33 @@ export function drawShadows(state: RenderState): void {
     const meta = state.spriteMeta.get(id);
     if (!sprite || !shadow || !interp || !meta) continue;
 
+    const sx = interp.base.x + interp.lungeOffset.x;
     const sy = interp.base.y + interp.lungeOffset.y;
-    shadow.setPosition(
-      interp.base.x + interp.lungeOffset.x,
-      sy + meta.shadowOffsetY,
-    );
+    const def = getShadowDef(meta.currentFrame);
+
+    let shadowW: number;
+    let shadowH: number;
+    let footPx: number;
+
+    if (def && def.sourceW > 0) {
+      const scale = sprite.displayWidth / def.sourceW;
+      shadowW = def.halfWAtFoot * 2 * scale * SHADOW_WIDTH_PAD;
+      shadowH = shadowW * SHADOW_FLATTEN;
+      footPx = def.footY * scale;
+    } else {
+      shadowW = sprite.displayWidth * SHADOW_FALLBACK_W_RATIO;
+      shadowH = sprite.displayHeight * SHADOW_FALLBACK_H_RATIO;
+      footPx = sprite.displayHeight * 0.5;
+    }
+
+    if (state.kind.get(id) === 'player') {
+      shadowW = Math.max(shadowW, PLAYER_MIN_SHADOW_W);
+      shadowH = Math.max(shadowH, PLAYER_MIN_SHADOW_H);
+    }
+
+    shadow.setSize(shadowW, shadowH);
+    shadow.setScale(1);
+    shadow.setPosition(sx, sy + footPx);
     shadow.setDepth(DEPTH.SHADOW + sy);
   }
 }

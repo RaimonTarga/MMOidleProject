@@ -192,6 +192,27 @@ export function drawTacticalMode(scene: GameScene): void {
     }
   }
 
+  // Minion attack-range pips (pale yellow). Drawn beneath the player overlay
+  // so the player rings stay legible on top.
+  for (const id of scene.state.ids) {
+    if (scene.state.kind.get(id) !== 'minion') continue;
+    const sprite = scene.state.sprite.get(id);
+    const ranges = scene.state.debugRanges.get(id);
+    if (!sprite || !ranges) continue;
+    if (ranges.attackRange != null) {
+      gfx.lineStyle(1, 0xffe680, 0.45);
+      const view = scene.state.view.get(id);
+      const reach = view && 'hitboxRects' in view
+        ? ranges.attackRange + outerReachHalfW(view.hitboxRects)
+        : ranges.attackRange;
+      gfx.strokeCircle(sprite.x, sprite.y, reach);
+    }
+    const view = scene.state.view.get(id);
+    if (view && 'hitboxRects' in view) {
+      strokeEntityHitboxes(gfx, sprite.x, sprite.y, view.hitboxRects, 0xffe680);
+    }
+  }
+
   const ownSprite = scene.state.ownId
     ? scene.state.sprite.get(scene.state.ownId)
     : undefined;
@@ -204,5 +225,15 @@ export function drawTacticalMode(scene: GameScene): void {
       player.attackRange + outerReachHalfW(player.hitboxRects),
     );
     strokeEntityHitboxes(gfx, ownSprite.x, ownSprite.y, player.hitboxRects, HITBOX_COLOR_PLAYER);
+
+    // Summoner leash ring (pale cyan). Slimes are constrained to this radius
+    // around the player. Match the server's `computeLeashRadius`:
+    //   playerAttackRange × summoner.leash-mult  (default 2.0)
+    if (player.summonsMinions) {
+      const mult = player.passives['summoner.leash-mult'] ?? 2.0;
+      const leashRadius = Math.max(40, player.attackRange * mult);
+      gfx.lineStyle(1.5, 0x99e6ff, 0.5);
+      gfx.strokeCircle(ownSprite.x, ownSprite.y, leashRadius);
+    }
   }
 }

@@ -1,0 +1,221 @@
+{
+  "atlasHash": "7e6a90f05fd33dacabcd7e9065f2671e0970d2f54eef06b8b45c406fbc5869ec",
+  "frames": {
+    "archer.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 28,
+      "halfWAtFoot": 17.5
+    },
+    "boar.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 18,
+      "halfWAtFoot": 21
+    },
+    "boss_cave.png": {
+      "sourceW": 128,
+      "sourceH": 128,
+      "footY": 61,
+      "halfWAtFoot": 41.5
+    },
+    "boss_forest.png": {
+      "sourceW": 128,
+      "sourceH": 128,
+      "footY": 61,
+      "halfWAtFoot": 41.5
+    },
+    "boss_mountain.png": {
+      "sourceW": 128,
+      "sourceH": 128,
+      "footY": 62,
+      "halfWAtFoot": 38.5
+    },
+    "boss_swamp.png": {
+      "sourceW": 128,
+      "sourceH": 128,
+      "footY": 62,
+      "halfWAtFoot": 52
+    },
+    "brute.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 28,
+      "halfWAtFoot": 26
+    },
+    "cadence.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 28,
+      "halfWAtFoot": 12
+    },
+    "classless.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 28,
+      "halfWAtFoot": 18
+    },
+    "cooldown.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 28,
+      "halfWAtFoot": 12
+    },
+    "crawler.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 15,
+      "halfWAtFoot": 26.5
+    },
+    "dot.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 28,
+      "halfWAtFoot": 18
+    },
+    "energy.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 27,
+      "halfWAtFoot": 13.5
+    },
+    "frog.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 18,
+      "halfWAtFoot": 25.5
+    },
+    "greenslime.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 24,
+      "halfWAtFoot": 27.5
+    },
+    "heavy_cadence.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 28,
+      "halfWAtFoot": 12
+    },
+    "heavy_cooldown.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 28,
+      "halfWAtFoot": 12
+    },
+    "heavy_dot.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 28,
+      "halfWAtFoot": 20.5
+    },
+    "heavy_energy.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 30,
+      "halfWAtFoot": 16
+    },
+    "heavy_reload.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 28,
+      "halfWAtFoot": 12
+    },
+    "jumper.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 29,
+      "halfWAtFoot": 13
+    },
+    "light_cadence.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 28,
+      "halfWAtFoot": 12
+    },
+    "light_cooldown.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 28,
+      "halfWAtFoot": 12
+    },
+    "light_dot.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 28,
+      "halfWAtFoot": 12.5
+    },
+    "light_energy.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 29,
+      "halfWAtFoot": 18
+    },
+    "light_reload.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 28,
+      "halfWAtFoot": 12
+    },
+    "medium_cadence.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 28,
+      "halfWAtFoot": 12
+    },
+    "medium_cooldown.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 28,
+      "halfWAtFoot": 12
+    },
+    "medium_dot.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 28,
+      "halfWAtFoot": 18
+    },
+    "medium_energy.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 27,
+      "halfWAtFoot": 13.5
+    },
+    "medium_reload.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 28,
+      "halfWAtFoot": 12
+    },
+    "reload.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 28,
+      "halfWAtFoot": 12
+    },
+    "swampslime.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 17,
+      "halfWAtFoot": 32
+    },
+    "tinyslime.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 9,
+      "halfWAtFoot": 13.5
+    },
+    "wolf.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 18,
+      "halfWAtFoot": 24.5
+    },
+    "yellowslime.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 24,
+      "halfWAtFoot": 27.5
+    }
+  }
+}

@@ -4,6 +4,7 @@ import type { World } from '../../world/World';
 import { syncArchetypeSlices } from '../../ecs/archetypeSliceSync';
 import { recalculatePlayerEntityStats } from '../../ecs/playerEntityFormulas';
 import { setAttackTarget } from '../combat/ai/targeting';
+import { despawnMinionsForOwner } from '../classes/archetypes/summoner';
 
 const INTERACT_COOLDOWN_MS = 2_000;
 const TEST_ROOM_ESSENCE_AMOUNT = 1_000_000_000;
@@ -56,6 +57,7 @@ function resetPlayerProgression(world: World, player: PlayerEntity): void {
   player.tracksProgression.questProgress = {};
   setAttackTarget(world, player, null);
   player.usesAutocombat.auto = false;
+  despawnMinionsForOwner(world, player);
 
   recalculatePlayerEntityStats(world, player);
   syncArchetypeSlices(world, player);

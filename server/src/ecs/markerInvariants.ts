@@ -67,6 +67,11 @@ const ARCHETYPE_SLICE_CHECKS: ArchetypeSliceCheck[] = [
     shouldBePresent: (entity) => entity.usesSkills?.combatArchetype === "reload",
     label: "reload archetype",
   },
+  {
+    slice: "summonsMinions",
+    shouldBePresent: (entity) => entity.usesSkills?.combatArchetype === "summoner",
+    label: "summoner archetype",
+  },
 ];
 
 function hasEffect(
@@ -109,8 +114,8 @@ function checkAbsentState(entity: ServerEntity, violations: string[]): void {
   if (entity.hasAttackTarget && entity.hasAttackTarget.targetId.length === 0) {
     violations.push(`${entity.entityId}: hasAttackTarget present with empty target`);
   }
-  if (entity.hasAggroTarget && entity.hasAggroTarget.playerId.length === 0) {
-    violations.push(`${entity.entityId}: hasAggroTarget present with empty player target`);
+  if (entity.hasAggroTarget && entity.hasAggroTarget.targetId.length === 0) {
+    violations.push(`${entity.entityId}: hasAggroTarget present with empty target id`);
   }
   if (entity.isBossEngaged && !entity.scriptsBoss) {
     violations.push(`${entity.entityId}: isBossEngaged present without scriptsBoss`);
@@ -164,7 +169,11 @@ export function assertMarkerInvariants(world: World): string[] {
 
 export function assertNetworkedComponentInvariants(world: World): string[] {
   const violations: string[] = [];
-  for (const entity of [...world.playerEntities, ...world.monsterEntities]) {
+  for (const entity of [
+    ...world.playerEntities,
+    ...world.monsterEntities,
+    ...world.minionEntities,
+  ]) {
     const kind = entityNetworkKind(entity);
     if (!kind) continue;
     const allowed = new Set(networkedKeysForKind(kind));

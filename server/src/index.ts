@@ -26,6 +26,11 @@ import { timeSync } from './telemetry/nodeTelemetry';
 import { TELEMETRY_WINDOW_MS } from './telemetry/constants';
 import { initWeaponEffects } from './systems/combat/damage/weaponEffects';
 import { initDefenseSystems } from './systems/defense';
+import {
+  registerSummonerDamageSponge,
+  registerMountainPathHooks,
+  despawnMinionsForOwner,
+} from './systems/classes/archetypes/summoner';
 import { initDebuffMechanics } from './systems/classes/shared/debuffs';
 import { IS_DEV } from './env';
 import {
@@ -84,6 +89,13 @@ initDefenseSystems();
 // ── DEBUFF MECHANICS ──────────────────────────────────────────────────────────
 // Registers onDamageTaken listeners that apply debuff multipliers (vulnerability).
 initDebuffMechanics();
+
+// ── SUMMONER DAMAGE SPONGE ────────────────────────────────────────────────────
+// Registered after defense systems so shield/absorb get first crack at incoming
+// damage; whatever remains has half siphoned off to a random living slime.
+// Sentinel aura runs before owner sponge; rockslide runs on post-sponge ally damage.
+registerMountainPathHooks();
+registerSummonerDamageSponge();
 
 // ── DATABASE ──────────────────────────────────────────
 
@@ -321,7 +333,9 @@ io.on('connection', (socket) => {
       detachComponent(world, p, 'isChanneling');
       clearEngagement(world, p);
       for (const e of world.aggroedMonsters) {
-        if (e.hasAggroTarget.playerId === socket.id) setAggroTarget(world, e, null, Date.now());
+        if (e.hasAggroTarget.targetKind === 'player' && e.hasAggroTarget.targetId === socket.id) {
+          setAggroTarget(world, e, null, Date.now());
+        }
       }
     });
 
@@ -395,6 +409,8 @@ io.on('connection', (socket) => {
       detachComponent(world, p, 'inAcChargePhase');
       detachComponent(world, p, 'inAcDischarge');
       detachComponent(world, p, 'holdsShields');
+      // Drop any live slimes before the archetype slice is detached.
+      despawnMinionsForOwner(world, p);
       resetTracksCombat(p.tracksCombat);
       syncArchetypeSlices(world, p);
       recalculatePlayerEntityStats(world, p);

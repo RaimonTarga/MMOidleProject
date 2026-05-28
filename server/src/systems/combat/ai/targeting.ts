@@ -1,5 +1,6 @@
 import { attachComponent, detachComponent } from '../../../ecs/markerHelpers';
 import { MONSTER_DATABASE } from '@mmo-idle/shared';
+import type { AggroTargetKind } from '@mmo-idle/shared';
 import type { MonsterEntity } from '../../../ecs/entity';
 import type { ServerEntity } from '../../../ecs/entity';
 import type { World } from '../../../world/World';
@@ -7,10 +8,10 @@ import type { World } from '../../../world/World';
 export function setAggroTarget(
   world: World,
   monster: MonsterEntity,
-  playerId: string | null,
+  target: { id: string; kind: AggroTargetKind } | null,
   now: number,
 ): void {
-  if (playerId === null) {
+  if (target === null) {
     detachComponent(world, monster, 'hasAggroTarget');
     monster.controlsMonster.chargeRemainingMs = 0;
     return;
@@ -26,7 +27,8 @@ export function setAggroTarget(
     }
   }
   attachComponent(world, monster, 'hasAggroTarget', {
-    playerId,
+    targetId: target.id,
+    targetKind: target.kind,
     lastAggroAt: now,
     sinceMs,
   });

@@ -112,6 +112,71 @@ export const DOT_KEYS = [
   'dot.glacial-fracture',
 ] as const;
 
+export const SUMMONER_KEYS = [
+  'summoner.minion-count',
+  'summoner.minion-count-mult',
+  'summoner.minion-count-cap',
+  'summoner.minion-damage-pct',
+  'summoner.minion-damage-mult',
+  'summoner.minion-hp-pct',
+  'summoner.minion-speed-mult',
+  'summoner.minion-size-mult',
+  'summoner.minion-respawn-ms',
+  'summoner.minion-range',
+  'summoner.minion-attack-cooldown',
+  'summoner.damage-sponge-pct',
+  'summoner.leash-mult',
+  'summoner.minion-as-cave-lurker',
+  'summoner.minion-as-plains-slime',
+  'summoner.minion-as-boar',
+  'summoner.minion-as-mud-toad',
+  'summoner.minion-as-cliff-hopper',
+  'summoner.minion-as-ridge-archer',
+  'summoner.minion-as-mountain-sentinel',
+  'summoner.predators-howl',
+  'summoner.howl-radius',
+  'summoner.howl-pct-per-stack',
+  'summoner.howl-cap',
+  'summoner.web-of-the-hunt',
+  'summoner.web-cap',
+  'summoner.web-pct-per-stack',
+  'summoner.web-ms',
+  'summoner.acid-brood',
+  'summoner.acid-cap',
+  'summoner.acid-plating-per-stack',
+  'summoner.acid-wet-pct',
+  'summoner.acid-duration-ms',
+  'summoner.acid-lurker-lifetime-ms',
+  'summoner.acid-explosion-radius',
+  'summoner.acid-explosion-damage-pct',
+  'summoner.acid-explosion-corrosion-stacks',
+  'summoner.grazing-field',
+  'summoner.grazing-interval-ms',
+  'summoner.grazing-pct',
+  'summoner.grazing-radius',
+  'summoner.grazing-ooc-mult',
+  'summoner.trampled-path',
+  'summoner.trample-aura-radius',
+  'summoner.trample-speed-pct',
+  'summoner.trample-charge-cd-ms',
+  'summoner.trample-charge-speed-mult',
+  'summoner.trample-stun-ms',
+  'summoner.vital-burst',
+  'summoner.vital-burst-radius',
+  'summoner.vital-burst-immunity-ms',
+  'summoner.stone-sentinel',
+  'summoner.stone-sentinel-count',
+  'summoner.sentinel-radius',
+  'summoner.sentinel-plating',
+  'summoner.sentinel-dr',
+  'summoner.rockslide-cover',
+  'summoner.rockslide-pct',
+  'summoner.rockslide-radius',
+  'summoner.mountain-guardian',
+  'summoner.guardian-plating-share-pct',
+  'summoner.guardian-dr-share-pct',
+] as const;
+
 // ── Derived types (zero duplication) ──────────────────────────────────────────
 
 export type DefensePassiveKey  = typeof DEFENSE_KEYS[number];
@@ -120,10 +185,12 @@ export type CooldownPassiveKey = typeof COOLDOWN_KEYS[number];
 export type ReloadPassiveKey   = typeof RELOAD_KEYS[number];
 export type EnergyPassiveKey   = typeof ENERGY_KEYS[number];
 export type DotPassiveKey      = typeof DOT_KEYS[number];
+export type SummonerPassiveKey = typeof SUMMONER_KEYS[number];
 
 export type PassiveKey =
   | DefensePassiveKey | CadencePassiveKey | CooldownPassiveKey
-  | ReloadPassiveKey  | EnergyPassiveKey  | DotPassiveKey;
+  | ReloadPassiveKey  | EnergyPassiveKey  | DotPassiveKey
+  | SummonerPassiveKey;
 
 export type PassiveMap      = Partial<Record<PassiveKey, number>>;
 export type MechanicEffects = Partial<Record<PassiveKey, number>>;
@@ -131,7 +198,7 @@ export type MechanicEffects = Partial<Record<PassiveKey, number>>;
 /** Flat array of every passive key — useful for client iteration / debug panels. */
 export const ALL_PASSIVE_KEYS = [
   ...DEFENSE_KEYS, ...CADENCE_KEYS, ...COOLDOWN_KEYS,
-  ...RELOAD_KEYS, ...ENERGY_KEYS, ...DOT_KEYS,
+  ...RELOAD_KEYS, ...ENERGY_KEYS, ...DOT_KEYS, ...SUMMONER_KEYS,
 ] as const;
 
 // ── Helpers ───────────────────────────────────────────────────────────────────

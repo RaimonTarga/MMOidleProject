@@ -49,6 +49,14 @@ export function buildNodeDelta(
     else if (kind === 'patch') patches++;
   }
 
+  for (const e of world.minionEntities) {
+    entityScans++;
+    if (e.hasPosition.nodeId !== nodeId) continue;
+    const kind = encodeNodeEntityDelta(e, dirty, members, liveIds, deltas);
+    if (kind === 'add') adds++;
+    else if (kind === 'patch') patches++;
+  }
+
   for (const netId of [...members]) {
     if (liveIds.has(netId)) continue;
     deltas.push({ kind: 'remove', netId });

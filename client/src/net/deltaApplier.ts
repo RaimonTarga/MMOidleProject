@@ -1,5 +1,6 @@
 import type { DeltaSnapshot, NetworkedEntity } from "@mmo-idle/shared";
 import {
+  composeMinionView,
   composeMonsterView,
   composePlayerView,
   RECIPE_DATABASE,
@@ -13,6 +14,7 @@ import type { GameScene } from "../scenes/GameScene";
 import type { RenderState } from "../render/state";
 import { upsertPlayer } from "../render/players";
 import { upsertMonster } from "../render/monsters";
+import { upsertMinion } from "../render/minions";
 import { destroyEntity } from "../render/destroy";
 import { getOwnView } from "../render/state";
 import { dispatchCombatEvent } from "../render/combatFx";
@@ -112,5 +114,11 @@ function upsertEntityView(
     const monster = composeMonsterView(entity);
     if (!monster) return;
     upsertMonster(state, monster, scene);
+    return;
+  }
+  if (kind === "minion") {
+    const minion = composeMinionView(entity);
+    if (!minion) return;
+    upsertMinion(state, minion, scene);
   }
 }

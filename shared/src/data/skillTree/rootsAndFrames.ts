@@ -73,6 +73,62 @@ export const rootsAndFramesEntries = [
   }],
 
 
+  ['summoner-root', {
+    id: 'summoner-root', name: 'Summoner', tier: 0,
+    classId: 'summoner-root', subVariantId: null,
+    parent: null, children: ['summoner-light', 'summoner-balanced', 'summoner-heavy'],
+    description: 'Three slimes fight in your place, each striking with your full attack. Slimes leash to twice your attack range — extend your reach and they will too. Half of all damage you take is redirected to a random living slime.',
+    cost: 1, statEffects: { attack: 10, maxHp: 20, attackRange: 150, speed: 5 },
+    mechanicEffects: {
+      'summoner.minion-count':           3,
+      'summoner.minion-damage-pct':      1.0,
+      'summoner.minion-hp-pct':          0.40,
+      'summoner.minion-respawn-ms':      5000,
+      'summoner.minion-range':           12,
+      'summoner.minion-attack-cooldown': 1000,
+      'summoner.damage-sponge-pct':      0.50,
+      'summoner.leash-mult':             2.0,
+    } as Record<string, number>,
+  }],
+
+
+  ['summoner-light', {
+    id: 'summoner-light', name: 'Light Frame', tier: 1,
+    classId: 'summoner-root', subVariantId: 'light',
+    parent: 'summoner-root', children: ['summoner-light-t3-a', 'summoner-light-t3-b', 'summoner-light-t3-c'],
+    description: 'Double your slime count. Each slime is half as large and deals half damage, spreading your pressure across a wider swarm.',
+    cost: 1, statEffects: {},
+    mechanicEffects: {
+      'summoner.minion-count-mult':  2.0,
+      'summoner.minion-damage-mult': 0.5,
+      'summoner.minion-size-mult':   0.5,
+    } as Record<string, number>,
+  }],
+
+  ['summoner-balanced', {
+    id: 'summoner-balanced', name: 'Medium Frame', tier: 1,
+    classId: 'summoner-root', subVariantId: 'balanced',
+    parent: 'summoner-root', children: ['summoner-balanced-t3-a', 'summoner-balanced-t3-b', 'summoner-balanced-t3-c'],
+    description: 'Keep the baseline summoner pattern: three standard slimes with no count, damage, speed, or size tradeoff.',
+    cost: 1, statEffects: {},
+    mechanicEffects: {} as Record<string, number>,
+  }],
+
+  ['summoner-heavy', {
+    id: 'summoner-heavy', name: 'Heavy Frame', tier: 1,
+    classId: 'summoner-root', subVariantId: 'heavy',
+    parent: 'summoner-root', children: ['summoner-heavy-t3-a', 'summoner-heavy-t3-b', 'summoner-heavy-t3-c'],
+    description: 'Half as many slimes, but each is twice as large and hits twice as hard. Heavy summons move slower than your baseline slimes.',
+    cost: 1, statEffects: { maxHp: 40 },
+    mechanicEffects: {
+      'summoner.minion-count-mult':  0.5,
+      'summoner.minion-damage-mult': 2.0,
+      'summoner.minion-speed-mult':  0.65,
+      'summoner.minion-size-mult':   2.0,
+    } as Record<string, number>,
+  }],
+
+
   ['cadence-light', {
     id: 'cadence-light', name: 'Light Frame', tier: 1,
     classId: 'cadence-root', subVariantId: 'light',

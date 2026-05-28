@@ -17,6 +17,21 @@ export interface HitboxDef {
   coverage: number;
 }
 
+/** Baked contact-shadow metadata for one atlas frame (source-space). */
+export interface ShadowDef {
+  sourceW: number;
+  sourceH: number;
+  /** Y of the lowest opaque row, relative to sprite center. */
+  footY: number;
+  /** Half-width of the opaque footprint near the bottom of the sprite. */
+  halfWAtFoot: number;
+}
+
+export interface ShadowDefsFile {
+  atlasHash: string;
+  frames: Record<string, ShadowDef>;
+}
+
 /** Runtime / networked hitbox slice (display-scaled rects). */
 export interface HasHitbox {
   rects: HitboxRect[];

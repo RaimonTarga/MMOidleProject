@@ -6,6 +6,7 @@ import type { CombatArchetype, MonsterAIState, ShieldState } from '../types/comb
 import type { HitboxRect } from '../hitbox/types';
 import { FALLBACK_MONSTER_AABB, FALLBACK_PLAYER_AABB } from '../hitbox/constants';
 import { pointFromMotion, type Vec2 } from '../systems/spatial';
+import type { MinionMonsterType } from '../components/archetypes/summoner/isMinion';
 import type { NetworkedEntity } from './networkedEntity';
 
 export interface PlayerView {
@@ -76,6 +77,29 @@ export interface PlayerView {
   playerTier: number;
   bossesCleared: string[];
   clearedNodes: string[];
+  hitboxRects: HitboxRect[];
+  /** Number of minion slots the player has. 0 if not a summoner. */
+  summonsMinions: number;
+}
+
+export interface MinionView {
+  id: string;
+  ownerPlayerId: string;
+  slot: number;
+  monsterTypeId: MinionMonsterType;
+  pos: Vec2;
+  target: Vec2;
+  hp: number;
+  maxHp: number;
+  attack: number;
+  attackRange: number;
+  attackCooldown: number;
+  lastAttackAt: number;
+  attackTargetId: string | null;
+  attackStyle: string;
+  speed: number;
+  sizeMult: number;
+  nodeId: string;
   hitboxRects: HitboxRect[];
 }
 
@@ -211,6 +235,7 @@ export function composePlayerView(entity: NetworkedEntity): PlayerView | null {
     bossesCleared: progression.bossesCleared ?? [],
     clearedNodes: progression.clearedNodes ?? [],
     hitboxRects: entity.hasHitbox?.rects ?? [FALLBACK_PLAYER_AABB],
+    summonsMinions: entity.summonsMinions?.targetCount ?? 0,
   };
 }
 
@@ -263,4 +288,40 @@ export function composeMonsterView(entity: NetworkedEntity): MonsterView | null 
   };
 }
 
-export type EntityView = PlayerView | MonsterView;
+export function composeMinionView(entity: NetworkedEntity): MinionView | null {
+  if (
+    !entity.isMinion ||
+    !entity.hasPosition ||
+    !entity.hasHealth ||
+    !entity.dealsDamage ||
+    !entity.performsAttack
+  ) {
+    return null;
+  }
+  const target = entity.isMoving
+    ? pointFromMotion(entity.hasPosition.current, entity.isMoving.motion)
+    : entity.hasPosition.current;
+  const pos = entity.hasPosition.current;
+  return {
+    id: entity.isMinion.id,
+    ownerPlayerId: entity.isMinion.ownerPlayerId,
+    slot: entity.isMinion.slot,
+    monsterTypeId: entity.isMinion.monsterTypeId,
+    pos,
+    target,
+    hp: entity.hasHealth.hp,
+    maxHp: entity.hasHealth.maxHp,
+    attack: entity.dealsDamage.attack,
+    attackRange: entity.performsAttack.attackRange,
+    attackCooldown: entity.performsAttack.attackCooldown,
+    lastAttackAt: entity.performsAttack.lastAttackAt,
+    attackTargetId: entity.hasAttackTarget?.targetId ?? null,
+    attackStyle: entity.dealsDamage.attackStyle,
+    speed: entity.hasPosition.speed,
+    sizeMult: entity.isMinion.sizeMult ?? 1.0,
+    nodeId: entity.hasPosition.nodeId,
+    hitboxRects: entity.hasHitbox?.rects ?? [FALLBACK_MONSTER_AABB],
+  };
+}
+
+export type EntityView = PlayerView | MonsterView | MinionView;

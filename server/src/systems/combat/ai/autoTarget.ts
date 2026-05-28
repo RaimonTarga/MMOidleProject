@@ -46,6 +46,8 @@ export function updateAutoTargets(world: World) {
   for (const player of world.playerEntities) {
     if (!player.usesAutocombat.auto) continue;
     if (player.hasManualMoveIntent) continue;
+    // Summoner auto-combat is driven by minion AI; the player does not chase or strike.
+    if (player.usesSkills.combatArchetype === 'summoner') continue;
 
     if (player.hasAutoTraversePath) {
       if (player.hasAutoTraversePath.targetNodeId !== player.hasPosition.nodeId) continue;
@@ -67,7 +69,9 @@ export function updateAutoTargets(world: World) {
 
     for (const monster of monsters) {
       if (skipBosses && monster.isMonster.isBoss) continue;
-      const aggroedOnPlayer = monster.hasAggroTarget?.playerId === player.isPlayer.id;
+      const aggroedOnPlayer =
+        monster.hasAggroTarget?.targetKind === 'player' &&
+        monster.hasAggroTarget.targetId === player.isPlayer.id;
       const d = distanceSq(monster.hasPosition.current, playerPos);
 
       if (aggroedOnPlayer) {

@@ -1,8 +1,9 @@
 import { createHash } from 'crypto';
-import { readFileSync } from 'fs';
+import { readFileSync, writeFileSync } from 'fs';
+import path from 'path';
 import sharp from 'sharp';
 import type { BetterSQLite3Database } from 'drizzle-orm/better-sqlite3';
-import type { HitboxRect } from '@mmo-idle/shared';
+import type { HitboxRect, ShadowDef, ShadowDefsFile } from '@mmo-idle/shared';
 import { replaceAllHitboxes, type HitboxRow } from '../../db/hitboxRepo';
 import type * as schema from '../../db/schema';
 import {
@@ -10,6 +11,7 @@ import {
   greedyRectCover,
   toCenterRelativeRects,
 } from './greedyCover';
+import { computeShadowDef } from './footMetrics';
 
 interface AtlasFrame {
   filename: string;
@@ -30,6 +32,12 @@ export function sha256File(filePath: string): string {
   return createHash('sha256').update(buf).digest('hex');
 }
 
+function writeShadowDefsFile(atlasJsonPath: string, atlasHash: string, frames: Record<string, ShadowDef>): void {
+  const outPath = path.join(path.dirname(atlasJsonPath), 'shadows.json');
+  const file: ShadowDefsFile = { atlasHash, frames };
+  writeFileSync(outPath, `${JSON.stringify(file, null, 2)}\n`, 'utf8');
+}
+
 export async function bakeSpriteHitboxes(
   db: DB,
   atlasPngPath: string,
@@ -43,6 +51,7 @@ export async function bakeSpriteHitboxes(
   const atlasW = info.width;
 
   const rows: HitboxRow[] = [];
+  const shadowDefs: Record<string, ShadowDef> = {};
 
   for (const frame of frames) {
     const { filename, sourceSize, spriteSourceSize, frame: fr } = frame;
@@ -68,6 +77,9 @@ export async function bakeSpriteHitboxes(
       spriteSourceSize.x,
       spriteSourceSize.y,
     );
+
+    const shadowDef = computeShadowDef(mask, sourceSize.w, sourceSize.h);
+    if (shadowDef) shadowDefs[filename] = shadowDef;
 
     const { rects: pixelRects, coverage } = greedyRectCover(
       mask,
@@ -103,5 +115,7 @@ export async function bakeSpriteHitboxes(
   }
 
   replaceAllHitboxes(db, rows, atlasHash);
+  writeShadowDefsFile(atlasJsonPath, atlasHash, shadowDefs);
+  console.log(`[hitbox] wrote ${Object.keys(shadowDefs).length} frame shadow defs`);
   return rows.length;
 }

@@ -161,7 +161,7 @@ function applyLaserTick(world: World, player: PlayerEntity, target: MonsterEntit
   const monster = world.getMonsterEntity(target.isMonster.id);
   const ai = monster?.controlsMonster;
   if (monster && ai && !monster.hasAggroTarget) {
-    setAggroTarget(world, monster, player.isPlayer.id, now);
+    setAggroTarget(world, monster, { id: player.isPlayer.id, kind: 'player' }, now);
     markEngaged(world, player, now);
   }
 }

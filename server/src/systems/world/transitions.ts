@@ -4,6 +4,7 @@ import { GAME_CONFIG, pointFromMotion } from '@mmo-idle/shared';
 import { NODE_REGISTRY } from '../../world/nodeRegistry';
 import { setEntityMotion, stopEntity } from './movement';
 import { thawNode } from '../../world/nodeLifecycle';
+import { despawnMinionsForOwner } from '../classes/archetypes/summoner';
 
 // Pixels from the boundary that fire a transition. Must match GATE_THICK in GameScene.
 const EXIT_TRIGGER = 20;
@@ -81,6 +82,10 @@ export function updateTransitions(world: World): void {
 
     const targetNode = NODE_REGISTRY.get(targetNodeId)!;
     const fromNodeId = position.nodeId;
+
+    // Drop any live slimes — the summoner tick will respawn them at the new node.
+    // Avoids the slimes appearing in the previous node's broadcast for a tick or two.
+    despawnMinionsForOwner(world, entity);
 
     position.nodeId = targetNodeId;
     world.movePlayerNode(fromNodeId, targetNodeId);

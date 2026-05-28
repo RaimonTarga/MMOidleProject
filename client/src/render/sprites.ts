@@ -1,9 +1,16 @@
 import Phaser from 'phaser';
-import type { PlayerView, MonsterView, Vec2 } from '@mmo-idle/shared';
+import type { PlayerView, MonsterView, MinionView, Vec2 } from '@mmo-idle/shared';
 import { ATLAS_KEY, getPlayerFrame, getMonsterFrame } from '../sprites';
 import type { RenderState } from './state';
 import type { GameScene } from '../scenes/GameScene';
 import { DEPTH } from './depth';
+
+type SpriteSnapshot = PlayerView | MonsterView | MinionView;
+
+function getMonsterTypeIdFromSnapshot(snapshot: SpriteSnapshot): string {
+  if ('monsterTypeId' in snapshot) return snapshot.monsterTypeId;
+  return '';
+}
 
 export function tryMakeImage(
   scene: Phaser.Scene,
@@ -21,7 +28,7 @@ export function tryMakeImage(
 export function ensureSprite(
   state: RenderState,
   id: string,
-  snapshot: PlayerView | MonsterView,
+  snapshot: SpriteSnapshot,
   scene: GameScene,
   opts: {
     displayW: number;
@@ -34,7 +41,7 @@ export function ensureSprite(
 
   const frame = opts.isPlayer
     ? getPlayerFrame(snapshot as PlayerView)
-    : getMonsterFrame((snapshot as MonsterView).monsterTypeId);
+    : getMonsterFrame(getMonsterTypeIdFromSnapshot(snapshot));
 
   const sprite =
     tryMakeImage(scene, snapshot.pos, frame, opts.displayW, opts.displayH) ??
@@ -50,7 +57,7 @@ export function ensureSprite(
 export function updateSpriteFrame(
   state: RenderState,
   id: string,
-  snapshot: PlayerView | MonsterView,
+  snapshot: SpriteSnapshot,
   scene: GameScene,
   opts: {
     displayW: number;
@@ -61,12 +68,14 @@ export function updateSpriteFrame(
 ): void {
   const newFrame = opts.isPlayer
     ? getPlayerFrame(snapshot as PlayerView)
-    : getMonsterFrame((snapshot as MonsterView).monsterTypeId);
+    : getMonsterFrame(getMonsterTypeIdFromSnapshot(snapshot));
 
   const meta = state.spriteMeta.get(id);
-  if (!meta || newFrame === meta.currentFrame) return;
-
   const existing = state.sprite.get(id);
+  if (!meta) return;
+  if (existing) existing.setDisplaySize(opts.displayW, opts.displayH);
+  if (newFrame === meta.currentFrame) return;
+
   const canSwapInPlace =
     existing instanceof Phaser.GameObjects.Image &&
     !!newFrame &&

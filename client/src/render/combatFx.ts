@@ -132,6 +132,11 @@ const ATTACK_FX_BY_ARCHETYPE: Record<NonNullArchetype, AttackFxFn> = {
       default: return fxPoisonSmog(scene, to.x, to.y, ev.empowered);
     }
   },
+  // Summoner uses a plain melee impact from the slime — the slime sprite is
+  // the FX, and the empowered ring is handled separately via the player's
+  // existing empoweredRing pass.
+  summoner: ({ scene, ev, from, to }) =>
+    fxSlash(scene, from.x, from.y, to.x, to.y, ev.empowered),
 };
 
 const ATTACK_FX_BY_STYLE: Record<string, AttackFxFn> = {
@@ -170,7 +175,13 @@ export function dispatchCombatEvent(state: RenderState, ev: CombatEvent, scene: 
     combatLog.push('damage-out', `${ev.targetName} -${ev.damage}`);
     if (ev.empowered) combatLog.push('empowered', `Empowered strike -> ${ev.targetName}`);
     if (ev.execution) combatLog.push('execution', `Execution strike -> ${ev.targetName}`);
-    if (shouldRunClientFx()) runFxForAttackStyle(state, ev, scene);
+    const player = state.ownId
+      ? (state.view.get(state.ownId) as PlayerView | undefined)
+      : undefined;
+    // Minion hits already play FX from minions.ts (lastAttackAt); skip body lunge/FX.
+    if (shouldRunClientFx() && (player?.summonsMinions ?? 0) === 0) {
+      runFxForAttackStyle(state, ev, scene);
+    }
   }
 
   if (ev.kind === 'player-kill') {

@@ -16,7 +16,14 @@ import './skillTree.css';
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
 
-const CLASS_ROOTS = ['cadence-root', 'cooldown-root', 'reload-root', 'energy-root', 'dot-root'];
+const CLASS_ROOTS = [
+  'cadence-root',
+  'cooldown-root',
+  'reload-root',
+  'energy-root',
+  'dot-root',
+  'summoner-root',
+];
 
 const EFFECT_LABELS: Record<string, string> = {
   attack:          'ATK',

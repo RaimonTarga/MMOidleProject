@@ -19,6 +19,7 @@ import { clearAutoTraversePath } from '../autoTraverse';
 import { setAggroTarget, setAttackTarget } from '../../combat/ai/targeting';
 import { resolveMonsterHitbox } from '../../../hitbox/resolve';
 import { thawNode } from '../../../world/nodeLifecycle';
+import { despawnMinionsForOwner } from '../../classes/archetypes/summoner';
 
 // Regular monsters in dungeon nodes are scaled up; boss stats come from the database directly.
 const DUNGEON_HP_MULT  = 2.0;
@@ -185,6 +186,8 @@ export function respawnPlayer(world: World, playerId: string): void {
   setAttackTarget(world, entity, null);
   entity.usesAutocombat.auto = false;
   clearAutoTraversePath(world, entity);
+  // Drop any live slimes — the summoner tick will restage them at the new spawn.
+  despawnMinionsForOwner(world, entity);
 
   recalculatePlayerEntityStats(world, entity);
   syncArchetypeSlices(world, entity);
@@ -203,7 +206,9 @@ export function respawnPlayer(world: World, playerId: string): void {
   resetTracksCombat(entity.tracksCombat);
 
   for (const e of world.aggroedMonsters) {
-    if (e.hasAggroTarget.playerId === playerId) setAggroTarget(world, e, null, Date.now());
+    if (e.hasAggroTarget.targetKind === 'player' && e.hasAggroTarget.targetId === playerId) {
+      setAggroTarget(world, e, null, Date.now());
+    }
   }
 
   world.pendingDeaths.push(playerId);

@@ -46,25 +46,6 @@ export function getPlayerShadowColor(progressionLevel: number): number {
   return color;
 }
 
-const DEFAULT_SHADOW_OFFSET = 22;
-
-const SHADOW_OFFSETS: Record<string, number> = {
-  'player': 28,
-  'tiny-slime':   10,
-  'forest-slime': 24,
-  'plains-slime': 24,
-  'bog-slime':    24,
-  'cave-lurker': 18,
-};
-
-export function getPlayerShadowOffset(): number {
-  return SHADOW_OFFSETS['player'] ?? DEFAULT_SHADOW_OFFSET;
-}
-
-export function getMonsterShadowOffset(monsterTypeId: string): number {
-  return SHADOW_OFFSETS[monsterTypeId] ?? DEFAULT_SHADOW_OFFSET;
-}
-
 export const BIOME_TEXTURES: Record<string, string> = {
   'clearing': 'biome_clearing',
   'forest':   'biome_forest',

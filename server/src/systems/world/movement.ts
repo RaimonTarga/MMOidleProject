@@ -33,11 +33,13 @@ export function updateMovement(world: World, dt: number) {
     }
 
     const slow = getStatusEffect(entity.tracksCombat, 'slow');
-    const speedMult = slow ? Math.max(0, slow.data['speedMult'] ?? 1) : 1;
+    const slowMult = slow ? Math.max(0, slow.data['speedMult'] ?? 1) : 1;
+    const trample = getStatusEffect(entity.tracksCombat, 'summoner-trample-boon');
+    const trampleMult = trample ? 1 + (trample.data.speedPct ?? 0.25) : 1;
     const next = advanceMotion(
       entity.hasPosition.current,
       entity.isMoving.motion,
-      entity.hasPosition.speed * speedMult * (dt / 1000),
+      entity.hasPosition.speed * slowMult * trampleMult * (dt / 1000),
     );
     entity.hasPosition.current = next.position;
     if (next.motion.magnitude > 0) {
@@ -48,6 +50,32 @@ export function updateMovement(world: World, dt: number) {
   }
 
   for (const e of world.movingMonsters) {
+    const next = advanceMotion(
+      e.hasPosition.current,
+      e.isMoving.motion,
+      e.hasPosition.speed * (dt / 1000),
+    );
+    e.hasPosition.current = next.position;
+    if (next.motion.magnitude > 0) {
+      e.isMoving.motion = next.motion;
+    } else {
+      stopEntity(world, e);
+    }
+
+    const node = NODE_REGISTRY.get(e.hasPosition.nodeId);
+    if (node) {
+      e.hasPosition.current.x = Math.max(
+        MONSTER_MARGIN,
+        Math.min(node.width - MONSTER_MARGIN, e.hasPosition.current.x),
+      );
+      e.hasPosition.current.y = Math.max(
+        MONSTER_MARGIN,
+        Math.min(node.height - MONSTER_MARGIN, e.hasPosition.current.y),
+      );
+    }
+  }
+
+  for (const e of world.movingMinions) {
     const next = advanceMotion(
       e.hasPosition.current,
       e.isMoving.motion,
