@@ -14,6 +14,8 @@ export interface IntentMap {
   resetProgress: undefined;
   refreshRecipes: undefined;
   tacticalView: undefined;
+  joinParty: string;
+  leaveParty: undefined;
 }
 
 type IntentKind = keyof IntentMap;

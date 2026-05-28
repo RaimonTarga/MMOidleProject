@@ -88,6 +88,23 @@ export interface UsesAutocombat {
   autoTraverse: boolean;
 }
 
+/** One entry in a party roster (display identity). */
+export interface PartyMember {
+  id: string;
+  name: string;
+}
+
+/**
+ * Party membership. Present only while the player is in a party.
+ * `leaderId === <own id>` means this player is the leader. `members` is the
+ * full roster (recomputed and stamped onto every member on any change) so the
+ * client can show the party even when a member is briefly in another zone.
+ */
+export interface InParty {
+  leaderId: string;
+  members: PartyMember[];
+}
+
 /** Per-player long-term progression state. */
 export interface TracksProgression {
   level: number;

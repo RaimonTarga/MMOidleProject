@@ -5,6 +5,8 @@ import {
   sendCraftRecipe,
   sendEquipItem,
   sendGoToTestRoom,
+  sendJoinParty,
+  sendLeaveParty,
   sendLeaveTestRoom,
   sendRefreshRecipes,
   sendResetProgress,
@@ -72,5 +74,13 @@ export function attachHudEvents(scene: GameScene): void {
 
   intents.on("refreshRecipes", () => {
     sendRefreshRecipes(scene.socket);
+  });
+
+  intents.on("joinParty", (targetPlayerId) => {
+    sendJoinParty(scene.socket, targetPlayerId);
+  });
+
+  intents.on("leaveParty", () => {
+    sendLeaveParty(scene.socket);
   });
 }

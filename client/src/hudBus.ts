@@ -74,6 +74,16 @@ export const hudBus = {
     return () => recipeUnlockListeners.delete(fn);
   },
 
+  /** Called by PartyPanel — GameScene picks this up and emits the socket event. */
+  requestJoinParty(targetPlayerId: string): void {
+    intents.emit('joinParty', targetPlayerId);
+  },
+
+  /** Called by PartyPanel — leave (or disband) the current party. */
+  requestLeaveParty(): void {
+    intents.emit('leaveParty', undefined);
+  },
+
   /** Toggle tactical mode (ranges + hitboxes). */
   toggleTacticalView(): void {
     intents.emit('tacticalView', undefined);

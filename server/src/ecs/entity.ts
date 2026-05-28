@@ -28,6 +28,7 @@ import type {
   HoldsInventory,
   InAcChargePhase,
   InAcDischarge,
+  InParty,
   IsBossEngaged,
   IsChanneling,
   IsMonster,
@@ -103,6 +104,7 @@ export interface ServerEntity {
   holdsInventory?:     HoldsInventory;
   usesSkills?:         UsesSkills;
   showsSacred?:        ShowsSacred;
+  inParty?:            InParty;
   usesCadence?:        UsesCadence;
   usesEnergy?:         UsesEnergy;
   appliesDots?:        AppliesDots;

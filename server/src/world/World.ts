@@ -12,6 +12,7 @@ import {
 } from "@mmo-idle/shared";
 import { updateAutoTargets } from "../systems/combat/ai/autoTarget";
 import { updateAutoTraverse } from "../systems/world/autoTraverse";
+import { updatePartyFollow } from "../systems/world/partyFollow";
 import { updateMovement } from "../systems/world/movement";
 import { updateMonsters } from "../systems/combat/ai/ai";
 import { updateCombat } from "../systems/combat/engine/combat";
@@ -203,6 +204,7 @@ export class World {
     tickAllMechanics(this, dt, now);
     updateWeaponEffects(this, dt);
     updateBossScripts(this, dt);
+    updatePartyFollow(this);
     updateAutoTraverse(this);
     updateAutoTargets(this);
     updateKnockback(this, dt);

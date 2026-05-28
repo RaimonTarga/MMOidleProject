@@ -132,6 +132,8 @@ Everything that crosses the client/server boundary lives here. Start here for an
 | `player:unlockSkill` | C→S | Unlock skill tree node |
 | `inventory:equipItem` / `inventory:unequip` | C→S | Equipment changes |
 | `crafting:craftRecipe` | C→S | Craft attempt |
+| `party:join` | C→S | Join a target player's party (their leader becomes your leader) |
+| `party:leave` | C→S | Leave your party (disbands it if you are the leader) |
 
 ---
 
@@ -221,6 +223,52 @@ Components: `HUD.tsx` (sidebars, StatPanel, BuffBar, EssencePanel), `BuffBar.tsx
 **Mob density:** `BiomeDefinition.mobDensity?: number` sets the spawn target per node. Falls back to `GAME_CONFIG.MONSTERS_PER_NODE` (12) when absent. `World.getMobDensity(nodeId)` reads it via `NODE_BIOMES → BIOME_DATABASE`. Both `init()` and `ensurePopulation()` use it. Density values: plains 16, forest 13, swamp 10, mountain 7, cave 5, jungle 15, tundra 6, desert 14, volcanic 5, necropolis 13, abyss 5, clearing 6.
 
 **Boss respawn timer:** Bosses respawn 30 s after death. `World.bossRespawnAt: Map<string, number>` maps `nodeId → earliest respawn timestamp`. Set in `grantMonsterRewards` on every boss kill. `ensureBoss` skips spawning until `Date.now() >= bossRespawnAt`.
+
+---
+
+## Party system
+
+Single-level parties: one leader + N followers, no invites. Clicking **Join** on any
+player puts you in that player's leader's party (the join target becomes the leader if they
+were solo). Parties are **ephemeral runtime state** — never persisted; cleared on disconnect.
+
+**Source of truth:** the networked `InParty { leaderId; members: PartyMember[] }` slice
+(`shared/src/components/core/networkedSlices.ts`). Presence ⇔ in a party;
+`leaderId === own id` ⇔ leader. `members` is the full roster (recomputed and stamped onto
+every member on any change) so the client panel is correct even when a member is briefly in
+another zone. Added to `NETWORKED_PLAYER_KEYS`; flows automatically through `buildNodeDelta`.
+No separate manager — followers are derived by scanning `world.playerEntities` for a matching
+`leaderId`.
+
+**Membership logic** (`server/src/systems/player/party/partySystem.ts`):
+- `joinParty(world, self, targetId)` — resolves the target's root leader; rejects self/cycles.
+  If `self` already led a party, that group is **disbanded** (followers go solo); only the
+  joiner moves. Attaches `inParty` to the leader (if solo) and to `self`, then re-syncs rosters.
+- `leaveParty(world, self)` — follower leaves (re-sync); **leader leaving disbands** the party.
+- `syncPartyRoster(world, leaderId)` — restamps the roster onto all members; dissolves a party
+  of one. `handlePartyDisconnect` runs on socket disconnect before `detachPlayerEntity`.
+- `isPartyFollower(player)` — `inParty` present and `leaderId !== own id`. Used by the auto systems.
+
+**Follow + assist** (`server/src/systems/world/partyFollow.ts`, `updatePartyFollow` runs in
+`World.tick` **before** `updateAutoTraverse`/`updateAutoTargets`): a follower with auto-combat on
+trails the leader, assists against the leader's current attack target, and paths to the leader's
+gate when the leader is in another zone (reuses `nodePath.ts` helpers + `updateTransitions`).
+`updateAutoTargets` and `updateAutoTraverse` early-skip followers so this system owns their movement.
+Approach uses the shared `steerTowardTarget(world, player, target)` extracted from `autoTarget.ts`
+(ranged kite / melee close / reload-hold) — followers approach identically to solo auto-combat.
+
+**Rewards** (`grantMonsterRewards` in `rewards.ts`): the per-player body is extracted into
+`applyKillRewardsToPlayer`. On a kill, **every party member in the same node** as the kill earns
+full rewards (essence, biome XP, quests, boss-clear credit). The `player-kill` floater stays keyed
+to the killer; other members' essence rides their own `node:delta`. To split rewards equally later,
+divide essence/biomeXp by recipient count inside `applyKillRewardsToPlayer` — single lever, not built.
+
+**Client:** `inParty` flows into `PlayerView.partyLeaderId` / `partyMembers`. `deltaApplier.ts`
+publishes `zonePlayersAtom` (same-zone players for the In-Zone join list) and `syncPlayerAtoms`
+sets `partyAtom` (own roster). `client/src/hud/PartyPanel.tsx` is an always-visible **left** sidebar
+panel (between StatPanel and the debug panel). Intents route Join/Leave through
+`hudBus.requestJoinParty/requestLeaveParty` → local `intents` bus → `hudEvents.ts` →
+`party:join`/`party:leave` socket events.
 
 ---
 
@@ -510,6 +558,7 @@ Never set a `dot.damage-per-stack` passive — `damagePerStack` is always derive
 - Monster charge-on-aggro (`chargeOnAggro`), player slow/root (`slowEffect`), deterministic evasion (`evadeEvery`), ranged flag (`isRanged`) — see Monster mechanics section
 - Boss fight scripting framework (`bossScripts.ts`) — data-driven phases, repeating timers, enrage/regen/shield/summon/stat-buff actions
 - Quest system (kill-count quests → XP → skill points); QuestPanel
+- Party system — single-level parties (`inParty` networked slice), click-to-join, follow + assist in auto-combat (`partyFollow`), same-zone full rewards; left-sidebar PartyPanel. See "Party system" section
 - All 5 class archetypes with T0 roots and T1–T2 nodes; T3 fully implemented for Cadence, Energy, DoT; Cooldown light+balanced; Reload designed only
 - Defense/recovery system (5 recovery archetypes, all `defense.*` passives)
 - Weapon families: Chaotic (axe + greataxe), Sacred (cross + consecrated), Burn (ashbrand + cinderfang + frostmourne); `onHitDamage` stat for flat on-hit weapons (Stinger Fang)

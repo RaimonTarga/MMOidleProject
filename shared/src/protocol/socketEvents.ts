@@ -48,6 +48,10 @@ export interface ClientToServerEvents {
   'crafting:craftRecipe': (recipeId: string) => void;
   /** Attempt to upgrade an owned item by ID (+1). Server validates and applies. */
   'inventory:upgradeItem': (itemId: string) => void;
+  /** Join the party of the target player (the target's leader becomes your leader). */
+  'party:join': (targetPlayerId: string) => void;
+  /** Leave your current party (disbands it if you are the leader). */
+  'party:leave': () => void;
   /** Dev-only: teleport the player to the debug test room. Server ignores in production. */
   'debug:goToTestRoom': () => void;
   /** Dev-only: leave the debug test room and return to the clearing. Server ignores in production. */

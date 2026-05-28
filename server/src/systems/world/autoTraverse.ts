@@ -23,6 +23,7 @@ import {
   gateTargetForDirection,
 } from '../../world/nodePath';
 import { setEntityMotion, stopEntity } from './movement';
+import { isPartyFollower } from '../player/party/partySystem';
 
 type TraversePhase = 'mob' | 'boss' | 'advance';
 
@@ -135,6 +136,11 @@ function markCurrentNodeClearedIfCapped(world: World, player: PlayerEntity): voi
 
 export function updateAutoTraverse(world: World): void {
   for (const player of world.playerEntities) {
+    // Party followers mirror the leader instead of running their own traverse.
+    if (isPartyFollower(player)) {
+      if (player.hasAutoTraversePath) clearAutoTraversePath(world, player);
+      continue;
+    }
     if (!player.usesAutocombat.auto || !player.usesAutocombat.autoTraverse) {
       if (player.hasAutoTraversePath) clearAutoTraversePath(world, player);
       continue;

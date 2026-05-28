@@ -1,5 +1,5 @@
 import type { World } from '../../../world/World';
-import type { MonsterEntity } from '../../../ecs/entity';
+import type { MonsterEntity, PlayerEntity } from '../../../ecs/entity';
 import {
   areAllBiomeRecipesUnlocked,
   distanceSq,
@@ -12,6 +12,7 @@ import {
 } from '@mmo-idle/shared';
 import { NODE_REGISTRY } from '../../../world/nodeRegistry';
 import { setEntityMotion, stopEntity } from '../../world/movement';
+import { isPartyFollower } from '../../player/party/partySystem';
 
 const NODE_MARGIN = 40;
 
@@ -45,6 +46,8 @@ function clampToNode(world: World, nodeId: string, pos: Vec2): Vec2 {
 export function updateAutoTargets(world: World) {
   for (const player of world.playerEntities) {
     if (!player.usesAutocombat.auto) continue;
+    // Party followers are steered by updatePartyFollow, not by their own targeting.
+    if (isPartyFollower(player)) continue;
     if (player.hasManualMoveIntent) continue;
 
     if (player.hasAutoTraversePath) {
@@ -84,56 +87,74 @@ export function updateAutoTargets(world: World) {
 
     if (!target) continue;
 
-    // Reload OOC hold: while the clip is reloading and no enemy has aggroed, stay put.
-    // If something aggros the player (targetIsAggroed), fall through to normal movement.
-    if (player.usesReload && player.usesReload.reloadingMs > 0 && !targetIsAggroed) {
-      stopEntity(world, player);
-      continue;
-    }
+    steerTowardTarget(world, player, target);
+  }
+}
 
-    const targetPos = target.hasPosition.current;
-    const dx = targetPos.x - playerPos.x;
-    const dy = targetPos.y - playerPos.y;
-    const dist = Math.hypot(dx, dy);
-    const attackRange = player.performsAttack.attackRange;
-    const playerPH = posHitboxFromEntity(player);
-    const targetPH = posHitboxFromEntity(target);
-    const gap = hitboxGap(playerPH, targetPH);
+/**
+ * Move `player` into attacking position against `target`, matching the auto-combat
+ * approach rules: ranged players kite to an ideal gap; melee players close to
+ * contact; a reloading player with no aggro on it holds still. Shared by
+ * `updateAutoTargets` (its chosen nearest target) and party follow (the leader's
+ * target) so followers approach identically to solo auto-combat.
+ */
+export function steerTowardTarget(
+  world: World,
+  player: PlayerEntity,
+  target: MonsterEntity,
+): void {
+  const targetIsAggroed = target.hasAggroTarget?.playerId === player.isPlayer.id;
 
-    if (isRangedAutoPlayer(player) && dist > 0) {
-      const minSafeGap = Math.min(attackRange * 0.82, target.performsAttack.attackRange + 45);
-      const idealGap   = Math.max(minSafeGap + 20, attackRange * 0.72);
-      const maxFireGap = attackRange * 0.92;
+  // Reload OOC hold: while the clip is reloading and no enemy has aggroed, stay put.
+  // If something aggros the player (targetIsAggroed), fall through to normal movement.
+  if (player.usesReload && player.usesReload.reloadingMs > 0 && !targetIsAggroed) {
+    stopEntity(world, player);
+    return;
+  }
 
-      if (gap < minSafeGap) {
-        const candidate: Vec2 = {
-          x: targetPos.x - (dx / dist) * (idealGap + 32),
-          y: targetPos.y - (dy / dist) * (idealGap + 32),
-        };
-        setEntityMotion(world, player, clampToNode(world, player.hasPosition.nodeId, candidate));
-        continue;
-      }
+  const playerPos = player.hasPosition.current;
+  const targetPos = target.hasPosition.current;
+  const dx = targetPos.x - playerPos.x;
+  const dy = targetPos.y - playerPos.y;
+  const dist = Math.hypot(dx, dy);
+  const attackRange = player.performsAttack.attackRange;
+  const playerPH = posHitboxFromEntity(player);
+  const targetPH = posHitboxFromEntity(target);
+  const gap = hitboxGap(playerPH, targetPH);
 
-      if (inAttackRange(playerPH, targetPH, attackRange) && gap <= maxFireGap) {
-        stopEntity(world, player);
-        continue;
-      }
+  if (isRangedAutoPlayer(player) && dist > 0) {
+    const minSafeGap = Math.min(attackRange * 0.82, target.performsAttack.attackRange + 45);
+    const idealGap   = Math.max(minSafeGap + 20, attackRange * 0.72);
+    const maxFireGap = attackRange * 0.92;
 
+    if (gap < minSafeGap) {
       const candidate: Vec2 = {
         x: targetPos.x - (dx / dist) * (idealGap + 32),
         y: targetPos.y - (dy / dist) * (idealGap + 32),
       };
       setEntityMotion(world, player, clampToNode(world, player.hasPosition.nodeId, candidate));
-      continue;
+      return;
     }
 
-    if (inAttackRange(playerPH, targetPH, attackRange)) {
+    if (inAttackRange(playerPH, targetPH, attackRange) && gap <= maxFireGap) {
       stopEntity(world, player);
-      continue;
+      return;
     }
 
-    if (dist > 0) {
-      setEntityMotion(world, player, targetPos);
-    }
+    const candidate: Vec2 = {
+      x: targetPos.x - (dx / dist) * (idealGap + 32),
+      y: targetPos.y - (dy / dist) * (idealGap + 32),
+    };
+    setEntityMotion(world, player, clampToNode(world, player.hasPosition.nodeId, candidate));
+    return;
+  }
+
+  if (inAttackRange(playerPH, targetPH, attackRange)) {
+    stopEntity(world, player);
+    return;
+  }
+
+  if (dist > 0) {
+    setEntityMotion(world, player, targetPos);
   }
 }

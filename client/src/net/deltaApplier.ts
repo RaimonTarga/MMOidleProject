@@ -1,4 +1,4 @@
-import type { DeltaSnapshot, NetworkedEntity } from "@mmo-idle/shared";
+import type { DeltaSnapshot, NetworkedEntity, PlayerView } from "@mmo-idle/shared";
 import {
   composeMonsterView,
   composePlayerView,
@@ -7,7 +7,7 @@ import {
 import { loadGameplaySettings } from '../settings/gameplaySettings';
 import { sendSetAutoTraverse } from './intents';
 import { hudBus } from "../hudBus";
-import { syncPlayerAtoms, nodeLoadingAtom } from "../hud/atoms";
+import { syncPlayerAtoms, nodeLoadingAtom, setZonePlayers, type ZonePlayer } from "../hud/atoms";
 import { getDefaultStore } from "jotai";
 import type { GameScene } from "../scenes/GameScene";
 import type { RenderState } from "../render/state";
@@ -86,6 +86,17 @@ export function applyDelta(
       }
     }
     syncPlayerAtoms(own);
+
+    const zonePlayers: ZonePlayer[] = [];
+    for (const id of state.ids) {
+      if (state.kind.get(id) !== "player") continue;
+      const v = state.view.get(id) as PlayerView | undefined;
+      if (!v || v.nodeId !== own.nodeId) continue;
+      zonePlayers.push({ id: v.id, name: v.name, partyLeaderId: v.partyLeaderId });
+    }
+    zonePlayers.sort((a, b) => a.name.localeCompare(b.name));
+    setZonePlayers(zonePlayers);
+
     if (!state.gameplaySettingsSynced) {
       sendSetAutoTraverse(scene.socket, loadGameplaySettings().autoTraverseEnabled);
       state.gameplaySettingsSynced = true;
