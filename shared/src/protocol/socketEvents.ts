@@ -40,6 +40,8 @@ export interface ClientToServerEvents {
   'player:setAuto': (enabled: boolean) => void;
   /** Enable or disable server-side auto-traverse when auto-combat is on. */
   'player:setAutoTraverse': (enabled: boolean) => void;
+  /** Walk to a destination node via the shortest gate path (map click-to-navigate). */
+  'player:navigateTo': (nodeId: string) => void;
   /** Request a fresh authoritative full snapshot for the player's current node. */
   'player:requestSync': () => void;
   /** Request to unlock a skill tree node by ID. Server validates and applies. */

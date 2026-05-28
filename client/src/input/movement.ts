@@ -83,7 +83,7 @@ function tickMovement(scene: GameScene): void {
 
   if (!wasMoving) {
     if (scene.autoMode) setAutoMode(scene, false);
-    if (scene.autoPath.length > 0) cancelAutoPath(scene);
+    cancelAutoPath();
     scene.flashCameraHold = false;
     scene.flashCameraHoldTargetId = null;
     scene.targetMarker.setVisible(false);

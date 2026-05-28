@@ -1,4 +1,4 @@
-import { ESSENCE_COLORS, GAME_CONFIG, isMeleeArchetype, type CombatArchetype, type CombatEvent, type PlayerView, type Vec2 } from '@mmo-idle/shared';
+import { ESSENCE_COLORS, GAME_CONFIG, isRangedPlayerView, type CombatArchetype, type CombatEvent, type PlayerView, type Vec2 } from '@mmo-idle/shared';
 import { combatLog } from '../combatLog';
 import { activateLaserBeam } from '../fx/laser';
 import { playOneShotEffect, spawnDamageNumber } from '../fx/particles';
@@ -247,7 +247,7 @@ function runFxForAttackStyle(
     playOneShotEffect(scene, effectId, to, { scale: targetEffectScale });
   }
 
-  if (!isLaser && !isFlashTeleport && isMeleeArchetype(player.combatArchetype, player.unlockedSkills) && state.ownId && targetInterp) {
+  if (!isLaser && !isFlashTeleport && !isRangedPlayerView(player) && state.ownId && targetInterp) {
     applyLunge(state, state.ownId, { ...targetInterp.base }, scene);
   }
 }

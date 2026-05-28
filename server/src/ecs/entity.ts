@@ -1,5 +1,6 @@
 import type {
   AppliesDots,
+  CannotAttack,
   ChillsTarget,
   ControlsMonster,
   DealsDamage,
@@ -93,6 +94,7 @@ export interface ServerEntity {
   hasHitbox?:       HasHitbox;
   isMoving?:        IsMoving;
   hasAttackTarget?: HasAttackTarget;
+  cannotAttack?:    CannotAttack;
   hasHealth?:       HasHealth;
   dealsDamage?:     DealsDamage;
   performsAttack?:  PerformsAttack;

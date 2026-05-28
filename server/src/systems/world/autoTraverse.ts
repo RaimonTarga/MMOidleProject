@@ -31,6 +31,42 @@ export function clearAutoTraversePath(world: World, player: PlayerEntity): void 
   detachComponent(world, player, 'hasAutoTraversePath');
 }
 
+/**
+ * Begin walking to `destNodeId` via the shortest gate path — the server-side
+ * owner of map click-to-navigate. Turns off auto-combat (the player just
+ * travels) and installs a traverse path. `updateAutoTraverse` steps the path
+ * every tick even while auto-combat/auto-traverse are off, so the client no
+ * longer needs to compute gate destinations or advance the path itself.
+ */
+export function startManualNavigation(
+  world: World,
+  player: PlayerEntity,
+  destNodeId: string,
+): void {
+  detachComponent(world, player, 'hasManualMoveIntent');
+  if (player.usesAutocombat.auto) {
+    player.usesAutocombat.auto = false;
+    markSliceDirty(world, player, 'usesAutocombat');
+  }
+
+  const fromNodeId = player.hasPosition.nodeId;
+  if (destNodeId === fromNodeId) {
+    clearAutoTraversePath(world, player);
+    return;
+  }
+
+  const path = findShortestNodePath(fromNodeId, destNodeId);
+  if (!path || path.length < 2) {
+    clearAutoTraversePath(world, player);
+    return;
+  }
+
+  attachComponent(world, player, 'hasAutoTraversePath', {
+    targetNodeId: destNodeId,
+    remainingPath: path.slice(1),
+  });
+}
+
 function resolveTraversePhase(
   progression: BiomeProgressInput,
   biomeGroup: string,
@@ -83,7 +119,7 @@ function resolveDesiredNodeId(
   if (phase === 'boss') {
     return findDungeonNodeFor(biomeGroup, biomeTier);
   }
-  const next = pickNextIncompleteBiome(progression, 0);
+  const next = pickNextIncompleteBiome(progression);
   if (!next) return null;
   return findRegularNodeFor(next.biomeGroup, next.tier);
 }
@@ -136,17 +172,29 @@ function markCurrentNodeClearedIfCapped(world: World, player: PlayerEntity): voi
 
 export function updateAutoTraverse(world: World): void {
   for (const player of world.playerEntities) {
-    // Party followers mirror the leader instead of running their own traverse.
-    if (isPartyFollower(player)) {
+    // Party followers in auto-combat mirror the leader (updatePartyFollow owns
+    // them) instead of running their own traverse. With auto off they may still
+    // manually navigate, so fall through to manual path stepping below.
+    if (isPartyFollower(player) && player.usesAutocombat.auto) {
       if (player.hasAutoTraversePath) clearAutoTraversePath(world, player);
       continue;
     }
-    if (!player.usesAutocombat.auto || !player.usesAutocombat.autoTraverse) {
-      if (player.hasAutoTraversePath) clearAutoTraversePath(world, player);
-      continue;
-    }
+    // A direct click-to-move cancels any in-progress navigation / traverse.
     if (player.hasManualMoveIntent) {
-      clearAutoTraversePath(world, player);
+      if (player.hasAutoTraversePath) clearAutoTraversePath(world, player);
+      continue;
+    }
+
+    const autoTraverseActive =
+      player.usesAutocombat.auto && player.usesAutocombat.autoTraverse;
+
+    // Auto-traverse off: we may still be walking a manual navigation path (map
+    // click-to-navigate). Step it, but skip the auto-combat biome decision.
+    if (!autoTraverseActive) {
+      if (player.hasAutoTraversePath) {
+        advancePathIfArrived(world, player);
+        continueAutoTraversePath(world, player);
+      }
       continue;
     }
 
@@ -161,7 +209,7 @@ export function updateAutoTraverse(world: World): void {
     let biomeGroup = nodeInfo.biomeGroup;
     let biomeTier = nodeInfo.biomeTier;
     if (isBiomeFullyDoneAtTier(player.tracksProgression, biomeGroup, biomeTier)) {
-      const next = pickNextIncompleteBiome(player.tracksProgression, 0);
+      const next = pickNextIncompleteBiome(player.tracksProgression);
       if (!next) {
         if (player.hasAutoTraversePath) clearAutoTraversePath(world, player);
         continue;

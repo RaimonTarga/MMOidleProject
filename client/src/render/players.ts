@@ -1,6 +1,7 @@
 import type { PlayerView } from "@mmo-idle/shared";
-import { isMeleeArchetype } from "@mmo-idle/shared";
-import { setAutoPath } from "../hud/atoms";
+import { isRangedPlayerView } from "@mmo-idle/shared";
+import { getDefaultStore } from "jotai";
+import { autoPathAtom, setAutoPath } from "../hud/atoms";
 import { combatLog } from "../combatLog";
 import type { RenderState } from "./state";
 import type { GameScene } from "../scenes/GameScene";
@@ -18,8 +19,12 @@ import { applyLunge } from "./interpolation";
 import { spawnAttackEffect } from "./combatFx";
 import { getDotPath } from "../fx/dot";
 import { spawnDamageNumber } from "../fx/particles";
-import { cancelAutoPath, sendAutoPathMove } from "../input/autoPath";
 import { flashShiftTint, spawnFlashAttackAfterimage } from "./movementEffects";
+
+// Server position is authoritative; the client extrapolates ahead toward the
+// motion target between 5 Hz snapshots. Beyond this error the prediction has
+// diverged (rejected move, dropped packet) — snap rather than glide-correct.
+const RECONCILE_SNAP_SQ = 220 * 220;
 
 export function upsertPlayer(
   state: RenderState,
@@ -91,18 +96,14 @@ export function upsertPlayer(
     const sprite = state.sprite.get(player.id);
     sprite?.setPosition(player.pos.x, player.pos.y);
 
-    if (scene.autoPath.length > 0) {
-      if (scene.autoPath[0] === player.nodeId) {
-        scene.autoPath.shift();
-        if (scene.autoPath.length > 0) {
-          setAutoPath([...scene.autoPath]);
-          sendAutoPathMove(scene, player.nodeId);
-        } else {
-          cancelAutoPath(scene);
-        }
-      } else {
-        cancelAutoPath(scene);
-      }
+    // Trim the navigation route display as the server walks us across nodes;
+    // clear it on arrival. Movement itself is owned by the server.
+    const store = getDefaultStore();
+    const navPath = store.get(autoPathAtom);
+    if (navPath && navPath.length > 0) {
+      const idx = navPath.indexOf(player.nodeId);
+      const remaining = idx >= 0 ? navPath.slice(idx + 1) : [];
+      setAutoPath(remaining.length > 0 ? remaining : null);
     }
   }
 
@@ -136,6 +137,18 @@ export function upsertPlayer(
   if (transform) {
     transform.target = { ...player.target };
     transform.speed = player.speed;
+  }
+
+  if (isOwn) {
+    const interp = state.interpolation.get(player.id);
+    if (interp) {
+      const ex = player.pos.x - interp.base.x;
+      const ey = player.pos.y - interp.base.y;
+      if (ex * ex + ey * ey > RECONCILE_SNAP_SQ) {
+        interp.base.x = player.pos.x;
+        interp.base.y = player.pos.y;
+      }
+    }
   }
 
   if (player.hp < prevHp) {
@@ -196,7 +209,7 @@ export function upsertPlayer(
             player.combatArchetype === "dot" ? getDotPath(player) : undefined,
         },
       );
-      if (isMeleeArchetype(player.combatArchetype, player.unlockedSkills)) {
+      if (!isRangedPlayerView(player)) {
         applyLunge(state, player.id, { ...targetInterp.base }, scene);
       }
     }

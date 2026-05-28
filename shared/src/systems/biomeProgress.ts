@@ -112,22 +112,30 @@ export function listBiomeGroupsAtTier(tier: number): string[] {
   return BIOME_GROUPS_BY_TIER.get(tier) ?? [];
 }
 
+function firstIncompleteBiomeAtTier(
+  player: BiomeProgressInput,
+  tier: number,
+): { biomeGroup: string; tier: number } | null {
+  for (const biomeGroup of listBiomeGroupsAtTier(tier)) {
+    if (!isBiomeFullyDoneAtTier(player, biomeGroup, tier)) {
+      return { biomeGroup, tier };
+    }
+  }
+  return null;
+}
+
+/**
+ * Picks the next biome the player should work on for auto-traverse.
+ * Prefers the player's current tier (e.g. T3 players route to T3 biomes first),
+ * then falls back to lower tiers. Tiers above playerTier are not considered.
+ */
 export function pickNextIncompleteBiome(
   player: BiomeProgressInput,
-  fromTier: number,
 ): { biomeGroup: string; tier: number } | null {
-  const maxTier = Math.max(
-    0,
-    ...Object.entries(NODE_BIOMES)
-      .filter(([nodeId]) => isProgressionNode(nodeId))
-      .map(([, node]) => node.biomeTier),
-  );
-  for (let tier = fromTier; tier <= maxTier; tier++) {
-    for (const biomeGroup of listBiomeGroupsAtTier(tier)) {
-      if (!isBiomeFullyDoneAtTier(player, biomeGroup, tier)) {
-        return { biomeGroup, tier };
-      }
-    }
+  const preferredTier = Math.max(0, player.playerTier);
+  for (let tier = preferredTier; tier >= 0; tier--) {
+    const next = firstIncompleteBiomeAtTier(player, tier);
+    if (next) return next;
   }
   return null;
 }
