@@ -1,11 +1,13 @@
 export interface GameplaySettings {
   autoTraverseEnabled: boolean;
+  deathNotificationsEnabled: boolean;
 }
 
 const STORAGE_KEY = 'mmo_gameplay_settings_v1';
 
 const DEFAULTS: GameplaySettings = {
   autoTraverseEnabled: false,
+  deathNotificationsEnabled: false,
 };
 
 export function loadGameplaySettings(): GameplaySettings {

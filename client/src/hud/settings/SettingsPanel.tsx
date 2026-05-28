@@ -20,6 +20,15 @@ import {
   loadGameplaySettings,
   saveGameplaySettings,
 } from '../../settings/gameplaySettings';
+import {
+  canUseNotifications,
+  getNotificationPermission,
+  isDeathNotificationEffectivelyOn,
+  primeNotificationAudio,
+  requestDeathNotificationPermission,
+  sendTestDeathNotification,
+  syncDeathNotificationPreference,
+} from '../../notifications/deathNotification';
 import { hudBus } from '../../hudBus';
 import { clearCaptureSink, setCaptureSink } from '../../input/gamepad';
 import '../hud.css';
@@ -40,6 +49,19 @@ export function SettingsPanel({ onClose }: Props) {
   const [autoTraverseEnabled, setAutoTraverseEnabled] = useState(
     () => loadGameplaySettings().autoTraverseEnabled,
   );
+  const [deathNotificationsEnabled, setDeathNotificationsEnabled] = useState(
+    () => loadGameplaySettings().deathNotificationsEnabled,
+  );
+  const [notificationPermission, setNotificationPermission] = useState(
+    getNotificationPermission,
+  );
+
+  useEffect(() => {
+    if (tab !== 'gameplay') return;
+    const synced = syncDeathNotificationPreference();
+    setDeathNotificationsEnabled(synced);
+    setNotificationPermission(getNotificationPermission());
+  }, [tab]);
 
   useEffect(() => {
     if (!capture || capture.device !== 'keyboard') return;
@@ -140,6 +162,34 @@ export function SettingsPanel({ onClose }: Props) {
     hudBus.requestSetAutoTraverse(enabled);
   }
 
+  const deathNotificationsOn = isDeathNotificationEffectivelyOn(
+    deathNotificationsEnabled,
+    notificationPermission,
+  );
+
+  async function handleDeathNotificationsToggle(wantOn: boolean): Promise<void> {
+    if (!wantOn) {
+      setDeathNotificationsEnabled(false);
+      saveGameplaySettings({ deathNotificationsEnabled: false });
+      return;
+    }
+
+    if (!canUseNotifications()) return;
+
+    primeNotificationAudio();
+
+    const permission = await requestDeathNotificationPermission();
+    setNotificationPermission(permission);
+
+    if (permission === 'granted') {
+      setDeathNotificationsEnabled(true);
+      saveGameplaySettings({ deathNotificationsEnabled: true });
+    } else {
+      setDeathNotificationsEnabled(false);
+      saveGameplaySettings({ deathNotificationsEnabled: false });
+    }
+  }
+
   return createPortal(
     <div className="inv-overlay" onClick={handleOverlayClick}>
       <div className="inv-panel settings-panel-wide" onClick={(e) => e.stopPropagation()}>
@@ -230,6 +280,34 @@ export function SettingsPanel({ onClose }: Props) {
               Grinds the current biome until all recipes are unlocked, kills the boss last,
               then moves to the next biome. Re-visits a biome if your tier increases the level cap.
             </p>
+            <label className="settings-toggle-row">
+              <input
+                type="checkbox"
+                checked={deathNotificationsOn}
+                onChange={(e) => void handleDeathNotificationsToggle(e.target.checked)}
+                disabled={!canUseNotifications()}
+              />
+              <span>Notify when I die (tab in background)</span>
+            </label>
+            <p className="settings-help">
+              When you die with the game tab in the background, plays a short chime,
+              flashes the tab title, and shows a browser notification. Some operating
+              systems silently suppress browser notification banners; the chime and
+              title flash still surface through the tab/dock.
+            </p>
+            {notificationPermission === 'denied' && (
+              <p className="settings-help settings-help--warning">
+                Notifications are blocked in your browser settings for this site.
+              </p>
+            )}
+            <button
+              type="button"
+              className="auto-btn settings-reset"
+              onClick={() => void sendTestDeathNotification()}
+              disabled={!deathNotificationsOn}
+            >
+              SEND TEST NOTIFICATION
+            </button>
           </div>
         )}
       </div>

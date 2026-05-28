@@ -24,17 +24,17 @@ export function attachPlayerEntity(
     hasPosition: player.hasPosition,
     hasHealth: player.hasHealth,
     dealsDamage: {
-      attack:      GAME_CONFIG.PLAYER_ATTACK,
+      attack: GAME_CONFIG.PLAYER_ATTACK,
       onHitDamage: 0,
-      attackStyle: 'slash',
+      attackStyle: "slash",
     },
     performsAttack: {
-      attackRange:    GAME_CONFIG.PLAYER_ATTACK_RANGE,
+      attackRange: GAME_CONFIG.PLAYER_ATTACK_RANGE,
       attackCooldown: GAME_CONFIG.PLAYER_ATTACK_COOLDOWN,
-      lastAttackAt:   0,
+      lastAttackAt: 0,
     },
     mitigatesDamage: {
-      plating:         GAME_CONFIG.PLAYER_PLATING,
+      plating: GAME_CONFIG.PLAYER_PLATING,
       damageReduction: 0,
     },
     hasStatus: {
@@ -52,7 +52,7 @@ export function attachPlayerEntity(
     },
     showsSacred: {
       sacredBuffActive: false,
-      sacredBuffPct:    0,
+      sacredBuffPct: 0,
     },
   };
   entity.hasHitbox = resolvePlayerHitbox(entity);
@@ -73,12 +73,18 @@ export function detachPlayerEntity(world: World, playerId: string): void {
 }
 
 /** O(1) typed lookup. Backed by world.playerById, populated via onEntityAdded. */
-export function getPlayerEntity(world: World, playerId: string): PlayerEntity | undefined {
+export function getPlayerEntity(
+  world: World,
+  playerId: string,
+): PlayerEntity | undefined {
   return world.playerById.get(playerId);
 }
 
 /** Iterate every player entity in `nodeId`. Uses the `hasPosition` slice. */
-export function* playerEntitiesInNode(world: World, nodeId: string): IterableIterator<PlayerEntity> {
+export function* playerEntitiesInNode(
+  world: World,
+  nodeId: string,
+): IterableIterator<PlayerEntity> {
   for (const e of world.playerEntities) {
     if (e.hasPosition.nodeId === nodeId) yield e;
   }

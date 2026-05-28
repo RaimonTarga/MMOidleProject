@@ -17,6 +17,7 @@ import { drawCooldownBars } from "../../render/cooldownBars";
 import { updateEffectOverlays } from "../../render/effectOverlays";
 import { updateMovementEffects } from "../../render/movementEffects";
 import { beginTabResync, isClientRenderPaused, onDocumentHidden } from "../../fx/guard";
+import { maybeNotifyDeath } from "../../notifications/deathNotification";
 import { initParticleTextures, initEffectFrames } from "../../fx/particles";
 import { updateLaserBeam } from "../../fx/laser";
 import { attachClickToMove } from "../../input/clickToMove";
@@ -201,6 +202,7 @@ function connectSocket(scene: GameScene): void {
     onPlayerDied: () => {
       combatLog.push("death", "You were defeated");
       showDeathOverlay(scene);
+      maybeNotifyDeath();
     },
     onPlayerAscended: (tier) => {
       showAscensionOverlay(scene, tier);

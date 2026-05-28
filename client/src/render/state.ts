@@ -1,11 +1,16 @@
-import type Phaser from 'phaser';
-import type { NetworkedEntity, PlayerView, MonsterView, Vec2 } from '@mmo-idle/shared';
+import type Phaser from "phaser";
+import type {
+  NetworkedEntity,
+  PlayerView,
+  MonsterView,
+  Vec2,
+} from "@mmo-idle/shared";
 
 export type NetworkId = string;
 
 export interface RenderState {
   ids: Set<NetworkId>;
-  kind: Map<NetworkId, 'player' | 'monster'>;
+  kind: Map<NetworkId, "player" | "monster">;
   entity: Map<NetworkId, NetworkedEntity>;
   view: Map<NetworkId, PlayerView | MonsterView>;
 
@@ -131,14 +136,14 @@ export function createRenderState(): RenderState {
       debugClearedAt: 0,
     },
     ownId: null,
-    ownNodeId: '',
+    ownNodeId: "",
   };
 }
 
 export function getOwnView(state: RenderState): PlayerView | null {
   if (!state.ownId) return null;
   const s = state.view.get(state.ownId);
-  return s && state.kind.get(state.ownId) === 'player'
+  return s && state.kind.get(state.ownId) === "player"
     ? (s as PlayerView)
     : null;
 }
