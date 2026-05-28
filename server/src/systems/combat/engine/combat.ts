@@ -357,6 +357,8 @@ export function updateCombat(world: World, dt: number, now: number) {
       if (now - e.performsAttack.lastAttackAt >= e.performsAttack.attackCooldown && !isMonsterFrozen(world, e.isMonster.id)) {
         const outcome = runMonsterAttack(world, e, target, now);
         if (outcome === 'hit') {
+          // Landing a hit halves the accumulated kite ramp so the monster must re-earn speed.
+          e.controlsMonster.kiteTimer = Math.floor(e.controlsMonster.kiteTimer / 2);
           const t = world.getPlayerEntity(target.isPlayer.id);
           if (t) markEngaged(world, t, now);
         }

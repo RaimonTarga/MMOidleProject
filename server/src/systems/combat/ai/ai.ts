@@ -17,8 +17,7 @@ import { setEntityMotion, stopEntity } from '../../world/movement';
 import { setAggroTarget, setAttackTarget } from './targeting';
 
 const KITE_GRACE_MS   = 500;   // ms chasing before speed ramp begins
-const KITE_RAMP_RATE  = 1.5;   // speed multiplier gain per second past grace
-const KITE_MAX_MULT   = 6.0;   // cap on kite speed multiplier
+const KITE_RAMP_RATE  = 1.5;   // speed multiplier gain per second past grace (no cap — ramps forever)
 const KITE_MIN_SPEED  = 150;   // absolute floor once ramp is active (beats base player speed of 120)
 const KITE_DECAY_RATE = 2.0;   // drains 2× faster than it builds while monster is in attack range
 const RETURN_SPEED_MULT = 1.6; // how fast monsters snap back to spawn
@@ -152,7 +151,9 @@ export function updateMonsters(world: World, dt: number, now: number) {
       const targetPH = posHitboxFromEntity(target.entity);
 
       if (inAttackRange(monsterPH, targetPH, e.performsAttack.attackRange)) {
-        if (e.hasAwareness.state !== 'attacking') {
+        // Only pre-load the attack timer when first stumbling onto a target (idle/wander/return),
+        // not on every re-entry during a kite chase — that caused cooldown bypass via oscillation.
+        if (e.hasAwareness.state === 'idle' || e.hasAwareness.state === 'wandering' || e.hasAwareness.state === 'returning') {
           e.performsAttack.lastAttackAt = now - e.performsAttack.attackCooldown;
         }
         ai.kiteTimer          = Math.max(0, ai.kiteTimer - dt * KITE_DECAY_RATE);
@@ -168,7 +169,7 @@ export function updateMonsters(world: World, dt: number, now: number) {
         } else {
           ai.kiteTimer += dt;
           const excess = Math.max(0, ai.kiteTimer - KITE_GRACE_MS);
-          const mult   = Math.min(KITE_MAX_MULT, 1 + (excess / 1000) * KITE_RAMP_RATE);
+          const mult   = 1 + (excess / 1000) * KITE_RAMP_RATE;
           const rawSpeed = ai.baseSpeed * mult;
           e.hasPosition.speed = Math.round(excess > 0 ? Math.max(rawSpeed, KITE_MIN_SPEED) : rawSpeed);
         }
