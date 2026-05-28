@@ -62,6 +62,7 @@ export function createMonster(
       name:            def.name,
       isBoss,
       behavior:        def.behavior,
+      isRanged:        def.isRanged,
     },
     hasPosition: {
       current: pos,

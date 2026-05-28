@@ -34,6 +34,7 @@ export function upsertMonster(
       barOffsetY: monster.isBoss ? 50 : 40,
       entityName: monster.name,
       monsterBehavior: monster.behavior,
+      monsterIsRanged: monster.isRanged,
     });
 
     state.transform.set(monster.id, {
@@ -102,6 +103,7 @@ export function upsertMonster(
     meta.barOffsetY = monster.isBoss ? 50 : 40;
     meta.entityName = monster.name;
     meta.monsterBehavior = monster.behavior;
+    meta.monsterIsRanged = monster.isRanged;
     meta.shadowOffsetY = getMonsterShadowOffset(monster.monsterTypeId);
   }
   if (typeChanged) {
@@ -155,7 +157,7 @@ export function upsertMonster(
         { x: targetSprite.x, y: targetSprite.y },
       );
 
-      if (meta?.monsterBehavior === 'melee') {
+      if (!meta?.monsterIsRanged) {
         applyLunge(state, monster.id, { ...targetInterp.base }, scene);
       }
     }

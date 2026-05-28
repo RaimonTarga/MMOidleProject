@@ -65,6 +65,7 @@ export interface RenderState {
       barOffsetY: number;
       entityName?: string;
       monsterBehavior?: string;
+      monsterIsRanged?: boolean;
       isOwn?: boolean;
     }
   >;

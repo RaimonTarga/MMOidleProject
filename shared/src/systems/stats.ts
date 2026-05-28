@@ -43,7 +43,8 @@ function applyStatModToTarget(p: PlayerStatsTarget, stat: string, value: number)
     case 'onHitDamage':     p.dealsDamage.onHitDamage     += value; break;
     case 'plating':         p.mitigatesDamage.plating     += value; break;
     case 'damageReduction': p.mitigatesDamage.damageReduction += value; break;
-    case 'evasion':         p.evadesHits.threshold        += value; break;
+    // evasion is accumulated as probability — handled separately in recalculatePlayerStats
+    case 'evasion': break;
     case 'attackRange':     p.performsAttack.attackRange  += value; break;
     case 'attackCooldown':  p.performsAttack.attackCooldown += value; break;
     case 'maxHp':           p.hasHealth.maxHp             += value; break;
@@ -78,6 +79,9 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): void {
 
   // 2. Apply unlocked skill effects
   let attackSpeedPct = 0;
+  // Evasion sources are combined as independent dodge probabilities: sum of 1/N per source.
+  // Converted to a threshold at the end: threshold = round(1 / totalChance).
+  let evasionChance = 0;
   p.usesSkills.passives = {};
   for (const skillId of p.usesSkills.unlockedSkills) {
     const node = SKILL_TREE.get(skillId);
@@ -86,7 +90,7 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): void {
     p.dealsDamage.attack          += e.attack          ?? 0;
     p.mitigatesDamage.plating     += e.plating         ?? 0;
     p.mitigatesDamage.damageReduction += e.damageReduction ?? 0;
-    p.evadesHits.threshold        += e.evasion         ?? 0;
+    if ((e.evasion ?? 0) > 0) evasionChance += 1 / e.evasion!;
     p.performsAttack.attackRange  += e.attackRange     ?? 0;
     attackSpeedPct                 += e.attackSpeedPct  ?? 0;
     p.hasHealth.maxHp             += e.maxHp           ?? 0;
@@ -123,10 +127,19 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): void {
     const def = ITEM_DATABASE.get(defId);
     if (!def) continue;
     for (const [stat, value] of Object.entries(def.statModifiers)) {
-      applyStatModToTarget(p, stat, value);
+      if (stat === 'evasion') {
+        if (value > 0) evasionChance += 1 / value;
+      } else {
+        applyStatModToTarget(p, stat, value);
+      }
     }
     mergePassives(p.usesSkills.passives, def.mechanicEffects);
   }
+
+  // Convert accumulated evasion probability to a 1-in-N threshold.
+  p.evadesHits.threshold = evasionChance > 0
+    ? Math.max(1, Math.round(1 / Math.min(1, evasionChance)))
+    : 0;
 
   // 3b. Reload archetype final multiplier
   if (p.usesSkills.combatArchetype === 'reload') {

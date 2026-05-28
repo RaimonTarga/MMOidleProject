@@ -1,5 +1,6 @@
 import type { SkillNode } from './types';
 import { rootsAndFramesEntries } from './rootsAndFrames';
+export { isMeleeArchetype } from './rootsAndFrames';
 import { t3CombatEntriesA } from './t3CombatA';
 import { t3CombatEntriesB } from './t3CombatB';
 import { addGeneratedPlaceholderNodes } from './generated';

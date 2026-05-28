@@ -129,7 +129,6 @@ function buildFreshSlices(
   pos: Vec2,
 ): PersistedPlayerSlices {
   const equipment = emptyEquipment();
-  equipment.weapon = 'basic-sword';
 
   return {
     isPlayer: {

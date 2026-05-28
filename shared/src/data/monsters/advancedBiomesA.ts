@@ -200,7 +200,7 @@ export const advancedBiomeMonsterEntriesA = [
     id: 'jungle-blowdarter', name: 'Jungle Blowdarter', color: 0x55bb44,
     // Hidden in foliage; fires poisoned darts from long range
     stats: { hp: 130, attack: 19, plating: 0, damageReduction: 0, speed: 42, attackRange: 195, attackCooldown: 2500, pullRange: 245 },
-    behavior: 'melee', attackStyle: 'poison', biome: 'jungle',
+    behavior: 'melee', attackStyle: 'poison', isRanged: true, biome: 'jungle',
     rewards: { essence: 13, essenceType: 'green', level: 1, biomeXp: 38 },
     ai: { wanderRadius: 250, leashRange: 660, idleMinMs: 1200, idleMaxMs: 4000 },
     dotEffect: { damagePerStack: 2, maxStacks: 5, tickIntervalMs: 1000, durationMs: 4500 },

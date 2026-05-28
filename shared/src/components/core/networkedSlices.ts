@@ -137,6 +137,7 @@ export interface IsMonster {
   name: string;
   isBoss: boolean;
   behavior: string;
+  isRanged?: boolean;
   combatArchetype?: CombatArchetype;
 }
 

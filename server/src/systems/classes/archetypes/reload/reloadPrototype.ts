@@ -6,7 +6,7 @@ import { initReloadT3 } from './t3';
 // ── Fallback constants (balanced-frame defaults, used when no frame is unlocked) ─
 
 const RELOAD_MAX_AMMO = 8;
-const RELOAD_TIME_MS  = 2500;
+const RELOAD_TIME_MS  = 2000;
 
 // ── Tick-driven reload completion ─────────────────────────────────────────────
 

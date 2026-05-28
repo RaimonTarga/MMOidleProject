@@ -103,6 +103,7 @@ export interface MonsterView {
   attackStyle: string;
   isBoss: boolean;
   behavior: string;
+  isRanged: boolean;
   combatArchetype?: CombatArchetype;
   activeEffects?: Record<string, number>;
   activeEffectFrames?: Record<string, number>;
@@ -253,6 +254,7 @@ export function composeMonsterView(entity: NetworkedEntity): MonsterView | null 
     attackStyle: entity.dealsDamage.attackStyle,
     isBoss: entity.isMonster.isBoss,
     behavior: entity.isMonster.behavior,
+    isRanged: entity.isMonster.isRanged ?? false,
     combatArchetype: entity.isMonster.combatArchetype,
     activeEffects: entity.hasStatus?.activeEffects,
     activeEffectFrames: entity.hasStatus?.activeEffectFrames,

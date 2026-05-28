@@ -54,7 +54,7 @@ export const earlyBiomeMonsterEntries = [
     id: 'ridge-archer', name: 'Ridge Archer', color: 0x778899,
     // Longer attack range simulates a thrown-rock / sling attack; high HP and punishing damage
     stats: { hp: 200, attack: 16, plating: 0, damageReduction: 0, speed: 35, attackRange: 200, attackCooldown: 2800, pullRange: 350 },
-    behavior: 'melee', attackStyle: 'impact', biome: 'mountain',
+    behavior: 'melee', attackStyle: 'gunshot', isRanged: true, biome: 'mountain',
     rewards: { essence: 15, essenceType: 'blue', level: 1, biomeXp: 52 },
     ai: { wanderRadius: 210, leashRange: 600, idleMinMs: 1500, idleMaxMs: 4500 },
   }],
@@ -148,7 +148,7 @@ export const earlyBiomeMonsterEntries = [
     id: 'bog-witch', name: 'Bog Witch', color: 0x884499,
     // Curses from range; much longer attack range than T1 counterpart
     stats: { hp: 190, attack: 26, plating: 0, damageReduction: 0.05, speed: 38, attackRange: 180, attackCooldown: 2000, pullRange: 215 },
-    behavior: 'melee', attackStyle: 'magic', biome: 'swamp',
+    behavior: 'melee', attackStyle: 'magic', isRanged: true, biome: 'swamp',
     rewards: { essence: 22, essenceType: 'purple', level: 1, biomeXp: 62 },
     ai: { wanderRadius: 200, leashRange: 580, idleMinMs: 1500, idleMaxMs: 4500 },
   }],
@@ -266,7 +266,7 @@ export const earlyBiomeMonsterEntries = [
     id: 'canopy-sprite', name: 'Canopy Sprite', color: 0x88ff44,
     // Hurls thorn volleys from the treetops; long range but lightly armored
     stats: { hp: 150, attack: 23, plating: 0, damageReduction: 0.05, speed: 48, attackRange: 190, attackCooldown: 2800, pullRange: 250 },
-    behavior: 'melee', attackStyle: 'impact', biome: 'forest',
+    behavior: 'melee', attackStyle: 'gunshot', isRanged: true, biome: 'forest',
     rewards: { essence: 17, essenceType: 'green', level: 1, biomeXp: 50 },
     ai: { wanderRadius: 240, leashRange: 650, idleMinMs: 1200, idleMaxMs: 3500 },
   }],
@@ -275,7 +275,7 @@ export const earlyBiomeMonsterEntries = [
     id: 'peak-archer', name: 'Peak Archer', color: 0xaabbcc,
     // Hurls boulders from extreme range; slow but devastating if you stand still
     stats: { hp: 280, attack: 30, plating: 0, damageReduction: 0.05, speed: 28, attackRange: 240, attackCooldown: 3500, pullRange: 265 },
-    behavior: 'melee', attackStyle: 'impact', biome: 'mountain',
+    behavior: 'melee', attackStyle: 'gunshot', isRanged: true, biome: 'mountain',
     rewards: { essence: 26, essenceType: 'blue', level: 1, biomeXp: 75 },
     ai: { wanderRadius: 200, leashRange: 600, idleMinMs: 2000, idleMaxMs: 5000 },
   }],
@@ -284,7 +284,7 @@ export const earlyBiomeMonsterEntries = [
     id: 'savanna-hawk', name: 'Savanna Hawk', color: 0xddcc66,
     // Aerial predator; swoops from distance and retreats — the ranged threat of the plains
     stats: { hp: 90, attack: 22, plating: 0, damageReduction: 0, speed: 50, attackRange: 165, attackCooldown: 2600, pullRange: 245 },
-    behavior: 'melee', attackStyle: 'slash', biome: 'plains',
+    behavior: 'melee', attackStyle: 'slash', isRanged: true, biome: 'plains',
     rewards: { essence: 13, essenceType: 'yellow', level: 1, biomeXp: 38 },
     ai: { wanderRadius: 280, leashRange: 680, idleMinMs: 1000, idleMaxMs: 3200 },
   }],
@@ -303,7 +303,7 @@ export const earlyBiomeMonsterEntries = [
     id: 'cave-gargoyle', name: 'Cave Gargoyle', color: 0x554455,
     // Perches in darkness and hurls stalactites — the only ranged threat in the caverns
     stats: { hp: 430, attack: 30, plating: 0, damageReduction: 0.10, speed: 22, attackRange: 200, attackCooldown: 3200, pullRange: 185 },
-    behavior: 'melee', attackStyle: 'impact', biome: 'cave',
+    behavior: 'melee', attackStyle: 'gunshot', isRanged: true, biome: 'cave',
     rewards: { essence: 35, essenceType: 'red', level: 1, biomeXp: 100 },
     ai: { wanderRadius: 130, leashRange: 460, idleMinMs: 2500, idleMaxMs: 7000 },
   }],

@@ -1,4 +1,20 @@
 import type { SkillNode } from './types';
+import type { CombatArchetype } from '../../types/combat';
+
+const MELEE_ARCHETYPES = new Set<CombatArchetype>(['cadence', 'cooldown']);
+
+/**
+ * Returns true if the archetype fights in melee.
+ * Null (no class selected) defaults to melee — base attack range is 12px.
+ * Range nodes can override this in the future by passing unlockedSkills.
+ */
+export function isMeleeArchetype(archetype: CombatArchetype, unlockedSkills?: string[]): boolean {
+  if (unlockedSkills) {
+    if (unlockedSkills.includes('range-far') || unlockedSkills.includes('range-mid')) return false;
+    if (unlockedSkills.includes('range-close')) return true;
+  }
+  return archetype === null || MELEE_ARCHETYPES.has(archetype);
+}
 
 export const rootsAndFramesEntries = [
   // ── Tier 0: Class roots ────────────────────────────────────────────────────
@@ -13,7 +29,7 @@ export const rootsAndFramesEntries = [
     classId: 'cadence-root', subVariantId: null,
     parent: null, children: [],
     description: 'Find the rhythm of battle. Every few hits your attack surges with accumulated force. A balanced fighter — periodic bursts of healing sustain you through prolonged engagements.',
-    cost: 1, statEffects: { attack: 8, maxHp: 18, plating: 2, damageReduction: 0.03 },
+    cost: 1, statEffects: { attack: 12, maxHp: 30, plating: 2, damageReduction: 0.04, speed: 5 },
     mechanicEffects: { 'defense.regen-burst-pct': 0.06, 'defense.regen-burst-interval-ms': 5000 } as Record<string, number>,
   }],
 
@@ -23,7 +39,7 @@ export const rootsAndFramesEntries = [
     classId: 'cooldown-root', subVariantId: null,
     parent: null, children: [],
     description: 'Patience is power. Prepare a devastating strike on a set cycle. Your heavy bearing brings substantial bulk and damage reduction, and 12% of your regen rate applies even while you fight.',
-    cost: 1, statEffects: { attack: 6, maxHp: 28, plating: 3, damageReduction: 0.05, speed: -10 },
+    cost: 1, statEffects: { attack: 14, maxHp: 50, plating: 3, damageReduction: 0.08, speed: -10 },
     mechanicEffects: { 'defense.in-combat-regen-pct': 0.12 } as Record<string, number>,
   }],
 
@@ -33,7 +49,7 @@ export const rootsAndFramesEntries = [
     classId: 'reload-root', subVariantId: null,
     parent: null, children: [],
     description: 'Unleash a rapid clip then reload. Your speed is doubled and damage per shot halved as a fundamental multiplier — fights from range naturally and weaves around incoming blows.',
-    cost: 1, statEffects: { speed: 12, maxHp: -8, attackRange: 105, evasion: 10 },
+    cost: 1, statEffects: { attack: 4, maxHp: 20, attackSpeedPct: 0.15, attackRange: 120, evasion: 10, speed: 15 },
   }],
 
 
@@ -42,7 +58,7 @@ export const rootsAndFramesEntries = [
     classId: 'energy-root', subVariantId: null,
     parent: null, children: [],
     description: 'Channel each blow into a building surge of power. Your light build fights from range and your energy feeds a periodic shield that absorbs the hits that do reach you.',
-    cost: 1, statEffects: { attack: 5, speed: 14, attackSpeedPct: 0.10, maxHp: -5, attackRange: 115, plating: 1 },
+    cost: 1, statEffects: { attack: 11, maxHp: 10, attackSpeedPct: 0.25,  attackRange: 130, speed: 15 },
     mechanicEffects: { 'defense.shield-pct': 0.06, 'defense.shield-interval-ms': 14000, 'defense.shield-duration-ms': 14000 } as Record<string, number>,
   }],
 
@@ -52,7 +68,7 @@ export const rootsAndFramesEntries = [
     classId: 'dot-root', subVariantId: null,
     parent: null, children: [],
     description: 'Your strikes leave lingering wounds. Stack the pain until nothing survives. Your toxin-hardened body resists DoT damage by 12% and converts 10% of incoming direct hits into delayed damage you can outlast.',
-    cost: 1, statEffects: { attack: 6, maxHp: 18, plating: 2, damageReduction: 0.03, hpRegen: 1, attackRange: 50 },
+    cost: 1, statEffects: { attack: 12, maxHp: 35, plating: 1, damageReduction: 0.04, hpRegen: 2, attackRange: 60, speed: 5 },
     mechanicEffects: { 'defense.dot-resistance': 0.12, 'defense.hit-to-dot-pct': 0.10 } as Record<string, number>,
   }],
 
@@ -156,7 +172,7 @@ export const rootsAndFramesEntries = [
     parent: 'reload-root', children: [],
     description: 'A steady burst fighter. Standard 8-round clip, 2.5 s reload, modest avoidance — tempo and staying power in balance.',
     cost: 1, statEffects: { attack: 9, maxHp: 10, speed: 6, hpRegen: 2, evasion: 3 },
-    mechanicEffects: { 'reload.max-ammo': 8, 'reload.reload-time-ms': 2500 } as Record<string, number>,
+    mechanicEffects: { 'reload.max-ammo': 10, 'reload.reload-time-ms': 2500 } as Record<string, number>,
   }],
 
   ['reload-heavy', {
@@ -165,7 +181,7 @@ export const rootsAndFramesEntries = [
     parent: 'reload-root', children: [],
     description: 'Slower but harder to put down. Large 12-round clip for sustained bursting, but reloading takes 4 s — plan your downtime.',
     cost: 1, statEffects: { attack: 12, maxHp: 32, plating: 5, hpRegen: 4, speed: -12, attackSpeedPct: -0.10 },
-    mechanicEffects: { 'reload.max-ammo': 12, 'reload.reload-time-ms': 4000 } as Record<string, number>,
+    mechanicEffects: { 'reload.max-ammo': 20, 'reload.reload-time-ms': 4000 } as Record<string, number>,
   }],
 
 

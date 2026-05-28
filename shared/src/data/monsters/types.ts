@@ -72,6 +72,8 @@ export interface MonsterDefinition {
   };
   /** Combat style — only 'melee' exists; extend union for ranged/caster/etc. */
   behavior: 'melee';
+  /** True for monsters that attack from range and should not play a lunge animation. */
+  isRanged?: boolean;
   /** Visual style for attack animations: 'slash' | 'impact' | 'poison' | 'magic' */
   attackStyle: string;
   /** Biome group this monster belongs to — must match a BiomeDefinition id. */

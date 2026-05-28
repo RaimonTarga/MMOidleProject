@@ -1,4 +1,4 @@
-import { GAME_CONFIG, type CombatArchetype, type CombatEvent, type PlayerView, type Vec2 } from '@mmo-idle/shared';
+import { GAME_CONFIG, isMeleeArchetype, type CombatArchetype, type CombatEvent, type PlayerView, type Vec2 } from '@mmo-idle/shared';
 import { combatLog } from '../combatLog';
 import { activateLaserBeam } from '../fx/laser';
 import { playOneShotEffect, spawnDamageNumber } from '../fx/particles';
@@ -141,7 +141,8 @@ const ATTACK_FX_BY_STYLE: Record<string, AttackFxFn> = {
   frost:  ({ scene, to }) => fxFrost(scene, to.x, to.y),
   fire:   ({ scene, to }) => fxFire(scene, to.x, to.y),
   void:   ({ scene, to }) => fxVoid(scene, to.x, to.y),
-  impact: ({ scene, ev, to }) => fxImpact(scene, to.x, to.y, ev.execution),
+  impact:   ({ scene, ev, to }) => fxImpact(scene, to.x, to.y, ev.execution),
+  gunshot:  ({ scene, from, to }) => fxGunshot(scene, from.x, from.y, to.x, to.y),
 };
 
 export function dispatchCombatEvent(state: RenderState, ev: CombatEvent, scene: GameScene): void {
@@ -236,7 +237,7 @@ function runFxForAttackStyle(
     playOneShotEffect(scene, effectId, to, { scale: targetEffectScale });
   }
 
-  if (!isLaser && !isFlashTeleport && player.attackRange <= 150 && state.ownId && targetInterp) {
+  if (!isLaser && !isFlashTeleport && isMeleeArchetype(player.combatArchetype, player.unlockedSkills) && state.ownId && targetInterp) {
     applyLunge(state, state.ownId, { ...targetInterp.base }, scene);
   }
 }

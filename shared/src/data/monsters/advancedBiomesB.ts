@@ -152,7 +152,7 @@ export const advancedBiomeMonsterEntriesB = [
     id: 'dune-asp', name: 'Dune Asp', color: 0xccaa55,
     // Strikes from distance and writhes unpredictably — evasion + range is a dangerous combo
     stats: { hp: 135, attack: 22, plating: 0, damageReduction: 0.05, speed: 48, attackRange: 185, attackCooldown: 2400, pullRange: 250 },
-    behavior: 'melee', attackStyle: 'poison', biome: 'desert',
+    behavior: 'melee', attackStyle: 'poison', isRanged: true, biome: 'desert',
     rewards: { essence: 14, essenceType: 'yellow', level: 1, biomeXp: 40 },
     ai: { wanderRadius: 260, leashRange: 660, idleMinMs: 1200, idleMaxMs: 4000 },
     evadeEvery: 5,

@@ -1,4 +1,5 @@
 import type { PlayerView } from "@mmo-idle/shared";
+import { isMeleeArchetype } from "@mmo-idle/shared";
 import { setAutoPath } from "../hud/atoms";
 import { combatLog } from "../combatLog";
 import { getPlayerShadowOffset } from "../sprites";
@@ -190,7 +191,7 @@ export function upsertPlayer(
             player.combatArchetype === "dot" ? getDotPath(player) : undefined,
         },
       );
-      if (player.attackRange <= 150) {
+      if (isMeleeArchetype(player.combatArchetype, player.unlockedSkills)) {
         applyLunge(state, player.id, { ...targetInterp.base }, scene);
       }
     }

@@ -84,6 +84,13 @@ export function updateAutoTargets(world: World) {
 
     if (!target) continue;
 
+    // Reload OOC hold: while the clip is reloading and no enemy has aggroed, stay put.
+    // If something aggros the player (targetIsAggroed), fall through to normal movement.
+    if (player.usesReload && player.usesReload.reloadingMs > 0 && !targetIsAggroed) {
+      stopEntity(world, player);
+      continue;
+    }
+
     const targetPos = target.hasPosition.current;
     const dx = targetPos.x - playerPos.x;
     const dy = targetPos.y - playerPos.y;
