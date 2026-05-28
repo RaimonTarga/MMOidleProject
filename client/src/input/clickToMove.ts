@@ -1,13 +1,35 @@
-import type { Vec2 } from '@mmo-idle/shared';
-import { sendMove } from '../net/intents';
+import type { PlayerView, Vec2 } from '@mmo-idle/shared';
+import { sendCommandSummons, sendMove } from '../net/intents';
 import type { GameScene } from '../scenes/GameScene';
 import { cancelAutoPath, setAutoMode } from './autoPath';
+import { isHoldStill } from './movement';
+
+function isSummoner(player: PlayerView | undefined): boolean {
+  return player?.combatArchetype === 'summoner' && (player.summonsMinions ?? 0) > 0;
+}
+
+function showTargetMarker(scene: GameScene, dest: Vec2): void {
+  scene.targetMarker.setPosition(dest.x, dest.y).setVisible(true);
+}
 
 export function attachClickToMove(scene: GameScene): void {
   scene.input.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
     if (!scene.myId) return;
 
     const dest: Vec2 = { x: Math.round(pointer.worldX), y: Math.round(pointer.worldY) };
+    const player = scene.state.ownId
+      ? scene.state.view.get(scene.state.ownId) as PlayerView | undefined
+      : undefined;
+
+    if (isHoldStill()) {
+      if (scene.autoMode) setAutoMode(scene, false);
+      if (scene.autoPath.length > 0) cancelAutoPath(scene);
+      showTargetMarker(scene, dest);
+      if (isSummoner(player)) {
+        sendCommandSummons(scene.socket, dest);
+      }
+      return;
+    }
 
     if (scene.autoMode) setAutoMode(scene, false);
     if (scene.autoPath.length > 0) cancelAutoPath(scene);
@@ -21,6 +43,6 @@ export function attachClickToMove(scene: GameScene): void {
       transform.target = dest;
     }
 
-    scene.targetMarker.setPosition(dest.x, dest.y).setVisible(true);
+    showTargetMarker(scene, dest);
   });
 }

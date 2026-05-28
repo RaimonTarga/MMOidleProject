@@ -10,6 +10,7 @@ import {
 } from './t3';
 import type { World } from '../../../../world/World';
 import { attachMarker, detachMarkerIfNoEffect } from '../../../../ecs/markerHelpers';
+import { canApplyPlayerDebuff } from '../summoner/t3/core/debuffGuard';
 
 // Re-export the pure tick formula from shared so existing importers don't change paths.
 export { computeScaledDotDamage };
@@ -203,7 +204,10 @@ export function initDotArchetype(): void {
     const monsterDef = MONSTER_DATABASE.get(ctx.attacker.isMonster.monsterTypeId);
     if (!monsterDef?.dotEffect) return;
 
-    const playerCombatState = ctx.defender.tracksCombat;
+    const player = ctx.defender;
+    if (!canApplyPlayerDebuff(player)) return;
+
+    const playerCombatState = player.tracksCombat;
 
     const { damagePerStack, maxStacks, tickIntervalMs } = monsterDef.dotEffect;
     const durationMs = monsterDef.dotEffect.durationMs ?? DOT_DURATION_MS;

@@ -46,8 +46,9 @@ export function updatePartyFollow(world: World): void {
     }
 
     // Same zone: assist against whatever the leader is attacking.
+    // Summoner followers stay back — minions fight; they only trail the leader.
     const leaderTargetId = leader.hasAttackTarget?.targetId;
-    if (leaderTargetId) {
+    if (leaderTargetId && player.usesSkills.combatArchetype !== 'summoner') {
       const monster = world.getMonsterEntity(leaderTargetId);
       if (monster && monster.hasPosition.nodeId === playerNode) {
         steerTowardTarget(world, player, monster);

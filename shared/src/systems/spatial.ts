@@ -149,6 +149,23 @@ export function inAttackRange(a: PosHitbox, b: PosHitbox, range: number): boolea
   return hitboxGap(a, b) <= range;
 }
 
+/** True when `point` lies inside any rect of `ph`. */
+export function pointInHitbox(point: Vec2, ph: PosHitbox): boolean {
+  for (const rect of ph.rects) {
+    const cx = ph.pos.x + rect.offsetX;
+    const cy = ph.pos.y + rect.offsetY;
+    if (
+      point.x >= cx - rect.halfW &&
+      point.x <= cx + rect.halfW &&
+      point.y >= cy - rect.halfH &&
+      point.y <= cy + rect.halfH
+    ) {
+      return true;
+    }
+  }
+  return false;
+}
+
 export function posHitboxFromEntity(entity: {
   hasPosition: HasPosition;
   hasHitbox?: HasHitbox;

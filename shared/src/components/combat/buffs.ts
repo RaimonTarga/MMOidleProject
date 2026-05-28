@@ -28,6 +28,10 @@ export const BUFF_IDS = [
   'defense-absorb',
   'defense-burst',
   'defense-debt',
+  'summoner-howl-banner',
+  'summoner-trample-boon',
+  'summoner-debuff-immune',
+  'debuff-stunned',
 ] as const;
 
 export type BuffId = typeof BUFF_IDS[number];
@@ -41,7 +45,8 @@ export type BuffCategory =
   | 'dot-frost'
   | 'dot-frozen'
   | 'weapon'
-  | 'neutral';
+  | 'neutral'
+  | 'summoner';
 
 export type BuffShape = 'square' | 'circle' | 'diamond' | 'small-square';
 

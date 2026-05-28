@@ -49,6 +49,8 @@ export function updateAutoTargets(world: World) {
     // Party followers are steered by updatePartyFollow, not by their own targeting.
     if (isPartyFollower(player)) continue;
     if (player.hasManualMoveIntent) continue;
+    // Summoner auto-combat is driven by minion AI; the player does not chase or strike.
+    if (player.usesSkills.combatArchetype === 'summoner') continue;
 
     if (player.hasAutoTraversePath) {
       if (player.hasAutoTraversePath.targetNodeId !== player.hasPosition.nodeId) continue;
@@ -70,7 +72,9 @@ export function updateAutoTargets(world: World) {
 
     for (const monster of monsters) {
       if (skipBosses && monster.isMonster.isBoss) continue;
-      const aggroedOnPlayer = monster.hasAggroTarget?.playerId === player.isPlayer.id;
+      const aggroedOnPlayer =
+        monster.hasAggroTarget?.targetKind === 'player' &&
+        monster.hasAggroTarget.targetId === player.isPlayer.id;
       const d = distanceSq(monster.hasPosition.current, playerPos);
 
       if (aggroedOnPlayer) {
@@ -103,7 +107,9 @@ export function steerTowardTarget(
   player: PlayerEntity,
   target: MonsterEntity,
 ): void {
-  const targetIsAggroed = target.hasAggroTarget?.playerId === player.isPlayer.id;
+  const targetIsAggroed =
+    target.hasAggroTarget?.targetKind === 'player' &&
+    target.hasAggroTarget.targetId === player.isPlayer.id;
 
   // Reload OOC hold: while the clip is reloading and no enemy has aggroed, stay put.
   // If something aggros the player (targetIsAggroed), fall through to normal movement.

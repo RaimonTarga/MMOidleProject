@@ -29,8 +29,14 @@ export const PLAYER_FRAMES: Record<string, string> = {
   'reload-heavy':    'heavy_reload.png',
 };
 
-/** Key: monsterTypeId (matches MONSTER_DATABASE keys exactly). */
+/** Key: monsterTypeId (matches MONSTER_DATABASE keys exactly).
+ *
+ * Note: `slime` is the summoner-archetype minion. It is not a `MonsterDefinition`
+ * entry — it is rendered as a minion entity, aliased to the swamp slime spritesheet
+ * so we get a creature look without authoring a new asset.
+ */
 export const MONSTER_FRAMES: Record<string, string> = {
+  'slime':        'swampslime.png',
   'tiny-slime':   'tinyslime.png',
 
   'forest-slime': 'greenslime.png',

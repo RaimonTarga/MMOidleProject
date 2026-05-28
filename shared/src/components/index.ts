@@ -34,3 +34,5 @@ export * from './archetypes/energy/inAcChargePhase';
 export * from './archetypes/energy/inAcDischarge';
 export * from './archetypes/energy/usesEnergy';
 export * from './archetypes/reload/usesReload';
+export * from './archetypes/summoner/isMinion';
+export * from './archetypes/summoner/summonsMinions';

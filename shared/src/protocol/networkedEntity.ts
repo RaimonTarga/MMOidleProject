@@ -14,12 +14,14 @@ import type {
   HoldsInventory,
   IsChanneling,
   InParty,
+  IsMinion,
   IsMonster,
   IsMoving,
   IsPlayer,
   MitigatesDamage,
   PerformsAttack,
   ShowsSacred,
+  SummonsMinions,
   TracksProgression,
   UsesAutocombat,
   UsesCadence,
@@ -30,7 +32,7 @@ import type {
 } from '../components';
 
 export type NetworkId = string;
-export type EntityKind = 'player' | 'monster';
+export type EntityKind = 'player' | 'monster' | 'minion';
 
 export const NETWORKED_PLAYER_KEYS = [
   'isPlayer',
@@ -59,6 +61,7 @@ export const NETWORKED_PLAYER_KEYS = [
   'usesCooldown',
   'usesReload',
   'isChanneling',
+  'summonsMinions',
 ] as const;
 
 export const NETWORKED_MONSTER_KEYS = [
@@ -75,13 +78,31 @@ export const NETWORKED_MONSTER_KEYS = [
   'hasStatus',
 ] as const;
 
+export const NETWORKED_MINION_KEYS = [
+  'isMinion',
+  'hasPosition',
+  'hasHitbox',
+  'isMoving',
+  'hasAttackTarget',
+  'hasHealth',
+  'dealsDamage',
+  'performsAttack',
+  'mitigatesDamage',
+  'hasStatus',
+] as const;
+
 export type NetworkedPlayerKey = (typeof NETWORKED_PLAYER_KEYS)[number];
 export type NetworkedMonsterKey = (typeof NETWORKED_MONSTER_KEYS)[number];
-export type NetworkedComponentKey = NetworkedPlayerKey | NetworkedMonsterKey;
+export type NetworkedMinionKey = (typeof NETWORKED_MINION_KEYS)[number];
+export type NetworkedComponentKey =
+  | NetworkedPlayerKey
+  | NetworkedMonsterKey
+  | NetworkedMinionKey;
 
 export interface NetworkedEntity {
   isPlayer?: IsPlayer;
   isMonster?: IsMonster;
+  isMinion?: IsMinion;
   hasPosition?: HasPosition;
   hasHitbox?: HasHitbox;
   isMoving?: IsMoving;
@@ -100,6 +121,7 @@ export interface NetworkedEntity {
   hasStatus?: HasStatus;
   showsSacred?: ShowsSacred;
   inParty?: InParty;
+  summonsMinions?: SummonsMinions;
   usesCadence?: UsesCadence;
   usesEnergy?: UsesEnergy;
   appliesDots?: AppliesDots;
@@ -113,6 +135,7 @@ export interface NetworkedEntity {
 const NETWORKED_COMPONENT_KEY_SET: ReadonlySet<NetworkedComponentKey> = new Set([
   ...NETWORKED_PLAYER_KEYS,
   ...NETWORKED_MONSTER_KEYS,
+  ...NETWORKED_MINION_KEYS,
 ]);
 
 export function isNetworkedComponentKey(
@@ -125,5 +148,7 @@ export function isNetworkedComponentKey(
 }
 
 export function networkedKeysForKind(kind: EntityKind): readonly NetworkedComponentKey[] {
-  return kind === 'player' ? NETWORKED_PLAYER_KEYS : NETWORKED_MONSTER_KEYS;
+  if (kind === 'player')  return NETWORKED_PLAYER_KEYS;
+  if (kind === 'monster') return NETWORKED_MONSTER_KEYS;
+  return NETWORKED_MINION_KEYS;
 }

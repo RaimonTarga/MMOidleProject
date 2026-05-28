@@ -1,4 +1,4 @@
-export type CombatArchetype = 'cadence' | 'cooldown' | 'energy' | 'reload' | 'dot' | null;
+export type CombatArchetype = 'cadence' | 'cooldown' | 'energy' | 'reload' | 'dot' | 'summoner' | null;
 
 export interface ShieldState {
   amount: number;

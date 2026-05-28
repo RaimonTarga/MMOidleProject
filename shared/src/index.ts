@@ -14,6 +14,7 @@ export * from './systems/damage';
 export * from './systems/spatial';
 export * from './systems/biomeProgress';
 export * from './systems/itemUpgrades';
+export * from './systems/summonerHud';
 export * from './systems/weaponFamilies';
 export * from './hitbox/types';
 export * from './hitbox/constants';

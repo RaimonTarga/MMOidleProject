@@ -4,6 +4,7 @@ import { GAME_CONFIG, pointFromMotion } from '@mmo-idle/shared';
 import { NODE_REGISTRY } from '../../world/nodeRegistry';
 import { setEntityMotion, stopEntity } from './movement';
 import { thawNode } from '../../world/nodeLifecycle';
+import { relocateMinionsForOwner } from '../classes/archetypes/summoner';
 
 // Pixels from the boundary that fire a transition. Must match GATE_THICK in GameScene.
 const EXIT_TRIGGER = 20;
@@ -113,6 +114,9 @@ export function updateTransitions(world: World): void {
     }
 
     stopEntity(world, entity);
+
+    // Carry live summons into the new node at the player's entry point.
+    relocateMinionsForOwner(world, entity);
 
     console.log(`[trans] ✓ ${entity.isPlayer.name} ${fromNodeId} → ${targetNodeId} via ${direction}  pos=(${Math.round(position.current.x)}, ${Math.round(position.current.y)})`);
   }

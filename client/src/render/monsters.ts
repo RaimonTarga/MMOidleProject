@@ -1,9 +1,8 @@
 import type { MonsterView } from '@mmo-idle/shared';
-import { getMonsterShadowOffset } from '../sprites';
 import type { RenderState } from './state';
 import type { GameScene } from '../scenes/GameScene';
 import { ensureSprite, updateSpriteFrame } from './sprites';
-import { ensureShadow, destroyShadow } from './shadows';
+import { ensureShadow } from './shadows';
 import { ensureLabel, destroyLabel } from './labels';
 import { ensureHpBar } from './healthBars';
 import { ensureCdBar } from './cooldownBars';
@@ -24,13 +23,9 @@ export function upsertMonster(
     state.view.set(monster.id, monster);
 
     const spriteSize = monster.isBoss ? 80 : 64;
-    const shadowW = monster.isBoss ? 64 : 52;
-    const shadowH = monster.isBoss ? 18 : 14;
-    const shadowOffsetY = getMonsterShadowOffset(monster.monsterTypeId);
 
     state.spriteMeta.set(monster.id, {
       currentFrame: null,
-      shadowOffsetY,
       barOffsetY: monster.isBoss ? 50 : 40,
       entityName: monster.name,
       monsterBehavior: monster.behavior,
@@ -53,9 +48,7 @@ export function upsertMonster(
       attackRange: monster.attackRange,
     });
 
-    ensureShadow(state, monster.id, monster.pos, shadowOffsetY, scene, {
-      width: shadowW,
-      height: shadowH,
+    ensureShadow(state, monster.id, monster.pos, scene, {
       fillColor: 0x000000,
       fillAlpha: monster.isBoss ? 0.55 : 0.45,
     });
@@ -104,7 +97,6 @@ export function upsertMonster(
     meta.entityName = monster.name;
     meta.monsterBehavior = monster.behavior;
     meta.monsterIsRanged = monster.isRanged;
-    meta.shadowOffsetY = getMonsterShadowOffset(monster.monsterTypeId);
   }
   if (typeChanged) {
     state.debugRanges.set(monster.id, {
@@ -112,16 +104,8 @@ export function upsertMonster(
       leashRange: monster.leashRange,
       attackRange: monster.attackRange,
     });
-    destroyShadow(state, monster.id);
+    state.shadow.get(monster.id)?.setFillStyle(0x000000, monster.isBoss ? 0.55 : 0.45);
     destroyLabel(state, monster.id);
-    const shadowW = monster.isBoss ? 64 : 52;
-    const shadowH = monster.isBoss ? 18 : 14;
-    ensureShadow(state, monster.id, monster.pos, meta?.shadowOffsetY ?? 0, scene, {
-      width: shadowW,
-      height: shadowH,
-      fillColor: 0x000000,
-      fillAlpha: monster.isBoss ? 0.55 : 0.45,
-    });
     ensureLabel(state, monster.id, monster, scene);
   }
   const spriteSize = monster.isBoss ? 80 : 64;

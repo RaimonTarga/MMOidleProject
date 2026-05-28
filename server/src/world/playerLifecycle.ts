@@ -4,6 +4,7 @@ import type { PlayerEntity } from "../ecs/entity";
 import type { PersistedPlayerSlices } from "../db/playerRepo";
 import { resolvePlayerHitbox } from "../hitbox/resolve";
 import { freezeNode } from "./nodeLifecycle";
+import { despawnMinionsForOwner } from "../systems/classes/archetypes/summoner";
 
 /**
  * Attach hydrated player slices to the ECS world with fresh combat tracking.
@@ -64,6 +65,7 @@ export function attachPlayerEntity(
 export function detachPlayerEntity(world: World, playerId: string): void {
   const e = getPlayerEntity(world, playerId);
   if (e) {
+    despawnMinionsForOwner(world, e);
     const nodeId = e.hasPosition.nodeId;
     const before = world.countPlayersInNode(nodeId);
     world.decrementPlayersInNode(nodeId);

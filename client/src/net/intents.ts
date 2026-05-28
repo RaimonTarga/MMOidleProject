@@ -5,6 +5,10 @@ export function sendMove(socket: GameSocket, pos: Vec2): void {
   socket.emit('player:move', pos);
 }
 
+export function sendCommandSummons(socket: GameSocket, pos: Vec2): void {
+  socket.emit('player:commandSummons', pos);
+}
+
 export function sendSetAuto(socket: GameSocket, enabled: boolean): void {
   socket.emit('player:setAuto', enabled);
 }

@@ -32,6 +32,8 @@ export interface ServerToClientEvents {
 export interface ClientToServerEvents {
   /** Set the player's movement destination (click-to-move or AI-issued). */
   'player:move': (pos: Vec2) => void;
+  /** Summoner: shift+click command — focus a clicked enemy or move minions to a point. */
+  'player:commandSummons': (pos: Vec2) => void;
   /** Enable or disable server-side auto-targeting for this player. */
   'player:setAuto': (enabled: boolean) => void;
   /** Enable or disable server-side auto-traverse when auto-combat is on. */

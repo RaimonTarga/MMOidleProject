@@ -11,6 +11,7 @@ import { applyDelta } from "../../net/deltaApplier";
 import { ATLAS_KEY, BIOME_TEXTURES } from "../../sprites";
 import { stepInterpolation, getOwnBase } from "../../render/interpolation";
 import { drawShadows } from "../../render/shadows";
+import { setShadowDefs } from "../../render/shadowDefs";
 import { drawLabels } from "../../render/labels";
 import { drawHealthBars } from "../../render/healthBars";
 import { drawCooldownBars } from "../../render/cooldownBars";
@@ -36,6 +37,7 @@ import { showAscensionOverlay, showDeathOverlay } from "./screenOverlays";
 import type { GameScene } from "./GameScene";
 
 const CAMERA_HOLD_MARGIN = 80;
+const SHADOW_DEFS_KEY = "shadowDefs";
 
 function isPointComfortablyOnScreen(
   scene: GameScene,
@@ -53,6 +55,7 @@ function isPointComfortablyOnScreen(
 
 export function preloadGameAssets(scene: GameScene): void {
   scene.load.atlas(ATLAS_KEY, "/assets/sprites.png", "/assets/sprites.json");
+  scene.load.json(SHADOW_DEFS_KEY, "/assets/shadows.json");
   for (const def of EFFECT_DEFS) {
     if (def.rowSlices) {
       scene.load.image(def.key, def.file);
@@ -69,6 +72,7 @@ export function preloadGameAssets(scene: GameScene): void {
 }
 
 export function createGameScene(scene: GameScene): void {
+  setShadowDefs(scene.cache.json.get(SHADOW_DEFS_KEY));
   initParticleTextures(scene);
   initEffectFrames(scene);
 

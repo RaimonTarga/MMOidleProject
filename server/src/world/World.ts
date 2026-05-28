@@ -38,11 +38,12 @@ import { updateTestRoomInteract } from "../systems/world/testRoomInteract";
 import { NODE_REGISTRY } from "./nodeRegistry";
 import { IS_DEV } from "../env";
 import { createEcsWorld, type EcsWorld } from "../ecs/world";
-import type { EntityId, MonsterEntity, PlayerEntity } from "../ecs/entity";
+import type { EntityId, MinionEntity, MonsterEntity, PlayerEntity } from "../ecs/entity";
 import type { PersistedPlayerSlices } from "../db/playerRepo";
 import { DirtyTracker, type DirtyDrain } from "../ecs/dirtyTracker";
 import type { HasKnockback } from "../systems/combat/damage/knockback";
 import * as monsterLifecycle from "./monsterLifecycle";
+import * as minionLifecycle from "./minionLifecycle";
 import * as playerLifecycle from "./playerLifecycle";
 import {
   initTestRoom,
@@ -119,6 +120,25 @@ export class World {
   readonly dotPlayers = this.playerEntities.with("appliesDots");
   readonly chillingPlayers = this.playerEntities.with("chillsTarget");
   readonly cooldownPlayers = this.playerEntities.with("usesCooldown");
+  readonly summonerPlayers = this.playerEntities.with("summonsMinions");
+
+  /**
+   * Canonical minion query. All slices stamped together in
+   * `spawnMinionForOwner`, so the return type matches `MinionEntity`.
+   */
+  readonly minionEntities = this.ecs.with(
+    "isMinion",
+    "controlsMinion",
+    "hasPosition",
+    "hasHitbox",
+    "hasHealth",
+    "dealsDamage",
+    "performsAttack",
+    "mitigatesDamage",
+    "tracksCombat",
+    "hasStatus",
+  );
+  readonly movingMinions = this.minionEntities.with("isMoving");
   readonly reloadPlayers = this.playerEntities.with("usesReload");
   readonly dottedPlayers = this.playerEntities.with("hasDot");
   readonly movingPlayers = this.playerEntities.with("isMoving");
@@ -143,6 +163,7 @@ export class World {
   testRoomEngagedBossId: string | null = null;
 
   readonly nextMonsterIdByNode = new Map<string, number>();
+  readonly nextMinionIdByOwner = new Map<string, number>();
   tickCounter = 0;
   readonly dirty = new DirtyTracker();
   readonly telemetry = new NodeTelemetry();
@@ -157,6 +178,7 @@ export class World {
 
   readonly playerById = new Map<EntityId, PlayerEntity>();
   readonly monsterById = new Map<EntityId, MonsterEntity>();
+  readonly minionById = new Map<EntityId, MinionEntity>();
   private readonly nodeMembership = new Map<string, Set<string>>();
 
   constructor(nodeId = "node-5-5") {
@@ -174,11 +196,14 @@ export class World {
         this.playerById.set(entity.entityId, entity as PlayerEntity);
       } else if (entity.isMonster) {
         this.monsterById.set(entity.entityId, entity as MonsterEntity);
+      } else if (entity.isMinion) {
+        this.minionById.set(entity.entityId, entity as MinionEntity);
       }
     });
     this.ecs.onEntityRemoved.subscribe((entity) => {
       this.playerById.delete(entity.entityId);
       this.monsterById.delete(entity.entityId);
+      this.minionById.delete(entity.entityId);
     });
   }
 
@@ -279,6 +304,29 @@ export class World {
 
   removeMonsterEntity(id: string): void {
     monsterLifecycle.removeMonsterEntity(this, id);
+  }
+
+  // ── MINION LIFECYCLE (delegators) ──────────────────────────────
+  getMinionEntity(id: string): MinionEntity | undefined {
+    return minionLifecycle.getMinionEntity(this, id);
+  }
+
+  hasMinion(id: string): boolean {
+    return minionLifecycle.hasMinion(this, id);
+  }
+
+  removeMinionEntity(id: string): void {
+    minionLifecycle.removeMinionEntity(this, id);
+  }
+
+  minionEntitiesInNode(nodeId: string): IterableIterator<MinionEntity> {
+    return minionLifecycle.minionEntitiesInNode(this, nodeId);
+  }
+
+  allocMinionId(ownerPlayerId: string): string {
+    const next = (this.nextMinionIdByOwner.get(ownerPlayerId) ?? 0) + 1;
+    this.nextMinionIdByOwner.set(ownerPlayerId, next);
+    return `minion_${ownerPlayerId}-${next}`;
   }
 
   attachPlayerEntity(

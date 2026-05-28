@@ -3,6 +3,7 @@ import type {
   NetworkedEntity,
   PlayerView,
   MonsterView,
+  MinionView,
   Vec2,
 } from "@mmo-idle/shared";
 
@@ -10,9 +11,9 @@ export type NetworkId = string;
 
 export interface RenderState {
   ids: Set<NetworkId>;
-  kind: Map<NetworkId, "player" | "monster">;
+  kind: Map<NetworkId, "player" | "monster" | "minion">;
   entity: Map<NetworkId, NetworkedEntity>;
-  view: Map<NetworkId, PlayerView | MonsterView>;
+  view: Map<NetworkId, PlayerView | MonsterView | MinionView>;
 
   transform: Map<
     NetworkId,
@@ -65,7 +66,6 @@ export interface RenderState {
     NetworkId,
     {
       currentFrame: string | null;
-      shadowOffsetY: number;
       shadowLevel?: number;
       barOffsetY: number;
       entityName?: string;

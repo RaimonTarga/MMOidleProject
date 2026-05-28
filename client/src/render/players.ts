@@ -2,7 +2,6 @@ import type { PlayerView } from "@mmo-idle/shared";
 import { isMeleeArchetype } from "@mmo-idle/shared";
 import { setAutoPath } from "../hud/atoms";
 import { combatLog } from "../combatLog";
-import { getPlayerShadowOffset } from "../sprites";
 import type { RenderState } from "./state";
 import type { GameScene } from "../scenes/GameScene";
 import {
@@ -35,10 +34,8 @@ export function upsertPlayer(
     state.kind.set(player.id, "player");
     state.view.set(player.id, player);
 
-    const shadowOffsetY = getPlayerShadowOffset();
     state.spriteMeta.set(player.id, {
       currentFrame: null,
-      shadowOffsetY,
       shadowLevel: player.playerTier,
       barOffsetY: 40,
       isOwn,
@@ -55,9 +52,7 @@ export function upsertPlayer(
     });
 
     const color = isOwn ? 0x44ff88 : 0x4488ff;
-    ensureShadow(state, player.id, player.pos, shadowOffsetY, scene, {
-      width: 52,
-      height: 14,
+    ensureShadow(state, player.id, player.pos, scene, {
       playerTier: player.playerTier,
     });
     ensureSprite(state, player.id, player, scene, {
@@ -126,7 +121,12 @@ export function upsertPlayer(
     } else {
       resetSpriteTint(sprite, color);
     }
-    if (isOwn && tint !== null && player.lastAttackAt > prevAttackAt) {
+    if (
+      isOwn &&
+      tint !== null &&
+      player.lastAttackAt > prevAttackAt &&
+      (player.summonsMinions ?? 0) === 0
+    ) {
       spawnFlashAttackAfterimage(state, player, scene);
     }
   }
@@ -173,7 +173,12 @@ export function upsertPlayer(
     }
   }
 
-  if (!isOwn && player.lastAttackAt > prevAttackAt && player.attackTargetId) {
+  if (
+    !isOwn &&
+    (player.summonsMinions ?? 0) === 0 &&
+    player.lastAttackAt > prevAttackAt &&
+    player.attackTargetId
+  ) {
     const ownSprite = state.sprite.get(player.id);
     const targetInterp = state.interpolation.get(player.attackTargetId);
     const targetSprite = state.sprite.get(player.attackTargetId);

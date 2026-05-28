@@ -1,0 +1,132 @@
+import { MINION_BASE_DISPLAY_SIZE, type MinionView } from '@mmo-idle/shared';
+import type { RenderState } from './state';
+import type { GameScene } from '../scenes/GameScene';
+import { ensureSprite, updateSpriteFrame } from './sprites';
+import { ensureShadow } from './shadows';
+import { ensureHpBar } from './healthBars';
+import { ensureCdBar } from './cooldownBars';
+import { applyLunge } from './interpolation';
+import { spawnAttackEffect } from './combatFx';
+import { spawnDamageNumber } from '../fx/particles';
+
+function minionScale(minion: MinionView): number {
+  return Math.max(0.1, minion.sizeMult ?? 1.0);
+}
+
+/**
+ * Render a summoner minion (slime). Reuses the monster rendering primitives
+ * — sprite, shadow, hp bar, cooldown bar, lunge animation — but does NOT
+ * register a debug-range entry since minions don't have a pull/leash radius
+ * of their own (the leash radius is rendered around the owning player in
+ * `overlays.ts`).
+ */
+export function upsertMinion(
+  state: RenderState,
+  minion: MinionView,
+  scene: GameScene,
+): void {
+  const isNew = !state.sprite.has(minion.id);
+  const scale = minionScale(minion);
+  const spriteSize = MINION_BASE_DISPLAY_SIZE * scale;
+
+  if (isNew) {
+    state.ids.add(minion.id);
+    state.kind.set(minion.id, 'minion');
+    state.view.set(minion.id, minion);
+
+    state.spriteMeta.set(minion.id, {
+      currentFrame: null,
+      barOffsetY: 32,
+      entityName: '',
+      monsterBehavior: 'aggressive',
+      monsterIsRanged: false,
+    });
+
+    state.transform.set(minion.id, {
+      pos:    { ...minion.pos },
+      target: { ...minion.target },
+      speed:  minion.speed,
+    });
+    state.interpolation.set(minion.id, {
+      base:        { ...minion.pos },
+      lungeOffset: { x: 0, y: 0 },
+    });
+
+    // Per-minion attack-range pip drawn in tactical mode (see overlays.ts).
+    state.debugRanges.set(minion.id, {
+      attackRange: minion.attackRange,
+    });
+
+    ensureShadow(state, minion.id, minion.pos, scene, {
+      fillColor: 0x000000,
+      fillAlpha: 0.40,
+    });
+    ensureSprite(state, minion.id, minion, scene, {
+      displayW: spriteSize,
+      displayH: spriteSize,
+      fallbackColor: 0x55cc66,
+      isPlayer: false,
+    });
+    // Slimes are anonymous — no label.
+    ensureHpBar(state, minion.id, scene);
+    ensureCdBar(state, minion.id, scene);
+    return;
+  }
+
+  const prev = state.view.get(minion.id) as MinionView | undefined;
+  const prevAttackAt = prev?.lastAttackAt ?? 0;
+  const prevHp = prev?.hp ?? minion.hp;
+
+  const interp = state.interpolation.get(minion.id);
+  if (interp) {
+    const snapDx = minion.pos.x - interp.base.x;
+    const snapDy = minion.pos.y - interp.base.y;
+    if (snapDx * snapDx + snapDy * snapDy > 80 * 80) {
+      interp.base = { ...minion.pos };
+    }
+  }
+
+  state.view.set(minion.id, minion);
+  const transform = state.transform.get(minion.id);
+  if (transform) {
+    transform.target = { ...minion.target };
+    transform.speed = minion.speed;
+  }
+
+  updateSpriteFrame(state, minion.id, minion, scene, {
+    displayW: spriteSize,
+    displayH: spriteSize,
+    fallbackColor: 0x55cc66,
+    isPlayer: false,
+  });
+
+  const meta = state.spriteMeta.get(minion.id);
+  if (minion.hp < prevHp) {
+    const sprite = state.sprite.get(minion.id);
+    if (sprite && meta) {
+      spawnDamageNumber(
+        scene,
+        { x: sprite.x, y: sprite.y },
+        meta.barOffsetY,
+        Math.round(prevHp - minion.hp),
+        '#ffd1d1',
+      );
+    }
+  }
+
+  if (minion.lastAttackAt > prevAttackAt && minion.attackTargetId) {
+    const vmSprite = state.sprite.get(minion.id);
+    const targetInterp = state.interpolation.get(minion.attackTargetId);
+    const targetSprite = state.sprite.get(minion.attackTargetId);
+    if (vmSprite && targetInterp && targetSprite) {
+      spawnAttackEffect(
+        scene,
+        minion.attackStyle,
+        { x: vmSprite.x, y: vmSprite.y },
+        { x: targetSprite.x, y: targetSprite.y },
+      );
+      // Slimes always lunge (no isRanged tag).
+      applyLunge(state, minion.id, { ...targetInterp.base }, scene);
+    }
+  }
+}

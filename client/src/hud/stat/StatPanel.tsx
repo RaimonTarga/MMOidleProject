@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useAtomValue } from 'jotai';
-import { BuffBar, CadenceTimeline, DefensePassivesSection, StatRow } from './components';
+import { BuffBar, CadenceTimeline, DefensePassivesSection, StatRow, SummonSlotBar } from './components';
 import {
   ammoCountAtom,
   ammoMaxAtom,
@@ -36,6 +36,9 @@ import {
   shieldsAtom,
   speedAtom,
   statusAtom,
+  summonActiveCountAtom,
+  summonSlotCountAtom,
+  summonSlotsAtom,
   targetChillStacksAtom,
   targetDotStacksAtom,
 } from '../atoms';
@@ -78,6 +81,9 @@ export function StatPanel() {
   const sacredBuffActive = useAtomValue(sacredBuffActiveAtom);
   const evasion = useAtomValue(evasionAtom);
   const evasionCount = useAtomValue(evasionCountAtom);
+  const summonActiveCount = useAtomValue(summonActiveCountAtom);
+  const summonSlotCount = useAtomValue(summonSlotCountAtom);
+  const summonSlots = useAtomValue(summonSlotsAtom);
   const player = playerId
     ? {
       name,
@@ -114,6 +120,9 @@ export function StatPanel() {
       sacredBuffActive,
       evasion,
       evasionCount,
+      summonActiveCount,
+      summonSlotCount,
+      summonSlots,
     }
     : null;
 
@@ -206,6 +215,19 @@ export function StatPanel() {
               style={{ width: `${(player.ammoCount / player.ammoMax) * 100}%` }}
             />
           </div>
+        </div>
+      )}
+
+      {/* Summon roster — summoner archetype */}
+      {player?.combatArchetype === 'summoner' && player.summonSlotCount > 0 && (
+        <div className="stat-section">
+          <div className="stat-row">
+            <span className="stat-label">Summons</span>
+            <span className="stat-value">
+              {player.summonActiveCount} / {player.summonSlotCount} active
+            </span>
+          </div>
+          <SummonSlotBar slots={player.summonSlots} />
         </div>
       )}
 

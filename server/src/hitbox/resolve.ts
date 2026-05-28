@@ -1,8 +1,12 @@
 import type { HasHitbox, HitboxDef, HitboxRect } from '@mmo-idle/shared';
 import {
+  BOSS_DISPLAY_SIZE,
   FALLBACK_BOSS_AABB,
   FALLBACK_MONSTER_AABB,
   FALLBACK_PLAYER_AABB,
+  MINION_BASE_DISPLAY_SIZE,
+  MONSTER_DISPLAY_SIZE,
+  PLAYER_DISPLAY_SIZE,
   resolveMonsterFrame,
   resolvePlayerFrame,
 } from '@mmo-idle/shared';
@@ -11,7 +15,11 @@ import { getHitboxDef } from './cache';
 
 export function scaleHitboxDef(def: HitboxDef, displaySize: number): HitboxRect[] {
   const scale = displaySize / def.sourceW;
-  return def.rects.map(r => ({
+  return scaleHitboxRects(def.rects, scale);
+}
+
+export function scaleHitboxRects(rects: HitboxRect[], scale: number): HitboxRect[] {
+  return rects.map(r => ({
     offsetX: r.offsetX * scale,
     offsetY: r.offsetY * scale,
     halfW: r.halfW * scale,
@@ -24,12 +32,27 @@ export function resolveMonsterHitbox(
   isBoss: boolean,
 ): HasHitbox {
   const frame = resolveMonsterFrame(monsterTypeId);
-  const displaySize = isBoss ? 80 : 64;
+  const displaySize = isBoss ? BOSS_DISPLAY_SIZE : MONSTER_DISPLAY_SIZE;
   if (frame) {
     const def = getHitboxDef(frame);
     if (def) return { rects: scaleHitboxDef(def, displaySize) };
   }
   return { rects: [isBoss ? FALLBACK_BOSS_AABB : FALLBACK_MONSTER_AABB] };
+}
+
+export function resolveMinionHitbox(
+  monsterTypeId: string,
+  sizeMult: number,
+): HasHitbox {
+  const mult = Math.max(0.1, sizeMult);
+  const displaySize = MINION_BASE_DISPLAY_SIZE * mult;
+  const frame = resolveMonsterFrame(monsterTypeId);
+  if (frame) {
+    const def = getHitboxDef(frame);
+    if (def) return { rects: scaleHitboxDef(def, displaySize) };
+  }
+  const fallbackScale = displaySize / MONSTER_DISPLAY_SIZE;
+  return { rects: scaleHitboxRects([FALLBACK_MONSTER_AABB], fallbackScale) };
 }
 
 export function resolvePlayerHitbox(entity: PlayerEntity): HasHitbox {
@@ -39,7 +62,7 @@ export function resolvePlayerHitbox(entity: PlayerEntity): HasHitbox {
   });
   if (frame) {
     const def = getHitboxDef(frame);
-    if (def) return { rects: scaleHitboxDef(def, 64) };
+    if (def) return { rects: scaleHitboxDef(def, PLAYER_DISPLAY_SIZE) };
   }
   return { rects: [FALLBACK_PLAYER_AABB] };
 }

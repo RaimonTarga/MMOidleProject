@@ -31,6 +31,7 @@ import type {
   InParty,
   IsBossEngaged,
   IsChanneling,
+  IsMinion,
   IsMonster,
   IsMoving,
   IsPlayer,
@@ -38,6 +39,7 @@ import type {
   PerformsAttack,
   ScriptsBoss,
   ShowsSacred,
+  SummonsMinions,
   TracksCombat,
   TracksProgression,
   UsesAutocombat,
@@ -48,6 +50,8 @@ import type {
   UsesSkills,
 } from '@mmo-idle/shared';
 import type { With } from 'miniplex';
+import type { ControlsMinion } from '../systems/classes/archetypes/summoner/controlsMinion';
+import type { HasSummonerCommand } from '../systems/classes/archetypes/summoner/command';
 
 export type EntityId = string;
 
@@ -104,6 +108,7 @@ export interface ServerEntity {
   holdsInventory?:     HoldsInventory;
   usesSkills?:         UsesSkills;
   showsSacred?:        ShowsSacred;
+  summonsMinions?:     SummonsMinions;
   inParty?:            InParty;
   usesCadence?:        UsesCadence;
   usesEnergy?:         UsesEnergy;
@@ -123,6 +128,10 @@ export interface ServerEntity {
   hasAwareness?: HasAwareness;
   hasAggroTarget?: HasAggroTarget;
 
+  // Minion-only slices (summoner archetype)
+  isMinion?:       IsMinion;
+  controlsMinion?: ControlsMinion;
+
   // ── Monster (S7) ──────────────────────────────────────────────
   controlsMonster?: ControlsMonster;
   hasKnockback?:    HasKnockback;
@@ -141,6 +150,7 @@ export interface ServerEntity {
   // ── Player (S8) ───────────────────────────────────────────────
   tracksEngagement?: number;
   hasManualMoveIntent?: {};
+  hasSummonerCommand?: HasSummonerCommand;
   hasAutoTraversePath?: HasAutoTraversePath;
 
   // ── Shared by both (S7 + S8) ──────────────────────────────────
@@ -195,12 +205,41 @@ export function isMonsterEntity(e: ServerEntity): e is MonsterEntity {
   return "isMonster" in e;
 }
 
-export function entityNetworkId(entity: ServerEntity): EntityId | null {
-  return entity.isPlayer?.id ?? entity.isMonster?.id ?? null;
+/**
+ * A miniplex entity carrying a summoner minion's identity, AI, and combat
+ * state. `isMoving` is intentionally NOT required — minions stop at their
+ * follow offset / leash boundary, attaching/detaching `isMoving` as needed.
+ */
+export type MinionEntity = With<
+  ServerEntity,
+  | "isMinion"
+  | "controlsMinion"
+  | "hasPosition"
+  | "hasHitbox"
+  | "hasHealth"
+  | "dealsDamage"
+  | "performsAttack"
+  | "mitigatesDamage"
+  | "tracksCombat"
+  | "hasStatus"
+>;
+
+export function isMinionEntity(e: ServerEntity): e is MinionEntity {
+  return "isMinion" in e;
 }
 
-export function entityNetworkKind(entity: ServerEntity): 'player' | 'monster' | null {
-  if (entity.isPlayer) return 'player';
+export function entityNetworkId(entity: ServerEntity): EntityId | null {
+  return (
+    entity.isPlayer?.id ??
+    entity.isMonster?.id ??
+    entity.isMinion?.id ??
+    null
+  );
+}
+
+export function entityNetworkKind(entity: ServerEntity): 'player' | 'monster' | 'minion' | null {
+  if (entity.isPlayer)  return 'player';
   if (entity.isMonster) return 'monster';
+  if (entity.isMinion)  return 'minion';
   return null;
 }

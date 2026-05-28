@@ -4,6 +4,7 @@ import type { World } from '../../../world/World';
 import type { PlayerEntity } from '../../../ecs/entity';
 import { syncArchetypeSlices } from '../../../ecs/archetypeSliceSync';
 import { canUnlockEntitySkill, recalculatePlayerEntityStats } from '../../../ecs/playerEntityFormulas';
+import { despawnMinionsForOwner } from '../../classes/archetypes/summoner';
 
 export { canUnlockSkill, canUnlockSkillFromView } from '@mmo-idle/shared';
 export type { UnlockResult } from '@mmo-idle/shared';
@@ -14,6 +15,7 @@ const CLASS_ARCHETYPES: Record<string, CombatArchetype> = {
   'reload-root':   'reload',
   'energy-root':   'energy',
   'dot-root':      'dot',
+  'summoner-root': 'summoner',
 };
 
 /** Validate and apply a skill unlock. Returns false if validation fails. */
@@ -38,5 +40,10 @@ export function unlockSkill(world: World, entity: PlayerEntity, skillId: string)
 
   recalculatePlayerEntityStats(world, entity);
   syncArchetypeSlices(world, entity);
+
+  if (entity.summonsMinions && node.classId === 'summoner-root') {
+    despawnMinionsForOwner(world, entity);
+  }
+
   return true;
 }
