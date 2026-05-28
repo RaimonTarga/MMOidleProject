@@ -1,11 +1,13 @@
 export const BANNER_EFFECT    = 'summoner-howl-banner';
-export const WEB_EFFECT       = 'summoner-web';
+export const OVERWHELMED_EFFECT = 'summoner-overwhelmed';
 export const CORROSION_EFFECT = 'summoner-corrosion';
 export const WET_EFFECT       = 'summoner-wet';
 
 export const TRAMPLE_BOON_EFFECT   = 'summoner-trample-boon';
 export const DEBUFF_IMMUNE_EFFECT  = 'summoner-debuff-immune';
-export const SENTINEL_EFFECT       = 'summoner-sentinel-aegis';
+/** Monster debuff — applied by Stone Sentinel ridge-archer aura. */
+export const SENTINEL_SLOW_EFFECT  = 'summoner-sentinel-slow';
+export const SENTINEL_SLOW_FLAG    = 'sentinel-slow-applied';
 
 export const GRAZING_COOLDOWN_KEY    = 'grazing-heal';
 export const VITAL_BURST_COUNTER_KEY = 'vital-burst-used';

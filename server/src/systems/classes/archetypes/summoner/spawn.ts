@@ -7,9 +7,9 @@
  * weapon effects) apply naturally.
  */
 import {
-  FALLBACK_MONSTER_AABB,
   initIsMinion,
   makeTracksCombat,
+  MONSTER_DATABASE,
   type MinionMonsterType,
   type PassiveKey,
   type Vec2,
@@ -17,8 +17,13 @@ import {
 import type { World } from '../../../../world/World';
 import type { MinionEntity, PlayerEntity, ServerEntity } from '../../../../ecs/entity';
 import { initControlsMinion } from './controlsMinion';
-import { resolveMonsterHitbox } from '../../../../hitbox/resolve';
-import { detachComponent } from '../../../../ecs/markerHelpers';
+import { getStoneSentinelSpawnPos } from './sentinelPlacement';
+import { computeMinionAttackRange } from './range';
+import { hitboxEqual, resolveMinionHitbox } from '../../../../hitbox/resolve';
+import { markSliceDirty } from '../../../../ecs/dirtyHelpers';
+import { attachComponent, detachComponent } from '../../../../ecs/markerHelpers';
+import { setAttackTarget } from '../../../combat/ai/targeting';
+import { stopEntity } from '../../../world/movement';
 
 const MINION_BASE_HP_MIN = 10;
 const FOLLOW_RADIUS = 44;
@@ -46,12 +51,43 @@ export function getMinionIdlePos(owner: PlayerEntity, slot: number): Vec2 {
 }
 
 export function computeMinionSpeed(owner: PlayerEntity): number {
+  if (owner.usesSkills.passives['summoner.stone-sentinel']) return 0;
   const speedMult = owner.usesSkills.passives['summoner.minion-speed-mult'] ?? 1.0;
   return Math.max(180, Math.round((owner.hasPosition.speed + 40) * speedMult));
 }
 
 export function computeMinionSizeMult(owner: PlayerEntity): number {
   return Math.max(0.1, owner.usesSkills.passives['summoner.minion-size-mult'] ?? 1.0);
+}
+
+/** Owner HP pool (× hpPct passive) split evenly across all minion slots. */
+export function computeMinionMaxHp(owner: PlayerEntity): number {
+  const count = Math.max(1, owner.summonsMinions?.targetCount ?? 1);
+  const hpPct = owner.usesSkills.passives['summoner.minion-hp-pct'] ?? 1.0;
+  return Math.max(MINION_BASE_HP_MIN, Math.round(owner.hasHealth.maxHp * hpPct / count));
+}
+
+export function syncMinionMaxHp(
+  world: World,
+  minion: MinionEntity,
+  desiredMaxHp: number,
+): void {
+  if (minion.hasHealth.maxHp === desiredMaxHp) return;
+  const prevMax = minion.hasHealth.maxHp;
+  const ratio = prevMax > 0 ? minion.hasHealth.hp / prevMax : 1;
+  minion.hasHealth.maxHp = desiredMaxHp;
+  minion.hasHealth.hp = Math.min(
+    desiredMaxHp,
+    Math.max(minion.hasHealth.hp > 0 ? 1 : 0, Math.round(desiredMaxHp * ratio)),
+  );
+  markSliceDirty(world, minion, 'hasHealth');
+}
+
+export function syncMinionHitbox(world: World, minion: MinionEntity, sizeMult: number): void {
+  const nextHitbox = resolveMinionHitbox(minion.isMinion.monsterTypeId, sizeMult);
+  if (!hitboxEqual(minion.hasHitbox?.rects, nextHitbox.rects)) {
+    attachComponent(world, minion, 'hasHitbox', nextHitbox);
+  }
 }
 
 const MINION_TYPE_PASSIVE_MAP: Array<[PassiveKey, MinionMonsterType]> = [
@@ -83,17 +119,21 @@ export function spawnMinionForOwner(
 
   const passives = owner.usesSkills.passives;
   const damagePct  = passives['summoner.minion-damage-pct']      ?? 1.0;
-  const hpPct      = passives['summoner.minion-hp-pct']          ?? 0.40;
-  const attackRange = Math.max(8, Math.round(passives['summoner.minion-range'] ?? 12));
+  const attackRange = computeMinionAttackRange(passives);
   const attackCooldown = Math.max(200, Math.round(passives['summoner.minion-attack-cooldown'] ?? 1000));
   const sizeMult = computeMinionSizeMult(owner);
   const monsterTypeId = resolveMinionType(owner);
+  const monsterDef = MONSTER_DATABASE.get(monsterTypeId);
+  const attackStyle = monsterDef?.attackStyle ?? 'impact';
 
-  const maxHp = Math.max(MINION_BASE_HP_MIN, Math.round(owner.hasHealth.maxHp * hpPct));
+  const maxHp = computeMinionMaxHp(owner);
   const attack = Math.max(1, Math.round(owner.dealsDamage.attack * damagePct));
 
   const id = world.allocMinionId(owner.isPlayer.id);
-  const spawnPos = getMinionIdlePos(owner, slot);
+  const minionHitbox = resolveMinionHitbox(monsterTypeId, sizeMult);
+  const spawnPos = passives['summoner.stone-sentinel'] && monsterTypeId === 'ridge-archer'
+    ? getStoneSentinelSpawnPos(world, owner, slot, attackRange, minionHitbox)
+    : getMinionIdlePos(owner, slot);
   const followOffset = getFollowOffset(slot, owner.summonsMinions.targetCount);
 
   const entity: MinionEntity = {
@@ -122,7 +162,7 @@ export function spawnMinionForOwner(
       nodeId:  owner.hasPosition.nodeId,
       speed:   computeMinionSpeed(owner),
     },
-    hasHitbox: resolveMonsterHitbox(monsterTypeId, false) ?? { rects: [FALLBACK_MONSTER_AABB] },
+    hasHitbox: minionHitbox,
     hasHealth: {
       hp: maxHp,
       maxHp,
@@ -130,7 +170,7 @@ export function spawnMinionForOwner(
     dealsDamage: {
       attack,
       onHitDamage: 0,
-      attackStyle: 'impact',
+      attackStyle,
     },
     performsAttack: {
       attackRange,
@@ -179,8 +219,46 @@ function dropMonsterAggroOnMinion(world: World, minionId: string): void {
 }
 
 /**
+ * Move live minions into the owner's current node and restage them nearby.
+ * Preserves HP and slot bindings — used on gate transitions so summons survive
+ * map changes without triggering respawn timers.
+ */
+export function relocateMinionsForOwner(world: World, owner: PlayerEntity): void {
+  if (!owner.summonsMinions) return;
+  const passives = owner.usesSkills.passives;
+  const stoneSentinel = !!passives['summoner.stone-sentinel'];
+  const nodeId = owner.hasPosition.nodeId;
+
+  for (const id of owner.summonsMinions.minionIds) {
+    if (!id) continue;
+    const minion = world.getMinionEntity(id);
+    if (!minion || minion.hasHealth.hp <= 0) continue;
+
+    minion.hasPosition.nodeId = nodeId;
+
+    if (stoneSentinel && minion.isMinion.monsterTypeId === 'ridge-archer') {
+      minion.hasPosition.current = getStoneSentinelSpawnPos(
+        world,
+        owner,
+        minion.isMinion.slot,
+        minion.performsAttack.attackRange,
+        minion.hasHitbox,
+      );
+    } else {
+      minion.hasPosition.current = getMinionIdlePos(owner, minion.isMinion.slot);
+    }
+
+    stopEntity(world, minion);
+    setAttackTarget(world, minion, null);
+    minion.controlsMinion.currentTargetId = null;
+    minion.controlsMinion.isCharging = false;
+    markSliceDirty(world, minion, 'hasPosition');
+  }
+}
+
+/**
  * Despawn every minion currently bound to `owner`. Safe to call when the player
- * is being detached, transitioning nodes, respawning, or changing archetype.
+ * is being detached, respawning, or changing archetype.
  */
 export function despawnMinionsForOwner(world: World, owner: PlayerEntity | ServerEntity): void {
   if (!owner.isPlayer) return;

@@ -43,6 +43,7 @@ import { setEntityMotion, stopEntity } from './systems/world/movement';
 import { setAggroTarget, setAttackTarget } from './systems/combat/ai/targeting';
 import { clearEngagement } from './systems/combat/ai/engagement';
 import { attachComponent, detachComponent } from './ecs/markerHelpers';
+import { applySummonerCommand, clearSummonerCommand } from './systems/classes/archetypes/summoner/command';
 import { syncArchetypeSlices } from './ecs/archetypeSliceSync';
 import { recalculatePlayerEntityStats } from './ecs/playerEntityFormulas';
 import { markSliceDirty, mutateSlice } from './ecs/dirtyHelpers';
@@ -95,7 +96,7 @@ initDebuffMechanics();
 // ── SUMMONER DAMAGE SPONGE ────────────────────────────────────────────────────
 // Registered after defense systems so shield/absorb get first crack at incoming
 // damage; whatever remains has half siphoned off to a random living slime.
-// Sentinel aura runs before owner sponge; rockslide runs on post-sponge ally damage.
+// Rockslide cover runs on post-sponge ally damage.
 registerMountainPathHooks();
 registerSummonerDamageSponge();
 
@@ -246,12 +247,19 @@ io.on('connection', (socket) => {
     const p = world.getPlayerEntity(socket.id);
     if (!p) return;
     if (p.isChanneling) return;
+    clearSummonerCommand(world, p);
     setEntityMotion(world, p, pos);
     if (p.isMoving) {
       attachComponent(world, p, 'hasManualMoveIntent', {});
     } else {
       detachComponent(world, p, 'hasManualMoveIntent');
     }
+  });
+
+  socket.on('player:commandSummons', (pos) => {
+    const p = world.getPlayerEntity(socket.id);
+    if (!p) return;
+    applySummonerCommand(world, p, pos);
   });
 
   socket.on('player:setAuto', (enabled) => {

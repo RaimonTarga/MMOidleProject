@@ -16,6 +16,28 @@ export function setHoldStill(still: boolean): void {
   holdStill = still;
 }
 
+export function isHoldStill(): boolean {
+  return holdStill;
+}
+
+/** Stop click-to-move / keyboard motion and tell the server to hold position. */
+export function cancelActiveMove(scene: GameScene): void {
+  if (!scene.myId) return;
+  const ownId = scene.state.ownId;
+  if (!ownId) return;
+  const transform = scene.state.transform.get(ownId);
+  if (!transform) return;
+
+  const origin = getOwnBase(scene.state) ?? transform.pos;
+  const stop: Vec2 = {
+    x: Math.round(origin.x),
+    y: Math.round(origin.y),
+  };
+  sendMove(scene.socket, stop);
+  transform.target = stop;
+  wasMoving = false;
+}
+
 export function setKeyboardVector(dx: number, dy: number): void {
   kbVec = { dx, dy };
 }

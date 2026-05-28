@@ -1,4 +1,56 @@
+import type { SummonSlotView } from '@mmo-idle/shared';
+
 const CADENCE_TICKS = 8;
+
+export function SummonSlotBar({ slots }: { slots: SummonSlotView[] }) {
+  if (slots.length === 0) return null;
+
+  return (
+    <div className="summon-slots">
+      {slots.map((slot, i) => {
+        const respawning = !slot.active && slot.respawnRemainingMs > 0;
+        const queued = !slot.active && slot.respawnRemainingMs <= 0;
+        const respawnSec = respawning
+          ? (slot.respawnRemainingMs / 1000).toFixed(1)
+          : null;
+
+        return (
+          <div
+            key={i}
+            className="summon-slot"
+            title={
+              slot.active
+                ? `Summon ${i + 1}: active`
+                : respawning
+                  ? `Summon ${i + 1}: respawning (${respawnSec}s)`
+                  : `Summon ${i + 1}: waiting`
+            }
+          >
+            <div
+              className={`summon-slot-pip${
+                slot.active
+                  ? ' summon-slot-pip--active'
+                  : respawning
+                    ? ' summon-slot-pip--respawning'
+                    : queued
+                      ? ' summon-slot-pip--queued'
+                      : ''
+              }`}
+            />
+            {respawning && (
+              <div className="summon-slot-respawn-track">
+                <div
+                  className="summon-slot-respawn-fill"
+                  style={{ width: `${slot.respawnPct}%` }}
+                />
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
 
 export function CadenceTimeline({ count, threshold, armed }: { count: number; threshold: number; armed: boolean }) {
   const hitsUntilFinisher = armed ? 0 : (threshold - 1) - count;

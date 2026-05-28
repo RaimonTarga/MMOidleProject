@@ -51,6 +51,7 @@ import type {
 } from '@mmo-idle/shared';
 import type { With } from 'miniplex';
 import type { ControlsMinion } from '../systems/classes/archetypes/summoner/controlsMinion';
+import type { HasSummonerCommand } from '../systems/classes/archetypes/summoner/command';
 
 export type EntityId = string;
 
@@ -149,6 +150,7 @@ export interface ServerEntity {
   // ── Player (S8) ───────────────────────────────────────────────
   tracksEngagement?: number;
   hasManualMoveIntent?: {};
+  hasSummonerCommand?: HasSummonerCommand;
   hasAutoTraversePath?: HasAutoTraversePath;
 
   // ── Shared by both (S7 + S8) ──────────────────────────────────

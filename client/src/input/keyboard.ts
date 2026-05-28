@@ -18,7 +18,7 @@ import {
   settingsOpenAtom,
   skillTreeOpenAtom,
 } from '../hud/atoms';
-import { setHoldStill, setKeyboardVector } from './movement';
+import { cancelActiveMove, setHoldStill, setKeyboardVector } from './movement';
 import { closeTopmostOverlay } from './overlayStack';
 
 const MOBILE_QUERY = '(max-width: 1100px)';
@@ -55,6 +55,7 @@ export function attachKeyboard(scene: GameScene): () => void {
     if (stillHeld === heldNow) return;
     stillHeld = heldNow;
     setHoldStill(heldNow);
+    if (heldNow) cancelActiveMove(scene);
     publishKbVector();
   }
 

@@ -1,4 +1,4 @@
-import type { MinionView } from '@mmo-idle/shared';
+import { MINION_BASE_DISPLAY_SIZE, type MinionView } from '@mmo-idle/shared';
 import type { RenderState } from './state';
 import type { GameScene } from '../scenes/GameScene';
 import { ensureSprite, updateSpriteFrame } from './sprites';
@@ -8,8 +8,6 @@ import { ensureCdBar } from './cooldownBars';
 import { applyLunge } from './interpolation';
 import { spawnAttackEffect } from './combatFx';
 import { spawnDamageNumber } from '../fx/particles';
-
-const BASE_SLIME_SPRITE_SIZE = 48;
 
 function minionScale(minion: MinionView): number {
   return Math.max(0.1, minion.sizeMult ?? 1.0);
@@ -29,7 +27,7 @@ export function upsertMinion(
 ): void {
   const isNew = !state.sprite.has(minion.id);
   const scale = minionScale(minion);
-  const spriteSize = BASE_SLIME_SPRITE_SIZE * scale;
+  const spriteSize = MINION_BASE_DISPLAY_SIZE * scale;
 
   if (isNew) {
     state.ids.add(minion.id);

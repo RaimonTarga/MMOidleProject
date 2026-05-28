@@ -1,8 +1,8 @@
 import { getStatusEffect, getTotalStacks, hasStatusEffect, type TracksCombat } from '@mmo-idle/shared';
-import { BANNER_EFFECT, CORROSION_EFFECT, SENTINEL_EFFECT, WEB_EFFECT, WET_EFFECT } from './constants';
+import { BANNER_EFFECT, CORROSION_EFFECT, OVERWHELMED_EFFECT, WET_EFFECT } from './constants';
 
-export function getWebStacks(monsterCs: TracksCombat): number {
-  return getTotalStacks(monsterCs, WEB_EFFECT);
+export function getOverwhelmedAttackerCount(monsterCs: TracksCombat): number {
+  return getTotalStacks(monsterCs, OVERWHELMED_EFFECT);
 }
 
 export function getCorrosionStacks(monsterCs: TracksCombat): number {
@@ -19,6 +19,3 @@ export function getBannerStacks(playerCs: TracksCombat): number {
   return Math.floor(eff.data.stacks ?? 0);
 }
 
-export function hasSentinelAegis(playerCs: TracksCombat): boolean {
-  return hasStatusEffect(playerCs, SENTINEL_EFFECT);
-}

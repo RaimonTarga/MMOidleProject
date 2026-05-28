@@ -16,9 +16,19 @@
 import type { World } from '../../../../world/World';
 import type { PlayerEntity } from '../../../../ecs/entity';
 import { markSliceDirty } from '../../../../ecs/dirtyHelpers';
-import { computeMinionSizeMult, computeMinionSpeed, despawnMinion, resolveMinionType, spawnMinionForOwner } from './spawn';
+import {
+  computeMinionMaxHp,
+  computeMinionSizeMult,
+  computeMinionSpeed,
+  despawnMinion,
+  resolveMinionType,
+  spawnMinionForOwner,
+  syncMinionHitbox,
+  syncMinionMaxHp,
+} from './spawn';
 import { applyOwnerStatShare } from './statShare';
 import { driveMinion } from './ai';
+import { validateSummonerCommand } from './command';
 import { tickAcidLurkerLifetime, tryAcidBroodMinionExplosion } from './t3/paths/cave';
 import { tryVitalBurst } from './t3/paths/plains';
 
@@ -41,6 +51,30 @@ function desiredMinionCount(owner: SummonerPlayerEntity): number {
     count = Math.min(count, Math.floor(cap));
   }
   return Math.max(1, count);
+}
+
+function isStoneSentinelOwner(owner: SummonerPlayerEntity): boolean {
+  return !!owner.usesSkills.passives['summoner.stone-sentinel'];
+}
+
+/**
+ * Stone Sentinel: only one empty slot may run a respawn timer at a time so
+ * sentries spawn sequentially at different follow offsets instead of stacking.
+ */
+function stoneSentinelActiveRespawnSlot(
+  world: World,
+  summons: SummonerPlayerEntity['summonsMinions'],
+): number | null {
+  for (let i = 0; i < summons.targetCount; i++) {
+    if (summons.respawnTimers[i] > 0) return i;
+  }
+  for (let i = 0; i < summons.targetCount; i++) {
+    const id = summons.minionIds[i];
+    if (!id) return i;
+    const minion = world.getMinionEntity(id);
+    if (!minion || minion.hasHealth.hp <= 0) return i;
+  }
+  return null;
 }
 
 function reconcileMinionSlots(world: World, owner: SummonerPlayerEntity): void {
@@ -68,6 +102,7 @@ function reconcileMinionSlots(world: World, owner: SummonerPlayerEntity): void {
 function syncLiveMinionFrameStats(world: World, owner: SummonerPlayerEntity): void {
   const desiredSpeed = computeMinionSpeed(owner);
   const desiredSizeMult = computeMinionSizeMult(owner);
+  const desiredMaxHp = computeMinionMaxHp(owner);
   const desiredType = resolveMinionType(owner);
   for (const id of owner.summonsMinions.minionIds) {
     const minion = id ? world.getMinionEntity(id) : undefined;
@@ -83,7 +118,9 @@ function syncLiveMinionFrameStats(world: World, owner: SummonerPlayerEntity): vo
     if (minion.isMinion.sizeMult !== desiredSizeMult) {
       minion.isMinion.sizeMult = desiredSizeMult;
       markSliceDirty(world, minion, 'isMinion');
+      syncMinionHitbox(world, minion, desiredSizeMult);
     }
+    syncMinionMaxHp(world, minion, desiredMaxHp);
     applyOwnerStatShare(world, owner, minion);
   }
 }
@@ -100,23 +137,33 @@ export function updateSummonerArchetype(world: World, dt: number, now: number): 
     const summoner = owner as SummonerPlayerEntity;
     reconcileMinionSlots(world, summoner);
     syncLiveMinionFrameStats(world, summoner);
+    validateSummonerCommand(world, summoner);
 
     const summons = summoner.summonsMinions;
     const targetCount = summons.targetCount;
-    const respawnMs = Math.max(0, Math.round(
+    let respawnMs = Math.max(0, Math.round(
       summoner.usesSkills.passives['summoner.minion-respawn-ms'] ?? DEFAULT_RESPAWN_MS,
     ));
+    const stoneSentinel = isStoneSentinelOwner(summoner);
+    if (stoneSentinel) {
+      respawnMs = Math.max(0, Math.round(
+        respawnMs * (summoner.usesSkills.passives['summoner.sentinel-respawn-mult'] ?? 0.5),
+      ));
+    }
+    const staggeredRespawnSlot = stoneSentinel
+      ? stoneSentinelActiveRespawnSlot(world, summons)
+      : null;
 
     for (let slot = 0; slot < targetCount; slot++) {
       const id = summons.minionIds[slot];
       const minion = id ? world.getMinionEntity(id) : undefined;
 
       if (minion && minion.hasHealth.hp > 0) {
-        // Live slime — possible cross-node drift (player teleport) is handled
-        // by leaving the minion at its current position; node transitions despawn
-        // and respawn slimes via `despawnMinionsForOwner`.
+        // Keep minions in the owner's node (gate transitions relocate via
+        // `relocateMinionsForOwner`; this covers any other teleport edge cases).
         if (minion.hasPosition.nodeId !== summoner.hasPosition.nodeId) {
           minion.hasPosition.nodeId = summoner.hasPosition.nodeId;
+          markSliceDirty(world, minion, 'hasPosition');
         }
         if (tickAcidLurkerLifetime(world, summoner, minion, dt)) {
           tryVitalBurst(world, summoner, minion, now);
@@ -136,6 +183,11 @@ export function updateSummonerArchetype(world: World, dt: number, now: number): 
         despawnMinion(world, minion);
       } else if (id) {
         summons.minionIds[slot] = '';
+      }
+
+      if (stoneSentinel && staggeredRespawnSlot !== slot) {
+        summons.respawnTimers[slot] = 0;
+        continue;
       }
 
       if (summons.respawnTimers[slot] <= 0) {

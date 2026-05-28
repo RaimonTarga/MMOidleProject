@@ -17,5 +17,5 @@ const summonerModule = defineMechanic({
 
 export { registerSummonerDamageSponge } from './damageSponge';
 export { registerMountainPathHooks };
-export { despawnMinionsForOwner } from './spawn';
+export { despawnMinionsForOwner, relocateMinionsForOwner } from './spawn';
 export default summonerModule;

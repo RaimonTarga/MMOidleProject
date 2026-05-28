@@ -27,6 +27,10 @@ import {
   cleanseAllyDebuffs,
   grantDebuffImmunity,
 } from '../core/debuffGuard';
+import {
+  computeMinionAttackRange,
+  minionBuffRadius,
+} from '../../range';
 import { isInCombat, livingMinionsOfType } from '../core/helpers';
 
 export function tickGrazingField(world: World, dt: number, now: number): void {
@@ -42,7 +46,6 @@ export function tickGrazingField(world: World, dt: number, now: number): void {
     if (isCooldownActive(cs, GRAZING_COOLDOWN_KEY)) continue;
     setCooldown(cs, GRAZING_COOLDOWN_KEY, interval);
 
-    const radius = passives['summoner.grazing-radius'] ?? 100;
     const pct = passives['summoner.grazing-pct'] ?? 0.04;
     const healMult = isInCombat(owner, now)
       ? 1
@@ -52,8 +55,9 @@ export function tickGrazingField(world: World, dt: number, now: number): void {
     if (slimes.length === 0) continue;
 
     const healed = new Set<string>();
-    const r2 = radius * radius;
     for (const slime of slimes) {
+      const radius = minionBuffRadius(slime);
+      const r2 = radius * radius;
       for (const ally of alliesInNodeWithin(
         world,
         slime.hasPosition.current,
@@ -76,12 +80,11 @@ export function tickTrampleAura(world: World): void {
     const passives = owner.usesSkills.passives;
     if (!passives['summoner.trampled-path']) continue;
 
-    const radius = passives['summoner.trample-aura-radius'] ?? 120;
     const speedPct = passives['summoner.trample-speed-pct'] ?? 0.25;
     const boars = livingMinionsOfType(world, owner, 'boar');
     if (boars.length === 0) continue;
 
-    const scanRadius = radius * 4;
+    const scanRadius = computeMinionAttackRange(passives) * 4;
     const allies = alliesInNodeWithin(
       world,
       owner.hasPosition.current,
@@ -89,12 +92,12 @@ export function tickTrampleAura(world: World): void {
       scanRadius,
     );
 
-    const r2 = radius * radius;
     for (const ally of allies) {
       if (!ally.tracksCombat) continue;
-      const inAura = boars.some(
-        b => distanceSq(b.hasPosition.current, ally.hasPosition.current) <= r2,
-      );
+      const inAura = boars.some((b) => {
+        const r2 = minionBuffRadius(b) ** 2;
+        return distanceSq(b.hasPosition.current, ally.hasPosition.current) <= r2;
+      });
       if (!inAura) {
         removeStatusEffect(ally.tracksCombat, TRAMPLE_BOON_EFFECT);
         continue;
@@ -127,7 +130,7 @@ export function tryVitalBurst(
 
   setCounter(owner.tracksCombat, VITAL_BURST_COUNTER_KEY, 1);
 
-  const radius = passives['summoner.vital-burst-radius'] ?? 200;
+  const radius = minionBuffRadius(minion);
   const immunityMs = passives['summoner.vital-burst-immunity-ms'] ?? 3000;
 
   for (const ally of alliesInNodeWithin(

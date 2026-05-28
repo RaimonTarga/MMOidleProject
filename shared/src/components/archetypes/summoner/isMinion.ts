@@ -2,7 +2,7 @@
  * Networked identity slice for a summoner minion entity.
  *
  * `monsterTypeId` drives client sprite lookup via `frameMaps.ts` and server
- * hitbox resolution via `resolveMonsterHitbox`.
+ * hitbox resolution via `resolveMinionHitbox`.
  */
 export type MinionMonsterType =
   | 'slime'

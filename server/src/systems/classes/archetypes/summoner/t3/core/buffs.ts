@@ -1,7 +1,7 @@
 import { getStatusEffect } from '@mmo-idle/shared';
 import { defineBuff, type BuffDescriptor } from '../../../../../combat/buffs/descriptor';
 import { DEBUFF_IMMUNE_EFFECT, TRAMPLE_BOON_EFFECT } from './constants';
-import { getBannerStacks, hasSentinelAegis } from './selectors';
+import { getBannerStacks } from './selectors';
 
 function durationPctFromEffect(effect: { remainingMs: number; data: Record<string, number> }): number {
   if (effect.remainingMs <= 0) return -1;
@@ -44,22 +44,6 @@ export const SUMMONER_T3_BUFFS = [
         : null;
     },
     { label: 'Trail', color: '#c8a84a', category: 'summoner', shape: 'square' },
-  ),
-  defineBuff(
-    'summoner-sentinel-aegis',
-    ({ player }) => {
-      if (!player.tracksCombat) return null;
-      return hasSentinelAegis(player.tracksCombat)
-        ? {
-            id: 'summoner-sentinel-aegis',
-            label: 'Aegis',
-            stacks: 1,
-            durationPct: -1,
-            color: '#8899bb',
-          }
-        : null;
-    },
-    { label: 'Aegis', color: '#8899bb', category: 'summoner', shape: 'square' },
   ),
   defineBuff(
     'summoner-debuff-immune',

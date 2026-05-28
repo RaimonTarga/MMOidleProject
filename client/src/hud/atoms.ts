@@ -10,6 +10,7 @@ import type {
   PlayerView,
   ShieldState,
   SubVariant,
+  SummonSlotView,
 } from '@mmo-idle/shared';
 
 export type HudConnectionStatus = 'connecting' | 'connected' | 'disconnected';
@@ -94,6 +95,11 @@ export const laserOverheatedAtom = atom<boolean>(false);
 export const targetDotStacksAtom = atom<number>(0);
 export const targetChillStacksAtom = atom<number>(0);
 
+export const summonActiveCountAtom = atom<number>(0);
+export const summonSlotCountAtom = atom<number>(0);
+export const summonRespawnMaxMsAtom = atom<number>(0);
+export const summonSlotsAtom = atom<SummonSlotView[]>([]);
+
 export const sacredBuffPctAtom = atom<number>(0);
 export const sacredBuffActiveAtom = atom<boolean>(false);
 
@@ -152,6 +158,21 @@ function shallowArrayEqual<T>(a: readonly T[], b: readonly T[]): boolean {
   return true;
 }
 
+function summonSlotsEqual(a: SummonSlotView[], b: SummonSlotView[]): boolean {
+  if (a === b) return true;
+  if (a.length !== b.length) return false;
+  for (let i = 0; i < a.length; i++) {
+    if (
+      a[i].active !== b[i].active
+      || a[i].respawnPct !== b[i].respawnPct
+      || a[i].respawnRemainingMs !== b[i].respawnRemainingMs
+    ) {
+      return false;
+    }
+  }
+  return true;
+}
+
 function shallowObjectEqual(
   a: Record<string, unknown>,
   b: Record<string, unknown>,
@@ -184,6 +205,13 @@ export function setIfShallowObjectEqual<T extends Record<string, unknown>>(
   const prev = store.get(targetAtom);
   if (shallowObjectEqual(prev, next)) return;
   store.set(targetAtom, next);
+}
+
+export function setIfSummonSlotsEqual(next: SummonSlotView[]): void {
+  const store = getDefaultStore();
+  const prev = store.get(summonSlotsAtom);
+  if (summonSlotsEqual(prev, next)) return;
+  store.set(summonSlotsAtom, next);
 }
 
 export function setAutoPath(path: string[] | null): void {
@@ -325,6 +353,10 @@ function resetPlayerAtoms(): void {
   store.set(skillPointsAtom, 0);
 
   setIfShallowArrayEqual(shieldsAtom, []);
+  setIfShallowArrayEqual(summonSlotsAtom, []);
+  setIfChanged(summonActiveCountAtom, 0);
+  setIfChanged(summonSlotCountAtom, 0);
+  setIfChanged(summonRespawnMaxMsAtom, 0);
   setIfShallowArrayEqual(unlockedSkillsAtom, []);
   setIfShallowArrayEqual(inventoryAtom, []);
   setIfShallowArrayEqual(unlockedRecipesAtom, []);
@@ -396,6 +428,10 @@ export function syncPlayerAtoms(player: PlayerView | null): void {
   setIfChanged(laserOverheatedAtom, player.laserOverheated);
   setIfChanged(targetDotStacksAtom, player.targetDotStacks);
   setIfChanged(targetChillStacksAtom, player.targetChillStacks);
+  setIfChanged(summonActiveCountAtom, player.summonActiveCount);
+  setIfChanged(summonSlotCountAtom, player.summonsMinions);
+  setIfChanged(summonRespawnMaxMsAtom, player.summonRespawnMaxMs);
+  setIfSummonSlotsEqual(player.summonSlots);
   setIfChanged(sacredBuffPctAtom, player.sacredBuffPct);
   setIfChanged(sacredBuffActiveAtom, player.sacredBuffActive);
   setIfChanged(isChannelingAtom, player.isChanneling);

@@ -8,7 +8,15 @@ import type { HitboxRect } from '../hitbox/types';
 import { FALLBACK_MONSTER_AABB, FALLBACK_PLAYER_AABB } from '../hitbox/constants';
 import { pointFromMotion, type Vec2 } from '../systems/spatial';
 import type { MinionMonsterType } from '../components/archetypes/summoner/isMinion';
+import {
+  computeSummonRespawnMaxMs,
+  countActiveSummons,
+  projectSummonSlots,
+  type SummonSlotView,
+} from '../systems/summonerHud';
 import type { NetworkedEntity } from './networkedEntity';
+
+export type { SummonSlotView };
 
 export interface PlayerView {
   id: string;
@@ -84,6 +92,12 @@ export interface PlayerView {
   hitboxRects: HitboxRect[];
   /** Number of minion slots the player has. 0 if not a summoner. */
   summonsMinions: number;
+  /** Live summons vs total slots (summoner only). */
+  summonActiveCount: number;
+  /** Full respawn duration in ms for cooldown bar scaling. */
+  summonRespawnMaxMs: number;
+  /** Per-slot active / respawn state for the HUD. */
+  summonSlots: SummonSlotView[];
 }
 
 export interface MinionView {
@@ -164,6 +178,11 @@ export function composePlayerView(entity: NetworkedEntity): PlayerView | null {
   const flashShiftPct = entity.usesEnergy && entity.usesEnergy.energyMax > 0
     ? Math.round((entity.usesEnergy.energy / entity.usesEnergy.energyMax) * 100)
     : 0;
+  const summonSlots = projectSummonSlots(entity.summonsMinions, skills.passives);
+  const summonActiveCount = countActiveSummons(summonSlots);
+  const summonRespawnMaxMs = entity.summonsMinions
+    ? computeSummonRespawnMaxMs(skills.passives)
+    : 0;
   return {
     id: entity.isPlayer.id,
     name: entity.isPlayer.name,
@@ -243,6 +262,9 @@ export function composePlayerView(entity: NetworkedEntity): PlayerView | null {
     clearedNodes: progression.clearedNodes ?? [],
     hitboxRects: entity.hasHitbox?.rects ?? [FALLBACK_PLAYER_AABB],
     summonsMinions: entity.summonsMinions?.targetCount ?? 0,
+    summonActiveCount,
+    summonRespawnMaxMs,
+    summonSlots,
   };
 }
 

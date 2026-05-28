@@ -313,6 +313,58 @@
   text-shadow: 0 0 8px rgba(255, 238, 68, 0.5);
 }
 
+/* ── Summoner summon slots ───────────────────────────────────────────────── */
+.summon-slots {
+  display: flex;
+  gap: 5px;
+  margin-top: 5px;
+}
+
+.summon-slot {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.summon-slot-pip {
+  height: 8px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(120, 200, 120, 0.18);
+  transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.summon-slot-pip--active {
+  background: linear-gradient(90deg, #2a8844, #44cc66);
+  border-color: rgba(68, 204, 102, 0.55);
+  box-shadow: 0 0 6px rgba(68, 204, 102, 0.45);
+}
+
+.summon-slot-pip--respawning {
+  border-color: rgba(90, 140, 220, 0.35);
+}
+
+.summon-slot-pip--queued {
+  border-color: rgba(255, 255, 255, 0.12);
+  opacity: 0.55;
+}
+
+.summon-slot-respawn-track {
+  height: 3px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.06);
+  overflow: hidden;
+}
+
+.summon-slot-respawn-fill {
+  height: 100%;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #3366aa, #55aaff);
+  transition: width 0.15s linear;
+}
+
 /* ── DoT stack pips ──────────────────────────────────────────────────────── */
 .dot-pips {
   display: flex;

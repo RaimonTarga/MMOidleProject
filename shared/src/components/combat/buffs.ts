@@ -31,7 +31,6 @@ export const BUFF_IDS = [
   'summoner-howl-banner',
   'summoner-trample-boon',
   'summoner-debuff-immune',
-  'summoner-sentinel-aegis',
   'debuff-stunned',
 ] as const;
 

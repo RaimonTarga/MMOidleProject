@@ -82,7 +82,7 @@ export const rootsAndFramesEntries = [
     mechanicEffects: {
       'summoner.minion-count':           3,
       'summoner.minion-damage-pct':      1.0,
-      'summoner.minion-hp-pct':          0.40,
+      'summoner.minion-hp-pct':          1.0,
       'summoner.minion-respawn-ms':      5000,
       'summoner.minion-range':           12,
       'summoner.minion-attack-cooldown': 1000,

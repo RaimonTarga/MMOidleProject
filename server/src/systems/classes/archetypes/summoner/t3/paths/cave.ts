@@ -8,6 +8,7 @@ import {
 } from '@mmo-idle/shared';
 import type { World } from '../../../../../../world/World';
 import type { MinionEntity, MonsterEntity, PlayerEntity } from '../../../../../../ecs/entity';
+import { markSliceDirty } from '../../../../../../ecs/dirtyHelpers';
 import { registerCombatListener } from '../../../../../combat/engine/combatPipeline';
 import { applyPlayerAoe } from '../../../../../combat/damage/aoeDamage';
 import { alliesInNodeWithin } from '../../../../../world/queries';
@@ -15,10 +16,14 @@ import {
   BANNER_EFFECT,
   BANNER_REFRESH_MS,
   CORROSION_EFFECT,
-  WEB_EFFECT,
+  OVERWHELMED_EFFECT,
   WET_EFFECT,
 } from '../core/constants';
 import { hasWet } from '../core/selectors';
+import {
+  computeMinionAttackRange,
+  minionBuffRadius,
+} from '../../range';
 import { livingMinions } from '../core/helpers';
 
 type AggroSourceMeta = { id: string; kind: AggroTargetKind };
@@ -126,18 +131,61 @@ export function tickAcidLurkerLifetime(
   return true;
 }
 
+function resolveHowlBaseAttackCooldown(ally: PlayerEntity): number {
+  const existing = getStatusEffect(ally.tracksCombat, BANNER_EFFECT);
+  if (!existing) return ally.performsAttack.attackCooldown;
+
+  const stacks = Math.floor(existing.data.stacks ?? 0);
+  const perStack = existing.data.perStack ?? 0.05;
+  const storedBase = existing.data.baseCd ?? ally.performsAttack.attackCooldown;
+  const expectedModified = Math.max(
+    200,
+    Math.round(storedBase / (1 + stacks * perStack)),
+  );
+
+  if (expectedModified === ally.performsAttack.attackCooldown) {
+    return storedBase;
+  }
+  return ally.performsAttack.attackCooldown;
+}
+
+function restoreHowlBaseAttackCooldown(ally: PlayerEntity): number {
+  const existing = getStatusEffect(ally.tracksCombat, BANNER_EFFECT);
+  if (!existing) return ally.performsAttack.attackCooldown;
+
+  const baseCd = resolveHowlBaseAttackCooldown(ally);
+  if (ally.performsAttack.attackCooldown !== baseCd) {
+    ally.performsAttack.attackCooldown = baseCd;
+  }
+  return baseCd;
+}
+
+function applyHowlAttackSpeed(
+  world: World,
+  ally: PlayerEntity,
+  stacks: number,
+  perStack: number,
+  baseCd: number,
+): void {
+  ally.performsAttack.attackCooldown = Math.max(
+    200,
+    Math.round(baseCd / (1 + stacks * perStack)),
+  );
+  markSliceDirty(world, ally, 'performsAttack');
+}
+
 export function tickPredatorsHowl(world: World): void {
   for (const owner of world.summonerPlayers) {
     const passives = owner.usesSkills.passives;
     if (!passives['summoner.predators-howl']) continue;
     if (!owner.tracksCombat) continue;
 
-    const radius = passives['summoner.howl-radius'] ?? 120;
     const cap = passives['summoner.howl-cap'] ?? 6;
+    const perStack = passives['summoner.howl-pct-per-stack'] ?? 0.05;
     const minions = livingMinions(world, owner);
     if (minions.length === 0) continue;
 
-    const scanRadius = radius * 4;
+    const scanRadius = computeMinionAttackRange(passives) * 4;
     const allies = alliesInNodeWithin(
       world,
       owner.hasPosition.current,
@@ -145,16 +193,25 @@ export function tickPredatorsHowl(world: World): void {
       scanRadius,
     );
 
-    const r2 = radius * radius;
     for (const ally of allies) {
       if (!ally.tracksCombat) continue;
       const stacks = minions.reduce((n, m) => {
+        const r2 = minionBuffRadius(m) ** 2;
         return n + (distanceSq(m.hasPosition.current, ally.hasPosition.current) <= r2 ? 1 : 0);
       }, 0);
       if (stacks <= 0) {
+        const hadBanner = getStatusEffect(ally.tracksCombat, BANNER_EFFECT);
+        if (hadBanner) {
+          restoreHowlBaseAttackCooldown(ally);
+          markSliceDirty(world, ally, 'performsAttack');
+        }
         removeStatusEffect(ally.tracksCombat, BANNER_EFFECT);
         continue;
       }
+
+      const effectiveStacks = Math.min(stacks, cap);
+      const baseCd = resolveHowlBaseAttackCooldown(ally);
+
       removeStatusEffect(ally.tracksCombat, BANNER_EFFECT);
       applyStatusEffect(ally.tracksCombat, {
         id:           BANNER_EFFECT,
@@ -162,8 +219,61 @@ export function tickPredatorsHowl(world: World): void {
         remainingMs:  BANNER_REFRESH_MS,
         refreshable:  true,
         sourceId:     owner.isPlayer.id,
-        data:         { stacks: Math.min(stacks, cap) },
+        data:         { stacks: effectiveStacks, perStack, baseCd },
       });
+      applyHowlAttackSpeed(world, ally, effectiveStacks, perStack, baseCd);
+    }
+  }
+}
+
+/** Swarm: re-project Overwhelmed stacks from live attacker count each tick. */
+function countSwarmAttackersOnMonster(
+  world: World,
+  owner: PlayerEntity,
+  monsterId: string,
+): number {
+  let count = 0;
+  if (owner.hasAttackTarget?.targetId === monsterId) count++;
+
+  const nodeId = owner.hasPosition.nodeId;
+  for (const minion of world.minionEntities) {
+    if (minion.isMinion.ownerPlayerId !== owner.isPlayer.id) continue;
+    if (minion.hasPosition.nodeId !== nodeId) continue;
+    if (minion.hasHealth.hp <= 0) continue;
+    if (minion.controlsMinion.currentTargetId === monsterId) count++;
+  }
+  return count;
+}
+
+export function tickSwarmOverwhelmed(world: World): void {
+  for (const owner of world.summonerPlayers) {
+    const passives = owner.usesSkills.passives;
+    if (!passives['summoner.swarm']) continue;
+
+    const perAttacker = passives['summoner.overwhelmed-pct-per-attacker'] ?? 0.10;
+    const refreshMs = passives['summoner.overwhelmed-ms'] ?? 2000;
+    const nodeId = owner.hasPosition.nodeId;
+
+    for (const monster of world.monsterEntitiesInNode(nodeId)) {
+      if (monster.hasHealth.hp <= 0) continue;
+      const attackers = countSwarmAttackersOnMonster(
+        world,
+        owner,
+        monster.isMonster.id,
+      );
+
+      removeStatusEffect(monster.tracksCombat, OVERWHELMED_EFFECT);
+      if (attackers <= 0) continue;
+
+      const eff = applyStatusEffect(monster.tracksCombat, {
+        id:           OVERWHELMED_EFFECT,
+        maxStacks:    attackers,
+        remainingMs:  refreshMs,
+        refreshable:  true,
+        sourceId:     owner.isPlayer.id,
+        data:         { perAttacker },
+      });
+      eff.stacks = attackers;
     }
   }
 }
@@ -184,22 +294,11 @@ export function registerCavePathHooks(): void {
   });
 
   registerCombatListener('onHit', (ctx) => {
-    if (ctx.attackerType === 'player' && ctx.defenderType === 'monster') {
-      const eff = getStatusEffect(ctx.attacker.tracksCombat, BANNER_EFFECT);
-      if (eff) {
-        const stacks = Math.floor(eff.data.stacks ?? 0);
-        if (stacks > 0) {
-          const perStack = ctx.attacker.usesSkills.passives['summoner.howl-pct-per-stack'] ?? 0.05;
-          ctx.damage = Math.round(ctx.damage * (1 + stacks * perStack));
-        }
-      }
-    }
-
     if (ctx.defenderType === 'monster') {
-      const web = getStatusEffect(ctx.defender.tracksCombat, WEB_EFFECT);
-      if (web && web.stacks > 0) {
-        const perStack = web.data.perStack ?? 0.06;
-        ctx.damage = Math.round(ctx.damage * (1 + web.stacks * perStack));
+      const overwhelmed = getStatusEffect(ctx.defender.tracksCombat, OVERWHELMED_EFFECT);
+      if (overwhelmed && overwhelmed.stacks > 0) {
+        const perAttacker = overwhelmed.data.perAttacker ?? 0.10;
+        ctx.damage = Math.round(ctx.damage * (1 + overwhelmed.stacks * perAttacker));
       }
 
       if (hasWet(ctx.defender.tracksCombat)) {
@@ -221,19 +320,6 @@ export function registerCavePathHooks(): void {
 
     const passives = ctx.attacker.usesSkills.passives;
 
-    if (passives['summoner.web-of-the-hunt']) {
-      const cap = passives['summoner.web-cap'] ?? 8;
-      const perStack = passives['summoner.web-pct-per-stack'] ?? 0.06;
-      applyStatusEffect(ctx.defender.tracksCombat, {
-        id:           WEB_EFFECT,
-        maxStacks:    cap,
-        remainingMs:  passives['summoner.web-ms'] ?? 6000,
-        refreshable:  true,
-        sourceId:     ctx.attacker.isPlayer.id,
-        data:         { perStack },
-      });
-    }
-
     if (passives['summoner.acid-brood']) {
       applyCorrosionStacks(ctx.defender.tracksCombat, ctx.attacker, 1);
     }
@@ -242,4 +328,5 @@ export function registerCavePathHooks(): void {
 
 export function tickCavePath(world: World): void {
   tickPredatorsHowl(world);
+  tickSwarmOverwhelmed(world);
 }

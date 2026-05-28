@@ -1,20 +1,24 @@
 import {
+  MONSTER_DATABASE,
   applyStatusEffect,
   distanceSq,
+  getFlag,
   getStatusEffect,
   removeStatusEffect,
+  setFlag,
 } from '@mmo-idle/shared';
 import type { World } from '../../../../../../world/World';
-import type { MinionEntity, PlayerEntity } from '../../../../../../ecs/entity';
+import type { MinionEntity, MonsterEntity, PlayerEntity } from '../../../../../../ecs/entity';
 import { registerCombatListener } from '../../../../../combat/engine/combatPipeline';
 import { setAggroTarget } from '../../../../../combat/ai/targeting';
-import { alliesInNodeWithin } from '../../../../../world/queries';
 import { redirectDamageToMinion } from '../../damageSponge';
 import { computeLeashRadius } from '../../ai';
 import {
-  SENTINEL_EFFECT,
   SENTINEL_REFRESH_MS,
+  SENTINEL_SLOW_EFFECT,
+  SENTINEL_SLOW_FLAG,
 } from '../core/constants';
+import { minionBuffRadius } from '../../range';
 import { livingMinionsOfType } from '../core/helpers';
 
 function findRockslideHopperForVictim(
@@ -23,15 +27,13 @@ function findRockslideHopperForVictim(
 ): { owner: PlayerEntity; hopper: MinionEntity } | null {
   const nodeId = victim.hasPosition.nodeId;
   for (const owner of world.summonerPlayers) {
-    if (owner.isPlayer.id === victim.isPlayer.id) continue;
     const passives = owner.usesSkills.passives;
     if (!passives['summoner.rockslide-cover']) continue;
 
-    const radius = passives['summoner.rockslide-radius'] ?? 160;
-    const r2 = radius * radius;
     const hoppers = livingMinionsOfType(world, owner, 'cliff-hopper');
     for (const hopper of hoppers) {
       if (hopper.hasPosition.nodeId !== nodeId) continue;
+      const r2 = minionBuffRadius(hopper) ** 2;
       if (distanceSq(hopper.hasPosition.current, victim.hasPosition.current) <= r2) {
         return { owner, hopper };
       }
@@ -40,44 +42,82 @@ function findRockslideHopperForVictim(
   return null;
 }
 
+function applySentinelSlowStats(
+  monster: MonsterEntity,
+  speedMult: number,
+  atkCdMult: number,
+): void {
+  const def = MONSTER_DATABASE.get(monster.isMonster.monsterTypeId);
+  if (!def) return;
+  monster.hasPosition.speed = Math.max(
+    10,
+    Math.round(def.stats.speed * speedMult),
+  );
+  monster.performsAttack.attackCooldown = Math.round(
+    def.stats.attackCooldown * atkCdMult,
+  );
+}
+
+function restoreSentinelSlowStats(world: World, monster: MonsterEntity): void {
+  const cs = monster.tracksCombat;
+  if (!getStatusEffect(cs, SENTINEL_SLOW_EFFECT)) return;
+
+  removeStatusEffect(cs, SENTINEL_SLOW_EFFECT);
+  if (!getFlag(cs, SENTINEL_SLOW_FLAG)) return;
+
+  const def = MONSTER_DATABASE.get(monster.isMonster.monsterTypeId);
+  if (def) {
+    monster.hasPosition.speed = def.stats.speed;
+    monster.performsAttack.attackCooldown = def.stats.attackCooldown;
+  }
+  setFlag(cs, SENTINEL_SLOW_FLAG, false);
+}
+
+/** Stone Sentinel: monsters in aura move and attack slower. Requires living archers. */
 export function tickStoneSentinelAura(world: World): void {
   for (const owner of world.summonerPlayers) {
     const passives = owner.usesSkills.passives;
     if (!passives['summoner.stone-sentinel']) continue;
 
-    const radius = passives['summoner.sentinel-radius'] ?? 120;
-    const plating = passives['summoner.sentinel-plating'] ?? 6;
-    const dr = passives['summoner.sentinel-dr'] ?? 0.04;
     const archers = livingMinionsOfType(world, owner, 'ridge-archer');
-    if (archers.length === 0) continue;
+    const speedMult = passives['summoner.sentinel-slow-speed-mult'] ?? 0.65;
+    const atkCdMult = passives['summoner.sentinel-slow-atk-mult'] ?? 1.35;
+    const nodeId = owner.hasPosition.nodeId;
 
-    const scanRadius = radius * 4;
-    const allies = alliesInNodeWithin(
-      world,
-      owner.hasPosition.current,
-      owner.hasPosition.nodeId,
-      scanRadius,
-    );
+    if (archers.length === 0) {
+      for (const monster of world.monsterEntitiesInNode(nodeId)) {
+        const eff = getStatusEffect(monster.tracksCombat, SENTINEL_SLOW_EFFECT);
+        if (eff?.sourceId === owner.isPlayer.id) {
+          restoreSentinelSlowStats(world, monster);
+        }
+      }
+      continue;
+    }
 
-    const r2 = radius * radius;
-    for (const ally of allies) {
-      if (!ally.tracksCombat) continue;
-      const inAura = archers.some(
-        a => distanceSq(a.hasPosition.current, ally.hasPosition.current) <= r2,
-      );
+    for (const monster of world.monsterEntitiesInNode(nodeId)) {
+      const inAura = archers.some((a) => {
+        const r2 = minionBuffRadius(a) ** 2;
+        return distanceSq(a.hasPosition.current, monster.hasPosition.current) <= r2;
+      });
       if (!inAura) {
-        removeStatusEffect(ally.tracksCombat, SENTINEL_EFFECT);
+        restoreSentinelSlowStats(world, monster);
         continue;
       }
-      removeStatusEffect(ally.tracksCombat, SENTINEL_EFFECT);
-      applyStatusEffect(ally.tracksCombat, {
-        id:           SENTINEL_EFFECT,
-        maxStacks:    1,
-        remainingMs:  SENTINEL_REFRESH_MS,
-        refreshable:  true,
-        sourceId:     owner.isPlayer.id,
-        data:         { plating, dr },
+
+      const cs = monster.tracksCombat;
+      removeStatusEffect(cs, SENTINEL_SLOW_EFFECT);
+      applyStatusEffect(cs, {
+        id:          SENTINEL_SLOW_EFFECT,
+        maxStacks:   1,
+        remainingMs: SENTINEL_REFRESH_MS,
+        refreshable: true,
+        sourceId:    owner.isPlayer.id,
+        data:        { speedMult, atkCdMult },
       });
+      applySentinelSlowStats(monster, speedMult, atkCdMult);
+      if (!getFlag(cs, SENTINEL_SLOW_FLAG)) {
+        setFlag(cs, SENTINEL_SLOW_FLAG, true);
+      }
     }
   }
 }
@@ -111,22 +151,6 @@ export function registerMountainPathHooks(): void {
     if (ctx.defenderType !== 'player' || ctx.damage <= 0) return;
     const victim = ctx.defender;
 
-    // Stone Sentinel — bonus plating/DR (recompute before ally sponge).
-    if (ctx.attackerType === 'monster' && victim.tracksCombat) {
-      const eff = getStatusEffect(victim.tracksCombat, SENTINEL_EFFECT);
-      if (eff) {
-        const monster = ctx.attacker;
-        const bonusPlt = eff.data.plating ?? 0;
-        const bonusDr = eff.data.dr ?? 0;
-        const plt = victim.mitigatesDamage.plating + bonusPlt;
-        const dr = Math.min(0.95, victim.mitigatesDamage.damageReduction + bonusDr);
-        ctx.damage = Math.max(1, Math.round(
-          Math.max(0, monster.dealsDamage.attack - plt) * (1 - dr),
-        ));
-      }
-    }
-
-    // Rockslide Cover — ally damage near a living cliff-hopper.
     const rockslide = findRockslideHopperForVictim(world, victim);
     if (rockslide) {
       const pct = rockslide.owner.usesSkills.passives['summoner.rockslide-pct'] ?? 0.30;
