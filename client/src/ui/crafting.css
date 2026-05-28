@@ -741,3 +741,86 @@
 
 .craft-card-result--ok  .craft-card-result__text { color: #77eebb; }
 .craft-card-result--err .craft-card-result__text { color: #ff8877; }
+
+/* ── Upgrade tab ─────────────────────────────────────────────────────────── */
+.craft-upgrade__level {
+  font-size: 11px;
+  font-weight: bold;
+  color: #ffd24a;
+  flex-shrink: 0;
+  text-shadow: 0 0 8px rgba(255, 200, 60, 0.45);
+}
+
+.craft-upgrade--maxed {
+  border-color: rgba(200, 165, 60, 0.45);
+  background: rgba(24, 19, 6, 0.85);
+}
+
+.craft-upgrade__transition {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+}
+
+.craft-upgrade__from {
+  font-size: 13px;
+  font-weight: bold;
+  color: #aab0d0;
+}
+
+.craft-upgrade__arrow {
+  font-size: 12px;
+  color: #6a7050;
+}
+
+.craft-upgrade__to {
+  font-size: 14px;
+  font-weight: bold;
+  color: #5de88a;
+  text-shadow: 0 0 8px rgba(80, 230, 130, 0.40);
+}
+
+.craft-upgrade__stat-label {
+  font-size: 9px;
+  letter-spacing: 0.6px;
+  color: #8888b0;
+  text-transform: uppercase;
+}
+
+.craft-upgrade__max {
+  font-size: 10px;
+  font-weight: bold;
+  letter-spacing: 0.8px;
+  color: #ffcf55;
+  text-shadow: 0 0 8px rgba(255, 200, 60, 0.45);
+}
+
+.craft-upgrade__req {
+  flex: 1;
+  min-width: 0;
+  font-size: 10px;
+  letter-spacing: 0.3px;
+}
+
+.craft-upgrade__req--ok  { color: #66bb88; }
+.craft-upgrade__req--bad { color: #cc7766; }
+
+/* Fancier success burst for upgrades. */
+@keyframes craft-upgrade-burst {
+  0%   { opacity: 0; transform: scale(0.85); }
+  18%  { opacity: 1; transform: scale(1.04); }
+  70%  { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(1); }
+}
+
+.craft-upgrade .craft-card-result--ok {
+  animation: craft-upgrade-burst 1.5s ease-out forwards;
+  background: radial-gradient(circle at center, rgba(40, 70, 30, 0.95), rgba(8, 28, 14, 0.95));
+  border-color: rgba(120, 230, 130, 0.65);
+  box-shadow: inset 0 0 32px rgba(110, 240, 150, 0.20), 0 0 18px rgba(90, 220, 120, 0.30);
+}
+
+.craft-upgrade .craft-card-result--ok .craft-card-result__icon {
+  color: #8effb0;
+  text-shadow: 0 0 12px rgba(120, 255, 160, 0.70);
+}

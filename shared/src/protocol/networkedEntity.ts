@@ -13,6 +13,7 @@ import type {
   HoldsShields,
   HoldsInventory,
   IsChanneling,
+  InParty,
   IsMinion,
   IsMonster,
   IsMoving,
@@ -52,6 +53,7 @@ export const NETWORKED_PLAYER_KEYS = [
   'usesSkills',
   'hasStatus',
   'showsSacred',
+  'inParty',
   'usesCadence',
   'usesEnergy',
   'appliesDots',
@@ -118,6 +120,7 @@ export interface NetworkedEntity {
   usesSkills?: UsesSkills;
   hasStatus?: HasStatus;
   showsSacred?: ShowsSacred;
+  inParty?: InParty;
   summonsMinions?: SummonsMinions;
   usesCadence?: UsesCadence;
   usesEnergy?: UsesEnergy;

@@ -1,4 +1,5 @@
 import type { EquipmentMap, EssenceType } from '../items';
+import type { PartyMember } from '../components';
 import type { PassiveMap } from '../passives';
 import type { SubVariant } from '../skillTree';
 import type { BuffId, PlayerBuff } from '../components/combat/buffs';
@@ -29,6 +30,8 @@ export interface PlayerView {
   attackTargetId: string | null;
   auto: boolean;
   autoTraverse: boolean;
+  partyLeaderId: string | null;
+  partyMembers: PartyMember[];
   nodeId: string;
   essences: Record<EssenceType, number>;
   level: number;
@@ -45,6 +48,7 @@ export interface PlayerView {
   attackStyle: string;
   inventory: string[];
   equipment: EquipmentMap;
+  itemUpgrades: Record<string, number>;
   biomeXP: Record<string, number>;
   biomeLevel: Record<string, number>;
   unlockedRecipes: string[];
@@ -180,6 +184,8 @@ export function composePlayerView(entity: NetworkedEntity): PlayerView | null {
     attackTargetId: entity.hasAttackTarget?.targetId ?? null,
     auto: entity.usesAutocombat?.auto ?? false,
     autoTraverse: entity.usesAutocombat?.autoTraverse ?? false,
+    partyLeaderId: entity.inParty?.leaderId ?? null,
+    partyMembers: entity.inParty?.members ?? [],
     nodeId: entity.hasPosition.nodeId,
     essences: progression.essences,
     level: progression.level,
@@ -196,6 +202,7 @@ export function composePlayerView(entity: NetworkedEntity): PlayerView | null {
     attackStyle: damage.attackStyle,
     inventory: inventory.inventory,
     equipment: inventory.equipment ?? EMPTY_EQUIPMENT,
+    itemUpgrades: inventory.itemUpgrades ?? {},
     biomeXP: progression.biomeXP,
     biomeLevel: progression.biomeLevel,
     unlockedRecipes: progression.unlockedRecipes,

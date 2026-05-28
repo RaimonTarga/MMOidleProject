@@ -67,36 +67,33 @@ export function checkRecipeUnlocks(entity: PlayerEntity, biomeGroup?: string, ne
   }
 }
 
-export function grantMonsterRewards(
+function applyKillRewardsToPlayer(
   world: World,
-  killerPlayerId: string,
+  recipient: PlayerEntity,
   monster: MonsterEntity,
-): KillRewardInfo | null {
-  const killer = world.getPlayerEntity(killerPlayerId);
-  if (!killer) return null;
-
+): KillRewardInfo {
   const def = MONSTER_DATABASE.get(monster.isMonster.monsterTypeId);
   const rewards = def?.rewards ?? FALLBACK_REWARDS;
-  rewardPlayer(killer, rewards);
+  rewardPlayer(recipient, rewards);
   const biomeInfo = NODE_BIOMES[monster.hasPosition.nodeId];
   const biomeTier = biomeInfo?.biomeTier ?? 0;
   const biomeXpGained = applyBiomeXP(
-    killer,
+    recipient,
     monster.hasPosition.nodeId,
     rewards.biomeXp ?? fallbackBiomeXp(rewards, biomeTier),
   );
-  const tierAdvanced = registerKillForQuests(killer, monster.isMonster.monsterTypeId);
+  const tierAdvanced = registerKillForQuests(recipient, monster.isMonster.monsterTypeId);
   if (tierAdvanced) {
-    world.pendingAscensions.push(killer.isPlayer.id);
+    world.pendingAscensions.push(recipient.isPlayer.id);
   }
   if (monster.isMonster.isBoss) {
     world.bossRespawnAt.set(monster.hasPosition.nodeId, Date.now() + 30_000);
     const info = NODE_BIOMES[monster.hasPosition.nodeId];
     if (info) {
       const key = bossClearKey(info.biomeGroup, info.biomeTier);
-      if (!killer.tracksProgression.bossesCleared.includes(key)) {
-        killer.tracksProgression.bossesCleared.push(key);
-        markSliceDirty(world, killer, 'tracksProgression');
+      if (!recipient.tracksProgression.bossesCleared.includes(key)) {
+        recipient.tracksProgression.bossesCleared.push(key);
+        markSliceDirty(world, recipient, 'tracksProgression');
       }
     }
   }
@@ -106,4 +103,29 @@ export function grantMonsterRewards(
     biomeXpGained,
     tierAdvanced,
   };
+}
+
+export function grantMonsterRewards(
+  world: World,
+  killerPlayerId: string,
+  monster: MonsterEntity,
+): KillRewardInfo | null {
+  const killer = world.getPlayerEntity(killerPlayerId);
+  if (!killer) return null;
+
+  const killerInfo = applyKillRewardsToPlayer(world, killer, monster);
+
+  // Party split: every other party member in the same zone earns full rewards.
+  const party = killer.inParty;
+  if (party) {
+    const killNodeId = monster.hasPosition.nodeId;
+    for (const member of world.playerEntities) {
+      if (member === killer) continue;
+      if (member.inParty?.leaderId !== party.leaderId) continue;
+      if (member.hasPosition.nodeId !== killNodeId) continue;
+      applyKillRewardsToPlayer(world, member, monster);
+    }
+  }
+
+  return killerInfo;
 }

@@ -7,12 +7,15 @@ export interface IntentMap {
   equipItem: string;
   unequipItem: EquipmentSlot;
   craftRecipe: string;
+  upgradeItem: string;
   navigateTo: { path: string[] };
   goToTestRoom: undefined;
   leaveTestRoom: undefined;
   resetProgress: undefined;
   refreshRecipes: undefined;
   tacticalView: undefined;
+  joinParty: string;
+  leaveParty: undefined;
 }
 
 type IntentKind = keyof IntentMap;

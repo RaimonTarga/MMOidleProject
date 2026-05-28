@@ -60,6 +60,20 @@ export interface ItemStats {
   attackCooldown?: number;
 }
 
+// ─── Per-item upgrade steps ───────────────────────────────────────────────────
+
+/**
+ * One incremental upgrade level authored alongside the recipe.
+ * Index 0 = +1, index 1 = +2, etc.
+ * `stats` and `mechanicEffects` are additive deltas on top of base item values.
+ */
+export interface UpgradeStep {
+  stats?: Partial<ItemStats>;
+  mechanicEffects?: Record<string, number>;
+  cost: Partial<Record<EssenceType, number>>;
+  requiredBiomeLevel: number;
+}
+
 // ─── Item definition ──────────────────────────────────────────────────────────
 
 /**
@@ -72,6 +86,9 @@ export interface ItemDefinition {
   name: string;
   slot: EquipmentSlot;
   tier: number;
+  /** Biome group this item belongs to (from its recipe). Gates upgrading + sets
+   *  the essence type spent. Absent on legacy starter items → not upgradeable. */
+  biomeGroup?: string;
   statModifiers: Record<string, number>;
   /**
    * Named mechanic modifiers accumulated into player.passives during stat rebuild,
@@ -99,4 +116,6 @@ export interface ItemDefinition {
    */
   attacksPerSecond?: number;
   description?: string;
+  /** Per-item upgrade steps. Length determines the max upgrade level for this item. */
+  upgrades?: UpgradeStep[];
 }

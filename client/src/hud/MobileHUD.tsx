@@ -46,7 +46,7 @@ function useIsMobile(): boolean {
 function MobileHUDContent() {
   const [treeOpen, setTreeOpen]   = useState(false);
   const [invOpen, setInvOpen]     = useState(false);
-  const [craftTab, setCraftTab]   = useState<'biome' | 'forge' | null>(null);
+  const [craftTab, setCraftTab]   = useState<'biome' | 'forge' | 'upgrade' | null>(null);
   const [mapOpen, setMapOpen]     = useState(false);
   const [questOpen, setQuestOpen] = useState(false);
   const [menuOpen, setMenuOpen]   = useState(false);

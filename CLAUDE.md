@@ -132,6 +132,8 @@ Everything that crosses the client/server boundary lives here. Start here for an
 | `player:unlockSkill` | C→S | Unlock skill tree node |
 | `inventory:equipItem` / `inventory:unequip` | C→S | Equipment changes |
 | `crafting:craftRecipe` | C→S | Craft attempt |
+| `party:join` | C→S | Join a target player's party (their leader becomes your leader) |
+| `party:leave` | C→S | Leave your party (disbands it if you are the leader) |
 
 ---
 
@@ -221,6 +223,53 @@ Components: `HUD.tsx` (sidebars, StatPanel, BuffBar, EssencePanel), `BuffBar.tsx
 **Mob density:** `BiomeDefinition.mobDensity?: number` sets the spawn target per node. Falls back to `GAME_CONFIG.MONSTERS_PER_NODE` (12) when absent. `World.getMobDensity(nodeId)` reads it via `NODE_BIOMES → BIOME_DATABASE`. Both `init()` and `ensurePopulation()` use it. Density values: plains 16, forest 13, swamp 10, mountain 7, cave 5, jungle 15, tundra 6, desert 14, volcanic 5, necropolis 13, abyss 5, clearing 6.
 
 **Boss respawn timer:** Bosses respawn 30 s after death. `World.bossRespawnAt: Map<string, number>` maps `nodeId → earliest respawn timestamp`. Set in `grantMonsterRewards` on every boss kill. `ensureBoss` skips spawning until `Date.now() >= bossRespawnAt`.
+
+---
+
+## Party system
+
+Single-level parties: one leader + N followers, no invites. Clicking **Join** on any
+player puts you in that player's leader's party (the join target becomes the leader if they
+were solo). Parties are **ephemeral runtime state** — never persisted; cleared on disconnect.
+
+**Source of truth:** the networked `InParty { leaderId; members: PartyMember[] }` slice
+(`shared/src/components/core/networkedSlices.ts`). Presence ⇔ in a party;
+`leaderId === own id` ⇔ leader. `members` is the full roster (recomputed and stamped onto
+every member on any change) so the client panel is correct even when a member is briefly in
+another zone. Added to `NETWORKED_PLAYER_KEYS`; flows automatically through `buildNodeDelta`.
+No separate manager — followers are derived by scanning `world.playerEntities` for a matching
+`leaderId`.
+
+**Membership logic** (`server/src/systems/player/party/partySystem.ts`):
+- `joinParty(world, self, targetId)` — resolves the target's root leader; rejects self/cycles.
+  If `self` already led a party, that group is **disbanded** (followers go solo); only the
+  joiner moves. Attaches `inParty` to the leader (if solo) and to `self`, then re-syncs rosters.
+- `leaveParty(world, self)` — follower leaves (re-sync); **leader leaving disbands** the party.
+- `syncPartyRoster(world, leaderId)` — restamps the roster onto all members; dissolves a party
+  of one. `handlePartyDisconnect` runs on socket disconnect before `detachPlayerEntity`.
+- `isPartyFollower(player)` — `inParty` present and `leaderId !== own id`. Used by the auto systems.
+
+**Follow + assist** (`server/src/systems/world/partyFollow.ts`, `updatePartyFollow` runs in
+`World.tick` **before** `updateAutoTraverse`/`updateAutoTargets`): a follower with auto-combat on
+trails the leader, assists against the leader's current attack target, and paths to the leader's
+gate when the leader is in another zone (reuses `nodePath.ts` helpers + `updateTransitions`).
+`updateAutoTargets` and `updateAutoTraverse` early-skip followers so this system owns their movement.
+Approach uses the shared `steerTowardTarget(world, player, target)` extracted from `autoTarget.ts`
+(ranged kite / melee close / reload-hold) — followers approach identically to solo auto-combat.
+
+**Rewards** (`grantMonsterRewards` in `rewards.ts`): the per-player body is extracted into
+`applyKillRewardsToPlayer`. On a kill, **every party member in the same node** as the kill earns
+full rewards (essence, biome XP, quests, boss-clear credit). The `player-kill` floater stays keyed
+to the killer; other members' essence rides their own `node:delta`. To split rewards equally later,
+divide essence/biomeXp by recipient count inside `applyKillRewardsToPlayer` — single lever, not built.
+
+**Client:** `inParty` flows into `PlayerView.partyLeaderId` / `partyMembers`. `deltaApplier.ts`
+publishes `zonePlayersAtom` (same-zone players incl. `hp`/`maxHp`, for the In-Zone join list) and
+`syncPlayerAtoms` sets `partyAtom` (own roster). `client/src/hud/PartyPanel.tsx` is an always-visible
+**left** sidebar panel (between StatPanel and the debug panel); each roster row shows an HP bar looked
+up from `zonePlayersAtom` (members in another zone show "away" since HP is only known for same-zone players). Intents route Join/Leave through
+`hudBus.requestJoinParty/requestLeaveParty` → local `intents` bus → `hudEvents.ts` →
+`party:join`/`party:leave` socket events.
 
 ---
 
@@ -323,6 +372,37 @@ Shield `duration-ms` = `interval-ms` for clean 1:1 rotation. Omit/-1 for permane
 | `defense.cleanse-stacks/interval-ms` | Periodic stack removal |
 
 **Damage debt drain** (`server/src/systems/defense/mitigation/hitToDot.ts`, `runDebtDrain`): fires once per second (via `debtTick` cooldown) — not proportionally every tick. Each second drains 25% of the current pool; `Math.round(damage) < 1` is skipped. Absorb and burst pools use proportional per-tick drain but zero out when the pool falls below 0.5 to avoid asymptotic trickle.
+
+---
+
+## Item upgrade system
+
+Items can be upgraded up to +3 (or however many steps are defined on that item). Upgrade state lives in `holdsInventory.itemUpgrades: Record<itemId, number>` (0 = not upgraded).
+
+**Authoring upgrades:** Each `Recipe` in `shared/src/data/recipes/` has an optional `upgrades: UpgradeStep[]` array. The array length sets that item's max upgrade level. Each step is incremental (applied on top of all prior steps):
+
+```typescript
+interface UpgradeStep {
+  stats?: Partial<ItemStats>;           // stat deltas (additive on base)
+  mechanicEffects?: Record<string, number>; // mechanic effect deltas (additive)
+  cost: Partial<Record<EssenceType, number>>; // can be multi-essence
+  requiredBiomeLevel: number;           // biome level gate for this step
+}
+```
+
+**Pipeline:** `Recipe.upgrades` → copied into `ItemDefinition.upgrades` by `itemDatabase.ts` → applied during `recalculatePlayerEntityStats` via `upgradeStatBonusTotal` + `upgradeMechanicEffectsTotal` from `shared/src/systems/itemUpgrades.ts`.
+
+**Key functions (`shared/src/systems/itemUpgrades.ts`):**
+- `getMaxUpgrade(item)` — `upgrades.length` or `MAX_UPGRADE` (3) for generic items
+- `upgradeStatBonusTotal(item, plus)` — returns `Record<string, number>` of cumulative stat deltas across steps 0..plus-1
+- `upgradeMechanicEffectsTotal(item, plus)` — same for mechanic effects
+- `upgradeCostFor(item, targetPlus)` — returns `Partial<Record<EssenceType, number>> | null`
+- `requiredBiomeLevelForUpgrade(item, targetPlus)` — reads from `item.upgrades[targetPlus-1].requiredBiomeLevel`
+- `checkUpgrade({item, currentPlus, biomeLevel, essences})` — shared authority check (server + client)
+
+Items without an `upgrades` array fall back to the old generic tier-based formula (still valid for legacy/starter items).
+
+**Server:** `server/src/systems/player/economy/itemUpgrade.ts` handles the `inventory:upgradeItem` intent — validates via `checkUpgrade`, deducts all essence types in the cost record, increments `itemUpgrades[itemId]`, triggers stat recalc.
 
 ---
 
@@ -479,11 +559,13 @@ Never set a `dot.damage-per-stack` passive — `damagePerStack` is always derive
 - Monster charge-on-aggro (`chargeOnAggro`), player slow/root (`slowEffect`), deterministic evasion (`evadeEvery`), ranged flag (`isRanged`) — see Monster mechanics section
 - Boss fight scripting framework (`bossScripts.ts`) — data-driven phases, repeating timers, enrage/regen/shield/summon/stat-buff actions
 - Quest system (kill-count quests → XP → skill points); QuestPanel
+- Party system — single-level parties (`inParty` networked slice), click-to-join, follow + assist in auto-combat (`partyFollow`), same-zone full rewards; left-sidebar PartyPanel. See "Party system" section
 - All 5 class archetypes with T0 roots and T1–T2 nodes; T3 fully implemented for Cadence, Energy, DoT; Cooldown light+balanced; Reload designed only
 - Defense/recovery system (5 recovery archetypes, all `defense.*` passives)
 - Weapon families: Chaotic (axe + greataxe), Sacred (cross + consecrated), Burn (ashbrand + cinderfang + frostmourne); `onHitDamage` stat for flat on-hit weapons (Stinger Fang)
 - T1 and T2 weapons (8 T2 weapons at biome level 9)
 - Inventory/equipment (4 slots), crafting with biome XP unlock gates
+- Item upgrade system (+1/+2/+3 per item, per-item stat+cost+biome-level defined in recipe files alongside the recipe); `UpgradeStep[]` on `Recipe` and `ItemDefinition`; `shared/src/systems/itemUpgrades.ts`
 - Biome XP power-curve system (`biomeXpForLevel`); two-tab crafting panel (Biome Progress + Forge)
 - Skill tree T0–T7 (T4–7 generated placeholders)
 - Death/respawn; node transitions
@@ -572,6 +654,10 @@ T1 bosses: 400–700 HP, 14–22 ATK. T2 bosses: not yet balanced (stats inherit
 - **Reload multiplier is a final layer** — apply `* 0.5` to `dealsDamage.attack` and `performsAttack.attackCooldown` at the end of `recalculatePlayerStats()`, never additively
 - **Attack speed in skill nodes is `attackSpeedPct`** — percentage modifier (e.g. `0.15` = +15%); all unlocked nodes sum additively, applied once as `round(baseCooldown / (1 + total))`. Never use flat ms deltas in `StatEffects`; flat ms only belongs in temporary runtime buffs.
 - **Reload plating compensation** — `reloadPrototype.ts` sets `ctx.platingMult = 0.5` in `beforeAttack`; `combat.ts` applies `effectivePlating * ctx.platingMult`. Never add an archetype check inside the damage formula itself.
+- **Upgrade steps are incremental, not cumulative** — each `UpgradeStep.stats` is the delta for that level only; `upgradeStatBonusTotal` sums steps 0..plus-1 to get the total. Never store cumulative totals in the step.
+- **`upgradeStatBonusTotal` returns a record** — signature is `(item: ItemDefinition, plus: number): Record<string, number>`. It is NOT `(slot, tier, plus)`. Callers that need the primary-slot stat pick it out: `upgradeStatBonusTotal(def, plus)[UPGRADE_STAT_BY_SLOT[slot]] ?? 0`.
+- **`upgradeCostFor` returns multi-essence** — `Partial<Record<EssenceType, number>> | null`, not `{ type, amount }`. The server iterates all entries to deduct; the client passes it directly to `CostDisplay`.
+- **Upgrade steps belong in the recipe file** — add `upgrades: UpgradeStep[]` next to the item's other fields in `shared/src/data/recipes/`. `itemDatabase.ts` copies it through automatically. Never define upgrade data elsewhere.
 - **Evasion stacking is probability-based** — in `recalculatePlayerStats`, each `evasion: N` source contributes `1/N` to a probability accumulator; final `threshold = round(1 / totalChance)`. Single-source: `evasion: 10` → threshold 10. Two sources of 10: threshold 5. Never add raw N values together.
 - **`isMeleeArchetype(archetype, unlockedSkills?)` is the single source of truth for melee/ranged** — defined in `shared/src/data/skillTree/rootsAndFrames.ts`, exported from `@mmo-idle/shared`. Cadence, cooldown, and null (unclassed) are melee. Range nodes override: range-close forces melee, range-mid/far forces ranged. Use this function everywhere (player lunge, future stat multipliers) — do not re-derive from attackRange or archetype name.
 - **Ranged monster `attackStyle`** — ranged monsters that previously used generic `impact` should use `gunshot` instead. Monsters with a thematic style (magic, poison, slash) keep it even when `isRanged: true`.

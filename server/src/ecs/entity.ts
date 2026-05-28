@@ -28,6 +28,7 @@ import type {
   HoldsInventory,
   InAcChargePhase,
   InAcDischarge,
+  InParty,
   IsBossEngaged,
   IsChanneling,
   IsMinion,
@@ -107,6 +108,7 @@ export interface ServerEntity {
   usesSkills?:         UsesSkills;
   showsSacred?:        ShowsSacred;
   summonsMinions?:     SummonsMinions;
+  inParty?:            InParty;
   usesCadence?:        UsesCadence;
   usesEnergy?:         UsesEnergy;
   appliesDots?:        AppliesDots;

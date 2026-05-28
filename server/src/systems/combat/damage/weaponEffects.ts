@@ -6,65 +6,24 @@ import {
   getFlag, setFlag,
   isCooldownActive, setCooldown, getCooldown,
   getString, setString,
+  CHAOTIC_FAMILY, SACRED_FAMILY, BURN_FAMILY,
+  SACRED_DMG_MULT, SACRED_APS_MULT,
+  ASHBRAND_DURATION_MS, ASHBRAND_TICK_MS,
 } from '@mmo-idle/shared';
 import { grantMonsterRewards } from '../../player/progression/rewards';
 import type { World } from '../../../world/World';
 import { defineBuff, type BuffDescriptor } from '../buffs/descriptor';
 import { attachMarker, detachMarkerIfNoEffect } from '../../../ecs/markerHelpers';
 
-// ── Chaotic family (Chaotic Axe / Frenzied Greataxe) ─────────────────────────
+// ── Internal combat state keys ────────────────────────────────────────────────
 
-const CHAOTIC_HIT_KEY = 'chaoticHits';
-/** Every Nth hit is a miss (deals 0 damage). On-hit effects still fire. */
-export const CHAOTIC_MISS_EVERY   = 3;
-export const FRENZIED_MISS_EVERY  = 4;
-
-const CHAOTIC_FAMILY: Record<string, number> = {
-  'chaotic-axe':       CHAOTIC_MISS_EVERY,
-  'frenzied-greataxe': FRENZIED_MISS_EVERY,
-};
-
-// ── Sacred family (Sacred Cross / Consecrated Cross) ─────────────────────────
-
-export const SACRED_CD_MS        = 6_000;
-export const SACRED_BUFF_MS      = 2_000;
-export const CONSECRATED_CD_MS   = 7_000;
-export const CONSECRATED_BUFF_MS = 4_000;
-export const SACRED_DMG_MULT     = 3;
-export const SACRED_APS_MULT     = 2;
-
+const CHAOTIC_HIT_KEY   = 'chaoticHits';
 const SACRED_STARTED    = 'sacredStarted';
 const SACRED_BUFF_FLAG  = 'sacredBuffActive';
 const SACRED_READY      = 'sacredReady';
 const SACRED_CD_KEY     = 'sacredCd';
 const SACRED_BUFF_TIMER = 'sacredBufTimer';
 const SACRED_ORIG_CD    = 'sacredOrigCd';
-
-const SACRED_FAMILY: Record<string, { cdMs: number; buffMs: number }> = {
-  'sacred-cross':      { cdMs: SACRED_CD_MS,       buffMs: SACRED_BUFF_MS       },
-  'consecrated-cross': { cdMs: CONSECRATED_CD_MS,  buffMs: CONSECRATED_BUFF_MS  },
-};
-
-// ── Burn family (Ashbrand / Cinderfang / Frostmourne) ────────────────────────
-
-export const ASHBRAND_CONV_PCT    = 0.30;
-export const ASHBRAND_MAX_STACKS  = 5;
-export const ASHBRAND_TICK_MS     = 1_000;
-export const ASHBRAND_DURATION_MS = 4_500;
-
-export const CINDERFANG_CONV_PCT   = 0.30;
-export const CINDERFANG_MAX_STACKS = 7;
-
-export const FROSTMOURNE_CONV_PCT   = 0.50;
-export const FROSTMOURNE_MAX_STACKS = 3;
-
-interface BurnEntry { weaponId: string; effectId: string; convPct: number; maxStacks: number }
-
-const BURN_FAMILY: BurnEntry[] = [
-  { weaponId: 'ashbrand-blade',   effectId: 'ashbrand-burn',    convPct: ASHBRAND_CONV_PCT,   maxStacks: ASHBRAND_MAX_STACKS   },
-  { weaponId: 'cinderfang-saber', effectId: 'cinderfang-burn',  convPct: CINDERFANG_CONV_PCT, maxStacks: CINDERFANG_MAX_STACKS },
-  { weaponId: 'frostmourne-mace', effectId: 'frostmourne-burn', convPct: FROSTMOURNE_CONV_PCT, maxStacks: FROSTMOURNE_MAX_STACKS },
-];
 
 const BURN_EFFECT_IDS = BURN_FAMILY.map(b => b.effectId);
 

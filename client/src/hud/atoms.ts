@@ -4,6 +4,7 @@ import type {
   EquipmentMap,
   EssenceType,
   NodeTelemetrySnapshot,
+  PartyMember,
   PassiveMap,
   PlayerBuff,
   PlayerView,
@@ -104,6 +105,7 @@ export const unlockedSkillsAtom = atom<string[]>([]);
 export const passivesAtom = atom<PassiveMap>({});
 export const inventoryAtom = atom<string[]>([]);
 export const equipmentAtom = atom<EquipmentMap>({ ...DEFAULT_EQUIPMENT });
+export const itemUpgradesAtom = atom<Record<string, number>>({});
 export const unlockedRecipesAtom = atom<string[]>([]);
 export const biomeLevelAtom = atom<Record<string, number>>({});
 export const biomeXPAtom = atom<Record<string, number>>({});
@@ -113,10 +115,22 @@ export const essencesAtom = atom<Record<EssenceType, number>>({ ...DEFAULT_ESSEN
 export const activeBuffsAtom = atom<PlayerBuff[]>([]);
 export const autoPathAtom = atom<string[] | null>(null);
 
+export interface ZonePlayer {
+  id: string;
+  name: string;
+  partyLeaderId: string | null;
+  hp: number;
+  maxHp: number;
+}
+/** Players in the local player's current zone (for the party panel). */
+export const zonePlayersAtom = atom<ZonePlayer[]>([]);
+/** The local player's party (null when not in a party). */
+export const partyAtom = atom<{ leaderId: string; members: PartyMember[] } | null>(null);
+
 export const skillTreeOpenAtom = atom<boolean>(false);
 export const inventoryOpenAtom = atom<boolean>(false);
 export const mapOpenAtom = atom<boolean>(false);
-export const craftTabAtom = atom<'biome' | 'forge' | null>(null);
+export const craftTabAtom = atom<'biome' | 'forge' | 'upgrade' | null>(null);
 export const questOpenAtom = atom<boolean>(false);
 export const settingsOpenAtom = atom<boolean>(false);
 export const debugPanelOpenAtom = atom<boolean>(false);
@@ -185,6 +199,48 @@ function setIfChanged<T>(targetAtom: PrimitiveAtom<T>, next: T): void {
   const prev = store.get(targetAtom);
   if (Object.is(prev, next)) return;
   store.set(targetAtom, next);
+}
+
+function zonePlayersEqual(a: readonly ZonePlayer[], b: readonly ZonePlayer[]): boolean {
+  if (a === b) return true;
+  if (a.length !== b.length) return false;
+  for (let i = 0; i < a.length; i++) {
+    if (
+      a[i].id !== b[i].id ||
+      a[i].name !== b[i].name ||
+      a[i].partyLeaderId !== b[i].partyLeaderId ||
+      a[i].hp !== b[i].hp ||
+      a[i].maxHp !== b[i].maxHp
+    ) {
+      return false;
+    }
+  }
+  return true;
+}
+
+export function setZonePlayers(next: ZonePlayer[]): void {
+  const store = getDefaultStore();
+  if (zonePlayersEqual(store.get(zonePlayersAtom), next)) return;
+  store.set(zonePlayersAtom, next);
+}
+
+function partyEqual(
+  a: { leaderId: string; members: PartyMember[] } | null,
+  b: { leaderId: string; members: PartyMember[] } | null,
+): boolean {
+  if (a === b) return true;
+  if (!a || !b) return false;
+  if (a.leaderId !== b.leaderId || a.members.length !== b.members.length) return false;
+  for (let i = 0; i < a.members.length; i++) {
+    if (a.members[i].id !== b.members[i].id || a.members[i].name !== b.members[i].name) return false;
+  }
+  return true;
+}
+
+function setParty(next: { leaderId: string; members: PartyMember[] } | null): void {
+  const store = getDefaultStore();
+  if (partyEqual(store.get(partyAtom), next)) return;
+  store.set(partyAtom, next);
 }
 
 function buffsEqual(a: readonly PlayerBuff[], b: readonly PlayerBuff[]): boolean {
@@ -275,11 +331,14 @@ function resetPlayerAtoms(): void {
   setIfShallowArrayEqual(activeBuffsAtom, []);
   setIfShallowObjectEqual(passivesAtom, {});
   setIfShallowObjectEqual(equipmentAtom, { ...DEFAULT_EQUIPMENT });
+  setIfShallowObjectEqual(itemUpgradesAtom, {});
   setIfShallowObjectEqual(biomeLevelAtom, {});
   setIfShallowObjectEqual(biomeXPAtom, {});
   setIfShallowObjectEqual(questProgressAtom, {});
   setIfShallowObjectEqual(essencesAtom, { ...DEFAULT_ESSENCES });
   setAutoPath(null);
+  setParty(null);
+  setZonePlayers([]);
   store.set(nodeLoadingAtom, { active: false, nodeId: null });
   store.set(tabResyncAtom, { active: false, startedAt: null });
 }
@@ -350,8 +409,15 @@ export function syncPlayerAtoms(player: PlayerView | null): void {
   setIfBuffsEqual(activeBuffsAtom, player.activeBuffs);
   setIfShallowObjectEqual(passivesAtom, player.passives);
   setIfShallowObjectEqual(equipmentAtom, player.equipment);
+  setIfShallowObjectEqual(itemUpgradesAtom, player.itemUpgrades ?? {});
   setIfShallowObjectEqual(biomeLevelAtom, player.biomeLevel);
   setIfShallowObjectEqual(biomeXPAtom, player.biomeXP);
   setIfShallowObjectEqual(questProgressAtom, player.questProgress);
   setIfShallowObjectEqual(essencesAtom, player.essences);
+
+  setParty(
+    player.partyLeaderId
+      ? { leaderId: player.partyLeaderId, members: player.partyMembers }
+      : null,
+  );
 }

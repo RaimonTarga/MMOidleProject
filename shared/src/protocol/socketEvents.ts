@@ -11,6 +11,13 @@ export interface ServerToClientEvents {
   'node:delta': (snapshot: DeltaSnapshot) => void;
   /** Immediate result of a crafting attempt — success or reason for failure. */
   'crafting:result': (result: { success: boolean; reason?: string }) => void;
+  /** Immediate result of an item upgrade attempt. */
+  'inventory:upgradeResult': (result: {
+    success: boolean;
+    reason?: string;
+    itemId: string;
+    newLevel: number;
+  }) => void;
   /** Sent to a player whose HP reached zero — they are simultaneously respawned server-side. */
   'player:died': () => void;
   /** Sent when a player unlocks a skill and advances to the next tier. */
@@ -39,6 +46,12 @@ export interface ClientToServerEvents {
   'inventory:unequip': (slot: EquipmentSlot) => void;
   /** Attempt to craft a recipe by ID. Server validates and applies. */
   'crafting:craftRecipe': (recipeId: string) => void;
+  /** Attempt to upgrade an owned item by ID (+1). Server validates and applies. */
+  'inventory:upgradeItem': (itemId: string) => void;
+  /** Join the party of the target player (the target's leader becomes your leader). */
+  'party:join': (targetPlayerId: string) => void;
+  /** Leave your current party (disbands it if you are the leader). */
+  'party:leave': () => void;
   /** Dev-only: teleport the player to the debug test room. Server ignores in production. */
   'debug:goToTestRoom': () => void;
   /** Dev-only: leave the debug test room and return to the clearing. Server ignores in production. */

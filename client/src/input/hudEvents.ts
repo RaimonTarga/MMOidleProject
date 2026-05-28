@@ -5,12 +5,15 @@ import {
   sendCraftRecipe,
   sendEquipItem,
   sendGoToTestRoom,
+  sendJoinParty,
+  sendLeaveParty,
   sendLeaveTestRoom,
   sendRefreshRecipes,
   sendResetProgress,
   sendSetAutoTraverse,
   sendUnequip,
   sendUnlockSkill,
+  sendUpgradeItem,
 } from "../net/intents";
 import type { GameScene } from "../scenes/GameScene";
 import { sendAutoPathMove, setAutoMode } from "./autoPath";
@@ -40,6 +43,10 @@ export function attachHudEvents(scene: GameScene): void {
     sendCraftRecipe(scene.socket, recipeId);
   });
 
+  intents.on("upgradeItem", (itemId) => {
+    sendUpgradeItem(scene.socket, itemId);
+  });
+
   intents.on("tacticalView", () => {
     scene.tacticalMode = !scene.tacticalMode;
     hudBus.notifyTacticalView(scene.tacticalMode);
@@ -67,5 +74,13 @@ export function attachHudEvents(scene: GameScene): void {
 
   intents.on("refreshRecipes", () => {
     sendRefreshRecipes(scene.socket);
+  });
+
+  intents.on("joinParty", (targetPlayerId) => {
+    sendJoinParty(scene.socket, targetPlayerId);
+  });
+
+  intents.on("leaveParty", () => {
+    sendLeaveParty(scene.socket);
   });
 }

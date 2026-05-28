@@ -11,6 +11,7 @@ import type {
 import { SKILL_TREE } from '../skillTree';
 import { ITEM_DATABASE } from '../itemDatabase';
 import { EQUIPMENT_SLOTS } from '../items';
+import { upgradeMechanicEffectsTotal, upgradeStatBonusTotal } from './itemUpgrades';
 import { GAME_CONFIG } from '../index';
 import { mergePassives } from '../passives';
 
@@ -134,7 +135,21 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): void {
       }
     }
     mergePassives(p.usesSkills.passives, def.mechanicEffects);
+
+    // Item upgrade bonuses: all stat and mechanic effect deltas from upgrade steps.
+    const plus = p.holdsInventory.itemUpgrades?.[defId] ?? 0;
+    if (plus > 0) {
+      for (const [stat, value] of Object.entries(upgradeStatBonusTotal(def, plus))) {
+        if (stat === 'evasion') { if (value > 0) evasionChance += 1 / value; }
+        else applyStatModToTarget(p, stat, value);
+      }
+      const meFx = upgradeMechanicEffectsTotal(def, plus);
+      if (Object.keys(meFx).length > 0) mergePassives(p.usesSkills.passives, meFx);
+    }
   }
+
+  // Re-clamp damage reduction: equipment + upgrades are applied after the step-2 clamp.
+  p.mitigatesDamage.damageReduction = Math.min(0.9, Math.max(0, p.mitigatesDamage.damageReduction));
 
   // Convert accumulated evasion probability to a 1-in-N threshold.
   p.evadesHits.threshold = evasionChance > 0

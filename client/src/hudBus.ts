@@ -38,6 +38,11 @@ export const hudBus = {
     intents.emit('craftRecipe', recipeId);
   },
 
+  /** Called by the Upgrade tab — GameScene picks this up and emits the socket event. */
+  requestUpgradeItem(itemId: string): void {
+    intents.emit('upgradeItem', itemId);
+  },
+
   /** Navigate the player to a node via BFS auto-path. `path` is the sequence of
    *  nodeIds to visit, NOT including the player's current node. */
   requestNavigateTo(path: string[]): void {
@@ -67,6 +72,16 @@ export const hudBus = {
   subscribeRecipeUnlock(fn: RecipeUnlockListener): () => void {
     recipeUnlockListeners.add(fn);
     return () => recipeUnlockListeners.delete(fn);
+  },
+
+  /** Called by PartyPanel — GameScene picks this up and emits the socket event. */
+  requestJoinParty(targetPlayerId: string): void {
+    intents.emit('joinParty', targetPlayerId);
+  },
+
+  /** Called by PartyPanel — leave (or disband) the current party. */
+  requestLeaveParty(): void {
+    intents.emit('leaveParty', undefined);
   },
 
   /** Toggle tactical mode (ranges + hitboxes). */
