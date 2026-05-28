@@ -2,7 +2,7 @@ import { createPortal } from 'react-dom';
 import { useAtomValue } from 'jotai';
 import { BackpackGrid } from './BackpackGrid';
 import { EquipmentSlots } from './EquipmentSlots';
-import { ItemDesc } from './ItemDesc';
+import { StatSheet } from './StatSheet';
 import { playerIdAtom } from '../../hud/atoms';
 import { useFocusWithDelay } from './useFocus';
 import '../inventory.css';
@@ -33,9 +33,11 @@ export function InventoryPanel({ onClose }: Props) {
             <div className="inv-left">
               <EquipmentSlots focused={focused} onFocus={focus} />
             </div>
-            <div className="inv-right">
+            <div className="inv-center">
               <BackpackGrid focused={focused} onFocus={focus} />
-              <ItemDesc focused={focused} onFocus={focus} />
+            </div>
+            <div className="inv-right">
+              <StatSheet focused={focused} onFocus={focus} />
             </div>
           </div>
         ) : (

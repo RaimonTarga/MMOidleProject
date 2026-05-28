@@ -44,6 +44,7 @@ export interface PlayerView {
   attackStyle: string;
   inventory: string[];
   equipment: EquipmentMap;
+  itemUpgrades: Record<string, number>;
   biomeXP: Record<string, number>;
   biomeLevel: Record<string, number>;
   unlockedRecipes: string[];
@@ -172,6 +173,7 @@ export function composePlayerView(entity: NetworkedEntity): PlayerView | null {
     attackStyle: damage.attackStyle,
     inventory: inventory.inventory,
     equipment: inventory.equipment ?? EMPTY_EQUIPMENT,
+    itemUpgrades: inventory.itemUpgrades ?? {},
     biomeXP: progression.biomeXP,
     biomeLevel: progression.biomeLevel,
     unlockedRecipes: progression.unlockedRecipes,

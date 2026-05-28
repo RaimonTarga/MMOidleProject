@@ -177,6 +177,13 @@ export function RightSidebar() {
             />
           )}
         </button>
+        <button
+          className={`auto-btn${craftTab === "upgrade" ? " active" : ""}`}
+          style={{ marginTop: 4 }}
+          onClick={() => setCraftTab((t) => (t === "upgrade" ? null : "upgrade"))}
+        >
+          {craftTab === "upgrade" ? "CLOSE UPGRADE" : "UPGRADE ITEMS"}
+        </button>
       </div>
 
       <div className="sidebar-panel">

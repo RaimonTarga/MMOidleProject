@@ -72,6 +72,9 @@ export interface ItemDefinition {
   name: string;
   slot: EquipmentSlot;
   tier: number;
+  /** Biome group this item belongs to (from its recipe). Gates upgrading + sets
+   *  the essence type spent. Absent on legacy starter items → not upgradeable. */
+  biomeGroup?: string;
   statModifiers: Record<string, number>;
   /**
    * Named mechanic modifiers accumulated into player.passives during stat rebuild,

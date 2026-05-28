@@ -4,6 +4,7 @@ import type { EssenceType } from '@mmo-idle/shared';
 import { RECIPE_DATABASE, TEST_ROOM_NODE_ID } from '@mmo-idle/shared';
 import { hudBus } from '../../hudBus';
 import {
+  equipmentAtom,
   essencesAtom,
   inventoryAtom,
   playerNodeIdAtom,
@@ -26,6 +27,7 @@ export function ForgeTab() {
   const unlockedRecipeIds = useAtomValue(unlockedRecipesAtom);
   const essences          = useAtomValue(essencesAtom);
   const inventory         = useAtomValue(inventoryAtom);
+  const equipment         = useAtomValue(equipmentAtom);
 
   const isTestRoom        = nodeId === TEST_ROOM_NODE_ID;
   const lastCraftedIdRef  = useRef<string | null>(null);
@@ -47,7 +49,8 @@ export function ForgeTab() {
     };
   }, []);
 
-  const ownedSet = useMemo(() => new Set(inventory), [inventory]);
+  const equippedSet = useMemo(() => new Set(Object.values(equipment).filter((id): id is string => id !== null)), [equipment]);
+  const ownedSet    = useMemo(() => new Set([...inventory, ...equippedSet]), [inventory, equippedSet]);
 
   const allRecipes = useMemo(() =>
     Array.from(RECIPE_DATABASE.values()).sort((a, b) =>
@@ -202,7 +205,7 @@ export function ForgeTab() {
                       {SLOT_LABELS[recipe.slot] ?? recipe.slot}
                     </span>
                     <span className="craft-recipe__tier-badge">T{recipe.tier}</span>
-                    {owned && <span className="craft-recipe__owned-badge">IN BAG</span>}
+                    {owned && <span className="craft-recipe__owned-badge">{equippedSet.has(recipe.id) ? 'EQUIPPED' : 'IN BAG'}</span>}
                   </div>
 
                   {statEntries.length > 0 && (
@@ -232,7 +235,7 @@ export function ForgeTab() {
                         }
                       }}
                     >
-                      {owned ? 'In inventory' : canAfford ? 'Craft' : 'Insufficient'}
+                      {owned ? (equippedSet.has(recipe.id) ? 'Equipped' : 'In inventory') : canAfford ? 'Craft' : 'Insufficient'}
                     </button>
                   </div>
                 </div>

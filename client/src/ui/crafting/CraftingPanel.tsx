@@ -2,12 +2,15 @@ import { createPortal } from 'react-dom';
 import { useAtomValue } from 'jotai';
 import { BiomeTab } from './BiomeTab';
 import { ForgeTab } from './ForgeTab';
+import { UpgradeTab } from './UpgradeTab';
 import { playerIdAtom } from '../../hud/atoms';
 import '../crafting.css';
 
+export type CraftTab = 'biome' | 'forge' | 'upgrade';
+
 interface Props {
-  tab: 'biome' | 'forge';
-  onTabChange: (tab: 'biome' | 'forge') => void;
+  tab: CraftTab;
+  onTabChange: (tab: CraftTab) => void;
   onClose: () => void;
 }
 
@@ -42,13 +45,21 @@ export function CraftingPanel({ tab, onTabChange, onClose }: Props) {
           >
             Forge
           </button>
+          <button
+            className={`craft-tab${tab === 'upgrade' ? ' craft-tab--active' : ''}`}
+            onClick={() => onTabChange('upgrade')}
+          >
+            Upgrade
+          </button>
         </div>
 
         {/* Content */}
         {playerId ? (
           tab === 'biome'
             ? <BiomeTab />
-            : <ForgeTab />
+            : tab === 'forge'
+              ? <ForgeTab />
+              : <UpgradeTab />
         ) : (
           <div className="craft-empty">Not connected.</div>
         )}

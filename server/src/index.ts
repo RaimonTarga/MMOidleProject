@@ -10,6 +10,7 @@ import { unlockSkill } from './systems/player/progression/skills';
 import { checkRecipeUnlocks } from './systems/player/progression/rewards';
 import { equipItem, unequipItem } from './systems/player/economy/inventory';
 import { craftRecipe } from './systems/player/economy/crafting';
+import { upgradeItem } from './systems/player/economy/itemUpgrade';
 import type {
   ServerToClientEvents,
   ClientToServerEvents,
@@ -296,6 +297,13 @@ io.on('connection', (socket) => {
     socket.emit('crafting:result', result);
   });
 
+  socket.on('inventory:upgradeItem', (itemId: string) => {
+    const p = world.getPlayerEntity(socket.id);
+    if (!p) return;
+    const result = upgradeItem(world, p, itemId);
+    socket.emit('inventory:upgradeResult', result);
+  });
+
   if (IS_DEV) {
     socket.on('debug:goToTestRoom', () => {
       const p = world.getPlayerEntity(socket.id);
@@ -377,6 +385,7 @@ io.on('connection', (socket) => {
 
       p.holdsInventory.inventory = [];
       p.holdsInventory.equipment = emptyEquipment();
+      p.holdsInventory.itemUpgrades = {};
       p.usesSkills.unlockedSkills = [];
       p.usesSkills.passives = {};
       p.usesSkills.selectedClass = null;

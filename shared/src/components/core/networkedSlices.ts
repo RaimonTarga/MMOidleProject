@@ -109,6 +109,8 @@ export interface TracksProgression {
 export interface HoldsInventory {
   inventory: string[];
   equipment: EquipmentMap;
+  /** Per-item-id upgrade level (+0..+MAX_UPGRADE). Absent key means +0. */
+  itemUpgrades: Record<string, number>;
 }
 
 /** Skill tree unlocks plus the derived passive map and class selections. */

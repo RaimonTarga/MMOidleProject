@@ -11,6 +11,7 @@ import {
   sendSetAutoTraverse,
   sendUnequip,
   sendUnlockSkill,
+  sendUpgradeItem,
 } from "../net/intents";
 import type { GameScene } from "../scenes/GameScene";
 import { sendAutoPathMove, setAutoMode } from "./autoPath";
@@ -38,6 +39,10 @@ export function attachHudEvents(scene: GameScene): void {
 
   intents.on("craftRecipe", (recipeId) => {
     sendCraftRecipe(scene.socket, recipeId);
+  });
+
+  intents.on("upgradeItem", (itemId) => {
+    sendUpgradeItem(scene.socket, itemId);
   });
 
   intents.on("tacticalView", () => {

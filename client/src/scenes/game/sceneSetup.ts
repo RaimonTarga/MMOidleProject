@@ -199,6 +199,11 @@ function connectSocket(scene: GameScene): void {
         new CustomEvent("hud:craftResult", { detail: result }),
       );
     },
+    onUpgradeResult: (result) => {
+      window.dispatchEvent(
+        new CustomEvent("hud:upgradeResult", { detail: result }),
+      );
+    },
     onPlayerDied: () => {
       combatLog.push("death", "You were defeated");
       showDeathOverlay(scene);

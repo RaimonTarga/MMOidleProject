@@ -11,6 +11,7 @@ import type {
 import { SKILL_TREE } from '../skillTree';
 import { ITEM_DATABASE } from '../itemDatabase';
 import { EQUIPMENT_SLOTS } from '../items';
+import { UPGRADE_STAT_BY_SLOT, upgradeStatBonusTotal } from './itemUpgrades';
 import { GAME_CONFIG } from '../index';
 import { mergePassives } from '../passives';
 
@@ -134,7 +135,16 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): void {
       }
     }
     mergePassives(p.usesSkills.passives, def.mechanicEffects);
+
+    // Item upgrade bonus: flat boost to the slot's primary stat.
+    const plus = p.holdsInventory.itemUpgrades?.[defId] ?? 0;
+    if (plus > 0) {
+      applyStatModToTarget(p, UPGRADE_STAT_BY_SLOT[slot], upgradeStatBonusTotal(slot, def.tier, plus));
+    }
   }
+
+  // Re-clamp damage reduction: equipment + upgrades are applied after the step-2 clamp.
+  p.mitigatesDamage.damageReduction = Math.min(0.9, Math.max(0, p.mitigatesDamage.damageReduction));
 
   // Convert accumulated evasion probability to a 1-in-N threshold.
   p.evadesHits.threshold = evasionChance > 0

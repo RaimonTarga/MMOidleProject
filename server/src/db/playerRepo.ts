@@ -104,6 +104,7 @@ function hydratePlayerSlices(row: CharacterRow): PersistedPlayerSlices {
     ...emptyEquipment(),
     ...holdsInventory.equipment,
   };
+  holdsInventory.itemUpgrades = holdsInventory.itemUpgrades ?? {};
   const tracksProgression = parseSlice<TracksProgression>(row.tracksProgression);
 
   return {
@@ -161,6 +162,7 @@ function buildFreshSlices(
     holdsInventory: {
       inventory: [],
       equipment,
+      itemUpgrades: {},
     },
     usesSkills: {
       unlockedSkills:     [],

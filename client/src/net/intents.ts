@@ -33,6 +33,10 @@ export function sendCraftRecipe(socket: GameSocket, recipeId: string): void {
   socket.emit('crafting:craftRecipe', recipeId);
 }
 
+export function sendUpgradeItem(socket: GameSocket, itemId: string): void {
+  socket.emit('inventory:upgradeItem', itemId);
+}
+
 export function sendGoToTestRoom(socket: GameSocket): void {
   socket.emit('debug:goToTestRoom');
 }

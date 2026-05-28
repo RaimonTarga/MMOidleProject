@@ -123,6 +123,7 @@ export function StatPanel() {
   const shieldPct   = player && player.maxHp > 0 ? Math.min(100 - hpPct, (totalShield / player.maxHp) * 100) : 0;
   const cdSec       = player ? (player.attackCooldown / 1000).toFixed(2) : '—';
   const aps         = player ? (1000 / player.attackCooldown).toFixed(2) : '—';
+  const dps         = player ? (player.attack * (1000 / player.attackCooldown)).toFixed(1) : '—';
   const isFlash     = player ? (player.passives['energy.flash'] ?? 0) > 0 : false;
   const flashShiftLabel = player && player.flashShiftPct >= 50 ? 'Red Shift' : 'Blue Shift';
   const flashShiftColor = player
@@ -162,13 +163,14 @@ export function StatPanel() {
       {/* Core combat stats */}
       <div className="stat-section">
         <StatRow label="Attack"     value={player?.attack    ?? '—'} />
+        <StatRow label="DPS"        value={dps} />
+        <StatRow label="Atk Speed"  value={player ? `${aps} APS (${cdSec}s)` : '—'} />
         <StatRow label="Plating"    value={player?.plating   ?? '—'} />
         {player && player.damageReduction > 0 && (
           <StatRow label="Dmg Reduc." value={`${Math.round(player.damageReduction * 100)}%`} />
         )}
-        <StatRow label="Atk Speed"  value={player ? `${aps} APS (${cdSec}s)` : '—'} />
-        <StatRow label="Atk Range"  value={player ? `${player.attackRange}px` : '—'} />
-        <StatRow label="Move Speed" value={player ? `${player.speed}px/s` : '—'} />
+        <StatRow label="Atk Range"  value={player ? `${player.attackRange}` : '—'} />
+        <StatRow label="Move Speed" value={player ? `${player.speed}` : '—'} />
         <StatRow label="HP Regen"   value={player ? `${player.hpRegen}/s` : '—'} />
       </div>
 

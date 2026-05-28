@@ -1,4 +1,4 @@
-import { GAME_CONFIG, isMeleeArchetype, type CombatArchetype, type CombatEvent, type PlayerView, type Vec2 } from '@mmo-idle/shared';
+import { ESSENCE_COLORS, GAME_CONFIG, isMeleeArchetype, type CombatArchetype, type CombatEvent, type PlayerView, type Vec2 } from '@mmo-idle/shared';
 import { combatLog } from '../combatLog';
 import { activateLaserBeam } from '../fx/laser';
 import { playOneShotEffect, spawnDamageNumber } from '../fx/particles';
@@ -29,16 +29,15 @@ function spawnRewardFloaters(scene: GameScene, ev: PlayerKillEvent): void {
   const target = scene.state.sprite.get(ev.targetId);
   const x = target?.x ?? scene.cameras.main.worldView.centerX;
   const y = target?.y ?? scene.cameras.main.worldView.centerY;
-  const lines = [
-    ev.biomeXpGained > 0 ? `+${ev.biomeXpGained} XP` : null,
-    ev.essenceGained > 0 ? `+${ev.essenceGained} ${ev.essenceType}` : null,
-  ].filter((line): line is string => line !== null);
+  const lines: { text: string; color: string }[] = [];
+  if (ev.biomeXpGained > 0) lines.push({ text: `+${ev.biomeXpGained} XP`, color: '#88ddff' });
+  if (ev.essenceGained > 0) lines.push({ text: `+${ev.essenceGained} ●`, color: ESSENCE_COLORS[ev.essenceType] });
 
   lines.forEach((line, index) => {
-    const text = scene.add.text(x, y - 32 - index * 18, line, {
+    const text = scene.add.text(x, y - 32 - index * 18, line.text, {
       fontFamily: 'monospace',
       fontSize: '14px',
-      color: index === 0 ? '#88ddff' : '#ffdd88',
+      color: line.color,
       stroke: '#000000',
       strokeThickness: 3,
     }).setOrigin(0.5).setDepth(DEPTH.FX);

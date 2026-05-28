@@ -38,6 +38,11 @@ export const hudBus = {
     intents.emit('craftRecipe', recipeId);
   },
 
+  /** Called by the Upgrade tab — GameScene picks this up and emits the socket event. */
+  requestUpgradeItem(itemId: string): void {
+    intents.emit('upgradeItem', itemId);
+  },
+
   /** Navigate the player to a node via BFS auto-path. `path` is the sequence of
    *  nodeIds to visit, NOT including the player's current node. */
   requestNavigateTo(path: string[]): void {

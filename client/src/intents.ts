@@ -7,6 +7,7 @@ export interface IntentMap {
   equipItem: string;
   unequipItem: EquipmentSlot;
   craftRecipe: string;
+  upgradeItem: string;
   navigateTo: { path: string[] };
   goToTestRoom: undefined;
   leaveTestRoom: undefined;

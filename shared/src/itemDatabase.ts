@@ -17,6 +17,7 @@ for (const recipe of RECIPE_DATABASE.values()) {
     name: recipe.name,
     slot: recipe.slot,
     tier: recipe.tier,
+    biomeGroup: recipe.recipeGroup,
     statModifiers: Object.fromEntries(
       Object.entries(recipe.stats).filter(([, v]) => v !== undefined),
     ) as Record<string, number>,
