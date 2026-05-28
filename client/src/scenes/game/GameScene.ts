@@ -23,7 +23,6 @@ export class GameScene extends Phaser.Scene {
   /** Tactical mode: range rings + entity hitbox squares. */
   tacticalMode = false;
 
-  autoPath: string[] = [];
   autoMode = false;
   cameraTarget!: Phaser.GameObjects.Arc;
   flashCameraHold = false;

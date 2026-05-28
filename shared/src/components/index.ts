@@ -1,6 +1,7 @@
 export * from './core/networkedSlices';
 
 export * from './combat/buffs';
+export * from './combat/cannotAttack';
 export * from './combat/effects';
 export * from './combat/hasEmpoweredAttack';
 export * from './combat/holdsShields';

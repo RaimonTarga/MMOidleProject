@@ -16,6 +16,29 @@ export function isMeleeArchetype(archetype: CombatArchetype, unlockedSkills?: st
   return archetype === null || MELEE_ARCHETYPES.has(archetype);
 }
 
+/** Inputs for {@link isRangedCombatant}; both server entity and PlayerView can supply these. */
+export interface RangedCombatantInput {
+  attackRange: number;
+  combatArchetype: CombatArchetype;
+  selectedRange: string | null;
+  /** True when the energy.flash passive is active (Flash teleports into melee). */
+  flashActive: boolean;
+}
+
+/**
+ * Single source of truth for whether a combatant fights at range (kites to an
+ * ideal gap) or in melee (closes to contact). Shared by server auto-steering
+ * (`steerTowardTarget`) and the client lunge animation gate so the two never
+ * disagree. Range nodes win over archetype; Flash is always melee.
+ */
+export function isRangedCombatant(input: RangedCombatantInput): boolean {
+  if (input.flashActive) return false;
+  if (input.selectedRange === 'range-close') return false;
+  if (input.selectedRange === 'range-mid' || input.selectedRange === 'range-far') return true;
+  if (input.combatArchetype === 'reload' || input.combatArchetype === 'energy') return true;
+  return input.attackRange > 100;
+}
+
 export const rootsAndFramesEntries = [
   // ── Tier 0: Class roots ────────────────────────────────────────────────────
   //

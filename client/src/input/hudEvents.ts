@@ -8,6 +8,7 @@ import {
   sendJoinParty,
   sendLeaveParty,
   sendLeaveTestRoom,
+  sendNavigateTo,
   sendRefreshRecipes,
   sendResetProgress,
   sendSetAutoTraverse,
@@ -16,7 +17,7 @@ import {
   sendUpgradeItem,
 } from "../net/intents";
 import type { GameScene } from "../scenes/GameScene";
-import { sendAutoPathMove, setAutoMode } from "./autoPath";
+import { setAutoMode } from "./autoPath";
 
 export function attachHudEvents(scene: GameScene): void {
   intents.on("toggleAuto", () => {
@@ -54,10 +55,11 @@ export function attachHudEvents(scene: GameScene): void {
 
   intents.on("navigateTo", ({ path }) => {
     if (path.length === 0) return;
-    setAutoMode(scene, false);
-    scene.autoPath = path;
+    const destNodeId = path[path.length - 1];
+    // Display the planned route; the server owns the actual movement and turns
+    // off auto-combat for the trip (state flows back via deltas).
     setAutoPath([...path]);
-    sendAutoPathMove(scene, scene.state.ownNodeId);
+    sendNavigateTo(scene.socket, destNodeId);
   });
 
   intents.on("goToTestRoom", () => {

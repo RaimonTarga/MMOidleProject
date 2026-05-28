@@ -23,7 +23,7 @@ export function attachClickToMove(scene: GameScene): void {
 
     if (isHoldStill()) {
       if (scene.autoMode) setAutoMode(scene, false);
-      if (scene.autoPath.length > 0) cancelAutoPath(scene);
+      cancelAutoPath();
       showTargetMarker(scene, dest);
       if (isSummoner(player)) {
         sendCommandSummons(scene.socket, dest);
@@ -32,7 +32,7 @@ export function attachClickToMove(scene: GameScene): void {
     }
 
     if (scene.autoMode) setAutoMode(scene, false);
-    if (scene.autoPath.length > 0) cancelAutoPath(scene);
+    cancelAutoPath();
     scene.flashCameraHold = false;
     scene.flashCameraHoldTargetId = null;
 

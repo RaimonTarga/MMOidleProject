@@ -47,7 +47,7 @@ import { applySummonerCommand, clearSummonerCommand } from './systems/classes/ar
 import { syncArchetypeSlices } from './ecs/archetypeSliceSync';
 import { recalculatePlayerEntityStats } from './ecs/playerEntityFormulas';
 import { markSliceDirty, mutateSlice } from './ecs/dirtyHelpers';
-import { clearAutoTraversePath } from './systems/world/autoTraverse';
+import { clearAutoTraversePath, startManualNavigation } from './systems/world/autoTraverse';
 import { thawNode } from './world/nodeLifecycle';
 import { ensurePopulation, ensureBoss } from './systems/world/spawning';
 
@@ -275,6 +275,15 @@ io.on('connection', (socket) => {
       s.autoTraverse = !!enabled;
     });
     if (!enabled) clearAutoTraversePath(world, p);
+  });
+
+  socket.on('player:navigateTo', (nodeId) => {
+    const p = world.getPlayerEntity(socket.id);
+    if (!p) return;
+    if (p.isChanneling) return;
+    if (typeof nodeId !== 'string') return;
+    clearSummonerCommand(world, p);
+    startManualNavigation(world, p, nodeId);
   });
 
   socket.on('player:requestSync', () => {

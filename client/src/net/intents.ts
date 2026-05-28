@@ -17,6 +17,10 @@ export function sendSetAutoTraverse(socket: GameSocket, enabled: boolean): void 
   socket.emit('player:setAutoTraverse', enabled);
 }
 
+export function sendNavigateTo(socket: GameSocket, nodeId: string): void {
+  socket.emit('player:navigateTo', nodeId);
+}
+
 export function sendRequestSync(socket: GameSocket): void {
   socket.emit('player:requestSync');
 }

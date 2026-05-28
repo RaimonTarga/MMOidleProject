@@ -54,11 +54,21 @@ function applyStatModToTarget(p: PlayerStatsTarget, stat: string, value: number)
   }
 }
 
+/** Result of a stat rebuild — out-of-band signals the entity wrapper acts on. */
+export interface PlayerStatsResult {
+  /**
+   * True when this player can no longer attack: either the summoner archetype
+   * (minions fight in its place) or attack range was pushed below 1px. The
+   * server wrapper attaches/detaches the `CannotAttack` marker from this.
+   */
+  cannotAttack: boolean;
+}
+
 /**
  * Deterministic full stat rebuild: base constants → weapon aps → skill effects → equipment modifiers.
- * Mutates slice fields in place.
+ * Mutates slice fields in place. Returns out-of-band signals (see {@link PlayerStatsResult}).
  */
-export function recalculatePlayerStats(p: PlayerStatsTarget): void {
+export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult {
   // 1. Reset to base
   p.dealsDamage.attack          = GAME_CONFIG.PLAYER_ATTACK;
   p.dealsDamage.onHitDamage     = 0;
@@ -165,7 +175,17 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): void {
     }
   }
 
-  // 4. Clamp current hp to the new max
+  // 4. Range floor. Attack range can never drop below 1px. If skill/equipment
+  // modifiers pushed it under 1, the player loses the ability to attack
+  // entirely — there is nothing they could ever be close enough to reach.
+  // Summoners never attack directly (their minions do), so they also can't.
+  const cannotAttack =
+    p.performsAttack.attackRange < 1 || p.usesSkills.combatArchetype === 'summoner';
+  p.performsAttack.attackRange = Math.max(1, p.performsAttack.attackRange);
+
+  // 5. Clamp current hp to the new max
   p.hasHealth.hp = Math.max(1, Math.min(p.hasHealth.hp, p.hasHealth.maxHp));
+
+  return { cannotAttack };
 }
 

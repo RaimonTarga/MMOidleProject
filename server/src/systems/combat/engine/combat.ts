@@ -270,8 +270,11 @@ export function runMonsterAttackOnMinion(
 export function updateCombat(world: World, dt: number, now: number) {
   // PLAYER → MONSTER
   for (const player of world.playerEntities) {
-    // Summoner damage is dealt only by minions via runPlayerAttack(aggroSource: minion).
-    if (player.usesSkills.combatArchetype === 'summoner') {
+    // Entities can attack by default; the CannotAttack marker is the only thing
+    // that disables it. Summoners carry it permanently (their minions deal all
+    // damage via runPlayerAttack(aggroSource: minion)); anyone whose range fell
+    // below 1px carries it until their range recovers.
+    if (player.cannotAttack) {
       setAttackTarget(world, player, null);
       continue;
     }
@@ -339,6 +342,11 @@ export function updateCombat(world: World, dt: number, now: number) {
       continue;
     }
     if (e.hasAwareness.state !== 'attacking') continue;
+    // Same rule as players: a monster with the CannotAttack marker cannot strike.
+    if (e.cannotAttack) {
+      setAttackTarget(world, e, null);
+      continue;
+    }
 
     if (e.hasAggroTarget.targetKind === 'player') {
       const target = world.getPlayerEntity(e.hasAggroTarget.targetId) ?? null;

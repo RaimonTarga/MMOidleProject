@@ -1,7 +1,7 @@
 import type { EquipmentMap, EssenceType } from '../items';
 import type { PartyMember } from '../components';
 import type { PassiveMap } from '../passives';
-import type { SubVariant } from '../skillTree';
+import { isRangedCombatant, type SubVariant } from '../skillTree';
 import type { BuffId, PlayerBuff } from '../components/combat/buffs';
 import type { CombatArchetype, MonsterAIState, ShieldState } from '../types/combat';
 import type { HitboxRect } from '../hitbox/types';
@@ -98,6 +98,20 @@ export interface PlayerView {
   summonRespawnMaxMs: number;
   /** Per-slot active / respawn state for the HUD. */
   summonSlots: SummonSlotView[];
+}
+
+/**
+ * Whether this player fights at range, derived via the shared
+ * {@link isRangedCombatant} predicate. The client uses this to gate the lunge
+ * animation so it matches the server's kite-vs-melee approach exactly.
+ */
+export function isRangedPlayerView(view: PlayerView): boolean {
+  return isRangedCombatant({
+    attackRange: view.attackRange,
+    combatArchetype: view.combatArchetype,
+    selectedRange: view.selectedRange,
+    flashActive: (view.passives['energy.flash'] ?? 0) > 0,
+  });
 }
 
 export interface MinionView {

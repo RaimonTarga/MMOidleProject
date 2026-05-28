@@ -12,7 +12,7 @@ export function recalculatePlayerEntityStats(world: World, entity: PlayerEntity)
   const evadesHits = entity.evadesHits
     ? { ...entity.evadesHits }
     : { threshold: 0, count: 0 };
-  recalculatePlayerStats({
+  const { cannotAttack } = recalculatePlayerStats({
     dealsDamage:     entity.dealsDamage,
     mitigatesDamage: entity.mitigatesDamage,
     evadesHits,
@@ -39,6 +39,12 @@ export function recalculatePlayerEntityStats(world: World, entity: PlayerEntity)
     attachComponent(world, entity, 'evadesHits', evadesHits);
   } else {
     detachComponent(world, entity, 'evadesHits');
+  }
+
+  if (cannotAttack) {
+    attachComponent(world, entity, 'cannotAttack', {});
+  } else {
+    detachComponent(world, entity, 'cannotAttack');
   }
 
   const nextHitbox = resolvePlayerHitbox(entity);
