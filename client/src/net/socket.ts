@@ -29,6 +29,7 @@ export interface SocketHandlers {
   onPlayerDied(): void;
   onPlayerAscended(tier: number): void;
   onTelemetry(snapshot: NodeTelemetrySnapshot): void;
+  onSessionKicked(): void;
 }
 
 export function wireSocketHandlers(
@@ -45,4 +46,8 @@ export function wireSocketHandlers(
   socket.on('player:died', () => h.onPlayerDied());
   socket.on('player:ascended', (t) => h.onPlayerAscended(t));
   socket.on('world:telemetry', (s) => h.onTelemetry(s));
+  socket.on('session:kicked', () => {
+    socket.io.reconnection(false);
+    h.onSessionKicked();
+  });
 }

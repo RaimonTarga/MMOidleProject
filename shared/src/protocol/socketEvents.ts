@@ -26,6 +26,8 @@ export interface ServerToClientEvents {
   'world:telemetry': (snapshot: NodeTelemetrySnapshot) => void;
   /** Sent before a cold-start thaw of a frozen node (loading overlay on client). */
   'node:preparing': (payload: { nodeId: string }) => void;
+  /** Sent to the old socket when a second session connects with the same account ID. */
+  'session:kicked': (payload: { reason: string }) => void;
 }
 
 /** Events clients send to the server */

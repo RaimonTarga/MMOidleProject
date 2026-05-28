@@ -219,5 +219,21 @@ function connectSocket(scene: GameScene): void {
     onTelemetry: (snapshot) => {
       atomStore.set(nodeTelemetryAtom, snapshot);
     },
+    onSessionKicked: () => {
+      const overlay = document.createElement('div');
+      overlay.style.cssText = [
+        'position:fixed', 'inset:0', 'z-index:99999',
+        'background:rgba(0,0,0,0.85)',
+        'display:flex', 'flex-direction:column',
+        'align-items:center', 'justify-content:center',
+        'color:#fff', 'font-family:sans-serif', 'text-align:center',
+        'gap:12px',
+      ].join(';');
+      overlay.innerHTML = `
+        <div style="font-size:1.4rem;font-weight:bold">Session replaced</div>
+        <div style="font-size:1rem;opacity:0.75">Another tab or window opened this account.<br>Close this tab and use the other one.</div>
+      `;
+      document.body.appendChild(overlay);
+    },
   });
 }

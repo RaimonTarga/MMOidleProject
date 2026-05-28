@@ -218,6 +218,21 @@ io.on('connection', (socket) => {
   const playerName = (auth.displayName ?? `Hero_${socket.id.slice(0, 5)}`).slice(0, 32);
 
   findOrCreateAccount(db, accId, playerName);
+
+  // Kick any existing session for this account (e.g. duplicate tab).
+  // Save + clean up the old entity before the new one attaches so there's
+  // never two live PlayerEntities for the same account.
+  const existingSocketId = socketByAccount.get(accId);
+  if (existingSocketId) {
+    const existingPlayer = world.getPlayerEntity(existingSocketId);
+    if (existingPlayer) saveCharacter(db, accId, existingPlayer);
+    handlePartyDisconnect(world, existingSocketId);
+    world.detachPlayerEntity(existingSocketId);
+    const existingSock = io.sockets.sockets.get(existingSocketId);
+    existingSock?.emit('session:kicked', { reason: 'duplicate_session' });
+    existingSock?.disconnect(true);
+  }
+
   const player = getOrCreateCharacter(db, accId, playerName);
 
   const spawnNodeId = player.hasPosition.nodeId;
@@ -459,7 +474,10 @@ io.on('connection', (socket) => {
     const p = world.getPlayerEntity(socket.id);
     if (p) saveCharacter(db, accId, p);
     handlePartyDisconnect(world, socket.id);
-    socketByAccount.delete(accId);
+    // Only remove the account entry if it still points to this socket.
+    // A kicked socket's disconnect fires after the new session has already
+    // overwritten the entry — deleting it would silently log out the new tab.
+    if (socketByAccount.get(accId) === socket.id) socketByAccount.delete(accId);
     world.detachPlayerEntity(socket.id);
   });
 });
