@@ -47,6 +47,44 @@ export function drawLabels(state: RenderState): void {
   }
 }
 
+export function updateLabelForGrave(
+  state: RenderState,
+  id: string,
+  player: PlayerView,
+  scene: GameScene,
+): void {
+  const label = state.label.get(id);
+  if (!label) return;
+  label.setText(player.name);
+  label.setColor(player.id === scene.myId ? "#88ccaa" : "#cccccc");
+  label.setFontStyle("normal");
+  label.setVisible(true);
+}
+
+export function updateLabelForLivePlayer(
+  state: RenderState,
+  id: string,
+  snapshot: PlayerView | MonsterView,
+  scene: GameScene,
+): void {
+  const label = state.label.get(id);
+  if (!label) return;
+  const isMonster = state.kind.get(id) === "monster";
+  const monster = isMonster ? (snapshot as MonsterView) : null;
+  label.setText(monster?.isBoss ? `⚠ ${monster.name}` : snapshot.name);
+  label.setColor(
+    isMonster
+      ? monster?.isBoss
+        ? "#ffcc44"
+        : "#ffaaaa"
+      : snapshot.id === scene.myId
+        ? "#ffffff"
+        : "#ffffff",
+  );
+  label.setFontStyle(monster?.isBoss ? "bold" : "normal");
+  label.setVisible(true);
+}
+
 export function destroyLabel(state: RenderState, id: string): void {
   state.label.get(id)?.destroy();
   state.label.delete(id);

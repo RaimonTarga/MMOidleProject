@@ -1,11 +1,19 @@
 import {
-  addResource, getResource, setResource,
-  isCooldownActive, setCooldown,
-} from '@mmo-idle/shared';
-import type { PlayerEntity } from '../../../ecs/entity';
-import type { World } from '../../../world/World';
-import { registerCombatListener } from '../../combat/engine/combatPipeline';
-import { DEBT_POOL_KEY, POOL_DRAIN_MS } from '../core/pools';
+  addResource,
+  getResource,
+  setResource,
+  isCooldownActive,
+  setCooldown,
+  setString,
+} from "@mmo-idle/shared";
+import type { PlayerEntity } from "../../../ecs/entity";
+import type { World } from "../../../world/World";
+import { registerCombatListener } from "../../combat/engine/combatPipeline";
+import { DEBT_POOL_KEY, POOL_DRAIN_MS } from "../core/pools";
+import {
+  buildKillerFromMonster,
+  readDebtKillerFromStrings,
+} from "../../world/deathCause";
 
 /**
  * Register the hit-to-DoT listener on `onDamageTaken`.
@@ -16,18 +24,31 @@ import { DEBT_POOL_KEY, POOL_DRAIN_MS } from '../core/pools';
  * `defense.dot-resistance` when it drains in `runDebtDrain`.
  */
 export function registerHitToDot(): void {
-  registerCombatListener('onDamageTaken', (ctx, _world) => {
-    if (ctx.defenderType !== 'player') return;
+  registerCombatListener("onDamageTaken", (ctx, _world) => {
+    if (ctx.defenderType !== "player") return;
     if (ctx.damage <= 0) return;
-    if (ctx.metadata['isDot']) return;
+    if (ctx.metadata["isDot"]) return;
 
     const player = ctx.defender;
-    const conversionPct = player.usesSkills.passives['defense.hit-to-dot-pct'] ?? 0;
+    const conversionPct =
+      player.usesSkills.passives["defense.hit-to-dot-pct"] ?? 0;
     if (conversionPct <= 0) return;
 
     const debtAmount = ctx.damage * conversionPct;
-    ctx.damage      -= debtAmount;
+    ctx.damage -= debtAmount;
     addResource(player.tracksCombat, DEBT_POOL_KEY, debtAmount);
+
+    if (ctx.attackerType === "monster") {
+      const killer = buildKillerFromMonster(ctx.attacker);
+      setString(player.tracksCombat, "debtSourceTypeId", killer.monsterTypeId);
+      setString(player.tracksCombat, "debtSourceName", killer.monsterName);
+      setString(player.tracksCombat, "debtSourceNodeId", killer.nodeId);
+      setString(
+        player.tracksCombat,
+        "debtSourceIsBoss",
+        killer.isBoss ? "1" : "0",
+      );
+    }
   });
 }
 
@@ -45,21 +66,30 @@ export function runDebtDrain(world: World, player: PlayerEntity): boolean {
   const cs = player.tracksCombat;
   const debtPool = getResource(cs, DEBT_POOL_KEY);
   if (debtPool <= 0) return false;
-  if (isCooldownActive(cs, 'debtTick')) return false;
+  if (isCooldownActive(cs, "debtTick")) return false;
 
-  setCooldown(cs, 'debtTick', 1000);
+  setCooldown(cs, "debtTick", 1000);
   const drainAmount = debtPool * (1000 / POOL_DRAIN_MS);
-  const remaining   = debtPool - drainAmount;
+  const remaining = debtPool - drainAmount;
   setResource(cs, DEBT_POOL_KEY, remaining < 0.5 ? 0 : remaining);
 
-  const dotResist  = Math.min(0.9, player.usesSkills.passives['defense.dot-resistance'] ?? 0);
+  const dotResist = Math.min(
+    0.9,
+    player.usesSkills.passives["defense.dot-resistance"] ?? 0,
+  );
   const debtDamage = Math.round(drainAmount * (1 - dotResist));
   if (debtDamage < 1) return false;
 
   player.hasHealth.hp = Math.max(0, player.hasHealth.hp - debtDamage);
   if (player.hasHealth.hp <= 0) {
     setResource(cs, DEBT_POOL_KEY, 0);
-    world.respawnPlayer(player.isPlayer.id);
+    const nodeId = player.hasPosition.nodeId;
+    world.killPlayer(player.isPlayer.id, {
+      kind: "debt",
+      damage: debtDamage,
+      nodeId,
+      killer: readDebtKillerFromStrings(cs.strings, nodeId),
+    });
     return true;
   }
   return false;

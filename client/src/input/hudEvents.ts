@@ -1,4 +1,4 @@
-import { setAutoPath } from "../hud/atoms";
+import { isDeathOverlayActive, setAutoPath } from "../hud/atoms";
 import { hudBus } from "../hudBus";
 import { intents } from "../intents";
 import {
@@ -15,6 +15,7 @@ import {
   sendUnequip,
   sendUnlockSkill,
   sendUpgradeItem,
+  sendAckDeath,
 } from "../net/intents";
 import type { GameScene } from "../scenes/GameScene";
 import { setAutoMode } from "./autoPath";
@@ -33,19 +34,27 @@ export function attachHudEvents(scene: GameScene): void {
   });
 
   intents.on("equipItem", (definitionId) => {
+    if (isDeathOverlayActive()) return;
     sendEquipItem(scene.socket, definitionId);
   });
 
   intents.on("unequipItem", (slot) => {
+    if (isDeathOverlayActive()) return;
     sendUnequip(scene.socket, slot);
   });
 
   intents.on("craftRecipe", (recipeId) => {
+    if (isDeathOverlayActive()) return;
     sendCraftRecipe(scene.socket, recipeId);
   });
 
   intents.on("upgradeItem", (itemId) => {
+    if (isDeathOverlayActive()) return;
     sendUpgradeItem(scene.socket, itemId);
+  });
+
+  intents.on("ackDeath", () => {
+    sendAckDeath(scene.socket);
   });
 
   intents.on("tacticalView", () => {

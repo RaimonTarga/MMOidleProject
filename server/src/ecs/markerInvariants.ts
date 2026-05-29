@@ -162,6 +162,17 @@ export function assertMarkerInvariants(world: World): string[] {
     checkEntity(entity, [{ marker: "hasDot", effectId: "dot" }], violations);
     checkAbsentState(entity, violations);
     checkArchetypeSlices(entity, violations);
+    if (entity.isDead) {
+      if (entity.hasHealth && entity.hasHealth.hp !== 0) {
+        violations.push(`${entity.entityId}: isDead but hp=${entity.hasHealth.hp}`);
+      }
+      if (entity.isMoving) {
+        violations.push(`${entity.entityId}: isDead but isMoving present`);
+      }
+      if (entity.hasAttackTarget) {
+        violations.push(`${entity.entityId}: isDead but hasAttackTarget present`);
+      }
+    }
   }
 
   return violations;

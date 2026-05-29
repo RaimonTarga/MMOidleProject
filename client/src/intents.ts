@@ -16,6 +16,7 @@ export interface IntentMap {
   tacticalView: undefined;
   joinParty: string;
   leaveParty: undefined;
+  ackDeath: undefined;
 }
 
 type IntentKind = keyof IntentMap;

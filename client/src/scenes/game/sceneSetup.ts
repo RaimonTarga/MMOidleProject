@@ -1,14 +1,19 @@
-import { EFFECT_DEFS, GAME_CONFIG } from "@mmo-idle/shared";
+import { EFFECT_DEFS, GAME_CONFIG, formatDeathLogMessage } from "@mmo-idle/shared";
 import { DEPTH } from "../../render/depth";
 import { getDefaultStore } from "jotai";
 import { combatLog } from "../../combatLog";
-import { statusAtom, nodeTelemetryAtom, syncPlayerAtoms, nodeLoadingAtom } from "../../hud/atoms";
+import { statusAtom, nodeTelemetryAtom, syncPlayerAtoms, nodeLoadingAtom, triggerDeathOverlay } from "../../hud/atoms";
 import { loadGameplaySettings } from "../../settings/gameplaySettings";
 import { sendRequestSync, sendSetAutoTraverse } from "../../net/intents";
 import { accountId, displayName } from "../../clientAuth";
 import { connectGameSocket, wireSocketHandlers } from "../../net/socket";
 import { applyDelta } from "../../net/deltaApplier";
-import { ATLAS_KEY, BIOME_TEXTURES } from "../../sprites";
+import {
+  ATLAS_KEY,
+  BIOME_TEXTURES,
+  GRAVES_KEY,
+  GRAVE_FRAME_SIZE,
+} from "../../sprites";
 import { stepInterpolation, getOwnBase } from "../../render/interpolation";
 import { drawShadows } from "../../render/shadows";
 import { setShadowDefs } from "../../render/shadowDefs";
@@ -33,7 +38,7 @@ import {
   drawMinimap,
   updateBiomeBackground,
 } from "./overlays";
-import { showAscensionOverlay, showDeathOverlay } from "./screenOverlays";
+import { showAscensionOverlay } from "./screenOverlays";
 import type { GameScene } from "./GameScene";
 
 const CAMERA_HOLD_MARGIN = 80;
@@ -55,6 +60,10 @@ function isPointComfortablyOnScreen(
 
 export function preloadGameAssets(scene: GameScene): void {
   scene.load.atlas(ATLAS_KEY, "/assets/sprites.png", "/assets/sprites.json");
+  scene.load.spritesheet(GRAVES_KEY, "/assets/environment/graves.png", {
+    frameWidth: GRAVE_FRAME_SIZE,
+    frameHeight: GRAVE_FRAME_SIZE,
+  });
   scene.load.json(SHADOW_DEFS_KEY, "/assets/shadows.json");
   for (const def of EFFECT_DEFS) {
     if (def.rowSlices) {
@@ -208,9 +217,9 @@ function connectSocket(scene: GameScene): void {
         new CustomEvent("hud:upgradeResult", { detail: result }),
       );
     },
-    onPlayerDied: () => {
-      combatLog.push("death", "You were defeated");
-      showDeathOverlay(scene);
+    onPlayerDied: (payload) => {
+      combatLog.push("death", formatDeathLogMessage(payload));
+      triggerDeathOverlay(payload);
       maybeNotifyDeath();
     },
     onPlayerAscended: (tier) => {

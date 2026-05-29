@@ -337,6 +337,13 @@
   color: #aaa8dc;
 }
 
+.map-node-info__coord {
+  font-size: 10px;
+  font-family: monospace;
+  letter-spacing: 0.05em;
+  color: #7f7cae;
+}
+
 .map-node-info__dungeon-tag {
   font-size: 9px;
   font-family: monospace;

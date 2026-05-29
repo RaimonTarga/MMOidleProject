@@ -12,9 +12,17 @@ import {
   updateSpriteFrame,
 } from "./sprites";
 import { ensureShadow } from "./shadows";
-import { ensureLabel } from "./labels";
-import { ensureHpBar } from "./healthBars";
-import { ensureCdBar } from "./cooldownBars";
+import {
+  ensureLabel,
+  updateLabelForGrave,
+  updateLabelForLivePlayer,
+} from "./labels";
+import { ensureHpBar, destroyHpBar } from "./healthBars";
+import { ensureCdBar, destroyCdBar } from "./cooldownBars";
+import {
+  GRAVE_DISPLAY_H,
+  GRAVE_LABEL_OFFSET_Y,
+} from "../sprites";
 import { applyLunge } from "./interpolation";
 import { spawnAttackEffect } from "./combatFx";
 import { getDotPath } from "../fx/dot";
@@ -42,7 +50,7 @@ export function upsertPlayer(
     state.spriteMeta.set(player.id, {
       currentFrame: null,
       shadowLevel: player.playerTier,
-      barOffsetY: 40,
+      barOffsetY: player.isDead ? GRAVE_LABEL_OFFSET_Y : 40,
       isOwn,
     });
 
@@ -57,21 +65,39 @@ export function upsertPlayer(
     });
 
     const color = isOwn ? 0x44ff88 : 0x4488ff;
-    ensureShadow(state, player.id, player.pos, scene, {
-      playerTier: player.playerTier,
-    });
+    if (!player.isDead) {
+      ensureShadow(state, player.id, player.pos, scene, {
+        playerTier: player.playerTier,
+      });
+    }
     ensureSprite(state, player.id, player, scene, {
       displayW: 64,
       displayH: 64,
       fallbackColor: color,
       isPlayer: true,
     });
+    if (player.isDead) {
+      updateSpriteFrame(state, player.id, player, scene, {
+        displayW: 80,
+        displayH: GRAVE_DISPLAY_H,
+        fallbackColor: color,
+        isPlayer: true,
+      });
+    }
     const sprite = state.sprite.get(player.id);
-    const tint = flashShiftTint(player);
-    if (sprite && tint !== null) applySpriteTint(sprite, tint);
+    if (!player.isDead) {
+      const tint = flashShiftTint(player);
+      if (sprite && tint !== null) applySpriteTint(sprite, tint);
+    }
     ensureLabel(state, player.id, player, scene);
-    ensureHpBar(state, player.id, scene);
-    ensureCdBar(state, player.id, scene);
+    if (player.isDead) {
+      updateLabelForGrave(state, player.id, player, scene);
+      destroyHpBar(state, player.id);
+      destroyCdBar(state, player.id);
+    } else {
+      ensureHpBar(state, player.id, scene);
+      ensureCdBar(state, player.id, scene);
+    }
 
     if (isOwn) {
       state.ownId = player.id;
@@ -83,8 +109,42 @@ export function upsertPlayer(
   }
 
   const prev = state.view.get(player.id) as PlayerView | undefined;
+  const wasDead = prev?.isDead ?? false;
   const prevAttackAt = prev?.lastAttackAt ?? 0;
   const prevHp = prev?.hp ?? player.hp;
+
+  if (player.isDead) {
+    const meta = state.spriteMeta.get(player.id);
+    if (meta) meta.barOffsetY = GRAVE_LABEL_OFFSET_Y;
+    updateSpriteFrame(state, player.id, player, scene, {
+      displayW: 80,
+      displayH: GRAVE_DISPLAY_H,
+      fallbackColor: isOwn ? 0x44ff88 : 0x4488ff,
+      isPlayer: true,
+    });
+    ensureLabel(state, player.id, player, scene);
+    updateLabelForGrave(state, player.id, player, scene);
+    destroyHpBar(state, player.id);
+    destroyCdBar(state, player.id);
+    state.view.set(player.id, player);
+    const interp = state.interpolation.get(player.id);
+    if (interp) {
+      interp.base = { ...player.pos };
+      interp.lungeOffset = { x: 0, y: 0 };
+    }
+    return;
+  }
+
+  if (wasDead) {
+    const meta = state.spriteMeta.get(player.id);
+    if (meta) meta.barOffsetY = 40;
+    ensureShadow(state, player.id, player.pos, scene, {
+      playerTier: player.playerTier,
+    });
+    ensureHpBar(state, player.id, scene);
+    ensureCdBar(state, player.id, scene);
+    updateLabelForLivePlayer(state, player.id, player, scene);
+  }
   const prevTotalShield =
     prev?.shields.reduce((sum, s) => sum + s.amount, 0) ?? 0;
 
@@ -150,6 +210,8 @@ export function upsertPlayer(
       }
     }
   }
+
+  updateLabelForLivePlayer(state, player.id, player, scene);
 
   if (player.hp < prevHp) {
     const sprite = state.sprite.get(player.id);

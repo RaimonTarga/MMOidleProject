@@ -10,6 +10,7 @@ import { NODE_BIOMES, BIOME_DATABASE } from '@mmo-idle/shared';
 import { SettingsPanel } from './settings/SettingsPanel';
 import {
   autoAtom,
+  deathOverlayAtom,
   hpAtom,
   maxHpAtom,
   playerNameAtom,
@@ -60,6 +61,7 @@ function MobileHUDContent() {
   const auto = useAtomValue(autoAtom);
   const skillPoints = useAtomValue(skillPointsAtom);
   const nodeId = useAtomValue(playerNodeIdAtom);
+  const dead = useAtomValue(deathOverlayAtom).active;
 
   const hpPct       = maxHp > 0 ? (hp / maxHp) * 100 : 0;
   const hpBarColor  = hpPct > 50 ? '#44ee44' : hpPct > 25 ? '#eeaa22' : '#ee3322';
@@ -122,8 +124,8 @@ function MobileHUDContent() {
         </button>
         <div className="mob-drawer-menu">
           <DrawerBtn label="SKILL TREE" active={treeOpen} highlight={!treeOpen && skillPoints > 0} onClick={() => openPanel(setTreeOpen, treeOpen)} />
-          <DrawerBtn label="INVENTORY"  active={invOpen}   onClick={() => openPanel(setInvOpen, invOpen)} />
-          <DrawerBtn label="CRAFTING"   active={craftTab !== null} onClick={() => { setCraftTab(t => t ? null : 'forge'); setMenuOpen(false); }} />
+          <DrawerBtn label="INVENTORY"  active={invOpen}   disabled={dead} onClick={() => { if (!dead) openPanel(setInvOpen, invOpen); }} />
+          <DrawerBtn label="CRAFTING"   active={craftTab !== null} disabled={dead} onClick={() => { if (!dead) { setCraftTab(t => t ? null : 'forge'); setMenuOpen(false); } }} />
           <DrawerBtn label="MAP"        active={mapOpen}   onClick={() => openPanel(setMapOpen, mapOpen)} />
           <DrawerBtn label="QUESTS"     active={questOpen} onClick={() => openPanel(setQuestOpen, questOpen)} />
           <DrawerBtn label="SETTINGS"   active={settingsOpen} onClick={() => openPanel(setSettingsOpen, settingsOpen)} />
@@ -154,16 +156,18 @@ function MobileHUDContent() {
 }
 
 function DrawerBtn({
-  label, active, highlight, onClick,
+  label, active, highlight, disabled, onClick,
 }: {
   label: string;
   active: boolean;
   highlight?: boolean;
+  disabled?: boolean;
   onClick: () => void;
 }) {
   return (
     <button
       className={`mob-drawer-btn${active ? ' active' : ''}${highlight ? ' mob-drawer-btn--has-points' : ''}`}
+      disabled={disabled}
       onClick={onClick}
     >
       {label}
