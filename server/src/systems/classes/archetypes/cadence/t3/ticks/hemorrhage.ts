@@ -2,6 +2,12 @@ import { getStatusEffects, pruneStatusEffects } from '@mmo-idle/shared';
 import type { World } from '../../../../../../world/World';
 import { detachMarkerIfNoEffects } from '../../../../../../ecs/markerHelpers';
 import { grantMonsterRewards } from '../../../../../player/progression/rewards';
+import {
+  buildSimpleBreakdown,
+  recordMonsterDamagedByPlayer,
+  recordPlayerKillMonster,
+} from '../../../../../../world/worldLogCombat';
+import { actorFromSourceId } from '../../../../../../world/worldLogActors';
 
 export function updateHemorrhages(world: World, dt: number): void {
   const toKill: Array<{ monsterId: string; sourceId: string }> = [];
@@ -20,7 +26,17 @@ export function updateHemorrhages(world: World, dt: number): void {
 
       bleed.data['nextTickIn'] = bleed.data['tickIntervalMs'];
       bleed.data['ticksLeft']--;
-      entity.hasHealth.hp -= bleed.data['damagePerTick'];
+      const tickDmg = bleed.data['damagePerTick'];
+      recordMonsterDamagedByPlayer(
+        world,
+        bleed.sourceId,
+        actorFromSourceId(world, bleed.sourceId),
+        entity,
+        tickDmg,
+        'dot',
+        buildSimpleBreakdown(tickDmg, tickDmg),
+      );
+      entity.hasHealth.hp -= tickDmg;
       lastSourceId = bleed.sourceId;
       console.log(
         `[Hemorrhage] ${monsterId}: ${bleed.data['damagePerTick']} bleed dmg, ${bleed.data['ticksLeft']} ticks left`,
@@ -37,7 +53,10 @@ export function updateHemorrhages(world: World, dt: number): void {
 
   for (const { monsterId, sourceId } of toKill) {
     const monster = world.getMonsterEntity(monsterId);
-    if (monster && sourceId) grantMonsterRewards(world, sourceId, monster);
+    if (monster && sourceId) {
+      const rewardInfo = grantMonsterRewards(world, sourceId, monster);
+      recordPlayerKillMonster(world, sourceId, monster, 0, rewardInfo);
+    }
     world.removeMonsterEntity(monsterId);
   }
 }

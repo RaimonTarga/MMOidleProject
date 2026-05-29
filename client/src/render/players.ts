@@ -2,7 +2,6 @@ import type { PlayerView } from "@mmo-idle/shared";
 import { isRangedPlayerView } from "@mmo-idle/shared";
 import { getDefaultStore } from "jotai";
 import { autoPathAtom, setAutoPath } from "../hud/atoms";
-import { combatLog } from "../combatLog";
 import type { RenderState } from "./state";
 import type { GameScene } from "../scenes/GameScene";
 import {
@@ -145,8 +144,6 @@ export function upsertPlayer(
     ensureCdBar(state, player.id, scene);
     updateLabelForLivePlayer(state, player.id, player, scene);
   }
-  const prevTotalShield =
-    prev?.shields.reduce((sum, s) => sum + s.amount, 0) ?? 0;
 
   if (isOwn && player.nodeId !== state.ownNodeId) {
     const interp = state.interpolation.get(player.id);
@@ -224,26 +221,6 @@ export function upsertPlayer(
         meta.barOffsetY,
         Math.round(prevHp - player.hp),
         dmgColor,
-      );
-      if (isOwn)
-        combatLog.push(
-          "damage-in",
-          `Took ${Math.round(prevHp - player.hp)} damage`,
-        );
-    }
-  }
-
-  if (isOwn && player.hp > prevHp && prevHp > 0) {
-    const healed = Math.round(player.hp - prevHp);
-    if (healed >= 1) combatLog.push("heal", `Recovered ${healed} HP`);
-  }
-
-  if (isOwn) {
-    const newTotalShield = player.shields.reduce((sum, s) => sum + s.amount, 0);
-    if (newTotalShield > prevTotalShield) {
-      combatLog.push(
-        "shield",
-        `Shield +${Math.round(newTotalShield - prevTotalShield)}`,
       );
     }
   }

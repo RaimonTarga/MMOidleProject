@@ -1,4 +1,5 @@
 import type { PlayerEntity } from '../../../ecs/entity';
+import type { World } from '../../../world/World';
 import { applyHealToPlayer } from './healing';
 
 /**
@@ -6,11 +7,11 @@ import { applyHealToPlayer } from './healing';
  * applies `defense.in-combat-regen-pct` fraction of the out-of-combat regen
  * rate. Antiheal applies via `applyHealToPlayer`.
  */
-export function runInCombatRegen(player: PlayerEntity, dt: number): void {
+export function runInCombatRegen(world: World, player: PlayerEntity, dt: number): void {
   const inCombatRegenPct = player.usesSkills.passives['defense.in-combat-regen-pct'] ?? 0;
   if (inCombatRegenPct <= 0) return;
   if (player.hasAttackTarget === undefined) return;
 
   const baseRegenPerMs = player.hasHealth.maxHp * ((player.hasHealth.hpRegen ?? 0) / 100) / 1000;
-  applyHealToPlayer(player, player.tracksCombat, baseRegenPerMs * inCombatRegenPct * dt);
+  applyHealToPlayer(player, player.tracksCombat, baseRegenPerMs * inCombatRegenPct * dt, world);
 }

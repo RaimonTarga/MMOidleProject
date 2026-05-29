@@ -15,6 +15,12 @@ import {
   DEFAULT_LASER_HEAT_PER_TICK,
   SERVER_TICK_MS,
 } from '../core/constants';
+import {
+  buildPlatingDrBreakdown,
+  recordMonsterDamagedByPlayer,
+  recordPlayerKillMonster,
+} from '../../../../../../world/worldLogCombat';
+import { actorFromPlayer } from '../../../../../../world/worldLogActors';
 
 export function updateReloadT3Ticks(world: World, dt: number, now: number): void {
   for (const entity of world.reloadPlayers) {
@@ -117,6 +123,25 @@ function applyLaserTick(world: World, player: PlayerEntity, target: MonsterEntit
 
   emitCombatEvent('onDamageTaken', ctx, world);
 
+  const mitigation = buildPlatingDrBreakdown({
+    grossDamage: Math.round(rawLaserDamage),
+    effectivePlating,
+    platingMult: ctx.platingMult,
+    damageReduction: target.mitigatesDamage.damageReduction,
+  });
+  mitigation.hpDamage = ctx.damage;
+
+  recordMonsterDamagedByPlayer(
+    world,
+    player.isPlayer.id,
+    actorFromPlayer(player),
+    target,
+    ctx.damage,
+    'proc',
+    mitigation,
+    ['laser'],
+  );
+
   target.hasHealth.hp -= ctx.damage;
   player.performsAttack.lastAttackAt = now;
 
@@ -144,6 +169,7 @@ function applyLaserTick(world: World, player: PlayerEntity, target: MonsterEntit
   if (target.hasHealth.hp <= 0) {
     emitCombatEvent('onKill', ctx, world);
     const rewardInfo = grantMonsterRewards(world, player.isPlayer.id, target);
+    recordPlayerKillMonster(world, player.isPlayer.id, target, ctx.damage, rewardInfo);
     world.pushEvent(player.hasPosition.nodeId, {
       kind: 'player-kill',
       playerId: player.isPlayer.id,

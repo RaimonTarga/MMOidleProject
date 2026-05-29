@@ -3,6 +3,12 @@ import type { World } from '../../../../../../../world/World';
 import { detachMarkerIfNoEffect } from '../../../../../../../ecs/markerHelpers';
 import { grantMonsterRewards } from '../../../../../../player/progression/rewards';
 import { ENT_DOT_FX } from '../../core/constants';
+import {
+  buildSimpleBreakdown,
+  recordMonsterDamagedByPlayer,
+  recordPlayerKillMonster,
+} from '../../../../../../../world/worldLogCombat';
+import { actorFromSourceId } from '../../../../../../../world/worldLogActors';
 
 /**
  * Entropy Collapse tick. Per-monster DoT whose damage scales with the
@@ -35,6 +41,15 @@ export function updateEntropyCollapse(world: World, dt: number): void {
     const mult            = 1 + Math.pow(scaled, 3) * 3;
     const damage          = Math.max(1, Math.round(effect.data['baseDamagePerTick'] * mult));
 
+    recordMonsterDamagedByPlayer(
+      world,
+      effect.sourceId,
+      actorFromSourceId(world, effect.sourceId),
+      entity,
+      damage,
+      'dot',
+      buildSimpleBreakdown(effect.data['baseDamagePerTick'], damage),
+    );
     entity.hasHealth.hp -= damage;
     console.log(
       `[EntropyColl] ${monsterId}: ${damage} tick (${(missingFraction * 100).toFixed(0)}% missing, ${mult.toFixed(2)}x), hp=${Math.max(0, entity.hasHealth.hp)}`,
@@ -51,7 +66,10 @@ export function updateEntropyCollapse(world: World, dt: number): void {
 
   for (const { monsterId, sourceId } of toKill) {
     const monster = world.getMonsterEntity(monsterId);
-    if (monster && sourceId) grantMonsterRewards(world, sourceId, monster);
+    if (monster && sourceId) {
+      const rewardInfo = grantMonsterRewards(world, sourceId, monster);
+      recordPlayerKillMonster(world, sourceId, monster, 0, rewardInfo);
+    }
     world.removeMonsterEntity(monsterId);
   }
 }

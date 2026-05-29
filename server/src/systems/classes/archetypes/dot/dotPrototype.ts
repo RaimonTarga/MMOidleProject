@@ -20,6 +20,17 @@ import {
 } from "../../../../ecs/markerHelpers";
 import { canApplyPlayerDebuff } from "../summoner/t3/core/debuffGuard";
 import { buildKillerFromSourceId } from "../../../world/deathCause";
+import {
+  buildSimpleBreakdown,
+  recordMonsterDamagedByPlayer,
+  recordPlayerDamaged,
+} from "../../../../world/worldLogCombat";
+import { recordWorldLogEvent } from "../../../../world/worldLog";
+import {
+  actorFromMonster,
+  actorFromPlayer,
+  actorFromSourceId,
+} from "../../../../world/worldLogActors";
 
 // Re-export the pure tick formula from shared so existing importers don't change paths.
 export { computeScaledDotDamage };
@@ -70,7 +81,19 @@ export function updateDotArchetype(world: World, dt: number): void {
       : computeScaledDotDamage(effect);
 
     // Apply Smoldering Ember vulnerability and Freeze bonus to DoT ticks.
-    damage = Math.round(damage * getSmolderMult(state) * getFrozenMult(state));
+    damage = Math.max(1, Math.round(damage * getSmolderMult(state) * getFrozenMult(state)));
+
+    const source = actorFromSourceId(world, effect.sourceId);
+    recordMonsterDamagedByPlayer(
+      world,
+      effect.sourceId,
+      source,
+      entity,
+      damage,
+      'dot',
+      buildSimpleBreakdown(damage, damage),
+    );
+
     entity.hasHealth.hp -= damage;
 
     if (entity.hasHealth.hp <= 0) {
@@ -85,6 +108,25 @@ export function updateDotArchetype(world: World, dt: number): void {
     if (monster && sourceId) {
       const rewardInfo = grantMonsterRewards(world, sourceId, monster);
       const player = world.getPlayerEntity(sourceId);
+      const source = player ? actorFromPlayer(player) : actorFromSourceId(world, sourceId);
+      recordWorldLogEvent(
+        world,
+        {
+          kind: 'kill',
+          nodeId: monster.hasPosition.nodeId,
+          killer: source,
+          victim: actorFromMonster(monster),
+          damage,
+          essenceGained: rewardInfo?.essenceGained ?? 0,
+          essenceType: rewardInfo?.essenceType ?? 'green',
+          biomeXpGained: rewardInfo?.biomeXpGained ?? 0,
+        },
+        {
+          visibility: 'combat',
+          relatedPlayerIds: [sourceId],
+          nodeId: monster.hasPosition.nodeId,
+        },
+      );
       if (player) {
         world.pushEvent(player.hasPosition.nodeId, {
           kind: "player-kill",
@@ -129,6 +171,25 @@ export function updateDotArchetype(world: World, dt: number): void {
       Math.round(
         base * (1 - entity.mitigatesDamage.damageReduction) * (1 - dotResist),
       ),
+    );
+
+    const killer = buildKillerFromSourceId(
+      world,
+      effect.sourceId,
+      entity.hasPosition.nodeId,
+    );
+    recordPlayerDamaged(
+      world,
+      entity,
+      {
+        id: killer.monsterTypeId,
+        name: killer.monsterName,
+        actorType: 'monster',
+      },
+      damage,
+      0,
+      'dot',
+      buildSimpleBreakdown(base, damage),
     );
 
     entity.hasHealth.hp -= damage;

@@ -1,11 +1,12 @@
 import type { BuffCategory, BuffShape, PlayerBuff, TracksCombat } from '@mmo-idle/shared';
 import type { World } from '../../../world/World';
-import type { PlayerEntity } from '../../../ecs/entity';
+import type { MonsterEntity, PlayerEntity } from '../../../ecs/entity';
 
 export interface BuffProjectionContext {
   player: PlayerEntity;
   playerCs?: TracksCombat;
   targetCs?: TracksCombat;
+  target?: MonsterEntity;
   world: World;
 }
 

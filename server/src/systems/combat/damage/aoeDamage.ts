@@ -4,20 +4,20 @@ import type { World } from "../../../world/World";
 import { grantMonsterRewards } from "../../player/progression/rewards";
 import { markEngaged } from "../ai/engagement";
 import { buildKillerFromMonster } from "../../world/deathCause";
+import {
+  actorFromMonster,
+  actorFromPlayer,
+} from "../../../world/worldLogActors";
+import {
+  buildPlatingDrBreakdown,
+  recordMonsterDamagedByPlayer,
+  recordPlayerDamaged,
+} from "../../../world/worldLogCombat";
+import { recordWorldLogEvent } from "../../../world/worldLog";
 
 /**
  * Apply splash AoE damage from a player to all monsters within radius of a
  * center point, skipping any excluded monster (the primary target).
- *
- * Damage is applied with per-target plating and DR reductions — identical math
- * to the main combat loop — but does NOT run through the combat pipeline. This
- * keeps splash cheap and avoids recursive AoE chains.
- *
- * @param attacker   - The player dealing the AoE.
- * @param center     - World-space center of the blast (usually the primary target's position).
- * @param radius     - Blast radius in pixels.
- * @param baseDamage - Raw damage before per-target reductions (caller computes this).
- * @param excludeId  - Monster ID to skip (primary target already received full damage).
  */
 export function applyPlayerAoe(
   world: World,
@@ -31,18 +31,29 @@ export function applyPlayerAoe(
   const toKill: MonsterEntity[] = [];
   const attackerNodeId = attacker.hasPosition.nodeId;
   const attackerId = attacker.isPlayer.id;
+  const source = actorFromPlayer(attacker);
 
   for (const monster of world.monsterEntitiesInNode(attackerNodeId)) {
     if (monster.isMonster.id === excludeId) continue;
 
     if (distanceSq(monster.hasPosition.current, center) > radiusSq) continue;
 
-    const effectiveDmg = Math.max(
-      1,
-      Math.round(
-        Math.max(0, baseDamage - monster.mitigatesDamage.plating) *
-          (1 - monster.mitigatesDamage.damageReduction),
-      ),
+    const mitigation = buildPlatingDrBreakdown({
+      grossDamage: baseDamage,
+      effectivePlating: monster.mitigatesDamage.plating,
+      platingMult: 1,
+      damageReduction: monster.mitigatesDamage.damageReduction,
+    });
+    const effectiveDmg = mitigation.hpDamage;
+
+    recordMonsterDamagedByPlayer(
+      world,
+      attackerId,
+      source,
+      monster,
+      effectiveDmg,
+      "aoe",
+      mitigation,
     );
 
     monster.hasHealth.hp -= effectiveDmg;
@@ -51,7 +62,25 @@ export function applyPlayerAoe(
   }
 
   for (const monster of toKill) {
-    grantMonsterRewards(world, attackerId, monster);
+    const rewardInfo = grantMonsterRewards(world, attackerId, monster);
+    recordWorldLogEvent(
+      world,
+      {
+        kind: "kill",
+        nodeId: attackerNodeId,
+        killer: source,
+        victim: actorFromMonster(monster),
+        damage: 0,
+        essenceGained: rewardInfo?.essenceGained ?? 0,
+        essenceType: rewardInfo?.essenceType ?? "green",
+        biomeXpGained: rewardInfo?.biomeXpGained ?? 0,
+      },
+      {
+        visibility: "combat",
+        relatedPlayerIds: [attackerId],
+        nodeId: attackerNodeId,
+      },
+    );
     world.removeMonsterEntity(monster.isMonster.id);
   }
 }
@@ -59,9 +88,6 @@ export function applyPlayerAoe(
 /**
  * Apply splash AoE damage from a monster to all players within radius of a
  * center point, skipping the primary target.
- *
- * Intended for future monster abilities (e.g. boss slams). Not yet wired into
- * the combat loop — call explicitly from the monster's attack handler.
  */
 export function applyMonsterAoe(
   world: World,
@@ -73,18 +99,29 @@ export function applyMonsterAoe(
 ): void {
   const radiusSq = radius * radius;
   const attackerNodeId = attacker.hasPosition.nodeId;
+  const source = actorFromMonster(attacker);
 
   for (const player of world.livePlayersInNode(attackerNodeId)) {
     if (player.isPlayer.id === excludeId) continue;
 
     if (distanceSq(player.hasPosition.current, center) > radiusSq) continue;
 
-    const effectiveDmg = Math.max(
-      1,
-      Math.round(
-        Math.max(0, baseDamage - player.mitigatesDamage.plating) *
-          (1 - player.mitigatesDamage.damageReduction),
-      ),
+    const mitigation = buildPlatingDrBreakdown({
+      grossDamage: baseDamage,
+      effectivePlating: player.mitigatesDamage.plating,
+      platingMult: 1,
+      damageReduction: player.mitigatesDamage.damageReduction,
+    });
+    const effectiveDmg = mitigation.hpDamage;
+
+    recordPlayerDamaged(
+      world,
+      player,
+      source,
+      effectiveDmg,
+      0,
+      "aoe",
+      mitigation,
     );
 
     player.hasHealth.hp -= effectiveDmg;

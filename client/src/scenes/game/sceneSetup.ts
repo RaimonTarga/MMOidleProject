@@ -1,8 +1,8 @@
-import { EFFECT_DEFS, GAME_CONFIG, formatDeathLogMessage } from "@mmo-idle/shared";
+import { EFFECT_DEFS, GAME_CONFIG } from "@mmo-idle/shared";
 import { DEPTH } from "../../render/depth";
 import { getDefaultStore } from "jotai";
-import { combatLog } from "../../combatLog";
 import { statusAtom, nodeTelemetryAtom, syncPlayerAtoms, nodeLoadingAtom, triggerDeathOverlay } from "../../hud/atoms";
+import { applyWorldLogEvents } from "../../worldLog/formatWorldLog";
 import { loadGameplaySettings } from "../../settings/gameplaySettings";
 import { sendRequestSync, sendSetAutoTraverse } from "../../net/intents";
 import { accountId, displayName } from "../../clientAuth";
@@ -218,9 +218,11 @@ function connectSocket(scene: GameScene): void {
       );
     },
     onPlayerDied: (payload) => {
-      combatLog.push("death", formatDeathLogMessage(payload));
       triggerDeathOverlay(payload);
       maybeNotifyDeath();
+    },
+    onWorldEvents: (events) => {
+      applyWorldLogEvents(events, scene.myId);
     },
     onPlayerAscended: (tier) => {
       showAscensionOverlay(scene, tier);

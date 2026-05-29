@@ -1,5 +1,4 @@
 import { ESSENCE_COLORS, GAME_CONFIG, isRangedPlayerView, type CombatArchetype, type CombatEvent, type PlayerView, type Vec2 } from '@mmo-idle/shared';
-import { combatLog } from '../combatLog';
 import { activateLaserBeam } from '../fx/laser';
 import { playOneShotEffect, spawnDamageNumber } from '../fx/particles';
 import { getDotPath, type DotPath } from '../fx/dot';
@@ -171,9 +170,6 @@ export function dispatchCombatEvent(state: RenderState, ev: CombatEvent, scene: 
   if (ev.playerId !== scene.myId) return;
 
   if (ev.kind === 'player-hit') {
-    combatLog.push('damage-out', `${ev.targetName} -${ev.damage}`);
-    if (ev.empowered) combatLog.push('empowered', `Empowered strike -> ${ev.targetName}`);
-    if (ev.execution) combatLog.push('execution', `Execution strike -> ${ev.targetName}`);
     const player = state.ownId
       ? (state.view.get(state.ownId) as PlayerView | undefined)
       : undefined;
@@ -184,7 +180,6 @@ export function dispatchCombatEvent(state: RenderState, ev: CombatEvent, scene: 
   }
 
   if (ev.kind === 'player-kill') {
-    combatLog.push('kill', `${ev.targetName} defeated`);
     if (shouldRunClientFx()) {
       const target = scene.state.sprite.get(ev.targetId);
       if (target && ev.damage > 0) {

@@ -51,11 +51,11 @@ export function updateDefensiveSystems(
 
     if (runDebtDrain(world, player)) continue; // player died → skip remaining
 
-    runAbsorbDrain(player, dt);
-    runRegenBurst(player, dt, inCombat);
+    runAbsorbDrain(world, player, dt);
+    runRegenBurst(world, player, dt, inCombat);
     runPeriodicShield(world, player, inCombat);
     runDebuffCleanse(player);
-    runInCombatRegen(player, dt);
+    runInCombatRegen(world, player, dt);
   }
 }
 

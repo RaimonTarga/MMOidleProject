@@ -27,6 +27,12 @@ import {
   attachMarker,
   detachMarkerIfNoEffect,
 } from "../../../ecs/markerHelpers";
+import {
+  buildSimpleBreakdown,
+  recordMonsterDamagedByPlayer,
+  recordPlayerKillMonster,
+} from "../../../world/worldLogCombat";
+import { actorFromSourceId } from "../../../world/worldLogActors";
 
 // ── Internal combat state keys ────────────────────────────────────────────────
 
@@ -222,7 +228,16 @@ function updateBurnEffects(world: World, dt: number): void {
       effect.data.nextTickIn -= dt;
       if (effect.data.nextTickIn <= 0) {
         effect.data.nextTickIn = effect.data.tickIntervalMs;
-        const damage = computeScaledDotDamage(effect);
+        const damage = Math.max(1, computeScaledDotDamage(effect));
+        recordMonsterDamagedByPlayer(
+          world,
+          effect.sourceId,
+          actorFromSourceId(world, effect.sourceId),
+          e,
+          damage,
+          'proc',
+          buildSimpleBreakdown(damage, damage),
+        );
         e.hasHealth.hp -= damage;
 
         if (e.hasHealth.hp <= 0 && !killed.has(monsterId)) {
@@ -241,7 +256,10 @@ function updateBurnEffects(world: World, dt: number): void {
 
   for (const { monsterId, sourceId } of toKill) {
     const monster = world.getMonsterEntity(monsterId);
-    if (monster && sourceId) grantMonsterRewards(world, sourceId, monster);
+    if (monster && sourceId) {
+      const rewardInfo = grantMonsterRewards(world, sourceId, monster);
+      recordPlayerKillMonster(world, sourceId, monster, 0, rewardInfo);
+    }
     world.removeMonsterEntity(monsterId);
   }
 }
@@ -259,6 +277,7 @@ export const WEAPON_BUFFS = [
             stacks: 1,
             durationPct: player.showsSacred.sacredBuffPct,
             color: "#ffdd44",
+            logDetail: `+${Math.round((SACRED_DMG_MULT - 1) * 100)}% damage, +${Math.round((SACRED_APS_MULT - 1) * 100)}% attack speed`,
           }
         : null,
     { label: "Holy", color: "#ffdd44", category: "weapon", shape: "square" },

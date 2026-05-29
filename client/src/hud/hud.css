@@ -717,10 +717,10 @@
 
 .combat-log__row {
   display: flex;
-  align-items: baseline;
+  align-items: flex-start;
   gap: 4px;
-  padding: 1px 6px;
-  line-height: 1.45;
+  padding: 3px 6px;
+  line-height: 1.4;
 }
 
 .combat-log__row:nth-child(even) {
@@ -733,20 +733,108 @@
   flex-shrink: 0;
   width: 32px;
   text-align: right;
+  padding-top: 1px;
+}
+
+.combat-log__entry {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.combat-log__line1 {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  min-width: 0;
+}
+
+.combat-log__line2 {
+  padding-left: 14px;
+  min-width: 0;
 }
 
 .combat-log__pfx {
   flex-shrink: 0;
-  width: 10px;
+  width: 12px;
   text-align: center;
+  font-size: 9px;
+}
+
+.combat-log__headline {
+  flex: 1;
+  font-size: 10px;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .combat-log__msg {
   flex: 1;
   font-size: 10px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.combat-log__detail {
+  font-size: 10px;
+  color: #9a9ab4;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.combat-log__buff-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  font-size: 9px;
+  line-height: 1.25;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.combat-log__buff-detail-line {
+  display: block;
+}
+
+.combat-log__math {
+  font-size: 10px;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.combat-log__mitigated,
+.combat-log__gross,
+.combat-log__final {
+  font-weight: 500;
+}
+
+.combat-log__paren,
+.combat-log__sep,
+.combat-log__eq {
+  color: #666677;
+}
+
+.combat-log__target {
+  color: #b0b0cc;
+}
+
+.combat-log__source {
+  color: #888899;
+}
+
+.combat-log__glancing {
+  color: #aa9988;
+  font-style: italic;
+  font-size: 9px;
+}
+
+.combat-log__icon {
+  font-size: 9px;
+  margin-right: 1px;
 }
 
 /* ── Quest / Tier panel ──────────────────────────────────────────────────── */

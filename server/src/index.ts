@@ -5,6 +5,7 @@ import cors from "cors";
 import path from "path";
 
 import { World } from "./world/World";
+import { takeWorldLogEvents } from "./world/worldLog";
 import {
   emptyEquipment,
   GAME_CONFIG,
@@ -228,6 +229,10 @@ async function boot(): Promise<void> {
       const snap = nodeSnaps.get(nodeId)!;
       recordBroadcast(snap, "node:delta");
       sock.emit("node:delta", snap);
+      const logEvents = takeWorldLogEvents(world, player.isPlayer.id);
+      if (logEvents.length > 0) {
+        sock.emit("world:events", logEvents);
+      }
     }
   }, BROADCAST_MS);
 
