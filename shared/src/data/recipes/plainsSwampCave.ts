@@ -9,8 +9,8 @@ export const plainsSwampCaveRecipeEntries = [
     description: 'A dependable iron blade carried by soldiers, travelers, and adventurers alike. It lacks flair, but never fails its wielder.',
     upgrades: [
       { stats: { attack: 2 }, cost: { yellow: 10 }, requiredBiomeLevel: 2 },
-      { stats: { attack: 3 }, cost: { yellow: 22 }, requiredBiomeLevel: 3 },
-      { stats: { attack: 5 }, cost: { yellow: 42 }, requiredBiomeLevel: 4 },
+      { stats: { attack: 5 }, cost: { yellow: 22 }, requiredBiomeLevel: 3 },
+      { stats: { attack: 9 }, cost: { yellow: 42 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -203,9 +203,9 @@ export const plainsSwampCaveRecipeEntries = [
     cost: { red: 22 }, stats: { attack: 10 }, attacksPerSecond: 1.10, tier: 1,
     description: 'An axe that swings with wild abandon — two in every three strikes land hard, but the third flies wide.',
     upgrades: [
-      { stats: { attack: 2 }, cost: { red: 10 }, requiredBiomeLevel: 2 },
-      { stats: { attack: 3 }, cost: { red: 22 }, requiredBiomeLevel: 3 },
-      { stats: { attack: 5 }, cost: { red: 42 }, requiredBiomeLevel: 4 },
+      { stats: { attack: 3 }, cost: { red: 10 }, requiredBiomeLevel: 2 },
+      { stats: { attack: 5 }, cost: { red: 22 }, requiredBiomeLevel: 3 },
+      { stats: { attack: 7 }, cost: { red: 42 }, requiredBiomeLevel: 4 },
     ],
   }],
 

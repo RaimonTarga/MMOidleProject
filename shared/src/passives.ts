@@ -112,6 +112,10 @@ export const DOT_KEYS = [
   'dot.glacial-fracture',
 ] as const;
 
+export const SHARED_KEYS = [
+  'shared.empowered-mult-add',
+] as const;
+
 export const SUMMONER_KEYS = [
   'summoner.minion-count',
   'summoner.minion-count-mult',
@@ -180,12 +184,13 @@ export type CooldownPassiveKey = typeof COOLDOWN_KEYS[number];
 export type ReloadPassiveKey   = typeof RELOAD_KEYS[number];
 export type EnergyPassiveKey   = typeof ENERGY_KEYS[number];
 export type DotPassiveKey      = typeof DOT_KEYS[number];
+export type SharedPassiveKey   = typeof SHARED_KEYS[number];
 export type SummonerPassiveKey = typeof SUMMONER_KEYS[number];
 
 export type PassiveKey =
   | DefensePassiveKey | CadencePassiveKey | CooldownPassiveKey
   | ReloadPassiveKey  | EnergyPassiveKey  | DotPassiveKey
-  | SummonerPassiveKey;
+  | SharedPassiveKey  | SummonerPassiveKey;
 
 export type PassiveMap      = Partial<Record<PassiveKey, number>>;
 export type MechanicEffects = Partial<Record<PassiveKey, number>>;
@@ -193,7 +198,7 @@ export type MechanicEffects = Partial<Record<PassiveKey, number>>;
 /** Flat array of every passive key — useful for client iteration / debug panels. */
 export const ALL_PASSIVE_KEYS = [
   ...DEFENSE_KEYS, ...CADENCE_KEYS, ...COOLDOWN_KEYS,
-  ...RELOAD_KEYS, ...ENERGY_KEYS, ...DOT_KEYS, ...SUMMONER_KEYS,
+  ...RELOAD_KEYS, ...ENERGY_KEYS, ...DOT_KEYS, ...SHARED_KEYS, ...SUMMONER_KEYS,
 ] as const;
 
 // ── Helpers ───────────────────────────────────────────────────────────────────

@@ -58,7 +58,7 @@ export const clearingForestMountainRecipeEntries = [
     upgrades: [
       { stats: { attack: 1 }, cost: { green: 10 }, requiredBiomeLevel: 2 },
       { stats: { attack: 2 }, cost: { green: 22 }, requiredBiomeLevel: 3 },
-      { stats: { attack: 3 }, cost: { green: 42 }, requiredBiomeLevel: 4 },
+      { stats: { attack: 4 }, cost: { green: 42 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -143,9 +143,9 @@ export const clearingForestMountainRecipeEntries = [
     cost: { blue: 22 }, stats: { attack: 16 }, attacksPerSecond: 0.40, tier: 1,
     description: 'A war hammer so heavy it takes both hands — but when it lands, it lands.',
     upgrades: [
-      { stats: { attack: 2 }, cost: { blue: 10 }, requiredBiomeLevel: 2 },
-      { stats: { attack: 4 }, cost: { blue: 22 }, requiredBiomeLevel: 3 },
-      { stats: { attack: 6 }, cost: { blue: 42 }, requiredBiomeLevel: 4 },
+      { stats: { attack: 4 }, cost: { blue: 10 }, requiredBiomeLevel: 2 },
+      { stats: { attack: 9 }, cost: { blue: 22 }, requiredBiomeLevel: 3 },
+      { stats: { attack: 15 }, cost: { blue: 42 }, requiredBiomeLevel: 4 },
     ],
   }],
 

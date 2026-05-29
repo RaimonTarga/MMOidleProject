@@ -117,6 +117,10 @@ export function registerEmpoweredMultiplier(
         }
       }
     }
+    // Universal item/passive bonus — stacks on top of archetype base + T3 add.
+    if (ctx.attackerType === 'player') {
+      effectiveMult += ctx.attacker.usesSkills.passives['shared.empowered-mult-add'] ?? 0;
+    }
 
     const base     = ctx.damage;
     ctx.damage     = Math.floor(base * effectiveMult);
