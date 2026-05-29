@@ -1,51 +1,67 @@
-import { ESSENCE_COLORS, GAME_CONFIG, isRangedPlayerView, type CombatArchetype, type CombatEvent, type PlayerView, type Vec2 } from '@mmo-idle/shared';
-import { activateLaserBeam } from '../fx/laser';
-import { playOneShotEffect, spawnDamageNumber } from '../fx/particles';
-import { getDotPath, type DotPath } from '../fx/dot';
-import { fxSlash } from '../fx/slash';
-import { fxImpact } from '../fx/impact';
-import { fxGunshot } from '../fx/gunshot';
-import { fxLightning } from '../fx/lightning';
-import { fxFireFlame } from '../fx/dotFire';
-import { fxFrostSnowflake } from '../fx/dotFrost';
-import { fxPoisonSmog } from '../fx/dotPoison';
-import { fxPoison } from '../fx/poison';
-import { fxMagic } from '../fx/magic';
-import { fxFrost } from '../fx/frost';
-import { fxFire } from '../fx/fire';
-import { fxVoid } from '../fx/voidFx';
-import { shouldRunClientFx } from '../fx/guard';
-import type { GameScene } from '../scenes/GameScene';
-import { applyLunge } from './interpolation';
-import type { RenderState } from './state';
-import { DEPTH } from './depth';
+import {
+  ESSENCE_COLORS,
+  GAME_CONFIG,
+  isRangedPlayerView,
+  type CombatArchetype,
+  type CombatEvent,
+  type PlayerView,
+  type Vec2,
+} from "@mmo-idle/shared";
+import { activateLaserBeam } from "../fx/laser";
+import { playOneShotEffect, spawnDamageNumber } from "../fx/particles";
+import { getDotPath, type DotPath } from "../fx/dot";
+import { fxSlash } from "../fx/slash";
+import { fxImpact } from "../fx/impact";
+import { fxGunshot } from "../fx/gunshot";
+import { fxLightning } from "../fx/lightning";
+import { fxFireFlame } from "../fx/dotFire";
+import { fxFrostSnowflake } from "../fx/dotFrost";
+import { fxPoisonSmog } from "../fx/dotPoison";
+import { fxPoison } from "../fx/poison";
+import { fxMagic } from "../fx/magic";
+import { fxFrost } from "../fx/frost";
+import { fxFire } from "../fx/fire";
+import { fxVoid } from "../fx/voidFx";
+import { shouldRunClientFx } from "../fx/guard";
+import type { GameScene } from "../scenes/GameScene";
+import { applyLunge } from "./interpolation";
+import type { RenderState } from "./state";
+import { DEPTH } from "./depth";
 
 type NonNullArchetype = Exclude<CombatArchetype, null>;
-type PlayerHitEvent = CombatEvent & { kind: 'player-hit' };
-type PlayerKillEvent = CombatEvent & { kind: 'player-kill' };
+type PlayerHitEvent = CombatEvent & { kind: "player-hit" };
+type PlayerKillEvent = CombatEvent & { kind: "player-kill" };
 
 function spawnRewardFloaters(scene: GameScene, ev: PlayerKillEvent): void {
   const target = scene.state.sprite.get(ev.targetId);
   const x = target?.x ?? scene.cameras.main.worldView.centerX;
   const y = target?.y ?? scene.cameras.main.worldView.centerY;
   const lines: { text: string; color: string }[] = [];
-  if (ev.biomeXpGained > 0) lines.push({ text: `+${ev.biomeXpGained} XP`, color: '#88ddff' });
-  if (ev.essenceGained > 0) lines.push({ text: `+${ev.essenceGained} ●`, color: ESSENCE_COLORS[ev.essenceType] });
+  if (ev.biomeXpGained > 0)
+    lines.push({ text: `+${ev.biomeXpGained} XP`, color: "#88ddff" });
+  if (ev.essenceGained > 0)
+    lines.push({
+      text: `+${ev.essenceGained} ●`,
+      color: ESSENCE_COLORS[ev.essenceType],
+    });
 
   lines.forEach((line, index) => {
-    const text = scene.add.text(x, y - 32 - index * 18, line.text, {
-      fontFamily: 'monospace',
-      fontSize: '14px',
-      color: line.color,
-      stroke: '#000000',
-      strokeThickness: 3,
-    }).setOrigin(0.5).setDepth(DEPTH.FX);
+    const text = scene.add
+      .text(x, y - 32 - index * 18, line.text, {
+        fontFamily: "monospace",
+        fontSize: "14px",
+        color: line.color,
+        stroke: "#000000",
+        strokeThickness: 3,
+      })
+      .setOrigin(0.5)
+      .setDepth(DEPTH.FX);
     scene.tweens.add({
       targets: text,
       y: text.y - 34,
       alpha: 0,
       duration: 900,
-      ease: 'Power2',
+      ease: "Power2",
       onComplete: () => text.destroy(),
     });
   });
@@ -62,7 +78,7 @@ interface AttackFxArgs {
 
 type AttackFxFn = (args: AttackFxArgs) => void;
 
-const FLASH_CLIENT_EFFECT = 'flash-teleport';
+const FLASH_CLIENT_EFFECT = "flash-teleport";
 
 function snapOwnPlayerToServerTarget(
   state: RenderState,
@@ -88,7 +104,12 @@ function snapOwnPlayerToServerTarget(
   }
 }
 
-function fxAoeRing(scene: GameScene, pos: Vec2, radius: number, color: number): void {
+function fxAoeRing(
+  scene: GameScene,
+  pos: Vec2,
+  radius: number,
+  color: number,
+): void {
   const ring = scene.add.graphics({ x: pos.x, y: pos.y }).setDepth(DEPTH.FX);
   ring.lineStyle(2.5, color, 0.65);
   ring.strokeCircle(0, 0, 1);
@@ -98,7 +119,7 @@ function fxAoeRing(scene: GameScene, pos: Vec2, radius: number, color: number): 
     scaleY: radius,
     alpha: 0,
     duration: 420,
-    ease: 'Power2',
+    ease: "Power2",
     onComplete: () => ring.destroy(),
   });
 }
@@ -106,28 +127,35 @@ function fxAoeRing(scene: GameScene, pos: Vec2, radius: number, color: number): 
 function playEmpoweredRing(args: AttackFxArgs): void {
   const { scene, ev, player, to } = args;
   if (!ev.empowered && !ev.execution) return;
-  const ringColor = player.combatArchetype === 'cadence' ? 0x4499ff
-    : player.combatArchetype === 'cooldown' ? 0xddeeff
-    : player.combatArchetype === 'energy' ? 0x88aaff
-    : player.combatArchetype === 'reload' ? 0xffeedd
-    : 0xffdd22;
+  const ringColor =
+    player.combatArchetype === "cadence"
+      ? 0x4499ff
+      : player.combatArchetype === "cooldown"
+        ? 0xddeeff
+        : player.combatArchetype === "energy"
+          ? 0x88aaff
+          : player.combatArchetype === "reload"
+            ? 0xffeedd
+            : 0xffdd22;
   fxAoeRing(scene, to, GAME_CONFIG.EMPOWERED_AOE_RADIUS, ringColor);
 }
 
 const ATTACK_FX_BY_ARCHETYPE: Record<NonNullArchetype, AttackFxFn> = {
   cadence: ({ scene, ev, from, to }) =>
     fxSlash(scene, from.x, from.y, to.x, to.y, ev.empowered, true),
-  cooldown: ({ scene, ev, to }) =>
-    fxImpact(scene, to.x, to.y, ev.execution),
+  cooldown: ({ scene, ev, to }) => fxImpact(scene, to.x, to.y, ev.execution),
   reload: ({ scene, ev, from, to }) =>
     fxGunshot(scene, from.x, from.y, to.x, to.y, ev.empowered),
   energy: ({ scene, ev, from, to }) =>
     fxLightning(scene, from.x, from.y, to.x, to.y, ev.empowered),
   dot: ({ scene, ev, to, dotPath }) => {
     switch (dotPath) {
-      case 'fire': return fxFireFlame(scene, to.x, to.y, ev.empowered);
-      case 'frost': return fxFrostSnowflake(scene, to.x, to.y, ev.empowered);
-      default: return fxPoisonSmog(scene, to.x, to.y, ev.empowered);
+      case "fire":
+        return fxFireFlame(scene, to.x, to.y, ev.empowered);
+      case "frost":
+        return fxFrostSnowflake(scene, to.x, to.y, ev.empowered);
+      default:
+        return fxPoisonSmog(scene, to.x, to.y, ev.empowered);
     }
   },
   // Summoner uses a plain melee impact from the slime — the slime sprite is
@@ -138,38 +166,58 @@ const ATTACK_FX_BY_ARCHETYPE: Record<NonNullArchetype, AttackFxFn> = {
 };
 
 const ATTACK_FX_BY_STYLE: Record<string, AttackFxFn> = {
-  slash:  ({ scene, ev, from, to }) => fxSlash(scene, from.x, from.y, to.x, to.y, ev.empowered),
+  slash: ({ scene, ev, from, to }) =>
+    fxSlash(scene, from.x, from.y, to.x, to.y, ev.empowered),
   poison: ({ scene, to }) => fxPoison(scene, to.x, to.y),
-  magic:  ({ scene, from, to }) => fxMagic(scene, from.x, from.y, to.x, to.y),
-  frost:  ({ scene, to }) => fxFrost(scene, to.x, to.y),
-  fire:   ({ scene, to }) => fxFire(scene, to.x, to.y),
-  void:   ({ scene, to }) => fxVoid(scene, to.x, to.y),
-  impact:   ({ scene, ev, to }) => fxImpact(scene, to.x, to.y, ev.execution),
-  gunshot:  ({ scene, ev, from, to }) => fxGunshot(scene, from.x, from.y, to.x, to.y, ev.empowered),
+  magic: ({ scene, from, to }) => fxMagic(scene, from.x, from.y, to.x, to.y),
+  frost: ({ scene, to }) => fxFrost(scene, to.x, to.y),
+  fire: ({ scene, to }) => fxFire(scene, to.x, to.y),
+  void: ({ scene, to }) => fxVoid(scene, to.x, to.y),
+  impact: ({ scene, ev, to }) => fxImpact(scene, to.x, to.y, ev.execution),
+  gunshot: ({ scene, ev, from, to }) =>
+    fxGunshot(scene, from.x, from.y, to.x, to.y, ev.empowered),
 };
 
-export function dispatchCombatEvent(state: RenderState, ev: CombatEvent, scene: GameScene): void {
-  if (ev.kind === 'monster-dodge') {
+export function dispatchCombatEvent(
+  state: RenderState,
+  ev: CombatEvent,
+  scene: GameScene,
+): void {
+  if (ev.kind === "monster-dodge") {
     if (!shouldRunClientFx()) return;
-    const target = ev.targetPos ?? (state.sprite.get(ev.monsterId)
-      ? { x: state.sprite.get(ev.monsterId)!.x, y: state.sprite.get(ev.monsterId)!.y }
-      : null);
+    const target =
+      ev.targetPos ??
+      (state.sprite.get(ev.monsterId)
+        ? {
+            x: state.sprite.get(ev.monsterId)!.x,
+            y: state.sprite.get(ev.monsterId)!.y,
+          }
+        : null);
     if (target) {
-      const text = scene.add.text(target.x, target.y - 40, 'DODGE', {
-        fontFamily: 'monospace',
-        fontSize: '14px',
-        color: '#ddddff',
-        stroke: '#000000',
-        strokeThickness: 3,
-      }).setOrigin(0.5).setDepth(DEPTH.FX);
-      scene.tweens.add({ targets: text, y: text.y - 28, alpha: 0, duration: 650, onComplete: () => text.destroy() });
+      const text = scene.add
+        .text(target.x, target.y - 40, "DODGE", {
+          fontFamily: "monospace",
+          fontSize: "14px",
+          color: "#ddddff",
+          stroke: "#000000",
+          strokeThickness: 3,
+        })
+        .setOrigin(0.5)
+        .setDepth(DEPTH.FX);
+      scene.tweens.add({
+        targets: text,
+        y: text.y - 28,
+        alpha: 0,
+        duration: 650,
+        onComplete: () => text.destroy(),
+      });
     }
     return;
   }
 
   if (ev.playerId !== scene.myId) return;
 
-  if (ev.kind === 'player-hit') {
+  if (ev.kind === "player-hit") {
     const player = state.ownId
       ? (state.view.get(state.ownId) as PlayerView | undefined)
       : undefined;
@@ -179,12 +227,18 @@ export function dispatchCombatEvent(state: RenderState, ev: CombatEvent, scene: 
     }
   }
 
-  if (ev.kind === 'player-kill') {
+  if (ev.kind === "player-kill") {
     if (shouldRunClientFx()) {
       const target = scene.state.sprite.get(ev.targetId);
       if (target && ev.damage > 0) {
         const meta = scene.state.spriteMeta.get(ev.targetId);
-        spawnDamageNumber(scene, { x: target.x, y: target.y }, meta?.barOffsetY ?? 40, Math.round(ev.damage), '#ffffff');
+        spawnDamageNumber(
+          scene,
+          { x: target.x, y: target.y },
+          meta?.barOffsetY ?? 40,
+          Math.round(ev.damage),
+          "#ffffff",
+        );
       }
       spawnRewardFloaters(scene, ev);
     }
@@ -198,7 +252,9 @@ function runFxForAttackStyle(
 ): void {
   const ownSprite = state.ownId ? state.sprite.get(state.ownId) : undefined;
   const targetSprite = state.sprite.get(ev.targetId);
-  const player = state.ownId ? (state.view.get(state.ownId) as PlayerView | undefined) : undefined;
+  const player = state.ownId
+    ? (state.view.get(state.ownId) as PlayerView | undefined)
+    : undefined;
   const targetInterp = state.interpolation.get(ev.targetId);
   const isFlashTeleport = ev.effects?.includes(FLASH_CLIENT_EFFECT) ?? false;
 
@@ -211,10 +267,16 @@ function runFxForAttackStyle(
 
   if (!ownSprite || !player) return;
 
-  const dotPath = player.combatArchetype === 'dot' ? getDotPath(player) : undefined;
-  const bossScale = Math.max(targetSprite.displayWidth, targetSprite.displayHeight) > 64 ? 1.33 : 1;
+  const dotPath =
+    player.combatArchetype === "dot" ? getDotPath(player) : undefined;
+  const bossScale =
+    Math.max(targetSprite.displayWidth, targetSprite.displayHeight) > 64
+      ? 1.33
+      : 1;
   const targetEffectScale = 1.5 * bossScale;
-  const isLaser = player.combatArchetype === 'reload' && (player.passives['reload.laser'] ?? 0) > 0;
+  const isLaser =
+    player.combatArchetype === "reload" &&
+    (player.passives["reload.laser"] ?? 0) > 0;
 
   const from = { x: ownSprite.x, y: ownSprite.y };
   const to = { x: targetSprite.x, y: targetSprite.y };
@@ -228,7 +290,8 @@ function runFxForAttackStyle(
     if (archetype && ATTACK_FX_BY_ARCHETYPE[archetype]) {
       ATTACK_FX_BY_ARCHETYPE[archetype](args);
     } else {
-      const styleFn = ATTACK_FX_BY_STYLE[player.attackStyle] ?? ATTACK_FX_BY_STYLE.impact;
+      const styleFn =
+        ATTACK_FX_BY_STYLE[player.attackStyle] ?? ATTACK_FX_BY_STYLE.impact;
       styleFn(args);
     }
   }
@@ -242,7 +305,13 @@ function runFxForAttackStyle(
     playOneShotEffect(scene, effectId, to, { scale: targetEffectScale });
   }
 
-  if (!isLaser && !isFlashTeleport && !isRangedPlayerView(player) && state.ownId && targetInterp) {
+  if (
+    !isLaser &&
+    !isFlashTeleport &&
+    !isRangedPlayerView(player) &&
+    state.ownId &&
+    targetInterp
+  ) {
     applyLunge(state, state.ownId, { ...targetInterp.base }, scene);
   }
 }
@@ -262,10 +331,10 @@ export function spawnAttackEffect(
 ): void {
   if (!shouldRunClientFx()) return;
   const ev: PlayerHitEvent = {
-    kind: 'player-hit',
+    kind: "player-hit",
     playerId: scene.myId,
-    targetId: '',
-    targetName: '',
+    targetId: "",
+    targetName: "",
     damage: 0,
     empowered: flags?.empowered ?? false,
     execution: flags?.execution ?? false,

@@ -29,6 +29,7 @@ export function ensureLabel(
       stroke: '#000000',
       strokeThickness: 3,
     })
+    .setOrigin(0.5, 0)
     .setDepth(DEPTH.UI);
 
   state.label.set(id, label);
@@ -42,7 +43,7 @@ export function drawLabels(state: RenderState): void {
     if (!sprite || !label || !meta) continue;
 
     const barY = sprite.y - meta.barOffsetY;
-    label.setPosition(sprite.x - 16, barY - 12);
+    label.setPosition(sprite.x, barY - 12);
     label.setDepth(DEPTH.UI + sprite.y);
   }
 }

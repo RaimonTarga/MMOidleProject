@@ -19,6 +19,7 @@ export class GameScene extends Phaser.Scene {
   bgRect!: Phaser.GameObjects.Rectangle;
   bgGrid!: Phaser.GameObjects.TileSprite;
   bgTile: Phaser.GameObjects.TileSprite | null = null;
+  nodeDecor: Phaser.GameObjects.Image[] = [];
   debugGraphics!: Phaser.GameObjects.Graphics;
   /** Tactical mode: range rings + entity hitbox squares. */
   tacticalMode = false;
@@ -27,6 +28,8 @@ export class GameScene extends Phaser.Scene {
   cameraTarget!: Phaser.GameObjects.Arc;
   flashCameraHold = false;
   flashCameraHoldTargetId: string | null = null;
+  /** Current opacity of the void-flood mist post-FX (0–1, eased by fade). */
+  mistIntensity = 0;
 
   constructor() {
     super({ key: 'GameScene' });

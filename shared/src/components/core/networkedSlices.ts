@@ -64,6 +64,32 @@ export interface EvadesHits {
   count: number;
 }
 
+/** Presentation-ready objective row for ultimate boss HUD. */
+export interface UltimateObjectiveStatus {
+  headline: string;
+  detail?: string;
+  current?: number;
+  total?: number;
+}
+
+/** Active environmental hazard synced for ultimate boss HUD. */
+export interface UltimateHazardStatus {
+  effectId: string;
+  dmgPerTick: number;
+  tickMs: number;
+  hint?: string;
+}
+
+/** Ultimate boss encounter HUD payload — populated server-side each tick. */
+export interface UltimateStatus {
+  stageLabel: string;
+  stageIndex: number;
+  stageCount: number;
+  invulnerable: boolean;
+  objective?: UltimateObjectiveStatus;
+  hazard?: UltimateHazardStatus;
+}
+
 /** Client-facing status overlay and buff slice. */
 export interface HasStatus {
   activeEffects?: Record<string, number>;
@@ -72,6 +98,10 @@ export interface HasStatus {
   activeBuffs?: PlayerBuff[];
   /** Bosses only — populated by `bossScripts.ts` each tick. */
   bossEffects?: string[];
+  /** Ultimate bosses only — populated by ultimateEncounter sync. */
+  ultimateStatus?: UltimateStatus;
+  /** Encounter adds healing inside the void throne ring. */
+  throneHealing?: boolean;
 }
 
 // ─── Player-specific ─────────────────────────────────────────────────────────

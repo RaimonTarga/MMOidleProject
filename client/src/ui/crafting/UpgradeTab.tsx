@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useAtomValue } from 'jotai';
-import type { EquipmentSlot, EssenceType } from '@mmo-idle/shared';
+import type { EquipmentSlot } from '@mmo-idle/shared';
 import {
   ITEM_DATABASE,
   TEST_ROOM_NODE_ID,
@@ -78,17 +78,19 @@ export function UpgradeTab() {
   );
 
   // All owned upgradeable items — equipped items sorted first, then by tier, then name.
+  // The dev test room also exposes legacy/dev gear so it can be bumped without
+  // needing a biome-backed recipe.
   const items = useMemo(() => {
     const ids = new Set<string>([...inventory, ...equippedSet]);
     return Array.from(ids)
       .map(id => ITEM_DATABASE.get(id))
-      .filter((def): def is NonNullable<typeof def> => !!def && !!def.biomeGroup)
+      .filter((def): def is NonNullable<typeof def> => !!def && (isTestRoom || !!def.biomeGroup))
       .sort((a, b) => {
         const aEq = equippedSet.has(a.id) ? 0 : 1;
         const bEq = equippedSet.has(b.id) ? 0 : 1;
         return aEq - bEq || a.tier - b.tier || a.name.localeCompare(b.name);
       });
-  }, [inventory, equippedSet]);
+  }, [inventory, equippedSet, isTestRoom]);
 
   const biomeGroups = useMemo(() => {
     const groups = new Set<string>();
@@ -184,8 +186,8 @@ export function UpgradeTab() {
             const nextVal     = base + (upgradeStatBonusTotal(def, currentPlus + 1)[upStat] ?? 0);
 
             const reqLevel    = requiredBiomeLevelForUpgrade(def, currentPlus + 1);
-            const haveLevel   = biomeLevel[def.biomeGroup!] ?? 0;
-            const levelMet    = haveLevel >= reqLevel;
+            const haveLevel   = def.biomeGroup ? (biomeLevel[def.biomeGroup] ?? 0) : 0;
+            const levelMet    = isTestRoom || haveLevel >= reqLevel;
             const cost        = upgradeCostFor(def, currentPlus + 1);
             const check       = checkUpgrade({ item: def, currentPlus, biomeLevel: haveLevel, essences });
             const canUpgrade  = !isMaxed && (isTestRoom || check.ok);
@@ -242,8 +244,9 @@ export function UpgradeTab() {
                   {!isMaxed && (
                     <div className="craft-recipe__footer">
                       <span className={`craft-upgrade__req${levelMet ? ' craft-upgrade__req--ok' : ' craft-upgrade__req--bad'}`}>
-                        {biomeName(def.biomeGroup!)} Lv {reqLevel}
-                        {!levelMet && ` (have ${haveLevel})`}
+                        {isTestRoom
+                          ? 'Test room bypass'
+                          : `${biomeName(def.biomeGroup!)} Lv ${reqLevel}${!levelMet ? ` (have ${haveLevel})` : ''}`}
                       </span>
                       <button
                         className="craft-recipe__btn"

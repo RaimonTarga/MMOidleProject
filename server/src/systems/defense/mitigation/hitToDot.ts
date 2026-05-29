@@ -9,6 +9,7 @@ import {
 import type { PlayerEntity } from "../../../ecs/entity";
 import type { World } from "../../../world/World";
 import { registerCombatListener } from "../../combat/engine/combatPipeline";
+import { isInvulnerablePlayer } from "../../combat/invulnerability";
 import { DEBT_POOL_KEY, POOL_DRAIN_MS } from "../core/pools";
 import {
   buildKillerFromMonster,
@@ -42,6 +43,9 @@ export function registerHitToDot(): void {
 
     if (ctx.attackerType === "monster") {
       const killer = buildKillerFromMonster(ctx.attacker);
+      if (killer.monsterEntityId) {
+        setString(player.tracksCombat, "debtSourceEntityId", killer.monsterEntityId);
+      }
       setString(player.tracksCombat, "debtSourceTypeId", killer.monsterTypeId);
       setString(player.tracksCombat, "debtSourceName", killer.monsterName);
       setString(player.tracksCombat, "debtSourceNodeId", killer.nodeId);
@@ -65,6 +69,7 @@ export function registerHitToDot(): void {
  * the rest of the per-tick mechanics for this player).
  */
 export function runDebtDrain(world: World, player: PlayerEntity): boolean {
+  if (isInvulnerablePlayer(player)) return false;
   const cs = player.tracksCombat;
   const debtPool = getResource(cs, DEBT_POOL_KEY);
   if (debtPool <= 0) return false;

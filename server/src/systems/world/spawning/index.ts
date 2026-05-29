@@ -13,6 +13,7 @@ import {
   makeTracksCombat,
   resetTracksCombat,
   initScriptsBoss,
+  initScriptsUltimate,
 } from "@mmo-idle/shared";
 import type { MonsterEntity } from "../../../ecs/entity";
 import { recalculatePlayerEntityStats } from "../../../ecs/playerEntityFormulas";
@@ -24,6 +25,8 @@ import { setAggroTarget, setAttackTarget } from "../../combat/ai/targeting";
 import { resolveMonsterHitbox } from "../../../hitbox/resolve";
 import { thawNode } from "../../../world/nodeLifecycle";
 import { despawnMinionsForOwner } from "../../classes/archetypes/summoner";
+import { resetNodeFeatureRuntimeState } from "../nodeFeatures";
+import { applyDormantUltimateBoss } from "../../combat/ai/ultimateEncounter";
 
 // Regular monsters in dungeon nodes are scaled up; boss stats come from the database directly.
 const DUNGEON_HP_MULT = 2.0;
@@ -117,7 +120,7 @@ export function createMonster(
       chargeRemainingMs: 0,
     },
     tracksCombat: makeTracksCombat(),
-    hasHitbox: resolveMonsterHitbox(typeId, isBoss),
+    hasHitbox: resolveMonsterHitbox(typeId, isBoss, id),
   };
   world.ecs.add(entity);
 
@@ -127,6 +130,11 @@ export function createMonster(
       "scriptsBoss",
       initScriptsBoss(def.bossScript),
     );
+  }
+
+  if (def.ultimateEncounter) {
+    world.ecs.addComponent(entity, "scriptsUltimate", initScriptsUltimate());
+    applyDormantUltimateBoss(world, entity, def);
   }
 
   world.adjustMonsterCount(nodeId, 1, isBoss);
@@ -258,13 +266,20 @@ export function ensureBoss(world: World, nodeId: string): void {
   if (world.getBossCountInNode(nodeId) > 0) return;
 
   const biome = BIOME_DATABASE.get(nodeDef.biomeGroup);
-  const pool = biome?.bossPoolByTier?.[nodeDef.biomeTier];
-  if (!pool || pool.length === 0) return;
-
-  const typeId = pool[Math.floor(Math.random() * pool.length)];
+  const pool = biome?.bossPoolByTier?.[nodeDef.biomeTier] ?? [];
+  const typeId =
+    nodeDef.bossTypeId ?? pool[Math.floor(Math.random() * pool.length)];
+  if (!typeId) return;
   const pos: Vec2 = {
     x: nodeDef.width / 2 + (Math.random() - 0.5) * 200,
     y: nodeDef.height / 2 + (Math.random() - 0.5) * 200,
   };
-  createMonster(world, nodeId, typeId, pos);
+  resetNodeFeatureRuntimeState(world, nodeId);
+  const boss = createMonster(world, nodeId, typeId, pos);
+  if (boss) {
+    world.bossRespawnAt.delete(nodeId);
+    world.bossRespawnMarkers.delete(nodeId);
+    if (typeId === "void-overlord") world.overlordRespawnPersist?.(null);
+    world.broadcastBossFelledState();
+  }
 }

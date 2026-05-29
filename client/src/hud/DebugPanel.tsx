@@ -202,6 +202,17 @@ function DebugPanelContent() {
       {import.meta.env.DEV && (
         <div className="debug-section">
           <button
+            className="debug-btn"
+            onClick={() => hudBus.requestEquipPhaseTester()}
+          >
+            EQUIP DEV LOADOUT (400 DMG + INVULN)
+          </button>
+        </div>
+      )}
+
+      {import.meta.env.DEV && (
+        <div className="debug-section">
+          <button
             className={`debug-btn${inTestRoom ? ' active' : ''}`}
             onClick={() => {
               if (inTestRoom) hudBus.requestLeaveTestRoom();

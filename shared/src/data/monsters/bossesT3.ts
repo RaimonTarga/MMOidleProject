@@ -93,8 +93,8 @@ export const bossMonsterEntriesT3 = [
   }],
 
 
-  ['cave-overlord', {
-    id: 'cave-overlord', name: 'Cave Overlord', color: 0x332244,
+  ['cave-dread', {
+    id: 'cave-dread', name: 'Cave Dread', color: 0x332244,
     isBoss: true,
     stats: {
       hp: 4800, attack: 96, plating: 48, damageReduction: 0.15,

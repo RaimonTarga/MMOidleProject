@@ -19,4 +19,17 @@ const monsterEntries: [string, MonsterDefinition][] = [
 
 export const MONSTER_DATABASE: Map<string, MonsterDefinition> = new Map(monsterEntries);
 
-export type { BossAction, BossPhase, BossScript, MonsterDefinition, RepeatingAction } from './types';
+export type {
+  BossAction,
+  BossPhase,
+  BossScript,
+  EncounterStage,
+  MonsterDefinition,
+  RepeatingAction,
+  StageAction,
+  StageCondition,
+  UltimateEncounter,
+  UltimateEnvironmentalDot,
+  UltimateSavedBaseline,
+  WaveDef,
+} from './types';

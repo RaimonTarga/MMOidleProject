@@ -156,4 +156,86 @@ export const bossMonsterEntriesT4 = [
     rewards: { essence: 2000, essenceType: 'purple', level: 25 },
     ai: { wanderRadius: 140, leashRange: 950, idleMinMs: 3000, idleMaxMs: 7000 },
   }],
+
+  ['void-titan-warden', {
+    id: 'void-titan-warden', name: 'Void Titan Warden', color: 0x330055,
+    // Encounter elite, not a dungeon boss. Dungeon scaling brings this near 80% Void Titan stats.
+    stats: {
+      hp: 3400, attack: 126, plating: 60, damageReduction: 0.18,
+      speed: 18, attackRange: 92, attackCooldown: 3400, pullRange: 340,
+    },
+    behavior: 'melee', attackStyle: 'void', biome: 'abyss',
+    rewards: { essence: 0, essenceType: 'purple', level: 0, biomeXp: 0 },
+    ai: { wanderRadius: 100, leashRange: 900, idleMinMs: 3000, idleMaxMs: 8000 },
+  }],
+
+  ['void-overlord', {
+    id: 'void-overlord', name: 'Void Overlord', color: 0x220044,
+    isBoss: true,
+    stats: {
+      hp: 16000, attack: 280, plating: 45, damageReduction: 0.28,
+      speed: 18, attackRange: 110, attackCooldown: 3000, pullRange: 380,
+    },
+    behavior: 'melee', attackStyle: 'void', biome: 'abyss',
+    rewards: { essence: 3500, essenceType: 'purple', level: 25 },
+    ai: { wanderRadius: 0, leashRange: 980, idleMinMs: 4000, idleMaxMs: 9000 },
+    ultimateEncounter: {
+      anchor: 'center',
+      reset: { onWipe: true },
+      spawnFromFeatureId: 'abyssal_throne',
+      stages: [
+        {
+          id: 'waves',
+          displayName: 'Summoning Waves',
+          objectiveLabel: 'Clear all summoned adds',
+          onEnter: [
+            { type: 'set-invulnerable', value: true },
+            { type: 'set-rooted', value: true },
+            { type: 'set-cannot-attack', value: true },
+            {
+              type: 'spawn-waves',
+              waves: [
+                { adds: [{ monsterTypeId: 'void-horror', count: 4 }] },
+                { adds: [{ monsterTypeId: 'void-horror', count: 3 }, { monsterTypeId: 'abyssal-titan', count: 2 }] },
+                { adds: [{ monsterTypeId: 'abyssal-titan', count: 3 }] },
+              ],
+            },
+          ],
+          completeWhen: { kind: 'waves-cleared' },
+        },
+        {
+          id: 'titans',
+          displayName: 'Titan Wardens',
+          objectiveLabel: 'Slay the Void Titan Wardens',
+          onEnter: [
+            { type: 'set-rooted', value: true },
+            { type: 'set-cannot-attack', value: true },
+            { type: 'spawn-elites', monsterTypeId: 'void-titan-warden', count: 3, offsetRange: 280 },
+          ],
+          completeWhen: { kind: 'elites-cleared' },
+        },
+        {
+          id: 'flood',
+          displayName: 'The Flood',
+          vulnerable: true,
+          onEnter: [
+            { type: 'set-invulnerable', value: false },
+            { type: 'set-rooted', value: false },
+            { type: 'set-cannot-attack', value: false },
+            { type: 'set-feature-block', featureId: 'abyssal_throne', value: false },
+            {
+              type: 'environmental-dot',
+              effectId: 'void-flood',
+              damagePerStack: 1,
+              tickIntervalMs: 1000,
+              maxStacks: 0,
+              refreshMs: 5000,
+              stackCap: 40,
+              hazardHint: 'The flood permeates the abyss',
+            },
+          ],
+        },
+      ],
+    },
+  }],
 ] satisfies [string, MonsterDefinition][];

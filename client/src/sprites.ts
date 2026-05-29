@@ -13,6 +13,10 @@ export const GRAVE_DISPLAY_W = 80;
 export const GRAVE_DISPLAY_H = 96;
 /** Label offset above grave crown (used by drawLabels). */
 export const GRAVE_LABEL_OFFSET_Y = GRAVE_DISPLAY_H * 0.55 + 8;
+export const VOID_TOMB_TEXTURE_KEY = "void_tomb";
+export const VOID_TOMB_FILE = "/assets/ultimate_bosses/void_tomb.png";
+export const VOID_TOMB_DISPLAY_W = 280;
+export const VOID_TOMB_DISPLAY_H = 280;
 
 export {
   MONSTER_FRAMES,
@@ -20,6 +24,12 @@ export {
   resolveMonsterFrame,
   resolvePlayerFrame,
 };
+
+export {
+  VOID_OVERLORD_TEXTURE_KEY,
+  VOID_OVERLORD_FILE,
+  initVoidOverlordSheet,
+} from "./sprites/voidOverlordSheet";
 
 /**
  * Returns the atlas frame name for a player.
@@ -70,4 +80,29 @@ export const BIOME_TEXTURES: Record<string, string> = {
   volcanic: "biome_volcano",
   necropolis: "biome_necropolis",
   abyss: "biome_abyss",
+};
+
+/** Client-only visual art for a shared NODE_FEATURES entry. */
+export interface NodeDecorArt {
+  featureId: string;
+  key: string;
+  file: string;
+  openKey?: string;
+  openFile?: string;
+  alpha?: number;
+  depth?: number;
+  /** Render scale relative to shared displayW/H (default 1). */
+  artScale?: number;
+}
+
+export const NODE_DECOR: Record<string, NodeDecorArt[]> = {
+  "node-9-0": [
+    {
+      featureId: "abyssal_throne",
+      key: "abyssal_throne",
+      file: "/assets/environment/abyssal_throne.png",
+      openKey: "abyssal_throne_open",
+      openFile: "/assets/environment/void_throne_open.png",
+    },
+  ],
 };

@@ -1,16 +1,17 @@
 import { createPortal } from 'react-dom';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useAtomValue } from 'jotai';
-import { NODE_BIOMES, BIOME_DATABASE } from '@mmo-idle/shared';
+import { NODE_BIOMES, BIOME_DATABASE, formatRespawnRemaining } from '@mmo-idle/shared';
 import { hudBus } from '../../hudBus';
-import { autoPathAtom, nodeTelemetryAtom, playerNodeIdAtom } from '../../hud/atoms';
-import { MAX_VIEW_C, MAX_VIEW_R, VIEWPORT, tileColor } from './constants';
+import { autoPathAtom, bossFelledByNodeAtom, nodeTelemetryAtom, playerNodeIdAtom } from '../../hud/atoms';
+import { MAX_VIEW_C, MAX_VIEW_R, VIEWPORT, dungeonBadgeLabel, tileColor } from './constants';
 import { bfsPath, clampView, parseNodeId } from './pathing';
 import { NodeInfo } from './NodeInfo';
 import { NodeTelemetryHistogram3D } from './NodeTelemetryHistogram3D';
 import { NodeTelemetryPanel } from './NodeTelemetryPanel';
 import { OverviewMap } from './OverviewMap';
 import { TELEMETRY_METRICS, type TelemetryMetric } from './telemetryMetrics';
+import { useMapClock } from './useMapClock';
 import '../map.css';
 
 interface Props {
@@ -22,6 +23,7 @@ interface Props {
 type OpsView = 'heat' | '3d';
 
 const SHOW_OPS_MAP = import.meta.env.DEV || import.meta.env.VITE_ENABLE_OPS_MAP === 'true';
+const SHOW_DEV_TELEPORT = import.meta.env.DEV;
 
 function heatOpacity(row: { tickCpuMs: number; idlePopulationMs: number } | undefined, maxCpu: number): number {
   if (!row || maxCpu <= 0) return 0;
@@ -33,6 +35,8 @@ function heatOpacity(row: { tickCpuMs: number; idlePopulationMs: number } | unde
 export function MapPanel({ onClose, highlightNodes, focusNodeId }: Props) {
   const playerNodeId = useAtomValue(playerNodeIdAtom);
   const telemetry = useAtomValue(nodeTelemetryAtom);
+  const bossFelledByNode = useAtomValue(bossFelledByNodeAtom);
+  const mapNow = useMapClock();
   const busAutoPath = useAtomValue(autoPathAtom);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [pinnedNodeId, setPinnedNodeId] = useState<string | null>(null);
@@ -66,9 +70,14 @@ export function MapPanel({ onClose, highlightNodes, focusNodeId }: Props) {
 
   const detailNodeId = opsMode ? (pinnedNodeId ?? hoveredId) : hoveredId;
 
-  function handleTileClick(id: string, isCurrent: boolean) {
+  function handleTileClick(id: string, isCurrent: boolean, e: React.MouseEvent) {
     if (opsMode) {
       setPinnedNodeId(id);
+      return;
+    }
+    if (SHOW_DEV_TELEPORT && e.shiftKey) {
+      hudBus.requestTeleportToNode(id);
+      onClose();
       return;
     }
     if (isCurrent || !playerNodeId) return;
@@ -170,7 +179,14 @@ export function MapPanel({ onClose, highlightNodes, focusNodeId }: Props) {
               )}
             </div>
           )}
-          <OverviewMap viewRow={viewRow} viewCol={viewCol} playerNodeId={playerNodeId} pathSet={pathSet} destNode={destNode} />
+          <OverviewMap
+            viewRow={viewRow}
+            viewCol={viewCol}
+            playerNodeId={playerNodeId}
+            pathSet={pathSet}
+            destNode={destNode}
+            bossFelledByNode={bossFelledByNode}
+          />
           {SHOW_OPS_MAP && (
             <button
               type="button"
@@ -197,12 +213,16 @@ export function MapPanel({ onClose, highlightNodes, focusNodeId }: Props) {
                   const isHovered     = hoveredId === id;
                   const isPinned      = opsMode && pinnedNodeId === id;
                   const isDungeon     = info?.isDungeon === true;
+                  const dungeonBadge  = dungeonBadgeLabel(info);
                   const isDestination = id === destNode;
                   const isPath        = !opsMode && !isDestination && !isCurrent && pathSet.has(id);
                   const isHighlight   = !!highlightNodes?.includes(id);
                   const tierBadge     = info?.biomeTier === 0 ? '★' : `T${info?.biomeTier ?? '?'}`;
                   const row           = telemetry?.nodes[id];
                   const heat          = opsMode ? heatOpacity(row, maxNodeCpu) : 0;
+                  const felled        = bossFelledByNode[id];
+                  const isOverlordFelled =
+                    felled?.monsterTypeId === 'void-overlord' && felled.respawnAt > mapNow;
 
                   return (
                     <div
@@ -210,6 +230,7 @@ export function MapPanel({ onClose, highlightNodes, focusNodeId }: Props) {
                       className={[
                         'map-tile',
                         isDungeon       ? 'map-tile--dungeon'       : '',
+                        isOverlordFelled ? 'map-tile--felled'       : '',
                         isCurrent       ? 'map-tile--current'       : '',
                         isHovered && !isCurrent ? 'map-tile--hovered' : '',
                         isPath          ? 'map-tile--path'          : '',
@@ -224,12 +245,20 @@ export function MapPanel({ onClose, highlightNodes, focusNodeId }: Props) {
                       }}
                       onMouseEnter={() => setHoveredId(id)}
                       onMouseLeave={() => setHoveredId(null)}
-                      onClick={() => handleTileClick(id, isCurrent)}
-                      title={opsMode ? 'Click to pin telemetry' : (isCurrent ? undefined : 'Click to navigate here')}
+                      onClick={(e) => handleTileClick(id, isCurrent, e)}
+                      title={opsMode ? 'Click to pin telemetry' : (SHOW_DEV_TELEPORT ? 'Click to navigate here. Shift+Click to teleport.' : (isCurrent ? undefined : 'Click to navigate here'))}
                     >
                       <span className="map-tile__tier">{tierBadge}</span>
                       <span className="map-tile__name">{biome?.name ?? '?'}</span>
-                      {isDungeon      && <span className="map-tile__dungeon-badge">DUNGEON</span>}
+                      {dungeonBadge   && <span className="map-tile__dungeon-badge">{dungeonBadge}</span>}
+                      {isOverlordFelled && (
+                        <>
+                          <span className="map-tile__felled-badge">[FELLED]</span>
+                          <span className="map-tile__felled-timer">
+                            {formatRespawnRemaining(felled.respawnAt, mapNow)}
+                          </span>
+                        </>
+                      )}
                       {isCurrent      && <span className="map-tile__you">▼ YOU</span>}
                       {isDestination  && !opsMode && <span className="map-tile__dest">★ DEST</span>}
                       {isPinned       && <span className="map-tile__ops-pin">◆ PIN</span>}

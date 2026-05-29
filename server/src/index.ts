@@ -4,11 +4,14 @@ import { Server } from "socket.io";
 import cors from "cors";
 import path from "path";
 
-import { World } from "./world/World";
+import { World, type PersistedBossRespawn } from "./world/World";
 import { takeWorldLogEvents } from "./world/worldLog";
 import {
   emptyEquipment,
   GAME_CONFIG,
+  ITEM_DATABASE,
+  NODE_BIOMES,
+  registerDevItems,
   resetTracksCombat,
   TEST_ROOM_NODE_ID,
   ESSENCE_TYPES,
@@ -18,6 +21,7 @@ import { checkRecipeUnlocks } from "./systems/player/progression/rewards";
 import { equipItem, unequipItem } from "./systems/player/economy/inventory";
 import { craftRecipe } from "./systems/player/economy/crafting";
 import { upgradeItem } from "./systems/player/economy/itemUpgrade";
+import { grantDevLoadout } from "./systems/player/economy/grantDevWeapon";
 import {
   joinParty,
   leaveParty,
@@ -30,6 +34,11 @@ import type {
   DeltaSnapshot,
 } from "@mmo-idle/shared";
 import { db, runMigrations } from "./db/index";
+import {
+  readWorldState,
+  writeWorldState,
+  clearWorldState,
+} from "./db/worldStateRepo";
 import { initHitboxCache } from "./hitbox/cache";
 import { getAtlasPaths } from "./hitbox/paths";
 import {
@@ -42,11 +51,13 @@ import { recordBroadcast } from "./net/profiler";
 import { timeSync } from "./telemetry/nodeTelemetry";
 import { TELEMETRY_WINDOW_MS } from "./telemetry/constants";
 import { initWeaponEffects } from "./systems/combat/damage/weaponEffects";
+import { initInvulnerabilityGuard } from "./systems/combat/invulnerability";
 import { initDefenseSystems } from "./systems/defense";
 import {
   registerSummonerDamageSponge,
   registerMountainPathHooks,
   despawnMinionsForOwner,
+  relocateMinionsForOwner,
 } from "./systems/classes/archetypes/summoner";
 import { initDebuffMechanics } from "./systems/classes/shared/debuffs";
 import { IS_DEV } from "./env";
@@ -70,11 +81,14 @@ import {
   startManualNavigation,
 } from "./systems/world/autoTraverse";
 import { thawNode } from "./world/nodeLifecycle";
+import { rightmostEntranceTarget } from "./world/nodePath";
 import { ensurePopulation, ensureBoss } from "./systems/world/spawning";
 import { initDeadPlayerGuard } from "./systems/world/playerIncapacitation";
 import type { PlayerEntity } from "./ecs/entity";
 
 export { IS_DEV };
+
+if (IS_DEV) registerDevItems(ITEM_DATABASE);
 
 // ── Setup ─────────────────────────────────────────────
 
@@ -115,6 +129,7 @@ initDefenseSystems();
 // ── DEBUFF MECHANICS ──────────────────────────────────────────────────────────
 // Registers onDamageTaken listeners that apply debuff multipliers (vulnerability).
 initDebuffMechanics();
+initInvulnerabilityGuard();
 initDeadPlayerGuard();
 
 // ── SUMMONER DAMAGE SPONGE ────────────────────────────────────────────────────
@@ -131,6 +146,36 @@ runMigrations();
 // accountId → socketId map for the auto-save interval
 const socketByAccount = new Map<string, string>();
 
+/** Server-global key for the persisted Void Overlord respawn cooldown. */
+const OVERLORD_RESPAWN_KEY = "void-overlord-respawn";
+
+/**
+ * Re-seed the in-memory Void Overlord respawn cooldown from the DB on boot so a
+ * server restart (or any node despawn) does not bring the overlord back early.
+ * Drops the record if the cooldown already elapsed while the server was down.
+ */
+function restoreOverlordRespawn(world: World): void {
+  const raw = readWorldState(db, OVERLORD_RESPAWN_KEY);
+  if (!raw) return;
+
+  let saved: PersistedBossRespawn;
+  try {
+    saved = JSON.parse(raw) as PersistedBossRespawn;
+  } catch {
+    clearWorldState(db, OVERLORD_RESPAWN_KEY);
+    return;
+  }
+
+  if (saved.respawnAt <= Date.now()) {
+    clearWorldState(db, OVERLORD_RESPAWN_KEY);
+    return;
+  }
+
+  const { nodeId, ...marker } = saved;
+  world.bossRespawnAt.set(nodeId, marker.respawnAt);
+  world.bossRespawnMarkers.set(nodeId, marker);
+}
+
 async function boot(): Promise<void> {
   const { atlasPng, atlasJson } = getAtlasPaths();
   await initHitboxCache(db, atlasPng, atlasJson);
@@ -142,6 +187,20 @@ async function boot(): Promise<void> {
   world.nodePreparingEmitter = (playerId, nodeId) => {
     io.sockets.sockets.get(playerId)?.emit("node:preparing", { nodeId });
   };
+
+  world.overlordRespawnPersist = (marker) => {
+    if (marker) {
+      writeWorldState(db, OVERLORD_RESPAWN_KEY, JSON.stringify(marker));
+    } else {
+      clearWorldState(db, OVERLORD_RESPAWN_KEY);
+    }
+  };
+  restoreOverlordRespawn(world);
+
+  const emitBossFelledState = () => {
+    io.emit("world:bossFelled", world.buildBossFelledSnapshot());
+  };
+  world.bossFelledBroadcast = emitBossFelledState;
 
   // ── MARKER INVARIANT CHECK (dev only) ─────────────────
   if (IS_DEV) {
@@ -206,6 +265,10 @@ async function boot(): Promise<void> {
           ?.emit("player:ascended", p.tracksProgression.currentSkillTier);
     }
     world.pendingAscensions = [];
+    for (const playerId of world.pendingOverlordFelled) {
+      io.sockets.sockets.get(playerId)?.emit("overlord:felled");
+    }
+    world.pendingOverlordFelled = [];
   }, LOGIC_MS);
 
   // Broadcast tick — 5 Hz. Sends authoritative component deltas to each player.
@@ -302,12 +365,59 @@ async function boot(): Promise<void> {
     );
     recordBroadcast(syncSnap, "state:sync");
     socket.emit("state:sync", syncSnap);
+    emitBossFelledState();
     world.syncTelemetryOccupancy();
     socket.emit("world:telemetry", world.telemetry.flush(world.tickCounter));
 
     function liveSelf(): PlayerEntity | null {
       const p = world.getPlayerEntity(socket.id);
       return p && !p.isDead ? p : null;
+    }
+
+    function teleportLiveSelfToNode(nodeId: string): void {
+      const p = liveSelf();
+      if (!p) return;
+      if (!NODE_BIOMES[nodeId]) return;
+
+      const fromNodeId = p.hasPosition.nodeId;
+      if (fromNodeId === TEST_ROOM_NODE_ID) {
+        // Match debug:leaveTestRoom so the test-room stockpile cannot leak out.
+        for (const type of ESSENCE_TYPES) {
+          p.tracksProgression.essences[type] = 0;
+        }
+        markSliceDirty(world, p, "tracksProgression");
+      }
+
+      p.hasPosition.nodeId = nodeId;
+      if (fromNodeId !== nodeId) {
+        world.movePlayerNode(fromNodeId, nodeId);
+      }
+
+      if (world.isNodeFrozen(nodeId)) {
+        world.nodePreparingEmitter?.(p.isPlayer.id, nodeId);
+        thawNode(world, nodeId);
+      }
+
+      p.hasPosition.current = rightmostEntranceTarget(nodeId);
+
+      world.resetNodeDeltaState(nodeId);
+      stopEntity(world, p);
+      p.usesAutocombat.auto = false;
+      clearAutoTraversePath(world, p);
+      clearSummonerCommand(world, p);
+      setAttackTarget(world, p, null);
+      detachComponent(world, p, "isChanneling");
+      clearEngagement(world, p);
+      relocateMinionsForOwner(world, p);
+
+      for (const e of world.aggroedMonsters) {
+        if (
+          e.hasAggroTarget.targetKind === "player" &&
+          e.hasAggroTarget.targetId === socket.id
+        ) {
+          setAggroTarget(world, e, null, Date.now());
+        }
+      }
     }
 
     socket.on("player:ackDeath", () => {
@@ -369,6 +479,7 @@ async function boot(): Promise<void> {
       );
       recordBroadcast(snap, "state:sync");
       socket.emit("state:sync", snap);
+      emitBossFelledState();
     });
 
     socket.on("player:unlockSkill", (skillId) => {
@@ -453,6 +564,11 @@ async function boot(): Promise<void> {
         }
       });
 
+      socket.on("debug:teleportToNode", (nodeId) => {
+        if (typeof nodeId !== "string") return;
+        teleportLiveSelfToNode(nodeId);
+      });
+
       socket.on("debug:leaveTestRoom", () => {
         const p = world.getPlayerEntity(socket.id);
         if (!p) return;
@@ -483,6 +599,12 @@ async function boot(): Promise<void> {
         ensureBoss(world, nodeId);
         world.reconcileMonsterCounts();
         world.resetNodeDeltaState(nodeId);
+      });
+
+      socket.on("debug:equipPhaseTester", () => {
+        const p = liveSelf();
+        if (!p) return;
+        grantDevLoadout(world, p);
       });
 
       socket.on("debug:resetProgress", () => {

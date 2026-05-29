@@ -1,4 +1,5 @@
 import type { EquipmentSlot } from "../items";
+import type { BossFelledMarker } from "./bossFelled";
 import type { DeltaSnapshot } from "./delta";
 import type { PlayerDeathPayload } from "./death";
 import type { NodeTelemetrySnapshot } from "./nodeTelemetry";
@@ -24,10 +25,14 @@ export interface ServerToClientEvents {
   "player:died": (payload: PlayerDeathPayload) => void;
   /** Sent when a player unlocks a skill and advances to the next tier. */
   "player:ascended": (tier: number) => void;
+  /** Sent to contributors still on the node when the Void Overlord is defeated. */
+  "overlord:felled": () => void;
   /** Authoritative combat/progression log records for the combat log panel. */
   "world:events": (events: WorldLogEvent[]) => void;
   /** Per-node server telemetry snapshot (CPU, memory proxies, leak heuristics). */
   "world:telemetry": (snapshot: NodeTelemetrySnapshot) => void;
+  /** Active dungeon boss respawn cooldowns for the world map. */
+  "world:bossFelled": (markers: BossFelledMarker[]) => void;
   /** Sent before a cold-start thaw of a frozen node (loading overlay on client). */
   "node:preparing": (payload: { nodeId: string }) => void;
   /** Sent to the old socket when a second session connects with the same account ID. */
@@ -66,6 +71,8 @@ export interface ClientToServerEvents {
   "player:ackDeath": () => void;
   /** Dev-only: teleport the player to the debug test room. Server ignores in production. */
   "debug:goToTestRoom": () => void;
+  /** Dev-only: teleport the player directly to a world-map node. Server ignores in production. */
+  "debug:teleportToNode": (nodeId: string) => void;
   /** Dev-only: leave the debug test room and return to the clearing. Server ignores in production. */
   "debug:leaveTestRoom": () => void;
   /** Dev-only: reset the current player's progression for playtesting. */
@@ -74,4 +81,6 @@ export interface ClientToServerEvents {
   "debug:refreshRecipes": () => void;
   /** Dev-only: remove and regenerate all monsters in the player's current node. */
   "debug:respawnNode": () => void;
+  /** Dev-only: grant and equip the Phase Tester weapon + Godmode armor. */
+  "debug:equipPhaseTester": () => void;
 }

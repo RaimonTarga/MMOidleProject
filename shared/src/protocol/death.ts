@@ -6,6 +6,7 @@ export { GRAVE_FRAME_COUNT } from "../components/combat/isDead";
 
 /** Killer snapshot — stable even if the monster entity is despawned mid-tick. */
 export interface DeathKiller {
+  monsterEntityId?: string;
   monsterTypeId: string;
   monsterName: string;
   isBoss: boolean;

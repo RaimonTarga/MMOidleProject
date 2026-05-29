@@ -35,4 +35,12 @@ export interface ShadowDefsFile {
 /** Runtime / networked hitbox slice (display-scaled rects). */
 export interface HasHitbox {
   rects: HitboxRect[];
+  /** Baked atlas frame key; null when using fallback AABB only. */
+  frameName?: string | null;
+  /** Source-space dimensions used for the last resolve (from HitboxDef or fallback). */
+  sourceW?: number;
+  sourceH?: number;
+  /** Nominal display size at last resolve (before optional scaleMult). */
+  displayW?: number;
+  displayH?: number;
 }

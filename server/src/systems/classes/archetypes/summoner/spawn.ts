@@ -7,9 +7,12 @@
  * weapon effects) apply naturally.
  */
 import {
+  FALLBACK_MONSTER_AABB,
   initIsMinion,
   makeTracksCombat,
+  MINION_BASE_DISPLAY_SIZE,
   MONSTER_DATABASE,
+  resolveMonsterFrame,
   type MinionMonsterType,
   type PassiveKey,
   type Vec2,
@@ -19,7 +22,7 @@ import type { MinionEntity, PlayerEntity, ServerEntity } from '../../../../ecs/e
 import { initControlsMinion } from './controlsMinion';
 import { getStoneSentinelSpawnPos } from './sentinelPlacement';
 import { computeMinionAttackRange } from './range';
-import { hitboxEqual, resolveMinionHitbox } from '../../../../hitbox/resolve';
+import { resolveMinionHitbox, syncEntityHitbox } from '../../../../hitbox/resolve';
 import { markSliceDirty } from '../../../../ecs/dirtyHelpers';
 import { attachComponent, detachComponent } from '../../../../ecs/markerHelpers';
 import { setAttackTarget } from '../../../combat/ai/targeting';
@@ -84,10 +87,16 @@ export function syncMinionMaxHp(
 }
 
 export function syncMinionHitbox(world: World, minion: MinionEntity, sizeMult: number): void {
-  const nextHitbox = resolveMinionHitbox(minion.isMinion.monsterTypeId, sizeMult);
-  if (!hitboxEqual(minion.hasHitbox?.rects, nextHitbox.rects)) {
-    attachComponent(world, minion, 'hasHitbox', nextHitbox);
-  }
+  const typeId = minion.isMinion.monsterTypeId;
+  const frame = resolveMonsterFrame(typeId);
+  const mult = Math.max(0.1, sizeMult);
+  const displaySize = MINION_BASE_DISPLAY_SIZE * mult;
+  syncEntityHitbox(world, minion, {
+    frameName: frame,
+    displayW: displaySize,
+    displayH: displaySize,
+    fallback: FALLBACK_MONSTER_AABB,
+  });
 }
 
 const MINION_TYPE_PASSIVE_MAP: Array<[PassiveKey, MinionMonsterType]> = [

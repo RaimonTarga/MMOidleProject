@@ -19,6 +19,12 @@ export const characters = sqliteTable('characters', {
   updatedAt:         integer('updated_at').notNull().default(0),
 });
 
+export const worldState = sqliteTable('world_state', {
+  key:       text('key').primaryKey(),
+  value:     text('value').notNull(),
+  updatedAt: integer('updated_at').notNull().default(0),
+});
+
 export const spriteHitboxMeta = sqliteTable('sprite_hitbox_meta', {
   key:       text('key').primaryKey(),
   atlasHash: text('atlas_hash').notNull(),

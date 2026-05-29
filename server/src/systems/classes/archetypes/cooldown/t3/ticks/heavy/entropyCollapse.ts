@@ -9,6 +9,7 @@ import {
   recordPlayerKillMonster,
 } from '../../../../../../../world/worldLogCombat';
 import { actorFromSourceId } from '../../../../../../../world/worldLogActors';
+import { isInvulnerableMonster } from '../../../../../../combat/invulnerability';
 
 /**
  * Entropy Collapse tick. Per-monster DoT whose damage scales with the
@@ -25,6 +26,7 @@ export function updateEntropyCollapse(world: World, dt: number): void {
   for (const entity of world.entropyMonsters) {
     const monsterId = entity.isMonster.id;
     const state     = entity.tracksCombat;
+    if (isInvulnerableMonster(entity)) continue;
     const effect = getStatusEffect(state, ENT_DOT_FX);
     if (!effect) {
       detachMarkerIfNoEffect(world, entity, 'hasEntropy', state, ENT_DOT_FX);

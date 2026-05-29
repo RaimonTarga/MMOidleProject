@@ -34,6 +34,7 @@ export function applyKnockback(
 ): void {
   const entity = world.getMonsterEntity(monsterId);
   if (!entity) return;
+  if (entity.isRooted) return;
   const position = entity.hasPosition;
 
   const dx = position.current.x - from.x;
@@ -78,6 +79,12 @@ export function isMonsterKnockedBack(world: World, monsterId: string): boolean {
  */
 export function updateKnockback(world: World, dt: number): void {
   for (const entity of world.knockbackedMonsters) {
+    if (entity.isRooted) {
+      stopEntity(world, entity);
+      world.clearMonsterKnockback(entity.isMonster.id);
+      continue;
+    }
+
     const kb = entity.hasKnockback;
 
     kb.elapsedMs += dt;

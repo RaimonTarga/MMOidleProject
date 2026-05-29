@@ -21,6 +21,7 @@ function buildNode(row: number, col: number): [string, NodeDefinition] {
     biomeGroup: biomeInfo.biomeGroup,
     biomeTier:  biomeInfo.biomeTier,
     isDungeon:  biomeInfo.isDungeon ?? false,
+    bossTypeId:  biomeInfo.bossTypeId,
     width:  GAME_CONFIG.NODE_WIDTH,
     height: GAME_CONFIG.NODE_HEIGHT,
     exits,

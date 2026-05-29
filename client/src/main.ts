@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { createRoot } from 'react-dom/client';
 import { createElement } from 'react';
+import { ITEM_DATABASE, registerDevItems } from '@mmo-idle/shared';
 import { GameScene } from './scenes/GameScene';
 import { LeftSidebar } from './hud/HUD';
 import { RightSidebar } from './hud/MenuButtons';
@@ -12,6 +13,11 @@ import { NodeLoadingOverlay } from './hud/NodeLoadingOverlay';
 import { TabResyncOverlay } from './hud/TabResyncOverlay';
 import { DeathOverlay } from './hud/DeathOverlay';
 import { BiomeXpBar } from './hud/BiomeXpBar';
+import { BossBar } from './hud/BossBar';
+
+if (import.meta.env.DEV) {
+  registerDevItems(ITEM_DATABASE);
+}
 
 function blockMouseHistoryButtons(event: Event) {
   if (!(event instanceof MouseEvent)) return;
@@ -64,3 +70,4 @@ createRoot(document.getElementById('node-loading-overlay')!).render(createElemen
 createRoot(document.getElementById('tab-resync-overlay')!).render(createElement(TabResyncOverlay));
 createRoot(document.getElementById('death-overlay')!).render(createElement(DeathOverlay));
 createRoot(document.getElementById('biome-xp-overlay')!).render(createElement(BiomeXpBar));
+createRoot(document.getElementById('boss-bar-overlay')!).render(createElement(BossBar));

@@ -10,9 +10,11 @@ export interface IntentMap {
   upgradeItem: string;
   navigateTo: { path: string[] };
   goToTestRoom: undefined;
+  teleportToNode: string;
   leaveTestRoom: undefined;
   resetProgress: undefined;
   refreshRecipes: undefined;
+  equipPhaseTester: undefined;
   tacticalView: undefined;
   joinParty: string;
   leaveParty: undefined;

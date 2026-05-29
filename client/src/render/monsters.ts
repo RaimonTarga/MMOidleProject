@@ -9,6 +9,70 @@ import { ensureCdBar } from './cooldownBars';
 import { applyLunge } from './interpolation';
 import { spawnAttackEffect } from './combatFx';
 import { spawnDamageNumber } from '../fx/particles';
+import { applySpriteTint, resetSpriteTint } from './sprites';
+import { VOID_OVERLORD_DISPLAY } from '../sprites/voidOverlordSheet';
+import {
+  ensureVoidOverlordBossSprite,
+  ensureVoidOverlordMinionSprite,
+  shouldUseVoidOverlordSheet,
+} from './ultimateBossSprites';
+
+const THRONE_HEAL_TINT = 0xbb66ff;
+
+function syncMonsterThroneTint(
+  state: RenderState,
+  monster: MonsterView,
+): void {
+  const sprite = state.sprite.get(monster.id);
+  if (!sprite) return;
+  if (monster.throneHealing) {
+    applySpriteTint(sprite, THRONE_HEAL_TINT);
+  } else {
+    resetSpriteTint(sprite, monster.color);
+  }
+}
+
+function defaultBarOffsetY(monster: MonsterView): number {
+  return monster.isBoss ? 50 : 40;
+}
+
+function defaultSpriteSize(monster: MonsterView): number {
+  return monster.isBoss ? 80 : 64;
+}
+
+function upsertSheetMonsterSprite(
+  state: RenderState,
+  monster: MonsterView,
+  scene: GameScene,
+): void {
+  const meta = state.spriteMeta.get(monster.id);
+  if (!meta) return;
+
+  if (monster.monsterTypeId === 'void-overlord') {
+    meta.barOffsetY = VOID_OVERLORD_DISPLAY['void-overlord'].barOffsetY;
+    ensureVoidOverlordBossSprite(state, monster.id, monster.pos, scene);
+    return;
+  }
+
+  if (shouldUseVoidOverlordSheet(monster.monsterTypeId)) {
+    meta.barOffsetY = VOID_OVERLORD_DISPLAY[monster.monsterTypeId].barOffsetY;
+    meta.visualOffsetY = undefined;
+    ensureVoidOverlordMinionSprite(state, monster.id, monster, scene);
+    return;
+  }
+
+  const spriteSize = defaultSpriteSize(monster);
+  meta.barOffsetY = defaultBarOffsetY(monster);
+  meta.skipFrameRefresh = false;
+  meta.isAnimated = false;
+  meta.visualOffsetY = undefined;
+  ensureSprite(state, monster.id, monster, scene, {
+    displayW: spriteSize,
+    displayH: spriteSize,
+    fallbackColor: monster.color,
+    isPlayer: false,
+  });
+}
 
 export function upsertMonster(
   state: RenderState,
@@ -22,11 +86,9 @@ export function upsertMonster(
     state.kind.set(monster.id, 'monster');
     state.view.set(monster.id, monster);
 
-    const spriteSize = monster.isBoss ? 80 : 64;
-
     state.spriteMeta.set(monster.id, {
       currentFrame: null,
-      barOffsetY: monster.isBoss ? 50 : 40,
+      barOffsetY: defaultBarOffsetY(monster),
       entityName: monster.name,
       monsterBehavior: monster.behavior,
       monsterIsRanged: monster.isRanged,
@@ -52,15 +114,11 @@ export function upsertMonster(
       fillColor: 0x000000,
       fillAlpha: monster.isBoss ? 0.55 : 0.45,
     });
-    ensureSprite(state, monster.id, monster, scene, {
-      displayW: spriteSize,
-      displayH: spriteSize,
-      fallbackColor: monster.color,
-      isPlayer: false,
-    });
+    upsertSheetMonsterSprite(state, monster, scene);
     ensureLabel(state, monster.id, monster, scene);
     ensureHpBar(state, monster.id, scene);
     ensureCdBar(state, monster.id, scene);
+    syncMonsterThroneTint(state, monster);
     return;
   }
 
@@ -93,10 +151,14 @@ export function upsertMonster(
   const meta = state.spriteMeta.get(monster.id);
   const typeChanged = prev !== undefined && prev.monsterTypeId !== monster.monsterTypeId;
   if (typeChanged && meta) {
-    meta.barOffsetY = monster.isBoss ? 50 : 40;
     meta.entityName = monster.name;
     meta.monsterBehavior = monster.behavior;
     meta.monsterIsRanged = monster.isRanged;
+    meta.skipFrameRefresh = false;
+    meta.isAnimated = false;
+    state.sprite.get(monster.id)?.destroy();
+    state.sprite.delete(monster.id);
+    upsertSheetMonsterSprite(state, monster, scene);
   }
   if (typeChanged) {
     state.debugRanges.set(monster.id, {
@@ -108,13 +170,16 @@ export function upsertMonster(
     destroyLabel(state, monster.id);
     ensureLabel(state, monster.id, monster, scene);
   }
-  const spriteSize = monster.isBoss ? 80 : 64;
-  updateSpriteFrame(state, monster.id, monster, scene, {
-    displayW: spriteSize,
-    displayH: spriteSize,
-    fallbackColor: monster.color,
-    isPlayer: false,
-  });
+
+  if (!meta?.skipFrameRefresh) {
+    const spriteSize = defaultSpriteSize(monster);
+    updateSpriteFrame(state, monster.id, monster, scene, {
+      displayW: spriteSize,
+      displayH: spriteSize,
+      fallbackColor: monster.color,
+      isPlayer: false,
+    });
+  }
 
   if (monster.hp < prevHp) {
     const sprite = state.sprite.get(monster.id);
@@ -146,4 +211,6 @@ export function upsertMonster(
       }
     }
   }
+
+  syncMonsterThroneTint(state, monster);
 }

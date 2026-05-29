@@ -122,8 +122,8 @@ export const bossMonsterEntriesT1T2 = [
   }],
 
 
-  ['plains-overlord', {
-    id: 'plains-overlord', name: 'Plains Overlord', color: 0xcc9922,
+  ['plains-tyrant', {
+    id: 'plains-tyrant', name: 'Plains Tyrant', color: 0xcc9922,
     isBoss: true,
     stats: {
       hp: 2000, attack: 64, plating: 20, damageReduction: 0.08,

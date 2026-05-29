@@ -1,8 +1,43 @@
-import type { Vec2 } from '@mmo-idle/shared';
+import {
+  clampSegmentBeforeShapes,
+  RESOLVED_NODE_FEATURES,
+  type NodeFeatureShape,
+  type PlayerView,
+  type Vec2,
+} from '@mmo-idle/shared';
 import { sendMove } from '../net/intents';
 import { getOwnBase } from '../render/interpolation';
+import { ABYSSAL_THRONE_FEATURE_ID, isVoidThroneUnblocked } from '../scenes/game/voidThrone';
 import { cancelAutoPath, setAutoMode } from './autoPath';
 import type { GameScene } from '../scenes/GameScene';
+
+/**
+ * Stop the own-player prediction target before any feature that blocks players, so
+ * the client never glides across an impassable boundary and gets snapped back by the
+ * authoritative position. Uses the latest server position as the segment start: if the
+ * server has already let the player inside (e.g. a stage lifted the block), the shape is
+ * skipped and free movement resumes.
+ */
+export function clampOwnMoveTarget(scene: GameScene, dest: Vec2): Vec2 {
+  const ownId = scene.state.ownId;
+  if (!ownId) return dest;
+  const features = RESOLVED_NODE_FEATURES[scene.state.ownNodeId];
+  if (!features) return dest;
+
+  const throneUnblocked = isVoidThroneUnblocked(scene);
+  const shapes: NodeFeatureShape[] = [];
+  for (const f of features) {
+    if (!f.blocksMovement?.includes('player')) continue;
+    if (throneUnblocked && f.id === ABYSSAL_THRONE_FEATURE_ID) continue;
+    shapes.push(f.shape);
+  }
+  if (shapes.length === 0) return dest;
+
+  const view = scene.state.view.get(ownId) as PlayerView | undefined;
+  const from = view?.pos ?? getOwnBase(scene.state);
+  if (!from) return dest;
+  return clampSegmentBeforeShapes(from, dest, shapes);
+}
 
 const MOVE_TICK_MS = 100;
 const STEP_DISTANCE = 600;
@@ -95,5 +130,5 @@ function tickMovement(scene: GameScene): void {
     y: Math.round(origin.y + dy * STEP_DISTANCE),
   };
   sendMove(scene.socket, dest);
-  transform.target = dest;
+  transform.target = clampOwnMoveTarget(scene, dest);
 }

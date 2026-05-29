@@ -4,6 +4,7 @@
 
 // ── Shared with dotPrototype.ts ──────────────────────────────────────────────
 export const DOT_EFFECT_ID      = 'dot';
+export const DOT_MAX_STACKS     = 6;
 export const DOT_TICK_MS        = 1_000;
 /** Fallback conversion fraction when no T1 path is unlocked (mirrors dotPrototype.ts). */
 export const DOT_CONVERSION_PCT = 0.40;

@@ -1,10 +1,18 @@
 import { useMemo } from 'react';
 import { useAtomValue } from 'jotai';
 import type { Recipe } from '@mmo-idle/shared';
-import { RECIPE_DATABASE, NODE_BIOMES, TEST_ROOM_NODE_ID, biomeLevelCap, biomeXpForLevel } from '@mmo-idle/shared';
+import {
+  RECIPE_DATABASE,
+  NODE_BIOMES,
+  TEST_ROOM_NODE_ID,
+  ULTIMATE_CLEAR_VOID_OVERLORD,
+  biomeLevelCap,
+  biomeXpForLevel,
+} from '@mmo-idle/shared';
 import {
   biomeLevelAtom,
   biomeXPAtom,
+  bossesClearedAtom,
   playerNodeIdAtom,
   playerTierAtom,
   unlockedRecipesAtom,
@@ -17,11 +25,96 @@ interface BiomeSectionProps {
   biomeXP: Record<string, number>;
   playerTier: number;
   unlockedRecipes: string[];
+  bossesCleared: string[];
   recipes: Recipe[];
   isCurrent: boolean;
 }
 
-function BiomeSection({ biomeGroup, biomeLevel, biomeXP, playerTier, unlockedRecipes, recipes, isCurrent }: BiomeSectionProps) {
+function ultimateUnlockLabel(recipe: Recipe): string {
+  if (recipe.requiredBossClear === ULTIMATE_CLEAR_VOID_OVERLORD) {
+    return 'Void Overlord';
+  }
+  return recipe.requiredBossClear ?? `Lv ${recipe.requiredBiomeLevel}`;
+}
+
+function ultimateUnlockStatus(
+  recipe: Recipe,
+  unlockedRecipes: string[],
+  bossesCleared: string[],
+  playerTier: number,
+): string {
+  if (unlockedRecipes.includes(recipe.id)) return '✓';
+  if (recipe.tier > playerTier) return 'TIER';
+  if (recipe.requiredBossClear &&
+      !bossesCleared.includes(recipe.requiredBossClear)) {
+    return 'BOSS';
+  }
+  return '—';
+}
+
+function UltimateSection({
+  playerTier,
+  unlockedRecipes,
+  bossesCleared,
+}: {
+  playerTier: number;
+  unlockedRecipes: string[];
+  bossesCleared: string[];
+}) {
+  const recipes = useMemo(
+    () =>
+      Array.from(RECIPE_DATABASE.values())
+        .filter((r) => r.ultimate)
+        .sort((a, b) => a.slot.localeCompare(b.slot) || a.name.localeCompare(b.name)),
+    [],
+  );
+
+  if (recipes.length === 0) return null;
+
+  return (
+    <div className="craft-biome-section craft-biome-section--ultimate">
+      <div className="craft-biome-section__header">
+        <span className="craft-biome-section__name">Ultimate Gear</span>
+        <span className="craft-biome-section__tag">T4</span>
+      </div>
+      <div className="craft-unlock-path">
+        {recipes.map((r) => {
+          const unlocked = unlockedRecipes.includes(r.id);
+          const tierLocked = r.tier > playerTier;
+          const status = ultimateUnlockStatus(r, unlockedRecipes, bossesCleared, playerTier);
+          return (
+            <div
+              key={r.id}
+              className={[
+                'craft-unlock-row',
+                unlocked ? 'craft-unlock-row--unlocked' : '',
+                tierLocked ? 'craft-unlock-row--tier-locked' : '',
+              ].filter(Boolean).join(' ')}
+            >
+              <span className="craft-unlock-row__level">{ultimateUnlockLabel(r)}</span>
+              <span className="craft-unlock-row__name">{r.name}</span>
+              <span className="craft-unlock-row__slot" data-slot={r.slot}>
+                {SLOT_LABELS[r.slot] ?? r.slot}
+              </span>
+              <span className="craft-unlock-row__tier">T{r.tier}</span>
+              <span
+                className={`craft-unlock-row__status${
+                  unlocked ? ' craft-unlock-row__status--ok'
+                    : tierLocked ? ' craft-unlock-row__status--tier'
+                    : status === 'BOSS' ? ' craft-unlock-row__status--boss' : ''
+                }`}
+              >
+                {status}
+              </span>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function BiomeSection({ biomeGroup, biomeLevel, biomeXP, playerTier, unlockedRecipes, bossesCleared, recipes, isCurrent }: BiomeSectionProps) {
   const level    = biomeLevel[biomeGroup] ?? 0;
   const xp       = biomeXP[biomeGroup] ?? 0;
   const levelCap = biomeLevelCap(playerTier, biomeGroup);
@@ -56,6 +149,12 @@ function BiomeSection({ biomeGroup, biomeLevel, biomeXP, playerTier, unlockedRec
           {recipes.map(r => {
             const unlocked   = unlockedRecipes.includes(r.id);
             const tierLocked = r.tier > playerTier;
+            const reqLabel = r.requiredBossClear
+              ? ultimateUnlockLabel(r)
+              : `Lv ${r.requiredBiomeLevel}`;
+            const status = r.requiredBossClear
+              ? ultimateUnlockStatus(r, unlockedRecipes, bossesCleared, playerTier)
+              : (unlocked ? '✓' : tierLocked ? 'TIER' : '—');
             return (
               <div
                 key={r.id}
@@ -65,14 +164,18 @@ function BiomeSection({ biomeGroup, biomeLevel, biomeXP, playerTier, unlockedRec
                   tierLocked ? 'craft-unlock-row--tier-locked' : '',
                 ].filter(Boolean).join(' ')}
               >
-                <span className="craft-unlock-row__level">Lv {r.requiredBiomeLevel}</span>
+                <span className="craft-unlock-row__level">{reqLabel}</span>
                 <span className="craft-unlock-row__name">{r.name}</span>
                 <span className="craft-unlock-row__slot" data-slot={r.slot}>
                   {SLOT_LABELS[r.slot] ?? r.slot}
                 </span>
                 <span className="craft-unlock-row__tier">T{r.tier}</span>
-                <span className={`craft-unlock-row__status${unlocked ? ' craft-unlock-row__status--ok' : tierLocked ? ' craft-unlock-row__status--tier' : ''}`}>
-                  {unlocked ? '✓' : tierLocked ? 'TIER' : '—'}
+                <span className={`craft-unlock-row__status${
+                  unlocked ? ' craft-unlock-row__status--ok'
+                    : tierLocked ? ' craft-unlock-row__status--tier'
+                    : status === 'BOSS' ? ' craft-unlock-row__status--boss' : ''
+                }`}>
+                  {status}
                 </span>
               </div>
             );
@@ -89,6 +192,7 @@ export function BiomeTab() {
   const biomeXP = useAtomValue(biomeXPAtom);
   const biomeLevel = useAtomValue(biomeLevelAtom);
   const unlockedRecipes = useAtomValue(unlockedRecipesAtom);
+  const bossesCleared = useAtomValue(bossesClearedAtom);
   const isTestRoom = nodeId === TEST_ROOM_NODE_ID;
 
   const currentBiomeGroup = isTestRoom
@@ -104,6 +208,7 @@ export function BiomeTab() {
   const recipesByBiome = useMemo(() => {
     const map = new Map<string, Recipe[]>();
     for (const recipe of RECIPE_DATABASE.values()) {
+      if (recipe.ultimate) continue;
       const arr = map.get(recipe.recipeGroup) ?? [];
       arr.push(recipe);
       map.set(recipe.recipeGroup, arr);
@@ -128,6 +233,11 @@ export function BiomeTab() {
 
   return (
     <div className="craft-body">
+      <UltimateSection
+        playerTier={playerTier}
+        unlockedRecipes={unlockedRecipes}
+        bossesCleared={bossesCleared}
+      />
       {trackedBiomes.length === 0 && (
         <div className="craft-empty">No biome progress yet — kill monsters to earn XP.</div>
       )}
@@ -138,6 +248,7 @@ export function BiomeTab() {
           biomeXP={biomeXP}
           playerTier={playerTier}
           unlockedRecipes={unlockedRecipes}
+          bossesCleared={bossesCleared}
           recipes={recipesByBiome.get(currentBiomeGroup) ?? []}
           isCurrent
         />
@@ -150,6 +261,7 @@ export function BiomeTab() {
           biomeXP={biomeXP}
           playerTier={playerTier}
           unlockedRecipes={unlockedRecipes}
+          bossesCleared={bossesCleared}
           recipes={recipesByBiome.get(g) ?? []}
           isCurrent={false}
         />

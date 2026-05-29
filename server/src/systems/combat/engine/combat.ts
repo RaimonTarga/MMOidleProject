@@ -33,6 +33,8 @@ import {
   actorFromMinion,
 } from "../../../world/worldLogActors";
 import { buildPlatingDrBreakdown } from "../../../world/worldLogCombat";
+import { markUltimateContributor } from "../ai/ultimateContributors";
+import { tryEngageUltimateEncounter } from "../ai/ultimateEncounter";
 
 export type PlayerAttackOutcome = "cancelled" | "dodged" | "hit" | "killed";
 export type MonsterAttackOutcome = "cancelled" | "hit" | "killed";
@@ -70,6 +72,13 @@ export function runPlayerAttack(
   ctx.metadata.aggroSource = opts.aggroSource;
   if (opts.metadata) {
     Object.assign(ctx.metadata, opts.metadata);
+  }
+
+  if (target.scriptsUltimate && !target.scriptsUltimate.engaged) {
+    tryEngageUltimateEncounter(world, target);
+    if (!target.hasAggroTarget) {
+      setAggroTarget(world, target, opts.aggroSource, now);
+    }
   }
 
   emitCombatEvent("beforeAttack", ctx, world);
@@ -185,6 +194,7 @@ export function runPlayerAttack(
         })()
       : actorFromPlayer(player);
 
+  markUltimateContributor(world, target, player.isPlayer.id);
   recordWorldLogEvent(
     world,
     {
@@ -538,12 +548,12 @@ export function updateCombat(world: World, dt: number, now: number) {
     ) {
       continue;
     }
-    if (e.hasAwareness.state !== "attacking") continue;
     // Same rule as players: a monster with the CannotAttack marker cannot strike.
     if (e.cannotAttack) {
       setAttackTarget(world, e, null);
       continue;
     }
+    if (e.hasAwareness.state !== "attacking") continue;
 
     if (e.hasAggroTarget.targetKind === "player") {
       const target = world.getPlayerEntity(e.hasAggroTarget.targetId) ?? null;

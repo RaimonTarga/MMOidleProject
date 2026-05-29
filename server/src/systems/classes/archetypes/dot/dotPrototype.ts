@@ -31,20 +31,17 @@ import {
   actorFromPlayer,
   actorFromSourceId,
 } from "../../../../world/worldLogActors";
+import { isInvulnerableMonster, isInvulnerablePlayer } from "../../../combat/invulnerability";
+import {
+  DOT_CONVERSION_PCT,
+  DOT_DURATION_MS,
+  DOT_EFFECT_ID,
+  DOT_MAX_STACKS,
+  DOT_TICK_MS,
+} from "./t3/core/constants";
 
 // Re-export the pure tick formula from shared so existing importers don't change paths.
 export { computeScaledDotDamage };
-
-// ── Constants ─────────────────────────────────────────────────────────────────
-
-const DOT_MAX_STACKS = 6;
-// Fraction of player.attack redirected into DoT ticks when no T1 path is chosen.
-const DOT_CONVERSION_PCT = 0.4;
-const DOT_TICK_INTERVAL_MS = 1_000;
-// Default duration for player-applied DoT stacks (refreshed on every hit, not stacked).
-const DOT_DURATION_MS = 4_500;
-
-const DOT_EFFECT_ID = "dot";
 
 // ── Tick-driven DoT ───────────────────────────────────────────────────────────
 
@@ -66,6 +63,7 @@ export function updateDotArchetype(world: World, dt: number): void {
   for (const entity of world.dottedMonsters) {
     const monsterId = entity.isMonster.id;
     const state = entity.tracksCombat;
+    if (isInvulnerableMonster(entity)) continue;
     const effect = getStatusEffects(state, DOT_EFFECT_ID)[0];
     if (!effect) {
       detachMarkerIfNoEffect(world, entity, "hasDot", state, DOT_EFFECT_ID);
@@ -150,6 +148,7 @@ export function updateDotArchetype(world: World, dt: number): void {
   const playersToRespawn: Array<{ playerId: string; cause: DeathCause }> = [];
 
   for (const entity of world.dottedPlayers) {
+    if (isInvulnerablePlayer(entity)) continue;
     const playerId = entity.isPlayer.id;
     const state = entity.tracksCombat;
     const effect = getStatusEffects(state, DOT_EFFECT_ID)[0];
@@ -265,7 +264,7 @@ export function initDotArchetype(): void {
     const convPct = passives["dot.conversion-pct"] ?? DOT_CONVERSION_PCT;
     const tickIntervalMs = Math.max(
       100,
-      Math.round(passives["dot.tick-interval-ms"] ?? DOT_TICK_INTERVAL_MS),
+      Math.round(passives["dot.tick-interval-ms"] ?? DOT_TICK_MS),
     );
     const durationMs = Math.round(
       passives["dot.duration-ms"] ?? DOT_DURATION_MS,

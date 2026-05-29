@@ -132,7 +132,7 @@ export const advancedBiomeMonsterEntriesB = [
 
   ['void-horror', {
     id: 'void-horror', name: 'Void Horror', color: 0x220033,
-    stats: { hp: 1500, attack: 150, plating: 24, damageReduction: 0.09, speed: 68, attackRange: 64, attackCooldown: 1900, pullRange: 270 },
+    stats: { hp: 1300, attack: 90, plating: 24, damageReduction: 0.09, speed: 68, attackRange: 64, attackCooldown: 1900, pullRange: 270 },
     behavior: 'melee', attackStyle: 'void', biome: 'abyss',
     rewards: { essence: 165, essenceType: 'purple', level: 3 },
     ai: { wanderRadius: 280, leashRange: 750, idleMinMs: 800, idleMaxMs: 3500 },
@@ -140,7 +140,7 @@ export const advancedBiomeMonsterEntriesB = [
 
   ['abyssal-titan', {
     id: 'abyssal-titan', name: 'Abyssal Titan', color: 0x110022,
-    stats: { hp: 2600, attack: 125, plating: 55, damageReduction: 0.15, speed: 20, attackRange: 15, attackCooldown: 4500, pullRange: 145 },
+    stats: { hp: 2000, attack: 110, plating: 55, damageReduction: 0.15, speed: 20, attackRange: 15, attackCooldown: 4500, pullRange: 145 },
     behavior: 'melee', attackStyle: 'void', biome: 'abyss',
     rewards: { essence: 178, essenceType: 'purple', level: 3 },
     ai: { wanderRadius: 95, leashRange: 420, idleMinMs: 4500, idleMaxMs: 11000 },

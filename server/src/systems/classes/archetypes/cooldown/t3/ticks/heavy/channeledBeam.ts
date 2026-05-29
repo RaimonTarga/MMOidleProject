@@ -11,6 +11,7 @@ import {
   recordPlayerKillMonster,
 } from '../../../../../../../world/worldLogCombat';
 import { actorFromPlayer } from '../../../../../../../world/worldLogActors';
+import { isInvulnerableMonster } from '../../../../../../combat/invulnerability';
 
 /**
  * Channeled Beam tick. Drains `isChanneling.remainingMs`, ticks damage
@@ -40,7 +41,7 @@ export function updateChanneledBeam(world: World, dt: number): void {
     if (!channel.targetId) { endChannel(world, player); continue; }
 
     let monster = world.getMonsterEntity(channel.targetId);
-    if (!monster || monster.hasPosition.nodeId !== player.hasPosition.nodeId) {
+    if (!monster || monster.hasPosition.nodeId !== player.hasPosition.nodeId || isInvulnerableMonster(monster)) {
       const newTarget = findBeamTarget(world, player);
       if (newTarget) {
         channel.targetId = newTarget.isMonster.id;
@@ -123,6 +124,7 @@ function findBeamTarget(world: World, player: PlayerEntity, excludeId?: string):
 
   for (const entity of world.monsterEntitiesInNode(player.hasPosition.nodeId)) {
     if (excludeId && entity.isMonster.id === excludeId) continue;
+    if (isInvulnerableMonster(entity)) continue;
     const monsterPH = posHitboxFromEntity(entity);
     if (!inAttackRange(playerPH, monsterPH, attackRange)) continue;
     const gap = hitboxGap(playerPH, monsterPH);

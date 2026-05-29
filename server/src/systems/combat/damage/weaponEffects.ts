@@ -19,6 +19,13 @@ import {
   SACRED_APS_MULT,
   ASHBRAND_DURATION_MS,
   ASHBRAND_TICK_MS,
+  EDGE_OF_OBLIVION_ID,
+  VOID_CORRUPTION_EFFECT_ID,
+  CORRUPTION_MAX_STACKS,
+  CORRUPTION_CONV_PCT,
+  CORRUPTION_TICK_MS,
+  CORRUPTION_DURATION_MS,
+  CORRUPTION_SLOW_PER_STACK,
 } from "@mmo-idle/shared";
 import { grantMonsterRewards } from "../../player/progression/rewards";
 import type { World } from "../../../world/World";
@@ -33,6 +40,7 @@ import {
   recordPlayerKillMonster,
 } from "../../../world/worldLogCombat";
 import { actorFromSourceId } from "../../../world/worldLogActors";
+import { isInvulnerableMonster } from "../invulnerability";
 
 // ── Internal combat state keys ────────────────────────────────────────────────
 
@@ -139,6 +147,45 @@ export function initWeaponEffects(): void {
       ctx.damage = Math.max(1, Math.round(ctx.damage * (1 - convPct)));
     });
   }
+
+  // ── Edge of Oblivion: corruption stacks (DoT tick + move slow per stack) ─────
+  registerCombatListener("onHit", (ctx, world) => {
+    if (ctx.attackerType !== "player") return;
+    if (ctx.defenderType !== "monster") return;
+    const player = ctx.attacker;
+    if (player.holdsInventory.equipment.weapon !== EDGE_OF_OBLIVION_ID) return;
+
+    const p = player.usesSkills.passives;
+    const convPct = p["dot.conversion-pct"] ?? CORRUPTION_CONV_PCT;
+    const tickIntervalMs = Math.max(
+      100,
+      Math.round(p["dot.tick-interval-ms"] ?? CORRUPTION_TICK_MS),
+    );
+    const durationMs = Math.round(p["dot.duration-ms"] ?? CORRUPTION_DURATION_MS);
+    const damagePerStack = Math.max(
+      1,
+      Math.round((player.dealsDamage.attack * convPct) / CORRUPTION_MAX_STACKS),
+    );
+
+    const effect = applyStatusEffect(ctx.defender.tracksCombat, {
+      id: VOID_CORRUPTION_EFFECT_ID,
+      maxStacks: CORRUPTION_MAX_STACKS,
+      instanced: false,
+      sourceId: player.isPlayer.id,
+      remainingMs: durationMs,
+      refreshable: true,
+      data: {
+        damagePerStack,
+        nextTickIn: tickIntervalMs,
+        tickIntervalMs,
+        slowPerStack: CORRUPTION_SLOW_PER_STACK,
+      },
+    });
+    effect.data.damagePerStack = damagePerStack;
+    effect.data.tickIntervalMs = tickIntervalMs;
+    effect.data.slowPerStack = CORRUPTION_SLOW_PER_STACK;
+    attachMarker(world, ctx.defender, "hasVoidCorruption");
+  });
 }
 
 // ── Per-tick updates ──────────────────────────────────────────────────────────
@@ -146,6 +193,7 @@ export function initWeaponEffects(): void {
 export function updateWeaponEffects(world: World, dt: number): void {
   updateSacredCrossBuff(world);
   updateBurnEffects(world, dt);
+  updateCorruptionEffects(world, dt);
 }
 
 // ── Sacred family buff timer ───────────────────────────────────────────────────
@@ -211,6 +259,60 @@ function updateSacredCrossBuff(world: World): void {
   }
 }
 
+// ── Edge of Oblivion corruption tick ─────────────────────────────────────────
+
+function updateCorruptionEffects(world: World, dt: number): void {
+  const toKill: Array<{ monsterId: string; sourceId: string }> = [];
+  const killed = new Set<string>();
+
+  for (const e of world.voidCorruptionMonsters) {
+    if (isInvulnerableMonster(e)) continue;
+    const monsterId = e.isMonster.id;
+    const state = e.tracksCombat;
+    const effect = getStatusEffect(state, VOID_CORRUPTION_EFFECT_ID);
+    if (!effect) {
+      detachMarkerIfNoEffect(
+        world,
+        e,
+        "hasVoidCorruption",
+        state,
+        VOID_CORRUPTION_EFFECT_ID,
+      );
+      continue;
+    }
+
+    effect.data.nextTickIn -= dt;
+    if (effect.data.nextTickIn <= 0) {
+      effect.data.nextTickIn = effect.data.tickIntervalMs;
+      const damage = Math.max(1, computeScaledDotDamage(effect));
+      recordMonsterDamagedByPlayer(
+        world,
+        effect.sourceId,
+        actorFromSourceId(world, effect.sourceId),
+        e,
+        damage,
+        "dot",
+        buildSimpleBreakdown(damage, damage),
+      );
+      e.hasHealth.hp -= damage;
+
+      if (e.hasHealth.hp <= 0 && !killed.has(monsterId)) {
+        killed.add(monsterId);
+        toKill.push({ monsterId, sourceId: effect.sourceId });
+      }
+    }
+  }
+
+  for (const { monsterId, sourceId } of toKill) {
+    const monster = world.getMonsterEntity(monsterId);
+    if (monster && sourceId) {
+      const rewardInfo = grantMonsterRewards(world, sourceId, monster);
+      recordPlayerKillMonster(world, sourceId, monster, 0, rewardInfo);
+    }
+    world.removeMonsterEntity(monsterId);
+  }
+}
+
 // ── Burn family tick (ashbrand / cinderfang / frostmourne) ────────────────────
 
 function updateBurnEffects(world: World, dt: number): void {
@@ -218,6 +320,7 @@ function updateBurnEffects(world: World, dt: number): void {
   const killed = new Set<string>();
 
   for (const e of world.ashbrandMonsters) {
+    if (isInvulnerableMonster(e)) continue;
     const monsterId = e.isMonster.id;
     const state = e.tracksCombat;
     let hasBurn = false;

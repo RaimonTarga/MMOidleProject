@@ -135,6 +135,13 @@ export type WorldLogEvent =
       newTier: number;
       questId?: string;
       questName?: string;
+    }
+  | {
+      kind: 'overlord-slain';
+      id: number;
+      tick: number;
+      serverTime: number;
+      nodeId: string;
     };
 
 type DistributiveOmit<T, K extends keyof T> = T extends unknown ? Omit<T, K> : never;
@@ -494,6 +501,15 @@ export function formatWorldLogEntry(
         headline: `${who} ascended`,
         headlineParts: [actorPart(event.player, viewerId), neutral(' ascended')],
         detail: `Tier ${event.prevTier} → ${event.newTier}`,
+      };
+    }
+    case 'overlord-slain': {
+      const text = 'An Overlord has been slain!';
+      return {
+        kind: 'info',
+        text,
+        headline: text,
+        headlineParts: [neutral(text)],
       };
     }
     default:

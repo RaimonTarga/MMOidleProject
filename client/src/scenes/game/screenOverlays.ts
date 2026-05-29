@@ -2,6 +2,46 @@ import type { GameScene } from './GameScene';
 import { shouldRunClientFx } from '../../fx/guard';
 import { DEPTH } from '../../render/depth';
 
+export function showOverlordFelledOverlay(scene: GameScene): void {
+  if (!shouldRunClientFx()) return;
+
+  const w = scene.scale.width;
+  const h = scene.scale.height;
+
+  const bg = scene.add
+    .rectangle(w / 2, h / 2, w, h, 0x05030f, 0.72)
+    .setScrollFactor(0)
+    .setDepth(DEPTH.SCREEN);
+
+  const label = scene.add
+    .text(w / 2, h / 2, 'Overlord Felled', {
+      color: '#c44dff',
+      fontSize: '46px',
+      fontFamily: 'monospace',
+      fontStyle: 'bold',
+    })
+    .setScrollFactor(0)
+    .setDepth(DEPTH.SCREEN + 1)
+    .setOrigin(0.5);
+
+  [bg, label].forEach((obj) => obj.setAlpha(0));
+  scene.tweens.add({
+    targets: [bg, label],
+    alpha: 1,
+    duration: 350,
+    onComplete: () => {
+      scene.time.delayedCall(2000, () => {
+        scene.tweens.add({
+          targets: [bg, label],
+          alpha: 0,
+          duration: 600,
+          onComplete: () => { bg.destroy(); label.destroy(); },
+        });
+      });
+    },
+  });
+}
+
 export function showAscensionOverlay(scene: GameScene, tier: number): void {
   if (!shouldRunClientFx()) return;
   const messages: Record<number, string> = {

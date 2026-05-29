@@ -1,9 +1,9 @@
-import type { PlayerEntity } from '../../../ecs/entity';
-import type { World } from '../../../world/World';
-import { attachComponent, detachComponent } from '../../../ecs/markerHelpers';
-import { registerCombatListener } from '../../combat/engine/combatPipeline';
-import { recordWorldLogEvent } from '../../../world/worldLog';
-import { actorFromPlayer } from '../../../world/worldLogActors';
+import type { PlayerEntity } from "../../../ecs/entity";
+import type { World } from "../../../world/World";
+import { attachComponent, detachComponent } from "../../../ecs/markerHelpers";
+import { registerCombatListener } from "../../combat/engine/combatPipeline";
+import { recordWorldLogEvent } from "../../../world/worldLog";
+import { actorFromPlayer } from "../../../world/worldLogActors";
 
 /**
  * Apply a temporary shield to a player.
@@ -11,7 +11,12 @@ import { actorFromPlayer } from '../../../world/worldLogActors';
  * @param amount     Shield HP. Caller is responsible for scaling by maxHp if needed.
  * @param durationMs Duration in ms. 0 or negative = permanent until fully depleted.
  */
-export function applyShield(world: World, player: PlayerEntity, amount: number, durationMs: number): void {
+export function applyShield(
+  world: World,
+  player: PlayerEntity,
+  amount: number,
+  durationMs: number,
+): void {
   if (amount <= 0) return;
   const shield = {
     amount,
@@ -21,18 +26,18 @@ export function applyShield(world: World, player: PlayerEntity, amount: number, 
   if (player.holdsShields) {
     player.holdsShields.shields.push(shield);
   } else {
-    attachComponent(world, player, 'holdsShields', { shields: [shield] });
+    attachComponent(world, player, "holdsShields", { shields: [shield] });
   }
   recordWorldLogEvent(
     world,
     {
-      kind: 'shield-gain',
+      kind: "shield-gain",
       nodeId: player.hasPosition.nodeId,
       target: actorFromPlayer(player),
       amount,
     },
     {
-      visibility: 'combat',
+      visibility: "combat",
       relatedPlayerIds: [player.isPlayer.id],
       nodeId: player.hasPosition.nodeId,
     },
@@ -49,7 +54,12 @@ export function applyShieldPercent(
   pct: number,
   durationMs: number,
 ): void {
-  applyShield(world, player, Math.round(player.hasHealth.maxHp * pct), durationMs);
+  applyShield(
+    world,
+    player,
+    Math.round(player.hasHealth.maxHp * pct),
+    durationMs,
+  );
 }
 
 /**
@@ -68,12 +78,12 @@ export function updateShields(world: World, dt: number): void {
     }
 
     const active = shields.filter(
-      s => s.amount > 0 && (s.remainingMs === -1 || s.remainingMs > 0),
+      (s) => s.amount > 0 && (s.remainingMs === -1 || s.remainingMs > 0),
     );
     if (active.length > 0) {
       player.holdsShields.shields = active;
     } else {
-      detachComponent(world, player, 'holdsShields');
+      detachComponent(world, player, "holdsShields");
     }
   }
 }
@@ -85,8 +95,8 @@ export function updateShields(world: World, dt: number): void {
  * dry. Shields whose `amount` reaches zero are filtered out at the end.
  */
 export function registerShieldAbsorb(): void {
-  registerCombatListener('onDamageTaken', (ctx, _world) => {
-    if (ctx.defenderType !== 'player') return;
+  registerCombatListener("onDamageTaken", (ctx, _world) => {
+    if (ctx.defenderType !== "player") return;
     if (ctx.damage <= 0) return;
 
     const player = ctx.defender;
@@ -102,8 +112,10 @@ export function registerShieldAbsorb(): void {
       remaining -= block;
       absorbed += block;
     }
-    shieldComponent.shields = shieldComponent.shields.filter((s) => s.amount > 0);
-    ctx.metadata['shieldAbsorbed'] = absorbed;
+    shieldComponent.shields = shieldComponent.shields.filter(
+      (s) => s.amount > 0,
+    );
+    ctx.metadata["shieldAbsorbed"] = absorbed;
     ctx.damage = Math.max(0, remaining);
   });
 }

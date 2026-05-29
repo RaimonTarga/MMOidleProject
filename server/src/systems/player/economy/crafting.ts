@@ -6,6 +6,7 @@ import {
 } from "@mmo-idle/shared";
 import type { World } from "../../../world/World";
 import type { PlayerEntity } from "../../../ecs/entity";
+import { markSliceDirty } from "../../../ecs/dirtyHelpers";
 
 const TEST_ROOM_ESSENCE_AMOUNT = 1_000_000_000;
 
@@ -24,20 +25,24 @@ export function craftRecipe(
 
   const isTestRoom = entity.hasPosition.nodeId === TEST_ROOM_NODE_ID;
   if (isTestRoom) {
-    if (entity.tracksProgression.playerTier < recipe.tier) {
-      return {
-        success: false,
-        reason: `Test forge tier ${entity.tracksProgression.playerTier} cannot craft tier ${recipe.tier} recipes.`,
-      };
-    }
     for (const type of ESSENCE_TYPES) {
       entity.tracksProgression.essences[type] = TEST_ROOM_ESSENCE_AMOUNT;
     }
+    markSliceDirty(world, entity, "tracksProgression");
   } else {
+    if (recipe.requiredBossClear &&
+        !entity.tracksProgression.bossesCleared.includes(recipe.requiredBossClear)) {
+      return {
+        success: false,
+        reason: 'Defeat the Void Overlord to unlock this recipe.',
+      };
+    }
     if (!entity.tracksProgression.unlockedRecipes.includes(recipeId)) {
       return {
         success: false,
-        reason: `Recipe locked — reach ${recipe.recipeGroup} level ${recipe.requiredBiomeLevel}.`,
+        reason: recipe.requiredBossClear
+          ? 'Recipe locked — defeat the Void Overlord.'
+          : `Recipe locked — reach ${recipe.recipeGroup} level ${recipe.requiredBiomeLevel}.`,
       };
     }
   }
@@ -61,5 +66,6 @@ export function craftRecipe(
     ...entity.holdsInventory.inventory,
     recipe.id,
   ];
+  markSliceDirty(world, entity, "holdsInventory");
   return { success: true };
 }

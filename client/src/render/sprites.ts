@@ -145,25 +145,31 @@ export function updateSpriteFrame(
 }
 
 export function applySpriteTint(
-  sprite: Phaser.GameObjects.Image | Phaser.GameObjects.Rectangle,
+  sprite:
+    | Phaser.GameObjects.Image
+    | Phaser.GameObjects.Sprite
+    | Phaser.GameObjects.Rectangle,
   color: number,
 ): void {
-  if (sprite instanceof Phaser.GameObjects.Image) {
-    sprite.setTint(color);
+  if (sprite instanceof Phaser.GameObjects.Rectangle) {
+    sprite.setFillStyle(color, 1);
     return;
   }
-  sprite.setFillStyle(color, 1);
+  sprite.setTint(color);
 }
 
 export function resetSpriteTint(
-  sprite: Phaser.GameObjects.Image | Phaser.GameObjects.Rectangle,
+  sprite:
+    | Phaser.GameObjects.Image
+    | Phaser.GameObjects.Sprite
+    | Phaser.GameObjects.Rectangle,
   fallbackColor: number,
 ): void {
-  if (sprite instanceof Phaser.GameObjects.Image) {
-    sprite.clearTint();
+  if (sprite instanceof Phaser.GameObjects.Rectangle) {
+    sprite.setFillStyle(fallbackColor, 1);
     return;
   }
-  sprite.setFillStyle(fallbackColor, 1);
+  sprite.clearTint();
 }
 
 export function destroySprite(state: RenderState, id: string): void {

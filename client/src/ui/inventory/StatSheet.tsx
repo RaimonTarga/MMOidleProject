@@ -3,7 +3,10 @@ import { useAtomValue } from 'jotai';
 import type { EquipmentSlot } from '@mmo-idle/shared';
 import {
   ASHBRAND_DURATION_MS, ASHBRAND_TICK_MS,
-  BURN_FAMILY, CHAOTIC_FAMILY, GAME_CONFIG,
+  BURN_FAMILY, CHAOTIC_FAMILY, EDGE_OF_OBLIVION_ID,
+  CORRUPTION_MAX_STACKS, CORRUPTION_TICK_MS, CORRUPTION_DURATION_MS,
+  CORRUPTION_SLOW_PER_STACK, CORRUPTION_MIN_SPEED_MULT,
+  GAME_CONFIG,
   ITEM_DATABASE, RECIPE_DATABASE, SACRED_APS_MULT, SACRED_DMG_MULT,
   SACRED_FAMILY, upgradeStatBonusTotal,
 } from '@mmo-idle/shared';
@@ -149,6 +152,18 @@ function formatWeaponEffects(weaponId: string): string[] {
     const buf = sacred.buffMs / 1000;
     lines.push(`Every ${cd}s: next attack triggers a ${buf}s burst`);
     lines.push(`Burst: ${SACRED_DMG_MULT}× damage, ${SACRED_APS_MULT}× attack speed`);
+  }
+
+  if (weaponId === EDGE_OF_OBLIVION_ID) {
+    const tickSec = CORRUPTION_TICK_MS / 1000;
+    const durSec = CORRUPTION_DURATION_MS / 1000;
+    const slowPct = Math.round(CORRUPTION_SLOW_PER_STACK * 100);
+    const maxSlowPct = Math.round((1 - CORRUPTION_MIN_SPEED_MULT) * 100);
+    lines.push(`Each hit applies Corruption (up to ${CORRUPTION_MAX_STACKS} stacks)`);
+    lines.push(`Corruption ticks every ${tickSec}s for ${durSec}s; full hit damage retained`);
+    lines.push(`Each stack: DoT tick damage + ${slowPct}% move slow (${maxSlowPct}% max at ${CORRUPTION_MAX_STACKS} stacks)`);
+    lines.push('Stacks alongside class DoT and scales with dot.conversion-pct, tick-rate, and duration passives');
+    lines.push('Summoner minion attacks apply Corruption');
   }
 
   // Burn family

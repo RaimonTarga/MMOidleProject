@@ -8,3 +8,10 @@ export function getAtlasPaths(): { atlasPng: string; atlasJson: string } {
     atlasJson: path.join(repoRoot, 'client/public/assets/sprites.json'),
   };
 }
+
+export function getVoidOverlordPaths(): { png: string } {
+  const repoRoot = path.resolve(process.cwd(), '..');
+  return {
+    png: path.join(repoRoot, 'client/public/assets/ultimate_bosses/void_overlord.png'),
+  };
+}

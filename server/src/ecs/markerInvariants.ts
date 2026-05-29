@@ -32,6 +32,7 @@ const MONSTER_MARKER_CHECKS: MarkerCheck[] = [
   { marker: "hasSmolder", effectId: "dot-smolder" },
   { marker: "hasEntropy", effectId: ENT_DOT_FX },
   { marker: "hasAshbrandBurn", effectId: "ashbrand-burn" },
+  { marker: "hasVoidCorruption", effectId: "void-corruption" },
 ];
 
 const ARCHETYPE_SLICE_CHECKS: ArchetypeSliceCheck[] = [
@@ -105,6 +106,9 @@ function checkAbsentState(entity: ServerEntity, violations: string[]): void {
   if (entity.isMoving && entity.isMoving.motion.magnitude <= 0) {
     violations.push(`${entity.entityId}: isMoving present with zero motion`);
   }
+  if (entity.isRooted && entity.isMoving) {
+    violations.push(`${entity.entityId}: isRooted but isMoving present`);
+  }
   if (entity.holdsShields && entity.holdsShields.shields.length === 0) {
     violations.push(`${entity.entityId}: holdsShields present with no shields`);
   }
@@ -119,6 +123,33 @@ function checkAbsentState(entity: ServerEntity, violations: string[]): void {
   }
   if (entity.isBossEngaged && !entity.scriptsBoss) {
     violations.push(`${entity.entityId}: isBossEngaged present without scriptsBoss`);
+  }
+  if (entity.isUltimateEngaged && !entity.scriptsUltimate) {
+    violations.push(`${entity.entityId}: isUltimateEngaged present without scriptsUltimate`);
+  }
+  if (entity.hasStatus?.ultimateStatus && !entity.isUltimateEngaged) {
+    violations.push(`${entity.entityId}: ultimateStatus present without isUltimateEngaged`);
+  }
+  if (entity.hasStatus?.ultimateStatus) {
+    const status = entity.hasStatus.ultimateStatus;
+    if (status.stageIndex < 0 || status.stageIndex >= status.stageCount) {
+      violations.push(`${entity.entityId}: ultimateStatus.stageIndex out of range`);
+    }
+  }
+  if (entity.isInvulnerable && !entity.isMonster && !entity.isPlayer) {
+    violations.push(`${entity.entityId}: isInvulnerable present on non-entity`);
+  }
+  if (entity.isEncounterAdd && !entity.isMonster) {
+    violations.push(`${entity.entityId}: isEncounterAdd present on non-monster`);
+  }
+  if (entity.isNodeFeatureSpawn && !entity.isMonster) {
+    violations.push(`${entity.entityId}: isNodeFeatureSpawn present on non-monster`);
+  }
+  if (entity.hasEnvironmentalDot && !entity.isPlayer) {
+    violations.push(`${entity.entityId}: hasEnvironmentalDot present on non-player`);
+  }
+  if (entity.hasNodeFeatureEffect && !entity.isPlayer) {
+    violations.push(`${entity.entityId}: hasNodeFeatureEffect present on non-player`);
   }
   if (entity.isChanneling && entity.isChanneling.remainingMs <= 0) {
     violations.push(`${entity.entityId}: isChanneling present with expired timer`);

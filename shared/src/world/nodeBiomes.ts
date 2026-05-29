@@ -18,6 +18,8 @@ export interface NodeDefinition {
    * One boss monster is maintained alongside the normal population.
    */
   isDungeon: boolean;
+  /** Optional explicit boss type for unique dungeon encounters. */
+  bossTypeId?: string;
 }
 
 export const TEST_ROOM_NODE_ID = 'node-test-room';
@@ -41,7 +43,16 @@ export const TEST_ROOM_NODE_ID = 'node-test-room';
  *   West  (col 0)            — swamp / cave / abyss
  *   NW   (rows 0–4, cols 0–4)— swamp / tundra
  */
-export const NODE_BIOMES: Record<string, { biomeGroup: string; biomeTier: number; isDungeon?: boolean }> = {
+export interface NodeBiomeInfo {
+  biomeGroup: string;
+  biomeTier: number;
+  isDungeon?: boolean;
+  bossTypeId?: string;
+  /** Overrides biome mobDensity for this node only (e.g. 0 = boss adds only). */
+  mobDensity?: number;
+}
+
+export const NODE_BIOMES: Record<string, NodeBiomeInfo> = {
 
   // ── T0 center — starting clearing ─────────────────────────────────────────
   'node-5-5': { biomeGroup: 'clearing',   biomeTier: 0 },
@@ -223,7 +234,7 @@ export const NODE_BIOMES: Record<string, { biomeGroup: string; biomeTier: number
   // Abyss T4 — SW corner (row 10 cols 0–1 + col 0 rows 8–9; first appearance)
   'node-10-0': { biomeGroup: 'abyss',     biomeTier: 4 },
   'node-10-1': { biomeGroup: 'abyss',     biomeTier: 4 },
-  'node-9-0':  { biomeGroup: 'abyss',     biomeTier: 4, isDungeon: true },
+  'node-9-0':  { biomeGroup: 'abyss',     biomeTier: 4, isDungeon: true, bossTypeId: 'void-overlord', mobDensity: 0 },
   'node-8-0':  { biomeGroup: 'abyss',     biomeTier: 4 },
 
   // Cave T4 — West (col 0, rows 5–7)
