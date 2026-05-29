@@ -3,6 +3,7 @@ import type {
   CombatEvent,
   DeltaSnapshot,
   PlayerDeathPayload,
+  WorldLogEvent,
 } from "@mmo-idle/shared";
 import {
   BIOME_DATABASE,
@@ -170,6 +171,11 @@ export class World {
   bossRespawnAt = new Map<string, number>();
   /** Queued combat events per node, flushed into each broadcast snapshot. */
   private nodeEvents = new Map<string, CombatEvent[]>();
+  /** Runtime journal of all world log events (dev/debug). */
+  worldLogJournal: WorldLogEvent[] = [];
+  /** Per-player queues drained at broadcast tick. */
+  worldLogByPlayer = new Map<string, WorldLogEvent[]>();
+  nextWorldLogId = 1;
   /**
    * ID of the test-room boss that has been attacked by a player.
    * While set (and the boss still exists), the boss-rotation loop is paused so

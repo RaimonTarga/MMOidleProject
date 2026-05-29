@@ -26,6 +26,13 @@ import type {
   PlayerEntity,
 } from "../../../ecs/entity";
 import { buildKillerFromMonster } from "../../world/deathCause";
+import { recordWorldLogEvent } from "../../../world/worldLog";
+import {
+  actorFromMonster,
+  actorFromPlayer,
+  actorFromMinion,
+} from "../../../world/worldLogActors";
+import { buildPlatingDrBreakdown } from "../../../world/worldLogCombat";
 
 export type PlayerAttackOutcome = "cancelled" | "dodged" | "hit" | "killed";
 export type MonsterAttackOutcome = "cancelled" | "hit" | "killed";
@@ -82,6 +89,20 @@ export function runPlayerAttack(
         monsterId: target.isMonster.id,
         targetPos: { ...target.hasPosition.current },
       });
+      recordWorldLogEvent(
+        world,
+        {
+          kind: "dodge",
+          nodeId: player.hasPosition.nodeId,
+          attacker: actorFromPlayer(player),
+          target: actorFromMonster(target),
+        },
+        {
+          visibility: "combat",
+          relatedPlayerIds: [player.isPlayer.id],
+          nodeId: player.hasPosition.nodeId,
+        },
+      );
       return "dodged";
     }
   }
@@ -141,6 +162,52 @@ export function runPlayerAttack(
 
   emitCombatEvent("onDamageTaken", ctx, world);
 
+  const gross = Math.round(player.dealsDamage.attack * minionDamageMult);
+  const mitigation = buildPlatingDrBreakdown({
+    grossDamage: gross,
+    effectivePlating,
+    platingMult: ctx.platingMult,
+    damageReduction: target.mitigatesDamage.damageReduction,
+    onHitBonus: player.dealsDamage.onHitDamage,
+  });
+  mitigation.hpDamage = ctx.damage;
+  mitigation.glancing =
+    mitigation.hpDamage === 1 &&
+    gross + player.dealsDamage.onHitDamage - mitigation.mitigatedTotal < 1;
+
+  const sourceActor =
+    opts.aggroSource.kind === "minion"
+      ? (() => {
+          const minion = world.getMinionEntity(opts.aggroSource.id);
+          return minion
+            ? actorFromMinion(minion, player.isPlayer.id)
+            : actorFromPlayer(player);
+        })()
+      : actorFromPlayer(player);
+
+  recordWorldLogEvent(
+    world,
+    {
+      kind: "damage",
+      nodeId: player.hasPosition.nodeId,
+      source: sourceActor,
+      target: actorFromMonster(target),
+      hpDamage: ctx.damage,
+      shieldAbsorbed: 0,
+      damageType: "direct",
+      mitigation,
+      tags: [
+        ...(isEmpowered ? ["empowered"] : []),
+        ...(isExecution ? ["execution"] : []),
+      ],
+    },
+    {
+      visibility: "combat",
+      relatedPlayerIds: [player.isPlayer.id],
+      nodeId: player.hasPosition.nodeId,
+    },
+  );
+
   target.hasHealth.hp -= ctx.damage;
   target.controlsMonster.spawn = { ...target.hasPosition.current };
 
@@ -176,6 +243,24 @@ export function runPlayerAttack(
   if (target.hasHealth.hp <= 0) {
     emitCombatEvent("onKill", ctx, world);
     const rewardInfo = grantMonsterRewards(world, player.isPlayer.id, target);
+    recordWorldLogEvent(
+      world,
+      {
+        kind: "kill",
+        nodeId: player.hasPosition.nodeId,
+        killer: actorFromPlayer(player),
+        victim: actorFromMonster(target),
+        damage: ctx.damage,
+        essenceGained: rewardInfo?.essenceGained ?? 0,
+        essenceType: rewardInfo?.essenceType ?? "green",
+        biomeXpGained: rewardInfo?.biomeXpGained ?? 0,
+      },
+      {
+        visibility: "combat",
+        relatedPlayerIds: [player.isPlayer.id],
+        nodeId: player.hasPosition.nodeId,
+      },
+    );
     world.pushEvent(player.hasPosition.nodeId, {
       kind: "player-kill",
       playerId: player.isPlayer.id,
@@ -248,6 +333,55 @@ export function runMonsterAttack(
 
   emitCombatEvent("onHit", ctx, world);
   emitCombatEvent("onDamageTaken", ctx, world);
+
+  const shieldAbsorbed = Number(ctx.metadata["shieldAbsorbed"] ?? 0);
+  const mitigation = buildPlatingDrBreakdown({
+    grossDamage: monster.dealsDamage.attack,
+    effectivePlating: target.mitigatesDamage.plating,
+    platingMult: 1,
+    damageReduction: target.mitigatesDamage.damageReduction,
+  });
+  mitigation.hpDamage = ctx.damage;
+  mitigation.glancing =
+    mitigation.hpDamage === 1 &&
+    monster.dealsDamage.attack - mitigation.mitigatedTotal < 1;
+
+  recordWorldLogEvent(
+    world,
+    {
+      kind: "damage",
+      nodeId: target.hasPosition.nodeId,
+      source: actorFromMonster(monster),
+      target: actorFromPlayer(target),
+      hpDamage: ctx.damage,
+      shieldAbsorbed,
+      damageType: "direct",
+      mitigation,
+    },
+    {
+      visibility: "combat",
+      relatedPlayerIds: [target.isPlayer.id],
+      nodeId: target.hasPosition.nodeId,
+    },
+  );
+
+  if (shieldAbsorbed > 0) {
+    recordWorldLogEvent(
+      world,
+      {
+        kind: "shield-absorb",
+        nodeId: target.hasPosition.nodeId,
+        target: actorFromPlayer(target),
+        source: actorFromMonster(monster),
+        amount: shieldAbsorbed,
+      },
+      {
+        visibility: "combat",
+        relatedPlayerIds: [target.isPlayer.id],
+        nodeId: target.hasPosition.nodeId,
+      },
+    );
+  }
 
   target.hasHealth.hp -= ctx.damage;
   monster.performsAttack.lastAttackAt = now;

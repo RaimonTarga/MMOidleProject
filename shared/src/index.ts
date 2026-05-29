@@ -25,6 +25,7 @@ export * from './protocol/networkedEntity';
 export * from './protocol/delta';
 export * from './protocol/views';
 export * from './protocol/combatEvents';
+export * from './protocol/worldLogEvents';
 export * from './protocol/nodeTelemetry';
 export * from './protocol/death';
 export * from './protocol/socketEvents';

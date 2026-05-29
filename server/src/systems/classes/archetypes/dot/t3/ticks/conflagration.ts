@@ -3,6 +3,12 @@ import { detachMarker, detachMarkerIfNoEffect } from '../../../../../../ecs/mark
 import { grantMonsterRewards } from '../../../../../player/progression/rewards';
 import type { World } from '../../../../../../world/World';
 import { CONF_EFFECT_ID } from '../core/constants';
+import {
+  buildSimpleBreakdown,
+  recordMonsterDamagedByPlayer,
+  recordPlayerKillMonster,
+} from '../../../../../../world/worldLogCombat';
+import { actorFromSourceId } from '../../../../../../world/worldLogActors';
 
 /**
  * Conflagration fast-tick DoT. Independent of the normal DoT updater —
@@ -27,7 +33,17 @@ export function updateConflagration(world: World, dt: number): void {
     effect.data.nextTickIn = effect.data.tickIntervalMs;
     effect.data.ticksLeft--;
 
-    const damage = Math.round(effect.data.damagePerTick);
+    const damage = Math.max(1, Math.round(effect.data.damagePerTick));
+    const source = actorFromSourceId(world, effect.sourceId);
+    recordMonsterDamagedByPlayer(
+      world,
+      effect.sourceId,
+      source,
+      entity,
+      damage,
+      'dot',
+      buildSimpleBreakdown(damage, damage),
+    );
     entity.hasHealth.hp -= damage;
     console.log(`[Conflagration] ${monsterId}: ${damage} tick (${effect.data.ticksLeft} left)`);
 
@@ -45,6 +61,7 @@ export function updateConflagration(world: World, dt: number): void {
     const monster = world.getMonsterEntity(monsterId);
     if (monster && sourceId) {
       const rewardInfo = grantMonsterRewards(world, sourceId, monster);
+      recordPlayerKillMonster(world, sourceId, monster, damage, rewardInfo);
       const player = world.getPlayerEntity(sourceId);
       if (player) {
         world.pushEvent(player.hasPosition.nodeId, {

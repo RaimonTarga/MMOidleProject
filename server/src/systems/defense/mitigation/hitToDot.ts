@@ -14,6 +14,8 @@ import {
   buildKillerFromMonster,
   readDebtKillerFromStrings,
 } from "../../world/deathCause";
+import { recordPlayerDamaged } from "../../../world/worldLogCombat";
+import { actorFromSourceId } from "../../../world/worldLogActors";
 
 /**
  * Register the hit-to-DoT listener on `onDamageTaken`.
@@ -80,15 +82,34 @@ export function runDebtDrain(world: World, player: PlayerEntity): boolean {
   const debtDamage = Math.round(drainAmount * (1 - dotResist));
   if (debtDamage < 1) return false;
 
+  const nodeId = player.hasPosition.nodeId;
+  const debtKiller = readDebtKillerFromStrings(cs.strings, nodeId);
+  const source = debtKiller
+    ? {
+        id: debtKiller.monsterTypeId,
+        name: debtKiller.monsterName,
+        actorType: 'monster' as const,
+      }
+    : actorFromSourceId(world, 'debt', 'Debt');
+
+  recordPlayerDamaged(
+    world,
+    player,
+    source,
+    debtDamage,
+    0,
+    'debt',
+    { grossDamage: Math.round(drainAmount), platingBlocked: 0, drBlocked: Math.round(drainAmount - debtDamage), mitigatedTotal: Math.round(drainAmount - debtDamage), hpDamage: debtDamage, glancing: false },
+  );
+
   player.hasHealth.hp = Math.max(0, player.hasHealth.hp - debtDamage);
   if (player.hasHealth.hp <= 0) {
     setResource(cs, DEBT_POOL_KEY, 0);
-    const nodeId = player.hasPosition.nodeId;
     world.killPlayer(player.isPlayer.id, {
       kind: "debt",
       damage: debtDamage,
       nodeId,
-      killer: readDebtKillerFromStrings(cs.strings, nodeId),
+      killer: debtKiller,
     });
     return true;
   }

@@ -1,9 +1,13 @@
 import {
+  formatLogNumber,
   getStatusEffect,
+  type WorldLogActor,
   type PlayerBuff,
   type BuffId,
 } from "@mmo-idle/shared";
 import type { World } from "../../../world/World";
+import { recordWorldLogEvent } from "../../../world/worldLog";
+import { actorFromPlayer } from "../../../world/worldLogActors";
 import { collectMechanicBuffs } from "../../classes/registry";
 import { DEFENSE_BUFFS } from "../../defense";
 import { WEAPON_BUFFS } from "../damage/weaponEffects";
@@ -12,11 +16,13 @@ import { defineBuff, type BuffDescriptor } from "./descriptor";
 const DEBUFF_BUFFS = [
   defineBuff(
     "debuff-slow",
-    ({ playerCs }) => {
+    ({ playerCs, world }) => {
       if (!playerCs) return null;
       const slow = getStatusEffect(playerCs, "slow");
       if (!slow || (slow.data["speedMult"] ?? 1) <= 0) return null;
       const totalMs = slow.data["totalMs"] ?? slow.remainingMs;
+      const source = world.getMonsterEntity(slow.sourceId);
+      const speedPct = Math.round((slow.data["speedMult"] ?? 1) * 100);
       return {
         id: "debuff-slow",
         label: "SLOW",
@@ -26,17 +32,21 @@ const DEBUFF_BUFFS = [
             ? (slow.remainingMs / totalMs) * 100
             : -1,
         color: "#55aaff",
+        logSourceName: source?.isMonster.name ?? "Monster debuff",
+        logSourceSide: "enemy",
+        logDetail: `movement speed ${speedPct}%`,
       };
     },
     { category: "neutral", shape: "diamond", color: "#55aaff", label: "SLOW" },
   ),
   defineBuff(
     "debuff-root",
-    ({ playerCs }) => {
+    ({ playerCs, world }) => {
       if (!playerCs) return null;
       const slow = getStatusEffect(playerCs, "slow");
       if (!slow || (slow.data["speedMult"] ?? 1) > 0) return null;
       const totalMs = slow.data["totalMs"] ?? slow.remainingMs;
+      const source = world.getMonsterEntity(slow.sourceId);
       return {
         id: "debuff-root",
         label: "ROOT",
@@ -46,6 +56,9 @@ const DEBUFF_BUFFS = [
             ? (slow.remainingMs / totalMs) * 100
             : -1,
         color: "#aa66ff",
+        logSourceName: source?.isMonster.name ?? "Monster debuff",
+        logSourceSide: "enemy",
+        logDetail: "movement speed 0%",
       };
     },
     { category: "neutral", shape: "diamond", color: "#aa66ff", label: "ROOT" },
@@ -80,11 +93,11 @@ export type ServerBuffId = (typeof ALL_BUFFS)[number]["id"];
  */
 export function syncPlayerBuffs(world: World): void {
   for (const entity of world.livePlayers) {
+    const previousBuffs = entity.hasStatus.activeBuffs ?? [];
     const playerCs = entity.tracksCombat;
     const targetId = entity.hasAttackTarget?.targetId;
-    const targetCs = targetId
-      ? world.getMonsterEntity(targetId)?.tracksCombat
-      : undefined;
+    const target = targetId ? world.getMonsterEntity(targetId) : undefined;
+    const targetCs = target?.tracksCombat;
 
     const buffs: PlayerBuff[] = [];
     for (const descriptor of ALL_BUFFS) {
@@ -92,6 +105,7 @@ export function syncPlayerBuffs(world: World): void {
         player: entity,
         playerCs,
         targetCs,
+        target,
         world,
       });
       if (buff) {
@@ -105,5 +119,251 @@ export function syncPlayerBuffs(world: World): void {
     }
 
     entity.hasStatus.activeBuffs = buffs;
+    recordBuffTransitions(world, entity, previousBuffs, buffs);
+  }
+}
+
+function recordBuffTransitions(
+  world: World,
+  player: Parameters<typeof actorFromPlayer>[0],
+  previousBuffs: PlayerBuff[],
+  nextBuffs: PlayerBuff[],
+): void {
+  const previousByKey = new Map(previousBuffs.map((buff) => [buffLogKey(buff), buff]));
+  const nextByKey = new Map(nextBuffs.map((buff) => [buffLogKey(buff), buff]));
+
+  for (const buff of nextBuffs) {
+    const previous = previousByKey.get(buffLogKey(buff));
+    if (!previous) {
+      recordBuffLogEvent(world, player, null, buff, "buff-gain");
+      continue;
+    }
+    if (previous.stacks !== buff.stacks) {
+      recordBuffLogEvent(world, player, previous, buff, "buff-update");
+    }
+  }
+
+  for (const buff of previousBuffs) {
+    if (nextByKey.has(buffLogKey(buff))) continue;
+    recordBuffLogEvent(world, player, buff, null, "buff-expire");
+  }
+}
+
+function recordBuffLogEvent(
+  world: World,
+  player: Parameters<typeof actorFromPlayer>[0],
+  previousBuff: PlayerBuff | null,
+  nextBuff: PlayerBuff | null,
+  kind: "buff-gain" | "buff-update" | "buff-expire",
+): void {
+  const eventBuff = nextBuff ?? previousBuff;
+  if (!eventBuff) return;
+
+  recordWorldLogEvent(
+    world,
+    {
+      kind,
+      nodeId: player.hasPosition.nodeId,
+      target: buffLogTarget(player, eventBuff),
+      buffId: eventBuff.id,
+      label: eventBuff.label,
+      stacks: nextBuff?.stacks ?? 0,
+      stackDelta: buffStackDelta(previousBuff, nextBuff),
+      category: eventBuff.category,
+      sourceName: eventBuff.logSourceName ?? buffSourceName(eventBuff),
+      sourceSide: eventBuff.logSourceSide ?? buffSourceSide(eventBuff),
+      effectText: nextBuff ? buffCurrentEffectText(nextBuff) : "no active modifier",
+      changeText: buffChangeText(previousBuff, nextBuff),
+      durationPct: nextBuff?.durationPct ?? -1,
+    },
+    {
+      visibility: "combat",
+      relatedPlayerIds: [player.isPlayer.id],
+      nodeId: player.hasPosition.nodeId,
+    },
+  );
+}
+
+function buffStackDelta(
+  previousBuff: PlayerBuff | null,
+  nextBuff: PlayerBuff | null,
+): number {
+  return (nextBuff?.stacks ?? 0) - (previousBuff?.stacks ?? 0);
+}
+
+function buffCurrentEffectText(buff: PlayerBuff): string {
+  return buff.logDetail ?? buffEffectText(buff);
+}
+
+function buffChangeText(
+  previousBuff: PlayerBuff | null,
+  nextBuff: PlayerBuff | null,
+): string | undefined {
+  if (!previousBuff || !nextBuff) {
+    if (previousBuff && !nextBuff) {
+      return effectDeltaText(buffCurrentEffectText(previousBuff), undefined);
+    }
+    return undefined;
+  }
+  return effectDeltaText(
+    buffCurrentEffectText(previousBuff),
+    buffCurrentEffectText(nextBuff),
+  );
+}
+
+function effectDeltaText(
+  previousText: string,
+  nextText: string | undefined,
+): string | undefined {
+  const previousTerms = splitEffectTerms(previousText);
+  const nextTerms = nextText ? splitEffectTerms(nextText) : [];
+  const terms = previousTerms
+    .map((previous) => {
+      const next = nextTerms.find((candidate) => candidate.key === previous.key);
+      if (!next && nextText !== undefined) return undefined;
+      const delta = (next?.value ?? 0) - previous.value;
+      if (Math.abs(delta) < 0.005) return undefined;
+      return `${signedNumber(delta)}${previous.unit}${previous.label}`;
+    })
+    .filter((term): term is string => term !== undefined);
+  if (terms.length > 0) return terms.join(", ");
+  if (!nextText) return `lost: ${previousText}`;
+  return undefined;
+}
+
+interface EffectTerm {
+  key: string;
+  value: number;
+  unit: string;
+  label: string;
+}
+
+function splitEffectTerms(text: string): EffectTerm[] {
+  return text
+    .split(/,\s*/)
+    .map((raw) => raw.trim())
+    .map(parseEffectTerm)
+    .filter((term): term is EffectTerm => term !== null);
+}
+
+function parseEffectTerm(text: string): EffectTerm | null {
+  const match = /^([+-])(\d+(?:\.\d+)?)(%?)(.*)$/.exec(text);
+  if (!match) return null;
+  const sign = match[1] === "-" ? -1 : 1;
+  const value = sign * Number(match[2]);
+  const unit = match[3];
+  const label = match[4];
+  return {
+    key: `${unit}:${label.trim().toLowerCase()}`,
+    value,
+    unit,
+    label,
+  };
+}
+
+function signedNumber(value: number): string {
+  const sign = value >= 0 ? "+" : "-";
+  return `${sign}${formatLogNumber(Math.abs(value))}`;
+}
+
+function buffLogKey(buff: PlayerBuff): string {
+  return `${buff.id}:${buff.logTargetId ?? "self"}`;
+}
+
+function buffLogTarget(
+  player: Parameters<typeof actorFromPlayer>[0],
+  buff: PlayerBuff,
+): WorldLogActor {
+  if (buff.logTargetId && buff.logTargetName && buff.logTargetType) {
+    return {
+      id: buff.logTargetId,
+      name: buff.logTargetName,
+      actorType: buff.logTargetType,
+    };
+  }
+  return actorFromPlayer(player);
+}
+
+function buffSourceName(buff: PlayerBuff): string {
+  if (buff.id === "sacred-burst") return "Sacred weapon";
+  if (buff.id.startsWith("defense-")) return "Defense";
+  if (buff.id.startsWith("debuff-")) return "Debuff";
+  if (buff.id.startsWith("cadence-")) return "Cadence";
+  if (buff.id.startsWith("cooldown-")) return "Cooldown";
+  if (buff.id.startsWith("energy-")) return "Energy";
+  if (buff.id.startsWith("dot-")) return "DoT";
+  if (buff.id.startsWith("reload-")) return "Reload";
+  if (buff.id.startsWith("summoner-")) return "Summoner";
+  return "Buff";
+}
+
+function buffSourceSide(buff: PlayerBuff): "ally" | "enemy" | "neutral" {
+  if (buff.id.startsWith("debuff-")) return "enemy";
+  if (buff.id.startsWith("summoner-")) return "ally";
+  return "neutral";
+}
+
+function buffEffectText(buff: PlayerBuff): string {
+  switch (buff.id) {
+    case "cadence-accelerando":
+      return "+attack speed";
+    case "cadence-echo":
+      return "echo hit stored";
+    case "cooldown-overdrive":
+      return "+movement speed";
+    case "cooldown-eternal-charge":
+      return "+execution charge";
+    case "cooldown-temporal-ext":
+      return "+on-hit damage";
+    case "cooldown-battery":
+      return "+execution damage";
+    case "cooldown-alignment":
+      return "+attack speed";
+    case "cooldown-channel":
+      return "channeled beam active";
+    case "energy-overcharge":
+      return "+discharge damage";
+    case "energy-ac-charge":
+      return "charging phase";
+    case "energy-ac-discharge":
+      return "discharge phase damage ticks";
+    case "energy-reservoir":
+      return "+discharge reservoir";
+    case "energy-equilibrium":
+      return "+damage";
+    case "energy-sm-pool":
+      return "stored true damage";
+    case "dot-vigor":
+      return "+attack and attack speed";
+    case "dot-conflag":
+      return "fast burn ticks";
+    case "dot-chill":
+      return "target chill stacks";
+    case "dot-frozen":
+      return "target frozen";
+    case "reload-snipe-ready":
+      return "next shot empowered";
+    case "sacred-burst":
+      return "+damage and attack speed";
+    case "debuff-slow":
+      return "movement speed reduced";
+    case "debuff-root":
+      return "movement disabled";
+    case "defense-absorb":
+      return "healing pool active";
+    case "defense-burst":
+      return "regen burst pool active";
+    case "defense-debt":
+      return "deferred damage pool";
+    case "summoner-howl-banner":
+      return "+summoner banner stacks";
+    case "summoner-trample-boon":
+      return "trample boon active";
+    case "summoner-debuff-immune":
+      return "debuff immunity";
+    case "debuff-stunned":
+      return "actions disabled";
+    default:
+      return buff.stacks > 1 ? `${buff.stacks} stacks` : "active";
   }
 }

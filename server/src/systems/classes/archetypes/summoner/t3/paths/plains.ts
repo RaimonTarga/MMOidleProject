@@ -13,8 +13,10 @@ import type { World } from '../../../../../../world/World';
 import type { MinionEntity, PlayerEntity } from '../../../../../../ecs/entity';
 import { markSliceDirty } from '../../../../../../ecs/dirtyHelpers';
 import { registerCombatListener } from '../../../../../combat/engine/combatPipeline';
+import { applyHealToMinion, applyHealToPlayer } from '../../../../../defense/regen/healing';
 import { applyStun } from '../../../../../combat/status/stun';
 import { alliesInNodeWithin } from '../../../../../world/queries';
+import { actorFromMinion } from '../../../../../../world/worldLogActors';
 import {
   DEBUFF_IMMUNE_EFFECT,
   GRAZING_COOLDOWN_KEY,
@@ -31,7 +33,7 @@ import {
   computeMinionAttackRange,
   minionBuffRadius,
 } from '../../range';
-import { isInCombat, livingMinionsOfType } from '../core/helpers';
+import { isInCombat, livingMinions, livingMinionsOfType } from '../core/helpers';
 
 export function tickGrazingField(world: World, dt: number, now: number): void {
   for (const owner of world.summonerPlayers) {
@@ -53,11 +55,13 @@ export function tickGrazingField(world: World, dt: number, now: number): void {
 
     const slimes = livingMinionsOfType(world, owner, 'plains-slime');
     if (slimes.length === 0) continue;
+    const ownerMinions = livingMinions(world, owner);
 
     const healed = new Set<string>();
     for (const slime of slimes) {
       const radius = minionBuffRadius(slime);
       const r2 = radius * radius;
+      const source = actorFromMinion(slime, owner.isPlayer.id);
       for (const ally of alliesInNodeWithin(
         world,
         slime.hasPosition.current,
@@ -68,8 +72,27 @@ export function tickGrazingField(world: World, dt: number, now: number): void {
         if (distanceSq(slime.hasPosition.current, ally.hasPosition.current) > r2) continue;
         healed.add(ally.isPlayer.id);
         const amount = Math.max(1, Math.round(ally.hasHealth.maxHp * pct * healMult));
-        ally.hasHealth.hp = Math.min(ally.hasHealth.maxHp, ally.hasHealth.hp + amount);
-        markSliceDirty(world, ally, 'hasHealth');
+        applyHealToPlayer(
+          ally,
+          ally.tracksCombat,
+          amount,
+          world,
+          source,
+        );
+      }
+      for (const ally of ownerMinions) {
+        if (ally.entityId === slime.entityId) continue;
+        if (healed.has(ally.entityId)) continue;
+        if (distanceSq(slime.hasPosition.current, ally.hasPosition.current) > r2) continue;
+        healed.add(ally.entityId);
+        const amount = Math.max(1, Math.round(ally.hasHealth.maxHp * pct * healMult));
+        applyHealToMinion(
+          ally,
+          owner.isPlayer.id,
+          amount,
+          world,
+          source,
+        );
       }
     }
   }

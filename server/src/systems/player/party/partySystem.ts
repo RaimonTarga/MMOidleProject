@@ -16,6 +16,14 @@ export function isPartyFollower(player: PlayerEntity): boolean {
 }
 
 /** Every player currently in the party led by `leaderId` (leader included). */
+export function getPartyMemberIds(world: World, playerId: string): string[] {
+  const player = world.getPlayerEntity(playerId);
+  if (!player?.inParty) return [playerId];
+  const leaderId = player.inParty.leaderId;
+  return partyMemberEntities(world, leaderId).map((m) => m.isPlayer.id);
+}
+
+/** Every player currently in the party led by `leaderId` (leader included). */
 function partyMemberEntities(world: World, leaderId: string): PlayerEntity[] {
   const members: PlayerEntity[] = [];
   for (const p of world.playerEntities) {

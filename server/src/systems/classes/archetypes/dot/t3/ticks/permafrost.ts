@@ -5,6 +5,12 @@ import type { World } from '../../../../../../world/World';
 import { DOT_EFFECT_ID, DOT_TICK_MS } from '../core/constants';
 import { getSmolderMult, getFrozenMult } from '../core/selectors';
 import { PERM_MAX_HITS, PERM_PCT_PER_HIT } from '../paths/_constants';
+import {
+  buildSimpleBreakdown,
+  recordMonsterDamagedByPlayer,
+  recordPlayerKillMonster,
+} from '../../../../../../world/worldLogCombat';
+import { actorFromPlayer } from '../../../../../../world/worldLogActors';
 
 /**
  * Permafrost tick. Walks every monster with the `hasDot` marker, but only
@@ -37,6 +43,15 @@ export function updatePermafrost(world: World, dt: number): void {
     const pct    = hits * PERM_PCT_PER_HIT;
     const base   = Math.max(1, Math.round(source.dealsDamage.attack * pct));
     const damage = Math.round(base * getSmolderMult(monsterState) * getFrozenMult(monsterState));
+    recordMonsterDamagedByPlayer(
+      world,
+      effect.sourceId,
+      actorFromPlayer(source),
+      entity,
+      damage,
+      'dot',
+      buildSimpleBreakdown(base, damage),
+    );
     entity.hasHealth.hp -= damage;
     console.log(`[Permafrost] ${monsterId}: ${damage} tick (${hits}/${PERM_MAX_HITS} hits = ${Math.round(pct * 100)}% ATK)`);
 
@@ -47,6 +62,7 @@ export function updatePermafrost(world: World, dt: number): void {
     const monster = world.getMonsterEntity(monsterId);
     if (monster && sourceId) {
       const rewardInfo = grantMonsterRewards(world, sourceId, monster);
+      recordPlayerKillMonster(world, sourceId, monster, damage, rewardInfo);
       const player = world.getPlayerEntity(sourceId);
       if (player) {
         world.pushEvent(player.hasPosition.nodeId, {

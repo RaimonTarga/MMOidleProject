@@ -79,4 +79,14 @@ export interface PlayerBuff {
   iconKey: string;
   /** Placeholder shape token for inline CSS styling. */
   shape: BuffShape;
+  /** Optional world-log source label, e.g. "Cooldown", "Ridge Boar". */
+  logSourceName?: string;
+  /** Optional world-log source color side. */
+  logSourceSide?: 'ally' | 'enemy' | 'neutral';
+  /** Optional world-log effect summary, e.g. "+attack speed". */
+  logDetail?: string;
+  /** Optional world-log target override for target debuffs shown in the buff bar. */
+  logTargetId?: string;
+  logTargetName?: string;
+  logTargetType?: 'player' | 'monster';
 }

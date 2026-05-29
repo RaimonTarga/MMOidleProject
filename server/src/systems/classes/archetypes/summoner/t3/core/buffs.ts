@@ -16,6 +16,8 @@ export const SUMMONER_T3_BUFFS = [
     ({ player }) => {
       if (!player.tracksCombat) return null;
       const stacks = getBannerStacks(player.tracksCombat);
+      const perStack = player.usesSkills.passives['summoner.howl-pct-per-stack'] ?? 0.05;
+      const speedPct = Math.round(stacks * perStack * 100);
       return stacks > 0
         ? {
             id: 'summoner-howl-banner',
@@ -23,6 +25,9 @@ export const SUMMONER_T3_BUFFS = [
             stacks,
             durationPct: -1,
             color: '#ff8844',
+            logSourceName: 'Cave Lurker',
+            logSourceSide: 'ally',
+            logDetail: `+${speedPct}% attack speed`,
           }
         : null;
     },
@@ -33,6 +38,7 @@ export const SUMMONER_T3_BUFFS = [
     ({ player }) => {
       if (!player.tracksCombat) return null;
       const eff = getStatusEffect(player.tracksCombat, TRAMPLE_BOON_EFFECT);
+      const speedPct = Math.round((eff?.data.speedPct ?? 0) * 100);
       return eff
         ? {
             id: 'summoner-trample-boon',
@@ -40,6 +46,9 @@ export const SUMMONER_T3_BUFFS = [
             stacks: 1,
             durationPct: durationPctFromEffect(eff),
             color: '#c8a84a',
+            logSourceName: 'Boar',
+            logSourceSide: 'ally',
+            logDetail: `+${speedPct}% movement speed`,
           }
         : null;
     },
@@ -57,6 +66,9 @@ export const SUMMONER_T3_BUFFS = [
             stacks: 1,
             durationPct: durationPctFromEffect(eff),
             color: '#88ddff',
+            logSourceName: 'Plains Slime',
+            logSourceSide: 'ally',
+            logDetail: '100% debuff immunity',
           }
         : null;
     },

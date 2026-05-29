@@ -2,6 +2,8 @@ import type { PlayerEntity } from '../../../ecs/entity';
 import type { World } from '../../../world/World';
 import { attachComponent, detachComponent } from '../../../ecs/markerHelpers';
 import { registerCombatListener } from '../../combat/engine/combatPipeline';
+import { recordWorldLogEvent } from '../../../world/worldLog';
+import { actorFromPlayer } from '../../../world/worldLogActors';
 
 /**
  * Apply a temporary shield to a player.
@@ -21,6 +23,20 @@ export function applyShield(world: World, player: PlayerEntity, amount: number, 
   } else {
     attachComponent(world, player, 'holdsShields', { shields: [shield] });
   }
+  recordWorldLogEvent(
+    world,
+    {
+      kind: 'shield-gain',
+      nodeId: player.hasPosition.nodeId,
+      target: actorFromPlayer(player),
+      amount,
+    },
+    {
+      visibility: 'combat',
+      relatedPlayerIds: [player.isPlayer.id],
+      nodeId: player.hasPosition.nodeId,
+    },
+  );
 }
 
 /**
@@ -78,13 +94,16 @@ export function registerShieldAbsorb(): void {
     if (!shieldComponent) return;
 
     let remaining = ctx.damage;
+    let absorbed = 0;
     for (const shield of shieldComponent.shields) {
       if (remaining <= 0) break;
-      const absorbed = Math.min(shield.amount, remaining);
-      shield.amount -= absorbed;
-      remaining     -= absorbed;
+      const block = Math.min(shield.amount, remaining);
+      shield.amount -= block;
+      remaining -= block;
+      absorbed += block;
     }
-    shieldComponent.shields = shieldComponent.shields.filter(s => s.amount > 0);
-    ctx.damage     = Math.max(0, remaining);
+    shieldComponent.shields = shieldComponent.shields.filter((s) => s.amount > 0);
+    ctx.metadata['shieldAbsorbed'] = absorbed;
+    ctx.damage = Math.max(0, remaining);
   });
 }

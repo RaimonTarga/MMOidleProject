@@ -15,6 +15,8 @@ import {
   buildPlayerDeathPayload,
 } from "./deathCause";
 import { respawnPlayer } from "./spawning";
+import { recordWorldLogEvent } from "../../world/worldLog";
+import { actorFromPlayer } from "../../world/worldLogActors";
 import {
   registerCombatListener,
   type CombatContext,
@@ -75,6 +77,21 @@ export function killPlayer(
     graveFrame,
     diedAtMs: Date.now(),
   });
+
+  recordWorldLogEvent(
+    world,
+    {
+      kind: "player-death",
+      nodeId: entity.hasPosition.nodeId,
+      player: actorFromPlayer(entity),
+      cause,
+    },
+    {
+      visibility: "death",
+      relatedPlayerIds: [playerId],
+      nodeId: entity.hasPosition.nodeId,
+    },
+  );
 
   world.pendingDeaths.push({ playerId, payload });
 }
