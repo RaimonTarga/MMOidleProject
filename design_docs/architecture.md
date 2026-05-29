@@ -113,12 +113,14 @@ Two derived "shape" types are convenient for systems that always operate on a pl
 
 These types are populated by canonical queries on `World` (`world.playerEntities`, `world.monsterEntities`), so any code that iterates them is guaranteed the required slices exist.
 
+**Player query tiers.** `playerEntities` = all connected players including corpses (serialization, id lookup, party roster). `livePlayers` = `playerEntities.without('isDead')` — use for every gameplay tick; archetype queries (`cadencePlayers`, `dotPlayers`, …) derive from `livePlayers`. `deadPlayers` = timeout sweep only. `livePlayersInNode(nodeId)` for spatial combat scans.
+
 ### Component categories
 
 | Category | Examples | Notes |
 | --- | --- | --- |
 | **Identity** | `IsPlayer`, `IsMonster` | Presence determines entity kind. |
-| **Networked state** | `HasPosition`, `HasHealth`, `DealsDamage`, `PerformsAttack`, `MitigatesDamage`, `HasStatus`, `TracksProgression`, `HoldsInventory`, `UsesSkills` | Allowlisted in `NETWORKED_*_KEYS`; serialized as deltas. |
+| **Networked state** | `HasPosition`, `HasHealth`, `DealsDamage`, `PerformsAttack`, `MitigatesDamage`, `HasStatus`, `TracksProgression`, `HoldsInventory`, `UsesSkills`, `IsDead` | Allowlisted in `NETWORKED_*_KEYS`; serialized as deltas. `IsDead` is runtime-only (never persisted). |
 | **Archetype slices** | `UsesCadence`, `UsesCooldown`, `UsesEnergy`, `UsesReload`, `AppliesDots`, `ChillsTarget` | Networked. Presence gates archetype behavior. |
 | **Target / link** | `HasAttackTarget`, `HasAggroTarget` | Presence means "currently has a target." Detach when target is dropped. |
 | **Transient state markers** | `IsMoving`, `IsChanneling`, `IsBossEngaged`, `InAcChargePhase`, `InAcDischarge`, `HasEmpoweredAttack` | Presence is the sub-state. No "disabled = true" sentinel. |

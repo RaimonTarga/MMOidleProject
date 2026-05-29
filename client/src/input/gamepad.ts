@@ -4,6 +4,7 @@ import type { GameScene } from '../scenes/GameScene';
 import { hudBus } from '../hudBus';
 import {
   craftTabAtom,
+  deathOverlayAtom,
   debugPanelOpenAtom,
   gamepadStatusAtom,
   inventoryOpenAtom,
@@ -56,6 +57,7 @@ export function attachGamepad(scene: GameScene): () => void {
       return;
     }
     if (matchesPad(index, 'toggle.inventory', bindings)) {
+      if (store.get(deathOverlayAtom).active) return;
       store.set(inventoryOpenAtom, (v) => !v);
       return;
     }
@@ -80,6 +82,7 @@ export function attachGamepad(scene: GameScene): () => void {
       return;
     }
     if (matchesPad(index, 'toggle.crafting', bindings)) {
+      if (store.get(deathOverlayAtom).active) return;
       store.set(craftTabAtom, (t) => (t === 'forge' ? null : 'forge'));
       return;
     }

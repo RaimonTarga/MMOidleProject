@@ -237,3 +237,44 @@ export const NODE_BIOMES: Record<string, { biomeGroup: string; biomeTier: number
   'node-3-0': { biomeGroup: 'swamp',      biomeTier: 4 },
   'node-4-0': { biomeGroup: 'swamp',      biomeTier: 4 },
 };
+
+// ─── In-game coordinate system ──────────────────────────────────────────────
+// Node ids stay in the internal `node-{row}-{col}` form (rows/cols 0–10), but the
+// player-facing coordinate system is centered on the starting clearing: the clearing
+// is the origin [0, 0]. X is east-positive (increasing column), Y is north-positive
+// (decreasing row, so "up" on the map is +Y).
+
+/** The starting clearing node — origin of the in-game coordinate system. */
+export const CLEARING_NODE_ID = 'node-5-5';
+
+/** Grid row/col of the origin (the clearing). */
+export const ORIGIN_ROW = 5;
+export const ORIGIN_COL = 5;
+
+export interface NodeCoord {
+  x: number;
+  y: number;
+}
+
+/**
+ * Convert a `node-{row}-{col}` id to centered coordinates where the clearing is `[0, 0]`.
+ * X = east-positive (col − 5), Y = north-positive (5 − row). Returns null for malformed ids.
+ */
+export function nodeIdToCoord(nodeId: string): NodeCoord | null {
+  const parts = nodeId.split('-');
+  if (parts.length !== 3) return null;
+  const row = Number(parts[1]);
+  const col = Number(parts[2]);
+  if (!Number.isInteger(row) || !Number.isInteger(col)) return null;
+  return { x: col - ORIGIN_COL, y: ORIGIN_ROW - row };
+}
+
+/** Convert centered coordinates back to a `node-{row}-{col}` id. */
+export function coordToNodeId({ x, y }: NodeCoord): string {
+  return `node-${ORIGIN_ROW - y}-${ORIGIN_COL + x}`;
+}
+
+/** Format coordinates for display, e.g. `[0, 0]`. */
+export function formatNodeCoord(coord: NodeCoord): string {
+  return `[${coord.x}, ${coord.y}]`;
+}

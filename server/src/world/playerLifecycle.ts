@@ -92,6 +92,16 @@ export function* playerEntitiesInNode(
   }
 }
 
+/** Live players in a node — excludes corpses (aggro, AoE, spatial queries). */
+export function* livePlayersInNode(
+  world: World,
+  nodeId: string,
+): IterableIterator<PlayerEntity> {
+  for (const e of world.livePlayers) {
+    if (e.hasPosition.nodeId === nodeId) yield e;
+  }
+}
+
 export function hasPlayer(world: World, playerId: string): boolean {
   return getPlayerEntity(world, playerId) !== undefined;
 }

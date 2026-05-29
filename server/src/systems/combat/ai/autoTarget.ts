@@ -1,5 +1,5 @@
-import type { World } from '../../../world/World';
-import type { MonsterEntity, PlayerEntity } from '../../../ecs/entity';
+import type { World } from "../../../world/World";
+import type { MonsterEntity, PlayerEntity } from "../../../ecs/entity";
 import {
   areAllBiomeRecipesUnlocked,
   distanceSq,
@@ -12,10 +12,10 @@ import {
   posHitboxFromEntity,
   setFlag,
   type Vec2,
-} from '@mmo-idle/shared';
-import { NODE_REGISTRY } from '../../../world/nodeRegistry';
-import { setEntityMotion, stopEntity } from '../../world/movement';
-import { isPartyFollower } from '../../player/party/partySystem';
+} from "@mmo-idle/shared";
+import { NODE_REGISTRY } from "../../../world/nodeRegistry";
+import { setEntityMotion, stopEntity } from "../../world/movement";
+import { isPartyFollower } from "../../player/party/partySystem";
 
 const NODE_MARGIN = 40;
 
@@ -25,14 +25,14 @@ const NODE_MARGIN = 40;
  * drift between ticks doesn't flip the player between stop and reposition every
  * tick — that churn is what the 5 Hz client samples as movement stutter.
  */
-const AUTO_FIRING_FLAG = 'autoFiring';
+const AUTO_FIRING_FLAG = "autoFiring";
 
 function isRangedAutoPlayer(player: PlayerEntity): boolean {
   return isRangedCombatant({
     attackRange: player.performsAttack.attackRange,
     combatArchetype: player.usesSkills.combatArchetype,
     selectedRange: player.usesSkills.selectedRange,
-    flashActive: (player.usesSkills.passives['energy.flash'] ?? 0) > 0,
+    flashActive: (player.usesSkills.passives["energy.flash"] ?? 0) > 0,
   });
 }
 
@@ -41,13 +41,13 @@ function clampToNode(world: World, nodeId: string, pos: Vec2): Vec2 {
   if (!node) return pos;
 
   return {
-    x: Math.max(NODE_MARGIN, Math.min(node.width  - NODE_MARGIN, pos.x)),
+    x: Math.max(NODE_MARGIN, Math.min(node.width - NODE_MARGIN, pos.x)),
     y: Math.max(NODE_MARGIN, Math.min(node.height - NODE_MARGIN, pos.y)),
   };
 }
 
 export function updateAutoTargets(world: World) {
-  for (const player of world.playerEntities) {
+  for (const player of world.livePlayers) {
     if (!player.usesAutocombat.auto) continue;
     // Party followers are steered by updatePartyFollow, not by their own targeting.
     if (isPartyFollower(player)) continue;
@@ -58,7 +58,8 @@ export function updateAutoTargets(world: World) {
     // player approaches the target and its leashed minions engage.
 
     if (player.hasAutoTraversePath) {
-      if (player.hasAutoTraversePath.targetNodeId !== player.hasPosition.nodeId) continue;
+      if (player.hasAutoTraversePath.targetNodeId !== player.hasPosition.nodeId)
+        continue;
     }
 
     const playerPos = player.hasPosition.current;
@@ -67,7 +68,10 @@ export function updateAutoTargets(world: World) {
       player.usesAutocombat.autoTraverse &&
       nodeInfo &&
       (!isBiomeLevelCapped(player.tracksProgression, nodeInfo.biomeGroup) ||
-        !areAllBiomeRecipesUnlocked(player.tracksProgression, nodeInfo.biomeGroup));
+        !areAllBiomeRecipesUnlocked(
+          player.tracksProgression,
+          nodeInfo.biomeGroup,
+        ));
 
     const monsters = world.monsterEntitiesInNode(player.hasPosition.nodeId);
 
@@ -78,7 +82,7 @@ export function updateAutoTargets(world: World) {
     for (const monster of monsters) {
       if (skipBosses && monster.isMonster.isBoss) continue;
       const aggroedOnPlayer =
-        monster.hasAggroTarget?.targetKind === 'player' &&
+        monster.hasAggroTarget?.targetKind === "player" &&
         monster.hasAggroTarget.targetId === player.isPlayer.id;
       const d = distanceSq(monster.hasPosition.current, playerPos);
 
@@ -113,12 +117,16 @@ export function steerTowardTarget(
   target: MonsterEntity,
 ): void {
   const targetIsAggroed =
-    target.hasAggroTarget?.targetKind === 'player' &&
+    target.hasAggroTarget?.targetKind === "player" &&
     target.hasAggroTarget.targetId === player.isPlayer.id;
 
   // Reload OOC hold: while the clip is reloading and no enemy has aggroed, stay put.
   // If something aggros the player (targetIsAggroed), fall through to normal movement.
-  if (player.usesReload && player.usesReload.reloadingMs > 0 && !targetIsAggroed) {
+  if (
+    player.usesReload &&
+    player.usesReload.reloadingMs > 0 &&
+    !targetIsAggroed
+  ) {
     setFlag(player.tracksCombat, AUTO_FIRING_FLAG, false);
     stopEntity(world, player);
     return;
@@ -135,17 +143,22 @@ export function steerTowardTarget(
   const gap = hitboxGap(playerPH, targetPH);
 
   if (isRangedAutoPlayer(player) && dist > 0) {
-    const minSafeGap = Math.min(attackRange * 0.82, target.performsAttack.attackRange + 45);
-    const idealGap   = Math.max(minSafeGap + 20, attackRange * 0.72);
+    const minSafeGap = Math.min(
+      attackRange * 0.82,
+      target.performsAttack.attackRange + 45,
+    );
+    const idealGap = Math.max(minSafeGap + 20, attackRange * 0.72);
     const maxFireGap = attackRange * 0.92;
-    const inRange    = inAttackRange(playerPH, targetPH, attackRange);
+    const inRange = inAttackRange(playerPH, targetPH, attackRange);
 
     // Hysteresis: once latched (firing), widen the acceptable gap window so the
     // player keeps holding through small target drift instead of re-issuing a
     // motion target every tick.
-    const firing     = getFlag(player.tracksCombat, AUTO_FIRING_FLAG);
+    const firing = getFlag(player.tracksCombat, AUTO_FIRING_FLAG);
     const holdMinGap = firing ? minSafeGap * 0.85 : minSafeGap;
-    const holdMaxGap = firing ? Math.min(attackRange, maxFireGap * 1.08) : maxFireGap;
+    const holdMaxGap = firing
+      ? Math.min(attackRange, maxFireGap * 1.08)
+      : maxFireGap;
 
     if (inRange && gap >= holdMinGap && gap <= holdMaxGap) {
       setFlag(player.tracksCombat, AUTO_FIRING_FLAG, true);
@@ -160,7 +173,11 @@ export function steerTowardTarget(
       x: targetPos.x - (dx / dist) * (idealGap + 32),
       y: targetPos.y - (dy / dist) * (idealGap + 32),
     };
-    setEntityMotion(world, player, clampToNode(world, player.hasPosition.nodeId, candidate));
+    setEntityMotion(
+      world,
+      player,
+      clampToNode(world, player.hasPosition.nodeId, candidate),
+    );
     return;
   }
 

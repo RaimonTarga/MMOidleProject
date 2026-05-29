@@ -2,12 +2,14 @@ import type {
   NodeDefinition,
   CombatEvent,
   DeltaSnapshot,
+  PlayerDeathPayload,
 } from "@mmo-idle/shared";
 import {
   BIOME_DATABASE,
   GAME_CONFIG,
   NODE_BIOMES,
   TEST_ROOM_NODE_ID,
+  type DeathCause,
   type Vec2,
 } from "@mmo-idle/shared";
 import { updateAutoTargets } from "../systems/combat/ai/autoTarget";
@@ -21,16 +23,15 @@ import { updateCombatState } from "../systems/combat/engine/combatState";
 import { tickAllMechanics } from "../systems/classes/registry";
 import { updateWeaponEffects } from "../systems/combat/damage/weaponEffects";
 import { updateBossScripts } from "../systems/combat/ai/bossScripts";
-import {
-  updateShields,
-  updateDefensiveSystems,
-} from "../systems/defense";
+import { updateShields, updateDefensiveSystems } from "../systems/defense";
 import { updateKnockback } from "../systems/combat/damage/knockback";
 import { syncPlayerBuffs } from "../systems/combat/buffs/buffSync";
 import {
   createMonster as createMonsterInWorld,
   spawnMonster as spawnMonsterInWorld,
   respawnPlayer as respawnPlayerInWorld,
+  killPlayer as killPlayerInWorld,
+  updateDeadPlayers as updateDeadPlayersInWorld,
   ensurePopulation as ensurePopulationInWorld,
   ensureBoss as ensureBossInWorld,
 } from "../systems/world/spawning";
@@ -38,7 +39,12 @@ import { updateTestRoomInteract } from "../systems/world/testRoomInteract";
 import { NODE_REGISTRY } from "./nodeRegistry";
 import { IS_DEV } from "../env";
 import { createEcsWorld, type EcsWorld } from "../ecs/world";
-import type { EntityId, MinionEntity, MonsterEntity, PlayerEntity } from "../ecs/entity";
+import type {
+  EntityId,
+  MinionEntity,
+  MonsterEntity,
+  PlayerEntity,
+} from "../ecs/entity";
 import type { PersistedPlayerSlices } from "../db/playerRepo";
 import { DirtyTracker, type DirtyDrain } from "../ecs/dirtyTracker";
 import type { HasKnockback } from "../systems/combat/damage/knockback";
@@ -54,6 +60,11 @@ import { buildNodeDelta } from "./nodeDelta";
 import { NodeTelemetry, timeSync } from "../telemetry/nodeTelemetry";
 import { POPULATION_INTERVAL_MS } from "../telemetry/constants";
 import { freezeNode } from "./nodeLifecycle";
+
+export interface PendingDeath {
+  playerId: string;
+  payload: PlayerDeathPayload;
+}
 
 export class World {
   readonly nodeId: string;
@@ -115,12 +126,17 @@ export class World {
     "showsSacred",
   );
 
-  readonly cadencePlayers = this.playerEntities.with("usesCadence");
-  readonly energyPlayers = this.playerEntities.with("usesEnergy");
-  readonly dotPlayers = this.playerEntities.with("appliesDots");
-  readonly chillingPlayers = this.playerEntities.with("chillsTarget");
-  readonly cooldownPlayers = this.playerEntities.with("usesCooldown");
-  readonly summonerPlayers = this.playerEntities.with("summonsMinions");
+  /** Live players only — corpses excluded from gameplay ticks. */
+  readonly livePlayers = this.playerEntities.without("isDead");
+  /** Players awaiting respawn ack or server timeout. */
+  readonly deadPlayers = this.playerEntities.with("isDead");
+
+  readonly cadencePlayers = this.livePlayers.with("usesCadence");
+  readonly energyPlayers = this.livePlayers.with("usesEnergy");
+  readonly dotPlayers = this.livePlayers.with("appliesDots");
+  readonly chillingPlayers = this.livePlayers.with("chillsTarget");
+  readonly cooldownPlayers = this.livePlayers.with("usesCooldown");
+  readonly summonerPlayers = this.livePlayers.with("summonsMinions");
 
   /**
    * Canonical minion query. All slices stamped together in
@@ -139,15 +155,15 @@ export class World {
     "hasStatus",
   );
   readonly movingMinions = this.minionEntities.with("isMoving");
-  readonly reloadPlayers = this.playerEntities.with("usesReload");
-  readonly dottedPlayers = this.playerEntities.with("hasDot");
-  readonly movingPlayers = this.playerEntities.with("isMoving");
-  readonly shieldedPlayers = this.playerEntities.with("holdsShields");
+  readonly reloadPlayers = this.livePlayers.with("usesReload");
+  readonly dottedPlayers = this.livePlayers.with("hasDot");
+  readonly movingPlayers = this.livePlayers.with("isMoving");
+  readonly shieldedPlayers = this.livePlayers.with("holdsShields");
   readonly channelingPlayers = this.cooldownPlayers.with("isChanneling");
   readonly overdrivenPlayers = this.cooldownPlayers.with("hasOverdrive");
   readonly alignedPlayers = this.cooldownPlayers.with("hasAlignment");
-  /** Player IDs that died this tick. Drained by the server loop after each tick. */
-  pendingDeaths: string[] = [];
+  /** Player deaths queued this tick. Drained by the server loop after each tick. */
+  pendingDeaths: PendingDeath[] = [];
   /** Player IDs whose quest completion advanced their tier. Drained by the server loop. */
   pendingAscensions: string[] = [];
   /** Dungeon boss respawn cooldowns keyed by node id. */
@@ -174,7 +190,8 @@ export class World {
   private populationCheckedAt = new Map<string, number>();
 
   /** Optional hook set by index.ts to emit node:preparing before cold thaw. */
-  nodePreparingEmitter: ((playerId: string, nodeId: string) => void) | null = null;
+  nodePreparingEmitter: ((playerId: string, nodeId: string) => void) | null =
+    null;
 
   readonly playerById = new Map<EntityId, PlayerEntity>();
   readonly monsterById = new Map<EntityId, MonsterEntity>();
@@ -240,6 +257,7 @@ export class World {
     updateCombat(this, dt, now);
     updateDefensiveSystems(this, dt, now);
     syncPlayerBuffs(this);
+    updateDeadPlayersInWorld(this, now);
 
     if (IS_DEV) {
       ensureCurrentTestRoomBoss(this);
@@ -348,6 +366,10 @@ export class World {
     return playerLifecycle.playerEntitiesInNode(this, nodeId);
   }
 
+  livePlayersInNode(nodeId: string): IterableIterator<PlayerEntity> {
+    return playerLifecycle.livePlayersInNode(this, nodeId);
+  }
+
   hasPlayer(playerId: string): boolean {
     return playerLifecycle.hasPlayer(this, playerId);
   }
@@ -358,6 +380,10 @@ export class World {
 
   spawnMonster(nodeId: string): boolean {
     return spawnMonsterInWorld(this, nodeId);
+  }
+
+  killPlayer(playerId: string, cause: DeathCause): void {
+    killPlayerInWorld(this, playerId, cause);
   }
 
   respawnPlayer(playerId: string): void {
@@ -374,7 +400,9 @@ export class World {
 
   getMobDensity(nodeId: string): number {
     const biomeInfo = NODE_BIOMES[nodeId];
-    const biome = biomeInfo ? BIOME_DATABASE.get(biomeInfo.biomeGroup) : undefined;
+    const biome = biomeInfo
+      ? BIOME_DATABASE.get(biomeInfo.biomeGroup)
+      : undefined;
     return biome?.mobDensity ?? GAME_CONFIG.MONSTERS_PER_NODE;
   }
 

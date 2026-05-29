@@ -22,6 +22,7 @@ import type {
   HasAshbrandBurn,
   HasAlignment,
   HasAttackTarget,
+  IsDead,
   HasOverdrive,
   HasPosition,
   HasStatus,
@@ -49,10 +50,10 @@ import type {
   UsesEnergy,
   UsesReload,
   UsesSkills,
-} from '@mmo-idle/shared';
-import type { With } from 'miniplex';
-import type { ControlsMinion } from '../systems/classes/archetypes/summoner/controlsMinion';
-import type { HasSummonerCommand } from '../systems/classes/archetypes/summoner/command';
+} from "@mmo-idle/shared";
+import type { With } from "miniplex";
+import type { ControlsMinion } from "../systems/classes/archetypes/summoner/controlsMinion";
+import type { HasSummonerCommand } from "../systems/classes/archetypes/summoner/command";
 
 export type EntityId = string;
 
@@ -90,64 +91,65 @@ export interface ServerEntity {
   // Every wire-DTO field belongs to exactly one slice.
 
   // Shared by players and monsters
-  hasPosition?:     HasPosition;
-  hasHitbox?:       HasHitbox;
-  isMoving?:        IsMoving;
+  hasPosition?: HasPosition;
+  hasHitbox?: HasHitbox;
+  isMoving?: IsMoving;
   hasAttackTarget?: HasAttackTarget;
-  cannotAttack?:    CannotAttack;
-  hasHealth?:       HasHealth;
-  dealsDamage?:     DealsDamage;
-  performsAttack?:  PerformsAttack;
+  cannotAttack?: CannotAttack;
+  hasHealth?: HasHealth;
+  dealsDamage?: DealsDamage;
+  performsAttack?: PerformsAttack;
   mitigatesDamage?: MitigatesDamage;
-  hasStatus?:       HasStatus;
+  hasStatus?: HasStatus;
 
   // Player-only slices
-  isPlayer?:           IsPlayer;
-  evadesHits?:         EvadesHits;
-  holdsShields?:       HoldsShields;
-  usesAutocombat?:     UsesAutocombat;
-  tracksProgression?:  TracksProgression;
-  holdsInventory?:     HoldsInventory;
-  usesSkills?:         UsesSkills;
-  showsSacred?:        ShowsSacred;
-  summonsMinions?:     SummonsMinions;
-  inParty?:            InParty;
-  usesCadence?:        UsesCadence;
-  usesEnergy?:         UsesEnergy;
-  appliesDots?:        AppliesDots;
-  chillsTarget?:       ChillsTarget;
-  usesCooldown?:       UsesCooldown;
-  usesReload?:         UsesReload;
-  isChanneling?:       IsChanneling;
-  hasOverdrive?:       HasOverdrive;
-  hasAlignment?:       HasAlignment;
-  inAcChargePhase?:    InAcChargePhase;
-  inAcDischarge?:      InAcDischarge;
+  isPlayer?: IsPlayer;
+  evadesHits?: EvadesHits;
+  holdsShields?: HoldsShields;
+  usesAutocombat?: UsesAutocombat;
+  tracksProgression?: TracksProgression;
+  holdsInventory?: HoldsInventory;
+  usesSkills?: UsesSkills;
+  showsSacred?: ShowsSacred;
+  summonsMinions?: SummonsMinions;
+  inParty?: InParty;
+  usesCadence?: UsesCadence;
+  usesEnergy?: UsesEnergy;
+  appliesDots?: AppliesDots;
+  chillsTarget?: ChillsTarget;
+  usesCooldown?: UsesCooldown;
+  usesReload?: UsesReload;
+  isChanneling?: IsChanneling;
+  hasOverdrive?: HasOverdrive;
+  hasAlignment?: HasAlignment;
+  inAcChargePhase?: InAcChargePhase;
+  inAcDischarge?: InAcDischarge;
   hasEmpoweredAttack?: HasEmpoweredAttack;
+  isDead?: IsDead;
 
   // Monster-only slices
-  isMonster?:    IsMonster;
+  isMonster?: IsMonster;
   hasAwareness?: HasAwareness;
   hasAggroTarget?: HasAggroTarget;
 
   // Minion-only slices (summoner archetype)
-  isMinion?:       IsMinion;
+  isMinion?: IsMinion;
   controlsMinion?: ControlsMinion;
 
   // ── Monster (S7) ──────────────────────────────────────────────
   controlsMonster?: ControlsMonster;
-  hasKnockback?:    HasKnockback;
-  hasDetonation?:   HasDetonation;
-  hasHemorrhage?:   HasHemorrhage;
-  hasDot?:          HasDot;
+  hasKnockback?: HasKnockback;
+  hasDetonation?: HasDetonation;
+  hasHemorrhage?: HasHemorrhage;
+  hasDot?: HasDot;
   hasConflagration?: HasConflagration;
-  hasChill?:        HasChill;
-  hasFrozen?:       HasFrozen;
-  hasSmolder?:      HasSmolder;
-  hasEntropy?:      HasEntropy;
+  hasChill?: HasChill;
+  hasFrozen?: HasFrozen;
+  hasSmolder?: HasSmolder;
+  hasEntropy?: HasEntropy;
   hasAshbrandBurn?: HasAshbrandBurn;
-  scriptsBoss?:     ScriptsBoss;
-  isBossEngaged?:   IsBossEngaged;
+  scriptsBoss?: ScriptsBoss;
+  isBossEngaged?: IsBossEngaged;
 
   // ── Player (S8) ───────────────────────────────────────────────
   tracksEngagement?: number;
@@ -156,7 +158,7 @@ export interface ServerEntity {
   hasAutoTraversePath?: HasAutoTraversePath;
 
   // ── Shared by both (S7 + S8) ──────────────────────────────────
-  tracksCombat?:    TracksCombat;
+  tracksCombat?: TracksCombat;
 }
 
 /**
@@ -232,16 +234,15 @@ export function isMinionEntity(e: ServerEntity): e is MinionEntity {
 
 export function entityNetworkId(entity: ServerEntity): EntityId | null {
   return (
-    entity.isPlayer?.id ??
-    entity.isMonster?.id ??
-    entity.isMinion?.id ??
-    null
+    entity.isPlayer?.id ?? entity.isMonster?.id ?? entity.isMinion?.id ?? null
   );
 }
 
-export function entityNetworkKind(entity: ServerEntity): 'player' | 'monster' | 'minion' | null {
-  if (entity.isPlayer)  return 'player';
-  if (entity.isMonster) return 'monster';
-  if (entity.isMinion)  return 'minion';
+export function entityNetworkKind(
+  entity: ServerEntity,
+): "player" | "monster" | "minion" | null {
+  if (entity.isPlayer) return "player";
+  if (entity.isMonster) return "monster";
+  if (entity.isMinion) return "minion";
   return null;
 }

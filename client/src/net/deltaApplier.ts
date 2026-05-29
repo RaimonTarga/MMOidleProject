@@ -35,16 +35,20 @@ export function applyDelta(
       continue;
     }
 
-    let entity = state.entity.get(delta.netId);
-    if (!entity) {
+    // An `add` delta carries the entity's full component set, so start from a
+    // fresh object. Reusing the stale one would leak slices the server has
+    // since detached (e.g. `isDead` after respawn) because Object.assign only
+    // overwrites present keys — it never removes absent ones.
+    let entity: NetworkedEntity;
+    if (delta.kind === "add") {
       entity = {};
       state.entity.set(delta.netId, entity);
-    }
-
-    if (delta.kind === "add") {
       state.ids.add(delta.netId);
       state.kind.set(delta.netId, delta.entityKind);
       liveIds.add(delta.netId);
+    } else {
+      entity = state.entity.get(delta.netId) ?? {};
+      state.entity.set(delta.netId, entity);
     }
 
     if (delta.components) {

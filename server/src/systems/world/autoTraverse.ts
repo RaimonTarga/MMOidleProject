@@ -10,25 +10,28 @@ import {
   NODE_BIOMES,
   pickNextIncompleteBiome,
   type BiomeProgressInput,
-} from '@mmo-idle/shared';
-import type { World } from '../../world/World';
-import type { PlayerEntity } from '../../ecs/entity';
-import { attachComponent, detachComponent } from '../../ecs/markerHelpers';
-import { markSliceDirty } from '../../ecs/dirtyHelpers';
+} from "@mmo-idle/shared";
+import type { World } from "../../world/World";
+import type { PlayerEntity } from "../../ecs/entity";
+import { attachComponent, detachComponent } from "../../ecs/markerHelpers";
+import { markSliceDirty } from "../../ecs/dirtyHelpers";
 import {
   directionFromTo,
   findDungeonNodeFor,
   findRegularNodeFor,
   findShortestNodePath,
   gateTargetForDirection,
-} from '../../world/nodePath';
-import { setEntityMotion, stopEntity } from './movement';
-import { isPartyFollower } from '../player/party/partySystem';
+} from "../../world/nodePath";
+import { setEntityMotion, stopEntity } from "./movement";
+import { isPartyFollower } from "../player/party/partySystem";
 
-type TraversePhase = 'mob' | 'boss' | 'advance';
+type TraversePhase = "mob" | "boss" | "advance";
 
-export function clearAutoTraversePath(world: World, player: PlayerEntity): void {
-  detachComponent(world, player, 'hasAutoTraversePath');
+export function clearAutoTraversePath(
+  world: World,
+  player: PlayerEntity,
+): void {
+  detachComponent(world, player, "hasAutoTraversePath");
 }
 
 /**
@@ -43,10 +46,10 @@ export function startManualNavigation(
   player: PlayerEntity,
   destNodeId: string,
 ): void {
-  detachComponent(world, player, 'hasManualMoveIntent');
+  detachComponent(world, player, "hasManualMoveIntent");
   if (player.usesAutocombat.auto) {
     player.usesAutocombat.auto = false;
-    markSliceDirty(world, player, 'usesAutocombat');
+    markSliceDirty(world, player, "usesAutocombat");
   }
 
   const fromNodeId = player.hasPosition.nodeId;
@@ -61,7 +64,7 @@ export function startManualNavigation(
     return;
   }
 
-  attachComponent(world, player, 'hasAutoTraversePath', {
+  attachComponent(world, player, "hasAutoTraversePath", {
     targetNodeId: destNodeId,
     remainingPath: path.slice(1),
   });
@@ -72,13 +75,14 @@ function resolveTraversePhase(
   biomeGroup: string,
   biomeTier: number,
 ): TraversePhase {
-  if (isBiomeFullyDoneAtTier(progression, biomeGroup, biomeTier)) return 'advance';
+  if (isBiomeFullyDoneAtTier(progression, biomeGroup, biomeTier))
+    return "advance";
   if (
     isBiomeLevelCapped(progression, biomeGroup) &&
     areAllBiomeRecipesUnlocked(progression, biomeGroup) &&
     !areAllNonBossNodesClearedAtTier(progression, biomeGroup, biomeTier)
   ) {
-    return 'mob';
+    return "mob";
   }
   if (
     isBiomeLevelCapped(progression, biomeGroup) &&
@@ -86,9 +90,9 @@ function resolveTraversePhase(
     hasDungeonForBiomeTier(biomeGroup, biomeTier) &&
     !isBossClearedAtTier(progression, biomeGroup, biomeTier)
   ) {
-    return 'boss';
+    return "boss";
   }
-  return 'mob';
+  return "mob";
 }
 
 function resolveDesiredNodeId(
@@ -98,7 +102,7 @@ function resolveDesiredNodeId(
   biomeTier: number,
   currentNodeId: string,
 ): string | null {
-  if (phase === 'mob') {
+  if (phase === "mob") {
     const currentNode = NODE_BIOMES[currentNodeId];
     const currentIsRelevantRegular =
       currentNode?.biomeGroup === biomeGroup &&
@@ -108,15 +112,20 @@ function resolveDesiredNodeId(
       isBiomeLevelCapped(progression, biomeGroup) &&
       areAllBiomeRecipesUnlocked(progression, biomeGroup);
 
-    if (currentIsRelevantRegular && (!currentBiomeCapped || !isNodeCleared(progression, currentNodeId))) {
+    if (
+      currentIsRelevantRegular &&
+      (!currentBiomeCapped || !isNodeCleared(progression, currentNodeId))
+    ) {
       return currentNodeId;
     }
 
-    return listNonBossNodesForBiomeTier(biomeGroup, biomeTier)
-      .find(nodeId => !isNodeCleared(progression, nodeId)) ??
-      findRegularNodeFor(biomeGroup, biomeTier);
+    return (
+      listNonBossNodesForBiomeTier(biomeGroup, biomeTier).find(
+        (nodeId) => !isNodeCleared(progression, nodeId),
+      ) ?? findRegularNodeFor(biomeGroup, biomeTier)
+    );
   }
-  if (phase === 'boss') {
+  if (phase === "boss") {
     return findDungeonNodeFor(biomeGroup, biomeTier);
   }
   const next = pickNextIncompleteBiome(progression);
@@ -153,25 +162,36 @@ function continueAutoTraversePath(world: World, player: PlayerEntity): boolean {
     return false;
   }
 
-  setEntityMotion(world, player, gateTargetForDirection(player.hasPosition.nodeId, dir));
+  setEntityMotion(
+    world,
+    player,
+    gateTargetForDirection(player.hasPosition.nodeId, dir),
+  );
   return true;
 }
 
-function markCurrentNodeClearedIfCapped(world: World, player: PlayerEntity): void {
+function markCurrentNodeClearedIfCapped(
+  world: World,
+  player: PlayerEntity,
+): void {
   const nodeId = player.hasPosition.nodeId;
   const nodeInfo = NODE_BIOMES[nodeId];
   if (!nodeInfo || nodeInfo.isDungeon) return;
-  if (!isBiomeLevelCapped(player.tracksProgression, nodeInfo.biomeGroup)) return;
-  if (!areAllBiomeRecipesUnlocked(player.tracksProgression, nodeInfo.biomeGroup)) return;
+  if (!isBiomeLevelCapped(player.tracksProgression, nodeInfo.biomeGroup))
+    return;
+  if (
+    !areAllBiomeRecipesUnlocked(player.tracksProgression, nodeInfo.biomeGroup)
+  )
+    return;
   if (isNodeCleared(player.tracksProgression, nodeId)) return;
 
   player.tracksProgression.clearedNodes ??= [];
   player.tracksProgression.clearedNodes.push(nodeId);
-  markSliceDirty(world, player, 'tracksProgression');
+  markSliceDirty(world, player, "tracksProgression");
 }
 
 export function updateAutoTraverse(world: World): void {
-  for (const player of world.playerEntities) {
+  for (const player of world.livePlayers) {
     // Party followers in auto-combat mirror the leader (updatePartyFollow owns
     // them) instead of running their own traverse. With auto off they may still
     // manually navigate, so fall through to manual path stepping below.
@@ -208,7 +228,9 @@ export function updateAutoTraverse(world: World): void {
 
     let biomeGroup = nodeInfo.biomeGroup;
     let biomeTier = nodeInfo.biomeTier;
-    if (isBiomeFullyDoneAtTier(player.tracksProgression, biomeGroup, biomeTier)) {
+    if (
+      isBiomeFullyDoneAtTier(player.tracksProgression, biomeGroup, biomeTier)
+    ) {
       const next = pickNextIncompleteBiome(player.tracksProgression);
       if (!next) {
         if (player.hasAutoTraversePath) clearAutoTraversePath(world, player);
@@ -218,7 +240,11 @@ export function updateAutoTraverse(world: World): void {
       biomeTier = next.tier;
     }
 
-    const phase = resolveTraversePhase(player.tracksProgression, biomeGroup, biomeTier);
+    const phase = resolveTraversePhase(
+      player.tracksProgression,
+      biomeGroup,
+      biomeTier,
+    );
     const desiredNodeId = resolveDesiredNodeId(
       player.tracksProgression,
       phase,
@@ -237,7 +263,7 @@ export function updateAutoTraverse(world: World): void {
     ) {
       const path = findShortestNodePath(nodeId, desiredNodeId);
       if (!path || path.length < 2) continue;
-      attachComponent(world, player, 'hasAutoTraversePath', {
+      attachComponent(world, player, "hasAutoTraversePath", {
         targetNodeId: desiredNodeId,
         remainingPath: path.slice(1),
       });

@@ -1,6 +1,6 @@
-import { distanceSq, type Vec2 } from '@mmo-idle/shared';
-import type { World } from '../../world/World';
-import type { PlayerEntity } from '../../ecs/entity';
+import { distanceSq, type Vec2 } from "@mmo-idle/shared";
+import type { World } from "../../world/World";
+import type { PlayerEntity } from "../../ecs/entity";
 
 /**
  * Returns all player entities in `nodeId` within `radius` px of `center`.
@@ -14,7 +14,7 @@ export function alliesInNodeWithin(
 ): PlayerEntity[] {
   const r2 = radius * radius;
   const out: PlayerEntity[] = [];
-  for (const p of world.playerEntitiesInNode(nodeId)) {
+  for (const p of world.livePlayersInNode(nodeId)) {
     if (distanceSq(p.hasPosition.current, center) <= r2) {
       out.push(p);
     }

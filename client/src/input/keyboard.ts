@@ -11,6 +11,7 @@ import {
 } from '../settings/keybinds';
 import {
   craftTabAtom,
+  deathOverlayAtom,
   debugPanelOpenAtom,
   inventoryOpenAtom,
   mapOpenAtom,
@@ -62,6 +63,7 @@ export function attachKeyboard(scene: GameScene): () => void {
   function onKeyDown(event: KeyboardEvent): void {
     if (!scene.myId || isEditable(event.target)) return;
     if (store.get(captureModeAtom) !== null) return;
+    const dead = store.get(deathOverlayAtom).active;
 
     const bindings = getBindings();
 
@@ -71,14 +73,16 @@ export function attachKeyboard(scene: GameScene): () => void {
       return;
     }
 
-    for (const mv of MOVEMENT_ACTIONS) {
-      if (matchesKey(event, mv, bindings)) {
-        event.preventDefault();
-        if (!event.repeat) {
-          held.add(mv);
-          publishKbVector();
+    if (!dead) {
+      for (const mv of MOVEMENT_ACTIONS) {
+        if (matchesKey(event, mv, bindings)) {
+          event.preventDefault();
+          if (!event.repeat) {
+            held.add(mv);
+            publishKbVector();
+          }
+          return;
         }
-        return;
       }
     }
     if (event.repeat) return;
@@ -89,6 +93,7 @@ export function attachKeyboard(scene: GameScene): () => void {
       return;
     }
     if (matchesKey(event, 'toggle.inventory', bindings)) {
+      if (dead) return;
       event.preventDefault();
       store.set(inventoryOpenAtom, (v) => !v);
       return;
@@ -119,6 +124,7 @@ export function attachKeyboard(scene: GameScene): () => void {
       return;
     }
     if (matchesKey(event, 'toggle.crafting', bindings)) {
+      if (dead) return;
       store.set(craftTabAtom, (t) => (t === 'forge' ? null : 'forge'));
       return;
     }

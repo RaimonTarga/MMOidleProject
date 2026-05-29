@@ -1,4 +1,5 @@
 import { atom, getDefaultStore, type PrimitiveAtom } from 'jotai';
+import { intents } from '../intents';
 import type {
   CombatArchetype,
   EquipmentMap,
@@ -7,6 +8,7 @@ import type {
   PartyMember,
   PassiveMap,
   PlayerBuff,
+  PlayerDeathPayload,
   PlayerView,
   ShieldState,
   SubVariant,
@@ -38,6 +40,15 @@ export const nodeLoadingAtom = atom<{ active: boolean; nodeId: string | null }>(
 });
 export const tabResyncAtom = atom<{ active: boolean; startedAt: number | null }>({
   active: false,
+  startedAt: null,
+});
+export const deathOverlayAtom = atom<{
+  active: boolean;
+  payload: PlayerDeathPayload | null;
+  startedAt: number | null;
+}>({
+  active: false,
+  payload: null,
   startedAt: null,
 });
 
@@ -373,6 +384,7 @@ function resetPlayerAtoms(): void {
   setZonePlayers([]);
   store.set(nodeLoadingAtom, { active: false, nodeId: null });
   store.set(tabResyncAtom, { active: false, startedAt: null });
+  store.set(deathOverlayAtom, { active: false, payload: null, startedAt: null });
 }
 
 export function syncPlayerAtoms(player: PlayerView | null): void {
@@ -456,4 +468,33 @@ export function syncPlayerAtoms(player: PlayerView | null): void {
       ? { leaderId: player.partyLeaderId, members: player.partyMembers }
       : null,
   );
+}
+
+export function isDeathOverlayActive(): boolean {
+  return getDefaultStore().get(deathOverlayAtom).active;
+}
+
+/** Close inventory + crafting panels when death starts. */
+export function closeEconomyPanels(): void {
+  const store = getDefaultStore();
+  store.set(inventoryOpenAtom, false);
+  store.set(craftTabAtom, null);
+}
+
+export function triggerDeathOverlay(payload: PlayerDeathPayload): void {
+  closeEconomyPanels();
+  getDefaultStore().set(deathOverlayAtom, {
+    active: true,
+    payload,
+    startedAt: Date.now(),
+  });
+}
+
+export function clearDeathOverlay(): void {
+  getDefaultStore().set(deathOverlayAtom, {
+    active: false,
+    payload: null,
+    startedAt: null,
+  });
+  intents.emit("ackDeath", undefined);
 }

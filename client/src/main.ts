@@ -10,6 +10,7 @@ import { MobileHUD } from './hud/MobileHUD';
 import { RecipeToastLayer } from './hud/RecipeToastLayer';
 import { NodeLoadingOverlay } from './hud/NodeLoadingOverlay';
 import { TabResyncOverlay } from './hud/TabResyncOverlay';
+import { DeathOverlay } from './hud/DeathOverlay';
 import { BiomeXpBar } from './hud/BiomeXpBar';
 
 function blockMouseHistoryButtons(event: Event) {
@@ -61,4 +62,5 @@ createRoot(document.getElementById('mobile-hud')!).render(createElement(MobileHU
 createRoot(document.getElementById('toast-overlay')!).render(createElement(RecipeToastLayer));
 createRoot(document.getElementById('node-loading-overlay')!).render(createElement(NodeLoadingOverlay));
 createRoot(document.getElementById('tab-resync-overlay')!).render(createElement(TabResyncOverlay));
+createRoot(document.getElementById('death-overlay')!).render(createElement(DeathOverlay));
 createRoot(document.getElementById('biome-xp-overlay')!).render(createElement(BiomeXpBar));

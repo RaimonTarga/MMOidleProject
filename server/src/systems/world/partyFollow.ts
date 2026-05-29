@@ -1,11 +1,11 @@
-import type { World } from '../../world/World';
-import { setEntityMotion, stopEntity } from './movement';
+import type { World } from "../../world/World";
+import { setEntityMotion, stopEntity } from "./movement";
 import {
   directionFromTo,
   findShortestNodePath,
   gateTargetForDirection,
-} from '../../world/nodePath';
-import { steerTowardTarget } from '../combat/ai/autoTarget';
+} from "../../world/nodePath";
+import { steerTowardTarget } from "../combat/ai/autoTarget";
 
 /** How close a follower trails an idle leader before holding position (px). */
 const PARTY_FOLLOW_DISTANCE = 90;
@@ -18,7 +18,7 @@ const PARTY_FOLLOW_DISTANCE_SQ = PARTY_FOLLOW_DISTANCE * PARTY_FOLLOW_DISTANCE;
  * movement. Followers only react while their own auto-combat is enabled.
  */
 export function updatePartyFollow(world: World): void {
-  for (const player of world.playerEntities) {
+  for (const player of world.livePlayers) {
     if (!player.usesAutocombat.auto) continue;
     if (player.hasManualMoveIntent) continue;
 
@@ -37,7 +37,11 @@ export function updatePartyFollow(world: World): void {
       if (path && path.length >= 2) {
         const dir = directionFromTo(playerNode, path[1]);
         if (dir) {
-          setEntityMotion(world, player, gateTargetForDirection(playerNode, dir));
+          setEntityMotion(
+            world,
+            player,
+            gateTargetForDirection(playerNode, dir),
+          );
           continue;
         }
       }
@@ -48,7 +52,7 @@ export function updatePartyFollow(world: World): void {
     // Same zone: assist against whatever the leader is attacking.
     // Summoner followers stay back — minions fight; they only trail the leader.
     const leaderTargetId = leader.hasAttackTarget?.targetId;
-    if (leaderTargetId && player.usesSkills.combatArchetype !== 'summoner') {
+    if (leaderTargetId && player.usesSkills.combatArchetype !== "summoner") {
       const monster = world.getMonsterEntity(leaderTargetId);
       if (monster && monster.hasPosition.nodeId === playerNode) {
         steerTowardTarget(world, player, monster);
