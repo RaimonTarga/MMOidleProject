@@ -1,8 +1,9 @@
-import { distanceSq, type Vec2 } from '@mmo-idle/shared';
-import type { MonsterEntity, PlayerEntity } from '../../../ecs/entity';
-import type { World } from '../../../world/World';
-import { grantMonsterRewards } from '../../player/progression/rewards';
-import { markEngaged } from '../ai/engagement';
+import { distanceSq, type Vec2 } from "@mmo-idle/shared";
+import type { MonsterEntity, PlayerEntity } from "../../../ecs/entity";
+import type { World } from "../../../world/World";
+import { grantMonsterRewards } from "../../player/progression/rewards";
+import { markEngaged } from "../ai/engagement";
+import { buildKillerFromMonster } from "../../world/deathCause";
 
 /**
  * Apply splash AoE damage from a player to all monsters within radius of a
@@ -36,9 +37,13 @@ export function applyPlayerAoe(
 
     if (distanceSq(monster.hasPosition.current, center) > radiusSq) continue;
 
-    const effectiveDmg = Math.max(1, Math.round(
-      Math.max(0, baseDamage - monster.mitigatesDamage.plating) * (1 - monster.mitigatesDamage.damageReduction),
-    ));
+    const effectiveDmg = Math.max(
+      1,
+      Math.round(
+        Math.max(0, baseDamage - monster.mitigatesDamage.plating) *
+          (1 - monster.mitigatesDamage.damageReduction),
+      ),
+    );
 
     monster.hasHealth.hp -= effectiveDmg;
 
@@ -69,19 +74,27 @@ export function applyMonsterAoe(
   const radiusSq = radius * radius;
   const attackerNodeId = attacker.hasPosition.nodeId;
 
-  for (const player of world.playerEntitiesInNode(attackerNodeId)) {
+  for (const player of world.livePlayersInNode(attackerNodeId)) {
     if (player.isPlayer.id === excludeId) continue;
 
     if (distanceSq(player.hasPosition.current, center) > radiusSq) continue;
 
-    const effectiveDmg = Math.max(1, Math.round(
-      Math.max(0, baseDamage - player.mitigatesDamage.plating) * (1 - player.mitigatesDamage.damageReduction),
-    ));
+    const effectiveDmg = Math.max(
+      1,
+      Math.round(
+        Math.max(0, baseDamage - player.mitigatesDamage.plating) *
+          (1 - player.mitigatesDamage.damageReduction),
+      ),
+    );
 
     player.hasHealth.hp -= effectiveDmg;
 
     if (player.hasHealth.hp <= 0) {
-      world.respawnPlayer(player.isPlayer.id);
+      world.killPlayer(player.isPlayer.id, {
+        kind: "aoe",
+        killer: buildKillerFromMonster(attacker),
+        damage: effectiveDmg,
+      });
     } else {
       markEngaged(world, player, Date.now());
     }

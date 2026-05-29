@@ -1,14 +1,25 @@
-import type { PlayerView } from '@mmo-idle/shared';
+import type { PlayerView } from "@mmo-idle/shared";
 import {
   MONSTER_FRAMES,
   PLAYER_FRAMES,
   resolveMonsterFrame,
   resolvePlayerFrame,
-} from '@mmo-idle/shared';
+} from "@mmo-idle/shared";
 
-export const ATLAS_KEY = 'game-atlas';
+export const ATLAS_KEY = "game-atlas";
+export const GRAVES_KEY = "graves";
+export const GRAVE_FRAME_SIZE = 250;
+export const GRAVE_DISPLAY_W = 80;
+export const GRAVE_DISPLAY_H = 96;
+/** Label offset above grave crown (used by drawLabels). */
+export const GRAVE_LABEL_OFFSET_Y = GRAVE_DISPLAY_H * 0.55 + 8;
 
-export { MONSTER_FRAMES, PLAYER_FRAMES, resolveMonsterFrame, resolvePlayerFrame };
+export {
+  MONSTER_FRAMES,
+  PLAYER_FRAMES,
+  resolveMonsterFrame,
+  resolvePlayerFrame,
+};
 
 /**
  * Returns the atlas frame name for a player.
@@ -28,13 +39,13 @@ export function getMonsterFrame(monsterTypeId: string): string | null {
 
 // ── Player shadow color ramp ──────────────────────────────────────────────────
 const PLAYER_SHADOW_RAMP: Array<{ minLevel: number; color: number }> = [
-  { minLevel:  0, color: 0x000000 },
-  { minLevel:  1, color: 0xff4444 },
-  { minLevel:  2, color: 0xff8800 },
-  { minLevel:  3, color: 0xffee00 },
-  { minLevel:  4, color: 0x44ff88 },
-  { minLevel:  5, color: 0x00ddcc },
-  { minLevel:  6, color: 0x4488ff },
+  { minLevel: 0, color: 0x000000 },
+  { minLevel: 1, color: 0xff4444 },
+  { minLevel: 2, color: 0xff8800 },
+  { minLevel: 3, color: 0xffee00 },
+  { minLevel: 4, color: 0x44ff88 },
+  { minLevel: 5, color: 0x00ddcc },
+  { minLevel: 6, color: 0x4488ff },
 ];
 
 export function getPlayerShadowColor(progressionLevel: number): number {
@@ -47,16 +58,16 @@ export function getPlayerShadowColor(progressionLevel: number): number {
 }
 
 export const BIOME_TEXTURES: Record<string, string> = {
-  'clearing': 'biome_clearing',
-  'forest':   'biome_forest',
-  'mountain': 'biome_mountain',
-  'plains':   'biome_plains',
-  'swamp':    'biome_swamp',
-  'cave':     'biome_cave',
-  'jungle':   'biome_jungle',
-  'tundra':   'biome_tundra',
-  'desert':   'biome_desert',
-  'volcanic': 'biome_volcano',
-  'necropolis': 'biome_necropolis',
-  'abyss':    'biome_abyss',
+  clearing: "biome_clearing",
+  forest: "biome_forest",
+  mountain: "biome_mountain",
+  plains: "biome_plains",
+  swamp: "biome_swamp",
+  cave: "biome_cave",
+  jungle: "biome_jungle",
+  tundra: "biome_tundra",
+  desert: "biome_desert",
+  volcanic: "biome_volcano",
+  necropolis: "biome_necropolis",
+  abyss: "biome_abyss",
 };

@@ -12,6 +12,7 @@ import { QuestOverlay } from "./quest/QuestOverlay";
 import { SKILL_TREE, NODE_BIOMES, BIOME_DATABASE } from "@mmo-idle/shared";
 import {
   craftTabAtom,
+  deathOverlayAtom,
   equipmentAtom,
   inventoryAtom,
   inventoryOpenAtom,
@@ -50,6 +51,7 @@ export function RightSidebar() {
   const inventory = useAtomValue(inventoryAtom);
   const equipment = useAtomValue(equipmentAtom);
   const nodeId = useAtomValue(playerNodeIdAtom);
+  const dead = useAtomValue(deathOverlayAtom).active;
 
   const className = selectedClass
     ? (SKILL_TREE.get(selectedClass)?.name ?? selectedClass)
@@ -114,8 +116,11 @@ export function RightSidebar() {
         <div className="panel-title">Inventory</div>
 
         <button
-          className={`auto-btn${invOpen ? " active" : ""}`}
-          onClick={() => setInvOpen((v) => !v)}
+          className={`auto-btn${invOpen ? " active" : ""}${dead ? " auto-btn--disabled" : ""}`}
+          disabled={dead}
+          onClick={() => {
+            if (!dead) setInvOpen((v) => !v);
+          }}
         >
           {invOpen ? "CLOSE BAG" : "OPEN BAG"}
         </button>
@@ -147,15 +152,20 @@ export function RightSidebar() {
         <div className="panel-title">Crafting</div>
 
         <button
-          className={`auto-btn${craftTab === "biome" ? " active" : ""}`}
-          onClick={() => setCraftTab((t) => (t === "biome" ? null : "biome"))}
+          className={`auto-btn${craftTab === "biome" ? " active" : ""}${dead ? " auto-btn--disabled" : ""}`}
+          disabled={dead}
+          onClick={() => {
+            if (!dead) setCraftTab((t) => (t === "biome" ? null : "biome"));
+          }}
         >
           {craftTab === "biome" ? "CLOSE BIOME" : "BIOME PROGRESS"}
         </button>
         <button
-          className={`auto-btn${craftTab === "forge" ? " active" : ""}`}
+          className={`auto-btn${craftTab === "forge" ? " active" : ""}${dead ? " auto-btn--disabled" : ""}`}
           style={{ marginTop: 4, position: "relative" }}
+          disabled={dead}
           onClick={() => {
+            if (dead) return;
             setCraftTab((t) => (t === "forge" ? null : "forge"));
             setForgeBadge(0);
           }}
@@ -178,9 +188,12 @@ export function RightSidebar() {
           )}
         </button>
         <button
-          className={`auto-btn${craftTab === "upgrade" ? " active" : ""}`}
+          className={`auto-btn${craftTab === "upgrade" ? " active" : ""}${dead ? " auto-btn--disabled" : ""}`}
           style={{ marginTop: 4 }}
-          onClick={() => setCraftTab((t) => (t === "upgrade" ? null : "upgrade"))}
+          disabled={dead}
+          onClick={() => {
+            if (!dead) setCraftTab((t) => (t === "upgrade" ? null : "upgrade"));
+          }}
         >
           {craftTab === "upgrade" ? "CLOSE UPGRADE" : "UPGRADE ITEMS"}
         </button>

@@ -1,20 +1,27 @@
-import type { EquipmentMap, EssenceType } from '../items';
-import type { PartyMember } from '../components';
-import type { PassiveMap } from '../passives';
-import { isRangedCombatant, type SubVariant } from '../skillTree';
-import type { BuffId, PlayerBuff } from '../components/combat/buffs';
-import type { CombatArchetype, MonsterAIState, ShieldState } from '../types/combat';
-import type { HitboxRect } from '../hitbox/types';
-import { FALLBACK_MONSTER_AABB, FALLBACK_PLAYER_AABB } from '../hitbox/constants';
-import { pointFromMotion, type Vec2 } from '../systems/spatial';
-import type { MinionMonsterType } from '../components/archetypes/summoner/isMinion';
+import type { EquipmentMap, EssenceType } from "../items";
+import type { PartyMember } from "../components";
+import type { PassiveMap } from "../passives";
+import { isRangedCombatant, type SubVariant } from "../skillTree";
+import type { BuffId, PlayerBuff } from "../components/combat/buffs";
+import type {
+  CombatArchetype,
+  MonsterAIState,
+  ShieldState,
+} from "../types/combat";
+import type { HitboxRect } from "../hitbox/types";
+import {
+  FALLBACK_MONSTER_AABB,
+  FALLBACK_PLAYER_AABB,
+} from "../hitbox/constants";
+import { pointFromMotion, type Vec2 } from "../systems/spatial";
+import type { MinionMonsterType } from "../components/archetypes/summoner/isMinion";
 import {
   computeSummonRespawnMaxMs,
   countActiveSummons,
   projectSummonSlots,
   type SummonSlotView,
-} from '../systems/summonerHud';
-import type { NetworkedEntity } from './networkedEntity';
+} from "../systems/summonerHud";
+import type { NetworkedEntity } from "./networkedEntity";
 
 export type { SummonSlotView };
 
@@ -98,6 +105,8 @@ export interface PlayerView {
   summonRespawnMaxMs: number;
   /** Per-slot active / respawn state for the HUD. */
   summonSlots: SummonSlotView[];
+  isDead: boolean;
+  graveFrame: number | null;
 }
 
 /**
@@ -110,7 +119,7 @@ export function isRangedPlayerView(view: PlayerView): boolean {
     attackRange: view.attackRange,
     combatArchetype: view.combatArchetype,
     selectedRange: view.selectedRange,
-    flashActive: (view.passives['energy.flash'] ?? 0) > 0,
+    flashActive: (view.passives["energy.flash"] ?? 0) > 0,
   });
 }
 
@@ -185,14 +194,27 @@ export function composePlayerView(entity: NetworkedEntity): PlayerView | null {
   const damage = entity.dealsDamage;
   const attack = entity.performsAttack;
   const mitigation = entity.mitigatesDamage;
-  if (!progression || !inventory || !skills || !damage || !attack || !mitigation) {
+  if (
+    !progression ||
+    !inventory ||
+    !skills ||
+    !damage ||
+    !attack ||
+    !mitigation
+  ) {
     return null;
   }
   const pos = entity.hasPosition.current;
-  const flashShiftPct = entity.usesEnergy && entity.usesEnergy.energyMax > 0
-    ? Math.round((entity.usesEnergy.energy / entity.usesEnergy.energyMax) * 100)
-    : 0;
-  const summonSlots = projectSummonSlots(entity.summonsMinions, skills.passives);
+  const flashShiftPct =
+    entity.usesEnergy && entity.usesEnergy.energyMax > 0
+      ? Math.round(
+          (entity.usesEnergy.energy / entity.usesEnergy.energyMax) * 100,
+        )
+      : 0;
+  const summonSlots = projectSummonSlots(
+    entity.summonsMinions,
+    skills.passives,
+  );
   const summonActiveCount = countActiveSummons(summonSlots);
   const summonRespawnMaxMs = entity.summonsMinions
     ? computeSummonRespawnMaxMs(skills.passives)
@@ -279,10 +301,14 @@ export function composePlayerView(entity: NetworkedEntity): PlayerView | null {
     summonActiveCount,
     summonRespawnMaxMs,
     summonSlots,
+    isDead: entity.isDead !== undefined,
+    graveFrame: entity.isDead?.graveFrame ?? null,
   };
 }
 
-export function composeMonsterView(entity: NetworkedEntity): MonsterView | null {
+export function composeMonsterView(
+  entity: NetworkedEntity,
+): MonsterView | null {
   if (
     !entity.isMonster ||
     !entity.hasPosition ||

@@ -53,6 +53,10 @@ export function sendLeaveParty(socket: GameSocket): void {
   socket.emit('party:leave');
 }
 
+export function sendAckDeath(socket: GameSocket): void {
+  socket.emit('player:ackDeath');
+}
+
 export function sendGoToTestRoom(socket: GameSocket): void {
   socket.emit('debug:goToTestRoom');
 }

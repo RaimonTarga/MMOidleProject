@@ -125,7 +125,8 @@ Everything that crosses the client/server boundary lives here. Start here for an
 |---|---|---|
 | `state:sync` | S→C | Full component resync on connect / reconnect / node transition (`DeltaSnapshot` with `full: true`) |
 | `node:delta` | S→C | Authoritative component-delta broadcast every 200 ms |
-| `player:died` | S→C | Player HP hit zero (before respawn) |
+| `player:died` | S→C | Player HP hit zero; corpse stays at death site (`isDead` + grave frame in delta) |
+| `player:ackDeath` | C→S | Acknowledge death overlay — triggers respawn at clearing |
 | `crafting:result` | S→C | Craft success/failure |
 | `player:move` | C→S | Movement request |
 | `player:setAuto` | C→S | Toggle auto-targeting |
@@ -568,7 +569,8 @@ Never set a `dot.damage-per-stack` passive — `damagePerStack` is always derive
 - Item upgrade system (+1/+2/+3 per item, per-item stat+cost+biome-level defined in recipe files alongside the recipe); `UpgradeStep[]` on `Recipe` and `ItemDefinition`; `shared/src/systems/itemUpgrades.ts`
 - Biome XP power-curve system (`biomeXpForLevel`); two-tab crafting panel (Biome Progress + Forge)
 - Skill tree T0–T7 (T4–7 generated placeholders)
-- Death/respawn; node transitions
+- Death/respawn split: `killPlayer` (corpse at death site, networked `isDead`) → `player:died` + grave render; `respawnPlayer` on `player:ackDeath` or 25s timeout / disconnect; `livePlayers` query excludes corpses from gameplay
+- Node transitions
 - Client HUD: stat panel, buff bar (category-distinct icons, slow/root debuff tiles), map (11×11 + dungeon/boss), skill tree, inventory, crafting, quest panel
 - Mobile/tablet responsive HUD (≤ 1100px): fixed top bar, fixed AUTO button, slide-out menu drawer
 - AoE framework; empowered AoE splash (80px, 0.5× ATK); debug range overlay

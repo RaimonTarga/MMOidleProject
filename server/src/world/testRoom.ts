@@ -1,4 +1,8 @@
-import { BIOME_DATABASE, GAME_CONFIG, TEST_ROOM_NODE_ID } from "@mmo-idle/shared";
+import {
+  BIOME_DATABASE,
+  GAME_CONFIG,
+  TEST_ROOM_NODE_ID,
+} from "@mmo-idle/shared";
 import type { World } from "./World";
 import { removeMonsterEntity } from "./monsterLifecycle";
 
@@ -23,16 +27,14 @@ const TEST_ROOM_TRAINING_DUMMY_SPACING = 500;
 
 export function initTestRoom(world: World): void {
   const y = GAME_CONFIG.NODE_HEIGHT / 2 - 260;
-  world.createMonster(
-    TEST_ROOM_NODE_ID,
-    TEST_ROOM_TARGET_RESET,
-    { x: GAME_CONFIG.NODE_WIDTH / 2 - 180, y },
-  );
-  world.createMonster(
-    TEST_ROOM_NODE_ID,
-    TEST_ROOM_TARGET_GAIN_POINT,
-    { x: GAME_CONFIG.NODE_WIDTH / 2 + 180, y },
-  );
+  world.createMonster(TEST_ROOM_NODE_ID, TEST_ROOM_TARGET_RESET, {
+    x: GAME_CONFIG.NODE_WIDTH / 2 - 180,
+    y,
+  });
+  world.createMonster(TEST_ROOM_NODE_ID, TEST_ROOM_TARGET_GAIN_POINT, {
+    x: GAME_CONFIG.NODE_WIDTH / 2 + 180,
+    y,
+  });
   ensureTestRoomBoss(world, 0);
   ensureTrainingDummies(world);
 }
@@ -56,14 +58,10 @@ export function ensureTrainingDummies(world: World): void {
   for (let i = 0; i < count; i++) {
     const typeId = TEST_ROOM_TRAINING_DUMMY_TYPES[i];
     if (present.has(typeId)) continue;
-    world.createMonster(
-      TEST_ROOM_NODE_ID,
-      typeId,
-      {
-        x: startX + i * TEST_ROOM_TRAINING_DUMMY_SPACING,
-        y: TEST_ROOM_TRAINING_DUMMY_Y,
-      },
-    );
+    world.createMonster(TEST_ROOM_NODE_ID, typeId, {
+      x: startX + i * TEST_ROOM_TRAINING_DUMMY_SPACING,
+      y: TEST_ROOM_TRAINING_DUMMY_Y,
+    });
   }
 }
 
@@ -81,12 +79,9 @@ export function ensureCurrentTestRoomBoss(world: World): void {
   if (world.testRoomEngagedBossId) return;
 
   let targetTier: number | null = null;
-  for (const player of world.playerEntities) {
+  for (const player of world.livePlayers) {
     if (player.hasPosition.nodeId !== TEST_ROOM_NODE_ID) continue;
-    targetTier = Math.max(
-      targetTier ?? 0,
-      player.tracksProgression.playerTier,
-    );
+    targetTier = Math.max(targetTier ?? 0, player.tracksProgression.playerTier);
   }
   if (targetTier !== null) ensureTestRoomBoss(world, targetTier);
 }
@@ -102,14 +97,10 @@ export function ensureTestRoomBoss(world: World, targetTier: number): void {
     removeMonsterEntity(world, e.isMonster.id);
   }
 
-  const boss = world.createMonster(
-    TEST_ROOM_NODE_ID,
-    typeId,
-    {
-      x: GAME_CONFIG.NODE_WIDTH / 2,
-      y: GAME_CONFIG.NODE_HEIGHT / 2 + 120,
-    },
-  );
+  const boss = world.createMonster(TEST_ROOM_NODE_ID, typeId, {
+    x: GAME_CONFIG.NODE_WIDTH / 2,
+    y: GAME_CONFIG.NODE_HEIGHT / 2 + 120,
+  });
   if (boss) {
     const entity = world.getMonsterEntity(boss.isMonster.id);
     if (entity) {

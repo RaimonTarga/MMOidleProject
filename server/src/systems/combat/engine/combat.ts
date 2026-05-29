@@ -1,4 +1,4 @@
-import type { World } from '../../../world/World';
+import type { World } from "../../../world/World";
 import {
   applyStatusEffect,
   GAME_CONFIG,
@@ -8,25 +8,27 @@ import {
   hitboxGap,
   inAttackRange,
   posHitboxFromEntity,
-} from '@mmo-idle/shared';
-import type { AggroTargetKind, Vec2 } from '@mmo-idle/shared';
-import { grantMonsterRewards } from '../../player/progression/rewards';
-import {
-  makeCombatContext,
-  emitCombatEvent,
-} from './combatPipeline';
-import { getCounter, getStatusEffect, setCounter } from '@mmo-idle/shared';
-import { getAntiHealMult } from '../../defense';
-import { applyPlayerAoe } from '../damage/aoeDamage';
-import { isMonsterFrozen } from '../../classes/archetypes/dot/t3';
-import { canApplyPlayerDebuff } from '../../classes/archetypes/summoner/t3/core/debuffGuard';
-import { isMonsterStunned } from '../status/stun';
-import { setAggroTarget, setAttackTarget } from '../ai/targeting';
-import { markEngaged } from '../ai/engagement';
-import type { MinionEntity, MonsterEntity, PlayerEntity } from '../../../ecs/entity';
+} from "@mmo-idle/shared";
+import type { AggroTargetKind, Vec2 } from "@mmo-idle/shared";
+import { grantMonsterRewards } from "../../player/progression/rewards";
+import { makeCombatContext, emitCombatEvent } from "./combatPipeline";
+import { getCounter, getStatusEffect, setCounter } from "@mmo-idle/shared";
+import { getAntiHealMult } from "../../defense";
+import { applyPlayerAoe } from "../damage/aoeDamage";
+import { isMonsterFrozen } from "../../classes/archetypes/dot/t3";
+import { canApplyPlayerDebuff } from "../../classes/archetypes/summoner/t3/core/debuffGuard";
+import { isMonsterStunned } from "../status/stun";
+import { setAggroTarget, setAttackTarget } from "../ai/targeting";
+import { markEngaged } from "../ai/engagement";
+import type {
+  MinionEntity,
+  MonsterEntity,
+  PlayerEntity,
+} from "../../../ecs/entity";
+import { buildKillerFromMonster } from "../../world/deathCause";
 
-export type PlayerAttackOutcome = 'cancelled' | 'dodged' | 'hit' | 'killed';
-export type MonsterAttackOutcome = 'cancelled' | 'hit' | 'killed';
+export type PlayerAttackOutcome = "cancelled" | "dodged" | "hit" | "killed";
+export type MonsterAttackOutcome = "cancelled" | "hit" | "killed";
 
 /**
  * Run a single attack from `player` onto `target`. Drives the full combat
@@ -57,61 +59,79 @@ export function runPlayerAttack(
     metadata?: Record<string, unknown>;
   },
 ): PlayerAttackOutcome {
-  const ctx = makeCombatContext(player, 'player', target, 'monster');
+  const ctx = makeCombatContext(player, "player", target, "monster");
   ctx.metadata.aggroSource = opts.aggroSource;
   if (opts.metadata) {
     Object.assign(ctx.metadata, opts.metadata);
   }
 
-  emitCombatEvent('beforeAttack', ctx, world);
-  if (ctx.cancelled) return 'cancelled';
+  emitCombatEvent("beforeAttack", ctx, world);
+  if (ctx.cancelled) return "cancelled";
 
-  emitCombatEvent('onAttack', ctx, world);
+  emitCombatEvent("onAttack", ctx, world);
 
-  const evadeEvery = MONSTER_DATABASE.get(target.isMonster.monsterTypeId)?.evadeEvery;
+  const evadeEvery = MONSTER_DATABASE.get(
+    target.isMonster.monsterTypeId,
+  )?.evadeEvery;
   if (evadeEvery !== undefined && evadeEvery >= 5) {
-    const hitsTaken = getCounter(target.tracksCombat, 'hitsTaken') + 1;
-    setCounter(target.tracksCombat, 'hitsTaken', hitsTaken);
+    const hitsTaken = getCounter(target.tracksCombat, "hitsTaken") + 1;
+    setCounter(target.tracksCombat, "hitsTaken", hitsTaken);
     if (hitsTaken % evadeEvery === 0) {
       world.pushEvent(player.hasPosition.nodeId, {
-        kind: 'monster-dodge',
+        kind: "monster-dodge",
         monsterId: target.isMonster.id,
         targetPos: { ...target.hasPosition.current },
       });
-      return 'dodged';
+      return "dodged";
     }
   }
 
   const monsterCombatState = target.tracksCombat;
   const shredEffect = monsterCombatState
-    ? getStatusEffect(monsterCombatState, 'plating-shred')
+    ? getStatusEffect(monsterCombatState, "plating-shred")
     : undefined;
-  const platingShred = typeof ctx.metadata.platingShred === 'number' ? ctx.metadata.platingShred : 0;
-  const effectivePlating = Math.max(0,
-    target.mitigatesDamage.plating
-      - (shredEffect ? shredEffect.stacks * shredEffect.data['platingReduction'] : 0)
-      - platingShred,
+  const platingShred =
+    typeof ctx.metadata.platingShred === "number"
+      ? ctx.metadata.platingShred
+      : 0;
+  const effectivePlating = Math.max(
+    0,
+    target.mitigatesDamage.plating -
+      (shredEffect
+        ? shredEffect.stacks * shredEffect.data["platingReduction"]
+        : 0) -
+      platingShred,
   );
 
-  const minionDamageMult = opts.aggroSource.kind === 'minion'
-    ? (player.usesSkills.passives['summoner.minion-damage-mult'] ?? 1.0)
-    : 1.0;
-  ctx.damage = Math.max(1, Math.round(
-    Math.max(0, player.dealsDamage.attack * minionDamageMult - effectivePlating * ctx.platingMult) * (1 - target.mitigatesDamage.damageReduction),
-  ));
+  const minionDamageMult =
+    opts.aggroSource.kind === "minion"
+      ? (player.usesSkills.passives["summoner.minion-damage-mult"] ?? 1.0)
+      : 1.0;
+  ctx.damage = Math.max(
+    1,
+    Math.round(
+      Math.max(
+        0,
+        player.dealsDamage.attack * minionDamageMult -
+          effectivePlating * ctx.platingMult,
+      ) *
+        (1 - target.mitigatesDamage.damageReduction),
+    ),
+  );
 
-  emitCombatEvent('onHit', ctx, world);
+  emitCombatEvent("onHit", ctx, world);
 
   if (player.dealsDamage.onHitDamage > 0) {
     ctx.damage += player.dealsDamage.onHitDamage;
   }
 
-  const isEmpowered = !!ctx.metadata['empoweredAttack'];
+  const isEmpowered = !!ctx.metadata["empoweredAttack"];
   const isExecution = isEmpowered && player.usesCooldown !== undefined;
 
   if (isEmpowered) {
     applyPlayerAoe(
-      world, player,
+      world,
+      player,
       target.hasPosition.current,
       GAME_CONFIG.EMPOWERED_AOE_RADIUS,
       Math.round(player.dealsDamage.attack * GAME_CONFIG.EMPOWERED_AOE_MULT),
@@ -119,49 +139,55 @@ export function runPlayerAttack(
     );
   }
 
-  emitCombatEvent('onDamageTaken', ctx, world);
+  emitCombatEvent("onDamageTaken", ctx, world);
 
   target.hasHealth.hp -= ctx.damage;
   target.controlsMonster.spawn = { ...target.hasPosition.current };
 
-  if (target.isMonster.isBoss && target.hasPosition.nodeId === TEST_ROOM_NODE_ID) {
+  if (
+    target.isMonster.isBoss &&
+    target.hasPosition.nodeId === TEST_ROOM_NODE_ID
+  ) {
     world.testRoomEngagedBossId = target.isMonster.id;
   }
 
-  const clientEffectsRaw = ctx.metadata['clientEffects'];
+  const clientEffectsRaw = ctx.metadata["clientEffects"];
   const clientEffects = Array.isArray(clientEffectsRaw)
-    ? clientEffectsRaw.filter((effect): effect is string => typeof effect === 'string')
+    ? clientEffectsRaw.filter(
+        (effect): effect is string => typeof effect === "string",
+      )
     : undefined;
   world.pushEvent(player.hasPosition.nodeId, {
-    kind: 'player-hit',
-    playerId:   player.isPlayer.id,
-    targetId:   target.isMonster.id,
+    kind: "player-hit",
+    playerId: player.isPlayer.id,
+    targetId: target.isMonster.id,
     targetName: target.isMonster.name,
-    damage:     ctx.damage,
-    empowered:  isEmpowered,
-    execution:  isExecution,
-    effects:    clientEffects && clientEffects.length > 0 ? clientEffects : undefined,
-    playerPos:  { ...opts.attackOrigin },
-    targetPos:  { ...target.hasPosition.current },
+    damage: ctx.damage,
+    empowered: isEmpowered,
+    execution: isExecution,
+    effects:
+      clientEffects && clientEffects.length > 0 ? clientEffects : undefined,
+    playerPos: { ...opts.attackOrigin },
+    targetPos: { ...target.hasPosition.current },
   });
 
-  emitCombatEvent('afterHit', ctx, world);
+  emitCombatEvent("afterHit", ctx, world);
 
   if (target.hasHealth.hp <= 0) {
-    emitCombatEvent('onKill', ctx, world);
+    emitCombatEvent("onKill", ctx, world);
     const rewardInfo = grantMonsterRewards(world, player.isPlayer.id, target);
     world.pushEvent(player.hasPosition.nodeId, {
-      kind:       'player-kill',
-      playerId:   player.isPlayer.id,
-      targetId:   target.isMonster.id,
+      kind: "player-kill",
+      playerId: player.isPlayer.id,
+      targetId: target.isMonster.id,
       targetName: target.isMonster.name,
-      damage:     ctx.damage,
+      damage: ctx.damage,
       biomeXpGained: rewardInfo?.biomeXpGained ?? 0,
       essenceGained: rewardInfo?.essenceGained ?? 0,
-      essenceType: rewardInfo?.essenceType ?? 'green',
+      essenceType: rewardInfo?.essenceType ?? "green",
     });
     world.removeMonsterEntity(target.isMonster.id);
-    return 'killed';
+    return "killed";
   }
 
   // Retaliation aggro: if the monster had no target it now fixates on whoever
@@ -170,20 +196,23 @@ export function runPlayerAttack(
   // safe static-range whittling.
   const ai = target.controlsMonster;
   if (!target.hasAggroTarget) {
-    if (distanceSq(opts.attackOrigin, ai.spawn) <= ai.leashRange * ai.leashRange) {
+    if (
+      distanceSq(opts.attackOrigin, ai.spawn) <=
+      ai.leashRange * ai.leashRange
+    ) {
       setAggroTarget(world, target, opts.aggroSource, now);
-      if (opts.aggroSource.kind === 'player') {
+      if (opts.aggroSource.kind === "player") {
         const attacker = world.getPlayerEntity(opts.aggroSource.id);
         if (attacker) markEngaged(world, attacker, now);
       }
     }
   }
 
-  if (opts.aggroSource.kind === 'minion') {
+  if (opts.aggroSource.kind === "minion") {
     markEngaged(world, player, now);
   }
 
-  return 'hit';
+  return "hit";
 }
 
 /**
@@ -198,31 +227,37 @@ export function runMonsterAttack(
   target: PlayerEntity,
   now: number,
 ): MonsterAttackOutcome {
-  const ctx = makeCombatContext(monster, 'monster', target, 'player');
+  const ctx = makeCombatContext(monster, "monster", target, "player");
 
   if (isMonsterStunned(world, monster.isMonster.id)) {
     ctx.cancelled = true;
   }
 
-  emitCombatEvent('beforeAttack', ctx, world);
-  if (ctx.cancelled) return 'cancelled';
+  emitCombatEvent("beforeAttack", ctx, world);
+  if (ctx.cancelled) return "cancelled";
 
-  emitCombatEvent('onAttack', ctx, world);
+  emitCombatEvent("onAttack", ctx, world);
 
-  ctx.damage = Math.max(1, Math.round(
-    Math.max(0, monster.dealsDamage.attack - target.mitigatesDamage.plating) * (1 - target.mitigatesDamage.damageReduction),
-  ));
+  ctx.damage = Math.max(
+    1,
+    Math.round(
+      Math.max(0, monster.dealsDamage.attack - target.mitigatesDamage.plating) *
+        (1 - target.mitigatesDamage.damageReduction),
+    ),
+  );
 
-  emitCombatEvent('onHit', ctx, world);
-  emitCombatEvent('onDamageTaken', ctx, world);
+  emitCombatEvent("onHit", ctx, world);
+  emitCombatEvent("onDamageTaken", ctx, world);
 
   target.hasHealth.hp -= ctx.damage;
   monster.performsAttack.lastAttackAt = now;
 
-  const slow = MONSTER_DATABASE.get(monster.isMonster.monsterTypeId)?.slowEffect;
+  const slow = MONSTER_DATABASE.get(
+    monster.isMonster.monsterTypeId,
+  )?.slowEffect;
   if (slow && canApplyPlayerDebuff(target)) {
     applyStatusEffect(target.tracksCombat, {
-      id: 'slow',
+      id: "slow",
       maxStacks: 1,
       remainingMs: slow.durationMs,
       refreshable: true,
@@ -234,14 +269,18 @@ export function runMonsterAttack(
     });
   }
 
-  emitCombatEvent('afterHit', ctx, world);
+  emitCombatEvent("afterHit", ctx, world);
 
   if (target.hasHealth.hp <= 0) {
-    emitCombatEvent('onKill', ctx, world);
-    world.respawnPlayer(target.isPlayer.id);
-    return 'killed';
+    emitCombatEvent("onKill", ctx, world);
+    world.killPlayer(target.isPlayer.id, {
+      kind: "melee",
+      killer: buildKillerFromMonster(monster),
+      damage: ctx.damage,
+    });
+    return "killed";
   }
-  return 'hit';
+  return "hit";
 }
 
 /**
@@ -256,10 +295,13 @@ export function runMonsterAttackOnMinion(
   minion: MinionEntity,
   now: number,
 ): void {
-  const damage = Math.max(1, Math.round(
-    Math.max(0, monster.dealsDamage.attack - minion.mitigatesDamage.plating) *
-      (1 - minion.mitigatesDamage.damageReduction),
-  ));
+  const damage = Math.max(
+    1,
+    Math.round(
+      Math.max(0, monster.dealsDamage.attack - minion.mitigatesDamage.plating) *
+        (1 - minion.mitigatesDamage.damageReduction),
+    ),
+  );
   minion.hasHealth.hp = Math.max(0, minion.hasHealth.hp - damage);
   monster.performsAttack.lastAttackAt = now;
   // Death is observed by the summoner tick on its next pass — it will detach
@@ -269,7 +311,7 @@ export function runMonsterAttackOnMinion(
 
 export function updateCombat(world: World, dt: number, now: number) {
   // PLAYER → MONSTER
-  for (const player of world.playerEntities) {
+  for (const player of world.livePlayers) {
     // Entities can attack by default; the CannotAttack marker is the only thing
     // that disables it. Summoners carry it permanently (their minions deal all
     // damage via runPlayerAttack(aggroSource: minion)); anyone whose range fell
@@ -303,14 +345,17 @@ export function updateCombat(world: World, dt: number, now: number) {
     setAttackTarget(world, player, target?.isMonster.id ?? null);
 
     if (target) {
-      if (now - player.performsAttack.lastAttackAt >= player.performsAttack.attackCooldown) {
+      if (
+        now - player.performsAttack.lastAttackAt >=
+        player.performsAttack.attackCooldown
+      ) {
         const outcome = runPlayerAttack(world, player, target, now, {
           attackOrigin: player.hasPosition.current,
-          aggroSource:  { id: player.isPlayer.id, kind: 'player' },
+          aggroSource: { id: player.isPlayer.id, kind: "player" },
         });
         // All cooldown-consuming outcomes (everything except cancelled) advance
         // the player's own attack timer, mirroring previous behavior.
-        if (outcome !== 'cancelled') {
+        if (outcome !== "cancelled") {
           player.performsAttack.lastAttackAt = now;
         }
       }
@@ -319,7 +364,10 @@ export function updateCombat(world: World, dt: number, now: number) {
       // so regen doesn't tick while being actively chased.
       for (const e of [...world.aggroedMonsters]) {
         if (!e?.hasAggroTarget) continue;
-        if (e.hasAggroTarget.targetKind === 'player' && e.hasAggroTarget.targetId === player.isPlayer.id) {
+        if (
+          e.hasAggroTarget.targetKind === "player" &&
+          e.hasAggroTarget.targetId === player.isPlayer.id
+        ) {
           const p = world.getPlayerEntity(player.isPlayer.id);
           if (p) markEngaged(world, p, now);
           break;
@@ -327,28 +375,43 @@ export function updateCombat(world: World, dt: number, now: number) {
       }
 
       const lastCombat = player.tracksEngagement;
-      if (lastCombat === undefined || now - lastCombat > GAME_CONFIG.COMBAT_REGEN_DELAY) {
+      if (
+        lastCombat === undefined ||
+        now - lastCombat > GAME_CONFIG.COMBAT_REGEN_DELAY
+      ) {
         const cs = player.tracksCombat;
-        const rawRegen = player.hasHealth.maxHp * ((player.hasHealth.hpRegen ?? 0) / 100) * (dt / 1000);
+        const rawRegen =
+          player.hasHealth.maxHp *
+          ((player.hasHealth.hpRegen ?? 0) / 100) *
+          (dt / 1000);
         const healAmount = cs ? rawRegen * getAntiHealMult(cs) : rawRegen;
-        player.hasHealth.hp = Math.min(player.hasHealth.maxHp, player.hasHealth.hp + healAmount);
+        player.hasHealth.hp = Math.min(
+          player.hasHealth.maxHp,
+          player.hasHealth.hp + healAmount,
+        );
       }
     }
   }
 
   // MONSTER → PLAYER / MINION
   for (const e of [...world.aggroedMonsters]) {
-    if (!e?.hasAwareness || !e.hasAggroTarget || !e.hasPosition || !e.performsAttack || !e.dealsDamage) {
+    if (
+      !e?.hasAwareness ||
+      !e.hasAggroTarget ||
+      !e.hasPosition ||
+      !e.performsAttack ||
+      !e.dealsDamage
+    ) {
       continue;
     }
-    if (e.hasAwareness.state !== 'attacking') continue;
+    if (e.hasAwareness.state !== "attacking") continue;
     // Same rule as players: a monster with the CannotAttack marker cannot strike.
     if (e.cannotAttack) {
       setAttackTarget(world, e, null);
       continue;
     }
 
-    if (e.hasAggroTarget.targetKind === 'player') {
+    if (e.hasAggroTarget.targetKind === "player") {
       const target = world.getPlayerEntity(e.hasAggroTarget.targetId) ?? null;
       if (!target || target.hasPosition.nodeId !== e.hasPosition.nodeId) {
         setAggroTarget(world, e, null, now);
@@ -362,11 +425,17 @@ export function updateCombat(world: World, dt: number, now: number) {
         continue;
       }
       setAttackTarget(world, e, target.isPlayer.id);
-      if (now - e.performsAttack.lastAttackAt >= e.performsAttack.attackCooldown && !isMonsterFrozen(world, e.isMonster.id)) {
+      if (
+        now - e.performsAttack.lastAttackAt >=
+          e.performsAttack.attackCooldown &&
+        !isMonsterFrozen(world, e.isMonster.id)
+      ) {
         const outcome = runMonsterAttack(world, e, target, now);
-        if (outcome === 'hit') {
+        if (outcome === "hit") {
           // Landing a hit halves the accumulated kite ramp so the monster must re-earn speed.
-          e.controlsMonster.kiteTimer = Math.floor(e.controlsMonster.kiteTimer / 2);
+          e.controlsMonster.kiteTimer = Math.floor(
+            e.controlsMonster.kiteTimer / 2,
+          );
           const t = world.getPlayerEntity(target.isPlayer.id);
           if (t) markEngaged(world, t, now);
         }
@@ -376,7 +445,11 @@ export function updateCombat(world: World, dt: number, now: number) {
 
     // targetKind === 'minion'
     const minion = world.getMinionEntity(e.hasAggroTarget.targetId) ?? null;
-    if (!minion || minion.hasPosition.nodeId !== e.hasPosition.nodeId || minion.hasHealth.hp <= 0) {
+    if (
+      !minion ||
+      minion.hasPosition.nodeId !== e.hasPosition.nodeId ||
+      minion.hasHealth.hp <= 0
+    ) {
       setAggroTarget(world, e, null, now);
       setAttackTarget(world, e, null);
       continue;
@@ -388,7 +461,10 @@ export function updateCombat(world: World, dt: number, now: number) {
       continue;
     }
     setAttackTarget(world, e, minion.isMinion.id);
-    if (now - e.performsAttack.lastAttackAt >= e.performsAttack.attackCooldown && !isMonsterFrozen(world, e.isMonster.id)) {
+    if (
+      now - e.performsAttack.lastAttackAt >= e.performsAttack.attackCooldown &&
+      !isMonsterFrozen(world, e.isMonster.id)
+    ) {
       runMonsterAttackOnMinion(world, e, minion, now);
     }
   }
@@ -401,7 +477,10 @@ export function updateCombat(world: World, dt: number, now: number) {
     if (now - ai.lastAggroAt < GAME_CONFIG.MONSTER_REGEN_DELAY) continue;
     e.hasHealth.hp = Math.min(
       e.hasHealth.maxHp,
-      e.hasHealth.hp + e.hasHealth.maxHp * (GAME_CONFIG.MONSTER_REGEN_RATE / 100) * (dt / 1000),
+      e.hasHealth.hp +
+        e.hasHealth.maxHp *
+          (GAME_CONFIG.MONSTER_REGEN_RATE / 100) *
+          (dt / 1000),
     );
   }
 }

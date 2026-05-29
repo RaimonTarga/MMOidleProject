@@ -1,14 +1,14 @@
-import { GAME_CONFIG } from '@mmo-idle/shared';
-import type { World } from '../../world/World';
-import { registerEvasion } from './mitigation/evasion';
-import { registerDamageCap } from './mitigation/damageCap';
-import { registerShieldAbsorb } from './shields/shields';
-import { registerHitToDot, runDebtDrain } from './mitigation/hitToDot';
-import { registerDamageAbsorb, runAbsorbDrain } from './shields/damageAbsorb';
-import { registerKillBurst, runRegenBurst } from './regen/regenBurst';
-import { runPeriodicShield } from './shields/periodicShield';
-import { runDebuffCleanse } from './mitigation/debuffCleanse';
-import { runInCombatRegen } from './regen/inCombatRegen';
+import { GAME_CONFIG } from "@mmo-idle/shared";
+import type { World } from "../../world/World";
+import { registerEvasion } from "./mitigation/evasion";
+import { registerDamageCap } from "./mitigation/damageCap";
+import { registerShieldAbsorb } from "./shields/shields";
+import { registerHitToDot, runDebtDrain } from "./mitigation/hitToDot";
+import { registerDamageAbsorb, runAbsorbDrain } from "./shields/damageAbsorb";
+import { registerKillBurst, runRegenBurst } from "./regen/regenBurst";
+import { runPeriodicShield } from "./shields/periodicShield";
+import { runDebuffCleanse } from "./mitigation/debuffCleanse";
+import { runInCombatRegen } from "./regen/inCombatRegen";
 
 /**
  * Register all defense-layer combat pipeline listeners.
@@ -37,13 +37,19 @@ export function initDefenseSystems(): void {
  * Handles all time-based defensive and recovery mechanics for each player.
  * The order matters — debt drain can kill the player and is skipped first.
  */
-export function updateDefensiveSystems(world: World, dt: number, now: number): void {
-  for (const player of world.playerEntities) {
+export function updateDefensiveSystems(
+  world: World,
+  dt: number,
+  now: number,
+): void {
+  for (const player of world.livePlayers) {
     const lastCombatAt = player.tracksEngagement;
-    const inCombat = player.hasAttackTarget !== undefined ||
-      (lastCombatAt !== undefined && (now - lastCombatAt) < GAME_CONFIG.COMBAT_REGEN_DELAY);
+    const inCombat =
+      player.hasAttackTarget !== undefined ||
+      (lastCombatAt !== undefined &&
+        now - lastCombatAt < GAME_CONFIG.COMBAT_REGEN_DELAY);
 
-    if (runDebtDrain(world, player)) continue;   // player died → skip remaining
+    if (runDebtDrain(world, player)) continue; // player died → skip remaining
 
     runAbsorbDrain(player, dt);
     runRegenBurst(player, dt, inCombat);
@@ -55,11 +61,19 @@ export function updateDefensiveSystems(world: World, dt: number, now: number): v
 
 // ── Public re-exports (preserve `defenseSystems` public API) ─────────────────
 
-export { applyShield, applyShieldPercent, updateShields } from './shields/shields';
-export { applyHealToPlayer, getAntiHealMult, getDebuffResistanceMult } from './regen/healing';
+export {
+  applyShield,
+  applyShieldPercent,
+  updateShields,
+} from "./shields/shields";
+export {
+  applyHealToPlayer,
+  getAntiHealMult,
+  getDebuffResistanceMult,
+} from "./regen/healing";
 export {
   getDefenseAbsorbPool,
   getDefenseBurstPool,
   getDefenseDebtPool,
-} from './core/pools';
-export { DEFENSE_BUFFS } from './core/buffs';
+} from "./core/pools";
+export { DEFENSE_BUFFS } from "./core/buffs";

@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useAtomValue } from 'jotai';
 import type { EssenceType, ItemStats } from '@mmo-idle/shared';
-import { NODE_BIOMES, BIOME_DATABASE, MONSTER_DATABASE, RECIPE_DATABASE, ESSENCE_COLORS, biomeLevelCap, biomeXpForLevel } from '@mmo-idle/shared';
+import { NODE_BIOMES, BIOME_DATABASE, MONSTER_DATABASE, RECIPE_DATABASE, ESSENCE_COLORS, biomeLevelCap, biomeXpForLevel, formatNodeCoord, nodeIdToCoord } from '@mmo-idle/shared';
 import { biomeLevelAtom, biomeXPAtom, playerTierAtom } from '../../hud/atoms';
 import { formatStat, hexDot, tileColor } from './constants';
 
@@ -37,6 +37,7 @@ export function NodeInfo({ nodeId }: NodeInfoProps) {
   const biomeLevel = biomeLevelByGroup[biomeGroup] ?? 0;
   const levelCap   = biomeLevelCap(playerTier, biomeGroup);
   const tierLabel  = biomeTier === 0 ? 'Starting Zone' : `Tier ${biomeTier}`;
+  const coord      = nodeIdToCoord(nodeId);
 
   const recipesByLevel = recipes.reduce<Record<number, typeof recipes>>((acc, r) => {
     (acc[r.requiredBiomeLevel] ??= []).push(r);
@@ -48,6 +49,7 @@ export function NodeInfo({ nodeId }: NodeInfoProps) {
       <div className="map-node-info__header" style={{ borderLeftColor: accentColor }}>
         <span className="map-node-info__name">{biome.name}</span>
         <span className="map-node-info__tier">{tierLabel}</span>
+        {coord && <span className="map-node-info__coord">{formatNodeCoord(coord)}</span>}
         {isDungeon && <span className="map-node-info__dungeon-tag">DUNGEON</span>}
       </div>
 
