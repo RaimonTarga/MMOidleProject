@@ -4,6 +4,22 @@
  * change both behavior and the stat-sheet description at the same time.
  */
 
+// ── Abyss ultimate weapon ───────────────────────────────────────────────────
+
+export const EDGE_OF_OBLIVION_ID = 'edge-of-oblivion';
+
+/** Status effect id for Edge of Oblivion corruption stacks. */
+export const VOID_CORRUPTION_EFFECT_ID = 'void-corruption';
+
+export const CORRUPTION_MAX_STACKS = 10;
+/** Fraction of attack converted into per-stack tick damage (÷ max stacks). */
+export const CORRUPTION_CONV_PCT = 0.40;
+export const CORRUPTION_TICK_MS = 1_000;
+export const CORRUPTION_DURATION_MS = 4_500;
+/** Movement speed multiplier reduction per stack (additive on mult: 1 − stacks × rate). */
+export const CORRUPTION_SLOW_PER_STACK = 0.05;
+export const CORRUPTION_MIN_SPEED_MULT = 0.35;
+
 // ── Chaotic family (Chaotic Axe / Frenzied Greataxe) ────────────────────────
 
 /** Every Nth player hit deals 0 damage (on-hit effects still fire). */

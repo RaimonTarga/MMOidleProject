@@ -4,6 +4,7 @@ import type {
   DeltaSnapshot,
   PlayerDeathPayload,
   WorldLogEvent,
+  BossFelledMarker,
 } from "@mmo-idle/shared";
 import {
   BIOME_DATABASE,
@@ -17,6 +18,7 @@ import { updateAutoTargets } from "../systems/combat/ai/autoTarget";
 import { updateAutoTraverse } from "../systems/world/autoTraverse";
 import { updatePartyFollow } from "../systems/world/partyFollow";
 import { updateMovement } from "../systems/world/movement";
+import { updateNodeFeatures } from "../systems/world/nodeFeatures";
 import { updateMonsters } from "../systems/combat/ai/ai";
 import { updateCombat } from "../systems/combat/engine/combat";
 import { updateTransitions } from "../systems/world/transitions";
@@ -24,6 +26,7 @@ import { updateCombatState } from "../systems/combat/engine/combatState";
 import { tickAllMechanics } from "../systems/classes/registry";
 import { updateWeaponEffects } from "../systems/combat/damage/weaponEffects";
 import { updateBossScripts } from "../systems/combat/ai/bossScripts";
+import { updateUltimateEncounters } from "../systems/combat/ai/ultimateEncounter";
 import { updateShields, updateDefensiveSystems } from "../systems/defense";
 import { updateKnockback } from "../systems/combat/damage/knockback";
 import { syncPlayerBuffs } from "../systems/combat/buffs/buffSync";
@@ -67,6 +70,19 @@ export interface PendingDeath {
   payload: PlayerDeathPayload;
 }
 
+/** Client-facing boss death marker; drives the respawn countdown / void tomb. */
+export interface BossRespawnMarker {
+  monsterTypeId: string;
+  pos: Vec2;
+  respawnAt: number;
+  durationMs: number;
+}
+
+/** A {@link BossRespawnMarker} tagged with its node, for persistence. */
+export interface PersistedBossRespawn extends BossRespawnMarker {
+  nodeId: string;
+}
+
 export class World {
   readonly nodeId: string;
   readonly node: NodeDefinition;
@@ -94,6 +110,7 @@ export class World {
 
   readonly knockbackedMonsters = this.monsterEntities.with("hasKnockback");
   readonly bossScriptedMonsters = this.monsterEntities.with("scriptsBoss");
+  readonly ultimateMonsters = this.monsterEntities.with("scriptsUltimate");
   readonly movingMonsters = this.monsterEntities.with("isMoving");
   readonly aggroedMonsters = this.monsterEntities.with("hasAggroTarget");
   readonly detonatedMonsters = this.monsterEntities.with("hasDetonation");
@@ -105,6 +122,7 @@ export class World {
   readonly frozenMonsters = this.monsterEntities.with("hasFrozen");
   readonly entropyMonsters = this.monsterEntities.with("hasEntropy");
   readonly ashbrandMonsters = this.monsterEntities.with("hasAshbrandBurn");
+  readonly voidCorruptionMonsters = this.monsterEntities.with("hasVoidCorruption");
   readonly smolderMonsters = this.monsterEntities.with("hasSmolder");
 
   /**
@@ -158,6 +176,10 @@ export class World {
   readonly movingMinions = this.minionEntities.with("isMoving");
   readonly reloadPlayers = this.livePlayers.with("usesReload");
   readonly dottedPlayers = this.livePlayers.with("hasDot");
+  readonly environmentallyDottedPlayers =
+    this.livePlayers.with("hasEnvironmentalDot");
+  readonly nodeFeatureEffectPlayers =
+    this.livePlayers.with("hasNodeFeatureEffect");
   readonly movingPlayers = this.livePlayers.with("isMoving");
   readonly shieldedPlayers = this.livePlayers.with("holdsShields");
   readonly channelingPlayers = this.cooldownPlayers.with("isChanneling");
@@ -167,8 +189,28 @@ export class World {
   pendingDeaths: PendingDeath[] = [];
   /** Player IDs whose quest completion advanced their tier. Drained by the server loop. */
   pendingAscensions: string[] = [];
+  /** Contributors on-node when the Void Overlord dies — drained for overlay emit. */
+  pendingOverlordFelled: string[] = [];
   /** Dungeon boss respawn cooldowns keyed by node id. */
   bossRespawnAt = new Map<string, number>();
+  /** Client-facing boss death markers keyed by node id. */
+  bossRespawnMarkers = new Map<string, BossRespawnMarker>();
+  /**
+   * Persist (marker) or clear (null) the server-global Void Overlord respawn
+   * cooldown so it survives node freeze/thaw and server restarts. Set by
+   * index.ts at boot; left null in benchmarks/tests (no DB).
+   */
+  overlordRespawnPersist: ((marker: PersistedBossRespawn | null) => void) | null =
+    null;
+  /** Broadcast active boss-felled markers to all clients (world map). Set by index.ts. */
+  bossFelledBroadcast: (() => void) | null = null;
+  /** Generic NODE_FEATURES spawn runtime state keyed `${nodeId}:${featureId}`. */
+  nodeFeatureSpawnState = new Map<
+    string,
+    { spawnedIds: string[]; nextSpawnAt: number }
+  >();
+  /** Suppressed feature blocks keyed `${nodeId}:${featureId}` (encounter toggles). */
+  suppressedFeatureBlocks = new Set<string>();
   /** Queued combat events per node, flushed into each broadcast snapshot. */
   private nodeEvents = new Map<string, CombatEvent[]>();
   /** Runtime journal of all world log events (dev/debug). */
@@ -252,11 +294,13 @@ export class World {
     tickAllMechanics(this, dt, now);
     updateWeaponEffects(this, dt);
     updateBossScripts(this, dt);
+    updateUltimateEncounters(this, dt);
     updatePartyFollow(this);
     updateAutoTraverse(this);
     updateAutoTargets(this);
     updateKnockback(this, dt);
     updateMovement(this, dt);
+    updateNodeFeatures(this, dt);
     updateTransitions(this);
     if (IS_DEV) updateTestRoomInteract(this, now);
     updateMonsters(this, dt, now);
@@ -406,6 +450,7 @@ export class World {
 
   getMobDensity(nodeId: string): number {
     const biomeInfo = NODE_BIOMES[nodeId];
+    if (biomeInfo?.mobDensity !== undefined) return biomeInfo.mobDensity;
     const biome = biomeInfo
       ? BIOME_DATABASE.get(biomeInfo.biomeGroup)
       : undefined;
@@ -498,6 +543,25 @@ export class World {
     opts: { resync?: boolean } = {},
   ) {
     return buildNodeDelta(this, nodeId, dirty, opts);
+  }
+
+  buildBossFelledSnapshot(): BossFelledMarker[] {
+    const now = Date.now();
+    const markers: BossFelledMarker[] = [];
+    for (const [nodeId, marker] of this.bossRespawnMarkers) {
+      if (marker.respawnAt <= now) continue;
+      markers.push({
+        nodeId,
+        monsterTypeId: marker.monsterTypeId,
+        respawnAt: marker.respawnAt,
+        durationMs: marker.durationMs,
+      });
+    }
+    return markers;
+  }
+
+  broadcastBossFelledState(): void {
+    this.bossFelledBroadcast?.();
   }
 
   countPlayersInNode(nodeId: string): number {

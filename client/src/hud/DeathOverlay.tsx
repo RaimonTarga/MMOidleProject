@@ -1,9 +1,18 @@
 import { useEffect, useState } from 'react';
 import { useAtomValue } from 'jotai';
 import {
+  buildVoidOverlordAtlasFrames,
   formatDeathCauseLabel,
   formatDeathLocation,
+  resolveVoidOverlordBossFrameName,
+  resolveVoidOverlordMinionFrameName,
   resolveMonsterFrame,
+  shouldUseVoidOverlordSheet,
+  VOID_OVERLORD_DISPLAY,
+  VOID_OVERLORD_MINION_ROW_H,
+  VOID_OVERLORD_MINION_ROWS,
+  VOID_OVERLORD_MINION_Y0,
+  VOID_OVERLORD_SHEET_W,
   type DeathKiller,
 } from '@mmo-idle/shared';
 import { AtlasSprite } from '../ui/AtlasSprite';
@@ -11,6 +20,11 @@ import { clearDeathOverlay, deathOverlayAtom } from './atoms';
 import './deathOverlay.css';
 
 const AUTO_MS = 600_000;
+const VOID_OVERLORD_SHEET_FILE = '/assets/ultimate_bosses/void_overlord.png';
+const VOID_OVERLORD_SHEET_H = VOID_OVERLORD_MINION_Y0 + VOID_OVERLORD_MINION_ROWS * VOID_OVERLORD_MINION_ROW_H;
+const VOID_OVERLORD_FRAMES = new Map(
+  buildVoidOverlordAtlasFrames().map((entry) => [entry.filename, entry.frame]),
+);
 
 function formatClock(ms: number): string {
   const totalSec = Math.max(0, Math.floor(ms / 1000));
@@ -27,6 +41,84 @@ function getKiller(payload: NonNullable<ReturnType<typeof useAtomValue<typeof de
 
 function getDamage(payload: NonNullable<ReturnType<typeof useAtomValue<typeof deathOverlayAtom>>['payload']>): number {
   return payload.cause.damage;
+}
+
+function resolveVoidOverlordDeathFrame(killer: DeathKiller): string | null {
+  if (killer.monsterTypeId === 'void-overlord') {
+    return resolveVoidOverlordBossFrameName();
+  }
+  if (!shouldUseVoidOverlordSheet(killer.monsterTypeId)) {
+    return null;
+  }
+  return resolveVoidOverlordMinionFrameName(
+    killer.monsterTypeId,
+    killer.monsterEntityId ?? killer.monsterTypeId,
+  );
+}
+
+function VoidOverlordDeathSprite({
+  killer,
+  scale,
+}: {
+  killer: DeathKiller;
+  scale: number;
+}) {
+  const frameName = resolveVoidOverlordDeathFrame(killer);
+  const rect = frameName ? VOID_OVERLORD_FRAMES.get(frameName) : null;
+  if (!rect) {
+    return (
+      <AtlasSprite
+        frameName={resolveMonsterFrame(killer.monsterTypeId)}
+        scale={scale}
+        fallbackInitial={killer.monsterName}
+      />
+    );
+  }
+
+  const display = VOID_OVERLORD_DISPLAY[killer.monsterTypeId] ?? {
+    displayW: rect.w,
+    displayH: rect.h,
+  };
+  const width = display.displayW * scale;
+  const height = display.displayH * scale;
+  const scaleX = width / rect.w;
+  const scaleY = height / rect.h;
+
+  return (
+    <div
+      className="death-card__void-sprite"
+      style={{
+        width,
+        height,
+        backgroundImage: `url(${VOID_OVERLORD_SHEET_FILE})`,
+        backgroundSize: `${VOID_OVERLORD_SHEET_W * scaleX}px ${VOID_OVERLORD_SHEET_H * scaleY}px`,
+        backgroundPosition: `-${rect.x * scaleX}px -${rect.y * scaleY}px`,
+      }}
+    />
+  );
+}
+
+function KillerSprite({ killer }: { killer: DeathKiller | null }) {
+  if (!killer) {
+    return <AtlasSprite frameName={null} fallbackInitial="?" />;
+  }
+
+  const isVoidOverlordSheetKiller =
+    killer.monsterTypeId === 'void-overlord' ||
+    shouldUseVoidOverlordSheet(killer.monsterTypeId);
+  const scale = killer.isBoss ? 0.35 : 1.5;
+
+  if (isVoidOverlordSheetKiller) {
+    return <VoidOverlordDeathSprite killer={killer} scale={scale} />;
+  }
+
+  return (
+    <AtlasSprite
+      frameName={resolveMonsterFrame(killer.monsterTypeId)}
+      scale={killer.isBoss ? 1.25 : 1.5}
+      fallbackInitial={killer.monsterName}
+    />
+  );
 }
 
 export function DeathOverlay() {
@@ -58,20 +150,13 @@ export function DeathOverlay() {
 
   const killer = getKiller(payload);
   const locationLabel = formatDeathLocation(payload.diedAtNodeId);
-
-  const frameName = killer ? resolveMonsterFrame(killer.monsterTypeId) : null;
-  const spriteScale = killer?.isBoss ? 1.25 : 1.5;
   const causeLabel = formatDeathCauseLabel(payload.cause);
 
   return (
     <div className="death-overlay" role="alert" aria-live="assertive">
       <div className="death-card">
         <div className={`death-card__sprite${killer?.isBoss ? ' death-card__sprite--boss' : ''}`}>
-          <AtlasSprite
-            frameName={frameName}
-            scale={spriteScale}
-            fallbackInitial={killer?.monsterName ?? '?'}
-          />
+          <KillerSprite killer={killer} />
         </div>
 
         <div className="death-card__header">✗ Defeated</div>

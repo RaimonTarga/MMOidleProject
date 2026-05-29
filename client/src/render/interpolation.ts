@@ -3,11 +3,16 @@ import type { RenderState } from './state';
 import type { GameScene } from '../scenes/GameScene';
 import { DEPTH } from './depth';
 
+function spriteDrawY(baseY: number, visualOffsetY?: number): number {
+  return baseY + (visualOffsetY ?? 0);
+}
+
 export function stepInterpolation(state: RenderState, dt: number): void {
   for (const id of state.ids) {
     const transform = state.transform.get(id);
     const interp = state.interpolation.get(id);
     const sprite = state.sprite.get(id);
+    const meta = state.spriteMeta.get(id);
     if (!transform || !interp || !sprite) continue;
 
     const dx = transform.target.x - interp.base.x;
@@ -25,7 +30,8 @@ export function stepInterpolation(state: RenderState, dt: number): void {
 
     const sx = interp.base.x + interp.lungeOffset.x;
     const sy = interp.base.y + interp.lungeOffset.y;
-    sprite.setPosition(sx, sy);
+    const drawY = spriteDrawY(sy, meta?.visualOffsetY);
+    sprite.setPosition(sx, drawY);
     sprite.setDepth(DEPTH.SPRITE + sy);
   }
 }

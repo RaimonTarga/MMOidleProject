@@ -21,6 +21,7 @@ import {
   recordPlayerKillMonster,
 } from '../../../../../../world/worldLogCombat';
 import { actorFromPlayer } from '../../../../../../world/worldLogActors';
+import { isInvulnerableMonster } from '../../../../../combat/invulnerability';
 
 export function updateReloadT3Ticks(world: World, dt: number, now: number): void {
   for (const entity of world.reloadPlayers) {
@@ -90,6 +91,8 @@ function findNearestTarget(world: World, player: PlayerEntity): MonsterEntity | 
 }
 
 function applyLaserTick(world: World, player: PlayerEntity, target: MonsterEntity, now: number): void {
+  if (isInvulnerableMonster(target)) return;
+
   const ctx = makeCombatContext(player, 'player', target, 'monster');
   ctx.metadata['reloadLaser'] = true;
 

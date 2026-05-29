@@ -1,15 +1,19 @@
 import { NODE_BIOMES } from '@mmo-idle/shared';
+import type { BossFelledMarker } from '@mmo-idle/shared';
 import { GRID_COLS, GRID_ROWS, VIEWPORT, tileColor } from './constants';
 import { parseNodeId } from './pathing';
+import { useMapClock } from './useMapClock';
 
 interface OverviewProps {
   viewRow: number; viewCol: number;
   playerNodeId: string | null;
   pathSet: Set<string>;
   destNode: string | null;
+  bossFelledByNode: Record<string, BossFelledMarker>;
 }
 
-export function OverviewMap({ viewRow, viewCol, playerNodeId, pathSet, destNode }: OverviewProps) {
+export function OverviewMap({ viewRow, viewCol, playerNodeId, pathSet, destNode, bossFelledByNode }: OverviewProps) {
+  const mapNow = useMapClock();
   const playerPos = playerNodeId ? parseNodeId(playerNodeId) : null;
   return (
     <div className="map-overview">
@@ -22,6 +26,9 @@ export function OverviewMap({ viewRow, viewCol, playerNodeId, pathSet, destNode 
         const isPlayer = playerPos?.[0] === r && playerPos?.[1] === c;
         const isDest  = id === destNode;
         const isPath  = !isDest && pathSet.has(id);
+        const isFelled =
+          bossFelledByNode[id]?.monsterTypeId === 'void-overlord'
+          && (bossFelledByNode[id]?.respawnAt ?? 0) > mapNow;
         return (
           <div
             key={id}
@@ -30,6 +37,7 @@ export function OverviewMap({ viewRow, viewCol, playerNodeId, pathSet, destNode 
               inView   ? 'map-overview-cell--inview' : '',
               isPlayer ? 'map-overview-cell--player' : '',
               info?.isDungeon ? 'map-overview-cell--dungeon' : '',
+              isFelled ? 'map-overview-cell--felled' : '',
               isPath   ? 'map-overview-cell--path' : '',
               isDest   ? 'map-overview-cell--destination' : '',
             ].filter(Boolean).join(' ')}

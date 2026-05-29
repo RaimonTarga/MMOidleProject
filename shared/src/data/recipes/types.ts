@@ -29,4 +29,11 @@ export interface Recipe {
   description?: string;
   /** Per-item upgrade steps authored alongside the recipe. See UpgradeStep. */
   upgrades?: UpgradeStep[];
+  /**
+   * If set, recipe unlocks only when this token is present in bossesCleared
+   * (e.g. ultimate:void-overlord).
+   */
+  requiredBossClear?: string;
+  /** T4 endgame gear — surfaced in Forge Ultimate filter. */
+  ultimate?: boolean;
 }

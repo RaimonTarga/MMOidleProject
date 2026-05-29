@@ -2,10 +2,13 @@ import { createHash } from 'crypto';
 import { readFileSync, writeFileSync } from 'fs';
 import path from 'path';
 import sharp from 'sharp';
-import type { BetterSQLite3Database } from 'drizzle-orm/better-sqlite3';
-import type { HitboxRect, ShadowDef, ShadowDefsFile } from '@mmo-idle/shared';
-import { replaceAllHitboxes, type HitboxRow } from '../../db/hitboxRepo';
-import type * as schema from '../../db/schema';
+import {
+  buildVoidOverlordAtlasFrames,
+  type HitboxRect,
+  type ShadowDef,
+  type ShadowDefsFile,
+} from '@mmo-idle/shared';
+import type { HitboxRow } from '../../db/hitboxRepo';
 import {
   buildSourceMask,
   greedyRectCover,
@@ -13,39 +16,41 @@ import {
 } from './greedyCover';
 import { computeShadowDef } from './footMetrics';
 
-interface AtlasFrame {
+export interface BakeAtlasFrame {
   filename: string;
-  trimmed: boolean;
   sourceSize: { w: number; h: number };
   spriteSourceSize: { x: number; y: number; w: number; h: number };
   frame: { x: number; y: number; w: number; h: number };
 }
 
 interface AtlasJson {
-  textures: Array<{ frames: AtlasFrame[] }>;
+  textures: Array<{ frames: BakeAtlasFrame[] }>;
 }
 
-type DB = BetterSQLite3Database<typeof schema>;
+export interface BakeResult {
+  rows: HitboxRow[];
+  shadowDefs: Record<string, ShadowDef>;
+}
 
 export function sha256File(filePath: string): string {
   const buf = readFileSync(filePath);
   return createHash('sha256').update(buf).digest('hex');
 }
 
-function writeShadowDefsFile(atlasJsonPath: string, atlasHash: string, frames: Record<string, ShadowDef>): void {
+export function writeShadowDefsFile(
+  atlasJsonPath: string,
+  atlasHash: string,
+  frames: Record<string, ShadowDef>,
+): void {
   const outPath = path.join(path.dirname(atlasJsonPath), 'shadows.json');
   const file: ShadowDefsFile = { atlasHash, frames };
   writeFileSync(outPath, `${JSON.stringify(file, null, 2)}\n`, 'utf8');
 }
 
-export async function bakeSpriteHitboxes(
-  db: DB,
+export async function bakeFramesFromPng(
   atlasPngPath: string,
-  atlasJsonPath: string,
-  atlasHash: string,
-): Promise<number> {
-  const atlasJson = JSON.parse(readFileSync(atlasJsonPath, 'utf8')) as AtlasJson;
-  const frames = atlasJson.textures[0]?.frames ?? [];
+  frames: BakeAtlasFrame[],
+): Promise<BakeResult> {
   const png = sharp(atlasPngPath);
   const { data, info } = await png.ensureAlpha().raw().toBuffer({ resolveWithObject: true });
   const atlasW = info.width;
@@ -93,7 +98,6 @@ export async function bakeSpriteHitboxes(
       sourceSize.h,
     );
 
-    // Fallback: trimmed AABB when greedy finds nothing
     if (hitboxRects.length === 0 && spriteSourceSize.w > 0 && spriteSourceSize.h > 0) {
       const cx = sourceSize.w / 2;
       const cy = sourceSize.h / 2;
@@ -114,8 +118,19 @@ export async function bakeSpriteHitboxes(
     });
   }
 
-  replaceAllHitboxes(db, rows, atlasHash);
-  writeShadowDefsFile(atlasJsonPath, atlasHash, shadowDefs);
-  console.log(`[hitbox] wrote ${Object.keys(shadowDefs).length} frame shadow defs`);
-  return rows.length;
+  return { rows, shadowDefs };
+}
+
+export async function bakeSpriteHitboxes(
+  atlasPngPath: string,
+  atlasJsonPath: string,
+): Promise<BakeResult> {
+  const atlasJson = JSON.parse(readFileSync(atlasJsonPath, 'utf8')) as AtlasJson;
+  const frames = atlasJson.textures[0]?.frames ?? [];
+  return bakeFramesFromPng(atlasPngPath, frames);
+}
+
+export async function bakeVoidOverlordHitboxes(atlasPngPath: string): Promise<BakeResult> {
+  const frames = buildVoidOverlordAtlasFrames();
+  return bakeFramesFromPng(atlasPngPath, frames);
 }

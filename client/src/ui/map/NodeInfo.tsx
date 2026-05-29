@@ -1,9 +1,10 @@
 import { useMemo } from 'react';
 import { useAtomValue } from 'jotai';
 import type { EssenceType, ItemStats } from '@mmo-idle/shared';
-import { NODE_BIOMES, BIOME_DATABASE, MONSTER_DATABASE, RECIPE_DATABASE, ESSENCE_COLORS, biomeLevelCap, biomeXpForLevel, formatNodeCoord, nodeIdToCoord } from '@mmo-idle/shared';
-import { biomeLevelAtom, biomeXPAtom, playerTierAtom } from '../../hud/atoms';
-import { formatStat, hexDot, tileColor } from './constants';
+import { NODE_BIOMES, BIOME_DATABASE, MONSTER_DATABASE, RECIPE_DATABASE, ESSENCE_COLORS, biomeLevelCap, biomeXpForLevel, formatNodeCoord, formatRespawnRemaining, nodeIdToCoord } from '@mmo-idle/shared';
+import { biomeLevelAtom, biomeXPAtom, bossFelledByNodeAtom, playerTierAtom } from '../../hud/atoms';
+import { dungeonBadgeLabel, formatStat, hexDot, tileColor } from './constants';
+import { useMapClock } from './useMapClock';
 
 interface NodeInfoProps { nodeId: string; }
 
@@ -11,6 +12,8 @@ export function NodeInfo({ nodeId }: NodeInfoProps) {
   const playerTier = useAtomValue(playerTierAtom);
   const biomeXPByGroup = useAtomValue(biomeXPAtom);
   const biomeLevelByGroup = useAtomValue(biomeLevelAtom);
+  const bossFelledByNode = useAtomValue(bossFelledByNodeAtom);
+  const mapNow = useMapClock();
   const info  = NODE_BIOMES[nodeId];
   const biome = info ? BIOME_DATABASE.get(info.biomeGroup) : null;
 
@@ -25,6 +28,7 @@ export function NodeInfo({ nodeId }: NodeInfoProps) {
 
   const { biomeGroup, biomeTier } = info;
   const isDungeon   = info.isDungeon === true;
+  const dungeonBadge = dungeonBadgeLabel(info);
   const accentColor = isDungeon ? '#882222' : tileColor(biomeGroup);
 
   const monsterIds = biome.monsterPoolByTier[biomeTier] ?? [];
@@ -32,6 +36,10 @@ export function NodeInfo({ nodeId }: NodeInfoProps) {
 
   const bossIds = isDungeon ? (biome.bossPoolByTier?.[biomeTier] ?? []) : [];
   const bosses  = bossIds.map(id => MONSTER_DATABASE.get(id)).filter((m): m is NonNullable<typeof m> => m !== undefined);
+  const felledMarker = bossFelledByNode[nodeId];
+  const felledBoss = felledMarker && felledMarker.respawnAt > mapNow
+    ? MONSTER_DATABASE.get(felledMarker.monsterTypeId)
+    : undefined;
 
   const biomeXP    = biomeXPByGroup[biomeGroup] ?? 0;
   const biomeLevel = biomeLevelByGroup[biomeGroup] ?? 0;
@@ -50,12 +58,25 @@ export function NodeInfo({ nodeId }: NodeInfoProps) {
         <span className="map-node-info__name">{biome.name}</span>
         <span className="map-node-info__tier">{tierLabel}</span>
         {coord && <span className="map-node-info__coord">{formatNodeCoord(coord)}</span>}
-        {isDungeon && <span className="map-node-info__dungeon-tag">DUNGEON</span>}
+        {dungeonBadge && <span className="map-node-info__dungeon-tag">{dungeonBadge}</span>}
       </div>
 
       {isDungeon && <div className="map-dungeon-warning">Enemies: ×2 HP · ×1.6 ATK</div>}
 
-      {bosses.length > 0 && (
+      {felledMarker && felledMarker.respawnAt > mapNow && felledBoss && (
+        <section className="map-info-section">
+          <div className="map-info-section__title map-info-section__title--boss">Boss</div>
+          <div className="map-boss-felled">
+            <span className="map-boss-felled__tag">[FELLED]</span>
+            <span className="map-boss-felled__name">{felledBoss.name}</span>
+            <span className="map-boss-felled__timer">
+              Respawns in {formatRespawnRemaining(felledMarker.respawnAt, mapNow)}
+            </span>
+          </div>
+        </section>
+      )}
+
+      {!felledMarker && bosses.length > 0 && (
         <section className="map-info-section">
           <div className="map-info-section__title map-info-section__title--boss">Boss</div>
           {bosses.map(m => (

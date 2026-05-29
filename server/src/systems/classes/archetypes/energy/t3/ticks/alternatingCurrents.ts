@@ -10,6 +10,7 @@ import {
   recordPlayerKillMonster,
 } from '../../../../../../world/worldLogCombat';
 import { actorFromPlayer } from '../../../../../../world/worldLogActors';
+import { isInvulnerableMonster } from '../../../../../combat/invulnerability';
 
 interface PendingKill {
   monsterId: string;
@@ -51,7 +52,11 @@ export function updateAlternatingCurrents(world: World, dt: number): void {
       const targetId = player.hasAttackTarget?.targetId;
       if (targetId) {
         const monster = world.getMonsterEntity(targetId);
-        if (monster && monster.hasPosition.nodeId === player.hasPosition.nodeId) {
+        if (
+          monster &&
+          monster.hasPosition.nodeId === player.hasPosition.nodeId &&
+          !isInvulnerableMonster(monster)
+        ) {
           const tickDmg = Math.max(1, Math.round(player.dealsDamage.attack * AC_TICK_DAMAGE_MULT));
           recordMonsterDamagedByPlayer(
             world,

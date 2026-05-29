@@ -53,6 +53,10 @@ export const hudBus = {
     intents.emit('goToTestRoom', undefined);
   },
 
+  requestTeleportToNode(nodeId: string): void {
+    intents.emit('teleportToNode', nodeId);
+  },
+
   requestLeaveTestRoom(): void {
     intents.emit('leaveTestRoom', undefined);
   },
@@ -63,6 +67,10 @@ export const hudBus = {
 
   requestRefreshRecipes(): void {
     intents.emit('refreshRecipes', undefined);
+  },
+
+  requestEquipPhaseTester(): void {
+    intents.emit('equipPhaseTester', undefined);
   },
 
   notifyRecipeUnlock(name: string, biomeGroup: string): void {

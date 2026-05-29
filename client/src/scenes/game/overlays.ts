@@ -1,8 +1,10 @@
-import { BIOME_DATABASE, GAME_CONFIG, NODE_BIOMES, outerReachHalfW, type HitboxRect } from '@mmo-idle/shared';
+import { BIOME_DATABASE, GAME_CONFIG, NODE_BIOMES, NODE_FEATURES, outerReachHalfW, RESOLVED_NODE_FEATURES, type HitboxRect } from '@mmo-idle/shared';
 import { getOwnView } from '../../render/state';
-import { BIOME_TEXTURES } from '../../sprites';
+import { DEPTH } from '../../render/depth';
+import { BIOME_TEXTURES, NODE_DECOR } from '../../sprites';
 import type { GameScene } from './GameScene';
 import { GATE_COLOR, GATE_THICK, getNodeExits, MM_H, MM_PAD, MM_W } from './nodeExits';
+import { isVoidThroneUnblocked } from './voidThrone';
 
 export function createGridBackground(scene: GameScene): void {
   const cell = 64;
@@ -54,6 +56,48 @@ export function updateBiomeBackground(scene: GameScene): void {
   } else {
     scene.bgRect.setVisible(true).setFillStyle(biome.backgroundColor);
     scene.bgGrid.setVisible(true);
+  }
+}
+
+export function updateNodeDecor(scene: GameScene): void {
+  for (const img of scene.nodeDecor) img.destroy();
+  scene.nodeDecor = [];
+
+  const arts = NODE_DECOR[scene.state.ownNodeId];
+  if (!arts) return;
+
+  const nodeId = scene.state.ownNodeId;
+  const throneOpen = isVoidThroneUnblocked(scene);
+  for (const art of arts) {
+    const feature = NODE_FEATURES[nodeId]?.find(f => f.id === art.featureId);
+    const textureKey = throneOpen && art.openKey ? art.openKey : art.key;
+    if (!feature || !scene.textures.exists(textureKey)) continue;
+    const scale = art.artScale ?? 1;
+    const img = scene.add
+      .image(feature.x, feature.y, textureKey)
+      .setOrigin(0.5, 0.5)
+      .setDepth(art.depth ?? DEPTH.BG_DECOR)
+      .setDisplaySize(feature.displayW * scale, feature.displayH * scale);
+    img.setData('featureId', art.featureId);
+    if (art.alpha != null) img.setAlpha(art.alpha);
+    scene.nodeDecor.push(img);
+  }
+}
+
+export function refreshNodeDecorState(scene: GameScene): void {
+  const arts = NODE_DECOR[scene.state.ownNodeId];
+  if (!arts) return;
+
+  const throneOpen = isVoidThroneUnblocked(scene);
+  for (const img of scene.nodeDecor) {
+    const featureId = img.getData('featureId') as string | undefined;
+    const art = arts.find(a => a.featureId === featureId);
+    if (!art) continue;
+    const textureKey = throneOpen && art.openKey ? art.openKey : art.key;
+    if (img.texture.key === textureKey || !scene.textures.exists(textureKey)) continue;
+    const displayW = img.displayWidth;
+    const displayH = img.displayHeight;
+    img.setTexture(textureKey).setDisplaySize(displayW, displayH);
   }
 }
 
@@ -133,6 +177,26 @@ export function drawMinimap(scene: GameScene): void {
 
 const HITBOX_COLOR_ENEMY = 0xff3333;
 const HITBOX_COLOR_PLAYER = 0x44ff88;
+const FEATURE_DEBUG_COLOR = 0xff66cc;
+
+function drawNodeFeatureShapes(
+  scene: GameScene,
+  gfx: Phaser.GameObjects.Graphics,
+): void {
+  const features = RESOLVED_NODE_FEATURES[scene.state.ownNodeId];
+  if (!features) return;
+  gfx.lineStyle(2, FEATURE_DEBUG_COLOR, 0.85);
+  for (const f of features) {
+    const s = f.shape;
+    if (s.kind === 'circle') {
+      gfx.strokeCircle(s.x, s.y, s.radius);
+    } else if (s.kind === 'ellipse') {
+      gfx.strokeEllipse(s.x, s.y, s.halfW * 2, s.halfH * 2);
+    } else {
+      gfx.strokeRect(s.x - s.halfW, s.y - s.halfH, s.halfW * 2, s.halfH * 2);
+    }
+  }
+}
 
 function strokeEntityHitboxes(
   gfx: Phaser.GameObjects.Graphics,
@@ -164,6 +228,8 @@ export function drawTacticalMode(scene: GameScene): void {
   const gfx = scene.debugGraphics;
   gfx.clear();
   scene.state.throttles.debugClearedAt = scene.time.now;
+
+  drawNodeFeatureShapes(scene, gfx);
 
   for (const id of scene.state.ids) {
     if (scene.state.kind.get(id) !== 'monster') continue;

@@ -8,6 +8,7 @@ import {
   recordPlayerKillMonster,
 } from '../../../../../../world/worldLogCombat';
 import { actorFromSourceId } from '../../../../../../world/worldLogActors';
+import { isInvulnerableMonster } from '../../../../../combat/invulnerability';
 
 export function updateHemorrhages(world: World, dt: number): void {
   const toKill: Array<{ monsterId: string; sourceId: string }> = [];
@@ -15,6 +16,7 @@ export function updateHemorrhages(world: World, dt: number): void {
   for (const entity of world.hemorrhagedMonsters) {
     const monsterId = entity.isMonster.id;
     const state     = entity.tracksCombat;
+    if (isInvulnerableMonster(entity)) continue;
     const bleeds = getStatusEffects(state, 'cadence-hemorrhage');
     if (bleeds.length === 0) continue;
 

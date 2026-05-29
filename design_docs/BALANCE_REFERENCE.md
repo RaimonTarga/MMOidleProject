@@ -768,7 +768,7 @@ T2 monsters are meaningfully stronger than T1. Biomes introduce second monster v
 |---|---|---|---|---|---|---|---|---|---|
 | Stampede Bull | 110 | **24** | 4 | 0% | 65 | 1900ms | 60 | 230 | High damage |
 | Prairie Wolf | 80 | 18 | 2 | 0% | 78 | 1700ms | 60 | 260 | Fast |
-| **Plains Overlord** (boss) | **2000** | **64** | **20** | **8%** | **46** | **2700ms** | **70** | **320** | |
+| **Plains Tyrant** (boss) | **2000** | **64** | **20** | **8%** | **46** | **2700ms** | **70** | **320** | |
 
 ### Swamp T2
 | Monster | HP | ATK | PLT | DR | SPD | CD | Range | Pull | Notes |
@@ -844,7 +844,7 @@ All T3 mobs drop `level: 2` essence rewards (compared to T1/T2 `level: 1`).
 |---|---|---|---|---|---|---|---|---|
 | Cave Behemoth | 750 | 42 | 22 | 7% | 16 | 4000ms | 65 | 140 |
 | Venom Queen | 360 | 60 | 8 | 0% | 80 | 1800ms | 62 | 240 |
-| **Cave Overlord** (boss) | **4800** | **96** | **48** | **15%** | **16** | **5000ms** | **82** | **330** |
+| **Cave Dread** (boss) | **4800** | **96** | **48** | **15%** | **16** | **5000ms** | **82** | **330** |
 
 ### Jungle T3
 | Monster | HP | ATK | PLT | DR | SPD | CD | Range | Pull |

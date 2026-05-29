@@ -18,10 +18,7 @@ import {
 } from "./labels";
 import { ensureHpBar, destroyHpBar } from "./healthBars";
 import { ensureCdBar, destroyCdBar } from "./cooldownBars";
-import {
-  GRAVE_DISPLAY_H,
-  GRAVE_LABEL_OFFSET_Y,
-} from "../sprites";
+import { GRAVE_DISPLAY_H, GRAVE_LABEL_OFFSET_Y } from "../sprites";
 import { applyLunge } from "./interpolation";
 import { spawnAttackEffect } from "./combatFx";
 import { getDotPath } from "../fx/dot";

@@ -36,6 +36,13 @@
       "when": 1779662000000,
       "tag": "0004_drop_node_states",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1779663000000,
+      "tag": "0005_world_state",
+      "breakpoints": true
     }
   ]
 }

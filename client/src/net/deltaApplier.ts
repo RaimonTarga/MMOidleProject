@@ -1,4 +1,4 @@
-import type { DeltaSnapshot, NetworkedEntity, PlayerView } from "@mmo-idle/shared";
+import type { DeltaSnapshot, MonsterView, NetworkedEntity, PlayerView } from "@mmo-idle/shared";
 import {
   composeMinionView,
   composeMonsterView,
@@ -8,7 +8,7 @@ import {
 import { loadGameplaySettings } from '../settings/gameplaySettings';
 import { sendSetAutoTraverse } from './intents';
 import { hudBus } from "../hudBus";
-import { syncPlayerAtoms, nodeLoadingAtom, setZonePlayers, type ZonePlayer } from "../hud/atoms";
+import { syncPlayerAtoms, nodeLoadingAtom, setZoneBoss, setZonePlayers, type ZonePlayer } from "../hud/atoms";
 import { getDefaultStore } from "jotai";
 import type { GameScene } from "../scenes/GameScene";
 import type { RenderState } from "../render/state";
@@ -19,6 +19,9 @@ import { destroyEntity } from "../render/destroy";
 import { getOwnView } from "../render/state";
 import { dispatchCombatEvent } from "../render/combatFx";
 import { notifyDeltaAppliedDuringTabResync } from "../fx/guard";
+import { refreshNodeDecorState } from "../scenes/game/overlays";
+import { setVoidThroneHazardLifted } from "../scenes/game/voidThrone";
+import { syncVoidOverlordRespawn } from "../render/voidOverlordTomb";
 
 export function applyDelta(
   state: RenderState,
@@ -46,6 +49,12 @@ export function applyDelta(
       state.ids.add(delta.netId);
       state.kind.set(delta.netId, delta.entityKind);
       liveIds.add(delta.netId);
+      if (
+        delta.entityKind === "monster" &&
+        delta.components?.isMonster?.monsterTypeId === "void-overlord"
+      ) {
+        setVoidThroneHazardLifted(scene, false);
+      }
     } else {
       entity = state.entity.get(delta.netId) ?? {};
       state.entity.set(delta.netId, entity);
@@ -66,7 +75,17 @@ export function applyDelta(
   // Events fire before removes: sprites still exist so reward/hit FX can read positions
   for (const ev of snapshot.events) dispatchCombatEvent(state, ev, scene);
 
-  for (const netId of pendingRemoves) destroyEntity(state, netId, scene);
+  for (const netId of pendingRemoves) {
+    const entity = state.entity.get(netId);
+    if (entity?.isMonster?.monsterTypeId === "void-overlord") {
+      setVoidThroneHazardLifted(scene, true);
+    }
+    destroyEntity(state, netId, scene);
+  }
+  syncVoidOverlordRespawn(state, snapshot.voidOverlordRespawn, scene);
+  if (snapshot.voidOverlordRespawn) {
+    setVoidThroneHazardLifted(scene, true);
+  }
 
   if (snapshot.full) {
     for (const id of [...state.ids]) {
@@ -108,6 +127,23 @@ export function applyDelta(
     }
     zonePlayers.sort((a, b) => a.name.localeCompare(b.name));
     setZonePlayers(zonePlayers);
+
+    let zoneBoss = null;
+    for (const id of state.ids) {
+      if (state.kind.get(id) !== "monster") continue;
+      const m = state.view.get(id) as MonsterView | undefined;
+      if (!m || m.nodeId !== own.nodeId || !m.ultimateStatus) continue;
+      zoneBoss = {
+        id: m.id,
+        name: m.name,
+        hp: m.hp,
+        maxHp: m.maxHp,
+        status: m.ultimateStatus,
+      };
+      break;
+    }
+    setZoneBoss(zoneBoss);
+    refreshNodeDecorState(scene);
 
     if (!state.gameplaySettingsSynced) {
       sendSetAutoTraverse(scene.socket, loadGameplaySettings().autoTraverseEnabled);

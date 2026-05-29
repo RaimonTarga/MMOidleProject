@@ -10,8 +10,10 @@ import {
   sendLeaveTestRoom,
   sendNavigateTo,
   sendRefreshRecipes,
+  sendEquipPhaseTester,
   sendResetProgress,
   sendSetAutoTraverse,
+  sendTeleportToNode,
   sendUnequip,
   sendUnlockSkill,
   sendUpgradeItem,
@@ -75,6 +77,10 @@ export function attachHudEvents(scene: GameScene): void {
     sendGoToTestRoom(scene.socket);
   });
 
+  intents.on("teleportToNode", (nodeId) => {
+    sendTeleportToNode(scene.socket, nodeId);
+  });
+
   intents.on("leaveTestRoom", () => {
     sendLeaveTestRoom(scene.socket);
   });
@@ -85,6 +91,11 @@ export function attachHudEvents(scene: GameScene): void {
 
   intents.on("refreshRecipes", () => {
     sendRefreshRecipes(scene.socket);
+  });
+
+  intents.on("equipPhaseTester", () => {
+    if (isDeathOverlayActive()) return;
+    sendEquipPhaseTester(scene.socket);
   });
 
   intents.on("joinParty", (targetPlayerId) => {

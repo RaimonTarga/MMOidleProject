@@ -15,7 +15,8 @@ type MarkerKey =
   | "hasFrozen"
   | "hasSmolder"
   | "hasEntropy"
-  | "hasAshbrandBurn";
+  | "hasAshbrandBurn"
+  | "hasVoidCorruption";
 
 export function attachComponent<K extends keyof ServerEntity>(
   world: World,

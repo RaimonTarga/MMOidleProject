@@ -10,6 +10,7 @@ import type { World } from "../../world/World";
 export function buildKillerFromMonster(m: MonsterEntity): DeathKiller {
   const def = MONSTER_DATABASE.get(m.isMonster.monsterTypeId);
   return {
+    monsterEntityId: m.isMonster.id,
     monsterTypeId: m.isMonster.monsterTypeId,
     monsterName: m.isMonster.name,
     isBoss: def?.isBoss ?? m.isMonster.isBoss ?? false,
@@ -22,9 +23,11 @@ export function buildKillerFromStoredStrings(
   name: string | undefined,
   nodeId: string,
   isBoss: boolean,
+  entityId?: string,
 ): DeathKiller | undefined {
   if (!typeId || !name) return undefined;
   return {
+    monsterEntityId: entityId,
     monsterTypeId: typeId,
     monsterName: name,
     isBoss,
@@ -74,5 +77,6 @@ export function readDebtKillerFromStrings(
     strings["debtSourceName"],
     strings["debtSourceNodeId"] ?? fallbackNodeId,
     strings["debtSourceIsBoss"] === "1",
+    strings["debtSourceEntityId"],
   );
 }

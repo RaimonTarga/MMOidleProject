@@ -49,17 +49,15 @@ export function upgradeItem(
       essences: entity.tracksProgression.essences,
     });
     if (!check.ok) return fail(check.reason ?? 'Cannot upgrade.');
-  } else if (!def.biomeGroup) {
-    return fail('This item cannot be upgraded.');
   } else if (current >= getMaxUpgrade(def)) {
     return fail('Already at maximum upgrade.');
   }
 
   const targetPlus = current + 1;
   const cost = upgradeCostFor(def, targetPlus);
-  if (!cost) return fail('This item cannot be upgraded.');
+  if (!cost && !isTestRoom) return fail('This item cannot be upgraded.');
 
-  if (!isTestRoom) {
+  if (!isTestRoom && cost) {
     for (const [type, amount] of Object.entries(cost)) {
       entity.tracksProgression.essences[type as EssenceType] =
         (entity.tracksProgression.essences[type as EssenceType] ?? 0) - (amount ?? 0);

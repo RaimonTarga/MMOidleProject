@@ -13,6 +13,8 @@ import type {
   ShieldState,
   SubVariant,
   SummonSlotView,
+  UltimateStatus,
+  BossFelledMarker,
 } from '@mmo-idle/shared';
 
 export type HudConnectionStatus = 'connecting' | 'connected' | 'disconnected';
@@ -124,6 +126,7 @@ export const inventoryAtom = atom<string[]>([]);
 export const equipmentAtom = atom<EquipmentMap>({ ...DEFAULT_EQUIPMENT });
 export const itemUpgradesAtom = atom<Record<string, number>>({});
 export const unlockedRecipesAtom = atom<string[]>([]);
+export const bossesClearedAtom = atom<string[]>([]);
 export const biomeLevelAtom = atom<Record<string, number>>({});
 export const biomeXPAtom = atom<Record<string, number>>({});
 export const questProgressAtom = atom<Record<string, number>>({});
@@ -141,6 +144,20 @@ export interface ZonePlayer {
 }
 /** Players in the local player's current zone (for the party panel). */
 export const zonePlayersAtom = atom<ZonePlayer[]>([]);
+
+/** One ultimate boss per node — first engaged match wins. See deltaApplier scan. */
+export interface ZoneBoss {
+  id: string;
+  name: string;
+  hp: number;
+  maxHp: number;
+  status: UltimateStatus;
+}
+export const zoneBossAtom = atom<ZoneBoss | null>(null);
+
+/** Slain bosses awaiting respawn, keyed by node id (world map). */
+export const bossFelledByNodeAtom = atom<Record<string, BossFelledMarker>>({});
+
 /** The local player's party (null when not in a party). */
 export const partyAtom = atom<{ leaderId: string; members: PartyMember[] } | null>(null);
 
@@ -263,6 +280,54 @@ export function setZonePlayers(next: ZonePlayer[]): void {
   store.set(zonePlayersAtom, next);
 }
 
+function zoneBossEqual(a: ZoneBoss | null, b: ZoneBoss | null): boolean {
+  if (a === b) return true;
+  if (!a || !b) return false;
+  if (
+    a.id !== b.id ||
+    a.name !== b.name ||
+    a.hp !== b.hp ||
+    a.maxHp !== b.maxHp
+  ) {
+    return false;
+  }
+  const sa = a.status;
+  const sb = b.status;
+  if (
+    sa.stageLabel !== sb.stageLabel ||
+    sa.stageIndex !== sb.stageIndex ||
+    sa.stageCount !== sb.stageCount ||
+    sa.invulnerable !== sb.invulnerable
+  ) {
+    return false;
+  }
+  const oa = sa.objective;
+  const ob = sb.objective;
+  if (oa?.headline !== ob?.headline || oa?.detail !== ob?.detail ||
+      oa?.current !== ob?.current || oa?.total !== ob?.total) {
+    return false;
+  }
+  const ha = sa.hazard;
+  const hb = sb.hazard;
+  if (ha?.effectId !== hb?.effectId || ha?.dmgPerTick !== hb?.dmgPerTick ||
+      ha?.tickMs !== hb?.tickMs || ha?.hint !== hb?.hint) {
+    return false;
+  }
+  return true;
+}
+
+export function setZoneBoss(next: ZoneBoss | null): void {
+  const store = getDefaultStore();
+  if (zoneBossEqual(store.get(zoneBossAtom), next)) return;
+  store.set(zoneBossAtom, next);
+}
+
+export function setBossFelledMarkers(markers: BossFelledMarker[]): void {
+  const next: Record<string, BossFelledMarker> = {};
+  for (const marker of markers) next[marker.nodeId] = marker;
+  getDefaultStore().set(bossFelledByNodeAtom, next);
+}
+
 function partyEqual(
   a: { leaderId: string; members: PartyMember[] } | null,
   b: { leaderId: string; members: PartyMember[] } | null,
@@ -371,6 +436,7 @@ function resetPlayerAtoms(): void {
   setIfShallowArrayEqual(unlockedSkillsAtom, []);
   setIfShallowArrayEqual(inventoryAtom, []);
   setIfShallowArrayEqual(unlockedRecipesAtom, []);
+  setIfShallowArrayEqual(bossesClearedAtom, []);
   setIfShallowArrayEqual(activeBuffsAtom, []);
   setIfShallowObjectEqual(passivesAtom, {});
   setIfShallowObjectEqual(equipmentAtom, { ...DEFAULT_EQUIPMENT });
@@ -382,6 +448,8 @@ function resetPlayerAtoms(): void {
   setAutoPath(null);
   setParty(null);
   setZonePlayers([]);
+  setZoneBoss(null);
+  setBossFelledMarkers([]);
   store.set(nodeLoadingAtom, { active: false, nodeId: null });
   store.set(tabResyncAtom, { active: false, startedAt: null });
   store.set(deathOverlayAtom, { active: false, payload: null, startedAt: null });
@@ -454,6 +522,7 @@ export function syncPlayerAtoms(player: PlayerView | null): void {
   setIfShallowArrayEqual(unlockedSkillsAtom, player.unlockedSkills);
   setIfShallowArrayEqual(inventoryAtom, player.inventory);
   setIfShallowArrayEqual(unlockedRecipesAtom, player.unlockedRecipes);
+  setIfShallowArrayEqual(bossesClearedAtom, player.bossesCleared);
   setIfBuffsEqual(activeBuffsAtom, player.activeBuffs);
   setIfShallowObjectEqual(passivesAtom, player.passives);
   setIfShallowObjectEqual(equipmentAtom, player.equipment);

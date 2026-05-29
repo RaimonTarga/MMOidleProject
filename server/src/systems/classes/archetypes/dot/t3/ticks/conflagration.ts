@@ -9,6 +9,7 @@ import {
   recordPlayerKillMonster,
 } from '../../../../../../world/worldLogCombat';
 import { actorFromSourceId } from '../../../../../../world/worldLogActors';
+import { isInvulnerableMonster } from '../../../../../combat/invulnerability';
 
 /**
  * Conflagration fast-tick DoT. Independent of the normal DoT updater —
@@ -21,6 +22,7 @@ export function updateConflagration(world: World, dt: number): void {
   for (const entity of world.conflagrationMonsters) {
     const monsterId    = entity.isMonster.id;
     const monsterState = entity.tracksCombat;
+    if (isInvulnerableMonster(entity)) continue;
     const effect = getStatusEffect(monsterState, CONF_EFFECT_ID);
     if (!effect) {
       detachMarkerIfNoEffect(world, entity, 'hasConflagration', monsterState, CONF_EFFECT_ID);

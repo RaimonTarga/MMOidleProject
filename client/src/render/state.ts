@@ -4,6 +4,7 @@ import type {
   PlayerView,
   MonsterView,
   MinionView,
+  VoidOverlordRespawnState,
   Vec2,
 } from "@mmo-idle/shared";
 
@@ -34,7 +35,9 @@ export interface RenderState {
 
   sprite: Map<
     NetworkId,
-    Phaser.GameObjects.Image | Phaser.GameObjects.Rectangle
+    | Phaser.GameObjects.Image
+    | Phaser.GameObjects.Rectangle
+    | Phaser.GameObjects.Sprite
   >;
   shadow: Map<NetworkId, Phaser.GameObjects.Ellipse>;
   label: Map<NetworkId, Phaser.GameObjects.Text>;
@@ -73,6 +76,12 @@ export interface RenderState {
       monsterBehavior?: string;
       monsterIsRanged?: boolean;
       isOwn?: boolean;
+      /** Skip atlas frame refresh on patch (void-overlord sheet sprites). */
+      skipFrameRefresh?: boolean;
+      /** True when sprite is a Phaser Sprite with a running animation. */
+      isAnimated?: boolean;
+      /** Client-only render nudge (negative Y = up). Logical pos unchanged. */
+      visualOffsetY?: number;
     }
   >;
 
@@ -90,6 +99,15 @@ export interface RenderState {
     targetId: string | null;
     until: number;
   };
+  voidOverlordRespawn: {
+    payload: VoidOverlordRespawnState;
+    deadlineMs: number;
+    sprite: Phaser.GameObjects.Image | Phaser.GameObjects.Rectangle;
+    label: Phaser.GameObjects.Text;
+    lastText: string;
+  } | null;
+  /** True after the Void Overlord dies until a new one spawns (client prediction). */
+  voidThroneHazardLifted: boolean;
   movementEffectNextAt: Map<string, number>;
   knownUnlockedRecipes: Set<string>;
   knownUnlockedRecipesInitialized: boolean;
@@ -127,6 +145,8 @@ export function createRenderState(): RenderState {
       targetId: null,
       until: 0,
     },
+    voidOverlordRespawn: null,
+    voidThroneHazardLifted: false,
     movementEffectNextAt: new Map(),
     knownUnlockedRecipes: new Set(),
     knownUnlockedRecipesInitialized: false,

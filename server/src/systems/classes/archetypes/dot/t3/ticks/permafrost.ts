@@ -11,6 +11,7 @@ import {
   recordPlayerKillMonster,
 } from '../../../../../../world/worldLogCombat';
 import { actorFromPlayer } from '../../../../../../world/worldLogActors';
+import { isInvulnerableMonster } from '../../../../../combat/invulnerability';
 
 /**
  * Permafrost tick. Walks every monster with the `hasDot` marker, but only
@@ -25,6 +26,7 @@ export function updatePermafrost(world: World, dt: number): void {
   for (const entity of world.dottedMonsters) {
     const monsterId    = entity.isMonster.id;
     const monsterState = entity.tracksCombat;
+    if (isInvulnerableMonster(entity)) continue;
     const effect = getStatusEffect(monsterState, DOT_EFFECT_ID);
     if (!effect || !effect.data.t3Perm) {
       if (!effect?.data.t3Perm) detachMarkerIfNoEffect(world, entity, 'hasDot', monsterState, DOT_EFFECT_ID);

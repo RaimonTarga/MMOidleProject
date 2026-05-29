@@ -61,6 +61,10 @@ export function sendGoToTestRoom(socket: GameSocket): void {
   socket.emit('debug:goToTestRoom');
 }
 
+export function sendTeleportToNode(socket: GameSocket, nodeId: string): void {
+  socket.emit('debug:teleportToNode', nodeId);
+}
+
 export function sendLeaveTestRoom(socket: GameSocket): void {
   socket.emit('debug:leaveTestRoom');
 }
@@ -71,4 +75,8 @@ export function sendResetProgress(socket: GameSocket): void {
 
 export function sendRefreshRecipes(socket: GameSocket): void {
   socket.emit('debug:refreshRecipes');
+}
+
+export function sendEquipPhaseTester(socket: GameSocket): void {
+  socket.emit('debug:equipPhaseTester');
 }

@@ -13,6 +13,13 @@ export function freezeNode(world: World, nodeId: string): void {
   world.nextMonsterIdByNode.delete(nodeId);
   world.reconcileMonsterCounts();
 
+  for (const key of [...world.nodeFeatureSpawnState.keys()]) {
+    if (key.startsWith(`${nodeId}:`)) world.nodeFeatureSpawnState.delete(key);
+  }
+  for (const key of [...world.suppressedFeatureBlocks]) {
+    if (key.startsWith(`${nodeId}:`)) world.suppressedFeatureBlocks.delete(key);
+  }
+
   world.frozenNodes.add(nodeId);
   world.resetNodeDeltaState(nodeId);
   world.clearNodeEvents(nodeId);

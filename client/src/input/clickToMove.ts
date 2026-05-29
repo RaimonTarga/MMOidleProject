@@ -3,7 +3,7 @@ import { isDeathOverlayActive } from '../hud/atoms';
 import { sendCommandSummons, sendMove } from '../net/intents';
 import type { GameScene } from '../scenes/GameScene';
 import { cancelAutoPath, setAutoMode } from './autoPath';
-import { isHoldStill } from './movement';
+import { clampOwnMoveTarget, isHoldStill } from './movement';
 
 function isSummoner(player: PlayerView | undefined): boolean {
   return player?.combatArchetype === 'summoner' && (player.summonsMinions ?? 0) > 0;
@@ -41,7 +41,7 @@ export function attachClickToMove(scene: GameScene): void {
 
     const transform = scene.state.ownId ? scene.state.transform.get(scene.state.ownId) : undefined;
     if (transform) {
-      transform.target = dest;
+      transform.target = clampOwnMoveTarget(scene, dest);
     }
 
     showTargetMarker(scene, dest);

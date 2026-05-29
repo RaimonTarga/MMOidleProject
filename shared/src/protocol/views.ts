@@ -1,5 +1,5 @@
 import type { EquipmentMap, EssenceType } from "../items";
-import type { PartyMember } from "../components";
+import type { PartyMember, UltimateStatus } from "../components";
 import type { PassiveMap } from "../passives";
 import { isRangedCombatant, type SubVariant } from "../skillTree";
 import type { BuffId, PlayerBuff } from "../components/combat/buffs";
@@ -173,6 +173,8 @@ export interface MonsterView {
   activeEffects?: Record<string, number>;
   activeEffectFrames?: Record<string, number>;
   bossEffects?: string[];
+  ultimateStatus?: UltimateStatus;
+  throneHealing?: boolean;
   hitboxRects: HitboxRect[];
 }
 
@@ -353,6 +355,8 @@ export function composeMonsterView(
     activeEffects: entity.hasStatus?.activeEffects,
     activeEffectFrames: entity.hasStatus?.activeEffectFrames,
     bossEffects: entity.hasStatus?.bossEffects,
+    ultimateStatus: entity.hasStatus?.ultimateStatus,
+    throneHealing: entity.hasStatus?.throneHealing,
     hitboxRects: entity.hasHitbox?.rects ?? [FALLBACK_MONSTER_AABB],
   };
 }

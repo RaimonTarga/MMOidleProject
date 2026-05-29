@@ -14,6 +14,7 @@ import {
   recordPlayerDamaged,
 } from "../../../world/worldLogCombat";
 import { recordWorldLogEvent } from "../../../world/worldLog";
+import { isInvulnerableMonster, isInvulnerablePlayer } from "../invulnerability";
 
 /**
  * Apply splash AoE damage from a player to all monsters within radius of a
@@ -35,6 +36,7 @@ export function applyPlayerAoe(
 
   for (const monster of world.monsterEntitiesInNode(attackerNodeId)) {
     if (monster.isMonster.id === excludeId) continue;
+    if (isInvulnerableMonster(monster)) continue;
 
     if (distanceSq(monster.hasPosition.current, center) > radiusSq) continue;
 
@@ -103,6 +105,7 @@ export function applyMonsterAoe(
 
   for (const player of world.livePlayersInNode(attackerNodeId)) {
     if (player.isPlayer.id === excludeId) continue;
+    if (isInvulnerablePlayer(player)) continue;
 
     if (distanceSq(player.hasPosition.current, center) > radiusSq) continue;
 

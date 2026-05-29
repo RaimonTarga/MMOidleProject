@@ -5,7 +5,7 @@ import { getPartyMemberIds } from '../systems/player/party/partySystem';
 export const WORLD_LOG_JOURNAL_MAX = 2000;
 
 export type WorldLogRecordOpts = {
-  visibility: 'combat' | 'node' | 'death';
+  visibility: 'combat' | 'node' | 'death' | 'global';
   relatedPlayerIds: string[];
   nodeId: string;
 };
@@ -66,6 +66,12 @@ function resolveWorldLogRecipients(
     opts.visibility === 'combat'
   ) {
     for (const p of world.livePlayersInNode(opts.nodeId)) {
+      out.add(p.isPlayer.id);
+    }
+  }
+
+  if (opts.visibility === 'global') {
+    for (const p of world.playerEntities) {
       out.add(p.isPlayer.id);
     }
   }

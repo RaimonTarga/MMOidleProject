@@ -99,7 +99,7 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
     },
     bossPoolByTier: {
       1: ['plains-champion'],
-      2: ['plains-overlord'],
+      2: ['plains-tyrant'],
       3: ['plains-warlord'],
       4: ['stampede-emperor'],
     },
@@ -142,7 +142,7 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
     bossPoolByTier: {
       1: ['cave-sentinel'],
       2: ['cave-terror'],
-      3: ['cave-overlord'],
+      3: ['cave-dread'],
       4: ['cave-titan'],
     },
     essenceType: 'essence',
@@ -241,7 +241,7 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
       4: ['void-horror', 'abyssal-titan'],
     },
     bossPoolByTier: {
-      4: ['void-titan'],
+      4: ['void-overlord', 'void-titan'],
     },
     essenceType: 'essence',
     mobDensity: 5,

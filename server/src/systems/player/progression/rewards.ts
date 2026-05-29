@@ -1,4 +1,4 @@
-import { NODE_BIOMES, MONSTER_DATABASE, RECIPE_DATABASE, GAME_CONFIG, biomeLevelCap, biomeXpForLevel, bossClearKey, BIOME_DATABASE } from '@mmo-idle/shared';
+import { NODE_BIOMES, MONSTER_DATABASE, RECIPE_DATABASE, GAME_CONFIG, biomeLevelCap, biomeXpForLevel, bossClearKey, BIOME_DATABASE, ULTIMATE_CLEAR_VOID_OVERLORD } from '@mmo-idle/shared';
 import type { EssenceType } from '@mmo-idle/shared';
 import type { MonsterEntity, PlayerEntity } from '../../../ecs/entity';
 import type { World } from '../../../world/World';
@@ -6,6 +6,7 @@ import { markSliceDirty } from '../../../ecs/dirtyHelpers';
 import { registerKillForQuests } from './questSystem';
 import { recordWorldLogEvent } from '../../../world/worldLog';
 import { actorFromPlayer } from '../../../world/worldLogActors';
+import { notifyVoidOverlordDeath } from '../../combat/ai/ultimateEncounter';
 
 export interface KillRewards {
   essence: number;
@@ -15,6 +16,8 @@ export interface KillRewards {
 }
 
 const FALLBACK_REWARDS: KillRewards = { essence: 1, essenceType: 'green', level: 1 };
+const DEFAULT_BOSS_RESPAWN_MS = 30_000;
+const VOID_OVERLORD_RESPAWN_MS = 5 * 60_000;
 
 export interface KillRewardInfo {
   essenceGained: number;
@@ -34,6 +37,33 @@ export function rewardPlayer(entity: PlayerEntity, rewards: KillRewards): void {
 function fallbackBiomeXp(rewards: KillRewards, biomeTier: number): number {
   const mult = GAME_CONFIG.BIOME_XP_ESSENCE_MULT[biomeTier] ?? 1;
   return Math.max(1, Math.round(rewards.essence * mult));
+}
+
+function scheduleBossRespawn(world: World, monster: MonsterEntity): void {
+  const durationMs =
+    monster.isMonster.monsterTypeId === 'void-overlord'
+      ? VOID_OVERLORD_RESPAWN_MS
+      : DEFAULT_BOSS_RESPAWN_MS;
+  const respawnAt = Date.now() + durationMs;
+  const nodeId = monster.hasPosition.nodeId;
+
+  const marker = {
+    monsterTypeId: monster.isMonster.monsterTypeId,
+    pos: { ...monster.hasPosition.current },
+    respawnAt,
+    durationMs,
+  };
+  world.bossRespawnAt.set(nodeId, respawnAt);
+  world.bossRespawnMarkers.set(nodeId, marker);
+
+  if (monster.isMonster.monsterTypeId === 'void-overlord') {
+    world.suppressedFeatureBlocks.add(`${nodeId}:abyssal_throne`);
+    // The overlord cooldown is global and long (5 min); persist it so it is
+    // remembered across node despawn (freeze/thaw) and server restarts.
+    world.overlordRespawnPersist?.({ nodeId, ...marker });
+  }
+
+  world.broadcastBossFelledState();
 }
 
 interface BiomeXpResult {
@@ -100,6 +130,10 @@ function applyBiomeXP(
 
 export function checkRecipeUnlocks(entity: PlayerEntity, biomeGroup?: string, newLevel?: number): void {
   for (const recipe of RECIPE_DATABASE.values()) {
+    if (recipe.requiredBossClear &&
+        !entity.tracksProgression.bossesCleared.includes(recipe.requiredBossClear)) {
+      continue;
+    }
     const level = newLevel ?? entity.tracksProgression.biomeLevel[recipe.recipeGroup] ?? 0;
     if (biomeGroup !== undefined && recipe.recipeGroup !== biomeGroup) continue;
     if (recipe.requiredBiomeLevel > level) continue;
@@ -146,8 +180,8 @@ function applyKillRewardsToPlayer(
     );
     world.pendingAscensions.push(recipient.isPlayer.id);
   }
-  if (monster.isMonster.isBoss) {
-    world.bossRespawnAt.set(monster.hasPosition.nodeId, Date.now() + 30_000);
+  if (monster.isMonster.isBoss && !monster.isEncounterAdd) {
+    scheduleBossRespawn(world, monster);
     const info = NODE_BIOMES[monster.hasPosition.nodeId];
     if (info) {
       const key = bossClearKey(info.biomeGroup, info.biomeTier);
@@ -156,7 +190,15 @@ function applyKillRewardsToPlayer(
         markSliceDirty(world, recipient, 'tracksProgression');
       }
     }
+    if (monster.isMonster.monsterTypeId === 'void-overlord') {
+      const token = ULTIMATE_CLEAR_VOID_OVERLORD;
+      if (!recipient.tracksProgression.bossesCleared.includes(token)) {
+        recipient.tracksProgression.bossesCleared.push(token);
+        markSliceDirty(world, recipient, 'tracksProgression');
+      }
+    }
   }
+  checkRecipeUnlocks(recipient);
   return {
     essenceGained: rewards.essence,
     essenceType: rewards.essenceType,
@@ -174,6 +216,10 @@ export function grantMonsterRewards(
   if (!killer) return null;
 
   const killerInfo = applyKillRewardsToPlayer(world, killer, monster);
+
+  if (monster.isMonster.monsterTypeId === 'void-overlord') {
+    notifyVoidOverlordDeath(world, monster, killerPlayerId);
+  }
 
   const party = killer.inParty;
   if (party) {

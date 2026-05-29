@@ -19,7 +19,10 @@ import type {
   HasAggroTarget,
   HasEntropy,
   HasEmpoweredAttack,
+  HasEnvironmentalDot,
+  HasNodeFeatureEffect,
   HasAshbrandBurn,
+  HasVoidCorruption,
   HasAlignment,
   HasAttackTarget,
   IsDead,
@@ -33,13 +36,19 @@ import type {
   InParty,
   IsBossEngaged,
   IsChanneling,
+  IsEncounterAdd,
+  IsNodeFeatureSpawn,
+  IsInvulnerable,
   IsMinion,
   IsMonster,
   IsMoving,
   IsPlayer,
+  IsRooted,
+  IsUltimateEngaged,
   MitigatesDamage,
   PerformsAttack,
   ScriptsBoss,
+  ScriptsUltimate,
   ShowsSacred,
   SummonsMinions,
   TracksCombat,
@@ -94,6 +103,7 @@ export interface ServerEntity {
   hasPosition?: HasPosition;
   hasHitbox?: HasHitbox;
   isMoving?: IsMoving;
+  isRooted?: IsRooted;
   hasAttackTarget?: HasAttackTarget;
   cannotAttack?: CannotAttack;
   hasHealth?: HasHealth;
@@ -125,6 +135,8 @@ export interface ServerEntity {
   inAcChargePhase?: InAcChargePhase;
   inAcDischarge?: InAcDischarge;
   hasEmpoweredAttack?: HasEmpoweredAttack;
+  hasEnvironmentalDot?: HasEnvironmentalDot;
+  hasNodeFeatureEffect?: HasNodeFeatureEffect;
   isDead?: IsDead;
 
   // Monster-only slices
@@ -148,8 +160,14 @@ export interface ServerEntity {
   hasSmolder?: HasSmolder;
   hasEntropy?: HasEntropy;
   hasAshbrandBurn?: HasAshbrandBurn;
+  hasVoidCorruption?: HasVoidCorruption;
   scriptsBoss?: ScriptsBoss;
+  scriptsUltimate?: ScriptsUltimate;
   isBossEngaged?: IsBossEngaged;
+  isEncounterAdd?: IsEncounterAdd;
+  isNodeFeatureSpawn?: IsNodeFeatureSpawn;
+  isInvulnerable?: IsInvulnerable;
+  isUltimateEngaged?: IsUltimateEngaged;
 
   // ── Player (S8) ───────────────────────────────────────────────
   tracksEngagement?: number;

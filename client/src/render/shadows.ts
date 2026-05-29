@@ -74,8 +74,6 @@ export function drawShadows(state: RenderState): void {
     const meta = state.spriteMeta.get(id);
     if (!sprite || !shadow || !interp || !meta) continue;
 
-    const sx = interp.base.x + interp.lungeOffset.x;
-    const sy = interp.base.y + interp.lungeOffset.y;
     const def = getShadowDef(meta.currentFrame);
 
     let shadowW: number;
@@ -98,10 +96,12 @@ export function drawShadows(state: RenderState): void {
       shadowH = Math.max(shadowH, PLAYER_MIN_SHADOW_H);
     }
 
+    // Sprite position includes client visualOffsetY; place shadow at visual feet.
+    const footY = sprite.y + footPx;
     shadow.setSize(shadowW, shadowH);
     shadow.setScale(1);
-    shadow.setPosition(sx, sy + footPx);
-    shadow.setDepth(DEPTH.SHADOW + sy);
+    shadow.setPosition(sprite.x, footY);
+    shadow.setDepth(DEPTH.SHADOW + footY);
   }
 }
 
