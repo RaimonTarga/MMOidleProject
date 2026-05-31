@@ -54,6 +54,29 @@ export const deathOverlayAtom = atom<{
   startedAt: null,
 });
 
+export type EmoteWheelDirection = 'up' | 'down' | 'left' | 'right';
+
+export const emoteWheelAtom = atom<{
+  visible: boolean;
+  highlight: EmoteWheelDirection | null;
+}>({
+  visible: false,
+  highlight: null,
+});
+
+let emoteWheelHideTimer: ReturnType<typeof setTimeout> | null = null;
+
+/** Briefly show the emote wheel HUD after an arrow-key press. */
+export function flashEmoteWheel(highlight: EmoteWheelDirection): void {
+  const store = getDefaultStore();
+  store.set(emoteWheelAtom, { visible: true, highlight });
+  if (emoteWheelHideTimer) clearTimeout(emoteWheelHideTimer);
+  emoteWheelHideTimer = setTimeout(() => {
+    store.set(emoteWheelAtom, { visible: false, highlight: null });
+    emoteWheelHideTimer = null;
+  }, 650);
+}
+
 export const playerIdAtom = atom<string | null>(null);
 export const playerNameAtom = atom<string | null>(null);
 export const playerNodeIdAtom = atom<string | null>(null);

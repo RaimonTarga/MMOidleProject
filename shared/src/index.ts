@@ -38,5 +38,6 @@ export * from './world/nodeBiomes';
 export * from './world/nodeFeatures';
 export * from './quests/questDatabase';
 export * from './config/gameConfig';
+export * from './emotes';
 export * from './ultimate/hazardDisplay';
 export * from './ultimate/gear';

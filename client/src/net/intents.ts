@@ -64,6 +64,10 @@ export function sendAckDeath(socket: GameSocket): void {
   socket.emit('player:ackDeath');
 }
 
+export function sendEmote(socket: GameSocket, emoteId: string): void {
+  socket.emit('player:emote', emoteId);
+}
+
 export function sendGoToTestRoom(socket: GameSocket): void {
   socket.emit('debug:goToTestRoom');
 }

@@ -97,6 +97,11 @@ export const hudBus = {
     intents.emit('leaveParty', undefined);
   },
 
+  /** Play an emote by id (arrow-key wheel). */
+  requestEmote(emoteId: string): void {
+    intents.emit('emote', emoteId);
+  },
+
   /** Toggle tactical mode (ranges + hitboxes). */
   toggleTacticalView(): void {
     intents.emit('tacticalView', undefined);

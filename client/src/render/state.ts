@@ -70,7 +70,11 @@ export interface RenderState {
     NetworkId,
     {
       container: Phaser.GameObjects.Container;
-      icon: Phaser.GameObjects.Image | Phaser.GameObjects.Text | null;
+      icon:
+        | Phaser.GameObjects.Image
+        | Phaser.GameObjects.Sprite
+        | Phaser.GameObjects.Text
+        | null;
       signature: string | null;
       visible: boolean;
     }

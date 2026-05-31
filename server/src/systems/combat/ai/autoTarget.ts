@@ -2,6 +2,7 @@ import type { World } from "../../../world/World";
 import type { MonsterEntity, PlayerEntity } from "../../../ecs/entity";
 import {
   approachPoint,
+  GAME_CONFIG,
   getFlag,
   hitboxGap,
   inAttackRange,
@@ -45,6 +46,12 @@ function clampToNode(world: World, nodeId: string, pos: Vec2): Vec2 {
   };
 }
 
+function isReloadPlayerInCombat(player: PlayerEntity, now: number): boolean {
+  if (player.hasAttackTarget !== undefined) return true;
+  const last = player.tracksEngagement;
+  return last !== undefined && now - last < GAME_CONFIG.COMBAT_REGEN_DELAY;
+}
+
 export function updateAutoTargets(world: World, now: number) {
   for (const player of world.livePlayers) {
     if (!player.usesAutocombat.auto) continue;
@@ -76,7 +83,7 @@ export function updateAutoTargets(world: World, now: number) {
       beginFlee(world, player);
       stepFlee(world, player);
     } else if (action.kind === "attack") {
-      steerTowardTarget(world, player, action.target);
+      steerTowardTarget(world, player, action.target, now);
     }
   }
 }
@@ -84,25 +91,28 @@ export function updateAutoTargets(world: World, now: number) {
 /**
  * Move `player` into attacking position against `target`, matching the auto-combat
  * approach rules: ranged players kite to an ideal gap; melee players close to
- * contact; a reloading player with no aggro on it holds still. Shared by
- * `updateAutoTargets` (its chosen priority target) and party follow (the
+ * contact; an OOC-reloading player with no aggro on the target holds still.
+ * In-combat reloads keep closing on the selected target so node clears don't stall.
+ * Shared by `updateAutoTargets` (its chosen priority target) and party follow (the
  * leader's target) so followers approach identically to solo auto-combat.
  */
 export function steerTowardTarget(
   world: World,
   player: PlayerEntity,
   target: MonsterEntity,
+  now: number,
 ): void {
   const targetIsAggroed =
     target.hasAggroTarget?.targetKind === "player" &&
     target.hasAggroTarget.targetId === player.isPlayer.id;
 
-  // Reload OOC hold: while the clip is reloading and no enemy has aggroed, stay put.
-  // If something aggros the player (targetIsAggroed), fall through to normal movement.
+  // Reload OOC hold: partial-clip reload while out of combat — stay put until
+  // something aggros. In combat, keep pathing toward the auto target between clips.
   if (
     player.usesReload &&
     player.usesReload.reloadingMs > 0 &&
-    !targetIsAggroed
+    !targetIsAggroed &&
+    !isReloadPlayerInCombat(player, now)
   ) {
     setFlag(player.tracksCombat, AUTO_FIRING_FLAG, false);
     stopEntity(world, player);

@@ -24,6 +24,16 @@ export const THOUGHT_MASK_KEY = "thought_bubble_mask";
 export const THOUGHT_BUBBLE_FILE = "/assets/emotes/thoughts/thought.png";
 export const THOUGHT_MASK_FILE = "/assets/emotes/thoughts/thought_mask.png";
 
+/** Texture key for a player emote spritesheet (rendered inside the thought bubble). */
+export function emoteTextureKey(emoteId: string): string {
+  return `emote_${emoteId}`;
+}
+
+/** Phaser animation key for a player emote loop. */
+export function emoteAnimKey(emoteId: string): string {
+  return `emote-anim-${emoteId}`;
+}
+
 export {
   MONSTER_FRAMES,
   PLAYER_FRAMES,

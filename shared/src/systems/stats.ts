@@ -194,7 +194,7 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
 
   // 3b. Reload archetype final multiplier
   if (p.usesSkills.combatArchetype === 'reload') {
-    p.dealsDamage.attack = Math.max(1, Math.floor(p.dealsDamage.attack * 0.5));
+    p.dealsDamage.attack = Math.max(1, Math.floor(p.dealsDamage.attack * 0.57));
     p.performsAttack.attackCooldown = Math.max(200, Math.round(p.performsAttack.attackCooldown * 0.5));
     if ((p.usesSkills.passives['reload.gatling'] ?? 0) > 0) {
       p.performsAttack.attackCooldown = Math.max(100, Math.round(p.performsAttack.attackCooldown * 0.5));

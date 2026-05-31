@@ -26,6 +26,7 @@ import type {
   HasAlignment,
   HasAttackTarget,
   HasAutoIntent,
+  HasEmote,
   IsDead,
   HasOverdrive,
   HasPosition,
@@ -125,6 +126,7 @@ export interface ServerEntity {
   holdsShields?: HoldsShields;
   usesAutocombat?: UsesAutocombat;
   hasAutoIntent?: HasAutoIntent;
+  hasEmote?: HasEmote;
   tracksProgression?: TracksProgression;
   holdsInventory?: HoldsInventory;
   usesSkills?: UsesSkills;

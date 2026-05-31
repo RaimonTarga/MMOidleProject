@@ -72,7 +72,8 @@ export const rootsAndFramesEntries = [
     classId: 'reload-root', subVariantId: null,
     parent: null, children: [],
     description: 'Unleash a rapid clip then reload. Your speed is doubled and damage per shot halved as a fundamental multiplier — fights from range naturally and weaves around incoming blows.',
-    cost: 1, statEffects: { attack: 4, maxHp: 20, attackSpeedPct: 0.15, attackRange: 120, evasion: 10, speed: 15 },
+    cost: 1, statEffects: { attack: 18, maxHp: 24, attackSpeedPct: 0.20, attackRange: 120, evasion: 10, speed: 15 },
+    mechanicEffects: { 'reload.max-ammo': 10, 'reload.reload-time-ms': 1400, 'reload.acquire-radius-mult': 2.5 } as Record<string, number>,
   }],
 
 
@@ -241,8 +242,8 @@ export const rootsAndFramesEntries = [
     classId: 'reload-root', subVariantId: 'light',
     parent: 'reload-root', children: [],
     description: 'All-in on mobility. Small clip (5 rounds), 1.5 s reload, and extra dodge chance — maximum uptime, minimum profile to hit.',
-    cost: 1, statEffects: { attack: 6, speed: 18, maxHp: -18, attackSpeedPct: 0.15, evasion: 5 },
-    mechanicEffects: { 'reload.max-ammo': 5, 'reload.reload-time-ms': 1500 } as Record<string, number>,
+    cost: 1, statEffects: { attack: 10, speed: 18, maxHp: -14, attackSpeedPct: 0.18, evasion: 5 },
+    mechanicEffects: { 'reload.max-ammo': 5, 'reload.reload-time-ms': 1200 } as Record<string, number>,
   }],
 
   ['reload-balanced', {
@@ -250,8 +251,8 @@ export const rootsAndFramesEntries = [
     classId: 'reload-root', subVariantId: 'balanced',
     parent: 'reload-root', children: [],
     description: 'A steady burst fighter. Standard 8-round clip, 2.5 s reload, modest avoidance — tempo and staying power in balance.',
-    cost: 1, statEffects: { attack: 9, maxHp: 10, speed: 6, hpRegen: 2, evasion: 3 },
-    mechanicEffects: { 'reload.max-ammo': 10, 'reload.reload-time-ms': 2500 } as Record<string, number>,
+    cost: 1, statEffects: { attack: 12, maxHp: 14, speed: 6, hpRegen: 2, evasion: 3 },
+    mechanicEffects: { 'reload.max-ammo': 10, 'reload.reload-time-ms': 2000 } as Record<string, number>,
   }],
 
   ['reload-heavy', {
@@ -259,8 +260,8 @@ export const rootsAndFramesEntries = [
     classId: 'reload-root', subVariantId: 'heavy',
     parent: 'reload-root', children: [],
     description: 'Slower but harder to put down. Large 12-round clip for sustained bursting, but reloading takes 4 s — plan your downtime.',
-    cost: 1, statEffects: { attack: 12, maxHp: 32, plating: 5, hpRegen: 4, speed: -12, attackSpeedPct: -0.10 },
-    mechanicEffects: { 'reload.max-ammo': 20, 'reload.reload-time-ms': 4000 } as Record<string, number>,
+    cost: 1, statEffects: { attack: 16, maxHp: 36, plating: 6, hpRegen: 4, speed: -10, attackSpeedPct: -0.05 },
+    mechanicEffects: { 'reload.max-ammo': 14, 'reload.reload-time-ms': 3000 } as Record<string, number>,
   }],
 
 
@@ -315,6 +316,6 @@ export const rootsAndFramesEntries = [
     classId: null, subVariantId: null,
     parent: null, children: [],
     description: 'Strike from a substantial distance. Major range extension at the cost of raw damage and attack speed — opponents may not even reach you.',
-    cost: 1, statEffects: { attackRange: 120, attack: -8, attackSpeedPct: -0.20 },
+    cost: 1, statEffects: { attackRange: 120, attack: -5, attackSpeedPct: -0.15 },
   }],
 ] satisfies [string, SkillNode][];

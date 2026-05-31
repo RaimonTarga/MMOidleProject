@@ -30,17 +30,8 @@ const T3_CHOICES = ['a', 'b', 'c'] as const;
 
 const GEAR_SLOTS: GearSlot[] = ['weapon', 'armor', 'recovery', 'mobility'];
 
-/** Reload T3 and cooldown heavy T3 have no server logic yet. */
+/** Cooldown heavy T3 has no server logic yet. Reload T3 is fully implemented. */
 export const UNIMPLEMENTED_T3_IDS = new Set<string>([
-  'reload-light-t3-a',
-  'reload-light-t3-b',
-  'reload-light-t3-c',
-  'reload-balanced-t3-a',
-  'reload-balanced-t3-b',
-  'reload-balanced-t3-c',
-  'reload-heavy-t3-a',
-  'reload-heavy-t3-b',
-  'reload-heavy-t3-c',
   'cooldown-heavy-t3-a',
   'cooldown-heavy-t3-b',
   'cooldown-heavy-t3-c',

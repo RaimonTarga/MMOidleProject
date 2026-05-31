@@ -56,6 +56,7 @@ export function killPlayer(
   resetTracksCombat(entity.tracksCombat);
 
   detachComponent(world, entity, "hasAutoIntent");
+  detachComponent(world, entity, "hasEmote");
   detachComponent(world, entity, "holdsShields");
   detachComponent(world, entity, "tracksEngagement");
   detachComponent(world, entity, "hasEmpoweredAttack");

@@ -1,4 +1,4 @@
-import { GAME_CONFIG, TEST_ROOM_NODE_ID, getStatusEffect, hitboxGap, inAttackRange, posHitboxFromEntity, type UsesReload } from '@mmo-idle/shared';
+import { GAME_CONFIG, TEST_ROOM_NODE_ID, hitboxGap, inAttackRange, posHitboxFromEntity, type UsesReload } from '@mmo-idle/shared';
 import type { World } from '../../../../../../world/World';
 import type { MonsterEntity, PlayerEntity } from '../../../../../../ecs/entity';
 import {
@@ -22,6 +22,7 @@ import {
 } from '../../../../../../world/worldLogCombat';
 import { actorFromPlayer } from '../../../../../../world/worldLogActors';
 import { isInvulnerableMonster } from '../../../../../combat/invulnerability';
+import { effectivePlatingAfterShred } from '../../../../../combat/damage/effectivePlating';
 
 export function updateReloadT3Ticks(world: World, dt: number, now: number): void {
   for (const entity of world.reloadPlayers) {
@@ -99,9 +100,9 @@ function applyLaserTick(world: World, player: PlayerEntity, target: MonsterEntit
   emitCombatEvent('onAttack', ctx, world);
 
   const monsterCombatState = target.tracksCombat;
-  const shredEffect = getStatusEffect(monsterCombatState, 'plating-shred');
-  const effectivePlating = Math.max(0,
-    target.mitigatesDamage.plating - (shredEffect ? shredEffect.stacks * shredEffect.data['platingReduction'] : 0),
+  const effectivePlating = effectivePlatingAfterShred(
+    target.mitigatesDamage.plating,
+    monsterCombatState,
   );
   const damagePct = player.usesSkills.passives['reload.laser-damage-per-tick-pct'] ?? DEFAULT_LASER_DAMAGE_PER_TICK_PCT;
   const rawLaserDamage = Math.max(1, player.dealsDamage.attack * damagePct);

@@ -1,5 +1,5 @@
 import type { EquipmentMap, EssenceType } from "../items";
-import type { HasAutoIntent, PartyMember, UltimateStatus } from "../components";
+import type { HasAutoIntent, HasEmote, PartyMember, UltimateStatus } from "../components";
 import type { PassiveMap } from "../passives";
 import { isRangedCombatant, type SubVariant } from "../skillTree";
 import type { BuffId, PlayerBuff } from "../components/combat/buffs";
@@ -49,6 +49,8 @@ export interface PlayerView {
   autoTraverse: boolean;
   /** Telegraphed next auto-combat action; null when auto-combat is off. */
   autoIntent: HasAutoIntent | null;
+  /** Active emote; null when none is playing. */
+  emote: HasEmote | null;
   partyLeaderId: string | null;
   partyMembers: PartyMember[];
   nodeId: string;
@@ -246,6 +248,7 @@ export function composePlayerView(entity: NetworkedEntity): PlayerView | null {
     auto: entity.usesAutocombat?.auto ?? false,
     autoTraverse: entity.usesAutocombat?.autoTraverse ?? false,
     autoIntent: entity.hasAutoIntent ?? null,
+    emote: entity.hasEmote ?? null,
     partyLeaderId: entity.inParty?.leaderId ?? null,
     partyMembers: entity.inParty?.members ?? [],
     nodeId: entity.hasPosition.nodeId,

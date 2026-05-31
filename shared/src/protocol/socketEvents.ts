@@ -72,6 +72,8 @@ export interface ClientToServerEvents {
   "party:leave": () => void;
   /** Acknowledge death overlay — triggers respawn at the clearing. */
   "player:ackDeath": () => void;
+  /** Play an emote by id (validated against EMOTE_IDS). */
+  "player:emote": (emoteId: string) => void;
   /** Dev-only: teleport the player to the debug test room. Server ignores in production. */
   "debug:goToTestRoom": () => void;
   /** Dev-only: teleport the player directly to a world-map node. Server ignores in production. */
