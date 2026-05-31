@@ -36,8 +36,10 @@ export interface PlayerView {
   onHitDamage: number;
   plating: number;
   damageReduction: number;
-  evasion: number;
-  evasionCount: number;
+  /** Deterministic per-hit dodge rate (0..<1). */
+  dodgeRate: number;
+  /** Fraction of damage avoided on an evaded hit (0..1; 1 = full avoid). */
+  evadeMitigation: number;
   shields: ShieldState[];
   attackRange: number;
   attackCooldown: number;
@@ -232,8 +234,8 @@ export function composePlayerView(entity: NetworkedEntity): PlayerView | null {
     onHitDamage: damage.onHitDamage,
     plating: mitigation.plating,
     damageReduction: mitigation.damageReduction,
-    evasion: entity.evadesHits?.threshold ?? 0,
-    evasionCount: entity.evadesHits?.count ?? 0,
+    dodgeRate: entity.evadesHits?.dodgeRate ?? 0,
+    evadeMitigation: entity.evadesHits?.evadeMitigation ?? 0,
     shields: entity.holdsShields?.shields ?? [],
     attackRange: attack.attackRange,
     attackCooldown: attack.attackCooldown,

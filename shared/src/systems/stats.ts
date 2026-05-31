@@ -15,6 +15,25 @@ import { upgradeMechanicEffectsTotal, upgradeStatBonusTotal } from './itemUpgrad
 import { GAME_CONFIG } from '../index';
 import { mergePassives } from '../passives';
 
+/**
+ * Map a raw evasion rating (Σ 1/N across all evasion sources) to a deterministic
+ * per-hit dodge rate. Fully deterministic — the returned value drives a
+ * fractional accumulator, never an RNG roll.
+ *
+ * Below `EVASION_SOFT_CAP` the rate is linear (unchanged low end). Above it,
+ * diminishing returns asymptotically approach `EVASION_MAX_DODGE` so dodge
+ * frequency can exceed 1/2 (2-in-3, 3-in-4, …) but never reaches 100% — full
+ * avoidance is the job of the evade-mitigation multiplier, not frequency.
+ */
+export function evasionDodgeRate(raw: number): number {
+  if (raw <= 0) return 0;
+  const { EVASION_SOFT_CAP, EVASION_MAX_DODGE, EVASION_DR_K } = GAME_CONFIG;
+  if (raw <= EVASION_SOFT_CAP) return raw;
+  const excess = raw - EVASION_SOFT_CAP;
+  return EVASION_MAX_DODGE
+    - (EVASION_MAX_DODGE - EVASION_SOFT_CAP) / (1 + excess * EVASION_DR_K);
+}
+
 /** Slice record consumed by `recalculatePlayerStats`. */
 export interface PlayerStatsTarget {
   dealsDamage:     DealsDamage;
@@ -44,7 +63,7 @@ function applyStatModToTarget(p: PlayerStatsTarget, stat: string, value: number)
     case 'onHitDamage':     p.dealsDamage.onHitDamage     += value; break;
     case 'plating':         p.mitigatesDamage.plating     += value; break;
     case 'damageReduction': p.mitigatesDamage.damageReduction += value; break;
-    // evasion is accumulated as probability — handled separately in recalculatePlayerStats
+    // evasion is accumulated as a dodge rating — handled separately in recalculatePlayerStats
     case 'evasion': break;
     case 'attackRange':     p.performsAttack.attackRange  += value; break;
     case 'attackCooldown':  p.performsAttack.attackCooldown += value; break;
@@ -74,7 +93,8 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
   p.dealsDamage.onHitDamage     = 0;
   p.mitigatesDamage.plating     = GAME_CONFIG.PLAYER_PLATING;
   p.mitigatesDamage.damageReduction = 0;
-  p.evadesHits.threshold        = 0;
+  p.evadesHits.dodgeRate        = 0;
+  p.evadesHits.evadeMitigation  = 0;
   p.performsAttack.attackRange  = GAME_CONFIG.PLAYER_ATTACK_RANGE;
   p.performsAttack.attackCooldown = GAME_CONFIG.PLAYER_ATTACK_COOLDOWN;
   p.hasHealth.maxHp             = GAME_CONFIG.PLAYER_MAX_HP;
@@ -90,8 +110,8 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
 
   // 2. Apply unlocked skill effects
   let attackSpeedPct = 0;
-  // Evasion sources are combined as independent dodge probabilities: sum of 1/N per source.
-  // Converted to a threshold at the end: threshold = round(1 / totalChance).
+  // Evasion sources combine into a raw dodge rating: sum of 1/N per source.
+  // Converted to a deterministic per-hit dodge rate at the end via evasionDodgeRate().
   let evasionChance = 0;
   p.usesSkills.passives = {};
   for (const skillId of p.usesSkills.unlockedSkills) {
@@ -161,10 +181,17 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
   // Re-clamp damage reduction: equipment + upgrades are applied after the step-2 clamp.
   p.mitigatesDamage.damageReduction = Math.min(0.9, Math.max(0, p.mitigatesDamage.damageReduction));
 
-  // Convert accumulated evasion probability to a 1-in-N threshold.
-  p.evadesHits.threshold = evasionChance > 0
-    ? Math.max(1, Math.round(1 / Math.min(1, evasionChance)))
-    : 0;
+  // Convert accumulated evasion rating to a deterministic per-hit dodge rate
+  // (diminishing returns past the soft cap), plus the evade-mitigation multiplier.
+  const dodgeRate = evasionDodgeRate(evasionChance);
+  if (dodgeRate > 0) {
+    p.evadesHits.dodgeRate = dodgeRate;
+    p.evadesHits.evadeMitigation = Math.min(1, Math.max(0,
+      GAME_CONFIG.EVADE_MITIGATION_BASE + (p.usesSkills.passives['defense.evade-mitigation'] ?? 0)));
+  } else {
+    p.evadesHits.dodgeRate = 0;
+    p.evadesHits.evadeMitigation = 0;
+  }
 
   // 3b. Reload archetype final multiplier
   if (p.usesSkills.combatArchetype === 'reload') {

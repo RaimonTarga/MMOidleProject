@@ -1,3 +1,4 @@
+import { GAME_CONFIG } from '@mmo-idle/shared';
 import { detachComponent } from '../../../../../../ecs/markerHelpers';
 import { markSliceDirty } from '../../../../../../ecs/dirtyHelpers';
 import type { PlayerEntity } from '../../../../../../ecs/entity';
@@ -15,7 +16,7 @@ function hasFlashRamp(player: PlayerEntity): boolean {
   const energy = player.usesEnergy;
   if (!energy) return false;
   return energy.flashBaseAttackCooldown > 0 ||
-    energy.flashBaseEvasionThreshold > 0 ||
+    energy.flashBaseDodgeRate > 0 ||
     energy.flashBaseMoveSpeed > 0 ||
     energy.flashSpeedBonusPct > 0 ||
     energy.flashEvasionBonusPct > 0 ||
@@ -30,8 +31,8 @@ export function resetFlashSpeed(world: World, player: PlayerEntity): void {
     player.performsAttack.attackCooldown = energy.flashBaseAttackCooldown;
     markSliceDirty(world, player, 'performsAttack');
   }
-  if (energy.flashBaseEvasionThreshold > 0 && player.evadesHits) {
-    player.evadesHits.threshold = energy.flashBaseEvasionThreshold;
+  if (energy.flashBaseDodgeRate > 0 && player.evadesHits) {
+    player.evadesHits.dodgeRate = energy.flashBaseDodgeRate;
     markSliceDirty(world, player, 'evadesHits');
   }
   if (energy.flashBaseMoveSpeed > 0) {
@@ -41,7 +42,7 @@ export function resetFlashSpeed(world: World, player: PlayerEntity): void {
 
   energy.energy = 0;
   energy.flashBaseAttackCooldown = 0;
-  energy.flashBaseEvasionThreshold = 0;
+  energy.flashBaseDodgeRate = 0;
   energy.flashBaseMoveSpeed = 0;
   energy.flashSpeedBonusPct = 0;
   energy.flashEvasionBonusPct = 0;
@@ -70,10 +71,11 @@ function applyFlashShiftStats(world: World, player: PlayerEntity): void {
     );
     markSliceDirty(world, player, 'performsAttack');
   }
-  if (energy.flashBaseEvasionThreshold > 0 && player.evadesHits) {
-    player.evadesHits.threshold = Math.max(
-      1,
-      Math.round(energy.flashBaseEvasionThreshold * (1 - energy.flashEvasionBonusPct)),
+  if (energy.flashBaseDodgeRate > 0 && player.evadesHits) {
+    // Red Shift adds dodge rate additively (deterministic), capped at the global ceiling.
+    player.evadesHits.dodgeRate = Math.min(
+      GAME_CONFIG.EVASION_MAX_DODGE,
+      energy.flashBaseDodgeRate + energy.flashEvasionBonusPct,
     );
     markSliceDirty(world, player, 'evadesHits');
   }
@@ -108,8 +110,8 @@ export function applyFlashSpeedGain(world: World, player: PlayerEntity): void {
   if (energy.flashBaseAttackCooldown <= 0) {
     energy.flashBaseAttackCooldown = player.performsAttack.attackCooldown;
   }
-  if (energy.flashBaseEvasionThreshold <= 0 && player.evadesHits) {
-    energy.flashBaseEvasionThreshold = player.evadesHits.threshold;
+  if (energy.flashBaseDodgeRate <= 0 && player.evadesHits) {
+    energy.flashBaseDodgeRate = player.evadesHits.dodgeRate;
   }
   if (energy.flashBaseMoveSpeed <= 0) {
     energy.flashBaseMoveSpeed = player.hasPosition.speed;

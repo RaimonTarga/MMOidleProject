@@ -26,6 +26,7 @@ import { resolveMonsterHitbox } from "../../../hitbox/resolve";
 import { thawNode } from "../../../world/nodeLifecycle";
 import { despawnMinionsForOwner } from "../../classes/archetypes/summoner";
 import { resetNodeFeatureRuntimeState } from "../nodeFeatures";
+import { resetEvadeAccumulator } from "../../defense/mitigation/evasion";
 import { applyDormantUltimateBoss } from "../../combat/ai/ultimateEncounter";
 
 // Regular monsters in dungeon nodes are scaled up; boss stats come from the database directly.
@@ -218,7 +219,7 @@ export function respawnPlayer(world: World, playerId: string): void {
   syncArchetypeSlices(world, entity);
   entity.hasHealth.hp = entity.hasHealth.maxHp;
 
-  if (entity.evadesHits) entity.evadesHits.count = 0;
+  resetEvadeAccumulator(entity); // reset deterministic dodge accumulator on respawn
   detachComponent(world, entity, "holdsShields");
   detachComponent(world, entity, "tracksEngagement");
   detachComponent(world, entity, "hasEmpoweredAttack");

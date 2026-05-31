@@ -23,6 +23,9 @@ export const DEFENSE_KEYS = [
   'defense.cleanse-stacks',
   'defense.cleanse-interval-ms',
   'defense.max-hit-pct',
+  // Additive bonus (0..1) to the fraction of damage avoided on an evade, on top
+  // of GAME_CONFIG.EVADE_MITIGATION_BASE. Final value is clamped to [0,1].
+  'defense.evade-mitigation',
 ] as const;
 
 export const CADENCE_KEYS = [
@@ -114,6 +117,8 @@ export const DOT_KEYS = [
 
 export const SHARED_KEYS = [
   'shared.empowered-mult-add',
+  // 1 = this attacker's debuffs/DoT stacks still land on an evaded hit (pierce evade).
+  'shared.applies-through-evade',
 ] as const;
 
 export const SUMMONER_KEYS = [

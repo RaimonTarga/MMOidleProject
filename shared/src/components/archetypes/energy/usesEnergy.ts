@@ -6,7 +6,7 @@ export interface UsesEnergy {
   smChargePool: number;
   seInitialized: boolean;
   flashBaseAttackCooldown: number;
-  flashBaseEvasionThreshold: number;
+  flashBaseDodgeRate: number;
   flashBaseMoveSpeed: number;
   flashSpeedBonusPct: number;
   flashEvasionBonusPct: number;
@@ -20,7 +20,7 @@ export function initUsesEnergy(): UsesEnergy {
     smChargePool:  0,
     seInitialized: false,
     flashBaseAttackCooldown: 0,
-    flashBaseEvasionThreshold: 0,
+    flashBaseDodgeRate: 0,
     flashBaseMoveSpeed: 0,
     flashSpeedBonusPct:     0,
     flashEvasionBonusPct:   0,

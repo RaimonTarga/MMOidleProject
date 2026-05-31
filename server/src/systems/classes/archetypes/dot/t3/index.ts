@@ -26,6 +26,7 @@ import { updatePermafrost } from './ticks/permafrost';
 import { updateConflagration } from './ticks/conflagration';
 import { updateChillAndFreeze } from './ticks/chillFreeze';
 import { mirrorDotT3PlayerSlices, mirrorStatusEffectsToClient } from './core/mirroring';
+import { evadeBlocksDebuffs } from '../../../../defense/mitigation/evasion';
 
 /**
  * Register all DoT T3 combat pipeline listeners.
@@ -41,6 +42,7 @@ export function initDotT3(): void {
   registerCombatListener('onHit', (ctx, world) => {
     if (ctx.attackerType !== 'player') return;
     if (ctx.defenderType !== 'monster') return;
+    if (evadeBlocksDebuffs(ctx)) return; // dodged hit applies no DoT/chill/freeze stacks
 
     const player = ctx.attacker;
     if (!player.appliesDots) return;

@@ -19,6 +19,7 @@ import {
   detachMarkerIfNoEffect,
 } from "../../../../ecs/markerHelpers";
 import { canApplyPlayerDebuff } from "../summoner/t3/core/debuffGuard";
+import { evadeBlocksDebuffs } from "../../../defense/mitigation/evasion";
 import { buildKillerFromSourceId } from "../../../world/deathCause";
 import {
   buildSimpleBreakdown,
@@ -252,6 +253,7 @@ export function initDotArchetype(): void {
     if (ctx.attackerType !== "player") return;
     if (ctx.defenderType !== "monster") return;
     if (ctx.metadata["dotHandled"]) return;
+    if (evadeBlocksDebuffs(ctx)) return; // dodged hit applies no DoT stacks
 
     // Query by component presence, not by combatArchetype string.
     const attacker = ctx.attacker;

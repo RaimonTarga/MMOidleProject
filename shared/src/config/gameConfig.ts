@@ -38,6 +38,29 @@ export const GAME_CONFIG = {
   /** Minimum pixel distance between two monsters at spawn time */
   MONSTER_MIN_SPAWN_DIST: 120,
 
+  // ── Evasion (fully deterministic — fractional accumulator, no RNG) ─────────────
+  /**
+   * Baseline fraction of a hit's damage avoided when it is evaded (0.5 = half).
+   * Classes/items push this toward 1.0 (full avoid) via `defense.evade-mitigation`;
+   * monsters may override it per-definition with `evadeMitigation`.
+   */
+  EVADE_MITIGATION_BASE: 0.5,
+  /**
+   * Raw dodge rate (Σ 1/N across evasion sources) at or below which dodge
+   * frequency stays linear/unchanged. Above it, diminishing returns kick in.
+   */
+  EVASION_SOFT_CAP: 0.5,
+  /** Asymptotic ceiling on dodge rate — full avoidance comes from the mitigation lever, not frequency. */
+  EVASION_MAX_DODGE: 0.85,
+  /** Diminishing-returns steepness past the soft cap. Higher = approaches the ceiling faster. */
+  EVASION_DR_K: 2.0,
+  /**
+   * Value the deterministic dodge accumulator is reset to while a player is out
+   * of combat. 0 = first in-combat hit starts a fresh dodge count. Raise toward
+   * 1.0 to "preload" a guaranteed dodge on the first hit of an engagement.
+   */
+  EVADE_OOC_RESET: 0,
+
   // ── AoE splash ────────────────────────────────────────────────────────────────
   /** Pixel radius of the empowered-attack splash, centered on the primary target. */
   EMPOWERED_AOE_RADIUS: 80,

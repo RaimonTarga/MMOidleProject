@@ -17,6 +17,7 @@ import { getAntiHealMult } from "../../defense";
 import { applyPlayerAoe } from "../damage/aoeDamage";
 import { isMonsterFrozen } from "../../classes/archetypes/dot/t3";
 import { canApplyPlayerDebuff } from "../../classes/archetypes/summoner/t3/core/debuffGuard";
+import { evadeBlocksDebuffs } from "../../defense/mitigation/evasion";
 import { isMonsterStunned } from "../status/stun";
 import { setAggroTarget, setAttackTarget } from "../ai/targeting";
 import { markEngaged } from "../ai/engagement";
@@ -86,13 +87,26 @@ export function runPlayerAttack(
 
   emitCombatEvent("onAttack", ctx, world);
 
-  const evadeEvery = MONSTER_DATABASE.get(
-    target.isMonster.monsterTypeId,
-  )?.evadeEvery;
+  // Deterministic monster evasion (NO RNG): a fractional accumulator on the
+  // monster sums a per-hit dodge rate of 1/evadeEvery; when it crosses 1.0 the
+  // hit is dodged. The dodge reduces damage by `evadeMitigation` (default 0.5)
+  // rather than fully negating it, and suppresses the player's debuffs/DoT unless
+  // the player's attack pierces evade. A full-avoid (mitigation ≥ 1) short-circuits
+  // to the legacy zero-damage path.
+  const monsterDef = MONSTER_DATABASE.get(target.isMonster.monsterTypeId);
+  const evadeEvery = monsterDef?.evadeEvery;
+  let evaded = false;
+  let evadeMult = 0;
   if (evadeEvery !== undefined && evadeEvery >= 5) {
-    const hitsTaken = getCounter(target.tracksCombat, "hitsTaken") + 1;
-    setCounter(target.tracksCombat, "hitsTaken", hitsTaken);
-    if (hitsTaken % evadeEvery === 0) {
+    const acc = getCounter(target.tracksCombat, "evadeAcc") + 1 / evadeEvery;
+    if (acc >= 1) {
+      setCounter(target.tracksCombat, "evadeAcc", acc - 1);
+      evaded = true;
+      evadeMult = monsterDef?.evadeMitigation ?? GAME_CONFIG.EVADE_MITIGATION_BASE;
+      if ((player.usesSkills.passives["shared.applies-through-evade"] ?? 0) <= 0) {
+        ctx.metadata["evadeBlocksDebuffs"] = true;
+      }
+      ctx.metadata["evaded"] = true;
       world.pushEvent(player.hasPosition.nodeId, {
         kind: "monster-dodge",
         monsterId: target.isMonster.id,
@@ -112,7 +126,10 @@ export function runPlayerAttack(
           nodeId: player.hasPosition.nodeId,
         },
       );
-      return "dodged";
+      // Full avoidance preserves the legacy "dodged" outcome (no damage, no debuffs).
+      if (evadeMult >= 1) return "dodged";
+    } else {
+      setCounter(target.tracksCombat, "evadeAcc", acc);
     }
   }
 
@@ -170,6 +187,13 @@ export function runPlayerAttack(
   }
 
   emitCombatEvent("onDamageTaken", ctx, world);
+
+  // Partial monster dodge: scale the finalized damage by the avoided fraction
+  // (full avoid already returned "dodged" above). Floored at 1 so a glancing hit
+  // still registers.
+  if (evaded) {
+    ctx.damage = Math.max(1, Math.round(ctx.damage * (1 - evadeMult)));
+  }
 
   const gross = Math.round(player.dealsDamage.attack * minionDamageMult);
   const mitigation = buildPlatingDrBreakdown({
@@ -399,7 +423,7 @@ export function runMonsterAttack(
   const slow = MONSTER_DATABASE.get(
     monster.isMonster.monsterTypeId,
   )?.slowEffect;
-  if (slow && canApplyPlayerDebuff(target)) {
+  if (slow && canApplyPlayerDebuff(target) && !evadeBlocksDebuffs(ctx)) {
     applyStatusEffect(target.tracksCombat, {
       id: "slow",
       maxStacks: 1,

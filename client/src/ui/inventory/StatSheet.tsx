@@ -16,7 +16,8 @@ import {
   attackCooldownAtom,
   damageReductionAtom,
   equipmentAtom,
-  evasionAtom,
+  dodgeRateAtom,
+  evadeMitigationAtom,
   hpRegenAtom,
   itemUpgradesAtom,
   maxHpAtom,
@@ -201,7 +202,8 @@ export function StatSheet({ focused, onFocus }: Props) {
   const damageReduction = useAtomValue(damageReductionAtom);
   const speed           = useAtomValue(speedAtom);
   const attackCooldown  = useAtomValue(attackCooldownAtom);
-  const evasion         = useAtomValue(evasionAtom);
+  const dodgeRate       = useAtomValue(dodgeRateAtom);
+  const evadeMitigation = useAtomValue(evadeMitigationAtom);
   const equipment       = useAtomValue(equipmentAtom);
   const itemUpgrades    = useAtomValue(itemUpgradesAtom);
 
@@ -371,11 +373,13 @@ export function StatSheet({ focused, onFocus }: Props) {
           );
         })}
 
-        {/* Evasion — shown only when active; no comparison (probabilistic stacking) */}
-        {evasion > 0 && (
+        {/* Evasion — deterministic dodge rate + damage avoided per dodge */}
+        {dodgeRate > 0 && (
           <div className="inv-stat-row">
             <span className="inv-stat-row__label">EVS</span>
-            <span className="inv-stat-row__value">1 in {evasion}</span>
+            <span className="inv-stat-row__value">
+              {Math.round(dodgeRate * 100)}% · −{Math.round(evadeMitigation * 100)}%
+            </span>
           </div>
         )}
       </div>

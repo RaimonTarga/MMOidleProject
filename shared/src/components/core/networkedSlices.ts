@@ -58,10 +58,17 @@ export interface MitigatesDamage {
   damageReduction: number;
 }
 
-/** Hit-counter evasion. Present only while enabled. */
+/**
+ * Deterministic evasion. Present only while the player has any evasion.
+ *
+ * `dodgeRate` is a per-hit rate (NOT a probability — evasion is fully
+ * deterministic). A server-side fractional accumulator in `tracksCombat` adds
+ * `dodgeRate` each incoming hit and evades when it crosses 1.0. `evadeMitigation`
+ * is the fraction of damage avoided on an evaded hit (1.0 = full avoid).
+ */
 export interface EvadesHits {
-  threshold: number;
-  count: number;
+  dodgeRate: number;
+  evadeMitigation: number;
 }
 
 /** Presentation-ready objective row for ultimate boss HUD. */

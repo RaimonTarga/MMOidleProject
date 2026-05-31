@@ -76,8 +76,8 @@ export const damageReductionAtom = atom<number>(0);
 export const attackRangeAtom = atom<number>(0);
 export const attackCooldownAtom = atom<number>(0);
 export const speedAtom = atom<number>(0);
-export const evasionAtom = atom<number>(0);
-export const evasionCountAtom = atom<number>(0);
+export const dodgeRateAtom = atom<number>(0);
+export const evadeMitigationAtom = atom<number>(0);
 
 export const combatArchetypeAtom = atom<CombatArchetype>(null);
 export const attackStyleAtom = atom<string>('');
@@ -395,8 +395,8 @@ function resetPlayerAtoms(): void {
   store.set(attackRangeAtom, 0);
   store.set(attackCooldownAtom, 0);
   store.set(speedAtom, 0);
-  store.set(evasionAtom, 0);
-  store.set(evasionCountAtom, 0);
+  store.set(dodgeRateAtom, 0);
+  store.set(evadeMitigationAtom, 0);
 
   store.set(combatArchetypeAtom, null);
   store.set(attackStyleAtom, '');
@@ -481,8 +481,8 @@ export function syncPlayerAtoms(player: PlayerView | null): void {
   setIfChanged(attackRangeAtom, player.attackRange);
   setIfChanged(attackCooldownAtom, player.attackCooldown);
   setIfChanged(speedAtom, player.speed);
-  setIfChanged(evasionAtom, player.evasion);
-  setIfChanged(evasionCountAtom, player.evasionCount);
+  setIfChanged(dodgeRateAtom, player.dodgeRate);
+  setIfChanged(evadeMitigationAtom, player.evadeMitigation);
 
   setIfChanged(combatArchetypeAtom, player.combatArchetype);
   setIfChanged(attackStyleAtom, player.attackStyle);

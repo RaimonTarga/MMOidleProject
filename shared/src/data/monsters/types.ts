@@ -200,8 +200,20 @@ export interface MonsterDefinition {
    */
   slowEffect?: { speedMult: number; durationMs: number };
   /**
-   * Deterministic evasion: this monster dodges every Nth incoming hit from players.
-   * Minimum useful value is 5; lower values should be ignored by combat logic.
+   * Deterministic evasion: this monster dodges at a rate of 1/N incoming player
+   * hits (a fractional accumulator, not RNG). Minimum useful value is 5; lower
+   * values should be ignored by combat logic.
    */
   evadeEvery?: number;
+  /**
+   * Fraction of damage avoided on one of this monster's dodges (0..1). Defaults
+   * to GAME_CONFIG.EVADE_MITIGATION_BASE (0.5). Set to 1 to fully negate the hit
+   * (the legacy behavior).
+   */
+  evadeMitigation?: number;
+  /**
+   * If true, the player's debuffs/DoT stacks still land even when this monster
+   * dodges the hit. Default false (a dodged hit applies no debuffs).
+   */
+  appliesThroughEvade?: boolean;
 }

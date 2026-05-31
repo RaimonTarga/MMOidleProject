@@ -12,7 +12,7 @@ import { syncDevInvulnerability } from '../dev/syncDevInvulnerability';
 export function recalculatePlayerEntityStats(world: World, entity: PlayerEntity): void {
   const evadesHits = entity.evadesHits
     ? { ...entity.evadesHits }
-    : { threshold: 0, count: 0 };
+    : { dodgeRate: 0, evadeMitigation: 0 };
   const { cannotAttack } = recalculatePlayerStats({
     dealsDamage:     entity.dealsDamage,
     mitigatesDamage: entity.mitigatesDamage,
@@ -36,7 +36,7 @@ export function recalculatePlayerEntityStats(world: World, entity: PlayerEntity)
   markSliceDirty(world, entity, 'hasPosition');
   markSliceDirty(world, entity, 'usesSkills');
   if (entity.usesCadence) markSliceDirty(world, entity, 'usesCadence');
-  if (evadesHits.threshold > 0) {
+  if (evadesHits.dodgeRate > 0) {
     attachComponent(world, entity, 'evadesHits', evadesHits);
   } else {
     detachComponent(world, entity, 'evadesHits');

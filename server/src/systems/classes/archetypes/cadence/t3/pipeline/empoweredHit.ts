@@ -1,6 +1,7 @@
 import { applyStatusEffect, removeStatusEffect } from '@mmo-idle/shared';
 import { registerCombatListener } from '../../../../../combat/engine/combatPipeline';
 import { attachMarker } from '../../../../../../ecs/markerHelpers';
+import { evadeBlocksDebuffs } from '../../../../../defense/mitigation/evasion';
 import {
   CADENCE_MAX_SPEED_STACKS,
   CADENCE_SPEED_PER_STACK_MS,
@@ -99,7 +100,7 @@ export function registerCadenceEmpoweredHit(): void {
     const vulnPct      = passives['cadence.debuff-vuln-pct']      ?? 0;
     const vulnMs       = passives['cadence.debuff-vuln-ms']       ?? 5000;
     const platingShred = passives['cadence.debuff-plating-shred'] ?? 0;
-    if ((vulnPct > 0 || platingShred > 0) && ctx.defenderType === 'monster') {
+    if ((vulnPct > 0 || platingShred > 0) && ctx.defenderType === 'monster' && !evadeBlocksDebuffs(ctx)) {
       const monsterState = ctx.defender.tracksCombat;
       if (vulnPct > 0) {
         applyStatusEffect(monsterState, {

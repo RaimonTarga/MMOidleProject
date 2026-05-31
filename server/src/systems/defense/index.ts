@@ -1,6 +1,6 @@
 import { GAME_CONFIG } from "@mmo-idle/shared";
 import type { World } from "../../world/World";
-import { registerEvasion } from "./mitigation/evasion";
+import { registerEvasion, resetEvadeAccumulator } from "./mitigation/evasion";
 import { registerDamageCap } from "./mitigation/damageCap";
 import { registerShieldAbsorb } from "./shields/shields";
 import { registerHitToDot, runDebtDrain } from "./mitigation/hitToDot";
@@ -16,7 +16,7 @@ import { runInCombatRegen } from "./regen/inCombatRegen";
  * listeners run last in onDamageTaken.
  *
  * Listener order within onDamageTaken (player as defender):
- *   1. Evasion         — may zero ctx.damage
+ *   1. Evasion         — reduces ctx.damage by the evade-mitigation fraction
  *   2. Damage cap      — clamps to defense.max-hit-pct of maxHp
  *   3. Shield          — absorbs remaining damage
  *   4. Hit-to-DoT      — redirects defense.hit-to-dot-pct to debt pool
@@ -48,6 +48,10 @@ export function updateDefensiveSystems(
       player.hasAttackTarget !== undefined ||
       (lastCombatAt !== undefined &&
         now - lastCombatAt < GAME_CONFIG.COMBAT_REGEN_DELAY);
+
+    // Deterministic dodge accumulator resets while out of combat (single balance
+    // lever via GAME_CONFIG.EVADE_OOC_RESET).
+    if (!inCombat) resetEvadeAccumulator(player);
 
     if (runDebtDrain(world, player)) continue; // player died → skip remaining
 

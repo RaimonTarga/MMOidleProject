@@ -16,8 +16,8 @@ import {
   energyCountAtom,
   empoweredReadyAtom,
   equipmentAtom,
-  evasionAtom,
-  evasionCountAtom,
+  dodgeRateAtom,
+  evadeMitigationAtom,
   executionCooldownPctAtom,
   executionReadyAtom,
   flashShiftPctAtom,
@@ -79,8 +79,8 @@ export function StatPanel() {
   const equipment = useAtomValue(equipmentAtom);
   const sacredBuffPct = useAtomValue(sacredBuffPctAtom);
   const sacredBuffActive = useAtomValue(sacredBuffActiveAtom);
-  const evasion = useAtomValue(evasionAtom);
-  const evasionCount = useAtomValue(evasionCountAtom);
+  const dodgeRate = useAtomValue(dodgeRateAtom);
+  const evadeMitigation = useAtomValue(evadeMitigationAtom);
   const summonActiveCount = useAtomValue(summonActiveCountAtom);
   const summonSlotCount = useAtomValue(summonSlotCountAtom);
   const summonSlots = useAtomValue(summonSlotsAtom);
@@ -118,8 +118,8 @@ export function StatPanel() {
       equipment,
       sacredBuffPct,
       sacredBuffActive,
-      evasion,
-      evasionCount,
+      dodgeRate,
+      evadeMitigation,
       summonActiveCount,
       summonSlotCount,
       summonSlots,
@@ -390,21 +390,12 @@ export function StatPanel() {
       {/* ── Expanded section ─────────────────────────────────────────────── */}
       {expanded && (
         <>
-          {/* Evasion */}
-          {player && player.evasion > 0 && (
+          {/* Evasion (deterministic — dodge rate + damage avoided per dodge) */}
+          {player && player.dodgeRate > 0 && (
             <div className="stat-section">
               <div className="stat-section-title">Evasion</div>
-              <StatRow label="Trigger" value={`every ${player.evasion} hits`} />
-              <div className="stat-row">
-                <span className="stat-label">Progress</span>
-                <span className="stat-value">{player.evasionCount} / {player.evasion}</span>
-              </div>
-              <div className="mech-bar-track">
-                <div
-                  className="mech-bar-fill mech-bar-fill--evasion"
-                  style={{ width: `${(player.evasionCount / player.evasion) * 100}%` }}
-                />
-              </div>
+              <StatRow label="Dodge rate" value={`${Math.round(player.dodgeRate * 100)}%`} />
+              <StatRow label="Damage avoided" value={`${Math.round(player.evadeMitigation * 100)}% per dodge`} />
             </div>
           )}
 

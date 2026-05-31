@@ -112,8 +112,8 @@ function checkAbsentState(entity: ServerEntity, violations: string[]): void {
   if (entity.holdsShields && entity.holdsShields.shields.length === 0) {
     violations.push(`${entity.entityId}: holdsShields present with no shields`);
   }
-  if (entity.evadesHits && entity.evadesHits.threshold <= 0) {
-    violations.push(`${entity.entityId}: evadesHits present with disabled threshold`);
+  if (entity.evadesHits && entity.evadesHits.dodgeRate <= 0) {
+    violations.push(`${entity.entityId}: evadesHits present with zero dodgeRate`);
   }
   if (entity.hasAttackTarget && entity.hasAttackTarget.targetId.length === 0) {
     violations.push(`${entity.entityId}: hasAttackTarget present with empty target`);
