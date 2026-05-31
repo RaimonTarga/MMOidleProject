@@ -1,11 +1,14 @@
 import type Phaser from "phaser";
 import type { PlayerView } from "@mmo-idle/shared";
+import { isValidEmoteId } from "@mmo-idle/shared";
 import type { RenderState } from "./state";
 import type { GameScene } from "../scenes/GameScene";
 import { DEPTH } from "./depth";
 import {
   ATLAS_KEY,
   BIOME_TEXTURES,
+  emoteAnimKey,
+  emoteTextureKey,
   getMonsterFrame,
   getPlayerFrame,
   THOUGHT_BUBBLE_KEY,
@@ -39,12 +42,13 @@ type ThoughtBubble = NonNullable<
 
 type ContentSpec =
   | { type: "image"; textureKey: string; frame?: string }
+  | { type: "anim"; textureKey: string; animKey: string }
   | { type: "text"; text: string; color: string };
 
 function signatureFor(spec: ContentSpec): string {
-  return spec.type === "image"
-    ? `i:${spec.textureKey}:${spec.frame ?? ""}`
-    : `t:${spec.text}:${spec.color}`;
+  if (spec.type === "image") return `i:${spec.textureKey}:${spec.frame ?? ""}`;
+  if (spec.type === "anim") return `a:${spec.animKey}`;
+  return `t:${spec.text}:${spec.color}`;
 }
 
 /**
@@ -56,11 +60,27 @@ function resolveContent(
   player: PlayerView,
   depth = 0,
 ): ContentSpec | null {
+  if (player.isDead) return null;
+
+  // Player-triggered emotes take priority over the auto-combat telegraph.
+  const emote = player.emote;
+  if (
+    emote &&
+    emote.expiresAt > Date.now() &&
+    isValidEmoteId(emote.emoteId)
+  ) {
+    return {
+      type: "anim",
+      textureKey: emoteTextureKey(emote.emoteId),
+      animKey: emoteAnimKey(emote.emoteId),
+    };
+  }
+
   // Trust the server's intent: it is present exactly when the player is
   // performing an auto action (auto-combat targeting/follow/flee, or
   // server-driven map navigation even with auto-combat off).
   const intent = player.autoIntent;
-  if (player.isDead || !intent) return null;
+  if (!intent) return null;
 
   switch (intent.kind) {
     case "idle":
@@ -103,7 +123,11 @@ function resolveContent(
 function buildIcon(
   scene: GameScene,
   spec: ContentSpec,
-): Phaser.GameObjects.Image | Phaser.GameObjects.Text | null {
+):
+  | Phaser.GameObjects.Image
+  | Phaser.GameObjects.Sprite
+  | Phaser.GameObjects.Text
+  | null {
   if (spec.type === "text") {
     const text = scene.add
       .text(0, 0, spec.text, {
@@ -119,6 +143,13 @@ function buildIcon(
     return text;
   }
   if (!scene.textures.exists(spec.textureKey)) return null;
+  if (spec.type === "anim") {
+    if (!scene.anims.exists(spec.animKey)) return null;
+    const sprite = scene.add.sprite(0, 0, spec.textureKey);
+    sprite.play(spec.animKey);
+    fitToInterior(sprite);
+    return sprite;
+  }
   if (spec.frame && !scene.textures.get(spec.textureKey).has(spec.frame)) {
     return null;
   }
@@ -135,7 +166,10 @@ function buildIcon(
  * (unscaled) dimensions, so this works for any source icon size.
  */
 function fitToInterior(
-  obj: Phaser.GameObjects.Image | Phaser.GameObjects.Text,
+  obj:
+    | Phaser.GameObjects.Image
+    | Phaser.GameObjects.Sprite
+    | Phaser.GameObjects.Text,
 ): void {
   const w = obj.width || 1;
   const h = obj.height || 1;

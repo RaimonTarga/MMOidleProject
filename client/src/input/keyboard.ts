@@ -13,16 +13,28 @@ import {
   craftTabAtom,
   deathOverlayAtom,
   debugPanelOpenAtom,
+  flashEmoteWheel,
   inventoryOpenAtom,
   mapOpenAtom,
   questOpenAtom,
   settingsOpenAtom,
   skillTreeOpenAtom,
+  type EmoteWheelDirection,
 } from '../hud/atoms';
+import { emoteForWheelDirection } from '@mmo-idle/shared';
 import { cancelActiveMove, setHoldStill, setKeyboardVector } from './movement';
 import { closeTopmostOverlay } from './overlayStack';
 
 const MOBILE_QUERY = '(max-width: 1100px)';
+
+const ARROW_TO_WHEEL: Record<string, EmoteWheelDirection> = {
+  ArrowUp: 'up',
+  ArrowDown: 'down',
+  ArrowLeft: 'left',
+  ArrowRight: 'right',
+};
+
+const EMOTE_CLIENT_COOLDOWN_MS = 400;
 
 export function attachKeyboard(scene: GameScene): () => void {
   if (window.matchMedia(MOBILE_QUERY).matches) return () => {};
@@ -30,6 +42,7 @@ export function attachKeyboard(scene: GameScene): () => void {
   const store = getDefaultStore();
   const held = new Set<ActionId>();
   let stillHeld = false;
+  let lastEmoteAt = 0;
 
   function isEditable(target: EventTarget | null): boolean {
     if (!(target instanceof HTMLElement)) return false;
@@ -86,6 +99,19 @@ export function attachKeyboard(scene: GameScene): () => void {
       }
     }
     if (event.repeat) return;
+
+    const wheelDir = ARROW_TO_WHEEL[event.code];
+    if (wheelDir && !dead) {
+      event.preventDefault();
+      flashEmoteWheel(wheelDir);
+      const emoteId = emoteForWheelDirection(wheelDir);
+      if (!emoteId) return;
+      const now = Date.now();
+      if (now - lastEmoteAt < EMOTE_CLIENT_COOLDOWN_MS) return;
+      lastEmoteAt = now;
+      hudBus.requestEmote(emoteId);
+      return;
+    }
 
     if (matchesKey(event, 'toggle.autoCombat', bindings)) {
       event.preventDefault();

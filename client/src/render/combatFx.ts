@@ -217,6 +217,24 @@ export function dispatchCombatEvent(
 
   if (ev.playerId !== scene.myId) return;
 
+  if (ev.kind === "player-knockback") {
+    if (!state.ownId) return;
+    const transform = state.transform.get(state.ownId);
+    const interp = state.interpolation.get(state.ownId);
+    if (!transform || !interp) return;
+    // The client owns own-player prediction and glides toward `transform.target`,
+    // so a small authoritative backward shift is invisible while moving. Snap the
+    // render baseline and prediction target to the recoil position so the shove
+    // actually lands; movement re-paths forward from here on the next tick.
+    scene.tweens.killTweensOf(interp.lungeOffset);
+    interp.lungeOffset.x = 0;
+    interp.lungeOffset.y = 0;
+    interp.base.x = ev.pos.x;
+    interp.base.y = ev.pos.y;
+    transform.target = { x: ev.pos.x, y: ev.pos.y };
+    return;
+  }
+
   if (ev.kind === "player-hit") {
     const player = state.ownId
       ? (state.view.get(state.ownId) as PlayerView | undefined)
@@ -279,8 +297,26 @@ function runFxForAttackStyle(
     (player.passives["reload.laser"] ?? 0) > 0;
 
   const from = { x: ownSprite.x, y: ownSprite.y };
-  const to = { x: targetSprite.x, y: targetSprite.y };
+  const to = ev.targetPos
+    ? { x: ev.targetPos.x, y: ev.targetPos.y }
+    : { x: targetSprite.x, y: targetSprite.y };
   const args: AttackFxArgs = { scene, ev, player, from, to, dotPath };
+
+  // Blunderbuss volley: each pellet is its own bullet, all fired at once from a
+  // shared muzzle to its own scattered endpoint (angle + distance randomized
+  // server-side). Randomize each bullet's animation speed too so the burst
+  // reads as a chaotic shotgun blast, not an ordered sweep.
+  if (
+    !isLaser &&
+    player.combatArchetype === "reload" &&
+    ev.pelletIndex !== undefined
+  ) {
+    if (!document.hidden) {
+      const durationScale = 0.55 + Math.random() * 0.9;
+      fxGunshot(scene, from.x, from.y, to.x, to.y, ev.empowered, durationScale);
+    }
+    return;
+  }
 
   if (isLaser) {
     activateLaserBeam(state, scene, ev.targetId);

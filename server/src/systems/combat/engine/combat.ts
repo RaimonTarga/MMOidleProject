@@ -12,7 +12,7 @@ import {
 import type { AggroTargetKind, Vec2 } from "@mmo-idle/shared";
 import { grantMonsterRewards } from "../../player/progression/rewards";
 import { makeCombatContext, emitCombatEvent } from "./combatPipeline";
-import { getCounter, getStatusEffect, setCounter } from "@mmo-idle/shared";
+import { getCounter, setCounter } from "@mmo-idle/shared";
 import { getAntiHealMult } from "../../defense";
 import { applyPlayerAoe } from "../damage/aoeDamage";
 import { isMonsterFrozen } from "../../classes/archetypes/dot/t3";
@@ -36,6 +36,7 @@ import {
 import { buildPlatingDrBreakdown } from "../../../world/worldLogCombat";
 import { markUltimateContributor } from "../ai/ultimateContributors";
 import { tryEngageUltimateEncounter } from "../ai/ultimateEncounter";
+import { effectivePlatingAfterShred } from "../damage/effectivePlating";
 
 export type PlayerAttackOutcome = "cancelled" | "dodged" | "hit" | "killed";
 export type MonsterAttackOutcome = "cancelled" | "hit" | "killed";
@@ -134,20 +135,14 @@ export function runPlayerAttack(
   }
 
   const monsterCombatState = target.tracksCombat;
-  const shredEffect = monsterCombatState
-    ? getStatusEffect(monsterCombatState, "plating-shred")
-    : undefined;
   const platingShred =
     typeof ctx.metadata.platingShred === "number"
       ? ctx.metadata.platingShred
       : 0;
-  const effectivePlating = Math.max(
-    0,
-    target.mitigatesDamage.plating -
-      (shredEffect
-        ? shredEffect.stacks * shredEffect.data["platingReduction"]
-        : 0) -
-      platingShred,
+  const effectivePlating = effectivePlatingAfterShred(
+    target.mitigatesDamage.plating,
+    monsterCombatState,
+    platingShred,
   );
 
   const minionDamageMult =
@@ -269,7 +264,28 @@ export function runPlayerAttack(
     effects:
       clientEffects && clientEffects.length > 0 ? clientEffects : undefined,
     playerPos: { ...opts.attackOrigin },
-    targetPos: { ...target.hasPosition.current },
+    targetPos: (() => {
+      const aim = ctx.metadata["aimPos"];
+      if (
+        typeof aim === "object" &&
+        aim !== null &&
+        "x" in aim &&
+        "y" in aim &&
+        typeof aim.x === "number" &&
+        typeof aim.y === "number"
+      ) {
+        return { x: aim.x, y: aim.y };
+      }
+      return { ...target.hasPosition.current };
+    })(),
+    pelletIndex:
+      typeof ctx.metadata["blunderbussPelletIndex"] === "number"
+        ? (ctx.metadata["blunderbussPelletIndex"] as number)
+        : undefined,
+    pelletTotal:
+      typeof ctx.metadata["blunderbussPelletTotal"] === "number"
+        ? (ctx.metadata["blunderbussPelletTotal"] as number)
+        : undefined,
   });
 
   emitCombatEvent("afterHit", ctx, world);

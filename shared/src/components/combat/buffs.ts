@@ -22,6 +22,8 @@ export const BUFF_IDS = [
   'dot-chill',
   'dot-frozen',
   'reload-snipe-ready',
+  'reload-hair-trigger',
+  'reload-cover-fire',
   'sacred-burst',
   'debuff-slow',
   'debuff-root',

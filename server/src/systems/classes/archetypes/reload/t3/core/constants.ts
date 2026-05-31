@@ -1,4 +1,4 @@
-export const DEFAULT_LASER_DAMAGE_PER_TICK_PCT = 0.15;
+export const DEFAULT_LASER_DAMAGE_PER_TICK_PCT = 0.18;
 export const DEFAULT_LASER_HEAT_PER_TICK = 2;
 export const DEFAULT_LASER_COOL_PER_TICK = 2.5;
 export const DEFAULT_SNIPE_COOLDOWN_MS = 2500;
@@ -8,3 +8,29 @@ export const FULL_HP_THRESHOLD = 0.95;
 export const GATLING_KNOCKBACK_DISTANCE = 20;
 export const GATLING_KNOCKBACK_MS = 150;
 export const SERVER_TICK_MS = 100;
+
+// ── Light / Balanced T3 ───────────────────────────────────────────────────────
+
+export const DEATH_MARK_EFFECT_ID = 'death-mark';
+export const SUPPRESS_SHRED_EFFECT_ID = 'reload-suppress-shred';
+export const COVER_FIRE_EFFECT_ID = 'reload-cover-fire';
+export const EXPLODING_CLIP_CLIENT_EFFECT = 'reload-exploding-clip';
+
+export const DEFAULT_EXPLODING_CLIP_MULT = 3.5;
+export const DEFAULT_EXPLODING_AOE_MULT = 0.6;
+export const DEFAULT_HAIR_TRIGGER_PCT = 0.07;
+export const DEFAULT_HAIR_TRIGGER_MAX = 5;
+export const DEFAULT_BLUNDERBUSS_SPREAD_RAD = 0.55;
+export const DEFAULT_BLUNDERBUSS_KNOCKBACK_DIST_PER_PELLET = 7;
+export const DEFAULT_BLUNDERBUSS_KNOCKBACK_MS_PER_PELLET = 14;
+// Fixed recoil the shooter takes, opposite the firing direction, per volley.
+export const DEFAULT_BLUNDERBUSS_SELF_KNOCKBACK_DIST = 110;
+export const BLUNDERBUSS_VOLLEY_HITS_COUNTER = 'blunderbussVolleyHits';
+export const DEFAULT_RELOAD_TIME_MULT = 1;
+export const DEFAULT_DEATH_MARK_MAX = 10;
+export const DEFAULT_DEATH_MARK_DETONATE_MULT = 0.65;
+export const DEFAULT_DEATH_MARK_DURATION_MS = 8000;
+export const DEFAULT_SUPPRESS_SHRED = 4;
+export const DEFAULT_SUPPRESS_MAX = 5;
+export const DEFAULT_COVER_FIRE_DR = 0.45;
+export const COVER_FIRE_DR_CAP = 0.9;

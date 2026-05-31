@@ -28,6 +28,7 @@ import {
   leaveParty,
   handlePartyDisconnect,
 } from "./systems/player/party/partySystem";
+import { handlePlayerEmoteIntent } from "./systems/player/emotes";
 import type {
   ServerToClientEvents,
   ClientToServerEvents,
@@ -562,6 +563,12 @@ async function boot(): Promise<void> {
       const p = liveSelf();
       if (!p) return;
       leaveParty(world, p);
+    });
+
+    socket.on("player:emote", (emoteId) => {
+      const p = liveSelf();
+      if (!p || typeof emoteId !== "string") return;
+      handlePlayerEmoteIntent(world, p, emoteId, Date.now());
     });
 
     if (IS_DEV) {

@@ -1,4 +1,4 @@
-import { EFFECT_DEFS, GAME_CONFIG } from "@mmo-idle/shared";
+import { EFFECT_DEFS, EMOTE_SPRITESHEETS, GAME_CONFIG } from "@mmo-idle/shared";
 import { DEPTH } from "../../render/depth";
 import { getDefaultStore } from "jotai";
 import {
@@ -25,6 +25,8 @@ import {
   GRAVES_KEY,
   GRAVE_FRAME_SIZE,
   NODE_DECOR,
+  emoteAnimKey,
+  emoteTextureKey,
   initVoidOverlordSheet,
   THOUGHT_BUBBLE_FILE,
   THOUGHT_BUBBLE_KEY,
@@ -72,6 +74,24 @@ import type { GameScene } from "./GameScene";
 const CAMERA_HOLD_MARGIN = 80;
 const SHADOW_DEFS_KEY = "shadowDefs";
 
+function initEmoteAnimations(scene: GameScene): void {
+  for (const [emoteId, sheet] of Object.entries(EMOTE_SPRITESHEETS)) {
+    const key = emoteAnimKey(emoteId);
+    if (scene.anims.exists(key)) continue;
+    const texKey = emoteTextureKey(emoteId);
+    if (!scene.textures.exists(texKey)) continue;
+    scene.anims.create({
+      key,
+      frames: scene.anims.generateFrameNumbers(texKey, {
+        start: 0,
+        end: sheet.frameCount - 1,
+      }),
+      frameRate: sheet.frameRate,
+      repeat: -1,
+    });
+  }
+}
+
 function isPointComfortablyOnScreen(
   scene: GameScene,
   x: number,
@@ -96,6 +116,12 @@ export function preloadGameAssets(scene: GameScene): void {
   scene.load.image(VOID_OVERLORD_TEXTURE_KEY, VOID_OVERLORD_FILE);
   scene.load.image(VOID_TOMB_TEXTURE_KEY, VOID_TOMB_FILE);
   scene.load.image(THOUGHT_BUBBLE_KEY, THOUGHT_BUBBLE_FILE);
+  for (const [emoteId, sheet] of Object.entries(EMOTE_SPRITESHEETS)) {
+    scene.load.spritesheet(emoteTextureKey(emoteId), sheet.file, {
+      frameWidth: sheet.frameWidth,
+      frameHeight: sheet.frameHeight,
+    });
+  }
   for (const def of EFFECT_DEFS) {
     if (def.rowSlices) {
       scene.load.image(def.key, def.file);
@@ -126,6 +152,7 @@ export function preloadGameAssets(scene: GameScene): void {
 
 export function createGameScene(scene: GameScene): void {
   setShadowDefs(scene.cache.json.get(SHADOW_DEFS_KEY));
+  initEmoteAnimations(scene);
   initParticleTextures(scene);
   initEffectFrames(scene);
   initVoidOverlordSheet(scene);

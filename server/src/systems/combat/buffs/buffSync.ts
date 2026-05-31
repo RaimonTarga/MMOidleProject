@@ -343,6 +343,10 @@ function buffEffectText(buff: PlayerBuff): string {
       return "target frozen";
     case "reload-snipe-ready":
       return "next shot empowered";
+    case "reload-hair-trigger":
+      return "+attack speed";
+    case "reload-cover-fire":
+      return "damage reduction while reloading";
     case "sacred-burst":
       return "+damage and attack speed";
     case "debuff-slow":

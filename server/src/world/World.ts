@@ -17,6 +17,7 @@ import {
 import { updateAutoTargets } from "../systems/combat/ai/autoTarget";
 import { updateAutoTraverse } from "../systems/world/autoTraverse";
 import { updateAutoIntent } from "../systems/world/autoIntent";
+import { updateExpiredEmotes } from "../systems/player/emotes";
 import { updatePartyFollow } from "../systems/world/partyFollow";
 import { updateMovement } from "../systems/world/movement";
 import { updateNodeFeatures } from "../systems/world/nodeFeatures";
@@ -303,7 +304,7 @@ export class World {
     updateWeaponEffects(this, dt);
     updateBossScripts(this, dt);
     updateUltimateEncounters(this, dt);
-    updatePartyFollow(this);
+    updatePartyFollow(this, now);
     updateAutoTraverse(this);
     updateAutoTargets(this, now);
     updateKnockback(this, dt);
@@ -316,6 +317,7 @@ export class World {
     updateDefensiveSystems(this, dt, now);
     syncPlayerBuffs(this);
     updateAutoIntent(this);
+    updateExpiredEmotes(this, now);
     updateDeadPlayersInWorld(this, now);
 
     if (IS_DEV) {

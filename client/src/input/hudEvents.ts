@@ -19,6 +19,7 @@ import {
   sendUnlockSkill,
   sendUpgradeItem,
   sendAckDeath,
+  sendEmote,
 } from "../net/intents";
 import type { GameScene } from "../scenes/GameScene";
 import { setAutoMode } from "./autoPath";
@@ -109,5 +110,10 @@ export function attachHudEvents(scene: GameScene): void {
 
   intents.on("leaveParty", () => {
     sendLeaveParty(scene.socket);
+  });
+
+  intents.on("emote", (emoteId) => {
+    if (isDeathOverlayActive()) return;
+    sendEmote(scene.socket, emoteId);
   });
 }

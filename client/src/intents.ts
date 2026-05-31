@@ -20,6 +20,7 @@ export interface IntentMap {
   joinParty: string;
   leaveParty: undefined;
   ackDeath: undefined;
+  emote: string;
 }
 
 type IntentKind = keyof IntentMap;

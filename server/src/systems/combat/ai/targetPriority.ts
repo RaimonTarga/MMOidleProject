@@ -283,7 +283,11 @@ function effectiveAcquireRadius(
 ): number {
   const rootedMult = player.isRooted ? ROOTED_ACQUIRE_MULT : 1;
   const rangedMult = ranged ? RANGED_ACQUIRE_MULT : 1;
-  return Math.max(80, cfg.acquireRadius * rootedMult * rangedMult);
+  let radius = Math.max(80, cfg.acquireRadius * rootedMult * rangedMult);
+  if (player.usesReload) {
+    radius *= player.usesSkills.passives['reload.acquire-radius-mult'] ?? 1;
+  }
+  return radius;
 }
 
 function shouldSkipBosses(player: PlayerEntity): boolean {

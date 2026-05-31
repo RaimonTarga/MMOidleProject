@@ -18,7 +18,7 @@ const PARTY_FOLLOW_DISTANCE_SQ = PARTY_FOLLOW_DISTANCE * PARTY_FOLLOW_DISTANCE;
  * `updateAutoTraverse` / `updateAutoTargets`, which skip followers so this owns their
  * movement. Followers only react while their own auto-combat is enabled.
  */
-export function updatePartyFollow(world: World): void {
+export function updatePartyFollow(world: World, now: number): void {
   for (const player of world.livePlayers) {
     if (!player.usesAutocombat.auto) continue;
     if (isFleeing(player)) continue;
@@ -57,7 +57,7 @@ export function updatePartyFollow(world: World): void {
     if (leaderTargetId && player.usesSkills.combatArchetype !== "summoner") {
       const monster = world.getMonsterEntity(leaderTargetId);
       if (monster && monster.hasPosition.nodeId === playerNode) {
-        steerTowardTarget(world, player, monster);
+        steerTowardTarget(world, player, monster, now);
         continue;
       }
     }

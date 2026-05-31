@@ -162,6 +162,12 @@ export interface HasAutoIntent {
   destBiomeGroup?: string;
 }
 
+/** Active player emote — present only while the emote is playing. */
+export interface HasEmote {
+  emoteId: string;
+  expiresAt: number;
+}
+
 /** One entry in a party roster (display identity). */
 export interface PartyMember {
   id: string;

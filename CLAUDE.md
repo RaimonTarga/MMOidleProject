@@ -507,13 +507,13 @@ Energy 0–100 fills on hits; at 100, next attack is Empowered. T1: Light (20/hi
 ---
 
 #### Reload (`reloadPrototype.ts`)
-Magazine system — burst then reload window. T1: Light (5 rounds, 1500 ms), Balanced (8, 2000 ms), Heavy (12, 4000 ms). Reload class uses double APS / half dmg final multiplier — see above. **All 9 T3 paths designed in skillTree.ts; none implemented yet.**
+Magazine system — burst then reload window. T1: Light (5 rounds, 1500 ms), Balanced (8, 2000 ms), Heavy (12, 4000 ms). Reload class uses double APS / half dmg final multiplier — see above. **All 9 T3 paths implemented** in `server/src/systems/classes/archetypes/reload/t3/`.
 
 **OOC auto-reload:** When the reload player leaves combat (`!inCombat` via `tracksEngagement` + `COMBAT_REGEN_DELAY`) with a partial clip (`ammo > 0 && ammo < ammoMax`) and no reload is already active, `updateReloadArchetype` immediately sets `ammo = 0` and starts a reload. OOC reloads (and any reload in progress when going OOC) tick at **2× speed**. Auto-combat AI (`autoTarget.ts`) stops the player from moving toward the next enemy while `usesReload.reloadingMs > 0 && !targetIsAggroed`; if an enemy aggros the player mid-reload, the normal ranged movement AI resumes immediately.
 
-- Light: Exploding Clip (last bullet 3×), Preemptive Strike (first bullet 2.5×), High Powered (3-round ramp)
-- Balanced: Death Mark (stacks → reload detonation), Continuous Firing (reload speed stacks + ATK buff), Finishing Strike (last bullet scales with missing HP)
-- Heavy: Momentum (per-hit ATK/speed stacks, reset on reload), Heat (reduced dmg + Heat ticks detonated on reload), Burst (post-reload ATK stacks → speed stacks)
+- Light: Exploding Clip (last bullet 3× + AoE), Hair Trigger (+5% attack speed per shot in clip, up to 5 stacks), Gatling (double mag/speed + knockback)
+- Balanced: Death Mark (stacks → reload detonation), Suppressing Fire (plating shred stacks), Cover Fire (40% DR while reloading)
+- Heavy: Laser (continuous heat-based beam), Snipe (slow heavy shots, full-HP bonus), Blunderbuss (close-range full-clip volley; knockback scales with pellets landed)
 
 ---
 
@@ -561,7 +561,7 @@ Never set a `dot.damage-per-stack` passive — `damagePerStack` is always derive
 - Boss fight scripting framework (`bossScripts.ts`) — data-driven phases, repeating timers, enrage/regen/shield/summon/stat-buff actions
 - Quest system (kill-count quests → XP → skill points); QuestPanel
 - Party system — single-level parties (`inParty` networked slice), click-to-join, follow + assist in auto-combat (`partyFollow`), same-zone full rewards; left-sidebar PartyPanel. See "Party system" section
-- All 5 class archetypes with T0 roots and T1–T2 nodes; T3 fully implemented for Cadence, Energy, DoT; Cooldown light+balanced; Reload designed only
+- All 5 class archetypes with T0 roots and T1–T2 nodes; T3 fully implemented for Cadence, Energy, DoT, Reload; Cooldown light+balanced
 - Defense/recovery system (5 recovery archetypes, all `defense.*` passives)
 - Weapon families: Chaotic (axe + greataxe), Sacred (cross + consecrated), Burn (ashbrand + cinderfang + frostmourne); `onHitDamage` stat for flat on-hit weapons (Stinger Fang)
 - T1 and T2 weapons (8 T2 weapons at biome level 9)
@@ -587,6 +587,7 @@ Never set a `dot.damage-per-stack` passive — `damagePerStack` is always derive
 - Evasion stacking fix — `evasion` stat values are combined as independent dodge probabilities (`1/N` per source, `threshold = round(1/sum)`); single-source behavior unchanged, stacking always improves evasion
 - `isMeleeArchetype(archetype, unlockedSkills?)` in `shared/src/data/skillTree/rootsAndFrames.ts` — cadence/cooldown/null are melee; range nodes override (range-close forces melee, range-mid/far forces ranged); used to gate player lunge in `players.ts` and `combatFx.ts`
 - Ranged monster lunge suppression — `isRanged` flag on `MonsterDefinition` flows to `MonsterView`; client skips lunge for ranged monsters; 8 monsters tagged; `gunshot` added to `ATTACK_FX_BY_STYLE`
+- Reload T3 — Light/Balanced/Heavy all implemented (`reload/t3/`); lifecycle hooks via `reloadLifecycle.ts`, proc damage via `procDamage.ts`
 - Reload OOC auto-reload and movement hold — see Reload archetype section
 - Players start with no equipment (basic sword removed from `buildFreshSlices` in `playerRepo.ts`)
 
@@ -597,7 +598,6 @@ Never set a `dot.damage-per-stack` passive — `damagePerStack` is always derive
 - [ ] Deployment (Caddy + PM2 on Hetzner — next priority after playtesting)
 - [ ] World map click-to-navigate
 - [ ] Cooldown heavy T3 (Entropy Collapse, Singular Extraction, Channeled Beam)
-- [ ] Reload T3 server logic (all 9 designed, none implemented)
 - [ ] T4–7 mechanics (all placeholders)
 - [ ] StatPanel update for evasion/shields/absorb/burst-regen display
 - [ ] Client-side `monster-dodge` visual (server pushes the event; client ignores it — no floating DODGE text yet)
@@ -610,9 +610,8 @@ Never set a `dot.damage-per-stack` passive — `damagePerStack` is always derive
 **Priority order:**
 1. Deploy (Caddy + PM2 on Hetzner)
 2. Playtest T1/T2 balance
-3. Implement Reload T3
-4. Implement Cooldown heavy T3
-5. T3 biome/monster design
+3. Implement Cooldown heavy T3
+4. T3 biome/monster design
 
 **T1 biome threat profiles (density-balanced):**
 
