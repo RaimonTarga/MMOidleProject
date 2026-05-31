@@ -18,6 +18,12 @@ export const VOID_TOMB_FILE = "/assets/ultimate_bosses/void_tomb.png";
 export const VOID_TOMB_DISPLAY_W = 280;
 export const VOID_TOMB_DISPLAY_H = 280;
 
+// ── Auto-combat thought bubble (telegraphs a player's next action) ────────────
+export const THOUGHT_BUBBLE_KEY = "thought_bubble";
+export const THOUGHT_MASK_KEY = "thought_bubble_mask";
+export const THOUGHT_BUBBLE_FILE = "/assets/emotes/thoughts/thought.png";
+export const THOUGHT_MASK_FILE = "/assets/emotes/thoughts/thought_mask.png";
+
 export {
   MONSTER_FRAMES,
   PLAYER_FRAMES,

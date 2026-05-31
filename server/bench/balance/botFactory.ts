@@ -1,4 +1,5 @@
 import {
+  DEFAULT_AUTOCOMBAT_CONFIG,
   GAME_CONFIG,
   emptyEquipment,
   biomeLevelCap,
@@ -106,8 +107,11 @@ export function materializeBot(
   syncArchetypeSlices(world, entity);
   recalculatePlayerEntityStats(world, entity);
   syncArchetypeSlices(world, entity);
-  entity.usesAutocombat.auto = true;
-  entity.usesAutocombat.autoTraverse = false;
+  Object.assign(entity.usesAutocombat, DEFAULT_AUTOCOMBAT_CONFIG, {
+    auto: true,
+    autoTraverse: false,
+    engageUltimateBosses: true,
+  });
   entity.hasHealth.hp = entity.hasHealth.maxHp;
   return entity;
 }

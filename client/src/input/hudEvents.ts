@@ -13,6 +13,7 @@ import {
   sendEquipPhaseTester,
   sendResetProgress,
   sendSetAutoTraverse,
+  sendSetAutocombatConfig,
   sendTeleportToNode,
   sendUnequip,
   sendUnlockSkill,
@@ -29,6 +30,10 @@ export function attachHudEvents(scene: GameScene): void {
 
   intents.on("setAutoTraverse", (enabled) => {
     sendSetAutoTraverse(scene.socket, enabled);
+  });
+
+  intents.on("setAutocombatConfig", (config) => {
+    sendSetAutocombatConfig(scene.socket, config);
   });
 
   intents.on("unlockSkill", (skillId) => {

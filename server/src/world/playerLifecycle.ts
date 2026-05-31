@@ -1,4 +1,8 @@
-import { GAME_CONFIG, makeTracksCombat } from "@mmo-idle/shared";
+import {
+  DEFAULT_AUTOCOMBAT_CONFIG,
+  GAME_CONFIG,
+  makeTracksCombat,
+} from "@mmo-idle/shared";
 import type { World } from "./World";
 import type { PlayerEntity } from "../ecs/entity";
 import type { PersistedPlayerSlices } from "../db/playerRepo";
@@ -44,6 +48,7 @@ export function attachPlayerEntity(
     usesAutocombat: {
       auto: false,
       autoTraverse: false,
+      ...DEFAULT_AUTOCOMBAT_CONFIG,
     },
     tracksProgression: player.tracksProgression,
     holdsInventory: player.holdsInventory,

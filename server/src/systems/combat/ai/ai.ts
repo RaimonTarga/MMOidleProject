@@ -5,6 +5,7 @@ import type {
   PlayerEntity,
 } from "../../../ecs/entity";
 import {
+  approachPoint,
   distanceSq,
   inAttackRange,
   MONSTER_DATABASE,
@@ -209,7 +210,18 @@ export function updateMonsters(world: World, dt: number, now: number) {
 
         e.hasAwareness.state = "chasing";
         setAttackTarget(world, e, aggroAttackTargetId(target));
-        setMonsterTarget(world, e, aggroPosition(target));
+        // Steer to a standoff just inside reach, not the target center, so a
+        // fast (or kite-ramped) monster can't tunnel straight through its target
+        // at large dt — `advanceMotion` clamps to the standoff so it stops in
+        // range instead of swapping sides and ramping speed forever.
+        const approach = approachPoint(
+          e.hasPosition.current,
+          monsterPH,
+          aggroPosition(target),
+          targetPH,
+          e.performsAttack.attackRange,
+        );
+        setMonsterTarget(world, e, approach.dest);
       }
     } else {
       // No valid aggro target — reset kite state and return/wander.

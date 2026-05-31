@@ -4,6 +4,7 @@ import type {
   DealsDamage,
   EvadesHits,
   HasAttackTarget,
+  HasAutoIntent,
   HasAwareness,
   HasEmpoweredAttack,
   HasHealth,
@@ -49,6 +50,7 @@ export const NETWORKED_PLAYER_KEYS = [
   "evadesHits",
   "holdsShields",
   "usesAutocombat",
+  "hasAutoIntent",
   "tracksProgression",
   "holdsInventory",
   "usesSkills",
@@ -117,6 +119,7 @@ export interface NetworkedEntity {
   evadesHits?: EvadesHits;
   holdsShields?: HoldsShields;
   usesAutocombat?: UsesAutocombat;
+  hasAutoIntent?: HasAutoIntent;
   tracksProgression?: TracksProgression;
   holdsInventory?: HoldsInventory;
   usesSkills?: UsesSkills;

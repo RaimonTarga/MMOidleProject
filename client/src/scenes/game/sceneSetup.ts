@@ -11,7 +11,11 @@ import {
 } from "../../hud/atoms";
 import { applyWorldLogEvents } from "../../worldLog/formatWorldLog";
 import { loadGameplaySettings } from "../../settings/gameplaySettings";
-import { sendRequestSync, sendSetAutoTraverse } from "../../net/intents";
+import {
+  sendRequestSync,
+  sendSetAutocombatConfig,
+  sendSetAutoTraverse,
+} from "../../net/intents";
 import { accountId, displayName } from "../../clientAuth";
 import { connectGameSocket, wireSocketHandlers } from "../../net/socket";
 import { applyDelta } from "../../net/deltaApplier";
@@ -22,6 +26,8 @@ import {
   GRAVE_FRAME_SIZE,
   NODE_DECOR,
   initVoidOverlordSheet,
+  THOUGHT_BUBBLE_FILE,
+  THOUGHT_BUBBLE_KEY,
   VOID_OVERLORD_FILE,
   VOID_OVERLORD_TEXTURE_KEY,
   VOID_TOMB_FILE,
@@ -31,6 +37,7 @@ import { stepInterpolation, getOwnBase } from "../../render/interpolation";
 import { drawShadows } from "../../render/shadows";
 import { setShadowDefs } from "../../render/shadowDefs";
 import { drawLabels } from "../../render/labels";
+import { drawThoughtBubbles } from "../../render/thoughtBubbles";
 import { drawHealthBars } from "../../render/healthBars";
 import { drawCooldownBars } from "../../render/cooldownBars";
 import { updateEffectOverlays } from "../../render/effectOverlays";
@@ -88,6 +95,7 @@ export function preloadGameAssets(scene: GameScene): void {
   scene.load.json(SHADOW_DEFS_KEY, "/assets/shadows.json");
   scene.load.image(VOID_OVERLORD_TEXTURE_KEY, VOID_OVERLORD_FILE);
   scene.load.image(VOID_TOMB_TEXTURE_KEY, VOID_TOMB_FILE);
+  scene.load.image(THOUGHT_BUBBLE_KEY, THOUGHT_BUBBLE_FILE);
   for (const def of EFFECT_DEFS) {
     if (def.rowSlices) {
       scene.load.image(def.key, def.file);
@@ -186,6 +194,7 @@ export function updateGameScene(scene: GameScene, delta: number): void {
   stepInterpolation(scene.state, dt);
   drawShadows(scene.state);
   drawLabels(scene.state);
+  drawThoughtBubbles(scene.state);
   drawHealthBars(scene.state);
 
   if (!isClientRenderPaused()) {
@@ -235,7 +244,9 @@ function connectSocket(scene: GameScene): void {
     onConnect: (socket) => {
       scene.myId = socket.id ?? "";
       atomStore.set(statusAtom, "connected");
-      sendSetAutoTraverse(socket, loadGameplaySettings().autoTraverseEnabled);
+      const gameplaySettings = loadGameplaySettings();
+      sendSetAutoTraverse(socket, gameplaySettings.autoTraverseEnabled);
+      sendSetAutocombatConfig(socket, gameplaySettings.autocombat);
       if (scene.state.ownId)
         scene.cameras.main.startFollow(scene.cameraTarget, true, 0.1, 0.1);
     },

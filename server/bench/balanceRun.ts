@@ -24,6 +24,7 @@ import {
 import { runOverlordMatch } from './balance/runMatch';
 import { computeBalanceScore } from './balance/scoring';
 import type { BenchMode } from './balance/types';
+import { ensureBenchHitboxCache } from './harness';
 
 const DEFAULT_TIERS = [0, 1, 2, 3, 4];
 const MAX_TIME_SCALE = 10;
@@ -347,7 +348,7 @@ function runPartyLog(args: BalanceCliArgs): void {
   printJsonlMatch({ build: leader, party, result });
 }
 
-function main(): void {
+async function main(): Promise<void> {
   process.env.BALANCE_BENCH = '1';
   let args: BalanceCliArgs;
   try {
@@ -357,6 +358,12 @@ function main(): void {
     console.error(err instanceof Error ? err.message : String(err));
     printUsage();
     process.exit(1);
+  }
+
+  // Bake/load sprite hitboxes before simulating so combat reach matches the live
+  // server (see `ensureBenchHitboxCache`). Skipped for --dry-run (no simulation).
+  if (!args.dryRun) {
+    await ensureBenchHitboxCache();
   }
 
   // On-demand single-party re-run (TUI fight log): skip the matrix entirely.
@@ -391,4 +398,7 @@ function main(): void {
   }
 }
 
-main();
+main().catch((err) => {
+  console.error(err instanceof Error ? err.stack ?? err.message : String(err));
+  process.exit(1);
+});

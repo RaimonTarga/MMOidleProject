@@ -16,6 +16,7 @@ import {
 } from "@mmo-idle/shared";
 import { updateAutoTargets } from "../systems/combat/ai/autoTarget";
 import { updateAutoTraverse } from "../systems/world/autoTraverse";
+import { updateAutoIntent } from "../systems/world/autoIntent";
 import { updatePartyFollow } from "../systems/world/partyFollow";
 import { updateMovement } from "../systems/world/movement";
 import { updateNodeFeatures } from "../systems/world/nodeFeatures";
@@ -304,7 +305,7 @@ export class World {
     updateUltimateEncounters(this, dt);
     updatePartyFollow(this);
     updateAutoTraverse(this);
-    updateAutoTargets(this);
+    updateAutoTargets(this, now);
     updateKnockback(this, dt);
     updateMovement(this, dt);
     updateNodeFeatures(this, dt);
@@ -314,6 +315,7 @@ export class World {
     updateCombat(this, dt, now);
     updateDefensiveSystems(this, dt, now);
     syncPlayerBuffs(this);
+    updateAutoIntent(this);
     updateDeadPlayersInWorld(this, now);
 
     if (IS_DEV) {

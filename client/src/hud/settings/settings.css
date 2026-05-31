@@ -167,6 +167,31 @@
   accent-color: var(--hud-primary);
 }
 
+.settings-slider-row,
+.settings-field-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 12px;
+  color: var(--hud-text);
+  margin-bottom: 12px;
+}
+
+.settings-slider-row input {
+  flex: 1;
+  accent-color: var(--hud-primary);
+}
+
+.settings-field-row select {
+  min-width: 150px;
+  padding: 4px 8px;
+  color: var(--hud-text);
+  background: rgba(25, 20, 55, 0.9);
+  border: 1px solid rgba(100, 85, 190, 0.3);
+  border-radius: 4px;
+}
+
 .settings-help {
   font-size: 11px;
   color: var(--hud-text-muted);

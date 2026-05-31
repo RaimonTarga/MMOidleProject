@@ -24,6 +24,7 @@ import {
 } from "../../world/nodePath";
 import { setEntityMotion, stopEntity } from "./movement";
 import { isPartyFollower } from "../player/party/partySystem";
+import { isFleeing } from "../combat/ai/flee";
 
 type TraversePhase = "mob" | "boss" | "advance";
 
@@ -192,6 +193,7 @@ function markCurrentNodeClearedIfCapped(
 
 export function updateAutoTraverse(world: World): void {
   for (const player of world.livePlayers) {
+    if (isFleeing(player)) continue;
     // Party followers in auto-combat mirror the leader (updatePartyFollow owns
     // them) instead of running their own traverse. With auto off they may still
     // manually navigate, so fall through to manual path stepping below.

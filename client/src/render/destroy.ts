@@ -6,6 +6,7 @@ import { destroyLabel } from './labels';
 import { destroyHpBar } from './healthBars';
 import { destroyCdBar } from './cooldownBars';
 import { destroyEffectOverlays } from './effectOverlays';
+import { destroyThoughtBubble } from './thoughtBubbles';
 import { clearMovementEffectsForEntity } from './movementEffects';
 
 export function destroyEntity(
@@ -25,6 +26,7 @@ export function destroyEntity(
   destroyHpBar(state, id);
   destroyCdBar(state, id);
   destroyEffectOverlays(state, id);
+  destroyThoughtBubble(state, id);
 
   state.ids.delete(id);
   state.kind.delete(id);

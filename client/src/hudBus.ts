@@ -1,4 +1,4 @@
-import type { EquipmentSlot } from '@mmo-idle/shared';
+import type { AutocombatConfig, EquipmentSlot } from '@mmo-idle/shared';
 import { intents } from './intents';
 
 type RecipeUnlockListener = (name: string, biomeGroup: string) => void;
@@ -16,6 +16,11 @@ export const hudBus = {
   /** Persist and push auto-traverse preference to the server. */
   requestSetAutoTraverse(enabled: boolean): void {
     intents.emit('setAutoTraverse', enabled);
+  },
+
+  /** Persist and push auto-combat targeting preferences to the server. */
+  requestSetAutocombatConfig(config: AutocombatConfig): void {
+    intents.emit('setAutocombatConfig', config);
   },
 
   /** Called by SkillTreePanel — GameScene picks this up and emits the socket event. */
