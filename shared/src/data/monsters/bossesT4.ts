@@ -195,9 +195,9 @@ export const bossMonsterEntriesT4 = [
             {
               type: 'spawn-waves',
               waves: [
-                { adds: [{ monsterTypeId: 'void-horror', count: 4 }] },
-                { adds: [{ monsterTypeId: 'void-horror', count: 3 }, { monsterTypeId: 'abyssal-titan', count: 2 }] },
-                { adds: [{ monsterTypeId: 'abyssal-titan', count: 3 }] },
+                { adds: [{ monsterTypeId: 'void-horror', count: 12 }] },
+                { adds: [{ monsterTypeId: 'void-horror', count: 9 }, { monsterTypeId: 'abyssal-titan', count: 6 }] },
+                { adds: [{ monsterTypeId: 'abyssal-titan', count: 9 }] },
               ],
             },
           ],

@@ -215,6 +215,8 @@ export class World {
   private nodeEvents = new Map<string, CombatEvent[]>();
   /** Runtime journal of all world log events (dev/debug). */
   worldLogJournal: WorldLogEvent[] = [];
+  /** When set, caps journal length instead of {@link WORLD_LOG_JOURNAL_MAX} (bench fight logs). */
+  worldLogJournalMax?: number;
   /** Per-player queues drained at broadcast tick. */
   worldLogByPlayer = new Map<string, WorldLogEvent[]>();
   nextWorldLogId = 1;
@@ -225,6 +227,11 @@ export class World {
    * Cleared automatically when the engaged boss is no longer in the world.
    */
   testRoomEngagedBossId: string | null = null;
+  /**
+   * When true, skip the periodic ensurePopulation/ensureBoss loop in tick().
+   * Set by the balance bench only so full-node clears can complete without repop.
+   */
+  suppressRepopulation = false;
 
   readonly nextMonsterIdByNode = new Map<string, number>();
   readonly nextMinionIdByOwner = new Map<string, number>();
@@ -314,20 +321,22 @@ export class World {
       ensureTrainingDummies(this);
     }
 
-    for (const nodeId of NODE_REGISTRY.keys()) {
-      if (nodeId === TEST_ROOM_NODE_ID) continue;
-      if (this.isNodeFrozen(nodeId)) continue;
-      if (this.countPlayersInNode(nodeId) === 0) continue;
+    if (!this.suppressRepopulation) {
+      for (const nodeId of NODE_REGISTRY.keys()) {
+        if (nodeId === TEST_ROOM_NODE_ID) continue;
+        if (this.isNodeFrozen(nodeId)) continue;
+        if (this.countPlayersInNode(nodeId) === 0) continue;
 
-      const last = this.populationCheckedAt.get(nodeId) ?? 0;
-      if (now - last < POPULATION_INTERVAL_MS) continue;
-      this.populationCheckedAt.set(nodeId, now);
+        const last = this.populationCheckedAt.get(nodeId) ?? 0;
+        if (now - last < POPULATION_INTERVAL_MS) continue;
+        this.populationCheckedAt.set(nodeId, now);
 
-      const { ms } = timeSync(() => {
-        ensurePopulationInWorld(this, nodeId);
-        ensureBossInWorld(this, nodeId);
-      });
-      this.telemetry.recordPopulationMs(nodeId, ms, true);
+        const { ms } = timeSync(() => {
+          ensurePopulationInWorld(this, nodeId);
+          ensureBossInWorld(this, nodeId);
+        });
+        this.telemetry.recordPopulationMs(nodeId, ms, true);
+      }
     }
   }
 
