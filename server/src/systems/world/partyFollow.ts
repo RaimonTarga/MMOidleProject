@@ -6,6 +6,7 @@ import {
   gateTargetForDirection,
 } from "../../world/nodePath";
 import { steerTowardTarget } from "../combat/ai/autoTarget";
+import { isFleeing } from "../combat/ai/flee";
 
 /** How close a follower trails an idle leader before holding position (px). */
 const PARTY_FOLLOW_DISTANCE = 90;
@@ -20,6 +21,7 @@ const PARTY_FOLLOW_DISTANCE_SQ = PARTY_FOLLOW_DISTANCE * PARTY_FOLLOW_DISTANCE;
 export function updatePartyFollow(world: World): void {
   for (const player of world.livePlayers) {
     if (!player.usesAutocombat.auto) continue;
+    if (isFleeing(player)) continue;
     if (player.hasManualMoveIntent) continue;
 
     const party = player.inParty;

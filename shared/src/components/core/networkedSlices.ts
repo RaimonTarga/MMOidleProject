@@ -112,10 +112,47 @@ export interface IsPlayer {
   name: string;
 }
 
-/** Auto-combat opt-in. */
-export interface UsesAutocombat {
+export type AutocombatPriorityMode = 'nearest' | 'damage' | 'threat' | 'balanced';
+
+/** User-tunable server-side auto-combat behavior. */
+export interface AutocombatConfig {
+  /** Allow auto-combat to wake dormant ultimate encounters such as the Void Overlord. */
+  engageUltimateBosses: boolean;
+  /** Leave combat when low HP and losing the trade. */
+  fleeWhenLow: boolean;
+  /** HP fraction at or below which flee checks can trigger. */
+  fleeHpPct: number;
+  /** Preset score weights for target selection. */
+  priorityMode: AutocombatPriorityMode;
+  /** Maximum non-aggro acquisition distance before distance scoring. */
+  acquireRadius: number;
+  /** Bias same-party players toward their leader's current target. */
+  focusLeaderTarget: boolean;
+}
+
+/** Auto-combat opt-in plus user-tunable targeting behavior. */
+export interface UsesAutocombat extends AutocombatConfig {
   auto: boolean;
   autoTraverse: boolean;
+}
+
+/** What an auto-combat player is about to do — telegraphed via a thought bubble. */
+export type AutoIntentKind = 'attack' | 'follow' | 'travel' | 'flee' | 'idle';
+
+/**
+ * Networked telegraph of an auto-combat player's next action. Present only
+ * while the player has auto-combat enabled. Carries enough denormalized data
+ * (monster type, destination biome) that the client can render the right icon
+ * even for entities/nodes it cannot currently see.
+ */
+export interface HasAutoIntent {
+  kind: AutoIntentKind;
+  /** 'attack' — monster type id of the target; the bubble shows that monster's sprite. */
+  targetMonsterTypeId?: string;
+  /** 'follow' — leader being followed; the client mirrors that leader's bubble. */
+  leaderId?: string;
+  /** 'travel' — biome group of the destination node (icon source). */
+  destBiomeGroup?: string;
 }
 
 /** One entry in a party roster (display identity). */

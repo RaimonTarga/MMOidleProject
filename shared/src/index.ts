@@ -12,6 +12,7 @@ export * from './components/combat/buffs';
 export * from './systems/stats';
 export * from './systems/skills';
 export * from './systems/damage';
+export * from './systems/combatEstimates';
 export * from './systems/spatial';
 export * from './systems/biomeProgress';
 export * from './systems/itemUpgrades';

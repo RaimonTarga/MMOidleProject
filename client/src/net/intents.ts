@@ -1,4 +1,4 @@
-import type { EquipmentSlot, Vec2 } from '@mmo-idle/shared';
+import type { AutocombatConfig, EquipmentSlot, Vec2 } from '@mmo-idle/shared';
 import type { GameSocket } from './socket';
 
 export function sendMove(socket: GameSocket, pos: Vec2): void {
@@ -15,6 +15,13 @@ export function sendSetAuto(socket: GameSocket, enabled: boolean): void {
 
 export function sendSetAutoTraverse(socket: GameSocket, enabled: boolean): void {
   socket.emit('player:setAutoTraverse', enabled);
+}
+
+export function sendSetAutocombatConfig(
+  socket: GameSocket,
+  config: AutocombatConfig,
+): void {
+  socket.emit('player:setAutocombatConfig', config);
 }
 
 export function sendNavigateTo(socket: GameSocket, nodeId: string): void {

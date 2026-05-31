@@ -1,4 +1,5 @@
 import type { EquipmentSlot } from "../items";
+import type { AutocombatConfig } from "../components/core/networkedSlices";
 import type { BossFelledMarker } from "./bossFelled";
 import type { DeltaSnapshot } from "./delta";
 import type { PlayerDeathPayload } from "./death";
@@ -49,6 +50,8 @@ export interface ClientToServerEvents {
   "player:setAuto": (enabled: boolean) => void;
   /** Enable or disable server-side auto-traverse when auto-combat is on. */
   "player:setAutoTraverse": (enabled: boolean) => void;
+  /** Update server-side auto-combat targeting preferences. */
+  "player:setAutocombatConfig": (config: AutocombatConfig) => void;
   /** Walk to a destination node via the shortest gate path (map click-to-navigate). */
   "player:navigateTo": (nodeId: string) => void;
   /** Request a fresh authoritative full snapshot for the player's current node. */

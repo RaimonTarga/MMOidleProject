@@ -1,8 +1,9 @@
-import type { EquipmentSlot } from '@mmo-idle/shared';
+import type { AutocombatConfig, EquipmentSlot } from '@mmo-idle/shared';
 
 export interface IntentMap {
   toggleAuto: undefined;
   setAutoTraverse: boolean;
+  setAutocombatConfig: AutocombatConfig;
   unlockSkill: string;
   equipItem: string;
   unequipItem: EquipmentSlot;

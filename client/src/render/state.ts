@@ -65,6 +65,17 @@ export interface RenderState {
 
   effectOverlays: Map<NetworkId, Map<string, Phaser.GameObjects.Sprite>>;
 
+  /** Auto-combat "next action" thought bubble above each player's head. */
+  thoughtBubble: Map<
+    NetworkId,
+    {
+      container: Phaser.GameObjects.Container;
+      icon: Phaser.GameObjects.Image | Phaser.GameObjects.Text | null;
+      signature: string | null;
+      visible: boolean;
+    }
+  >;
+
   spriteMeta: Map<
     NetworkId,
     {
@@ -138,6 +149,7 @@ export function createRenderState(): RenderState {
     hpBarCache: new Map(),
     cdBarCache: new Map(),
     effectOverlays: new Map(),
+    thoughtBubble: new Map(),
     spriteMeta: new Map(),
     debugRanges: new Map(),
     laserBeam: {

@@ -6,7 +6,7 @@ import {
   RECIPE_DATABASE,
 } from "@mmo-idle/shared";
 import { loadGameplaySettings } from '../settings/gameplaySettings';
-import { sendSetAutoTraverse } from './intents';
+import { sendSetAutocombatConfig, sendSetAutoTraverse } from './intents';
 import { hudBus } from "../hudBus";
 import { syncPlayerAtoms, nodeLoadingAtom, setZoneBoss, setZonePlayers, type ZonePlayer } from "../hud/atoms";
 import { getDefaultStore } from "jotai";
@@ -14,6 +14,7 @@ import type { GameScene } from "../scenes/GameScene";
 import type { RenderState } from "../render/state";
 import { upsertPlayer } from "../render/players";
 import { upsertMonster } from "../render/monsters";
+import { upsertThoughtBubble } from "../render/thoughtBubbles";
 import { upsertMinion } from "../render/minions";
 import { destroyEntity } from "../render/destroy";
 import { getOwnView } from "../render/state";
@@ -146,7 +147,9 @@ export function applyDelta(
     refreshNodeDecorState(scene);
 
     if (!state.gameplaySettingsSynced) {
-      sendSetAutoTraverse(scene.socket, loadGameplaySettings().autoTraverseEnabled);
+      const gameplaySettings = loadGameplaySettings();
+      sendSetAutoTraverse(scene.socket, gameplaySettings.autoTraverseEnabled);
+      sendSetAutocombatConfig(scene.socket, gameplaySettings.autocombat);
       state.gameplaySettingsSynced = true;
     }
   }
@@ -165,6 +168,7 @@ function upsertEntityView(
     const player = composePlayerView(entity);
     if (!player) return;
     upsertPlayer(state, player, scene);
+    upsertThoughtBubble(state, player, scene);
     return;
   }
   if (kind === "monster") {

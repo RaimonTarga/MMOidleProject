@@ -151,6 +151,56 @@ export function inAttackRange(a: PosHitbox, b: PosHitbox, range: number): boolea
   return hitboxGap(a, b) <= range;
 }
 
+/**
+ * Margin (px) an approacher keeps inside its own reach when settling on a melee
+ * target. The resting gap is the larger of `attackRange - MELEE_CONTACT_MARGIN`
+ * and `attackRange * MELEE_STANDOFF_FRAC` — so short-reach melee settles around
+ * half its reach, while long-reach (ranged) movers barely change their standoff.
+ */
+export const MELEE_CONTACT_MARGIN = 8;
+export const MELEE_STANDOFF_FRAC = 0.5;
+
+/**
+ * Destination for an approacher closing on an attack target. Returns a point a
+ * fixed standoff *inside* reach rather than the target's center.
+ *
+ * Steering at the exact center makes fast movers tunnel straight through the
+ * target at large `dt`: each side overshoots to where the other just was, they
+ * swap places, and the narrow edge-to-edge reach band is never satisfied at a
+ * tick boundary (so no hit lands and kite speed ramps forever). Because
+ * `advanceMotion` never overshoots its destination, aiming at the standoff point
+ * makes the approacher stop cleanly in range no matter how large its per-tick
+ * step is. The standoff also leaves a margin so small per-tick drift doesn't
+ * immediately drop the approacher back out of range.
+ */
+export function approachPoint(
+  from: Vec2,
+  fromPH: PosHitbox,
+  to: Vec2,
+  toPH: PosHitbox,
+  attackRange: number,
+): { inRange: boolean; dest: Vec2 } {
+  const gap = hitboxGap(fromPH, toPH);
+  if (gap <= attackRange) return { inRange: true, dest: from };
+
+  const dx = to.x - from.x;
+  const dy = to.y - from.y;
+  const dist = Math.hypot(dx, dy);
+  if (dist === 0) return { inRange: false, dest: from };
+
+  const desiredGap = Math.max(
+    attackRange - MELEE_CONTACT_MARGIN,
+    attackRange * MELEE_STANDOFF_FRAC,
+  );
+  // gap > attackRange ≥ desiredGap here, so advance is always positive; clamp to
+  // [0, dist] so we never step past the target center (or backward).
+  const advance = Math.max(0, Math.min(gap - desiredGap, dist));
+  return {
+    inRange: false,
+    dest: { x: from.x + (dx / dist) * advance, y: from.y + (dy / dist) * advance },
+  };
+}
+
 /** True when `point` lies inside any rect of `ph`. */
 export function pointInHitbox(point: Vec2, ph: PosHitbox): boolean {
   for (const rect of ph.rects) {

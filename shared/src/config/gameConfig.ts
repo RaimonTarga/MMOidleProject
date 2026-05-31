@@ -1,4 +1,5 @@
 import { NODE_BIOMES } from '../world/nodeBiomes';
+import type { AutocombatConfig } from '../components/core/networkedSlices';
 
 // ─── Game balance constants ───────────────────────────────────────────────────
 
@@ -84,3 +85,12 @@ export function biomeLevelCap(playerTier: number, biomeGroup: string): number {
   if (biomeGroup === 'clearing') return 4;
   return Math.max(4, playerTier * 4);
 }
+
+export const DEFAULT_AUTOCOMBAT_CONFIG: AutocombatConfig = {
+  engageUltimateBosses: false,
+  fleeWhenLow: true,
+  fleeHpPct: 0.25,
+  priorityMode: 'balanced',
+  acquireRadius: 600,
+  focusLeaderTarget: true,
+};

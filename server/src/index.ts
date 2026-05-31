@@ -7,6 +7,7 @@ import path from "path";
 import { World, type PersistedBossRespawn } from "./world/World";
 import { takeWorldLogEvents } from "./world/worldLog";
 import {
+  DEFAULT_AUTOCOMBAT_CONFIG,
   emptyEquipment,
   GAME_CONFIG,
   ITEM_DATABASE,
@@ -32,6 +33,8 @@ import type {
   ClientToServerEvents,
   EquipmentSlot,
   DeltaSnapshot,
+  AutocombatConfig,
+  AutocombatPriorityMode,
 } from "@mmo-idle/shared";
 import { db, runMigrations } from "./db/index";
 import {
@@ -46,20 +49,14 @@ import {
   getOrCreateCharacter,
   saveCharacter,
 } from "./db/playerRepo";
-import { initAllMechanics } from "./systems/classes/registry";
 import { recordBroadcast } from "./net/profiler";
 import { timeSync } from "./telemetry/nodeTelemetry";
 import { TELEMETRY_WINDOW_MS } from "./telemetry/constants";
-import { initWeaponEffects } from "./systems/combat/damage/weaponEffects";
-import { initInvulnerabilityGuard } from "./systems/combat/invulnerability";
-import { initDefenseSystems } from "./systems/defense";
+import { initCombatSystems } from "./systems/combatBootstrap";
 import {
-  registerSummonerDamageSponge,
-  registerMountainPathHooks,
   despawnMinionsForOwner,
   relocateMinionsForOwner,
 } from "./systems/classes/archetypes/summoner";
-import { initDebuffMechanics } from "./systems/classes/shared/debuffs";
 import { IS_DEV } from "./env";
 import {
   assertMarkerInvariants,
@@ -88,6 +85,54 @@ import type { PlayerEntity } from "./ecs/entity";
 
 export { IS_DEV };
 
+const AUTOCOMBAT_PRIORITY_MODES: readonly AutocombatPriorityMode[] = [
+  "nearest",
+  "damage",
+  "threat",
+  "balanced",
+];
+
+function sanitizeAutocombatConfig(input: AutocombatConfig): AutocombatConfig {
+  const raw =
+    typeof input === "object" && input !== null
+      ? (input as Partial<AutocombatConfig>)
+      : {};
+  const mode =
+    raw.priorityMode && AUTOCOMBAT_PRIORITY_MODES.includes(raw.priorityMode)
+      ? raw.priorityMode
+    : DEFAULT_AUTOCOMBAT_CONFIG.priorityMode;
+
+  return {
+    engageUltimateBosses: !!raw.engageUltimateBosses,
+    fleeWhenLow:
+      raw.fleeWhenLow === undefined
+        ? DEFAULT_AUTOCOMBAT_CONFIG.fleeWhenLow
+        : !!raw.fleeWhenLow,
+    fleeHpPct: clampNumber(raw.fleeHpPct, 0, 1, DEFAULT_AUTOCOMBAT_CONFIG.fleeHpPct),
+    priorityMode: mode,
+    acquireRadius: clampNumber(
+      raw.acquireRadius,
+      120,
+      GAME_CONFIG.NODE_WIDTH,
+      DEFAULT_AUTOCOMBAT_CONFIG.acquireRadius,
+    ),
+    focusLeaderTarget:
+      raw.focusLeaderTarget === undefined
+        ? DEFAULT_AUTOCOMBAT_CONFIG.focusLeaderTarget
+        : !!raw.focusLeaderTarget,
+  };
+}
+
+function clampNumber(
+  value: number | undefined,
+  min: number,
+  max: number,
+  fallback: number,
+): number {
+  if (typeof value !== "number" || !Number.isFinite(value)) return fallback;
+  return Math.max(min, Math.min(max, value));
+}
+
 if (IS_DEV) registerDevItems(ITEM_DATABASE);
 
 // ── Setup ─────────────────────────────────────────────
@@ -108,36 +153,16 @@ const io = new Server<ClientToServerEvents, ServerToClientEvents>(httpServer, {
   cors: { origin: true },
 });
 
-// ── COMBAT EFFECTS ────────────────────────────────────
-// Each class mechanic is declared in server/src/systems/classes/<name>/index.ts
-// via `defineMechanic({ id, init, tick, buffs })`. The registry's
-// `initAllMechanics` calls every module's init in MODULES order — combat
-// pipeline listeners get registered exactly once.
-initAllMechanics();
-
-// ── WEAPON EFFECTS ────────────────────────────────────────────────────────────
-// Registers combat pipeline hooks for weapon-specific mechanics (Chaotic Axe,
-// Sacred Cross, Ashbrand Blade). Works for any class — weapon and class effects
-// layer independently.
-initWeaponEffects();
-
-// ── DEFENSE SYSTEMS ───────────────────────────────────────────────────────────
-// Registers onDamageTaken listeners for evasion and shield absorption.
-// Must run after weapon effects (lower pipeline priority = runs later in order).
-initDefenseSystems();
-
-// ── DEBUFF MECHANICS ──────────────────────────────────────────────────────────
-// Registers onDamageTaken listeners that apply debuff multipliers (vulnerability).
-initDebuffMechanics();
-initInvulnerabilityGuard();
-initDeadPlayerGuard();
-
-// ── SUMMONER DAMAGE SPONGE ────────────────────────────────────────────────────
-// Registered after defense systems so shield/absorb get first crack at incoming
-// damage; whatever remains has half siphoned off to a random living slime.
-// Rockslide cover runs on post-sponge ally damage.
-registerMountainPathHooks();
-registerSummonerDamageSponge();
+// ── COMBAT SYSTEMS BOOTSTRAP ──────────────────────────────────────────────────
+// Registers every combat-pipeline listener and per-system hook (class mechanics,
+// weapon effects, defense, debuffs, invulnerability/dead-player guards, summoner
+// hooks) exactly once, in priority order.
+//
+// This is shared with the balance/bench harness (server/bench/harness.ts) so the
+// simulation exercises the identical combat pipeline. DO NOT register new combat
+// listeners inline here — add them inside `initCombatSystems` so the bench never
+// silently diverges from live server behavior.
+initCombatSystems();
 
 // ── DATABASE ──────────────────────────────────────────
 
@@ -458,6 +483,15 @@ async function boot(): Promise<void> {
         s.autoTraverse = !!enabled;
       });
       if (!enabled) clearAutoTraversePath(world, p);
+    });
+
+    socket.on("player:setAutocombatConfig", (config) => {
+      const p = liveSelf();
+      if (!p) return;
+      const sanitized = sanitizeAutocombatConfig(config);
+      mutateSlice(world, p, "usesAutocombat", (s) => {
+        Object.assign(s, sanitized);
+      });
     });
 
     socket.on("player:navigateTo", (nodeId) => {

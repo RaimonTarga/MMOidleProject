@@ -1,14 +1,11 @@
 import type { World } from "../../../world/World";
 import type { MonsterEntity, PlayerEntity } from "../../../ecs/entity";
 import {
-  areAllBiomeRecipesUnlocked,
-  distanceSq,
+  approachPoint,
   getFlag,
   hitboxGap,
   inAttackRange,
-  isBiomeLevelCapped,
   isRangedCombatant,
-  NODE_BIOMES,
   posHitboxFromEntity,
   setFlag,
   type Vec2,
@@ -16,6 +13,8 @@ import {
 import { NODE_REGISTRY } from "../../../world/nodeRegistry";
 import { setEntityMotion, stopEntity } from "../../world/movement";
 import { isPartyFollower } from "../../player/party/partySystem";
+import { beginFlee, stepFlee } from "./flee";
+import { selectAutoCombatAction } from "./targetPriority";
 
 const NODE_MARGIN = 40;
 
@@ -46,7 +45,7 @@ function clampToNode(world: World, nodeId: string, pos: Vec2): Vec2 {
   };
 }
 
-export function updateAutoTargets(world: World) {
+export function updateAutoTargets(world: World, now: number) {
   for (const player of world.livePlayers) {
     if (!player.usesAutocombat.auto) continue;
     // Party followers are steered by updatePartyFollow, not by their own targeting.
@@ -62,45 +61,23 @@ export function updateAutoTargets(world: World) {
         continue;
     }
 
-    const playerPos = player.hasPosition.current;
-    const nodeInfo = NODE_BIOMES[player.hasPosition.nodeId];
-    const skipBosses =
-      player.usesAutocombat.autoTraverse &&
-      nodeInfo &&
-      (!isBiomeLevelCapped(player.tracksProgression, nodeInfo.biomeGroup) ||
-        !areAllBiomeRecipesUnlocked(
-          player.tracksProgression,
-          nodeInfo.biomeGroup,
-        ));
-
-    const monsters = world.monsterEntitiesInNode(player.hasPosition.nodeId);
-
-    let target: MonsterEntity | null = null;
-    let targetIsAggroed = false;
-    let bestDist = Infinity;
-
-    for (const monster of monsters) {
-      if (skipBosses && monster.isMonster.isBoss) continue;
-      const aggroedOnPlayer =
-        monster.hasAggroTarget?.targetKind === "player" &&
-        monster.hasAggroTarget.targetId === player.isPlayer.id;
-      const d = distanceSq(monster.hasPosition.current, playerPos);
-
-      if (aggroedOnPlayer) {
-        if (!targetIsAggroed || d < bestDist) {
-          target = monster;
-          targetIsAggroed = true;
-          bestDist = d;
-        }
-      } else if (!targetIsAggroed && d < bestDist) {
-        target = monster;
-        bestDist = d;
-      }
+    if (player.isFleeing) {
+      stepFlee(world, player);
+      continue;
     }
 
-    if (!target) continue;
-
-    steerTowardTarget(world, player, target);
+    const action = selectAutoCombatAction(
+      world,
+      player,
+      player.usesAutocombat,
+      now,
+    );
+    if (action.kind === "flee") {
+      beginFlee(world, player);
+      stepFlee(world, player);
+    } else if (action.kind === "attack") {
+      steerTowardTarget(world, player, action.target);
+    }
   }
 }
 
@@ -108,8 +85,8 @@ export function updateAutoTargets(world: World) {
  * Move `player` into attacking position against `target`, matching the auto-combat
  * approach rules: ranged players kite to an ideal gap; melee players close to
  * contact; a reloading player with no aggro on it holds still. Shared by
- * `updateAutoTargets` (its chosen nearest target) and party follow (the leader's
- * target) so followers approach identically to solo auto-combat.
+ * `updateAutoTargets` (its chosen priority target) and party follow (the
+ * leader's target) so followers approach identically to solo auto-combat.
  */
 export function steerTowardTarget(
   world: World,
@@ -181,12 +158,18 @@ export function steerTowardTarget(
     return;
   }
 
-  if (inAttackRange(playerPH, targetPH, attackRange)) {
+  // Melee: close to a standoff just inside reach instead of charging the target
+  // center, which makes fast movers tunnel through the target at large dt (they
+  // swap sides and never settle inside the narrow edge-to-edge reach band).
+  const approach = approachPoint(playerPos, playerPH, targetPos, targetPH, attackRange);
+  if (approach.inRange) {
     stopEntity(world, player);
     return;
   }
 
-  if (dist > 0) {
-    setEntityMotion(world, player, targetPos);
-  }
+  setEntityMotion(
+    world,
+    player,
+    clampToNode(world, player.hasPosition.nodeId, approach.dest),
+  );
 }

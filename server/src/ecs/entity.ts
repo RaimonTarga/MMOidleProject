@@ -25,6 +25,7 @@ import type {
   HasVoidCorruption,
   HasAlignment,
   HasAttackTarget,
+  HasAutoIntent,
   IsDead,
   HasOverdrive,
   HasPosition,
@@ -72,6 +73,12 @@ export interface HasAutoTraversePath {
   remainingPath: string[];
 }
 
+/** Server-only marker: auto-combat has temporarily yielded to survival movement. */
+export interface IsFleeing {
+  phase: "out" | "recover" | "return";
+  returnNodeId: string;
+}
+
 /**
  * The shape of any entity in the ECS world.
  *
@@ -117,6 +124,7 @@ export interface ServerEntity {
   evadesHits?: EvadesHits;
   holdsShields?: HoldsShields;
   usesAutocombat?: UsesAutocombat;
+  hasAutoIntent?: HasAutoIntent;
   tracksProgression?: TracksProgression;
   holdsInventory?: HoldsInventory;
   usesSkills?: UsesSkills;
@@ -174,6 +182,7 @@ export interface ServerEntity {
   hasManualMoveIntent?: {};
   hasSummonerCommand?: HasSummonerCommand;
   hasAutoTraversePath?: HasAutoTraversePath;
+  isFleeing?: IsFleeing;
 
   // ── Shared by both (S7 + S8) ──────────────────────────────────
   tracksCombat?: TracksCombat;
