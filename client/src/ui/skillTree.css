@@ -19,7 +19,7 @@
   border: 1px solid rgba(100, 85, 210, 0.30);
   border-radius: 8px;
   width: 100%;
-  max-width: 860px;
+  max-width: 980px;
   max-height: 90vh;
   overflow: hidden;
   display: flex;
@@ -102,28 +102,140 @@
   text-align: center;
 }
 
-.skill-class-grid {
-  display: flex;
-  flex-direction: row;
-  gap: 18px;
-  justify-content: center;
-  flex-wrap: wrap;
+.skill-class-orbit {
+  --class-radius: 220px;
+  width: min(100%, 680px);
+  height: 520px;
+  position: relative;
+  margin: 4px auto 0;
 }
 
-.skill-class-card {
+.skill-class-orbit::before {
+  content: '';
+  position: absolute;
+  inset: 40px 120px;
+  border: 1px solid rgba(80, 70, 170, 0.24);
+  border-radius: 50%;
+  box-shadow:
+    inset 0 0 26px rgba(70, 65, 160, 0.10),
+    0 0 34px rgba(60, 50, 150, 0.08);
+  pointer-events: none;
+}
+
+.skill-class-orbit__slot {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform:
+    translate(-50%, -50%)
+    rotate(var(--class-angle))
+    translate(var(--class-radius))
+    rotate(calc(var(--class-angle) * -1));
+}
+
+.skill-class-orbit__slot .skill-node {
+  width: 96px;
+  height: 96px;
+}
+
+.skill-class-orbit__slot .skill-node__name {
+  display: none;
+}
+
+.skill-class-orbit__sigil {
+  position: absolute;
+  inset: 0 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: bold;
+  color: rgba(204, 196, 255, 0.82);
+  letter-spacing: 0.05em;
+  line-height: 1.2;
+  text-align: center;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+
+.skill-class-orbit__info {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 238px;
+  min-height: 156px;
+  transform: translate(-50%, -50%);
+  border: 1px solid rgba(80, 68, 160, 0.28);
+  border-radius: 8px;
+  background: rgba(8, 6, 22, 0.88);
+  box-shadow: inset 0 0 18px rgba(80, 70, 180, 0.08);
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 8px;
-  width: 130px;
+  padding: 16px;
+  box-sizing: border-box;
+  text-align: center;
+  pointer-events: none;
 }
 
-.skill-class-desc {
+.skill-class-orbit__info--active {
+  border-color: rgba(100, 140, 230, 0.52);
+  box-shadow:
+    inset 0 0 18px rgba(80, 120, 230, 0.10),
+    0 0 18px rgba(80, 120, 230, 0.14);
+}
+
+.skill-class-orbit__info--unlocked {
+  border-color: rgba(44, 210, 100, 0.58);
+}
+
+.skill-class-orbit__info--available {
+  border-color: rgba(100, 140, 230, 0.58);
+}
+
+.skill-class-orbit__info--locked {
+  border-color: rgba(70, 64, 130, 0.42);
+}
+
+.skill-class-orbit__info-title {
+  font-size: 13px;
+  font-weight: bold;
+  color: #c8c4ff;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.skill-class-orbit__info-meta {
+  font-size: 10px;
+  color: #88aaff;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.skill-class-orbit__info--unlocked .skill-class-orbit__info-meta {
+  color: #44cc77;
+}
+
+.skill-class-orbit__info-effects {
+  font-size: 10px;
+  color: #8898cc;
+  line-height: 1.35;
+}
+
+.skill-class-orbit__info--available .skill-class-orbit__info-effects {
+  color: #88aaee;
+}
+
+.skill-class-orbit__info--unlocked .skill-class-orbit__info-effects {
+  color: #33cc77;
+}
+
+.skill-class-orbit__info-text {
   font-size: 10px;
   color: #aaa8dc;
-  margin: 0;
   line-height: 1.45;
-  text-align: center;
 }
 
 /* ── Progression meta bar ────────────────────────────────────────────────── */
@@ -434,4 +546,54 @@
   color: #b8b5dc;
   line-height: 1.5;
   font-style: italic;
+}
+
+@media (max-width: 620px) {
+  .skill-tree-body {
+    padding: 16px 12px 10px;
+  }
+
+  .skill-class-orbit {
+    --class-radius: 126px;
+    height: 330px;
+  }
+
+  .skill-class-orbit::before {
+    inset: 48px 58px;
+  }
+
+  .skill-class-orbit__slot .skill-node {
+    width: 78px;
+    height: 78px;
+  }
+
+  .skill-class-orbit__slot .skill-node__cost {
+    top: 4px;
+    right: 4px;
+    font-size: 7px;
+  }
+
+  .skill-class-orbit__slot .skill-node__name {
+    font-size: 8px;
+    max-width: 58px;
+  }
+
+  .skill-class-orbit__sigil {
+    inset: 0 6px;
+    font-size: 9px;
+  }
+
+  .skill-class-orbit__info {
+    width: 174px;
+    min-height: 136px;
+    padding: 12px;
+  }
+
+  .skill-class-orbit__info-title {
+    font-size: 11px;
+  }
+
+  .skill-class-orbit__info-text {
+    font-size: 9px;
+  }
 }

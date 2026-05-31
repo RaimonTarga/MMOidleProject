@@ -14,6 +14,8 @@
     "build:client": "pnpm --filter @mmo-idle/client build",
     "play": "cross-env VITE_ENABLE_OPS_MAP=true pnpm build:client && pnpm dev:server",
     "bench:server": "pnpm --filter @mmo-idle/server bench",
+    "bench:balance": "pnpm --filter @mmo-idle/server bench:balance",
+    "bench:tui": "cargo run --release --manifest-path tools/balance-tui/Cargo.toml --",
     "test:spatial": "pnpm --filter @mmo-idle/server exec tsx ../shared/src/systems/spatialHitbox.test.ts",
     "bake:hitboxes": "pnpm --filter @mmo-idle/server bake:hitboxes",
     "typecheck": "pnpm -r exec tsc --noEmit",

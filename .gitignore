@@ -5,6 +5,9 @@ node_modules/
 dist/
 build/
 
+# ── Rust build output ─────────────────────────────────────────────────────────
+target/
+
 # ── Environment & secrets ─────────────────────────────────────────────────────
 .env
 .env.local

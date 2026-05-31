@@ -7,7 +7,8 @@
     "dev": "pnpm run bake:hitboxes && tsx watch src/index.ts",
     "build": "tsc",
     "start": "pnpm run bake:hitboxes && NODE_ENV=production node dist/index.js",
-    "bench": "tsx bench/run.ts"
+    "bench": "tsx bench/run.ts",
+    "bench:balance": "tsx bench/balanceRun.ts"
   },
   "dependencies": {
     "@mmo-idle/shared": "workspace:*",

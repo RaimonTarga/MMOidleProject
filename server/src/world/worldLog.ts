@@ -23,7 +23,8 @@ export function recordWorldLogEvent(
   } as WorldLogEvent;
 
   world.worldLogJournal.push(event);
-  if (world.worldLogJournal.length > WORLD_LOG_JOURNAL_MAX) {
+  const maxLen = world.worldLogJournalMax ?? WORLD_LOG_JOURNAL_MAX;
+  if (world.worldLogJournal.length > maxLen) {
     world.worldLogJournal.shift();
   }
 
