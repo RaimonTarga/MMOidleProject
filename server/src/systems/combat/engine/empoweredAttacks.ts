@@ -129,9 +129,11 @@ export function registerEmpoweredMultiplier(
     ctx.metadata['empoweredMultiplier'] = effectiveMult;
     ctx.metadata['empoweredBonus']      = ctx.damage - base;
 
-    console.log(
-      `[Empowered] ${ctx.attacker.entityId}: ${effectiveMult}x hit on ${ctx.defender.entityId} — ` +
-      `${base} → ${ctx.damage} dmg (+${ctx.damage - base})`,
-    );
+    if (!process.env.BALANCE_BENCH) {
+      console.log(
+        `[Empowered] ${ctx.attacker.entityId}: ${effectiveMult}x hit on ${ctx.defender.entityId} — ` +
+          `${base} → ${ctx.damage} dmg (+${ctx.damage - base})`,
+      );
+    }
   });
 }

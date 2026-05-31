@@ -13,8 +13,9 @@
  *   - From AoE: monsters do not currently AoE; if introduced, route
  *     through a future `applyMonsterAoe(... includeMinions: true)`.
  */
+import { GAME_CONFIG } from '@mmo-idle/shared';
 import type { World } from '../../../../world/World';
-import type { PlayerEntity } from '../../../../ecs/entity';
+import type { MinionEntity, PlayerEntity } from '../../../../ecs/entity';
 import { markSliceDirty } from '../../../../ecs/dirtyHelpers';
 import {
   computeMinionMaxHp,
@@ -31,6 +32,7 @@ import { driveMinion } from './ai';
 import { validateSummonerCommand } from './command';
 import { tickAcidLurkerLifetime, tryAcidBroodMinionExplosion } from './t3/paths/cave';
 import { tryVitalBurst } from './t3/paths/plains';
+import { applyHealToMinion } from '../../../defense/regen/healing';
 
 const DEFAULT_RESPAWN_MS = 5000;
 
@@ -103,6 +105,7 @@ function syncLiveMinionFrameStats(world: World, owner: SummonerPlayerEntity): vo
   const desiredSpeed = computeMinionSpeed(owner);
   const desiredSizeMult = computeMinionSizeMult(owner);
   const desiredMaxHp = computeMinionMaxHp(owner);
+  const desiredHpRegen = owner.hasHealth.hpRegen;
   const desiredType = resolveMinionType(owner);
   for (const id of owner.summonsMinions.minionIds) {
     const minion = id ? world.getMinionEntity(id) : undefined;
@@ -121,8 +124,53 @@ function syncLiveMinionFrameStats(world: World, owner: SummonerPlayerEntity): vo
       syncMinionHitbox(world, minion, desiredSizeMult);
     }
     syncMinionMaxHp(world, minion, desiredMaxHp);
+    if (minion.hasHealth.hpRegen !== desiredHpRegen) {
+      minion.hasHealth.hpRegen = desiredHpRegen;
+      markSliceDirty(world, minion, 'hasHealth');
+    }
     applyOwnerStatShare(world, owner, minion);
   }
+}
+
+function isMinionInCombat(
+  world: World,
+  owner: SummonerPlayerEntity,
+  minion: MinionEntity,
+  now: number,
+): boolean {
+  if (minion.hasAttackTarget !== undefined) return true;
+  const lastCombatAt = owner.tracksEngagement;
+  if (
+    lastCombatAt !== undefined &&
+    now - lastCombatAt < GAME_CONFIG.COMBAT_REGEN_DELAY
+  ) {
+    return true;
+  }
+  for (const monster of world.aggroedMonsters) {
+    if (
+      monster.hasAggroTarget.targetKind === 'minion' &&
+      monster.hasAggroTarget.targetId === minion.isMinion.id
+    ) {
+      return true;
+    }
+  }
+  return false;
+}
+
+function runMinionRegen(
+  world: World,
+  owner: SummonerPlayerEntity,
+  minion: MinionEntity,
+  dt: number,
+  now: number,
+): void {
+  if (minion.hasHealth.hp >= minion.hasHealth.maxHp) return;
+  const hpRegen = minion.hasHealth.hpRegen ?? 0;
+  if (hpRegen <= 0) return;
+  if (isMinionInCombat(world, owner, minion, now)) return;
+
+  const healAmount = minion.hasHealth.maxHp * (hpRegen / 100) * (dt / 1000);
+  applyHealToMinion(minion, owner.isPlayer.id, healAmount, world);
 }
 
 export function initSummonerArchetype(): void {
@@ -169,6 +217,7 @@ export function updateSummonerArchetype(world: World, dt: number, now: number): 
           tryVitalBurst(world, summoner, minion, now);
           despawnMinion(world, minion);
         } else {
+          runMinionRegen(world, summoner, minion, dt, now);
           driveMinion(world, minion, summoner, now);
         }
         continue;

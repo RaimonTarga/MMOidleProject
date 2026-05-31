@@ -175,6 +175,7 @@ export function spawnMinionForOwner(
     hasHealth: {
       hp: maxHp,
       maxHp,
+      hpRegen: owner.hasHealth.hpRegen,
     },
     dealsDamage: {
       attack,

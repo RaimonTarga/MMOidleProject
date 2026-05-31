@@ -76,9 +76,8 @@ function applyStatModToTarget(p: PlayerStatsTarget, stat: string, value: number)
 /** Result of a stat rebuild — out-of-band signals the entity wrapper acts on. */
 export interface PlayerStatsResult {
   /**
-   * True when this player can no longer attack: either the summoner archetype
-   * (minions fight in its place) or attack range was pushed below 1px. The
-   * server wrapper attaches/detaches the `CannotAttack` marker from this.
+   * True when this player can no longer attack directly. Summoners fight
+   * through minions, so the server wrapper attaches the `CannotAttack` marker.
    */
   cannotAttack: boolean;
 }
@@ -202,13 +201,15 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
     }
   }
 
-  // 4. Range floor. Attack range can never drop below 1px. If skill/equipment
-  // modifiers pushed it under 1, the player loses the ability to attack
-  // entirely — there is nothing they could ever be close enough to reach.
-  // Summoners never attack directly (their minions do), so they also can't.
-  const cannotAttack =
-    p.performsAttack.attackRange < 1 || p.usesSkills.combatArchetype === 'summoner';
-  p.performsAttack.attackRange = Math.max(1, p.performsAttack.attackRange);
+  // 4. Range floor. Negative range bonuses can reduce ranged builds down to
+  // melee, but should never remove the base contact reach needed to attack.
+  p.performsAttack.attackRange = Math.max(
+    GAME_CONFIG.PLAYER_ATTACK_RANGE,
+    p.performsAttack.attackRange,
+  );
+
+  // Summoners never attack directly (their minions do), so they can't.
+  const cannotAttack = p.usesSkills.combatArchetype === 'summoner';
 
   // 5. Clamp current hp to the new max
   p.hasHealth.hp = Math.max(1, Math.min(p.hasHealth.hp, p.hasHealth.maxHp));
