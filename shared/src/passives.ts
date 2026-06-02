@@ -23,9 +23,14 @@ export const DEFENSE_KEYS = [
   'defense.cleanse-stacks',
   'defense.cleanse-interval-ms',
   'defense.max-hit-pct',
+  'defense.max-hit-mult',
   // Additive bonus (0..1) to the fraction of damage avoided on an evade, on top
   // of GAME_CONFIG.EVADE_MITIGATION_BASE. Final value is clamped to [0,1].
   'defense.evade-mitigation',
+  'defense.cheat-death',
+  'defense.ramp-regen-start-pct',
+  'defense.ramp-regen-max-pct',
+  'defense.ramp-regen-ramptime-ms',
 ] as const;
 
 export const CADENCE_KEYS = [
@@ -131,6 +136,10 @@ export const SHARED_KEYS = [
   'shared.empowered-mult-add',
   // 1 = this attacker's debuffs/DoT stacks still land on an evaded hit (pierce evade).
   'shared.applies-through-evade',
+  // Additive multiplier applied to final damage after plating/DR. 0.25 = +25%.
+  'shared.damage-mult',
+  // Damage multiplier applied on the very first hit ever landed on a fresh monster entity.
+  'weapon.first-strike-mult',
 ] as const;
 
 export const SUMMONER_KEYS = [
@@ -228,9 +237,17 @@ export function hasPassive(map: PassiveMap, key: PassiveKey): boolean {
   return (map[key] ?? 0) > 0;
 }
 
+// Passives that represent multiplicative pass-through factors: each source
+// compounds as a product (identity = 1) rather than a sum (identity = 0).
+const MULTIPLICATIVE_PASSIVES = new Set<PassiveKey>(['defense.max-hit-mult']);
+
 export function mergePassives(target: PassiveMap, source: MechanicEffects | undefined): void {
   if (!source) return;
   for (const [key, val] of Object.entries(source) as [PassiveKey, number][]) {
-    target[key] = (target[key] ?? 0) + val;
+    if (MULTIPLICATIVE_PASSIVES.has(key)) {
+      target[key] = (target[key] ?? 1) * val;
+    } else {
+      target[key] = (target[key] ?? 0) + val;
+    }
   }
 }

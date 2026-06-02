@@ -11,6 +11,7 @@ import type { World } from "../../../world/World";
 import { registerCombatListener } from "../../combat/engine/combatPipeline";
 import { isInvulnerablePlayer } from "../../combat/invulnerability";
 import { DEBT_POOL_KEY, POOL_DRAIN_MS } from "../core/pools";
+import { tryCheatDeath } from "./cheatDeath";
 import {
   buildKillerFromMonster,
   readDebtKillerFromStrings,
@@ -33,8 +34,10 @@ export function registerHitToDot(): void {
     if (ctx.metadata["isDot"]) return;
 
     const player = ctx.defender;
-    const conversionPct =
-      player.usesSkills.passives["defense.hit-to-dot-pct"] ?? 0;
+    const conversionPct = Math.min(
+      0.5,
+      player.usesSkills.passives["defense.hit-to-dot-pct"] ?? 0,
+    );
     if (conversionPct <= 0) return;
 
     const debtAmount = ctx.damage * conversionPct;
@@ -85,7 +88,10 @@ export function runDebtDrain(world: World, player: PlayerEntity): boolean {
     player.usesSkills.passives["defense.dot-resistance"] ?? 0,
   );
   const debtDamage = Math.round(drainAmount * (1 - dotResist));
-  if (debtDamage < 1) return false;
+  if (debtDamage < 1) {
+    setResource(cs, DEBT_POOL_KEY, 0);
+    return false;
+  }
 
   const nodeId = player.hasPosition.nodeId;
   const debtKiller = readDebtKillerFromStrings(cs.strings, nodeId);
@@ -109,6 +115,7 @@ export function runDebtDrain(world: World, player: PlayerEntity): boolean {
 
   player.hasHealth.hp = Math.max(0, player.hasHealth.hp - debtDamage);
   if (player.hasHealth.hp <= 0) {
+    if (tryCheatDeath(world, player)) return false;
     setResource(cs, DEBT_POOL_KEY, 0);
     world.killPlayer(player.isPlayer.id, {
       kind: "debt",

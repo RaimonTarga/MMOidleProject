@@ -107,8 +107,12 @@ function formatMechanicEffects(fx: Record<string, number> | undefined): string[]
   }
 
   if (has('defense.max-hit-pct')) {
-    lines.push(`Single hits capped at ${pct('defense.max-hit-pct')} of your max HP`);
-    mark('defense.max-hit-pct');
+    const mult = fx['defense.max-hit-mult'] ?? 1;
+    const reductionPct = Math.round((1 - mult) * 100);
+    lines.push(
+      `Hits above ${pct('defense.max-hit-pct')} of your max HP have excess damage reduced by ${reductionPct}%`
+    );
+    mark('defense.max-hit-pct', 'defense.max-hit-mult');
   }
 
   if (has('defense.dot-resistance') || has('defense.debuff-resistance')) {

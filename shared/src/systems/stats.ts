@@ -109,8 +109,8 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
 
   // 2. Apply unlocked skill effects
   let attackSpeedPct = 0;
-  // Evasion sources combine into a raw dodge rating: sum of 1/N per source.
-  // Converted to a deterministic per-hit dodge rate at the end via evasionDodgeRate().
+  // Evasion sources combine additively: each source is a fraction (0–1) expressing
+  // dodge frequency. Converted to a deterministic per-hit dodge rate via evasionDodgeRate().
   let evasionChance = 0;
   p.usesSkills.passives = {};
   for (const skillId of p.usesSkills.unlockedSkills) {
@@ -120,7 +120,7 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
     p.dealsDamage.attack          += e.attack          ?? 0;
     p.mitigatesDamage.plating     += e.plating         ?? 0;
     p.mitigatesDamage.damageReduction += e.damageReduction ?? 0;
-    if ((e.evasion ?? 0) > 0) evasionChance += 1 / e.evasion!;
+    if ((e.evasion ?? 0) > 0) evasionChance += e.evasion!;
     p.performsAttack.attackRange  += e.attackRange     ?? 0;
     attackSpeedPct                 += e.attackSpeedPct  ?? 0;
     p.hasHealth.maxHp             += e.maxHp           ?? 0;
@@ -135,7 +135,7 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
   p.mitigatesDamage.damageReduction = Math.min(0.9, Math.max(0, p.mitigatesDamage.damageReduction));
 
   // 2b. Class-specific close-range bonus
-  if (p.usesSkills.selectedRange === 'range-close' && p.usesSkills.selectedClass) {
+  if (p.usesSkills.selectedRange?.endsWith('-range-close') && p.usesSkills.selectedClass) {
     const bonus = CLOSE_RANGE_CLASS_BONUS[p.usesSkills.selectedClass];
     if (bonus) {
       p.mitigatesDamage.plating += bonus.plating;
@@ -158,7 +158,7 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
     if (!def) continue;
     for (const [stat, value] of Object.entries(def.statModifiers)) {
       if (stat === 'evasion') {
-        if (value > 0) evasionChance += 1 / value;
+        if (value > 0) evasionChance += value;
       } else {
         applyStatModToTarget(p, stat, value);
       }
@@ -169,7 +169,7 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
     const plus = p.holdsInventory.itemUpgrades?.[defId] ?? 0;
     if (plus > 0) {
       for (const [stat, value] of Object.entries(upgradeStatBonusTotal(def, plus))) {
-        if (stat === 'evasion') { if (value > 0) evasionChance += 1 / value; }
+        if (stat === 'evasion') { if (value > 0) evasionChance += value; }
         else applyStatModToTarget(p, stat, value);
       }
       const meFx = upgradeMechanicEffectsTotal(def, plus);

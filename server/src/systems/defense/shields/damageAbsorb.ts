@@ -17,6 +17,7 @@ export function registerDamageAbsorb(): void {
   registerCombatListener('onDamageTaken', (ctx, _world) => {
     if (ctx.defenderType !== 'player') return;
     if (ctx.damage <= 0) return;
+    if (ctx.metadata["isDot"]) return;
 
     const player = ctx.defender;
     const absorbPct = player.usesSkills.passives['defense.absorb-pct'] ?? 0;

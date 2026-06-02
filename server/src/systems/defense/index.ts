@@ -4,11 +4,13 @@ import { registerEvasion, resetEvadeAccumulator } from "./mitigation/evasion";
 import { registerDamageCap } from "./mitigation/damageCap";
 import { registerShieldAbsorb } from "./shields/shields";
 import { registerHitToDot, runDebtDrain } from "./mitigation/hitToDot";
+import { registerCheatDeath, resetCheatDeath } from "./mitigation/cheatDeath";
 import { registerDamageAbsorb, runAbsorbDrain } from "./shields/damageAbsorb";
 import { registerKillBurst, runRegenBurst } from "./regen/regenBurst";
 import { runPeriodicShield } from "./shields/periodicShield";
 import { runDebuffCleanse } from "./mitigation/debuffCleanse";
 import { runInCombatRegen } from "./regen/inCombatRegen";
+import { runRampRegen, resetRampRegen } from "./regen/rampRegen";
 
 /**
  * Register all defense-layer combat pipeline listeners.
@@ -20,13 +22,15 @@ import { runInCombatRegen } from "./regen/inCombatRegen";
  *   2. Damage cap      — clamps to defense.max-hit-pct of maxHp
  *   3. Shield          — absorbs remaining damage
  *   4. Hit-to-DoT      — redirects defense.hit-to-dot-pct to debt pool
- *   5. Damage absorb   — converts defense.absorb-pct of hit into HoT pool
+ *   5. Cheat death     — caps lethal damage to hp-1 (once per combat)
+ *   6. Damage absorb   — converts defense.absorb-pct of hit into HoT pool
  */
 export function initDefenseSystems(): void {
   registerEvasion();
   registerDamageCap();
   registerShieldAbsorb();
   registerHitToDot();
+  registerCheatDeath();
   registerDamageAbsorb();
   registerKillBurst();
 }
@@ -51,7 +55,11 @@ export function updateDefensiveSystems(
 
     // Deterministic dodge accumulator resets while out of combat (single balance
     // lever via GAME_CONFIG.EVADE_OOC_RESET).
-    if (!inCombat) resetEvadeAccumulator(player);
+    if (!inCombat) {
+      resetEvadeAccumulator(player);
+      resetCheatDeath(player);
+      resetRampRegen(player);
+    }
 
     if (runDebtDrain(world, player)) continue; // player died → skip remaining
 
@@ -60,6 +68,7 @@ export function updateDefensiveSystems(
     runPeriodicShield(world, player, inCombat);
     runDebuffCleanse(player);
     runInCombatRegen(world, player, dt);
+    runRampRegen(world, player, dt);
   }
 }
 

@@ -33,6 +33,7 @@ import {
   actorFromSourceId,
 } from "../../../../world/worldLogActors";
 import { isInvulnerableMonster, isInvulnerablePlayer } from "../../../combat/invulnerability";
+import { tryCheatDeath } from "../../../defense/mitigation/cheatDeath";
 import {
   DOT_CONVERSION_PCT,
   DOT_DURATION_MS,
@@ -166,11 +167,11 @@ export function updateDotArchetype(world: World, dt: number): void {
       0.9,
       entity.usesSkills.passives["defense.dot-resistance"] ?? 0,
     );
+    // DR applies at half value vs DoT; dot-resistance is the dedicated counter.
+    const drForDot = entity.mitigatesDamage.damageReduction * 0.5;
     const damage = Math.max(
       1,
-      Math.round(
-        base * (1 - entity.mitigatesDamage.damageReduction) * (1 - dotResist),
-      ),
+      Math.round(base * (1 - drForDot) * (1 - dotResist)),
     );
 
     const killer = buildKillerFromSourceId(
@@ -195,19 +196,23 @@ export function updateDotArchetype(world: World, dt: number): void {
     entity.hasHealth.hp -= damage;
 
     if (entity.hasHealth.hp <= 0) {
-      playersToRespawn.push({
-        playerId,
-        cause: {
-          kind: "dot",
-          killer: buildKillerFromSourceId(
-            world,
-            effect.sourceId,
-            entity.hasPosition.nodeId,
-          ),
-          damage,
-          stacks: effect.stacks,
-        },
-      });
+      if (tryCheatDeath(world, entity)) {
+        effect.data.nextTickIn = effect.data.tickIntervalMs;
+      } else {
+        playersToRespawn.push({
+          playerId,
+          cause: {
+            kind: "dot",
+            killer: buildKillerFromSourceId(
+              world,
+              effect.sourceId,
+              entity.hasPosition.nodeId,
+            ),
+            damage,
+            stacks: effect.stacks,
+          },
+        });
+      }
     } else {
       effect.data.nextTickIn = effect.data.tickIntervalMs;
     }

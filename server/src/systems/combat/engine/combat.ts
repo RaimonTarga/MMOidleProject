@@ -161,6 +161,9 @@ export function runPlayerAttack(
     ),
   );
 
+  const damageMult = player.usesSkills.passives['shared.damage-mult'] ?? 0;
+  if (damageMult > 0) ctx.damage = Math.round(ctx.damage * (1 + damageMult));
+
   emitCombatEvent("onHit", ctx, world);
 
   if (player.dealsDamage.onHitDamage > 0) {

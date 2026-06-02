@@ -44,6 +44,9 @@ import { isInvulnerableMonster } from "../invulnerability";
 
 // ── Internal combat state keys ────────────────────────────────────────────────
 
+const HITS_RECEIVED_KEY = "hitsReceived";
+const FIRST_STRIKE_EFFECT = "first-strike";
+
 const CHAOTIC_HIT_KEY = "chaoticHits";
 const SACRED_STARTED = "sacredStarted";
 const SACRED_BUFF_FLAG = "sacredBuffActive";
@@ -57,6 +60,28 @@ const BURN_EFFECT_IDS = BURN_FAMILY.map((b) => b.effectId);
 // ── Init — registers combat pipeline listeners ────────────────────────────────
 
 export function initWeaponEffects(): void {
+  // ── First strike: 2× (or custom) damage on the very first hit on a fresh monster ─
+  // hitsReceived is incremented unconditionally for every player → monster onHit,
+  // so the bonus fires only when this player is genuinely the first to connect.
+  // Fully-evaded hits (evadeMult >= 1) never reach onHit and don't consume the charge.
+  registerCombatListener("onHit", (ctx, _world) => {
+    if (ctx.attackerType !== "player") return;
+    if (ctx.defenderType !== "monster") return;
+
+    const monsterState = ctx.defender.tracksCombat;
+    addCounter(monsterState, HITS_RECEIVED_KEY, 1);
+    const hitsReceived = getCounter(monsterState, HITS_RECEIVED_KEY);
+
+    const mult = ctx.attacker.usesSkills.passives["weapon.first-strike-mult"] ?? 0;
+    if (mult <= 0 || hitsReceived !== 1) return;
+
+    ctx.damage = Math.round(ctx.damage * mult);
+    const existing = ctx.metadata["clientEffects"];
+    ctx.metadata["clientEffects"] = Array.isArray(existing)
+      ? [...existing, FIRST_STRIKE_EFFECT]
+      : [FIRST_STRIKE_EFFECT];
+  });
+
   // ── Chaotic family: every Nth hit misses (0 damage, on-hit effects still fire) ─
   registerCombatListener("onHit", (ctx, _world) => {
     if (ctx.attackerType !== "player") return;

@@ -93,7 +93,7 @@ function getVisibleNodes(player: SkillPlayer): Map<number, SkillNode[]> {
     if (node.tier === 0) {
       if (node.id !== classId) continue;
     } else if (node.tier === 2) {
-      // universal
+      if (node.classId !== classId) continue;
     } else {
       if (node.classId !== classId) continue;
       if (node.tier >= 3 && node.subVariantId !== sub) continue;
