@@ -489,6 +489,7 @@ async function boot(): Promise<void> {
       const p = liveSelf();
       if (!p) return;
       p.usesAutocombat.auto = enabled;
+      if (!enabled) detachComponent(world, p, "isFleeing");
     });
 
     socket.on("player:setAutoTraverse", (enabled) => {

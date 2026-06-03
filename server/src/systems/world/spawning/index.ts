@@ -220,6 +220,7 @@ export function respawnPlayer(world: World, playerId: string): void {
   entity.hasHealth.hp = entity.hasHealth.maxHp;
 
   resetEvadeAccumulator(entity); // reset deterministic dodge accumulator on respawn
+  detachComponent(world, entity, "isFleeing");
   detachComponent(world, entity, "holdsShields");
   detachComponent(world, entity, "tracksEngagement");
   detachComponent(world, entity, "hasEmpoweredAttack");
