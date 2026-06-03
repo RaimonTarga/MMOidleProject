@@ -42,7 +42,11 @@ const pool = new Pool({
 export const db = drizzle(pool, { schema });
 
 export async function runMigrations(): Promise<void> {
-  const migrationsFolder = path.join(process.cwd(), 'src', 'db', 'migrations');
+  // Resolve relative to this module (not process.cwd()) so migrations are found
+  // regardless of the working directory the process is launched from.
+  // dev: server/src/db -> server/src/db/migrations
+  // prod: server/dist/db -> server/src/db/migrations
+  const migrationsFolder = path.join(__dirname, '..', '..', 'src', 'db', 'migrations');
   await migrate(db, { migrationsFolder });
   console.log('[db] migrations applied');
 }
