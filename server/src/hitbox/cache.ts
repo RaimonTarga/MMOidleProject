@@ -1,5 +1,5 @@
 import { createHash } from 'crypto';
-import type { BetterSQLite3Database } from 'drizzle-orm/better-sqlite3';
+import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import type { HitboxDef } from '@mmo-idle/shared';
 import type * as schema from '../db/schema';
 import { loadHitboxCache, replaceAllHitboxes } from '../db/hitboxRepo';
@@ -11,7 +11,7 @@ import {
 } from './bake/index';
 import { getAtlasPaths, getVoidOverlordPaths } from './paths';
 
-type DB = BetterSQLite3Database<typeof schema>;
+type DB = NodePgDatabase<typeof schema>;
 
 let cache: Map<string, HitboxDef> = new Map();
 
@@ -36,7 +36,7 @@ export async function initHitboxCache(
   const rows = [...main.rows, ...voidBaked.rows];
   const shadowDefs = { ...main.shadowDefs, ...voidBaked.shadowDefs };
 
-  replaceAllHitboxes(db, rows, compositeHash);
+  await replaceAllHitboxes(db, rows, compositeHash);
   writeShadowDefsFile(atlasJsonPath, compositeHash, shadowDefs);
 
   console.log(
@@ -44,7 +44,7 @@ export async function initHitboxCache(
   );
   console.log(`[hitbox] wrote ${Object.keys(shadowDefs).length} frame shadow defs`);
 
-  cache = loadHitboxCache(db);
+  cache = await loadHitboxCache(db);
   console.log(`[hitbox] loaded ${cache.size} frame hitboxes`);
   return cache;
 }
@@ -56,8 +56,8 @@ export async function initHitboxCache(
  * paying for a full atlas rebake on every bench process. Returns 0 if the DB has
  * never been baked (the caller should then fall back to `initHitboxCache`).
  */
-export function hydrateHitboxCacheFromDb(db: DB): number {
-  cache = loadHitboxCache(db);
+export async function hydrateHitboxCacheFromDb(db: DB): Promise<number> {
+  cache = await loadHitboxCache(db);
   return cache.size;
 }
 

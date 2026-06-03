@@ -1,6 +1,6 @@
 import { eq } from 'drizzle-orm';
 import { randomUUID } from 'crypto';
-import type { BetterSQLite3Database } from 'drizzle-orm/better-sqlite3';
+import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import type {
   HasHealth,
   HasPosition,
@@ -14,7 +14,7 @@ import type { PlayerEntity } from '../ecs/entity';
 import { accounts, characters } from './schema';
 import type * as schema from './schema';
 
-type DB = BetterSQLite3Database<typeof schema>;
+type DB = NodePgDatabase<typeof schema>;
 
 export interface PersistedPlayerSlices {
   isPlayer:          IsPlayer;
@@ -27,29 +27,30 @@ export interface PersistedPlayerSlices {
 
 // ── Account ───────────────────────────────────────────────────────────────────
 
-export function findOrCreateAccount(db: DB, accountId: string, displayName: string): void {
-  const existing = db.select().from(accounts).where(eq(accounts.id, accountId)).get();
-  if (!existing) {
-    db.insert(accounts).values({
+export async function findOrCreateAccount(db: DB, accountId: string, displayName: string): Promise<void> {
+  const existing = await db.select().from(accounts).where(eq(accounts.id, accountId)).limit(1);
+  if (existing.length === 0) {
+    await db.insert(accounts).values({
       id:          accountId,
       displayName,
       discordId:   null,
       createdAt:   Date.now(),
-    }).run();
+    });
   }
 }
 
 // ── Character ─────────────────────────────────────────────────────────────────
 
-export function getOrCreateCharacter(
+export async function getOrCreateCharacter(
   db: DB,
   accountId: string,
   characterName: string,
-): PersistedPlayerSlices {
-  const row = db.select().from(characters)
+): Promise<PersistedPlayerSlices> {
+  const rows = await db.select().from(characters)
     .where(eq(characters.accountId, accountId))
-    .get();
+    .limit(1);
 
+  const row = rows[0];
   if (row) {
     return hydratePlayerSlices(row);
   }
@@ -61,7 +62,7 @@ export function getOrCreateCharacter(
   };
   const fresh = buildFreshSlices(charId, characterName, spawn);
 
-  db.insert(characters).values({
+  await db.insert(characters).values({
     id:                charId,
     accountId,
     isPlayer:          JSON.stringify(fresh.isPlayer),
@@ -71,13 +72,13 @@ export function getOrCreateCharacter(
     holdsInventory:    JSON.stringify(fresh.holdsInventory),
     usesSkills:        JSON.stringify(fresh.usesSkills),
     updatedAt:         Date.now(),
-  }).run();
+  });
 
   return fresh;
 }
 
-export function saveCharacter(db: DB, accountId: string, entity: PlayerEntity): void {
-  db.update(characters)
+export async function saveCharacter(db: DB, accountId: string, entity: PlayerEntity): Promise<void> {
+  await db.update(characters)
     .set({
       isPlayer:          JSON.stringify(entity.isPlayer),
       hasPosition:       JSON.stringify(entity.hasPosition),
@@ -90,8 +91,7 @@ export function saveCharacter(db: DB, accountId: string, entity: PlayerEntity): 
       }),
       updatedAt:         Date.now(),
     })
-    .where(eq(characters.accountId, accountId))
-    .run();
+    .where(eq(characters.accountId, accountId));
 }
 
 // ── Internals ─────────────────────────────────────────────────────────────────
