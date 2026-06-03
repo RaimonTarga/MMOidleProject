@@ -45,9 +45,9 @@ export const plainsSwampCaveRecipeEntries = [
     mechanicEffects: { 'mobility.ooc-speed-pct': 0.40 },
     description: 'Open sandals built for crossing flat ground at a dead run.',
     upgrades: [
-      { stats: { speed: 5 }, cost: { yellow: 10 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 7 }, cost: { yellow: 22 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 9 }, cost: { yellow: 42 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 3 }, cost: { yellow: 10 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 4 }, cost: { yellow: 22 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 4 }, cost: { yellow: 42 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -80,13 +80,13 @@ export const plainsSwampCaveRecipeEntries = [
   ['plains-boots-t2', {
     id: 'plains-boots-t2', name: 'Gale Boots',
     recipeGroup: 'plains', requiredBiomeLevel: 7, slot: 'mobility',
-    cost: { yellow: 40, red: 10 }, stats: { speed: 48 }, tier: 2,
+    cost: { yellow: 40, red: 10 }, stats: { speed: 36 }, tier: 2,
     mechanicEffects: { 'mobility.ooc-speed-pct': 0.55 },
     description: 'Wind-cured leather that seems to lean into every stride.',
     upgrades: [
-      { stats: { speed: 7 },  cost: { yellow: 20 }, requiredBiomeLevel: 8 },
-      { stats: { speed: 10 }, cost: { yellow: 40 }, requiredBiomeLevel: 8 },
-      { stats: { speed: 14 }, cost: { yellow: 72 }, requiredBiomeLevel: 8 },
+      { stats: { speed: 3 }, cost: { yellow: 20 }, requiredBiomeLevel: 8 },
+      { stats: { speed: 4 }, cost: { yellow: 40 }, requiredBiomeLevel: 8 },
+      { stats: { speed: 5 }, cost: { yellow: 72 }, requiredBiomeLevel: 8 },
     ],
   }],
 
@@ -156,9 +156,9 @@ export const plainsSwampCaveRecipeEntries = [
     mechanicEffects: { 'mobility.tenacity-pct': 0.30 },
     description: 'Broad soles that ride the surface of soft, sucking ground.',
     upgrades: [
-      { stats: { speed: 4 }, cost: { purple: 10 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 6 }, cost: { purple: 22 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 8 }, cost: { purple: 42 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 3 }, cost: { purple: 10 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 4 }, cost: { purple: 22 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 4 }, cost: { purple: 42 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -193,13 +193,13 @@ export const plainsSwampCaveRecipeEntries = [
   ['swamp-boots-t2', {
     id: 'swamp-boots-t2', name: 'Wetland Wraps',
     recipeGroup: 'swamp', requiredBiomeLevel: 7, slot: 'mobility',
-    cost: { purple: 44, green: 11 }, stats: { speed: 50 }, tier: 2,
+    cost: { purple: 44, green: 11 }, stats: { speed: 31 }, tier: 2,
     mechanicEffects: { 'mobility.tenacity-pct': 0.45 },
     description: 'Enchanted bindings that find footing where there should be none.',
     upgrades: [
-      { stats: { speed: 7 },  cost: { purple: 22 }, requiredBiomeLevel: 8 },
-      { stats: { speed: 10 }, cost: { purple: 44 }, requiredBiomeLevel: 8 },
-      { stats: { speed: 13 }, cost: { purple: 78 }, requiredBiomeLevel: 8 },
+      { stats: { speed: 3 }, cost: { purple: 22 }, requiredBiomeLevel: 8 },
+      { stats: { speed: 4 }, cost: { purple: 44 }, requiredBiomeLevel: 8 },
+      { stats: { speed: 5 }, cost: { purple: 78 }, requiredBiomeLevel: 8 },
     ],
   }],
 
@@ -254,9 +254,9 @@ export const plainsSwampCaveRecipeEntries = [
     mechanicEffects: { 'mobility.stealth-pct': 0.30 },
     description: 'Stretched membrane that falls on stone without a whisper.',
     upgrades: [
-      { stats: { speed: 5 }, cost: { red: 10 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 7 }, cost: { red: 22 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 10 }, cost: { red: 42 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 3 }, cost: { red: 10 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 4 }, cost: { red: 22 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 4 }, cost: { red: 42 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -289,13 +289,13 @@ export const plainsSwampCaveRecipeEntries = [
   ['cave-boots-t2', {
     id: 'cave-boots-t2', name: 'Cavern Sprints',
     recipeGroup: 'cave', requiredBiomeLevel: 7, slot: 'mobility',
-    cost: { red: 44, purple: 11 }, stats: { speed: 55 }, tier: 2,
+    cost: { red: 44, purple: 11 }, stats: { speed: 39 }, tier: 2,
     mechanicEffects: { 'mobility.stealth-pct': 0.45 },
     description: 'Worn smooth on tunnel floors no map has ever charted.',
     upgrades: [
-      { stats: { speed: 7 },  cost: { red: 22 }, requiredBiomeLevel: 8 },
-      { stats: { speed: 11 }, cost: { red: 44 }, requiredBiomeLevel: 8 },
-      { stats: { speed: 14 }, cost: { red: 78 }, requiredBiomeLevel: 8 },
+      { stats: { speed: 3 }, cost: { red: 22 }, requiredBiomeLevel: 8 },
+      { stats: { speed: 4 }, cost: { red: 44 }, requiredBiomeLevel: 8 },
+      { stats: { speed: 5 }, cost: { red: 78 }, requiredBiomeLevel: 8 },
     ],
   }],
 

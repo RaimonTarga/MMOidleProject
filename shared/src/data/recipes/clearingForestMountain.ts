@@ -95,9 +95,9 @@ export const clearingForestMountainRecipeEntries = [
     mechanicEffects: { 'mobility.kill-speed-pct': 0.25, 'mobility.kill-speed-ms': 3000 },
     description: 'Strips of supple hide that move when you move, and never before.',
     upgrades: [
-      { stats: { speed: 4 }, cost: { green: 10 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 6 }, cost: { green: 22 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 8 }, cost: { green: 42 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 3 }, cost: { green: 10 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 4 }, cost: { green: 22 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 4 }, cost: { green: 42 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -128,13 +128,13 @@ export const clearingForestMountainRecipeEntries = [
   ['forest-boots-t2', {
     id: 'forest-boots-t2', name: 'Windstep Wraps',
     recipeGroup: 'forest', requiredBiomeLevel: 7, slot: 'mobility',
-    cost: { green: 38, yellow: 10 }, stats: { speed: 40 }, tier: 2,
+    cost: { green: 38, yellow: 10 }, stats: { speed: 31 }, tier: 2,
     mechanicEffects: { 'mobility.kill-speed-pct': 0.35, 'mobility.kill-speed-ms': 3000 },
     description: 'Light enough that the wind mistakes the wearer for one of its own.',
     upgrades: [
-      { stats: { speed: 6 }, cost: { green: 18 }, requiredBiomeLevel: 8 },
-      { stats: { speed: 9 }, cost: { green: 38 }, requiredBiomeLevel: 8 },
-      { stats: { speed: 12 }, cost: { green: 68 }, requiredBiomeLevel: 8 },
+      { stats: { speed: 3 }, cost: { green: 18 }, requiredBiomeLevel: 8 },
+      { stats: { speed: 4 }, cost: { green: 38 }, requiredBiomeLevel: 8 },
+      { stats: { speed: 5 }, cost: { green: 68 }, requiredBiomeLevel: 8 },
     ],
   }],
 
@@ -200,9 +200,9 @@ export const clearingForestMountainRecipeEntries = [
     mechanicEffects: { 'mobility.acquire-speed-pct': 0.50, 'mobility.acquire-speed-ms': 1500, 'mobility.acquire-cooldown-ms': 8000 },
     description: 'Heavy soles that bite into scree and loose rock alike.',
     upgrades: [
-      { stats: { speed: 4 }, cost: { blue: 10 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 6 }, cost: { blue: 22 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 8 }, cost: { blue: 42 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 3 }, cost: { blue: 10 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 4 }, cost: { blue: 22 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 4 }, cost: { blue: 42 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -237,13 +237,13 @@ export const clearingForestMountainRecipeEntries = [
   ['mountain-boots-t2', {
     id: 'mountain-boots-t2', name: 'Mountain Stride',
     recipeGroup: 'mountain', requiredBiomeLevel: 7, slot: 'mobility',
-    cost: { blue: 42, purple: 10 }, stats: { speed: 45 }, tier: 2,
+    cost: { blue: 42, purple: 10 }, stats: { speed: 29 }, tier: 2,
     mechanicEffects: { 'mobility.acquire-speed-pct': 0.65, 'mobility.acquire-speed-ms': 1500, 'mobility.acquire-cooldown-ms': 8000 },
     description: 'Forged for those who treat a sheer slope as a road.',
     upgrades: [
-      { stats: { speed: 6 }, cost: { blue: 20 }, requiredBiomeLevel: 8 },
-      { stats: { speed: 9 }, cost: { blue: 42 }, requiredBiomeLevel: 8 },
-      { stats: { speed: 12 }, cost: { blue: 75 }, requiredBiomeLevel: 8 },
+      { stats: { speed: 3 }, cost: { blue: 20 }, requiredBiomeLevel: 8 },
+      { stats: { speed: 4 }, cost: { blue: 42 }, requiredBiomeLevel: 8 },
+      { stats: { speed: 5 }, cost: { blue: 75 }, requiredBiomeLevel: 8 },
     ],
   }],
 
