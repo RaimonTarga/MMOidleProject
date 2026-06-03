@@ -143,6 +143,14 @@ const app = express();
 app.use(cors({ origin: true }));
 app.use(express.json());
 
+// Liveness probe for Railway / container orchestration. Intentionally cheap:
+// returns 200 as soon as the HTTP server is accepting requests (the server only
+// starts listening after migrations + hitbox bake complete in boot()). It does
+// not touch the DB so a transient Postgres blip won't trigger restart loops.
+app.get("/healthz", (_req, res) => {
+  res.status(200).json({ status: "ok" });
+});
+
 // Serve the production client build when it exists.
 // Run `pnpm --filter @mmo-idle/client build` to generate it.
 const clientDist = path.resolve(__dirname, "../../client/dist");
@@ -166,8 +174,7 @@ const io = new Server<ClientToServerEvents, ServerToClientEvents>(httpServer, {
 initCombatSystems();
 
 // ── DATABASE ──────────────────────────────────────────
-
-runMigrations();
+// Migrations run at the top of boot() (they are async on Postgres).
 
 // accountId → socketId map for the auto-save interval
 const socketByAccount = new Map<string, string>();
@@ -180,20 +187,20 @@ const OVERLORD_RESPAWN_KEY = "void-overlord-respawn";
  * server restart (or any node despawn) does not bring the overlord back early.
  * Drops the record if the cooldown already elapsed while the server was down.
  */
-function restoreOverlordRespawn(world: World): void {
-  const raw = readWorldState(db, OVERLORD_RESPAWN_KEY);
+async function restoreOverlordRespawn(world: World): Promise<void> {
+  const raw = await readWorldState(db, OVERLORD_RESPAWN_KEY);
   if (!raw) return;
 
   let saved: PersistedBossRespawn;
   try {
     saved = JSON.parse(raw) as PersistedBossRespawn;
   } catch {
-    clearWorldState(db, OVERLORD_RESPAWN_KEY);
+    await clearWorldState(db, OVERLORD_RESPAWN_KEY);
     return;
   }
 
   if (saved.respawnAt <= Date.now()) {
-    clearWorldState(db, OVERLORD_RESPAWN_KEY);
+    await clearWorldState(db, OVERLORD_RESPAWN_KEY);
     return;
   }
 
@@ -203,6 +210,8 @@ function restoreOverlordRespawn(world: World): void {
 }
 
 async function boot(): Promise<void> {
+  await runMigrations();
+
   const { atlasPng, atlasJson } = getAtlasPaths();
   await initHitboxCache(db, atlasPng, atlasJson);
 
@@ -215,13 +224,14 @@ async function boot(): Promise<void> {
   };
 
   world.overlordRespawnPersist = (marker) => {
-    if (marker) {
-      writeWorldState(db, OVERLORD_RESPAWN_KEY, JSON.stringify(marker));
-    } else {
-      clearWorldState(db, OVERLORD_RESPAWN_KEY);
-    }
+    const op = marker
+      ? writeWorldState(db, OVERLORD_RESPAWN_KEY, JSON.stringify(marker))
+      : clearWorldState(db, OVERLORD_RESPAWN_KEY);
+    void op.catch((err) =>
+      console.error("[db] overlord respawn persist failed:", err),
+    );
   };
-  restoreOverlordRespawn(world);
+  await restoreOverlordRespawn(world);
 
   const emitBossFelledState = () => {
     io.emit("world:bossFelled", world.buildBossFelledSnapshot());
@@ -336,13 +346,17 @@ async function boot(): Promise<void> {
   setInterval(() => {
     for (const [accountId, socketId] of socketByAccount) {
       const player = world.getPlayerEntity(socketId);
-      if (player) saveCharacter(db, accountId, player);
+      if (player) {
+        void saveCharacter(db, accountId, player).catch((err) =>
+          console.error("[db] autosave failed:", err),
+        );
+      }
     }
   }, 30_000);
 
   // ── SOCKETS ──────────────────────────────────────────
 
-  io.on("connection", (socket) => {
+  io.on("connection", async (socket) => {
     const auth = socket.handshake.auth as {
       accountId?: string;
       displayName?: string;
@@ -352,7 +366,7 @@ async function boot(): Promise<void> {
       auth.displayName ?? `Hero_${socket.id.slice(0, 5)}`
     ).slice(0, 32);
 
-    findOrCreateAccount(db, accId, playerName);
+    await findOrCreateAccount(db, accId, playerName);
 
     // Kick any existing session for this account (e.g. duplicate tab).
     // Save + clean up the old entity before the new one attaches so there's
@@ -361,7 +375,7 @@ async function boot(): Promise<void> {
     if (existingSocketId) {
       const existingPlayer = world.getPlayerEntity(existingSocketId);
       if (existingPlayer?.isDead) world.respawnPlayer(existingSocketId);
-      if (existingPlayer) saveCharacter(db, accId, existingPlayer);
+      if (existingPlayer) await saveCharacter(db, accId, existingPlayer);
       handlePartyDisconnect(world, existingSocketId);
       world.detachPlayerEntity(existingSocketId);
       const existingSock = io.sockets.sockets.get(existingSocketId);
@@ -369,7 +383,7 @@ async function boot(): Promise<void> {
       existingSock?.disconnect(true);
     }
 
-    const player = getOrCreateCharacter(db, accId, playerName);
+    const player = await getOrCreateCharacter(db, accId, playerName);
 
     const spawnNodeId = player.hasPosition.nodeId;
     if (world.isNodeFrozen(spawnNodeId)) {
@@ -706,7 +720,11 @@ async function boot(): Promise<void> {
     socket.on("disconnect", () => {
       const p = world.getPlayerEntity(socket.id);
       if (p?.isDead) world.respawnPlayer(socket.id);
-      if (p) saveCharacter(db, accId, p);
+      if (p) {
+        void saveCharacter(db, accId, p).catch((err) =>
+          console.error("[db] disconnect save failed:", err),
+        );
+      }
       handlePartyDisconnect(world, socket.id);
       // Only remove the account entry if it still points to this socket.
       // A kicked socket's disconnect fires after the new session has already
@@ -719,8 +737,9 @@ async function boot(): Promise<void> {
 
   // ── START ────────────────────────────────────────────
 
-  httpServer.listen(4000, () => {
-    console.log("Server running on http://localhost:4000");
+  const port = Number(process.env.PORT) || 4000;
+  httpServer.listen(port, "0.0.0.0", () => {
+    console.log(`Server running on http://0.0.0.0:${port}`);
   });
 }
 

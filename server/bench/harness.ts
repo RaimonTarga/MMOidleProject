@@ -50,9 +50,9 @@ export async function ensureBenchHitboxCache(): Promise<void> {
   hitboxReady = true;
 
   // The hitbox table must exist before we can read it; migrations are idempotent.
-  runMigrations();
+  await runMigrations();
 
-  if (hydrateHitboxCacheFromDb(db) > 0) return;
+  if ((await hydrateHitboxCacheFromDb(db)) > 0) return;
 
   // Fresh DB that was never baked — bake from the atlas exactly like server boot.
   const { atlasPng, atlasJson } = getAtlasPaths();
