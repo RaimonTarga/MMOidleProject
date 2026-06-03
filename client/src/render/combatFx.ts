@@ -22,6 +22,7 @@ import { fxMagic } from "../fx/magic";
 import { fxFrost } from "../fx/frost";
 import { fxFire } from "../fx/fire";
 import { fxVoid } from "../fx/voidFx";
+import { fxFirstStrike } from "../fx/firstStrike";
 import { shouldRunClientFx } from "../fx/guard";
 import type { GameScene } from "../scenes/GameScene";
 import { applyLunge } from "./interpolation";
@@ -79,6 +80,7 @@ interface AttackFxArgs {
 type AttackFxFn = (args: AttackFxArgs) => void;
 
 const FLASH_CLIENT_EFFECT = "flash-teleport";
+const FIRST_STRIKE_CLIENT_EFFECT = "first-strike";
 
 function snapOwnPlayerToServerTarget(
   state: RenderState,
@@ -338,6 +340,10 @@ function runFxForAttackStyle(
 
   for (const effectId of ev.effects ?? []) {
     if (effectId === FLASH_CLIENT_EFFECT) continue;
+    if (effectId === FIRST_STRIKE_CLIENT_EFFECT) {
+      fxFirstStrike(scene, to.x, to.y);
+      continue;
+    }
     playOneShotEffect(scene, effectId, to, { scale: targetEffectScale });
   }
 
