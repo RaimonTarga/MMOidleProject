@@ -143,6 +143,14 @@ const app = express();
 app.use(cors({ origin: true }));
 app.use(express.json());
 
+// Liveness probe for Railway / container orchestration. Intentionally cheap:
+// returns 200 as soon as the HTTP server is accepting requests (the server only
+// starts listening after migrations + hitbox bake complete in boot()). It does
+// not touch the DB so a transient Postgres blip won't trigger restart loops.
+app.get("/healthz", (_req, res) => {
+  res.status(200).json({ status: "ok" });
+});
+
 // Serve the production client build when it exists.
 // Run `pnpm --filter @mmo-idle/client build` to generate it.
 const clientDist = path.resolve(__dirname, "../../client/dist");
