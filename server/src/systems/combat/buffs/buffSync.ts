@@ -31,6 +31,7 @@ const DEBUFF_BUFFS = [
           totalMs > 0 && slow.remainingMs > 0
             ? (slow.remainingMs / totalMs) * 100
             : -1,
+        speedMult: Math.max(0, slow.data["speedMult"] ?? 1),
         color: "#55aaff",
         logSourceName: source?.isMonster.name ?? "Monster debuff",
         logSourceSide: "enemy",
@@ -55,6 +56,7 @@ const DEBUFF_BUFFS = [
           totalMs > 0 && slow.remainingMs > 0
             ? (slow.remainingMs / totalMs) * 100
             : -1,
+        speedMult: 0,
         color: "#aa66ff",
         logSourceName: source?.isMonster.name ?? "Monster debuff",
         logSourceSide: "enemy",
