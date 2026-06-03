@@ -195,10 +195,10 @@ function ClassSelectionView({
   return (
     <div className="skill-class-view">
       <p className="skill-tree-instruction">
-        Choose your class to begin.
+        Choose a class to begin.
         {pts > 0
           ? ` You have ${pts} skill point${pts !== 1 ? 's' : ''}.`
-          : ' Earn skill points by defeating monsters.'}
+          : ' Earn skill points by fulfilling your destiny.'}
       </p>
       <div className="skill-class-orbit" aria-label="Class selection">
         <div className={[

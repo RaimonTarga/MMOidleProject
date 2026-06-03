@@ -20,6 +20,8 @@ import {
   mapOpenAtom,
   playerNodeIdAtom,
   selectedClassAtom,
+  selectedRangeAtom,
+  selectedSubVariantAtom,
   settingsOpenAtom,
   skillPointsAtom,
   skillTreeOpenAtom,
@@ -47,15 +49,25 @@ export function RightSidebar() {
   );
 
   const selectedClass = useAtomValue(selectedClassAtom);
+  const selectedSubVariant = useAtomValue(selectedSubVariantAtom);
+  const selectedRange = useAtomValue(selectedRangeAtom);
   const skillPoints = useAtomValue(skillPointsAtom);
   const inventory = useAtomValue(inventoryAtom);
   const equipment = useAtomValue(equipmentAtom);
   const nodeId = useAtomValue(playerNodeIdAtom);
   const dead = useAtomValue(deathOverlayAtom).active;
 
-  const className = selectedClass
-    ? (SKILL_TREE.get(selectedClass)?.name ?? selectedClass)
-    : null;
+  const className = (() => {
+    if (!selectedClass) return null;
+    if (selectedRange) return SKILL_TREE.get(selectedRange)?.name ?? selectedRange;
+    if (selectedSubVariant) {
+      for (const node of SKILL_TREE.values()) {
+        if (node.tier === 1 && node.classId === selectedClass && node.subVariantId === selectedSubVariant)
+          return node.name;
+      }
+    }
+    return SKILL_TREE.get(selectedClass)?.name ?? selectedClass;
+  })();
 
   const zoneLabel = (() => {
     if (!nodeId) return null;
@@ -98,12 +110,8 @@ export function RightSidebar() {
             )}
             {!className && (
               <div className="stat-row">
-                <span
-                  className="stat-label"
-                  style={{ color: "#33334a", fontSize: 10 }}
-                >
-                  No class selected
-                </span>
+                <span className="stat-label">Class</span>
+                <span className="stat-value" style={{ color: "#666" }}>Vagrant</span>
               </div>
             )}
           </div>
