@@ -55,7 +55,7 @@ export const rootsAndFramesEntries = [
   //   downgrade" friction and keeps frames feeling like power gains.
 
   ['cadence-root', {
-    id: 'cadence-root', name: 'Cadence', tier: 0,
+    id: 'cadence-root', name: 'Striker', tier: 0,
     classId: 'cadence-root', subVariantId: null,
     parent: null, children: [],
     description: 'Find the rhythm of battle. Every few hits your attack surges with accumulated force. A balanced fighter — periodic bursts of healing sustain you through prolonged engagements.',
@@ -65,7 +65,7 @@ export const rootsAndFramesEntries = [
 
 
   ['cooldown-root', {
-    id: 'cooldown-root', name: 'Cooldown', tier: 0,
+    id: 'cooldown-root', name: 'Squire', tier: 0,
     classId: 'cooldown-root', subVariantId: null,
     parent: null, children: [],
     description: 'Patience is power. Prepare a devastating strike on a set cycle. Your heavy bearing brings substantial bulk and damage reduction, and 10% of your regen rate applies even while you fight.',
@@ -75,7 +75,7 @@ export const rootsAndFramesEntries = [
 
 
   ['reload-root', {
-    id: 'reload-root', name: 'Reload', tier: 0,
+    id: 'reload-root', name: 'Slinger', tier: 0,
     classId: 'reload-root', subVariantId: null,
     parent: null, children: [],
     description: 'Unleash a rapid clip then reload. Your speed is doubled and damage per shot halved as a fundamental multiplier — fights from range naturally and weaves around incoming blows.',
@@ -85,7 +85,7 @@ export const rootsAndFramesEntries = [
 
 
   ['energy-root', {
-    id: 'energy-root', name: 'Energy', tier: 0,
+    id: 'energy-root', name: 'Spirit', tier: 0,
     classId: 'energy-root', subVariantId: null,
     parent: null, children: [],
     description: 'Channel each blow into a building surge of power. Your light build fights from range and your energy feeds a periodic shield that absorbs the hits that do reach you.',
@@ -95,7 +95,7 @@ export const rootsAndFramesEntries = [
 
 
   ['dot-root', {
-    id: 'dot-root', name: 'DoT', tier: 0,
+    id: 'dot-root', name: 'Apprentice', tier: 0,
     classId: 'dot-root', subVariantId: null,
     parent: null, children: [],
     description: 'Your strikes leave lingering wounds. Stack the pain until nothing survives. Your toxin-hardened body resists DoT damage by 18% and converts 10% of incoming direct hits into delayed damage you can outlast.',
@@ -105,7 +105,7 @@ export const rootsAndFramesEntries = [
 
 
   ['summoner-root', {
-    id: 'summoner-root', name: 'Summoner', tier: 0,
+    id: 'summoner-root', name: 'Conduit', tier: 0,
     classId: 'summoner-root', subVariantId: null,
     parent: null, children: ['summoner-light', 'summoner-balanced', 'summoner-heavy'],
     description: 'Three slimes fight in your place, each striking with your full attack. Slimes leash to twice your attack range — extend your reach and they will too. Half of all damage you take is redirected to a random living slime.',
@@ -171,7 +171,7 @@ export const rootsAndFramesEntries = [
 
 
   ['cadence-light', {
-    id: 'cadence-light', name: 'Light Frame', tier: 1,
+    id: 'cadence-light', name: 'Flurry', tier: 1,
     classId: 'cadence-root', subVariantId: 'light',
     parent: 'cadence-root', children: [],
     description: 'Swift and agile. Trades raw bulk for a blistering attack pace. Empowered finisher triggers every 4 hits at 1.5× — frequency over raw power.',
@@ -180,7 +180,7 @@ export const rootsAndFramesEntries = [
   }],
 
   ['cadence-balanced', {
-    id: 'cadence-balanced', name: 'Balanced Frame', tier: 1,
+    id: 'cadence-balanced', name: 'Skirmisher', tier: 1,
     classId: 'cadence-root', subVariantId: 'balanced',
     parent: 'cadence-root', children: [],
     description: 'A measured approach. Modest gains across the board without committing to an extreme. Empowered finisher every 5 hits at 2×.',
@@ -189,7 +189,7 @@ export const rootsAndFramesEntries = [
   }],
 
   ['cadence-heavy', {
-    id: 'cadence-heavy', name: 'Heavy Frame', tier: 1,
+    id: 'cadence-heavy', name: 'Breaker', tier: 1,
     classId: 'cadence-root', subVariantId: 'heavy',
     parent: 'cadence-root', children: [],
     description: 'Endurance over speed. Significant bulk and recovery; pays for it in attack pace. Empowered finisher every 6 hits at 4× — patience rewarded with one enormous blow.',
@@ -199,7 +199,7 @@ export const rootsAndFramesEntries = [
 
 
   ['cooldown-light', {
-    id: 'cooldown-light', name: 'Light Frame', tier: 1,
+    id: 'cooldown-light', name: 'Warrior', tier: 1,
     classId: 'cooldown-root', subVariantId: 'light',
     parent: 'cooldown-root', children: [],
     description: 'The aggressive tank. Keeps its armored core but trades patience for a fast, hungry tempo. Execution recharges in 5 s at 1.5×.',
@@ -208,7 +208,7 @@ export const rootsAndFramesEntries = [
   }],
 
   ['cooldown-balanced', {
-    id: 'cooldown-balanced', name: 'Balanced Frame', tier: 1,
+    id: 'cooldown-balanced', name: 'Knight', tier: 1,
     classId: 'cooldown-root', subVariantId: 'balanced',
     parent: 'cooldown-root', children: [],
     description: 'A sturdy foundation. Substantial HP and armor amplify the class\'s defensive identity without tipping into immobility. Execution recharges in 7 s at 2×.',
@@ -217,7 +217,7 @@ export const rootsAndFramesEntries = [
   }],
 
   ['cooldown-heavy', {
-    id: 'cooldown-heavy', name: 'Heavy Frame', tier: 1,
+    id: 'cooldown-heavy', name: 'Bulwark', tier: 1,
     classId: 'cooldown-root', subVariantId: 'heavy',
     parent: 'cooldown-root', children: [],
     description: 'Fortress of patience. Maximum bulk makes you a wall — but you move like a boulder and attack even slower. Execution recharges in 9 s at 3×.',
@@ -227,7 +227,7 @@ export const rootsAndFramesEntries = [
 
 
   ['dot-light', {
-    id: 'dot-light', name: 'Light Frame (Poison)', tier: 1,
+    id: 'dot-light', name: 'Venom vessel', tier: 1,
     classId: 'dot-root', subVariantId: 'light',
     parent: 'dot-root', children: [],
     description: 'Poison path. Apply wounds quickly and stay mobile. Up to 8 poison stacks — each hit converts 30% of your attack into lingering poison damage.',
@@ -236,7 +236,7 @@ export const rootsAndFramesEntries = [
   }],
 
   ['dot-balanced', {
-    id: 'dot-balanced', name: 'Balanced Frame (Fire)', tier: 1,
+    id: 'dot-balanced', name: 'Ember mage', tier: 1,
     classId: 'dot-root', subVariantId: 'balanced',
     parent: 'dot-root', children: [],
     description: 'Fire path. A deliberate fighter. Up to 6 burn stacks — each hit converts 50% of your attack into damage over time.',
@@ -245,7 +245,7 @@ export const rootsAndFramesEntries = [
   }],
 
   ['dot-heavy', {
-    id: 'dot-heavy', name: 'Heavy Frame (Frost)', tier: 1,
+    id: 'dot-heavy', name: 'Rime-Bound', tier: 1,
     classId: 'dot-root', subVariantId: 'heavy',
     parent: 'dot-root', children: [],
     description: 'Frost path. A war of attrition. Up to 3 frost stacks — each hit converts 70% of your attack into deep, lingering wounds.',
@@ -255,7 +255,7 @@ export const rootsAndFramesEntries = [
 
 
   ['reload-light', {
-    id: 'reload-light', name: 'Light Frame', tier: 1,
+    id: 'reload-light', name: 'Scout', tier: 1,
     classId: 'reload-root', subVariantId: 'light',
     parent: 'reload-root', children: [],
     description: 'All-in on mobility. Small clip (5 rounds), 1.2 s reload, and extra dodge — maximum uptime, minimum profile to hit.',
@@ -264,7 +264,7 @@ export const rootsAndFramesEntries = [
   }],
 
   ['reload-balanced', {
-    id: 'reload-balanced', name: 'Balanced Frame', tier: 1,
+    id: 'reload-balanced', name: 'Marksman', tier: 1,
     classId: 'reload-root', subVariantId: 'balanced',
     parent: 'reload-root', children: [],
     description: 'A steady burst fighter. Standard 10-round clip, 2.0 s reload, modest avoidance — tempo and staying power in balance.',
@@ -273,7 +273,7 @@ export const rootsAndFramesEntries = [
   }],
 
   ['reload-heavy', {
-    id: 'reload-heavy', name: 'Heavy Frame', tier: 1,
+    id: 'reload-heavy', name: 'Artillerist', tier: 1,
     classId: 'reload-root', subVariantId: 'heavy',
     parent: 'reload-root', children: [],
     description: 'Slower but harder to put down. Large 14-round clip for sustained bursting, but reloading takes 3 s — plan your downtime.',
@@ -283,7 +283,7 @@ export const rootsAndFramesEntries = [
 
 
   ['energy-light', {
-    id: 'energy-light', name: 'Light Frame', tier: 1,
+    id: 'energy-light', name: 'Spark', tier: 1,
     classId: 'energy-root', subVariantId: 'light',
     parent: 'energy-root', children: [],
     description: 'Pure momentum. Blazing speed and rapid attacks; thrives on frequent discharges and their AoE splash. Gains 20 energy per hit, empowered at 1.5× — fires often.',
@@ -292,7 +292,7 @@ export const rootsAndFramesEntries = [
   }],
 
   ['energy-balanced', {
-    id: 'energy-balanced', name: 'Balanced Frame', tier: 1,
+    id: 'energy-balanced', name: 'Wraith', tier: 1,
     classId: 'energy-root', subVariantId: 'balanced',
     parent: 'energy-root', children: [],
     description: 'Fast and capable. A bit of extra punch and some light armor without sacrificing mobility. Gains 14 energy per hit, empowered at 2×.',
@@ -301,7 +301,7 @@ export const rootsAndFramesEntries = [
   }],
 
   ['energy-heavy', {
-    id: 'energy-heavy', name: 'Heavy Frame', tier: 1,
+    id: 'energy-heavy', name: 'Phantasm', tier: 1,
     classId: 'energy-root', subVariantId: 'heavy',
     parent: 'energy-root', children: [],
     description: 'Measured power. A light class wearing heavier armor — durability and a sliver of damage reduction, traded against attack pace. Gains 10 energy per hit, empowered at 6× — builds slowly, hits very hard.',
@@ -322,7 +322,7 @@ export const rootsAndFramesEntries = [
   // incoming hits in playtest; that's the dial that makes Close/Far fair.
 
   ['cadence-range-close', {
-    id: 'cadence-range-close', name: 'Close Range', tier: 2,
+    id: 'cadence-range-close', name: 'In-Fighter', tier: 2,
     classId: 'cadence-root', subVariantId: null,
     parent: null, children: [],
     description: 'Fight at point-blank range. Reduced reach, repaid with faster, harder attacks, real armor, and tighter healing pulses — every 4th hit feels sturdier as your recovery bursts swell.',
@@ -330,14 +330,14 @@ export const rootsAndFramesEntries = [
     mechanicEffects: { 'shared.damage-mult': 0.10, 'defense.regen-burst-pct': 0.04 } as Record<string, number>,
   }],
   ['cadence-range-mid', {
-    id: 'cadence-range-mid', name: 'Mid Range', tier: 2,
+    id: 'cadence-range-mid', name: 'Lancer', tier: 2,
     classId: 'cadence-root', subVariantId: null,
     parent: null, children: [],
     description: 'The standard fighting distance. Solid all-around growth with no commitment to either extreme.',
     cost: 1, statEffects: { attack: 4, attackSpeedPct: 0.10, maxHp: 18, plating: 2 },
   }],
   ['cadence-range-far', {
-    id: 'cadence-range-far', name: 'Far Range', tier: 2,
+    id: 'cadence-range-far', name: 'Phantom-Blade', tier: 2,
     classId: 'cadence-root', subVariantId: null,
     parent: null, children: [],
     description: 'Strike from a substantial distance. Modest stat growth, but the reach and footspeed let you land hits before the enemy ever closes — distance as armor.',
@@ -345,7 +345,7 @@ export const rootsAndFramesEntries = [
   }],
 
   ['cooldown-range-close', {
-    id: 'cooldown-range-close', name: 'Close Range', tier: 2,
+    id: 'cooldown-range-close', name: 'Vanguard', tier: 2,
     classId: 'cooldown-root', subVariantId: null,
     parent: null, children: [],
     description: 'Fight at point-blank range. Reduced reach, repaid with faster, harder attacks and real armor — and your in-combat regen surges to a constant 30% of your enormous out-of-combat rate.',
@@ -353,14 +353,14 @@ export const rootsAndFramesEntries = [
     mechanicEffects: { 'shared.damage-mult': 0.10, 'defense.in-combat-regen-pct': 0.20 } as Record<string, number>,
   }],
   ['cooldown-range-mid', {
-    id: 'cooldown-range-mid', name: 'Mid Range', tier: 2,
+    id: 'cooldown-range-mid', name: 'Phalanx', tier: 2,
     classId: 'cooldown-root', subVariantId: null,
     parent: null, children: [],
     description: 'The standard fighting distance. Solid all-around growth with no commitment to either extreme.',
     cost: 1, statEffects: { attack: 4, attackSpeedPct: 0.10, maxHp: 18, plating: 2 },
   }],
   ['cooldown-range-far', {
-    id: 'cooldown-range-far', name: 'Far Range', tier: 2,
+    id: 'cooldown-range-far', name: 'Sentinel', tier: 2,
     classId: 'cooldown-root', subVariantId: null,
     parent: null, children: [],
     description: 'Strike from a substantial distance. Modest stat growth, but the reach and footspeed let a slow tank punish from afar — distance as armor.',
@@ -368,7 +368,7 @@ export const rootsAndFramesEntries = [
   }],
 
   ['dot-range-close', {
-    id: 'dot-range-close', name: 'Close Range', tier: 2,
+    id: 'dot-range-close', name: 'Hexblade', tier: 2,
     classId: 'dot-root', subVariantId: null,
     parent: null, children: [],
     description: 'Fight at point-blank range. Reduced reach, repaid with faster, harder attacks and real armor — and your absorption pool deepens by 12%, turning you into a close-quarters drain-tank.',
@@ -376,14 +376,14 @@ export const rootsAndFramesEntries = [
     mechanicEffects: { 'shared.damage-mult': 0.10, 'defense.absorb-pct': 0.12 } as Record<string, number>,
   }],
   ['dot-range-mid', {
-    id: 'dot-range-mid', name: 'Mid Range', tier: 2,
+    id: 'dot-range-mid', name: 'Warlock', tier: 2,
     classId: 'dot-root', subVariantId: null,
     parent: null, children: [],
     description: 'The standard fighting distance. Solid all-around growth with no commitment to either extreme.',
     cost: 1, statEffects: { attack: 4, attackSpeedPct: 0.10, maxHp: 18, plating: 2 },
   }],
   ['dot-range-far', {
-    id: 'dot-range-far', name: 'Far Range', tier: 2,
+    id: 'dot-range-far', name: 'Harbinger', tier: 2,
     classId: 'dot-root', subVariantId: null,
     parent: null, children: [],
     description: 'Strike from a substantial distance. Modest stat growth, but the reach and footspeed let you apply stacks and retreat — distance as armor.',
@@ -391,7 +391,7 @@ export const rootsAndFramesEntries = [
   }],
 
   ['reload-range-close', {
-    id: 'reload-range-close', name: 'Close Range', tier: 2,
+    id: 'reload-range-close', name: 'Breacher', tier: 2,
     classId: 'reload-root', subVariantId: null,
     parent: null, children: [],
     description: 'Fight at point-blank range. Reduced reach, repaid with faster, harder attacks and real armor — and your evasion sharpens: more dodges, and each one cuts deeper.',
@@ -399,14 +399,14 @@ export const rootsAndFramesEntries = [
     mechanicEffects: { 'shared.damage-mult': 0.10, 'defense.evade-mitigation': 0.10 } as Record<string, number>,
   }],
   ['reload-range-mid', {
-    id: 'reload-range-mid', name: 'Mid Range', tier: 2,
+    id: 'reload-range-mid', name: 'Enforcer', tier: 2,
     classId: 'reload-root', subVariantId: null,
     parent: null, children: [],
     description: 'The standard fighting distance. Solid all-around growth with no commitment to either extreme.',
     cost: 1, statEffects: { attack: 4, attackSpeedPct: 0.10, maxHp: 18, plating: 2 },
   }],
   ['reload-range-far', {
-    id: 'reload-range-far', name: 'Far Range', tier: 2,
+    id: 'reload-range-far', name: 'Deadeye', tier: 2,
     classId: 'reload-root', subVariantId: null,
     parent: null, children: [],
     description: 'Strike from a substantial distance. Modest stat growth, but the reach and footspeed maximize your kiting buffer — distance as armor.',
@@ -414,7 +414,7 @@ export const rootsAndFramesEntries = [
   }],
 
   ['energy-range-close', {
-    id: 'energy-range-close', name: 'Close Range', tier: 2,
+    id: 'energy-range-close', name: 'Haunt', tier: 2,
     classId: 'energy-root', subVariantId: null,
     parent: null, children: [],
     description: 'Fight at point-blank range. Reduced reach, repaid with faster, harder attacks and real armor — and your energy shield swells to 40% of max HP to weather the constant melee pressure.',
@@ -422,14 +422,14 @@ export const rootsAndFramesEntries = [
     mechanicEffects: { 'shared.damage-mult': 0.10, 'defense.shield-pct': 0.10 } as Record<string, number>,
   }],
   ['energy-range-mid', {
-    id: 'energy-range-mid', name: 'Mid Range', tier: 2,
+    id: 'energy-range-mid', name: 'Shade', tier: 2,
     classId: 'energy-root', subVariantId: null,
     parent: null, children: [],
     description: 'The standard fighting distance. Solid all-around growth with no commitment to either extreme.',
     cost: 1, statEffects: { attack: 4, attackSpeedPct: 0.10, maxHp: 18, plating: 2 },
   }],
   ['energy-range-far', {
-    id: 'energy-range-far', name: 'Far Range', tier: 2,
+    id: 'energy-range-far', name: 'Wisp', tier: 2,
     classId: 'energy-root', subVariantId: null,
     parent: null, children: [],
     description: 'Strike from a substantial distance. Modest stat growth, but the reach and footspeed keep you safely behind your shield — distance as armor.',
