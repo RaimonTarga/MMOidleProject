@@ -39,9 +39,32 @@ export function stepInterpolation(state: RenderState, dt: number): void {
     }
 
     if (id === state.ownId) {
-      const ex = transform.pos.x - interp.base.x;
-      const ey = transform.pos.y - interp.base.y;
+      let ex = transform.pos.x - interp.base.x;
+      let ey = transform.pos.y - interp.base.y;
       if (ex * ex + ey * ey > RECONCILE_DEADZONE_SQ) {
+        // While still travelling to a target, the predicted base legitimately
+        // runs ahead of the authoritative position along the path (client
+        // prediction lead + 5 Hz broadcast staleness). With a far click-to-move
+        // target the sprite reaches the destination before the server does, so
+        // the raw error points straight backward and the reconcile would drag
+        // the sprite back toward the lagging server position — the visible
+        // "step backward then settle" on stop. Strip that backward-along-path
+        // component (forward axis = server position → target) so only genuine
+        // divergence is corrected: perpendicular drift, or the server being
+        // *ahead* of the prediction. When the server has stopped (target === pos)
+        // the axis is zero, so the full error is applied and we settle exactly.
+        const fx = transform.target.x - transform.pos.x;
+        const fy = transform.target.y - transform.pos.y;
+        const fMag = Math.hypot(fx, fy);
+        if (fMag > 1) {
+          const ux = fx / fMag;
+          const uy = fy / fMag;
+          const along = ex * ux + ey * uy;
+          if (along < 0) {
+            ex -= along * ux;
+            ey -= along * uy;
+          }
+        }
         const t = 1 - Math.exp(-RECONCILE_RATE * dt);
         interp.base.x += ex * t;
         interp.base.y += ey * t;
