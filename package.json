@@ -12,6 +12,7 @@
     "db:reset": "docker compose down -v && docker compose up -d --wait db",
     "db:logs": "docker compose logs -f db",
     "docker:up": "docker compose --profile full up --build",
+    "docker:up:dev": "cross-env DEV_TOOLS=true VITE_DEV_TOOLS=true docker compose --profile full up --build",
     "docker:down": "docker compose --profile full down",
     "dev:client": "pnpm --filter @mmo-idle/client dev",
     "dev:server": "pnpm db:up && pnpm --filter @mmo-idle/server dev",

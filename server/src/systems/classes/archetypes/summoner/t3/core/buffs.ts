@@ -45,6 +45,7 @@ export const SUMMONER_T3_BUFFS = [
             label: 'Trail',
             stacks: 1,
             durationPct: durationPctFromEffect(eff),
+            speedMult: 1 + (eff.data.speedPct ?? 0.25),
             color: '#c8a84a',
             logSourceName: 'Boar',
             logSourceSide: 'ally',

@@ -73,6 +73,13 @@ export interface PlayerBuff {
   stacks: number;
   /** 0–100 remaining duration percentage; -1 = no timer. */
   durationPct: number;
+  /**
+   * Movement-speed multiplier this buff imposes (e.g. 0.5 = 50% slow, 0 = root,
+   * 1.25 = +25% boon). Omitted for buffs that don't affect movement speed. The
+   * client multiplies all present values to match the server's effective speed
+   * so own-player position prediction doesn't over/under-extrapolate.
+   */
+  speedMult?: number;
   /** CSS hex color string for the placeholder shape, e.g. '#00ffaa'. */
   color: string;
   /** Buff bar category for CSS animation class. */

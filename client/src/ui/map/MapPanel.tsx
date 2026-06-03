@@ -12,6 +12,7 @@ import { NodeTelemetryPanel } from './NodeTelemetryPanel';
 import { OverviewMap } from './OverviewMap';
 import { TELEMETRY_METRICS, type TelemetryMetric } from './telemetryMetrics';
 import { useMapClock } from './useMapClock';
+import { DEV_TOOLS_ENABLED } from '../../devTools';
 import '../map.css';
 
 interface Props {
@@ -23,7 +24,7 @@ interface Props {
 type OpsView = 'heat' | '3d';
 
 const SHOW_OPS_MAP = import.meta.env.DEV || import.meta.env.VITE_ENABLE_OPS_MAP === 'true';
-const SHOW_DEV_TELEPORT = import.meta.env.DEV;
+const SHOW_DEV_TELEPORT = DEV_TOOLS_ENABLED;
 
 function heatOpacity(row: { tickCpuMs: number; idlePopulationMs: number } | undefined, maxCpu: number): number {
   if (!row || maxCpu <= 0) return 0;

@@ -55,6 +55,21 @@ export function isHoldStill(): boolean {
   return holdStill;
 }
 
+/**
+ * True while keyboard/gamepad input is actively driving the own player. During
+ * manual movement the client owns its own motion target (re-anchored every
+ * {@link MOVE_TICK_MS}); the authoritative `node:delta` carries a target that is
+ * ~1 RTT stale, so letting it overwrite `transform.target` makes the predicted
+ * sprite briefly chase the old heading on every direction change (the "subtle
+ * rubberband"). `upsertPlayer` uses this to skip that overwrite for the own
+ * player while manual movement owns the heading. Click-to-move and server-driven
+ * movement (auto-combat, traverse, party follow, knockback) leave this false so
+ * the server target is applied normally.
+ */
+export function isManualMovementActive(): boolean {
+  return wasMoving;
+}
+
 /** Stop click-to-move / keyboard motion and tell the server to hold position. */
 export function cancelActiveMove(scene: GameScene): void {
   if (!scene.myId) return;
