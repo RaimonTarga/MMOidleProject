@@ -202,6 +202,40 @@ export const SUMMONER_KEYS = [
   'summoner.guardian-dr-share-pct',
 ] as const;
 
+// Mobility / boot mechanics. Strictly on the speed + positioning axis — these
+// keys NEVER grant eHP/DR/plating/HP; the only base stat a boot reduces (to "buy"
+// utility within its tier's speed budget) is the `speed` statModifier. Read at
+// runtime by server/src/systems/world/mobility/mobilityBoots.ts.
+export const MOBILITY_KEYS = [
+  // Plains — OOC speed that collapses the moment combat starts.
+  'mobility.ooc-speed-pct',
+  // Forest — on-kill haste (chain through packs).
+  'mobility.kill-speed-pct',
+  'mobility.kill-speed-ms',
+  // Mountain — on-new-target burst, cooldown-gated.
+  'mobility.acquire-speed-pct',
+  'mobility.acquire-speed-ms',
+  'mobility.acquire-cooldown-ms',
+  // Cave — stealth: reduces enemies' effective detection radius vs the player.
+  'mobility.stealth-pct',
+  // Swamp — tenacity: reduces incoming slow/CC duration.
+  'mobility.tenacity-pct',
+  // Jungle — aggro-pull: increases enemies' effective detection radius vs the player.
+  'mobility.aggro-pull-pct',
+  // Desert — extra speed while moving away from the active target (kite/re-ambush).
+  'mobility.kite-speed-pct',
+  // Tundra — speed ramps while moving continuously toward a cap; bleeds off on stop.
+  'mobility.ramp-speed-pct',
+  'mobility.ramp-rate',
+  // Volcanic — high passive speed, suppressed for a window when taking a direct hit.
+  'mobility.passive-speed-pct',
+  'mobility.suppress-ms',
+  // Graveyard — on-kill speed + tenacity, stacking (high-density ramp).
+  'mobility.kill-stack-speed-pct',
+  'mobility.kill-stack-tenacity-pct',
+  'mobility.kill-stack-ms',
+] as const;
+
 // ── Derived types (zero duplication) ──────────────────────────────────────────
 
 export type DefensePassiveKey  = typeof DEFENSE_KEYS[number];
@@ -212,11 +246,12 @@ export type EnergyPassiveKey   = typeof ENERGY_KEYS[number];
 export type DotPassiveKey      = typeof DOT_KEYS[number];
 export type SharedPassiveKey   = typeof SHARED_KEYS[number];
 export type SummonerPassiveKey = typeof SUMMONER_KEYS[number];
+export type MobilityPassiveKey = typeof MOBILITY_KEYS[number];
 
 export type PassiveKey =
   | DefensePassiveKey | CadencePassiveKey | CooldownPassiveKey
   | ReloadPassiveKey  | EnergyPassiveKey  | DotPassiveKey
-  | SharedPassiveKey  | SummonerPassiveKey;
+  | SharedPassiveKey  | SummonerPassiveKey | MobilityPassiveKey;
 
 export type PassiveMap      = Partial<Record<PassiveKey, number>>;
 export type MechanicEffects = Partial<Record<PassiveKey, number>>;
@@ -225,6 +260,7 @@ export type MechanicEffects = Partial<Record<PassiveKey, number>>;
 export const ALL_PASSIVE_KEYS = [
   ...DEFENSE_KEYS, ...CADENCE_KEYS, ...COOLDOWN_KEYS,
   ...RELOAD_KEYS, ...ENERGY_KEYS, ...DOT_KEYS, ...SHARED_KEYS, ...SUMMONER_KEYS,
+  ...MOBILITY_KEYS,
 ] as const;
 
 // ── Helpers ───────────────────────────────────────────────────────────────────

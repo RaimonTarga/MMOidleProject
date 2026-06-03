@@ -255,7 +255,7 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
   // Mob pool is placeholder pending the new-mechanic mobs.
   ['trench', {
     id: 'trench', name: 'Deep-Sea Trench',
-    backgroundColor: 0x060410,
+    backgroundColor: 0x001a4d,
     monsterPoolByTier: {
       4: ['void-horror', 'trenchal-titan'],
     },

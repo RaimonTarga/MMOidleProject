@@ -3,8 +3,9 @@ import type { Recipe } from './types';
 // ─────────────────────────────────────────────────────────────────────────
 // NEW Jungle-T2 + Desert-T2 entries (advanced biomes that DEBUT at global T2;
 // they have no T1 line by design). These REPLACE the outdated jungle/desert
-// entries in jungleTundraDesertVolcanicRecipeEntries. Tundra + Volcanic remain
-// DEFERRED (T3/T4, post-engine-gate) and untouched.
+// entries in jungleTundraDesertVolcanicRecipeEntries. Tundra + Volcanic now have
+// mobility (boot) entries — their boot mechanics are live in the combat engine;
+// their armor/weapon/charm lines remain DEFERRED.
 //
 // ⚠ ENGINE-GATED: these carry NEW mechanics not yet in the combat engine, so the
 //   items are a SPEC that must be implemented before they function:
@@ -75,6 +76,7 @@ export const jungleTundraDesertVolcanicRecipeEntries = [
     id: 'jungle-boots-t2', name: 'Vine Wraps',
     recipeGroup: 'jungle', requiredBiomeLevel: 1, slot: 'mobility',
     cost: { green: 18 }, stats: { speed: 22 }, tier: 2,
+    mechanicEffects: { 'mobility.aggro-pull-pct': 0.50 },
     description: 'Springy growth lashed to the feet, always eager to be running.',
     upgrades: [
       { stats: { speed: 5 }, cost: { green: 10 }, requiredBiomeLevel: 2 },
@@ -137,11 +139,42 @@ export const jungleTundraDesertVolcanicRecipeEntries = [
     id: 'desert-boots-t2', name: 'Sand Sprint',
     recipeGroup: 'desert', requiredBiomeLevel: 1, slot: 'mobility',
     cost: { yellow: 58 }, stats: { speed: 58 }, tier: 2,
+    mechanicEffects: { 'mobility.kite-speed-pct': 0.40 },
     description: 'Wide and light, made to outpace a storm across open dune.',
     upgrades: [
       { stats: { speed: 8 },  cost: { yellow: 28 }, requiredBiomeLevel: 2 },
       { stats: { speed: 12 }, cost: { yellow: 58 }, requiredBiomeLevel: 3 },
       { stats: { speed: 16 }, cost: { yellow: 96 }, requiredBiomeLevel: 4 },
+    ],
+  }],
+
+  // ── Tundra (T3) — continuous-move ramp boots (mobility engine now live) ──
+  ['tundra-boots-t3', {
+    id: 'tundra-boots-t3', name: 'Glacier Striders',
+    recipeGroup: 'tundra', requiredBiomeLevel: 1, slot: 'mobility',
+    cost: { blue: 60 }, stats: { speed: 30 }, tier: 3,
+    // ramp: +0.30 speed/sec while moving, capped at +60% (reached after ~2s). Untuned placeholder.
+    mechanicEffects: { 'mobility.ramp-speed-pct': 0.60, 'mobility.ramp-rate': 0.30 },
+    description: 'They gather momentum across the ice and are loath to give it back.',
+    upgrades: [
+      { stats: { speed: 8 },  cost: { blue: 30 },  requiredBiomeLevel: 2 },
+      { stats: { speed: 12 }, cost: { blue: 60 },  requiredBiomeLevel: 3 },
+      { stats: { speed: 16 }, cost: { blue: 100 }, requiredBiomeLevel: 4 },
+    ],
+  }],
+
+  // ── Volcanic (T3) — high passive speed, suppressed for 4s on a direct hit ──
+  ['volcanic-boots-t3', {
+    id: 'volcanic-boots-t3', name: 'Magma Walkers',
+    recipeGroup: 'volcanic', requiredBiomeLevel: 1, slot: 'mobility',
+    cost: { red: 62 }, stats: { speed: 36 }, tier: 3,
+    // +55% passive move speed; a direct hit suppresses it for 4s. Untuned placeholder.
+    mechanicEffects: { 'mobility.passive-speed-pct': 0.55, 'mobility.suppress-ms': 4000 },
+    description: 'Quick as a thrown spark — until a solid blow knocks the wind from them.',
+    upgrades: [
+      { stats: { speed: 8 },  cost: { red: 30 },  requiredBiomeLevel: 2 },
+      { stats: { speed: 12 }, cost: { red: 62 },  requiredBiomeLevel: 3 },
+      { stats: { speed: 16 }, cost: { red: 104 }, requiredBiomeLevel: 4 },
     ],
   }],
 ] satisfies [string, Recipe][];

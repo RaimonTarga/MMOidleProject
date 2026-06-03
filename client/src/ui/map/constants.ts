@@ -17,8 +17,8 @@ export const BIOME_TILE_COLORS: Record<string, string> = {
   tundra:     '#222e48',
   desert:     '#5a4010',
   volcanic:   '#4a1010',
-  necropolis: '#1e0e2a',
-  abyss:      '#0a0612',
+  graveyard: '#1e0e2a',
+  trench:     '#001a4d',
 };
 
 export function tileColor(biomeGroup: string): string {

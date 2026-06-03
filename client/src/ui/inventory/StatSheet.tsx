@@ -130,9 +130,69 @@ function formatMechanicEffects(fx: Record<string, number> | undefined): string[]
     mark('defense.cleanse-stacks', 'defense.cleanse-interval-ms');
   }
 
+  // ── Mobility (boot) mechanics ──────────────────────────────────────────────
+  if (has('mobility.ooc-speed-pct')) {
+    lines.push(`+${pct('mobility.ooc-speed-pct')} move speed while out of combat`);
+    mark('mobility.ooc-speed-pct');
+  }
+
+  if (has('mobility.kill-speed-pct')) {
+    const dur = has('mobility.kill-speed-ms') ? ` for ${sec('mobility.kill-speed-ms')}` : '';
+    lines.push(`On a kill: +${pct('mobility.kill-speed-pct')} move speed${dur}`);
+    mark('mobility.kill-speed-pct', 'mobility.kill-speed-ms');
+  }
+
+  if (has('mobility.acquire-speed-pct')) {
+    const dur = has('mobility.acquire-speed-ms') ? ` for ${sec('mobility.acquire-speed-ms')}` : '';
+    const cd = has('mobility.acquire-cooldown-ms') ? ` (every ${sec('mobility.acquire-cooldown-ms')})` : '';
+    lines.push(`When you lock onto a new target: +${pct('mobility.acquire-speed-pct')} move speed${dur}${cd}`);
+    mark('mobility.acquire-speed-pct', 'mobility.acquire-speed-ms', 'mobility.acquire-cooldown-ms');
+  }
+
+  if (has('mobility.stealth-pct')) {
+    lines.push(`Enemies notice you from ${pct('mobility.stealth-pct')} closer`);
+    mark('mobility.stealth-pct');
+  }
+
+  if (has('mobility.aggro-pull-pct')) {
+    lines.push(`Enemies notice you from ${pct('mobility.aggro-pull-pct')} farther away`);
+    mark('mobility.aggro-pull-pct');
+  }
+
+  if (has('mobility.tenacity-pct')) {
+    lines.push(`Slows and roots on you wear off ${pct('mobility.tenacity-pct')} faster`);
+    mark('mobility.tenacity-pct');
+  }
+
+  if (has('mobility.kite-speed-pct')) {
+    lines.push(`+${pct('mobility.kite-speed-pct')} move speed while retreating from your target`);
+    mark('mobility.kite-speed-pct');
+  }
+
+  if (has('mobility.ramp-speed-pct')) {
+    const rate = has('mobility.ramp-rate') ? ` (builds ${pct('mobility.ramp-rate')}/s while moving)` : '';
+    lines.push(`Keep moving to ramp up to +${pct('mobility.ramp-speed-pct')} move speed${rate}`);
+    mark('mobility.ramp-speed-pct', 'mobility.ramp-rate');
+  }
+
+  if (has('mobility.passive-speed-pct')) {
+    const supp = has('mobility.suppress-ms') ? `, lost for ${sec('mobility.suppress-ms')} after taking a direct hit` : '';
+    lines.push(`+${pct('mobility.passive-speed-pct')} move speed${supp}`);
+    mark('mobility.passive-speed-pct', 'mobility.suppress-ms');
+  }
+
+  if (has('mobility.kill-stack-speed-pct') || has('mobility.kill-stack-tenacity-pct')) {
+    const parts: string[] = [];
+    if (has('mobility.kill-stack-speed-pct'))    parts.push(`+${pct('mobility.kill-stack-speed-pct')} move speed`);
+    if (has('mobility.kill-stack-tenacity-pct')) parts.push(`${pct('mobility.kill-stack-tenacity-pct')} faster slow/root recovery`);
+    const dur = has('mobility.kill-stack-ms') ? ` (up to 3 stacks, ${sec('mobility.kill-stack-ms')})` : '';
+    lines.push(`On a kill: ${parts.join(' and ')} per stack${dur}`);
+    mark('mobility.kill-stack-speed-pct', 'mobility.kill-stack-tenacity-pct', 'mobility.kill-stack-ms');
+  }
+
   // Fallback for any keys not yet handled
   for (const [k, v] of Object.entries(fx)) {
-    if (!seen.has(k)) lines.push(`${k.replace(/^defense\./, '').replace(/-/g, ' ')}: ${v}`);
+    if (!seen.has(k)) lines.push(`${k.replace(/^[a-z]+\./, '').replace(/-/g, ' ')}: ${v}`);
   }
 
   return lines;

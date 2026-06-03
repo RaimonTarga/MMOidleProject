@@ -12,6 +12,7 @@ import { NODE_REGISTRY } from '../../world/nodeRegistry';
 import type { ServerEntity } from '../../ecs/entity';
 import { attachComponent, detachComponent } from '../../ecs/markerHelpers';
 import { resolveObstaclesForNode } from './nodeFeatures';
+import { bootSpeedMultiplier } from './mobility/mobilityBoots';
 
 // Monsters stay this many pixels from the node edge at all times.
 const MONSTER_MARGIN = 40;
@@ -39,7 +40,7 @@ export function stopEntity(world: World, entity: ServerEntity): void {
   detachComponent(world, entity, 'hasManualMoveIntent');
 }
 
-export function updateMovement(world: World, dt: number) {
+export function updateMovement(world: World, dt: number, now: number) {
   for (const entity of world.movingPlayers) {
     if (entity.isRooted || entity.isChanneling) {
       stopEntity(world, entity);
@@ -50,10 +51,11 @@ export function updateMovement(world: World, dt: number) {
     const slowMult = slow ? Math.max(0, slow.data['speedMult'] ?? 1) : 1;
     const trample = getStatusEffect(entity.tracksCombat, 'summoner-trample-boon');
     const trampleMult = trample ? 1 + (trample.data.speedPct ?? 0.25) : 1;
+    const bootMult = bootSpeedMultiplier(world, entity, now);
     const next = advanceMotion(
       entity.hasPosition.current,
       entity.isMoving.motion,
-      entity.hasPosition.speed * slowMult * trampleMult * (dt / 1000),
+      entity.hasPosition.speed * slowMult * trampleMult * bootMult * (dt / 1000),
     );
     const resolved = resolveObstaclesForNode(
       world,

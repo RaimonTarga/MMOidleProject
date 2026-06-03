@@ -19,6 +19,7 @@ import { isMonsterFrozen } from "../../classes/archetypes/dot/t3";
 import { isMonsterStunned } from "../status/stun";
 import { isMonsterKnockedBack } from "../damage/knockback";
 import { setEntityMotion, stopEntity } from "../../world/movement";
+import { playerDetectionMult } from "../../world/mobility/mobilityBoots";
 import { setAggroTarget, setAttackTarget } from "./targeting";
 
 const KITE_GRACE_MS = 500; // ms chasing before speed ramp begins
@@ -40,13 +41,17 @@ function findAggro(
   monster: MonsterEntity,
   world: World,
 ): AggroCandidate | null {
-  const pullSq = monster.hasAwareness.pullRange ** 2;
+  const pullRange = monster.hasAwareness.pullRange;
+  const pullSq = pullRange ** 2;
   let best: AggroCandidate | null = null;
   let bestDist = Infinity;
 
   for (const p of world.livePlayersInNode(monster.hasPosition.nodeId)) {
+    // Mobility boots scale the monster's effective detection radius per-player:
+    // Cave stealth shrinks it (mult < 1), Jungle aggro-pull widens it (mult > 1).
+    const effPull = pullRange * playerDetectionMult(p);
     const d = distanceSq(p.hasPosition.current, monster.hasPosition.current);
-    if (d < pullSq && d < bestDist) {
+    if (d < effPull * effPull && d < bestDist) {
       bestDist = d;
       best = { kind: "player", entity: p };
     }

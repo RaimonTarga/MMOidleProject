@@ -92,6 +92,7 @@ export const clearingForestMountainRecipeEntries = [
     id: 'forest-boots-t1', name: 'Sprinter Wraps',
     recipeGroup: 'forest', requiredBiomeLevel: 3, slot: 'mobility',
     cost: { green: 15 }, stats: { speed: 20 }, tier: 1,
+    mechanicEffects: { 'mobility.kill-speed-pct': 0.25, 'mobility.kill-speed-ms': 3000 },
     description: 'Strips of supple hide that move when you move, and never before.',
     upgrades: [
       { stats: { speed: 4 }, cost: { green: 10 }, requiredBiomeLevel: 4 },
@@ -128,6 +129,7 @@ export const clearingForestMountainRecipeEntries = [
     id: 'forest-boots-t2', name: 'Windstep Wraps',
     recipeGroup: 'forest', requiredBiomeLevel: 7, slot: 'mobility',
     cost: { green: 38, yellow: 10 }, stats: { speed: 40 }, tier: 2,
+    mechanicEffects: { 'mobility.kill-speed-pct': 0.35, 'mobility.kill-speed-ms': 3000 },
     description: 'Light enough that the wind mistakes the wearer for one of its own.',
     upgrades: [
       { stats: { speed: 6 }, cost: { green: 18 }, requiredBiomeLevel: 8 },
@@ -195,6 +197,7 @@ export const clearingForestMountainRecipeEntries = [
     id: 'mountain-boots-t1', name: 'Iron Treads',
     recipeGroup: 'mountain', requiredBiomeLevel: 3, slot: 'mobility',
     cost: { blue: 18 }, stats: { speed: 18 }, tier: 1,
+    mechanicEffects: { 'mobility.acquire-speed-pct': 0.50, 'mobility.acquire-speed-ms': 1500, 'mobility.acquire-cooldown-ms': 8000 },
     description: 'Heavy soles that bite into scree and loose rock alike.',
     upgrades: [
       { stats: { speed: 4 }, cost: { blue: 10 }, requiredBiomeLevel: 4 },
@@ -235,6 +238,7 @@ export const clearingForestMountainRecipeEntries = [
     id: 'mountain-boots-t2', name: 'Mountain Stride',
     recipeGroup: 'mountain', requiredBiomeLevel: 7, slot: 'mobility',
     cost: { blue: 42, purple: 10 }, stats: { speed: 45 }, tier: 2,
+    mechanicEffects: { 'mobility.acquire-speed-pct': 0.65, 'mobility.acquire-speed-ms': 1500, 'mobility.acquire-cooldown-ms': 8000 },
     description: 'Forged for those who treat a sheer slope as a road.',
     upgrades: [
       { stats: { speed: 6 }, cost: { blue: 20 }, requiredBiomeLevel: 8 },

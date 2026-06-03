@@ -8,6 +8,8 @@ export interface BuffProjectionContext {
   targetCs?: TracksCombat;
   target?: MonsterEntity;
   world: World;
+  /** Current tick timestamp — same `now` the tick loop uses for engagement/cooldowns. */
+  now: number;
 }
 
 export interface BuffDescriptor<TId extends string = string> {

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useAtomValue } from 'jotai';
-import { BuffBar, CadenceTimeline, DefensePassivesSection, StatRow, SummonSlotBar } from './components';
+import { BuffBar, CadenceTimeline, DefensePassivesSection, MobilityPassivesSection, StatRow, SummonSlotBar } from './components';
 import {
   ammoCountAtom,
   ammoMaxAtom,
@@ -401,6 +401,9 @@ export function StatPanel() {
 
           {/* Defense passives */}
           {player && <DefensePassivesSection passives={player.passives ?? {}} />}
+
+          {/* Mobility (boot) passives */}
+          {player && <MobilityPassivesSection passives={player.passives ?? {}} />}
 
         </>
       )}

@@ -11,6 +11,7 @@ import { actorFromPlayer } from "../../../world/worldLogActors";
 import { collectMechanicBuffs } from "../../classes/registry";
 import { DEFENSE_BUFFS } from "../../defense";
 import { WEAPON_BUFFS } from "../damage/weaponEffects";
+import { MOBILITY_BUFFS } from "../../world/mobility/mobilityBoots";
 import { defineBuff, type BuffDescriptor } from "./descriptor";
 
 const DEBUFF_BUFFS = [
@@ -84,6 +85,7 @@ export const ALL_BUFFS = [
   ...collectMechanicBuffs(),
   ...WEAPON_BUFFS,
   ...DEFENSE_BUFFS,
+  ...MOBILITY_BUFFS,
   ...DEBUFF_BUFFS,
 ] as const satisfies readonly BuffDescriptor[];
 
@@ -93,7 +95,7 @@ export type ServerBuffId = (typeof ALL_BUFFS)[number]["id"];
  * Run once per world tick (after all combat systems) to populate
  * player.activeBuffs by projecting every registered BuffDescriptor.
  */
-export function syncPlayerBuffs(world: World): void {
+export function syncPlayerBuffs(world: World, now: number): void {
   for (const entity of world.livePlayers) {
     const previousBuffs = entity.hasStatus.activeBuffs ?? [];
     const playerCs = entity.tracksCombat;
@@ -109,6 +111,7 @@ export function syncPlayerBuffs(world: World): void {
         targetCs,
         target,
         world,
+        now,
       });
       if (buff) {
         buffs.push({

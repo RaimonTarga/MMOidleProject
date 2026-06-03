@@ -34,6 +34,15 @@ export const BUFF_IDS = [
   'summoner-trample-boon',
   'summoner-debuff-immune',
   'debuff-stunned',
+  // Mobility boots (see server/src/systems/world/mobility/mobilityBoots.ts)
+  'mob-sprint',   // Plains — out-of-combat sprint
+  'mob-haste',    // Forest — on-kill haste
+  'mob-burst',    // Mountain — on-new-target burst
+  'mob-grave',    // Graveyard — stacking on-kill speed + tenacity
+  'mob-kite',     // Desert — moving-away-from-target speed
+  'mob-rush',     // Tundra — continuous-move ramp
+  'mob-volcanic', // Volcanic — passive speed (active while not suppressed)
+  'mob-suppress', // Volcanic — speed suppressed after a direct hit
 ] as const;
 
 export type BuffId = typeof BUFF_IDS[number];

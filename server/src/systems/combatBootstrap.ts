@@ -8,6 +8,7 @@ import {
   registerMountainPathHooks,
   registerSummonerDamageSponge,
 } from "./classes/archetypes/summoner";
+import { initMobilityBoots } from "./world/mobility/mobilityBoots";
 
 let initialized = false;
 
@@ -49,4 +50,7 @@ export function initCombatSystems(): void {
   // Summoner mountain-path cover + damage sponge (after defense systems).
   registerMountainPathHooks();
   registerSummonerDamageSponge();
+  // Mobility boots: on-kill / on-acquire / on-hit speed & tenacity hooks.
+  // Order-independent — these listeners only apply status effects, never touch ctx.damage.
+  initMobilityBoots();
 }

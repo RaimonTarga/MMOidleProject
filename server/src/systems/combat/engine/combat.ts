@@ -21,6 +21,7 @@ import { evadeBlocksDebuffs } from "../../defense/mitigation/evasion";
 import { isMonsterStunned } from "../status/stun";
 import { setAggroTarget, setAttackTarget } from "../ai/targeting";
 import { markEngaged } from "../ai/engagement";
+import { mobilityTenacityDurationMult } from "../../world/mobility/mobilityBoots";
 import type {
   MinionEntity,
   MonsterEntity,
@@ -443,15 +444,19 @@ export function runMonsterAttack(
     monster.isMonster.monsterTypeId,
   )?.slowEffect;
   if (slow && canApplyPlayerDebuff(target) && !evadeBlocksDebuffs(ctx)) {
+    // Mobility-boot tenacity (Swamp + Graveyard stacks) shortens the CC duration.
+    const slowMs = Math.round(
+      slow.durationMs * mobilityTenacityDurationMult(target),
+    );
     applyStatusEffect(target.tracksCombat, {
       id: "slow",
       maxStacks: 1,
-      remainingMs: slow.durationMs,
+      remainingMs: slowMs,
       refreshable: true,
       sourceId: monster.isMonster.id,
       data: {
         speedMult: slow.speedMult,
-        totalMs: slow.durationMs,
+        totalMs: slowMs,
       },
     });
   }

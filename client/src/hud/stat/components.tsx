@@ -122,6 +122,58 @@ export function DefensePassivesSection({ passives: p }: { passives: Record<strin
   );
 }
 
+export function MobilityPassivesSection({ passives: p }: { passives: Record<string, number> }) {
+  const rows: { label: string; value: string }[] = [];
+  const pct = (k: string) => `${Math.round((p[k] ?? 0) * 100)}%`;
+  const sec = (k: string) => `${Math.round((p[k] ?? 0) / 1000)}s`;
+  const has = (k: string) => (p[k] ?? 0) > 0;
+
+  if (has('mobility.ooc-speed-pct'))
+    rows.push({ label: 'Out-of-combat Speed', value: `+${pct('mobility.ooc-speed-pct')}` });
+
+  if (has('mobility.kill-speed-pct'))
+    rows.push({ label: 'On-kill Haste', value: `+${pct('mobility.kill-speed-pct')} / ${sec('mobility.kill-speed-ms')}` });
+
+  if (has('mobility.acquire-speed-pct'))
+    rows.push({
+      label: 'New-target Burst',
+      value: `+${pct('mobility.acquire-speed-pct')} / ${sec('mobility.acquire-speed-ms')} (${sec('mobility.acquire-cooldown-ms')} cd)`,
+    });
+
+  if (has('mobility.kite-speed-pct'))
+    rows.push({ label: 'Retreat Speed', value: `+${pct('mobility.kite-speed-pct')}` });
+
+  if (has('mobility.ramp-speed-pct'))
+    rows.push({ label: 'Move Ramp', value: `up to +${pct('mobility.ramp-speed-pct')}` });
+
+  if (has('mobility.passive-speed-pct'))
+    rows.push({ label: 'Passive Speed', value: `+${pct('mobility.passive-speed-pct')} (−${sec('mobility.suppress-ms')} on hit)` });
+
+  if (has('mobility.kill-stack-speed-pct') || has('mobility.kill-stack-tenacity-pct'))
+    rows.push({
+      label: 'On-kill Stacks',
+      value: `+${pct('mobility.kill-stack-speed-pct')} spd, ${pct('mobility.kill-stack-tenacity-pct')} ten / stack`,
+    });
+
+  if (has('mobility.stealth-pct'))
+    rows.push({ label: 'Stealth', value: `−${pct('mobility.stealth-pct')} enemy detection` });
+
+  if (has('mobility.aggro-pull-pct'))
+    rows.push({ label: 'Aggro Pull', value: `+${pct('mobility.aggro-pull-pct')} enemy detection` });
+
+  if (has('mobility.tenacity-pct'))
+    rows.push({ label: 'Tenacity', value: `${pct('mobility.tenacity-pct')} faster slow/root recovery` });
+
+  if (rows.length === 0) return null;
+
+  return (
+    <div className="stat-section">
+      <div className="stat-section-title">Mobility</div>
+      {rows.map(r => <StatRow key={r.label} label={r.label} value={r.value} />)}
+    </div>
+  );
+}
+
 
 export function StatRow({
   label,
