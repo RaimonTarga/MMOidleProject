@@ -17,14 +17,15 @@ export const clearingForestMountainRecipeEntries = [
   ['primordial-club', {
     id: 'primordial-club', name: 'Primordial Club',
     recipeGroup: 'clearing', requiredBiomeLevel: 1, slot: 'weapon',
-    cost: { green: 8 }, stats: { attack: 5 }, attacksPerSecond: 0.70, tier: 0,
+    cost: { green: 8 }, stats: { attack: 3 }, attacksPerSecond: 0.65, tier: 0,
     description: 'Whittled from ironwood in a single evening, and it has not snapped since.',
     upgrades: [
-      { stats: { attack: 2 }, cost: { green: 5  }, requiredBiomeLevel: 2 },
-      { stats: { attack: 2 }, cost: { green: 10 }, requiredBiomeLevel: 3 },
-      { stats: { attack: 2 }, cost: { green: 18 }, requiredBiomeLevel: 4 },
+      { stats: { attack: 1 }, cost: { green: 5  }, requiredBiomeLevel: 2 },
+      { stats: { attack: 1 }, cost: { green: 10 }, requiredBiomeLevel: 3 },
+      { stats: { attack: 1 }, cost: { green: 18 }, requiredBiomeLevel: 4 },
     ],
   }],
+
 
   ['clearing-vest-t1', {
     id: 'clearing-vest-t1', name: 'Bark Wrap',

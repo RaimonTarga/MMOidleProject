@@ -876,7 +876,7 @@ All T3 mobs drop `level: 2` essence rewards (compared to T1/T2 `level: 1`).
 | Fire Elemental | 400 | 64 | 8 | 4% | 70 | 2100ms | 62 | 230 |
 | **Volcanic Titan** (boss) | **3800** | **105** | **30** | **12%** | **32** | **3400ms** | **76** | **340** |
 
-### Necropolis T3 (first appearance)
+### graveyard T3 (first appearance)
 | Monster | HP | ATK | PLT | DR | SPD | CD | Range | Pull |
 |---|---|---|---|---|---|---|---|---|
 | Skeleton Warrior | 500 | 47 | 12 | 6% | 50 | 2400ms | 62 | 220 |
@@ -921,7 +921,7 @@ All T4 mobs drop `level: 3` essence rewards.
 | Monster | HP | ATK | PLT | DR | SPD | CD | Range | Pull |
 |---|---|---|---|---|---|---|---|---|
 | Stone Colossus | 2200 | 98 | 58 | 13% | 12 | 4500ms | 70 | 135 |
-| Abyss Crawler | 1100 | 128 | 28 | 8% | 58 | 2000ms | 62 | 240 |
+| trench Crawler | 1100 | 128 | 28 | 8% | 58 | 2000ms | 62 | 240 |
 | **Cave Titan** (boss) | **8500** | **162** | **70** | **22%** | **14** | **5500ms** | **90** | **370** |
 
 ### Jungle T4
@@ -952,18 +952,18 @@ All T4 mobs drop `level: 3` essence rewards.
 | Magma Colossus | 2400 | 118 | 58 | 15% | 16 | 4800ms | 70 | 145 |
 | **Inferno Lord** (boss) | **8000** | **182** | **62** | **21%** | **26** | **4000ms** | **84** | **380** |
 
-### Necropolis T4
+### graveyard T4
 | Monster | HP | ATK | PLT | DR | SPD | CD | Range | Pull |
 |---|---|---|---|---|---|---|---|---|
 | Bone Colossus | 2000 | 112 | 45 | 11% | 18 | 4200ms | 68 | 145 |
 | Death Knight | 1200 | 142 | 30 | 9% | 58 | 2200ms | 62 | 250 |
 | **Undying Lord** (boss) | **7500** | **178** | **58** | **21%** | **24** | **4500ms** | **88** | **390** |
 
-### Abyss T4 (first appearance)
+### trench T4 (first appearance)
 | Monster | HP | ATK | PLT | DR | SPD | CD | Range | Pull |
 |---|---|---|---|---|---|---|---|---|
 | Void Horror | 1500 | 150 | 24 | 9% | 68 | 1900ms | 64 | 270 |
-| Abyssal Titan | 2600 | 125 | 55 | 15% | 20 | 4500ms | 70 | 145 |
+| trenchal Titan | 2600 | 125 | 55 | 15% | 20 | 4500ms | 70 | 145 |
 | **Void Titan** (boss) | **12000** | **252** | **68** | **22%** | **20** | **3200ms** | **100** | **360** |
 
 ---
@@ -1002,16 +1002,16 @@ Chebyshev distance from center → tier:
   0 = T0 (1 node)
   1–2 = T1 (24 nodes: forest, mountain, plains, swamp, cave, +plains extension)
   3 = T2 (24 nodes: tundra, mountain, forest, plains, desert, jungle, cave, swamp)
-  4 = T3 (32 nodes: + volcanic, necropolis)
-  5 = T4 (40 nodes: + abyss)
+  4 = T3 (32 nodes: + volcanic, graveyard)
+  5 = T4 (40 nodes: + trench)
 
 Geographic layout:
   North        — tundra / mountain
   NE           — forest / plains
   East (col 10)— plains / desert
   SE           — jungle
-  South        — volcanic / necropolis / abyss
-  West (col 0) — swamp / cave / abyss
+  South        — volcanic / graveyard / trench
+  West (col 0) — swamp / cave / trench
   NW           — swamp / tundra
 ```
 

@@ -31,7 +31,7 @@ export const bossMonsterEntriesT1T2 = [
     id: 'plains-champion', name: 'Plains Champion', color: 0xddaa44,
     isBoss: true,
     stats: {
-      hp: 540, attack: 30, plating: 4, damageReduction: 0.02,
+      hp: 560, attack: 34, plating: 4, damageReduction: 0.02,
       speed: 50, attackRange: 15, attackCooldown: 2000, pullRange: 280,
     },
     behavior: 'melee', attackStyle: 'impact', biome: 'plains',
@@ -44,7 +44,7 @@ export const bossMonsterEntriesT1T2 = [
     id: 'forest-warden', name: 'Forest Warden', color: 0x33aa44,
     isBoss: true,
     stats: {
-      hp: 440, attack: 24, plating: 0, damageReduction: 0,
+      hp: 480, attack: 30, plating: 0, damageReduction: 0,
       speed: 60, attackRange: 15, attackCooldown: 1400, pullRange: 300,
     },
     behavior: 'melee', attackStyle: 'slash', biome: 'forest',
@@ -58,7 +58,7 @@ export const bossMonsterEntriesT1T2 = [
     id: 'mountain-sentinel', name: 'Mountain Sentinel', color: 0x8899bb,
     isBoss: true,
     stats: {
-      hp: 600, attack: 62, plating: 0, damageReduction: 0,
+      hp: 640, attack: 66, plating: 0, damageReduction: 0,
       speed: 22, attackRange: 18, attackCooldown: 3500, pullRange: 280,
     },
     behavior: 'melee', attackStyle: 'impact', biome: 'mountain',
@@ -73,13 +73,13 @@ export const bossMonsterEntriesT1T2 = [
     id: 'bog-sovereign', name: 'Bog Sovereign', color: 0x1e3d1e,
     isBoss: true,
     stats: {
-      hp: 440, attack: 6, plating: 2, damageReduction: 0.02,
+      hp: 480, attack: 6, plating: 2, damageReduction: 0.02,
       speed: 28, attackRange: 15, attackCooldown: 2600, pullRange: 260,
     },
     behavior: 'melee', attackStyle: 'poison', biome: 'swamp',
     rewards: { essence: 100, essenceType: 'purple', level: 5, biomeXp: 150 },
     ai: { wanderRadius: 100, leashRange: 700, idleMinMs: 2000, idleMaxMs: 5500 },
-    dotEffect: { damagePerStack: 4, maxStacks: 4, tickIntervalMs: 1000, durationMs: 4000 },
+    dotEffect: { damagePerStack: 6, maxStacks: 4, tickIntervalMs: 1000, durationMs: 4000 },
   }],
 
   // CAVE — tanky mixed elite: high HP, DR + plating, charges. Slow/piercing
@@ -88,7 +88,7 @@ export const bossMonsterEntriesT1T2 = [
     id: 'cave-sentinel', name: 'Cave Sentinel', color: 0x334455,
     isBoss: true,
     stats: {
-      hp: 660, attack: 38, plating: 6, damageReduction: 0.08,
+      hp: 760, attack: 54, plating: 6, damageReduction: 0.10,
       speed: 24, attackRange: 18, attackCooldown: 2800, pullRange: 240,
     },
     behavior: 'melee', attackStyle: 'impact', biome: 'cave',
@@ -104,7 +104,7 @@ export const bossMonsterEntriesT1T2 = [
     id: 'plains-tyrant', name: 'Plains Tyrant', color: 0xcc9922,
     isBoss: true,
     stats: {
-      hp: 2000, attack: 55, plating: 8, damageReduction: 0.05,
+      hp: 2000, attack: 60, plating: 8, damageReduction: 0.05,
       speed: 46, attackRange: 15, attackCooldown: 2200, pullRange: 320,
     },
     behavior: 'melee', attackStyle: 'impact', biome: 'plains',
@@ -117,7 +117,7 @@ export const bossMonsterEntriesT1T2 = [
     id: 'forest-elder', name: 'Forest Elder', color: 0x226622,
     isBoss: true,
     stats: {
-      hp: 1800, attack: 45, plating: 0, damageReduction: 0,
+      hp: 1800, attack: 50, plating: 0, damageReduction: 0,
       speed: 60, attackRange: 18, attackCooldown: 1500, pullRange: 310,
     },
     behavior: 'melee', attackStyle: 'slash', biome: 'forest',
@@ -162,7 +162,7 @@ export const bossMonsterEntriesT1T2 = [
     id: 'cave-terror', name: 'Cave Terror', color: 0x442244,
     isBoss: true,
     stats: {
-      hp: 2300, attack: 72, plating: 12, damageReduction: 0.12,
+      hp: 2300, attack: 92, plating: 12, damageReduction: 0.12,
       speed: 20, attackRange: 72, attackCooldown: 3600, pullRange: 280,
     },
     behavior: 'melee', attackStyle: 'impact', biome: 'cave',

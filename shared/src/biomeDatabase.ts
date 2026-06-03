@@ -144,7 +144,7 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
       1: ['cave-lurker', 'cave-brute'],
       2: ['giant-spider', 'cave-troll', 'cave-gargoyle'],
       3: ['cave-behemoth', 'venom-queen'],
-      4: ['stone-colossus', 'abyss-crawler'],
+      4: ['stone-colossus', 'trench-crawler'],
     },
     bossPoolByTier: {
       1: ['cave-sentinel'],
@@ -230,7 +230,7 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
     mobDensity: 5,
   }],
 
-  // GRAVEYARD (T4) — was 'necropolis'. EXTREME-high-density weak undead swarm;
+  // GRAVEYARD (T4) — was 'graveyard'. EXTREME-high-density weak undead swarm;
   // carries a NEW mechanic (plague / DoT-contagion), not a plains re-run.
   // ⚠ id changed necropolis -> graveyard: propagate in world-gen / zone config.
   // Mob pool is placeholder pending the new-mechanic mobs.
@@ -249,7 +249,7 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
     mobDensity: 20,
   }],
 
-  // DEEP-SEA TRENCH (T4) — was 'abyss'. EXTREME-low-density rare abyssal terrors;
+  // DEEP-SEA TRENCH (T4) — was 'trench'. EXTREME-low-density rare trenchal terrors;
   // carries a NEW mechanic (execute / finisher), not a desert re-run.
   // ⚠ id changed abyss -> trench: propagate in world-gen / zone config.
   // Mob pool is placeholder pending the new-mechanic mobs.
@@ -257,7 +257,7 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
     id: 'trench', name: 'Deep-Sea Trench',
     backgroundColor: 0x060410,
     monsterPoolByTier: {
-      4: ['void-horror', 'abyssal-titan'],
+      4: ['void-horror', 'trenchal-titan'],
     },
     bossPoolByTier: {
       4: ['void-overlord', 'void-titan'],
