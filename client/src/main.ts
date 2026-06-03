@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { createRoot } from 'react-dom/client';
 import { createElement } from 'react';
 import { ITEM_DATABASE, registerDevItems } from '@mmo-idle/shared';
+import { DEV_TOOLS_ENABLED } from './devTools';
 import { GameScene } from './scenes/GameScene';
 import { LeftSidebar } from './hud/HUD';
 import { RightSidebar } from './hud/MenuButtons';
@@ -16,7 +17,7 @@ import { BiomeXpBar } from './hud/BiomeXpBar';
 import { BossBar } from './hud/BossBar';
 import { EmoteWheel } from './hud/EmoteWheel';
 
-if (import.meta.env.DEV) {
+if (DEV_TOOLS_ENABLED) {
   registerDevItems(ITEM_DATABASE);
 }
 

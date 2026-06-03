@@ -20,6 +20,7 @@ import { ensureHpBar, destroyHpBar } from "./healthBars";
 import { ensureCdBar, destroyCdBar } from "./cooldownBars";
 import { GRAVE_DISPLAY_H, GRAVE_LABEL_OFFSET_Y } from "../sprites";
 import { applyLunge } from "./interpolation";
+import { isManualMovementActive } from "../input/movement";
 import { spawnAttackEffect } from "./combatFx";
 import { getDotPath } from "../fx/dot";
 import { spawnDamageNumber } from "../fx/particles";
@@ -29,6 +30,20 @@ import { flashShiftTint, spawnFlashAttackAfterimage } from "./movementEffects";
 // motion target between 5 Hz snapshots. Beyond this error the prediction has
 // diverged (rejected move, dropped packet) — snap rather than glide-correct.
 const RECONCILE_SNAP_SQ = 220 * 220;
+
+/**
+ * Combined movement-speed multiplier from any movement-affecting buffs the
+ * player has (slow, root, trample boon, …). Mirrors the server's
+ * `slowMult * trampleMult` so client extrapolation runs at the same effective
+ * speed. Buffs without a `speedMult` (the common case) are ignored.
+ */
+function moveSpeedMult(player: PlayerView): number {
+  let mult = 1;
+  for (const buff of player.activeBuffs) {
+    if (buff.speedMult !== undefined) mult *= buff.speedMult;
+  }
+  return mult;
+}
 
 export function upsertPlayer(
   state: RenderState,
@@ -189,8 +204,21 @@ export function upsertPlayer(
   state.view.set(player.id, player);
   const transform = state.transform.get(player.id);
   if (transform) {
-    transform.target = { ...player.target };
-    transform.speed = player.speed;
+    // Fix #1: while keyboard/gamepad movement is driving the own player, the
+    // client owns the heading. The server's `player.target` is ~1 RTT stale, so
+    // overwriting it here would yank the predicted sprite toward the old heading
+    // for a frame on every direction change. Other players, and the own player
+    // under server-driven movement (auto/traverse/follow/knockback) or
+    // click-to-move, still take the authoritative target.
+    if (!(isOwn && isManualMovementActive())) {
+      transform.target = { ...player.target };
+    }
+    // Keep the authoritative position current for the per-frame reconcile below.
+    transform.pos = { ...player.pos };
+    // Fix #3: match the server's effective speed so the client doesn't over- or
+    // under-extrapolate while slowed/rooted/boosted (otherwise the prediction
+    // diverges until the hard snap fires). Movement buffs carry their multiplier.
+    transform.speed = player.speed * moveSpeedMult(player);
   }
 
   if (isOwn) {

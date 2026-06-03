@@ -29,6 +29,10 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        # Build-time flag that bakes client dev tooling (test room button, etc.)
+        # into the production bundle. `pnpm docker:up:dev` sets it to true.
+        VITE_DEV_TOOLS: ${VITE_DEV_TOOLS:-false}
     container_name: mmo-app
     restart: unless-stopped
     environment:
@@ -37,6 +41,10 @@ services:
       DATABASE_URL: postgresql://postgres:postgres@db:5432/gamedb
       PORT: "4000"
       NODE_ENV: production
+      # Runtime flag that turns on the server's dev tooling (test room, dev items)
+      # even though the image boots with NODE_ENV=production. `pnpm docker:up:dev`
+      # sets it to true; defaults off so plain `docker:up` stays a Railway mirror.
+      DEV_TOOLS: ${DEV_TOOLS:-false}
     ports:
       - "4000:4000"
     depends_on:

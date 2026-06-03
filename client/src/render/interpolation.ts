@@ -7,6 +7,16 @@ function spriteDrawY(baseY: number, visualOffsetY?: number): number {
   return baseY + (visualOffsetY ?? 0);
 }
 
+// Fix #2: smooth own-player reconciliation. Below the hard-snap threshold
+// (handled in `upsertPlayer`), the predicted base is eased toward the
+// authoritative server position each frame instead of being left to drift until
+// it snaps. The dead-zone preserves the intended small prediction lead so we
+// don't fight responsive movement; only larger divergences (a turn, a dropped
+// packet, a speed mismatch) get pulled back, and smoothly rather than as a jump.
+const RECONCILE_DEADZONE_SQ = 80 * 80;
+// Exponential approach rate (per second) — frame-rate independent via dt.
+const RECONCILE_RATE = 6;
+
 export function stepInterpolation(state: RenderState, dt: number): void {
   for (const id of state.ids) {
     const transform = state.transform.get(id);
@@ -26,6 +36,16 @@ export function stepInterpolation(state: RenderState, dt: number): void {
     } else {
       interp.base.x = transform.target.x;
       interp.base.y = transform.target.y;
+    }
+
+    if (id === state.ownId) {
+      const ex = transform.pos.x - interp.base.x;
+      const ey = transform.pos.y - interp.base.y;
+      if (ex * ex + ey * ey > RECONCILE_DEADZONE_SQ) {
+        const t = 1 - Math.exp(-RECONCILE_RATE * dt);
+        interp.base.x += ex * t;
+        interp.base.y += ey * t;
+      }
     }
 
     const sx = interp.base.x + interp.lungeOffset.x;
