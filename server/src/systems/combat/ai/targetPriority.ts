@@ -159,13 +159,11 @@ function passesGates(
     return false;
   }
 
-  const aggroed = isAggroedOnPlayer(monster, player);
-  const dist = Math.sqrt(
-    distanceSq(player.hasPosition.current, monster.hasPosition.current),
-  );
-
-  if (!aggroed) {
-    if (dist > ctx.acquireRadius) return false;
+  // Auto-combat has no acquisition radius: with auto on, the player always
+  // engages something in the node (nearest is still preferred via the distance
+  // term in scoreCandidate). Only the leash anchor still gates un-aggroed mobs
+  // that have wandered too far from their spawn.
+  if (!isAggroedOnPlayer(monster, player)) {
     if (isPastLeashAnchor(monster)) return false;
   }
 
