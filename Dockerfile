@@ -18,6 +18,9 @@ RUN pnpm install --frozen-lockfile
 
 # Copy the rest of the source and build shared → client → server.
 COPY . .
+# Expose the server ops/telemetry map in the production client build. Vite reads
+# VITE_-prefixed env vars at build time; without this SHOW_OPS_MAP is false in prod.
+ENV VITE_ENABLE_OPS_MAP=true
 RUN pnpm build
 
 ENV NODE_ENV=production
