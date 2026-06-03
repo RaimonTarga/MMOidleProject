@@ -1,0 +1,47 @@
+# Local dev + Railway simulation.
+#
+#   pnpm db:up        → start just Postgres (for native `pnpm dev:server`)
+#   pnpm docker:up    → build + run the full app + Postgres (mirrors Railway)
+#
+# The `db` service has no profile, so it starts by default. The `app` service is
+# gated behind the `full` profile so day-to-day dev only spins up Postgres.
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: mmo-gamedb
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: gamedb
+    ports:
+      - "5432:5432"
+    volumes:
+      - gamedb-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d gamedb"]
+      interval: 3s
+      timeout: 3s
+      retries: 15
+
+  app:
+    profiles: ["full"]
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mmo-app
+    restart: unless-stopped
+    environment:
+      # Reaches the db service over the compose network (mirrors Railway's
+      # private-network DATABASE_URL reference).
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/gamedb
+      PORT: "4000"
+      NODE_ENV: production
+    ports:
+      - "4000:4000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  gamedb-data:

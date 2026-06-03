@@ -1,13 +1,13 @@
-import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core';
+import { pgTable, text, integer, bigint } from 'drizzle-orm/pg-core';
 
-export const accounts = sqliteTable('accounts', {
+export const accounts = pgTable('accounts', {
   id:          text('id').primaryKey(),
   displayName: text('display_name').notNull(),
   discordId:   text('discord_id'),
-  createdAt:   integer('created_at').notNull(),
+  createdAt:   bigint('created_at', { mode: 'number' }).notNull(),
 });
 
-export const characters = sqliteTable('characters', {
+export const characters = pgTable('characters', {
   id:                text('id').primaryKey(),
   accountId:         text('account_id').notNull().references(() => accounts.id),
   isPlayer:          text('is_player').notNull(),
@@ -16,22 +16,22 @@ export const characters = sqliteTable('characters', {
   tracksProgression: text('tracks_progression').notNull(),
   holdsInventory:    text('holds_inventory').notNull(),
   usesSkills:        text('uses_skills').notNull(),
-  updatedAt:         integer('updated_at').notNull().default(0),
+  updatedAt:         bigint('updated_at', { mode: 'number' }).notNull().default(0),
 });
 
-export const worldState = sqliteTable('world_state', {
+export const worldState = pgTable('world_state', {
   key:       text('key').primaryKey(),
   value:     text('value').notNull(),
-  updatedAt: integer('updated_at').notNull().default(0),
+  updatedAt: bigint('updated_at', { mode: 'number' }).notNull().default(0),
 });
 
-export const spriteHitboxMeta = sqliteTable('sprite_hitbox_meta', {
+export const spriteHitboxMeta = pgTable('sprite_hitbox_meta', {
   key:       text('key').primaryKey(),
   atlasHash: text('atlas_hash').notNull(),
-  bakedAt:   integer('baked_at').notNull(),
+  bakedAt:   bigint('baked_at', { mode: 'number' }).notNull(),
 });
 
-export const spriteHitboxes = sqliteTable('sprite_hitboxes', {
+export const spriteHitboxes = pgTable('sprite_hitboxes', {
   frameName: text('frame_name').primaryKey(),
   sourceW:   integer('source_w').notNull(),
   sourceH:   integer('source_h').notNull(),

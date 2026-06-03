@@ -69,7 +69,7 @@ Key design axioms:
     │   ├── defense/          ← regen/, shields/, mitigation/, core/
     │   ├── player/           ← economy/ (inventory, crafting), progression/ (skills, rewards, quests)
     │   └── world/            ← movement, spawning, transitions, testRoomInteract
-    └── db/                   ← Drizzle + SQLite, component-shaped persistence
+    └── db/                   ← Drizzle + Postgres (pg), component-shaped persistence
 ```
 
 ---
@@ -82,22 +82,39 @@ Key design axioms:
 | Client framework | Phaser 3 | Sprites/scenes/camera/tweens |
 | Client HUD | React 18 + inline CSS | Overlaid on Phaser canvas |
 | Client build | Vite 5 | Dev server on port 3000 |
-| Server runtime | Node.js + tsx | No compile step in dev |
+| Server runtime | Node.js + tsx (dev) / compiled `node dist` (prod) | tsx in dev; prod runs compiled JS |
 | Realtime | Socket.IO 4 | One room per node instance |
-| Database | SQLite + Drizzle ORM | `server/src/db/` — wired up |
-| Package manager | pnpm workspaces | Always `pnpm install` from repo root |
+| Database | Postgres + Drizzle ORM (`pg` / node-postgres) | `server/src/db/` — connects via `DATABASE_URL`; local Postgres via docker-compose |
+| Package manager | pnpm workspaces (pinned `pnpm@8.15.1`) | Always `pnpm install` from repo root |
 
 ---
 
 ## Running the project
 
 ```bash
-pnpm install              # once, or after adding deps
-pnpm dev:server           # http://localhost:4000
+pnpm install              # once, or after adding deps (Docker must be installed/running)
+pnpm dev:server           # auto-starts the Postgres container, then runs the server (http://localhost:4000)
 pnpm dev:client           # http://localhost:3000
 pnpm play                 # build client + start server (LAN / production mode)
 # map-editor.html — open directly in browser
 ```
+
+**Database (Postgres):** the server requires a Postgres reachable via `DATABASE_URL`.
+A local instance is defined in `docker-compose.yml` so dev "just works":
+
+```bash
+pnpm db:up                # start just Postgres (docker compose, waits until healthy)
+pnpm db:down              # stop containers
+pnpm db:reset             # wipe the local db volume and restart fresh
+pnpm db:logs              # tail Postgres logs
+pnpm docker:up            # build + run the FULL app + Postgres in containers (mirrors Railway)
+pnpm docker:down          # stop the full stack
+```
+
+`pnpm dev:server` runs `pnpm db:up` first (Docker must be running). When `DATABASE_URL`
+is unset in dev, `db/index.ts` falls back to the local compose Postgres
+(`postgresql://postgres:postgres@localhost:5432/gamedb`); in production it throws if unset.
+Migrations live in `server/src/db/migrations` (Postgres dialect) and run automatically at boot.
 
 ---
 
@@ -577,7 +594,8 @@ Never set a `dot.damage-per-stack` passive — `damagePerStack` is always derive
 - Generic 5×5 spritesheet effect animation pipeline for status overlays and one-shot effects
 - Split-tick loop (10 Hz logic, 5 Hz broadcast); combat event queue for animations
 - Monster wander smoothing (80px hard-snap threshold)
-- SQLite persistence (`server/src/db/`) — accounts + characters (load on connect, save on disconnect + 30 s auto-save). Frozen nodes do not persist monster state; monsters are regenerated from biome definitions when a node thaws. Monster IDs use compound form `{nodeId}_monster-{N}` for global uniqueness.
+- Postgres persistence (`server/src/db/`, `pg` + `drizzle-orm/node-postgres`) — accounts + characters (load on connect, save on disconnect + 30 s auto-save). All repo functions are async; DB calls happen outside the hot tick loop (boot, socket connect/disconnect, autosave). Connects via `DATABASE_URL`; local dev uses the docker-compose Postgres. Frozen nodes do not persist monster state; monsters are regenerated from biome definitions when a node thaws. Monster IDs use compound form `{nodeId}_monster-{N}` for global uniqueness.
+- Railway deploy config (`railway.json`) + local Railway simulation (`Dockerfile` + `docker-compose.yml`); SQLite replaced by Postgres
 - DoT duration system — stacks expire after 4.5 s without a hit; damage debt drains once/second
 - DoT kills push `player-kill` combat events — `updateDotArchetype`, `updateConflagration`, and `updatePermafrost` all call `world.pushEvent('player-kill', ...)` after `grantMonsterRewards`, matching the regular-attack kill path so reward floaters and death effects display correctly on DoT kills
 - LAN play — client served as static files from Express; `pnpm play` builds + starts
@@ -595,7 +613,7 @@ Never set a `dot.damage-per-stack` passive — `damagePerStack` is always derive
 
 - [ ] Discord OAuth / login screen / character select
 - [ ] Multiple World instances / node routing
-- [ ] Deployment (Caddy + PM2 on Hetzner — next priority after playtesting)
+- [ ] Finish Railway deployment (config + Postgres + Docker simulation are in place; remaining: provision/attach `gamedb` env var, first deploy, verify)
 - [ ] World map click-to-navigate
 - [ ] Cooldown heavy T3 (Entropy Collapse, Singular Extraction, Channeled Beam)
 - [ ] T4–7 mechanics (all placeholders)
@@ -608,7 +626,7 @@ Never set a `dot.damage-per-stack` passive — `damagePerStack` is always derive
 ## Project state
 
 **Priority order:**
-1. Deploy (Caddy + PM2 on Hetzner)
+1. Finish Railway deploy (set `DATABASE_URL=${{gamedb.DATABASE_URL}}` on the app service, deploy, verify)
 2. Playtest T1/T2 balance
 3. Implement Cooldown heavy T3
 4. T3 biome/monster design
@@ -675,7 +693,7 @@ T1 bosses: 400–700 HP, 14–22 ATK. T2 bosses: not yet balanced (stats inherit
 - **Component shapes live in `shared/src/components/`** — slice interfaces, status helpers, marker components, and pure factories (`initUsesCadence`, etc.). Import from `@mmo-idle/shared`; do not add server re-export shims.
 - **Server owns miniplex wiring** — `ServerEntity` in `server/src/ecs/entity.ts`, typed queries on `World.ts` (`playerEntities`, `dottedMonsters`, `bossScriptedMonsters`, …), and `World.buildNodeDelta()` serializes allowlisted component slices at the broadcast boundary.
 - **Entity-native game logic** — systems mutate slice fields on `PlayerEntity` / `MonsterEntity` directly. No snapshot round-trip for stat recalc, archetype slice sync, DB hydrate, persistence, or monster spawn.
-- **Persistence is component-shaped** — `characters` stores one JSON blob per persisted player slice (`isPlayer`, `hasPosition`, `hasHealth`, `tracksProgression`, `holdsInventory`, `usesSkills`). Runtime-only slices and `usesSkills.passives` are rebuilt on attach/recalc, not persisted.
+- **Persistence is component-shaped** — the Postgres `characters` table stores one JSON `text` column per persisted player slice (`isPlayer`, `hasPosition`, `hasHealth`, `tracksProgression`, `holdsInventory`, `usesSkills`). Runtime-only slices and `usesSkills.passives` are rebuilt on attach/recalc, not persisted. Timestamp columns are `bigint` (`Date.now()` overflows Postgres `int4`). All repo functions are async (`pg`); fire-and-forget writes (disconnect/autosave) capture the slice snapshot synchronously via `JSON.stringify` before the awaited query, so the persisted state is correct without awaiting.
 - **Component presence gates behavior** — `if (entity.usesCadence)`, not `combatArchetype === 'cadence'`; `entity.isMoving` exists only while motion is active; `hasAttackTarget` / `hasAggroTarget` exist only while a target is active; shield/evasion/channel/empowered/boss-engaged states are presence components, not disabled sentinels inside always-present slices.
 - **Detach absent behavior promptly** — use `attachComponent` / `detachComponent` (or focused helpers like `setEntityMotion`, `stopEntity`, `setAttackTarget`, `setAggroTarget`) when behavior starts/stops. Do not encode absence as zero motion, empty shield arrays, null target ids, false channel flags, or zero-duration sub-state.
 - **Networked slice mutations mark dirty** — `attachComponent` / `detachComponent` notify the dirty tracker automatically; direct in-place networked slice writes should call `markSliceDirty` or go through `mutateSlice`.
