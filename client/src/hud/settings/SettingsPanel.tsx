@@ -386,11 +386,11 @@ export function SettingsPanel({ onClose }: Props) {
             </label>
 
             <label className="settings-slider-row">
-              <span>Acquire radius: {autocombat.acquireRadius}px</span>
+              <span>Acquire radius: {autocombat.acquireRadius >= 3200 ? 'Max' : `${autocombat.acquireRadius}px`}</span>
               <input
                 type="range"
                 min="120"
-                max="1600"
+                max="3200"
                 step="40"
                 value={autocombat.acquireRadius}
                 onChange={(e) =>
