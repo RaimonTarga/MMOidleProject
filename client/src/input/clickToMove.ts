@@ -4,6 +4,7 @@ import { sendCommandSummons, sendMove } from '../net/intents';
 import type { GameScene } from '../scenes/GameScene';
 import { cancelAutoPath, setAutoMode } from './autoPath';
 import { clampOwnMoveTarget, isHoldStill } from './movement';
+import { clearPendingStop } from './moveOwnership';
 
 function isSummoner(player: PlayerView | undefined): boolean {
   return player?.combatArchetype === 'summoner' && (player.summonsMinions ?? 0) > 0;
@@ -36,6 +37,9 @@ export function attachClickToMove(scene: GameScene): void {
     cancelAutoPath();
     scene.flashCameraHold = false;
     scene.flashCameraHoldTargetId = null;
+    // Click-to-move is server-authoritative: drop any post-keyboard stop latch
+    // so the authoritative target is honored immediately.
+    clearPendingStop();
 
     sendMove(scene.socket, dest);
 

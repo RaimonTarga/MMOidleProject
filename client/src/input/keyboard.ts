@@ -44,6 +44,12 @@ export function attachKeyboard(scene: GameScene): () => void {
   const held = new Set<ActionId>();
   let stillHeld = false;
   let lastEmoteAt = 0;
+  // Debounce the zero-vector transition so a keyup→keydown gap during a
+  // direction change (release one key a few ms before pressing the next)
+  // doesn't emit a spurious stop that briefly halts the server-side mover
+  // mid-walk. A new non-zero vector cancels the pending zero.
+  const KB_STOP_DEBOUNCE_MS = 40;
+  let kbZeroTimer: number | null = null;
 
   function isEditable(target: EventTarget | null): boolean {
     if (!(target instanceof HTMLElement)) return false;
@@ -52,7 +58,11 @@ export function attachKeyboard(scene: GameScene): () => void {
     return tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT';
   }
 
-  function publishKbVector(): void {
+  function applyKbVector(immediate: boolean): void {
+    if (kbZeroTimer !== null) {
+      window.clearTimeout(kbZeroTimer);
+      kbZeroTimer = null;
+    }
     if (stillHeld) {
       setKeyboardVector(0, 0);
       return;
@@ -62,8 +72,22 @@ export function attachKeyboard(scene: GameScene): () => void {
     const dy =
       (held.has('move.down') ? 1 : 0) - (held.has('move.up') ? 1 : 0);
     const len = Math.hypot(dx, dy);
-    if (len === 0) setKeyboardVector(0, 0);
-    else setKeyboardVector(dx / len, dy / len);
+    if (len === 0) {
+      if (immediate) {
+        setKeyboardVector(0, 0);
+      } else {
+        kbZeroTimer = window.setTimeout(() => {
+          kbZeroTimer = null;
+          setKeyboardVector(0, 0);
+        }, KB_STOP_DEBOUNCE_MS);
+      }
+      return;
+    }
+    setKeyboardVector(dx / len, dy / len);
+  }
+
+  function publishKbVector(): void {
+    applyKbVector(false);
   }
 
   function updateStillHeld(heldNow: boolean): void {
@@ -71,7 +95,9 @@ export function attachKeyboard(scene: GameScene): () => void {
     stillHeld = heldNow;
     setHoldStill(heldNow);
     if (heldNow) cancelActiveMove(scene);
-    publishKbVector();
+    // Hold-still toggles are deliberate: apply the resulting vector immediately
+    // (stop, or resume if WASD is still held) without the rollover debounce.
+    applyKbVector(true);
   }
 
   function onKeyDown(event: KeyboardEvent): void {
@@ -189,7 +215,8 @@ export function attachKeyboard(scene: GameScene): () => void {
   function onBlur(): void {
     held.clear();
     updateStillHeld(false);
-    publishKbVector();
+    // Focus loss is an unambiguous stop — bypass the rollover debounce.
+    applyKbVector(true);
   }
 
   window.addEventListener('keydown', onKeyDown);
@@ -202,6 +229,10 @@ export function attachKeyboard(scene: GameScene): () => void {
     window.removeEventListener('blur', onBlur);
     held.clear();
     updateStillHeld(false);
+    if (kbZeroTimer !== null) {
+      window.clearTimeout(kbZeroTimer);
+      kbZeroTimer = null;
+    }
     setKeyboardVector(0, 0);
   };
 }
