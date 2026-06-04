@@ -22,6 +22,7 @@ import {
 } from '../../hud/atoms';
 import { SLOT_LABELS, biomeName, tierColor } from './common';
 import { CostDisplay, EssenceSummary } from './shared';
+import { ItemIcon } from '../ItemIcon';
 
 const STAT_LABEL: Record<string, string> = {
   attack: 'ATK',
@@ -213,7 +214,9 @@ export function UpgradeTab() {
                 )}
 
                 <div className="craft-recipe__icon" data-slot={slot}>
-                  {currentPlus > 0 ? `+${currentPlus}` : SLOT_LABELS[slot]?.slice(0, 3).toUpperCase()}
+                  {def.icon
+                    ? <ItemIcon frameName={def.icon} />
+                    : SLOT_LABELS[slot]?.slice(0, 3).toUpperCase()}
                 </div>
 
                 <div className="craft-recipe__content">

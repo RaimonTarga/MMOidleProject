@@ -13,6 +13,7 @@ import {
 } from '../../hud/atoms';
 import { SLOT_ABBR, SLOT_LABELS, biomeName, getStatEntries, tierColor } from './common';
 import { CostDisplay, EssenceSummary } from './shared';
+import { ItemIcon } from '../ItemIcon';
 
 interface CraftResult { recipeId: string; success: boolean; }
 
@@ -203,7 +204,9 @@ export function ForgeTab() {
                 )}
 
                 <div className="craft-recipe__icon" data-slot={recipe.slot}>
-                  {SLOT_ABBR[recipe.slot] ?? recipe.slot.slice(0, 3).toUpperCase()}
+                  {recipe.icon
+                    ? <ItemIcon frameName={recipe.icon} />
+                    : SLOT_ABBR[recipe.slot] ?? recipe.slot.slice(0, 3).toUpperCase()}
                 </div>
 
                 <div className="craft-recipe__content">
