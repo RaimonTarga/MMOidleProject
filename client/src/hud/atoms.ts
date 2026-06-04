@@ -3,6 +3,7 @@ import { intents } from '../intents';
 import type {
   CombatArchetype,
   EquipmentMap,
+  EquippedRule,
   EssenceType,
   NodeTelemetrySnapshot,
   PartyMember,
@@ -184,7 +185,11 @@ export const bossFelledByNodeAtom = atom<Record<string, BossFelledMarker>>({});
 /** The local player's party (null when not in a party). */
 export const partyAtom = atom<{ leaderId: string; members: PartyMember[] } | null>(null);
 
+export const runesOwnedAtom = atom<string[]>([]);
+export const runesEquippedAtom = atom<EquippedRule[]>([]);
+
 export const skillTreeOpenAtom = atom<boolean>(false);
+export const runesOpenAtom = atom<boolean>(false);
 export const inventoryOpenAtom = atom<boolean>(false);
 export const mapOpenAtom = atom<boolean>(false);
 export const craftTabAtom = atom<'biome' | 'forge' | 'upgrade' | null>(null);
@@ -370,6 +375,26 @@ function setParty(next: { leaderId: string; members: PartyMember[] } | null): vo
   store.set(partyAtom, next);
 }
 
+function runesEquippedEqual(
+  a: readonly EquippedRule[],
+  b: readonly EquippedRule[],
+): boolean {
+  if (a === b) return true;
+  if (a.length !== b.length) return false;
+  for (let i = 0; i < a.length; i++) {
+    if (a[i].conditionId !== b[i].conditionId || a[i].actionId !== b[i].actionId) {
+      return false;
+    }
+  }
+  return true;
+}
+
+function setRunesEquipped(next: EquippedRule[]): void {
+  const store = getDefaultStore();
+  if (runesEquippedEqual(store.get(runesEquippedAtom), next)) return;
+  store.set(runesEquippedAtom, next);
+}
+
 function buffsEqual(a: readonly PlayerBuff[], b: readonly PlayerBuff[]): boolean {
   if (a === b) return true;
   if (a.length !== b.length) return false;
@@ -457,6 +482,8 @@ function resetPlayerAtoms(): void {
   setIfChanged(summonSlotCountAtom, 0);
   setIfChanged(summonRespawnMaxMsAtom, 0);
   setIfShallowArrayEqual(unlockedSkillsAtom, []);
+  setIfShallowArrayEqual(runesOwnedAtom, []);
+  setRunesEquipped([]);
   setIfShallowArrayEqual(inventoryAtom, []);
   setIfShallowArrayEqual(unlockedRecipesAtom, []);
   setIfShallowArrayEqual(bossesClearedAtom, []);
@@ -543,6 +570,8 @@ export function syncPlayerAtoms(player: PlayerView | null): void {
 
   setIfShallowArrayEqual(shieldsAtom, player.shields);
   setIfShallowArrayEqual(unlockedSkillsAtom, player.unlockedSkills);
+  setIfShallowArrayEqual(runesOwnedAtom, player.runesOwned);
+  setRunesEquipped(player.runesEquipped);
   setIfShallowArrayEqual(inventoryAtom, player.inventory);
   setIfShallowArrayEqual(unlockedRecipesAtom, player.unlockedRecipes);
   setIfShallowArrayEqual(bossesClearedAtom, player.bossesCleared);

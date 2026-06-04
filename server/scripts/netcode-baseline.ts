@@ -65,6 +65,8 @@ function makePlayer(id: string, nodeId: string, name: string): PersistedPlayerSl
       currentSkillTier: 0,
       bossesCleared: [],
       clearedNodes: [],
+      runesOwned: [],
+      runesEquipped: [],
     },
     holdsInventory: {
       inventory: [],

@@ -9,6 +9,7 @@ import type {
   ShieldState,
 } from "../types/combat";
 import type { HitboxRect } from "../hitbox/types";
+import type { EquippedRule } from "../runeDatabase";
 import {
   FALLBACK_MONSTER_AABB,
   FALLBACK_PLAYER_AABB,
@@ -102,6 +103,8 @@ export interface PlayerView {
   playerTier: number;
   bossesCleared: string[];
   clearedNodes: string[];
+  runesOwned: string[];
+  runesEquipped: EquippedRule[];
   hitboxRects: HitboxRect[];
   /** Number of minion slots the player has. 0 if not a summoner. */
   summonsMinions: number;
@@ -306,6 +309,8 @@ export function composePlayerView(entity: NetworkedEntity): PlayerView | null {
     playerTier: progression.playerTier,
     bossesCleared: progression.bossesCleared ?? [],
     clearedNodes: progression.clearedNodes ?? [],
+    runesOwned: progression.runesOwned ?? [],
+    runesEquipped: progression.runesEquipped ?? [],
     hitboxRects: entity.hasHitbox?.rects ?? [FALLBACK_PLAYER_AABB],
     summonsMinions: entity.summonsMinions?.targetCount ?? 0,
     summonActiveCount,

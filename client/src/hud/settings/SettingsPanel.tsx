@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useAtom, useAtomValue } from 'jotai';
-import type { AutocombatConfig, AutocombatPriorityMode } from '@mmo-idle/shared';
 import { gamepadStatusAtom } from '../atoms';
 import {
   ACTION_LABELS,
@@ -36,7 +35,7 @@ import '../hud.css';
 import '../../ui/inventory.css';
 import './settings.css';
 
-type SettingsTab = 'controls' | 'gameplay' | 'autocombat';
+type SettingsTab = 'controls' | 'gameplay';
 
 interface Props {
   onClose: () => void;
@@ -49,9 +48,6 @@ export function SettingsPanel({ onClose }: Props) {
   const padStatus = useAtomValue(gamepadStatusAtom);
   const [autoTraverseEnabled, setAutoTraverseEnabled] = useState(
     () => loadGameplaySettings().autoTraverseEnabled,
-  );
-  const [autocombat, setAutocombat] = useState(
-    () => loadGameplaySettings().autocombat,
   );
   const [deathNotificationsEnabled, setDeathNotificationsEnabled] = useState(
     () => loadGameplaySettings().deathNotificationsEnabled,
@@ -166,13 +162,6 @@ export function SettingsPanel({ onClose }: Props) {
     hudBus.requestSetAutoTraverse(enabled);
   }
 
-  function handleAutocombatPatch(patch: Partial<AutocombatConfig>): void {
-    const next = { ...autocombat, ...patch };
-    setAutocombat(next);
-    saveGameplaySettings({ autocombat: next });
-    hudBus.requestSetAutocombatConfig(next);
-  }
-
   const deathNotificationsOn = isDeathNotificationEffectivelyOn(
     deathNotificationsEnabled,
     notificationPermission,
@@ -226,13 +215,6 @@ export function SettingsPanel({ onClose }: Props) {
           >
             Gameplay
           </button>
-          <button
-            type="button"
-            className={`settings-tab${tab === 'autocombat' ? ' settings-tab--active' : ''}`}
-            onClick={() => setTab('autocombat')}
-          >
-            Autocombat
-          </button>
         </div>
 
         {tab === 'controls' ? (
@@ -284,8 +266,21 @@ export function SettingsPanel({ onClose }: Props) {
               RESET TO DEFAULTS
             </button>
           </>
-        ) : tab === 'gameplay' ? (
+        ) : (
           <div className="settings-gameplay">
+            <label className="settings-toggle-row">
+              <input
+                type="checkbox"
+                checked={autoTraverseEnabled}
+                onChange={(e) => handleAutoTraverseToggle(e.target.checked)}
+              />
+              <span>Auto-traverse when Auto Combat is on</span>
+            </label>
+            <p className="settings-help">
+              Grinds the current biome until all recipes are unlocked, kills the boss last,
+              then moves to the next biome. Re-visits a biome if your tier increases the level cap.
+            </p>
+
             <label className="settings-toggle-row">
               <input
                 type="checkbox"
@@ -314,101 +309,6 @@ export function SettingsPanel({ onClose }: Props) {
             >
               SEND TEST NOTIFICATION
             </button>
-          </div>
-        ) : (
-          <div className="settings-gameplay">
-            <label className="settings-toggle-row">
-              <input
-                type="checkbox"
-                checked={autoTraverseEnabled}
-                onChange={(e) => handleAutoTraverseToggle(e.target.checked)}
-              />
-              <span>Auto-traverse when Auto Combat is on</span>
-            </label>
-            <p className="settings-help">
-              Grinds the current biome until all recipes are unlocked, kills the boss last,
-              then moves to the next biome. Re-visits a biome if your tier increases the level cap.
-            </p>
-
-            <label className="settings-toggle-row">
-              <input
-                type="checkbox"
-                checked={autocombat.engageUltimateBosses}
-                onChange={(e) =>
-                  handleAutocombatPatch({ engageUltimateBosses: e.target.checked })
-                }
-              />
-              <span>Engage ultimate bosses automatically</span>
-            </label>
-            <p className="settings-help">
-              When off, Auto Combat avoids waking dormant ultimate encounters. Turn this on
-              when you want Auto Combat to intentionally start those fights.
-            </p>
-
-            <label className="settings-toggle-row">
-              <input
-                type="checkbox"
-                checked={autocombat.fleeWhenLow}
-                onChange={(e) => handleAutocombatPatch({ fleeWhenLow: e.target.checked })}
-              />
-              <span>Flee when losing the fight</span>
-            </label>
-            <label className="settings-slider-row">
-              <span>Flee HP: {Math.round(autocombat.fleeHpPct * 100)}%</span>
-              <input
-                type="range"
-                min="5"
-                max="50"
-                step="5"
-                value={Math.round(autocombat.fleeHpPct * 100)}
-                onChange={(e) =>
-                  handleAutocombatPatch({ fleeHpPct: Number(e.target.value) / 100 })
-                }
-                disabled={!autocombat.fleeWhenLow}
-              />
-            </label>
-
-            <label className="settings-field-row">
-              <span>Priority mode</span>
-              <select
-                value={autocombat.priorityMode}
-                onChange={(e) =>
-                  handleAutocombatPatch({
-                    priorityMode: e.target.value as AutocombatPriorityMode,
-                  })
-                }
-              >
-                <option value="balanced">Balanced</option>
-                <option value="nearest">Nearest</option>
-                <option value="damage">Damage</option>
-                <option value="threat">Threat</option>
-              </select>
-            </label>
-
-            <label className="settings-slider-row">
-              <span>Acquire radius: {autocombat.acquireRadius >= 3200 ? 'Max' : `${autocombat.acquireRadius}px`}</span>
-              <input
-                type="range"
-                min="120"
-                max="3200"
-                step="40"
-                value={autocombat.acquireRadius}
-                onChange={(e) =>
-                  handleAutocombatPatch({ acquireRadius: Number(e.target.value) })
-                }
-              />
-            </label>
-
-            <label className="settings-toggle-row">
-              <input
-                type="checkbox"
-                checked={autocombat.focusLeaderTarget}
-                onChange={(e) =>
-                  handleAutocombatPatch({ focusLeaderTarget: e.target.checked })
-                }
-              />
-              <span>Prefer party leader's target</span>
-            </label>
           </div>
         )}
       </div>

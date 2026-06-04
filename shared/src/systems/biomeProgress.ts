@@ -100,8 +100,11 @@ export function isBiomeFullyDoneAtTier(
   const bossDone =
     !hasDungeonForBiomeTier(biomeGroup, tier) ||
     isBossClearedAtTier(player, biomeGroup, tier);
+  // A biome is "done" once nothing more can be unlocked from it (all reachable
+  // recipes unlocked) and its nodes + boss are cleared. We intentionally do NOT
+  // require maxing the biome level — grinding levels past the last unlock is
+  // wasted time, so auto-traverse moves on as soon as unlocks are exhausted.
   return (
-    isBiomeLevelCapped(player, biomeGroup) &&
     areAllBiomeRecipesUnlocked(player, biomeGroup) &&
     areAllNonBossNodesClearedAtTier(player, biomeGroup, tier) &&
     bossDone

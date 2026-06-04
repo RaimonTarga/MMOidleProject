@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useAtom, useAtomValue } from 'jotai';
 import { hudBus } from '../hudBus';
 import { SkillTreePanel } from '../ui/SkillTreePanel';
+import { RunesPanel } from '../ui/RunesPanel';
 import { InventoryPanel } from '../ui/InventoryPanel';
 import { CraftingPanel } from '../ui/CraftingPanel';
 import { MapPanel } from '../ui/MapPanel';
@@ -46,6 +47,7 @@ function useIsMobile(): boolean {
 
 function MobileHUDContent() {
   const [treeOpen, setTreeOpen]   = useState(false);
+  const [runesOpen, setRunesOpen] = useState(false);
   const [invOpen, setInvOpen]     = useState(false);
   const [craftTab, setCraftTab]   = useState<'biome' | 'forge' | 'upgrade' | null>(null);
   const [mapOpen, setMapOpen]     = useState(false);
@@ -124,6 +126,7 @@ function MobileHUDContent() {
         </button>
         <div className="mob-drawer-menu">
           <DrawerBtn label="SKILL TREE" active={treeOpen} highlight={!treeOpen && skillPoints > 0} onClick={() => openPanel(setTreeOpen, treeOpen)} />
+          <DrawerBtn label="RUNES"      active={runesOpen} onClick={() => openPanel(setRunesOpen, runesOpen)} />
           <DrawerBtn label="INVENTORY"  active={invOpen}   disabled={dead} onClick={() => { if (!dead) openPanel(setInvOpen, invOpen); }} />
           <DrawerBtn label="CRAFTING"   active={craftTab !== null} disabled={dead} onClick={() => { if (!dead) { setCraftTab(t => t ? null : 'forge'); setMenuOpen(false); } }} />
           <DrawerBtn label="MAP"        active={mapOpen}   onClick={() => openPanel(setMapOpen, mapOpen)} />
@@ -134,6 +137,7 @@ function MobileHUDContent() {
 
       {/* ── Panel overlays ──────────────────────────────────────────────── */}
       {treeOpen  && <SkillTreePanel onClose={() => setTreeOpen(false)} />}
+      {runesOpen && <RunesPanel     onClose={() => setRunesOpen(false)} />}
       {invOpen   && <InventoryPanel onClose={() => setInvOpen(false)} />}
       {craftTab !== null && <CraftingPanel tab={craftTab} onTabChange={setCraftTab} onClose={() => setCraftTab(null)} />}
       {mapOpen   && <MapPanel       onClose={() => setMapOpen(false)} />}

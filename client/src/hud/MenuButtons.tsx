@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useAtom, useAtomValue } from "jotai";
 import { hudBus } from "../hudBus";
 import { SkillTreePanel } from "../ui/SkillTreePanel";
+import { RunesPanel } from "../ui/RunesPanel";
 import { InventoryPanel } from "../ui/InventoryPanel";
 import { CraftingPanel } from "../ui/CraftingPanel";
 import { MapPanel } from "../ui/MapPanel";
@@ -19,6 +20,7 @@ import {
   mapHighlightNodesAtom,
   mapOpenAtom,
   playerNodeIdAtom,
+  runesOpenAtom,
   selectedClassAtom,
   selectedRangeAtom,
   selectedSubVariantAtom,
@@ -30,6 +32,7 @@ import "./hud.css";
 
 export function RightSidebar() {
   const [treeOpen, setTreeOpen] = useAtom(skillTreeOpenAtom);
+  const [runesOpen, setRunesOpen] = useAtom(runesOpenAtom);
   const [invOpen, setInvOpen] = useAtom(inventoryOpenAtom);
   const [craftTab, setCraftTab] = useAtom(craftTabAtom);
   const [mapOpen, setMapOpen] = useAtom(mapOpenAtom);
@@ -116,6 +119,16 @@ export function RightSidebar() {
             )}
           </div>
         )}
+      </div>
+
+      <div className="sidebar-panel">
+        <div className="panel-title">Runes</div>
+        <button
+          className={`auto-btn${runesOpen ? " active" : ""}`}
+          onClick={() => setRunesOpen((v) => !v)}
+        >
+          {runesOpen ? "CLOSE RUNES" : "OPEN RUNES"}
+        </button>
       </div>
 
       <EssencePanel />
@@ -247,6 +260,7 @@ export function RightSidebar() {
       </div>
 
       {treeOpen && <SkillTreePanel onClose={() => setTreeOpen(false)} />}
+      {runesOpen && <RunesPanel onClose={() => setRunesOpen(false)} />}
       {invOpen && <InventoryPanel onClose={() => setInvOpen(false)} />}
       {craftTab !== null && (
         <CraftingPanel

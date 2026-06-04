@@ -13,6 +13,7 @@ import type { PlayerBuff } from '../combat/buffs';
 import type { SubVariant } from '../../skillTree';
 import type { CombatArchetype, MonsterAIState } from '../../types/combat';
 import type { HasHitbox } from '../../hitbox/types';
+import type { EquippedRule } from '../../runeDatabase';
 
 export type { HasHitbox };
 
@@ -200,6 +201,10 @@ export interface TracksProgression {
   bossesCleared: string[];
   /** Persisted non-boss map clears keyed by node id. */
   clearedNodes: string[];
+  /** Every rune condition + action fragment id the player has found. */
+  runesOwned: string[];
+  /** Assembled rune rules, ordered (loadout). Drives the auto-combat config. */
+  runesEquipped: EquippedRule[];
 }
 
 /** Owned items, by inventory bag and equipment slot. */

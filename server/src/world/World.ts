@@ -15,6 +15,7 @@ import {
   type Vec2,
 } from "@mmo-idle/shared";
 import { updateAutoTargets } from "../systems/combat/ai/autoTarget";
+import { updateRuneDerivedConfig } from "../systems/combat/ai/runeConfig";
 import { updateAutoTraverse } from "../systems/world/autoTraverse";
 import { updateAutoIntent } from "../systems/world/autoIntent";
 import { updateExpiredEmotes } from "../systems/player/emotes";
@@ -305,6 +306,7 @@ export class World {
     updateWeaponEffects(this, dt);
     updateBossScripts(this, dt);
     updateUltimateEncounters(this, dt);
+    updateRuneDerivedConfig(this, now);
     updatePartyFollow(this, now);
     updateAutoTraverse(this);
     updateAutoTargets(this, now);

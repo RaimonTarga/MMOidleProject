@@ -115,6 +115,8 @@ function hydratePlayerSlices(row: CharacterRow): PersistedPlayerSlices {
       ...tracksProgression,
       bossesCleared: tracksProgression.bossesCleared ?? [],
       clearedNodes:   tracksProgression.clearedNodes ?? [],
+      runesOwned:     tracksProgression.runesOwned ?? [],
+      runesEquipped:  tracksProgression.runesEquipped ?? [],
     },
     holdsInventory,
     usesSkills:        {
@@ -158,6 +160,8 @@ function buildFreshSlices(
       currentSkillTier: 0,
       bossesCleared:    [],
       clearedNodes:     [],
+      runesOwned:       [],
+      runesEquipped:    [],
     },
     holdsInventory: {
       inventory: [],

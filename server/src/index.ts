@@ -7,13 +7,19 @@ import path from "path";
 import { World, type PersistedBossRespawn } from "./world/World";
 import { takeWorldLogEvents } from "./world/worldLog";
 import {
+  ACTION_DATABASE,
+  CONDITION_DATABASE,
   DEFAULT_AUTOCOMBAT_CONFIG,
   emptyEquipment,
   GAME_CONFIG,
   ITEM_DATABASE,
   NODE_BIOMES,
+  pointInNodeFeatureShape,
   registerDevItems,
   resetTracksCombat,
+  RESOLVED_NODE_FEATURES,
+  RUNE_ALTAR_FEATURE_ID,
+  SKILL_TREE,
   TEST_ROOM_NODE_ID,
   ESSENCE_TYPES,
 } from "@mmo-idle/shared";
@@ -540,6 +546,78 @@ async function boot(): Promise<void> {
         markSliceDirty(world, p, "tracksProgression");
         markSliceDirty(world, p, "usesSkills");
       }
+    });
+
+    socket.on("player:resetClass", () => {
+      const p = liveSelf();
+      if (!p) return;
+
+      // Authoritative gate: the player must be standing on the rune altar.
+      const altar = RESOLVED_NODE_FEATURES[p.hasPosition.nodeId]?.find(
+        (f) => f.id === RUNE_ALTAR_FEATURE_ID,
+      );
+      if (!altar || !pointInNodeFeatureShape(p.hasPosition.current, altar.shape)) {
+        return;
+      }
+
+      // Refund every point spent on the perk tree so the player can re-spec
+      // without losing earned tiers, levels, items, essence, or quests.
+      let refund = 0;
+      for (const id of p.usesSkills.unlockedSkills) {
+        refund += SKILL_TREE.get(id)?.cost ?? 0;
+      }
+      p.tracksProgression.skillPoints += refund;
+      p.tracksProgression.currentSkillTier = 0;
+
+      p.usesSkills.unlockedSkills = [];
+      p.usesSkills.passives = {};
+      p.usesSkills.selectedClass = null;
+      p.usesSkills.selectedSubVariant = null;
+      p.usesSkills.selectedRange = null;
+      p.usesSkills.combatArchetype = null;
+
+      stopEntity(world, p);
+      setAttackTarget(world, p, null);
+      detachComponent(world, p, "hasEmpoweredAttack");
+      detachComponent(world, p, "isChanneling");
+      detachComponent(world, p, "hasOverdrive");
+      detachComponent(world, p, "hasAlignment");
+      detachComponent(world, p, "inAcChargePhase");
+      detachComponent(world, p, "inAcDischarge");
+      detachComponent(world, p, "holdsShields");
+      // Drop any live slimes before the archetype slice is detached.
+      despawnMinionsForOwner(world, p);
+      resetTracksCombat(p.tracksCombat);
+      syncArchetypeSlices(world, p);
+      recalculatePlayerEntityStats(world, p);
+      syncArchetypeSlices(world, p);
+      p.hasHealth.hp = p.hasHealth.maxHp;
+
+      markSliceDirty(world, p, "tracksProgression");
+      markSliceDirty(world, p, "usesSkills");
+      markSliceDirty(world, p, "hasHealth");
+    });
+
+    socket.on("rune:setLoadout", (rules) => {
+      const p = liveSelf();
+      if (!p) return;
+      if (!Array.isArray(rules)) return;
+      const owned = new Set(p.tracksProgression.runesOwned);
+      const valid = rules.filter(
+        (r) =>
+          r &&
+          typeof r.conditionId === "string" &&
+          typeof r.actionId === "string" &&
+          CONDITION_DATABASE.has(r.conditionId) &&
+          ACTION_DATABASE.has(r.actionId) &&
+          owned.has(r.conditionId) &&
+          owned.has(r.actionId),
+      );
+      p.tracksProgression.runesEquipped = valid.map((r) => ({
+        conditionId: r.conditionId,
+        actionId: r.actionId,
+      }));
+      markSliceDirty(world, p, "tracksProgression");
     });
 
     socket.on("inventory:equipItem", (definitionId) => {
