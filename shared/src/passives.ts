@@ -31,6 +31,9 @@ export const DEFENSE_KEYS = [
   'defense.ramp-regen-start-pct',
   'defense.ramp-regen-max-pct',
   'defense.ramp-regen-ramptime-ms',
+  'defense.hardening-per-sec',
+  'defense.hardening-max',
+  'defense.hardening-reset-pct',
 ] as const;
 
 export const CADENCE_KEYS = [

@@ -8,8 +8,10 @@ import { attachComponent, detachComponent } from './markerHelpers';
 import { markSliceDirty } from './dirtyHelpers';
 import { hitboxEqual, resolvePlayerHitbox } from '../hitbox/resolve';
 import { syncDevInvulnerability } from '../dev/syncDevInvulnerability';
+import { resetHardening } from '../systems/defense/mitigation/hardening';
 
 export function recalculatePlayerEntityStats(world: World, entity: PlayerEntity): void {
+  resetHardening(entity);
   const evadesHits = entity.evadesHits
     ? { ...entity.evadesHits }
     : { dodgeRate: 0, evadeMitigation: 0 };

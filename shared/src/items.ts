@@ -118,4 +118,6 @@ export interface ItemDefinition {
   description?: string;
   /** Per-item upgrade steps. Length determines the max upgrade level for this item. */
   upgrades?: UpgradeStep[];
+  /** Frame name in the /assets/icons.png atlas for the item's inventory icon. */
+  icon?: string;
 }

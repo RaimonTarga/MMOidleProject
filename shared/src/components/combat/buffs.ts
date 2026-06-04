@@ -30,6 +30,7 @@ export const BUFF_IDS = [
   'defense-absorb',
   'defense-burst',
   'defense-debt',
+  'defense-hardening',
   'summoner-howl-banner',
   'summoner-trample-boon',
   'summoner-debuff-immune',

@@ -29,6 +29,8 @@ export interface Recipe {
   description?: string;
   /** Per-item upgrade steps authored alongside the recipe. See UpgradeStep. */
   upgrades?: UpgradeStep[];
+  /** Frame name in the /assets/icons.png atlas for the item's inventory icon. */
+  icon?: string;
   /**
    * If set, recipe unlocks only when this token is present in bossesCleared
    * (e.g. ultimate:void-overlord).

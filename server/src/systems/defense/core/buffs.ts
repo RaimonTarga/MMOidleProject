@@ -4,6 +4,7 @@ import {
   getDefenseBurstPool,
   getDefenseDebtPool,
 } from './pools';
+import { getHardeningBonus } from '../mitigation/hardening';
 
 const NEUTRAL_OPTS = { category: 'neutral' as const, shape: 'square' as const };
 
@@ -27,6 +28,13 @@ export const DEFENSE_BUFFS = [
     const pool = getDefenseDebtPool(playerCs);
     return pool > 0
       ? { id: 'defense-debt', label: 'Debt', stacks: 1, durationPct: -1, color: '#ff4444', logDetail: `${Math.round(pool)} deferred damage` }
+      : null;
+  }, NEUTRAL_OPTS),
+  defineBuff('defense-hardening', ({ player }) => {
+    if (!player) return null;
+    const bonus = getHardeningBonus(player);
+    return bonus > 0
+      ? { id: 'defense-hardening', label: 'Hard', stacks: bonus, durationPct: -1, color: '#88cc44', logDetail: `+${bonus} plating` }
       : null;
   }, NEUTRAL_OPTS),
 ] as const satisfies readonly BuffDescriptor[];

@@ -18,6 +18,7 @@ export const graveyardRecipeEntries = [
       'mobility.kill-stack-tenacity-pct': 0.12,
       'mobility.kill-stack-ms': 4000,
     },
+    icon: 'items/boots/plate-boots-6.png',
     description: 'Each fallen foe lends a little of its lingering haste to the wearer.',
     upgrades: [
       { stats: { speed: 8 },  cost: { purple: 40 },  requiredBiomeLevel: 2 },

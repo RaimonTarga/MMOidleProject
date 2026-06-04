@@ -510,6 +510,13 @@ export function updateCombat(world: World, dt: number, now: number) {
     // below 1px carries it until their range recovers.
     if (player.cannotAttack) {
       setAttackTarget(world, player, null);
+      const lastCombat = player.tracksEngagement;
+      if (lastCombat === undefined || now - lastCombat > GAME_CONFIG.COMBAT_REGEN_DELAY) {
+        const cs = player.tracksCombat;
+        const rawRegen = player.hasHealth.maxHp * ((player.hasHealth.hpRegen ?? 0) / 100) * (dt / 1000);
+        const healAmount = cs ? rawRegen * getAntiHealMult(cs) : rawRegen;
+        player.hasHealth.hp = Math.min(player.hasHealth.maxHp, player.hasHealth.hp + healAmount);
+      }
       continue;
     }
 

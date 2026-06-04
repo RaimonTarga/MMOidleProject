@@ -298,10 +298,12 @@
   background: rgba(12, 14, 42, 0.98);
 }
 
-/* Icon area — future item icon goes here */
 .inv-item-slot__icon {
   flex: 1;
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background: rgba(80, 90, 180, 0.04);
 }
 

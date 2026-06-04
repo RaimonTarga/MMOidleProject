@@ -5,6 +5,7 @@ import { ITEM_DATABASE, RECIPE_DATABASE } from '@mmo-idle/shared';
 import { hudBus } from '../../hudBus';
 import { inventoryAtom, itemUpgradesAtom } from '../../hud/atoms';
 import { SLOT_LABELS, biomeName, tierColor } from './constants';
+import { ItemIcon } from '../ItemIcon';
 import type { FocusedItem } from './useFocus';
 
 const COLS = 4;
@@ -156,7 +157,10 @@ export function BackpackGrid({ focused, onFocus }: Props) {
                 {def && (
                   <>
                     <div className="inv-item-slot__icon" style={{ background: `${color}0d` }}>
-                      <span className="inv-slot-tier-pip" style={{ background: `${color}cc` }} />
+                      {def.icon
+                        ? <ItemIcon frameName={def.icon} />
+                        : <span className="inv-slot-tier-pip" style={{ background: `${color}cc` }} />
+                      }
                     </div>
                     <div className="inv-item-slot__name">
                       {def.name}{plus > 0 ? ` +${plus}` : ''}

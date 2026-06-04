@@ -25,5 +25,6 @@ for (const recipe of RECIPE_DATABASE.values()) {
     attacksPerSecond: recipe.attacksPerSecond,
     description: recipe.description,
     upgrades: recipe.upgrades,
+    icon: recipe.icon,
   });
 }
