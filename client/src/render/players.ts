@@ -20,7 +20,7 @@ import { ensureHpBar, destroyHpBar } from "./healthBars";
 import { ensureCdBar, destroyCdBar } from "./cooldownBars";
 import { GRAVE_DISPLAY_H, GRAVE_LABEL_OFFSET_Y } from "../sprites";
 import { applyLunge } from "./interpolation";
-import { isManualMovementActive } from "../input/movement";
+import { getPendingStop, isOwnHeadingClientOwned } from "../input/moveOwnership";
 import { spawnAttackEffect } from "./combatFx";
 import { getDotPath } from "../fx/dot";
 import { spawnDamageNumber } from "../fx/particles";
@@ -204,13 +204,14 @@ export function upsertPlayer(
   state.view.set(player.id, player);
   const transform = state.transform.get(player.id);
   if (transform) {
-    // Fix #1: while keyboard/gamepad movement is driving the own player, the
-    // client owns the heading. The server's `player.target` is ~1 RTT stale, so
-    // overwriting it here would yank the predicted sprite toward the old heading
-    // for a frame on every direction change. Other players, and the own player
-    // under server-driven movement (auto/traverse/follow/knockback) or
-    // click-to-move, still take the authoritative target.
-    if (!(isOwn && isManualMovementActive())) {
+    // Fix #1: while the client owns the own player's heading — active
+    // keyboard/gamepad movement OR a sent-but-unconfirmed stop — the server's
+    // `player.target` is ~1 RTT stale, so overwriting it here would yank the
+    // predicted sprite toward the old heading (mid-walk) or let the lagging
+    // authoritative state drive then snap it back (the "backtrack on stop").
+    // Other players, and the own player under server-driven movement
+    // (auto/traverse/follow/knockback) or click-to-move, take the server target.
+    if (!(isOwn && isOwnHeadingClientOwned())) {
       transform.target = { ...player.target };
     }
     // Keep the authoritative position current for the per-frame reconcile below.
@@ -227,8 +228,23 @@ export function upsertPlayer(
       const ex = player.pos.x - interp.base.x;
       const ey = player.pos.y - interp.base.y;
       if (ex * ex + ey * ey > RECONCILE_SNAP_SQ) {
-        interp.base.x = player.pos.x;
-        interp.base.y = player.pos.y;
+        // While a stop is unconfirmed the predicted base legitimately leads the
+        // lagging authoritative position; a hard snap back to it would be the
+        // visible backtrack. Suppress only the BACKWARD snap (server still
+        // behind, along the path to the stop) — forward/perpendicular desyncs
+        // (lag spike, rejected move) still snap.
+        const ps = getPendingStop();
+        let backwardStopSnap = false;
+        if (ps) {
+          const ax = ps.x - player.pos.x;
+          const ay = ps.y - player.pos.y;
+          // ex,ey = pos − base. base ahead toward stop ⇒ (pos−base)·(stop−pos) < 0.
+          if (ex * ax + ey * ay < 0) backwardStopSnap = true;
+        }
+        if (!backwardStopSnap) {
+          interp.base.x = player.pos.x;
+          interp.base.y = player.pos.y;
+        }
       }
     }
   }
