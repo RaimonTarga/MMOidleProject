@@ -7,6 +7,8 @@ import path from "path";
 import { World, type PersistedBossRespawn } from "./world/World";
 import { takeWorldLogEvents } from "./world/worldLog";
 import {
+  ACTION_DATABASE,
+  CONDITION_DATABASE,
   DEFAULT_AUTOCOMBAT_CONFIG,
   emptyEquipment,
   GAME_CONFIG,
@@ -540,6 +542,28 @@ async function boot(): Promise<void> {
         markSliceDirty(world, p, "tracksProgression");
         markSliceDirty(world, p, "usesSkills");
       }
+    });
+
+    socket.on("rune:setLoadout", (rules) => {
+      const p = liveSelf();
+      if (!p) return;
+      if (!Array.isArray(rules)) return;
+      const owned = new Set(p.tracksProgression.runesOwned);
+      const valid = rules.filter(
+        (r) =>
+          r &&
+          typeof r.conditionId === "string" &&
+          typeof r.actionId === "string" &&
+          CONDITION_DATABASE.has(r.conditionId) &&
+          ACTION_DATABASE.has(r.actionId) &&
+          owned.has(r.conditionId) &&
+          owned.has(r.actionId),
+      );
+      p.tracksProgression.runesEquipped = valid.map((r) => ({
+        conditionId: r.conditionId,
+        actionId: r.actionId,
+      }));
+      markSliceDirty(world, p, "tracksProgression");
     });
 
     socket.on("inventory:equipItem", (definitionId) => {

@@ -92,6 +92,8 @@ function buildBenchPlayer(
       currentSkillTier: 0,
       bossesCleared: [],
       clearedNodes: [],
+      runesOwned: [],
+      runesEquipped: [],
     },
     holdsInventory: { inventory: [], equipment, itemUpgrades: {} },
     usesSkills: {

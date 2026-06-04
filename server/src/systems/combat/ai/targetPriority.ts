@@ -9,6 +9,7 @@ import {
   estimateMonsterHitDamage,
   estimatePlayerHitDamage,
   GAME_CONFIG,
+  getFlag,
   getStatusEffect,
   getString,
   inAttackRange,
@@ -22,6 +23,7 @@ import {
   type AutocombatPriorityMode,
   type UsesAutocombat,
 } from "@mmo-idle/shared";
+import { RUNE_FLEE_FLAG } from "./runeConfig";
 
 export type AutoCombatAction =
   | { kind: "attack"; target: MonsterEntity }
@@ -73,9 +75,6 @@ const RANGED_ACQUIRE_MULT = 1.5;
 /** Rooted players should not acquire anything they cannot already hit. */
 const ROOTED_ACQUIRE_MULT = 0.35;
 
-/** If this target kills us this much faster than we kill it, skip/flee. */
-const SUICIDE_RATIO = 0.85;
-
 const DOT_OVERKILL_PENALTY = 2.0;
 const AOE_CLUSTER_WEIGHT = 0.12;
 const QUEST_WEIGHT = 0.35;
@@ -97,7 +96,7 @@ export function selectAutoCombatAction(
   cfg: UsesAutocombat,
   now: number,
 ): AutoCombatAction {
-  if (cfg.fleeWhenLow && shouldFlee(world, player, cfg)) {
+  if (getFlag(player.tracksCombat, RUNE_FLEE_FLAG)) {
     setString(player.tracksCombat, AUTO_TARGET_ID, "");
     return { kind: "flee" };
   }
@@ -159,12 +158,18 @@ function passesGates(
     return false;
   }
 
-  // Auto-combat has no acquisition radius: with auto on, the player always
-  // engages something in the node (nearest is still preferred via the distance
-  // term in scoreCandidate). Only the leash anchor still gates un-aggroed mobs
-  // that have wandered too far from their spawn.
+  // Acquisition radius: an un-aggroed mob is only engaged if it sits within the
+  // (rune-derived) acquire radius and inside its leash anchor. Monsters already
+  // aggroed on the player are always engaged (retaliation). When nothing
+  // qualifies, `selectAutoCombatAction` returns idle and the player holds.
   if (!isAggroedOnPlayer(monster, player)) {
     if (isPastLeashAnchor(monster)) return false;
+    if (
+      distanceSq(player.hasPosition.current, monster.hasPosition.current) >
+      ctx.acquireRadius * ctx.acquireRadius
+    ) {
+      return false;
+    }
   }
 
   // Rooted players can only select targets they can already attack.
@@ -196,8 +201,8 @@ function passesGates(
   // Survival ("would this trade kill me?") is intentionally NOT an acquisition
   // gate: the first-order estimate here ignores regen/shields/absorbs/DoT/on-kill,
   // so using it to hard-block engagement permanently locks out under-geared or
-  // defensively-built players. The flee decision (`shouldFlee` + `fleeWhenLow`)
-  // owns disengagement using the same SUICIDE_RATIO once HP actually drops.
+  // defensively-built players. Disengagement is owned by the rune flee flag
+  // (`rune.flee`, set by `updateRuneDerivedConfig` from the player's loadout).
   return true;
 }
 
@@ -253,25 +258,6 @@ function scoreCandidate(
   }
 
   return score;
-}
-
-function shouldFlee(world: World, player: PlayerEntity, cfg: UsesAutocombat): boolean {
-  if (player.hasHealth.hp / Math.max(1, player.hasHealth.maxHp) > cfg.fleeHpPct) {
-    return false;
-  }
-
-  let incomingDps = 0;
-  let bestKillTtk = Infinity;
-  for (const monster of world.aggroedMonsters) {
-    if (!monster || monster.hasPosition.nodeId !== player.hasPosition.nodeId) continue;
-    if (!isAggroedOnPlayer(monster, player)) continue;
-    incomingDps += incomingDpsFromMonster(player, monster);
-    bestKillTtk = Math.min(bestKillTtk, killTtkSeconds(player, monster));
-  }
-
-  if (incomingDps <= 0 || !Number.isFinite(bestKillTtk)) return false;
-  const selfTtk = player.hasHealth.hp / incomingDps;
-  return selfTtk * SUICIDE_RATIO < bestKillTtk;
 }
 
 function effectiveAcquireRadius(
@@ -338,13 +324,6 @@ function incomingDpsFromMonster(player: PlayerEntity, monster: MonsterEntity): n
     targetDamageReduction: player.mitigatesDamage.damageReduction,
   });
   return damage / Math.max(EPS, monster.performsAttack.attackCooldown / 1000);
-}
-
-function killTtkSeconds(player: PlayerEntity, monster: MonsterEntity): number {
-  const dps =
-    estimatedPlayerDamage(player, monster) /
-    Math.max(EPS, player.performsAttack.attackCooldown / 1000);
-  return monster.hasHealth.hp / Math.max(EPS, dps);
 }
 
 function isAggroedOnPlayer(monster: MonsterEntity, player: PlayerEntity): boolean {

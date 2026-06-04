@@ -1,4 +1,4 @@
-import type { AutocombatConfig, EquipmentSlot } from '@mmo-idle/shared';
+import type { AutocombatConfig, EquipmentSlot, EquippedRule } from '@mmo-idle/shared';
 import { intents } from './intents';
 
 type RecipeUnlockListener = (name: string, biomeGroup: string) => void;
@@ -21,6 +21,11 @@ export const hudBus = {
   /** Persist and push auto-combat targeting preferences to the server. */
   requestSetAutocombatConfig(config: AutocombatConfig): void {
     intents.emit('setAutocombatConfig', config);
+  },
+
+  /** Called by RunesPanel — push the equipped rune loadout to the server. */
+  requestSetRuneLoadout(rules: EquippedRule[]): void {
+    intents.emit('setRuneLoadout', rules);
   },
 
   /** Called by SkillTreePanel — GameScene picks this up and emits the socket event. */

@@ -1,5 +1,6 @@
 import type { EquipmentSlot } from "../items";
 import type { AutocombatConfig } from "../components/core/networkedSlices";
+import type { EquippedRule } from "../runeDatabase";
 import type { BossFelledMarker } from "./bossFelled";
 import type { DeltaSnapshot } from "./delta";
 import type { PlayerDeathPayload } from "./death";
@@ -58,6 +59,8 @@ export interface ClientToServerEvents {
   "player:requestSync": () => void;
   /** Request to unlock a skill tree node by ID. Server validates and applies. */
   "player:unlockSkill": (skillId: string) => void;
+  /** Set the player's equipped rune loadout (ordered). Server validates ownership/catalog. */
+  "rune:setLoadout": (rules: EquippedRule[]) => void;
   /** Equip an item from inventory by its definition ID. */
   "inventory:equipItem": (definitionId: string) => void;
   /** Move the item in the given slot back to inventory. */

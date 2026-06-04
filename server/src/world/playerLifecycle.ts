@@ -1,4 +1,5 @@
 import {
+  ALL_RUNE_IDS,
   DEFAULT_AUTOCOMBAT_CONFIG,
   GAME_CONFIG,
   makeTracksCombat,
@@ -19,6 +20,13 @@ export function attachPlayerEntity(
   player: PersistedPlayerSlices,
   socketId: string,
 ): PlayerEntity {
+  // Grant-all rune fragments (MVP: no acquisition gating). Covers existing
+  // characters whose persisted slices predate the rune system.
+  player.tracksProgression.runesOwned = [...ALL_RUNE_IDS];
+  if (!Array.isArray(player.tracksProgression.runesEquipped)) {
+    player.tracksProgression.runesEquipped = [];
+  }
+
   const entity: PlayerEntity = {
     entityId: socketId,
     tracksCombat: makeTracksCombat(),

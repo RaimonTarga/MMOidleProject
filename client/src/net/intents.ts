@@ -1,4 +1,4 @@
-import type { AutocombatConfig, EquipmentSlot, Vec2 } from '@mmo-idle/shared';
+import type { AutocombatConfig, EquipmentSlot, EquippedRule, Vec2 } from '@mmo-idle/shared';
 import type { GameSocket } from './socket';
 
 export function sendMove(socket: GameSocket, pos: Vec2): void {
@@ -34,6 +34,13 @@ export function sendRequestSync(socket: GameSocket): void {
 
 export function sendUnlockSkill(socket: GameSocket, skillId: string): void {
   socket.emit('player:unlockSkill', skillId);
+}
+
+export function sendSetRuneLoadout(
+  socket: GameSocket,
+  rules: EquippedRule[],
+): void {
+  socket.emit('rune:setLoadout', rules);
 }
 
 export function sendEquipItem(socket: GameSocket, definitionId: string): void {

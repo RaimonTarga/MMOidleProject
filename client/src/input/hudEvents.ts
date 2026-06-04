@@ -14,6 +14,7 @@ import {
   sendResetProgress,
   sendSetAutoTraverse,
   sendSetAutocombatConfig,
+  sendSetRuneLoadout,
   sendTeleportToNode,
   sendUnequip,
   sendUnlockSkill,
@@ -35,6 +36,10 @@ export function attachHudEvents(scene: GameScene): void {
 
   intents.on("setAutocombatConfig", (config) => {
     sendSetAutocombatConfig(scene.socket, config);
+  });
+
+  intents.on("setRuneLoadout", (rules) => {
+    sendSetRuneLoadout(scene.socket, rules);
   });
 
   intents.on("unlockSkill", (skillId) => {

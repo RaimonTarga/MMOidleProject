@@ -50,6 +50,8 @@ function buildBotSlices(
       currentSkillTier: 0,
       bossesCleared: [],
       clearedNodes: [],
+      runesOwned: [],
+      runesEquipped: [],
     },
     holdsInventory: {
       inventory: [],
