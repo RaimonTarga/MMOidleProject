@@ -282,6 +282,49 @@ function shouldSkipBosses(player: PlayerEntity): boolean {
   );
 }
 
+/**
+ * The nearest monster in the player's node the auto-combat selector *would*
+ * engage if the player walked up to it — same boss / leash / invulnerability /
+ * dormant-ultimate gates as {@link selectAutoCombatAction}, but with the acquire
+ * radius removed so distant mobs still count.
+ *
+ * Used by the explore rune's idle roam: instead of hopping to random points, an
+ * exploring player heads straight for the closest mob it can clear. Returns null
+ * only when the node has nothing engageable left.
+ */
+export function nearestEngageableMonster(
+  world: World,
+  player: PlayerEntity,
+): MonsterEntity | null {
+  const skipBosses = shouldSkipBosses(player);
+  let best: MonsterEntity | null = null;
+  let bestDistSq = Infinity;
+
+  for (const monster of world.monsterEntitiesInNode(player.hasPosition.nodeId)) {
+    if (skipBosses && monster.isMonster.isBoss) continue;
+    if (monster.isInvulnerable) continue;
+    if (
+      monster.scriptsUltimate &&
+      !monster.scriptsUltimate.engaged &&
+      !player.usesAutocombat.engageUltimateBosses
+    ) {
+      continue;
+    }
+    if (isPastLeashAnchor(monster)) continue;
+
+    const d = distanceSq(
+      player.hasPosition.current,
+      monster.hasPosition.current,
+    );
+    if (d < bestDistSq) {
+      bestDistSq = d;
+      best = monster;
+    }
+  }
+
+  return best;
+}
+
 function estimatedPlayerDamage(player: PlayerEntity, monster: MonsterEntity): number {
   const shred = platingShred(monster);
   return estimatePlayerHitDamage({
