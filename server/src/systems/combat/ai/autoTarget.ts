@@ -16,7 +16,10 @@ import { NODE_REGISTRY } from "../../../world/nodeRegistry";
 import { setEntityMotion, stopEntity } from "../../world/movement";
 import { isPartyFollower } from "../../player/party/partySystem";
 import { beginFlee, stepFlee } from "./flee";
-import { selectAutoCombatAction } from "./targetPriority";
+import {
+  nearestEngageableMonster,
+  selectAutoCombatAction,
+} from "./targetPriority";
 import { RUNE_KEEP_DISTANCE_FLAG } from "./runeConfig";
 
 const NODE_MARGIN = 40;
@@ -156,11 +159,24 @@ export function updateAutoTargets(world: World, now: number) {
     } else if (action.kind === "attack") {
       steerTowardTarget(world, player, action.target, now);
     } else {
-      // idle — nothing within acquire range. Enter the exploring state and roam
-      // the current node looking for new targets. Leaving the node/biome stays
-      // owned by the explore rune (updateAutoTraverse).
+      // idle — nothing within acquire range. How we look for the next target
+      // depends on whether the explore rune is connected:
+      //   • explore rune on  → head straight for the nearest clearable mob (a
+      //     directed search that finishes the node), holding still only when the
+      //     node has nothing left; leaving the node/biome stays owned by
+      //     updateAutoTraverse.
+      //   • explore rune off → the dumb baseline roams the node at random.
       setFlag(player.tracksCombat, AUTO_FIRING_FLAG, false);
-      stepExploreWander(world, player, now);
+      if (player.usesAutocombat.autoTraverse) {
+        const mob = nearestEngageableMonster(world, player);
+        if (mob) {
+          steerTowardTarget(world, player, mob, now);
+        } else {
+          stopEntity(world, player);
+        }
+      } else {
+        stepExploreWander(world, player, now);
+      }
     }
   }
 }
