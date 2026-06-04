@@ -9,20 +9,20 @@
  * This MVP ships 3 conditions × 3 actions with no budget, charge, flaws, or
  * acquisition gating — see `.cursor/design/runes.md` for the full design.
  */
-import type { AutocombatConfig } from './components/core/networkedSlices';
+import type { AutocombatConfig } from "./components/core/networkedSlices";
 
 /** Arbitration priority tier (in-game flavor name). Highest → lowest. */
-export type RuneCategory = 'instinct' | 'linking' | 'wayfinding' | 'targeting';
+export type RuneCategory = "instinct" | "linking" | "wayfinding" | "targeting";
 
 /** The AI control resource an action writes. */
-export type RuneChannel = 'move' | 'target' | 'config' | 'oneshot';
+export type RuneChannel = "move" | "target" | "config" | "oneshot";
 
 /** A condition fragment — for the MVP every condition is a live-evaluated state. */
 export interface ConditionDef {
   id: string;
   name: string;
   blurb: string;
-  kind: 'state';
+  kind: "state";
 }
 
 /** An action fragment. */
@@ -42,63 +42,63 @@ export interface EquippedRule {
 
 export const CONDITION_DATABASE = new Map<string, ConditionDef>([
   [
-    'when-idle',
+    "when-idle",
     {
-      id: 'when-idle',
-      name: 'While exploring',
-      blurb: 'True while you are out of combat / roaming.',
-      kind: 'state',
+      id: "when-idle",
+      name: "Idle",
+      blurb: "True while you are out of combat.",
+      kind: "state",
     },
   ],
   [
-    'low-hp',
+    "low-hp",
     {
-      id: 'low-hp',
-      name: 'Below 25% HP',
-      blurb: 'True while your health is at or under a quarter.',
-      kind: 'state',
+      id: "low-hp",
+      name: "Hurt",
+      blurb: "True while your health is at or under 25%.",
+      kind: "state",
     },
   ],
   [
-    'in-combat',
+    "in-combat",
     {
-      id: 'in-combat',
-      name: 'In combat',
-      blurb: 'True while you are actively fighting.',
-      kind: 'state',
+      id: "in-combat",
+      name: "Fighting",
+      blurb: "True while you are actively fighting.",
+      kind: "state",
     },
   ],
 ]);
 
 export const ACTION_DATABASE = new Map<string, ActionDef>([
   [
-    'flee',
+    "flee",
     {
-      id: 'flee',
-      name: 'Flee',
-      blurb: 'Retreat from the fight when triggered.',
-      category: 'instinct',
-      channel: 'move',
+      id: "flee",
+      name: "Flee",
+      blurb: "Retreat from the fight when triggered.",
+      category: "instinct",
+      channel: "move",
     },
   ],
   [
-    'keep-distance',
+    "keep-distance",
     {
-      id: 'keep-distance',
-      name: 'Keep distance',
-      blurb: 'Hold a standoff gap — kite while fighting, back away while idle.',
-      category: 'targeting',
-      channel: 'config',
+      id: "keep-distance",
+      name: "Keep Distance",
+      blurb: "Keep targets at the edge of your range.",
+      category: "targeting",
+      channel: "config",
     },
   ],
   [
-    'explore',
+    "explore",
     {
-      id: 'explore',
-      name: 'Seek a new biome',
-      blurb: 'Auto-traverse: finish the biome and move on.',
-      category: 'wayfinding',
-      channel: 'move',
+      id: "explore",
+      name: "Explore",
+      blurb: "Auto-traverse: finish the biome and move on.",
+      category: "wayfinding",
+      channel: "move",
     },
   ],
 ]);
@@ -123,80 +123,84 @@ function ruleKey(conditionId: string, actionId: string): string {
 /** All 9 condition × action pairings, named for the UI. */
 export const NAMED_RULES = new Map<string, NamedRule>([
   [
-    ruleKey('when-idle', 'flee'),
+    ruleKey("when-idle", "flee"),
     {
-      name: 'Pacer',
+      name: "Pacer",
       blurb:
-        'With nothing to fight, the flee routine walks you to the nearest gate, hops to the next node, and back — pacing forever. Near-nonsense, but harmless.',
+        "With nothing to fight, the flee routine walks you to the nearest gate, hops to the next node, and back — pacing forever. Near-nonsense, but harmless.",
     },
   ],
   [
-    ruleKey('when-idle', 'keep-distance'),
+    ruleKey("when-idle", "keep-distance"),
     {
-      name: 'Skittish',
+      name: "Skittish",
       blurb:
-        'Out of combat you hold position until an enemy wanders into your personal space, then step directly away. Keeps roaming threats at arm\u2019s length without engaging.',
+        "Out of combat you hold position until an enemy wanders into your personal space, then step directly away. Keeps roaming threats at arm\u2019s length without engaging.",
     },
   ],
   [
-    ruleKey('when-idle', 'explore'),
+    ruleKey("when-idle", "explore"),
     {
-      name: 'Explorer',
+      name: "Explorer",
       blurb:
-        'Whenever you are out of combat, auto-traverse the biome and move on. The clean, intended exploration build.',
+        "Whenever you are out of combat, auto-traverse the biome and move on. The clean, intended exploration build.",
     },
   ],
   [
-    ruleKey('low-hp', 'flee'),
+    ruleKey("low-hp", "flee"),
     {
-      name: 'Survivor',
-      blurb: 'At or below 25% HP, retreat from the fight. The classic safety net.',
+      name: "Survivor",
+      blurb:
+        "At or below 25% HP, retreat from the fight. The classic safety net.",
     },
   ],
   [
-    ruleKey('low-hp', 'keep-distance'),
+    ruleKey("low-hp", "keep-distance"),
     {
-      name: 'Desperate Kiter',
+      name: "Desperate Kiter",
       blurb:
-        'Below 25% HP you start kiting — back-pedal while firing. Buys a ranged build survival; melee just holds the edge of range.',
+        "Below 25% HP you start kiting — back-pedal while firing. Buys a ranged build survival; melee just holds the edge of range.",
     },
   ],
   [
-    ruleKey('low-hp', 'explore'),
+    ruleKey("low-hp", "explore"),
     {
-      name: 'Flight Forward',
+      name: "Flight Forward",
       blurb:
-        'When hurt, head for the next node instead of fighting. Sometimes an escape, sometimes it walks you deeper into danger — reckless.',
+        "When hurt, head for the next node instead of fighting. Sometimes an escape, sometimes it walks you deeper into danger — reckless.",
     },
   ],
   [
-    ruleKey('in-combat', 'flee'),
+    ruleKey("in-combat", "flee"),
     {
-      name: 'Coward',
+      name: "Coward",
       blurb:
-        'Bolt the instant a fight starts; you never trade a single hit. A pure comedy/trap build.',
+        "Bolt the instant a fight starts; you never trade a single hit. A pure comedy/trap build.",
     },
   ],
   [
-    ruleKey('in-combat', 'keep-distance'),
+    ruleKey("in-combat", "keep-distance"),
     {
-      name: 'Kiter',
+      name: "Kiter",
       blurb:
-        'While fighting, hold a standoff gap and attack from range. The headline use of keep-distance, now available to any archetype.',
+        "While fighting, hold a standoff gap and attack from range. The headline use of keep-distance, now available to any archetype.",
     },
   ],
   [
-    ruleKey('in-combat', 'explore'),
+    ruleKey("in-combat", "explore"),
     {
-      name: 'Tourist',
+      name: "Tourist",
       blurb:
-        'The moment combat begins you travel to the next node; leaving ends combat, so you stutter between bumping into fights and wandering off. Never commits.',
+        "The moment combat begins you travel to the next node; leaving ends combat, so you stutter between bumping into fights and wandering off. Never commits.",
     },
   ],
 ]);
 
 /** Resolve the named pairing for a (condition, action), or null if unnamed. */
-export function getRuleName(conditionId: string, actionId: string): NamedRule | null {
+export function getRuleName(
+  conditionId: string,
+  actionId: string,
+): NamedRule | null {
   return NAMED_RULES.get(ruleKey(conditionId, actionId)) ?? null;
 }
 
@@ -208,7 +212,7 @@ export function getRuleName(conditionId: string, actionId: string): NamedRule | 
 export const BASELINE_ACQUIRE_RADIUS = 600;
 
 export const BASELINE_RUNE_CONFIG: AutocombatConfig = {
-  priorityMode: 'nearest',
+  priorityMode: "nearest",
   fleeWhenLow: false,
   fleeHpPct: 0.25,
   acquireRadius: BASELINE_ACQUIRE_RADIUS,
@@ -236,11 +240,11 @@ export interface DerivedRuneConfig {
 
 function isConditionActive(conditionId: string, ctx: RuneContext): boolean {
   switch (conditionId) {
-    case 'when-idle':
+    case "when-idle":
       return !ctx.inCombat;
-    case 'low-hp':
+    case "low-hp":
       return ctx.hpPct <= 0.25;
-    case 'in-combat':
+    case "in-combat":
       return ctx.inCombat;
     default:
       return false;
@@ -270,13 +274,13 @@ export function deriveAutoConfigFromRunes(
   for (const rule of equipped) {
     if (!isConditionActive(rule.conditionId, ctx)) continue;
     switch (rule.actionId) {
-      case 'flee':
+      case "flee":
         derived.fleeRequested = true;
         break;
-      case 'keep-distance':
+      case "keep-distance":
         derived.keepDistance = true;
         break;
-      case 'explore':
+      case "explore":
         derived.autoTraverse = true;
         break;
       default:

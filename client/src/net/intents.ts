@@ -36,6 +36,10 @@ export function sendUnlockSkill(socket: GameSocket, skillId: string): void {
   socket.emit('player:unlockSkill', skillId);
 }
 
+export function sendResetClass(socket: GameSocket): void {
+  socket.emit('player:resetClass');
+}
+
 export function sendSetRuneLoadout(
   socket: GameSocket,
   rules: EquippedRule[],

@@ -53,6 +53,8 @@ import { maybeNotifyDeath } from "../../notifications/deathNotification";
 import { initParticleTextures, initEffectFrames } from "../../fx/particles";
 import { updateLaserBeam } from "../../fx/laser";
 import { initMistPostFx, updateMistPostFx } from "../../fx/mistPostFx";
+import { updateAltarGlow } from "../../fx/altarGlow";
+import { updateAltarPrompt } from "../../render/altarPrompt";
 import { updateVoidOverlordRespawn } from "../../render/voidOverlordTomb";
 import { isVoidFloodActive } from "./voidThrone";
 import { attachClickToMove } from "../../input/clickToMove";
@@ -231,6 +233,8 @@ export function updateGameScene(scene: GameScene, delta: number): void {
     updateLaserBeam(scene.state, scene);
     updateVoidOverlordRespawn(scene.state, scene);
     updateMistPostFx(scene, isVoidFloodActive(scene), scene.time.now, dt);
+    updateAltarGlow(scene, dt);
+    updateAltarPrompt(scene);
     drawMinimap(scene);
   }
 

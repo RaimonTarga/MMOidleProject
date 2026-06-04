@@ -69,6 +69,9 @@ export interface NodeFeatureSpec {
 
 export type ResolvedNodeFeature = NodeFeatureSpec & { shape: NodeFeatureShape };
 
+/** Shared id for the clearing rune altar feature (client decor + server gating). */
+export const RUNE_ALTAR_FEATURE_ID = "rune_altar";
+
 export function resolveFeatureShape(spec: NodeFeatureSpec): NodeFeatureShape {
   if (spec.shape) return spec.shape;
   const scale = spec.hitboxScale ?? DEFAULT_HITBOX_SCALE;
@@ -106,6 +109,22 @@ function buildResolvedNodeFeatures(): Record<string, ResolvedNodeFeature[]> {
 
 /** Per-node static hazards and obstacles. */
 export const NODE_FEATURES: Record<string, NodeFeatureSpec[]> = {
+  // Clearing (T0). Rune altar centerpiece, just north of the player spawn point
+  // (node center). Non-blocking on purpose — its hitbox exists only so future
+  // interaction logic can detect a player standing at the altar.
+  "node-5-5": [
+    {
+      id: RUNE_ALTAR_FEATURE_ID,
+      x: GAME_CONFIG.NODE_WIDTH / 2,
+      y: GAME_CONFIG.NODE_HEIGHT / 2 - 320,
+      displayW: 560,
+      displayH: 560,
+      hitboxScale: 0.7,
+      hitboxKind: "ellipse",
+      hitboxHeightScale: 0.62,
+      // No `blocksMovement`: players (and minions) can walk through it freely.
+    },
+  ],
   "node-9-0": [
     {
       id: "abyssal_throne",

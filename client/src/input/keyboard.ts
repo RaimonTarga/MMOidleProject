@@ -24,6 +24,7 @@ import {
 import { emoteForWheelDirection } from '@mmo-idle/shared';
 import { cancelActiveMove, setHoldStill, setKeyboardVector } from './movement';
 import { closeTopmostOverlay } from './overlayStack';
+import { ALTAR_ARC_CONFIG, getAltarArc } from '../scenes/game/runeAltar';
 
 const MOBILE_QUERY = '(max-width: 1100px)';
 
@@ -99,6 +100,17 @@ export function attachKeyboard(scene: GameScene): () => void {
       }
     }
     if (event.repeat) return;
+
+    // Enter: trigger the rune altar interaction for the arc the player stands in.
+    if (event.code === 'Enter') {
+      if (dead) return;
+      const arc = getAltarArc(scene);
+      if (arc && ALTAR_ARC_CONFIG[arc].action === 'resetClass') {
+        event.preventDefault();
+        hudBus.requestResetClass();
+      }
+      return;
+    }
 
     const wheelDir = ARROW_TO_WHEEL[event.code];
     if (wheelDir && !dead) {

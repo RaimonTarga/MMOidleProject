@@ -12,6 +12,7 @@ import {
   sendRefreshRecipes,
   sendEquipPhaseTester,
   sendResetProgress,
+  sendResetClass,
   sendSetAutoTraverse,
   sendSetAutocombatConfig,
   sendSetRuneLoadout,
@@ -98,6 +99,10 @@ export function attachHudEvents(scene: GameScene): void {
 
   intents.on("resetProgress", () => {
     sendResetProgress(scene.socket);
+  });
+
+  intents.on("resetClass", () => {
+    sendResetClass(scene.socket);
   });
 
   intents.on("refreshRecipes", () => {

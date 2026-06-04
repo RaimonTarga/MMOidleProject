@@ -75,6 +75,10 @@ export const hudBus = {
     intents.emit('resetProgress', undefined);
   },
 
+  requestResetClass(): void {
+    intents.emit('resetClass', undefined);
+  },
+
   requestRefreshRecipes(): void {
     intents.emit('refreshRecipes', undefined);
   },

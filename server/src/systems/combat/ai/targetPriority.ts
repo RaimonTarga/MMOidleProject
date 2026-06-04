@@ -13,7 +13,6 @@ import {
   getStatusEffect,
   getString,
   inAttackRange,
-  isBiomeLevelCapped,
   isGlancingHit,
   isRangedCombatant,
   NODE_BIOMES,
@@ -279,8 +278,7 @@ function shouldSkipBosses(player: PlayerEntity): boolean {
   return (
     player.usesAutocombat.autoTraverse &&
     nodeInfo !== undefined &&
-    (!isBiomeLevelCapped(player.tracksProgression, nodeInfo.biomeGroup) ||
-      !areAllBiomeRecipesUnlocked(player.tracksProgression, nodeInfo.biomeGroup))
+    !areAllBiomeRecipesUnlocked(player.tracksProgression, nodeInfo.biomeGroup)
   );
 }
 
@@ -371,9 +369,9 @@ function questValue(player: PlayerEntity, monster: MonsterEntity): number {
 function biomeValue(player: PlayerEntity): number {
   const nodeInfo = NODE_BIOMES[player.hasPosition.nodeId];
   if (!nodeInfo) return 0;
-  if (!isBiomeLevelCapped(player.tracksProgression, nodeInfo.biomeGroup)) {
-    return BIOME_VALUE_WEIGHT;
-  }
+  // Keep farming valuable only while the biome still has unlocks to earn;
+  // once everything is unlocked we stop weighting kills here (auto-traverse
+  // takes over to clear nodes / boss and move on).
   if (!areAllBiomeRecipesUnlocked(player.tracksProgression, nodeInfo.biomeGroup)) {
     return BIOME_VALUE_WEIGHT;
   }

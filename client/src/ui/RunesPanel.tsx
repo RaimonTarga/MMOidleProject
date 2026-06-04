@@ -85,7 +85,7 @@ export function RunesPanel({ onClose }: Props) {
     <div className="skill-tree-overlay" onClick={handleOverlayClick}>
       <div className="skill-tree-panel" style={{ maxWidth: 760 }}>
         <div className="skill-tree-header">
-          <span className="skill-tree-title">Runes — wire your combat brain</span>
+          <span className="skill-tree-title">Runes</span>
           <button className="skill-tree-close" onClick={onClose}>
             ✕
           </button>

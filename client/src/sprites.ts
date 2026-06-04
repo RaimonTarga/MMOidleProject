@@ -112,6 +112,13 @@ export interface NodeDecorArt {
 }
 
 export const NODE_DECOR: Record<string, NodeDecorArt[]> = {
+  "node-5-5": [
+    {
+      featureId: "rune_altar",
+      key: "rune_altar",
+      file: "/assets/environment/rune_altar.png",
+    },
+  ],
   "node-9-0": [
     {
       featureId: "abyssal_throne",

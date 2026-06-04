@@ -14,8 +14,12 @@ import {
   GAME_CONFIG,
   ITEM_DATABASE,
   NODE_BIOMES,
+  pointInNodeFeatureShape,
   registerDevItems,
   resetTracksCombat,
+  RESOLVED_NODE_FEATURES,
+  RUNE_ALTAR_FEATURE_ID,
+  SKILL_TREE,
   TEST_ROOM_NODE_ID,
   ESSENCE_TYPES,
 } from "@mmo-idle/shared";
@@ -542,6 +546,56 @@ async function boot(): Promise<void> {
         markSliceDirty(world, p, "tracksProgression");
         markSliceDirty(world, p, "usesSkills");
       }
+    });
+
+    socket.on("player:resetClass", () => {
+      const p = liveSelf();
+      if (!p) return;
+
+      // Authoritative gate: the player must be standing on the rune altar.
+      const altar = RESOLVED_NODE_FEATURES[p.hasPosition.nodeId]?.find(
+        (f) => f.id === RUNE_ALTAR_FEATURE_ID,
+      );
+      if (!altar || !pointInNodeFeatureShape(p.hasPosition.current, altar.shape)) {
+        return;
+      }
+
+      // Refund every point spent on the perk tree so the player can re-spec
+      // without losing earned tiers, levels, items, essence, or quests.
+      let refund = 0;
+      for (const id of p.usesSkills.unlockedSkills) {
+        refund += SKILL_TREE.get(id)?.cost ?? 0;
+      }
+      p.tracksProgression.skillPoints += refund;
+      p.tracksProgression.currentSkillTier = 0;
+
+      p.usesSkills.unlockedSkills = [];
+      p.usesSkills.passives = {};
+      p.usesSkills.selectedClass = null;
+      p.usesSkills.selectedSubVariant = null;
+      p.usesSkills.selectedRange = null;
+      p.usesSkills.combatArchetype = null;
+
+      stopEntity(world, p);
+      setAttackTarget(world, p, null);
+      detachComponent(world, p, "hasEmpoweredAttack");
+      detachComponent(world, p, "isChanneling");
+      detachComponent(world, p, "hasOverdrive");
+      detachComponent(world, p, "hasAlignment");
+      detachComponent(world, p, "inAcChargePhase");
+      detachComponent(world, p, "inAcDischarge");
+      detachComponent(world, p, "holdsShields");
+      // Drop any live slimes before the archetype slice is detached.
+      despawnMinionsForOwner(world, p);
+      resetTracksCombat(p.tracksCombat);
+      syncArchetypeSlices(world, p);
+      recalculatePlayerEntityStats(world, p);
+      syncArchetypeSlices(world, p);
+      p.hasHealth.hp = p.hasHealth.maxHp;
+
+      markSliceDirty(world, p, "tracksProgression");
+      markSliceDirty(world, p, "usesSkills");
+      markSliceDirty(world, p, "hasHealth");
     });
 
     socket.on("rune:setLoadout", (rules) => {

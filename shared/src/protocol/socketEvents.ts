@@ -59,6 +59,8 @@ export interface ClientToServerEvents {
   "player:requestSync": () => void;
   /** Request to unlock a skill tree node by ID. Server validates and applies. */
   "player:unlockSkill": (skillId: string) => void;
+  /** Reset the perk tree (refund spent skill points; keep tier/items). Altar-gated. */
+  "player:resetClass": () => void;
   /** Set the player's equipped rune loadout (ordered). Server validates ownership/catalog. */
   "rune:setLoadout": (rules: EquippedRule[]) => void;
   /** Equip an item from inventory by its definition ID. */

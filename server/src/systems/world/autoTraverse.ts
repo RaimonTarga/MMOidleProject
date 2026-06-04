@@ -3,7 +3,6 @@ import {
   areAllNonBossNodesClearedAtTier,
   hasDungeonForBiomeTier,
   isBiomeFullyDoneAtTier,
-  isBiomeLevelCapped,
   isNodeCleared,
   isBossClearedAtTier,
   listNonBossNodesForBiomeTier,
@@ -78,15 +77,15 @@ function resolveTraversePhase(
 ): TraversePhase {
   if (isBiomeFullyDoneAtTier(progression, biomeGroup, biomeTier))
     return "advance";
+  // Once nothing more can be unlocked, stop grinding levels and switch to
+  // clearing the remaining nodes, then the boss, then advance.
   if (
-    isBiomeLevelCapped(progression, biomeGroup) &&
     areAllBiomeRecipesUnlocked(progression, biomeGroup) &&
     !areAllNonBossNodesClearedAtTier(progression, biomeGroup, biomeTier)
   ) {
     return "mob";
   }
   if (
-    isBiomeLevelCapped(progression, biomeGroup) &&
     areAllBiomeRecipesUnlocked(progression, biomeGroup) &&
     hasDungeonForBiomeTier(biomeGroup, biomeTier) &&
     !isBossClearedAtTier(progression, biomeGroup, biomeTier)
@@ -109,13 +108,14 @@ function resolveDesiredNodeId(
       currentNode?.biomeGroup === biomeGroup &&
       currentNode.biomeTier === biomeTier &&
       !currentNode.isDungeon;
-    const currentBiomeCapped =
-      isBiomeLevelCapped(progression, biomeGroup) &&
-      areAllBiomeRecipesUnlocked(progression, biomeGroup);
+    const currentBiomeUnlocksDone = areAllBiomeRecipesUnlocked(
+      progression,
+      biomeGroup,
+    );
 
     if (
       currentIsRelevantRegular &&
-      (!currentBiomeCapped || !isNodeCleared(progression, currentNodeId))
+      (!currentBiomeUnlocksDone || !isNodeCleared(progression, currentNodeId))
     ) {
       return currentNodeId;
     }
@@ -171,15 +171,13 @@ function continueAutoTraversePath(world: World, player: PlayerEntity): boolean {
   return true;
 }
 
-function markCurrentNodeClearedIfCapped(
+function markCurrentNodeClearedIfUnlocksDone(
   world: World,
   player: PlayerEntity,
 ): void {
   const nodeId = player.hasPosition.nodeId;
   const nodeInfo = NODE_BIOMES[nodeId];
   if (!nodeInfo || nodeInfo.isDungeon) return;
-  if (!isBiomeLevelCapped(player.tracksProgression, nodeInfo.biomeGroup))
-    return;
   if (
     !areAllBiomeRecipesUnlocked(player.tracksProgression, nodeInfo.biomeGroup)
   )
@@ -222,7 +220,7 @@ export function updateAutoTraverse(world: World): void {
 
     advancePathIfArrived(world, player);
     if (continueAutoTraversePath(world, player)) continue;
-    markCurrentNodeClearedIfCapped(world, player);
+    markCurrentNodeClearedIfUnlocksDone(world, player);
 
     const nodeId = player.hasPosition.nodeId;
     const nodeInfo = NODE_BIOMES[nodeId];
