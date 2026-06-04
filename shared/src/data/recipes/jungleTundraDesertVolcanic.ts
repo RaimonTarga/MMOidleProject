@@ -28,6 +28,7 @@ export const jungleTundraDesertVolcanicRecipeEntries = [
     recipeGroup: 'jungle', requiredBiomeLevel: 1, slot: 'weapon',
     cost: { green: 48, yellow: 12 }, stats: { attack: 12, onHitDamage: 8 }, attacksPerSecond: 1.55, tier: 2,
     mechanicEffects: {},
+    icon: 'items/weapons/rapier-3.png',
     description: 'A thin blade kept slick with something the jungle distilled and never named.',
     upgrades: [
       { stats: { attack: 5, onHitDamage: 3 }, cost: { green: 22 }, requiredBiomeLevel: 2 },
@@ -46,6 +47,7 @@ export const jungleTundraDesertVolcanicRecipeEntries = [
       'defense.hardening-reset-pct': 0.25, // resets to base when a hit exceeds 25% maxHP
     },
     tier: 2,
+    icon: 'items/armor/leater-armor-2.png',
     description: 'Living bark coaxed into armor, still growing slowly against the skin.',
     upgrades: [
       { stats: { maxHp: 12, plating: 2, evasion: 0.04 }, cost: { green: 22 }, requiredBiomeLevel: 4 },
@@ -64,6 +66,7 @@ export const jungleTundraDesertVolcanicRecipeEntries = [
       'defense.ramp-regen-ramptime-ms': 10000, // full ramp after 10s of sustained combat
     },
     tier: 2,
+    icon: 'items/charms/wood-charm-2.png',
     description: 'A knot of ancient vine that wakes, slowly, to the rhythm of a long fight.',
     upgrades: [
       { stats: { hpRegen: 2 }, cost: { green: 18 }, requiredBiomeLevel: 3 },
@@ -77,6 +80,7 @@ export const jungleTundraDesertVolcanicRecipeEntries = [
     recipeGroup: 'jungle', requiredBiomeLevel: 1, slot: 'mobility',
     cost: { green: 18 }, stats: { speed: 22 }, tier: 2,
     mechanicEffects: { 'mobility.aggro-pull-pct': 0.50 },
+    icon: 'items/boots/plate-boots-3.png',
     description: 'Springy growth lashed to the feet, always eager to be running.',
     upgrades: [
       { stats: { speed: 5 }, cost: { green: 10 }, requiredBiomeLevel: 2 },
@@ -91,6 +95,7 @@ export const jungleTundraDesertVolcanicRecipeEntries = [
     recipeGroup: 'desert', requiredBiomeLevel: 4, slot: 'weapon',
     cost: { yellow: 70 }, stats: { attack: 14 }, attacksPerSecond: 0.70, tier: 2,
     mechanicEffects: { 'weapon.first-strike-mult': 2.0 }, // first hit on a fresh monster entity deals 2x
+    icon: 'items/weapons/sword-3.png',
     description: 'Sun-forged and ward-etched, it strikes the first blow as if it waited years for it.',
     upgrades: [
       { stats: { attack: 6 }, cost: { yellow: 34 }, requiredBiomeLevel: 5 },
@@ -109,6 +114,7 @@ export const jungleTundraDesertVolcanicRecipeEntries = [
       'defense.cleanse-interval-ms': 8000,
     },
     tier: 2,
+    icon: 'items/armor/plate-armor-5.png',
     description: 'Plate of the standfast dead, who are said to have refused to fall even once.',
     upgrades: [
       { stats: { maxHp: 12, plating: 3 }, cost: { yellow: 34 }, requiredBiomeLevel: 4 },
@@ -127,6 +133,7 @@ export const jungleTundraDesertVolcanicRecipeEntries = [
       'defense.cleanse-empty-heal-pct': 0.06, // when nothing to cleanse, heal 6% maxHP instead
     },
     tier: 2,
+    icon: 'items/charms/tear-charm-1.png',
     description: 'A shard of cooled glass that shows you water which is not there, and mends what is.',
     upgrades: [
       { stats: { hpRegen: 2 }, cost: { yellow: 28 }, requiredBiomeLevel: 3 },
@@ -140,6 +147,7 @@ export const jungleTundraDesertVolcanicRecipeEntries = [
     recipeGroup: 'desert', requiredBiomeLevel: 1, slot: 'mobility',
     cost: { yellow: 58 }, stats: { speed: 58 }, tier: 2,
     mechanicEffects: { 'mobility.kite-speed-pct': 0.40 },
+    icon: 'items/boots/mage-boots-1.png',
     description: 'Wide and light, made to outpace a storm across open dune.',
     upgrades: [
       { stats: { speed: 8 },  cost: { yellow: 28 }, requiredBiomeLevel: 2 },
@@ -155,6 +163,7 @@ export const jungleTundraDesertVolcanicRecipeEntries = [
     cost: { blue: 60 }, stats: { speed: 30 }, tier: 3,
     // ramp: +0.30 speed/sec while moving, capped at +60% (reached after ~2s). Untuned placeholder.
     mechanicEffects: { 'mobility.ramp-speed-pct': 0.60, 'mobility.ramp-rate': 0.30 },
+    icon: 'items/boots/plate-boots-4.png',
     description: 'They gather momentum across the ice and are loath to give it back.',
     upgrades: [
       { stats: { speed: 8 },  cost: { blue: 30 },  requiredBiomeLevel: 2 },
@@ -170,6 +179,7 @@ export const jungleTundraDesertVolcanicRecipeEntries = [
     cost: { red: 62 }, stats: { speed: 36 }, tier: 3,
     // +55% passive move speed; a direct hit suppresses it for 4s. Untuned placeholder.
     mechanicEffects: { 'mobility.passive-speed-pct': 0.55, 'mobility.suppress-ms': 4000 },
+    icon: 'items/boots/plate-boots-5.png',
     description: 'Quick as a thrown spark — until a solid blow knocks the wind from them.',
     upgrades: [
       { stats: { speed: 8 },  cost: { red: 30 },  requiredBiomeLevel: 2 },

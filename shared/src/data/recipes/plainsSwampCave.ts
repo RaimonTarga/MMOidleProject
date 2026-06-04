@@ -18,6 +18,7 @@ export const plainsSwampCaveRecipeEntries = [
     id: 'iron-broadsword', name: 'Iron Broadsword',
     recipeGroup: 'plains', requiredBiomeLevel: 1, slot: 'weapon',
     cost: { yellow: 14 }, stats: { attack: 8 }, attacksPerSecond: 0.65, tier: 1,
+    icon: 'items/weapons/sword-1.png',
     description: 'Mass-forged for the ranks, dependable as sunrise. Ten thousand like it have won quiet wars.',
     upgrades: [
       { stats: { attack: 3 }, cost: { yellow: 10 }, requiredBiomeLevel: 2 },
@@ -30,6 +31,7 @@ export const plainsSwampCaveRecipeEntries = [
     id: 'plains-vest-t1', name: "Survivor's Robe",
     recipeGroup: 'plains', requiredBiomeLevel: 4, slot: 'armor',
     cost: { yellow: 20 }, stats: { maxHp: 10, plating: 13 }, tier: 1,
+    icon: 'items/armor/leather-armor-1.png',
     description: 'Field plate patched and repatched by those who lived to patch it.',
     upgrades: [
       { stats: { maxHp: 3, plating: 4 }, cost: { yellow: 10 }, requiredBiomeLevel: 4 },
@@ -43,6 +45,7 @@ export const plainsSwampCaveRecipeEntries = [
     recipeGroup: 'plains', requiredBiomeLevel: 3, slot: 'mobility',
     cost: { yellow: 16 }, stats: { speed: 25 }, tier: 1,
     mechanicEffects: { 'mobility.ooc-speed-pct': 0.40 },
+    icon: 'items/boots/sandals-1.png',
     description: 'Open sandals built for crossing flat ground at a dead run.',
     upgrades: [
       { stats: { speed: 3 }, cost: { yellow: 10 }, requiredBiomeLevel: 4 },
@@ -57,6 +60,7 @@ export const plainsSwampCaveRecipeEntries = [
     cost: { yellow: 16 }, stats: { hpRegen: 4 },
     mechanicEffects: { 'defense.kill-burst-pct': 0.08 },
     tier: 1,
+    icon: 'items/charms/jewel-charm-1.png',
     description: 'A sun-warmed stone from the heart of the grasslands, humming with quiet vigor.',
     upgrades: [
       { stats: { hpRegen: 1 }, cost: { yellow: 10 }, requiredBiomeLevel: 3 },
@@ -69,6 +73,7 @@ export const plainsSwampCaveRecipeEntries = [
     id: 'plains-vest-t2', name: 'Enduring Robe',
     recipeGroup: 'plains', requiredBiomeLevel: 8, slot: 'armor',
     cost: { yellow: 50, red: 12 }, stats: { maxHp: 20, plating: 24 }, tier: 2,
+    icon: 'items/armor/plate-armor-2.png',
     description: 'Plate that has outlasted the wars it was made for, and the smith who made it.',
     upgrades: [
       { stats: { maxHp: 5, plating: 6 }, cost: { yellow: 24 }, requiredBiomeLevel: 8 },
@@ -82,6 +87,7 @@ export const plainsSwampCaveRecipeEntries = [
     recipeGroup: 'plains', requiredBiomeLevel: 7, slot: 'mobility',
     cost: { yellow: 40, red: 10 }, stats: { speed: 36 }, tier: 2,
     mechanicEffects: { 'mobility.ooc-speed-pct': 0.55 },
+    icon: 'items/boots/sandals-2.png',
     description: 'Wind-cured leather that seems to lean into every stride.',
     upgrades: [
       { stats: { speed: 3 }, cost: { yellow: 20 }, requiredBiomeLevel: 8 },
@@ -96,6 +102,7 @@ export const plainsSwampCaveRecipeEntries = [
     cost: { yellow: 40, red: 10 }, stats: { hpRegen: 7 },
     mechanicEffects: { 'defense.kill-burst-pct': 0.12 },
     tier: 2,
+    icon: 'items/charms/jewel-charm-2.png',
     description: 'A greater plains-stone, its warmth swelling with every foe laid low.',
     upgrades: [
       { stats: { hpRegen: 2 }, cost: { yellow: 20 }, requiredBiomeLevel: 7 },
@@ -108,6 +115,7 @@ export const plainsSwampCaveRecipeEntries = [
     id: 'knight-steelsword', name: "Knight's Steelsword",
     recipeGroup: 'plains', requiredBiomeLevel: 5, slot: 'weapon',
     cost: { yellow: 35, red: 8 }, stats: { attack: 20 }, attacksPerSecond: 0.80, tier: 2,
+    icon: 'items/weapons/sword-2.png',
     description: 'A knight sidearm kept keen by habit and pride — plain, proven, never flashy.',
     upgrades: [
       { stats: { attack: 8 }, cost: { yellow: 18 }, requiredBiomeLevel: 6 },
@@ -127,6 +135,7 @@ export const plainsSwampCaveRecipeEntries = [
     recipeGroup: 'swamp', requiredBiomeLevel: 1, slot: 'weapon',
     cost: { purple: 22 }, stats: { attack: 7 }, attacksPerSecond: 0.75, tier: 1,
     mechanicEffects: { 'weapon.dot-conversion-pct': 0.30, 'weapon.dot-stacks': 5 },
+    icon: 'items/weapons/rune-sword-hot-1.png',
     description: 'Crude iron scratched with heat-runes that never quite cool.',
     upgrades: [
       { stats: { attack: 3 }, cost: { purple: 10 }, requiredBiomeLevel: 2 },
@@ -141,6 +150,7 @@ export const plainsSwampCaveRecipeEntries = [
     cost: { purple: 22 }, stats: { maxHp: 24, plating: 6 },
     mechanicEffects: { 'defense.dot-resistance': 0.18 },
     tier: 1,
+    icon: 'items/armor/leather-armor-4.png',
     description: 'Marsh-cloth steeped in old wardings against rot and fume.',
     upgrades: [
       { stats: { maxHp: 6, plating: 2 }, cost: { purple: 10 }, requiredBiomeLevel: 4 },
@@ -154,6 +164,7 @@ export const plainsSwampCaveRecipeEntries = [
     recipeGroup: 'swamp', requiredBiomeLevel: 3, slot: 'mobility',
     cost: { purple: 18 }, stats: { speed: 20 }, tier: 1,
     mechanicEffects: { 'mobility.tenacity-pct': 0.30 },
+    icon: 'items/boots/leather-boots-2.png',
     description: 'Broad soles that ride the surface of soft, sucking ground.',
     upgrades: [
       { stats: { speed: 3 }, cost: { purple: 10 }, requiredBiomeLevel: 4 },
@@ -168,6 +179,7 @@ export const plainsSwampCaveRecipeEntries = [
     cost: { purple: 18 }, stats: { hpRegen: 3 },
     mechanicEffects: { 'defense.absorb-pct': 0.10 },
     tier: 1,
+    icon: 'items/charms/eye-charm-1.png',
     description: 'A preserved golem eye, still weeping faint green light.',
     upgrades: [
       { stats: { hpRegen: 1 }, cost: { purple: 10 }, requiredBiomeLevel: 3 },
@@ -182,6 +194,7 @@ export const plainsSwampCaveRecipeEntries = [
     cost: { purple: 54, green: 14 }, stats: { maxHp: 44, plating: 12 },
     mechanicEffects: { 'defense.dot-resistance': 0.30, 'defense.hit-to-dot-pct': 0.15 },
     tier: 2,
+    icon: 'items/armor/leather-armor-5.png',
     description: 'Cloth drawn from the deepest mire, where even the water has forgotten the sun.',
     upgrades: [
       { stats: { maxHp: 12, plating: 3 }, cost: { purple: 26 }, requiredBiomeLevel: 8 },
@@ -195,6 +208,7 @@ export const plainsSwampCaveRecipeEntries = [
     recipeGroup: 'swamp', requiredBiomeLevel: 7, slot: 'mobility',
     cost: { purple: 44, green: 11 }, stats: { speed: 31 }, tier: 2,
     mechanicEffects: { 'mobility.tenacity-pct': 0.45 },
+    icon: 'items/boots/leather-boots-4.png',
     description: 'Enchanted bindings that find footing where there should be none.',
     upgrades: [
       { stats: { speed: 3 }, cost: { purple: 22 }, requiredBiomeLevel: 8 },
@@ -209,6 +223,7 @@ export const plainsSwampCaveRecipeEntries = [
     cost: { purple: 44, green: 11 }, stats: { hpRegen: 6 },
     mechanicEffects: { 'defense.absorb-pct': 0.15 },
     tier: 2,
+    icon: 'items/charms/eye-charm-2.png',
     description: 'A void-touched eye that drinks deep and gives quietly back.',
     upgrades: [
       { stats: { hpRegen: 2 }, cost: { purple: 22 }, requiredBiomeLevel: 7 },
@@ -227,6 +242,7 @@ export const plainsSwampCaveRecipeEntries = [
     recipeGroup: 'cave', requiredBiomeLevel: 1, slot: 'weapon',
     cost: { red: 22 }, stats: { attack: 25 }, attacksPerSecond: 1.10, tier: 1,
     mechanicEffects: { 'weapon.dead-swing-interval': 3 },
+    icon: 'items/weapons/axe-1.png',
     description: 'A wild, top-heavy thing that fights as much as it is wielded.',
     upgrades: [
       { stats: { attack: 10 }, cost: { red: 10 }, requiredBiomeLevel: 2 },
@@ -239,6 +255,7 @@ export const plainsSwampCaveRecipeEntries = [
     id: 'cave-vest-t1', name: 'Bestial Hide',
     recipeGroup: 'cave', requiredBiomeLevel: 4, slot: 'armor',
     cost: { red: 22 }, stats: { maxHp: 16, plating: 2, damageReduction: 0.06 }, tier: 1,
+    icon: 'items/armor/bone-armor.png',
     description: 'The hide of something large and unlucky, cured to a stubborn toughness.',
     upgrades: [
       { stats: { maxHp: 4, plating: 1, damageReduction: 0.01 }, cost: { red: 10 }, requiredBiomeLevel: 4 },
@@ -252,6 +269,7 @@ export const plainsSwampCaveRecipeEntries = [
     recipeGroup: 'cave', requiredBiomeLevel: 3, slot: 'mobility',
     cost: { red: 18 }, stats: { speed: 28 }, tier: 1,
     mechanicEffects: { 'mobility.stealth-pct': 0.30 },
+    icon: 'items/boots/leather-boots-5.png',
     description: 'Stretched membrane that falls on stone without a whisper.',
     upgrades: [
       { stats: { speed: 3 }, cost: { red: 10 }, requiredBiomeLevel: 4 },
@@ -266,6 +284,7 @@ export const plainsSwampCaveRecipeEntries = [
     cost: { red: 18 }, stats: { hpRegen: 3 },
     mechanicEffects: { 'defense.regen-burst-pct': 0.08, 'defense.regen-burst-interval-ms': 8000 },
     tier: 1,
+    icon: 'items/charms/bright-charm-1.png',
     description: 'A cave-crystal that beats, slow and steady, like a sleeping heart.',
     upgrades: [
       { stats: { hpRegen: 1 }, cost: { red: 10 }, requiredBiomeLevel: 3 },
@@ -278,6 +297,7 @@ export const plainsSwampCaveRecipeEntries = [
     id: 'cave-vest-t2', name: 'Dire Bestial Hide',
     recipeGroup: 'cave', requiredBiomeLevel: 7, slot: 'armor',
     cost: { red: 54, purple: 14 }, stats: { maxHp: 30, plating: 4, damageReduction: 0.10 }, tier: 2,
+    icon: 'items/armor/plate-armor-4.png',
     description: 'From a beast the deep-cavern folk name only in low voices.',
     upgrades: [
       { stats: { maxHp: 8, plating: 1, damageReduction: 0.01 }, cost: { red: 26 }, requiredBiomeLevel: 8 },
@@ -291,6 +311,7 @@ export const plainsSwampCaveRecipeEntries = [
     recipeGroup: 'cave', requiredBiomeLevel: 7, slot: 'mobility',
     cost: { red: 44, purple: 11 }, stats: { speed: 39 }, tier: 2,
     mechanicEffects: { 'mobility.stealth-pct': 0.45 },
+    icon: 'items/boots/leather-boots-6.png',
     description: 'Worn smooth on tunnel floors no map has ever charted.',
     upgrades: [
       { stats: { speed: 3 }, cost: { red: 22 }, requiredBiomeLevel: 8 },
@@ -305,6 +326,7 @@ export const plainsSwampCaveRecipeEntries = [
     cost: { red: 44, purple: 11 }, stats: { hpRegen: 6 },
     mechanicEffects: { 'defense.regen-burst-pct': 0.15, 'defense.regen-burst-interval-ms': 8000 },
     tier: 2,
+    icon: 'items/charms/bright-charm-2.png',
     description: 'A gem that rings on its own in the dark, answering a song no one else hears.',
     upgrades: [
       { stats: { hpRegen: 2 }, cost: { red: 22 }, requiredBiomeLevel: 7 },
@@ -318,6 +340,7 @@ export const plainsSwampCaveRecipeEntries = [
     recipeGroup: 'cave', requiredBiomeLevel: 5, slot: 'weapon',
     cost: { red: 54, purple: 13 }, stats: { attack: 40 }, attacksPerSecond: 1.20, tier: 2,
     mechanicEffects: { 'weapon.dead-swing-interval': 4 },
+    icon: 'items/weapons/axe-2.png',
     description: 'Bigger, meaner, and somehow better balanced — chaos with the faintest thread of discipline.',
     upgrades: [
       { stats: { attack: 16 }, cost: { red: 26 }, requiredBiomeLevel: 6 },

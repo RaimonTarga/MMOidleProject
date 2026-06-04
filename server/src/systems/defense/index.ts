@@ -11,6 +11,7 @@ import { runPeriodicShield } from "./shields/periodicShield";
 import { runDebuffCleanse } from "./mitigation/debuffCleanse";
 import { runInCombatRegen } from "./regen/inCombatRegen";
 import { runRampRegen, resetRampRegen } from "./regen/rampRegen";
+import { registerHardening, runHardening, resetHardening } from "./mitigation/hardening";
 
 /**
  * Register all defense-layer combat pipeline listeners.
@@ -33,6 +34,7 @@ export function initDefenseSystems(): void {
   registerCheatDeath();
   registerDamageAbsorb();
   registerKillBurst();
+  registerHardening();
 }
 
 /**
@@ -59,6 +61,7 @@ export function updateDefensiveSystems(
       resetEvadeAccumulator(player);
       resetCheatDeath(player);
       resetRampRegen(player);
+      resetHardening(player);
     }
 
     if (runDebtDrain(world, player)) continue; // player died → skip remaining
@@ -69,6 +72,7 @@ export function updateDefensiveSystems(
     runDebuffCleanse(player);
     runInCombatRegen(world, player, dt);
     runRampRegen(world, player, dt);
+    runHardening(world, player, dt);
   }
 }
 

@@ -46,7 +46,10 @@
       "Bash(sqlite3 *)",
       "Bash(xargs grep -l \"grantMonsterRewards\")",
       "Bash(echo \"EXIT: $?\")",
-      "Bash(del *)"
+      "Bash(del *)",
+      "Bash(grep -E \"\\\\.\\(css|scss\\)$\")",
+      "Bash(dir /s /b \"C:\\\\Users\\\\osaif\\\\Documents\\\\Claude\\\\Projects\\\\MMO idle\\\\server\\\\src\\\\systems\\\\defense\")",
+      "Bash(powershell *)"
     ]
   }
 }

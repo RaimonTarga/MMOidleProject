@@ -18,6 +18,7 @@ export const clearingForestMountainRecipeEntries = [
     id: 'primordial-club', name: 'Primordial Club',
     recipeGroup: 'clearing', requiredBiomeLevel: 1, slot: 'weapon',
     cost: { green: 8 }, stats: { attack: 3 }, attacksPerSecond: 0.65, tier: 0,
+    icon: 'items/weapons/hammer-1.png',
     description: 'Whittled from ironwood in a single evening, and it has not snapped since.',
     upgrades: [
       { stats: { attack: 1 }, cost: { green: 5  }, requiredBiomeLevel: 2 },
@@ -31,6 +32,7 @@ export const clearingForestMountainRecipeEntries = [
     id: 'clearing-vest-t1', name: 'Bark Wrap',
     recipeGroup: 'clearing', requiredBiomeLevel: 4, slot: 'armor',
     cost: { green: 8 }, stats: { maxHp: 4, plating: 4 }, tier: 0,
+    icon: 'items/armor/rags-1.png',
     description: 'Bound bark and twine, smelling of sap and rain — the first armor any wanderer learns to make.',
     upgrades: [
       { stats: { maxHp: 1, plating: 1 }, cost: { green: 4 }, requiredBiomeLevel: 4 },
@@ -43,6 +45,7 @@ export const clearingForestMountainRecipeEntries = [
     id: 'clearing-boots-t1', name: 'Soft Boots',
     recipeGroup: 'clearing', requiredBiomeLevel: 3, slot: 'mobility',
     cost: { green: 6 }, stats: { speed: 12 }, tier: 0,
+    icon: 'items/boots/leather-boots-1.png',
     description: 'Worn soft by a hundred miles of easy trail.',
     upgrades: [
       { stats: { speed: 3 }, cost: { green: 4 }, requiredBiomeLevel: 4 },
@@ -55,6 +58,7 @@ export const clearingForestMountainRecipeEntries = [
     id: 'clearing-charm-t1', name: 'Herb Pouch',
     recipeGroup: 'clearing', requiredBiomeLevel: 2, slot: 'recovery',
     cost: { green: 6 }, stats: { hpRegen: 2 }, tier: 0,
+    icon: 'items/charms/wood-charm-1.png',
     description: 'A drawstring pouch of bruised green leaves, gathered at the forest edge.',
     upgrades: [
       { stats: { hpRegen: 1 }, cost: { green: 4 }, requiredBiomeLevel: 3 },
@@ -68,6 +72,7 @@ export const clearingForestMountainRecipeEntries = [
     id: 'flash-rapier', name: 'Flash Rapier',
     recipeGroup: 'forest', requiredBiomeLevel: 1, slot: 'weapon',
     cost: { green: 20 }, stats: { attack: 5 }, attacksPerSecond: 1.50, tier: 1,
+    icon: 'items/weapons/rapier-1.png',
     description: 'Forged thin as a reed by duelists who prized speed above all.',
     upgrades: [
       { stats: { attack: 2 }, cost: { green: 10 }, requiredBiomeLevel: 2 },
@@ -80,6 +85,7 @@ export const clearingForestMountainRecipeEntries = [
     id: 'forest-vest-t1', name: 'Shaded Bindings',
     recipeGroup: 'forest', requiredBiomeLevel: 4, slot: 'armor',
     cost: { green: 20 }, stats: { maxHp: 20, plating: 2, evasion: 0.20 }, tier: 1,
+    icon: 'items/armor/forest-armor-1.png',
     description: 'Woven in the dappled dark beneath the canopy, where shadow clings to cloth.',
     upgrades: [
       { stats: { maxHp: 5, plating: 1, evasion: 0.05 }, cost: { green: 10 }, requiredBiomeLevel: 4 },
@@ -93,6 +99,7 @@ export const clearingForestMountainRecipeEntries = [
     recipeGroup: 'forest', requiredBiomeLevel: 3, slot: 'mobility',
     cost: { green: 15 }, stats: { speed: 20 }, tier: 1,
     mechanicEffects: { 'mobility.kill-speed-pct': 0.25, 'mobility.kill-speed-ms': 3000 },
+    icon: 'items/boots/forest-boots-1.png',
     description: 'Strips of supple hide that move when you move, and never before.',
     upgrades: [
       { stats: { speed: 3 }, cost: { green: 10 }, requiredBiomeLevel: 4 },
@@ -105,6 +112,7 @@ export const clearingForestMountainRecipeEntries = [
     id: 'forest-charm-t1', name: 'Heartroot Amulet',
     recipeGroup: 'forest', requiredBiomeLevel: 2, slot: 'recovery',
     cost: { green: 15 }, stats: { hpRegen: 6 }, tier: 1,
+    icon: 'items/charms/heart-charm-1.png',
     description: 'Heartroot drawn from the oldest tree in the grove, still faintly warm.',
     upgrades: [
       { stats: { hpRegen: 2 }, cost: { green: 10 }, requiredBiomeLevel: 3 },
@@ -117,6 +125,7 @@ export const clearingForestMountainRecipeEntries = [
     id: 'forest-vest-t2', name: 'Phantom Bindings',
     recipeGroup: 'forest', requiredBiomeLevel: 8, slot: 'armor',
     cost: { green: 48, yellow: 12 }, stats: { maxHp: 43, plating: 4, evasion: 0.28 }, tier: 2,
+    icon: 'items/armor/leather-armor-3.png',
     description: 'They say the weaver vanished the day it was finished. The cloth remembers the trick.',
     upgrades: [
       { stats: { maxHp: 12, plating: 1, evasion: 0.06 }, cost: { green: 22 }, requiredBiomeLevel: 8 },
@@ -130,6 +139,7 @@ export const clearingForestMountainRecipeEntries = [
     recipeGroup: 'forest', requiredBiomeLevel: 7, slot: 'mobility',
     cost: { green: 38, yellow: 10 }, stats: { speed: 31 }, tier: 2,
     mechanicEffects: { 'mobility.kill-speed-pct': 0.35, 'mobility.kill-speed-ms': 3000 },
+    icon: 'items/boots/leather-boots-3.png',
     description: 'Light enough that the wind mistakes the wearer for one of its own.',
     upgrades: [
       { stats: { speed: 3 }, cost: { green: 18 }, requiredBiomeLevel: 8 },
@@ -142,6 +152,7 @@ export const clearingForestMountainRecipeEntries = [
     id: 'forest-charm-t2', name: 'Ancient Heartroot Amulet',
     recipeGroup: 'forest', requiredBiomeLevel: 6, slot: 'recovery',
     cost: { green: 38, yellow: 10 }, stats: { hpRegen: 10 }, tier: 2,
+    icon: 'items/charms/heart-charm-2.png',
     description: 'A relic of a grove that burned an age ago, its life somehow undimmed.',
     upgrades: [
       { stats: { hpRegen: 3 }, cost: { green: 18 }, requiredBiomeLevel: 7 },
@@ -154,6 +165,7 @@ export const clearingForestMountainRecipeEntries = [
     id: 'gale-needle', name: 'Gale Needle',
     recipeGroup: 'forest', requiredBiomeLevel: 5, slot: 'weapon',
     cost: { green: 48, yellow: 12 }, stats: { attack: 16 }, attacksPerSecond: 1.60, tier: 2,
+    icon: 'items/weapons/rapier-2.png',
     description: 'A fencing blade machined to an impossible point, humming faintly when drawn.',
     upgrades: [
       { stats: { attack: 6 }, cost: { green: 22 }, requiredBiomeLevel: 6 },
@@ -171,6 +183,7 @@ export const clearingForestMountainRecipeEntries = [
     id: 'heavy-hammer', name: 'Heavy Hammer',
     recipeGroup: 'mountain', requiredBiomeLevel: 1, slot: 'weapon',
     cost: { blue: 22 }, stats: { attack: 16 }, attacksPerSecond: 0.40, tier: 1,
+    icon: 'items/weapons/hammer-2.png',
     description: 'Two-handed, brutal, and honest. It asks only that you find the time to swing it.',
     upgrades: [
       { stats: { attack: 6 }, cost: { blue: 10 }, requiredBiomeLevel: 2 },
@@ -185,6 +198,7 @@ export const clearingForestMountainRecipeEntries = [
     cost: { blue: 22 }, stats: { maxHp: 22, plating: 7 },
     mechanicEffects: { 'defense.max-hit-pct': 0.25, 'defense.max-hit-mult': 0.5 },
     tier: 1,
+    icon: 'items/armor/plate-armor-1.png',
     description: 'Stripped from a knight who fell at the high pass and was never named.',
     upgrades: [
       { stats: { maxHp: 6, plating: 2 }, cost: { blue: 10 }, requiredBiomeLevel: 4 },
@@ -198,6 +212,7 @@ export const clearingForestMountainRecipeEntries = [
     recipeGroup: 'mountain', requiredBiomeLevel: 3, slot: 'mobility',
     cost: { blue: 18 }, stats: { speed: 18 }, tier: 1,
     mechanicEffects: { 'mobility.acquire-speed-pct': 0.50, 'mobility.acquire-speed-ms': 1500, 'mobility.acquire-cooldown-ms': 8000 },
+    icon: 'items/boots/plate-boots-1.png',
     description: 'Heavy soles that bite into scree and loose rock alike.',
     upgrades: [
       { stats: { speed: 3 }, cost: { blue: 10 }, requiredBiomeLevel: 4 },
@@ -212,6 +227,7 @@ export const clearingForestMountainRecipeEntries = [
     cost: { blue: 18 }, stats: { hpRegen: 3 },
     mechanicEffects: { 'defense.shield-pct': 0.12, 'defense.shield-interval-ms': 10000, 'defense.shield-duration-ms': 10000 },
     tier: 1,
+    icon: 'items/charms/stone-hand-charm-1.png',
     description: 'A palm of carved granite, cold and patient as the peak it came from.',
     upgrades: [
       { stats: { hpRegen: 1 }, cost: { blue: 10 }, requiredBiomeLevel: 3 },
@@ -226,6 +242,7 @@ export const clearingForestMountainRecipeEntries = [
     cost: { blue: 52, purple: 13 }, stats: { maxHp: 29, plating: 12, damageReduction: 0.05 },
     mechanicEffects: { 'defense.max-hit-pct': 0.25, 'defense.max-hit-mult': 0.5 },
     tier: 2,
+    icon: 'items/armor/plate-armor-3.png',
     description: 'Masterwork plate of the old crusades, dented in a hundred places, breached in none.',
     upgrades: [
       { stats: { maxHp: 8, plating: 3 }, cost: { blue: 26 }, requiredBiomeLevel: 8 },
@@ -239,6 +256,7 @@ export const clearingForestMountainRecipeEntries = [
     recipeGroup: 'mountain', requiredBiomeLevel: 7, slot: 'mobility',
     cost: { blue: 42, purple: 10 }, stats: { speed: 29 }, tier: 2,
     mechanicEffects: { 'mobility.acquire-speed-pct': 0.65, 'mobility.acquire-speed-ms': 1500, 'mobility.acquire-cooldown-ms': 8000 },
+    icon: 'items/boots/plate-boots-2.png',
     description: 'Forged for those who treat a sheer slope as a road.',
     upgrades: [
       { stats: { speed: 3 }, cost: { blue: 20 }, requiredBiomeLevel: 8 },
@@ -253,6 +271,7 @@ export const clearingForestMountainRecipeEntries = [
     cost: { blue: 42, purple: 10 }, stats: { hpRegen: 6 },
     mechanicEffects: { 'defense.shield-pct': 0.18, 'defense.shield-interval-ms': 8000, 'defense.shield-duration-ms': 8000 },
     tier: 2,
+    icon: 'items/charms/stone-hand-charm-2.png',
     description: 'A ward-stone the mountainfolk pass down, hand to weathered hand.',
     upgrades: [
       { stats: { hpRegen: 2 }, cost: { blue: 20 }, requiredBiomeLevel: 7 },
@@ -265,6 +284,7 @@ export const clearingForestMountainRecipeEntries = [
     id: 'quake-hammer', name: 'Quake Hammer',
     recipeGroup: 'mountain', requiredBiomeLevel: 5, slot: 'weapon',
     cost: { blue: 52, purple: 13 }, stats: { attack: 32 }, attacksPerSecond: 0.40, tier: 2,
+    icon: 'items/weapons/hammer-2.png',
     description: 'When it lands, the ground remembers it longer than the foe does.',
     upgrades: [
       { stats: { attack: 13 }, cost: { blue: 26 }, requiredBiomeLevel: 6 },

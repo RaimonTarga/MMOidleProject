@@ -3,6 +3,7 @@ import { EQUIPMENT_SLOTS, ITEM_DATABASE } from '@mmo-idle/shared';
 import { hudBus } from '../../hudBus';
 import { equipmentAtom, itemUpgradesAtom } from '../../hud/atoms';
 import { SLOT_LABELS, tierColor } from './constants';
+import { ItemIcon } from '../ItemIcon';
 import type { FocusedItem } from './useFocus';
 
 interface Props {
@@ -45,8 +46,9 @@ export function EquipmentSlots({ focused, onFocus }: Props) {
                 style={color ? { background: `${color}10` } : undefined}
               >
                 {!filled && <span className="inv-equip-slot__dash">—</span>}
-                {color && (
-                  <span className="inv-slot-tier-pip" style={{ background: `${color}cc` }} />
+                {filled && (def?.icon
+                  ? <ItemIcon frameName={def.icon} />
+                  : <span className="inv-slot-tier-pip" style={{ background: `${color}cc` }} />
                 )}
               </div>
               <div className="inv-equip-slot__footer">
