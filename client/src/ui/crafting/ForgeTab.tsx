@@ -203,7 +203,15 @@ export function ForgeTab() {
                   </div>
                 )}
 
-                <div className="craft-recipe__icon" data-slot={recipe.slot}>
+                <div
+                  className="craft-recipe__icon"
+                  data-slot={recipe.slot}
+                  style={{
+                    borderColor: `${tierColor(recipe.tier)}77`,
+                    background:  `${tierColor(recipe.tier)}0d`,
+                    color:       `${tierColor(recipe.tier)}cc`,
+                  }}
+                >
                   {recipe.icon
                     ? <ItemIcon frameName={recipe.icon} />
                     : SLOT_ABBR[recipe.slot] ?? recipe.slot.slice(0, 3).toUpperCase()}

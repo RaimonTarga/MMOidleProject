@@ -213,7 +213,15 @@ export function UpgradeTab() {
                   </div>
                 )}
 
-                <div className="craft-recipe__icon" data-slot={slot}>
+                <div
+                  className="craft-recipe__icon"
+                  data-slot={slot}
+                  style={{
+                    borderColor: `${tierColor(def.tier)}77`,
+                    background:  `${tierColor(def.tier)}0d`,
+                    color:       `${tierColor(def.tier)}cc`,
+                  }}
+                >
                   {def.icon
                     ? <ItemIcon frameName={def.icon} />
                     : SLOT_LABELS[slot]?.slice(0, 3).toUpperCase()}
