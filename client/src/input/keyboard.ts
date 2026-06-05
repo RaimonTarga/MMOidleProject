@@ -128,7 +128,7 @@ export function attachKeyboard(scene: GameScene): () => void {
     if (event.repeat) return;
 
     // Enter: trigger the rune altar interaction for the arc the player stands in.
-    if (event.code === 'Enter') {
+    if (event.code === 'Enter' || event.code === 'NumpadEnter') {
       if (dead) return;
       const arc = getAltarArc(scene);
       if (arc && ALTAR_ARC_CONFIG[arc].action === 'resetClass') {
