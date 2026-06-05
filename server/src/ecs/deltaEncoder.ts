@@ -39,15 +39,32 @@ function quantizeComponentForWire(
   return value;
 }
 
+/**
+ * Build the full set of wire-quantized networked components for an entity (all
+ * keys for its kind). Returns `null` if the entity is not networkable. Used by
+ * both the add path and the value-diff patch path so the bytes compared and the
+ * bytes sent are identical.
+ */
+export function componentsForEntity(
+  entity: ServerEntity,
+): { entityKind: NonNullable<ReturnType<typeof entityNetworkKind>>; components: Partial<NetworkedEntity> } | null {
+  const entityKind = entityNetworkKind(entity);
+  if (!entityKind) return null;
+  return {
+    entityKind,
+    components: pickComponents(entity, networkedKeysForKind(entityKind)),
+  };
+}
+
 export function encodeAdd(entity: ServerEntity): AddEntityDelta | null {
   const netId = entityNetworkId(entity);
-  const entityKind = entityNetworkKind(entity);
-  if (!netId || !entityKind) return null;
+  const built = componentsForEntity(entity);
+  if (!netId || !built) return null;
   return {
     kind: "add",
     netId,
-    entityKind,
-    components: pickComponents(entity, networkedKeysForKind(entityKind)),
+    entityKind: built.entityKind,
+    components: built.components,
   };
 }
 

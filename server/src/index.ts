@@ -185,6 +185,11 @@ initCombatSystems();
 // accountId → socketId map for the auto-save interval
 const socketByAccount = new Map<string, string>();
 
+// Sockets whose tab is currently hidden/backgrounded. While a socket is here,
+// the broadcast loop skips its high-volume node:delta / world:events stream; the
+// client requests a full resync when the tab regains focus.
+const inactiveSockets = new Set<string>();
+
 /** Server-global key for the persisted Void Overlord respawn cooldown. */
 const OVERLORD_RESPAWN_KEY = "void-overlord-respawn";
 
@@ -320,10 +325,23 @@ async function boot(): Promise<void> {
   setInterval(() => {
     const dirty = world.beginBroadcast();
     const nodeSnaps = new Map<string, DeltaSnapshot>();
+    const occupiedNodes = new Set<string>();
+    const activeNodes = new Set<string>();
     for (const player of world.playerEntities) {
       const sock = io.sockets.sockets.get(player.isPlayer.id);
       if (!sock) continue;
       const nodeId = player.hasPosition.nodeId;
+      occupiedNodes.add(nodeId);
+
+      // Hidden tab: skip its high-volume stream and drop any queued world-log
+      // events so a backgrounded auto-combat player can't accumulate them
+      // unbounded. State is rebuilt via state:sync when the tab regains focus.
+      if (inactiveSockets.has(player.isPlayer.id)) {
+        takeWorldLogEvents(world, player.isPlayer.id);
+        continue;
+      }
+      activeNodes.add(nodeId);
+
       if (!nodeSnaps.has(nodeId)) {
         const timed = timeSync(() =>
           world.buildNodeDeltaWithStats(nodeId, dirty),
@@ -338,6 +356,13 @@ async function boot(): Promise<void> {
       if (logEvents.length > 0) {
         sock.emit("world:events", logEvents);
       }
+    }
+
+    // Drain transient combat events for occupied nodes that no active viewer
+    // built a snapshot for this tick (every viewer hidden), so the per-node
+    // event queue can't grow without bound while a node is fully backgrounded.
+    for (const nodeId of occupiedNodes) {
+      if (!activeNodes.has(nodeId)) world.takeNodeEvents(nodeId);
     }
   }, BROADCAST_MS);
 
@@ -536,6 +561,12 @@ async function boot(): Promise<void> {
       recordBroadcast(snap, "state:sync");
       socket.emit("state:sync", snap);
       emitBossFelledState();
+    });
+
+    socket.on("player:setActive", (active) => {
+      if (typeof active !== "boolean") return;
+      if (active) inactiveSockets.delete(socket.id);
+      else inactiveSockets.add(socket.id);
     });
 
     socket.on("player:unlockSkill", (skillId) => {
@@ -805,6 +836,7 @@ async function boot(): Promise<void> {
         );
       }
       handlePartyDisconnect(world, socket.id);
+      inactiveSockets.delete(socket.id);
       // Only remove the account entry if it still points to this socket.
       // A kicked socket's disconnect fires after the new session has already
       // overwritten the entry — deleting it would silently log out the new tab.

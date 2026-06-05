@@ -12,8 +12,19 @@ import {
   NODE_BIOMES,
   TEST_ROOM_NODE_ID,
   type DeathCause,
+  type NetworkedComponentKey,
   type Vec2,
 } from "@mmo-idle/shared";
+
+/**
+ * Per-broadcast delta state for one node. Maps each known entity's network id to
+ * the JSON-serialized, wire-quantized value of every networked slice last sent
+ * for that entity. The encoder diffs current values against these to send only
+ * slices that actually changed (value-diff). An entry's presence also marks the
+ * entity as a current member of the node's delta stream.
+ */
+export type NodeSentSlices = Map<NetworkedComponentKey, string>;
+export type NodeDeltaState = Map<string, NodeSentSlices>;
 import { updateAutoTargets } from "../systems/combat/ai/autoTarget";
 import { updateRuneDerivedConfig } from "../systems/combat/ai/runeConfig";
 import { updateAutoTraverse } from "../systems/world/autoTraverse";
@@ -255,7 +266,7 @@ export class World {
   readonly playerById = new Map<EntityId, PlayerEntity>();
   readonly monsterById = new Map<EntityId, MonsterEntity>();
   readonly minionById = new Map<EntityId, MinionEntity>();
-  private readonly nodeMembership = new Map<string, Set<string>>();
+  private readonly nodeMembership = new Map<string, NodeDeltaState>();
 
   constructor(nodeId = "node-5-5") {
     const node = NODE_REGISTRY.get(nodeId);
@@ -536,11 +547,11 @@ export class World {
     return this.dirty.drain();
   }
 
-  /** Lazily initialize and return the membership set for `nodeId`. */
-  getOrCreateNodeMembership(nodeId: string): Set<string> {
+  /** Lazily initialize and return the per-node delta state for `nodeId`. */
+  getOrCreateNodeMembership(nodeId: string): NodeDeltaState {
     let members = this.nodeMembership.get(nodeId);
     if (!members) {
-      members = new Set();
+      members = new Map();
       this.nodeMembership.set(nodeId, members);
     }
     return members;

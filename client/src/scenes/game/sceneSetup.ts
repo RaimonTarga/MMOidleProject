@@ -13,6 +13,7 @@ import { applyWorldLogEvents } from "../../worldLog/formatWorldLog";
 import { loadGameplaySettings } from "../../settings/gameplaySettings";
 import {
   sendRequestSync,
+  sendSetActive,
   sendSetAutocombatConfig,
   sendSetAutoTraverse,
 } from "../../net/intents";
@@ -198,10 +199,14 @@ export function createGameScene(scene: GameScene): void {
 
   function onVisibilityChange(): void {
     if (document.hidden) {
+      // Tell the server to pause our high-volume stream; we'll resync on return.
+      if (scene.socket.connected) sendSetActive(scene.socket, false);
       onDocumentHidden();
       return;
     }
     if (scene.socket.connected) {
+      // Resume streaming first, then pull a fresh full snapshot to catch up.
+      sendSetActive(scene.socket, true);
       sendRequestSync(scene.socket);
     }
     beginTabResync(scene.state, scene);
@@ -275,6 +280,8 @@ function connectSocket(scene: GameScene): void {
     onConnect: (socket) => {
       scene.myId = socket.id ?? "";
       atomStore.set(statusAtom, "connected");
+      // Re-assert tab focus so a reconnect while hidden doesn't resume streaming.
+      sendSetActive(socket, !document.hidden);
       const gameplaySettings = loadGameplaySettings();
       sendSetAutoTraverse(socket, gameplaySettings.autoTraverseEnabled);
       sendSetAutocombatConfig(socket, gameplaySettings.autocombat);

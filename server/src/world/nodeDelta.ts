@@ -1,12 +1,13 @@
 import {
-  networkedKeysForKind,
   type DeltaSnapshot,
   type EntityDelta,
+  type NetworkedComponentKey,
+  type NetworkedEntity,
 } from "@mmo-idle/shared";
-import type { World } from "./World";
+import type { World, NodeDeltaState } from "./World";
 import type { ServerEntity } from "../ecs/entity";
-import { entityNetworkId, entityNetworkKind } from "../ecs/entity";
-import { encodeAdd, encodePatch } from "../ecs/deltaEncoder";
+import { entityNetworkId } from "../ecs/entity";
+import { componentsForEntity } from "../ecs/deltaEncoder";
 import type { DirtyDrain } from "../ecs/dirtyTracker";
 import type { BroadcastStats } from "../telemetry/nodeTelemetry";
 
@@ -57,7 +58,7 @@ export function buildNodeDelta(
     else if (kind === 'patch') patches++;
   }
 
-  for (const netId of [...members]) {
+  for (const netId of [...members.keys()]) {
     if (liveIds.has(netId)) continue;
     deltas.push({ kind: 'remove', netId });
     members.delete(netId);
@@ -105,29 +106,72 @@ export function buildNodeDelta(
 function encodeNodeEntityDelta(
   entity: ServerEntity,
   dirty: DirtyDrain,
-  members: Set<string>,
+  members: NodeDeltaState,
   liveIds: Set<string>,
   deltas: EntityDelta[],
 ): 'add' | 'patch' | 'none' {
   const netId = entityNetworkId(entity);
   if (!netId) return 'none';
   liveIds.add(netId);
-  if (!members.has(netId)) {
-    const add = encodeAdd(entity);
-    if (!add) return 'none';
-    deltas.push(add);
-    members.add(netId);
+
+  const built = componentsForEntity(entity);
+  if (!built) return 'none';
+  const { entityKind, components } = built;
+
+  // Serialize each present slice once (wire-quantized) for value comparison.
+  const currentStrings = new Map<NetworkedComponentKey, string>();
+  for (const key of Object.keys(components) as NetworkedComponentKey[]) {
+    currentStrings.set(key, JSON.stringify(components[key]));
+  }
+
+  const sent = members.get(netId);
+  if (!sent) {
+    // New to this node's delta stream → full add; seed the sent-value store.
+    deltas.push({ kind: 'add', netId, entityKind, components });
+    members.set(netId, currentStrings);
     return 'add';
   }
 
-  const entityKind = entityNetworkKind(entity);
-  if (!entityKind) return 'none';
-  const patchKeys = new Set(networkedKeysForKind(entityKind));
-  for (const key of dirty.patched.get(netId) ?? []) patchKeys.add(key);
-  const patch = encodePatch(entity, patchKeys, dirty.detached.get(netId));
-  if (patch) {
-    deltas.push(patch);
-    return 'patch';
+  // Value-diff (hybrid safety net): include a slice only when its serialized
+  // value actually changed since the last broadcast, regardless of whether the
+  // mutating system remembered to mark it dirty. A slice present before but
+  // absent now is reported as removed. dirty.detached is unioned in for
+  // robustness.
+  const patchComponents: Partial<NetworkedEntity> = {};
+  let changed = 0;
+  const removedKeys: NetworkedComponentKey[] = [];
+
+  for (const [key, str] of currentStrings) {
+    if (sent.get(key) !== str) {
+      (patchComponents as Record<string, unknown>)[key] = components[key];
+      sent.set(key, str);
+      changed++;
+    }
   }
-  return 'none';
+
+  for (const key of [...sent.keys()]) {
+    if (!currentStrings.has(key)) {
+      removedKeys.push(key);
+      sent.delete(key);
+    }
+  }
+
+  const detached = dirty.detached.get(netId);
+  if (detached) {
+    for (const key of detached) {
+      if (!currentStrings.has(key) && !removedKeys.includes(key)) {
+        removedKeys.push(key);
+        sent.delete(key);
+      }
+    }
+  }
+
+  if (changed === 0 && removedKeys.length === 0) return 'none';
+  deltas.push({
+    kind: 'patch',
+    netId,
+    components: changed > 0 ? patchComponents : undefined,
+    removed: removedKeys.length > 0 ? removedKeys : undefined,
+  });
+  return 'patch';
 }

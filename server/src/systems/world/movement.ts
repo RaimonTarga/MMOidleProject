@@ -11,6 +11,7 @@ import type { World } from '../../world/World';
 import { NODE_REGISTRY } from '../../world/nodeRegistry';
 import type { ServerEntity } from '../../ecs/entity';
 import { attachComponent, detachComponent } from '../../ecs/markerHelpers';
+import { markSliceDirty } from '../../ecs/dirtyHelpers';
 import { resolveObstaclesForNode } from './nodeFeatures';
 import { bootSpeedMultiplier } from './mobility/mobilityBoots';
 
@@ -66,10 +67,12 @@ export function updateMovement(world: World, dt: number, now: number) {
     );
     const blocked = resolved !== next.position;
     entity.hasPosition.current = resolved;
+    markSliceDirty(world, entity, 'hasPosition');
     if (blocked) {
       stopEntity(world, entity);
     } else if (next.motion.magnitude > 0) {
       entity.isMoving.motion = next.motion;
+      markSliceDirty(world, entity, 'isMoving');
     } else {
       stopEntity(world, entity);
     }
@@ -102,10 +105,12 @@ export function updateMovement(world: World, dt: number, now: number) {
     );
     const blocked = resolved !== next.position;
     e.hasPosition.current = resolved;
+    markSliceDirty(world, e, 'hasPosition');
     if (blocked) {
       stopEntity(world, e);
     } else if (next.motion.magnitude > 0) {
       e.isMoving.motion = next.motion;
+      markSliceDirty(world, e, 'isMoving');
     } else {
       stopEntity(world, e);
     }
@@ -143,10 +148,12 @@ export function updateMovement(world: World, dt: number, now: number) {
     );
     const blocked = resolved !== next.position;
     e.hasPosition.current = resolved;
+    markSliceDirty(world, e, 'hasPosition');
     if (blocked) {
       stopEntity(world, e);
     } else if (next.motion.magnitude > 0) {
       e.isMoving.motion = next.motion;
+      markSliceDirty(world, e, 'isMoving');
     } else {
       stopEntity(world, e);
     }
