@@ -95,6 +95,8 @@ export function killPlayer(
     },
   );
 
+  world.analyticsPlayerDeath?.(playerId, entity.hasPosition.nodeId);
+
   world.pendingDeaths.push({ playerId, payload });
 }
 

@@ -1,10 +1,26 @@
 # Local dev + Railway simulation.
 #
-#   pnpm db:up        → start just Postgres (for native `pnpm dev:server`)
-#   pnpm docker:up    → build + run the full app + Postgres (mirrors Railway)
+#   pnpm db:up           → start just Postgres (for native `pnpm dev:server`)
+#   pnpm docker:dev      → hot-reload dev stack (bind-mounted source, no rebuild on edit)
+#   pnpm docker:rebuild  → rebuild dev image + refresh node_modules volumes (after dep changes)
+#   pnpm docker:up       → build + run the full app + Postgres (mirrors Railway)
 #
 # The `db` service has no profile, so it starts by default. The `app` service is
-# gated behind the `full` profile so day-to-day dev only spins up Postgres.
+# gated behind the `full` profile; `server-dev` / `client-dev` / `admin-dev` use `dev`.
+x-dev-image: &dev-image
+  image: mmo-idle-dev:latest
+  build:
+    context: .
+    dockerfile: Dockerfile.dev
+
+x-dev-src-volumes: &dev-src-volumes
+  - .:/app
+  - dev-root-node-modules:/app/node_modules
+  - dev-server-node-modules:/app/server/node_modules
+  - dev-client-node-modules:/app/client/node_modules
+  - dev-admin-node-modules:/app/admin/node_modules
+  - dev-shared-node-modules:/app/shared/node_modules
+
 services:
   db:
     image: postgres:16-alpine
@@ -24,6 +40,36 @@ services:
       timeout: 3s
       retries: 15
 
+  logdb:
+    image: postgres:16-alpine
+    container_name: mmo-logdb
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: logdb
+    ports:
+      - "5433:5432"
+    volumes:
+      - logdb-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d logdb"]
+      interval: 3s
+      timeout: 3s
+      retries: 15
+
+  redis:
+    image: redis:7-alpine
+    container_name: mmo-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 3s
+      timeout: 3s
+      retries: 15
+
   app:
     profiles: ["full"]
     build:
@@ -39,6 +85,9 @@ services:
       # Reaches the db service over the compose network (mirrors Railway's
       # private-network DATABASE_URL reference).
       DATABASE_URL: postgresql://postgres:postgres@db:5432/gamedb
+      LOG_DATABASE_URL: postgresql://postgres:postgres@logdb:5432/logdb
+      REDIS_URL: redis://redis:6379
+      LOG_RETENTION_DAYS: "7"
       PORT: "4000"
       NODE_ENV: production
       # Runtime flag that turns on the server's dev tooling (test room, dev items)
@@ -50,6 +99,69 @@ services:
     depends_on:
       db:
         condition: service_healthy
+      logdb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  server-dev:
+    <<: *dev-image
+    profiles: ["dev"]
+    container_name: mmo-server-dev
+    command: pnpm --filter @mmo-idle/server dev:docker
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/gamedb
+      LOG_DATABASE_URL: postgresql://postgres:postgres@logdb:5432/logdb
+      REDIS_URL: redis://redis:6379
+      LOG_RETENTION_DAYS: "7"
+      PORT: "4000"
+      NODE_ENV: development
+      DEV_TOOLS: "true"
+      CHOKIDAR_USEPOLLING: "true"
+    volumes: *dev-src-volumes
+    ports:
+      - "4000:4000"
+    depends_on:
+      db:
+        condition: service_healthy
+      logdb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  client-dev:
+    <<: *dev-image
+    profiles: ["dev"]
+    container_name: mmo-client-dev
+    command: pnpm --filter @mmo-idle/client dev
+    environment:
+      CHOKIDAR_USEPOLLING: "true"
+      VITE_ENABLE_OPS_MAP: "true"
+      VITE_DEV_TOOLS: "true"
+    volumes: *dev-src-volumes
+    ports:
+      - "3000:3000"
+    depends_on:
+      - server-dev
+
+  admin-dev:
+    <<: *dev-image
+    profiles: ["dev"]
+    container_name: mmo-admin-dev
+    command: pnpm --filter @mmo-idle/admin dev
+    environment:
+      CHOKIDAR_USEPOLLING: "true"
+    volumes: *dev-src-volumes
+    ports:
+      - "3001:3001"
+    depends_on:
+      - server-dev
 
 volumes:
   gamedb-data:
+  logdb-data:
+  dev-root-node-modules:
+  dev-server-node-modules:
+  dev-client-node-modules:
+  dev-admin-node-modules:
+  dev-shared-node-modules:

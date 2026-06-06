@@ -2,6 +2,7 @@ import { eq } from 'drizzle-orm';
 import { randomUUID } from 'crypto';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import type {
+  AdminCharacterRecord,
   HasHealth,
   HasPosition,
   HoldsInventory,
@@ -14,7 +15,7 @@ import type { PlayerEntity } from '../ecs/entity';
 import { accounts, characters } from './schema';
 import type * as schema from './schema';
 
-type DB = NodePgDatabase<typeof schema>;
+export type DB = NodePgDatabase<typeof schema>;
 
 export interface PersistedPlayerSlices {
   isPlayer:          IsPlayer;
@@ -92,6 +93,46 @@ export async function saveCharacter(db: DB, accountId: string, entity: PlayerEnt
       updatedAt:         Date.now(),
     })
     .where(eq(characters.accountId, accountId));
+}
+
+export async function listCharacters(db: DB): Promise<AdminCharacterRecord[]> {
+  const rows = await db
+    .select({
+      character: characters,
+      accountDisplayName: accounts.displayName,
+    })
+    .from(characters)
+    .leftJoin(accounts, eq(characters.accountId, accounts.id));
+
+  return rows.map(({ character, accountDisplayName }) => {
+    const slices = hydratePlayerSlices(character);
+    const equipmentCount = Object.values(slices.holdsInventory.equipment)
+      .filter((itemId): itemId is string => typeof itemId === 'string')
+      .length;
+    return {
+      id: character.id,
+      accountId: character.accountId,
+      accountDisplayName: accountDisplayName ?? slices.isPlayer.name,
+      name: slices.isPlayer.name,
+      nodeId: slices.hasPosition.nodeId,
+      hp: slices.hasHealth.hp,
+      maxHp: slices.hasHealth.maxHp,
+      level: slices.tracksProgression.level,
+      playerTier: slices.tracksProgression.playerTier,
+      skillPoints: slices.tracksProgression.skillPoints,
+      combatArchetype: slices.usesSkills.combatArchetype,
+      selectedClass: slices.usesSkills.selectedClass,
+      selectedSubVariant: slices.usesSkills.selectedSubVariant,
+      selectedRange: slices.usesSkills.selectedRange,
+      essences: slices.tracksProgression.essences,
+      biomeLevel: slices.tracksProgression.biomeLevel,
+      clearedNodes: slices.tracksProgression.clearedNodes,
+      bossesCleared: slices.tracksProgression.bossesCleared,
+      inventoryCount: slices.holdsInventory.inventory.length,
+      equipmentCount,
+      updatedAt: character.updatedAt,
+    };
+  });
 }
 
 // ── Internals ─────────────────────────────────────────────────────────────────

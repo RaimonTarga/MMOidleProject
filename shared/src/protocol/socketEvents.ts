@@ -57,6 +57,12 @@ export interface ClientToServerEvents {
   "player:navigateTo": (nodeId: string) => void;
   /** Request a fresh authoritative full snapshot for the player's current node. */
   "player:requestSync": () => void;
+  /**
+   * Report tab focus. When `false` (tab hidden), the server pauses this socket's
+   * high-volume `node:delta` / `world:events` stream; when `true`, streaming
+   * resumes (the client also requests a full resync on focus).
+   */
+  "player:setActive": (active: boolean) => void;
   /** Request to unlock a skill tree node by ID. Server validates and applies. */
   "player:unlockSkill": (skillId: string) => void;
   /** Reset the perk tree (refund spent skill points; keep tier/items). Altar-gated. */
