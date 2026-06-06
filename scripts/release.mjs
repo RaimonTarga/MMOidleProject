@@ -5,6 +5,8 @@ import path from 'node:path';
 import process from 'node:process';
 
 const ROOT = path.resolve(import.meta.dirname, '..');
+const DEVELOPMENT_BRANCH = 'develop';
+const PRODUCTION_BRANCH = 'master';
 const RELEASE_BRANCH_PREFIX = 'release-v';
 const RELEASE_PATHS = [
   'package.json',
@@ -27,7 +29,7 @@ function main() {
 
   const version = normalizeVersion(versionArg);
   if (!version) {
-    fail('Expected a semantic version like 1.2.3.');
+    fail('Expected a major.minor version like 1.2.');
   }
 
   if (command === 'prepare') {
@@ -43,7 +45,7 @@ function main() {
 }
 
 function prepareRelease(version, flags) {
-  requireBranch('develop', flags);
+  requireBranch(DEVELOPMENT_BRANCH);
   const dryRun = flags.has('--dry-run');
   const releaseBranch = `${RELEASE_BRANCH_PREFIX}${version}`;
   ensureReleaseBranchAvailable(releaseBranch);
@@ -70,7 +72,7 @@ function prepareRelease(version, flags) {
 }
 
 function cutRelease(version, flags) {
-  requireBranch('develop', flags);
+  requireBranch(DEVELOPMENT_BRANCH);
   const releaseBranch = `${RELEASE_BRANCH_PREFIX}${version}`;
   ensureReleaseBranchAvailable(releaseBranch);
   ensureNoUnrelatedChanges(version);
@@ -81,14 +83,14 @@ function cutRelease(version, flags) {
 
   commitReleaseChanges(version);
 
-  ensureLatestCanFastForward();
+  ensureProductionCanFastForward();
   run('git', ['branch', releaseBranch, 'HEAD']);
-  run('git', ['branch', '-f', 'latest', 'HEAD']);
-  run('git', ['push', 'origin', 'develop'], { stdio: 'inherit' });
+  run('git', ['branch', '-f', PRODUCTION_BRANCH, 'HEAD']);
+  run('git', ['push', 'origin', DEVELOPMENT_BRANCH], { stdio: 'inherit' });
   run('git', ['push', 'origin', releaseBranch], { stdio: 'inherit' });
-  run('git', ['push', 'origin', 'latest'], { stdio: 'inherit' });
+  run('git', ['push', 'origin', PRODUCTION_BRANCH], { stdio: 'inherit' });
 
-  console.log(`[release] cut ${releaseBranch} and moved latest`);
+  console.log(`[release] cut ${releaseBranch} and advanced ${PRODUCTION_BRANCH}`);
 }
 
 function buildChangelog(version, releasedAt) {
@@ -192,30 +194,36 @@ function ensureReleaseBranchAvailable(branch) {
   }
 }
 
-function ensureLatestCanFastForward() {
-  const latestRef = refExists('latest') ? 'latest' : refExists('origin/latest') ? 'origin/latest' : null;
-  if (!latestRef) return;
-  if (commandStatus('git', ['merge-base', '--is-ancestor', latestRef, 'HEAD']) !== 0) {
-    fail('latest cannot fast-forward to HEAD. Resolve the branch history before cutting the release.');
+function ensureProductionCanFastForward() {
+  const productionRef = refExists(`origin/${PRODUCTION_BRANCH}`)
+    ? `origin/${PRODUCTION_BRANCH}`
+    : refExists(PRODUCTION_BRANCH)
+      ? PRODUCTION_BRANCH
+      : null;
+  if (!productionRef) {
+    fail(`${PRODUCTION_BRANCH} branch not found. Create it before cutting a release.`);
+  }
+  if (commandStatus('git', ['merge-base', '--is-ancestor', productionRef, 'HEAD']) !== 0) {
+    fail(`${PRODUCTION_BRANCH} cannot fast-forward to HEAD. Merge or rebase ${DEVELOPMENT_BRANCH} onto ${PRODUCTION_BRANCH} before cutting the release.`);
   }
 }
 
 function resolvePreviousReleaseRef() {
-  if (refExists('latest')) return 'latest';
-  if (refExists('origin/latest')) return 'origin/latest';
+  if (refExists(`origin/${PRODUCTION_BRANCH}`)) return `origin/${PRODUCTION_BRANCH}`;
+  if (refExists(PRODUCTION_BRANCH)) return PRODUCTION_BRANCH;
   const refs = git(['for-each-ref', '--format=%(refname:short)', 'refs/heads', 'refs/remotes/origin'])
     .split('\n')
     .map((ref) => ref.trim())
     .filter(Boolean)
-    .filter((ref) => /(^|\/)release-v\d+\.\d+\.\d+$/.test(ref));
+    .filter((ref) => /(^|\/)release-v\d+\.\d+$/.test(ref));
   refs.sort(compareReleaseRefs);
   return refs.at(-1) ?? null;
 }
 
 function compareReleaseRefs(a, b) {
-  const av = semverParts(a.replace(/^origin\//, '').replace(RELEASE_BRANCH_PREFIX, ''));
-  const bv = semverParts(b.replace(/^origin\//, '').replace(RELEASE_BRANCH_PREFIX, ''));
-  for (let i = 0; i < 3; i++) {
+  const av = versionParts(a.replace(/^origin\//, '').replace(RELEASE_BRANCH_PREFIX, ''));
+  const bv = versionParts(b.replace(/^origin\//, '').replace(RELEASE_BRANCH_PREFIX, ''));
+  for (let i = 0; i < 2; i++) {
     if (av[i] !== bv[i]) return av[i] - bv[i];
   }
   return a.localeCompare(b);
@@ -230,8 +238,7 @@ function gitLog(range) {
   });
 }
 
-function requireBranch(expected, flags) {
-  if (flags.has('--allow-current-branch')) return;
+function requireBranch(expected) {
   const current = git(['branch', '--show-current']).trim();
   if (current !== expected) {
     fail(`Release commands must run on ${expected}; current branch is ${current || '(detached)'}.`);
@@ -279,22 +286,22 @@ function writeJson(file, value) {
 function normalizeVersion(value) {
   if (typeof value !== 'string') return null;
   const version = value.trim().replace(/^v/i, '');
-  return /^\d+\.\d+\.\d+$/.test(version) ? version : null;
+  return /^\d+\.\d+$/.test(version) ? version : null;
 }
 
-function semverParts(version) {
+function versionParts(version) {
   return version.split('.').map((part) => Number(part));
 }
 
 function printHelp() {
   console.log(`Usage:
-  pnpm release:prepare 1.2.3 [--dry-run] [--allow-current-branch]
-  pnpm release:cut 1.2.3 [--skip-checks] [--allow-current-branch]
+  pnpm release:prepare 1.2 [--dry-run]
+  pnpm release:cut 1.2 [--skip-checks]
 
 Branch model:
-  develop              in-flight integration branch
-  release-vX.Y.Z       immutable release snapshot
-  latest               branch Railway deploys
+  develop              in-flight work for the next release
+  master               production branch Railway deploys
+  release-vX.Y         immutable release snapshot
 `);
 }
 
