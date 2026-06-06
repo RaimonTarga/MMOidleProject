@@ -5,6 +5,12 @@
       "title": "Smarter Auto-Combat",
       "releasedAt": 1780456120691,
       "markdownPath": "v0.01/changelog.md"
+    },
+    {
+      "version": "0.2",
+      "title": "Release 0.2",
+      "releasedAt": 1780778921397,
+      "markdownPath": "v0.2/changelog.md"
     }
   ]
 }
