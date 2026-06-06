@@ -1,6 +1,7 @@
-import { useState } from 'react';
 import { useAtomValue } from 'jotai';
 import { BuffBar, CadenceTimeline, DefensePassivesSection, MobilityPassivesSection, StatRow, SummonSlotBar } from './components';
+import { useHoverTooltip } from './tooltip';
+import { STAT_HELP } from './statHelp';
 import {
   ammoCountAtom,
   ammoMaxAtom,
@@ -44,7 +45,7 @@ import {
 } from '../atoms';
 
 export function StatPanel() {
-  const [expanded, setExpanded] = useState(false);
+  const hpTip = useHoverTooltip(STAT_HELP.hp);
   const playerId = useAtomValue(playerIdAtom);
   const status = useAtomValue(statusAtom);
   const name = useAtomValue(playerNameAtom);
@@ -151,7 +152,7 @@ export function StatPanel() {
 
       {/* HP bar */}
       <div className="stat-section">
-        <div className="stat-row">
+        <div className="stat-row stat-row--help" {...hpTip.handlers}>
           <span className="stat-label">HP</span>
           <span className="stat-value">
             {player
@@ -160,6 +161,7 @@ export function StatPanel() {
                 : `${Math.ceil(player.hp)} / ${player.maxHp}`
               : '— / —'}
           </span>
+          {hpTip.node}
         </div>
         <div className="hp-bar-track">
           <div className="hp-bar-fill" style={{ width: `${hpPct}%`, background: hpBarColor }} />
@@ -171,16 +173,16 @@ export function StatPanel() {
 
       {/* Core combat stats */}
       <div className="stat-section">
-        <StatRow label="Attack"     value={player?.attack    ?? '—'} />
-        <StatRow label="DPS"        value={dps} />
-        <StatRow label="Atk Speed"  value={player ? `${aps} APS (${cdSec}s)` : '—'} />
-        <StatRow label="Plating"    value={player?.plating   ?? '—'} />
+        <StatRow label="Attack"     value={player?.attack    ?? '—'} help={STAT_HELP.attack} />
+        <StatRow label="DPS"        value={dps} help={STAT_HELP.dps} />
+        <StatRow label="Atk Speed"  value={player ? `${aps} APS (${cdSec}s)` : '—'} help={STAT_HELP.atkSpeed} />
+        <StatRow label="Plating"    value={player?.plating   ?? '—'} help={STAT_HELP.plating} />
         {player && player.damageReduction > 0 && (
-          <StatRow label="Dmg Reduc." value={`${Math.round(player.damageReduction * 100)}%`} />
+          <StatRow label="Dmg Reduc." value={`${Math.round(player.damageReduction * 100)}%`} help={STAT_HELP.damageReduction} />
         )}
-        <StatRow label="Atk Range"  value={player ? `${player.attackRange}` : '—'} />
-        <StatRow label="Move Speed" value={player ? `${player.speed}` : '—'} />
-        <StatRow label="HP Regen"   value={player ? `${player.hpRegen}/s` : '—'} />
+        <StatRow label="Atk Range"  value={player ? `${player.attackRange}` : '—'} help={STAT_HELP.attackRange} />
+        <StatRow label="Move Speed" value={player ? `${player.speed}` : '—'} help={STAT_HELP.speed} />
+        <StatRow label="HP Regen"   value={player ? `${player.hpRegen}/s` : '—'} help={STAT_HELP.hpRegen} />
       </div>
 
       {/* Ammo / Heat bar — reload archetype */}
@@ -378,35 +380,22 @@ export function StatPanel() {
         />
       )}
 
-      {/* Expand / collapse toggle */}
-      <button
-        className={`auto-btn${expanded ? ' active' : ''}`}
-        onClick={() => setExpanded(v => !v)}
-        style={{ marginTop: 8 }}
-      >
-        {expanded ? '▲ LESS' : '▼ MORE STATS'}
-      </button>
+      {/* ── Evasion / passives — always shown; each self-hides when empty ── */}
 
-      {/* ── Expanded section ─────────────────────────────────────────────── */}
-      {expanded && (
-        <>
-          {/* Evasion (deterministic — dodge rate + damage avoided per dodge) */}
-          {player && player.dodgeRate > 0 && (
-            <div className="stat-section">
-              <div className="stat-section-title">Evasion</div>
-              <StatRow label="Dodge rate" value={`${Math.round(player.dodgeRate * 100)}%`} />
-              <StatRow label="Damage avoided" value={`${Math.round(player.evadeMitigation * 100)}% per dodge`} />
-            </div>
-          )}
-
-          {/* Defense passives */}
-          {player && <DefensePassivesSection passives={player.passives ?? {}} />}
-
-          {/* Mobility (boot) passives */}
-          {player && <MobilityPassivesSection passives={player.passives ?? {}} />}
-
-        </>
+      {/* Evasion (deterministic — dodge rate + damage avoided per dodge) */}
+      {player && player.dodgeRate > 0 && (
+        <div className="stat-section">
+          <div className="stat-section-title">Evasion</div>
+          <StatRow label="Dodge rate" value={`${Math.round(player.dodgeRate * 100)}%`} help={STAT_HELP.dodgeRate} />
+          <StatRow label="Damage avoided" value={`${Math.round(player.evadeMitigation * 100)}% per dodge`} help={STAT_HELP.evadeMitigation} />
+        </div>
       )}
+
+      {/* Defense passives */}
+      {player && <DefensePassivesSection passives={player.passives ?? {}} />}
+
+      {/* Mobility (boot) passives */}
+      {player && <MobilityPassivesSection passives={player.passives ?? {}} />}
     </div>
   );
 }

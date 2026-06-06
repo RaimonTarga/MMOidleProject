@@ -51,7 +51,10 @@
       "Bash(dir /s /b \"C:\\\\Users\\\\osaif\\\\Documents\\\\Claude\\\\Projects\\\\MMO idle\\\\server\\\\src\\\\systems\\\\defense\")",
       "Bash(powershell *)",
       "PowerShell(pnpm typecheck *)",
-      "PowerShell(pnpm *)"
+      "PowerShell(pnpm *)",
+      "PowerShell(Get-NetTCPConnection *)",
+      "PowerShell(docker compose *)",
+      "PowerShell(docker ps *)"
     ]
   }
 }

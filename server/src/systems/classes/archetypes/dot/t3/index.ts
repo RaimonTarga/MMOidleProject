@@ -26,6 +26,7 @@ import { updatePermafrost } from './ticks/permafrost';
 import { updateConflagration } from './ticks/conflagration';
 import { updateChillAndFreeze } from './ticks/chillFreeze';
 import { mirrorDotT3PlayerSlices, mirrorStatusEffectsToClient } from './core/mirroring';
+import { mirrorTargetStatus } from '../../../../combat/targetStatus';
 import { evadeBlocksDebuffs } from '../../../../defense/mitigation/evasion';
 
 /**
@@ -104,6 +105,7 @@ export function updateDotT3(world: World, dt: number): void {
   updateChillAndFreeze(world);
   mirrorDotT3PlayerSlices(world);
   mirrorStatusEffectsToClient(world);
+  mirrorTargetStatus(world);
 }
 
 // ── Public re-exports (preserve dotT3 module API) ────────────────────────────

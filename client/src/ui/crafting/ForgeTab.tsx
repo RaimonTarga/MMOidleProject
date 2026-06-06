@@ -11,8 +11,9 @@ import {
   playerTierAtom,
   unlockedRecipesAtom,
 } from '../../hud/atoms';
-import { SLOT_ABBR, SLOT_LABELS, biomeName, getStatEntries, tierColor } from './common';
+import { SLOT_ABBR, SLOT_LABELS, biomeName, tierColor } from './common';
 import { CostDisplay, EssenceSummary } from './shared';
+import { statEntries, formatMechanicEffects, formatWeaponEffects } from './itemDisplay';
 import { ItemIcon } from '../ItemIcon';
 
 interface CraftResult { recipeId: string; success: boolean; }
@@ -177,10 +178,14 @@ export function ForgeTab() {
             const canAfford   = costEntries.every(([type, amount]) => (essences[type] ?? 0) >= amount);
             const canCraft    = isTestRoom || canAfford;
             const owned       = ownedSet.has(recipe.id);
-            const statEntries = getStatEntries(
+            const statList    = statEntries(
               recipe.stats,
               recipe.slot === 'weapon' ? recipe.attacksPerSecond : undefined,
             );
+            const effectLines = [
+              ...formatMechanicEffects(recipe.mechanicEffects),
+              ...(recipe.slot === 'weapon' ? formatWeaponEffects(recipe.id) : []),
+            ];
             const result = craftResult?.recipeId === recipe.id ? craftResult : null;
 
             return (
@@ -230,15 +235,23 @@ export function ForgeTab() {
                     {owned && <span className="craft-recipe__owned-badge">{equippedSet.has(recipe.id) ? 'EQUIPPED' : 'IN BAG'}</span>}
                   </div>
 
-                  {statEntries.length > 0 && (
+                  {statList.length > 0 && (
                     <div className="craft-recipe__stats">
-                      {statEntries.map((e, i) => (
+                      {statList.map((e, i) => (
                         <span key={i} className="craft-stat-pill">
                           <span className="craft-stat-pill__value">{e.value}</span>
                           <span className="craft-stat-pill__label">{e.label}</span>
                         </span>
                       ))}
                     </div>
+                  )}
+
+                  {effectLines.length > 0 && (
+                    <ul className="craft-recipe__effects">
+                      {effectLines.map((line, i) => (
+                        <li key={i} className="craft-recipe__effect-line">{line}</li>
+                      ))}
+                    </ul>
                   )}
 
                   <CostDisplay cost={recipe.cost} essences={essences} />

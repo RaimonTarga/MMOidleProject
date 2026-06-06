@@ -110,6 +110,34 @@
   color: var(--hud-text-dim);
 }
 
+/* ── Stat help affordance + custom hover tooltip ─────────────────────────── */
+.stat-row--help { cursor: help; }
+.stat-row--help .stat-label {
+  text-decoration: underline dotted rgba(160, 150, 220, 0.45);
+  text-underline-offset: 2px;
+}
+.stat-row--help:hover .stat-label {
+  text-decoration-color: rgba(190, 175, 255, 0.9);
+  color: var(--hud-text);
+}
+
+/* Portalled to <body> — fixed-positioned by the hook, never clipped. */
+.hud-tooltip {
+  position: fixed;
+  z-index: 9000;
+  max-width: 240px;
+  padding: 8px 10px;
+  font-size: 11px;
+  line-height: 1.45;
+  color: #e6e3ff;
+  background: rgba(14, 12, 30, 0.98);
+  border: 1px solid rgba(120, 100, 220, 0.5);
+  border-radius: 5px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.55);
+  pointer-events: none;
+  white-space: normal;
+}
+
 /* ── HP bar ──────────────────────────────────────────────────────────────── */
 .hp-bar-track {
   position: relative;

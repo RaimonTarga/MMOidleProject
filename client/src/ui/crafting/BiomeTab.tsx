@@ -18,6 +18,15 @@ import {
   unlockedRecipesAtom,
 } from '../../hud/atoms';
 import { SLOT_LABELS, biomeName } from './common';
+import { statEntries, mechanicSummary } from './itemDisplay';
+
+// Compact "what you unlock" line: primary/secondary stats + headline effects.
+function recipeSummaryLine(r: Recipe): string {
+  const stats = statEntries(r.stats, r.slot === 'weapon' ? r.attacksPerSecond : undefined)
+    .map(e => `${e.value} ${e.label}`);
+  const mech = mechanicSummary(r.mechanicEffects);
+  return [...stats, mech].filter(Boolean).join(' · ');
+}
 
 interface BiomeSectionProps {
   biomeGroup: string;
@@ -106,6 +115,9 @@ function UltimateSection({
               >
                 {status}
               </span>
+              {recipeSummaryLine(r) && (
+                <span className="craft-unlock-row__summary">{recipeSummaryLine(r)}</span>
+              )}
             </div>
           );
         })}
@@ -177,6 +189,9 @@ function BiomeSection({ biomeGroup, biomeLevel, biomeXP, playerTier, unlockedRec
                 }`}>
                   {status}
                 </span>
+                {recipeSummaryLine(r) && (
+                  <span className="craft-unlock-row__summary">{recipeSummaryLine(r)}</span>
+                )}
               </div>
             );
           })}

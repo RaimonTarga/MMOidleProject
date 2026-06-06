@@ -389,6 +389,36 @@
   color: #aaa8dc;
 }
 
+/* ── Mechanic / weapon effect lines (Forge cards) ───────────────────────────── */
+.craft-recipe__effects {
+  list-style: none;
+  margin: 2px 0 0;
+  padding: 6px 8px;
+  border-radius: 4px;
+  border: 1px solid rgba(70, 64, 130, 0.30);
+  background: rgba(10, 8, 26, 0.55);
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.craft-recipe__effect-line {
+  position: relative;
+  padding-left: 12px;
+  font-size: 10px;
+  line-height: 1.35;
+  color: #b8c0e8;
+}
+
+.craft-recipe__effect-line::before {
+  content: '◆';
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-size: 7px;
+  color: #6a78c0;
+}
+
 /* ── Footer (desc + button / lock) ──────────────────────────────────────── */
 .craft-recipe__footer {
   display: flex;
@@ -556,12 +586,26 @@
 .craft-unlock-row {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 8px;
   padding: 4px 6px;
   border-radius: 3px;
   border: 1px solid rgba(50, 45, 100, 0.30);
   background: rgba(8, 6, 22, 0.85);
   opacity: 0.70;
+}
+
+/* "What you unlock" summary — wraps to its own line under the row header. */
+.craft-unlock-row__summary {
+  flex-basis: 100%;
+  margin-left: 36px;
+  font-size: 9px;
+  line-height: 1.3;
+  color: #7a7ab0;
+}
+
+.craft-unlock-row--unlocked .craft-unlock-row__summary {
+  color: #8ea0c8;
 }
 
 .craft-unlock-row--unlocked {
@@ -756,36 +800,78 @@
   background: rgba(24, 19, 6, 0.85);
 }
 
-.craft-upgrade__transition {
+/* ── Upgrade diff block (per-stat / per-mechanic change list) ─────────────── */
+.craft-upgrade__diff {
   display: flex;
-  align-items: baseline;
-  gap: 7px;
+  flex-direction: column;
+  gap: 3px;
+  padding: 5px 7px;
+  border-radius: 4px;
+  border: 1px solid rgba(60, 58, 120, 0.35);
+  background: rgba(10, 8, 26, 0.65);
 }
 
-.craft-upgrade__from {
-  font-size: 13px;
+.craft-upgrade__diff--maxed {
+  border-color: rgba(200, 165, 60, 0.35);
+  background: rgba(24, 19, 6, 0.55);
+  align-items: flex-start;
+}
+
+.craft-upgrade__diff-title {
+  font-size: 8px;
+  font-weight: bold;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: #ffd24a;
+  opacity: 0.85;
+}
+
+.craft-upgrade__diff-row {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.craft-upgrade__diff-label {
+  flex: 1;
+  min-width: 0;
+  font-size: 9px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: #8888b0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.craft-upgrade__diff-from {
+  font-size: 12px;
   font-weight: bold;
   color: #aab0d0;
 }
 
-.craft-upgrade__arrow {
-  font-size: 12px;
+.craft-upgrade__diff-arrow {
+  font-size: 11px;
   color: #6a7050;
 }
 
-.craft-upgrade__to {
-  font-size: 14px;
+.craft-upgrade__diff-to {
+  font-size: 13px;
   font-weight: bold;
   color: #5de88a;
   text-shadow: 0 0 8px rgba(80, 230, 130, 0.40);
 }
 
-.craft-upgrade__stat-label {
-  font-size: 9px;
-  letter-spacing: 0.6px;
-  color: #8888b0;
-  text-transform: uppercase;
+.craft-upgrade__diff-delta {
+  font-size: 10px;
+  font-weight: bold;
+  min-width: 34px;
+  text-align: right;
 }
+
+.craft-upgrade__diff-row--up   .craft-upgrade__diff-delta { color: #5de88a; }
+.craft-upgrade__diff-row--down .craft-upgrade__diff-delta { color: #e88a5d; }
+.craft-upgrade__diff-row--down .craft-upgrade__diff-to    { color: #e88a5d; text-shadow: none; }
 
 .craft-upgrade__max {
   font-size: 10px;

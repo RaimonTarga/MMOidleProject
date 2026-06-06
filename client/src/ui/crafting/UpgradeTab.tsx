@@ -4,12 +4,10 @@ import type { EquipmentSlot } from '@mmo-idle/shared';
 import {
   ITEM_DATABASE,
   TEST_ROOM_NODE_ID,
-  UPGRADE_STAT_BY_SLOT,
   checkUpgrade,
   getMaxUpgrade,
   requiredBiomeLevelForUpgrade,
   upgradeCostFor,
-  upgradeStatBonusTotal,
 } from '@mmo-idle/shared';
 import { hudBus } from '../../hudBus';
 import {
@@ -22,19 +20,8 @@ import {
 } from '../../hud/atoms';
 import { SLOT_LABELS, biomeName, tierColor } from './common';
 import { CostDisplay, EssenceSummary } from './shared';
+import { computeUpgradeDiff } from './itemDisplay';
 import { ItemIcon } from '../ItemIcon';
-
-const STAT_LABEL: Record<string, string> = {
-  attack: 'ATK',
-  damageReduction: 'DR',
-  speed: 'SPD',
-  hpRegen: 'REGEN',
-};
-
-function formatStat(stat: string, value: number): string {
-  if (stat === 'damageReduction') return `${Math.round(value * 100)}%`;
-  return String(Math.round(value * 10) / 10);
-}
 
 interface UpgradeResult {
   itemId: string;
@@ -181,10 +168,7 @@ export function UpgradeTab() {
             const slot        = def.slot as EquipmentSlot;
             const currentPlus = itemUpgrades[def.id] ?? 0;
             const isMaxed     = currentPlus >= getMaxUpgrade(def);
-            const upStat      = UPGRADE_STAT_BY_SLOT[slot];
-            const base        = (def.statModifiers[upStat] as number | undefined) ?? 0;
-            const curVal      = base + (upgradeStatBonusTotal(def, currentPlus)[upStat] ?? 0);
-            const nextVal     = base + (upgradeStatBonusTotal(def, currentPlus + 1)[upStat] ?? 0);
+            const diff        = isMaxed ? [] : computeUpgradeDiff(def, currentPlus);
 
             const reqLevel    = requiredBiomeLevelForUpgrade(def, currentPlus + 1);
             const haveLevel   = def.biomeGroup ? (biomeLevel[def.biomeGroup] ?? 0) : 0;
@@ -236,17 +220,29 @@ export function UpgradeTab() {
                     {equippedSet.has(def.id) && <span className="craft-recipe__owned-badge">EQUIPPED</span>}
                   </div>
 
-                  <div className="craft-upgrade__transition">
-                    <span className="craft-upgrade__from">{formatStat(upStat, curVal)}</span>
-                    {!isMaxed && (
-                      <>
-                        <span className="craft-upgrade__arrow">→</span>
-                        <span className="craft-upgrade__to">{formatStat(upStat, nextVal)}</span>
-                      </>
-                    )}
-                    <span className="craft-upgrade__stat-label">{STAT_LABEL[upStat] ?? upStat}</span>
-                    {isMaxed && <span className="craft-upgrade__max">MAX +{getMaxUpgrade(def)}</span>}
-                  </div>
+                  {isMaxed ? (
+                    <div className="craft-upgrade__diff craft-upgrade__diff--maxed">
+                      <span className="craft-upgrade__max">MAX +{getMaxUpgrade(def)}</span>
+                    </div>
+                  ) : diff.length > 0 ? (
+                    <div className="craft-upgrade__diff">
+                      <span className="craft-upgrade__diff-title">+{currentPlus + 1}</span>
+                      {diff.map((row, i) => (
+                        <div
+                          key={i}
+                          className={`craft-upgrade__diff-row craft-upgrade__diff-row--${row.up ? 'up' : 'down'}`}
+                        >
+                          <span className="craft-upgrade__diff-label">{row.label}</span>
+                          <span className="craft-upgrade__diff-from">{row.from}</span>
+                          <span className="craft-upgrade__diff-arrow">→</span>
+                          <span className="craft-upgrade__diff-to">{row.to}</span>
+                          {row.delta && (
+                            <span className="craft-upgrade__diff-delta">{row.delta}</span>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  ) : null}
 
                   {!isMaxed && cost && (
                     <CostDisplay cost={cost} essences={essences} />

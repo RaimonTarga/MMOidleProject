@@ -8,7 +8,7 @@ export const desertRecipeEntries = [
   // ── T2 ──
   ['desert-sunsteel-cross', {
     id: 'desert-sunsteel-cross', name: 'Sunsteel Cross',
-    recipeGroup: 'desert', requiredBiomeLevel: 4, slot: 'weapon',
+    recipeGroup: 'desert', requiredBiomeLevel: 1, slot: 'weapon',
     cost: { yellow: 70 }, stats: { attack: 14 }, attacksPerSecond: 0.70, tier: 2,
     mechanicEffects: { 'weapon.first-strike-mult': 2.0 },
     icon: 'items/weapons/sword-3.png',
@@ -22,7 +22,7 @@ export const desertRecipeEntries = [
 
   ['desert-vest-t2', {
     id: 'desert-vest-t2', name: 'Duneplate of the Last Stand',
-    recipeGroup: 'desert', requiredBiomeLevel: 3, slot: 'armor',
+    recipeGroup: 'desert', requiredBiomeLevel: 4, slot: 'armor',
     cost: { yellow: 70 }, stats: { maxHp: 44, plating: 10 },
     mechanicEffects: { 'defense.cheat-death': 1, 'defense.cleanse-stacks': 1, 'defense.cleanse-interval-ms': 8000 },
     tier: 2,
@@ -53,7 +53,7 @@ export const desertRecipeEntries = [
 
   ['desert-boots-t2', {
     id: 'desert-boots-t2', name: 'Sand Sprint',
-    recipeGroup: 'desert', requiredBiomeLevel: 1, slot: 'mobility',
+    recipeGroup: 'desert', requiredBiomeLevel: 3, slot: 'mobility',
     cost: { yellow: 58 }, stats: { speed: 58 }, tier: 2,
     mechanicEffects: { 'mobility.kite-speed-pct': 0.40 },
     icon: 'items/boots/mage-boots-1.png',

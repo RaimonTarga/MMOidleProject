@@ -8,7 +8,7 @@ import {
 import { loadGameplaySettings } from '../settings/gameplaySettings';
 import { sendSetAutocombatConfig, sendSetAutoTraverse } from './intents';
 import { hudBus } from "../hudBus";
-import { syncPlayerAtoms, nodeLoadingAtom, setZoneBoss, setZonePlayers, type ZonePlayer } from "../hud/atoms";
+import { syncPlayerAtoms, nodeLoadingAtom, setTargetFrame, setZoneBoss, setZonePlayers, type ZonePlayer } from "../hud/atoms";
 import { getDefaultStore } from "jotai";
 import type { GameScene } from "../scenes/GameScene";
 import type { RenderState } from "../render/state";
@@ -144,6 +144,25 @@ export function applyDelta(
       break;
     }
     setZoneBoss(zoneBoss);
+
+    // Resolve the local player's current attack target → top-center target frame.
+    const targetId = own.attackTargetId;
+    const tm = targetId && state.kind.get(targetId) === "monster"
+      ? (state.view.get(targetId) as MonsterView | undefined)
+      : undefined;
+    setTargetFrame(tm && tm.nodeId === own.nodeId ? {
+      id: tm.id,
+      name: tm.name,
+      hp: tm.hp,
+      maxHp: tm.maxHp,
+      attack: tm.attack,
+      plating: tm.plating,
+      damageReduction: tm.damageReduction,
+      isBoss: tm.isBoss,
+      statuses: tm.targetStatus ?? [],
+      bossEffects: tm.bossEffects ?? [],
+    } : null);
+
     refreshNodeDecorState(scene);
 
     if (!state.gameplaySettingsSynced) {

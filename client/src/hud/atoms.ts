@@ -13,6 +13,7 @@ import type {
   ShieldState,
   SubVariant,
   SummonSlotView,
+  TargetStatusView,
   UltimateStatus,
   BossFelledMarker,
 } from '@mmo-idle/shared';
@@ -176,6 +177,22 @@ export interface ZoneBoss {
   status: UltimateStatus;
 }
 export const zoneBossAtom = atom<ZoneBoss | null>(null);
+
+/** Current attack target — drives the top-center target frame. Resolved each
+ *  broadcast in deltaApplier from the local player's attackTargetId. */
+export interface TargetFrameData {
+  id: string;
+  name: string;
+  hp: number;
+  maxHp: number;
+  attack: number;
+  plating: number;
+  damageReduction: number;
+  isBoss: boolean;
+  statuses: TargetStatusView[];
+  bossEffects: string[];
+}
+export const targetFrameAtom = atom<TargetFrameData | null>(null);
 
 /** Slain bosses awaiting respawn, keyed by node id (world map). */
 export const bossFelledByNodeAtom = atom<Record<string, BossFelledMarker>>({});
@@ -348,6 +365,31 @@ export function setZoneBoss(next: ZoneBoss | null): void {
   store.set(zoneBossAtom, next);
 }
 
+function targetFrameEqual(a: TargetFrameData | null, b: TargetFrameData | null): boolean {
+  if (a === b) return true;
+  if (!a || !b) return false;
+  if (
+    a.id !== b.id || a.hp !== b.hp || a.maxHp !== b.maxHp ||
+    a.attack !== b.attack || a.plating !== b.plating ||
+    a.damageReduction !== b.damageReduction || a.isBoss !== b.isBoss ||
+    a.statuses.length !== b.statuses.length || a.bossEffects.length !== b.bossEffects.length
+  ) return false;
+  for (let i = 0; i < a.statuses.length; i++) {
+    const x = a.statuses[i], y = b.statuses[i];
+    if (x.id !== y.id || x.stacks !== y.stacks || x.remainingMs !== y.remainingMs) return false;
+  }
+  for (let i = 0; i < a.bossEffects.length; i++) {
+    if (a.bossEffects[i] !== b.bossEffects[i]) return false;
+  }
+  return true;
+}
+
+export function setTargetFrame(next: TargetFrameData | null): void {
+  const store = getDefaultStore();
+  if (targetFrameEqual(store.get(targetFrameAtom), next)) return;
+  store.set(targetFrameAtom, next);
+}
+
 export function setBossFelledMarkers(markers: BossFelledMarker[]): void {
   const next: Record<string, BossFelledMarker> = {};
   for (const marker of markers) next[marker.nodeId] = marker;
@@ -497,6 +539,7 @@ function resetPlayerAtoms(): void {
   setParty(null);
   setZonePlayers([]);
   setZoneBoss(null);
+  setTargetFrame(null);
   setBossFelledMarkers([]);
   store.set(nodeLoadingAtom, { active: false, nodeId: null });
   store.set(tabResyncAtom, { active: false, startedAt: null });

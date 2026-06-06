@@ -17,16 +17,17 @@ export const clearingRecipeEntries = [
     ],
   }],
 
-  ['clearing-vest-t1', {
-    id: 'clearing-vest-t1', name: 'Bark Wrap',
-    recipeGroup: 'clearing', requiredBiomeLevel: 4, slot: 'armor',
-    cost: { green: 8 }, stats: { maxHp: 4, plating: 4 }, tier: 0,
-    icon: 'items/armor/rags-1.png',
-    description: 'Bound bark and twine, smelling of sap and rain — the first armor any wanderer learns to make.',
+  // Pure-regen charm: keeps upgrading hpRegen (regen is its only effect).
+  ['clearing-charm-t1', {
+    id: 'clearing-charm-t1', name: 'Herb Pouch',
+    recipeGroup: 'clearing', requiredBiomeLevel: 2, slot: 'recovery',
+    cost: { green: 6 }, stats: { hpRegen: 2 }, tier: 0,
+    icon: 'items/charms/wood-charm-1.png',
+    description: 'A drawstring pouch of bruised green leaves, gathered at the forest edge.',
     upgrades: [
-      { stats: { maxHp: 1, plating: 1 }, cost: { green: 4 }, requiredBiomeLevel: 4 },
-      { stats: { maxHp: 1, plating: 1 }, cost: { green: 8 }, requiredBiomeLevel: 4 },
-      { stats: { maxHp: 1, plating: 1 }, cost: { green: 16 }, requiredBiomeLevel: 4 },
+      { stats: { hpRegen: 1 }, cost: { green: 4 }, requiredBiomeLevel: 3 },
+      { stats: { hpRegen: 1 }, cost: { green: 8 }, requiredBiomeLevel: 4 },
+      { stats: { hpRegen: 1 }, cost: { green: 16 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -43,17 +44,18 @@ export const clearingRecipeEntries = [
     ],
   }],
 
-  // Pure-regen charm: keeps upgrading hpRegen (regen is its only effect).
-  ['clearing-charm-t1', {
-    id: 'clearing-charm-t1', name: 'Herb Pouch',
-    recipeGroup: 'clearing', requiredBiomeLevel: 2, slot: 'recovery',
-    cost: { green: 6 }, stats: { hpRegen: 2 }, tier: 0,
-    icon: 'items/charms/wood-charm-1.png',
-    description: 'A drawstring pouch of bruised green leaves, gathered at the forest edge.',
+  ['clearing-vest-t1', {
+    id: 'clearing-vest-t1', name: 'Bark Wrap',
+    recipeGroup: 'clearing', requiredBiomeLevel: 4, slot: 'armor',
+    cost: { green: 8 }, stats: { maxHp: 4, plating: 4 }, tier: 0,
+    icon: 'items/armor/rags-1.png',
+    description: 'Bound bark and twine, smelling of sap and rain — the first armor any wanderer learns to make.',
     upgrades: [
-      { stats: { hpRegen: 1 }, cost: { green: 4 }, requiredBiomeLevel: 3 },
-      { stats: { hpRegen: 1 }, cost: { green: 8 }, requiredBiomeLevel: 4 },
-      { stats: { hpRegen: 1 }, cost: { green: 16 }, requiredBiomeLevel: 4 },
+      { stats: { maxHp: 1, plating: 1 }, cost: { green: 4 }, requiredBiomeLevel: 4 },
+      { stats: { maxHp: 1, plating: 1 }, cost: { green: 8 }, requiredBiomeLevel: 4 },
+      { stats: { maxHp: 1, plating: 1 }, cost: { green: 16 }, requiredBiomeLevel: 4 },
     ],
   }],
+
+
 ] satisfies [string, Recipe][];
