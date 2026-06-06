@@ -1,8 +1,11 @@
+import { getCooldown } from '@mmo-idle/shared';
 import { defineBuff, type BuffDescriptor } from '../../combat/buffs/descriptor';
 import {
   getDefenseAbsorbPool,
   getDefenseBurstPool,
   getDefenseDebtPool,
+  BURST_DRAIN_MS,
+  BURST_DRAIN_CD,
 } from './pools';
 import { getHardeningBonus } from '../mitigation/hardening';
 
@@ -19,9 +22,16 @@ export const DEFENSE_BUFFS = [
   defineBuff('defense-burst', ({ playerCs }) => {
     if (!playerCs) return null;
     const pool = getDefenseBurstPool(playerCs);
-    return pool > 0
-      ? { id: 'defense-burst', label: 'Regen', stacks: 1, durationPct: -1, color: '#aaffaa', logDetail: `${Math.round(pool)} healing pool` }
-      : null;
+    if (pool <= 0) return null;
+    const drainLeft = getCooldown(playerCs, BURST_DRAIN_CD);
+    return {
+      id: 'defense-burst',
+      label: 'Regen',
+      stacks: 1,
+      durationPct: drainLeft > 0 ? (drainLeft / BURST_DRAIN_MS) * 100 : -1,
+      color: '#aaffaa',
+      logDetail: `${Math.round(pool)} healing pool`,
+    };
   }, NEUTRAL_OPTS),
   defineBuff('defense-debt', ({ playerCs }) => {
     if (!playerCs) return null;

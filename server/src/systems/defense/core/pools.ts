@@ -15,6 +15,13 @@ export const BURST_POOL_KEY  = 'regenBurstPool';
 /** Duration over which hit-to-DoT debt and leech/burst pools drain (ms). */
 export const POOL_DRAIN_MS = 4000;
 
+/** Drain window for the regen-burst healing pool (ms). Also the duration shown
+ *  on the "Regen" buff tile via the `regenBurstDrain` cooldown. */
+export const BURST_DRAIN_MS = 2000;
+
+/** Cooldown key tracking the regen-burst pool's drain window for the HUD sweep. */
+export const BURST_DRAIN_CD = 'regenBurstDrain';
+
 // ── Public pool accessors (for buffSync HUD descriptors) ─────────────────────
 
 export function getDefenseDebtPool(cs: TracksCombat): number {

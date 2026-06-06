@@ -26,9 +26,11 @@ import {
   heatPctAtom,
   hpAtom,
   hpRegenAtom,
+  incomingDotAtom,
   laserOverheatedAtom,
   maxHpAtom,
   passivesAtom,
+  pendingHealAtom,
   platingAtom,
   playerIdAtom,
   playerNameAtom,
@@ -52,6 +54,8 @@ export function StatPanel() {
   const hp = useAtomValue(hpAtom);
   const maxHp = useAtomValue(maxHpAtom);
   const shields = useAtomValue(shieldsAtom);
+  const incomingDot = useAtomValue(incomingDotAtom);
+  const pendingHeal = useAtomValue(pendingHealAtom);
   const attack = useAtomValue(attackAtom);
   const plating = useAtomValue(platingAtom);
   const damageReduction = useAtomValue(damageReductionAtom);
@@ -91,6 +95,8 @@ export function StatPanel() {
       hp,
       maxHp,
       shields,
+      incomingDot,
+      pendingHeal,
       attack,
       plating,
       damageReduction,
@@ -127,10 +133,17 @@ export function StatPanel() {
     }
     : null;
 
-  const hpPct       = player && player.maxHp > 0 ? (player.hp / player.maxHp) * 100 : 0;
+  const maxHpVal    = player?.maxHp ?? 0;
+  const hpPct       = player && maxHpVal > 0 ? (player.hp / maxHpVal) * 100 : 0;
   const hpBarColor  = hpPct > 50 ? '#44ee44' : hpPct > 25 ? '#eeaa22' : '#ee3322';
   const totalShield = player?.shields.reduce((s, sh) => s + sh.amount, 0) ?? 0;
-  const shieldPct   = player && player.maxHp > 0 ? Math.min(100 - hpPct, (totalShield / player.maxHp) * 100) : 0;
+  // Shield sits in its own strip above the bar and stays visible at full HP.
+  const shieldPct   = maxHpVal > 0 ? Math.min(100, (totalShield / maxHpVal) * 100) : 0;
+  // HP-bar layers (all as % of maxHp): pending DoT eats the right edge of current
+  // HP (red); pending regen extends past current HP (dark green).
+  const dotPct      = player && maxHpVal > 0 ? Math.min(hpPct, (player.incomingDot / maxHpVal) * 100) : 0;
+  const safePct     = Math.max(0, hpPct - dotPct);
+  const healPct     = player && maxHpVal > 0 ? Math.min(100 - hpPct, (player.pendingHeal / maxHpVal) * 100) : 0;
   const cdSec       = player ? (player.attackCooldown / 1000).toFixed(2) : '—';
   const aps         = player ? (1000 / player.attackCooldown).toFixed(2) : '—';
   const dps         = player ? (player.attack * (1000 / player.attackCooldown)).toFixed(1) : '—';
@@ -163,10 +176,22 @@ export function StatPanel() {
           </span>
           {hpTip.node}
         </div>
+        {/* Shield strip — above the HP bar, always visible (even at full HP) */}
+        {shieldPct > 0 && (
+          <div className="hp-shield-strip">
+            <div className="hp-shield-strip__fill" style={{ width: `${shieldPct}%` }} />
+          </div>
+        )}
         <div className="hp-bar-track">
-          <div className="hp-bar-fill" style={{ width: `${hpPct}%`, background: hpBarColor }} />
-          {shieldPct > 0 && (
-            <div className="shield-bar-fill" style={{ width: `${shieldPct}%`, left: `${hpPct}%` }} />
+          {/* expected regen — dark-green layer extending past current HP */}
+          {healPct > 0 && (
+            <div className="hp-layer hp-layer--regen" style={{ left: `${hpPct}%`, width: `${healPct}%` }} />
+          )}
+          {/* safe HP */}
+          <div className="hp-layer hp-layer--hp" style={{ width: `${safePct}%`, background: hpBarColor }} />
+          {/* pending DoT — red layer at the right edge of current HP */}
+          {dotPct > 0 && (
+            <div className="hp-layer hp-layer--dot" style={{ left: `${safePct}%`, width: `${dotPct}%` }} />
           )}
         </div>
       </div>

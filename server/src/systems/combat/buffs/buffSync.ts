@@ -98,6 +98,33 @@ const DEBUFF_BUFFS = [
     },
     { category: "neutral", shape: "diamond", color: "#aaddff", label: "FROST" },
   ),
+  defineBuff(
+    "debuff-dot",
+    ({ playerCs, world }) => {
+      if (!playerCs) return null;
+      // Monster-inflicted DoT lives on the player's own combat state under the
+      // 'dot' id (players never DoT themselves — that always hits monsters).
+      const dot = getStatusEffect(playerCs, "dot");
+      if (!dot || dot.stacks <= 0) return null;
+      const totalMs = dot.data["totalMs"] ?? dot.remainingMs;
+      const source = world.getMonsterEntity(dot.sourceId);
+      const perStack = Math.round(dot.data["damagePerStack"] ?? 0);
+      return {
+        id: "debuff-dot",
+        label: "DoT",
+        stacks: dot.stacks,
+        durationPct:
+          totalMs > 0 && dot.remainingMs > 0
+            ? (dot.remainingMs / totalMs) * 100
+            : -1,
+        color: "#88bb55",
+        logSourceName: source?.isMonster.name ?? "Monster debuff",
+        logSourceSide: "enemy",
+        logDetail: `${perStack} dmg/stack per tick`,
+      };
+    },
+    { category: "neutral", shape: "diamond", color: "#88bb55", label: "DoT" },
+  ),
 ] as const satisfies readonly BuffDescriptor[];
 
 /** Compile-time guard: shared BUFF_IDS must match server descriptor ids. */
@@ -392,6 +419,8 @@ function buffEffectText(buff: PlayerBuff): string {
       return "movement disabled";
     case "debuff-frost-ramp":
       return "movement and attack speed reduced";
+    case "debuff-dot":
+      return "taking damage over time";
     case "defense-absorb":
       return "healing pool active";
     case "defense-burst":

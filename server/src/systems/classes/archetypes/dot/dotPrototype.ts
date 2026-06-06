@@ -338,6 +338,7 @@ export function initDotArchetype(): void {
         damagePerStack,
         nextTickIn: tickIntervalMs,
         tickIntervalMs,
+        totalMs: durationMs,
       },
     });
 

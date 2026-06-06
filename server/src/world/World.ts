@@ -45,6 +45,7 @@ import { updateUltimateEncounters } from "../systems/combat/ai/ultimateEncounter
 import { updateShields, updateDefensiveSystems } from "../systems/defense";
 import { updateKnockback } from "../systems/combat/damage/knockback";
 import { syncPlayerBuffs } from "../systems/combat/buffs/buffSync";
+import { mirrorHpForecast } from "../systems/defense/core/hpForecast";
 import {
   createMonster as createMonsterInWorld,
   spawnMonster as spawnMonsterInWorld,
@@ -342,6 +343,7 @@ export class World {
     updateCombat(this, dt, now);
     updateDefensiveSystems(this, dt, now);
     syncPlayerBuffs(this, now);
+    mirrorHpForecast(this);
     updateAutoIntent(this);
     updateExpiredEmotes(this, now);
     updateDeadPlayersInWorld(this, now);

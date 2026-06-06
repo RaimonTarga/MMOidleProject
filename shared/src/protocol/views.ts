@@ -42,6 +42,10 @@ export interface PlayerView {
   /** Fraction of damage avoided on an evaded hit (0..1; 1 = full avoid). */
   evadeMitigation: number;
   shields: ShieldState[];
+  /** Total pending damage-over-time on the player (HP-bar red layer). */
+  incomingDot: number;
+  /** Pending heal-over-time from regen/absorb pools (HP-bar regen layer). */
+  pendingHeal: number;
   attackRange: number;
   attackCooldown: number;
   lastAttackAt: number;
@@ -245,6 +249,8 @@ export function composePlayerView(entity: NetworkedEntity): PlayerView | null {
     dodgeRate: entity.evadesHits?.dodgeRate ?? 0,
     evadeMitigation: entity.evadesHits?.evadeMitigation ?? 0,
     shields: entity.holdsShields?.shields ?? [],
+    incomingDot: entity.hasStatus?.incomingDot ?? 0,
+    pendingHeal: entity.hasStatus?.pendingHeal ?? 0,
     attackRange: attack.attackRange,
     attackCooldown: attack.attackCooldown,
     lastAttackAt: attack.lastAttackAt,

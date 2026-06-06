@@ -35,7 +35,7 @@ export const bossMonsterEntriesT1T2 = [
   ['plains-champion', {
     id: 'plains-champion', name: 'Plains Champion', color: 0xddaa44,
     isBoss: true,
-    stats: { hp: 1000, attack: 40, plating: 4, damageReduction: 0.02, speed: 50, attackRange: 15, attackCooldown: 2000, pullRange: 280 },
+    stats: { hp: 1000, attack: 30, plating: 4, damageReduction: 0.02, speed: 50, attackRange: 15, attackCooldown: 2000, pullRange: 280 },
     behavior: 'melee', attackStyle: 'impact', biome: 'plains',
     rewards: { essence: 100, essenceType: 'yellow', level: 5, biomeXp: 150 },
     ai: { wanderRadius: 120, leashRange: 750, idleMinMs: 1500, idleMaxMs: 4500 },
@@ -45,7 +45,7 @@ export const bossMonsterEntriesT1T2 = [
   ['forest-warden', {
     id: 'forest-warden', name: 'Forest Warden', color: 0x33aa44,
     isBoss: true,
-    stats: { hp: 900, attack: 34, plating: 0, damageReduction: 0, speed: 60, attackRange: 15, attackCooldown: 1400, pullRange: 300 },
+    stats: { hp: 900, attack: 24, plating: 0, damageReduction: 0, speed: 60, attackRange: 15, attackCooldown: 1400, pullRange: 300 },
     behavior: 'melee', attackStyle: 'slash', biome: 'forest',
     rewards: { essence: 100, essenceType: 'green', level: 5, biomeXp: 150 },
     ai: { wanderRadius: 160, leashRange: 800, idleMinMs: 1200, idleMaxMs: 4000 },
@@ -55,7 +55,7 @@ export const bossMonsterEntriesT1T2 = [
   ['mountain-sentinel', {
     id: 'mountain-sentinel', name: 'Mountain Sentinel', color: 0x8899bb,
     isBoss: true,
-    stats: { hp: 1100, attack: 70, plating: 0, damageReduction: 0, speed: 22, attackRange: 18, attackCooldown: 3500, pullRange: 280 },
+    stats: { hp: 1100, attack: 60, plating: 0, damageReduction: 0, speed: 22, attackRange: 18, attackCooldown: 3500, pullRange: 280 },
     behavior: 'melee', attackStyle: 'impact', biome: 'mountain',
     rewards: { essence: 105, essenceType: 'blue', level: 5, biomeXp: 158 },
     ai: { wanderRadius: 120, leashRange: 750, idleMinMs: 2000, idleMaxMs: 5000 },
@@ -72,7 +72,7 @@ export const bossMonsterEntriesT1T2 = [
     behavior: 'melee', attackStyle: 'poison', biome: 'swamp',
     rewards: { essence: 100, essenceType: 'purple', level: 5, biomeXp: 150 },
     ai: { wanderRadius: 100, leashRange: 700, idleMinMs: 2000, idleMaxMs: 5500 },
-    dotEffect: { damagePerStack: 8, maxStacks: 4, tickIntervalMs: 1000, durationMs: 4000 },
+    dotEffect: { damagePerStack: 4, maxStacks: 3, tickIntervalMs: 1000, durationMs: 4000 },
     aoeAttack: { radius: 120, damageMult: 0.6 },
   }],
 
@@ -80,7 +80,7 @@ export const bossMonsterEntriesT1T2 = [
   ['cave-sentinel', {
     id: 'cave-sentinel', name: 'Cave Sentinel', color: 0x334455,
     isBoss: true,
-    stats: { hp: 1050, attack: 58, plating: 6, damageReduction: 0.10, speed: 24, attackRange: 18, attackCooldown: 2800, pullRange: 240 },
+    stats: { hp: 1050, attack: 40, plating: 6, damageReduction: 0.10, speed: 24, attackRange: 18, attackCooldown: 2800, pullRange: 240 },
     behavior: 'melee', attackStyle: 'impact', biome: 'cave',
     rewards: { essence: 110, essenceType: 'red', level: 5, biomeXp: 165 },
     ai: { wanderRadius: 80, leashRange: 680, idleMinMs: 2500, idleMaxMs: 6500 },

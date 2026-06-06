@@ -5,7 +5,7 @@
 
 export const STAT_HELP: Record<string, string> = {
   // ── Core ──────────────────────────────────────────────────────────────────
-  hp: 'Your health. At 0 you die and respawn at the clearing, leaving a corpse at the death site.',
+  hp: 'Your health. At 0 you die and respawn at the clearing, leaving a corpse at the death site. Bar layers: blue strip above = shield; red = HP that pending damage (damage-over-time + deferred debt) will remove; dark green = healing queued from regen/absorb.',
   attack:
     'Base damage per hit before the target’s defenses. Final hit = (Attack − their Plating) × (1 − their Damage Reduction), floored at 1.',
   dps:

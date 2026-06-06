@@ -122,6 +122,10 @@ export interface HasStatus {
   bossEffects?: string[];
   /** Monsters only — current debuffs for the target frame (targeted monsters). */
   targetStatus?: TargetStatusView[];
+  /** Players only — total pending damage-over-time on the player (HP-bar forecast). */
+  incomingDot?: number;
+  /** Players only — pending heal-over-time (regen/absorb pools) for the HP bar. */
+  pendingHeal?: number;
   /** Ultimate bosses only — populated by ultimateEncounter sync. */
   ultimateStatus?: UltimateStatus;
   /** Encounter adds healing inside the void throne ring. */

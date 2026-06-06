@@ -29,6 +29,7 @@ export const BUFF_IDS = [
   'debuff-slow',
   'debuff-root',
   'debuff-frost-ramp',
+  'debuff-dot',
   'defense-absorb',
   'defense-burst',
   'defense-debt',

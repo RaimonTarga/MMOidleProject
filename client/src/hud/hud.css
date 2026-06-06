@@ -141,12 +141,56 @@
 /* ── HP bar ──────────────────────────────────────────────────────────────── */
 .hp-bar-track {
   position: relative;
-  height: 5px;
+  height: 8px;
   background: rgba(255, 255, 255, 0.05);
   border-radius: 3px;
   margin-top: 4px;
   overflow: hidden;
   box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+/* ── Layered HP bar (StatPanel) ──────────────────────────────────────────── */
+/* Positioned via inline left/width %, all as a fraction of maxHp. */
+.hp-layer {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  transition: width 0.3s ease, left 0.3s ease, background 0.4s ease;
+}
+.hp-layer--hp {
+  left: 0;
+  border-radius: 3px 0 0 3px;
+}
+/* Pending damage-over-time — hatched red eating the right edge of current HP. */
+.hp-layer--dot {
+  background: repeating-linear-gradient(45deg, #e04545, #e04545 4px, #b62b2b 4px, #b62b2b 8px);
+  box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.35);
+}
+/* Expected heal-over-time — darker green extending past current HP. */
+.hp-layer--regen {
+  background: #1f7a37;
+  opacity: 0.9;
+}
+
+/* Shield strip — its own bar above the HP bar, always visible. */
+.hp-shield-strip {
+  position: relative;
+  height: 4px;
+  margin-top: 4px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.05);
+  overflow: hidden;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+.hp-shield-strip__fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: linear-gradient(90deg, #33aacc, #44ccdd);
+  border-radius: 2px;
+  transition: width 0.3s ease;
+  animation: shield-shimmer 1.8s ease-in-out infinite alternate;
 }
 
 .hp-bar-fill {

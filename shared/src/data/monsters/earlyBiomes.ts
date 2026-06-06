@@ -72,7 +72,7 @@ export const earlyBiomeMonsterEntries = [
     id: 'cliff-hopper', name: 'Cliff Hopper', color: 0x99aacc,
     // SHAPE CHANGED: now a slow charging bruiser (atk trips the ~25%-HP cap), not a
     // fast mob. Charges once to close, then lumbers. TODO rename in cosmetic pass.
-    stats: { hp: 170, attack: 46, plating: 0, damageReduction: 0, speed: 28, attackRange: 12, attackCooldown: 3500, pullRange: 275 },
+    stats: { hp: 170, attack: 36, plating: 0, damageReduction: 0, speed: 28, attackRange: 12, attackCooldown: 3500, pullRange: 275 },
     behavior: 'melee', attackStyle: 'impact', biome: 'mountain',
     rewards: { essence: 12, essenceType: 'blue', level: 1, biomeXp: 42 },
     ai: { wanderRadius: 200, leashRange: 640, idleMinMs: 1500, idleMaxMs: 4500 },
@@ -83,7 +83,7 @@ export const earlyBiomeMonsterEntries = [
     id: 'ridge-archer', name: 'Ridge Archer', color: 0x778899,
     // Hurls boulders — a big, slow hit from range. Punishes standing still; the
     // ranged half of mountain's "stand and trade" pressure. No charge (ranged).
-    stats: { hp: 200, attack: 42, plating: 0, damageReduction: 0, speed: 26, attackRange: 210, attackCooldown: 3500, pullRange: 350 },
+    stats: { hp: 200, attack: 32, plating: 0, damageReduction: 0, speed: 26, attackRange: 210, attackCooldown: 3500, pullRange: 350 },
     behavior: 'melee', attackStyle: 'gunshot', isRanged: true, biome: 'mountain',
     rewards: { essence: 15, essenceType: 'blue', level: 1, biomeXp: 52 },
     ai: { wanderRadius: 210, leashRange: 600, idleMinMs: 1500, idleMaxMs: 4500 },
@@ -98,7 +98,7 @@ export const earlyBiomeMonsterEntries = [
     behavior: 'melee', attackStyle: 'poison', biome: 'swamp',
     rewards: { essence: 10, essenceType: 'purple', level: 1, biomeXp: 35 },
     ai: { wanderRadius: 160, leashRange: 530, idleMinMs: 2000, idleMaxMs: 5500 },
-    dotEffect: { damagePerStack: 3, maxStacks: 4, tickIntervalMs: 1000, durationMs: 4000 },
+    dotEffect: { damagePerStack: 3, maxStacks: 4, tickIntervalMs: 1000, durationMs: 2400 },
   }],
 
   ['mud-toad', {
@@ -108,7 +108,7 @@ export const earlyBiomeMonsterEntries = [
     behavior: 'melee', attackStyle: 'poison', biome: 'swamp',
     rewards: { essence: 12, essenceType: 'purple', level: 1, biomeXp: 42 },
     ai: { wanderRadius: 180, leashRange: 550, idleMinMs: 1800, idleMaxMs: 5000 },
-    dotEffect: { damagePerStack: 4, maxStacks: 4, tickIntervalMs: 1000, durationMs: 4000 },
+    dotEffect: { damagePerStack: 4, maxStacks: 4, tickIntervalMs: 1000, durationMs: 2600 },
   }],
 
   // ══ CAVE — few ELITE mobs, MIXED shapes (fast + bruiser); %DR answers all ══
@@ -239,7 +239,7 @@ export const earlyBiomeMonsterEntries = [
     behavior: 'melee', attackStyle: 'poison', biome: 'swamp',
     rewards: { essence: 24, essenceType: 'purple', level: 1, biomeXp: 68 },
     ai: { wanderRadius: 170, leashRange: 560, idleMinMs: 2500, idleMaxMs: 7000 },
-    dotEffect: { damagePerStack: 8, maxStacks: 5, tickIntervalMs: 1000, durationMs: 5000 },
+    dotEffect: { damagePerStack: 8, maxStacks: 5, tickIntervalMs: 1000, durationMs: 2400 },
   }],
 
   ['bog-witch', {
@@ -249,7 +249,7 @@ export const earlyBiomeMonsterEntries = [
     behavior: 'melee', attackStyle: 'magic', isRanged: true, biome: 'swamp',
     rewards: { essence: 22, essenceType: 'purple', level: 1, biomeXp: 62 },
     ai: { wanderRadius: 200, leashRange: 580, idleMinMs: 1500, idleMaxMs: 4500 },
-    dotEffect: { damagePerStack: 5, maxStacks: 4, tickIntervalMs: 1000, durationMs: 4000 },
+    dotEffect: { damagePerStack: 6, maxStacks: 4, tickIntervalMs: 1000, durationMs: 2400 },
   }],
 
   ['mire-stalker', {
@@ -259,7 +259,7 @@ export const earlyBiomeMonsterEntries = [
     behavior: 'melee', attackStyle: 'poison', biome: 'swamp',
     rewards: { essence: 26, essenceType: 'purple', level: 1, biomeXp: 75 },
     ai: { wanderRadius: 170, leashRange: 540, idleMinMs: 2000, idleMaxMs: 6000 },
-    dotEffect: { damagePerStack: 6, maxStacks: 4, tickIntervalMs: 1000, durationMs: 4500 },
+    dotEffect: { damagePerStack: 6, maxStacks: 4, tickIntervalMs: 1000, durationMs: 2800 },
     evadeEvery: 5,
   }],
 
@@ -272,7 +272,7 @@ export const earlyBiomeMonsterEntries = [
     rewards: { essence: 30, essenceType: 'red', level: 1, biomeXp: 85 },
     ai: { wanderRadius: 260, leashRange: 680, idleMinMs: 800, idleMaxMs: 3200 },
     evadeEvery: 5,
-    dotEffect: { damagePerStack: 4, maxStacks: 3, tickIntervalMs: 1000, durationMs: 3000 },
+    dotEffect: { damagePerStack: 6, maxStacks: 3, tickIntervalMs: 1000, durationMs: 2000 },
   }],
 
   ['cave-troll', {
@@ -304,7 +304,7 @@ export const earlyBiomeMonsterEntries = [
     behavior: 'melee', attackStyle: 'poison', biome: 'jungle',
     rewards: { essence: 14, essenceType: 'green', level: 1, biomeXp: 38 },
     ai: { wanderRadius: 290, leashRange: 740, idleMinMs: 600, idleMaxMs: 2600 },
-    dotEffect: { damagePerStack: 3, maxStacks: 3, tickIntervalMs: 1000, durationMs: 3600 },
+    dotEffect: { damagePerStack: 6, maxStacks: 3, tickIntervalMs: 1000, durationMs: 1500 },
   }],
  
   ['jungle-ape', {
@@ -326,7 +326,7 @@ export const earlyBiomeMonsterEntries = [
     behavior: 'melee', attackStyle: 'poison', isRanged: true, biome: 'jungle',
     rewards: { essence: 14, essenceType: 'green', level: 1, biomeXp: 38 },
     ai: { wanderRadius: 250, leashRange: 660, idleMinMs: 1200, idleMaxMs: 4000 },
-    dotEffect: { damagePerStack: 3, maxStacks: 4, tickIntervalMs: 1000, durationMs: 4500 },
+    dotEffect: { damagePerStack: 6, maxStacks: 4, tickIntervalMs: 1000, durationMs: 2100 },
   }],
  
   // ══ DESERT T2 — debuff/slow/root appliers; lockdown is the threat ══
