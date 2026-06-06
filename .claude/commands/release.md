@@ -12,10 +12,12 @@ Cut an MMO Idle release.
 2. Validate that `X.Y` is a major.minor release version.
 3. Verify the current branch is `develop`; release commands must not run from any other branch.
 4. Run `pnpm release:prepare X.Y`.
-5. Edit `updates/vX.Y/changelog.md` into player-facing patch notes using the generated commit list.
-6. Run `pnpm typecheck`.
-7. Present the patch notes and ask for confirmation before publishing.
-8. Run `pnpm release:cut X.Y` only after confirmation. This commits release metadata on `develop`, creates `release-vX.Y`, fast-forwards `master` to the release commit, and pushes `develop`, `master`, and the snapshot branch.
+5. Read `updates/vX.Y/changelog.md` and every file under `updates/develop/**/*`.
+6. Edit `updates/vX.Y/changelog.md` into player-facing patch notes using both the generated commit list and the `updates/develop` notes.
+7. After folding the `updates/develop` information into `updates/vX.Y/changelog.md`, delete the no-longer-needed branch note files/directories under `updates/develop/`.
+8. Run `pnpm typecheck`.
+9. Present the patch notes and ask for confirmation before publishing.
+10. Run `pnpm release:cut X.Y` only after confirmation. This commits release metadata on `develop`, creates `release-vX.Y`, fast-forwards `master` to the release commit, and pushes `develop`, `master`, and the snapshot branch.
 
 ## Branch Model
 
@@ -25,3 +27,6 @@ Cut an MMO Idle release.
 
 Use `scripts/release.mjs` for branch creation and `master` advancement. Do not
 manually duplicate the release script logic.
+
+Do not leave folded `updates/develop` branch notes behind after creating the
+version changelog.
