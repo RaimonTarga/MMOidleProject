@@ -20,6 +20,8 @@ import {
   ASHBRAND_DURATION_MS,
   ASHBRAND_TICK_MS,
   EDGE_OF_OBLIVION_ID,
+  BRITTLE_EFFECT_ID,
+  BRITTLE_DURATION_MS,
   VOID_CORRUPTION_EFFECT_ID,
   CORRUPTION_MAX_STACKS,
   CORRUPTION_CONV_PCT,
@@ -80,6 +82,34 @@ export function initWeaponEffects(): void {
     ctx.metadata["clientEffects"] = Array.isArray(existing)
       ? [...existing, FIRST_STRIKE_EFFECT]
       : [FIRST_STRIKE_EFFECT];
+  });
+
+  // ── Brittle: stacking −plating / −DR debuff on the target (Tundra weapon) ────
+  // Passive-driven (any item granting weapon.brittle-* gains it). One stack per
+  // hit up to brittle-stacks, refreshing the timer; read at damage time in
+  // effectivePlating.ts. No tick loop — it's a pure mitigation reduction.
+  registerCombatListener("onHit", (ctx, _world) => {
+    if (ctx.attackerType !== "player") return;
+    if (ctx.defenderType !== "monster") return;
+
+    const p = ctx.attacker.usesSkills.passives;
+    const platingPerStack = p["weapon.brittle-plating"] ?? 0;
+    const drPerStack = p["weapon.brittle-dr"] ?? 0;
+    if (platingPerStack <= 0 && drPerStack <= 0) return;
+    const maxStacks = Math.max(1, Math.round(p["weapon.brittle-stacks"] ?? 1));
+
+    const effect = applyStatusEffect(ctx.defender.tracksCombat, {
+      id: BRITTLE_EFFECT_ID,
+      maxStacks,
+      instanced: false,
+      sourceId: ctx.attacker.isPlayer.id,
+      remainingMs: BRITTLE_DURATION_MS,
+      refreshable: true,
+      data: { platingPerStack, drPerStack },
+    });
+    // Keep per-stack values current with the equipped weapon (buffs apply immediately).
+    effect.data.platingPerStack = platingPerStack;
+    effect.data.drPerStack = drPerStack;
   });
 
   // ── Chaotic family: every Nth hit misses (0 damage, on-hit effects still fire) ─

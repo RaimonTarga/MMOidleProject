@@ -20,6 +20,19 @@ export const CORRUPTION_DURATION_MS = 4_500;
 export const CORRUPTION_SLOW_PER_STACK = 0.05;
 export const CORRUPTION_MIN_SPEED_MULT = 0.35;
 
+// ── Brittle (Tundra weapon armor-shred) ─────────────────────────────────────
+
+/**
+ * Player-applied debuff that reduces the target monster's plating and damage
+ * reduction. Driven by the `weapon.brittle-plating` / `weapon.brittle-dr` /
+ * `weapon.brittle-stacks` passives, so any item granting them gains the effect.
+ * Stacks on each hit (capped at brittle-stacks), refreshing the timer; read at
+ * damage time in effectivePlating.ts (no DoT tick). data: { platingPerStack, drPerStack }.
+ */
+export const BRITTLE_EFFECT_ID = 'brittle';
+/** Duration refreshed on each brittle application, matching other on-hit debuffs. */
+export const BRITTLE_DURATION_MS = 4_500;
+
 // ── Chaotic family (Chaotic Axe / Frenzied Greataxe) ────────────────────────
 
 /** Every Nth player hit deals 0 damage (on-hit effects still fire). */

@@ -1,6 +1,9 @@
 import {
   formatLogNumber,
   getStatusEffect,
+  FROST_RAMP_EFFECT_ID,
+  frostRampMoveSlowPct,
+  frostRampAtkSlowPct,
   type WorldLogActor,
   type PlayerBuff,
   type BuffId,
@@ -65,6 +68,35 @@ const DEBUFF_BUFFS = [
       };
     },
     { category: "neutral", shape: "diamond", color: "#aa66ff", label: "ROOT" },
+  ),
+  defineBuff(
+    "debuff-frost-ramp",
+    ({ playerCs, world }) => {
+      if (!playerCs) return null;
+      const ramp = getStatusEffect(playerCs, FROST_RAMP_EFFECT_ID);
+      if (!ramp) return null;
+      const totalMs = ramp.data["totalMs"] ?? ramp.remainingMs;
+      const source = world.getMonsterEntity(ramp.sourceId);
+      const moveSlow = frostRampMoveSlowPct(ramp);
+      const movePct = Math.round(moveSlow * 100);
+      const atkPct = Math.round(frostRampAtkSlowPct(ramp) * 100);
+      return {
+        id: "debuff-frost-ramp",
+        label: "FROST",
+        stacks: ramp.stacks,
+        durationPct:
+          totalMs > 0 && ramp.remainingMs > 0
+            ? (ramp.remainingMs / totalMs) * 100
+            : -1,
+        // Keep client own-player prediction aligned with the server move-slow.
+        speedMult: Math.max(0, 1 - moveSlow),
+        color: "#aaddff",
+        logSourceName: source?.isMonster.name ?? "Monster debuff",
+        logSourceSide: "enemy",
+        logDetail: `move -${movePct}%, attack -${atkPct}%`,
+      };
+    },
+    { category: "neutral", shape: "diamond", color: "#aaddff", label: "FROST" },
   ),
 ] as const satisfies readonly BuffDescriptor[];
 
@@ -358,6 +390,8 @@ function buffEffectText(buff: PlayerBuff): string {
       return "movement speed reduced";
     case "debuff-root":
       return "movement disabled";
+    case "debuff-frost-ramp":
+      return "movement and attack speed reduced";
     case "defense-absorb":
       return "healing pool active";
     case "defense-burst":

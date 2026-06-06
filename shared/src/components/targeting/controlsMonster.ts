@@ -18,4 +18,10 @@ export interface ControlsMonster {
   kiteTimer: number;
   /** Remaining milliseconds of a charge-on-aggro speed burst. */
   chargeRemainingMs?: number;
+  /** Unmodified attack captured at first ramp tick — rampOnCombat multiplies this. */
+  baseAttack?: number;
+  /** Current in-combat attack ramp fraction (0..rampOnCombat.maxPct). */
+  rampPct?: number;
+  /** Ms accumulated toward the next rampOnCombat tick. */
+  rampAccumMs?: number;
 }

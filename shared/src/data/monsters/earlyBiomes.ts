@@ -295,77 +295,74 @@ export const earlyBiomeMonsterEntries = [
     ai: { wanderRadius: 130, leashRange: 460, idleMinMs: 2500, idleMaxMs: 7000 },
   }],
 
-  // ══════════════════════════════════════════════════════════════════════
-  // DEFERRED — advanced biomes (Jungle/Tundra/Desert/Volcanic). Untouched this
-  // pass; they tune alongside their engine-gated items in a later step.
-  // ══════════════════════════════════════════════════════════════════════
-
+    // ══ JUNGLE T2 — fast, frequent, evasive swarm (Forest successor) ══
   ['jungle-snake', {
     id: 'jungle-snake', name: 'Jungle Snake', color: 0x33cc44,
-    stats: { hp: 145, attack: 18, plating: 0, damageReduction: 0, speed: 72, attackRange: 12, attackCooldown: 1900, pullRange: 215 },
+    // The frantic frequent-attacker: low per-hit but strikes constantly (frequency
+    // is what evasion answers), plus a light creeping venom. Squishy, very fast.
+    stats: { hp: 150, attack: 16, plating: 0, damageReduction: 0, speed: 76, attackRange: 12, attackCooldown: 1100, pullRange: 270 },
     behavior: 'melee', attackStyle: 'poison', biome: 'jungle',
-    rewards: { essence: 12, essenceType: 'green', level: 1, biomeXp: 35 },
-    ai: { wanderRadius: 260, leashRange: 660, idleMinMs: 1000, idleMaxMs: 3500 },
-    dotEffect: { damagePerStack: 1, maxStacks: 3, tickIntervalMs: 1200, durationMs: 3600 },
+    rewards: { essence: 14, essenceType: 'green', level: 1, biomeXp: 38 },
+    ai: { wanderRadius: 290, leashRange: 740, idleMinMs: 600, idleMaxMs: 2600 },
+    dotEffect: { damagePerStack: 3, maxStacks: 3, tickIntervalMs: 1000, durationMs: 3600 },
   }],
-
+ 
   ['jungle-ape', {
     id: 'jungle-ape', name: 'Jungle Ape', color: 0xaa6633,
-    stats: { hp: 185, attack: 22, plating: 0, damageReduction: 0.05, speed: 58, attackRange: 12, attackCooldown: 2000, pullRange: 225 },
+    // Fast charging bruiser — closes the gap, hits a bit harder. DR removed: Jungle
+    // is the evasion biome (squishy like Forest), not a DR biome.
+    stats: { hp: 190, attack: 26, plating: 0, damageReduction: 0, speed: 62, attackRange: 12, attackCooldown: 1700, pullRange: 240 },
     behavior: 'melee', attackStyle: 'impact', biome: 'jungle',
-    rewards: { essence: 14, essenceType: 'yellow', level: 1, biomeXp: 40 },
-    ai: { wanderRadius: 240, leashRange: 640, idleMinMs: 1200, idleMaxMs: 4000 },
-    chargeOnAggro: { speedMult: 2.8, durationMs: 1100 },
+    rewards: { essence: 16, essenceType: 'green', level: 1, biomeXp: 44 },
+    ai: { wanderRadius: 250, leashRange: 660, idleMinMs: 1000, idleMaxMs: 3800 },
+    chargeOnAggro: { speedMult: 2.8, durationMs: 1000 },
   }],
-
-  ['frost-slime', {
-    id: 'frost-slime', name: 'Frost Slime', color: 0xaaddff,
-    stats: { hp: 100, attack: 14, plating: 0, damageReduction: 0.10, speed: 28, attackRange: 12, attackCooldown: 2800, pullRange: 170 },
-    behavior: 'melee', attackStyle: 'impact', biome: 'tundra',
-    rewards: { essence: 18, essenceType: 'blue', level: 1, biomeXp: 54 },
-    ai: { wanderRadius: 150, leashRange: 510, idleMinMs: 2500, idleMaxMs: 7000 },
+ 
+  ['jungle-blowdarter', {
+    id: 'jungle-blowdarter', name: 'Jungle Blowdarter', color: 0x55bb44,
+    // Re-added: Jungle's ranged poke (its Canopy-Sprite analog). Hidden in foliage,
+    // spits poisoned darts — frequent light hits + DoT from range. Squishy.
+    stats: { hp: 140, attack: 16, plating: 0, damageReduction: 0, speed: 48, attackRange: 190, attackCooldown: 1900, pullRange: 250 },
+    behavior: 'melee', attackStyle: 'poison', isRanged: true, biome: 'jungle',
+    rewards: { essence: 14, essenceType: 'green', level: 1, biomeXp: 38 },
+    ai: { wanderRadius: 250, leashRange: 660, idleMinMs: 1200, idleMaxMs: 4000 },
+    dotEffect: { damagePerStack: 3, maxStacks: 4, tickIntervalMs: 1000, durationMs: 4500 },
   }],
-
-  ['ice-bear', {
-    id: 'ice-bear', name: 'Ice Bear', color: 0xddeeff,
-    stats: { hp: 240, attack: 22, plating: 0, damageReduction: 0.14, speed: 38, attackRange: 15, attackCooldown: 3200, pullRange: 200 },
-    behavior: 'melee', attackStyle: 'impact', biome: 'tundra',
-    rewards: { essence: 25, essenceType: 'blue', level: 1, biomeXp: 70 },
-    ai: { wanderRadius: 180, leashRange: 560, idleMinMs: 2000, idleMaxMs: 6500 },
-  }],
-
+ 
+  // ══ DESERT T2 — debuff/slow/root appliers; lockdown is the threat ══
   ['sand-scorpion', {
     id: 'sand-scorpion', name: 'Sand Scorpion', color: 0xddbb44,
-    stats: { hp: 160, attack: 20, plating: 0, damageReduction: 0.10, speed: 50, attackRange: 12, attackCooldown: 2200, pullRange: 210 },
+    // Fast slow-applier: a sting that saps your speed (speedMult 0.5) so the rest
+    // of the pack can keep up with you. Light DR. The mobile debuffer.
+    stats: { hp: 170, attack: 20, plating: 0, damageReduction: 0.08, speed: 52, attackRange: 12, attackCooldown: 2000, pullRange: 210 },
     behavior: 'melee', attackStyle: 'poison', biome: 'desert',
-    rewards: { essence: 13, essenceType: 'yellow', level: 1, biomeXp: 38 },
+    rewards: { essence: 14, essenceType: 'yellow', level: 1, biomeXp: 40 },
     ai: { wanderRadius: 240, leashRange: 640, idleMinMs: 1500, idleMaxMs: 4500 },
     slowEffect: { speedMult: 0.5, durationMs: 2500 },
   }],
-
+ 
   ['stone-basilisk', {
     id: 'stone-basilisk', name: 'Stone Basilisk', color: 0xaa8833,
-    stats: { hp: 255, attack: 24, plating: 0, damageReduction: 0.12, speed: 28, attackRange: 12, attackCooldown: 2600, pullRange: 175 },
+    // Root bruiser: a petrifying gaze briefly pins you in place (speedMult 0) — the
+    // lockdown setup that lets the scorpions and djinn pile on. Slow, sturdier DR.
+    stats: { hp: 260, attack: 26, plating: 0, damageReduction: 0.12, speed: 28, attackRange: 12, attackCooldown: 2600, pullRange: 175 },
     behavior: 'melee', attackStyle: 'impact', biome: 'desert',
-    rewards: { essence: 16, essenceType: 'yellow', level: 1, biomeXp: 45 },
+    rewards: { essence: 17, essenceType: 'yellow', level: 1, biomeXp: 46 },
     ai: { wanderRadius: 180, leashRange: 560, idleMinMs: 2000, idleMaxMs: 5500 },
     slowEffect: { speedMult: 0, durationMs: 1200 },
   }],
-
-  ['ember-slime', {
-    id: 'ember-slime', name: 'Ember Slime', color: 0xff4422,
-    stats: { hp: 110, attack: 18, plating: 5, damageReduction: 0, speed: 52, attackRange: 12, attackCooldown: 2300, pullRange: 210 },
-    behavior: 'melee', attackStyle: 'fire', biome: 'volcanic',
-    rewards: { essence: 20, essenceType: 'red', level: 1, biomeXp: 58 },
-    ai: { wanderRadius: 220, leashRange: 600, idleMinMs: 1200, idleMaxMs: 4000 },
+ 
+  ['dust-djinn', {
+    id: 'dust-djinn', name: 'Dust Djinn', color: 0xeecc66,
+    // Desert's ranged debuffer (Sand-Scorpion's reach version): flings stinging
+    // sand that slows from afar. Stationary ranged at T2 — becomes the standoff
+    // kiter (Sandweaver) at T3. Light DR.
+    stats: { hp: 150, attack: 22, plating: 0, damageReduction: 0.05, speed: 40, attackRange: 185, attackCooldown: 2100, pullRange: 230 },
+    behavior: 'melee', attackStyle: 'magic', isRanged: true, biome: 'desert',
+    rewards: { essence: 16, essenceType: 'yellow', level: 1, biomeXp: 42 },
+    ai: { wanderRadius: 220, leashRange: 620, idleMinMs: 1200, idleMaxMs: 4000 },
+    slowEffect: { speedMult: 0.6, durationMs: 2000 },
   }],
 
-  ['magma-golem', {
-    id: 'magma-golem', name: 'Magma Golem', color: 0xcc2200,
-    stats: { hp: 260, attack: 24, plating: 12, damageReduction: 0, speed: 18, attackRange: 15, attackCooldown: 3800, pullRange: 150 },
-    behavior: 'melee', attackStyle: 'fire', biome: 'volcanic',
-    rewards: { essence: 28, essenceType: 'red', level: 1, biomeXp: 80 },
-    ai: { wanderRadius: 110, leashRange: 460, idleMinMs: 3500, idleMaxMs: 9500 },
-  }],
 
 ] satisfies [string, MonsterDefinition][];

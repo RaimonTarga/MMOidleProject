@@ -27,6 +27,7 @@ export const BUFF_IDS = [
   'sacred-burst',
   'debuff-slow',
   'debuff-root',
+  'debuff-frost-ramp',
   'defense-absorb',
   'defense-burst',
   'defense-debt',
