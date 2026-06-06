@@ -79,6 +79,8 @@ export function detachPlayerEntity(world: World, playerId: string): void {
   const e = getPlayerEntity(world, playerId);
   if (e) {
     despawnMinionsForOwner(world, e);
+    world.worldLogByPlayer.delete(playerId);
+    world.nextMinionIdByOwner.delete(playerId);
     const nodeId = e.hasPosition.nodeId;
     const before = world.countPlayersInNode(nodeId);
     world.decrementPlayersInNode(nodeId);

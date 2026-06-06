@@ -8,6 +8,13 @@ import type { NodeTelemetrySnapshot } from "./nodeTelemetry";
 import type { WorldLogEvent } from "./worldLogEvents";
 import type { Vec2 } from "../systems/spatial";
 
+export interface ReleaseAnnouncementPayload {
+  version: string;
+  title: string;
+  releasedAt: number;
+  markdown: string;
+}
+
 /** Events the server sends to clients */
 export interface ServerToClientEvents {
   /** Full component resync sent to a newly connected player */
@@ -39,6 +46,8 @@ export interface ServerToClientEvents {
   "node:preparing": (payload: { nodeId: string }) => void;
   /** Sent to the old socket when a second session connects with the same account ID. */
   "session:kicked": (payload: { reason: string }) => void;
+  /** Player-facing release notes for versions newer than the player's previous login. */
+  "game:updateAnnouncement": (payload: ReleaseAnnouncementPayload) => void;
 }
 
 /** Events clients send to the server */

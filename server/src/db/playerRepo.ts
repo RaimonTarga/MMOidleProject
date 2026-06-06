@@ -28,16 +28,37 @@ export interface PersistedPlayerSlices {
 
 // ── Account ───────────────────────────────────────────────────────────────────
 
-export async function findOrCreateAccount(db: DB, accountId: string, displayName: string): Promise<void> {
+export interface AccountLoginResult {
+  previousLoginAt: number | null;
+  currentLoginAt: number;
+}
+
+export async function findOrCreateAccount(
+  db: DB,
+  accountId: string,
+  displayName: string,
+): Promise<AccountLoginResult> {
+  const now = Date.now();
   const existing = await db.select().from(accounts).where(eq(accounts.id, accountId)).limit(1);
   if (existing.length === 0) {
     await db.insert(accounts).values({
       id:          accountId,
       displayName,
       discordId:   null,
-      createdAt:   Date.now(),
+      createdAt:   now,
+      lastLoginAt: now,
     });
+    return { previousLoginAt: null, currentLoginAt: now };
   }
+
+  const previousLoginAt = existing[0].lastLoginAt || existing[0].createdAt;
+  await db.update(accounts)
+    .set({
+      displayName,
+      lastLoginAt: now,
+    })
+    .where(eq(accounts.id, accountId));
+  return { previousLoginAt, currentLoginAt: now };
 }
 
 // ── Character ─────────────────────────────────────────────────────────────────

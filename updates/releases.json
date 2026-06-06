@@ -1,0 +1,10 @@
+{
+  "releases": [
+    {
+      "version": "0.01",
+      "title": "Smarter Auto-Combat",
+      "releasedAt": 1780456120691,
+      "markdownPath": "v0.01/changelog.md"
+    }
+  ]
+}

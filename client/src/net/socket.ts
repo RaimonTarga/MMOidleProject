@@ -6,6 +6,7 @@ import type {
   PlayerDeathPayload,
   WorldLogEvent,
   BossFelledMarker,
+  ReleaseAnnouncementPayload,
 } from '@mmo-idle/shared';
 
 export type GameSocket = Socket<ServerToClientEvents, ClientToServerEvents>;
@@ -33,6 +34,7 @@ export interface SocketHandlers {
   onOverlordFelled(): void;
   onBossFelled(markers: BossFelledMarker[]): void;
   onWorldEvents(events: WorldLogEvent[]): void;
+  onUpdateAnnouncement(payload: ReleaseAnnouncementPayload): void;
   onSessionKicked(): void;
 }
 
@@ -52,6 +54,7 @@ export function wireSocketHandlers(
   socket.on('overlord:felled', () => h.onOverlordFelled());
   socket.on('world:bossFelled', (m) => h.onBossFelled(m));
   socket.on('world:events', (e) => h.onWorldEvents(e));
+  socket.on('game:updateAnnouncement', (p) => h.onUpdateAnnouncement(p));
   socket.on('session:kicked', () => {
     socket.io.reconnection(false);
     h.onSessionKicked();

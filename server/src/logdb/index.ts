@@ -25,8 +25,16 @@ const wantsSsl =
   process.env.LOG_PGSSL === 'require' ||
   process.env.LOG_PGSSL === 'true';
 
+function parsePoolMax(value: string | undefined, fallback: number): number {
+  if (!value) return fallback;
+  const parsed = Number(value);
+  if (!Number.isInteger(parsed) || parsed < 1) return fallback;
+  return parsed;
+}
+
 export const logPool = new Pool({
   connectionString,
+  max: parsePoolMax(process.env.LOG_PG_POOL_MAX, 2),
   ssl: wantsSsl ? { rejectUnauthorized: false } : false,
 });
 
