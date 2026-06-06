@@ -24,6 +24,9 @@ export interface BiomeDefinition {
    * How many non-boss monsters the server targets per node of this biome.
    * Falls back to GAME_CONFIG.MONSTERS_PER_NODE when omitted.
    * High density = more but weaker monsters; low density = fewer but tougher.
+   * Density is the OTHER half of each biome's threat: high-density biomes
+   * (plains/forest/jungle) pressure tanks via volume; low-density (mountain/
+   * cave/desert) pressure via per-hit. The per-mob stats assume these values.
    */
   mobDensity?: number;
 }
@@ -46,35 +49,33 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
   }],
 
   // ── T1 biomes ─────────────────────────────────────────────────────────────
-  // Threat profile: fast/sustained, low defense — easy to burst down
+
+  // FOREST — fast movement + FREQUENT (low-cd) attacks; low per-hit, no armor.
+  // Evasion's home; squishy, fast weapons shred. High-ish density.
   ['forest', {
     id: 'forest', name: 'Forest',
     backgroundColor: 0x0a1a0a,
     monsterPoolByTier: {
       1: ['forest-slime', 'wolf'],
       2: ['ancient-wolf', 'ironwood-golem', 'canopy-sprite'],
-      3: ['cursed-wolf', 'treant'],
-      4: ['elder-treant', 'spectral-wolf'],
     },
     bossPoolByTier: {
       1: ['forest-warden'],
       2: ['forest-elder'],
-      3: ['elder-forest-warden'],
-      4: ['elder-treant-lord'],
     },
     essenceType: 'essence',
     mobDensity: 13,
   }],
 
-  // Threat profile: two varieties — fast skirmishers (high pull range, low defense)
-  // and pseudo-ranged attackers (long attack range, average stats)
+  // MOUNTAIN — rare HUGE hits that trip the damage cap; slow + charge to connect.
+  // Low density: the threat is per-hit, not volume. Damage-cap's home.
   ['mountain', {
     id: 'mountain', name: 'Mountain',
     backgroundColor: 0x141418,
     monsterPoolByTier: {
       1: ['cliff-hopper', 'ridge-archer'],
       2: ['granite-titan', 'stone-eagle', 'peak-archer'],
-      3: ['rune-golem', 'storm-eagle'],
+      3: ['mountain-colossus', 'avalanche-ram', 'summit-trebuchet'],
       4: ['colossal-titan', 'thunder-condor'],
     },
     bossPoolByTier: {
@@ -87,35 +88,32 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
     mobDensity: 7,
   }],
 
-  // Threat profile: balanced, no specialization — jack of all trades
+  // PLAINS — swarm of small, fast, low-per-hit mobs; volume is the threat.
+  // Highest density; plating's home. The all-rounder / floor biome.
   ['plains', {
     id: 'plains', name: 'Plains',
     backgroundColor: 0x141a08,
     monsterPoolByTier: {
       1: ['plains-slime', 'boar'],
       2: ['stampede-bull', 'prairie-wolf', 'savanna-hawk'],
-      3: ['war-mammoth', 'dire-wolf'],
-      4: ['ancient-guardian', 'stampede-king'],
     },
     bossPoolByTier: {
       1: ['plains-champion'],
-      2: ['plains-overlord'],
-      3: ['plains-warlord'],
-      4: ['stampede-emperor'],
+      2: ['plains-tyrant'],
     },
     essenceType: 'essence',
     mobDensity: 16,
   }],
 
-  // Threat profile: attrition — DoT/poison attackers with above-average defense;
-  // slow but ramping damage output; higher tiers introduce debuffs
+  // SWAMP — trivial direct damage, heavy stacking DoT; attrition. Dot-resist's
+  // home (its armor's debt loop turns direct hits into resist-able DoT too).
   ['swamp', {
     id: 'swamp', name: 'Swamp',
     backgroundColor: 0x0c1708,
     monsterPoolByTier: {
       1: ['bog-slime', 'mud-toad'],
       2: ['swamp-hydra', 'bog-witch', 'mire-stalker'],
-      3: ['bog-horror', 'plague-witch'],
+      3: ['plague-hydra', 'mire-curse-witch', 'bog-lurker'],
       4: ['hydra-elder', 'shadow-toad'],
     },
     bossPoolByTier: {
@@ -128,21 +126,22 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
     mobDensity: 10,
   }],
 
-  // Threat profile: high defense, hard and slow hits — damage spikiness;
-  // hardest T1 biome to farm due to plating; low pull range (ambush style)
+  // CAVE — few ELITE mobs, MIXED shapes (fast / bruiser / ranged), real DR +
+  // plating. %DR is the universal answer; slow/piercing weapons earn keep here.
+  // Lowest starter density. The intended "mixed trio" exception.
   ['cave', {
     id: 'cave', name: 'Caverns',
     backgroundColor: 0x0c0c0f,
     monsterPoolByTier: {
       1: ['cave-lurker', 'cave-brute'],
       2: ['giant-spider', 'cave-troll', 'cave-gargoyle'],
-      3: ['cave-behemoth', 'venom-queen'],
-      4: ['stone-colossus', 'abyss-crawler'],
+      3: ['deep-spider', 'cavern-troll', 'crystal-gargoyle'],
+      4: ['stone-colossus', 'trench-crawler'],
     },
     bossPoolByTier: {
       1: ['cave-sentinel'],
       2: ['cave-terror'],
-      3: ['cave-overlord'],
+      3: ['cave-dread'],
       4: ['cave-titan'],
     },
     essenceType: 'essence',
@@ -150,13 +149,14 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
   }],
 
   // ── T2+ biomes (not available at T1) ──────────────────────────────────────
-  // Jungle first appears at T2 — dense, aggressive, mixed threat profile
+
+  // JUNGLE (debuts T2) — HIGH density, aggressive; on-hit / hardening profile.
   ['jungle', {
     id: 'jungle', name: 'Jungle',
     backgroundColor: 0x081508,
     monsterPoolByTier: {
       2: ['jungle-snake', 'jungle-ape', 'jungle-blowdarter'],
-      3: ['feral-gorilla', 'pit-viper'],
+      3: ['jungle-stalker', 'silverback', 'canopy-harrier'],
       4: ['ancient-titan', 'jungle-wyvern'],
     },
     bossPoolByTier: {
@@ -172,11 +172,10 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
     id: 'tundra', name: 'Tundra',
     backgroundColor: 0x0e1218,
     monsterPoolByTier: {
-      3: ['frost-slime', 'ice-bear', 'frost-giant', 'blizzard-wolf'],
+      3: ['frost-lurker', 'glacier-bear', 'rime-caster'],
       4: ['arctic-leviathan', 'ice-specter'],
     },
     bossPoolByTier: {
-      2: ['glacial-colossus'],
       3: ['frost-colossus'],
       4: ['glacial-titan'],
     },
@@ -184,12 +183,15 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
     mobDensity: 6,
   }],
 
+  // DESERT (debuts T2) — the LOW-density "standoff": few tough, debuff-laden
+  // enemies. Density corrected 14 -> 5 to match the locked identity (was the
+  // long-standing assignment error).
   ['desert', {
     id: 'desert', name: 'Desert',
     backgroundColor: 0x1a1608,
     monsterPoolByTier: {
-      2: ['sand-scorpion', 'stone-basilisk', 'dune-asp'],
-      3: ['sand-kraken', 'bone-drake'],
+      2: ['sand-scorpion', 'stone-basilisk', 'dust-djinn'],
+      3: ['dune-stalker', 'desert-basilisk', 'sandweaver'],
       4: ['pharaoh-construct', 'desert-wyrm'],
     },
     bossPoolByTier: {
@@ -198,7 +200,7 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
       4: ['desert-eternal'],
     },
     essenceType: 'essence',
-    mobDensity: 14,
+    mobDensity: 5,
   }],
 
   // Volcanic first appears at T3 — not available in T1 or T2 zones.
@@ -206,7 +208,7 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
     id: 'volcanic', name: 'Volcanic',
     backgroundColor: 0x1a0808,
     monsterPoolByTier: {
-      3: ['ember-slime', 'magma-golem', 'lava-titan', 'fire-elemental'],
+      3: ['ember-imp', 'cinder-hound', 'magma-brute', 'ash-slinger'],
       4: ['infernal-drake', 'magma-colossus'],
     },
     bossPoolByTier: {
@@ -214,12 +216,15 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
       4: ['inferno-lord'],
     },
     essenceType: 'essence',
-    mobDensity: 5,
+    mobDensity: 18,
   }],
 
-  // Necropolis first appears at T4 — deep undead territory.
-  ['necropolis', {
-    id: 'necropolis', name: 'Necropolis',
+  // GRAVEYARD (T4) — was 'graveyard'. EXTREME-high-density weak undead swarm;
+  // carries a NEW mechanic (plague / DoT-contagion), not a plains re-run.
+  // ⚠ id changed necropolis -> graveyard: propagate in world-gen / zone config.
+  // Mob pool is placeholder pending the new-mechanic mobs.
+  ['graveyard', {
+    id: 'graveyard', name: 'Graveyard',
     backgroundColor: 0x0c0810,
     monsterPoolByTier: {
       3: ['skeleton-warrior', 'lich'],
@@ -230,20 +235,23 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
       4: ['undying-lord'],
     },
     essenceType: 'essence',
-    mobDensity: 13,
+    mobDensity: 20,
   }],
 
-  // Abyss first appears at T4 — end-game void zones only.
-  ['abyss', {
-    id: 'abyss', name: 'Abyss',
-    backgroundColor: 0x060410,
+  // DEEP-SEA TRENCH (T4) — was 'trench'. EXTREME-low-density rare trenchal terrors;
+  // carries a NEW mechanic (execute / finisher), not a desert re-run.
+  // ⚠ id changed abyss -> trench: propagate in world-gen / zone config.
+  // Mob pool is placeholder pending the new-mechanic mobs.
+  ['trench', {
+    id: 'trench', name: 'Deep-Sea Trench',
+    backgroundColor: 0x001a4d,
     monsterPoolByTier: {
-      4: ['void-horror', 'abyssal-titan'],
+      4: ['void-horror', 'trenchal-titan'],
     },
     bossPoolByTier: {
-      4: ['void-titan'],
+      4: ['void-overlord', 'void-titan'],
     },
     essenceType: 'essence',
-    mobDensity: 5,
+    mobDensity: 3,
   }],
 ]);

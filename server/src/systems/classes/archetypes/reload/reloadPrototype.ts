@@ -1,32 +1,28 @@
 import { registerCombatListener } from '../../../combat/engine/combatPipeline';
 import type { World } from '../../../../world/World';
+import { GAME_CONFIG, resetCounter } from '@mmo-idle/shared';
 import { initReloadT3 } from './t3';
+import {
+  completeReload,
+  emitReloadStart,
+  registerReloadAfterHitListener,
+  resolveReloadTimeMs,
+  startReloadTimer,
+} from './reloadLifecycle';
+import { blunderbussAimPos } from './t3/pipeline/blunderbuss';
+import {
+  BLUNDERBUSS_VOLLEY_HITS_COUNTER,
+  DEFAULT_BLUNDERBUSS_SPREAD_RAD,
+} from './t3/core/constants';
 
-// ── Fallback constants (balanced-frame defaults, used when no frame is unlocked) ─
+const RELOAD_MAX_AMMO = 10;
 
-const RELOAD_MAX_AMMO = 8;
-const RELOAD_TIME_MS  = 2500;
-
-// ── Tick-driven reload completion ─────────────────────────────────────────────
-
-/**
- * Run once per world tick, AFTER updateCombatState. The ammo clip and reload
- * timer live on the ReloadComponent now; this function keeps them in sync with
- * the current `reload.max-ammo` passive, ticks down the reload timer, and
- * refills when it expires.
- *
- * For every reload-archetype player:
- *   1. First call / passive change: reconcile ammoMax against the passive.
- *   2. Decrement reloadingMs each tick.
- *   3. When reload timer hits zero and ammo is 0: refill to max.
- */
-export function updateReloadArchetype(world: World, dt: number): void {
+export function updateReloadArchetype(world: World, dt: number, now: number): void {
   for (const entity of world.reloadPlayers) {
     const reload = entity.usesReload;
 
     const maxAmmo = Math.round(entity.usesSkills.passives['reload.max-ammo'] ?? RELOAD_MAX_AMMO);
 
-    // Lazy-init or sync when the max-ammo passive changes.
     if (reload.ammoMax !== maxAmmo) {
       const isFirstInit = reload.ammoMax === 0;
       reload.ammoMax = maxAmmo;
@@ -35,35 +31,32 @@ export function updateReloadArchetype(world: World, dt: number): void {
       }
     }
 
-    // Tick down the reload timer.
+    const lastCombatAt = entity.tracksEngagement;
+    const inCombat = entity.hasAttackTarget !== undefined ||
+      (lastCombatAt !== undefined && (now - lastCombatAt) < GAME_CONFIG.COMBAT_REGEN_DELAY);
+
+    if (!inCombat && reload.ammo < reload.ammoMax && reload.reloadingMs <= 0 && reload.ammo > 0) {
+      const reloadTimeMs = resolveReloadTimeMs(entity);
+      startReloadTimer(world, entity, reloadTimeMs);
+      emitReloadStart(world, entity);
+    }
+
     if (reload.reloadingMs > 0) {
-      reload.reloadingMs = Math.max(0, reload.reloadingMs - dt);
+      const tickMs = inCombat ? dt : dt * 2;
+      reload.reloadingMs = Math.max(0, reload.reloadingMs - tickMs);
     }
 
-    // Reload complete: refill when timer expired and clip is empty.
     if (reload.reloadingMs <= 0 && reload.ammo === 0) {
-      reload.ammo = reload.ammoMax;
-      console.log(`[Reload] ${entity.isPlayer.id}: reload complete — ${reload.ammoMax} rounds`);
+      completeReload(world, entity);
     }
-
   }
 }
 
-// ── Combat listener ───────────────────────────────────────────────────────────
-
-/**
- * Register the beforeAttack listener that enforces the ammo/reload gate.
- * Called once at server startup via registerClassMechanic / activateClassMechanics.
- *
- * Behavior:
- *   - If the reload timer is active or ammo is 0: cancel the attack.
- *   - Otherwise: consume one round; if that empties the clip, start the reload
- *     timer (duration from reload.reload-time-ms passive, or fallback constant).
- */
 export function initReloadArchetype(): void {
   initReloadT3();
+  registerReloadAfterHitListener();
 
-  registerCombatListener('beforeAttack', (ctx, _world) => {
+  registerCombatListener('beforeAttack', (ctx, world) => {
     if (ctx.attackerType !== 'player') return;
 
     const entity = ctx.attacker;
@@ -72,18 +65,55 @@ export function initReloadArchetype(): void {
     ctx.platingMult = 0.5;
 
     const reload = entity.usesReload;
+    const passives = entity.usesSkills.passives;
+    const isBlunderbussPellet = ctx.metadata['blunderbussPellet'] === true;
 
-    if (reload.reloadingMs > 0 || reload.ammo === 0) {
+    // Blunderbuss volley pellets fire as one burst: pellet 0 empties the clip
+    // and starts the reload, so the follow-up pellets must bypass both the
+    // reloading and empty-clip guards (otherwise only the first pellet lands).
+    if (!isBlunderbussPellet && (reload.reloadingMs > 0 || reload.ammo === 0)) {
       ctx.cancelled = true;
       return;
     }
 
+    if ((passives['reload.blunderbuss'] ?? 0) > 0 && !isBlunderbussPellet) {
+      const pelletCount = reload.ammo;
+      if (pelletCount <= 0) {
+        ctx.cancelled = true;
+        return;
+      }
+
+      const spreadRad =
+        passives['reload.blunderbuss-spread-rad'] ?? DEFAULT_BLUNDERBUSS_SPREAD_RAD;
+      const targetPos = ctx.defender.hasPosition.current;
+      const from = entity.hasPosition.current;
+      ctx.metadata['aimPos'] = blunderbussAimPos(from, targetPos, spreadRad);
+      ctx.metadata['blunderbussPellet'] = true;
+      ctx.metadata['blunderbussPelletIndex'] = 0;
+      ctx.metadata['blunderbussPelletTotal'] = pelletCount;
+      ctx.metadata['blunderbussRemaining'] = pelletCount - 1;
+      ctx.metadata['blunderbussLastPellet'] = pelletCount === 1;
+      ctx.metadata['blunderbussVolleyTrigger'] = true;
+      if (entity.tracksCombat) {
+        resetCounter(entity.tracksCombat, BLUNDERBUSS_VOLLEY_HITS_COUNTER);
+      }
+
+      reload.ammo = 0;
+      const reloadTimeMs = resolveReloadTimeMs(entity);
+      startReloadTimer(world, entity, reloadTimeMs);
+      return;
+    }
+
+    // Follow-up volley pellets don't consume ammo — pellet 0 already emptied the
+    // clip and started the reload. Without this they'd drive ammo negative.
+    if (isBlunderbussPellet) return;
+
     reload.ammo -= 1;
 
     if (reload.ammo === 0) {
-      const reloadTimeMs = Math.round(entity.usesSkills.passives['reload.reload-time-ms'] ?? RELOAD_TIME_MS);
-      reload.reloadingMs = reloadTimeMs;
-      console.log(`[Reload] ${entity.isPlayer.id}: clip empty — reloading (${reloadTimeMs}ms)`);
+      const reloadTimeMs = resolveReloadTimeMs(entity);
+      startReloadTimer(world, entity, reloadTimeMs);
+      ctx.metadata['pendingReloadStart'] = true;
     }
   });
 }

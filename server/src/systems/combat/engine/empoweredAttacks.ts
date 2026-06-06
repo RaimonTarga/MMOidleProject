@@ -117,6 +117,10 @@ export function registerEmpoweredMultiplier(
         }
       }
     }
+    // Universal item/passive bonus — stacks on top of archetype base + T3 add.
+    if (ctx.attackerType === 'player') {
+      effectiveMult += ctx.attacker.usesSkills.passives['shared.empowered-mult-add'] ?? 0;
+    }
 
     const base     = ctx.damage;
     ctx.damage     = Math.floor(base * effectiveMult);
@@ -125,9 +129,11 @@ export function registerEmpoweredMultiplier(
     ctx.metadata['empoweredMultiplier'] = effectiveMult;
     ctx.metadata['empoweredBonus']      = ctx.damage - base;
 
-    console.log(
-      `[Empowered] ${ctx.attacker.entityId}: ${effectiveMult}x hit on ${ctx.defender.entityId} — ` +
-      `${base} → ${ctx.damage} dmg (+${ctx.damage - base})`,
-    );
+    if (!process.env.BALANCE_BENCH) {
+      console.log(
+        `[Empowered] ${ctx.attacker.entityId}: ${effectiveMult}x hit on ${ctx.defender.entityId} — ` +
+          `${base} → ${ctx.damage} dmg (+${ctx.damage - base})`,
+      );
+    }
   });
 }

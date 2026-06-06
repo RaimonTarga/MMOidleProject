@@ -1,8 +1,10 @@
-import { BIOME_DATABASE, GAME_CONFIG, NODE_BIOMES, outerReachHalfW, type HitboxRect } from '@mmo-idle/shared';
+import { BIOME_DATABASE, GAME_CONFIG, NODE_BIOMES, NODE_FEATURES, outerReachHalfW, RESOLVED_NODE_FEATURES, type HitboxRect } from '@mmo-idle/shared';
 import { getOwnView } from '../../render/state';
-import { BIOME_TEXTURES } from '../../sprites';
+import { DEPTH } from '../../render/depth';
+import { BIOME_TEXTURES, NODE_DECOR } from '../../sprites';
 import type { GameScene } from './GameScene';
 import { GATE_COLOR, GATE_THICK, getNodeExits, MM_H, MM_PAD, MM_W } from './nodeExits';
+import { isVoidThroneUnblocked } from './voidThrone';
 
 export function createGridBackground(scene: GameScene): void {
   const cell = 64;
@@ -54,6 +56,48 @@ export function updateBiomeBackground(scene: GameScene): void {
   } else {
     scene.bgRect.setVisible(true).setFillStyle(biome.backgroundColor);
     scene.bgGrid.setVisible(true);
+  }
+}
+
+export function updateNodeDecor(scene: GameScene): void {
+  for (const img of scene.nodeDecor) img.destroy();
+  scene.nodeDecor = [];
+
+  const arts = NODE_DECOR[scene.state.ownNodeId];
+  if (!arts) return;
+
+  const nodeId = scene.state.ownNodeId;
+  const throneOpen = isVoidThroneUnblocked(scene);
+  for (const art of arts) {
+    const feature = NODE_FEATURES[nodeId]?.find(f => f.id === art.featureId);
+    const textureKey = throneOpen && art.openKey ? art.openKey : art.key;
+    if (!feature || !scene.textures.exists(textureKey)) continue;
+    const scale = art.artScale ?? 1;
+    const img = scene.add
+      .image(feature.x, feature.y, textureKey)
+      .setOrigin(0.5, 0.5)
+      .setDepth(art.depth ?? DEPTH.BG_DECOR)
+      .setDisplaySize(feature.displayW * scale, feature.displayH * scale);
+    img.setData('featureId', art.featureId);
+    if (art.alpha != null) img.setAlpha(art.alpha);
+    scene.nodeDecor.push(img);
+  }
+}
+
+export function refreshNodeDecorState(scene: GameScene): void {
+  const arts = NODE_DECOR[scene.state.ownNodeId];
+  if (!arts) return;
+
+  const throneOpen = isVoidThroneUnblocked(scene);
+  for (const img of scene.nodeDecor) {
+    const featureId = img.getData('featureId') as string | undefined;
+    const art = arts.find(a => a.featureId === featureId);
+    if (!art) continue;
+    const textureKey = throneOpen && art.openKey ? art.openKey : art.key;
+    if (img.texture.key === textureKey || !scene.textures.exists(textureKey)) continue;
+    const displayW = img.displayWidth;
+    const displayH = img.displayHeight;
+    img.setTexture(textureKey).setDisplaySize(displayW, displayH);
   }
 }
 
@@ -133,6 +177,26 @@ export function drawMinimap(scene: GameScene): void {
 
 const HITBOX_COLOR_ENEMY = 0xff3333;
 const HITBOX_COLOR_PLAYER = 0x44ff88;
+const FEATURE_DEBUG_COLOR = 0xff66cc;
+
+function drawNodeFeatureShapes(
+  scene: GameScene,
+  gfx: Phaser.GameObjects.Graphics,
+): void {
+  const features = RESOLVED_NODE_FEATURES[scene.state.ownNodeId];
+  if (!features) return;
+  gfx.lineStyle(2, FEATURE_DEBUG_COLOR, 0.85);
+  for (const f of features) {
+    const s = f.shape;
+    if (s.kind === 'circle') {
+      gfx.strokeCircle(s.x, s.y, s.radius);
+    } else if (s.kind === 'ellipse') {
+      gfx.strokeEllipse(s.x, s.y, s.halfW * 2, s.halfH * 2);
+    } else {
+      gfx.strokeRect(s.x - s.halfW, s.y - s.halfH, s.halfW * 2, s.halfH * 2);
+    }
+  }
+}
 
 function strokeEntityHitboxes(
   gfx: Phaser.GameObjects.Graphics,
@@ -165,6 +229,8 @@ export function drawTacticalMode(scene: GameScene): void {
   gfx.clear();
   scene.state.throttles.debugClearedAt = scene.time.now;
 
+  drawNodeFeatureShapes(scene, gfx);
+
   for (const id of scene.state.ids) {
     if (scene.state.kind.get(id) !== 'monster') continue;
     const sprite = scene.state.sprite.get(id);
@@ -192,6 +258,27 @@ export function drawTacticalMode(scene: GameScene): void {
     }
   }
 
+  // Minion attack-range pips (pale yellow). Drawn beneath the player overlay
+  // so the player rings stay legible on top.
+  for (const id of scene.state.ids) {
+    if (scene.state.kind.get(id) !== 'minion') continue;
+    const sprite = scene.state.sprite.get(id);
+    const ranges = scene.state.debugRanges.get(id);
+    if (!sprite || !ranges) continue;
+    if (ranges.attackRange != null) {
+      gfx.lineStyle(1, 0xffe680, 0.45);
+      const view = scene.state.view.get(id);
+      const reach = view && 'hitboxRects' in view
+        ? ranges.attackRange + outerReachHalfW(view.hitboxRects)
+        : ranges.attackRange;
+      gfx.strokeCircle(sprite.x, sprite.y, reach);
+    }
+    const view = scene.state.view.get(id);
+    if (view && 'hitboxRects' in view) {
+      strokeEntityHitboxes(gfx, sprite.x, sprite.y, view.hitboxRects, 0xffe680);
+    }
+  }
+
   const ownSprite = scene.state.ownId
     ? scene.state.sprite.get(scene.state.ownId)
     : undefined;
@@ -204,5 +291,15 @@ export function drawTacticalMode(scene: GameScene): void {
       player.attackRange + outerReachHalfW(player.hitboxRects),
     );
     strokeEntityHitboxes(gfx, ownSprite.x, ownSprite.y, player.hitboxRects, HITBOX_COLOR_PLAYER);
+
+    // Summoner leash ring (pale cyan). Slimes are constrained to this radius
+    // around the player. Match the server's `computeLeashRadius`:
+    //   playerAttackRange × summoner.leash-mult  (default 2.0)
+    if (player.summonsMinions) {
+      const mult = player.passives['summoner.leash-mult'] ?? 2.0;
+      const leashRadius = Math.max(40, player.attackRange * mult);
+      gfx.lineStyle(1.5, 0x99e6ff, 0.5);
+      gfx.strokeCircle(ownSprite.x, ownSprite.y, leashRadius);
+    }
   }
 }

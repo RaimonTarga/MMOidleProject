@@ -8,7 +8,7 @@ export const t3CombatEntriesB = [
     classId: 'energy-root', subVariantId: 'light',
     parent: 'energy-light', children: [],
     description: 'Your lightning condenses into daggers. Blue Shift at low energy hits harder; Red Shift at high energy hits lighter but attacks faster, moves faster, and evades more. Energy builds slowly while you Flash the same fight and decays back to Blue Shift over 2 seconds when you disengage.',
-    cost: 1, statEffects: { evasion: 4 },
+    cost: 1, statEffects: { evasion: 0.25 },
     mechanicEffects: { 'energy.flash': 1 },
   }],
   ['energy-light-t3-b', {

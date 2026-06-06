@@ -110,15 +110,87 @@
   color: var(--hud-text-dim);
 }
 
+/* ── Stat help affordance + custom hover tooltip ─────────────────────────── */
+.stat-row--help { cursor: help; }
+.stat-row--help .stat-label {
+  text-decoration: underline dotted rgba(160, 150, 220, 0.45);
+  text-underline-offset: 2px;
+}
+.stat-row--help:hover .stat-label {
+  text-decoration-color: rgba(190, 175, 255, 0.9);
+  color: var(--hud-text);
+}
+
+/* Portalled to <body> — fixed-positioned by the hook, never clipped. */
+.hud-tooltip {
+  position: fixed;
+  z-index: 9000;
+  max-width: 240px;
+  padding: 8px 10px;
+  font-size: 11px;
+  line-height: 1.45;
+  color: #e6e3ff;
+  background: rgba(14, 12, 30, 0.98);
+  border: 1px solid rgba(120, 100, 220, 0.5);
+  border-radius: 5px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.55);
+  pointer-events: none;
+  white-space: normal;
+}
+
 /* ── HP bar ──────────────────────────────────────────────────────────────── */
 .hp-bar-track {
   position: relative;
-  height: 5px;
+  height: 8px;
   background: rgba(255, 255, 255, 0.05);
   border-radius: 3px;
   margin-top: 4px;
   overflow: hidden;
   box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+/* ── Layered HP bar (StatPanel) ──────────────────────────────────────────── */
+/* Positioned via inline left/width %, all as a fraction of maxHp. */
+.hp-layer {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  transition: width 0.3s ease, left 0.3s ease, background 0.4s ease;
+}
+.hp-layer--hp {
+  left: 0;
+  border-radius: 3px 0 0 3px;
+}
+/* Pending damage-over-time — hatched red eating the right edge of current HP. */
+.hp-layer--dot {
+  background: repeating-linear-gradient(45deg, #e04545, #e04545 4px, #b62b2b 4px, #b62b2b 8px);
+  box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.35);
+}
+/* Expected heal-over-time — darker green extending past current HP. */
+.hp-layer--regen {
+  background: #1f7a37;
+  opacity: 0.9;
+}
+
+/* Shield strip — its own bar above the HP bar, always visible. */
+.hp-shield-strip {
+  position: relative;
+  height: 4px;
+  margin-top: 4px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.05);
+  overflow: hidden;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+.hp-shield-strip__fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: linear-gradient(90deg, #33aacc, #44ccdd);
+  border-radius: 2px;
+  transition: width 0.3s ease;
+  animation: shield-shimmer 1.8s ease-in-out infinite alternate;
 }
 
 .hp-bar-fill {
@@ -311,6 +383,58 @@
   color: #ffee44;
   font-weight: bold;
   text-shadow: 0 0 8px rgba(255, 238, 68, 0.5);
+}
+
+/* ── Summoner summon slots ───────────────────────────────────────────────── */
+.summon-slots {
+  display: flex;
+  gap: 5px;
+  margin-top: 5px;
+}
+
+.summon-slot {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.summon-slot-pip {
+  height: 8px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(120, 200, 120, 0.18);
+  transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.summon-slot-pip--active {
+  background: linear-gradient(90deg, #2a8844, #44cc66);
+  border-color: rgba(68, 204, 102, 0.55);
+  box-shadow: 0 0 6px rgba(68, 204, 102, 0.45);
+}
+
+.summon-slot-pip--respawning {
+  border-color: rgba(90, 140, 220, 0.35);
+}
+
+.summon-slot-pip--queued {
+  border-color: rgba(255, 255, 255, 0.12);
+  opacity: 0.55;
+}
+
+.summon-slot-respawn-track {
+  height: 3px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.06);
+  overflow: hidden;
+}
+
+.summon-slot-respawn-fill {
+  height: 100%;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #3366aa, #55aaff);
+  transition: width 0.15s linear;
 }
 
 /* ── DoT stack pips ──────────────────────────────────────────────────────── */
@@ -665,10 +789,10 @@
 
 .combat-log__row {
   display: flex;
-  align-items: baseline;
+  align-items: flex-start;
   gap: 4px;
-  padding: 1px 6px;
-  line-height: 1.45;
+  padding: 3px 6px;
+  line-height: 1.4;
 }
 
 .combat-log__row:nth-child(even) {
@@ -681,20 +805,108 @@
   flex-shrink: 0;
   width: 32px;
   text-align: right;
+  padding-top: 1px;
+}
+
+.combat-log__entry {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.combat-log__line1 {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  min-width: 0;
+}
+
+.combat-log__line2 {
+  padding-left: 14px;
+  min-width: 0;
 }
 
 .combat-log__pfx {
   flex-shrink: 0;
-  width: 10px;
+  width: 12px;
   text-align: center;
+  font-size: 9px;
+}
+
+.combat-log__headline {
+  flex: 1;
+  font-size: 10px;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .combat-log__msg {
   flex: 1;
   font-size: 10px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.combat-log__detail {
+  font-size: 10px;
+  color: #9a9ab4;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.combat-log__buff-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  font-size: 9px;
+  line-height: 1.25;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.combat-log__buff-detail-line {
+  display: block;
+}
+
+.combat-log__math {
+  font-size: 10px;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.combat-log__mitigated,
+.combat-log__gross,
+.combat-log__final {
+  font-weight: 500;
+}
+
+.combat-log__paren,
+.combat-log__sep,
+.combat-log__eq {
+  color: #666677;
+}
+
+.combat-log__target {
+  color: #b0b0cc;
+}
+
+.combat-log__source {
+  color: #888899;
+}
+
+.combat-log__glancing {
+  color: #aa9988;
+  font-style: italic;
+  font-size: 9px;
+}
+
+.combat-log__icon {
+  font-size: 9px;
+  margin-right: 1px;
 }
 
 /* ── Quest / Tier panel ──────────────────────────────────────────────────── */

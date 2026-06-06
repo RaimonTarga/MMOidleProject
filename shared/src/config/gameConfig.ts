@@ -1,4 +1,5 @@
 import { NODE_BIOMES } from '../world/nodeBiomes';
+import type { AutocombatConfig } from '../components/core/networkedSlices';
 
 // ─── Game balance constants ───────────────────────────────────────────────────
 
@@ -38,6 +39,29 @@ export const GAME_CONFIG = {
   /** Minimum pixel distance between two monsters at spawn time */
   MONSTER_MIN_SPAWN_DIST: 120,
 
+  // ── Evasion (fully deterministic — fractional accumulator, no RNG) ─────────────
+  /**
+   * Baseline fraction of a hit's damage avoided when it is evaded (0.5 = half).
+   * Classes/items push this toward 1.0 (full avoid) via `defense.evade-mitigation`;
+   * monsters may override it per-definition with `evadeMitigation`.
+   */
+  EVADE_MITIGATION_BASE: 0.5,
+  /**
+   * Raw dodge rate (Σ 1/N across evasion sources) at or below which dodge
+   * frequency stays linear/unchanged. Above it, diminishing returns kick in.
+   */
+  EVASION_SOFT_CAP: 0.5,
+  /** Asymptotic ceiling on dodge rate — full avoidance comes from the mitigation lever, not frequency. */
+  EVASION_MAX_DODGE: 0.85,
+  /** Diminishing-returns steepness past the soft cap. Higher = approaches the ceiling faster. */
+  EVASION_DR_K: 2.0,
+  /**
+   * Value the deterministic dodge accumulator is reset to while a player is out
+   * of combat. 0 = first in-combat hit starts a fresh dodge count. Raise toward
+   * 1.0 to "preload" a guaranteed dodge on the first hit of an engagement.
+   */
+  EVADE_OOC_RESET: 0,
+
   // ── AoE splash ────────────────────────────────────────────────────────────────
   /** Pixel radius of the empowered-attack splash, centered on the primary target. */
   EMPOWERED_AOE_RADIUS: 80,
@@ -48,24 +72,11 @@ export const GAME_CONFIG = {
    */
   EMPOWERED_AOE_MULT: 0.5,
 
-  // ── Biome XP / recipe unlock system ──────────────────────────────────────
-  /**
-   * XP needed to reach level 1. Higher levels cost BASE * level^EXPONENT total XP.
-   * Use biomeXpForLevel(n) from this package to compute thresholds.
-   */
-  BIOME_XP_BASE: 80,
-  /**
-   * Power-curve exponent. 1.7 means each level costs noticeably more than the last.
-   * Tune alongside BIOME_XP_BASE and BIOME_XP_ESSENCE_MULT.
-   */
-  BIOME_XP_EXPONENT: 1.7,
-  /**
-   * Per-kill biome XP = round(monster.essence * BIOME_XP_ESSENCE_MULT[biomeTier]).
-   * Monsters with an explicit rewards.biomeXp bypass this multiplier.
-   */
-  BIOME_XP_ESSENCE_MULT: [1.0, 2.0, 1.1, 1.0, 1.0, 1.0] as unknown as readonly number[],
-  /** Maximum biome level attainable at each playerTier (index = playerTier). T2 recipes start at level 6. */
-  BIOME_LEVEL_CAP_BY_TIER: [2, 5, 10, 15, 20, 25, 30, 35] as unknown as readonly number[],
+  // ── Biome progression ─────────────────────────────────────────────────────────
+  BIOME_XP_BASE: 40,
+  BIOME_XP_EXPONENT: 2.8,
+  BIOME_XP_ESSENCE_MULT: [1.0, 2.0, 1.1, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0] as unknown as readonly number[],
+  BIOME_LEVEL_CAP_BY_TIER: [5, 5, 9, 13, 17, 21, 25, 29, 33, 37, 41] as unknown as readonly number[],
 } as const;
 
 /**
@@ -97,3 +108,12 @@ export function biomeLevelCap(playerTier: number, biomeGroup: string): number {
   if (biomeGroup === 'clearing') return 4;
   return Math.max(4, playerTier * 4);
 }
+
+export const DEFAULT_AUTOCOMBAT_CONFIG: AutocombatConfig = {
+  engageUltimateBosses: false,
+  fleeWhenLow: true,
+  fleeHpPct: 0.25,
+  priorityMode: 'balanced',
+  acquireRadius: 600,
+  focusLeaderTarget: true,
+};

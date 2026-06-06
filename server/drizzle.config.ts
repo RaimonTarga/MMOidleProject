@@ -3,6 +3,6 @@ import { defineConfig } from 'drizzle-kit';
 export default defineConfig({
   schema:    './src/db/schema.ts',
   out:       './src/db/migrations',
-  dialect:   'sqlite',
-  dbCredentials: { url: './game.db' },
+  dialect:   'postgresql',
+  dbCredentials: { url: process.env.DATABASE_URL ?? '' },
 });

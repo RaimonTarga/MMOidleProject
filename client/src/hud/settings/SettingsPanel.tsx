@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useAtom, useAtomValue } from 'jotai';
 import { gamepadStatusAtom } from '../atoms';
@@ -16,19 +16,52 @@ import {
   type Bindings,
   type CaptureRequest,
 } from '../../settings/keybinds';
+import {
+  loadGameplaySettings,
+  saveGameplaySettings,
+} from '../../settings/gameplaySettings';
+import {
+  canUseNotifications,
+  getNotificationPermission,
+  isDeathNotificationEffectivelyOn,
+  primeNotificationAudio,
+  requestDeathNotificationPermission,
+  sendTestDeathNotification,
+  syncDeathNotificationPreference,
+} from '../../notifications/deathNotification';
+import { hudBus } from '../../hudBus';
 import { clearCaptureSink, setCaptureSink } from '../../input/gamepad';
 import '../hud.css';
 import '../../ui/inventory.css';
 import './settings.css';
+
+type SettingsTab = 'controls' | 'gameplay';
 
 interface Props {
   onClose: () => void;
 }
 
 export function SettingsPanel({ onClose }: Props) {
+  const [tab, setTab] = useState<SettingsTab>('controls');
   const [bindings, setBindings] = useAtom(keybindsAtom);
   const [capture, setCapture] = useAtom(captureModeAtom);
   const padStatus = useAtomValue(gamepadStatusAtom);
+  const [autoTraverseEnabled, setAutoTraverseEnabled] = useState(
+    () => loadGameplaySettings().autoTraverseEnabled,
+  );
+  const [deathNotificationsEnabled, setDeathNotificationsEnabled] = useState(
+    () => loadGameplaySettings().deathNotificationsEnabled,
+  );
+  const [notificationPermission, setNotificationPermission] = useState(
+    getNotificationPermission,
+  );
+
+  useEffect(() => {
+    if (tab !== 'gameplay') return;
+    const synced = syncDeathNotificationPreference();
+    setDeathNotificationsEnabled(synced);
+    setNotificationPermission(getNotificationPermission());
+  }, [tab]);
 
   useEffect(() => {
     if (!capture || capture.device !== 'keyboard') return;
@@ -123,62 +156,161 @@ export function SettingsPanel({ onClose }: Props) {
     setCapture(null);
   }
 
+  function handleAutoTraverseToggle(enabled: boolean): void {
+    setAutoTraverseEnabled(enabled);
+    saveGameplaySettings({ autoTraverseEnabled: enabled });
+    hudBus.requestSetAutoTraverse(enabled);
+  }
+
+  const deathNotificationsOn = isDeathNotificationEffectivelyOn(
+    deathNotificationsEnabled,
+    notificationPermission,
+  );
+
+  async function handleDeathNotificationsToggle(wantOn: boolean): Promise<void> {
+    if (!wantOn) {
+      setDeathNotificationsEnabled(false);
+      saveGameplaySettings({ deathNotificationsEnabled: false });
+      return;
+    }
+
+    if (!canUseNotifications()) return;
+
+    primeNotificationAudio();
+
+    const permission = await requestDeathNotificationPermission();
+    setNotificationPermission(permission);
+
+    if (permission === 'granted') {
+      setDeathNotificationsEnabled(true);
+      saveGameplaySettings({ deathNotificationsEnabled: true });
+    } else {
+      setDeathNotificationsEnabled(false);
+      saveGameplaySettings({ deathNotificationsEnabled: false });
+    }
+  }
+
   return createPortal(
     <div className="inv-overlay" onClick={handleOverlayClick}>
       <div className="inv-panel settings-panel-wide" onClick={(e) => e.stopPropagation()}>
         <div className="inv-header">
-          <span className="inv-title">Controls</span>
+          <span className="inv-title">Settings</span>
           <button type="button" className="inv-close" onClick={onClose}>
             ✕
           </button>
         </div>
 
-        <div
-          className={`settings-status${padStatus ? ' settings-status--connected' : ''}`}
-        >
-          {padStatus
-            ? `Controller: ${padStatus.id}`
-            : 'No controller detected'}
+        <div className="settings-tabs">
+          <button
+            type="button"
+            className={`settings-tab${tab === 'controls' ? ' settings-tab--active' : ''}`}
+            onClick={() => setTab('controls')}
+          >
+            Controls
+          </button>
+          <button
+            type="button"
+            className={`settings-tab${tab === 'gameplay' ? ' settings-tab--active' : ''}`}
+            onClick={() => setTab('gameplay')}
+          >
+            Gameplay
+          </button>
         </div>
 
-        {capture && (
-          <div className="settings-capture-hint">
-            {capture.device === 'keyboard'
-              ? 'Press a key (Esc to cancel)…'
-              : 'Press a button or pull a trigger (Esc to cancel)…'}
+        {tab === 'controls' ? (
+          <>
+            <div
+              className={`settings-status${padStatus ? ' settings-status--connected' : ''}`}
+            >
+              {padStatus
+                ? `Controller: ${padStatus.id}`
+                : 'No controller detected'}
+            </div>
+
+            {capture && (
+              <div className="settings-capture-hint">
+                {capture.device === 'keyboard'
+                  ? 'Press a key (Esc to cancel)…'
+                  : 'Press a button or pull a trigger (Esc to cancel)…'}
+              </div>
+            )}
+
+            <table className="settings-table">
+              <thead>
+                <tr>
+                  <th>Action</th>
+                  <th>Keyboard</th>
+                  <th>Controller</th>
+                </tr>
+              </thead>
+              <tbody>
+                {REBINDABLE_ACTIONS.map((action) => (
+                  <BindingRow
+                    key={action}
+                    action={action}
+                    bindings={bindings}
+                    capture={capture}
+                    onStartCapture={startCapture}
+                    onClearKey={clearKey}
+                    onClearPad={clearPad}
+                  />
+                ))}
+              </tbody>
+            </table>
+
+            <div className="settings-footnotes">
+              Left stick always moves. Esc / B close overlays (not rebindable).
+            </div>
+
+            <button type="button" className="auto-btn settings-reset" onClick={resetAll}>
+              RESET TO DEFAULTS
+            </button>
+          </>
+        ) : (
+          <div className="settings-gameplay">
+            <label className="settings-toggle-row">
+              <input
+                type="checkbox"
+                checked={autoTraverseEnabled}
+                onChange={(e) => handleAutoTraverseToggle(e.target.checked)}
+              />
+              <span>Auto-traverse when Auto Combat is on</span>
+            </label>
+            <p className="settings-help">
+              Grinds the current biome until all recipes are unlocked, kills the boss last,
+              then moves to the next biome. Re-visits a biome if your tier increases the level cap.
+            </p>
+
+            <label className="settings-toggle-row">
+              <input
+                type="checkbox"
+                checked={deathNotificationsOn}
+                onChange={(e) => void handleDeathNotificationsToggle(e.target.checked)}
+                disabled={!canUseNotifications()}
+              />
+              <span>Notify when I die (tab in background)</span>
+            </label>
+            <p className="settings-help">
+              When you die with the game tab in the background, plays a short chime,
+              flashes the tab title, and shows a browser notification. Some operating
+              systems silently suppress browser notification banners; the chime and
+              title flash still surface through the tab/dock.
+            </p>
+            {notificationPermission === 'denied' && (
+              <p className="settings-help settings-help--warning">
+                Notifications are blocked in your browser settings for this site.
+              </p>
+            )}
+            <button
+              type="button"
+              className="auto-btn settings-reset"
+              onClick={() => void sendTestDeathNotification()}
+              disabled={!deathNotificationsOn}
+            >
+              SEND TEST NOTIFICATION
+            </button>
           </div>
         )}
-
-        <table className="settings-table">
-          <thead>
-            <tr>
-              <th>Action</th>
-              <th>Keyboard</th>
-              <th>Controller</th>
-            </tr>
-          </thead>
-          <tbody>
-            {REBINDABLE_ACTIONS.map((action) => (
-              <BindingRow
-                key={action}
-                action={action}
-                bindings={bindings}
-                capture={capture}
-                onStartCapture={startCapture}
-                onClearKey={clearKey}
-                onClearPad={clearPad}
-              />
-            ))}
-          </tbody>
-        </table>
-
-        <div className="settings-footnotes">
-          Left stick always moves. Esc / B close overlays (not rebindable).
-        </div>
-
-        <button type="button" className="auto-btn settings-reset" onClick={resetAll}>
-          RESET TO DEFAULTS
-        </button>
       </div>
     </div>,
     document.body,

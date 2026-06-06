@@ -1,10 +1,10 @@
 import { eq } from 'drizzle-orm';
-import type { BetterSQLite3Database } from 'drizzle-orm/better-sqlite3';
+import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import type { HitboxDef, HitboxRect } from '@mmo-idle/shared';
 import { spriteHitboxMeta, spriteHitboxes } from './schema';
 import type * as schema from './schema';
 
-type DB = BetterSQLite3Database<typeof schema>;
+type DB = NodePgDatabase<typeof schema>;
 
 export const HITBOX_META_KEY = 'atlas';
 
@@ -16,45 +16,44 @@ export interface HitboxRow {
   coverage: number;
 }
 
-export function getAtlasHash(db: DB): string | null {
-  const row = db
+export async function getAtlasHash(db: DB): Promise<string | null> {
+  const rows = await db
     .select()
     .from(spriteHitboxMeta)
     .where(eq(spriteHitboxMeta.key, HITBOX_META_KEY))
-    .get();
-  return row?.atlasHash ?? null;
+    .limit(1);
+  return rows[0]?.atlasHash ?? null;
 }
 
-export function replaceAllHitboxes(
+export async function replaceAllHitboxes(
   db: DB,
   rows: HitboxRow[],
   atlasHash: string,
-): void {
+): Promise<void> {
   const now = Date.now();
-  db.transaction((tx) => {
-    tx.delete(spriteHitboxes).run();
+  await db.transaction(async (tx) => {
+    await tx.delete(spriteHitboxes);
     for (const row of rows) {
-      tx.insert(spriteHitboxes).values({
+      await tx.insert(spriteHitboxes).values({
         frameName: row.frameName,
         sourceW: row.sourceW,
         sourceH: row.sourceH,
         rectsJson: JSON.stringify(row.rects),
         coverage: Math.round(row.coverage * 10000),
-      }).run();
+      });
     }
-    tx.insert(spriteHitboxMeta)
+    await tx.insert(spriteHitboxMeta)
       .values({ key: HITBOX_META_KEY, atlasHash, bakedAt: now })
       .onConflictDoUpdate({
         target: spriteHitboxMeta.key,
         set: { atlasHash, bakedAt: now },
-      })
-      .run();
+      });
   });
 }
 
-export function loadHitboxCache(db: DB): Map<string, HitboxDef> {
+export async function loadHitboxCache(db: DB): Promise<Map<string, HitboxDef>> {
   const cache = new Map<string, HitboxDef>();
-  const rows = db.select().from(spriteHitboxes).all();
+  const rows = await db.select().from(spriteHitboxes);
   for (const row of rows) {
     cache.set(row.frameName, {
       frameName: row.frameName,

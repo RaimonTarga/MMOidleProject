@@ -15,7 +15,7 @@ const reloadModule = defineMechanic({
   },
   tick: (world, dt, now) => {
     updateReloadT3(world, dt, now);
-    updateReloadArchetype(world, dt);
+    updateReloadArchetype(world, dt, now);
   },
   buffs: RELOAD_T3_BUFFS,
 });

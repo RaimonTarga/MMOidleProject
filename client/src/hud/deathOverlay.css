@@ -1,0 +1,177 @@
+.death-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10001;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(5, 5, 16, 0.82);
+  pointer-events: all;
+  font-family: system-ui, sans-serif;
+}
+
+.death-card {
+  position: relative;
+  width: min(560px, calc(100vw - 32px));
+  margin-top: 48px;
+  padding: 24px 28px 20px;
+  border: 1px solid rgba(132, 112, 235, 0.45);
+  border-radius: 8px;
+  background: rgba(12, 10, 28, 0.95);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+}
+
+.death-card__sprite {
+  position: absolute;
+  left: 50%;
+  top: -56px;
+  transform: translateX(-50%);
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.6));
+}
+
+.death-card__sprite--boss {
+  top: -64px;
+}
+
+.death-card__void-sprite {
+  background-repeat: no-repeat;
+}
+
+.death-card__header {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #cc2222;
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.death-card__divider {
+  height: 1px;
+  background: rgba(100, 85, 210, 0.22);
+  margin-bottom: 16px;
+}
+
+.death-card__body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 16px;
+}
+
+.death-card__section-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #8877bb;
+  margin-bottom: 6px;
+}
+
+.death-card__killer-name {
+  font-size: 18px;
+  font-weight: 600;
+  color: #f0eeff;
+}
+
+.death-card__killer-cause {
+  font-size: 13px;
+  color: #aa99cc;
+  margin-top: 4px;
+}
+
+.death-card__boss-badge {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: rgba(204, 34, 34, 0.2);
+  border: 1px solid rgba(204, 34, 34, 0.45);
+  color: #ff6666;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+.death-card__detail-line {
+  font-size: 14px;
+  color: #d0cce8;
+  margin-bottom: 4px;
+}
+
+.death-card__footer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(100, 85, 210, 0.22);
+}
+
+.death-card__footer-top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.death-card__respawn-label {
+  flex: 1;
+  font-size: 12px;
+  color: #8877aa;
+}
+
+.death-card__timer {
+  flex-shrink: 0;
+  font-family: ui-monospace, monospace;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: #c8b8ff;
+}
+
+.death-card__progress {
+  width: 100%;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(100, 85, 210, 0.2);
+  overflow: hidden;
+}
+
+.death-card__progress-fill {
+  height: 100%;
+  background: rgba(200, 184, 255, 0.7);
+  transition: width 100ms linear;
+}
+
+.death-card__continue {
+  align-self: flex-end;
+  padding: 8px 16px;
+  border: 1px solid rgba(132, 112, 235, 0.55);
+  border-radius: 4px;
+  background: rgba(40, 32, 80, 0.8);
+  color: #c8b8ff;
+  font-family: monospace;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+}
+
+.death-card__continue:hover {
+  background: rgba(60, 48, 110, 0.9);
+}
+
+@media (max-width: 1100px) {
+  .death-card__body {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .death-card__footer-top {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+}

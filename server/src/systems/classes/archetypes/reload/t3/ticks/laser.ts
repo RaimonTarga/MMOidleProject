@@ -1,4 +1,4 @@
-import { GAME_CONFIG, TEST_ROOM_NODE_ID, getStatusEffect, hitboxGap, inAttackRange, posHitboxFromEntity, type UsesReload } from '@mmo-idle/shared';
+import { GAME_CONFIG, TEST_ROOM_NODE_ID, hitboxGap, inAttackRange, posHitboxFromEntity, type UsesReload } from '@mmo-idle/shared';
 import type { World } from '../../../../../../world/World';
 import type { MonsterEntity, PlayerEntity } from '../../../../../../ecs/entity';
 import {
@@ -15,6 +15,14 @@ import {
   DEFAULT_LASER_HEAT_PER_TICK,
   SERVER_TICK_MS,
 } from '../core/constants';
+import {
+  buildPlatingDrBreakdown,
+  recordMonsterDamagedByPlayer,
+  recordPlayerKillMonster,
+} from '../../../../../../world/worldLogCombat';
+import { actorFromPlayer } from '../../../../../../world/worldLogActors';
+import { isInvulnerableMonster } from '../../../../../combat/invulnerability';
+import { effectivePlatingAfterShred } from '../../../../../combat/damage/effectivePlating';
 
 export function updateReloadT3Ticks(world: World, dt: number, now: number): void {
   for (const entity of world.reloadPlayers) {
@@ -84,15 +92,17 @@ function findNearestTarget(world: World, player: PlayerEntity): MonsterEntity | 
 }
 
 function applyLaserTick(world: World, player: PlayerEntity, target: MonsterEntity, now: number): void {
+  if (isInvulnerableMonster(target)) return;
+
   const ctx = makeCombatContext(player, 'player', target, 'monster');
   ctx.metadata['reloadLaser'] = true;
 
   emitCombatEvent('onAttack', ctx, world);
 
   const monsterCombatState = target.tracksCombat;
-  const shredEffect = getStatusEffect(monsterCombatState, 'plating-shred');
-  const effectivePlating = Math.max(0,
-    target.mitigatesDamage.plating - (shredEffect ? shredEffect.stacks * shredEffect.data['platingReduction'] : 0),
+  const effectivePlating = effectivePlatingAfterShred(
+    target.mitigatesDamage.plating,
+    monsterCombatState,
   );
   const damagePct = player.usesSkills.passives['reload.laser-damage-per-tick-pct'] ?? DEFAULT_LASER_DAMAGE_PER_TICK_PCT;
   const rawLaserDamage = Math.max(1, player.dealsDamage.attack * damagePct);
@@ -116,6 +126,25 @@ function applyLaserTick(world: World, player: PlayerEntity, target: MonsterEntit
   }
 
   emitCombatEvent('onDamageTaken', ctx, world);
+
+  const mitigation = buildPlatingDrBreakdown({
+    grossDamage: Math.round(rawLaserDamage),
+    effectivePlating,
+    platingMult: ctx.platingMult,
+    damageReduction: target.mitigatesDamage.damageReduction,
+  });
+  mitigation.hpDamage = ctx.damage;
+
+  recordMonsterDamagedByPlayer(
+    world,
+    player.isPlayer.id,
+    actorFromPlayer(player),
+    target,
+    ctx.damage,
+    'proc',
+    mitigation,
+    ['laser'],
+  );
 
   target.hasHealth.hp -= ctx.damage;
   player.performsAttack.lastAttackAt = now;
@@ -144,6 +173,7 @@ function applyLaserTick(world: World, player: PlayerEntity, target: MonsterEntit
   if (target.hasHealth.hp <= 0) {
     emitCombatEvent('onKill', ctx, world);
     const rewardInfo = grantMonsterRewards(world, player.isPlayer.id, target);
+    recordPlayerKillMonster(world, player.isPlayer.id, target, ctx.damage, rewardInfo);
     world.pushEvent(player.hasPosition.nodeId, {
       kind: 'player-kill',
       playerId: player.isPlayer.id,
@@ -161,7 +191,7 @@ function applyLaserTick(world: World, player: PlayerEntity, target: MonsterEntit
   const monster = world.getMonsterEntity(target.isMonster.id);
   const ai = monster?.controlsMonster;
   if (monster && ai && !monster.hasAggroTarget) {
-    setAggroTarget(world, monster, player.isPlayer.id, now);
+    setAggroTarget(world, monster, { id: player.isPlayer.id, kind: 'player' }, now);
     markEngaged(world, player, now);
   }
 }

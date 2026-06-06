@@ -4,14 +4,17 @@ import type { EssenceType } from '@mmo-idle/shared';
 import { RECIPE_DATABASE, TEST_ROOM_NODE_ID } from '@mmo-idle/shared';
 import { hudBus } from '../../hudBus';
 import {
+  equipmentAtom,
   essencesAtom,
   inventoryAtom,
   playerNodeIdAtom,
   playerTierAtom,
   unlockedRecipesAtom,
 } from '../../hud/atoms';
-import { SLOT_ABBR, SLOT_LABELS, biomeName, getStatEntries, tierColor } from './common';
+import { SLOT_ABBR, SLOT_LABELS, biomeName, tierColor } from './common';
 import { CostDisplay, EssenceSummary } from './shared';
+import { statEntries, formatMechanicEffects, formatWeaponEffects } from './itemDisplay';
+import { ItemIcon } from '../ItemIcon';
 
 interface CraftResult { recipeId: string; success: boolean; }
 
@@ -19,6 +22,7 @@ export function ForgeTab() {
   const [filterBiome, setFilterBiome] = useState<string | null>(null);
   const [filterSlot,  setFilterSlot]  = useState<string | null>(null);
   const [filterTier,  setFilterTier]  = useState<number | null>(null);
+  const [filterUltimate, setFilterUltimate] = useState(false);
   const [craftResult, setCraftResult] = useState<CraftResult | null>(null);
 
   const nodeId            = useAtomValue(playerNodeIdAtom);
@@ -26,6 +30,7 @@ export function ForgeTab() {
   const unlockedRecipeIds = useAtomValue(unlockedRecipesAtom);
   const essences          = useAtomValue(essencesAtom);
   const inventory         = useAtomValue(inventoryAtom);
+  const equipment         = useAtomValue(equipmentAtom);
 
   const isTestRoom        = nodeId === TEST_ROOM_NODE_ID;
   const lastCraftedIdRef  = useRef<string | null>(null);
@@ -47,7 +52,8 @@ export function ForgeTab() {
     };
   }, []);
 
-  const ownedSet = useMemo(() => new Set(inventory), [inventory]);
+  const equippedSet = useMemo(() => new Set(Object.values(equipment).filter((id): id is string => id !== null)), [equipment]);
+  const ownedSet    = useMemo(() => new Set([...inventory, ...equippedSet]), [inventory, equippedSet]);
 
   const allRecipes = useMemo(() =>
     Array.from(RECIPE_DATABASE.values()).sort((a, b) =>
@@ -62,7 +68,7 @@ export function ForgeTab() {
   const unlockedRecipes = useMemo(() =>
     allRecipes.filter(r =>
       isTestRoom
-        ? playerTier >= r.tier
+        ? true
         : unlockedRecipeIds.includes(r.id),
     ),
     [allRecipes, unlockedRecipeIds, playerTier, isTestRoom],
@@ -82,6 +88,7 @@ export function ForgeTab() {
 
   const filtered = useMemo(() => {
     const base = unlockedRecipes.filter(r =>
+      (!filterUltimate || r.ultimate) &&
       (!filterBiome || r.recipeGroup === filterBiome) &&
       (!filterSlot  || r.slot        === filterSlot) &&
       (!filterTier  || r.tier        === filterTier),
@@ -95,7 +102,7 @@ export function ForgeTab() {
       };
       return cat(a) - cat(b);
     });
-  }, [unlockedRecipes, filterBiome, filterSlot, filterTier, ownedSet, essences]);
+  }, [unlockedRecipes, filterBiome, filterSlot, filterTier, filterUltimate, ownedSet, essences]);
 
   const toggleBiome = (g: string) => setFilterBiome(v => v === g ? null : g);
   const toggleSlot  = (s: string) => setFilterSlot(v  => v === s ? null : s);
@@ -108,6 +115,10 @@ export function ForgeTab() {
       {/* Filters */}
       <div className="craft-filters">
         <div className="craft-filter-row">
+          <button
+            className={`craft-filter-chip craft-filter-chip--ultimate${filterUltimate ? ' craft-filter-chip--active' : ''}`}
+            onClick={() => setFilterUltimate(v => !v)}
+          >Ultimate</button>
           <button
             className={`craft-filter-chip${!filterBiome ? ' craft-filter-chip--active' : ''}`}
             onClick={() => setFilterBiome(null)}
@@ -165,11 +176,16 @@ export function ForgeTab() {
           {filtered.map(recipe => {
             const costEntries = Object.entries(recipe.cost) as [EssenceType, number][];
             const canAfford   = costEntries.every(([type, amount]) => (essences[type] ?? 0) >= amount);
+            const canCraft    = isTestRoom || canAfford;
             const owned       = ownedSet.has(recipe.id);
-            const statEntries = getStatEntries(
+            const statList    = statEntries(
               recipe.stats,
               recipe.slot === 'weapon' ? recipe.attacksPerSecond : undefined,
             );
+            const effectLines = [
+              ...formatMechanicEffects(recipe.mechanicEffects),
+              ...(recipe.slot === 'weapon' ? formatWeaponEffects(recipe.id) : []),
+            ];
             const result = craftResult?.recipeId === recipe.id ? craftResult : null;
 
             return (
@@ -177,6 +193,7 @@ export function ForgeTab() {
                 key={recipe.id}
                 className={[
                   'craft-recipe',
+                  recipe.ultimate      ? 'craft-recipe--ultimate'    : '',
                   owned                ? 'craft-recipe--owned'       : '',
                   !owned && !canAfford ? 'craft-recipe--unaffordable' : '',
                 ].filter(Boolean).join(' ')}
@@ -191,8 +208,18 @@ export function ForgeTab() {
                   </div>
                 )}
 
-                <div className="craft-recipe__icon" data-slot={recipe.slot}>
-                  {SLOT_ABBR[recipe.slot] ?? recipe.slot.slice(0, 3).toUpperCase()}
+                <div
+                  className="craft-recipe__icon"
+                  data-slot={recipe.slot}
+                  style={{
+                    borderColor: `${tierColor(recipe.tier)}77`,
+                    background:  `${tierColor(recipe.tier)}0d`,
+                    color:       `${tierColor(recipe.tier)}cc`,
+                  }}
+                >
+                  {recipe.icon
+                    ? <ItemIcon frameName={recipe.icon} />
+                    : SLOT_ABBR[recipe.slot] ?? recipe.slot.slice(0, 3).toUpperCase()}
                 </div>
 
                 <div className="craft-recipe__content">
@@ -202,18 +229,29 @@ export function ForgeTab() {
                       {SLOT_LABELS[recipe.slot] ?? recipe.slot}
                     </span>
                     <span className="craft-recipe__tier-badge">T{recipe.tier}</span>
-                    {owned && <span className="craft-recipe__owned-badge">IN BAG</span>}
+                    {recipe.ultimate && (
+                      <span className="craft-recipe__source">Void Overlord</span>
+                    )}
+                    {owned && <span className="craft-recipe__owned-badge">{equippedSet.has(recipe.id) ? 'EQUIPPED' : 'IN BAG'}</span>}
                   </div>
 
-                  {statEntries.length > 0 && (
+                  {statList.length > 0 && (
                     <div className="craft-recipe__stats">
-                      {statEntries.map((e, i) => (
+                      {statList.map((e, i) => (
                         <span key={i} className="craft-stat-pill">
                           <span className="craft-stat-pill__value">{e.value}</span>
                           <span className="craft-stat-pill__label">{e.label}</span>
                         </span>
                       ))}
                     </div>
+                  )}
+
+                  {effectLines.length > 0 && (
+                    <ul className="craft-recipe__effects">
+                      {effectLines.map((line, i) => (
+                        <li key={i} className="craft-recipe__effect-line">{line}</li>
+                      ))}
+                    </ul>
                   )}
 
                   <CostDisplay cost={recipe.cost} essences={essences} />
@@ -224,7 +262,7 @@ export function ForgeTab() {
                     )}
                     <button
                       className="craft-recipe__btn"
-                      disabled={!canAfford || owned}
+                      disabled={!canCraft || owned}
                       onClick={() => {
                         if (!owned) {
                           lastCraftedIdRef.current = recipe.id;
@@ -232,7 +270,7 @@ export function ForgeTab() {
                         }
                       }}
                     >
-                      {owned ? 'In inventory' : canAfford ? 'Craft' : 'Insufficient'}
+                      {owned ? (equippedSet.has(recipe.id) ? 'Equipped' : 'In inventory') : canCraft ? 'Craft' : 'Insufficient'}
                     </button>
                   </div>
                 </div>

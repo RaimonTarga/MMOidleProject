@@ -1,30 +1,63 @@
+import type {
+  DamageMitigationBreakdown,
+  HeadlinePart,
+  WorldLogDamageType,
+  WorldLogDisplayKind,
+} from '@mmo-idle/shared';
+
 export type LogKind =
-  | 'damage-out'  // player hit a monster
-  | 'damage-in'   // player took damage
-  | 'heal'        // player recovered HP
-  | 'shield'      // player gained shield HP
-  | 'kill'        // player's target was defeated
-  | 'death'       // player died
-  | 'empowered'   // empowered / finisher fired
-  | 'execution'   // execution strike fired
-  | 'info';       // generic message
+  | WorldLogDisplayKind
+  | 'empowered'
+  | 'execution';
 
 export interface LogEntry {
-  id:   number;
-  time: number;   // Date.now()
+  id: number;
+  time: number;
   kind: LogKind;
   text: string;
+  headline?: string;
+  headlineParts?: HeadlinePart[];
+  detail?: string;
+  damageType?: WorldLogDamageType;
+  targetName?: string;
+  sourceName?: string;
+  mitigation?: DamageMitigationBreakdown;
+  glancing?: boolean;
 }
 
 const MAX_ENTRIES = 500;
 
+export interface LogPushOpts {
+  headline?: string;
+  headlineParts?: HeadlinePart[];
+  detail?: string;
+  damageType?: WorldLogDamageType;
+  targetName?: string;
+  sourceName?: string;
+  mitigation?: DamageMitigationBreakdown;
+  glancing?: boolean;
+}
+
 class CombatLogStore {
   private entries: LogEntry[] = [];
-  private subs    = new Set<(entries: LogEntry[]) => void>();
-  private seq     = 0;
+  private subs = new Set<(entries: LogEntry[]) => void>();
+  private seq = 0;
 
-  push(kind: LogKind, text: string): void {
-    this.entries.push({ id: this.seq++, time: Date.now(), kind, text });
+  push(kind: LogKind, text: string, opts?: LogPushOpts): void {
+    this.entries.push({
+      id: this.seq++,
+      time: Date.now(),
+      kind,
+      text,
+      headline: opts?.headline,
+      headlineParts: opts?.headlineParts,
+      detail: opts?.detail,
+      damageType: opts?.damageType,
+      targetName: opts?.targetName,
+      sourceName: opts?.sourceName,
+      mitigation: opts?.mitigation,
+      glancing: opts?.glancing,
+    });
     if (this.entries.length > MAX_ENTRIES) this.entries.shift();
     this.notify();
   }

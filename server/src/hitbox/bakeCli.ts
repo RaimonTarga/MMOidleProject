@@ -3,7 +3,7 @@ import { initHitboxCache } from './cache';
 import { getAtlasPaths } from './paths';
 
 async function main(): Promise<void> {
-  runMigrations();
+  await runMigrations();
   const { atlasPng, atlasJson } = getAtlasPaths();
   await initHitboxCache(db, atlasPng, atlasJson);
 }

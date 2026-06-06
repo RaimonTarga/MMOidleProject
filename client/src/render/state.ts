@@ -1,13 +1,20 @@
-import type Phaser from 'phaser';
-import type { NetworkedEntity, PlayerView, MonsterView, Vec2 } from '@mmo-idle/shared';
+import type Phaser from "phaser";
+import type {
+  NetworkedEntity,
+  PlayerView,
+  MonsterView,
+  MinionView,
+  VoidOverlordRespawnState,
+  Vec2,
+} from "@mmo-idle/shared";
 
 export type NetworkId = string;
 
 export interface RenderState {
   ids: Set<NetworkId>;
-  kind: Map<NetworkId, 'player' | 'monster'>;
+  kind: Map<NetworkId, "player" | "monster" | "minion">;
   entity: Map<NetworkId, NetworkedEntity>;
-  view: Map<NetworkId, PlayerView | MonsterView>;
+  view: Map<NetworkId, PlayerView | MonsterView | MinionView>;
 
   transform: Map<
     NetworkId,
@@ -28,7 +35,9 @@ export interface RenderState {
 
   sprite: Map<
     NetworkId,
-    Phaser.GameObjects.Image | Phaser.GameObjects.Rectangle
+    | Phaser.GameObjects.Image
+    | Phaser.GameObjects.Rectangle
+    | Phaser.GameObjects.Sprite
   >;
   shadow: Map<NetworkId, Phaser.GameObjects.Ellipse>;
   label: Map<NetworkId, Phaser.GameObjects.Text>;
@@ -56,16 +65,38 @@ export interface RenderState {
 
   effectOverlays: Map<NetworkId, Map<string, Phaser.GameObjects.Sprite>>;
 
+  /** Auto-combat "next action" thought bubble above each player's head. */
+  thoughtBubble: Map<
+    NetworkId,
+    {
+      container: Phaser.GameObjects.Container;
+      icon:
+        | Phaser.GameObjects.Image
+        | Phaser.GameObjects.Sprite
+        | Phaser.GameObjects.Text
+        | null;
+      signature: string | null;
+      visible: boolean;
+    }
+  >;
+
   spriteMeta: Map<
     NetworkId,
     {
       currentFrame: string | null;
-      shadowOffsetY: number;
+      textureKey?: string;
       shadowLevel?: number;
       barOffsetY: number;
       entityName?: string;
       monsterBehavior?: string;
+      monsterIsRanged?: boolean;
       isOwn?: boolean;
+      /** Skip atlas frame refresh on patch (void-overlord sheet sprites). */
+      skipFrameRefresh?: boolean;
+      /** True when sprite is a Phaser Sprite with a running animation. */
+      isAnimated?: boolean;
+      /** Client-only render nudge (negative Y = up). Logical pos unchanged. */
+      visualOffsetY?: number;
     }
   >;
 
@@ -83,9 +114,19 @@ export interface RenderState {
     targetId: string | null;
     until: number;
   };
+  voidOverlordRespawn: {
+    payload: VoidOverlordRespawnState;
+    deadlineMs: number;
+    sprite: Phaser.GameObjects.Image | Phaser.GameObjects.Rectangle;
+    label: Phaser.GameObjects.Text;
+    lastText: string;
+  } | null;
+  /** True after the Void Overlord dies until a new one spawns (client prediction). */
+  voidThroneHazardLifted: boolean;
   movementEffectNextAt: Map<string, number>;
   knownUnlockedRecipes: Set<string>;
   knownUnlockedRecipesInitialized: boolean;
+  gameplaySettingsSynced: boolean;
   throttles: {
     minimapAt: number;
     effectOverlaysAt: number;
@@ -112,6 +153,7 @@ export function createRenderState(): RenderState {
     hpBarCache: new Map(),
     cdBarCache: new Map(),
     effectOverlays: new Map(),
+    thoughtBubble: new Map(),
     spriteMeta: new Map(),
     debugRanges: new Map(),
     laserBeam: {
@@ -119,23 +161,26 @@ export function createRenderState(): RenderState {
       targetId: null,
       until: 0,
     },
+    voidOverlordRespawn: null,
+    voidThroneHazardLifted: false,
     movementEffectNextAt: new Map(),
     knownUnlockedRecipes: new Set(),
     knownUnlockedRecipesInitialized: false,
+    gameplaySettingsSynced: false,
     throttles: {
       minimapAt: 0,
       effectOverlaysAt: 0,
       debugClearedAt: 0,
     },
     ownId: null,
-    ownNodeId: '',
+    ownNodeId: "",
   };
 }
 
 export function getOwnView(state: RenderState): PlayerView | null {
   if (!state.ownId) return null;
   const s = state.view.get(state.ownId);
-  return s && state.kind.get(state.ownId) === 'player'
+  return s && state.kind.get(state.ownId) === "player"
     ? (s as PlayerView)
     : null;
 }

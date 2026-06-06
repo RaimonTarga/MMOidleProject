@@ -1,6 +1,7 @@
-import { useState } from 'react';
 import { useAtomValue } from 'jotai';
-import { BuffBar, CadenceTimeline, DefensePassivesSection, StatRow } from './components';
+import { BuffBar, CadenceTimeline, DefensePassivesSection, MobilityPassivesSection, StatRow, SummonSlotBar } from './components';
+import { useHoverTooltip } from './tooltip';
+import { STAT_HELP } from './statHelp';
 import {
   ammoCountAtom,
   ammoMaxAtom,
@@ -16,8 +17,8 @@ import {
   energyCountAtom,
   empoweredReadyAtom,
   equipmentAtom,
-  evasionAtom,
-  evasionCountAtom,
+  dodgeRateAtom,
+  evadeMitigationAtom,
   executionCooldownPctAtom,
   executionReadyAtom,
   flashShiftPctAtom,
@@ -25,9 +26,11 @@ import {
   heatPctAtom,
   hpAtom,
   hpRegenAtom,
+  incomingDotAtom,
   laserOverheatedAtom,
   maxHpAtom,
   passivesAtom,
+  pendingHealAtom,
   platingAtom,
   playerIdAtom,
   playerNameAtom,
@@ -36,18 +39,23 @@ import {
   shieldsAtom,
   speedAtom,
   statusAtom,
+  summonActiveCountAtom,
+  summonSlotCountAtom,
+  summonSlotsAtom,
   targetChillStacksAtom,
   targetDotStacksAtom,
 } from '../atoms';
 
 export function StatPanel() {
-  const [expanded, setExpanded] = useState(false);
+  const hpTip = useHoverTooltip(STAT_HELP.hp);
   const playerId = useAtomValue(playerIdAtom);
   const status = useAtomValue(statusAtom);
   const name = useAtomValue(playerNameAtom);
   const hp = useAtomValue(hpAtom);
   const maxHp = useAtomValue(maxHpAtom);
   const shields = useAtomValue(shieldsAtom);
+  const incomingDot = useAtomValue(incomingDotAtom);
+  const pendingHeal = useAtomValue(pendingHealAtom);
   const attack = useAtomValue(attackAtom);
   const plating = useAtomValue(platingAtom);
   const damageReduction = useAtomValue(damageReductionAtom);
@@ -76,14 +84,19 @@ export function StatPanel() {
   const equipment = useAtomValue(equipmentAtom);
   const sacredBuffPct = useAtomValue(sacredBuffPctAtom);
   const sacredBuffActive = useAtomValue(sacredBuffActiveAtom);
-  const evasion = useAtomValue(evasionAtom);
-  const evasionCount = useAtomValue(evasionCountAtom);
+  const dodgeRate = useAtomValue(dodgeRateAtom);
+  const evadeMitigation = useAtomValue(evadeMitigationAtom);
+  const summonActiveCount = useAtomValue(summonActiveCountAtom);
+  const summonSlotCount = useAtomValue(summonSlotCountAtom);
+  const summonSlots = useAtomValue(summonSlotsAtom);
   const player = playerId
     ? {
       name,
       hp,
       maxHp,
       shields,
+      incomingDot,
+      pendingHeal,
       attack,
       plating,
       damageReduction,
@@ -112,17 +125,28 @@ export function StatPanel() {
       equipment,
       sacredBuffPct,
       sacredBuffActive,
-      evasion,
-      evasionCount,
+      dodgeRate,
+      evadeMitigation,
+      summonActiveCount,
+      summonSlotCount,
+      summonSlots,
     }
     : null;
 
-  const hpPct       = player && player.maxHp > 0 ? (player.hp / player.maxHp) * 100 : 0;
+  const maxHpVal    = player?.maxHp ?? 0;
+  const hpPct       = player && maxHpVal > 0 ? (player.hp / maxHpVal) * 100 : 0;
   const hpBarColor  = hpPct > 50 ? '#44ee44' : hpPct > 25 ? '#eeaa22' : '#ee3322';
   const totalShield = player?.shields.reduce((s, sh) => s + sh.amount, 0) ?? 0;
-  const shieldPct   = player && player.maxHp > 0 ? Math.min(100 - hpPct, (totalShield / player.maxHp) * 100) : 0;
+  // Shield sits in its own strip above the bar and stays visible at full HP.
+  const shieldPct   = maxHpVal > 0 ? Math.min(100, (totalShield / maxHpVal) * 100) : 0;
+  // HP-bar layers (all as % of maxHp): pending DoT eats the right edge of current
+  // HP (red); pending regen extends past current HP (dark green).
+  const dotPct      = player && maxHpVal > 0 ? Math.min(hpPct, (player.incomingDot / maxHpVal) * 100) : 0;
+  const safePct     = Math.max(0, hpPct - dotPct);
+  const healPct     = player && maxHpVal > 0 ? Math.min(100 - hpPct, (player.pendingHeal / maxHpVal) * 100) : 0;
   const cdSec       = player ? (player.attackCooldown / 1000).toFixed(2) : '—';
   const aps         = player ? (1000 / player.attackCooldown).toFixed(2) : '—';
+  const dps         = player ? (player.attack * (1000 / player.attackCooldown)).toFixed(1) : '—';
   const isFlash     = player ? (player.passives['energy.flash'] ?? 0) > 0 : false;
   const flashShiftLabel = player && player.flashShiftPct >= 50 ? 'Red Shift' : 'Blue Shift';
   const flashShiftColor = player
@@ -141,7 +165,7 @@ export function StatPanel() {
 
       {/* HP bar */}
       <div className="stat-section">
-        <div className="stat-row">
+        <div className="stat-row stat-row--help" {...hpTip.handlers}>
           <span className="stat-label">HP</span>
           <span className="stat-value">
             {player
@@ -150,26 +174,40 @@ export function StatPanel() {
                 : `${Math.ceil(player.hp)} / ${player.maxHp}`
               : '— / —'}
           </span>
+          {hpTip.node}
         </div>
+        {/* Shield strip — above the HP bar, always visible (even at full HP) */}
+        {shieldPct > 0 && (
+          <div className="hp-shield-strip">
+            <div className="hp-shield-strip__fill" style={{ width: `${shieldPct}%` }} />
+          </div>
+        )}
         <div className="hp-bar-track">
-          <div className="hp-bar-fill" style={{ width: `${hpPct}%`, background: hpBarColor }} />
-          {shieldPct > 0 && (
-            <div className="shield-bar-fill" style={{ width: `${shieldPct}%`, left: `${hpPct}%` }} />
+          {/* expected regen — dark-green layer extending past current HP */}
+          {healPct > 0 && (
+            <div className="hp-layer hp-layer--regen" style={{ left: `${hpPct}%`, width: `${healPct}%` }} />
+          )}
+          {/* safe HP */}
+          <div className="hp-layer hp-layer--hp" style={{ width: `${safePct}%`, background: hpBarColor }} />
+          {/* pending DoT — red layer at the right edge of current HP */}
+          {dotPct > 0 && (
+            <div className="hp-layer hp-layer--dot" style={{ left: `${safePct}%`, width: `${dotPct}%` }} />
           )}
         </div>
       </div>
 
       {/* Core combat stats */}
       <div className="stat-section">
-        <StatRow label="Attack"     value={player?.attack    ?? '—'} />
-        <StatRow label="Plating"    value={player?.plating   ?? '—'} />
+        <StatRow label="Attack"     value={player?.attack    ?? '—'} help={STAT_HELP.attack} />
+        <StatRow label="DPS"        value={dps} help={STAT_HELP.dps} />
+        <StatRow label="Atk Speed"  value={player ? `${aps} APS (${cdSec}s)` : '—'} help={STAT_HELP.atkSpeed} />
+        <StatRow label="Plating"    value={player?.plating   ?? '—'} help={STAT_HELP.plating} />
         {player && player.damageReduction > 0 && (
-          <StatRow label="Dmg Reduc." value={`${Math.round(player.damageReduction * 100)}%`} />
+          <StatRow label="Dmg Reduc." value={`${Math.round(player.damageReduction * 100)}%`} help={STAT_HELP.damageReduction} />
         )}
-        <StatRow label="Atk Speed"  value={player ? `${aps} APS (${cdSec}s)` : '—'} />
-        <StatRow label="Atk Range"  value={player ? `${player.attackRange}px` : '—'} />
-        <StatRow label="Move Speed" value={player ? `${player.speed}px/s` : '—'} />
-        <StatRow label="HP Regen"   value={player ? `${player.hpRegen}/s` : '—'} />
+        <StatRow label="Atk Range"  value={player ? `${player.attackRange}` : '—'} help={STAT_HELP.attackRange} />
+        <StatRow label="Move Speed" value={player ? `${player.speed}` : '—'} help={STAT_HELP.speed} />
+        <StatRow label="HP Regen"   value={player ? `${player.hpRegen}/s` : '—'} help={STAT_HELP.hpRegen} />
       </div>
 
       {/* Ammo / Heat bar — reload archetype */}
@@ -204,6 +242,19 @@ export function StatPanel() {
               style={{ width: `${(player.ammoCount / player.ammoMax) * 100}%` }}
             />
           </div>
+        </div>
+      )}
+
+      {/* Summon roster — summoner archetype */}
+      {player?.combatArchetype === 'summoner' && player.summonSlotCount > 0 && (
+        <div className="stat-section">
+          <div className="stat-row">
+            <span className="stat-label">Summons</span>
+            <span className="stat-value">
+              {player.summonActiveCount} / {player.summonSlotCount} active
+            </span>
+          </div>
+          <SummonSlotBar slots={player.summonSlots} />
         </div>
       )}
 
@@ -354,41 +405,22 @@ export function StatPanel() {
         />
       )}
 
-      {/* Expand / collapse toggle */}
-      <button
-        className={`auto-btn${expanded ? ' active' : ''}`}
-        onClick={() => setExpanded(v => !v)}
-        style={{ marginTop: 8 }}
-      >
-        {expanded ? '▲ LESS' : '▼ MORE STATS'}
-      </button>
+      {/* ── Evasion / passives — always shown; each self-hides when empty ── */}
 
-      {/* ── Expanded section ─────────────────────────────────────────────── */}
-      {expanded && (
-        <>
-          {/* Evasion */}
-          {player && player.evasion > 0 && (
-            <div className="stat-section">
-              <div className="stat-section-title">Evasion</div>
-              <StatRow label="Trigger" value={`every ${player.evasion} hits`} />
-              <div className="stat-row">
-                <span className="stat-label">Progress</span>
-                <span className="stat-value">{player.evasionCount} / {player.evasion}</span>
-              </div>
-              <div className="mech-bar-track">
-                <div
-                  className="mech-bar-fill mech-bar-fill--evasion"
-                  style={{ width: `${(player.evasionCount / player.evasion) * 100}%` }}
-                />
-              </div>
-            </div>
-          )}
-
-          {/* Defense passives */}
-          {player && <DefensePassivesSection passives={player.passives ?? {}} />}
-
-        </>
+      {/* Evasion (deterministic — dodge rate + damage avoided per dodge) */}
+      {player && player.dodgeRate > 0 && (
+        <div className="stat-section">
+          <div className="stat-section-title">Evasion</div>
+          <StatRow label="Dodge rate" value={`${Math.round(player.dodgeRate * 100)}%`} help={STAT_HELP.dodgeRate} />
+          <StatRow label="Damage avoided" value={`${Math.round(player.evadeMitigation * 100)}% per dodge`} help={STAT_HELP.evadeMitigation} />
+        </div>
       )}
+
+      {/* Defense passives */}
+      {player && <DefensePassivesSection passives={player.passives ?? {}} />}
+
+      {/* Mobility (boot) passives */}
+      {player && <MobilityPassivesSection passives={player.passives ?? {}} />}
     </div>
   );
 }

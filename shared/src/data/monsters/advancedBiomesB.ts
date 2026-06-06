@@ -132,7 +132,7 @@ export const advancedBiomeMonsterEntriesB = [
 
   ['void-horror', {
     id: 'void-horror', name: 'Void Horror', color: 0x220033,
-    stats: { hp: 1500, attack: 150, plating: 24, damageReduction: 0.09, speed: 68, attackRange: 64, attackCooldown: 1900, pullRange: 270 },
+    stats: { hp: 1300, attack: 90, plating: 24, damageReduction: 0.09, speed: 68, attackRange: 64, attackCooldown: 1900, pullRange: 270 },
     behavior: 'melee', attackStyle: 'void', biome: 'abyss',
     rewards: { essence: 165, essenceType: 'purple', level: 3 },
     ai: { wanderRadius: 280, leashRange: 750, idleMinMs: 800, idleMaxMs: 3500 },
@@ -140,21 +140,10 @@ export const advancedBiomeMonsterEntriesB = [
 
   ['abyssal-titan', {
     id: 'abyssal-titan', name: 'Abyssal Titan', color: 0x110022,
-    stats: { hp: 2600, attack: 125, plating: 55, damageReduction: 0.15, speed: 20, attackRange: 15, attackCooldown: 4500, pullRange: 145 },
+    stats: { hp: 2000, attack: 110, plating: 55, damageReduction: 0.15, speed: 20, attackRange: 15, attackCooldown: 4500, pullRange: 145 },
     behavior: 'melee', attackStyle: 'void', biome: 'abyss',
     rewards: { essence: 178, essenceType: 'purple', level: 3 },
     ai: { wanderRadius: 95, leashRange: 420, idleMinMs: 4500, idleMaxMs: 11000 },
   }],
 
-  // ── Master merge additions ─────────────────────────────────────────────
-
-  ['dune-asp', {
-    id: 'dune-asp', name: 'Dune Asp', color: 0xccaa55,
-    // Strikes from distance and writhes unpredictably — evasion + range is a dangerous combo
-    stats: { hp: 135, attack: 22, plating: 0, damageReduction: 0.05, speed: 48, attackRange: 185, attackCooldown: 2400, pullRange: 250 },
-    behavior: 'melee', attackStyle: 'poison', biome: 'desert',
-    rewards: { essence: 14, essenceType: 'yellow', level: 1, biomeXp: 40 },
-    ai: { wanderRadius: 260, leashRange: 660, idleMinMs: 1200, idleMaxMs: 4000 },
-    evadeEvery: 5,
-  }],
 ] satisfies [string, MonsterDefinition][];

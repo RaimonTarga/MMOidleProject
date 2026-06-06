@@ -1,7 +1,17 @@
 import type Phaser from 'phaser';
-import { EFFECT_BY_ID, EFFECT_FRAME_COUNT, type MonsterView, type PlayerView } from '@mmo-idle/shared';
+import { EFFECT_BY_ID, EFFECT_FRAME_COUNT, type MinionView, type MonsterView, type PlayerView } from '@mmo-idle/shared';
 import type { RenderState } from './state';
 import type { GameScene } from '../scenes/GameScene';
+
+type OverlayView = PlayerView | MonsterView | MinionView;
+
+function getActiveEffects(snap: OverlayView): Record<string, number> | undefined {
+  return 'activeEffects' in snap ? snap.activeEffects : undefined;
+}
+
+function getActiveEffectFrames(snap: OverlayView): Record<string, number> | undefined {
+  return 'activeEffectFrames' in snap ? snap.activeEffectFrames : undefined;
+}
 
 function getEffectScale(state: RenderState, id: string, baseScale = 1.5): number {
   const sprite = state.sprite.get(id);
@@ -26,8 +36,8 @@ export function updateEffectOverlays(
     const snap = state.view.get(id);
     if (!sprite || !snap) continue;
 
-    const activeEffects = snap.activeEffects ?? {};
-    const activeEffectFrames = snap.activeEffectFrames ?? {};
+    const activeEffects = getActiveEffects(snap) ?? {};
+    const activeEffectFrames = getActiveEffectFrames(snap) ?? {};
 
     let overlays = state.effectOverlays.get(id);
     if (!overlays) {
@@ -59,7 +69,7 @@ function updateOverlayForEffect(
   scene: GameScene,
   id: string,
   sprite: Phaser.GameObjects.Image | Phaser.GameObjects.Rectangle,
-  snap: PlayerView | MonsterView,
+  snap: OverlayView,
   overlays: Map<string, Phaser.GameObjects.Sprite>,
   activeEffects: Record<string, number>,
   activeEffectFrames: Record<string, number>,
@@ -71,7 +81,8 @@ function updateOverlayForEffect(
   const remainingMsRaw = activeEffects[effectId] ?? 0;
   const remainingMs = Math.max(0, remainingMsRaw);
   if (!def || (remainingMs <= 0 && explicitFrame == null)) {
-    if (snap.activeEffects) snap.activeEffects[effectId] = 0;
+    const eff = getActiveEffects(snap);
+    if (eff) eff[effectId] = 0;
     return;
   }
 
@@ -106,8 +117,9 @@ function updateOverlayForEffect(
     .setDepth(sprite.depth + 1)
     .setVisible(true);
 
-  if (explicitFrame == null && snap.activeEffects) {
-    snap.activeEffects[effectId] = Math.max(0, remainingMs - elapsedMs);
+  if (explicitFrame == null) {
+    const eff = getActiveEffects(snap);
+    if (eff) eff[effectId] = Math.max(0, remainingMs - elapsedMs);
   }
 }
 

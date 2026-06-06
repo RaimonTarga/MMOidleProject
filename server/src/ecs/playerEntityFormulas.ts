@@ -7,12 +7,15 @@ import type { PlayerEntity } from './entity';
 import { attachComponent, detachComponent } from './markerHelpers';
 import { markSliceDirty } from './dirtyHelpers';
 import { hitboxEqual, resolvePlayerHitbox } from '../hitbox/resolve';
+import { syncDevInvulnerability } from '../dev/syncDevInvulnerability';
+import { resetHardening } from '../systems/defense/mitigation/hardening';
 
 export function recalculatePlayerEntityStats(world: World, entity: PlayerEntity): void {
+  resetHardening(entity);
   const evadesHits = entity.evadesHits
     ? { ...entity.evadesHits }
-    : { threshold: 0, count: 0 };
-  recalculatePlayerStats({
+    : { dodgeRate: 0, evadeMitigation: 0 };
+  const { cannotAttack } = recalculatePlayerStats({
     dealsDamage:     entity.dealsDamage,
     mitigatesDamage: entity.mitigatesDamage,
     evadesHits,
@@ -35,11 +38,19 @@ export function recalculatePlayerEntityStats(world: World, entity: PlayerEntity)
   markSliceDirty(world, entity, 'hasPosition');
   markSliceDirty(world, entity, 'usesSkills');
   if (entity.usesCadence) markSliceDirty(world, entity, 'usesCadence');
-  if (evadesHits.threshold > 0) {
+  if (evadesHits.dodgeRate > 0) {
     attachComponent(world, entity, 'evadesHits', evadesHits);
   } else {
     detachComponent(world, entity, 'evadesHits');
   }
+
+  if (cannotAttack) {
+    attachComponent(world, entity, 'cannotAttack', {});
+  } else {
+    detachComponent(world, entity, 'cannotAttack');
+  }
+
+  syncDevInvulnerability(world, entity);
 
   const nextHitbox = resolvePlayerHitbox(entity);
   if (!hitboxEqual(entity.hasHitbox?.rects, nextHitbox.rects)) {

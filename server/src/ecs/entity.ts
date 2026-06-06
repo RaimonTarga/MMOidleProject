@@ -1,5 +1,6 @@
 import type {
   AppliesDots,
+  CannotAttack,
   ChillsTarget,
   ControlsMonster,
   DealsDamage,
@@ -18,9 +19,15 @@ import type {
   HasAggroTarget,
   HasEntropy,
   HasEmpoweredAttack,
+  HasEnvironmentalDot,
+  HasNodeFeatureEffect,
   HasAshbrandBurn,
+  HasVoidCorruption,
   HasAlignment,
   HasAttackTarget,
+  HasAutoIntent,
+  HasEmote,
+  IsDead,
   HasOverdrive,
   HasPosition,
   HasStatus,
@@ -28,15 +35,24 @@ import type {
   HoldsInventory,
   InAcChargePhase,
   InAcDischarge,
+  InParty,
   IsBossEngaged,
   IsChanneling,
+  IsEncounterAdd,
+  IsNodeFeatureSpawn,
+  IsInvulnerable,
+  IsMinion,
   IsMonster,
   IsMoving,
   IsPlayer,
+  IsRooted,
+  IsUltimateEngaged,
   MitigatesDamage,
   PerformsAttack,
   ScriptsBoss,
+  ScriptsUltimate,
   ShowsSacred,
+  SummonsMinions,
   TracksCombat,
   TracksProgression,
   UsesAutocombat,
@@ -45,10 +61,24 @@ import type {
   UsesEnergy,
   UsesReload,
   UsesSkills,
-} from '@mmo-idle/shared';
-import type { With } from 'miniplex';
+} from "@mmo-idle/shared";
+import type { With } from "miniplex";
+import type { ControlsMinion } from "../systems/classes/archetypes/summoner/controlsMinion";
+import type { HasSummonerCommand } from "../systems/classes/archetypes/summoner/command";
 
 export type EntityId = string;
+
+/** Server-only marker: player is walking a planned auto-traverse path. */
+export interface HasAutoTraversePath {
+  targetNodeId: string;
+  remainingPath: string[];
+}
+
+/** Server-only marker: auto-combat has temporarily yielded to survival movement. */
+export interface IsFleeing {
+  phase: "out" | "recover" | "return";
+  returnNodeId: string;
+}
 
 /**
  * The shape of any entity in the ECS world.
@@ -78,64 +108,86 @@ export interface ServerEntity {
   // Every wire-DTO field belongs to exactly one slice.
 
   // Shared by players and monsters
-  hasPosition?:     HasPosition;
-  hasHitbox?:       HasHitbox;
-  isMoving?:        IsMoving;
+  hasPosition?: HasPosition;
+  hasHitbox?: HasHitbox;
+  isMoving?: IsMoving;
+  isRooted?: IsRooted;
   hasAttackTarget?: HasAttackTarget;
-  hasHealth?:       HasHealth;
-  dealsDamage?:     DealsDamage;
-  performsAttack?:  PerformsAttack;
+  cannotAttack?: CannotAttack;
+  hasHealth?: HasHealth;
+  dealsDamage?: DealsDamage;
+  performsAttack?: PerformsAttack;
   mitigatesDamage?: MitigatesDamage;
-  hasStatus?:       HasStatus;
+  hasStatus?: HasStatus;
 
   // Player-only slices
-  isPlayer?:           IsPlayer;
-  evadesHits?:         EvadesHits;
-  holdsShields?:       HoldsShields;
-  usesAutocombat?:     UsesAutocombat;
-  tracksProgression?:  TracksProgression;
-  holdsInventory?:     HoldsInventory;
-  usesSkills?:         UsesSkills;
-  showsSacred?:        ShowsSacred;
-  usesCadence?:        UsesCadence;
-  usesEnergy?:         UsesEnergy;
-  appliesDots?:        AppliesDots;
-  chillsTarget?:       ChillsTarget;
-  usesCooldown?:       UsesCooldown;
-  usesReload?:         UsesReload;
-  isChanneling?:       IsChanneling;
-  hasOverdrive?:       HasOverdrive;
-  hasAlignment?:       HasAlignment;
-  inAcChargePhase?:    InAcChargePhase;
-  inAcDischarge?:      InAcDischarge;
+  isPlayer?: IsPlayer;
+  evadesHits?: EvadesHits;
+  holdsShields?: HoldsShields;
+  usesAutocombat?: UsesAutocombat;
+  hasAutoIntent?: HasAutoIntent;
+  hasEmote?: HasEmote;
+  tracksProgression?: TracksProgression;
+  holdsInventory?: HoldsInventory;
+  usesSkills?: UsesSkills;
+  showsSacred?: ShowsSacred;
+  summonsMinions?: SummonsMinions;
+  inParty?: InParty;
+  usesCadence?: UsesCadence;
+  usesEnergy?: UsesEnergy;
+  appliesDots?: AppliesDots;
+  chillsTarget?: ChillsTarget;
+  usesCooldown?: UsesCooldown;
+  usesReload?: UsesReload;
+  isChanneling?: IsChanneling;
+  hasOverdrive?: HasOverdrive;
+  hasAlignment?: HasAlignment;
+  inAcChargePhase?: InAcChargePhase;
+  inAcDischarge?: InAcDischarge;
   hasEmpoweredAttack?: HasEmpoweredAttack;
+  hasEnvironmentalDot?: HasEnvironmentalDot;
+  hasNodeFeatureEffect?: HasNodeFeatureEffect;
+  isDead?: IsDead;
 
   // Monster-only slices
-  isMonster?:    IsMonster;
+  isMonster?: IsMonster;
   hasAwareness?: HasAwareness;
   hasAggroTarget?: HasAggroTarget;
 
+  // Minion-only slices (summoner archetype)
+  isMinion?: IsMinion;
+  controlsMinion?: ControlsMinion;
+
   // ── Monster (S7) ──────────────────────────────────────────────
   controlsMonster?: ControlsMonster;
-  hasKnockback?:    HasKnockback;
-  hasDetonation?:   HasDetonation;
-  hasHemorrhage?:   HasHemorrhage;
-  hasDot?:          HasDot;
+  hasKnockback?: HasKnockback;
+  hasDetonation?: HasDetonation;
+  hasHemorrhage?: HasHemorrhage;
+  hasDot?: HasDot;
   hasConflagration?: HasConflagration;
-  hasChill?:        HasChill;
-  hasFrozen?:       HasFrozen;
-  hasSmolder?:      HasSmolder;
-  hasEntropy?:      HasEntropy;
+  hasChill?: HasChill;
+  hasFrozen?: HasFrozen;
+  hasSmolder?: HasSmolder;
+  hasEntropy?: HasEntropy;
   hasAshbrandBurn?: HasAshbrandBurn;
-  scriptsBoss?:     ScriptsBoss;
-  isBossEngaged?:   IsBossEngaged;
+  hasVoidCorruption?: HasVoidCorruption;
+  scriptsBoss?: ScriptsBoss;
+  scriptsUltimate?: ScriptsUltimate;
+  isBossEngaged?: IsBossEngaged;
+  isEncounterAdd?: IsEncounterAdd;
+  isNodeFeatureSpawn?: IsNodeFeatureSpawn;
+  isInvulnerable?: IsInvulnerable;
+  isUltimateEngaged?: IsUltimateEngaged;
 
   // ── Player (S8) ───────────────────────────────────────────────
   tracksEngagement?: number;
   hasManualMoveIntent?: {};
+  hasSummonerCommand?: HasSummonerCommand;
+  hasAutoTraversePath?: HasAutoTraversePath;
+  isFleeing?: IsFleeing;
 
   // ── Shared by both (S7 + S8) ──────────────────────────────────
-  tracksCombat?:    TracksCombat;
+  tracksCombat?: TracksCombat;
 }
 
 /**
@@ -186,12 +238,40 @@ export function isMonsterEntity(e: ServerEntity): e is MonsterEntity {
   return "isMonster" in e;
 }
 
-export function entityNetworkId(entity: ServerEntity): EntityId | null {
-  return entity.isPlayer?.id ?? entity.isMonster?.id ?? null;
+/**
+ * A miniplex entity carrying a summoner minion's identity, AI, and combat
+ * state. `isMoving` is intentionally NOT required — minions stop at their
+ * follow offset / leash boundary, attaching/detaching `isMoving` as needed.
+ */
+export type MinionEntity = With<
+  ServerEntity,
+  | "isMinion"
+  | "controlsMinion"
+  | "hasPosition"
+  | "hasHitbox"
+  | "hasHealth"
+  | "dealsDamage"
+  | "performsAttack"
+  | "mitigatesDamage"
+  | "tracksCombat"
+  | "hasStatus"
+>;
+
+export function isMinionEntity(e: ServerEntity): e is MinionEntity {
+  return "isMinion" in e;
 }
 
-export function entityNetworkKind(entity: ServerEntity): 'player' | 'monster' | null {
-  if (entity.isPlayer) return 'player';
-  if (entity.isMonster) return 'monster';
+export function entityNetworkId(entity: ServerEntity): EntityId | null {
+  return (
+    entity.isPlayer?.id ?? entity.isMonster?.id ?? entity.isMinion?.id ?? null
+  );
+}
+
+export function entityNetworkKind(
+  entity: ServerEntity,
+): "player" | "monster" | "minion" | null {
+  if (entity.isPlayer) return "player";
+  if (entity.isMonster) return "monster";
+  if (entity.isMinion) return "minion";
   return null;
 }

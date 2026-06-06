@@ -2,6 +2,13 @@ import { getStatusEffects, pruneStatusEffects } from '@mmo-idle/shared';
 import type { World } from '../../../../../../world/World';
 import { detachMarkerIfNoEffects } from '../../../../../../ecs/markerHelpers';
 import { grantMonsterRewards } from '../../../../../player/progression/rewards';
+import {
+  buildSimpleBreakdown,
+  recordMonsterDamagedByPlayer,
+  recordPlayerKillMonster,
+} from '../../../../../../world/worldLogCombat';
+import { actorFromSourceId } from '../../../../../../world/worldLogActors';
+import { isInvulnerableMonster } from '../../../../../combat/invulnerability';
 
 export function updateDetonations(world: World, dt: number): void {
   const toKill: Array<{ monsterId: string; sourceId: string }> = [];
@@ -9,6 +16,7 @@ export function updateDetonations(world: World, dt: number): void {
   for (const entity of world.detonatedMonsters) {
     const monsterId = entity.isMonster.id;
     const state     = entity.tracksCombat;
+    if (isInvulnerableMonster(entity)) continue;
     const tags = getStatusEffects(state, 'cadence-detonation');
     if (tags.length === 0) continue;
 
@@ -18,7 +26,17 @@ export function updateDetonations(world: World, dt: number): void {
       tag.data['fuseMs'] -= dt;
       if (tag.data['fuseMs'] > 0) continue;
 
-      entity.hasHealth.hp -= tag.data['damage'];
+      const dmg = tag.data['damage'];
+      recordMonsterDamagedByPlayer(
+        world,
+        tag.sourceId,
+        actorFromSourceId(world, tag.sourceId),
+        entity,
+        dmg,
+        'proc',
+        buildSimpleBreakdown(dmg, dmg),
+      );
+      entity.hasHealth.hp -= dmg;
       lastSourceId = tag.sourceId;
       console.log(`[Detonation] ${monsterId}: ${tag.data['damage']} damage, hp=${Math.max(0, entity.hasHealth.hp)}`);
     }
@@ -33,7 +51,10 @@ export function updateDetonations(world: World, dt: number): void {
 
   for (const { monsterId, sourceId } of toKill) {
     const monster = world.getMonsterEntity(monsterId);
-    if (monster && sourceId) grantMonsterRewards(world, sourceId, monster);
+    if (monster && sourceId) {
+      const rewardInfo = grantMonsterRewards(world, sourceId, monster);
+      recordPlayerKillMonster(world, sourceId, monster, 0, rewardInfo);
+    }
     world.removeMonsterEntity(monsterId);
   }
 }

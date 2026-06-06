@@ -1,7 +1,8 @@
 import { eq } from 'drizzle-orm';
 import { randomUUID } from 'crypto';
-import type { BetterSQLite3Database } from 'drizzle-orm/better-sqlite3';
+import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import type {
+  AdminCharacterRecord,
   HasHealth,
   HasPosition,
   HoldsInventory,
@@ -14,7 +15,7 @@ import type { PlayerEntity } from '../ecs/entity';
 import { accounts, characters } from './schema';
 import type * as schema from './schema';
 
-type DB = BetterSQLite3Database<typeof schema>;
+export type DB = NodePgDatabase<typeof schema>;
 
 export interface PersistedPlayerSlices {
   isPlayer:          IsPlayer;
@@ -27,29 +28,51 @@ export interface PersistedPlayerSlices {
 
 // ── Account ───────────────────────────────────────────────────────────────────
 
-export function findOrCreateAccount(db: DB, accountId: string, displayName: string): void {
-  const existing = db.select().from(accounts).where(eq(accounts.id, accountId)).get();
-  if (!existing) {
-    db.insert(accounts).values({
+export interface AccountLoginResult {
+  previousLoginAt: number | null;
+  currentLoginAt: number;
+}
+
+export async function findOrCreateAccount(
+  db: DB,
+  accountId: string,
+  displayName: string,
+): Promise<AccountLoginResult> {
+  const now = Date.now();
+  const existing = await db.select().from(accounts).where(eq(accounts.id, accountId)).limit(1);
+  if (existing.length === 0) {
+    await db.insert(accounts).values({
       id:          accountId,
       displayName,
       discordId:   null,
-      createdAt:   Date.now(),
-    }).run();
+      createdAt:   now,
+      lastLoginAt: now,
+    });
+    return { previousLoginAt: null, currentLoginAt: now };
   }
+
+  const previousLoginAt = existing[0].lastLoginAt || existing[0].createdAt;
+  await db.update(accounts)
+    .set({
+      displayName,
+      lastLoginAt: now,
+    })
+    .where(eq(accounts.id, accountId));
+  return { previousLoginAt, currentLoginAt: now };
 }
 
 // ── Character ─────────────────────────────────────────────────────────────────
 
-export function getOrCreateCharacter(
+export async function getOrCreateCharacter(
   db: DB,
   accountId: string,
   characterName: string,
-): PersistedPlayerSlices {
-  const row = db.select().from(characters)
+): Promise<PersistedPlayerSlices> {
+  const rows = await db.select().from(characters)
     .where(eq(characters.accountId, accountId))
-    .get();
+    .limit(1);
 
+  const row = rows[0];
   if (row) {
     return hydratePlayerSlices(row);
   }
@@ -61,7 +84,7 @@ export function getOrCreateCharacter(
   };
   const fresh = buildFreshSlices(charId, characterName, spawn);
 
-  db.insert(characters).values({
+  await db.insert(characters).values({
     id:                charId,
     accountId,
     isPlayer:          JSON.stringify(fresh.isPlayer),
@@ -71,13 +94,13 @@ export function getOrCreateCharacter(
     holdsInventory:    JSON.stringify(fresh.holdsInventory),
     usesSkills:        JSON.stringify(fresh.usesSkills),
     updatedAt:         Date.now(),
-  }).run();
+  });
 
   return fresh;
 }
 
-export function saveCharacter(db: DB, accountId: string, entity: PlayerEntity): void {
-  db.update(characters)
+export async function saveCharacter(db: DB, accountId: string, entity: PlayerEntity): Promise<void> {
+  await db.update(characters)
     .set({
       isPlayer:          JSON.stringify(entity.isPlayer),
       hasPosition:       JSON.stringify(entity.hasPosition),
@@ -90,8 +113,47 @@ export function saveCharacter(db: DB, accountId: string, entity: PlayerEntity): 
       }),
       updatedAt:         Date.now(),
     })
-    .where(eq(characters.accountId, accountId))
-    .run();
+    .where(eq(characters.accountId, accountId));
+}
+
+export async function listCharacters(db: DB): Promise<AdminCharacterRecord[]> {
+  const rows = await db
+    .select({
+      character: characters,
+      accountDisplayName: accounts.displayName,
+    })
+    .from(characters)
+    .leftJoin(accounts, eq(characters.accountId, accounts.id));
+
+  return rows.map(({ character, accountDisplayName }) => {
+    const slices = hydratePlayerSlices(character);
+    const equipmentCount = Object.values(slices.holdsInventory.equipment)
+      .filter((itemId): itemId is string => typeof itemId === 'string')
+      .length;
+    return {
+      id: character.id,
+      accountId: character.accountId,
+      accountDisplayName: accountDisplayName ?? slices.isPlayer.name,
+      name: slices.isPlayer.name,
+      nodeId: slices.hasPosition.nodeId,
+      hp: slices.hasHealth.hp,
+      maxHp: slices.hasHealth.maxHp,
+      level: slices.tracksProgression.level,
+      playerTier: slices.tracksProgression.playerTier,
+      skillPoints: slices.tracksProgression.skillPoints,
+      combatArchetype: slices.usesSkills.combatArchetype,
+      selectedClass: slices.usesSkills.selectedClass,
+      selectedSubVariant: slices.usesSkills.selectedSubVariant,
+      selectedRange: slices.usesSkills.selectedRange,
+      essences: slices.tracksProgression.essences,
+      biomeLevel: slices.tracksProgression.biomeLevel,
+      clearedNodes: slices.tracksProgression.clearedNodes,
+      bossesCleared: slices.tracksProgression.bossesCleared,
+      inventoryCount: slices.holdsInventory.inventory.length,
+      equipmentCount,
+      updatedAt: character.updatedAt,
+    };
+  });
 }
 
 // ── Internals ─────────────────────────────────────────────────────────────────
@@ -104,12 +166,20 @@ function hydratePlayerSlices(row: CharacterRow): PersistedPlayerSlices {
     ...emptyEquipment(),
     ...holdsInventory.equipment,
   };
+  holdsInventory.itemUpgrades = holdsInventory.itemUpgrades ?? {};
+  const tracksProgression = parseSlice<TracksProgression>(row.tracksProgression);
 
   return {
     isPlayer:          parseSlice<IsPlayer>(row.isPlayer),
     hasPosition:       parseSlice<HasPosition>(row.hasPosition),
     hasHealth:         parseSlice<HasHealth>(row.hasHealth),
-    tracksProgression: parseSlice<TracksProgression>(row.tracksProgression),
+    tracksProgression: {
+      ...tracksProgression,
+      bossesCleared: tracksProgression.bossesCleared ?? [],
+      clearedNodes:   tracksProgression.clearedNodes ?? [],
+      runesOwned:     tracksProgression.runesOwned ?? [],
+      runesEquipped:  tracksProgression.runesEquipped ?? [],
+    },
     holdsInventory,
     usesSkills:        {
       ...parseSlice<UsesSkills>(row.usesSkills),
@@ -124,7 +194,6 @@ function buildFreshSlices(
   pos: Vec2,
 ): PersistedPlayerSlices {
   const equipment = emptyEquipment();
-  equipment.weapon = 'basic-sword';
 
   return {
     isPlayer: {
@@ -151,10 +220,15 @@ function buildFreshSlices(
       questProgress:    {},
       playerTier:       0,
       currentSkillTier: 0,
+      bossesCleared:    [],
+      clearedNodes:     [],
+      runesOwned:       [],
+      runesEquipped:    [],
     },
     holdsInventory: {
       inventory: [],
       equipment,
+      itemUpgrades: {},
     },
     usesSkills: {
       unlockedSkills:     [],

@@ -1,22 +1,63 @@
-import { EFFECT_DEFS, GAME_CONFIG } from "@mmo-idle/shared";
+import { EFFECT_DEFS, EMOTE_SPRITESHEETS, GAME_CONFIG } from "@mmo-idle/shared";
 import { DEPTH } from "../../render/depth";
 import { getDefaultStore } from "jotai";
-import { combatLog } from "../../combatLog";
-import { statusAtom, nodeTelemetryAtom, syncPlayerAtoms, nodeLoadingAtom } from "../../hud/atoms";
+import {
+  statusAtom,
+  syncPlayerAtoms,
+  nodeLoadingAtom,
+  showReleaseAnnouncement,
+  triggerDeathOverlay,
+  setBossFelledMarkers,
+} from "../../hud/atoms";
+import { applyWorldLogEvents } from "../../worldLog/formatWorldLog";
+import { loadGameplaySettings } from "../../settings/gameplaySettings";
+import {
+  sendRequestSync,
+  sendSetActive,
+  sendSetAutocombatConfig,
+  sendSetAutoTraverse,
+} from "../../net/intents";
 import { accountId, displayName } from "../../clientAuth";
 import { connectGameSocket, wireSocketHandlers } from "../../net/socket";
 import { applyDelta } from "../../net/deltaApplier";
-import { ATLAS_KEY, BIOME_TEXTURES } from "../../sprites";
+import {
+  ATLAS_KEY,
+  BIOME_TEXTURES,
+  GRAVES_KEY,
+  GRAVE_FRAME_SIZE,
+  NODE_DECOR,
+  emoteAnimKey,
+  emoteTextureKey,
+  initVoidOverlordSheet,
+  THOUGHT_BUBBLE_FILE,
+  THOUGHT_BUBBLE_KEY,
+  VOID_OVERLORD_FILE,
+  VOID_OVERLORD_TEXTURE_KEY,
+  VOID_TOMB_FILE,
+  VOID_TOMB_TEXTURE_KEY,
+} from "../../sprites";
 import { stepInterpolation, getOwnBase } from "../../render/interpolation";
 import { drawShadows } from "../../render/shadows";
+import { setShadowDefs } from "../../render/shadowDefs";
 import { drawLabels } from "../../render/labels";
+import { drawThoughtBubbles } from "../../render/thoughtBubbles";
 import { drawHealthBars } from "../../render/healthBars";
 import { drawCooldownBars } from "../../render/cooldownBars";
 import { updateEffectOverlays } from "../../render/effectOverlays";
 import { updateMovementEffects } from "../../render/movementEffects";
-import { beginTabResync, isClientRenderPaused, onDocumentHidden } from "../../fx/guard";
+import {
+  beginTabResync,
+  isClientRenderPaused,
+  onDocumentHidden,
+} from "../../fx/guard";
+import { maybeNotifyDeath } from "../../notifications/deathNotification";
 import { initParticleTextures, initEffectFrames } from "../../fx/particles";
 import { updateLaserBeam } from "../../fx/laser";
+import { initMistPostFx, updateMistPostFx } from "../../fx/mistPostFx";
+import { updateAltarGlow } from "../../fx/altarGlow";
+import { updateAltarPrompt } from "../../render/altarPrompt";
+import { updateVoidOverlordRespawn } from "../../render/voidOverlordTomb";
+import { isVoidFloodActive } from "./voidThrone";
 import { attachClickToMove } from "../../input/clickToMove";
 import { attachGamepad } from "../../input/gamepad";
 import { attachHudEvents } from "../../input/hudEvents";
@@ -28,11 +69,31 @@ import {
   drawExitMarkers,
   drawMinimap,
   updateBiomeBackground,
+  updateNodeDecor,
 } from "./overlays";
-import { showAscensionOverlay, showDeathOverlay } from "./screenOverlays";
+import { showAscensionOverlay, showOverlordFelledOverlay } from "./screenOverlays";
 import type { GameScene } from "./GameScene";
 
 const CAMERA_HOLD_MARGIN = 80;
+const SHADOW_DEFS_KEY = "shadowDefs";
+
+function initEmoteAnimations(scene: GameScene): void {
+  for (const [emoteId, sheet] of Object.entries(EMOTE_SPRITESHEETS)) {
+    const key = emoteAnimKey(emoteId);
+    if (scene.anims.exists(key)) continue;
+    const texKey = emoteTextureKey(emoteId);
+    if (!scene.textures.exists(texKey)) continue;
+    scene.anims.create({
+      key,
+      frames: scene.anims.generateFrameNumbers(texKey, {
+        start: 0,
+        end: sheet.frameCount - 1,
+      }),
+      frameRate: sheet.frameRate,
+      repeat: -1,
+    });
+  }
+}
 
 function isPointComfortablyOnScreen(
   scene: GameScene,
@@ -50,6 +111,20 @@ function isPointComfortablyOnScreen(
 
 export function preloadGameAssets(scene: GameScene): void {
   scene.load.atlas(ATLAS_KEY, "/assets/sprites.png", "/assets/sprites.json");
+  scene.load.spritesheet(GRAVES_KEY, "/assets/environment/graves.png", {
+    frameWidth: GRAVE_FRAME_SIZE,
+    frameHeight: GRAVE_FRAME_SIZE,
+  });
+  scene.load.json(SHADOW_DEFS_KEY, "/assets/shadows.json");
+  scene.load.image(VOID_OVERLORD_TEXTURE_KEY, VOID_OVERLORD_FILE);
+  scene.load.image(VOID_TOMB_TEXTURE_KEY, VOID_TOMB_FILE);
+  scene.load.image(THOUGHT_BUBBLE_KEY, THOUGHT_BUBBLE_FILE);
+  for (const [emoteId, sheet] of Object.entries(EMOTE_SPRITESHEETS)) {
+    scene.load.spritesheet(emoteTextureKey(emoteId), sheet.file, {
+      frameWidth: sheet.frameWidth,
+      frameHeight: sheet.frameHeight,
+    });
+  }
   for (const def of EFFECT_DEFS) {
     if (def.rowSlices) {
       scene.load.image(def.key, def.file);
@@ -63,11 +138,28 @@ export function preloadGameAssets(scene: GameScene): void {
   for (const key of Object.values(BIOME_TEXTURES)) {
     scene.load.image(key, `/assets/${key}.png`);
   }
+  const decorKeysSeen = new Set<string>();
+  for (const specs of Object.values(NODE_DECOR)) {
+    for (const s of specs) {
+      if (!decorKeysSeen.has(s.key)) {
+        decorKeysSeen.add(s.key);
+        scene.load.image(s.key, s.file);
+      }
+      if (s.openKey && s.openFile && !decorKeysSeen.has(s.openKey)) {
+        decorKeysSeen.add(s.openKey);
+        scene.load.image(s.openKey, s.openFile);
+      }
+    }
+  }
 }
 
 export function createGameScene(scene: GameScene): void {
+  setShadowDefs(scene.cache.json.get(SHADOW_DEFS_KEY));
+  initEmoteAnimations(scene);
   initParticleTextures(scene);
   initEffectFrames(scene);
+  initVoidOverlordSheet(scene);
+  initMistPostFx(scene);
 
   scene.cameras.main.setBounds(
     0,
@@ -94,7 +186,10 @@ export function createGameScene(scene: GameScene): void {
   scene.exitMarkers = scene.add.graphics().setDepth(DEPTH.FX - 1);
   scene.debugGraphics = scene.add.graphics().setDepth(DEPTH.FX + 1000);
   scene.cameraTarget = scene.add.arc(0, 0, 1).setAlpha(0);
-  scene.minimap = scene.add.graphics().setScrollFactor(0).setDepth(DEPTH.MINIMAP);
+  scene.minimap = scene.add
+    .graphics()
+    .setScrollFactor(0)
+    .setDepth(DEPTH.MINIMAP);
 
   attachHudEvents(scene);
   attachClickToMove(scene);
@@ -104,15 +199,22 @@ export function createGameScene(scene: GameScene): void {
 
   function onVisibilityChange(): void {
     if (document.hidden) {
+      // Tell the server to pause our high-volume stream; we'll resync on return.
+      if (scene.socket.connected) sendSetActive(scene.socket, false);
       onDocumentHidden();
       return;
     }
+    if (scene.socket.connected) {
+      // Resume streaming first, then pull a fresh full snapshot to catch up.
+      sendSetActive(scene.socket, true);
+      sendRequestSync(scene.socket);
+    }
     beginTabResync(scene.state, scene);
   }
-  document.addEventListener('visibilitychange', onVisibilityChange);
+  document.addEventListener("visibilitychange", onVisibilityChange);
 
-  scene.events.once('shutdown', () => {
-    document.removeEventListener('visibilitychange', onVisibilityChange);
+  scene.events.once("shutdown", () => {
+    document.removeEventListener("visibilitychange", onVisibilityChange);
     detachKb();
     detachPad();
     stopMove();
@@ -126,6 +228,7 @@ export function updateGameScene(scene: GameScene, delta: number): void {
   stepInterpolation(scene.state, dt);
   drawShadows(scene.state);
   drawLabels(scene.state);
+  drawThoughtBubbles(scene.state);
   drawHealthBars(scene.state);
 
   if (!isClientRenderPaused()) {
@@ -133,12 +236,17 @@ export function updateGameScene(scene: GameScene, delta: number): void {
     updateEffectOverlays(scene.state, scene, dt);
     updateMovementEffects(scene.state, scene);
     updateLaserBeam(scene.state, scene);
+    updateVoidOverlordRespawn(scene.state, scene);
+    updateMistPostFx(scene, isVoidFloodActive(scene), scene.time.now, dt);
+    updateAltarGlow(scene, dt);
+    updateAltarPrompt(scene);
     drawMinimap(scene);
   }
 
   if (scene.state.ownNodeId !== scene.lastDrawnNodeId) {
     drawExitMarkers(scene);
     updateBiomeBackground(scene);
+    updateNodeDecor(scene);
     scene.lastDrawnNodeId = scene.state.ownNodeId;
   }
 
@@ -172,13 +280,18 @@ function connectSocket(scene: GameScene): void {
     onConnect: (socket) => {
       scene.myId = socket.id ?? "";
       atomStore.set(statusAtom, "connected");
+      // Re-assert tab focus so a reconnect while hidden doesn't resume streaming.
+      sendSetActive(socket, !document.hidden);
+      const gameplaySettings = loadGameplaySettings();
+      sendSetAutoTraverse(socket, gameplaySettings.autoTraverseEnabled);
+      sendSetAutocombatConfig(socket, gameplaySettings.autocombat);
       if (scene.state.ownId)
         scene.cameras.main.startFollow(scene.cameraTarget, true, 0.1, 0.1);
     },
     onDisconnect: () => {
       atomStore.set(statusAtom, "disconnected");
-      atomStore.set(nodeTelemetryAtom, null);
       syncPlayerAtoms(null);
+      scene.state.gameplaySettingsSynced = false;
       scene.myId = "";
       scene.state.ownId = null;
     },
@@ -191,15 +304,51 @@ function connectSocket(scene: GameScene): void {
         new CustomEvent("hud:craftResult", { detail: result }),
       );
     },
-    onPlayerDied: () => {
-      combatLog.push("death", "You were defeated");
-      showDeathOverlay(scene);
+    onUpgradeResult: (result) => {
+      window.dispatchEvent(
+        new CustomEvent("hud:upgradeResult", { detail: result }),
+      );
+    },
+    onPlayerDied: (payload) => {
+      triggerDeathOverlay(payload);
+      maybeNotifyDeath();
+    },
+    onWorldEvents: (events) => {
+      applyWorldLogEvents(events, scene.myId);
     },
     onPlayerAscended: (tier) => {
       showAscensionOverlay(scene, tier);
     },
-    onTelemetry: (snapshot) => {
-      atomStore.set(nodeTelemetryAtom, snapshot);
+    onOverlordFelled: () => {
+      showOverlordFelledOverlay(scene);
+    },
+    onBossFelled: (markers) => {
+      setBossFelledMarkers(markers);
+    },
+    onUpdateAnnouncement: (payload) => {
+      showReleaseAnnouncement(payload);
+    },
+    onSessionKicked: () => {
+      const overlay = document.createElement("div");
+      overlay.style.cssText = [
+        "position:fixed",
+        "inset:0",
+        "z-index:99999",
+        "background:rgba(0,0,0,0.85)",
+        "display:flex",
+        "flex-direction:column",
+        "align-items:center",
+        "justify-content:center",
+        "color:#fff",
+        "font-family:sans-serif",
+        "text-align:center",
+        "gap:12px",
+      ].join(";");
+      overlay.innerHTML = `
+        <div style="font-size:1.4rem;font-weight:bold">Session replaced</div>
+        <div style="font-size:1rem;opacity:0.75">Another tab or window opened this account.<br>Close this tab and use the other one.</div>
+      `;
+      document.body.appendChild(overlay);
     },
   });
 }

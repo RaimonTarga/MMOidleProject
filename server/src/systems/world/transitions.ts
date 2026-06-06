@@ -1,9 +1,10 @@
-import type { World } from '../../world/World';
-import type { NodeDirection } from '@mmo-idle/shared';
-import { GAME_CONFIG, pointFromMotion } from '@mmo-idle/shared';
-import { NODE_REGISTRY } from '../../world/nodeRegistry';
-import { setEntityMotion, stopEntity } from './movement';
-import { thawNode } from '../../world/nodeLifecycle';
+import type { World } from "../../world/World";
+import type { NodeDirection } from "@mmo-idle/shared";
+import { GAME_CONFIG, pointFromMotion } from "@mmo-idle/shared";
+import { NODE_REGISTRY } from "../../world/nodeRegistry";
+import { setEntityMotion, stopEntity } from "./movement";
+import { thawNode } from "../../world/nodeLifecycle";
+import { relocateMinionsForOwner } from "../classes/archetypes/summoner";
 
 // Pixels from the boundary that fire a transition. Must match GATE_THICK in GameScene.
 const EXIT_TRIGGER = 20;
@@ -11,7 +12,10 @@ const EXIT_TRIGGER = 20;
 /**
  * Returns the destination node id for an exit, or null if the boundary is sealed.
  */
-export function resolveExit(nodeId: string, direction: NodeDirection): string | null {
+export function resolveExit(
+  nodeId: string,
+  direction: NodeDirection,
+): string | null {
   return NODE_REGISTRY.get(nodeId)?.exits[direction] ?? null;
 }
 
@@ -24,7 +28,7 @@ export function resolveExit(nodeId: string, direction: NodeDirection): string | 
 export function updateTransitions(world: World): void {
   const G = GAME_CONFIG.GATE_HALF;
 
-  for (const entity of world.playerEntities) {
+  for (const entity of world.livePlayers) {
     const position = entity.hasPosition;
     const node = NODE_REGISTRY.get(position.nodeId);
     if (!node) continue;
@@ -37,41 +41,43 @@ export function updateTransitions(world: World): void {
     let inGate = false;
 
     if (current.x <= EXIT_TRIGGER) {
-      direction = 'west';
+      direction = "west";
       inGate = current.y >= H / 2 - G && current.y <= H / 2 + G;
     } else if (current.x >= W - EXIT_TRIGGER) {
-      direction = 'east';
+      direction = "east";
       inGate = current.y >= H / 2 - G && current.y <= H / 2 + G;
     } else if (current.y <= EXIT_TRIGGER) {
-      direction = 'north';
+      direction = "north";
       inGate = current.x >= W / 2 - G && current.x <= W / 2 + G;
     } else if (current.y >= H - EXIT_TRIGGER) {
-      direction = 'south';
+      direction = "south";
       inGate = current.x >= W / 2 - G && current.x <= W / 2 + G;
     }
 
     if (!direction) continue;
 
-    const targetNodeId = inGate ? resolveExit(position.nodeId, direction) : null;
+    const targetNodeId = inGate
+      ? resolveExit(position.nodeId, direction)
+      : null;
 
     if (!targetNodeId) {
       // Solid wall (or not in gate zone) — clamp player back inside.
       const target = entity.isMoving
         ? pointFromMotion(position.current, entity.isMoving.motion)
         : position.current;
-      if (direction === 'west') {
+      if (direction === "west") {
         position.current.x = EXIT_TRIGGER + 1;
         target.x = Math.max(EXIT_TRIGGER + 1, target.x);
       }
-      if (direction === 'east') {
+      if (direction === "east") {
         position.current.x = W - EXIT_TRIGGER - 1;
         target.x = Math.min(W - EXIT_TRIGGER - 1, target.x);
       }
-      if (direction === 'north') {
+      if (direction === "north") {
         position.current.y = EXIT_TRIGGER + 1;
         target.y = Math.max(EXIT_TRIGGER + 1, target.y);
       }
-      if (direction === 'south') {
+      if (direction === "south") {
         position.current.y = H - EXIT_TRIGGER - 1;
         target.y = Math.min(H - EXIT_TRIGGER - 1, target.y);
       }
@@ -83,7 +89,7 @@ export function updateTransitions(world: World): void {
     const fromNodeId = position.nodeId;
 
     position.nodeId = targetNodeId;
-    world.movePlayerNode(fromNodeId, targetNodeId);
+    world.movePlayerNode(fromNodeId, targetNodeId, entity.isPlayer.id);
 
     if (world.isNodeFrozen(targetNodeId)) {
       world.nodePreparingEmitter?.(entity.isPlayer.id, targetNodeId);
@@ -94,26 +100,43 @@ export function updateTransitions(world: World): void {
 
     // Place the player just inside the opposite edge of the new node.
     switch (direction) {
-      case 'west':
+      case "west":
         position.current.x = targetNode.width - EXIT_TRIGGER - 1;
-        position.current.y = Math.max(0, Math.min(position.current.y, targetNode.height));
+        position.current.y = Math.max(
+          0,
+          Math.min(position.current.y, targetNode.height),
+        );
         break;
-      case 'east':
+      case "east":
         position.current.x = EXIT_TRIGGER + 1;
-        position.current.y = Math.max(0, Math.min(position.current.y, targetNode.height));
+        position.current.y = Math.max(
+          0,
+          Math.min(position.current.y, targetNode.height),
+        );
         break;
-      case 'north':
+      case "north":
         position.current.y = targetNode.height - EXIT_TRIGGER - 1;
-        position.current.x = Math.max(0, Math.min(position.current.x, targetNode.width));
+        position.current.x = Math.max(
+          0,
+          Math.min(position.current.x, targetNode.width),
+        );
         break;
-      case 'south':
+      case "south":
         position.current.y = EXIT_TRIGGER + 1;
-        position.current.x = Math.max(0, Math.min(position.current.x, targetNode.width));
+        position.current.x = Math.max(
+          0,
+          Math.min(position.current.x, targetNode.width),
+        );
         break;
     }
 
     stopEntity(world, entity);
 
-    console.log(`[trans] ✓ ${entity.isPlayer.name} ${fromNodeId} → ${targetNodeId} via ${direction}  pos=(${Math.round(position.current.x)}, ${Math.round(position.current.y)})`);
+    // Carry live summons into the new node at the player's entry point.
+    relocateMinionsForOwner(world, entity);
+
+    console.log(
+      `[trans] ✓ ${entity.isPlayer.name} ${fromNodeId} → ${targetNodeId} via ${direction}  pos=(${Math.round(position.current.x)}, ${Math.round(position.current.y)})`,
+    );
   }
 }

@@ -1,7 +1,7 @@
 import type { PlayerView } from "@mmo-idle/shared";
-import { setAutoPath } from "../hud/atoms";
-import { combatLog } from "../combatLog";
-import { getPlayerShadowOffset } from "../sprites";
+import { isRangedPlayerView } from "@mmo-idle/shared";
+import { getDefaultStore } from "jotai";
+import { autoPathAtom, setAutoPath } from "../hud/atoms";
 import type { RenderState } from "./state";
 import type { GameScene } from "../scenes/GameScene";
 import {
@@ -11,15 +11,39 @@ import {
   updateSpriteFrame,
 } from "./sprites";
 import { ensureShadow } from "./shadows";
-import { ensureLabel } from "./labels";
-import { ensureHpBar } from "./healthBars";
-import { ensureCdBar } from "./cooldownBars";
+import {
+  ensureLabel,
+  updateLabelForGrave,
+  updateLabelForLivePlayer,
+} from "./labels";
+import { ensureHpBar, destroyHpBar } from "./healthBars";
+import { ensureCdBar, destroyCdBar } from "./cooldownBars";
+import { GRAVE_DISPLAY_H, GRAVE_LABEL_OFFSET_Y } from "../sprites";
 import { applyLunge } from "./interpolation";
+import { getPendingStop, isOwnHeadingClientOwned } from "../input/moveOwnership";
 import { spawnAttackEffect } from "./combatFx";
 import { getDotPath } from "../fx/dot";
 import { spawnDamageNumber } from "../fx/particles";
-import { cancelAutoPath, sendAutoPathMove } from "../input/autoPath";
 import { flashShiftTint, spawnFlashAttackAfterimage } from "./movementEffects";
+
+// Server position is authoritative; the client extrapolates ahead toward the
+// motion target between 5 Hz snapshots. Beyond this error the prediction has
+// diverged (rejected move, dropped packet) — snap rather than glide-correct.
+const RECONCILE_SNAP_SQ = 220 * 220;
+
+/**
+ * Combined movement-speed multiplier from any movement-affecting buffs the
+ * player has (slow, root, trample boon, …). Mirrors the server's
+ * `slowMult * trampleMult` so client extrapolation runs at the same effective
+ * speed. Buffs without a `speedMult` (the common case) are ignored.
+ */
+function moveSpeedMult(player: PlayerView): number {
+  let mult = 1;
+  for (const buff of player.activeBuffs) {
+    if (buff.speedMult !== undefined) mult *= buff.speedMult;
+  }
+  return mult;
+}
 
 export function upsertPlayer(
   state: RenderState,
@@ -34,12 +58,10 @@ export function upsertPlayer(
     state.kind.set(player.id, "player");
     state.view.set(player.id, player);
 
-    const shadowOffsetY = getPlayerShadowOffset();
     state.spriteMeta.set(player.id, {
       currentFrame: null,
-      shadowOffsetY,
       shadowLevel: player.playerTier,
-      barOffsetY: 40,
+      barOffsetY: player.isDead ? GRAVE_LABEL_OFFSET_Y : 40,
       isOwn,
     });
 
@@ -54,23 +76,39 @@ export function upsertPlayer(
     });
 
     const color = isOwn ? 0x44ff88 : 0x4488ff;
-    ensureShadow(state, player.id, player.pos, shadowOffsetY, scene, {
-      width: 52,
-      height: 14,
-      playerTier: player.playerTier,
-    });
+    if (!player.isDead) {
+      ensureShadow(state, player.id, player.pos, scene, {
+        playerTier: player.playerTier,
+      });
+    }
     ensureSprite(state, player.id, player, scene, {
       displayW: 64,
       displayH: 64,
       fallbackColor: color,
       isPlayer: true,
     });
+    if (player.isDead) {
+      updateSpriteFrame(state, player.id, player, scene, {
+        displayW: 80,
+        displayH: GRAVE_DISPLAY_H,
+        fallbackColor: color,
+        isPlayer: true,
+      });
+    }
     const sprite = state.sprite.get(player.id);
-    const tint = flashShiftTint(player);
-    if (sprite && tint !== null) applySpriteTint(sprite, tint);
+    if (!player.isDead) {
+      const tint = flashShiftTint(player);
+      if (sprite && tint !== null) applySpriteTint(sprite, tint);
+    }
     ensureLabel(state, player.id, player, scene);
-    ensureHpBar(state, player.id, scene);
-    ensureCdBar(state, player.id, scene);
+    if (player.isDead) {
+      updateLabelForGrave(state, player.id, player, scene);
+      destroyHpBar(state, player.id);
+      destroyCdBar(state, player.id);
+    } else {
+      ensureHpBar(state, player.id, scene);
+      ensureCdBar(state, player.id, scene);
+    }
 
     if (isOwn) {
       state.ownId = player.id;
@@ -82,10 +120,42 @@ export function upsertPlayer(
   }
 
   const prev = state.view.get(player.id) as PlayerView | undefined;
+  const wasDead = prev?.isDead ?? false;
   const prevAttackAt = prev?.lastAttackAt ?? 0;
   const prevHp = prev?.hp ?? player.hp;
-  const prevTotalShield =
-    prev?.shields.reduce((sum, s) => sum + s.amount, 0) ?? 0;
+
+  if (player.isDead) {
+    const meta = state.spriteMeta.get(player.id);
+    if (meta) meta.barOffsetY = GRAVE_LABEL_OFFSET_Y;
+    updateSpriteFrame(state, player.id, player, scene, {
+      displayW: 80,
+      displayH: GRAVE_DISPLAY_H,
+      fallbackColor: isOwn ? 0x44ff88 : 0x4488ff,
+      isPlayer: true,
+    });
+    ensureLabel(state, player.id, player, scene);
+    updateLabelForGrave(state, player.id, player, scene);
+    destroyHpBar(state, player.id);
+    destroyCdBar(state, player.id);
+    state.view.set(player.id, player);
+    const interp = state.interpolation.get(player.id);
+    if (interp) {
+      interp.base = { ...player.pos };
+      interp.lungeOffset = { x: 0, y: 0 };
+    }
+    return;
+  }
+
+  if (wasDead) {
+    const meta = state.spriteMeta.get(player.id);
+    if (meta) meta.barOffsetY = 40;
+    ensureShadow(state, player.id, player.pos, scene, {
+      playerTier: player.playerTier,
+    });
+    ensureHpBar(state, player.id, scene);
+    ensureCdBar(state, player.id, scene);
+    updateLabelForLivePlayer(state, player.id, player, scene);
+  }
 
   if (isOwn && player.nodeId !== state.ownNodeId) {
     const interp = state.interpolation.get(player.id);
@@ -95,18 +165,14 @@ export function upsertPlayer(
     const sprite = state.sprite.get(player.id);
     sprite?.setPosition(player.pos.x, player.pos.y);
 
-    if (scene.autoPath.length > 0) {
-      if (scene.autoPath[0] === player.nodeId) {
-        scene.autoPath.shift();
-        if (scene.autoPath.length > 0) {
-          setAutoPath([...scene.autoPath]);
-          sendAutoPathMove(scene, player.nodeId);
-        } else {
-          cancelAutoPath(scene);
-        }
-      } else {
-        cancelAutoPath(scene);
-      }
+    // Trim the navigation route display as the server walks us across nodes;
+    // clear it on arrival. Movement itself is owned by the server.
+    const store = getDefaultStore();
+    const navPath = store.get(autoPathAtom);
+    if (navPath && navPath.length > 0) {
+      const idx = navPath.indexOf(player.nodeId);
+      const remaining = idx >= 0 ? navPath.slice(idx + 1) : [];
+      setAutoPath(remaining.length > 0 ? remaining : null);
     }
   }
 
@@ -125,7 +191,12 @@ export function upsertPlayer(
     } else {
       resetSpriteTint(sprite, color);
     }
-    if (isOwn && tint !== null && player.lastAttackAt > prevAttackAt) {
+    if (
+      isOwn &&
+      tint !== null &&
+      player.lastAttackAt > prevAttackAt &&
+      (player.summonsMinions ?? 0) === 0
+    ) {
       spawnFlashAttackAfterimage(state, player, scene);
     }
   }
@@ -133,9 +204,52 @@ export function upsertPlayer(
   state.view.set(player.id, player);
   const transform = state.transform.get(player.id);
   if (transform) {
-    transform.target = { ...player.target };
-    transform.speed = player.speed;
+    // Fix #1: while the client owns the own player's heading — active
+    // keyboard/gamepad movement OR a sent-but-unconfirmed stop — the server's
+    // `player.target` is ~1 RTT stale, so overwriting it here would yank the
+    // predicted sprite toward the old heading (mid-walk) or let the lagging
+    // authoritative state drive then snap it back (the "backtrack on stop").
+    // Other players, and the own player under server-driven movement
+    // (auto/traverse/follow/knockback) or click-to-move, take the server target.
+    if (!(isOwn && isOwnHeadingClientOwned())) {
+      transform.target = { ...player.target };
+    }
+    // Keep the authoritative position current for the per-frame reconcile below.
+    transform.pos = { ...player.pos };
+    // Fix #3: match the server's effective speed so the client doesn't over- or
+    // under-extrapolate while slowed/rooted/boosted (otherwise the prediction
+    // diverges until the hard snap fires). Movement buffs carry their multiplier.
+    transform.speed = player.speed * moveSpeedMult(player);
   }
+
+  if (isOwn) {
+    const interp = state.interpolation.get(player.id);
+    if (interp) {
+      const ex = player.pos.x - interp.base.x;
+      const ey = player.pos.y - interp.base.y;
+      if (ex * ex + ey * ey > RECONCILE_SNAP_SQ) {
+        // While a stop is unconfirmed the predicted base legitimately leads the
+        // lagging authoritative position; a hard snap back to it would be the
+        // visible backtrack. Suppress only the BACKWARD snap (server still
+        // behind, along the path to the stop) — forward/perpendicular desyncs
+        // (lag spike, rejected move) still snap.
+        const ps = getPendingStop();
+        let backwardStopSnap = false;
+        if (ps) {
+          const ax = ps.x - player.pos.x;
+          const ay = ps.y - player.pos.y;
+          // ex,ey = pos − base. base ahead toward stop ⇒ (pos−base)·(stop−pos) < 0.
+          if (ex * ax + ey * ay < 0) backwardStopSnap = true;
+        }
+        if (!backwardStopSnap) {
+          interp.base.x = player.pos.x;
+          interp.base.y = player.pos.y;
+        }
+      }
+    }
+  }
+
+  updateLabelForLivePlayer(state, player.id, player, scene);
 
   if (player.hp < prevHp) {
     const sprite = state.sprite.get(player.id);
@@ -149,30 +263,15 @@ export function upsertPlayer(
         Math.round(prevHp - player.hp),
         dmgColor,
       );
-      if (isOwn)
-        combatLog.push(
-          "damage-in",
-          `Took ${Math.round(prevHp - player.hp)} damage`,
-        );
     }
   }
 
-  if (isOwn && player.hp > prevHp && prevHp > 0) {
-    const healed = Math.round(player.hp - prevHp);
-    if (healed >= 1) combatLog.push("heal", `Recovered ${healed} HP`);
-  }
-
-  if (isOwn) {
-    const newTotalShield = player.shields.reduce((sum, s) => sum + s.amount, 0);
-    if (newTotalShield > prevTotalShield) {
-      combatLog.push(
-        "shield",
-        `Shield +${Math.round(newTotalShield - prevTotalShield)}`,
-      );
-    }
-  }
-
-  if (!isOwn && player.lastAttackAt > prevAttackAt && player.attackTargetId) {
+  if (
+    !isOwn &&
+    (player.summonsMinions ?? 0) === 0 &&
+    player.lastAttackAt > prevAttackAt &&
+    player.attackTargetId
+  ) {
     const ownSprite = state.sprite.get(player.id);
     const targetInterp = state.interpolation.get(player.attackTargetId);
     const targetSprite = state.sprite.get(player.attackTargetId);
@@ -190,7 +289,7 @@ export function upsertPlayer(
             player.combatArchetype === "dot" ? getDotPath(player) : undefined,
         },
       );
-      if (player.attackRange <= 150) {
+      if (!isRangedPlayerView(player)) {
         applyLunge(state, player.id, { ...targetInterp.base }, scene);
       }
     }

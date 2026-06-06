@@ -5,6 +5,13 @@ import { setAttackTarget } from '../../../../../../combat/ai/targeting';
 import { grantMonsterRewards } from '../../../../../../player/progression/rewards';
 import { endChannel } from '../../core/helpers';
 import { BEAM_DURATION_MS, BEAM_TICK_MS, BEAM_DMG_PER_TICK_MULT } from '../../core/constants';
+import {
+  buildPlatingDrBreakdown,
+  recordMonsterDamagedByPlayer,
+  recordPlayerKillMonster,
+} from '../../../../../../../world/worldLogCombat';
+import { actorFromPlayer } from '../../../../../../../world/worldLogActors';
+import { isInvulnerableMonster } from '../../../../../../combat/invulnerability';
 
 /**
  * Channeled Beam tick. Drains `isChanneling.remainingMs`, ticks damage
@@ -34,7 +41,7 @@ export function updateChanneledBeam(world: World, dt: number): void {
     if (!channel.targetId) { endChannel(world, player); continue; }
 
     let monster = world.getMonsterEntity(channel.targetId);
-    if (!monster || monster.hasPosition.nodeId !== player.hasPosition.nodeId) {
+    if (!monster || monster.hasPosition.nodeId !== player.hasPosition.nodeId || isInvulnerableMonster(monster)) {
       const newTarget = findBeamTarget(world, player);
       if (newTarget) {
         channel.targetId = newTarget.isMonster.id;
@@ -52,7 +59,30 @@ export function updateChanneledBeam(world: World, dt: number): void {
     if (nextTick <= 0) {
       channel.nextTickMs = nextTick + BEAM_TICK_MS;
 
-      const dmgPerTick = Math.max(1, Math.round(player.dealsDamage.attack * BEAM_DMG_PER_TICK_MULT));
+      const gross = Math.round(player.dealsDamage.attack * BEAM_DMG_PER_TICK_MULT);
+      const dmgPerTick = Math.max(
+        1,
+        Math.round(
+          Math.max(0, gross - monster.mitigatesDamage.plating) *
+            (1 - monster.mitigatesDamage.damageReduction),
+        ),
+      );
+      const mitigation = buildPlatingDrBreakdown({
+        grossDamage: gross,
+        effectivePlating: monster.mitigatesDamage.plating,
+        platingMult: 1,
+        damageReduction: monster.mitigatesDamage.damageReduction,
+      });
+      mitigation.hpDamage = dmgPerTick;
+      recordMonsterDamagedByPlayer(
+        world,
+        player.isPlayer.id,
+        actorFromPlayer(player),
+        monster,
+        dmgPerTick,
+        'proc',
+        mitigation,
+      );
       monster.hasHealth.hp -= dmgPerTick;
       console.log(
         `[BeamChannel] ${player.isPlayer.id}: ${dmgPerTick} tick dmg on ${monster.isMonster.id}, hp=${Math.max(0, monster.hasHealth.hp)}`,
@@ -77,7 +107,10 @@ export function updateChanneledBeam(world: World, dt: number): void {
 
   for (const { monsterId, sourceId } of toKill) {
     const monster = world.getMonsterEntity(monsterId);
-    if (monster && sourceId) grantMonsterRewards(world, sourceId, monster);
+    if (monster && sourceId) {
+      const rewardInfo = grantMonsterRewards(world, sourceId, monster);
+      recordPlayerKillMonster(world, sourceId, monster, 0, rewardInfo);
+    }
     world.removeMonsterEntity(monsterId);
   }
 }
@@ -91,6 +124,7 @@ function findBeamTarget(world: World, player: PlayerEntity, excludeId?: string):
 
   for (const entity of world.monsterEntitiesInNode(player.hasPosition.nodeId)) {
     if (excludeId && entity.isMonster.id === excludeId) continue;
+    if (isInvulnerableMonster(entity)) continue;
     const monsterPH = posHitboxFromEntity(entity);
     if (!inAttackRange(playerPH, monsterPH, attackRange)) continue;
     const gap = hitboxGap(playerPH, monsterPH);

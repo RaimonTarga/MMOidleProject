@@ -1,12 +1,30 @@
 import type { Recipe } from './types';
-import { clearingForestMountainRecipeEntries } from './clearingForestMountain';
-import { plainsSwampCaveRecipeEntries } from './plainsSwampCave';
-import { jungleTundraDesertVolcanicRecipeEntries } from './jungleTundraDesertVolcanic';
+import { clearingRecipeEntries } from './clearing.recipes';
+import { caveRecipeEntries } from './cave.recipes';
+import { desertRecipeEntries } from './desert.recipes';
+import { forestRecipeEntries } from './forest.recipes';
+import { jungleRecipeEntries } from './jungle.recipes';
+import { mountainRecipeEntries } from './mountain.recipes';
+import { plainsRecipeEntries } from './plains.recipes';
+import { swampRecipeEntries } from './swamp.recipes';
+import { tundraRecipeEntries } from './tundra.recipes';
+import { volcanicRecipeEntries } from './volcanic.recipes';
+import { graveyardRecipeEntries } from './graveyard';
+// import { abyssUltimateRecipeEntries } from './abyssUltimate';
 
 const recipeEntries: [string, Recipe][] = [
-  ...clearingForestMountainRecipeEntries,
-  ...plainsSwampCaveRecipeEntries,
-  ...jungleTundraDesertVolcanicRecipeEntries,
+  ...clearingRecipeEntries,
+  ...caveRecipeEntries,
+  ...forestRecipeEntries,
+  ...jungleRecipeEntries,
+  ...mountainRecipeEntries,
+  ...plainsRecipeEntries,
+  ...swampRecipeEntries,
+  ...tundraRecipeEntries,
+  ...desertRecipeEntries,
+  ...volcanicRecipeEntries,
+  ...graveyardRecipeEntries,
+  // ...trenchRecipeEntries,
 ];
 
 export const RECIPE_DATABASE: Map<string, Recipe> = new Map<string, Recipe>(recipeEntries);

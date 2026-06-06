@@ -7,6 +7,7 @@ import type { PlayerEntity, ServerEntity } from './entity';
 import {
   initAppliesDots,
   initChillsTarget,
+  initSummonsMinions,
   initUsesCadence,
   initUsesCooldown,
   initUsesEnergy,
@@ -80,5 +81,18 @@ export function syncArchetypeSlices(world: World, entity: PlayerEntity): void {
     archetype === 'reload',
     'usesReload',
     () => initUsesReload({ ammoMax: entity.usesReload?.ammoMax ?? 0 }),
+  );
+
+  // The summoner archetype attaches `summonsMinions`. Initial slot count uses the
+  // passive value if available (post-recalc) and defaults to 3 otherwise.
+  const minionBaseCount = passives['summoner.minion-count'] ?? 3;
+  const minionCountMult = passives['summoner.minion-count-mult'] ?? 1.0;
+  const minionCount = Math.max(1, Math.floor(minionBaseCount * minionCountMult));
+  syncArchetypeSlice(
+    world,
+    entity,
+    archetype === 'summoner',
+    'summonsMinions',
+    () => entity.summonsMinions ?? initSummonsMinions({ targetCount: minionCount }),
   );
 }

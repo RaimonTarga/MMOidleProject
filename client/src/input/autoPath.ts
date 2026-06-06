@@ -1,51 +1,24 @@
-import { GAME_CONFIG, type Vec2 } from "@mmo-idle/shared";
-import { autoAtom, setAutoPath } from "../hud/atoms";
-import { sendMove, sendSetAuto } from "../net/intents";
-import { getOwnView } from "../render/state";
+import { setAutoPath } from "../hud/atoms";
+import { sendSetAuto } from "../net/intents";
+import { clearPendingStop } from "./moveOwnership";
 import type { GameScene } from "../scenes/GameScene";
-import { getDefaultStore } from "jotai";
 
 export function setAutoMode(scene: GameScene, enabled: boolean): void {
   scene.autoMode = enabled;
   sendSetAuto(scene.socket, enabled);
-  if (enabled) scene.targetMarker.setVisible(false);
-
-  const own = getOwnView(scene.state);
-  if (own) {
-    getDefaultStore().set(autoAtom, enabled);
+  if (enabled) {
+    scene.targetMarker.setVisible(false);
+    // Auto-combat is server-driven: drop any post-keyboard stop latch so the
+    // server can steer immediately instead of waiting out the grace window.
+    clearPendingStop();
   }
+  // `autoAtom` (the AUTO button state) is driven authoritatively by `player.auto`
+  // from server deltas — see syncPlayerAtoms — so we do not set it optimistically
+  // here. That keeps a single writer and prevents the button flickering against
+  // an in-flight delta.
 }
 
-export function sendAutoPathMove(scene: GameScene, fromNodeId: string): void {
-  if (scene.autoPath.length === 0 || !scene.myId) return;
-  const [, curRStr, curCStr] = fromNodeId.split("-");
-  const [, nxtRStr, nxtCStr] = scene.autoPath[0].split("-");
-  const dr = parseInt(nxtRStr, 10) - parseInt(curRStr, 10);
-  const dc = parseInt(nxtCStr, 10) - parseInt(curCStr, 10);
-
-  const w = GAME_CONFIG.NODE_WIDTH;
-  const h = GAME_CONFIG.NODE_HEIGHT;
-  let dest: Vec2;
-  if (dr === -1) dest = { x: w / 2, y: 5 };
-  else if (dr === 1) dest = { x: w / 2, y: h - 5 };
-  else if (dc === -1) dest = { x: 5, y: h / 2 };
-  else if (dc === 1) dest = { x: w - 5, y: h / 2 };
-  else {
-    cancelAutoPath(scene);
-    return;
-  }
-
-  dest = { x: Math.round(dest.x), y: Math.round(dest.y) };
-  sendMove(scene.socket, dest);
-  const transform = scene.state.ownId
-    ? scene.state.transform.get(scene.state.ownId)
-    : undefined;
-  if (transform) {
-    transform.target = dest;
-  }
-}
-
-export function cancelAutoPath(scene: GameScene): void {
-  scene.autoPath = [];
+/** Clear the client-side navigation route display. Movement itself is server-owned. */
+export function cancelAutoPath(): void {
   setAutoPath(null);
 }

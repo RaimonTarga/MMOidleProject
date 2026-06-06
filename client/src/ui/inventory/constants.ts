@@ -9,13 +9,15 @@ export const SLOT_LABELS: Record<EquipmentSlot, string> = {
 };
 
 export const STAT_LABELS: Record<string, string> = {
-  attack:         'ATK',
-  defense:        'DEF',
-  maxHp:          'HP',
-  hpRegen:        'REGEN',
-  speed:          'SPD',
-  attackRange:    'RNG',
-  attackCooldown: 'CD',
+  attack:          'ATK',
+  defense:         'DEF',
+  maxHp:           'HP',
+  hpRegen:         'REGEN',
+  speed:           'SPD',
+  attackRange:     'RNG',
+  attackCooldown:  'CD',
+  plating:         'PLT',
+  damageReduction: 'DR',
 };
 
 // Matches PLAYER_SHADOW_RAMP in sprites.ts

@@ -18,6 +18,8 @@ export interface NodeDefinition {
    * One boss monster is maintained alongside the normal population.
    */
   isDungeon: boolean;
+  /** Optional explicit boss type for unique dungeon encounters. */
+  bossTypeId?: string;
 }
 
 export const TEST_ROOM_NODE_ID = 'node-test-room';
@@ -28,8 +30,8 @@ export const TEST_ROOM_NODE_ID = 'node-test-room';
  *   0        — clearing (T0)                    1 node
  *   1–2      — T1 biomes (24 nodes)             forest, mountain, plains, swamp, cave, jungle
  *   3        — T2 biomes (24 nodes)             + tundra, desert
- *   4        — T3 biomes (32 nodes)             + volcanic, necropolis (first appearance)
- *   5        — T4 biomes (40 nodes)             + abyss (first appearance)
+ *   4        — T3 biomes (32 nodes)             + volcanic, graveyard (first appearance)
+ *   5        — T4 biomes (40 nodes)             + trench (first appearance)
  *
  * Each tier has exactly one dungeon per biome present at that tier.
  * Geographic layout:
@@ -37,11 +39,20 @@ export const TEST_ROOM_NODE_ID = 'node-test-room';
  *   NE   (rows 0–4, cols 7+) — forest / plains
  *   East (col 10)            — plains / desert / jungle
  *   SE   (rows 8–10, cols 7+)— jungle
- *   South (rows 9–10)        — volcanic / necropolis / abyss
- *   West  (col 0)            — swamp / cave / abyss
+ *   South (rows 9–10)        — volcanic / graveyard / trench
+ *   West  (col 0)            — swamp / cave / trench
  *   NW   (rows 0–4, cols 0–4)— swamp / tundra
  */
-export const NODE_BIOMES: Record<string, { biomeGroup: string; biomeTier: number; isDungeon?: boolean }> = {
+export interface NodeBiomeInfo {
+  biomeGroup: string;
+  biomeTier: number;
+  isDungeon?: boolean;
+  bossTypeId?: string;
+  /** Overrides biome mobDensity for this node only (e.g. 0 = boss adds only). */
+  mobDensity?: number;
+}
+
+export const NODE_BIOMES: Record<string, NodeBiomeInfo> = {
 
   // ── T0 center — starting clearing ─────────────────────────────────────────
   'node-5-5': { biomeGroup: 'clearing',   biomeTier: 0 },
@@ -215,16 +226,16 @@ export const NODE_BIOMES: Record<string, { biomeGroup: string; biomeTier: number
   'node-10-6': { biomeGroup: 'volcanic',  biomeTier: 4 },
   'node-10-7': { biomeGroup: 'volcanic',  biomeTier: 4 },
 
-  // Necropolis T4 — SW (row 10, cols 2–4; first appearance)
-  'node-10-2': { biomeGroup: 'necropolis', biomeTier: 4 },
-  'node-10-3': { biomeGroup: 'necropolis', biomeTier: 4, isDungeon: true },
-  'node-10-4': { biomeGroup: 'necropolis', biomeTier: 4 },
+  // Graveyard T4 — SW (row 10, cols 2–4; first appearance) — was 'necropolis'
+  'node-10-2': { biomeGroup: 'graveyard', biomeTier: 4 },
+  'node-10-3': { biomeGroup: 'graveyard', biomeTier: 4, isDungeon: true },
+  'node-10-4': { biomeGroup: 'graveyard', biomeTier: 4 },
 
-  // Abyss T4 — SW corner (row 10 cols 0–1 + col 0 rows 8–9; first appearance)
-  'node-10-0': { biomeGroup: 'abyss',     biomeTier: 4 },
-  'node-10-1': { biomeGroup: 'abyss',     biomeTier: 4 },
-  'node-9-0':  { biomeGroup: 'abyss',     biomeTier: 4, isDungeon: true },
-  'node-8-0':  { biomeGroup: 'abyss',     biomeTier: 4 },
+  // Deep-Sea Trench T4 — SW corner (row 10 cols 0–1 + col 0 rows 8–9; first appearance) — was 'abyss'
+  'node-10-0': { biomeGroup: 'trench',    biomeTier: 4 },
+  'node-10-1': { biomeGroup: 'trench',    biomeTier: 4 },
+  'node-9-0':  { biomeGroup: 'trench',    biomeTier: 4, isDungeon: true, bossTypeId: 'void-overlord', mobDensity: 0 },
+  'node-8-0':  { biomeGroup: 'trench',    biomeTier: 4 },
 
   // Cave T4 — West (col 0, rows 5–7)
   'node-5-0': { biomeGroup: 'cave',       biomeTier: 4 },
@@ -237,3 +248,44 @@ export const NODE_BIOMES: Record<string, { biomeGroup: string; biomeTier: number
   'node-3-0': { biomeGroup: 'swamp',      biomeTier: 4 },
   'node-4-0': { biomeGroup: 'swamp',      biomeTier: 4 },
 };
+
+// ─── In-game coordinate system ──────────────────────────────────────────────
+// Node ids stay in the internal `node-{row}-{col}` form (rows/cols 0–10), but the
+// player-facing coordinate system is centered on the starting clearing: the clearing
+// is the origin [0, 0]. X is east-positive (increasing column), Y is north-positive
+// (decreasing row, so "up" on the map is +Y).
+
+/** The starting clearing node — origin of the in-game coordinate system. */
+export const CLEARING_NODE_ID = 'node-5-5';
+
+/** Grid row/col of the origin (the clearing). */
+export const ORIGIN_ROW = 5;
+export const ORIGIN_COL = 5;
+
+export interface NodeCoord {
+  x: number;
+  y: number;
+}
+
+/**
+ * Convert a `node-{row}-{col}` id to centered coordinates where the clearing is `[0, 0]`.
+ * X = east-positive (col − 5), Y = north-positive (5 − row). Returns null for malformed ids.
+ */
+export function nodeIdToCoord(nodeId: string): NodeCoord | null {
+  const parts = nodeId.split('-');
+  if (parts.length !== 3) return null;
+  const row = Number(parts[1]);
+  const col = Number(parts[2]);
+  if (!Number.isInteger(row) || !Number.isInteger(col)) return null;
+  return { x: col - ORIGIN_COL, y: ORIGIN_ROW - row };
+}
+
+/** Convert centered coordinates back to a `node-{row}-{col}` id. */
+export function coordToNodeId({ x, y }: NodeCoord): string {
+  return `node-${ORIGIN_ROW - y}-${ORIGIN_COL + x}`;
+}
+
+/** Format coordinates for display, e.g. `[0, 0]`. */
+export function formatNodeCoord(coord: NodeCoord): string {
+  return `[${coord.x}, ${coord.y}]`;
+}

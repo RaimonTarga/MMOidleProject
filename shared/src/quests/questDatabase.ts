@@ -52,7 +52,7 @@ export const QUEST_DATABASE = new Map<string, QuestDefinition>([
     tierRequired: 2,
     // All T2 dungeon bosses — one per biome at biomeTier 2
     targetMonsterTypes: [
-      'glacial-colossus', 'stone-warden', 'forest-elder', 'plains-overlord',
+      'glacial-colossus', 'stone-warden', 'forest-elder', 'plains-tyrant',
       'desert-pharaoh', 'jungle-colossus', 'cave-terror', 'mire-lord',
     ],
     killsRequired: 1,
@@ -66,7 +66,7 @@ export const QUEST_DATABASE = new Map<string, QuestDefinition>([
     targetMonsterTypes: [
       'frost-colossus', 'peak-titan', 'elder-forest-warden', 'plains-warlord',
       'sand-emperor', 'jungle-titan-lord', 'volcanic-titan', 'lich-king',
-      'cave-overlord', 'bog-ancient',
+      'cave-dread', 'bog-ancient',
     ],
     killsRequired: 1,
   }],

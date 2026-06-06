@@ -1,35 +1,116 @@
-import type { HasHitbox, HitboxDef, HitboxRect } from '@mmo-idle/shared';
+import type { HasHitbox, HitboxRect } from '@mmo-idle/shared';
 import {
+  BOSS_DISPLAY_SIZE,
+  buildHasHitboxFromDef,
   FALLBACK_BOSS_AABB,
   FALLBACK_MONSTER_AABB,
   FALLBACK_PLAYER_AABB,
+  isVoidOverlordSheetMonster,
+  MINION_BASE_DISPLAY_SIZE,
+  MONSTER_DISPLAY_SIZE,
+  PLAYER_DISPLAY_SIZE,
   resolveMonsterFrame,
   resolvePlayerFrame,
+  resolveVoidOverlordBossFrameName,
+  resolveVoidOverlordMinionFrameName,
+  VOID_OVERLORD_DISPLAY,
 } from '@mmo-idle/shared';
-import type { PlayerEntity } from '../ecs/entity';
+import type { PlayerEntity, ServerEntity } from '../ecs/entity';
+import type { World } from '../world/World';
+import { attachComponent } from '../ecs/markerHelpers';
 import { getHitboxDef } from './cache';
 
-export function scaleHitboxDef(def: HitboxDef, displaySize: number): HitboxRect[] {
-  const scale = displaySize / def.sourceW;
-  return def.rects.map(r => ({
-    offsetX: r.offsetX * scale,
-    offsetY: r.offsetY * scale,
-    halfW: r.halfW * scale,
-    halfH: r.halfH * scale,
-  }));
+export function resolveHitboxByFrame(
+  frameName: string | null,
+  displayW: number,
+  displayH: number,
+  fallback: HitboxRect,
+): HasHitbox {
+  const def = frameName ? getHitboxDef(frameName) : undefined;
+  return buildHasHitboxFromDef({ frameName, def, displayW, displayH, fallback });
+}
+
+export function syncEntityHitbox(
+  world: World,
+  entity: ServerEntity,
+  args: {
+    frameName: string | null;
+    displayW: number;
+    displayH: number;
+    fallback: HitboxRect;
+  },
+): void {
+  const next = resolveHitboxByFrame(
+    args.frameName,
+    args.displayW,
+    args.displayH,
+    args.fallback,
+  );
+  if (!hitboxEqual(entity.hasHitbox?.rects, next.rects)) {
+    attachComponent(world, entity, 'hasHitbox', next);
+  }
+}
+
+export function syncEntityHitboxScale(
+  world: World,
+  entity: ServerEntity,
+  scaleMult: number,
+  fallback: HitboxRect,
+): void {
+  const hb = entity.hasHitbox;
+  if (hb?.displayW === undefined || hb.displayH === undefined) return;
+  const mult = Math.max(0.1, scaleMult);
+  syncEntityHitbox(world, entity, {
+    frameName: hb.frameName ?? null,
+    displayW: hb.displayW * mult,
+    displayH: hb.displayH * mult,
+    fallback,
+  });
 }
 
 export function resolveMonsterHitbox(
   monsterTypeId: string,
   isBoss: boolean,
+  entityId?: string,
 ): HasHitbox {
-  const frame = resolveMonsterFrame(monsterTypeId);
-  const displaySize = isBoss ? 80 : 64;
-  if (frame) {
-    const def = getHitboxDef(frame);
-    if (def) return { rects: scaleHitboxDef(def, displaySize) };
+  if (isVoidOverlordSheetMonster(monsterTypeId)) {
+    const display = VOID_OVERLORD_DISPLAY[monsterTypeId];
+    const frameName =
+      monsterTypeId === 'void-overlord'
+        ? resolveVoidOverlordBossFrameName()
+        : entityId
+          ? resolveVoidOverlordMinionFrameName(monsterTypeId, entityId)
+          : null;
+    const fb = isBoss ? FALLBACK_BOSS_AABB : FALLBACK_MONSTER_AABB;
+    if (display) {
+      return resolveHitboxByFrame(
+        frameName,
+        display.displayW,
+        display.displayH,
+        fb,
+      );
+    }
   }
-  return { rects: [isBoss ? FALLBACK_BOSS_AABB : FALLBACK_MONSTER_AABB] };
+
+  const frame = resolveMonsterFrame(monsterTypeId);
+  const displaySize = isBoss ? BOSS_DISPLAY_SIZE : MONSTER_DISPLAY_SIZE;
+  const fb = isBoss ? FALLBACK_BOSS_AABB : FALLBACK_MONSTER_AABB;
+  return resolveHitboxByFrame(frame, displaySize, displaySize, fb);
+}
+
+export function resolveMinionHitbox(
+  monsterTypeId: string,
+  sizeMult: number,
+): HasHitbox {
+  const mult = Math.max(0.1, sizeMult);
+  const displaySize = MINION_BASE_DISPLAY_SIZE * mult;
+  const frame = resolveMonsterFrame(monsterTypeId);
+  return resolveHitboxByFrame(
+    frame,
+    displaySize,
+    displaySize,
+    FALLBACK_MONSTER_AABB,
+  );
 }
 
 export function resolvePlayerHitbox(entity: PlayerEntity): HasHitbox {
@@ -37,11 +118,12 @@ export function resolvePlayerHitbox(entity: PlayerEntity): HasHitbox {
     combatArchetype: entity.usesSkills?.combatArchetype ?? null,
     unlockedSkills: entity.usesSkills?.unlockedSkills ?? [],
   });
-  if (frame) {
-    const def = getHitboxDef(frame);
-    if (def) return { rects: scaleHitboxDef(def, 64) };
-  }
-  return { rects: [FALLBACK_PLAYER_AABB] };
+  return resolveHitboxByFrame(
+    frame,
+    PLAYER_DISPLAY_SIZE,
+    PLAYER_DISPLAY_SIZE,
+    FALLBACK_PLAYER_AABB,
+  );
 }
 
 export function hitboxEqual(a: HitboxRect[] | undefined, b: HitboxRect[]): boolean {

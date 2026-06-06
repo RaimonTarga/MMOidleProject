@@ -1,0 +1,22 @@
+.atlas-sprite,
+.item-icon {
+  display: block;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+.atlas-sprite--missing {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: rgba(80, 40, 40, 0.85);
+  border: 2px solid rgba(204, 34, 34, 0.55);
+  color: #ffcccc;
+  font-family: monospace;
+  font-size: 28px;
+  font-weight: 700;
+}

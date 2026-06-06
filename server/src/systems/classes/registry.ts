@@ -5,11 +5,15 @@ import cooldownModule from './archetypes/cooldown';
 import energyModule   from './archetypes/energy';
 import reloadModule   from './archetypes/reload';
 import dotModule      from './archetypes/dot';
+import summonerModule from './archetypes/summoner';
 
 /**
  * Order matches the legacy World.tick() ordering so that any cross-module
  * tick interactions stay byte-for-byte identical. Inside each module's tick
  * body, "T3 before base" sequencing is preserved.
+ *
+ * Summoner ticks last so other modules' state changes for the owner have
+ * already settled by the time minions read passives / dispatch attacks.
  */
 export const MODULES = [
   cooldownModule,
@@ -17,6 +21,7 @@ export const MODULES = [
   reloadModule,
   dotModule,
   cadenceModule,
+  summonerModule,
 ] as const;
 
 export type MechanicId = typeof MODULES[number]['id'];

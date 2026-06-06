@@ -1,5 +1,6 @@
 import { addResource, getResource, setResource } from '@mmo-idle/shared';
 import type { PlayerEntity } from '../../../ecs/entity';
+import type { World } from '../../../world/World';
 import { registerCombatListener } from '../../combat/engine/combatPipeline';
 import { ABSORB_POOL_KEY, POOL_DRAIN_MS } from '../core/pools';
 import { applyHealToPlayer } from '../regen/healing';
@@ -16,6 +17,7 @@ export function registerDamageAbsorb(): void {
   registerCombatListener('onDamageTaken', (ctx, _world) => {
     if (ctx.defenderType !== 'player') return;
     if (ctx.damage <= 0) return;
+    if (ctx.metadata["isDot"]) return;
 
     const player = ctx.defender;
     const absorbPct = player.usesSkills.passives['defense.absorb-pct'] ?? 0;
@@ -30,7 +32,7 @@ export function registerDamageAbsorb(): void {
  * POOL_DRAIN_MS. Antiheal is applied via `applyHealToPlayer`. Pool zeroes
  * out below 0.5 to avoid asymptotic trickle.
  */
-export function runAbsorbDrain(player: PlayerEntity, dt: number): void {
+export function runAbsorbDrain(world: World, player: PlayerEntity, dt: number): void {
   const cs = player.tracksCombat;
   const absorbPool = getResource(cs, ABSORB_POOL_KEY);
   if (absorbPool <= 0) return;
@@ -38,5 +40,5 @@ export function runAbsorbDrain(player: PlayerEntity, dt: number): void {
   const healAmount = absorbPool * (dt / POOL_DRAIN_MS);
   const absorbLeft = absorbPool - healAmount;
   setResource(cs, ABSORB_POOL_KEY, absorbLeft < 0.5 ? 0 : absorbLeft);
-  applyHealToPlayer(player, cs, healAmount);
+  applyHealToPlayer(player, cs, healAmount, world);
 }

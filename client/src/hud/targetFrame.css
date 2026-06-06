@@ -1,0 +1,161 @@
+/* Top-center target frame — DOM overlay layered over the Phaser canvas. */
+.target-frame {
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 320px;
+  max-width: 86vw;
+  padding: 8px 12px 10px;
+  border-radius: 8px;
+  background: rgba(12, 10, 26, 0.82);
+  border: 1px solid rgba(120, 100, 200, 0.35);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.5);
+  font-family: monospace;
+  pointer-events: none;
+  z-index: 11;
+  backdrop-filter: blur(2px);
+}
+
+.target-frame--boss {
+  border-color: rgba(200, 70, 70, 0.5);
+  box-shadow: 0 4px 22px rgba(120, 20, 20, 0.45);
+}
+
+.target-frame--stale { opacity: 0.55; }
+
+.target-frame__name-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 5px;
+}
+
+.target-frame__name {
+  font-size: 14px;
+  font-weight: bold;
+  color: #ece8ff;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+}
+
+.target-frame__boss-tag {
+  font-size: 8px;
+  font-weight: bold;
+  letter-spacing: 0.1em;
+  color: #ff8a8a;
+  background: rgba(180, 30, 30, 0.25);
+  border: 1px solid rgba(200, 60, 60, 0.45);
+  border-radius: 3px;
+  padding: 1px 5px;
+}
+
+/* HP bar — width transitions to smooth the 5 Hz broadcast cadence. */
+.target-frame__track {
+  position: relative;
+  height: 18px;
+  border-radius: 5px;
+  background: rgba(0, 0, 0, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  overflow: hidden;
+}
+
+.target-frame__fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.18s linear, background 0.25s;
+}
+
+.target-frame__hp-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: bold;
+  color: #fff;
+  text-shadow: 1px 1px 0 #000, -1px 0 0 #000, 0 -1px 0 #000;
+}
+
+.target-frame__stats {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  margin-top: 5px;
+  font-size: 10px;
+  color: #9a96c0;
+}
+.target-frame__stats b { color: #d6d2f0; font-weight: bold; }
+
+/* Debuff tiles */
+.target-frame__tiles {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 7px;
+  margin-top: 8px;
+}
+
+.tf-tile-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  pointer-events: auto; /* so the per-tile tooltip can trigger on hover */
+}
+
+.tf-tile {
+  position: relative;
+  width: 30px;
+  height: 30px;
+  border-radius: 4px;
+  border: 1.5px solid rgba(255, 255, 255, 0.22);
+  flex-shrink: 0;
+}
+
+.tf-tile__sweep {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.tf-tile__secs {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: bold;
+  color: #fff;
+  text-shadow: 1px 1px 0 #000, -1px 0 0 #000;
+}
+
+.tf-tile__stacks {
+  position: absolute;
+  bottom: 1px;
+  right: 2px;
+  font-size: 10px;
+  font-weight: bold;
+  color: #fff;
+  text-shadow: 1px 1px 0 #000, -1px 0 0 #000;
+  line-height: 1;
+  z-index: 2;
+}
+
+.tf-tile__label {
+  font-size: 8px;
+  line-height: 1;
+  text-shadow: 1px 1px 0 #000;
+  white-space: nowrap;
+}
+
+/* Mobile: a fixed top bar already exists — nudge the frame below it. */
+@media (max-width: 1100px) {
+  .target-frame {
+    top: 52px;
+    width: 280px;
+  }
+}

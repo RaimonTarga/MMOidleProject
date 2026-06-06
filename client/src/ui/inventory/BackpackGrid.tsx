@@ -3,8 +3,9 @@ import { useAtomValue } from 'jotai';
 import type { EquipmentSlot } from '@mmo-idle/shared';
 import { ITEM_DATABASE, RECIPE_DATABASE } from '@mmo-idle/shared';
 import { hudBus } from '../../hudBus';
-import { inventoryAtom } from '../../hud/atoms';
+import { inventoryAtom, itemUpgradesAtom } from '../../hud/atoms';
 import { SLOT_LABELS, biomeName, tierColor } from './constants';
+import { ItemIcon } from '../ItemIcon';
 import type { FocusedItem } from './useFocus';
 
 const COLS = 4;
@@ -16,7 +17,8 @@ interface Props {
 }
 
 export function BackpackGrid({ focused, onFocus }: Props) {
-  const inventory = useAtomValue(inventoryAtom);
+  const inventory    = useAtomValue(inventoryAtom);
+  const itemUpgrades = useAtomValue(itemUpgradesAtom);
   const [filterBiome, setFilterBiome] = useState<string | null>(null);
   const [filterSlot,  setFilterSlot]  = useState<EquipmentSlot | null>(null);
   const [filterTier,  setFilterTier]  = useState<number | null>(null);
@@ -135,6 +137,7 @@ export function BackpackGrid({ focused, onFocus }: Props) {
           {gridItems.map(({ defId, def, invIndex }, i) => {
             const isFocused = focused?.source === 'backpack' && focused.invIndex === invIndex;
             const color     = def ? tierColor(def.tier) : null;
+            const plus      = defId ? (itemUpgrades[defId] ?? 0) : 0;
 
             return (
               <div
@@ -154,9 +157,14 @@ export function BackpackGrid({ focused, onFocus }: Props) {
                 {def && (
                   <>
                     <div className="inv-item-slot__icon" style={{ background: `${color}0d` }}>
-                      <span className="inv-slot-tier-pip" style={{ background: `${color}cc` }} />
+                      {def.icon
+                        ? <ItemIcon frameName={def.icon} />
+                        : <span className="inv-slot-tier-pip" style={{ background: `${color}cc` }} />
+                      }
                     </div>
-                    <div className="inv-item-slot__name">{def.name}</div>
+                    <div className="inv-item-slot__name">
+                      {def.name}{plus > 0 ? ` +${plus}` : ''}
+                    </div>
                   </>
                 )}
               </div>

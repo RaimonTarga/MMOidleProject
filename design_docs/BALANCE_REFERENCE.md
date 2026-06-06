@@ -51,8 +51,8 @@ splashRadius = 80px
 ```
 AoE bypasses the combat pipeline (no `onHit` listeners). Affects all other monsters within 80px of the primary target.
 
-### Evasion
-`player.evasion` is a hit counter threshold. Every N incoming hits, the Nth is fully nullified (damage = 0). `evasion = 0` means disabled.
+### Evasion (deterministic — no RNG)
+Each `evasion: N` source contributes `1/N` to a raw dodge rating (`Σ 1/N`), mapped through `evasionDodgeRate()` (linear below `EVASION_SOFT_CAP`, diminishing returns toward `EVASION_MAX_DODGE` above it) to a per-hit `dodgeRate`. A fractional accumulator in `tracksCombat` adds `dodgeRate` each incoming hit and evades when it crosses 1.0 — fully deterministic and replayable. An evaded hit is reduced by `evadeMitigation` (`EVADE_MITIGATION_BASE = 0.5`, raised by `defense.evade-mitigation`, clamped to 1.0 = full avoid), not nullified. Evaded hits apply no debuffs/DoT unless the source pierces evade (`shared.applies-through-evade` passive / monster `appliesThroughEvade`). The accumulator resets to `EVADE_OOC_RESET` (0) while out of combat. Monsters dodge via `evadeEvery` (rate `1/N`) with per-monster `evadeMitigation` (default 0.5). DoT *ticks* never interact with evasion.
 
 ### Plating Shred (Cursed Finale passive)
 `platingReduction` stored in the monster's status effect `data` field. Shred stacks have no cap and persist until the monster dies.
@@ -768,7 +768,7 @@ T2 monsters are meaningfully stronger than T1. Biomes introduce second monster v
 |---|---|---|---|---|---|---|---|---|---|
 | Stampede Bull | 110 | **24** | 4 | 0% | 65 | 1900ms | 60 | 230 | High damage |
 | Prairie Wolf | 80 | 18 | 2 | 0% | 78 | 1700ms | 60 | 260 | Fast |
-| **Plains Overlord** (boss) | **2000** | **64** | **20** | **8%** | **46** | **2700ms** | **70** | **320** | |
+| **Plains Tyrant** (boss) | **2000** | **64** | **20** | **8%** | **46** | **2700ms** | **70** | **320** | |
 
 ### Swamp T2
 | Monster | HP | ATK | PLT | DR | SPD | CD | Range | Pull | Notes |
@@ -844,7 +844,7 @@ All T3 mobs drop `level: 2` essence rewards (compared to T1/T2 `level: 1`).
 |---|---|---|---|---|---|---|---|---|
 | Cave Behemoth | 750 | 42 | 22 | 7% | 16 | 4000ms | 65 | 140 |
 | Venom Queen | 360 | 60 | 8 | 0% | 80 | 1800ms | 62 | 240 |
-| **Cave Overlord** (boss) | **4800** | **96** | **48** | **15%** | **16** | **5000ms** | **82** | **330** |
+| **Cave Dread** (boss) | **4800** | **96** | **48** | **15%** | **16** | **5000ms** | **82** | **330** |
 
 ### Jungle T3
 | Monster | HP | ATK | PLT | DR | SPD | CD | Range | Pull |
@@ -876,7 +876,7 @@ All T3 mobs drop `level: 2` essence rewards (compared to T1/T2 `level: 1`).
 | Fire Elemental | 400 | 64 | 8 | 4% | 70 | 2100ms | 62 | 230 |
 | **Volcanic Titan** (boss) | **3800** | **105** | **30** | **12%** | **32** | **3400ms** | **76** | **340** |
 
-### Necropolis T3 (first appearance)
+### graveyard T3 (first appearance)
 | Monster | HP | ATK | PLT | DR | SPD | CD | Range | Pull |
 |---|---|---|---|---|---|---|---|---|
 | Skeleton Warrior | 500 | 47 | 12 | 6% | 50 | 2400ms | 62 | 220 |
@@ -921,7 +921,7 @@ All T4 mobs drop `level: 3` essence rewards.
 | Monster | HP | ATK | PLT | DR | SPD | CD | Range | Pull |
 |---|---|---|---|---|---|---|---|---|
 | Stone Colossus | 2200 | 98 | 58 | 13% | 12 | 4500ms | 70 | 135 |
-| Abyss Crawler | 1100 | 128 | 28 | 8% | 58 | 2000ms | 62 | 240 |
+| trench Crawler | 1100 | 128 | 28 | 8% | 58 | 2000ms | 62 | 240 |
 | **Cave Titan** (boss) | **8500** | **162** | **70** | **22%** | **14** | **5500ms** | **90** | **370** |
 
 ### Jungle T4
@@ -952,18 +952,18 @@ All T4 mobs drop `level: 3` essence rewards.
 | Magma Colossus | 2400 | 118 | 58 | 15% | 16 | 4800ms | 70 | 145 |
 | **Inferno Lord** (boss) | **8000** | **182** | **62** | **21%** | **26** | **4000ms** | **84** | **380** |
 
-### Necropolis T4
+### graveyard T4
 | Monster | HP | ATK | PLT | DR | SPD | CD | Range | Pull |
 |---|---|---|---|---|---|---|---|---|
 | Bone Colossus | 2000 | 112 | 45 | 11% | 18 | 4200ms | 68 | 145 |
 | Death Knight | 1200 | 142 | 30 | 9% | 58 | 2200ms | 62 | 250 |
 | **Undying Lord** (boss) | **7500** | **178** | **58** | **21%** | **24** | **4500ms** | **88** | **390** |
 
-### Abyss T4 (first appearance)
+### trench T4 (first appearance)
 | Monster | HP | ATK | PLT | DR | SPD | CD | Range | Pull |
 |---|---|---|---|---|---|---|---|---|
 | Void Horror | 1500 | 150 | 24 | 9% | 68 | 1900ms | 64 | 270 |
-| Abyssal Titan | 2600 | 125 | 55 | 15% | 20 | 4500ms | 70 | 145 |
+| trenchal Titan | 2600 | 125 | 55 | 15% | 20 | 4500ms | 70 | 145 |
 | **Void Titan** (boss) | **12000** | **252** | **68** | **22%** | **20** | **3200ms** | **100** | **360** |
 
 ---
@@ -1002,16 +1002,16 @@ Chebyshev distance from center → tier:
   0 = T0 (1 node)
   1–2 = T1 (24 nodes: forest, mountain, plains, swamp, cave, +plains extension)
   3 = T2 (24 nodes: tundra, mountain, forest, plains, desert, jungle, cave, swamp)
-  4 = T3 (32 nodes: + volcanic, necropolis)
-  5 = T4 (40 nodes: + abyss)
+  4 = T3 (32 nodes: + volcanic, graveyard)
+  5 = T4 (40 nodes: + trench)
 
 Geographic layout:
   North        — tundra / mountain
   NE           — forest / plains
   East (col 10)— plains / desert
   SE           — jungle
-  South        — volcanic / necropolis / abyss
-  West (col 0) — swamp / cave / abyss
+  South        — volcanic / graveyard / trench
+  West (col 0) — swamp / cave / trench
   NW           — swamp / tundra
 ```
 

@@ -1,18 +1,22 @@
 import { useState, useEffect } from 'react';
-import { useAtomValue } from 'jotai';
+import { useAtom, useAtomValue } from 'jotai';
 import { hudBus } from '../hudBus';
 import { SkillTreePanel } from '../ui/SkillTreePanel';
+import { RunesPanel } from '../ui/RunesPanel';
 import { InventoryPanel } from '../ui/InventoryPanel';
 import { CraftingPanel } from '../ui/CraftingPanel';
 import { MapPanel } from '../ui/MapPanel';
 import { QuestPanel } from '../ui/QuestPanel';
 import { NODE_BIOMES, BIOME_DATABASE } from '@mmo-idle/shared';
+import { SettingsPanel } from './settings/SettingsPanel';
 import {
   autoAtom,
+  deathOverlayAtom,
   hpAtom,
   maxHpAtom,
   playerNameAtom,
   playerNodeIdAtom,
+  settingsOpenAtom,
   shieldsAtom,
   skillPointsAtom,
   statusAtom,
@@ -43,11 +47,13 @@ function useIsMobile(): boolean {
 
 function MobileHUDContent() {
   const [treeOpen, setTreeOpen]   = useState(false);
+  const [runesOpen, setRunesOpen] = useState(false);
   const [invOpen, setInvOpen]     = useState(false);
-  const [craftTab, setCraftTab]   = useState<'biome' | 'forge' | null>(null);
+  const [craftTab, setCraftTab]   = useState<'biome' | 'forge' | 'upgrade' | null>(null);
   const [mapOpen, setMapOpen]     = useState(false);
   const [questOpen, setQuestOpen] = useState(false);
   const [menuOpen, setMenuOpen]   = useState(false);
+  const [settingsOpen, setSettingsOpen] = useAtom(settingsOpenAtom);
 
   const status = useAtomValue(statusAtom);
   const playerName = useAtomValue(playerNameAtom);
@@ -57,6 +63,7 @@ function MobileHUDContent() {
   const auto = useAtomValue(autoAtom);
   const skillPoints = useAtomValue(skillPointsAtom);
   const nodeId = useAtomValue(playerNodeIdAtom);
+  const dead = useAtomValue(deathOverlayAtom).active;
 
   const hpPct       = maxHp > 0 ? (hp / maxHp) * 100 : 0;
   const hpBarColor  = hpPct > 50 ? '#44ee44' : hpPct > 25 ? '#eeaa22' : '#ee3322';
@@ -119,15 +126,18 @@ function MobileHUDContent() {
         </button>
         <div className="mob-drawer-menu">
           <DrawerBtn label="SKILL TREE" active={treeOpen} highlight={!treeOpen && skillPoints > 0} onClick={() => openPanel(setTreeOpen, treeOpen)} />
-          <DrawerBtn label="INVENTORY"  active={invOpen}   onClick={() => openPanel(setInvOpen, invOpen)} />
-          <DrawerBtn label="CRAFTING"   active={craftTab !== null} onClick={() => { setCraftTab(t => t ? null : 'forge'); setMenuOpen(false); }} />
+          <DrawerBtn label="RUNES"      active={runesOpen} onClick={() => openPanel(setRunesOpen, runesOpen)} />
+          <DrawerBtn label="INVENTORY"  active={invOpen}   disabled={dead} onClick={() => { if (!dead) openPanel(setInvOpen, invOpen); }} />
+          <DrawerBtn label="CRAFTING"   active={craftTab !== null} disabled={dead} onClick={() => { if (!dead) { setCraftTab(t => t ? null : 'forge'); setMenuOpen(false); } }} />
           <DrawerBtn label="MAP"        active={mapOpen}   onClick={() => openPanel(setMapOpen, mapOpen)} />
           <DrawerBtn label="QUESTS"     active={questOpen} onClick={() => openPanel(setQuestOpen, questOpen)} />
+          <DrawerBtn label="SETTINGS"   active={settingsOpen} onClick={() => openPanel(setSettingsOpen, settingsOpen)} />
         </div>
       </div>
 
       {/* ── Panel overlays ──────────────────────────────────────────────── */}
       {treeOpen  && <SkillTreePanel onClose={() => setTreeOpen(false)} />}
+      {runesOpen && <RunesPanel     onClose={() => setRunesOpen(false)} />}
       {invOpen   && <InventoryPanel onClose={() => setInvOpen(false)} />}
       {craftTab !== null && <CraftingPanel tab={craftTab} onTabChange={setCraftTab} onClose={() => setCraftTab(null)} />}
       {mapOpen   && <MapPanel       onClose={() => setMapOpen(false)} />}
@@ -144,21 +154,24 @@ function MobileHUDContent() {
           </div>
         </div>
       )}
+      {settingsOpen && <SettingsPanel onClose={() => setSettingsOpen(false)} />}
     </>
   );
 }
 
 function DrawerBtn({
-  label, active, highlight, onClick,
+  label, active, highlight, disabled, onClick,
 }: {
   label: string;
   active: boolean;
   highlight?: boolean;
+  disabled?: boolean;
   onClick: () => void;
 }) {
   return (
     <button
       className={`mob-drawer-btn${active ? ' active' : ''}${highlight ? ' mob-drawer-btn--has-points' : ''}`}
+      disabled={disabled}
       onClick={onClick}
     >
       {label}

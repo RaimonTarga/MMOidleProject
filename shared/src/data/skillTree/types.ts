@@ -41,12 +41,12 @@ export interface SkillNode {
   tier: number;
   /**
    * Which class root this node belongs to.
-   * null for tier-2 universal range nodes (accessible regardless of class).
+   * null only for tier-0 roots (they ARE the class root).
    */
   classId: string | null;
   /**
    * Which sub-variant this node targets.
-   * null for tier-0 class roots and tier-2 universal range nodes.
+   * null for tier-0 class roots and tier-2 range nodes.
    * For tier 1, identifies which sub-variant this node IS.
    * For tier 3+, used as the path lock key alongside classId.
    */

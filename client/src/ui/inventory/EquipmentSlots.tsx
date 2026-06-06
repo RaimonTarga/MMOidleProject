@@ -1,8 +1,9 @@
 import { useAtomValue } from 'jotai';
 import { EQUIPMENT_SLOTS, ITEM_DATABASE } from '@mmo-idle/shared';
 import { hudBus } from '../../hudBus';
-import { equipmentAtom } from '../../hud/atoms';
+import { equipmentAtom, itemUpgradesAtom } from '../../hud/atoms';
 import { SLOT_LABELS, tierColor } from './constants';
+import { ItemIcon } from '../ItemIcon';
 import type { FocusedItem } from './useFocus';
 
 interface Props {
@@ -11,7 +12,8 @@ interface Props {
 }
 
 export function EquipmentSlots({ focused, onFocus }: Props) {
-  const equipment = useAtomValue(equipmentAtom);
+  const equipment    = useAtomValue(equipmentAtom);
+  const itemUpgrades = useAtomValue(itemUpgradesAtom);
   return (
     <div className="inv-equip">
       <div className="inv-section-label">Equipped</div>
@@ -22,6 +24,7 @@ export function EquipmentSlots({ focused, onFocus }: Props) {
           const filled    = def != null;
           const isFocused = focused?.source === 'equipped' && focused.equipSlot === slot;
           const color     = filled ? tierColor(def.tier) : null;
+          const plus      = defId ? (itemUpgrades[defId] ?? 0) : 0;
 
           return (
             <div
@@ -43,13 +46,18 @@ export function EquipmentSlots({ focused, onFocus }: Props) {
                 style={color ? { background: `${color}10` } : undefined}
               >
                 {!filled && <span className="inv-equip-slot__dash">—</span>}
-                {color && (
-                  <span className="inv-slot-tier-pip" style={{ background: `${color}cc` }} />
+                {filled && (def?.icon
+                  ? <ItemIcon frameName={def.icon} />
+                  : <span className="inv-slot-tier-pip" style={{ background: `${color}cc` }} />
                 )}
               </div>
               <div className="inv-equip-slot__footer">
                 <span className="inv-equip-slot__type">{SLOT_LABELS[slot]}</span>
-                {filled && <span className="inv-equip-slot__name">{def.name}</span>}
+                {filled && (
+                  <span className="inv-equip-slot__name">
+                    {def.name}{plus > 0 ? ` +${plus}` : ''}
+                  </span>
+                )}
               </div>
             </div>
           );

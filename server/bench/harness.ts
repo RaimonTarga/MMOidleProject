@@ -1,23 +1,62 @@
-import { GAME_CONFIG, emptyEquipment, type Vec2 } from '@mmo-idle/shared';
-import type { PersistedPlayerSlices } from '../src/db/playerRepo';
-import { World } from '../src/world/World';
-import { initAllMechanics } from '../src/systems/classes/registry';
-import { initWeaponEffects } from '../src/systems/combat/damage/weaponEffects';
-import { initDefenseSystems } from '../src/systems/defense';
-import { initDebuffMechanics } from '../src/systems/classes/shared/debuffs';
-import { syncArchetypeSlices } from '../src/ecs/archetypeSliceSync';
-import { recalculatePlayerEntityStats } from '../src/ecs/playerEntityFormulas';
-import type { BenchScenario } from './scenarios';
+import {
+  DEFAULT_AUTOCOMBAT_CONFIG,
+  GAME_CONFIG,
+  emptyEquipment,
+  type Vec2,
+} from "@mmo-idle/shared";
+import type { PersistedPlayerSlices } from "../src/db/playerRepo";
+import { World } from "../src/world/World";
+import { initCombatSystems } from "../src/systems/combatBootstrap";
+import { db, runMigrations } from "../src/db/index";
+import {
+  hydrateHitboxCacheFromDb,
+  initHitboxCache,
+} from "../src/hitbox/cache";
+import { getAtlasPaths } from "../src/hitbox/paths";
+import { syncArchetypeSlices } from "../src/ecs/archetypeSliceSync";
+import { recalculatePlayerEntityStats } from "../src/ecs/playerEntityFormulas";
+import type { BenchScenario } from "./scenarios";
 
-let mechanicsInitialized = false;
-
+/**
+ * Registers the combat pipeline for the bench. Delegates to the shared
+ * `initCombatSystems` (the same bootstrap the live server uses) so the
+ * simulation can never drift from in-game combat behavior. `initCombatSystems`
+ * is itself idempotent, so calling this once per bench world is safe.
+ */
 export function initBenchMechanics(): void {
-  if (mechanicsInitialized) return;
-  initAllMechanics();
-  initWeaponEffects();
-  initDefenseSystems();
-  initDebuffMechanics();
-  mechanicsInitialized = true;
+  initCombatSystems();
+}
+
+let hitboxReady = false;
+
+/**
+ * Populate the sprite-hitbox cache so the bench resolves the SAME baked hitboxes
+ * the live server uses. Combat range/positioning (`inAttackRange`, `hitboxGap`)
+ * reads these via `getHitboxDef`; with an empty cache every entity falls back to
+ * a square AABB, which diverges from in-game reach (most visibly for the large
+ * baked Void Overlord).
+ *
+ * The live server bakes at boot (`initHitboxCache`). Here we prefer the fast
+ * path — hydrate the already-baked rows from `game.db` — and only fall back to a
+ * full atlas rebake when the DB has never been baked (fresh checkout). Run once
+ * per bench process; idempotent thereafter.
+ *
+ * NOTE: keep this in sync with the server's hitbox bootstrap in
+ * `server/src/index.ts` (`initHitboxCache`). Bench stdout is JSONL/CSV, but the
+ * TUI tolerantly skips non-JSON lines, so the `[db]`/`[hitbox]` logs are benign.
+ */
+export async function ensureBenchHitboxCache(): Promise<void> {
+  if (hitboxReady) return;
+  hitboxReady = true;
+
+  // The hitbox table must exist before we can read it; migrations are idempotent.
+  await runMigrations();
+
+  if ((await hydrateHitboxCacheFromDb(db)) > 0) return;
+
+  // Fresh DB that was never baked — bake from the atlas exactly like server boot.
+  const { atlasPng, atlasJson } = getAtlasPaths();
+  await initHitboxCache(db, atlasPng, atlasJson);
 }
 
 export function createBenchWorld(): World {
@@ -25,9 +64,14 @@ export function createBenchWorld(): World {
   return new World();
 }
 
-function buildBenchPlayer(id: string, name: string, nodeId: string, pos: Vec2): PersistedPlayerSlices {
+function buildBenchPlayer(
+  id: string,
+  name: string,
+  nodeId: string,
+  pos: Vec2,
+): PersistedPlayerSlices {
   const equipment = emptyEquipment();
-  equipment.weapon = 'basic-sword';
+  equipment.weapon = "basic-sword";
   return {
     isPlayer: { id, name },
     hasPosition: { current: pos, nodeId, speed: GAME_CONFIG.PLAYER_SPEED },
@@ -46,8 +90,12 @@ function buildBenchPlayer(id: string, name: string, nodeId: string, pos: Vec2): 
       questProgress: {},
       playerTier: 0,
       currentSkillTier: 0,
+      bossesCleared: [],
+      clearedNodes: [],
+      runesOwned: [],
+      runesEquipped: [],
     },
-    holdsInventory: { inventory: [], equipment },
+    holdsInventory: { inventory: [], equipment, itemUpgrades: {} },
     usesSkills: {
       unlockedSkills: [],
       passives: {},
@@ -59,7 +107,11 @@ function buildBenchPlayer(id: string, name: string, nodeId: string, pos: Vec2): 
   };
 }
 
-export function spawnBenchPlayers(world: World, scenario: BenchScenario, count: number): void {
+export function spawnBenchPlayers(
+  world: World,
+  scenario: BenchScenario,
+  count: number,
+): void {
   for (let i = 0; i < count; i++) {
     const nodeId = scenario.nodeForIndex(i, count);
     const pos: Vec2 = {
@@ -72,9 +124,14 @@ export function spawnBenchPlayers(world: World, scenario: BenchScenario, count: 
     syncArchetypeSlices(world, entity);
     recalculatePlayerEntityStats(world, entity);
     syncArchetypeSlices(world, entity);
-    entity.usesAutocombat.auto = scenario.autoCombat;
+    Object.assign(entity.usesAutocombat, DEFAULT_AUTOCOMBAT_CONFIG, {
+      auto: scenario.autoCombat,
+      engageUltimateBosses: true,
+    });
   }
 }
 
 export const BENCH_DT_MS = Math.round(1000 / GAME_CONFIG.LOGIC_TICK_RATE);
-export const BENCH_BROADCAST_MS = Math.round(1000 / GAME_CONFIG.BROADCAST_TICK_RATE);
+export const BENCH_BROADCAST_MS = Math.round(
+  1000 / GAME_CONFIG.BROADCAST_TICK_RATE,
+);

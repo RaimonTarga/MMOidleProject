@@ -1,4 +1,5 @@
 import type { CombatEvent } from '../index';
+import type { Vec2 } from '../systems/spatial';
 import type {
   EntityKind,
   NetworkedComponentKey,
@@ -24,10 +25,18 @@ export type EntityDelta =
       netId: NetworkId;
     };
 
+export interface VoidOverlordRespawnState {
+  nodeId: string;
+  pos: Vec2;
+  remainingMs: number;
+  durationMs: number;
+}
+
 export interface DeltaSnapshot {
   tick: number;
   nodeId: string;
   full: boolean;
   deltas: EntityDelta[];
   events: CombatEvent[];
+  voidOverlordRespawn?: VoidOverlordRespawnState;
 }

@@ -1,4 +1,4 @@
-import type { EquipmentSlot, ItemStats, EssenceType } from '../../items';
+import type { EquipmentSlot, ItemStats, EssenceType, UpgradeStep } from '../../items';
 
 export interface Recipe {
   id: string;
@@ -27,4 +27,15 @@ export interface Recipe {
    */
   attacksPerSecond?: number;
   description?: string;
+  /** Per-item upgrade steps authored alongside the recipe. See UpgradeStep. */
+  upgrades?: UpgradeStep[];
+  /** Frame name in the /assets/icons.png atlas for the item's inventory icon. */
+  icon?: string;
+  /**
+   * If set, recipe unlocks only when this token is present in bossesCleared
+   * (e.g. ultimate:void-overlord).
+   */
+  requiredBossClear?: string;
+  /** T4 endgame gear — surfaced in Forge Ultimate filter. */
+  ultimate?: boolean;
 }

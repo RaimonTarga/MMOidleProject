@@ -2,6 +2,7 @@ import { createPortal } from 'react-dom';
 import { useState } from 'react';
 import { useAtomValue } from 'jotai';
 import { SKILL_TREE, canUnlockSkill } from '@mmo-idle/shared';
+import type { CSSProperties } from 'react';
 import type { SkillNode, StatEffects, SubVariant } from '@mmo-idle/shared';
 import { hudBus } from '../hudBus';
 import {
@@ -16,7 +17,14 @@ import './skillTree.css';
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
 
-const CLASS_ROOTS = ['cadence-root', 'cooldown-root', 'reload-root', 'energy-root', 'dot-root'];
+const CLASS_ROOTS = [
+  'cadence-root',
+  'cooldown-root',
+  'reload-root',
+  'energy-root',
+  'dot-root',
+  'summoner-root',
+];
 
 const EFFECT_LABELS: Record<string, string> = {
   attack:          'ATK',
@@ -85,7 +93,7 @@ function getVisibleNodes(player: SkillPlayer): Map<number, SkillNode[]> {
     if (node.tier === 0) {
       if (node.id !== classId) continue;
     } else if (node.tier === 2) {
-      // universal
+      if (node.classId !== classId) continue;
     } else {
       if (node.classId !== classId) continue;
       if (node.tier >= 3 && node.subVariantId !== sub) continue;
@@ -175,22 +183,60 @@ function ClassSelectionView({
   onHover: (node: SkillNode | null) => void;
 }) {
   const pts = player?.skillPoints ?? 0;
+  const [hoveredClass, setHoveredClass] = useState<SkillNode | null>(null);
+  const hoveredStatus = hoveredClass ? getNodeStatus(hoveredClass, player) : null;
+  const hoveredEffects = hoveredClass ? formatEffects(hoveredClass.statEffects) : '';
+
+  function setHover(node: SkillNode | null) {
+    setHoveredClass(node);
+    onHover(node);
+  }
 
   return (
     <div className="skill-class-view">
       <p className="skill-tree-instruction">
-        Choose your class to begin.
+        Choose a class to begin.
         {pts > 0
           ? ` You have ${pts} skill point${pts !== 1 ? 's' : ''}.`
-          : ' Earn skill points by defeating monsters.'}
+          : ' Earn skill points by fulfilling your destiny.'}
       </p>
-      <div className="skill-class-grid">
-        {CLASS_ROOTS.map(rootId => {
+      <div className="skill-class-orbit" aria-label="Class selection">
+        <div className={[
+          'skill-class-orbit__info',
+          hoveredClass ? 'skill-class-orbit__info--active' : '',
+          hoveredStatus ? `skill-class-orbit__info--${hoveredStatus}` : '',
+        ].filter(Boolean).join(' ')}>
+          {hoveredClass ? (
+            <>
+              <span className="skill-class-orbit__info-title">{hoveredClass.name}</span>
+              <span className="skill-class-orbit__info-meta">
+                {tierLabel(hoveredClass.tier)} · {hoveredClass.cost} pt{hoveredClass.cost !== 1 ? 's' : ''}
+              </span>
+              {hoveredEffects && (
+                <span className="skill-class-orbit__info-effects">{hoveredEffects}</span>
+              )}
+              <span className="skill-class-orbit__info-text">{hoveredClass.description}</span>
+            </>
+          ) : (
+            <>
+              <span className="skill-class-orbit__info-title">Choose a Class</span>
+              <span className="skill-class-orbit__info-text">Hover an orb to inspect it, then click to unlock.</span>
+            </>
+          )}
+        </div>
+        {CLASS_ROOTS.map((rootId, index) => {
           const root = SKILL_TREE.get(rootId)!;
+          const angle = -90 + index * (360 / CLASS_ROOTS.length);
           return (
-            <div key={rootId} className="skill-class-card">
-              <SkillNodeCard node={root} player={player} onHover={onHover} />
-              <p className="skill-class-desc">{root.description}</p>
+            <div
+              key={rootId}
+              className="skill-class-orbit__slot"
+              style={{
+                '--class-angle': `${angle}deg`,
+              } as CSSProperties}
+            >
+              <SkillNodeCard node={root} player={player} onHover={setHover} />
+              <span className="skill-class-orbit__sigil">{root.name}</span>
             </div>
           );
         })}
@@ -331,7 +377,7 @@ export function SkillTreePanel({ onClose }: Props) {
             : <ClassSelectionView player={player} onHover={setHoveredNode} />}
         </div>
 
-        <NodeDesc node={hoveredNode} player={player} />
+        {classChosen && <NodeDesc node={hoveredNode} player={player} />}
 
       </div>
     </div>,

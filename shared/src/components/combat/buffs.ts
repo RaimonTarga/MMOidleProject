@@ -22,12 +22,31 @@ export const BUFF_IDS = [
   'dot-chill',
   'dot-frozen',
   'reload-snipe-ready',
+  'reload-hair-trigger',
+  'reload-cover-fire',
   'sacred-burst',
+  'flurry',
   'debuff-slow',
   'debuff-root',
+  'debuff-frost-ramp',
+  'debuff-dot',
   'defense-absorb',
   'defense-burst',
   'defense-debt',
+  'defense-hardening',
+  'summoner-howl-banner',
+  'summoner-trample-boon',
+  'summoner-debuff-immune',
+  'debuff-stunned',
+  // Mobility boots (see server/src/systems/world/mobility/mobilityBoots.ts)
+  'mob-sprint',   // Plains — out-of-combat sprint
+  'mob-haste',    // Forest — on-kill haste
+  'mob-burst',    // Mountain — on-new-target burst
+  'mob-grave',    // Graveyard — stacking on-kill speed + tenacity
+  'mob-kite',     // Desert — moving-away-from-target speed
+  'mob-rush',     // Tundra — continuous-move ramp
+  'mob-volcanic', // Volcanic — passive speed (active while not suppressed)
+  'mob-suppress', // Volcanic — speed suppressed after a direct hit
 ] as const;
 
 export type BuffId = typeof BUFF_IDS[number];
@@ -41,7 +60,8 @@ export type BuffCategory =
   | 'dot-frost'
   | 'dot-frozen'
   | 'weapon'
-  | 'neutral';
+  | 'neutral'
+  | 'summoner';
 
 export type BuffShape = 'square' | 'circle' | 'diamond' | 'small-square';
 
@@ -66,6 +86,13 @@ export interface PlayerBuff {
   stacks: number;
   /** 0–100 remaining duration percentage; -1 = no timer. */
   durationPct: number;
+  /**
+   * Movement-speed multiplier this buff imposes (e.g. 0.5 = 50% slow, 0 = root,
+   * 1.25 = +25% boon). Omitted for buffs that don't affect movement speed. The
+   * client multiplies all present values to match the server's effective speed
+   * so own-player position prediction doesn't over/under-extrapolate.
+   */
+  speedMult?: number;
   /** CSS hex color string for the placeholder shape, e.g. '#00ffaa'. */
   color: string;
   /** Buff bar category for CSS animation class. */
@@ -74,4 +101,14 @@ export interface PlayerBuff {
   iconKey: string;
   /** Placeholder shape token for inline CSS styling. */
   shape: BuffShape;
+  /** Optional world-log source label, e.g. "Cooldown", "Ridge Boar". */
+  logSourceName?: string;
+  /** Optional world-log source color side. */
+  logSourceSide?: 'ally' | 'enemy' | 'neutral';
+  /** Optional world-log effect summary, e.g. "+attack speed". */
+  logDetail?: string;
+  /** Optional world-log target override for target debuffs shown in the buff bar. */
+  logTargetId?: string;
+  logTargetName?: string;
+  logTargetType?: 'player' | 'monster';
 }

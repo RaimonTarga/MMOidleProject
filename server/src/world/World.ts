@@ -2,16 +2,38 @@ import type {
   NodeDefinition,
   CombatEvent,
   DeltaSnapshot,
+  PlayerDeathPayload,
+  WorldLogEvent,
+  BossFelledMarker,
 } from "@mmo-idle/shared";
 import {
   BIOME_DATABASE,
   GAME_CONFIG,
   NODE_BIOMES,
   TEST_ROOM_NODE_ID,
+  type DeathCause,
+  type NetworkedComponentKey,
   type Vec2,
 } from "@mmo-idle/shared";
+
+/**
+ * Per-broadcast delta state for one node. Maps each known entity's network id to
+ * the JSON-serialized, wire-quantized value of every networked slice last sent
+ * for that entity. The encoder diffs current values against these to send only
+ * slices that actually changed (value-diff). An entry's presence also marks the
+ * entity as a current member of the node's delta stream.
+ */
+export type NodeSentSlices = Map<NetworkedComponentKey, string>;
+export type NodeDeltaState = Map<string, NodeSentSlices>;
 import { updateAutoTargets } from "../systems/combat/ai/autoTarget";
+import { updateRuneDerivedConfig } from "../systems/combat/ai/runeConfig";
+import { updateAutoTraverse } from "../systems/world/autoTraverse";
+import { updateAutoIntent } from "../systems/world/autoIntent";
+import { updateExpiredEmotes } from "../systems/player/emotes";
+import { updatePartyFollow } from "../systems/world/partyFollow";
 import { updateMovement } from "../systems/world/movement";
+import { updateMobilityState } from "../systems/world/mobility/mobilityBoots";
+import { updateNodeFeatures } from "../systems/world/nodeFeatures";
 import { updateMonsters } from "../systems/combat/ai/ai";
 import { updateCombat } from "../systems/combat/engine/combat";
 import { updateTransitions } from "../systems/world/transitions";
@@ -19,16 +41,17 @@ import { updateCombatState } from "../systems/combat/engine/combatState";
 import { tickAllMechanics } from "../systems/classes/registry";
 import { updateWeaponEffects } from "../systems/combat/damage/weaponEffects";
 import { updateBossScripts } from "../systems/combat/ai/bossScripts";
-import {
-  updateShields,
-  updateDefensiveSystems,
-} from "../systems/defense";
+import { updateUltimateEncounters } from "../systems/combat/ai/ultimateEncounter";
+import { updateShields, updateDefensiveSystems } from "../systems/defense";
 import { updateKnockback } from "../systems/combat/damage/knockback";
 import { syncPlayerBuffs } from "../systems/combat/buffs/buffSync";
+import { mirrorHpForecast } from "../systems/defense/core/hpForecast";
 import {
   createMonster as createMonsterInWorld,
   spawnMonster as spawnMonsterInWorld,
   respawnPlayer as respawnPlayerInWorld,
+  killPlayer as killPlayerInWorld,
+  updateDeadPlayers as updateDeadPlayersInWorld,
   ensurePopulation as ensurePopulationInWorld,
   ensureBoss as ensureBossInWorld,
 } from "../systems/world/spawning";
@@ -36,11 +59,17 @@ import { updateTestRoomInteract } from "../systems/world/testRoomInteract";
 import { NODE_REGISTRY } from "./nodeRegistry";
 import { IS_DEV } from "../env";
 import { createEcsWorld, type EcsWorld } from "../ecs/world";
-import type { EntityId, MonsterEntity, PlayerEntity } from "../ecs/entity";
+import type {
+  EntityId,
+  MinionEntity,
+  MonsterEntity,
+  PlayerEntity,
+} from "../ecs/entity";
 import type { PersistedPlayerSlices } from "../db/playerRepo";
 import { DirtyTracker, type DirtyDrain } from "../ecs/dirtyTracker";
 import type { HasKnockback } from "../systems/combat/damage/knockback";
 import * as monsterLifecycle from "./monsterLifecycle";
+import * as minionLifecycle from "./minionLifecycle";
 import * as playerLifecycle from "./playerLifecycle";
 import {
   initTestRoom,
@@ -51,6 +80,24 @@ import { buildNodeDelta } from "./nodeDelta";
 import { NodeTelemetry, timeSync } from "../telemetry/nodeTelemetry";
 import { POPULATION_INTERVAL_MS } from "../telemetry/constants";
 import { freezeNode } from "./nodeLifecycle";
+
+export interface PendingDeath {
+  playerId: string;
+  payload: PlayerDeathPayload;
+}
+
+/** Client-facing boss death marker; drives the respawn countdown / void tomb. */
+export interface BossRespawnMarker {
+  monsterTypeId: string;
+  pos: Vec2;
+  respawnAt: number;
+  durationMs: number;
+}
+
+/** A {@link BossRespawnMarker} tagged with its node, for persistence. */
+export interface PersistedBossRespawn extends BossRespawnMarker {
+  nodeId: string;
+}
 
 export class World {
   readonly nodeId: string;
@@ -79,6 +126,7 @@ export class World {
 
   readonly knockbackedMonsters = this.monsterEntities.with("hasKnockback");
   readonly bossScriptedMonsters = this.monsterEntities.with("scriptsBoss");
+  readonly ultimateMonsters = this.monsterEntities.with("scriptsUltimate");
   readonly movingMonsters = this.monsterEntities.with("isMoving");
   readonly aggroedMonsters = this.monsterEntities.with("hasAggroTarget");
   readonly detonatedMonsters = this.monsterEntities.with("hasDetonation");
@@ -90,6 +138,7 @@ export class World {
   readonly frozenMonsters = this.monsterEntities.with("hasFrozen");
   readonly entropyMonsters = this.monsterEntities.with("hasEntropy");
   readonly ashbrandMonsters = this.monsterEntities.with("hasAshbrandBurn");
+  readonly voidCorruptionMonsters = this.monsterEntities.with("hasVoidCorruption");
   readonly smolderMonsters = this.monsterEntities.with("hasSmolder");
 
   /**
@@ -112,26 +161,92 @@ export class World {
     "showsSacred",
   );
 
-  readonly cadencePlayers = this.playerEntities.with("usesCadence");
-  readonly energyPlayers = this.playerEntities.with("usesEnergy");
-  readonly dotPlayers = this.playerEntities.with("appliesDots");
-  readonly chillingPlayers = this.playerEntities.with("chillsTarget");
-  readonly cooldownPlayers = this.playerEntities.with("usesCooldown");
-  readonly reloadPlayers = this.playerEntities.with("usesReload");
-  readonly dottedPlayers = this.playerEntities.with("hasDot");
-  readonly movingPlayers = this.playerEntities.with("isMoving");
-  readonly shieldedPlayers = this.playerEntities.with("holdsShields");
+  /** Live players only — corpses excluded from gameplay ticks. */
+  readonly livePlayers = this.playerEntities.without("isDead");
+  /** Players awaiting respawn ack or server timeout. */
+  readonly deadPlayers = this.playerEntities.with("isDead");
+
+  readonly cadencePlayers = this.livePlayers.with("usesCadence");
+  readonly energyPlayers = this.livePlayers.with("usesEnergy");
+  readonly dotPlayers = this.livePlayers.with("appliesDots");
+  readonly chillingPlayers = this.livePlayers.with("chillsTarget");
+  readonly cooldownPlayers = this.livePlayers.with("usesCooldown");
+  readonly summonerPlayers = this.livePlayers.with("summonsMinions");
+
+  /**
+   * Canonical minion query. All slices stamped together in
+   * `spawnMinionForOwner`, so the return type matches `MinionEntity`.
+   */
+  readonly minionEntities = this.ecs.with(
+    "isMinion",
+    "controlsMinion",
+    "hasPosition",
+    "hasHitbox",
+    "hasHealth",
+    "dealsDamage",
+    "performsAttack",
+    "mitigatesDamage",
+    "tracksCombat",
+    "hasStatus",
+  );
+  readonly movingMinions = this.minionEntities.with("isMoving");
+  readonly reloadPlayers = this.livePlayers.with("usesReload");
+  readonly dottedPlayers = this.livePlayers.with("hasDot");
+  readonly environmentallyDottedPlayers =
+    this.livePlayers.with("hasEnvironmentalDot");
+  readonly nodeFeatureEffectPlayers =
+    this.livePlayers.with("hasNodeFeatureEffect");
+  readonly movingPlayers = this.livePlayers.with("isMoving");
+  readonly shieldedPlayers = this.livePlayers.with("holdsShields");
   readonly channelingPlayers = this.cooldownPlayers.with("isChanneling");
   readonly overdrivenPlayers = this.cooldownPlayers.with("hasOverdrive");
   readonly alignedPlayers = this.cooldownPlayers.with("hasAlignment");
-  /** Player IDs that died this tick. Drained by the server loop after each tick. */
-  pendingDeaths: string[] = [];
+  /** Player deaths queued this tick. Drained by the server loop after each tick. */
+  pendingDeaths: PendingDeath[] = [];
   /** Player IDs whose quest completion advanced their tier. Drained by the server loop. */
   pendingAscensions: string[] = [];
+  /** Contributors on-node when the Void Overlord dies — drained for overlay emit. */
+  pendingOverlordFelled: string[] = [];
   /** Dungeon boss respawn cooldowns keyed by node id. */
   bossRespawnAt = new Map<string, number>();
+  /** Client-facing boss death markers keyed by node id. */
+  bossRespawnMarkers = new Map<string, BossRespawnMarker>();
+  /**
+   * Persist (marker) or clear (null) the server-global Void Overlord respawn
+   * cooldown so it survives node freeze/thaw and server restarts. Set by
+   * index.ts at boot; left null in benchmarks/tests (no DB).
+   */
+  overlordRespawnPersist: ((marker: PersistedBossRespawn | null) => void) | null =
+    null;
+  /** Broadcast active boss-felled markers to all clients (world map). Set by index.ts. */
+  bossFelledBroadcast: (() => void) | null = null;
+  /** Optional analytics hooks installed by the server entrypoint. */
+  analyticsNodeTransition:
+    | ((playerId: string, fromNodeId: string, toNodeId: string) => void)
+    | null = null;
+  analyticsPlayerDeath: ((playerId: string, nodeId: string) => void) | null = null;
+  analyticsSkillUnlock:
+    | ((playerId: string, skillId: string, path: string[]) => void)
+    | null = null;
+  analyticsProgression:
+    | ((playerId: string, nodeId: string, progressionKind: string, value?: number) => void)
+    | null = null;
+  /** Generic NODE_FEATURES spawn runtime state keyed `${nodeId}:${featureId}`. */
+  nodeFeatureSpawnState = new Map<
+    string,
+    { spawnedIds: string[]; nextSpawnAt: number }
+  >();
+  /** Suppressed feature blocks keyed `${nodeId}:${featureId}` (encounter toggles). */
+  suppressedFeatureBlocks = new Set<string>();
   /** Queued combat events per node, flushed into each broadcast snapshot. */
   private nodeEvents = new Map<string, CombatEvent[]>();
+  /** Runtime journal of all world log events (dev/debug). */
+  worldLogJournal: WorldLogEvent[] = [];
+  /** When set, caps journal length instead of {@link WORLD_LOG_JOURNAL_MAX} (bench fight logs). */
+  worldLogJournalMax?: number;
+  /** Per-player queues drained at broadcast tick. */
+  worldLogByPlayer = new Map<string, WorldLogEvent[]>();
+  nextWorldLogId = 1;
   /**
    * ID of the test-room boss that has been attacked by a player.
    * While set (and the boss still exists), the boss-rotation loop is paused so
@@ -139,8 +254,14 @@ export class World {
    * Cleared automatically when the engaged boss is no longer in the world.
    */
   testRoomEngagedBossId: string | null = null;
+  /**
+   * When true, skip the periodic ensurePopulation/ensureBoss loop in tick().
+   * Set by the balance bench only so full-node clears can complete without repop.
+   */
+  suppressRepopulation = false;
 
   readonly nextMonsterIdByNode = new Map<string, number>();
+  readonly nextMinionIdByOwner = new Map<string, number>();
   tickCounter = 0;
   readonly dirty = new DirtyTracker();
   readonly telemetry = new NodeTelemetry();
@@ -151,11 +272,13 @@ export class World {
   private populationCheckedAt = new Map<string, number>();
 
   /** Optional hook set by index.ts to emit node:preparing before cold thaw. */
-  nodePreparingEmitter: ((playerId: string, nodeId: string) => void) | null = null;
+  nodePreparingEmitter: ((playerId: string, nodeId: string) => void) | null =
+    null;
 
   readonly playerById = new Map<EntityId, PlayerEntity>();
   readonly monsterById = new Map<EntityId, MonsterEntity>();
-  private readonly nodeMembership = new Map<string, Set<string>>();
+  readonly minionById = new Map<EntityId, MinionEntity>();
+  private readonly nodeMembership = new Map<string, NodeDeltaState>();
 
   constructor(nodeId = "node-5-5") {
     const node = NODE_REGISTRY.get(nodeId);
@@ -172,11 +295,14 @@ export class World {
         this.playerById.set(entity.entityId, entity as PlayerEntity);
       } else if (entity.isMonster) {
         this.monsterById.set(entity.entityId, entity as MonsterEntity);
+      } else if (entity.isMinion) {
+        this.minionById.set(entity.entityId, entity as MinionEntity);
       }
     });
     this.ecs.onEntityRemoved.subscribe((entity) => {
       this.playerById.delete(entity.entityId);
       this.monsterById.delete(entity.entityId);
+      this.minionById.delete(entity.entityId);
     });
   }
 
@@ -202,35 +328,47 @@ export class World {
     tickAllMechanics(this, dt, now);
     updateWeaponEffects(this, dt);
     updateBossScripts(this, dt);
-    updateAutoTargets(this);
+    updateUltimateEncounters(this, dt);
+    updateRuneDerivedConfig(this, now);
+    updatePartyFollow(this, now);
+    updateAutoTraverse(this);
+    updateAutoTargets(this, now);
     updateKnockback(this, dt);
-    updateMovement(this, dt);
+    updateMobilityState(this, dt);
+    updateMovement(this, dt, now);
+    updateNodeFeatures(this, dt);
     updateTransitions(this);
     if (IS_DEV) updateTestRoomInteract(this, now);
     updateMonsters(this, dt, now);
     updateCombat(this, dt, now);
     updateDefensiveSystems(this, dt, now);
-    syncPlayerBuffs(this);
+    syncPlayerBuffs(this, now);
+    mirrorHpForecast(this);
+    updateAutoIntent(this);
+    updateExpiredEmotes(this, now);
+    updateDeadPlayersInWorld(this, now);
 
     if (IS_DEV) {
       ensureCurrentTestRoomBoss(this);
       ensureTrainingDummies(this);
     }
 
-    for (const nodeId of NODE_REGISTRY.keys()) {
-      if (nodeId === TEST_ROOM_NODE_ID) continue;
-      if (this.isNodeFrozen(nodeId)) continue;
-      if (this.countPlayersInNode(nodeId) === 0) continue;
+    if (!this.suppressRepopulation) {
+      for (const nodeId of NODE_REGISTRY.keys()) {
+        if (nodeId === TEST_ROOM_NODE_ID) continue;
+        if (this.isNodeFrozen(nodeId)) continue;
+        if (this.countPlayersInNode(nodeId) === 0) continue;
 
-      const last = this.populationCheckedAt.get(nodeId) ?? 0;
-      if (now - last < POPULATION_INTERVAL_MS) continue;
-      this.populationCheckedAt.set(nodeId, now);
+        const last = this.populationCheckedAt.get(nodeId) ?? 0;
+        if (now - last < POPULATION_INTERVAL_MS) continue;
+        this.populationCheckedAt.set(nodeId, now);
 
-      const { ms } = timeSync(() => {
-        ensurePopulationInWorld(this, nodeId);
-        ensureBossInWorld(this, nodeId);
-      });
-      this.telemetry.recordPopulationMs(nodeId, ms, true);
+        const { ms } = timeSync(() => {
+          ensurePopulationInWorld(this, nodeId);
+          ensureBossInWorld(this, nodeId);
+        });
+        this.telemetry.recordPopulationMs(nodeId, ms, true);
+      }
     }
   }
 
@@ -277,6 +415,29 @@ export class World {
     monsterLifecycle.removeMonsterEntity(this, id);
   }
 
+  // ── MINION LIFECYCLE (delegators) ──────────────────────────────
+  getMinionEntity(id: string): MinionEntity | undefined {
+    return minionLifecycle.getMinionEntity(this, id);
+  }
+
+  hasMinion(id: string): boolean {
+    return minionLifecycle.hasMinion(this, id);
+  }
+
+  removeMinionEntity(id: string): void {
+    minionLifecycle.removeMinionEntity(this, id);
+  }
+
+  minionEntitiesInNode(nodeId: string): IterableIterator<MinionEntity> {
+    return minionLifecycle.minionEntitiesInNode(this, nodeId);
+  }
+
+  allocMinionId(ownerPlayerId: string): string {
+    const next = (this.nextMinionIdByOwner.get(ownerPlayerId) ?? 0) + 1;
+    this.nextMinionIdByOwner.set(ownerPlayerId, next);
+    return `minion_${ownerPlayerId}-${next}`;
+  }
+
   attachPlayerEntity(
     player: PersistedPlayerSlices,
     socketId: string,
@@ -296,6 +457,10 @@ export class World {
     return playerLifecycle.playerEntitiesInNode(this, nodeId);
   }
 
+  livePlayersInNode(nodeId: string): IterableIterator<PlayerEntity> {
+    return playerLifecycle.livePlayersInNode(this, nodeId);
+  }
+
   hasPlayer(playerId: string): boolean {
     return playerLifecycle.hasPlayer(this, playerId);
   }
@@ -306,6 +471,10 @@ export class World {
 
   spawnMonster(nodeId: string): boolean {
     return spawnMonsterInWorld(this, nodeId);
+  }
+
+  killPlayer(playerId: string, cause: DeathCause): void {
+    killPlayerInWorld(this, playerId, cause);
   }
 
   respawnPlayer(playerId: string): void {
@@ -322,7 +491,10 @@ export class World {
 
   getMobDensity(nodeId: string): number {
     const biomeInfo = NODE_BIOMES[nodeId];
-    const biome = biomeInfo ? BIOME_DATABASE.get(biomeInfo.biomeGroup) : undefined;
+    if (biomeInfo?.mobDensity !== undefined) return biomeInfo.mobDensity;
+    const biome = biomeInfo
+      ? BIOME_DATABASE.get(biomeInfo.biomeGroup)
+      : undefined;
     return biome?.mobDensity ?? GAME_CONFIG.MONSTERS_PER_NODE;
   }
 
@@ -388,11 +560,11 @@ export class World {
     return this.dirty.drain();
   }
 
-  /** Lazily initialize and return the membership set for `nodeId`. */
-  getOrCreateNodeMembership(nodeId: string): Set<string> {
+  /** Lazily initialize and return the per-node delta state for `nodeId`. */
+  getOrCreateNodeMembership(nodeId: string): NodeDeltaState {
     let members = this.nodeMembership.get(nodeId);
     if (!members) {
-      members = new Set();
+      members = new Map();
       this.nodeMembership.set(nodeId, members);
     }
     return members;
@@ -414,6 +586,25 @@ export class World {
     return buildNodeDelta(this, nodeId, dirty, opts);
   }
 
+  buildBossFelledSnapshot(): BossFelledMarker[] {
+    const now = Date.now();
+    const markers: BossFelledMarker[] = [];
+    for (const [nodeId, marker] of this.bossRespawnMarkers) {
+      if (marker.respawnAt <= now) continue;
+      markers.push({
+        nodeId,
+        monsterTypeId: marker.monsterTypeId,
+        respawnAt: marker.respawnAt,
+        durationMs: marker.durationMs,
+      });
+    }
+    return markers;
+  }
+
+  broadcastBossFelledState(): void {
+    this.bossFelledBroadcast?.();
+  }
+
   countPlayersInNode(nodeId: string): number {
     return this.playersByNode.get(nodeId) ?? 0;
   }
@@ -428,12 +619,15 @@ export class World {
     else this.playersByNode.set(nodeId, next);
   }
 
-  movePlayerNode(fromNodeId: string, toNodeId: string): void {
+  movePlayerNode(fromNodeId: string, toNodeId: string, playerId?: string): void {
     const fromBefore = this.countPlayersInNode(fromNodeId);
     this.decrementPlayersInNode(fromNodeId);
     if (fromBefore === 1) freezeNode(this, fromNodeId);
 
     this.incrementPlayersInNode(toNodeId);
+    if (playerId && fromNodeId !== toNodeId) {
+      this.analyticsNodeTransition?.(playerId, fromNodeId, toNodeId);
+    }
   }
 
   syncTelemetryOccupancy(): void {

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useAtom, useAtomValue } from 'jotai';
 import { TEST_ROOM_NODE_ID } from '@mmo-idle/shared';
+import { DEV_TOOLS_ENABLED } from '../devTools';
 import { hudBus } from '../hudBus';
 import {
   attackAtom,
@@ -199,7 +200,18 @@ function DebugPanelContent() {
 
   return (
     <>
-      {import.meta.env.DEV && (
+      {DEV_TOOLS_ENABLED && (
+        <div className="debug-section">
+          <button
+            className="debug-btn"
+            onClick={() => hudBus.requestEquipPhaseTester()}
+          >
+            EQUIP DEV LOADOUT (400 DMG + INVULN)
+          </button>
+        </div>
+      )}
+
+      {DEV_TOOLS_ENABLED && (
         <div className="debug-section">
           <button
             className={`debug-btn${inTestRoom ? ' active' : ''}`}

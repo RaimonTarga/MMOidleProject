@@ -1,2 +1,2 @@
-export { SKILL_TREE } from './data/skillTree';
-export type { SkillNode, StatEffects, SubVariant } from './data/skillTree';
+export { SKILL_TREE, isMeleeArchetype, isRangedCombatant } from './data/skillTree';
+export type { SkillNode, StatEffects, SubVariant, RangedCombatantInput } from './data/skillTree';

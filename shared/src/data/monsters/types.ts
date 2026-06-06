@@ -1,4 +1,5 @@
 import type { EssenceType } from '../../items';
+import type { Vec2 } from '../../systems/spatial';
 
 // ── Boss script types ─────────────────────────────────────────────────────────
 
@@ -10,6 +11,16 @@ import type { EssenceType } from '../../items';
  *   shield    — add drAdd to damageReduction for durationMs (cyclic, always timed).
  *   summon    — spawn `count` minions of monsterTypeId near the boss.
  *   stat-buff — multiply a single stat for durationMs (or rest-of-fight).
+ *   morph     — SET (not multiply) non-numeric combat fields: isRanged, attackStyle,
+ *               attackRange, dotEffect, kite. Lets a boss flip stance mid-fight
+ *               (e.g. melee → ranged kiter at 50% HP). Each field is independent and
+ *               optional; only provided fields change. `dotEffect: null` clears an
+ *               existing DoT override. To kite after a flip, set `kite: true` AND
+ *               extend `attackRange` (the standoff band scales off the live range).
+ *   slam      — instant AoE burst centered on the boss, hitting all players AND
+ *               enemy summons within `radius`. Pure damage (no slow/DoT). Pair with
+ *               a RepeatingAction to slam every N seconds. `damageMult` scales off
+ *               the boss's current attack (default 1.0).
  *
  * Omitting durationMs (or undefined) means the effect lasts until the boss dies.
  */
@@ -18,7 +29,19 @@ export type BossAction =
   | { type: 'regen';     hpPctPerSec: number;                 durationMs?: number }
   | { type: 'shield';    drAdd: number;   durationMs: number }
   | { type: 'summon';    monsterTypeId: string; count: number; offsetRange?: number }
-  | { type: 'stat-buff'; stat: 'attack' | 'speed' | 'plating' | 'damageReduction'; mult: number; durationMs?: number };
+  | { type: 'stat-buff'; stat: 'attack' | 'speed' | 'plating' | 'damageReduction'; mult: number; durationMs?: number }
+  | { type: 'slam';      radius: number; damageMult?: number }
+  | {
+      type: 'morph';
+      isRanged?: boolean;
+      attackStyle?: string;
+      attackRange?: number;
+      /** Object sets a runtime DoT override; null clears it (revert to no DoT). */
+      dotEffect?: { damagePerStack: number; maxStacks: number; tickIntervalMs: number; durationMs?: number } | null;
+      kite?: boolean;
+      /** When set, revert to pre-morph values after durationMs. Omit = permanent phase flip. */
+      durationMs?: number;
+    };
 
 /**
  * HP-threshold phase — fires once per fight when boss HP% drops below hpPct.
@@ -53,6 +76,88 @@ export interface BossScript {
   repeating?: RepeatingAction[];
 }
 
+// ── Ultimate encounter types ──────────────────────────────────────────────────
+
+/**
+ * Objective-driven encounter script for major bosses.
+ *
+ * Unlike BossScript, stages advance from explicit conditions such as clearing
+ * tracked waves or elites rather than HP thresholds.
+ */
+export interface UltimateEncounter {
+  anchor?: 'center';
+  /** Empty-node reset is handled by node freeze/thaw; this covers party wipes. */
+  reset: { onWipe: boolean };
+  stages: EncounterStage[];
+  /** When set, staged adds spawn on this node feature's perimeter instead of around the boss. */
+  spawnFromFeatureId?: string;
+}
+
+export interface EncounterStage {
+  id: string;
+  /** HUD label; falls back to id.toUpperCase() when omitted. */
+  displayName?: string;
+  /** Overrides server-built objective headline when set. */
+  objectiveLabel?: string;
+  /** Default false. Final stages usually set this true and omit completeWhen. */
+  vulnerable?: boolean;
+  onEnter: StageAction[];
+  /** Omit on a final stage that ends only when the boss dies. */
+  completeWhen?: StageCondition;
+}
+
+export type StageAction =
+  | { type: 'spawn-waves'; waves: WaveDef[] }
+  | { type: 'spawn-elites'; monsterTypeId: string; count: number; offsetRange?: number }
+  | {
+      type: 'environmental-dot';
+      effectId: string;
+      damagePerStack: number;
+      tickIntervalMs: number;
+      /** Pass 0 for linear stacks × damagePerStack (used by void flood ramp). */
+      maxStacks: number;
+      refreshMs: number;
+      /** Max stacks the hazard ramps up to over the fight. */
+      stackCap?: number;
+      /** HUD hint, e.g. "Leave the throne hazard". */
+      hazardHint?: string;
+    }
+  | { type: 'set-invulnerable'; value: boolean }
+  | { type: 'set-rooted'; value: boolean }
+  | { type: 'set-cannot-attack'; value: boolean }
+  /** Toggle a node-feature obstacle on/off for this node while engaged. */
+  | { type: 'set-feature-block'; featureId: string; value: boolean };
+
+export interface WaveDef {
+  adds: { monsterTypeId: string; count: number }[];
+}
+
+export type StageCondition =
+  | { kind: 'adds-cleared' }
+  | { kind: 'elites-cleared' }
+  | { kind: 'waves-cleared' };
+
+export interface UltimateEnvironmentalDot {
+  effectId: string;
+  damagePerStack: number;
+  tickIntervalMs: number;
+  maxStacks: number;
+  refreshMs: number;
+  refreshTimerMs: number;
+  /** Max stacks the flood ramp reaches. */
+  stackCap: number;
+  /** Current ramp intensity (1..stackCap). */
+  currentStacks: number;
+  /** Refresh cycles since flood started — ramp skips the first. */
+  refreshCount: number;
+}
+
+export interface UltimateSavedBaseline {
+  speed?: number;
+  pullRange?: number;
+  spawn?: Vec2;
+}
+
 // ── Monster definition ────────────────────────────────────────────────────────
 
 export interface MonsterDefinition {
@@ -72,6 +177,8 @@ export interface MonsterDefinition {
   };
   /** Combat style — only 'melee' exists; extend union for ranged/caster/etc. */
   behavior: 'melee';
+  /** True for monsters that attack from range and should not play a lunge animation. */
+  isRanged?: boolean;
   /** Visual style for attack animations: 'slash' | 'impact' | 'poison' | 'magic' */
   attackStyle: string;
   /** Biome group this monster belongs to — must match a BiomeDefinition id. */
@@ -87,6 +194,8 @@ export interface MonsterDefinition {
   isBoss?: boolean;
   /** Fight script — opt-in boss mechanics (phases, regen, enrage, summons, etc.). */
   bossScript?: BossScript;
+  /** Objective-driven multi-stage encounter controller. */
+  ultimateEncounter?: UltimateEncounter;
   /**
    * If set, the monster bursts at speedMult x base speed for durationMs when it
    * first acquires an aggro target (both pull-range and retaliation aggro).
@@ -113,8 +222,62 @@ export interface MonsterDefinition {
    */
   slowEffect?: { speedMult: number; durationMs: number };
   /**
-   * Deterministic evasion: this monster dodges every Nth incoming hit from players.
-   * Minimum useful value is 5; lower values should be ignored by combat logic.
+   * If set, this monster's basic attack also deals splash damage to all players
+   * AND enemy summons within `radius` px of the primary target. The primary target
+   * takes its normal direct hit (full pipeline, including slow/DoT); everyone else
+   * takes splash only. Splash bypasses the combat pipeline (pure damage — no
+   * slow/DoT), matching player empowered-AoE semantics. `damageMult` scales the
+   * splash off the monster's current attack (default 1.0), so it composes with
+   * enrage / stat-buff / morph.
+   */
+  aoeAttack?: { radius: number; damageMult?: number };
+  /**
+   * Ranged kiter: when paired with isRanged, the AI steers to MAINTAIN attackRange
+   * (backs off as the player closes, re-closes if the player flees). Kiter move
+   * speed MUST stay below player base (120) so a charge can always catch it.
+   * NOTE: behavior not yet implemented — this is the data gate only.
+   */
+  kite?: boolean;
+  /**
+   * In-combat attack ramp. While the monster has an aggro target, a multiplier on
+   * `stat` grows by perTickPct every tickIntervalMs, clamped at maxPct. Deterministic
+   * (counts elapsed ticks). Resets to zero on de-aggro / leash.
+   */
+  rampOnCombat?: {
+    stat: 'attack';
+    perTickPct: number;
+    maxPct: number;
+    tickIntervalMs: number;
+  };
+  /**
+   * Stacking debuff applied to the PLAYER on every landed hit: a movement slow and
+   * an attack-speed slow, each accumulating per hit and clamped at its own MaxPct.
+   * The whole debuff decays stackDurationMs after the last hit taken (refreshed each
+   * hit). ⚠ atkSlowMaxPct is load-bearing — an uncapped attack-speed debuff
+   * death-spirals (slower attack → slower kill → more stacks).
+   */
+  rampDebuff?: {
+    moveSlowPerHit: number;
+    moveSlowMaxPct: number;
+    atkSlowPerHit: number;
+    atkSlowMaxPct: number;
+    stackDurationMs: number;
+  };
+  /**
+   * Deterministic evasion: this monster dodges at a rate of 1/N incoming player
+   * hits (a fractional accumulator, not RNG). Minimum useful value is 5; lower
+   * values should be ignored by combat logic.
    */
   evadeEvery?: number;
+  /**
+   * Fraction of damage avoided on one of this monster's dodges (0..1). Defaults
+   * to GAME_CONFIG.EVADE_MITIGATION_BASE (0.5). Set to 1 to fully negate the hit
+   * (the legacy behavior).
+   */
+  evadeMitigation?: number;
+  /**
+   * If true, the player's debuffs/DoT stacks still land even when this monster
+   * dodges the hit. Default false (a dodged hit applies no debuffs).
+   */
+  appliesThroughEvade?: boolean;
 }

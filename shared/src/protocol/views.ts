@@ -1,12 +1,30 @@
-import type { EquipmentMap, EssenceType } from '../items';
-import type { PassiveMap } from '../passives';
-import type { SubVariant } from '../skillTree';
-import type { BuffId, PlayerBuff } from '../components/combat/buffs';
-import type { CombatArchetype, MonsterAIState, ShieldState } from '../types/combat';
-import type { HitboxRect } from '../hitbox/types';
-import { FALLBACK_MONSTER_AABB, FALLBACK_PLAYER_AABB } from '../hitbox/constants';
-import { pointFromMotion, type Vec2 } from '../systems/spatial';
-import type { NetworkedEntity } from './networkedEntity';
+import type { EquipmentMap, EssenceType } from "../items";
+import type { HasAutoIntent, HasEmote, PartyMember, TargetStatusView, UltimateStatus } from "../components";
+import type { PassiveMap } from "../passives";
+import { isRangedCombatant, type SubVariant } from "../skillTree";
+import type { BuffId, PlayerBuff } from "../components/combat/buffs";
+import type {
+  CombatArchetype,
+  MonsterAIState,
+  ShieldState,
+} from "../types/combat";
+import type { HitboxRect } from "../hitbox/types";
+import type { EquippedRule } from "../runeDatabase";
+import {
+  FALLBACK_MONSTER_AABB,
+  FALLBACK_PLAYER_AABB,
+} from "../hitbox/constants";
+import { pointFromMotion, type Vec2 } from "../systems/spatial";
+import type { MinionMonsterType } from "../components/archetypes/summoner/isMinion";
+import {
+  computeSummonRespawnMaxMs,
+  countActiveSummons,
+  projectSummonSlots,
+  type SummonSlotView,
+} from "../systems/summonerHud";
+import type { NetworkedEntity } from "./networkedEntity";
+
+export type { SummonSlotView };
 
 export interface PlayerView {
   id: string;
@@ -19,14 +37,27 @@ export interface PlayerView {
   onHitDamage: number;
   plating: number;
   damageReduction: number;
-  evasion: number;
-  evasionCount: number;
+  /** Deterministic per-hit dodge rate (0..<1). */
+  dodgeRate: number;
+  /** Fraction of damage avoided on an evaded hit (0..1; 1 = full avoid). */
+  evadeMitigation: number;
   shields: ShieldState[];
+  /** Total pending damage-over-time on the player (HP-bar red layer). */
+  incomingDot: number;
+  /** Pending heal-over-time from regen/absorb pools (HP-bar regen layer). */
+  pendingHeal: number;
   attackRange: number;
   attackCooldown: number;
   lastAttackAt: number;
   attackTargetId: string | null;
   auto: boolean;
+  autoTraverse: boolean;
+  /** Telegraphed next auto-combat action; null when auto-combat is off. */
+  autoIntent: HasAutoIntent | null;
+  /** Active emote; null when none is playing. */
+  emote: HasEmote | null;
+  partyLeaderId: string | null;
+  partyMembers: PartyMember[];
   nodeId: string;
   essences: Record<EssenceType, number>;
   level: number;
@@ -43,6 +74,7 @@ export interface PlayerView {
   attackStyle: string;
   inventory: string[];
   equipment: EquipmentMap;
+  itemUpgrades: Record<string, number>;
   biomeXP: Record<string, number>;
   biomeLevel: Record<string, number>;
   unlockedRecipes: string[];
@@ -73,6 +105,55 @@ export interface PlayerView {
   activeBuffs: PlayerBuff[];
   questProgress: Record<string, number>;
   playerTier: number;
+  bossesCleared: string[];
+  clearedNodes: string[];
+  runesOwned: string[];
+  runesEquipped: EquippedRule[];
+  hitboxRects: HitboxRect[];
+  /** Number of minion slots the player has. 0 if not a summoner. */
+  summonsMinions: number;
+  /** Live summons vs total slots (summoner only). */
+  summonActiveCount: number;
+  /** Full respawn duration in ms for cooldown bar scaling. */
+  summonRespawnMaxMs: number;
+  /** Per-slot active / respawn state for the HUD. */
+  summonSlots: SummonSlotView[];
+  isDead: boolean;
+  graveFrame: number | null;
+}
+
+/**
+ * Whether this player fights at range, derived via the shared
+ * {@link isRangedCombatant} predicate. The client uses this to gate the lunge
+ * animation so it matches the server's kite-vs-melee approach exactly.
+ */
+export function isRangedPlayerView(view: PlayerView): boolean {
+  return isRangedCombatant({
+    attackRange: view.attackRange,
+    combatArchetype: view.combatArchetype,
+    selectedRange: view.selectedRange,
+    flashActive: (view.passives["energy.flash"] ?? 0) > 0,
+  });
+}
+
+export interface MinionView {
+  id: string;
+  ownerPlayerId: string;
+  slot: number;
+  monsterTypeId: MinionMonsterType;
+  pos: Vec2;
+  target: Vec2;
+  hp: number;
+  maxHp: number;
+  attack: number;
+  attackRange: number;
+  attackCooldown: number;
+  lastAttackAt: number;
+  attackTargetId: string | null;
+  attackStyle: string;
+  speed: number;
+  sizeMult: number;
+  nodeId: string;
   hitboxRects: HitboxRect[];
 }
 
@@ -100,10 +181,14 @@ export interface MonsterView {
   attackStyle: string;
   isBoss: boolean;
   behavior: string;
+  isRanged: boolean;
   combatArchetype?: CombatArchetype;
   activeEffects?: Record<string, number>;
   activeEffectFrames?: Record<string, number>;
   bossEffects?: string[];
+  targetStatus?: TargetStatusView[];
+  ultimateStatus?: UltimateStatus;
+  throneHealing?: boolean;
   hitboxRects: HitboxRect[];
 }
 
@@ -125,12 +210,30 @@ export function composePlayerView(entity: NetworkedEntity): PlayerView | null {
   const damage = entity.dealsDamage;
   const attack = entity.performsAttack;
   const mitigation = entity.mitigatesDamage;
-  if (!progression || !inventory || !skills || !damage || !attack || !mitigation) {
+  if (
+    !progression ||
+    !inventory ||
+    !skills ||
+    !damage ||
+    !attack ||
+    !mitigation
+  ) {
     return null;
   }
   const pos = entity.hasPosition.current;
-  const flashShiftPct = entity.usesEnergy && entity.usesEnergy.energyMax > 0
-    ? Math.round((entity.usesEnergy.energy / entity.usesEnergy.energyMax) * 100)
+  const flashShiftPct =
+    entity.usesEnergy && entity.usesEnergy.energyMax > 0
+      ? Math.round(
+          (entity.usesEnergy.energy / entity.usesEnergy.energyMax) * 100,
+        )
+      : 0;
+  const summonSlots = projectSummonSlots(
+    entity.summonsMinions,
+    skills.passives,
+  );
+  const summonActiveCount = countActiveSummons(summonSlots);
+  const summonRespawnMaxMs = entity.summonsMinions
+    ? computeSummonRespawnMaxMs(skills.passives)
     : 0;
   return {
     id: entity.isPlayer.id,
@@ -143,14 +246,21 @@ export function composePlayerView(entity: NetworkedEntity): PlayerView | null {
     onHitDamage: damage.onHitDamage,
     plating: mitigation.plating,
     damageReduction: mitigation.damageReduction,
-    evasion: entity.evadesHits?.threshold ?? 0,
-    evasionCount: entity.evadesHits?.count ?? 0,
+    dodgeRate: entity.evadesHits?.dodgeRate ?? 0,
+    evadeMitigation: entity.evadesHits?.evadeMitigation ?? 0,
     shields: entity.holdsShields?.shields ?? [],
+    incomingDot: entity.hasStatus?.incomingDot ?? 0,
+    pendingHeal: entity.hasStatus?.pendingHeal ?? 0,
     attackRange: attack.attackRange,
     attackCooldown: attack.attackCooldown,
     lastAttackAt: attack.lastAttackAt,
     attackTargetId: entity.hasAttackTarget?.targetId ?? null,
     auto: entity.usesAutocombat?.auto ?? false,
+    autoTraverse: entity.usesAutocombat?.autoTraverse ?? false,
+    autoIntent: entity.hasAutoIntent ?? null,
+    emote: entity.hasEmote ?? null,
+    partyLeaderId: entity.inParty?.leaderId ?? null,
+    partyMembers: entity.inParty?.members ?? [],
     nodeId: entity.hasPosition.nodeId,
     essences: progression.essences,
     level: progression.level,
@@ -167,6 +277,7 @@ export function composePlayerView(entity: NetworkedEntity): PlayerView | null {
     attackStyle: damage.attackStyle,
     inventory: inventory.inventory,
     equipment: inventory.equipment ?? EMPTY_EQUIPMENT,
+    itemUpgrades: inventory.itemUpgrades ?? {},
     biomeXP: progression.biomeXP,
     biomeLevel: progression.biomeLevel,
     unlockedRecipes: progression.unlockedRecipes,
@@ -203,11 +314,23 @@ export function composePlayerView(entity: NetworkedEntity): PlayerView | null {
     activeBuffs: entity.hasStatus?.activeBuffs ?? [],
     questProgress: progression.questProgress,
     playerTier: progression.playerTier,
+    bossesCleared: progression.bossesCleared ?? [],
+    clearedNodes: progression.clearedNodes ?? [],
+    runesOwned: progression.runesOwned ?? [],
+    runesEquipped: progression.runesEquipped ?? [],
     hitboxRects: entity.hasHitbox?.rects ?? [FALLBACK_PLAYER_AABB],
+    summonsMinions: entity.summonsMinions?.targetCount ?? 0,
+    summonActiveCount,
+    summonRespawnMaxMs,
+    summonSlots,
+    isDead: entity.isDead !== undefined,
+    graveFrame: entity.isDead?.graveFrame ?? null,
   };
 }
 
-export function composeMonsterView(entity: NetworkedEntity): MonsterView | null {
+export function composeMonsterView(
+  entity: NetworkedEntity,
+): MonsterView | null {
   if (
     !entity.isMonster ||
     !entity.hasPosition ||
@@ -247,12 +370,52 @@ export function composeMonsterView(entity: NetworkedEntity): MonsterView | null 
     attackStyle: entity.dealsDamage.attackStyle,
     isBoss: entity.isMonster.isBoss,
     behavior: entity.isMonster.behavior,
+    isRanged: entity.isMonster.isRanged ?? false,
     combatArchetype: entity.isMonster.combatArchetype,
     activeEffects: entity.hasStatus?.activeEffects,
     activeEffectFrames: entity.hasStatus?.activeEffectFrames,
     bossEffects: entity.hasStatus?.bossEffects,
+    targetStatus: entity.hasStatus?.targetStatus,
+    ultimateStatus: entity.hasStatus?.ultimateStatus,
+    throneHealing: entity.hasStatus?.throneHealing,
     hitboxRects: entity.hasHitbox?.rects ?? [FALLBACK_MONSTER_AABB],
   };
 }
 
-export type EntityView = PlayerView | MonsterView;
+export function composeMinionView(entity: NetworkedEntity): MinionView | null {
+  if (
+    !entity.isMinion ||
+    !entity.hasPosition ||
+    !entity.hasHealth ||
+    !entity.dealsDamage ||
+    !entity.performsAttack
+  ) {
+    return null;
+  }
+  const target = entity.isMoving
+    ? pointFromMotion(entity.hasPosition.current, entity.isMoving.motion)
+    : entity.hasPosition.current;
+  const pos = entity.hasPosition.current;
+  return {
+    id: entity.isMinion.id,
+    ownerPlayerId: entity.isMinion.ownerPlayerId,
+    slot: entity.isMinion.slot,
+    monsterTypeId: entity.isMinion.monsterTypeId,
+    pos,
+    target,
+    hp: entity.hasHealth.hp,
+    maxHp: entity.hasHealth.maxHp,
+    attack: entity.dealsDamage.attack,
+    attackRange: entity.performsAttack.attackRange,
+    attackCooldown: entity.performsAttack.attackCooldown,
+    lastAttackAt: entity.performsAttack.lastAttackAt,
+    attackTargetId: entity.hasAttackTarget?.targetId ?? null,
+    attackStyle: entity.dealsDamage.attackStyle,
+    speed: entity.hasPosition.speed,
+    sizeMult: entity.isMinion.sizeMult ?? 1.0,
+    nodeId: entity.hasPosition.nodeId,
+    hitboxRects: entity.hasHitbox?.rects ?? [FALLBACK_MONSTER_AABB],
+  };
+}
+
+export type EntityView = PlayerView | MonsterView | MinionView;

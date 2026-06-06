@@ -1,8 +1,7 @@
 packages:
   - "client"
+  - "admin"
   - "server"
   - "shared"
 allowBuilds:
-  '0': esbuild
-  better-sqlite3: set this to true or false
   esbuild: true

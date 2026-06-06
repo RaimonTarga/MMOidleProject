@@ -389,6 +389,36 @@
   color: #aaa8dc;
 }
 
+/* ── Mechanic / weapon effect lines (Forge cards) ───────────────────────────── */
+.craft-recipe__effects {
+  list-style: none;
+  margin: 2px 0 0;
+  padding: 6px 8px;
+  border-radius: 4px;
+  border: 1px solid rgba(70, 64, 130, 0.30);
+  background: rgba(10, 8, 26, 0.55);
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.craft-recipe__effect-line {
+  position: relative;
+  padding-left: 12px;
+  font-size: 10px;
+  line-height: 1.35;
+  color: #b8c0e8;
+}
+
+.craft-recipe__effect-line::before {
+  content: '◆';
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-size: 7px;
+  color: #6a78c0;
+}
+
 /* ── Footer (desc + button / lock) ──────────────────────────────────────── */
 .craft-recipe__footer {
   display: flex;
@@ -556,12 +586,26 @@
 .craft-unlock-row {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 8px;
   padding: 4px 6px;
   border-radius: 3px;
   border: 1px solid rgba(50, 45, 100, 0.30);
   background: rgba(8, 6, 22, 0.85);
   opacity: 0.70;
+}
+
+/* "What you unlock" summary — wraps to its own line under the row header. */
+.craft-unlock-row__summary {
+  flex-basis: 100%;
+  margin-left: 36px;
+  font-size: 9px;
+  line-height: 1.3;
+  color: #7a7ab0;
+}
+
+.craft-unlock-row--unlocked .craft-unlock-row__summary {
+  color: #8ea0c8;
 }
 
 .craft-unlock-row--unlocked {
@@ -741,3 +785,177 @@
 
 .craft-card-result--ok  .craft-card-result__text { color: #77eebb; }
 .craft-card-result--err .craft-card-result__text { color: #ff8877; }
+
+/* ── Upgrade tab ─────────────────────────────────────────────────────────── */
+.craft-upgrade__level {
+  font-size: 11px;
+  font-weight: bold;
+  color: #ffd24a;
+  flex-shrink: 0;
+  text-shadow: 0 0 8px rgba(255, 200, 60, 0.45);
+}
+
+.craft-upgrade--maxed {
+  border-color: rgba(200, 165, 60, 0.45);
+  background: rgba(24, 19, 6, 0.85);
+}
+
+/* ── Upgrade diff block (per-stat / per-mechanic change list) ─────────────── */
+.craft-upgrade__diff {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 5px 7px;
+  border-radius: 4px;
+  border: 1px solid rgba(60, 58, 120, 0.35);
+  background: rgba(10, 8, 26, 0.65);
+}
+
+.craft-upgrade__diff--maxed {
+  border-color: rgba(200, 165, 60, 0.35);
+  background: rgba(24, 19, 6, 0.55);
+  align-items: flex-start;
+}
+
+.craft-upgrade__diff-title {
+  font-size: 8px;
+  font-weight: bold;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: #ffd24a;
+  opacity: 0.85;
+}
+
+.craft-upgrade__diff-row {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.craft-upgrade__diff-label {
+  flex: 1;
+  min-width: 0;
+  font-size: 9px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: #8888b0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.craft-upgrade__diff-from {
+  font-size: 12px;
+  font-weight: bold;
+  color: #aab0d0;
+}
+
+.craft-upgrade__diff-arrow {
+  font-size: 11px;
+  color: #6a7050;
+}
+
+.craft-upgrade__diff-to {
+  font-size: 13px;
+  font-weight: bold;
+  color: #5de88a;
+  text-shadow: 0 0 8px rgba(80, 230, 130, 0.40);
+}
+
+.craft-upgrade__diff-delta {
+  font-size: 10px;
+  font-weight: bold;
+  min-width: 34px;
+  text-align: right;
+}
+
+.craft-upgrade__diff-row--up   .craft-upgrade__diff-delta { color: #5de88a; }
+.craft-upgrade__diff-row--down .craft-upgrade__diff-delta { color: #e88a5d; }
+.craft-upgrade__diff-row--down .craft-upgrade__diff-to    { color: #e88a5d; text-shadow: none; }
+
+.craft-upgrade__max {
+  font-size: 10px;
+  font-weight: bold;
+  letter-spacing: 0.8px;
+  color: #ffcf55;
+  text-shadow: 0 0 8px rgba(255, 200, 60, 0.45);
+}
+
+.craft-upgrade__req {
+  flex: 1;
+  min-width: 0;
+  font-size: 10px;
+  letter-spacing: 0.3px;
+}
+
+.craft-upgrade__req--ok  { color: #66bb88; }
+.craft-upgrade__req--bad { color: #cc7766; }
+
+/* Fancier success burst for upgrades. */
+@keyframes craft-upgrade-burst {
+  0%   { opacity: 0; transform: scale(0.85); }
+  18%  { opacity: 1; transform: scale(1.04); }
+  70%  { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(1); }
+}
+
+.craft-upgrade .craft-card-result--ok {
+  animation: craft-upgrade-burst 1.5s ease-out forwards;
+  background: radial-gradient(circle at center, rgba(40, 70, 30, 0.95), rgba(8, 28, 14, 0.95));
+  border-color: rgba(120, 230, 130, 0.65);
+  box-shadow: inset 0 0 32px rgba(110, 240, 150, 0.20), 0 0 18px rgba(90, 220, 120, 0.30);
+}
+
+.craft-upgrade .craft-card-result--ok .craft-card-result__icon {
+  color: #8effb0;
+  text-shadow: 0 0 12px rgba(120, 255, 160, 0.70);
+}
+
+/* ── Ultimate gear ───────────────────────────────────────────────────────── */
+.craft-filter-chip--ultimate {
+  color: #aa88ff;
+  border-color: rgba(120, 60, 200, 0.45);
+}
+
+.craft-filter-chip--ultimate.craft-filter-chip--active {
+  color: #cc99ff;
+  border-color: rgba(160, 80, 255, 0.65);
+  background: rgba(80, 30, 140, 0.25);
+}
+
+.craft-recipe--ultimate {
+  border-color: rgba(120, 60, 200, 0.55);
+  background: rgba(18, 8, 36, 0.95);
+  box-shadow: 0 0 12px rgba(100, 40, 180, 0.15);
+}
+
+.craft-recipe--ultimate:not(.craft-recipe--owned):not(.craft-recipe--unaffordable):hover {
+  border-color: rgba(160, 80, 255, 0.75);
+  box-shadow: 0 0 16px rgba(120, 60, 220, 0.25);
+}
+
+.craft-recipe__source {
+  font-size: 8px;
+  font-weight: bold;
+  color: #aa77ee;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  padding: 1px 5px;
+  border-radius: 2px;
+  background: rgba(80, 30, 140, 0.30);
+  border: 1px solid rgba(140, 80, 220, 0.35);
+}
+
+.craft-biome-section--ultimate {
+  border: 1px solid rgba(100, 50, 180, 0.35);
+  border-radius: 6px;
+  padding: 10px 12px;
+  margin-bottom: 14px;
+  background: rgba(12, 6, 28, 0.85);
+}
+
+.craft-unlock-row__status--boss {
+  color: #aa66cc;
+  font-size: 7px;
+  letter-spacing: 0.3px;
+}

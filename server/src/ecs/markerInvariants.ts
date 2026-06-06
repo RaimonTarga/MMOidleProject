@@ -32,6 +32,7 @@ const MONSTER_MARKER_CHECKS: MarkerCheck[] = [
   { marker: "hasSmolder", effectId: "dot-smolder" },
   { marker: "hasEntropy", effectId: ENT_DOT_FX },
   { marker: "hasAshbrandBurn", effectId: "ashbrand-burn" },
+  { marker: "hasVoidCorruption", effectId: "void-corruption" },
 ];
 
 const ARCHETYPE_SLICE_CHECKS: ArchetypeSliceCheck[] = [
@@ -67,6 +68,11 @@ const ARCHETYPE_SLICE_CHECKS: ArchetypeSliceCheck[] = [
     shouldBePresent: (entity) => entity.usesSkills?.combatArchetype === "reload",
     label: "reload archetype",
   },
+  {
+    slice: "summonsMinions",
+    shouldBePresent: (entity) => entity.usesSkills?.combatArchetype === "summoner",
+    label: "summoner archetype",
+  },
 ];
 
 function hasEffect(
@@ -100,20 +106,50 @@ function checkAbsentState(entity: ServerEntity, violations: string[]): void {
   if (entity.isMoving && entity.isMoving.motion.magnitude <= 0) {
     violations.push(`${entity.entityId}: isMoving present with zero motion`);
   }
+  if (entity.isRooted && entity.isMoving) {
+    violations.push(`${entity.entityId}: isRooted but isMoving present`);
+  }
   if (entity.holdsShields && entity.holdsShields.shields.length === 0) {
     violations.push(`${entity.entityId}: holdsShields present with no shields`);
   }
-  if (entity.evadesHits && entity.evadesHits.threshold <= 0) {
-    violations.push(`${entity.entityId}: evadesHits present with disabled threshold`);
+  if (entity.evadesHits && entity.evadesHits.dodgeRate <= 0) {
+    violations.push(`${entity.entityId}: evadesHits present with zero dodgeRate`);
   }
   if (entity.hasAttackTarget && entity.hasAttackTarget.targetId.length === 0) {
     violations.push(`${entity.entityId}: hasAttackTarget present with empty target`);
   }
-  if (entity.hasAggroTarget && entity.hasAggroTarget.playerId.length === 0) {
-    violations.push(`${entity.entityId}: hasAggroTarget present with empty player target`);
+  if (entity.hasAggroTarget && entity.hasAggroTarget.targetId.length === 0) {
+    violations.push(`${entity.entityId}: hasAggroTarget present with empty target id`);
   }
   if (entity.isBossEngaged && !entity.scriptsBoss) {
     violations.push(`${entity.entityId}: isBossEngaged present without scriptsBoss`);
+  }
+  if (entity.isUltimateEngaged && !entity.scriptsUltimate) {
+    violations.push(`${entity.entityId}: isUltimateEngaged present without scriptsUltimate`);
+  }
+  if (entity.hasStatus?.ultimateStatus && !entity.isUltimateEngaged) {
+    violations.push(`${entity.entityId}: ultimateStatus present without isUltimateEngaged`);
+  }
+  if (entity.hasStatus?.ultimateStatus) {
+    const status = entity.hasStatus.ultimateStatus;
+    if (status.stageIndex < 0 || status.stageIndex >= status.stageCount) {
+      violations.push(`${entity.entityId}: ultimateStatus.stageIndex out of range`);
+    }
+  }
+  if (entity.isInvulnerable && !entity.isMonster && !entity.isPlayer) {
+    violations.push(`${entity.entityId}: isInvulnerable present on non-entity`);
+  }
+  if (entity.isEncounterAdd && !entity.isMonster) {
+    violations.push(`${entity.entityId}: isEncounterAdd present on non-monster`);
+  }
+  if (entity.isNodeFeatureSpawn && !entity.isMonster) {
+    violations.push(`${entity.entityId}: isNodeFeatureSpawn present on non-monster`);
+  }
+  if (entity.hasEnvironmentalDot && !entity.isPlayer) {
+    violations.push(`${entity.entityId}: hasEnvironmentalDot present on non-player`);
+  }
+  if (entity.hasNodeFeatureEffect && !entity.isPlayer) {
+    violations.push(`${entity.entityId}: hasNodeFeatureEffect present on non-player`);
   }
   if (entity.isChanneling && entity.isChanneling.remainingMs <= 0) {
     violations.push(`${entity.entityId}: isChanneling present with expired timer`);
@@ -157,6 +193,17 @@ export function assertMarkerInvariants(world: World): string[] {
     checkEntity(entity, [{ marker: "hasDot", effectId: "dot" }], violations);
     checkAbsentState(entity, violations);
     checkArchetypeSlices(entity, violations);
+    if (entity.isDead) {
+      if (entity.hasHealth && entity.hasHealth.hp !== 0) {
+        violations.push(`${entity.entityId}: isDead but hp=${entity.hasHealth.hp}`);
+      }
+      if (entity.isMoving) {
+        violations.push(`${entity.entityId}: isDead but isMoving present`);
+      }
+      if (entity.hasAttackTarget) {
+        violations.push(`${entity.entityId}: isDead but hasAttackTarget present`);
+      }
+    }
   }
 
   return violations;
@@ -164,7 +211,11 @@ export function assertMarkerInvariants(world: World): string[] {
 
 export function assertNetworkedComponentInvariants(world: World): string[] {
   const violations: string[] = [];
-  for (const entity of [...world.playerEntities, ...world.monsterEntities]) {
+  for (const entity of [
+    ...world.playerEntities,
+    ...world.monsterEntities,
+    ...world.minionEntities,
+  ]) {
     const kind = entityNetworkKind(entity);
     if (!kind) continue;
     const allowed = new Set(networkedKeysForKind(kind));

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useAtom, useAtomValue } from "jotai";
 import { hudBus } from "../hudBus";
 import { SkillTreePanel } from "../ui/SkillTreePanel";
+import { RunesPanel } from "../ui/RunesPanel";
 import { InventoryPanel } from "../ui/InventoryPanel";
 import { CraftingPanel } from "../ui/CraftingPanel";
 import { MapPanel } from "../ui/MapPanel";
@@ -12,13 +13,17 @@ import { QuestOverlay } from "./quest/QuestOverlay";
 import { SKILL_TREE, NODE_BIOMES, BIOME_DATABASE } from "@mmo-idle/shared";
 import {
   craftTabAtom,
+  deathOverlayAtom,
   equipmentAtom,
   inventoryAtom,
   inventoryOpenAtom,
   mapHighlightNodesAtom,
   mapOpenAtom,
   playerNodeIdAtom,
+  runesOpenAtom,
   selectedClassAtom,
+  selectedRangeAtom,
+  selectedSubVariantAtom,
   settingsOpenAtom,
   skillPointsAtom,
   skillTreeOpenAtom,
@@ -27,6 +32,7 @@ import "./hud.css";
 
 export function RightSidebar() {
   const [treeOpen, setTreeOpen] = useAtom(skillTreeOpenAtom);
+  const [runesOpen, setRunesOpen] = useAtom(runesOpenAtom);
   const [invOpen, setInvOpen] = useAtom(inventoryOpenAtom);
   const [craftTab, setCraftTab] = useAtom(craftTabAtom);
   const [mapOpen, setMapOpen] = useAtom(mapOpenAtom);
@@ -46,14 +52,25 @@ export function RightSidebar() {
   );
 
   const selectedClass = useAtomValue(selectedClassAtom);
+  const selectedSubVariant = useAtomValue(selectedSubVariantAtom);
+  const selectedRange = useAtomValue(selectedRangeAtom);
   const skillPoints = useAtomValue(skillPointsAtom);
   const inventory = useAtomValue(inventoryAtom);
   const equipment = useAtomValue(equipmentAtom);
   const nodeId = useAtomValue(playerNodeIdAtom);
+  const dead = useAtomValue(deathOverlayAtom).active;
 
-  const className = selectedClass
-    ? (SKILL_TREE.get(selectedClass)?.name ?? selectedClass)
-    : null;
+  const className = (() => {
+    if (!selectedClass) return null;
+    if (selectedRange) return SKILL_TREE.get(selectedRange)?.name ?? selectedRange;
+    if (selectedSubVariant) {
+      for (const node of SKILL_TREE.values()) {
+        if (node.tier === 1 && node.classId === selectedClass && node.subVariantId === selectedSubVariant)
+          return node.name;
+      }
+    }
+    return SKILL_TREE.get(selectedClass)?.name ?? selectedClass;
+  })();
 
   const zoneLabel = (() => {
     if (!nodeId) return null;
@@ -96,16 +113,22 @@ export function RightSidebar() {
             )}
             {!className && (
               <div className="stat-row">
-                <span
-                  className="stat-label"
-                  style={{ color: "#33334a", fontSize: 10 }}
-                >
-                  No class selected
-                </span>
+                <span className="stat-label">Class</span>
+                <span className="stat-value" style={{ color: "#666" }}>Vagrant</span>
               </div>
             )}
           </div>
         )}
+      </div>
+
+      <div className="sidebar-panel">
+        <div className="panel-title">Runes</div>
+        <button
+          className={`auto-btn${runesOpen ? " active" : ""}`}
+          onClick={() => setRunesOpen((v) => !v)}
+        >
+          {runesOpen ? "CLOSE RUNES" : "OPEN RUNES"}
+        </button>
       </div>
 
       <EssencePanel />
@@ -114,8 +137,11 @@ export function RightSidebar() {
         <div className="panel-title">Inventory</div>
 
         <button
-          className={`auto-btn${invOpen ? " active" : ""}`}
-          onClick={() => setInvOpen((v) => !v)}
+          className={`auto-btn${invOpen ? " active" : ""}${dead ? " auto-btn--disabled" : ""}`}
+          disabled={dead}
+          onClick={() => {
+            if (!dead) setInvOpen((v) => !v);
+          }}
         >
           {invOpen ? "CLOSE BAG" : "OPEN BAG"}
         </button>
@@ -147,15 +173,20 @@ export function RightSidebar() {
         <div className="panel-title">Crafting</div>
 
         <button
-          className={`auto-btn${craftTab === "biome" ? " active" : ""}`}
-          onClick={() => setCraftTab((t) => (t === "biome" ? null : "biome"))}
+          className={`auto-btn${craftTab === "biome" ? " active" : ""}${dead ? " auto-btn--disabled" : ""}`}
+          disabled={dead}
+          onClick={() => {
+            if (!dead) setCraftTab((t) => (t === "biome" ? null : "biome"));
+          }}
         >
           {craftTab === "biome" ? "CLOSE BIOME" : "BIOME PROGRESS"}
         </button>
         <button
-          className={`auto-btn${craftTab === "forge" ? " active" : ""}`}
+          className={`auto-btn${craftTab === "forge" ? " active" : ""}${dead ? " auto-btn--disabled" : ""}`}
           style={{ marginTop: 4, position: "relative" }}
+          disabled={dead}
           onClick={() => {
+            if (dead) return;
             setCraftTab((t) => (t === "forge" ? null : "forge"));
             setForgeBadge(0);
           }}
@@ -176,6 +207,16 @@ export function RightSidebar() {
               }}
             />
           )}
+        </button>
+        <button
+          className={`auto-btn${craftTab === "upgrade" ? " active" : ""}${dead ? " auto-btn--disabled" : ""}`}
+          style={{ marginTop: 4 }}
+          disabled={dead}
+          onClick={() => {
+            if (!dead) setCraftTab((t) => (t === "upgrade" ? null : "upgrade"));
+          }}
+        >
+          {craftTab === "upgrade" ? "CLOSE UPGRADE" : "UPGRADE ITEMS"}
         </button>
       </div>
 
@@ -219,6 +260,7 @@ export function RightSidebar() {
       </div>
 
       {treeOpen && <SkillTreePanel onClose={() => setTreeOpen(false)} />}
+      {runesOpen && <RunesPanel onClose={() => setRunesOpen(false)} />}
       {invOpen && <InventoryPanel onClose={() => setInvOpen(false)} />}
       {craftTab !== null && (
         <CraftingPanel

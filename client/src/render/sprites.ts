@@ -1,9 +1,28 @@
-import Phaser from 'phaser';
-import type { PlayerView, MonsterView, Vec2 } from '@mmo-idle/shared';
-import { ATLAS_KEY, getPlayerFrame, getMonsterFrame } from '../sprites';
-import type { RenderState } from './state';
-import type { GameScene } from '../scenes/GameScene';
-import { DEPTH } from './depth';
+import Phaser from "phaser";
+import type {
+  PlayerView,
+  MonsterView,
+  MinionView,
+  Vec2,
+} from "@mmo-idle/shared";
+import {
+  ATLAS_KEY,
+  GRAVES_KEY,
+  GRAVE_DISPLAY_W,
+  GRAVE_DISPLAY_H,
+  getPlayerFrame,
+  getMonsterFrame,
+} from "../sprites";
+import type { RenderState } from "./state";
+import type { GameScene } from "../scenes/GameScene";
+import { DEPTH } from "./depth";
+
+type SpriteSnapshot = PlayerView | MonsterView | MinionView;
+
+function getMonsterTypeIdFromSnapshot(snapshot: SpriteSnapshot): string {
+  if ("monsterTypeId" in snapshot) return snapshot.monsterTypeId;
+  return "";
+}
 
 export function tryMakeImage(
   scene: Phaser.Scene,
@@ -11,17 +30,36 @@ export function tryMakeImage(
   frame: string | null,
   displayW: number,
   displayH: number,
+  textureKey: string = ATLAS_KEY,
 ): Phaser.GameObjects.Image | null {
   if (!frame) return null;
-  if (!scene.textures.exists(ATLAS_KEY)) return null;
-  if (!scene.textures.get(ATLAS_KEY).has(frame)) return null;
-  return scene.add.image(pos.x, pos.y, ATLAS_KEY, frame).setDisplaySize(displayW, displayH);
+  if (!scene.textures.exists(textureKey)) return null;
+  if (!scene.textures.get(textureKey).has(frame)) return null;
+  return scene.add
+    .image(pos.x, pos.y, textureKey, frame)
+    .setDisplaySize(displayW, displayH);
+}
+
+export function tryMakeGraveImage(
+  scene: Phaser.Scene,
+  pos: Vec2,
+  frameIndex: number,
+): Phaser.GameObjects.Image | null {
+  const frame = String(frameIndex);
+  return tryMakeImage(
+    scene,
+    pos,
+    frame,
+    GRAVE_DISPLAY_W,
+    GRAVE_DISPLAY_H,
+    GRAVES_KEY,
+  );
 }
 
 export function ensureSprite(
   state: RenderState,
   id: string,
-  snapshot: PlayerView | MonsterView,
+  snapshot: SpriteSnapshot,
   scene: GameScene,
   opts: {
     displayW: number;
@@ -34,23 +72,32 @@ export function ensureSprite(
 
   const frame = opts.isPlayer
     ? getPlayerFrame(snapshot as PlayerView)
-    : getMonsterFrame((snapshot as MonsterView).monsterTypeId);
+    : getMonsterFrame(getMonsterTypeIdFromSnapshot(snapshot));
 
   const sprite =
     tryMakeImage(scene, snapshot.pos, frame, opts.displayW, opts.displayH) ??
-    scene.add.rectangle(snapshot.pos.x, snapshot.pos.y, opts.displayW, opts.displayH, opts.fallbackColor);
+    scene.add.rectangle(
+      snapshot.pos.x,
+      snapshot.pos.y,
+      opts.displayW,
+      opts.displayH,
+      opts.fallbackColor,
+    );
 
   sprite.setDepth(DEPTH.SPRITE + snapshot.pos.y);
   state.sprite.set(id, sprite);
 
   const meta = state.spriteMeta.get(id);
-  if (meta) meta.currentFrame = frame;
+  if (meta) {
+    meta.currentFrame = frame;
+    meta.textureKey = ATLAS_KEY;
+  }
 }
 
 export function updateSpriteFrame(
   state: RenderState,
   id: string,
-  snapshot: PlayerView | MonsterView,
+  snapshot: SpriteSnapshot,
   scene: GameScene,
   opts: {
     displayW: number;
@@ -59,62 +106,70 @@ export function updateSpriteFrame(
     isPlayer: boolean;
   },
 ): void {
-  const newFrame = opts.isPlayer
-    ? getPlayerFrame(snapshot as PlayerView)
-    : getMonsterFrame((snapshot as MonsterView).monsterTypeId);
+  const playerView = opts.isPlayer ? (snapshot as PlayerView) : null;
+  const newFrame = playerView?.isDead
+    ? String(playerView.graveFrame ?? 0)
+    : opts.isPlayer
+      ? getPlayerFrame(snapshot as PlayerView)
+      : getMonsterFrame(getMonsterTypeIdFromSnapshot(snapshot));
+
+  const textureKey = playerView?.isDead ? GRAVES_KEY : ATLAS_KEY;
+  const displayW = playerView?.isDead ? GRAVE_DISPLAY_W : opts.displayW;
+  const displayH = playerView?.isDead ? GRAVE_DISPLAY_H : opts.displayH;
 
   const meta = state.spriteMeta.get(id);
-  if (!meta || newFrame === meta.currentFrame) return;
-
   const existing = state.sprite.get(id);
-  const canSwapInPlace =
-    existing instanceof Phaser.GameObjects.Image &&
-    !!newFrame &&
-    scene.textures.exists(ATLAS_KEY) &&
-    scene.textures.get(ATLAS_KEY).has(newFrame);
+  if (!meta) return;
+  if (existing) existing.setDisplaySize(displayW, displayH);
 
-  if (canSwapInPlace) {
-    existing
-      .setTexture(ATLAS_KEY, newFrame)
-      .setDisplaySize(opts.displayW, opts.displayH);
-    // depth is managed per-frame by stepInterpolation; no reset needed
-    meta.currentFrame = newFrame;
-    return;
-  }
+  const sameFrame =
+    newFrame === meta.currentFrame && meta.textureKey === textureKey;
+  if (sameFrame) return;
 
   const interp = state.interpolation.get(id);
   const base = interp?.base ?? snapshot.pos;
-  const prevDepth = existing?.depth ?? (DEPTH.SPRITE + base.y);
+  const prevDepth = existing?.depth ?? DEPTH.SPRITE + base.y;
 
   existing?.destroy();
+
   const sprite =
-    tryMakeImage(scene, base, newFrame, opts.displayW, opts.displayH) ??
-    scene.add.rectangle(base.x, base.y, opts.displayW, opts.displayH, opts.fallbackColor);
+    (playerView?.isDead
+      ? tryMakeGraveImage(scene, base, playerView.graveFrame ?? 0)
+      : tryMakeImage(scene, base, newFrame, displayW, displayH, textureKey)) ??
+    scene.add.rectangle(base.x, base.y, displayW, displayH, opts.fallbackColor);
+
   sprite.setDepth(prevDepth);
   state.sprite.set(id, sprite);
   meta.currentFrame = newFrame;
+  meta.textureKey = textureKey;
 }
 
 export function applySpriteTint(
-  sprite: Phaser.GameObjects.Image | Phaser.GameObjects.Rectangle,
+  sprite:
+    | Phaser.GameObjects.Image
+    | Phaser.GameObjects.Sprite
+    | Phaser.GameObjects.Rectangle,
   color: number,
 ): void {
-  if (sprite instanceof Phaser.GameObjects.Image) {
-    sprite.setTint(color);
+  if (sprite instanceof Phaser.GameObjects.Rectangle) {
+    sprite.setFillStyle(color, 1);
     return;
   }
-  sprite.setFillStyle(color, 1);
+  sprite.setTint(color);
 }
 
 export function resetSpriteTint(
-  sprite: Phaser.GameObjects.Image | Phaser.GameObjects.Rectangle,
+  sprite:
+    | Phaser.GameObjects.Image
+    | Phaser.GameObjects.Sprite
+    | Phaser.GameObjects.Rectangle,
   fallbackColor: number,
 ): void {
-  if (sprite instanceof Phaser.GameObjects.Image) {
-    sprite.clearTint();
+  if (sprite instanceof Phaser.GameObjects.Rectangle) {
+    sprite.setFillStyle(fallbackColor, 1);
     return;
   }
-  sprite.setFillStyle(fallbackColor, 1);
+  sprite.clearTint();
 }
 
 export function destroySprite(state: RenderState, id: string): void {

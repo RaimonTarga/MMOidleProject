@@ -11,17 +11,31 @@ import {
 } from '../settings/keybinds';
 import {
   craftTabAtom,
+  deathOverlayAtom,
   debugPanelOpenAtom,
+  flashEmoteWheel,
   inventoryOpenAtom,
   mapOpenAtom,
   questOpenAtom,
   settingsOpenAtom,
   skillTreeOpenAtom,
+  type EmoteWheelDirection,
 } from '../hud/atoms';
-import { setHoldStill, setKeyboardVector } from './movement';
+import { emoteForWheelDirection } from '@mmo-idle/shared';
+import { cancelActiveMove, setHoldStill, setKeyboardVector } from './movement';
 import { closeTopmostOverlay } from './overlayStack';
+import { ALTAR_ARC_CONFIG, getAltarArc } from '../scenes/game/runeAltar';
 
 const MOBILE_QUERY = '(max-width: 1100px)';
+
+const ARROW_TO_WHEEL: Record<string, EmoteWheelDirection> = {
+  ArrowUp: 'up',
+  ArrowDown: 'down',
+  ArrowLeft: 'left',
+  ArrowRight: 'right',
+};
+
+const EMOTE_CLIENT_COOLDOWN_MS = 400;
 
 export function attachKeyboard(scene: GameScene): () => void {
   if (window.matchMedia(MOBILE_QUERY).matches) return () => {};
@@ -29,6 +43,13 @@ export function attachKeyboard(scene: GameScene): () => void {
   const store = getDefaultStore();
   const held = new Set<ActionId>();
   let stillHeld = false;
+  let lastEmoteAt = 0;
+  // Debounce the zero-vector transition so a keyup→keydown gap during a
+  // direction change (release one key a few ms before pressing the next)
+  // doesn't emit a spurious stop that briefly halts the server-side mover
+  // mid-walk. A new non-zero vector cancels the pending zero.
+  const KB_STOP_DEBOUNCE_MS = 40;
+  let kbZeroTimer: number | null = null;
 
   function isEditable(target: EventTarget | null): boolean {
     if (!(target instanceof HTMLElement)) return false;
@@ -37,7 +58,11 @@ export function attachKeyboard(scene: GameScene): () => void {
     return tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT';
   }
 
-  function publishKbVector(): void {
+  function applyKbVector(immediate: boolean): void {
+    if (kbZeroTimer !== null) {
+      window.clearTimeout(kbZeroTimer);
+      kbZeroTimer = null;
+    }
     if (stillHeld) {
       setKeyboardVector(0, 0);
       return;
@@ -47,20 +72,38 @@ export function attachKeyboard(scene: GameScene): () => void {
     const dy =
       (held.has('move.down') ? 1 : 0) - (held.has('move.up') ? 1 : 0);
     const len = Math.hypot(dx, dy);
-    if (len === 0) setKeyboardVector(0, 0);
-    else setKeyboardVector(dx / len, dy / len);
+    if (len === 0) {
+      if (immediate) {
+        setKeyboardVector(0, 0);
+      } else {
+        kbZeroTimer = window.setTimeout(() => {
+          kbZeroTimer = null;
+          setKeyboardVector(0, 0);
+        }, KB_STOP_DEBOUNCE_MS);
+      }
+      return;
+    }
+    setKeyboardVector(dx / len, dy / len);
+  }
+
+  function publishKbVector(): void {
+    applyKbVector(false);
   }
 
   function updateStillHeld(heldNow: boolean): void {
     if (stillHeld === heldNow) return;
     stillHeld = heldNow;
     setHoldStill(heldNow);
-    publishKbVector();
+    if (heldNow) cancelActiveMove(scene);
+    // Hold-still toggles are deliberate: apply the resulting vector immediately
+    // (stop, or resume if WASD is still held) without the rollover debounce.
+    applyKbVector(true);
   }
 
   function onKeyDown(event: KeyboardEvent): void {
     if (!scene.myId || isEditable(event.target)) return;
     if (store.get(captureModeAtom) !== null) return;
+    const dead = store.get(deathOverlayAtom).active;
 
     const bindings = getBindings();
 
@@ -70,17 +113,43 @@ export function attachKeyboard(scene: GameScene): () => void {
       return;
     }
 
-    for (const mv of MOVEMENT_ACTIONS) {
-      if (matchesKey(event, mv, bindings)) {
-        event.preventDefault();
-        if (!event.repeat) {
-          held.add(mv);
-          publishKbVector();
+    if (!dead) {
+      for (const mv of MOVEMENT_ACTIONS) {
+        if (matchesKey(event, mv, bindings)) {
+          event.preventDefault();
+          if (!event.repeat) {
+            held.add(mv);
+            publishKbVector();
+          }
+          return;
         }
-        return;
       }
     }
     if (event.repeat) return;
+
+    // Enter: trigger the rune altar interaction for the arc the player stands in.
+    if (event.code === 'Enter' || event.code === 'NumpadEnter') {
+      if (dead) return;
+      const arc = getAltarArc(scene);
+      if (arc && ALTAR_ARC_CONFIG[arc].action === 'resetClass') {
+        event.preventDefault();
+        hudBus.requestResetClass();
+      }
+      return;
+    }
+
+    const wheelDir = ARROW_TO_WHEEL[event.code];
+    if (wheelDir && !dead) {
+      event.preventDefault();
+      flashEmoteWheel(wheelDir);
+      const emoteId = emoteForWheelDirection(wheelDir);
+      if (!emoteId) return;
+      const now = Date.now();
+      if (now - lastEmoteAt < EMOTE_CLIENT_COOLDOWN_MS) return;
+      lastEmoteAt = now;
+      hudBus.requestEmote(emoteId);
+      return;
+    }
 
     if (matchesKey(event, 'toggle.autoCombat', bindings)) {
       event.preventDefault();
@@ -88,6 +157,7 @@ export function attachKeyboard(scene: GameScene): () => void {
       return;
     }
     if (matchesKey(event, 'toggle.inventory', bindings)) {
+      if (dead) return;
       event.preventDefault();
       store.set(inventoryOpenAtom, (v) => !v);
       return;
@@ -118,6 +188,7 @@ export function attachKeyboard(scene: GameScene): () => void {
       return;
     }
     if (matchesKey(event, 'toggle.crafting', bindings)) {
+      if (dead) return;
       store.set(craftTabAtom, (t) => (t === 'forge' ? null : 'forge'));
       return;
     }
@@ -144,7 +215,8 @@ export function attachKeyboard(scene: GameScene): () => void {
   function onBlur(): void {
     held.clear();
     updateStillHeld(false);
-    publishKbVector();
+    // Focus loss is an unambiguous stop — bypass the rollover debounce.
+    applyKbVector(true);
   }
 
   window.addEventListener('keydown', onKeyDown);
@@ -157,6 +229,10 @@ export function attachKeyboard(scene: GameScene): () => void {
     window.removeEventListener('blur', onBlur);
     held.clear();
     updateStillHeld(false);
+    if (kbZeroTimer !== null) {
+      window.clearTimeout(kbZeroTimer);
+      kbZeroTimer = null;
+    }
     setKeyboardVector(0, 0);
   };
 }
