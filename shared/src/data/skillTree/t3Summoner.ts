@@ -149,6 +149,7 @@ export const t3SummonerEntries = [
       'summoner.minion-count-cap':            1,
       'summoner.minion-hp-pct':               1.0,
       'summoner.minion-size-mult':            2.5,
+      'summoner.minion-speed-mult':           2.0,
       'summoner.minion-respawn-ms':           12000,
       'summoner.guardian-plating-share-pct':  0.20,
       'summoner.guardian-dr-share-pct':       0.20,

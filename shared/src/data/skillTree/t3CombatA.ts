@@ -151,12 +151,17 @@ export const t3CombatEntriesA = [
   // ── Tier 3: Reload — Light ───────────────────────────────────────────────────
 
   ['reload-light-t3-a', {
-    id: 'reload-light-t3-a', name: 'Exploding Clip', tier: 3,
+    id: 'reload-light-t3-a', name: 'Laser', tier: 3,
     classId: 'reload-root', subVariantId: 'light',
     parent: 'reload-light', children: [],
-    description: 'The last bullet in every clip explodes outward for 3.5× damage. A high spike on an already aggressive rhythm.',
+    description: 'Replaces your magazine with a continuous laser. It fires every server tick while a target is in range, building Heat from 0% to 100%. At 100% Heat it overheats and cannot fire again until fully cooled.',
     cost: 1, statEffects: {},
-    mechanicEffects: { 'reload.exploding-clip': 1, 'reload.exploding-clip-mult': 3.5 },
+    mechanicEffects: {
+      'reload.laser': 1,
+      'reload.laser-damage-per-tick-pct': 0.18,
+      'reload.laser-heat-per-tick': 2,
+      'reload.laser-cool-per-tick': 2.5,
+    },
   }],
   ['reload-light-t3-b', {
     id: 'reload-light-t3-b', name: 'Hair Trigger', tier: 3,
@@ -206,36 +211,9 @@ export const t3CombatEntriesA = [
     },
   }],
   ['reload-balanced-t3-c', {
-    id: 'reload-balanced-t3-c', name: 'Cover Fire', tier: 3,
+    id: 'reload-balanced-t3-c', name: 'Snipe', tier: 3,
     classId: 'reload-root', subVariantId: 'balanced',
     parent: 'reload-balanced', children: [],
-    description: 'While reloading, take 45% less damage. Duck behind your own suppressive fire.',
-    cost: 1, statEffects: {},
-    mechanicEffects: {
-      'reload.cover-fire': 1,
-      'reload.cover-fire-dr': 0.45,
-    },
-  }],
-
-  // ── Tier 3: Reload — Heavy ────────────────────────────────────────────────────
-
-  ['reload-heavy-t3-a', {
-    id: 'reload-heavy-t3-a', name: 'Laser', tier: 3,
-    classId: 'reload-root', subVariantId: 'heavy',
-    parent: 'reload-heavy', children: [],
-    description: 'Replaces your magazine with a continuous laser. It fires every server tick while a target is in range, building Heat from 0% to 100%. At 100% Heat it overheats and cannot fire again until fully cooled.',
-    cost: 1, statEffects: {},
-    mechanicEffects: {
-      'reload.laser': 1,
-      'reload.laser-damage-per-tick-pct': 0.18,
-      'reload.laser-heat-per-tick': 2,
-      'reload.laser-cool-per-tick': 2.5,
-    },
-  }],
-  ['reload-heavy-t3-b', {
-    id: 'reload-heavy-t3-b', name: 'Snipe', tier: 3,
-    classId: 'reload-root', subVariantId: 'heavy',
-    parent: 'reload-heavy', children: [],
     description: 'Loads only 3 heavy shells. Your firing cadence is fixed and slow, ignoring attack speed, but attack speed instead scales shot damage. Shots deal extra damage against enemies still at full health.',
     cost: 1, statEffects: {},
     mechanicEffects: {
@@ -244,6 +222,28 @@ export const t3CombatEntriesA = [
       'reload.snipe-cooldown-ms': 2500,
       'reload.snipe-baseline-cd-ms': 1000,
       'reload.snipe-fullhp-mult': 2,
+    },
+  }],
+
+  // ── Tier 3: Reload — Heavy ────────────────────────────────────────────────────
+
+  ['reload-heavy-t3-a', {
+    id: 'reload-heavy-t3-a', name: 'Exploding Clip', tier: 3,
+    classId: 'reload-root', subVariantId: 'heavy',
+    parent: 'reload-heavy', children: [],
+    description: 'The last bullet in every clip explodes outward for 3.5× damage. A high spike on an already aggressive rhythm.',
+    cost: 1, statEffects: {},
+    mechanicEffects: { 'reload.exploding-clip': 1, 'reload.exploding-clip-mult': 3.5 },
+  }],
+  ['reload-heavy-t3-b', {
+    id: 'reload-heavy-t3-b', name: 'Cover Fire', tier: 3,
+    classId: 'reload-root', subVariantId: 'heavy',
+    parent: 'reload-heavy', children: [],
+    description: 'While reloading, take 45% less damage. Duck behind your own suppressive fire.',
+    cost: 1, statEffects: {},
+    mechanicEffects: {
+      'reload.cover-fire': 1,
+      'reload.cover-fire-dr': 0.45,
     },
   }],
   ['reload-heavy-t3-c', {
