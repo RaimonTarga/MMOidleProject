@@ -2,6 +2,8 @@ import {
   advanceMotion,
   getStatusEffect,
   vectorTo,
+  FROST_RAMP_EFFECT_ID,
+  frostRampMoveSlowPct,
   VOID_CORRUPTION_EFFECT_ID,
   CORRUPTION_SLOW_PER_STACK,
   CORRUPTION_MIN_SPEED_MULT,
@@ -50,13 +52,21 @@ export function updateMovement(world: World, dt: number, now: number) {
 
     const slow = getStatusEffect(entity.tracksCombat, 'slow');
     const slowMult = slow ? Math.max(0, slow.data['speedMult'] ?? 1) : 1;
+    // Tundra rampDebuff move-slow (capped), multiplicative with other slows.
+    const frostRamp = getStatusEffect(entity.tracksCombat, FROST_RAMP_EFFECT_ID);
+    const frostRampMult = frostRamp ? 1 - frostRampMoveSlowPct(frostRamp) : 1;
     const trample = getStatusEffect(entity.tracksCombat, 'summoner-trample-boon');
     const trampleMult = trample ? 1 + (trample.data.speedPct ?? 0.25) : 1;
     const bootMult = bootSpeedMultiplier(world, entity, now);
     const next = advanceMotion(
       entity.hasPosition.current,
       entity.isMoving.motion,
-      entity.hasPosition.speed * slowMult * trampleMult * bootMult * (dt / 1000),
+      entity.hasPosition.speed *
+        slowMult *
+        frostRampMult *
+        trampleMult *
+        bootMult *
+        (dt / 1000),
     );
     const resolved = resolveObstaclesForNode(
       world,

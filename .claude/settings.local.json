@@ -49,7 +49,12 @@
       "Bash(del *)",
       "Bash(grep -E \"\\\\.\\(css|scss\\)$\")",
       "Bash(dir /s /b \"C:\\\\Users\\\\osaif\\\\Documents\\\\Claude\\\\Projects\\\\MMO idle\\\\server\\\\src\\\\systems\\\\defense\")",
-      "Bash(powershell *)"
+      "Bash(powershell *)",
+      "PowerShell(pnpm typecheck *)",
+      "PowerShell(pnpm *)",
+      "PowerShell(Get-NetTCPConnection *)",
+      "PowerShell(docker compose *)",
+      "PowerShell(docker ps *)"
     ]
   }
 }

@@ -10,7 +10,7 @@ import type { Recipe } from './types';
 export const graveyardRecipeEntries = [
   ['graveyard-boots-t4', {
     id: 'graveyard-boots-t4', name: 'Gravewalker Boots',
-    recipeGroup: 'graveyard', requiredBiomeLevel: 1, slot: 'mobility',
+    recipeGroup: 'graveyard', requiredBiomeLevel: 3, slot: 'mobility',
     cost: { purple: 80 }, stats: { speed: 30 }, tier: 4,
     // Each kill adds a stack (max 3, 4s): +12% move speed and +12% tenacity per stack.
     mechanicEffects: {
@@ -21,8 +21,8 @@ export const graveyardRecipeEntries = [
     icon: 'items/boots/plate-boots-6.png',
     description: 'Each fallen foe lends a little of its lingering haste to the wearer.',
     upgrades: [
-      { stats: { speed: 8 },  cost: { purple: 40 },  requiredBiomeLevel: 2 },
-      { stats: { speed: 12 }, cost: { purple: 80 },  requiredBiomeLevel: 3 },
+      { stats: { speed: 8 },  cost: { purple: 40 },  requiredBiomeLevel: 4 },
+      { stats: { speed: 12 }, cost: { purple: 80 },  requiredBiomeLevel: 4 },
       { stats: { speed: 16 }, cost: { purple: 132 }, requiredBiomeLevel: 4 },
     ],
   }],

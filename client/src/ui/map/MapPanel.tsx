@@ -5,8 +5,9 @@ import { NODE_BIOMES, BIOME_DATABASE, formatRespawnRemaining } from '@mmo-idle/s
 import { hudBus } from '../../hudBus';
 import { autoPathAtom, bossFelledByNodeAtom, playerNodeIdAtom } from '../../hud/atoms';
 import { MAX_VIEW_C, MAX_VIEW_R, VIEWPORT, dungeonBadgeLabel, tileColor } from './constants';
-import { bfsPath, clampView, parseNodeId } from './pathing';
+import { clampView, parseNodeId } from './pathing';
 import { NodeInfo } from './NodeInfo';
+import { BiomeIcon } from './BiomeIcon';
 import { OverviewMap } from './OverviewMap';
 import { useMapClock } from './useMapClock';
 import { DEV_TOOLS_ENABLED } from '../../devTools';
@@ -26,24 +27,28 @@ export function MapPanel({ onClose, highlightNodes, focusNodeId }: Props) {
   const mapNow = useMapClock();
   const busAutoPath = useAtomValue(autoPathAtom);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
+  const [selectedId, setSelectedId] = useState<string | null>(focusNodeId ?? playerNodeId ?? null);
   const [autoPath, setAutoPath] = useState<string[] | null>(null);
 
   useEffect(() => setAutoPath(busAutoPath), [busAutoPath]);
 
+  // Default the selection to the player's node once it's known (panel opens populated).
+  useEffect(() => {
+    if (!selectedId && playerNodeId) setSelectedId(playerNodeId);
+  }, [playerNodeId, selectedId]);
+
   const pathSet = useMemo(() => new Set(autoPath ?? []), [autoPath]);
   const destNode = autoPath && autoPath.length > 0 ? autoPath[autoPath.length - 1] : null;
 
-  function handleTileClick(id: string, isCurrent: boolean, e: React.MouseEvent) {
+  // Clicking a tile selects it (shows details). Travel is an explicit button in
+  // NodeInfo, so selecting never moves the player or closes the panel.
+  function handleTileClick(id: string, e: React.MouseEvent) {
     if (SHOW_DEV_TELEPORT && e.shiftKey) {
       hudBus.requestTeleportToNode(id);
       onClose();
       return;
     }
-    if (isCurrent || !playerNodeId) return;
-    const path = bfsPath(playerNodeId, id);
-    if (!path || path.length <= 1) return;
-    hudBus.requestNavigateTo(path.slice(1));
-    onClose();
+    setSelectedId(id);
   }
 
   const playerPos = playerNodeId ? parseNodeId(playerNodeId) : null;
@@ -118,6 +123,7 @@ export function MapPanel({ onClose, highlightNodes, focusNodeId }: Props) {
                 const biome         = info ? BIOME_DATABASE.get(info.biomeGroup) : null;
                 const isCurrent     = playerNodeId === id;
                 const isHovered     = hoveredId === id;
+                const isSelected    = selectedId === id;
                 const isDungeon     = info?.isDungeon === true;
                 const dungeonBadge  = dungeonBadgeLabel(info);
                 const isDestination = id === destNode;
@@ -135,6 +141,7 @@ export function MapPanel({ onClose, highlightNodes, focusNodeId }: Props) {
                       'map-tile',
                       isDungeon       ? 'map-tile--dungeon'       : '',
                       isOverlordFelled ? 'map-tile--felled'       : '',
+                      isSelected      ? 'map-tile--selected'      : '',
                       isCurrent       ? 'map-tile--current'       : '',
                       isHovered && !isCurrent ? 'map-tile--hovered' : '',
                       isPath          ? 'map-tile--path'          : '',
@@ -144,10 +151,11 @@ export function MapPanel({ onClose, highlightNodes, focusNodeId }: Props) {
                     style={{ background: tileColor(info?.biomeGroup ?? '') }}
                     onMouseEnter={() => setHoveredId(id)}
                     onMouseLeave={() => setHoveredId(null)}
-                    onClick={(e) => handleTileClick(id, isCurrent, e)}
-                    title={SHOW_DEV_TELEPORT ? 'Click to navigate here. Shift+Click to teleport.' : (isCurrent ? undefined : 'Click to navigate here')}
+                    onClick={(e) => handleTileClick(id, e)}
+                    title={SHOW_DEV_TELEPORT ? 'Click to view details. Shift+Click to teleport.' : 'Click to view details'}
                   >
                     <span className="map-tile__tier">{tierBadge}</span>
+                    {info && <BiomeIcon biomeGroup={info.biomeGroup} size={38} className="map-tile__icon" />}
                     <span className="map-tile__name">{biome?.name ?? '?'}</span>
                     {dungeonBadge   && <span className="map-tile__dungeon-badge">{dungeonBadge}</span>}
                     {isOverlordFelled && (
@@ -170,9 +178,9 @@ export function MapPanel({ onClose, highlightNodes, focusNodeId }: Props) {
           </div>
 
           <div className="map-info-panel">
-            {hoveredId
-              ? <NodeInfo nodeId={hoveredId} />
-              : <div className="map-info__empty">Hover a zone to see details.</div>}
+            {selectedId
+              ? <NodeInfo nodeId={selectedId} playerNodeId={playerNodeId} onClose={onClose} />
+              : <div className="map-info__empty">Select a zone to see details.</div>}
           </div>
         </div>
       </div>

@@ -143,6 +143,16 @@ export const SHARED_KEYS = [
   'shared.damage-mult',
   // Damage multiplier applied on the very first hit ever landed on a fresh monster entity.
   'weapon.first-strike-mult',
+  // Brittle armor-shred debuff: flat plating reduction per stack applied on hit.
+  'weapon.brittle-plating',
+  // Brittle armor-shred debuff: damage-reduction fraction removed per stack applied on hit.
+  'weapon.brittle-dr',
+  // Brittle armor-shred debuff: maximum stacks the debuff can reach.
+  'weapon.brittle-stacks',
+  // Flurry: attack-speed fraction granted per stack (0.06 = +6% per stack).
+  'weapon.flurry-pct',
+  // Flurry: maximum attack-speed stacks the buff can reach.
+  'weapon.flurry-stacks',
 ] as const;
 
 export const SUMMONER_KEYS = [

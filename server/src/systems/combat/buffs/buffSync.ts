@@ -1,6 +1,9 @@
 import {
   formatLogNumber,
   getStatusEffect,
+  FROST_RAMP_EFFECT_ID,
+  frostRampMoveSlowPct,
+  frostRampAtkSlowPct,
   type WorldLogActor,
   type PlayerBuff,
   type BuffId,
@@ -65,6 +68,62 @@ const DEBUFF_BUFFS = [
       };
     },
     { category: "neutral", shape: "diamond", color: "#aa66ff", label: "ROOT" },
+  ),
+  defineBuff(
+    "debuff-frost-ramp",
+    ({ playerCs, world }) => {
+      if (!playerCs) return null;
+      const ramp = getStatusEffect(playerCs, FROST_RAMP_EFFECT_ID);
+      if (!ramp) return null;
+      const totalMs = ramp.data["totalMs"] ?? ramp.remainingMs;
+      const source = world.getMonsterEntity(ramp.sourceId);
+      const moveSlow = frostRampMoveSlowPct(ramp);
+      const movePct = Math.round(moveSlow * 100);
+      const atkPct = Math.round(frostRampAtkSlowPct(ramp) * 100);
+      return {
+        id: "debuff-frost-ramp",
+        label: "FROST",
+        stacks: ramp.stacks,
+        durationPct:
+          totalMs > 0 && ramp.remainingMs > 0
+            ? (ramp.remainingMs / totalMs) * 100
+            : -1,
+        // Keep client own-player prediction aligned with the server move-slow.
+        speedMult: Math.max(0, 1 - moveSlow),
+        color: "#aaddff",
+        logSourceName: source?.isMonster.name ?? "Monster debuff",
+        logSourceSide: "enemy",
+        logDetail: `move -${movePct}%, attack -${atkPct}%`,
+      };
+    },
+    { category: "neutral", shape: "diamond", color: "#aaddff", label: "FROST" },
+  ),
+  defineBuff(
+    "debuff-dot",
+    ({ playerCs, world }) => {
+      if (!playerCs) return null;
+      // Monster-inflicted DoT lives on the player's own combat state under the
+      // 'dot' id (players never DoT themselves — that always hits monsters).
+      const dot = getStatusEffect(playerCs, "dot");
+      if (!dot || dot.stacks <= 0) return null;
+      const totalMs = dot.data["totalMs"] ?? dot.remainingMs;
+      const source = world.getMonsterEntity(dot.sourceId);
+      const perStack = Math.round(dot.data["damagePerStack"] ?? 0);
+      return {
+        id: "debuff-dot",
+        label: "DoT",
+        stacks: dot.stacks,
+        durationPct:
+          totalMs > 0 && dot.remainingMs > 0
+            ? (dot.remainingMs / totalMs) * 100
+            : -1,
+        color: "#88bb55",
+        logSourceName: source?.isMonster.name ?? "Monster debuff",
+        logSourceSide: "enemy",
+        logDetail: `${perStack} dmg/stack per tick`,
+      };
+    },
+    { category: "neutral", shape: "diamond", color: "#88bb55", label: "DoT" },
   ),
 ] as const satisfies readonly BuffDescriptor[];
 
@@ -358,6 +417,10 @@ function buffEffectText(buff: PlayerBuff): string {
       return "movement speed reduced";
     case "debuff-root":
       return "movement disabled";
+    case "debuff-frost-ramp":
+      return "movement and attack speed reduced";
+    case "debuff-dot":
+      return "taking damage over time";
     case "defense-absorb":
       return "healing pool active";
     case "defense-burst":

@@ -16,6 +16,7 @@ import { DeathOverlay } from './hud/DeathOverlay';
 import { ReleaseAnnouncementOverlay } from './hud/ReleaseAnnouncementOverlay';
 import { BiomeXpBar } from './hud/BiomeXpBar';
 import { BossBar } from './hud/BossBar';
+import { TargetFrame } from './hud/TargetFrame';
 import { EmoteWheel } from './hud/EmoteWheel';
 
 if (DEV_TOOLS_ENABLED) {
@@ -75,4 +76,5 @@ createRoot(document.getElementById('death-overlay')!).render(createElement(Death
 createRoot(document.getElementById('release-announcement-overlay')!).render(createElement(ReleaseAnnouncementOverlay));
 createRoot(document.getElementById('biome-xp-overlay')!).render(createElement(BiomeXpBar));
 createRoot(document.getElementById('boss-bar-overlay')!).render(createElement(BossBar));
+createRoot(document.getElementById('target-frame-overlay')!).render(createElement(TargetFrame));
 createRoot(document.getElementById('emote-wheel-overlay')!).render(createElement(EmoteWheel));

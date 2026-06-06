@@ -88,8 +88,12 @@ export function applyPlayerAoe(
 }
 
 /**
- * Apply splash AoE damage from a monster to all players within radius of a
- * center point, skipping the primary target.
+ * Apply splash AoE damage from a monster to all players AND enemy summons within
+ * radius of a center point, skipping the primary target (matched by id against
+ * both players and minions — ids are globally unique).
+ *
+ * Minions take raw mitigated damage and are not killed here: their death is
+ * observed lazily by the summoner tick (mirrors `runMonsterAttackOnMinion`).
  */
 export function applyMonsterAoe(
   world: World,
@@ -138,5 +142,21 @@ export function applyMonsterAoe(
     } else {
       markEngaged(world, player, Date.now());
     }
+  }
+
+  for (const minion of world.minionEntitiesInNode(attackerNodeId)) {
+    if (minion.isMinion.id === excludeId) continue;
+    if (minion.hasHealth.hp <= 0) continue;
+
+    if (distanceSq(minion.hasPosition.current, center) > radiusSq) continue;
+
+    const effectiveDmg = buildPlatingDrBreakdown({
+      grossDamage: baseDamage,
+      effectivePlating: minion.mitigatesDamage.plating,
+      platingMult: 1,
+      damageReduction: minion.mitigatesDamage.damageReduction,
+    }).hpDamage;
+
+    minion.hasHealth.hp = Math.max(0, minion.hasHealth.hp - effectiveDmg);
   }
 }

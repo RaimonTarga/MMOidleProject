@@ -1,5 +1,5 @@
 import type { EquipmentMap, EssenceType } from "../items";
-import type { HasAutoIntent, HasEmote, PartyMember, UltimateStatus } from "../components";
+import type { HasAutoIntent, HasEmote, PartyMember, TargetStatusView, UltimateStatus } from "../components";
 import type { PassiveMap } from "../passives";
 import { isRangedCombatant, type SubVariant } from "../skillTree";
 import type { BuffId, PlayerBuff } from "../components/combat/buffs";
@@ -42,6 +42,10 @@ export interface PlayerView {
   /** Fraction of damage avoided on an evaded hit (0..1; 1 = full avoid). */
   evadeMitigation: number;
   shields: ShieldState[];
+  /** Total pending damage-over-time on the player (HP-bar red layer). */
+  incomingDot: number;
+  /** Pending heal-over-time from regen/absorb pools (HP-bar regen layer). */
+  pendingHeal: number;
   attackRange: number;
   attackCooldown: number;
   lastAttackAt: number;
@@ -182,6 +186,7 @@ export interface MonsterView {
   activeEffects?: Record<string, number>;
   activeEffectFrames?: Record<string, number>;
   bossEffects?: string[];
+  targetStatus?: TargetStatusView[];
   ultimateStatus?: UltimateStatus;
   throneHealing?: boolean;
   hitboxRects: HitboxRect[];
@@ -244,6 +249,8 @@ export function composePlayerView(entity: NetworkedEntity): PlayerView | null {
     dodgeRate: entity.evadesHits?.dodgeRate ?? 0,
     evadeMitigation: entity.evadesHits?.evadeMitigation ?? 0,
     shields: entity.holdsShields?.shields ?? [],
+    incomingDot: entity.hasStatus?.incomingDot ?? 0,
+    pendingHeal: entity.hasStatus?.pendingHeal ?? 0,
     attackRange: attack.attackRange,
     attackCooldown: attack.attackCooldown,
     lastAttackAt: attack.lastAttackAt,
@@ -368,6 +375,7 @@ export function composeMonsterView(
     activeEffects: entity.hasStatus?.activeEffects,
     activeEffectFrames: entity.hasStatus?.activeEffectFrames,
     bossEffects: entity.hasStatus?.bossEffects,
+    targetStatus: entity.hasStatus?.targetStatus,
     ultimateStatus: entity.hasStatus?.ultimateStatus,
     throneHealing: entity.hasStatus?.throneHealing,
     hitboxRects: entity.hasHitbox?.rects ?? [FALLBACK_MONSTER_AABB],

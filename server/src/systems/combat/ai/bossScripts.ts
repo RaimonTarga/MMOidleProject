@@ -25,6 +25,8 @@ import type { MonsterEntity } from '../../../ecs/entity';
 import type { ActiveBossEffect, ScriptsBoss } from '@mmo-idle/shared';
 import { initScriptsBoss } from '@mmo-idle/shared';
 import { attachComponent } from '../../../ecs/markerHelpers';
+import { markSliceDirty } from '../../../ecs/dirtyHelpers';
+import { applyMonsterAoe } from '../damage/aoeDamage';
 
 export type { ScriptsBoss, ActiveBossEffect } from '@mmo-idle/shared';
 export { initScriptsBoss } from '@mmo-idle/shared';
@@ -41,7 +43,7 @@ export function updateBossScripts(world: World, dt: number): void {
 
     if (e.hasAggroTarget) attachComponent(world, e, 'isBossEngaged', {});
 
-    tickActiveEffects(state, e, dt);
+    tickActiveEffects(state, e, world, dt);
 
     if (e.isBossEngaged) {
       if (script.phases)    checkPhaseTransitions(state, script.phases,    e, world);
@@ -57,6 +59,7 @@ export function updateBossScripts(world: World, dt: number): void {
 function tickActiveEffects(
   state: ScriptsBoss,
   monster: MonsterEntity,
+  world: World,
   dt: number,
 ): void {
   const toExpire: ActiveBossEffect[] = [];
@@ -75,17 +78,42 @@ function tickActiveEffects(
   }
 
   for (const effect of toExpire) {
-    restoreStats(effect, monster);
+    restoreStats(effect, monster, world, state);
     state.activeEffects = state.activeEffects.filter(fx => fx !== effect);
   }
 }
 
-function restoreStats(effect: ActiveBossEffect, monster: MonsterEntity): void {
+function restoreStats(
+  effect: ActiveBossEffect,
+  monster: MonsterEntity,
+  world: World,
+  state: ScriptsBoss,
+): void {
   if (effect.savedAttack          !== undefined) monster.dealsDamage.attack = effect.savedAttack;
   if (effect.savedCooldown        !== undefined) monster.performsAttack.attackCooldown = effect.savedCooldown;
   if (effect.savedPlating         !== undefined) monster.mitigatesDamage.plating = effect.savedPlating;
   if (effect.savedDamageReduction !== undefined) monster.mitigatesDamage.damageReduction = effect.savedDamageReduction;
   if (effect.savedSpeed           !== undefined) monster.hasPosition.speed = effect.savedSpeed;
+
+  // Morph reverts — restore networked combat fields and the server-only overrides.
+  if (effect.savedIsRanged !== undefined) {
+    monster.isMonster.isRanged = effect.savedIsRanged;
+    markSliceDirty(world, monster, 'isMonster');
+  }
+  if (effect.savedAttackStyle !== undefined) {
+    monster.dealsDamage.attackStyle = effect.savedAttackStyle;
+    markSliceDirty(world, monster, 'dealsDamage');
+  }
+  if (effect.savedAttackRange !== undefined) {
+    monster.performsAttack.attackRange = effect.savedAttackRange;
+    markSliceDirty(world, monster, 'performsAttack');
+  }
+  if (effect.hadDotOverride !== undefined) {
+    state.dotEffectOverride = effect.hadDotOverride ? effect.savedDotEffect : undefined;
+  }
+  if (effect.hadKiteOverride !== undefined) {
+    state.kiteOverride = effect.hadKiteOverride ? effect.savedKite : undefined;
+  }
 }
 
 function checkPhaseTransitions(
@@ -208,6 +236,61 @@ function applyAction(
         };
         world.createMonster(monster.hasPosition.nodeId, action.monsterTypeId, pos);
       }
+      break;
+    }
+
+    case 'morph': {
+      const timed = action.durationMs !== undefined;
+      const effect: ActiveBossEffect = {
+        type:        'morph',
+        remainingMs: action.durationMs ?? -1,
+      };
+
+      if (action.isRanged !== undefined) {
+        if (timed) effect.savedIsRanged = monster.isMonster.isRanged ?? false;
+        monster.isMonster.isRanged = action.isRanged;
+        markSliceDirty(world, monster, 'isMonster');
+      }
+      if (action.attackStyle !== undefined) {
+        if (timed) effect.savedAttackStyle = monster.dealsDamage.attackStyle;
+        monster.dealsDamage.attackStyle = action.attackStyle;
+        markSliceDirty(world, monster, 'dealsDamage');
+      }
+      if (action.attackRange !== undefined) {
+        if (timed) effect.savedAttackRange = monster.performsAttack.attackRange;
+        monster.performsAttack.attackRange = action.attackRange;
+        markSliceDirty(world, monster, 'performsAttack');
+      }
+      if (action.dotEffect !== undefined) {
+        if (timed) {
+          effect.hadDotOverride = state.dotEffectOverride !== undefined;
+          effect.savedDotEffect = state.dotEffectOverride;
+        }
+        state.dotEffectOverride = action.dotEffect ?? undefined;
+      }
+      if (action.kite !== undefined) {
+        if (timed) {
+          effect.hadKiteOverride = state.kiteOverride !== undefined;
+          effect.savedKite = state.kiteOverride;
+        }
+        state.kiteOverride = action.kite;
+      }
+
+      // Only track the effect when it can expire — a permanent morph needs no bookkeeping.
+      if (timed) state.activeEffects.push(effect);
+      break;
+    }
+
+    case 'slam': {
+      // Instant AoE burst centered on the boss — hits all players and enemy
+      // summons in radius (no exclude). Pure damage, no slow/DoT.
+      applyMonsterAoe(
+        world,
+        monster,
+        monster.hasPosition.current,
+        action.radius,
+        monster.dealsDamage.attack * (action.damageMult ?? 1),
+      );
       break;
     }
   }

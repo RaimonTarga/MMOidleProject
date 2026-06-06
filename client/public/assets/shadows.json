@@ -1,217 +1,343 @@
 {
-  "atlasHash": "b3eaf8a4608fd94ecee69d03cb02befa4c2fc32c265a27a277e9a0d775d47772",
+  "atlasHash": "5f460abe08c05b6f5438d016fe25fe099d47e75b792c7acb464b6a0b735eb1e9",
   "frames": {
-    "archer.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 28,
-      "halfWAtFoot": 17.5
-    },
-    "boar.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 18,
-      "halfWAtFoot": 21
-    },
-    "boss_cave.png": {
+    "sprites/boss_cave.png": {
       "sourceW": 128,
       "sourceH": 128,
       "footY": 61,
       "halfWAtFoot": 41.5
     },
-    "boss_forest.png": {
+    "sprites/boss_forest.png": {
       "sourceW": 128,
       "sourceH": 128,
       "footY": 61,
       "halfWAtFoot": 41.5
     },
-    "boss_mountain.png": {
+    "sprites/boss_mountain.png": {
       "sourceW": 128,
       "sourceH": 128,
       "footY": 62,
       "halfWAtFoot": 38.5
     },
-    "boss_swamp.png": {
+    "sprites/boss_swamp.png": {
       "sourceW": 128,
       "sourceH": 128,
       "footY": 62,
       "halfWAtFoot": 52
     },
-    "brute.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 28,
-      "halfWAtFoot": 26
-    },
-    "cadence.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 28,
-      "halfWAtFoot": 12
-    },
-    "classless.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 28,
-      "halfWAtFoot": 18
-    },
-    "cooldown.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 28,
-      "halfWAtFoot": 12
-    },
-    "crawler.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 15,
-      "halfWAtFoot": 26.5
-    },
-    "dot.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 28,
-      "halfWAtFoot": 18
-    },
-    "energy.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 27,
-      "halfWAtFoot": 13.5
-    },
-    "frog.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 18,
-      "halfWAtFoot": 25.5
-    },
-    "greenslime.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 24,
-      "halfWAtFoot": 27.5
-    },
-    "heavy_cadence.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 28,
-      "halfWAtFoot": 12
-    },
-    "heavy_cooldown.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 28,
-      "halfWAtFoot": 12
-    },
-    "heavy_dot.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 28,
-      "halfWAtFoot": 20.5
-    },
-    "heavy_energy.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 30,
-      "halfWAtFoot": 16
-    },
-    "heavy_reload.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 28,
-      "halfWAtFoot": 12
-    },
-    "jumper.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 29,
-      "halfWAtFoot": 13
-    },
-    "light_cadence.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 28,
-      "halfWAtFoot": 12
-    },
-    "light_cooldown.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 28,
-      "halfWAtFoot": 12
-    },
-    "light_dot.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 28,
-      "halfWAtFoot": 12.5
-    },
-    "light_energy.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 29,
-      "halfWAtFoot": 18
-    },
-    "light_reload.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 28,
-      "halfWAtFoot": 12
-    },
-    "medium_cadence.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 28,
-      "halfWAtFoot": 12
-    },
-    "medium_cooldown.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 28,
-      "halfWAtFoot": 12
-    },
-    "medium_dot.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 28,
-      "halfWAtFoot": 18
-    },
-    "medium_energy.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 27,
-      "halfWAtFoot": 13.5
-    },
-    "medium_reload.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 28,
-      "halfWAtFoot": 12
-    },
-    "reload.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 28,
-      "halfWAtFoot": 12
-    },
-    "swampslime.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 17,
-      "halfWAtFoot": 32
-    },
-    "tinyslime.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 9,
-      "halfWAtFoot": 13.5
-    },
-    "wolf.png": {
+    "sprites/ancient-wolf.png": {
       "sourceW": 64,
       "sourceH": 64,
       "footY": 18,
       "halfWAtFoot": 24.5
     },
-    "yellowslime.png": {
+    "sprites/archer.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 28,
+      "halfWAtFoot": 17.5
+    },
+    "sprites/boar.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 18,
+      "halfWAtFoot": 21
+    },
+    "sprites/bog-witch.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 30,
+      "halfWAtFoot": 22
+    },
+    "sprites/brute.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 28,
+      "halfWAtFoot": 26
+    },
+    "sprites/cadence.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 28,
+      "halfWAtFoot": 12
+    },
+    "sprites/canopy-sprite.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 18,
+      "halfWAtFoot": 7.5
+    },
+    "sprites/cave-gargoyle.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 24,
+      "halfWAtFoot": 8.5
+    },
+    "sprites/cave-troll.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 22,
+      "halfWAtFoot": 14
+    },
+    "sprites/classless.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 28,
+      "halfWAtFoot": 18
+    },
+    "sprites/cooldown.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 28,
+      "halfWAtFoot": 12
+    },
+    "sprites/crawler.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 15,
+      "halfWAtFoot": 26.5
+    },
+    "sprites/dot.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 28,
+      "halfWAtFoot": 18
+    },
+    "sprites/dust-djinn.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 25,
+      "halfWAtFoot": 20.5
+    },
+    "sprites/energy.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 27,
+      "halfWAtFoot": 13.5
+    },
+    "sprites/frog.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 18,
+      "halfWAtFoot": 25.5
+    },
+    "sprites/giant-spider.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 21,
+      "halfWAtFoot": 21.5
+    },
+    "sprites/granite-titan.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 28,
+      "halfWAtFoot": 26
+    },
+    "sprites/greenslime.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 24,
+      "halfWAtFoot": 27.5
+    },
+    "sprites/heavy_cadence.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 28,
+      "halfWAtFoot": 12
+    },
+    "sprites/heavy_cooldown.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 28,
+      "halfWAtFoot": 12
+    },
+    "sprites/heavy_dot.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 28,
+      "halfWAtFoot": 20.5
+    },
+    "sprites/heavy_energy.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 30,
+      "halfWAtFoot": 16
+    },
+    "sprites/heavy_reload.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 28,
+      "halfWAtFoot": 12
+    },
+    "sprites/ironwood-golem.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 27,
+      "halfWAtFoot": 26
+    },
+    "sprites/jumper.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 29,
+      "halfWAtFoot": 13
+    },
+    "sprites/jungle-ape.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 28,
+      "halfWAtFoot": 29
+    },
+    "sprites/jungle-blowdarter.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 27,
+      "halfWAtFoot": 16
+    },
+    "sprites/jungle-snake.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 25,
+      "halfWAtFoot": 29
+    },
+    "sprites/light_cadence.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 28,
+      "halfWAtFoot": 12
+    },
+    "sprites/light_cooldown.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 28,
+      "halfWAtFoot": 12
+    },
+    "sprites/light_dot.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 28,
+      "halfWAtFoot": 12.5
+    },
+    "sprites/light_energy.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 29,
+      "halfWAtFoot": 18
+    },
+    "sprites/light_reload.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 28,
+      "halfWAtFoot": 12
+    },
+    "sprites/medium_cadence.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 28,
+      "halfWAtFoot": 12
+    },
+    "sprites/medium_cooldown.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 28,
+      "halfWAtFoot": 12
+    },
+    "sprites/medium_dot.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 28,
+      "halfWAtFoot": 18
+    },
+    "sprites/medium_energy.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 27,
+      "halfWAtFoot": 13.5
+    },
+    "sprites/medium_reload.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 28,
+      "halfWAtFoot": 12
+    },
+    "sprites/mire-stalker.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 13,
+      "halfWAtFoot": 28.5
+    },
+    "sprites/peak-archer.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 30,
+      "halfWAtFoot": 14
+    },
+    "sprites/prairie-wolf.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 18,
+      "halfWAtFoot": 21
+    },
+    "sprites/reload.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 28,
+      "halfWAtFoot": 12
+    },
+    "sprites/sand-scorpion.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 23,
+      "halfWAtFoot": 14
+    },
+    "sprites/savanna-hawk.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 21,
+      "halfWAtFoot": 13
+    },
+    "sprites/stampede-bull.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 20,
+      "halfWAtFoot": 21.5
+    },
+    "sprites/stone-basilisk.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 22,
+      "halfWAtFoot": 25
+    },
+    "sprites/stone-eagle.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 23,
+      "halfWAtFoot": 19
+    },
+    "sprites/swamp-hydra.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 30,
+      "halfWAtFoot": 26.5
+    },
+    "sprites/swampslime.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 17,
+      "halfWAtFoot": 32
+    },
+    "sprites/tinyslime.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 9,
+      "halfWAtFoot": 13.5
+    },
+    "sprites/wolf.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 18,
+      "halfWAtFoot": 24.5
+    },
+    "sprites/yellowslime.png": {
       "sourceW": 64,
       "sourceH": 64,
       "footY": 24,

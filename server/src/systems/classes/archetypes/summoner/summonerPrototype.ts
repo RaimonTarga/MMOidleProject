@@ -10,8 +10,9 @@
  *   - From monster melee/ranged: minions are not currently valid aggro
  *     targets for monsters; in v1 they take damage only via the
  *     damage-sponge listener (`damageSponge.ts`).
- *   - From AoE: monsters do not currently AoE; if introduced, route
- *     through a future `applyMonsterAoe(... includeMinions: true)`.
+ *   - From AoE: `applyMonsterAoe` damages minions in radius (monster `aoeAttack`
+ *     splash and boss-script `slam`). Dead minions are detached here on the next
+ *     tick — AoE only drops their HP.
  */
 import { GAME_CONFIG } from '@mmo-idle/shared';
 import type { World } from '../../../../world/World';

@@ -23,8 +23,12 @@ export interface BakeAtlasFrame {
   frame: { x: number; y: number; w: number; h: number };
 }
 
-interface AtlasJson {
+interface AtlasJsonMulti {
   textures: Array<{ frames: BakeAtlasFrame[] }>;
+}
+
+interface AtlasJsonHash {
+  frames: Record<string, Omit<BakeAtlasFrame, 'filename'>>;
 }
 
 export interface BakeResult {
@@ -125,8 +129,13 @@ export async function bakeSpriteHitboxes(
   atlasPngPath: string,
   atlasJsonPath: string,
 ): Promise<BakeResult> {
-  const atlasJson = JSON.parse(readFileSync(atlasJsonPath, 'utf8')) as AtlasJson;
-  const frames = atlasJson.textures[0]?.frames ?? [];
+  const atlasJson = JSON.parse(readFileSync(atlasJsonPath, 'utf8')) as AtlasJsonMulti | AtlasJsonHash;
+  let frames: BakeAtlasFrame[];
+  if ('textures' in atlasJson) {
+    frames = atlasJson.textures[0]?.frames ?? [];
+  } else {
+    frames = Object.entries(atlasJson.frames).map(([filename, f]) => ({ filename, ...f }));
+  }
   return bakeFramesFromPng(atlasPngPath, frames);
 }
 

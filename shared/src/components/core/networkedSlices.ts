@@ -98,6 +98,20 @@ export interface UltimateStatus {
   hazard?: UltimateHazardStatus;
 }
 
+/**
+ * Compact debuff descriptor for the target frame. Populated only for monsters
+ * that are currently a player's attack target (see the server targetStatus
+ * mirror), so the HUD can show what's afflicting the thing you're fighting.
+ */
+export interface TargetStatusView {
+  id: string;
+  stacks: number;
+  /** Remaining duration (ms); -1 = permanent. */
+  remainingMs: number;
+  /** Total duration when known (from effect.data.totalMs); 0 = unknown → countdown, no sweep. */
+  totalMs: number;
+}
+
 /** Client-facing status overlay and buff slice. */
 export interface HasStatus {
   activeEffects?: Record<string, number>;
@@ -106,6 +120,12 @@ export interface HasStatus {
   activeBuffs?: PlayerBuff[];
   /** Bosses only — populated by `bossScripts.ts` each tick. */
   bossEffects?: string[];
+  /** Monsters only — current debuffs for the target frame (targeted monsters). */
+  targetStatus?: TargetStatusView[];
+  /** Players only — total pending damage-over-time on the player (HP-bar forecast). */
+  incomingDot?: number;
+  /** Players only — pending heal-over-time (regen/absorb pools) for the HP bar. */
+  pendingHeal?: number;
   /** Ultimate bosses only — populated by ultimateEncounter sync. */
   ultimateStatus?: UltimateStatus;
   /** Encounter adds healing inside the void throne ring. */

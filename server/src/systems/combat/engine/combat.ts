@@ -12,9 +12,16 @@ import {
 import type { AggroTargetKind, Vec2 } from "@mmo-idle/shared";
 import { grantMonsterRewards } from "../../player/progression/rewards";
 import { makeCombatContext, emitCombatEvent } from "./combatPipeline";
-import { getCounter, setCounter } from "@mmo-idle/shared";
+import {
+  getCounter,
+  setCounter,
+  getStatusEffect,
+  FROST_RAMP_EFFECT_ID,
+  frostRampMaxStacks,
+  frostRampAtkSlowPct,
+} from "@mmo-idle/shared";
 import { getAntiHealMult } from "../../defense";
-import { applyPlayerAoe } from "../damage/aoeDamage";
+import { applyPlayerAoe, applyMonsterAoe } from "../damage/aoeDamage";
 import { isMonsterFrozen } from "../../classes/archetypes/dot/t3";
 import { canApplyPlayerDebuff } from "../../classes/archetypes/summoner/t3/core/debuffGuard";
 import { evadeBlocksDebuffs } from "../../defense/mitigation/evasion";
@@ -37,7 +44,10 @@ import {
 import { buildPlatingDrBreakdown } from "../../../world/worldLogCombat";
 import { markUltimateContributor } from "../ai/ultimateContributors";
 import { tryEngageUltimateEncounter } from "../ai/ultimateEncounter";
-import { effectivePlatingAfterShred } from "../damage/effectivePlating";
+import {
+  effectivePlatingAfterShred,
+  effectiveDamageReductionAfterBrittle,
+} from "../damage/effectivePlating";
 
 export type PlayerAttackOutcome = "cancelled" | "dodged" | "hit" | "killed";
 export type MonsterAttackOutcome = "cancelled" | "hit" | "killed";
@@ -145,6 +155,10 @@ export function runPlayerAttack(
     monsterCombatState,
     platingShred,
   );
+  const effectiveDr = effectiveDamageReductionAfterBrittle(
+    target.mitigatesDamage.damageReduction,
+    monsterCombatState,
+  );
 
   const minionDamageMult =
     opts.aggroSource.kind === "minion"
@@ -158,7 +172,7 @@ export function runPlayerAttack(
         player.dealsDamage.attack * minionDamageMult -
           effectivePlating * ctx.platingMult,
       ) *
-        (1 - target.mitigatesDamage.damageReduction),
+        (1 - effectiveDr),
     ),
   );
 
@@ -199,7 +213,7 @@ export function runPlayerAttack(
     grossDamage: gross,
     effectivePlating,
     platingMult: ctx.platingMult,
-    damageReduction: target.mitigatesDamage.damageReduction,
+    damageReduction: effectiveDr,
     onHitBonus: player.dealsDamage.onHitDamage,
   });
   mitigation.hpDamage = ctx.damage;
@@ -461,6 +475,31 @@ export function runMonsterAttack(
     });
   }
 
+  // Tundra rampDebuff — stacking move-slow + attack-slow on the player, each
+  // capped, decaying stackDurationMs after the last hit (refreshed every hit).
+  const rampDebuff = MONSTER_DATABASE.get(
+    monster.isMonster.monsterTypeId,
+  )?.rampDebuff;
+  if (rampDebuff && canApplyPlayerDebuff(target) && !evadeBlocksDebuffs(ctx)) {
+    const durMs = Math.round(
+      rampDebuff.stackDurationMs * mobilityTenacityDurationMult(target),
+    );
+    applyStatusEffect(target.tracksCombat, {
+      id: FROST_RAMP_EFFECT_ID,
+      maxStacks: frostRampMaxStacks(rampDebuff),
+      remainingMs: durMs,
+      refreshable: true,
+      sourceId: monster.isMonster.id,
+      data: {
+        moveSlowPerHit: rampDebuff.moveSlowPerHit,
+        moveSlowMaxPct: rampDebuff.moveSlowMaxPct,
+        atkSlowPerHit: rampDebuff.atkSlowPerHit,
+        atkSlowMaxPct: rampDebuff.atkSlowMaxPct,
+        totalMs: durMs,
+      },
+    });
+  }
+
   emitCombatEvent("afterHit", ctx, world);
 
   if (target.hasHealth.hp <= 0) {
@@ -499,6 +538,29 @@ export function runMonsterAttackOnMinion(
   // Death is observed by the summoner tick on its next pass — it will detach
   // the minion entity and start a respawn timer. We deliberately do not push
   // a client event here in v1; the slime's HP bar drop is enough feedback.
+}
+
+/**
+ * If the monster defines `aoeAttack`, splash all OTHER players and enemy summons
+ * within radius of the primary target. The primary already took its direct hit;
+ * `primaryId` excludes it from the splash. Pure damage — no slow/DoT.
+ */
+function applyMonsterAttackSplash(
+  world: World,
+  monster: MonsterEntity,
+  center: Vec2,
+  primaryId: string,
+): void {
+  const aoe = MONSTER_DATABASE.get(monster.isMonster.monsterTypeId)?.aoeAttack;
+  if (!aoe) return;
+  applyMonsterAoe(
+    world,
+    monster,
+    center,
+    aoe.radius,
+    monster.dealsDamage.attack * (aoe.damageMult ?? 1),
+    primaryId,
+  );
 }
 
 export function updateCombat(world: World, dt: number, now: number) {
@@ -544,9 +606,17 @@ export function updateCombat(world: World, dt: number, now: number) {
     setAttackTarget(world, player, target?.isMonster.id ?? null);
 
     if (target) {
+      // Tundra rampDebuff slows the player's attack speed (capped). Applied as a
+      // multiplier on the cooldown gate so the base attackCooldown (stat-recalc
+      // owned) is never mutated. The cap is the death-spiral guard.
+      const frostRamp = getStatusEffect(
+        player.tracksCombat,
+        FROST_RAMP_EFFECT_ID,
+      );
+      const atkSlowMult = frostRamp ? 1 + frostRampAtkSlowPct(frostRamp) : 1;
       if (
         now - player.performsAttack.lastAttackAt >=
-        player.performsAttack.attackCooldown
+        player.performsAttack.attackCooldown * atkSlowMult
       ) {
         const outcome = runPlayerAttack(world, player, target, now, {
           attackOrigin: player.hasPosition.current,
@@ -630,6 +700,14 @@ export function updateCombat(world: World, dt: number, now: number) {
         !isMonsterFrozen(world, e.isMonster.id)
       ) {
         const outcome = runMonsterAttack(world, e, target, now);
+        if (outcome === "hit" || outcome === "killed") {
+          applyMonsterAttackSplash(
+            world,
+            e,
+            target.hasPosition.current,
+            target.isPlayer.id,
+          );
+        }
         if (outcome === "hit") {
           // Landing a hit halves the accumulated kite ramp so the monster must re-earn speed.
           e.controlsMonster.kiteTimer = Math.floor(
@@ -665,6 +743,12 @@ export function updateCombat(world: World, dt: number, now: number) {
       !isMonsterFrozen(world, e.isMonster.id)
     ) {
       runMonsterAttackOnMinion(world, e, minion, now);
+      applyMonsterAttackSplash(
+        world,
+        e,
+        minion.hasPosition.current,
+        minion.isMinion.id,
+      );
     }
   }
 

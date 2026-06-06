@@ -8,7 +8,7 @@ import {
 import { loadGameplaySettings } from '../settings/gameplaySettings';
 import { sendSetAutocombatConfig, sendSetAutoTraverse } from './intents';
 import { hudBus } from "../hudBus";
-import { syncPlayerAtoms, nodeLoadingAtom, setZoneBoss, setZonePlayers, type ZonePlayer } from "../hud/atoms";
+import { syncPlayerAtoms, nodeLoadingAtom, setTargetFrame, setZoneBoss, setZonePlayers, type TargetFrameData, type ZonePlayer } from "../hud/atoms";
 import { getDefaultStore } from "jotai";
 import type { GameScene } from "../scenes/GameScene";
 import type { RenderState } from "../render/state";
@@ -23,6 +23,10 @@ import { notifyDeltaAppliedDuringTabResync } from "../fx/guard";
 import { refreshNodeDecorState } from "../scenes/game/overlays";
 import { setVoidThroneHazardLifted } from "../scenes/game/voidThrone";
 import { syncVoidOverlordRespawn } from "../render/voidOverlordTomb";
+
+// Last frame's resolved target — lets us detect when a target dies (its id
+// vanishes from view) so the target frame can drain HP to 0 before fading.
+let lastTargetRef: { id: string; data: TargetFrameData } | null = null;
 
 export function applyDelta(
   state: RenderState,
@@ -144,6 +148,37 @@ export function applyDelta(
       break;
     }
     setZoneBoss(zoneBoss);
+
+    // Resolve the local player's current attack target → top-center target frame.
+    const targetId = own.attackTargetId;
+    const tm = targetId && state.kind.get(targetId) === "monster"
+      ? (state.view.get(targetId) as MonsterView | undefined)
+      : undefined;
+    if (tm && tm.nodeId === own.nodeId) {
+      const data: TargetFrameData = {
+        id: tm.id,
+        name: tm.name,
+        hp: tm.hp,
+        maxHp: tm.maxHp,
+        attack: tm.attack,
+        plating: tm.plating,
+        damageReduction: tm.damageReduction,
+        isBoss: tm.isBoss,
+        statuses: tm.targetStatus ?? [],
+        bossEffects: tm.bossEffects ?? [],
+      };
+      setTargetFrame(data);
+      lastTargetRef = { id: tm.id, data };
+    } else if (lastTargetRef && !state.view.has(lastTargetRef.id)) {
+      // The target vanished from view (it died) — emit one final frame at 0 HP so
+      // the bar animates down to empty, then clear so the linger fade takes over.
+      setTargetFrame({ ...lastTargetRef.data, hp: 0, statuses: [], bossEffects: [] });
+      lastTargetRef = null;
+    } else {
+      setTargetFrame(null);
+      lastTargetRef = null;
+    }
+
     refreshNodeDecorState(scene);
 
     if (!state.gameplaySettingsSynced) {

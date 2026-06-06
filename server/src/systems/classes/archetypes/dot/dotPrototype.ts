@@ -315,15 +315,17 @@ export function initDotArchetype(): void {
     const monsterDef = MONSTER_DATABASE.get(
       ctx.attacker.isMonster.monsterTypeId,
     );
-    if (!monsterDef?.dotEffect) return;
+    // A boss 'morph' action can override the def's DoT-on-hit at runtime.
+    const dotEffect = ctx.attacker.scriptsBoss?.dotEffectOverride ?? monsterDef?.dotEffect;
+    if (!dotEffect) return;
 
     const player = ctx.defender;
     if (!canApplyPlayerDebuff(player)) return;
 
     const playerCombatState = player.tracksCombat;
 
-    const { damagePerStack, maxStacks, tickIntervalMs } = monsterDef.dotEffect;
-    const durationMs = monsterDef.dotEffect.durationMs ?? DOT_DURATION_MS;
+    const { damagePerStack, maxStacks, tickIntervalMs } = dotEffect;
+    const durationMs = dotEffect.durationMs ?? DOT_DURATION_MS;
 
     applyStatusEffect(playerCombatState, {
       id: DOT_EFFECT_ID,
@@ -336,6 +338,7 @@ export function initDotArchetype(): void {
         damagePerStack,
         nextTickIn: tickIntervalMs,
         tickIntervalMs,
+        totalMs: durationMs,
       },
     });
 

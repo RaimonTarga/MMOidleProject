@@ -1,4 +1,7 @@
-import type { BossScript } from '../../monsterDatabase';
+import type { BossScript, MonsterDefinition } from '../../monsterDatabase';
+
+/** Runtime DoT override shape — mirrors MonsterDefinition.dotEffect. */
+export type MonsterDotEffect = NonNullable<MonsterDefinition['dotEffect']>;
 
 /**
  * An active timed effect on a boss.
@@ -16,6 +19,17 @@ export interface ActiveBossEffect {
   savedPlating?:         number;
   savedDamageReduction?: number;
   savedSpeed?:           number;
+  /**
+   * Saved morph fields — restored when a timed 'morph' expires. The `had*Override`
+   * flags distinguish "revert to a prior override value" from "clear the override".
+   */
+  savedIsRanged?:        boolean;
+  savedAttackStyle?:     string;
+  savedAttackRange?:     number;
+  savedDotEffect?:       MonsterDotEffect;
+  hadDotOverride?:       boolean;
+  savedKite?:            boolean;
+  hadKiteOverride?:      boolean;
 }
 
 /**
@@ -29,6 +43,13 @@ export interface ScriptsBoss {
   repeatingTimers: number[];
   /** Currently active timed effects. */
   activeEffects: ActiveBossEffect[];
+  /**
+   * Runtime override of the monster's DoT-on-hit (set by a 'morph' action). When
+   * present, the monster→player DoT listener uses this instead of the static def.
+   */
+  dotEffectOverride?: MonsterDotEffect;
+  /** Runtime override of the kite flag (set by a 'morph' action). Read by the AI. */
+  kiteOverride?: boolean;
 }
 
 export function initScriptsBoss(script: BossScript): ScriptsBoss {
