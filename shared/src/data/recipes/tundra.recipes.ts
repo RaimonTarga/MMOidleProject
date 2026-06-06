@@ -5,19 +5,6 @@ import type { Recipe } from './types';
 // (see mountain.recipes.ts header).
 
 export const tundraRecipeEntries = [
-  ['tundra-boots-t3', {
-    id: 'tundra-boots-t3', name: 'Glacier Striders',
-    recipeGroup: 'tundra', requiredBiomeLevel: 1, slot: 'mobility',
-    cost: { blue: 60 }, stats: { speed: 30 }, tier: 3,
-    mechanicEffects: { 'mobility.ramp-speed-pct': 0.60, 'mobility.ramp-rate': 0.30 },
-    icon: 'items/boots/plate-boots-4.png',
-    description: 'They gather momentum across the ice and are loath to give it back.',
-    upgrades: [
-      { stats: { speed: 8 },  cost: { blue: 30 },  requiredBiomeLevel: 2 },
-      { stats: { speed: 12 }, cost: { blue: 60 },  requiredBiomeLevel: 3 },
-      { stats: { speed: 16 }, cost: { blue: 100 }, requiredBiomeLevel: 4 },
-    ],
-  }],
 
   ['tundra-permafrost-maul', {
     id: 'tundra-permafrost-maul', name: 'Permafrost Maul',
@@ -30,24 +17,6 @@ export const tundraRecipeEntries = [
       { stats: { attack: 25 }, cost: { blue: 62 },  requiredBiomeLevel: 2 },
       { stats: { attack: 25 }, cost: { blue: 124 }, requiredBiomeLevel: 3 },
       { stats: { attack: 25 }, cost: { blue: 208 }, requiredBiomeLevel: 4 },
-    ],
-  }],
-
-  ['tundra-vest-t3', {
-    id: 'tundra-vest-t3', name: 'Glacial Bulwark',
-    recipeGroup: 'tundra', requiredBiomeLevel: 3, slot: 'armor',
-    cost: { blue: 124 }, stats: { maxHp: 100, plating: 15 },
-    mechanicEffects: {
-      'defense.stationary-dr-pct': 0.15, 'defense.stationary-dr-ramptime-ms': 6000,
-      'defense.max-hit-pct': 0.25, 'defense.max-hit-mult': 0.5,
-    },
-    tier: 3,
-    icon: 'items/armor/plate-armor-1.png',
-    description: 'Stand still and the ice creeps over the plate, until you are part of the glacier itself.',
-    upgrades: [
-      { stats: { maxHp: 22, plating: 4 }, cost: { blue: 62 },  requiredBiomeLevel: 4 },
-      { stats: { maxHp: 22, plating: 4 }, cost: { blue: 124 }, requiredBiomeLevel: 5 },
-      { stats: { maxHp: 22, plating: 4 }, cost: { blue: 208 }, requiredBiomeLevel: 6 },
     ],
   }],
 
@@ -66,7 +35,40 @@ export const tundraRecipeEntries = [
     upgrades: [
       { mechanicEffects: { 'defense.shield-pct': 0.02, 'defense.absorb-pct': 0.02 }, cost: { blue: 52 },  requiredBiomeLevel: 3 },
       { mechanicEffects: { 'defense.shield-pct': 0.02, 'defense.absorb-pct': 0.02 }, cost: { blue: 104 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'defense.shield-pct': 0.02, 'defense.absorb-pct': 0.02 }, cost: { blue: 180 }, requiredBiomeLevel: 5 },
+      { mechanicEffects: { 'defense.shield-pct': 0.02, 'defense.absorb-pct': 0.02 }, cost: { blue: 180 }, requiredBiomeLevel: 4 },
     ],
   }],
+
+  ['tundra-boots-t3', {
+    id: 'tundra-boots-t3', name: 'Glacier Striders',
+    recipeGroup: 'tundra', requiredBiomeLevel: 3, slot: 'mobility',
+    cost: { blue: 60 }, stats: { speed: 30 }, tier: 3,
+    mechanicEffects: { 'mobility.ramp-speed-pct': 0.60, 'mobility.ramp-rate': 0.30 },
+    icon: 'items/boots/plate-boots-4.png',
+    description: 'They gather momentum across the ice and are loath to give it back.',
+    upgrades: [
+      { stats: { speed: 8 },  cost: { blue: 30 },  requiredBiomeLevel: 4 },
+      { stats: { speed: 12 }, cost: { blue: 60 },  requiredBiomeLevel: 4 },
+      { stats: { speed: 16 }, cost: { blue: 100 }, requiredBiomeLevel: 4 },
+    ],
+  }],
+
+  ['tundra-vest-t3', {
+    id: 'tundra-vest-t3', name: 'Glacial Bulwark',
+    recipeGroup: 'tundra', requiredBiomeLevel: 4, slot: 'armor',
+    cost: { blue: 124 }, stats: { maxHp: 100, plating: 15 },
+    mechanicEffects: {
+      'defense.stationary-dr-pct': 0.15, 'defense.stationary-dr-ramptime-ms': 6000,
+      'defense.max-hit-pct': 0.25, 'defense.max-hit-mult': 0.5,
+    },
+    tier: 3,
+    icon: 'items/armor/plate-armor-1.png',
+    description: 'Stand still and the ice creeps over the plate, until you are part of the glacier itself.',
+    upgrades: [
+      { stats: { maxHp: 22, plating: 4 }, cost: { blue: 62 },  requiredBiomeLevel: 4 },
+      { stats: { maxHp: 22, plating: 4 }, cost: { blue: 124 }, requiredBiomeLevel: 4 },
+      { stats: { maxHp: 22, plating: 4 }, cost: { blue: 208 }, requiredBiomeLevel: 4 },
+    ],
+  }],
+
 ] satisfies [string, Recipe][];

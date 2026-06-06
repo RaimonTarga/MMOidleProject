@@ -23,35 +23,6 @@ export const swampRecipeEntries = [
     ],
   }],
 
-  ['swamp-vest-t1', {
-    id: 'swamp-vest-t1', name: 'Arcane Wrappings',
-    recipeGroup: 'swamp', requiredBiomeLevel: 4, slot: 'armor',
-    cost: { purple: 22 }, stats: { maxHp: 24, plating: 6 },
-    mechanicEffects: { 'defense.dot-resistance': 0.18 },
-    tier: 1,
-    icon: 'items/armor/leather-armor-4.png',
-    description: 'Marsh-cloth steeped in old wardings against rot and fume.',
-    upgrades: [
-      { stats: { maxHp: 6, plating: 2 }, cost: { purple: 10 }, requiredBiomeLevel: 4 },
-      { stats: { maxHp: 6, plating: 2 }, cost: { purple: 22 }, requiredBiomeLevel: 4 },
-      { stats: { maxHp: 6, plating: 2 }, cost: { purple: 42 }, requiredBiomeLevel: 4 },
-    ],
-  }],
-
-  ['swamp-boots-t1', {
-    id: 'swamp-boots-t1', name: 'Marsh Treads',
-    recipeGroup: 'swamp', requiredBiomeLevel: 3, slot: 'mobility',
-    cost: { purple: 18 }, stats: { speed: 20 }, tier: 1,
-    mechanicEffects: { 'mobility.tenacity-pct': 0.30 },
-    icon: 'items/boots/leather-boots-2.png',
-    description: 'Broad soles that ride the surface of soft, sucking ground.',
-    upgrades: [
-      { stats: { speed: 3 }, cost: { purple: 10 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 4 }, cost: { purple: 22 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 4 }, cost: { purple: 42 }, requiredBiomeLevel: 4 },
-    ],
-  }],
-
   // CHARM (absorb): base 0.07 -> +0.01/step -> 0.10 at +3. hpRegen 3 flat.
   ['swamp-charm-t1', {
     id: 'swamp-charm-t1', name: 'Murk Eye',
@@ -65,6 +36,35 @@ export const swampRecipeEntries = [
       { mechanicEffects: { 'defense.absorb-pct': 0.01 }, cost: { purple: 10 }, requiredBiomeLevel: 3 },
       { mechanicEffects: { 'defense.absorb-pct': 0.01 }, cost: { purple: 22 }, requiredBiomeLevel: 4 },
       { mechanicEffects: { 'defense.absorb-pct': 0.01 }, cost: { purple: 42 }, requiredBiomeLevel: 4 },
+    ],
+  }],
+
+  ['swamp-boots-t1', {
+    id: 'swamp-boots-t1', name: 'Marsh Treads',
+    recipeGroup: 'swamp', requiredBiomeLevel: 3, slot: 'mobility',
+    cost: { purple: 18 }, stats: { speed: 20 }, tier: 1,
+    mechanicEffects: { 'mobility.tenacity-pct': 0.20 },
+    icon: 'items/boots/leather-boots-2.png',
+    description: 'Broad soles that ride the surface of soft, sucking ground.',
+    upgrades: [
+      { stats: { speed: 3 }, cost: { purple: 10 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 4 }, cost: { purple: 22 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 4 }, cost: { purple: 42 }, requiredBiomeLevel: 4 },
+    ],
+  }],
+
+  ['swamp-vest-t1', {
+    id: 'swamp-vest-t1', name: 'Arcane Wrappings',
+    recipeGroup: 'swamp', requiredBiomeLevel: 4, slot: 'armor',
+    cost: { purple: 22 }, stats: { maxHp: 24, plating: 6 },
+    mechanicEffects: { 'defense.dot-resistance': 0.18 },
+    tier: 1,
+    icon: 'items/armor/leather-armor-4.png',
+    description: 'Marsh-cloth steeped in old wardings against rot and fume.',
+    upgrades: [
+      { stats: { maxHp: 6, plating: 2 }, cost: { purple: 10 }, requiredBiomeLevel: 4 },
+      { stats: { maxHp: 6, plating: 2 }, cost: { purple: 22 }, requiredBiomeLevel: 4 },
+      { stats: { maxHp: 6, plating: 2 }, cost: { purple: 42 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -97,35 +97,6 @@ export const swampRecipeEntries = [
     ],
   }],
   
-  ['swamp-vest-t2', {
-    id: 'swamp-vest-t2', name: 'Void Wrappings',
-    recipeGroup: 'swamp', requiredBiomeLevel: 8, slot: 'armor',
-    cost: { purple: 54, green: 14 }, stats: { maxHp: 44, plating: 12 },
-    mechanicEffects: { 'defense.dot-resistance': 0.30, 'defense.hit-to-dot-pct': 0.15 },
-    tier: 2,
-    icon: 'items/armor/leather-armor-5.png',
-    description: 'Cloth drawn from the deepest mire, where even the water has forgotten the sun.',
-    upgrades: [
-      { stats: { maxHp: 12, plating: 3 }, cost: { purple: 26 }, requiredBiomeLevel: 8 },
-      { stats: { maxHp: 12, plating: 3 }, cost: { purple: 54 }, requiredBiomeLevel: 8 },
-      { stats: { maxHp: 12, plating: 3 }, cost: { purple: 96 }, requiredBiomeLevel: 8 },
-    ],
-  }],
-
-  ['swamp-boots-t2', {
-    id: 'swamp-boots-t2', name: 'Wetland Wraps',
-    recipeGroup: 'swamp', requiredBiomeLevel: 7, slot: 'mobility',
-    cost: { purple: 44, green: 11 }, stats: { speed: 31 }, tier: 2,
-    mechanicEffects: { 'mobility.tenacity-pct': 0.45 },
-    icon: 'items/boots/leather-boots-4.png',
-    description: 'Enchanted bindings that find footing where there should be none.',
-    upgrades: [
-      { stats: { speed: 3 }, cost: { purple: 22 }, requiredBiomeLevel: 8 },
-      { stats: { speed: 4 }, cost: { purple: 44 }, requiredBiomeLevel: 8 },
-      { stats: { speed: 5 }, cost: { purple: 78 }, requiredBiomeLevel: 8 },
-    ],
-  }],
-
   // CHARM (absorb): base 0.09 -> +0.02/step -> 0.15 at +3. hpRegen 6 flat.
   ['swamp-charm-t2', {
     id: 'swamp-charm-t2', name: 'Void Eye',
@@ -139,6 +110,35 @@ export const swampRecipeEntries = [
       { mechanicEffects: { 'defense.absorb-pct': 0.02 }, cost: { purple: 22 }, requiredBiomeLevel: 7 },
       { mechanicEffects: { 'defense.absorb-pct': 0.02 }, cost: { purple: 44 }, requiredBiomeLevel: 8 },
       { mechanicEffects: { 'defense.absorb-pct': 0.02 }, cost: { purple: 78 }, requiredBiomeLevel: 8 },
+    ],
+  }],
+
+  ['swamp-boots-t2', {
+    id: 'swamp-boots-t2', name: 'Wetland Wraps',
+    recipeGroup: 'swamp', requiredBiomeLevel: 7, slot: 'mobility',
+    cost: { purple: 44, green: 11 }, stats: { speed: 31 }, tier: 2,
+    mechanicEffects: { 'mobility.tenacity-pct': 0.25 },
+    icon: 'items/boots/leather-boots-4.png',
+    description: 'Enchanted bindings that find footing where there should be none.',
+    upgrades: [
+      { stats: { speed: 3 }, cost: { purple: 22 }, requiredBiomeLevel: 8 },
+      { stats: { speed: 4 }, cost: { purple: 44 }, requiredBiomeLevel: 8 },
+      { stats: { speed: 5 }, cost: { purple: 78 }, requiredBiomeLevel: 8 },
+    ],
+  }],
+
+  ['swamp-vest-t2', {
+    id: 'swamp-vest-t2', name: 'Void Wrappings',
+    recipeGroup: 'swamp', requiredBiomeLevel: 8, slot: 'armor',
+    cost: { purple: 54, green: 14 }, stats: { maxHp: 44, plating: 12 },
+    mechanicEffects: { 'defense.dot-resistance': 0.30, 'defense.hit-to-dot-pct': 0.15 },
+    tier: 2,
+    icon: 'items/armor/leather-armor-5.png',
+    description: 'Cloth drawn from the deepest mire, where even the water has forgotten the sun.',
+    upgrades: [
+      { stats: { maxHp: 12, plating: 3 }, cost: { purple: 26 }, requiredBiomeLevel: 8 },
+      { stats: { maxHp: 12, plating: 3 }, cost: { purple: 54 }, requiredBiomeLevel: 8 },
+      { stats: { maxHp: 12, plating: 3 }, cost: { purple: 96 }, requiredBiomeLevel: 8 },
     ],
   }],
 
@@ -171,35 +171,6 @@ export const swampRecipeEntries = [
     ],
   }],
 
-  ['swamp-vest-t3', {
-    id: 'swamp-vest-t3', name: 'Plaguebound Shroud',
-    recipeGroup: 'swamp', requiredBiomeLevel: 12, slot: 'armor',
-    cost: { purple: 116 }, stats: { maxHp: 86, plating: 22 },
-    mechanicEffects: { 'defense.dot-resistance': 0.40, 'defense.hit-to-dot-pct': 0.20, 'defense.debuff-resist': 0.20 },
-    tier: 3,
-    icon: 'items/armor/leather-armor-5.png',
-    description: 'It turns the blows you take into a slow ache it then refuses to feel.',
-    upgrades: [
-      { stats: { maxHp: 18, plating: 6 }, cost: { purple: 58 },  requiredBiomeLevel: 12 },
-      { stats: { maxHp: 18, plating: 6 }, cost: { purple: 116 }, requiredBiomeLevel: 12 },
-      { stats: { maxHp: 18, plating: 6 }, cost: { purple: 196 }, requiredBiomeLevel: 12 },
-    ],
-  }],
-
-  ['swamp-boots-t3', {
-    id: 'swamp-boots-t3', name: 'Mire Striders',
-    recipeGroup: 'swamp', requiredBiomeLevel: 9, slot: 'mobility',
-    cost: { purple: 60, green: 15 }, stats: { speed: 44 }, tier: 3,
-    mechanicEffects: { 'mobility.tenacity-pct': 0.60 },
-    icon: 'items/boots/leather-boots-6.png',
-    description: 'Nothing the bog grips holds them; they walk free of any mire that tries to keep them.',
-    upgrades: [
-      { stats: { speed: 4 }, cost: { purple: 30 },  requiredBiomeLevel: 10 },
-      { stats: { speed: 5 }, cost: { purple: 60 },  requiredBiomeLevel: 11 },
-      { stats: { speed: 6 }, cost: { purple: 105 }, requiredBiomeLevel: 12 },
-    ],
-  }],
-
   // CHARM (absorb): base 0.13 -> +0.03/step -> 0.22 at +3. hpRegen 11 flat.
   ['swamp-charm-t3', {
     id: 'swamp-charm-t3', name: 'Sorrow Eye',
@@ -215,4 +186,34 @@ export const swampRecipeEntries = [
       { mechanicEffects: { 'defense.absorb-pct': 0.03 }, cost: { purple: 175 }, requiredBiomeLevel: 12 },
     ],
   }],
+
+  ['swamp-boots-t3', {
+    id: 'swamp-boots-t3', name: 'Mire Striders',
+    recipeGroup: 'swamp', requiredBiomeLevel: 11, slot: 'mobility',
+    cost: { purple: 60, green: 15 }, stats: { speed: 44 }, tier: 3,
+    mechanicEffects: { 'mobility.tenacity-pct': 0.30 },
+    icon: 'items/boots/leather-boots-6.png',
+    description: 'Nothing the bog grips holds them; they walk free of any mire that tries to keep them.',
+    upgrades: [
+      { stats: { speed: 4 }, cost: { purple: 30 },  requiredBiomeLevel: 12 },
+      { stats: { speed: 5 }, cost: { purple: 60 },  requiredBiomeLevel: 12 },
+      { stats: { speed: 6 }, cost: { purple: 105 }, requiredBiomeLevel: 12 },
+    ],
+  }],
+
+  ['swamp-vest-t3', {
+    id: 'swamp-vest-t3', name: 'Plaguebound Shroud',
+    recipeGroup: 'swamp', requiredBiomeLevel: 12, slot: 'armor',
+    cost: { purple: 116 }, stats: { maxHp: 86, plating: 22 },
+    mechanicEffects: { 'defense.dot-resistance': 0.40, 'defense.hit-to-dot-pct': 0.20, 'defense.debuff-resist': 0.20 },
+    tier: 3,
+    icon: 'items/armor/leather-armor-5.png',
+    description: 'It turns the blows you take into a slow ache it then refuses to feel.',
+    upgrades: [
+      { stats: { maxHp: 18, plating: 6 }, cost: { purple: 58 },  requiredBiomeLevel: 12 },
+      { stats: { maxHp: 18, plating: 6 }, cost: { purple: 116 }, requiredBiomeLevel: 12 },
+      { stats: { maxHp: 18, plating: 6 }, cost: { purple: 196 }, requiredBiomeLevel: 12 },
+    ],
+  }],
+
 ] satisfies [string, Recipe][];

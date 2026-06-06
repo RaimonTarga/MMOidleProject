@@ -65,30 +65,16 @@ export const plainsRecipeEntries = [
   }],
 
   // ── T2 ──
-  ['plains-vest-t2', {
-    id: 'plains-vest-t2', name: 'Enduring Robe',
-    recipeGroup: 'plains', requiredBiomeLevel: 8, slot: 'armor',
-    cost: { yellow: 50, red: 12 }, stats: { maxHp: 20, plating: 24 }, tier: 2,
-    icon: 'items/armor/plate-armor-2.png',
-    description: 'Plate that has outlasted the wars it was made for, and the smith who made it.',
+  ['knight-steelsword', {
+    id: 'knight-steelsword', name: "Knight's Steelsword",
+    recipeGroup: 'plains', requiredBiomeLevel: 5, slot: 'weapon',
+    cost: { yellow: 35, red: 8 }, stats: { attack: 20 }, attacksPerSecond: 0.80, tier: 2,
+    icon: 'items/weapons/sword-2.png',
+    description: 'A knight sidearm kept keen by habit and pride — plain, proven, never flashy.',
     upgrades: [
-      { stats: { maxHp: 5, plating: 6 }, cost: { yellow: 24 }, requiredBiomeLevel: 8 },
-      { stats: { maxHp: 5, plating: 6 }, cost: { yellow: 50 }, requiredBiomeLevel: 8 },
-      { stats: { maxHp: 5, plating: 6 }, cost: { yellow: 90 }, requiredBiomeLevel: 8 },
-    ],
-  }],
-
-  ['plains-boots-t2', {
-    id: 'plains-boots-t2', name: 'Gale Boots',
-    recipeGroup: 'plains', requiredBiomeLevel: 7, slot: 'mobility',
-    cost: { yellow: 40, red: 10 }, stats: { speed: 36 }, tier: 2,
-    mechanicEffects: { 'mobility.ooc-speed-pct': 0.55 },
-    icon: 'items/boots/sandals-2.png',
-    description: 'Wind-cured leather that seems to lean into every stride.',
-    upgrades: [
-      { stats: { speed: 3 }, cost: { yellow: 20 }, requiredBiomeLevel: 8 },
-      { stats: { speed: 4 }, cost: { yellow: 40 }, requiredBiomeLevel: 8 },
-      { stats: { speed: 5 }, cost: { yellow: 72 }, requiredBiomeLevel: 8 },
+      { stats: { attack: 8 }, cost: { yellow: 18 }, requiredBiomeLevel: 6 },
+      { stats: { attack: 8 }, cost: { yellow: 35 }, requiredBiomeLevel: 7 },
+      { stats: { attack: 8 }, cost: { yellow: 64 }, requiredBiomeLevel: 8 },
     ],
   }],
 
@@ -108,16 +94,31 @@ export const plainsRecipeEntries = [
     ],
   }],
 
-  ['knight-steelsword', {
-    id: 'knight-steelsword', name: "Knight's Steelsword",
-    recipeGroup: 'plains', requiredBiomeLevel: 5, slot: 'weapon',
-    cost: { yellow: 35, red: 8 }, stats: { attack: 20 }, attacksPerSecond: 0.80, tier: 2,
-    icon: 'items/weapons/sword-2.png',
-    description: 'A knight sidearm kept keen by habit and pride — plain, proven, never flashy.',
+  ['plains-boots-t2', {
+    id: 'plains-boots-t2', name: 'Gale Boots',
+    recipeGroup: 'plains', requiredBiomeLevel: 7, slot: 'mobility',
+    cost: { yellow: 40, red: 10 }, stats: { speed: 36 }, tier: 2,
+    mechanicEffects: { 'mobility.ooc-speed-pct': 0.55 },
+    icon: 'items/boots/sandals-2.png',
+    description: 'Wind-cured leather that seems to lean into every stride.',
     upgrades: [
-      { stats: { attack: 8 }, cost: { yellow: 18 }, requiredBiomeLevel: 6 },
-      { stats: { attack: 8 }, cost: { yellow: 35 }, requiredBiomeLevel: 7 },
-      { stats: { attack: 8 }, cost: { yellow: 64 }, requiredBiomeLevel: 8 },
+      { stats: { speed: 3 }, cost: { yellow: 20 }, requiredBiomeLevel: 8 },
+      { stats: { speed: 4 }, cost: { yellow: 40 }, requiredBiomeLevel: 8 },
+      { stats: { speed: 5 }, cost: { yellow: 72 }, requiredBiomeLevel: 8 },
     ],
   }],
+  
+  ['plains-vest-t2', {
+    id: 'plains-vest-t2', name: 'Enduring Robe',
+    recipeGroup: 'plains', requiredBiomeLevel: 8, slot: 'armor',
+    cost: { yellow: 50, red: 12 }, stats: { maxHp: 20, plating: 24 }, tier: 2,
+    icon: 'items/armor/plate-armor-2.png',
+    description: 'Plate that has outlasted the wars it was made for, and the smith who made it.',
+    upgrades: [
+      { stats: { maxHp: 5, plating: 6 }, cost: { yellow: 24 }, requiredBiomeLevel: 8 },
+      { stats: { maxHp: 5, plating: 6 }, cost: { yellow: 50 }, requiredBiomeLevel: 8 },
+      { stats: { maxHp: 5, plating: 6 }, cost: { yellow: 90 }, requiredBiomeLevel: 8 },
+    ],
+  }],
+  
 ] satisfies [string, Recipe][];
