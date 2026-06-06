@@ -1,4 +1,4 @@
-import type { CombatArchetype } from '@mmo-idle/shared';
+import type { CombatArchetype, SkillNode } from '@mmo-idle/shared';
 import { SKILL_TREE, canUnlockSkill } from '@mmo-idle/shared';
 import type { World } from '../../../world/World';
 import type { PlayerEntity } from '../../../ecs/entity';
@@ -45,5 +45,24 @@ export function unlockSkill(world: World, entity: PlayerEntity, skillId: string)
     despawnMinionsForOwner(world, entity);
   }
 
+  world.analyticsSkillUnlock?.(
+    entity.isPlayer.id,
+    skillId,
+    buildSkillPath(entity.usesSkills.unlockedSkills),
+  );
+
   return true;
+}
+
+function buildSkillPath(unlockedSkills: string[]): string[] {
+  return unlockedSkills
+    .map((id) => SKILL_TREE.get(id))
+    .filter((node): node is SkillNode => !!node)
+    .sort((a, b) => a.tier - b.tier)
+    .map((node) => {
+      if (node.tier === 0) return `Class: ${node.name}`;
+      if (node.tier === 1) return `Variant: ${node.name}`;
+      if (node.tier === 2) return `Range: ${node.name}`;
+      return `Perk: ${node.name}`;
+    });
 }

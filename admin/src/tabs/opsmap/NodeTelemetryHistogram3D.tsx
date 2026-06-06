@@ -2,17 +2,17 @@ import { useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useAtomValue } from 'jotai';
 import { BIOME_DATABASE, NODE_BIOMES } from '@mmo-idle/shared';
-import { nodeTelemetryAtom } from '../../hud/atoms';
-import { GRID_ROWS, GRID_COLS } from './constants';
-import { extractMetric, formatMetricValue, type TelemetryMetric } from './telemetryMetrics';
+import { telemetryAtom } from '../../state';
+import { extractMetric, formatMetricValue, type TelemetryMetric } from '@/lib/telemetry';
 
 interface Props {
   metric: TelemetryMetric;
   pinnedNodeId: string | null;
-  playerNodeId: string | null;
   onSelect: (nodeId: string) => void;
 }
 
+const GRID_ROWS = 11;
+const GRID_COLS = 11;
 const MAX_BAR_PX = 120;
 const INITIAL_ROT_X = 58;
 const INITIAL_ROT_Y = -32;
@@ -39,10 +39,9 @@ function findBarAt(clientX: number, clientY: number): string | null {
 export function NodeTelemetryHistogram3D({
   metric,
   pinnedNodeId,
-  playerNodeId,
   onSelect,
 }: Props) {
-  const snap = useAtomValue(nodeTelemetryAtom);
+  const snap = useAtomValue(telemetryAtom);
   const [rotX, setRotX] = useState(INITIAL_ROT_X);
   const [rotY, setRotY] = useState(INITIAL_ROT_Y);
   const [hover, setHover] = useState<{ id: string; x: number; y: number } | null>(null);
@@ -51,8 +50,6 @@ export function NodeTelemetryHistogram3D({
   const { entries, maxValue } = useMemo(() => {
     const out: Array<{
       id: string;
-      row: number;
-      col: number;
       value: number;
       flagged: boolean;
       orphan: boolean;
@@ -61,16 +58,14 @@ export function NodeTelemetryHistogram3D({
     for (let r = 0; r < GRID_ROWS; r++) {
       for (let c = 0; c < GRID_COLS; c++) {
         const id = `node-${r}-${c}`;
-        const tRow = snap?.nodes[id];
-        const value = tRow ? extractMetric(tRow, metric) : 0;
+        const row = snap?.nodes[id];
+        const value = row ? extractMetric(row, metric) : 0;
         if (value > max) max = value;
         out.push({
           id,
-          row: r,
-          col: c,
           value,
-          flagged: !!tRow && tRow.leakFlags.length > 0,
-          orphan: !!tRow && !tRow.occupied && tRow.idlePopulationMs > 0,
+          flagged: !!row && row.leakFlags.length > 0,
+          orphan: !!row && !row.occupied && row.idlePopulationMs > 0,
         });
       }
     }
@@ -83,14 +78,14 @@ export function NodeTelemetryHistogram3D({
   }
 
   function onPointerMove(e: React.PointerEvent) {
-    const d = dragRef.current;
-    if (d) {
-      const dx = e.clientX - d.x;
-      const dy = e.clientY - d.y;
-      if (Math.abs(dx) + Math.abs(dy) > DRAG_THRESHOLD_PX) d.moved = true;
-      setRotY(d.ry + dx * 0.4);
-      setRotX(clamp(25, 80, d.rx + dy * 0.3));
-      if (d.moved && hover) setHover(null);
+    const drag = dragRef.current;
+    if (drag) {
+      const dx = e.clientX - drag.x;
+      const dy = e.clientY - drag.y;
+      if (Math.abs(dx) + Math.abs(dy) > DRAG_THRESHOLD_PX) drag.moved = true;
+      setRotY(drag.ry + dx * 0.4);
+      setRotX(clamp(25, 80, drag.rx + dy * 0.3));
+      if (drag.moved && hover) setHover(null);
       return;
     }
     const id = findBarAt(e.clientX, e.clientY);
@@ -104,15 +99,11 @@ export function NodeTelemetryHistogram3D({
   }
 
   function onPointerUp(e: React.PointerEvent) {
-    const d = dragRef.current;
+    const drag = dragRef.current;
     dragRef.current = null;
-    if (!d || d.moved) return;
+    if (!drag || drag.moved) return;
     const id = findBarAt(e.clientX, e.clientY);
     if (id) onSelect(id);
-  }
-
-  function onPointerLeave() {
-    setHover(null);
   }
 
   const tooltip = (() => {
@@ -143,7 +134,7 @@ export function NodeTelemetryHistogram3D({
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
       onPointerCancel={onPointerUp}
-      onPointerLeave={onPointerLeave}
+      onPointerLeave={() => setHover(null)}
     >
       <div
         className="map-histogram-world"
@@ -161,7 +152,6 @@ export function NodeTelemetryHistogram3D({
                   className={[
                     'map-histogram-bar',
                     pinnedNodeId === id ? 'map-histogram-bar--pinned' : '',
-                    playerNodeId === id ? 'map-histogram-bar--player' : '',
                     flagged ? 'map-histogram-bar--leak' : '',
                     orphan ? 'map-histogram-bar--orphan' : '',
                   ].filter(Boolean).join(' ')}

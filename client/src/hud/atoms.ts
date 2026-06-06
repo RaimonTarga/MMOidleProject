@@ -5,7 +5,6 @@ import type {
   EquipmentMap,
   EquippedRule,
   EssenceType,
-  NodeTelemetrySnapshot,
   PartyMember,
   PassiveMap,
   PlayerBuff,
@@ -36,7 +35,6 @@ const DEFAULT_EQUIPMENT: EquipmentMap = {
 };
 
 export const statusAtom = atom<HudConnectionStatus>('connecting');
-export const nodeTelemetryAtom = atom<NodeTelemetrySnapshot | null>(null);
 export const nodeLoadingAtom = atom<{ active: boolean; nodeId: string | null }>({
   active: false,
   nodeId: null,

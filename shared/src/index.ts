@@ -33,6 +33,7 @@ export * from './protocol/views';
 export * from './protocol/combatEvents';
 export * from './protocol/worldLogEvents';
 export * from './protocol/nodeTelemetry';
+export * from './protocol/admin';
 export * from './protocol/death';
 export * from './protocol/socketEvents';
 export * from './world/nodeBiomes';

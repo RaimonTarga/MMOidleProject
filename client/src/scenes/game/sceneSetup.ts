@@ -3,7 +3,6 @@ import { DEPTH } from "../../render/depth";
 import { getDefaultStore } from "jotai";
 import {
   statusAtom,
-  nodeTelemetryAtom,
   syncPlayerAtoms,
   nodeLoadingAtom,
   triggerDeathOverlay,
@@ -290,7 +289,6 @@ function connectSocket(scene: GameScene): void {
     },
     onDisconnect: () => {
       atomStore.set(statusAtom, "disconnected");
-      atomStore.set(nodeTelemetryAtom, null);
       syncPlayerAtoms(null);
       scene.state.gameplaySettingsSynced = false;
       scene.myId = "";
@@ -325,9 +323,6 @@ function connectSocket(scene: GameScene): void {
     },
     onBossFelled: (markers) => {
       setBossFelledMarkers(markers);
-    },
-    onTelemetry: (snapshot) => {
-      atomStore.set(nodeTelemetryAtom, snapshot);
     },
     onSessionKicked: () => {
       const overlay = document.createElement("div");

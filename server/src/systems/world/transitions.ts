@@ -89,7 +89,7 @@ export function updateTransitions(world: World): void {
     const fromNodeId = position.nodeId;
 
     position.nodeId = targetNodeId;
-    world.movePlayerNode(fromNodeId, targetNodeId);
+    world.movePlayerNode(fromNodeId, targetNodeId, entity.isPlayer.id);
 
     if (world.isNodeFrozen(targetNodeId)) {
       world.nodePreparingEmitter?.(entity.isPlayer.id, targetNodeId);

@@ -219,6 +219,17 @@ export class World {
     null;
   /** Broadcast active boss-felled markers to all clients (world map). Set by index.ts. */
   bossFelledBroadcast: (() => void) | null = null;
+  /** Optional analytics hooks installed by the server entrypoint. */
+  analyticsNodeTransition:
+    | ((playerId: string, fromNodeId: string, toNodeId: string) => void)
+    | null = null;
+  analyticsPlayerDeath: ((playerId: string, nodeId: string) => void) | null = null;
+  analyticsSkillUnlock:
+    | ((playerId: string, skillId: string, path: string[]) => void)
+    | null = null;
+  analyticsProgression:
+    | ((playerId: string, nodeId: string, progressionKind: string, value?: number) => void)
+    | null = null;
   /** Generic NODE_FEATURES spawn runtime state keyed `${nodeId}:${featureId}`. */
   nodeFeatureSpawnState = new Map<
     string,
@@ -606,12 +617,15 @@ export class World {
     else this.playersByNode.set(nodeId, next);
   }
 
-  movePlayerNode(fromNodeId: string, toNodeId: string): void {
+  movePlayerNode(fromNodeId: string, toNodeId: string, playerId?: string): void {
     const fromBefore = this.countPlayersInNode(fromNodeId);
     this.decrementPlayersInNode(fromNodeId);
     if (fromBefore === 1) freezeNode(this, fromNodeId);
 
     this.incrementPlayersInNode(toNodeId);
+    if (playerId && fromNodeId !== toNodeId) {
+      this.analyticsNodeTransition?.(playerId, fromNodeId, toNodeId);
+    }
   }
 
   syncTelemetryOccupancy(): void {

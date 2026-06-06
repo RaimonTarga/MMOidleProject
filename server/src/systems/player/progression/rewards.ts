@@ -124,6 +124,12 @@ function applyBiomeXP(
         nodeId,
       },
     );
+    world.analyticsProgression?.(
+      entity.isPlayer.id,
+      nodeId,
+      'biome-level-up',
+      newLevel,
+    );
   }
   return { xpGain, prevLevel, newLevel, unlockedRecipeIds };
 }
@@ -177,6 +183,12 @@ function applyKillRewardsToPlayer(
         relatedPlayerIds: [recipient.isPlayer.id],
         nodeId: monster.hasPosition.nodeId,
       },
+    );
+    world.analyticsProgression?.(
+      recipient.isPlayer.id,
+      monster.hasPosition.nodeId,
+      'player-tier-up',
+      tierResult.newTier,
     );
     world.pendingAscensions.push(recipient.isPlayer.id);
   }
