@@ -69,6 +69,34 @@ export const swampRecipeEntries = [
   }],
 
   // ── T2 ──
+  ['swamp-mirebrand', {
+    id: 'swamp-mirebrand', name: 'Mirebrand',
+    recipeGroup: 'swamp', requiredBiomeLevel: 5, slot: 'weapon',
+    cost: { purple: 52, green: 13 }, stats: { attack: 17 }, attacksPerSecond: 0.78, tier: 2,
+    mechanicEffects: { 'weapon.dot-conversion-pct': 0.30, 'weapon.dot-stacks': 5 },
+    icon: 'items/weapons/rune-sword-hot-1.png',
+    description: 'The runes burn hotter now; what they touch keeps smouldering.',
+    upgrades: [
+      { stats: { attack: 5 }, cost: { purple: 26 }, requiredBiomeLevel: 6 },
+      { stats: { attack: 5 }, cost: { purple: 52 }, requiredBiomeLevel: 7 },
+      { stats: { attack: 5 }, cost: { purple: 92 }, requiredBiomeLevel: 8 },
+    ],
+  }],
+
+  ['swamp-frostbrand', {
+    id: 'swamp-frostbrand', name: 'Frostbrand',
+    recipeGroup: 'swamp', requiredBiomeLevel: 5, slot: 'weapon',
+    cost: { purple: 52, green: 13 }, stats: { attack: 24 }, attacksPerSecond: 0.55, tier: 2,
+    mechanicEffects: { 'weapon.dot-conversion-pct': 0.45, 'weapon.dot-stacks': 3 },
+    icon: 'items/weapons/rune-sword-cold-1.png',
+    description: 'The first of the cold brands — slower and heavier, biting deep instead of often.',
+    upgrades: [
+      { stats: { attack: 7 }, cost: { purple: 26 }, requiredBiomeLevel: 6 },
+      { stats: { attack: 7 }, cost: { purple: 52 }, requiredBiomeLevel: 7 },
+      { stats: { attack: 7 }, cost: { purple: 92 }, requiredBiomeLevel: 8 },
+    ],
+  }],
+  
   ['swamp-vest-t2', {
     id: 'swamp-vest-t2', name: 'Void Wrappings',
     recipeGroup: 'swamp', requiredBiomeLevel: 8, slot: 'armor',
@@ -155,6 +183,20 @@ export const swampRecipeEntries = [
       { stats: { maxHp: 18, plating: 6 }, cost: { purple: 58 },  requiredBiomeLevel: 12 },
       { stats: { maxHp: 18, plating: 6 }, cost: { purple: 116 }, requiredBiomeLevel: 12 },
       { stats: { maxHp: 18, plating: 6 }, cost: { purple: 196 }, requiredBiomeLevel: 12 },
+    ],
+  }],
+
+  ['swamp-boots-t3', {
+    id: 'swamp-boots-t3', name: 'Mire Striders',
+    recipeGroup: 'swamp', requiredBiomeLevel: 9, slot: 'mobility',
+    cost: { purple: 60, green: 15 }, stats: { speed: 44 }, tier: 3,
+    mechanicEffects: { 'mobility.tenacity-pct': 0.60 },
+    icon: 'items/boots/leather-boots-6.png',
+    description: 'Nothing the bog grips holds them; they walk free of any mire that tries to keep them.',
+    upgrades: [
+      { stats: { speed: 4 }, cost: { purple: 30 },  requiredBiomeLevel: 10 },
+      { stats: { speed: 5 }, cost: { purple: 60 },  requiredBiomeLevel: 11 },
+      { stats: { speed: 6 }, cost: { purple: 105 }, requiredBiomeLevel: 12 },
     ],
   }],
 

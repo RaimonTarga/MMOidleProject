@@ -95,6 +95,20 @@ export const desertRecipeEntries = [
     ],
   }],
 
+  ['desert-boots-t3', {
+    id: 'desert-boots-t3', name: 'Mirage Striders',
+    recipeGroup: 'desert', requiredBiomeLevel: 5, slot: 'mobility',
+    cost: { yellow: 80 }, stats: { speed: 96 }, tier: 3,
+    mechanicEffects: { 'mobility.kite-speed-pct': 0.55 },
+    icon: 'items/boots/mage-boots-2.png',
+    description: 'By the time the storm reaches where you stood, you are already a rumor on the next dune.',
+    upgrades: [
+      { stats: { speed: 10 }, cost: { yellow: 40 },  requiredBiomeLevel: 6 },
+      { stats: { speed: 14 }, cost: { yellow: 80 },  requiredBiomeLevel: 7 },
+      { stats: { speed: 18 }, cost: { yellow: 138 }, requiredBiomeLevel: 8 },
+    ],
+  }],
+
   // Charm: hpRegen flat; upgrades ramp cleanse empty-heal 0.05 -> 0.08.
   ['desert-charm-t3', {
     id: 'desert-charm-t3', name: 'Oasis Core',

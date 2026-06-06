@@ -138,6 +138,21 @@ export const caveRecipeEntries = [
     ],
   }],
 
+  // cave.recipes.ts
+  ['cave-boots-t3', {
+    id: 'cave-boots-t3', name: 'Echostep Treads',
+    recipeGroup: 'cave', requiredBiomeLevel: 9, slot: 'mobility',
+    cost: { red: 60, purple: 15 }, stats: { speed: 52 }, tier: 3,
+    mechanicEffects: { 'mobility.stealth-pct': 0.60 },
+    icon: 'items/boots/leather-boots-7.png',
+    description: 'They give back no sound at all — not even the echo the deep stone expects.',
+    upgrades: [
+      { stats: { speed: 4 }, cost: { red: 30 },  requiredBiomeLevel: 10 },
+      { stats: { speed: 5 }, cost: { red: 60 },  requiredBiomeLevel: 11 },
+      { stats: { speed: 6 }, cost: { red: 105 }, requiredBiomeLevel: 12 },
+    ],
+  }],
+
   ['cave-vest-t3', {
     id: 'cave-vest-t3', name: 'Deepscale Hide',
     recipeGroup: 'cave', requiredBiomeLevel: 12, slot: 'armor',

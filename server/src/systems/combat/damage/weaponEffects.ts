@@ -2,6 +2,7 @@ import { registerCombatListener } from "../engine/combatPipeline";
 import {
   applyStatusEffect,
   getStatusEffect,
+  removeStatusEffect,
   computeScaledDotDamage,
   getCounter,
   addCounter,
@@ -36,6 +37,7 @@ import {
   attachMarker,
   detachMarkerIfNoEffect,
 } from "../../../ecs/markerHelpers";
+import { markSliceDirty } from "../../../ecs/dirtyHelpers";
 import {
   buildSimpleBreakdown,
   recordMonsterDamagedByPlayer,
@@ -58,6 +60,11 @@ const SACRED_BUFF_TIMER = "sacredBufTimer";
 const SACRED_ORIG_CD = "sacredOrigCd";
 
 const BURN_EFFECT_IDS = BURN_FAMILY.map((b) => b.effectId);
+
+// ── Flurry: stacking attack-speed buff (weapon.flurry-* passives) ─────────────
+const FLURRY_EFFECT_ID = "flurry";
+const FLURRY_DURATION_MS = 4500;
+const FLURRY_BASE_CD = "flurryBaseCd"; // tracksCombat string: cached pre-flurry cooldown
 
 // ── Init — registers combat pipeline listeners ────────────────────────────────
 
@@ -110,6 +117,28 @@ export function initWeaponEffects(): void {
     // Keep per-stack values current with the equipped weapon (buffs apply immediately).
     effect.data.platingPerStack = platingPerStack;
     effect.data.drPerStack = drPerStack;
+  });
+
+  // ── Flurry: each hit adds 1 attack-speed stack (up to weapon.flurry-stacks), ──
+  // refreshing the buff window. Stacks scale attackCooldown in updateFlurryBuff;
+  // the buff drops all at once when the window lapses (standard stacking-status decay).
+  registerCombatListener("onHit", (ctx, _world) => {
+    if (ctx.attackerType !== "player") return;
+    if (ctx.defenderType !== "monster") return;
+
+    const p = ctx.attacker.usesSkills.passives;
+    if ((p["weapon.flurry-pct"] ?? 0) <= 0) return;
+    const maxStacks = Math.max(1, Math.round(p["weapon.flurry-stacks"] ?? 1));
+
+    applyStatusEffect(ctx.attacker.tracksCombat, {
+      id: FLURRY_EFFECT_ID,
+      maxStacks,
+      instanced: false,
+      sourceId: ctx.attacker.isPlayer.id,
+      remainingMs: FLURRY_DURATION_MS,
+      refreshable: true,
+      data: { totalMs: FLURRY_DURATION_MS },
+    });
   });
 
   // ── Chaotic family: every Nth hit misses (0 damage, on-hit effects still fire) ─
@@ -247,8 +276,48 @@ export function initWeaponEffects(): void {
 
 export function updateWeaponEffects(world: World, dt: number): void {
   updateSacredCrossBuff(world);
+  updateFlurryBuff(world);
   updateBurnEffects(world, dt);
   updateCorruptionEffects(world, dt);
+}
+
+// ── Flurry buff: recompute attackCooldown from current stacks each tick ────────
+// The flurry status effect decays in updateCombatState; here we mirror its stack
+// count onto attackCooldown, caching the pre-flurry cooldown so it restores cleanly
+// when the window lapses or the weapon is swapped out.
+function updateFlurryBuff(world: World): void {
+  for (const player of world.livePlayers) {
+    const state = player.tracksCombat;
+    const pct = player.usesSkills.passives["weapon.flurry-pct"] ?? 0;
+    const effect = getStatusEffect(state, FLURRY_EFFECT_ID);
+    const storedBase = getString(state, FLURRY_BASE_CD);
+
+    // No active flurry (expired, or weapon no longer grants it) — restore base cooldown.
+    if (!effect || pct <= 0) {
+      if (storedBase) {
+        const base = Number(storedBase);
+        if (base > 0 && player.performsAttack.attackCooldown !== base) {
+          player.performsAttack.attackCooldown = base;
+          markSliceDirty(world, player, "performsAttack");
+        }
+        setString(state, FLURRY_BASE_CD, "");
+      }
+      // Effect lingering after a weapon swap removed the passive — drop it.
+      if (effect && pct <= 0) removeStatusEffect(state, FLURRY_EFFECT_ID);
+      continue;
+    }
+
+    // Cache the un-flurried cooldown on the 0→active transition.
+    if (!storedBase) {
+      setString(state, FLURRY_BASE_CD, String(player.performsAttack.attackCooldown));
+    }
+    const base = Number(getString(state, FLURRY_BASE_CD));
+    const next = Math.max(200, Math.round(base / (1 + effect.stacks * pct)));
+    if (next !== player.performsAttack.attackCooldown) {
+      player.performsAttack.attackCooldown = next;
+      markSliceDirty(world, player, "performsAttack");
+    }
+  }
 }
 
 // ── Sacred family buff timer ───────────────────────────────────────────────────
@@ -439,5 +508,27 @@ export const WEAPON_BUFFS = [
           }
         : null,
     { label: "Holy", color: "#ffdd44", category: "weapon", shape: "square" },
+  ),
+  defineBuff(
+    "flurry",
+    ({ player }) => {
+      const pct = player.usesSkills.passives["weapon.flurry-pct"] ?? 0;
+      if (pct <= 0) return null;
+      const effect = getStatusEffect(player.tracksCombat, FLURRY_EFFECT_ID);
+      if (!effect || effect.stacks <= 0) return null;
+      const totalMs = effect.data["totalMs"] ?? effect.remainingMs;
+      return {
+        id: "flurry",
+        label: "Flurry",
+        stacks: effect.stacks,
+        durationPct:
+          totalMs > 0 && effect.remainingMs > 0
+            ? (effect.remainingMs / totalMs) * 100
+            : -1,
+        color: "#ff8844",
+        logDetail: `+${Math.round(effect.stacks * pct * 100)}% attack speed`,
+      };
+    },
+    { label: "Flurry", color: "#ff8844", category: "weapon", shape: "square" },
   ),
 ] as const satisfies readonly BuffDescriptor[];

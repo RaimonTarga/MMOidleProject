@@ -149,6 +149,10 @@ export const SHARED_KEYS = [
   'weapon.brittle-dr',
   // Brittle armor-shred debuff: maximum stacks the debuff can reach.
   'weapon.brittle-stacks',
+  // Flurry: attack-speed fraction granted per stack (0.06 = +6% per stack).
+  'weapon.flurry-pct',
+  // Flurry: maximum attack-speed stacks the buff can reach.
+  'weapon.flurry-stacks',
 ] as const;
 
 export const SUMMONER_KEYS = [

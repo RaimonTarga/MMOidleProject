@@ -98,6 +98,20 @@ export const jungleRecipeEntries = [
     ],
   }],
 
+  ['jungle-boots-t3', {
+    id: 'jungle-boots-t3', name: 'Canopy Striders',
+    recipeGroup: 'jungle', requiredBiomeLevel: 5, slot: 'mobility',
+    cost: { green: 58 }, stats: { speed: 44 }, tier: 3,
+    mechanicEffects: { 'mobility.aggro-pull-pct': 0.65 },
+    icon: 'items/boots/plate-boots-4.png',
+    description: 'They crash through the green loud enough to turn every hungry thing your way.',
+    upgrades: [
+      { stats: { speed: 6 },  cost: { green: 28 }, requiredBiomeLevel: 6 },
+      { stats: { speed: 8 },  cost: { green: 58 }, requiredBiomeLevel: 7 },
+      { stats: { speed: 10 }, cost: { green: 96 }, requiredBiomeLevel: 8 },
+    ],
+  }],
+
   // Charm: hpRegen flat; upgrades ramp ramp-regen MAX 0.23 -> 0.35.
   ['jungle-charm-t3', {
     id: 'jungle-charm-t3', name: 'Worldvine Heart',

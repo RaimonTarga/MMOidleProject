@@ -25,6 +25,7 @@ export const BUFF_IDS = [
   'reload-hair-trigger',
   'reload-cover-fire',
   'sacred-burst',
+  'flurry',
   'debuff-slow',
   'debuff-root',
   'debuff-frost-ramp',

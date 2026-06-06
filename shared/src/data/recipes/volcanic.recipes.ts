@@ -7,7 +7,7 @@ import type { Recipe } from './types';
 export const volcanicRecipeEntries = [
   ['volcanic-boots-t3', {
     id: 'volcanic-boots-t3', name: 'Magma Walkers',
-    recipeGroup: 'volcanic', requiredBiomeLevel: 1, slot: 'mobility',
+    recipeGroup: 'volcanic', requiredBiomeLevel: 4, slot: 'mobility',
     cost: { red: 62 }, stats: { speed: 36 }, tier: 3,
     mechanicEffects: { 'mobility.passive-speed-pct': 0.55, 'mobility.suppress-ms': 4000 },
     icon: 'items/boots/plate-boots-5.png',
