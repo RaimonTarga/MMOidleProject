@@ -32,6 +32,10 @@ export function sendRequestSync(socket: GameSocket): void {
   socket.emit('player:requestSync');
 }
 
+export function sendSetActive(socket: GameSocket, active: boolean): void {
+  socket.emit('player:setActive', active);
+}
+
 export function sendUnlockSkill(socket: GameSocket, skillId: string): void {
   socket.emit('player:unlockSkill', skillId);
 }

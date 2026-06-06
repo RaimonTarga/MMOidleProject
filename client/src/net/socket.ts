@@ -3,7 +3,6 @@ import type {
   ServerToClientEvents,
   ClientToServerEvents,
   DeltaSnapshot,
-  NodeTelemetrySnapshot,
   PlayerDeathPayload,
   WorldLogEvent,
   BossFelledMarker,
@@ -34,7 +33,6 @@ export interface SocketHandlers {
   onOverlordFelled(): void;
   onBossFelled(markers: BossFelledMarker[]): void;
   onWorldEvents(events: WorldLogEvent[]): void;
-  onTelemetry(snapshot: NodeTelemetrySnapshot): void;
   onSessionKicked(): void;
 }
 
@@ -54,7 +52,6 @@ export function wireSocketHandlers(
   socket.on('overlord:felled', () => h.onOverlordFelled());
   socket.on('world:bossFelled', (m) => h.onBossFelled(m));
   socket.on('world:events', (e) => h.onWorldEvents(e));
-  socket.on('world:telemetry', (s) => h.onTelemetry(s));
   socket.on('session:kicked', () => {
     socket.io.reconnection(false);
     h.onSessionKicked();

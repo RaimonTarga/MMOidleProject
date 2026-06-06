@@ -99,8 +99,9 @@ pnpm play                 # build client + start server (LAN / production mode)
 # map-editor.html — open directly in browser
 ```
 
-**Database (Postgres):** the server requires a Postgres reachable via `DATABASE_URL`.
-A local instance is defined in `docker-compose.yml` so dev "just works":
+**Database (Postgres):** the server requires a player/game Postgres reachable via
+`DATABASE_URL` and a separate operational log Postgres reachable via `LOG_DATABASE_URL`.
+Local instances for both are defined in `docker-compose.yml` so dev "just works":
 
 ```bash
 pnpm db:up                # start just Postgres (docker compose, waits until healthy)
@@ -112,9 +113,17 @@ pnpm docker:down          # stop the full stack
 ```
 
 `pnpm dev:server` runs `pnpm db:up` first (Docker must be running). When `DATABASE_URL`
-is unset in dev, `db/index.ts` falls back to the local compose Postgres
-(`postgresql://postgres:postgres@localhost:5432/gamedb`); in production it throws if unset.
-Migrations live in `server/src/db/migrations` (Postgres dialect) and run automatically at boot.
+is unset in dev, `db/index.ts` falls back to the local compose game Postgres
+(`postgresql://postgres:postgres@localhost:5432/gamedb`). When `LOG_DATABASE_URL` is unset
+in dev, `logdb/index.ts` falls back to the local compose log Postgres
+(`postgresql://postgres:postgres@localhost:5433/logdb`). In production both env vars must
+be set. On Railway, attach two Postgres services and set
+`DATABASE_URL=${{gamedb.DATABASE_URL}}` and `LOG_DATABASE_URL=${{logdb.DATABASE_URL}}` on
+the app service. Log retention is capped at 7 days (`LOG_RETENTION_DAYS`, default 7) so
+high-volume operational logs never flood the player database.
+
+Game DB migrations live in `server/src/db/migrations`; log DB migrations live in
+`server/src/logdb/migrations`. Both run automatically at boot.
 
 ---
 
@@ -528,9 +537,9 @@ Magazine system — burst then reload window. T1: Light (5 rounds, 1500 ms), Bal
 
 **OOC auto-reload:** When the reload player leaves combat (`!inCombat` via `tracksEngagement` + `COMBAT_REGEN_DELAY`) with a partial clip (`ammo > 0 && ammo < ammoMax`) and no reload is already active, `updateReloadArchetype` immediately sets `ammo = 0` and starts a reload. OOC reloads (and any reload in progress when going OOC) tick at **2× speed**. Auto-combat AI (`autoTarget.ts`) stops the player from moving toward the next enemy while `usesReload.reloadingMs > 0 && !targetIsAggroed`; if an enemy aggros the player mid-reload, the normal ranged movement AI resumes immediately.
 
-- Light: Exploding Clip (last bullet 3× + AoE), Hair Trigger (+5% attack speed per shot in clip, up to 5 stacks), Gatling (double mag/speed + knockback)
-- Balanced: Death Mark (stacks → reload detonation), Suppressing Fire (plating shred stacks), Cover Fire (40% DR while reloading)
-- Heavy: Laser (continuous heat-based beam), Snipe (slow heavy shots, full-HP bonus), Blunderbuss (close-range full-clip volley; knockback scales with pellets landed)
+- Light: Laser (continuous heat-based beam), Hair Trigger (+5% attack speed per shot in clip, up to 5 stacks), Gatling (double mag/speed + knockback)
+- Balanced: Death Mark (stacks → reload detonation), Suppressing Fire (plating shred stacks), Snipe (slow heavy shots, full-HP bonus)
+- Heavy: Exploding Clip (last bullet 3× + AoE), Cover Fire (40% DR while reloading), Blunderbuss (close-range full-clip volley; knockback scales with pellets landed)
 
 ---
 

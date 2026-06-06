@@ -1,13 +1,14 @@
 import { useAtomValue } from 'jotai';
-import { NODE_BIOMES, BIOME_DATABASE } from '@mmo-idle/shared';
-import { nodeTelemetryAtom } from '../../hud/atoms';
+import { BIOME_DATABASE, NODE_BIOMES } from '@mmo-idle/shared';
+import { telemetryAtom } from '../../state';
+import { sendAdminAction } from '../../socket';
 
 interface Props {
   nodeId: string;
 }
 
 function fmt(n: number, digits = 2): string {
-  return Number.isFinite(n) ? n.toFixed(digits) : '—';
+  return Number.isFinite(n) ? n.toFixed(digits) : '-';
 }
 
 function leakBadgeClass(flags: string[]): string {
@@ -16,31 +17,65 @@ function leakBadgeClass(flags: string[]): string {
   return 'map-telemetry-flag map-telemetry-flag--bad';
 }
 
+function nodeCoords(nodeId: string): string {
+  const match = /^node-(\d+)-(\d+)$/.exec(nodeId);
+  return match ? `row ${match[1]}, col ${match[2]}` : '-';
+}
+
 export function NodeTelemetryPanel({ nodeId }: Props) {
-  const snap = useAtomValue(nodeTelemetryAtom);
+  const snap = useAtomValue(telemetryAtom);
   const row = snap?.nodes[nodeId];
   const info = NODE_BIOMES[nodeId];
   const biome = info ? BIOME_DATABASE.get(info.biomeGroup) : null;
 
-  if (!snap || !row) {
-    return <div className="map-info__empty">No telemetry yet.</div>;
-  }
-
-  const cpuTotal = row.tickCpuMs + row.idlePopulationMs;
+  const cpuTotal = row ? row.tickCpuMs + row.idlePopulationMs : 0;
   const logicBudgetPct = Math.min(100, (cpuTotal / 100) * 100);
-  const deltaKb = row.lastDeltaBytes / 1024;
-  const estKb = row.estimatedBytes / 1024;
+  const deltaKb = row ? row.lastDeltaBytes / 1024 : 0;
+  const estKb = row ? row.estimatedBytes / 1024 : 0;
 
   return (
     <div className="map-node-telemetry">
       <div className="map-node-telemetry__header">
         <span className="map-node-telemetry__name">{biome?.name ?? nodeId}</span>
         <span className="map-node-telemetry__id">{nodeId}</span>
-        {row.frozen && !row.occupied && (
+        {row?.frozen && !row.occupied && (
           <span className="map-telemetry-flag map-telemetry-flag--ok">frozen</span>
         )}
       </div>
 
+      <section className="map-telemetry-section">
+        <div className="map-node-telemetry__label">Node debug</div>
+        <div className="map-telemetry-row"><span>Coords</span><span>{nodeCoords(nodeId)}</span></div>
+        <div className="map-telemetry-row"><span>Tier</span><span>{info ? `T${info.biomeTier}` : '-'}</span></div>
+        <div className="map-telemetry-row"><span>Biome group</span><span>{info?.biomeGroup ?? '-'}</span></div>
+        <div className="map-telemetry-row"><span>Dungeon</span><span>{info?.isDungeon ? 'yes' : 'no'}</span></div>
+        <div className="map-telemetry-row"><span>Boss type</span><span>{info?.bossTypeId ?? '-'}</span></div>
+        <div className="map-telemetry-row"><span>Target density</span><span>{biome?.mobDensity ?? '-'}</span></div>
+        <button
+          type="button"
+          className="map-debug-action"
+          onClick={() => sendAdminAction({ kind: 'respawnNode', nodeId })}
+        >
+          Respawn Node
+        </button>
+      </section>
+
+      {!snap && (
+        <section className="map-telemetry-section map-telemetry-section--warn">
+          <div className="map-node-telemetry__label">Telemetry</div>
+          <p className="map-telemetry-note">Waiting for the first admin telemetry snapshot.</p>
+        </section>
+      )}
+
+      {snap && !row && (
+        <section className="map-telemetry-section map-telemetry-section--warn">
+          <div className="map-node-telemetry__label">Telemetry</div>
+          <p className="map-telemetry-note">No row reported for this node in the latest snapshot.</p>
+        </section>
+      )}
+
+      {row && (
+        <>
       <section className="map-telemetry-section">
         <div className="map-node-telemetry__label">CPU (attributed)</div>
         <div className="map-telemetry-row"><span>Tick</span><span>{fmt(row.tickCpuMs)} ms</span></div>
@@ -87,7 +122,7 @@ export function NodeTelemetryPanel({ nodeId }: Props) {
         <section className="map-telemetry-section">
           <div className="map-node-telemetry__label">Node state</div>
           <p className="map-telemetry-note">
-            Frozen — no live entities. Snapshot persisted; cold start on next enter.
+            Frozen - no live entities. Snapshot persisted; cold start on next enter.
           </p>
         </section>
       )}
@@ -107,6 +142,8 @@ export function NodeTelemetryPanel({ nodeId }: Props) {
         <div className="map-telemetry-row"><span>Global orphan CPU</span><span>{fmt(snap.process.orphanCpuPct, 1)}%</span></div>
         <div className="map-telemetry-row"><span>Window</span><span>{snap.windowMs} ms</span></div>
       </section>
+        </>
+      )}
     </div>
   );
 }

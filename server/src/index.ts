@@ -89,6 +89,31 @@ import { rightmostEntranceTarget } from "./world/nodePath";
 import { ensurePopulation, ensureBoss } from "./systems/world/spawning";
 import { initDeadPlayerGuard } from "./systems/world/playerIncapacitation";
 import type { PlayerEntity } from "./ecs/entity";
+import { log } from "./log";
+import { runLogMigrations } from "./logdb/index";
+import { pruneExpiredLogs } from "./logdb/repo";
+import {
+  insertWorldLogEntries,
+  pruneExpiredWorldLogEntries,
+  type WorldLogInsertEntry,
+} from "./logdb/worldLogRepo";
+import {
+  insertAnalyticsEvents,
+  pruneExpiredAnalyticsEvents,
+  type AnalyticsEventInput,
+} from "./logdb/analyticsRepo";
+import { registerAdminNamespace } from "./admin/namespace";
+import { onTelemetry, publishTelemetry } from "./broker";
+import {
+  equipPhaseTester,
+  goToTestRoom,
+  leaveTestRoom,
+  refreshPlayerRecipes,
+  resetPlayerClass,
+  resetPlayerProgress,
+  respawnNode,
+  teleportPlayerToNode,
+} from "./admin/gameActions";
 
 export { IS_DEV };
 
@@ -160,6 +185,11 @@ app.get("/healthz", (_req, res) => {
 // Serve the production client build when it exists.
 // Run `pnpm --filter @mmo-idle/client build` to generate it.
 const clientDist = path.resolve(__dirname, "../../client/dist");
+const adminDist = path.resolve(__dirname, "../../admin/dist");
+app.use("/admin", express.static(adminDist));
+app.get(["/admin", "/admin/*"], (_req, res) => {
+  res.sendFile(path.join(adminDist, "index.html"));
+});
 app.use(express.static(clientDist));
 
 const httpServer = createServer(app);
@@ -184,6 +214,19 @@ initCombatSystems();
 
 // accountId → socketId map for the auto-save interval
 const socketByAccount = new Map<string, string>();
+const sessionStartedAtBySocket = new Map<string, number>();
+
+// Sockets whose tab is currently hidden/backgrounded. While a socket is here,
+// the broadcast loop skips its high-volume node:delta / world:events stream; the
+// client requests a full resync when the tab regains focus.
+const inactiveSockets = new Set<string>();
+
+function accountIdForSocket(socketId: string): string | undefined {
+  for (const [accountId, mappedSocketId] of socketByAccount) {
+    if (mappedSocketId === socketId) return accountId;
+  }
+  return undefined;
+}
 
 /** Server-global key for the persisted Void Overlord respawn cooldown. */
 const OVERLORD_RESPAWN_KEY = "void-overlord-respawn";
@@ -217,6 +260,18 @@ async function restoreOverlordRespawn(world: World): Promise<void> {
 
 async function boot(): Promise<void> {
   await runMigrations();
+  await runLogMigrations();
+  await pruneExpiredLogs();
+  await pruneExpiredWorldLogEntries();
+  await pruneExpiredAnalyticsEvents();
+  const pruneTimer = setInterval(() => {
+    void Promise.all([
+      pruneExpiredLogs(),
+      pruneExpiredWorldLogEntries(),
+      pruneExpiredAnalyticsEvents(),
+    ]).catch((err) => log.warn({ err }, "log retention prune failed"));
+  }, 60 * 60 * 1000);
+  pruneTimer.unref?.();
 
   const { atlasPng, atlasJson } = getAtlasPaths();
   await initHitboxCache(db, atlasPng, atlasJson);
@@ -234,7 +289,7 @@ async function boot(): Promise<void> {
       ? writeWorldState(db, OVERLORD_RESPAWN_KEY, JSON.stringify(marker))
       : clearWorldState(db, OVERLORD_RESPAWN_KEY);
     void op.catch((err) =>
-      console.error("[db] overlord respawn persist failed:", err),
+      log.error({ err }, "overlord respawn persist failed"),
     );
   };
   await restoreOverlordRespawn(world);
@@ -243,26 +298,31 @@ async function boot(): Promise<void> {
     io.emit("world:bossFelled", world.buildBossFelledSnapshot());
   };
   world.bossFelledBroadcast = emitBossFelledState;
+  const adminControls = registerAdminNamespace(
+    io,
+    world,
+    db,
+    socketByAccount,
+    inactiveSockets,
+  );
+  onTelemetry((telemetry) => {
+    io.emit("world:telemetry", telemetry);
+    adminControls.emitTelemetry(telemetry);
+  });
 
   // ── MARKER INVARIANT CHECK (dev only) ─────────────────
   if (IS_DEV) {
     const markerViolations = assertMarkerInvariants(world);
     if (markerViolations.length > 0) {
-      console.error(
-        "[marker-invariants] Marker/status mismatch:",
-        markerViolations,
-      );
+      log.error({ markerViolations }, "marker/status invariant mismatch");
     } else {
-      console.log("[marker-invariants] Marker components OK");
+      log.info("marker components OK");
     }
     const networkViolations = assertNetworkedComponentInvariants(world);
     if (networkViolations.length > 0) {
-      console.error(
-        "[network-invariants] Networked component mismatch:",
-        networkViolations,
-      );
+      log.error({ networkViolations }, "networked component invariant mismatch");
     } else {
-      console.log("[network-invariants] Networked components OK");
+      log.info("networked components OK");
     }
   }
 
@@ -280,6 +340,106 @@ async function boot(): Promise<void> {
 
   const LOGIC_MS = Math.round(1000 / GAME_CONFIG.LOGIC_TICK_RATE);
   const BROADCAST_MS = Math.round(1000 / GAME_CONFIG.BROADCAST_TICK_RATE);
+  const queuedWorldLogEntries: WorldLogInsertEntry[] = [];
+  const queuedAnalyticsEvents: AnalyticsEventInput[] = [];
+
+  function queueAnalyticsEvent(entry: AnalyticsEventInput): void {
+    queuedAnalyticsEvents.push(entry);
+  }
+
+  function playerAccountId(playerId: string): string | undefined {
+    return accountIdForSocket(playerId);
+  }
+
+  function queuePlayerAnalyticsEvent(
+    playerId: string,
+    entry: Omit<AnalyticsEventInput, "playerId" | "accountId">,
+  ): void {
+    queueAnalyticsEvent({
+      ...entry,
+      playerId,
+      accountId: playerAccountId(playerId),
+    });
+  }
+
+  function recordSessionEnd(socketId: string, accId: string, p: PlayerEntity): void {
+    const startedAt = sessionStartedAtBySocket.get(socketId);
+    if (!startedAt) return;
+    sessionStartedAtBySocket.delete(socketId);
+    queueAnalyticsEvent({
+      kind: "session-end",
+      accountId: accId,
+      playerId: socketId,
+      nodeId: p.hasPosition.nodeId,
+      value: Math.max(0, Date.now() - startedAt),
+      meta: {
+        level: p.tracksProgression.level,
+        playerTier: p.tracksProgression.playerTier,
+        selectedClass: p.usesSkills.selectedClass,
+        selectedSubVariant: p.usesSkills.selectedSubVariant,
+        selectedRange: p.usesSkills.selectedRange,
+      },
+    });
+  }
+
+  world.analyticsNodeTransition = (playerId, fromNodeId, toNodeId) => {
+    const info = NODE_BIOMES[toNodeId];
+    queuePlayerAnalyticsEvent(playerId, {
+      kind: "node-enter",
+      nodeId: toNodeId,
+      meta: {
+        fromNodeId,
+        biomeGroup: info?.biomeGroup,
+        biomeTier: info?.biomeTier,
+      },
+    });
+  };
+  world.analyticsPlayerDeath = (playerId, nodeId) => {
+    queuePlayerAnalyticsEvent(playerId, {
+      kind: "player-death",
+      nodeId,
+    });
+  };
+  world.analyticsSkillUnlock = (playerId, skillId, path) => {
+    const p = world.getPlayerEntity(playerId);
+    const node = SKILL_TREE.get(skillId);
+    queuePlayerAnalyticsEvent(playerId, {
+      kind: "skill-unlock",
+      nodeId: p?.hasPosition.nodeId,
+      meta: {
+        skillId,
+        skillName: node?.name ?? skillId,
+        skillTier: node?.tier,
+        path,
+      },
+    });
+  };
+  world.analyticsProgression = (playerId, nodeId, progressionKind, value) => {
+    queuePlayerAnalyticsEvent(playerId, {
+      kind: "progression",
+      nodeId,
+      value,
+      meta: { progressionKind },
+    });
+  };
+
+  const worldLogFlushTimer = setInterval(() => {
+    if (queuedWorldLogEntries.length === 0) return;
+    const batch = queuedWorldLogEntries.splice(0, queuedWorldLogEntries.length);
+    void insertWorldLogEntries(batch).catch((err) =>
+      log.warn({ err }, "world log flush failed"),
+    );
+  }, 1_000);
+  worldLogFlushTimer.unref?.();
+
+  const analyticsFlushTimer = setInterval(() => {
+    if (queuedAnalyticsEvents.length === 0) return;
+    const batch = queuedAnalyticsEvents.splice(0, queuedAnalyticsEvents.length);
+    void insertAnalyticsEvents(batch).catch((err) =>
+      log.warn({ err }, "analytics flush failed"),
+    );
+  }, 1_000);
+  analyticsFlushTimer.unref?.();
 
   let last = Date.now();
 
@@ -320,10 +480,23 @@ async function boot(): Promise<void> {
   setInterval(() => {
     const dirty = world.beginBroadcast();
     const nodeSnaps = new Map<string, DeltaSnapshot>();
+    const occupiedNodes = new Set<string>();
+    const activeNodes = new Set<string>();
     for (const player of world.playerEntities) {
       const sock = io.sockets.sockets.get(player.isPlayer.id);
       if (!sock) continue;
       const nodeId = player.hasPosition.nodeId;
+      occupiedNodes.add(nodeId);
+
+      // Hidden tab: skip its high-volume stream and drop any queued world-log
+      // events so a backgrounded auto-combat player can't accumulate them
+      // unbounded. State is rebuilt via state:sync when the tab regains focus.
+      if (inactiveSockets.has(player.isPlayer.id)) {
+        takeWorldLogEvents(world, player.isPlayer.id);
+        continue;
+      }
+      activeNodes.add(nodeId);
+
       if (!nodeSnaps.has(nodeId)) {
         const timed = timeSync(() =>
           world.buildNodeDeltaWithStats(nodeId, dirty),
@@ -336,15 +509,43 @@ async function boot(): Promise<void> {
       sock.emit("node:delta", snap);
       const logEvents = takeWorldLogEvents(world, player.isPlayer.id);
       if (logEvents.length > 0) {
+        const viewerAccountId = accountIdForSocket(player.isPlayer.id);
+        for (const event of logEvents) {
+          queuedWorldLogEntries.push({
+            viewerId: player.isPlayer.id,
+            viewerAccountId,
+            viewerName: player.isPlayer.name,
+            event,
+          });
+        }
         sock.emit("world:events", logEvents);
       }
+    }
+
+    // Drain transient combat events for occupied nodes that no active viewer
+    // built a snapshot for this tick (every viewer hidden), so the per-node
+    // event queue can't grow without bound while a node is fully backgrounded.
+    for (const nodeId of occupiedNodes) {
+      if (!activeNodes.has(nodeId)) world.takeNodeEvents(nodeId);
     }
   }, BROADCAST_MS);
 
   const TELEMETRY_MS = TELEMETRY_WINDOW_MS;
   setInterval(() => {
     world.syncTelemetryOccupancy();
-    io.emit("world:telemetry", world.telemetry.flush(world.tickCounter));
+    const telemetry = world.telemetry.flush(world.tickCounter);
+    queueAnalyticsEvent({
+      kind: "server-sample",
+      value: world.playerCount(),
+      meta: {
+        heapUsedMb: telemetry.process.heapUsedMb,
+        eventLoopP99Ms: telemetry.process.eventLoopP99Ms,
+        totalTickCpuMs: telemetry.process.totalTickCpuMs,
+      },
+    });
+    void publishTelemetry(telemetry).catch((err) =>
+      log.warn({ err }, "telemetry broker publish failed"),
+    );
   }, TELEMETRY_MS);
 
   // ── AUTO-SAVE ─────────────────────────────────────────
@@ -354,7 +555,7 @@ async function boot(): Promise<void> {
       const player = world.getPlayerEntity(socketId);
       if (player) {
         void saveCharacter(db, accountId, player).catch((err) =>
-          console.error("[db] autosave failed:", err),
+          log.error({ err, accountId, playerId: socketId }, "autosave failed"),
         );
       }
     }
@@ -381,7 +582,10 @@ async function boot(): Promise<void> {
     if (existingSocketId) {
       const existingPlayer = world.getPlayerEntity(existingSocketId);
       if (existingPlayer?.isDead) world.respawnPlayer(existingSocketId);
-      if (existingPlayer) await saveCharacter(db, accId, existingPlayer);
+      if (existingPlayer) {
+        recordSessionEnd(existingSocketId, accId, existingPlayer);
+        await saveCharacter(db, accId, existingPlayer);
+      }
       handlePartyDisconnect(world, existingSocketId);
       world.detachPlayerEntity(existingSocketId);
       const existingSock = io.sockets.sockets.get(existingSocketId);
@@ -403,6 +607,28 @@ async function boot(): Promise<void> {
     recalculatePlayerEntityStats(world, entity);
     syncArchetypeSlices(world, entity);
     entity.hasHealth.hp = entity.hasHealth.maxHp;
+    sessionStartedAtBySocket.set(socket.id, Date.now());
+    queueAnalyticsEvent({
+      kind: "session-start",
+      accountId: accId,
+      playerId: socket.id,
+      nodeId: entity.hasPosition.nodeId,
+      meta: {
+        level: entity.tracksProgression.level,
+        playerTier: entity.tracksProgression.playerTier,
+      },
+    });
+    queueAnalyticsEvent({
+      kind: "node-enter",
+      accountId: accId,
+      playerId: socket.id,
+      nodeId: entity.hasPosition.nodeId,
+      meta: {
+        biomeGroup: NODE_BIOMES[entity.hasPosition.nodeId]?.biomeGroup,
+        biomeTier: NODE_BIOMES[entity.hasPosition.nodeId]?.biomeTier,
+        fromNodeId: null,
+      },
+    });
 
     const syncSnap = world.buildNodeDelta(
       entity.hasPosition.nodeId,
@@ -414,6 +640,7 @@ async function boot(): Promise<void> {
     emitBossFelledState();
     world.syncTelemetryOccupancy();
     socket.emit("world:telemetry", world.telemetry.flush(world.tickCounter));
+    adminControls.emitPlayerSummaries();
 
     function liveSelf(): PlayerEntity | null {
       const p = world.getPlayerEntity(socket.id);
@@ -436,7 +663,7 @@ async function boot(): Promise<void> {
 
       p.hasPosition.nodeId = nodeId;
       if (fromNodeId !== nodeId) {
-        world.movePlayerNode(fromNodeId, nodeId);
+        world.movePlayerNode(fromNodeId, nodeId, p.isPlayer.id);
       }
 
       if (world.isNodeFrozen(nodeId)) {
@@ -538,6 +765,13 @@ async function boot(): Promise<void> {
       emitBossFelledState();
     });
 
+    socket.on("player:setActive", (active) => {
+      if (typeof active !== "boolean") return;
+      if (active) inactiveSockets.delete(socket.id);
+      else inactiveSockets.add(socket.id);
+      adminControls.emitPlayerSummaries();
+    });
+
     socket.on("player:unlockSkill", (skillId) => {
       const p = liveSelf();
       if (!p) return;
@@ -551,51 +785,8 @@ async function boot(): Promise<void> {
     socket.on("player:resetClass", () => {
       const p = liveSelf();
       if (!p) return;
-
-      // Authoritative gate: the player must be standing on the rune altar.
-      const altar = RESOLVED_NODE_FEATURES[p.hasPosition.nodeId]?.find(
-        (f) => f.id === RUNE_ALTAR_FEATURE_ID,
-      );
-      if (!altar || !pointInNodeFeatureShape(p.hasPosition.current, altar.shape)) {
-        return;
-      }
-
-      // Refund every point spent on the perk tree so the player can re-spec
-      // without losing earned tiers, levels, items, essence, or quests.
-      let refund = 0;
-      for (const id of p.usesSkills.unlockedSkills) {
-        refund += SKILL_TREE.get(id)?.cost ?? 0;
-      }
-      p.tracksProgression.skillPoints += refund;
-      p.tracksProgression.currentSkillTier = 0;
-
-      p.usesSkills.unlockedSkills = [];
-      p.usesSkills.passives = {};
-      p.usesSkills.selectedClass = null;
-      p.usesSkills.selectedSubVariant = null;
-      p.usesSkills.selectedRange = null;
-      p.usesSkills.combatArchetype = null;
-
-      stopEntity(world, p);
-      setAttackTarget(world, p, null);
-      detachComponent(world, p, "hasEmpoweredAttack");
-      detachComponent(world, p, "isChanneling");
-      detachComponent(world, p, "hasOverdrive");
-      detachComponent(world, p, "hasAlignment");
-      detachComponent(world, p, "inAcChargePhase");
-      detachComponent(world, p, "inAcDischarge");
-      detachComponent(world, p, "holdsShields");
-      // Drop any live slimes before the archetype slice is detached.
-      despawnMinionsForOwner(world, p);
-      resetTracksCombat(p.tracksCombat);
-      syncArchetypeSlices(world, p);
-      recalculatePlayerEntityStats(world, p);
-      syncArchetypeSlices(world, p);
-      p.hasHealth.hp = p.hasHealth.maxHp;
-
-      markSliceDirty(world, p, "tracksProgression");
-      markSliceDirty(world, p, "usesSkills");
-      markSliceDirty(world, p, "hasHealth");
+      resetPlayerClass(world, p, { requireAltar: true });
+      adminControls.emitPlayerSummaries();
     });
 
     socket.on("rune:setLoadout", (rules) => {
@@ -668,131 +859,49 @@ async function boot(): Promise<void> {
       socket.on("debug:goToTestRoom", () => {
         const p = world.getPlayerEntity(socket.id);
         if (!p) return;
-
-        const spawn = {
-          x: GAME_CONFIG.NODE_WIDTH / 2,
-          y: GAME_CONFIG.NODE_HEIGHT / 2 - 200,
-        };
-
-        const fromNodeId = p.hasPosition.nodeId;
-        p.hasPosition.nodeId = TEST_ROOM_NODE_ID;
-        if (fromNodeId !== TEST_ROOM_NODE_ID) {
-          world.movePlayerNode(fromNodeId, TEST_ROOM_NODE_ID);
-        }
-        p.hasPosition.current = spawn;
-        // Force a full snapshot for the test room so the client clears any
-        // render state lingering from the node they came from.
-        world.resetNodeDeltaState(TEST_ROOM_NODE_ID);
-        stopEntity(world, p);
-        p.usesAutocombat.auto = false;
-        setAttackTarget(world, p, null);
-        detachComponent(world, p, "isChanneling");
-        clearEngagement(world, p);
-        for (const e of world.aggroedMonsters) {
-          if (
-            e.hasAggroTarget.targetKind === "player" &&
-            e.hasAggroTarget.targetId === socket.id
-          ) {
-            setAggroTarget(world, e, null, Date.now());
-          }
-        }
+        goToTestRoom(world, p);
+        adminControls.emitPlayerSummaries();
       });
 
       socket.on("debug:teleportToNode", (nodeId) => {
         if (typeof nodeId !== "string") return;
-        teleportLiveSelfToNode(nodeId);
+        const p = liveSelf();
+        if (!p) return;
+        teleportPlayerToNode(world, p, nodeId);
+        adminControls.emitPlayerSummaries();
       });
 
       socket.on("debug:leaveTestRoom", () => {
         const p = world.getPlayerEntity(socket.id);
         if (!p) return;
-        // Wipe the infinite test-room essence stockpile so it can't leak into the live world.
-        for (const type of ESSENCE_TYPES) {
-          p.tracksProgression.essences[type] = 0;
-        }
-        world.respawnPlayer(socket.id);
+        leaveTestRoom(world, p);
+        adminControls.emitPlayerSummaries();
       });
 
       socket.on("debug:refreshRecipes", () => {
         const p = world.getPlayerEntity(socket.id);
         if (!p) return;
-        checkRecipeUnlocks(p);
-        markSliceDirty(world, p, "tracksProgression");
+        refreshPlayerRecipes(world, p);
       });
 
       socket.on("debug:respawnNode", () => {
         const p = world.getPlayerEntity(socket.id);
         if (!p) return;
-
-        const nodeId = p.hasPosition.nodeId;
-        for (const m of [...world.monsterEntitiesInNode(nodeId)]) {
-          world.removeMonsterEntity(m.isMonster.id);
-        }
-        world.nextMonsterIdByNode.delete(nodeId);
-        ensurePopulation(world, nodeId);
-        ensureBoss(world, nodeId);
-        world.reconcileMonsterCounts();
-        world.resetNodeDeltaState(nodeId);
+        respawnNode(world, p.hasPosition.nodeId);
       });
 
       socket.on("debug:equipPhaseTester", () => {
         const p = liveSelf();
         if (!p) return;
-        grantDevLoadout(world, p);
+        equipPhaseTester(world, p);
+        adminControls.emitPlayerSummaries();
       });
 
       socket.on("debug:resetProgress", () => {
         const p = world.getPlayerEntity(socket.id);
         if (!p) return;
-
-        p.tracksProgression.level = 1;
-        p.tracksProgression.skillPoints = 0;
-        p.tracksProgression.biomeXP = {};
-        p.tracksProgression.biomeLevel = {};
-        p.tracksProgression.unlockedRecipes = [];
-        p.tracksProgression.questProgress = {};
-        p.tracksProgression.playerTier = 0;
-        p.tracksProgression.currentSkillTier = 0;
-        p.tracksProgression.bossesCleared = [];
-        p.tracksProgression.clearedNodes = [];
-        for (const type of ESSENCE_TYPES) {
-          p.tracksProgression.essences[type] = 0;
-        }
-
-        p.holdsInventory.inventory = [];
-        p.holdsInventory.equipment = emptyEquipment();
-        p.holdsInventory.itemUpgrades = {};
-        p.usesSkills.unlockedSkills = [];
-        p.usesSkills.passives = {};
-        p.usesSkills.selectedClass = null;
-        p.usesSkills.selectedSubVariant = null;
-        p.usesSkills.selectedRange = null;
-        p.usesSkills.combatArchetype = null;
-        p.usesAutocombat.auto = false;
-        clearAutoTraversePath(world, p);
-
-        stopEntity(world, p);
-        setAttackTarget(world, p, null);
-        detachComponent(world, p, "hasEmpoweredAttack");
-        detachComponent(world, p, "isChanneling");
-        detachComponent(world, p, "hasOverdrive");
-        detachComponent(world, p, "hasAlignment");
-        detachComponent(world, p, "inAcChargePhase");
-        detachComponent(world, p, "inAcDischarge");
-        detachComponent(world, p, "holdsShields");
-        // Drop any live slimes before the archetype slice is detached.
-        despawnMinionsForOwner(world, p);
-        resetTracksCombat(p.tracksCombat);
-        syncArchetypeSlices(world, p);
-        recalculatePlayerEntityStats(world, p);
-        syncArchetypeSlices(world, p);
-        p.hasHealth.hp = p.hasHealth.maxHp;
-
-        markSliceDirty(world, p, "tracksProgression");
-        markSliceDirty(world, p, "holdsInventory");
-        markSliceDirty(world, p, "usesSkills");
-        markSliceDirty(world, p, "usesAutocombat");
-        markSliceDirty(world, p, "hasHealth");
+        resetPlayerProgress(world, p);
+        adminControls.emitPlayerSummaries();
       });
     }
 
@@ -800,17 +909,21 @@ async function boot(): Promise<void> {
       const p = world.getPlayerEntity(socket.id);
       if (p?.isDead) world.respawnPlayer(socket.id);
       if (p) {
+        recordSessionEnd(socket.id, accId, p);
         void saveCharacter(db, accId, p).catch((err) =>
-          console.error("[db] disconnect save failed:", err),
+          log.error({ err, accountId: accId, playerId: socket.id }, "disconnect save failed"),
         );
       }
       handlePartyDisconnect(world, socket.id);
+      inactiveSockets.delete(socket.id);
+      sessionStartedAtBySocket.delete(socket.id);
       // Only remove the account entry if it still points to this socket.
       // A kicked socket's disconnect fires after the new session has already
       // overwritten the entry — deleting it would silently log out the new tab.
       if (socketByAccount.get(accId) === socket.id)
         socketByAccount.delete(accId);
       world.detachPlayerEntity(socket.id);
+      adminControls.emitPlayerSummaries();
     });
   });
 
@@ -818,11 +931,21 @@ async function boot(): Promise<void> {
 
   const port = Number(process.env.PORT) || 4000;
   httpServer.listen(port, "0.0.0.0", () => {
-    console.log(`Server running on http://0.0.0.0:${port}`);
+    log.info({ port }, `Server running on http://0.0.0.0:${port}`);
   });
+
+  const shutdown = (signal: string) => {
+    log.info({ signal }, "shutting down");
+    io.close();
+    httpServer.closeAllConnections?.();
+    httpServer.close(() => process.exit(0));
+    setTimeout(() => process.exit(1), 5_000).unref();
+  };
+  process.once("SIGTERM", () => shutdown("SIGTERM"));
+  process.once("SIGINT", () => shutdown("SIGINT"));
 }
 
 boot().catch((err) => {
-  console.error("[boot] failed:", err);
+  log.fatal({ err }, "boot failed");
   process.exit(1);
 });

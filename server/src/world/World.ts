@@ -12,8 +12,19 @@ import {
   NODE_BIOMES,
   TEST_ROOM_NODE_ID,
   type DeathCause,
+  type NetworkedComponentKey,
   type Vec2,
 } from "@mmo-idle/shared";
+
+/**
+ * Per-broadcast delta state for one node. Maps each known entity's network id to
+ * the JSON-serialized, wire-quantized value of every networked slice last sent
+ * for that entity. The encoder diffs current values against these to send only
+ * slices that actually changed (value-diff). An entry's presence also marks the
+ * entity as a current member of the node's delta stream.
+ */
+export type NodeSentSlices = Map<NetworkedComponentKey, string>;
+export type NodeDeltaState = Map<string, NodeSentSlices>;
 import { updateAutoTargets } from "../systems/combat/ai/autoTarget";
 import { updateRuneDerivedConfig } from "../systems/combat/ai/runeConfig";
 import { updateAutoTraverse } from "../systems/world/autoTraverse";
@@ -208,6 +219,17 @@ export class World {
     null;
   /** Broadcast active boss-felled markers to all clients (world map). Set by index.ts. */
   bossFelledBroadcast: (() => void) | null = null;
+  /** Optional analytics hooks installed by the server entrypoint. */
+  analyticsNodeTransition:
+    | ((playerId: string, fromNodeId: string, toNodeId: string) => void)
+    | null = null;
+  analyticsPlayerDeath: ((playerId: string, nodeId: string) => void) | null = null;
+  analyticsSkillUnlock:
+    | ((playerId: string, skillId: string, path: string[]) => void)
+    | null = null;
+  analyticsProgression:
+    | ((playerId: string, nodeId: string, progressionKind: string, value?: number) => void)
+    | null = null;
   /** Generic NODE_FEATURES spawn runtime state keyed `${nodeId}:${featureId}`. */
   nodeFeatureSpawnState = new Map<
     string,
@@ -255,7 +277,7 @@ export class World {
   readonly playerById = new Map<EntityId, PlayerEntity>();
   readonly monsterById = new Map<EntityId, MonsterEntity>();
   readonly minionById = new Map<EntityId, MinionEntity>();
-  private readonly nodeMembership = new Map<string, Set<string>>();
+  private readonly nodeMembership = new Map<string, NodeDeltaState>();
 
   constructor(nodeId = "node-5-5") {
     const node = NODE_REGISTRY.get(nodeId);
@@ -536,11 +558,11 @@ export class World {
     return this.dirty.drain();
   }
 
-  /** Lazily initialize and return the membership set for `nodeId`. */
-  getOrCreateNodeMembership(nodeId: string): Set<string> {
+  /** Lazily initialize and return the per-node delta state for `nodeId`. */
+  getOrCreateNodeMembership(nodeId: string): NodeDeltaState {
     let members = this.nodeMembership.get(nodeId);
     if (!members) {
-      members = new Set();
+      members = new Map();
       this.nodeMembership.set(nodeId, members);
     }
     return members;
@@ -595,12 +617,15 @@ export class World {
     else this.playersByNode.set(nodeId, next);
   }
 
-  movePlayerNode(fromNodeId: string, toNodeId: string): void {
+  movePlayerNode(fromNodeId: string, toNodeId: string, playerId?: string): void {
     const fromBefore = this.countPlayersInNode(fromNodeId);
     this.decrementPlayersInNode(fromNodeId);
     if (fromBefore === 1) freezeNode(this, fromNodeId);
 
     this.incrementPlayersInNode(toNodeId);
+    if (playerId && fromNodeId !== toNodeId) {
+      this.analyticsNodeTransition?.(playerId, fromNodeId, toNodeId);
+    }
   }
 
   syncTelemetryOccupancy(): void {

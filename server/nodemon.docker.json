@@ -1,0 +1,9 @@
+{
+  "watch": ["src", "../shared/src"],
+  "ext": "ts,json",
+  "legacyWatch": true,
+  "delay": 1500,
+  "signal": "SIGTERM",
+  "killTimeout": 5000,
+  "exec": "tsx --conditions=development src/index.ts"
+}
