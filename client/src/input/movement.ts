@@ -9,6 +9,12 @@ import { sendMove } from '../net/intents';
 import { getOwnBase } from '../render/interpolation';
 import { ABYSSAL_THRONE_FEATURE_ID, isVoidThroneUnblocked } from '../scenes/game/voidThrone';
 import { cancelAutoPath, setAutoMode } from './autoPath';
+import {
+  beginPendingStop,
+  isManualActive,
+  maintainPendingStop,
+  setManualActive,
+} from './moveOwnership';
 import type { GameScene } from '../scenes/GameScene';
 
 /**
@@ -44,7 +50,6 @@ const STEP_DISTANCE = 600;
 
 let kbVec = { dx: 0, dy: 0 };
 let padVec = { dx: 0, dy: 0 };
-let wasMoving = false;
 let holdStill = false;
 
 export function setHoldStill(still: boolean): void {
@@ -53,21 +58,6 @@ export function setHoldStill(still: boolean): void {
 
 export function isHoldStill(): boolean {
   return holdStill;
-}
-
-/**
- * True while keyboard/gamepad input is actively driving the own player. During
- * manual movement the client owns its own motion target (re-anchored every
- * {@link MOVE_TICK_MS}); the authoritative `node:delta` carries a target that is
- * ~1 RTT stale, so letting it overwrite `transform.target` makes the predicted
- * sprite briefly chase the old heading on every direction change (the "subtle
- * rubberband"). `upsertPlayer` uses this to skip that overwrite for the own
- * player while manual movement owns the heading. Click-to-move and server-driven
- * movement (auto-combat, traverse, party follow, knockback) leave this false so
- * the server target is applied normally.
- */
-export function isManualMovementActive(): boolean {
-  return wasMoving;
 }
 
 /** Stop click-to-move / keyboard motion and tell the server to hold position. */
@@ -85,7 +75,8 @@ export function cancelActiveMove(scene: GameScene): void {
   };
   sendMove(scene.socket, stop);
   transform.target = stop;
-  wasMoving = false;
+  // Hold heading ownership until the server confirms the stop (see moveOwnership).
+  beginPendingStop(stop, performance.now());
 }
 
 export function setKeyboardVector(dx: number, dy: number): void {
@@ -108,6 +99,10 @@ function tickMovement(scene: GameScene): void {
   const transform = scene.state.transform.get(ownId);
   if (!transform) return;
 
+  // Release the post-stop heading latch once the authoritative position has
+  // caught up to the stop point (or the grace window has elapsed).
+  maintainPendingStop(transform.pos, performance.now());
+
   let dx = holdStill ? 0 : kbVec.dx + padVec.dx;
   let dy = holdStill ? 0 : kbVec.dy + padVec.dy;
   const mag = Math.hypot(dx, dy);
@@ -119,25 +114,28 @@ function tickMovement(scene: GameScene): void {
   const origin = getOwnBase(scene.state) ?? transform.pos;
 
   if (mag < 0.0001) {
-    if (wasMoving) {
+    if (isManualActive()) {
       const stop: Vec2 = {
         x: Math.round(origin.x),
         y: Math.round(origin.y),
       };
       sendMove(scene.socket, stop);
       transform.target = stop;
-      wasMoving = false;
+      // Keep owning the heading until the server confirms the stop, so the
+      // lagging authoritative state can't drive the sprite forward and then
+      // yank it back (the "backtrack on stop").
+      beginPendingStop(stop, performance.now());
     }
     return;
   }
 
-  if (!wasMoving) {
+  if (!isManualActive()) {
     if (scene.autoMode) setAutoMode(scene, false);
     cancelAutoPath();
     scene.flashCameraHold = false;
     scene.flashCameraHoldTargetId = null;
     scene.targetMarker.setVisible(false);
-    wasMoving = true;
+    setManualActive(true);
   }
 
   const dest: Vec2 = {

@@ -2,6 +2,7 @@ import type { Vec2 } from '@mmo-idle/shared';
 import type { RenderState } from './state';
 import type { GameScene } from '../scenes/GameScene';
 import { DEPTH } from './depth';
+import { getPendingStop, isStopPending } from '../input/moveOwnership';
 
 function spriteDrawY(baseY: number, visualOffsetY?: number): number {
   return baseY + (visualOffsetY ?? 0);
@@ -49,12 +50,18 @@ export function stepInterpolation(state: RenderState, dt: number): void {
         // the raw error points straight backward and the reconcile would drag
         // the sprite back toward the lagging server position — the visible
         // "step backward then settle" on stop. Strip that backward-along-path
-        // component (forward axis = server position → target) so only genuine
-        // divergence is corrected: perpendicular drift, or the server being
-        // *ahead* of the prediction. When the server has stopped (target === pos)
-        // the axis is zero, so the full error is applied and we settle exactly.
-        const fx = transform.target.x - transform.pos.x;
-        const fy = transform.target.y - transform.pos.y;
+        // component so only genuine divergence is corrected: perpendicular
+        // drift, or the server being *ahead* of the prediction.
+        //
+        // The forward path axis is normally server position → target. While a
+        // stop is pending we use the unconfirmed stop point instead: the
+        // authoritative `target` collapses onto `pos` the instant the server
+        // halts, and with a zero axis the full (backward) error would otherwise
+        // snap the base back — the "backtrack on stop". Referencing the stop
+        // point keeps the axis forward right up to convergence.
+        const ps = isStopPending() ? getPendingStop() : null;
+        const fx = (ps ? ps.x : transform.target.x) - transform.pos.x;
+        const fy = (ps ? ps.y : transform.target.y) - transform.pos.y;
         const fMag = Math.hypot(fx, fy);
         if (fMag > 1) {
           const ux = fx / fMag;
@@ -64,6 +71,11 @@ export function stepInterpolation(state: RenderState, dt: number): void {
             ex -= along * ux;
             ey -= along * uy;
           }
+        } else if (ps) {
+          // Converged onto the stop point: drop residual backward error rather
+          // than snapping the base back to the lagging authoritative position.
+          ex = 0;
+          ey = 0;
         }
         const t = 1 - Math.exp(-RECONCILE_RATE * dt);
         interp.base.x += ex * t;
