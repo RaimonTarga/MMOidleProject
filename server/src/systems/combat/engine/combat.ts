@@ -15,10 +15,13 @@ import { makeCombatContext, emitCombatEvent } from "./combatPipeline";
 import {
   getCounter,
   setCounter,
+  addCounter,
   getStatusEffect,
   FROST_RAMP_EFFECT_ID,
   frostRampMaxStacks,
   frostRampAtkSlowPct,
+  CHAOTIC_FAMILY,
+  CHAOTIC_HIT_COUNTER_KEY,
 } from "@mmo-idle/shared";
 import { getAntiHealMult } from "../../defense";
 import { applyPlayerAoe, applyMonsterAoe } from "../damage/aoeDamage";
@@ -94,23 +97,46 @@ export function runPlayerAttack(
     }
   }
 
+  // Chaotic weapon family: every Nth attack whiffs. Determined here (not in an
+  // onHit listener) so the flag is visible to beforeAttack — letting reload skip
+  // ammo and the empowered multiplier preserve its charge. Peek the counter
+  // before beforeAttack; commit it only once the attack is confirmed to fire so
+  // a cancelled attack (empty clip / mid-reload) never advances the cycle.
+  const chaoticWeapon = player.holdsInventory.equipment.weapon;
+  const chaoticMissEvery = chaoticWeapon
+    ? CHAOTIC_FAMILY[chaoticWeapon]
+    : undefined;
+  if (
+    chaoticMissEvery &&
+    (getCounter(player.tracksCombat, CHAOTIC_HIT_COUNTER_KEY) + 1) %
+      chaoticMissEvery ===
+      0
+  ) {
+    ctx.metadata.chaoticMiss = true;
+  }
+
   emitCombatEvent("beforeAttack", ctx, world);
   if (ctx.cancelled) return "cancelled";
+
+  if (chaoticMissEvery) {
+    addCounter(player.tracksCombat, CHAOTIC_HIT_COUNTER_KEY, 1);
+  }
 
   emitCombatEvent("onAttack", ctx, world);
 
   // Deterministic monster evasion (NO RNG): a fractional accumulator on the
-  // monster sums a per-hit dodge rate of 1/evadeEvery; when it crosses 1.0 the
-  // hit is dodged. The dodge reduces damage by `evadeMitigation` (default 0.5)
-  // rather than fully negating it, and suppresses the player's debuffs/DoT unless
-  // the player's attack pierces evade. A full-avoid (mitigation ≥ 1) short-circuits
-  // to the legacy zero-damage path.
+  // monster sums the per-hit dodge chance `evasion` (a 0–1 fraction, same
+  // notation as the player evasion stat); when it crosses 1.0 the hit is dodged.
+  // The dodge reduces damage by `evadeMitigation` (default 0.5) rather than fully
+  // negating it, and suppresses the player's debuffs/DoT unless the player's
+  // attack pierces evade. A full-avoid (mitigation ≥ 1) short-circuits to the
+  // legacy zero-damage path.
   const monsterDef = MONSTER_DATABASE.get(target.isMonster.monsterTypeId);
-  const evadeEvery = monsterDef?.evadeEvery;
+  const evadeChance = monsterDef?.evasion;
   let evaded = false;
   let evadeMult = 0;
-  if (evadeEvery !== undefined && evadeEvery >= 5) {
-    const acc = getCounter(target.tracksCombat, "evadeAcc") + 1 / evadeEvery;
+  if (evadeChance !== undefined && evadeChance > 0) {
+    const acc = getCounter(target.tracksCombat, "evadeAcc") + evadeChance;
     if (acc >= 1) {
       setCounter(target.tracksCombat, "evadeAcc", acc - 1);
       evaded = true;
@@ -207,6 +233,10 @@ export function runPlayerAttack(
   if (evaded) {
     ctx.damage = Math.max(1, Math.round(ctx.damage * (1 - evadeMult)));
   }
+
+  // Chaotic miss: zero the direct damage last so it overrides any onHit floor
+  // (e.g. burn's max(1, …)). On-hit DoT stacks already applied during onHit.
+  if (ctx.metadata.chaoticMiss) ctx.damage = 0;
 
   const gross = Math.round(player.dealsDamage.attack * minionDamageMult);
   const mitigation = buildPlatingDrBreakdown({
@@ -306,6 +336,15 @@ export function runPlayerAttack(
         : undefined,
   });
 
+  if (ctx.metadata.chaoticMiss) {
+    world.pushEvent(player.hasPosition.nodeId, {
+      kind: "player-miss",
+      playerId: player.isPlayer.id,
+      targetId: target.isMonster.id,
+      targetPos: { ...target.hasPosition.current },
+    });
+  }
+
   emitCombatEvent("afterHit", ctx, world);
 
   if (target.hasHealth.hp <= 0) {
@@ -338,6 +377,8 @@ export function runPlayerAttack(
       biomeXpGained: rewardInfo?.biomeXpGained ?? 0,
       essenceGained: rewardInfo?.essenceGained ?? 0,
       essenceType: rewardInfo?.essenceType ?? "green",
+      empowered: isEmpowered,
+      execution: isExecution,
     });
     world.removeMonsterEntity(target.isMonster.id);
     return "killed";

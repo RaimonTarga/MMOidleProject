@@ -20,6 +20,12 @@ import {
 } from "../../../../ecs/markerHelpers";
 import { canApplyPlayerDebuff } from "../summoner/t3/core/debuffGuard";
 import { evadeBlocksDebuffs } from "../../../defense/mitigation/evasion";
+import {
+  pushDotTickEvent,
+  dotElementForSource,
+  pushPlayerDotTickEvent,
+  monsterDotElement,
+} from "../../../combat/damage/dotTickEvent";
 import { buildKillerFromSourceId } from "../../../world/deathCause";
 import {
   buildSimpleBreakdown,
@@ -95,6 +101,7 @@ export function updateDotArchetype(world: World, dt: number): void {
     );
 
     entity.hasHealth.hp -= damage;
+    pushDotTickEvent(world, entity, dotElementForSource(world, effect.sourceId), damage);
 
     if (entity.hasHealth.hp <= 0) {
       monstersToKill.push({ monsterId, sourceId: effect.sourceId, damage });
@@ -194,6 +201,7 @@ export function updateDotArchetype(world: World, dt: number): void {
     );
 
     entity.hasHealth.hp -= damage;
+    pushPlayerDotTickEvent(world, entity, monsterDotElement(world, effect.sourceId), damage);
 
     if (entity.hasHealth.hp <= 0) {
       if (tryCheatDeath(world, entity)) {
@@ -321,6 +329,7 @@ export function initDotArchetype(): void {
 
     const player = ctx.defender;
     if (!canApplyPlayerDebuff(player)) return;
+    if (evadeBlocksDebuffs(ctx)) return; // evaded monster hit applies no DoT
 
     const playerCombatState = player.tracksCombat;
 

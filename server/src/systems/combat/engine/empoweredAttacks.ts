@@ -95,6 +95,11 @@ export function registerEmpoweredMultiplier(
       if (!isClassActive(world, ctx.attacker.isPlayer.id, options.attackerClass)) return;
     }
 
+    // Chaotic miss: the attack whiffs. Don't consume the empowered charge, don't
+    // multiply, don't set empoweredAttack metadata (which would fire the AoE splash
+    // and restart cooldowns). The charge stays armed for the next real hit.
+    if (ctx.metadata['chaoticMiss']) return;
+
     if (!consumeEmpoweredAttack(world, ctx.attacker)) return;
 
     // Some T4 mechanics suppress the standard multiplier but still need the

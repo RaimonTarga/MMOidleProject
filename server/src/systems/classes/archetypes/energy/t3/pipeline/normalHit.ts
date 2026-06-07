@@ -1,5 +1,6 @@
 import { registerCombatListener } from '../../../../../combat/engine/combatPipeline';
 import { isEmpoweredAttack } from '../../../../../combat/engine/empoweredAttacks';
+import { evadeBlocksDebuffs } from '../../../../../defense/mitigation/evasion';
 import {
   applyStatusEffect, removeStatusEffect, getStatusEffect, getTotalStacks,
 } from '@mmo-idle/shared';
@@ -80,13 +81,17 @@ export function registerNormalHit(): void {
 
     if (hasPassive(player, 'energy.cascading-induction') && ctx.defenderType === 'monster') {
       ctx.damage = 1;
-      const monsterState = ctx.defender.tracksCombat;
-      applyStatusEffect(monsterState, {
-        id: CI_TAG_FX, instanced: false,
-        remainingMs: CI_TAG_MS, refreshable: true,
-        sourceId: player.isPlayer.id, data: {},
-      });
-      console.log(`[CascadeInduct] ${player.isPlayer.id}: tag planted -> ${getTotalStacks(monsterState, CI_TAG_FX)} on ${ctx.defender.isMonster.id}`);
+      // The damage-to-1 is the mechanic; only the induction tag is the debuff, so
+      // an evaded hit keeps damage=1 but plants no tag.
+      if (!evadeBlocksDebuffs(ctx)) {
+        const monsterState = ctx.defender.tracksCombat;
+        applyStatusEffect(monsterState, {
+          id: CI_TAG_FX, instanced: false,
+          remainingMs: CI_TAG_MS, refreshable: true,
+          sourceId: player.isPlayer.id, data: {},
+        });
+        console.log(`[CascadeInduct] ${player.isPlayer.id}: tag planted -> ${getTotalStacks(monsterState, CI_TAG_FX)} on ${ctx.defender.isMonster.id}`);
+      }
     }
 
     if (hasPassive(player, 'energy.superconducting-mass')) {

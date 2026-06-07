@@ -10,6 +10,7 @@ import {
 } from '../../../../../../world/worldLogCombat';
 import { actorFromSourceId } from '../../../../../../world/worldLogActors';
 import { isInvulnerableMonster } from '../../../../../combat/invulnerability';
+import { pushDotTickEvent } from '../../../../../combat/damage/dotTickEvent';
 
 /**
  * Conflagration fast-tick DoT. Independent of the normal DoT updater —
@@ -47,6 +48,7 @@ export function updateConflagration(world: World, dt: number): void {
       buildSimpleBreakdown(damage, damage),
     );
     entity.hasHealth.hp -= damage;
+    pushDotTickEvent(world, entity, 'fire', damage);
     console.log(`[Conflagration] ${monsterId}: ${damage} tick (${effect.data.ticksLeft} left)`);
 
     if (entity.hasHealth.hp <= 0) {

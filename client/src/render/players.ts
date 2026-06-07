@@ -24,6 +24,7 @@ import { getPendingStop, isOwnHeadingClientOwned } from "../input/moveOwnership"
 import { spawnAttackEffect } from "./combatFx";
 import { getDotPath } from "../fx/dot";
 import { spawnDamageNumber } from "../fx/particles";
+import { resolvePlayerDamageStyle } from "./damageNumberStyle";
 import { flashShiftTint, spawnFlashAttackAfterimage } from "./movementEffects";
 
 // Server position is authoritative; the client extrapolates ahead toward the
@@ -255,13 +256,17 @@ export function upsertPlayer(
     const sprite = state.sprite.get(player.id);
     const meta = state.spriteMeta.get(player.id);
     if (sprite && meta) {
-      const dmgColor = isOwn ? "#ff4444" : "#ff8844";
+      const { color, style } = resolvePlayerDamageStyle(
+        state.damageStyleHints.get(player.id),
+        isOwn ? "#ff4444" : "#ff8844",
+      );
       spawnDamageNumber(
         scene,
         { x: sprite.x, y: sprite.y },
         meta.barOffsetY,
         Math.round(prevHp - player.hp),
-        dmgColor,
+        color,
+        style,
       );
     }
   }

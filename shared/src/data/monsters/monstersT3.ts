@@ -31,7 +31,7 @@ import type { MonsterDefinition } from './types';
 //   kite: true            — ranged AI maintains standoff (pairs with isRanged)
 //   rampOnCombat: {...}    — Volcano: attack ramps while in combat, capped
 //   rampDebuff: {...}      — Tundra: stacking slow/atk-slow on the PLAYER, capped
-// Existing/reused: chargeOnAggro, isRanged, dotEffect, evadeEvery, slowEffect.
+// Existing/reused: chargeOnAggro, isRanged, dotEffect, evasion, slowEffect.
 // Costs/essence/biomeXp = placeholder (economy deferred).
 // ─────────────────────────────────────────────────────────────────────────
 
@@ -102,7 +102,7 @@ export const tier3MonsterEntries = [
     behavior: 'melee', attackStyle: 'poison', biome: 'swamp',
     rewards: { essence: 115, essenceType: 'purple', level: 3, biomeXp: 345 },
     ai: { wanderRadius: 160, leashRange: 540, idleMinMs: 2200, idleMaxMs: 6500 },
-    evadeEvery: 5,
+    evasion: 0.25,
     dotEffect: { damagePerStack: 14, maxStacks: 5, tickIntervalMs: 1000, durationMs: 4500 },
   }],
 
@@ -118,7 +118,7 @@ export const tier3MonsterEntries = [
     behavior: 'melee', attackStyle: 'poison', biome: 'cave',
     rewards: { essence: 110, essenceType: 'red', level: 3, biomeXp: 330 },
     ai: { wanderRadius: 260, leashRange: 680, idleMinMs: 800, idleMaxMs: 3200 },
-    evadeEvery: 5,
+    evasion: 0.25,
     dotEffect: { damagePerStack: 8, maxStacks: 3, tickIntervalMs: 1000, durationMs: 3000 },
   }],
 

@@ -3,6 +3,10 @@ import type { GameScene } from '../scenes/GameScene';
 import { shouldRunClientFx } from './guard';
 import { DEPTH } from '../render/depth';
 
+/** Shared empowered/"critical" damage-number styling (gold, enlarged, '!'). */
+export const EMPOWERED_DAMAGE_COLOR = '#ffd23f';
+export const EMPOWERED_DAMAGE_SIZE_PX = 22;
+
 export function initParticleTextures(scene: GameScene): void {
   const dotG = scene.make.graphics({ x: 0, y: 0 }, false);
   dotG.fillStyle(0xffffff, 1);
@@ -83,14 +87,31 @@ export function playOneShotEffect(scene: GameScene, id: string, pos: Vec2, opts?
   });
 }
 
-export function spawnDamageNumber(scene: GameScene, pos: Vec2, barOffsetY: number, amount: number, color: string): void {
+export interface DamageNumberStyle {
+  /** Font size in px (default 14). */
+  sizePx?: number;
+  /** Trailing string appended after the amount (e.g. '!' for crits). */
+  suffix?: string;
+  /** Trailing glyph/symbol appended after the suffix (e.g. element marker). */
+  symbol?: string;
+}
+
+export function spawnDamageNumber(
+  scene: GameScene,
+  pos: Vec2,
+  barOffsetY: number,
+  amount: number,
+  color: string,
+  style?: DamageNumberStyle,
+): void {
   if (!shouldRunClientFx()) return;
   const jitter = (Math.random() - 0.5) * 18;
   const startY = pos.y - barOffsetY - 6;
+  const label = `${amount}${style?.suffix ?? ''}${style?.symbol ?? ''}`;
   const text = scene.add
-    .text(pos.x + jitter, startY, String(amount), {
+    .text(pos.x + jitter, startY, label, {
       color,
-      fontSize: '14px',
+      fontSize: `${style?.sizePx ?? 14}px`,
       fontFamily: 'monospace',
       fontStyle: 'bold',
       stroke: '#000000',

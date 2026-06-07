@@ -6,9 +6,22 @@ import type {
   MinionView,
   VoidOverlordRespawnState,
   Vec2,
+  DamageElement,
 } from "@mmo-idle/shared";
 
 export type NetworkId = string;
+
+/**
+ * Per-snapshot styling hint for a monster's HP-delta damage number, derived from
+ * that snapshot's combat events (empowered/execution from player-hit, element from
+ * dot-tick). The amount shown is still the HP delta; this only picks color/size/glyph.
+ */
+export interface DamageNumberHint {
+  hasDirectHit: boolean;
+  empowered: boolean;
+  execution: boolean;
+  dotElement?: DamageElement;
+}
 
 export interface RenderState {
   ids: Set<NetworkId>;
@@ -135,6 +148,9 @@ export interface RenderState {
 
   ownId: NetworkId | null;
   ownNodeId: string;
+
+  /** Transient per-snapshot damage-number style hints (built in applyDelta). */
+  damageStyleHints: Map<NetworkId, DamageNumberHint>;
 }
 
 export function createRenderState(): RenderState {
@@ -174,6 +190,7 @@ export function createRenderState(): RenderState {
     },
     ownId: null,
     ownNodeId: "",
+    damageStyleHints: new Map(),
   };
 }
 

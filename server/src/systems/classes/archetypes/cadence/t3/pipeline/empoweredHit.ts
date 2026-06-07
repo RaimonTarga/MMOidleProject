@@ -47,7 +47,7 @@ export function registerCadenceEmpoweredHit(): void {
     }
 
     // Hemorrhage: convert finisher damage to a non-stacking bleed DoT.
-    if ((passives['cadence.hemorrhage'] ?? 0) > 0 && ctx.defenderType === 'monster') {
+    if ((passives['cadence.hemorrhage'] ?? 0) > 0 && ctx.defenderType === 'monster' && !evadeBlocksDebuffs(ctx)) {
       const monsterState = ctx.defender.tracksCombat;
       const damagePerTick = Math.max(1, Math.round(ctx.damage * HEMORRHAGE_MULT / HEMORRHAGE_TICKS));
       removeStatusEffect(monsterState, 'cadence-hemorrhage');
@@ -68,7 +68,7 @@ export function registerCadenceEmpoweredHit(): void {
     }
 
     // Delayed Verdict: tag the target with accumulated pre-finisher damage.
-    if ((passives['cadence.detonation'] ?? 0) > 0 && ctx.defenderType === 'monster') {
+    if ((passives['cadence.detonation'] ?? 0) > 0 && ctx.defenderType === 'monster' && !evadeBlocksDebuffs(ctx)) {
       const monsterState = ctx.defender.tracksCombat;
       removeStatusEffect(monsterState, 'cadence-detonation');
       applyStatusEffect(monsterState, {

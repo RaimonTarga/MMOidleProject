@@ -1,5 +1,6 @@
 import type { EssenceType } from '../../items';
 import type { Vec2 } from '../../systems/spatial';
+import type { DamageElement } from '../../systems/dotElements';
 
 // ── Boss script types ─────────────────────────────────────────────────────────
 
@@ -215,6 +216,8 @@ export interface MonsterDefinition {
     maxStacks: number;
     tickIntervalMs: number;
     durationMs?: number;
+    /** DoT element for damage-number flavor (color/glyph). Defaults to poison. */
+    element?: DamageElement;
   };
   /**
    * If set, this monster applies a movement slow (or root when speedMult = 0) to
@@ -264,11 +267,12 @@ export interface MonsterDefinition {
     stackDurationMs: number;
   };
   /**
-   * Deterministic evasion: this monster dodges at a rate of 1/N incoming player
-   * hits (a fractional accumulator, not RNG). Minimum useful value is 5; lower
-   * values should be ignored by combat logic.
+   * Deterministic evasion: per-hit dodge chance as a fraction (0–1), the same
+   * notation as the player `evasion` stat. The value is added to a fractional
+   * accumulator each incoming player hit and the hit is dodged when it crosses
+   * 1.0 (e.g. 0.2 ⇒ dodges every 5th hit, 0.25 ⇒ every 4th). Not RNG.
    */
-  evadeEvery?: number;
+  evasion?: number;
   /**
    * Fraction of damage avoided on one of this monster's dodges (0..1). Defaults
    * to GAME_CONFIG.EVADE_MITIGATION_BASE (0.5). Set to 1 to fully negate the hit

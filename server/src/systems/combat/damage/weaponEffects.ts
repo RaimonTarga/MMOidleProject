@@ -13,7 +13,6 @@ import {
   getCooldown,
   getString,
   setString,
-  CHAOTIC_FAMILY,
   SACRED_FAMILY,
   BURN_FAMILY,
   SACRED_DMG_MULT,
@@ -29,6 +28,7 @@ import {
   CORRUPTION_TICK_MS,
   CORRUPTION_DURATION_MS,
   CORRUPTION_SLOW_PER_STACK,
+  type DamageElement,
 } from "@mmo-idle/shared";
 import { grantMonsterRewards } from "../../player/progression/rewards";
 import type { World } from "../../../world/World";
@@ -45,13 +45,14 @@ import {
 } from "../../../world/worldLogCombat";
 import { actorFromSourceId } from "../../../world/worldLogActors";
 import { isInvulnerableMonster } from "../invulnerability";
+import { evadeBlocksDebuffs } from "../../defense/mitigation/evasion";
+import { pushDotTickEvent } from "./dotTickEvent";
 
 // ── Internal combat state keys ────────────────────────────────────────────────
 
 const HITS_RECEIVED_KEY = "hitsReceived";
 const FIRST_STRIKE_EFFECT = "first-strike";
 
-const CHAOTIC_HIT_KEY = "chaoticHits";
 const SACRED_STARTED = "sacredStarted";
 const SACRED_BUFF_FLAG = "sacredBuffActive";
 const SACRED_READY = "sacredReady";
@@ -60,6 +61,8 @@ const SACRED_BUFF_TIMER = "sacredBufTimer";
 const SACRED_ORIG_CD = "sacredOrigCd";
 
 const BURN_EFFECT_IDS = BURN_FAMILY.map((b) => b.effectId);
+const BURN_ELEMENT_BY_EFFECT_ID: Record<string, DamageElement> =
+  Object.fromEntries(BURN_FAMILY.map((b) => [b.effectId, b.element]));
 
 // ── Flurry: stacking attack-speed buff (weapon.flurry-* passives) ─────────────
 const FLURRY_EFFECT_ID = "flurry";
@@ -103,6 +106,7 @@ export function initWeaponEffects(): void {
     const platingPerStack = p["weapon.brittle-plating"] ?? 0;
     const drPerStack = p["weapon.brittle-dr"] ?? 0;
     if (platingPerStack <= 0 && drPerStack <= 0) return;
+    if (evadeBlocksDebuffs(ctx)) return; // dodged hit applies no brittle
     const maxStacks = Math.max(1, Math.round(p["weapon.brittle-stacks"] ?? 1));
 
     const effect = applyStatusEffect(ctx.defender.tracksCombat, {
@@ -142,22 +146,8 @@ export function initWeaponEffects(): void {
   });
 
   // ── Chaotic family: every Nth hit misses (0 damage, on-hit effects still fire) ─
-  registerCombatListener("onHit", (ctx, _world) => {
-    if (ctx.attackerType !== "player") return;
-    const player = ctx.attacker;
-    const missEvery = player.holdsInventory.equipment.weapon
-      ? CHAOTIC_FAMILY[player.holdsInventory.equipment.weapon]
-      : undefined;
-    if (!missEvery) return;
-
-    const state = player.tracksCombat;
-
-    addCounter(state, CHAOTIC_HIT_KEY, 1);
-    if (getCounter(state, CHAOTIC_HIT_KEY) % missEvery === 0) {
-      ctx.damage = 0;
-      ctx.metadata["chaoticMiss"] = true;
-    }
-  });
+  // Determined centrally in runPlayerAttack (combat.ts) before beforeAttack so the
+  // miss can preserve empowered charges / reload ammo. No onHit listener here.
 
   // ── Sacred family: 3× damage multiplier during the buff window ───────────────
   // Buff only procs (activates) when the player makes an attack, even if the
@@ -204,6 +194,7 @@ export function initWeaponEffects(): void {
       if (ctx.defenderType !== "monster") return;
       const player = ctx.attacker;
       if (player.holdsInventory.equipment.weapon !== weaponId) return;
+      if (evadeBlocksDebuffs(ctx)) return; // dodged hit applies no burn stacks
 
       const monsterState = ctx.defender.tracksCombat;
 
@@ -238,6 +229,7 @@ export function initWeaponEffects(): void {
     if (ctx.defenderType !== "monster") return;
     const player = ctx.attacker;
     if (player.holdsInventory.equipment.weapon !== EDGE_OF_OBLIVION_ID) return;
+    if (evadeBlocksDebuffs(ctx)) return; // dodged hit applies no corruption
 
     const p = player.usesSkills.passives;
     const convPct = p["dot.conversion-pct"] ?? CORRUPTION_CONV_PCT;
@@ -466,6 +458,7 @@ function updateBurnEffects(world: World, dt: number): void {
           buildSimpleBreakdown(damage, damage),
         );
         e.hasHealth.hp -= damage;
+        pushDotTickEvent(world, e, BURN_ELEMENT_BY_EFFECT_ID[effectId] ?? "fire", damage);
 
         if (e.hasHealth.hp <= 0 && !killed.has(monsterId)) {
           killed.add(monsterId);

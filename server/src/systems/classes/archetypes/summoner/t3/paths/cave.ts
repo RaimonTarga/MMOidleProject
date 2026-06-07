@@ -10,6 +10,7 @@ import type { World } from '../../../../../../world/World';
 import type { MinionEntity, MonsterEntity, PlayerEntity } from '../../../../../../ecs/entity';
 import { markSliceDirty } from '../../../../../../ecs/dirtyHelpers';
 import { registerCombatListener } from '../../../../../combat/engine/combatPipeline';
+import { evadeBlocksDebuffs } from '../../../../../defense/mitigation/evasion';
 import { applyPlayerAoe } from '../../../../../combat/damage/aoeDamage';
 import { alliesInNodeWithin } from '../../../../../world/queries';
 import {
@@ -317,6 +318,7 @@ export function registerCavePathHooks(): void {
     }
 
     if (!isMinionAggroSource(ctx.metadata)) return;
+    if (evadeBlocksDebuffs(ctx)) return; // dodged hit plants no corrosion
 
     const passives = ctx.attacker.usesSkills.passives;
 

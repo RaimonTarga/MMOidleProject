@@ -76,6 +76,10 @@ export function initReloadArchetype(): void {
       return;
     }
 
+    // Chaotic miss: the shot whiffs but doesn't consume ammo or start a reload.
+    // The cancel guards above already ran, so a miss can't fire on an empty clip.
+    if (ctx.metadata['chaoticMiss']) return;
+
     if ((passives['reload.blunderbuss'] ?? 0) > 0 && !isBlunderbussPellet) {
       const pelletCount = reload.ammo;
       if (pelletCount <= 0) {

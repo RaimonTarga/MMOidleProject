@@ -3,6 +3,7 @@
  * Shared between server combat logic and client display — edit here to
  * change both behavior and the stat-sheet description at the same time.
  */
+import type { DamageElement } from './dotElements';
 
 // ── Abyss ultimate weapon ───────────────────────────────────────────────────
 
@@ -38,6 +39,9 @@ export const BRITTLE_DURATION_MS = 4_500;
 /** Every Nth player hit deals 0 damage (on-hit effects still fire). */
 export const CHAOTIC_MISS_EVERY  = 3;
 export const FRENZIED_MISS_EVERY = 4;
+
+/** tracksCombat counter key tracking the chaotic hit cycle (server-only). */
+export const CHAOTIC_HIT_COUNTER_KEY = 'chaoticHits';
 
 export const CHAOTIC_FAMILY: Record<string, number> = {
   'chaotic-axe':       CHAOTIC_MISS_EVERY,
@@ -82,10 +86,12 @@ export interface BurnWeaponEntry {
   effectId:  string;
   convPct:   number;
   maxStacks: number;
+  /** DoT element for damage-number flavor (color/glyph). */
+  element:   DamageElement;
 }
 
 export const BURN_FAMILY: BurnWeaponEntry[] = [
-  { weaponId: 'ashbrand-blade',   effectId: 'ashbrand-burn',   convPct: ASHBRAND_CONV_PCT,   maxStacks: ASHBRAND_MAX_STACKS   },
-  { weaponId: 'cinderfang-saber', effectId: 'cinderfang-burn', convPct: CINDERFANG_CONV_PCT, maxStacks: CINDERFANG_MAX_STACKS },
-  { weaponId: 'frostmourne-mace', effectId: 'frostmourne-burn',      convPct: FROSTMOURNE_CONV_PCT, maxStacks: FROSTMOURNE_MAX_STACKS },
+  { weaponId: 'ashbrand-blade',   effectId: 'ashbrand-burn',   convPct: ASHBRAND_CONV_PCT,   maxStacks: ASHBRAND_MAX_STACKS,   element: 'fire'  },
+  { weaponId: 'cinderfang-saber', effectId: 'cinderfang-burn', convPct: CINDERFANG_CONV_PCT, maxStacks: CINDERFANG_MAX_STACKS, element: 'fire'  },
+  { weaponId: 'frostmourne-mace', effectId: 'frostmourne-burn',      convPct: FROSTMOURNE_CONV_PCT, maxStacks: FROSTMOURNE_MAX_STACKS, element: 'frost' },
 ];

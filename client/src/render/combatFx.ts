@@ -8,7 +8,12 @@ import {
   type Vec2,
 } from "@mmo-idle/shared";
 import { activateLaserBeam } from "../fx/laser";
-import { playOneShotEffect, spawnDamageNumber } from "../fx/particles";
+import {
+  playOneShotEffect,
+  spawnDamageNumber,
+  EMPOWERED_DAMAGE_COLOR,
+  EMPOWERED_DAMAGE_SIZE_PX,
+} from "../fx/particles";
 import { getDotPath, type DotPath } from "../fx/dot";
 import { fxSlash } from "../fx/slash";
 import { fxImpact } from "../fx/impact";
@@ -185,6 +190,10 @@ export function dispatchCombatEvent(
   ev: CombatEvent,
   scene: GameScene,
 ): void {
+  // dot-tick / monster-hit events are consumed as damage-number style hints in
+  // deltaApplier, not here.
+  if (ev.kind === "dot-tick" || ev.kind === "monster-hit") return;
+
   if (ev.kind === "monster-dodge") {
     if (!shouldRunClientFx()) return;
     const target =
@@ -201,6 +210,38 @@ export function dispatchCombatEvent(
           fontFamily: "monospace",
           fontSize: "14px",
           color: "#ddddff",
+          stroke: "#000000",
+          strokeThickness: 3,
+        })
+        .setOrigin(0.5)
+        .setDepth(DEPTH.FX);
+      scene.tweens.add({
+        targets: text,
+        y: text.y - 28,
+        alpha: 0,
+        duration: 650,
+        onComplete: () => text.destroy(),
+      });
+    }
+    return;
+  }
+
+  if (ev.kind === "player-miss") {
+    if (!shouldRunClientFx()) return;
+    const target =
+      ev.targetPos ??
+      (state.sprite.get(ev.targetId)
+        ? {
+            x: state.sprite.get(ev.targetId)!.x,
+            y: state.sprite.get(ev.targetId)!.y,
+          }
+        : null);
+    if (target) {
+      const text = scene.add
+        .text(target.x, target.y - 40, "MISS", {
+          fontFamily: "monospace",
+          fontSize: "14px",
+          color: "#bbbbbb",
           stroke: "#000000",
           strokeThickness: 3,
         })
@@ -252,12 +293,16 @@ export function dispatchCombatEvent(
       const target = scene.state.sprite.get(ev.targetId);
       if (target && ev.damage > 0) {
         const meta = scene.state.spriteMeta.get(ev.targetId);
+        const empowered = ev.empowered || ev.execution;
         spawnDamageNumber(
           scene,
           { x: target.x, y: target.y },
           meta?.barOffsetY ?? 40,
           Math.round(ev.damage),
-          "#ffffff",
+          empowered ? EMPOWERED_DAMAGE_COLOR : "#ffffff",
+          empowered
+            ? { sizePx: EMPOWERED_DAMAGE_SIZE_PX, suffix: "!" }
+            : undefined,
         );
       }
       spawnRewardFloaters(scene, ev);

@@ -146,6 +146,9 @@ Important formula conventions:
 - `biomeXpForLevel` is the only biome XP threshold function.
 - `biomeLevelCap(playerTier, biomeGroup)` takes exactly two args.
 - Evasion is a fraction from 0 to 1, not old `1/N` notation.
+- An evaded hit applies no debuffs/DoT: every on-hit debuff/DoT/status applier must
+  early-return on `evadeBlocksDebuffs(ctx)` (respects monster `appliesThroughEvade` /
+  player `shared.applies-through-evade`). Unlike a chaotic-axe miss, which still applies them.
 - Use shared melee/ranged helpers from `shared/src/data/skillTree/rootsAndFrames.ts`.
 
 ## World, Progression, And Persistence
@@ -212,7 +215,7 @@ Player client-to-server highlights:
 - Recipe upgrade steps are incremental and belong next to recipe definitions.
 - `upgradeCostFor` returns multi-essence cost records.
 - Ranged monsters with generic impact should use `gunshot`; thematic styles can stay.
-- `evadeEvery` on monsters should be at least 5.
+- Monster `evasion` is a per-hit dodge fraction (0–1), the same notation as the player evasion stat (0.2 ≈ 1 in 5); keep it ≤ 0.25 (≈ 1 in 4).
 - Slow/root effects must store `totalMs` in status effect data for buff UI clocks.
 
 ## Current Priority / Known Gaps

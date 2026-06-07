@@ -20,6 +20,7 @@ export * from './systems/itemUpgrades';
 export * from './systems/summonerHud';
 export * from './systems/weaponFamilies';
 export * from './systems/monsterDebuffs';
+export * from './systems/dotElements';
 export * from './hitbox/types';
 export * from './hitbox/constants';
 export * from './hitbox/resolveHitbox';

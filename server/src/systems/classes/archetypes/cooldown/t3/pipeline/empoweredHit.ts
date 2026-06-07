@@ -2,6 +2,7 @@ import {
   applyStatusEffect, removeStatusEffect, getStatusEffect,
 } from '@mmo-idle/shared';
 import { registerCombatListener } from '../../../../../combat/engine/combatPipeline';
+import { evadeBlocksDebuffs } from '../../../../../defense/mitigation/evasion';
 import { attachComponent, attachMarker } from '../../../../../../ecs/markerHelpers';
 import { setAttackTarget } from '../../../../../combat/ai/targeting';
 import { hasPassive } from '../core/helpers';
@@ -76,7 +77,7 @@ export function registerEmpoweredHit(): void {
       return;
     }
 
-    if (hasPassive(player, 'cooldown.entropy-collapse') && ctx.defenderType === 'monster') {
+    if (hasPassive(player, 'cooldown.entropy-collapse') && ctx.defenderType === 'monster' && !evadeBlocksDebuffs(ctx)) {
       const monsterState = ctx.defender.tracksCombat;
       const baseDmg = passives['cooldown.entropy-base-damage'] ?? ENTROPY_BASE_DMG;
       removeStatusEffect(monsterState, ENT_DOT_FX);
