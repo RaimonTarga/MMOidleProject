@@ -101,12 +101,63 @@ export const BIOME_TIER_BY_GROUP: Record<string, number> = Object.fromEntries(
 );
 
 /**
- * Returns the maximum biome level a player of `playerTier` can reach.
- * Cap = playerTier * 4, minimum 4. Clearing is always capped at 4.
+ * Maps biomeGroup -> the lowest tier the group appears at in NODE_BIOMES (its
+ * "start tier"). Biomes that first appear above T1 (e.g. desert at T2) use this
+ * to offset their XP curve so a given level costs what the same-tier level costs
+ * in a biome that started at T1. See {@link biomeLevelOffset}.
+ */
+export const BIOME_START_TIER_BY_GROUP: Record<string, number> = (() => {
+  const map: Record<string, number> = {};
+  for (const { biomeGroup, biomeTier } of Object.values(NODE_BIOMES)) {
+    if (map[biomeGroup] === undefined || biomeTier < map[biomeGroup]) {
+      map[biomeGroup] = biomeTier;
+    }
+  }
+  return map;
+})();
+
+/** Each tier spans this many biome levels. */
+export const BIOME_LEVELS_PER_TIER = 4;
+
+/**
+ * Level offset for a biome whose start tier is above T1. A biome starting at
+ * tier T behaves, level-for-level, like the top `(T-1)*4` levels of a T1 biome:
+ * its level 1 lines up with a T1 biome's level `(T-1)*4 + 1`. Returns 0 for T1
+ * biomes and the clearing, so they keep the unshifted curve.
+ */
+export function biomeLevelOffset(biomeGroup: string): number {
+  if (biomeGroup === 'clearing') return 0;
+  const startTier = BIOME_START_TIER_BY_GROUP[biomeGroup] ?? 1;
+  return Math.max(0, (startTier - 1) * BIOME_LEVELS_PER_TIER);
+}
+
+/**
+ * Returns the maximum biome level a player of `playerTier` can reach in a given
+ * biome. A biome only has `BIOME_LEVELS_PER_TIER` levels of content per tier it
+ * spans, so the cap shrinks for biomes that start above T1: cap =
+ * (playerTier - startTier + 1) * 4, minimum 4. Clearing is always capped at 4.
  */
 export function biomeLevelCap(playerTier: number, biomeGroup: string): number {
   if (biomeGroup === 'clearing') return 4;
-  return Math.max(4, playerTier * 4);
+  const startTier = BIOME_START_TIER_BY_GROUP[biomeGroup] ?? 1;
+  return Math.max(
+    BIOME_LEVELS_PER_TIER,
+    (playerTier - startTier + 1) * BIOME_LEVELS_PER_TIER,
+  );
+}
+
+/**
+ * Cumulative XP required to reach biome level `n` *within a specific biome*,
+ * accounting for its start-tier offset. For a T1 biome this equals
+ * {@link biomeXpForLevel}. For a biome starting at tier T, level `n` costs what
+ * the equivalent same-tier level costs in a T1 biome — the offset levels are
+ * subtracted out so the biome's own curve still starts at 0 XP for level 0
+ * (i.e. level 1 costs the increment, not the whole cumulative wall below it).
+ */
+export function biomeXpForBiomeLevel(biomeGroup: string, n: number): number {
+  const offset = biomeLevelOffset(biomeGroup);
+  if (offset === 0) return biomeXpForLevel(n);
+  return biomeXpForLevel(n + offset) - biomeXpForLevel(offset);
 }
 
 export const DEFAULT_AUTOCOMBAT_CONFIG: AutocombatConfig = {

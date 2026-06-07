@@ -1,5 +1,5 @@
 import { useAtomValue } from 'jotai';
-import { NODE_BIOMES, BIOME_DATABASE, biomeXpForLevel, biomeLevelCap } from '@mmo-idle/shared';
+import { NODE_BIOMES, BIOME_DATABASE, biomeXpForBiomeLevel, biomeLevelCap } from '@mmo-idle/shared';
 import { useState, useEffect, useRef } from 'react';
 import { biomeXPAtom, biomeLevelAtom, playerNodeIdAtom, playerTierAtom } from './atoms';
 import './biomeXpBar.css';
@@ -18,8 +18,8 @@ function deriveBarState(
   const isMaxed = level >= absoluteMax;
   const isCapped = !isMaxed && level >= levelCap;
 
-  const xpThisLevel = biomeXpForLevel(level);
-  const xpNextLevel = biomeXpForLevel(level + 1);
+  const xpThisLevel = biomeXpForBiomeLevel(biomeGroup, level);
+  const xpNextLevel = biomeXpForBiomeLevel(biomeGroup, level + 1);
   const xpInLevel = Math.max(0, totalXp - xpThisLevel);
   const xpNeeded = xpNextLevel - xpThisLevel;
   const pct = (isMaxed || isCapped) ? 100 : Math.min(100, Math.max(0, (xpInLevel / xpNeeded) * 100));

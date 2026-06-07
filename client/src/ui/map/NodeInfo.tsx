@@ -3,7 +3,7 @@ import { useAtomValue } from 'jotai';
 import type { EssenceType, MonsterDefinition, Recipe } from '@mmo-idle/shared';
 import {
   NODE_BIOMES, BIOME_DATABASE, MONSTER_DATABASE, RECIPE_DATABASE, ESSENCE_COLORS,
-  biomeLevelCap, biomeXpForLevel, formatNodeCoord, formatRespawnRemaining, nodeIdToCoord,
+  biomeLevelCap, biomeXpForBiomeLevel, formatNodeCoord, formatRespawnRemaining, nodeIdToCoord,
 } from '@mmo-idle/shared';
 import { biomeLevelAtom, biomeXPAtom, bossFelledByNodeAtom, playerTierAtom } from '../../hud/atoms';
 import { hudBus } from '../../hudBus';
@@ -272,8 +272,8 @@ export function NodeInfo({ nodeId, playerNodeId, onClose }: NodeInfoProps) {
             <span className="map-kills-badge">Lv {biomeLevel}{biomeLevel >= levelCap ? ' (max)' : ''}</span>
           </div>
           {biomeLevel < levelCap && (() => {
-            const xpThisTier = biomeXpForLevel(biomeLevel);
-            const xpNextTier = biomeXpForLevel(biomeLevel + 1);
+            const xpThisTier = biomeXpForBiomeLevel(biomeGroup, biomeLevel);
+            const xpNextTier = biomeXpForBiomeLevel(biomeGroup, biomeLevel + 1);
             const xpInLevel  = biomeXP - xpThisTier;
             const xpNeeded   = xpNextTier - xpThisTier;
             const pct = Math.min(100, (xpInLevel / xpNeeded) * 100);

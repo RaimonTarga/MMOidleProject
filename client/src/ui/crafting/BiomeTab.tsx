@@ -7,7 +7,7 @@ import {
   TEST_ROOM_NODE_ID,
   ULTIMATE_CLEAR_VOID_OVERLORD,
   biomeLevelCap,
-  biomeXpForLevel,
+  biomeXpForBiomeLevel,
 } from '@mmo-idle/shared';
 import {
   biomeLevelAtom,
@@ -130,8 +130,8 @@ function BiomeSection({ biomeGroup, biomeLevel, biomeXP, playerTier, unlockedRec
   const level    = biomeLevel[biomeGroup] ?? 0;
   const xp       = biomeXP[biomeGroup] ?? 0;
   const levelCap = biomeLevelCap(playerTier, biomeGroup);
-  const xpThisTier  = biomeXpForLevel(level);
-  const xpNextTier  = biomeXpForLevel(level + 1);
+  const xpThisTier  = biomeXpForBiomeLevel(biomeGroup, level);
+  const xpNextTier  = biomeXpForBiomeLevel(biomeGroup, level + 1);
   const xpInLevel   = xp - xpThisTier;
   const xpNeeded    = xpNextTier - xpThisTier;
   const pct = level >= levelCap
