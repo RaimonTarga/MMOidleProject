@@ -1,5 +1,7 @@
 import type { MonsterDefinition } from './types';
 
+// this file is deprecated, old AI generated monsters for the advanced biomes (T2+). Discarded, replaced by hand-designed monsters in the biome-specific files (volcano.monsters.ts, tundra.monsters.ts). Left here for reference, but not imported anywhere. Do not add new monsters here.
+
 export const advancedBiomeMonsterEntriesB = [
   // ── Tundra T3 ─────────────────────────────────────────────────────────────
   ['frost-giant', {

@@ -28,65 +28,7 @@ import type { MonsterDefinition } from './types';
 // of player pool (trip the cap). Rewards/essence = placeholder (economy deferred).
 // ─────────────────────────────────────────────────────────────────────────
 
-export const bossMonsterEntriesT1T2 = [
-  // ════════════════════════ T1 BOSSES (pure shape, no phase) ════════════════════════
-
-  // PLAINS — honest bruiser, no gimmick. The floor. (fast enough: single-target)
-  ['plains-champion', {
-    id: 'plains-champion', name: 'Plains Champion', color: 0xddaa44,
-    isBoss: true,
-    stats: { hp: 1000, attack: 30, plating: 4, damageReduction: 0.02, speed: 50, attackRange: 15, attackCooldown: 2000, pullRange: 280 },
-    behavior: 'melee', attackStyle: 'impact', biome: 'plains',
-    rewards: { essence: 100, essenceType: 'yellow', level: 5, biomeXp: 150 },
-    ai: { wanderRadius: 120, leashRange: 750, idleMinMs: 1500, idleMaxMs: 4500 },
-  }],
-
-  // FOREST — fast, frequent, frail. The evasion exam. (fast: single-target)
-  ['forest-warden', {
-    id: 'forest-warden', name: 'Forest Warden', color: 0x33aa44,
-    isBoss: true,
-    stats: { hp: 900, attack: 24, plating: 0, damageReduction: 0, speed: 60, attackRange: 15, attackCooldown: 1400, pullRange: 300 },
-    behavior: 'melee', attackStyle: 'slash', biome: 'forest',
-    rewards: { essence: 100, essenceType: 'green', level: 5, biomeXp: 150 },
-    ai: { wanderRadius: 160, leashRange: 800, idleMinMs: 1200, idleMaxMs: 4000 },
-  }],
-
-  // MOUNTAIN — slow charging mega-slam that trips the cap. Burst exam. Cleaves.
-  ['mountain-sentinel', {
-    id: 'mountain-sentinel', name: 'Mountain Sentinel', color: 0x8899bb,
-    isBoss: true,
-    stats: { hp: 1100, attack: 60, plating: 0, damageReduction: 0, speed: 22, attackRange: 18, attackCooldown: 3500, pullRange: 280 },
-    behavior: 'melee', attackStyle: 'impact', biome: 'mountain',
-    rewards: { essence: 105, essenceType: 'blue', level: 5, biomeXp: 158 },
-    ai: { wanderRadius: 120, leashRange: 750, idleMinMs: 2000, idleMaxMs: 5000 },
-    chargeOnAggro: { speedMult: 3.0, durationMs: 1200 },
-    aoeAttack: { radius: 120, damageMult: 0.6 },
-  }],
-
-  // SWAMP — trivial direct hit, real (beatable) DoT. dot-resist exam. Cleaves
-  // (slow: a body-blocked DoT swing lands on summons instead of the player).
-  ['bog-sovereign', {
-    id: 'bog-sovereign', name: 'Bog Sovereign', color: 0x1e3d1e,
-    isBoss: true,
-    stats: { hp: 950, attack: 8, plating: 2, damageReduction: 0.02, speed: 28, attackRange: 15, attackCooldown: 2600, pullRange: 260 },
-    behavior: 'melee', attackStyle: 'poison', biome: 'swamp',
-    rewards: { essence: 100, essenceType: 'purple', level: 5, biomeXp: 150 },
-    ai: { wanderRadius: 100, leashRange: 700, idleMinMs: 2000, idleMaxMs: 5500 },
-    dotEffect: { damagePerStack: 4, maxStacks: 3, tickIntervalMs: 1000, durationMs: 4000 },
-    aoeAttack: { radius: 120, damageMult: 0.6 },
-  }],
-
-  // CAVE — tanky mixed elite: high HP, DR + plating, charges. Endurance exam. Cleaves.
-  ['cave-sentinel', {
-    id: 'cave-sentinel', name: 'Cave Sentinel', color: 0x334455,
-    isBoss: true,
-    stats: { hp: 1050, attack: 40, plating: 6, damageReduction: 0.10, speed: 24, attackRange: 18, attackCooldown: 2800, pullRange: 240 },
-    behavior: 'melee', attackStyle: 'impact', biome: 'cave',
-    rewards: { essence: 110, essenceType: 'red', level: 5, biomeXp: 165 },
-    ai: { wanderRadius: 80, leashRange: 680, idleMinMs: 2500, idleMaxMs: 6500 },
-    chargeOnAggro: { speedMult: 2.5, durationMs: 1200 },
-    aoeAttack: { radius: 120, damageMult: 0.6 },
-  }],
+export const bossMonsterEntriesT2 = [
 
   // ════════════════════════ T2 BOSSES (+ one phase @50%) ════════════════════════
 

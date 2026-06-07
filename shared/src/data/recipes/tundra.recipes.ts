@@ -14,9 +14,9 @@ export const tundraRecipeEntries = [
     icon: 'items/weapons/hammer-2.png',
     description: 'Each blow leaves a deep frost-crack; armor that takes enough of them simply gives.',
     upgrades: [
-      { stats: { attack: 25 }, cost: { blue: 62 },  requiredBiomeLevel: 2 },
-      { stats: { attack: 25 }, cost: { blue: 124 }, requiredBiomeLevel: 3 },
-      { stats: { attack: 25 }, cost: { blue: 208 }, requiredBiomeLevel: 4 },
+      { stats: { attack: 25 }, cost: { blue: 186 },  requiredBiomeLevel: 2 },
+      { stats: { attack: 25 }, cost: { blue: 372 }, requiredBiomeLevel: 3 },
+      { stats: { attack: 25 }, cost: { blue: 744 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -24,7 +24,7 @@ export const tundraRecipeEntries = [
   ['tundra-charm-t3', {
     id: 'tundra-charm-t3', name: 'Frostward Charm',
     recipeGroup: 'tundra', requiredBiomeLevel: 2, slot: 'recovery',
-    cost: { blue: 104 }, stats: { hpRegen: 11 },
+    cost: { blue: 75, purple: 25 }, stats: { hpRegen: 11 },
     mechanicEffects: {
       'defense.shield-pct': 0.12, 'defense.shield-interval-ms': 9000, 'defense.shield-duration-ms': 9000,
       'defense.absorb-pct': 0.08,
@@ -33,16 +33,16 @@ export const tundraRecipeEntries = [
     icon: 'items/charms/stone-hand-charm-2.png',
     description: 'A rime-cold ward that throws up a sheet of ice, and drinks the blows that get through.',
     upgrades: [
-      { mechanicEffects: { 'defense.shield-pct': 0.02, 'defense.absorb-pct': 0.02 }, cost: { blue: 52 },  requiredBiomeLevel: 3 },
-      { mechanicEffects: { 'defense.shield-pct': 0.02, 'defense.absorb-pct': 0.02 }, cost: { blue: 104 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'defense.shield-pct': 0.02, 'defense.absorb-pct': 0.02 }, cost: { blue: 180 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.shield-pct': 0.02, 'defense.absorb-pct': 0.02 }, cost: { blue: 50, purple: 25 },  requiredBiomeLevel: 3 },
+      { mechanicEffects: { 'defense.shield-pct': 0.02, 'defense.absorb-pct': 0.02 }, cost: { blue: 100, purple: 50 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.shield-pct': 0.02, 'defense.absorb-pct': 0.02 }, cost: { blue: 200, purple: 100 }, requiredBiomeLevel: 4 },
     ],
   }],
 
   ['tundra-boots-t3', {
     id: 'tundra-boots-t3', name: 'Glacier Striders',
     recipeGroup: 'tundra', requiredBiomeLevel: 3, slot: 'mobility',
-    cost: { blue: 60 }, stats: { speed: 30 }, tier: 3,
+    cost: { blue: 80 }, stats: { speed: 30 }, tier: 3,
     mechanicEffects: { 'mobility.ramp-speed-pct': 0.60, 'mobility.ramp-rate': 0.30 },
     icon: 'items/boots/plate-boots-4.png',
     description: 'They gather momentum across the ice and are loath to give it back.',
@@ -56,7 +56,7 @@ export const tundraRecipeEntries = [
   ['tundra-vest-t3', {
     id: 'tundra-vest-t3', name: 'Glacial Bulwark',
     recipeGroup: 'tundra', requiredBiomeLevel: 4, slot: 'armor',
-    cost: { blue: 124 }, stats: { maxHp: 100, plating: 15 },
+    cost: { blue: 100, red: 25 }, stats: { maxHp: 100, plating: 15 },
     mechanicEffects: {
       'defense.stationary-dr-pct': 0.15, 'defense.stationary-dr-ramptime-ms': 6000,
       'defense.max-hit-pct': 0.25, 'defense.max-hit-mult': 0.5,
@@ -65,9 +65,9 @@ export const tundraRecipeEntries = [
     icon: 'items/armor/plate-armor-1.png',
     description: 'Stand still and the ice creeps over the plate, until you are part of the glacier itself.',
     upgrades: [
-      { stats: { maxHp: 22, plating: 4 }, cost: { blue: 62 },  requiredBiomeLevel: 4 },
-      { stats: { maxHp: 22, plating: 4 }, cost: { blue: 124 }, requiredBiomeLevel: 4 },
-      { stats: { maxHp: 22, plating: 4 }, cost: { blue: 208 }, requiredBiomeLevel: 4 },
+      { stats: { maxHp: 22, plating: 4 }, cost: { blue: 90, red: 40 },  requiredBiomeLevel: 4 },
+      { stats: { maxHp: 22, plating: 4 }, cost: { blue: 180, red: 60 }, requiredBiomeLevel: 4 },
+      { stats: { maxHp: 22, plating: 4 }, cost: { blue: 270, red: 80 }, requiredBiomeLevel: 4 },
     ],
   }],
 

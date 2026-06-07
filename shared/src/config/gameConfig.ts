@@ -73,22 +73,25 @@ export const GAME_CONFIG = {
   EMPOWERED_AOE_MULT: 0.5,
 
   // ── Biome progression ─────────────────────────────────────────────────────────
-  BIOME_XP_BASE: 40,
+  // Was 40 before, now tuned to be about 25 
+  // The change's intention is to make biome XP less grindy, while shifting the balance towards essence being more scarce
+  // power is unlocked, but needs to be paid for in essence, which will take more time to farm
+
+  BIOME_XP_BASE: 25,
   BIOME_XP_EXPONENT: 2.8,
-  BIOME_XP_ESSENCE_MULT: [1.0, 2.0, 1.1, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0] as unknown as readonly number[],
   BIOME_LEVEL_CAP_BY_TIER: [5, 5, 9, 13, 17, 21, 25, 29, 33, 37, 41] as unknown as readonly number[],
 } as const;
 
 /**
  * Total XP required to reach biome level `n` (from 0).
  * Formula: round(BASE × n ^ EXPONENT)
- * Example with defaults (BASE=80, EXP=1.7):
- *   Lv 1 →   80 XP   (8 T1 kills)
- *   Lv 2 →  260 XP   (26 T1 kills total)
- *   Lv 3 →  518 XP   (52 T1 kills total)
- *   Lv 4 →  845 XP   (85 T1 kills total)
- *   Lv 6 → 1831 XP   (92 T2 kills total)
- *   Lv 9 → 3848 XP   (192 T2 kills total)
+ * Example with defaults (BASE=25, EXP=2.8):
+ *   Lv 1 →   25 XP   (25 T1 kills)
+ *   Lv 2 →  250 XP   (25 T1 kills total)
+ *   Lv 3 →  500 XP   (50 T1 kills total)
+ *   Lv 4 →  800 XP   (80 T1 kills total)
+ *   Lv 6 → 1800 XP   (90 T2 kills total)
+ *   Lv 9 → 3800 XP   (190 T2 kills total)
  */
 export function biomeXpForLevel(n: number): number {
   if (n <= 0) return 0;

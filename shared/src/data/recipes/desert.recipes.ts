@@ -14,27 +14,25 @@ export const desertRecipeEntries = [
     icon: 'items/weapons/sword-3.png',
     description: 'Sun-forged and ward-etched, it strikes the first blow as if it waited years for it.',
     upgrades: [
-      { stats: { attack: 6 }, cost: { yellow: 34 }, requiredBiomeLevel: 2 },
-      { stats: { attack: 6 }, cost: { yellow: 70 }, requiredBiomeLevel: 3 },
-      { stats: { attack: 6 }, cost: { yellow: 115 }, requiredBiomeLevel: 4 },
+      { stats: { attack: 6 }, cost: { yellow: 100 }, requiredBiomeLevel: 2 },
+      { stats: { attack: 6 }, cost: { yellow: 200 }, requiredBiomeLevel: 3 },
+      { stats: { attack: 6 }, cost: { yellow: 300 }, requiredBiomeLevel: 4 },
     ],
   }],
-
-  
 
   // Charm: hpRegen flat; upgrades ramp cleanse empty-heal 0.03 -> 0.06 (stacks/interval flat).
   ['desert-charm-t2', {
     id: 'desert-charm-t2', name: 'Mirage Core',
     recipeGroup: 'desert', requiredBiomeLevel: 2, slot: 'recovery',
-    cost: { yellow: 58 }, stats: { hpRegen: 6 },
+    cost: { yellow: 50, purple: 25 }, stats: { hpRegen: 6 },
     mechanicEffects: { 'defense.cleanse-stacks': 1, 'defense.cleanse-interval-ms': 6000, 'defense.cleanse-empty-heal-pct': 0.03 },
     tier: 2,
     icon: 'items/charms/tear-charm-1.png',
     description: 'A shard of cooled glass that shows you water which is not there, and mends what is.',
     upgrades: [
-      { mechanicEffects: { 'defense.cleanse-empty-heal-pct': 0.01 }, cost: { yellow: 28 }, requiredBiomeLevel: 3 },
-      { mechanicEffects: { 'defense.cleanse-empty-heal-pct': 0.01 }, cost: { yellow: 58 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'defense.cleanse-empty-heal-pct': 0.01 }, cost: { yellow: 96 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.cleanse-empty-heal-pct': 0.01 }, cost: { yellow: 25, purple: 15 }, requiredBiomeLevel: 3 },
+      { mechanicEffects: { 'defense.cleanse-empty-heal-pct': 0.01 }, cost: { yellow: 60, purple: 30 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.cleanse-empty-heal-pct': 0.01 }, cost: { yellow: 100, purple: 50 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -42,7 +40,7 @@ export const desertRecipeEntries = [
     id: 'desert-boots-t2', name: 'Sand Sprint',
     recipeGroup: 'desert', requiredBiomeLevel: 3, slot: 'mobility',
     cost: { yellow: 58 }, stats: { speed: 58 }, tier: 2,
-    mechanicEffects: { 'mobility.kite-speed-pct': 0.40 },
+    mechanicEffects: { 'mobility.kite-speed-pct': 0.20 },
     icon: 'items/boots/mage-boots-1.png',
     description: 'Wide and light, made to outpace a storm across open dune.',
     upgrades: [
@@ -55,15 +53,15 @@ export const desertRecipeEntries = [
   ['desert-vest-t2', {
     id: 'desert-vest-t2', name: 'Duneplate of the Last Stand',
     recipeGroup: 'desert', requiredBiomeLevel: 4, slot: 'armor',
-    cost: { yellow: 70 }, stats: { maxHp: 44, plating: 10 },
+    cost: { yellow: 35, purple: 25 }, stats: { maxHp: 44, plating: 10 },
     mechanicEffects: { 'defense.cheat-death': 1, 'defense.cleanse-stacks': 1, 'defense.cleanse-interval-ms': 8000 },
     tier: 2,
     icon: 'items/armor/plate-armor-5.png',
     description: 'Plate of the standfast dead, who are said to have refused to fall even once.',
     upgrades: [
-      { stats: { maxHp: 12, plating: 3 }, cost: { yellow: 34 }, requiredBiomeLevel: 4 },
-      { stats: { maxHp: 12, plating: 3 }, cost: { yellow: 70 }, requiredBiomeLevel: 4 },
-      { stats: { maxHp: 12, plating: 3 }, cost: { yellow: 115 }, requiredBiomeLevel: 4 },
+      { stats: { maxHp: 12, plating: 3 }, cost: { yellow: 75, purple: 25 }, requiredBiomeLevel: 4 },
+      { stats: { maxHp: 12, plating: 3 }, cost: { yellow: 150, purple: 50 }, requiredBiomeLevel: 4 },
+      { stats: { maxHp: 12, plating: 3 }, cost: { yellow: 200, purple: 100 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -72,13 +70,13 @@ export const desertRecipeEntries = [
     id: 'desert-solar-cross', name: 'Solar Cross',
     recipeGroup: 'desert', requiredBiomeLevel: 5, slot: 'weapon',
     cost: { yellow: 116 }, stats: { attack: 34 }, attacksPerSecond: 0.70, tier: 3,
-    mechanicEffects: { 'weapon.first-strike-mult': 2.0 },
+    mechanicEffects: { 'weapon.first-strike-mult': 2.5 },
     icon: 'items/weapons/sword-3.png',
     description: 'It saves its fury for the opening blow, and spends it all at once.',
     upgrades: [
-      { stats: { attack: 8 }, cost: { yellow: 58 },  requiredBiomeLevel: 6 },
-      { stats: { attack: 8 }, cost: { yellow: 116 }, requiredBiomeLevel: 7 },
-      { stats: { attack: 8 }, cost: { yellow: 196 }, requiredBiomeLevel: 8 },
+      { stats: { attack: 8 }, cost: { yellow: 170 },  requiredBiomeLevel: 6 },
+      { stats: { attack: 8 }, cost: { yellow: 340 }, requiredBiomeLevel: 7 },
+      { stats: { attack: 8 }, cost: { yellow: 570 }, requiredBiomeLevel: 8 },
     ],
   }],
 
@@ -86,23 +84,23 @@ export const desertRecipeEntries = [
   ['desert-charm-t3', {
     id: 'desert-charm-t3', name: 'Oasis Core',
     recipeGroup: 'desert', requiredBiomeLevel: 6, slot: 'recovery',
-    cost: { yellow: 100 }, stats: { hpRegen: 11 },
+    cost: { yellow: 100, purple: 25 }, stats: { hpRegen: 11 },
     mechanicEffects: { 'defense.cleanse-stacks': 1, 'defense.cleanse-interval-ms': 6000, 'defense.cleanse-empty-heal-pct': 0.05 },
     tier: 3,
     icon: 'items/charms/tear-charm-1.png',
     description: 'It strips the curse from your blood, or — finding none — gives you a swallow of water instead.',
     upgrades: [
-      { mechanicEffects: { 'defense.cleanse-empty-heal-pct': 0.01 }, cost: { yellow: 50 },  requiredBiomeLevel: 7 },
-      { mechanicEffects: { 'defense.cleanse-empty-heal-pct': 0.01 }, cost: { yellow: 100 }, requiredBiomeLevel: 8 },
-      { mechanicEffects: { 'defense.cleanse-empty-heal-pct': 0.01 }, cost: { yellow: 175 }, requiredBiomeLevel: 8 },
+      { mechanicEffects: { 'defense.cleanse-empty-heal-pct': 0.01 }, cost: { yellow: 35, purple: 25 },  requiredBiomeLevel: 7 },
+      { mechanicEffects: { 'defense.cleanse-empty-heal-pct': 0.01 }, cost: { yellow: 140, purple: 35 }, requiredBiomeLevel: 8 },
+      { mechanicEffects: { 'defense.cleanse-empty-heal-pct': 0.01 }, cost: { yellow: 280, purple: 70 }, requiredBiomeLevel: 8 },
     ],
   }],
 
   ['desert-boots-t3', {
     id: 'desert-boots-t3', name: 'Mirage Striders',
     recipeGroup: 'desert', requiredBiomeLevel: 7, slot: 'mobility',
-    cost: { yellow: 80 }, stats: { speed: 96 }, tier: 3,
-    mechanicEffects: { 'mobility.kite-speed-pct': 0.55 },
+    cost: { yellow: 90 }, stats: { speed: 96 }, tier: 3,
+    mechanicEffects: { 'mobility.kite-speed-pct': 0.30 },
     icon: 'items/boots/mage-boots-2.png',
     description: 'By the time the storm reaches where you stood, you are already a rumor on the next dune.',
     upgrades: [
@@ -115,15 +113,15 @@ export const desertRecipeEntries = [
   ['desert-vest-t3', {
     id: 'desert-vest-t3', name: 'Eternal Duneplate',
     recipeGroup: 'desert', requiredBiomeLevel: 8, slot: 'armor',
-    cost: { yellow: 116 }, stats: { maxHp: 90, plating: 20 },
+    cost: { yellow: 120, purple: 30 }, stats: { maxHp: 90, plating: 20 },
     mechanicEffects: { 'defense.cheat-death': 1, 'defense.cleanse-stacks': 1, 'defense.cleanse-interval-ms': 8000, 'defense.debuff-resist': 0.20 },
     tier: 3,
     icon: 'items/armor/plate-armor-5.png',
     description: 'Worn by the standfast dead, who shed curses like sand and refused, once, to die.',
     upgrades: [
-      { stats: { maxHp: 20, plating: 5 }, cost: { yellow: 58 },  requiredBiomeLevel: 8 },
-      { stats: { maxHp: 20, plating: 5 }, cost: { yellow: 116 }, requiredBiomeLevel: 8 },
-      { stats: { maxHp: 20, plating: 5 }, cost: { yellow: 196 }, requiredBiomeLevel: 8 },
+      { stats: { maxHp: 20, plating: 5 }, cost: { yellow: 100, purple: 50 },  requiredBiomeLevel: 8 },
+      { stats: { maxHp: 20, plating: 5 }, cost: { yellow: 200, purple: 100 }, requiredBiomeLevel: 8 },
+      { stats: { maxHp: 20, plating: 5 }, cost: { yellow: 450, purple: 150 }, requiredBiomeLevel: 8 },
     ],
   }],
 ] satisfies [string, Recipe][];

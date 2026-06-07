@@ -11,14 +11,14 @@ export const caveRecipeEntries = [
   ['chaotic-axe', {
     id: 'chaotic-axe', name: 'Chaotic Axe',
     recipeGroup: 'cave', requiredBiomeLevel: 1, slot: 'weapon',
-    cost: { red: 22 }, stats: { attack: 25 }, attacksPerSecond: 1.10, tier: 1,
+    cost: { red: 26 }, stats: { attack: 25 }, attacksPerSecond: 1.10, tier: 1,
     mechanicEffects: { 'weapon.dead-swing-interval': 3 },
     icon: 'items/weapons/axe-1.png',
     description: 'A wild, top-heavy thing that fights as much as it is wielded.',
     upgrades: [
-      { stats: { attack: 10 }, cost: { red: 10 }, requiredBiomeLevel: 2 },
-      { stats: { attack: 10 }, cost: { red: 22 }, requiredBiomeLevel: 3 },
-      { stats: { attack: 10 }, cost: { red: 42 }, requiredBiomeLevel: 4 },
+      { stats: { attack: 10 }, cost: { red: 30 }, requiredBiomeLevel: 2 },
+      { stats: { attack: 10 }, cost: { red: 66 }, requiredBiomeLevel: 3 },
+      { stats: { attack: 10 }, cost: { red: 126 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -32,9 +32,9 @@ export const caveRecipeEntries = [
     icon: 'items/charms/bright-charm-1.png',
     description: 'A cave-crystal that beats, slow and steady, like a sleeping heart.',
     upgrades: [
-      { mechanicEffects: { 'defense.regen-burst-pct': 0.01 }, cost: { red: 10 }, requiredBiomeLevel: 3 },
-      { mechanicEffects: { 'defense.regen-burst-pct': 0.01 }, cost: { red: 22 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'defense.regen-burst-pct': 0.01 }, cost: { red: 42 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.regen-burst-pct': 0.01 }, cost: { red: 15 }, requiredBiomeLevel: 3 },
+      { mechanicEffects: { 'defense.regen-burst-pct': 0.01 }, cost: { red: 33 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.regen-burst-pct': 0.01 }, cost: { red: 63 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -59,9 +59,9 @@ export const caveRecipeEntries = [
     icon: 'items/armor/bone-armor.png',
     description: 'The hide of something large and unlucky, cured to a stubborn toughness.',
     upgrades: [
-      { stats: { maxHp: 4, plating: 1, damageReduction: 0.01 }, cost: { red: 10 }, requiredBiomeLevel: 4 },
-      { stats: { maxHp: 4, plating: 1, damageReduction: 0.01 }, cost: { red: 22 }, requiredBiomeLevel: 4 },
-      { stats: { maxHp: 4, plating: 1, damageReduction: 0.01 }, cost: { red: 42 }, requiredBiomeLevel: 4 },
+      { stats: { maxHp: 4, plating: 1, damageReduction: 0.01 }, cost: { red: 50 }, requiredBiomeLevel: 4 },
+      { stats: { maxHp: 4, plating: 1, damageReduction: 0.01 }, cost: { red: 100 }, requiredBiomeLevel: 4 },
+      { stats: { maxHp: 4, plating: 1, damageReduction: 0.01 }, cost: { red: 150 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -69,14 +69,14 @@ export const caveRecipeEntries = [
   ['ruinous-axe', {
     id: 'ruinous-axe', name: 'Ruinous Axe',
     recipeGroup: 'cave', requiredBiomeLevel: 5, slot: 'weapon',
-    cost: { red: 54, purple: 13 }, stats: { attack: 40 }, attacksPerSecond: 1.20, tier: 2,
+    cost: { red: 60 }, stats: { attack: 40 }, attacksPerSecond: 1.20, tier: 2,
     mechanicEffects: { 'weapon.dead-swing-interval': 4 },
     icon: 'items/weapons/axe-2.png',
     description: 'Bigger, meaner, and somehow better balanced — chaos with the faintest thread of discipline.',
     upgrades: [
-      { stats: { attack: 16 }, cost: { red: 26 }, requiredBiomeLevel: 6 },
-      { stats: { attack: 16 }, cost: { red: 54 }, requiredBiomeLevel: 7 },
-      { stats: { attack: 16 }, cost: { red: 96 }, requiredBiomeLevel: 8 },
+      { stats: { attack: 16 }, cost: { red: 78 }, requiredBiomeLevel: 6 },
+      { stats: { attack: 16 }, cost: { red: 162 }, requiredBiomeLevel: 7 },
+      { stats: { attack: 16 }, cost: { red: 288 }, requiredBiomeLevel: 8 },
     ],
   }],
 
@@ -84,23 +84,23 @@ export const caveRecipeEntries = [
   ['cave-charm-t2', {
     id: 'cave-charm-t2', name: 'Resonant Gem',
     recipeGroup: 'cave', requiredBiomeLevel: 6, slot: 'recovery',
-    cost: { red: 44, purple: 11 }, stats: { hpRegen: 6 },
+    cost: { red: 44 }, stats: { hpRegen: 6 },
     mechanicEffects: { 'defense.regen-burst-pct': 0.09, 'defense.regen-burst-interval-ms': 6000 },
     tier: 2,
     icon: 'items/charms/bright-charm-2.png',
     description: 'A gem that rings on its own in the dark, answering a song no one else hears.',
     upgrades: [
-      { mechanicEffects: { 'defense.regen-burst-pct': 0.02 }, cost: { red: 22 }, requiredBiomeLevel: 7 },
-      { mechanicEffects: { 'defense.regen-burst-pct': 0.02 }, cost: { red: 44 }, requiredBiomeLevel: 8 },
-      { mechanicEffects: { 'defense.regen-burst-pct': 0.02 }, cost: { red: 78 }, requiredBiomeLevel: 8 },
+      { mechanicEffects: { 'defense.regen-burst-pct': 0.02 }, cost: { red: 33 }, requiredBiomeLevel: 7 },
+      { mechanicEffects: { 'defense.regen-burst-pct': 0.02 }, cost: { red: 66 }, requiredBiomeLevel: 8 },
+      { mechanicEffects: { 'defense.regen-burst-pct': 0.02 }, cost: { red: 120 }, requiredBiomeLevel: 8 },
     ],
   }],
 
   ['cave-boots-t2', {
     id: 'cave-boots-t2', name: 'Cavern Sprints',
     recipeGroup: 'cave', requiredBiomeLevel: 7, slot: 'mobility',
-    cost: { red: 44, purple: 11 }, stats: { speed: 39 }, tier: 2,
-    mechanicEffects: { 'mobility.stealth-pct': 0.45 },
+    cost: { red: 33 }, stats: { speed: 39 }, tier: 2,
+    mechanicEffects: { 'mobility.stealth-pct': 0.35 },
     icon: 'items/boots/leather-boots-6.png',
     description: 'Worn smooth on tunnel floors no map has ever charted.',
     upgrades: [
@@ -113,13 +113,13 @@ export const caveRecipeEntries = [
   ['cave-vest-t2', {
     id: 'cave-vest-t2', name: 'Dire Bestial Hide',
     recipeGroup: 'cave', requiredBiomeLevel: 7, slot: 'armor',
-    cost: { red: 54, purple: 14 }, stats: { maxHp: 30, plating: 4, damageReduction: 0.10 }, tier: 2,
+    cost: { red: 54 }, stats: { maxHp: 30, plating: 4, damageReduction: 0.10 }, tier: 2,
     icon: 'items/armor/plate-armor-4.png',
     description: 'From a beast the deep-cavern folk name only in low voices.',
     upgrades: [
-      { stats: { maxHp: 8, plating: 1, damageReduction: 0.01 }, cost: { red: 26 }, requiredBiomeLevel: 8 },
-      { stats: { maxHp: 8, plating: 1, damageReduction: 0.01 }, cost: { red: 54 }, requiredBiomeLevel: 8 },
-      { stats: { maxHp: 8, plating: 1, damageReduction: 0.01 }, cost: { red: 96 }, requiredBiomeLevel: 8 },
+      { stats: { maxHp: 8, plating: 1, damageReduction: 0.01 }, cost: { red: 80 }, requiredBiomeLevel: 8 },
+      { stats: { maxHp: 8, plating: 1, damageReduction: 0.01 }, cost: { red: 175 }, requiredBiomeLevel: 8 },
+      { stats: { maxHp: 8, plating: 1, damageReduction: 0.01 }, cost: { red: 300 }, requiredBiomeLevel: 8 },
     ],
   }],
 
@@ -127,14 +127,14 @@ export const caveRecipeEntries = [
   ['cave-cataclysm-axe', {
     id: 'cave-cataclysm-axe', name: 'Cataclysm Axe',
     recipeGroup: 'cave', requiredBiomeLevel: 9, slot: 'weapon',
-    cost: { red: 116 }, stats: { attack: 92 }, attacksPerSecond: 1.20, tier: 3,
+    cost: { red: 120 }, stats: { attack: 92 }, attacksPerSecond: 1.20, tier: 3,
     mechanicEffects: { 'weapon.dead-swing-interval': 5 },
     icon: 'items/weapons/axe-2.png',
     description: 'Chaos given an edge — and, at last, a little rhythm. Every fifth swing still finds only air.',
     upgrades: [
-      { stats: { attack: 20 }, cost: { red: 58 },  requiredBiomeLevel: 10 },
-      { stats: { attack: 20 }, cost: { red: 116 }, requiredBiomeLevel: 11 },
-      { stats: { attack: 20 }, cost: { red: 196 }, requiredBiomeLevel: 12 },
+      { stats: { attack: 20 }, cost: { red: 174 },  requiredBiomeLevel: 10 },
+      { stats: { attack: 20 }, cost: { red: 348 }, requiredBiomeLevel: 11 },
+      { stats: { attack: 20 }, cost: { red: 588 }, requiredBiomeLevel: 12 },
     ],
   }],
 
@@ -143,15 +143,15 @@ export const caveRecipeEntries = [
   ['cave-charm-t3', {
     id: 'cave-charm-t3', name: 'Echo Geode',
     recipeGroup: 'cave', requiredBiomeLevel: 10, slot: 'recovery',
-    cost: { red: 100 }, stats: { hpRegen: 11 },
+    cost: { red: 100, green: 25 }, stats: { hpRegen: 11 },
     mechanicEffects: { 'defense.regen-burst-pct': 0.13, 'defense.regen-burst-interval-ms': 6000, 'defense.in-combat-regen-pct': 0.07 },
     tier: 3,
     icon: 'items/charms/bright-charm-2.png',
     description: 'It pulses on its own clock, and hums a low, steady mending between the beats.',
     upgrades: [
-      { mechanicEffects: { 'defense.regen-burst-pct': 0.03, 'defense.in-combat-regen-pct': 0.01 }, cost: { red: 50 },  requiredBiomeLevel: 11 },
-      { mechanicEffects: { 'defense.regen-burst-pct': 0.03, 'defense.in-combat-regen-pct': 0.01 }, cost: { red: 100 }, requiredBiomeLevel: 12 },
-      { mechanicEffects: { 'defense.regen-burst-pct': 0.03, 'defense.in-combat-regen-pct': 0.01 }, cost: { red: 175 }, requiredBiomeLevel: 12 },
+      { mechanicEffects: { 'defense.regen-burst-pct': 0.03, 'defense.in-combat-regen-pct': 0.01 }, cost: { red: 50, green: 25 },  requiredBiomeLevel: 11 },
+      { mechanicEffects: { 'defense.regen-burst-pct': 0.03, 'defense.in-combat-regen-pct': 0.01 }, cost: { red: 112, green: 38}, requiredBiomeLevel: 12 },
+      { mechanicEffects: { 'defense.regen-burst-pct': 0.03, 'defense.in-combat-regen-pct': 0.01 }, cost: { red: 200, green: 50 }, requiredBiomeLevel: 12 },
     ],
   }],
 
@@ -159,8 +159,8 @@ export const caveRecipeEntries = [
   ['cave-boots-t3', {
     id: 'cave-boots-t3', name: 'Echostep Treads',
     recipeGroup: 'cave', requiredBiomeLevel: 11, slot: 'mobility',
-    cost: { red: 60, purple: 15 }, stats: { speed: 52 }, tier: 3,
-    mechanicEffects: { 'mobility.stealth-pct': 0.60 },
+    cost: { red: 100 }, stats: { speed: 52 }, tier: 3,
+    mechanicEffects: { 'mobility.stealth-pct': 0.40 },
     icon: 'items/boots/leather-boots-7.png',
     description: 'They give back no sound at all — not even the echo the deep stone expects.',
     upgrades: [
@@ -173,14 +173,14 @@ export const caveRecipeEntries = [
   ['cave-vest-t3', {
     id: 'cave-vest-t3', name: 'Deepscale Hide',
     recipeGroup: 'cave', requiredBiomeLevel: 12, slot: 'armor',
-    cost: { red: 116 }, stats: { maxHp: 50, plating: 10, damageReduction: 0.20 },
+    cost: { red: 116, yellow: 29 }, stats: { maxHp: 50, plating: 10, damageReduction: 0.20 },
     tier: 3,
     icon: 'items/armor/plate-armor-4.png',
     description: 'Layered scale over thick hide — nothing fancy, just the most of everything that stops a blow.',
     upgrades: [
-      { stats: { maxHp: 10, plating: 2, damageReduction: 0.02 }, cost: { red: 58 },  requiredBiomeLevel: 12 },
-      { stats: { maxHp: 10, plating: 2, damageReduction: 0.02 }, cost: { red: 116 }, requiredBiomeLevel: 12 },
-      { stats: { maxHp: 10, plating: 2, damageReduction: 0.02 }, cost: { red: 196 }, requiredBiomeLevel: 12 },
+      { stats: { maxHp: 10, plating: 2, damageReduction: 0.02 }, cost: { red: 135, yellow: 45 },  requiredBiomeLevel: 12 },
+      { stats: { maxHp: 10, plating: 2, damageReduction: 0.02 }, cost: { red: 270, yellow: 90 }, requiredBiomeLevel: 12 },
+      { stats: { maxHp: 10, plating: 2, damageReduction: 0.02 }, cost: { red: 450, yellow: 150 }, requiredBiomeLevel: 12 },
     ],
   }],
 
