@@ -13,6 +13,7 @@ import { RecipeToastLayer } from './hud/RecipeToastLayer';
 import { NodeLoadingOverlay } from './hud/NodeLoadingOverlay';
 import { TabResyncOverlay } from './hud/TabResyncOverlay';
 import { DeathOverlay } from './hud/DeathOverlay';
+import { ReleaseAnnouncementOverlay } from './hud/ReleaseAnnouncementOverlay';
 import { BiomeXpBar } from './hud/BiomeXpBar';
 import { BossBar } from './hud/BossBar';
 import { TargetFrame } from './hud/TargetFrame';
@@ -72,6 +73,7 @@ createRoot(document.getElementById('toast-overlay')!).render(createElement(Recip
 createRoot(document.getElementById('node-loading-overlay')!).render(createElement(NodeLoadingOverlay));
 createRoot(document.getElementById('tab-resync-overlay')!).render(createElement(TabResyncOverlay));
 createRoot(document.getElementById('death-overlay')!).render(createElement(DeathOverlay));
+createRoot(document.getElementById('release-announcement-overlay')!).render(createElement(ReleaseAnnouncementOverlay));
 createRoot(document.getElementById('biome-xp-overlay')!).render(createElement(BiomeXpBar));
 createRoot(document.getElementById('boss-bar-overlay')!).render(createElement(BossBar));
 createRoot(document.getElementById('target-frame-overlay')!).render(createElement(TargetFrame));

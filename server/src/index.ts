@@ -49,13 +49,18 @@ import {
   writeWorldState,
   clearWorldState,
 } from "./db/worldStateRepo";
-import { initHitboxCache } from "./hitbox/cache";
+import {
+  hydrateHitboxCacheFromArtifact,
+  hydrateHitboxCacheFromDb,
+  initHitboxCache,
+} from "./hitbox/cache";
 import { getAtlasPaths } from "./hitbox/paths";
 import {
   findOrCreateAccount,
   getOrCreateCharacter,
   saveCharacter,
 } from "./db/playerRepo";
+import { currentReleaseAnnouncement } from "./updates/releaseAnnouncements";
 import { recordBroadcast } from "./net/profiler";
 import { timeSync } from "./telemetry/nodeTelemetry";
 import { TELEMETRY_WINDOW_MS } from "./telemetry/constants";
@@ -273,8 +278,23 @@ async function boot(): Promise<void> {
   }, 60 * 60 * 1000);
   pruneTimer.unref?.();
 
-  const { atlasPng, atlasJson } = getAtlasPaths();
-  await initHitboxCache(db, atlasPng, atlasJson);
+  if (process.env.NODE_ENV === "production") {
+    const artifactCount = hydrateHitboxCacheFromArtifact();
+    if (artifactCount > 0) {
+      log.info({ hitboxes: artifactCount }, "loaded hitbox artifact");
+    } else {
+      const dbCount = await hydrateHitboxCacheFromDb(db);
+      if (dbCount === 0) {
+        throw new Error(
+          "[hitbox] no baked artifact or DB hitboxes found; run the server build before production start",
+        );
+      }
+      log.warn({ hitboxes: dbCount }, "loaded hitboxes from DB fallback");
+    }
+  } else {
+    const { atlasPng, atlasJson } = getAtlasPaths();
+    await initHitboxCache(db, atlasPng, atlasJson);
+  }
 
   // ── WORLD ─────────────────────────────────────────────
 
@@ -573,7 +593,8 @@ async function boot(): Promise<void> {
       auth.displayName ?? `Hero_${socket.id.slice(0, 5)}`
     ).slice(0, 32);
 
-    await findOrCreateAccount(db, accId, playerName);
+    const accountLogin = await findOrCreateAccount(db, accId, playerName);
+    const updateAnnouncement = currentReleaseAnnouncement();
 
     // Kick any existing session for this account (e.g. duplicate tab).
     // Save + clean up the old entity before the new one attaches so there's
@@ -637,6 +658,13 @@ async function boot(): Promise<void> {
     );
     recordBroadcast(syncSnap, "state:sync");
     socket.emit("state:sync", syncSnap);
+    if (
+      updateAnnouncement &&
+      accountLogin.previousLoginAt !== null &&
+      updateAnnouncement.releasedAt > accountLogin.previousLoginAt
+    ) {
+      socket.emit("game:updateAnnouncement", updateAnnouncement);
+    }
     emitBossFelledState();
     world.syncTelemetryOccupancy();
     socket.emit("world:telemetry", world.telemetry.flush(world.tickCounter));

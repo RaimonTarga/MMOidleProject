@@ -44,10 +44,29 @@ Everything that crosses the network boundary is defined in `shared/` first. The 
 
 ## Getting started
 
-**Prerequisites:** Node.js 20+ and pnpm.
+**Prerequisites:** Node.js 20+, pnpm, and the GitHub CLI (`gh`) for release automation.
+
+macOS / Homebrew:
 
 ```bash
 npm install -g pnpm
+brew install gh
+gh auth login          # one-time auth for /release PR and branch automation
+```
+
+Windows / PowerShell:
+
+```powershell
+npm install -g pnpm
+winget install --id GitHub.cli
+# Or, with Chocolatey:
+# choco install gh
+gh auth login          # one-time auth for /release PR and branch automation
+```
+
+Then clone and install:
+
+```bash
 git clone <repo-url>
 cd mmo-idle
 pnpm install

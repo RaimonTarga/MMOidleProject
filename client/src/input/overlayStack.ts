@@ -5,12 +5,17 @@ import {
   inventoryOpenAtom,
   mapOpenAtom,
   questOpenAtom,
+  releaseAnnouncementAtom,
   settingsOpenAtom,
   skillTreeOpenAtom,
 } from '../hud/atoms';
 
 export function closeTopmostOverlay(): void {
   const store = getDefaultStore();
+  if (store.get(releaseAnnouncementAtom)) {
+    store.set(releaseAnnouncementAtom, null);
+    return;
+  }
   if (store.get(settingsOpenAtom)) {
     store.set(settingsOpenAtom, false);
     return;

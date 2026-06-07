@@ -5,6 +5,7 @@ import {
   statusAtom,
   syncPlayerAtoms,
   nodeLoadingAtom,
+  showReleaseAnnouncement,
   triggerDeathOverlay,
   setBossFelledMarkers,
 } from "../../hud/atoms";
@@ -323,6 +324,9 @@ function connectSocket(scene: GameScene): void {
     },
     onBossFelled: (markers) => {
       setBossFelledMarkers(markers);
+    },
+    onUpdateAnnouncement: (payload) => {
+      showReleaseAnnouncement(payload);
     },
     onSessionKicked: () => {
       const overlay = document.createElement("div");

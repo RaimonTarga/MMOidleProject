@@ -5,6 +5,7 @@ export const accounts = pgTable('accounts', {
   displayName: text('display_name').notNull(),
   discordId:   text('discord_id'),
   createdAt:   bigint('created_at', { mode: 'number' }).notNull(),
+  lastLoginAt: bigint('last_login_at', { mode: 'number' }).notNull().default(0),
 });
 
 export const characters = pgTable('characters', {

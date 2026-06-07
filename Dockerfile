@@ -32,4 +32,4 @@ RUN pnpm build
 
 ENV NODE_ENV=production
 EXPOSE 4000
-CMD ["pnpm", "--filter", "@mmo-idle/server", "start"]
+CMD ["node", "server/dist/index.js"]

@@ -10,6 +10,7 @@ import type {
   PlayerBuff,
   PlayerDeathPayload,
   PlayerView,
+  ReleaseAnnouncementPayload,
   ShieldState,
   SubVariant,
   SummonSlotView,
@@ -53,6 +54,16 @@ export const deathOverlayAtom = atom<{
   payload: null,
   startedAt: null,
 });
+
+export const releaseAnnouncementAtom = atom<ReleaseAnnouncementPayload | null>(null);
+
+export function showReleaseAnnouncement(payload: ReleaseAnnouncementPayload): void {
+  getDefaultStore().set(releaseAnnouncementAtom, payload);
+}
+
+export function clearReleaseAnnouncement(): void {
+  getDefaultStore().set(releaseAnnouncementAtom, null);
+}
 
 export type EmoteWheelDirection = 'up' | 'down' | 'left' | 'right';
 
