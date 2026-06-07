@@ -35,7 +35,7 @@ export const bossMonsterEntriesT1T2 = [
   ['plains-champion', {
     id: 'plains-champion', name: 'Plains Champion', color: 0xddaa44,
     isBoss: true,
-    stats: { hp: 1000, attack: 30, plating: 4, damageReduction: 0.02, speed: 50, attackRange: 15, attackCooldown: 2000, pullRange: 280 },
+    stats: { hp: 1000, attack: 36, plating: 4, damageReduction: 0.02, speed: 50, attackRange: 15, attackCooldown: 2000, pullRange: 280 },
     behavior: 'melee', attackStyle: 'impact', biome: 'plains',
     rewards: { essence: 100, essenceType: 'yellow', level: 5, biomeXp: 150 },
     ai: { wanderRadius: 120, leashRange: 750, idleMinMs: 1500, idleMaxMs: 4500 },
@@ -45,7 +45,7 @@ export const bossMonsterEntriesT1T2 = [
   ['forest-warden', {
     id: 'forest-warden', name: 'Forest Warden', color: 0x33aa44,
     isBoss: true,
-    stats: { hp: 900, attack: 24, plating: 0, damageReduction: 0, speed: 60, attackRange: 15, attackCooldown: 1400, pullRange: 300 },
+    stats: { hp: 900, attack: 32, plating: 0, damageReduction: 0, speed: 60, attackRange: 15, attackCooldown: 1400, pullRange: 300 },
     behavior: 'melee', attackStyle: 'slash', biome: 'forest',
     rewards: { essence: 100, essenceType: 'green', level: 5, biomeXp: 150 },
     ai: { wanderRadius: 160, leashRange: 800, idleMinMs: 1200, idleMaxMs: 4000 },
