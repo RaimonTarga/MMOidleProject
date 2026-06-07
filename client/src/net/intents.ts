@@ -99,8 +99,8 @@ export function sendResetProgress(socket: GameSocket): void {
   socket.emit('debug:resetProgress');
 }
 
-export function sendRefreshRecipes(socket: GameSocket): void {
-  socket.emit('debug:refreshRecipes');
+export function sendRenameCharacter(socket: GameSocket, name: string): void {
+  socket.emit('debug:renameCharacter', name);
 }
 
 export function sendEquipPhaseTester(socket: GameSocket): void {

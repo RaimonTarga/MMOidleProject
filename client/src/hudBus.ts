@@ -79,8 +79,8 @@ export const hudBus = {
     intents.emit('resetClass', undefined);
   },
 
-  requestRefreshRecipes(): void {
-    intents.emit('refreshRecipes', undefined);
+  requestRenameCharacter(name: string): void {
+    intents.emit('renameCharacter', name);
   },
 
   requestEquipPhaseTester(): void {

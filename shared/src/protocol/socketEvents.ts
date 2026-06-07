@@ -102,8 +102,8 @@ export interface ClientToServerEvents {
   "debug:leaveTestRoom": () => void;
   /** Dev-only: reset the current player's progression for playtesting. */
   "debug:resetProgress": () => void;
-  /** Dev-only: re-run recipe unlock checks after data changes. */
-  "debug:refreshRecipes": () => void;
+  /** Dev-only: rename the current player's character. */
+  "debug:renameCharacter": (name: string) => void;
   /** Dev-only: remove and regenerate all monsters in the player's current node. */
   "debug:respawnNode": () => void;
   /** Dev-only: grant and equip the Phase Tester weapon + Godmode armor. */

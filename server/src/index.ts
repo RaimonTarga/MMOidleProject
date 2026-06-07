@@ -113,7 +113,7 @@ import {
   equipPhaseTester,
   goToTestRoom,
   leaveTestRoom,
-  refreshPlayerRecipes,
+  renamePlayer,
   resetPlayerClass,
   resetPlayerProgress,
   respawnNode,
@@ -906,10 +906,12 @@ async function boot(): Promise<void> {
         adminControls.emitPlayerSummaries();
       });
 
-      socket.on("debug:refreshRecipes", () => {
+      socket.on("debug:renameCharacter", (name) => {
+        if (typeof name !== "string") return;
         const p = world.getPlayerEntity(socket.id);
         if (!p) return;
-        refreshPlayerRecipes(world, p);
+        renamePlayer(world, p, name);
+        adminControls.emitPlayerSummaries();
       });
 
       socket.on("debug:respawnNode", () => {
