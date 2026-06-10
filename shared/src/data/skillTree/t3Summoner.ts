@@ -141,10 +141,10 @@ export const t3SummonerEntries = [
     id: 'summoner-heavy-t3-c', name: 'Mountain Guardian', tier: 3,
     classId: 'summoner-root', subVariantId: 'heavy',
     parent: 'summoner-heavy', children: [],
-    description: 'You summon one colossal mountain sentinel. It taunts monsters within leash range, inherits 20% of your plating and DR, and respawns in 12 s if it falls.',
+    description: 'You summon one colossal Crag Behemoth. It taunts monsters within leash range, inherits 20% of your plating and DR, and respawns in 12 s if it falls.',
     cost: 1, statEffects: {},
     mechanicEffects: {
-      'summoner.minion-as-mountain-sentinel': 1,
+      'summoner.minion-as-crag-behemoth': 1,
       'summoner.mountain-guardian':           1,
       'summoner.minion-count-cap':            1,
       'summoner.minion-hp-pct':               1.0,

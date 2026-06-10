@@ -60,8 +60,8 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
       2: ['ancient-wolf', 'ironwood-golem', 'canopy-sprite'],
     },
     bossPoolByTier: {
-      1: ['forest-warden'],
-      2: ['forest-elder'],
+      1: ['gnarled-greatbear'],
+      2: ['apex-timberclaw'],
     },
     essenceType: 'essence',
     mobDensity: 13,
@@ -75,17 +75,17 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
     monsterPoolByTier: {
       1: ['cliff-hopper', 'ridge-archer'],
       2: ['granite-titan', 'stone-eagle', 'peak-archer'],
-      3: ['mountain-colossus', 'avalanche-ram', 'summit-trebuchet'],
+      3: ['mountain-colossus', 'avalanche-ram', 'crag-mortar'],
       4: ['colossal-titan', 'thunder-condor'],
     },
     bossPoolByTier: {
-      1: ['mountain-sentinel'],
-      2: ['stone-warden'],
-      3: ['peak-titan'],
+      1: ['crag-behemoth'],
+      2: ['stoneplate-juggernaut'],
+      3: ['crag-gorged-horn-behemoth'],
       4: ['mountain-titan'],
     },
     essenceType: 'essence',
-    mobDensity: 7,
+    mobDensity: 10,
   }],
 
   // PLAINS — swarm of small, fast, low-per-hit mobs; volume is the threat.
@@ -98,8 +98,8 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
       2: ['stampede-bull', 'prairie-wolf', 'savanna-hawk'],
     },
     bossPoolByTier: {
-      1: ['plains-champion'],
-      2: ['plains-tyrant'],
+      1: ['tusked-razorback'],
+      2: ['gorging-razortusk'],
     },
     essenceType: 'essence',
     mobDensity: 16,
@@ -113,13 +113,13 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
     monsterPoolByTier: {
       1: ['bog-slime', 'mud-toad'],
       2: ['swamp-hydra', 'bog-witch', 'mire-stalker'],
-      3: ['plague-hydra', 'mire-curse-witch', 'bog-lurker'],
+      3: ['plague-hydra', 'mire-hex-spitter', 'bog-lurker'],
       4: ['hydra-elder', 'shadow-toad'],
     },
     bossPoolByTier: {
-      1: ['bog-sovereign'],
-      2: ['mire-lord'],
-      3: ['bog-ancient'],
+      1: ['grave-toadeater'],
+      2: ['mire-gorged-behemoth'],
+      3: ['rot-spore-croc-behemoth'],
       4: ['swamp-sovereign'],
     },
     essenceType: 'essence',
@@ -139,13 +139,13 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
       4: ['stone-colossus', 'trench-crawler'],
     },
     bossPoolByTier: {
-      1: ['cave-sentinel'],
-      2: ['cave-terror'],
-      3: ['cave-dread'],
+      1: ['obsidian-broodmother'],
+      2: ['chitinous-dreadbore'],
+      3: ['deep-core-burrow-gorger'],
       4: ['cave-titan'],
     },
     essenceType: 'essence',
-    mobDensity: 5,
+    mobDensity: 8,
   }],
 
   // ── T2+ biomes (not available at T1) ──────────────────────────────────────
@@ -160,8 +160,8 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
       4: ['ancient-titan', 'jungle-wyvern'],
     },
     bossPoolByTier: {
-      2: ['jungle-colossus'],
-      3: ['jungle-titan-lord'],
+      2: ['jungle-dread-gorger'],
+      3: ['apex-bramble-slasher'],
       4: ['jungle-ancient-lord'],
     },
     essenceType: 'essence',
@@ -176,11 +176,11 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
       4: ['arctic-leviathan', 'ice-specter'],
     },
     bossPoolByTier: {
-      3: ['frost-colossus'],
+      3: ['frost-plated-rime-mammoth'],
       4: ['glacial-titan'],
     },
     essenceType: 'essence',
-    mobDensity: 6,
+    mobDensity: 8,
   }],
 
   // DESERT (debuts T2) — the LOW-density "standoff": few tough, debuff-laden
@@ -195,12 +195,12 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
       4: ['pharaoh-construct', 'desert-wyrm'],
     },
     bossPoolByTier: {
-      2: ['desert-pharaoh'],
-      3: ['sand-emperor'],
+      2: ['dune-stalker-emperor'],
+      3: ['dune-carapace-monarch'],
       4: ['desert-eternal'],
     },
     essenceType: 'essence',
-    mobDensity: 5,
+    mobDensity: 8,
   }],
 
   // Volcanic first appears at T3 — not available in T1 or T2 zones.
@@ -208,11 +208,11 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
     id: 'volcanic', name: 'Volcanic',
     backgroundColor: 0x1a0808,
     monsterPoolByTier: {
-      3: ['ember-imp', 'cinder-hound', 'magma-brute', 'ash-slinger'],
+      3: ['ember-scuttler', 'cinder-hound', 'magma-brute', 'ash-slinger'],
       4: ['infernal-drake', 'magma-colossus'],
     },
     bossPoolByTier: {
-      3: ['volcanic-titan'],
+      3: ['cinder-shell-magma-salamander'],
       4: ['inferno-lord'],
     },
     essenceType: 'essence',
@@ -252,6 +252,6 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
       4: ['void-overlord', 'void-titan'],
     },
     essenceType: 'essence',
-    mobDensity: 3,
+    mobDensity: 5,
   }],
 ]);

@@ -713,21 +713,21 @@ Additionally: 1 skill point per 100 player XP (flat; XP_PER_LEVEL = 100).
 |---|---|---|---|---|---|---|---|---|---|
 | Forest Slime | 65 | 10 | 0 | 0% | 52 | 1800ms | 60 | 210 | |
 | Wolf | 55 | 12 | 0 | 0% | 78 | 1400ms | 60 | 255 | High speed and pull |
-| **Forest Warden** (boss) | **450** | **22** | **0** | **0%** | **52** | **2000ms** | **68** | **300** | High DPS spike |
+| **Gnarled Greatbear** (boss) | **450** | **22** | **0** | **0%** | **52** | **2000ms** | **68** | **300** | High DPS spike |
 
 ### Mountain (two sub-types: fast skirmisher + pseudo-ranged)
 | Monster | HP | ATK | PLT | DR | SPD | CD | Range | Pull | Notes |
 |---|---|---|---|---|---|---|---|---|---|
 | Cliff Hopper | 60 | 12 | 0 | 0% | 80 | 1500ms | 60 | 275 | Sprint-attacks |
 | Ridge Archer | 85 | 13 | 0 | 0% | 35 | 2800ms | **130** | 230 | Long range |
-| **Mountain Sentinel** (boss) | **480** | **20** | **0** | **0%** | **58** | **1800ms** | **68** | **280** | Mobile, zero armor |
+| **Crag Behemoth** (boss) | **480** | **20** | **0** | **0%** | **58** | **1800ms** | **68** | **280** | Mobile, zero armor |
 
 ### Plains (balanced, no specialization)
 | Monster | HP | ATK | PLT | DR | SPD | CD | Range | Pull | Notes |
 |---|---|---|---|---|---|---|---|---|---|
 | Plains Slime | 90 | 11 | 0 | 0% | 42 | 2200ms | 60 | 190 | |
 | Boar | 115 | 14 | 0 | 0% | 48 | 2000ms | 60 | 205 | |
-| **Plains Champion** (boss) | **520** | **18** | **2** | **2%** | **50** | **2200ms** | **65** | **280** | Balanced profile |
+| **Tusked Razorback** (boss) | **520** | **18** | **2** | **2%** | **50** | **2200ms** | **65** | **280** | Balanced profile |
 
 ### Swamp (attrition — slow, above-average defense, DoT)
 | Monster | HP | ATK | PLT | DR | SPD | CD | Range | Pull | Notes |
@@ -741,7 +741,7 @@ Additionally: 1 skill point per 100 player XP (flat; XP_PER_LEVEL = 100).
 |---|---|---|---|---|---|---|---|---|---|
 | Cave Lurker | 100 | 16 | **4** | 0% | 22 | 3200ms | 60 | 145 | Low pull = ambush |
 | Cave Brute | 130 | 19 | **5** | 0% | 17 | 3600ms | 60 | 125 | Hardest hitting T1 mob |
-| **Cave Sentinel** (boss) | **650** | **22** | **7** | **4%** | **18** | **3200ms** | **65** | **240** | Most defensive T1 boss |
+| **Obsidian Broodmother** (boss) | **650** | **22** | **7** | **4%** | **18** | **3200ms** | **65** | **240** | Most defensive T1 boss |
 
 ---
 
@@ -754,42 +754,42 @@ T2 monsters are meaningfully stronger than T1. Biomes introduce second monster v
 |---|---|---|---|---|---|---|---|---|---|
 | Ancient Wolf | 75 | 18 | 3 | 0% | 85 | 1600ms | 60 | 270 | Faster and stronger wolf |
 | Ironwood Golem | 200 | 15 | **12** | 0% | 18 | 3500ms | 60 | 150 | Extremely tanky |
-| **Forest Elder** (boss) | **2200** | **58** | **22** | **8%** | **26** | **3000ms** | **74** | **310** | |
+| **Apex Timberclaw** (boss) | **2200** | **58** | **22** | **8%** | **26** | **3000ms** | **74** | **310** | |
 
 ### Mountain T2
 | Monster | HP | ATK | PLT | DR | SPD | CD | Range | Pull | Notes |
 |---|---|---|---|---|---|---|---|---|---|
 | Granite Titan | 220 | 14 | **12** | 0% | 15 | 3800ms | 65 | 150 | Very tanky |
 | Stone Eagle | 65 | 22 | 2 | 0% | **92** | 1500ms | 60 | 280 | Fast aerial |
-| **Stone Warden** (boss) | **2400** | **62** | **32** | **10%** | **20** | **4000ms** | **72** | **320** | Fortress boss |
+| **Stoneplate Juggernaut** (boss) | **2400** | **62** | **32** | **10%** | **20** | **4000ms** | **72** | **320** | Fortress boss |
 
 ### Plains T2
 | Monster | HP | ATK | PLT | DR | SPD | CD | Range | Pull | Notes |
 |---|---|---|---|---|---|---|---|---|---|
 | Stampede Bull | 110 | **24** | 4 | 0% | 65 | 1900ms | 60 | 230 | High damage |
 | Prairie Wolf | 80 | 18 | 2 | 0% | 78 | 1700ms | 60 | 260 | Fast |
-| **Plains Tyrant** (boss) | **2000** | **64** | **20** | **8%** | **46** | **2700ms** | **70** | **320** | |
+| **Gorging Razortusk** (boss) | **2000** | **64** | **20** | **8%** | **46** | **2700ms** | **70** | **320** | |
 
 ### Swamp T2
 | Monster | HP | ATK | PLT | DR | SPD | CD | Range | Pull | Notes |
 |---|---|---|---|---|---|---|---|---|---|
 | Swamp Hydra | 180 | 16 | 6 | 0% | 32 | 2500ms | 65 | 190 | Tanky |
 | Bog Witch | 85 | **22** | 2 | 0% | 42 | 2200ms | 60 | 200 | High damage, paper defense |
-| **Mire Lord** (boss) | **2100** | **58** | **22** | **9%** | **30** | **3000ms** | **68** | **300** | |
+| **Mire-Gorged Behemoth** (boss) | **2100** | **58** | **22** | **9%** | **30** | **3000ms** | **68** | **300** | |
 
 ### Cave T2
 | Monster | HP | ATK | PLT | DR | SPD | CD | Range | Pull | Notes |
 |---|---|---|---|---|---|---|---|---|---|
 | Giant Spider | 130 | 20 | 5 | 0% | 65 | 2000ms | 62 | 220 | Fast + plating |
 | Cave Troll | 220 | 18 | **9** | 0% | 22 | 3600ms | 65 | 155 | Extremely tanky |
-| **Cave Terror** (boss) | **2400** | **56** | **28** | **10%** | **18** | **4000ms** | **72** | **280** | |
+| **Chitinous Dreadbore** (boss) | **2400** | **56** | **28** | **10%** | **18** | **4000ms** | **72** | **280** | |
 
 ### Jungle T2 (first appearance — mixed threat)
 | Monster | HP | ATK | PLT | DR | SPD | CD | Range | Pull | Notes |
 |---|---|---|---|---|---|---|---|---|---|
 | Jungle Snake | 48 | 13 | 1 | 0% | 62 | 2100ms | 60 | 210 | Fragile |
 | Jungle Ape | 72 | 14 | 2 | 0% | 52 | 2200ms | 60 | 220 | |
-| **Jungle Colossus** (boss) | **1800** | **68** | **17** | **7%** | **56** | **2400ms** | **66** | **320** | |
+| **Jungle Dread-Gorger** (boss) | **1800** | **68** | **17** | **7%** | **56** | **2400ms** | **66** | **320** | |
 
 ### Tundra T2 (first appearance)
 | Monster | HP | ATK | PLT | DR | SPD | CD | Range | Pull | Notes |
@@ -803,7 +803,7 @@ T2 monsters are meaningfully stronger than T1. Biomes introduce second monster v
 |---|---|---|---|---|---|---|---|---|---|
 | Sand Scorpion | 90 | **22** | 4 | 0% | 72 | 2000ms | 60 | 230 | Fast and hits hard |
 | Stone Basilisk | 180 | 18 | **9** | 0% | 32 | 3000ms | 62 | 175 | Tanky |
-| **Desert Pharaoh** (boss) | **1900** | **74** | **18** | **10%** | **40** | **2600ms** | **74** | **340** | High ATK |
+| **Dune-Stalker Emperor** (boss) | **1900** | **74** | **18** | **10%** | **40** | **2600ms** | **74** | **340** | High ATK |
 
 ---
 
@@ -816,7 +816,7 @@ All T3 mobs drop `level: 2` essence rewards (compared to T1/T2 `level: 1`).
 |---|---|---|---|---|---|---|---|---|
 | Cursed Wolf | 420 | 55 | 8 | 0% | 92 | 1400ms | 60 | 280 |
 | Treant | 720 | 40 | 18 | 5% | 18 | 3800ms | 65 | 140 |
-| **Elder Forest Warden** (boss) | **4500** | **102** | **38** | **13%** | **22** | **4000ms** | **78** | **350** |
+| **Elder Gnarled Greatbear** (boss) | **4500** | **102** | **38** | **13%** | **22** | **4000ms** | **78** | **350** |
 
 ### Mountain T3
 | Monster | HP | ATK | PLT | DR | SPD | CD | Range | Pull |

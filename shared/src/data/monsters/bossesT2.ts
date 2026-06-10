@@ -21,7 +21,7 @@ import type { MonsterDefinition } from './types';
 //
 // DESERT/JUNGLE bosses moved out of "deferred" — those biomes debut at T2, so
 // they get the full T2 treatment now. `glacial-colossus` (Tundra) is DELETED:
-// Tundra debuts at T3, its boss is frost-colossus (Pass 2).
+// Tundra debuts at T3, its boss is frost-plated-rime-mammoth.
 //
 // Stat anchors (boss-design.md): boss HP ~9-10x median trash & >=2x toughest
 // elite; per-hit ~1.3-1.4x the biome's biggest trash hit; Mtn/Cave slams ~40-50%
@@ -33,8 +33,8 @@ export const bossMonsterEntriesT2 = [
   // ════════════════════════ T2 BOSSES (+ one phase @50%) ════════════════════════
 
   // PLAINS — honest big bruiser; phase is the simplest: it just gets angrier.
-  ['plains-tyrant', {
-    id: 'plains-tyrant', name: 'Plains Tyrant', color: 0xcc9922,
+  ['gorging-razortusk', {
+    id: 'gorging-razortusk', name: 'Gorging Razortusk', color: 0xcc9922,
     isBoss: true,
     stats: { hp: 2000, attack: 60, plating: 8, damageReduction: 0.05, speed: 46, attackRange: 15, attackCooldown: 2200, pullRange: 320 },
     behavior: 'melee', attackStyle: 'impact', biome: 'plains',
@@ -48,8 +48,8 @@ export const bossMonsterEntriesT2 = [
   }],
 
   // FOREST — fast, frequent, frail; phase pushes frequency higher (cd down).
-  ['forest-elder', {
-    id: 'forest-elder', name: 'Forest Elder', color: 0x226622,
+  ['apex-timberclaw', {
+    id: 'apex-timberclaw', name: 'Apex Timberclaw', color: 0x226622,
     isBoss: true,
     stats: { hp: 1900, attack: 50, plating: 0, damageReduction: 0, speed: 60, attackRange: 18, attackCooldown: 1500, pullRange: 310 },
     behavior: 'melee', attackStyle: 'slash', biome: 'forest',
@@ -63,8 +63,8 @@ export const bossMonsterEntriesT2 = [
   }],
 
   // MOUNTAIN — flagship burst-check: ~40%-pool slam, slow, charges, reach. Cleaves.
-  ['stone-warden', {
-    id: 'stone-warden', name: 'Stone Warden', color: 0x667788,
+  ['stoneplate-juggernaut', {
+    id: 'stoneplate-juggernaut', name: 'Stoneplate Juggernaut', color: 0x667788,
     isBoss: true,
     stats: { hp: 2400, attack: 90, plating: 10, damageReduction: 0.05, speed: 20, attackRange: 72, attackCooldown: 3800, pullRange: 320 },
     behavior: 'melee', attackStyle: 'impact', biome: 'mountain',
@@ -80,8 +80,8 @@ export const bossMonsterEntriesT2 = [
   }],
 
   // SWAMP — tiny direct, the venom is the fight; phase makes it apply faster. Cleaves.
-  ['mire-lord', {
-    id: 'mire-lord', name: 'Mire Lord', color: 0x2a4011,
+  ['mire-gorged-behemoth', {
+    id: 'mire-gorged-behemoth', name: 'Mire-Gorged Behemoth', color: 0x2a4011,
     isBoss: true,
     stats: { hp: 1900, attack: 12, plating: 6, damageReduction: 0.08, speed: 30, attackRange: 15, attackCooldown: 2800, pullRange: 300 },
     behavior: 'melee', attackStyle: 'poison', biome: 'swamp',
@@ -97,8 +97,8 @@ export const bossMonsterEntriesT2 = [
   }],
 
   // CAVE — endurance bruiser: high HP, DR + plating, cap-slam, charges. Cleaves.
-  ['cave-terror', {
-    id: 'cave-terror', name: 'Cave Terror', color: 0x442244,
+  ['chitinous-dreadbore', {
+    id: 'chitinous-dreadbore', name: 'Chitinous Dreadbore', color: 0x442244,
     isBoss: true,
     stats: { hp: 2300, attack: 92, plating: 12, damageReduction: 0.12, speed: 20, attackRange: 72, attackCooldown: 3600, pullRange: 280 },
     behavior: 'melee', attackStyle: 'impact', biome: 'cave',
@@ -117,8 +117,8 @@ export const bossMonsterEntriesT2 = [
   }],
 
   // DESERT (debut T2) — debuffer with reach; phase keeps it on your heels. Single-target.
-  ['desert-pharaoh', {
-    id: 'desert-pharaoh', name: 'Desert Pharaoh', color: 0xddcc44,
+  ['dune-stalker-emperor', {
+    id: 'dune-stalker-emperor', name: 'Dune-Stalker Emperor', color: 0xddcc44,
     isBoss: true,
     stats: { hp: 2000, attack: 70, plating: 12, damageReduction: 0.08, speed: 42, attackRange: 40, attackCooldown: 2600, pullRange: 340 },
     behavior: 'melee', attackStyle: 'magic', biome: 'desert',
@@ -137,8 +137,8 @@ export const bossMonsterEntriesT2 = [
 
   // JUNGLE (debut T2) — fast, frequent, squishy (plating stripped); phase = frequency
   // storm + chase. Single-target (fast enough to keep pace with summons).
-  ['jungle-colossus', {
-    id: 'jungle-colossus', name: 'Jungle Colossus', color: 0x117722,
+  ['jungle-dread-gorger', {
+    id: 'jungle-dread-gorger', name: 'Jungle Dread-Gorger', color: 0x117722,
     isBoss: true,
     stats: { hp: 1850, attack: 64, plating: 0, damageReduction: 0.03, speed: 56, attackRange: 18, attackCooldown: 2400, pullRange: 320 },
     behavior: 'melee', attackStyle: 'slash', biome: 'jungle',
@@ -154,6 +154,3 @@ export const bossMonsterEntriesT2 = [
     },
   }],
 ] satisfies [string, MonsterDefinition][];
-
-// NOTE: `glacial-colossus` (old deferred Tundra boss) is intentionally removed —
-// Tundra debuts at T3; its boss is `frost-colossus`, built in Pass 2 (T3 bosses).

@@ -9,6 +9,8 @@ import { jungleMonsterEntries } from './jungle.monsters';
 import { desertMonsterEntries } from './desert.monsters';
 import { volcanoMonsterEntries } from './volcano.monsters';
 import { tundraMonsterEntries } from './tundra.monsters';
+import { graveyardMonsterEntries } from './graveyard.monsters';
+import { trenchMonsterEntries } from './trench.monsters';
 // import { advancedBiomeMonsterEntriesB } from './advancedBiomesB';
 import { bossMonsterEntriesT1 } from './bossesT1';
 import { bossMonsterEntriesT2 } from './bossesT2';
@@ -26,6 +28,8 @@ const monsterEntries: [string, MonsterDefinition][] = [
   ...desertMonsterEntries,
   ...volcanoMonsterEntries,
   ...tundraMonsterEntries,
+  ...graveyardMonsterEntries,
+  ...trenchMonsterEntries,
   // ...advancedBiomeMonsterEntriesB,
   ...bossMonsterEntriesT1,
   ...bossMonsterEntriesT2,

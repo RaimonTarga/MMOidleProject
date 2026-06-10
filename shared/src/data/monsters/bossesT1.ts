@@ -21,7 +21,7 @@ import type { MonsterDefinition } from './types';
 //
 // DESERT/JUNGLE bosses moved out of "deferred" — those biomes debut at T2, so
 // they get the full T2 treatment now. `glacial-colossus` (Tundra) is DELETED:
-// Tundra debuts at T3, its boss is frost-colossus (Pass 2).
+// Tundra debuts at T3, its boss is frost-plated-rime-mammoth.
 //
 // Stat anchors (boss-design.md): boss HP ~9-10x median trash & >=2x toughest
 // elite; per-hit ~1.3-1.4x the biome's biggest trash hit; Mtn/Cave slams ~40-50%
@@ -32,8 +32,8 @@ export const bossMonsterEntriesT1 = [
   // ════════════════════════ T1 BOSSES (pure shape, no phase) ════════════════════════
 
   // PLAINS — honest bruiser, no gimmick. The floor. (fast enough: single-target)
-  ['plains-champion', {
-    id: 'plains-champion', name: 'Plains Champion', color: 0xddaa44,
+  ['tusked-razorback', {
+    id: 'tusked-razorback', name: 'Tusked Razorback', color: 0xddaa44,
     isBoss: true,
     stats: { hp: 1000, attack: 30, plating: 4, damageReduction: 0.02, speed: 50, attackRange: 15, attackCooldown: 2000, pullRange: 280 },
     behavior: 'melee', attackStyle: 'impact', biome: 'plains',
@@ -42,8 +42,8 @@ export const bossMonsterEntriesT1 = [
   }],
 
   // FOREST — fast, frequent, frail. The evasion exam. (fast: single-target)
-  ['forest-warden', {
-    id: 'forest-warden', name: 'Forest Warden', color: 0x33aa44,
+  ['gnarled-greatbear', {
+    id: 'gnarled-greatbear', name: 'Gnarled Greatbear', color: 0x33aa44,
     isBoss: true,
     stats: { hp: 900, attack: 24, plating: 0, damageReduction: 0, speed: 60, attackRange: 15, attackCooldown: 1400, pullRange: 300 },
     behavior: 'melee', attackStyle: 'slash', biome: 'forest',
@@ -52,8 +52,8 @@ export const bossMonsterEntriesT1 = [
   }],
 
   // MOUNTAIN — slow charging mega-slam that trips the cap. Burst exam. Cleaves.
-  ['mountain-sentinel', {
-    id: 'mountain-sentinel', name: 'Mountain Sentinel', color: 0x8899bb,
+  ['crag-behemoth', {
+    id: 'crag-behemoth', name: 'Crag Behemoth', color: 0x8899bb,
     isBoss: true,
     stats: { hp: 1100, attack: 60, plating: 0, damageReduction: 0, speed: 22, attackRange: 18, attackCooldown: 3500, pullRange: 280 },
     behavior: 'melee', attackStyle: 'impact', biome: 'mountain',
@@ -65,8 +65,8 @@ export const bossMonsterEntriesT1 = [
 
   // SWAMP — trivial direct hit, real (beatable) DoT. dot-resist exam. Cleaves
   // (slow: a body-blocked DoT swing lands on summons instead of the player).
-  ['bog-sovereign', {
-    id: 'bog-sovereign', name: 'Bog Sovereign', color: 0x1e3d1e,
+  ['grave-toadeater', {
+    id: 'grave-toadeater', name: 'Grave Toadeater', color: 0x1e3d1e,
     isBoss: true,
     stats: { hp: 950, attack: 8, plating: 2, damageReduction: 0.02, speed: 28, attackRange: 15, attackCooldown: 2600, pullRange: 260 },
     behavior: 'melee', attackStyle: 'poison', biome: 'swamp',
@@ -77,8 +77,8 @@ export const bossMonsterEntriesT1 = [
   }],
 
   // CAVE — tanky mixed elite: high HP, DR + plating, charges. Endurance exam. Cleaves.
-  ['cave-sentinel', {
-    id: 'cave-sentinel', name: 'Cave Sentinel', color: 0x334455,
+  ['obsidian-broodmother', {
+    id: 'obsidian-broodmother', name: 'Obsidian Broodmother', color: 0x334455,
     isBoss: true,
     stats: { hp: 1050, attack: 40, plating: 6, damageReduction: 0.10, speed: 24, attackRange: 18, attackCooldown: 2800, pullRange: 240 },
     behavior: 'melee', attackStyle: 'impact', biome: 'cave',

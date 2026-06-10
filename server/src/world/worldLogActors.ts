@@ -50,8 +50,8 @@ function minionDisplayName(monsterTypeId: MinionMonsterType): string {
       return 'Cliff Hopper';
     case 'ridge-archer':
       return 'Ridge Archer';
-    case 'mountain-sentinel':
-      return 'Mountain Sentinel';
+    case 'crag-behemoth':
+      return 'Crag Behemoth';
   }
 }
 

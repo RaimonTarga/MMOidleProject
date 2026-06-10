@@ -99,5 +99,57 @@ export const desertMonsterEntries = [
     slowEffect: { speedMult: 0.6, durationMs: 2000 },
   }],
 
+  // T4
+
+  ['sand-viper', {
+    id: 'sand-viper', name: 'Sand Viper', color: 0xddaa33,
+    // Fast debuffer: lands a heavy movement slow so the slower pack can pile on.
+    // Catches Far builds that try to kite. DPS 78 × (1000/1600) = 49 + the slow.
+    stats: { hp: 830, attack: 78, plating: 0, damageReduction: 0.08, speed: 60, attackRange: 12, attackCooldown: 1600, pullRange: 230 },
+    behavior: 'melee', attackStyle: 'poison', biome: 'desert',
+    rewards: { essence: 55, essenceType: 'yellow', level: 3, biomeXp: 330 },
+    ai: { wanderRadius: 260, leashRange: 680, idleMinMs: 1500, idleMaxMs: 4500 },
+    slowEffect: { speedMult: 0.45, durationMs: 3000 },
+  }],
+
+  ['dune-basilisk', {
+    id: 'dune-basilisk', name: 'Dune Basilisk', color: 0xaa8833,
+    // Root bruiser: a petrifying gaze full-stops you (speedMult 0) — the lockdown
+    // setup that lets the vipers close and the cobra plink. Moderate plating.
+    // DPS 90 × (1000/2800) = 32 — low, but the root is the real weapon.
+    stats: { hp: 1300, attack: 90, plating: 10, damageReduction: 0.10, speed: 26, attackRange: 15, attackCooldown: 2800, pullRange: 175 },
+    behavior: 'melee', attackStyle: 'impact', biome: 'desert',
+    rewards: { essence: 100, essenceType: 'yellow', level: 4, biomeXp: 600 },
+    ai: { wanderRadius: 170, leashRange: 560, idleMinMs: 2500, idleMaxMs: 7000 },
+    slowEffect: { speedMult: 0, durationMs: 1400 },
+  }],
+
+  ['sandspitter-cobra', {
+    id: 'sandspitter-cobra', name: 'Sandspitter Cobra', color: 0xeecc66,
+    // Ranged KITER + ENEMY SHIELD (hooded carapace flares). Anti-Close — chasing
+    // it eats slowed hits. The shield rewards the alpha-strike weapon: a
+    // first-strike burst tears the barrier before the slow stack bites.
+    // DPS 84 × (1000/2200) = 38 (kiter).
+    stats: { hp: 780, attack: 84, plating: 0, damageReduction: 0, speed: 38, attackRange: 230, attackCooldown: 2200, pullRange: 280 },
+    behavior: 'melee', attackStyle: 'magic', isRanged: true, kite: true, biome: 'desert',
+    rewards: { essence: 58, essenceType: 'yellow', level: 3, biomeXp: 350 },
+    ai: { wanderRadius: 240, leashRange: 660, idleMinMs: 1200, idleMaxMs: 4000 },
+    slowEffect: { speedMult: 0.6, durationMs: 2500 },
+    enemyShield: { shieldPct: 0.22, intervalMs: 12000, durationMs: 6000 },
+  }],
+
+  ['dune-tyrant', {
+    id: 'dune-tyrant', name: 'Dune Tyrant', color: 0xcc9922,
+    // Slow elite (great desert lizard). COOLDOWN slam every 10s = 246 that also
+    // dumps a long heavy slow. The Desert exam: last-stand + debuff-resist both
+    // tested. Base 88 ≈ H_med (survivable); the slam is the spike.
+    stats: { hp: 1900, attack: 88, plating: 8, damageReduction: 0.08, speed: 20, attackRange: 15, attackCooldown: 3500, pullRange: 160 },
+    behavior: 'melee', attackStyle: 'impact', biome: 'desert',
+    rewards: { essence: 170, essenceType: 'yellow', level: 4, biomeXp: 1020 },
+    ai: { wanderRadius: 100, leashRange: 450, idleMinMs: 4500, idleMaxMs: 12000 },
+    empoweredCooldown: { cooldownMs: 10000, multiplier: 2.8 },  // 246
+    slowEffect: { speedMult: 0.4, durationMs: 4000 },
+  }],
+
 
 ] satisfies [string, MonsterDefinition][];

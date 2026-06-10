@@ -54,7 +54,8 @@
       "PowerShell(pnpm *)",
       "PowerShell(Get-NetTCPConnection *)",
       "PowerShell(docker compose *)",
-      "PowerShell(docker ps *)"
+      "PowerShell(docker ps *)",
+      "Bash(grep -iE \"monsterMechanics|combat.ts|combat\\\\\\\\\\\\\\\\engine\")"
     ]
   }
 }

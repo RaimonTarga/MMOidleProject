@@ -175,7 +175,7 @@ export const SUMMONER_KEYS = [
   'summoner.minion-as-mud-toad',
   'summoner.minion-as-cliff-hopper',
   'summoner.minion-as-ridge-archer',
-  'summoner.minion-as-mountain-sentinel',
+  'summoner.minion-as-crag-behemoth',
   'summoner.predators-howl',
   'summoner.howl-pct-per-stack',
   'summoner.howl-cap',
@@ -290,13 +290,77 @@ export function hasPassive(map: PassiveMap, key: PassiveKey): boolean {
 // compounds as a product (identity = 1) rather than a sum (identity = 0).
 const MULTIPLICATIVE_PASSIVES = new Set<PassiveKey>(['defense.max-hit-mult']);
 
-export function mergePassives(target: PassiveMap, source: MechanicEffects | undefined): void {
+// Regen burst is a paired mechanic: every `interval-ms`, heal `pct × maxHp`.
+// Naively summing both keys is wrong — adding intervals makes stacked sources
+// proc *less* often (a nerf). Instead these two keys are resolved through a
+// BurstAccumulator (see below) so stacked sources keep the highest frequency
+// and combine their healing throughput. They are excluded from the generic
+// additive/multiplicative merge whenever an accumulator is supplied.
+const BURST_PCT_KEY: PassiveKey      = 'defense.regen-burst-pct';
+const BURST_INTERVAL_KEY: PassiveKey = 'defense.regen-burst-interval-ms';
+
+export function mergePassives(
+  target: PassiveMap,
+  source: MechanicEffects | undefined,
+  burstAcc?: BurstAccumulator,
+): void {
   if (!source) return;
   for (const [key, val] of Object.entries(source) as [PassiveKey, number][]) {
+    // When an accumulator is threaded through, the burst pair is resolved
+    // separately (frequency-weighted) and must not be summed here.
+    if (burstAcc && (key === BURST_PCT_KEY || key === BURST_INTERVAL_KEY)) continue;
     if (MULTIPLICATIVE_PASSIVES.has(key)) {
       target[key] = (target[key] ?? 1) * val;
     } else {
       target[key] = (target[key] ?? 0) + val;
     }
+  }
+  if (burstAcc) accrueBurst(burstAcc, source);
+}
+
+/**
+ * Order-independent accumulator for the regen-burst pair. Combining stacked
+ * sources by raw summation would slow the proc cadence; instead we preserve
+ * total healing throughput at the highest available frequency:
+ *
+ *   final interval = min interval across full (pct + interval) sources
+ *   final pct      = throughput × final interval + flat pct
+ *
+ * where `throughput = Σ pct_i / interval_i` over full sources and `flatPct`
+ * is the sum of pct-only sources (which carry no cadence of their own and
+ * simply boost the magnitude of whatever burst is active).
+ */
+export interface BurstAccumulator {
+  throughput: number;   // Σ pct_i / interval_i  over sources that define both
+  minInterval: number;  // highest frequency = smallest interval among full sources
+  flatPct: number;      // Σ pct  over pct-only sources (no interval of their own)
+}
+
+export function makeBurstAccumulator(): BurstAccumulator {
+  return { throughput: 0, minInterval: Infinity, flatPct: 0 };
+}
+
+function accrueBurst(acc: BurstAccumulator, source: MechanicEffects): void {
+  const pct      = source[BURST_PCT_KEY] ?? 0;
+  const interval = source[BURST_INTERVAL_KEY] ?? 0;
+  if (pct > 0 && interval > 0) {
+    acc.throughput  += pct / interval;
+    acc.minInterval  = Math.min(acc.minInterval, interval);
+  } else if (pct > 0) {
+    // pct-only source: no cadence, just adds magnitude at the active interval.
+    acc.flatPct += pct;
+  }
+  // interval-only (pct <= 0) is inert: the mechanic needs both to fire.
+}
+
+/** Write the resolved burst pct/interval back onto the passive map. */
+export function finalizeBurst(acc: BurstAccumulator, target: PassiveMap): void {
+  if (acc.minInterval !== Infinity) {
+    target[BURST_INTERVAL_KEY] = acc.minInterval;
+    target[BURST_PCT_KEY]      = acc.throughput * acc.minInterval + acc.flatPct;
+  } else if (acc.flatPct > 0) {
+    // pct sources but no cadence source: store pct; interval stays 0 so the
+    // mechanic remains inactive (runRegenBurst requires interval > 0).
+    target[BURST_PCT_KEY] = acc.flatPct;
   }
 }

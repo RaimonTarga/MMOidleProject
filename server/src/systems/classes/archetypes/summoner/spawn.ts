@@ -106,7 +106,7 @@ const MINION_TYPE_PASSIVE_MAP: Array<[PassiveKey, MinionMonsterType]> = [
   ['summoner.minion-as-mud-toad',          'mud-toad'],
   ['summoner.minion-as-cliff-hopper',      'cliff-hopper'],
   ['summoner.minion-as-ridge-archer',      'ridge-archer'],
-  ['summoner.minion-as-mountain-sentinel', 'mountain-sentinel'],
+  ['summoner.minion-as-crag-behemoth', 'crag-behemoth'],
 ];
 
 /** Resolves which creature sprite/hitbox to use from unlocked T3 passives. */

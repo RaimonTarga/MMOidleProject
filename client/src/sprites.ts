@@ -94,8 +94,8 @@ export const BIOME_TEXTURES: Record<string, string> = {
   tundra: "biome_tundra",
   desert: "biome_desert",
   volcanic: "biome_volcano",
-  necropolis: "biome_necropolis",
-  abyss: "biome_abyss",
+  graveyard: "biome_graveyard",
+  trench: "biome_trench",
 };
 
 /** Client-only visual art for a shared NODE_FEATURES entry. */

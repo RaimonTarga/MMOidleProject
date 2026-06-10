@@ -1,4 +1,4 @@
-// Keys: 'default', '{archetype}', or '{archetype}-{variant}'.
+// Keys: 'default', '{archetype}', '{archetype}-{variant}', or '{archetype}-{variant}-t3'.
 export const PLAYER_FRAMES: Record<string, string> = {
   'default':  'sprites/classless.png',
 
@@ -27,6 +27,27 @@ export const PLAYER_FRAMES: Record<string, string> = {
   'reload-light':    'sprites/light_reload.png',
   'reload-balanced': 'sprites/medium_reload.png',
   'reload-heavy':    'sprites/heavy_reload.png',
+
+  // ── T3 range ─────────
+  'cadence-range-close':    'sprites/in-fighter.png',
+  'cadence-range-mid': 'sprites/lancer.png',
+  'cadence-range-far':    'sprites/phantom-blade.png',
+
+  'cooldown-range-close':    'sprites/vanguard.png',
+  'cooldown-range-mid': 'sprites/phalanx.png',
+  'cooldown-range-far':    'sprites/sentinel.png',
+
+  'dot-range-close':    'sprites/shade.png',
+  'dot-range-mid': 'sprites/warlock.png',
+  'dot-range-far':    'sprites/harbinger.png',
+
+  'energy-range-close':    'sprites/wisp.png',
+  'energy-range-mid': 'sprites/shade.png',
+  'energy-range-far':    'sprites/haunt.png',
+
+  'reload-range-close':    'sprites/breacher.png',
+  'reload-range-mid': 'sprites/enforcer.png',
+  'reload-range-far':    'sprites/deadeye.png',
 };
 
 /** Key: monsterTypeId (matches MONSTER_DATABASE keys exactly).
@@ -60,10 +81,11 @@ export const MONSTER_FRAMES: Record<string, string> = {
   'cave-brute':   'sprites/brute.png',
 
   // ── T1 bosses ────────────────────────────────────────────────────────────────
-  'forest-warden':     'sprites/boss_forest.png',
-  'mountain-sentinel': 'sprites/boss_mountain.png',
-  'bog-sovereign':     'sprites/boss_swamp.png',
-  'cave-sentinel':     'sprites/boss_cave.png',
+  'tusked-razorback':    'sprites/boss-plains-t1.png',
+  'gnarled-greatbear':   'sprites/boss-forest-t1.png',
+  'crag-behemoth':       'sprites/boss-mountain-t1.png',
+  'grave-toadeater':     'sprites/boss-swamp-t1.png',
+  'obsidian-broodmother':'sprites/boss-cave-t1.png',
 
   // ── T2: Plains ──────────────────────────────────────────────────────────────
   'prairie-wolf':   'sprites/prairie-wolf.png',
@@ -100,6 +122,60 @@ export const MONSTER_FRAMES: Record<string, string> = {
   'stone-basilisk': 'sprites/stone-basilisk.png',
   'dust-djinn':     'sprites/dust-djinn.png',
 
+  // ── T2 bosses ────────────────────────────────────────────────────────────────
+  'gorging-razortusk':     'sprites/boss-plains-t2.png',
+  'apex-timberclaw':       'sprites/boss-forest-t2.png',
+  'stoneplate-juggernaut': 'sprites/boss-mountain-t2.png',
+  'mire-gorged-behemoth':  'sprites/boss-swamp-t2.png',
+  'chitinous-dreadbore':   'sprites/boss-cave-t2.png',
+  'dune-stalker-emperor':  'sprites/boss-desert-t2.png',
+  'jungle-dread-gorger':   'sprites/boss-jungle-t2.png',
+
+  // ── T3: Mountain ─────────────────────────────────────────────────────────────
+  'mountain-colossus': 'sprites/mountain-colossus.png',
+  'avalanche-ram':     'sprites/avalanche-ram.png',
+  'crag-mortar':       'sprites/crag-mortar.png',
+
+  // ── T3: Cave ─────────────────────────────────────────────────────────────────
+  'deep-spider':      'sprites/deep-spider.png',
+  'cavern-troll':     'sprites/cavern-troll.png',
+  'crystal-gargoyle': 'sprites/crystal-gargoyle.png',
+
+  // ── T3: Swamp ────────────────────────────────────────────────────────────────
+  'plague-hydra': 'sprites/plague-hydra.png',
+  'bog-lurker':   'sprites/bog-lurker.png',
+  'mire-hex-spitter': 'sprites/mire-hex-spitter.png',
+
+  // ── T3: Jungle ───────────────────────────────────────────────────────────────
+  'jungle-stalker':  'sprites/jungle-stalker.png',
+  'silverback':      'sprites/silverback.png',
+  'canopy-harrier':  'sprites/canopy-harrier.png',
+
+  // ── T3: Desert ───────────────────────────────────────────────────────────────
+  'dune-stalker':    'sprites/dune-stalker.png',
+  'desert-basilisk': 'sprites/desert-basilisk.png',
+  'sandweaver':      'sprites/sand-weaver.png',
+
+  // ── T3: Volcano ──────────────────────────────────────────────────────────────
+  'cinder-hound': 'sprites/cinder-hound.png',
+  'magma-brute':  'sprites/magma-brute.png',
+  'ash-slinger':  'sprites/ash-slinger.png',
+  'ember-scuttler': 'sprites/ember-scuttler.png',
+
+  // ── T3: Tundra ───────────────────────────────────────────────────────────────
+  'frost-lurker': 'sprites/frost-lurker.png',
+  'glacier-bear': 'sprites/glacier-bear.png',
+  'rime-caster':  'sprites/rime-caster.png',
+
+  // ── T3 bosses ────────────────────────────────────────────────────────────────
+  'crag-gorged-horn-behemoth':    'sprites/boss-mountain-t3.png',
+  'deep-core-burrow-gorger':      'sprites/boss-cave-t3.png',
+  'rot-spore-croc-behemoth':      'sprites/boss-swamp-t3.png',
+  'dune-carapace-monarch':        'sprites/boss-desert-t3.png',
+  'apex-bramble-slasher':         'sprites/boss-jungle-t3.png',
+  'cinder-shell-magma-salamander':'sprites/boss-volcano-t3.png',
+  'frost-plated-rime-mammoth':    'sprites/boss-tundra-t3.png',
+
   // ── Summoner minion ──────────────────────────────────────────────────────────
   'slime':      'sprites/swampslime.png',
   'tiny-slime': 'sprites/tinyslime.png',
@@ -109,7 +185,7 @@ const VARIANTS = ['light', 'balanced', 'heavy'] as const;
 
 /**
  * Returns the atlas frame name for a player.
- * Resolution order: '{archetype}-{variant}' → '{archetype}' → 'default' → null.
+ * Resolution order: '{archetype}-{variant}-t3' → '{archetype}-{variant}' → '{archetype}' → 'default' → null.
  */
 export function resolvePlayerFrame(input: {
   combatArchetype: string | null;
@@ -120,6 +196,13 @@ export function resolvePlayerFrame(input: {
       input.unlockedSkills.includes(`${input.combatArchetype}-${v}`),
     );
     if (variant) {
+      const hasT3 = input.unlockedSkills.some(s =>
+        s.startsWith(`${input.combatArchetype}-${variant}-t3`),
+      );
+      if (hasT3) {
+        const t3Frame = PLAYER_FRAMES[`${input.combatArchetype}-${variant}-t3`];
+        if (t3Frame) return t3Frame;
+      }
       const variantFrame = PLAYER_FRAMES[`${input.combatArchetype}-${variant}`];
       if (variantFrame) return variantFrame;
     }

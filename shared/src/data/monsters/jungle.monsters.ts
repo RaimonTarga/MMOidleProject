@@ -97,5 +97,54 @@ export const jungleMonsterEntries = [
     ai: { wanderRadius: 240, leashRange: 650, idleMinMs: 1200, idleMaxMs: 3500 },
   }],
 
+  // T4
+
+  ['hunting-panther', {
+    id: 'hunting-panther', name: 'Hunting Panther', color: 0x33cc44,
+    // Fast swarm filler: low per-hit, attacks constantly. FREQUENCY is what
+    // evasion answers. DPS 60 × (1000/1200) = 50 (filler; volume compensates).
+    stats: { hp: 650, attack: 60, plating: 0, damageReduction: 0, speed: 82, attackRange: 12, attackCooldown: 1200, pullRange: 290 },
+    behavior: 'melee', attackStyle: 'slash', biome: 'jungle',
+    rewards: { essence: 45, essenceType: 'green', level: 3, biomeXp: 270 },
+    ai: { wanderRadius: 320, leashRange: 800, idleMinMs: 600, idleMaxMs: 2400 },
+  }],
+
+  ['apex-silverback', {
+    id: 'apex-silverback', name: 'Apex Silverback', color: 0xaa6633,
+    // Charging great ape with EVASION (dodges 1-in-4 player hits) — tests on-hit
+    // gear / Harrier −evasion debuffs. Anti-Far via charge. DPS 88 × (1000/1800) = 49.
+    stats: { hp: 1050, attack: 88, plating: 0, damageReduction: 0.05, speed: 54, attackRange: 12, attackCooldown: 1800, pullRange: 250 },
+    behavior: 'melee', attackStyle: 'impact', biome: 'jungle',
+    rewards: { essence: 88, essenceType: 'green', level: 4, biomeXp: 528 },
+    ai: { wanderRadius: 260, leashRange: 680, idleMinMs: 1000, idleMaxMs: 3600 },
+    chargeOnAggro: { speedMult: 2.8, durationMs: 1000 },
+    evasion: 0.25,
+  }],
+
+  ['thornback-lizard', {
+    id: 'thornback-lizard', name: 'Thornback Lizard', color: 0x55bb44,
+    // Ranged stationary spitter: frequent light hits + stacking venom DoT.
+    // Background chip while the swarm closes. DPS 60 × (1000/1500) = 40 + DoT.
+    stats: { hp: 700, attack: 60, plating: 0, damageReduction: 0, speed: 50, attackRange: 200, attackCooldown: 1500, pullRange: 260 },
+    behavior: 'melee', attackStyle: 'poison', isRanged: true, biome: 'jungle',
+    rewards: { essence: 50, essenceType: 'green', level: 3, biomeXp: 300 },
+    ai: { wanderRadius: 250, leashRange: 660, idleMinMs: 1200, idleMaxMs: 4000 },
+    dotEffect: { damagePerStack: 10, maxStacks: 5, tickIntervalMs: 1000, durationMs: 2500 },
+  }],
+
+  ['emerald-constrictor', {
+    id: 'emerald-constrictor', name: 'Emerald Constrictor', color: 0x22aa33,
+    // Elite predator. CADENCE every 4 = a 168 venom lunge + heavy DoT; evasion
+    // 0.25. Tests cap, DoT-resist, AND on-hit all at once. Effective ~66 DPS:
+    // avg/attack (3·84+168)/4 = 105 → ×(1000/1600) = 66, plus DoT.
+    stats: { hp: 1400, attack: 84, plating: 0, damageReduction: 0.06, speed: 62, attackRange: 12, attackCooldown: 1600, pullRange: 280 },
+    behavior: 'melee', attackStyle: 'poison', biome: 'jungle',
+    rewards: { essence: 130, essenceType: 'green', level: 4, biomeXp: 780 },
+    ai: { wanderRadius: 280, leashRange: 720, idleMinMs: 800, idleMaxMs: 3000 },
+    cadenceFinisher: { everyNAttacks: 4, multiplier: 2.0 },   // 168
+    dotEffect: { damagePerStack: 12, maxStacks: 5, tickIntervalMs: 1000, durationMs: 3000 },
+    evasion: 0.25,
+  }],
+
 
 ] satisfies [string, MonsterDefinition][];

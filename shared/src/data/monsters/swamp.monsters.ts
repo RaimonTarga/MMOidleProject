@@ -98,8 +98,8 @@ export const swampMonsterEntries = [
     dotEffect: { damagePerStack: 16, maxStacks: 6, tickIntervalMs: 1000, durationMs: 6000 },
   }],
 
-  ['mire-curse-witch', {
-    id: 'mire-curse-witch', name: 'Mire Curse-Witch', color: 0x884499,
+  ['mire-hex-spitter', {
+    id: 'mire-hex-spitter', name: 'Mire Hex Spitter', color: 0x884499,
     // Ranged DoT KITER: plinks festering hexes, backs away. Anti-Close — chasing
     // it just walks you through more poison. Speed 36 (catchable on charge).
     stats: { hp: 400, attack: 16, plating: 0, damageReduction: 0, speed: 36, attackRange: 200, attackCooldown: 2200, pullRange: 230 },

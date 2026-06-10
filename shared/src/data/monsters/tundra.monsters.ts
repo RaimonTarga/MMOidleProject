@@ -80,5 +80,67 @@ export const tundraMonsterEntries = [
     slowEffect: { speedMult: 0.6, durationMs: 2200 },
   }],
 
+  // T4
+  ['frosttusk-mammoth', {
+    id: 'frosttusk-mammoth', name: 'Frosttusk Mammoth', color: 0xaaddff,
+    // CADENCE every 4 = a 240 freeze-slam that trips the cap + hard slow.
+    // Heavy ICE PLATING (12) rewards the brittle weapon to crack it open.
+    // Base 120 ≈ H_big. avg/attack (3·120+240)/4 = 150 → ×(1000/3500) = 43.
+    stats: { hp: 1250, attack: 120, plating: 12, damageReduction: 0, speed: 18, attackRange: 15, attackCooldown: 3500, pullRange: 165 },
+    behavior: 'melee', attackStyle: 'frost', biome: 'tundra',
+    rewards: { essence: 110, essenceType: 'blue', level: 4, biomeXp: 660 },
+    ai: { wanderRadius: 140, leashRange: 490, idleMinMs: 3500, idleMaxMs: 9500 },
+    chargeOnAggro: { speedMult: 2.3, durationMs: 1200 },
+    cadenceFinisher: { everyNAttacks: 4, multiplier: 2.0 },   // 240
+    slowEffect: { speedMult: 0.45, durationMs: 3500 },
+  }],
+
+  ['glacial-direbear', {
+    id: 'glacial-direbear', name: 'Glacial Dire-Bear', color: 0x5599cc,
+    // The ramping-debuff carrier: each hit stacks move-slow + atk-slow (both
+    // capped — never a full root). Plant-vs-burst tension with your stationary
+    // DR armor. DPS 105 × (1000/3200) = 33 base, but the debuff escalates the fight.
+    stats: { hp: 1700, attack: 105, plating: 0, damageReduction: 0.14, speed: 18, attackRange: 15, attackCooldown: 3200, pullRange: 175 },
+    behavior: 'melee', attackStyle: 'frost', biome: 'tundra',
+    rewards: { essence: 150, essenceType: 'blue', level: 4, biomeXp: 900 },
+    ai: { wanderRadius: 130, leashRange: 490, idleMinMs: 3500, idleMaxMs: 9000 },
+    rampDebuff: {
+      moveSlowPerHit: 0.08, moveSlowMaxPct: 0.50,
+      atkSlowPerHit:  0.06, atkSlowMaxPct:  0.40,   // cap load-bearing (anti-spiral)
+      stackDurationMs: 5000,
+    },
+  }],
+
+  ['hoarfrost-yeti', {
+    id: 'hoarfrost-yeti', name: 'Hoarfrost Yeti', color: 0xccffff,
+    // Ranged KITER (hurls ice chunks): maintains standoff, applies ramp debuff
+    // from afar. Anti-Close — chasing while its stacks build hurts. Speed 36
+    // (catchable on charge). DPS 86 × (1000/2900) = 30 + escalating debuff.
+    stats: { hp: 910, attack: 86, plating: 0, damageReduction: 0.08, speed: 36, attackRange: 220, attackCooldown: 2900, pullRange: 260 },
+    behavior: 'melee', attackStyle: 'frost', isRanged: true, kite: true, biome: 'tundra',
+    rewards: { essence: 62, essenceType: 'blue', level: 3, biomeXp: 370 },
+    ai: { wanderRadius: 210, leashRange: 620, idleMinMs: 1500, idleMaxMs: 4500 },
+    rampDebuff: {
+      moveSlowPerHit: 0.05, moveSlowMaxPct: 0.35,
+      atkSlowPerHit:  0.04, atkSlowMaxPct:  0.25,
+      stackDurationMs: 4000,
+    },
+  }],
+
+  ['permafrost-behemoth', {
+    id: 'permafrost-behemoth', name: 'Permafrost Behemoth', color: 0x4477aa,
+    // Apex. COOLDOWN slam every 9s = 300. Extreme plating (20) + ENEMY SOFT-CAP
+    // — the full weapon-matchup exam: brittle weapon strips the plate (shatter
+    // window), fast consistent damage beats the soft-cap, empowered-only builds
+    // struggle. Base 100 ≈ H_med (survivable between slams).
+    stats: { hp: 2600, attack: 100, plating: 20, damageReduction: 0.12, speed: 12, attackRange: 15, attackCooldown: 4000, pullRange: 140 },
+    behavior: 'melee', attackStyle: 'frost', biome: 'tundra',
+    rewards: { essence: 260, essenceType: 'blue', level: 4, biomeXp: 1560 },
+    ai: { wanderRadius: 70, leashRange: 380, idleMinMs: 6000, idleMaxMs: 15000 },
+    chargeOnAggro: { speedMult: 2.0, durationMs: 1400 },
+    empoweredCooldown: { cooldownMs: 9000, multiplier: 3.0 },  // 300
+    enemySoftCap: { capPct: 0.25, capMult: 0.5 },
+  }],
+
   
 ] satisfies [string, MonsterDefinition][];

@@ -13,7 +13,7 @@ import { ITEM_DATABASE } from '../itemDatabase';
 import { EQUIPMENT_SLOTS } from '../items';
 import { upgradeMechanicEffectsTotal, upgradeStatBonusTotal } from './itemUpgrades';
 import { GAME_CONFIG } from '../index';
-import { mergePassives } from '../passives';
+import { mergePassives, makeBurstAccumulator, finalizeBurst } from '../passives';
 
 /**
  * Map a raw evasion rating (Σ 1/N across all evasion sources) to a deterministic
@@ -113,6 +113,9 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
   // dodge frequency. Converted to a deterministic per-hit dodge rate via evasionDodgeRate().
   let evasionChance = 0;
   p.usesSkills.passives = {};
+  // Regen-burst pair is resolved frequency-weighted across all sources rather
+  // than summed; collect contributions here and finalize after equipment.
+  const burstAcc = makeBurstAccumulator();
   for (const skillId of p.usesSkills.unlockedSkills) {
     const node = SKILL_TREE.get(skillId);
     if (!node) continue;
@@ -126,7 +129,7 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
     p.hasHealth.maxHp             += e.maxHp           ?? 0;
     p.hasHealth.hpRegen           = (p.hasHealth.hpRegen ?? 0) + (e.hpRegen ?? 0);
     p.hasPosition.speed           += e.speed           ?? 0;
-    mergePassives(p.usesSkills.passives, node.mechanicEffects);
+    mergePassives(p.usesSkills.passives, node.mechanicEffects, burstAcc);
   }
   p.performsAttack.attackCooldown = Math.round(
     p.performsAttack.attackCooldown / Math.max(0.1, 1 + attackSpeedPct),
@@ -163,7 +166,7 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
         applyStatModToTarget(p, stat, value);
       }
     }
-    mergePassives(p.usesSkills.passives, def.mechanicEffects);
+    mergePassives(p.usesSkills.passives, def.mechanicEffects, burstAcc);
 
     // Item upgrade bonuses: all stat and mechanic effect deltas from upgrade steps.
     const plus = p.holdsInventory.itemUpgrades?.[defId] ?? 0;
@@ -173,9 +176,10 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
         else applyStatModToTarget(p, stat, value);
       }
       const meFx = upgradeMechanicEffectsTotal(def, plus);
-      if (Object.keys(meFx).length > 0) mergePassives(p.usesSkills.passives, meFx);
+      if (Object.keys(meFx).length > 0) mergePassives(p.usesSkills.passives, meFx, burstAcc);
     }
   }
+  finalizeBurst(burstAcc, p.usesSkills.passives);
 
   // Re-clamp damage reduction: equipment + upgrades are applied after the step-2 clamp.
   p.mitigatesDamage.damageReduction = Math.min(0.9, Math.max(0, p.mitigatesDamage.damageReduction));

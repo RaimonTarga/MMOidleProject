@@ -218,6 +218,12 @@ export interface MonsterDefinition {
     durationMs?: number;
     /** DoT element for damage-number flavor (color/glyph). Defaults to poison. */
     element?: DamageElement;
+    /**
+     * Exception flag: when true this DoT's ticks ignore the player's shields and
+     * hit HP directly. The DEFAULT (omitted/false) is that DoT ticks are absorbed
+     * by shields like any other damage — bypass should stay rare and deliberate.
+     */
+    bypassShield?: boolean;
   };
   /**
    * If set, this monster applies a movement slow (or root when speedMult = 0) to
@@ -266,6 +272,41 @@ export interface MonsterDefinition {
     atkSlowMaxPct: number;
     stackDurationMs: number;
   };
+  /**
+   * Deterministic cadence finisher — port of the player cadence empowered attack.
+   * Every `everyNAttacks` landed basic attacks, that attack's outgoing damage is
+   * multiplied by `multiplier`. Counter-based (no RNG); the boosted hit resolves
+   * through the player's full defensive pipeline (damage-cap, shields, plating, DR)
+   * exactly like a player empowered attack — these spikes are what the player's
+   * damage-cap armor is meant to answer.
+   */
+  cadenceFinisher?: { everyNAttacks: number; multiplier: number };
+  /**
+   * Deterministic cooldown finisher — port of the player cooldown empowered attack.
+   * The timer starts on combat entry; once `cooldownMs` elapses the monster's NEXT
+   * landed attack is multiplied by `multiplier` and the timer resets. If the monster
+   * cannot attack the instant the timer expires, the empowered state waits for the
+   * next actual attack (it is evaluated at attack time, never wasted on an idle tick).
+   * Resolves through the player's full defensive pipeline.
+   */
+  empoweredCooldown?: { cooldownMs: number; multiplier: number };
+  /**
+   * Periodic absorb barrier on the MONSTER — mirror of the player periodic shield
+   * (defense.shield-pct). Every `intervalMs` the monster gains a shield equal to
+   * `shieldPct × maxHp` lasting `durationMs`; it absorbs incoming player direct-hit
+   * damage before the monster's HP (same scope as the player shield, which likewise
+   * only absorbs combat-pipeline hits). Rewards burst (one big hit pops it) and
+   * punishes chip (small hits waste themselves against it). Timer is deterministic.
+   */
+  enemyShield?: { shieldPct: number; intervalMs: number; durationMs: number };
+  /**
+   * Soft damage cap protecting the MONSTER — mirror of the player damage-cap
+   * (defense.max-hit-pct / max-hit-mult). When a single player hit exceeds
+   * `capPct × maxHp`, the portion above the threshold is scaled by `capMult`
+   * (threshold + excess × capMult). Partial only — never reduces a hit to zero.
+   * Punishes slow single-big-hit builds; rewards fast consistent damage and pierce.
+   */
+  enemySoftCap?: { capPct: number; capMult: number };
   /**
    * Deterministic evasion: per-hit dodge chance as a fraction (0–1), the same
    * notation as the player `evasion` stat. The value is added to a fractional

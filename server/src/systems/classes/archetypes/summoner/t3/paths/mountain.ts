@@ -127,7 +127,7 @@ export function tickGuardianTaunt(world: World, now: number): void {
   for (const owner of world.summonerPlayers) {
     if (!owner.usesSkills.passives['summoner.mountain-guardian']) continue;
 
-    const sentinels = livingMinionsOfType(world, owner, 'mountain-sentinel');
+    const sentinels = livingMinionsOfType(world, owner, 'crag-behemoth');
     const sentinel = sentinels[0];
     if (!sentinel) continue;
 

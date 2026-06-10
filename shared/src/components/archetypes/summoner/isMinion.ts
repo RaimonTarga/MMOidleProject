@@ -12,7 +12,7 @@ export type MinionMonsterType =
   | 'mud-toad'
   | 'cliff-hopper'
   | 'ridge-archer'
-  | 'mountain-sentinel';
+  | 'crag-behemoth';
 
 export interface IsMinion {
   id: string;

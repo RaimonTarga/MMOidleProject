@@ -38,7 +38,7 @@ function defaultBarOffsetY(monster: MonsterView): number {
 }
 
 function defaultSpriteSize(monster: MonsterView): number {
-  return monster.isBoss ? 80 : 64;
+  return monster.isBoss ? 128 : 64;
 }
 
 function upsertSheetMonsterSprite(

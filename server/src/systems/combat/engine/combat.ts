@@ -13,6 +13,11 @@ import type { AggroTargetKind, Vec2 } from "@mmo-idle/shared";
 import { grantMonsterRewards } from "../../player/progression/rewards";
 import { makeCombatContext, emitCombatEvent } from "./combatPipeline";
 import {
+  monsterEmpoweredMultiplier,
+  applyEnemySoftCap,
+  applyEnemyShield,
+} from "./monsterMechanics";
+import {
   getCounter,
   setCounter,
   addCounter,
@@ -238,6 +243,16 @@ export function runPlayerAttack(
   // (e.g. burn's max(1, …)). On-hit DoT stacks already applied during onHit.
   if (ctx.metadata.chaoticMiss) ctx.damage = 0;
 
+  // T4 monster defensive mechanics (mirror the player damage-cap + periodic
+  // shield). Clip an oversized hit FIRST so the barrier only absorbs the capped
+  // amount, then drain the periodic absorb barrier before HP. Both are no-ops
+  // unless the monster defines enemySoftCap / enemyShield. Like the player's own
+  // cap/shield they act on the direct combat-pipeline hit only (DoT/AoE bypass).
+  ctx.damage = applyEnemySoftCap(target, monsterDef, ctx.damage);
+  const enemyShieldResult = applyEnemyShield(target, monsterDef, ctx.damage, now);
+  ctx.damage = enemyShieldResult.damage;
+  const enemyShieldAbsorbed = enemyShieldResult.absorbed;
+
   const gross = Math.round(player.dealsDamage.attack * minionDamageMult);
   const mitigation = buildPlatingDrBreakdown({
     grossDamage: gross,
@@ -270,7 +285,7 @@ export function runPlayerAttack(
       source: sourceActor,
       target: actorFromMonster(target),
       hpDamage: ctx.damage,
-      shieldAbsorbed: 0,
+      shieldAbsorbed: enemyShieldAbsorbed,
       damageType: "direct",
       mitigation,
       tags: [
@@ -284,6 +299,24 @@ export function runPlayerAttack(
       nodeId: player.hasPosition.nodeId,
     },
   );
+
+  if (enemyShieldAbsorbed > 0) {
+    recordWorldLogEvent(
+      world,
+      {
+        kind: "shield-absorb",
+        nodeId: player.hasPosition.nodeId,
+        target: actorFromMonster(target),
+        source: sourceActor,
+        amount: enemyShieldAbsorbed,
+      },
+      {
+        visibility: "combat",
+        relatedPlayerIds: [player.isPlayer.id],
+        nodeId: player.hasPosition.nodeId,
+      },
+    );
+  }
 
   target.hasHealth.hp -= ctx.damage;
   target.controlsMonster.spawn = { ...target.hasPosition.current };
@@ -439,6 +472,20 @@ export function runMonsterAttack(
         (1 - target.mitigatesDamage.damageReduction),
     ),
   );
+
+  // T4 monster empowered attacks (cadence finisher / cooldown spike). Multiply
+  // the already-mitigated damage BEFORE onHit/onDamageTaken so the player's
+  // damage-cap, shields, plating and DR all apply to the boosted hit — the same
+  // path a player empowered attack takes. Deterministic (counter + timer).
+  const empoweredMult = monsterEmpoweredMultiplier(
+    monster,
+    MONSTER_DATABASE.get(monster.isMonster.monsterTypeId),
+    now,
+  );
+  if (empoweredMult > 1) {
+    ctx.damage = Math.max(1, Math.round(ctx.damage * empoweredMult));
+    ctx.metadata["empoweredAttack"] = true;
+  }
 
   emitCombatEvent("onHit", ctx, world);
   emitCombatEvent("onDamageTaken", ctx, world);
