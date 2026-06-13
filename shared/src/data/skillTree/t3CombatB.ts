@@ -162,4 +162,6 @@ export const t3CombatEntriesB = [
     cost: 1, statEffects: {},
     mechanicEffects: { 'dot.glacial-fracture': 1 },
   }],
+
+  
 ] satisfies [string, SkillNode][];
