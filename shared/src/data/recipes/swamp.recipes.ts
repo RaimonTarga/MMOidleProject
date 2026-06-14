@@ -44,7 +44,7 @@ export const swampRecipeEntries = [
     recipeGroup: 'swamp', requiredBiomeLevel: 3, slot: 'mobility',
     cost: { purple: 18 }, stats: { speed: 20 }, tier: 1,
     mechanicEffects: { 'mobility.tenacity-pct': 0.20 },
-    icon: 'items/boots/leather-boots-2.png',
+    icon: 'items/boots/wraps-1.png',
     description: 'Broad soles that ride the surface of soft, sucking ground.',
     upgrades: [
       { stats: { speed: 3 }, cost: { purple: 10 }, requiredBiomeLevel: 4 },
@@ -118,7 +118,7 @@ export const swampRecipeEntries = [
     recipeGroup: 'swamp', requiredBiomeLevel: 7, slot: 'mobility',
     cost: { purple: 44 }, stats: { speed: 31 }, tier: 2,
     mechanicEffects: { 'mobility.tenacity-pct': 0.25 },
-    icon: 'items/boots/leather-boots-4.png',
+    icon: 'items/boots/wraps-2.png',
     description: 'Enchanted bindings that find footing where there should be none.',
     upgrades: [
       { stats: { speed: 3 }, cost: { purple: 22 }, requiredBiomeLevel: 8 },
@@ -148,7 +148,7 @@ export const swampRecipeEntries = [
     recipeGroup: 'swamp', requiredBiomeLevel: 9, slot: 'weapon',
     cost: { purple: 116 }, stats: { attack: 34 }, attacksPerSecond: 0.80, tier: 3,
     mechanicEffects: { 'weapon.dot-conversion-pct': 0.30, 'weapon.dot-stacks': 5 },
-    icon: 'items/weapons/rune-sword-hot-1.png',
+    icon: 'items/weapons/rune-sword-hot-2.png',
     description: 'The rot it carries does more work than the edge ever could.',
     upgrades: [
       { stats: { attack: 8 }, cost: { purple: 170 },  requiredBiomeLevel: 10 },
@@ -162,7 +162,7 @@ export const swampRecipeEntries = [
     recipeGroup: 'swamp', requiredBiomeLevel: 9, slot: 'weapon',
     cost: { purple: 116 }, stats: { attack: 48 }, attacksPerSecond: 0.55, tier: 3,
     mechanicEffects: { 'weapon.dot-conversion-pct': 0.45, 'weapon.dot-stacks': 3 },
-    icon: 'items/weapons/rune-sword-cold-1.png',
+    icon: 'items/weapons/rune-sword-cold-2.png',
     description: 'Slower, colder, and heavier — it converts more of each blow into a deep, biting chill.',
     upgrades: [
       { stats: { attack: 12 }, cost: { purple: 180 },  requiredBiomeLevel: 10 },
@@ -178,7 +178,7 @@ export const swampRecipeEntries = [
     cost: { purple: 100 }, stats: { hpRegen: 11 },
     mechanicEffects: { 'defense.absorb-pct': 0.13 },
     tier: 3,
-    icon: 'items/charms/eye-charm-2.png',
+    icon: 'items/charms/eye-charm-3.png',
     description: 'It weeps for every wound, and gives the tears back as strength.',
     upgrades: [
       { mechanicEffects: { 'defense.absorb-pct': 0.03 }, cost: { purple: 75 },  requiredBiomeLevel: 11 },
@@ -205,9 +205,9 @@ export const swampRecipeEntries = [
     id: 'swamp-vest-t3', name: 'Plaguebound Shroud',
     recipeGroup: 'swamp', requiredBiomeLevel: 12, slot: 'armor',
     cost: { purple: 140 }, stats: { maxHp: 86, plating: 22 },
-    mechanicEffects: { 'defense.dot-resistance': 0.40, 'defense.hit-to-dot-pct': 0.20, 'defense.debuff-resist': 0.20 },
+    mechanicEffects: { 'defense.dot-resistance': 0.40, 'defense.hit-to-dot-pct': 0.20, 'defense.debuff-resistance': 0.20 },
     tier: 3,
-    icon: 'items/armor/leather-armor-5.png',
+    icon: 'items/armor/dark-armor-1.png',
     description: 'It turns the blows you take into a slow ache it then refuses to feel.',
     upgrades: [
       { stats: { maxHp: 18, plating: 6 }, cost: { purple: 180 },  requiredBiomeLevel: 12 },

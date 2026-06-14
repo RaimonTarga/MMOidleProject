@@ -33,6 +33,12 @@ export const CORRUPTION_MIN_SPEED_MULT = 0.35;
 export const BRITTLE_EFFECT_ID = 'brittle';
 /** Duration refreshed on each brittle application, matching other on-hit debuffs. */
 export const BRITTLE_DURATION_MS = 4_500;
+/**
+ * Brittle-shatter DR strip: while this effect is on a monster, its damage
+ * reduction is treated as 0. Applied by weapons with `weapon.brittle-shatter-*`
+ * when brittle reaches the shatter threshold; read in effectivePlating.ts.
+ */
+export const DR_SHATTER_EFFECT_ID = 'dr-shatter';
 
 // ── Chaotic family (Chaotic Axe / Frenzied Greataxe) ────────────────────────
 
@@ -75,12 +81,6 @@ export const ASHBRAND_TICK_MS     = 1_000;
 /** Burn-stack duration without a refreshing hit (ms). */
 export const ASHBRAND_DURATION_MS = 4_500;
 
-export const CINDERFANG_CONV_PCT   = 0.30;
-export const CINDERFANG_MAX_STACKS = 7;
-
-export const FROSTMOURNE_CONV_PCT   = 0.50;
-export const FROSTMOURNE_MAX_STACKS = 3;
-
 export interface BurnWeaponEntry {
   weaponId:  string;
   effectId:  string;
@@ -90,8 +90,17 @@ export interface BurnWeaponEntry {
   element:   DamageElement;
 }
 
+// All burn-DoT weapons. convPct/maxStacks mirror each weapon's recipe
+// dot-conversion keys; element drives damage-number flavor + target tile.
+// effectIds MUST be unique per weapon (the tick loop iterates the id set).
 export const BURN_FAMILY: BurnWeaponEntry[] = [
-  { weaponId: 'ashbrand-blade',   effectId: 'ashbrand-burn',   convPct: ASHBRAND_CONV_PCT,   maxStacks: ASHBRAND_MAX_STACKS,   element: 'fire'  },
-  { weaponId: 'cinderfang-saber', effectId: 'cinderfang-burn', convPct: CINDERFANG_CONV_PCT, maxStacks: CINDERFANG_MAX_STACKS, element: 'fire'  },
-  { weaponId: 'frostmourne-mace', effectId: 'frostmourne-burn',      convPct: FROSTMOURNE_CONV_PCT, maxStacks: FROSTMOURNE_MAX_STACKS, element: 'frost' },
+  // Swamp — hot/fire line (ashbrand → mirebrand → blightbrand) and cold/frost line.
+  { weaponId: 'ashbrand-blade',    effectId: 'ashbrand-burn',          convPct: ASHBRAND_CONV_PCT, maxStacks: ASHBRAND_MAX_STACKS, element: 'fire'  },
+  { weaponId: 'swamp-mirebrand',   effectId: 'swamp-mirebrand-burn',   convPct: 0.30, maxStacks: 5, element: 'fire'  },
+  { weaponId: 'swamp-blightbrand', effectId: 'swamp-blightbrand-burn', convPct: 0.30, maxStacks: 5, element: 'fire'  },
+  { weaponId: 'swamp-frostbrand',  effectId: 'swamp-frostbrand-burn',  convPct: 0.45, maxStacks: 3, element: 'frost' },
+  { weaponId: 'swamp-rimebrand',   effectId: 'swamp-rimebrand-burn',   convPct: 0.45, maxStacks: 3, element: 'frost' },
+  // T4 DoT weapons — same burn mechanic, values mirror their recipe dot-conversion keys.
+  { weaponId: 'tundra-glacial-rimebrand', effectId: 'rimebrand-burn',  convPct: 0.45, maxStacks: 3, element: 'frost' },
+  { weaponId: 'volcanic-blightbrand',     effectId: 'blightbrand-burn', convPct: 0.30, maxStacks: 5, element: 'fire'  },
 ];

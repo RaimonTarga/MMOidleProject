@@ -1,17 +1,22 @@
-import { GAME_CONFIG } from "@mmo-idle/shared";
+import { GAME_CONFIG, getResource, setResource } from "@mmo-idle/shared";
 import type { World } from "../../world/World";
 import { registerEvasion, resetEvadeAccumulator } from "./mitigation/evasion";
 import { registerDamageCap } from "./mitigation/damageCap";
 import { registerShieldAbsorb } from "./shields/shields";
-import { registerHitToDot, runDebtDrain } from "./mitigation/hitToDot";
-import { registerCheatDeath, resetCheatDeath } from "./mitigation/cheatDeath";
+import { registerShieldBreakHeal } from "./shields/shieldBreakHeal";
+import { registerHitToDot, runDebtDrain, resetDebtCheatDeath } from "./mitigation/hitToDot";
+import { registerCheatDeath, resetCheatDeath, runPostCheatDeathHeal } from "./mitigation/cheatDeath";
 import { registerDamageAbsorb, runAbsorbDrain } from "./shields/damageAbsorb";
 import { registerKillBurst, runRegenBurst } from "./regen/regenBurst";
 import { runPeriodicShield } from "./shields/periodicShield";
 import { runDebuffCleanse } from "./mitigation/debuffCleanse";
 import { runInCombatRegen } from "./regen/inCombatRegen";
 import { runRampRegen, resetRampRegen } from "./regen/rampRegen";
-import { registerHardening, runHardening, resetHardening } from "./mitigation/hardening";
+import { registerHardening, runHardening, resetHardening, runHardeningMaxDr, resetHardeningMaxDr } from "./mitigation/hardening";
+import { runStationaryDr } from "./mitigation/stationaryDr";
+import { runSustainedFightDr } from "./mitigation/sustainedFightDr";
+import { registerReactivePlating, runReactivePlating } from "./mitigation/reactivePlating";
+import { COMBAT_ELAPSED_KEY } from "./core/pools";
 
 /**
  * Register all defense-layer combat pipeline listeners.
@@ -30,11 +35,13 @@ export function initDefenseSystems(): void {
   registerEvasion();
   registerDamageCap();
   registerShieldAbsorb();
+  registerShieldBreakHeal(); // after shield absorb — reads its shieldBrokenMax metadata
   registerHitToDot();
   registerCheatDeath();
   registerDamageAbsorb();
   registerKillBurst();
   registerHardening();
+  registerReactivePlating();
 }
 
 /**
@@ -60,19 +67,34 @@ export function updateDefensiveSystems(
     if (!inCombat) {
       resetEvadeAccumulator(player);
       resetCheatDeath(player);
+      resetDebtCheatDeath(player);
       resetRampRegen(player);
       resetHardening(player);
+      resetHardeningMaxDr(player);
     }
+
+    // Combat-elapsed timer for in-fight ramps (sustained-fight DR, absorb ramp).
+    // Reset to 0 out of combat; accumulated before the ramps that read it run.
+    setResource(
+      player.tracksCombat,
+      COMBAT_ELAPSED_KEY,
+      inCombat ? getResource(player.tracksCombat, COMBAT_ELAPSED_KEY) + dt : 0,
+    );
 
     if (runDebtDrain(world, player)) continue; // player died → skip remaining
 
     runAbsorbDrain(world, player, dt);
+    runPostCheatDeathHeal(world, player, dt);
     runRegenBurst(world, player, dt, inCombat);
     runPeriodicShield(world, player, inCombat);
-    runDebuffCleanse(player);
+    runDebuffCleanse(world, player);
     runInCombatRegen(world, player, dt);
     runRampRegen(world, player, dt);
     runHardening(world, player, dt);
+    runHardeningMaxDr(world, player);
+    runStationaryDr(world, player, dt);
+    runSustainedFightDr(world, player);
+    runReactivePlating(world, player);
   }
 }
 

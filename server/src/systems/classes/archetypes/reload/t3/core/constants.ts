@@ -34,3 +34,17 @@ export const DEFAULT_SUPPRESS_SHRED = 4;
 export const DEFAULT_SUPPRESS_MAX = 5;
 export const DEFAULT_COVER_FIRE_DR = 0.45;
 export const COVER_FIRE_DR_CAP = 0.9;
+
+// ── T4 specs (placeholder constants — replaced at the balance pass) ───────────
+
+// Alternating Cadence (reload-light-t3-b)
+export const ALT_CADENCE_ATTACK_MULT = 2;  // even shots: 2× attack (on-hit zeroed)
+export const ALT_CADENCE_ONHIT_MULT  = 2;  // odd shots: 2× on-hit (attack zeroed)
+
+// Momentum (reload-balanced-t3-c)
+export const DEFAULT_MOMENTUM_APS_PER_STACK = 0.06; // +6% APS per stack
+export const DEFAULT_MOMENTUM_MAX_STACKS    = 5;
+export const MOMENTUM_DECAY_INTERVAL_MS     = 12_000; // OOC: shed 1 stack per interval
+
+// Siege (reload-heavy-t3-c)
+export const DEFAULT_SIEGE_DAMAGE_PER_SHOT = 0.5; // burst = attack × shotsFired × this

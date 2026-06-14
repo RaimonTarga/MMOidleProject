@@ -8,6 +8,8 @@ import {
   DEFAULT_HAIR_TRIGGER_MAX,
   DEFAULT_HAIR_TRIGGER_PCT,
   EXPLODING_CLIP_CLIENT_EFFECT,
+  ALT_CADENCE_ATTACK_MULT,
+  ALT_CADENCE_ONHIT_MULT,
 } from '../core/constants';
 
 function usesStandardMagazine(passives: Record<string, number | undefined>): boolean {
@@ -28,6 +30,20 @@ export function registerReloadLightT3(): void {
 
     const passives = player.usesSkills.passives;
     if (!usesStandardMagazine(passives)) return;
+
+    // Alternating Cadence: even shots = 2× attack (on-hit zeroed), odd shots =
+    // 2× on-hit (attack zeroed). On-hit TRIGGERS (DoT/procs) still fire on all
+    // shots — only the on-hit DAMAGE value is scaled (see combat.ts onHitDamageMult).
+    if ((passives['reload.alternating-cadence'] ?? 0) > 0) {
+      const shotPos = reload.ammoMax - reload.ammo; // 1-indexed shot just fired
+      if (shotPos % 2 === 0) {
+        ctx.damage = Math.max(1, Math.round(ctx.damage * ALT_CADENCE_ATTACK_MULT));
+        ctx.metadata['onHitDamageMult'] = 0;
+      } else {
+        ctx.damage = 0;
+        ctx.metadata['onHitDamageMult'] = ALT_CADENCE_ONHIT_MULT;
+      }
+    }
 
     const blunderbuss = (passives['reload.blunderbuss'] ?? 0) > 0;
     const isLastPellet = blunderbuss

@@ -85,6 +85,8 @@ export const volcanoMonsterEntries = [
     rampOnCombat: { stat: 'attack', perTickPct: 0.08, maxPct: 0.40, tickIntervalMs: 2000 },
   }],
 
+  // T4
+
   ['ember-skink', {
     id: 'ember-skink', name: 'Ember Skink', color: 0xff6622,
     // Fast swarm filler that heats up. Fire DoT per hit. DPS 64 × (1000/1300) = 49

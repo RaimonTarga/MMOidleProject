@@ -13,6 +13,9 @@ import {
   DEFAULT_COVER_FIRE_DR,
   DEFAULT_DEATH_MARK_DETONATE_MULT,
   DEATH_MARK_EFFECT_ID,
+  DEFAULT_MOMENTUM_APS_PER_STACK,
+  DEFAULT_MOMENTUM_MAX_STACKS,
+  DEFAULT_SIEGE_DAMAGE_PER_SHOT,
 } from './core/constants';
 
 function detonateDeathMark(
@@ -72,15 +75,51 @@ export function registerReloadLifecycleHandlers(): void {
         }
         markSliceDirty(world, player, 'usesReload');
       }
+
+      // Siege: capture how many shots were used from the clip being reloaded.
+      if ((passives['reload.siege'] ?? 0) > 0) {
+        reload.siegeShotsFired = Math.max(0, reload.ammoMax - reload.ammo);
+      }
     },
 
     onComplete(world, player) {
       if (!player.usesReload) return;
+      const reload = player.usesReload;
+      const passives = player.usesSkills.passives;
       removeStatusEffect(player.tracksCombat, COVER_FIRE_EFFECT_ID);
 
-      if ((player.usesSkills.passives['reload.hair-trigger'] ?? 0) > 0) {
-        player.usesReload.clipBaseAttackCooldownMs = 0;
+      if ((passives['reload.hair-trigger'] ?? 0) > 0) {
+        reload.clipBaseAttackCooldownMs = 0;
         markSliceDirty(world, player, 'usesReload');
+      }
+
+      // Momentum: each reload grants an attack-speed stack (decays out of combat).
+      if ((passives['reload.momentum'] ?? 0) > 0) {
+        const maxStacks = Math.round(passives['reload.momentum-max-stacks'] ?? DEFAULT_MOMENTUM_MAX_STACKS);
+        if (reload.momentumStacks < maxStacks) {
+          if (reload.momentumBaseCd === 0) reload.momentumBaseCd = player.performsAttack.attackCooldown;
+          reload.momentumStacks++;
+          const pct = passives['reload.momentum-aps-per-stack'] ?? DEFAULT_MOMENTUM_APS_PER_STACK;
+          player.performsAttack.attackCooldown = Math.max(
+            150,
+            Math.round(reload.momentumBaseCd / (1 + reload.momentumStacks * pct)),
+          );
+          reload.momentumDecayMs = 0;
+          markSliceDirty(world, player, 'performsAttack');
+          markSliceDirty(world, player, 'usesReload');
+        }
+      }
+
+      // Siege: fire a burst proportional to the shots used in the previous clip.
+      if ((passives['reload.siege'] ?? 0) > 0 && reload.siegeShotsFired > 0) {
+        const targetId = player.hasAttackTarget?.targetId;
+        const target = targetId ? world.getMonsterEntity(targetId) : undefined;
+        if (target) {
+          const perShot = passives['reload.siege-damage-per-shot'] ?? DEFAULT_SIEGE_DAMAGE_PER_SHOT;
+          const burst = Math.max(1, Math.round(player.dealsDamage.attack * reload.siegeShotsFired * perShot));
+          applyPlayerProcDamage(world, player, target, burst, { tags: ['siege'] });
+        }
+        reload.siegeShotsFired = 0;
       }
     },
   });

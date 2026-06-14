@@ -3,6 +3,10 @@ export interface AppliesDots {
   targetDotStacks: number;
   itInitialized: boolean;
   itBaseCd: number;
+  /** Frenzy: true while the doubled-APS state is active (target at max stacks). */
+  frenzyActive: boolean;
+  /** Frenzy: pre-frenzy attack cooldown, restored when the state drops. */
+  frenzyBaseCd: number;
 }
 
 export function initAppliesDots(): AppliesDots {
@@ -10,5 +14,7 @@ export function initAppliesDots(): AppliesDots {
     targetDotStacks: 0,
     itInitialized:   false,
     itBaseCd:        0,
+    frenzyActive:    false,
+    frenzyBaseCd:    0,
   };
 }

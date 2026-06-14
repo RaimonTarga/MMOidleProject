@@ -56,7 +56,7 @@ export const caveRecipeEntries = [
     id: 'cave-vest-t1', name: 'Bestial Hide',
     recipeGroup: 'cave', requiredBiomeLevel: 4, slot: 'armor',
     cost: { red: 22 }, stats: { maxHp: 16, plating: 2, damageReduction: 0.06 }, tier: 1,
-    icon: 'items/armor/bone-armor.png',
+    icon: 'items/armor/bone-armor-1.png',
     description: 'The hide of something large and unlucky, cured to a stubborn toughness.',
     upgrades: [
       { stats: { maxHp: 4, plating: 1, damageReduction: 0.01 }, cost: { red: 50 }, requiredBiomeLevel: 4 },
@@ -129,7 +129,7 @@ export const caveRecipeEntries = [
     recipeGroup: 'cave', requiredBiomeLevel: 9, slot: 'weapon',
     cost: { red: 120 }, stats: { attack: 92 }, attacksPerSecond: 1.20, tier: 3,
     mechanicEffects: { 'weapon.dead-swing-interval': 5 },
-    icon: 'items/weapons/axe-2.png',
+    icon: 'items/weapons/whirling-morning-star.png',
     description: 'Chaos given an edge — and, at last, a little rhythm. Every fifth swing still finds only air.',
     upgrades: [
       { stats: { attack: 20 }, cost: { red: 174 },  requiredBiomeLevel: 10 },
@@ -146,7 +146,7 @@ export const caveRecipeEntries = [
     cost: { red: 100, green: 25 }, stats: { hpRegen: 11 },
     mechanicEffects: { 'defense.regen-burst-pct': 0.13, 'defense.regen-burst-interval-ms': 6000, 'defense.in-combat-regen-pct': 0.07 },
     tier: 3,
-    icon: 'items/charms/bright-charm-2.png',
+    icon: 'items/charms/jewel-charm-3.png',
     description: 'It pulses on its own clock, and hums a low, steady mending between the beats.',
     upgrades: [
       { mechanicEffects: { 'defense.regen-burst-pct': 0.03, 'defense.in-combat-regen-pct': 0.01 }, cost: { red: 50, green: 25 },  requiredBiomeLevel: 11 },
@@ -175,7 +175,7 @@ export const caveRecipeEntries = [
     recipeGroup: 'cave', requiredBiomeLevel: 12, slot: 'armor',
     cost: { red: 116, yellow: 29 }, stats: { maxHp: 50, plating: 10, damageReduction: 0.20 },
     tier: 3,
-    icon: 'items/armor/plate-armor-4.png',
+    icon: 'items/armor/bone-armor-2.png',
     description: 'Layered scale over thick hide — nothing fancy, just the most of everything that stops a blow.',
     upgrades: [
       { stats: { maxHp: 10, plating: 2, damageReduction: 0.02 }, cost: { red: 135, yellow: 45 },  requiredBiomeLevel: 12 },

@@ -125,8 +125,21 @@ export function registerShieldAbsorb(): void {
     if (ctx.defenderType !== "player") return;
     if (ctx.damage <= 0) return;
 
-    const result = drainPlayerShields(ctx.defender, ctx.damage);
+    const player = ctx.defender;
+    // Snapshot shields about to drain so we can detect ones that fully break
+    // (for defense.shield-break-* heals; consumed in registerShieldBreakHeal).
+    const snapshot = player.holdsShields
+      ? player.holdsShields.shields.map((s) => ({ s, before: s.amount, maxAmount: s.maxAmount }))
+      : [];
+
+    const result = drainPlayerShields(player, ctx.damage);
     ctx.metadata["shieldAbsorbed"] = result.absorbed;
     ctx.damage = result.damage;
+
+    let brokenMax = 0;
+    for (const { s, before, maxAmount } of snapshot) {
+      if (before > 0 && s.amount <= 0) brokenMax += maxAmount;
+    }
+    if (brokenMax > 0) ctx.metadata["shieldBrokenMax"] = brokenMax;
   });
 }

@@ -23,6 +23,24 @@ import type { DamageElement } from '../../systems/dotElements';
  *               a RepeatingAction to slam every N seconds. `damageMult` scales off
  *               the boss's current attack (default 1.0).
  *
+ *   apply-shield   — gain a runtime enemyShield override mid-fight (same mechanic as
+ *               the static MonsterDefinition.enemyShield). The barrier comes up on the
+ *               next incoming hit. Permanent until shed-defense / boss death.
+ *   apply-soft-cap — gain a runtime enemySoftCap override mid-fight (same mechanic as
+ *               the static MonsterDefinition.enemySoftCap). Permanent until shed.
+ *   shed-defense   — drop ALL active defenses: clears the runtime shield/soft-cap
+ *               overrides AND suppresses any static enemyShield/enemySoftCap, then
+ *               reduces current plating to ~20%. The desperation finale. Pair with an
+ *               explicit slam in the same phase for the transition impact.
+ *   modify-ramp-debuff — raise the caps on this boss's rampDebuff. Patches live
+ *               frost-ramp stacks on players in-node and all future applications.
+ *   spawn-adds     — spawn a burst of trash adds near the boss (same as summon) and
+ *               track them so they are despawned when the boss dies.
+ *
+ * `stat-buff` supports `evasion` in addition to the entity stats: it multiplies the
+ * boss's effective per-hit dodge fraction via a runtime override (mult 0 = stop
+ * dodging entirely).
+ *
  * Omitting durationMs (or undefined) means the effect lasts until the boss dies.
  */
 export type BossAction =
@@ -30,8 +48,13 @@ export type BossAction =
   | { type: 'regen';     hpPctPerSec: number;                 durationMs?: number }
   | { type: 'shield';    drAdd: number;   durationMs: number }
   | { type: 'summon';    monsterTypeId: string; count: number; offsetRange?: number }
-  | { type: 'stat-buff'; stat: 'attack' | 'speed' | 'plating' | 'damageReduction'; mult: number; durationMs?: number }
+  | { type: 'stat-buff'; stat: 'attack' | 'speed' | 'plating' | 'damageReduction' | 'evasion'; mult: number; durationMs?: number }
   | { type: 'slam';      radius: number; damageMult?: number }
+  | { type: 'apply-shield';   shieldPct: number; intervalMs: number; durationMs: number }
+  | { type: 'apply-soft-cap'; capPct: number; capMult: number }
+  | { type: 'shed-defense' }
+  | { type: 'modify-ramp-debuff'; moveSlowMaxPct: number; atkSlowMaxPct: number }
+  | { type: 'spawn-adds'; monsterTypeId: string; count: number; offsetRange?: number }
   | {
       type: 'morph';
       isRanged?: boolean;

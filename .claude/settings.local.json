@@ -55,7 +55,11 @@
       "PowerShell(Get-NetTCPConnection *)",
       "PowerShell(docker compose *)",
       "PowerShell(docker ps *)",
-      "Bash(grep -iE \"monsterMechanics|combat.ts|combat\\\\\\\\\\\\\\\\engine\")"
+      "Bash(grep -iE \"monsterMechanics|combat.ts|combat\\\\\\\\\\\\\\\\engine\")",
+      "PowerShell(Set-Location \"C:\\\\Users\\\\osaif\\\\Documents\\\\Claude\\\\Projects\\\\MMO idle\"; \\(Get-Content package.json -Raw | ConvertFrom-Json\\).scripts | Format-List)",
+      "Read(//c/c/Users/osaif/Documents/Claude/Projects/MMO idle/shared/src/data/skillTree/**)",
+      "Read(//c/c/Users/osaif/Documents/Claude/Projects/MMO idle/shared/src/data/**)",
+      "Bash(xargs grep -l \"NODE_BIOMES\\\\|BIOME_DATABASE\")"
     ]
   }
 }

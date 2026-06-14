@@ -28,12 +28,55 @@ export const DEFENSE_KEYS = [
   // of GAME_CONFIG.EVADE_MITIGATION_BASE. Final value is clamped to [0,1].
   'defense.evade-mitigation',
   'defense.cheat-death',
+  // After cheat-death saves the player, restore this fraction of maxHp as a
+  // heal-over-time spread across post-cheat-death-heal-ms. 0.30 = 30% of maxHp.
+  'defense.post-cheat-death-heal-pct',
+  // Duration (ms) of the post-cheat-death heal-over-time window.
+  'defense.post-cheat-death-heal-ms',
   'defense.ramp-regen-start-pct',
   'defense.ramp-regen-max-pct',
   'defense.ramp-regen-ramptime-ms',
   'defense.hardening-per-sec',
   'defense.hardening-max',
   'defense.hardening-reset-pct',
+  // While stationary, ramp damage-reduction up to this fraction (0.15 = +15% DR)
+  // over stationary-dr-ramptime-ms. Moving erodes the ramp at the same rate
+  // (symmetric decay), so brief steps barely dent it. ("Become the glacier.")
+  'defense.stationary-dr-pct',
+  'defense.stationary-dr-ramptime-ms',
+  // ── T4 defensive mechanics ───────────────────────────────────────────────
+  // Sustained-fight DR: while in combat, gain `bonus` DR every step, capping at
+  // `dr-max`, reaching the cap over `ramptime-ms` (step = ramptime ÷ (max/bonus)).
+  'defense.sustained-fight-dr-bonus',
+  'defense.sustained-fight-dr-max',
+  'defense.sustained-fight-ramptime-ms',
+  // Absorb that ramps in combat from `start` to `max` over `ramptime-ms`
+  // (replaces flat absorb-pct on the conversion).
+  'defense.absorb-ramp-start-pct',
+  'defense.absorb-ramp-max-pct',
+  'defense.absorb-ramptime-ms',
+  // Once per combat, if the damage-debt pool would exceed current HP, clear it.
+  'defense.debt-cheat-death',
+  // Heal when a cleanse pulse fires: per stack actually removed, or a flat heal
+  // when there was nothing to cleanse.
+  'defense.cleanse-empty-heal-pct',
+  'defense.cleanse-per-stack-heal-pct',
+  // Heal a fraction of a broken shield's max value when it fully breaks (two keys
+  // for the charm and armor variants; summed).
+  'defense.shield-break-heal-pct',
+  'defense.shield-break-hp-recovery-pct',
+  // 1 = when the damage cap triggers, immediately rearm the periodic shield.
+  'defense.max-hit-rearms-shield',
+  // At max hardening stacks, pulse +`bonus` DR for `ms`.
+  'defense.hardening-max-dr-bonus',
+  'defense.hardening-max-dr-ms',
+  // Fraction of healing past max HP converted into a temporary shield.
+  'defense.overheal-shield-pct',
+  // Reactive plating: each hit taken grants +`per-stack` plating for `duration-ms`,
+  // stacking (refreshing the timer) up to `max-stacks`.
+  'defense.hit-plating-per-stack',
+  'defense.hit-plating-max-stacks',
+  'defense.hit-plating-duration-ms',
 ] as const;
 
 export const CADENCE_KEYS = [
@@ -46,11 +89,26 @@ export const CADENCE_KEYS = [
   'cadence.debuff-vuln-pct',
   'cadence.debuff-vuln-ms',
   'cadence.debuff-plating-shred',
+  // Cursed Finale hard cap: max total flat plating this source can strip per target.
+  'cadence.debuff-shred-cap',
   'cadence.momentum-buildup',
   'cadence.momentum-echo',
   'cadence.detonation',
   'cadence.hemorrhage',
   'cadence.charge-buildup',
+  // T4 specs ─────────────────────────────────────────────────────────────────
+  // Aftershock (light): after a finisher, the next N regular attacks fire on-hit twice.
+  'cadence.aftershock',
+  // Aftershock also grants flat on-hit damage scaling with player tier ((tier+1) × this).
+  'cadence.aftershock-onhit-per-tier',
+  // Metronome (balanced): each buildup attack adds flat damage to subsequent attacks + finisher.
+  'cadence.metronome',
+  'cadence.metronome-flat',
+  // Rampage (heavy): each finisher stacks threshold-down / APS-up / atk-down / mult-up.
+  'cadence.rampage',
+  // Crescendo (heavy): per-second in-combat stacks, consumed on finisher for flat bonus.
+  'cadence.crescendo',
+  'cadence.crescendo-flat',
 ] as const;
 
 export const COOLDOWN_KEYS = [
@@ -70,6 +128,19 @@ export const COOLDOWN_KEYS = [
   'cooldown.temporal-buff-max-ms',
   'cooldown.temporal-flat-dmg',
   'cooldown.entropy-base-damage',
+  // T4 specs ─────────────────────────────────────────────────────────────────
+  // Rupture (light): execution bypasses plating; brief window bypasses 50% on regulars.
+  'cooldown.rupture',
+  'cooldown.rupture-dr-pierce',
+  // Reverb (balanced): attacks-between-executions charge the NEXT execution.
+  'cooldown.reverb',
+  'cooldown.reverb-bonus-per-attack',
+  // Patience Paid (balanced): uninterrupted CD ramps attack + execution damage.
+  'cooldown.patience-paid',
+  // Vengeance (heavy): execution bonus from damage taken since last execution.
+  'cooldown.vengeance',
+  'cooldown.vengeance-mult',
+  'cooldown.vengeance-floor',
 ] as const;
 
 export const RELOAD_KEYS = [
@@ -103,6 +174,16 @@ export const RELOAD_KEYS = [
   'reload.cover-fire',
   'reload.cover-fire-dr',
   'reload.acquire-radius-mult',
+  // T4 specs ─────────────────────────────────────────────────────────────────
+  // Alternating Cadence (light): even shots = 2× attack, odd shots = 2× on-hit.
+  'reload.alternating-cadence',
+  // Momentum (balanced): each reload grants stacking attack speed (decays OOC).
+  'reload.momentum',
+  'reload.momentum-aps-per-stack',
+  'reload.momentum-max-stacks',
+  // Siege (heavy): reload completion fires a burst scaled by shots used last clip.
+  'reload.siege',
+  'reload.siege-damage-per-shot',
 ] as const;
 
 export const ENERGY_KEYS = [
@@ -117,6 +198,14 @@ export const ENERGY_KEYS = [
   'energy.singularity-execute',
   'energy.cascading-induction',
   'energy.superconducting-mass',
+  // T4 specs ─────────────────────────────────────────────────────────────────
+  'energy.overdrive',          // light: discharge → +ATK% mode, decays 100→0
+  'energy.upkeep',             // light: no discharge; on-hit scales with upkeep timer
+  'energy.binary-cycle',       // balanced: alternating charge/discharge states
+  'energy.awakened-lightning', // balanced: discharge empowers next N attacks
+  'energy.charge-state',       // balanced: attack damage scales with energy %
+  'energy.critical-mass',      // heavy: consecutive discharges stack
+  'energy.endless-storm',      // heavy: discharge applies a persistent storm DoT
 ] as const;
 
 export const DOT_KEYS = [
@@ -133,16 +222,40 @@ export const DOT_KEYS = [
   'dot.permafrost',
   'dot.freezing-cold',
   'dot.glacial-fracture',
+  // T4 specs ─────────────────────────────────────────────────────────────────
+  'dot.frenzy',         // poison: double APS while at max stacks
+  'dot.ignition',       // fire: front-load all stacks on a fresh target
+  'dot.rimeshatter',    // frost: at max stacks, full direct + DR debuff
+  'dot.shatter-strike', // frost: per-stack flat direct bonus, locked-peak cycle
 ] as const;
 
 export const SHARED_KEYS = [
   'shared.empowered-mult-add',
+  // Multiplicative bonus to the empowered-attack multiplier: final = base * (1 + bonus).
+  // 0.25 = +25% to the whole empowered multiplier regardless of the spec's base, so
+  // every spec gains the same %. (Distinct from the additive shared.empowered-mult-add.)
+  'weapon.empowered-mult-bonus',
   // 1 = this attacker's debuffs/DoT stacks still land on an evaded hit (pierce evade).
   'shared.applies-through-evade',
   // Additive multiplier applied to final damage after plating/DR. 0.25 = +25%.
   'shared.damage-mult',
   // Damage multiplier applied on the very first hit ever landed on a fresh monster entity.
   'weapon.first-strike-mult',
+  // Chaotic ("dead swing") cadence: every Nth player hit deals 0 damage but still
+  // applies on-hit effects. Read in runPlayerAttack; CHAOTIC_FAMILY is the legacy
+  // fallback for weapons without this key.
+  'weapon.dead-swing-interval',
+  // Plague Axe: the dead swing applies `vulnerability` (+damage-taken) instead of
+  // damage. -pct is the fraction added (0.20 = +20%), -ms the debuff duration.
+  'weapon.dead-swing-vuln-pct',
+  'weapon.dead-swing-vuln-ms',
+  // Execute: hits vs targets at/below `execute-threshold-pct` HP deal ×`execute-dmg-mult`.
+  'weapon.execute-threshold-pct',
+  'weapon.execute-dmg-mult',
+  // Brittle shatter: at `brittle-shatter-threshold` stacks, strip the target's
+  // damage reduction entirely for `brittle-shatter-dr-strip-ms`.
+  'weapon.brittle-shatter-threshold',
+  'weapon.brittle-shatter-dr-strip-ms',
   // Brittle armor-shred debuff: flat plating reduction per stack applied on hit.
   'weapon.brittle-plating',
   // Brittle armor-shred debuff: damage-reduction fraction removed per stack applied on hit.

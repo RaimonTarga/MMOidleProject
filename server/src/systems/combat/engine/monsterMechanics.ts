@@ -86,7 +86,9 @@ export function applyEnemySoftCap(
   def: MonsterDefinition | undefined,
   damage: number,
 ): number {
-  const cap = def?.enemySoftCap;
+  // shed-defense suppresses both the runtime override and any static cap.
+  if (monster.scriptsBoss?.defenseShed) return damage;
+  const cap = monster.scriptsBoss?.softCapOverride ?? def?.enemySoftCap;
   if (!cap || damage <= 0) return damage;
   const threshold = monster.hasHealth.maxHp * cap.capPct;
   if (damage <= threshold) return damage;
@@ -110,7 +112,9 @@ export function applyEnemyShield(
   damage: number,
   now: number,
 ): { damage: number; absorbed: number } {
-  const shield = def?.enemyShield;
+  // shed-defense suppresses both the runtime override and any static barrier.
+  if (monster.scriptsBoss?.defenseShed) return { damage, absorbed: 0 };
+  const shield = monster.scriptsBoss?.shieldOverride ?? def?.enemyShield;
   if (!shield || damage <= 0) return { damage, absorbed: 0 };
   const cs = monster.tracksCombat;
 

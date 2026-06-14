@@ -44,9 +44,12 @@ export interface PlayerStatsTarget {
   hasPosition:     HasPosition;
   usesSkills:      UsesSkills;
   holdsInventory:  HoldsInventory;
+  /** Player progression tier (0-indexed: T1=0 … T4=3). Drives per-tier class bonuses. */
+  playerTier?:     number;
   /** Optional callback when cadence threshold is recalculated (writes to usesCadence on server). */
   resetCadenceCounters?: (threshold: number) => void;
 }
+
 
 // Class-specific bonus applied when the player chose close range (range-close).
 const CLOSE_RANGE_CLASS_BONUS: Record<string, { plating: number; hpRegen: number }> = {
@@ -180,6 +183,15 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
     }
   }
   finalizeBurst(burstAcc, p.usesSkills.passives);
+
+  // 3a. Shockblade (cadence-light-t3-a): flat on-hit damage scaling with the
+  // player's tier, always active while the passive is unlocked. The per-tier
+  // rate is authored on the node ('cadence.aftershock-onhit-per-tier'), so this
+  // only affects the Shockblade branch.
+  const aftershockOnHitPerTier = p.usesSkills.passives['cadence.aftershock-onhit-per-tier'] ?? 0;
+  if (aftershockOnHitPerTier > 0) {
+    p.dealsDamage.onHitDamage += ((p.playerTier ?? 0) + 1) * aftershockOnHitPerTier;
+  }
 
   // Re-clamp damage reduction: equipment + upgrades are applied after the step-2 clamp.
   p.mitigatesDamage.damageReduction = Math.min(0.9, Math.max(0, p.mitigatesDamage.damageReduction));

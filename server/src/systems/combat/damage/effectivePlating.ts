@@ -1,6 +1,7 @@
 import {
   getStatusEffect,
   BRITTLE_EFFECT_ID,
+  DR_SHATTER_EFFECT_ID,
   type TracksCombat,
 } from '@mmo-idle/shared';
 
@@ -43,5 +44,7 @@ export function effectiveDamageReductionAfterBrittle(
   monsterState: TracksCombat | undefined,
 ): number {
   if (!monsterState) return baseDr;
+  // Brittle shatter: while the DR-strip debuff is active, all DR is removed.
+  if (getStatusEffect(monsterState, DR_SHATTER_EFFECT_ID)) return 0;
   return Math.max(0, baseDr - brittleReduction(monsterState).dr);
 }

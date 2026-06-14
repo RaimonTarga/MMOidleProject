@@ -373,6 +373,16 @@ function buffEffectText(buff: PlayerBuff): string {
       return "+attack speed";
     case "cadence-echo":
       return "echo hit stored";
+    case "cadence-resonance":
+      return "finisher amplified";
+    case "cadence-verdict":
+      return "banked execution power";
+    case "cadence-aftershock":
+      return "next attacks fire on-hit twice";
+    case "cadence-metronome":
+      return "+flat damage to subsequent hits";
+    case "cadence-rampage":
+      return "+attack speed and finisher damage";
     case "cooldown-overdrive":
       return "+movement speed";
     case "cooldown-eternal-charge":

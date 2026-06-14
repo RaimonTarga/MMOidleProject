@@ -1,7 +1,7 @@
 import { computeScaledDotDamage, getStatusEffect } from '@mmo-idle/shared';
 import type { PlayerEntity } from '../../../ecs/entity';
 import type { World } from '../../../world/World';
-import { getDefenseAbsorbPool, getDefenseBurstPool, getDefenseDebtPool } from './pools';
+import { getCheatDeathHealPool, getDefenseAbsorbPool, getDefenseBurstPool, getDefenseDebtPool } from './pools';
 
 // Display-only HP-bar forecast: how much pending damage will hit the player
 // (ticking DoT + deferred hit-to-DoT debt), and how much heal-over-time
@@ -35,7 +35,7 @@ function forecastIncomingDot(player: PlayerEntity): number {
 
 function forecastPendingHeal(player: PlayerEntity): number {
   const cs = player.tracksCombat;
-  return Math.round(getDefenseBurstPool(cs) + getDefenseAbsorbPool(cs));
+  return Math.round(getDefenseBurstPool(cs) + getDefenseAbsorbPool(cs) + getCheatDeathHealPool(cs));
 }
 
 export function mirrorHpForecast(world: World): void {

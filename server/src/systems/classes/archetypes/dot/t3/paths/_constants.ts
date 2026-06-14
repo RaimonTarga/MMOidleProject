@@ -1,9 +1,24 @@
 // ── Per-path constants (consumed by paths/ files and mirroring.ts) ───────────
 
 // Light — Poison Explosion (dot-light-t3-a)
-export const PE_MAX_STACKS  = 20;
-/** burst = maxStacks × dmgPerStack × PE_BURST_TICKS */
+export const PE_MAX_STACKS  = 10;   // design: 10-stack cap (was 20)
+/** burst = maxStacks × dmgPerStack × PE_BURST_TICKS = "10 full ticks' worth" */
 export const PE_BURST_TICKS = 10;
+
+// ── T4 specs (placeholder constants — replaced at the balance pass) ───────────
+
+// Light — Frenzy (dot-light-t3-c) — APS doubling at max stacks (tick-driven).
+export const FRENZY_APS_FACTOR = 2;   // attack speed multiplier while at max stacks
+
+// Balanced — Ignition (dot-balanced-t3-b)
+export const IGNITION_VALUE_MULT = 0.6;  // tick value of each front-loaded stack
+
+// Heavy — Rimeshatter (dot-heavy-t3-a)
+export const RIMESHATTER_DR_DEBUFF = 0.08;  // DR reduction applied while at max stacks
+export const RIMESHATTER_DR_MS     = 2_000; // debuff refresh window
+
+// Heavy — Shatter Strike (dot-heavy-t3-c)
+export const SHATTER_STRIKE_BONUS_PER_STACK = 10;  // flat direct bonus per active frost stack
 
 // Light — Eternal Doom (dot-light-t3-b)
 export const ED_BASE_STACKS   = 8;

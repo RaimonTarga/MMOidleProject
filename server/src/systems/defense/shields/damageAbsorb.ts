@@ -2,7 +2,7 @@ import { addResource, getResource, setResource } from '@mmo-idle/shared';
 import type { PlayerEntity } from '../../../ecs/entity';
 import type { World } from '../../../world/World';
 import { registerCombatListener } from '../../combat/engine/combatPipeline';
-import { ABSORB_POOL_KEY, POOL_DRAIN_MS } from '../core/pools';
+import { ABSORB_POOL_KEY, POOL_DRAIN_MS, COMBAT_ELAPSED_KEY } from '../core/pools';
 import { applyHealToPlayer } from '../regen/healing';
 
 /**
@@ -20,7 +20,19 @@ export function registerDamageAbsorb(): void {
     if (ctx.metadata["isDot"]) return;
 
     const player = ctx.defender;
-    const absorbPct = player.usesSkills.passives['defense.absorb-pct'] ?? 0;
+    const flatPct = player.usesSkills.passives['defense.absorb-pct'] ?? 0;
+
+    // Ramping absorb (Deepfreeze Ward): climbs from start→max over a fight.
+    // Takes the larger of the flat and ramped values (no item carries both).
+    let absorbPct = flatPct;
+    const rampMax = player.usesSkills.passives['defense.absorb-ramp-max-pct'] ?? 0;
+    if (rampMax > 0) {
+      const start    = player.usesSkills.passives['defense.absorb-ramp-start-pct'] ?? 0;
+      const ramptime = player.usesSkills.passives['defense.absorb-ramptime-ms'] ?? 0;
+      const elapsed  = getResource(player.tracksCombat, COMBAT_ELAPSED_KEY);
+      const progress = ramptime > 0 ? Math.min(1, elapsed / ramptime) : 1;
+      absorbPct = Math.max(flatPct, start + (rampMax - start) * progress);
+    }
     if (absorbPct <= 0) return;
 
     addResource(player.tracksCombat, ABSORB_POOL_KEY, ctx.damage * absorbPct);

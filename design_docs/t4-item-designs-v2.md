@@ -1,9 +1,6 @@
-# T4 Item Designs — Visual Reference
+# T4 Item Designs — ✅ LOCKED
 
-**Scope:** weapon, armor, charm per biome. Boots excluded (already designed) except Trench (TBD).
-Stats shown as base values. Upgrade scaling shown as (+per step → total at +3).
-Numbers are order-of-magnitude baselines — exact values in the math/balance pass.
-New mechanic keys (†) require engine implementation before going live.
+**Phase status: CLOSED.** All biome items are finalized for the design pass. Numbers are order-of-magnitude baselines pending the math/balance pass. Do not reopen for new ideas — post-launch iteration handles changes.
 
 ---
 
@@ -31,7 +28,7 @@ New mechanic keys (†) require engine implementation before going live.
 | Slot | Name | Base Stats | Key Mechanic | Notes |
 |---|---|---|---|---|
 | Weapon (slow) | **Earthsunder Maul** | ATK 132, APS 0.40 | Pure attack | Baseline; plating-piercing, strong empowered. Upgrades: +ATK 18/step → 186 at +3 |
-| Weapon (medium) | **Warmaul** | ATK 90, APS 0.65 | `empowered-mult-bonus: +0.6` | †New branch. Universal speed; adds +0.6 flat to class empowered multiplier. Best for light/balanced frames. Upgrades: +ATK 12/step → 126 at +3 |
+| Weapon (medium) | **Warmaul** | ATK 90, APS 0.65 | `empowered-mult-bonus: +0.6` | †New branch. Universal speed; scales the class empowered multiplier by ×(1+0.6) — multiplicative, same % for every spec. Best for light/balanced frames. Upgrades: +ATK 12/step → 126 at +3 |
 | Armor | **Titan's Keep** | HP 100, PLT 40, DR 0.12 | `max-hit-pct: 0.25, max-hit-mult: 0.5` | †`max-hit-rearms-shield: 1` — cap trigger immediately rearms the shield charm. Upgrades: +HP 25, +PLT 10/step |
 | Armor (alt) | **Stormwall Plate** | HP 100, PLT 30, DR 0.14 | `max-hit-pct: 0.25, max-hit-mult: 0.5` | †`shield-break-hp-recovery-pct: 0.30` — when shield breaks, recover 30% of its max value as HP. Pairs with any shield charm; sustain in long fights. Upgrades: +HP 24, +PLT 8/step |
 | Charm | **Fortress Core** | hpRegen 14 | `shield-pct: 0.22` (+0.04/step → 0.34) | Standard shield charm. Pairs with Titan's Keep for the cap-rearms loop |
@@ -48,7 +45,7 @@ New mechanic keys (†) require engine implementation before going live.
 | Slot | Name | Base Stats | Key Mechanic | Notes |
 |---|---|---|---|---|
 | Weapon | **Zenith Cross** | ATK 62, APS 0.70 | `first-strike-mult: 2.5` | Up from 2.0× at T3. Highest opening alpha in the game. Upgrades: +ATK 10/step → 92 at +3 |
-| Armor | **Deathless Duneplate** | HP 165, PLT 38 | `cheat-death: 1, cleanse-stacks: 2, cleanse-interval-ms: 7000, debuff-resist: 0.30` | †`post-cheat-death-atk-mult: 1.5, post-cheat-death-ms: 3000` — after surviving via cheat-death, next 3s deal +50% attack damage. Upgrades: +HP 40, +PLT 9/step |
+| Armor | **Deathless Duneplate** | HP 165, PLT 38 | `cheat-death: 1, cleanse-stacks: 2, cleanse-interval-ms: 7000, debuff-resist: 0.30` | †`post-cheat-death-heal-pct: 0.30, post-cheat-death-heal-ms: 4000` — after surviving via cheat-death, restore 30% max HP over 4s. Upgrades: +HP 40, +PLT 9/step |
 | Charm | **Last Oasis** | hpRegen 14 | `cleanse-stacks: 2, cleanse-interval-ms: 6000, cleanse-empty-heal-pct: 0.07` (+0.015/step → 0.115) | †`cleanse-per-stack-heal-pct: 0.02` — each cleansed debuff stack heals 2% maxHP additionally. Sustain scales with debuff density of the zone |
 | Boots | *[Designed]* | — | — | — |
 
@@ -110,7 +107,7 @@ New mechanic keys (†) require engine implementation before going live.
 
 | Slot | Name | Base Stats | Key Mechanic | Notes |
 |---|---|---|---|---|
-| Weapon | **Plague Axe** | ATK 110, APS 1.10 | `dead-swing-interval: 3, dead-swing-debuff: vulnerable, dead-swing-debuff-pct: 0.20, dead-swing-debuff-ms: 4000` | Dead swing (every 3rd attack): no damage but applies 20% vulnerability for 4s. Party synergy — all damage on target increases. Note: dead swing must NOT consume class mechanic resources (design bible invariant) |
+| Weapon | **Plague Axe** | ATK 110, APS 1.10 | `dead-swing-interval: 3, dead-swing-vuln-pct: 0.20, dead-swing-vuln-ms: 4000` | ✅ Dead swing (every 3rd attack): no damage but applies +20% damage-taken (`vulnerability`) for 4s. Party synergy — all damage on target increases. Dead swing does NOT consume class mechanic resources (design bible invariant). Vuln key is numeric (presence-gated), not a string |
 | Armor | **Plaguebound Mantle** | HP 150, PLT 36 | `dot-resistance: 0.40, hit-to-dot-pct: 0.22, debuff-resist: 0.25` | †`nearby-enemy-plating: 2` per nearby enemy (cap 5 enemies = +10 PLT). High-density passive reward. Upgrades: +HP 36, +PLT 9/step |
 | Armor (alt) | **Debt Ward** | HP 150, PLT 30 | `dot-resistance: 0.40, hit-to-dot-pct: 0.22` | †`debt-cheat-death: 1` — once per combat, if accumulated damage debt would exceed current HP pool, the debt clears completely. Cross-pollination of Desert last-stand with Swamp debt mechanic. No shield required |
 | Charm | **Necrotic Pulse** | hpRegen 14 | `regen-burst-pct: 0.13` (+0.03/step → 0.22), `regen-burst-interval-ms: 6000` | Baseline regen-burst inherited from Cave. No kill-trigger (moved to T5) — fires on standard 6s timer |
@@ -129,7 +126,8 @@ New mechanic keys (†) require engine implementation before going live.
 | Weapon | **Abyssal Axe** | ATK 110, APS 1.15 | `dead-swing-interval: 4` | Sustained-DPS Cave branch. Lower miss frequency (1-in-4 vs 1-in-3). †`execute-threshold-pct: 0.20, execute-dmg-mult: 2.5` — attacks vs enemies below 20% HP deal 2.5×. The rare abyssal elite rarely reaches 20%; when it does, finish it fast. Upgrades: +ATK 20/step → 170 at +3 |
 | Armor | **Abyssal Carapace** | HP 90, PLT 24, DR 0.22 | Premium DR | †`sustained-fight-dr-bonus: 0.01, sustained-fight-dr-max: 0.05, sustained-fight-ramptime-ms: 10000` — DR ramps up +1% per ~2s of sustained combat, capping at +5% after 10s. Against the rare long abyssal fight, patience earns extra mitigation. Upgrades: +HP 22, +PLT 6, +DR 0.02/step → DR 0.28 at +3 |
 | Charm | **Pressure Vessel** | hpRegen 14 | `absorb-pct: 0.16` (+0.03/step → 0.25), `regen-burst-pct: 0.10` (+0.02/step → 0.16), `regen-burst-interval-ms: 8000` | Absorb softens the rare enormous single hits. Burst heal on an 8s timer provides periodic recovery. No kill-trigger (kills are rare in this biome anyway) |
-| Boots | **Abyssal Stalkers** *(TBD — stealth branch from Cave)* | Base stats TBD | `stealth-pct: 0.65` | †Reduces enemy detection range by 65%. Approach rare abyssal creatures before they aggro. Consider: brief speed burst when breaking stealth (`stealth-break-sprint-ms: 1500`). Only boots in this document not yet designed |
+| Boots (stealth) | **Abyssal Stalkers** | SPD 52 | `stealth-pct: 0.72` | Reduces enemy detection range by 72%. †`stealth-first-strike-ms: 3000` — for 3s after first engaging (breaking stealth), attacks benefit from a first-strike window. Synergises with Desert's Zenith Cross. Upgrades: +SPD 6/step → 70 at +3 |
+| Boots (tenacity) | **Abyssal Treaders** | SPD 48 | `tenacity-pct: 0.55` | Flat CC resistance — reduces duration of all slows, stuns, and debuffs by 55%. Different from Graveyard's kill-stack tenacity; this is always-on. Suits the Trench's slow heavy hitters. Upgrades: +SPD 5/step → 63 at +3 |
 
 ---
 
@@ -146,8 +144,8 @@ Ideas that emerged in this session without a confirmed home. Candidates for vari
 | Nearby-enemy plating | `nearby-enemy-plating` | Gain flat plating per nearby enemy (capped) | Graveyard armor (density reward) |
 | Sustained-fight DR ramp | `sustained-fight-dr-bonus/max/ramptime` | DR ramps slowly over a single long fight | Trench armor (patient elite tanking) |
 | Execute threshold | `execute-threshold-pct, execute-dmg-mult` | Bonus damage vs enemies below X% HP | Trench weapon |
-| Shield break → sprint | `stealth-break-sprint-ms` | Brief speed burst when breaking out of stealth | Trench boots |
-| Empowered mult bonus | `empowered-mult-bonus` | Flat additive bonus to class empowered multiplier | Mountain weapon (Warmaul) |
+| Stealth first-strike window | `stealth-first-strike-ms` | After breaking stealth, attacks have a first-strike window for X ms | Trench boots (Stalkers) |
+| Empowered mult bonus | `empowered-mult-bonus` | Multiplicative bonus to class empowered multiplier: final = base × (1 + bonus) | Mountain weapon (Warmaul) |
 
 ---
 
@@ -157,11 +155,12 @@ All mechanics marked † need engine implementation before going live.
 
 | Key | Mechanic | Priority |
 |---|---|---|
-| `weapon.empowered-mult-bonus` | Flat bonus to class empowered multiplier | Before balance pass |
+| `weapon.empowered-mult-bonus` | Multiplicative bonus to class empowered multiplier — final = base × (1 + bonus) | ✅ Implemented |
 | `defense.max-hit-rearms-shield` | Cap trigger immediately rearms shield charm | Before balance pass |
 | `defense.shield-break-hp-recovery-pct` | HP recovery on shield break | Before balance pass |
 | `defense.shield-break-heal-pct` | Alias for the charm version | Same |
-| `defense.post-cheat-death-atk-mult` | ATK bonus window after cheat-death survives | Before balance pass |
+| `defense.post-cheat-death-heal-pct` / `-ms` | Restore % max HP over a window after cheat-death survives | ✅ Implemented |
+| `defense.stationary-dr-pct` / `-ramptime-ms` | Ramp DR up to % while stationary; moving erodes it gradually (symmetric decay) | ✅ Implemented |
 | `defense.cleanse-per-stack-heal-pct` | Heal per cleansed stack | Before balance pass |
 | `defense.evasion-speed-scaling` | Evasion rate scales with move speed | Before balance pass |
 | `weapon.brittle-shatter-threshold` | Brittle max-stack shatter trigger | Before balance pass |
@@ -177,7 +176,8 @@ All mechanics marked † need engine implementation before going live.
 | `weapon.execute-dmg-mult` | Execute damage multiplier | Same |
 | `weapon.dead-swing-debuff` | Debuff type applied by dead swing | Before balance pass |
 | `weapon.dead-swing-debuff-pct` | Debuff magnitude | Same |
-| `mobility.stealth-break-sprint-ms` | Sprint duration when breaking stealth | Before Trench boots |
+| `mobility.stealth-first-strike-ms` | First-strike window duration after breaking stealth | Before Trench boots |
+| `mobility.tenacity-pct` | Flat CC duration reduction (always-on, distinct from kill-stack tenacity) | Before Trench boots |
 
 ---
 

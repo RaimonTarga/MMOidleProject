@@ -76,9 +76,11 @@ export function StatSheet({ focused, onFocus }: Props) {
     attack, maxHp, hpRegen, plating, damageReduction, speed, onHitDamage, attackRange,
   };
 
-  // Derived combat stats
+  // Derived combat stats. On-hit damage is flat per hit (ignores enemy defenses),
+  // so it factors into the planning DPS alongside attack.
   const currentAps = 1000 / attackCooldown;
-  const currentDps = attack * currentAps;
+  const currentHit = attack + onHitDamage;
+  const currentDps = currentHit * currentAps;
 
   const info = useMemo(() => {
     if (!focused) return null;
@@ -132,8 +134,10 @@ export function StatSheet({ focused, onFocus }: Props) {
     ? currentAps * (info.weaponSwap.currentBase / info.weaponSwap.proposedBase)
     : null;
   const proposedAttack = info ? attack + (info.delta.attack ?? 0) : null;
-  const proposedDps    = proposedAps  != null && proposedAttack != null ? proposedAttack * proposedAps
-                       : proposedAttack != null && proposedAttack !== attack  ? proposedAttack * currentAps
+  const proposedOnHit  = info ? onHitDamage + (info.delta.onHitDamage ?? 0) : null;
+  const proposedHit    = proposedAttack != null && proposedOnHit != null ? proposedAttack + proposedOnHit : null;
+  const proposedDps    = proposedAps  != null && proposedHit != null ? proposedHit * proposedAps
+                       : proposedHit != null && proposedHit !== currentHit  ? proposedHit * currentAps
                        : null;
 
   function handleAction() {

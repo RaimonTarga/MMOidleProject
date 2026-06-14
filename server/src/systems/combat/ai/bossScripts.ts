@@ -7,18 +7,31 @@
  *   - repeating: periodic timers (run continuously once the boss is engaged)
  *
  * Supported actions (BossAction union in monsterDatabase.ts):
- *   enrage    — multiply attack + accelerate cooldown, optional duration
- *   regen     — heal hpPctPerSec × maxHp per second, optional duration
- *   shield    — add flat damage-reduction for a fixed window (cyclic)
- *   summon    — spawn N minions of a given type near the boss
- *   stat-buff — multiply any single stat, optional duration
+ *   enrage         — multiply attack + accelerate cooldown, optional duration
+ *   regen          — heal hpPctPerSec × maxHp per second, optional duration
+ *   shield         — add flat damage-reduction for a fixed window (cyclic)
+ *   summon         — spawn N minions of a given type near the boss
+ *   stat-buff      — multiply any single stat (incl. evasion), optional duration
+ *   morph          — flip non-numeric stance fields (ranged/style/range/dot/kite)
+ *   slam           — instant AoE burst centered on the boss
+ *   apply-shield   — gain a runtime enemyShield override mid-fight
+ *   apply-soft-cap — gain a runtime enemySoftCap override mid-fight
+ *   shed-defense   — drop all defenses (clear overrides, suppress static, cut plating)
+ *   modify-ramp-debuff — raise the rampDebuff slow caps mid-fight
+ *   spawn-adds     — spawn tracked adds despawned on boss death
  *
  * Runtime state lives on `entity.scriptsBoss` (server-only, never serialized).
  * Dead bosses are pruned when the monster entity is removed from the world.
  */
 
 import type { BossAction, BossPhase, BossScript, RepeatingAction } from '@mmo-idle/shared';
-import { MONSTER_DATABASE, GAME_CONFIG } from '@mmo-idle/shared';
+import {
+  MONSTER_DATABASE,
+  GAME_CONFIG,
+  FROST_RAMP_EFFECT_ID,
+  frostRampMaxStacks,
+  getStatusEffect,
+} from '@mmo-idle/shared';
 import { NODE_REGISTRY } from '../../../world/nodeRegistry';
 import type { World } from '../../../world/World';
 import type { MonsterEntity } from '../../../ecs/entity';
@@ -113,6 +126,9 @@ function restoreStats(
   }
   if (effect.hadKiteOverride !== undefined) {
     state.kiteOverride = effect.hadKiteOverride ? effect.savedKite : undefined;
+  }
+  if (effect.hadEvasionOverride !== undefined) {
+    state.evasionOverride = effect.hadEvasionOverride ? effect.savedEvasionOverride : undefined;
   }
 }
 
@@ -216,6 +232,18 @@ function applyAction(
           effect.savedDamageReduction = monster.mitigatesDamage.damageReduction;
           monster.mitigatesDamage.damageReduction = Math.min(0.95, monster.mitigatesDamage.damageReduction * action.mult);
           break;
+        case 'evasion': {
+          // Evasion is a runtime override (no entity field). Base off the live
+          // override or the static def. A timed buff saves the prior override.
+          const def = MONSTER_DATABASE.get(monster.isMonster.monsterTypeId);
+          const base = state.evasionOverride ?? def?.evasion ?? 0;
+          if (action.durationMs !== undefined) {
+            effect.hadEvasionOverride = state.evasionOverride !== undefined;
+            effect.savedEvasionOverride = state.evasionOverride;
+          }
+          state.evasionOverride = base * action.mult;
+          break;
+        }
       }
       state.activeEffects.push(effect);
       break;
@@ -291,6 +319,84 @@ function applyAction(
         action.radius,
         monster.dealsDamage.attack * (action.damageMult ?? 1),
       );
+      break;
+    }
+
+    case 'apply-shield': {
+      // Runtime enemyShield gained mid-fight. The barrier comes up on the next
+      // incoming hit (the monsterMechanics shield path refreshes on demand).
+      state.shieldOverride = {
+        shieldPct:  action.shieldPct,
+        intervalMs: action.intervalMs,
+        durationMs: action.durationMs,
+      };
+      break;
+    }
+
+    case 'apply-soft-cap': {
+      // Runtime enemySoftCap gained mid-fight — clips the player's oversized hits.
+      state.softCapOverride = { capPct: action.capPct, capMult: action.capMult };
+      break;
+    }
+
+    case 'shed-defense': {
+      // Desperation finale: drop every defense. Clear the runtime overrides and
+      // set the suppression flag so any STATIC enemyShield/enemySoftCap is also
+      // ignored, then crumble plating to ~20% of its current value.
+      state.defenseShed = true;
+      state.shieldOverride = undefined;
+      state.softCapOverride = undefined;
+      monster.mitigatesDamage.plating = Math.round(monster.mitigatesDamage.plating * 0.2);
+      break;
+    }
+
+    case 'modify-ramp-debuff': {
+      // Raise the rampDebuff caps. Future applications read the override (see the
+      // combat onHit rampDebuff path); patch live frost-ramp stacks here so the
+      // tightening is felt immediately by anyone already debuffed.
+      state.rampDebuffCapOverride = {
+        moveSlowMaxPct: action.moveSlowMaxPct,
+        atkSlowMaxPct:  action.atkSlowMaxPct,
+      };
+      const def = MONSTER_DATABASE.get(monster.isMonster.monsterTypeId);
+      const ramp = def?.rampDebuff;
+      if (ramp) {
+        const newMaxStacks = frostRampMaxStacks({
+          ...ramp,
+          moveSlowMaxPct: action.moveSlowMaxPct,
+          atkSlowMaxPct:  action.atkSlowMaxPct,
+        });
+        for (const player of world.livePlayersInNode(monster.hasPosition.nodeId)) {
+          const fx = getStatusEffect(player.tracksCombat, FROST_RAMP_EFFECT_ID);
+          if (!fx) continue;
+          fx.maxStacks = newMaxStacks;
+          fx.data.moveSlowMaxPct = action.moveSlowMaxPct;
+          fx.data.atkSlowMaxPct  = action.atkSlowMaxPct;
+        }
+      }
+      break;
+    }
+
+    case 'spawn-adds': {
+      // Same spawn geometry as 'summon', but track the ids so the swarm is
+      // despawned when the boss dies (see grantMonsterRewards).
+      // TODO(leash): adds do not yet leash to the boss — they use normal AI leash.
+      const nodeDef     = NODE_REGISTRY.get(monster.hasPosition.nodeId);
+      const nodeWidth   = nodeDef?.width  ?? GAME_CONFIG.NODE_WIDTH;
+      const nodeHeight  = nodeDef?.height ?? GAME_CONFIG.NODE_HEIGHT;
+      const offsetRange = action.offsetRange ?? 200;
+
+      state.spawnedAddIds ??= [];
+      for (let i = 0; i < action.count; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const dist  = Math.random() * offsetRange;
+        const pos = {
+          x: Math.max(64, Math.min(nodeWidth  - 64, monster.hasPosition.current.x + Math.cos(angle) * dist)),
+          y: Math.max(64, Math.min(nodeHeight - 64, monster.hasPosition.current.y + Math.sin(angle) * dist)),
+        };
+        const add = world.createMonster(monster.hasPosition.nodeId, action.monsterTypeId, pos);
+        if (add) state.spawnedAddIds.push(add.isMonster.id);
+      }
       break;
     }
   }

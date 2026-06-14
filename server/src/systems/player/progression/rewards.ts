@@ -227,6 +227,13 @@ export function grantMonsterRewards(
     notifyVoidOverlordDeath(world, monster, killerPlayerId);
   }
 
+  // Despawn any adds the boss spawned via a 'spawn-adds' script action.
+  const spawnedAddIds = monster.scriptsBoss?.spawnedAddIds;
+  if (spawnedAddIds?.length) {
+    for (const id of spawnedAddIds) world.removeMonsterEntity(id);
+    monster.scriptsBoss!.spawnedAddIds = [];
+  }
+
   const party = killer.inParty;
   if (party) {
     const killNodeId = monster.hasPosition.nodeId;

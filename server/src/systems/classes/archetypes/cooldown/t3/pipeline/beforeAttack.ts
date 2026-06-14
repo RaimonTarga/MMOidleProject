@@ -1,13 +1,15 @@
 import { registerCombatListener } from '../../../../../combat/engine/combatPipeline';
 import { isEmpoweredAttack } from '../../../../../combat/engine/empoweredAttacks';
 import { hasPassive } from '../core/helpers';
+import { RUPTURE_WINDOW_PLATING_MULT } from '../core/constants';
 
 /**
- * Suppress the standard empowered damage multiplier for cooldown T3 paths
- * that replace it with their own effect (Overdrive, Eternal Cycle,
- * Temporal Extension, Entropy Collapse, Channeled Beam). Sets
- * `ctx.metadata['suppressEmpoweredMult']` so `empoweredAttacks.ts` skips the
- * multiplication but still consumes the empowered flag.
+ * Cooldown T3 beforeAttack hooks:
+ *
+ *   - suppressEmpoweredMult: Channeled Beam replaces the execution damage with a
+ *     channel, so the standard multiplier is skipped (the flag is still consumed).
+ *   - Rupture: the execution hit bypasses 100% of plating (platingMult 0); for a
+ *     short window afterward, regular attacks bypass 50% (platingMult 0.5).
  */
 export function registerBeforeAttack(): void {
   registerCombatListener('beforeAttack', (ctx, _world) => {
@@ -15,16 +17,19 @@ export function registerBeforeAttack(): void {
 
     const entity = ctx.attacker;
     if (!entity.usesCooldown) return;
-    if (!isEmpoweredAttack(entity)) return;
 
-    if (
-      hasPassive(entity, 'cooldown.overdrive')          ||
-      hasPassive(entity, 'cooldown.eternal-cycle')      ||
-      hasPassive(entity, 'cooldown.temporal-extension') ||
-      hasPassive(entity, 'cooldown.entropy-collapse')   ||
-      hasPassive(entity, 'cooldown.channeled-beam')
-    ) {
+    const empowered = isEmpoweredAttack(entity);
+
+    if (empowered && hasPassive(entity, 'cooldown.channeled-beam')) {
       ctx.metadata['suppressEmpoweredMult'] = true;
+    }
+
+    if (hasPassive(entity, 'cooldown.rupture')) {
+      if (empowered) {
+        ctx.platingMult = 0; // execution ignores plating entirely
+      } else if (entity.usesCooldown.ruptureWindowMs > 0) {
+        ctx.platingMult = Math.min(ctx.platingMult, RUPTURE_WINDOW_PLATING_MULT);
+      }
     }
   });
 }

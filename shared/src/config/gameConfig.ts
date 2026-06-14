@@ -137,14 +137,18 @@ export function biomeLevelOffset(biomeGroup: string): number {
 /**
  * Returns the maximum biome level a player of `playerTier` can reach in a given
  * biome. A biome only has `BIOME_LEVELS_PER_TIER` levels of content per tier it
- * spans, so the cap shrinks for biomes that start above T1: cap =
- * (playerTier - startTier + 1) * 4, minimum 4. Clearing is always capped at 4.
+ * spans, so the cap grows with the player's tier: cap =
+ * (playerTier - startTier + 1) * 4. A player at exactly the biome's start tier
+ * gets the native 4 levels; a player below it gets 0 (they can't bank levels in
+ * a biome they haven't unlocked — this is the case that matters for biomes that
+ * first appear above T1, e.g. a T1 player must not gain levels in the T2 jungle).
+ * Clearing is always capped at 4.
  */
 export function biomeLevelCap(playerTier: number, biomeGroup: string): number {
   if (biomeGroup === 'clearing') return 4;
   const startTier = BIOME_START_TIER_BY_GROUP[biomeGroup] ?? 1;
   return Math.max(
-    BIOME_LEVELS_PER_TIER,
+    0,
     (playerTier - startTier + 1) * BIOME_LEVELS_PER_TIER,
   );
 }

@@ -9,33 +9,32 @@ export const t3CombatEntriesA = [
   // player.passives and are read by the relevant archetype system at runtime.
 
   ['cadence-light-t3-a', {
-    id: 'cadence-light-t3-a', name: 'Accelerando', tier: 3,
+    id: 'cadence-light-t3-a', name: 'Shockblade', tier: 3,
     classId: 'cadence-root', subVariantId: 'light',
     parent: 'cadence-light', children: [],
-    description: 'Each cadence finisher grants a stack of attack speed (up to 5 stacks). Stacks are lost on death or re-equip.',
+    description: 'After your finisher, your next 3 regular attacks fire their on-hit damage twice. Gain extra scaling on-hit damage.',
     cost: 1, statEffects: {},
-    mechanicEffects: { 'cadence.speed-stack': 1 },
+    // 'cadence.aftershock-onhit-per-tier': flat on-hit damage = (playerTier + 1) × this.
+    mechanicEffects: { 'cadence.aftershock': 1, 'cadence.aftershock-onhit-per-tier': 10 },
   }],
   ['cadence-light-t3-b', {
-    id: 'cadence-light-t3-b', name: 'Cursed Finale', tier: 3,
+    id: 'cadence-light-t3-b', name: 'Scrapper', tier: 3,
     classId: 'cadence-root', subVariantId: 'light',
     parent: 'cadence-light', children: [],
-    description: 'Your cadence finisher curses the target: increases their damage taken by 25% for 5 seconds, and permanently reduces their flat plating by 5 (stacks with no cap). The triggering finisher itself benefits from the vulnerability.',
+    description: 'Your finisher curses the target: +25% damage taken for 5 seconds, and permanently reduces their flat plating by 5 (capped at 20 total per target). The triggering finisher benefits from the vulnerability.',
     cost: 1, statEffects: {},
-    // NOTE: 'cadence.debuff-plating-shred' is currently a static flat value (-5 per stack).
-    // This is intentionally simple for now but likely needs to scale with player stats
-    // or monster level in later tiers to remain relevant. Change the value here when scaling is designed.
     mechanicEffects: {
       'cadence.debuff-vuln-pct': 25,
       'cadence.debuff-vuln-ms':  5000,
       'cadence.debuff-plating-shred': 5,
+      'cadence.debuff-shred-cap': 20,
     },
   }],
   ['cadence-light-t3-c', {
-    id: 'cadence-light-t3-c', name: 'Double Time', tier: 3,
+    id: 'cadence-light-t3-c', name: 'Swiftblade', tier: 3,
     classId: 'cadence-root', subVariantId: 'light',
     parent: 'cadence-light', children: [],
-    description: 'Your cadence finisher strikes twice. Both hits apply the full damage multiplier.',
+    description: 'Your finisher strikes twice. Both hits apply the full multiplier. Neither hit counts toward the next combo.',
     cost: 1, statEffects: {},
     mechanicEffects: { 'cadence.trigger-count': 2 },
   }],
@@ -43,26 +42,26 @@ export const t3CombatEntriesA = [
   // ── Tier 3: Cadence — Balanced ─────────────────────────────────────────────
 
   ['cadence-balanced-t3-a', {
-    id: 'cadence-balanced-t3-a', name: 'Rapid Tempo', tier: 3,
+    id: 'cadence-balanced-t3-a', name: 'Maestro', tier: 3,
     classId: 'cadence-root', subVariantId: 'balanced',
     parent: 'cadence-balanced', children: [],
-    description: 'Shortens your combo sequence by 2, letting you reach the finisher more often.',
+    description: 'Each regular attack in the buildup adds flat attack damage to every subsequent attack in that cycle, including the finisher. Stacks reset after each finisher.',
     cost: 1, statEffects: {},
-    mechanicEffects: { 'cadence.threshold-mod': -2 },
+    mechanicEffects: { 'cadence.metronome': 1, 'cadence.metronome-flat': 12 },
   }],
   ['cadence-balanced-t3-b', {
-    id: 'cadence-balanced-t3-b', name: 'Rising Tide', tier: 3,
+    id: 'cadence-balanced-t3-b', name: 'Wavecrest', tier: 3,
     classId: 'cadence-root', subVariantId: 'balanced',
     parent: 'cadence-balanced', children: [],
-    description: 'Each attack building toward the finisher amplifies it by 20%. After a finisher, your next 5 attacks deal 50% bonus damage.',
+    description: 'Each attack building toward the finisher amplifies it by 20%. After a finisher, your next 4 attacks deal 50% bonus damage.',
     cost: 1, statEffects: {},
-    mechanicEffects: { 'cadence.momentum-buildup': 0.20, 'cadence.momentum-echo': 5 },
+    mechanicEffects: { 'cadence.momentum-buildup': 0.20, 'cadence.momentum-echo': 4 },
   }],
   ['cadence-balanced-t3-c', {
-    id: 'cadence-balanced-t3-c', name: 'Delayed Verdict', tier: 3,
+    id: 'cadence-balanced-t3-c', name: 'Justicar', tier: 3,
     classId: 'cadence-root', subVariantId: 'balanced',
     parent: 'cadence-balanced', children: [],
-    description: 'Your finisher tags the enemy with a detonation charge. After 3 seconds it explodes for damage equal to the sum of the attacks that built up to the finisher. Re-tagging resets the fuse.',
+    description: 'Each finisher banks 30% of its damage into a Verdict — a stored pool of execution power that persists across targets. When a target\'s remaining health is at or below your Verdict, your finisher executes it instantly and spends the pool.',
     cost: 1, statEffects: {},
     mechanicEffects: { 'cadence.detonation': 1 },
   }],
@@ -70,69 +69,74 @@ export const t3CombatEntriesA = [
   // ── Tier 3: Cadence — Heavy ────────────────────────────────────────────────
 
   ['cadence-heavy-t3-a', {
-    id: 'cadence-heavy-t3-a', name: 'Overwhelming Force', tier: 3,
+    id: 'cadence-heavy-t3-a', name: 'Berserker', tier: 3,
     classId: 'cadence-root', subVariantId: 'heavy',
     parent: 'cadence-heavy', children: [],
-    description: 'Your combo sequence requires 2 more attacks, but the finisher deals 200% damage (3× multiplier instead of 2×).',
+    description: 'Each finisher grants a Rampage stack (up to 10): −1 combo threshold (floor 2), faster attacks, weaker regular hits, and a stronger finisher multiplier. At 10 stacks the next finisher overloads and resets Rampage to 0. Stacks decay slowly out of combat.',
     cost: 1, statEffects: {},
-    mechanicEffects: { 'cadence.threshold-mod': 2, 'cadence.damage-mult-add': 1 },
+    mechanicEffects: { 'cadence.rampage': 1 },
   }],
   ['cadence-heavy-t3-b', {
-    id: 'cadence-heavy-t3-b', name: 'Hemorrhage', tier: 3,
+    id: 'cadence-heavy-t3-b', name: 'Hemomancer', tier: 3,
     classId: 'cadence-root', subVariantId: 'heavy',
     parent: 'cadence-heavy', children: [],
-    description: 'Your finisher converts all its damage into a bleeding wound: a non-stacking damage-over-time effect dealing 150% of the finisher damage over 4 seconds. Re-triggering refreshes the wound.',
+    description: 'Your finisher deals no direct damage — instead it converts into a bleeding wound (non-stacking) dealing 150% of the finisher damage over 4 seconds. Re-triggering refreshes the wound.',
     cost: 1, statEffects: {},
     mechanicEffects: { 'cadence.hemorrhage': 1 },
   }],
   ['cadence-heavy-t3-c', {
-    id: 'cadence-heavy-t3-c', name: 'Iron Patience', tier: 3,
+    id: 'cadence-heavy-t3-c', name: 'Juggernaut', tier: 3,
     classId: 'cadence-root', subVariantId: 'heavy',
     parent: 'cadence-heavy', children: [],
-    description: 'Each attack building the sequence stores 30% of its damage as potential energy. Your finisher consumes all stored charge, adding it as bonus damage — the longer the buildup, the heavier the blow.',
+    description: 'Every second in active combat, gain a Crescendo stack. When your finisher fires it consumes all stacks, each adding flat bonus damage to that hit. Stacks decay slowly out of combat. Does not affect regular attacks.',
     cost: 1, statEffects: {},
-    mechanicEffects: { 'cadence.charge-buildup': 0.30 },
+    mechanicEffects: { 'cadence.crescendo': 1, 'cadence.crescendo-flat': 18 },
   }],
 
   // ── Tier 3: Cooldown — Light ──────────────────────────────────────────────────
 
+  // NOTE(naming): "Overdrive" collides with the Energy Light spec of the same
+  // working name — both need distinct final class titles at the naming pass.
   ['cooldown-light-t3-a', {
-    id: 'cooldown-light-t3-a', name: 'Overdrive', tier: 3,
+    id: 'cooldown-light-t3-a', name: 'Assassin', tier: 3,
     classId: 'cooldown-root', subVariantId: 'light',
     parent: 'cooldown-light', children: [],
-    description: 'Your execution strikes no harder than usual — instead, it triggers a burst of speed: 50% faster attacks for 2.5 s. Roughly half-uptime by default. Pending balance.',
+    description: 'Your execution deals its normal damage and triggers a 2.5s burst of double attack speed (~half-uptime at the 5s cooldown). The timer keeps ticking through the burst.',
     cost: 1, statEffects: {},
     mechanicEffects: { 'cooldown.overdrive': 1 },
   }],
   ['cooldown-light-t3-b', {
-    id: 'cooldown-light-t3-b', name: 'Eternal Cycle', tier: 3,
+    id: 'cooldown-light-t3-b', name: 'Transcendant', tier: 3,
     classId: 'cooldown-root', subVariantId: 'light',
     parent: 'cooldown-light', children: [],
-    description: 'Your execution cycle stretches to 10 s, but each attack builds charge that increases attack damage while active (falls off after 10 s idle). The execution deals no inherent multiplier — instead it deals attack × stacks, then resets the charge.',
+    description: 'Each attack during the 5s execution cooldown banks a stack of flat damage (falls off after 10s idle). The execution fires at its normal 1.5× plus all stacked flat bonus, then clears the stacks.',
     cost: 1, statEffects: {},
-    mechanicEffects: { 'cooldown.eternal-cycle': 1, 'cooldown.empowered-cd-ms': 5000 },
+    // CD stays at the light frame's 5000ms (no override) — the old +5000ms that
+    // pushed it to "10s" was a bug; description corrected to 5s.
+    mechanicEffects: { 'cooldown.eternal-cycle': 1 },
   }],
   ['cooldown-light-t3-c', {
-    id: 'cooldown-light-t3-c', name: 'Temporal Extension', tier: 3,
+    id: 'cooldown-light-t3-c', name: 'Sunderer', tier: 3,
     classId: 'cooldown-root', subVariantId: 'light',
     parent: 'cooldown-light', children: [],
-    description: 'Your execution deals no extra damage. Instead it grants a buff that adds flat on-hit damage to every attack. Each attack extends the buff by 1 second — keep fighting to keep it alive.',
+    description: 'Your execution bypasses 100% of the target\'s plating. For 2 seconds afterward, your regular attacks bypass 50% of plating.',
     cost: 1, statEffects: {},
-    mechanicEffects: { 'cooldown.temporal-extension': 1 },
+    // TODO(engine): the planned 10% DR pierce during the window has no ctx hook yet.
+    mechanicEffects: { 'cooldown.rupture': 1, 'cooldown.rupture-dr-pierce': 0.10 },
   }],
 
   // ── Tier 3: Cooldown — Balanced ───────────────────────────────────────────────
 
   ['cooldown-balanced-t3-a', {
-    id: 'cooldown-balanced-t3-a', name: 'Acceleration', tier: 3,
+    id: 'cooldown-balanced-t3-a', name: 'Reverb', tier: 3,
     classId: 'cooldown-root', subVariantId: 'balanced',
     parent: 'cooldown-balanced', children: [],
-    description: 'Each attack shaves 1 second off your execution cooldown. Your timing still matters — the reduction is real, not a reset.',
+    description: 'The attacks you land during one cooldown window charge your NEXT execution: each attack adds bonus damage to the following execution (the current one fires normally). The charge resets each execution.',
     cost: 1, statEffects: {},
-    mechanicEffects: { 'cooldown.acceleration-ms': 1000 },
+    mechanicEffects: { 'cooldown.reverb': 1, 'cooldown.reverb-bonus-per-attack': 0.04 },
   }],
   ['cooldown-balanced-t3-b', {
-    id: 'cooldown-balanced-t3-b', name: 'Battery', tier: 3,
+    id: 'cooldown-balanced-t3-b', name: 'Dynamo', tier: 3,
     classId: 'cooldown-root', subVariantId: 'balanced',
     parent: 'cooldown-balanced', children: [],
     description: 'Every second your execution cooldown ticks down, you gain a stack of accumulated power that increases attack damage. The execution spends all stacks.',
@@ -140,20 +144,92 @@ export const t3CombatEntriesA = [
     mechanicEffects: { 'cooldown.battery': 1 },
   }],
   ['cooldown-balanced-t3-c', {
-    id: 'cooldown-balanced-t3-c', name: 'Alignment', tier: 3,
+    id: 'cooldown-balanced-t3-c', name: 'Stalwart', tier: 3,
     classId: 'cooldown-root', subVariantId: 'balanced',
     parent: 'cooldown-balanced', children: [],
-    description: 'After your execution fires, a 2-second attack speed surge follows (+50%). When that window closes, the remaining cooldown is halved — creating a fast-slow-fast rhythm unique to this path.',
+    description: 'The longer your execution cooldown runs uninterrupted, the more both your attack damage and the execution\'s bonus ramp — peaking at the full natural 7s. Triggering early yields a proportionally smaller payoff.',
     cost: 1, statEffects: {},
-    mechanicEffects: { 'cooldown.alignment': 1 },
+    mechanicEffects: { 'cooldown.patience-paid': 1 },
   }],
 
   // ── Tier 3: Reload — Light ───────────────────────────────────────────────────
 
   ['reload-light-t3-a', {
-    id: 'reload-light-t3-a', name: 'Laser', tier: 3,
+    id: 'reload-light-t3-a', name: 'Duelist', tier: 3,
     classId: 'reload-root', subVariantId: 'light',
     parent: 'reload-light', children: [],
+    description: 'The last bullet of every clip deals 3.5× damage. Every 5 shots delivers a payoff hit.',
+    cost: 1, statEffects: {},
+    mechanicEffects: { 'reload.exploding-clip': 1, 'reload.exploding-clip-mult': 3.5 },
+  }],
+  ['reload-light-t3-b', {
+    id: 'reload-light-t3-b', name: 'Dualslinger', tier: 3,
+    classId: 'reload-root', subVariantId: 'light',
+    parent: 'reload-light', children: [],
+    description: 'Even shots deal 2× attack damage with no on-hit damage; odd shots deal 2× on-hit damage with no attack damage. On-hit TRIGGERS (DoT, procs) still fire on every shot. Rewards a genuinely balanced attack/on-hit gear split.',
+    cost: 1, statEffects: {},
+    mechanicEffects: { 'reload.alternating-cadence': 1 },
+  }],
+  ['reload-light-t3-c', {
+    id: 'reload-light-t3-c', name: 'Sniper', tier: 3,
+    classId: 'reload-root', subVariantId: 'light',
+    parent: 'reload-light', children: [],
+    description: 'Loads only 3 heavy shells at a fixed slow cadence (ignoring attack speed). Attack speed instead scales per-shot damage, and shots deal bonus damage against full-health targets. Fast 1.2s reload.',
+    cost: 1, statEffects: {},
+    mechanicEffects: {
+      'reload.snipe': 1,
+      'reload.max-ammo': -2,            // light frame is 5 rounds → 3 shells
+      'reload.snipe-cooldown-ms': 2500,
+      'reload.snipe-baseline-cd-ms': 1000,
+      'reload.snipe-fullhp-mult': 2,
+    },
+  }],
+
+  // ── Tier 3: Reload — Balanced ─────────────────────────────────────────────────
+
+  ['reload-balanced-t3-a', {
+    id: 'reload-balanced-t3-a', name: 'Bounty hunter', tier: 3,
+    classId: 'reload-root', subVariantId: 'balanced',
+    parent: 'reload-balanced', children: [],
+    description: 'Each attack applies a Death Mark stack to the target (up to 10). Reloading detonates all stacks on the current target for attack × stacks × 0.65 bonus damage.',
+    cost: 1, statEffects: {},
+    mechanicEffects: { 'reload.death-mark': 1, 'reload.death-mark-detonate-mult': 0.65 },
+  }],
+  ['reload-balanced-t3-b', {
+    id: 'reload-balanced-t3-b', name: 'Blunderbuss', tier: 3,
+    classId: 'reload-root', subVariantId: 'balanced',
+    parent: 'reload-balanced', children: [],
+    description: 'Fires all 10 rounds at once as a point-blank volley, then reloads (2s). Close range mandatory — the reach penalty is preserved. Each pellet deals normal damage; the burst shoves enemies back.',
+    cost: 1, statEffects: { attackRange: -100 },
+    mechanicEffects: {
+      'reload.blunderbuss': 1,
+      'reload.blunderbuss-spread-rad': 0.65,
+      'reload.blunderbuss-knockback-distance-per-pellet': 7,
+      'reload.blunderbuss-knockback-ms-per-pellet': 14,
+    },
+  }],
+  ['reload-balanced-t3-c', {
+    id: 'reload-balanced-t3-c', name: 'Desperado', tier: 3,
+    classId: 'reload-root', subVariantId: 'balanced',
+    parent: 'reload-balanced', children: [],
+    description: 'Each reload completion grants a stack of attack speed (up to 5). Stacks persist through combat and decay slowly out of combat. Rewards continuous, uninterrupted fighting.',
+    cost: 1, statEffects: {},
+    mechanicEffects: {
+      'reload.momentum': 1,
+      'reload.momentum-aps-per-stack': 0.06,
+      'reload.momentum-max-stacks': 5,
+    },
+  }],
+
+  // ── Tier 3: Reload — Heavy ────────────────────────────────────────────────────
+
+  // TODO(naming): "Laser" replaces Exploding Clip in the heavy slot. The full
+  // heat-based firing system is the highest-cost spec in the doc; this reuses the
+  // existing implemented laser mechanic. Re-evaluate against the design's heat model.
+  ['reload-heavy-t3-a', {
+    id: 'reload-heavy-t3-a', name: 'Melter', tier: 3,
+    classId: 'reload-root', subVariantId: 'heavy',
+    parent: 'reload-heavy', children: [],
     description: 'Replaces your magazine with a continuous laser. It fires every server tick while a target is in range, building Heat from 0% to 100%. At 100% Heat it overheats and cannot fire again until fully cooled.',
     cost: 1, statEffects: {},
     mechanicEffects: {
@@ -163,123 +239,52 @@ export const t3CombatEntriesA = [
       'reload.laser-cool-per-tick': 2.5,
     },
   }],
-  ['reload-light-t3-b', {
-    id: 'reload-light-t3-b', name: 'Hair Trigger', tier: 3,
-    classId: 'reload-root', subVariantId: 'light',
-    parent: 'reload-light', children: [],
-    description: 'Each shot in a clip grants +7% attack speed (up to 5 stacks). Stacks reset when you reload.',
+  ['reload-heavy-t3-b', {
+    id: 'reload-heavy-t3-b', name: 'Warmonger', tier: 3,
+    classId: 'reload-root', subVariantId: 'heavy',
+    parent: 'reload-heavy', children: [],
+    description: 'Attack speed ramps up with every shot fired through the 14-round clip, resetting on reload. Only the heavy clip is large enough to reach the full ramp — fire every round before reloading.',
     cost: 1, statEffects: {},
+    // Reuses the clip-ramp mechanic; max-stacks spans the 14-round clip (shots 1→14).
     mechanicEffects: {
       'reload.hair-trigger': 1,
-      'reload.hair-trigger-pct-per-shot': 0.07,
-      'reload.hair-trigger-max-stacks': 5,
-    },
-  }],
-  ['reload-light-t3-c', {
-    id: 'reload-light-t3-c', name: 'Gatling', tier: 3,
-    classId: 'reload-root', subVariantId: 'light',
-    parent: 'reload-light', children: [],
-    description: 'Doubles your magazine and doubles your attack speed again, turning your light clip into sustained suppressive fire. Each hit applies a very small knockback, but the enlarged weapon doubles your reload recovery window.',
-    cost: 1, statEffects: {},
-    mechanicEffects: {
-      'reload.gatling': 1,
-      'reload.max-ammo': 15,
-      'reload.reload-time-ms': 2600,
-    },
-  }],
-
-  // ── Tier 3: Reload — Balanced ─────────────────────────────────────────────────
-
-  ['reload-balanced-t3-a', {
-    id: 'reload-balanced-t3-a', name: 'Death Mark', tier: 3,
-    classId: 'reload-root', subVariantId: 'balanced',
-    parent: 'reload-balanced', children: [],
-    description: 'Each attack applies a Death Mark stack to the target (up to 10). Reloading detonates all stacks on the current target for attack × stacks × 0.65 bonus damage.',
-    cost: 1, statEffects: {},
-    mechanicEffects: { 'reload.death-mark': 1, 'reload.death-mark-detonate-mult': 0.65 },
-  }],
-  ['reload-balanced-t3-b', {
-    id: 'reload-balanced-t3-b', name: 'Suppressing Fire', tier: 3,
-    classId: 'reload-root', subVariantId: 'balanced',
-    parent: 'reload-balanced', children: [],
-    description: 'Each hit shreds 4 flat plating from the target (stacks up to 5). Sustained fire breaks down armored foes.',
-    cost: 1, statEffects: {},
-    mechanicEffects: {
-      'reload.suppressing-fire': 1,
-      'reload.suppress-shred': 4,
-      'reload.suppress-max-stacks': 5,
-    },
-  }],
-  ['reload-balanced-t3-c', {
-    id: 'reload-balanced-t3-c', name: 'Snipe', tier: 3,
-    classId: 'reload-root', subVariantId: 'balanced',
-    parent: 'reload-balanced', children: [],
-    description: 'Loads only 3 heavy shells. Your firing cadence is fixed and slow, ignoring attack speed, but attack speed instead scales shot damage. Shots deal extra damage against enemies still at full health.',
-    cost: 1, statEffects: {},
-    mechanicEffects: {
-      'reload.snipe': 1,
-      'reload.max-ammo': -9,
-      'reload.snipe-cooldown-ms': 2500,
-      'reload.snipe-baseline-cd-ms': 1000,
-      'reload.snipe-fullhp-mult': 2,
-    },
-  }],
-
-  // ── Tier 3: Reload — Heavy ────────────────────────────────────────────────────
-
-  ['reload-heavy-t3-a', {
-    id: 'reload-heavy-t3-a', name: 'Exploding Clip', tier: 3,
-    classId: 'reload-root', subVariantId: 'heavy',
-    parent: 'reload-heavy', children: [],
-    description: 'The last bullet in every clip explodes outward for 3.5× damage. A high spike on an already aggressive rhythm.',
-    cost: 1, statEffects: {},
-    mechanicEffects: { 'reload.exploding-clip': 1, 'reload.exploding-clip-mult': 3.5 },
-  }],
-  ['reload-heavy-t3-b', {
-    id: 'reload-heavy-t3-b', name: 'Cover Fire', tier: 3,
-    classId: 'reload-root', subVariantId: 'heavy',
-    parent: 'reload-heavy', children: [],
-    description: 'While reloading, take 45% less damage. Duck behind your own suppressive fire.',
-    cost: 1, statEffects: {},
-    mechanicEffects: {
-      'reload.cover-fire': 1,
-      'reload.cover-fire-dr': 0.45,
+      'reload.hair-trigger-pct-per-shot': 0.05,
+      'reload.hair-trigger-max-stacks': 13,
     },
   }],
   ['reload-heavy-t3-c', {
-    id: 'reload-heavy-t3-c', name: 'Blunderbuss', tier: 3,
+    id: 'reload-heavy-t3-c', name: 'Cannoneer', tier: 3,
     classId: 'reload-root', subVariantId: 'heavy',
     parent: 'reload-heavy', children: [],
-    description: 'A brutal close-range shotgun. Your reach shrinks, but you can empty your whole clip in one wide volley, then reload. Each pellet deals normal shot damage; the whole burst shoves enemies back — harder the more pellets connect.',
-    cost: 1, statEffects: { attackRange: -100 },
-    mechanicEffects: {
-      'reload.blunderbuss': 1,
-      'reload.blunderbuss-spread-rad': 0.65,
-      'reload.blunderbuss-knockback-distance-per-pellet': 7,
-      'reload.blunderbuss-knockback-ms-per-pellet': 14,
-    },
+    description: 'On reload completion, fire a burst of bonus damage proportional to how many shots were used in the previous clip. A full 14-round clip yields the maximum burst.',
+    cost: 1, statEffects: {},
+    mechanicEffects: { 'reload.siege': 1, 'reload.siege-damage-per-shot': 0.5 },
   }],
 
   // ── Tier 3: Cooldown — Heavy ──────────────────────────────────────────────────
 
   ['cooldown-heavy-t3-a', {
-    id: 'cooldown-heavy-t3-a', name: 'Entropy Collapse', tier: 3,
+    id: 'cooldown-heavy-t3-a', name: 'Avenger', tier: 3,
     classId: 'cooldown-root', subVariantId: 'heavy',
     parent: 'cooldown-heavy', children: [],
-    description: 'Your execution deals no direct damage. Instead it inflicts a wound that ticks every second for 8 s. Each tick scales with the target\'s missing health — the weaker they are, the harder it burns. 4× multiplier at 90% missing HP.',
+    description: 'Your execution deals bonus damage equal to a portion of all damage you have taken since your last execution (with a minimum floor so it never feels dead). The fixed 9s window makes the payoff predictable.',
     cost: 1, statEffects: {},
-    mechanicEffects: { 'cooldown.entropy-collapse': 1 },
+    mechanicEffects: { 'cooldown.vengeance': 1, 'cooldown.vengeance-mult': 1.5, 'cooldown.vengeance-floor': 30 },
   }],
   ['cooldown-heavy-t3-b', {
-    id: 'cooldown-heavy-t3-b', name: 'Singular Extraction', tier: 3,
+    id: 'cooldown-heavy-t3-b', name: 'Destroyer', tier: 3,
     classId: 'cooldown-root', subVariantId: 'heavy',
     parent: 'cooldown-heavy', children: [],
-    description: 'Normal attacks deal no damage. Your execution fires on a greatly shortened cooldown and hits for significantly more. Leaving combat for 4 s resets your preparation — patience earns nothing here.',
+    description: 'Normal attacks deal no damage. Your execution fires on a greatly shortened cooldown (4s) and hits for far more (5× instead of 3×). On-hit gear and charm triggers still fire on regular attacks. Leaving combat for 4s resets preparation.',
     cost: 1, statEffects: {},
-    mechanicEffects: { 'cooldown.singular-extraction': 1, 'cooldown.empowered-cd-ms': -6000 },
+    // Heavy frame is 9000ms / 3.0×; deltas land it at 4000ms / 5.0×.
+    mechanicEffects: { 'cooldown.singular-extraction': 1, 'cooldown.empowered-cd-ms': -5000, 'cooldown.empowered-mult': 2.0 },
   }],
+  // TODO(engine): Channeled Beam is NOT production-ready — the channel firing mode
+  // needs engine work before this spec goes live (see t3-spec-designs-reference.md).
+  // The node ships so the path is visible; the existing channeledBeam tick is a stub.
   ['cooldown-heavy-t3-c', {
-    id: 'cooldown-heavy-t3-c', name: 'Channeled Beam', tier: 3,
+    id: 'cooldown-heavy-t3-c', name: 'Devout Priest', tier: 3,
     classId: 'cooldown-root', subVariantId: 'heavy',
     parent: 'cooldown-heavy', children: [],
     description: 'Your execution becomes a 3-second concentrated channel: you stand still and continuously deal damage to your target. If the target dies mid-channel, you briefly attempt to reacquire before the beam ends.',

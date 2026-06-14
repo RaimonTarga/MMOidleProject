@@ -1,3 +1,4 @@
+import { setCooldown } from '@mmo-idle/shared';
 import { registerCombatListener } from '../../combat/engine/combatPipeline';
 
 /**
@@ -22,5 +23,11 @@ export function registerDamageCap(): void {
 
     const mult = player.usesSkills.passives['defense.max-hit-mult'] ?? 1;
     ctx.damage = Math.ceil(threshold + (ctx.damage - threshold) * mult);
+
+    // Titan's Keep: a cap trigger immediately rearms the periodic shield by
+    // clearing its cooldown, so runPeriodicShield re-applies on the next tick.
+    if ((player.usesSkills.passives['defense.max-hit-rearms-shield'] ?? 0) > 0) {
+      setCooldown(player.tracksCombat, 'shieldRegen', 0);
+    }
   });
 }

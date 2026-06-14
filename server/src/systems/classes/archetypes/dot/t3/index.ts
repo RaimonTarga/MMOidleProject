@@ -13,11 +13,14 @@ import {
 } from './paths/poison';
 import {
   tryFanTheFlames,
+  tryIgnition,
   trySmolderingEmber,
   tryConflagration,
 } from './paths/fire';
 import {
   tryPermafrost,
+  tryRimeshatter,
+  tryShatterStrike,
   tryFreezingCold,
   tryGlacialFracture,
 } from './paths/frost';
@@ -25,6 +28,7 @@ import type { DotT3PathContext } from './paths/_types';
 import { updatePermafrost } from './ticks/permafrost';
 import { updateConflagration } from './ticks/conflagration';
 import { updateChillAndFreeze } from './ticks/chillFreeze';
+import { updateFrenzy } from './ticks/frenzy';
 import { mirrorDotT3PlayerSlices, mirrorStatusEffectsToClient } from './core/mirroring';
 import { mirrorTargetStatus } from '../../../../combat/targetStatus';
 import { evadeBlocksDebuffs } from '../../../../defense/mitigation/evasion';
@@ -75,9 +79,12 @@ export function initDotT3(): void {
     if (tryPoisonExplosion(pc))  return;
     if (tryEternalDoom(pc))      return;
     if (tryFanTheFlames(pc))     return;
+    if (tryIgnition(pc))         return;
     if (trySmolderingEmber(pc))  return;
     if (tryConflagration(pc))    return;
     if (tryPermafrost(pc))       return;
+    if (tryRimeshatter(pc))      return;
+    if (tryShatterStrike(pc))    return;
     if (tryFreezingCold(pc))     return;
     if (tryGlacialFracture(pc))  return;
   });
@@ -103,6 +110,7 @@ export function updateDotT3(world: World, dt: number): void {
   updatePermafrost(world, dt);
   updateConflagration(world, dt);
   updateChillAndFreeze(world);
+  updateFrenzy(world);
   mirrorDotT3PlayerSlices(world);
   mirrorStatusEffectsToClient(world);
   mirrorTargetStatus(world);

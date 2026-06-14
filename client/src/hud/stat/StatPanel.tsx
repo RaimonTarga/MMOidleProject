@@ -29,6 +29,7 @@ import {
   incomingDotAtom,
   laserOverheatedAtom,
   maxHpAtom,
+  onHitDamageAtom,
   passivesAtom,
   pendingHealAtom,
   platingAtom,
@@ -57,6 +58,7 @@ export function StatPanel() {
   const incomingDot = useAtomValue(incomingDotAtom);
   const pendingHeal = useAtomValue(pendingHealAtom);
   const attack = useAtomValue(attackAtom);
+  const onHitDamage = useAtomValue(onHitDamageAtom);
   const plating = useAtomValue(platingAtom);
   const damageReduction = useAtomValue(damageReductionAtom);
   const attackCooldown = useAtomValue(attackCooldownAtom);
@@ -98,6 +100,7 @@ export function StatPanel() {
       incomingDot,
       pendingHeal,
       attack,
+      onHitDamage,
       plating,
       damageReduction,
       attackCooldown,
@@ -146,7 +149,7 @@ export function StatPanel() {
   const healPct     = player && maxHpVal > 0 ? Math.min(100 - hpPct, (player.pendingHeal / maxHpVal) * 100) : 0;
   const cdSec       = player ? (player.attackCooldown / 1000).toFixed(2) : '—';
   const aps         = player ? (1000 / player.attackCooldown).toFixed(2) : '—';
-  const dps         = player ? (player.attack * (1000 / player.attackCooldown)).toFixed(1) : '—';
+  const dps         = player ? ((player.attack + player.onHitDamage) * (1000 / player.attackCooldown)).toFixed(1) : '—';
   const isFlash     = player ? (player.passives['energy.flash'] ?? 0) > 0 : false;
   const flashShiftLabel = player && player.flashShiftPct >= 50 ? 'Red Shift' : 'Blue Shift';
   const flashShiftColor = player
@@ -199,6 +202,9 @@ export function StatPanel() {
       {/* Core combat stats */}
       <div className="stat-section">
         <StatRow label="Attack"     value={player?.attack    ?? '—'} help={STAT_HELP.attack} />
+        {player && player.onHitDamage > 0 && (
+          <StatRow label="On-Hit Dmg" value={`+${player.onHitDamage}`} help={STAT_HELP.onHitDamage} />
+        )}
         <StatRow label="DPS"        value={dps} help={STAT_HELP.dps} />
         <StatRow label="Atk Speed"  value={player ? `${aps} APS (${cdSec}s)` : '—'} help={STAT_HELP.atkSpeed} />
         <StatRow label="Plating"    value={player?.plating   ?? '—'} help={STAT_HELP.plating} />

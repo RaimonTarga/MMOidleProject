@@ -49,3 +49,40 @@ export const SE_ACCEL_SCALE = 0.5; // gain *= (1 + fillPct × SE_ACCEL_SCALE)
 export const CI_TAG_FX    = 'energy-ci-tag';
 export const CI_TAG_MS    = 15_000;
 export const CI_BASE_MULT = 1.3; // burst = player.attack × 1.3^tagCount
+
+// ── T4 specs (placeholder constants — replaced at the balance pass) ───────────
+
+// Light — Overdrive (energy-light-t3-b)
+export const ENERGY_OVERDRIVE_ATK_PCT  = 0.40;  // +ATK% while Overdrive is active
+export const OVERDRIVE_DECAY_PER_SEC    = 25;    // energy lost per second during Overdrive
+
+// Light — Energy Upkeep (energy-light-t3-c)
+export const UPKEEP_THRESHOLD_PCT = 0.20; // energy% above which the upkeep timer runs
+export const UPKEEP_DECAY_PER_SEC = 8;    // continuous energy decay
+export const UPKEEP_ONHIT_SCALE   = 0.05; // on-hit damage bonus per upkeep-second
+
+// Balanced — Binary Cycle (energy-balanced-t3-a)
+export const BINARY_CHARGE_ATK_BONUS    = 0.30; // +ATK% during Charge State
+export const BINARY_DISCHARGE_ONHIT_BONUS = 0.30; // +on-hit% during Discharge State
+export const BINARY_CHARGE_GAIN_MULT    = 1.5;  // faster energy gain in Charge State
+export const BINARY_CHARGE_DISCHARGE_MULT   = 1.3; // big discharge ending Charge State
+export const BINARY_DISCHARGE_DISCHARGE_MULT = 0.8; // light discharge ending Discharge State
+
+// Balanced — Awakened Lightning (energy-balanced-t3-b)
+export const AWAKENED_N    = 5;   // empowered regular attacks after a discharge
+export const AWAKENED_MULT = 1.5; // multiplier on each empowered attack
+
+// Balanced — Charge State (energy-balanced-t3-c)
+export const CHARGE_STATE_MIN = 0.5; // attack damage at 0 energy (scales to 1.0 at max)
+
+// Heavy — Critical Mass (energy-heavy-t3-b)
+export const CRITICAL_MASS_MAX           = 3;
+export const CRITICAL_MASS_DMG_PER_STACK = 0.20; // +discharge mult per stack
+export const CRITICAL_MASS_GAIN_PER_STACK = 0.20; // +energy gain per stack
+export const CRITICAL_MASS_RESET_MS      = 5_000; // gap without damage that resets stacks
+
+// Heavy — Endless Storm (energy-heavy-t3-c)
+export const STORM_FX           = 'energy-storm';
+export const ENDLESS_STORM_DPS  = 40;
+export const ENDLESS_STORM_TICK_MS = 1_000;
+export const ENDLESS_STORM_DURATION_MS = 600_000; // effectively permanent (until death)

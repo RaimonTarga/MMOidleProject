@@ -108,9 +108,16 @@ export function runPlayerAttack(
   // before beforeAttack; commit it only once the attack is confirmed to fire so
   // a cancelled attack (empty clip / mid-reload) never advances the cycle.
   const chaoticWeapon = player.holdsInventory.equipment.weapon;
-  const chaoticMissEvery = chaoticWeapon
-    ? CHAOTIC_FAMILY[chaoticWeapon]
-    : undefined;
+  // Dead-swing cadence is data-driven from the equipped weapon's
+  // `weapon.dead-swing-interval` mechanic. CHAOTIC_FAMILY remains a fallback for
+  // legacy weapons predating the key (e.g. frenzied-greataxe, which has no recipe).
+  const deadSwingInterval = player.usesSkills.passives["weapon.dead-swing-interval"] ?? 0;
+  const chaoticMissEvery =
+    deadSwingInterval > 0
+      ? Math.round(deadSwingInterval)
+      : chaoticWeapon
+        ? CHAOTIC_FAMILY[chaoticWeapon]
+        : undefined;
   if (
     chaoticMissEvery &&
     (getCounter(player.tracksCombat, CHAOTIC_HIT_COUNTER_KEY) + 1) %
@@ -137,7 +144,9 @@ export function runPlayerAttack(
   // attack pierces evade. A full-avoid (mitigation ≥ 1) short-circuits to the
   // legacy zero-damage path.
   const monsterDef = MONSTER_DATABASE.get(target.isMonster.monsterTypeId);
-  const evadeChance = monsterDef?.evasion;
+  // A boss 'stat-buff' evasion action can override the dodge fraction at runtime
+  // (e.g. drop to 0 in a desperation phase). 0 is a valid override, so use ??.
+  const evadeChance = target.scriptsBoss?.evasionOverride ?? monsterDef?.evasion;
   let evaded = false;
   let evadeMult = 0;
   if (evadeChance !== undefined && evadeChance > 0) {
@@ -213,7 +222,12 @@ export function runPlayerAttack(
   emitCombatEvent("onHit", ctx, world);
 
   if (player.dealsDamage.onHitDamage > 0) {
-    ctx.damage += player.dealsDamage.onHitDamage;
+    // Per-shot on-hit scaling (e.g. reload Alternating Cadence zeroes/doubles the
+    // on-hit DAMAGE while leaving on-hit TRIGGERS — set by an onHit listener).
+    const onHitMult = typeof ctx.metadata['onHitDamageMult'] === 'number'
+      ? (ctx.metadata['onHitDamageMult'] as number)
+      : 1;
+    ctx.damage += Math.round(player.dealsDamage.onHitDamage * onHitMult);
   }
 
   const isEmpowered = !!ctx.metadata["empoweredAttack"];
@@ -572,17 +586,22 @@ export function runMonsterAttack(
     const durMs = Math.round(
       rampDebuff.stackDurationMs * mobilityTenacityDurationMult(target),
     );
+    // A boss 'modify-ramp-debuff' action raises the slow caps mid-fight.
+    const capOverride = monster.scriptsBoss?.rampDebuffCapOverride;
+    const effectiveRamp = capOverride
+      ? { ...rampDebuff, moveSlowMaxPct: capOverride.moveSlowMaxPct, atkSlowMaxPct: capOverride.atkSlowMaxPct }
+      : rampDebuff;
     applyStatusEffect(target.tracksCombat, {
       id: FROST_RAMP_EFFECT_ID,
-      maxStacks: frostRampMaxStacks(rampDebuff),
+      maxStacks: frostRampMaxStacks(effectiveRamp),
       remainingMs: durMs,
       refreshable: true,
       sourceId: monster.isMonster.id,
       data: {
-        moveSlowPerHit: rampDebuff.moveSlowPerHit,
-        moveSlowMaxPct: rampDebuff.moveSlowMaxPct,
-        atkSlowPerHit: rampDebuff.atkSlowPerHit,
-        atkSlowMaxPct: rampDebuff.atkSlowMaxPct,
+        moveSlowPerHit: effectiveRamp.moveSlowPerHit,
+        moveSlowMaxPct: effectiveRamp.moveSlowMaxPct,
+        atkSlowPerHit: effectiveRamp.atkSlowPerHit,
+        atkSlowMaxPct: effectiveRamp.atkSlowMaxPct,
         totalMs: durMs,
       },
     });

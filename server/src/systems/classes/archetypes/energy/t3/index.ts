@@ -5,6 +5,7 @@ import { registerNormalHit } from './pipeline/normalHit';
 import { registerAfterHit } from './pipeline/afterHit';
 import { updateAlternatingCurrents } from './ticks/alternatingCurrents';
 import { updateFlashSpeed } from './ticks/flash';
+import { updateEnergyState } from './ticks/energyState';
 
 /**
  * Register all tier-3 energy combat pipeline listeners.
@@ -38,6 +39,7 @@ export function initEnergyT3(): void {
 export function updateEnergyT3(world: World, dt: number): void {
   updateFlashSpeed(world, dt);
   updateAlternatingCurrents(world, dt);
+  updateEnergyState(world, dt);
 }
 
 // ── Public re-exports (preserve energyT3 module API) ─────────────────────────

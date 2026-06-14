@@ -8,8 +8,51 @@ import type { DotT3PathContext } from './_types';
 import {
   FTF_STACKS_PER_HIT, FTF_DMG_MULT, FTF_BONUS_MULT,
   CONF_TICK_MS, CONF_DMG_FACTOR,
+  IGNITION_VALUE_MULT,
 } from './_constants';
 import { CONF_TICKS } from '../core/constants';
+
+/**
+ * Ignition (Balanced).
+ * The first attack on a fresh (un-burned) target instantly applies ALL fire
+ * stacks at a reduced per-tick value; once burning, attacks refresh normally.
+ */
+export function tryIgnition(pc: DotT3PathContext): boolean {
+  if (!hasPassive(pc.player, 'dot.ignition')) return false;
+  const { ctx, world, player, monster, monsterState, maxStacks, dmgPerStack, durationMs, tickIntervalMs } = pc;
+
+  const current = getTotalStacks(monsterState, DOT_EFFECT_ID);
+  if (current === 0) {
+    // Fresh target — front-load every stack at 60% tick value.
+    const igDmg = Math.max(1, Math.round(dmgPerStack * IGNITION_VALUE_MULT));
+    let eff = applyStatusEffect(monsterState, {
+      id: DOT_EFFECT_ID, maxStacks, instanced: false,
+      sourceId: player.isPlayer.id, remainingMs: durationMs, refreshable: true,
+      data: { damagePerStack: igDmg, nextTickIn: tickIntervalMs, tickIntervalMs },
+    });
+    for (let i = 1; i < maxStacks; i++) {
+      eff = applyStatusEffect(monsterState, {
+        id: DOT_EFFECT_ID, maxStacks, instanced: false,
+        sourceId: player.isPlayer.id, remainingMs: durationMs, refreshable: true,
+        data: { damagePerStack: igDmg, nextTickIn: tickIntervalMs, tickIntervalMs },
+      });
+    }
+    eff.data.damagePerStack = igDmg;
+    eff.data.tickIntervalMs = tickIntervalMs;
+  } else {
+    // Already burning — refresh/add a single stack at the standard value.
+    const eff = applyStatusEffect(monsterState, {
+      id: DOT_EFFECT_ID, maxStacks, instanced: false,
+      sourceId: player.isPlayer.id, remainingMs: durationMs, refreshable: true,
+      data: { damagePerStack: dmgPerStack, nextTickIn: tickIntervalMs, tickIntervalMs },
+    });
+    eff.data.damagePerStack = dmgPerStack;
+    eff.data.tickIntervalMs = tickIntervalMs;
+  }
+  markMonsterDot(world, monster);
+  ctx.metadata['dotHandled'] = true;
+  return true;
+}
 
 /**
  * Fan the Flames (Balanced).

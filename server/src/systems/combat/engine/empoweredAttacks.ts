@@ -125,6 +125,11 @@ export function registerEmpoweredMultiplier(
     // Universal item/passive bonus — stacks on top of archetype base + T3 add.
     if (ctx.attackerType === 'player') {
       effectiveMult += ctx.attacker.usesSkills.passives['shared.empowered-mult-add'] ?? 0;
+      // Multiplicative empowered bonus (weapon mechanic): scales the resolved
+      // multiplier by (1 + bonus), so every spec gains the same % regardless of
+      // its base multiplier. e.g. 2.5x base with +0.5 → 3.75x (NOT additive 3.0x).
+      const multBonus = ctx.attacker.usesSkills.passives['weapon.empowered-mult-bonus'] ?? 0;
+      if (multBonus !== 0) effectiveMult *= 1 + multBonus;
     }
 
     const base     = ctx.damage;

@@ -1,6 +1,6 @@
 import {
   applyStatusEffect, getStatusEffect, getTotalStacks, hasStatusEffect,
-  removeStatusEffect,
+  removeStatusEffect, BRITTLE_EFFECT_ID,
 } from '@mmo-idle/shared';
 import { attachMarker, detachMarker } from '../../../../../../ecs/markerHelpers';
 import { applyKnockback } from '../../../../../combat/damage/knockback';
@@ -11,7 +11,77 @@ import {
   PERM_MAX_STACKS, PERM_MAX_HITS,
   CHILL_MAX, CHILL_MS,
   GLACIAL_FRACTURE_KNOCKBACK_PX, GLACIAL_FRACTURE_KNOCKBACK_MS,
+  RIMESHATTER_DR_DEBUFF, RIMESHATTER_DR_MS,
+  SHATTER_STRIKE_BONUS_PER_STACK,
 } from './_constants';
+
+/**
+ * Rimeshatter (Heavy).
+ * Below max frost stacks: normal 70% conversion (apply a stack). At max stacks:
+ * the hit deals full direct damage (the dispatcher's conversion cut is undone),
+ * the stacks are MAINTAINED (kept ticking), and a DR debuff is applied so the
+ * full-power direct hits land harder. The DR debuff reuses the brittle effect,
+ * which the mitigation layer already reads.
+ */
+export function tryRimeshatter(pc: DotT3PathContext): boolean {
+  if (!hasPassive(pc.player, 'dot.rimeshatter')) return false;
+  const { ctx, world, player, monster, monsterState, maxStacks, convPct, dmgPerStack, durationMs, tickIntervalMs } = pc;
+
+  const stacks = getTotalStacks(monsterState, DOT_EFFECT_ID);
+  if (stacks >= maxStacks) {
+    // Full-power phase: restore the direct damage the dispatcher converted to DoT.
+    if (convPct < 1) ctx.damage = Math.round(ctx.damage / (1 - convPct));
+    // Keep the existing stacks alive (refresh duration only, no new stack).
+    const existing = getStatusEffect(monsterState, DOT_EFFECT_ID);
+    if (existing) existing.remainingMs = durationMs;
+    // DR debuff via the brittle effect (read by effectiveDamageReductionAfterBrittle).
+    applyStatusEffect(monsterState, {
+      id: BRITTLE_EFFECT_ID, instanced: false, maxStacks: 1, refreshable: true,
+      remainingMs: RIMESHATTER_DR_MS, sourceId: player.isPlayer.id,
+      data: { platingPerStack: 0, drPerStack: RIMESHATTER_DR_DEBUFF },
+    });
+  } else {
+    const eff = applyStatusEffect(monsterState, {
+      id: DOT_EFFECT_ID, maxStacks, instanced: false,
+      sourceId: player.isPlayer.id, remainingMs: durationMs, refreshable: true,
+      data: { damagePerStack: dmgPerStack, nextTickIn: tickIntervalMs, tickIntervalMs },
+    });
+    eff.data.damagePerStack = dmgPerStack;
+    eff.data.tickIntervalMs = tickIntervalMs;
+  }
+  markMonsterDot(world, monster);
+  ctx.metadata['dotHandled'] = true;
+  return true;
+}
+
+/**
+ * Shatter Strike (Heavy).
+ * Each active frost stack grants a flat direct-damage bonus. While building, hits
+ * add/refresh stacks; at max stacks the duration can NO LONGER be refreshed — the
+ * stacks tick down naturally, then the cycle resets and reapplication begins.
+ */
+export function tryShatterStrike(pc: DotT3PathContext): boolean {
+  if (!hasPassive(pc.player, 'dot.shatter-strike')) return false;
+  const { ctx, world, player, monster, monsterState, maxStacks, dmgPerStack, durationMs, tickIntervalMs } = pc;
+
+  const stacks = getTotalStacks(monsterState, DOT_EFFECT_ID);
+  if (stacks > 0) ctx.damage += stacks * SHATTER_STRIKE_BONUS_PER_STACK;
+
+  if (stacks < maxStacks) {
+    // Ramp phase: add a stack and refresh.
+    const eff = applyStatusEffect(monsterState, {
+      id: DOT_EFFECT_ID, maxStacks, instanced: false,
+      sourceId: player.isPlayer.id, remainingMs: durationMs, refreshable: true,
+      data: { damagePerStack: dmgPerStack, nextTickIn: tickIntervalMs, tickIntervalMs },
+    });
+    eff.data.damagePerStack = dmgPerStack;
+    eff.data.tickIntervalMs = tickIntervalMs;
+    markMonsterDot(world, monster);
+  }
+  // At max: intentionally do NOT refresh — stacks tick down naturally (locked peak).
+  ctx.metadata['dotHandled'] = true;
+  return true;
+}
 
 /**
  * Permafrost (Heavy).

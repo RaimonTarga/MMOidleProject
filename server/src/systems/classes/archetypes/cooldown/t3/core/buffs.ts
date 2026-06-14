@@ -10,7 +10,7 @@ import {
 import {
   ALIGNMENT_SPEED_FACTOR,
   BATTERY_ATK_PER_STACK,
-  ETERNAL_FLAT_PER_STACK,
+  ETERNAL_CYCLE_FLAT_PER_STACK,
   OVERDRIVE_SPEED_FACTOR,
   TEMPORAL_FLAT_DMG,
 } from './constants';
@@ -29,7 +29,7 @@ export const COOLDOWN_T3_BUFFS = [
     if (!playerCs) return null;
     const stacks = getEternalChargeStacks(playerCs);
     return stacks > 0
-      ? { id: 'cooldown-eternal-charge', label: 'Chrge', stacks, durationPct: -1, color: '#ffaa00', logDetail: `+${stacks * ETERNAL_FLAT_PER_STACK} damage, stored execution charge` }
+      ? { id: 'cooldown-eternal-charge', label: 'Chrge', stacks, durationPct: -1, color: '#ffaa00', logDetail: `+${stacks * ETERNAL_CYCLE_FLAT_PER_STACK} execution damage banked` }
       : null;
   }, COOLDOWN_OPTS),
   defineBuff('cooldown-temporal-ext', ({ playerCs }) => {

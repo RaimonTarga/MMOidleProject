@@ -25,25 +25,20 @@ export function tileColor(biomeGroup: string): string {
   return BIOME_TILE_COLORS[biomeGroup] ?? '#1a1a2e';
 }
 
-/**
- * Maps a biomeGroup to its frame name in the biome atlas (/assets/biomes.png).
- * Frame names default to the group id; edit here if the packed names differ.
- * Until the atlas ships, BiomeIcon resolves these to nothing and the colored
- * tile + name fallback renders instead.
- */
+/** Maps a biomeGroup to its frame name in /assets/UI_icons.png. */
 export const BIOME_ICONS: Record<string, string> = {
-  clearing:  'clearing',
-  forest:    'forest',
-  mountain:  'mountain',
-  plains:    'plains',
-  swamp:     'swamp',
-  cave:      'cave',
-  jungle:    'jungle',
-  tundra:    'tundra',
-  desert:    'desert',
-  volcanic:  'volcanic',
-  graveyard: 'graveyard',
-  trench:    'trench',
+  clearing:  'UI_icons/clearing_icon.png',
+  forest:    'UI_icons/forest-icon.png',
+  mountain:  'UI_icons/mountain-icon.png',
+  plains:    'UI_icons/plains-icon.png',
+  swamp:     'UI_icons/swamp-icon.png',
+  cave:      'UI_icons/cave-icon.png',
+  jungle:    'UI_icons/jungle-icon.png',
+  tundra:    'UI_icons/tundra-icon.png',
+  desert:    'UI_icons/desert-icon.png',
+  volcanic:  'UI_icons/volcano-icon.png',
+  graveyard: 'UI_icons/graveyard-icon.png',
+  trench:    'UI_icons/trench-icon.png',
 };
 
 /** Map badge for dungeon nodes — Void Overlord throne uses a distinct label. */

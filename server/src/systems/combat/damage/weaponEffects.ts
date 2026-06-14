@@ -22,6 +22,7 @@ import {
   EDGE_OF_OBLIVION_ID,
   BRITTLE_EFFECT_ID,
   BRITTLE_DURATION_MS,
+  DR_SHATTER_EFFECT_ID,
   VOID_CORRUPTION_EFFECT_ID,
   CORRUPTION_MAX_STACKS,
   CORRUPTION_CONV_PCT,
@@ -121,6 +122,36 @@ export function initWeaponEffects(): void {
     // Keep per-stack values current with the equipped weapon (buffs apply immediately).
     effect.data.platingPerStack = platingPerStack;
     effect.data.drPerStack = drPerStack;
+
+    // Brittle shatter: at the shatter threshold, strip the target's DR for a window.
+    const shatterThreshold = p["weapon.brittle-shatter-threshold"] ?? 0;
+    const stripMs = p["weapon.brittle-shatter-dr-strip-ms"] ?? 0;
+    if (shatterThreshold > 0 && stripMs > 0 && effect.stacks >= shatterThreshold) {
+      applyStatusEffect(ctx.defender.tracksCombat, {
+        id: DR_SHATTER_EFFECT_ID,
+        instanced: false,
+        refreshable: true,
+        remainingMs: stripMs,
+        sourceId: ctx.attacker.isPlayer.id,
+        data: { totalMs: stripMs },
+      });
+    }
+  });
+
+  // ── Execute: hits vs low-HP targets deal a damage multiplier (Abyssal Axe). ──
+  registerCombatListener("onHit", (ctx, _world) => {
+    if (ctx.attackerType !== "player") return;
+    if (ctx.defenderType !== "monster") return;
+    const threshold = ctx.attacker.usesSkills.passives["weapon.execute-threshold-pct"] ?? 0;
+    if (threshold <= 0) return;
+    const mult = ctx.attacker.usesSkills.passives["weapon.execute-dmg-mult"] ?? 1;
+    if (mult <= 1) return;
+
+    const def = ctx.defender;
+    const hpFrac = def.hasHealth.hp / Math.max(1, def.hasHealth.maxHp);
+    if (hpFrac > threshold) return;
+
+    ctx.damage = Math.round(ctx.damage * mult);
   });
 
   // ── Flurry: each hit adds 1 attack-speed stack (up to weapon.flurry-stacks), ──
@@ -147,7 +178,29 @@ export function initWeaponEffects(): void {
 
   // ── Chaotic family: every Nth hit misses (0 damage, on-hit effects still fire) ─
   // Determined centrally in runPlayerAttack (combat.ts) before beforeAttack so the
-  // miss can preserve empowered charges / reload ammo. No onHit listener here.
+  // miss can preserve empowered charges / reload ammo.
+
+  // ── Plague Axe: the dead swing applies a damage-taken debuff instead of damage. ─
+  // Gated by weapon.dead-swing-vuln-pct; fires only on the chaotic-miss swing and
+  // applies the shared `vulnerability` effect (consumed in initDebuffMechanics).
+  registerCombatListener("onHit", (ctx, _world) => {
+    if (ctx.attackerType !== "player") return;
+    if (ctx.defenderType !== "monster") return;
+    if (!ctx.metadata["chaoticMiss"]) return; // only the dead swing carries it
+    const vulnPct = ctx.attacker.usesSkills.passives["weapon.dead-swing-vuln-pct"] ?? 0;
+    if (vulnPct <= 0) return;
+    if (evadeBlocksDebuffs(ctx)) return; // a monster-evaded swing applies no debuff
+
+    const vulnMs = ctx.attacker.usesSkills.passives["weapon.dead-swing-vuln-ms"] ?? 4000;
+    applyStatusEffect(ctx.defender.tracksCombat, {
+      id: "vulnerability",
+      instanced: false,
+      refreshable: true,
+      remainingMs: vulnMs,
+      sourceId: ctx.attacker.isPlayer.id,
+      data: { damageMultiplier: 1 + vulnPct },
+    });
+  });
 
   // ── Sacred family: 3× damage multiplier during the buff window ───────────────
   // Buff only procs (activates) when the player makes an attack, even if the

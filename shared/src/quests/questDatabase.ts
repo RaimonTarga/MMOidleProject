@@ -79,7 +79,7 @@ export const QUEST_DATABASE = new Map<string, QuestDefinition>([
     targetMonsterTypes: [
       'glacial-titan', 'mountain-titan', 'elder-treant-lord', 'stampede-emperor',
       'desert-eternal', 'jungle-ancient-lord', 'inferno-lord', 'undying-lord',
-      'void-titan', 'cave-titan', 'swamp-sovereign',
+      'elder-trench-serpent', 'cave-titan', 'swamp-sovereign',
     ],
     killsRequired: 1,
   }],

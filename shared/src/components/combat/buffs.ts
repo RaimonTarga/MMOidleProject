@@ -5,6 +5,11 @@
 export const BUFF_IDS = [
   'cadence-accelerando',
   'cadence-echo',
+  'cadence-resonance',
+  'cadence-verdict',
+  'cadence-aftershock',
+  'cadence-metronome',
+  'cadence-rampage',
   'cooldown-overdrive',
   'cooldown-eternal-charge',
   'cooldown-temporal-ext',
@@ -34,6 +39,11 @@ export const BUFF_IDS = [
   'defense-burst',
   'defense-debt',
   'defense-hardening',
+  'defense-revive-heal',     // post-cheat-death heal-over-time
+  'defense-stationary-dr',   // stationary DR ramp
+  'defense-sustained-dr',    // sustained-fight DR ramp
+  'defense-hardening-maxdr', // max-hardening DR pulse
+  'defense-reactive-plating',// on-hit stacking plating buff
   'summoner-howl-banner',
   'summoner-trample-boon',
   'summoner-debuff-immune',

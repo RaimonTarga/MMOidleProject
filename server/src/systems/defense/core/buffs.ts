@@ -1,13 +1,17 @@
 import { getCooldown } from '@mmo-idle/shared';
 import { defineBuff, type BuffDescriptor } from '../../combat/buffs/descriptor';
 import {
+  getCheatDeathHealPool,
   getDefenseAbsorbPool,
   getDefenseBurstPool,
   getDefenseDebtPool,
   BURST_DRAIN_MS,
   BURST_DRAIN_CD,
 } from './pools';
-import { getHardeningBonus } from '../mitigation/hardening';
+import { getHardeningBonus, getHardeningMaxDrBonus } from '../mitigation/hardening';
+import { getStationaryDrBonus } from '../mitigation/stationaryDr';
+import { getSustainedFightDrBonus } from '../mitigation/sustainedFightDr';
+import { getReactivePlatingBonus } from '../mitigation/reactivePlating';
 
 const NEUTRAL_OPTS = { category: 'neutral' as const, shape: 'square' as const };
 
@@ -33,11 +37,46 @@ export const DEFENSE_BUFFS = [
       logDetail: `${Math.round(pool)} healing pool`,
     };
   }, NEUTRAL_OPTS),
+  defineBuff('defense-revive-heal', ({ playerCs }) => {
+    if (!playerCs) return null;
+    const pool = getCheatDeathHealPool(playerCs);
+    return pool > 0
+      ? { id: 'defense-revive-heal', label: 'Reviv', stacks: 1, durationPct: -1, color: '#aaffcc', logDetail: `${Math.round(pool)} recovery pool` }
+      : null;
+  }, NEUTRAL_OPTS),
   defineBuff('defense-debt', ({ playerCs }) => {
     if (!playerCs) return null;
     const pool = getDefenseDebtPool(playerCs);
     return pool > 0
       ? { id: 'defense-debt', label: 'Debt', stacks: 1, durationPct: -1, color: '#ff4444', logDetail: `${Math.round(pool)} deferred damage` }
+      : null;
+  }, NEUTRAL_OPTS),
+  defineBuff('defense-stationary-dr', ({ player }) => {
+    if (!player) return null;
+    const bonus = getStationaryDrBonus(player);
+    return bonus > 0
+      ? { id: 'defense-stationary-dr', label: 'Frost', stacks: Math.round(bonus * 100), durationPct: -1, color: '#88ccff', logDetail: `+${Math.round(bonus * 100)}% damage reduction (stationary)` }
+      : null;
+  }, NEUTRAL_OPTS),
+  defineBuff('defense-sustained-dr', ({ player }) => {
+    if (!player) return null;
+    const bonus = getSustainedFightDrBonus(player);
+    return bonus > 0
+      ? { id: 'defense-sustained-dr', label: 'Endure', stacks: Math.round(bonus * 100), durationPct: -1, color: '#7faaff', logDetail: `+${Math.round(bonus * 100)}% damage reduction (sustained fight)` }
+      : null;
+  }, NEUTRAL_OPTS),
+  defineBuff('defense-hardening-maxdr', ({ player }) => {
+    if (!player) return null;
+    const bonus = getHardeningMaxDrBonus(player);
+    return bonus > 0
+      ? { id: 'defense-hardening-maxdr', label: 'Temper', stacks: Math.round(bonus * 100), durationPct: -1, color: '#ffaa66', logDetail: `+${Math.round(bonus * 100)}% damage reduction (max hardening)` }
+      : null;
+  }, NEUTRAL_OPTS),
+  defineBuff('defense-reactive-plating', ({ player }) => {
+    if (!player) return null;
+    const bonus = getReactivePlatingBonus(player);
+    return bonus > 0
+      ? { id: 'defense-reactive-plating', label: 'Crust', stacks: bonus, durationPct: -1, color: '#c9a24a', logDetail: `+${bonus} plating (reactive)` }
       : null;
   }, NEUTRAL_OPTS),
   defineBuff('defense-hardening', ({ player }) => {

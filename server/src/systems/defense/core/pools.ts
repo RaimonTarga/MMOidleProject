@@ -12,6 +12,16 @@ export const DEBT_POOL_KEY   = 'damageDebtPool';
 export const ABSORB_POOL_KEY = 'absorbPool';
 export const BURST_POOL_KEY  = 'regenBurstPool';
 
+// Post-cheat-death recovery: remaining HP to restore, plus the fixed drain rate
+// (HP per ms) computed at trigger time so an arbitrary heal window drains linearly.
+export const CHEAT_DEATH_HEAL_POOL_KEY = 'cheatDeathHealPool';
+export const CHEAT_DEATH_HEAL_RATE_KEY = 'cheatDeathHealRate';
+
+// Milliseconds elapsed in the current combat engagement (reset to 0 out of combat).
+// Maintained once per tick in updateDefensiveSystems; read by combat-duration ramps
+// (sustained-fight DR, absorb ramp) including from the combat pipeline.
+export const COMBAT_ELAPSED_KEY = 'combatElapsedMs';
+
 /** Duration over which hit-to-DoT debt and leech/burst pools drain (ms). */
 export const POOL_DRAIN_MS = 4000;
 
@@ -34,4 +44,12 @@ export function getDefenseAbsorbPool(cs: TracksCombat): number {
 
 export function getDefenseBurstPool(cs: TracksCombat): number {
   return getResource(cs, BURST_POOL_KEY);
+}
+
+export function getCheatDeathHealPool(cs: TracksCombat): number {
+  return getResource(cs, CHEAT_DEATH_HEAL_POOL_KEY);
+}
+
+export function getCombatElapsedMs(cs: TracksCombat): number {
+  return getResource(cs, COMBAT_ELAPSED_KEY);
 }

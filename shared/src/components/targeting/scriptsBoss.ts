@@ -30,6 +30,9 @@ export interface ActiveBossEffect {
   hadDotOverride?:       boolean;
   savedKite?:            boolean;
   hadKiteOverride?:      boolean;
+  /** Saved evasion override — restored when a timed evasion 'stat-buff' expires. */
+  savedEvasionOverride?: number;
+  hadEvasionOverride?:   boolean;
 }
 
 /**
@@ -50,6 +53,33 @@ export interface ScriptsBoss {
   dotEffectOverride?: MonsterDotEffect;
   /** Runtime override of the kite flag (set by a 'morph' action). Read by the AI. */
   kiteOverride?: boolean;
+  /**
+   * Runtime enemyShield gained mid-fight (set by an 'apply-shield' action). When
+   * present, the monster→player shield mechanic uses this instead of the static def.
+   */
+  shieldOverride?: { shieldPct: number; intervalMs: number; durationMs: number };
+  /**
+   * Runtime enemySoftCap gained mid-fight (set by an 'apply-soft-cap' action). When
+   * present, the player→monster soft-cap mechanic uses this instead of the static def.
+   */
+  softCapOverride?: { capPct: number; capMult: number };
+  /**
+   * Runtime evasion override (set by a 'stat-buff' evasion action). When present, the
+   * monster's per-hit dodge fraction uses this instead of the static def.evasion.
+   */
+  evasionOverride?: number;
+  /**
+   * Runtime rampDebuff cap override (set by a 'modify-ramp-debuff' action). Raises the
+   * move/atk slow caps used when (re)applying the frost-ramp debuff to players.
+   */
+  rampDebuffCapOverride?: { moveSlowMaxPct: number; atkSlowMaxPct: number };
+  /**
+   * Set by 'shed-defense' — suppresses BOTH the runtime overrides AND any static
+   * enemyShield/enemySoftCap so the boss drops all defenses for the finale.
+   */
+  defenseShed?: boolean;
+  /** Ids of adds spawned by 'spawn-adds' — despawned when the boss dies. */
+  spawnedAddIds?: string[];
 }
 
 export function initScriptsBoss(script: BossScript): ScriptsBoss {

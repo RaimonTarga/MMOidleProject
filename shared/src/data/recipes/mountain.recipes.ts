@@ -46,7 +46,7 @@ export const mountainRecipeEntries = [
     recipeGroup: 'mountain', requiredBiomeLevel: 3, slot: 'mobility',
     cost: { blue: 18 }, stats: { speed: 18 }, tier: 1,
     mechanicEffects: { 'mobility.acquire-speed-pct': 0.50, 'mobility.acquire-speed-ms': 1500, 'mobility.acquire-cooldown-ms': 8000 },
-    icon: 'items/boots/plate-boots-1.png',
+    icon: 'items/boots/knight-boots-1.png',
     description: 'Heavy soles that bite into scree and loose rock alike.',
     upgrades: [
       { stats: { speed: 3 }, cost: { blue: 10 }, requiredBiomeLevel: 4 },
@@ -185,6 +185,130 @@ export const mountainRecipeEntries = [
       { stats: { maxHp: 14, plating: 6 }, cost: { blue: 130, red: 44},  requiredBiomeLevel: 12 },
       { stats: { maxHp: 14, plating: 6 }, cost: { blue: 260, red: 88 }, requiredBiomeLevel: 12 },
       { stats: { maxHp: 14, plating: 6 }, cost: { blue: 390, red: 132 }, requiredBiomeLevel: 12 },
+    ],
+  }],
+
+  // T4
+
+  ['mountain-earthsunder-maul', {
+    id: 'mountain-earthsunder-maul', name: 'Earthsunder Maul',
+    recipeGroup: 'mountain', requiredBiomeLevel: 13, slot: 'weapon',
+    cost: { blue: 256 }, stats: { attack: 150 }, attacksPerSecond: 0.40, tier: 4,
+    icon: 'items/weapons/hammer-2.png',
+    description: 'It does not strike the earth so much as remind it of an old grievance.',
+    upgrades: [
+      { stats: { attack: 45 }, cost: { blue: 384 },  requiredBiomeLevel: 14 },
+      { stats: { attack: 45 }, cost: { blue: 768 },  requiredBiomeLevel: 15 },
+      { stats: { attack: 45 }, cost: { blue: 1290 }, requiredBiomeLevel: 16 },
+    ],
+  }],
+
+  ['mountain-warmaul', {
+    id: 'mountain-warmaul', name: 'Warmaul',
+    recipeGroup: 'mountain', requiredBiomeLevel: 13, slot: 'weapon',
+    cost: { blue: 240 }, stats: { attack: 90 }, attacksPerSecond: 0.65, tier: 4,
+    // ⚠⚠ empowered-mult-bonus MUST be implemented MULTIPLICATIVELY, not additively.
+    // final empowered mult = base_mult * (1 + 0.25), i.e. a flat +25% to the
+    // empowered hit REGARDLESS of the spec's base multiplier.
+    // Additive (+0.25 flat) would skew hugely toward low-mult/high-frequency
+    // specs (1.5→1.75 = +17%) and barely help high-mult specs (4.0→4.25 = +6%).
+    // Multiplicative gives every spec the same %, which is the design intent.
+    mechanicEffects: { 'weapon.empowered-mult-bonus': 0.25 },
+    icon: 'items/weapons/hammer-1.png',
+    description: 'Lighter in the haft, quicker to the shoulder — it rewards the soldier who already knows when to swing.',
+    upgrades: [
+      { stats: { attack: 27 }, cost: { blue: 360 },  requiredBiomeLevel: 14 },
+      { stats: { attack: 27 }, cost: { blue: 720 },  requiredBiomeLevel: 15 },
+      { stats: { attack: 27 }, cost: { blue: 1200 }, requiredBiomeLevel: 16 },
+    ],
+  }],
+
+  ['mountain-charm-t4', {
+    id: 'mountain-charm-t4', name: 'Fortress Core',
+    recipeGroup: 'mountain', requiredBiomeLevel: 14, slot: 'recovery',
+    cost: { blue: 220, red: 30 }, stats: { hpRegen: 16 },
+    mechanicEffects: { 'defense.shield-pct': 0.22, 'defense.shield-interval-ms': 8000, 'defense.shield-duration-ms': 8000 },
+    tier: 4,
+    icon: 'items/charms/stone-hand-charm-2.png',
+    description: 'A keep in miniature: it throws up a wall, lets it fall, and throws up another, tireless as siegework.',
+    upgrades: [
+      { mechanicEffects: { 'defense.shield-pct': 0.04 }, cost: { blue: 110, red: 30 }, requiredBiomeLevel: 15 },
+      { mechanicEffects: { 'defense.shield-pct': 0.04 }, cost: { blue: 220, red: 60 }, requiredBiomeLevel: 16 },
+      { mechanicEffects: { 'defense.shield-pct': 0.04 }, cost: { blue: 340, red: 90 }, requiredBiomeLevel: 16 },
+    ],
+  }],
+
+  ['mountain-boots-t4', {
+    id: 'mountain-boots-t4', name: 'Vanguard Stride',
+    recipeGroup: 'mountain', requiredBiomeLevel: 15, slot: 'mobility',
+    cost: { blue: 220 }, stats: { speed: 57 }, tier: 4,
+    mechanicEffects: { 'mobility.acquire-speed-pct': 0.90, 'mobility.acquire-speed-ms': 1500, 'mobility.acquire-cooldown-ms': 7000 },
+    icon: 'items/boots/plate-boots-4.png',
+    description: 'The instant a foe is marked, they close the gap as if the mountain itself leaned them forward.',
+    upgrades: [
+      { stats: { speed: 4 }, cost: { blue: 44 },  requiredBiomeLevel: 16 },
+      { stats: { speed: 5 }, cost: { blue: 92 },  requiredBiomeLevel: 16 },
+      { stats: { speed: 6 }, cost: { blue: 165 }, requiredBiomeLevel: 16 },
+    ],
+  }],
+
+  ['mountain-charm-t4-shieldmend', {
+    id: 'mountain-charm-t4-shieldmend', name: 'Shieldmend Ward',
+    recipeGroup: 'mountain', requiredBiomeLevel: 14, slot: 'recovery',
+    cost: { blue: 220, red: 30 }, stats: { hpRegen: 16 },
+    // † shield-break-heal-pct: when the shield is fully broken, heal 25% of the
+    //   shield's max value as HP. (new engine key)
+    mechanicEffects: {
+      'defense.shield-pct': 0.18, 'defense.shield-interval-ms': 8000, 'defense.shield-duration-ms': 8000,
+      'defense.shield-break-heal-pct': 0.25,
+    },
+    tier: 4,
+    icon: 'items/charms/stone-hand-charm-1.png',
+    description: 'When the ward shatters, it gives back a little of the blow it ate.',
+    upgrades: [
+      { mechanicEffects: { 'defense.shield-pct': 0.03 }, cost: { blue: 110, red: 30 }, requiredBiomeLevel: 15 },
+      { mechanicEffects: { 'defense.shield-pct': 0.03 }, cost: { blue: 220, red: 60 }, requiredBiomeLevel: 16 },
+      { mechanicEffects: { 'defense.shield-pct': 0.03 }, cost: { blue: 340, red: 90 }, requiredBiomeLevel: 16 },
+    ],
+  }],
+
+  ['mountain-vest-t4', {
+    id: 'mountain-vest-t4', name: "Titan's Keep",
+    recipeGroup: 'mountain', requiredBiomeLevel: 16, slot: 'armor',
+    cost: { blue: 256, red: 64 }, stats: { maxHp: 100, plating: 40, damageReduction: 0.12 },
+    // † max-hit-rearms-shield: when the damage cap triggers, immediately rearm
+    //   the shield charm (resets its interval). (new engine key)
+    mechanicEffects: {
+      'defense.max-hit-pct': 0.25, 'defense.max-hit-mult': 0.5,
+      'defense.max-hit-rearms-shield': 1,
+    },
+    tier: 4,
+    icon: 'items/armor/plate-armor-3.png',
+    description: 'The blow that should have ended you instead rings the walls — and the walls answer by standing back up.',
+    upgrades: [
+      { stats: { maxHp: 25, plating: 10 }, cost: { blue: 290, red: 96 },  requiredBiomeLevel: 16 },
+      { stats: { maxHp: 25, plating: 10 }, cost: { blue: 572, red: 192 }, requiredBiomeLevel: 16 },
+      { stats: { maxHp: 25, plating: 10 }, cost: { blue: 858, red: 290 }, requiredBiomeLevel: 16 },
+    ],
+  }],
+
+  ['mountain-vest-t4-stormwall', {
+    id: 'mountain-vest-t4-stormwall', name: 'Stormwall Plate',
+    recipeGroup: 'mountain', requiredBiomeLevel: 16, slot: 'armor',
+    cost: { blue: 256, red: 64 }, stats: { maxHp: 100, plating: 30, damageReduction: 0.14 },
+    // † shield-break-hp-recovery-pct: on shield break, recover 30% of the shield
+    //   max value as HP. (new engine key — armor-side variant)
+    mechanicEffects: {
+      'defense.max-hit-pct': 0.25, 'defense.max-hit-mult': 0.5,
+      'defense.shield-break-hp-recovery-pct': 0.30,
+    },
+    tier: 4,
+    icon: 'items/armor/plate-armor-1.png',
+    description: 'Built to take the storm head-on and turn what it absorbs back into a second wind.',
+    upgrades: [
+      { stats: { maxHp: 25, plating: 8 }, cost: { blue: 290, red: 96 },  requiredBiomeLevel: 16 },
+      { stats: { maxHp: 25, plating: 8 }, cost: { blue: 572, red: 192 }, requiredBiomeLevel: 16 },
+      { stats: { maxHp: 25, plating: 8 }, cost: { blue: 858, red: 290 }, requiredBiomeLevel: 16 },
     ],
   }],
 

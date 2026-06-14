@@ -8,6 +8,10 @@ import {
   PD_DISCHARGE_MULT, PD_OVERCHARGE_COUNT, PD_OVERCHARGE_MS, PD_OVERCHARGE_FX,
   CI_TAG_FX, CI_BASE_MULT,
   CS_RESERVOIR_SCALE,
+  BINARY_CHARGE_DISCHARGE_MULT, BINARY_DISCHARGE_DISCHARGE_MULT,
+  AWAKENED_N,
+  CRITICAL_MASS_MAX, CRITICAL_MASS_DMG_PER_STACK,
+  STORM_FX, ENDLESS_STORM_DPS, ENDLESS_STORM_TICK_MS, ENDLESS_STORM_DURATION_MS,
 } from '../core/constants';
 
 /**
@@ -77,6 +81,55 @@ export function registerEmpoweredHit(): void {
       const ampFactor = 1 + reservoir / CS_RESERVOIR_SCALE;
       ctx.damage      = Math.max(1, Math.floor(player.dealsDamage.attack * empMult * ampFactor));
       console.log(`[CapacitorShunt] ${player.isPlayer.id}: ${empMult}xbase x ${ampFactor.toFixed(2)} (res=${Math.round(reservoir)}) -> ${ctx.damage}`);
+      return;
+    }
+
+    // ── T4 specs ───────────────────────────────────────────────────────────────
+
+    // Binary Cycle: alternating big/small discharge, then flip state. Base mult
+    // still applies on top (not suppressed).
+    if (hasPassive(player, 'energy.binary-cycle')) {
+      const mult = energy.binaryDischargeState ? BINARY_DISCHARGE_DISCHARGE_MULT : BINARY_CHARGE_DISCHARGE_MULT;
+      ctx.damage = Math.max(1, Math.round(ctx.damage * mult));
+      energy.binaryDischargeState = !energy.binaryDischargeState;
+      return;
+    }
+
+    // Awakened Lightning: no instant damage; empower the next N regular attacks.
+    // Base mult is suppressed for this path (see beforeAttack).
+    // TODO(engine): the empowered regular attacks don't yet set the empoweredAttack
+    // flag, so empowered-triggered gear won't see them — apply 1.5× damage only.
+    if (hasPassive(player, 'energy.awakened-lightning')) {
+      ctx.damage = 0;
+      energy.awakenedCharges = AWAKENED_N;
+      return;
+    }
+
+    // Critical Mass: consecutive discharges stack a discharge-damage multiplier.
+    if (hasPassive(player, 'energy.critical-mass')) {
+      energy.criticalMassStacks = Math.min(CRITICAL_MASS_MAX, energy.criticalMassStacks + 1);
+      energy.criticalMassGapMs = 0;
+      ctx.damage = Math.round(ctx.damage * (1 + energy.criticalMassStacks * CRITICAL_MASS_DMG_PER_STACK));
+      return;
+    }
+
+    // Endless Storm: discharge deals normal damage AND applies/refreshes a storm DoT.
+    // TODO(engine): storm transfer to the next target on death is not yet implemented.
+    if (hasPassive(player, 'energy.endless-storm') && ctx.defenderType === 'monster') {
+      applyStatusEffect(ctx.defender.tracksCombat, {
+        id: STORM_FX, instanced: false, maxStacks: 1, refreshable: true,
+        remainingMs: ENDLESS_STORM_DURATION_MS, sourceId: player.isPlayer.id,
+        data: { dps: ENDLESS_STORM_DPS, nextTickIn: ENDLESS_STORM_TICK_MS, tickIntervalMs: ENDLESS_STORM_TICK_MS },
+      });
+      return; // base mult still applies the discharge hit
+    }
+
+    // Singularity Execute: discharge scales linearly with the energy stored when it
+    // was armed (captured in afterHit / the beforeAttack execute). Base mult suppressed.
+    if (hasPassive(player, 'energy.singularity-execute')) {
+      const empMult = passives['energy.empowered-mult'] ?? 6.0;
+      const scale   = Math.max(0, energy.dischargeEnergy) / 100;
+      ctx.damage    = Math.max(1, Math.floor(player.dealsDamage.attack * empMult * scale));
       return;
     }
   });

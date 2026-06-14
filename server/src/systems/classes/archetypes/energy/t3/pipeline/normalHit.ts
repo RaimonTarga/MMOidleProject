@@ -12,6 +12,9 @@ import {
   AC_CHARGE_DMG_MULT,
   HE_LOW_THRESHOLD, HE_HIGH_THRESHOLD, HE_DMG_MULT,
   CI_TAG_FX, CI_TAG_MS,
+  ENERGY_OVERDRIVE_ATK_PCT, UPKEEP_ONHIT_SCALE,
+  BINARY_CHARGE_ATK_BONUS, BINARY_DISCHARGE_ONHIT_BONUS,
+  CHARGE_STATE_MIN, AWAKENED_MULT,
 } from '../core/constants';
 
 /**
@@ -98,6 +101,41 @@ export function registerNormalHit(): void {
       ctx.damage = 0;
       energy.smChargePool += player.dealsDamage.attack;
       console.log(`[SuperconductM] ${player.isPlayer.id}: +${player.dealsDamage.attack} stored (pool=${energy.smChargePool})`);
+    }
+
+    // ── T4 specs ───────────────────────────────────────────────────────────────
+
+    // Overdrive: +ATK% while the mode is active (energy decaying in the tick).
+    if (hasPassive(player, 'energy.overdrive') && energy.overdriveActive) {
+      ctx.damage = Math.round(ctx.damage * (1 + ENERGY_OVERDRIVE_ATK_PCT));
+    }
+
+    // Energy Upkeep: on-hit DAMAGE scales with how long energy has been maintained.
+    if (hasPassive(player, 'energy.upkeep')) {
+      const upkeepSec = energy.upkeepTimerMs / 1000;
+      ctx.metadata['onHitDamageMult'] = 1 + upkeepSec * UPKEEP_ONHIT_SCALE;
+    }
+
+    // Binary Cycle: Charge State boosts attack damage; Discharge State boosts on-hit.
+    // TODO(engine): the per-state APS swing is not yet applied (needs a buff layer).
+    if (hasPassive(player, 'energy.binary-cycle')) {
+      if (energy.binaryDischargeState) {
+        ctx.metadata['onHitDamageMult'] = 1 + BINARY_DISCHARGE_ONHIT_BONUS;
+      } else {
+        ctx.damage = Math.round(ctx.damage * (1 + BINARY_CHARGE_ATK_BONUS));
+      }
+    }
+
+    // Charge State: attack damage scales linearly with the energy pool (0.5×→1.0×).
+    if (hasPassive(player, 'energy.charge-state')) {
+      const fillPct = energyPercent(energy);
+      ctx.damage = Math.max(1, Math.round(ctx.damage * (CHARGE_STATE_MIN + (1 - CHARGE_STATE_MIN) * fillPct)));
+    }
+
+    // Awakened Lightning: spend an empowered charge from the last discharge.
+    if (hasPassive(player, 'energy.awakened-lightning') && energy.awakenedCharges > 0) {
+      ctx.damage = Math.round(ctx.damage * AWAKENED_MULT);
+      energy.awakenedCharges--;
     }
   });
 }

@@ -81,8 +81,8 @@ export const tundraMonsterEntries = [
   }],
 
   // T4
-  ['frosttusk-mammoth', {
-    id: 'frosttusk-mammoth', name: 'Frosttusk Mammoth', color: 0xaaddff,
+  ['rime-tusk-mastodon', {
+    id: 'rime-tusk-mastodon', name: 'Rime-Tusk Mastodon', color: 0xaaddff,
     // CADENCE every 4 = a 240 freeze-slam that trips the cap + hard slow.
     // Heavy ICE PLATING (12) rewards the brittle weapon to crack it open.
     // Base 120 ≈ H_big. avg/attack (3·120+240)/4 = 150 → ×(1000/3500) = 43.

@@ -28,6 +28,8 @@ import { fxFrost } from "../fx/frost";
 import { fxFire } from "../fx/fire";
 import { fxVoid } from "../fx/voidFx";
 import { fxFirstStrike } from "../fx/firstStrike";
+import { fxAftershock } from "../fx/aftershock";
+import { fxDualSlash } from "../fx/dualSlash";
 import { shouldRunClientFx } from "../fx/guard";
 import type { GameScene } from "../scenes/GameScene";
 import { applyLunge } from "./interpolation";
@@ -86,6 +88,8 @@ type AttackFxFn = (args: AttackFxArgs) => void;
 
 const FLASH_CLIENT_EFFECT = "flash-teleport";
 const FIRST_STRIKE_CLIENT_EFFECT = "first-strike";
+const AFTERSHOCK_CLIENT_EFFECT = "aftershock";
+const SWIFTBLADE_CLIENT_EFFECT = "swiftblade";
 
 function snapOwnPlayerToServerTarget(
   state: RenderState,
@@ -322,6 +326,7 @@ function runFxForAttackStyle(
     : undefined;
   const targetInterp = state.interpolation.get(ev.targetId);
   const isFlashTeleport = ev.effects?.includes(FLASH_CLIENT_EFFECT) ?? false;
+  const isSwiftblade = ev.effects?.includes(SWIFTBLADE_CLIENT_EFFECT) ?? false;
 
   if (!targetSprite) {
     if (isFlashTeleport) {
@@ -367,6 +372,11 @@ function runFxForAttackStyle(
 
   if (isLaser) {
     activateLaserBeam(state, scene, ev.targetId);
+  } else if (isSwiftblade) {
+    // Swiftblade replaces the default cadence slash with its dual diagonal slash;
+    // both the primary and the extra strikes carry this effect.
+    playEmpoweredRing(args);
+    fxDualSlash(scene, to.x, to.y, ev.empowered);
   } else {
     playEmpoweredRing(args);
     const archetype = player.combatArchetype;
@@ -385,8 +395,13 @@ function runFxForAttackStyle(
 
   for (const effectId of ev.effects ?? []) {
     if (effectId === FLASH_CLIENT_EFFECT) continue;
+    if (effectId === SWIFTBLADE_CLIENT_EFFECT) continue; // handled above
     if (effectId === FIRST_STRIKE_CLIENT_EFFECT) {
       fxFirstStrike(scene, to.x, to.y);
+      continue;
+    }
+    if (effectId === AFTERSHOCK_CLIENT_EFFECT) {
+      fxAftershock(scene, to.x, to.y);
       continue;
     }
     playOneShotEffect(scene, effectId, to, { scale: targetEffectScale });

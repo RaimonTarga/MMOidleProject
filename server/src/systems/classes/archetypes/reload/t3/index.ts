@@ -8,6 +8,7 @@ import { registerReloadBalancedT3 } from './pipeline/balancedPaths';
 import { registerCoverFire } from './pipeline/coverFire';
 import { registerReloadLifecycleHandlers } from './lifecycleHandlers';
 import { updateReloadT3Ticks } from './ticks/laser';
+import { updateReloadMomentum } from './ticks/momentum';
 
 export function initReloadT3(): void {
   registerLaserGateAndSnipeCooldown();
@@ -22,6 +23,7 @@ export function initReloadT3(): void {
 
 export function updateReloadT3(world: World, dt: number, now: number = Date.now()): void {
   updateReloadT3Ticks(world, dt, now);
+  updateReloadMomentum(world, dt);
 }
 
 export { RELOAD_T3_BUFFS } from './core/buffs';

@@ -8,46 +8,25 @@ export const PLAYER_FRAMES: Record<string, string> = {
   'energy':   'sprites/energy.png',
   'reload':   'sprites/reload.png',
 
-  'cadence-light':    'sprites/light_cadence.png',
-  'cadence-balanced': 'sprites/medium_cadence.png',
-  'cadence-heavy':    'sprites/heavy_cadence.png',
+  'cadence-range-close': 'sprites/in-fighter.png',
+  'cadence-range-mid':   'sprites/lancer.png',
+  'cadence-range-far':   'sprites/phantom-blade.png',
 
-  'cooldown-light':    'sprites/light_cooldown.png',
-  'cooldown-balanced': 'sprites/medium_cooldown.png',
-  'cooldown-heavy':    'sprites/heavy_cooldown.png',
+  'cooldown-range-close': 'sprites/vanguard.png',
+  'cooldown-range-mid':   'sprites/phalanx.png',
+  'cooldown-range-far':   'sprites/sentinel.png',
 
-  'dot-light':    'sprites/light_dot.png',
-  'dot-balanced': 'sprites/medium_dot.png',
-  'dot-heavy':    'sprites/heavy_dot.png',
+  'dot-range-close': 'sprites/hexblade.png',
+  'dot-range-mid':   'sprites/warlock.png',
+  'dot-range-far':   'sprites/harbinger.png',
 
-  'energy-light':    'sprites/light_energy.png',
-  'energy-balanced': 'sprites/medium_energy.png',
-  'energy-heavy':    'sprites/heavy_energy.png',
+  'energy-range-close': 'sprites/haunt.png',
+  'energy-range-mid':   'sprites/shade.png',
+  'energy-range-far':   'sprites/wisp.png',
 
-  'reload-light':    'sprites/light_reload.png',
-  'reload-balanced': 'sprites/medium_reload.png',
-  'reload-heavy':    'sprites/heavy_reload.png',
-
-  // ── T3 range ─────────
-  'cadence-range-close':    'sprites/in-fighter.png',
-  'cadence-range-mid': 'sprites/lancer.png',
-  'cadence-range-far':    'sprites/phantom-blade.png',
-
-  'cooldown-range-close':    'sprites/vanguard.png',
-  'cooldown-range-mid': 'sprites/phalanx.png',
-  'cooldown-range-far':    'sprites/sentinel.png',
-
-  'dot-range-close':    'sprites/shade.png',
-  'dot-range-mid': 'sprites/warlock.png',
-  'dot-range-far':    'sprites/harbinger.png',
-
-  'energy-range-close':    'sprites/wisp.png',
-  'energy-range-mid': 'sprites/shade.png',
-  'energy-range-far':    'sprites/haunt.png',
-
-  'reload-range-close':    'sprites/breacher.png',
-  'reload-range-mid': 'sprites/enforcer.png',
-  'reload-range-far':    'sprites/deadeye.png',
+  'reload-range-close': 'sprites/breacher.png',
+  'reload-range-mid':   'sprites/enforcer.png',
+  'reload-range-far':   'sprites/deadeye.png',
 };
 
 /** Key: monsterTypeId (matches MONSTER_DATABASE keys exactly).
@@ -182,16 +161,24 @@ export const MONSTER_FRAMES: Record<string, string> = {
 };
 
 const VARIANTS = ['light', 'balanced', 'heavy'] as const;
+const RANGE_SUFFIXES = ['range-close', 'range-mid', 'range-far'] as const;
 
 /**
  * Returns the atlas frame name for a player.
- * Resolution order: '{archetype}-{variant}-t3' → '{archetype}-{variant}' → '{archetype}' → 'default' → null.
+ * Resolution order: '{archetype}-{range}' → '{archetype}-{variant}-t3' → '{archetype}-{variant}' → '{archetype}' → 'default' → null.
  */
 export function resolvePlayerFrame(input: {
   combatArchetype: string | null;
   unlockedSkills: string[];
 }): string | null {
   if (input.combatArchetype) {
+    const range = RANGE_SUFFIXES.find(r =>
+      input.unlockedSkills.includes(`${input.combatArchetype}-${r}`),
+    );
+    if (range) {
+      const rangeFrame = PLAYER_FRAMES[`${input.combatArchetype}-${range}`];
+      if (rangeFrame) return rangeFrame;
+    }
     const variant = VARIANTS.find(v =>
       input.unlockedSkills.includes(`${input.combatArchetype}-${v}`),
     );
