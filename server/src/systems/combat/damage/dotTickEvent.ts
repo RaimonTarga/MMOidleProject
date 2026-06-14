@@ -3,6 +3,7 @@ import {
   MONSTER_DATABASE,
   type DamageElement,
   type DotPathElement,
+  type DotTickFx,
 } from "@mmo-idle/shared";
 import type { World } from "../../../world/World";
 import type { MonsterEntity, PlayerEntity } from "../../../ecs/entity";
@@ -17,6 +18,7 @@ export function pushDotTickEvent(
   monster: MonsterEntity,
   element: DamageElement,
   amount: number,
+  fx?: DotTickFx,
 ): void {
   if (amount <= 0) return;
   world.pushEvent(monster.hasPosition.nodeId, {
@@ -25,6 +27,7 @@ export function pushDotTickEvent(
     targetPos: { ...monster.hasPosition.current },
     amount: Math.round(amount),
     element,
+    ...(fx ? { fx } : {}),
   });
 }
 

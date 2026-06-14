@@ -421,6 +421,8 @@ function buffEffectText(buff: PlayerBuff): string {
       return "target chill stacks";
     case "dot-frozen":
       return "target frozen";
+    case "dot-rimeblade":
+      return "+attack damage per frost stack";
     case "reload-snipe-ready":
       return "next shot empowered";
     case "reload-hair-trigger":

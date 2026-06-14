@@ -30,7 +30,6 @@ import {
 } from "@mmo-idle/shared";
 import { getAntiHealMult } from "../../defense";
 import { applyPlayerAoe, applyMonsterAoe } from "../damage/aoeDamage";
-import { isMonsterFrozen } from "../../classes/archetypes/dot/t3";
 import { canApplyPlayerDebuff } from "../../classes/archetypes/summoner/t3/core/debuffGuard";
 import { evadeBlocksDebuffs } from "../../defense/mitigation/evasion";
 import { isMonsterStunned } from "../status/stun";
@@ -812,10 +811,11 @@ export function updateCombat(world: World, dt: number, now: number) {
         continue;
       }
       setAttackTarget(world, e, target.isPlayer.id);
+      // Frozen no longer blocks attacks (it's a severe slow, not full CC); the
+      // lengthened attack cooldown applied in updateChillAndFreeze paces them.
       if (
         now - e.performsAttack.lastAttackAt >=
-          e.performsAttack.attackCooldown &&
-        !isMonsterFrozen(world, e.isMonster.id)
+        e.performsAttack.attackCooldown
       ) {
         const outcome = runMonsterAttack(world, e, target, now);
         if (outcome === "hit" || outcome === "killed") {
@@ -857,8 +857,7 @@ export function updateCombat(world: World, dt: number, now: number) {
     }
     setAttackTarget(world, e, minion.isMinion.id);
     if (
-      now - e.performsAttack.lastAttackAt >= e.performsAttack.attackCooldown &&
-      !isMonsterFrozen(world, e.isMonster.id)
+      now - e.performsAttack.lastAttackAt >= e.performsAttack.attackCooldown
     ) {
       runMonsterAttackOnMinion(world, e, minion, now);
       applyMonsterAttackSplash(

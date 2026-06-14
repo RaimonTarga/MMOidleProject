@@ -12,7 +12,7 @@ import {
   CHILL_MAX, CHILL_MS,
   GLACIAL_FRACTURE_KNOCKBACK_PX, GLACIAL_FRACTURE_KNOCKBACK_MS,
   RIMESHATTER_DR_DEBUFF, RIMESHATTER_DR_MS,
-  SHATTER_STRIKE_BONUS_PER_STACK,
+  SHATTER_STRIKE_BONUS_PER_STACK, SHATTER_STRIKE_UNLOCK_TIER,
 } from './_constants';
 
 /**
@@ -65,7 +65,10 @@ export function tryShatterStrike(pc: DotT3PathContext): boolean {
   const { ctx, world, player, monster, monsterState, maxStacks, dmgPerStack, durationMs, tickIntervalMs } = pc;
 
   const stacks = getTotalStacks(monsterState, DOT_EFFECT_ID);
-  if (stacks > 0) ctx.damage += stacks * SHATTER_STRIKE_BONUS_PER_STACK;
+  // Flat direct-attack bonus per active frost stack, scaled per tier from the
+  // path unlock (1× at unlock, +1× each tier beyond) like the other T4 specs.
+  const tierMult = Math.max(1, (player.tracksProgression?.playerTier ?? SHATTER_STRIKE_UNLOCK_TIER) - SHATTER_STRIKE_UNLOCK_TIER + 1);
+  if (stacks > 0) ctx.damage += stacks * SHATTER_STRIKE_BONUS_PER_STACK * tierMult;
 
   if (stacks < maxStacks) {
     // Ramp phase: add a stack and refresh.

@@ -38,6 +38,7 @@ export const BUFF_IDS = [
   'dot-chill',
   'dot-frozen',
   'dot-frenzy',
+  'dot-rimeblade',
   'reload-snipe-ready',
   'reload-hair-trigger',
   'reload-cover-fire',

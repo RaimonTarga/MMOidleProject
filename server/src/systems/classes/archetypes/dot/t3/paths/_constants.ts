@@ -23,8 +23,9 @@ export const IGNITION_VALUE_MULT = 0.6;  // tick value of each front-loaded stac
 export const RIMESHATTER_DR_DEBUFF = 0.08;  // DR reduction applied while at max stacks
 export const RIMESHATTER_DR_MS     = 2_000; // debuff refresh window
 
-// Heavy — Shatter Strike (dot-heavy-t3-c)
-export const SHATTER_STRIKE_BONUS_PER_STACK = 10;  // flat direct bonus per active frost stack
+// Heavy — Shatter Strike / Rime Blade (dot-heavy-t3-c)
+export const SHATTER_STRIKE_BONUS_PER_STACK = 10;  // flat direct bonus per active frost stack (× tierMult)
+export const SHATTER_STRIKE_UNLOCK_TIER     = 4;   // path specs unlock at playerTier 4 → 1×
 
 // Light — Eternal Doom (dot-light-t3-b)
 export const ED_BASE_STACKS   = 8;
@@ -42,8 +43,10 @@ export const FTF_DMG_MULT       = 0.5;
 export const FTF_BONUS_MULT     = 2;     // bonus = maxStacks × basePerStack × FTF_BONUS_MULT (was 3, OP)
 
 // Balanced — Conflagration (dot-balanced-t3-c)
-export const CONF_TICK_MS    = 500;
-export const CONF_DMG_FACTOR = 2;
+// Fast cadence: 10 ticks × 250ms (2.5s total) at factor 1 — same total damage and
+// duration as the old 5 × 500ms × factor 2, just a rapid raging burn.
+export const CONF_TICK_MS    = 250;
+export const CONF_DMG_FACTOR = 1;
 
 // Heavy — Permafrost (dot-heavy-t3-a)
 export const PERM_MAX_STACKS  = 1;
@@ -51,11 +54,15 @@ export const PERM_MAX_HITS    = 35;    // hits to reach max damage (35% of ATK)
 export const PERM_PCT_PER_HIT = 0.01;  // +1% of ATK per hit
 
 // Heavy — Freezing Cold (dot-heavy-t3-b)
-export const CHILL_MAX        = 3;
-export const CHILL_SPEED_MULT = 0.12;  // 12% speed reduction per chill stack
-export const CHILL_ATK_MULT   = 0.12;  // 12% attackCooldown increase per chill stack
+export const CHILL_MAX        = 9;     // 9 chill stacks → freeze (longer ramp; avoids perma-freeze)
+export const CHILL_SPEED_MULT = 0.05;  // 5% speed reduction per chill stack (45% at max)
+export const CHILL_ATK_MULT   = 0.05;  // 5% attackCooldown increase per chill stack (+45% at max)
 export const CHILL_MS         = 6_000;
 export const CHILL_FLAG       = 'dot-chill-applied';
+// Frozen is a SEVERE slow, not full CC (design): the monster still moves and
+// attacks, just very slowly. Applied as a strong speed cut + long attack cooldown.
+export const FREEZE_SPEED_MULT = 0.80;  // -80% movement speed while frozen
+export const FREEZE_ATK_MULT   = 2.0;   // +200% attack cooldown while frozen (×3)
 
 // Heavy — Glacial Fracture (dot-heavy-t3-c)
 export const GLACIAL_FRACTURE_KNOCKBACK_PX = 120;

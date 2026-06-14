@@ -51,6 +51,9 @@ import {
   targetDotStacksAtom,
 } from '../atoms';
 
+// Freezing Cold: chill stacks needed to trigger the freeze (server CHILL_MAX).
+const CHILL_MAX_STACKS = 9;
+
 export function StatPanel() {
   const hpTip = useHoverTooltip(STAT_HELP.hp);
   const playerId = useAtomValue(playerIdAtom);
@@ -420,24 +423,24 @@ export function StatPanel() {
               </div>
             )}
 
-            {/* Frost path — chill stacks + frozen indicator */}
+            {/* Frost path — chill stacks + frozen indicator (9 stacks → freeze) */}
             {isFrost && (p['dot.freezing-cold'] ?? 0) > 0 && (
               <>
                 <div className="stat-row" style={{ marginTop: 6 }}>
                   <span className="stat-label">Chill</span>
                   <span className="stat-value">
-                    {player.attackTargetId ? `${player.targetChillStacks ?? 0} / 3` : '—'}
+                    {player.attackTargetId ? `${player.targetChillStacks ?? 0} / ${CHILL_MAX_STACKS}` : '—'}
                   </span>
                 </div>
                 <div className="chill-pips">
-                  {[0, 1, 2].map(i => (
+                  {Array.from({ length: CHILL_MAX_STACKS }, (_, i) => (
                     <div
                       key={i}
                       className={`chill-pip${i < (player.targetChillStacks ?? 0) ? ' chill-pip--active' : ''}`}
                     />
                   ))}
                 </div>
-                {(player.targetChillStacks ?? 0) >= 3 && (
+                {(player.targetChillStacks ?? 0) >= CHILL_MAX_STACKS && (
                   <div className="chill-frozen-label">— FROZEN —</div>
                 )}
               </>

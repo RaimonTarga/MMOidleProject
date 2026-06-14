@@ -11,6 +11,7 @@ import { FREEZE_BONUS } from './constants';
 import {
   CHILL_ATK_MULT, CHILL_SPEED_MULT, IT_ATK_PER_STACK, IT_SPEED_CAP, IT_SPEED_PER_STACK,
   FRENZY_FX, FRENZY_DURATION_MS, FRENZY_APS, FRENZY_ONHIT_PER_TIER, FRENZY_UNLOCK_TIER,
+  SHATTER_STRIKE_BONUS_PER_STACK, SHATTER_STRIKE_UNLOCK_TIER,
 } from '../paths/_constants';
 
 export const DOT_T3_BUFFS = [
@@ -27,6 +28,18 @@ export const DOT_T3_BUFFS = [
       logDetail: `+${Math.round(FRENZY_APS * 100)}% attack speed, +${FRENZY_ONHIT_PER_TIER * tierMult} on-hit damage`,
     };
   }, { category: 'dot-poison', shape: 'square' }),
+  defineBuff('dot-rimeblade', ({ player }) => {
+    if (player.usesSkills.combatArchetype !== 'dot') return null;
+    if ((player.usesSkills.passives['dot.shatter-strike'] ?? 0) <= 0) return null;
+    const stacks = player.appliesDots?.targetDotStacks ?? 0;
+    if (stacks <= 0) return null;
+    const tierMult = Math.max(1, (player.tracksProgression?.playerTier ?? SHATTER_STRIKE_UNLOCK_TIER) - SHATTER_STRIKE_UNLOCK_TIER + 1);
+    const bonus = stacks * SHATTER_STRIKE_BONUS_PER_STACK * tierMult;
+    return {
+      id: 'dot-rimeblade', label: 'Rime', stacks, durationPct: -1, color: '#7fd0ff',
+      logDetail: `+${bonus} attack damage`,
+    };
+  }, { category: 'dot-frost', shape: 'diamond' }),
   defineBuff('dot-vigor', ({ player, targetCs }) => {
     if (player.usesSkills.combatArchetype !== 'dot') return null;
     if ((player.usesSkills.passives['dot.invigorating-toxins'] ?? 0) <= 0) return null;

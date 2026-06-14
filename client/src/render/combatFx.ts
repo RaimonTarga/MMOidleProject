@@ -13,6 +13,7 @@ import { fxCannonBlast } from "../fx/cannonFx";
 import { fxVoidDischarge } from "../fx/voidDischarge";
 import { fxPoisonExplosion } from "../fx/poisonExplosion";
 import { fxFirebrand } from "../fx/firebrand";
+import { fxConflagrationTick } from "../fx/conflagrationTick";
 import { fxDoomTick, fxDoomCloud } from "../fx/doom";
 import {
   playOneShotEffect,
@@ -217,7 +218,8 @@ export function dispatchCombatEvent(
       const spr = state.sprite.get(ev.targetId);
       const tx = spr?.x ?? ev.targetPos.x;
       const ty = spr?.y ?? ev.targetPos.y;
-      if (ev.element === "lightning") fxLightning(scene, tx, ty - 130, tx, ty, true);
+      if (ev.fx === "conflagration") fxConflagrationTick(scene, tx, ty);
+      else if (ev.element === "lightning") fxLightning(scene, tx, ty - 130, tx, ty, true);
       else if (ev.element === "doom") fxDoomTick(scene, tx, ty);
     }
     return;
