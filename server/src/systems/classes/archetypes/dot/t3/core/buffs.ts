@@ -6,10 +6,27 @@ import {
   getConflagrationRemainingPct,
   isConflagrationActive,
 } from './selectors';
+import { getStatusEffect } from '@mmo-idle/shared';
 import { FREEZE_BONUS } from './constants';
-import { CHILL_ATK_MULT, CHILL_SPEED_MULT, IT_ATK_PER_STACK, IT_SPEED_CAP, IT_SPEED_PER_STACK } from '../paths/_constants';
+import {
+  CHILL_ATK_MULT, CHILL_SPEED_MULT, IT_ATK_PER_STACK, IT_SPEED_CAP, IT_SPEED_PER_STACK,
+  FRENZY_FX, FRENZY_DURATION_MS, FRENZY_APS, FRENZY_ONHIT_PER_TIER, FRENZY_UNLOCK_TIER,
+} from '../paths/_constants';
 
 export const DOT_T3_BUFFS = [
+  defineBuff('dot-frenzy', ({ player }) => {
+    if (player.usesSkills.combatArchetype !== 'dot') return null;
+    if ((player.usesSkills.passives['dot.frenzy'] ?? 0) <= 0) return null;
+    const fx = getStatusEffect(player.tracksCombat, FRENZY_FX);
+    if (!fx || fx.remainingMs <= 0) return null;
+    const total = fx.data['totalMs'] ?? FRENZY_DURATION_MS;
+    const pct = total > 0 ? Math.round((fx.remainingMs / total) * 100) : 0;
+    const tierMult = Math.max(1, (player.tracksProgression?.playerTier ?? FRENZY_UNLOCK_TIER) - FRENZY_UNLOCK_TIER + 1);
+    return {
+      id: 'dot-frenzy', label: 'Frenzy', stacks: 1, durationPct: pct, color: '#ff3355',
+      logDetail: `+${Math.round(FRENZY_APS * 100)}% attack speed, +${FRENZY_ONHIT_PER_TIER * tierMult} on-hit damage`,
+    };
+  }, { category: 'dot-poison', shape: 'square' }),
   defineBuff('dot-vigor', ({ player, targetCs }) => {
     if (player.usesSkills.combatArchetype !== 'dot') return null;
     if ((player.usesSkills.passives['dot.invigorating-toxins'] ?? 0) <= 0) return null;

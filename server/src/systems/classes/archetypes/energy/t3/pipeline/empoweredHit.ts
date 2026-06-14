@@ -9,9 +9,9 @@ import {
   CI_TAG_FX, CI_BASE_MULT,
   CS_RESERVOIR_SCALE,
   BINARY_CHARGE_DISCHARGE_MULT, BINARY_DISCHARGE_DISCHARGE_MULT,
-  AWAKENED_N,
+  AWAKENED_N, AWAKENED_MULT,
   CRITICAL_MASS_MAX, CRITICAL_MASS_DMG_PER_STACK,
-  STORM_FX, ENDLESS_STORM_DPS, ENDLESS_STORM_TICK_MS, ENDLESS_STORM_DURATION_MS,
+  STORM_FX, ENDLESS_STORM_TICK_MS, ENDLESS_STORM_DURATION_MS, ENDLESS_STORM_MAX_MS, ENDLESS_STORM_TOTAL_MULT,
 } from '../core/constants';
 
 /**
@@ -95,13 +95,12 @@ export function registerEmpoweredHit(): void {
       return;
     }
 
-    // Awakened Lightning: no instant damage; empower the next N regular attacks.
-    // Base mult is suppressed for this path (see beforeAttack).
-    // TODO(engine): the empowered regular attacks don't yet set the empoweredAttack
-    // flag, so empowered-triggered gear won't see them — apply 1.5× damage only.
+    // Stormbringer: the discharge is the FIRST of N uniform 1.5× empowered strikes
+    // (base mult suppressed in beforeAttack, so this applies exactly 1.5×). It's a real
+    // empowered hit; arm the remaining N−1 strikes (handled in normalHit).
     if (hasPassive(player, 'energy.awakened-lightning')) {
-      ctx.damage = 0;
-      energy.awakenedCharges = AWAKENED_N;
+      ctx.damage = Math.max(1, Math.round(ctx.damage * AWAKENED_MULT));
+      energy.awakenedCharges = AWAKENED_N - 1;
       return;
     }
 
@@ -114,14 +113,21 @@ export function registerEmpoweredHit(): void {
     }
 
     // Endless Storm: discharge deals normal damage AND applies/refreshes a storm DoT.
-    // TODO(engine): storm transfer to the next target on death is not yet implemented.
     if (hasPassive(player, 'energy.endless-storm') && ctx.defenderType === 'monster') {
+      // Discharge deals NORMAL damage (mult suppressed in beforeAttack) with no splash —
+      // the entire empowered payload is the storm DoT: total = attack × TOTAL_MULT over the
+      // base duration, captured per-tick at cast time. Extending the storm = more total.
+      ctx.metadata['suppressEmpoweredAoe'] = true;
+      const tickMs = ENDLESS_STORM_TICK_MS;
+      const damagePerTick = Math.max(1, Math.round(
+        player.dealsDamage.attack * ENDLESS_STORM_TOTAL_MULT * tickMs / ENDLESS_STORM_DURATION_MS,
+      ));
       applyStatusEffect(ctx.defender.tracksCombat, {
         id: STORM_FX, instanced: false, maxStacks: 1, refreshable: true,
         remainingMs: ENDLESS_STORM_DURATION_MS, sourceId: player.isPlayer.id,
-        data: { dps: ENDLESS_STORM_DPS, nextTickIn: ENDLESS_STORM_TICK_MS, tickIntervalMs: ENDLESS_STORM_TICK_MS },
+        data: { damagePerTick, nextTickIn: tickMs, tickIntervalMs: tickMs, totalMs: ENDLESS_STORM_MAX_MS },
       });
-      return; // base mult still applies the discharge hit
+      return; // discharge itself keeps its normal (suppressed) damage
     }
 
     // Singularity Execute: discharge scales linearly with the energy stored when it
@@ -130,6 +136,9 @@ export function registerEmpoweredHit(): void {
       const empMult = passives['energy.empowered-mult'] ?? 6.0;
       const scale   = Math.max(0, energy.dischargeEnergy) / 100;
       ctx.damage    = Math.max(1, Math.floor(player.dealsDamage.attack * empMult * scale));
+      // Void-themed discharge FX (client fxVoidDischarge).
+      const existing = ctx.metadata['clientEffects'];
+      ctx.metadata['clientEffects'] = Array.isArray(existing) ? [...existing, 'void-discharge'] : ['void-discharge'];
       return;
     }
   });

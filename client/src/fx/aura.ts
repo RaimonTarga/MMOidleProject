@@ -16,12 +16,51 @@ export const AURA_REGISTRY: Record<string, { color: number; tint: number; intens
   'channel-1': { color: 0x88d8ff, tint: 0xcdeeff, intensity: 0.7 },
   'channel-2': { color: 0x55c2ff, tint: 0xa8e0ff, intensity: 1.1 },
   'channel-3': { color: 0x22aaff, tint: 0x88d4ff, intensity: 1.6 },
+  // Equinox — opposed green (Charge) vs magenta (Discharge); vivid complementary
+  // pair, distinct from the yellow/light-blue used by other auras.
+  'equinox-charge':    { color: 0x44dd66, tint: 0xa8f0bb, intensity: 1.1 },
+  'equinox-discharge': { color: 0xdd44cc, tint: 0xf0a8e6, intensity: 1.1 },
+  // Stormbringer — electric indigo crackle while the empowered strikes last.
+  'storm': { color: 0x8a5cff, tint: 0xc2aaff, intensity: 1.3 },
 };
 
-/** Sprite tint for an aura id, or null if unknown/none. */
-export function auraTint(aura: string | null | undefined): number | null {
-  if (!aura) return null;
-  return AURA_REGISTRY[aura]?.tint ?? null;
+interface AuraColors { color: number; tint: number; intensity: number }
+
+function lerpColor(a: number, b: number, t: number): number {
+  const k = Math.max(0, Math.min(1, t));
+  const ar = (a >> 16) & 0xff, ag = (a >> 8) & 0xff, ab = a & 0xff;
+  const br = (b >> 16) & 0xff, bg = (b >> 8) & 0xff, bb = b & 0xff;
+  const r = Math.round(ar + (br - ar) * k);
+  const g = Math.round(ag + (bg - ag) * k);
+  const bl = Math.round(ab + (bb - ab) * k);
+  return (r << 16) | (g << 8) | bl;
+}
+
+/**
+ * Resolve a player's current aura colors. Most auras are static registry entries;
+ * Aetherist ('aether') is DYNAMIC — a sun that shifts red→yellow and brightens as
+ * energy (and thus attack power) climbs.
+ */
+export function resolveAuraColors(player: PlayerView): AuraColors | null {
+  const id = player.aura;
+  if (!id) return null;
+  if (id === 'aether') {
+    // Energy resets to 0 the tick it fills (the discharge arms), so treat
+    // empowered-ready as full — otherwise the aura snaps to red at peak charge.
+    const t = player.empoweredReady ? 1 : Math.max(0, Math.min(1, (player.energyCount ?? 0) / 100));
+    return {
+      color: lerpColor(0xff2a1a, 0xffd633, t),  // deep red → bright sun-yellow
+      tint:  lerpColor(0xff7a5a, 0xffe699, t),
+      intensity: 0.7 + 0.8 * t,                 // brighter/bigger at high energy
+    };
+  }
+  const def = AURA_REGISTRY[id];
+  return def ? { color: def.color, tint: def.tint, intensity: def.intensity } : null;
+}
+
+/** Sprite tint for a player's active aura, or null if none. */
+export function auraTint(player: PlayerView): number | null {
+  return resolveAuraColors(player)?.tint ?? null;
 }
 
 /**
@@ -34,8 +73,7 @@ export function updatePlayerAuras(state: RenderState, scene: GameScene): void {
   for (const [id, view] of state.view) {
     if (state.kind.get(id) !== 'player') continue;
     const player = view as PlayerView;
-    const auraId = player.aura ?? null;
-    const def = auraId ? AURA_REGISTRY[auraId] : undefined;
+    const def = resolveAuraColors(player);
     const sprite = state.sprite.get(id);
 
     let g = state.auras.get(id);

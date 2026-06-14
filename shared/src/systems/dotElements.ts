@@ -7,10 +7,10 @@
  * the damage-number system (the client style map already has entries for them).
  * `bleed` is the natural element for the existing Hemorrhage DoT if it's ever wired.
  */
-export type DamageElement = 'poison' | 'fire' | 'frost' | 'lightning' | 'bleed';
+export type DamageElement = 'poison' | 'fire' | 'frost' | 'lightning' | 'bleed' | 'doom';
 
 /** Elements that an actual DoT-class path currently resolves to. */
-export type DotPathElement = Extract<DamageElement, 'poison' | 'fire' | 'frost'>;
+export type DotPathElement = Extract<DamageElement, 'poison' | 'fire' | 'frost' | 'doom'>;
 
 /**
  * Resolve a player's DoT-class element from unlocked path passives, falling back to
@@ -33,9 +33,10 @@ export function dotElementForPlayer(
     (passives['dot.glacial-fracture'] ?? 0) > 0
   )
     return 'frost';
+  // Cultist (eternal-doom) is a purple "doom" flavor of the poison path.
+  if ((passives['dot.eternal-doom'] ?? 0) > 0) return 'doom';
   if (
     (passives['dot.poison-explosion'] ?? 0) > 0 ||
-    (passives['dot.eternal-doom'] ?? 0) > 0 ||
     (passives['dot.invigorating-toxins'] ?? 0) > 0
   )
     return 'poison';

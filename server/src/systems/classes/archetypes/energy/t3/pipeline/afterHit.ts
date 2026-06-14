@@ -13,9 +13,9 @@ import {
   AC_SPEED_FACTOR,
   CS_SPLIT_RATIO,
   CS_RESERVOIR_MAX,
-  SE_ENERGY_MAX,
   SE_ACCEL_SCALE,
   BINARY_CHARGE_GAIN_MULT,
+  BINARY_DISCHARGE_GAIN_MULT,
   CRITICAL_MASS_GAIN_PER_STACK,
 } from "../core/constants";
 
@@ -112,10 +112,7 @@ export function registerAfterHit(): void {
     }
 
     if (hasPassive(player, "energy.singularity-execute")) {
-      if (energy.energyMax !== SE_ENERGY_MAX) {
-        energy.energyMax = SE_ENERGY_MAX;
-        energy.seInitialized = true;
-      }
+      // Max energy is set in recalc (resolveEnergyMax) — gain just accelerates with fill.
       const fillPct = energyPercent(energy);
       const scaledGain = Math.round(baseGain * (1 + fillPct * SE_ACCEL_SCALE));
       energy.energy = Math.min(energy.energy + scaledGain, energy.energyMax);
@@ -124,7 +121,7 @@ export function registerAfterHit(): void {
         energy.energy = 0;
         setEmpoweredAttack(world, player);
         console.log(
-          `[SingularityExec] ${player.isPlayer.id}: max energy (${SE_ENERGY_MAX}) - discharge armed`,
+          `[SingularityExec] ${player.isPlayer.id}: max energy (${energy.energyMax}) - discharge armed`,
         );
       }
       ctx.metadata["energyHandled"] = true;
@@ -155,9 +152,9 @@ export function registerAfterHit(): void {
       return;
     }
 
-    // Binary Cycle: Charge State gains energy faster; discharge arms at max.
+    // Binary Cycle: Charge State gains energy SLOWLY, Discharge State gains FAST.
     if (hasPassive(player, "energy.binary-cycle")) {
-      const gain = energy.binaryDischargeState ? baseGain : Math.round(baseGain * BINARY_CHARGE_GAIN_MULT);
+      const gain = Math.round(baseGain * (energy.binaryDischargeState ? BINARY_DISCHARGE_GAIN_MULT : BINARY_CHARGE_GAIN_MULT));
       energy.energy = Math.min(energy.energy + gain, energy.energyMax);
       if (energy.energy >= energy.energyMax) {
         energy.dischargeEnergy = energy.energyMax;

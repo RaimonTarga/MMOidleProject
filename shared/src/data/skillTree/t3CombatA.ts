@@ -14,7 +14,7 @@ export const t3CombatEntriesA = [
     parent: 'cadence-light', children: [],
     description: 'After your finisher, your next 3 regular attacks fire their on-hit damage twice. Gain extra scaling on-hit damage.',
     cost: 1, statEffects: {},
-    // 'cadence.aftershock-onhit-per-tier': flat on-hit damage = (playerTier + 1) × this.
+    // 'cadence.aftershock-onhit-per-tier': flat on-hit = this × tiers-since-unlock (1× at unlock).
     mechanicEffects: { 'cadence.aftershock': 1, 'cadence.aftershock-onhit-per-tier': 10 },
   }],
   ['cadence-light-t3-b', {
@@ -196,7 +196,7 @@ export const t3CombatEntriesA = [
     parent: 'reload-light', children: [],
     description: 'Even shots deal 2× attack damage with no on-hit damage; odd shots deal 2× on-hit damage with no attack damage. On-hit TRIGGERS (DoT, procs) still fire on every shot. Also grants scaling on-hit damage. Rewards a genuinely balanced attack/on-hit gear split.',
     cost: 1, statEffects: {},
-    // 'reload.alternating-onhit-per-tier': flat on-hit damage = (playerTier + 1) × this.
+    // 'reload.alternating-onhit-per-tier': flat on-hit = this × tiers-since-unlock (1× at unlock).
     mechanicEffects: { 'reload.alternating-cadence': 1, 'reload.alternating-onhit-per-tier': 10 },
   }],
   ['reload-light-t3-c', {

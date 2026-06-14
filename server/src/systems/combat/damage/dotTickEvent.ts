@@ -29,7 +29,7 @@ export function pushDotTickEvent(
 }
 
 /** DoT-class element of the source player (falls back to poison if unresolved). */
-export function dotElementForSource(world: World, sourceId: string): DotPathElement {
+export function dotElementForSource(world: World, sourceId: string): DamageElement {
   const player = world.getPlayerEntity(sourceId);
   if (!player) return "poison";
   return dotElementForPlayer(

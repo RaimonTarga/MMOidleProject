@@ -17,6 +17,7 @@ import {
   combatArchetypeAtom,
   damageReductionAtom,
   energyCountAtom,
+  energyMaxAtom,
   empoweredReadyAtom,
   equipmentAtom,
   dodgeRateAtom,
@@ -85,6 +86,7 @@ export function StatPanel() {
   const channelingPct = useAtomValue(channelingPctAtom);
   const empoweredReady = useAtomValue(empoweredReadyAtom);
   const energyCount = useAtomValue(energyCountAtom);
+  const energyMax = useAtomValue(energyMaxAtom);
   const attackTargetId = useAtomValue(attackTargetIdAtom);
   const targetDotStacks = useAtomValue(targetDotStacksAtom);
   const targetChillStacks = useAtomValue(targetChillStacksAtom);
@@ -129,6 +131,7 @@ export function StatPanel() {
       channelingPct,
       empoweredReady,
       energyCount,
+      energyMax,
       attackTargetId,
       targetDotStacks,
       targetChillStacks,
@@ -343,8 +346,8 @@ export function StatPanel() {
               style={isFlash ? { color: flashShiftColor } : undefined}
             >
               {isFlash
-                ? `${Math.round(player.energyCount)} / 100`
-                : player.empoweredReady ? 'EMPOWERED' : `${Math.round(player.energyCount)} / 100`}
+                ? `${Math.round(player.energyCount)} / ${player.energyMax}`
+                : player.empoweredReady ? 'EMPOWERED' : `${Math.round(player.energyCount)} / ${player.energyMax}`}
             </span>
           </div>
           <div className="mech-bar-track">
@@ -356,7 +359,7 @@ export function StatPanel() {
                   background: 'linear-gradient(90deg, #4488ff 0%, #aa88ff 50%, #ff4433 100%)',
                   boxShadow: `0 0 ${6 + player.flashSpeedBonusPct / 2}px ${flashShiftColor}`,
                 }
-                : { width: `${player.empoweredReady ? 100 : player.energyCount}%` }}
+                : { width: `${player.empoweredReady ? 100 : (player.energyMax > 0 ? (player.energyCount / player.energyMax) * 100 : 0)}%` }}
             />
           </div>
         </div>
@@ -376,7 +379,7 @@ export function StatPanel() {
           || (p['dot.glacial-fracture'] ?? 0) > 0;
         const path = isPoison ? 'poison' : isFire ? 'fire' : isFrost ? 'frost' : 'default';
 
-        const dotMax = (p['dot.poison-explosion'] ?? 0) > 0 ? 20
+        const dotMax = (p['dot.poison-explosion'] ?? 0) > 0 ? 10
           : (p['dot.eternal-doom'] ?? 0) > 0 ? 50
           : (p['dot.conflagration'] ?? 0) > 0 ? 8
           : (p['dot.permafrost'] ?? 0) > 0 ? 1

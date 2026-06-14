@@ -3,10 +3,10 @@ export interface AppliesDots {
   targetDotStacks: number;
   itInitialized: boolean;
   itBaseCd: number;
-  /** Frenzy: true while the doubled-APS state is active (target at max stacks). */
-  frenzyActive: boolean;
-  /** Frenzy: pre-frenzy attack cooldown, restored when the state drops. */
+  /** Frenzy: cached clean attack cooldown while the buff is active (0 = inactive). */
   frenzyBaseCd: number;
+  /** Frenzy: last attack cooldown this spec wrote (to detect recalc resets). */
+  frenzyAppliedCd: number;
 }
 
 export function initAppliesDots(): AppliesDots {
@@ -14,7 +14,7 @@ export function initAppliesDots(): AppliesDots {
     targetDotStacks: 0,
     itInitialized:   false,
     itBaseCd:        0,
-    frenzyActive:    false,
     frenzyBaseCd:    0,
+    frenzyAppliedCd: 0,
   };
 }

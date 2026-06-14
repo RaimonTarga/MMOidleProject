@@ -17,6 +17,7 @@ const STATUS_META: Record<string, StatusMeta> = {
   root:            { label: 'Root',    color: '#aa77ee' },
   'plating-shred': { label: 'Shred',   color: '#d8b24a' },
   'cadence-hemorrhage': { label: 'Bleed', color: '#c41e1e' },
+  'energy-storm':       { label: 'Storm', color: '#c77dff' },
   brittle:         { label: 'Brittle', color: '#d88a4a' },
   'ashbrand-burn': { label: 'Burn',    color: '#ff7a3c' },
   // Burn-family DoT weapons (fire → Burn, frost → Chill).

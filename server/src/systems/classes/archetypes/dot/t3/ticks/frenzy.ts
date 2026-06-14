@@ -1,31 +1,38 @@
-import { getTotalStacks } from '@mmo-idle/shared';
+import { getStatusEffect } from '@mmo-idle/shared';
 import type { World } from '../../../../../../world/World';
-import { DOT_EFFECT_ID } from '../core/constants';
-import { FRENZY_APS_FACTOR } from '../paths/_constants';
+import { markSliceDirty } from '../../../../../../ecs/dirtyHelpers';
+import { FRENZY_FX, FRENZY_APS } from '../paths/_constants';
 
 /**
- * Frenzy (Poison Light). While the current target sits at max poison stacks, the
- * player's attack speed doubles; it drops back the instant stacks fall below max
- * (no grace period). Tick-driven so it tracks the live stack count each frame.
+ * Frenzy (Zealot) attack-speed half. While the Frenzy buff (FRENZY_FX, applied on
+ * hitting a max-stack target — see initDotT3) is active, reassert the attack-speed
+ * bonus each tick from a cached clean cooldown; restore it when the buff lapses.
+ * Recalc-safe: if attackCooldown no longer matches what we last wrote, recapture.
+ * (The on-hit-damage half is applied at hit time in initDotT3.)
  */
 export function updateFrenzy(world: World): void {
   for (const player of world.dotPlayers) {
     if ((player.usesSkills.passives['dot.frenzy'] ?? 0) <= 0) continue;
-
     const dots = player.appliesDots;
-    const maxStacks = Math.round(player.usesSkills.passives['dot.max-stacks'] ?? 6);
-    const targetId = player.hasAttackTarget?.targetId;
-    const monster = targetId ? world.getMonsterEntity(targetId) : undefined;
-    const stacks = monster ? getTotalStacks(monster.tracksCombat, DOT_EFFECT_ID) : 0;
-    const atMax = maxStacks > 0 && stacks >= maxStacks;
+    const active = getStatusEffect(player.tracksCombat, FRENZY_FX) !== undefined;
 
-    if (atMax && !dots.frenzyActive) {
-      dots.frenzyBaseCd = player.performsAttack.attackCooldown;
-      player.performsAttack.attackCooldown = Math.max(150, Math.round(dots.frenzyBaseCd / FRENZY_APS_FACTOR));
-      dots.frenzyActive = true;
-    } else if (!atMax && dots.frenzyActive) {
-      player.performsAttack.attackCooldown = dots.frenzyBaseCd;
-      dots.frenzyActive = false;
+    if (active) {
+      const apsBonus = FRENZY_APS; // flat — attack speed does NOT scale per tier
+      if (player.performsAttack.attackCooldown !== dots.frenzyAppliedCd) {
+        dots.frenzyBaseCd = player.performsAttack.attackCooldown; // clean base (post-recalc)
+      }
+      const desired = Math.max(150, Math.round(dots.frenzyBaseCd / (1 + apsBonus)));
+      if (player.performsAttack.attackCooldown !== desired) {
+        player.performsAttack.attackCooldown = desired;
+        markSliceDirty(world, player, 'performsAttack');
+      }
+      dots.frenzyAppliedCd = desired;
+    } else if (dots.frenzyBaseCd > 0) {
+      if (player.performsAttack.attackCooldown !== dots.frenzyBaseCd) {
+        player.performsAttack.attackCooldown = dots.frenzyBaseCd;
+        markSliceDirty(world, player, 'performsAttack');
+      }
+      dots.frenzyBaseCd = 0;
     }
   }
 }

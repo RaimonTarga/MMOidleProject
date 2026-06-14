@@ -4,8 +4,8 @@ import { evadeBlocksDebuffs } from '../../../../../defense/mitigation/evasion';
 import {
   applyStatusEffect, removeStatusEffect, getStatusEffect, getTotalStacks,
 } from '@mmo-idle/shared';
-import { upkeepStacks, UPKEEP_ONHIT_PER_STACK } from '@mmo-idle/shared';
-import { hasPassive, energyPercent } from '../core/helpers';
+import { upkeepStacks, upkeepOnHitBonus, UPKEEP_UNLOCK_TIER } from '@mmo-idle/shared';
+import { hasPassive, energyPercent, chargeStateMult } from '../core/helpers';
 import {
   FLASH_MAX_DAMAGE_SHIFT_PCT,
   MV_THRESHOLD, MV_ENERGY_COST, MV_FLAT_DAMAGE,
@@ -14,8 +14,10 @@ import {
   HE_LOW_THRESHOLD, HE_HIGH_THRESHOLD, HE_DMG_MULT,
   CI_TAG_FX, CI_TAG_MS,
   ENERGY_OVERDRIVE_ATK_PCT,
-  BINARY_CHARGE_ATK_BONUS, BINARY_DISCHARGE_ONHIT_BONUS,
-  CHARGE_STATE_MIN, AWAKENED_MULT,
+  BINARY_DISCHARGE_ATK_BONUS, BINARY_CHARGE_ONHIT_BONUS,
+  BINARY_CHARGE_ONHIT_PER_TIER, BINARY_UNLOCK_TIER,
+  AWAKENED_MULT,
+  STORM_FX, ENDLESS_STORM_EXTEND_MS, ENDLESS_STORM_MAX_MS,
 } from '../core/constants';
 
 /**
@@ -114,33 +116,50 @@ export function registerNormalHit(): void {
       ctx.metadata['suppressEmpoweredAoe'] = true;
     }
 
-    // Energy Upkeep (Channeler): ADD flat on-hit damage per upkeep stack — strictly
-    // on-hit (post-mitigation, no attack scaling), so it works with zero on-hit gear.
+    // Energy Upkeep (Channeler): ADD flat on-hit damage from upkeep stacks — strictly
+    // on-hit (post-mitigation, no attack scaling), per tier with diminishing returns.
     if (hasPassive(player, 'energy.upkeep')) {
       const stacks = upkeepStacks(energy);
-      if (stacks > 0) ctx.damage += stacks * UPKEEP_ONHIT_PER_STACK;
+      if (stacks > 0) {
+        const tier = player.tracksProgression?.playerTier ?? UPKEEP_UNLOCK_TIER;
+        ctx.damage += upkeepOnHitBonus(stacks, tier);
+      }
     }
 
     // Binary Cycle: Charge State boosts attack damage; Discharge State boosts on-hit.
     // TODO(engine): the per-state APS swing is not yet applied (needs a buff layer).
     if (hasPassive(player, 'energy.binary-cycle')) {
       if (energy.binaryDischargeState) {
-        ctx.metadata['onHitDamageMult'] = 1 + BINARY_DISCHARGE_ONHIT_BONUS;
+        // Discharge: attack-damage bonus (percentage).
+        ctx.damage = Math.round(ctx.damage * (1 + BINARY_DISCHARGE_ATK_BONUS));
       } else {
-        ctx.damage = Math.round(ctx.damage * (1 + BINARY_CHARGE_ATK_BONUS));
+        // Charge: +on-hit% on existing on-hit AND flat on-hit per tier (shockblade-style).
+        ctx.metadata['onHitDamageMult'] = 1 + BINARY_CHARGE_ONHIT_BONUS;
+        const tierMult = Math.max(1, (player.tracksProgression?.playerTier ?? BINARY_UNLOCK_TIER) - BINARY_UNLOCK_TIER + 1);
+        ctx.damage += BINARY_CHARGE_ONHIT_PER_TIER * tierMult;
       }
     }
 
-    // Charge State: attack damage scales linearly with the energy pool (0.5×→1.0×).
+    // Charge State (Aetherist): attack mult oscillates with energy — 0.5× empty,
+    // 1.0× at half (neutral), 2.0× full. Strongest right before discharge.
     if (hasPassive(player, 'energy.charge-state')) {
-      const fillPct = energyPercent(energy);
-      ctx.damage = Math.max(1, Math.round(ctx.damage * (CHARGE_STATE_MIN + (1 - CHARGE_STATE_MIN) * fillPct)));
+      ctx.damage = Math.max(1, Math.round(ctx.damage * chargeStateMult(energyPercent(energy))));
     }
 
-    // Awakened Lightning: spend an empowered charge from the last discharge.
+    // Awakened Lightning (Stormbringer): spend a charge from the discharge. These are
+    // REAL empowered attacks — set the flag so empowered-triggered gear + crit styling
+    // + the empowered splash all apply, uniform with the discharge strike.
     if (hasPassive(player, 'energy.awakened-lightning') && energy.awakenedCharges > 0) {
       ctx.damage = Math.round(ctx.damage * AWAKENED_MULT);
+      ctx.metadata['empoweredAttack'] = true;
       energy.awakenedCharges--;
+    }
+
+    // Endless Storm (Tempest): each normal attack extends the storm on the target,
+    // capped — trivial to upkeep even with a slow weapon.
+    if (hasPassive(player, 'energy.endless-storm') && ctx.defenderType === 'monster') {
+      const storm = getStatusEffect(ctx.defender.tracksCombat, STORM_FX);
+      if (storm) storm.remainingMs = Math.min(ENDLESS_STORM_MAX_MS, storm.remainingMs + ENDLESS_STORM_EXTEND_MS);
     }
   });
 }

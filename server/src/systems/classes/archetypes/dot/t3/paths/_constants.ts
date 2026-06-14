@@ -7,8 +7,14 @@ export const PE_BURST_TICKS = 10;
 
 // ── T4 specs (placeholder constants — replaced at the balance pass) ───────────
 
-// Light — Frenzy (dot-light-t3-c) — APS doubling at max stacks (tick-driven).
-export const FRENZY_APS_FACTOR = 2;   // attack speed multiplier while at max stacks
+// Light — Frenzy (Zealot, dot-light-t3-c). A refreshable self-buff granted on hitting
+// a max-stack target: split between attack speed and on-hit damage, both scaling per
+// tier (counting from the path unlock tier). Lasts a few seconds, refreshes on hit.
+export const FRENZY_FX            = 'dot-frenzy'; // status id on the player
+export const FRENZY_DURATION_MS   = 6_000;        // buff duration, refreshed on each max-stack hit
+export const FRENZY_UNLOCK_TIER   = 4;            // path specs unlock at playerTier 4 → 1×
+export const FRENZY_APS            = 0.30;         // +attack-speed fraction (FLAT — does not scale per tier)
+export const FRENZY_ONHIT_PER_TIER = 10;          // +flat on-hit damage per tier (this is the scaling half)
 
 // Balanced — Ignition (dot-balanced-t3-b)
 export const IGNITION_VALUE_MULT = 0.6;  // tick value of each front-loaded stack
@@ -33,7 +39,7 @@ export const IT_SPEED_CAP       = 0.40;  // maximum 40% reduction
 // Balanced — Fan the Flames (dot-balanced-t3-a)
 export const FTF_STACKS_PER_HIT = 2;
 export const FTF_DMG_MULT       = 0.5;
-export const FTF_BONUS_MULT     = 3;     // bonus = maxStacks × basePerStack × FTF_BONUS_MULT
+export const FTF_BONUS_MULT     = 2;     // bonus = maxStacks × basePerStack × FTF_BONUS_MULT (was 3, OP)
 
 // Balanced — Conflagration (dot-balanced-t3-c)
 export const CONF_TICK_MS    = 500;

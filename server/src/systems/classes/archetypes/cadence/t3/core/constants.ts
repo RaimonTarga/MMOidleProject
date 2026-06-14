@@ -31,10 +31,11 @@ export const CURSED_FINALE_SHRED_CAP     = 20;   // hard cap on total shred per 
 
 // Metronome (cadence-balanced-t3-a)
 export const METRONOME_FLAT_BONUS = 12;          // flat damage each buildup attack adds (per-tier base)
-// Internal tier the Maestro node unlocks at (matches the skill node's `tier: 3`).
+// playerTier at which the Maestro path node unlocks. A tier:3 node costs 4 tier-ups
+// to reach (3 prior unlocks + the point for this one), so that's playerTier 4.
 // Per-tier flat = METRONOME_FLAT_BONUS × (playerTier − METRONOME_UNLOCK_TIER + 1):
-// 12 at tier 3, 24 at tier 4, 36 at tier 5, … (never scales below the unlock tier).
-export const METRONOME_UNLOCK_TIER = 3;
+// 1× at unlock, +1 each tier after.
+export const METRONOME_UNLOCK_TIER = 4;
 
 // Rampage (cadence-heavy-t3-a)
 export const RAMPAGE_MAX_STACKS       = 10;      // hard cap; the next finisher overloads → reset to 0

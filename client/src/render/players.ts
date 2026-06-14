@@ -99,7 +99,7 @@ export function upsertPlayer(
     }
     const sprite = state.sprite.get(player.id);
     if (!player.isDead) {
-      const tint = flashShiftTint(player) ?? auraTint(player.aura);
+      const tint = flashShiftTint(player) ?? auraTint(player);
       if (sprite && tint !== null) applySpriteTint(sprite, tint);
     }
     ensureLabel(state, player.id, player, scene);
@@ -188,7 +188,7 @@ export function upsertPlayer(
   const sprite = state.sprite.get(player.id);
   // Flash shift tint takes priority; otherwise a transformation aura (e.g. Surge)
   // tints the sprite to match its glow.
-  const tint = flashShiftTint(player) ?? auraTint(player.aura);
+  const tint = flashShiftTint(player) ?? auraTint(player);
   if (sprite) {
     if (tint !== null) {
       applySpriteTint(sprite, tint);

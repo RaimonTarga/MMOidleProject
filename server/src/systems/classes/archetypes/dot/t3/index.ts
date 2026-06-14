@@ -1,11 +1,14 @@
-import { getStatusEffect, hasStatusEffect } from '@mmo-idle/shared';
+import { getStatusEffect, hasStatusEffect, applyStatusEffect, getTotalStacks } from '@mmo-idle/shared';
 import { registerCombatListener } from '../../../../combat/engine/combatPipeline';
 import type { World } from '../../../../../world/World';
 import {
-  DOT_CONVERSION_PCT, DOT_DURATION_MS, DOT_TICK_MS,
+  DOT_CONVERSION_PCT, DOT_DURATION_MS, DOT_TICK_MS, DOT_EFFECT_ID,
   SMOLDER_EFFECT, FROZEN_EFFECT,
   SE_VULN_PER_STACK, FREEZE_BONUS,
 } from './core/constants';
+import {
+  FRENZY_FX, FRENZY_DURATION_MS, FRENZY_ONHIT_PER_TIER, FRENZY_UNLOCK_TIER,
+} from './paths/_constants';
 import {
   applyInvigoratingToxins,
   tryPoisonExplosion,
@@ -60,7 +63,9 @@ export function initDotT3(): void {
     const convPct        = passives['dot.conversion-pct']                            ?? DOT_CONVERSION_PCT;
     const tickIntervalMs = Math.max(100, Math.round(passives['dot.tick-interval-ms'] ?? DOT_TICK_MS));
     const durationMs     = Math.round(passives['dot.duration-ms']                    ?? DOT_DURATION_MS);
-    const dmgPerStack    = Math.max(1, Math.round(player.dealsDamage.attack * convPct / maxStacks));
+    // Normalize per-tick damage by the tick interval (calibrated to DOT_TICK_MS), so a
+    // faster tick rate ticks MORE OFTEN for the SAME total — tick rate is a free knob.
+    const dmgPerStack    = Math.max(1, Math.round(player.dealsDamage.attack * convPct / maxStacks * tickIntervalMs / DOT_TICK_MS));
 
     // Redirect convPct of direct hit damage into DoT ticks.
     // Flag prevents the base handler from double-applying this reduction for
@@ -87,6 +92,29 @@ export function initDotT3(): void {
     if (tryShatterStrike(pc))    return;
     if (tryFreezingCold(pc))     return;
     if (tryGlacialFracture(pc))  return;
+  });
+
+  // ── onHit: Zealot Frenzy — grant/refresh the buff on a max-stack hit, and apply
+  // the on-hit-damage half while it's active (the attack-speed half is in updateFrenzy).
+  registerCombatListener('onHit', (ctx, _world) => {
+    if (ctx.attackerType !== 'player' || ctx.defenderType !== 'monster') return;
+    const player = ctx.attacker;
+    if (!player.appliesDots) return;
+    if ((player.usesSkills.passives['dot.frenzy'] ?? 0) <= 0) return;
+
+    const maxStacks = Math.round(player.usesSkills.passives['dot.max-stacks'] ?? 6);
+    const stacks = getTotalStacks(ctx.defender.tracksCombat, DOT_EFFECT_ID);
+    if (maxStacks > 0 && stacks >= maxStacks) {
+      applyStatusEffect(player.tracksCombat, {
+        id: FRENZY_FX, instanced: false, refreshable: true,
+        remainingMs: FRENZY_DURATION_MS, sourceId: player.isPlayer.id,
+        data: { totalMs: FRENZY_DURATION_MS },
+      });
+    }
+    if (getStatusEffect(player.tracksCombat, FRENZY_FX)) {
+      const tierMult = Math.max(1, (player.tracksProgression?.playerTier ?? FRENZY_UNLOCK_TIER) - FRENZY_UNLOCK_TIER + 1);
+      ctx.damage += Math.round(FRENZY_ONHIT_PER_TIER * tierMult);
+    }
   });
 
   // ── onDamageTaken: Smoldering Ember vulnerability + Frozen bonus ─────────

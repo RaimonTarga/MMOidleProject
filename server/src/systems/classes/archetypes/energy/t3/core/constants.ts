@@ -57,23 +57,36 @@ export const ENERGY_OVERDRIVE_ATK_PCT  = 0.40;  // +ATK% while Overdrive is acti
 export const OVERDRIVE_DECAY_PER_SEC    = 18;    // energy lost per second during Overdrive
 
 // Light — Energy Upkeep (energy-light-t3-c)
-export const UPKEEP_THRESHOLD_PCT = 0.20; // energy% above which the upkeep timer runs
-export const UPKEEP_DECAY_PER_SEC = 16;   // continuous energy decay (you must keep firing)
-// On-hit scaling now lives in shared/systems/energyUpkeep.ts (stack-based, flat add).
+// Flow builds while energy > 0 and only resets at 0 — no threshold gate.
+// Energy decay RAMPS with how long you've sustained: decay = base + ramp × upkeepSec.
+// This is what caps the otherwise-infinite stack scaling — eventually decay outpaces
+// your energy gain, energy falls below threshold, and the whole thing resets.
+export const UPKEEP_DECAY_BASE        = 12;  // decay/sec at the start of a sustain
+export const UPKEEP_DECAY_RAMP_PER_SEC = 1.5; // extra decay/sec added per sustained second
+// On-hit scaling lives in shared/systems/energyUpkeep.ts (uncapped, per-tier, DR).
 
-// Balanced — Binary Cycle (energy-balanced-t3-a)
-export const BINARY_CHARGE_ATK_BONUS    = 0.30; // +ATK% during Charge State
-export const BINARY_DISCHARGE_ONHIT_BONUS = 0.30; // +on-hit% during Discharge State
-export const BINARY_CHARGE_GAIN_MULT    = 1.5;  // faster energy gain in Charge State
-export const BINARY_CHARGE_DISCHARGE_MULT   = 1.3; // big discharge ending Charge State
-export const BINARY_DISCHARGE_DISCHARGE_MULT = 0.8; // light discharge ending Discharge State
+// Balanced — Binary Cycle (energy-balanced-t3-a / Equinox)
+// Charge State: slow energy gain, +on-hit (flat per tier), slower attacks, WEAK discharge.
+// Discharge State: fast energy gain, +ATK%, faster attacks, STRONG discharge.
+export const BINARY_CHARGE_ONHIT_BONUS    = 0.30; // +on-hit% during Charge State
+export const BINARY_CHARGE_ONHIT_PER_TIER = 6;    // flat on-hit added per tier in Charge
+export const BINARY_DISCHARGE_ATK_BONUS   = 0.30; // +ATK% during Discharge State
+export const BINARY_CHARGE_GAIN_MULT    = 0.6;  // SLOW energy gain in Charge State
+export const BINARY_DISCHARGE_GAIN_MULT = 1.5;  // FAST energy gain in Discharge State
+export const BINARY_CHARGE_SPEED_FACTOR    = 1.25; // attack cooldown ×1.25 (slower) in Charge
+export const BINARY_DISCHARGE_SPEED_FACTOR = 0.75; // attack cooldown ×0.75 (faster) in Discharge
+export const BINARY_UNLOCK_TIER = 4;               // path specs unlock at playerTier 4 → 1× there
+export const BINARY_CHARGE_DISCHARGE_MULT   = 0.8; // WEAK discharge ending Charge State
+export const BINARY_DISCHARGE_DISCHARGE_MULT = 1.3; // STRONG discharge ending Discharge State
 
 // Balanced — Awakened Lightning (energy-balanced-t3-b)
-export const AWAKENED_N    = 5;   // empowered regular attacks after a discharge
+export const AWAKENED_N    = 4;   // empowered regular attacks after a discharge
 export const AWAKENED_MULT = 1.5; // multiplier on each empowered attack
 
 // Balanced — Charge State (energy-balanced-t3-c)
-export const CHARGE_STATE_MIN = 0.5; // attack damage at 0 energy (scales to 1.0 at max)
+// Aetherist oscillation: 0.5× at empty → 1.0× at half (neutral) → 2.0× at full.
+export const CHARGE_STATE_MIN = 0.5; // attack mult at 0 energy
+export const CHARGE_STATE_MAX = 2.0; // attack mult at full energy
 
 // Heavy — Critical Mass (energy-heavy-t3-b)
 export const CRITICAL_MASS_MAX           = 3;
@@ -83,6 +96,11 @@ export const CRITICAL_MASS_RESET_MS      = 5_000; // gap without damage that res
 
 // Heavy — Endless Storm (energy-heavy-t3-c)
 export const STORM_FX           = 'energy-storm';
-export const ENDLESS_STORM_DPS  = 40;
+export const ENDLESS_STORM_DPS  = 40; // legacy flat fallback (unused once attack-scaled)
+// The storm carries the whole empowered payload: total = attack × this over the base
+// duration. The discharge itself just deals normal damage + applies the storm.
+export const ENDLESS_STORM_TOTAL_MULT = 8.0;
 export const ENDLESS_STORM_TICK_MS = 1_000;
-export const ENDLESS_STORM_DURATION_MS = 600_000; // effectively permanent (until death)
+export const ENDLESS_STORM_DURATION_MS = 4_500; // base duration a discharge applies/refreshes
+export const ENDLESS_STORM_EXTEND_MS   = 1_000; // each normal attack extends the storm by this
+export const ENDLESS_STORM_MAX_MS      = 7_500; // hard cap on the extended duration

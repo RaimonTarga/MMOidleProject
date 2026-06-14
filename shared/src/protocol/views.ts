@@ -90,6 +90,7 @@ export interface PlayerView {
   executionReady: boolean;
   executionCooldownPct: number;
   energyCount: number;
+  energyMax: number;
   flashShiftPct: number;
   flashDamageShiftPct: number;
   flashSpeedBonusPct: number;
@@ -300,6 +301,7 @@ export function composePlayerView(entity: NetworkedEntity): PlayerView | null {
     executionReady: entity.hasEmpoweredAttack !== undefined,
     executionCooldownPct: entity.usesCooldown?.executionCooldownPct ?? 0,
     energyCount: entity.usesEnergy?.energy ?? 0,
+    energyMax: entity.usesEnergy?.energyMax ?? 100,
     flashShiftPct,
     flashDamageShiftPct: entity.usesEnergy
       ? Math.round((0.45 - (flashShiftPct / 100) * 0.9) * 100)
@@ -331,6 +333,14 @@ export function composePlayerView(entity: NetworkedEntity): PlayerView | null {
       if (e.overdriveActive) return 'surge';
       const stacks = upkeepStacks(e);
       if (stacks > 0) return `channel-${upkeepStage(stacks)}`;
+      // Equinox is always in one of two cycles → always coloured by its current state.
+      if ((entity.usesSkills?.passives['energy.binary-cycle'] ?? 0) > 0) {
+        return e.binaryDischargeState ? 'equinox-discharge' : 'equinox-charge';
+      }
+      // Stormbringer: storm aura while empowered strikes remain.
+      if (e.awakenedCharges > 0) return 'storm';
+      // Aetherist: always wears a sun aura (client tints red→yellow by energy).
+      if ((entity.usesSkills?.passives['energy.charge-state'] ?? 0) > 0) return 'aether';
       return null;
     })(),
     activeEffects: entity.hasStatus?.activeEffects,

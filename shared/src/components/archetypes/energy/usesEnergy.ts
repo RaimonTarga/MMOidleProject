@@ -17,6 +17,10 @@ export interface UsesEnergy {
   upkeepTimerMs: number;
   /** Binary Cycle: true = Discharge State, false = Charge State. */
   binaryDischargeState: boolean;
+  /** Binary Cycle: cached clean attack cooldown for the per-state speed swing (0 = none). */
+  binaryBaseCd: number;
+  /** Binary Cycle: last attack cooldown this spec wrote (to detect recalc resets). */
+  binaryAppliedCd: number;
   /** Critical Mass: consecutive-discharge stacks. */
   criticalMassStacks: number;
   /** Critical Mass: ms since damage was last dealt (resets stacks past the cap). */
@@ -42,6 +46,8 @@ export function initUsesEnergy(): UsesEnergy {
     overdriveActive:      false,
     upkeepTimerMs:        0,
     binaryDischargeState: false,
+    binaryBaseCd:         0,
+    binaryAppliedCd:      0,
     criticalMassStacks:   0,
     criticalMassGapMs:    0,
     awakenedCharges:      0,

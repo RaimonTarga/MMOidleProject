@@ -10,10 +10,10 @@ export const OVERDRIVE_ATTACK_SPEED_PCT = 1.0;
 // Eternal Cycle (cooldown-light-T3-b) — additive flat on execution (Version A).
 export const ETERNAL_CHARGE_DURATION_MS = 10_000; // stacks fall off after 10 s without hits
 export const ETERNAL_CYCLE_FLAT_PER_STACK = 8;    // per-tier base flat bonus per stack (node override: cooldown.eternal-cycle-flat)
-// Internal tier the Transcendant node unlocks at (matches the skill node's `tier: 3`).
-// Per-stack flat = base × max(1, playerTier − ETERNAL_CYCLE_UNLOCK_TIER + 1): 1× at
-// tier 3, 2× at tier 4, … (never scales below the unlock tier).
-export const ETERNAL_CYCLE_UNLOCK_TIER = 3;
+// playerTier at which the Transcendant path node unlocks (4 — a tier:3 node costs 4
+// tier-ups to reach). Per-stack flat = base × max(1, playerTier − UNLOCK + 1):
+// 1× at unlock, +1 each tier after.
+export const ETERNAL_CYCLE_UNLOCK_TIER = 4;
 
 // Temporal Extension (cooldown-light-T3-c)
 export const TEMPORAL_INIT_MS   = 3_000; // initial buff duration on empowered trigger

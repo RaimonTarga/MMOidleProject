@@ -219,6 +219,8 @@ export const ENERGY_KEYS = [
   'energy.charge-state',       // balanced: attack damage scales with energy %
   'energy.critical-mass',      // heavy: consecutive discharges stack
   'energy.endless-storm',      // heavy: discharge applies a persistent storm DoT
+  // Voidwalker: per-tier flat addition to BASE max energy (resolveEnergyMax).
+  'energy.max-bonus',
 ] as const;
 
 export const DOT_KEYS = [

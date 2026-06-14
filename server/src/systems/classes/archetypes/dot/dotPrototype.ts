@@ -295,7 +295,8 @@ export function initDotArchetype(): void {
     );
     const damagePerStack = Math.max(
       1,
-      Math.round((attacker.dealsDamage.attack * convPct) / maxStacks),
+      // Normalized by tick interval (vs DOT_TICK_MS) so faster ticks = same total.
+      Math.round((attacker.dealsDamage.attack * convPct) / maxStacks * tickIntervalMs / DOT_TICK_MS),
     );
 
     // Apply conversion reduction only if the T3 handler hasn't already done so.

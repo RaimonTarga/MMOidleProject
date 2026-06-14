@@ -10,6 +10,10 @@ import {
 import { activateLaserBeam } from "../fx/laser";
 import { activateHolyBeam, fxHolyFlash } from "../fx/holyBeam";
 import { fxCannonBlast } from "../fx/cannonFx";
+import { fxVoidDischarge } from "../fx/voidDischarge";
+import { fxPoisonExplosion } from "../fx/poisonExplosion";
+import { fxFirebrand } from "../fx/firebrand";
+import { fxDoomTick, fxDoomCloud } from "../fx/doom";
 import {
   playOneShotEffect,
   spawnDamageNumber,
@@ -98,6 +102,7 @@ const EXPLODING_CLIP_CLIENT_EFFECT = "reload-exploding-clip";
 const ALT_ONHIT_CLIENT_EFFECT = "reload-alt-onhit";
 const DEATH_MARK_BLAST_CLIENT_EFFECT = "death-mark-blast";
 const CANNON_BLAST_CLIENT_EFFECT = "reload-cannon-blast";
+const VOID_DISCHARGE_CLIENT_EFFECT = "void-discharge";
 
 function snapOwnPlayerToServerTarget(
   state: RenderState,
@@ -173,6 +178,8 @@ const ATTACK_FX_BY_ARCHETYPE: Record<NonNullArchetype, AttackFxFn> = {
         return fxFireFlame(scene, to.x, to.y, ev.empowered);
       case "frost":
         return fxFrostSnowflake(scene, to.x, to.y, ev.empowered);
+      case "doom":
+        return fxDoomCloud(scene, to.x, to.y, ev.empowered);
       default:
         return fxPoisonSmog(scene, to.x, to.y, ev.empowered);
     }
@@ -203,8 +210,19 @@ export function dispatchCombatEvent(
   scene: GameScene,
 ): void {
   // dot-tick / monster-hit events are consumed as damage-number style hints in
-  // deltaApplier, not here.
-  if (ev.kind === "dot-tick" || ev.kind === "monster-hit") return;
+  // deltaApplier. The lightning element (Tempest storm) also cracks a bolt down onto
+  // the target on each tick for a "storm" read.
+  if (ev.kind === "dot-tick") {
+    if (shouldRunClientFx()) {
+      const spr = state.sprite.get(ev.targetId);
+      const tx = spr?.x ?? ev.targetPos.x;
+      const ty = spr?.y ?? ev.targetPos.y;
+      if (ev.element === "lightning") fxLightning(scene, tx, ty - 130, tx, ty, true);
+      else if (ev.element === "doom") fxDoomTick(scene, tx, ty);
+    }
+    return;
+  }
+  if (ev.kind === "monster-hit") return;
 
   if (ev.kind === "monster-dodge") {
     if (!shouldRunClientFx()) return;
@@ -341,6 +359,7 @@ function runFxForAttackStyle(
   const isAltShot = ev.effects?.includes(ALT_ONHIT_CLIENT_EFFECT) ?? false;
   const isDeathMarkBlast = ev.effects?.includes(DEATH_MARK_BLAST_CLIENT_EFFECT) ?? false;
   const isCannonBlast = ev.effects?.includes(CANNON_BLAST_CLIENT_EFFECT) ?? false;
+  const isVoidDischarge = ev.effects?.includes(VOID_DISCHARGE_CLIENT_EFFECT) ?? false;
 
   if (!targetSprite) {
     if (isFlashTeleport) {
@@ -405,6 +424,9 @@ function runFxForAttackStyle(
   } else if (isCannonBlast) {
     // Cannoneer burst: a big explosion on the target when the stored pool fires.
     fxCannonBlast(scene, to.x, to.y);
+  } else if (isVoidDischarge) {
+    // Voidwalker singularity discharge: void implosion → detonation on the target.
+    fxVoidDischarge(scene, to.x, to.y);
   } else if (isSwiftblade) {
     // Swiftblade replaces the default cadence slash with its dual diagonal slash;
     // both the primary and the extra strikes carry this effect.
@@ -435,12 +457,21 @@ function runFxForAttackStyle(
     if (effectId === ALT_ONHIT_CLIENT_EFFECT) continue; // handled above
     if (effectId === DEATH_MARK_BLAST_CLIENT_EFFECT) continue; // handled above
     if (effectId === CANNON_BLAST_CLIENT_EFFECT) continue; // handled above
+    if (effectId === VOID_DISCHARGE_CLIENT_EFFECT) continue; // handled above
     if (effectId === FIRST_STRIKE_CLIENT_EFFECT) {
       fxFirstStrike(scene, to.x, to.y);
       continue;
     }
     if (effectId === AFTERSHOCK_CLIENT_EFFECT) {
       fxAftershock(scene, to.x, to.y);
+      continue;
+    }
+    if (effectId === "poison-explosion") {
+      fxPoisonExplosion(scene, to.x, to.y);
+      continue;
+    }
+    if (effectId === "firebrand") {
+      fxFirebrand(scene, to.x, to.y);
       continue;
     }
     playOneShotEffect(scene, effectId, to, { scale: targetEffectScale });

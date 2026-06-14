@@ -17,6 +17,7 @@ export const ELEMENT_STYLE: Record<DamageElement, { color: string; symbol: strin
   frost: { color: '#5fd0ff', symbol: '❄' },
   lightning: { color: '#c77dff', symbol: '⚡' },
   bleed: { color: '#c41e1e', symbol: '🩸' }, // deep red, deeper than fire's orange
+  doom: { color: '#9d4dff', symbol: '☠' },   // Cultist eternal-doom — purple death
 };
 
 export interface ResolvedDamageStyle {

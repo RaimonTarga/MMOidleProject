@@ -1,7 +1,7 @@
 /**
  * Entity-native wrappers for shared formula helpers.
  */
-import { canUnlockSkill, recalculatePlayerStats } from '@mmo-idle/shared';
+import { canUnlockSkill, recalculatePlayerStats, resolveEnergyMax } from '@mmo-idle/shared';
 import type { World } from '../world/World';
 import type { PlayerEntity } from './entity';
 import { attachComponent, detachComponent } from './markerHelpers';
@@ -51,6 +51,17 @@ export function recalculatePlayerEntityStats(world: World, entity: PlayerEntity)
   markSliceDirty(world, entity, 'hasPosition');
   markSliceDirty(world, entity, 'usesSkills');
   if (entity.usesCadence) markSliceDirty(world, entity, 'usesCadence');
+
+  // Max energy is a recalc-computed BASE stat (Voidwalker per-tier bonus + future
+  // relics), so the pool and its UI update from passives instead of a hardcoded tick.
+  if (entity.usesEnergy) {
+    const newMax = resolveEnergyMax(entity.usesSkills.passives, entity.tracksProgression?.playerTier ?? 0);
+    if (entity.usesEnergy.energyMax !== newMax) {
+      entity.usesEnergy.energyMax = newMax;
+      if (entity.usesEnergy.energy > newMax) entity.usesEnergy.energy = newMax;
+      markSliceDirty(world, entity, 'usesEnergy');
+    }
+  }
   if (evadesHits.dodgeRate > 0) {
     attachComponent(world, entity, 'evadesHits', evadesHits);
   } else {

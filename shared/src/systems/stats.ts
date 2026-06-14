@@ -188,9 +188,11 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
   // player's tier, always active while the passive is unlocked. The per-tier
   // rate is authored on the node ('cadence.aftershock-onhit-per-tier'), so this
   // only affects the Shockblade branch.
+  // Path specs unlock at playerTier 4, so scaling counts from there: 1× at unlock,
+  // +1 per tier after (max(1, playerTier − 4 + 1)).
   const aftershockOnHitPerTier = p.usesSkills.passives['cadence.aftershock-onhit-per-tier'] ?? 0;
   if (aftershockOnHitPerTier > 0) {
-    p.dealsDamage.onHitDamage += ((p.playerTier ?? 0) + 1) * aftershockOnHitPerTier;
+    p.dealsDamage.onHitDamage += Math.max(1, (p.playerTier ?? 4) - 4 + 1) * aftershockOnHitPerTier;
   }
 
   // 3b. Dualslinger (reload-light-t3-b): same per-tier on-hit scaling, authored on
@@ -198,7 +200,7 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
   // attack/on-hit split — the odd (2× on-hit) shots scale up with tier.
   const altOnHitPerTier = p.usesSkills.passives['reload.alternating-onhit-per-tier'] ?? 0;
   if (altOnHitPerTier > 0) {
-    p.dealsDamage.onHitDamage += ((p.playerTier ?? 0) + 1) * altOnHitPerTier;
+    p.dealsDamage.onHitDamage += Math.max(1, (p.playerTier ?? 4) - 4 + 1) * altOnHitPerTier;
   }
 
   // Re-clamp damage reduction: equipment + upgrades are applied after the step-2 clamp.
