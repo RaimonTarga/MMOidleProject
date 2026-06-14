@@ -10,10 +10,10 @@ import {
   CURSED_FINALE_SHRED_CAP,
   RAMPAGE_MAX_STACKS,
   RAMPAGE_MULT_PER_STACK,
-  CRESCENDO_FLAT_PER_STACK,
   SWIFTBLADE_EFFECT,
 } from '../core/constants';
 import { recomputeRampageStats } from '../core/rampage';
+import { crescendoMultiplier } from '../core/crescendo';
 
 export function registerCadenceEmpoweredHit(): void {
   registerCombatListener('onHit', (ctx, world) => {
@@ -74,30 +74,32 @@ export function registerCadenceEmpoweredHit(): void {
       }
     }
 
-    // Crescendo: consume all in-combat time-stacks, each adding a flat bonus.
-    if ((passives['cadence.crescendo'] ?? 0) > 0 && cadence.crescendoStacks > 0) {
-      const flat = Math.round(passives['cadence.crescendo-flat'] ?? CRESCENDO_FLAT_PER_STACK);
-      ctx.damage += cadence.crescendoStacks * flat;
-      cadence.crescendoStacks = 0;
+    // Crescendo (Juggernaut): amplify the finisher by the in-combat ramp multiplier
+    // (time-based, front-loaded then heavy DR — see core/crescendo.ts). Not consumed:
+    // it keeps climbing while you stay in combat and resets instantly when it ends.
+    if ((passives['cadence.crescendo'] ?? 0) > 0 && cadence.crescendoTimerMs > 0) {
+      ctx.damage = Math.round(ctx.damage * (1 + crescendoMultiplier(cadence.crescendoTimerMs)));
     }
 
-    // Hemorrhage: convert finisher damage to a non-stacking bleed DoT.
+    // Hemorrhage: convert finisher damage to a non-stacking bleed DoT. Remaining
+    // ticks are tracked as the effect's stack count so the target-frame tile reads
+    // as a clear countdown (4 → 3 → 2 → …) instead of a static ∞.
     if ((passives['cadence.hemorrhage'] ?? 0) > 0 && ctx.defenderType === 'monster' && !evadeBlocksDebuffs(ctx)) {
       const monsterState = ctx.defender.tracksCombat;
       const damagePerTick = Math.max(1, Math.round(ctx.damage * HEMORRHAGE_MULT / HEMORRHAGE_TICKS));
       removeStatusEffect(monsterState, 'cadence-hemorrhage');
-      applyStatusEffect(monsterState, {
+      const bleed = applyStatusEffect(monsterState, {
         id:          'cadence-hemorrhage',
         instanced:   false,
         remainingMs: -1,
         sourceId:    player.isPlayer.id,
         data: {
           damagePerTick,
-          ticksLeft:      HEMORRHAGE_TICKS,
           nextTickIn:     HEMORRHAGE_TICK_MS,
           tickIntervalMs: HEMORRHAGE_TICK_MS,
         },
       });
+      bleed.stacks = HEMORRHAGE_TICKS; // one stack per remaining tick
       attachMarker(world, ctx.defender, 'hasHemorrhage');
       ctx.damage = 0;
     }

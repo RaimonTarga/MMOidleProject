@@ -195,10 +195,11 @@ export function runPlayerAttack(
     monsterCombatState,
     platingShred,
   );
-  const effectiveDr = effectiveDamageReductionAfterBrittle(
-    target.mitigatesDamage.damageReduction,
-    monsterCombatState,
-  );
+  const effectiveDr =
+    effectiveDamageReductionAfterBrittle(
+      target.mitigatesDamage.damageReduction,
+      monsterCombatState,
+    ) * (1 - Math.max(0, Math.min(1, ctx.drPierce)));
 
   const minionDamageMult =
     opts.aggroSource.kind === "minion"
@@ -233,7 +234,9 @@ export function runPlayerAttack(
   const isEmpowered = !!ctx.metadata["empoweredAttack"];
   const isExecution = isEmpowered && player.usesCooldown !== undefined;
 
-  if (isEmpowered) {
+  // suppressEmpoweredAoe lets a spec wear the empowered tag (crit styling + ring)
+  // without the splash — e.g. Sniper's precision full-HP shot is single-target.
+  if (isEmpowered && !ctx.metadata["suppressEmpoweredAoe"]) {
     applyPlayerAoe(
       world,
       player,
@@ -500,6 +503,14 @@ export function runMonsterAttack(
     ctx.damage = Math.max(1, Math.round(ctx.damage * empoweredMult));
     ctx.metadata["empoweredAttack"] = true;
   }
+
+  // Pre-mitigation incoming damage (gross monster attack, scaled by any empowered
+  // mult, BEFORE the player's plating/DR). Exposed for listeners that want to scale
+  // off the raw hit rather than the mitigated HP loss (e.g. Avenger/Vengeance), so
+  // building defenses doesn't shrink the payoff.
+  ctx.metadata["incomingGross"] = Math.round(
+    monster.dealsDamage.attack * (empoweredMult > 1 ? empoweredMult : 1),
+  );
 
   emitCombatEvent("onHit", ctx, world);
   emitCombatEvent("onDamageTaken", ctx, world);

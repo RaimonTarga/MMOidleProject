@@ -8,6 +8,8 @@ import {
   type Vec2,
 } from "@mmo-idle/shared";
 import { activateLaserBeam } from "../fx/laser";
+import { activateHolyBeam, fxHolyFlash } from "../fx/holyBeam";
+import { fxCannonBlast } from "../fx/cannonFx";
 import {
   playOneShotEffect,
   spawnDamageNumber,
@@ -17,7 +19,7 @@ import {
 import { getDotPath, type DotPath } from "../fx/dot";
 import { fxSlash } from "../fx/slash";
 import { fxImpact } from "../fx/impact";
-import { fxGunshot } from "../fx/gunshot";
+import { fxGunshot, fxDuelistShot, fxAltShot, fxDeathMarkBlast } from "../fx/gunshot";
 import { fxLightning } from "../fx/lightning";
 import { fxFireFlame } from "../fx/dotFire";
 import { fxFrostSnowflake } from "../fx/dotFrost";
@@ -90,6 +92,12 @@ const FLASH_CLIENT_EFFECT = "flash-teleport";
 const FIRST_STRIKE_CLIENT_EFFECT = "first-strike";
 const AFTERSHOCK_CLIENT_EFFECT = "aftershock";
 const SWIFTBLADE_CLIENT_EFFECT = "swiftblade";
+const CHANNEL_BEAM_CLIENT_EFFECT = "channel-beam";
+const HOLY_FLASH_CLIENT_EFFECT = "holy-flash";
+const EXPLODING_CLIP_CLIENT_EFFECT = "reload-exploding-clip";
+const ALT_ONHIT_CLIENT_EFFECT = "reload-alt-onhit";
+const DEATH_MARK_BLAST_CLIENT_EFFECT = "death-mark-blast";
+const CANNON_BLAST_CLIENT_EFFECT = "reload-cannon-blast";
 
 function snapOwnPlayerToServerTarget(
   state: RenderState,
@@ -327,6 +335,12 @@ function runFxForAttackStyle(
   const targetInterp = state.interpolation.get(ev.targetId);
   const isFlashTeleport = ev.effects?.includes(FLASH_CLIENT_EFFECT) ?? false;
   const isSwiftblade = ev.effects?.includes(SWIFTBLADE_CLIENT_EFFECT) ?? false;
+  const isHolyBeam = ev.effects?.includes(CHANNEL_BEAM_CLIENT_EFFECT) ?? false;
+  const isHolyFlash = ev.effects?.includes(HOLY_FLASH_CLIENT_EFFECT) ?? false;
+  const isDuelistShot = ev.effects?.includes(EXPLODING_CLIP_CLIENT_EFFECT) ?? false;
+  const isAltShot = ev.effects?.includes(ALT_ONHIT_CLIENT_EFFECT) ?? false;
+  const isDeathMarkBlast = ev.effects?.includes(DEATH_MARK_BLAST_CLIENT_EFFECT) ?? false;
+  const isCannonBlast = ev.effects?.includes(CANNON_BLAST_CLIENT_EFFECT) ?? false;
 
   if (!targetSprite) {
     if (isFlashTeleport) {
@@ -372,6 +386,25 @@ function runFxForAttackStyle(
 
   if (isLaser) {
     activateLaserBeam(state, scene, ev.targetId);
+  } else if (isHolyBeam) {
+    activateHolyBeam(state, scene, ev.targetId);
+  } else if (isHolyFlash) {
+    // Execution "cast" that opens the channel — holy flash instead of melee lunge/ring.
+    fxHolyFlash(scene, from.x, from.y);
+    fxHolyFlash(scene, to.x, to.y, 0.8);
+  } else if (isDuelistShot) {
+    // Duelist last-bullet: red power shot + empowered ring (replaces the normal gunshot).
+    playEmpoweredRing(args);
+    fxDuelistShot(scene, from.x, from.y, to.x, to.y);
+  } else if (isAltShot) {
+    // Dualslinger on-hit (odd) round: blue shot instead of the normal gunshot.
+    fxAltShot(scene, from.x, from.y, to.x, to.y);
+  } else if (isDeathMarkBlast) {
+    // Bounty Hunter detonation: a small explosion on the target (no shot tracer).
+    fxDeathMarkBlast(scene, to.x, to.y);
+  } else if (isCannonBlast) {
+    // Cannoneer burst: a big explosion on the target when the stored pool fires.
+    fxCannonBlast(scene, to.x, to.y);
   } else if (isSwiftblade) {
     // Swiftblade replaces the default cadence slash with its dual diagonal slash;
     // both the primary and the extra strikes carry this effect.
@@ -396,6 +429,12 @@ function runFxForAttackStyle(
   for (const effectId of ev.effects ?? []) {
     if (effectId === FLASH_CLIENT_EFFECT) continue;
     if (effectId === SWIFTBLADE_CLIENT_EFFECT) continue; // handled above
+    if (effectId === CHANNEL_BEAM_CLIENT_EFFECT) continue; // handled above
+    if (effectId === HOLY_FLASH_CLIENT_EFFECT) continue; // handled above
+    if (effectId === EXPLODING_CLIP_CLIENT_EFFECT) continue; // handled above
+    if (effectId === ALT_ONHIT_CLIENT_EFFECT) continue; // handled above
+    if (effectId === DEATH_MARK_BLAST_CLIENT_EFFECT) continue; // handled above
+    if (effectId === CANNON_BLAST_CLIENT_EFFECT) continue; // handled above
     if (effectId === FIRST_STRIKE_CLIENT_EFFECT) {
       fxFirstStrike(scene, to.x, to.y);
       continue;
@@ -409,6 +448,8 @@ function runFxForAttackStyle(
 
   if (
     !isLaser &&
+    !isHolyBeam &&
+    !isHolyFlash &&
     !isFlashTeleport &&
     !isRangedPlayerView(player) &&
     state.ownId &&

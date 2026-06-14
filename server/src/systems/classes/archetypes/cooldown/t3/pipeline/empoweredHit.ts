@@ -3,8 +3,8 @@ import { attachComponent } from '../../../../../../ecs/markerHelpers';
 import { setAttackTarget } from '../../../../../combat/ai/targeting';
 import { hasPassive } from '../core/helpers';
 import {
-  OVERDRIVE_BUFF_MS, OVERDRIVE_SPEED_FACTOR,
-  BEAM_DURATION_MS, BEAM_TICK_MS,
+  OVERDRIVE_BUFF_MS, OVERDRIVE_ATTACK_SPEED_PCT,
+  BEAM_DURATION_MS,
 } from '../core/constants';
 
 /**
@@ -27,8 +27,14 @@ export function registerEmpoweredHit(): void {
     if (hasPassive(player, 'cooldown.overdrive')) {
       const active = player.hasOverdrive;
       if (!active) {
+        // "Burst": a flat +OVERDRIVE_ATTACK_SPEED_PCT attack-speed buff. Applied as
+        // the standard attack-speed math (cooldown ÷ (1 + pct)); baseCd is cached so
+        // the tick restores the pre-burst cooldown exactly when it expires.
         const baseCd = player.performsAttack.attackCooldown;
-        player.performsAttack.attackCooldown = Math.max(200, Math.round(player.performsAttack.attackCooldown * OVERDRIVE_SPEED_FACTOR));
+        player.performsAttack.attackCooldown = Math.max(
+          200,
+          Math.round(baseCd / (1 + OVERDRIVE_ATTACK_SPEED_PCT)),
+        );
         attachComponent(world, player, 'hasOverdrive', { remainingMs: OVERDRIVE_BUFF_MS, baseCd });
       } else {
         active.remainingMs = OVERDRIVE_BUFF_MS;
@@ -37,18 +43,24 @@ export function registerEmpoweredHit(): void {
     }
 
     if (hasPassive(player, 'cooldown.channeled-beam') && ctx.defenderType === 'monster') {
-      // TODO(engine): Channeled Beam is a STUB — the channel firing mode is not
-      // production-ready (see t3-spec-designs-reference.md). It zeroes the hit and
-      // starts the placeholder channel tick; do not treat as balanced/shippable.
-      console.warn(`[ChanneledBeam][STUB] ${player.isPlayer.id}: channel triggered — spec not production-ready`);
+      // Devout Priest: the execution becomes a beam channel instead of a single
+      // spike. Zero the triggering hit's direct damage; updateChanneledBeam then
+      // ticks damage (and on-hit) every BEAM_TICK_MS for BEAM_DURATION_MS. The
+      // first tick fires immediately (nextTickMs 0) so the beam feels responsive.
       attachComponent(world, player, 'isChanneling', {
         remainingMs: BEAM_DURATION_MS,
-        nextTickMs: BEAM_TICK_MS,
+        nextTickMs: 0,
         targetId: ctx.defender.isMonster.id,
         pct: 0,
       });
       setAttackTarget(world, player, ctx.defender.isMonster.id);
       ctx.damage = 0;
+      // The execution hit itself deals no damage — it's the "cast". Tag it so the
+      // client suppresses the normal melee lunge/ring and plays a holy flash instead.
+      const existing = ctx.metadata['clientEffects'];
+      ctx.metadata['clientEffects'] = Array.isArray(existing)
+        ? [...existing, 'holy-flash']
+        : ['holy-flash'];
       return;
     }
   });

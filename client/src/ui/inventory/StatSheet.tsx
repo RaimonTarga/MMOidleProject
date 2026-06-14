@@ -4,12 +4,14 @@ import type { EquipmentSlot } from '@mmo-idle/shared';
 import {
   GAME_CONFIG,
   ITEM_DATABASE, RECIPE_DATABASE, upgradeStatBonusTotal,
+  resolveEmpoweredMultiplier,
 } from '@mmo-idle/shared';
 import { hudBus } from '../../hudBus';
 import {
   attackAtom,
   attackCooldownAtom,
   attackRangeAtom,
+  combatArchetypeAtom,
   damageReductionAtom,
   equipmentAtom,
   dodgeRateAtom,
@@ -18,6 +20,7 @@ import {
   itemUpgradesAtom,
   maxHpAtom,
   onHitDamageAtom,
+  passivesAtom,
   platingAtom,
   speedAtom,
 } from '../../hud/atoms';
@@ -71,6 +74,10 @@ export function StatSheet({ focused, onFocus }: Props) {
   const evadeMitigation = useAtomValue(evadeMitigationAtom);
   const equipment       = useAtomValue(equipmentAtom);
   const itemUpgrades    = useAtomValue(itemUpgradesAtom);
+  const passives        = useAtomValue(passivesAtom);
+  const combatArchetype = useAtomValue(combatArchetypeAtom);
+
+  const empMult = resolveEmpoweredMultiplier(passives, combatArchetype);
 
   const playerStats: Record<string, number> = {
     attack, maxHp, hpRegen, plating, damageReduction, speed, onHitDamage, attackRange,
@@ -248,6 +255,14 @@ export function StatSheet({ focused, onFocus }: Props) {
             </>
           );
         })}
+
+        {/* Empowered attack multiplier — cadence/cooldown/energy only */}
+        {empMult && (
+          <div className="inv-stat-row">
+            <span className="inv-stat-row__label">EMP</span>
+            <span className="inv-stat-row__value">×{empMult.effective.toFixed(2)}</span>
+          </div>
+        )}
 
         {/* Evasion — deterministic dodge rate + damage avoided per dodge */}
         {dodgeRate > 0 && (

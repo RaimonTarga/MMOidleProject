@@ -1,7 +1,7 @@
 import { applyStatusEffect, getStatusEffect } from '@mmo-idle/shared';
 import { registerCombatListener } from '../../../../../combat/engine/combatPipeline';
 import { hasPassive } from '../core/helpers';
-import { rampFactorFor } from '../core/selectors';
+import { rampFactorFor, eternalCycleFlatPerStack } from '../core/selectors';
 import {
   ETERNAL_CHARGE_DURATION_MS,
   BATTERY_ATK_PER_STACK,
@@ -31,7 +31,10 @@ export function registerNormalHit(): void {
     const cd    = player.usesCooldown;
 
     if (hasPassive(player, 'cooldown.eternal-cycle')) {
-      applyStatusEffect(state, {
+      // Bank a stack, then add flat damage per banked stack to THIS attack — the
+      // bonus ramps as stacks build (Metronome-style). The execution adds the full
+      // stacked bonus again and clears the stacks (see postEmpoweredHit).
+      const charge = applyStatusEffect(state, {
         id:          EC_CHARGE_FX,
         instanced:   false,
         remainingMs: ETERNAL_CHARGE_DURATION_MS,
@@ -39,6 +42,7 @@ export function registerNormalHit(): void {
         sourceId:    player.isPlayer.id,
         data:        {},
       });
+      ctx.damage += Math.round(charge.stacks * eternalCycleFlatPerStack(player));
     }
 
     if (hasPassive(player, 'cooldown.battery')) {

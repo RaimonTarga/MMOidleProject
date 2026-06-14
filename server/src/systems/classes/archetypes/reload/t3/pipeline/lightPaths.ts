@@ -1,13 +1,11 @@
-import { applyStatusEffect, GAME_CONFIG } from '@mmo-idle/shared';
+import { applyStatusEffect } from '@mmo-idle/shared';
 import { registerCombatListener } from '../../../../../combat/engine/combatPipeline';
-import { applyPlayerAoe } from '../../../../../combat/damage/aoeDamage';
 import { markSliceDirty } from '../../../../../../ecs/dirtyHelpers';
 import {
-  DEFAULT_EXPLODING_AOE_MULT,
-  DEFAULT_EXPLODING_CLIP_MULT,
   DEFAULT_HAIR_TRIGGER_MAX,
   DEFAULT_HAIR_TRIGGER_PCT,
   EXPLODING_CLIP_CLIENT_EFFECT,
+  ALT_ONHIT_CLIENT_EFFECT,
   ALT_CADENCE_ATTACK_MULT,
   ALT_CADENCE_ONHIT_MULT,
 } from '../core/constants';
@@ -42,6 +40,13 @@ export function registerReloadLightT3(): void {
       } else {
         ctx.damage = 0;
         ctx.metadata['onHitDamageMult'] = ALT_CADENCE_ONHIT_MULT;
+        // Odd shot = the on-hit-focused round → tag the blue shot FX.
+        const existing = ctx.metadata['clientEffects'];
+        const effects = Array.isArray(existing)
+          ? existing.filter((e): e is string => typeof e === 'string')
+          : [];
+        effects.push(ALT_ONHIT_CLIENT_EFFECT);
+        ctx.metadata['clientEffects'] = effects;
       }
     }
 
@@ -51,20 +56,10 @@ export function registerReloadLightT3(): void {
       : reload.ammo === 0;
 
     if ((passives['reload.exploding-clip'] ?? 0) > 0 && isLastPellet) {
-      const mult =
-        passives['reload.exploding-clip-mult'] ?? DEFAULT_EXPLODING_CLIP_MULT;
-      ctx.damage = Math.max(1, Math.round(ctx.damage * mult));
-      applyPlayerAoe(
-        world,
-        player,
-        ctx.defender.hasPosition.current,
-        GAME_CONFIG.EMPOWERED_AOE_RADIUS,
-        Math.round(
-          player.dealsDamage.attack *
-            (passives['reload.exploding-aoe-mult'] ?? DEFAULT_EXPLODING_AOE_MULT),
-        ),
-        ctx.defender.isMonster.id,
-      );
+      // The damage multiplier and AoE splash are handled by the empowered system:
+      // the last bullet is armed empowered in reloadPrototype.beforeAttack, so the
+      // empowered multiplier (reload.empowered-mult) scales the hit and combat.ts
+      // applies the standard empowered AoE. Here we only tag the red Duelist shot FX.
       const existing = ctx.metadata['clientEffects'];
       const effects = Array.isArray(existing)
         ? existing.filter((e): e is string => typeof e === 'string')

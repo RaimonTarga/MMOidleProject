@@ -13,9 +13,9 @@ import {
   DEFAULT_COVER_FIRE_DR,
   DEFAULT_DEATH_MARK_DETONATE_MULT,
   DEATH_MARK_EFFECT_ID,
-  DEFAULT_MOMENTUM_APS_PER_STACK,
+  DEATH_MARK_DETONATE_DELAY_MS,
+  DEATH_MARK_BLAST_EFFECT,
   DEFAULT_MOMENTUM_MAX_STACKS,
-  DEFAULT_SIEGE_DAMAGE_PER_SHOT,
 } from './core/constants';
 
 function detonateDeathMark(
@@ -40,7 +40,29 @@ function detonateDeathMark(
   removeStatusEffect(target.tracksCombat, DEATH_MARK_EFFECT_ID);
   applyPlayerProcDamage(world, player, target, dmg, {
     tags: ['death-mark'],
+    clientEffects: [DEATH_MARK_BLAST_EFFECT], // small explosion on the target
+    empowered: true,                          // crit (yellow "!") styling, no AoE
   });
+}
+
+/**
+ * Per-tick: fire any armed Death Mark detonations once their delay elapses.
+ * Reloading arms the blast (see onStart); it goes off DEATH_MARK_DETONATE_DELAY_MS
+ * later on the captured target (re-fetched at fire time; skipped if it's gone).
+ */
+export function updateDeathMarkDetonation(world: World, dt: number): void {
+  for (const player of world.reloadPlayers) {
+    const reload = player.usesReload;
+    if (reload.deathMarkDetonateMs <= 0) continue;
+
+    reload.deathMarkDetonateMs -= dt;
+    if (reload.deathMarkDetonateMs > 0) continue;
+
+    const targetId = reload.deathMarkTargetId;
+    reload.deathMarkDetonateMs = 0;
+    reload.deathMarkTargetId = null;
+    if (targetId) detonateDeathMark(world, player, targetId);
+  }
 }
 
 export function registerReloadLifecycleHandlers(): void {
@@ -52,7 +74,11 @@ export function registerReloadLifecycleHandlers(): void {
 
       if ((passives['reload.death-mark'] ?? 0) > 0) {
         const targetId = player.hasAttackTarget?.targetId;
-        if (targetId) detonateDeathMark(world, player, targetId);
+        if (targetId) {
+          // Arm a delayed detonation instead of firing immediately on reload.
+          reload.deathMarkTargetId = targetId;
+          reload.deathMarkDetonateMs = DEATH_MARK_DETONATE_DELAY_MS;
+        }
       }
 
       if ((passives['reload.cover-fire'] ?? 0) > 0) {
@@ -76,10 +102,6 @@ export function registerReloadLifecycleHandlers(): void {
         markSliceDirty(world, player, 'usesReload');
       }
 
-      // Siege: capture how many shots were used from the clip being reloaded.
-      if ((passives['reload.siege'] ?? 0) > 0) {
-        reload.siegeShotsFired = Math.max(0, reload.ammoMax - reload.ammo);
-      }
     },
 
     onComplete(world, player) {
@@ -93,34 +115,18 @@ export function registerReloadLifecycleHandlers(): void {
         markSliceDirty(world, player, 'usesReload');
       }
 
-      // Momentum: each reload grants an attack-speed stack (decays out of combat).
+      // Momentum: each reload grants a stack (decays out of combat). The attack-speed
+      // reduction is (re)applied every tick in updateReloadMomentum so a recalc can't
+      // silently wipe it; here we only bump the stack count.
       if ((passives['reload.momentum'] ?? 0) > 0) {
         const maxStacks = Math.round(passives['reload.momentum-max-stacks'] ?? DEFAULT_MOMENTUM_MAX_STACKS);
         if (reload.momentumStacks < maxStacks) {
-          if (reload.momentumBaseCd === 0) reload.momentumBaseCd = player.performsAttack.attackCooldown;
           reload.momentumStacks++;
-          const pct = passives['reload.momentum-aps-per-stack'] ?? DEFAULT_MOMENTUM_APS_PER_STACK;
-          player.performsAttack.attackCooldown = Math.max(
-            150,
-            Math.round(reload.momentumBaseCd / (1 + reload.momentumStacks * pct)),
-          );
           reload.momentumDecayMs = 0;
-          markSliceDirty(world, player, 'performsAttack');
           markSliceDirty(world, player, 'usesReload');
         }
       }
 
-      // Siege: fire a burst proportional to the shots used in the previous clip.
-      if ((passives['reload.siege'] ?? 0) > 0 && reload.siegeShotsFired > 0) {
-        const targetId = player.hasAttackTarget?.targetId;
-        const target = targetId ? world.getMonsterEntity(targetId) : undefined;
-        if (target) {
-          const perShot = passives['reload.siege-damage-per-shot'] ?? DEFAULT_SIEGE_DAMAGE_PER_SHOT;
-          const burst = Math.max(1, Math.round(player.dealsDamage.attack * reload.siegeShotsFired * perShot));
-          applyPlayerProcDamage(world, player, target, burst, { tags: ['siege'] });
-        }
-        reload.siegeShotsFired = 0;
-      }
     },
   });
 }

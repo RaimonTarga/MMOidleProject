@@ -54,12 +54,12 @@ export const CI_BASE_MULT = 1.3; // burst = player.attack × 1.3^tagCount
 
 // Light — Overdrive (energy-light-t3-b)
 export const ENERGY_OVERDRIVE_ATK_PCT  = 0.40;  // +ATK% while Overdrive is active
-export const OVERDRIVE_DECAY_PER_SEC    = 25;    // energy lost per second during Overdrive
+export const OVERDRIVE_DECAY_PER_SEC    = 18;    // energy lost per second during Overdrive
 
 // Light — Energy Upkeep (energy-light-t3-c)
 export const UPKEEP_THRESHOLD_PCT = 0.20; // energy% above which the upkeep timer runs
-export const UPKEEP_DECAY_PER_SEC = 8;    // continuous energy decay
-export const UPKEEP_ONHIT_SCALE   = 0.05; // on-hit damage bonus per upkeep-second
+export const UPKEEP_DECAY_PER_SEC = 16;   // continuous energy decay (you must keep firing)
+// On-hit scaling now lives in shared/systems/energyUpkeep.ts (stack-based, flat add).
 
 // Balanced — Binary Cycle (energy-balanced-t3-a)
 export const BINARY_CHARGE_ATK_BONUS    = 0.30; // +ATK% during Charge State

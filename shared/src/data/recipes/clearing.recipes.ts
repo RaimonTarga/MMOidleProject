@@ -8,7 +8,7 @@ export const clearingRecipeEntries = [
     id: 'primordial-club', name: 'Primordial Club',
     recipeGroup: 'clearing', requiredBiomeLevel: 1, slot: 'weapon',
     cost: { green: 4 }, stats: { attack: 3 }, attacksPerSecond: 0.65, tier: 0,
-    icon: 'items/weapons/hammer-1.png',
+    icon: 'items/weapons/club.png',
     description: 'Whittled from ironwood in a single evening, and it has not snapped since.',
     upgrades: [
       { stats: { attack: 1 }, cost: { green: 2  }, requiredBiomeLevel: 2 },

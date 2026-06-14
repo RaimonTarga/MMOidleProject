@@ -13,8 +13,8 @@ const cooldownModule = defineMechanic({
   init: () => {
     initCooldownArchetype();
   },
-  tick: (world, dt) => {
-    updateCooldownT3(world, dt);
+  tick: (world, dt, now) => {
+    updateCooldownT3(world, dt, now);
     updateCooldownArchetype(world, dt);
   },
   buffs: COOLDOWN_T3_BUFFS,

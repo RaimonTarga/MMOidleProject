@@ -1,4 +1,5 @@
 import { useAtomValue } from 'jotai';
+import { resolveEmpoweredMultiplier } from '@mmo-idle/shared';
 import { BuffBar, CadenceTimeline, DefensePassivesSection, MobilityPassivesSection, StatRow, SummonSlotBar } from './components';
 import { useHoverTooltip } from './tooltip';
 import { STAT_HELP } from './statHelp';
@@ -12,6 +13,7 @@ import {
   cadenceCountAtom,
   cadenceEmpoweredArmedAtom,
   cadenceThresholdAtom,
+  channelingPctAtom,
   combatArchetypeAtom,
   damageReductionAtom,
   energyCountAtom,
@@ -21,6 +23,7 @@ import {
   evadeMitigationAtom,
   executionCooldownPctAtom,
   executionReadyAtom,
+  isChannelingAtom,
   flashShiftPctAtom,
   flashSpeedBonusPctAtom,
   heatPctAtom,
@@ -78,6 +81,8 @@ export function StatPanel() {
   const cadenceEmpoweredArmed = useAtomValue(cadenceEmpoweredArmedAtom);
   const executionReady = useAtomValue(executionReadyAtom);
   const executionCooldownPct = useAtomValue(executionCooldownPctAtom);
+  const isChanneling = useAtomValue(isChannelingAtom);
+  const channelingPct = useAtomValue(channelingPctAtom);
   const empoweredReady = useAtomValue(empoweredReadyAtom);
   const energyCount = useAtomValue(energyCountAtom);
   const attackTargetId = useAtomValue(attackTargetIdAtom);
@@ -120,6 +125,8 @@ export function StatPanel() {
       cadenceEmpoweredArmed,
       executionReady,
       executionCooldownPct,
+      isChanneling,
+      channelingPct,
       empoweredReady,
       energyCount,
       attackTargetId,
@@ -150,6 +157,17 @@ export function StatPanel() {
   const cdSec       = player ? (player.attackCooldown / 1000).toFixed(2) : '—';
   const aps         = player ? (1000 / player.attackCooldown).toFixed(2) : '—';
   const dps         = player ? ((player.attack + player.onHitDamage) * (1000 / player.attackCooldown)).toFixed(1) : '—';
+  const empMult     = player ? resolveEmpoweredMultiplier(player.passives, player.combatArchetype) : null;
+  const empMultTip  = empMult ? (
+    <>
+      <div>The damage multiplier applied to your empowered attack (cadence finisher / cooldown execution / energy discharge).</div>
+      <div style={{ marginTop: 6 }}>Base ×{empMult.base.toFixed(2)} (frame + spec)</div>
+      {empMult.archetypeAdd !== 0 && <div>+{empMult.archetypeAdd.toFixed(2)} spec bonus</div>}
+      {empMult.sharedAdd !== 0 && <div>+{empMult.sharedAdd.toFixed(2)} from gear/passives</div>}
+      {empMult.multBonus !== 0 && <div>×{(1 + empMult.multBonus).toFixed(2)} weapon bonus</div>}
+      <div style={{ marginTop: 6 }}>= ×{empMult.effective.toFixed(2)} effective</div>
+    </>
+  ) : undefined;
   const isFlash     = player ? (player.passives['energy.flash'] ?? 0) > 0 : false;
   const flashShiftLabel = player && player.flashShiftPct >= 50 ? 'Red Shift' : 'Blue Shift';
   const flashShiftColor = player
@@ -206,6 +224,9 @@ export function StatPanel() {
           <StatRow label="On-Hit Dmg" value={`+${player.onHitDamage}`} help={STAT_HELP.onHitDamage} />
         )}
         <StatRow label="DPS"        value={dps} help={STAT_HELP.dps} />
+        {empMult && (
+          <StatRow label="Empowered" value={`×${empMult.effective.toFixed(2)}`} help={empMultTip} />
+        )}
         <StatRow label="Atk Speed"  value={player ? `${aps} APS (${cdSec}s)` : '—'} help={STAT_HELP.atkSpeed} />
         <StatRow label="Plating"    value={player?.plating   ?? '—'} help={STAT_HELP.plating} />
         {player && player.damageReduction > 0 && (
@@ -272,22 +293,44 @@ export function StatPanel() {
         </div>
       )}
 
-      {/* Execution bar — cooldown archetype */}
+      {/* Execution bar — cooldown archetype. While the Devout Priest channels, the
+          same bar drains to show the beam's leftover duration instead of the
+          execution cooldown. */}
       {player?.combatArchetype === 'cooldown' && (
-        <div className="stat-section">
-          <div className="stat-row">
-            <span className="stat-label">Execution</span>
-            <span className={`stat-value${player.executionReady ? ' mech-label--ready' : ''}`}>
-              {player.executionReady ? 'READY' : `${player.executionCooldownPct}%`}
-            </span>
+        player.isChanneling ? (() => {
+          const remainingPct = Math.max(0, 100 - player.channelingPct);
+          return (
+            <div className="stat-section">
+              <div className="stat-row">
+                <span className="stat-label">Channel</span>
+                <span className="stat-value mech-label--empowered">
+                  BEAM {(remainingPct / 100 * 3).toFixed(1)}s
+                </span>
+              </div>
+              <div className="mech-bar-track">
+                <div
+                  className="mech-bar-fill mech-bar-fill--cooldown mech-bar-fill--ready"
+                  style={{ width: `${remainingPct}%` }}
+                />
+              </div>
+            </div>
+          );
+        })() : (
+          <div className="stat-section">
+            <div className="stat-row">
+              <span className="stat-label">Execution</span>
+              <span className={`stat-value${player.executionReady ? ' mech-label--ready' : ''}`}>
+                {player.executionReady ? 'READY' : `${player.executionCooldownPct}%`}
+              </span>
+            </div>
+            <div className="mech-bar-track">
+              <div
+                className={`mech-bar-fill mech-bar-fill--cooldown${player.executionReady ? ' mech-bar-fill--ready' : ''}`}
+                style={{ width: `${player.executionCooldownPct}%` }}
+              />
+            </div>
           </div>
-          <div className="mech-bar-track">
-            <div
-              className={`mech-bar-fill mech-bar-fill--cooldown${player.executionReady ? ' mech-bar-fill--ready' : ''}`}
-              style={{ width: `${player.executionCooldownPct}%` }}
-            />
-          </div>
-        </div>
+        )
       )}
 
       {/* Energy bar — energy archetype */}
@@ -301,7 +344,7 @@ export function StatPanel() {
             >
               {isFlash
                 ? `${Math.round(player.energyCount)} / 100`
-                : player.empoweredReady ? 'EMPOWERED' : `${player.energyCount} / 100`}
+                : player.empoweredReady ? 'EMPOWERED' : `${Math.round(player.energyCount)} / 100`}
             </span>
           </div>
           <div className="mech-bar-track">

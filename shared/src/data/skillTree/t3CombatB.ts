@@ -25,7 +25,7 @@ export const t3CombatEntriesB = [
     id: 'energy-light-t3-c', name: 'Channeler', tier: 3,
     classId: 'energy-root', subVariantId: 'light',
     parent: 'energy-light', children: [],
-    description: 'Discharge is suppressed and energy decays continuously. While energy stays above the threshold, an upkeep timer builds — and your on-hit damage scales with how long you have sustained it. No attack-speed bonus.',
+    description: 'Discharge is suppressed and energy decays quickly — keep firing to sustain it. While energy stays above the threshold you build Flow stacks, and each stack adds flat on-hit damage (not attack damage). Ramps through 3 channel stages. No attack-speed bonus.',
     cost: 1, statEffects: {},
     mechanicEffects: { 'energy.upkeep': 1 },
   }],

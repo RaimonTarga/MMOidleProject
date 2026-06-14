@@ -20,9 +20,8 @@ export interface UsesCadence {
   rampageDecayMs: number;
   /** Rampage: ms currently subtracted from attack cooldown (for exact undo). */
   rampageCdReduction: number;
-  /** Crescendo: per-second in-combat stacks consumed on the next finisher. */
-  crescendoStacks: number;
-  /** Crescendo: ms accumulator toward the next +1 stack (or decay while OOC). */
+  /** Crescendo (Juggernaut): elapsed in-combat ms; drives the finisher ramp
+   *  multiplier and resets to 0 instantly out of combat. */
   crescendoTimerMs: number;
   /** Verdict: character-side banked execution power (persists across targets). */
   verdictStored: number;
@@ -42,7 +41,6 @@ export function initUsesCadence(args: { threshold: number }): UsesCadence {
     rampageStacks:     0,
     rampageDecayMs:    0,
     rampageCdReduction: 0,
-    crescendoStacks:   0,
     crescendoTimerMs:  0,
     verdictStored:     0,
   };

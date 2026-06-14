@@ -44,7 +44,4 @@ export const RAMPAGE_ATK_PEN_PER_STACK = 0.08;   // regular-attack damage penalt
 export const RAMPAGE_MULT_PER_STACK    = 0.15;   // empowered-multiplier bonus per stack (frac)
 export const RAMPAGE_DECAY_INTERVAL_MS = 8_000;  // OOC: shed 1 stack per interval
 
-// Crescendo (cadence-heavy-t3-c)
-export const CRESCENDO_FLAT_PER_STACK = 18;      // flat bonus to the finisher per stack
-export const CRESCENDO_TICK_MS        = 1_000;   // in-combat: +1 stack per tick
-export const CRESCENDO_DECAY_MS       = 2_000;   // OOC: shed 1 stack per this interval
+// Crescendo (cadence-heavy-t3-c) — time-based ramp lives in core/crescendo.ts.

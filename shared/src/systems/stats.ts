@@ -193,6 +193,14 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
     p.dealsDamage.onHitDamage += ((p.playerTier ?? 0) + 1) * aftershockOnHitPerTier;
   }
 
+  // 3b. Dualslinger (reload-light-t3-b): same per-tier on-hit scaling, authored on
+  // the node ('reload.alternating-onhit-per-tier'). Rewards the on-hit half of its
+  // attack/on-hit split — the odd (2× on-hit) shots scale up with tier.
+  const altOnHitPerTier = p.usesSkills.passives['reload.alternating-onhit-per-tier'] ?? 0;
+  if (altOnHitPerTier > 0) {
+    p.dealsDamage.onHitDamage += ((p.playerTier ?? 0) + 1) * altOnHitPerTier;
+  }
+
   // Re-clamp damage reduction: equipment + upgrades are applied after the step-2 clamp.
   p.mitigatesDamage.damageReduction = Math.min(0.9, Math.max(0, p.mitigatesDamage.damageReduction));
 
@@ -210,10 +218,36 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
 
   // 3b. Reload archetype final multiplier
   if (p.usesSkills.combatArchetype === 'reload') {
-    p.dealsDamage.attack = Math.max(1, Math.floor(p.dealsDamage.attack * 0.57));
-    p.performsAttack.attackCooldown = Math.max(200, Math.round(p.performsAttack.attackCooldown * 0.5));
-    if ((p.usesSkills.passives['reload.gatling'] ?? 0) > 0) {
-      p.performsAttack.attackCooldown = Math.max(100, Math.round(p.performsAttack.attackCooldown * 0.5));
+    const isSnipe = (p.usesSkills.passives['reload.snipe'] ?? 0) > 0;
+    const isLaser = (p.usesSkills.passives['reload.laser'] ?? 0) > 0;
+
+    // Sniper converts the bonus attack-speed STAT into attack damage (weapon APS is
+    // ignored entirely — the cadence is hard-set below). Deliberately sub-1.0 so
+    // attack speed is a damage source, never an efficiency race toward fast weapons.
+    if (isSnipe) {
+      const rate = p.usesSkills.passives['reload.snipe-as-to-dmg'] ?? 0.5;
+      p.dealsDamage.attack += Math.round(p.dealsDamage.attack * attackSpeedPct * rate);
+    }
+
+    // Reload's half-damage pays for its double-speed. Sniper (slow hard-set cadence)
+    // and Melter (continuous laser with its own per-tick scaling) don't get that
+    // double-speed, so both are exempt and keep full attack damage.
+    if (!isSnipe && !isLaser) {
+      p.dealsDamage.attack = Math.max(1, Math.floor(p.dealsDamage.attack * 0.57));
+    }
+
+    if (isSnipe) {
+      // Hard-set the firing cadence (ms/shot), ignoring weapon APS, the attack-speed
+      // stat, and the reload double-speed layer. Default 2000ms = 0.5 APS.
+      p.performsAttack.attackCooldown = Math.max(
+        200,
+        Math.round(p.usesSkills.passives['reload.snipe-cadence-ms'] ?? 2000),
+      );
+    } else {
+      p.performsAttack.attackCooldown = Math.max(200, Math.round(p.performsAttack.attackCooldown * 0.5));
+      if ((p.usesSkills.passives['reload.gatling'] ?? 0) > 0) {
+        p.performsAttack.attackCooldown = Math.max(100, Math.round(p.performsAttack.attackCooldown * 0.5));
+      }
     }
   }
 

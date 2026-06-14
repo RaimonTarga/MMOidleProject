@@ -80,7 +80,11 @@ export const rootsAndFramesEntries = [
     parent: null, children: [],
     description: 'Unleash a rapid clip then reload. Your speed is doubled and damage per shot halved as a fundamental multiplier — fights from range naturally and weaves around incoming blows.',
     cost: 1, statEffects: { attack: 18, maxHp: 24, attackSpeedPct: 0.20, attackRange: 120, evasion: 0.25, speed: 15 },
-    mechanicEffects: { 'defense.kill-burst-pct': 0.05, 'defense.evade-mitigation': 0.20, 'reload.max-ammo': 10, 'reload.reload-time-ms': 2000, 'reload.acquire-radius-mult': 2.5 } as Record<string, number>,
+    // NOTE: max-ammo / reload-time-ms are set by the FRAME (Scout/Marksman/Artillerist),
+    // not here — passives merge additively, so seeding them on the root too would stack
+    // with the frame (e.g. 10 + 5 = 15 ammo). T3 nodes then delta off the frame's base
+    // (e.g. snipe's reload.max-ammo: -2). Root-only falls back to the consumer defaults.
+    mechanicEffects: { 'defense.kill-burst-pct': 0.05, 'defense.evade-mitigation': 0.20, 'reload.acquire-radius-mult': 2.5 } as Record<string, number>,
   }],
 
 
@@ -276,9 +280,9 @@ export const rootsAndFramesEntries = [
     id: 'reload-heavy', name: 'Artillerist', tier: 1,
     classId: 'reload-root', subVariantId: 'heavy',
     parent: 'reload-root', children: [],
-    description: 'Slower but harder to put down. Large 14-round clip for sustained bursting, but reloading takes 3 s — plan your downtime.',
+    description: 'Slower but harder to put down. Large 20-round clip for sustained bursting, but reloading takes 3 s — plan your downtime.',
     cost: 1, statEffects: { attack: 16, maxHp: 20, plating: 4, hpRegen: 4, speed: -10, attackSpeedPct: -0.05 },
-    mechanicEffects: { 'reload.max-ammo': 14, 'reload.reload-time-ms': 3000 } as Record<string, number>,
+    mechanicEffects: { 'reload.max-ammo': 20, 'reload.reload-time-ms': 3000 } as Record<string, number>,
   }],
 
 

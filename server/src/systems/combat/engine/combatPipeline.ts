@@ -38,6 +38,13 @@ interface CombatContextBase<
    * (e.g. reload archetype uses 0.5 to compensate for its halved per-shot damage).
    */
   platingMult: number;
+  /**
+   * Fraction of the defender's damage-reduction to ignore (0–1). Default 0 (full
+   * DR). The DR side mirror of `platingMult`: effective DR = DR × (1 − drPierce).
+   * Set in a beforeAttack handler (e.g. cooldown Rupture pierces DR on execution
+   * and during its window).
+   */
+  drPierce: number;
   /** Set to true in a beforeAttack handler to skip the entire attack. */
   cancelled: boolean;
   /**
@@ -129,6 +136,7 @@ export function makeCombatContext(
     defenderType,
     damage: 0,
     platingMult: 1.0,
+    drPierce: 0,
     cancelled: false,
     metadata: {},
   } as CombatContext;

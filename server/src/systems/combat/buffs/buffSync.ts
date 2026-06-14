@@ -383,16 +383,22 @@ function buffEffectText(buff: PlayerBuff): string {
       return "+flat damage to subsequent hits";
     case "cadence-rampage":
       return "+attack speed and finisher damage";
+    case "cadence-crescendo":
+      return "+finisher damage (ramps in combat)";
     case "cooldown-overdrive":
-      return "+movement speed";
+      return "+attack speed";
     case "cooldown-eternal-charge":
       return "+execution charge";
     case "cooldown-temporal-ext":
       return "+on-hit damage";
     case "cooldown-battery":
       return "+execution damage";
+    case "cooldown-reverb":
+      return "next execution empowered";
     case "cooldown-alignment":
       return "+attack speed";
+    case "cooldown-rupture":
+      return "regular attacks pierce plating";
     case "cooldown-channel":
       return "channeled beam active";
     case "energy-overcharge":

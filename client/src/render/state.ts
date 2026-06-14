@@ -127,6 +127,18 @@ export interface RenderState {
     targetId: string | null;
     until: number;
   };
+  /** Devout Priest channeled holy beam (see client/src/fx/holyBeam.ts). */
+  holyBeam: {
+    graphics: Phaser.GameObjects.Graphics | null;
+    targetId: string | null;
+    until: number;
+  };
+  /** Cannoneer charge-up ring on the own player (see client/src/fx/cannonFx.ts). */
+  cannonCharge: {
+    graphics: Phaser.GameObjects.Graphics | null;
+  };
+  /** Per-player transformation aura glow graphics (see client/src/fx/aura.ts). */
+  auras: Map<string, Phaser.GameObjects.Graphics>;
   voidOverlordRespawn: {
     payload: VoidOverlordRespawnState;
     deadlineMs: number;
@@ -177,6 +189,15 @@ export function createRenderState(): RenderState {
       targetId: null,
       until: 0,
     },
+    holyBeam: {
+      graphics: null,
+      targetId: null,
+      until: 0,
+    },
+    cannonCharge: {
+      graphics: null,
+    },
+    auras: new Map(),
     voidOverlordRespawn: null,
     voidThroneHazardLifted: false,
     movementEffectNextAt: new Map(),

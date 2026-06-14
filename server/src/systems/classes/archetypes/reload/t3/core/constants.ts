@@ -1,8 +1,9 @@
 export const DEFAULT_LASER_DAMAGE_PER_TICK_PCT = 0.18;
 export const DEFAULT_LASER_HEAT_PER_TICK = 2;
 export const DEFAULT_LASER_COOL_PER_TICK = 2.5;
-export const DEFAULT_SNIPE_COOLDOWN_MS = 2500;
-export const DEFAULT_SNIPE_BASELINE_CD_MS = 1000;
+// Snipe cadence (reload.snipe-cadence-ms) and attack-speed→damage conversion
+// (reload.snipe-as-to-dmg) are applied in recalculatePlayerStats (shared); their
+// defaults live there. Only the full-HP bonus is read at combat time.
 export const DEFAULT_SNIPE_FULL_HP_MULT = 2;
 export const FULL_HP_THRESHOLD = 0.95;
 export const GATLING_KNOCKBACK_DISTANCE = 20;
@@ -15,6 +16,7 @@ export const DEATH_MARK_EFFECT_ID = 'death-mark';
 export const SUPPRESS_SHRED_EFFECT_ID = 'reload-suppress-shred';
 export const COVER_FIRE_EFFECT_ID = 'reload-cover-fire';
 export const EXPLODING_CLIP_CLIENT_EFFECT = 'reload-exploding-clip';
+export const ALT_ONHIT_CLIENT_EFFECT = 'reload-alt-onhit';
 
 export const DEFAULT_EXPLODING_CLIP_MULT = 3.5;
 export const DEFAULT_EXPLODING_AOE_MULT = 0.6;
@@ -30,6 +32,8 @@ export const DEFAULT_RELOAD_TIME_MULT = 1;
 export const DEFAULT_DEATH_MARK_MAX = 10;
 export const DEFAULT_DEATH_MARK_DETONATE_MULT = 0.65;
 export const DEFAULT_DEATH_MARK_DURATION_MS = 8000;
+export const DEATH_MARK_DETONATE_DELAY_MS = 1000; // reload arms the blast; it fires 1s later
+export const DEATH_MARK_BLAST_EFFECT = 'death-mark-blast'; // client explosion FX id
 export const DEFAULT_SUPPRESS_SHRED = 4;
 export const DEFAULT_SUPPRESS_MAX = 5;
 export const DEFAULT_COVER_FIRE_DR = 0.45;
@@ -44,7 +48,11 @@ export const ALT_CADENCE_ONHIT_MULT  = 2;  // odd shots: 2× on-hit (attack zero
 // Momentum (reload-balanced-t3-c)
 export const DEFAULT_MOMENTUM_APS_PER_STACK = 0.06; // +6% APS per stack
 export const DEFAULT_MOMENTUM_MAX_STACKS    = 5;
-export const MOMENTUM_DECAY_INTERVAL_MS     = 12_000; // OOC: shed 1 stack per interval
+export const MOMENTUM_DECAY_INTERVAL_MS     = 4_000; // OOC: shed 1 stack per interval
+export const DEFAULT_MOMENTUM_RELOAD_REDUCTION = 0.10; // -10% reload time per stack
+export const MOMENTUM_RELOAD_REDUCTION_FLOOR   = 0.30; // never cut reload below 30% of base
 
-// Siege (reload-heavy-t3-c)
-export const DEFAULT_SIEGE_DAMAGE_PER_SHOT = 0.5; // burst = attack × shotsFired × this
+// Cannon (reload-heavy-t3-c)
+export const DEFAULT_CANNON_DAMAGE_PER_SHOT = 0.5;  // each shot banks attack × this
+export const CANNON_CHARGE_FRACTION = 0.5;          // charge time = reload × this
+export const CANNON_BLAST_EFFECT = 'reload-cannon-blast'; // client explosion FX id

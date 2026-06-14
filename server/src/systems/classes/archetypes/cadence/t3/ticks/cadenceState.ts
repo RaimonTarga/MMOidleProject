@@ -1,14 +1,10 @@
 import type { World } from '../../../../../../world/World';
-import {
-  CRESCENDO_TICK_MS,
-  CRESCENDO_DECAY_MS,
-  RAMPAGE_DECAY_INTERVAL_MS,
-} from '../core/constants';
+import { RAMPAGE_DECAY_INTERVAL_MS } from '../core/constants';
 import { recomputeRampageStats } from '../core/rampage';
 
 /**
  * Per-player cadence runtime tick — drives the time-based T4 specs:
- *   Crescendo — accrue 1 stack/sec in combat, decay slowly out of combat.
+ *   Crescendo — ramp in-combat elapsed time (resets instantly out of combat).
  *   Rampage   — shed 1 stack per interval out of combat (restore threshold/APS).
  * (Verdict's bank/execute is hit-driven and lives in pipeline/verdict.ts.)
  */
@@ -18,21 +14,11 @@ export function updateCadenceState(world: World, dt: number): void {
     const passives = player.usesSkills.passives;
     const inCombat = player.hasAttackTarget !== undefined;
 
-    // ── Crescendo ─────────────────────────────────────────────────────────────
+    // ── Crescendo (Juggernaut) ──────────────────────────────────────────────────
+    // Accrue in-combat time (drives the finisher ramp multiplier); reset instantly
+    // the moment combat ends so the scaling only rewards sustained fights.
     if ((passives['cadence.crescendo'] ?? 0) > 0) {
-      cadence.crescendoTimerMs += dt;
-      if (inCombat) {
-        while (cadence.crescendoTimerMs >= CRESCENDO_TICK_MS) {
-          cadence.crescendoTimerMs -= CRESCENDO_TICK_MS;
-          cadence.crescendoStacks++;
-        }
-      } else {
-        while (cadence.crescendoStacks > 0 && cadence.crescendoTimerMs >= CRESCENDO_DECAY_MS) {
-          cadence.crescendoTimerMs -= CRESCENDO_DECAY_MS;
-          cadence.crescendoStacks--;
-        }
-        if (cadence.crescendoStacks === 0) cadence.crescendoTimerMs = 0;
-      }
+      cadence.crescendoTimerMs = inCombat ? cadence.crescendoTimerMs + dt : 0;
     }
 
     // ── Rampage out-of-combat decay ────────────────────────────────────────────

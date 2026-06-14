@@ -5,6 +5,7 @@ import {
   RAMPAGE_MAX_STACKS,
   RAMPAGE_MULT_PER_STACK,
 } from './constants';
+import { crescendoMultiplier } from './crescendo';
 
 export const CADENCE_T3_BUFFS = [
   defineBuff(
@@ -113,6 +114,26 @@ export const CADENCE_T3_BUFFS = [
       };
     },
     { label: 'Rage', color: '#ff3322', category: 'cadence', shape: 'square' },
+  ),
+  defineBuff(
+    'cadence-crescendo',
+    ({ player }) => {
+      if ((player.usesSkills.passives['cadence.crescendo'] ?? 0) <= 0) return null;
+      const ms = player.usesCadence?.crescendoTimerMs ?? 0;
+      const mult = crescendoMultiplier(ms);
+      if (mult <= 0) return null;
+      const pct = Math.round(mult * 100);
+      return {
+        id: 'cadence-crescendo',
+        label: 'Cresc',
+        // Stack badge doubles as the current finisher bonus % (infinite scaler).
+        stacks: pct,
+        durationPct: -1,
+        color: '#ff8800',
+        logDetail: `+${pct}% finisher damage`,
+      };
+    },
+    { label: 'Cresc', color: '#ff8800', category: 'cadence', shape: 'square' },
   ),
   defineBuff(
     'cadence-verdict',

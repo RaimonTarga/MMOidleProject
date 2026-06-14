@@ -1,3 +1,4 @@
+import { upkeepStacks, UPKEEP_ONHIT_PER_STACK, UPKEEP_MAX_STACKS } from '@mmo-idle/shared';
 import { defineBuff, type BuffDescriptor } from '../../../../../combat/buffs/descriptor';
 import {
   getOverchargeStacks,
@@ -14,6 +15,7 @@ import {
   AC_TICK_DAMAGE_MULT,
   CS_RESERVOIR_MAX,
   CS_RESERVOIR_SCALE,
+  ENERGY_OVERDRIVE_ATK_PCT,
   HE_DMG_MULT,
   PD_STACK_FLAT_DMG,
 } from './constants';
@@ -21,6 +23,31 @@ import {
 const ENERGY_OPTS = { category: 'energy' as const, shape: 'square' as const };
 
 export const ENERGY_T3_BUFFS = [
+  defineBuff('energy-overdrive', ({ player }) => {
+    if (player.usesSkills.combatArchetype !== 'energy') return null;
+    const energy = player.usesEnergy;
+    if (!energy || !energy.overdriveActive) return null;
+    // Energy decays 100→0 over the Overdrive window, so energy% doubles as the timer.
+    const pct = Math.round(energyPercent(energy) * 100);
+    const atkPct = Math.round(ENERGY_OVERDRIVE_ATK_PCT * 100);
+    return { id: 'energy-overdrive', label: 'Surge', stacks: 1, durationPct: pct, color: '#ffdd33', logDetail: `+${atkPct}% attack damage` };
+  }, ENERGY_OPTS),
+  defineBuff('energy-channel', ({ player }) => {
+    if (player.usesSkills.combatArchetype !== 'energy') return null;
+    if ((player.usesSkills.passives['energy.upkeep'] ?? 0) <= 0) return null;
+    const energy = player.usesEnergy;
+    if (!energy) return null;
+    const stacks = upkeepStacks(energy);
+    if (stacks <= 0) return null;
+    return {
+      id: 'energy-channel',
+      label: 'Flow',
+      stacks,
+      durationPct: -1,
+      color: '#66ccff',
+      logDetail: `+${stacks * UPKEEP_ONHIT_PER_STACK} on-hit damage (${stacks}/${UPKEEP_MAX_STACKS})`,
+    };
+  }, ENERGY_OPTS),
   defineBuff('energy-overcharge', ({ player, playerCs }) => {
     if (!playerCs || player.usesSkills.combatArchetype !== 'energy') return null;
     const stacks = getOverchargeStacks(playerCs);

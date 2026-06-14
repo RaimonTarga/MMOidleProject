@@ -26,6 +26,7 @@ import { getDotPath } from "../fx/dot";
 import { spawnDamageNumber } from "../fx/particles";
 import { resolvePlayerDamageStyle } from "./damageNumberStyle";
 import { flashShiftTint, spawnFlashAttackAfterimage } from "./movementEffects";
+import { auraTint } from "../fx/aura";
 
 // Server position is authoritative; the client extrapolates ahead toward the
 // motion target between 5 Hz snapshots. Beyond this error the prediction has
@@ -98,7 +99,7 @@ export function upsertPlayer(
     }
     const sprite = state.sprite.get(player.id);
     if (!player.isDead) {
-      const tint = flashShiftTint(player);
+      const tint = flashShiftTint(player) ?? auraTint(player.aura);
       if (sprite && tint !== null) applySpriteTint(sprite, tint);
     }
     ensureLabel(state, player.id, player, scene);
@@ -185,7 +186,9 @@ export function upsertPlayer(
     isPlayer: true,
   });
   const sprite = state.sprite.get(player.id);
-  const tint = flashShiftTint(player);
+  // Flash shift tint takes priority; otherwise a transformation aura (e.g. Surge)
+  // tints the sprite to match its glow.
+  const tint = flashShiftTint(player) ?? auraTint(player.aura);
   if (sprite) {
     if (tint !== null) {
       applySpriteTint(sprite, tint);

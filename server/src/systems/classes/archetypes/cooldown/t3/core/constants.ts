@@ -1,13 +1,19 @@
 // ── Cooldown T3 constants ────────────────────────────────────────────────────
 // All values pending balance tuning; serve as defaults when no passive override.
 
-// Overdrive (cooldown-light-T3-a)
-export const OVERDRIVE_BUFF_MS      = 2_500; // ~50% uptime with 5 000 ms light CD
-export const OVERDRIVE_SPEED_FACTOR = 2 / 3; // attackCooldown × 2/3 → 1.5× attacks/s
+// Overdrive / "Burst" (cooldown-light-T3-a)
+export const OVERDRIVE_BUFF_MS         = 2_500; // ~50% uptime with 5 000 ms light CD
+// Flat attack-speed buff (same units as the attackSpeedPct stat): 1.0 = +100% =
+// double attack rate (attackCooldown halved). Balance TBD.
+export const OVERDRIVE_ATTACK_SPEED_PCT = 1.0;
 
 // Eternal Cycle (cooldown-light-T3-b) — additive flat on execution (Version A).
 export const ETERNAL_CHARGE_DURATION_MS = 10_000; // stacks fall off after 10 s without hits
-export const ETERNAL_CYCLE_FLAT_PER_STACK = 8;    // flat bonus added to the execution per stack
+export const ETERNAL_CYCLE_FLAT_PER_STACK = 8;    // per-tier base flat bonus per stack (node override: cooldown.eternal-cycle-flat)
+// Internal tier the Transcendant node unlocks at (matches the skill node's `tier: 3`).
+// Per-stack flat = base × max(1, playerTier − ETERNAL_CYCLE_UNLOCK_TIER + 1): 1× at
+// tier 3, 2× at tier 4, … (never scales below the unlock tier).
+export const ETERNAL_CYCLE_UNLOCK_TIER = 3;
 
 // Temporal Extension (cooldown-light-T3-c)
 export const TEMPORAL_INIT_MS   = 3_000; // initial buff duration on empowered trigger
@@ -39,7 +45,7 @@ export const SINGULAR_EXTRACTION_MULT  = 5.0;
 // Rupture (cooldown-light-T3-c)
 export const RUPTURE_WINDOW_MS      = 2_000; // post-execution 50%-bypass window
 export const RUPTURE_WINDOW_PLATING_MULT = 0.5; // plating multiplier during the window
-export const RUPTURE_DR_PIERCE      = 0.10;  // TODO(engine): DR pierce not yet wired
+export const RUPTURE_DR_PIERCE      = 0.10;  // window: fraction of target DR ignored (node: cooldown.rupture-dr-pierce)
 
 // Reverb (cooldown-balanced-T3-a)
 export const REVERB_BONUS_PER_ATTACK = 0.04; // +4% next-execution damage per attack landed

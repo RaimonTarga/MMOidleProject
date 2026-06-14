@@ -4,6 +4,7 @@ import { evadeBlocksDebuffs } from '../../../../../defense/mitigation/evasion';
 import {
   applyStatusEffect, removeStatusEffect, getStatusEffect, getTotalStacks,
 } from '@mmo-idle/shared';
+import { upkeepStacks, UPKEEP_ONHIT_PER_STACK } from '@mmo-idle/shared';
 import { hasPassive, energyPercent } from '../core/helpers';
 import {
   FLASH_MAX_DAMAGE_SHIFT_PCT,
@@ -12,7 +13,7 @@ import {
   AC_CHARGE_DMG_MULT,
   HE_LOW_THRESHOLD, HE_HIGH_THRESHOLD, HE_DMG_MULT,
   CI_TAG_FX, CI_TAG_MS,
-  ENERGY_OVERDRIVE_ATK_PCT, UPKEEP_ONHIT_SCALE,
+  ENERGY_OVERDRIVE_ATK_PCT,
   BINARY_CHARGE_ATK_BONUS, BINARY_DISCHARGE_ONHIT_BONUS,
   CHARGE_STATE_MIN, AWAKENED_MULT,
 } from '../core/constants';
@@ -108,12 +109,16 @@ export function registerNormalHit(): void {
     // Overdrive: +ATK% while the mode is active (energy decaying in the tick).
     if (hasPassive(player, 'energy.overdrive') && energy.overdriveActive) {
       ctx.damage = Math.round(ctx.damage * (1 + ENERGY_OVERDRIVE_ATK_PCT));
+      // Aesthetic-only crits while Surge is active: yellow "!" styling, no AoE.
+      ctx.metadata['empoweredAttack'] = true;
+      ctx.metadata['suppressEmpoweredAoe'] = true;
     }
 
-    // Energy Upkeep: on-hit DAMAGE scales with how long energy has been maintained.
+    // Energy Upkeep (Channeler): ADD flat on-hit damage per upkeep stack — strictly
+    // on-hit (post-mitigation, no attack scaling), so it works with zero on-hit gear.
     if (hasPassive(player, 'energy.upkeep')) {
-      const upkeepSec = energy.upkeepTimerMs / 1000;
-      ctx.metadata['onHitDamageMult'] = 1 + upkeepSec * UPKEEP_ONHIT_SCALE;
+      const stacks = upkeepStacks(energy);
+      if (stacks > 0) ctx.damage += stacks * UPKEEP_ONHIT_PER_STACK;
     }
 
     // Binary Cycle: Charge State boosts attack damage; Discharge State boosts on-hit.

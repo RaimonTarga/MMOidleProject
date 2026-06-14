@@ -106,9 +106,8 @@ export const CADENCE_KEYS = [
   'cadence.metronome-flat',
   // Rampage (heavy): each finisher stacks threshold-down / APS-up / atk-down / mult-up.
   'cadence.rampage',
-  // Crescendo (heavy): per-second in-combat stacks, consumed on finisher for flat bonus.
+  // Crescendo (heavy): in-combat time ramps a finisher multiplier (resets out of combat).
   'cadence.crescendo',
-  'cadence.crescendo-flat',
 ] as const;
 
 export const COOLDOWN_KEYS = [
@@ -116,6 +115,7 @@ export const COOLDOWN_KEYS = [
   'cooldown.empowered-mult',
   'cooldown.overdrive',
   'cooldown.eternal-cycle',
+  'cooldown.eternal-cycle-flat',
   'cooldown.temporal-extension',
   'cooldown.acceleration-ms',
   'cooldown.battery',
@@ -123,6 +123,8 @@ export const COOLDOWN_KEYS = [
   'cooldown.entropy-collapse',
   'cooldown.singular-extraction',
   'cooldown.channeled-beam',
+  // Devout Priest: damage per beam tick = player.attack × this (authored on the node).
+  'cooldown.channeled-beam-mult',
   // Read-only tuning keys — no producer today, included for forward compat
   'cooldown.temporal-buff-init-ms',
   'cooldown.temporal-buff-max-ms',
@@ -146,13 +148,19 @@ export const COOLDOWN_KEYS = [
 export const RELOAD_KEYS = [
   'reload.max-ammo',
   'reload.reload-time-ms',
+  // Duelist: the last bullet of a clip fires as an empowered attack at this
+  // multiplier (so shared.empowered-mult-add / weapon.empowered-mult-bonus apply).
+  'reload.empowered-mult',
   'reload.laser',
   'reload.laser-damage-per-tick-pct',
   'reload.laser-heat-per-tick',
   'reload.laser-cool-per-tick',
   'reload.snipe',
-  'reload.snipe-cooldown-ms',
-  'reload.snipe-baseline-cd-ms',
+  // Sniper hard-sets its firing cadence (ms between shots), ignoring weapon APS and
+  // the attack-speed stat. The attack-speed stat is instead converted to attack
+  // damage at this rate (bonus attack = attack × attackSpeedPct × rate).
+  'reload.snipe-cadence-ms',
+  'reload.snipe-as-to-dmg',
   'reload.snipe-fullhp-mult',
   'reload.gatling',
   'reload.exploding-clip',
@@ -177,13 +185,18 @@ export const RELOAD_KEYS = [
   // T4 specs ─────────────────────────────────────────────────────────────────
   // Alternating Cadence (light): even shots = 2× attack, odd shots = 2× on-hit.
   'reload.alternating-cadence',
+  // Dualslinger also grants flat on-hit damage scaling with player tier ((tier+1) × this).
+  'reload.alternating-onhit-per-tier',
   // Momentum (balanced): each reload grants stacking attack speed (decays OOC).
   'reload.momentum',
   'reload.momentum-aps-per-stack',
   'reload.momentum-max-stacks',
-  // Siege (heavy): reload completion fires a burst scaled by shots used last clip.
-  'reload.siege',
-  'reload.siege-damage-per-shot',
+  // Each stack also cuts reload time by this fraction (0.10 × 5 = 50% → ~1s at 2s base).
+  'reload.momentum-reload-reduction',
+  // Cannon (heavy): each shot banks attack × per-shot into a stored pool; reloading
+  // charges for half the reload then fires the whole pool as one burst.
+  'reload.cannon',
+  'reload.cannon-damage-per-shot',
 ] as const;
 
 export const ENERGY_KEYS = [

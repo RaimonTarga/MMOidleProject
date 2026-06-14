@@ -2,6 +2,7 @@ import type { EquipmentMap, EssenceType } from "../items";
 import type { HasAutoIntent, HasEmote, PartyMember, TargetStatusView, UltimateStatus } from "../components";
 import type { PassiveMap } from "../passives";
 import { isRangedCombatant, type SubVariant } from "../skillTree";
+import { upkeepStacks, upkeepStage } from "../systems/energyUpkeep";
 import type { BuffId, PlayerBuff } from "../components/combat/buffs";
 import type {
   CombatArchetype,
@@ -100,6 +101,13 @@ export interface PlayerView {
   sacredBuffPct: number;
   isChanneling: boolean;
   channelingPct: number;
+  /** Cannoneer: 0 when idle, else 0→100 as the mid-reload cannon charge fills. */
+  cannonChargePct: number;
+  /**
+   * Active transformation/state aura id (e.g. 'surge'), or null. Drives a persistent
+   * tint + glow on the character for "state" classes. Client maps the id to a color.
+   */
+  aura: string | null;
   activeEffects?: Record<string, number>;
   activeEffectFrames?: Record<string, number>;
   activeBuffs: PlayerBuff[];
@@ -309,6 +317,22 @@ export function composePlayerView(entity: NetworkedEntity): PlayerView | null {
     sacredBuffPct: entity.showsSacred?.sacredBuffPct ?? 0,
     isChanneling: entity.isChanneling !== undefined,
     channelingPct: entity.isChanneling?.pct ?? 0,
+    cannonChargePct: (() => {
+      const r = entity.usesReload;
+      if (!r || r.cannonFireMs <= 0 || r.cannonChargeTotalMs <= 0) return 0;
+      return Math.round((1 - r.cannonFireMs / r.cannonChargeTotalMs) * 100);
+    })(),
+    // Transformation/state auras. Add future state classes here (each maps to a
+    // client aura color). Surge/Overdrive glows yellow; Channeler glows light blue
+    // in 3 stages by upkeep stacks.
+    aura: (() => {
+      const e = entity.usesEnergy;
+      if (!e) return null;
+      if (e.overdriveActive) return 'surge';
+      const stacks = upkeepStacks(e);
+      if (stacks > 0) return `channel-${upkeepStage(stacks)}`;
+      return null;
+    })(),
     activeEffects: entity.hasStatus?.activeEffects,
     activeEffectFrames: entity.hasStatus?.activeEffectFrames,
     activeBuffs: entity.hasStatus?.activeBuffs ?? [],

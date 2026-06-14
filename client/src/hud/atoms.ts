@@ -155,6 +155,7 @@ export const sacredBuffActiveAtom = atom<boolean>(false);
 
 export const isChannelingAtom = atom<boolean>(false);
 export const channelingPctAtom = atom<number>(0);
+export const cannonChargePctAtom = atom<number>(0);
 
 export const skillPointsAtom = atom<number>(0);
 export const unlockedSkillsAtom = atom<string[]>([]);
@@ -625,6 +626,7 @@ export function syncPlayerAtoms(player: PlayerView | null): void {
   setIfChanged(sacredBuffActiveAtom, player.sacredBuffActive);
   setIfChanged(isChannelingAtom, player.isChanneling);
   setIfChanged(channelingPctAtom, player.channelingPct);
+  setIfChanged(cannonChargePctAtom, player.cannonChargePct);
   setIfChanged(skillPointsAtom, player.skillPoints);
 
   setIfShallowArrayEqual(shieldsAtom, player.shields);

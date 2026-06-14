@@ -2,7 +2,11 @@ import type { World } from '../../../../world/World';
 import type { PlayerEntity } from '../../../../ecs/entity';
 import { markSliceDirty } from '../../../../ecs/dirtyHelpers';
 import { registerCombatListener } from '../../../combat/engine/combatPipeline';
-import { DEFAULT_RELOAD_TIME_MULT } from './t3/core/constants';
+import {
+  DEFAULT_RELOAD_TIME_MULT,
+  DEFAULT_MOMENTUM_RELOAD_REDUCTION,
+  MOMENTUM_RELOAD_REDUCTION_FLOOR,
+} from './t3/core/constants';
 
 const RELOAD_TIME_MS = 1600;
 
@@ -25,7 +29,21 @@ export function resolveReloadTimeMs(player: PlayerEntity): number {
   const mult =
     player.usesSkills.passives['reload.reload-time-mult'] ??
     DEFAULT_RELOAD_TIME_MULT;
-  return Math.max(100, Math.round(base * mult));
+  let ms = Math.max(100, Math.round(base * mult));
+
+  // Desperado: each Momentum stack also speeds up the reload itself (the
+  // continuous-fighting payoff), floored so it never trivializes. Uses the stack
+  // count at reload start, so reload time ramps down as the streak builds.
+  if ((player.usesSkills.passives['reload.momentum'] ?? 0) > 0) {
+    const stacks = player.usesReload?.momentumStacks ?? 0;
+    const perStack =
+      player.usesSkills.passives['reload.momentum-reload-reduction'] ??
+      DEFAULT_MOMENTUM_RELOAD_REDUCTION;
+    const factor = Math.max(MOMENTUM_RELOAD_REDUCTION_FLOOR, 1 - stacks * perStack);
+    ms = Math.max(100, Math.round(ms * factor));
+  }
+
+  return ms;
 }
 
 /** Start reload timer only — no lifecycle hooks. */

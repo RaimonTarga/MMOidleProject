@@ -31,11 +31,11 @@ export function initCooldownT3(): void {
  * Run once per world tick, after updateCombatState (so cooldowns are already
  * decremented) to handle time-driven T3 cooldown mechanics.
  */
-export function updateCooldownT3(world: World, dt: number): void {
+export function updateCooldownT3(world: World, dt: number, now: number): void {
   updateOverdrive(world, dt);
   updateBattery(world, dt);
   updateSingularExtraction(world, dt);
-  updateChanneledBeam(world, dt);
+  updateChanneledBeam(world, dt, now);
   updateCooldownState(world, dt);
 }
 

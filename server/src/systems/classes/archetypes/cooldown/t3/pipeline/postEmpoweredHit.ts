@@ -1,10 +1,9 @@
 import { getStatusEffect, removeStatusEffect } from '@mmo-idle/shared';
 import { registerCombatListener } from '../../../../../combat/engine/combatPipeline';
 import { hasPassive } from '../core/helpers';
-import { rampFactorFor } from '../core/selectors';
+import { rampFactorFor, eternalCycleFlatPerStack } from '../core/selectors';
 import {
   BATTERY_ATK_PER_STACK,
-  ETERNAL_CYCLE_FLAT_PER_STACK,
   REVERB_BONUS_PER_ATTACK,
   PATIENCE_PAID_EXEC_MAX,
   VENGEANCE_MULTIPLIER, VENGEANCE_FLOOR,
@@ -38,7 +37,7 @@ export function registerPostEmpoweredHit(): void {
     if (hasPassive(player, 'cooldown.eternal-cycle')) {
       const charge = getStatusEffect(state, EC_CHARGE_FX);
       if (charge && charge.stacks > 0) {
-        ctx.damage += Math.round(charge.stacks * ETERNAL_CYCLE_FLAT_PER_STACK);
+        ctx.damage += Math.round(charge.stacks * eternalCycleFlatPerStack(player));
         removeStatusEffect(state, EC_CHARGE_FX);
       }
     }

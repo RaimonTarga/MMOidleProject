@@ -16,7 +16,6 @@ export function updateOverdrive(world: World, dt: number): void {
     if (od.remainingMs <= 0) {
       entity.performsAttack.attackCooldown = od.baseCd || entity.performsAttack.attackCooldown;
       detachComponent(world, entity, 'hasOverdrive');
-      console.log(`[Overdrive] ${entity.isPlayer.id}: buff expired - speed restored`);
     }
   }
 }

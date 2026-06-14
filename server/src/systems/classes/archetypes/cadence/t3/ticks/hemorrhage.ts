@@ -9,6 +9,7 @@ import {
 } from '../../../../../../world/worldLogCombat';
 import { actorFromSourceId } from '../../../../../../world/worldLogActors';
 import { isInvulnerableMonster } from '../../../../../combat/invulnerability';
+import { pushDotTickEvent } from '../../../../../combat/damage/dotTickEvent';
 
 export function updateHemorrhages(world: World, dt: number): void {
   const toKill: Array<{ monsterId: string; sourceId: string }> = [];
@@ -27,7 +28,7 @@ export function updateHemorrhages(world: World, dt: number): void {
       if (bleed.data['nextTickIn'] > 0) continue;
 
       bleed.data['nextTickIn'] = bleed.data['tickIntervalMs'];
-      bleed.data['ticksLeft']--;
+      bleed.stacks--; // consume a stack — drives the target-frame countdown
       const tickDmg = bleed.data['damagePerTick'];
       recordMonsterDamagedByPlayer(
         world,
@@ -39,13 +40,11 @@ export function updateHemorrhages(world: World, dt: number): void {
         buildSimpleBreakdown(tickDmg, tickDmg),
       );
       entity.hasHealth.hp -= tickDmg;
+      pushDotTickEvent(world, entity, 'bleed', tickDmg); // bleed-red number + 🩸 glyph
       lastSourceId = bleed.sourceId;
-      console.log(
-        `[Hemorrhage] ${monsterId}: ${bleed.data['damagePerTick']} bleed dmg, ${bleed.data['ticksLeft']} ticks left`,
-      );
     }
 
-    pruneStatusEffects(state, e => e.id === 'cadence-hemorrhage' && e.data['ticksLeft'] <= 0);
+    pruneStatusEffects(state, e => e.id === 'cadence-hemorrhage' && e.stacks <= 0);
     detachMarkerIfNoEffects(world, entity, 'hasHemorrhage', state, 'cadence-hemorrhage');
 
     if (entity.hasHealth.hp <= 0) {

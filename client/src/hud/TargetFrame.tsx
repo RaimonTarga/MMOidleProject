@@ -43,7 +43,7 @@ function StatusTile({ label, color, stacks, remainingMs, totalMs }: Omit<TileDat
           />
         )}
         {durationPct < 0 && !permanent && secs && <span className="tf-tile__secs">{secs}</span>}
-        {permanent && <span className="tf-tile__secs">∞</span>}
+        {permanent && stacks <= 1 && <span className="tf-tile__secs">∞</span>}
         {stacks > 1 && <span className="tf-tile__stacks">{stacks}</span>}
       </div>
       <span className="tf-tile__label" style={{ color }}>{label}</span>
