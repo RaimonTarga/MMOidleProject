@@ -2,6 +2,7 @@ import type { MonsterView, Vec2 } from "@mmo-idle/shared";
 import type { RenderState } from "./state";
 import type { GameScene } from "../scenes/GameScene";
 import { DEPTH } from "./depth";
+import { nodeToScene, nodeToSceneX, nodeToSceneY, sceneDepthY } from "./sceneCoords";
 import {
   VOID_OVERLORD_ANIM_KEY,
   VOID_OVERLORD_DISPLAY,
@@ -19,22 +20,22 @@ export function ensureVoidOverlordBossSprite(
   scene: GameScene,
 ): Phaser.GameObjects.Sprite | Phaser.GameObjects.Rectangle {
   const { displayW, displayH, visualOffsetY } = VOID_OVERLORD_DISPLAY["void-overlord"];
+  const sceneX = nodeToSceneX(pos.x);
+  const sceneY = nodeToSceneY(pos.y + (visualOffsetY ?? 0));
   if (!scene.textures.exists(VOID_OVERLORD_TEXTURE_KEY)) {
-    const drawY = pos.y + (visualOffsetY ?? 0);
-    const fallback = scene.add.rectangle(pos.x, drawY, displayW, displayH, 0x220044);
-    fallback.setDepth(DEPTH.SPRITE + pos.y);
+    const fallback = scene.add.rectangle(sceneX, sceneY, displayW, displayH, 0x220044);
+    fallback.setDepth(DEPTH.SPRITE + sceneDepthY(pos.y));
     state.sprite.set(id, fallback);
     const meta = state.spriteMeta.get(id);
     if (meta) meta.visualOffsetY = visualOffsetY;
     return fallback;
   }
 
-  const drawY = pos.y + (visualOffsetY ?? 0);
   const sprite = scene.add
-    .sprite(pos.x, drawY, VOID_OVERLORD_TEXTURE_KEY, "boss-0")
+    .sprite(sceneX, sceneY, VOID_OVERLORD_TEXTURE_KEY, "boss-0")
     .setDisplaySize(displayW, displayH)
     .play(VOID_OVERLORD_ANIM_KEY);
-  sprite.setDepth(DEPTH.SPRITE + pos.y);
+  sprite.setDepth(DEPTH.SPRITE + sceneDepthY(pos.y));
   state.sprite.set(id, sprite);
 
   const meta = state.spriteMeta.get(id);
@@ -60,19 +61,20 @@ export function ensureVoidOverlordMinionSprite(
     displayH: 64,
   };
 
+  const scenePos = nodeToScene(monster.pos.x, monster.pos.y);
   const texture = scene.textures.get(VOID_OVERLORD_TEXTURE_KEY);
   const sprite =
     frame && texture?.has(frame)
-      ? scene.add.image(monster.pos.x, monster.pos.y, VOID_OVERLORD_TEXTURE_KEY, frame)
+      ? scene.add.image(scenePos.x, scenePos.y, VOID_OVERLORD_TEXTURE_KEY, frame)
       : scene.add.rectangle(
-          monster.pos.x,
-          monster.pos.y,
+          scenePos.x,
+          scenePos.y,
           displayW,
           displayH,
           monster.color,
         );
   sprite.setDisplaySize(displayW, displayH);
-  sprite.setDepth(DEPTH.SPRITE + monster.pos.y);
+  sprite.setDepth(DEPTH.SPRITE + sceneDepthY(monster.pos.y));
   state.sprite.set(id, sprite);
 
   const meta = state.spriteMeta.get(id);

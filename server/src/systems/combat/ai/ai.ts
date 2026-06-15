@@ -5,12 +5,9 @@ import type {
   PlayerEntity,
 } from "../../../ecs/entity";
 import {
-  approachPoint,
   distanceSq,
-  inAttackRange,
   MONSTER_DATABASE,
   pointFromMotion,
-  posHitboxFromEntity,
   type AggroTargetKind,
   type Vec2,
 } from "@mmo-idle/shared";
@@ -18,7 +15,7 @@ import { NODE_REGISTRY } from "../../../world/nodeRegistry";
 import { isMonsterStunned } from "../status/stun";
 import { isMonsterKnockedBack } from "../damage/knockback";
 import { setEntityMotion, stopEntity } from "../../world/movement";
-import { playerDetectionMult } from "../../world/mobility/mobilityBoots";
+import { resolveObstaclesForNode } from "../../world/nodeFeatures";
 import { setAggroTarget, setAttackTarget } from "./targeting";
 
 const KITE_GRACE_MS = 500; // ms chasing before speed ramp begins
@@ -114,42 +111,6 @@ type AggroCandidate =
   | { kind: "player"; entity: PlayerEntity }
   | { kind: "minion"; entity: MinionEntity };
 
-/**
- * Split-aggro pull-range scan: the closest of any player OR minion within
- * the monster's pull range. Minions are valid aggro targets for the summoner
- * archetype — they tank for the player.
- */
-function findAggro(
-  monster: MonsterEntity,
-  world: World,
-): AggroCandidate | null {
-  const pullRange = monster.hasAwareness.pullRange;
-  const pullSq = pullRange ** 2;
-  let best: AggroCandidate | null = null;
-  let bestDist = Infinity;
-
-  for (const p of world.livePlayersInNode(monster.hasPosition.nodeId)) {
-    // Mobility boots scale the monster's effective detection radius per-player:
-    // Cave stealth shrinks it (mult < 1), Jungle aggro-pull widens it (mult > 1).
-    const effPull = pullRange * playerDetectionMult(p);
-    const d = distanceSq(p.hasPosition.current, monster.hasPosition.current);
-    if (d < effPull * effPull && d < bestDist) {
-      bestDist = d;
-      best = { kind: "player", entity: p };
-    }
-  }
-  for (const m of world.minionEntitiesInNode(monster.hasPosition.nodeId)) {
-    if (m.hasHealth.hp <= 0) continue;
-    const d = distanceSq(m.hasPosition.current, monster.hasPosition.current);
-    if (d < pullSq && d < bestDist) {
-      bestDist = d;
-      best = { kind: "minion", entity: m };
-    }
-  }
-
-  return best;
-}
-
 type ResolvedAggroTarget =
   | { kind: "player"; entity: PlayerEntity }
   | { kind: "minion"; entity: MinionEntity };
@@ -233,7 +194,7 @@ export function updateMonsters(world: World, dt: number, now: number) {
     // This preserves retaliation aggro set by the combat system when a
     // player attacks from outside pull range.
     if (!e.hasAggroTarget) {
-      const pulled = findAggro(e, world);
+      const pulled = world.collision.aggroCandidate(e);
       if (pulled) {
         setAggroTarget(world, e, aggroSourceFromCandidate(pulled), now);
       }
@@ -271,10 +232,23 @@ export function updateMonsters(world: World, dt: number, now: number) {
       // A boss 'morph' action can flip the kite flag at runtime.
       const isKiter = (e.scriptsBoss?.kiteOverride ?? monsterDef?.kite) === true;
 
-      const monsterPH = posHitboxFromEntity(e);
-      const targetPH = posHitboxFromEntity(target.entity);
+      const targetPos = aggroPosition(target);
+      const inReach = world.collision.canReach(
+        e,
+        target.entity,
+        e.performsAttack.attackRange,
+      );
+      const hasLine =
+        inReach
+        && resolveObstaclesForNode(
+          world,
+          e.hasPosition.nodeId,
+          e.hasPosition.current,
+          targetPos,
+          'monster',
+        ) === targetPos;
 
-      if (inAttackRange(monsterPH, targetPH, e.performsAttack.attackRange)) {
+      if (hasLine) {
         // Only pre-load the attack timer when first stumbling onto a target (idle/wander/return),
         // not on every re-entry during a kite chase — that caused cooldown bypass via oscillation.
         if (
@@ -291,7 +265,7 @@ export function updateMonsters(world: World, dt: number, now: number) {
         e.hasAwareness.state = "attacking";
         setAttackTarget(world, e, aggroAttackTargetId(target));
         if (isKiter) {
-          maintainKiteStandoff(world, e, aggroPosition(target));
+          maintainKiteStandoff(world, e, targetPos);
         } else {
           stopMonster(world, e);
         }
@@ -317,18 +291,9 @@ export function updateMonsters(world: World, dt: number, now: number) {
 
         e.hasAwareness.state = "chasing";
         setAttackTarget(world, e, aggroAttackTargetId(target));
-        // Steer to a standoff just inside reach, not the target center, so a
-        // fast (or kite-ramped) monster can't tunnel straight through its target
-        // at large dt — `advanceMotion` clamps to the standoff so it stops in
-        // range instead of swapping sides and ramping speed forever.
-        const approach = approachPoint(
-          e.hasPosition.current,
-          monsterPH,
-          aggroPosition(target),
-          targetPH,
-          e.performsAttack.attackRange,
-        );
-        setMonsterTarget(world, e, approach.dest);
+        // Path toward the target center so A* routes around trees. A geometric
+        // standoff point can sit inside trunk collision and strand the monster.
+        setMonsterTarget(world, e, targetPos);
       }
     } else {
       // No valid aggro target — reset kite state and return/wander.

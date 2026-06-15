@@ -4,6 +4,7 @@ import { getPlayerShadowColor } from '../sprites';
 import type { RenderState } from './state';
 import type { GameScene } from '../scenes/GameScene';
 import { DEPTH } from './depth';
+import { nodeToSceneX, nodeToSceneY } from './sceneCoords';
 import { getShadowDef } from './shadowDefs';
 
 const SHADOW_WIDTH_PAD = 1.05;
@@ -37,7 +38,7 @@ export function ensureShadow(
   if (state.shadow.has(id)) return;
 
   const shadow = scene.add
-    .ellipse(pos.x, pos.y, 1, 1)
+    .ellipse(nodeToSceneX(pos.x), nodeToSceneY(pos.y), 1, 1)
     .setDepth(DEPTH.SHADOW);
 
   if (opts.playerTier !== undefined) {

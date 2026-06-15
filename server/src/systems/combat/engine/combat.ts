@@ -5,9 +5,6 @@ import {
   MONSTER_DATABASE,
   TEST_ROOM_NODE_ID,
   distanceSq,
-  hitboxGap,
-  inAttackRange,
-  posHitboxFromEntity,
 } from "@mmo-idle/shared";
 import type { AggroTargetKind, Vec2 } from "@mmo-idle/shared";
 import { grantMonsterRewards } from "../../player/progression/rewards";
@@ -705,20 +702,13 @@ export function updateCombat(world: World, dt: number, now: number) {
       continue;
     }
 
-    let target = null;
-    let bestGap = Infinity;
-    const playerPH = posHitboxFromEntity(player);
     const attackRange = player.performsAttack.attackRange;
 
-    for (const m of world.monsterEntitiesInNode(player.hasPosition.nodeId)) {
-      const monsterPH = posHitboxFromEntity(m);
-      if (!inAttackRange(playerPH, monsterPH, attackRange)) continue;
-      const gap = hitboxGap(playerPH, monsterPH);
-      if (gap < bestGap) {
-        bestGap = gap;
-        target = m;
-      }
-    }
+    const target = world.collision.bestTargetInReach(
+      player,
+      world.monsterEntitiesInNode(player.hasPosition.nodeId),
+      attackRange,
+    );
 
     setAttackTarget(world, player, target?.isMonster.id ?? null);
 
@@ -804,9 +794,7 @@ export function updateCombat(world: World, dt: number, now: number) {
         setAttackTarget(world, e, null);
         continue;
       }
-      const monsterPH = posHitboxFromEntity(e);
-      const targetPH = posHitboxFromEntity(target);
-      if (!inAttackRange(monsterPH, targetPH, e.performsAttack.attackRange)) {
+      if (!world.collision.canReach(e, target, e.performsAttack.attackRange)) {
         setAttackTarget(world, e, null);
         continue;
       }
@@ -849,9 +837,7 @@ export function updateCombat(world: World, dt: number, now: number) {
       setAttackTarget(world, e, null);
       continue;
     }
-    const monsterPH = posHitboxFromEntity(e);
-    const minionPH = posHitboxFromEntity(minion);
-    if (!inAttackRange(monsterPH, minionPH, e.performsAttack.attackRange)) {
+    if (!world.collision.canReach(e, minion, e.performsAttack.attackRange)) {
       setAttackTarget(world, e, null);
       continue;
     }

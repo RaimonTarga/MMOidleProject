@@ -207,7 +207,8 @@ export function getRuleName(
 /**
  * The dumb baseline the AI runs with zero rules equipped: hit the nearest
  * thing within {@link BASELINE_ACQUIRE_RADIUS}, never flee, ignore the party.
- * With nothing in range the selector returns idle (the player holds position).
+ * With nothing in range the selector returns idle and the player walks to the
+ * nearest engageable mob on the node.
  */
 export const BASELINE_ACQUIRE_RADIUS = 600;
 

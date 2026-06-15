@@ -16,6 +16,7 @@ import {
 import type { RenderState } from "./state";
 import type { GameScene } from "../scenes/GameScene";
 import { DEPTH } from "./depth";
+import { nodeToScene, sceneDepthY } from "./sceneCoords";
 
 type SpriteSnapshot = PlayerView | MonsterView | MinionView;
 
@@ -74,17 +75,19 @@ export function ensureSprite(
     ? getPlayerFrame(snapshot as PlayerView)
     : getMonsterFrame(getMonsterTypeIdFromSnapshot(snapshot));
 
+  const scenePos = nodeToScene(snapshot.pos.x, snapshot.pos.y);
+
   const sprite =
-    tryMakeImage(scene, snapshot.pos, frame, opts.displayW, opts.displayH) ??
+    tryMakeImage(scene, scenePos, frame, opts.displayW, opts.displayH) ??
     scene.add.rectangle(
-      snapshot.pos.x,
-      snapshot.pos.y,
+      scenePos.x,
+      scenePos.y,
       opts.displayW,
       opts.displayH,
       opts.fallbackColor,
     );
 
-  sprite.setDepth(DEPTH.SPRITE + snapshot.pos.y);
+  sprite.setDepth(DEPTH.SPRITE + sceneDepthY(snapshot.pos.y));
   state.sprite.set(id, sprite);
 
   const meta = state.spriteMeta.get(id);
@@ -128,15 +131,16 @@ export function updateSpriteFrame(
 
   const interp = state.interpolation.get(id);
   const base = interp?.base ?? snapshot.pos;
-  const prevDepth = existing?.depth ?? DEPTH.SPRITE + base.y;
+  const scenePos = nodeToScene(base.x, base.y);
+  const prevDepth = existing?.depth ?? DEPTH.SPRITE + sceneDepthY(base.y);
 
   existing?.destroy();
 
   const sprite =
     (playerView?.isDead
-      ? tryMakeGraveImage(scene, base, playerView.graveFrame ?? 0)
-      : tryMakeImage(scene, base, newFrame, displayW, displayH, textureKey)) ??
-    scene.add.rectangle(base.x, base.y, displayW, displayH, opts.fallbackColor);
+      ? tryMakeGraveImage(scene, scenePos, playerView.graveFrame ?? 0)
+      : tryMakeImage(scene, scenePos, newFrame, displayW, displayH, textureKey)) ??
+    scene.add.rectangle(scenePos.x, scenePos.y, displayW, displayH, opts.fallbackColor);
 
   sprite.setDepth(prevDepth);
   state.sprite.set(id, sprite);

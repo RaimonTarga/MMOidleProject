@@ -1,6 +1,7 @@
 import type Phaser from "phaser";
 import type {
   NetworkedEntity,
+  NodeGateEntity,
   PlayerView,
   MonsterView,
   MinionView,
@@ -160,6 +161,12 @@ export interface RenderState {
 
   ownId: NetworkId | null;
   ownNodeId: string;
+  /** Client-only A* waypoints for own-player click-to-move prediction. */
+  ownPathWaypoints: Vec2[];
+  ownPathGoal: Vec2 | null;
+  /** Gate entities for the current node; collision + world markers derive from these. */
+  nodeGateEntities: NodeGateEntity[];
+  lastSpawnedGateNodeId: string;
 
   /** Transient per-snapshot damage-number style hints (built in applyDelta). */
   damageStyleHints: Map<NetworkId, DamageNumberHint>;
@@ -211,6 +218,10 @@ export function createRenderState(): RenderState {
     },
     ownId: null,
     ownNodeId: "",
+    ownPathWaypoints: [],
+    ownPathGoal: null,
+    nodeGateEntities: [],
+    lastSpawnedGateNodeId: "",
     damageStyleHints: new Map(),
   };
 }

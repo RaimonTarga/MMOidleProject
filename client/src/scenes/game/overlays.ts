@@ -1,35 +1,323 @@
-import { BIOME_DATABASE, GAME_CONFIG, NODE_BIOMES, NODE_FEATURES, outerReachHalfW, RESOLVED_NODE_FEATURES, type HitboxRect } from '@mmo-idle/shared';
-import { getOwnView } from '../../render/state';
-import { DEPTH } from '../../render/depth';
-import { BIOME_TEXTURES, NODE_DECOR } from '../../sprites';
-import type { GameScene } from './GameScene';
-import { GATE_COLOR, GATE_THICK, getNodeExits, MM_H, MM_PAD, MM_W } from './nodeExits';
-import { isVoidThroneUnblocked } from './voidThrone';
+import {
+  BIOME_DATABASE,
+  GAME_CONFIG,
+  NODE_BIOMES,
+  NODE_FEATURES,
+  TREE_CELL_PX,
+  TREE_TRUNK_TOP_PX,
+  getNodeTrees,
+} from "@mmo-idle/shared";
+import {
+  buildClientCollisionLayer,
+  minimapLayerProjection,
+  minimapStaticKinds,
+  paintCollisionLayer,
+  paintEntityDotsOnMinimap,
+  tacticalKinds,
+  worldLayerProjection,
+} from "../../render/collisionLayer";
+import { DEPTH } from "../../render/depth";
+import { sceneDepthY } from "../../render/sceneCoords";
+import { BIOME_TEXTURES, NODE_DECOR, TREES_KEY } from "../../sprites";
+import type { GameScene } from "./GameScene";
+import { MM_H, MM_PAD, MM_W } from "./nodeExits";
+import { isVoidThroneUnblocked } from "./voidThrone";
+
+const BG_DEPTH = -11;
+const BOUNDARY_DEPTH = -9.5;
+/** Tree trunk/root pass sits on the ground, just below shadows + entities. */
+const TREE_ROOT_DEPTH = DEPTH.SHADOW - 0.5;
+/**
+ * Source-cell rows duplicated on both tree render passes so the over/under
+ * crop seam does not show a hairline gap after display scaling.
+ */
+const TREE_SEAM_OVERLAP_PX = 18;
+
+export interface NodeStaticGroup {
+  nodeId: string;
+  offsetX: number;
+  offsetY: number;
+  bg: Phaser.GameObjects.TileSprite | Phaser.GameObjects.Rectangle | null;
+  shade: Phaser.GameObjects.Rectangle | null;
+  decor: Phaser.GameObjects.Image[];
+  trees: Phaser.GameObjects.Image[];
+  boundary: Phaser.GameObjects.Graphics;
+}
+
+export interface PaintNodeStaticOptions {
+  preview?: boolean;
+}
+
+function ensureBgNodeFill(scene: GameScene): Phaser.GameObjects.Rectangle {
+  if (scene.bgNodeFill) return scene.bgNodeFill;
+  scene.bgNodeFill = scene.add
+    .rectangle(0, 0, GAME_CONFIG.NODE_WIDTH, GAME_CONFIG.NODE_HEIGHT, 0x101a10)
+    .setOrigin(0, 0)
+    .setDepth(BG_DEPTH);
+  return scene.bgNodeFill;
+}
+
+function buildBiomeBg(
+  scene: GameScene,
+  nodeId: string,
+  offsetX: number,
+  offsetY: number,
+  depthBias: number,
+): Phaser.GameObjects.TileSprite | Phaser.GameObjects.Rectangle | null {
+  const biomeInfo = NODE_BIOMES[nodeId];
+  if (!biomeInfo) return null;
+  const biome = BIOME_DATABASE.get(biomeInfo.biomeGroup);
+  if (!biome) return null;
+
+  const textureKey = BIOME_TEXTURES[biomeInfo.biomeGroup];
+  const depth = BG_DEPTH + depthBias;
+
+  if (textureKey && scene.textures.exists(textureKey)) {
+    const tile = scene.add
+      .tileSprite(
+        offsetX,
+        offsetY,
+        GAME_CONFIG.NODE_WIDTH,
+        GAME_CONFIG.NODE_HEIGHT,
+        textureKey,
+      )
+      .setOrigin(0, 0)
+      .setDepth(depth);
+    return tile;
+  }
+
+  const rect = scene.add
+    .rectangle(
+      offsetX,
+      offsetY,
+      GAME_CONFIG.NODE_WIDTH,
+      GAME_CONFIG.NODE_HEIGHT,
+      biome.backgroundColor,
+    )
+    .setOrigin(0, 0)
+    .setDepth(depth);
+  return rect;
+}
+
+function buildPreviewShade(
+  scene: GameScene,
+  offsetX: number,
+  offsetY: number,
+  depthBias: number,
+  alpha = GAME_CONFIG.NEIGHBOR_FOG_ALPHA,
+): Phaser.GameObjects.Rectangle {
+  // Single fog overlay above the node's bg + decor so the whole adjacent map
+  // reads as one uniform darker color (kept below shadows/sprites at depth 0+).
+  return scene.add
+    .rectangle(
+      offsetX,
+      offsetY,
+      GAME_CONFIG.NODE_WIDTH,
+      GAME_CONFIG.NODE_HEIGHT,
+      0x000000,
+      alpha,
+    )
+    .setOrigin(0, 0)
+    .setDepth(DEPTH.SHADOW - 0.5 + depthBias);
+}
+
+/** Fog overlay for the active node during a map slide (fades out over the slide). */
+export function createIncomingTransitionFog(
+  scene: GameScene,
+): Phaser.GameObjects.Rectangle {
+  return buildPreviewShade(scene, 0, 0, 0, GAME_CONFIG.NEIGHBOR_FOG_ALPHA);
+}
+
+function buildNodeDecorImages(
+  scene: GameScene,
+  nodeId: string,
+  offsetX: number,
+  offsetY: number,
+  depthBias: number,
+  throneOpen: boolean,
+): Phaser.GameObjects.Image[] {
+  const arts = NODE_DECOR[nodeId];
+  if (!arts) return [];
+
+  const decor: Phaser.GameObjects.Image[] = [];
+  for (const art of arts) {
+    const feature = NODE_FEATURES[nodeId]?.find((f) => f.id === art.featureId);
+    const textureKey = throneOpen && art.openKey ? art.openKey : art.key;
+    if (!feature || !scene.textures.exists(textureKey)) continue;
+    const scale = art.artScale ?? 1;
+    const img = scene.add
+      .image(offsetX + feature.x, offsetY + feature.y, textureKey)
+      .setOrigin(0.5, 0.5)
+      .setDepth((art.depth ?? DEPTH.BG_DECOR) + depthBias)
+      .setDisplaySize(feature.displayW * scale, feature.displayH * scale);
+    img.setData("featureId", art.featureId);
+    if (art.alpha != null) img.setAlpha(art.alpha);
+    decor.push(img);
+  }
+  return decor;
+}
+
+/**
+ * Scattered forest trees for a node. In the active node (`ySort`) each tree is
+ * drawn in two passes: the full canopy sprite is depth-sorted by the bottom of
+ * its trunk (so entities north of the trunk render behind it and those south of
+ * it render in front — walk-behind), and the trunk/root sheet is drawn on the
+ * ground beneath all entities so players appear to step on the roots. Neighbor
+ * previews stay flat below the sprite band (the player is never in a preview).
+ */
+function buildNodeTreeImages(
+  scene: GameScene,
+  nodeId: string,
+  offsetX: number,
+  offsetY: number,
+  opts: { ySort: boolean; depthBias: number },
+): Phaser.GameObjects.Image[] {
+  if (!scene.textures.exists(TREES_KEY)) return [];
+
+  const images: Phaser.GameObjects.Image[] = [];
+  for (const tree of getNodeTrees(nodeId)) {
+    const x = offsetX + tree.spriteX;
+    const y = offsetY + tree.spriteY;
+
+    if (!opts.ySort) {
+      // Preview: the whole tree, flat, below the sprite band (no player here).
+      images.push(
+        scene.add
+          .image(x, y, TREES_KEY, tree.variant)
+          .setOrigin(0.5, 0.5)
+          .setDisplaySize(tree.displaySize, tree.displaySize)
+          .setDepth(DEPTH.BG_DECOR + opts.depthBias),
+      );
+      continue;
+    }
+
+    // Active node: split the canopy sheet at the trunk-base seam so the two
+    // passes are slices of the *same* image. Extend each crop slightly past the
+    // seam so both layers redraw the same trunk band — hides the hard edge after
+    // scaling (selection rings, collision debug, etc. straddle this line).
+    const seam = TREE_TRUNK_TOP_PX[tree.variant] ?? TREE_CELL_PX;
+    const rootsCropY = Math.max(0, seam - TREE_SEAM_OVERLAP_PX);
+    const canopyCropH = Math.min(TREE_CELL_PX, seam + TREE_SEAM_OVERLAP_PX);
+
+    // Pass 2: trunk/roots (bottom slice) under the player — they step on it.
+    const roots = scene.add
+      .image(x, y, TREES_KEY, tree.variant)
+      .setOrigin(0.5, 0.5)
+      .setDisplaySize(tree.displaySize, tree.displaySize)
+      .setDepth(TREE_ROOT_DEPTH);
+    roots.setCrop(0, rootsCropY, TREE_CELL_PX, TREE_CELL_PX - rootsCropY);
+    images.push(roots);
+
+    // Pass 1: canopy + upper trunk (top slice) over the player — walk-behind.
+    const canopy = scene.add
+      .image(x, y, TREES_KEY, tree.variant)
+      .setOrigin(0.5, 0.5)
+      .setDisplaySize(tree.displaySize, tree.displaySize)
+      .setDepth(DEPTH.SPRITE + sceneDepthY(tree.baseY));
+    canopy.setCrop(0, 0, TREE_CELL_PX, canopyCropH);
+    images.push(canopy);
+  }
+  return images;
+}
+
+function buildBoundary(
+  scene: GameScene,
+  offsetX: number,
+  offsetY: number,
+  depthBias: number,
+): Phaser.GameObjects.Graphics {
+  const w = GAME_CONFIG.NODE_WIDTH;
+  const h = GAME_CONFIG.NODE_HEIGHT;
+  const g = scene.add.graphics().setDepth(BOUNDARY_DEPTH + depthBias);
+  g.lineStyle(2, 0x444466, 0.9);
+  g.strokeRect(offsetX + 0.5, offsetY + 0.5, w - 1, h - 1);
+  return g;
+}
+
+/** Builds bg + decor + boundary for `nodeId` at the given scene offset. */
+export function paintNodeStatic(
+  scene: GameScene,
+  nodeId: string,
+  offsetX: number,
+  offsetY: number,
+  depthBias = 0,
+  throneOpen = false,
+  options: PaintNodeStaticOptions = {},
+): NodeStaticGroup {
+  const preview = options.preview ?? false;
+  return {
+    nodeId,
+    offsetX,
+    offsetY,
+    bg: buildBiomeBg(scene, nodeId, offsetX, offsetY, depthBias),
+    shade: preview
+      ? buildPreviewShade(scene, offsetX, offsetY, depthBias)
+      : null,
+    decor: buildNodeDecorImages(
+      scene,
+      nodeId,
+      offsetX,
+      offsetY,
+      depthBias,
+      throneOpen,
+    ),
+    trees: buildNodeTreeImages(scene, nodeId, offsetX, offsetY, {
+      ySort: false,
+      depthBias,
+    }),
+    boundary: preview
+      ? scene.add.graphics().setVisible(false)
+      : buildBoundary(scene, offsetX, offsetY, depthBias),
+  };
+}
+
+export function destroyNodeStatic(group: NodeStaticGroup): void {
+  group.bg?.destroy();
+  group.shade?.destroy();
+  for (const img of group.decor) img.destroy();
+  for (const img of group.trees) img.destroy();
+  group.boundary.destroy();
+}
+
+/** Strokes the active node gameplay boundary (0..NODE_WIDTH/HEIGHT). */
+export function updateNodeBoundaryFrame(scene: GameScene): void {
+  const w = GAME_CONFIG.NODE_WIDTH;
+  const h = GAME_CONFIG.NODE_HEIGHT;
+  scene.nodeBoundaryFrame.clear();
+  scene.nodeBoundaryFrame.lineStyle(2, 0x444466, 0.9);
+  scene.nodeBoundaryFrame.strokeRect(0.5, 0.5, w - 1, h - 1);
+}
 
 export function createGridBackground(scene: GameScene): void {
   const cell = 64;
   const g = scene.make.graphics({ x: 0, y: 0 }, false);
-  // Transparent fill so the biome bgRect (depth -12) shows through the cells.
   g.fillStyle(0x000000, 0);
   g.fillRect(0, 0, cell, cell);
   g.lineStyle(1, 0x2a2a4a, 0.45);
   g.strokeRect(0.5, 0.5, cell - 1, cell - 1);
-  g.generateTexture('grid-cell', cell, cell);
+  g.generateTexture("grid-cell", cell, cell);
   g.destroy();
 
   scene.bgGrid = scene.add
     .tileSprite(
-      GAME_CONFIG.NODE_WIDTH / 2,
-      GAME_CONFIG.NODE_HEIGHT / 2,
+      0,
+      0,
       GAME_CONFIG.NODE_WIDTH,
       GAME_CONFIG.NODE_HEIGHT,
-      'grid-cell',
+      "grid-cell",
     )
+    .setOrigin(0, 0)
     .setDepth(-10);
 }
 
-export function updateBiomeBackground(scene: GameScene): void {
-  const biomeInfo = NODE_BIOMES[scene.state.ownNodeId];
+export function paintActiveNode(scene: GameScene, nodeId: string): void {
+  updateBiomeBackgroundForNode(scene, nodeId);
+  updateNodeDecorForNode(scene, nodeId);
+  updateNodeBoundaryFrame(scene);
+}
+
+function updateBiomeBackgroundForNode(scene: GameScene, nodeId: string): void {
+  const biomeInfo = NODE_BIOMES[nodeId];
   if (!biomeInfo) return;
   const biome = BIOME_DATABASE.get(biomeInfo.biomeGroup);
   if (!biome) return;
@@ -42,46 +330,54 @@ export function updateBiomeBackground(scene: GameScene): void {
   }
 
   if (textureKey && scene.textures.exists(textureKey)) {
+    scene.bgNodeFill?.setVisible(false);
     scene.bgTile = scene.add
       .tileSprite(
-        GAME_CONFIG.NODE_WIDTH / 2,
-        GAME_CONFIG.NODE_HEIGHT / 2,
+        0,
+        0,
         GAME_CONFIG.NODE_WIDTH,
         GAME_CONFIG.NODE_HEIGHT,
         textureKey,
       )
-      .setDepth(-11);
-    scene.bgRect.setVisible(false);
+      .setOrigin(0, 0)
+      .setDepth(BG_DEPTH);
     scene.bgGrid.setVisible(false);
   } else {
-    scene.bgRect.setVisible(true).setFillStyle(biome.backgroundColor);
+    const nodeFill = ensureBgNodeFill(scene);
+    nodeFill.setPosition(0, 0);
+    nodeFill.setVisible(true).setFillStyle(biome.backgroundColor);
     scene.bgGrid.setVisible(true);
   }
 }
 
-export function updateNodeDecor(scene: GameScene): void {
+function updateNodeDecorForNode(scene: GameScene, nodeId: string): void {
   for (const img of scene.nodeDecor) img.destroy();
   scene.nodeDecor = [];
+  for (const img of scene.nodeTrees) img.destroy();
+  scene.nodeTrees = [];
 
-  const arts = NODE_DECOR[scene.state.ownNodeId];
-  if (!arts) return;
+  const throneOpen =
+    nodeId === scene.state.ownNodeId && isVoidThroneUnblocked(scene);
+  scene.nodeDecor = buildNodeDecorImages(
+    scene,
+    nodeId,
+    0,
+    0,
+    0,
+    throneOpen,
+  );
+  scene.nodeTrees = buildNodeTreeImages(scene, nodeId, 0, 0, {
+    ySort: true,
+    depthBias: 0,
+  });
+}
 
-  const nodeId = scene.state.ownNodeId;
-  const throneOpen = isVoidThroneUnblocked(scene);
-  for (const art of arts) {
-    const feature = NODE_FEATURES[nodeId]?.find(f => f.id === art.featureId);
-    const textureKey = throneOpen && art.openKey ? art.openKey : art.key;
-    if (!feature || !scene.textures.exists(textureKey)) continue;
-    const scale = art.artScale ?? 1;
-    const img = scene.add
-      .image(feature.x, feature.y, textureKey)
-      .setOrigin(0.5, 0.5)
-      .setDepth(art.depth ?? DEPTH.BG_DECOR)
-      .setDisplaySize(feature.displayW * scale, feature.displayH * scale);
-    img.setData('featureId', art.featureId);
-    if (art.alpha != null) img.setAlpha(art.alpha);
-    scene.nodeDecor.push(img);
-  }
+export function updateBiomeBackground(scene: GameScene): void {
+  updateBiomeBackgroundForNode(scene, scene.state.ownNodeId);
+}
+
+export function updateNodeDecor(scene: GameScene): void {
+  updateNodeDecorForNode(scene, scene.state.ownNodeId);
 }
 
 export function refreshNodeDecorState(scene: GameScene): void {
@@ -90,11 +386,12 @@ export function refreshNodeDecorState(scene: GameScene): void {
 
   const throneOpen = isVoidThroneUnblocked(scene);
   for (const img of scene.nodeDecor) {
-    const featureId = img.getData('featureId') as string | undefined;
-    const art = arts.find(a => a.featureId === featureId);
+    const featureId = img.getData("featureId") as string | undefined;
+    const art = arts.find((a) => a.featureId === featureId);
     if (!art) continue;
     const textureKey = throneOpen && art.openKey ? art.openKey : art.key;
-    if (img.texture.key === textureKey || !scene.textures.exists(textureKey)) continue;
+    if (img.texture.key === textureKey || !scene.textures.exists(textureKey))
+      continue;
     const displayW = img.displayWidth;
     const displayH = img.displayHeight;
     img.setTexture(textureKey).setDisplaySize(displayW, displayH);
@@ -103,27 +400,6 @@ export function refreshNodeDecorState(scene: GameScene): void {
 
 export function drawExitMarkers(scene: GameScene): void {
   scene.exitMarkers.clear();
-
-  const exits = getNodeExits(scene.state.ownNodeId);
-  if (!exits) return;
-
-  const w = GAME_CONFIG.NODE_WIDTH;
-  const h = GAME_CONFIG.NODE_HEIGHT;
-  const gateHalf = GAME_CONFIG.GATE_HALF;
-
-  // Outer glow: wider, translucent halo around the gate.
-  scene.exitMarkers.fillStyle(GATE_COLOR, 0.22);
-  if (exits.north) scene.exitMarkers.fillRect(w / 2 - gateHalf - 8, -6, gateHalf * 2 + 16, GATE_THICK + 10);
-  if (exits.south) scene.exitMarkers.fillRect(w / 2 - gateHalf - 8, h - GATE_THICK - 4, gateHalf * 2 + 16, GATE_THICK + 10);
-  if (exits.west) scene.exitMarkers.fillRect(-6, h / 2 - gateHalf - 8, GATE_THICK + 10, gateHalf * 2 + 16);
-  if (exits.east) scene.exitMarkers.fillRect(w - GATE_THICK - 4, h / 2 - gateHalf - 8, GATE_THICK + 10, gateHalf * 2 + 16);
-
-  // Inner solid bar: right at the world boundary.
-  scene.exitMarkers.fillStyle(GATE_COLOR, 0.88);
-  if (exits.north) scene.exitMarkers.fillRect(w / 2 - gateHalf, 0, gateHalf * 2, GATE_THICK);
-  if (exits.south) scene.exitMarkers.fillRect(w / 2 - gateHalf, h - GATE_THICK, gateHalf * 2, GATE_THICK);
-  if (exits.west) scene.exitMarkers.fillRect(0, h / 2 - gateHalf, GATE_THICK, gateHalf * 2);
-  if (exits.east) scene.exitMarkers.fillRect(w - GATE_THICK, h / 2 - gateHalf, GATE_THICK, gateHalf * 2);
 }
 
 export function drawMinimap(scene: GameScene): void {
@@ -133,8 +409,11 @@ export function drawMinimap(scene: GameScene): void {
 
   const mmX = scene.scale.width - MM_W - MM_PAD;
   const mmY = scene.scale.height - MM_H - MM_PAD;
-  const scaleX = MM_W / GAME_CONFIG.NODE_WIDTH;
-  const scaleY = MM_H / GAME_CONFIG.NODE_HEIGHT;
+  const projection = minimapLayerProjection(
+    scene.scale.width,
+    scene.scale.height,
+  );
+  const layer = buildClientCollisionLayer(scene.state);
 
   scene.minimap.clear();
 
@@ -143,77 +422,11 @@ export function drawMinimap(scene: GameScene): void {
   scene.minimap.lineStyle(1, 0x444466, 1);
   scene.minimap.strokeRect(mmX, mmY, MM_W, MM_H);
 
-  scene.minimap.fillStyle(0xff4444, 1);
-  for (const id of scene.state.ids) {
-    if (scene.state.kind.get(id) !== 'monster') continue;
-    const sprite = scene.state.sprite.get(id);
-    if (!sprite) continue;
-    scene.minimap.fillRect(mmX + sprite.x * scaleX - 1, mmY + sprite.y * scaleY - 1, 2, 2);
-  }
-
-  scene.minimap.fillStyle(0x4488ff, 1);
-  for (const id of scene.state.ids) {
-    if (scene.state.kind.get(id) !== 'player' || id === scene.myId) continue;
-    const sprite = scene.state.sprite.get(id);
-    if (!sprite) continue;
-    scene.minimap.fillRect(mmX + sprite.x * scaleX - 1, mmY + sprite.y * scaleY - 1, 2, 2);
-  }
-
-  const ownSprite = scene.state.ownId ? scene.state.sprite.get(scene.state.ownId) : undefined;
-  if (ownSprite) {
-    scene.minimap.fillStyle(0x44ff88, 1);
-    scene.minimap.fillRect(mmX + ownSprite.x * scaleX - 1, mmY + ownSprite.y * scaleY - 1, 3, 3);
-  }
-
-  const exits = getNodeExits(scene.state.ownNodeId) ?? {};
-  const mcx = mmX + MM_W / 2;
-  const mcy = mmY + MM_H / 2;
-  scene.minimap.fillStyle(GATE_COLOR, 1);
-  if (exits.north) scene.minimap.fillRect(mcx - 4, mmY, 8, 5);
-  if (exits.south) scene.minimap.fillRect(mcx - 4, mmY + MM_H - 5, 8, 5);
-  if (exits.east) scene.minimap.fillRect(mmX + MM_W - 5, mcy - 4, 5, 8);
-  if (exits.west) scene.minimap.fillRect(mmX, mcy - 4, 5, 8);
-}
-
-const HITBOX_COLOR_ENEMY = 0xff3333;
-const HITBOX_COLOR_PLAYER = 0x44ff88;
-const FEATURE_DEBUG_COLOR = 0xff66cc;
-
-function drawNodeFeatureShapes(
-  scene: GameScene,
-  gfx: Phaser.GameObjects.Graphics,
-): void {
-  const features = RESOLVED_NODE_FEATURES[scene.state.ownNodeId];
-  if (!features) return;
-  gfx.lineStyle(2, FEATURE_DEBUG_COLOR, 0.85);
-  for (const f of features) {
-    const s = f.shape;
-    if (s.kind === 'circle') {
-      gfx.strokeCircle(s.x, s.y, s.radius);
-    } else if (s.kind === 'ellipse') {
-      gfx.strokeEllipse(s.x, s.y, s.halfW * 2, s.halfH * 2);
-    } else {
-      gfx.strokeRect(s.x - s.halfW, s.y - s.halfH, s.halfW * 2, s.halfH * 2);
-    }
-  }
-}
-
-function strokeEntityHitboxes(
-  gfx: Phaser.GameObjects.Graphics,
-  spriteX: number,
-  spriteY: number,
-  rects: HitboxRect[],
-  color: number,
-): void {
-  gfx.lineStyle(2, color, 0.9);
-  for (const r of rects) {
-    gfx.strokeRect(
-      spriteX + r.offsetX - r.halfW,
-      spriteY + r.offsetY - r.halfH,
-      r.halfW * 2,
-      r.halfH * 2,
-    );
-  }
+  paintCollisionLayer(scene.minimap, layer, projection, {
+    mode: "minimap",
+    kinds: minimapStaticKinds(),
+  });
+  paintEntityDotsOnMinimap(scene.minimap, scene.state, projection);
 }
 
 export function drawTacticalMode(scene: GameScene): void {
@@ -229,77 +442,9 @@ export function drawTacticalMode(scene: GameScene): void {
   gfx.clear();
   scene.state.throttles.debugClearedAt = scene.time.now;
 
-  drawNodeFeatureShapes(scene, gfx);
-
-  for (const id of scene.state.ids) {
-    if (scene.state.kind.get(id) !== 'monster') continue;
-    const sprite = scene.state.sprite.get(id);
-    const ranges = scene.state.debugRanges.get(id);
-    if (!sprite || !ranges) continue;
-
-    if (ranges.pullRange != null) {
-      gfx.lineStyle(1, 0xff8844, 0.5);
-      gfx.strokeCircle(sprite.x, sprite.y, ranges.pullRange);
-    }
-    if (ranges.leashRange != null) {
-      gfx.lineStyle(1, 0x4466cc, 0.35);
-      gfx.strokeCircle(sprite.x, sprite.y, ranges.leashRange);
-    }
-    const view = scene.state.view.get(id);
-    if (ranges.attackRange != null) {
-      gfx.lineStyle(1, 0xff4444, 0.6);
-      const reach = view && 'hitboxRects' in view
-        ? ranges.attackRange + outerReachHalfW(view.hitboxRects)
-        : ranges.attackRange;
-      gfx.strokeCircle(sprite.x, sprite.y, reach);
-    }
-    if (view && 'hitboxRects' in view) {
-      strokeEntityHitboxes(gfx, sprite.x, sprite.y, view.hitboxRects, HITBOX_COLOR_ENEMY);
-    }
-  }
-
-  // Minion attack-range pips (pale yellow). Drawn beneath the player overlay
-  // so the player rings stay legible on top.
-  for (const id of scene.state.ids) {
-    if (scene.state.kind.get(id) !== 'minion') continue;
-    const sprite = scene.state.sprite.get(id);
-    const ranges = scene.state.debugRanges.get(id);
-    if (!sprite || !ranges) continue;
-    if (ranges.attackRange != null) {
-      gfx.lineStyle(1, 0xffe680, 0.45);
-      const view = scene.state.view.get(id);
-      const reach = view && 'hitboxRects' in view
-        ? ranges.attackRange + outerReachHalfW(view.hitboxRects)
-        : ranges.attackRange;
-      gfx.strokeCircle(sprite.x, sprite.y, reach);
-    }
-    const view = scene.state.view.get(id);
-    if (view && 'hitboxRects' in view) {
-      strokeEntityHitboxes(gfx, sprite.x, sprite.y, view.hitboxRects, 0xffe680);
-    }
-  }
-
-  const ownSprite = scene.state.ownId
-    ? scene.state.sprite.get(scene.state.ownId)
-    : undefined;
-  const player = getOwnView(scene.state);
-  if (ownSprite && player) {
-    gfx.lineStyle(1.5, 0xaaff44, 0.55);
-    gfx.strokeCircle(
-      ownSprite.x,
-      ownSprite.y,
-      player.attackRange + outerReachHalfW(player.hitboxRects),
-    );
-    strokeEntityHitboxes(gfx, ownSprite.x, ownSprite.y, player.hitboxRects, HITBOX_COLOR_PLAYER);
-
-    // Summoner leash ring (pale cyan). Slimes are constrained to this radius
-    // around the player. Match the server's `computeLeashRadius`:
-    //   playerAttackRange × summoner.leash-mult  (default 2.0)
-    if (player.summonsMinions) {
-      const mult = player.passives['summoner.leash-mult'] ?? 2.0;
-      const leashRadius = Math.max(40, player.attackRange * mult);
-      gfx.lineStyle(1.5, 0x99e6ff, 0.5);
-      gfx.strokeCircle(ownSprite.x, ownSprite.y, leashRadius);
-    }
-  }
+  const layer = buildClientCollisionLayer(scene.state);
+  paintCollisionLayer(gfx, layer, worldLayerProjection(), {
+    mode: "world",
+    kinds: tacticalKinds(),
+  });
 }

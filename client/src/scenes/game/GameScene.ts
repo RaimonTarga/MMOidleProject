@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { createRenderState, type RenderState } from '../../render/state';
+import type { NeighborLayer } from '../../render/neighborScenes';
 import type { AltarPromptHandle } from '../../render/altarPrompt';
 import type { GameSocket } from '../../net/socket';
 import {
@@ -7,6 +8,10 @@ import {
   preloadGameAssets,
   updateGameScene,
 } from './sceneSetup';
+import {
+  createMapTransition,
+  type MapTransition,
+} from './mapTransition';
 
 export class GameScene extends Phaser.Scene {
   socket!: GameSocket;
@@ -14,13 +19,25 @@ export class GameScene extends Phaser.Scene {
   myId = '';
 
   lastDrawnNodeId = '';
+  /** True while a Link's-Awakening-style map slide is in progress. */
+  transitioning = false;
+  neighborLayer: NeighborLayer = new Map();
+  mapTransition: MapTransition = createMapTransition();
   targetMarker!: Phaser.GameObjects.Arc;
   minimap!: Phaser.GameObjects.Graphics;
   exitMarkers!: Phaser.GameObjects.Graphics;
   bgRect!: Phaser.GameObjects.Rectangle;
+  /** Node-sized biome fill when no texture is available (sits above backdrop). */
+  bgNodeFill: Phaser.GameObjects.Rectangle | null = null;
+  /** True after the first authoritative camera scroll is applied. */
+  cameraScrollReady = false;
+  /** Strokes the node gameplay boundary (0..NODE_WIDTH/HEIGHT). */
+  nodeBoundaryFrame!: Phaser.GameObjects.Graphics;
   bgGrid!: Phaser.GameObjects.TileSprite;
   bgTile: Phaser.GameObjects.TileSprite | null = null;
   nodeDecor: Phaser.GameObjects.Image[] = [];
+  /** Scattered forest trees in the active node, depth-sorted for walk-behind. */
+  nodeTrees: Phaser.GameObjects.Image[] = [];
   debugGraphics!: Phaser.GameObjects.Graphics;
   /** Tactical mode: range rings + entity hitbox squares. */
   tacticalMode = false;

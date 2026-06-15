@@ -180,6 +180,33 @@ export const t3CombatEntriesA = [
     mechanicEffects: { 'cooldown.channeled-beam': 1, 'cooldown.channeled-beam-mult': 2.0 },
   }],
 
+  // ── Tier 3: Cooldown — Heavy ──────────────────────────────────────────────────
+
+  ['cooldown-heavy-t3-a', {
+    id: 'cooldown-heavy-t3-a', name: 'Entropy Collapse', tier: 3,
+    classId: 'cooldown-root', subVariantId: 'heavy',
+    parent: 'cooldown-heavy', children: [],
+    description: 'Your execution deals no direct damage. Instead it inflicts a wound that ticks every second for 8 s. Each tick scales with the target\'s missing health — the weaker they are, the harder it burns. 4× multiplier at 90% missing HP.',
+    cost: 1, statEffects: {},
+    mechanicEffects: { 'cooldown.entropy-collapse': 1 },
+  }],
+  ['cooldown-heavy-t3-b', {
+    id: 'cooldown-heavy-t3-b', name: 'Singular Extraction', tier: 3,
+    classId: 'cooldown-root', subVariantId: 'heavy',
+    parent: 'cooldown-heavy', children: [],
+    description: 'Normal attacks deal no damage. Your execution fires on a greatly shortened cooldown and hits for significantly more. Leaving combat for 4 s resets your preparation — patience earns nothing here.',
+    cost: 1, statEffects: {},
+    mechanicEffects: { 'cooldown.singular-extraction': 1, 'cooldown.empowered-cd-ms': -6000 },
+  }],
+  ['cooldown-heavy-t3-c', {
+    id: 'cooldown-heavy-t3-c', name: 'Channeled Beam', tier: 3,
+    classId: 'cooldown-root', subVariantId: 'heavy',
+    parent: 'cooldown-heavy', children: [],
+    description: 'Your execution becomes a 3-second concentrated channel: you stand still and continuously deal damage to your target. If the target dies mid-channel, you briefly attempt to reacquire before the beam ends.',
+    cost: 1, statEffects: {},
+    mechanicEffects: { 'cooldown.channeled-beam': 1 },
+  }],
+
   // ── Tier 3: Reload — Light ───────────────────────────────────────────────────
 
   ['reload-light-t3-a', {
@@ -291,5 +318,4 @@ export const t3CombatEntriesA = [
     mechanicEffects: { 'reload.cannon': 1, 'reload.cannon-damage-per-shot': 0.5 },
   }],
 
- 
 ] satisfies [string, SkillNode][];

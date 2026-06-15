@@ -6,6 +6,7 @@ import {
   VOID_TOMB_TEXTURE_KEY,
 } from "../sprites";
 import { DEPTH } from "./depth";
+import { nodeToScene, sceneDepthY } from "./sceneCoords";
 import { setVoidThroneHazardLifted } from "../scenes/game/voidThrone";
 import type { RenderState } from "./state";
 
@@ -22,15 +23,16 @@ function createTombSprite(
   scene: GameScene,
   payload: VoidOverlordRespawnState,
 ): Phaser.GameObjects.Image | Phaser.GameObjects.Rectangle {
+  const scenePos = nodeToScene(payload.pos.x, payload.pos.y);
   if (scene.textures.exists(VOID_TOMB_TEXTURE_KEY)) {
     return scene.add
-      .image(payload.pos.x, payload.pos.y, VOID_TOMB_TEXTURE_KEY)
+      .image(scenePos.x, scenePos.y, VOID_TOMB_TEXTURE_KEY)
       .setDisplaySize(VOID_TOMB_DISPLAY_W, VOID_TOMB_DISPLAY_H);
   }
 
   return scene.add.rectangle(
-    payload.pos.x,
-    payload.pos.y,
+    scenePos.x,
+    scenePos.y,
     VOID_TOMB_DISPLAY_W,
     VOID_TOMB_DISPLAY_H,
     0x332244,
@@ -62,18 +64,20 @@ export function syncVoidOverlordRespawn(
   if (existing) {
     existing.payload = payload;
     existing.deadlineMs = deadlineMs;
-    existing.sprite.setPosition(payload.pos.x, payload.pos.y);
-    existing.sprite.setDepth(DEPTH.SPRITE + payload.pos.y);
-    existing.label.setPosition(payload.pos.x, payload.pos.y - TIMER_OFFSET_Y);
-    existing.label.setDepth(DEPTH.UI + payload.pos.y);
+    const scenePos = nodeToScene(payload.pos.x, payload.pos.y);
+    existing.sprite.setPosition(scenePos.x, scenePos.y);
+    existing.sprite.setDepth(DEPTH.SPRITE + sceneDepthY(payload.pos.y));
+    existing.label.setPosition(scenePos.x, scenePos.y - TIMER_OFFSET_Y);
+    existing.label.setDepth(DEPTH.UI + sceneDepthY(payload.pos.y));
     return;
   }
 
   const sprite = createTombSprite(scene, payload);
-  sprite.setDepth(DEPTH.SPRITE + payload.pos.y);
+  sprite.setDepth(DEPTH.SPRITE + sceneDepthY(payload.pos.y));
 
+  const scenePos = nodeToScene(payload.pos.x, payload.pos.y);
   const label = scene.add
-    .text(payload.pos.x, payload.pos.y - TIMER_OFFSET_Y, "", {
+    .text(scenePos.x, scenePos.y - TIMER_OFFSET_Y, "", {
       color: "#f4dcff",
       fontFamily: "monospace",
       fontSize: "18px",
@@ -82,7 +86,7 @@ export function syncVoidOverlordRespawn(
       strokeThickness: 4,
     })
     .setOrigin(0.5)
-    .setDepth(DEPTH.UI + payload.pos.y);
+    .setDepth(DEPTH.UI + sceneDepthY(payload.pos.y));
 
   state.voidOverlordRespawn = {
     payload,
