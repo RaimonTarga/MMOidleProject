@@ -1,20 +1,22 @@
 import type { World } from "../../../world/World";
 import type { MonsterEntity, PlayerEntity } from "../../../ecs/entity";
-import { resolveObstaclesForNode } from "../../world/nodeFeatures";
+import { suppressedFeatureIdsForNode } from "../../world/pathMotion";
 import {
+  aabbHalfExtents,
   areAllBiomeRecipesUnlocked,
   computeEternalDoomDamage,
   computeScaledDotDamage,
   distanceSq,
   estimateMonsterHitDamage,
   estimatePlayerHitDamage,
+  findPathForMover,
   GAME_CONFIG,
   getFlag,
   getStatusEffect,
   getString,
-  inAttackRange,
   isGlancingHit,
   isRangedCombatant,
+  isWithinRange,
   NODE_BIOMES,
   posHitboxFromEntity,
   QUEST_DATABASE,
@@ -111,27 +113,38 @@ export function selectAutoCombatAction(
   };
 
   const currentTargetId = getString(player.tracksCombat, AUTO_TARGET_ID);
-  let best: { monster: MonsterEntity; score: number } | null = null;
-  let current: { monster: MonsterEntity; score: number } | null = null;
+  const candidates: Array<{ monster: MonsterEntity; score: number }> = [];
 
   for (const monster of world.monsterEntitiesInNode(player.hasPosition.nodeId)) {
     if (!passesGates(world, player, monster, ctx)) continue;
-    const score = scoreCandidate(world, player, monster, ctx);
-    if (!best || score > best.score) best = { monster, score };
-    if (currentTargetId && monster.isMonster.id === currentTargetId) {
-      current = { monster, score };
-    }
+    candidates.push({
+      monster,
+      score: scoreCandidate(world, player, monster, ctx),
+    });
   }
 
-  if (!best) {
+  if (candidates.length === 0) {
     setString(player.tracksCombat, AUTO_TARGET_ID, "");
     return { kind: "idle" };
   }
 
-  const chosen =
+  candidates.sort((a, b) => b.score - a.score);
+  const best = candidates[0];
+  const current = currentTargetId
+    ? candidates.find((c) => c.monster.isMonster.id === currentTargetId) ?? null
+    : null;
+
+  const preferred =
     current && best.score <= current.score * (1 + SWITCH_MARGIN)
       ? current
       : best;
+
+  const chosen = pickPathReachableTarget(world, player, preferred, candidates);
+  if (!chosen) {
+    setString(player.tracksCombat, AUTO_TARGET_ID, "");
+    return { kind: "idle" };
+  }
+
   setString(player.tracksCombat, AUTO_TARGET_ID, chosen.monster.isMonster.id);
   return { kind: "attack", target: chosen.monster };
 }
@@ -164,8 +177,11 @@ function passesGates(
   if (!isAggroedOnPlayer(monster, player)) {
     if (isPastLeashAnchor(monster)) return false;
     if (
-      distanceSq(player.hasPosition.current, monster.hasPosition.current) >
-      ctx.acquireRadius * ctx.acquireRadius
+      !world.collision.isWithinCenterRadius(
+        player.hasPosition.current,
+        monster.hasPosition.current,
+        ctx.acquireRadius,
+      )
     ) {
       return false;
     }
@@ -174,35 +190,47 @@ function passesGates(
   // Rooted players can only select targets they can already attack.
   if (
     player.isRooted &&
-    !inAttackRange(
-      posHitboxFromEntity(player),
-      posHitboxFromEntity(monster),
-      player.performsAttack.attackRange,
-    )
+    !world.collision.canReach(player, monster, player.performsAttack.attackRange)
   ) {
     return false;
   }
 
-  // Match the movement system's semantics exactly: resolveObstaclesForNode
-  // returns the `to` reference unchanged when the straight-line path is clear.
-  if (
-    resolveObstaclesForNode(
-      world,
-      player.hasPosition.nodeId,
-      player.hasPosition.current,
-      monster.hasPosition.current,
-      "player",
-    ) !== monster.hasPosition.current
-  ) {
-    return false;
-  }
-
-  // Survival ("would this trade kill me?") is intentionally NOT an acquisition
-  // gate: the first-order estimate here ignores regen/shields/absorbs/DoT/on-kill,
-  // so using it to hard-block engagement permanently locks out under-geared or
-  // defensively-built players. Disengagement is owned by the rune flee flag
-  // (`rune.flee`, set by `updateRuneDerivedConfig` from the player's loadout).
+  // Path reachability is owned by nav movement (`setEntityMotion` / pathfind).
+  // A straight-line LOS gate here blocked every nearby target once trees shipped,
+  // leaving auto-combat permanently idle while the player pathed toward blocked mobs.
   return true;
+}
+
+function monsterHasPath(
+  world: World,
+  player: PlayerEntity,
+  monster: MonsterEntity,
+): boolean {
+  const pad = aabbHalfExtents(posHitboxFromEntity(player).rects);
+  const path = findPathForMover(
+    player.hasPosition.nodeId,
+    "player",
+    pad,
+    player.hasPosition.current,
+    monster.hasPosition.current,
+    suppressedFeatureIdsForNode(world, player.hasPosition.nodeId),
+  );
+  return !!path && path.length > 0;
+}
+
+/** Prefer `preferred`, else the highest-scored candidate with a valid nav path. */
+function pickPathReachableTarget(
+  world: World,
+  player: PlayerEntity,
+  preferred: { monster: MonsterEntity; score: number },
+  candidates: Array<{ monster: MonsterEntity; score: number }>,
+): { monster: MonsterEntity; score: number } | null {
+  if (monsterHasPath(world, player, preferred.monster)) return preferred;
+  for (const entry of candidates) {
+    if (entry.monster.isMonster.id === preferred.monster.isMonster.id) continue;
+    if (monsterHasPath(world, player, entry.monster)) return entry;
+  }
+  return null;
 }
 
 function scoreCandidate(
@@ -288,19 +316,22 @@ function shouldSkipBosses(player: PlayerEntity): boolean {
  * dormant-ultimate gates as {@link selectAutoCombatAction}, but with the acquire
  * radius removed so distant mobs still count.
  *
- * Used by the explore rune's idle roam: instead of hopping to random points, an
- * exploring player heads straight for the closest mob it can clear. Returns null
- * only when the node has nothing engageable left.
+ * Used when auto-combat is idle: instead of roaming at random, the player
+ * heads straight for the closest mob it can clear. Returns null only when the
+ * node has nothing engageable left.
  */
 export function nearestEngageableMonster(
   world: World,
   player: PlayerEntity,
 ): MonsterEntity | null {
   const skipBosses = shouldSkipBosses(player);
-  let best: MonsterEntity | null = null;
-  let bestDistSq = Infinity;
+  const nodeId = player.hasPosition.nodeId;
+  const pad = aabbHalfExtents(posHitboxFromEntity(player).rects);
+  const suppressed = suppressedFeatureIdsForNode(world, nodeId);
+  const from = player.hasPosition.current;
 
-  for (const monster of world.monsterEntitiesInNode(player.hasPosition.nodeId)) {
+  const candidates: Array<{ monster: MonsterEntity; distSq: number }> = [];
+  for (const monster of world.monsterEntitiesInNode(nodeId)) {
     if (skipBosses && monster.isMonster.isBoss) continue;
     if (monster.isInvulnerable) continue;
     if (
@@ -312,17 +343,27 @@ export function nearestEngageableMonster(
     }
     if (isPastLeashAnchor(monster)) continue;
 
-    const d = distanceSq(
-      player.hasPosition.current,
-      monster.hasPosition.current,
-    );
-    if (d < bestDistSq) {
-      bestDistSq = d;
-      best = monster;
-    }
+    candidates.push({
+      monster,
+      distSq: distanceSq(from, monster.hasPosition.current),
+    });
   }
 
-  return best;
+  candidates.sort((a, b) => a.distSq - b.distSq);
+
+  for (const { monster } of candidates) {
+    const path = findPathForMover(
+      nodeId,
+      "player",
+      pad,
+      from,
+      monster.hasPosition.current,
+      suppressed,
+    );
+    if (path && path.length > 0) return monster;
+  }
+
+  return null;
 }
 
 function estimatedPlayerDamage(player: PlayerEntity, monster: MonsterEntity): number {
@@ -375,25 +416,21 @@ function isAggroedOnPlayer(monster: MonsterEntity, player: PlayerEntity): boolea
 }
 
 function isPastLeashAnchor(monster: MonsterEntity): boolean {
-  return (
-    distanceSq(monster.hasPosition.current, monster.controlsMonster.spawn) >
-    monster.controlsMonster.leashRange * monster.controlsMonster.leashRange
+  return !isWithinRange(
+    monster.hasPosition.current,
+    monster.controlsMonster.spawn,
+    monster.controlsMonster.leashRange,
   );
 }
 
 function aoeClusterCount(world: World, monster: MonsterEntity): number {
-  let count = 0;
-  const radiusSq = GAME_CONFIG.EMPOWERED_AOE_RADIUS ** 2;
-  for (const other of world.monsterEntitiesInNode(monster.hasPosition.nodeId)) {
-    if (other.isMonster.id === monster.isMonster.id) continue;
-    if (
-      distanceSq(other.hasPosition.current, monster.hasPosition.current) <=
-      radiusSq
-    ) {
-      count++;
-    }
-  }
-  return count;
+  const radius = GAME_CONFIG.EMPOWERED_AOE_RADIUS;
+  const nearby = world.collision.bodiesInCircle(
+    world.monsterEntitiesInNode(monster.hasPosition.nodeId),
+    monster.hasPosition.current,
+    radius,
+  );
+  return nearby.filter(other => other.isMonster.id !== monster.isMonster.id).length;
 }
 
 function questValue(player: PlayerEntity, monster: MonsterEntity): number {

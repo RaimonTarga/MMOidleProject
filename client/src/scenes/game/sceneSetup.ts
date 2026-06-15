@@ -1,4 +1,12 @@
-import { EFFECT_DEFS, EMOTE_SPRITESHEETS, GAME_CONFIG } from "@mmo-idle/shared";
+import {
+  EFFECT_DEFS,
+  EMOTE_SPRITESHEETS,
+  GAME_CONFIG,
+  TREE_CELL_PX,
+  directionBetweenNodes,
+  peekSceneBounds,
+  nodeToSceneCoords,
+} from "@mmo-idle/shared";
 import { DEPTH } from "../../render/depth";
 import { getDefaultStore } from "jotai";
 import {
@@ -31,6 +39,8 @@ import {
   initVoidOverlordSheet,
   THOUGHT_BUBBLE_FILE,
   THOUGHT_BUBBLE_KEY,
+  TREES_FILE,
+  TREES_KEY,
   VOID_OVERLORD_FILE,
   VOID_OVERLORD_TEXTURE_KEY,
   VOID_TOMB_FILE,
@@ -71,14 +81,63 @@ import {
   drawTacticalMode,
   drawExitMarkers,
   drawMinimap,
-  updateBiomeBackground,
-  updateNodeDecor,
+  updateNodeBoundaryFrame,
+  paintActiveNode,
 } from "./overlays";
+import { applyPeekCameraBounds, syncSceneBackdrop } from "./peekCamera";
 import { showAscensionOverlay, showOverlordFelledOverlay } from "./screenOverlays";
 import type { GameScene } from "./GameScene";
+import { rebuildNeighborLayer } from "../../render/neighborScenes";
+import {
+  abortMapSlide,
+  beginMapSlide,
+  fastForwardMapSlide,
+  tickMapSlide,
+} from "./mapTransition";
 
 const CAMERA_HOLD_MARGIN = 80;
+const CAMERA_LERP = 0.1;
+const CAMERA_EDGE_PIN_DIST = 80;
 const SHADOW_DEFS_KEY = "shadowDefs";
+
+function clamp(n: number, min: number, max: number): number {
+  return Math.max(min, Math.min(max, n));
+}
+
+function lerp(a: number, b: number, t: number): number {
+  return a + (b - a) * t;
+}
+
+function computeCameraScroll(
+  scene: GameScene,
+  scenePos: { x: number; y: number },
+  nodePos: { x: number; y: number },
+): { x: number; y: number; maxX: number; maxY: number } {
+  const cam = scene.cameras.main;
+  const nodeId = scene.state.ownNodeId || scene.lastDrawnNodeId;
+  const bounds = peekSceneBounds(nodeId, cam.width, cam.height);
+  const vw = cam.width;
+  const vh = cam.height;
+  const maxX = Math.max(bounds.x, bounds.x + bounds.width - vw);
+  const maxY = Math.max(bounds.y, bounds.y + bounds.height - vh);
+  let x = clamp(scenePos.x - vw / 2, bounds.x, maxX);
+  let y = clamp(scenePos.y - vh / 2, bounds.y, maxY);
+
+  const W = GAME_CONFIG.NODE_WIDTH;
+  const H = GAME_CONFIG.NODE_HEIGHT;
+  if (nodePos.x <= CAMERA_EDGE_PIN_DIST) {
+    x = bounds.x;
+  } else if (nodePos.x >= W - CAMERA_EDGE_PIN_DIST) {
+    x = maxX;
+  }
+  if (nodePos.y <= CAMERA_EDGE_PIN_DIST) {
+    y = bounds.y;
+  } else if (nodePos.y >= H - CAMERA_EDGE_PIN_DIST) {
+    y = maxY;
+  }
+
+  return { x, y, maxX, maxY };
+}
 
 function initEmoteAnimations(scene: GameScene): void {
   for (const [emoteId, sheet] of Object.entries(EMOTE_SPRITESHEETS)) {
@@ -112,6 +171,14 @@ function isPointComfortablyOnScreen(
   );
 }
 
+function instantReskinNode(scene: GameScene, nodeId: string): void {
+  paintActiveNode(scene, nodeId);
+  rebuildNeighborLayer(scene, nodeId);
+  scene.lastDrawnNodeId = nodeId;
+  applyPeekCameraBounds(scene, nodeId);
+  syncSceneBackdrop(scene, nodeId);
+}
+
 export function preloadGameAssets(scene: GameScene): void {
   scene.load.atlas(ATLAS_KEY, "/assets/sprites.png", "/assets/sprites.json");
   scene.load.spritesheet(GRAVES_KEY, "/assets/environment/graves.png", {
@@ -122,6 +189,10 @@ export function preloadGameAssets(scene: GameScene): void {
   scene.load.image(VOID_OVERLORD_TEXTURE_KEY, VOID_OVERLORD_FILE);
   scene.load.image(VOID_TOMB_TEXTURE_KEY, VOID_TOMB_FILE);
   scene.load.image(THOUGHT_BUBBLE_KEY, THOUGHT_BUBBLE_FILE);
+  scene.load.spritesheet(TREES_KEY, TREES_FILE, {
+    frameWidth: TREE_CELL_PX,
+    frameHeight: TREE_CELL_PX,
+  });
   for (const [emoteId, sheet] of Object.entries(EMOTE_SPRITESHEETS)) {
     scene.load.spritesheet(emoteTextureKey(emoteId), sheet.file, {
       frameWidth: sheet.frameWidth,
@@ -164,24 +235,16 @@ export function createGameScene(scene: GameScene): void {
   initVoidOverlordSheet(scene);
   initMistPostFx(scene);
 
-  scene.cameras.main.setBounds(
-    0,
-    0,
-    GAME_CONFIG.NODE_WIDTH,
-    GAME_CONFIG.NODE_HEIGHT,
-  );
-
+  const cam = scene.cameras.main;
   scene.bgRect = scene.add
-    .rectangle(
-      GAME_CONFIG.NODE_WIDTH / 2,
-      GAME_CONFIG.NODE_HEIGHT / 2,
-      GAME_CONFIG.NODE_WIDTH,
-      GAME_CONFIG.NODE_HEIGHT,
-      0x101a10,
-    )
+    .rectangle(0, 0, cam.width, cam.height, GAME_CONFIG.SCENE_BACKDROP_COLOR)
+    .setOrigin(0, 0)
     .setDepth(-12);
 
   createGridBackground(scene);
+
+  scene.nodeBoundaryFrame = scene.add.graphics().setDepth(-9.5);
+  updateNodeBoundaryFrame(scene);
 
   scene.targetMarker = scene.add
     .circle(0, 0, 5, 0xffff44, 0.8)
@@ -202,16 +265,16 @@ export function createGameScene(scene: GameScene): void {
 
   function onVisibilityChange(): void {
     if (document.hidden) {
-      // Tell the server to pause our high-volume stream; we'll resync on return.
+      abortMapSlide(scene);
       if (scene.socket.connected) sendSetActive(scene.socket, false);
       onDocumentHidden();
       return;
     }
     if (scene.socket.connected) {
-      // Resume streaming first, then pull a fresh full snapshot to catch up.
       sendSetActive(scene.socket, true);
       sendRequestSync(scene.socket);
     }
+    abortMapSlide(scene);
     beginTabResync(scene.state, scene);
   }
   document.addEventListener("visibilitychange", onVisibilityChange);
@@ -223,12 +286,41 @@ export function createGameScene(scene: GameScene): void {
     stopMove();
   });
   connectSocket(scene);
+
+  const applyPeekBoundsOnResize = (): void => {
+    const nodeId = scene.state.ownNodeId || scene.lastDrawnNodeId;
+    if (!nodeId) return;
+    applyPeekCameraBounds(scene, nodeId);
+    syncSceneBackdrop(scene, nodeId);
+  };
+  scene.scale.on("resize", applyPeekBoundsOnResize);
+  scene.events.once("shutdown", () => {
+    scene.scale.off("resize", applyPeekBoundsOnResize);
+  });
 }
 
 export function updateGameScene(scene: GameScene, delta: number): void {
   const dt = Math.min(delta, 100) / 1000;
 
-  stepInterpolation(scene.state, dt);
+  if (scene.transitioning) {
+    tickMapSlide(scene, dt);
+    // Authoritative node bounced mid-slide — finish the tween and snap visuals.
+    if (scene.state.ownNodeId !== scene.mapTransition.toNodeId) {
+      fastForwardMapSlide(scene);
+      instantReskinNode(scene, scene.state.ownNodeId);
+    }
+  } else if (scene.state.ownNodeId !== scene.lastDrawnNodeId) {
+    const dir = directionBetweenNodes(scene.lastDrawnNodeId, scene.state.ownNodeId);
+    if (dir) {
+      beginMapSlide(scene, dir, scene.state.ownNodeId);
+    } else {
+      instantReskinNode(scene, scene.state.ownNodeId);
+    }
+  }
+
+  // The own player tracks the server-authoritative position even during a map
+  // slide; the slide is purely a camera pan, so client and server never diverge.
+  stepInterpolation(scene, dt);
   drawShadows(scene.state);
   drawLabels(scene.state);
   drawThoughtBubbles(scene.state);
@@ -246,23 +338,44 @@ export function updateGameScene(scene: GameScene, delta: number): void {
     updateMistPostFx(scene, isVoidFloodActive(scene), scene.time.now, dt);
     updateAltarGlow(scene, dt);
     updateAltarPrompt(scene);
+    drawExitMarkers(scene);
     drawMinimap(scene);
   }
 
-  if (scene.state.ownNodeId !== scene.lastDrawnNodeId) {
-    drawExitMarkers(scene);
-    updateBiomeBackground(scene);
-    updateNodeDecor(scene);
-    scene.lastDrawnNodeId = scene.state.ownNodeId;
-  }
-
+  // The camera follows the own player every frame — including during a map
+  // slide. The slide is a continuity camera jump followed by the same smooth
+  // lerp used for normal world movement, so the camera tracks the player across
+  // the transition instead of running a separate time-based tween that freezes
+  // at the boundary and then snaps onto the moved player.
   const base = getOwnBase(scene.state);
   if (base) {
+    const scenePos = nodeToSceneCoords(base.x, base.y);
     const shouldHoldCamera =
+      !scene.autoMode &&
       scene.flashCameraHold &&
-      isPointComfortablyOnScreen(scene, base.x, base.y);
+      isPointComfortablyOnScreen(scene, scenePos.x, scenePos.y);
     if (!shouldHoldCamera) {
-      scene.cameraTarget.setPosition(base.x, base.y);
+      scene.cameraTarget.setPosition(scenePos.x, scenePos.y);
+      const cam = scene.cameras.main;
+      const targetScroll = computeCameraScroll(scene, scenePos, base);
+      cam.stopFollow();
+      if (!scene.cameraScrollReady) {
+        cam.setScroll(targetScroll.x, targetScroll.y);
+        scene.cameraScrollReady = true;
+      } else {
+        const scrollDx = targetScroll.x - cam.scrollX;
+        const scrollDy = targetScroll.y - cam.scrollY;
+        const lagSq = scrollDx * scrollDx + scrollDy * scrollDy;
+        // During auto-combat the player can outrun the default camera lerp and
+        // appear frozen off-screen while still pathing on the server.
+        const followT = scene.autoMode
+          ? (lagSq > 140 * 140 ? 1 : 0.3)
+          : CAMERA_LERP;
+        cam.setScroll(
+          lerp(cam.scrollX, targetScroll.x, followT),
+          lerp(cam.scrollY, targetScroll.y, followT),
+        );
+      }
     }
   }
 
@@ -291,8 +404,6 @@ function connectSocket(scene: GameScene): void {
       const gameplaySettings = loadGameplaySettings();
       sendSetAutoTraverse(socket, gameplaySettings.autoTraverseEnabled);
       sendSetAutocombatConfig(socket, gameplaySettings.autocombat);
-      if (scene.state.ownId)
-        scene.cameras.main.startFollow(scene.cameraTarget, true, 0.1, 0.1);
     },
     onDisconnect: () => {
       atomStore.set(statusAtom, "disconnected");
@@ -300,9 +411,17 @@ function connectSocket(scene: GameScene): void {
       scene.state.gameplaySettingsSynced = false;
       scene.myId = "";
       scene.state.ownId = null;
+      scene.cameraScrollReady = false;
+      scene.cameras.main.stopFollow();
     },
     onDelta: (snapshot) => applyDelta(scene.state, snapshot, scene),
     onNodePreparing: ({ nodeId }) => {
+      if (nodeId === scene.state.ownNodeId || nodeId === scene.lastDrawnNodeId) return;
+      const dir = directionBetweenNodes(scene.state.ownNodeId, nodeId);
+      if (dir) {
+        // Adjacent thaw: slide is driven by the delta ownNodeId change in updateGameScene.
+        return;
+      }
       atomStore.set(nodeLoadingAtom, { active: true, nodeId });
     },
     onCraftResult: (result) => {

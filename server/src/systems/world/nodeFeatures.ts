@@ -1,6 +1,5 @@
 import {
   applyStatusEffect,
-  clampSegmentBeforeShapes,
   computeScaledDotDamage,
   GAME_CONFIG,
   getStatusEffect,
@@ -10,6 +9,7 @@ import {
   pointNearNodeFeatureShapeEdge,
   randomPointInShape,
   removeStatusEffect,
+  resolveMoveAgainstBlocks,
   RESOLVED_NODE_FEATURES,
   type DeathKiller,
   type FeatureTarget,
@@ -46,18 +46,11 @@ export function resolveObstaclesForNode(
   from: Vec2,
   to: Vec2,
   target: FeatureTarget,
+  pad?: Vec2,
 ): Vec2 {
-  const features = RESOLVED_NODE_FEATURES[nodeId];
-  if (!features) return to;
-
-  const shapes: NodeFeatureShape[] = [];
-  for (const feature of features) {
-    if (!feature.blocksMovement?.includes(target)) continue;
-    if (world.suppressedFeatureBlocks.has(`${nodeId}:${feature.id}`)) continue;
-    shapes.push(feature.shape);
-  }
+  const shapes = world.collision.blockShapes(nodeId, target);
   if (shapes.length === 0) return to;
-  return clampSegmentBeforeShapes(from, to, shapes);
+  return resolveMoveAgainstBlocks(from, to, shapes, pad);
 }
 
 function collectOccupiedNodeIds(world: World): Set<string> {

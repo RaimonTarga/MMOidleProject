@@ -454,21 +454,73 @@ function segmentEntryT(from: Vec2, to: Vec2, shape: NodeFeatureShape): number | 
   return tMin > 0 && tMin <= 1 ? tMin : null;
 }
 
+/** Axis-aligned half-extents of a hitbox around its anchor (for box-vs-box pad). */
+export function aabbHalfExtents(rects: HitboxRect[]): Vec2 {
+  let x = 0;
+  let y = 0;
+  for (const r of rects) {
+    x = Math.max(x, Math.abs(r.offsetX) + r.halfW);
+    y = Math.max(y, Math.abs(r.offsetY) + r.halfH);
+  }
+  return { x, y };
+}
+
+/**
+ * Grow a block shape by the mover's half-extents (Minkowski sum) so a point test
+ * on the mover's center is equivalent to a box-vs-shape overlap test — the
+ * mover's body then never intersects the shape instead of its center slipping to
+ * the edge. Circles widen by the larger half-extent to stay fully enclosing.
+ */
+function inflateShape(shape: NodeFeatureShape, pad: Vec2): NodeFeatureShape {
+  switch (shape.kind) {
+    case 'circle':
+      return {
+        kind: 'circle',
+        x: shape.x,
+        y: shape.y,
+        radius: shape.radius + Math.max(pad.x, pad.y),
+      };
+    case 'ellipse':
+      return {
+        kind: 'ellipse',
+        x: shape.x,
+        y: shape.y,
+        halfW: shape.halfW + pad.x,
+        halfH: shape.halfH + pad.y,
+      };
+    case 'rect':
+      return {
+        kind: 'rect',
+        x: shape.x,
+        y: shape.y,
+        halfW: shape.halfW + pad.x,
+        halfH: shape.halfH + pad.y,
+      };
+  }
+}
+
 /**
  * Clamp the segment `from`→`to` so it stops just before entering any of `shapes`.
  * Shapes that already contain `from` are ignored (the mover is already inside, so
  * it may move freely until it exits). Returns the original `to` reference when the
  * path is unobstructed, so callers can detect truncation via identity.
+ *
+ * When `pad` is non-zero each shape is inflated by those half-extents, turning the
+ * center-point test into a box-vs-shape test so the mover's body — not just its
+ * center — stays out of the obstacle.
  */
 export function clampSegmentBeforeShapes(
   from: Vec2,
   to: Vec2,
   shapes: NodeFeatureShape[],
+  pad: Vec2 = { x: 0, y: 0 },
 ): Vec2 {
+  const padded = pad.x !== 0 || pad.y !== 0;
   let minT = 1;
   for (const shape of shapes) {
-    if (pointInNodeFeatureShape(from, shape)) continue;
-    const t = segmentEntryT(from, to, shape);
+    const s = padded ? inflateShape(shape, pad) : shape;
+    if (pointInNodeFeatureShape(from, s)) continue;
+    const t = segmentEntryT(from, to, s);
     if (t !== null && t < minT) minT = t;
   }
   if (minT >= 1) return to;
@@ -479,6 +531,61 @@ export function clampSegmentBeforeShapes(
   if (len === 0) return { x: from.x, y: from.y };
   const gap = 0.5; // stop a hair short of the boundary
   const reach = Math.max(0, minT * len - gap);
+  return {
+    x: from.x + (dx / len) * reach,
+    y: from.y + (dy / len) * reach,
+  };
+}
+
+/** True when the mover's padded bounding box overlaps any block shape. */
+export function moverOverlapsBlockShapes(
+  pos: Vec2,
+  shapes: NodeFeatureShape[],
+  pad: Vec2 = { x: 0, y: 0 },
+): boolean {
+  const padded = pad.x !== 0 || pad.y !== 0;
+  for (const shape of shapes) {
+    const s = padded ? inflateShape(shape, pad) : shape;
+    if (pointInNodeFeatureShape(pos, s)) return true;
+  }
+  return false;
+}
+
+/**
+ * Resolve a move target so the mover's bounding box never overlaps block shapes.
+ * Extends {@link clampSegmentBeforeShapes} with a destination overlap check so
+ * movers that already touch a blocker cannot path deeper into it.
+ */
+export function resolveMoveAgainstBlocks(
+  from: Vec2,
+  to: Vec2,
+  shapes: NodeFeatureShape[],
+  pad: Vec2 = { x: 0, y: 0 },
+): Vec2 {
+  if (shapes.length === 0) return to;
+
+  const candidate = clampSegmentBeforeShapes(from, to, shapes, pad);
+  if (!moverOverlapsBlockShapes(candidate, shapes, pad)) return candidate;
+
+  const dx = candidate.x - from.x;
+  const dy = candidate.y - from.y;
+  const len = Math.hypot(dx, dy);
+  if (len < 1e-6) return { x: from.x, y: from.y };
+
+  // Walk back along the segment to the furthest non-overlapping point.
+  let lo = 0;
+  let hi = 1;
+  for (let i = 0; i < 16; i++) {
+    const mid = (lo + hi) / 2;
+    const probe = { x: from.x + (dx / len) * (mid * len), y: from.y + (dy / len) * (mid * len) };
+    if (moverOverlapsBlockShapes(probe, shapes, pad)) {
+      hi = mid;
+    } else {
+      lo = mid;
+    }
+  }
+
+  const reach = Math.max(0, lo * len - 0.5);
   return {
     x: from.x + (dx / len) * reach,
     y: from.y + (dy / len) * reach,

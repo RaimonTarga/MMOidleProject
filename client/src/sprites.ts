@@ -18,6 +18,13 @@ export const VOID_TOMB_FILE = "/assets/ultimate_bosses/void_tomb.png";
 export const VOID_TOMB_DISPLAY_W = 280;
 export const VOID_TOMB_DISPLAY_H = 280;
 
+// ── Scattered forest trees (2×2 sheet, one tree variant per 1024px cell) ──────
+export const TREES_KEY = "env_trees";
+export const TREES_FILE = "/assets/environment/trees/trees.png";
+/** Trunk/root-only sheet, drawn under the player so they appear to step on roots. */
+export const TREES_HITBOX_KEY = "env_trees_hitbox";
+export const TREES_HITBOX_FILE = "/assets/environment/trees/trees_hitbox.png";
+
 // ── Auto-combat thought bubble (telegraphs a player's next action) ────────────
 export const THOUGHT_BUBBLE_KEY = "thought_bubble";
 export const THOUGHT_MASK_KEY = "thought_bubble_mask";

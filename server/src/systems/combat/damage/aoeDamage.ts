@@ -1,4 +1,4 @@
-import { distanceSq, type Vec2 } from "@mmo-idle/shared";
+import type { Vec2 } from "@mmo-idle/shared";
 import type { MonsterEntity, PlayerEntity } from "../../../ecs/entity";
 import type { World } from "../../../world/World";
 import { grantMonsterRewards } from "../../player/progression/rewards";
@@ -28,17 +28,20 @@ export function applyPlayerAoe(
   baseDamage: number,
   excludeId?: string,
 ): void {
-  const radiusSq = radius * radius;
   const toKill: MonsterEntity[] = [];
   const attackerNodeId = attacker.hasPosition.nodeId;
   const attackerId = attacker.isPlayer.id;
   const source = actorFromPlayer(attacker);
 
-  for (const monster of world.monsterEntitiesInNode(attackerNodeId)) {
+  const victims = world.collision.bodiesInCircle(
+    world.monsterEntitiesInNode(attackerNodeId),
+    center,
+    radius,
+  );
+
+  for (const monster of victims) {
     if (monster.isMonster.id === excludeId) continue;
     if (isInvulnerableMonster(monster)) continue;
-
-    if (distanceSq(monster.hasPosition.current, center) > radiusSq) continue;
 
     const mitigation = buildPlatingDrBreakdown({
       grossDamage: baseDamage,
@@ -103,15 +106,18 @@ export function applyMonsterAoe(
   baseDamage: number,
   excludeId?: string,
 ): void {
-  const radiusSq = radius * radius;
   const attackerNodeId = attacker.hasPosition.nodeId;
   const source = actorFromMonster(attacker);
 
-  for (const player of world.livePlayersInNode(attackerNodeId)) {
+  const players = world.collision.bodiesInCircle(
+    world.livePlayersInNode(attackerNodeId),
+    center,
+    radius,
+  );
+
+  for (const player of players) {
     if (player.isPlayer.id === excludeId) continue;
     if (isInvulnerablePlayer(player)) continue;
-
-    if (distanceSq(player.hasPosition.current, center) > radiusSq) continue;
 
     const mitigation = buildPlatingDrBreakdown({
       grossDamage: baseDamage,
@@ -144,11 +150,15 @@ export function applyMonsterAoe(
     }
   }
 
-  for (const minion of world.minionEntitiesInNode(attackerNodeId)) {
+  const minions = world.collision.bodiesInCircle(
+    world.minionEntitiesInNode(attackerNodeId),
+    center,
+    radius,
+  );
+
+  for (const minion of minions) {
     if (minion.isMinion.id === excludeId) continue;
     if (minion.hasHealth.hp <= 0) continue;
-
-    if (distanceSq(minion.hasPosition.current, center) > radiusSq) continue;
 
     const effectiveDmg = buildPlatingDrBreakdown({
       grossDamage: baseDamage,

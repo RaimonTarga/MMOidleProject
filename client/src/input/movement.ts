@@ -1,13 +1,7 @@
-import {
-  clampSegmentBeforeShapes,
-  RESOLVED_NODE_FEATURES,
-  type NodeFeatureShape,
-  type PlayerView,
-  type Vec2,
-} from '@mmo-idle/shared';
+import type { Vec2 } from '@mmo-idle/shared';
+import { slideMoveAgainstBlocks } from '@mmo-idle/shared';
 import { sendMove } from '../net/intents';
 import { getOwnBase } from '../render/interpolation';
-import { ABYSSAL_THRONE_FEATURE_ID, isVoidThroneUnblocked } from '../scenes/game/voidThrone';
 import { cancelAutoPath, setAutoMode } from './autoPath';
 import {
   beginPendingStop,
@@ -15,34 +9,66 @@ import {
   maintainPendingStop,
   setManualActive,
 } from './moveOwnership';
+import {
+  clearOwnMovePath,
+  planOwnClickPath,
+} from './pathPrediction';
+import {
+  getOwnBlockShapes,
+  getOwnMovePad,
+  resolveOwnMoveAgainstBlocks,
+} from './obstacleResolve';
 import type { GameScene } from '../scenes/GameScene';
 
+export interface SendClampedMoveOptions {
+  /** Click-to-move: plan an A* path for client prediction. */
+  pathfind?: boolean;
+}
+
 /**
- * Stop the own-player prediction target before any feature that blocks players, so
- * the client never glides across an impassable boundary and gets snapped back by the
- * authoritative position. Uses the latest server position as the segment start: if the
- * server has already let the player inside (e.g. a stage lifted the block), the shape is
- * skipped and free movement resumes.
+ * Clamp an own-player move target so the body never overlaps block shapes. Uses
+ * the predicted base as the segment start so client prediction cannot outrun the
+ * obstacle check while the authoritative position lags behind.
  */
 export function clampOwnMoveTarget(scene: GameScene, dest: Vec2): Vec2 {
   const ownId = scene.state.ownId;
   if (!ownId) return dest;
-  const features = RESOLVED_NODE_FEATURES[scene.state.ownNodeId];
-  if (!features) return dest;
 
-  const throneUnblocked = isVoidThroneUnblocked(scene);
-  const shapes: NodeFeatureShape[] = [];
-  for (const f of features) {
-    if (!f.blocksMovement?.includes('player')) continue;
-    if (throneUnblocked && f.id === ABYSSAL_THRONE_FEATURE_ID) continue;
-    shapes.push(f.shape);
-  }
-  if (shapes.length === 0) return dest;
-
-  const view = scene.state.view.get(ownId) as PlayerView | undefined;
-  const from = view?.pos ?? getOwnBase(scene.state);
+  const from = getOwnBase(scene.state);
   if (!from) return dest;
-  return clampSegmentBeforeShapes(from, dest, shapes);
+  return resolveOwnMoveAgainstBlocks(scene, from, dest);
+}
+
+/** Clamp using an explicit segment start (e.g. authoritative server position). */
+export function clampOwnMoveFrom(scene: GameScene, from: Vec2, dest: Vec2): Vec2 {
+  return resolveOwnMoveAgainstBlocks(scene, from, dest);
+}
+
+/**
+ * Send a player move intent only after box-vs-block clamping. Returns the
+ * clamped destination so prediction and the wire intent stay aligned.
+ */
+export function sendClampedMove(
+  scene: GameScene,
+  dest: Vec2,
+  opts?: SendClampedMoveOptions,
+): Vec2 {
+  const ownId = scene.state.ownId;
+  if (!ownId) return dest;
+
+  const from = getOwnBase(scene.state) ?? scene.state.transform.get(ownId)?.pos;
+  if (!from) return dest;
+
+  if (opts?.pathfind) {
+    const steering = planOwnClickPath(scene, from, dest);
+    sendMove(scene.socket, dest);
+    return steering;
+  }
+
+  clearOwnMovePath(scene.state);
+  const clamped = resolveOwnMoveAgainstBlocks(scene, from, dest);
+  sendMove(scene.socket, clamped);
+  return clamped;
 }
 
 const MOVE_TICK_MS = 100;
@@ -60,6 +86,14 @@ export function isHoldStill(): boolean {
   return holdStill;
 }
 
+/** True while keyboard or gamepad is actively providing a movement vector. */
+export function hasKeyboardMoveIntent(): boolean {
+  if (holdStill) return false;
+  const dx = kbVec.dx + padVec.dx;
+  const dy = kbVec.dy + padVec.dy;
+  return Math.hypot(dx, dy) >= 0.0001;
+}
+
 /** Stop click-to-move / keyboard motion and tell the server to hold position. */
 export function cancelActiveMove(scene: GameScene): void {
   if (!scene.myId) return;
@@ -68,6 +102,8 @@ export function cancelActiveMove(scene: GameScene): void {
   const transform = scene.state.transform.get(ownId);
   if (!transform) return;
 
+  clearOwnMovePath(scene.state);
+
   const origin = getOwnBase(scene.state) ?? transform.pos;
   const stop: Vec2 = {
     x: Math.round(origin.x),
@@ -75,7 +111,6 @@ export function cancelActiveMove(scene: GameScene): void {
   };
   sendMove(scene.socket, stop);
   transform.target = stop;
-  // Hold heading ownership until the server confirms the stop (see moveOwnership).
   beginPendingStop(stop, performance.now());
 }
 
@@ -93,14 +128,12 @@ export function startMovementTick(scene: GameScene): () => void {
 }
 
 function tickMovement(scene: GameScene): void {
-  if (!scene.myId) return;
+  if (!scene.myId || scene.transitioning) return;
   const ownId = scene.state.ownId;
   if (!ownId) return;
   const transform = scene.state.transform.get(ownId);
   if (!transform) return;
 
-  // Release the post-stop heading latch once the authoritative position has
-  // caught up to the stop point (or the grace window has elapsed).
   maintainPendingStop(transform.pos, performance.now());
 
   let dx = holdStill ? 0 : kbVec.dx + padVec.dx;
@@ -121,9 +154,6 @@ function tickMovement(scene: GameScene): void {
       };
       sendMove(scene.socket, stop);
       transform.target = stop;
-      // Keep owning the heading until the server confirms the stop, so the
-      // lagging authoritative state can't drive the sprite forward and then
-      // yank it back (the "backtrack on stop").
       beginPendingStop(stop, performance.now());
     }
     return;
@@ -135,6 +165,7 @@ function tickMovement(scene: GameScene): void {
     scene.flashCameraHold = false;
     scene.flashCameraHoldTargetId = null;
     scene.targetMarker.setVisible(false);
+    clearOwnMovePath(scene.state);
     setManualActive(true);
   }
 
@@ -142,6 +173,13 @@ function tickMovement(scene: GameScene): void {
     x: Math.round(origin.x + dx * STEP_DISTANCE),
     y: Math.round(origin.y + dy * STEP_DISTANCE),
   };
+
+  clearOwnMovePath(scene.state);
+  const shapes = getOwnBlockShapes(scene);
+  const pad = getOwnMovePad(scene.state);
+  const predicted = shapes.length > 0
+    ? slideMoveAgainstBlocks(origin, dest, shapes, pad)
+    : dest;
   sendMove(scene.socket, dest);
-  transform.target = clampOwnMoveTarget(scene, dest);
+  transform.target = predicted;
 }

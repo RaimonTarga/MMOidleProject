@@ -1,3 +1,4 @@
+import { CollisionIndex } from "./collision/CollisionIndex";
 import type {
   NodeDefinition,
   CombatEvent,
@@ -110,6 +111,7 @@ export class World {
    *   S8 — players move in (PlayerEntity)
    */
   readonly ecs: EcsWorld = createEcsWorld();
+  readonly collision = new CollisionIndex(this);
 
   readonly monsterEntities = this.ecs.with(
     "controlsMonster",

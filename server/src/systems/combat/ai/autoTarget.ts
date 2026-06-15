@@ -3,12 +3,9 @@ import type { MonsterEntity, PlayerEntity } from "../../../ecs/entity";
 import {
   approachPoint,
   GAME_CONFIG,
-  getCounter,
   getFlag,
   hitboxGap,
-  inAttackRange,
   posHitboxFromEntity,
-  setCounter,
   setFlag,
   type Vec2,
 } from "@mmo-idle/shared";
@@ -38,73 +35,6 @@ const AUTO_FIRING_FLAG = "autoFiring";
  */
 const AVOID_GAP = 220;
 
-// ── Explore wander ──────────────────────────────────────────────────────────
-// When auto-combat finds no target inside the acquire radius the player enters
-// the "exploring" state: it roams the current node to look for new targets.
-// Leaving the node/biome is owned by the explore rune (updateAutoTraverse) —
-// this only wanders in-place. The wander loop mirrors monster wander: hop to a
-// nearby point, pause on arrival, repeat.
-
-/** Max distance (px) of a single explore wander hop from the current position. */
-const WANDER_HOP_RADIUS = 480;
-/** Idle pause bounds (ms) between wander hops. */
-const WANDER_IDLE_MIN_MS = 700;
-const WANDER_IDLE_MAX_MS = 1800;
-
-/** True while the player is mid-hop toward a chosen explore wander point. */
-const WANDER_ACTIVE_FLAG = "explore.wandering";
-/** Earliest timestamp (ms) at which the next wander hop may begin. */
-const WANDER_NEXT_AT = "explore.nextWanderAt";
-
-function randBetween(min: number, max: number): number {
-  return min + Math.random() * (max - min);
-}
-
-/**
- * Drive the in-node "exploring" roam for an idle auto-combat player. Hops to a
- * random nearby point, pauses briefly on arrival, then hops again — until a
- * target enters the acquire radius and the scorer takes over.
- */
-function stepExploreWander(world: World, player: PlayerEntity, now: number): void {
-  // Mid-hop: let the movement system carry the player to the wander point.
-  if (player.isMoving) return;
-
-  const tc = player.tracksCombat;
-
-  // Just arrived from a hop — start an idle pause before the next one.
-  if (getFlag(tc, WANDER_ACTIVE_FLAG)) {
-    setFlag(tc, WANDER_ACTIVE_FLAG, false);
-    setCounter(
-      tc,
-      WANDER_NEXT_AT,
-      now + randBetween(WANDER_IDLE_MIN_MS, WANDER_IDLE_MAX_MS),
-    );
-    stopEntity(world, player);
-    return;
-  }
-
-  // Still pausing between hops.
-  if (now < getCounter(tc, WANDER_NEXT_AT)) {
-    stopEntity(world, player);
-    return;
-  }
-
-  // Pick a new wander point near the player and start the next hop.
-  const pos = player.hasPosition.current;
-  const angle = Math.random() * 2 * Math.PI;
-  const radius = Math.random() * WANDER_HOP_RADIUS;
-  const candidate: Vec2 = {
-    x: pos.x + Math.cos(angle) * radius,
-    y: pos.y + Math.sin(angle) * radius,
-  };
-  setFlag(tc, WANDER_ACTIVE_FLAG, true);
-  setEntityMotion(
-    world,
-    player,
-    clampToNode(world, player.hasPosition.nodeId, candidate),
-  );
-}
-
 function clampToNode(world: World, nodeId: string, pos: Vec2): Vec2 {
   const node = NODE_REGISTRY.get(nodeId);
   if (!node) return pos;
@@ -129,6 +59,7 @@ function isPlayerInCombat(player: PlayerEntity, now: number): boolean {
 export function updateAutoTargets(world: World, now: number) {
   for (const player of world.livePlayers) {
     if (!player.usesAutocombat.auto) continue;
+
     // Party followers are steered by updatePartyFollow, not by their own targeting.
     if (isPartyFollower(player)) continue;
     if (player.hasManualMoveIntent) continue;
@@ -138,8 +69,9 @@ export function updateAutoTargets(world: World, now: number) {
     // player approaches the target and its leashed minions engage.
 
     if (player.hasAutoTraversePath) {
-      if (player.hasAutoTraversePath.targetNodeId !== player.hasPosition.nodeId)
+      if (player.hasAutoTraversePath.targetNodeId !== player.hasPosition.nodeId) {
         continue;
+      }
     }
 
     if (player.isFleeing) {
@@ -159,23 +91,16 @@ export function updateAutoTargets(world: World, now: number) {
     } else if (action.kind === "attack") {
       steerTowardTarget(world, player, action.target, now);
     } else {
-      // idle — nothing within acquire range. How we look for the next target
-      // depends on whether the explore rune is connected:
-      //   • explore rune on  → head straight for the nearest clearable mob (a
-      //     directed search that finishes the node), holding still only when the
-      //     node has nothing left; leaving the node/biome stays owned by
-      //     updateAutoTraverse.
-      //   • explore rune off → the dumb baseline roams the node at random.
+      // idle — nothing within acquire range. Head for the nearest clearable mob
+      // on this node (baseline with no runes, and explore rune alike). Hold
+      // still only when the node is empty; leaving the node/biome stays owned
+      // by updateAutoTraverse when the explore rune is equipped.
       setFlag(player.tracksCombat, AUTO_FIRING_FLAG, false);
-      if (player.usesAutocombat.autoTraverse) {
-        const mob = nearestEngageableMonster(world, player);
-        if (mob) {
-          steerTowardTarget(world, player, mob, now);
-        } else {
-          stopEntity(world, player);
-        }
+      const mob = nearestEngageableMonster(world, player);
+      if (mob) {
+        steerTowardTarget(world, player, mob, now);
       } else {
-        stepExploreWander(world, player, now);
+        stopEntity(world, player);
       }
     }
   }
@@ -238,7 +163,7 @@ export function steerTowardTarget(
     );
     const idealGap = Math.max(minSafeGap + 20, attackRange * 0.72);
     const maxFireGap = attackRange * 0.92;
-    const inRange = inAttackRange(playerPH, targetPH, attackRange);
+    const inRange = world.collision.canReach(player, target, attackRange);
 
     // Hysteresis: once latched (firing), widen the acceptable gap window so the
     // player keeps holding through small target drift instead of re-issuing a
@@ -303,6 +228,6 @@ export function steerTowardTarget(
   setEntityMotion(
     world,
     player,
-    clampToNode(world, player.hasPosition.nodeId, approach.dest),
+    clampToNode(world, player.hasPosition.nodeId, targetPos),
   );
 }
