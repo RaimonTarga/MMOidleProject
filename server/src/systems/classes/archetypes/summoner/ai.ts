@@ -10,8 +10,6 @@
  */
 import {
   distanceSq,
-  inAttackRange,
-  posHitboxFromEntity,
   type Vec2,
 } from '@mmo-idle/shared';
 
@@ -62,12 +60,11 @@ function findStoneSentinelTarget(
 ): MonsterEntity | null {
   const nodeId = minion.hasPosition.nodeId;
   const range = minion.performsAttack.attackRange;
-  const ph = posHitboxFromEntity(minion);
 
   if (currentTargetId) {
     const current = world.getMonsterEntity(currentTargetId);
     if (current && current.hasPosition.nodeId === nodeId && current.hasHealth.hp > 0) {
-      if (inAttackRange(ph, posHitboxFromEntity(current), range)) {
+      if (world.collision.canReach(minion, current, range)) {
         return current;
       }
     }
@@ -78,7 +75,7 @@ function findStoneSentinelTarget(
   let bestDistSq = Infinity;
   for (const m of world.monsterEntitiesInNode(nodeId)) {
     if (m.hasHealth.hp <= 0) continue;
-    if (!inAttackRange(ph, posHitboxFromEntity(m), range)) continue;
+    if (!world.collision.canReach(minion, m, range)) continue;
     const distSq = distanceSq(m.hasPosition.current, mp);
     if (distSq < bestDistSq) {
       bestDistSq = distSq;
@@ -101,8 +98,7 @@ function driveStoneSentinel(
   const commanded = resolveCommandedFocusTarget(world, owner);
   let target: MonsterEntity | null = null;
   if (commanded) {
-    const ph = posHitboxFromEntity(minion);
-    if (inAttackRange(ph, posHitboxFromEntity(commanded), minion.performsAttack.attackRange)) {
+    if (world.collision.canReach(minion, commanded, minion.performsAttack.attackRange)) {
       target = commanded;
     }
   }
@@ -311,15 +307,12 @@ export function driveMinion(
   const stickyTarget = isSwarm || !!focusOverride;
 
   if (target) {
-    const ph = posHitboxFromEntity(minion);
-    const th = posHitboxFromEntity(target);
-
     if (stickyTarget) {
       setAttackTarget(world, minion, target.isMonster.id);
       cm.currentTargetId = target.isMonster.id;
     }
 
-    if (inAttackRange(ph, th, minion.performsAttack.attackRange)) {
+    if (world.collision.canReach(minion, target, minion.performsAttack.attackRange)) {
       // In range — stop and attack on cooldown.
       stopEntity(world, minion);
       if (!stickyTarget) {

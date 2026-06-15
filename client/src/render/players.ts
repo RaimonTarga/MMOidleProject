@@ -20,7 +20,14 @@ import { ensureHpBar, destroyHpBar } from "./healthBars";
 import { ensureCdBar, destroyCdBar } from "./cooldownBars";
 import { GRAVE_DISPLAY_H, GRAVE_LABEL_OFFSET_Y } from "../sprites";
 import { applyLunge } from "./interpolation";
-import { getPendingStop, isOwnHeadingClientOwned } from "../input/moveOwnership";
+import { nodeToScene } from "./sceneCoords";
+import { getPendingStop, isOwnHeadingClientOwned, clearPendingStop } from "../input/moveOwnership";
+import { cancelActiveMove } from "../input/movement";
+import { isServerOwnedNavigation } from "../scenes/game/mapTransition";
+import {
+  clearOwnMovePath,
+  reconcileOwnPathFromServer,
+} from "../input/pathPrediction";
 import { spawnAttackEffect } from "./combatFx";
 import { getDotPath } from "../fx/dot";
 import { spawnDamageNumber } from "../fx/particles";
@@ -113,8 +120,11 @@ export function upsertPlayer(
     if (isOwn) {
       state.ownId = player.id;
       state.ownNodeId = player.nodeId;
-      scene.cameraTarget.setPosition(player.pos.x, player.pos.y);
-      scene.cameras.main.startFollow(scene.cameraTarget, true, 0.1, 0.1);
+      if (!scene.transitioning) {
+        const scenePos = nodeToScene(player.pos.x, player.pos.y);
+        scene.cameraTarget.setPosition(scenePos.x, scenePos.y);
+        scene.cameraScrollReady = false;
+      }
     }
     return;
   }
@@ -158,17 +168,27 @@ export function upsertPlayer(
   }
 
   if (isOwn && player.nodeId !== state.ownNodeId) {
+    clearPendingStop();
+    const store = getDefaultStore();
+    const navPathBefore = store.get(autoPathAtom);
+    if (!scene.transitioning && !isServerOwnedNavigation(scene, navPathBefore)) {
+      cancelActiveMove(scene);
+    }
+    state.ownNodeId = player.nodeId;
     const interp = state.interpolation.get(player.id);
     if (interp) {
       interp.base = { ...player.pos };
     }
     const sprite = state.sprite.get(player.id);
-    sprite?.setPosition(player.pos.x, player.pos.y);
+    // Place the sprite at the authoritative entry position in the new node; the
+    // map slide camera pans to it while server-authoritative interpolation keeps
+    // the player in sync across the transition.
+    const scenePos = nodeToScene(player.pos.x, player.pos.y);
+    sprite?.setPosition(scenePos.x, scenePos.y);
 
     // Trim the navigation route display as the server walks us across nodes;
     // clear it on arrival. Movement itself is owned by the server.
-    const store = getDefaultStore();
-    const navPath = store.get(autoPathAtom);
+    const navPath = navPathBefore;
     if (navPath && navPath.length > 0) {
       const idx = navPath.indexOf(player.nodeId);
       const remaining = idx >= 0 ? navPath.slice(idx + 1) : [];
@@ -204,6 +224,8 @@ export function upsertPlayer(
   state.view.set(player.id, player);
   const transform = state.transform.get(player.id);
   if (transform) {
+    transform.pos = { ...player.pos };
+    transform.speed = player.speed * moveSpeedMult(player);
     // Fix #1: while the client owns the own player's heading — active
     // keyboard/gamepad movement OR a sent-but-unconfirmed stop — the server's
     // `player.target` is ~1 RTT stale, so overwriting it here would yank the
@@ -211,24 +233,37 @@ export function upsertPlayer(
     // authoritative state drive then snap it back (the "backtrack on stop").
     // Other players, and the own player under server-driven movement
     // (auto/traverse/follow/knockback) or click-to-move, take the server target.
-    if (!(isOwn && isOwnHeadingClientOwned())) {
-      transform.target = { ...player.target };
+    // During a map slide the heading is server-driven, so the own player tracks
+    // the authoritative target and stays in sync across the transition.
+    const clientOwnsHeading =
+      isOwn && isOwnHeadingClientOwned() && !scene.transitioning;
+    if (!clientOwnsHeading) {
+      const interp = state.interpolation.get(player.id);
+      const from = interp ? { x: interp.base.x, y: interp.base.y } : player.pos;
+      // Click-to-move owns a client path toward `ownPathGoal`. Auto-combat and
+      // other server-driven motion expose only the next motion endpoint in
+      // `player.target` — replanning a full A* to that point every 5 Hz delta
+      // clears waypoints and often fails against trees, freezing the sprite while
+      // the server keeps moving.
+      if (isOwn && state.ownPathGoal) {
+        transform.target = reconcileOwnPathFromServer(
+          scene,
+          from,
+          state.ownPathGoal,
+        );
+      } else {
+        if (isOwn) clearOwnMovePath(state);
+        transform.target = { x: player.target.x, y: player.target.y };
+      }
     }
-    // Keep the authoritative position current for the per-frame reconcile below.
-    transform.pos = { ...player.pos };
-    // Fix #3: match the server's effective speed so the client doesn't over- or
-    // under-extrapolate while slowed/rooted/boosted (otherwise the prediction
-    // diverges until the hard snap fires). Movement buffs carry their multiplier.
-    transform.speed = player.speed * moveSpeedMult(player);
   }
 
-  if (isOwn) {
+  if (isOwn && !scene.transitioning) {
     const interp = state.interpolation.get(player.id);
     if (interp) {
       const ex = player.pos.x - interp.base.x;
       const ey = player.pos.y - interp.base.y;
       if (ex * ex + ey * ey > RECONCILE_SNAP_SQ) {
-        // While a stop is unconfirmed the predicted base legitimately leads the
         // lagging authoritative position; a hard snap back to it would be the
         // visible backtrack. Suppress only the BACKWARD snap (server still
         // behind, along the path to the stop) — forward/perpendicular desyncs

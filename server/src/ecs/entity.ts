@@ -62,6 +62,7 @@ import type {
   UsesReload,
   UsesSkills,
 } from "@mmo-idle/shared";
+import type { FeatureTarget, Vec2 } from "@mmo-idle/shared";
 import type { With } from "miniplex";
 import type { ControlsMinion } from "../systems/classes/archetypes/summoner/controlsMinion";
 import type { HasSummonerCommand } from "../systems/classes/archetypes/summoner/command";
@@ -78,6 +79,13 @@ export interface HasAutoTraversePath {
 export interface IsFleeing {
   phase: "out" | "recover" | "return";
   returnNodeId: string;
+}
+
+/** Server-only: A* waypoint queue toward {@link goal}. */
+export interface HasMovePath {
+  goal: Vec2;
+  waypoints: Vec2[];
+  mover: FeatureTarget;
 }
 
 /**
@@ -184,6 +192,7 @@ export interface ServerEntity {
   hasManualMoveIntent?: {};
   hasSummonerCommand?: HasSummonerCommand;
   hasAutoTraversePath?: HasAutoTraversePath;
+  hasMovePath?: HasMovePath;
   isFleeing?: IsFleeing;
 
   // ── Shared by both (S7 + S8) ──────────────────────────────────

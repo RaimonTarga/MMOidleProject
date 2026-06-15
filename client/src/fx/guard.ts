@@ -1,5 +1,6 @@
 import { getDefaultStore } from 'jotai';
 import { nodeLoadingAtom, tabResyncAtom } from '../hud/atoms';
+import { nodeToSceneX, nodeToSceneY } from '../render/sceneCoords';
 import type { RenderState } from '../render/state';
 import type { GameScene } from '../scenes/GameScene';
 
@@ -27,10 +28,6 @@ export function shouldRunClientFx(): boolean {
   return !isClientRenderPaused();
 }
 
-function spriteDrawY(baseY: number, visualOffsetY?: number): number {
-  return baseY + (visualOffsetY ?? 0);
-}
-
 export function snapRenderStateOnTabVisible(state: RenderState, scene: GameScene): void {
   for (const id of state.ids) {
     const transform = state.transform.get(id);
@@ -44,7 +41,10 @@ export function snapRenderStateOnTabVisible(state: RenderState, scene: GameScene
     scene.tweens.killTweensOf(interp.lungeOffset);
     interp.lungeOffset.x = 0;
     interp.lungeOffset.y = 0;
-    sprite.setPosition(interp.base.x, spriteDrawY(interp.base.y, meta?.visualOffsetY));
+    sprite.setPosition(
+      nodeToSceneX(interp.base.x),
+      nodeToSceneY(interp.base.y + (meta?.visualOffsetY ?? 0)),
+    );
   }
 }
 

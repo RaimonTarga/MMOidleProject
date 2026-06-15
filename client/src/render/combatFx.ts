@@ -26,6 +26,7 @@ import { fxFirstStrike } from "../fx/firstStrike";
 import { shouldRunClientFx } from "../fx/guard";
 import type { GameScene } from "../scenes/GameScene";
 import { applyLunge } from "./interpolation";
+import { nodeToScene } from "./sceneCoords";
 import type { RenderState } from "./state";
 import { DEPTH } from "./depth";
 
@@ -112,7 +113,8 @@ function fxAoeRing(
   radius: number,
   color: number,
 ): void {
-  const ring = scene.add.graphics({ x: pos.x, y: pos.y }).setDepth(DEPTH.FX);
+  const scenePos = nodeToScene(pos.x, pos.y);
+  const ring = scene.add.graphics({ x: scenePos.x, y: scenePos.y }).setDepth(DEPTH.FX);
   ring.lineStyle(2.5, color, 0.65);
   ring.strokeCircle(0, 0, 1);
   scene.tweens.add({
@@ -300,7 +302,7 @@ function runFxForAttackStyle(
 
   const from = { x: ownSprite.x, y: ownSprite.y };
   const to = ev.targetPos
-    ? { x: ev.targetPos.x, y: ev.targetPos.y }
+    ? nodeToScene(ev.targetPos.x, ev.targetPos.y)
     : { x: targetSprite.x, y: targetSprite.y };
   const args: AttackFxArgs = { scene, ev, player, from, to, dotPath };
 

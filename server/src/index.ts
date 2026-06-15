@@ -89,6 +89,7 @@ import {
   clearAutoTraversePath,
   startManualNavigation,
 } from "./systems/world/autoTraverse";
+import { clampMoveTargetToNode } from "./systems/world/transitions";
 import { thawNode } from "./world/nodeLifecycle";
 import { rightmostEntranceTarget } from "./world/nodePath";
 import { ensurePopulation, ensureBoss } from "./systems/world/spawning";
@@ -187,15 +188,17 @@ app.get("/healthz", (_req, res) => {
   res.status(200).json({ status: "ok" });
 });
 
-// Serve the production client build when it exists.
-// Run `pnpm --filter @mmo-idle/client build` to generate it.
-const clientDist = path.resolve(__dirname, "../../client/dist");
-const adminDist = path.resolve(__dirname, "../../admin/dist");
-app.use("/admin", express.static(adminDist));
-app.get(["/admin", "/admin/*"], (_req, res) => {
-  res.sendFile(path.join(adminDist, "index.html"));
-});
-app.use(express.static(clientDist));
+// Serve built client/admin only in production so dev doesn't expose a stale
+// client/dist on :4000 while the live Vite app runs on :3000.
+if (process.env.NODE_ENV === "production") {
+  const clientDist = path.resolve(__dirname, "../../client/dist");
+  const adminDist = path.resolve(__dirname, "../../admin/dist");
+  app.use("/admin", express.static(adminDist));
+  app.get(["/admin", "/admin/*"], (_req, res) => {
+    res.sendFile(path.join(adminDist, "index.html"));
+  });
+  app.use(express.static(clientDist));
+}
 
 const httpServer = createServer(app);
 
@@ -732,7 +735,8 @@ async function boot(): Promise<void> {
       if (!p) return;
       if (p.isChanneling) return;
       clearSummonerCommand(world, p);
-      setEntityMotion(world, p, pos);
+      const clamped = clampMoveTargetToNode(p.hasPosition.nodeId, pos);
+      setEntityMotion(world, p, clamped);
       if (p.isMoving) {
         attachComponent(world, p, "hasManualMoveIntent", {});
       } else {
@@ -750,7 +754,15 @@ async function boot(): Promise<void> {
       const p = liveSelf();
       if (!p) return;
       p.usesAutocombat.auto = enabled;
-      if (!enabled) detachComponent(world, p, "isFleeing");
+      if (!enabled) {
+        detachComponent(world, p, "isFleeing");
+        return;
+      }
+      // Click/keyboard moves latch hasManualMoveIntent until the server stops.
+      // Toggling auto on must release that latch or updateAutoTargets skips every
+      // tick ("auto combat does nothing").
+      detachComponent(world, p, "hasManualMoveIntent");
+      stopEntity(world, p);
     });
 
     socket.on("player:setAutoTraverse", (enabled) => {
