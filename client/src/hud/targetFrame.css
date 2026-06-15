@@ -154,10 +154,37 @@
   white-space: nowrap;
 }
 
-/* Mobile: a fixed top bar already exists — nudge the frame below it. */
+/* Mobile: the fixed top status strip already exists — nudge the frame below it
+   (offset derives from the --mhud-top-h chrome height set in hud.css) and slim it
+   down so it clears the top-left buff icons: narrower, thinner HP bar, no
+   secondary stat row, smaller debuff tiles on a single row. */
 @media (max-width: 1100px) {
   .target-frame {
-    top: 52px;
-    width: 280px;
+    top: calc(var(--mhud-top-h, 52px) + env(safe-area-inset-top, 0px) + 6px);
+    width: 220px;
+    max-width: 72vw;
+    padding: 6px 10px 7px;
   }
+
+  .target-frame__name-row { margin-bottom: 4px; }
+  .target-frame__name { font-size: 13px; }
+
+  /* Thinner HP bar */
+  .target-frame__track { height: 13px; }
+  .target-frame__hp-text { font-size: 10px; }
+
+  /* Enemy atk/plating isn't actionable mid-combat — drop it on phones */
+  .target-frame__stats { display: none; }
+
+  /* Debuff tiles: smaller, single row */
+  .target-frame__tiles {
+    flex-wrap: nowrap;
+    overflow: hidden;
+    gap: 5px;
+    margin-top: 6px;
+  }
+  .tf-tile { width: 22px; height: 22px; }
+  .tf-tile__secs { font-size: 9px; }
+  .tf-tile__stacks { font-size: 9px; }
+  .tf-tile__label { font-size: 7px; }
 }

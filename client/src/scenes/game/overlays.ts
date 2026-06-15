@@ -403,6 +403,15 @@ export function drawExitMarkers(scene: GameScene): void {
 }
 
 export function drawMinimap(scene: GameScene): void {
+  // Mobile: no minimap — the full Map panel is one tap away in the HUD tab bar,
+  // and it would otherwise sit under the floating AUTO button. Breakpoint matches
+  // the DOM HUD's 1100px (the canvas spans the full viewport once sidebars hide).
+  if (scene.scale.width <= 1100) {
+    scene.minimap.setVisible(false);
+    return;
+  }
+  scene.minimap.setVisible(true);
+
   const now = scene.time.now;
   if (now - scene.state.throttles.minimapAt < 100) return;
   scene.state.throttles.minimapAt = now;

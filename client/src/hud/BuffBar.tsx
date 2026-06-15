@@ -112,6 +112,7 @@ export function BuffBar() {
 
   return (
     <div
+      className="buff-bar-root"
       style={{
         position: "absolute",
         top: 12,

@@ -103,12 +103,13 @@
 
         #mobile-hud { display: block; }
 
-        /* Buff bar — fixed so it tracks the same bars as MobileHUD */
+        /* Buff bar — fixed so it tracks the same bars as MobileHUD.
+           Offsets derive from the --mhud-* chrome heights set in hud.css. */
         #buff-overlay {
           position: fixed !important;
           inset: unset !important;
-          top: 48px;
-          bottom: calc(64px + env(safe-area-inset-bottom, 0px));
+          top: calc(var(--mhud-top-h, 66px) + env(safe-area-inset-top, 0px));
+          bottom: calc(var(--mhud-bottom-h, 92px) + env(safe-area-inset-bottom, 0px));
           left: 0;
           right: 0;
         }

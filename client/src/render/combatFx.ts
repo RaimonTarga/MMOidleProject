@@ -25,6 +25,7 @@ import { getDotPath, type DotPath } from "../fx/dot";
 import { fxSlash } from "../fx/slash";
 import { fxImpact } from "../fx/impact";
 import { fxGunshot, fxDuelistShot, fxAltShot, fxDeathMarkBlast } from "../fx/gunshot";
+import { fxBoulder } from "../fx/boulder";
 import { fxLightning } from "../fx/lightning";
 import { fxFireFlame } from "../fx/dotFire";
 import { fxFrostSnowflake } from "../fx/dotFrost";
@@ -205,6 +206,8 @@ const ATTACK_FX_BY_STYLE: Record<string, AttackFxFn> = {
   impact: ({ scene, ev, to }) => fxImpact(scene, to.x, to.y, ev.execution),
   gunshot: ({ scene, ev, from, to }) =>
     fxGunshot(scene, from.x, from.y, to.x, to.y, ev.empowered),
+  boulder: ({ scene, from, to }) =>
+    fxBoulder(scene, from.x, from.y, to.x, to.y),
 };
 
 export function dispatchCombatEvent(

@@ -984,3 +984,22 @@
   font-size: 7px;
   letter-spacing: 0.3px;
 }
+
+/* ── Mobile compaction (phones) ──────────────────────────────────────────── */
+@media (max-width: 620px) {
+  .craft-overlay { padding: 6px; }
+  .craft-panel   { padding: 12px 12px 18px; max-height: 94vh; }
+  .craft-header  { margin-bottom: 12px; }
+  .craft-tabs    { margin-bottom: 12px; }
+  .craft-tab     { font-size: 9px; letter-spacing: 0.3px; padding: 7px 0 5px; }
+
+  /* Let the panel own the scroll instead of a nested fixed-height list. */
+  .craft-list    { max-height: none; }
+
+  .craft-recipe        { gap: 9px; padding: 9px 10px; }
+  .craft-recipe__icon  { width: 44px; height: 44px; }
+  .craft-recipe__name  { font-size: 11px; }
+  .craft-recipe__btn   { padding: 8px 16px; }  /* keep a tappable target */
+  .craft-essence-summary { gap: 5px; margin-bottom: 12px; }
+  .craft-filters       { margin-bottom: 10px; }
+}

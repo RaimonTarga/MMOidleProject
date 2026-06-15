@@ -451,6 +451,22 @@
   opacity: 0.45;
 }
 
+/* Selected (touch: tapped to preview, awaiting confirm) */
+.skill-node--selected {
+  border-color: rgba(150, 195, 255, 1.00);
+  box-shadow:
+    0 0 0 3px rgba(110, 165, 255, 0.35),
+    0 0 22px rgba(110, 165, 255, 0.55),
+    inset 0 0 16px rgba(110, 165, 255, 0.16);
+  transform: scale(1.06);
+}
+.skill-node--selected.skill-node--unlocked {
+  border-color: rgba(120, 240, 170, 1.00);
+  box-shadow:
+    0 0 0 3px rgba(60, 220, 130, 0.32),
+    0 0 22px rgba(60, 220, 130, 0.5);
+}
+
 /* Placeholder (upcoming tier) */
 .skill-node--placeholder {
   background: rgba(6, 5, 18, 0.70);
@@ -553,52 +569,78 @@
   font-style: italic;
 }
 
+/* ── Touch confirm button (tap-to-select then commit) ────────────────────── */
+.skill-confirm-btn {
+  margin-top: 10px;
+  width: 100%;
+  padding: 11px 14px;
+  background: linear-gradient(135deg, rgba(40, 80, 150, 0.92), rgba(24, 48, 100, 0.95));
+  border-top: 1px solid rgba(130, 180, 255, 0.55);
+  border-left: 1px solid rgba(130, 180, 255, 0.55);
+  border-right: 1px solid var(--bevel-dark);
+  border-bottom: 1px solid var(--bevel-dark);
+  border-radius: 3px;
+  color: #dcebff;
+  font-family: monospace;
+  font-size: 12px;
+  font-weight: bold;
+  letter-spacing: 0.6px;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+.skill-confirm-btn:active {
+  filter: brightness(1.15);
+  border-top-color: var(--bevel-dark);
+  border-left-color: var(--bevel-dark);
+  border-right-color: rgba(130, 180, 255, 0.55);
+  border-bottom-color: rgba(130, 180, 255, 0.55);
+}
+
+/* In the class orbit, the info box is pointer-events:none — the button opts in. */
+.skill-confirm-btn--orbit {
+  margin-top: 4px;
+  width: auto;
+  padding: 9px 14px;
+  pointer-events: auto;
+}
+
 @media (max-width: 620px) {
-  .skill-tree-body {
-    padding: 16px 12px 10px;
-  }
+  /* Reduce overall scale of the skill tree on phones. */
+  .skill-tree-overlay { padding: 6px; }
+  .skill-tree-header  { padding: 10px 12px; gap: 8px; }
+  .skill-tree-title   { font-size: 11px; }
+  .skill-tree-legend  { display: none; }
 
+  .skill-tree-body { padding: 12px 8px 8px; }
+
+  /* Class orbit */
   .skill-class-orbit {
-    --class-radius: 126px;
-    height: 330px;
+    --class-radius: 108px;
+    height: 286px;
   }
+  .skill-class-orbit::before { inset: 42px 50px; }
+  .skill-class-orbit__slot .skill-node { width: 64px; height: 64px; }
+  .skill-class-orbit__slot .skill-node__cost { top: 4px; right: 4px; font-size: 7px; }
+  .skill-class-orbit__slot .skill-node__name { font-size: 8px; max-width: 50px; }
+  .skill-class-orbit__sigil { inset: 0 6px; font-size: 8px; }
+  .skill-class-orbit__info { width: 150px; min-height: 118px; padding: 10px; gap: 5px; }
+  .skill-class-orbit__info-title { font-size: 11px; }
+  .skill-class-orbit__info-meta { font-size: 9px; }
+  .skill-class-orbit__info-effects { font-size: 9px; }
+  .skill-class-orbit__info-text { font-size: 9px; }
 
-  .skill-class-orbit::before {
-    inset: 48px 58px;
-  }
+  /* Progression tiers — smaller nodes + tighter spacing */
+  .skill-node { width: 64px; height: 64px; padding: 7px 5px; }
+  .skill-node__name { font-size: 9px; max-width: 50px; }
+  .skill-node__cost { font-size: 7px; top: 4px; right: 4px; }
+  .skill-node--compact { width: 48px; height: 48px; }
+  .skill-tier-nodes { gap: 12px; }
+  .skill-tier-section { gap: 8px; }
+  .skill-connector { height: 22px; }
+  .skill-progress-meta { gap: 8px; margin-bottom: 12px; padding-bottom: 8px; }
+  .skill-progress-class { font-size: 12px; }
 
-  .skill-class-orbit__slot .skill-node {
-    width: 78px;
-    height: 78px;
-  }
-
-  .skill-class-orbit__slot .skill-node__cost {
-    top: 4px;
-    right: 4px;
-    font-size: 7px;
-  }
-
-  .skill-class-orbit__slot .skill-node__name {
-    font-size: 8px;
-    max-width: 58px;
-  }
-
-  .skill-class-orbit__sigil {
-    inset: 0 6px;
-    font-size: 9px;
-  }
-
-  .skill-class-orbit__info {
-    width: 174px;
-    min-height: 136px;
-    padding: 12px;
-  }
-
-  .skill-class-orbit__info-title {
-    font-size: 11px;
-  }
-
-  .skill-class-orbit__info-text {
-    font-size: 9px;
-  }
+  /* Detail panel — flexible height instead of the fixed desktop 116px */
+  .skill-desc { height: auto; max-height: 42vh; padding: 9px 14px 12px; }
 }

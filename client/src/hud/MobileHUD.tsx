@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useRef, type ReactNode } from 'react';
 import { useAtom, useAtomValue } from 'jotai';
 import { hudBus } from '../hudBus';
 import { SkillTreePanel } from '../ui/SkillTreePanel';
@@ -7,13 +7,19 @@ import { InventoryPanel } from '../ui/InventoryPanel';
 import { CraftingPanel } from '../ui/CraftingPanel';
 import { MapPanel } from '../ui/MapPanel';
 import { QuestPanel } from '../ui/QuestPanel';
+import { StatPanel } from './StatPanel';
+import { BiomeXpBar } from './BiomeXpBar';
+import { ArchetypeMechanics } from './stat/mechanics';
 import { NODE_BIOMES, BIOME_DATABASE } from '@mmo-idle/shared';
 import { SettingsPanel } from './settings/SettingsPanel';
+import { useIsMobile } from './useIsMobile';
 import {
   autoAtom,
   deathOverlayAtom,
   hpAtom,
+  incomingDotAtom,
   maxHpAtom,
+  pendingHealAtom,
   playerNameAtom,
   playerNodeIdAtom,
   settingsOpenAtom,
@@ -29,30 +35,22 @@ export function MobileHUD() {
   return <MobileHUDContent />;
 }
 
-function useIsMobile(): boolean {
-  const [isMobile, setIsMobile] = useState(() =>
-    typeof window !== 'undefined' &&
-    window.matchMedia('(max-width: 1100px)').matches,
-  );
-
-  useEffect(() => {
-    const mq = window.matchMedia('(max-width: 1100px)');
-    const handler = (event: MediaQueryListEvent) => setIsMobile(event.matches);
-    mq.addEventListener('change', handler);
-    return () => mq.removeEventListener('change', handler);
-  }, []);
-
-  return isMobile;
-}
+/** Which destination is currently open. Self-overlaying panels and bottom sheets
+ *  are both single-open; `null` = just the base HUD. */
+type MobileView =
+  | 'character'
+  | 'skills'
+  | 'bag'
+  | 'craft'
+  | 'map'
+  | 'quests'
+  | 'runes'
+  | 'more'
+  | null;
 
 function MobileHUDContent() {
-  const [treeOpen, setTreeOpen]   = useState(false);
-  const [runesOpen, setRunesOpen] = useState(false);
-  const [invOpen, setInvOpen]     = useState(false);
-  const [craftTab, setCraftTab]   = useState<'biome' | 'forge' | 'upgrade' | null>(null);
-  const [mapOpen, setMapOpen]     = useState(false);
-  const [questOpen, setQuestOpen] = useState(false);
-  const [menuOpen, setMenuOpen]   = useState(false);
+  const [view, setView] = useState<MobileView>(null);
+  const [craftTab, setCraftTab] = useState<'biome' | 'forge' | 'upgrade'>('forge');
   const [settingsOpen, setSettingsOpen] = useAtom(settingsOpenAtom);
 
   const status = useAtomValue(statusAtom);
@@ -60,17 +58,21 @@ function MobileHUDContent() {
   const hp = useAtomValue(hpAtom);
   const maxHp = useAtomValue(maxHpAtom);
   const shields = useAtomValue(shieldsAtom);
+  const incomingDot = useAtomValue(incomingDotAtom);
+  const pendingHeal = useAtomValue(pendingHealAtom);
   const auto = useAtomValue(autoAtom);
   const skillPoints = useAtomValue(skillPointsAtom);
   const nodeId = useAtomValue(playerNodeIdAtom);
   const dead = useAtomValue(deathOverlayAtom).active;
 
+  // ── HP-bar layers (all as % of maxHp), mirroring the desktop StatPanel ──
   const hpPct       = maxHp > 0 ? (hp / maxHp) * 100 : 0;
   const hpBarColor  = hpPct > 50 ? '#44ee44' : hpPct > 25 ? '#eeaa22' : '#ee3322';
   const totalShield = shields.reduce((s, sh) => s + sh.amount, 0);
-  const shieldPct   = maxHp > 0
-    ? Math.min(100 - hpPct, (totalShield / maxHp) * 100)
-    : 0;
+  const shieldPct   = maxHp > 0 ? Math.min(100, (totalShield / maxHp) * 100) : 0;
+  const dotPct      = maxHp > 0 ? Math.min(hpPct, (incomingDot / maxHp) * 100) : 0;
+  const safePct     = Math.max(0, hpPct - dotPct);
+  const healPct     = maxHp > 0 ? Math.min(100 - hpPct, (pendingHeal / maxHp) * 100) : 0;
 
   const zoneLabel = (() => {
     if (!nodeId) return null;
@@ -80,101 +82,170 @@ function MobileHUDContent() {
     return `${biome?.name ?? info.biomeGroup} T${info.biomeTier}`;
   })();
 
-  function openPanel(setter: (v: boolean) => void, current: boolean) {
-    setter(!current);
-    setMenuOpen(false);
+  const close = () => setView(null);
+
+  function toggle(key: Exclude<MobileView, null>) {
+    if ((key === 'bag' || key === 'craft') && dead) return;
+    if (key === 'craft' && view !== 'craft') setCraftTab('forge');
+    setView(v => (v === key ? null : key));
   }
+
+  const tabs: { key: Exclude<MobileView, null>; icon: string; label: string; badge?: boolean; disabled?: boolean }[] = [
+    { key: 'character', icon: '📊', label: 'Stats' },
+    { key: 'skills',    icon: '🌳', label: 'Skills', badge: skillPoints > 0 },
+    { key: 'bag',       icon: '🎒', label: 'Bag', disabled: dead },
+    { key: 'craft',     icon: '⚒',  label: 'Craft', disabled: dead },
+    { key: 'map',       icon: '🗺', label: 'Map' },
+    { key: 'more',      icon: '☰',  label: 'More' },
+  ];
 
   return (
     <>
-      {/* ── Top bar ─────────────────────────────────────────────────────── */}
-      <div className="mob-topbar">
-        <span className={`status-dot ${status}`} />
-        <span className="mob-topbar__name">{playerName ?? '…'}</span>
-        <div className="mob-topbar__hpblock">
-          <div className="hp-bar-track" style={{ margin: 0, height: 6 }}>
-            <div className="hp-bar-fill" style={{ width: `${hpPct}%`, background: hpBarColor }} />
+      {/* ── Top status strip ────────────────────────────────────────────── */}
+      <div className="mhud-top">
+        <div className="mhud-top__row1">
+          <span className={`status-dot ${status}`} />
+          <span className="mhud-top__name">{playerName ?? '…'}</span>
+          <div className="mhud-hp">
             {shieldPct > 0 && (
-              <div className="shield-bar-fill" style={{ width: `${shieldPct}%`, left: `${hpPct}%` }} />
+              <div className="hp-shield-strip">
+                <div className="hp-shield-strip__fill" style={{ width: `${shieldPct}%` }} />
+              </div>
             )}
+            <div className="hp-bar-track">
+              {healPct > 0 && (
+                <div className="hp-layer hp-layer--regen" style={{ left: `${hpPct}%`, width: `${healPct}%` }} />
+              )}
+              <div className="hp-layer hp-layer--hp" style={{ width: `${safePct}%`, background: hpBarColor }} />
+              {dotPct > 0 && (
+                <div className="hp-layer hp-layer--dot" style={{ left: `${safePct}%`, width: `${dotPct}%` }} />
+              )}
+            </div>
           </div>
-          <span className="mob-topbar__hptext">
-            {nodeId ? `${Math.ceil(hp)}/${maxHp}` : '—'}
-          </span>
+          <span className="mhud-hp__text">{nodeId ? `${Math.ceil(hp)}/${maxHp}` : '—'}</span>
+          {zoneLabel && <span className="mhud-top__zone">{zoneLabel}</span>}
         </div>
-        {zoneLabel && <span className="mob-topbar__zone">{zoneLabel}</span>}
-      </div>
 
-      {/* ── AUTO combat button ──────────────────────────────────────────── */}
-      <div className="mob-bottombar">
-        <button
-          className={`mob-auto-btn${auto ? ' active' : ''}`}
-          onClick={() => hudBus.requestAutoToggle()}
-        >
-          <span className="mob-auto-btn__label">AUTO COMBAT</span>
-          <span className="mob-auto-btn__state">{auto ? '● ACTIVE' : '○ OFF'}</span>
-        </button>
-      </div>
-
-      {/* ── Right-side menu drawer ──────────────────────────────────────── */}
-      {menuOpen && (
-        <div className="mob-drawer-backdrop" onClick={() => setMenuOpen(false)} />
-      )}
-      <div className={`mob-drawer${menuOpen ? ' mob-drawer--open' : ''}`}>
-        <button className="mob-drawer-handle" onClick={() => setMenuOpen(v => !v)}>
-          {menuOpen ? '✕' : '☰'}
-        </button>
-        <div className="mob-drawer-menu">
-          <DrawerBtn label="SKILL TREE" active={treeOpen} highlight={!treeOpen && skillPoints > 0} onClick={() => openPanel(setTreeOpen, treeOpen)} />
-          <DrawerBtn label="RUNES"      active={runesOpen} onClick={() => openPanel(setRunesOpen, runesOpen)} />
-          <DrawerBtn label="INVENTORY"  active={invOpen}   disabled={dead} onClick={() => { if (!dead) openPanel(setInvOpen, invOpen); }} />
-          <DrawerBtn label="CRAFTING"   active={craftTab !== null} disabled={dead} onClick={() => { if (!dead) { setCraftTab(t => t ? null : 'forge'); setMenuOpen(false); } }} />
-          <DrawerBtn label="MAP"        active={mapOpen}   onClick={() => openPanel(setMapOpen, mapOpen)} />
-          <DrawerBtn label="QUESTS"     active={questOpen} onClick={() => openPanel(setQuestOpen, questOpen)} />
-          <DrawerBtn label="SETTINGS"   active={settingsOpen} onClick={() => openPanel(setSettingsOpen, settingsOpen)} />
+        {/* Compact archetype mechanic — shares the desktop renderer */}
+        <div className="mhud-mech">
+          <ArchetypeMechanics />
         </div>
       </div>
 
-      {/* ── Panel overlays ──────────────────────────────────────────────── */}
-      {treeOpen  && <SkillTreePanel onClose={() => setTreeOpen(false)} />}
-      {runesOpen && <RunesPanel     onClose={() => setRunesOpen(false)} />}
-      {invOpen   && <InventoryPanel onClose={() => setInvOpen(false)} />}
-      {craftTab !== null && <CraftingPanel tab={craftTab} onTabChange={setCraftTab} onClose={() => setCraftTab(null)} />}
-      {mapOpen   && <MapPanel       onClose={() => setMapOpen(false)} />}
-      {questOpen && (
-        <div className="mob-panel-overlay">
-          <div className="mob-panel-overlay__inner">
+      {/* ── Floating AUTO combat button ─────────────────────────────────── */}
+      <button
+        className={`mhud-auto${auto ? ' mhud-auto--on' : ''}`}
+        onClick={() => hudBus.requestAutoToggle()}
+      >
+        <span className="mhud-auto__icon">{auto ? '❚❚' : '▶'}</span>
+        <span className="mhud-auto__label">AUTO</span>
+      </button>
+
+      {/* ── Floating quest button (bottom-left) ─────────────────────────── */}
+      <button
+        className={`mhud-quest${view === 'quests' ? ' mhud-quest--active' : ''}`}
+        aria-label="Current quest"
+        onClick={() => setView(v => (v === 'quests' ? null : 'quests'))}
+      >
+        !
+      </button>
+
+      {/* ── Bottom region: biome XP bar + tab bar ───────────────────────── */}
+      <div className="mhud-bottom">
+        <div className="mhud-biomexp"><BiomeXpBar /></div>
+        <nav className="mhud-tabs">
+          {tabs.map(t => (
             <button
-              className="mob-panel-close"
-              onClick={() => setQuestOpen(false)}
+              key={t.key}
+              className={`mhud-tab${view === t.key ? ' mhud-tab--active' : ''}${t.badge ? ' mhud-tab--badge' : ''}`}
+              disabled={t.disabled}
+              onClick={() => toggle(t.key)}
             >
-              ✕ CLOSE
+              <span className="mhud-tab__icon">{t.icon}</span>
+              <span className="mhud-tab__label">{t.label}</span>
             </button>
-            <QuestPanel />
-          </div>
-        </div>
+          ))}
+        </nav>
+      </div>
+
+      {/* ── Bottom sheets (content that isn't itself a full overlay) ─────── */}
+      {view === 'character' && (
+        <MobileSheet title="Character" onClose={close}>
+          <StatPanel />
+        </MobileSheet>
       )}
+      {view === 'quests' && (
+        <MobileSheet title="Quests" onClose={close}>
+          <QuestPanel />
+        </MobileSheet>
+      )}
+      {view === 'more' && (
+        <MobileSheet title="More" onClose={close}>
+          <div className="mhud-more">
+            <button className="mhud-more__btn" onClick={() => setView('runes')}>Runes</button>
+            <button className="mhud-more__btn" onClick={() => { setSettingsOpen(true); setView(null); }}>Settings</button>
+            <button className="mhud-more__btn" onClick={() => hudBus.toggleTacticalView()}>Tactical Mode</button>
+          </div>
+        </MobileSheet>
+      )}
+
+      {/* ── Self-overlaying panels (reused from desktop, full-screen) ───── */}
+      {view === 'skills' && <SkillTreePanel onClose={close} />}
+      {view === 'bag'    && <InventoryPanel onClose={close} />}
+      {view === 'craft'  && (
+        <CraftingPanel
+          tab={craftTab}
+          onTabChange={(t) => (t ? setCraftTab(t) : close())}
+          onClose={close}
+        />
+      )}
+      {view === 'map'    && <MapPanel onClose={close} />}
+      {view === 'runes'  && <RunesPanel onClose={close} />}
       {settingsOpen && <SettingsPanel onClose={() => setSettingsOpen(false)} />}
     </>
   );
 }
 
-function DrawerBtn({
-  label, active, highlight, disabled, onClick,
-}: {
-  label: string;
-  active: boolean;
-  highlight?: boolean;
-  disabled?: boolean;
-  onClick: () => void;
-}) {
+/** Bottom sheet: slides up, tap-backdrop / drag-down / ✕ to dismiss. */
+function MobileSheet({ title, onClose, children }: { title: string; onClose: () => void; children: ReactNode }) {
+  const [dragY, setDragY] = useState(0);
+  const startY = useRef<number | null>(null);
+
+  function onTouchStart(e: React.TouchEvent) {
+    startY.current = e.touches[0].clientY;
+  }
+  function onTouchMove(e: React.TouchEvent) {
+    if (startY.current == null) return;
+    const dy = e.touches[0].clientY - startY.current;
+    if (dy > 0) setDragY(dy);
+  }
+  function onTouchEnd() {
+    if (dragY > 90) onClose();
+    setDragY(0);
+    startY.current = null;
+  }
+
   return (
-    <button
-      className={`mob-drawer-btn${active ? ' active' : ''}${highlight ? ' mob-drawer-btn--has-points' : ''}`}
-      disabled={disabled}
-      onClick={onClick}
-    >
-      {label}
-    </button>
+    <div className="mhud-sheet-backdrop" onClick={onClose}>
+      <div
+        className="mhud-sheet"
+        style={dragY > 0 ? { transform: `translateY(${dragY}px)`, transition: 'none' } : undefined}
+        onClick={e => e.stopPropagation()}
+      >
+        <div
+          className="mhud-sheet__handlebar"
+          onTouchStart={onTouchStart}
+          onTouchMove={onTouchMove}
+          onTouchEnd={onTouchEnd}
+        >
+          <div className="mhud-sheet__grip" />
+        </div>
+        <div className="mhud-sheet__head">
+          <span className="mhud-sheet__title">{title}</span>
+          <button className="mhud-sheet__close" onClick={onClose}>✕</button>
+        </div>
+        <div className="mhud-sheet__body">{children}</div>
+      </div>
+    </div>
   );
 }

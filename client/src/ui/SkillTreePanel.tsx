@@ -5,6 +5,7 @@ import { SKILL_TREE, canUnlockSkill } from '@mmo-idle/shared';
 import type { CSSProperties } from 'react';
 import type { SkillNode, StatEffects, SubVariant } from '@mmo-idle/shared';
 import { hudBus } from '../hudBus';
+import { useIsMobile } from '../hud/useIsMobile';
 import {
   currentSkillTierAtom,
   selectedClassAtom,
@@ -51,6 +52,10 @@ function tierLabel(tier: number): string {
   if (tier === 2) return 'Range';
   if (tier === 3) return 'Path';
   return `Tier ${tier}`;
+}
+
+function costLabel(cost: number): string {
+  return `${cost} pt${cost !== 1 ? 's' : ''}`;
 }
 
 type NodeStatus = 'unlocked' | 'available' | 'locked';
@@ -107,21 +112,37 @@ function getVisibleNodes(player: SkillPlayer): Map<number, SkillNode[]> {
 }
 
 // ── Node card (circular) ───────────────────────────────────────────────────────
+//
+// Interaction differs by input model:
+//  • Desktop (hover): hovering previews details; a click unlocks immediately.
+//  • Mobile (touch, no hover): a tap only *selects* the node (driving the same
+//    preview); committing happens via the explicit Unlock/Choose button. This
+//    lets you inspect a node before spending points on it.
 
 function SkillNodeCard({
   node,
   player,
   compact = false,
+  isMobile,
+  selected = false,
   onHover,
+  onSelect,
 }: {
   node:     SkillNode;
   player:   SkillPlayer | null;
   compact?: boolean;
+  isMobile: boolean;
+  selected?: boolean;
   onHover:  (node: SkillNode | null) => void;
+  onSelect: (node: SkillNode) => void;
 }) {
   const status = getNodeStatus(node, player);
 
   function handleClick() {
+    if (isMobile) {
+      onSelect(node);
+      return;
+    }
     if (status !== 'available') return;
     hudBus.requestSkillUnlock(node.id);
   }
@@ -132,6 +153,7 @@ function SkillNodeCard({
         'skill-node',
         `skill-node--${status}`,
         compact ? 'skill-node--compact' : '',
+        selected ? 'skill-node--selected' : '',
       ].filter(Boolean).join(' ')}
       onClick={handleClick}
       onMouseEnter={() => onHover(node)}
@@ -148,11 +170,21 @@ function SkillNodeCard({
 
 // ── Description panel (sticky bottom) ─────────────────────────────────────────
 
-function NodeDesc({ node, player }: { node: SkillNode | null; player: SkillPlayer | null }) {
+function NodeDesc({
+  node,
+  player,
+  isMobile,
+  onUnlock,
+}: {
+  node: SkillNode | null;
+  player: SkillPlayer | null;
+  isMobile: boolean;
+  onUnlock: (node: SkillNode) => void;
+}) {
   if (!node) {
     return (
       <div className="skill-desc skill-desc--empty">
-        Hover a node to see details
+        {isMobile ? 'Tap a node to see details' : 'Hover a node to see details'}
       </div>
     );
   }
@@ -165,10 +197,15 @@ function NodeDesc({ node, player }: { node: SkillNode | null; player: SkillPlaye
       <div className="skill-desc__header">
         <span className="skill-desc__name">{node.name}</span>
         <span className="skill-desc__tier">{tierLabel(node.tier)}</span>
-        <span className="skill-desc__cost">{node.cost} pt{node.cost !== 1 ? 's' : ''}</span>
+        <span className="skill-desc__cost">{costLabel(node.cost)}</span>
       </div>
       {effects && <div className="skill-desc__effects">{effects}</div>}
       {node.description && <div className="skill-desc__text">{node.description}</div>}
+      {isMobile && status === 'available' && (
+        <button className="skill-confirm-btn" onClick={() => onUnlock(node)}>
+          Unlock — {costLabel(node.cost)}
+        </button>
+      )}
     </div>
   );
 }
@@ -177,15 +214,25 @@ function NodeDesc({ node, player }: { node: SkillNode | null; player: SkillPlaye
 
 function ClassSelectionView({
   player,
+  isMobile,
+  selectedNode,
   onHover,
+  onSelect,
+  onUnlock,
 }: {
   player:  SkillPlayer | null;
+  isMobile: boolean;
+  selectedNode: SkillNode | null;
   onHover: (node: SkillNode | null) => void;
+  onSelect: (node: SkillNode) => void;
+  onUnlock: (node: SkillNode) => void;
 }) {
   const pts = player?.skillPoints ?? 0;
   const [hoveredClass, setHoveredClass] = useState<SkillNode | null>(null);
-  const hoveredStatus = hoveredClass ? getNodeStatus(hoveredClass, player) : null;
-  const hoveredEffects = hoveredClass ? formatEffects(hoveredClass.statEffects) : '';
+  // On touch there's no hover, so the selected orb drives the center info.
+  const displayClass = isMobile ? selectedNode : hoveredClass;
+  const displayStatus = displayClass ? getNodeStatus(displayClass, player) : null;
+  const displayEffects = displayClass ? formatEffects(displayClass.statEffects) : '';
 
   function setHover(node: SkillNode | null) {
     setHoveredClass(node);
@@ -203,24 +250,36 @@ function ClassSelectionView({
       <div className="skill-class-orbit" aria-label="Class selection">
         <div className={[
           'skill-class-orbit__info',
-          hoveredClass ? 'skill-class-orbit__info--active' : '',
-          hoveredStatus ? `skill-class-orbit__info--${hoveredStatus}` : '',
+          displayClass ? 'skill-class-orbit__info--active' : '',
+          displayStatus ? `skill-class-orbit__info--${displayStatus}` : '',
         ].filter(Boolean).join(' ')}>
-          {hoveredClass ? (
+          {displayClass ? (
             <>
-              <span className="skill-class-orbit__info-title">{hoveredClass.name}</span>
+              <span className="skill-class-orbit__info-title">{displayClass.name}</span>
               <span className="skill-class-orbit__info-meta">
-                {tierLabel(hoveredClass.tier)} · {hoveredClass.cost} pt{hoveredClass.cost !== 1 ? 's' : ''}
+                {tierLabel(displayClass.tier)} · {costLabel(displayClass.cost)}
               </span>
-              {hoveredEffects && (
-                <span className="skill-class-orbit__info-effects">{hoveredEffects}</span>
+              {displayEffects && (
+                <span className="skill-class-orbit__info-effects">{displayEffects}</span>
               )}
-              <span className="skill-class-orbit__info-text">{hoveredClass.description}</span>
+              <span className="skill-class-orbit__info-text">{displayClass.description}</span>
+              {isMobile && displayStatus === 'available' && (
+                <button
+                  className="skill-confirm-btn skill-confirm-btn--orbit"
+                  onClick={() => onUnlock(displayClass)}
+                >
+                  Choose {displayClass.name}
+                </button>
+              )}
             </>
           ) : (
             <>
               <span className="skill-class-orbit__info-title">Choose a Class</span>
-              <span className="skill-class-orbit__info-text">Hover an orb to inspect it, then click to unlock.</span>
+              <span className="skill-class-orbit__info-text">
+                {isMobile
+                  ? 'Tap an orb to inspect it, then confirm to unlock.'
+                  : 'Hover an orb to inspect it, then click to unlock.'}
+              </span>
             </>
           )}
         </div>
@@ -235,7 +294,14 @@ function ClassSelectionView({
                 '--class-angle': `${angle}deg`,
               } as CSSProperties}
             >
-              <SkillNodeCard node={root} player={player} onHover={setHover} />
+              <SkillNodeCard
+                node={root}
+                player={player}
+                isMobile={isMobile}
+                selected={selectedNode?.id === root.id}
+                onHover={setHover}
+                onSelect={onSelect}
+              />
               <span className="skill-class-orbit__sigil">{root.name}</span>
             </div>
           );
@@ -249,10 +315,16 @@ function ClassSelectionView({
 
 function ProgressionView({
   player,
+  isMobile,
+  selectedNode,
   onHover,
+  onSelect,
 }: {
   player:  SkillPlayer;
+  isMobile: boolean;
+  selectedNode: SkillNode | null;
   onHover: (node: SkillNode | null) => void;
+  onSelect: (node: SkillNode) => void;
 }) {
   const classId     = player.selectedClass!;
   const className   = SKILL_TREE.get(classId)?.name ?? classId;
@@ -303,7 +375,10 @@ function ProgressionView({
                       node={node}
                       player={player}
                       compact={isPast}
+                      isMobile={isMobile}
+                      selected={selectedNode?.id === node.id}
                       onHover={onHover}
+                      onSelect={onSelect}
                     />
                   ))}
                 </div>
@@ -342,6 +417,7 @@ export function SkillTreePanel({ onClose }: Props) {
   const unlockedSkills = useAtomValue(unlockedSkillsAtom);
   const skillPoints = useAtomValue(skillPointsAtom);
   const currentSkillTier = useAtomValue(currentSkillTierAtom);
+  const isMobile = useIsMobile();
   const player: SkillPlayer = {
     selectedClass,
     selectedSubVariant,
@@ -351,7 +427,17 @@ export function SkillTreePanel({ onClose }: Props) {
     currentSkillTier,
   };
   const [hoveredNode, setHoveredNode] = useState<SkillNode | null>(null);
+  const [selectedNode, setSelectedNode] = useState<SkillNode | null>(null);
   const classChosen = player.selectedClass !== null;
+
+  // The node shown in the detail panel: hover on desktop, tap-selection on touch.
+  const activeNode = isMobile ? selectedNode : hoveredNode;
+
+  function handleUnlock(node: SkillNode) {
+    if (getNodeStatus(node, player) !== 'available') return;
+    hudBus.requestSkillUnlock(node.id);
+    setSelectedNode(null);
+  }
 
   function handleOverlayClick(e: React.MouseEvent) {
     if (e.target === e.currentTarget) onClose();
@@ -373,11 +459,26 @@ export function SkillTreePanel({ onClose }: Props) {
 
         <div className="skill-tree-body">
           {classChosen
-            ? <ProgressionView player={player!} onHover={setHoveredNode} />
-            : <ClassSelectionView player={player} onHover={setHoveredNode} />}
+            ? <ProgressionView
+                player={player!}
+                isMobile={isMobile}
+                selectedNode={selectedNode}
+                onHover={setHoveredNode}
+                onSelect={setSelectedNode}
+              />
+            : <ClassSelectionView
+                player={player}
+                isMobile={isMobile}
+                selectedNode={selectedNode}
+                onHover={setHoveredNode}
+                onSelect={setSelectedNode}
+                onUnlock={handleUnlock}
+              />}
         </div>
 
-        {classChosen && <NodeDesc node={hoveredNode} player={player} />}
+        {classChosen && (
+          <NodeDesc node={activeNode} player={player} isMobile={isMobile} onUnlock={handleUnlock} />
+        )}
 
       </div>
     </div>,

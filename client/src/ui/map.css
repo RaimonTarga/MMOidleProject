@@ -904,10 +904,12 @@
     border-radius: 0;
   }
 
-  /* Stack grid on top, info panel below */
+  /* Stack grid on top, info panel below — scroll the whole body so the travel
+     button (top of NodeInfo) is always reachable instead of being clipped. */
   .map-body {
     flex-direction: column;
-    overflow: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
   /* Shrink the overview minimap cells so the header doesn't overflow */
@@ -917,16 +919,24 @@
     gap: 1px;
   }
 
+  /* Smaller nav arrows (16px instead of 22px) free up width for bigger tiles. */
   .map-grid-wrap {
     align-self: center;
+    grid-template-columns: 16px auto 16px;
+    grid-template-rows:    16px auto 16px;
+  }
+  .map-nav { font-size: 9px; }
+
+  /* Scale tiles to fit width, but also cap by height so the grid never eats the
+     whole screen — leaves room for the info panel + travel button below.
+     Reserved = nav(32) + grid padding(16) + gaps(12) = 60px. */
+  .map-grid {
+    grid-template-columns: repeat(5, min((100vw - 60px) / 5, (56dvh - 60px) / 5));
+    grid-template-rows:    repeat(5, min((100vw - 60px) / 5, (56dvh - 60px) / 5));
   }
 
-  /* Scale tile grid to fit screen width.
-     Formula: 100vw minus nav arrows (44px) minus grid padding (16px) minus margin (8px) / 5 tiles */
-  .map-grid {
-    grid-template-columns: repeat(5, calc((100vw - 68px) / 5));
-    grid-template-rows:    repeat(5, calc((100vw - 68px) / 5));
-  }
+  /* Clip any tile-text overflow so a long biome name can't spill into neighbours. */
+  .map-tile { overflow: hidden; }
 
   .map-tile__name {
     font-size: 8px;
@@ -940,14 +950,22 @@
     font-size: 8px;
   }
 
-  /* Info panel below the grid, not beside it */
+  /* Info panel below the grid, not beside it. flex 1 0 auto = fill spare space
+     but never collapse below its content, so the travel button stays visible. */
   .map-info-panel {
     border-left: none;
     border-top: 1px solid rgba(60, 55, 40, 0.30);
-    min-height: 0;
+    flex: 1 0 auto;
+    overflow: visible;
   }
 
   .map-monster-stats {
     display: none; /* too wide on small screens — name + drop is enough */
+  }
+
+  /* Biome icons render poorly on phones — the tile colour backdrop is enough. */
+  .map-tile__icon,
+  .map-node-info__icon {
+    display: none;
   }
 }

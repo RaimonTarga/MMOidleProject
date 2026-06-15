@@ -1,6 +1,7 @@
 import { useAtomValue } from 'jotai';
 import { resolveEmpoweredMultiplier } from '@mmo-idle/shared';
-import { BuffBar, CadenceTimeline, DefensePassivesSection, MobilityPassivesSection, StatRow, SummonSlotBar } from './components';
+import { DefensePassivesSection, MobilityPassivesSection, StatRow } from './components';
+import { ArchetypeMechanics } from './mechanics';
 import { useHoverTooltip } from './tooltip';
 import { STAT_HELP } from './statHelp';
 import {
@@ -50,9 +51,6 @@ import {
   targetChillStacksAtom,
   targetDotStacksAtom,
 } from '../atoms';
-
-// Freezing Cold: chill stacks needed to trigger the freeze (server CHILL_MAX).
-const CHILL_MAX_STACKS = 9;
 
 export function StatPanel() {
   const hpTip = useHoverTooltip(STAT_HELP.hp);
@@ -174,11 +172,6 @@ export function StatPanel() {
       <div style={{ marginTop: 6 }}>= ×{empMult.effective.toFixed(2)} effective</div>
     </>
   ) : undefined;
-  const isFlash     = player ? (player.passives['energy.flash'] ?? 0) > 0 : false;
-  const flashShiftLabel = player && player.flashShiftPct >= 50 ? 'Red Shift' : 'Blue Shift';
-  const flashShiftColor = player
-    ? `rgb(${Math.round(70 + player.flashShiftPct * 1.85)}, ${Math.round(130 - player.flashShiftPct * 0.65)}, ${Math.round(255 - player.flashShiftPct * 1.95)})`
-    : '#66aaff';
 
   return (
     <div className="sidebar-panel">
@@ -243,222 +236,8 @@ export function StatPanel() {
         <StatRow label="HP Regen"   value={player ? `${player.hpRegen}/s` : '—'} help={STAT_HELP.hpRegen} />
       </div>
 
-      {/* Ammo / Heat bar — reload archetype */}
-      {player?.combatArchetype === 'reload' && (player.passives['reload.laser'] ?? 0) > 0 && (
-        <div className="stat-section">
-          <div className="stat-row">
-            <span className="stat-label">Heat</span>
-            <span className={`stat-value${player.laserOverheated ? ' mech-label--empowered' : ''}`}>
-              {player.laserOverheated ? `OVERHEAT - Cooling (${player.heatPct}%)` : `${player.heatPct}%`}
-            </span>
-          </div>
-          <div className="ammo-bar-track">
-            <div
-              className={`ammo-bar-fill ammo-bar-fill--heat${player.laserOverheated ? ' ammo-bar-fill--overheated' : ''}`}
-              style={{ width: `${player.heatPct}%` }}
-            />
-          </div>
-        </div>
-      )}
-
-      {player?.combatArchetype === 'reload' && (player.passives['reload.laser'] ?? 0) <= 0 && player.ammoMax > 0 && (
-        <div className="stat-section">
-          <div className="stat-row">
-            <span className="stat-label">Ammo</span>
-            <span className="stat-value">
-              {player.ammoCount === 0 ? 'Reloading…' : `${player.ammoCount} / ${player.ammoMax}`}
-            </span>
-          </div>
-          <div className="ammo-bar-track">
-            <div
-              className={`ammo-bar-fill${player.ammoCount === 0 ? ' ammo-bar-fill--reloading' : ''}`}
-              style={{ width: `${(player.ammoCount / player.ammoMax) * 100}%` }}
-            />
-          </div>
-        </div>
-      )}
-
-      {/* Summon roster — summoner archetype */}
-      {player?.combatArchetype === 'summoner' && player.summonSlotCount > 0 && (
-        <div className="stat-section">
-          <div className="stat-row">
-            <span className="stat-label">Summons</span>
-            <span className="stat-value">
-              {player.summonActiveCount} / {player.summonSlotCount} active
-            </span>
-          </div>
-          <SummonSlotBar slots={player.summonSlots} />
-        </div>
-      )}
-
-      {/* Cadence hit timeline */}
-      {player?.combatArchetype === 'cadence' && player.cadenceThreshold > 0 && (
-        <div className="stat-section">
-          <span className="stat-label">Cadence</span>
-          <CadenceTimeline count={player.cadenceCount} threshold={player.cadenceThreshold} armed={player.cadenceEmpoweredArmed} />
-        </div>
-      )}
-
-      {/* Execution bar — cooldown archetype. While the Devout Priest channels, the
-          same bar drains to show the beam's leftover duration instead of the
-          execution cooldown. */}
-      {player?.combatArchetype === 'cooldown' && (
-        player.isChanneling ? (() => {
-          const remainingPct = Math.max(0, 100 - player.channelingPct);
-          return (
-            <div className="stat-section">
-              <div className="stat-row">
-                <span className="stat-label">Channel</span>
-                <span className="stat-value mech-label--empowered">
-                  BEAM {(remainingPct / 100 * 3).toFixed(1)}s
-                </span>
-              </div>
-              <div className="mech-bar-track">
-                <div
-                  className="mech-bar-fill mech-bar-fill--cooldown mech-bar-fill--ready"
-                  style={{ width: `${remainingPct}%` }}
-                />
-              </div>
-            </div>
-          );
-        })() : (
-          <div className="stat-section">
-            <div className="stat-row">
-              <span className="stat-label">Execution</span>
-              <span className={`stat-value${player.executionReady ? ' mech-label--ready' : ''}`}>
-                {player.executionReady ? 'READY' : `${player.executionCooldownPct}%`}
-              </span>
-            </div>
-            <div className="mech-bar-track">
-              <div
-                className={`mech-bar-fill mech-bar-fill--cooldown${player.executionReady ? ' mech-bar-fill--ready' : ''}`}
-                style={{ width: `${player.executionCooldownPct}%` }}
-              />
-            </div>
-          </div>
-        )
-      )}
-
-      {/* Energy bar — energy archetype */}
-      {player?.combatArchetype === 'energy' && (
-        <div className="stat-section">
-          <div className="stat-row">
-            <span className="stat-label">{isFlash ? flashShiftLabel : 'Energy'}</span>
-            <span
-              className={`stat-value${player.empoweredReady && !isFlash ? ' mech-label--empowered' : ''}`}
-              style={isFlash ? { color: flashShiftColor } : undefined}
-            >
-              {isFlash
-                ? `${Math.round(player.energyCount)} / ${player.energyMax}`
-                : player.empoweredReady ? 'EMPOWERED' : `${Math.round(player.energyCount)} / ${player.energyMax}`}
-            </span>
-          </div>
-          <div className="mech-bar-track">
-            <div
-              className={`mech-bar-fill mech-bar-fill--energy${player.empoweredReady && !isFlash ? ' mech-bar-fill--empowered' : ''}`}
-              style={isFlash
-                ? {
-                  width: `${player.flashShiftPct}%`,
-                  background: 'linear-gradient(90deg, #4488ff 0%, #aa88ff 50%, #ff4433 100%)',
-                  boxShadow: `0 0 ${6 + player.flashSpeedBonusPct / 2}px ${flashShiftColor}`,
-                }
-                : { width: `${player.empoweredReady ? 100 : (player.energyMax > 0 ? (player.energyCount / player.energyMax) * 100 : 0)}%` }}
-            />
-          </div>
-        </div>
-      )}
-
-      {/* DoT stacks — dot archetype, path-aware */}
-      {player?.combatArchetype === 'dot' && (() => {
-        const p = player.passives ?? {};
-        const isPoison = (p['dot.poison-explosion'] ?? 0) > 0
-          || (p['dot.eternal-doom'] ?? 0) > 0
-          || (p['dot.invigorating-toxins'] ?? 0) > 0;
-        const isFire   = (p['dot.fan-the-flames'] ?? 0) > 0
-          || (p['dot.smoldering-ember'] ?? 0) > 0
-          || (p['dot.conflagration'] ?? 0) > 0;
-        const isFrost  = (p['dot.permafrost'] ?? 0) > 0
-          || (p['dot.freezing-cold'] ?? 0) > 0
-          || (p['dot.glacial-fracture'] ?? 0) > 0;
-        const path = isPoison ? 'poison' : isFire ? 'fire' : isFrost ? 'frost' : 'default';
-
-        const dotMax = (p['dot.poison-explosion'] ?? 0) > 0 ? 10
-          : (p['dot.eternal-doom'] ?? 0) > 0 ? 50
-          : (p['dot.conflagration'] ?? 0) > 0 ? 8
-          : (p['dot.permafrost'] ?? 0) > 0 ? 1
-          : Math.round(p['dot.max-stacks'] ?? 5);
-
-        const stackLabel = isFire ? 'Burn Stacks'
-          : isFrost ? 'Frost Stacks'
-          : isPoison ? 'Poison Stacks'
-          : 'Target Stacks';
-
-        const pipClass = path !== 'default' ? ` dot-pip--${path}` : '';
-        const usePips  = dotMax <= 10;
-
-        return (
-          <div className="stat-section">
-            <div className="stat-row">
-              <span className="stat-label">{stackLabel}</span>
-              <span className={`stat-value${!player.attackTargetId ? ' dim' : ''}`}>
-                {player.attackTargetId ? `${player.targetDotStacks} / ${dotMax}` : 'No target'}
-              </span>
-            </div>
-
-            {usePips ? (
-              <div className="dot-pips">
-                {Array.from({ length: dotMax }, (_, i) => (
-                  <div
-                    key={i}
-                    className={`dot-pip${pipClass}${i < player.targetDotStacks ? ` dot-pip--active${pipClass}` : ''}`}
-                  />
-                ))}
-              </div>
-            ) : (
-              <div className="dot-stack-bar-track">
-                <div
-                  className={`dot-stack-bar-fill dot-stack-bar-fill--${path}`}
-                  style={{ width: `${Math.min(100, (player.targetDotStacks / dotMax) * 100)}%` }}
-                />
-              </div>
-            )}
-
-            {/* Frost path — chill stacks + frozen indicator (9 stacks → freeze) */}
-            {isFrost && (p['dot.freezing-cold'] ?? 0) > 0 && (
-              <>
-                <div className="stat-row" style={{ marginTop: 6 }}>
-                  <span className="stat-label">Chill</span>
-                  <span className="stat-value">
-                    {player.attackTargetId ? `${player.targetChillStacks ?? 0} / ${CHILL_MAX_STACKS}` : '—'}
-                  </span>
-                </div>
-                <div className="chill-pips">
-                  {Array.from({ length: CHILL_MAX_STACKS }, (_, i) => (
-                    <div
-                      key={i}
-                      className={`chill-pip${i < (player.targetChillStacks ?? 0) ? ' chill-pip--active' : ''}`}
-                    />
-                  ))}
-                </div>
-                {(player.targetChillStacks ?? 0) >= CHILL_MAX_STACKS && (
-                  <div className="chill-frozen-label">— FROZEN —</div>
-                )}
-              </>
-            )}
-          </div>
-        );
-      })()}
-
-      {/* Sacred Cross weapon buff bar */}
-      {player?.equipment.weapon === 'sacred-cross' && (
-        <BuffBar
-          label="Sacred Burst"
-          pct={player.sacredBuffPct}
-          active={player.sacredBuffActive}
-          activeLabel="BURST!"
-          variant="sacred"
-        />
-      )}
+      {/* Per-archetype mechanic bars (shared with the mobile HUD) */}
+      {player && <ArchetypeMechanics />}
 
       {/* ── Evasion / passives — always shown; each self-hides when empty ── */}
 
