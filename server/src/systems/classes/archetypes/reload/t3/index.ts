@@ -1,27 +1,33 @@
 import type { World } from '../../../../../world/World';
-import { registerLaserGateAndSnipeCooldown } from './pipeline/beforeAttack';
+import { registerLaserGate } from './pipeline/beforeAttack';
 import { registerGatlingKnockback } from './pipeline/gatlingKnockback';
 import { registerSnipeDamage } from './pipeline/snipeDamage';
 import { registerBlunderbussVolley } from './pipeline/blunderbuss';
 import { registerReloadLightT3 } from './pipeline/lightPaths';
 import { registerReloadBalancedT3 } from './pipeline/balancedPaths';
 import { registerCoverFire } from './pipeline/coverFire';
-import { registerReloadLifecycleHandlers } from './lifecycleHandlers';
+import { registerCannon, updateCannonFire } from './pipeline/cannon';
+import { registerReloadLifecycleHandlers, updateDeathMarkDetonation } from './lifecycleHandlers';
 import { updateReloadT3Ticks } from './ticks/laser';
+import { updateReloadMomentum } from './ticks/momentum';
 
 export function initReloadT3(): void {
-  registerLaserGateAndSnipeCooldown();
+  registerLaserGate();
   registerSnipeDamage();
   registerGatlingKnockback();
   registerBlunderbussVolley();
   registerReloadLightT3();
   registerReloadBalancedT3();
   registerCoverFire();
+  registerCannon();
   registerReloadLifecycleHandlers();
 }
 
 export function updateReloadT3(world: World, dt: number, now: number = Date.now()): void {
   updateReloadT3Ticks(world, dt, now);
+  updateReloadMomentum(world, dt);
+  updateDeathMarkDetonation(world, dt);
+  updateCannonFire(world, dt);
 }
 
 export { RELOAD_T3_BUFFS } from './core/buffs';

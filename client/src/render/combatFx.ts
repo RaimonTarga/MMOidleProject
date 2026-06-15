@@ -8,11 +8,23 @@ import {
   type Vec2,
 } from "@mmo-idle/shared";
 import { activateLaserBeam } from "../fx/laser";
-import { playOneShotEffect, spawnDamageNumber } from "../fx/particles";
+import { activateHolyBeam, fxHolyFlash } from "../fx/holyBeam";
+import { fxCannonBlast } from "../fx/cannonFx";
+import { fxVoidDischarge } from "../fx/voidDischarge";
+import { fxPoisonExplosion } from "../fx/poisonExplosion";
+import { fxFirebrand } from "../fx/firebrand";
+import { fxConflagrationTick } from "../fx/conflagrationTick";
+import { fxDoomTick, fxDoomCloud } from "../fx/doom";
+import {
+  playOneShotEffect,
+  spawnDamageNumber,
+  EMPOWERED_DAMAGE_COLOR,
+  EMPOWERED_DAMAGE_SIZE_PX,
+} from "../fx/particles";
 import { getDotPath, type DotPath } from "../fx/dot";
 import { fxSlash } from "../fx/slash";
 import { fxImpact } from "../fx/impact";
-import { fxGunshot } from "../fx/gunshot";
+import { fxGunshot, fxDuelistShot, fxAltShot, fxDeathMarkBlast } from "../fx/gunshot";
 import { fxLightning } from "../fx/lightning";
 import { fxFireFlame } from "../fx/dotFire";
 import { fxFrostSnowflake } from "../fx/dotFrost";
@@ -23,6 +35,8 @@ import { fxFrost } from "../fx/frost";
 import { fxFire } from "../fx/fire";
 import { fxVoid } from "../fx/voidFx";
 import { fxFirstStrike } from "../fx/firstStrike";
+import { fxAftershock } from "../fx/aftershock";
+import { fxDualSlash } from "../fx/dualSlash";
 import { shouldRunClientFx } from "../fx/guard";
 import type { GameScene } from "../scenes/GameScene";
 import { applyLunge } from "./interpolation";
@@ -82,6 +96,15 @@ type AttackFxFn = (args: AttackFxArgs) => void;
 
 const FLASH_CLIENT_EFFECT = "flash-teleport";
 const FIRST_STRIKE_CLIENT_EFFECT = "first-strike";
+const AFTERSHOCK_CLIENT_EFFECT = "aftershock";
+const SWIFTBLADE_CLIENT_EFFECT = "swiftblade";
+const CHANNEL_BEAM_CLIENT_EFFECT = "channel-beam";
+const HOLY_FLASH_CLIENT_EFFECT = "holy-flash";
+const EXPLODING_CLIP_CLIENT_EFFECT = "reload-exploding-clip";
+const ALT_ONHIT_CLIENT_EFFECT = "reload-alt-onhit";
+const DEATH_MARK_BLAST_CLIENT_EFFECT = "death-mark-blast";
+const CANNON_BLAST_CLIENT_EFFECT = "reload-cannon-blast";
+const VOID_DISCHARGE_CLIENT_EFFECT = "void-discharge";
 
 function snapOwnPlayerToServerTarget(
   state: RenderState,
@@ -158,6 +181,8 @@ const ATTACK_FX_BY_ARCHETYPE: Record<NonNullArchetype, AttackFxFn> = {
         return fxFireFlame(scene, to.x, to.y, ev.empowered);
       case "frost":
         return fxFrostSnowflake(scene, to.x, to.y, ev.empowered);
+      case "doom":
+        return fxDoomCloud(scene, to.x, to.y, ev.empowered);
       default:
         return fxPoisonSmog(scene, to.x, to.y, ev.empowered);
     }
@@ -187,6 +212,22 @@ export function dispatchCombatEvent(
   ev: CombatEvent,
   scene: GameScene,
 ): void {
+  // dot-tick / monster-hit events are consumed as damage-number style hints in
+  // deltaApplier. The lightning element (Tempest storm) also cracks a bolt down onto
+  // the target on each tick for a "storm" read.
+  if (ev.kind === "dot-tick") {
+    if (shouldRunClientFx()) {
+      const spr = state.sprite.get(ev.targetId);
+      const tx = spr?.x ?? ev.targetPos.x;
+      const ty = spr?.y ?? ev.targetPos.y;
+      if (ev.fx === "conflagration") fxConflagrationTick(scene, tx, ty);
+      else if (ev.element === "lightning") fxLightning(scene, tx, ty - 130, tx, ty, true);
+      else if (ev.element === "doom") fxDoomTick(scene, tx, ty);
+    }
+    return;
+  }
+  if (ev.kind === "monster-hit") return;
+
   if (ev.kind === "monster-dodge") {
     if (!shouldRunClientFx()) return;
     const target =
@@ -203,6 +244,38 @@ export function dispatchCombatEvent(
           fontFamily: "monospace",
           fontSize: "14px",
           color: "#ddddff",
+          stroke: "#000000",
+          strokeThickness: 3,
+        })
+        .setOrigin(0.5)
+        .setDepth(DEPTH.FX);
+      scene.tweens.add({
+        targets: text,
+        y: text.y - 28,
+        alpha: 0,
+        duration: 650,
+        onComplete: () => text.destroy(),
+      });
+    }
+    return;
+  }
+
+  if (ev.kind === "player-miss") {
+    if (!shouldRunClientFx()) return;
+    const target =
+      ev.targetPos ??
+      (state.sprite.get(ev.targetId)
+        ? {
+            x: state.sprite.get(ev.targetId)!.x,
+            y: state.sprite.get(ev.targetId)!.y,
+          }
+        : null);
+    if (target) {
+      const text = scene.add
+        .text(target.x, target.y - 40, "MISS", {
+          fontFamily: "monospace",
+          fontSize: "14px",
+          color: "#bbbbbb",
           stroke: "#000000",
           strokeThickness: 3,
         })
@@ -254,12 +327,16 @@ export function dispatchCombatEvent(
       const target = scene.state.sprite.get(ev.targetId);
       if (target && ev.damage > 0) {
         const meta = scene.state.spriteMeta.get(ev.targetId);
+        const empowered = ev.empowered || ev.execution;
         spawnDamageNumber(
           scene,
           { x: target.x, y: target.y },
           meta?.barOffsetY ?? 40,
           Math.round(ev.damage),
-          "#ffffff",
+          empowered ? EMPOWERED_DAMAGE_COLOR : "#ffffff",
+          empowered
+            ? { sizePx: EMPOWERED_DAMAGE_SIZE_PX, suffix: "!" }
+            : undefined,
         );
       }
       spawnRewardFloaters(scene, ev);
@@ -279,6 +356,14 @@ function runFxForAttackStyle(
     : undefined;
   const targetInterp = state.interpolation.get(ev.targetId);
   const isFlashTeleport = ev.effects?.includes(FLASH_CLIENT_EFFECT) ?? false;
+  const isSwiftblade = ev.effects?.includes(SWIFTBLADE_CLIENT_EFFECT) ?? false;
+  const isHolyBeam = ev.effects?.includes(CHANNEL_BEAM_CLIENT_EFFECT) ?? false;
+  const isHolyFlash = ev.effects?.includes(HOLY_FLASH_CLIENT_EFFECT) ?? false;
+  const isDuelistShot = ev.effects?.includes(EXPLODING_CLIP_CLIENT_EFFECT) ?? false;
+  const isAltShot = ev.effects?.includes(ALT_ONHIT_CLIENT_EFFECT) ?? false;
+  const isDeathMarkBlast = ev.effects?.includes(DEATH_MARK_BLAST_CLIENT_EFFECT) ?? false;
+  const isCannonBlast = ev.effects?.includes(CANNON_BLAST_CLIENT_EFFECT) ?? false;
+  const isVoidDischarge = ev.effects?.includes(VOID_DISCHARGE_CLIENT_EFFECT) ?? false;
 
   if (!targetSprite) {
     if (isFlashTeleport) {
@@ -324,6 +409,33 @@ function runFxForAttackStyle(
 
   if (isLaser) {
     activateLaserBeam(state, scene, ev.targetId);
+  } else if (isHolyBeam) {
+    activateHolyBeam(state, scene, ev.targetId);
+  } else if (isHolyFlash) {
+    // Execution "cast" that opens the channel — holy flash instead of melee lunge/ring.
+    fxHolyFlash(scene, from.x, from.y);
+    fxHolyFlash(scene, to.x, to.y, 0.8);
+  } else if (isDuelistShot) {
+    // Duelist last-bullet: red power shot + empowered ring (replaces the normal gunshot).
+    playEmpoweredRing(args);
+    fxDuelistShot(scene, from.x, from.y, to.x, to.y);
+  } else if (isAltShot) {
+    // Dualslinger on-hit (odd) round: blue shot instead of the normal gunshot.
+    fxAltShot(scene, from.x, from.y, to.x, to.y);
+  } else if (isDeathMarkBlast) {
+    // Bounty Hunter detonation: a small explosion on the target (no shot tracer).
+    fxDeathMarkBlast(scene, to.x, to.y);
+  } else if (isCannonBlast) {
+    // Cannoneer burst: a big explosion on the target when the stored pool fires.
+    fxCannonBlast(scene, to.x, to.y);
+  } else if (isVoidDischarge) {
+    // Voidwalker singularity discharge: void implosion → detonation on the target.
+    fxVoidDischarge(scene, to.x, to.y);
+  } else if (isSwiftblade) {
+    // Swiftblade replaces the default cadence slash with its dual diagonal slash;
+    // both the primary and the extra strikes carry this effect.
+    playEmpoweredRing(args);
+    fxDualSlash(scene, to.x, to.y, ev.empowered);
   } else {
     playEmpoweredRing(args);
     const archetype = player.combatArchetype;
@@ -342,8 +454,28 @@ function runFxForAttackStyle(
 
   for (const effectId of ev.effects ?? []) {
     if (effectId === FLASH_CLIENT_EFFECT) continue;
+    if (effectId === SWIFTBLADE_CLIENT_EFFECT) continue; // handled above
+    if (effectId === CHANNEL_BEAM_CLIENT_EFFECT) continue; // handled above
+    if (effectId === HOLY_FLASH_CLIENT_EFFECT) continue; // handled above
+    if (effectId === EXPLODING_CLIP_CLIENT_EFFECT) continue; // handled above
+    if (effectId === ALT_ONHIT_CLIENT_EFFECT) continue; // handled above
+    if (effectId === DEATH_MARK_BLAST_CLIENT_EFFECT) continue; // handled above
+    if (effectId === CANNON_BLAST_CLIENT_EFFECT) continue; // handled above
+    if (effectId === VOID_DISCHARGE_CLIENT_EFFECT) continue; // handled above
     if (effectId === FIRST_STRIKE_CLIENT_EFFECT) {
       fxFirstStrike(scene, to.x, to.y);
+      continue;
+    }
+    if (effectId === AFTERSHOCK_CLIENT_EFFECT) {
+      fxAftershock(scene, to.x, to.y);
+      continue;
+    }
+    if (effectId === "poison-explosion") {
+      fxPoisonExplosion(scene, to.x, to.y);
+      continue;
+    }
+    if (effectId === "firebrand") {
+      fxFirebrand(scene, to.x, to.y);
       continue;
     }
     playOneShotEffect(scene, effectId, to, { scale: targetEffectScale });
@@ -351,6 +483,8 @@ function runFxForAttackStyle(
 
   if (
     !isLaser &&
+    !isHolyBeam &&
+    !isHolyFlash &&
     !isFlashTeleport &&
     !isRangedPlayerView(player) &&
     state.ownId &&

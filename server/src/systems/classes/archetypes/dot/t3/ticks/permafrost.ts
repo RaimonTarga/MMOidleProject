@@ -12,6 +12,7 @@ import {
 } from '../../../../../../world/worldLogCombat';
 import { actorFromPlayer } from '../../../../../../world/worldLogActors';
 import { isInvulnerableMonster } from '../../../../../combat/invulnerability';
+import { pushDotTickEvent } from '../../../../../combat/damage/dotTickEvent';
 
 /**
  * Permafrost tick. Walks every monster with the `hasDot` marker, but only
@@ -55,6 +56,7 @@ export function updatePermafrost(world: World, dt: number): void {
       buildSimpleBreakdown(base, damage),
     );
     entity.hasHealth.hp -= damage;
+    pushDotTickEvent(world, entity, 'frost', damage);
     console.log(`[Permafrost] ${monsterId}: ${damage} tick (${hits}/${PERM_MAX_HITS} hits = ${Math.round(pct * 100)}% ATK)`);
 
     if (entity.hasHealth.hp <= 0) toKill.push({ monsterId, sourceId: effect.sourceId, damage });

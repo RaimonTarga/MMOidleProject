@@ -16,7 +16,7 @@ export interface IntentMap {
   teleportToNode: string;
   leaveTestRoom: undefined;
   resetProgress: undefined;
-  refreshRecipes: undefined;
+  renameCharacter: string;
   equipPhaseTester: undefined;
   tacticalView: undefined;
   joinParty: string;

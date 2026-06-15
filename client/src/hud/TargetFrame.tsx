@@ -1,7 +1,17 @@
 import { useEffect, useRef, useState } from 'react';
 import { useAtomValue } from 'jotai';
-import { targetFrameAtom, zoneBossAtom, type TargetFrameData } from './atoms';
+import { dotElementForPlayer } from '@mmo-idle/shared';
+import { targetFrameAtom, zoneBossAtom, combatArchetypeAtom, passivesAtom, selectedSubVariantAtom, type TargetFrameData } from './atoms';
 import { statusMeta, bossEffectMeta } from './targetStatusMeta';
+
+// The base DoT stack ('dot') tile should reflect YOUR chosen element instead of a
+// fixed green — green (poison/light), red (fire/balanced), light-blue (frost/heavy).
+const DOT_ELEMENT_COLOR: Record<string, string> = {
+  poison: '#7ac74f',
+  fire:   '#ff5a2c',
+  frost:  '#6fd0ff',
+  doom:   '#9d4dff',
+};
 import { useHoverTooltip } from './stat/tooltip';
 import './targetFrame.css';
 
@@ -43,7 +53,7 @@ function StatusTile({ label, color, stacks, remainingMs, totalMs }: Omit<TileDat
           />
         )}
         {durationPct < 0 && !permanent && secs && <span className="tf-tile__secs">{secs}</span>}
-        {permanent && <span className="tf-tile__secs">∞</span>}
+        {permanent && stacks <= 1 && <span className="tf-tile__secs">∞</span>}
         {stacks > 1 && <span className="tf-tile__stacks">{stacks}</span>}
       </div>
       <span className="tf-tile__label" style={{ color }}>{label}</span>
@@ -55,6 +65,9 @@ function StatusTile({ label, color, stacks, remainingMs, totalMs }: Omit<TileDat
 export function TargetFrame() {
   const live = useAtomValue(targetFrameAtom);
   const boss = useAtomValue(zoneBossAtom);
+  const combatArchetype = useAtomValue(combatArchetypeAtom);
+  const passives = useAtomValue(passivesAtom);
+  const subVariant = useAtomValue(selectedSubVariantAtom);
   const [shown, setShown] = useState<TargetFrameData | null>(null);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -75,14 +88,23 @@ export function TargetFrame() {
   const hpColor = hpPct > 50 ? '#44ee44' : hpPct > 25 ? '#eeaa22' : '#ee3322';
   const stale = !live; // lingering after death/clear
 
+  // Local player's DoT element drives the base 'dot' tile color.
+  const dotColor = combatArchetype === 'dot'
+    ? DOT_ELEMENT_COLOR[dotElementForPlayer(passives, subVariant)]
+    : undefined;
+
   const tiles: TileData[] = [
-    ...shown.statuses.map((s) => ({
-      key: `s-${s.id}`,
-      ...statusMeta(s.id),
-      stacks: s.stacks,
-      remainingMs: s.remainingMs,
-      totalMs: s.totalMs,
-    })),
+    ...shown.statuses.map((s) => {
+      const meta = statusMeta(s.id);
+      return {
+        key: `s-${s.id}`,
+        ...meta,
+        color: s.id === 'dot' && dotColor ? dotColor : meta.color,
+        stacks: s.stacks,
+        remainingMs: s.remainingMs,
+        totalMs: s.totalMs,
+      };
+    }),
     ...(shown.isBoss
       ? shown.bossEffects.map((b) => ({
           key: `b-${b}`,

@@ -1,4 +1,5 @@
 import { useAtomValue } from 'jotai';
+import { resolveEmpoweredMultiplier } from '@mmo-idle/shared';
 import { BuffBar, CadenceTimeline, DefensePassivesSection, MobilityPassivesSection, StatRow, SummonSlotBar } from './components';
 import { useHoverTooltip } from './tooltip';
 import { STAT_HELP } from './statHelp';
@@ -12,15 +13,18 @@ import {
   cadenceCountAtom,
   cadenceEmpoweredArmedAtom,
   cadenceThresholdAtom,
+  channelingPctAtom,
   combatArchetypeAtom,
   damageReductionAtom,
   energyCountAtom,
+  energyMaxAtom,
   empoweredReadyAtom,
   equipmentAtom,
   dodgeRateAtom,
   evadeMitigationAtom,
   executionCooldownPctAtom,
   executionReadyAtom,
+  isChannelingAtom,
   flashShiftPctAtom,
   flashSpeedBonusPctAtom,
   heatPctAtom,
@@ -29,6 +33,7 @@ import {
   incomingDotAtom,
   laserOverheatedAtom,
   maxHpAtom,
+  onHitDamageAtom,
   passivesAtom,
   pendingHealAtom,
   platingAtom,
@@ -46,6 +51,9 @@ import {
   targetDotStacksAtom,
 } from '../atoms';
 
+// Freezing Cold: chill stacks needed to trigger the freeze (server CHILL_MAX).
+const CHILL_MAX_STACKS = 9;
+
 export function StatPanel() {
   const hpTip = useHoverTooltip(STAT_HELP.hp);
   const playerId = useAtomValue(playerIdAtom);
@@ -57,6 +65,7 @@ export function StatPanel() {
   const incomingDot = useAtomValue(incomingDotAtom);
   const pendingHeal = useAtomValue(pendingHealAtom);
   const attack = useAtomValue(attackAtom);
+  const onHitDamage = useAtomValue(onHitDamageAtom);
   const plating = useAtomValue(platingAtom);
   const damageReduction = useAtomValue(damageReductionAtom);
   const attackCooldown = useAtomValue(attackCooldownAtom);
@@ -76,8 +85,11 @@ export function StatPanel() {
   const cadenceEmpoweredArmed = useAtomValue(cadenceEmpoweredArmedAtom);
   const executionReady = useAtomValue(executionReadyAtom);
   const executionCooldownPct = useAtomValue(executionCooldownPctAtom);
+  const isChanneling = useAtomValue(isChannelingAtom);
+  const channelingPct = useAtomValue(channelingPctAtom);
   const empoweredReady = useAtomValue(empoweredReadyAtom);
   const energyCount = useAtomValue(energyCountAtom);
+  const energyMax = useAtomValue(energyMaxAtom);
   const attackTargetId = useAtomValue(attackTargetIdAtom);
   const targetDotStacks = useAtomValue(targetDotStacksAtom);
   const targetChillStacks = useAtomValue(targetChillStacksAtom);
@@ -98,6 +110,7 @@ export function StatPanel() {
       incomingDot,
       pendingHeal,
       attack,
+      onHitDamage,
       plating,
       damageReduction,
       attackCooldown,
@@ -117,8 +130,11 @@ export function StatPanel() {
       cadenceEmpoweredArmed,
       executionReady,
       executionCooldownPct,
+      isChanneling,
+      channelingPct,
       empoweredReady,
       energyCount,
+      energyMax,
       attackTargetId,
       targetDotStacks,
       targetChillStacks,
@@ -146,7 +162,18 @@ export function StatPanel() {
   const healPct     = player && maxHpVal > 0 ? Math.min(100 - hpPct, (player.pendingHeal / maxHpVal) * 100) : 0;
   const cdSec       = player ? (player.attackCooldown / 1000).toFixed(2) : '—';
   const aps         = player ? (1000 / player.attackCooldown).toFixed(2) : '—';
-  const dps         = player ? (player.attack * (1000 / player.attackCooldown)).toFixed(1) : '—';
+  const dps         = player ? ((player.attack + player.onHitDamage) * (1000 / player.attackCooldown)).toFixed(1) : '—';
+  const empMult     = player ? resolveEmpoweredMultiplier(player.passives, player.combatArchetype) : null;
+  const empMultTip  = empMult ? (
+    <>
+      <div>The damage multiplier applied to your empowered attack (cadence finisher / cooldown execution / energy discharge).</div>
+      <div style={{ marginTop: 6 }}>Base ×{empMult.base.toFixed(2)} (frame + spec)</div>
+      {empMult.archetypeAdd !== 0 && <div>+{empMult.archetypeAdd.toFixed(2)} spec bonus</div>}
+      {empMult.sharedAdd !== 0 && <div>+{empMult.sharedAdd.toFixed(2)} from gear/passives</div>}
+      {empMult.multBonus !== 0 && <div>×{(1 + empMult.multBonus).toFixed(2)} weapon bonus</div>}
+      <div style={{ marginTop: 6 }}>= ×{empMult.effective.toFixed(2)} effective</div>
+    </>
+  ) : undefined;
   const isFlash     = player ? (player.passives['energy.flash'] ?? 0) > 0 : false;
   const flashShiftLabel = player && player.flashShiftPct >= 50 ? 'Red Shift' : 'Blue Shift';
   const flashShiftColor = player
@@ -199,7 +226,13 @@ export function StatPanel() {
       {/* Core combat stats */}
       <div className="stat-section">
         <StatRow label="Attack"     value={player?.attack    ?? '—'} help={STAT_HELP.attack} />
+        {player && player.onHitDamage > 0 && (
+          <StatRow label="On-Hit Dmg" value={`+${player.onHitDamage}`} help={STAT_HELP.onHitDamage} />
+        )}
         <StatRow label="DPS"        value={dps} help={STAT_HELP.dps} />
+        {empMult && (
+          <StatRow label="Empowered" value={`×${empMult.effective.toFixed(2)}`} help={empMultTip} />
+        )}
         <StatRow label="Atk Speed"  value={player ? `${aps} APS (${cdSec}s)` : '—'} help={STAT_HELP.atkSpeed} />
         <StatRow label="Plating"    value={player?.plating   ?? '—'} help={STAT_HELP.plating} />
         {player && player.damageReduction > 0 && (
@@ -266,22 +299,44 @@ export function StatPanel() {
         </div>
       )}
 
-      {/* Execution bar — cooldown archetype */}
+      {/* Execution bar — cooldown archetype. While the Devout Priest channels, the
+          same bar drains to show the beam's leftover duration instead of the
+          execution cooldown. */}
       {player?.combatArchetype === 'cooldown' && (
-        <div className="stat-section">
-          <div className="stat-row">
-            <span className="stat-label">Execution</span>
-            <span className={`stat-value${player.executionReady ? ' mech-label--ready' : ''}`}>
-              {player.executionReady ? 'READY' : `${player.executionCooldownPct}%`}
-            </span>
+        player.isChanneling ? (() => {
+          const remainingPct = Math.max(0, 100 - player.channelingPct);
+          return (
+            <div className="stat-section">
+              <div className="stat-row">
+                <span className="stat-label">Channel</span>
+                <span className="stat-value mech-label--empowered">
+                  BEAM {(remainingPct / 100 * 3).toFixed(1)}s
+                </span>
+              </div>
+              <div className="mech-bar-track">
+                <div
+                  className="mech-bar-fill mech-bar-fill--cooldown mech-bar-fill--ready"
+                  style={{ width: `${remainingPct}%` }}
+                />
+              </div>
+            </div>
+          );
+        })() : (
+          <div className="stat-section">
+            <div className="stat-row">
+              <span className="stat-label">Execution</span>
+              <span className={`stat-value${player.executionReady ? ' mech-label--ready' : ''}`}>
+                {player.executionReady ? 'READY' : `${player.executionCooldownPct}%`}
+              </span>
+            </div>
+            <div className="mech-bar-track">
+              <div
+                className={`mech-bar-fill mech-bar-fill--cooldown${player.executionReady ? ' mech-bar-fill--ready' : ''}`}
+                style={{ width: `${player.executionCooldownPct}%` }}
+              />
+            </div>
           </div>
-          <div className="mech-bar-track">
-            <div
-              className={`mech-bar-fill mech-bar-fill--cooldown${player.executionReady ? ' mech-bar-fill--ready' : ''}`}
-              style={{ width: `${player.executionCooldownPct}%` }}
-            />
-          </div>
-        </div>
+        )
       )}
 
       {/* Energy bar — energy archetype */}
@@ -294,8 +349,8 @@ export function StatPanel() {
               style={isFlash ? { color: flashShiftColor } : undefined}
             >
               {isFlash
-                ? `${Math.round(player.energyCount)} / 100`
-                : player.empoweredReady ? 'EMPOWERED' : `${player.energyCount} / 100`}
+                ? `${Math.round(player.energyCount)} / ${player.energyMax}`
+                : player.empoweredReady ? 'EMPOWERED' : `${Math.round(player.energyCount)} / ${player.energyMax}`}
             </span>
           </div>
           <div className="mech-bar-track">
@@ -307,7 +362,7 @@ export function StatPanel() {
                   background: 'linear-gradient(90deg, #4488ff 0%, #aa88ff 50%, #ff4433 100%)',
                   boxShadow: `0 0 ${6 + player.flashSpeedBonusPct / 2}px ${flashShiftColor}`,
                 }
-                : { width: `${player.empoweredReady ? 100 : player.energyCount}%` }}
+                : { width: `${player.empoweredReady ? 100 : (player.energyMax > 0 ? (player.energyCount / player.energyMax) * 100 : 0)}%` }}
             />
           </div>
         </div>
@@ -327,7 +382,7 @@ export function StatPanel() {
           || (p['dot.glacial-fracture'] ?? 0) > 0;
         const path = isPoison ? 'poison' : isFire ? 'fire' : isFrost ? 'frost' : 'default';
 
-        const dotMax = (p['dot.poison-explosion'] ?? 0) > 0 ? 20
+        const dotMax = (p['dot.poison-explosion'] ?? 0) > 0 ? 10
           : (p['dot.eternal-doom'] ?? 0) > 0 ? 50
           : (p['dot.conflagration'] ?? 0) > 0 ? 8
           : (p['dot.permafrost'] ?? 0) > 0 ? 1
@@ -368,24 +423,24 @@ export function StatPanel() {
               </div>
             )}
 
-            {/* Frost path — chill stacks + frozen indicator */}
+            {/* Frost path — chill stacks + frozen indicator (9 stacks → freeze) */}
             {isFrost && (p['dot.freezing-cold'] ?? 0) > 0 && (
               <>
                 <div className="stat-row" style={{ marginTop: 6 }}>
                   <span className="stat-label">Chill</span>
                   <span className="stat-value">
-                    {player.attackTargetId ? `${player.targetChillStacks ?? 0} / 3` : '—'}
+                    {player.attackTargetId ? `${player.targetChillStacks ?? 0} / ${CHILL_MAX_STACKS}` : '—'}
                   </span>
                 </div>
                 <div className="chill-pips">
-                  {[0, 1, 2].map(i => (
+                  {Array.from({ length: CHILL_MAX_STACKS }, (_, i) => (
                     <div
                       key={i}
                       className={`chill-pip${i < (player.targetChillStacks ?? 0) ? ' chill-pip--active' : ''}`}
                     />
                   ))}
                 </div>
-                {(player.targetChillStacks ?? 0) >= 3 && (
+                {(player.targetChillStacks ?? 0) >= CHILL_MAX_STACKS && (
                   <div className="chill-frozen-label">— FROZEN —</div>
                 )}
               </>

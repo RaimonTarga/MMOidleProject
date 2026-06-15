@@ -18,6 +18,7 @@ import {
   maxHpAtom,
   passivesAtom,
   playerIdAtom,
+  playerNameAtom,
   playerNodeIdAtom,
   debugPanelOpenAtom,
   selectedRangeAtom,
@@ -145,6 +146,7 @@ function DebugPanelContent() {
   const [collapsed, setCollapsed] = useState(new Set<string>());
   const [confirmReset, setConfirmReset] = useState(false);
   const playerId = useAtomValue(playerIdAtom);
+  const playerName = useAtomValue(playerNameAtom);
   const nodeId = useAtomValue(playerNodeIdAtom);
   const cadenceCount = useAtomValue(cadenceCountAtom);
   const cadenceThreshold = useAtomValue(cadenceThresholdAtom);
@@ -262,9 +264,12 @@ function DebugPanelContent() {
       <div className="debug-section">
         <button
           className="debug-btn"
-          onClick={() => hudBus.requestRefreshRecipes()}
+          onClick={() => {
+            const next = window.prompt('Rename character to:', playerName ?? '');
+            if (next !== null && next.trim()) hudBus.requestRenameCharacter(next.trim());
+          }}
         >
-          REFRESH RECIPES
+          RENAME CHARACTER
         </button>
       </div>
 

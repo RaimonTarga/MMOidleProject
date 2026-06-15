@@ -1,5 +1,6 @@
 import type { EssenceType } from '../../items';
 import type { Vec2 } from '../../systems/spatial';
+import type { DamageElement } from '../../systems/dotElements';
 
 // ── Boss script types ─────────────────────────────────────────────────────────
 
@@ -22,6 +23,24 @@ import type { Vec2 } from '../../systems/spatial';
  *               a RepeatingAction to slam every N seconds. `damageMult` scales off
  *               the boss's current attack (default 1.0).
  *
+ *   apply-shield   — gain a runtime enemyShield override mid-fight (same mechanic as
+ *               the static MonsterDefinition.enemyShield). The barrier comes up on the
+ *               next incoming hit. Permanent until shed-defense / boss death.
+ *   apply-soft-cap — gain a runtime enemySoftCap override mid-fight (same mechanic as
+ *               the static MonsterDefinition.enemySoftCap). Permanent until shed.
+ *   shed-defense   — drop ALL active defenses: clears the runtime shield/soft-cap
+ *               overrides AND suppresses any static enemyShield/enemySoftCap, then
+ *               reduces current plating to ~20%. The desperation finale. Pair with an
+ *               explicit slam in the same phase for the transition impact.
+ *   modify-ramp-debuff — raise the caps on this boss's rampDebuff. Patches live
+ *               frost-ramp stacks on players in-node and all future applications.
+ *   spawn-adds     — spawn a burst of trash adds near the boss (same as summon) and
+ *               track them so they are despawned when the boss dies.
+ *
+ * `stat-buff` supports `evasion` in addition to the entity stats: it multiplies the
+ * boss's effective per-hit dodge fraction via a runtime override (mult 0 = stop
+ * dodging entirely).
+ *
  * Omitting durationMs (or undefined) means the effect lasts until the boss dies.
  */
 export type BossAction =
@@ -29,8 +48,13 @@ export type BossAction =
   | { type: 'regen';     hpPctPerSec: number;                 durationMs?: number }
   | { type: 'shield';    drAdd: number;   durationMs: number }
   | { type: 'summon';    monsterTypeId: string; count: number; offsetRange?: number }
-  | { type: 'stat-buff'; stat: 'attack' | 'speed' | 'plating' | 'damageReduction'; mult: number; durationMs?: number }
+  | { type: 'stat-buff'; stat: 'attack' | 'speed' | 'plating' | 'damageReduction' | 'evasion'; mult: number; durationMs?: number }
   | { type: 'slam';      radius: number; damageMult?: number }
+  | { type: 'apply-shield';   shieldPct: number; intervalMs: number; durationMs: number }
+  | { type: 'apply-soft-cap'; capPct: number; capMult: number }
+  | { type: 'shed-defense' }
+  | { type: 'modify-ramp-debuff'; moveSlowMaxPct: number; atkSlowMaxPct: number }
+  | { type: 'spawn-adds'; monsterTypeId: string; count: number; offsetRange?: number }
   | {
       type: 'morph';
       isRanged?: boolean;
@@ -215,6 +239,14 @@ export interface MonsterDefinition {
     maxStacks: number;
     tickIntervalMs: number;
     durationMs?: number;
+    /** DoT element for damage-number flavor (color/glyph). Defaults to poison. */
+    element?: DamageElement;
+    /**
+     * Exception flag: when true this DoT's ticks ignore the player's shields and
+     * hit HP directly. The DEFAULT (omitted/false) is that DoT ticks are absorbed
+     * by shields like any other damage — bypass should stay rare and deliberate.
+     */
+    bypassShield?: boolean;
   };
   /**
    * If set, this monster applies a movement slow (or root when speedMult = 0) to
@@ -264,11 +296,47 @@ export interface MonsterDefinition {
     stackDurationMs: number;
   };
   /**
-   * Deterministic evasion: this monster dodges at a rate of 1/N incoming player
-   * hits (a fractional accumulator, not RNG). Minimum useful value is 5; lower
-   * values should be ignored by combat logic.
+   * Deterministic cadence finisher — port of the player cadence empowered attack.
+   * Every `everyNAttacks` landed basic attacks, that attack's outgoing damage is
+   * multiplied by `multiplier`. Counter-based (no RNG); the boosted hit resolves
+   * through the player's full defensive pipeline (damage-cap, shields, plating, DR)
+   * exactly like a player empowered attack — these spikes are what the player's
+   * damage-cap armor is meant to answer.
    */
-  evadeEvery?: number;
+  cadenceFinisher?: { everyNAttacks: number; multiplier: number };
+  /**
+   * Deterministic cooldown finisher — port of the player cooldown empowered attack.
+   * The timer starts on combat entry; once `cooldownMs` elapses the monster's NEXT
+   * landed attack is multiplied by `multiplier` and the timer resets. If the monster
+   * cannot attack the instant the timer expires, the empowered state waits for the
+   * next actual attack (it is evaluated at attack time, never wasted on an idle tick).
+   * Resolves through the player's full defensive pipeline.
+   */
+  empoweredCooldown?: { cooldownMs: number; multiplier: number };
+  /**
+   * Periodic absorb barrier on the MONSTER — mirror of the player periodic shield
+   * (defense.shield-pct). Every `intervalMs` the monster gains a shield equal to
+   * `shieldPct × maxHp` lasting `durationMs`; it absorbs incoming player direct-hit
+   * damage before the monster's HP (same scope as the player shield, which likewise
+   * only absorbs combat-pipeline hits). Rewards burst (one big hit pops it) and
+   * punishes chip (small hits waste themselves against it). Timer is deterministic.
+   */
+  enemyShield?: { shieldPct: number; intervalMs: number; durationMs: number };
+  /**
+   * Soft damage cap protecting the MONSTER — mirror of the player damage-cap
+   * (defense.max-hit-pct / max-hit-mult). When a single player hit exceeds
+   * `capPct × maxHp`, the portion above the threshold is scaled by `capMult`
+   * (threshold + excess × capMult). Partial only — never reduces a hit to zero.
+   * Punishes slow single-big-hit builds; rewards fast consistent damage and pierce.
+   */
+  enemySoftCap?: { capPct: number; capMult: number };
+  /**
+   * Deterministic evasion: per-hit dodge chance as a fraction (0–1), the same
+   * notation as the player `evasion` stat. The value is added to a fractional
+   * accumulator each incoming player hit and the hit is dodged when it crosses
+   * 1.0 (e.g. 0.2 ⇒ dodges every 5th hit, 0.25 ⇒ every 4th). Not RNG.
+   */
+  evasion?: number;
   /**
    * Fraction of damage avoided on one of this monster's dodges (0..1). Defaults
    * to GAME_CONFIG.EVADE_MITIGATION_BASE (0.5). Set to 1 to fully negate the hit

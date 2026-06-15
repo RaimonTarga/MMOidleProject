@@ -1,7 +1,9 @@
 import { registerCombatListener } from '../../../combat/engine/combatPipeline';
+import { registerEmpoweredMultiplier, setEmpoweredAttack } from '../../../combat/engine/empoweredAttacks';
 import type { World } from '../../../../world/World';
 import { GAME_CONFIG, resetCounter } from '@mmo-idle/shared';
 import { initReloadT3 } from './t3';
+import { DEFAULT_EXPLODING_CLIP_MULT } from './t3/core/constants';
 import {
   completeReload,
   emitReloadStart,
@@ -53,6 +55,17 @@ export function updateReloadArchetype(world: World, dt: number, now: number): vo
 }
 
 export function initReloadArchetype(): void {
+  // Register the empowered multiplier FIRST so it runs before the T3 onHit hooks.
+  // Only Duelist (exploding-clip) arms an empowered attack — on the clip's last
+  // bullet (see beforeAttack below) — so this is inert for every other reload spec.
+  // Reads the multiplier from the node (reload.empowered-mult) and layers the
+  // universal empowered bonuses (shared.empowered-mult-add, weapon.empowered-mult-bonus).
+  registerEmpoweredMultiplier(DEFAULT_EXPLODING_CLIP_MULT, {
+    attackerType:  'player',
+    attackerSlice: 'usesReload',
+    passiveKey:    'reload.empowered-mult',
+  });
+
   initReloadT3();
   registerReloadAfterHitListener();
 
@@ -61,6 +74,10 @@ export function initReloadArchetype(): void {
 
     const entity = ctx.attacker;
     if (!entity?.usesReload) return;
+
+    // If an earlier gate (laser/snipe) already cancelled this attack, don't run the
+    // ammo/plating bookkeeping — otherwise a cancelled shot still drains the clip.
+    if (ctx.cancelled) return;
 
     ctx.platingMult = 0.5;
 
@@ -75,6 +92,10 @@ export function initReloadArchetype(): void {
       ctx.cancelled = true;
       return;
     }
+
+    // Chaotic miss: the shot whiffs but doesn't consume ammo or start a reload.
+    // The cancel guards above already ran, so a miss can't fire on an empty clip.
+    if (ctx.metadata['chaoticMiss']) return;
 
     if ((passives['reload.blunderbuss'] ?? 0) > 0 && !isBlunderbussPellet) {
       const pelletCount = reload.ammo;
@@ -94,6 +115,10 @@ export function initReloadArchetype(): void {
       ctx.metadata['blunderbussRemaining'] = pelletCount - 1;
       ctx.metadata['blunderbussLastPellet'] = pelletCount === 1;
       ctx.metadata['blunderbussVolleyTrigger'] = true;
+      // Aesthetic-only crits: every pellet gets the yellow "!" styling (and yellow
+      // tracer), with no AoE splash. Suppress keeps it cosmetic, not mechanical.
+      ctx.metadata['empoweredAttack'] = true;
+      ctx.metadata['suppressEmpoweredAoe'] = true;
       if (entity.tracksCombat) {
         resetCounter(entity.tracksCombat, BLUNDERBUSS_VOLLEY_HITS_COUNTER);
       }
@@ -111,6 +136,12 @@ export function initReloadArchetype(): void {
     reload.ammo -= 1;
 
     if (reload.ammo === 0) {
+      // Duelist: the bullet that empties the clip fires as an empowered attack.
+      // Arm it here (beforeAttack) so the empowered multiplier consumes it at onHit
+      // — this also drives the empowered AoE splash and the yellow "!" damage style.
+      if ((passives['reload.exploding-clip'] ?? 0) > 0) {
+        setEmpoweredAttack(world, entity);
+      }
       const reloadTimeMs = resolveReloadTimeMs(entity);
       startReloadTimer(world, entity, reloadTimeMs);
       ctx.metadata['pendingReloadStart'] = true;

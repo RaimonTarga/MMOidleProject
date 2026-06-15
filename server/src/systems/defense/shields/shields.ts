@@ -89,10 +89,36 @@ export function updateShields(world: World, dt: number): void {
 }
 
 /**
- * Register the shield-absorption listener on `onDamageTaken`. Walks the
- * defender's shield stack (oldest first) and drains incoming damage off each
- * shield's `amount` field until either damage is exhausted or all shields are
- * dry. Shields whose `amount` reaches zero are filtered out at the end.
+ * Drain `damage` off the player's shield stack (oldest first), mutating each
+ * shield's `amount` and dropping emptied shields. Returns the post-absorb damage
+ * and the amount absorbed. Shared by the direct-hit absorb listener and the DoT
+ * tick path so both deplete shields identically. The `holdsShields` component is
+ * left in place when fully drained (empty array) — `updateShields` detaches it on
+ * the next tick.
+ */
+export function drainPlayerShields(
+  player: PlayerEntity,
+  damage: number,
+): { damage: number; absorbed: number } {
+  const shieldComponent = player.holdsShields;
+  if (!shieldComponent || damage <= 0) return { damage, absorbed: 0 };
+
+  let remaining = damage;
+  let absorbed = 0;
+  for (const shield of shieldComponent.shields) {
+    if (remaining <= 0) break;
+    const block = Math.min(shield.amount, remaining);
+    shield.amount -= block;
+    remaining -= block;
+    absorbed += block;
+  }
+  shieldComponent.shields = shieldComponent.shields.filter((s) => s.amount > 0);
+  return { damage: Math.max(0, remaining), absorbed };
+}
+
+/**
+ * Register the shield-absorption listener on `onDamageTaken`. Drains incoming
+ * direct-hit damage off the defender's shield stack before it reaches HP.
  */
 export function registerShieldAbsorb(): void {
   registerCombatListener("onDamageTaken", (ctx, _world) => {
@@ -100,22 +126,20 @@ export function registerShieldAbsorb(): void {
     if (ctx.damage <= 0) return;
 
     const player = ctx.defender;
-    const shieldComponent = player.holdsShields;
-    if (!shieldComponent) return;
+    // Snapshot shields about to drain so we can detect ones that fully break
+    // (for defense.shield-break-* heals; consumed in registerShieldBreakHeal).
+    const snapshot = player.holdsShields
+      ? player.holdsShields.shields.map((s) => ({ s, before: s.amount, maxAmount: s.maxAmount }))
+      : [];
 
-    let remaining = ctx.damage;
-    let absorbed = 0;
-    for (const shield of shieldComponent.shields) {
-      if (remaining <= 0) break;
-      const block = Math.min(shield.amount, remaining);
-      shield.amount -= block;
-      remaining -= block;
-      absorbed += block;
+    const result = drainPlayerShields(player, ctx.damage);
+    ctx.metadata["shieldAbsorbed"] = result.absorbed;
+    ctx.damage = result.damage;
+
+    let brokenMax = 0;
+    for (const { s, before, maxAmount } of snapshot) {
+      if (before > 0 && s.amount <= 0) brokenMax += maxAmount;
     }
-    shieldComponent.shields = shieldComponent.shields.filter(
-      (s) => s.amount > 0,
-    );
-    ctx.metadata["shieldAbsorbed"] = absorbed;
-    ctx.damage = Math.max(0, remaining);
+    if (brokenMax > 0) ctx.metadata["shieldBrokenMax"] = brokenMax;
   });
 }

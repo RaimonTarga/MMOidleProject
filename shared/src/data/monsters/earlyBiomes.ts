@@ -260,7 +260,7 @@ export const earlyBiomeMonsterEntries = [
     rewards: { essence: 26, essenceType: 'purple', level: 1, biomeXp: 75 },
     ai: { wanderRadius: 170, leashRange: 540, idleMinMs: 2000, idleMaxMs: 6000 },
     dotEffect: { damagePerStack: 6, maxStacks: 4, tickIntervalMs: 1000, durationMs: 2800 },
-    evadeEvery: 5,
+    evasion: 0.2,
   }],
 
   // ── CAVE T2 — three distinct ELITE shapes: fast/dodgy, bruiser, ranged ──
@@ -271,7 +271,7 @@ export const earlyBiomeMonsterEntries = [
     behavior: 'melee', attackStyle: 'poison', biome: 'cave',
     rewards: { essence: 30, essenceType: 'red', level: 1, biomeXp: 85 },
     ai: { wanderRadius: 260, leashRange: 680, idleMinMs: 800, idleMaxMs: 3200 },
-    evadeEvery: 5,
+    evasion: 0.2,
     dotEffect: { damagePerStack: 6, maxStacks: 3, tickIntervalMs: 1000, durationMs: 2000 },
   }],
 

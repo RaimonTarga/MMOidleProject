@@ -1,5 +1,5 @@
 import { registerCombatListener } from '../../../combat/engine/combatPipeline';
-import { setEmpoweredAttack, registerEmpoweredMultiplier } from '../../../combat/engine/empoweredAttacks';
+import { setEmpoweredAttack, registerEmpoweredMultiplier, isEmpoweredAttack } from '../../../combat/engine/empoweredAttacks';
 import { initEnergyT3 } from './t3';
 import type { World } from '../../../../world/World';
 
@@ -56,6 +56,10 @@ export function initEnergyArchetype(): void {
 
     if (ctx.metadata['empoweredAttack']) return; // empowered hits never generate energy
     if (ctx.metadata['energyHandled']) return;   // T3 mechanic already handled this hit
+    // Missed discharge: the charge is still armed (the multiplier skipped it on the
+    // miss), so don't generate more energy — the empowered attack is preserved for
+    // the next real hit. Normal missed hits (no charge armed) still build energy.
+    if (isEmpoweredAttack(entity)) return;
 
     const energy  = entity.usesEnergy;
 

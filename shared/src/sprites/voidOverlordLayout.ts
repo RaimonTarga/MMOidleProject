@@ -17,7 +17,7 @@ const ABYSSAL_TITAN_FRAMES = [0, 1, 2, 3] as const;
 
 export const VOID_OVERLORD_MINION_POOLS: Record<string, readonly number[]> = {
   'abyssal-titan': ABYSSAL_TITAN_FRAMES,
-  'void-titan-warden': ABYSSAL_TITAN_FRAMES,
+  'elder-trench-serpent-warden': ABYSSAL_TITAN_FRAMES,
   'void-horror': Array.from(
     { length: VOID_OVERLORD_MINION_COLS * VOID_OVERLORD_MINION_ROWS - 4 },
     (_, i) => i + 4,
@@ -30,7 +30,7 @@ export const VOID_OVERLORD_DISPLAY: Record<
 > = {
   'void-overlord': { displayW: 400, displayH: 400, barOffsetY: 180, visualOffsetY: -100 },
   'abyssal-titan': { displayW: 72, displayH: 72, barOffsetY: 44 },
-  'void-titan-warden': { displayW: 144, displayH: 144, barOffsetY: 88 },
+  'elder-trench-serpent-warden': { displayW: 144, displayH: 144, barOffsetY: 88 },
   'void-horror': { displayW: 60, displayH: 60, barOffsetY: 38 },
 };
 
@@ -38,7 +38,7 @@ const VOID_OVERLORD_SHEET_TYPES = new Set([
   'void-overlord',
   'void-horror',
   'abyssal-titan',
-  'void-titan-warden',
+  'elder-trench-serpent-warden',
 ]);
 
 export function isVoidOverlordSheetMonster(monsterTypeId: string): boolean {

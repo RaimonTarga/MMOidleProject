@@ -63,6 +63,9 @@ import {
 import { maybeNotifyDeath } from "../../notifications/deathNotification";
 import { initParticleTextures, initEffectFrames } from "../../fx/particles";
 import { updateLaserBeam } from "../../fx/laser";
+import { updateHolyBeam } from "../../fx/holyBeam";
+import { updateCannonCharge } from "../../fx/cannonFx";
+import { updatePlayerAuras } from "../../fx/aura";
 import { initMistPostFx, updateMistPostFx } from "../../fx/mistPostFx";
 import { updateAltarGlow } from "../../fx/altarGlow";
 import { updateAltarPrompt } from "../../render/altarPrompt";
@@ -328,6 +331,9 @@ export function updateGameScene(scene: GameScene, delta: number): void {
     updateEffectOverlays(scene.state, scene, dt);
     updateMovementEffects(scene.state, scene);
     updateLaserBeam(scene.state, scene);
+    updateHolyBeam(scene.state, scene);
+    updateCannonCharge(scene.state, scene);
+    updatePlayerAuras(scene.state, scene);
     updateVoidOverlordRespawn(scene.state, scene);
     updateMistPostFx(scene, isVoidFloodActive(scene), scene.time.now, dt);
     updateAltarGlow(scene, dt);

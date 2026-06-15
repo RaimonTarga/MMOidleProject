@@ -1,9 +1,11 @@
 import { registerCombatListener } from '../../../../../combat/engine/combatPipeline';
 import { isEmpoweredAttack } from '../../../../../combat/engine/empoweredAttacks';
+import { evadeBlocksDebuffs } from '../../../../../defense/mitigation/evasion';
 import {
   applyStatusEffect, removeStatusEffect, getStatusEffect, getTotalStacks,
 } from '@mmo-idle/shared';
-import { hasPassive, energyPercent } from '../core/helpers';
+import { upkeepStacks, upkeepOnHitBonus, UPKEEP_UNLOCK_TIER } from '@mmo-idle/shared';
+import { hasPassive, energyPercent, chargeStateMult } from '../core/helpers';
 import {
   FLASH_MAX_DAMAGE_SHIFT_PCT,
   MV_THRESHOLD, MV_ENERGY_COST, MV_FLAT_DAMAGE,
@@ -11,6 +13,11 @@ import {
   AC_CHARGE_DMG_MULT,
   HE_LOW_THRESHOLD, HE_HIGH_THRESHOLD, HE_DMG_MULT,
   CI_TAG_FX, CI_TAG_MS,
+  ENERGY_OVERDRIVE_ATK_PCT,
+  BINARY_DISCHARGE_ATK_BONUS, BINARY_CHARGE_ONHIT_BONUS,
+  BINARY_CHARGE_ONHIT_PER_TIER, BINARY_UNLOCK_TIER,
+  AWAKENED_MULT,
+  STORM_FX, ENDLESS_STORM_EXTEND_MS, ENDLESS_STORM_MAX_MS,
 } from '../core/constants';
 
 /**
@@ -80,19 +87,79 @@ export function registerNormalHit(): void {
 
     if (hasPassive(player, 'energy.cascading-induction') && ctx.defenderType === 'monster') {
       ctx.damage = 1;
-      const monsterState = ctx.defender.tracksCombat;
-      applyStatusEffect(monsterState, {
-        id: CI_TAG_FX, instanced: false,
-        remainingMs: CI_TAG_MS, refreshable: true,
-        sourceId: player.isPlayer.id, data: {},
-      });
-      console.log(`[CascadeInduct] ${player.isPlayer.id}: tag planted -> ${getTotalStacks(monsterState, CI_TAG_FX)} on ${ctx.defender.isMonster.id}`);
+      // The damage-to-1 is the mechanic; only the induction tag is the debuff, so
+      // an evaded hit keeps damage=1 but plants no tag.
+      if (!evadeBlocksDebuffs(ctx)) {
+        const monsterState = ctx.defender.tracksCombat;
+        applyStatusEffect(monsterState, {
+          id: CI_TAG_FX, instanced: false,
+          remainingMs: CI_TAG_MS, refreshable: true,
+          sourceId: player.isPlayer.id, data: {},
+        });
+        console.log(`[CascadeInduct] ${player.isPlayer.id}: tag planted -> ${getTotalStacks(monsterState, CI_TAG_FX)} on ${ctx.defender.isMonster.id}`);
+      }
     }
 
     if (hasPassive(player, 'energy.superconducting-mass')) {
       ctx.damage = 0;
       energy.smChargePool += player.dealsDamage.attack;
       console.log(`[SuperconductM] ${player.isPlayer.id}: +${player.dealsDamage.attack} stored (pool=${energy.smChargePool})`);
+    }
+
+    // ── T4 specs ───────────────────────────────────────────────────────────────
+
+    // Overdrive: +ATK% while the mode is active (energy decaying in the tick).
+    if (hasPassive(player, 'energy.overdrive') && energy.overdriveActive) {
+      ctx.damage = Math.round(ctx.damage * (1 + ENERGY_OVERDRIVE_ATK_PCT));
+      // Aesthetic-only crits while Surge is active: yellow "!" styling, no AoE.
+      ctx.metadata['empoweredAttack'] = true;
+      ctx.metadata['suppressEmpoweredAoe'] = true;
+    }
+
+    // Energy Upkeep (Channeler): ADD flat on-hit damage from upkeep stacks — strictly
+    // on-hit (post-mitigation, no attack scaling), per tier with diminishing returns.
+    if (hasPassive(player, 'energy.upkeep')) {
+      const stacks = upkeepStacks(energy);
+      if (stacks > 0) {
+        const tier = player.tracksProgression?.playerTier ?? UPKEEP_UNLOCK_TIER;
+        ctx.damage += upkeepOnHitBonus(stacks, tier);
+      }
+    }
+
+    // Binary Cycle: Charge State boosts attack damage; Discharge State boosts on-hit.
+    // TODO(engine): the per-state APS swing is not yet applied (needs a buff layer).
+    if (hasPassive(player, 'energy.binary-cycle')) {
+      if (energy.binaryDischargeState) {
+        // Discharge: attack-damage bonus (percentage).
+        ctx.damage = Math.round(ctx.damage * (1 + BINARY_DISCHARGE_ATK_BONUS));
+      } else {
+        // Charge: +on-hit% on existing on-hit AND flat on-hit per tier (shockblade-style).
+        ctx.metadata['onHitDamageMult'] = 1 + BINARY_CHARGE_ONHIT_BONUS;
+        const tierMult = Math.max(1, (player.tracksProgression?.playerTier ?? BINARY_UNLOCK_TIER) - BINARY_UNLOCK_TIER + 1);
+        ctx.damage += BINARY_CHARGE_ONHIT_PER_TIER * tierMult;
+      }
+    }
+
+    // Charge State (Aetherist): attack mult oscillates with energy — 0.5× empty,
+    // 1.0× at half (neutral), 2.0× full. Strongest right before discharge.
+    if (hasPassive(player, 'energy.charge-state')) {
+      ctx.damage = Math.max(1, Math.round(ctx.damage * chargeStateMult(energyPercent(energy))));
+    }
+
+    // Awakened Lightning (Stormbringer): spend a charge from the discharge. These are
+    // REAL empowered attacks — set the flag so empowered-triggered gear + crit styling
+    // + the empowered splash all apply, uniform with the discharge strike.
+    if (hasPassive(player, 'energy.awakened-lightning') && energy.awakenedCharges > 0) {
+      ctx.damage = Math.round(ctx.damage * AWAKENED_MULT);
+      ctx.metadata['empoweredAttack'] = true;
+      energy.awakenedCharges--;
+    }
+
+    // Endless Storm (Tempest): each normal attack extends the storm on the target,
+    // capped — trivial to upkeep even with a slow weapon.
+    if (hasPassive(player, 'energy.endless-storm') && ctx.defenderType === 'monster') {
+      const storm = getStatusEffect(ctx.defender.tracksCombat, STORM_FX);
+      if (storm) storm.remainingMs = Math.min(ENDLESS_STORM_MAX_MS, storm.remainingMs + ENDLESS_STORM_EXTEND_MS);
     }
   });
 }

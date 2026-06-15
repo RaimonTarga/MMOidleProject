@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useAtom, useAtomValue } from "jotai";
+import { UIIcon } from "../ui/UIIcon";
 import { hudBus } from "../hudBus";
 import { SkillTreePanel } from "../ui/SkillTreePanel";
 import { RunesPanel } from "../ui/RunesPanel";
@@ -94,8 +95,10 @@ export function RightSidebar() {
 
         <button
           className={`auto-btn${treeOpen ? " active" : ""}${!treeOpen && skillPoints > 0 ? " auto-btn--has-points" : ""}`}
+          style={{ display: 'flex', alignItems: 'center', gap: 6 }}
           onClick={() => setTreeOpen((v) => !v)}
         >
+          <UIIcon frameName="UI_icons/passives-icon.png" size={18} />
           {treeOpen ? "CLOSE TREE" : "OPEN TREE"}
         </button>
 
@@ -125,8 +128,10 @@ export function RightSidebar() {
         <div className="panel-title">Runes</div>
         <button
           className={`auto-btn${runesOpen ? " active" : ""}`}
+          style={{ display: 'flex', alignItems: 'center', gap: 6 }}
           onClick={() => setRunesOpen((v) => !v)}
         >
+          <UIIcon frameName="UI_icons/runes-icon.png" size={18} />
           {runesOpen ? "CLOSE RUNES" : "OPEN RUNES"}
         </button>
       </div>
@@ -138,11 +143,13 @@ export function RightSidebar() {
 
         <button
           className={`auto-btn${invOpen ? " active" : ""}${dead ? " auto-btn--disabled" : ""}`}
+          style={{ display: 'flex', alignItems: 'center', gap: 6 }}
           disabled={dead}
           onClick={() => {
             if (!dead) setInvOpen((v) => !v);
           }}
         >
+          <UIIcon frameName="UI_icons/inventory-icon.png" size={18} />
           {invOpen ? "CLOSE BAG" : "OPEN BAG"}
         </button>
 
@@ -174,16 +181,18 @@ export function RightSidebar() {
 
         <button
           className={`auto-btn${craftTab === "biome" ? " active" : ""}${dead ? " auto-btn--disabled" : ""}`}
+          style={{ display: 'flex', alignItems: 'center', gap: 6 }}
           disabled={dead}
           onClick={() => {
             if (!dead) setCraftTab((t) => (t === "biome" ? null : "biome"));
           }}
         >
+          <UIIcon frameName="UI_icons/progress-icon.png" size={18} />
           {craftTab === "biome" ? "CLOSE BIOME" : "BIOME PROGRESS"}
         </button>
         <button
           className={`auto-btn${craftTab === "forge" ? " active" : ""}${dead ? " auto-btn--disabled" : ""}`}
-          style={{ marginTop: 4, position: "relative" }}
+          style={{ marginTop: 4, position: "relative", display: 'flex', alignItems: 'center', gap: 6 }}
           disabled={dead}
           onClick={() => {
             if (dead) return;
@@ -191,6 +200,7 @@ export function RightSidebar() {
             setForgeBadge(0);
           }}
         >
+          <UIIcon frameName="UI_icons/forge-icon.png" size={18} />
           {craftTab === "forge" ? "CLOSE FORGE" : "OPEN FORGE"}
           {forgeBadge > 0 && craftTab !== "forge" && (
             <span
@@ -210,12 +220,13 @@ export function RightSidebar() {
         </button>
         <button
           className={`auto-btn${craftTab === "upgrade" ? " active" : ""}${dead ? " auto-btn--disabled" : ""}`}
-          style={{ marginTop: 4 }}
+          style={{ marginTop: 4, display: 'flex', alignItems: 'center', gap: 6 }}
           disabled={dead}
           onClick={() => {
             if (!dead) setCraftTab((t) => (t === "upgrade" ? null : "upgrade"));
           }}
         >
+          <UIIcon frameName="UI_icons/upgrade-icon.png" size={18} />
           {craftTab === "upgrade" ? "CLOSE UPGRADE" : "UPGRADE ITEMS"}
         </button>
       </div>
@@ -225,8 +236,10 @@ export function RightSidebar() {
 
         <button
           className={`auto-btn${mapOpen ? " active" : ""}`}
+          style={{ display: 'flex', alignItems: 'center', gap: 6 }}
           onClick={() => setMapOpen((v) => !v)}
         >
+          <UIIcon frameName="UI_icons/map-icon.png" size={18} />
           {mapOpen ? "CLOSE MAP" : "OPEN MAP"}
         </button>
 
@@ -244,8 +257,10 @@ export function RightSidebar() {
         <div className="panel-title">Settings</div>
         <button
           className={`auto-btn${settingsOpen ? " active" : ""}`}
+          style={{ display: 'flex', alignItems: 'center', gap: 6 }}
           onClick={() => setSettingsOpen((v) => !v)}
         >
+          <UIIcon frameName="UI_icons/settings-icon.png" size={18} />
           {settingsOpen ? "CLOSE SETTINGS" : "OPEN SETTINGS"}
         </button>
       </div>

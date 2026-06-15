@@ -1,17 +1,22 @@
 import { defineBuff, type BuffDescriptor } from '../../../../../combat/buffs/descriptor';
 import {
   getOverdrivePct,
+  getRupturePct,
   getEternalChargeStacks,
+  eternalCycleFlatPerStack,
   getTemporalExtPct,
   getBatteryStacks,
+  getVengeanceDamage,
+  getVengeanceBonus,
   getAlignmentPct,
   getChannelingRemainingPct,
 } from './selectors';
 import {
   ALIGNMENT_SPEED_FACTOR,
   BATTERY_ATK_PER_STACK,
-  ETERNAL_FLAT_PER_STACK,
-  OVERDRIVE_SPEED_FACTOR,
+  OVERDRIVE_ATTACK_SPEED_PCT,
+  RUPTURE_WINDOW_PLATING_MULT,
+  RUPTURE_DR_PIERCE,
   TEMPORAL_FLAT_DMG,
 } from './constants';
 
@@ -20,16 +25,16 @@ const COOLDOWN_OPTS = { category: 'cooldown' as const, shape: 'square' as const 
 export const COOLDOWN_T3_BUFFS = [
   defineBuff('cooldown-overdrive', ({ player }) => {
     const pct = getOverdrivePct(player);
-    const attackSpeedPct = Math.round((1 / OVERDRIVE_SPEED_FACTOR - 1) * 100);
+    const attackSpeedPct = Math.round(OVERDRIVE_ATTACK_SPEED_PCT * 100);
     return pct > 0
-      ? { id: 'cooldown-overdrive', label: 'Ovrdv', stacks: 1, durationPct: pct, color: '#ff6622', logDetail: `+${attackSpeedPct}% attack speed` }
+      ? { id: 'cooldown-overdrive', label: 'Burst', stacks: 1, durationPct: pct, color: '#ff6622', logDetail: `+${attackSpeedPct}% attack speed` }
       : null;
   }, COOLDOWN_OPTS),
-  defineBuff('cooldown-eternal-charge', ({ playerCs }) => {
+  defineBuff('cooldown-eternal-charge', ({ player, playerCs }) => {
     if (!playerCs) return null;
     const stacks = getEternalChargeStacks(playerCs);
     return stacks > 0
-      ? { id: 'cooldown-eternal-charge', label: 'Chrge', stacks, durationPct: -1, color: '#ffaa00', logDetail: `+${stacks * ETERNAL_FLAT_PER_STACK} damage, stored execution charge` }
+      ? { id: 'cooldown-eternal-charge', label: 'Chrge', stacks, durationPct: -1, color: '#ffaa00', logDetail: `+${stacks * eternalCycleFlatPerStack(player)} execution damage banked` }
       : null;
   }, COOLDOWN_OPTS),
   defineBuff('cooldown-temporal-ext', ({ playerCs }) => {
@@ -46,6 +51,12 @@ export const COOLDOWN_T3_BUFFS = [
       ? { id: 'cooldown-battery', label: 'Batry', stacks, durationPct: -1, color: '#aaffaa', logDetail: `+${stacks * BATTERY_ATK_PER_STACK} execution damage` }
       : null;
   }, COOLDOWN_OPTS),
+  defineBuff('cooldown-vengeance', ({ player }) => {
+    const stacks = getVengeanceDamage(player);
+    if (stacks <= 0) return null;
+    // Stack badge doubles as the raw damage banked since the last execution.
+    return { id: 'cooldown-vengeance', label: 'Revenge', stacks, durationPct: -1, color: '#d42a2a', logDetail: `next execution +${getVengeanceBonus(player)} damage` };
+  }, COOLDOWN_OPTS),
   defineBuff('cooldown-alignment', ({ player }) => {
     const pct = getAlignmentPct(player);
     const attackSpeedPct = Math.round((1 / ALIGNMENT_SPEED_FACTOR - 1) * 100);
@@ -53,8 +64,23 @@ export const COOLDOWN_T3_BUFFS = [
       ? { id: 'cooldown-alignment', label: 'Algn', stacks: 1, durationPct: pct, color: '#cc44ff', logDetail: `+${attackSpeedPct}% attack speed` }
       : null;
   }, COOLDOWN_OPTS),
+  defineBuff('cooldown-reverb', ({ player }) => {
+    const stored = player.usesCooldown?.reverbStoredBonus ?? 0;
+    if (stored <= 0) return null;
+    const pct = Math.round(stored * 100);
+    // Stack badge doubles as the locked-in bonus % for the next execution.
+    return { id: 'cooldown-reverb', label: 'Reverb', stacks: pct, durationPct: -1, color: '#9b6bff', logDetail: `next execution +${pct}% damage` };
+  }, COOLDOWN_OPTS),
+  defineBuff('cooldown-rupture', ({ player }) => {
+    const pct = getRupturePct(player);
+    const platingBypass = Math.round((1 - RUPTURE_WINDOW_PLATING_MULT) * 100);
+    const drPierce = Math.round((player.usesSkills.passives['cooldown.rupture-dr-pierce'] ?? RUPTURE_DR_PIERCE) * 100);
+    return pct > 0
+      ? { id: 'cooldown-rupture', label: 'Sunder', stacks: 1, durationPct: pct, color: '#dd8844', logDetail: `regular attacks bypass ${platingBypass}% plating, ${drPierce}% DR` }
+      : null;
+  }, COOLDOWN_OPTS),
   defineBuff('cooldown-channel', ({ player }) => {
     if (!player.isChanneling) return null;
-    return { id: 'cooldown-channel', label: 'Beam', stacks: 1, durationPct: getChannelingRemainingPct(player), color: '#ff44aa', logDetail: '100% attack damage every 500ms' };
+    return { id: 'cooldown-channel', label: 'Beam', stacks: 1, durationPct: getChannelingRemainingPct(player), color: '#ffe066', logDetail: 'holy beam: a hit every 0.5s, each applies on-hit' };
   }, COOLDOWN_OPTS),
 ] as const satisfies readonly BuffDescriptor[];

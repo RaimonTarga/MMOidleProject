@@ -1,0 +1,124 @@
+import type { Recipe } from './types';
+
+// ─────────────────────────────────────────────────────────────────────────
+// Graveyard (T4) — extreme-high-density undead swarm biome (renamed from
+// necropolis). Only the mobility (boot) line is authored so far: its on-kill
+// stacking speed + tenacity ramp is live in the combat engine and suits the
+// dense pack-clearing identity. Armor / weapon / charm / new-mechanic mobs
+// remain DEFERRED. Essence: purple (necrotic). Values are untuned placeholders.
+
+export const graveyardRecipeEntries = [
+  ['graveyard-plague-axe', {
+    id: 'graveyard-plague-axe', name: 'Plague Axe',
+    recipeGroup: 'graveyard', requiredBiomeLevel: 1, slot: 'weapon',
+    // ⚠ INHERITED (Cave debuff-branch axe) — base attack carried from doc.
+    //   VERIFY in dead-swing budget pass.
+    // INVARIANT: the dead swing must NOT consume class mechanic resources
+    //   (no cadence count, no energy, no cooldown progress).
+    cost: { purple: 270 }, stats: { attack: 110 }, attacksPerSecond: 1.10, tier: 4,
+    mechanicEffects: {
+      'weapon.dead-swing-interval': 3,
+      'weapon.dead-swing-vuln-pct': 0.20, 'weapon.dead-swing-vuln-ms': 4000,
+    },
+    icon: 'items/weapons/graveyard-axe.png',
+    description: 'Every third stroke lands flat and harmless — and leaves the rot to make the next one count double.',
+    upgrades: [
+      { stats: { attack: 20 }, cost: { purple: 405 }, requiredBiomeLevel: 2 },
+      { stats: { attack: 20 }, cost: { purple: 810 }, requiredBiomeLevel: 3 },
+      { stats: { attack: 20 }, cost: { purple: 1620 }, requiredBiomeLevel: 4 },
+    ],
+  }],
+
+  ['graveyard-charm-t4', {
+    id: 'graveyard-charm-t4', name: 'Necrotic Pulse',
+    recipeGroup: 'graveyard', requiredBiomeLevel: 2, slot: 'recovery',
+    cost: { purple: 150 }, stats: { hpRegen: 16 },
+    mechanicEffects: { 'defense.regen-burst-pct': 0.13, 'defense.regen-burst-interval-ms': 6000 },
+    tier: 4,
+    icon: 'items/charms/eye-charm-4.png',
+    description: 'A slow, certain throb of returning life, timed like a tired heart that refuses to stop.',
+    upgrades: [
+      { mechanicEffects: { 'defense.regen-burst-pct': 0.03 }, cost: { purple: 100 }, requiredBiomeLevel: 3 },
+      { mechanicEffects: { 'defense.regen-burst-pct': 0.03 }, cost: { purple: 200 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.regen-burst-pct': 0.03 }, cost: { purple: 330 }, requiredBiomeLevel: 4 },
+    ],
+  }],
+
+  ['graveyard-charm-t4-gravetide', {
+    id: 'graveyard-charm-t4-gravetide', name: 'Grave-Tide Pulse',
+    recipeGroup: 'graveyard', requiredBiomeLevel: 2, slot: 'recovery',
+    cost: { purple: 150 }, stats: { hpRegen: 16 },
+    // Combined: slower burst, compensated by a baseline in-combat trickle.
+    mechanicEffects: {
+      'defense.regen-burst-pct': 0.10, 'defense.regen-burst-interval-ms': 8000,
+      'defense.in-combat-regen-pct': 0.08,
+    },
+    tier: 4,
+    icon: 'items/charms/eye-charm-5.png',
+    description: 'A tide that never fully goes out — it gives back in a steady seep between the larger swells.',
+    upgrades: [
+      { mechanicEffects: { 'defense.regen-burst-pct': 0.02, 'defense.in-combat-regen-pct': 0.02 }, cost: { purple: 100 }, requiredBiomeLevel: 3 },
+      { mechanicEffects: { 'defense.regen-burst-pct': 0.02, 'defense.in-combat-regen-pct': 0.02 }, cost: { purple: 200 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.regen-burst-pct': 0.02, 'defense.in-combat-regen-pct': 0.02 }, cost: { purple: 330 }, requiredBiomeLevel: 4 },
+    ],
+  }],
+
+  ['graveyard-vest-t4', {
+    id: 'graveyard-vest-t4', name: 'Plaguebound Mantle',
+    recipeGroup: 'graveyard', requiredBiomeLevel: 4, slot: 'armor',
+    cost: { purple: 220 }, stats: { maxHp: 150, plating: 36 },
+    // Reactive plating: each hit taken grants +2 plating for 4s, stacking (refreshes
+    // duration) up to 15 stacks (+30 plating at full).
+    mechanicEffects: {
+      'defense.dot-resistance': 0.40, 'defense.hit-to-dot-pct': 0.22, 'defense.debuff-resistance': 0.25,
+      'defense.hit-plating-per-stack': 2, 'defense.hit-plating-max-stacks': 15, 'defense.hit-plating-duration-ms': 4000,
+    },
+    tier: 4,
+    icon: 'items/armor/plate-armor-9.png',
+    description: 'The denser the swarm, the thicker the crust of clinging filth — and the harder you are to bite.',
+    upgrades: [
+      { stats: { maxHp: 36, plating: 9 }, cost: { purple: 200 }, requiredBiomeLevel: 4 },
+      { stats: { maxHp: 36, plating: 9 }, cost: { purple: 400 }, requiredBiomeLevel: 4 },
+      { stats: { maxHp: 36, plating: 9 }, cost: { purple: 700 }, requiredBiomeLevel: 4 },
+    ],
+  }],
+
+  ['graveyard-vest-t4-debtward', {
+    id: 'graveyard-vest-t4-debtward', name: 'Grave Ward',
+    recipeGroup: 'graveyard', requiredBiomeLevel: 4, slot: 'armor',
+    cost: { purple: 220 }, stats: { maxHp: 150, plating: 30 },
+    // † debt-cheat-death: once per combat, if accumulated damage debt would
+    //   exceed current HP, the debt clears completely. (new key, no shield needed)
+    mechanicEffects: {
+      'defense.dot-resistance': 0.40, 'defense.hit-to-dot-pct': 0.22,
+      'defense.debt-cheat-death': 1,
+    },
+    tier: 4,
+    icon: 'items/armor/plate-armor-5.png',
+    description: 'It lets the debt of a hundred small wounds come due all at once — and then forgives it, once.',
+    upgrades: [
+      { stats: { maxHp: 36, plating: 7 }, cost: { purple: 200 }, requiredBiomeLevel: 4 },
+      { stats: { maxHp: 36, plating: 7 }, cost: { purple: 400 }, requiredBiomeLevel: 4 },
+      { stats: { maxHp: 36, plating: 7 }, cost: { purple: 700 }, requiredBiomeLevel: 4 },
+    ],
+  }],
+
+  // T4 boots — on-kill stacking speed + tenacity (max 3, 4s). Suits the dense swarm.
+  ['graveyard-boots-t4', {
+    id: 'graveyard-boots-t4', name: 'Gravewalker Boots',
+    recipeGroup: 'graveyard', requiredBiomeLevel: 3, slot: 'mobility',
+    cost: { purple: 80 }, stats: { speed: 30 }, tier: 4,
+    mechanicEffects: {
+      'mobility.kill-stack-speed-pct': 0.12,
+      'mobility.kill-stack-tenacity-pct': 0.12,
+      'mobility.kill-stack-ms': 4000,
+    },
+    icon: 'items/boots/graveyard-boots-1.png',
+    description: 'Each fallen foe lends a little of its lingering haste — and the more that fall, the harder it becomes to hold you down.',
+    upgrades: [
+      { stats: { speed: 8 },  cost: { purple: 40 },  requiredBiomeLevel: 4 },
+      { stats: { speed: 12 }, cost: { purple: 80 },  requiredBiomeLevel: 4 },
+      { stats: { speed: 16 }, cost: { purple: 132 }, requiredBiomeLevel: 4 },
+    ],
+  }],
+] satisfies [string, Recipe][];

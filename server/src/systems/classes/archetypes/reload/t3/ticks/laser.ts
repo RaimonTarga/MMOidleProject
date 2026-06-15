@@ -28,11 +28,6 @@ export function updateReloadT3Ticks(world: World, dt: number, now: number): void
   for (const entity of world.reloadPlayers) {
     const reload = entity.usesReload;
 
-    // Tick down the snipe cooldown on every reload-archetype player.
-    if (reload.snipeCooldownMs > 0) {
-      reload.snipeCooldownMs = Math.max(0, reload.snipeCooldownMs - dt);
-    }
-
     if ((entity.usesSkills.passives['reload.laser'] ?? 0) <= 0) {
       reload.laserHeat       = 0;
       reload.laserOverheated = false;
@@ -113,6 +108,11 @@ function applyLaserTick(world: World, player: PlayerEntity, target: MonsterEntit
 
   emitCombatEvent('onHit', ctx, world);
 
+  // Apply flat on-hit damage on EVERY tick (post-mitigation), mirroring the channeled
+  // beam — the laser's on-hit triggers already fire via the pipeline above, and this
+  // adds the on-hit DAMAGE stat too, rewarding on-hit builds on a continuous weapon.
+  if (player.dealsDamage.onHitDamage > 0) ctx.damage += player.dealsDamage.onHitDamage;
+
   const isEmpowered = !!ctx.metadata['empoweredAttack'];
   const isExecution = isEmpowered && player.usesCooldown !== undefined;
   if (isEmpowered) {
@@ -132,6 +132,7 @@ function applyLaserTick(world: World, player: PlayerEntity, target: MonsterEntit
     effectivePlating,
     platingMult: ctx.platingMult,
     damageReduction: target.mitigatesDamage.damageReduction,
+    onHitBonus: player.dealsDamage.onHitDamage,
   });
   mitigation.hpDamage = ctx.damage;
 

@@ -16,8 +16,8 @@ import { EVASION_KEY } from '../core/pools';
  *   - onDamageTaken: reduces ctx.damage by the evade-mitigation fraction
  *     (1.0 ⇒ damage 0, the legacy full-avoid behavior).
  *
- * The monster-as-defender (player → monster, `evadeEvery`) path is handled
- * inline in combat.ts; it shares {@link evadeBlocksDebuffs} for debuff gating.
+ * The monster-as-defender (player → monster, monster `evasion` fraction) path is
+ * handled inline in combat.ts; it shares {@link evadeBlocksDebuffs} for debuff gating.
  */
 export function registerEvasion(): void {
   // ── Evade decision (player defender) ───────────────────────────────────────

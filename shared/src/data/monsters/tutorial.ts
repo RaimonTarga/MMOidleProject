@@ -6,7 +6,7 @@ export const tutorialMonsterEntries = [
     id: 'tiny-slime', name: 'Tiny Slime', color: 0x99ff99,
     stats: { hp: 22, attack: 3, plating: 0, damageReduction: 0, speed: 30, attackRange: 50, attackCooldown: 3000, pullRange: 140 },
     behavior: 'melee', attackStyle: 'impact', biome: 'clearing',
-    rewards: { essence: 2, essenceType: 'green', level: 1, biomeXp: 43 },
+    rewards: { essence: 1, essenceType: 'green', level: 1, biomeXp: 43 },
     ai: { wanderRadius: 140, leashRange: 380, idleMinMs: 2000, idleMaxMs: 5000 },
   }],
 

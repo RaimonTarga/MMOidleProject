@@ -12,7 +12,6 @@ import {
   type Vec2,
 } from "@mmo-idle/shared";
 import { NODE_REGISTRY } from "../../../world/nodeRegistry";
-import { isMonsterFrozen } from "../../classes/archetypes/dot/t3";
 import { isMonsterStunned } from "../status/stun";
 import { isMonsterKnockedBack } from "../damage/knockback";
 import { setEntityMotion, stopEntity } from "../../world/movement";
@@ -173,7 +172,10 @@ export function updateMonsters(world: World, dt: number, now: number) {
     const ai = e.controlsMonster;
     const id = e.isMonster.id;
 
-    if (isMonsterFrozen(world, id) || isMonsterStunned(world, id)) {
+    // Stun is full CC (movement halt). Frozen is only a severe slow (handled via
+    // reduced speed/attack-cooldown in updateChillAndFreeze), so frozen monsters
+    // keep pathing normally — they just crawl.
+    if (isMonsterStunned(world, id)) {
       stopMonster(world, e);
       e.performsAttack.lastAttackAt = now;
       ai.kiteTimer = 0;

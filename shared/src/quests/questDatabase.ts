@@ -40,8 +40,8 @@ export const QUEST_DATABASE = new Map<string, QuestDefinition>([
     tierRequired: 1,
     // All T1 dungeon bosses — one per biome at biomeTier 1 (5 biomes)
     targetMonsterTypes: [
-      'forest-warden', 'mountain-sentinel', 'plains-champion',
-      'bog-sovereign', 'cave-sentinel',
+      'gnarled-greatbear', 'crag-behemoth', 'tusked-razorback',
+      'grave-toadeater', 'obsidian-broodmother',
     ],
     killsRequired: 1,
   }],
@@ -52,8 +52,8 @@ export const QUEST_DATABASE = new Map<string, QuestDefinition>([
     tierRequired: 2,
     // All T2 dungeon bosses — one per biome at biomeTier 2
     targetMonsterTypes: [
-      'glacial-colossus', 'stone-warden', 'forest-elder', 'plains-tyrant',
-      'desert-pharaoh', 'jungle-colossus', 'cave-terror', 'mire-lord',
+      'glacial-colossus', 'stoneplate-juggernaut', 'apex-timberclaw', 'gorging-razortusk',
+      'dune-stalker-emperor', 'jungle-dread-gorger', 'chitinous-dreadbore', 'mire-gorged-behemoth',
     ],
     killsRequired: 1,
   }],
@@ -64,9 +64,9 @@ export const QUEST_DATABASE = new Map<string, QuestDefinition>([
     tierRequired: 3,
     // All T3 dungeon bosses — one per biome at biomeTier 3
     targetMonsterTypes: [
-      'frost-colossus', 'peak-titan', 'elder-forest-warden', 'plains-warlord',
-      'sand-emperor', 'jungle-titan-lord', 'volcanic-titan', 'lich-king',
-      'cave-dread', 'bog-ancient',
+      'frost-plated-rime-mammoth', 'crag-gorged-horn-behemoth', 'elder-gnarled-greatbear', 'plains-warlord',
+      'dune-carapace-monarch', 'apex-bramble-slasher', 'cinder-shell-magma-salamander', 'lich-king',
+      'deep-core-burrow-gorger', 'rot-spore-croc-behemoth',
     ],
     killsRequired: 1,
   }],
@@ -79,7 +79,7 @@ export const QUEST_DATABASE = new Map<string, QuestDefinition>([
     targetMonsterTypes: [
       'glacial-titan', 'mountain-titan', 'elder-treant-lord', 'stampede-emperor',
       'desert-eternal', 'jungle-ancient-lord', 'inferno-lord', 'undying-lord',
-      'void-titan', 'cave-titan', 'swamp-sovereign',
+      'elder-trench-serpent', 'cave-titan', 'swamp-sovereign',
     ],
     killsRequired: 1,
   }],

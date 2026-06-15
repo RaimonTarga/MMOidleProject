@@ -7,9 +7,22 @@ import type {
   MinionView,
   VoidOverlordRespawnState,
   Vec2,
+  DamageElement,
 } from "@mmo-idle/shared";
 
 export type NetworkId = string;
+
+/**
+ * Per-snapshot styling hint for a monster's HP-delta damage number, derived from
+ * that snapshot's combat events (empowered/execution from player-hit, element from
+ * dot-tick). The amount shown is still the HP delta; this only picks color/size/glyph.
+ */
+export interface DamageNumberHint {
+  hasDirectHit: boolean;
+  empowered: boolean;
+  execution: boolean;
+  dotElement?: DamageElement;
+}
 
 export interface RenderState {
   ids: Set<NetworkId>;
@@ -115,6 +128,18 @@ export interface RenderState {
     targetId: string | null;
     until: number;
   };
+  /** Devout Priest channeled holy beam (see client/src/fx/holyBeam.ts). */
+  holyBeam: {
+    graphics: Phaser.GameObjects.Graphics | null;
+    targetId: string | null;
+    until: number;
+  };
+  /** Cannoneer charge-up ring on the own player (see client/src/fx/cannonFx.ts). */
+  cannonCharge: {
+    graphics: Phaser.GameObjects.Graphics | null;
+  };
+  /** Per-player transformation aura glow graphics (see client/src/fx/aura.ts). */
+  auras: Map<string, Phaser.GameObjects.Graphics>;
   voidOverlordRespawn: {
     payload: VoidOverlordRespawnState;
     deadlineMs: number;
@@ -142,6 +167,9 @@ export interface RenderState {
   /** Gate entities for the current node; collision + world markers derive from these. */
   nodeGateEntities: NodeGateEntity[];
   lastSpawnedGateNodeId: string;
+
+  /** Transient per-snapshot damage-number style hints (built in applyDelta). */
+  damageStyleHints: Map<NetworkId, DamageNumberHint>;
 }
 
 export function createRenderState(): RenderState {
@@ -168,6 +196,15 @@ export function createRenderState(): RenderState {
       targetId: null,
       until: 0,
     },
+    holyBeam: {
+      graphics: null,
+      targetId: null,
+      until: 0,
+    },
+    cannonCharge: {
+      graphics: null,
+    },
+    auras: new Map(),
     voidOverlordRespawn: null,
     voidThroneHazardLifted: false,
     movementEffectNextAt: new Map(),
@@ -185,6 +222,7 @@ export function createRenderState(): RenderState {
     ownPathGoal: null,
     nodeGateEntities: [],
     lastSpawnedGateNodeId: "",
+    damageStyleHints: new Map(),
   };
 }
 

@@ -131,6 +131,7 @@ export const executionReadyAtom = atom<boolean>(false);
 export const executionCooldownPctAtom = atom<number>(0);
 
 export const energyCountAtom = atom<number>(0);
+export const energyMaxAtom = atom<number>(100);
 export const empoweredReadyAtom = atom<boolean>(false);
 export const flashShiftPctAtom = atom<number>(0);
 export const flashDamageShiftPctAtom = atom<number>(0);
@@ -155,6 +156,7 @@ export const sacredBuffActiveAtom = atom<boolean>(false);
 
 export const isChannelingAtom = atom<boolean>(false);
 export const channelingPctAtom = atom<number>(0);
+export const cannonChargePctAtom = atom<number>(0);
 
 export const skillPointsAtom = atom<number>(0);
 export const unlockedSkillsAtom = atom<string[]>([]);
@@ -515,6 +517,7 @@ function resetPlayerAtoms(): void {
   store.set(executionReadyAtom, false);
   store.set(executionCooldownPctAtom, 0);
   store.set(energyCountAtom, 0);
+  store.set(energyMaxAtom, 100);
   store.set(empoweredReadyAtom, false);
   store.set(flashShiftPctAtom, 0);
   store.set(flashDamageShiftPctAtom, 0);
@@ -606,6 +609,7 @@ export function syncPlayerAtoms(player: PlayerView | null): void {
   setIfChanged(executionReadyAtom, player.executionReady);
   setIfChanged(executionCooldownPctAtom, player.executionCooldownPct);
   setIfChanged(energyCountAtom, player.energyCount);
+  setIfChanged(energyMaxAtom, player.energyMax);
   setIfChanged(empoweredReadyAtom, player.empoweredReady);
   setIfChanged(flashShiftPctAtom, player.flashShiftPct);
   setIfChanged(flashDamageShiftPctAtom, player.flashDamageShiftPct);
@@ -625,6 +629,7 @@ export function syncPlayerAtoms(player: PlayerView | null): void {
   setIfChanged(sacredBuffActiveAtom, player.sacredBuffActive);
   setIfChanged(isChannelingAtom, player.isChanneling);
   setIfChanged(channelingPctAtom, player.channelingPct);
+  setIfChanged(cannonChargePctAtom, player.cannonChargePct);
   setIfChanged(skillPointsAtom, player.skillPoints);
 
   setIfShallowArrayEqual(shieldsAtom, player.shields);

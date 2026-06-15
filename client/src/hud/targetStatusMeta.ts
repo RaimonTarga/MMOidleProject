@@ -16,9 +16,19 @@ const STATUS_META: Record<string, StatusMeta> = {
   slow:            { label: 'Slow',    color: '#88aaff' },
   root:            { label: 'Root',    color: '#aa77ee' },
   'plating-shred': { label: 'Shred',   color: '#d8b24a' },
+  'cadence-hemorrhage': { label: 'Bleed', color: '#c41e1e' },
+  'energy-storm':       { label: 'Storm', color: '#c77dff' },
   brittle:         { label: 'Brittle', color: '#d88a4a' },
   'ashbrand-burn': { label: 'Burn',    color: '#ff7a3c' },
+  // Burn-family DoT weapons (fire → Burn, frost → Chill).
+  'swamp-mirebrand-burn':   { label: 'Burn',  color: '#ff7a3c' },
+  'swamp-blightbrand-burn': { label: 'Burn',  color: '#ff7a3c' },
+  'blightbrand-burn':       { label: 'Burn',  color: '#ff7a3c' },
+  'swamp-frostbrand-burn':  { label: 'Chill', color: '#6fd0ff' },
+  'swamp-rimebrand-burn':   { label: 'Chill', color: '#6fd0ff' },
+  'rimebrand-burn':         { label: 'Chill', color: '#6fd0ff' },
   vuln:            { label: 'Vuln',    color: '#ff5577' },
+  vulnerability:   { label: 'Vuln',    color: '#ff5577' },
 };
 
 const BOSS_META: Record<string, StatusMeta> = {

@@ -15,6 +15,7 @@ import { markSliceDirty } from '../../../../../../ecs/dirtyHelpers';
 import { registerCombatListener } from '../../../../../combat/engine/combatPipeline';
 import { applyHealToMinion, applyHealToPlayer } from '../../../../../defense/regen/healing';
 import { applyStun } from '../../../../../combat/status/stun';
+import { evadeBlocksDebuffs } from '../../../../../defense/mitigation/evasion';
 import { alliesInNodeWithin } from '../../../../../world/queries';
 import { actorFromMinion } from '../../../../../../world/worldLogActors';
 import {
@@ -185,6 +186,7 @@ export function registerPlainsPathHooks(): void {
 
     const passives = ctx.attacker.usesSkills.passives;
     if (!passives['summoner.trampled-path']) return;
+    if (evadeBlocksDebuffs(ctx)) return; // dodged charge applies no stun
 
     const stunMs = passives['summoner.trample-stun-ms'] ?? 1200;
     applyStun(ctx.defender.tracksCombat, stunMs, ctx.attacker.isPlayer.id);

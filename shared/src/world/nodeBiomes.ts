@@ -63,29 +63,29 @@ export const NODE_BIOMES: Record<string, NodeBiomeInfo> = {
   'node-4-6': { biomeGroup: 'forest',     biomeTier: 1 },
   'node-4-7': { biomeGroup: 'forest',     biomeTier: 1 },
   'node-3-6': { biomeGroup: 'forest',     biomeTier: 1 },
-  'node-3-7': { biomeGroup: 'forest',     biomeTier: 1, isDungeon: true },   // forest-warden
+  'node-3-7': { biomeGroup: 'forest',     biomeTier: 1, isDungeon: true },   // gnarled-greatbear
 
   // Mountain T1 — North
   'node-4-5': { biomeGroup: 'mountain',   biomeTier: 1 },
-  'node-3-5': { biomeGroup: 'mountain',   biomeTier: 1, isDungeon: true },   // mountain-sentinel
+  'node-3-5': { biomeGroup: 'mountain',   biomeTier: 1, isDungeon: true },   // crag-behemoth
   'node-4-4': { biomeGroup: 'mountain',   biomeTier: 1 },
   'node-3-4': { biomeGroup: 'mountain',   biomeTier: 1 },
 
   // Plains T1 — East
   'node-5-6': { biomeGroup: 'plains',     biomeTier: 1 },
-  'node-5-7': { biomeGroup: 'plains',     biomeTier: 1, isDungeon: true },   // plains-champion
+  'node-5-7': { biomeGroup: 'plains',     biomeTier: 1, isDungeon: true },   // tusked-razorback
   'node-6-6': { biomeGroup: 'plains',     biomeTier: 1 },
   'node-6-7': { biomeGroup: 'plains',     biomeTier: 1 },
 
   // Swamp T1 — NW
   'node-5-4': { biomeGroup: 'swamp',      biomeTier: 1 },
-  'node-5-3': { biomeGroup: 'swamp',      biomeTier: 1, isDungeon: true },   // bog-sovereign
+  'node-5-3': { biomeGroup: 'swamp',      biomeTier: 1, isDungeon: true },   // grave-toadeater
   'node-4-3': { biomeGroup: 'swamp',      biomeTier: 1 },
   'node-3-3': { biomeGroup: 'swamp',      biomeTier: 1 },
 
   // Cave T1 — West
   'node-6-4': { biomeGroup: 'cave',       biomeTier: 1 },
-  'node-6-3': { biomeGroup: 'cave',       biomeTier: 1, isDungeon: true },   // cave-sentinel
+  'node-6-3': { biomeGroup: 'cave',       biomeTier: 1, isDungeon: true },   // obsidian-broodmother
   'node-7-3': { biomeGroup: 'cave',       biomeTier: 1 },
   'node-7-4': { biomeGroup: 'cave',       biomeTier: 1 },
 

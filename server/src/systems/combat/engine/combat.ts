@@ -10,16 +10,23 @@ import type { AggroTargetKind, Vec2 } from "@mmo-idle/shared";
 import { grantMonsterRewards } from "../../player/progression/rewards";
 import { makeCombatContext, emitCombatEvent } from "./combatPipeline";
 import {
+  monsterEmpoweredMultiplier,
+  applyEnemySoftCap,
+  applyEnemyShield,
+} from "./monsterMechanics";
+import {
   getCounter,
   setCounter,
+  addCounter,
   getStatusEffect,
   FROST_RAMP_EFFECT_ID,
   frostRampMaxStacks,
   frostRampAtkSlowPct,
+  CHAOTIC_FAMILY,
+  CHAOTIC_HIT_COUNTER_KEY,
 } from "@mmo-idle/shared";
 import { getAntiHealMult } from "../../defense";
 import { applyPlayerAoe, applyMonsterAoe } from "../damage/aoeDamage";
-import { isMonsterFrozen } from "../../classes/archetypes/dot/t3";
 import { canApplyPlayerDebuff } from "../../classes/archetypes/summoner/t3/core/debuffGuard";
 import { evadeBlocksDebuffs } from "../../defense/mitigation/evasion";
 import { isMonsterStunned } from "../status/stun";
@@ -91,23 +98,55 @@ export function runPlayerAttack(
     }
   }
 
+  // Chaotic weapon family: every Nth attack whiffs. Determined here (not in an
+  // onHit listener) so the flag is visible to beforeAttack — letting reload skip
+  // ammo and the empowered multiplier preserve its charge. Peek the counter
+  // before beforeAttack; commit it only once the attack is confirmed to fire so
+  // a cancelled attack (empty clip / mid-reload) never advances the cycle.
+  const chaoticWeapon = player.holdsInventory.equipment.weapon;
+  // Dead-swing cadence is data-driven from the equipped weapon's
+  // `weapon.dead-swing-interval` mechanic. CHAOTIC_FAMILY remains a fallback for
+  // legacy weapons predating the key (e.g. frenzied-greataxe, which has no recipe).
+  const deadSwingInterval = player.usesSkills.passives["weapon.dead-swing-interval"] ?? 0;
+  const chaoticMissEvery =
+    deadSwingInterval > 0
+      ? Math.round(deadSwingInterval)
+      : chaoticWeapon
+        ? CHAOTIC_FAMILY[chaoticWeapon]
+        : undefined;
+  if (
+    chaoticMissEvery &&
+    (getCounter(player.tracksCombat, CHAOTIC_HIT_COUNTER_KEY) + 1) %
+      chaoticMissEvery ===
+      0
+  ) {
+    ctx.metadata.chaoticMiss = true;
+  }
+
   emitCombatEvent("beforeAttack", ctx, world);
   if (ctx.cancelled) return "cancelled";
+
+  if (chaoticMissEvery) {
+    addCounter(player.tracksCombat, CHAOTIC_HIT_COUNTER_KEY, 1);
+  }
 
   emitCombatEvent("onAttack", ctx, world);
 
   // Deterministic monster evasion (NO RNG): a fractional accumulator on the
-  // monster sums a per-hit dodge rate of 1/evadeEvery; when it crosses 1.0 the
-  // hit is dodged. The dodge reduces damage by `evadeMitigation` (default 0.5)
-  // rather than fully negating it, and suppresses the player's debuffs/DoT unless
-  // the player's attack pierces evade. A full-avoid (mitigation ≥ 1) short-circuits
-  // to the legacy zero-damage path.
+  // monster sums the per-hit dodge chance `evasion` (a 0–1 fraction, same
+  // notation as the player evasion stat); when it crosses 1.0 the hit is dodged.
+  // The dodge reduces damage by `evadeMitigation` (default 0.5) rather than fully
+  // negating it, and suppresses the player's debuffs/DoT unless the player's
+  // attack pierces evade. A full-avoid (mitigation ≥ 1) short-circuits to the
+  // legacy zero-damage path.
   const monsterDef = MONSTER_DATABASE.get(target.isMonster.monsterTypeId);
-  const evadeEvery = monsterDef?.evadeEvery;
+  // A boss 'stat-buff' evasion action can override the dodge fraction at runtime
+  // (e.g. drop to 0 in a desperation phase). 0 is a valid override, so use ??.
+  const evadeChance = target.scriptsBoss?.evasionOverride ?? monsterDef?.evasion;
   let evaded = false;
   let evadeMult = 0;
-  if (evadeEvery !== undefined && evadeEvery >= 5) {
-    const acc = getCounter(target.tracksCombat, "evadeAcc") + 1 / evadeEvery;
+  if (evadeChance !== undefined && evadeChance > 0) {
+    const acc = getCounter(target.tracksCombat, "evadeAcc") + evadeChance;
     if (acc >= 1) {
       setCounter(target.tracksCombat, "evadeAcc", acc - 1);
       evaded = true;
@@ -152,10 +191,11 @@ export function runPlayerAttack(
     monsterCombatState,
     platingShred,
   );
-  const effectiveDr = effectiveDamageReductionAfterBrittle(
-    target.mitigatesDamage.damageReduction,
-    monsterCombatState,
-  );
+  const effectiveDr =
+    effectiveDamageReductionAfterBrittle(
+      target.mitigatesDamage.damageReduction,
+      monsterCombatState,
+    ) * (1 - Math.max(0, Math.min(1, ctx.drPierce)));
 
   const minionDamageMult =
     opts.aggroSource.kind === "minion"
@@ -179,13 +219,20 @@ export function runPlayerAttack(
   emitCombatEvent("onHit", ctx, world);
 
   if (player.dealsDamage.onHitDamage > 0) {
-    ctx.damage += player.dealsDamage.onHitDamage;
+    // Per-shot on-hit scaling (e.g. reload Alternating Cadence zeroes/doubles the
+    // on-hit DAMAGE while leaving on-hit TRIGGERS — set by an onHit listener).
+    const onHitMult = typeof ctx.metadata['onHitDamageMult'] === 'number'
+      ? (ctx.metadata['onHitDamageMult'] as number)
+      : 1;
+    ctx.damage += Math.round(player.dealsDamage.onHitDamage * onHitMult);
   }
 
   const isEmpowered = !!ctx.metadata["empoweredAttack"];
   const isExecution = isEmpowered && player.usesCooldown !== undefined;
 
-  if (isEmpowered) {
+  // suppressEmpoweredAoe lets a spec wear the empowered tag (crit styling + ring)
+  // without the splash — e.g. Sniper's precision full-HP shot is single-target.
+  if (isEmpowered && !ctx.metadata["suppressEmpoweredAoe"]) {
     applyPlayerAoe(
       world,
       player,
@@ -204,6 +251,20 @@ export function runPlayerAttack(
   if (evaded) {
     ctx.damage = Math.max(1, Math.round(ctx.damage * (1 - evadeMult)));
   }
+
+  // Chaotic miss: zero the direct damage last so it overrides any onHit floor
+  // (e.g. burn's max(1, …)). On-hit DoT stacks already applied during onHit.
+  if (ctx.metadata.chaoticMiss) ctx.damage = 0;
+
+  // T4 monster defensive mechanics (mirror the player damage-cap + periodic
+  // shield). Clip an oversized hit FIRST so the barrier only absorbs the capped
+  // amount, then drain the periodic absorb barrier before HP. Both are no-ops
+  // unless the monster defines enemySoftCap / enemyShield. Like the player's own
+  // cap/shield they act on the direct combat-pipeline hit only (DoT/AoE bypass).
+  ctx.damage = applyEnemySoftCap(target, monsterDef, ctx.damage);
+  const enemyShieldResult = applyEnemyShield(target, monsterDef, ctx.damage, now);
+  ctx.damage = enemyShieldResult.damage;
+  const enemyShieldAbsorbed = enemyShieldResult.absorbed;
 
   const gross = Math.round(player.dealsDamage.attack * minionDamageMult);
   const mitigation = buildPlatingDrBreakdown({
@@ -237,7 +298,7 @@ export function runPlayerAttack(
       source: sourceActor,
       target: actorFromMonster(target),
       hpDamage: ctx.damage,
-      shieldAbsorbed: 0,
+      shieldAbsorbed: enemyShieldAbsorbed,
       damageType: "direct",
       mitigation,
       tags: [
@@ -251,6 +312,24 @@ export function runPlayerAttack(
       nodeId: player.hasPosition.nodeId,
     },
   );
+
+  if (enemyShieldAbsorbed > 0) {
+    recordWorldLogEvent(
+      world,
+      {
+        kind: "shield-absorb",
+        nodeId: player.hasPosition.nodeId,
+        target: actorFromMonster(target),
+        source: sourceActor,
+        amount: enemyShieldAbsorbed,
+      },
+      {
+        visibility: "combat",
+        relatedPlayerIds: [player.isPlayer.id],
+        nodeId: player.hasPosition.nodeId,
+      },
+    );
+  }
 
   target.hasHealth.hp -= ctx.damage;
   target.controlsMonster.spawn = { ...target.hasPosition.current };
@@ -303,6 +382,15 @@ export function runPlayerAttack(
         : undefined,
   });
 
+  if (ctx.metadata.chaoticMiss) {
+    world.pushEvent(player.hasPosition.nodeId, {
+      kind: "player-miss",
+      playerId: player.isPlayer.id,
+      targetId: target.isMonster.id,
+      targetPos: { ...target.hasPosition.current },
+    });
+  }
+
   emitCombatEvent("afterHit", ctx, world);
 
   if (target.hasHealth.hp <= 0) {
@@ -335,6 +423,8 @@ export function runPlayerAttack(
       biomeXpGained: rewardInfo?.biomeXpGained ?? 0,
       essenceGained: rewardInfo?.essenceGained ?? 0,
       essenceType: rewardInfo?.essenceType ?? "green",
+      empowered: isEmpowered,
+      execution: isExecution,
     });
     world.removeMonsterEntity(target.isMonster.id);
     return "killed";
@@ -394,6 +484,28 @@ export function runMonsterAttack(
       Math.max(0, monster.dealsDamage.attack - target.mitigatesDamage.plating) *
         (1 - target.mitigatesDamage.damageReduction),
     ),
+  );
+
+  // T4 monster empowered attacks (cadence finisher / cooldown spike). Multiply
+  // the already-mitigated damage BEFORE onHit/onDamageTaken so the player's
+  // damage-cap, shields, plating and DR all apply to the boosted hit — the same
+  // path a player empowered attack takes. Deterministic (counter + timer).
+  const empoweredMult = monsterEmpoweredMultiplier(
+    monster,
+    MONSTER_DATABASE.get(monster.isMonster.monsterTypeId),
+    now,
+  );
+  if (empoweredMult > 1) {
+    ctx.damage = Math.max(1, Math.round(ctx.damage * empoweredMult));
+    ctx.metadata["empoweredAttack"] = true;
+  }
+
+  // Pre-mitigation incoming damage (gross monster attack, scaled by any empowered
+  // mult, BEFORE the player's plating/DR). Exposed for listeners that want to scale
+  // off the raw hit rather than the mitigated HP loss (e.g. Avenger/Vengeance), so
+  // building defenses doesn't shrink the payoff.
+  ctx.metadata["incomingGross"] = Math.round(
+    monster.dealsDamage.attack * (empoweredMult > 1 ? empoweredMult : 1),
   );
 
   emitCombatEvent("onHit", ctx, world);
@@ -481,17 +593,22 @@ export function runMonsterAttack(
     const durMs = Math.round(
       rampDebuff.stackDurationMs * mobilityTenacityDurationMult(target),
     );
+    // A boss 'modify-ramp-debuff' action raises the slow caps mid-fight.
+    const capOverride = monster.scriptsBoss?.rampDebuffCapOverride;
+    const effectiveRamp = capOverride
+      ? { ...rampDebuff, moveSlowMaxPct: capOverride.moveSlowMaxPct, atkSlowMaxPct: capOverride.atkSlowMaxPct }
+      : rampDebuff;
     applyStatusEffect(target.tracksCombat, {
       id: FROST_RAMP_EFFECT_ID,
-      maxStacks: frostRampMaxStacks(rampDebuff),
+      maxStacks: frostRampMaxStacks(effectiveRamp),
       remainingMs: durMs,
       refreshable: true,
       sourceId: monster.isMonster.id,
       data: {
-        moveSlowPerHit: rampDebuff.moveSlowPerHit,
-        moveSlowMaxPct: rampDebuff.moveSlowMaxPct,
-        atkSlowPerHit: rampDebuff.atkSlowPerHit,
-        atkSlowMaxPct: rampDebuff.atkSlowMaxPct,
+        moveSlowPerHit: effectiveRamp.moveSlowPerHit,
+        moveSlowMaxPct: effectiveRamp.moveSlowMaxPct,
+        atkSlowPerHit: effectiveRamp.atkSlowPerHit,
+        atkSlowMaxPct: effectiveRamp.atkSlowMaxPct,
         totalMs: durMs,
       },
     });
@@ -682,10 +799,11 @@ export function updateCombat(world: World, dt: number, now: number) {
         continue;
       }
       setAttackTarget(world, e, target.isPlayer.id);
+      // Frozen no longer blocks attacks (it's a severe slow, not full CC); the
+      // lengthened attack cooldown applied in updateChillAndFreeze paces them.
       if (
         now - e.performsAttack.lastAttackAt >=
-          e.performsAttack.attackCooldown &&
-        !isMonsterFrozen(world, e.isMonster.id)
+        e.performsAttack.attackCooldown
       ) {
         const outcome = runMonsterAttack(world, e, target, now);
         if (outcome === "hit" || outcome === "killed") {
@@ -725,8 +843,7 @@ export function updateCombat(world: World, dt: number, now: number) {
     }
     setAttackTarget(world, e, minion.isMinion.id);
     if (
-      now - e.performsAttack.lastAttackAt >= e.performsAttack.attackCooldown &&
-      !isMonsterFrozen(world, e.isMonster.id)
+      now - e.performsAttack.lastAttackAt >= e.performsAttack.attackCooldown
     ) {
       runMonsterAttackOnMinion(world, e, minion, now);
       applyMonsterAttackSplash(

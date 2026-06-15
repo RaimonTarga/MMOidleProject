@@ -20,6 +20,9 @@ import {
 export interface PlayerProcDamageOpts {
   tags?: string[];
   clientEffects?: string[];
+  /** Tag the damage number with empowered (yellow "!") styling. Proc damage never
+   *  splashes, so this is purely cosmetic — no AoE is involved. */
+  empowered?: boolean;
 }
 
 /**
@@ -68,7 +71,7 @@ export function applyPlayerProcDamage(
     targetId: target.isMonster.id,
     targetName: target.isMonster.name,
     damage: hpDamage,
-    empowered: false,
+    empowered: opts.empowered ?? false,
     execution: false,
     effects:
       opts.clientEffects && opts.clientEffects.length > 0

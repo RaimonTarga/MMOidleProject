@@ -102,6 +102,19 @@ export function resetPlayerProgress(world: World, player: PlayerEntity): GameAct
   return { ok: true, message: 'Player progress reset.' };
 }
 
+export function renamePlayer(
+  world: World,
+  player: PlayerEntity,
+  name: string,
+): GameActionResult {
+  const trimmed = name.trim().slice(0, 24);
+  if (!trimmed) return { ok: false, message: 'Name cannot be empty.' };
+
+  player.isPlayer.name = trimmed;
+  markSliceDirty(world, player, 'isPlayer');
+  return { ok: true, message: `Player renamed to ${trimmed}.` };
+}
+
 export function teleportPlayerToNode(
   world: World,
   player: PlayerEntity,

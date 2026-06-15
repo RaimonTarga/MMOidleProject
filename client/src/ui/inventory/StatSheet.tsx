@@ -4,12 +4,14 @@ import type { EquipmentSlot } from '@mmo-idle/shared';
 import {
   GAME_CONFIG,
   ITEM_DATABASE, RECIPE_DATABASE, upgradeStatBonusTotal,
+  resolveEmpoweredMultiplier,
 } from '@mmo-idle/shared';
 import { hudBus } from '../../hudBus';
 import {
   attackAtom,
   attackCooldownAtom,
   attackRangeAtom,
+  combatArchetypeAtom,
   damageReductionAtom,
   equipmentAtom,
   dodgeRateAtom,
@@ -18,6 +20,7 @@ import {
   itemUpgradesAtom,
   maxHpAtom,
   onHitDamageAtom,
+  passivesAtom,
   platingAtom,
   speedAtom,
 } from '../../hud/atoms';
@@ -71,14 +74,20 @@ export function StatSheet({ focused, onFocus }: Props) {
   const evadeMitigation = useAtomValue(evadeMitigationAtom);
   const equipment       = useAtomValue(equipmentAtom);
   const itemUpgrades    = useAtomValue(itemUpgradesAtom);
+  const passives        = useAtomValue(passivesAtom);
+  const combatArchetype = useAtomValue(combatArchetypeAtom);
+
+  const empMult = resolveEmpoweredMultiplier(passives, combatArchetype);
 
   const playerStats: Record<string, number> = {
     attack, maxHp, hpRegen, plating, damageReduction, speed, onHitDamage, attackRange,
   };
 
-  // Derived combat stats
+  // Derived combat stats. On-hit damage is flat per hit (ignores enemy defenses),
+  // so it factors into the planning DPS alongside attack.
   const currentAps = 1000 / attackCooldown;
-  const currentDps = attack * currentAps;
+  const currentHit = attack + onHitDamage;
+  const currentDps = currentHit * currentAps;
 
   const info = useMemo(() => {
     if (!focused) return null;
@@ -132,8 +141,10 @@ export function StatSheet({ focused, onFocus }: Props) {
     ? currentAps * (info.weaponSwap.currentBase / info.weaponSwap.proposedBase)
     : null;
   const proposedAttack = info ? attack + (info.delta.attack ?? 0) : null;
-  const proposedDps    = proposedAps  != null && proposedAttack != null ? proposedAttack * proposedAps
-                       : proposedAttack != null && proposedAttack !== attack  ? proposedAttack * currentAps
+  const proposedOnHit  = info ? onHitDamage + (info.delta.onHitDamage ?? 0) : null;
+  const proposedHit    = proposedAttack != null && proposedOnHit != null ? proposedAttack + proposedOnHit : null;
+  const proposedDps    = proposedAps  != null && proposedHit != null ? proposedHit * proposedAps
+                       : proposedHit != null && proposedHit !== currentHit  ? proposedHit * currentAps
                        : null;
 
   function handleAction() {
@@ -244,6 +255,14 @@ export function StatSheet({ focused, onFocus }: Props) {
             </>
           );
         })}
+
+        {/* Empowered attack multiplier — cadence/cooldown/energy only */}
+        {empMult && (
+          <div className="inv-stat-row">
+            <span className="inv-stat-row__label">EMP</span>
+            <span className="inv-stat-row__value">×{empMult.effective.toFixed(2)}</span>
+          </div>
+        )}
 
         {/* Evasion — deterministic dodge rate + damage avoided per dodge */}
         {dodgeRate > 0 && (

@@ -373,16 +373,32 @@ function buffEffectText(buff: PlayerBuff): string {
       return "+attack speed";
     case "cadence-echo":
       return "echo hit stored";
+    case "cadence-resonance":
+      return "finisher amplified";
+    case "cadence-verdict":
+      return "banked execution power";
+    case "cadence-aftershock":
+      return "next attacks fire on-hit twice";
+    case "cadence-metronome":
+      return "+flat damage to subsequent hits";
+    case "cadence-rampage":
+      return "+attack speed and finisher damage";
+    case "cadence-crescendo":
+      return "+finisher damage (ramps in combat)";
     case "cooldown-overdrive":
-      return "+movement speed";
+      return "+attack speed";
     case "cooldown-eternal-charge":
       return "+execution charge";
     case "cooldown-temporal-ext":
       return "+on-hit damage";
     case "cooldown-battery":
       return "+execution damage";
+    case "cooldown-reverb":
+      return "next execution empowered";
     case "cooldown-alignment":
       return "+attack speed";
+    case "cooldown-rupture":
+      return "regular attacks pierce plating";
     case "cooldown-channel":
       return "channeled beam active";
     case "energy-overcharge":
@@ -405,6 +421,8 @@ function buffEffectText(buff: PlayerBuff): string {
       return "target chill stacks";
     case "dot-frozen":
       return "target frozen";
+    case "dot-rimeblade":
+      return "+attack damage per frost stack";
     case "reload-snipe-ready":
       return "next shot empowered";
     case "reload-hair-trigger":

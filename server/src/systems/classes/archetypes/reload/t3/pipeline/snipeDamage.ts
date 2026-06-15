@@ -1,10 +1,11 @@
 import { registerCombatListener } from '../../../../../combat/engine/combatPipeline';
-import {
-  DEFAULT_SNIPE_BASELINE_CD_MS,
-  DEFAULT_SNIPE_FULL_HP_MULT,
-  FULL_HP_THRESHOLD,
-} from '../core/constants';
+import { DEFAULT_SNIPE_FULL_HP_MULT, FULL_HP_THRESHOLD } from '../core/constants';
 
+/**
+ * Snipe onHit: bonus damage against full-health targets. The attack-speed→damage
+ * conversion and the hard-set cadence are handled in recalculatePlayerStats (the
+ * attack-speed STAT is converted there, weapon APS ignored).
+ */
 export function registerSnipeDamage(): void {
   registerCombatListener('onHit', (ctx, _world) => {
     if (ctx.attackerType !== 'player') return;
@@ -14,14 +15,15 @@ export function registerSnipeDamage(): void {
     const monster = ctx.defender;
     if ((player.usesSkills.passives['reload.snipe'] ?? 0) <= 0) return;
 
-    const baselineCdMs = player.usesSkills.passives['reload.snipe-baseline-cd-ms'] ?? DEFAULT_SNIPE_BASELINE_CD_MS;
-    const attackSpeedDamageMult = baselineCdMs / Math.max(1, player.performsAttack.attackCooldown);
-    ctx.damage = Math.max(1, Math.round(ctx.damage * attackSpeedDamageMult));
-
     if (monster.hasHealth.hp >= monster.hasHealth.maxHp * FULL_HP_THRESHOLD) {
       const fullHpMult = player.usesSkills.passives['reload.snipe-fullhp-mult'] ?? DEFAULT_SNIPE_FULL_HP_MULT;
       ctx.damage = Math.max(1, Math.round(ctx.damage * fullHpMult));
       ctx.metadata['reloadSnipeFullHp'] = true;
+      // Tag the full-HP shot as empowered for the aesthetic only — yellow "!" crit
+      // styling + empowered ring — but suppress the splash, since the sniper is a
+      // single-target precision shot. (Set after the mult so it's only the bonus shot.)
+      ctx.metadata['empoweredAttack'] = true;
+      ctx.metadata['suppressEmpoweredAoe'] = true;
     }
   });
 }

@@ -9,7 +9,8 @@ import { plainsRecipeEntries } from './plains.recipes';
 import { swampRecipeEntries } from './swamp.recipes';
 import { tundraRecipeEntries } from './tundra.recipes';
 import { volcanicRecipeEntries } from './volcanic.recipes';
-import { graveyardRecipeEntries } from './graveyard';
+import { graveyardRecipeEntries } from './graveyard.recipes';
+import { trenchRecipeEntries } from './trench.recipes';
 // import { abyssUltimateRecipeEntries } from './abyssUltimate';
 
 const recipeEntries: [string, Recipe][] = [
@@ -24,6 +25,7 @@ const recipeEntries: [string, Recipe][] = [
   ...desertRecipeEntries,
   ...volcanicRecipeEntries,
   ...graveyardRecipeEntries,
+  ...trenchRecipeEntries,
   // ...trenchRecipeEntries,
 ];
 

@@ -96,7 +96,10 @@ export function registerBeforeAttack(): void {
       (hasPassive(player, "energy.polarity-decay") ||
         hasPassive(player, "energy.cascading-induction") ||
         hasPassive(player, "energy.superconducting-mass") ||
-        hasPassive(player, "energy.capacitor-shunt"))
+        hasPassive(player, "energy.capacitor-shunt") ||
+        hasPassive(player, "energy.awakened-lightning") ||
+        hasPassive(player, "energy.endless-storm") ||
+        hasPassive(player, "energy.singularity-execute"))
     ) {
       ctx.metadata["suppressEmpoweredMult"] = true;
     }
@@ -117,11 +120,21 @@ export function registerBeforeAttack(): void {
       !isEmpoweredAttack(entity)
     ) {
       const empMult = passives["energy.empowered-mult"] ?? 6.0;
-      const projected = Math.floor(player.dealsDamage.attack * empMult);
+      const energy = player.usesEnergy!;
+      // Project at the CURRENT stored energy (execute can fire below max).
+      const scale = Math.max(0, energy.energy) / 100;
+      const projected = Math.floor(player.dealsDamage.attack * empMult * scale);
       if (ctx.defender.hasHealth.hp <= projected) {
+        energy.dischargeEnergy = energy.energy;
+        energy.energy = 0; // execute SPENDS the stored energy (this was missing)
+        markSliceDirty(world, player, "usesEnergy");
         setEmpoweredAttack(world, entity);
+        // The suppress block above already ran (isEmpoweredAttack was false then), so
+        // set it here too — otherwise the empowered multiplier double-applies on top of
+        // empoweredHit's own ×empMult, blowing the discharge past its projected damage.
+        ctx.metadata["suppressEmpoweredMult"] = true;
         console.log(
-          `[SingularityExec] ${player.isPlayer.id}: execute — ${ctx.defender.hasHealth.hp} HP <= ${projected} projected`,
+          `[SingularityExec] ${player.isPlayer.id}: execute (spent ${energy.dischargeEnergy}) — ${ctx.defender.hasHealth.hp} HP <= ${projected} projected`,
         );
       }
     }

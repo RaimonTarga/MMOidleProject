@@ -4,11 +4,10 @@ import { registerEmpoweredHit } from './pipeline/empoweredHit';
 import { registerNormalHit } from './pipeline/normalHit';
 import { registerPostEmpoweredHit } from './pipeline/postEmpoweredHit';
 import { updateOverdrive } from './ticks/light/overdrive';
-import { updateAlignment } from './ticks/balanced/alignment';
 import { updateBattery } from './ticks/balanced/battery';
 import { updateSingularExtraction } from './ticks/heavy/singularExtraction';
-import { updateEntropyCollapse } from './ticks/heavy/entropyCollapse';
 import { updateChanneledBeam } from './ticks/heavy/channeledBeam';
+import { registerCooldownDamageTracking, updateCooldownState } from './ticks/cooldownState';
 
 /**
  * Register all tier-3 cooldown combat pipeline listeners.
@@ -25,19 +24,19 @@ export function initCooldownT3(): void {
   registerEmpoweredHit();
   registerNormalHit();
   registerPostEmpoweredHit();
+  registerCooldownDamageTracking();
 }
 
 /**
  * Run once per world tick, after updateCombatState (so cooldowns are already
  * decremented) to handle time-driven T3 cooldown mechanics.
  */
-export function updateCooldownT3(world: World, dt: number): void {
+export function updateCooldownT3(world: World, dt: number, now: number): void {
   updateOverdrive(world, dt);
-  updateAlignment(world, dt);
   updateBattery(world, dt);
   updateSingularExtraction(world, dt);
-  updateEntropyCollapse(world, dt);
-  updateChanneledBeam(world, dt);
+  updateChanneledBeam(world, dt, now);
+  updateCooldownState(world, dt);
 }
 
 // ── Public re-exports (preserve cooldownT3 module API) ───────────────────────

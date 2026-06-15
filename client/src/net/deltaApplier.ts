@@ -11,7 +11,7 @@ import { hudBus } from "../hudBus";
 import { syncPlayerAtoms, nodeLoadingAtom, setTargetFrame, setZoneBoss, setZonePlayers, type TargetFrameData, type ZonePlayer } from "../hud/atoms";
 import { getDefaultStore } from "jotai";
 import type { GameScene } from "../scenes/GameScene";
-import type { RenderState } from "../render/state";
+import type { RenderState, DamageNumberHint } from "../render/state";
 import { upsertPlayer } from "../render/players";
 import { upsertMonster } from "../render/monsters";
 import { upsertThoughtBubble } from "../render/thoughtBubbles";
@@ -28,6 +28,15 @@ import { syncVoidOverlordRespawn } from "../render/voidOverlordTomb";
 // vanishes from view) so the target frame can drain HP to 0 before fading.
 let lastTargetRef: { id: string; data: TargetFrameData } | null = null;
 
+function ensureDamageHint(state: RenderState, id: string): DamageNumberHint {
+  let hint = state.damageStyleHints.get(id);
+  if (!hint) {
+    hint = { hasDirectHit: false, empowered: false, execution: false };
+    state.damageStyleHints.set(id, hint);
+  }
+  return hint;
+}
+
 export function applyDelta(
   state: RenderState,
   snapshot: DeltaSnapshot,
@@ -35,6 +44,25 @@ export function applyDelta(
 ): void {
   const liveIds = new Set<string>();
   const pendingRemoves: string[] = [];
+
+  // Derive per-monster damage-number style hints from this snapshot's events
+  // before the delta loop spawns HP-delta numbers (which run before events fire).
+  state.damageStyleHints.clear();
+  for (const ev of snapshot.events) {
+    if (ev.kind === "player-hit") {
+      const hint = ensureDamageHint(state, ev.targetId);
+      hint.hasDirectHit = true;
+      if (ev.empowered) hint.empowered = true;
+      if (ev.execution) hint.execution = true;
+    } else if (ev.kind === "monster-hit") {
+      const hint = ensureDamageHint(state, ev.targetId);
+      hint.hasDirectHit = true;
+      if (ev.empowered) hint.empowered = true;
+      if (ev.execution) hint.execution = true;
+    } else if (ev.kind === "dot-tick") {
+      ensureDamageHint(state, ev.targetId).dotElement = ev.element;
+    }
+  }
 
   for (const delta of snapshot.deltas) {
     if (delta.kind === "remove") {

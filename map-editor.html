@@ -361,14 +361,14 @@ const CELL_PX    = 50;
 
 const BIOMES = [
   'clearing','forest','mountain','plains','swamp',
-  'cave','jungle','tundra','desert','volcanic','necropolis','abyss',
+  'cave','jungle','tundra','desert','volcanic','graveyard','trench',
 ];
 
 const BIOME_COLORS = {
   clearing:   '#2e6030', forest:     '#1e4e1c', mountain:   '#464660',
   plains:     '#566620', swamp:      '#1e441a', cave:       '#22223a',
   jungle:     '#0e3e1c', tundra:     '#283858', desert:     '#685414',
-  volcanic:   '#601414', necropolis: '#221230', abyss:      '#0c0820',
+  volcanic:   '#601414', graveyard:  '#221230', trench:     '#0c0820',
 };
 
 // Colors used in tier view mode — one per tier level (0–4).
@@ -384,23 +384,23 @@ const TIER_COLORS = {
 const BIOME_ABBREV = {
   clearing:'Clear', forest:'Forest', mountain:'Mtn',   plains:'Plains',
   swamp:'Swamp',    cave:'Cave',     jungle:'Jungle',  tundra:'Tundra',
-  desert:'Desert',  volcanic:'Volc', necropolis:'Necro', abyss:'Abyss',
+  desert:'Desert',  volcanic:'Volc', graveyard:'Grave',  trench:'Trench',
 };
 
 // Boss pools keyed by biome → tier, matching biomeDatabase.ts exactly.
 // First entry in each array is the primary boss spawned by ensureBoss().
 const BOSS_POOL_BY_TIER = {
-  forest:     { 1: ['forest-warden'],      2: ['forest-elder'],        3: ['elder-forest-warden'], 4: ['elder-treant-lord']   },
-  mountain:   { 1: ['mountain-sentinel'],  2: ['stone-warden'],        3: ['peak-titan'],          4: ['mountain-titan']      },
-  plains:     { 1: ['plains-champion'],    2: ['plains-tyrant'],       3: ['plains-warlord'],      4: ['stampede-emperor']    },
-  swamp:      { 1: ['bog-sovereign'],      2: ['mire-lord'],           3: ['bog-ancient'],         4: ['swamp-sovereign']     },
-  cave:       { 1: ['cave-sentinel'],      2: ['cave-terror'],         3: ['cave-dread'],          4: ['cave-titan']          },
-  jungle:     { 2: ['jungle-colossus'],    3: ['jungle-titan-lord'],   4: ['jungle-ancient-lord']                             },
-  tundra:     { 2: ['glacial-colossus'],   3: ['frost-colossus'],      4: ['glacial-titan']                                   },
-  desert:     { 2: ['desert-pharaoh'],     3: ['sand-emperor'],        4: ['desert-eternal']                                  },
-  volcanic:   { 3: ['volcanic-titan'],     4: ['inferno-lord']                                                                },
-  necropolis: { 3: ['lich-king'],          4: ['undying-lord']                                                                },
-  abyss:      { 4: ['void-titan']                                                                                             },
+  forest:     { 1: ['gnarled-greatbear'],      2: ['apex-timberclaw'],        3: ['elder-gnarled-greatbear'], 4: ['elder-treant-lord']   },
+  mountain:   { 1: ['crag-behemoth'],  2: ['stoneplate-juggernaut'],        3: ['crag-gorged-horn-behemoth'],   4: ['mountain-titan']      },
+  plains:     { 1: ['tusked-razorback'],    2: ['gorging-razortusk'],       3: ['plains-warlord'],              4: ['stampede-emperor']    },
+  swamp:      { 1: ['grave-toadeater'],      2: ['mire-gorged-behemoth'],   3: ['rot-spore-croc-behemoth'],     4: ['swamp-sovereign']     },
+  cave:       { 1: ['obsidian-broodmother'],      2: ['chitinous-dreadbore'], 3: ['deep-core-burrow-gorger'],   4: ['cave-titan']          },
+  jungle:     { 2: ['jungle-dread-gorger'],    3: ['apex-bramble-slasher'],        4: ['jungle-ancient-lord']                             },
+  tundra:     { 2: ['glacial-colossus'],   3: ['frost-plated-rime-mammoth'],   4: ['glacial-titan']                                   },
+  desert:     { 2: ['dune-stalker-emperor'],     3: ['dune-carapace-monarch'],       4: ['desert-eternal']                                  },
+  volcanic:   { 3: ['cinder-shell-magma-salamander'],     4: ['inferno-lord']                                                    },
+  graveyard:  { 3: ['lich-king'],          4: ['undying-lord']                                                                },
+  trench:     { 4: ['void-overlord']                                                                                          },
 };
 
 // Minimum tier each biome may appear at. Biomes not listed default to 1.
@@ -410,8 +410,8 @@ const BIOME_MIN_TIER = {
   desert:     2,
   tundra:     3,
   volcanic:   3,
-  abyss:      4,
-  necropolis: 4,
+  trench:     4,
+  graveyard:  4,
 };
 
 // ── State ──────────────────────────────────────────────────────────────────────

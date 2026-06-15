@@ -20,6 +20,12 @@ import {
 } from "../../../../ecs/markerHelpers";
 import { canApplyPlayerDebuff } from "../summoner/t3/core/debuffGuard";
 import { evadeBlocksDebuffs } from "../../../defense/mitigation/evasion";
+import {
+  pushDotTickEvent,
+  dotElementForSource,
+  pushPlayerDotTickEvent,
+  monsterDotElement,
+} from "../../../combat/damage/dotTickEvent";
 import { buildKillerFromSourceId } from "../../../world/deathCause";
 import {
   buildSimpleBreakdown,
@@ -34,6 +40,7 @@ import {
 } from "../../../../world/worldLogActors";
 import { isInvulnerableMonster, isInvulnerablePlayer } from "../../../combat/invulnerability";
 import { tryCheatDeath } from "../../../defense/mitigation/cheatDeath";
+import { drainPlayerShields } from "../../../defense/shields/shields";
 import {
   DOT_CONVERSION_PCT,
   DOT_DURATION_MS,
@@ -95,6 +102,7 @@ export function updateDotArchetype(world: World, dt: number): void {
     );
 
     entity.hasHealth.hp -= damage;
+    pushDotTickEvent(world, entity, dotElementForSource(world, effect.sourceId), damage);
 
     if (entity.hasHealth.hp <= 0) {
       monstersToKill.push({ monsterId, sourceId: effect.sourceId, damage });
@@ -174,6 +182,14 @@ export function updateDotArchetype(world: World, dt: number): void {
       Math.round(base * (1 - drForDot) * (1 - dotResist)),
     );
 
+    // DoT respects shields by default — drain the barrier before HP, mirroring
+    // direct hits. A DoT may opt out (the exception) via dotEffect.bypassShield,
+    // stored as data.bypassShield = 1.
+    const bypassShield = effect.data.bypassShield === 1;
+    const { damage: hpDamage, absorbed: shieldAbsorbed } = bypassShield
+      ? { damage, absorbed: 0 }
+      : drainPlayerShields(entity, damage);
+
     const killer = buildKillerFromSourceId(
       world,
       effect.sourceId,
@@ -187,13 +203,14 @@ export function updateDotArchetype(world: World, dt: number): void {
         name: killer.monsterName,
         actorType: 'monster',
       },
-      damage,
-      0,
+      hpDamage,
+      shieldAbsorbed,
       'dot',
-      buildSimpleBreakdown(base, damage),
+      buildSimpleBreakdown(base, hpDamage),
     );
 
-    entity.hasHealth.hp -= damage;
+    entity.hasHealth.hp -= hpDamage;
+    pushPlayerDotTickEvent(world, entity, monsterDotElement(world, effect.sourceId), hpDamage);
 
     if (entity.hasHealth.hp <= 0) {
       if (tryCheatDeath(world, entity)) {
@@ -208,7 +225,7 @@ export function updateDotArchetype(world: World, dt: number): void {
               effect.sourceId,
               entity.hasPosition.nodeId,
             ),
-            damage,
+            damage: hpDamage,
             stacks: effect.stacks,
           },
         });
@@ -278,7 +295,8 @@ export function initDotArchetype(): void {
     );
     const damagePerStack = Math.max(
       1,
-      Math.round((attacker.dealsDamage.attack * convPct) / maxStacks),
+      // Normalized by tick interval (vs DOT_TICK_MS) so faster ticks = same total.
+      Math.round((attacker.dealsDamage.attack * convPct) / maxStacks * tickIntervalMs / DOT_TICK_MS),
     );
 
     // Apply conversion reduction only if the T3 handler hasn't already done so.
@@ -321,6 +339,7 @@ export function initDotArchetype(): void {
 
     const player = ctx.defender;
     if (!canApplyPlayerDebuff(player)) return;
+    if (evadeBlocksDebuffs(ctx)) return; // evaded monster hit applies no DoT
 
     const playerCombatState = player.tracksCombat;
 
@@ -339,6 +358,8 @@ export function initDotArchetype(): void {
         nextTickIn: tickIntervalMs,
         tickIntervalMs,
         totalMs: durationMs,
+        // Exception flag (status data is numbers only): 1 = ignore shields.
+        bypassShield: dotEffect.bypassShield ? 1 : 0,
       },
     });
 

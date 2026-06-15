@@ -39,6 +39,12 @@ export function tryPoisonExplosion(pc: DotT3PathContext): boolean {
     const burst = PE_MAX_STACKS * dmgPerStack * PE_BURST_TICKS;
     ctx.damage += burst;
     clearMonsterDot(world, monster, monsterState);
+    // Real empowered detonation: crit styling + the standard empowered AoE splash.
+    ctx.metadata['empoweredAttack'] = true;
+    const existing = ctx.metadata['clientEffects'];
+    ctx.metadata['clientEffects'] = Array.isArray(existing)
+      ? [...existing, 'poison-explosion']
+      : ['poison-explosion'];
     console.log(`[PoisonExplosion] ${player.isPlayer.id}: detonated → +${burst} burst`);
   } else {
     markMonsterDot(world, monster);

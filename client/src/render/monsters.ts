@@ -9,6 +9,7 @@ import { ensureCdBar } from './cooldownBars';
 import { applyLunge } from './interpolation';
 import { spawnAttackEffect } from './combatFx';
 import { spawnDamageNumber } from '../fx/particles';
+import { resolveMonsterDamageStyle } from './damageNumberStyle';
 import { applySpriteTint, resetSpriteTint } from './sprites';
 import { VOID_OVERLORD_DISPLAY } from '../sprites/voidOverlordSheet';
 import {
@@ -37,7 +38,7 @@ function defaultBarOffsetY(monster: MonsterView): number {
 }
 
 function defaultSpriteSize(monster: MonsterView): number {
-  return monster.isBoss ? 80 : 64;
+  return monster.isBoss ? 128 : 64;
 }
 
 function upsertSheetMonsterSprite(
@@ -184,12 +185,16 @@ export function upsertMonster(
   if (monster.hp < prevHp) {
     const sprite = state.sprite.get(monster.id);
     if (sprite && meta) {
+      const { color, style } = resolveMonsterDamageStyle(
+        state.damageStyleHints.get(monster.id),
+      );
       spawnDamageNumber(
         scene,
         { x: sprite.x, y: sprite.y },
         meta.barOffsetY,
         Math.round(prevHp - monster.hp),
-        '#ffffff',
+        color,
+        style,
       );
     }
   }

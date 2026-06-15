@@ -1,13 +1,13 @@
-import { applyStatusEffect, GAME_CONFIG } from '@mmo-idle/shared';
+import { applyStatusEffect } from '@mmo-idle/shared';
 import { registerCombatListener } from '../../../../../combat/engine/combatPipeline';
-import { applyPlayerAoe } from '../../../../../combat/damage/aoeDamage';
 import { markSliceDirty } from '../../../../../../ecs/dirtyHelpers';
 import {
-  DEFAULT_EXPLODING_AOE_MULT,
-  DEFAULT_EXPLODING_CLIP_MULT,
   DEFAULT_HAIR_TRIGGER_MAX,
   DEFAULT_HAIR_TRIGGER_PCT,
   EXPLODING_CLIP_CLIENT_EFFECT,
+  ALT_ONHIT_CLIENT_EFFECT,
+  ALT_CADENCE_ATTACK_MULT,
+  ALT_CADENCE_ONHIT_MULT,
 } from '../core/constants';
 
 function usesStandardMagazine(passives: Record<string, number | undefined>): boolean {
@@ -29,26 +29,37 @@ export function registerReloadLightT3(): void {
     const passives = player.usesSkills.passives;
     if (!usesStandardMagazine(passives)) return;
 
+    // Alternating Cadence: even shots = 2× attack (on-hit zeroed), odd shots =
+    // 2× on-hit (attack zeroed). On-hit TRIGGERS (DoT/procs) still fire on all
+    // shots — only the on-hit DAMAGE value is scaled (see combat.ts onHitDamageMult).
+    if ((passives['reload.alternating-cadence'] ?? 0) > 0) {
+      const shotPos = reload.ammoMax - reload.ammo; // 1-indexed shot just fired
+      if (shotPos % 2 === 0) {
+        ctx.damage = Math.max(1, Math.round(ctx.damage * ALT_CADENCE_ATTACK_MULT));
+        ctx.metadata['onHitDamageMult'] = 0;
+      } else {
+        ctx.damage = 0;
+        ctx.metadata['onHitDamageMult'] = ALT_CADENCE_ONHIT_MULT;
+        // Odd shot = the on-hit-focused round → tag the blue shot FX.
+        const existing = ctx.metadata['clientEffects'];
+        const effects = Array.isArray(existing)
+          ? existing.filter((e): e is string => typeof e === 'string')
+          : [];
+        effects.push(ALT_ONHIT_CLIENT_EFFECT);
+        ctx.metadata['clientEffects'] = effects;
+      }
+    }
+
     const blunderbuss = (passives['reload.blunderbuss'] ?? 0) > 0;
     const isLastPellet = blunderbuss
       ? ctx.metadata['blunderbussLastPellet'] === true
       : reload.ammo === 0;
 
     if ((passives['reload.exploding-clip'] ?? 0) > 0 && isLastPellet) {
-      const mult =
-        passives['reload.exploding-clip-mult'] ?? DEFAULT_EXPLODING_CLIP_MULT;
-      ctx.damage = Math.max(1, Math.round(ctx.damage * mult));
-      applyPlayerAoe(
-        world,
-        player,
-        ctx.defender.hasPosition.current,
-        GAME_CONFIG.EMPOWERED_AOE_RADIUS,
-        Math.round(
-          player.dealsDamage.attack *
-            (passives['reload.exploding-aoe-mult'] ?? DEFAULT_EXPLODING_AOE_MULT),
-        ),
-        ctx.defender.isMonster.id,
-      );
+      // The damage multiplier and AoE splash are handled by the empowered system:
+      // the last bullet is armed empowered in reloadPrototype.beforeAttack, so the
+      // empowered multiplier (reload.empowered-mult) scales the hit and combat.ts
+      // applies the standard empowered AoE. Here we only tag the red Duelist shot FX.
       const existing = ctx.metadata['clientEffects'];
       const effects = Array.isArray(existing)
         ? existing.filter((e): e is string => typeof e === 'string')

@@ -8,8 +8,10 @@ export const STAT_HELP: Record<string, string> = {
   hp: 'Your health. At 0 you die and respawn at the clearing, leaving a corpse at the death site. Bar layers: blue strip above = shield; red = HP that pending damage (damage-over-time + deferred debt) will remove; dark green = healing queued from regen/absorb.',
   attack:
     'Base damage per hit before the target’s defenses. Final hit = (Attack − their Plating) × (1 − their Damage Reduction), floored at 1.',
+  onHitDamage:
+    'Flat bonus damage added to every hit AFTER the target’s defenses — it ignores Plating and Damage Reduction entirely, so each hit deals at least this much. Comes from certain weapons and passives (e.g. Shockblade).',
   dps:
-    'Estimate = Attack × Attacks-per-second, before enemy mitigation. A planning number — real output varies with positioning, procs, and enemy defenses.',
+    'Estimate = (Attack + On-Hit Dmg) × Attacks-per-second, before enemy mitigation. A planning number — real output varies with positioning, procs, and enemy defenses.',
   atkSpeed:
     'How often you attack, shown as attacks-per-second and the cooldown between swings. Attack-speed bonuses add up, then set cooldown = base ÷ (1 + total).',
   plating:

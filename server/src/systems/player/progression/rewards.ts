@@ -1,4 +1,4 @@
-import { NODE_BIOMES, MONSTER_DATABASE, RECIPE_DATABASE, GAME_CONFIG, biomeLevelCap, biomeXpForLevel, bossClearKey, BIOME_DATABASE, ULTIMATE_CLEAR_VOID_OVERLORD } from '@mmo-idle/shared';
+import { NODE_BIOMES, MONSTER_DATABASE, RECIPE_DATABASE, biomeLevelCap, biomeXpForBiomeLevel, bossClearKey, BIOME_DATABASE, ULTIMATE_CLEAR_VOID_OVERLORD } from '@mmo-idle/shared';
 import type { EssenceType } from '@mmo-idle/shared';
 import type { MonsterEntity, PlayerEntity } from '../../../ecs/entity';
 import type { World } from '../../../world/World';
@@ -34,10 +34,6 @@ export function rewardPlayer(entity: PlayerEntity, rewards: KillRewards): void {
   entity.tracksProgression.level += rewards.level;
 }
 
-function fallbackBiomeXp(rewards: KillRewards, biomeTier: number): number {
-  const mult = GAME_CONFIG.BIOME_XP_ESSENCE_MULT[biomeTier] ?? 1;
-  return Math.max(1, Math.round(rewards.essence * mult));
-}
 
 function scheduleBossRespawn(world: World, monster: MonsterEntity): void {
   const durationMs =
@@ -96,7 +92,7 @@ function applyBiomeXP(
   entity.tracksProgression.biomeXP[biomeGroup] = newXP;
 
   let rawLevel = prevLevel;
-  while (rawLevel < levelCap && newXP >= biomeXpForLevel(rawLevel + 1)) rawLevel++;
+  while (rawLevel < levelCap && newXP >= biomeXpForBiomeLevel(biomeGroup, rawLevel + 1)) rawLevel++;
   const newLevel = rawLevel;
   const unlockedRecipeIds: string[] = [];
   if (newLevel > prevLevel) {
@@ -157,13 +153,11 @@ function applyKillRewardsToPlayer(
   const def = MONSTER_DATABASE.get(monster.isMonster.monsterTypeId);
   const rewards = def?.rewards ?? FALLBACK_REWARDS;
   rewardPlayer(recipient, rewards);
-  const biomeInfo = NODE_BIOMES[monster.hasPosition.nodeId];
-  const biomeTier = biomeInfo?.biomeTier ?? 0;
   const biomeResult = applyBiomeXP(
     world,
     recipient,
     monster.hasPosition.nodeId,
-    rewards.biomeXp ?? fallbackBiomeXp(rewards, biomeTier),
+    rewards.biomeXp ?? 1,
   );
   const tierResult = registerKillForQuests(recipient, monster.isMonster.monsterTypeId);
   if (tierResult.advanced && tierResult.prevTier !== undefined && tierResult.newTier !== undefined) {
@@ -231,6 +225,13 @@ export function grantMonsterRewards(
 
   if (monster.isMonster.monsterTypeId === 'void-overlord') {
     notifyVoidOverlordDeath(world, monster, killerPlayerId);
+  }
+
+  // Despawn any adds the boss spawned via a 'spawn-adds' script action.
+  const spawnedAddIds = monster.scriptsBoss?.spawnedAddIds;
+  if (spawnedAddIds?.length) {
+    for (const id of spawnedAddIds) world.removeMonsterEntity(id);
+    monster.scriptsBoss!.spawnedAddIds = [];
   }
 
   const party = killer.inParty;

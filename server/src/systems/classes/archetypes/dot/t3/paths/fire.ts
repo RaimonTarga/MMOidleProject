@@ -8,8 +8,60 @@ import type { DotT3PathContext } from './_types';
 import {
   FTF_STACKS_PER_HIT, FTF_DMG_MULT, FTF_BONUS_MULT,
   CONF_TICK_MS, CONF_DMG_FACTOR,
+  IGNITION_VALUE_MULT,
 } from './_constants';
 import { CONF_TICKS } from '../core/constants';
+
+/**
+ * Ignition (Balanced).
+ * The first attack on a fresh (un-burned) target instantly applies ALL fire
+ * stacks at a reduced per-tick value; once burning, attacks refresh normally.
+ */
+export function tryIgnition(pc: DotT3PathContext): boolean {
+  if (!hasPassive(pc.player, 'dot.ignition')) return false;
+  const { ctx, world, player, monster, monsterState, maxStacks, dmgPerStack, durationMs, tickIntervalMs, convPct } = pc;
+
+  const current = getTotalStacks(monsterState, DOT_EFFECT_ID);
+  if (current === 0) {
+    // Firebrand: front-load every stack at reduced tick value + a searing brand FX.
+    const igDmg = Math.max(1, Math.round(dmgPerStack * IGNITION_VALUE_MULT));
+    let eff = applyStatusEffect(monsterState, {
+      id: DOT_EFFECT_ID, maxStacks, instanced: false,
+      sourceId: player.isPlayer.id, remainingMs: durationMs, refreshable: true,
+      data: { damagePerStack: igDmg, nextTickIn: tickIntervalMs, tickIntervalMs },
+    });
+    for (let i = 1; i < maxStacks; i++) {
+      eff = applyStatusEffect(monsterState, {
+        id: DOT_EFFECT_ID, maxStacks, instanced: false,
+        sourceId: player.isPlayer.id, remainingMs: durationMs, refreshable: true,
+        data: { damagePerStack: igDmg, nextTickIn: tickIntervalMs, tickIntervalMs },
+      });
+    }
+    eff.data.damagePerStack = igDmg;
+    eff.data.tickIntervalMs = tickIntervalMs;
+    const existing = ctx.metadata['clientEffects'];
+    ctx.metadata['clientEffects'] = Array.isArray(existing) ? [...existing, 'firebrand'] : ['firebrand'];
+  } else if (current >= maxStacks) {
+    // Already branded at max — this hit bypasses the DoT conversion and lands as a
+    // full 100% direct attack (undo the main handler's convPct cut), and just refreshes
+    // the existing burn's duration (no new stack, per-tick value unchanged).
+    ctx.damage = Math.max(1, Math.round(ctx.damage / Math.max(0.01, 1 - convPct)));
+    const eff = getStatusEffect(monsterState, DOT_EFFECT_ID);
+    if (eff) eff.remainingMs = durationMs;
+  } else {
+    // Partial stacks — refresh/add a single stack at the standard value.
+    const eff = applyStatusEffect(monsterState, {
+      id: DOT_EFFECT_ID, maxStacks, instanced: false,
+      sourceId: player.isPlayer.id, remainingMs: durationMs, refreshable: true,
+      data: { damagePerStack: dmgPerStack, nextTickIn: tickIntervalMs, tickIntervalMs },
+    });
+    eff.data.damagePerStack = dmgPerStack;
+    eff.data.tickIntervalMs = tickIntervalMs;
+  }
+  markMonsterDot(world, monster);
+  ctx.metadata['dotHandled'] = true;
+  return true;
+}
 
 /**
  * Fan the Flames (Balanced).
@@ -24,6 +76,9 @@ export function tryFanTheFlames(pc: DotT3PathContext): boolean {
   const currentStacks = getTotalStacks(monsterState, DOT_EFFECT_ID);
   if (currentStacks >= maxStacks) {
     ctx.damage += Math.floor(maxStacks * dmgPerStack * FTF_BONUS_MULT);
+    // Aesthetic-only crit on the full-stack bonus hit (yellow "!"), no AoE.
+    ctx.metadata['empoweredAttack'] = true;
+    ctx.metadata['suppressEmpoweredAoe'] = true;
     console.log(`[FanTheFlames] ${player.isPlayer.id}: at max — +${Math.floor(maxStacks * dmgPerStack * FTF_BONUS_MULT)} bonus`);
   } else {
     const toApply = Math.min(FTF_STACKS_PER_HIT, maxStacks - currentStacks);

@@ -26,7 +26,7 @@ export const FREEZE_BONUS = 0.35;
 export const FREEZE_MS    = 2_000;
 
 // ── Conflagration — referenced by selectors for remaining-pct UI. */
-export const CONF_TICKS  = 5;
+export const CONF_TICKS  = 10;  // fast-cadence burn (was 5); paired with CONF_TICK_MS 250 + CONF_DMG_FACTOR 1 → same total/duration
 
 // ── Status-effect → client effect-id mapping (mirroring.ts) ─────────────────
 export const STATUS_EFFECT_TO_CLIENT_ID: Array<[string, string]> = [

@@ -73,17 +73,19 @@ export function updateCooldownArchetype(world: World, dt: number): void {
  * of the next execution. The timer restarts after the hit lands, never before.
  */
 export function initCooldownArchetype(): void {
-  // T3 listeners registered first so their beforeAttack suppression fires
-  // before the empoweredMultiplier's onHit listener consumes the flag.
-  initCooldownT3();
-
-  // Register the multiplier listener FIRST so ctx.metadata['empoweredAttack']
-  // is set before the restart handler below checks it.
+  // Register the empowered multiplier FIRST. Its onHit handler is what sets
+  // ctx.metadata['empoweredAttack'], and every T3 onHit handler (overdrive,
+  // alignment, battery, …) gates on that flag — so the multiplier must run before
+  // them, or they bail every time (handlers fire in registration order). T3's
+  // beforeAttack suppression still fires first regardless, because beforeAttack
+  // precedes onHit as a pipeline stage independent of registration order.
   registerEmpoweredMultiplier(EXECUTION_MULTIPLIER, {
     attackerType:      'player',
     attackerSlice:     'usesCooldown',
     passiveKey:        'cooldown.empowered-mult',
   });
+
+  initCooldownT3();
 
   // After the execution fires, restart the preparation cycle.
   registerCombatListener('onHit', (ctx, _world) => {

@@ -95,6 +95,11 @@ export function registerEmpoweredMultiplier(
       if (!isClassActive(world, ctx.attacker.isPlayer.id, options.attackerClass)) return;
     }
 
+    // Chaotic miss: the attack whiffs. Don't consume the empowered charge, don't
+    // multiply, don't set empoweredAttack metadata (which would fire the AoE splash
+    // and restart cooldowns). The charge stays armed for the next real hit.
+    if (ctx.metadata['chaoticMiss']) return;
+
     if (!consumeEmpoweredAttack(world, ctx.attacker)) return;
 
     // Some T4 mechanics suppress the standard multiplier but still need the
@@ -120,6 +125,11 @@ export function registerEmpoweredMultiplier(
     // Universal item/passive bonus — stacks on top of archetype base + T3 add.
     if (ctx.attackerType === 'player') {
       effectiveMult += ctx.attacker.usesSkills.passives['shared.empowered-mult-add'] ?? 0;
+      // Multiplicative empowered bonus (weapon mechanic): scales the resolved
+      // multiplier by (1 + bonus), so every spec gains the same % regardless of
+      // its base multiplier. e.g. 2.5x base with +0.5 → 3.75x (NOT additive 3.0x).
+      const multBonus = ctx.attacker.usesSkills.passives['weapon.empowered-mult-bonus'] ?? 0;
+      if (multBonus !== 0) effectiveMult *= 1 + multBonus;
     }
 
     const base     = ctx.damage;

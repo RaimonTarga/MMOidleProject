@@ -13,8 +13,10 @@ import {
   AC_SPEED_FACTOR,
   CS_SPLIT_RATIO,
   CS_RESERVOIR_MAX,
-  SE_ENERGY_MAX,
   SE_ACCEL_SCALE,
+  BINARY_CHARGE_GAIN_MULT,
+  BINARY_DISCHARGE_GAIN_MULT,
+  CRITICAL_MASS_GAIN_PER_STACK,
 } from "../core/constants";
 
 /**
@@ -110,19 +112,68 @@ export function registerAfterHit(): void {
     }
 
     if (hasPassive(player, "energy.singularity-execute")) {
-      if (energy.energyMax !== SE_ENERGY_MAX) {
-        energy.energyMax = SE_ENERGY_MAX;
-        energy.seInitialized = true;
-      }
+      // Max energy is set in recalc (resolveEnergyMax) — gain just accelerates with fill.
       const fillPct = energyPercent(energy);
       const scaledGain = Math.round(baseGain * (1 + fillPct * SE_ACCEL_SCALE));
       energy.energy = Math.min(energy.energy + scaledGain, energy.energyMax);
       if (energy.energy >= energy.energyMax) {
+        energy.dischargeEnergy = energy.energyMax; // captured for discharge scaling
         energy.energy = 0;
         setEmpoweredAttack(world, player);
         console.log(
-          `[SingularityExec] ${player.isPlayer.id}: max energy (${SE_ENERGY_MAX}) - discharge armed`,
+          `[SingularityExec] ${player.isPlayer.id}: max energy (${energy.energyMax}) - discharge armed`,
         );
+      }
+      ctx.metadata["energyHandled"] = true;
+      return;
+    }
+
+    // ── T4 specs ───────────────────────────────────────────────────────────────
+
+    // Overdrive: build energy; at max, enter the +ATK% mode (held at max, then the
+    // tick decays it 100→0). While active, attacks add no energy.
+    if (hasPassive(player, "energy.overdrive")) {
+      if (!energy.overdriveActive) {
+        energy.energy = Math.min(energy.energy + baseGain, energy.energyMax);
+        if (energy.energy >= energy.energyMax) {
+          energy.overdriveActive = true;
+          energy.energy = energy.energyMax;
+        }
+      }
+      ctx.metadata["energyHandled"] = true;
+      return;
+    }
+
+    // Energy Upkeep: build energy; never discharges (the upkeep timer + on-hit
+    // scaling and continuous decay are handled in the tick / normalHit).
+    if (hasPassive(player, "energy.upkeep")) {
+      energy.energy = Math.min(energy.energy + baseGain, energy.energyMax);
+      ctx.metadata["energyHandled"] = true;
+      return;
+    }
+
+    // Binary Cycle: Charge State gains energy SLOWLY, Discharge State gains FAST.
+    if (hasPassive(player, "energy.binary-cycle")) {
+      const gain = Math.round(baseGain * (energy.binaryDischargeState ? BINARY_DISCHARGE_GAIN_MULT : BINARY_CHARGE_GAIN_MULT));
+      energy.energy = Math.min(energy.energy + gain, energy.energyMax);
+      if (energy.energy >= energy.energyMax) {
+        energy.dischargeEnergy = energy.energyMax;
+        energy.energy = 0;
+        setEmpoweredAttack(world, player);
+      }
+      ctx.metadata["energyHandled"] = true;
+      return;
+    }
+
+    // Critical Mass: resets the no-damage gap and gains energy faster per stack.
+    if (hasPassive(player, "energy.critical-mass")) {
+      energy.criticalMassGapMs = 0;
+      const gain = Math.round(baseGain * (1 + energy.criticalMassStacks * CRITICAL_MASS_GAIN_PER_STACK));
+      energy.energy = Math.min(energy.energy + gain, energy.energyMax);
+      if (energy.energy >= energy.energyMax) {
+        energy.dischargeEnergy = energy.energyMax;
+        energy.energy = 0;
+        setEmpoweredAttack(world, player);
       }
       ctx.metadata["energyHandled"] = true;
       return;

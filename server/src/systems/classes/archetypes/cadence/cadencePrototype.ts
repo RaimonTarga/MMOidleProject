@@ -1,5 +1,5 @@
 import { registerCombatListener } from '../../../combat/engine/combatPipeline';
-import { registerEmpoweredMultiplier, setEmpoweredAttack } from '../../../combat/engine/empoweredAttacks';
+import { registerEmpoweredMultiplier, setEmpoweredAttack, isEmpoweredAttack } from '../../../combat/engine/empoweredAttacks';
 import type { World } from '../../../../world/World';
 import { initCadenceT3 } from './t3';
 
@@ -24,6 +24,11 @@ export function initCadenceArchetype(): void {
 
     const entity = ctx.attacker;
     if (!entity.usesCadence) return;
+
+    // Chaotic miss while the finisher is armed: don't advance or consume the
+    // sequence — the empowered attack stays queued for the next real hit. A miss
+    // on a normal (non-armed) hit still advances the count below.
+    if (ctx.metadata['chaoticMiss'] && isEmpoweredAttack(entity)) return;
 
     const cadence = entity.usesCadence;
     const passives = entity.usesSkills.passives;

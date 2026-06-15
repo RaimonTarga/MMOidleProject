@@ -16,6 +16,7 @@ export const trenchUltimateRecipeEntries: [string, Recipe][] = [
     slot: 'armor',
     cost: { purple: 1400 },
     stats: { maxHp: 72, plating: 26, damageReduction: 0.16 },
+    icon: 'items/armor/plate-armor-9.png',
     description: 'Forged from the Void Overlord\'s collapsed core — apex trenchal protection.',
   }],
 
@@ -30,6 +31,7 @@ export const trenchUltimateRecipeEntries: [string, Recipe][] = [
     slot: 'mobility',
     cost: { purple: 1200 },
     stats: { speed: 108, attackRange: 25 },
+    icon: 'items/boots/trench-boots-2.png',
     description: 'Boots that slip between void rifts — unmatched speed and reach.',
   }],
 
@@ -49,6 +51,7 @@ export const trenchUltimateRecipeEntries: [string, Recipe][] = [
       'defense.shield-interval-ms': 7000,
       'defense.shield-duration-ms': 7000,
     },
+    icon: 'items/charms/depths-charm-1.png',
     description: 'A pulsing void heart — 24% max HP shield every 7 seconds in combat.',
   }],
 
@@ -64,6 +67,7 @@ export const trenchUltimateRecipeEntries: [string, Recipe][] = [
     cost: { purple: 1800 },
     stats: { attack: 34 },
     attacksPerSecond: 1.1,
+    icon: 'items/weapons/dark-blade.png',
     description: 'Each hit applies Corruption (up to 10 stacks). Corruption stacks alongside class DoTs; each stack ticks void damage and slows the target. Scales with DoT passives.',
   }],
 ];

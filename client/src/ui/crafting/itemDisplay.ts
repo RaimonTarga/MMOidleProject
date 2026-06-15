@@ -6,7 +6,7 @@
 import type { ItemDefinition } from '@mmo-idle/shared';
 import {
   ASHBRAND_DURATION_MS, ASHBRAND_TICK_MS,
-  BURN_FAMILY, CHAOTIC_FAMILY, EDGE_OF_OBLIVION_ID,
+  BURN_FAMILY, EDGE_OF_OBLIVION_ID,
   CORRUPTION_MAX_STACKS, CORRUPTION_TICK_MS, CORRUPTION_DURATION_MS,
   CORRUPTION_SLOW_PER_STACK, CORRUPTION_MIN_SPEED_MULT,
   SACRED_APS_MULT, SACRED_DMG_MULT, SACRED_FAMILY,
@@ -92,8 +92,16 @@ const num  = (v: number) => String(round1(v));
 const MECHANIC_META: Record<string, MechanicMeta> = {
   // weapon
   'weapon.first-strike-mult':        { label: 'First strike',   fmt: mult },
+  'weapon.empowered-mult-bonus':     { label: 'Empowered bonus', fmt: v => `+${pct(v)}` },
+  'weapon.dead-swing-interval':      { label: 'Dead swing',     fmt: v => `every ${round1(v)}` },
+  'weapon.dead-swing-vuln-pct':      { label: 'Vulnerability',  fmt: pct },
+  'weapon.dead-swing-vuln-ms':       { label: 'Vuln duration',  fmt: sec },
+  'weapon.execute-dmg-mult':         { label: 'Execute',        fmt: mult },
+  'weapon.brittle-shatter-dr-strip-ms': { label: 'Brittle shatter', fmt: sec },
   // defense
   'defense.cheat-death':             { label: 'Cheat death',    fmt: () => 'on' },
+  'defense.post-cheat-death-heal-pct': { label: 'Revive heal',  fmt: pct },
+  'defense.post-cheat-death-heal-ms':  { label: 'Revive heal dur', fmt: sec },
   'defense.cleanse-stacks':          { label: 'Cleanse',        fmt: v => `${num(v)} stack${v === 1 ? '' : 's'}` },
   'defense.cleanse-interval-ms':     { label: 'Cleanse rate',   fmt: sec },
   'defense.cleanse-empty-heal-pct':  { label: 'Cleanse heal',   fmt: pct },
@@ -110,6 +118,19 @@ const MECHANIC_META: Record<string, MechanicMeta> = {
   'defense.absorb-pct':              { label: 'Absorb',         fmt: pct },
   'defense.hit-to-dot-pct':          { label: 'Hit→DoT',        fmt: pct },
   'defense.max-hit-pct':             { label: 'Max-hit cap',    fmt: pct },
+  'defense.stationary-dr-pct':         { label: 'Stationary DR',  fmt: pct },
+  'defense.stationary-dr-ramptime-ms': { label: 'Stationary ramp', fmt: sec },
+  'defense.sustained-fight-dr-max':    { label: 'Sustained DR',   fmt: pct },
+  'defense.absorb-ramp-max-pct':       { label: 'Absorb (ramp)',  fmt: pct },
+  'defense.shield-break-heal-pct':     { label: 'Shield-break heal', fmt: pct },
+  'defense.shield-break-hp-recovery-pct': { label: 'Shield-break heal', fmt: pct },
+  'defense.overheal-shield-pct':       { label: 'Overheal shield', fmt: pct },
+  'defense.hardening-max-dr-bonus':    { label: 'Max-harden DR',  fmt: pct },
+  'defense.cleanse-per-stack-heal-pct': { label: 'Cleanse heal/stk', fmt: pct },
+  'defense.debt-cheat-death':          { label: 'Debt cheat-death', fmt: () => 'on' },
+  'defense.max-hit-rearms-shield':     { label: 'Cap rearms shield', fmt: () => 'on' },
+  'defense.hit-plating-per-stack':     { label: 'Reactive plating', fmt: v => `+${num(v)}/stk` },
+  'defense.evade-mitigation':          { label: 'Evade mitigation', fmt: pct },
   // mobility
   'mobility.kite-speed-pct':         { label: 'Kite speed',     fmt: pct },
   'mobility.ooc-speed-pct':          { label: 'OOC speed',      fmt: pct },
@@ -134,6 +155,13 @@ function mechanicMeta(key: string): MechanicMeta {
 const SUMMARY_SKIP = new Set([
   'defense.cleanse-interval-ms', 'defense.shield-interval-ms', 'defense.shield-duration-ms',
   'defense.regen-burst-interval-ms', 'defense.max-hit-mult',
+  'defense.post-cheat-death-heal-ms', 'defense.stationary-dr-ramptime-ms',
+  'weapon.dead-swing-vuln-ms',
+  'defense.sustained-fight-dr-bonus', 'defense.sustained-fight-ramptime-ms',
+  'defense.absorb-ramp-start-pct', 'defense.absorb-ramptime-ms',
+  'defense.hardening-max-dr-ms', 'defense.shield-break-hp-recovery-pct',
+  'weapon.execute-threshold-pct', 'weapon.brittle-shatter-threshold',
+  'defense.hit-plating-max-stacks', 'defense.hit-plating-duration-ms', 'weapon.dot-stacks',
 ]);
 
 /** Terse one-line summary of an item's mechanic effects (for compact list rows). */
@@ -259,6 +287,12 @@ export function formatMechanicEffects(fx: Record<string, number> | undefined): s
     mark('defense.cheat-death');
   }
 
+  if (has('defense.post-cheat-death-heal-pct')) {
+    const over = has('defense.post-cheat-death-heal-ms') ? ` over ${secK('defense.post-cheat-death-heal-ms')}` : '';
+    lines.push(`After cheat-death saves you, restore ${pctK('defense.post-cheat-death-heal-pct')} max HP${over}`);
+    mark('defense.post-cheat-death-heal-pct', 'defense.post-cheat-death-heal-ms');
+  }
+
   if (has('defense.absorb-pct')) {
     lines.push(`${pctK('defense.absorb-pct')} of damage taken becomes healing over time`);
     mark('defense.absorb-pct');
@@ -267,6 +301,12 @@ export function formatMechanicEffects(fx: Record<string, number> | undefined): s
   if (has('defense.hit-to-dot-pct')) {
     lines.push(`${pctK('defense.hit-to-dot-pct')} of incoming damage deferred as ticking damage`);
     mark('defense.hit-to-dot-pct');
+  }
+
+  if (has('defense.stationary-dr-pct')) {
+    const over = has('defense.stationary-dr-ramptime-ms') ? ` (ramps over ${secK('defense.stationary-dr-ramptime-ms')})` : '';
+    lines.push(`While stationary, gain up to ${pctK('defense.stationary-dr-pct')} damage reduction${over}; moving gradually erodes it`);
+    mark('defense.stationary-dr-pct', 'defense.stationary-dr-ramptime-ms');
   }
 
   if (has('defense.max-hit-pct')) {
@@ -362,6 +402,96 @@ export function formatMechanicEffects(fx: Record<string, number> | undefined): s
     mark('weapon.first-strike-mult');
   }
 
+  if (has('weapon.dead-swing-interval')) {
+    const n = Math.round(fx['weapon.dead-swing-interval'] ?? 0);
+    lines.push(`Every ${n}${ordinal(n)} hit is a dead swing: no damage, but on-hit effects still fire`);
+    if (has('weapon.dead-swing-vuln-pct')) {
+      const dur = has('weapon.dead-swing-vuln-ms') ? ` for ${secK('weapon.dead-swing-vuln-ms')}` : '';
+      lines.push(`Dead swing makes the target take ${pctK('weapon.dead-swing-vuln-pct')} more damage${dur}`);
+    }
+    mark('weapon.dead-swing-interval', 'weapon.dead-swing-vuln-pct', 'weapon.dead-swing-vuln-ms');
+  }
+
+  if (has('weapon.brittle-plating') || has('weapon.brittle-dr')) {
+    const parts: string[] = [];
+    if (has('weapon.brittle-plating')) parts.push(`-${num(fx['weapon.brittle-plating'] ?? 0)} plating`);
+    if (has('weapon.brittle-dr'))      parts.push(`-${pctK('weapon.brittle-dr')} DR`);
+    lines.push(`Brittle: each hit stacks ${parts.join(' and ')} (up to ${num(fx['weapon.brittle-stacks'] ?? 0)})`);
+    if (has('weapon.brittle-shatter-threshold')) {
+      const dur = has('weapon.brittle-shatter-dr-strip-ms') ? secK('weapon.brittle-shatter-dr-strip-ms') : '2s';
+      lines.push(`At ${num(fx['weapon.brittle-shatter-threshold'] ?? 0)} stacks, shatter the target: strip all its DR for ${dur}`);
+    }
+    mark('weapon.brittle-plating', 'weapon.brittle-dr', 'weapon.brittle-stacks',
+         'weapon.brittle-shatter-threshold', 'weapon.brittle-shatter-dr-strip-ms');
+  }
+
+  if (has('weapon.execute-threshold-pct')) {
+    lines.push(`Execute: ${mult(fx['weapon.execute-dmg-mult'] ?? 1)} damage vs targets below ${pctK('weapon.execute-threshold-pct')} HP`);
+    mark('weapon.execute-threshold-pct', 'weapon.execute-dmg-mult');
+  }
+
+  if (has('defense.sustained-fight-dr-max')) {
+    const over = has('defense.sustained-fight-ramptime-ms') ? ` over ${secK('defense.sustained-fight-ramptime-ms')}` : '';
+    lines.push(`While in combat, ramp up to ${pctK('defense.sustained-fight-dr-max')} damage reduction${over}`);
+    mark('defense.sustained-fight-dr-max', 'defense.sustained-fight-dr-bonus', 'defense.sustained-fight-ramptime-ms');
+  }
+
+  if (has('defense.absorb-ramp-max-pct')) {
+    const over   = has('defense.absorb-ramptime-ms') ? ` over ${secK('defense.absorb-ramptime-ms')}` : '';
+    const start  = has('defense.absorb-ramp-start-pct') ? `${pctK('defense.absorb-ramp-start-pct')}→` : '';
+    lines.push(`Absorb ${start}${pctK('defense.absorb-ramp-max-pct')} of damage taken as healing, ramping in combat${over}`);
+    mark('defense.absorb-ramp-max-pct', 'defense.absorb-ramp-start-pct', 'defense.absorb-ramptime-ms');
+  }
+
+  if (has('defense.debt-cheat-death')) {
+    lines.push('Once per combat, clear all deferred damage debt if it would kill you');
+    mark('defense.debt-cheat-death');
+  }
+
+  if (has('defense.shield-break-heal-pct') || has('defense.shield-break-hp-recovery-pct')) {
+    const breakPct = (fx['defense.shield-break-heal-pct'] ?? 0) + (fx['defense.shield-break-hp-recovery-pct'] ?? 0);
+    lines.push(`When a shield breaks, heal ${Math.round(breakPct * 100)}% of its max value as HP`);
+    mark('defense.shield-break-heal-pct', 'defense.shield-break-hp-recovery-pct');
+  }
+
+  if (has('defense.max-hit-rearms-shield')) {
+    lines.push('When the damage cap triggers, immediately rearm your shield');
+    mark('defense.max-hit-rearms-shield');
+  }
+
+  if (has('defense.hardening-max-dr-bonus')) {
+    const dur = has('defense.hardening-max-dr-ms') ? ` for ${secK('defense.hardening-max-dr-ms')}` : '';
+    lines.push(`At max hardening, gain ${pctK('defense.hardening-max-dr-bonus')} damage reduction${dur}`);
+    mark('defense.hardening-max-dr-bonus', 'defense.hardening-max-dr-ms');
+  }
+
+  if (has('defense.overheal-shield-pct')) {
+    lines.push(`Healing past full HP becomes a temporary shield (${pctK('defense.overheal-shield-pct')} of the overflow)`);
+    mark('defense.overheal-shield-pct');
+  }
+
+  if (has('defense.cleanse-per-stack-heal-pct')) {
+    lines.push(`Heal ${pctK('defense.cleanse-per-stack-heal-pct')} max HP per debuff stack cleansed`);
+    mark('defense.cleanse-per-stack-heal-pct');
+  }
+
+  if (has('defense.hit-plating-per-stack')) {
+    const dur = has('defense.hit-plating-duration-ms') ? secK('defense.hit-plating-duration-ms') : '4s';
+    lines.push(`Each hit taken grants +${num(fx['defense.hit-plating-per-stack'] ?? 0)} plating for ${dur}, stacking up to ${num(fx['defense.hit-plating-max-stacks'] ?? 0)}`);
+    mark('defense.hit-plating-per-stack', 'defense.hit-plating-max-stacks', 'defense.hit-plating-duration-ms');
+  }
+
+  if (has('defense.evade-mitigation')) {
+    lines.push(`+${pctK('defense.evade-mitigation')} damage avoided when you evade`);
+    mark('defense.evade-mitigation');
+  }
+
+  // Burn-DoT weapons describe their effect via formatWeaponEffects (BURN_FAMILY);
+  // consume the mirror keys here so they don't render as raw fallback text.
+  if (has('weapon.dot-conversion-pct')) {
+    mark('weapon.dot-conversion-pct', 'weapon.dot-stacks');
+  }
+
   // Fallback for any keys not yet handled
   for (const [k, v] of Object.entries(fx)) {
     if (!seen.has(k)) lines.push(`${k.replace(/^[a-z]+\./, '').replace(/-/g, ' ')}: ${v}`);
@@ -375,12 +505,8 @@ export function formatMechanicEffects(fx: Record<string, number> | undefined): s
 export function formatWeaponEffects(weaponId: string): string[] {
   const lines: string[] = [];
 
-  // Chaotic family
-  const missEvery = CHAOTIC_FAMILY[weaponId];
-  if (missEvery !== undefined) {
-    lines.push(`Every ${missEvery}${ordinal(missEvery)} hit deals no damage`);
-    lines.push(`On-hit effects and procs still fire on missed swings`);
-  }
+  // Chaotic family is described from the weapon's `weapon.dead-swing-interval`
+  // mechanic in formatMechanicEffects (data-driven), so no entry is needed here.
 
   // Sacred family
   const sacred = SACRED_FAMILY[weaponId];

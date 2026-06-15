@@ -9,7 +9,7 @@ import {
   sendLeaveParty,
   sendLeaveTestRoom,
   sendNavigateTo,
-  sendRefreshRecipes,
+  sendRenameCharacter,
   sendEquipPhaseTester,
   sendResetProgress,
   sendResetClass,
@@ -105,8 +105,8 @@ export function attachHudEvents(scene: GameScene): void {
     sendResetClass(scene.socket);
   });
 
-  intents.on("refreshRecipes", () => {
-    sendRefreshRecipes(scene.socket);
+  intents.on("renameCharacter", (name) => {
+    sendRenameCharacter(scene.socket, name);
   });
 
   intents.on("equipPhaseTester", () => {

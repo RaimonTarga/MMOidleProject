@@ -36,7 +36,7 @@ export function monsterTags(def: MonsterDefinition): string[] {
   if (def.dotEffect)     tags.push('DOT');
   if (def.slowEffect)    tags.push(def.slowEffect.speedMult === 0 ? 'ROOT' : 'SLOW');
   if (def.aoeAttack)     tags.push('AOE');
-  if (def.evadeEvery)    tags.push('EVADE');
+  if (def.evasion)       tags.push('EVADE');
   if (def.kite)          tags.push('KITE');
   if (def.rampOnCombat || def.rampDebuff) tags.push('RAMP');
   return tags;
@@ -111,11 +111,11 @@ export function formatMonsterMechanics(def: MonsterDefinition): string[] {
     lines.push(`Each hit stacks a move slow (max ${pct(r.moveSlowMaxPct)}) and attack-speed slow (max ${pct(r.atkSlowMaxPct)}); decays ${sec(r.stackDurationMs)} after the last hit`);
   }
 
-  if (def.evadeEvery) {
+  if (def.evasion) {
     const mit = def.evadeMitigation ?? 0.5;
     const mitText = mit >= 1 ? 'fully avoiding it' : `avoiding ${pct(mit)} of the damage`;
     const through = def.appliesThroughEvade ? ' (your debuffs still land)' : '';
-    lines.push(`Dodges every ${def.evadeEvery}th hit, ${mitText}${through}`);
+    lines.push(`Dodges 1 in ${Math.round(1 / def.evasion)} hits, ${mitText}${through}`);
   }
 
   const boss = summarizeBossScript(def);

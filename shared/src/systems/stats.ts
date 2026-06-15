@@ -13,7 +13,7 @@ import { ITEM_DATABASE } from '../itemDatabase';
 import { EQUIPMENT_SLOTS } from '../items';
 import { upgradeMechanicEffectsTotal, upgradeStatBonusTotal } from './itemUpgrades';
 import { GAME_CONFIG } from '../index';
-import { mergePassives } from '../passives';
+import { mergePassives, makeBurstAccumulator, finalizeBurst } from '../passives';
 
 /**
  * Map a raw evasion rating (Σ 1/N across all evasion sources) to a deterministic
@@ -44,9 +44,12 @@ export interface PlayerStatsTarget {
   hasPosition:     HasPosition;
   usesSkills:      UsesSkills;
   holdsInventory:  HoldsInventory;
+  /** Player progression tier (0-indexed: T1=0 … T4=3). Drives per-tier class bonuses. */
+  playerTier?:     number;
   /** Optional callback when cadence threshold is recalculated (writes to usesCadence on server). */
   resetCadenceCounters?: (threshold: number) => void;
 }
+
 
 // Class-specific bonus applied when the player chose close range (range-close).
 const CLOSE_RANGE_CLASS_BONUS: Record<string, { plating: number; hpRegen: number }> = {
@@ -113,6 +116,9 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
   // dodge frequency. Converted to a deterministic per-hit dodge rate via evasionDodgeRate().
   let evasionChance = 0;
   p.usesSkills.passives = {};
+  // Regen-burst pair is resolved frequency-weighted across all sources rather
+  // than summed; collect contributions here and finalize after equipment.
+  const burstAcc = makeBurstAccumulator();
   for (const skillId of p.usesSkills.unlockedSkills) {
     const node = SKILL_TREE.get(skillId);
     if (!node) continue;
@@ -126,7 +132,7 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
     p.hasHealth.maxHp             += e.maxHp           ?? 0;
     p.hasHealth.hpRegen           = (p.hasHealth.hpRegen ?? 0) + (e.hpRegen ?? 0);
     p.hasPosition.speed           += e.speed           ?? 0;
-    mergePassives(p.usesSkills.passives, node.mechanicEffects);
+    mergePassives(p.usesSkills.passives, node.mechanicEffects, burstAcc);
   }
   p.performsAttack.attackCooldown = Math.round(
     p.performsAttack.attackCooldown / Math.max(0.1, 1 + attackSpeedPct),
@@ -163,7 +169,7 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
         applyStatModToTarget(p, stat, value);
       }
     }
-    mergePassives(p.usesSkills.passives, def.mechanicEffects);
+    mergePassives(p.usesSkills.passives, def.mechanicEffects, burstAcc);
 
     // Item upgrade bonuses: all stat and mechanic effect deltas from upgrade steps.
     const plus = p.holdsInventory.itemUpgrades?.[defId] ?? 0;
@@ -173,8 +179,28 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
         else applyStatModToTarget(p, stat, value);
       }
       const meFx = upgradeMechanicEffectsTotal(def, plus);
-      if (Object.keys(meFx).length > 0) mergePassives(p.usesSkills.passives, meFx);
+      if (Object.keys(meFx).length > 0) mergePassives(p.usesSkills.passives, meFx, burstAcc);
     }
+  }
+  finalizeBurst(burstAcc, p.usesSkills.passives);
+
+  // 3a. Shockblade (cadence-light-t3-a): flat on-hit damage scaling with the
+  // player's tier, always active while the passive is unlocked. The per-tier
+  // rate is authored on the node ('cadence.aftershock-onhit-per-tier'), so this
+  // only affects the Shockblade branch.
+  // Path specs unlock at playerTier 4, so scaling counts from there: 1× at unlock,
+  // +1 per tier after (max(1, playerTier − 4 + 1)).
+  const aftershockOnHitPerTier = p.usesSkills.passives['cadence.aftershock-onhit-per-tier'] ?? 0;
+  if (aftershockOnHitPerTier > 0) {
+    p.dealsDamage.onHitDamage += Math.max(1, (p.playerTier ?? 4) - 4 + 1) * aftershockOnHitPerTier;
+  }
+
+  // 3b. Dualslinger (reload-light-t3-b): same per-tier on-hit scaling, authored on
+  // the node ('reload.alternating-onhit-per-tier'). Rewards the on-hit half of its
+  // attack/on-hit split — the odd (2× on-hit) shots scale up with tier.
+  const altOnHitPerTier = p.usesSkills.passives['reload.alternating-onhit-per-tier'] ?? 0;
+  if (altOnHitPerTier > 0) {
+    p.dealsDamage.onHitDamage += Math.max(1, (p.playerTier ?? 4) - 4 + 1) * altOnHitPerTier;
   }
 
   // Re-clamp damage reduction: equipment + upgrades are applied after the step-2 clamp.
@@ -194,10 +220,36 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
 
   // 3b. Reload archetype final multiplier
   if (p.usesSkills.combatArchetype === 'reload') {
-    p.dealsDamage.attack = Math.max(1, Math.floor(p.dealsDamage.attack * 0.57));
-    p.performsAttack.attackCooldown = Math.max(200, Math.round(p.performsAttack.attackCooldown * 0.5));
-    if ((p.usesSkills.passives['reload.gatling'] ?? 0) > 0) {
-      p.performsAttack.attackCooldown = Math.max(100, Math.round(p.performsAttack.attackCooldown * 0.5));
+    const isSnipe = (p.usesSkills.passives['reload.snipe'] ?? 0) > 0;
+    const isLaser = (p.usesSkills.passives['reload.laser'] ?? 0) > 0;
+
+    // Sniper converts the bonus attack-speed STAT into attack damage (weapon APS is
+    // ignored entirely — the cadence is hard-set below). Deliberately sub-1.0 so
+    // attack speed is a damage source, never an efficiency race toward fast weapons.
+    if (isSnipe) {
+      const rate = p.usesSkills.passives['reload.snipe-as-to-dmg'] ?? 0.5;
+      p.dealsDamage.attack += Math.round(p.dealsDamage.attack * attackSpeedPct * rate);
+    }
+
+    // Reload's half-damage pays for its double-speed. Sniper (slow hard-set cadence)
+    // and Melter (continuous laser with its own per-tick scaling) don't get that
+    // double-speed, so both are exempt and keep full attack damage.
+    if (!isSnipe && !isLaser) {
+      p.dealsDamage.attack = Math.max(1, Math.floor(p.dealsDamage.attack * 0.57));
+    }
+
+    if (isSnipe) {
+      // Hard-set the firing cadence (ms/shot), ignoring weapon APS, the attack-speed
+      // stat, and the reload double-speed layer. Default 2000ms = 0.5 APS.
+      p.performsAttack.attackCooldown = Math.max(
+        200,
+        Math.round(p.usesSkills.passives['reload.snipe-cadence-ms'] ?? 2000),
+      );
+    } else {
+      p.performsAttack.attackCooldown = Math.max(200, Math.round(p.performsAttack.attackCooldown * 0.5));
+      if ((p.usesSkills.passives['reload.gatling'] ?? 0) > 0) {
+        p.performsAttack.attackCooldown = Math.max(100, Math.round(p.performsAttack.attackCooldown * 0.5));
+      }
     }
   }
 
