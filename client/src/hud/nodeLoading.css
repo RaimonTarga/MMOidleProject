@@ -5,35 +5,38 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(5, 5, 16, 0.82);
+  background: rgba(8, 6, 4, 0.88);
   pointer-events: all;
 }
 
 .node-loading-overlay__panel {
   min-width: 220px;
   padding: 24px 32px;
-  border: 1px solid rgba(132, 112, 235, 0.45);
-  border-radius: 8px;
-  background: rgba(12, 10, 28, 0.95);
+  border-top: 2px solid var(--bevel-light);
+  border-left: 2px solid var(--bevel-light);
+  border-right: 2px solid var(--bevel-dark);
+  border-bottom: 2px solid var(--bevel-dark);
+  border-radius: 2px;
+  background: #221f18;
   text-align: center;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+  box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.6);
 }
 
 .node-loading-overlay__title {
-  font-family: system-ui, sans-serif;
+  font-family: ui-monospace, monospace;
   font-size: 14px;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #c8b8ff;
+  color: var(--hud-primary-strong);
 }
 
 .node-loading-overlay__subtitle {
   margin-top: 8px;
-  font-family: system-ui, sans-serif;
+  font-family: ui-monospace, monospace;
   font-size: 18px;
   font-weight: 600;
-  color: #f0eeff;
+  color: var(--hud-text);
 }
 
 .tab-resync-overlay {

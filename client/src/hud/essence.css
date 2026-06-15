@@ -12,21 +12,21 @@
 }
 
 .essence-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
+  width: 10px;
+  height: 10px;
+  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
   flex-shrink: 0;
 }
 
 .essence-name {
   flex: 1;
-  font-size: 11px;
+  font-size: 12px;
   color: var(--hud-text-muted, #a7a2d8);
   font-family: monospace;
 }
 
 .essence-value {
-  font-size: 12px;
+  font-size: 13px;
   font-family: monospace;
   font-weight: bold;
   min-width: 28px;

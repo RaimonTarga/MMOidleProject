@@ -15,8 +15,6 @@ import { SKILL_TREE, NODE_BIOMES, BIOME_DATABASE } from "@mmo-idle/shared";
 import {
   craftTabAtom,
   deathOverlayAtom,
-  equipmentAtom,
-  inventoryAtom,
   inventoryOpenAtom,
   mapHighlightNodesAtom,
   mapOpenAtom,
@@ -28,6 +26,7 @@ import {
   settingsOpenAtom,
   skillPointsAtom,
   skillTreeOpenAtom,
+  unlockedSkillsAtom,
 } from "./atoms";
 import "./hud.css";
 
@@ -55,14 +54,15 @@ export function RightSidebar() {
   const selectedClass = useAtomValue(selectedClassAtom);
   const selectedSubVariant = useAtomValue(selectedSubVariantAtom);
   const selectedRange = useAtomValue(selectedRangeAtom);
+  const unlockedSkills = useAtomValue(unlockedSkillsAtom);
   const skillPoints = useAtomValue(skillPointsAtom);
-  const inventory = useAtomValue(inventoryAtom);
-  const equipment = useAtomValue(equipmentAtom);
   const nodeId = useAtomValue(playerNodeIdAtom);
   const dead = useAtomValue(deathOverlayAtom).active;
 
   const className = (() => {
     if (!selectedClass) return null;
+    const t3Node = unlockedSkills.map(id => SKILL_TREE.get(id)).find(n => n?.tier === 3);
+    if (t3Node) return t3Node.name;
     if (selectedRange) return SKILL_TREE.get(selectedRange)?.name ?? selectedRange;
     if (selectedSubVariant) {
       for (const node of SKILL_TREE.values()) {
@@ -153,82 +153,56 @@ export function RightSidebar() {
           {invOpen ? "CLOSE BAG" : "OPEN BAG"}
         </button>
 
-        {nodeId && (
-          <div className="stat-section">
-            <div className="stat-row">
-              <span className="stat-label">Bag</span>
-              <span className="stat-value">
-                {inventory.length} item
-                {inventory.length !== 1 ? "s" : ""}
-              </span>
-            </div>
-            <div className="stat-row">
-              <span className="stat-label">Weapon</span>
-              <span className="stat-value">
-                {equipment.weapon ? (
-                  <span style={{ color: "#44ff88" }}>Equipped</span>
-                ) : (
-                  <span className="dim">—</span>
-                )}
-              </span>
-            </div>
-          </div>
-        )}
-      </div>
-
-      <div className="sidebar-panel">
-        <div className="panel-title">Crafting</div>
-
         <button
-          className={`auto-btn${craftTab === "biome" ? " active" : ""}${dead ? " auto-btn--disabled" : ""}`}
-          style={{ display: 'flex', alignItems: 'center', gap: 6 }}
-          disabled={dead}
-          onClick={() => {
-            if (!dead) setCraftTab((t) => (t === "biome" ? null : "biome"));
-          }}
-        >
-          <UIIcon frameName="UI_icons/progress-icon.png" size={18} />
-          {craftTab === "biome" ? "CLOSE BIOME" : "BIOME PROGRESS"}
-        </button>
-        <button
-          className={`auto-btn${craftTab === "forge" ? " active" : ""}${dead ? " auto-btn--disabled" : ""}`}
-          style={{ marginTop: 4, position: "relative", display: 'flex', alignItems: 'center', gap: 6 }}
-          disabled={dead}
-          onClick={() => {
-            if (dead) return;
-            setCraftTab((t) => (t === "forge" ? null : "forge"));
-            setForgeBadge(0);
-          }}
-        >
-          <UIIcon frameName="UI_icons/forge-icon.png" size={18} />
-          {craftTab === "forge" ? "CLOSE FORGE" : "OPEN FORGE"}
-          {forgeBadge > 0 && craftTab !== "forge" && (
-            <span
-              style={{
-                position: "absolute",
-                top: 4,
-                right: 6,
-                width: 8,
-                height: 8,
-                borderRadius: "50%",
-                background: "#44ff88",
-                boxShadow: "0 0 6px #44ff88",
-                display: "inline-block",
-              }}
-            />
-          )}
-        </button>
-        <button
-          className={`auto-btn${craftTab === "upgrade" ? " active" : ""}${dead ? " auto-btn--disabled" : ""}`}
-          style={{ marginTop: 4, display: 'flex', alignItems: 'center', gap: 6 }}
-          disabled={dead}
-          onClick={() => {
-            if (!dead) setCraftTab((t) => (t === "upgrade" ? null : "upgrade"));
-          }}
-        >
-          <UIIcon frameName="UI_icons/upgrade-icon.png" size={18} />
-          {craftTab === "upgrade" ? "CLOSE UPGRADE" : "UPGRADE ITEMS"}
-        </button>
+            className={`auto-btn${craftTab === "forge" ? " active" : ""}${dead ? " auto-btn--disabled" : ""}`}
+            style={{ marginTop: 4, position: "relative", display: 'flex', alignItems: 'center', gap: 6 }}
+            disabled={dead}
+            onClick={() => {
+              if (dead) return;
+              setCraftTab((t) => (t === "forge" ? null : "forge"));
+              setForgeBadge(0);
+            }}
+          >
+            <UIIcon frameName="UI_icons/forge-icon.png" size={18} />
+            {craftTab === "forge" ? "CLOSE FORGE" : "OPEN FORGE"}
+            {forgeBadge > 0 && craftTab !== "forge" && (
+              <span
+                style={{
+                  position: "absolute",
+                  top: 4,
+                  right: 6,
+                  width: 8,
+                  height: 8,
+                  borderRadius: "50%",
+                  background: "#44ff88",
+                  boxShadow: "0 0 6px #44ff88",
+                  display: "inline-block",
+                }}
+              />
+            )}
+          </button>
+          <button
+            className={`auto-btn${craftTab === "upgrade" ? " active" : ""}${dead ? " auto-btn--disabled" : ""}`}
+            style={{ marginTop: 4, display: 'flex', alignItems: 'center', gap: 6 }}
+            disabled={dead}
+            onClick={() => {
+              if (!dead) setCraftTab((t) => (t === "upgrade" ? null : "upgrade"));
+            }}
+          >
+            <UIIcon frameName="UI_icons/upgrade-icon.png" size={18} />
+            {craftTab === "upgrade" ? "CLOSE UPGRADE" : "UPGRADE ITEMS"}
+          </button>
+          <button
+            className={`auto-btn${craftTab === "biome" ? " active" : ""}${dead ? " auto-btn--disabled" : ""}`}
+            style={{ marginTop: 4, display: 'flex', alignItems: 'center', gap: 6 }}
+            disabled={dead}
+            onClick={() => {
+              if (!dead) setCraftTab((t) => (t === "biome" ? null : "biome"));
+            }}
+          >
+            <UIIcon frameName="UI_icons/progress-icon.png" size={18} />
+            {craftTab === "biome" ? "CLOSE BIOME" : "BIOME PROGRESS"}
+          </button>
       </div>
 
       <div className="sidebar-panel">

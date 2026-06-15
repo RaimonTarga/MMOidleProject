@@ -63,7 +63,6 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
     bossPoolByTier: {
       1: ['gnarled-greatbear'],
       2: ['apex-timberclaw'],
-      4: ['elder-treant-lord'],
     },
     essenceType: 'essence',
     mobDensity: 13,
@@ -84,7 +83,7 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
       1: ['crag-behemoth'],
       2: ['stoneplate-juggernaut'],
       3: ['crag-gorged-horn-behemoth'],
-      4: ['mountain-titan'],
+      4: ['iron-crest-titan'],
     },
     essenceType: 'essence',
     mobDensity: 10,
@@ -103,7 +102,6 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
     bossPoolByTier: {
       1: ['tusked-razorback'],
       2: ['gorging-razortusk'],
-      4: ['stampede-emperor'],
     },
     essenceType: 'essence',
     mobDensity: 16,
@@ -118,14 +116,11 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
       1: ['bog-slime', 'mud-toad'],
       2: ['swamp-hydra', 'bog-witch', 'mire-stalker'],
       3: ['plague-hydra', 'mire-hex-spitter', 'bog-lurker'],
-      // ⚠ T4 trash not yet authored (old 'hydra-elder'/'shadow-toad' ids were
-      // dangling) — swamp T4 ring nodes spawn nothing.
     },
     bossPoolByTier: {
       1: ['grave-toadeater'],
       2: ['mire-gorged-behemoth'],
-      3: ['rot-spore-croc-behemoth'],
-      4: ['swamp-sovereign'],
+      3: ['rot-spore-croc-behemoth']
     },
     essenceType: 'essence',
     mobDensity: 10,
@@ -141,14 +136,11 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
       1: ['cave-lurker', 'cave-brute'],
       2: ['giant-spider', 'cave-troll', 'cave-gargoyle'],
       3: ['deep-spider', 'cavern-troll', 'crystal-gargoyle'],
-      // ⚠ T4 trash not yet authored (old 'stone-colossus'/'trench-crawler' ids
-      // were dangling) — cave T4 ring nodes spawn nothing.
     },
     bossPoolByTier: {
       1: ['obsidian-broodmother'],
       2: ['chitinous-dreadbore'],
       3: ['deep-core-burrow-gorger'],
-      4: ['cave-titan'],
     },
     essenceType: 'essence',
     mobDensity: 8,
@@ -168,7 +160,7 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
     bossPoolByTier: {
       2: ['jungle-dread-gorger'],
       3: ['apex-bramble-slasher'],
-      4: ['jungle-ancient-lord'],
+      4: ['verdant-crown-predator'],
     },
     essenceType: 'essence',
     mobDensity: 15,
@@ -183,7 +175,7 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
     },
     bossPoolByTier: {
       3: ['frost-plated-rime-mammoth'],
-      4: ['glacial-titan'],
+      4: ['glacial-patriarch'],
     },
     essenceType: 'essence',
     mobDensity: 8,
@@ -203,7 +195,7 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
     bossPoolByTier: {
       2: ['dune-stalker-emperor'],
       3: ['dune-carapace-monarch'],
-      4: ['desert-eternal'],
+      4: ['dune-throne-sovereign'],
     },
     essenceType: 'essence',
     mobDensity: 8,
@@ -219,7 +211,7 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
     },
     bossPoolByTier: {
       3: ['cinder-shell-magma-salamander'],
-      4: ['inferno-lord'],
+      4: ['caldera-sovereign'],
     },
     essenceType: 'essence',
     mobDensity: 18,
@@ -234,7 +226,7 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
       4: ['bone-crawler', 'plague-hound', 'carrion-vulture', 'charnel-brute', 'plague-rat'],
     },
     bossPoolByTier: {
-      4: ['undying-lord'],
+      4: ['charnel-crown-sovereign'],
     },
     essenceType: 'essence',
     mobDensity: 20,

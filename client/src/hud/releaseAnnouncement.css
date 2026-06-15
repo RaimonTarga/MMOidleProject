@@ -6,7 +6,7 @@
   align-items: center;
   justify-content: center;
   padding: 24px;
-  background: rgba(5, 5, 16, 0.84);
+  background: rgba(8, 6, 4, 0.90);
   pointer-events: all;
   font-family: system-ui, sans-serif;
 }
@@ -17,11 +17,14 @@
   max-height: min(820px, calc(100vh - 48px));
   display: flex;
   flex-direction: column;
-  border: 1px solid rgba(132, 112, 235, 0.48);
-  border-radius: 10px;
-  background: rgba(12, 10, 28, 0.97);
-  box-shadow: 0 10px 36px rgba(0, 0, 0, 0.5);
-  color: #f0eeff;
+  border-top: 2px solid var(--bevel-light);
+  border-left: 2px solid var(--bevel-light);
+  border-right: 2px solid var(--bevel-dark);
+  border-bottom: 2px solid var(--bevel-dark);
+  border-radius: 2px;
+  background: #221f18;
+  box-shadow: 4px 4px 16px rgba(0, 0, 0, 0.65);
+  color: var(--hud-text);
   overflow: hidden;
 }
 
@@ -31,28 +34,30 @@
   right: 14px;
   width: 28px;
   height: 28px;
-  border: 1px solid rgba(132, 112, 235, 0.42);
-  border-radius: 4px;
-  background: rgba(40, 32, 80, 0.74);
-  color: #c8b8ff;
+  border-top: 1px solid var(--bevel-light);
+  border-left: 1px solid var(--bevel-light);
+  border-right: 1px solid var(--bevel-dark);
+  border-bottom: 1px solid var(--bevel-dark);
+  border-radius: 2px;
+  background: var(--btn-bg);
+  color: var(--hud-text-muted);
   font-family: ui-monospace, monospace;
   font-weight: 700;
   cursor: pointer;
 }
 
-.release-card__close:hover,
-.release-card__primary:hover {
-  background: rgba(60, 48, 110, 0.92);
+.release-card__close:hover {
+  color: var(--hud-danger);
 }
 
 .release-card__header {
   padding: 28px 56px 18px 28px;
-  border-bottom: 1px solid rgba(100, 85, 210, 0.24);
+  border-bottom: 1px solid rgba(80, 72, 52, 0.35);
 }
 
 .release-card__eyebrow {
   margin-bottom: 8px;
-  color: #8877bb;
+  color: var(--hud-text-muted);
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.1em;
@@ -61,14 +66,14 @@
 
 .release-card__header h1 {
   margin: 0;
-  color: #f6f1ff;
+  color: var(--hud-primary-strong);
   font-size: clamp(24px, 4vw, 36px);
   line-height: 1.1;
 }
 
 .release-card__meta {
   margin-top: 8px;
-  color: #aa99cc;
+  color: var(--hud-text-muted);
   font-family: ui-monospace, monospace;
   font-size: 13px;
 }
@@ -78,7 +83,7 @@
   min-height: 0;
   padding: 22px 28px;
   overflow-y: auto;
-  color: #d8d2f0;
+  color: var(--hud-text);
   font-size: 15px;
   line-height: 1.62;
 }
@@ -87,7 +92,7 @@
 .release-card__markdown h2,
 .release-card__markdown h3 {
   margin: 24px 0 10px;
-  color: #f0eeff;
+  color: var(--hud-primary-strong);
   line-height: 1.2;
 }
 
@@ -115,23 +120,26 @@
 }
 
 .release-card__markdown a {
-  color: #c8b8ff;
+  color: var(--hud-primary);
 }
 
 .release-card__markdown code {
   padding: 2px 5px;
-  border-radius: 4px;
-  background: rgba(100, 85, 210, 0.22);
-  color: #f0eeff;
+  border-radius: 2px;
+  background: rgba(60, 55, 40, 0.40);
+  color: var(--hud-text);
   font-family: ui-monospace, monospace;
   font-size: 0.92em;
 }
 
 .release-card__markdown pre {
   padding: 12px;
-  border: 1px solid rgba(132, 112, 235, 0.28);
-  border-radius: 6px;
-  background: rgba(5, 5, 16, 0.58);
+  border-top: 1px solid var(--bevel-dark);
+  border-left: 1px solid var(--bevel-dark);
+  border-right: 1px solid var(--bevel-light);
+  border-bottom: 1px solid var(--bevel-light);
+  border-radius: 2px;
+  background: rgba(14, 12, 9, 0.60);
   overflow-x: auto;
 }
 
@@ -143,27 +151,34 @@
 .release-card__markdown hr {
   margin: 20px 0;
   border: 0;
-  border-top: 1px solid rgba(100, 85, 210, 0.24);
+  border-top: 1px solid rgba(80, 72, 52, 0.35);
 }
 
 .release-card__footer {
   display: flex;
   justify-content: flex-end;
   padding: 16px 28px 20px;
-  border-top: 1px solid rgba(100, 85, 210, 0.24);
+  border-top: 1px solid rgba(80, 72, 52, 0.35);
 }
 
 .release-card__primary {
   padding: 9px 18px;
-  border: 1px solid rgba(132, 112, 235, 0.55);
-  border-radius: 4px;
-  background: rgba(40, 32, 80, 0.8);
-  color: #c8b8ff;
+  border-top: 2px solid var(--bevel-light);
+  border-left: 2px solid var(--bevel-light);
+  border-right: 2px solid var(--bevel-dark);
+  border-bottom: 2px solid var(--bevel-dark);
+  border-radius: 1px;
+  background: var(--btn-bg);
+  color: var(--hud-primary);
   font-family: ui-monospace, monospace;
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.06em;
   cursor: pointer;
+}
+
+.release-card__primary:hover {
+  color: var(--hud-primary-strong);
 }
 
 @media (max-width: 700px) {

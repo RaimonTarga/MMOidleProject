@@ -3,9 +3,7 @@
   position: fixed;
   inset: 0;
   z-index: 1000;
-  background: rgba(0, 0, 10, 0.88);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+  background: rgba(8, 7, 5, 0.92);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -15,15 +13,17 @@
 
 /* ── Panel ───────────────────────────────────────────────────────────────── */
 .inv-panel {
-  background: linear-gradient(155deg, #0d0b22 0%, #070514 100%);
-  border: 1px solid rgba(100, 85, 210, 0.30);
-  border-radius: 8px;
+  background: #221f18;
+  border-top: 2px solid var(--bevel-light);
+  border-left: 2px solid var(--bevel-light);
+  border-right: 2px solid var(--bevel-dark);
+  border-bottom: 2px solid var(--bevel-dark);
+  border-radius: 2px;
   width: 100%;
   max-width: 960px;
   height: 580px;
   max-height: 90vh;
   padding: 16px 20px 16px;
-  box-shadow: 0 8px 48px rgba(40, 28, 120, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.03);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -36,7 +36,7 @@
   align-items: center;
   gap: 12px;
   padding-bottom: 12px;
-  border-bottom: 1px solid rgba(100, 85, 200, 0.22);
+  border-bottom: 1px solid rgba(100, 88, 60, 0.35);
   margin-bottom: 18px;
 }
 
@@ -44,26 +44,27 @@
   flex: 1;
   font-size: 12px;
   font-weight: bold;
-  color: #c0aee8;
+  color: var(--hud-primary-strong);
   text-transform: uppercase;
   letter-spacing: 1.5px;
 }
 
 .inv-close {
-  background: rgba(25, 20, 55, 0.9);
-  border: 1px solid rgba(100, 85, 190, 0.25);
-  color: #6868a8;
+  background: var(--btn-bg);
+  border-top: 1px solid var(--bevel-light);
+  border-left: 1px solid var(--bevel-light);
+  border-right: 1px solid var(--bevel-dark);
+  border-bottom: 1px solid var(--bevel-dark);
+  color: var(--hud-text-muted);
   font-family: monospace;
   font-size: 12px;
   padding: 3px 9px;
-  border-radius: 4px;
+  border-radius: 2px;
   cursor: pointer;
-  transition: border-color 0.12s, color 0.12s, background 0.12s;
+  transition: color 0.12s;
 }
 .inv-close:hover {
-  border-color: rgba(255, 70, 70, 0.55);
-  color: #ff6666;
-  background: rgba(60, 15, 15, 0.75);
+  color: var(--hud-danger);
 }
 
 /* ── Body — three-column grid ────────────────────────────────────────────── */

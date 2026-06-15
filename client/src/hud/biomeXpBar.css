@@ -8,15 +8,14 @@
   font-family: monospace;
   user-select: none;
   pointer-events: none;
-  background: rgba(7, 6, 20, 0.8);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(132, 112, 235, 0.28);
-  border-radius: 6px;
+  background: rgba(20, 18, 13, 0.96);
+  border-top: 1px solid var(--bevel-light);
+  border-left: 1px solid var(--bevel-light);
+  border-right: 1px solid var(--bevel-dark);
+  border-bottom: 1px solid var(--bevel-dark);
+  border-radius: 2px;
   padding: 8px 10px;
-  box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.03),
-    0 3px 18px rgba(20, 14, 60, 0.35);
+  box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.5);
 }
 
 /* ── Header row ──────────────────────────────────────────────────────────── */

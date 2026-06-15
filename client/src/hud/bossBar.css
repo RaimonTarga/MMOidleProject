@@ -9,15 +9,14 @@
   font-family: monospace;
   user-select: none;
   pointer-events: none;
-  background: rgba(7, 6, 20, 0.88);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(132, 112, 235, 0.32);
-  border-radius: 6px;
+  background: rgba(20, 18, 13, 0.96);
+  border-top: 1px solid var(--bevel-light);
+  border-left: 1px solid var(--bevel-light);
+  border-right: 1px solid var(--bevel-dark);
+  border-bottom: 1px solid var(--bevel-dark);
+  border-radius: 2px;
   padding: 10px 12px;
-  box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.04),
-    0 4px 22px rgba(20, 14, 60, 0.45);
+  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.6);
 }
 
 .boss-bar__header {
@@ -120,7 +119,7 @@
   color: var(--hud-danger, #ff7766);
   font-size: 10px;
   letter-spacing: 0.2px;
-  border-top: 1px solid rgba(132, 112, 235, 0.2);
+  border-top: 1px solid rgba(80, 72, 52, 0.30);
   padding-top: 6px;
   margin-top: 2px;
 }

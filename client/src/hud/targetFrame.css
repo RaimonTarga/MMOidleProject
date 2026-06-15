@@ -7,14 +7,16 @@
   width: 320px;
   max-width: 86vw;
   padding: 8px 12px 10px;
-  border-radius: 8px;
-  background: rgba(12, 10, 26, 0.82);
-  border: 1px solid rgba(120, 100, 200, 0.35);
-  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.5);
+  border-radius: 2px;
+  background: rgba(20, 18, 13, 0.94);
+  border-top: 1px solid var(--bevel-light);
+  border-left: 1px solid var(--bevel-light);
+  border-right: 1px solid var(--bevel-dark);
+  border-bottom: 1px solid var(--bevel-dark);
+  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.6);
   font-family: monospace;
   pointer-events: none;
   z-index: 11;
-  backdrop-filter: blur(2px);
 }
 
 .target-frame--boss {
@@ -35,7 +37,7 @@
 .target-frame__name {
   font-size: 14px;
   font-weight: bold;
-  color: #ece8ff;
+  color: var(--hud-text);
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
 }
 
@@ -84,9 +86,9 @@
   gap: 14px;
   margin-top: 5px;
   font-size: 10px;
-  color: #9a96c0;
+  color: var(--hud-text-muted);
 }
-.target-frame__stats b { color: #d6d2f0; font-weight: bold; }
+.target-frame__stats b { color: var(--hud-text); font-weight: bold; }
 
 /* Debuff tiles */
 .target-frame__tiles {

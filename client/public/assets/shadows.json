@@ -1,655 +1,871 @@
 {
-  "atlasHash": "76c5fba4ed8fcdf55ef04003002a1fe7c34bb5e3d71cb565e732704895dace20",
+  "atlasHash": "ccc8527e828ea8a97573f7dea76f5a505102b155d4d85992e604648e969ded90",
   "frames": {
-    "sprites/boss-cave-t1.png": {
+    "sprites/bosses/boss-cave-t1.png": {
       "sourceW": 128,
       "sourceH": 128,
       "footY": 36,
       "halfWAtFoot": 52
     },
-    "sprites/boss-cave-t2.png": {
+    "sprites/bosses/boss-cave-t2.png": {
       "sourceW": 128,
       "sourceH": 128,
       "footY": 33,
       "halfWAtFoot": 49.5
     },
-    "sprites/boss-cave-t3.png": {
+    "sprites/bosses/boss-cave-t3.png": {
       "sourceW": 128,
       "sourceH": 128,
       "footY": 33,
       "halfWAtFoot": 56.5
     },
-    "sprites/boss-desert-t2.png": {
+    "sprites/bosses/boss-desert-t2.png": {
       "sourceW": 128,
       "sourceH": 128,
       "footY": 47,
       "halfWAtFoot": 28
     },
-    "sprites/boss-desert-t3.png": {
+    "sprites/bosses/boss-desert-t3.png": {
       "sourceW": 128,
       "sourceH": 128,
       "footY": 47,
       "halfWAtFoot": 28
     },
-    "sprites/boss-forest-t1.png": {
+    "sprites/bosses/boss-forest-t1.png": {
       "sourceW": 128,
       "sourceH": 128,
       "footY": 36,
       "halfWAtFoot": 51.5
     },
-    "sprites/boss-forest-t2.png": {
+    "sprites/bosses/boss-forest-t2.png": {
       "sourceW": 128,
       "sourceH": 128,
       "footY": 36,
       "halfWAtFoot": 51.5
     },
-    "sprites/boss-jungle-t2.png": {
+    "sprites/bosses/boss-jungle-t2.png": {
       "sourceW": 128,
       "sourceH": 128,
       "footY": 32,
       "halfWAtFoot": 33
     },
-    "sprites/boss-jungle-t3.png": {
+    "sprites/bosses/boss-jungle-t3.png": {
       "sourceW": 128,
       "sourceH": 128,
       "footY": 33,
       "halfWAtFoot": 50.5
     },
-    "sprites/boss-mountain-t1.png": {
+    "sprites/bosses/boss-mountain-t1.png": {
       "sourceW": 128,
       "sourceH": 128,
       "footY": 31,
       "halfWAtFoot": 52.5
     },
-    "sprites/boss-mountain-t2.png": {
+    "sprites/bosses/boss-mountain-t2.png": {
       "sourceW": 128,
       "sourceH": 128,
       "footY": 31,
       "halfWAtFoot": 52.5
     },
-    "sprites/boss-mountain-t3.png": {
+    "sprites/bosses/boss-mountain-t3.png": {
       "sourceW": 128,
       "sourceH": 128,
       "footY": 31,
       "halfWAtFoot": 41
     },
-    "sprites/boss-plains-t1.png": {
+    "sprites/bosses/boss-plains-t1.png": {
       "sourceW": 128,
       "sourceH": 128,
       "footY": 36,
       "halfWAtFoot": 38.5
     },
-    "sprites/boss-plains-t2.png": {
+    "sprites/bosses/boss-plains-t2.png": {
       "sourceW": 128,
       "sourceH": 128,
       "footY": 34,
       "halfWAtFoot": 45
     },
-    "sprites/boss-swamp-t1.png": {
+    "sprites/bosses/boss-swamp-t1.png": {
       "sourceW": 128,
       "sourceH": 128,
       "footY": 37,
       "halfWAtFoot": 49.5
     },
-    "sprites/boss-swamp-t2.png": {
+    "sprites/bosses/boss-swamp-t2.png": {
       "sourceW": 128,
       "sourceH": 128,
       "footY": 34,
       "halfWAtFoot": 51.5
     },
-    "sprites/boss-swamp-t3.png": {
+    "sprites/bosses/boss-swamp-t3.png": {
       "sourceW": 128,
       "sourceH": 128,
       "footY": 33,
       "halfWAtFoot": 48
     },
-    "sprites/boss-tundra-t3.png": {
+    "sprites/bosses/boss-tundra-t3.png": {
       "sourceW": 128,
       "sourceH": 128,
       "footY": 44,
       "halfWAtFoot": 48
     },
-    "sprites/boss-volcano-t3.png": {
+    "sprites/bosses/boss-volcano-t3.png": {
       "sourceW": 128,
       "sourceH": 128,
       "footY": 30,
       "halfWAtFoot": 43
     },
-    "sprites/ancient-wolf.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 18,
-      "halfWAtFoot": 24.5
+    "sprites/bosses/t4-desert-boss.png": {
+      "sourceW": 128,
+      "sourceH": 128,
+      "footY": 47,
+      "halfWAtFoot": 58
     },
-    "sprites/archer.png": {
+    "sprites/bosses/t4-graveyard-boss.png": {
+      "sourceW": 128,
+      "sourceH": 128,
+      "footY": 58,
+      "halfWAtFoot": 17
+    },
+    "sprites/bosses/t4-jungle-boss.png": {
+      "sourceW": 128,
+      "sourceH": 128,
+      "footY": 56,
+      "halfWAtFoot": 46
+    },
+    "sprites/bosses/t4-mountain-boss.png": {
+      "sourceW": 128,
+      "sourceH": 128,
+      "footY": 63,
+      "halfWAtFoot": 52
+    },
+    "sprites/bosses/t4-trench-boss.png": {
+      "sourceW": 128,
+      "sourceH": 128,
+      "footY": 63,
+      "halfWAtFoot": 35
+    },
+    "sprites/bosses/t4-tundra-boss.png": {
+      "sourceW": 128,
+      "sourceH": 128,
+      "footY": 63,
+      "halfWAtFoot": 63
+    },
+    "sprites/bosses/t4-volcano-boss.png": {
+      "sourceW": 128,
+      "sourceH": 128,
+      "footY": 62,
+      "halfWAtFoot": 50.5
+    },
+    "sprites/monsters/T4/volcano_spitter.png": {
+      "sourceW": 117,
+      "sourceH": 64,
+      "footY": 27,
+      "halfWAtFoot": 44.5
+    },
+    "sprites/classes/breacher.png": {
       "sourceW": 64,
       "sourceH": 64,
       "footY": 28,
       "halfWAtFoot": 17.5
     },
-    "sprites/ash-slinger.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 16,
-      "halfWAtFoot": 29
-    },
-    "sprites/avalanche-ram.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 17,
-      "halfWAtFoot": 21.5
-    },
-    "sprites/boar.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 18,
-      "halfWAtFoot": 21
-    },
-    "sprites/bog-lurker.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 15,
-      "halfWAtFoot": 29.5
-    },
-    "sprites/bog-witch.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 30,
-      "halfWAtFoot": 22
-    },
-    "sprites/breacher.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 28,
-      "halfWAtFoot": 17.5
-    },
-    "sprites/brute.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 28,
-      "halfWAtFoot": 26
-    },
-    "sprites/cadence.png": {
+    "sprites/classes/cadence.png": {
       "sourceW": 64,
       "sourceH": 64,
       "footY": 28,
       "halfWAtFoot": 12
     },
-    "sprites/canopy-harrier.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 16,
-      "halfWAtFoot": 22
-    },
-    "sprites/canopy-sprite.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 18,
-      "halfWAtFoot": 7.5
-    },
-    "sprites/cave-gargoyle.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 24,
-      "halfWAtFoot": 8.5
-    },
-    "sprites/cave-troll.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 22,
-      "halfWAtFoot": 14
-    },
-    "sprites/cavern-troll.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 22,
-      "halfWAtFoot": 21
-    },
-    "sprites/cinder-hound.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 16,
-      "halfWAtFoot": 26
-    },
-    "sprites/classless.png": {
+    "sprites/classes/classless.png": {
       "sourceW": 64,
       "sourceH": 64,
       "footY": 28,
       "halfWAtFoot": 18
     },
-    "sprites/cooldown.png": {
+    "sprites/classes/cooldown.png": {
       "sourceW": 64,
       "sourceH": 64,
       "footY": 28,
       "halfWAtFoot": 12
     },
-    "sprites/crag-mortar.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 19,
-      "halfWAtFoot": 24
-    },
-    "sprites/crawler.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 15,
-      "halfWAtFoot": 26.5
-    },
-    "sprites/crystal-gargoyle.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 25,
-      "halfWAtFoot": 18
-    },
-    "sprites/deadeye.png": {
+    "sprites/classes/deadeye.png": {
       "sourceW": 64,
       "sourceH": 64,
       "footY": 28,
       "halfWAtFoot": 15.5
     },
-    "sprites/deep-spider.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 21,
-      "halfWAtFoot": 21.5
-    },
-    "sprites/desert-basilisk.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 22,
-      "halfWAtFoot": 25
-    },
-    "sprites/dot.png": {
+    "sprites/classes/dot.png": {
       "sourceW": 64,
       "sourceH": 64,
       "footY": 28,
       "halfWAtFoot": 18
     },
-    "sprites/dune-stalker.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 23,
-      "halfWAtFoot": 14
-    },
-    "sprites/dust-djinn.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 25,
-      "halfWAtFoot": 20.5
-    },
-    "sprites/ember-scuttler.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 21,
-      "halfWAtFoot": 26.5
-    },
-    "sprites/energy.png": {
+    "sprites/classes/energy.png": {
       "sourceW": 64,
       "sourceH": 64,
       "footY": 27,
       "halfWAtFoot": 13.5
     },
-    "sprites/enforcer.png": {
+    "sprites/classes/enforcer.png": {
       "sourceW": 64,
       "sourceH": 64,
       "footY": 28,
       "halfWAtFoot": 12.5
     },
-    "sprites/frog.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 18,
-      "halfWAtFoot": 25.5
-    },
-    "sprites/frost-lurker.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 19,
-      "halfWAtFoot": 29.5
-    },
-    "sprites/giant-spider.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 21,
-      "halfWAtFoot": 21.5
-    },
-    "sprites/glacier-bear.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 21,
-      "halfWAtFoot": 28.5
-    },
-    "sprites/granite-titan.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 28,
-      "halfWAtFoot": 26
-    },
-    "sprites/greenslime.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 24,
-      "halfWAtFoot": 27.5
-    },
-    "sprites/harbinger.png": {
+    "sprites/classes/harbinger.png": {
       "sourceW": 64,
       "sourceH": 64,
       "footY": 28,
       "halfWAtFoot": 18.5
     },
-    "sprites/haunt.png": {
+    "sprites/classes/haunt.png": {
       "sourceW": 64,
       "sourceH": 64,
       "footY": 27,
       "halfWAtFoot": 13.5
     },
-    "sprites/heavy_cadence.png": {
+    "sprites/classes/heavy_cadence.png": {
       "sourceW": 64,
       "sourceH": 64,
       "footY": 28,
       "halfWAtFoot": 12
     },
-    "sprites/heavy_cooldown.png": {
+    "sprites/classes/heavy_cooldown.png": {
       "sourceW": 64,
       "sourceH": 64,
       "footY": 28,
       "halfWAtFoot": 12
     },
-    "sprites/heavy_dot.png": {
+    "sprites/classes/heavy_dot.png": {
       "sourceW": 64,
       "sourceH": 64,
       "footY": 28,
       "halfWAtFoot": 20.5
     },
-    "sprites/heavy_energy.png": {
+    "sprites/classes/heavy_energy.png": {
       "sourceW": 64,
       "sourceH": 64,
       "footY": 30,
       "halfWAtFoot": 16
     },
-    "sprites/heavy_reload.png": {
+    "sprites/classes/heavy_reload.png": {
       "sourceW": 64,
       "sourceH": 64,
       "footY": 28,
       "halfWAtFoot": 12
     },
-    "sprites/hexblade.png": {
+    "sprites/classes/hexblade.png": {
       "sourceW": 64,
       "sourceH": 64,
       "footY": 28,
       "halfWAtFoot": 18
     },
-    "sprites/in-fighter.png": {
+    "sprites/classes/in-fighter.png": {
       "sourceW": 64,
       "sourceH": 64,
       "footY": 28,
       "halfWAtFoot": 12
     },
-    "sprites/ironwood-golem.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 27,
-      "halfWAtFoot": 26
-    },
-    "sprites/jumper.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 29,
-      "halfWAtFoot": 13
-    },
-    "sprites/jungle-ape.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 28,
-      "halfWAtFoot": 29
-    },
-    "sprites/jungle-blowdarter.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 27,
-      "halfWAtFoot": 16
-    },
-    "sprites/jungle-snake.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 25,
-      "halfWAtFoot": 29
-    },
-    "sprites/jungle-stalker.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 21,
-      "halfWAtFoot": 17.5
-    },
-    "sprites/lancer.png": {
+    "sprites/classes/lancer.png": {
       "sourceW": 64,
       "sourceH": 64,
       "footY": 28,
       "halfWAtFoot": 12
     },
-    "sprites/light_cadence.png": {
+    "sprites/classes/light_cadence.png": {
       "sourceW": 64,
       "sourceH": 64,
       "footY": 28,
       "halfWAtFoot": 12
     },
-    "sprites/light_cooldown.png": {
+    "sprites/classes/light_cooldown.png": {
       "sourceW": 64,
       "sourceH": 64,
       "footY": 28,
       "halfWAtFoot": 12
     },
-    "sprites/light_dot.png": {
+    "sprites/classes/light_dot.png": {
       "sourceW": 64,
       "sourceH": 64,
       "footY": 28,
       "halfWAtFoot": 12.5
     },
-    "sprites/light_energy.png": {
+    "sprites/classes/light_energy.png": {
       "sourceW": 64,
       "sourceH": 64,
       "footY": 29,
       "halfWAtFoot": 18
     },
-    "sprites/light_reload.png": {
+    "sprites/classes/light_reload.png": {
       "sourceW": 64,
       "sourceH": 64,
       "footY": 28,
       "halfWAtFoot": 12
     },
-    "sprites/magma-brute.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 25,
-      "halfWAtFoot": 28
-    },
-    "sprites/medium_cadence.png": {
+    "sprites/classes/medium_cadence.png": {
       "sourceW": 64,
       "sourceH": 64,
       "footY": 28,
       "halfWAtFoot": 12
     },
-    "sprites/medium_cooldown.png": {
+    "sprites/classes/medium_cooldown.png": {
       "sourceW": 64,
       "sourceH": 64,
       "footY": 28,
       "halfWAtFoot": 12
     },
-    "sprites/medium_dot.png": {
+    "sprites/classes/medium_dot.png": {
       "sourceW": 64,
       "sourceH": 64,
       "footY": 28,
       "halfWAtFoot": 18
     },
-    "sprites/medium_energy.png": {
+    "sprites/classes/medium_energy.png": {
       "sourceW": 64,
       "sourceH": 64,
       "footY": 27,
       "halfWAtFoot": 13.5
     },
-    "sprites/medium_reload.png": {
+    "sprites/classes/medium_reload.png": {
       "sourceW": 64,
       "sourceH": 64,
       "footY": 28,
       "halfWAtFoot": 12
     },
-    "sprites/mire-hex-spitter.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 23,
-      "halfWAtFoot": 27.5
-    },
-    "sprites/mire-stalker.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 13,
-      "halfWAtFoot": 28.5
-    },
-    "sprites/mountain-colossus.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 28,
-      "halfWAtFoot": 26
-    },
-    "sprites/peak-archer.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 30,
-      "halfWAtFoot": 14
-    },
-    "sprites/phalanx.png": {
+    "sprites/classes/phalanx.png": {
       "sourceW": 64,
       "sourceH": 64,
       "footY": 28,
       "halfWAtFoot": 17.5
     },
-    "sprites/phantom-blade.png": {
+    "sprites/classes/phantom-blade.png": {
       "sourceW": 64,
       "sourceH": 64,
       "footY": 28,
       "halfWAtFoot": 11.5
     },
-    "sprites/plague-hydra.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 19,
-      "halfWAtFoot": 22.5
-    },
-    "sprites/prairie-wolf.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 18,
-      "halfWAtFoot": 21
-    },
-    "sprites/reload.png": {
+    "sprites/classes/reload.png": {
       "sourceW": 64,
       "sourceH": 64,
       "footY": 28,
       "halfWAtFoot": 12
     },
-    "sprites/rime-caster.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 25,
-      "halfWAtFoot": 2.5
-    },
-    "sprites/sand-scorpion.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 23,
-      "halfWAtFoot": 14
-    },
-    "sprites/sand-weaver.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 24,
-      "halfWAtFoot": 28.5
-    },
-    "sprites/savanna-hawk.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 21,
-      "halfWAtFoot": 13
-    },
-    "sprites/sentinel.png": {
+    "sprites/classes/sentinel.png": {
       "sourceW": 64,
       "sourceH": 64,
       "footY": 28,
       "halfWAtFoot": 12
     },
-    "sprites/shade.png": {
+    "sprites/classes/shade.png": {
       "sourceW": 64,
       "sourceH": 64,
       "footY": 28,
       "halfWAtFoot": 17
     },
-    "sprites/silverback.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 21,
-      "halfWAtFoot": 28
-    },
-    "sprites/stampede-bull.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 20,
-      "halfWAtFoot": 21.5
-    },
-    "sprites/stone-basilisk.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 22,
-      "halfWAtFoot": 25
-    },
-    "sprites/stone-eagle.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 23,
-      "halfWAtFoot": 19
-    },
-    "sprites/swamp-hydra.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 30,
-      "halfWAtFoot": 26.5
-    },
-    "sprites/swampslime.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 17,
-      "halfWAtFoot": 32
-    },
-    "sprites/tinyslime.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 9,
-      "halfWAtFoot": 13.5
-    },
-    "sprites/vanguard.png": {
+    "sprites/classes/vanguard.png": {
       "sourceW": 64,
       "sourceH": 64,
       "footY": 28,
       "halfWAtFoot": 18
     },
-    "sprites/warlock.png": {
+    "sprites/classes/warlock.png": {
       "sourceW": 64,
       "sourceH": 64,
       "footY": 28,
       "halfWAtFoot": 18
     },
-    "sprites/wisp.png": {
+    "sprites/classes/wisp.png": {
       "sourceW": 64,
       "sourceH": 64,
       "footY": 26,
       "halfWAtFoot": 13.5
     },
-    "sprites/wolf.png": {
+    "sprites/monsters/T4/desert_cobra.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 25,
+      "halfWAtFoot": 27
+    },
+    "sprites/monsters/T4/desert_iguana.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 22,
+      "halfWAtFoot": 25
+    },
+    "sprites/monsters/T4/desert_snake.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 23,
+      "halfWAtFoot": 24
+    },
+    "sprites/monsters/T4/graveyard_dog.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 29,
+      "halfWAtFoot": 28.5
+    },
+    "sprites/monsters/T4/graveyard_gigaskeleton.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 29,
+      "halfWAtFoot": 30
+    },
+    "sprites/monsters/T4/graveyard_rat.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 28,
+      "halfWAtFoot": 18
+    },
+    "sprites/monsters/T4/graveyard_skeleton.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 31,
+      "halfWAtFoot": 29.5
+    },
+    "sprites/monsters/T4/graveyard_vulture.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 26,
+      "halfWAtFoot": 14
+    },
+    "sprites/monsters/T4/jungle_iguana.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 13,
+      "halfWAtFoot": 26
+    },
+    "sprites/monsters/T4/jungle_panther.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 25,
+      "halfWAtFoot": 27
+    },
+    "sprites/monsters/T4/jungle_silverback.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 30,
+      "halfWAtFoot": 26
+    },
+    "sprites/monsters/T4/jungle_snake.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 20,
+      "halfWAtFoot": 25
+    },
+    "sprites/monsters/T4/mountain_big.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 31,
+      "halfWAtFoot": 19
+    },
+    "sprites/monsters/T4/mountain_dino.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 28,
+      "halfWAtFoot": 20.5
+    },
+    "sprites/monsters/T4/mountain_elephant.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 31,
+      "halfWAtFoot": 20.5
+    },
+    "sprites/monsters/T4/mountain_ram.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 17,
+      "halfWAtFoot": 21.5
+    },
+    "sprites/monsters/T4/mountain_roc.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 29,
+      "halfWAtFoot": 10.5
+    },
+    "sprites/monsters/T4/mountain_wolf.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 30,
+      "halfWAtFoot": 24.5
+    },
+    "sprites/monsters/T4/trench_crab.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 29,
+      "halfWAtFoot": 21.5
+    },
+    "sprites/monsters/T4/trench_demon.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 28,
+      "halfWAtFoot": 22.5
+    },
+    "sprites/monsters/T4/trench_serpent.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 22,
+      "halfWAtFoot": 26
+    },
+    "sprites/monsters/T4/tundra_bear.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 16,
+      "halfWAtFoot": 30.5
+    },
+    "sprites/monsters/T4/tundra_mammoth.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 31,
+      "halfWAtFoot": 20
+    },
+    "sprites/monsters/T4/volcano_dog.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 31,
+      "halfWAtFoot": 12
+    },
+    "sprites/monsters/T4/volcano_iguana.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 26,
+      "halfWAtFoot": 25
+    },
+    "sprites/monsters/T4/volcano_lizard.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 16,
+      "halfWAtFoot": 28
+    },
+    "sprites/monsters/T4/volcano_tiny_lizard.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 19,
+      "halfWAtFoot": 18
+    },
+    "sprites/monsters/T4/volcano_turtle.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 31,
+      "halfWAtFoot": 28
+    },
+    "sprites/monsters/ancient-wolf.png": {
       "sourceW": 64,
       "sourceH": 64,
       "footY": 18,
       "halfWAtFoot": 24.5
     },
-    "sprites/yellowslime.png": {
+    "sprites/monsters/archer.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 28,
+      "halfWAtFoot": 17.5
+    },
+    "sprites/monsters/ash-slinger.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 16,
+      "halfWAtFoot": 29
+    },
+    "sprites/monsters/avalanche-ram.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 17,
+      "halfWAtFoot": 21.5
+    },
+    "sprites/monsters/boar.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 18,
+      "halfWAtFoot": 21
+    },
+    "sprites/monsters/bog-lurker.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 15,
+      "halfWAtFoot": 29.5
+    },
+    "sprites/monsters/bog-witch.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 30,
+      "halfWAtFoot": 22
+    },
+    "sprites/monsters/brute.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 28,
+      "halfWAtFoot": 26
+    },
+    "sprites/monsters/canopy-harrier.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 16,
+      "halfWAtFoot": 22
+    },
+    "sprites/monsters/canopy-sprite.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 18,
+      "halfWAtFoot": 7.5
+    },
+    "sprites/monsters/cave-gargoyle.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 24,
+      "halfWAtFoot": 8.5
+    },
+    "sprites/monsters/cave-troll.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 22,
+      "halfWAtFoot": 14
+    },
+    "sprites/monsters/cavern-troll.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 22,
+      "halfWAtFoot": 21
+    },
+    "sprites/monsters/cinder-hound.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 16,
+      "halfWAtFoot": 26
+    },
+    "sprites/monsters/crag-mortar.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 19,
+      "halfWAtFoot": 24
+    },
+    "sprites/monsters/crawler.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 15,
+      "halfWAtFoot": 26.5
+    },
+    "sprites/monsters/crystal-gargoyle.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 25,
+      "halfWAtFoot": 18
+    },
+    "sprites/monsters/deep-spider.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 21,
+      "halfWAtFoot": 21.5
+    },
+    "sprites/monsters/desert-basilisk.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 22,
+      "halfWAtFoot": 25
+    },
+    "sprites/monsters/dune-stalker.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 23,
+      "halfWAtFoot": 14
+    },
+    "sprites/monsters/dust-djinn.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 25,
+      "halfWAtFoot": 20.5
+    },
+    "sprites/monsters/ember-scuttler.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 21,
+      "halfWAtFoot": 26.5
+    },
+    "sprites/monsters/frog.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 18,
+      "halfWAtFoot": 25.5
+    },
+    "sprites/monsters/frost-lurker.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 19,
+      "halfWAtFoot": 29.5
+    },
+    "sprites/monsters/giant-spider.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 21,
+      "halfWAtFoot": 21.5
+    },
+    "sprites/monsters/glacier-bear.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 21,
+      "halfWAtFoot": 28.5
+    },
+    "sprites/monsters/granite-titan.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 28,
+      "halfWAtFoot": 26
+    },
+    "sprites/monsters/greenslime.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 24,
+      "halfWAtFoot": 27.5
+    },
+    "sprites/monsters/ironwood-golem.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 27,
+      "halfWAtFoot": 26
+    },
+    "sprites/monsters/jumper.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 29,
+      "halfWAtFoot": 13
+    },
+    "sprites/monsters/jungle-ape.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 28,
+      "halfWAtFoot": 29
+    },
+    "sprites/monsters/jungle-blowdarter.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 27,
+      "halfWAtFoot": 16
+    },
+    "sprites/monsters/jungle-snake.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 25,
+      "halfWAtFoot": 29
+    },
+    "sprites/monsters/jungle-stalker.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 21,
+      "halfWAtFoot": 17.5
+    },
+    "sprites/monsters/magma-brute.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 25,
+      "halfWAtFoot": 28
+    },
+    "sprites/monsters/mire-hex-spitter.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 23,
+      "halfWAtFoot": 27.5
+    },
+    "sprites/monsters/mire-stalker.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 13,
+      "halfWAtFoot": 28.5
+    },
+    "sprites/monsters/mountain-colossus.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 28,
+      "halfWAtFoot": 26
+    },
+    "sprites/monsters/peak-archer.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 30,
+      "halfWAtFoot": 14
+    },
+    "sprites/monsters/plague-hydra.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 19,
+      "halfWAtFoot": 22.5
+    },
+    "sprites/monsters/prairie-wolf.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 18,
+      "halfWAtFoot": 21
+    },
+    "sprites/monsters/rime-caster.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 25,
+      "halfWAtFoot": 2.5
+    },
+    "sprites/monsters/sand-scorpion.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 23,
+      "halfWAtFoot": 14
+    },
+    "sprites/monsters/sand-weaver.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 24,
+      "halfWAtFoot": 28.5
+    },
+    "sprites/monsters/savanna-hawk.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 21,
+      "halfWAtFoot": 13
+    },
+    "sprites/monsters/silverback.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 21,
+      "halfWAtFoot": 28
+    },
+    "sprites/monsters/stampede-bull.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 20,
+      "halfWAtFoot": 21.5
+    },
+    "sprites/monsters/stone-basilisk.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 22,
+      "halfWAtFoot": 25
+    },
+    "sprites/monsters/stone-eagle.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 23,
+      "halfWAtFoot": 19
+    },
+    "sprites/monsters/swamp-hydra.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 30,
+      "halfWAtFoot": 26.5
+    },
+    "sprites/monsters/swampslime.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 17,
+      "halfWAtFoot": 32
+    },
+    "sprites/monsters/tinyslime.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 9,
+      "halfWAtFoot": 13.5
+    },
+    "sprites/monsters/wolf.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 18,
+      "halfWAtFoot": 24.5
+    },
+    "sprites/monsters/yellowslime.png": {
       "sourceW": 64,
       "sourceH": 64,
       "footY": 24,

@@ -15,7 +15,7 @@ export const trenchMonsterEntries = [
     // Standard Trench encounter. Massive HP, heavy DR/plating, charges to close.
     // COOLDOWN bite every 10s = 313 (deepest cap trip). Base 92 ≈ H_med between
     // bites. DR 0.20 extends the fight — rewards pierce + sustained-fight DR ramp.
-    stats: { hp: 2600, attack: 92, plating: 18, damageReduction: 0.20, speed: 28, attackRange: 15, attackCooldown: 2800, pullRange: 180 },
+    stats: { hp: 2600, attack: 132, plating: 18, damageReduction: 0.20, speed: 28, attackRange: 15, attackCooldown: 2800, pullRange: 180 },
     behavior: 'melee', attackStyle: 'impact', biome: 'trench',
     rewards: { essence: 260, essenceType: 'blue', level: 4, biomeXp: 1560 },
     ai: { wanderRadius: 120, leashRange: 480, idleMinMs: 5000, idleMaxMs: 14000 },
@@ -28,7 +28,7 @@ export const trenchMonsterEntries = [
     // Multi-limbed deep stalker. CADENCE every 5 = a 241 slam. The 5-attack
     // rhythm is slow but at heavy DR/plating the fight is long, so it recurs
     // often. avg/attack (4·86+241)/5 = 117 → ×(1000/3400) = 34 + the spikes.
-    stats: { hp: 2100, attack: 86, plating: 15, damageReduction: 0.16, speed: 22, attackRange: 15, attackCooldown: 3400, pullRange: 160 },
+    stats: { hp: 2100, attack: 126, plating: 15, damageReduction: 0.16, speed: 22, attackRange: 15, attackCooldown: 3400, pullRange: 160 },
     behavior: 'melee', attackStyle: 'impact', biome: 'trench',
     rewards: { essence: 210, essenceType: 'blue', level: 4, biomeXp: 1260 },
     ai: { wanderRadius: 100, leashRange: 450, idleMinMs: 5500, idleMaxMs: 14000 },
@@ -45,7 +45,7 @@ export const trenchMonsterEntries = [
     //   Heavy plating (22) + DR (0.24): rewards pierce (Rupture/Sunder/brittle)
     // Survive with premium-DR armor + sustained-fight DR ramp + absorb charm.
     // Without the right kit, shield+soft-cap+cooldown-finisher is lethal.
-    stats: { hp: 3600, attack: 102, plating: 22, damageReduction: 0.24, speed: 20, attackRange: 15, attackCooldown: 3600, pullRange: 150 },
+    stats: { hp: 3600, attack: 152, plating: 22, damageReduction: 0.24, speed: 20, attackRange: 15, attackCooldown: 3600, pullRange: 150 },
     behavior: 'melee', attackStyle: 'impact', biome: 'trench',
     rewards: { essence: 400, essenceType: 'blue', level: 4, biomeXp: 2400 },
     ai: { wanderRadius: 80, leashRange: 380, idleMinMs: 8000, idleMaxMs: 20000 },
