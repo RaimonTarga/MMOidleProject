@@ -1,10 +1,14 @@
-import { NODE_BIOMES, type HasAutoIntent } from "@mmo-idle/shared";
+import { getFlag, NODE_BIOMES, type HasAutoIntent } from "@mmo-idle/shared";
 import type { World } from "../../world/World";
 import type { PlayerEntity } from "../../ecs/entity";
 import { attachComponent, detachComponent } from "../../ecs/markerHelpers";
-import { isPartyFollower } from "../player/party/partySystem";
+import {
+  effectivePartyLeaderId,
+  isEffectivePartyFollower,
+} from "../player/party/partySystem";
 import { isFleeing } from "../combat/ai/flee";
 import { getAutoTargetId } from "../combat/ai/targetPriority";
+import { RUNE_FOLLOW_LEADER_FLAG } from "../combat/ai/runeConfig";
 
 /**
  * Stamp the networked {@link HasAutoIntent} telegraph onto every auto-combat
@@ -46,8 +50,12 @@ function resolveIntent(
 
   if (isFleeing(player)) return { kind: "flee" };
 
-  if (isPartyFollower(player)) {
-    return { kind: "follow", leaderId: player.inParty?.leaderId };
+  if (
+    isEffectivePartyFollower(world, player) &&
+    getFlag(player.tracksCombat, RUNE_FOLLOW_LEADER_FLAG)
+  ) {
+    const leaderId = effectivePartyLeaderId(world, player);
+    return leaderId ? { kind: "follow", leaderId } : { kind: "follow" };
   }
 
   const travel = travelIntent(player);

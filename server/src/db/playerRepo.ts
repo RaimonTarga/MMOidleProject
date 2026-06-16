@@ -10,7 +10,12 @@ import type {
   TracksProgression,
   UsesSkills,
 } from '@mmo-idle/shared';
-import { GAME_CONFIG, emptyEquipment, type Vec2 } from '@mmo-idle/shared';
+import {
+  DEFAULT_RUNE_LOADOUT,
+  GAME_CONFIG,
+  emptyEquipment,
+  type Vec2,
+} from '@mmo-idle/shared';
 import type { PlayerEntity } from '../ecs/entity';
 import { accounts, characters } from './schema';
 import type * as schema from './schema';
@@ -223,7 +228,7 @@ function buildFreshSlices(
       bossesCleared:    [],
       clearedNodes:     [],
       runesOwned:       [],
-      runesEquipped:    [],
+      runesEquipped:    [...DEFAULT_RUNE_LOADOUT],
     },
     holdsInventory: {
       inventory: [],

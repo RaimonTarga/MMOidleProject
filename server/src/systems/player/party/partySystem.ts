@@ -1,8 +1,9 @@
-import type { PartyMember } from '@mmo-idle/shared';
+import { getFlag, type PartyMember } from '@mmo-idle/shared';
 import type { World } from '../../../world/World';
 import type { PlayerEntity } from '../../../ecs/entity';
 import { attachComponent, detachComponent } from '../../../ecs/markerHelpers';
 import { clearAutoTraversePath } from '../../world/autoTraverse';
+import { RUNE_LEAD_THE_WAY_FLAG } from '../../combat/ai/runeConfig';
 
 /**
  * Single-level parties: one leader + N followers. The `inParty` slice on each
@@ -13,6 +14,34 @@ import { clearAutoTraversePath } from '../../world/autoTraverse';
 /** True when the player is a non-leader member of a party (a follower). */
 export function isPartyFollower(player: PlayerEntity): boolean {
   return player.inParty !== undefined && player.inParty.leaderId !== player.isPlayer.id;
+}
+
+/**
+ * Rune-facing party leader selection. The stored party leader stays as the
+ * default; if party members opt into Lead The Way, the first such member in the
+ * roster becomes the leader for auto-follow and assist targeting.
+ */
+export function effectivePartyLeaderId(
+  world: World,
+  player: PlayerEntity,
+): string | null {
+  const party = player.inParty;
+  if (!party) return null;
+  for (const member of party.members) {
+    const entity = world.getPlayerEntity(member.id);
+    if (entity && getFlag(entity.tracksCombat, RUNE_LEAD_THE_WAY_FLAG)) {
+      return entity.isPlayer.id;
+    }
+  }
+  return party.leaderId;
+}
+
+export function isEffectivePartyFollower(
+  world: World,
+  player: PlayerEntity,
+): boolean {
+  const leaderId = effectivePartyLeaderId(world, player);
+  return leaderId !== null && leaderId !== player.isPlayer.id;
 }
 
 /** Every player currently in the party led by `leaderId` (leader included). */

@@ -1,8 +1,12 @@
 import {
   ALL_RUNE_IDS,
+  DEFAULT_RUNE_LOADOUT,
   DEFAULT_AUTOCOMBAT_CONFIG,
   GAME_CONFIG,
   makeTracksCombat,
+  normalizeRuneLoadout,
+  runeBudgetForTier,
+  sanitizeRuneLoadout,
 } from "@mmo-idle/shared";
 import type { World } from "./World";
 import type { PlayerEntity } from "../ecs/entity";
@@ -23,9 +27,14 @@ export function attachPlayerEntity(
   // Grant-all rune fragments (MVP: no acquisition gating). Covers existing
   // characters whose persisted slices predate the rune system.
   player.tracksProgression.runesOwned = [...ALL_RUNE_IDS];
-  if (!Array.isArray(player.tracksProgression.runesEquipped)) {
-    player.tracksProgression.runesEquipped = [];
-  }
+  const owned = new Set(player.tracksProgression.runesOwned);
+  const budget = runeBudgetForTier(player.tracksProgression.playerTier);
+  const persistedRules = Array.isArray(player.tracksProgression.runesEquipped)
+    ? normalizeRuneLoadout(player.tracksProgression.runesEquipped)
+    : [];
+  const sanitizedRules = sanitizeRuneLoadout(persistedRules, owned, budget);
+  player.tracksProgression.runesEquipped =
+    sanitizedRules.length > 0 ? sanitizedRules : [...DEFAULT_RUNE_LOADOUT];
 
   const entity: PlayerEntity = {
     entityId: socketId,

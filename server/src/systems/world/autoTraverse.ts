@@ -8,6 +8,7 @@ import {
   listNonBossNodesForBiomeTier,
   NODE_BIOMES,
   pickNextIncompleteBiome,
+  getFlag,
   type BiomeProgressInput,
 } from "@mmo-idle/shared";
 import type { World } from "../../world/World";
@@ -22,8 +23,9 @@ import {
   gateTargetForDirection,
 } from "../../world/nodePath";
 import { setEntityMotion, stopEntity } from "./movement";
-import { isPartyFollower } from "../player/party/partySystem";
+import { isEffectivePartyFollower } from "../player/party/partySystem";
 import { isFleeing } from "../combat/ai/flee";
+import { RUNE_FOLLOW_LEADER_FLAG } from "../combat/ai/runeConfig";
 
 type TraversePhase = "mob" | "boss" | "advance";
 
@@ -192,10 +194,13 @@ function markCurrentNodeClearedIfUnlocksDone(
 export function updateAutoTraverse(world: World): void {
   for (const player of world.livePlayers) {
     if (isFleeing(player)) continue;
-    // Party followers in auto-combat mirror the leader (updatePartyFollow owns
-    // them) instead of running their own traverse. With auto off they may still
-    // manually navigate, so fall through to manual path stepping below.
-    if (isPartyFollower(player) && player.usesAutocombat.auto) {
+    // Rune-following party members mirror the effective leader
+    // (updatePartyFollow owns them) instead of running their own traverse.
+    if (
+      isEffectivePartyFollower(world, player) &&
+      player.usesAutocombat.auto &&
+      getFlag(player.tracksCombat, RUNE_FOLLOW_LEADER_FLAG)
+    ) {
       if (player.hasAutoTraversePath) clearAutoTraversePath(world, player);
       continue;
     }

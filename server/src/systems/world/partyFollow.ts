@@ -7,6 +7,9 @@ import {
 } from "../../world/nodePath";
 import { steerTowardTarget } from "../combat/ai/autoTarget";
 import { isFleeing } from "../combat/ai/flee";
+import { getFlag } from "@mmo-idle/shared";
+import { RUNE_FOLLOW_LEADER_FLAG } from "../combat/ai/runeConfig";
+import { effectivePartyLeaderId } from "../player/party/partySystem";
 
 /** How close a follower trails an idle leader before holding position (px). */
 const PARTY_FOLLOW_DISTANCE = 90;
@@ -24,11 +27,14 @@ export function updatePartyFollow(world: World, now: number): void {
     if (isFleeing(player)) continue;
     if (player.hasManualMoveIntent) continue;
 
-    const party = player.inParty;
-    if (!party || party.leaderId === player.isPlayer.id) continue; // not a follower
+    if (!player.inParty) continue;
 
-    const leader = world.getPlayerEntity(party.leaderId);
+    const leaderId = effectivePartyLeaderId(world, player);
+    if (!leaderId || leaderId === player.isPlayer.id) continue; // not a follower
+
+    const leader = world.getPlayerEntity(leaderId);
     if (!leader) continue;
+    if (!getFlag(player.tracksCombat, RUNE_FOLLOW_LEADER_FLAG)) continue;
 
     const playerNode = player.hasPosition.nodeId;
     const leaderNode = leader.hasPosition.nodeId;
@@ -54,7 +60,11 @@ export function updatePartyFollow(world: World, now: number): void {
     // Same zone: assist against whatever the leader is attacking.
     // Summoner followers stay back — minions fight; they only trail the leader.
     const leaderTargetId = leader.hasAttackTarget?.targetId;
-    if (leaderTargetId && player.usesSkills.combatArchetype !== "summoner") {
+    if (
+      leaderTargetId &&
+      player.usesAutocombat.focusLeaderTarget &&
+      player.usesSkills.combatArchetype !== "summoner"
+    ) {
       const monster = world.getMonsterEntity(leaderTargetId);
       if (monster && monster.hasPosition.nodeId === playerNode) {
         steerTowardTarget(world, player, monster, now);

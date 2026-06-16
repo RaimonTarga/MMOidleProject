@@ -17,6 +17,10 @@ import { isMonsterKnockedBack } from "../damage/knockback";
 import { setEntityMotion, stopEntity } from "../../world/movement";
 import { resolveObstaclesForNode } from "../../world/nodeFeatures";
 import { setAggroTarget, setAttackTarget } from "./targeting";
+import {
+  selectMonsterAggroCandidate,
+  type MonsterAggroCandidate,
+} from "./monsterTargeting";
 
 const KITE_GRACE_MS = 500; // ms chasing before speed ramp begins
 const KITE_RAMP_RATE = 1.5; // speed multiplier gain per second past grace (no cap — ramps forever)
@@ -107,10 +111,6 @@ function maintainKiteStandoff(
   }
 }
 
-type AggroCandidate =
-  | { kind: "player"; entity: PlayerEntity }
-  | { kind: "minion"; entity: MinionEntity };
-
 type ResolvedAggroTarget =
   | { kind: "player"; entity: PlayerEntity }
   | { kind: "minion"; entity: MinionEntity };
@@ -146,7 +146,7 @@ function aggroPosition(target: ResolvedAggroTarget): Vec2 {
   return target.entity.hasPosition.current;
 }
 
-function aggroSourceFromCandidate(c: AggroCandidate): {
+function aggroSourceFromCandidate(c: MonsterAggroCandidate): {
   id: string;
   kind: AggroTargetKind;
 } {
@@ -194,7 +194,8 @@ export function updateMonsters(world: World, dt: number, now: number) {
     // This preserves retaliation aggro set by the combat system when a
     // player attacks from outside pull range.
     if (!e.hasAggroTarget) {
-      const pulled = world.collision.aggroCandidate(e);
+      // Future taunt override should run before normal policy acquisition here.
+      const pulled = selectMonsterAggroCandidate(world, e);
       if (pulled) {
         setAggroTarget(world, e, aggroSourceFromCandidate(pulled), now);
       }

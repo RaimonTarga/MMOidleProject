@@ -45,6 +45,8 @@ export type {
   BossScript,
   EncounterStage,
   MonsterDefinition,
+  MonsterTargeting,
+  MonsterTargetingMode,
   RepeatingAction,
   StageAction,
   StageCondition,

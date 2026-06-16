@@ -11,13 +11,17 @@ import {
 } from "@mmo-idle/shared";
 import { NODE_REGISTRY } from "../../../world/nodeRegistry";
 import { setEntityMotion, stopEntity } from "../../world/movement";
-import { isPartyFollower } from "../../player/party/partySystem";
+import { isEffectivePartyFollower } from "../../player/party/partySystem";
 import { beginFlee, stepFlee } from "./flee";
 import {
   nearestEngageableMonster,
   selectAutoCombatAction,
 } from "./targetPriority";
-import { RUNE_KEEP_DISTANCE_FLAG } from "./runeConfig";
+import {
+  RUNE_FOLLOW_LEADER_FLAG,
+  RUNE_KEEP_DISTANCE_FLAG,
+  RUNE_WAIT_FOR_REGEN_FLAG,
+} from "./runeConfig";
 
 const NODE_MARGIN = 40;
 
@@ -60,8 +64,14 @@ export function updateAutoTargets(world: World, now: number) {
   for (const player of world.livePlayers) {
     if (!player.usesAutocombat.auto) continue;
 
-    // Party followers are steered by updatePartyFollow, not by their own targeting.
-    if (isPartyFollower(player)) continue;
+    // Rune-following party members are steered by updatePartyFollow. Followers
+    // without that rule fall through and use their own targeting rules.
+    if (
+      isEffectivePartyFollower(world, player) &&
+      getFlag(player.tracksCombat, RUNE_FOLLOW_LEADER_FLAG)
+    ) {
+      continue;
+    }
     if (player.hasManualMoveIntent) continue;
     // CannotAttack players (summoners; anyone whose range fell below 1px) still
     // route to mobs here — the marker only blocks the *direct* strike in
@@ -76,6 +86,16 @@ export function updateAutoTargets(world: World, now: number) {
 
     if (player.isFleeing) {
       stepFlee(world, player);
+      continue;
+    }
+
+    if (
+      getFlag(player.tracksCombat, RUNE_WAIT_FOR_REGEN_FLAG) &&
+      player.hasAttackTarget === undefined &&
+      player.hasHealth.hp < player.hasHealth.maxHp
+    ) {
+      setFlag(player.tracksCombat, AUTO_FIRING_FLAG, false);
+      stopEntity(world, player);
       continue;
     }
 

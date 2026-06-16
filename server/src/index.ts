@@ -7,8 +7,6 @@ import path from "path";
 import { World, type PersistedBossRespawn } from "./world/World";
 import { takeWorldLogEvents } from "./world/worldLog";
 import {
-  ACTION_DATABASE,
-  CONDITION_DATABASE,
   DEFAULT_AUTOCOMBAT_CONFIG,
   emptyEquipment,
   GAME_CONFIG,
@@ -19,6 +17,8 @@ import {
   resetTracksCombat,
   RESOLVED_NODE_FEATURES,
   RUNE_ALTAR_FEATURE_ID,
+  runeBudgetForTier,
+  sanitizeRuneLoadout,
   SKILL_TREE,
   TEST_ROOM_NODE_ID,
   ESSENCE_TYPES,
@@ -834,20 +834,13 @@ async function boot(): Promise<void> {
       if (!p) return;
       if (!Array.isArray(rules)) return;
       const owned = new Set(p.tracksProgression.runesOwned);
-      const valid = rules.filter(
-        (r) =>
-          r &&
-          typeof r.conditionId === "string" &&
-          typeof r.actionId === "string" &&
-          CONDITION_DATABASE.has(r.conditionId) &&
-          ACTION_DATABASE.has(r.actionId) &&
-          owned.has(r.conditionId) &&
-          owned.has(r.actionId),
+      const budget = runeBudgetForTier(p.tracksProgression.playerTier);
+      const valid = sanitizeRuneLoadout(
+        rules,
+        owned,
+        budget,
       );
-      p.tracksProgression.runesEquipped = valid.map((r) => ({
-        conditionId: r.conditionId,
-        actionId: r.actionId,
-      }));
+      p.tracksProgression.runesEquipped = valid;
       markSliceDirty(world, p, "tracksProgression");
     });
 

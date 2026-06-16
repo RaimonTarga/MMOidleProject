@@ -184,6 +184,21 @@ export interface UltimateSavedBaseline {
 
 // ── Monster definition ────────────────────────────────────────────────────────
 
+export type MonsterTargetingMode = 'closest' | 'lowest-hp';
+
+export interface MonsterTargeting {
+  /**
+   * Initial aggro acquisition policy. Omitted defaults to 'closest', matching
+   * the legacy behavior. Monsters do not periodically retarget from this alone.
+   */
+  mode?: MonsterTargetingMode;
+  /**
+   * Future taunt hook. Omitted/false means taunts may override this monster once
+   * the taunt system ships.
+   */
+  ignoresTaunts?: boolean;
+}
+
 export interface MonsterDefinition {
   id: string;
   name: string;
@@ -220,6 +235,8 @@ export interface MonsterDefinition {
   bossScript?: BossScript;
   /** Objective-driven multi-stage encounter controller. */
   ultimateEncounter?: UltimateEncounter;
+  /** How this monster chooses an aggro target when first pulled. Defaults to closest. */
+  targeting?: MonsterTargeting;
   /**
    * If set, the monster bursts at speedMult x base speed for durationMs when it
    * first acquires an aggro target (both pull-range and retaliation aggro).

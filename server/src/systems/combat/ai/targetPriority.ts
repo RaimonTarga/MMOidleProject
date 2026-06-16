@@ -25,6 +25,7 @@ import {
   type UsesAutocombat,
 } from "@mmo-idle/shared";
 import { RUNE_FLEE_FLAG } from "./runeConfig";
+import { effectivePartyLeaderId } from "../../player/party/partySystem";
 
 export type AutoCombatAction =
   | { kind: "attack"; target: MonsterEntity }
@@ -485,7 +486,7 @@ function projectedDotDamage(monster: MonsterEntity): number {
 }
 
 function partyLeaderTargetId(world: World, player: PlayerEntity): string | null {
-  const leaderId = player.inParty?.leaderId;
+  const leaderId = effectivePartyLeaderId(world, player);
   if (!leaderId || leaderId === player.isPlayer.id) return null;
   return world.getPlayerEntity(leaderId)?.hasAttackTarget?.targetId ?? null;
 }
