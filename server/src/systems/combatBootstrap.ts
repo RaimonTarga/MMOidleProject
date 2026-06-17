@@ -9,6 +9,7 @@ import {
   registerSummonerDamageSponge,
 } from "./classes/archetypes/summoner";
 import { initMobilityBoots } from "./world/mobility/mobilityBoots";
+import { initRuneTauntSystem } from "./combat/ai/taunt";
 
 let initialized = false;
 
@@ -47,6 +48,8 @@ export function initCombatSystems(): void {
   initInvulnerabilityGuard();
   // Prevents dead players (corpses) from acting/being targeted.
   initDeadPlayerGuard();
+  // Rune control hooks (currently taunt-current-target).
+  initRuneTauntSystem();
   // Summoner mountain-path cover + damage sponge (after defense systems).
   registerMountainPathHooks();
   registerSummonerDamageSponge();

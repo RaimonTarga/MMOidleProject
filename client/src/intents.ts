@@ -5,6 +5,7 @@ export interface IntentMap {
   setAutoTraverse: boolean;
   setAutocombatConfig: AutocombatConfig;
   setRuneLoadout: EquippedRule[];
+  craftRuneRecipe: string;
   unlockSkill: string;
   resetClass: undefined;
   equipItem: string;

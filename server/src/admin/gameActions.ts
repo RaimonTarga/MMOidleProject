@@ -1,4 +1,5 @@
 import {
+  DEFAULT_RUNE_LOADOUT,
   emptyEquipment,
   ESSENCE_TYPES,
   GAME_CONFIG,
@@ -9,6 +10,7 @@ import {
   RUNE_ALTAR_FEATURE_ID,
   SKILL_TREE,
   TEST_ROOM_NODE_ID,
+  runeIdsFromCraftedRecipes,
 } from '@mmo-idle/shared';
 import type { PlayerEntity } from '../ecs/entity';
 import { detachComponent } from '../ecs/markerHelpers';
@@ -81,6 +83,10 @@ export function resetPlayerProgress(world: World, player: PlayerEntity): GameAct
   player.tracksProgression.currentSkillTier = 0;
   player.tracksProgression.bossesCleared = [];
   player.tracksProgression.clearedNodes = [];
+  player.tracksProgression.runeRecipesCrafted = [];
+  player.tracksProgression.runePointBonus = 0;
+  player.tracksProgression.runesOwned = runeIdsFromCraftedRecipes([]);
+  player.tracksProgression.runesEquipped = DEFAULT_RUNE_LOADOUT.map((rule) => ({ ...rule }));
   for (const type of ESSENCE_TYPES) {
     player.tracksProgression.essences[type] = 0;
   }

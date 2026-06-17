@@ -6,6 +6,7 @@ export * from './recipeDatabase';
 export * from './monsterDatabase';
 export * from './biomeDatabase';
 export * from './runeDatabase';
+export * from './runeRecipes';
 export * from './passives';
 export * from './components/combat/effects';
 export * from './registries/effects';

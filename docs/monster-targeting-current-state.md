@@ -43,5 +43,10 @@ the node, minion death, or leash break.
 
 ## Taunt Hook
 
-`monsterIgnoresTaunts(monster)` reads the new `ignoresTaunts` flag. The taunt
-system should call this before forcing or overriding a monster's target.
+`monsterIgnoresTaunts(monster)` reads the new `ignoresTaunts` flag. The rune
+taunt system calls this before forcing or overriding a monster's target.
+
+`server/src/systems/combat/ai/taunt.ts` currently implements
+`taunt-current-target`: direct player hits force the hit monster to aggro the
+attacking player, with a 4 second internal cooldown per player. Summon/minion
+hits do not trigger this rune response.

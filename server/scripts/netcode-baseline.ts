@@ -5,6 +5,7 @@
 import {
   emptyEquipment,
   GAME_CONFIG,
+  STARTER_RUNE_IDS,
   type DeltaSnapshot,
 } from '@mmo-idle/shared';
 import { World } from '../src/world/World';
@@ -65,7 +66,9 @@ function makePlayer(id: string, nodeId: string, name: string): PersistedPlayerSl
       currentSkillTier: 0,
       bossesCleared: [],
       clearedNodes: [],
-      runesOwned: [],
+      runesOwned: [...STARTER_RUNE_IDS],
+      runeRecipesCrafted: [],
+      runePointBonus: 0,
       runesEquipped: [],
     },
     holdsInventory: {

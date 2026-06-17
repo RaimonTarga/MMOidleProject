@@ -87,6 +87,7 @@ const EPS = 0.001;
 
 const WEIGHT_PRESETS: Record<AutocombatPriorityMode, ScoreWeights> = {
   nearest: { damage: 0, distance: 1.4, threat: 0.6 },
+  "lowest-hp": { damage: 0, distance: 0.001, threat: 0 },
   damage: { damage: 1.8, distance: 0.55, threat: 0.6 },
   threat: { damage: 0.8, distance: 0.55, threat: 1.7 },
   balanced: { damage: 1.15, distance: 0.8, threat: 1.0 },
@@ -243,15 +244,19 @@ function scoreCandidate(
   const dist = Math.sqrt(
     distanceSq(player.hasPosition.current, monster.hasPosition.current),
   );
+  const distancePenalty =
+    (dist / Math.max(1, ctx.acquireRadius)) *
+    (ctx.ranged ? RANGED_DISTANCE_DAMPEN : 1);
+
+  if (ctx.cfg.priorityMode === "lowest-hp") {
+    return 1 / Math.max(1, monster.hasHealth.hp) - ctx.weights.distance * distancePenalty;
+  }
+
   const damage = estimatedPlayerDamage(player, monster);
   const dps = damage / Math.max(EPS, player.performsAttack.attackCooldown / 1000);
   const ttk = monster.hasHealth.hp / Math.max(EPS, dps);
   let damageTerm = 1 / (1 + ttk);
   if (isGlancingPlayerHit(player, monster)) damageTerm *= GLANCE_PENALTY;
-
-  const distancePenalty =
-    (dist / Math.max(1, ctx.acquireRadius)) *
-    (ctx.ranged ? RANGED_DISTANCE_DAMPEN : 1);
 
   const threatTerm = isAggroedOnPlayer(monster, player)
     ? 1 + incomingDpsFromMonster(player, monster) / Math.max(1, player.hasHealth.maxHp)

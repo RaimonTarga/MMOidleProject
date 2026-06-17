@@ -19,6 +19,7 @@ import {
   mapHighlightNodesAtom,
   mapOpenAtom,
   playerNodeIdAtom,
+  runePanelTabAtom,
   runesOpenAtom,
   selectedClassAtom,
   selectedRangeAtom,
@@ -33,6 +34,7 @@ import "./hud.css";
 export function RightSidebar() {
   const [treeOpen, setTreeOpen] = useAtom(skillTreeOpenAtom);
   const [runesOpen, setRunesOpen] = useAtom(runesOpenAtom);
+  const [runePanelTab, setRunePanelTab] = useAtom(runePanelTabAtom);
   const [invOpen, setInvOpen] = useAtom(inventoryOpenAtom);
   const [craftTab, setCraftTab] = useAtom(craftTabAtom);
   const [mapOpen, setMapOpen] = useAtom(mapOpenAtom);
@@ -127,12 +129,34 @@ export function RightSidebar() {
       <div className="sidebar-panel">
         <div className="panel-title">Runes</div>
         <button
-          className={`auto-btn${runesOpen ? " active" : ""}`}
+          className={`auto-btn${runesOpen && runePanelTab === "loadout" ? " active" : ""}`}
           style={{ display: 'flex', alignItems: 'center', gap: 6 }}
-          onClick={() => setRunesOpen((v) => !v)}
+          onClick={() => {
+            if (runesOpen && runePanelTab === "loadout") {
+              setRunesOpen(false);
+              return;
+            }
+            setRunePanelTab('loadout');
+            setRunesOpen(true);
+          }}
         >
           <UIIcon frameName="UI_icons/runes-icon.png" size={18} />
-          {runesOpen ? "CLOSE RUNES" : "OPEN RUNES"}
+          {runesOpen && runePanelTab === "loadout" ? "CLOSE RUNES" : "OPEN RUNES"}
+        </button>
+        <button
+          className={`auto-btn${runesOpen && runePanelTab === "forge" ? " active" : ""}`}
+          style={{ marginTop: 4, display: 'flex', alignItems: 'center', gap: 6 }}
+          onClick={() => {
+            if (runesOpen && runePanelTab === "forge") {
+              setRunesOpen(false);
+              return;
+            }
+            setRunePanelTab('forge');
+            setRunesOpen(true);
+          }}
+        >
+          <UIIcon frameName="UI_icons/forge-icon.png" size={18} />
+          {runesOpen && runePanelTab === "forge" ? "CLOSE RUNE FORGE" : "RUNE FORGE"}
         </button>
       </div>
 

@@ -1,10 +1,11 @@
 import {
-  ALL_RUNE_IDS,
   DEFAULT_RUNE_LOADOUT,
   DEFAULT_AUTOCOMBAT_CONFIG,
   GAME_CONFIG,
   makeTracksCombat,
   normalizeRuneLoadout,
+  runeIdsFromCraftedRecipes,
+  runePointBonusFromCraftedRecipes,
   runeBudgetForTier,
   sanitizeRuneLoadout,
 } from "@mmo-idle/shared";
@@ -24,15 +25,24 @@ export function attachPlayerEntity(
   player: PersistedPlayerSlices,
   socketId: string,
 ): PlayerEntity {
-  // Grant-all rune fragments (MVP: no acquisition gating). Covers existing
-  // characters whose persisted slices predate the rune system.
-  player.tracksProgression.runesOwned = [...ALL_RUNE_IDS];
+  const craftedRuneRecipes = player.tracksProgression.runeRecipesCrafted ?? [];
+  player.tracksProgression.runeRecipesCrafted = craftedRuneRecipes;
+  player.tracksProgression.runesOwned = runeIdsFromCraftedRecipes(craftedRuneRecipes);
+  player.tracksProgression.runePointBonus = runePointBonusFromCraftedRecipes(craftedRuneRecipes);
   const owned = new Set(player.tracksProgression.runesOwned);
-  const budget = runeBudgetForTier(player.tracksProgression.playerTier);
+  const budget = runeBudgetForTier(
+    player.tracksProgression.playerTier,
+    player.tracksProgression.runePointBonus,
+  );
   const persistedRules = Array.isArray(player.tracksProgression.runesEquipped)
     ? normalizeRuneLoadout(player.tracksProgression.runesEquipped)
     : [];
-  const sanitizedRules = sanitizeRuneLoadout(persistedRules, owned, budget);
+  const sanitizedRules = sanitizeRuneLoadout(
+    persistedRules,
+    owned,
+    budget,
+    player.usesSkills.combatArchetype,
+  );
   player.tracksProgression.runesEquipped =
     sanitizedRules.length > 0 ? sanitizedRules : [...DEFAULT_RUNE_LOADOUT];
 

@@ -140,7 +140,7 @@ export interface IsPlayer {
   name: string;
 }
 
-export type AutocombatPriorityMode = 'nearest' | 'damage' | 'threat' | 'balanced';
+export type AutocombatPriorityMode = 'nearest' | 'lowest-hp' | 'damage' | 'threat' | 'balanced';
 
 /** User-tunable server-side auto-combat behavior. */
 export interface AutocombatConfig {
@@ -223,6 +223,10 @@ export interface TracksProgression {
   clearedNodes: string[];
   /** Every rune condition + action fragment id the player has found. */
   runesOwned: string[];
+  /** One-time rune forge recipes the player has crafted. */
+  runeRecipesCrafted: string[];
+  /** Permanent bonus rune points from crafted capacity recipes. */
+  runePointBonus: number;
   /** Assembled rune rules, ordered (loadout). Drives the auto-combat config. */
   runesEquipped: EquippedRule[];
 }

@@ -1,11 +1,15 @@
 import { createPortal } from 'react-dom';
-import { useEffect, useState } from 'react';
-import { useAtomValue } from 'jotai';
+import { useEffect, useMemo, useState } from 'react';
+import { useAtom, useAtomValue } from 'jotai';
 import {
   ACTION_DATABASE,
   CONDITION_DATABASE,
+  DEFAULT_RUNE_LOADOUT,
+  RUNE_RECIPE_DATABASE,
+  TEST_ROOM_NODE_ID,
   getRuleName,
-  isRuneRuleCompatible,
+  isRuneRecipeAvailableForArchetype,
+  isRuneRuleCompatibleForArchetype,
   runeBudgetForTier,
   runeChannelLabel,
   runeLoadoutCost,
@@ -13,9 +17,25 @@ import {
   type ActionDef,
   type ConditionDef,
   type EquippedRule,
+  type EssenceType,
+  type RuneRecipe,
 } from '@mmo-idle/shared';
 import { hudBus } from '../hudBus';
-import { playerTierAtom, runesEquippedAtom, runesOwnedAtom } from '../hud/atoms';
+import {
+  bossesClearedAtom,
+  combatArchetypeAtom,
+  essencesAtom,
+  playerNodeIdAtom,
+  playerTierAtom,
+  runePanelTabAtom,
+  runePointBonusAtom,
+  runeRecipesCraftedAtom,
+  runesEquippedAtom,
+  runesOwnedAtom,
+} from '../hud/atoms';
+import { CostDisplay, EssenceSummary } from './crafting/shared';
+import { biomeName } from './crafting/common';
+import './crafting.css';
 import './skillTree.css';
 
 interface Props {
@@ -27,6 +47,7 @@ const CHANNEL_COLOR: Record<string, string> = {
   TARGETING: '#d6a8ff',
   OOC_MAINTENANCE: '#7ab8ff',
   GLOBAL_STRATEGY: '#7affc0',
+  CONTROL: '#ff7a9a',
 };
 
 function ruleLabel(rule: EquippedRule): { title: string; subtitle: string } {
@@ -131,10 +152,14 @@ export function RunesPanel({ onClose }: Props) {
   const owned = useAtomValue(runesOwnedAtom);
   const equipped = useAtomValue(runesEquippedAtom);
   const playerTier = useAtomValue(playerTierAtom);
+  const runePointBonus = useAtomValue(runePointBonusAtom);
+  const combatArchetype = useAtomValue(combatArchetypeAtom);
 
+  const [tab, setTab] = useAtom(runePanelTabAtom);
   const [loadout, setLoadout] = useState<EquippedRule[]>(equipped);
   const [selCond, setSelCond] = useState<string | null>(null);
   const [selAction, setSelAction] = useState<string | null>(null);
+  const [confirmReset, setConfirmReset] = useState(false);
 
   useEffect(() => {
     setLoadout(equipped);
@@ -149,17 +174,20 @@ export function RunesPanel({ onClose }: Props) {
   );
   const viableActions = selCond
     ? actions.filter((a) =>
-        isRuneRuleCompatible({ conditionId: selCond, actionId: a.id }),
+        isRuneRuleCompatibleForArchetype(
+          { conditionId: selCond, actionId: a.id },
+          combatArchetype,
+        ),
       )
     : [];
 
   const pendingRule =
     selCond && selAction ? { conditionId: selCond, actionId: selAction } : null;
   const pendingCompatible = pendingRule
-    ? isRuneRuleCompatible(pendingRule)
+    ? isRuneRuleCompatibleForArchetype(pendingRule, combatArchetype)
     : false;
   const pendingCost = pendingRule ? runeRuleCost(pendingRule) : 0;
-  const budget = runeBudgetForTier(playerTier);
+  const budget = runeBudgetForTier(playerTier, runePointBonus);
   const spent = runeLoadoutCost(loadout);
   const pendingOverBudget = pendingRule
     ? spent + pendingCost > budget
@@ -188,6 +216,13 @@ export function RunesPanel({ onClose }: Props) {
     commit(next);
   }
 
+  function resetDefaultLoadout(): void {
+    commit(DEFAULT_RUNE_LOADOUT.map((rule) => ({ ...rule })));
+    setSelCond(null);
+    setSelAction(null);
+    setConfirmReset(false);
+  }
+
   const preview =
     selCond && selAction ? getRuleName(selCond, selAction) : null;
   const previewCond = selCond ? CONDITION_DATABASE.get(selCond) : null;
@@ -199,7 +234,7 @@ export function RunesPanel({ onClose }: Props) {
 
   return createPortal(
     <div className="skill-tree-overlay" onClick={handleOverlayClick}>
-      <div className="skill-tree-panel" style={{ maxWidth: 820 }}>
+      <div className="skill-tree-panel" style={{ maxWidth: 820, position: 'relative' }}>
         <div className="skill-tree-header">
           <span className="skill-tree-title">Runes</span>
           <button className="skill-tree-close" onClick={onClose}>
@@ -207,20 +242,63 @@ export function RunesPanel({ onClose }: Props) {
           </button>
         </div>
 
+        <div className="craft-tabs" style={{ marginBottom: 12 }}>
+          <button
+            type="button"
+            className={`craft-tab${tab === 'loadout' ? ' craft-tab--active' : ''}`}
+            onClick={() => setTab('loadout')}
+          >
+            Loadout
+          </button>
+          <button
+            type="button"
+            className={`craft-tab${tab === 'forge' ? ' craft-tab--active' : ''}`}
+            onClick={() => setTab('forge')}
+          >
+            Forge
+          </button>
+        </div>
+
         <div className="skill-tree-body" style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-          <RunePointMeter spent={spent} budget={budget} />
+          {tab === 'loadout' ? (
+            <>
+              <RunePointMeter spent={spent} budget={budget} />
 
           <div>
             <div
               style={{
-                color: '#c0aee8',
-                fontSize: 11,
-                textTransform: 'uppercase',
-                letterSpacing: 1,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                gap: 12,
                 marginBottom: 8,
               }}
             >
-              Priority rules {loadout.length > 0 ? `(${loadout.length})` : ''}
+              <span
+                style={{
+                  color: '#c0aee8',
+                  fontSize: 11,
+                  textTransform: 'uppercase',
+                  letterSpacing: 1,
+                }}
+              >
+                Priority rules {loadout.length > 0 ? `(${loadout.length})` : ''}
+              </span>
+              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+                <button
+                  type="button"
+                  className="auto-btn"
+                  onClick={() => setConfirmReset(true)}
+                  style={{
+                    width: 'auto',
+                    minHeight: 24,
+                    padding: '4px 10px',
+                    fontSize: 10,
+                  }}
+                >
+                  RESET DEFAULT
+                </button>
+              </div>
             </div>
             {loadout.length === 0 ? (
               <div style={{ color: '#6868a8', fontSize: 12, fontStyle: 'italic' }}>
@@ -232,7 +310,7 @@ export function RunesPanel({ onClose }: Props) {
                   const { title, subtitle } = ruleLabel(rule);
                   const action = ACTION_DATABASE.get(rule.actionId);
                   const accent = action ? CHANNEL_COLOR[action.channel] : '#7a7ad0';
-                  const compatible = isRuneRuleCompatible(rule);
+                  const compatible = isRuneRuleCompatibleForArchetype(rule, combatArchetype);
                   return (
                     <div
                       key={`${rule.conditionId}:${rule.actionId}:${i}`}
@@ -292,7 +370,13 @@ export function RunesPanel({ onClose }: Props) {
               selectedId={selCond}
               onSelect={(id) => {
                 setSelCond(id);
-                if (selAction && !isRuneRuleCompatible({ conditionId: id, actionId: selAction })) {
+                if (
+                  selAction &&
+                  !isRuneRuleCompatibleForArchetype(
+                    { conditionId: id, actionId: selAction },
+                    combatArchetype,
+                  )
+                ) {
                   setSelAction(null);
                 }
               }}
@@ -353,10 +437,304 @@ export function RunesPanel({ onClose }: Props) {
             )}
           </div>
 
+            </>
+          ) : (
+            <RuneForgeTab budget={budget} runePointBonus={runePointBonus} />
+          )}
         </div>
+        {confirmReset && (
+          <div
+            role="dialog"
+            aria-modal="true"
+            style={{
+              position: 'absolute',
+              inset: 0,
+              background: 'rgba(4, 3, 12, 0.72)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: 16,
+              zIndex: 3,
+            }}
+          >
+            <div
+              style={{
+                width: 'min(420px, 100%)',
+                border: '1px solid rgba(224, 193, 92, 0.42)',
+                borderRadius: 6,
+                background: 'rgba(13, 11, 34, 0.96)',
+                boxShadow: '0 16px 60px rgba(0, 0, 0, 0.55)',
+                padding: 16,
+              }}
+            >
+              <div style={{ color: '#ffe084', fontWeight: 'bold', fontSize: 15 }}>
+                Reset Rune Loadout
+              </div>
+              <div style={{ color: '#b8a8e0', fontSize: 12, lineHeight: 1.5, marginTop: 8 }}>
+                Restore the basic enemy-seeking setup? This replaces your current priority rules.
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginTop: 16 }}>
+                <button
+                  type="button"
+                  className="auto-btn"
+                  onClick={() => setConfirmReset(false)}
+                  style={{ width: 'auto', padding: '6px 12px' }}
+                >
+                  CANCEL
+                </button>
+                <button
+                  type="button"
+                  className="auto-btn active"
+                  onClick={resetDefaultLoadout}
+                  style={{ width: 'auto', padding: '6px 12px' }}
+                >
+                  RESET
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>,
     document.body,
+  );
+}
+
+function canAffordRecipe(
+  recipe: RuneRecipe,
+  essences: Record<EssenceType, number>,
+): boolean {
+  return (Object.entries(recipe.cost) as [EssenceType, number][]).every(
+    ([type, amount]) => (essences[type] ?? 0) >= amount,
+  );
+}
+
+function recipeRuneLabel(recipe: RuneRecipe): string {
+  if (recipe.kind === 'increase-rune-points') {
+    return `+${recipe.runePointBonus ?? 0} RP`;
+  }
+  if (!recipe.runeId) return 'Rune';
+  return (
+    CONDITION_DATABASE.get(recipe.runeId)?.name ??
+    ACTION_DATABASE.get(recipe.runeId)?.name ??
+    recipe.runeId
+  );
+}
+
+function recipeTypeLabel(recipe: RuneRecipe): string {
+  if (recipe.kind === 'increase-rune-points') return 'Capacity';
+  return recipe.runeKind === 'condition' ? 'Situation' : 'Response';
+}
+
+function bossRequirementLabel(requiredBossClear: string | undefined): string {
+  if (!requiredBossClear) return 'Unlocked';
+  const [group, tier] = requiredBossClear.split(':');
+  if (!group || !tier) return requiredBossClear;
+  return `Defeat ${biomeName(group)} T${tier} boss`;
+}
+
+function RuneForgeTab({
+  budget,
+  runePointBonus,
+}: {
+  budget: number;
+  runePointBonus: number;
+}) {
+  const nodeId = useAtomValue(playerNodeIdAtom);
+  const combatArchetype = useAtomValue(combatArchetypeAtom);
+  const essences = useAtomValue(essencesAtom);
+  const bossesCleared = useAtomValue(bossesClearedAtom);
+  const craftedRecipeIds = useAtomValue(runeRecipesCraftedAtom);
+  const ownedRuneIds = useAtomValue(runesOwnedAtom);
+  const [craftResult, setCraftResult] = useState<{
+    recipeId: string;
+    success: boolean;
+    reason?: string;
+  } | null>(null);
+
+  useEffect(() => {
+    let timer: ReturnType<typeof setTimeout> | null = null;
+    const handler = (e: Event) => {
+      const result = (e as CustomEvent<{
+        recipeId: string;
+        success: boolean;
+        reason?: string;
+      }>).detail;
+      if (timer) clearTimeout(timer);
+      setCraftResult(result);
+      timer = setTimeout(() => setCraftResult(null), 2200);
+    };
+    window.addEventListener('hud:runeCraftResult', handler);
+    return () => {
+      window.removeEventListener('hud:runeCraftResult', handler);
+      if (timer) clearTimeout(timer);
+    };
+  }, []);
+
+  const isTestRoom = nodeId === TEST_ROOM_NODE_ID;
+  const craftedSet = useMemo(() => new Set(craftedRecipeIds), [craftedRecipeIds]);
+  const ownedSet = useMemo(() => new Set(ownedRuneIds), [ownedRuneIds]);
+
+  const visibleRecipes = useMemo(() => {
+    return [...RUNE_RECIPE_DATABASE.values()]
+      .filter((recipe) =>
+        isRuneRecipeAvailableForArchetype(recipe, combatArchetype),
+      )
+      .sort((a, b) => {
+        const unlocked = (recipe: RuneRecipe) => {
+          if (craftedSet.has(recipe.id)) return true;
+          return (
+            recipe.kind === 'unlock-rune' &&
+            recipe.runeId !== undefined &&
+            ownedSet.has(recipe.runeId)
+          );
+        };
+        const unlockedDelta = Number(unlocked(a)) - Number(unlocked(b));
+        if (unlockedDelta !== 0) return unlockedDelta;
+        return (
+          a.tier - b.tier ||
+          recipeTypeLabel(a).localeCompare(recipeTypeLabel(b)) ||
+          a.name.localeCompare(b.name)
+        );
+      });
+  }, [combatArchetype, craftedSet, ownedSet]);
+
+  return (
+    <div className="craft-body" style={{ padding: 0 }}>
+      <EssenceSummary essences={essences} />
+      <div
+        style={{
+          border: '1px solid rgba(100, 85, 200, 0.25)',
+          borderRadius: 6,
+          padding: '9px 10px',
+          background: 'rgba(13, 11, 34, 0.7)',
+          color: '#c0aee8',
+          fontSize: 12,
+          display: 'flex',
+          justifyContent: 'space-between',
+          gap: 12,
+          marginBottom: 12,
+        }}
+      >
+        <span>Rune Points</span>
+        <strong style={{ color: '#ffe084' }}>{budget} max</strong>
+        {runePointBonus > 0 && (
+          <span style={{ color: '#7affc0' }}>+{runePointBonus} forged</span>
+        )}
+      </div>
+
+      {visibleRecipes.length === 0 ? (
+        <div className="craft-empty">No rune recipes available for this class.</div>
+      ) : (
+        <div className="craft-list">
+          {visibleRecipes.map((recipe) => {
+            const crafted = craftedSet.has(recipe.id);
+            const alreadyOwned =
+              recipe.kind === 'unlock-rune' &&
+              recipe.runeId !== undefined &&
+              ownedSet.has(recipe.runeId);
+            const bossLocked =
+              !isTestRoom &&
+              recipe.requiredBossClear !== undefined &&
+              !bossesCleared.includes(recipe.requiredBossClear);
+            const canAfford = isTestRoom || canAffordRecipe(recipe, essences);
+            const canCraft = !crafted && !alreadyOwned && !bossLocked && canAfford;
+            const result = craftResult?.recipeId === recipe.id ? craftResult : null;
+            const accent =
+              recipe.kind === 'increase-rune-points'
+                ? '#ffe084'
+                : recipe.runeKind === 'condition'
+                  ? '#7ab8ff'
+                  : '#7affc0';
+
+            return (
+              <div
+                key={recipe.id}
+                className={[
+                  'craft-recipe',
+                  crafted || alreadyOwned ? 'craft-recipe--owned' : '',
+                  bossLocked ? 'craft-recipe--locked' : '',
+                  !crafted && !alreadyOwned && !bossLocked && !canAfford ? 'craft-recipe--unaffordable' : '',
+                ].filter(Boolean).join(' ')}
+              >
+                {result && (
+                  <div className={`craft-card-result craft-card-result--${result.success ? 'ok' : 'err'}`}>
+                    <span className="craft-card-result__icon">{result.success ? '+' : 'x'}</span>
+                    <span className="craft-card-result__text">
+                      {result.success ? 'Forged!' : result.reason ?? 'Could not forge'}
+                    </span>
+                  </div>
+                )}
+
+                <div
+                  className="craft-recipe__icon"
+                  style={{
+                    borderColor: `${accent}77`,
+                    background: `${accent}14`,
+                    color: accent,
+                    fontSize: recipe.kind === 'increase-rune-points' ? 12 : 18,
+                  }}
+                >
+                  {recipe.kind === 'increase-rune-points'
+                    ? `+${recipe.runePointBonus ?? 0}`
+                    : recipe.runeKind === 'condition' ? '?' : '>'}
+                </div>
+
+                <div className="craft-recipe__content">
+                  <div className="craft-recipe__header">
+                    <span className="craft-recipe__name">{recipe.name}</span>
+                    <span className="craft-recipe__tier-badge">T{recipe.tier}</span>
+                    <span className="craft-recipe__owned-badge" style={{ color: accent }}>
+                      {recipeTypeLabel(recipe)}
+                    </span>
+                    {bossLocked && (
+                      <span className="craft-recipe__source">LOCKED</span>
+                    )}
+                    {(crafted || alreadyOwned) && (
+                      <span className="craft-recipe__owned-badge">UNLOCKED</span>
+                    )}
+                  </div>
+
+                  <div className="craft-recipe__stats">
+                    <span className="craft-stat-pill">
+                      <span className="craft-stat-pill__value">{recipeRuneLabel(recipe)}</span>
+                      <span className="craft-stat-pill__label">Unlock</span>
+                    </span>
+                  </div>
+
+                  <ul className="craft-recipe__effects">
+                    <li className="craft-recipe__effect-line">{recipe.description}</li>
+                  </ul>
+
+                  <CostDisplay cost={recipe.cost} essences={essences} />
+
+                  <div className="craft-recipe__footer">
+                    <span
+                      className={`craft-recipe__desc${bossLocked ? ' craft-recipe__locked-label' : ''}`}
+                    >
+                      {crafted || alreadyOwned
+                        ? 'Unlocked'
+                        : bossRequirementLabel(recipe.requiredBossClear)}
+                    </span>
+                    <button
+                      className="craft-recipe__btn"
+                      disabled={!canCraft}
+                      onClick={() => hudBus.requestCraftRuneRecipe(recipe.id)}
+                    >
+                      {crafted || alreadyOwned
+                        ? 'Unlocked'
+                        : bossLocked
+                          ? 'Locked'
+                          : canAfford ? 'Forge' : 'Insufficient'}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
   );
 }
 

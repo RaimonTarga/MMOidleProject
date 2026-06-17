@@ -23,6 +23,7 @@ export interface ServerToClientEvents {
   "node:delta": (snapshot: DeltaSnapshot) => void;
   /** Immediate result of a crafting attempt — success or reason for failure. */
   "crafting:result": (result: { success: boolean; reason?: string }) => void;
+  "rune:craftResult": (result: { recipeId: string; success: boolean; reason?: string }) => void;
   /** Immediate result of an item upgrade attempt. */
   "inventory:upgradeResult": (result: {
     success: boolean;
@@ -78,6 +79,7 @@ export interface ClientToServerEvents {
   "player:resetClass": () => void;
   /** Set the player's equipped rune loadout (ordered). Server validates ownership/catalog. */
   "rune:setLoadout": (rules: EquippedRule[]) => void;
+  "rune:craftRecipe": (recipeId: string) => void;
   /** Equip an item from inventory by its definition ID. */
   "inventory:equipItem": (definitionId: string) => void;
   /** Move the item in the given slot back to inventory. */

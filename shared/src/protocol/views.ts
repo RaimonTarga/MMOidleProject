@@ -117,6 +117,8 @@ export interface PlayerView {
   bossesCleared: string[];
   clearedNodes: string[];
   runesOwned: string[];
+  runeRecipesCrafted: string[];
+  runePointBonus: number;
   runesEquipped: EquippedRule[];
   hitboxRects: HitboxRect[];
   /** Number of minion slots the player has. 0 if not a summoner. */
@@ -351,6 +353,8 @@ export function composePlayerView(entity: NetworkedEntity): PlayerView | null {
     bossesCleared: progression.bossesCleared ?? [],
     clearedNodes: progression.clearedNodes ?? [],
     runesOwned: progression.runesOwned ?? [],
+    runeRecipesCrafted: progression.runeRecipesCrafted ?? [],
+    runePointBonus: progression.runePointBonus ?? 0,
     runesEquipped: progression.runesEquipped ?? [],
     hitboxRects: entity.hasHitbox?.rects ?? [FALLBACK_PLAYER_AABB],
     summonsMinions: entity.summonsMinions?.targetCount ?? 0,

@@ -217,10 +217,13 @@ export const bossFelledByNodeAtom = atom<Record<string, BossFelledMarker>>({});
 export const partyAtom = atom<{ leaderId: string; members: PartyMember[] } | null>(null);
 
 export const runesOwnedAtom = atom<string[]>([]);
+export const runeRecipesCraftedAtom = atom<string[]>([]);
+export const runePointBonusAtom = atom<number>(0);
 export const runesEquippedAtom = atom<EquippedRule[]>([]);
 
 export const skillTreeOpenAtom = atom<boolean>(false);
 export const runesOpenAtom = atom<boolean>(false);
+export const runePanelTabAtom = atom<'loadout' | 'forge'>('loadout');
 export const inventoryOpenAtom = atom<boolean>(false);
 export const mapOpenAtom = atom<boolean>(false);
 export const craftTabAtom = atom<'biome' | 'forge' | 'upgrade' | null>(null);
@@ -542,6 +545,8 @@ function resetPlayerAtoms(): void {
   setIfChanged(summonRespawnMaxMsAtom, 0);
   setIfShallowArrayEqual(unlockedSkillsAtom, []);
   setIfShallowArrayEqual(runesOwnedAtom, []);
+  setIfShallowArrayEqual(runeRecipesCraftedAtom, []);
+  setIfChanged(runePointBonusAtom, 0);
   setRunesEquipped([]);
   setIfShallowArrayEqual(inventoryAtom, []);
   setIfShallowArrayEqual(unlockedRecipesAtom, []);
@@ -635,6 +640,8 @@ export function syncPlayerAtoms(player: PlayerView | null): void {
   setIfShallowArrayEqual(shieldsAtom, player.shields);
   setIfShallowArrayEqual(unlockedSkillsAtom, player.unlockedSkills);
   setIfShallowArrayEqual(runesOwnedAtom, player.runesOwned);
+  setIfShallowArrayEqual(runeRecipesCraftedAtom, player.runeRecipesCrafted);
+  setIfChanged(runePointBonusAtom, player.runePointBonus);
   setRunesEquipped(player.runesEquipped);
   setIfShallowArrayEqual(inventoryAtom, player.inventory);
   setIfShallowArrayEqual(unlockedRecipesAtom, player.unlockedRecipes);

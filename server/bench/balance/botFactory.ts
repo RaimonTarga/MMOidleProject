@@ -1,6 +1,7 @@
 import {
   DEFAULT_AUTOCOMBAT_CONFIG,
   GAME_CONFIG,
+  STARTER_RUNE_IDS,
   emptyEquipment,
   biomeLevelCap,
   getMaxUpgrade,
@@ -50,7 +51,9 @@ function buildBotSlices(
       currentSkillTier: 0,
       bossesCleared: [],
       clearedNodes: [],
-      runesOwned: [],
+      runesOwned: [...STARTER_RUNE_IDS],
+      runeRecipesCrafted: [],
+      runePointBonus: 0,
       runesEquipped: [],
     },
     holdsInventory: {

@@ -20,6 +20,7 @@ import {
 import {
   RUNE_FOLLOW_LEADER_FLAG,
   RUNE_KEEP_DISTANCE_FLAG,
+  RUNE_WAIT_FOR_EXECUTION_FLAG,
   RUNE_WAIT_FOR_REGEN_FLAG,
 } from "./runeConfig";
 
@@ -93,6 +94,17 @@ export function updateAutoTargets(world: World, now: number) {
       getFlag(player.tracksCombat, RUNE_WAIT_FOR_REGEN_FLAG) &&
       player.hasAttackTarget === undefined &&
       player.hasHealth.hp < player.hasHealth.maxHp
+    ) {
+      setFlag(player.tracksCombat, AUTO_FIRING_FLAG, false);
+      stopEntity(world, player);
+      continue;
+    }
+
+    if (
+      getFlag(player.tracksCombat, RUNE_WAIT_FOR_EXECUTION_FLAG) &&
+      player.hasAttackTarget === undefined &&
+      player.usesCooldown !== undefined &&
+      player.hasEmpoweredAttack === undefined
     ) {
       setFlag(player.tracksCombat, AUTO_FIRING_FLAG, false);
       stopEntity(world, player);

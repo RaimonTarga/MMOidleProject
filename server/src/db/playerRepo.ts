@@ -14,6 +14,8 @@ import {
   DEFAULT_RUNE_LOADOUT,
   GAME_CONFIG,
   emptyEquipment,
+  runeIdsFromCraftedRecipes,
+  runePointBonusFromCraftedRecipes,
   type Vec2,
 } from '@mmo-idle/shared';
 import type { PlayerEntity } from '../ecs/entity';
@@ -173,6 +175,7 @@ function hydratePlayerSlices(row: CharacterRow): PersistedPlayerSlices {
   };
   holdsInventory.itemUpgrades = holdsInventory.itemUpgrades ?? {};
   const tracksProgression = parseSlice<TracksProgression>(row.tracksProgression);
+  const runeRecipesCrafted = tracksProgression.runeRecipesCrafted ?? [];
 
   return {
     isPlayer:          parseSlice<IsPlayer>(row.isPlayer),
@@ -182,7 +185,9 @@ function hydratePlayerSlices(row: CharacterRow): PersistedPlayerSlices {
       ...tracksProgression,
       bossesCleared: tracksProgression.bossesCleared ?? [],
       clearedNodes:   tracksProgression.clearedNodes ?? [],
-      runesOwned:     tracksProgression.runesOwned ?? [],
+      runeRecipesCrafted,
+      runePointBonus: runePointBonusFromCraftedRecipes(runeRecipesCrafted),
+      runesOwned:     runeIdsFromCraftedRecipes(runeRecipesCrafted),
       runesEquipped:  tracksProgression.runesEquipped ?? [],
     },
     holdsInventory,
@@ -227,7 +232,9 @@ function buildFreshSlices(
       currentSkillTier: 0,
       bossesCleared:    [],
       clearedNodes:     [],
-      runesOwned:       [],
+      runesOwned:       runeIdsFromCraftedRecipes([]),
+      runeRecipesCrafted: [],
+      runePointBonus:   0,
       runesEquipped:    [...DEFAULT_RUNE_LOADOUT],
     },
     holdsInventory: {

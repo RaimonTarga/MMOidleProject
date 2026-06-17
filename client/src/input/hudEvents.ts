@@ -3,6 +3,7 @@ import { hudBus } from "../hudBus";
 import { intents } from "../intents";
 import {
   sendCraftRecipe,
+  sendCraftRuneRecipe,
   sendEquipItem,
   sendGoToTestRoom,
   sendJoinParty,
@@ -60,6 +61,11 @@ export function attachHudEvents(scene: GameScene): void {
   intents.on("craftRecipe", (recipeId) => {
     if (isDeathOverlayActive()) return;
     sendCraftRecipe(scene.socket, recipeId);
+  });
+
+  intents.on("craftRuneRecipe", (recipeId) => {
+    if (isDeathOverlayActive()) return;
+    sendCraftRuneRecipe(scene.socket, recipeId);
   });
 
   intents.on("upgradeItem", (itemId) => {

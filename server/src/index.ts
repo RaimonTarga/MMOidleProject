@@ -27,6 +27,7 @@ import { unlockSkill } from "./systems/player/progression/skills";
 import { checkRecipeUnlocks } from "./systems/player/progression/rewards";
 import { equipItem, unequipItem } from "./systems/player/economy/inventory";
 import { craftRecipe } from "./systems/player/economy/crafting";
+import { craftRuneRecipe } from "./systems/player/economy/runeCrafting";
 import { upgradeItem } from "./systems/player/economy/itemUpgrade";
 import { grantDevLoadout } from "./systems/player/economy/grantDevWeapon";
 import {
@@ -125,6 +126,7 @@ export { IS_DEV };
 
 const AUTOCOMBAT_PRIORITY_MODES: readonly AutocombatPriorityMode[] = [
   "nearest",
+  "lowest-hp",
   "damage",
   "threat",
   "balanced",
@@ -834,11 +836,15 @@ async function boot(): Promise<void> {
       if (!p) return;
       if (!Array.isArray(rules)) return;
       const owned = new Set(p.tracksProgression.runesOwned);
-      const budget = runeBudgetForTier(p.tracksProgression.playerTier);
+      const budget = runeBudgetForTier(
+        p.tracksProgression.playerTier,
+        p.tracksProgression.runePointBonus ?? 0,
+      );
       const valid = sanitizeRuneLoadout(
         rules,
         owned,
         budget,
+        p.usesSkills.combatArchetype,
       );
       p.tracksProgression.runesEquipped = valid;
       markSliceDirty(world, p, "tracksProgression");
@@ -861,6 +867,13 @@ async function boot(): Promise<void> {
       if (!p) return;
       const result = craftRecipe(world, p, recipeId);
       socket.emit("crafting:result", result);
+    });
+
+    socket.on("rune:craftRecipe", (recipeId: string) => {
+      const p = liveSelf();
+      if (!p || typeof recipeId !== "string") return;
+      const result = craftRuneRecipe(world, p, recipeId);
+      socket.emit("rune:craftResult", result);
     });
 
     socket.on("inventory:upgradeItem", (itemId: string) => {

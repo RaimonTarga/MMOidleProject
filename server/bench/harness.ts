@@ -1,6 +1,7 @@
 import {
   DEFAULT_AUTOCOMBAT_CONFIG,
   GAME_CONFIG,
+  STARTER_RUNE_IDS,
   emptyEquipment,
   type Vec2,
 } from "@mmo-idle/shared";
@@ -92,7 +93,9 @@ function buildBenchPlayer(
       currentSkillTier: 0,
       bossesCleared: [],
       clearedNodes: [],
-      runesOwned: [],
+      runesOwned: [...STARTER_RUNE_IDS],
+      runeRecipesCrafted: [],
+      runePointBonus: 0,
       runesEquipped: [],
     },
     holdsInventory: { inventory: [], equipment, itemUpgrades: {} },

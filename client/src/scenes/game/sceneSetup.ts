@@ -429,6 +429,11 @@ function connectSocket(scene: GameScene): void {
         new CustomEvent("hud:craftResult", { detail: result }),
       );
     },
+    onRuneCraftResult: (result) => {
+      window.dispatchEvent(
+        new CustomEvent("hud:runeCraftResult", { detail: result }),
+      );
+    },
     onUpgradeResult: (result) => {
       window.dispatchEvent(
         new CustomEvent("hud:upgradeResult", { detail: result }),

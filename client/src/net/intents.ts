@@ -51,6 +51,10 @@ export function sendSetRuneLoadout(
   socket.emit('rune:setLoadout', rules);
 }
 
+export function sendCraftRuneRecipe(socket: GameSocket, recipeId: string): void {
+  socket.emit('rune:craftRecipe', recipeId);
+}
+
 export function sendEquipItem(socket: GameSocket, definitionId: string): void {
   socket.emit('inventory:equipItem', definitionId);
 }

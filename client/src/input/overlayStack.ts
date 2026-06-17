@@ -6,6 +6,7 @@ import {
   mapOpenAtom,
   questOpenAtom,
   releaseAnnouncementAtom,
+  runesOpenAtom,
   settingsOpenAtom,
   skillTreeOpenAtom,
 } from '../hud/atoms';
@@ -30,6 +31,10 @@ export function closeTopmostOverlay(): void {
   }
   if (store.get(craftTabAtom)) {
     store.set(craftTabAtom, null);
+    return;
+  }
+  if (store.get(runesOpenAtom)) {
+    store.set(runesOpenAtom, false);
     return;
   }
   if (store.get(inventoryOpenAtom)) {

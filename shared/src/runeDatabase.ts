@@ -7,12 +7,14 @@
  * that pass.
  */
 import type { AutocombatConfig } from "./components/core/networkedSlices";
+import type { CombatArchetype } from "./types/combat";
 
 export type RuneChannel =
   | "MOVEMENT"
   | "TARGETING"
   | "OOC_MAINTENANCE"
-  | "GLOBAL_STRATEGY";
+  | "GLOBAL_STRATEGY"
+  | "CONTROL";
 
 export type RuneConditionId =
   | "always"
@@ -32,11 +34,12 @@ export type RuneActionId =
   | "follow-and-assist"
   | "focus-closest"
   | "focus-lowest-hp"
-  | "focus-shielded"
   | "tactical-reload"
+  | "wait-for-execution"
   | "wait-for-regen"
   | "auto-path-enemy"
-  | "lead-the-way";
+  | "lead-the-way"
+  | "taunt-current-target";
 
 export interface ConditionDef {
   id: RuneConditionId;
@@ -55,6 +58,7 @@ export interface ActionDef {
   tier: number;
   channel: RuneChannel;
   allowedConditionIds?: readonly RuneConditionId[];
+  requiredArchetype?: Exclude<CombatArchetype, null>;
 }
 
 /** An assembled rule: one condition wired to one action. Ordered by priority. */
@@ -68,6 +72,7 @@ export const RUNE_CHANNELS: RuneChannel[] = [
   "TARGETING",
   "OOC_MAINTENANCE",
   "GLOBAL_STRATEGY",
+  "CONTROL",
 ];
 
 const COMBAT_CONDITIONS: readonly RuneConditionId[] = [
@@ -90,6 +95,11 @@ const RECOVERY_CONDITIONS: readonly RuneConditionId[] = [
 const STRATEGY_CONDITIONS: readonly RuneConditionId[] = [
   "always",
   "when-idle",
+  "in-party",
+];
+
+const CONTROL_CONDITIONS: readonly RuneConditionId[] = [
+  "in-combat",
   "in-party",
 ];
 
@@ -248,18 +258,6 @@ export const ACTION_DATABASE = new Map<string, ActionDef>([
     },
   ],
   [
-    "focus-shielded",
-    {
-      id: "focus-shielded",
-      name: "Focus Shielded",
-      blurb: "Prefer enemies with active mitigation layers. Placeholder for shield tags.",
-      cost: 2,
-      tier: 4,
-      channel: "TARGETING",
-      allowedConditionIds: TARGETING_CONDITIONS,
-    },
-  ],
-  [
     "tactical-reload",
     {
       id: "tactical-reload",
@@ -269,6 +267,20 @@ export const ACTION_DATABASE = new Map<string, ActionDef>([
       tier: 1,
       channel: "OOC_MAINTENANCE",
       allowedConditionIds: RECOVERY_CONDITIONS,
+      requiredArchetype: "reload",
+    },
+  ],
+  [
+    "wait-for-execution",
+    {
+      id: "wait-for-execution",
+      name: "Ready Execution",
+      blurb: "Out of combat, wait until your cooldown-class execution is ready.",
+      cost: 1,
+      tier: 1,
+      channel: "OOC_MAINTENANCE",
+      allowedConditionIds: RECOVERY_CONDITIONS,
+      requiredArchetype: "cooldown",
     },
   ],
   [
@@ -307,21 +319,43 @@ export const ACTION_DATABASE = new Map<string, ActionDef>([
       allowedConditionIds: ["in-party"],
     },
   ],
+  [
+    "taunt-current-target",
+    {
+      id: "taunt-current-target",
+      name: "Taunt Target",
+      blurb: "On hit, force your current enemy to attack you. Has a 4 second cooldown.",
+      cost: 1,
+      tier: 1,
+      channel: "CONTROL",
+      allowedConditionIds: CONTROL_CONDITIONS,
+    },
+  ],
 ]);
 
-/** Every fragment id (conditions + actions). Granted whole until acquisition ships. */
+/** Every fragment id (conditions + actions). Useful for validation/tooling. */
 export const ALL_RUNE_IDS: string[] = [
   ...CONDITION_DATABASE.keys(),
   ...ACTION_DATABASE.keys(),
 ];
 
 export const DEFAULT_RUNE_LOADOUT: EquippedRule[] = [
-  { conditionId: "when-idle", actionId: "tactical-reload" },
-  { conditionId: "in-party", actionId: "follow-and-assist" },
-  { conditionId: "in-combat", actionId: "chase-enemy" },
-  { conditionId: "in-combat", actionId: "focus-closest" },
   { conditionId: "always", actionId: "auto-path-enemy" },
+  { conditionId: "in-combat", actionId: "chase-enemy" },
 ];
+
+export const STARTER_RUNE_IDS: string[] = Array.from(
+  new Set(
+    DEFAULT_RUNE_LOADOUT.flatMap((rule) => [
+      rule.conditionId,
+      rule.actionId,
+    ]),
+  ),
+);
+
+export function isRuneFragmentKnown(id: string): boolean {
+  return CONDITION_DATABASE.has(id) || ACTION_DATABASE.has(id);
+}
 
 const LEGACY_CONDITION_IDS: Record<string, RuneConditionId> = {
   "low-hp": "hp-below-25",
@@ -351,8 +385,8 @@ export function normalizeRuneLoadout(rules: EquippedRule[]): EquippedRule[] {
 }
 
 /** Tuned for the mutable starter loadout; adjust after playtest. */
-export function runeBudgetForTier(playerTier: number): number {
-  return 8 + Math.max(0, playerTier) * 2;
+export function runeBudgetForTier(playerTier: number, runePointBonus = 0): number {
+  return 8 + Math.max(0, playerTier) * 2 + Math.max(0, runePointBonus);
 }
 
 export function runeRuleCost(rule: EquippedRule): number {
@@ -376,6 +410,8 @@ export function runeChannelLabel(channel: RuneChannel): string {
       return "Recovery";
     case "GLOBAL_STRATEGY":
       return "Search";
+    case "CONTROL":
+      return "Control";
   }
 }
 
@@ -387,9 +423,22 @@ export function isRuneRuleKnown(rule: EquippedRule): boolean {
 }
 
 export function isRuneRuleCompatible(rule: EquippedRule): boolean {
+  return isRuneRuleCompatibleForArchetype(rule, undefined);
+}
+
+export function isRuneRuleCompatibleForArchetype(
+  rule: EquippedRule,
+  combatArchetype: CombatArchetype | undefined,
+): boolean {
   const condition = CONDITION_DATABASE.get(rule.conditionId);
   const action = ACTION_DATABASE.get(rule.actionId);
   if (!condition || !action) return false;
+  if (
+    action.requiredArchetype !== undefined &&
+    action.requiredArchetype !== combatArchetype
+  ) {
+    return false;
+  }
   return (
     action.allowedConditionIds === undefined ||
     action.allowedConditionIds.includes(condition.id)
@@ -407,6 +456,7 @@ export function sanitizeRuneLoadout(
   rules: EquippedRule[],
   owned: ReadonlySet<string>,
   budget: number,
+  combatArchetype?: CombatArchetype,
 ): EquippedRule[] {
   const sanitized: EquippedRule[] = [];
   let spent = 0;
@@ -416,7 +466,7 @@ export function sanitizeRuneLoadout(
       typeof raw.conditionId !== "string" ||
       typeof raw.actionId !== "string" ||
       !isRuneRuleKnown(raw) ||
-      !isRuneRuleCompatible(raw) ||
+      !isRuneRuleCompatibleForArchetype(raw, combatArchetype) ||
       !isRuneRuleOwned(raw, owned)
     ) {
       continue;
@@ -505,6 +555,27 @@ export const NAMED_RULES = new Map<string, NamedRule>([
       blurb: "After combat, wait for full HP before moving on.",
     },
   ],
+  [
+    ruleKey("when-idle", "wait-for-execution"),
+    {
+      name: "Patient Strike",
+      blurb: "After combat, wait until your execution is ready before moving on.",
+    },
+  ],
+  [
+    ruleKey("in-combat", "taunt-current-target"),
+    {
+      name: "Challenge",
+      blurb: "While fighting, your hits pull your target's attention onto you.",
+    },
+  ],
+  [
+    ruleKey("in-party", "taunt-current-target"),
+    {
+      name: "Protector",
+      blurb: "While in a party, your hits pull your target's attention onto you.",
+    },
+  ],
 ]);
 
 export function getRuleName(
@@ -532,6 +603,7 @@ export interface RuneContext {
   inCombat: boolean;
   inParty: boolean;
   aggroCount: number;
+  combatArchetype?: CombatArchetype;
 }
 
 export interface ClaimedRuneAction {
@@ -549,13 +621,16 @@ export interface DerivedRuneConfig {
   targetingAction: RuneActionId | null;
   oocMaintenanceAction: RuneActionId | null;
   globalStrategyAction: RuneActionId | null;
+  controlAction: RuneActionId | null;
   fleeRequested: boolean;
   orbit: boolean;
   autoPathEnemy: boolean;
   waitForRegen: boolean;
   tacticalReload: boolean;
+  waitForExecution: boolean;
   followLeader: boolean;
   leadTheWay: boolean;
+  tauntCurrentTarget: boolean;
 }
 
 function emptyClaims(): ClaimedRuneChannels {
@@ -564,6 +639,7 @@ function emptyClaims(): ClaimedRuneChannels {
     TARGETING: null,
     OOC_MAINTENANCE: null,
     GLOBAL_STRATEGY: null,
+    CONTROL: null,
   };
 }
 
@@ -598,20 +674,23 @@ export function deriveAutoConfigFromRunes(
     targetingAction: null,
     oocMaintenanceAction: null,
     globalStrategyAction: null,
+    controlAction: null,
     fleeRequested: false,
     orbit: false,
     autoPathEnemy: false,
     waitForRegen: false,
     tacticalReload: false,
+    waitForExecution: false,
     followLeader: false,
     leadTheWay: false,
+    tauntCurrentTarget: false,
   };
 
   for (const raw of normalizeRuneLoadout(equipped)) {
     const condition = CONDITION_DATABASE.get(raw.conditionId);
     const action = ACTION_DATABASE.get(raw.actionId);
     if (!condition || !action) continue;
-    if (!isRuneRuleCompatible(raw)) continue;
+    if (!isRuneRuleCompatibleForArchetype(raw, ctx.combatArchetype)) continue;
     if (
       action.channel === "GLOBAL_STRATEGY" &&
       action.id !== "lead-the-way" &&
@@ -631,6 +710,7 @@ export function deriveAutoConfigFromRunes(
   derived.targetingAction = claimed.TARGETING?.action.id ?? null;
   derived.oocMaintenanceAction = claimed.OOC_MAINTENANCE?.action.id ?? null;
   derived.globalStrategyAction = claimed.GLOBAL_STRATEGY?.action.id ?? null;
+  derived.controlAction = claimed.CONTROL?.action.id ?? null;
 
   switch (derived.movementAction) {
     case "flee":
@@ -653,10 +733,7 @@ export function deriveAutoConfigFromRunes(
 
   switch (derived.targetingAction) {
     case "focus-lowest-hp":
-      derived.config.priorityMode = "damage";
-      break;
-    case "focus-shielded":
-      derived.config.priorityMode = "threat";
+      derived.config.priorityMode = "lowest-hp";
       break;
     case "focus-closest":
     default:
@@ -670,6 +747,9 @@ export function deriveAutoConfigFromRunes(
   if (derived.oocMaintenanceAction === "tactical-reload") {
     derived.tacticalReload = true;
   }
+  if (derived.oocMaintenanceAction === "wait-for-execution") {
+    derived.waitForExecution = true;
+  }
   if (
     derived.globalStrategyAction === "auto-path-enemy" ||
     (derived.globalStrategyAction === "lead-the-way" && !ctx.inCombat)
@@ -679,6 +759,9 @@ export function deriveAutoConfigFromRunes(
   }
   if (derived.globalStrategyAction === "lead-the-way") {
     derived.leadTheWay = true;
+  }
+  if (derived.controlAction === "taunt-current-target") {
+    derived.tauntCurrentTarget = true;
   }
 
   return derived;

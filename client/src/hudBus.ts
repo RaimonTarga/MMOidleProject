@@ -28,6 +28,11 @@ export const hudBus = {
     intents.emit('setRuneLoadout', rules);
   },
 
+  /** Called by RunesPanel forge tab; server validates unlocks and costs. */
+  requestCraftRuneRecipe(recipeId: string): void {
+    intents.emit('craftRuneRecipe', recipeId);
+  },
+
   /** Called by SkillTreePanel — GameScene picks this up and emits the socket event. */
   requestSkillUnlock(skillId: string): void {
     intents.emit('unlockSkill', skillId);

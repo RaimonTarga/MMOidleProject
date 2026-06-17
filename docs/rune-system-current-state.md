@@ -30,6 +30,7 @@ Current channels:
 - `TARGETING`
 - `OOC_MAINTENANCE`
 - `GLOBAL_STRATEGY`
+- `CONTROL`
 
 `GLOBAL_STRATEGY` is suppressed while the player is in combat, except for
 `lead-the-way`, which remains active as a party role marker.
@@ -63,13 +64,16 @@ Actions:
 - `follow-and-assist`
 - `focus-closest`
 - `focus-lowest-hp`
-- `focus-shielded` placeholder
-- `tactical-reload` (shown as "Reload Safely")
+- `tactical-reload` (shown as "Reload Safely"; reload classes only)
+- `wait-for-execution` (shown as "Ready Execution"; cooldown classes only)
 - `wait-for-regen` (shown as "Recover First")
 - `auto-path-enemy` (shown as "Find Enemies")
 - `lead-the-way`
+- `taunt-current-target` (shown as "Taunt Target")
 
-The system still grants all fragments to every player until acquisition ships.
+New players only start with the fragments required by the default loadout:
+`always`, `auto-path-enemy`, `in-combat`, and `chase-enemy`. Additional live
+fragments come from one-time rune forge recipes.
 
 ## Budget
 
@@ -82,11 +86,38 @@ ruleCost = condition.cost + action.cost
 The current budget helper is tuned for playtest:
 
 ```ts
-runeBudgetForTier(playerTier) = 8 + playerTier * 2
+runeBudgetForTier(playerTier, runePointBonus) = 8 + playerTier * 2 + runePointBonus
 ```
 
-That base budget intentionally fits the mutable starter loadout with party
-follower defaults.
+That base budget intentionally fits the mutable starter loadout. Rune point
+bonus recipes permanently increase the budget.
+
+## Rune Forge
+
+Rune forge recipes live in `shared/src/runeRecipes.ts`.
+
+Recipe kinds:
+
+- `unlock-rune`: unlocks one condition or response fragment.
+- `increase-rune-points`: permanently increases maximum rune points.
+
+Recipes are hidden until their `requiredBossClear` token is present in
+`bossesCleared` (for example, `forest:1`). Crafting is one-time only and costs
+essence. Test room bypasses cost gates for playtesting.
+
+The server applies rune forge crafts through
+`server/src/systems/player/economy/runeCrafting.ts`. It validates:
+
+- recipe id exists,
+- recipe has not already been crafted,
+- required boss clear is present unless in test room,
+- unlock recipes point at a known rune fragment,
+- the player has enough essence.
+
+On success, the server records the recipe id in `runeRecipesCrafted`, rebuilds
+`runesOwned` from starter fragments plus crafted unlock recipes, rebuilds
+`runePointBonus` from crafted capacity recipes, and marks `tracksProgression`
+dirty.
 
 ## Default Loadout
 
@@ -94,16 +125,13 @@ New characters start with a mutable default loadout:
 
 ```ts
 [
-  { conditionId: "when-idle", actionId: "tactical-reload" },
-  { conditionId: "in-party", actionId: "follow-and-assist" },
-  { conditionId: "in-combat", actionId: "chase-enemy" },
-  { conditionId: "in-combat", actionId: "focus-closest" },
   { conditionId: "always", actionId: "auto-path-enemy" },
+  { conditionId: "in-combat", actionId: "chase-enemy" },
 ]
 ```
 
-Players can change or remove these rules. A future UI affordance should add a
-"reset to basic loadout" button.
+Players can change or remove these rules. The rune panel includes a confirmation
+guarded reset button that restores this basic loadout.
 
 ## Server Authority
 
@@ -116,15 +144,18 @@ per live player each world tick. It builds the live rune context from:
 - combat state
 - party membership
 - aggro count
+- combat archetype
 
 The derived rune result is translated into existing AI controls:
 
 - `flee` sets `rune.flee`
 - `orbit` and temporary `step-back` set `rune.keepDistance`
 - `wait-for-regen` sets `rune.waitForRegen`
+- `wait-for-execution` sets `rune.waitForExecution`
 - `follow-and-assist` sets `rune.followLeader` and `focusLeaderTarget`
 - `lead-the-way` sets `rune.leadTheWay` and uses the same local enemy-search
   behavior as `auto-path-enemy` while out of combat
+- `taunt-current-target` sets `rune.tauntCurrentTarget`
 - `always -> auto-path-enemy` can claim search even while combat state is active,
   so scouting does not wait for combat to fully drop
 - targeting actions map onto existing `AutocombatConfig` priority/focus fields
@@ -136,7 +167,7 @@ The derived rune result is translated into existing AI controls:
 
 `rune.flee` is read by `server/src/systems/combat/ai/targetPriority.ts`.
 
-`rune.keepDistance` and `rune.waitForRegen` are read by
+`rune.keepDistance`, `rune.waitForRegen`, and `rune.waitForExecution` are read by
 `server/src/systems/combat/ai/autoTarget.ts`.
 
 `rune.followLeader` and `rune.leadTheWay` are read by party automation systems.
@@ -154,6 +185,14 @@ current node. It does not route to other nodes.
 already auto-start an out-of-combat reload when their clip is partially spent, so
 no separate reload command has been added yet.
 
+`wait-for-execution` stops cooldown classes out of combat until their execution
+is armed (`hasEmpoweredAttack`), then normal targeting/search resumes.
+
+`rune.tauntCurrentTarget` is read by
+`server/src/systems/combat/ai/taunt.ts`. On direct player hits, it forces the
+monster target to aggro that player unless the monster has `ignoresTaunts`. The
+taunt response has a 4 second internal cooldown per player.
+
 ## Persistence And Protocol
 
 Rune ownership and equipped loadout live on `TracksProgression` in
@@ -161,6 +200,8 @@ Rune ownership and equipped loadout live on `TracksProgression` in
 
 ```ts
 runesOwned: string[];
+runeRecipesCrafted: string[];
+runePointBonus: number;
 runesEquipped: EquippedRule[];
 ```
 
@@ -171,6 +212,13 @@ The client-to-server socket event is defined in
 
 ```ts
 "rune:setLoadout": (rules: EquippedRule[]) => void;
+"rune:craftRecipe": (recipeId: string) => void;
+```
+
+The server-to-client rune forge result is:
+
+```ts
+"rune:craftResult": (result: { recipeId: string; success: boolean; reason?: string }) => void;
 ```
 
 The handler in `server/src/index.ts` validates:
@@ -179,26 +227,46 @@ The handler in `server/src/index.ts` validates:
 - condition/action ids exist in the catalog,
 - player owns both fragments,
 - rules fit inside the current budget in order.
+- class-specific responses match `usesSkills.combatArchetype`.
 
 Rules that do not fit or are invalid are skipped.
 
+Class specificity is based on `combatArchetype`, not class display names or
+branch ids. That means every reload branch can use reload-only responses, and
+every cooldown branch can use cooldown-only responses across tiers.
+
 ## Client UI
 
-`client/src/ui/RunesPanel.tsx` is the current rune panel. It:
+`client/src/ui/RunesPanel.tsx` is the current rune panel. It has two tabs:
+Loadout and Forge.
 
-- reads `runesOwnedAtom`, `runesEquippedAtom`, and `playerTierAtom`,
+The Loadout tab:
+
+- reads `runesOwnedAtom`, `runesEquippedAtom`, `combatArchetypeAtom`, and
+  `playerTierAtom`,
 - shows a chunked rune point meter with spent and leftover points,
 - lists equipped priority rules before the rule builder,
 - lets players move equipped rules up or down to change priority,
+- asks for confirmation before resetting to the default loadout,
 - lists owned condition fragments and action fragments,
 - uses player-facing "Situation" and "Response" wording,
 - shows condition/action costs in visible RP badges,
 - shows action channels with color-coded side bars,
 - only shows response choices that fit the selected situation,
+- hides class-specific responses unless the current combat archetype matches,
 - shows rune points as visual chunks,
 - previews named rule text when available,
 - blocks adding a rule that would exceed budget locally,
 - sends changes through `hudBus.requestSetRuneLoadout()`.
+
+The Forge tab:
+
+- reads essence, boss clears, owned runes, crafted rune recipes, and rune point
+  bonus from HUD atoms,
+- shows only recipes unlocked by current boss clears,
+- marks crafted/unlocked recipes as done,
+- sends craft attempts through `hudBus.requestCraftRuneRecipe()`,
+- displays the authoritative `rune:craftResult` response.
 
 The server remains authoritative even though the client performs a local budget
 check for usability.
@@ -207,12 +275,10 @@ check for usability.
 
 Still not implemented:
 
-- fragment acquisition from quests/bosses/hidden unlocks,
+- quest/hidden rune recipe unlocks beyond boss-gated recipes,
 - editable parameters for threshold conditions,
 - drag reorder UI,
-- reset-to-basic-loadout button,
 - real target-casting telegraphs,
-- real shielded-target tagging,
 - taunt stance/mechanic,
 - Rune Malfunction death attribution,
 - dedicated rune debugger/logging.
@@ -220,8 +286,10 @@ Still not implemented:
 ## Relevant Files
 
 - `shared/src/runeDatabase.ts`
+- `shared/src/runeRecipes.ts`
 - `shared/src/components/core/networkedSlices.ts`
 - `shared/src/protocol/socketEvents.ts`
+- `server/src/systems/player/economy/runeCrafting.ts`
 - `server/src/systems/combat/ai/runeConfig.ts`
 - `server/src/systems/combat/ai/targetPriority.ts`
 - `server/src/systems/combat/ai/autoTarget.ts`

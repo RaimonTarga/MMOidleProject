@@ -13,8 +13,10 @@ import { markSliceDirty } from "../../../ecs/dirtyHelpers";
 export const RUNE_FLEE_FLAG = "rune.flee";
 export const RUNE_KEEP_DISTANCE_FLAG = "rune.keepDistance";
 export const RUNE_WAIT_FOR_REGEN_FLAG = "rune.waitForRegen";
+export const RUNE_WAIT_FOR_EXECUTION_FLAG = "rune.waitForExecution";
 export const RUNE_FOLLOW_LEADER_FLAG = "rune.followLeader";
 export const RUNE_LEAD_THE_WAY_FLAG = "rune.leadTheWay";
+export const RUNE_TAUNT_CURRENT_TARGET_FLAG = "rune.tauntCurrentTarget";
 
 /**
  * "In combat" for rune evaluation: an active attack target, or recent
@@ -57,6 +59,7 @@ export function updateRuneDerivedConfig(world: World, now: number): void {
       inCombat: isPlayerInCombat(player, now),
       inParty: player.inParty !== undefined,
       aggroCount: aggroCount(world, player),
+      combatArchetype: player.usesSkills.combatArchetype,
     };
 
     const d = deriveAutoConfigFromRunes(
@@ -91,7 +94,13 @@ export function updateRuneDerivedConfig(world: World, now: number): void {
     setFlag(player.tracksCombat, RUNE_FLEE_FLAG, d.fleeRequested);
     setFlag(player.tracksCombat, RUNE_KEEP_DISTANCE_FLAG, d.orbit);
     setFlag(player.tracksCombat, RUNE_WAIT_FOR_REGEN_FLAG, d.waitForRegen);
+    setFlag(player.tracksCombat, RUNE_WAIT_FOR_EXECUTION_FLAG, d.waitForExecution);
     setFlag(player.tracksCombat, RUNE_FOLLOW_LEADER_FLAG, d.followLeader);
     setFlag(player.tracksCombat, RUNE_LEAD_THE_WAY_FLAG, d.leadTheWay);
+    setFlag(
+      player.tracksCombat,
+      RUNE_TAUNT_CURRENT_TARGET_FLAG,
+      d.tauntCurrentTarget,
+    );
   }
 }

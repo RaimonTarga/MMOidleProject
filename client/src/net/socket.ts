@@ -28,6 +28,7 @@ export interface SocketHandlers {
   onDelta(snapshot: DeltaSnapshot): void;
   onNodePreparing(payload: { nodeId: string }): void;
   onCraftResult(result: { success: boolean; reason?: string }): void;
+  onRuneCraftResult(result: { recipeId: string; success: boolean; reason?: string }): void;
   onUpgradeResult(result: { success: boolean; reason?: string; itemId: string; newLevel: number }): void;
   onPlayerDied(payload: PlayerDeathPayload): void;
   onPlayerAscended(tier: number): void;
@@ -48,6 +49,7 @@ export function wireSocketHandlers(
   socket.on('node:delta', (s) => h.onDelta(s));
   socket.on('node:preparing', (p) => h.onNodePreparing(p));
   socket.on('crafting:result', (r) => h.onCraftResult(r));
+  socket.on('rune:craftResult', (r) => h.onRuneCraftResult(r));
   socket.on('inventory:upgradeResult', (r) => h.onUpgradeResult(r));
   socket.on('player:died', (p) => h.onPlayerDied(p));
   socket.on('player:ascended', (t) => h.onPlayerAscended(t));
