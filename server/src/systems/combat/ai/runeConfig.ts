@@ -17,6 +17,8 @@ export const RUNE_WAIT_FOR_EXECUTION_FLAG = "rune.waitForExecution";
 export const RUNE_FOLLOW_LEADER_FLAG = "rune.followLeader";
 export const RUNE_LEAD_THE_WAY_FLAG = "rune.leadTheWay";
 export const RUNE_TAUNT_CURRENT_TARGET_FLAG = "rune.tauntCurrentTarget";
+export const RUNE_LET_DOTS_FINISH_FLAG = "rune.letDotsFinish";
+export const RUNE_SPREAD_DOTS_FLAG = "rune.spreadDots";
 
 /**
  * "In combat" for rune evaluation: an active attack target, or recent
@@ -102,5 +104,7 @@ export function updateRuneDerivedConfig(world: World, now: number): void {
       RUNE_TAUNT_CURRENT_TARGET_FLAG,
       d.tauntCurrentTarget,
     );
+    setFlag(player.tracksCombat, RUNE_LET_DOTS_FINISH_FLAG, d.letDotsFinish);
+    setFlag(player.tracksCombat, RUNE_SPREAD_DOTS_FLAG, d.spreadDots);
   }
 }

@@ -12,11 +12,11 @@ export const EDGE_OF_OBLIVION_ID = 'edge-of-oblivion';
 /** Status effect id for Edge of Oblivion corruption stacks. */
 export const VOID_CORRUPTION_EFFECT_ID = 'void-corruption';
 
-export const CORRUPTION_MAX_STACKS = 10;
 /** Fraction of attack converted into per-stack tick damage (÷ max stacks). */
 export const CORRUPTION_CONV_PCT = 0.40;
 export const CORRUPTION_TICK_MS = 1_000;
 export const CORRUPTION_DURATION_MS = 4_500;
+export const CORRUPTION_DOT_MULT = 1.35;
 /** Movement speed multiplier reduction per stack (additive on mult: 1 − stacks × rate). */
 export const CORRUPTION_SLOW_PER_STACK = 0.05;
 export const CORRUPTION_MIN_SPEED_MULT = 0.35;
@@ -75,32 +75,44 @@ export const SACRED_FAMILY: Record<string, { cdMs: number; buffMs: number }> = {
 // ── Burn family (Ashbrand / Cinderfang / Frostmourne) ────────────────────────
 
 export const ASHBRAND_CONV_PCT    = 0.30;
-export const ASHBRAND_MAX_STACKS  = 5;
 /** Burn-stack tick interval (ms), shared across the whole family. */
 export const ASHBRAND_TICK_MS     = 1_000;
 /** Burn-stack duration without a refreshing hit (ms). */
 export const ASHBRAND_DURATION_MS = 4_500;
+export const ASHBRAND_DOT_MULT    = 1.15;
 
 export interface BurnWeaponEntry {
   weaponId:  string;
   effectId:  string;
   convPct:   number;
-  maxStacks: number;
+  tickIntervalMs: number;
+  drainDurationMs: number;
+  dotMultiplier: number;
   /** DoT element for damage-number flavor (color/glyph). */
   element:   DamageElement;
+  slowPerStack?: number;
 }
 
-// All burn-DoT weapons. convPct/maxStacks mirror each weapon's recipe
-// dot-conversion keys; element drives damage-number flavor + target tile.
+// All burn-DoT weapons. convPct mirrors each weapon's recipe dot-conversion key;
+// element drives damage-number flavor + target tile.
 // effectIds MUST be unique per weapon (the tick loop iterates the id set).
 export const BURN_FAMILY: BurnWeaponEntry[] = [
   // Swamp — hot/fire line (ashbrand → mirebrand → blightbrand) and cold/frost line.
-  { weaponId: 'ashbrand-blade',    effectId: 'ashbrand-burn',          convPct: ASHBRAND_CONV_PCT, maxStacks: ASHBRAND_MAX_STACKS, element: 'fire'  },
-  { weaponId: 'swamp-mirebrand',   effectId: 'swamp-mirebrand-burn',   convPct: 0.30, maxStacks: 5, element: 'fire'  },
-  { weaponId: 'swamp-blightbrand', effectId: 'swamp-blightbrand-burn', convPct: 0.30, maxStacks: 5, element: 'fire'  },
-  { weaponId: 'swamp-frostbrand',  effectId: 'swamp-frostbrand-burn',  convPct: 0.45, maxStacks: 3, element: 'frost' },
-  { weaponId: 'swamp-rimebrand',   effectId: 'swamp-rimebrand-burn',   convPct: 0.45, maxStacks: 3, element: 'frost' },
+  { weaponId: 'ashbrand-blade',    effectId: 'ashbrand-burn',          convPct: ASHBRAND_CONV_PCT, tickIntervalMs: ASHBRAND_TICK_MS, drainDurationMs: ASHBRAND_DURATION_MS, dotMultiplier: ASHBRAND_DOT_MULT, element: 'fire'  },
+  { weaponId: 'swamp-mirebrand',   effectId: 'swamp-mirebrand-burn',   convPct: 0.30, tickIntervalMs: ASHBRAND_TICK_MS, drainDurationMs: ASHBRAND_DURATION_MS, dotMultiplier: ASHBRAND_DOT_MULT, element: 'fire'  },
+  { weaponId: 'swamp-blightbrand', effectId: 'swamp-blightbrand-burn', convPct: 0.30, tickIntervalMs: ASHBRAND_TICK_MS, drainDurationMs: ASHBRAND_DURATION_MS, dotMultiplier: ASHBRAND_DOT_MULT, element: 'fire'  },
+  { weaponId: 'swamp-frostbrand',  effectId: 'swamp-frostbrand-burn',  convPct: 0.45, tickIntervalMs: ASHBRAND_TICK_MS, drainDurationMs: ASHBRAND_DURATION_MS, dotMultiplier: ASHBRAND_DOT_MULT, element: 'frost' },
+  { weaponId: 'swamp-rimebrand',   effectId: 'swamp-rimebrand-burn',   convPct: 0.45, tickIntervalMs: ASHBRAND_TICK_MS, drainDurationMs: ASHBRAND_DURATION_MS, dotMultiplier: ASHBRAND_DOT_MULT, element: 'frost' },
   // T4 DoT weapons — same burn mechanic, values mirror their recipe dot-conversion keys.
-  { weaponId: 'tundra-glacial-rimebrand', effectId: 'rimebrand-burn',  convPct: 0.45, maxStacks: 3, element: 'frost' },
-  { weaponId: 'volcanic-blightbrand',     effectId: 'blightbrand-burn', convPct: 0.30, maxStacks: 5, element: 'fire'  },
+  { weaponId: 'tundra-glacial-rimebrand', effectId: 'rimebrand-burn',   convPct: 0.45, tickIntervalMs: ASHBRAND_TICK_MS, drainDurationMs: ASHBRAND_DURATION_MS, dotMultiplier: ASHBRAND_DOT_MULT, element: 'frost' },
+  { weaponId: 'volcanic-blightbrand',     effectId: 'blightbrand-burn', convPct: 0.30, tickIntervalMs: ASHBRAND_TICK_MS, drainDurationMs: ASHBRAND_DURATION_MS, dotMultiplier: ASHBRAND_DOT_MULT, element: 'fire'  },
+  { weaponId: EDGE_OF_OBLIVION_ID, effectId: VOID_CORRUPTION_EFFECT_ID, convPct: CORRUPTION_CONV_PCT, tickIntervalMs: CORRUPTION_TICK_MS, drainDurationMs: CORRUPTION_DURATION_MS, dotMultiplier: CORRUPTION_DOT_MULT, element: 'doom', slowPerStack: CORRUPTION_SLOW_PER_STACK },
 ];
+
+export function weaponDotProfileForWeapon(weaponId: string): BurnWeaponEntry | undefined {
+  return BURN_FAMILY.find((entry) => entry.weaponId === weaponId);
+}
+
+export function weaponDotProfileForEffect(effectId: string): BurnWeaponEntry | undefined {
+  return BURN_FAMILY.find((entry) => entry.effectId === effectId);
+}

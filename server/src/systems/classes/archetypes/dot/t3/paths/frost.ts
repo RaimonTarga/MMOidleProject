@@ -44,10 +44,11 @@ export function tryRimeshatter(pc: DotT3PathContext): boolean {
     const eff = applyStatusEffect(monsterState, {
       id: DOT_EFFECT_ID, maxStacks, instanced: false,
       sourceId: player.isPlayer.id, remainingMs: durationMs, refreshable: true,
-      data: { damagePerStack: dmgPerStack, nextTickIn: tickIntervalMs, tickIntervalMs },
+      data: { damagePerStack: dmgPerStack, nextTickIn: tickIntervalMs, tickIntervalMs, tickOnExpire: 1 },
     });
     eff.data.damagePerStack = dmgPerStack;
     eff.data.tickIntervalMs = tickIntervalMs;
+    eff.data.tickOnExpire = 1;
   }
   markMonsterDot(world, monster);
   ctx.metadata['dotHandled'] = true;
@@ -75,10 +76,11 @@ export function tryShatterStrike(pc: DotT3PathContext): boolean {
     const eff = applyStatusEffect(monsterState, {
       id: DOT_EFFECT_ID, maxStacks, instanced: false,
       sourceId: player.isPlayer.id, remainingMs: durationMs, refreshable: true,
-      data: { damagePerStack: dmgPerStack, nextTickIn: tickIntervalMs, tickIntervalMs },
+      data: { damagePerStack: dmgPerStack, nextTickIn: tickIntervalMs, tickIntervalMs, tickOnExpire: 1 },
     });
     eff.data.damagePerStack = dmgPerStack;
     eff.data.tickIntervalMs = tickIntervalMs;
+    eff.data.tickOnExpire = 1;
     markMonsterDot(world, monster);
   }
   // At max: intentionally do NOT refresh — stacks tick down naturally (locked peak).
@@ -130,10 +132,11 @@ export function tryFreezingCold(pc: DotT3PathContext): boolean {
   const fc = applyStatusEffect(monsterState, {
     id: DOT_EFFECT_ID, maxStacks, instanced: false,
     sourceId: player.isPlayer.id, remainingMs: durationMs, refreshable: true,
-    data: { damagePerStack: dmgPerStack, nextTickIn: tickIntervalMs, tickIntervalMs },
+    data: { damagePerStack: dmgPerStack, nextTickIn: tickIntervalMs, tickIntervalMs, tickOnExpire: 1 },
   });
   fc.data.damagePerStack = dmgPerStack;
   fc.data.tickIntervalMs = tickIntervalMs;
+  fc.data.tickOnExpire = 1;
 
   if (!hasStatusEffect(monsterState, FROZEN_EFFECT)) {
     applyStatusEffect(monsterState, {
@@ -191,10 +194,11 @@ export function tryGlacialFracture(pc: DotT3PathContext): boolean {
   const gf = applyStatusEffect(monsterState, {
     id: DOT_EFFECT_ID, maxStacks, instanced: false,
     sourceId: player.isPlayer.id, remainingMs: durationMs, refreshable: true,
-    data: { damagePerStack: dmgPerStack, nextTickIn: tickIntervalMs, tickIntervalMs },
+    data: { damagePerStack: dmgPerStack, nextTickIn: tickIntervalMs, tickIntervalMs, tickOnExpire: 1 },
   });
   gf.data.damagePerStack = dmgPerStack;
   gf.data.tickIntervalMs = tickIntervalMs;
+  gf.data.tickOnExpire = 1;
   markMonsterDot(world, monster);
   ctx.metadata['dotHandled'] = true;
   return true;

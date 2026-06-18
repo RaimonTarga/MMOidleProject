@@ -1,4 +1,4 @@
-import { getStatusEffect, getStatusEffects } from "@mmo-idle/shared";
+import { getStatusEffect, getStatusEffects, isMonsterDotStatusEffectId } from "@mmo-idle/shared";
 import {
   isNetworkedComponentKey,
   networkedKeysForKind,
@@ -14,6 +14,7 @@ interface MarkerCheck {
   effectId: string;
   /** Use getStatusEffects when multiple non-instanced entries are possible. */
   multi?: boolean;
+  hasEffect?: (state: NonNullable<ServerEntity["tracksCombat"]>) => boolean;
 }
 
 interface ArchetypeSliceCheck {
@@ -75,7 +76,7 @@ const ARCHETYPE_SLICE_CHECKS: ArchetypeSliceCheck[] = [
   },
 ];
 
-function hasEffect(
+function hasEffectForId(
   state: ServerEntity["tracksCombat"],
   effectId: string,
   multi?: boolean,
@@ -91,9 +92,11 @@ function checkEntity(
   violations: string[],
 ): void {
   const state = entity.tracksCombat;
-  for (const { marker, effectId, multi } of checks) {
+  for (const { marker, effectId, multi, hasEffect } of checks) {
     const hasMarker = entity[marker] !== undefined;
-    const hasFx = hasEffect(state, effectId, multi);
+    const hasFx = hasEffect
+      ? (state ? hasEffect(state) : false)
+      : hasEffectForId(state, effectId, multi);
     if (hasMarker !== hasFx) {
       violations.push(
         `${entity.entityId}: ${String(marker)}=${hasMarker} but ${effectId}=${hasFx}`,
@@ -190,7 +193,13 @@ export function assertMarkerInvariants(world: World): string[] {
   }
 
   for (const entity of world.playerEntities) {
-    checkEntity(entity, [{ marker: "hasDot", effectId: "dot" }], violations);
+    checkEntity(entity, [{
+      marker: "hasDot",
+      effectId: "monster-dot",
+      hasEffect: (state) => state.statusEffects.some((effect) =>
+        isMonsterDotStatusEffectId(effect.id),
+      ),
+    }], violations);
     checkAbsentState(entity, violations);
     checkArchetypeSlices(entity, violations);
     if (entity.isDead) {

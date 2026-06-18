@@ -1,4 +1,4 @@
-import type { MonsterDefinition } from '@mmo-idle/shared';
+import { resolveMonsterDotDebuff, type MonsterDefinition } from '@mmo-idle/shared';
 
 // Readable presentation of a monster's combat profile for the map info panel:
 // a stat grid, short capability tags (collapsed row), and a full plain-English
@@ -81,7 +81,8 @@ export function formatMonsterMechanics(def: MonsterDefinition): string[] {
   if (def.dotEffect) {
     const d = def.dotEffect;
     const dur = d.durationMs ? `, lasts ${sec(d.durationMs)}` : '';
-    lines.push(`Applies a damage-over-time on hit: ${d.damagePerStack}/stack, up to ${d.maxStacks} stacks, ticks every ${sec(d.tickIntervalMs)}${dur}`);
+    const debuff = resolveMonsterDotDebuff({ monster: def });
+    lines.push(`Applies ${debuff.label} on hit: ${d.damagePerStack}/stack, up to ${d.maxStacks} stacks, ticks every ${sec(d.tickIntervalMs)}${dur}`);
   }
 
   if (def.slowEffect) {

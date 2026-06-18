@@ -1,8 +1,16 @@
+import type { ReactNode } from 'react';
 import { useAtomValue } from 'jotai';
-import { BuffBar, CadenceTimeline, SummonSlotBar } from './components';
+import {
+  computeDotClassDamagePerStack,
+  computeEternalDoomDamage,
+  resolveDotClassProfile,
+} from '@mmo-idle/shared';
+import { BuffBar, CadenceTimeline, StatRow, SummonSlotBar } from './components';
+import { useHoverTooltip } from './tooltip';
 import {
   ammoCountAtom,
   ammoMaxAtom,
+  attackAtom,
   attackTargetIdAtom,
   cadenceCountAtom,
   cadenceEmpoweredArmedAtom,
@@ -23,6 +31,7 @@ import {
   passivesAtom,
   sacredBuffActiveAtom,
   sacredBuffPctAtom,
+  selectedSubVariantAtom,
   summonActiveCountAtom,
   summonSlotCountAtom,
   summonSlotsAtom,
@@ -32,6 +41,44 @@ import {
 
 // Freezing Cold: chill stacks needed to trigger the freeze (server CHILL_MAX).
 const CHILL_MAX_STACKS = 9;
+
+function DotStatCell({
+  label,
+  value,
+  help,
+}: {
+  label: string;
+  value: string | number;
+  help: ReactNode;
+}) {
+  const { handlers, node } = useHoverTooltip(help);
+  return (
+    <div className="dot-stat-cell stat-row--help" {...handlers}>
+      <span className="dot-stat-label">{label}</span>
+      <span className="dot-stat-value">{value}</span>
+      {node}
+    </div>
+  );
+}
+
+function DotSummaryValue({
+  label,
+  value,
+  help,
+}: {
+  label: string;
+  value: string | number;
+  help: ReactNode;
+}) {
+  const { handlers, node } = useHoverTooltip(help);
+  return (
+    <>
+      <span className="stat-row--help" {...handlers}>{label}</span>
+      <strong className="stat-row--help" {...handlers}>{value}</strong>
+      {node}
+    </>
+  );
+}
 
 /**
  * Per-archetype mechanic bars (ammo/heat, summon roster, cadence, execution,
@@ -43,6 +90,8 @@ const CHILL_MAX_STACKS = 9;
 export function ArchetypeMechanics() {
   const combatArchetype = useAtomValue(combatArchetypeAtom);
   const passives = useAtomValue(passivesAtom);
+  const selectedSubVariant = useAtomValue(selectedSubVariantAtom);
+  const attack = useAtomValue(attackAtom);
   const laserOverheated = useAtomValue(laserOverheatedAtom);
   const heatPct = useAtomValue(heatPctAtom);
   const ammoMax = useAtomValue(ammoMaxAtom);
@@ -203,6 +252,8 @@ export function ArchetypeMechanics() {
       {/* DoT stacks — dot archetype, path-aware */}
       {combatArchetype === 'dot' && (() => {
         const p = passives ?? {};
+        const profile = resolveDotClassProfile(p, selectedSubVariant);
+        const damagePerStack = computeDotClassDamagePerStack(attack, profile);
         const isPoison = (p['dot.poison-explosion'] ?? 0) > 0
           || (p['dot.eternal-doom'] ?? 0) > 0
           || (p['dot.invigorating-toxins'] ?? 0) > 0;
@@ -212,30 +263,100 @@ export function ArchetypeMechanics() {
         const isFrost  = (p['dot.permafrost'] ?? 0) > 0
           || (p['dot.freezing-cold'] ?? 0) > 0
           || (p['dot.glacial-fracture'] ?? 0) > 0;
-        const path = isPoison ? 'poison' : isFire ? 'fire' : isFrost ? 'frost' : 'default';
+        const path = isPoison ? 'poison' : isFire ? 'fire' : isFrost ? 'frost' : profile.element;
 
         const dotMax = (p['dot.poison-explosion'] ?? 0) > 0 ? 10
           : (p['dot.eternal-doom'] ?? 0) > 0 ? 50
-          : (p['dot.conflagration'] ?? 0) > 0 ? 8
           : (p['dot.permafrost'] ?? 0) > 0 ? 1
-          : Math.round(p['dot.max-stacks'] ?? 5);
+          : profile.maxStacks;
+        const maxTickDamage = (p['dot.eternal-doom'] ?? 0) > 0
+          ? computeEternalDoomDamage(dotMax, damagePerStack)
+          : damagePerStack * dotMax;
+        const maxDotDps = profile.tickIntervalMs > 0
+          ? (maxTickDamage * 1000) / profile.tickIntervalMs
+          : 0;
+        const targetPct = dotMax > 0 ? Math.min(100, (targetDotStacks / dotMax) * 100) : 0;
 
-        const stackLabel = isFire ? 'Burn Stacks'
-          : isFrost ? 'Frost Stacks'
-          : isPoison ? 'Poison Stacks'
+        const stackLabel = path === 'fire' ? 'Burn Stacks'
+          : path === 'frost' ? 'Frost Stacks'
+          : path === 'poison' ? 'Poison Stacks'
           : 'Target Stacks';
 
-        const pipClass = path !== 'default' ? ` dot-pip--${path}` : '';
+        const pipClass = ` dot-pip--${path}`;
         const usePips  = dotMax <= 10;
+        const directPct = Math.round((1 - profile.conversionPct) * 100);
+        const dotPct = Math.round(profile.conversionPct * 100);
+        const tickSec = (profile.tickIntervalMs / 1000).toFixed(1);
+        const durationSec = (profile.durationMs / 1000).toFixed(1);
 
         return (
-          <div className="stat-section">
-            <div className="stat-row">
-              <span className="stat-label">{stackLabel}</span>
-              <span className={`stat-value${!attackTargetId ? ' dim' : ''}`}>
-                {attackTargetId ? `${targetDotStacks} / ${dotMax}` : 'No target'}
-              </span>
+          <div className={`stat-section dot-stat-panel dot-stat-panel--${path}`}>
+            <div className="stat-section-title">Damage over time</div>
+            <div className="dot-stat-grid">
+              <DotStatCell
+                label="Direct"
+                value={`${directPct}%`}
+                help={
+                  <>
+                    <div>The part of each hit that remains as immediate direct damage after DoT conversion.</div>
+                    <div style={{ marginTop: 6 }}>Hit-specific bonuses still affect this direct portion before conversion is applied.</div>
+                  </>
+                }
+              />
+              <DotStatCell
+                label="DoT"
+                value={`${dotPct}%`}
+                help={
+                  <>
+                    <div>The attack share converted into class DoT stack power.</div>
+                    <div style={{ marginTop: 6 }}>This is generated from your Attack stat, not from final hit damage, so empowered hits and first-hit multipliers do not inflate DoT stacks.</div>
+                  </>
+                }
+              />
+              <DotStatCell
+                label="Mult"
+                value={`x${profile.dotMechanicMultiplier.toFixed(2)}`}
+                help="The DoT class's dedicated mechanic multiplier. It is separate from empowered strike multipliers and only scales class DoT stack value."
+              />
+              <DotStatCell
+                label="Tick"
+                value={`${tickSec}s`}
+                help="How often active DoT stacks deal damage. Longer tick intervals hit less often but each stack is budgeted with the interval in mind."
+              />
+              <DotStatCell
+                label="Duration"
+                value={`${durationSec}s`}
+                help="How long stacks last without being refreshed by another qualifying hit. Reapplying the DoT refreshes this timer."
+              />
+              <DotStatCell
+                label="Stack"
+                value={`${damagePerStack}/tick`}
+                help={
+                  <>
+                    <div>The per-stack tick value generated from Attack, conversion, tick interval, and the DoT multiplier.</div>
+                    <div style={{ marginTop: 6 }}>The actual tick uses the class stack curve, so partial stacks hit harder than simple linear scaling while full stacks equal this value times max stacks.</div>
+                  </>
+                }
+              />
             </div>
+            <div className="dot-stat-summary">
+              <DotSummaryValue
+                label="Max tick"
+                value={maxTickDamage}
+                help="Estimated tick damage at full stacks before target-side modifiers such as Smoldering Ember, Frozen, mitigation, or special spec exceptions."
+              />
+              <DotSummaryValue
+                label="DoT DPS"
+                value={maxDotDps.toFixed(1)}
+                help="Estimated sustained DoT damage per second at full stacks. This is max tick damage divided by tick interval and does not include the direct hit portion."
+              />
+            </div>
+            <StatRow
+              label={stackLabel}
+              value={attackTargetId ? `${targetDotStacks} / ${dotMax}` : 'No target'}
+              dim={!attackTargetId}
+              help="Current DoT stacks on your active target. This is target state from the server, so it only appears while you have a valid attack target."
+            />
 
             {usePips ? (
               <div className="dot-pips">
@@ -250,7 +371,7 @@ export function ArchetypeMechanics() {
               <div className="dot-stack-bar-track">
                 <div
                   className={`dot-stack-bar-fill dot-stack-bar-fill--${path}`}
-                  style={{ width: `${Math.min(100, (targetDotStacks / dotMax) * 100)}%` }}
+                  style={{ width: `${targetPct}%` }}
                 />
               </div>
             )}

@@ -64,6 +64,8 @@ Actions:
 - `follow-and-assist`
 - `focus-closest`
 - `focus-lowest-hp`
+- `let-dots-finish` (shown as "Let DoTs Finish"; DoT classes only)
+- `spread-dots` (shown as "Spread DoTs"; DoT classes only)
 - `tactical-reload` (shown as "Reload Safely"; reload classes only)
 - `wait-for-execution` (shown as "Ready Execution"; cooldown classes only)
 - `wait-for-regen` (shown as "Recover First")
@@ -101,9 +103,10 @@ Recipe kinds:
 - `unlock-rune`: unlocks one condition or response fragment.
 - `increase-rune-points`: permanently increases maximum rune points.
 
-Recipes are hidden until their `requiredBossClear` token is present in
-`bossesCleared` (for example, `forest:1`). Crafting is one-time only and costs
-essence. Test room bypasses cost gates for playtesting.
+Recipes show in the forge before their boss is cleared, but cannot be crafted
+until their `requiredBossClear` token is present in `bossesCleared` (for example,
+`forest:1`). Crafting is one-time only and costs essence. Test room bypasses cost
+gates for playtesting.
 
 The server applies rune forge crafts through
 `server/src/systems/player/economy/runeCrafting.ts`. It validates:
@@ -156,6 +159,8 @@ The derived rune result is translated into existing AI controls:
 - `lead-the-way` sets `rune.leadTheWay` and uses the same local enemy-search
   behavior as `auto-path-enemy` while out of combat
 - `taunt-current-target` sets `rune.tauntCurrentTarget`
+- `let-dots-finish` sets `rune.letDotsFinish`
+- `spread-dots` sets `rune.spreadDots`
 - `always -> auto-path-enemy` can claim search even while combat state is active,
   so scouting does not wait for combat to fully drop
 - targeting actions map onto existing `AutocombatConfig` priority/focus fields
@@ -187,6 +192,15 @@ no separate reload command has been added yet.
 
 `wait-for-execution` stops cooldown classes out of combat until their execution
 is armed (`hasEmpoweredAttack`), then normal targeting/search resumes.
+
+`let-dots-finish` restores the old DoT-class behavior as an explicit rune:
+targets whose current DoT projection should finish them receive a targeting
+penalty, so the player can move pressure elsewhere. Without this rune, DoT
+classes no longer abandon those targets by default.
+
+`spread-dots` is a DoT-class multidot response. During target scoring it prefers
+enemies missing the player's DoT, then enemies with expiring or incomplete DoT
+stacks, so the player rotates pressure across multi-enemy fights.
 
 `rune.tauntCurrentTarget` is read by
 `server/src/systems/combat/ai/taunt.ts`. On direct player hits, it forces the

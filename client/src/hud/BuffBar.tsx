@@ -23,6 +23,7 @@ function BuffIcon({ buff }: { buff: PlayerBuff }) {
       ? "buff-icon"
       : `buff-icon buff-cat-${buff.category}`;
   const hasDuration = buff.durationPct >= 0;
+  const showStacks = buff.stacks > 1 || (buff.id === "debuff-dot" && buff.stacks > 0);
 
   // Sweep overlay: darkened area sweeps clockwise from the top as the buff elapses.
   // At 100% remaining → 0% dark (fully visible); at 0% remaining → 100% dark.
@@ -41,45 +42,62 @@ function BuffIcon({ buff }: { buff: PlayerBuff }) {
     >
       {/* Icon with optional clock-sweep overlay */}
       <div
-        className={catClass}
         style={{
           position: "relative",
           width: ICON_SIZE,
           height: ICON_SIZE,
-          backgroundColor: buff.color,
-          border: "1.5px solid rgba(255,255,255,0.22)",
-          boxShadow: `0 0 10px ${buff.color}99, 0 0 3px rgba(0,0,0,0.7)`,
           flexShrink: 0,
-          ...shapeStyle,
         }}
       >
-        {/* Clockface darkening overlay — grows clockwise from the top as time elapses */}
-        {hasDuration && (
-          <div
-            style={{
-              position: "absolute",
-              inset: 0,
-              background: `conic-gradient(from -90deg, rgba(0,0,0,0.68) ${elapsed}%, transparent ${elapsed}%)`,
-              borderRadius: "inherit",
-              clipPath: shapeStyle.clipPath as string | undefined,
-              pointerEvents: "none",
-            }}
-          />
-        )}
+        <div
+          className={catClass}
+          style={{
+            position: "absolute",
+            inset: 0,
+            backgroundColor: buff.color,
+            border: "1.5px solid rgba(255,255,255,0.22)",
+            boxShadow: `0 0 10px ${buff.color}99, 0 0 3px rgba(0,0,0,0.7)`,
+            ...shapeStyle,
+          }}
+        >
+          {/* Clockface darkening overlay — grows clockwise from the top as time elapses */}
+          {hasDuration && (
+            <div
+              style={{
+                position: "absolute",
+                inset: 0,
+                background: `conic-gradient(from -90deg, rgba(0,0,0,0.68) ${elapsed}%, transparent ${elapsed}%)`,
+                borderRadius: "inherit",
+                clipPath: shapeStyle.clipPath as string | undefined,
+                pointerEvents: "none",
+              }}
+            />
+          )}
+        </div>
 
-        {/* Stack count badge — bottom-right corner, above the sweep */}
-        {buff.stacks > 1 && (
+        {/* Stack count badge: outside clipped shapes so diamond icons do not crop it. */}
+        {showStacks && (
           <span
             style={{
               position: "absolute",
-              bottom: 3,
-              right: 4,
+              bottom: -1,
+              right: -3,
+              minWidth: 16,
+              height: 16,
+              padding: "0 3px",
+              borderRadius: 8,
+              background: "rgba(0,0,0,0.78)",
+              border: "1px solid rgba(255,255,255,0.55)",
               fontSize: 12,
               fontWeight: "bold",
               fontFamily: "monospace",
               color: "#fff",
-              textShadow: "1px 1px 0 #000, -1px 0 0 #000",
+              textAlign: "center",
+              textShadow: "1px 1px 0 #000",
               lineHeight: 1,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
               zIndex: 2,
             }}
           >
@@ -126,7 +144,7 @@ export function BuffBar() {
       }}
     >
       {buffs.map((buff) => (
-        <BuffIcon key={buff.id} buff={buff} />
+        <BuffIcon key={`${buff.iconKey}:${buff.id}`} buff={buff} />
       ))}
     </div>
   );

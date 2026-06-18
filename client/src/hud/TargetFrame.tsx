@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useAtomValue } from 'jotai';
-import { dotElementForPlayer } from '@mmo-idle/shared';
+import { dotElementForPlayer, weaponDotProfileForEffect } from '@mmo-idle/shared';
 import { targetFrameAtom, zoneBossAtom, combatArchetypeAtom, passivesAtom, selectedSubVariantAtom, type TargetFrameData } from './atoms';
 import { statusMeta, bossEffectMeta } from './targetStatusMeta';
 
@@ -21,6 +21,7 @@ const LINGER_MS = 800;
 
 interface TileData {
   key: string;
+  id: string;
   label: string;
   color: string;
   stacks: number;
@@ -28,7 +29,7 @@ interface TileData {
   totalMs: number;
 }
 
-function StatusTile({ label, color, stacks, remainingMs, totalMs }: Omit<TileData, 'key'>) {
+function StatusTile({ id, label, color, stacks, remainingMs, totalMs }: Omit<TileData, 'key'>) {
   const permanent = remainingMs < 0;
   const durationPct = !permanent && totalMs > 0
     ? Math.max(0, Math.min(100, (remainingMs / totalMs) * 100))
@@ -39,7 +40,11 @@ function StatusTile({ label, color, stacks, remainingMs, totalMs }: Omit<TileDat
     : remainingMs >= 1000 ? `${Math.ceil(remainingMs / 1000)}s`
     : remainingMs > 0 ? '<1s' : '';
 
-  const tip = `${label}${stacks > 1 ? ` ×${stacks}` : ''}`
+  const isWeaponReservoir = weaponDotProfileForEffect(id) !== undefined;
+  const stackText = isWeaponReservoir && stacks > 0
+    ? ` — ${stacks} stored damage`
+    : stacks > 1 ? ` ×${stacks}` : '';
+  const tip = `${label}${stackText}`
     + (permanent ? ' — permanent' : secs ? ` — ${secs} left` : '');
   const { handlers, node } = useHoverTooltip(tip);
 
@@ -53,8 +58,10 @@ function StatusTile({ label, color, stacks, remainingMs, totalMs }: Omit<TileDat
           />
         )}
         {durationPct < 0 && !permanent && secs && <span className="tf-tile__secs">{secs}</span>}
-        {permanent && stacks <= 1 && <span className="tf-tile__secs">∞</span>}
-        {stacks > 1 && <span className="tf-tile__stacks">{stacks}</span>}
+        {permanent && !isWeaponReservoir && stacks <= 1 && <span className="tf-tile__secs">∞</span>}
+        {((isWeaponReservoir && stacks > 0) || (!isWeaponReservoir && stacks > 1)) && (
+          <span className="tf-tile__stacks">{stacks}</span>
+        )}
       </div>
       <span className="tf-tile__label" style={{ color }}>{label}</span>
       {node}
@@ -98,6 +105,7 @@ export function TargetFrame() {
       const meta = statusMeta(s.id);
       return {
         key: `s-${s.id}`,
+        id: s.id,
         ...meta,
         color: s.id === 'dot' && dotColor ? dotColor : meta.color,
         stacks: s.stacks,
@@ -108,6 +116,7 @@ export function TargetFrame() {
     ...(shown.isBoss
       ? shown.bossEffects.map((b) => ({
           key: `b-${b}`,
+          id: b,
           ...bossEffectMeta(b),
           stacks: 1,
           remainingMs: -1,
@@ -140,6 +149,7 @@ export function TargetFrame() {
             <StatusTile
               key={t.key}
               label={t.label}
+              id={t.id}
               color={t.color}
               stacks={t.stacks}
               remainingMs={t.remainingMs}

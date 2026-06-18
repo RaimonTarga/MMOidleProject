@@ -3,7 +3,7 @@ import {
   applyStatusEffect,
   getStatusEffect,
   removeStatusEffect,
-  computeScaledDotDamage,
+  computeReservoirDotTick,
   getCounter,
   addCounter,
   getFlag,
@@ -15,19 +15,13 @@ import {
   setString,
   SACRED_FAMILY,
   BURN_FAMILY,
+  weaponDotProfileForWeapon,
   SACRED_DMG_MULT,
   SACRED_APS_MULT,
-  ASHBRAND_DURATION_MS,
-  ASHBRAND_TICK_MS,
-  EDGE_OF_OBLIVION_ID,
   BRITTLE_EFFECT_ID,
   BRITTLE_DURATION_MS,
   DR_SHATTER_EFFECT_ID,
   VOID_CORRUPTION_EFFECT_ID,
-  CORRUPTION_MAX_STACKS,
-  CORRUPTION_CONV_PCT,
-  CORRUPTION_TICK_MS,
-  CORRUPTION_DURATION_MS,
   CORRUPTION_SLOW_PER_STACK,
   type DamageElement,
 } from "@mmo-idle/shared";
@@ -48,6 +42,7 @@ import { actorFromSourceId } from "../../../world/worldLogActors";
 import { isInvulnerableMonster } from "../invulnerability";
 import { evadeBlocksDebuffs } from "../../defense/mitigation/evasion";
 import { pushDotTickEvent } from "./dotTickEvent";
+import { emitPlayerMonsterOnKill } from "./killHooks";
 
 // ── Internal combat state keys ────────────────────────────────────────────────
 
@@ -61,7 +56,9 @@ const SACRED_CD_KEY = "sacredCd";
 const SACRED_BUFF_TIMER = "sacredBufTimer";
 const SACRED_ORIG_CD = "sacredOrigCd";
 
-const BURN_EFFECT_IDS = BURN_FAMILY.map((b) => b.effectId);
+const BURN_EFFECT_IDS = BURN_FAMILY
+  .filter((b) => b.effectId !== VOID_CORRUPTION_EFFECT_ID)
+  .map((b) => b.effectId);
 const BURN_ELEMENT_BY_EFFECT_ID: Record<string, DamageElement> =
   Object.fromEntries(BURN_FAMILY.map((b) => [b.effectId, b.element]));
 
@@ -240,80 +237,56 @@ export function initWeaponEffects(): void {
     ctx.metadata["sacredBurst"] = true;
   });
 
-  // ── Burn family: convPct of hit → stacking burn, remainder dealt directly ────
-  for (const { weaponId, effectId, convPct, maxStacks } of BURN_FAMILY) {
-    registerCombatListener("onHit", (ctx, world) => {
-      if (ctx.attackerType !== "player") return;
-      if (ctx.defenderType !== "monster") return;
-      const player = ctx.attacker;
-      if (player.holdsInventory.equipment.weapon !== weaponId) return;
-      if (evadeBlocksDebuffs(ctx)) return; // dodged hit applies no burn stacks
-
-      const monsterState = ctx.defender.tracksCombat;
-
-      const damagePerStack = Math.max(
-        1,
-        Math.round((player.dealsDamage.attack * convPct) / maxStacks),
-      );
-      const effect = applyStatusEffect(monsterState, {
-        id: effectId,
-        maxStacks,
-        instanced: false,
-        sourceId: player.isPlayer.id,
-        remainingMs: ASHBRAND_DURATION_MS,
-        refreshable: true,
-        data: {
-          damagePerStack,
-          nextTickIn: ASHBRAND_TICK_MS,
-          tickIntervalMs: ASHBRAND_TICK_MS,
-        },
-      });
-      // Keep per-stack damage in sync with current attack so buffs apply immediately.
-      effect.data.damagePerStack = damagePerStack;
-      attachMarker(world, ctx.defender, "hasAshbrandBurn");
-
-      ctx.damage = Math.max(1, Math.round(ctx.damage * (1 - convPct)));
-    });
-  }
-
-  // ── Edge of Oblivion: corruption stacks (DoT tick + move slow per stack) ─────
+  // ── Generic weapon reservoir DoTs: convert remaining direct damage into a pool.
   registerCombatListener("onHit", (ctx, world) => {
     if (ctx.attackerType !== "player") return;
     if (ctx.defenderType !== "monster") return;
     const player = ctx.attacker;
-    if (player.holdsInventory.equipment.weapon !== EDGE_OF_OBLIVION_ID) return;
-    if (evadeBlocksDebuffs(ctx)) return; // dodged hit applies no corruption
+    const weaponId = player.holdsInventory.equipment.weapon;
+    if (!weaponId) return;
+    const profile = weaponDotProfileForWeapon(weaponId);
+    if (!profile) return;
+    if (evadeBlocksDebuffs(ctx)) return;
 
-    const p = player.usesSkills.passives;
-    const convPct = p["dot.conversion-pct"] ?? CORRUPTION_CONV_PCT;
-    const tickIntervalMs = Math.max(
-      100,
-      Math.round(p["dot.tick-interval-ms"] ?? CORRUPTION_TICK_MS),
-    );
-    const durationMs = Math.round(p["dot.duration-ms"] ?? CORRUPTION_DURATION_MS);
-    const damagePerStack = Math.max(
-      1,
-      Math.round((player.dealsDamage.attack * convPct) / CORRUPTION_MAX_STACKS),
-    );
+    const empoweredBonus =
+      typeof ctx.metadata["empoweredBonus"] === "number"
+        ? ctx.metadata["empoweredBonus"]
+        : 0;
+    const reservoirBasis = Math.max(0, ctx.damage - empoweredBonus);
+    const poolGain = reservoirBasis * profile.convPct * profile.dotMultiplier;
 
     const effect = applyStatusEffect(ctx.defender.tracksCombat, {
-      id: VOID_CORRUPTION_EFFECT_ID,
-      maxStacks: CORRUPTION_MAX_STACKS,
+      id: profile.effectId,
+      maxStacks: 1,
       instanced: false,
       sourceId: player.isPlayer.id,
-      remainingMs: durationMs,
+      remainingMs: profile.drainDurationMs,
       refreshable: true,
       data: {
-        damagePerStack,
-        nextTickIn: tickIntervalMs,
-        tickIntervalMs,
-        slowPerStack: CORRUPTION_SLOW_PER_STACK,
+        pool: 0,
+        nextTickIn: profile.tickIntervalMs,
+        tickIntervalMs: profile.tickIntervalMs,
+        tickOnExpire: 1,
+        drainDurationMs: profile.drainDurationMs,
+        dotMultiplier: profile.dotMultiplier,
+        slowPerStack: profile.slowPerStack ?? 0,
       },
     });
-    effect.data.damagePerStack = damagePerStack;
-    effect.data.tickIntervalMs = tickIntervalMs;
-    effect.data.slowPerStack = CORRUPTION_SLOW_PER_STACK;
-    attachMarker(world, ctx.defender, "hasVoidCorruption");
+
+    effect.data.pool = (effect.data.pool ?? 0) + poolGain;
+    effect.data.tickIntervalMs = profile.tickIntervalMs;
+    effect.data.tickOnExpire = 1;
+    effect.data.drainDurationMs = profile.drainDurationMs;
+    effect.data.dotMultiplier = profile.dotMultiplier;
+    effect.data.slowPerStack = profile.slowPerStack ?? 0;
+
+    if (profile.effectId === VOID_CORRUPTION_EFFECT_ID) {
+      attachMarker(world, ctx.defender, "hasVoidCorruption");
+    } else {
+      attachMarker(world, ctx.defender, "hasAshbrandBurn");
+    }
+
+    ctx.damage = Math.max(1, Math.round(ctx.damage * (1 - profile.convPct)));
   });
 }
 
@@ -431,7 +404,7 @@ function updateSacredCrossBuff(world: World): void {
 // ── Edge of Oblivion corruption tick ─────────────────────────────────────────
 
 function updateCorruptionEffects(world: World, dt: number): void {
-  const toKill: Array<{ monsterId: string; sourceId: string }> = [];
+  const toKill: Array<{ monsterId: string; sourceId: string; damage: number }> = [];
   const killed = new Set<string>();
 
   for (const e of world.voidCorruptionMonsters) {
@@ -453,30 +426,47 @@ function updateCorruptionEffects(world: World, dt: number): void {
     effect.data.nextTickIn -= dt;
     if (effect.data.nextTickIn <= 0) {
       effect.data.nextTickIn = effect.data.tickIntervalMs;
-      const damage = Math.max(1, computeScaledDotDamage(effect));
+      const damage = Math.round(computeReservoirDotTick(
+        effect.data.pool ?? 0,
+        effect.data.tickIntervalMs,
+        effect.data.drainDurationMs,
+      ));
+      if (damage <= 0) {
+        if (effect.remainingMs <= 0) {
+          removeStatusEffect(state, VOID_CORRUPTION_EFFECT_ID);
+          detachMarkerIfNoEffect(world, e, "hasVoidCorruption", state, VOID_CORRUPTION_EFFECT_ID);
+        }
+        continue;
+      }
+      effect.data.pool = Math.max(0, (effect.data.pool ?? 0) - damage);
       recordMonsterDamagedByPlayer(
         world,
         effect.sourceId,
         actorFromSourceId(world, effect.sourceId),
         e,
         damage,
-        "dot",
+        "weapon-dot",
         buildSimpleBreakdown(damage, damage),
       );
       e.hasHealth.hp -= damage;
+      pushDotTickEvent(world, e, BURN_ELEMENT_BY_EFFECT_ID[effect.id] ?? "doom", damage, { sourceType: "weapon" });
 
       if (e.hasHealth.hp <= 0 && !killed.has(monsterId)) {
         killed.add(monsterId);
-        toKill.push({ monsterId, sourceId: effect.sourceId });
+        toKill.push({ monsterId, sourceId: effect.sourceId, damage });
+      } else if (effect.remainingMs <= 0) {
+        removeStatusEffect(state, VOID_CORRUPTION_EFFECT_ID);
+        detachMarkerIfNoEffect(world, e, "hasVoidCorruption", state, VOID_CORRUPTION_EFFECT_ID);
       }
     }
   }
 
-  for (const { monsterId, sourceId } of toKill) {
+  for (const { monsterId, sourceId, damage } of toKill) {
     const monster = world.getMonsterEntity(monsterId);
     if (monster && sourceId) {
+      emitPlayerMonsterOnKill(world, sourceId, monster, damage, "weapon-dot");
       const rewardInfo = grantMonsterRewards(world, sourceId, monster);
-      recordPlayerKillMonster(world, sourceId, monster, 0, rewardInfo);
+      recordPlayerKillMonster(world, sourceId, monster, damage, rewardInfo);
     }
     world.removeMonsterEntity(monsterId);
   }
@@ -485,7 +475,7 @@ function updateCorruptionEffects(world: World, dt: number): void {
 // ── Burn family tick (ashbrand / cinderfang / frostmourne) ────────────────────
 
 function updateBurnEffects(world: World, dt: number): void {
-  const toKill: Array<{ monsterId: string; sourceId: string }> = [];
+  const toKill: Array<{ monsterId: string; sourceId: string; damage: number }> = [];
   const killed = new Set<string>();
 
   for (const e of world.ashbrandMonsters) {
@@ -500,22 +490,33 @@ function updateBurnEffects(world: World, dt: number): void {
       effect.data.nextTickIn -= dt;
       if (effect.data.nextTickIn <= 0) {
         effect.data.nextTickIn = effect.data.tickIntervalMs;
-        const damage = Math.max(1, computeScaledDotDamage(effect));
+        const damage = Math.round(computeReservoirDotTick(
+          effect.data.pool ?? 0,
+          effect.data.tickIntervalMs,
+          effect.data.drainDurationMs,
+        ));
+        if (damage <= 0) {
+          if (effect.remainingMs <= 0) removeStatusEffect(state, effectId);
+          continue;
+        }
+        effect.data.pool = Math.max(0, (effect.data.pool ?? 0) - damage);
         recordMonsterDamagedByPlayer(
           world,
           effect.sourceId,
           actorFromSourceId(world, effect.sourceId),
           e,
           damage,
-          'proc',
+          'weapon-dot',
           buildSimpleBreakdown(damage, damage),
         );
         e.hasHealth.hp -= damage;
-        pushDotTickEvent(world, e, BURN_ELEMENT_BY_EFFECT_ID[effectId] ?? "fire", damage);
+        pushDotTickEvent(world, e, BURN_ELEMENT_BY_EFFECT_ID[effectId] ?? "fire", damage, { sourceType: "weapon" });
 
         if (e.hasHealth.hp <= 0 && !killed.has(monsterId)) {
           killed.add(monsterId);
-          toKill.push({ monsterId, sourceId: effect.sourceId });
+          toKill.push({ monsterId, sourceId: effect.sourceId, damage });
+        } else if (effect.remainingMs <= 0) {
+          removeStatusEffect(state, effectId);
         }
       }
     }
@@ -527,11 +528,12 @@ function updateBurnEffects(world: World, dt: number): void {
     }
   }
 
-  for (const { monsterId, sourceId } of toKill) {
+  for (const { monsterId, sourceId, damage } of toKill) {
     const monster = world.getMonsterEntity(monsterId);
     if (monster && sourceId) {
+      emitPlayerMonsterOnKill(world, sourceId, monster, damage, "weapon-dot");
       const rewardInfo = grantMonsterRewards(world, sourceId, monster);
-      recordPlayerKillMonster(world, sourceId, monster, 0, rewardInfo);
+      recordPlayerKillMonster(world, sourceId, monster, damage, rewardInfo);
     }
     world.removeMonsterEntity(monsterId);
   }

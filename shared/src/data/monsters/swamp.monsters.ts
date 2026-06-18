@@ -38,7 +38,7 @@ export const swampMonsterEntries = [
     behavior: 'melee', attackStyle: 'poison', biome: 'swamp',
     rewards: { essence: 5, essenceType: 'purple', level: 1, biomeXp: 35 },
     ai: { wanderRadius: 160, leashRange: 530, idleMinMs: 2000, idleMaxMs: 5500 },
-    dotEffect: { damagePerStack: 3, maxStacks: 4, tickIntervalMs: 1000, durationMs: 2400 },
+    dotEffect: { debuffId: 'swamp-poison', label: 'Poison', damagePerStack: 3, maxStacks: 4, tickIntervalMs: 1500, durationMs: 3000 },
   }],
 
   ['mud-toad', {
@@ -48,7 +48,7 @@ export const swampMonsterEntries = [
     behavior: 'melee', attackStyle: 'poison', biome: 'swamp',
     rewards: { essence: 6, essenceType: 'purple', level: 1, biomeXp: 42 },
     ai: { wanderRadius: 180, leashRange: 550, idleMinMs: 1800, idleMaxMs: 5000 },
-    dotEffect: { damagePerStack: 4, maxStacks: 4, tickIntervalMs: 1000, durationMs: 2600 },
+    dotEffect: { debuffId: 'swamp-poison', label: 'Poison', damagePerStack: 3, maxStacks: 4, tickIntervalMs: 1500, durationMs: 3000 },
   }],
 
   // ── SWAMP T2 — DoT engines; trivial direct hits, brutal stacking poison ──
@@ -60,7 +60,7 @@ export const swampMonsterEntries = [
     behavior: 'melee', attackStyle: 'poison', biome: 'swamp',
     rewards: { essence: 12, essenceType: 'purple', level: 1, biomeXp: 68 },
     ai: { wanderRadius: 170, leashRange: 560, idleMinMs: 2500, idleMaxMs: 7000 },
-    dotEffect: { damagePerStack: 8, maxStacks: 5, tickIntervalMs: 1000, durationMs: 2400 },
+    dotEffect: { debuffId: 'hydra-venom', label: 'Hydra Venom', damagePerStack: 8, maxStacks: 5, tickIntervalMs: 1000, durationMs: 2400 },
   }],
 
   ['bog-witch', {
@@ -70,7 +70,7 @@ export const swampMonsterEntries = [
     behavior: 'melee', attackStyle: 'magic', isRanged: true, biome: 'swamp',
     rewards: { essence: 11, essenceType: 'purple', level: 1, biomeXp: 62 },
     ai: { wanderRadius: 200, leashRange: 580, idleMinMs: 1500, idleMaxMs: 4500 },
-    dotEffect: { damagePerStack: 6, maxStacks: 4, tickIntervalMs: 1000, durationMs: 2400 },
+    dotEffect: { debuffId: 'swamp-hex', label: 'Swamp Hex', damagePerStack: 6, maxStacks: 4, tickIntervalMs: 1000, durationMs: 2400 },
   }],
 
   ['mire-stalker', {
@@ -80,7 +80,7 @@ export const swampMonsterEntries = [
     behavior: 'melee', attackStyle: 'poison', biome: 'swamp',
     rewards: { essence: 13, essenceType: 'purple', level: 1, biomeXp: 75 },
     ai: { wanderRadius: 170, leashRange: 540, idleMinMs: 2000, idleMaxMs: 6000 },
-    dotEffect: { damagePerStack: 6, maxStacks: 4, tickIntervalMs: 1000, durationMs: 2800 },
+    dotEffect: { debuffId: 'stalker-venom', label: 'Stalker Venom', damagePerStack: 6, maxStacks: 4, tickIntervalMs: 1000, durationMs: 2800 },
     evasion: 0.2,
   }],
 
@@ -95,7 +95,7 @@ export const swampMonsterEntries = [
     behavior: 'melee', attackStyle: 'poison', biome: 'swamp',
     rewards: { essence: 65, essenceType: 'purple', level: 3, biomeXp: 390 },
     ai: { wanderRadius: 150, leashRange: 520, idleMinMs: 2800, idleMaxMs: 8000 },
-    dotEffect: { damagePerStack: 16, maxStacks: 6, tickIntervalMs: 1000, durationMs: 6000 },
+    dotEffect: { debuffId: 'plague-venom', label: 'Plague', damagePerStack: 16, maxStacks: 6, tickIntervalMs: 1000, durationMs: 6000 },
   }],
 
   ['mire-hex-spitter', {
@@ -106,7 +106,7 @@ export const swampMonsterEntries = [
     behavior: 'melee', attackStyle: 'magic', isRanged: true, kite: true, biome: 'swamp',
     rewards: { essence: 35, essenceType: 'purple', level: 2, biomeXp: 210 },
     ai: { wanderRadius: 200, leashRange: 580, idleMinMs: 1500, idleMaxMs: 4500 },
-    dotEffect: { damagePerStack: 12, maxStacks: 5, tickIntervalMs: 1000, durationMs: 4500 },
+    dotEffect: { debuffId: 'mire-hex', label: 'Mire Hex', damagePerStack: 12, maxStacks: 5, tickIntervalMs: 1000, durationMs: 4500 },
   }],
 
   ['bog-lurker', {
@@ -118,7 +118,7 @@ export const swampMonsterEntries = [
     rewards: { essence: 57, essenceType: 'purple', level: 3, biomeXp: 345 },
     ai: { wanderRadius: 160, leashRange: 540, idleMinMs: 2200, idleMaxMs: 6500 },
     evasion: 0.25,
-    dotEffect: { damagePerStack: 14, maxStacks: 5, tickIntervalMs: 1000, durationMs: 4500 },
+    dotEffect: { debuffId: 'lurker-venom', label: 'Lurker Venom', damagePerStack: 14, maxStacks: 5, tickIntervalMs: 1000, durationMs: 4500 },
   }],
 
 

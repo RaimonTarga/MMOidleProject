@@ -195,7 +195,7 @@ export function updateMovement(world: World, dt: number, now: number) {
     const corruptionMult = corruption
       ? Math.max(
           CORRUPTION_MIN_SPEED_MULT,
-          1 - corruption.stacks * (corruption.data.slowPerStack ?? CORRUPTION_SLOW_PER_STACK),
+          1 - (corruption.data.slowPerStack ?? CORRUPTION_SLOW_PER_STACK),
         )
       : 1;
     processMoverStep(world, e, dt, corruptionMult, 'monster', now);

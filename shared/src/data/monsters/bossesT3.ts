@@ -48,7 +48,7 @@ export const bossMonsterEntriesT3 = [
     rewards: { essence: 345, essenceType: 'purple', level: 5, biomeXp: 518 },
     ai: { wanderRadius: 105, leashRange: 880, idleMinMs: 2800, idleMaxMs: 7000 },
     chargeOnAggro: { speedMult: 2.0, durationMs: 1200 },
-    dotEffect: { damagePerStack: 16, maxStacks: 6, tickIntervalMs: 1000, durationMs: 6000 },
+    dotEffect: { debuffId: 'rot-spore-plague', label: 'Rot Spores', damagePerStack: 16, maxStacks: 6, tickIntervalMs: 1000, durationMs: 6000 },
     aoeAttack: { radius: 120, damageMult: 0.6 },
     bossScript: {
       phases: [

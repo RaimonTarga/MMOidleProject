@@ -135,14 +135,28 @@ export function tickCooldowns(state: TracksCombat, dt: number): void {
 /**
  * Decrement remainingMs on all duration-based status effects and prune expired ones.
  * Permanent effects (remainingMs === -1) are unaffected.
+ *
+ * Tick-driven effects can opt into a same-step final tick with data.tickOnExpire = 1.
+ * This keeps the effect alive only when its next owner-managed tick is due during
+ * the same dt that expires the duration.
  */
 export function tickStatusEffectDurations(state: TracksCombat, dt: number): void {
+  const keepForFinalTick = new Set<StatusEffect>();
   for (const effect of state.statusEffects) {
     if (effect.remainingMs > 0) {
       effect.remainingMs -= dt;
       if (effect.remainingMs < 0) effect.remainingMs = 0;
+      if (
+        effect.remainingMs === 0 &&
+        effect.data['tickOnExpire'] === 1 &&
+        (effect.data['nextTickIn'] ?? Infinity) <= dt
+      ) {
+        keepForFinalTick.add(effect);
+      }
     }
   }
-  state.statusEffects = state.statusEffects.filter(e => e.remainingMs !== 0);
+  state.statusEffects = state.statusEffects.filter(e =>
+    e.remainingMs !== 0 || keepForFinalTick.has(e),
+  );
 }
 

@@ -24,7 +24,11 @@ import {
   type AutocombatPriorityMode,
   type UsesAutocombat,
 } from "@mmo-idle/shared";
-import { RUNE_FLEE_FLAG } from "./runeConfig";
+import {
+  RUNE_FLEE_FLAG,
+  RUNE_LET_DOTS_FINISH_FLAG,
+  RUNE_SPREAD_DOTS_FLAG,
+} from "./runeConfig";
 import { effectivePartyLeaderId } from "../../player/party/partySystem";
 
 export type AutoCombatAction =
@@ -45,6 +49,8 @@ interface CandidateContext {
   skipBosses: boolean;
   now: number;
   acquireRadius: number;
+  letDotsFinish: boolean;
+  spreadDots: boolean;
 }
 
 const AUTO_TARGET_ID = "autoCombat.targetId";
@@ -78,6 +84,10 @@ const RANGED_ACQUIRE_MULT = 1.5;
 const ROOTED_ACQUIRE_MULT = 0.35;
 
 const DOT_OVERKILL_PENALTY = 2.0;
+const DOT_SPREAD_MISSING_BONUS = 2.4;
+const DOT_SPREAD_EXPIRING_BONUS = 1.4;
+const DOT_SPREAD_STACK_BONUS = 1.2;
+const DOT_SPREAD_REFRESH_MS = 1500;
 const AOE_CLUSTER_WEIGHT = 0.12;
 const QUEST_WEIGHT = 0.35;
 const BIOME_VALUE_WEIGHT = 0.12;
@@ -112,6 +122,8 @@ export function selectAutoCombatAction(
     skipBosses: shouldSkipBosses(player),
     now,
     acquireRadius: effectiveAcquireRadius(player, cfg, ranged),
+    letDotsFinish: getFlag(player.tracksCombat, RUNE_LET_DOTS_FINISH_FLAG),
+    spreadDots: getFlag(player.tracksCombat, RUNE_SPREAD_DOTS_FLAG),
   };
 
   const currentTargetId = getString(player.tracksCombat, AUTO_TARGET_ID);
@@ -277,8 +289,16 @@ function scoreCandidate(
       (monster.hasHealth.hp / Math.max(1, monster.hasHealth.maxHp));
   }
 
-  if (player.appliesDots && projectedDotDamage(monster) >= monster.hasHealth.hp) {
+  if (
+    ctx.letDotsFinish &&
+    player.appliesDots &&
+    projectedDotDamage(monster) >= monster.hasHealth.hp
+  ) {
     score -= DOT_OVERKILL_PENALTY;
+  }
+
+  if (ctx.spreadDots && player.appliesDots) {
+    score += dotSpreadValue(player, monster);
   }
 
   const leaderTargetId = partyLeaderTargetId(world, player);
@@ -488,6 +508,23 @@ function projectedDotDamage(monster: MonsterEntity): number {
   }
 
   return projected;
+}
+
+function dotSpreadValue(player: PlayerEntity, monster: MonsterEntity): number {
+  const effect = getStatusEffect(monster.tracksCombat, "dot");
+  if (!effect || effect.sourceId !== player.isPlayer.id) {
+    return DOT_SPREAD_MISSING_BONUS;
+  }
+
+  let score = 0;
+  if (effect.remainingMs >= 0 && effect.remainingMs <= DOT_SPREAD_REFRESH_MS) {
+    score += DOT_SPREAD_EXPIRING_BONUS;
+  }
+
+  const maxStacks = Math.max(1, effect.maxStacks);
+  const missingStacks = Math.max(0, maxStacks - effect.stacks);
+  score += DOT_SPREAD_STACK_BONUS * (missingStacks / maxStacks);
+  return score;
 }
 
 function partyLeaderTargetId(world: World, player: PlayerEntity): string | null {

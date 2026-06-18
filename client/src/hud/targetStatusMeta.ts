@@ -27,6 +27,7 @@ const STATUS_META: Record<string, StatusMeta> = {
   'swamp-frostbrand-burn':  { label: 'Chill', color: '#6fd0ff' },
   'swamp-rimebrand-burn':   { label: 'Chill', color: '#6fd0ff' },
   'rimebrand-burn':         { label: 'Chill', color: '#6fd0ff' },
+  'void-corruption':         { label: 'Corrupt', color: '#b06cff' },
   vuln:            { label: 'Vuln',    color: '#ff5577' },
   vulnerability:   { label: 'Vuln',    color: '#ff5577' },
 };

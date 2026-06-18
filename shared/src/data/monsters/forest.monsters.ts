@@ -32,7 +32,7 @@ export const forestMonsterEntries = [
   ['forest-slime', {
     id: 'forest-slime', name: 'Forest Slime', color: 0x55ff55,
     // Attacks faster than its plains cousin — frequency over force.
-    stats: { hp: 60, attack: 9, plating: 0, damageReduction: 0, speed: 54, attackRange: 12, attackCooldown: 1500, pullRange: 210 },
+    stats: { hp: 60, attack: 10, plating: 0, damageReduction: 0, speed: 54, attackRange: 12, attackCooldown: 1500, pullRange: 210 },
     behavior: 'melee', attackStyle: 'impact', biome: 'forest',
     rewards: { essence: 3, essenceType: 'green', level: 1, biomeXp: 18 },
     ai: { wanderRadius: 230, leashRange: 620, idleMinMs: 1200, idleMaxMs: 4000 },

@@ -2,6 +2,7 @@ import { getStatusEffect } from '@mmo-idle/shared';
 import type { World } from '../../../../../../world/World';
 import { markSliceDirty } from '../../../../../../ecs/dirtyHelpers';
 import { pushDotTickEvent } from '../../../../../combat/damage/dotTickEvent';
+import { emitPlayerMonsterOnKill } from '../../../../../combat/damage/killHooks';
 import { isInvulnerableMonster } from '../../../../../combat/invulnerability';
 import { grantMonsterRewards } from '../../../../../player/progression/rewards';
 import {
@@ -79,7 +80,7 @@ export function updateEnergyState(world: World, dt: number): void {
   // TODO(perf/engine): no marker query for storm yet; scans all monsters. Storm
   // transfer to the next target on death is also not yet implemented.
   if (!anyStorm) return;
-  const toKill: Array<{ monsterId: string; sourceId: string }> = [];
+  const toKill: Array<{ monsterId: string; sourceId: string; damage: number }> = [];
   for (const monster of world.monsterEntities) {
     const storm = getStatusEffect(monster.tracksCombat, STORM_FX);
     if (!storm) continue;
@@ -96,15 +97,18 @@ export function updateEnergyState(world: World, dt: number): void {
       'dot', buildSimpleBreakdown(dmg, dmg),
     );
     monster.hasHealth.hp -= dmg;
-    pushDotTickEvent(world, monster, 'lightning', dmg);
-    if (monster.hasHealth.hp <= 0) toKill.push({ monsterId: monster.isMonster.id, sourceId: storm.sourceId });
+    pushDotTickEvent(world, monster, 'lightning', dmg, { sourceType: 'special' });
+    if (monster.hasHealth.hp <= 0) {
+      toKill.push({ monsterId: monster.isMonster.id, sourceId: storm.sourceId, damage: dmg });
+    }
   }
 
-  for (const { monsterId, sourceId } of toKill) {
+  for (const { monsterId, sourceId, damage } of toKill) {
     const monster = world.getMonsterEntity(monsterId);
     if (monster && sourceId) {
+      emitPlayerMonsterOnKill(world, sourceId, monster, damage, 'dot');
       const rewardInfo = grantMonsterRewards(world, sourceId, monster);
-      recordPlayerKillMonster(world, sourceId, monster, 0, rewardInfo);
+      recordPlayerKillMonster(world, sourceId, monster, damage, rewardInfo);
     }
     if (monster) world.removeMonsterEntity(monsterId);
   }

@@ -96,7 +96,7 @@ export type BuffShape = 'square' | 'circle' | 'diamond' | 'small-square';
  * are server-only.
  *
  * Resilience notes:
- *   - `id` will be used as the sprite key when icons are added later.
+ *   - `iconKey` is the unique entry/sprite key; it defaults to `id`.
  *   - `durationPct` of -1 means the buff has no timer (permanent or count-based).
  *   - `stacks` of 1 means no stack badge is shown.
  *   - `color` is a CSS hex string used for the placeholder shape; replace with
@@ -122,7 +122,7 @@ export interface PlayerBuff {
   color: string;
   /** Buff bar category for CSS animation class. */
   category: BuffCategory;
-  /** Future sprite key; defaults to `id` until icon textures land. */
+  /** Unique icon/sprite key for this active entry; defaults to `id`. */
   iconKey: string;
   /** Placeholder shape token for inline CSS styling. */
   shape: BuffShape;

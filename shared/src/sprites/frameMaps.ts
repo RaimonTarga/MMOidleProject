@@ -8,6 +8,26 @@ export const PLAYER_FRAMES: Record<string, string> = {
   'energy':   'sprites/classes/energy.png',
   'reload':   'sprites/classes/reload.png',
 
+  'cadence-light':  'sprites/classes/light_cadence.png',
+  'cadence-balanced':'sprites/classes/medium_cadence.png',
+  'cadence-heavy':  'sprites/classes/heavy_cadence.png',
+
+  'cooldown-light':  'sprites/classes/light_cooldown.png',
+  'cooldown-balanced':'sprites/classes/medium_cooldown.png',
+  'cooldown-heavy':  'sprites/classes/heavy_cooldown.png',
+  
+  'dot-light':  'sprites/classes/light_dot.png',
+  'dot-balanced':'sprites/classes/medium_dot.png',
+  'dot-heavy':  'sprites/classes/heavy_dot.png',
+
+  'energy-light':  'sprites/classes/light_energy.png',
+  'energy-balanced':'sprites/classes/medium_energy.png',
+  'energy-heavy':  'sprites/classes/heavy_energy.png',
+  
+  'reload-light':  'sprites/classes/light_reload.png',
+  'reload-balanced':'sprites/classes/medium_reload.png',
+  'reload-heavy':  'sprites/classes/heavy_reload.png',
+
   'cadence-range-close': 'sprites/classes/in-fighter.png',
   'cadence-range-mid':   'sprites/classes/lancer.png',
   'cadence-range-far':   'sprites/classes/phantom-blade.png',

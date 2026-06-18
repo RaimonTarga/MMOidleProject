@@ -12,7 +12,7 @@ export interface WorldLogActor {
   ownerPlayerId?: string;
 }
 
-export type WorldLogDamageType = 'direct' | 'dot' | 'aoe' | 'debt' | 'proc';
+export type WorldLogDamageType = 'direct' | 'dot' | 'weapon-dot' | 'aoe' | 'debt' | 'proc';
 
 export interface DamageMitigationBreakdown {
   grossDamage: number;

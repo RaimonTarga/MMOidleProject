@@ -87,7 +87,7 @@ export const bossMonsterEntriesT2 = [
     behavior: 'melee', attackStyle: 'poison', biome: 'swamp',
     rewards: { essence: 155, essenceType: 'purple', level: 5, biomeXp: 232 },
     ai: { wanderRadius: 110, leashRange: 800, idleMinMs: 2500, idleMaxMs: 6000 },
-    dotEffect: { damagePerStack: 6, maxStacks: 4, tickIntervalMs: 1000, durationMs: 5000 },
+    dotEffect: { debuffId: 'mire-gorged-venom', label: 'Gorged Venom', damagePerStack: 6, maxStacks: 4, tickIntervalMs: 1000, durationMs: 5000 },
     aoeAttack: { radius: 120, damageMult: 0.6 },
     bossScript: {
       phases: [

@@ -61,7 +61,17 @@ export type BossAction =
       attackStyle?: string;
       attackRange?: number;
       /** Object sets a runtime DoT override; null clears it (revert to no DoT). */
-      dotEffect?: { damagePerStack: number; maxStacks: number; tickIntervalMs: number; durationMs?: number } | null;
+      dotEffect?: {
+        debuffId?: string;
+        label?: string;
+        color?: string;
+        damagePerStack: number;
+        maxStacks: number;
+        tickIntervalMs: number;
+        durationMs?: number;
+        element?: DamageElement;
+        bypassShield?: boolean;
+      } | null;
       kite?: boolean;
       /** When set, revert to pre-morph values after durationMs. Omit = permanent phase flip. */
       durationMs?: number;
@@ -252,6 +262,12 @@ export interface MonsterDefinition {
    * tickIntervalMs: time between DoT ticks in milliseconds.
    */
   dotEffect?: {
+    /** Stable debuff identity. Same id stacks together; different ids are separate debuffs. */
+    debuffId?: string;
+    /** Player-facing debuff label. Omitted falls back to biome/element flavor. */
+    label?: string;
+    /** Player-facing icon color. Omitted falls back to biome/element flavor. */
+    color?: string;
     damagePerStack: number;
     maxStacks: number;
     tickIntervalMs: number;

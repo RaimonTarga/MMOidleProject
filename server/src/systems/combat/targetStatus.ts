@@ -1,4 +1,8 @@
-import type { TargetStatusView, TracksCombat } from '@mmo-idle/shared';
+import {
+  weaponDotProfileForEffect,
+  type TargetStatusView,
+  type TracksCombat,
+} from '@mmo-idle/shared';
 import type { World } from '../../world/World';
 
 // Mirrors the full debuff list of each player's current attack target onto the
@@ -37,9 +41,10 @@ function buildTargetStatus(tracksCombat: TracksCombat): TargetStatusView[] {
   const out: TargetStatusView[] = [];
   for (const fx of tracksCombat.statusEffects) {
     if (fx.remainingMs === 0) continue; // expired this tick
+    const weaponDotProfile = weaponDotProfileForEffect(fx.id);
     out.push({
       id: fx.id,
-      stacks: fx.stacks,
+      stacks: weaponDotProfile ? Math.max(0, Math.round(fx.data.pool ?? 0)) : fx.stacks,
       remainingMs: fx.remainingMs,
       totalMs: fx.data.totalMs ?? 0,
     });

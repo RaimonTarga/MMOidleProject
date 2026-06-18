@@ -21,6 +21,32 @@ export function computeScaledDotDamage(effect: StatusEffect): number {
 }
 
 /**
+ * Linear tick formula for enemy pressure DoTs.
+ *
+ * Monster-applied DoTs are not player build mechanics, so they do not get the
+ * front-loaded class curve used by computeScaledDotDamage.
+ */
+export function computeLinearDotDamage(effect: StatusEffect): number {
+  return Math.round(effect.stacks * effect.data.damagePerStack);
+}
+
+/**
+ * Tick formula for generic weapon reservoir DoTs.
+ *
+ * Weapon DoTs store converted damage in `data.pool`, then drain a slice of that
+ * pool each tick. This keeps their long-fight identity without borrowing the
+ * front-loaded class DoT stack curve.
+ */
+export function computeReservoirDotTick(
+  pool: number,
+  tickIntervalMs: number,
+  drainDurationMs: number,
+): number {
+  if (pool <= 0 || tickIntervalMs <= 0 || drainDurationMs <= 0) return 0;
+  return Math.min(pool, Math.max(1, Math.round(pool * (tickIntervalMs / drainDurationMs))));
+}
+
+/**
  * Tick damage for Eternal Doom: full rate for the first ED_BASE_STACKS stacks,
  * 50% per stack beyond that.
  */

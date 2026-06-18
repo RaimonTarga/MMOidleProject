@@ -38,7 +38,7 @@ export const jungleMonsterEntries = [
     behavior: 'melee', attackStyle: 'poison', biome: 'jungle',
     rewards: { essence: 7, essenceType: 'green', level: 1, biomeXp: 38 },
     ai: { wanderRadius: 290, leashRange: 740, idleMinMs: 600, idleMaxMs: 2600 },
-    dotEffect: { damagePerStack: 6, maxStacks: 3, tickIntervalMs: 1000, durationMs: 1500 },
+    dotEffect: { debuffId: 'snake-venom', label: 'Snake Venom', damagePerStack: 6, maxStacks: 3, tickIntervalMs: 1000, durationMs: 1500 },
   }],
  
   ['jungle-ape', {
@@ -60,7 +60,7 @@ export const jungleMonsterEntries = [
     behavior: 'melee', attackStyle: 'poison', isRanged: true, biome: 'jungle',
     rewards: { essence: 7, essenceType: 'green', level: 1, biomeXp: 38 },
     ai: { wanderRadius: 250, leashRange: 660, idleMinMs: 1200, idleMaxMs: 4000 },
-    dotEffect: { damagePerStack: 6, maxStacks: 4, tickIntervalMs: 1000, durationMs: 2100 },
+    dotEffect: { debuffId: 'dart-poison', label: 'Dart Poison', damagePerStack: 6, maxStacks: 4, tickIntervalMs: 1000, durationMs: 2100 },
   }],
 
   // ══════════════════ JUNGLE — fast aggressive evasive swarm (Forest successor) ══════════════════
@@ -74,7 +74,7 @@ export const jungleMonsterEntries = [
     behavior: 'melee', attackStyle: 'poison', biome: 'jungle',
     rewards: { essence: 25, essenceType: 'green', level: 2, biomeXp: 150 },
     ai: { wanderRadius: 300, leashRange: 760, idleMinMs: 600, idleMaxMs: 2600 },
-    dotEffect: { damagePerStack: 4, maxStacks: 3, tickIntervalMs: 1200, durationMs: 3600 },
+    dotEffect: { debuffId: 'stalker-venom', label: 'Stalker Venom', damagePerStack: 4, maxStacks: 3, tickIntervalMs: 1200, durationMs: 3600 },
   }],
 
   ['silverback', {
@@ -129,7 +129,7 @@ export const jungleMonsterEntries = [
     behavior: 'melee', attackStyle: 'poison', isRanged: true, biome: 'jungle',
     rewards: { essence: 50, essenceType: 'green', level: 3, biomeXp: 300 },
     ai: { wanderRadius: 250, leashRange: 660, idleMinMs: 1200, idleMaxMs: 4000 },
-    dotEffect: { damagePerStack: 10, maxStacks: 5, tickIntervalMs: 1000, durationMs: 2500 },
+    dotEffect: { debuffId: 'thornback-venom', label: 'Thorn Venom', damagePerStack: 10, maxStacks: 5, tickIntervalMs: 1000, durationMs: 2500 },
   }],
 
   ['emerald-constrictor', {
@@ -142,7 +142,7 @@ export const jungleMonsterEntries = [
     rewards: { essence: 130, essenceType: 'green', level: 4, biomeXp: 780 },
     ai: { wanderRadius: 280, leashRange: 720, idleMinMs: 800, idleMaxMs: 3000 },
     cadenceFinisher: { everyNAttacks: 4, multiplier: 2.0 },   // 168
-    dotEffect: { damagePerStack: 12, maxStacks: 5, tickIntervalMs: 1000, durationMs: 3000 },
+    dotEffect: { debuffId: 'constrictor-venom', label: 'Constrictor Venom', damagePerStack: 12, maxStacks: 5, tickIntervalMs: 1000, durationMs: 3000 },
     evasion: 0.25,
   }],
 

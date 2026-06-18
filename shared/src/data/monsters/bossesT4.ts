@@ -156,7 +156,7 @@ export const bossMonsterEntriesT4 = [
     chargeOnAggro: { speedMult: 2.8, durationMs: 900 },
     evasion: 0.25,
     cadenceFinisher: { everyNAttacks: 5, multiplier: 2.1 },   // 235
-    dotEffect: { damagePerStack: 14, maxStacks: 5, tickIntervalMs: 1000, durationMs: 3500 },
+    dotEffect: { debuffId: 'verdant-crown-venom', label: 'Crown Venom', damagePerStack: 14, maxStacks: 5, tickIntervalMs: 1000, durationMs: 3500 },
     bossScript: {
       phases: [
         { hpPct: 0.5, actions: [
@@ -239,7 +239,7 @@ export const bossMonsterEntriesT4 = [
     chargeOnAggro: { speedMult: 2.5, durationMs: 1000 },
     aoeAttack: { radius: 130, damageMult: 0.6 },
     rampOnCombat: { stat: 'attack', perTickPct: 0.10, maxPct: 0.80, tickIntervalMs: 2000 },
-    dotEffect: { damagePerStack: 16, maxStacks: 5, tickIntervalMs: 1000, durationMs: 3000 },
+    dotEffect: { debuffId: 'caldera-burn', label: 'Caldera Burn', damagePerStack: 16, maxStacks: 5, tickIntervalMs: 1000, durationMs: 3000 },
     bossScript: {
       repeating: [
         // Eruption slam every 6s. At 1.3× early = 153; at full ramp = 213. Escalating threat.
@@ -279,7 +279,7 @@ export const bossMonsterEntriesT4 = [
     rewards: { essence: 615, essenceType: 'purple', level: 5, biomeXp: 923 },
     ai: { wanderRadius: 105, leashRange: 960, idleMinMs: 3000, idleMaxMs: 8000 },
     chargeOnAggro: { speedMult: 2.0, durationMs: 1100 },
-    dotEffect: { damagePerStack: 22, maxStacks: 6, tickIntervalMs: 1000, durationMs: 5000 },
+    dotEffect: { debuffId: 'charnel-crown-decay', label: 'Crown Decay', damagePerStack: 22, maxStacks: 6, tickIntervalMs: 1000, durationMs: 5000 },
     aoeAttack: { radius: 130, damageMult: 0.5 },
     bossScript: {
       phases: [
@@ -438,7 +438,7 @@ export const bossMonsterEntriesT4 = [
     behavior: 'melee', attackStyle: 'impact', biome: 'trench',
     rewards: { essence: 0, essenceType: 'purple', level: 0, biomeXp: 0 },
     ai: { wanderRadius: 350, leashRange: 850, idleMinMs: 400, idleMaxMs: 2000 },
-    dotEffect: { damagePerStack: 9, maxStacks: 4, tickIntervalMs: 1000, durationMs: 2000 },
+    dotEffect: { debuffId: 'void-horror-corruption', label: 'Void Corruption', damagePerStack: 9, maxStacks: 4, tickIntervalMs: 1000, durationMs: 2000 },
   }],
 
   ['void-hulk', {

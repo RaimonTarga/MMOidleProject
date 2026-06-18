@@ -5,10 +5,8 @@
 
 import type { ItemDefinition } from '@mmo-idle/shared';
 import {
-  ASHBRAND_DURATION_MS, ASHBRAND_TICK_MS,
   BURN_FAMILY, EDGE_OF_OBLIVION_ID,
-  CORRUPTION_MAX_STACKS, CORRUPTION_TICK_MS, CORRUPTION_DURATION_MS,
-  CORRUPTION_SLOW_PER_STACK, CORRUPTION_MIN_SPEED_MULT,
+  CORRUPTION_SLOW_PER_STACK,
   SACRED_APS_MULT, SACRED_DMG_MULT, SACRED_FAMILY,
   upgradeMechanicEffectsTotal, upgradeStatBonusTotal,
 } from '@mmo-idle/shared';
@@ -517,27 +515,26 @@ export function formatWeaponEffects(weaponId: string): string[] {
     lines.push(`Burst: ${SACRED_DMG_MULT}× damage, ${SACRED_APS_MULT}× attack speed`);
   }
 
-  if (weaponId === EDGE_OF_OBLIVION_ID) {
-    const tickSec = CORRUPTION_TICK_MS / 1000;
-    const durSec = CORRUPTION_DURATION_MS / 1000;
-    const slowPct = Math.round(CORRUPTION_SLOW_PER_STACK * 100);
-    const maxSlowPct = Math.round((1 - CORRUPTION_MIN_SPEED_MULT) * 100);
-    lines.push(`Each hit applies Corruption (up to ${CORRUPTION_MAX_STACKS} stacks)`);
-    lines.push(`Corruption ticks every ${tickSec}s for ${durSec}s; full hit damage retained`);
-    lines.push(`Each stack: DoT tick damage + ${slowPct}% move slow (${maxSlowPct}% max at ${CORRUPTION_MAX_STACKS} stacks)`);
-    lines.push('Stacks alongside class DoT and scales with dot.conversion-pct, tick-rate, and duration passives');
-    lines.push('Summoner minion attacks apply Corruption');
-  }
-
-  // Burn family
+  // Generic weapon DoT reservoir family
   const burn = BURN_FAMILY.find(b => b.weaponId === weaponId);
   if (burn) {
     const convPct  = Math.round(burn.convPct  * 100);
     const keepPct  = 100 - convPct;
-    const tickSec  = ASHBRAND_TICK_MS     / 1000;
-    const durSec   = ASHBRAND_DURATION_MS / 1000;
-    lines.push(`${convPct}% of hit damage → burn DoT, ${keepPct}% dealt directly`);
-    lines.push(`Up to ${burn.maxStacks} stacks — ticks every ${tickSec}s, expires after ${durSec}s`);
+    const tickSec  = burn.tickIntervalMs / 1000;
+    const durSec   = burn.drainDurationMs / 1000;
+    const mult     = round1(burn.dotMultiplier);
+    const reservoirName = weaponId === EDGE_OF_OBLIVION_ID ? 'corruption reservoir' : 'DoT reservoir';
+    lines.push(`${convPct}% of remaining direct hit damage enters a ${reservoirName}; ${keepPct}% is dealt directly`);
+    lines.push(`Reservoir gains ${mult}x stored DoT value, then drains as ${burn.element} damage every ${tickSec}s over ${durSec}s`);
+    lines.push('Class DoT conversion happens first; this weapon converts only the direct damage left afterward');
+    lines.push('Empowered hit bonus damage does not increase the stored reservoir value');
+    lines.push('Repeated hits refresh the reservoir window; the target badge shows stored damage');
+
+    if (weaponId === EDGE_OF_OBLIVION_ID) {
+      const slowPct = Math.round(CORRUPTION_SLOW_PER_STACK * 100);
+      lines.push(`Corruption also slows movement by ${slowPct}% while active`);
+      lines.push('Summoner minion attacks apply Corruption');
+    }
   }
 
   return lines;

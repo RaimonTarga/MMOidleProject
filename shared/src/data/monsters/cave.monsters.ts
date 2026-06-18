@@ -36,7 +36,7 @@ export const caveMonsterEntries = [
   ['cave-lurker', {
     id: 'cave-lurker', name: 'Cave Lurker', color: 0x664466,
     // The fast elite of the pair — quick, armored a little, relentless.
-    stats: { hp: 200, attack: 14, plating: 4, damageReduction: 0.05, speed: 60, attackRange: 12, attackCooldown: 1400, pullRange: 220 },
+    stats: { hp: 200, attack: 16, plating: 4, damageReduction: 0.05, speed: 60, attackRange: 12, attackCooldown: 1400, pullRange: 220 },
     behavior: 'melee', attackStyle: 'impact', biome: 'cave',
     rewards: { essence: 10, essenceType: 'red', level: 1, biomeXp: 70 },
     ai: { wanderRadius: 200, leashRange: 560, idleMinMs: 2000, idleMaxMs: 6000 },
@@ -62,7 +62,7 @@ export const caveMonsterEntries = [
     rewards: { essence: 15, essenceType: 'red', level: 1, biomeXp: 85 },
     ai: { wanderRadius: 260, leashRange: 680, idleMinMs: 800, idleMaxMs: 3200 },
     evasion: 0.2,
-    dotEffect: { damagePerStack: 6, maxStacks: 3, tickIntervalMs: 1000, durationMs: 2000 },
+    dotEffect: { debuffId: 'spider-venom', label: 'Spider Venom', damagePerStack: 6, maxStacks: 3, tickIntervalMs: 1000, durationMs: 2000 },
   }],
 
   ['cave-troll', {
@@ -98,7 +98,7 @@ export const caveMonsterEntries = [
     rewards: { essence: 55, essenceType: 'red', level: 3, biomeXp: 330 },
     ai: { wanderRadius: 260, leashRange: 680, idleMinMs: 800, idleMaxMs: 3200 },
     evasion: 0.25,
-    dotEffect: { damagePerStack: 8, maxStacks: 3, tickIntervalMs: 1000, durationMs: 3000 },
+    dotEffect: { debuffId: 'deep-spider-venom', label: 'Deep Venom', damagePerStack: 8, maxStacks: 3, tickIntervalMs: 1000, durationMs: 3000 },
   }],
 
   ['cavern-troll', {

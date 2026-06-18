@@ -452,6 +452,85 @@
   margin-top: 5px;
 }
 
+.dot-stat-panel {
+  border-top-color: rgba(80, 110, 76, 0.45);
+}
+
+.dot-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 4px;
+  margin-bottom: 6px;
+}
+
+.dot-stat-cell {
+  min-width: 0;
+  padding: 4px 5px;
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(255, 255, 255, 0.055);
+  border-radius: 3px;
+}
+
+.dot-stat-cell.stat-row--help,
+.dot-stat-summary .stat-row--help {
+  cursor: help;
+}
+
+.dot-stat-cell.stat-row--help .dot-stat-label,
+.dot-stat-summary .stat-row--help {
+  text-decoration: underline dotted rgba(120, 108, 80, 0.45);
+  text-underline-offset: 2px;
+}
+
+.dot-stat-cell.stat-row--help:hover .dot-stat-label,
+.dot-stat-summary .stat-row--help:hover {
+  text-decoration-color: rgba(200, 168, 96, 0.9);
+}
+
+.dot-stat-label,
+.dot-stat-value {
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dot-stat-label {
+  color: var(--hud-text-dim);
+  font-size: 9px;
+  text-transform: uppercase;
+}
+
+.dot-stat-value {
+  color: var(--hud-text);
+  font-size: 11px;
+  margin-top: 1px;
+}
+
+.dot-stat-summary {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr auto;
+  align-items: baseline;
+  gap: 5px;
+  margin-bottom: 6px;
+  font-size: 10px;
+  color: var(--hud-text-muted);
+}
+
+.dot-stat-summary strong {
+  color: var(--hud-text);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.dot-stat-panel--poison .stat-section-title,
+.dot-stat-panel--poison .dot-stat-summary strong { color: #66ee88; }
+.dot-stat-panel--fire .stat-section-title,
+.dot-stat-panel--fire .dot-stat-summary strong { color: #ffaa44; }
+.dot-stat-panel--frost .stat-section-title,
+.dot-stat-panel--frost .dot-stat-summary strong { color: #88c8ff; }
+
 .dot-pip {
   flex: 1;
   height: 6px;
@@ -1239,6 +1318,11 @@
 .mhud-mech .dot-pips,
 .mhud-mech .chill-pips { margin-top: 1px; }
 .mhud-mech .chill-frozen-label { padding: 0; font-size: 9px; }
+.mhud-mech .dot-stat-panel .stat-section-title,
+.mhud-mech .dot-stat-grid,
+.mhud-mech .dot-stat-summary {
+  display: none;
+}
 
 /* ── Floating AUTO combat button ───────────────────────────────────── */
 .mhud-auto {

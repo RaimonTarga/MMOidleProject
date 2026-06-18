@@ -34,6 +34,8 @@ export type RuneActionId =
   | "follow-and-assist"
   | "focus-closest"
   | "focus-lowest-hp"
+  | "let-dots-finish"
+  | "spread-dots"
   | "tactical-reload"
   | "wait-for-execution"
   | "wait-for-regen"
@@ -255,6 +257,32 @@ export const ACTION_DATABASE = new Map<string, ActionDef>([
       tier: 4,
       channel: "TARGETING",
       allowedConditionIds: TARGETING_CONDITIONS,
+    },
+  ],
+  [
+    "let-dots-finish",
+    {
+      id: "let-dots-finish",
+      name: "Let DoTs Finish",
+      blurb: "Prefer a new enemy when your damage over time should finish the current one.",
+      cost: 1,
+      tier: 2,
+      channel: "TARGETING",
+      allowedConditionIds: TARGETING_CONDITIONS,
+      requiredArchetype: "dot",
+    },
+  ],
+  [
+    "spread-dots",
+    {
+      id: "spread-dots",
+      name: "Spread DoTs",
+      blurb: "In multi-enemy fights, rotate targets to keep your damage over time active.",
+      cost: 2,
+      tier: 2,
+      channel: "TARGETING",
+      allowedConditionIds: TARGETING_CONDITIONS,
+      requiredArchetype: "dot",
     },
   ],
   [
@@ -521,6 +549,20 @@ export const NAMED_RULES = new Map<string, NamedRule>([
     },
   ],
   [
+    ruleKey("in-combat", "let-dots-finish"),
+    {
+      name: "Wither",
+      blurb: "When your DoT should finish an enemy, start pressuring another one.",
+    },
+  ],
+  [
+    ruleKey("in-combat", "spread-dots"),
+    {
+      name: "Multidot",
+      blurb: "Rotate between enemies to keep your DoTs rolling across the fight.",
+    },
+  ],
+  [
     ruleKey("hp-below-25", "flee"),
     {
       name: "Survivor",
@@ -631,6 +673,8 @@ export interface DerivedRuneConfig {
   followLeader: boolean;
   leadTheWay: boolean;
   tauntCurrentTarget: boolean;
+  letDotsFinish: boolean;
+  spreadDots: boolean;
 }
 
 function emptyClaims(): ClaimedRuneChannels {
@@ -684,6 +728,8 @@ export function deriveAutoConfigFromRunes(
     followLeader: false,
     leadTheWay: false,
     tauntCurrentTarget: false,
+    letDotsFinish: false,
+    spreadDots: false,
   };
 
   for (const raw of normalizeRuneLoadout(equipped)) {
@@ -734,6 +780,14 @@ export function deriveAutoConfigFromRunes(
   switch (derived.targetingAction) {
     case "focus-lowest-hp":
       derived.config.priorityMode = "lowest-hp";
+      break;
+    case "let-dots-finish":
+      derived.letDotsFinish = true;
+      derived.config.priorityMode = "nearest";
+      break;
+    case "spread-dots":
+      derived.spreadDots = true;
+      derived.config.priorityMode = "nearest";
       break;
     case "focus-closest":
     default:

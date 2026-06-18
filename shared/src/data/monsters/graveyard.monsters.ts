@@ -18,7 +18,7 @@ export const graveyardMonsterEntries = [
     behavior: 'melee', attackStyle: 'poison', biome: 'graveyard',
     rewards: { essence: 30, essenceType: 'purple', level: 3, biomeXp: 180 },
     ai: { wanderRadius: 330, leashRange: 820, idleMinMs: 600, idleMaxMs: 2500 },
-    dotEffect: { damagePerStack: 10, maxStacks: 5, tickIntervalMs: 1000, durationMs: 2000 },
+    dotEffect: { debuffId: 'bone-rot', label: 'Bone Rot', damagePerStack: 10, maxStacks: 5, tickIntervalMs: 1000, durationMs: 2000 },
   }],
 
   ['plague-hound', {
@@ -30,7 +30,7 @@ export const graveyardMonsterEntries = [
     rewards: { essence: 50, essenceType: 'purple', level: 3, biomeXp: 300 },
     ai: { wanderRadius: 290, leashRange: 750, idleMinMs: 700, idleMaxMs: 3000 },
     chargeOnAggro: { speedMult: 2.5, durationMs: 900 },
-    dotEffect: { damagePerStack: 14, maxStacks: 5, tickIntervalMs: 1100, durationMs: 2500 },
+    dotEffect: { debuffId: 'hound-plague', label: 'Hound Plague', damagePerStack: 14, maxStacks: 5, tickIntervalMs: 1100, durationMs: 2500 },
   }],
 
   ['carrion-vulture', {
@@ -41,7 +41,7 @@ export const graveyardMonsterEntries = [
     behavior: 'melee', attackStyle: 'poison', isRanged: true, biome: 'graveyard',
     rewards: { essence: 40, essenceType: 'purple', level: 3, biomeXp: 240 },
     ai: { wanderRadius: 240, leashRange: 650, idleMinMs: 1200, idleMaxMs: 4000 },
-    dotEffect: { damagePerStack: 12, maxStacks: 5, tickIntervalMs: 1000, durationMs: 2200 },
+    dotEffect: { debuffId: 'carrion-blight', label: 'Carrion Blight', damagePerStack: 12, maxStacks: 5, tickIntervalMs: 1000, durationMs: 2200 },
   }],
 
   ['charnel-brute', {
@@ -54,7 +54,7 @@ export const graveyardMonsterEntries = [
     rewards: { essence: 160, essenceType: 'purple', level: 4, biomeXp: 960 },
     ai: { wanderRadius: 110, leashRange: 460, idleMinMs: 4000, idleMaxMs: 11000 },
     cadenceFinisher: { everyNAttacks: 4, multiplier: 2.4 },   // 216
-    dotEffect: { damagePerStack: 18, maxStacks: 5, tickIntervalMs: 1000, durationMs: 3500 },
+    dotEffect: { debuffId: 'charnel-decay', label: 'Charnel Decay', damagePerStack: 18, maxStacks: 5, tickIntervalMs: 1000, durationMs: 3500 },
   }],
 
   ['plague-rat', {
@@ -66,7 +66,7 @@ export const graveyardMonsterEntries = [
     behavior: 'melee', attackStyle: 'poison', biome: 'graveyard',
     rewards: { essence: 22, essenceType: 'purple', level: 3, biomeXp: 130 },
     ai: { wanderRadius: 360, leashRange: 860, idleMinMs: 400, idleMaxMs: 2000 },
-    dotEffect: { damagePerStack: 8, maxStacks: 3, tickIntervalMs: 1000, durationMs: 1800 },
+    dotEffect: { debuffId: 'rat-plague', label: 'Rat Plague', damagePerStack: 8, maxStacks: 3, tickIntervalMs: 1000, durationMs: 1800 },
   }],
 
 ] satisfies [string, MonsterDefinition][];

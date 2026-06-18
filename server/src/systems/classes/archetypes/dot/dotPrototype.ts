@@ -1,9 +1,18 @@
-import { MONSTER_DATABASE, computeScaledDotDamage } from "@mmo-idle/shared";
+import {
+  MONSTER_DATABASE,
+  computeDotClassDamagePerStack,
+  computeLinearDotDamage,
+  computeScaledDotDamage,
+  isMonsterDotStatusEffectId,
+  resolveMonsterDotDebuff,
+  resolveDotClassProfile,
+} from "@mmo-idle/shared";
 import { registerCombatListener } from "../../../combat/engine/combatPipeline";
 import {
   applyStatusEffect,
   getStatusEffects,
   getTotalStacks,
+  removeStatusEffect,
 } from "@mmo-idle/shared";
 import { grantMonsterRewards } from "../../../player/progression/rewards";
 import {
@@ -16,6 +25,7 @@ import type { DeathCause } from "@mmo-idle/shared";
 import type { World } from "../../../../world/World";
 import {
   attachMarker,
+  detachComponent,
   detachMarkerIfNoEffect,
 } from "../../../../ecs/markerHelpers";
 import { canApplyPlayerDebuff } from "../summoner/t3/core/debuffGuard";
@@ -26,6 +36,7 @@ import {
   pushPlayerDotTickEvent,
   monsterDotElement,
 } from "../../../combat/damage/dotTickEvent";
+import { emitPlayerMonsterOnKill } from "../../../combat/damage/killHooks";
 import { buildKillerFromSourceId } from "../../../world/deathCause";
 import {
   buildSimpleBreakdown,
@@ -41,13 +52,7 @@ import {
 import { isInvulnerableMonster, isInvulnerablePlayer } from "../../../combat/invulnerability";
 import { tryCheatDeath } from "../../../defense/mitigation/cheatDeath";
 import { drainPlayerShields } from "../../../defense/shields/shields";
-import {
-  DOT_CONVERSION_PCT,
-  DOT_DURATION_MS,
-  DOT_EFFECT_ID,
-  DOT_MAX_STACKS,
-  DOT_TICK_MS,
-} from "./t3/core/constants";
+import { DOT_DURATION_MS, DOT_EFFECT_ID } from "./t3/core/constants";
 
 // Re-export the pure tick formula from shared so existing importers don't change paths.
 export { computeScaledDotDamage };
@@ -102,10 +107,13 @@ export function updateDotArchetype(world: World, dt: number): void {
     );
 
     entity.hasHealth.hp -= damage;
-    pushDotTickEvent(world, entity, dotElementForSource(world, effect.sourceId), damage);
+    pushDotTickEvent(world, entity, dotElementForSource(world, effect.sourceId), damage, { sourceType: "class" });
 
     if (entity.hasHealth.hp <= 0) {
       monstersToKill.push({ monsterId, sourceId: effect.sourceId, damage });
+    } else if (effect.remainingMs <= 0) {
+      removeStatusEffect(state, DOT_EFFECT_ID);
+      detachMarkerIfNoEffect(world, entity, "hasDot", state, DOT_EFFECT_ID);
     } else {
       effect.data.nextTickIn = effect.data.tickIntervalMs;
     }
@@ -114,6 +122,7 @@ export function updateDotArchetype(world: World, dt: number): void {
   for (const { monsterId, sourceId, damage } of monstersToKill) {
     const monster = world.getMonsterEntity(monsterId);
     if (monster && sourceId) {
+      emitPlayerMonsterOnKill(world, sourceId, monster, damage, "dot");
       const rewardInfo = grantMonsterRewards(world, sourceId, monster);
       const player = world.getPlayerEntity(sourceId);
       const source = player ? actorFromPlayer(player) : actorFromSourceId(world, sourceId);
@@ -161,16 +170,19 @@ export function updateDotArchetype(world: World, dt: number): void {
     if (isInvulnerablePlayer(entity)) continue;
     const playerId = entity.isPlayer.id;
     const state = entity.tracksCombat;
-    const effect = getStatusEffects(state, DOT_EFFECT_ID)[0];
-    if (!effect) {
-      detachMarkerIfNoEffect(world, entity, "hasDot", state, DOT_EFFECT_ID);
+    const effects = state.statusEffects.filter((effect) =>
+      isMonsterDotStatusEffectId(effect.id),
+    );
+    if (effects.length === 0) {
+      detachMarkerIfNoMonsterDot(world, entity, state);
       continue;
     }
 
+    for (const effect of effects) {
     effect.data.nextTickIn -= dt;
     if (effect.data.nextTickIn > 0) continue;
 
-    const base = computeScaledDotDamage(effect);
+    const base = computeLinearDotDamage(effect);
     const dotResist = Math.min(
       0.9,
       entity.usesSkills.passives["defense.dot-resistance"] ?? 0,
@@ -210,11 +222,17 @@ export function updateDotArchetype(world: World, dt: number): void {
     );
 
     entity.hasHealth.hp -= hpDamage;
-    pushPlayerDotTickEvent(world, entity, monsterDotElement(world, effect.sourceId), hpDamage);
+    pushPlayerDotTickEvent(world, entity, monsterDotElement(world, effect.sourceId, effect), hpDamage, { sourceType: "monster" });
 
     if (entity.hasHealth.hp <= 0) {
       if (tryCheatDeath(world, entity)) {
-        effect.data.nextTickIn = effect.data.tickIntervalMs;
+        if (effect.remainingMs <= 0) {
+          removeStatusEffect(state, effect.id);
+          detachMarkerIfNoMonsterDot(world, entity, state);
+        } else {
+          effect.data.nextTickIn = effect.data.tickIntervalMs;
+        }
+        continue;
       } else {
         playersToRespawn.push({
           playerId,
@@ -229,9 +247,14 @@ export function updateDotArchetype(world: World, dt: number): void {
             stacks: effect.stacks,
           },
         });
+        break;
       }
+    } else if (effect.remainingMs <= 0) {
+      removeStatusEffect(state, effect.id);
+      detachMarkerIfNoMonsterDot(world, entity, state);
     } else {
       effect.data.nextTickIn = effect.data.tickIntervalMs;
+    }
     }
   }
 
@@ -282,22 +305,14 @@ export function initDotArchetype(): void {
     if (!attacker?.appliesDots) return;
 
     const state = ctx.defender.tracksCombat;
-    const passives = attacker.usesSkills.passives;
-
-    const maxStacks = Math.round(passives["dot.max-stacks"] ?? DOT_MAX_STACKS);
-    const convPct = passives["dot.conversion-pct"] ?? DOT_CONVERSION_PCT;
-    const tickIntervalMs = Math.max(
-      100,
-      Math.round(passives["dot.tick-interval-ms"] ?? DOT_TICK_MS),
+    const profile = resolveDotClassProfile(
+      attacker.usesSkills.passives,
+      attacker.usesSkills.selectedSubVariant,
     );
-    const durationMs = Math.round(
-      passives["dot.duration-ms"] ?? DOT_DURATION_MS,
-    );
-    const damagePerStack = Math.max(
-      1,
-      // Normalized by tick interval (vs DOT_TICK_MS) so faster ticks = same total.
-      Math.round((attacker.dealsDamage.attack * convPct) / maxStacks * tickIntervalMs / DOT_TICK_MS),
-    );
+    const { maxStacks, conversionPct: convPct, tickIntervalMs, durationMs } = profile;
+    // Class DoT stack value is generated from base attack, not final ctx.damage.
+    // Final-hit multipliers still affect the direct portion before this reduction.
+    const damagePerStack = computeDotClassDamagePerStack(attacker.dealsDamage.attack, profile);
 
     // Apply conversion reduction only if the T3 handler hasn't already done so.
     if (!ctx.metadata["dotConvApplied"]) {
@@ -315,12 +330,14 @@ export function initDotArchetype(): void {
         damagePerStack,
         nextTickIn: tickIntervalMs,
         tickIntervalMs,
+        tickOnExpire: 1,
       },
     });
 
     // Refresh dynamic stat values on every hit so buffs take effect immediately.
     effect.data.damagePerStack = damagePerStack;
     effect.data.tickIntervalMs = tickIntervalMs;
+    effect.data.tickOnExpire = 1;
     attachMarker(world, ctx.defender, "hasDot");
   });
 
@@ -345,9 +362,13 @@ export function initDotArchetype(): void {
 
     const { damagePerStack, maxStacks, tickIntervalMs } = dotEffect;
     const durationMs = dotEffect.durationMs ?? DOT_DURATION_MS;
+    const debuff = resolveMonsterDotDebuff({
+      monster: monsterDef,
+      dotEffect,
+    });
 
-    applyStatusEffect(playerCombatState, {
-      id: DOT_EFFECT_ID,
+    const effect = applyStatusEffect(playerCombatState, {
+      id: debuff.statusEffectId,
       maxStacks,
       instanced: false,
       sourceId: ctx.attacker.isMonster.id,
@@ -357,12 +378,31 @@ export function initDotArchetype(): void {
         damagePerStack,
         nextTickIn: tickIntervalMs,
         tickIntervalMs,
+        tickOnExpire: 1,
         totalMs: durationMs,
+        flavorCode: debuff.code,
+        isDot: 1,
         // Exception flag (status data is numbers only): 1 = ignore shields.
         bypassShield: dotEffect.bypassShield ? 1 : 0,
       },
     });
+    effect.data.damagePerStack = damagePerStack;
+    effect.data.tickIntervalMs = tickIntervalMs;
+    effect.data.tickOnExpire = 1;
+    effect.data.totalMs = durationMs;
+    effect.data.flavorCode = debuff.code;
+    effect.data.isDot = 1;
+    effect.data.bypassShield = dotEffect.bypassShield ? 1 : 0;
 
     attachMarker(world, ctx.defender, "hasDot");
   });
+}
+
+function detachMarkerIfNoMonsterDot(
+  world: World,
+  entity: Parameters<typeof detachComponent>[1],
+  state: Parameters<typeof getStatusEffects>[0],
+): void {
+  if (state.statusEffects.some((effect) => isMonsterDotStatusEffectId(effect.id))) return;
+  detachComponent(world, entity, "hasDot");
 }

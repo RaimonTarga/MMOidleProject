@@ -11,6 +11,7 @@ import {
 import { actorFromSourceId } from '../../../../../../world/worldLogActors';
 import { isInvulnerableMonster } from '../../../../../combat/invulnerability';
 import { pushDotTickEvent } from '../../../../../combat/damage/dotTickEvent';
+import { emitPlayerMonsterOnKill } from '../../../../../combat/damage/killHooks';
 
 /**
  * Conflagration fast-tick DoT. Independent of the normal DoT updater —
@@ -48,7 +49,7 @@ export function updateConflagration(world: World, dt: number): void {
       buildSimpleBreakdown(damage, damage),
     );
     entity.hasHealth.hp -= damage;
-    pushDotTickEvent(world, entity, 'fire', damage, 'conflagration');
+    pushDotTickEvent(world, entity, 'fire', damage, { sourceType: 'class', fx: 'conflagration' });
     console.log(`[Conflagration] ${monsterId}: ${damage} tick (${effect.data.ticksLeft} left)`);
 
     if (entity.hasHealth.hp <= 0) {
@@ -64,6 +65,7 @@ export function updateConflagration(world: World, dt: number): void {
   for (const { monsterId, sourceId, damage } of toKill) {
     const monster = world.getMonsterEntity(monsterId);
     if (monster && sourceId) {
+      emitPlayerMonsterOnKill(world, sourceId, monster, damage, 'dot');
       const rewardInfo = grantMonsterRewards(world, sourceId, monster);
       recordPlayerKillMonster(world, sourceId, monster, damage, rewardInfo);
       const player = world.getPlayerEntity(sourceId);

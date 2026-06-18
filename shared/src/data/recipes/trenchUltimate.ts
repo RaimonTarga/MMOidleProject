@@ -68,6 +68,6 @@ export const trenchUltimateRecipeEntries: [string, Recipe][] = [
     stats: { attack: 34 },
     attacksPerSecond: 1.1,
     icon: 'items/weapons/dark-blade.png',
-    description: 'Each hit applies Corruption (up to 10 stacks). Corruption stacks alongside class DoTs; each stack ticks void damage and slows the target. Scales with DoT passives.',
+    description: 'Each hit converts part of remaining direct damage into a corruption reservoir that drains as void damage. Corruption stacks also slow the target.',
   }],
 ];

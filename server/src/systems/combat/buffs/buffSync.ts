@@ -1,9 +1,14 @@
 import {
   formatLogNumber,
   getStatusEffect,
+  isMonsterDotStatusEffectId,
+  MONSTER_DATABASE,
+  monsterDotFlavorByCode,
+  resolveMonsterDotDebuff,
   FROST_RAMP_EFFECT_ID,
   frostRampMoveSlowPct,
   frostRampAtkSlowPct,
+  type StatusEffect,
   type WorldLogActor,
   type PlayerBuff,
   type BuffId,
@@ -15,7 +20,7 @@ import { collectMechanicBuffs } from "../../classes/registry";
 import { DEFENSE_BUFFS } from "../../defense";
 import { WEAPON_BUFFS } from "../damage/weaponEffects";
 import { MOBILITY_BUFFS } from "../../world/mobility/mobilityBoots";
-import { defineBuff, type BuffDescriptor } from "./descriptor";
+import { defineBuff, type BuffDescriptor, type BuffProjectionContext } from "./descriptor";
 
 const DEBUFF_BUFFS = [
   defineBuff(
@@ -104,23 +109,24 @@ const DEBUFF_BUFFS = [
       if (!playerCs) return null;
       // Monster-inflicted DoT lives on the player's own combat state under the
       // 'dot' id (players never DoT themselves — that always hits monsters).
-      const dot = getStatusEffect(playerCs, "dot");
+      const dot = getStatusEffect(playerCs, "__disabled-monster-dot-placeholder");
       if (!dot || dot.stacks <= 0) return null;
       const totalMs = dot.data["totalMs"] ?? dot.remainingMs;
       const source = world.getMonsterEntity(dot.sourceId);
       const perStack = Math.round(dot.data["damagePerStack"] ?? 0);
+      const flavor = monsterDotFlavorByCode(dot.data["flavorCode"]);
       return {
         id: "debuff-dot",
-        label: "DoT",
+        label: flavor.label,
         stacks: dot.stacks,
         durationPct:
           totalMs > 0 && dot.remainingMs > 0
             ? (dot.remainingMs / totalMs) * 100
             : -1,
-        color: "#88bb55",
+        color: flavor.color,
         logSourceName: source?.isMonster.name ?? "Monster debuff",
         logSourceSide: "enemy",
-        logDetail: `${perStack} dmg/stack per tick`,
+        logDetail: `${flavor.label}: ${perStack} dmg/stack per tick`,
       };
     },
     { category: "neutral", shape: "diamond", color: "#88bb55", label: "DoT" },
@@ -181,10 +187,51 @@ export function syncPlayerBuffs(world: World, now: number): void {
         });
       }
     }
+    buffs.push(...collectMonsterDotDebuffs(playerCs, world));
 
     entity.hasStatus.activeBuffs = buffs;
     recordBuffTransitions(world, entity, previousBuffs, buffs);
   }
+}
+
+function collectMonsterDotDebuffs(
+  playerCs: NonNullable<BuffProjectionContext["playerCs"]>,
+  world: World,
+): PlayerBuff[] {
+  return playerCs.statusEffects
+    .filter((effect) => isMonsterDotStatusEffectId(effect.id) && effect.stacks > 0)
+    .map((effect) => monsterDotBuff(effect, world));
+}
+
+function monsterDotBuff(effect: StatusEffect, world: World): PlayerBuff {
+  const source = world.getMonsterEntity(effect.sourceId);
+  const sourceDef = source
+    ? MONSTER_DATABASE.get(source.isMonster.monsterTypeId)
+    : undefined;
+  const debuff = sourceDef
+    ? resolveMonsterDotDebuff({
+        monster: sourceDef,
+        dotEffect: source?.scriptsBoss?.dotEffectOverride ?? sourceDef.dotEffect,
+      })
+    : monsterDotFlavorByCode(effect.data["flavorCode"]);
+  const totalMs = effect.data["totalMs"] ?? effect.remainingMs;
+  const perStack = Math.round(effect.data["damagePerStack"] ?? 0);
+  return {
+    id: "debuff-dot",
+    label: debuff.label,
+    stacks: effect.stacks,
+    durationPct:
+      totalMs > 0 && effect.remainingMs > 0
+        ? (effect.remainingMs / totalMs) * 100
+        : -1,
+    color: debuff.color,
+    category: "neutral",
+    iconKey: effect.id,
+    shape: "diamond",
+    logSourceName: source?.isMonster.name ?? "Monster debuff",
+    logSourceSide: "enemy",
+    logDetail: `${debuff.label}: ${perStack} dmg/stack per tick`,
+  };
 }
 
 function recordBuffTransitions(
@@ -331,7 +378,7 @@ function signedNumber(value: number): string {
 }
 
 function buffLogKey(buff: PlayerBuff): string {
-  return `${buff.id}:${buff.logTargetId ?? "self"}`;
+  return `${buff.iconKey}:${buff.id}:${buff.logTargetId ?? "self"}`;
 }
 
 function buffLogTarget(

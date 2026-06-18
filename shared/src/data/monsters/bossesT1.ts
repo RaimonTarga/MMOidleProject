@@ -72,7 +72,7 @@ export const bossMonsterEntriesT1 = [
     behavior: 'melee', attackStyle: 'poison', biome: 'swamp',
     rewards: { essence: 100, essenceType: 'purple', level: 5, biomeXp: 150 },
     ai: { wanderRadius: 100, leashRange: 700, idleMinMs: 2000, idleMaxMs: 5500 },
-    dotEffect: { damagePerStack: 4, maxStacks: 3, tickIntervalMs: 1000, durationMs: 4000 },
+    dotEffect: { debuffId: 'grave-toadeater-poison', label: 'Toad Poison', damagePerStack: 4, maxStacks: 3, tickIntervalMs: 1000, durationMs: 4000 },
     aoeAttack: { radius: 120, damageMult: 0.6 },
   }],
 

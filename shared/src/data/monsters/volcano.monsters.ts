@@ -96,7 +96,7 @@ export const volcanoMonsterEntries = [
     rewards: { essence: 47, essenceType: 'red', level: 3, biomeXp: 280 },
     ai: { wanderRadius: 250, leashRange: 660, idleMinMs: 1000, idleMaxMs: 3500 },
     rampOnCombat: { stat: 'attack', perTickPct: 0.09, maxPct: 0.50, tickIntervalMs: 2000 },
-    dotEffect: { damagePerStack: 10, maxStacks: 4, tickIntervalMs: 1000, durationMs: 2000 },
+    dotEffect: { debuffId: 'ember-burn', label: 'Ember Burn', damagePerStack: 10, maxStacks: 4, tickIntervalMs: 1000, durationMs: 2000 },
   }],
 
   ['infernal-direhound', {
@@ -133,7 +133,7 @@ export const volcanoMonsterEntries = [
     rewards: { essence: 52, essenceType: 'red', level: 3, biomeXp: 310 },
     ai: { wanderRadius: 230, leashRange: 630, idleMinMs: 1200, idleMaxMs: 4000 },
     rampOnCombat: { stat: 'attack', perTickPct: 0.08, maxPct: 0.50, tickIntervalMs: 2000 },
-    dotEffect: { damagePerStack: 12, maxStacks: 5, tickIntervalMs: 1000, durationMs: 2500 },
+    dotEffect: { debuffId: 'ashspitter-burn', label: 'Ash Burn', damagePerStack: 12, maxStacks: 5, tickIntervalMs: 1000, durationMs: 2500 },
   }],
 
   ['magma-salamander', {

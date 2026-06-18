@@ -28,17 +28,18 @@ export function tryIgnition(pc: DotT3PathContext): boolean {
     let eff = applyStatusEffect(monsterState, {
       id: DOT_EFFECT_ID, maxStacks, instanced: false,
       sourceId: player.isPlayer.id, remainingMs: durationMs, refreshable: true,
-      data: { damagePerStack: igDmg, nextTickIn: tickIntervalMs, tickIntervalMs },
+      data: { damagePerStack: igDmg, nextTickIn: tickIntervalMs, tickIntervalMs, tickOnExpire: 1 },
     });
     for (let i = 1; i < maxStacks; i++) {
       eff = applyStatusEffect(monsterState, {
         id: DOT_EFFECT_ID, maxStacks, instanced: false,
         sourceId: player.isPlayer.id, remainingMs: durationMs, refreshable: true,
-        data: { damagePerStack: igDmg, nextTickIn: tickIntervalMs, tickIntervalMs },
+        data: { damagePerStack: igDmg, nextTickIn: tickIntervalMs, tickIntervalMs, tickOnExpire: 1 },
       });
     }
     eff.data.damagePerStack = igDmg;
     eff.data.tickIntervalMs = tickIntervalMs;
+    eff.data.tickOnExpire = 1;
     const existing = ctx.metadata['clientEffects'];
     ctx.metadata['clientEffects'] = Array.isArray(existing) ? [...existing, 'firebrand'] : ['firebrand'];
   } else if (current >= maxStacks) {
@@ -53,10 +54,11 @@ export function tryIgnition(pc: DotT3PathContext): boolean {
     const eff = applyStatusEffect(monsterState, {
       id: DOT_EFFECT_ID, maxStacks, instanced: false,
       sourceId: player.isPlayer.id, remainingMs: durationMs, refreshable: true,
-      data: { damagePerStack: dmgPerStack, nextTickIn: tickIntervalMs, tickIntervalMs },
+      data: { damagePerStack: dmgPerStack, nextTickIn: tickIntervalMs, tickIntervalMs, tickOnExpire: 1 },
     });
     eff.data.damagePerStack = dmgPerStack;
     eff.data.tickIntervalMs = tickIntervalMs;
+    eff.data.tickOnExpire = 1;
   }
   markMonsterDot(world, monster);
   ctx.metadata['dotHandled'] = true;
@@ -85,17 +87,18 @@ export function tryFanTheFlames(pc: DotT3PathContext): boolean {
     let ftfEff = applyStatusEffect(monsterState, {
       id: DOT_EFFECT_ID, maxStacks, instanced: false,
       sourceId: player.isPlayer.id, remainingMs: durationMs, refreshable: true,
-      data: { damagePerStack: ftfDmg, nextTickIn: tickIntervalMs, tickIntervalMs },
+      data: { damagePerStack: ftfDmg, nextTickIn: tickIntervalMs, tickIntervalMs, tickOnExpire: 1 },
     });
     for (let i = 1; i < toApply; i++) {
       ftfEff = applyStatusEffect(monsterState, {
         id: DOT_EFFECT_ID, maxStacks, instanced: false,
         sourceId: player.isPlayer.id, remainingMs: durationMs, refreshable: true,
-        data: { damagePerStack: ftfDmg, nextTickIn: tickIntervalMs, tickIntervalMs },
+        data: { damagePerStack: ftfDmg, nextTickIn: tickIntervalMs, tickIntervalMs, tickOnExpire: 1 },
       });
     }
     ftfEff.data.damagePerStack = ftfDmg;
     ftfEff.data.tickIntervalMs = tickIntervalMs;
+    ftfEff.data.tickOnExpire = 1;
   }
   markMonsterDot(world, monster);
   ctx.metadata['dotHandled'] = true;
@@ -115,10 +118,11 @@ export function trySmolderingEmber(pc: DotT3PathContext): boolean {
   const se = applyStatusEffect(monsterState, {
     id: DOT_EFFECT_ID, maxStacks, instanced: false,
     sourceId: player.isPlayer.id, remainingMs: durationMs, refreshable: true,
-    data: { damagePerStack: dmgPerStack, nextTickIn: tickIntervalMs, tickIntervalMs },
+    data: { damagePerStack: dmgPerStack, nextTickIn: tickIntervalMs, tickIntervalMs, tickOnExpire: 1 },
   });
   se.data.damagePerStack = dmgPerStack;
   se.data.tickIntervalMs = tickIntervalMs;
+  se.data.tickOnExpire = 1;
 
   const burnStacks = getTotalStacks(monsterState, DOT_EFFECT_ID);
   let smolder = getStatusEffect(monsterState, SMOLDER_EFFECT);
@@ -171,10 +175,11 @@ export function tryConflagration(pc: DotT3PathContext): boolean {
     const cf = applyStatusEffect(monsterState, {
       id: DOT_EFFECT_ID, maxStacks, instanced: false,
       sourceId: player.isPlayer.id, remainingMs: durationMs, refreshable: true,
-      data: { damagePerStack: dmgPerStack, nextTickIn: tickIntervalMs, tickIntervalMs },
+      data: { damagePerStack: dmgPerStack, nextTickIn: tickIntervalMs, tickIntervalMs, tickOnExpire: 1 },
     });
     cf.data.damagePerStack = dmgPerStack;
     cf.data.tickIntervalMs = tickIntervalMs;
+    cf.data.tickOnExpire = 1;
     markMonsterDot(world, monster);
   }
   ctx.metadata['dotHandled'] = true;

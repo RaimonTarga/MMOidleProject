@@ -207,8 +207,8 @@ export function updateMobilityState(world: World, dt: number): void {
  *   - onKill (player attacker): Forest haste + Graveyard stacking haste/tenacity.
  *   - onDamageTaken (player defender): Volcanic passive-speed suppression.
  *
- * Note: only direct-attack kills emit onKill, so DoT-tick kills don't refresh the
- * on-kill buffs — acceptable for v1 (chain-through-packs is the direct-hit case).
+ * Direct-attack kills and player-owned DoT tick kills both emit onKill, so these
+ * buffs refresh from any player-credited monster kill path.
  */
 export function initMobilityBoots(): void {
   registerCombatListener("onKill", (ctx) => {

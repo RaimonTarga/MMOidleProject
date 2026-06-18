@@ -1,8 +1,15 @@
-import { getStatusEffect, hasStatusEffect, applyStatusEffect, getTotalStacks } from '@mmo-idle/shared';
+import {
+  computeDotClassDamagePerStack,
+  getStatusEffect,
+  hasStatusEffect,
+  applyStatusEffect,
+  getTotalStacks,
+  resolveDotClassProfile,
+} from '@mmo-idle/shared';
 import { registerCombatListener } from '../../../../combat/engine/combatPipeline';
 import type { World } from '../../../../../world/World';
 import {
-  DOT_CONVERSION_PCT, DOT_DURATION_MS, DOT_TICK_MS, DOT_EFFECT_ID,
+  DOT_EFFECT_ID,
   SMOLDER_EFFECT, FROZEN_EFFECT,
   SE_VULN_PER_STACK, FREEZE_BONUS,
 } from './core/constants';
@@ -59,13 +66,11 @@ export function initDotT3(): void {
     const monster = ctx.defender;
     const monsterState = monster.tracksCombat;
 
-    const maxStacks      = Math.round(passives['dot.max-stacks']                     ?? 6);
-    const convPct        = passives['dot.conversion-pct']                            ?? DOT_CONVERSION_PCT;
-    const tickIntervalMs = Math.max(100, Math.round(passives['dot.tick-interval-ms'] ?? DOT_TICK_MS));
-    const durationMs     = Math.round(passives['dot.duration-ms']                    ?? DOT_DURATION_MS);
-    // Normalize per-tick damage by the tick interval (calibrated to DOT_TICK_MS), so a
-    // faster tick rate ticks MORE OFTEN for the SAME total — tick rate is a free knob.
-    const dmgPerStack    = Math.max(1, Math.round(player.dealsDamage.attack * convPct / maxStacks * tickIntervalMs / DOT_TICK_MS));
+    const profile = resolveDotClassProfile(passives, player.usesSkills.selectedSubVariant);
+    const { maxStacks, conversionPct: convPct, tickIntervalMs, durationMs } = profile;
+    // Class DoT stack value is generated from base attack, not final ctx.damage.
+    // T3 specs may transform stack behavior, but they share the base profile contract.
+    const dmgPerStack = computeDotClassDamagePerStack(player.dealsDamage.attack, profile);
 
     // Redirect convPct of direct hit damage into DoT ticks.
     // Flag prevents the base handler from double-applying this reduction for

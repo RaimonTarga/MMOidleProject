@@ -5,6 +5,8 @@ import type { DamageElement } from '../systems/dotElements';
 /** Dedicated per-tick DoT animations (distinct from element damage-number styling). */
 export type DotTickFx = 'conflagration';
 
+export type DotTickSourceType = 'class' | 'weapon' | 'monster' | 'special';
+
 /**
  * Discrete combat events accumulated between broadcast ticks.
  * Bundled with each DeltaSnapshot so the client can fire animations and log
@@ -24,7 +26,7 @@ export type CombatEvent =
   // `fx` optionally requests a dedicated per-tick animation (beyond the element's
   // damage-number styling) — e.g. Cinder Lord's Conflagration burns. Omitted for
   // plain DoT ticks, which only style the number by element.
-  | { kind: 'dot-tick'; targetId: string; targetPos: Vec2; amount: number; element: DamageElement; fx?: DotTickFx }
+  | { kind: 'dot-tick'; targetId: string; targetPos: Vec2; amount: number; element: DamageElement; sourceType: DotTickSourceType; fx?: DotTickFx }
   | { kind: 'monster-dodge'; monsterId: string; targetPos?: Vec2 }
   // Player attack whiffed (chaotic weapon family's every-Nth-hit miss). Direct
   // damage was zeroed but on-hit effects (DoT) still applied; renders a "MISS"

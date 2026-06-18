@@ -1,4 +1,4 @@
-import { computeScaledDotDamage, getStatusEffect } from '@mmo-idle/shared';
+import { computeLinearDotDamage, isMonsterDotStatusEffectId } from '@mmo-idle/shared';
 import type { PlayerEntity } from '../../../ecs/entity';
 import type { World } from '../../../world/World';
 import { getCheatDeathHealPool, getDefenseAbsorbPool, getDefenseBurstPool, getDefenseDebtPool } from './pools';
@@ -9,16 +9,16 @@ import { getCheatDeathHealPool, getDefenseAbsorbPool, getDefenseBurstPool, getDe
 // bar can render the red (pending damage) and dark-green (regen) layers.
 // Read-only — never feeds back into combat math.
 
-const DOT_EFFECT_ID = 'dot';
-
 function forecastIncomingDot(player: PlayerEntity): number {
   const cs = player.tracksCombat;
 
-  // Ticking monster-applied DoT: scaled base, DR at half value, dot-resist.
+  // Ticking monster-applied DoT: linear base, DR at half value, dot-resist.
   let total = 0;
-  const dot = getStatusEffect(cs, DOT_EFFECT_ID);
-  if (dot && dot.stacks > 0 && dot.remainingMs > 0) {
-    const perTick = computeScaledDotDamage(dot);
+  const dots = cs.statusEffects.filter((effect) =>
+    isMonsterDotStatusEffectId(effect.id) && effect.stacks > 0 && effect.remainingMs > 0,
+  );
+  for (const dot of dots) {
+    const perTick = computeLinearDotDamage(dot);
     const dotResist = Math.min(0.9, player.usesSkills.passives['defense.dot-resistance'] ?? 0);
     const drForDot = player.mitigatesDamage.damageReduction * 0.5;
     const mitigatedPerTick = perTick * (1 - drForDot) * (1 - dotResist);

@@ -31,10 +31,11 @@ export function tryPoisonExplosion(pc: DotT3PathContext): boolean {
   const pe = applyStatusEffect(monsterState, {
     id: DOT_EFFECT_ID, maxStacks: PE_MAX_STACKS, instanced: false,
     sourceId: player.isPlayer.id, remainingMs: durationMs, refreshable: true,
-    data: { damagePerStack: dmgPerStack, nextTickIn: tickIntervalMs, tickIntervalMs },
+    data: { damagePerStack: dmgPerStack, nextTickIn: tickIntervalMs, tickIntervalMs, tickOnExpire: 1 },
   });
   pe.data.damagePerStack = dmgPerStack;
   pe.data.tickIntervalMs = tickIntervalMs;
+  pe.data.tickOnExpire = 1;
   if (getTotalStacks(monsterState, DOT_EFFECT_ID) >= PE_MAX_STACKS) {
     const burst = PE_MAX_STACKS * dmgPerStack * PE_BURST_TICKS;
     ctx.damage += burst;
@@ -66,12 +67,13 @@ export function tryEternalDoom(pc: DotT3PathContext): boolean {
     id: DOT_EFFECT_ID, maxStacks: ED_MAX_STACKS, instanced: false,
     sourceId: player.isPlayer.id, remainingMs: durationMs, refreshable: true,
     data: {
-      damagePerStack: dmgPerStack, nextTickIn: tickIntervalMs, tickIntervalMs,
+      damagePerStack: dmgPerStack, nextTickIn: tickIntervalMs, tickIntervalMs, tickOnExpire: 1,
       isEternalDoom: 1, edBaseStacks: ED_BASE_STACKS,
     },
   });
   ed.data.damagePerStack = dmgPerStack;
   ed.data.tickIntervalMs = tickIntervalMs;
+  ed.data.tickOnExpire = 1;
   markMonsterDot(world, monster);
   ctx.metadata['dotHandled'] = true;
   return true;
