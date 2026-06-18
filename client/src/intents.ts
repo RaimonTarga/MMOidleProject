@@ -6,6 +6,7 @@ export interface IntentMap {
   setAutocombatConfig: AutocombatConfig;
   setRuneLoadout: EquippedRule[];
   craftRuneRecipe: string;
+  activateDungeonAltar: undefined;
   unlockSkill: string;
   resetClass: undefined;
   equipItem: string;

@@ -14,6 +14,33 @@ standing boss" with short altar-started gauntlets:
 5. The boss spawns only after the gauntlet clears.
 6. Boss death completes the dungeon and starts a short altar cooldown.
 
+## Locked Decisions From Pre-Implementation Review
+
+- Mountain T1 is the prototype dungeon for the first implementation and tuning
+  pass.
+- Do not keep the old dungeon model alive in production only to support the
+  prototype. Use Mountain T1 to prove the code path, then propagate gauntlet
+  definitions to the other normal dungeons before removing/gating old dungeon
+  spawning for them.
+- Idle guardians give regular monster rewards.
+- Guardians should be buffed versions of regular biome mobs, not a separate loot
+  category.
+- Guardians should read visually and textually as guardians:
+  - replace their display names with `<biome> guardian`, such as
+    `mountain guardian` or `forest guardian`,
+  - add a yellow/gold outline or aura,
+  - use biome-specific stat modifiers that accentuate the biome profile.
+- Cleared idle guardians should not immediately respawn. They should stay
+  cleared long enough for players to activate the altar, then reform after the
+  idle pre-clear reset timer.
+- Gauntlet failure is a node wipe, not a participant death. The dungeon resets
+  only when all live players in the node are dead, whether or not they are in
+  the initiating party.
+- Gauntlet bosses keep current boss rewards and progression credit. Balance can
+  be adjusted later.
+- The Void Overlord dungeon is excluded from this rework for now. Its throne,
+  hazards, persistence, and ultimate encounter logic remain separate.
+
 ## Current Dungeon Implementation
 
 ### Static node identity
@@ -187,7 +214,7 @@ The current implementation lacks:
 - guardian tether / no-wander behavior,
 - phase progression tracking,
 - participant tracking,
-- reset-on-participant-death behavior,
+- reset-on-node-wipe behavior,
 - reset-on-freeze behavior that restores dungeon idle state,
 - boss spawning gated by phase completion,
 - short altar cooldown after success,
@@ -202,6 +229,102 @@ The current implementation also has behavior that must be removed or gated:
 - map/UI copy that describes dungeons as `x2 HP * x1.6 ATK`.
 
 ## Proposed Implementation Plan
+
+### Verification Findings
+
+The implementation is feasible, but there are a few important seams to handle
+deliberately.
+
+#### Kill finalization is not centralized enough yet
+
+Monster deaths currently happen through several paths:
+
+- direct combat in `server/src/systems/combat/engine/combat.ts`,
+- AoE in `server/src/systems/combat/damage/aoeDamage.ts`,
+- proc damage in `server/src/systems/combat/damage/procDamage.ts`,
+- weapon effects in `server/src/systems/combat/damage/weaponEffects.ts`,
+- DoT ticks in `server/src/systems/classes/archetypes/dot/`,
+- T3 archetype ticks such as laser, beams, hemorrhage, energy ticks, and
+  alternating currents.
+
+Most paths call `grantMonsterRewards()` and then `world.removeMonsterEntity()`
+directly. A small `killHooks.ts` exists, but it only emits an `onKill` context
+for some player-owned kill sources.
+
+Gauntlet progress should not be patched into every kill site independently.
+Before implementing phases, add or expand a shared monster kill finalizer that:
+
+1. emits `onKill` when appropriate,
+2. grants rewards,
+3. records kill log / kill event data,
+4. notifies dungeon gauntlet logic,
+5. removes the monster.
+
+This is the main code-health prerequisite for reliable gauntlet progress.
+
+#### Boss rewards and boss respawn must be separated
+
+`grantMonsterRewards()` currently does two jobs for bosses:
+
+1. grants rewards, quest progress, boss clear keys, party sharing, and special
+   Void Overlord clear handling,
+2. schedules old standing-boss respawn markers.
+
+Gauntlet bosses need the first behavior but not the second. Split the reward
+path so gauntlet boss death can apply current rewards/progression while starting
+altar cooldown instead of the old 30s boss respawn marker.
+
+#### Old dungeon spawning can be removed for normal dungeons
+
+Because the final rework should replace the old model, the migration should not
+land as a permanent dual dungeon system.
+
+Recommended flow:
+
+1. Build and test the gauntlet system with Mountain T1 as the first content
+   definition.
+2. Add generated/default gauntlet definitions for the other normal dungeon
+   nodes.
+3. Disable old ambient dungeon spawning and old standing-boss maintenance for
+   all gauntlet-defined non-Void dungeon nodes.
+4. Keep the Void Overlord node on its existing separate system.
+
+#### Guardian visuals fit current client architecture
+
+Guardian naming can be handled server-side by stamping
+`isMonster.name = "<biome> guardian"` after `createMonster()`.
+
+For the yellow/gold outline or aura, the least disruptive options are:
+
+- add a small guardian visual flag to the future client-facing
+  `DungeonGauntletView` and render a client-only outline by monster id, or
+- add a persistent `guardian` visual effect to `hasStatus.activeEffects` using
+  the existing effect overlay system.
+
+The first option is cleaner for non-combat identity. The second reuses existing
+effect overlay machinery but treats a permanent role marker like a status effect.
+
+MVP recommendation:
+
+- replace the name with `<biome> guardian` immediately,
+- add the outline/aura through gauntlet client view state once
+  `DungeonGauntletView` exists.
+
+#### Biome-specific guardian buffs should live in gauntlet data
+
+The current dungeon blanket scaling is `x2 HP` and `x1.6 ATK` for all non-boss
+dungeon monsters. The gauntlet should replace that with per-biome guardian
+modifiers:
+
+- Plains: more bodies or mild speed/attack-speed pressure.
+- Forest: faster attacks/movement, lower durability.
+- Mountain: higher attack/HP, slower movement.
+- Swamp: stronger DoT pressure.
+- Cave: fewer, bulkier guardians with mitigation.
+- Later biomes should follow the same identity-first rule.
+
+Keep these modifiers in `DungeonGauntletDef.guardianPhase.modifiers`, not in
+generic `createMonster()` dungeon scaling.
 
 ### Milestone 1 - Shared contracts and static definitions
 
@@ -332,13 +455,18 @@ Server changes:
 - Gate `ensureBoss()` so dungeon nodes do not maintain standing bosses once
   gauntlets are enabled.
 
-Migration-safe option:
+Migration shape:
 
-- Add a feature switch such as `ENABLE_DUNGEON_GAUNTLETS`.
-- Start enabled only for the pilot dungeon.
-- Other dungeon nodes keep old behavior until definitions exist.
+- During local development, Mountain T1 can be the first gauntlet definition
+  used to prove the state machine.
+- Before the rework is considered complete, add definitions for all normal
+  non-Void dungeon nodes.
+- Then disable old dungeon ambient spawning and old standing-boss maintenance for
+  all gauntlet-defined dungeon nodes.
+- Keep a narrow exception for the Void Overlord node because it has a separate
+  ultimate encounter system.
 
-This avoids breaking every dungeon while Mountain T1 is being proven.
+This avoids leaving two normal dungeon systems alive in production.
 
 ### Milestone 5 - Idle guardian spawning
 
@@ -489,7 +617,7 @@ Recommended refactor:
 - Old standing bosses use old respawn scheduling.
 - Gauntlet bosses use altar cooldown scheduling.
 
-### Milestone 10 - Failure reset and participant tracking
+### Milestone 10 - Node-wipe reset and participant tracking
 
 Participants should be tracked when:
 
@@ -507,8 +635,10 @@ Implementation hooks:
 
 Failure reset:
 
-- On player death, if the player is a participant and the gauntlet is `active`
-  or `boss`, reset the dungeon to idle.
+- On player death, if the gauntlet is `active` or `boss`, check the whole node.
+  Reset the dungeon to idle only when no live players remain in that node.
+- Party membership must not gate this check. Non-party players in the node keep
+  the attempt alive.
 - On node freeze, reset and discard gauntlet state.
 - Optional safety timeout can reset stalled active attempts.
 
@@ -708,6 +838,7 @@ Run focused checks as milestones land:
   - verify quest/boss clear credit,
   - verify 12s altar cooldown,
   - verify guardians respawn after cooldown,
-  - verify participant death resets,
+  - verify one player death does not reset while another live player remains in
+    the node,
+  - verify full node wipe resets,
   - verify node freeze/thaw resets runtime state.
-

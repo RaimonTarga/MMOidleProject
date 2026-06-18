@@ -33,6 +33,10 @@ export const hudBus = {
     intents.emit('craftRuneRecipe', recipeId);
   },
 
+  requestActivateDungeonAltar(): void {
+    intents.emit('activateDungeonAltar', undefined);
+  },
+
   /** Called by SkillTreePanel — GameScene picks this up and emits the socket event. */
   requestSkillUnlock(skillId: string): void {
     intents.emit('unlockSkill', skillId);

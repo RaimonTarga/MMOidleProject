@@ -10,6 +10,7 @@ import {
 } from "./classes/archetypes/summoner";
 import { initMobilityBoots } from "./world/mobility/mobilityBoots";
 import { initRuneTauntSystem } from "./combat/ai/taunt";
+import { initDungeonGauntletCombatHooks } from "./world/dungeons/gauntlet";
 
 let initialized = false;
 
@@ -50,6 +51,8 @@ export function initCombatSystems(): void {
   initDeadPlayerGuard();
   // Rune control hooks (currently taunt-current-target).
   initRuneTauntSystem();
+  // Dungeon gauntlet participant tracking.
+  initDungeonGauntletCombatHooks();
   // Summoner mountain-path cover + damage sponge (after defense systems).
   registerMountainPathHooks();
   registerSummonerDamageSponge();

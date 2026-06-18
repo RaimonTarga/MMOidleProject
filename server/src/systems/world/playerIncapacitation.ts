@@ -4,7 +4,6 @@ import {
   type DeathCause,
 } from "@mmo-idle/shared";
 import type { World } from "../../world/World";
-import type { PlayerEntity } from "../../ecs/entity";
 import { attachComponent, detachComponent } from "../../ecs/markerHelpers";
 import { stopEntity } from "./movement";
 import { clearAutoTraversePath } from "./autoTraverse";
@@ -17,6 +16,7 @@ import {
 import { respawnPlayer } from "./spawning";
 import { recordWorldLogEvent } from "../../world/worldLog";
 import { actorFromPlayer } from "../../world/worldLogActors";
+import { resetGauntletIfNodeWiped } from "./dungeons/gauntlet";
 import {
   registerCombatListener,
   type CombatContext,
@@ -79,6 +79,7 @@ export function killPlayer(
     graveFrame,
     diedAtMs: Date.now(),
   });
+  resetGauntletIfNodeWiped(world, entity.hasPosition.nodeId);
 
   recordWorldLogEvent(
     world,

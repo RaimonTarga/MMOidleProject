@@ -806,7 +806,7 @@ export function updateCombat(world: World, dt: number, now: number) {
         e.performsAttack.attackCooldown
       ) {
         const outcome = runMonsterAttack(world, e, target, now);
-        if (outcome === "hit" || outcome === "killed") {
+        if ((outcome === "hit" || outcome === "killed") && world.hasMonster(e.isMonster.id)) {
           applyMonsterAttackSplash(
             world,
             e,

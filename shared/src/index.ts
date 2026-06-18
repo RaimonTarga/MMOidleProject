@@ -5,6 +5,7 @@ export * from './devItems';
 export * from './recipeDatabase';
 export * from './monsterDatabase';
 export * from './biomeDatabase';
+export * from './dungeons';
 export * from './runeDatabase';
 export * from './runeRecipes';
 export * from './passives';

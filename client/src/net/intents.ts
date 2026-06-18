@@ -32,6 +32,10 @@ export function sendRequestSync(socket: GameSocket): void {
   socket.emit('player:requestSync');
 }
 
+export function sendActivateDungeonAltar(socket: GameSocket): void {
+  socket.emit('player:activateDungeonAltar');
+}
+
 export function sendSetActive(socket: GameSocket, active: boolean): void {
   socket.emit('player:setActive', active);
 }

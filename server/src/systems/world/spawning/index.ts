@@ -5,6 +5,7 @@ import {
   BIOME_DATABASE,
   TEST_ROOM_NODE_ID,
   distanceSq,
+  isGauntletDungeonNode,
   type Vec2,
 } from "@mmo-idle/shared";
 import type { World } from "../../../world/World";
@@ -55,13 +56,14 @@ export function createMonster(
   const isBoss = def.isBoss ?? false;
   const nodeDef = NODE_REGISTRY.get(nodeId);
   const isDungeon = nodeDef?.isDungeon ?? false;
+  const usesGauntlet = isGauntletDungeonNode(nodeId);
 
   const hpBase =
-    !isBoss && isDungeon
+    !isBoss && isDungeon && !usesGauntlet
       ? Math.round(def.stats.hp * DUNGEON_HP_MULT)
       : def.stats.hp;
   const atkBase =
-    !isBoss && isDungeon
+    !isBoss && isDungeon && !usesGauntlet
       ? Math.round(def.stats.attack * DUNGEON_ATK_MULT)
       : def.stats.attack;
   const isTestRoom = nodeId === TEST_ROOM_NODE_ID;
@@ -246,6 +248,7 @@ export function respawnPlayer(world: World, playerId: string): void {
 export { killPlayer, updateDeadPlayers } from "../playerIncapacitation";
 
 export function ensurePopulation(world: World, nodeId: string): number {
+  if (isGauntletDungeonNode(nodeId)) return 0;
   let count = world.getMonsterCountInNode(nodeId);
   const targetCount = world.getMobDensity(nodeId);
   while (count < targetCount) {
@@ -260,6 +263,7 @@ export function ensurePopulation(world: World, nodeId: string): number {
  * picks from the biome's bossPoolByTier and spawns near the node center.
  */
 export function ensureBoss(world: World, nodeId: string): void {
+  if (isGauntletDungeonNode(nodeId)) return;
   const nodeDef = NODE_REGISTRY.get(nodeId);
   if (!nodeDef?.isDungeon) return;
   const respawnAt = world.bossRespawnAt.get(nodeId) ?? 0;

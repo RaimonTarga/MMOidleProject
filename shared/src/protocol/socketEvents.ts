@@ -67,6 +67,8 @@ export interface ClientToServerEvents {
   "player:navigateTo": (nodeId: string) => void;
   /** Request a fresh authoritative full snapshot for the player's current node. */
   "player:requestSync": () => void;
+  /** Activate the current dungeon node's altar if the player is close enough. */
+  "player:activateDungeonAltar": () => void;
   /**
    * Report tab focus. When `false` (tab hidden), the server pauses this socket's
    * high-volume `node:delta` / `world:events` stream; when `true`, streaming

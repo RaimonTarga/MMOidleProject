@@ -72,7 +72,7 @@ function buildBenchPlayer(
   pos: Vec2,
 ): PersistedPlayerSlices {
   const equipment = emptyEquipment();
-  equipment.weapon = "basic-sword";
+  equipment.weapon = "primordial-club";
   return {
     isPlayer: { id, name },
     hasPosition: { current: pos, nodeId, speed: GAME_CONFIG.PLAYER_SPEED },

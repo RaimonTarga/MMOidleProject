@@ -18,6 +18,7 @@ import { BiomeXpBar } from './hud/BiomeXpBar';
 import { BossBar } from './hud/BossBar';
 import { TargetFrame } from './hud/TargetFrame';
 import { EmoteWheel } from './hud/EmoteWheel';
+import { DungeonAltarOverlay } from './hud/DungeonAltarOverlay';
 
 if (DEV_TOOLS_ENABLED) {
   registerDevItems(ITEM_DATABASE);
@@ -78,3 +79,4 @@ createRoot(document.getElementById('biome-xp-overlay')!).render(createElement(Bi
 createRoot(document.getElementById('boss-bar-overlay')!).render(createElement(BossBar));
 createRoot(document.getElementById('target-frame-overlay')!).render(createElement(TargetFrame));
 createRoot(document.getElementById('emote-wheel-overlay')!).render(createElement(EmoteWheel));
+createRoot(document.getElementById('dungeon-altar-overlay')!).render(createElement(DungeonAltarOverlay));

@@ -142,6 +142,14 @@ export type WorldLogEvent =
       tick: number;
       serverTime: number;
       nodeId: string;
+    }
+  | {
+      kind: 'dungeon-message';
+      id: number;
+      tick: number;
+      serverTime: number;
+      nodeId: string;
+      message: string;
     };
 
 type DistributiveOmit<T, K extends keyof T> = T extends unknown ? Omit<T, K> : never;
@@ -510,6 +518,14 @@ export function formatWorldLogEntry(
         text,
         headline: text,
         headlineParts: [neutral(text)],
+      };
+    }
+    case 'dungeon-message': {
+      return {
+        kind: 'info',
+        text: event.message,
+        headline: event.message,
+        headlineParts: [neutral(event.message)],
       };
     }
     default:

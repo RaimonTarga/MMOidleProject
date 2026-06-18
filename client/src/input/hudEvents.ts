@@ -22,6 +22,7 @@ import {
   sendUnlockSkill,
   sendUpgradeItem,
   sendAckDeath,
+  sendActivateDungeonAltar,
   sendEmote,
 } from "../net/intents";
 import type { GameScene } from "../scenes/GameScene";
@@ -66,6 +67,11 @@ export function attachHudEvents(scene: GameScene): void {
   intents.on("craftRuneRecipe", (recipeId) => {
     if (isDeathOverlayActive()) return;
     sendCraftRuneRecipe(scene.socket, recipeId);
+  });
+
+  intents.on("activateDungeonAltar", () => {
+    if (isDeathOverlayActive()) return;
+    sendActivateDungeonAltar(scene.socket);
   });
 
   intents.on("upgradeItem", (itemId) => {

@@ -81,6 +81,13 @@ import { buildNodeDelta } from "./nodeDelta";
 import { NodeTelemetry, timeSync } from "../telemetry/nodeTelemetry";
 import { POPULATION_INTERVAL_MS } from "../telemetry/constants";
 import { freezeNode } from "./nodeLifecycle";
+import {
+  buildDungeonGauntletView,
+  ensureDungeonGauntlet,
+  isGauntletDungeonNode,
+  tickDungeonGauntlets,
+  type GauntletState,
+} from "../systems/world/dungeons/gauntlet";
 
 export interface PendingDeath {
   playerId: string;
@@ -142,6 +149,7 @@ export class World {
   readonly ashbrandMonsters = this.monsterEntities.with("hasAshbrandBurn");
   readonly voidCorruptionMonsters = this.monsterEntities.with("hasVoidCorruption");
   readonly smolderMonsters = this.monsterEntities.with("hasSmolder");
+  readonly dungeonMonsters = this.monsterEntities.with("tracksDungeon");
 
   /**
    * Canonical player query. All required slice components are stamped together
@@ -211,6 +219,8 @@ export class World {
   pendingOverlordFelled: string[] = [];
   /** Dungeon boss respawn cooldowns keyed by node id. */
   bossRespawnAt = new Map<string, number>();
+  /** Runtime-only dungeon gauntlet state keyed by node id. */
+  gauntlets = new Map<string, GauntletState>();
   /** Client-facing boss death markers keyed by node id. */
   bossRespawnMarkers = new Map<string, BossRespawnMarker>();
   /**
@@ -349,6 +359,7 @@ export class World {
     updateAutoIntent(this);
     updateExpiredEmotes(this, now);
     updateDeadPlayersInWorld(this, now);
+    tickDungeonGauntlets(this, now);
 
     if (IS_DEV) {
       ensureCurrentTestRoomBoss(this);
@@ -366,8 +377,12 @@ export class World {
         this.populationCheckedAt.set(nodeId, now);
 
         const { ms } = timeSync(() => {
-          ensurePopulationInWorld(this, nodeId);
-          ensureBossInWorld(this, nodeId);
+          if (isGauntletDungeonNode(nodeId)) {
+            ensureDungeonGauntlet(this, nodeId);
+          } else {
+            ensurePopulationInWorld(this, nodeId);
+            ensureBossInWorld(this, nodeId);
+          }
         });
         this.telemetry.recordPopulationMs(nodeId, ms, true);
       }
@@ -605,6 +620,10 @@ export class World {
 
   broadcastBossFelledState(): void {
     this.bossFelledBroadcast?.();
+  }
+
+  buildDungeonGauntletView(nodeId: string) {
+    return buildDungeonGauntletView(this, nodeId);
   }
 
   countPlayersInNode(nodeId: string): number {

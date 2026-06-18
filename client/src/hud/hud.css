@@ -1219,6 +1219,70 @@
   text-shadow: 0 0 6px rgba(255, 85, 51, 0.32);
 }
 
+.dungeon-altar {
+  position: fixed;
+  left: 50%;
+  bottom: calc(74px + env(safe-area-inset-bottom, 0px));
+  transform: translateX(-50%);
+  width: min(360px, calc(100vw - 32px));
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  align-items: stretch;
+  pointer-events: auto;
+  font-family: monospace;
+  user-select: none;
+}
+
+.dungeon-altar__progress {
+  align-self: center;
+  max-width: 100%;
+  padding: 4px 8px;
+  background: rgba(12, 10, 7, 0.88);
+  border: 1px solid rgba(168, 130, 48, 0.38);
+  color: #d8c48a;
+  font-size: 10px;
+  line-height: 1.25;
+  text-align: center;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.dungeon-altar__button {
+  min-height: 48px;
+  padding: 10px 18px;
+  background: linear-gradient(180deg, #3a3018, #211b10);
+  border-top: 2px solid #7d6630;
+  border-left: 2px solid #7d6630;
+  border-right: 2px solid #0d0a06;
+  border-bottom: 2px solid #0d0a06;
+  color: #ffe08a;
+  font-family: monospace;
+  font-size: 13px;
+  font-weight: bold;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  touch-action: manipulation;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.45);
+}
+
+.dungeon-altar__button:disabled {
+  cursor: default;
+  color: #8d8062;
+  background: linear-gradient(180deg, #252016, #17130d);
+  border-top-color: #403723;
+  border-left-color: #403723;
+  opacity: 0.92;
+}
+
+.dungeon-altar__button:not(:disabled):active {
+  border-top-color: #0d0a06;
+  border-left-color: #0d0a06;
+  border-right-color: #7d6630;
+  border-bottom-color: #7d6630;
+}
+
 /* ══ Mobile HUD (portrait-first) ════════════════════════════════════════════
    Layout: fixed top status strip + compact mechanic bar, a floating AUTO FAB,
    and a fixed bottom region (stat chips + tab bar). Heavier info opens either as
@@ -1231,6 +1295,31 @@
    top/left so it no longer depends on the #buff-overlay box. This keeps the top
    clear for the centered target frame. */
 @media (max-width: 1100px) {
+  .dungeon-altar {
+    left: calc(10px + env(safe-area-inset-left, 0px));
+    right: calc(90px + env(safe-area-inset-right, 0px));
+    bottom: calc(var(--mhud-bottom-h, 86px) + env(safe-area-inset-bottom, 0px) + 86px);
+    transform: none;
+    width: auto;
+    max-width: 340px;
+    gap: 4px;
+    align-items: stretch;
+  }
+
+  .dungeon-altar__progress {
+    align-self: stretch;
+    padding: 3px 6px;
+    font-size: 9px;
+    line-height: 1.2;
+  }
+
+  .dungeon-altar__button {
+    min-height: 42px;
+    padding: 8px 10px;
+    font-size: 11px;
+    letter-spacing: 0.05em;
+  }
+
   .buff-bar-root {
     position: fixed !important;
     top: auto !important;
@@ -1243,6 +1332,19 @@
 }
 
 /* ── Top status strip ──────────────────────────────────────────────── */
+@media (max-width: 420px) {
+  .dungeon-altar {
+    right: calc(84px + env(safe-area-inset-right, 0px));
+    max-width: none;
+  }
+
+  .dungeon-altar__button {
+    min-height: 38px;
+    padding: 7px 8px;
+    font-size: 10px;
+  }
+}
+
 .mhud-top {
   position: fixed;
   top: 0; left: 0; right: 0;

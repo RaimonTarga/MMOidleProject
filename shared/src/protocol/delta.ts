@@ -1,4 +1,5 @@
 import type { CombatEvent } from '../index';
+import type { DungeonGauntletView } from '../dungeons';
 import type { Vec2 } from '../systems/spatial';
 import type {
   EntityKind,
@@ -39,4 +40,5 @@ export interface DeltaSnapshot {
   deltas: EntityDelta[];
   events: CombatEvent[];
   voidOverlordRespawn?: VoidOverlordRespawnState;
+  dungeonGauntlet?: DungeonGauntletView;
 }

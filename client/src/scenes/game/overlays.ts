@@ -1,6 +1,7 @@
 import {
   BIOME_DATABASE,
   GAME_CONFIG,
+  getDungeonGauntletDef,
   NODE_BIOMES,
   NODE_FEATURES,
   TREE_CELL_PX,
@@ -137,21 +138,33 @@ function buildNodeDecorImages(
   throneOpen: boolean,
 ): Phaser.GameObjects.Image[] {
   const arts = NODE_DECOR[nodeId];
-  if (!arts) return [];
 
   const decor: Phaser.GameObjects.Image[] = [];
-  for (const art of arts) {
-    const feature = NODE_FEATURES[nodeId]?.find((f) => f.id === art.featureId);
-    const textureKey = throneOpen && art.openKey ? art.openKey : art.key;
-    if (!feature || !scene.textures.exists(textureKey)) continue;
-    const scale = art.artScale ?? 1;
+  if (arts) {
+    for (const art of arts) {
+      const feature = NODE_FEATURES[nodeId]?.find((f) => f.id === art.featureId);
+      const textureKey = throneOpen && art.openKey ? art.openKey : art.key;
+      if (!feature || !scene.textures.exists(textureKey)) continue;
+      const scale = art.artScale ?? 1;
+      const img = scene.add
+        .image(offsetX + feature.x, offsetY + feature.y, textureKey)
+        .setOrigin(0.5, 0.5)
+        .setDepth((art.depth ?? DEPTH.BG_DECOR) + depthBias)
+        .setDisplaySize(feature.displayW * scale, feature.displayH * scale);
+      img.setData("featureId", art.featureId);
+      if (art.alpha != null) img.setAlpha(art.alpha);
+      decor.push(img);
+    }
+  }
+
+  const gauntlet = getDungeonGauntletDef(nodeId);
+  if (gauntlet && scene.textures.exists("rune_altar")) {
     const img = scene.add
-      .image(offsetX + feature.x, offsetY + feature.y, textureKey)
+      .image(offsetX + gauntlet.altar.x, offsetY + gauntlet.altar.y, "rune_altar")
       .setOrigin(0.5, 0.5)
-      .setDepth((art.depth ?? DEPTH.BG_DECOR) + depthBias)
-      .setDisplaySize(feature.displayW * scale, feature.displayH * scale);
-    img.setData("featureId", art.featureId);
-    if (art.alpha != null) img.setAlpha(art.alpha);
+      .setDepth(DEPTH.BG_DECOR + depthBias)
+      .setDisplaySize(220, 220);
+    img.setData("featureId", "dungeon_altar");
     decor.push(img);
   }
   return decor;

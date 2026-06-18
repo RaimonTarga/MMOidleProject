@@ -7,6 +7,7 @@ import { registerKillForQuests } from './questSystem';
 import { recordWorldLogEvent } from '../../../world/worldLog';
 import { actorFromPlayer } from '../../../world/worldLogActors';
 import { notifyVoidOverlordDeath } from '../../combat/ai/ultimateEncounter';
+import { onDungeonMonsterRewarded } from '../../world/dungeons/gauntlet';
 
 export interface KillRewards {
   essence: number;
@@ -149,6 +150,7 @@ function applyKillRewardsToPlayer(
   world: World,
   recipient: PlayerEntity,
   monster: MonsterEntity,
+  options: { suppressBossRespawn?: boolean } = {},
 ): KillRewardInfo {
   const def = MONSTER_DATABASE.get(monster.isMonster.monsterTypeId);
   const rewards = def?.rewards ?? FALLBACK_REWARDS;
@@ -187,7 +189,9 @@ function applyKillRewardsToPlayer(
     world.pendingAscensions.push(recipient.isPlayer.id);
   }
   if (monster.isMonster.isBoss && !monster.isEncounterAdd) {
-    scheduleBossRespawn(world, monster);
+    if (!options.suppressBossRespawn) {
+      scheduleBossRespawn(world, monster);
+    }
     const info = NODE_BIOMES[monster.hasPosition.nodeId];
     if (info) {
       const key = bossClearKey(info.biomeGroup, info.biomeTier);
@@ -221,7 +225,11 @@ export function grantMonsterRewards(
   const killer = world.getPlayerEntity(killerPlayerId);
   if (!killer) return null;
 
-  const killerInfo = applyKillRewardsToPlayer(world, killer, monster);
+  const suppressBossRespawn = monster.tracksDungeon?.source === 'gauntletBoss';
+  const killerInfo = applyKillRewardsToPlayer(world, killer, monster, {
+    suppressBossRespawn,
+  });
+  const dungeonResult = onDungeonMonsterRewarded(world, killerPlayerId, monster);
 
   if (monster.isMonster.monsterTypeId === 'void-overlord') {
     notifyVoidOverlordDeath(world, monster, killerPlayerId);
@@ -241,7 +249,9 @@ export function grantMonsterRewards(
       if (member === killer) continue;
       if (member.inParty?.leaderId !== party.leaderId) continue;
       if (member.hasPosition.nodeId !== killNodeId) continue;
-      applyKillRewardsToPlayer(world, member, monster);
+      applyKillRewardsToPlayer(world, member, monster, {
+        suppressBossRespawn: suppressBossRespawn || dungeonResult.suppressBossRespawn,
+      });
     }
   }
 

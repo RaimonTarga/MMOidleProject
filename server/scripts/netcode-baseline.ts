@@ -73,7 +73,7 @@ function makePlayer(id: string, nodeId: string, name: string): PersistedPlayerSl
     },
     holdsInventory: {
       inventory: [],
-      equipment: { ...emptyEquipment(), weapon: 'basic-sword' },
+      equipment: { ...emptyEquipment(), weapon: 'primordial-club' },
     },
     usesSkills: {
       unlockedSkills: [],

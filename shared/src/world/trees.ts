@@ -172,6 +172,8 @@ const MIN_TRUNK_SEPARATION = 440;
 const TREES_PER_NODE = 11;
 /** Forest dungeon nodes pack 5× as many trees (tighter trunk spacing). */
 const FOREST_DUNGEON_TREE_MULTIPLIER = 5;
+/** Dungeon altars need open combat space; no tree trunk anchors inside this radius. */
+const DUNGEON_CENTER_TREE_CLEAR_RADIUS = 760;
 
 function treesForNode(nodeId: string): { target: number; minSeparation: number } {
   const biome = NODE_BIOMES[nodeId];
@@ -208,6 +210,7 @@ function generateNodeTrees(nodeId: string): TreeInstance[] {
     // Footprint-center anchor in node-local world px.
     const footX = EDGE_MARGIN + rng() * (W - 2 * EDGE_MARGIN);
     const footY = EDGE_MARGIN + rng() * (H - 2 * EDGE_MARGIN);
+    if (isInsideDungeonCenterClearing(nodeId, footX, footY)) continue;
 
     const tooClose = anchors.some((a) => {
       const dx = footX - a.x;
@@ -226,6 +229,7 @@ function generateNodeTrees(nodeId: string): TreeInstance[] {
       halfW: r.halfW * scale,
       halfH: r.halfH * scale,
     }));
+    if (treeIntersectsDungeonCenterClearing(nodeId, shapes)) continue;
 
     anchors.push({ x: footX, y: footY });
     trees.push({
@@ -240,6 +244,46 @@ function generateNodeTrees(nodeId: string): TreeInstance[] {
   }
 
   return trees;
+}
+
+function isInsideDungeonCenterClearing(
+  nodeId: string,
+  x: number,
+  y: number,
+): boolean {
+  const biome = NODE_BIOMES[nodeId];
+  if (!biome?.isDungeon) return false;
+  const dx = x - GAME_CONFIG.NODE_WIDTH / 2;
+  const dy = y - GAME_CONFIG.NODE_HEIGHT / 2;
+  return dx * dx + dy * dy <
+    DUNGEON_CENTER_TREE_CLEAR_RADIUS * DUNGEON_CENTER_TREE_CLEAR_RADIUS;
+}
+
+function treeIntersectsDungeonCenterClearing(
+  nodeId: string,
+  shapes: NodeFeatureShape[],
+): boolean {
+  const biome = NODE_BIOMES[nodeId];
+  if (!biome?.isDungeon) return false;
+  const cx = GAME_CONFIG.NODE_WIDTH / 2;
+  const cy = GAME_CONFIG.NODE_HEIGHT / 2;
+  const radiusSq =
+    DUNGEON_CENTER_TREE_CLEAR_RADIUS * DUNGEON_CENTER_TREE_CLEAR_RADIUS;
+
+  return shapes.some((shape) => {
+    if (shape.kind !== "rect") return false;
+    const closestX = Math.max(
+      shape.x - shape.halfW,
+      Math.min(cx, shape.x + shape.halfW),
+    );
+    const closestY = Math.max(
+      shape.y - shape.halfH,
+      Math.min(cy, shape.y + shape.halfH),
+    );
+    const dx = closestX - cx;
+    const dy = closestY - cy;
+    return dx * dx + dy * dy < radiusSq;
+  });
 }
 
 /** Deterministic scattered trees for a node ('' for non-forest nodes). */

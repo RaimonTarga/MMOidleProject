@@ -19,6 +19,7 @@ import {
 } from './ultimateBossSprites';
 
 const THRONE_HEAL_TINT = 0xbb66ff;
+const GUARDIAN_TINT = 0xffcc44;
 
 function syncMonsterThroneTint(
   state: RenderState,
@@ -26,10 +27,20 @@ function syncMonsterThroneTint(
 ): void {
   const sprite = state.sprite.get(monster.id);
   if (!sprite) return;
-  if (monster.throneHealing) {
+  if (state.dungeonGuardianIds.has(monster.id)) {
+    applySpriteTint(sprite, GUARDIAN_TINT);
+  } else if (monster.throneHealing) {
     applySpriteTint(sprite, THRONE_HEAL_TINT);
   } else {
     resetSpriteTint(sprite, monster.color);
+  }
+}
+
+export function refreshMonsterTints(state: RenderState): void {
+  for (const id of state.ids) {
+    if (state.kind.get(id) !== "monster") continue;
+    const monster = state.view.get(id) as MonsterView | undefined;
+    if (monster) syncMonsterThroneTint(state, monster);
   }
 }
 

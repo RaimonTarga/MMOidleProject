@@ -170,6 +170,8 @@ export interface RenderState {
 
   /** Transient per-snapshot damage-number style hints (built in applyDelta). */
   damageStyleHints: Map<NetworkId, DamageNumberHint>;
+  /** Monster ids currently presented as dungeon guardians. */
+  dungeonGuardianIds: Set<NetworkId>;
 }
 
 export function createRenderState(): RenderState {
@@ -223,6 +225,7 @@ export function createRenderState(): RenderState {
     nodeGateEntities: [],
     lastSpawnedGateNodeId: "",
     damageStyleHints: new Map(),
+    dungeonGuardianIds: new Set(),
   };
 }
 

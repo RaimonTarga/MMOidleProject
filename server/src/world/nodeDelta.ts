@@ -82,6 +82,9 @@ export function buildNodeDelta(
     };
   }
 
+  const dungeonGauntlet = world.buildDungeonGauntletView(nodeId);
+  if (dungeonGauntlet) snapshot.dungeonGauntlet = dungeonGauntlet;
+
   let deltaBytes = 0;
   try {
     deltaBytes = JSON.stringify(snapshot).length;

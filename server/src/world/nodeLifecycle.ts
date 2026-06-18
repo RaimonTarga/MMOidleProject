@@ -2,6 +2,11 @@ import { TEST_ROOM_NODE_ID } from '@mmo-idle/shared';
 import type { World } from './World';
 import { removeMonsterEntity } from './monsterLifecycle';
 import { ensurePopulation, ensureBoss } from '../systems/world/spawning';
+import {
+  clearDungeonGauntletRuntime,
+  ensureDungeonGauntlet,
+  isGauntletDungeonNode,
+} from '../systems/world/dungeons/gauntlet';
 
 export function freezeNode(world: World, nodeId: string): void {
   if (nodeId === TEST_ROOM_NODE_ID) return;
@@ -10,6 +15,7 @@ export function freezeNode(world: World, nodeId: string): void {
   for (const m of [...world.monsterEntitiesInNode(nodeId)]) {
     removeMonsterEntity(world, m.isMonster.id);
   }
+  clearDungeonGauntletRuntime(world, nodeId);
   world.nextMonsterIdByNode.delete(nodeId);
   world.reconcileMonsterCounts();
 
@@ -32,8 +38,12 @@ export function thawNode(world: World, nodeId: string): void {
 
   world.frozenNodes.delete(nodeId);
   world.telemetry.syncFrozen(nodeId, false);
-  ensurePopulation(world, nodeId);
-  ensureBoss(world, nodeId);
+  if (isGauntletDungeonNode(nodeId)) {
+    ensureDungeonGauntlet(world, nodeId);
+  } else {
+    ensurePopulation(world, nodeId);
+    ensureBoss(world, nodeId);
+  }
   world.reconcileMonsterCounts();
   world.resetNodeDeltaState(nodeId);
 }

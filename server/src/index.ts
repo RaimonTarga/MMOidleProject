@@ -95,6 +95,7 @@ import { thawNode } from "./world/nodeLifecycle";
 import { rightmostEntranceTarget } from "./world/nodePath";
 import { ensurePopulation, ensureBoss } from "./systems/world/spawning";
 import { initDeadPlayerGuard } from "./systems/world/playerIncapacitation";
+import { activateDungeonAltar } from "./systems/world/dungeons/gauntlet";
 import type { PlayerEntity } from "./ecs/entity";
 import { log } from "./log";
 import { runLogMigrations } from "./logdb/index";
@@ -805,6 +806,12 @@ async function boot(): Promise<void> {
       recordBroadcast(snap, "state:sync");
       socket.emit("state:sync", snap);
       emitBossFelledState();
+    });
+
+    socket.on("player:activateDungeonAltar", () => {
+      const p = liveSelf();
+      if (!p) return;
+      activateDungeonAltar(world, p);
     });
 
     socket.on("player:setActive", (active) => {

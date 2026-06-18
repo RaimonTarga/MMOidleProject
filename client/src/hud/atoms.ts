@@ -17,6 +17,8 @@ import type {
   TargetStatusView,
   UltimateStatus,
   BossFelledMarker,
+  DungeonGauntletView,
+  Vec2,
 } from '@mmo-idle/shared';
 
 export type HudConnectionStatus = 'connecting' | 'connected' | 'disconnected';
@@ -91,6 +93,7 @@ export function flashEmoteWheel(highlight: EmoteWheelDirection): void {
 export const playerIdAtom = atom<string | null>(null);
 export const playerNameAtom = atom<string | null>(null);
 export const playerNodeIdAtom = atom<string | null>(null);
+export const playerPosAtom = atom<Vec2 | null>(null);
 export const selectedClassAtom = atom<string | null>(null);
 export const selectedSubVariantAtom = atom<SubVariant | null>(null);
 export const selectedRangeAtom = atom<string | null>(null);
@@ -212,6 +215,7 @@ export const targetFrameAtom = atom<TargetFrameData | null>(null);
 
 /** Slain bosses awaiting respawn, keyed by node id (world map). */
 export const bossFelledByNodeAtom = atom<Record<string, BossFelledMarker>>({});
+export const dungeonGauntletAtom = atom<DungeonGauntletView | null>(null);
 
 /** The local player's party (null when not in a party). */
 export const partyAtom = atom<{ leaderId: string; members: PartyMember[] } | null>(null);
@@ -415,6 +419,10 @@ export function setBossFelledMarkers(markers: BossFelledMarker[]): void {
   getDefaultStore().set(bossFelledByNodeAtom, next);
 }
 
+export function setDungeonGauntlet(next: DungeonGauntletView | null): void {
+  getDefaultStore().set(dungeonGauntletAtom, next);
+}
+
 function partyEqual(
   a: { leaderId: string; members: PartyMember[] } | null,
   b: { leaderId: string; members: PartyMember[] } | null,
@@ -485,6 +493,7 @@ function resetPlayerAtoms(): void {
   store.set(playerIdAtom, null);
   store.set(playerNameAtom, null);
   store.set(playerNodeIdAtom, null);
+  store.set(playerPosAtom, null);
   store.set(selectedClassAtom, null);
   store.set(selectedSubVariantAtom, null);
   store.set(selectedRangeAtom, null);
@@ -565,6 +574,7 @@ function resetPlayerAtoms(): void {
   setZoneBoss(null);
   setTargetFrame(null);
   setBossFelledMarkers([]);
+  setDungeonGauntlet(null);
   store.set(nodeLoadingAtom, { active: false, nodeId: null });
   store.set(tabResyncAtom, { active: false, startedAt: null });
   store.set(deathOverlayAtom, { active: false, payload: null, startedAt: null });
@@ -579,6 +589,7 @@ export function syncPlayerAtoms(player: PlayerView | null): void {
   setIfChanged(playerIdAtom, player.id);
   setIfChanged(playerNameAtom, player.name);
   setIfChanged(playerNodeIdAtom, player.nodeId);
+  getDefaultStore().set(playerPosAtom, player.pos);
   setIfChanged(selectedClassAtom, player.selectedClass);
   setIfChanged(selectedSubVariantAtom, player.selectedSubVariant);
   setIfChanged(selectedRangeAtom, player.selectedRange);

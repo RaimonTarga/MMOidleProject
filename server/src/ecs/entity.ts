@@ -88,6 +88,21 @@ export interface HasMovePath {
   mover: FeatureTarget;
 }
 
+export type DungeonMonsterSource =
+  | "idleDungeonGuardian"
+  | "gauntletPhase"
+  | "gauntletBoss";
+
+/** Server-only runtime metadata for monsters owned by a dungeon gauntlet. */
+export interface TracksDungeon {
+  source: DungeonMonsterSource;
+  dungeonNodeId: string;
+  gauntletPhaseIndex?: number;
+  gauntletPhaseId?: string;
+  guardPost?: Vec2;
+  leashRadius?: number;
+}
+
 /**
  * The shape of any entity in the ECS world.
  *
@@ -186,6 +201,7 @@ export interface ServerEntity {
   isNodeFeatureSpawn?: IsNodeFeatureSpawn;
   isInvulnerable?: IsInvulnerable;
   isUltimateEngaged?: IsUltimateEngaged;
+  tracksDungeon?: TracksDungeon;
 
   // ── Player (S8) ───────────────────────────────────────────────
   tracksEngagement?: number;

@@ -8,12 +8,12 @@ import {
 import { loadGameplaySettings } from '../settings/gameplaySettings';
 import { sendSetAutocombatConfig, sendSetAutoTraverse } from './intents';
 import { hudBus } from "../hudBus";
-import { syncPlayerAtoms, nodeLoadingAtom, setTargetFrame, setZoneBoss, setZonePlayers, type TargetFrameData, type ZonePlayer } from "../hud/atoms";
+import { syncPlayerAtoms, nodeLoadingAtom, setDungeonGauntlet, setTargetFrame, setZoneBoss, setZonePlayers, type TargetFrameData, type ZonePlayer } from "../hud/atoms";
 import { getDefaultStore } from "jotai";
 import type { GameScene } from "../scenes/GameScene";
 import type { RenderState, DamageNumberHint } from "../render/state";
 import { upsertPlayer } from "../render/players";
-import { upsertMonster } from "../render/monsters";
+import { refreshMonsterTints, upsertMonster } from "../render/monsters";
 import { upsertThoughtBubble } from "../render/thoughtBubbles";
 import { upsertMinion } from "../render/minions";
 import { destroyEntity } from "../render/destroy";
@@ -44,6 +44,7 @@ export function applyDelta(
 ): void {
   const liveIds = new Set<string>();
   const pendingRemoves: string[] = [];
+  state.dungeonGuardianIds = guardianIdsFromGauntlet(snapshot);
 
   // Derive per-monster damage-number style hints from this snapshot's events
   // before the delta loop spawns HP-delta numbers (which run before events fire).
@@ -116,6 +117,8 @@ export function applyDelta(
     destroyEntity(state, netId, scene);
   }
   syncVoidOverlordRespawn(state, snapshot.voidOverlordRespawn, scene);
+  setDungeonGauntlet(snapshot.dungeonGauntlet ?? null);
+  refreshMonsterTints(state);
   if (snapshot.voidOverlordRespawn) {
     setVoidThroneHazardLifted(scene, true);
   }
@@ -218,6 +221,17 @@ export function applyDelta(
   }
 
   notifyDeltaAppliedDuringTabResync();
+}
+
+function guardianIdsFromGauntlet(snapshot: DeltaSnapshot): Set<string> {
+  const gauntlet = snapshot.dungeonGauntlet;
+  const ids = new Set<string>();
+  if (!gauntlet) return ids;
+  for (const id of gauntlet.guardianMonsterIds) ids.add(id);
+  if (gauntlet.status === "active" && gauntlet.phaseIndex === 0) {
+    for (const id of gauntlet.activeMonsterIds) ids.add(id);
+  }
+  return ids;
 }
 
 function upsertEntityView(

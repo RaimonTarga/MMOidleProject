@@ -220,7 +220,7 @@ export function NodeInfo({ nodeId, playerNodeId, onClose }: NodeInfoProps) {
         </div>
       </div>
 
-      {isDungeon && <div className="map-dungeon-warning">Enemies: ×2 HP · ×1.6 ATK</div>}
+      {isDungeon && <div className="map-dungeon-warning">Altar trial · guardians · boss finale</div>}
 
       {felledMarker && felledMarker.respawnAt > mapNow && felledBoss && (
         <section className="map-info-section">
