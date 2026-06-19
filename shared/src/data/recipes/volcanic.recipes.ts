@@ -10,7 +10,7 @@ export const volcanicRecipeEntries = [
     id: 'volcanic-cinderlash', name: 'Cinderlash',
     recipeGroup: 'volcanic', requiredBiomeLevel: 1, slot: 'weapon',
     cost: { red: 140 }, stats: { attack: 34 }, attacksPerSecond: 1.65, tier: 3,
-    mechanicEffects: { 'weapon.flurry-pct': 0.06, 'weapon.flurry-stacks': 5 },
+    mechanicEffects: { 'weapon.flurry-pct': 0.03, 'weapon.flurry-stacks': 5 },
     icon: 'items/weapons/lava-rapier.png',
     description: 'A whip of braided ember that strikes faster the longer it burns.',
     upgrades: [
@@ -70,7 +70,7 @@ export const volcanicRecipeEntries = [
     id: 'volcanic-eruption-lash', name: 'Eruption Lash',
     recipeGroup: 'volcanic', requiredBiomeLevel: 5, slot: 'weapon',
     cost: { red: 308 }, stats: { attack: 58 }, attacksPerSecond: 1.80, tier: 4,
-    mechanicEffects: { 'weapon.flurry-pct': 0.07, 'weapon.flurry-stacks': 6 },
+    mechanicEffects: { 'weapon.flurry-pct': 0.04, 'weapon.flurry-stacks': 5 },
     icon: 'items/weapons/lava-rapier.png',
     description: 'A braided whip of ember that strikes faster the longer it is allowed to burn.',
     upgrades: [
@@ -85,14 +85,14 @@ export const volcanicRecipeEntries = [
     recipeGroup: 'volcanic', requiredBiomeLevel: 5, slot: 'weapon',
     // ⚠ INHERITED (Swamp fast-DoT lineage) — base attack carried from doc.
     //   VERIFY in the DoT-conversion budget pass.
-    cost: { red: 290 }, stats: { attack: 62 }, attacksPerSecond: 0.85, tier: 4,
-    mechanicEffects: { 'weapon.dot-conversion-pct': 0.30, 'weapon.dot-stacks': 5 },
+    cost: { red: 290 }, stats: { attack: 64 }, attacksPerSecond: 1.20, tier: 4,
+    mechanicEffects: { 'weapon.dot-conversion-pct': 0.50, 'weapon.dot-stacks': 5 },
     icon: 'items/weapons/lava-blade.png',
     description: 'It leaves a fire under the skin that does the rest of the work while you move on.',
     upgrades: [
-      { stats: { attack: 12 }, cost: { red: 435 }, requiredBiomeLevel: 6 },
-      { stats: { attack: 12 }, cost: { red: 870 }, requiredBiomeLevel: 7 },
-      { stats: { attack: 12 }, cost: { red: 1740 }, requiredBiomeLevel: 8 },
+      { stats: { attack: 14 }, cost: { red: 435 }, requiredBiomeLevel: 6 },
+      { stats: { attack: 14 }, cost: { red: 870 }, requiredBiomeLevel: 7 },
+      { stats: { attack: 14 }, cost: { red: 1740 }, requiredBiomeLevel: 8 },
     ],
   }],
 

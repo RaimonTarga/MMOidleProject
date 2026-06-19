@@ -20,9 +20,9 @@ Generated from `tools/dps-report.ts`. This packet is Markdown only; it intention
 | Average mob HP | 143 |
 | Average plating | 0.80 |
 | Average DR | 1.50% |
-| Reference optimal-build average DPS | 74.2 |
-| Target TTK at reference DPS | 1.92s |
-| Expected DPS band | 49.7 - 111 |
+| Reference optimal-build average DPS | 67.4 |
+| Target TTK at reference DPS | 2.11s |
+| Expected DPS band | 45.2 - 101 |
 
 | Profile | Monster | HP | Plating | DR | Defensive notes |
 | --- | --- | --- | --- | --- | --- |
@@ -37,27 +37,27 @@ Generated from `tools/dps-report.ts`. This packet is Markdown only; it intention
 
 | Build | Optimal Weapon | ATK | On-hit | APS | CD ms | Range | HP | Plating | DR | Class passives | Mechanic frequency | Formula notes |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Apprentice | Chaotic Axe +3 | 82.0 | 0.00 | 1.10 | 909 | 72.0 | 135 | 3.00 | 4.00% | - | DoT cap 6 stacks, tick 1500ms | dead swing every 3 hits |
-| Slinger | Chaotic Axe +3 | 50.0 | 0.00 | 1.86 | 379 | 132 | 124 | 2.00 | 0.00% | reload.acquire-radius-mult=2.50 | 10 shots, 1600ms reload, 1.86 effective shots/s | dead swing every 3 hits |
-| Spirit | Chaotic Axe +3 | 81.0 | 0.00 | 1.38 | 727 | 142 | 110 | 2.00 | 0.00% | - | discharge every 9 hits (0.15/s) | dead swing every 3 hits |
-| Squire | Chaotic Axe +3 | 84.0 | 0.00 | 1.10 | 909 | 12.0 | 150 | 5.00 | 8.00% | - | empowered every 7.00s (0.14/s) | dead swing every 3 hits |
-| Striker | Chaotic Axe +3 | 82.0 | 0.00 | 1.10 | 909 | 12.0 | 130 | 4.00 | 4.00% | - | finisher every 5 hits (0.22/s) | dead swing every 3 hits |
+| Apprentice | Heavy Hammer +3 | 83.0 | 0.00 | 0.55 | 1818 | 72.0 | 135 | 3.00 | 4.00% | - | DoT cap 6 stacks, tick 1500ms | dot steady-state hit estimate |
+| Slinger | Ashbrand Blade +3 | 35.0 | 0.00 | 1.54 | 490 | 132 | 124 | 2.00 | 0.00% | reload.acquire-radius-mult=2.50 | 10 shots, 1600ms reload, 1.54 effective shots/s | ashbrand-burn reservoir DoT from weapon profile |
+| Spirit | Chaotic Axe +3 | 72.0 | 0.00 | 1.27 | 790 | 142 | 110 | 2.00 | 0.00% | - | discharge every 9 hits (0.14/s) | dead swing every 3 hits |
+| Squire | Chaotic Axe +3 | 75.0 | 0.00 | 1.10 | 909 | 12.0 | 150 | 5.00 | 8.00% | - | empowered every 7.00s (0.14/s) | dead swing every 3 hits |
+| Striker | Chaotic Axe +3 | 73.0 | 0.00 | 1.10 | 909 | 12.0 | 130 | 4.00 | 4.00% | - | finisher every 5 hits (0.22/s) | dead swing every 3 hits |
 
 
 ## 4. Weapon Input Table (+0 and +3)
 
 | Weapon | Plus | Stats | Effects | Formulas | Scaling notes |
 | --- | --- | --- | --- | --- | --- |
-| Ashbrand Blade | +0 | attack=7.00 | weapon.dot-conversion-pct=0.30, weapon.dot-stacks=5.00 | 0.75 APS base; ashbrand-burn DoT reservoir 30.0% conversion x1.15 | explicit steps 0/3 |
-| Ashbrand Blade | +3 | attack=16.0 | weapon.dot-conversion-pct=0.30, weapon.dot-stacks=5.00 | 0.75 APS base; ashbrand-burn DoT reservoir 30.0% conversion x1.15 | explicit steps 3/3 |
-| Chaotic Axe | +0 | attack=25.0 | weapon.dead-swing-interval=3.00 | 1.10 APS base | explicit steps 0/3 |
-| Chaotic Axe | +3 | attack=55.0 | weapon.dead-swing-interval=3.00 | 1.10 APS base | explicit steps 3/3 |
+| Ashbrand Blade | +0 | attack=10.0 | weapon.dot-conversion-pct=0.50, weapon.dot-stacks=5.00 | 0.85 APS base; ashbrand-burn DoT reservoir 50.0% conversion x1.50 | explicit steps 0/3 |
+| Ashbrand Blade | +3 | attack=22.0 | weapon.dot-conversion-pct=0.50, weapon.dot-stacks=5.00 | 0.85 APS base; ashbrand-burn DoT reservoir 50.0% conversion x1.50 | explicit steps 3/3 |
+| Chaotic Axe | +0 | attack=24.0 | weapon.dead-swing-interval=3.00 | 1.10 APS base | explicit steps 0/3 |
+| Chaotic Axe | +3 | attack=46.0 | weapon.dead-swing-interval=3.00 | 1.10 APS base | explicit steps 3/3 |
 | Flash Rapier | +0 | attack=5.00 | - | 1.50 APS base | explicit steps 0/3 |
 | Flash Rapier | +3 | attack=11.0 | - | 1.50 APS base | explicit steps 3/3 |
-| Heavy Hammer | +0 | attack=16.0 | - | 0.40 APS base | explicit steps 0/3 |
-| Heavy Hammer | +3 | attack=34.0 | - | 0.40 APS base | explicit steps 3/3 |
-| Iron Broadsword | +0 | attack=8.00 | - | 0.65 APS base | explicit steps 0/3 |
-| Iron Broadsword | +3 | attack=17.0 | - | 0.65 APS base | explicit steps 3/3 |
+| Heavy Hammer | +0 | attack=26.0 | - | 0.55 APS base | explicit steps 0/3 |
+| Heavy Hammer | +3 | attack=56.0 | - | 0.55 APS base | explicit steps 3/3 |
+| Iron Broadsword | +0 | attack=10.0 | - | 0.75 APS base | explicit steps 0/3 |
+| Iron Broadsword | +3 | attack=22.0 | - | 0.75 APS base | explicit steps 3/3 |
 
 
 ## 5. Top / Bottom Builds And Outliers
@@ -66,22 +66,22 @@ Top 10 builds:
 
 | Build | Weapon | DPS | Direct | Class | DoT | Weapon/proc | Flag |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| Spirit | Chaotic Axe +3 | 84.7 | 72.4 | 12.2 | 0.00 | 0.00 | - |
-| Apprentice | Chaotic Axe +3 | 77.3 | 29.3 | 0.00 | 48.0 | 0.00 | - |
-| Striker | Chaotic Axe +3 | 76.5 | 58.7 | 17.8 | 0.00 | 0.00 | - |
-| Squire | Chaotic Axe +3 | 72.0 | 60.1 | 11.9 | 0.00 | 0.00 | - |
-| Slinger | Chaotic Axe +3 | 60.6 | 60.6 | 0.00 | 0.00 | 0.00 | - |
+| Apprentice | Heavy Hammer +3 | 70.6 | 22.6 | 0.00 | 48.0 | 0.00 | - |
+| Spirit | Chaotic Axe +3 | 69.1 | 59.1 | 9.99 | 0.00 | 0.00 | - |
+| Striker | Chaotic Axe +3 | 67.9 | 52.1 | 15.8 | 0.00 | 0.00 | - |
+| Slinger | Ashbrand Blade +3 | 65.4 | 26.2 | 0.00 | 0.00 | 39.2 | - |
+| Squire | Chaotic Axe +3 | 64.1 | 53.5 | 10.6 | 0.00 | 0.00 | - |
 
 
 Bottom 10 builds:
 
 | Build | Weapon | DPS | Direct | Class | DoT | Weapon/proc | Flag |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| Slinger | Chaotic Axe +3 | 60.6 | 60.6 | 0.00 | 0.00 | 0.00 | - |
-| Squire | Chaotic Axe +3 | 72.0 | 60.1 | 11.9 | 0.00 | 0.00 | - |
-| Striker | Chaotic Axe +3 | 76.5 | 58.7 | 17.8 | 0.00 | 0.00 | - |
-| Apprentice | Chaotic Axe +3 | 77.3 | 29.3 | 0.00 | 48.0 | 0.00 | - |
-| Spirit | Chaotic Axe +3 | 84.7 | 72.4 | 12.2 | 0.00 | 0.00 | - |
+| Squire | Chaotic Axe +3 | 64.1 | 53.5 | 10.6 | 0.00 | 0.00 | - |
+| Slinger | Ashbrand Blade +3 | 65.4 | 26.2 | 0.00 | 0.00 | 39.2 | - |
+| Striker | Chaotic Axe +3 | 67.9 | 52.1 | 15.8 | 0.00 | 0.00 | - |
+| Spirit | Chaotic Axe +3 | 69.1 | 59.1 | 9.99 | 0.00 | 0.00 | - |
+| Apprentice | Heavy Hammer +3 | 70.6 | 22.6 | 0.00 | 48.0 | 0.00 | - |
 
 
 All optimal-weapon outliers:
@@ -93,44 +93,55 @@ _No data._
 
 | Class | Avg DPS | Samples |
 | --- | --- | --- |
-| Spirit | 54.9 | 5 |
-| Apprentice | 52.1 | 5 |
-| Squire | 49.2 | 5 |
-| Striker | 48.9 | 5 |
-| Slinger | 43.6 | 5 |
+| Spirit | 60.3 | 5 |
+| Slinger | 59.5 | 5 |
+| Apprentice | 58.6 | 5 |
+| Squire | 58.2 | 5 |
+| Striker | 58.2 | 5 |
 
 
 ## 7. Average DPS Per Weapon
 
 | Weapon | Avg DPS | Samples |
 | --- | --- | --- |
-| Chaotic Axe | 74.2 | 5 |
-| Flash Rapier | 62.6 | 5 |
-| Ashbrand Blade | 40.7 | 5 |
-| Iron Broadsword | 36.6 | 5 |
-| Heavy Hammer | 34.5 | 5 |
+| Chaotic Axe | 66.7 | 5 |
+| Flash Rapier | 62.7 | 5 |
+| Ashbrand Blade | 60.6 | 5 |
+| Heavy Hammer | 59.8 | 5 |
+| Iron Broadsword | 44.9 | 5 |
+
+
+Weapon DPS against target shapes:
+
+| Weapon | neutral T1 dummy | high-plating T1 dummy | high-HP elite T1 dummy | Shape sources |
+| --- | --- | --- | --- | --- |
+| Ashbrand Blade +3 | 60.6 | 56.1 | 55.0 | neutral T1 dummy: 10 mob average, biome tier 1 fallback; high-plating T1 dummy: Cave Lurker; high-HP elite T1 dummy: Cave Brute |
+| Chaotic Axe +3 | 66.7 | 62.8 | 61.0 | neutral T1 dummy: 10 mob average, biome tier 1 fallback; high-plating T1 dummy: Cave Lurker; high-HP elite T1 dummy: Cave Brute |
+| Flash Rapier +3 | 62.7 | 56.1 | 55.8 | neutral T1 dummy: 10 mob average, biome tier 1 fallback; high-plating T1 dummy: Cave Lurker; high-HP elite T1 dummy: Cave Brute |
+| Heavy Hammer +3 | 59.8 | 56.3 | 54.8 | neutral T1 dummy: 10 mob average, biome tier 1 fallback; high-plating T1 dummy: Cave Lurker; high-HP elite T1 dummy: Cave Brute |
+| Iron Broadsword +3 | 44.9 | 41.6 | 40.9 | neutral T1 dummy: 10 mob average, biome tier 1 fallback; high-plating T1 dummy: Cave Lurker; high-HP elite T1 dummy: Cave Brute |
 
 
 ## 8. Best Weapon Per Class
 
 | Class | Weapon | Avg DPS | Samples |
 | --- | --- | --- | --- |
-| Striker | Chaotic Axe | 76.5 | 1 |
-| Squire | Chaotic Axe | 72.0 | 1 |
-| Apprentice | Chaotic Axe | 77.3 | 1 |
-| Spirit | Chaotic Axe | 84.7 | 1 |
-| Slinger | Chaotic Axe | 60.6 | 1 |
+| Striker | Chaotic Axe | 67.9 | 1 |
+| Squire | Chaotic Axe | 64.1 | 1 |
+| Apprentice | Heavy Hammer | 70.6 | 1 |
+| Spirit | Chaotic Axe | 69.1 | 1 |
+| Slinger | Ashbrand Blade | 65.4 | 1 |
 
 
 ## 9. Worst Weapon Per Class
 
 | Class | Weapon | Avg DPS | Samples |
 | --- | --- | --- | --- |
-| Striker | Heavy Hammer | 28.4 | 1 |
-| Squire | Heavy Hammer | 33.3 | 1 |
-| Apprentice | Ashbrand Blade | 40.5 | 1 |
-| Spirit | Heavy Hammer | 32.3 | 1 |
-| Slinger | Heavy Hammer | 30.8 | 1 |
+| Striker | Iron Broadsword | 42.6 | 1 |
+| Squire | Iron Broadsword | 44.0 | 1 |
+| Apprentice | Iron Broadsword | 46.0 | 1 |
+| Spirit | Iron Broadsword | 44.3 | 1 |
+| Slinger | Iron Broadsword | 47.5 | 1 |
 
 
 ## 10. Outlier Detail

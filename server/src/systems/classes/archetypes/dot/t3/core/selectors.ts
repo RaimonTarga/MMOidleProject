@@ -4,8 +4,9 @@ import {
 } from '@mmo-idle/shared';
 import type { World } from '../../../../../../world/World';
 import {
-  SMOLDER_EFFECT, FROZEN_EFFECT, CHILL_EFFECT, CONF_EFFECT_ID,
-  SE_VULN_PER_STACK, FREEZE_BONUS, FREEZE_MS, CONF_TICKS,
+  SMOLDER_EFFECT, FROZEN_EFFECT, CHILL_EFFECT, CONF_EFFECT_ID, FROSTBITE_EFFECT,
+  SE_VULN_PER_STACK, FREEZE_BONUS, FREEZE_MS, CONF_TICKS, FROSTBITE_DOT_TAKEN_PER_STACK,
+  FROSTBITE_MS,
 } from './constants';
 
 // ── Exported selectors used by dotPrototype.ts and combat / ai ───────────────
@@ -21,6 +22,13 @@ export function getFrozenMult(monsterState: TracksCombat): number {
   return hasStatusEffect(monsterState, FROZEN_EFFECT) ? (1 + FREEZE_BONUS) : 1;
 }
 
+/** DoT-only damage multiplier from Wind Spirit's Frostbite debuff. */
+export function getFrostbiteDotTakenMult(monsterState: TracksCombat): number {
+  const s = getStatusEffect(monsterState, FROSTBITE_EFFECT);
+  const perStack = s?.data.dotTakenPerStack ?? FROSTBITE_DOT_TAKEN_PER_STACK;
+  return s ? (1 + s.stacks * perStack) : 1;
+}
+
 export function isMonsterFrozen(world: World, monsterId: string): boolean {
   const monsterState = world.getMonsterEntity(monsterId)?.tracksCombat;
   return monsterState ? hasStatusEffect(monsterState, FROZEN_EFFECT) : false;
@@ -32,6 +40,10 @@ export function getTargetChillStacks(monsterState: TracksCombat): number {
   return getTotalStacks(monsterState, CHILL_EFFECT);
 }
 
+export function getTargetFrostbiteStacks(monsterState: TracksCombat): number {
+  return getTotalStacks(monsterState, FROSTBITE_EFFECT);
+}
+
 export function isTargetFrozen(monsterState: TracksCombat): boolean {
   return hasStatusEffect(monsterState, FROZEN_EFFECT);
 }
@@ -40,6 +52,17 @@ export function getTargetFrozenRemainingPct(monsterState: TracksCombat): number 
   const e = getStatusEffect(monsterState, FROZEN_EFFECT);
   if (!e || e.remainingMs <= 0) return 0;
   return Math.round((e.remainingMs / FREEZE_MS) * 100);
+}
+
+export function getTargetFrostbiteRemainingPct(monsterState: TracksCombat): number {
+  const e = getStatusEffect(monsterState, FROSTBITE_EFFECT);
+  if (!e || e.remainingMs <= 0) return 0;
+  const totalMs = e.data.totalMs ?? FROSTBITE_MS;
+  return Math.round((e.remainingMs / totalMs) * 100);
+}
+
+export function getTargetFrostbiteDotTakenPerStack(monsterState: TracksCombat): number {
+  return getStatusEffect(monsterState, FROSTBITE_EFFECT)?.data.dotTakenPerStack ?? FROSTBITE_DOT_TAKEN_PER_STACK;
 }
 
 export function getConflagrationRemainingPct(monsterState: TracksCombat): number {

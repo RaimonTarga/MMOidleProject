@@ -6,7 +6,7 @@ import {
 } from '../core/constants';
 
 /**
- * Momentum (Reload Balanced / Desperado). Stacks are granted on reload completion
+ * Momentum (Reload Light / Desperado). Stacks are granted on reload completion
  * (lifecycleHandlers). Out of combat they decay one per interval. Each tick we
  * (re)assert the attack-speed reduction from the current stack count — caching the
  * un-momentum cooldown so it restores cleanly — so a stat recalc between reloads

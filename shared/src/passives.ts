@@ -170,6 +170,7 @@ export const RELOAD_KEYS = [
   'reload.hair-trigger-pct-per-shot',
   'reload.hair-trigger-max-stacks',
   'reload.blunderbuss',
+  'reload.blunderbuss-damage-mult',
   'reload.blunderbuss-spread-rad',
   'reload.blunderbuss-knockback-distance-per-pellet',
   'reload.blunderbuss-knockback-ms-per-pellet',
@@ -226,6 +227,7 @@ export const ENERGY_KEYS = [
 export const DOT_KEYS = [
   'dot.max-stacks',
   'dot.conversion-pct',
+  'dot.mechanic-mult',
   'dot.tick-interval-ms',
   'dot.duration-ms',
   'dot.poison-explosion',
@@ -237,11 +239,14 @@ export const DOT_KEYS = [
   'dot.permafrost',
   'dot.freezing-cold',
   'dot.glacial-fracture',
+  'dot.frostbite-dot-taken-pct',
+  'dot.frostbite-max-stacks',
+  'dot.frostbite-duration-ms',
   // T4 specs ─────────────────────────────────────────────────────────────────
   'dot.frenzy',         // poison: double APS while at max stacks
   'dot.ignition',       // fire: front-load all stacks on a fresh target
   'dot.rimeshatter',    // frost: at max stacks, full direct + DR debuff
-  'dot.shatter-strike', // frost: per-stack flat direct bonus, locked-peak cycle
+  'dot.wind-spirit',    // frost: max-stack hits apply Frostbite DoT vulnerability
 ] as const;
 
 export const SHARED_KEYS = [

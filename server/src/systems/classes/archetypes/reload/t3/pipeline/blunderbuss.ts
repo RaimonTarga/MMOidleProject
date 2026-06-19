@@ -82,6 +82,16 @@ function resolveBlunderbussKnockback(hits: number, passives: Record<string, numb
 }
 
 export function registerBlunderbussVolley(): void {
+  registerCombatListener('onDamageTaken', (ctx) => {
+    if (ctx.attackerType !== 'player') return;
+    if (ctx.defenderType !== 'monster') return;
+    if (ctx.metadata['blunderbussPellet'] !== true) return;
+
+    const damageMult = ctx.attacker.usesSkills.passives['reload.blunderbuss-damage-mult'] ?? 0;
+    if (damageMult === 0) return;
+    ctx.damage = Math.max(0, Math.round(ctx.damage * Math.max(0, 1 + damageMult)));
+  });
+
   registerCombatListener('afterHit', (ctx, world) => {
     if (ctx.attackerType !== 'player') return;
     if (ctx.defenderType !== 'monster') return;

@@ -12,13 +12,13 @@ export const plainsRecipeEntries = [
   ['iron-broadsword', {
     id: 'iron-broadsword', name: 'Iron Broadsword',
     recipeGroup: 'plains', requiredBiomeLevel: 1, slot: 'weapon',
-    cost: { yellow: 10 }, stats: { attack: 8 }, attacksPerSecond: 0.65, tier: 1,
+    cost: { yellow: 10 }, stats: { attack: 10 }, attacksPerSecond: 0.75, tier: 1,
     icon: 'items/weapons/sword-1.png',
     description: 'Mass-forged for the ranks, dependable as sunrise. Ten thousand like it have won quiet wars.',
     upgrades: [
-      { stats: { attack: 3 }, cost: { yellow: 20 }, requiredBiomeLevel: 2 },
-      { stats: { attack: 3 }, cost: { yellow: 30 }, requiredBiomeLevel: 3 },
-      { stats: { attack: 3 }, cost: { yellow: 60 }, requiredBiomeLevel: 4 },
+      { stats: { attack: 4 }, cost: { yellow: 20 }, requiredBiomeLevel: 2 },
+      { stats: { attack: 4 }, cost: { yellow: 30 }, requiredBiomeLevel: 3 },
+      { stats: { attack: 4 }, cost: { yellow: 60 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -70,13 +70,13 @@ export const plainsRecipeEntries = [
   ['knight-steelsword', {
     id: 'knight-steelsword', name: "Knight's Steelsword",
     recipeGroup: 'plains', requiredBiomeLevel: 5, slot: 'weapon',
-    cost: { yellow: 45 }, stats: { attack: 20 }, attacksPerSecond: 0.80, tier: 2,
+    cost: { yellow: 45 }, stats: { attack: 25 }, attacksPerSecond: 1.00, tier: 2,
     icon: 'items/weapons/sword-2.png',
     description: 'A knight sidearm kept keen by habit and pride — plain, proven, never flashy.',
     upgrades: [
-      { stats: { attack: 8 }, cost: { yellow: 45 }, requiredBiomeLevel: 6 },
-      { stats: { attack: 8 }, cost: { yellow: 90 }, requiredBiomeLevel: 7 },
-      { stats: { attack: 8 }, cost: { yellow: 180 }, requiredBiomeLevel: 8 },
+      { stats: { attack: 10 }, cost: { yellow: 45 }, requiredBiomeLevel: 6 },
+      { stats: { attack: 10 }, cost: { yellow: 90 }, requiredBiomeLevel: 7 },
+      { stats: { attack: 10 }, cost: { yellow: 180 }, requiredBiomeLevel: 8 },
     ],
   }],
 

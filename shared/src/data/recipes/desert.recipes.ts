@@ -9,14 +9,14 @@ export const desertRecipeEntries = [
   ['desert-sunsteel-cross', {
     id: 'desert-sunsteel-cross', name: 'Sunsteel Cross',
     recipeGroup: 'desert', requiredBiomeLevel: 1, slot: 'weapon',
-    cost: { yellow: 70 }, stats: { attack: 14 }, attacksPerSecond: 0.70, tier: 2,
+    cost: { yellow: 70 }, stats: { attack: 24 }, attacksPerSecond: 0.80, tier: 2,
     mechanicEffects: { 'weapon.first-strike-mult': 2.0 },
     icon: 'items/weapons/cross-1.png',
     description: 'Sun-forged and ward-etched, it strikes the first blow as if it waited years for it.',
     upgrades: [
-      { stats: { attack: 6 }, cost: { yellow: 100 }, requiredBiomeLevel: 2 },
-      { stats: { attack: 6 }, cost: { yellow: 200 }, requiredBiomeLevel: 3 },
-      { stats: { attack: 6 }, cost: { yellow: 300 }, requiredBiomeLevel: 4 },
+      { stats: { attack: 9 }, cost: { yellow: 100 }, requiredBiomeLevel: 2 },
+      { stats: { attack: 9 }, cost: { yellow: 200 }, requiredBiomeLevel: 3 },
+      { stats: { attack: 9 }, cost: { yellow: 300 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -69,14 +69,14 @@ export const desertRecipeEntries = [
   ['desert-solar-cross', {
     id: 'desert-solar-cross', name: 'Solar Cross',
     recipeGroup: 'desert', requiredBiomeLevel: 5, slot: 'weapon',
-    cost: { yellow: 116 }, stats: { attack: 34 }, attacksPerSecond: 0.70, tier: 3,
+    cost: { yellow: 116 }, stats: { attack: 42 }, attacksPerSecond: 0.80, tier: 3,
     mechanicEffects: { 'weapon.first-strike-mult': 2.5 },
     icon: 'items/weapons/cross-1.png',
     description: 'It saves its fury for the opening blow, and spends it all at once.',
     upgrades: [
-      { stats: { attack: 8 }, cost: { yellow: 170 },  requiredBiomeLevel: 6 },
-      { stats: { attack: 8 }, cost: { yellow: 340 }, requiredBiomeLevel: 7 },
-      { stats: { attack: 8 }, cost: { yellow: 570 }, requiredBiomeLevel: 8 },
+      { stats: { attack: 12 }, cost: { yellow: 170 },  requiredBiomeLevel: 6 },
+      { stats: { attack: 12 }, cost: { yellow: 340 }, requiredBiomeLevel: 7 },
+      { stats: { attack: 12 }, cost: { yellow: 570 }, requiredBiomeLevel: 8 },
     ],
   }],
 
@@ -130,15 +130,15 @@ export const desertRecipeEntries = [
   ['desert-zenith-cross', {
     id: 'desert-zenith-cross', name: 'Zenith Cross',
     recipeGroup: 'desert', requiredBiomeLevel: 9, slot: 'weapon',
-    cost: { yellow: 255 }, stats: { attack: 60 }, attacksPerSecond: 0.70, tier: 4,
+    cost: { yellow: 255 }, stats: { attack: 100 }, attacksPerSecond: 0.80, tier: 4,
     // first-strike-mult progressed: T2 2.0 → T3 2.5 → T4 3.0 (doc said 2.5, = T3)
     mechanicEffects: { 'weapon.first-strike-mult': 3.0 },
     icon: 'items/weapons/cross-2.png',
     description: 'At the sun’s height it draws all that light into a single, opening cut.',
     upgrades: [
-      { stats: { attack: 14 }, cost: { yellow: 383 }, requiredBiomeLevel: 10 },
-      { stats: { attack: 14 }, cost: { yellow: 765 }, requiredBiomeLevel: 11 },
-      { stats: { attack: 14 }, cost: { yellow: 1530 }, requiredBiomeLevel: 12 },
+      { stats: { attack: 20 }, cost: { yellow: 383 }, requiredBiomeLevel: 10 },
+      { stats: { attack: 20 }, cost: { yellow: 765 }, requiredBiomeLevel: 11 },
+      { stats: { attack: 20 }, cost: { yellow: 1530 }, requiredBiomeLevel: 12 },
     ],
   }],
 

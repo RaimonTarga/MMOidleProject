@@ -291,6 +291,22 @@ All optimal-weapon outliers:
 | Volcanic Blightbrand | 237 | 108 |
 
 
+Weapon DPS against target shapes:
+
+| Weapon | neutral T4 dummy | high-plating T4 dummy | high-HP elite T4 dummy | Shape sources |
+| --- | --- | --- | --- | --- |
+| Abyssal Axe +3 | 418 | 430 | 374 | neutral T4 dummy: 22 mob average, biome tier 3; high-plating T4 dummy: Magma Brute; high-HP elite T4 dummy: Cavern Troll |
+| Deathfang Rapier +3 | 386 | 389 | 353 | neutral T4 dummy: 22 mob average, biome tier 3; high-plating T4 dummy: Magma Brute; high-HP elite T4 dummy: Cavern Troll |
+| Earthsunder Maul +3 | 399 | 413 | 359 | neutral T4 dummy: 22 mob average, biome tier 3; high-plating T4 dummy: Magma Brute; high-HP elite T4 dummy: Cavern Troll |
+| Eruption Lash +3 | 416 | 423 | 370 | neutral T4 dummy: 22 mob average, biome tier 3; high-plating T4 dummy: Magma Brute; high-HP elite T4 dummy: Cavern Troll |
+| Glacial Rimebrand +3 | 261 | 267 | 233 | neutral T4 dummy: 22 mob average, biome tier 3; high-plating T4 dummy: Magma Brute; high-HP elite T4 dummy: Cavern Troll |
+| Glacial Tyrant Maul +3 | 427 | 427 | 426 | neutral T4 dummy: 22 mob average, biome tier 3; high-plating T4 dummy: Magma Brute; high-HP elite T4 dummy: Cavern Troll |
+| Plague Axe +3 | 334 | 343 | 299 | neutral T4 dummy: 22 mob average, biome tier 3; high-plating T4 dummy: Magma Brute; high-HP elite T4 dummy: Cavern Troll |
+| Volcanic Blightbrand +3 | 237 | 241 | 210 | neutral T4 dummy: 22 mob average, biome tier 3; high-plating T4 dummy: Magma Brute; high-HP elite T4 dummy: Cavern Troll |
+| Warmaul +3 | 318 | 327 | 285 | neutral T4 dummy: 22 mob average, biome tier 3; high-plating T4 dummy: Magma Brute; high-HP elite T4 dummy: Cavern Troll |
+| Zenith Cross +3 | 249 | 248 | 201 | neutral T4 dummy: 22 mob average, biome tier 3; high-plating T4 dummy: Magma Brute; high-HP elite T4 dummy: Cavern Troll |
+
+
 ## 8. Best Weapon Per Class
 
 | Class | Weapon | Avg DPS | Samples |

@@ -195,7 +195,7 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
     p.dealsDamage.onHitDamage += Math.max(1, (p.playerTier ?? 4) - 4 + 1) * aftershockOnHitPerTier;
   }
 
-  // 3b. Dualslinger (reload-light-t3-b): same per-tier on-hit scaling, authored on
+  // 3b. Dualslinger (reload-balanced-t3-c): same per-tier on-hit scaling, authored on
   // the node ('reload.alternating-onhit-per-tier'). Rewards the on-hit half of its
   // attack/on-hit split — the odd (2× on-hit) shots scale up with tier.
   const altOnHitPerTier = p.usesSkills.passives['reload.alternating-onhit-per-tier'] ?? 0;
@@ -235,7 +235,7 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
     // and Melter (continuous laser with its own per-tick scaling) don't get that
     // double-speed, so both are exempt and keep full attack damage.
     if (!isSnipe && !isLaser) {
-      p.dealsDamage.attack = Math.max(1, Math.floor(p.dealsDamage.attack * 0.57));
+      p.dealsDamage.attack = Math.max(1, Math.floor(p.dealsDamage.attack * 0.65));
     }
 
     if (isSnipe) {

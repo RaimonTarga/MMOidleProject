@@ -118,6 +118,17 @@ All optimal-weapon outliers:
 | Iron Broadsword | 51.0 | 6 |
 
 
+Weapon DPS against target shapes:
+
+| Weapon | neutral T1 dummy | high-plating T1 dummy | high-HP elite T1 dummy | Shape sources |
+| --- | --- | --- | --- | --- |
+| Ashbrand Blade +3 | 54.8 | 49.3 | 48.9 | neutral T1 dummy: 10 mob average, biome tier 1 fallback; high-plating T1 dummy: Cave Lurker; high-HP elite T1 dummy: Cave Brute |
+| Chaotic Axe +3 | 101 | 94.2 | 91.5 | neutral T1 dummy: 10 mob average, biome tier 1 fallback; high-plating T1 dummy: Cave Lurker; high-HP elite T1 dummy: Cave Brute |
+| Flash Rapier +3 | 69.6 | 61.5 | 62.1 | neutral T1 dummy: 10 mob average, biome tier 1 fallback; high-plating T1 dummy: Cave Lurker; high-HP elite T1 dummy: Cave Brute |
+| Heavy Hammer +3 | 57.3 | 53.0 | 52.0 | neutral T1 dummy: 10 mob average, biome tier 1 fallback; high-plating T1 dummy: Cave Lurker; high-HP elite T1 dummy: Cave Brute |
+| Iron Broadsword +3 | 51.0 | 46.0 | 45.6 | neutral T1 dummy: 10 mob average, biome tier 1 fallback; high-plating T1 dummy: Cave Lurker; high-HP elite T1 dummy: Cave Brute |
+
+
 ## 8. Best Weapon Per Class
 
 | Class | Weapon | Avg DPS | Samples |

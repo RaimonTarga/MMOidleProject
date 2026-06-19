@@ -147,6 +147,20 @@ All optimal-weapon outliers:
 | Mirebrand | 82.9 | 18 |
 
 
+Weapon DPS against target shapes:
+
+| Weapon | neutral T2 dummy | high-plating T2 dummy | high-HP elite T2 dummy | Shape sources |
+| --- | --- | --- | --- | --- |
+| Frostbrand +3 | 85.8 | 79.6 | 78.0 | neutral T2 dummy: 10 mob average, biome tier 1; high-plating T2 dummy: Cave Lurker; high-HP elite T2 dummy: Cave Brute |
+| Gale Needle +3 | 128 | 119 | 116 | neutral T2 dummy: 10 mob average, biome tier 1; high-plating T2 dummy: Cave Lurker; high-HP elite T2 dummy: Cave Brute |
+| Knight's Steelsword +3 | 96.0 | 89.3 | 87.0 | neutral T2 dummy: 10 mob average, biome tier 1; high-plating T2 dummy: Cave Lurker; high-HP elite T2 dummy: Cave Brute |
+| Mirebrand +3 | 82.9 | 76.8 | 75.6 | neutral T2 dummy: 10 mob average, biome tier 1; high-plating T2 dummy: Cave Lurker; high-HP elite T2 dummy: Cave Brute |
+| Quake Hammer +3 | 94.4 | 88.8 | 86.2 | neutral T2 dummy: 10 mob average, biome tier 1; high-plating T2 dummy: Cave Lurker; high-HP elite T2 dummy: Cave Brute |
+| Ruinous Axe +3 | 163 | 154 | 149 | neutral T2 dummy: 10 mob average, biome tier 1; high-plating T2 dummy: Cave Lurker; high-HP elite T2 dummy: Cave Brute |
+| Stinger Rapier +3 | 135 | 126 | 124 | neutral T2 dummy: 10 mob average, biome tier 1; high-plating T2 dummy: Cave Lurker; high-HP elite T2 dummy: Cave Brute |
+| Sunsteel Cross +3 | 90.5 | 78.9 | 73.7 | neutral T2 dummy: 10 mob average, biome tier 1; high-plating T2 dummy: Cave Lurker; high-HP elite T2 dummy: Cave Brute |
+
+
 ## 8. Best Weapon Per Class
 
 | Class | Weapon | Avg DPS | Samples |

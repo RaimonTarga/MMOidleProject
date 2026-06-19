@@ -3,7 +3,7 @@ import { detachMarkerIfNoEffect } from '../../../../../../ecs/markerHelpers';
 import { grantMonsterRewards } from '../../../../../player/progression/rewards';
 import type { World } from '../../../../../../world/World';
 import { DOT_EFFECT_ID, DOT_TICK_MS } from '../core/constants';
-import { getSmolderMult, getFrozenMult } from '../core/selectors';
+import { getSmolderMult, getFrozenMult, getFrostbiteDotTakenMult } from '../core/selectors';
 import { PERM_MAX_HITS, PERM_PCT_PER_HIT } from '../paths/_constants';
 import {
   buildSimpleBreakdown,
@@ -18,7 +18,7 @@ import { emitPlayerMonsterOnKill } from '../../../../../combat/damage/killHooks'
 /**
  * Permafrost tick. Walks every monster with the `hasDot` marker, but only
  * processes effects with `data.t3Perm` set. Damage ramps with `hits` and
- * scales by Smoldering Ember vulnerability and Frozen bonus. On lethal
+ * scales by target DoT vulnerability effects. On lethal
  * damage, rewards are granted to the source player and the monster is
  * removed.
  */
@@ -46,7 +46,7 @@ export function updatePermafrost(world: World, dt: number): void {
     const hits   = Math.min(PERM_MAX_HITS, effect.data.hits ?? 0);
     const pct    = hits * PERM_PCT_PER_HIT;
     const base   = Math.max(1, Math.round(source.dealsDamage.attack * pct));
-    const damage = Math.round(base * getSmolderMult(monsterState) * getFrozenMult(monsterState));
+    const damage = Math.round(base * getSmolderMult(monsterState) * getFrozenMult(monsterState) * getFrostbiteDotTakenMult(monsterState));
     recordMonsterDamagedByPlayer(
       world,
       effect.sourceId,

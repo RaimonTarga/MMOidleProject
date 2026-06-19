@@ -14,7 +14,7 @@ export const trenchRecipeEntries = [
     // ⚠ INHERITED (Cave sustained-DPS axe branch) — base attack carried from doc.
     //   VERIFY in dead-swing/execute budget pass.
     // INVARIANT: dead swing must NOT consume class mechanic resources.
-    cost: { green: 270 }, stats: { attack: 110 }, attacksPerSecond: 1.15, tier: 4,
+    cost: { green: 270 }, stats: { attack: 120 }, attacksPerSecond: 1.15, tier: 4,
     // † execute-threshold-pct / execute-dmg-mult: vs targets below 20% HP, ×2.5.
     mechanicEffects: {
       'weapon.dead-swing-interval': 4,
@@ -23,9 +23,9 @@ export const trenchRecipeEntries = [
     icon: 'items/weapons/dark-blade.png',
     description: 'Patient through the long fight, merciless at the end of it: when the abyss-thing finally weakens, it disappears.',
     upgrades: [
-      { stats: { attack: 20 }, cost: { green: 405 }, requiredBiomeLevel: 2 },
-      { stats: { attack: 20 }, cost: { green: 810 }, requiredBiomeLevel: 3 },
-      { stats: { attack: 20 }, cost: { green: 1620 }, requiredBiomeLevel: 4 },
+      { stats: { attack: 24 }, cost: { green: 405 }, requiredBiomeLevel: 2 },
+      { stats: { attack: 24 }, cost: { green: 810 }, requiredBiomeLevel: 3 },
+      { stats: { attack: 24 }, cost: { green: 1620 }, requiredBiomeLevel: 4 },
     ],
   }],
 

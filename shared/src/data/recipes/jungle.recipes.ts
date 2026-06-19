@@ -10,13 +10,13 @@ export const jungleRecipeEntries = [
   ['jungle-stinger-rapier', {
     id: 'jungle-stinger-rapier', name: 'Stinger Rapier',
     recipeGroup: 'jungle', requiredBiomeLevel: 1, slot: 'weapon',
-    cost: { green: 55}, stats: { attack: 12, onHitDamage: 8 }, attacksPerSecond: 1.55, tier: 2,
+    cost: { green: 55}, stats: { attack: 10, onHitDamage: 8 }, attacksPerSecond: 1.55, tier: 2,
     icon: 'items/weapons/jungle-rapier.png',
     description: 'A thin blade kept slick with something the jungle distilled and never named.',
     upgrades: [
-      { stats: { attack: 5, onHitDamage: 3 }, cost: { green: 66 }, requiredBiomeLevel: 2 },
-      { stats: { attack: 5, onHitDamage: 3 }, cost: { green: 132 }, requiredBiomeLevel: 3 },
-      { stats: { attack: 5, onHitDamage: 3 }, cost: { green: 264 }, requiredBiomeLevel: 4 },
+      { stats: { attack: 4, onHitDamage: 3 }, cost: { green: 66 }, requiredBiomeLevel: 2 },
+      { stats: { attack: 4, onHitDamage: 3 }, cost: { green: 132 }, requiredBiomeLevel: 3 },
+      { stats: { attack: 4, onHitDamage: 3 }, cost: { green: 264 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -72,13 +72,13 @@ export const jungleRecipeEntries = [
   ['jungle-venomthorn-rapier', {
     id: 'jungle-venomthorn-rapier', name: 'Venomthorn Rapier',
     recipeGroup: 'jungle', requiredBiomeLevel: 5, slot: 'weapon',
-    cost: { green: 120 }, stats: { attack: 24, onHitDamage: 18 }, attacksPerSecond: 1.65, tier: 3,
+    cost: { green: 120 }, stats: { attack: 22, onHitDamage: 18 }, attacksPerSecond: 1.65, tier: 3,
     icon: 'items/weapons/jungle-rapier.png',
     description: 'Thin and quick, and slick with a thorn-sap that bites a little more with every touch.',
     upgrades: [
-      { stats: { attack: 6, onHitDamage: 4 }, cost: { green: 180 },  requiredBiomeLevel: 6 },
-      { stats: { attack: 6, onHitDamage: 4 }, cost: { green: 270 }, requiredBiomeLevel: 7 },
-      { stats: { attack: 6, onHitDamage: 4 }, cost: { green: 360 }, requiredBiomeLevel: 8 },
+      { stats: { attack: 4, onHitDamage: 4 }, cost: { green: 180 },  requiredBiomeLevel: 6 },
+      { stats: { attack: 4, onHitDamage: 4 }, cost: { green: 270 }, requiredBiomeLevel: 7 },
+      { stats: { attack: 4, onHitDamage: 4 }, cost: { green: 360 }, requiredBiomeLevel: 8 },
     ],
   }],
 
@@ -134,13 +134,13 @@ export const jungleRecipeEntries = [
   ['jungle-deathfang-rapier', {
     id: 'jungle-deathfang-rapier', name: 'Deathfang Rapier',
     recipeGroup: 'jungle', requiredBiomeLevel: 9, slot: 'weapon',
-    cost: { green: 264 }, stats: { attack: 44, onHitDamage: 30 }, attacksPerSecond: 1.75, tier: 4,
+    cost: { green: 264 }, stats: { attack: 34, onHitDamage: 30 }, attacksPerSecond: 1.75, tier: 4,
     icon: 'items/weapons/rapier-4.png',
     description: 'Quick past seeing, and slick with something the deep jungle spent a long time perfecting.',
     upgrades: [
-      { stats: { attack: 11, onHitDamage: 8 }, cost: { green: 396 }, requiredBiomeLevel: 10 },
-      { stats: { attack: 11, onHitDamage: 8 }, cost: { green: 792 }, requiredBiomeLevel: 11 },
-      { stats: { attack: 11, onHitDamage: 8 }, cost: { green: 1584 }, requiredBiomeLevel: 12 },
+      { stats: { attack: 10, onHitDamage: 8 }, cost: { green: 396 }, requiredBiomeLevel: 10 },
+      { stats: { attack: 10, onHitDamage: 8 }, cost: { green: 792 }, requiredBiomeLevel: 11 },
+      { stats: { attack: 10, onHitDamage: 8 }, cost: { green: 1584 }, requiredBiomeLevel: 12 },
     ],
   }],
 

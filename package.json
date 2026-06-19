@@ -29,6 +29,8 @@
     "dps:report": "pnpm --dir server exec tsx --conditions=development ../tools/dps-report.ts",
     "dps:report:no-conduit": "pnpm --dir server exec tsx --conditions=development ../tools/dps-report.ts --exclude-conduit",
     "dps:llm": "pnpm --dir server exec tsx --conditions=development ../tools/dps-report.ts --llm-packet",
+    "dps:class-mechanics": "pnpm --dir server exec tsx --conditions=development ../tools/dps-report.ts --class-mechanics",
+    "dps:t4-mechanics": "pnpm --dir server exec tsx --conditions=development ../tools/dps-report.ts --t4-subclass-mechanics",
     "test:spatial": "pnpm --filter @mmo-idle/server exec tsx ../shared/src/systems/spatialHitbox.test.ts && pnpm --filter @mmo-idle/server exec tsx ../shared/src/collision/collision.test.ts",
     "bake:hitboxes": "pnpm --filter @mmo-idle/server bake:hitboxes",
     "release:prepare": "node scripts/release.mjs prepare",

@@ -30,7 +30,8 @@ export function dotElementForPlayer(
   if (
     (passives['dot.permafrost'] ?? 0) > 0 ||
     (passives['dot.freezing-cold'] ?? 0) > 0 ||
-    (passives['dot.glacial-fracture'] ?? 0) > 0
+    (passives['dot.glacial-fracture'] ?? 0) > 0 ||
+    (passives['dot.wind-spirit'] ?? 0) > 0
   )
     return 'frost';
   // Cultist (eternal-doom) is a purple "doom" flavor of the poison path.

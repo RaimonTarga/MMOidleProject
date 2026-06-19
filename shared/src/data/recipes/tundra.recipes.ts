@@ -9,14 +9,14 @@ export const tundraRecipeEntries = [
   ['tundra-permafrost-maul', {
     id: 'tundra-permafrost-maul', name: 'Permafrost Maul',
     recipeGroup: 'tundra', requiredBiomeLevel: 1, slot: 'weapon',
-    cost: { blue: 124 }, stats: { attack: 76 }, attacksPerSecond: 0.42, tier: 3,
+    cost: { blue: 124 }, stats: { attack: 120 }, attacksPerSecond: 0.50, tier: 3,
     mechanicEffects: { 'weapon.brittle-plating': 2, 'weapon.brittle-dr': 0.01, 'weapon.brittle-stacks': 8 },
     icon: 'items/weapons/frozen-hammer.png',
     description: 'Each blow leaves a deep frost-crack; armor that takes enough of them simply gives.',
     upgrades: [
-      { stats: { attack: 25 }, cost: { blue: 186 },  requiredBiomeLevel: 2 },
-      { stats: { attack: 25 }, cost: { blue: 372 }, requiredBiomeLevel: 3 },
-      { stats: { attack: 25 }, cost: { blue: 744 }, requiredBiomeLevel: 4 },
+      { stats: { attack: 30 }, cost: { blue: 186 },  requiredBiomeLevel: 2 },
+      { stats: { attack: 30 }, cost: { blue: 372 }, requiredBiomeLevel: 3 },
+      { stats: { attack: 30 }, cost: { blue: 744 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -75,7 +75,7 @@ export const tundraRecipeEntries = [
   ['tundra-glacial-tyrant-maul', {
     id: 'tundra-glacial-tyrant-maul', name: 'Glacial Tyrant Maul',
     recipeGroup: 'tundra', requiredBiomeLevel: 5, slot: 'weapon',
-    cost: { blue: 273 }, stats: { attack: 150 }, attacksPerSecond: 0.42, tier: 4,
+    cost: { blue: 273 }, stats: { attack: 200 }, attacksPerSecond: 0.50, tier: 4,
     // † brittle-shatter-threshold: at max brittle stacks (8), strip the target's
     //   DR for 2s (brittle-shatter-dr-strip-ms). (new key)
     mechanicEffects: {
@@ -85,9 +85,9 @@ export const tundraRecipeEntries = [
     icon: 'items/weapons/frozen-hammer.png',
     description: 'Every blow leaves a deeper frost-crack; the eighth simply ends the argument about whether armor holds.',
     upgrades: [
-      { stats: { attack: 45 }, cost: { blue: 410 },  requiredBiomeLevel: 6 },
-      { stats: { attack: 45 }, cost: { blue: 819 },  requiredBiomeLevel: 7 },
-      { stats: { attack: 45 }, cost: { blue: 1638 }, requiredBiomeLevel: 8 },
+      { stats: { attack: 50 }, cost: { blue: 410 },  requiredBiomeLevel: 6 },
+      { stats: { attack: 50 }, cost: { blue: 819 },  requiredBiomeLevel: 7 },
+      { stats: { attack: 50 }, cost: { blue: 1638 }, requiredBiomeLevel: 8 },
     ],
   }],
 
@@ -96,14 +96,14 @@ export const tundraRecipeEntries = [
     recipeGroup: 'tundra', requiredBiomeLevel: 5, slot: 'weapon',
     // ⚠ INHERITED (Swamp slow-DoT lineage) — base attack carried from doc, not
     //   scaled from a T3 ancestor. VERIFY in the DoT-conversion budget pass.
-    cost: { blue: 258 }, stats: { attack: 86 }, attacksPerSecond: 0.55, tier: 4,
-    mechanicEffects: { 'weapon.dot-conversion-pct': 0.45, 'weapon.dot-stacks': 3 },
+    cost: { blue: 258 }, stats: { attack: 155 }, attacksPerSecond: 0.60, tier: 4,
+    mechanicEffects: { 'weapon.dot-conversion-pct': 0.70, 'weapon.dot-stacks': 3 },
     icon: 'items/weapons/frozen-sword.png',
     description: 'It does not cut so much as plant a cold that goes on spreading after the blade is gone.',
     upgrades: [
-      { stats: { attack: 18 }, cost: { blue: 387 },  requiredBiomeLevel: 6 },
-      { stats: { attack: 18 }, cost: { blue: 774 },  requiredBiomeLevel: 7 },
-      { stats: { attack: 18 }, cost: { blue: 1548 }, requiredBiomeLevel: 8 },
+      { stats: { attack: 35 }, cost: { blue: 387 },  requiredBiomeLevel: 6 },
+      { stats: { attack: 35 }, cost: { blue: 774 },  requiredBiomeLevel: 7 },
+      { stats: { attack: 35 }, cost: { blue: 1548 }, requiredBiomeLevel: 8 },
     ],
   }],
 

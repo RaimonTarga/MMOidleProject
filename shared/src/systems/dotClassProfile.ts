@@ -18,7 +18,7 @@ export const POISON_DOT_PROFILE: DotClassProfile = {
   maxStacks: 8,
   tickIntervalMs: 1_000,
   durationMs: 5_000,
-  dotMechanicMultiplier: 1.20,
+  dotMechanicMultiplier: 1.25,
 };
 
 export const FIRE_DOT_PROFILE: DotClassProfile = {
@@ -36,7 +36,7 @@ export const FROST_DOT_PROFILE: DotClassProfile = {
   maxStacks: 3,
   tickIntervalMs: 2_000,
   durationMs: 6_500,
-  dotMechanicMultiplier: 1.30,
+  dotMechanicMultiplier: 1.15,
 };
 
 export const DOT_CLASS_PROFILE_BY_SUBVARIANT: Record<SubVariant, DotClassProfile> = {
@@ -62,6 +62,7 @@ export function resolveDotClassProfile(
     maxStacks: Math.max(1, Math.round(passives['dot.max-stacks'] ?? base.maxStacks)),
     tickIntervalMs: Math.max(100, Math.round(passives['dot.tick-interval-ms'] ?? base.tickIntervalMs)),
     durationMs: Math.max(100, Math.round(passives['dot.duration-ms'] ?? base.durationMs)),
+    dotMechanicMultiplier: passives['dot.mechanic-mult'] ?? base.dotMechanicMultiplier,
   };
 }
 

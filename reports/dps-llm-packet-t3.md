@@ -171,6 +171,20 @@ All optimal-weapon outliers:
 | Blightbrand | 127 | 36 |
 
 
+Weapon DPS against target shapes:
+
+| Weapon | neutral T3 dummy | high-plating T3 dummy | high-HP elite T3 dummy | Shape sources |
+| --- | --- | --- | --- | --- |
+| Avalanche Maul +3 | 169 | 150 | 150 | neutral T3 dummy: 21 mob average, biome tier 2; high-plating T3 dummy: Cave Troll; high-HP elite T3 dummy: Cave Troll (also highest plating) |
+| Blightbrand +3 | 127 | 110 | 110 | neutral T3 dummy: 21 mob average, biome tier 2; high-plating T3 dummy: Cave Troll; high-HP elite T3 dummy: Cave Troll (also highest plating) |
+| Cataclysm Axe +3 | 271 | 239 | 239 | neutral T3 dummy: 21 mob average, biome tier 2; high-plating T3 dummy: Cave Troll; high-HP elite T3 dummy: Cave Troll (also highest plating) |
+| Cinderlash +3 | 215 | 186 | 186 | neutral T3 dummy: 21 mob average, biome tier 2; high-plating T3 dummy: Cave Troll; high-HP elite T3 dummy: Cave Troll (also highest plating) |
+| Permafrost Maul +3 | 185 | 173 | 173 | neutral T3 dummy: 21 mob average, biome tier 2; high-plating T3 dummy: Cave Troll; high-HP elite T3 dummy: Cave Troll (also highest plating) |
+| Rimebrand +3 | 136 | 119 | 119 | neutral T3 dummy: 21 mob average, biome tier 2; high-plating T3 dummy: Cave Troll; high-HP elite T3 dummy: Cave Troll (also highest plating) |
+| Solar Cross +3 | 143 | 106 | 106 | neutral T3 dummy: 21 mob average, biome tier 2; high-plating T3 dummy: Cave Troll; high-HP elite T3 dummy: Cave Troll (also highest plating) |
+| Venomthorn Rapier +3 | 206 | 184 | 184 | neutral T3 dummy: 21 mob average, biome tier 2; high-plating T3 dummy: Cave Troll; high-HP elite T3 dummy: Cave Troll (also highest plating) |
+
+
 ## 8. Best Weapon Per Class
 
 | Class | Weapon | Avg DPS | Samples |

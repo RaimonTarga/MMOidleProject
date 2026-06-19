@@ -23,9 +23,8 @@ export const IGNITION_VALUE_MULT = 0.6;  // tick value of each front-loaded stac
 export const RIMESHATTER_DR_DEBUFF = 0.08;  // DR reduction applied while at max stacks
 export const RIMESHATTER_DR_MS     = 2_000; // debuff refresh window
 
-// Heavy — Shatter Strike / Rime Blade (dot-heavy-t3-c)
-export const SHATTER_STRIKE_BONUS_PER_STACK = 10;  // flat direct bonus per active frost stack (× tierMult)
-export const SHATTER_STRIKE_UNLOCK_TIER     = 4;   // path specs unlock at playerTier 4 → 1×
+// Heavy — Wind Spirit (dot-heavy-t3-c)
+export const FROSTBITE_MAX_STACKS = 10;
 
 // Light — Eternal Doom (dot-light-t3-b)
 export const ED_BASE_STACKS   = 8;

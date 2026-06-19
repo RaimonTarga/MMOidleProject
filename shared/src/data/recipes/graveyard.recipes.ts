@@ -15,7 +15,7 @@ export const graveyardRecipeEntries = [
     //   VERIFY in dead-swing budget pass.
     // INVARIANT: the dead swing must NOT consume class mechanic resources
     //   (no cadence count, no energy, no cooldown progress).
-    cost: { purple: 270 }, stats: { attack: 110 }, attacksPerSecond: 1.10, tier: 4,
+    cost: { purple: 270 }, stats: { attack: 120 }, attacksPerSecond: 1.10, tier: 4,
     mechanicEffects: {
       'weapon.dead-swing-interval': 3,
       'weapon.dead-swing-vuln-pct': 0.20, 'weapon.dead-swing-vuln-ms': 4000,
@@ -23,9 +23,9 @@ export const graveyardRecipeEntries = [
     icon: 'items/weapons/graveyard-axe.png',
     description: 'Every third stroke lands flat and harmless — and leaves the rot to make the next one count double.',
     upgrades: [
-      { stats: { attack: 20 }, cost: { purple: 405 }, requiredBiomeLevel: 2 },
-      { stats: { attack: 20 }, cost: { purple: 810 }, requiredBiomeLevel: 3 },
-      { stats: { attack: 20 }, cost: { purple: 1620 }, requiredBiomeLevel: 4 },
+      { stats: { attack: 30 }, cost: { purple: 405 }, requiredBiomeLevel: 2 },
+      { stats: { attack: 30 }, cost: { purple: 810 }, requiredBiomeLevel: 3 },
+      { stats: { attack: 30 }, cost: { purple: 1620 }, requiredBiomeLevel: 4 },
     ],
   }],
 

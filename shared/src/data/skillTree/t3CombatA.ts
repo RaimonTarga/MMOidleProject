@@ -169,7 +169,7 @@ export const t3CombatEntriesA = [
     description: 'Normal attacks deal no damage. Your execution fires on a greatly shortened cooldown (4s) and hits for far more (5× instead of 3×). On-hit gear and charm triggers still fire on regular attacks. Out of combat, your execution stays primed — the first strike on a new target is an execution."',
     cost: 1, statEffects: {},
     // Heavy frame is 9000ms / 3.0×; deltas land it at 4000ms / 5.0×.
-    mechanicEffects: { 'cooldown.singular-extraction': 1, 'cooldown.empowered-cd-ms': -5000, 'cooldown.empowered-mult': 2.0 },
+    mechanicEffects: { 'cooldown.singular-extraction': 1, 'cooldown.empowered-cd-ms': -4000 },
   }],
   ['cooldown-heavy-t3-c', {
     id: 'cooldown-heavy-t3-c', name: 'Devout Priest', tier: 3,
@@ -177,34 +177,7 @@ export const t3CombatEntriesA = [
     parent: 'cooldown-heavy', children: [],
     description: 'Your execution becomes a 3-second holy channel: you stand still and fire a continuous beam at your target, and every beam tick applies your on-hit effects (gear, charms, on-hit damage) — built for high on-hit over attack speed. If the target dies mid-channel, you briefly reacquire before the beam ends.',
     cost: 1, statEffects: {},
-    mechanicEffects: { 'cooldown.channeled-beam': 1, 'cooldown.channeled-beam-mult': 2.0 },
-  }],
-
-  // ── Tier 3: Cooldown — Heavy ──────────────────────────────────────────────────
-
-  ['cooldown-heavy-t3-a', {
-    id: 'cooldown-heavy-t3-a', name: 'Entropy Collapse', tier: 3,
-    classId: 'cooldown-root', subVariantId: 'heavy',
-    parent: 'cooldown-heavy', children: [],
-    description: 'Your execution deals no direct damage. Instead it inflicts a wound that ticks every second for 8 s. Each tick scales with the target\'s missing health — the weaker they are, the harder it burns. 4× multiplier at 90% missing HP.',
-    cost: 1, statEffects: {},
-    mechanicEffects: { 'cooldown.entropy-collapse': 1 },
-  }],
-  ['cooldown-heavy-t3-b', {
-    id: 'cooldown-heavy-t3-b', name: 'Singular Extraction', tier: 3,
-    classId: 'cooldown-root', subVariantId: 'heavy',
-    parent: 'cooldown-heavy', children: [],
-    description: 'Normal attacks deal no damage. Your execution fires on a greatly shortened cooldown and hits for significantly more. Leaving combat for 4 s resets your preparation — patience earns nothing here.',
-    cost: 1, statEffects: {},
-    mechanicEffects: { 'cooldown.singular-extraction': 1, 'cooldown.empowered-cd-ms': -6000 },
-  }],
-  ['cooldown-heavy-t3-c', {
-    id: 'cooldown-heavy-t3-c', name: 'Channeled Beam', tier: 3,
-    classId: 'cooldown-root', subVariantId: 'heavy',
-    parent: 'cooldown-heavy', children: [],
-    description: 'Your execution becomes a 3-second concentrated channel: you stand still and continuously deal damage to your target. If the target dies mid-channel, you briefly attempt to reacquire before the beam ends.',
-    cost: 1, statEffects: {},
-    mechanicEffects: { 'cooldown.channeled-beam': 1 },
+    mechanicEffects: { 'cooldown.channeled-beam': 1, 'cooldown.channeled-beam-mult': 1.0 },
   }],
 
   // ── Tier 3: Reload — Light ───────────────────────────────────────────────────
@@ -218,13 +191,17 @@ export const t3CombatEntriesA = [
     mechanicEffects: { 'reload.exploding-clip': 1, 'reload.empowered-mult': 3.5, 'reload.max-ammo': +1 },
   }],
   ['reload-light-t3-b', {
-    id: 'reload-light-t3-b', name: 'Dualslinger', tier: 3,
+    id: 'reload-light-t3-b', name: 'Desperado', tier: 3,
     classId: 'reload-root', subVariantId: 'light',
     parent: 'reload-light', children: [],
-    description: 'Even shots deal 2× attack damage with no on-hit damage; odd shots deal 2× on-hit damage with no attack damage. On-hit TRIGGERS (DoT, procs) still fire on every shot. Also grants scaling on-hit damage. Rewards a genuinely balanced attack/on-hit gear split.',
+    description: 'Each reload completion grants a Momentum stack (up to 5): +6% attack speed and −10% reload time per stack (reaching ~1s reload at max). Stacks persist through combat and decay slowly out of combat. Rewards continuous, uninterrupted fighting.',
     cost: 1, statEffects: {},
-    // 'reload.alternating-onhit-per-tier': flat on-hit = this × tiers-since-unlock (1× at unlock).
-    mechanicEffects: { 'reload.alternating-cadence': 1, 'reload.alternating-onhit-per-tier': 10 },
+    mechanicEffects: {
+      'reload.momentum': 1,
+      'reload.momentum-aps-per-stack': 0.06,
+      'reload.momentum-max-stacks': 5,
+      'reload.momentum-reload-reduction': 0.10,
+    },
   }],
   ['reload-light-t3-c', {
     id: 'reload-light-t3-c', name: 'Sniper', tier: 3,
@@ -236,8 +213,8 @@ export const t3CombatEntriesA = [
       'reload.snipe': 1,
       'reload.max-ammo': -2,            // light frame is 5 rounds → 3 shells
       'reload.snipe-cadence-ms': 2000,  // hard-set 0.5 APS
-      'reload.snipe-as-to-dmg': 0.5,    // +attack-speed stat → +attack damage (×0.5)
-      'reload.snipe-fullhp-mult': 2,
+      'reload.snipe-as-to-dmg': 1.0,    // +attack-speed stat → +attack damage (×0.5)
+      'reload.snipe-fullhp-mult': 4,
     },
   }],
 
@@ -259,23 +236,20 @@ export const t3CombatEntriesA = [
     cost: 1, statEffects: { attackRange: -100 },
     mechanicEffects: {
       'reload.blunderbuss': 1,
+      'reload.blunderbuss-damage-mult': -0.50,
       'reload.blunderbuss-spread-rad': 0.65,
       'reload.blunderbuss-knockback-distance-per-pellet': 7,
       'reload.blunderbuss-knockback-ms-per-pellet': 14,
     },
   }],
   ['reload-balanced-t3-c', {
-    id: 'reload-balanced-t3-c', name: 'Desperado', tier: 3,
+    id: 'reload-balanced-t3-c', name: 'Dualslinger', tier: 3,
     classId: 'reload-root', subVariantId: 'balanced',
     parent: 'reload-balanced', children: [],
-    description: 'Each reload completion grants a Momentum stack (up to 5): +6% attack speed and −10% reload time per stack (reaching ~1s reload at max). Stacks persist through combat and decay slowly out of combat. Rewards continuous, uninterrupted fighting.',
+    description: 'Even shots deal 2× attack damage with no on-hit damage; odd shots deal 2× on-hit damage with no attack damage. On-hit TRIGGERS (DoT, procs) still fire on every shot. Also grants scaling on-hit damage. Rewards a genuinely balanced attack/on-hit gear split.',
     cost: 1, statEffects: {},
-    mechanicEffects: {
-      'reload.momentum': 1,
-      'reload.momentum-aps-per-stack': 0.06,
-      'reload.momentum-max-stacks': 5,
-      'reload.momentum-reload-reduction': 0.10,
-    },
+    // 'reload.alternating-onhit-per-tier': flat on-hit = this × tiers-since-unlock (1× at unlock).
+    mechanicEffects: { 'reload.alternating-cadence': 1, 'reload.alternating-onhit-per-tier': 20 },
   }],
 
   // ── Tier 3: Reload — Heavy ────────────────────────────────────────────────────

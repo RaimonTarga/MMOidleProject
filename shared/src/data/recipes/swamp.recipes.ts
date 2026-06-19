@@ -12,14 +12,15 @@ export const swampRecipeEntries = [
   ['ashbrand-blade', {
     id: 'ashbrand-blade', name: 'Ashbrand Blade',
     recipeGroup: 'swamp', requiredBiomeLevel: 1, slot: 'weapon',
-    cost: { purple: 22 }, stats: { attack: 7 }, attacksPerSecond: 0.75, tier: 1,
-    mechanicEffects: { 'weapon.dot-conversion-pct': 0.30, 'weapon.dot-stacks': 5 },
+    cost: { purple: 22 }, stats: { attack: 10 }, attacksPerSecond: 0.85, tier: 1,
+    //flagged stacks for removal since they're no longer relevant
+    mechanicEffects: { 'weapon.dot-conversion-pct': 0.50, 'weapon.dot-stacks': 5 },
     icon: 'items/weapons/rune-sword-hot-1.png',
     description: 'Crude iron scratched with heat-runes that never quite cool.',
     upgrades: [
-      { stats: { attack: 3 }, cost: { purple: 30 }, requiredBiomeLevel: 2 },
-      { stats: { attack: 3 }, cost: { purple: 60 }, requiredBiomeLevel: 3 },
-      { stats: { attack: 3 }, cost: { purple: 120 }, requiredBiomeLevel: 4 },
+      { stats: { attack: 4 }, cost: { purple: 30 }, requiredBiomeLevel: 2 },
+      { stats: { attack: 4 }, cost: { purple: 60 }, requiredBiomeLevel: 3 },
+      { stats: { attack: 4 }, cost: { purple: 120 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -72,28 +73,28 @@ export const swampRecipeEntries = [
   ['swamp-mirebrand', {
     id: 'swamp-mirebrand', name: 'Mirebrand',
     recipeGroup: 'swamp', requiredBiomeLevel: 5, slot: 'weapon',
-    cost: { purple: 52 }, stats: { attack: 17 }, attacksPerSecond: 0.78, tier: 2,
-    mechanicEffects: { 'weapon.dot-conversion-pct': 0.30, 'weapon.dot-stacks': 5 },
+    cost: { purple: 52 }, stats: { attack: 22 }, attacksPerSecond: 1.0, tier: 2,
+    mechanicEffects: { 'weapon.dot-conversion-pct': 0.50, 'weapon.dot-stacks': 5 },
     icon: 'items/weapons/rune-sword-hot-1.png',
     description: 'The runes burn hotter now; what they touch keeps smouldering.',
     upgrades: [
-      { stats: { attack: 5 }, cost: { purple: 78 }, requiredBiomeLevel: 6 },
-      { stats: { attack: 5 }, cost: { purple: 156 }, requiredBiomeLevel: 7 },
-      { stats: { attack: 5 }, cost: { purple: 312 }, requiredBiomeLevel: 8 },
+      { stats: { attack: 10 }, cost: { purple: 78 }, requiredBiomeLevel: 6 },
+      { stats: { attack: 10 }, cost: { purple: 156 }, requiredBiomeLevel: 7 },
+      { stats: { attack: 10 }, cost: { purple: 312 }, requiredBiomeLevel: 8 },
     ],
   }],
 
   ['swamp-frostbrand', {
     id: 'swamp-frostbrand', name: 'Frostbrand',
     recipeGroup: 'swamp', requiredBiomeLevel: 5, slot: 'weapon',
-    cost: { purple: 54}, stats: { attack: 24 }, attacksPerSecond: 0.55, tier: 2,
-    mechanicEffects: { 'weapon.dot-conversion-pct': 0.45, 'weapon.dot-stacks': 3 },
+    cost: { purple: 54}, stats: { attack: 32 }, attacksPerSecond: 0.75, tier: 2,
+    mechanicEffects: { 'weapon.dot-conversion-pct': 0.70, 'weapon.dot-stacks': 3 },
     icon: 'items/weapons/rune-sword-cold-1.png',
     description: 'The first of the cold brands — slower and heavier, biting deep instead of often.',
     upgrades: [
-      { stats: { attack: 7 }, cost: { purple: 80 }, requiredBiomeLevel: 6 },
-      { stats: { attack: 7 }, cost: { purple: 160 }, requiredBiomeLevel: 7 },
-      { stats: { attack: 7 }, cost: { purple: 320 }, requiredBiomeLevel: 8 },
+      { stats: { attack: 12 }, cost: { purple: 80 }, requiredBiomeLevel: 6 },
+      { stats: { attack: 12 }, cost: { purple: 160 }, requiredBiomeLevel: 7 },
+      { stats: { attack: 12 }, cost: { purple: 320 }, requiredBiomeLevel: 8 },
     ],
   }],
   
@@ -144,30 +145,30 @@ export const swampRecipeEntries = [
 
   // ── T3 ── (base DoT weapon + Frost variant)
   ['swamp-blightbrand', {
-    id: 'swamp-blightbrand', name: 'Blightbrand',
+    id: 'swamp-blightbrand', name: 'Flamebrand',
     recipeGroup: 'swamp', requiredBiomeLevel: 9, slot: 'weapon',
-    cost: { purple: 116 }, stats: { attack: 34 }, attacksPerSecond: 0.80, tier: 3,
-    mechanicEffects: { 'weapon.dot-conversion-pct': 0.30, 'weapon.dot-stacks': 5 },
+    cost: { purple: 116 }, stats: { attack: 46 }, attacksPerSecond: 1.00, tier: 3,
+    mechanicEffects: { 'weapon.dot-conversion-pct': 0.50, 'weapon.dot-stacks': 5 },
     icon: 'items/weapons/rune-sword-hot-2.png',
-    description: 'The rot it carries does more work than the edge ever could.',
+    description: 'The flame it carries does more work than the edge ever could.',
     upgrades: [
-      { stats: { attack: 8 }, cost: { purple: 170 },  requiredBiomeLevel: 10 },
-      { stats: { attack: 8 }, cost: { purple: 340 }, requiredBiomeLevel: 11 },
-      { stats: { attack: 8 }, cost: { purple: 696 }, requiredBiomeLevel: 12 },
+      { stats: { attack: 14 }, cost: { purple: 170 },  requiredBiomeLevel: 10 },
+      { stats: { attack: 14 }, cost: { purple: 340 }, requiredBiomeLevel: 11 },
+      { stats: { attack: 14 }, cost: { purple: 696 }, requiredBiomeLevel: 12 },
     ],
   }],
 
   ['swamp-rimebrand', {
     id: 'swamp-rimebrand', name: 'Rimebrand',
     recipeGroup: 'swamp', requiredBiomeLevel: 9, slot: 'weapon',
-    cost: { purple: 116 }, stats: { attack: 48 }, attacksPerSecond: 0.55, tier: 3,
-    mechanicEffects: { 'weapon.dot-conversion-pct': 0.45, 'weapon.dot-stacks': 3 },
+    cost: { purple: 116 }, stats: { attack: 58 }, attacksPerSecond: 0.75, tier: 3,
+    mechanicEffects: { 'weapon.dot-conversion-pct': 0.70, 'weapon.dot-stacks': 3 },
     icon: 'items/weapons/rune-sword-cold-2.png',
     description: 'Slower, colder, and heavier — it converts more of each blow into a deep, biting chill.',
     upgrades: [
-      { stats: { attack: 12 }, cost: { purple: 180 },  requiredBiomeLevel: 10 },
-      { stats: { attack: 12 }, cost: { purple: 360 }, requiredBiomeLevel: 11 },
-      { stats: { attack: 12 }, cost: { purple: 720 }, requiredBiomeLevel: 12 },
+      { stats: { attack: 18 }, cost: { purple: 180 },  requiredBiomeLevel: 10 },
+      { stats: { attack: 18 }, cost: { purple: 360 }, requiredBiomeLevel: 11 },
+      { stats: { attack: 18 }, cost: { purple: 720 }, requiredBiomeLevel: 12 },
     ],
   }],
 

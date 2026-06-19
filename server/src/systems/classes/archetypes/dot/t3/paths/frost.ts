@@ -4,7 +4,10 @@ import {
 } from '@mmo-idle/shared';
 import { attachMarker, detachMarker } from '../../../../../../ecs/markerHelpers';
 import { applyKnockback } from '../../../../../combat/damage/knockback';
-import { DOT_EFFECT_ID, CHILL_EFFECT, FROZEN_EFFECT, FREEZE_MS } from '../core/constants';
+import {
+  DOT_EFFECT_ID, CHILL_EFFECT, FROZEN_EFFECT, FREEZE_MS,
+  FROSTBITE_DOT_TAKEN_PER_STACK, FROSTBITE_EFFECT, FROSTBITE_MS,
+} from '../core/constants';
 import { hasPassive, markMonsterDot, clearMonsterDot } from '../core/helpers';
 import type { DotT3PathContext } from './_types';
 import {
@@ -12,7 +15,7 @@ import {
   CHILL_MAX, CHILL_MS,
   GLACIAL_FRACTURE_KNOCKBACK_PX, GLACIAL_FRACTURE_KNOCKBACK_MS,
   RIMESHATTER_DR_DEBUFF, RIMESHATTER_DR_MS,
-  SHATTER_STRIKE_BONUS_PER_STACK, SHATTER_STRIKE_UNLOCK_TIER,
+  FROSTBITE_MAX_STACKS,
 } from './_constants';
 
 /**
@@ -56,34 +59,38 @@ export function tryRimeshatter(pc: DotT3PathContext): boolean {
 }
 
 /**
- * Shatter Strike (Heavy).
- * Each active frost stack grants a flat direct-damage bonus. While building, hits
- * add/refresh stacks; at max stacks the duration can NO LONGER be refreshed — the
- * stacks tick down naturally, then the cycle resets and reapplication begins.
+ * Wind Spirit (Heavy).
+ * Converts the hit fully into frost DoT. The normal frost stack is applied or
+ * refreshed every hit; hitting a target already at max frost stacks applies
+ * Frostbite, increasing DoT damage taken for a short refreshable window.
  */
-export function tryShatterStrike(pc: DotT3PathContext): boolean {
-  if (!hasPassive(pc.player, 'dot.shatter-strike')) return false;
+export function tryWindSpirit(pc: DotT3PathContext): boolean {
+  if (!hasPassive(pc.player, 'dot.wind-spirit')) return false;
   const { ctx, world, player, monster, monsterState, maxStacks, dmgPerStack, durationMs, tickIntervalMs } = pc;
 
   const stacks = getTotalStacks(monsterState, DOT_EFFECT_ID);
-  // Flat direct-attack bonus per active frost stack, scaled per tier from the
-  // path unlock (1× at unlock, +1× each tier beyond) like the other T4 specs.
-  const tierMult = Math.max(1, (player.tracksProgression?.playerTier ?? SHATTER_STRIKE_UNLOCK_TIER) - SHATTER_STRIKE_UNLOCK_TIER + 1);
-  if (stacks > 0) ctx.damage += stacks * SHATTER_STRIKE_BONUS_PER_STACK * tierMult;
-
-  if (stacks < maxStacks) {
-    // Ramp phase: add a stack and refresh.
-    const eff = applyStatusEffect(monsterState, {
-      id: DOT_EFFECT_ID, maxStacks, instanced: false,
-      sourceId: player.isPlayer.id, remainingMs: durationMs, refreshable: true,
-      data: { damagePerStack: dmgPerStack, nextTickIn: tickIntervalMs, tickIntervalMs, tickOnExpire: 1 },
+  if (stacks >= maxStacks) {
+    const passives = player.usesSkills.passives;
+    const frostbiteMaxStacks = Math.max(1, Math.round(passives['dot.frostbite-max-stacks'] ?? FROSTBITE_MAX_STACKS));
+    const frostbiteMs = Math.max(100, Math.round(passives['dot.frostbite-duration-ms'] ?? FROSTBITE_MS));
+    const frostbiteDotTaken = Math.max(0, passives['dot.frostbite-dot-taken-pct'] ?? FROSTBITE_DOT_TAKEN_PER_STACK);
+    applyStatusEffect(monsterState, {
+      id: FROSTBITE_EFFECT, maxStacks: frostbiteMaxStacks, instanced: false,
+      remainingMs: frostbiteMs, refreshable: true, sourceId: player.isPlayer.id,
+      data: { dotTakenPerStack: frostbiteDotTaken, totalMs: frostbiteMs },
     });
-    eff.data.damagePerStack = dmgPerStack;
-    eff.data.tickIntervalMs = tickIntervalMs;
-    eff.data.tickOnExpire = 1;
-    markMonsterDot(world, monster);
   }
-  // At max: intentionally do NOT refresh — stacks tick down naturally (locked peak).
+
+  const eff = applyStatusEffect(monsterState, {
+    id: DOT_EFFECT_ID, maxStacks, instanced: false,
+    sourceId: player.isPlayer.id, remainingMs: durationMs, refreshable: true,
+    data: { damagePerStack: dmgPerStack, nextTickIn: tickIntervalMs, tickIntervalMs, tickOnExpire: 1 },
+  });
+  eff.data.damagePerStack = dmgPerStack;
+  eff.data.tickIntervalMs = tickIntervalMs;
+  eff.data.tickOnExpire = 1;
+  markMonsterDot(world, monster);
+  ctx.damage = 0;
   ctx.metadata['dotHandled'] = true;
   return true;
 }

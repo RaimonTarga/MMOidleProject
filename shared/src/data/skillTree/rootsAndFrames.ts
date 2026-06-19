@@ -93,7 +93,7 @@ export const rootsAndFramesEntries = [
     classId: 'energy-root', subVariantId: null,
     parent: null, children: [],
     description: 'Channel each blow into a building surge of power. Your light build fights from range and your energy feeds a periodic shield that absorbs the hits that do reach you.',
-    cost: 1, statEffects: { attack: 11, maxHp: 10, attackSpeedPct: 0.25,  attackRange: 130, speed: 15 },
+    cost: 1, statEffects: { attack: 11, maxHp: 10, attackSpeedPct: 0.15,  attackRange: 130, speed: 15 },
     mechanicEffects: { 'defense.shield-pct': 0.30, 'defense.shield-interval-ms': 10000, 'defense.shield-duration-ms': 10000 } as Record<string, number>,
   }],
 
@@ -179,7 +179,7 @@ export const rootsAndFramesEntries = [
     classId: 'cadence-root', subVariantId: 'light',
     parent: 'cadence-root', children: [],
     description: 'Swift and agile. Trades raw bulk for a blistering attack pace. Empowered finisher triggers every 4 hits at 1.5× — frequency over raw power.',
-    cost: 1, statEffects: { attack: 8, speed: 18, maxHp: 2, attackSpeedPct: 0.28 },
+    cost: 1, statEffects: { attack: 8, speed: 18, maxHp: 2, attackSpeedPct: 0.26 },
     mechanicEffects: { 'cadence.empowered-threshold': 4, 'cadence.empowered-mult': 1.5 } as Record<string, number>,
   }],
 
@@ -207,7 +207,7 @@ export const rootsAndFramesEntries = [
     classId: 'cooldown-root', subVariantId: 'light',
     parent: 'cooldown-root', children: [],
     description: 'The aggressive tank. Keeps its armored core but trades patience for a fast, hungry tempo. Execution recharges in 5 s at 1.5×.',
-    cost: 1, statEffects: { attack: 12, speed: 22, maxHp: 6, attackSpeedPct: 0.25 },
+    cost: 1, statEffects: { attack: 10, speed: 22, maxHp: 6, attackSpeedPct: 0.22 },
     mechanicEffects: { 'cooldown.empowered-cd-ms': 5000, 'cooldown.empowered-mult': 1.5 } as Record<string, number>,
   }],
 
@@ -225,8 +225,8 @@ export const rootsAndFramesEntries = [
     classId: 'cooldown-root', subVariantId: 'heavy',
     parent: 'cooldown-root', children: [],
     description: 'Fortress of patience. Maximum bulk makes you a wall — but you move like a boulder and attack even slower. Execution recharges in 9 s at 3×.',
-    cost: 1, statEffects: { attack: 15, maxHp: 32, plating: 5, hpRegen: 7, damageReduction: 0.03, speed: -28, attackSpeedPct: -0.25 },
-    mechanicEffects: { 'cooldown.empowered-cd-ms': 9000, 'cooldown.empowered-mult': 3.0 } as Record<string, number>,
+    cost: 1, statEffects: { attack: 16, maxHp: 32, plating: 5, hpRegen: 7, damageReduction: 0.03, speed: -28, attackSpeedPct: -0.25 },
+    mechanicEffects: { 'cooldown.empowered-cd-ms': 8000, 'cooldown.empowered-mult': 3.5 } as Record<string, number>,
   }],
 
 
@@ -235,7 +235,7 @@ export const rootsAndFramesEntries = [
     classId: 'dot-root', subVariantId: 'light',
     parent: 'dot-root', children: [],
     description: 'Poison path. Apply wounds quickly and stay mobile. Up to 8 poison stacks — each hit converts 30% of your attack into lingering poison damage.',
-    cost: 1, statEffects: { attack: 6, speed: 20, maxHp: 6, attackSpeedPct: 0.20 },
+    cost: 1, statEffects: { attack: 8, speed: 20, maxHp: 6, attackSpeedPct: 0.20 },
     mechanicEffects: { 'dot.max-stacks': 8, 'dot.conversion-pct': 0.30 } as Record<string, number>,
   }],
 
@@ -263,7 +263,7 @@ export const rootsAndFramesEntries = [
     classId: 'reload-root', subVariantId: 'light',
     parent: 'reload-root', children: [],
     description: 'All-in on mobility. Small clip (5 rounds), 1.2 s reload, and extra dodge — maximum uptime, minimum profile to hit.',
-    cost: 1, statEffects: { attack: 10, speed: 18, maxHp: 4, attackSpeedPct: 0.18, evasion: 0.20 },
+    cost: 1, statEffects: { attack: 16, speed: 18, maxHp: 4, attackSpeedPct: 0.18, evasion: 0.20 },
     mechanicEffects: { 'reload.max-ammo': 5, 'reload.reload-time-ms': 1200 } as Record<string, number>,
   }],
 
@@ -272,7 +272,7 @@ export const rootsAndFramesEntries = [
     classId: 'reload-root', subVariantId: 'balanced',
     parent: 'reload-root', children: [],
     description: 'A steady burst fighter. Standard 10-round clip, 2.0 s reload, modest avoidance — tempo and staying power in balance.',
-    cost: 1, statEffects: { attack: 12, maxHp: 14, speed: 6, hpRegen: 2, evasion: 0.13 },
+    cost: 1, statEffects: { attack: 18, maxHp: 14, speed: 6, hpRegen: 2, evasion: 0.13 },
     mechanicEffects: { 'reload.max-ammo': 10, 'reload.reload-time-ms': 2000 } as Record<string, number>,
   }],
 
@@ -281,7 +281,7 @@ export const rootsAndFramesEntries = [
     classId: 'reload-root', subVariantId: 'heavy',
     parent: 'reload-root', children: [],
     description: 'Slower but harder to put down. Large 20-round clip for sustained bursting, but reloading takes 3 s — plan your downtime.',
-    cost: 1, statEffects: { attack: 16, maxHp: 20, plating: 4, hpRegen: 4, speed: -10, attackSpeedPct: -0.05 },
+    cost: 1, statEffects: { attack: 20, maxHp: 20, plating: 4, hpRegen: 4, speed: -10, attackSpeedPct: -0.05 },
     mechanicEffects: { 'reload.max-ammo': 20, 'reload.reload-time-ms': 3000 } as Record<string, number>,
   }],
 
@@ -329,16 +329,16 @@ export const rootsAndFramesEntries = [
     id: 'cadence-range-close', name: 'In-Fighter', tier: 2,
     classId: 'cadence-root', subVariantId: null,
     parent: null, children: [],
-    description: 'Fight at point-blank range. Reduced reach, repaid with faster, harder attacks, real armor, and tighter healing pulses — every 4th hit feels sturdier as your recovery bursts swell.',
-    cost: 1, statEffects: { attackRange: -40, attack: 6, attackSpeedPct: 0.15, plating: 5, damageReduction: 0.06, maxHp: 25 },
+    description: 'Fight at point-blank range. Reduced reach, repaid with faster, harder attacks, real armor, and tighter healing pulses.',
+    cost: 1, statEffects: { attack: 6, attackSpeedPct: 0.15, plating: 5, damageReduction: 0.06, maxHp: 25 },
     mechanicEffects: { 'shared.damage-mult': 0.10, 'defense.regen-burst-pct': 0.04 } as Record<string, number>,
   }],
   ['cadence-range-mid', {
     id: 'cadence-range-mid', name: 'Lancer', tier: 2,
     classId: 'cadence-root', subVariantId: null,
     parent: null, children: [],
-    description: 'The standard fighting distance. Solid all-around growth with no commitment to either extreme.',
-    cost: 1, statEffects: { attack: 4, attackSpeedPct: 0.10, maxHp: 18, plating: 2 },
+    description: 'Increase your reach to the standard fighting distance. Solid all-around growth with no commitment to either extreme.',
+    cost: 1, statEffects: { attackRange: 60, attack: 4, attackSpeedPct: 0.10, maxHp: 18, plating: 2 },
   }],
   ['cadence-range-far', {
     id: 'cadence-range-far', name: 'Phantom-Blade', tier: 2,
@@ -361,7 +361,7 @@ export const rootsAndFramesEntries = [
     classId: 'cooldown-root', subVariantId: null,
     parent: null, children: [],
     description: 'The standard fighting distance. Solid all-around growth with no commitment to either extreme.',
-    cost: 1, statEffects: { attack: 4, attackSpeedPct: 0.10, maxHp: 18, plating: 2 },
+    cost: 1, statEffects: { attackRange: 60, attack: 4, attackSpeedPct: 0.10, maxHp: 18, plating: 2 },
   }],
   ['cooldown-range-far', {
     id: 'cooldown-range-far', name: 'Sentinel', tier: 2,
@@ -376,7 +376,7 @@ export const rootsAndFramesEntries = [
     classId: 'dot-root', subVariantId: null,
     parent: null, children: [],
     description: 'Fight at point-blank range. Reduced reach, repaid with faster, harder attacks and real armor — and your absorption pool deepens by 12%, turning you into a close-quarters drain-tank.',
-    cost: 1, statEffects: { attackRange: -40, attack: 6, attackSpeedPct: 0.15, plating: 5, damageReduction: 0.06, maxHp: 25 },
+    cost: 1, statEffects: { attackRange: -80, attack: 6, attackSpeedPct: 0.15, plating: 5, damageReduction: 0.06, maxHp: 25 },
     mechanicEffects: { 'shared.damage-mult': 0.10, 'defense.absorb-pct': 0.12 } as Record<string, number>,
   }],
   ['dot-range-mid', {
@@ -391,7 +391,7 @@ export const rootsAndFramesEntries = [
     classId: 'dot-root', subVariantId: null,
     parent: null, children: [],
     description: 'Strike from a substantial distance. Modest stat growth, but the reach and footspeed let you apply stacks and retreat — distance as armor.',
-    cost: 1, statEffects: { attackRange: 120, speed: 30, attack: 2, maxHp: 8, attackSpeedPct: 0.05 },
+    cost: 1, statEffects: { attackRange: 100, speed: 30, attack: 2, maxHp: 8, attackSpeedPct: 0.05 },
   }],
 
   ['reload-range-close', {
@@ -399,7 +399,7 @@ export const rootsAndFramesEntries = [
     classId: 'reload-root', subVariantId: null,
     parent: null, children: [],
     description: 'Fight at point-blank range. Reduced reach, repaid with faster, harder attacks and real armor — and your evasion sharpens: more dodges, and each one cuts deeper.',
-    cost: 1, statEffects: { attackRange: -40, attack: 6, attackSpeedPct: 0.15, plating: 5, damageReduction: 0.06, maxHp: 25, evasion: 0.10 },
+    cost: 1, statEffects: { attackRange: -120, attack: 6, attackSpeedPct: 0.15, plating: 5, damageReduction: 0.06, maxHp: 25, evasion: 0.10 },
     mechanicEffects: { 'shared.damage-mult': 0.10, 'defense.evade-mitigation': 0.10 } as Record<string, number>,
   }],
   ['reload-range-mid', {
@@ -414,7 +414,7 @@ export const rootsAndFramesEntries = [
     classId: 'reload-root', subVariantId: null,
     parent: null, children: [],
     description: 'Strike from a substantial distance. Modest stat growth, but the reach and footspeed maximize your kiting buffer — distance as armor.',
-    cost: 1, statEffects: { attackRange: 120, speed: 30, attack: 2, maxHp: 8, attackSpeedPct: 0.05 },
+    cost: 1, statEffects: { attackRange: 80, speed: 30, attack: 2, maxHp: 8, attackSpeedPct: 0.05 },
   }],
 
   ['energy-range-close', {
@@ -422,7 +422,7 @@ export const rootsAndFramesEntries = [
     classId: 'energy-root', subVariantId: null,
     parent: null, children: [],
     description: 'Fight at point-blank range. Reduced reach, repaid with faster, harder attacks and real armor — and your energy shield swells to 40% of max HP to weather the constant melee pressure.',
-    cost: 1, statEffects: { attackRange: -40, attack: 6, attackSpeedPct: 0.15, plating: 5, damageReduction: 0.06, maxHp: 25 },
+    cost: 1, statEffects: { attackRange: -140, attack: 6, attackSpeedPct: 0.15, plating: 5, damageReduction: 0.06, maxHp: 25 },
     mechanicEffects: { 'shared.damage-mult': 0.10, 'defense.shield-pct': 0.10 } as Record<string, number>,
   }],
   ['energy-range-mid', {
@@ -437,7 +437,7 @@ export const rootsAndFramesEntries = [
     classId: 'energy-root', subVariantId: null,
     parent: null, children: [],
     description: 'Strike from a substantial distance. Modest stat growth, but the reach and footspeed keep you safely behind your shield — distance as armor.',
-    cost: 1, statEffects: { attackRange: 120, speed: 30, attack: 2, maxHp: 8, attackSpeedPct: 0.05 },
+    cost: 1, statEffects: { attackRange: 80, speed: 30, attack: 2, maxHp: 8, attackSpeedPct: 0.05 },
   }],
 
   ['summoner-range-close', {

@@ -74,12 +74,14 @@ export const SACRED_FAMILY: Record<string, { cdMs: number; buffMs: number }> = {
 
 // ── Burn family (Ashbrand / Cinderfang / Frostmourne) ────────────────────────
 
-export const ASHBRAND_CONV_PCT    = 0.30;
+// Note: please move this to the recipe file: we want to be able to specify the design there
+export const ASHBRAND_CONV_PCT    = 0.50;
 /** Burn-stack tick interval (ms), shared across the whole family. */
 export const ASHBRAND_TICK_MS     = 1_000;
 /** Burn-stack duration without a refreshing hit (ms). */
+
 export const ASHBRAND_DURATION_MS = 4_500;
-export const ASHBRAND_DOT_MULT    = 1.15;
+export const ASHBRAND_DOT_MULT    = 1.50;
 
 export interface BurnWeaponEntry {
   weaponId:  string;
@@ -99,13 +101,13 @@ export interface BurnWeaponEntry {
 export const BURN_FAMILY: BurnWeaponEntry[] = [
   // Swamp — hot/fire line (ashbrand → mirebrand → blightbrand) and cold/frost line.
   { weaponId: 'ashbrand-blade',    effectId: 'ashbrand-burn',          convPct: ASHBRAND_CONV_PCT, tickIntervalMs: ASHBRAND_TICK_MS, drainDurationMs: ASHBRAND_DURATION_MS, dotMultiplier: ASHBRAND_DOT_MULT, element: 'fire'  },
-  { weaponId: 'swamp-mirebrand',   effectId: 'swamp-mirebrand-burn',   convPct: 0.30, tickIntervalMs: ASHBRAND_TICK_MS, drainDurationMs: ASHBRAND_DURATION_MS, dotMultiplier: ASHBRAND_DOT_MULT, element: 'fire'  },
-  { weaponId: 'swamp-blightbrand', effectId: 'swamp-blightbrand-burn', convPct: 0.30, tickIntervalMs: ASHBRAND_TICK_MS, drainDurationMs: ASHBRAND_DURATION_MS, dotMultiplier: ASHBRAND_DOT_MULT, element: 'fire'  },
-  { weaponId: 'swamp-frostbrand',  effectId: 'swamp-frostbrand-burn',  convPct: 0.45, tickIntervalMs: ASHBRAND_TICK_MS, drainDurationMs: ASHBRAND_DURATION_MS, dotMultiplier: ASHBRAND_DOT_MULT, element: 'frost' },
-  { weaponId: 'swamp-rimebrand',   effectId: 'swamp-rimebrand-burn',   convPct: 0.45, tickIntervalMs: ASHBRAND_TICK_MS, drainDurationMs: ASHBRAND_DURATION_MS, dotMultiplier: ASHBRAND_DOT_MULT, element: 'frost' },
+  { weaponId: 'swamp-mirebrand',   effectId: 'swamp-mirebrand-burn',   convPct: 0.50, tickIntervalMs: ASHBRAND_TICK_MS, drainDurationMs: ASHBRAND_DURATION_MS, dotMultiplier: ASHBRAND_DOT_MULT, element: 'fire'  },
+  { weaponId: 'swamp-blightbrand', effectId: 'swamp-blightbrand-burn', convPct: 0.50, tickIntervalMs: ASHBRAND_TICK_MS, drainDurationMs: ASHBRAND_DURATION_MS, dotMultiplier: ASHBRAND_DOT_MULT, element: 'fire'  },
+  { weaponId: 'swamp-frostbrand',  effectId: 'swamp-frostbrand-burn',  convPct: 0.70, tickIntervalMs: ASHBRAND_TICK_MS, drainDurationMs: ASHBRAND_DURATION_MS, dotMultiplier: ASHBRAND_DOT_MULT, element: 'frost' },
+  { weaponId: 'swamp-rimebrand',   effectId: 'swamp-rimebrand-burn',   convPct: 0.70, tickIntervalMs: ASHBRAND_TICK_MS, drainDurationMs: ASHBRAND_DURATION_MS, dotMultiplier: ASHBRAND_DOT_MULT, element: 'frost' },
   // T4 DoT weapons — same burn mechanic, values mirror their recipe dot-conversion keys.
-  { weaponId: 'tundra-glacial-rimebrand', effectId: 'rimebrand-burn',   convPct: 0.45, tickIntervalMs: ASHBRAND_TICK_MS, drainDurationMs: ASHBRAND_DURATION_MS, dotMultiplier: ASHBRAND_DOT_MULT, element: 'frost' },
-  { weaponId: 'volcanic-blightbrand',     effectId: 'blightbrand-burn', convPct: 0.30, tickIntervalMs: ASHBRAND_TICK_MS, drainDurationMs: ASHBRAND_DURATION_MS, dotMultiplier: ASHBRAND_DOT_MULT, element: 'fire'  },
+  { weaponId: 'tundra-glacial-rimebrand', effectId: 'rimebrand-burn',   convPct: 0.70, tickIntervalMs: ASHBRAND_TICK_MS, drainDurationMs: ASHBRAND_DURATION_MS, dotMultiplier: ASHBRAND_DOT_MULT, element: 'frost' },
+  { weaponId: 'volcanic-blightbrand',     effectId: 'blightbrand-burn', convPct: 0.50, tickIntervalMs: ASHBRAND_TICK_MS, drainDurationMs: ASHBRAND_DURATION_MS, dotMultiplier: ASHBRAND_DOT_MULT, element: 'fire'  },
   { weaponId: EDGE_OF_OBLIVION_ID, effectId: VOID_CORRUPTION_EFFECT_ID, convPct: CORRUPTION_CONV_PCT, tickIntervalMs: CORRUPTION_TICK_MS, drainDurationMs: CORRUPTION_DURATION_MS, dotMultiplier: CORRUPTION_DOT_MULT, element: 'doom', slowPerStack: CORRUPTION_SLOW_PER_STACK },
 ];
 

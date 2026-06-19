@@ -12,6 +12,7 @@ import { actorFromSourceId } from '../../../../../../world/worldLogActors';
 import { isInvulnerableMonster } from '../../../../../combat/invulnerability';
 import { pushDotTickEvent } from '../../../../../combat/damage/dotTickEvent';
 import { emitPlayerMonsterOnKill } from '../../../../../combat/damage/killHooks';
+import { getFrostbiteDotTakenMult } from '../core/selectors';
 
 /**
  * Conflagration fast-tick DoT. Independent of the normal DoT updater —
@@ -37,7 +38,7 @@ export function updateConflagration(world: World, dt: number): void {
     effect.data.nextTickIn = effect.data.tickIntervalMs;
     effect.data.ticksLeft--;
 
-    const damage = Math.max(1, Math.round(effect.data.damagePerTick));
+    const damage = Math.max(1, Math.round(effect.data.damagePerTick * getFrostbiteDotTakenMult(monsterState)));
     const source = actorFromSourceId(world, effect.sourceId);
     recordMonsterDamagedByPlayer(
       world,

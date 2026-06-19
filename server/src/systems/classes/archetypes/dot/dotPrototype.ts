@@ -20,6 +20,7 @@ import {
   computeEternalDoomDamage,
   getSmolderMult,
   getFrozenMult,
+  getFrostbiteDotTakenMult,
 } from "./t3";
 import type { DeathCause } from "@mmo-idle/shared";
 import type { World } from "../../../../world/World";
@@ -92,8 +93,8 @@ export function updateDotArchetype(world: World, dt: number): void {
       ? computeEternalDoomDamage(effect.stacks, effect.data.damagePerStack)
       : computeScaledDotDamage(effect);
 
-    // Apply Smoldering Ember vulnerability and Freeze bonus to DoT ticks.
-    damage = Math.max(1, Math.round(damage * getSmolderMult(state) * getFrozenMult(state)));
+    // Apply DoT vulnerability effects to DoT ticks.
+    damage = Math.max(1, Math.round(damage * getSmolderMult(state) * getFrozenMult(state) * getFrostbiteDotTakenMult(state)));
 
     const source = actorFromSourceId(world, effect.sourceId);
     recordMonsterDamagedByPlayer(

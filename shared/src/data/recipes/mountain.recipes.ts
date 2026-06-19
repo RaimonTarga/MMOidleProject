@@ -15,13 +15,14 @@ export const mountainRecipeEntries = [
   ['heavy-hammer', {
     id: 'heavy-hammer', name: 'Heavy Hammer',
     recipeGroup: 'mountain', requiredBiomeLevel: 1, slot: 'weapon',
-    cost: { blue: 22 }, stats: { attack: 16 }, attacksPerSecond: 0.40, tier: 1,
+    cost: { blue: 22 }, stats: { attack: 26 }, attacksPerSecond: 0.55, tier: 1,
     icon: 'items/weapons/hammer-2.png',
+    mechanicEffects: { 'weapon.empowered-mult-bonus': 0.15 },
     description: 'Two-handed, brutal, and honest. It asks only that you find the time to swing it.',
     upgrades: [
-      { stats: { attack: 6 }, cost: { blue: 30 }, requiredBiomeLevel: 2 },
-      { stats: { attack: 6 }, cost: { blue: 66 }, requiredBiomeLevel: 3 },
-      { stats: { attack: 6 }, cost: { blue: 126 }, requiredBiomeLevel: 4 },
+      { stats: { attack: 10 }, cost: { blue: 30 }, requiredBiomeLevel: 2 },
+      { stats: { attack: 10 }, cost: { blue: 66 }, requiredBiomeLevel: 3 },
+      { stats: { attack: 10 }, cost: { blue: 126 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -74,13 +75,14 @@ export const mountainRecipeEntries = [
   ['quake-hammer', {
     id: 'quake-hammer', name: 'Quake Hammer',
     recipeGroup: 'mountain', requiredBiomeLevel: 5, slot: 'weapon',
-    cost: { blue: 52 }, stats: { attack: 32 }, attacksPerSecond: 0.40, tier: 2,
+    cost: { blue: 52 }, stats: { attack: 54 }, attacksPerSecond: 0.55, tier: 2,
     icon: 'items/weapons/hammer-2.png',
+    mechanicEffects: { 'weapon.empowered-mult-bonus': 0.30 },
     description: 'When it lands, the ground remembers it longer than the foe does.',
     upgrades: [
-      { stats: { attack: 13 }, cost: { blue: 78 }, requiredBiomeLevel: 6 },
-      { stats: { attack: 13 }, cost: { blue: 156 }, requiredBiomeLevel: 7 },
-      { stats: { attack: 13 }, cost: { blue: 312 }, requiredBiomeLevel: 8 },
+      { stats: { attack: 24 }, cost: { blue: 78 }, requiredBiomeLevel: 6 },
+      { stats: { attack: 24 }, cost: { blue: 156 }, requiredBiomeLevel: 7 },
+      { stats: { attack: 24 }, cost: { blue: 312 }, requiredBiomeLevel: 8 },
     ],
   }],
 
@@ -133,13 +135,14 @@ export const mountainRecipeEntries = [
   ['mountain-avalanche-maul', {
     id: 'mountain-avalanche-maul', name: 'Avalanche Maul',
     recipeGroup: 'mountain', requiredBiomeLevel: 9, slot: 'weapon',
-    cost: { blue: 116 }, stats: { attack: 74 }, attacksPerSecond: 0.40, tier: 3,
+    cost: { blue: 116 }, stats: { attack: 120 }, attacksPerSecond: 0.55, tier: 3,
     icon: 'items/weapons/hammer-2.png',
+    mechanicEffects: { 'weapon.empowered-mult-bonus': 0.50 },
     description: 'It does not so much strike as arrive, the way a slope arrives on a village.',
     upgrades: [
-      { stats: { attack: 24 }, cost: { blue: 174 },  requiredBiomeLevel: 10 },
-      { stats: { attack: 24 }, cost: { blue: 348 }, requiredBiomeLevel: 11 },
-      { stats: { attack: 24 }, cost: { blue: 588 }, requiredBiomeLevel: 12 },
+      { stats: { attack: 28 }, cost: { blue: 174 },  requiredBiomeLevel: 10 },
+      { stats: { attack: 28 }, cost: { blue: 348 }, requiredBiomeLevel: 11 },
+      { stats: { attack: 28 }, cost: { blue: 588 }, requiredBiomeLevel: 12 },
     ],
   }],
 
@@ -193,33 +196,33 @@ export const mountainRecipeEntries = [
   ['mountain-earthsunder-maul', {
     id: 'mountain-earthsunder-maul', name: 'Earthsunder Maul',
     recipeGroup: 'mountain', requiredBiomeLevel: 13, slot: 'weapon',
-    cost: { blue: 256 }, stats: { attack: 150 }, attacksPerSecond: 0.40, tier: 4,
+    cost: { blue: 256 }, stats: { attack: 280 }, attacksPerSecond: 0.40, tier: 4,
     icon: 'items/weapons/hammer-2.png',
     description: 'It does not strike the earth so much as remind it of an old grievance.',
     upgrades: [
-      { stats: { attack: 45 }, cost: { blue: 384 },  requiredBiomeLevel: 14 },
-      { stats: { attack: 45 }, cost: { blue: 768 },  requiredBiomeLevel: 15 },
-      { stats: { attack: 45 }, cost: { blue: 1290 }, requiredBiomeLevel: 16 },
+      { stats: { attack: 60 }, cost: { blue: 384 },  requiredBiomeLevel: 14 },
+      { stats: { attack: 60 }, cost: { blue: 768 },  requiredBiomeLevel: 15 },
+      { stats: { attack: 60 }, cost: { blue: 1290 }, requiredBiomeLevel: 16 },
     ],
   }],
 
   ['mountain-warmaul', {
     id: 'mountain-warmaul', name: 'Warmaul',
     recipeGroup: 'mountain', requiredBiomeLevel: 13, slot: 'weapon',
-    cost: { blue: 240 }, stats: { attack: 90 }, attacksPerSecond: 0.65, tier: 4,
+    cost: { blue: 240 }, stats: { attack: 180 }, attacksPerSecond: 0.55, tier: 4,
     // ⚠⚠ empowered-mult-bonus MUST be implemented MULTIPLICATIVELY, not additively.
     // final empowered mult = base_mult * (1 + 0.25), i.e. a flat +25% to the
     // empowered hit REGARDLESS of the spec's base multiplier.
     // Additive (+0.25 flat) would skew hugely toward low-mult/high-frequency
     // specs (1.5→1.75 = +17%) and barely help high-mult specs (4.0→4.25 = +6%).
     // Multiplicative gives every spec the same %, which is the design intent.
-    mechanicEffects: { 'weapon.empowered-mult-bonus': 0.25 },
+    mechanicEffects: { 'weapon.empowered-mult-bonus': 0.60 },
     icon: 'items/weapons/hammer-1.png',
     description: 'Lighter in the haft, quicker to the shoulder — it rewards the soldier who already knows when to swing.',
     upgrades: [
-      { stats: { attack: 27 }, cost: { blue: 360 },  requiredBiomeLevel: 14 },
-      { stats: { attack: 27 }, cost: { blue: 720 },  requiredBiomeLevel: 15 },
-      { stats: { attack: 27 }, cost: { blue: 1200 }, requiredBiomeLevel: 16 },
+      { stats: { attack: 50 }, cost: { blue: 360 },  requiredBiomeLevel: 14 },
+      { stats: { attack: 50 }, cost: { blue: 720 },  requiredBiomeLevel: 15 },
+      { stats: { attack: 50 }, cost: { blue: 1200 }, requiredBiomeLevel: 16 },
     ],
   }],
 

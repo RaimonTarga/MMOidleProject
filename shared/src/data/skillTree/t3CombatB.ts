@@ -65,7 +65,7 @@ export const t3CombatEntriesB = [
     parent: 'energy-heavy', children: [],
     description: 'Doubles your max energy (200), and +100 more for each tier beyond this one (300 next tier, 400 after, …). Energy generation accelerates the fuller the pool. If a basic hit would kill via the discharge\'s projected damage, it triggers an immediate early discharge, spending the stored energy.',
     cost: 1, statEffects: {},
-    mechanicEffects: { 'energy.singularity-execute': 1, 'energy.max-bonus': 100 },
+    mechanicEffects: { 'energy.singularity-execute': 1, 'energy.max-bonus': 100, 'energy.per-hit': 20 },
   }],
   ['energy-heavy-t3-b', {
     id: 'energy-heavy-t3-b', name: 'Invoker', tier: 3,
@@ -158,12 +158,19 @@ export const t3CombatEntriesB = [
     mechanicEffects: { 'dot.freezing-cold': 1 },
   }],
   ['dot-heavy-t3-c', {
-    id: 'dot-heavy-t3-c', name: 'Rime Blade', tier: 3,
+    id: 'dot-heavy-t3-c', name: 'Wind Spirit', tier: 3,
     classId: 'dot-root', subVariantId: 'heavy',
     parent: 'dot-heavy', children: [],
-    description: 'Each active frost stack grants a flat bonus to your direct attack damage (scaling per tier). At max stacks (3) the bonus is maximised but the stacks can no longer be refreshed — they tick down naturally. When they expire, the cycle resets and you rebuild.',
+    description: 'Your frost conversion becomes total: 100% of attack damage is converted into DoT, with a stronger frost multiplier. Hitting a target already at max frost stacks applies Frostbite, increasing DoT damage taken by 3% per stack, up to 10 stacks for 4 seconds.',
     cost: 1, statEffects: {},
-    mechanicEffects: { 'dot.shatter-strike': 1 },
+    mechanicEffects: {
+      'dot.wind-spirit': 1,
+      'dot.conversion-pct': 0.30,
+      'dot.frostbite-dot-taken-pct': 0.02,
+      'dot.frostbite-max-stacks': 10,
+      'dot.frostbite-duration-ms': 4000,
+      'dot.mechanic-mult': 1.10
+    },
   }],
 
   

@@ -37,6 +37,8 @@ const ARGS = process.argv.slice(2);
 const OPTIONS = {
   excludeConduit: ARGS.includes('--exclude-conduit'),
   llmPacket: ARGS.includes('--llm-packet'),
+  classMechanics: ARGS.includes('--class-mechanics'),
+  t4SubclassMechanics: ARGS.includes('--t4-subclass-mechanics'),
   tier: numberArg('--tier'),
 };
 const REPORT_PATH = path.join(
@@ -44,13 +46,18 @@ const REPORT_PATH = path.join(
   'reports',
   OPTIONS.excludeConduit ? 'dps-report-no-conduit.html' : 'dps-report.html',
 );
-const RANGE_CHOICES = ['close', 'far'] as const;
+type RangeKind = 'close' | 'mid' | 'far';
+const RANGE_CHOICES = ['close', 'far'] as const satisfies readonly RangeKind[];
 const WEAPON_UPGRADE_LEVEL = 3;
 const REPORT_HORIZON_SEC = 60;
 const TUTORIAL_WEAPON_IDS = new Set(['primordial-club']);
 const TUTORIAL_MONSTER_IDS = new Set(['tiny-slime']);
 const CONDUIT_CLASS_ID = 'summoner-root';
 const CADENCE_DAMAGE_MULT_DEFAULT = 2;
+const NON_SUMMONER_CLASS_IDS = ['cadence-root', 'cooldown-root', 'dot-root', 'energy-root', 'reload-root'] as const;
+const WIND_SPIRIT_FROSTBITE_PER_STACK_DEFAULT = 0.03;
+const WIND_SPIRIT_FROSTBITE_MAX_STACKS_DEFAULT = 10;
+const WIND_SPIRIT_FROSTBITE_MS_DEFAULT = 4000;
 
 function numberArg(name: string): number | null {
   const equals = ARGS.find((arg) => arg.startsWith(`${name}=`));
@@ -69,7 +76,7 @@ interface BuildCombo {
   subVariant: SubVariant | null;
   rangeId: string | null;
   rangeName: string;
-  rangeKind: typeof RANGE_CHOICES[number] | null;
+  rangeKind: RangeKind | null;
   specId: string | null;
   specName: string;
   archetype: Exclude<CombatArchetype, null>;
@@ -182,14 +189,24 @@ function specNodes(classId: string, subVariant: SubVariant): SkillNode[] {
     .sort((a, b) => a.id.localeCompare(b.id));
 }
 
-function buildCombosForTier(classTier: number): BuildCombo[] {
+interface BuildComboOptions {
+  tier4MidOnly?: boolean;
+}
+
+function rangeChoicesForTier(classTier: number, options: BuildComboOptions): Array<RangeKind | null> {
+  if (classTier < 2) return [null];
+  if (options.tier4MidOnly && classTier === 3) return ['mid'];
+  return [...RANGE_CHOICES];
+}
+
+function buildCombosForTier(classTier: number, options: BuildComboOptions = {}): BuildCombo[] {
   const combos: BuildCombo[] = [];
   for (const root of classRoots()) {
     const archetype = archetypeForClassId(root.id);
     const frames = classTier >= 1 ? frameNodes(root.id) : [null];
     for (const frame of frames) {
       const subVariant = frame?.subVariantId ?? null;
-      const ranges = classTier >= 2 ? [...RANGE_CHOICES] : [null];
+      const ranges = rangeChoicesForTier(classTier, options);
       for (const rangeKind of ranges) {
         const rangeId = rangeKind ? `${archetype}-range-${rangeKind}` : null;
         const range = rangeId ? skill(rangeId) : null;
@@ -294,7 +311,8 @@ function targetDummyForTier(tier: number): TargetDummy {
 }
 
 function monstersForReportTier(reportTier: number): MonsterDefinition[] {
-  return reportMonsterSource(reportTier).monsters;
+  if (reportTier == 1) return reportMonsterSource(reportTier).monsters;
+  else return reportMonsterSource(reportTier+1).monsters;
 }
 
 function targetForMonster(monster: MonsterDefinition): TargetDummy {
@@ -306,6 +324,46 @@ function targetForMonster(monster: MonsterDefinition): TargetDummy {
     sourceTier: monster.rewards.level,
     usedFallback: false,
   };
+}
+
+function targetShapeChecks(reportTier: number): Array<{ label: string; target: TargetDummy; source: string }> {
+  const neutral = targetDummyForTier(reportTier);
+  const monsters = monstersForReportTier(reportTier);
+  const highPlating = monsters.slice().sort((a, b) =>
+    b.stats.plating - a.stats.plating ||
+    monsterDurabilityScore(b) - monsterDurabilityScore(a))[0];
+  const highHp = monsters.slice().sort((a, b) =>
+    b.stats.hp - a.stats.hp ||
+    monsterDurabilityScore(b) - monsterDurabilityScore(a))[0];
+
+  const shapes = [
+    {
+      label: `neutral T${reportTier} dummy`,
+      target: neutral,
+      source: `${neutral.monsterCount} mob average, biome tier ${neutral.sourceTier}${neutral.usedFallback ? ' fallback' : ''}`,
+    },
+  ];
+  if (highPlating) {
+    shapes.push({
+      label: `high-plating T${reportTier} dummy`,
+      target: targetForMonster(highPlating),
+      source: highPlating.name,
+    });
+  }
+  if (highHp && highHp.id !== highPlating?.id) {
+    shapes.push({
+      label: `high-HP elite T${reportTier} dummy`,
+      target: targetForMonster(highHp),
+      source: highHp.name,
+    });
+  } else if (highHp) {
+    shapes.push({
+      label: `high-HP elite T${reportTier} dummy`,
+      target: targetForMonster(highHp),
+      source: `${highHp.name} (also highest plating)`,
+    });
+  }
+  return shapes;
 }
 
 function monsterDurabilityScore(monster: MonsterDefinition): number {
@@ -663,6 +721,15 @@ function estimateClassDamage(
       classMechanicPerSec += 10 * Math.max(1, stats.playerTier ?? 1) * hitRate;
       notes.push('frenzy estimated at high uptime');
     }
+    if ((p['dot.wind-spirit'] ?? 0) > 0) {
+      const frostbitePerStack = p['dot.frostbite-dot-taken-pct'] ?? WIND_SPIRIT_FROSTBITE_PER_STACK_DEFAULT;
+      const frostbiteMaxStacks = Math.max(1, Math.round(p['dot.frostbite-max-stacks'] ?? WIND_SPIRIT_FROSTBITE_MAX_STACKS_DEFAULT));
+      const frostbiteMs = Math.max(100, Math.round(p['dot.frostbite-duration-ms'] ?? WIND_SPIRIT_FROSTBITE_MS_DEFAULT));
+      const frostbiteStacks = Math.min(frostbiteMaxStacks, Math.max(0, hitRate * frostbiteMs / 1000));
+      dotPerSec *= 1 + frostbiteStacks * frostbitePerStack;
+      directPerHit = 0;
+      notes.push(`wind spirit frostbite estimated at ${asNumber(frostbiteStacks)} steady stacks`);
+    }
     if ((p['dot.rimeshatter'] ?? 0) > 0 || (p['dot.ignition'] ?? 0) > 0) {
       directPerHit = baseWithOnHit;
       notes.push('max-stack direct bypass treated as steady-state');
@@ -682,7 +749,9 @@ function estimateClassDamage(
       directPerHit = (attackShot + onHitShot) / 2;
       notes.push('dual shots averaged 50/50');
     } else if ((p['reload.blunderbuss'] ?? 0) > 0) {
-      notes.push('blunderbuss modeled as full-magazine single-target volley');
+      const mult = Math.max(0, 1 + (p['reload.blunderbuss-damage-mult'] ?? 0));
+      directPerHit *= mult;
+      notes.push(`blunderbuss modeled as full-magazine single-target volley at ${Math.round(mult * 100)}% pellet damage`);
     } else if ((p['reload.death-mark'] ?? 0) > 0) {
       const ammo = Math.max(1, Math.round(p['reload.max-ammo'] ?? 10));
       classMechanicPerSec += stats.dealsDamage.attack * ammo * (p['reload.death-mark-detonate-mult'] ?? 0.65) * effectiveHitRate / ammo;
@@ -743,11 +812,11 @@ function estimateClassDamage(
   };
 }
 
-function buildRowsForTier(reportTier: number): ReportRow[] {
+function buildRowsForTier(reportTier: number, comboOptions: BuildComboOptions = {}): ReportRow[] {
   const classTier = reportTier - 1;
   const target = targetDummyForTier(reportTier);
   const weapons = weaponsForTier(reportTier);
-  const combos = buildCombosForTier(classTier);
+  const combos = buildCombosForTier(classTier, comboOptions);
   const rows: ReportRow[] = [];
 
   for (const combo of combos) {
@@ -1212,6 +1281,30 @@ function classWeaponExtremes(rows: ReportRow[], direction: 'best' | 'worst'): Ar
   });
 }
 
+function averageWeaponDpsAgainstTarget(reportTier: number, weapon: ItemDefinition, target: TargetDummy): number {
+  const classTier = reportTier - 1;
+  const combos = buildCombosForTier(classTier);
+  let total = 0;
+  let count = 0;
+  for (const combo of combos) {
+    const stats = makeStatsTarget(combo, weapon, WEAPON_UPGRADE_LEVEL, classTier);
+    recalculatePlayerStats(stats);
+    const estimate = estimateClassDamage(stats, target, weapon);
+    total += estimate.direct + estimate.classMechanic + estimate.dot + estimate.weaponProc;
+    count++;
+  }
+  return total / Math.max(1, count);
+}
+
+function weaponTargetShapeRows(reportTier: number): Array<Array<string | number>> {
+  const shapes = targetShapeChecks(reportTier);
+  return weaponsForTier(reportTier).map((weapon) => [
+    `${weapon.name} +${WEAPON_UPGRADE_LEVEL}`,
+    ...shapes.map(({ target }) => asNumber(averageWeaponDpsAgainstTarget(reportTier, weapon, target))),
+    shapes.map(({ label, source }) => `${label}: ${source}`).join('; '),
+  ]);
+}
+
 function suspectedSource(row: ReportRow): string {
   const parts = [
     ['direct', row.direct],
@@ -1222,6 +1315,217 @@ function suspectedSource(row: ReportRow): string {
   const [largest] = parts.sort((a, b) => b[1] - a[1]);
   const notes = [...new Set(row.notes)].slice(0, 2).join('; ');
   return `${largest[0]} share${notes ? `; ${notes}` : ''}`;
+}
+
+type DangerousAssumption =
+  | 'high uptime assumed'
+  | 'execute averaged'
+  | 'incoming damage not modeled'
+  | 'AoE treated as single-target'
+  | 'infinite/stack cap approximation';
+
+function shortText(value: string | undefined, max = 180): string {
+  const text = (value ?? '').replace(/\s+/g, ' ').trim();
+  if (text.length <= max) return text || '-';
+  return `${text.slice(0, Math.max(0, max - 1)).trim()}...`;
+}
+
+function t4SubclassNodes(): SkillNode[] {
+  return [...SKILL_TREE.values()]
+    .filter((node) =>
+      node.tier === 3 &&
+      !(OPTIONS.excludeConduit && node.classId === CONDUIT_CLASS_ID))
+    .sort((a, b) =>
+      a.classId.localeCompare(b.classId) ||
+      String(a.subVariantId).localeCompare(String(b.subVariantId)) ||
+      a.name.localeCompare(b.name));
+}
+
+function rowSubclassNode(row: ReportRow): SkillNode | undefined {
+  return row.combo.specId ? skillById(row.combo.specId) : undefined;
+}
+
+function subclassRows(rows: ReportRow[], node: SkillNode): ReportRow[] {
+  return rows.filter((row) => row.combo.specId === node.id);
+}
+
+function dangerousAssumptionsFromText(text: string): DangerousAssumption[] {
+  const lower = text.toLowerCase();
+  const flags: DangerousAssumption[] = [];
+  if (/(high uptime|steady|steady-state|uptime|duty cycle|amortized|estimated)/.test(lower)) {
+    flags.push('high uptime assumed');
+  }
+  if (/execute averaged/.test(lower)) {
+    flags.push('execute averaged');
+  }
+  if (/(incoming damage is not modeled|vengeance|damage taken)/.test(lower)) {
+    flags.push('incoming damage not modeled');
+  }
+  if (/(aoe|splash|area|nearby|blast|storm|volley|echo|beam|multi-target|conflagration|single-target volley)/.test(lower)) {
+    flags.push('AoE treated as single-target');
+  }
+  if (/(capped|cap |max stacks|max-stack|steady stacks|stack cap|reservoir|momentum|max-ammo|death mark|eternal doom|frostbite)/.test(lower)) {
+    flags.push('infinite/stack cap approximation');
+  }
+  return [...new Set(flags)];
+}
+
+function dangerousAssumptionSummary(node: SkillNode | undefined, rows: ReportRow[] = []): string {
+  const text = [
+    node?.description ?? '',
+    mapSummary(node?.mechanicEffects, 20),
+    ...rows.flatMap((row) => row.notes),
+  ].join(' ');
+  const flags = dangerousAssumptionsFromText(text);
+  return flags.join(', ') || '-';
+}
+
+function reportFormulaForSubclass(node: SkillNode, rows: ReportRow[]): string {
+  const best = rows.slice().sort((a, b) => b.total - a.total)[0];
+  const archetype = archetypeForClassId(node.classId);
+  const rootFormula =
+    archetype === 'cadence' ? 'cycle average of normal hits plus empowered finisher over threshold' :
+    archetype === 'cooldown' ? 'execution DPS = execution hit / cooldown; replacement paths override direct hit model' :
+    archetype === 'dot' ? 'DoT DPS = computeScaledDotDamage(max stacks) / tick interval; direct reduced by conversion pct' :
+    archetype === 'energy' ? 'cycle average over energy charge hits plus empowered discharge' :
+    archetype === 'reload' ? 'effective shots/s = ammo / (shot time + reload time); spec branches override as needed' :
+    archetype === 'summoner' ? 'minion count * minion APS * inherited attack; minion survival/pathing omitted' :
+    'steady-state hit estimate';
+  const notes = best ? formulaLabel(best) : '';
+  return notes && !notes.includes('steady-state hit estimate')
+    ? `${rootFormula}; ${notes}`
+    : rootFormula;
+}
+
+function subclassNodeRowsForPacket(rows: ReportRow[]): Array<Array<string | number>> {
+  return t4SubclassNodes().map((node) => {
+    const rowsForNode = subclassRows(rows, node);
+    const best = rowsForNode.slice().sort((a, b) => b.total - a.total)[0];
+    return [
+      skill(node.classId).name,
+      String(node.subVariantId ?? '-'),
+      node.name,
+      node.id,
+      shortText(node.description, 220),
+      mapSummary(node.statEffects, 8),
+      mapSummary(node.mechanicEffects, 14),
+      reportFormulaForSubclass(node, rowsForNode),
+      dangerousAssumptionSummary(node, best ? [best] : []),
+    ];
+  });
+}
+
+function bestWorstWeaponRowsBySubclass(rows: ReportRow[]): Array<Array<string | number>> {
+  return t4SubclassNodes().flatMap((node) => {
+    const rowsForNode = subclassRows(rows, node);
+    const weaponAverages = averageBy(rowsForNode, (row) => row.weaponName)
+      .sort((a, b) => b.avg - a.avg);
+    const best = weaponAverages[0];
+    const worst = weaponAverages[weaponAverages.length - 1];
+    return [
+      [
+        skill(node.classId).name,
+        node.name,
+        'best',
+        best?.key ?? '-',
+        best ? asNumber(best.avg) : '-',
+        best?.count ?? 0,
+      ],
+      [
+        skill(node.classId).name,
+        node.name,
+        'worst',
+        worst?.key ?? '-',
+        worst ? asNumber(worst.avg) : '-',
+        worst?.count ?? 0,
+      ],
+    ];
+  });
+}
+
+function groupedTopBottomSubclassRows(rows: ReportRow[]): Array<Array<string | number>> {
+  const optimalRows = bestWeaponByBuildRows(rows);
+  const optimalAverage = optimalRows.reduce((sum, row) => sum + row.total, 0) / Math.max(1, optimalRows.length);
+  const flagged = optimalRows.map((row) => ({ ...row, flag: outlierFlag(row.total, optimalAverage) }));
+  const classIds = [...new Set(flagged.map((row) => row.classId))].sort();
+  const packetRows: Array<Array<string | number>> = [];
+  for (const classId of classIds) {
+    const classRows = flagged.filter((row) => row.classId === classId);
+    const top = classRows.slice().sort((a, b) => b.total - a.total).slice(0, 5);
+    const bottom = classRows.slice().sort((a, b) => a.total - b.total).slice(0, 5);
+    for (const [kind, selected] of [['top', top], ['bottom', bottom]] as const) {
+      for (const row of selected) {
+        packetRows.push([
+          row.className,
+          kind,
+          row.buildKey,
+          `${row.weaponName} +${row.plus}`,
+          asNumber(row.total),
+          asNumber(row.direct),
+          asNumber(row.classMechanic),
+          asNumber(row.dot),
+          asNumber(row.weaponProc),
+          row.flag || '-',
+          dangerousAssumptionSummary(rowSubclassNode(row), [row]),
+        ]);
+      }
+    }
+  }
+  return packetRows;
+}
+
+function renderT4SubclassMechanicsPacket(rows: ReportRow[]): string {
+  const target = targetDummyForTier(4);
+  return `# MMO Idle T4 Subclass Mechanics Packet${OPTIONS.excludeConduit ? ' (No Conduit)' : ''}
+
+Generated from \`tools/dps-report.ts --t4-subclass-mechanics\`. This packet is meant for external LLM balance review and omits the full HTML report.
+
+## Scope And Assumptions
+
+- Report tier: T4; class unlock tier: 3; weapons: T4 at +${WEAPON_UPGRADE_LEVEL}.
+- Row set uses the HTML report's compact T4 rule: only the mid/balanced range node is included for each frame/path, avoiding close/far duplicate rows.
+- Target baseline: ${target.monsterCount} mobs from biome tier ${target.sourceTier}${target.usedFallback ? ' fallback' : ''}; HP ${asNumber(target.hp)}, plating ${asNumber(target.plating)}, DR ${asNumber(target.damageReduction * 100)}%.
+- Single-target theoretical steady-state only. Movement, sustain, enemy attacks, death, pathing, aggro, party effects, eHP, and real AoE target count are omitted.
+- Dangerous-assumption flags are generated from subclass text and report formula notes. Treat them as review prompts, not final verdicts.
+
+## Known Missing Context
+
+- AoE and splash value are not modeled; they are treated as single-target unless the formula explicitly says otherwise.
+- Uptime is often steady-state or averaged, especially buffs, cooldown windows, max-stack mechanics, reservoirs, and heat/cool cycles.
+- Incoming damage is not modeled, so vengeance-like or defensive feedback loops use floors or are effectively ignored.
+- Overkill, execute timing, target swapping, enemy count, and encounter length are approximated or amortized.
+- Stack caps and infinite-fight assumptions can overstate classes that need ramp time or understate classes that burst early.
+
+## T4 Subclass Nodes / Mechanics / Report Formula
+
+${mdTable(
+  ['Class', 'Frame', 'Subclass', 'Node', 'Intended identity', 'Stat effects', 'Mechanic effects', 'Report formula approximation', 'Danger flags'],
+  subclassNodeRowsForPacket(rows),
+)}
+
+## Best / Worst Weapon Per Subclass
+
+${mdTable(
+  ['Class', 'Subclass', 'Kind', 'Weapon', 'Avg DPS', 'Samples'],
+  bestWorstWeaponRowsBySubclass(rows),
+)}
+
+## Top / Bottom Subclass Rows Grouped By Root Class
+
+${mdTable(
+  ['Class', 'Group', 'Build', 'Weapon', 'DPS', 'Direct', 'Class', 'DoT', 'Weapon/proc', 'Outlier', 'Danger flags'],
+  groupedTopBottomSubclassRows(rows),
+)}
+`;
+}
+
+async function writeT4SubclassMechanicsPacket(): Promise<void> {
+  const rows = buildRowsForTier(4, { tier4MidOnly: true });
+  const suffix = OPTIONS.excludeConduit ? '-no-conduit' : '';
+  const outPath = path.join(REPO_ROOT, 'reports', `t4-subclass-mechanics-packet${suffix}.md`);
+  await mkdir(path.dirname(outPath), { recursive: true });
+  await writeFile(outPath, renderT4SubclassMechanicsPacket(rows), 'utf8');
+  console.log(`Wrote ${outPath}`);
 }
 
 function renderLlmPacket(reportTier: number, rows: ReportRow[]): string {
@@ -1283,6 +1587,7 @@ function renderLlmPacket(reportTier: number, rows: ReportRow[]): string {
 
   const classAverages = averageBy(rows, (row) => row.className).sort((a, b) => b.avg - a.avg);
   const weaponAverages = averageBy(rows, (row) => row.weaponName).sort((a, b) => b.avg - a.avg);
+  const shapeChecks = targetShapeChecks(reportTier);
   const caveatNotes = [...new Set(rows.flatMap((row) => row.notes))].sort();
   const modeledMechanics = ['Cadence', 'cooldown', 'energy', 'reload', 'DoT'];
   if (!OPTIONS.excludeConduit) modeledMechanics.push('summoner');
@@ -1361,6 +1666,13 @@ ${mdTable(['Class', 'Avg DPS', 'Samples'], classAverages.map((item) => [item.key
 
 ${mdTable(['Weapon', 'Avg DPS', 'Samples'], weaponAverages.map((item) => [item.key, asNumber(item.avg), item.count]))}
 
+Weapon DPS against target shapes:
+
+${mdTable(
+  ['Weapon', ...shapeChecks.map((shape) => shape.label), 'Shape sources'],
+  weaponTargetShapeRows(reportTier),
+)}
+
 ## 8. Best Weapon Per Class
 
 ${mdTable(['Class', 'Weapon', 'Avg DPS', 'Samples'], classWeaponExtremes(rows, 'best'))}
@@ -1409,6 +1721,182 @@ async function writeLlmPacket(): Promise<void> {
     await writeFile(outPath, renderLlmPacket(tier, rows), 'utf8');
     console.log(`Wrote ${outPath}`);
   }
+}
+
+function skillById(id: string): SkillNode | undefined {
+  return SKILL_TREE.get(id);
+}
+
+function nonSummonerRoots(): SkillNode[] {
+  return NON_SUMMONER_CLASS_IDS
+    .map((id) => skillById(id))
+    .filter((node): node is SkillNode => Boolean(node));
+}
+
+function frameRowsForMechanics(): Array<Array<string | number>> {
+  return [...SKILL_TREE.values()]
+    .filter((node) =>
+      node.tier === 1 &&
+      Boolean(node.subVariantId) &&
+      NON_SUMMONER_CLASS_IDS.includes(node.classId as typeof NON_SUMMONER_CLASS_IDS[number]))
+    .sort((a, b) => a.classId.localeCompare(b.classId) || String(a.subVariantId).localeCompare(String(b.subVariantId)))
+    .map((node) => [
+      skill(node.classId).name,
+      node.name,
+      String(node.subVariantId),
+      mapSummary(node.statEffects),
+      mapSummary(node.mechanicEffects),
+      md(node.description ?? ''),
+    ]);
+}
+
+function rangeRowsForMechanics(): Array<Array<string | number>> {
+  return [...SKILL_TREE.values()]
+    .filter((node) =>
+      node.tier === 2 &&
+      NON_SUMMONER_CLASS_IDS.includes(node.classId as typeof NON_SUMMONER_CLASS_IDS[number]) &&
+      (node.id.endsWith('-range-close') || node.id.endsWith('-range-far')))
+    .sort((a, b) => a.classId.localeCompare(b.classId) || a.id.localeCompare(b.id))
+    .map((node) => [
+      skill(node.classId).name,
+      node.name,
+      node.id.endsWith('-range-close') ? 'close' : 'far',
+      mapSummary(node.statEffects),
+      mapSummary(node.mechanicEffects),
+      md(node.description ?? ''),
+    ]);
+}
+
+function specRowsForMechanics(): Array<Array<string | number>> {
+  return [...SKILL_TREE.values()]
+    .filter((node) =>
+      node.tier === 3 &&
+      NON_SUMMONER_CLASS_IDS.includes(node.classId as typeof NON_SUMMONER_CLASS_IDS[number]))
+    .sort((a, b) =>
+      a.classId.localeCompare(b.classId) ||
+      String(a.subVariantId).localeCompare(String(b.subVariantId)) ||
+      a.name.localeCompare(b.name))
+    .map((node) => [
+      skill(node.classId).name,
+      String(node.subVariantId ?? '-'),
+      node.name,
+      mapSummary(node.statEffects),
+      mapSummary(node.mechanicEffects),
+      md(node.description ?? ''),
+    ]);
+}
+
+function rootRowsForMechanics(): Array<Array<string | number>> {
+  return nonSummonerRoots().map((node) => [
+    node.name,
+    archetypeForClassId(node.id),
+    mapSummary(node.statEffects),
+    mapSummary(node.mechanicEffects),
+    md(node.description ?? ''),
+  ]);
+}
+
+function classMechanicFormulaRows(): Array<Array<string | number>> {
+  return [
+    [
+      'Striker',
+      'Cadence',
+      'Empowered finisher after threshold normal hits. Threshold = max(2, cadence.empowered-threshold + cadence.threshold-mod).',
+      'Final empowered multiplier = (cadence.empowered-mult + cadence.damage-mult-add + shared.empowered-mult-add) * (1 + weapon.empowered-mult-bonus). Chaotic miss preserves the queued empowered hit.',
+      'Cycle estimate: threshold - 1 normal hits, then empowered hit. Frequency ~= hitRate / threshold.',
+    ],
+    [
+      'Squire',
+      'Cooldown',
+      'Execution arms on cooldown. Base cooldown from cooldown.empowered-cd-ms.',
+      'Final empowered multiplier = (cooldown.empowered-mult + shared.empowered-mult-add) * (1 + weapon.empowered-mult-bonus).',
+      'Frequency = 1 / (cooldown.empowered-cd-ms / 1000).',
+    ],
+    [
+      'Apprentice',
+      'DoT',
+      'Each hit converts a profile percentage of attack into a stack budget. Direct hit is reduced by conversion pct except bypass specs.',
+      'Damage per stack = computeDotClassDamagePerStack(attack, resolveDotClassProfile(passives, selectedSubVariant)); tick DPS = computeScaledDotDamage(stacks) / tickInterval.',
+      'Stacks assumed at max steady-state in the report.',
+    ],
+    [
+      'Spirit',
+      'Energy',
+      'Normal non-empowered hits gain energy.per-hit. On reaching energyMax, energy resets to 0 and the next real hit is empowered.',
+      'Energy max = 100, plus energy.max-bonus * max(1, playerTier - 4 + 1) for Voidwalker-style scaling. Discharge multiplier uses energy.empowered-mult plus shared/weapon empowered bonuses.',
+      'Normal hits to charge = ceil(energyMax / energy.per-hit); full cycle = normalHits + 1 empowered hit. Seconds depend on final hit rate.',
+    ],
+    [
+      'Slinger',
+      'Reload',
+      'Magazine drains per shot; empty clip starts reload. max ammo and reload time come from frame/spec passives.',
+      'After skill/equipment stats: normal reload attack = floor(attack * 0.65), then attack cooldown *= 0.5. Sniper and laser skip the 0.65 damage layer and double-speed layer.',
+      'Effective shot rate = ammo / (ammo / baseHitRate + reloadSeconds), except blunderbuss report estimate treats the clip as a single-target volley.',
+    ],
+  ];
+}
+
+function renderClassMechanicsPacket(): string {
+  return `# MMO Idle Class Mechanics Packet
+
+Generated from \`SKILL_TREE\`, shared stat rebuild rules, and the report's formula helpers. Summoner/Conduit is intentionally omitted for this balance pass.
+
+## Stat Pipeline
+
+- Base stats reset from \`GAME_CONFIG\`, then equipped weapon APS sets base attack cooldown when present.
+- Skill stat effects apply additively. \`attackSpeedPct\` sources sum, then cooldown becomes \`round(cooldown / max(0.1, 1 + attackSpeedPct))\`, floored to 200 ms before reload-specific layers.
+- Equipment stats and item upgrade stats apply after skill stats. Mechanic effects merge into \`usesSkills.passives\`.
+- Close range gets its authored range node plus class-specific close bonus from the stat pipeline: Squire +5 plating/+1 hpRegen, Apprentice +4/+2, Striker +3/+3, Slinger +2/+4, Spirit +1/+5.
+- \`shared.damage-mult\` is additive final damage after plating/DR: final direct pipeline damage is multiplied by \`1 + shared.damage-mult\`.
+- Empowered multiplier formula: \`effective = (archetypeBase + archetypeAdd + shared.empowered-mult-add) * (1 + weapon.empowered-mult-bonus)\`, then \`ctx.damage = floor(ctx.damage * effective)\`.
+
+## Root / Base Stat Bonuses
+
+${mdTable(['Class', 'Archetype', 'Root stat effects', 'Root passive effects', 'Design text'], rootRowsForMechanics())}
+
+## Frame Modifiers
+
+${mdTable(['Class', 'Frame', 'Subvariant', 'Stat effects', 'Passive effects', 'Design text'], frameRowsForMechanics())}
+
+## Close / Far Modifiers
+
+${mdTable(['Class', 'Range', 'Kind', 'Stat effects', 'Passive effects', 'Design text'], rangeRowsForMechanics())}
+
+## Path / Spec Modifiers
+
+${mdTable(['Class', 'Frame', 'Spec', 'Stat effects', 'Passive effects', 'Design text'], specRowsForMechanics())}
+
+## Class Mechanic Formulas
+
+${mdTable(['Class', 'Mechanic', 'Passive formulas', 'Final damage multipliers', 'Mechanic frequency rule'], classMechanicFormulaRows())}
+
+## Reload Exact Notes
+
+- Root Slinger stats: attack +18, maxHp +24, attackSpeedPct +0.20, attackRange +120, evasion +0.25, speed +15.
+- Frame magazine/reload bases: Scout 5 ammo / 1200 ms reload; Marksman 10 ammo / 2000 ms reload; Artillerist 20 ammo / 3000 ms reload.
+- Generic reload stat layer in \`recalculatePlayerStats\`: after normal stat rebuild, if not Sniper and not Laser, \`attack = max(1, floor(attack * 0.65))\`; if not Sniper, \`attackCooldown = max(200, round(attackCooldown * 0.5))\`; Gatling halves cooldown again with a 100 ms floor.
+- Sniper: \`attack += round(attack * attackSpeedPct * (reload.snipe-as-to-dmg ?? 0.5))\`, then cooldown hard-sets to \`reload.snipe-cadence-ms ?? 2000\`; it ignores weapon APS, attack-speed cooldown scaling, and reload double-speed.
+- Laser: keeps full attack and does not use normal hit rate in the report; report estimates heat/cool duty cycle using \`laser-heat-per-tick\`, \`laser-cool-per-tick\`, and \`laser-damage-per-tick-pct\`.
+- Plating compensation/bypass: live reload \`beforeAttack\` sets \`ctx.platingMult = 0.5\`; damage formula receives effective target plating multiplied by 0.5. The report mirrors this with \`platingMult = 0.5\` for reload.
+- Reload time: \`reload.reload-time-ms ?? 1600\`, multiplied by \`reload.reload-time-mult\` when present, minimum 100 ms. Momentum reduces reload time by \`1 - stacks * reload.momentum-reload-reduction\`, floored by the runtime constant.
+
+## Energy Exact Notes
+
+- Root Spirit stats: attack +11, maxHp +10, attackSpeedPct +0.25, attackRange +130, speed +15.
+- Frame energy rules: Spark gains 20 energy/hit and has 1.5x empowered; Wraith gains 14 energy/hit and has 2.0x empowered; Phantasm gains 10 energy/hit and has 6.0x empowered.
+- Energy has no special hidden APS bonus beyond normal \`attackSpeedPct\` stat effects from root/frame/range/spec. Attack-speed stats feed the shared cooldown formula above.
+- Energy max defaults to 100. If \`energy.max-bonus\` exists, \`energyMax = 100 + round(energy.max-bonus * max(1, playerTier - 4 + 1))\`.
+- After a non-empowered hit, if no T3 handler consumed the event, energy gains \`round(energy.per-hit ?? 14)\`. Empowered hits do not generate energy.
+- When energy reaches max, energy resets to 0 and the next real hit is empowered. Therefore discharge timing is hit-count based, not seconds-based: \`normalHits = ceil(energyMax / energy.per-hit)\`, then the next hit discharges. Seconds = \`(normalHits + 1) / finalHitsPerSecond\`.
+- Discharge damage is an empowered hit using \`energy.empowered-mult\`, plus shared/weapon empowered multiplier modifiers. T3 specs may replace or augment this with their own handlers, as listed in the spec table.
+`;
+}
+
+async function writeClassMechanicsPacket(): Promise<void> {
+  const outPath = path.join(REPO_ROOT, 'reports', 'class-mechanics-packet.md');
+  await mkdir(path.dirname(outPath), { recursive: true });
+  await writeFile(outPath, renderClassMechanicsPacket(), 'utf8');
+  console.log(`Wrote ${outPath}`);
 }
 
 function renderReport(sections: string[]): string {
@@ -1473,13 +1961,23 @@ function renderReport(sections: string[]): string {
 }
 
 async function main(): Promise<void> {
+  if (OPTIONS.classMechanics) {
+    await writeClassMechanicsPacket();
+    return;
+  }
+
+  if (OPTIONS.t4SubclassMechanics) {
+    await writeT4SubclassMechanicsPacket();
+    return;
+  }
+
   if (OPTIONS.llmPacket) {
     await writeLlmPacket();
     return;
   }
 
   const tiers = availableReportTiers();
-  const sections = tiers.map((tier) => renderTierSection(tier, buildRowsForTier(tier)));
+  const sections = tiers.map((tier) => renderTierSection(tier, buildRowsForTier(tier, { tier4MidOnly: true })));
   await mkdir(path.dirname(REPORT_PATH), { recursive: true });
   await writeFile(REPORT_PATH, renderReport(sections), 'utf8');
   console.log(`Wrote ${REPORT_PATH}`);

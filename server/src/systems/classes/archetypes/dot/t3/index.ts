@@ -30,7 +30,7 @@ import {
 import {
   tryPermafrost,
   tryRimeshatter,
-  tryShatterStrike,
+  tryWindSpirit,
   tryFreezingCold,
   tryGlacialFracture,
 } from './paths/frost';
@@ -94,7 +94,7 @@ export function initDotT3(): void {
     if (tryConflagration(pc))    return;
     if (tryPermafrost(pc))       return;
     if (tryRimeshatter(pc))      return;
-    if (tryShatterStrike(pc))    return;
+    if (tryWindSpirit(pc))       return;
     if (tryFreezingCold(pc))     return;
     if (tryGlacialFracture(pc))  return;
   });
@@ -151,5 +151,5 @@ export function updateDotT3(world: World, dt: number): void {
 
 // ── Public re-exports (preserve dotT3 module API) ────────────────────────────
 export { computeEternalDoomDamage } from '@mmo-idle/shared';
-export { getSmolderMult, getFrozenMult, isMonsterFrozen } from './core/selectors';
+export { getSmolderMult, getFrozenMult, getFrostbiteDotTakenMult, isMonsterFrozen } from './core/selectors';
 export { DOT_T3_BUFFS } from './core/buffs';

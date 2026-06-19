@@ -11,14 +11,14 @@ export const caveRecipeEntries = [
   ['chaotic-axe', {
     id: 'chaotic-axe', name: 'Chaotic Axe',
     recipeGroup: 'cave', requiredBiomeLevel: 1, slot: 'weapon',
-    cost: { red: 26 }, stats: { attack: 25 }, attacksPerSecond: 1.10, tier: 1,
+    cost: { red: 26 }, stats: { attack: 24 }, attacksPerSecond: 1.10, tier: 1,
     mechanicEffects: { 'weapon.dead-swing-interval': 3 },
     icon: 'items/weapons/axe-1.png',
     description: 'A wild, top-heavy thing that fights as much as it is wielded.',
     upgrades: [
-      { stats: { attack: 10 }, cost: { red: 30 }, requiredBiomeLevel: 2 },
-      { stats: { attack: 10 }, cost: { red: 66 }, requiredBiomeLevel: 3 },
-      { stats: { attack: 10 }, cost: { red: 126 }, requiredBiomeLevel: 4 },
+      { stats: { attack: 7 }, cost: { red: 30 }, requiredBiomeLevel: 2 },
+      { stats: { attack: 7}, cost: { red: 66 }, requiredBiomeLevel: 3 },
+      { stats: { attack: 8 }, cost: { red: 126 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -74,9 +74,9 @@ export const caveRecipeEntries = [
     icon: 'items/weapons/axe-2.png',
     description: 'Bigger, meaner, and somehow better balanced — chaos with the faintest thread of discipline.',
     upgrades: [
-      { stats: { attack: 16 }, cost: { red: 78 }, requiredBiomeLevel: 6 },
-      { stats: { attack: 16 }, cost: { red: 162 }, requiredBiomeLevel: 7 },
-      { stats: { attack: 16 }, cost: { red: 288 }, requiredBiomeLevel: 8 },
+      { stats: { attack: 14 }, cost: { red: 78 }, requiredBiomeLevel: 6 },
+      { stats: { attack: 14 }, cost: { red: 162 }, requiredBiomeLevel: 7 },
+      { stats: { attack: 14 }, cost: { red: 288 }, requiredBiomeLevel: 8 },
     ],
   }],
 
@@ -127,14 +127,14 @@ export const caveRecipeEntries = [
   ['cave-cataclysm-axe', {
     id: 'cave-cataclysm-axe', name: 'Cataclysm Axe',
     recipeGroup: 'cave', requiredBiomeLevel: 9, slot: 'weapon',
-    cost: { red: 120 }, stats: { attack: 92 }, attacksPerSecond: 1.20, tier: 3,
+    cost: { red: 120 }, stats: { attack: 82 }, attacksPerSecond: 1.20, tier: 3,
     mechanicEffects: { 'weapon.dead-swing-interval': 5 },
     icon: 'items/weapons/whirling-morning-star.png',
     description: 'Chaos given an edge — and, at last, a little rhythm. Every fifth swing still finds only air.',
     upgrades: [
-      { stats: { attack: 20 }, cost: { red: 174 },  requiredBiomeLevel: 10 },
-      { stats: { attack: 20 }, cost: { red: 348 }, requiredBiomeLevel: 11 },
-      { stats: { attack: 20 }, cost: { red: 588 }, requiredBiomeLevel: 12 },
+      { stats: { attack: 16 }, cost: { red: 174 },  requiredBiomeLevel: 10 },
+      { stats: { attack: 16 }, cost: { red: 348 }, requiredBiomeLevel: 11 },
+      { stats: { attack: 16 }, cost: { red: 588 }, requiredBiomeLevel: 12 },
     ],
   }],
 
