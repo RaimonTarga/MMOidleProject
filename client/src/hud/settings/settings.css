@@ -137,6 +137,23 @@
   margin-bottom: 16px;
 }
 
+/* Header and tabs stay pinned; the tab content scrolls when it overflows the
+   fixed-height .inv-panel (otherwise long keybind lists get clipped). */
+.settings-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(100, 88, 200, 0.30) transparent;
+}
+
+.settings-body::-webkit-scrollbar { width: 4px; }
+.settings-body::-webkit-scrollbar-track { background: transparent; }
+.settings-body::-webkit-scrollbar-thumb {
+  background: rgba(100, 88, 200, 0.30);
+  border-radius: 2px;
+}
+
 .settings-tab {
   padding: 6px 12px;
   font-size: 10px;

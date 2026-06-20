@@ -217,6 +217,7 @@ export function SettingsPanel({ onClose }: Props) {
           </button>
         </div>
 
+        <div className="settings-body">
         {tab === 'controls' ? (
           <>
             <div
@@ -311,6 +312,7 @@ export function SettingsPanel({ onClose }: Props) {
             </button>
           </div>
         )}
+        </div>
       </div>
     </div>,
     document.body,
