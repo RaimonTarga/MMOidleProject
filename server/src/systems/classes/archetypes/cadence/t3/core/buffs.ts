@@ -29,6 +29,7 @@ export const CADENCE_T3_BUFFS = [
     'cadence-echo',
     ({ player }) => {
       const echo = player.usesCadence?.echo ?? 0;
+      const echoBonus = player.usesSkills.passives['cadence.momentum-echo-bonus'] ?? MOMENTUM_ECHO_BONUS;
       return echo > 0
         ? {
             id: 'cadence-echo',
@@ -36,7 +37,7 @@ export const CADENCE_T3_BUFFS = [
             stacks: echo,
             durationPct: -1,
             color: '#4488ff',
-            logDetail: `next ${echo} hits echo +${Math.round(MOMENTUM_ECHO_BONUS * 100)}% damage`,
+            logDetail: `next ${echo} hits echo +${Math.round(echoBonus * 100)}% damage`,
           }
         : null;
     },
@@ -100,7 +101,9 @@ export const CADENCE_T3_BUFFS = [
     ({ player }) => {
       const stacks = player.usesCadence?.rampageStacks ?? 0;
       if (stacks <= 0) return null;
-      const atCap = stacks >= RAMPAGE_MAX_STACKS;
+      const maxStacks  = player.usesSkills.passives['cadence.rampage-max-stacks'] ?? RAMPAGE_MAX_STACKS;
+      const multPerStk = player.usesSkills.passives['cadence.rampage-mult-per-stack'] ?? RAMPAGE_MULT_PER_STACK;
+      const atCap = stacks >= maxStacks;
       return {
         id: 'cadence-rampage',
         label: 'Rage',
@@ -110,7 +113,7 @@ export const CADENCE_T3_BUFFS = [
         color: atCap ? '#ffdd22' : '#ff3322',
         logDetail: atCap
           ? `MAX — next finisher overloads (resets)`
-          : `+${Math.round(stacks * RAMPAGE_MULT_PER_STACK * 100)}% finisher (${stacks}/${RAMPAGE_MAX_STACKS})`,
+          : `+${Math.round(stacks * multPerStk * 100)}% finisher (${stacks}/${maxStacks})`,
       };
     },
     { label: 'Rage', color: '#ff3322', category: 'cadence', shape: 'square' },
@@ -120,7 +123,7 @@ export const CADENCE_T3_BUFFS = [
     ({ player }) => {
       if ((player.usesSkills.passives['cadence.crescendo'] ?? 0) <= 0) return null;
       const ms = player.usesCadence?.crescendoTimerMs ?? 0;
-      const mult = crescendoMultiplier(ms);
+      const mult = crescendoMultiplier(ms, player.usesSkills.passives);
       if (mult <= 0) return null;
       const pct = Math.round(mult * 100);
       return {

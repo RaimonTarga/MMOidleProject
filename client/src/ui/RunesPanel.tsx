@@ -46,6 +46,7 @@ const CHANNEL_COLOR: Record<string, string> = {
   MOVEMENT: '#ffb36b',
   TARGETING: '#d6a8ff',
   OOC_MAINTENANCE: '#7ab8ff',
+  RESOURCE_MAINTENANCE: '#73d7ff',
   GLOBAL_STRATEGY: '#7affc0',
   CONTROL: '#ff7a9a',
 };

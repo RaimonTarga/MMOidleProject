@@ -53,6 +53,12 @@ interface CandidateContext {
   spreadDots: boolean;
 }
 
+interface TargetCandidate {
+  monster: MonsterEntity;
+  score: number;
+  distSq: number;
+}
+
 const AUTO_TARGET_ID = "autoCombat.targetId";
 
 /**
@@ -72,6 +78,15 @@ export function getAutoTargetId(player: PlayerEntity): string | null {
  * player across the node.
  */
 const SWITCH_MARGIN = 0.25;
+
+/**
+ * Distance commitment hysteresis for strict-nearest targeting, as a squared
+ * fraction. A rival must be at least ~20% closer in linear distance (0.8² =
+ * 0.64 in squared distance) to steal the player's current approach target.
+ * Prevents flip-flop between near-equidistant mobs and leash-edge jitter while
+ * still honoring "nearest" once committed.
+ */
+const NEAREST_COMMIT_FRAC_SQ = 0.64;
 
 /** A glancing 1-damage hit is technically legal, but almost never a good target. */
 const GLANCE_PENALTY = 0.1;
@@ -126,14 +141,19 @@ export function selectAutoCombatAction(
     spreadDots: getFlag(player.tracksCombat, RUNE_SPREAD_DOTS_FLAG),
   };
 
+  const strictNearest = usesStrictNearest(ctx);
   const currentTargetId = getString(player.tracksCombat, AUTO_TARGET_ID);
-  const candidates: Array<{ monster: MonsterEntity; score: number }> = [];
+  const candidates: TargetCandidate[] = [];
 
   for (const monster of world.monsterEntitiesInNode(player.hasPosition.nodeId)) {
     if (!passesGates(world, player, monster, ctx)) continue;
     candidates.push({
       monster,
-      score: scoreCandidate(world, player, monster, ctx),
+      score: strictNearest ? 0 : scoreCandidate(world, player, monster, ctx),
+      distSq: distanceSq(
+        player.hasPosition.current,
+        monster.hasPosition.current,
+      ),
     });
   }
 
@@ -142,18 +162,59 @@ export function selectAutoCombatAction(
     return { kind: "idle" };
   }
 
-  candidates.sort((a, b) => b.score - a.score);
-  const best = candidates[0];
-  const current = currentTargetId
-    ? candidates.find((c) => c.monster.isMonster.id === currentTargetId) ?? null
-    : null;
+  let chosen: TargetCandidate | null;
+  if (strictNearest) {
+    // "Nearest" is a hard ordering, not one signal in the general-purpose
+    // target score. Search radius only controls eligibility; it must not dilute
+    // distance or let threat/quest/cluster bonuses select a farther monster.
+    // Stable id ordering makes exact-distance ties deterministic without keeping
+    // a previous target that is now farther away.
+    candidates.sort(
+      (a, b) =>
+        a.distSq - b.distSq ||
+        a.monster.isMonster.id.localeCompare(b.monster.isMonster.id),
+    );
+    const nearest = candidates[0];
+    const current = currentTargetId
+      ? candidates.find((c) => c.monster.isMonster.id === currentTargetId) ?? null
+      : null;
 
-  const preferred =
-    current && best.score <= current.score * (1 + SWITCH_MARGIN)
-      ? current
-      : best;
+    let preferred: TargetCandidate;
+    if (!current) {
+      preferred = nearest;
+    } else {
+      // Retaliation override: snap to the closest monster that is attacking us,
+      // but only if it is closer than the committed target (per design — a far
+      // ranged poke should not yank the player across the node).
+      const closerAttacker = candidates.find(
+        (c) => c.distSq < current.distSq && isAggroedOnPlayer(c.monster, player),
+      );
+      if (closerAttacker) {
+        preferred = closerAttacker;
+      } else if (nearest.distSq < current.distSq * NEAREST_COMMIT_FRAC_SQ) {
+        // Commitment hysteresis: only abandon the current approach target for
+        // one that is meaningfully closer, so two near-equidistant mobs (or a
+        // mob jittering around its leash edge) do not cause target flip-flop.
+        preferred = nearest;
+      } else {
+        preferred = current;
+      }
+    }
+    chosen = pickPathReachableTarget(world, player, preferred, candidates);
+  } else {
+    candidates.sort((a, b) => b.score - a.score);
+    const best = candidates[0];
+    const current = currentTargetId
+      ? candidates.find((c) => c.monster.isMonster.id === currentTargetId) ?? null
+      : null;
 
-  const chosen = pickPathReachableTarget(world, player, preferred, candidates);
+    const preferred =
+      current && best.score <= current.score * (1 + SWITCH_MARGIN)
+        ? current
+        : best;
+
+    chosen = pickPathReachableTarget(world, player, preferred, candidates);
+  }
   if (!chosen) {
     setString(player.tracksCombat, AUTO_TARGET_ID, "");
     return { kind: "idle" };
@@ -161,6 +222,19 @@ export function selectAutoCombatAction(
 
   setString(player.tracksCombat, AUTO_TARGET_ID, chosen.monster.isMonster.id);
   return { kind: "attack", target: chosen.monster };
+}
+
+/**
+ * Dedicated targeting strategies deliberately modify the generic score. Plain
+ * nearest/focus-closest does not: geometric distance is its primary contract.
+ */
+function usesStrictNearest(ctx: CandidateContext): boolean {
+  return (
+    ctx.cfg.priorityMode === "nearest" &&
+    !ctx.letDotsFinish &&
+    !ctx.spreadDots &&
+    !ctx.cfg.focusLeaderTarget
+  );
 }
 
 function passesGates(
@@ -189,6 +263,11 @@ function passesGates(
   // aggroed on the player are always engaged (retaliation). When nothing
   // qualifies, `selectAutoCombatAction` returns idle and the player holds.
   if (!isAggroedOnPlayer(monster, player)) {
+    // A monster sprinting home after a leash break (RETURN_SPEED_MULT) outruns
+    // the player and can never be caught. Committing to one causes the
+    // chase -> it flees -> pick another -> repeat oscillation. Skip it; if it
+    // were aggroed on us it would turn and fight (handled by the branch above).
+    if (monster.hasAwareness?.state === "returning") return false;
     if (isPastLeashAnchor(monster)) return false;
     if (
       !world.collision.isWithinCenterRadius(
@@ -232,13 +311,13 @@ function monsterHasPath(
   return !!path && path.length > 0;
 }
 
-/** Prefer `preferred`, else the highest-scored candidate with a valid nav path. */
+/** Prefer `preferred`, else the next candidate in the caller's priority order. */
 function pickPathReachableTarget(
   world: World,
   player: PlayerEntity,
-  preferred: { monster: MonsterEntity; score: number },
-  candidates: Array<{ monster: MonsterEntity; score: number }>,
-): { monster: MonsterEntity; score: number } | null {
+  preferred: TargetCandidate,
+  candidates: TargetCandidate[],
+): TargetCandidate | null {
   if (monsterHasPath(world, player, preferred.monster)) return preferred;
   for (const entry of candidates) {
     if (entry.monster.isMonster.id === preferred.monster.isMonster.id) continue;
@@ -367,6 +446,9 @@ export function nearestEngageableMonster(
     ) {
       continue;
     }
+    // A monster racing back to its spawn cannot be caught — heading toward it
+    // just produces the same chase/abandon oscillation. Skip it while idle.
+    if (monster.hasAwareness?.state === "returning") continue;
     if (isPastLeashAnchor(monster)) continue;
 
     candidates.push({
@@ -490,7 +572,12 @@ function projectedDotDamage(monster: MonsterEntity): number {
 
   const tickDamage =
     effect.data.isEternalDoom === 1
-      ? computeEternalDoomDamage(effect.stacks, effect.data.damagePerStack ?? 0)
+      ? computeEternalDoomDamage(
+          effect.stacks,
+          effect.data.damagePerStack ?? 0,
+          effect.data.edFullStacks,
+          effect.data.edDiminishRate,
+        )
       : computeScaledDotDamage(effect);
 
   if (effect.remainingMs < 0) return tickDamage;

@@ -232,6 +232,13 @@ export interface MonsterDefinition {
   attackStyle: string;
   /** Biome group this monster belongs to — must match a BiomeDefinition id. */
   biome: string;
+  /**
+   * Short bestiary hint describing the monster's combat profile (e.g.
+   * "Fast-attacking swarmer", "Slow, armored bruiser"). When omitted, a profile
+   * is derived from the monster's stats and mechanics. Authoring this overrides
+   * the derived text — the intended home for hand-written flavor/lore later.
+   */
+  profile?: string;
   rewards: { essence: number; essenceType: EssenceType; level: number; biomeXp?: number };
   ai: {
     wanderRadius: number;

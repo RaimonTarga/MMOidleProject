@@ -2,7 +2,7 @@ import type { EquipmentMap, EssenceType } from "../items";
 import type { HasAutoIntent, HasEmote, PartyMember, TargetStatusView, UltimateStatus } from "../components";
 import type { PassiveMap } from "../passives";
 import { isRangedCombatant, type SubVariant } from "../skillTree";
-import { upkeepStacks, upkeepStage } from "../systems/energyUpkeep";
+import { resolveUpkeepConfig, upkeepStacks, upkeepStage } from "../systems/energyUpkeep";
 import type { BuffId, PlayerBuff } from "../components/combat/buffs";
 import type {
   CombatArchetype,
@@ -98,8 +98,6 @@ export interface PlayerView {
   empoweredReady: boolean;
   targetDotStacks: number;
   targetChillStacks: number;
-  sacredBuffActive: boolean;
-  sacredBuffPct: number;
   isChanneling: boolean;
   channelingPct: number;
   /** Cannoneer: 0 when idle, else 0→100 as the mid-reload cannon charge fills. */
@@ -317,8 +315,6 @@ export function composePlayerView(entity: NetworkedEntity): PlayerView | null {
     empoweredReady: entity.hasEmpoweredAttack !== undefined,
     targetDotStacks: entity.appliesDots?.targetDotStacks ?? 0,
     targetChillStacks: entity.chillsTarget?.targetChillStacks ?? 0,
-    sacredBuffActive: entity.showsSacred?.sacredBuffActive ?? false,
-    sacredBuffPct: entity.showsSacred?.sacredBuffPct ?? 0,
     isChanneling: entity.isChanneling !== undefined,
     channelingPct: entity.isChanneling?.pct ?? 0,
     cannonChargePct: (() => {
@@ -333,8 +329,9 @@ export function composePlayerView(entity: NetworkedEntity): PlayerView | null {
       const e = entity.usesEnergy;
       if (!e) return null;
       if (e.overdriveActive) return 'surge';
-      const stacks = upkeepStacks(e);
-      if (stacks > 0) return `channel-${upkeepStage(stacks)}`;
+      const upkeep = resolveUpkeepConfig(entity.usesSkills?.passives ?? {});
+      const stacks = upkeepStacks(e, upkeep.stackIntervalMs);
+      if (stacks > 0) return `channel-${upkeepStage(stacks, upkeep)}`;
       // Equinox is always in one of two cycles → always coloured by its current state.
       if ((entity.usesSkills?.passives['energy.binary-cycle'] ?? 0) > 0) {
         return e.binaryDischargeState ? 'equinox-discharge' : 'equinox-charge';

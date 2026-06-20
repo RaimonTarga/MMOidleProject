@@ -54,14 +54,17 @@ function applyFlashShiftStats(world: World, player: PlayerEntity): void {
   const energy = player.usesEnergy;
   if (!energy || energy.energyMax <= 0) return;
 
+  const passives = player.usesSkills.passives;
+  const maxSpeedBonus = Math.max(0, passives['energy.flash-max-speed-bonus-pct'] ?? FLASH_MAX_SPEED_BONUS_PCT);
+  const maxEvasionBonus = Math.max(0, passives['energy.flash-max-evasion-bonus-pct'] ?? FLASH_MAX_EVASION_BONUS_PCT);
   const fillPct = energy.energy / energy.energyMax;
   energy.flashSpeedBonusPct = Math.min(
-    FLASH_MAX_SPEED_BONUS_PCT,
-    fillPct * FLASH_MAX_SPEED_BONUS_PCT,
+    maxSpeedBonus,
+    fillPct * maxSpeedBonus,
   );
   energy.flashEvasionBonusPct = Math.min(
-    FLASH_MAX_EVASION_BONUS_PCT,
-    fillPct * FLASH_MAX_EVASION_BONUS_PCT,
+    maxEvasionBonus,
+    fillPct * maxEvasionBonus,
   );
 
   if (energy.flashBaseAttackCooldown > 0) {
@@ -94,7 +97,8 @@ function decayFlashShift(world: World, player: PlayerEntity, dt: number): void {
   if (!energy || !hasFlashRamp(player)) return;
   if (energy.energyMax === 0) energy.energyMax = 100;
 
-  energy.energy = Math.max(0, energy.energy - energy.energyMax * (dt / FLASH_SHIFT_DECAY_MS));
+  const decayMs = Math.max(1, player.usesSkills.passives['energy.flash-shift-decay-ms'] ?? FLASH_SHIFT_DECAY_MS);
+  energy.energy = Math.max(0, energy.energy - energy.energyMax * (dt / decayMs));
   applyFlashShiftStats(world, player);
 
   if (energy.energy <= 0) {
@@ -117,7 +121,8 @@ export function applyFlashSpeedGain(world: World, player: PlayerEntity): void {
     energy.flashBaseMoveSpeed = player.hasPosition.speed;
   }
 
-  energy.energy = Math.min(energy.energy + FLASH_ENERGY_PER_HIT, energy.energyMax);
+  const energyPerHit = Math.max(0, player.usesSkills.passives['energy.flash-energy-per-hit'] ?? FLASH_ENERGY_PER_HIT);
+  energy.energy = Math.min(energy.energy + energyPerHit, energy.energyMax);
   applyFlashShiftStats(world, player);
 }
 

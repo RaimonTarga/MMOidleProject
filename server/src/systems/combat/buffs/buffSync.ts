@@ -396,7 +396,6 @@ function buffLogTarget(
 }
 
 function buffSourceName(buff: PlayerBuff): string {
-  if (buff.id === "sacred-burst") return "Sacred weapon";
   if (buff.id.startsWith("defense-")) return "Defense";
   if (buff.id.startsWith("debuff-")) return "Debuff";
   if (buff.id.startsWith("cadence-")) return "Cadence";
@@ -476,8 +475,6 @@ function buffEffectText(buff: PlayerBuff): string {
       return "+attack speed";
     case "reload-cover-fire":
       return "damage reduction while reloading";
-    case "sacred-burst":
-      return "+damage and attack speed";
     case "debuff-slow":
       return "movement speed reduced";
     case "debuff-root":

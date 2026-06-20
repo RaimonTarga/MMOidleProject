@@ -67,6 +67,7 @@ export const abyssUltimateRecipeEntries: [string, Recipe][] = [
     cost: { purple: 1800 },
     stats: { attack: 34 },
     attacksPerSecond: 1.1,
+    weaponDot: { effectId: 'void-corruption', convPct: 0.40, tickIntervalMs: 1000, drainDurationMs: 4500, dotMultiplier: 1.35, element: 'doom', slowPerStack: 0.05 },
     icon: 'items/weapons/sword-4.png',
     description: 'Each hit converts part of remaining direct damage into a corruption reservoir that drains as void damage. Corruption stacks also slow the target.',
   }],

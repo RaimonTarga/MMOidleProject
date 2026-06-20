@@ -236,7 +236,10 @@ export const rootsAndFramesEntries = [
     parent: 'dot-root', children: [],
     description: 'Poison path. Apply wounds quickly and stay mobile. Up to 8 poison stacks — each hit converts 30% of your attack into lingering poison damage.',
     cost: 1, statEffects: { attack: 8, speed: 20, maxHp: 6, attackSpeedPct: 0.20 },
-    mechanicEffects: { 'dot.max-stacks': 8, 'dot.conversion-pct': 0.30 } as Record<string, number>,
+    mechanicEffects: {
+      'dot.max-stacks': 8, 'dot.conversion-pct': 0.30,
+      'dot.tick-interval-ms': 1000, 'dot.duration-ms': 5000, 'dot.mechanic-mult': 1.25,
+    } as Record<string, number>,
   }],
 
   ['dot-balanced', {
@@ -245,7 +248,10 @@ export const rootsAndFramesEntries = [
     parent: 'dot-root', children: [],
     description: 'Fire path. A deliberate fighter. Up to 6 burn stacks — each hit converts 50% of your attack into damage over time.',
     cost: 1, statEffects: { attack: 9, maxHp: 16, plating: 3, hpRegen: 3, speed: -5 },
-    mechanicEffects: { 'dot.max-stacks': 6, 'dot.conversion-pct': 0.50 } as Record<string, number>,
+    mechanicEffects: {
+      'dot.max-stacks': 6, 'dot.conversion-pct': 0.50,
+      'dot.tick-interval-ms': 1500, 'dot.duration-ms': 5500, 'dot.mechanic-mult': 1.20,
+    } as Record<string, number>,
   }],
 
   ['dot-heavy', {
@@ -254,7 +260,10 @@ export const rootsAndFramesEntries = [
     parent: 'dot-root', children: [],
     description: 'Frost path. A war of attrition. Up to 3 frost stacks — each hit converts 70% of your attack into deep, lingering wounds.',
     cost: 1, statEffects: { attack: 10, maxHp: 32, plating: 6, hpRegen: 6, damageReduction: 0.06, speed: -28, attackSpeedPct: -0.20 },
-    mechanicEffects: { 'dot.max-stacks': 3, 'dot.conversion-pct': 0.70 } as Record<string, number>,
+    mechanicEffects: {
+      'dot.max-stacks': 3, 'dot.conversion-pct': 0.70,
+      'dot.tick-interval-ms': 2000, 'dot.duration-ms': 6500, 'dot.mechanic-mult': 1.15,
+    } as Record<string, number>,
   }],
 
 

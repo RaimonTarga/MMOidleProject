@@ -36,7 +36,7 @@ export const bossMonsterEntriesT2 = [
   ['gorging-razortusk', {
     id: 'gorging-razortusk', name: 'Gorging Razortusk', color: 0xcc9922,
     isBoss: true,
-    stats: { hp: 2000, attack: 45, plating: 8, damageReduction: 0.05, speed: 46, attackRange: 15, attackCooldown: 2200, pullRange: 320 },
+    stats: { hp: 3200, attack: 45, plating: 8, damageReduction: 0.05, speed: 46, attackRange: 15, attackCooldown: 2200, pullRange: 320 },
     behavior: 'melee', attackStyle: 'impact', biome: 'plains',
     rewards: { essence: 150, essenceType: 'yellow', level: 5, biomeXp: 225 },
     ai: { wanderRadius: 140, leashRange: 850, idleMinMs: 2000, idleMaxMs: 5500 },
@@ -51,7 +51,7 @@ export const bossMonsterEntriesT2 = [
   ['apex-timberclaw', {
     id: 'apex-timberclaw', name: 'Apex Timberclaw', color: 0x226622,
     isBoss: true,
-    stats: { hp: 1900, attack: 30, plating: 0, damageReduction: 0, speed: 60, attackRange: 18, attackCooldown: 1500, pullRange: 310 },
+    stats: { hp: 3000, attack: 30, plating: 0, damageReduction: 0, speed: 60, attackRange: 18, attackCooldown: 1500, pullRange: 310 },
     behavior: 'melee', attackStyle: 'slash', biome: 'forest',
     rewards: { essence: 155, essenceType: 'green', level: 5, biomeXp: 232 },
     ai: { wanderRadius: 130, leashRange: 830, idleMinMs: 1200, idleMaxMs: 4000 },
@@ -66,7 +66,7 @@ export const bossMonsterEntriesT2 = [
   ['stoneplate-juggernaut', {
     id: 'stoneplate-juggernaut', name: 'Stoneplate Juggernaut', color: 0x667788,
     isBoss: true,
-    stats: { hp: 2400, attack: 60, plating: 10, damageReduction: 0.05, speed: 20, attackRange: 72, attackCooldown: 4200, pullRange: 320 },
+    stats: { hp: 4000, attack: 60, plating: 10, damageReduction: 0.05, speed: 20, attackRange: 72, attackCooldown: 4200, pullRange: 320 },
     behavior: 'melee', attackStyle: 'impact', biome: 'mountain',
     rewards: { essence: 160, essenceType: 'blue', level: 5, biomeXp: 240 },
     ai: { wanderRadius: 120, leashRange: 850, idleMinMs: 3000, idleMaxMs: 7500 },
@@ -83,11 +83,11 @@ export const bossMonsterEntriesT2 = [
   ['mire-gorged-behemoth', {
     id: 'mire-gorged-behemoth', name: 'Mire-Gorged Behemoth', color: 0x2a4011,
     isBoss: true,
-    stats: { hp: 1900, attack: 12, plating: 6, damageReduction: 0.08, speed: 30, attackRange: 15, attackCooldown: 2800, pullRange: 300 },
+    stats: { hp: 2700, attack: 18, plating: 6, damageReduction: 0.08, speed: 30, attackRange: 15, attackCooldown: 2800, pullRange: 300 },
     behavior: 'melee', attackStyle: 'poison', biome: 'swamp',
     rewards: { essence: 155, essenceType: 'purple', level: 5, biomeXp: 232 },
     ai: { wanderRadius: 110, leashRange: 800, idleMinMs: 2500, idleMaxMs: 6000 },
-    dotEffect: { debuffId: 'mire-gorged-venom', label: 'Gorged Venom', damagePerStack: 6, maxStacks: 4, tickIntervalMs: 1000, durationMs: 5000 },
+    dotEffect: { debuffId: 'mire-gorged-venom', label: 'Gorged Venom', damagePerStack: 4, maxStacks: 4, tickIntervalMs: 1000, durationMs: 5000 },
     aoeAttack: { radius: 120, damageMult: 0.6 },
     bossScript: {
       phases: [
@@ -100,7 +100,7 @@ export const bossMonsterEntriesT2 = [
   ['chitinous-dreadbore', {
     id: 'chitinous-dreadbore', name: 'Chitinous Dreadbore', color: 0x442244,
     isBoss: true,
-    stats: { hp: 2300, attack: 65, plating: 12, damageReduction: 0.12, speed: 20, attackRange: 72, attackCooldown: 3600, pullRange: 280 },
+    stats: { hp: 3500, attack: 65, plating: 12, damageReduction: 0.12, speed: 20, attackRange: 72, attackCooldown: 3600, pullRange: 280 },
     behavior: 'melee', attackStyle: 'impact', biome: 'cave',
     rewards: { essence: 160, essenceType: 'red', level: 5, biomeXp: 240 },
     ai: { wanderRadius: 90, leashRange: 800, idleMinMs: 3000, idleMaxMs: 7500 },
@@ -120,7 +120,7 @@ export const bossMonsterEntriesT2 = [
   ['dune-stalker-emperor', {
     id: 'dune-stalker-emperor', name: 'Dune-Stalker Emperor', color: 0xddcc44,
     isBoss: true,
-    stats: { hp: 2000, attack: 40, plating: 12, damageReduction: 0.08, speed: 42, attackRange: 40, attackCooldown: 2600, pullRange: 340 },
+    stats: { hp: 3000, attack: 40, plating: 12, damageReduction: 0.08, speed: 42, attackRange: 40, attackCooldown: 2600, pullRange: 340 },
     behavior: 'melee', attackStyle: 'magic', biome: 'desert',
     rewards: { essence: 150, essenceType: 'yellow', level: 5, biomeXp: 225 },
     ai: { wanderRadius: 140, leashRange: 880, idleMinMs: 2000, idleMaxMs: 5500 },
@@ -140,7 +140,7 @@ export const bossMonsterEntriesT2 = [
   ['jungle-dread-gorger', {
     id: 'jungle-dread-gorger', name: 'Jungle Dread-Gorger', color: 0x117722,
     isBoss: true,
-    stats: { hp: 1850, attack: 40, plating: 0, damageReduction: 0.03, speed: 56, attackRange: 18, attackCooldown: 2400, pullRange: 320 },
+    stats: { hp: 2900, attack: 40, plating: 0, damageReduction: 0.03, speed: 56, attackRange: 18, attackCooldown: 2400, pullRange: 320 },
     behavior: 'melee', attackStyle: 'slash', biome: 'jungle',
     rewards: { essence: 145, essenceType: 'green', level: 5, biomeXp: 218 },
     ai: { wanderRadius: 150, leashRange: 840, idleMinMs: 1800, idleMaxMs: 4500 },

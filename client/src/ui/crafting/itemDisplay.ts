@@ -6,8 +6,6 @@
 import type { ItemDefinition } from '@mmo-idle/shared';
 import {
   BURN_FAMILY, EDGE_OF_OBLIVION_ID,
-  CORRUPTION_SLOW_PER_STACK,
-  SACRED_APS_MULT, SACRED_DMG_MULT, SACRED_FAMILY,
   upgradeMechanicEffectsTotal, upgradeStatBonusTotal,
 } from '@mmo-idle/shared';
 
@@ -159,7 +157,7 @@ const SUMMARY_SKIP = new Set([
   'defense.absorb-ramp-start-pct', 'defense.absorb-ramptime-ms',
   'defense.hardening-max-dr-ms', 'defense.shield-break-hp-recovery-pct',
   'weapon.execute-threshold-pct', 'weapon.brittle-shatter-threshold',
-  'defense.hit-plating-max-stacks', 'defense.hit-plating-duration-ms', 'weapon.dot-stacks',
+  'defense.hit-plating-max-stacks', 'defense.hit-plating-duration-ms',
 ]);
 
 /** Terse one-line summary of an item's mechanic effects (for compact list rows). */
@@ -484,11 +482,8 @@ export function formatMechanicEffects(fx: Record<string, number> | undefined): s
     mark('defense.evade-mitigation');
   }
 
-  // Burn-DoT weapons describe their effect via formatWeaponEffects (BURN_FAMILY);
-  // consume the mirror keys here so they don't render as raw fallback text.
-  if (has('weapon.dot-conversion-pct')) {
-    mark('weapon.dot-conversion-pct', 'weapon.dot-stacks');
-  }
+  // Burn-DoT weapons describe their effect via formatWeaponEffects (BURN_FAMILY,
+  // derived from the recipe's weaponDot block) — no mirror mechanic keys to consume.
 
   // Fallback for any keys not yet handled
   for (const [k, v] of Object.entries(fx)) {
@@ -498,22 +493,13 @@ export function formatMechanicEffects(fx: Record<string, number> | undefined): s
   return lines;
 }
 
-// Generates human-readable effect lines for weapon families (Chaotic / Sacred / Burn).
+// Generates human-readable effect lines for weapon families (Chaotic / Burn).
 // Returns an empty array for weapons with no special family mechanic.
 export function formatWeaponEffects(weaponId: string): string[] {
   const lines: string[] = [];
 
   // Chaotic family is described from the weapon's `weapon.dead-swing-interval`
   // mechanic in formatMechanicEffects (data-driven), so no entry is needed here.
-
-  // Sacred family
-  const sacred = SACRED_FAMILY[weaponId];
-  if (sacred) {
-    const cd  = sacred.cdMs  / 1000;
-    const buf = sacred.buffMs / 1000;
-    lines.push(`Every ${cd}s: next attack triggers a ${buf}s burst`);
-    lines.push(`Burst: ${SACRED_DMG_MULT}× damage, ${SACRED_APS_MULT}× attack speed`);
-  }
 
   // Generic weapon DoT reservoir family
   const burn = BURN_FAMILY.find(b => b.weaponId === weaponId);
@@ -531,7 +517,7 @@ export function formatWeaponEffects(weaponId: string): string[] {
     lines.push('Repeated hits refresh the reservoir window; the target badge shows stored damage');
 
     if (weaponId === EDGE_OF_OBLIVION_ID) {
-      const slowPct = Math.round(CORRUPTION_SLOW_PER_STACK * 100);
+      const slowPct = Math.round((burn.slowPerStack ?? 0) * 100);
       lines.push(`Corruption also slows movement by ${slowPct}% while active`);
       lines.push('Summoner minion attacks apply Corruption');
     }

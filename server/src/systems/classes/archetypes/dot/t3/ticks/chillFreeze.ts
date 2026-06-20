@@ -50,8 +50,11 @@ export function updateChillAndFreeze(world: World): void {
 
   // Frozen = severe slow; overrides chill while active.
   for (const entity of world.frozenMonsters) {
-    if (hasStatusEffect(entity.tracksCombat, FROZEN_EFFECT)) {
-      applyMonsterSlow(entity, FREEZE_SPEED_MULT, FREEZE_ATK_MULT);
+    const frozenEffect = getStatusEffect(entity.tracksCombat, FROZEN_EFFECT);
+    if (frozenEffect) {
+      const moveSlow = Math.max(0, frozenEffect.data.moveSlowPct ?? FREEZE_SPEED_MULT);
+      const attackSlow = Math.max(0, frozenEffect.data.attackSlowPct ?? FREEZE_ATK_MULT);
+      applyMonsterSlow(entity, moveSlow, attackSlow);
       slowed.add(entity.isMonster.id);
     } else {
       detachMarker(world, entity, 'hasFrozen');
@@ -65,7 +68,9 @@ export function updateChillAndFreeze(world: World): void {
     if (slowed.has(entity.isMonster.id)) continue;
     const chillEffect = getStatusEffect(entity.tracksCombat, CHILL_EFFECT);
     if (chillEffect) {
-      applyMonsterSlow(entity, chillEffect.stacks * CHILL_SPEED_MULT, chillEffect.stacks * CHILL_ATK_MULT);
+      const moveSlowPerStack = Math.max(0, chillEffect.data.moveSlowPerStack ?? CHILL_SPEED_MULT);
+      const attackSlowPerStack = Math.max(0, chillEffect.data.attackSlowPerStack ?? CHILL_ATK_MULT);
+      applyMonsterSlow(entity, chillEffect.stacks * moveSlowPerStack, chillEffect.stacks * attackSlowPerStack);
     } else {
       detachMarker(world, entity, 'hasChill');
       restoreMonsterStats(entity);

@@ -20,21 +20,35 @@ export const jungleRecipeEntries = [
     ],
   }],
 
+  ['jungle-vest-t2', {
+    id: 'jungle-vest-t2', name: 'Verdant Weave',
+    recipeGroup: 'jungle', requiredBiomeLevel: 2, slot: 'armor',
+    cost: { green: 48, yellow: 12 }, stats: { maxHp: 44, plating: 6, evasion: 0.15 },
+    tier: 2,
+    icon: 'items/armor/leater-armor-2.png',
+    description: 'A living mesh of leaf and creeper, too quick and too giving to be struck square.',
+    upgrades: [
+      { stats: { maxHp: 12, plating: 2, evasion: 0.04 }, cost: { green: 55, yellow: 11 }, requiredBiomeLevel: 3 },
+      { stats: { maxHp: 12, plating: 2, evasion: 0.04 }, cost: { green: 100, yellow: 44 }, requiredBiomeLevel: 4 },
+      { stats: { maxHp: 12, plating: 2, evasion: 0.04 }, cost: { green: 200, yellow: 55 }, requiredBiomeLevel: 4 },
+    ],
+  }],
+
   // Charm: hpRegen flat; upgrades ramp ramp-regen MAX 0.21 -> 0.30 (start/ramptime flat).
   ['jungle-charm-t2', {
     id: 'jungle-charm-t2', name: 'Canopy Heart',
-    recipeGroup: 'jungle', requiredBiomeLevel: 2, slot: 'recovery',
+    recipeGroup: 'jungle', requiredBiomeLevel: 3, slot: 'recovery',
     cost: { green: 45 }, stats: { hpRegen: 6 },
     mechanicEffects: {
-      'defense.ramp-regen-start-pct': 0.05,
-      'defense.ramp-regen-max-pct': 0.14,
+      'defense.ramp-regen-start-pct': 0.04,
+      'defense.ramp-regen-max-pct': 0.10,
       'defense.ramp-regen-ramptime-ms': 10000,
     },
     tier: 2,
     icon: 'items/charms/wood-charm-2.png',
     description: 'A knot of ancient vine that wakes, slowly, to the rhythm of a long fight.',
     upgrades: [
-      { mechanicEffects: { 'defense.ramp-regen-max-pct': 0.02 }, cost: { green: 33 }, requiredBiomeLevel: 3 },
+      { mechanicEffects: { 'defense.ramp-regen-max-pct': 0.02 }, cost: { green: 33 }, requiredBiomeLevel: 4 },
       { mechanicEffects: { 'defense.ramp-regen-max-pct': 0.02 }, cost: { green: 66 }, requiredBiomeLevel: 4 },
       { mechanicEffects: { 'defense.ramp-regen-max-pct': 0.02 }, cost: { green: 120 }, requiredBiomeLevel: 4 },
     ],
@@ -42,7 +56,7 @@ export const jungleRecipeEntries = [
 
   ['jungle-boots-t2', {
     id: 'jungle-boots-t2', name: 'Vine Wraps',
-    recipeGroup: 'jungle', requiredBiomeLevel: 3, slot: 'mobility',
+    recipeGroup: 'jungle', requiredBiomeLevel: 4, slot: 'mobility',
     cost: { green: 30 }, stats: { speed: 22 }, tier: 2,
     mechanicEffects: { 'mobility.aggro-pull-pct': 0.50 },
     icon: 'items/boots/wraps-3.png',
@@ -51,20 +65,6 @@ export const jungleRecipeEntries = [
       { stats: { speed: 5 }, cost: { green: 20 }, requiredBiomeLevel: 4 },
       { stats: { speed: 7 }, cost: { green: 40 }, requiredBiomeLevel: 4 },
       { stats: { speed: 9 }, cost: { green: 80 }, requiredBiomeLevel: 4 },
-    ],
-  }],
-
-  ['jungle-vest-t2', {
-    id: 'jungle-vest-t2', name: 'Verdant Weave',
-    recipeGroup: 'jungle', requiredBiomeLevel: 4, slot: 'armor',
-    cost: { green: 48, yellow: 12 }, stats: { maxHp: 44, plating: 6, evasion: 0.15 },
-    tier: 2,
-    icon: 'items/armor/leater-armor-2.png',
-    description: 'A living mesh of leaf and creeper, too quick and too giving to be struck square.',
-    upgrades: [
-      { stats: { maxHp: 12, plating: 2, evasion: 0.04 }, cost: { green: 55, yellow: 11 }, requiredBiomeLevel: 4 },
-      { stats: { maxHp: 12, plating: 2, evasion: 0.04 }, cost: { green: 100, yellow: 44 }, requiredBiomeLevel: 4 },
-      { stats: { maxHp: 12, plating: 2, evasion: 0.04 }, cost: { green: 200, yellow: 55 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -82,21 +82,35 @@ export const jungleRecipeEntries = [
     ],
   }],
 
+  ['jungle-vest-t3', {
+    id: 'jungle-vest-t3', name: 'Wildgrowth Weave',
+    recipeGroup: 'jungle', requiredBiomeLevel: 6, slot: 'armor',
+    cost: { green: 90, yellow: 30 }, stats: { maxHp: 80, plating: 13, evasion: 0.40 },
+    tier: 3,
+    icon: 'items/armor/jungle-armor-1.png',
+    description: 'A living mesh of leaf and vine, too quick and too giving to ever quite be struck square.',
+    upgrades: [
+      { stats: { maxHp: 18, plating: 3, evasion: 0.05 }, cost: { green: 100, yellow: 50 },  requiredBiomeLevel: 7 },
+      { stats: { maxHp: 18, plating: 3, evasion: 0.05 }, cost: { green: 225, yellow: 75 }, requiredBiomeLevel: 8 },
+      { stats: { maxHp: 18, plating: 3, evasion: 0.05 }, cost: { green: 300, yellow: 150 }, requiredBiomeLevel: 8 },
+    ],
+  }],
+
   // Charm: hpRegen flat; upgrades ramp ramp-regen MAX 0.23 -> 0.35.
   ['jungle-charm-t3', {
     id: 'jungle-charm-t3', name: 'Worldvine Heart',
-    recipeGroup: 'jungle', requiredBiomeLevel: 6, slot: 'recovery',
+    recipeGroup: 'jungle', requiredBiomeLevel: 7, slot: 'recovery',
     cost: { green: 100 }, stats: { hpRegen: 11 },
     mechanicEffects: {
       'defense.ramp-regen-start-pct': 0.05,
-      'defense.ramp-regen-max-pct': 0.19,
+      'defense.ramp-regen-max-pct': 0.14,
       'defense.ramp-regen-ramptime-ms': 10000,
     },
     tier: 3,
     icon: 'items/charms/wood-charm-2.png',
     description: 'It wakes slowly to a long fight, and by the end is pouring life back faster than it leaves.',
     upgrades: [
-      { mechanicEffects: { 'defense.ramp-regen-max-pct': 0.02 }, cost: { green: 75 },  requiredBiomeLevel: 7 },
+      { mechanicEffects: { 'defense.ramp-regen-max-pct': 0.02 }, cost: { green: 75 },  requiredBiomeLevel: 8 },
       { mechanicEffects: { 'defense.ramp-regen-max-pct': 0.02 }, cost: { green: 150 }, requiredBiomeLevel: 8 },
       { mechanicEffects: { 'defense.ramp-regen-max-pct': 0.02 }, cost: { green: 225 }, requiredBiomeLevel: 8 },
     ],
@@ -104,7 +118,7 @@ export const jungleRecipeEntries = [
 
   ['jungle-boots-t3', {
     id: 'jungle-boots-t3', name: 'Canopy Striders',
-    recipeGroup: 'jungle', requiredBiomeLevel: 7, slot: 'mobility',
+    recipeGroup: 'jungle', requiredBiomeLevel: 8, slot: 'mobility',
     cost: { green: 90 }, stats: { speed: 44 }, tier: 3,
     mechanicEffects: { 'mobility.aggro-pull-pct': 0.65 },
     icon: 'items/boots/plate-boots-4.png',
@@ -113,20 +127,6 @@ export const jungleRecipeEntries = [
       { stats: { speed: 6 },  cost: { green: 25 }, requiredBiomeLevel: 8 },
       { stats: { speed: 8 },  cost: { green: 50 }, requiredBiomeLevel: 8 },
       { stats: { speed: 10 }, cost: { green: 100 }, requiredBiomeLevel: 8 },
-    ],
-  }],
-
-  ['jungle-vest-t3', {
-    id: 'jungle-vest-t3', name: 'Wildgrowth Weave',
-    recipeGroup: 'jungle', requiredBiomeLevel: 8, slot: 'armor',
-    cost: { green: 90, yellow: 30 }, stats: { maxHp: 80, plating: 13, evasion: 0.40 },
-    tier: 3,
-    icon: 'items/armor/jungle-armor-1.png',
-    description: 'A living mesh of leaf and vine, too quick and too giving to ever quite be struck square.',
-    upgrades: [
-      { stats: { maxHp: 18, plating: 3, evasion: 0.05 }, cost: { green: 100, yellow: 50 },  requiredBiomeLevel: 8 },
-      { stats: { maxHp: 18, plating: 3, evasion: 0.05 }, cost: { green: 225, yellow: 75 }, requiredBiomeLevel: 8 },
-      { stats: { maxHp: 18, plating: 3, evasion: 0.05 }, cost: { green: 300, yellow: 150 }, requiredBiomeLevel: 8 },
     ],
   }],
 
@@ -144,45 +144,9 @@ export const jungleRecipeEntries = [
     ],
   }],
 
-  ['jungle-charm-t4', {
-    id: 'jungle-charm-t4', name: 'Ancient Canopy',
-    recipeGroup: 'jungle', requiredBiomeLevel: 10, slot: 'recovery',
-    cost: { green: 200 }, stats: { hpRegen: 16 },
-    mechanicEffects: {
-      'defense.ramp-regen-start-pct': 0.07, 'defense.ramp-regen-max-pct': 0.28, 'defense.ramp-regen-ramptime-ms': 9000,
-    },
-    tier: 4,
-    icon: 'items/charms/wood-charm-3.png',
-    description: 'Older than the trees around it, and by a long fight’s end it is pouring life back faster than any blade can take it.',
-    upgrades: [
-      { mechanicEffects: { 'defense.ramp-regen-max-pct': 0.04 }, cost: { green: 150 }, requiredBiomeLevel: 11 },
-      { mechanicEffects: { 'defense.ramp-regen-max-pct': 0.04 }, cost: { green: 300 }, requiredBiomeLevel: 12 },
-      { mechanicEffects: { 'defense.ramp-regen-max-pct': 0.04 }, cost: { green: 450 }, requiredBiomeLevel: 12 },
-    ],
-  }],
-
-  ['jungle-charm-t4-overgrowth', {
-    id: 'jungle-charm-t4-overgrowth', name: 'Overgrowth Pulse',
-    recipeGroup: 'jungle', requiredBiomeLevel: 10, slot: 'recovery',
-    cost: { green: 200 }, stats: { hpRegen: 16 },
-    // † overheal-shield-pct: regen beyond max HP converts to temp shield at 50%.
-    mechanicEffects: {
-      'defense.ramp-regen-start-pct': 0.07, 'defense.ramp-regen-max-pct': 0.22, 'defense.ramp-regen-ramptime-ms': 9000,
-      'defense.overheal-shield-pct': 0.50,
-    },
-    tier: 4,
-    icon: 'items/charms/wood-charm-4.png',
-    description: 'It grows past the wound and keeps growing, hardening the surplus into a living shell.',
-    upgrades: [
-      { mechanicEffects: { 'defense.ramp-regen-max-pct': 0.03 }, cost: { green: 150 }, requiredBiomeLevel: 11 },
-      { mechanicEffects: { 'defense.ramp-regen-max-pct': 0.03 }, cost: { green: 300 }, requiredBiomeLevel: 12 },
-      { mechanicEffects: { 'defense.ramp-regen-max-pct': 0.03 }, cost: { green: 450 }, requiredBiomeLevel: 12 },
-    ],
-  }],
-
   ['jungle-vest-t4', {
     id: 'jungle-vest-t4', name: 'Primal Canopy',
-    recipeGroup: 'jungle', requiredBiomeLevel: 12, slot: 'armor',
+    recipeGroup: 'jungle', requiredBiomeLevel: 10, slot: 'armor',
     cost: { green: 220, yellow: 55 }, stats: { maxHp: 145, plating: 24, evasion: 0.55 },
     // Bonus evade-mitigation: increases the fraction of damage avoided on an evade
     // (the reload-class mechanic). Stacks on GAME_CONFIG.EVADE_MITIGATION_BASE.
@@ -191,16 +155,52 @@ export const jungleRecipeEntries = [
     icon: 'items/armor/jungle-armor-2.png',
     description: 'The faster you move through the green, the less of you there is to strike.',
     upgrades: [
-      { stats: { maxHp: 35, plating: 6, evasion: 0.03 }, cost: { green: 200, yellow: 100 }, requiredBiomeLevel: 12 },
+      { stats: { maxHp: 35, plating: 6, evasion: 0.03 }, cost: { green: 200, yellow: 100 }, requiredBiomeLevel: 11 },
       { stats: { maxHp: 35, plating: 6, evasion: 0.03 }, cost: { green: 450, yellow: 150 }, requiredBiomeLevel: 12 },
       { stats: { maxHp: 35, plating: 6, evasion: 0.03 }, cost: { green: 600, yellow: 300 }, requiredBiomeLevel: 12 },
+    ],
+  }],
+
+  ['jungle-charm-t4', {
+    id: 'jungle-charm-t4', name: 'Ancient Canopy',
+    recipeGroup: 'jungle', requiredBiomeLevel: 11, slot: 'recovery',
+    cost: { green: 200 }, stats: { hpRegen: 16 },
+    mechanicEffects: {
+      'defense.ramp-regen-start-pct': 0.04, 'defense.ramp-regen-max-pct': 0.14, 'defense.ramp-regen-ramptime-ms': 9000,
+    },
+    tier: 4,
+    icon: 'items/charms/wood-charm-3.png',
+    description: 'Older than the trees around it, and by a long fight\'s end it is pouring life back faster than any blade can take it.',
+    upgrades: [
+      { mechanicEffects: { 'defense.ramp-regen-max-pct': 0.02 }, cost: { green: 150 }, requiredBiomeLevel: 12 },
+      { mechanicEffects: { 'defense.ramp-regen-max-pct': 0.02 }, cost: { green: 300 }, requiredBiomeLevel: 12 },
+      { mechanicEffects: { 'defense.ramp-regen-max-pct': 0.02 }, cost: { green: 450 }, requiredBiomeLevel: 12 },
+    ],
+  }],
+
+  ['jungle-charm-t4-overgrowth', {
+    id: 'jungle-charm-t4-overgrowth', name: 'Overgrowth Pulse',
+    recipeGroup: 'jungle', requiredBiomeLevel: 11, slot: 'recovery',
+    cost: { green: 200 }, stats: { hpRegen: 16 },
+    // † overheal-shield-pct: regen beyond max HP converts to temp shield at 50%.
+    mechanicEffects: {
+      'defense.ramp-regen-start-pct': 0.04, 'defense.ramp-regen-max-pct': 0.12, 'defense.ramp-regen-ramptime-ms': 9000,
+      'defense.overheal-shield-pct': 0.25,
+    },
+    tier: 4,
+    icon: 'items/charms/wood-charm-4.png',
+    description: 'It grows past the wound and keeps growing, hardening the surplus into a living shell.',
+    upgrades: [
+      { mechanicEffects: { 'defense.ramp-regen-max-pct': 0.02 }, cost: { green: 150 }, requiredBiomeLevel: 12 },
+      { mechanicEffects: { 'defense.ramp-regen-max-pct': 0.02 }, cost: { green: 300 }, requiredBiomeLevel: 12 },
+      { mechanicEffects: { 'defense.ramp-regen-max-pct': 0.02 }, cost: { green: 450 }, requiredBiomeLevel: 12 },
     ],
   }],
 
   // T4 boots — aggro-pull (draws more aggro, suits the swarm). T3 0.65 → T4 0.80.
   ['jungle-boots-t4', {
     id: 'jungle-boots-t4', name: 'Warpath Treads',
-    recipeGroup: 'jungle', requiredBiomeLevel: 11, slot: 'mobility',
+    recipeGroup: 'jungle', requiredBiomeLevel: 12, slot: 'mobility',
     cost: { green: 198 }, stats: { speed: 66 }, tier: 4,
     mechanicEffects: { 'mobility.aggro-pull-pct': 0.80 },
     icon: 'items/boots/plate-boots-7.png',

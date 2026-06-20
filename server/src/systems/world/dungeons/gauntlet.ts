@@ -40,6 +40,7 @@ const ACTIVE_LEASH_RADIUS = 3_600;
 const PREFERRED_SPAWN_PLAYER_DISTANCE = 360;
 const FALLBACK_SPAWN_PLAYER_DISTANCE = 160;
 const GUARDIAN_RING_RADIUS = 620;
+const SPAWN_JITTER_PX = 40;
 
 export { isGauntletDungeonNode };
 
@@ -304,7 +305,7 @@ function spawnIdleGuardians(
       leashRadius: GUARDIAN_LEASH_RADIUS,
     });
     if (!monster) continue;
-    monster.isMonster.name = `${def.biomeGroup} guardian`;
+    monster.isMonster.name = `${def.biomeGroup[0].toUpperCase()}${def.biomeGroup.slice(1)} Guardian`;
     markSliceDirty(world, monster, "isMonster");
     state.idleGuardianIds.push(monster.isMonster.id);
   }
@@ -539,6 +540,17 @@ function applyDungeonModifiers(
       Math.min(0.9, monster.mitigatesDamage.damageReduction + modifiers.drAdd),
     );
   }
+  if (modifiers.dotMult !== undefined) {
+    const def = MONSTER_DATABASE.get(monster.isMonster.monsterTypeId);
+    const baseDot = def?.dotEffect;
+    if (baseDot) {
+      monster.scriptsBoss ??= { phaseTriggered: [], repeatingTimers: [], activeEffects: [] };
+      monster.scriptsBoss.dotEffectOverride = {
+        ...baseDot,
+        damagePerStack: Math.max(1, Math.round(baseDot.damagePerStack * modifiers.dotMult)),
+      };
+    }
+  }
 }
 
 function resolveSpawnPoints(
@@ -555,8 +567,8 @@ function resolveSpawnPoints(
   for (let i = 0; i < count; i++) {
     const angle = (Math.PI * 2 * i) / count - Math.PI / 2;
     points.push(clampToNode({
-      x: def.altar.x + Math.cos(angle) * radius,
-      y: def.altar.y + Math.sin(angle) * radius,
+      x: def.altar.x + Math.cos(angle) * radius + (Math.random() - 0.5) * 2 * SPAWN_JITTER_PX,
+      y: def.altar.y + Math.sin(angle) * radius + (Math.random() - 0.5) * 2 * SPAWN_JITTER_PX,
     }));
   }
   return points;

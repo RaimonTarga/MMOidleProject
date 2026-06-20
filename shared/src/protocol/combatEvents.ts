@@ -13,13 +13,22 @@ export type DotTickSourceType = 'class' | 'weapon' | 'monster' | 'special';
  * entries reliably even when logic ticks outrun broadcast ticks.
  */
 export type CombatEvent =
-  | { kind: 'player-hit';  playerId: string; targetId: string; targetName: string; damage: number; empowered: boolean; execution: boolean; effects?: string[]; playerPos?: Vec2; targetPos?: Vec2; pelletIndex?: number; pelletTotal?: number }
+  // `shieldAbsorbed`/`evadedPartial`/`capped` are per-hit mitigation hints the
+  // client uses to style the damage number: shield-absorbed amount renders a
+  // separate blue shielded number (even when no HP was lost), a partial evade /
+  // damage-cap trip restyles the HP number. Omitted when the mechanic didn't fire.
+  | { kind: 'player-hit';  playerId: string; targetId: string; targetName: string; damage: number; empowered: boolean; execution: boolean; effects?: string[]; playerPos?: Vec2; targetPos?: Vec2; pelletIndex?: number; pelletTotal?: number; shieldAbsorbed?: number; evadedPartial?: boolean; capped?: boolean }
   | { kind: 'player-kill'; playerId: string; targetId: string; targetName: string; damage: number; biomeXpGained: number; essenceGained: number; essenceType: EssenceType; empowered?: boolean; execution?: boolean }
-  // Scaffolding for future monster "crits": a monster→player hit that the client
-  // styles as an incoming empowered number (enlarged + '!'). Nothing emits this yet;
-  // wire it later by pushing it from the monster-attack path on a crit. Marks the
+  // A monster→player hit. Drives the player's incoming damage-number styling:
+  // `empowered` enlarges it (a future monster "crit"), and the mitigation hints
+  // (`shieldAbsorbed`/`evadedPartial`/`capped`) mirror `player-hit`. Marks the
   // player as having taken a direct hit this snapshot (DoT element yields to it).
-  | { kind: 'monster-hit'; targetId: string; empowered?: boolean; execution?: boolean }
+  // `damage` is the HP damage dealt (the number's amount still tracks the HP delta).
+  | { kind: 'monster-hit'; targetId: string; empowered?: boolean; execution?: boolean; damage?: number; shieldAbsorbed?: number; evadedPartial?: boolean; capped?: boolean }
+  // A monster attack the player fully evaded (mitigation ≥ 1, zero damage). Renders
+  // a "DODGE" floater over the player, mirroring `monster-dodge` for the reverse
+  // direction. Partial evades stay on the damage number via `monster-hit.evadedPartial`.
+  | { kind: 'player-evade'; playerId: string; targetPos?: Vec2 }
   // A damage-over-time tick on a monster. Used by the client only as a style hint
   // (color/glyph by element) for the HP-delta damage number — the amount shown is
   // still driven by the HP delta. `element` flavor only; non-elemental DoTs omit this event.

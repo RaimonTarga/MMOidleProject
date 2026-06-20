@@ -89,7 +89,9 @@ export function registerEmpoweredHit(): void {
     // Binary Cycle: alternating big/small discharge, then flip state. Base mult
     // still applies on top (not suppressed).
     if (hasPassive(player, 'energy.binary-cycle')) {
-      const mult = energy.binaryDischargeState ? BINARY_DISCHARGE_DISCHARGE_MULT : BINARY_CHARGE_DISCHARGE_MULT;
+      const chargeMult = Math.max(0, passives['energy.binary-charge-discharge-mult'] ?? BINARY_CHARGE_DISCHARGE_MULT);
+      const dischargeMult = Math.max(0, passives['energy.binary-discharge-discharge-mult'] ?? BINARY_DISCHARGE_DISCHARGE_MULT);
+      const mult = energy.binaryDischargeState ? dischargeMult : chargeMult;
       ctx.damage = Math.max(1, Math.round(ctx.damage * mult));
       energy.binaryDischargeState = !energy.binaryDischargeState;
       return;
@@ -99,16 +101,20 @@ export function registerEmpoweredHit(): void {
     // (base mult suppressed in beforeAttack, so this applies exactly 1.5×). It's a real
     // empowered hit; arm the remaining N−1 strikes (handled in normalHit).
     if (hasPassive(player, 'energy.awakened-lightning')) {
-      ctx.damage = Math.max(1, Math.round(ctx.damage * AWAKENED_MULT));
-      energy.awakenedCharges = AWAKENED_N - 1;
+      const damageMult = Math.max(0, passives['energy.awakened-damage-mult'] ?? AWAKENED_MULT);
+      const strikeCount = Math.max(1, Math.round(passives['energy.awakened-strike-count'] ?? AWAKENED_N));
+      ctx.damage = Math.max(1, Math.round(ctx.damage * damageMult));
+      energy.awakenedCharges = strikeCount - 1;
       return;
     }
 
     // Critical Mass: consecutive discharges stack a discharge-damage multiplier.
     if (hasPassive(player, 'energy.critical-mass')) {
-      energy.criticalMassStacks = Math.min(CRITICAL_MASS_MAX, energy.criticalMassStacks + 1);
+      const maxStacks = Math.max(1, Math.round(passives['energy.critical-mass-max-stacks'] ?? CRITICAL_MASS_MAX));
+      const damagePerStack = Math.max(0, passives['energy.critical-mass-discharge-per-stack'] ?? CRITICAL_MASS_DMG_PER_STACK);
+      energy.criticalMassStacks = Math.min(maxStacks, energy.criticalMassStacks + 1);
       energy.criticalMassGapMs = 0;
-      ctx.damage = Math.round(ctx.damage * (1 + energy.criticalMassStacks * CRITICAL_MASS_DMG_PER_STACK));
+      ctx.damage = Math.round(ctx.damage * (1 + energy.criticalMassStacks * damagePerStack));
       return;
     }
 
@@ -118,14 +124,20 @@ export function registerEmpoweredHit(): void {
       // the entire empowered payload is the storm DoT: total = attack × TOTAL_MULT over the
       // base duration, captured per-tick at cast time. Extending the storm = more total.
       ctx.metadata['suppressEmpoweredAoe'] = true;
-      const tickMs = ENDLESS_STORM_TICK_MS;
+      const tickMs = Math.max(100, Math.round(passives['energy.endless-storm-tick-ms'] ?? ENDLESS_STORM_TICK_MS));
+      const durationMs = Math.max(100, Math.round(passives['energy.endless-storm-duration-ms'] ?? ENDLESS_STORM_DURATION_MS));
+      const maxMs = Math.max(durationMs, Math.round(passives['energy.endless-storm-max-ms'] ?? ENDLESS_STORM_MAX_MS));
+      const totalMult = Math.max(
+        0,
+        passives['energy.endless-storm-total-mult'] ?? ENDLESS_STORM_TOTAL_MULT,
+      );
       const damagePerTick = Math.max(1, Math.round(
-        player.dealsDamage.attack * ENDLESS_STORM_TOTAL_MULT * tickMs / ENDLESS_STORM_DURATION_MS,
+        player.dealsDamage.attack * totalMult * tickMs / durationMs,
       ));
       applyStatusEffect(ctx.defender.tracksCombat, {
         id: STORM_FX, instanced: false, maxStacks: 1, refreshable: true,
-        remainingMs: ENDLESS_STORM_DURATION_MS, sourceId: player.isPlayer.id,
-        data: { damagePerTick, nextTickIn: tickMs, tickIntervalMs: tickMs, totalMs: ENDLESS_STORM_MAX_MS },
+        remainingMs: durationMs, sourceId: player.isPlayer.id,
+        data: { damagePerTick, nextTickIn: tickMs, tickIntervalMs: tickMs, totalMs: maxMs },
       });
       return; // discharge itself keeps its normal (suppressed) damage
     }

@@ -22,6 +22,12 @@ export interface DamageNumberHint {
   empowered: boolean;
   execution: boolean;
   dotElement?: DamageElement;
+  /** Total shield HP absorbed this snapshot — rendered as a separate blue number. */
+  shieldAbsorbed?: number;
+  /** A hit was partially evaded (glancing) — restyles the HP-delta number. */
+  evadedPartial?: boolean;
+  /** A hit tripped the damage cap — restyles the HP-delta number. */
+  capped?: boolean;
 }
 
 export interface RenderState {

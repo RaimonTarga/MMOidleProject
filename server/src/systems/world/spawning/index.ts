@@ -31,8 +31,9 @@ import { resetEvadeAccumulator } from "../../defense/mitigation/evasion";
 import { applyDormantUltimateBoss } from "../../combat/ai/ultimateEncounter";
 
 // Regular monsters in dungeon nodes are scaled up; boss stats come from the database directly.
-const DUNGEON_HP_MULT = 2.0;
-const DUNGEON_ATK_MULT = 1.6;
+// Multipliers live in shared GAME_CONFIG so the client bestiary shows the same scaled stats.
+const DUNGEON_HP_MULT = GAME_CONFIG.DUNGEON_HP_MULT;
+const DUNGEON_ATK_MULT = GAME_CONFIG.DUNGEON_ATK_MULT;
 
 /**
  * Create a monster of the given type at `pos` in nodeId.

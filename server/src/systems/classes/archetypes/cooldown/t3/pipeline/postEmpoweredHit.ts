@@ -1,11 +1,14 @@
 import { getStatusEffect, removeStatusEffect } from '@mmo-idle/shared';
 import { registerCombatListener } from '../../../../../combat/engine/combatPipeline';
 import { hasPassive } from '../core/helpers';
-import { rampFactorFor, eternalCycleFlatPerStack } from '../core/selectors';
 import {
-  BATTERY_ATK_PER_STACK,
+  batteryDamagePerStack,
+  eternalCycleFlatPerStack,
+  patienceExecutionMax,
+  rampFactorFor,
+} from '../core/selectors';
+import {
   REVERB_BONUS_PER_ATTACK,
-  PATIENCE_PAID_EXEC_MAX,
   VENGEANCE_MULTIPLIER, VENGEANCE_FLOOR,
   RUPTURE_WINDOW_MS,
   BAT_CHARGE_FX, EC_CHARGE_FX,
@@ -45,7 +48,7 @@ export function registerPostEmpoweredHit(): void {
     if (hasPassive(player, 'cooldown.battery')) {
       const charge = getStatusEffect(state, BAT_CHARGE_FX);
       if (charge && charge.stacks > 0) {
-        ctx.damage += Math.round(charge.stacks * BATTERY_ATK_PER_STACK);
+        ctx.damage += Math.round(charge.stacks * batteryDamagePerStack(player));
       }
       removeStatusEffect(state, BAT_CHARGE_FX);
       cd.batteryTimerAcc = 0;
@@ -63,7 +66,7 @@ export function registerPostEmpoweredHit(): void {
 
     if (hasPassive(player, 'cooldown.patience-paid')) {
       const ramp = rampFactorFor(cd, player);
-      if (ramp > 0) ctx.damage = Math.round(ctx.damage * (1 + ramp * PATIENCE_PAID_EXEC_MAX));
+      if (ramp > 0) ctx.damage = Math.round(ctx.damage * (1 + ramp * patienceExecutionMax(player)));
     }
 
     if (hasPassive(player, 'cooldown.vengeance')) {
@@ -75,7 +78,7 @@ export function registerPostEmpoweredHit(): void {
     }
 
     if (hasPassive(player, 'cooldown.rupture')) {
-      cd.ruptureWindowMs = RUPTURE_WINDOW_MS;
+      cd.ruptureWindowMs = player.usesSkills.passives['cooldown.rupture-window-ms'] ?? RUPTURE_WINDOW_MS;
     }
   });
 }

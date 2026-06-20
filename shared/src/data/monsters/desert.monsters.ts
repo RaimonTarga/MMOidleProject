@@ -34,7 +34,7 @@ export const desertMonsterEntries = [
     id: 'sand-scorpion', name: 'Sand Scorpion', color: 0xddbb44,
     // Fast slow-applier: a sting that saps your speed (speedMult 0.5) so the rest
     // of the pack can keep up with you. Light DR. The mobile debuffer.
-    stats: { hp: 170, attack: 20, plating: 0, damageReduction: 0.08, speed: 52, attackRange: 12, attackCooldown: 2000, pullRange: 210 },
+    stats: { hp: 220, attack: 32, plating: 0, damageReduction: 0.08, speed: 52, attackRange: 12, attackCooldown: 2000, pullRange: 210 },
     behavior: 'melee', attackStyle: 'poison', biome: 'desert',
     rewards: { essence: 7, essenceType: 'yellow', level: 1, biomeXp: 40 },
     ai: { wanderRadius: 240, leashRange: 640, idleMinMs: 1500, idleMaxMs: 4500 },
@@ -45,7 +45,7 @@ export const desertMonsterEntries = [
     id: 'stone-basilisk', name: 'Stone Basilisk', color: 0xaa8833,
     // Root bruiser: a petrifying gaze briefly pins you in place (speedMult 0) — the
     // lockdown setup that lets the scorpions and djinn pile on. Slow, sturdier DR.
-    stats: { hp: 260, attack: 26, plating: 0, damageReduction: 0.12, speed: 28, attackRange: 12, attackCooldown: 2600, pullRange: 175 },
+    stats: { hp: 320, attack: 36, plating: 0, damageReduction: 0.12, speed: 28, attackRange: 12, attackCooldown: 2600, pullRange: 175 },
     behavior: 'melee', attackStyle: 'impact', biome: 'desert',
     rewards: { essence: 8, essenceType: 'yellow', level: 1, biomeXp: 46 },
     ai: { wanderRadius: 180, leashRange: 560, idleMinMs: 2000, idleMaxMs: 5500 },
@@ -57,7 +57,7 @@ export const desertMonsterEntries = [
     // Desert's ranged debuffer (Sand-Scorpion's reach version): flings stinging
     // sand that slows from afar. Stationary ranged at T2 — becomes the standoff
     // kiter (Sandweaver) at T3. Light DR.
-    stats: { hp: 150, attack: 22, plating: 0, damageReduction: 0.05, speed: 40, attackRange: 185, attackCooldown: 2100, pullRange: 230 },
+    stats: { hp: 200, attack: 34, plating: 0, damageReduction: 0.05, speed: 40, attackRange: 185, attackCooldown: 2100, pullRange: 230 },
     behavior: 'melee', attackStyle: 'magic', isRanged: true, biome: 'desert',
     rewards: { essence: 8, essenceType: 'yellow', level: 1, biomeXp: 42 },
     ai: { wanderRadius: 220, leashRange: 620, idleMinMs: 1200, idleMaxMs: 4000 },
@@ -70,7 +70,7 @@ export const desertMonsterEntries = [
   ['dune-stalker', {
     id: 'dune-stalker', name: 'Dune Stalker', color: 0xddbb44,
     // Fast slow-applier: lands a debuff that catches Far, then keeps pace. Anti-Far.
-    stats: { hp: 420, attack: 38, plating: 0, damageReduction: 0.08, speed: 56, attackRange: 12, attackCooldown: 2000, pullRange: 210 },
+    stats: { hp: 520, attack: 38, plating: 0, damageReduction: 0.08, speed: 56, attackRange: 12, attackCooldown: 2000, pullRange: 210 },
     behavior: 'melee', attackStyle: 'poison', biome: 'desert',
     rewards: { essence: 30, essenceType: 'yellow', level: 2, biomeXp: 180 },
     ai: { wanderRadius: 240, leashRange: 640, idleMinMs: 1500, idleMaxMs: 4500 },
@@ -81,7 +81,7 @@ export const desertMonsterEntries = [
     id: 'desert-basilisk', name: 'Desert Basilisk', color: 0xaa8833,
     // Root-applier bruiser: a brief full root (speedMult 0) pins you so the
     // kiters/slows punish — the debuff "setup" piece. Armored.
-    stats: { hp: 600, attack: 46, plating: 0, damageReduction: 0.12, speed: 28, attackRange: 12, attackCooldown: 2600, pullRange: 175 },
+    stats: { hp: 700, attack: 46, plating: 0, damageReduction: 0.12, speed: 28, attackRange: 12, attackCooldown: 2600, pullRange: 175 },
     behavior: 'melee', attackStyle: 'impact', biome: 'desert',
     rewards: { essence: 45, essenceType: 'yellow', level: 2, biomeXp: 270 },
     ai: { wanderRadius: 180, leashRange: 560, idleMinMs: 2000, idleMaxMs: 5500 },
@@ -92,7 +92,7 @@ export const desertMonsterEntries = [
     id: 'sandweaver', name: 'Sandweaver', color: 0xcc9933,
     // THE kiter: maintains standoff, plinks hard, and SLOWS you so you can't close.
     // Pure anti-Close — Close/melee suffers most here; Mid/Far shine. Speed 40.
-    stats: { hp: 360, attack: 44, plating: 0, damageReduction: 0, speed: 40, attackRange: 220, attackCooldown: 2200, pullRange: 250 },
+    stats: { hp: 460, attack: 44, plating: 0, damageReduction: 0, speed: 40, attackRange: 220, attackCooldown: 2200, pullRange: 250 },
     behavior: 'melee', attackStyle: 'magic', isRanged: true, kite: true, biome: 'desert',
     rewards: { essence: 47, essenceType: 'yellow', level: 2, biomeXp: 285 },
     ai: { wanderRadius: 220, leashRange: 640, idleMinMs: 1200, idleMaxMs: 4000 },
@@ -105,7 +105,7 @@ export const desertMonsterEntries = [
     id: 'sand-viper', name: 'Sand Viper', color: 0xddaa33,
     // Fast debuffer: lands a heavy movement slow so the slower pack can pile on.
     // Catches Far builds that try to kite. DPS 78 × (1000/1600) = 49 + the slow.
-    stats: { hp: 830, attack: 78, plating: 0, damageReduction: 0.08, speed: 60, attackRange: 12, attackCooldown: 1600, pullRange: 230 },
+    stats: { hp: 980, attack: 78, plating: 0, damageReduction: 0.08, speed: 60, attackRange: 12, attackCooldown: 1600, pullRange: 230 },
     behavior: 'melee', attackStyle: 'poison', biome: 'desert',
     rewards: { essence: 55, essenceType: 'yellow', level: 3, biomeXp: 330 },
     ai: { wanderRadius: 260, leashRange: 680, idleMinMs: 1500, idleMaxMs: 4500 },
@@ -117,7 +117,7 @@ export const desertMonsterEntries = [
     // Root bruiser: a petrifying gaze full-stops you (speedMult 0) — the lockdown
     // setup that lets the vipers close and the cobra plink. Moderate plating.
     // DPS 90 × (1000/2800) = 32 — low, but the root is the real weapon.
-    stats: { hp: 1300, attack: 90, plating: 10, damageReduction: 0.10, speed: 26, attackRange: 15, attackCooldown: 2800, pullRange: 175 },
+    stats: { hp: 1450, attack: 90, plating: 10, damageReduction: 0.10, speed: 26, attackRange: 15, attackCooldown: 2800, pullRange: 175 },
     behavior: 'melee', attackStyle: 'impact', biome: 'desert',
     rewards: { essence: 100, essenceType: 'yellow', level: 4, biomeXp: 600 },
     ai: { wanderRadius: 170, leashRange: 560, idleMinMs: 2500, idleMaxMs: 7000 },
@@ -130,7 +130,7 @@ export const desertMonsterEntries = [
     // it eats slowed hits. The shield rewards the alpha-strike weapon: a
     // first-strike burst tears the barrier before the slow stack bites.
     // DPS 84 × (1000/2200) = 38 (kiter).
-    stats: { hp: 780, attack: 84, plating: 0, damageReduction: 0, speed: 38, attackRange: 230, attackCooldown: 2200, pullRange: 280 },
+    stats: { hp: 930, attack: 84, plating: 0, damageReduction: 0, speed: 38, attackRange: 230, attackCooldown: 2200, pullRange: 280 },
     behavior: 'melee', attackStyle: 'magic', isRanged: true, kite: true, biome: 'desert',
     rewards: { essence: 58, essenceType: 'yellow', level: 3, biomeXp: 350 },
     ai: { wanderRadius: 240, leashRange: 660, idleMinMs: 1200, idleMaxMs: 4000 },
@@ -143,7 +143,7 @@ export const desertMonsterEntries = [
     // Slow elite (great desert lizard). COOLDOWN slam every 10s = 246 that also
     // dumps a long heavy slow. The Desert exam: last-stand + debuff-resist both
     // tested. Base 88 ≈ H_med (survivable); the slam is the spike.
-    stats: { hp: 1900, attack: 88, plating: 8, damageReduction: 0.08, speed: 20, attackRange: 15, attackCooldown: 3500, pullRange: 160 },
+    stats: { hp: 2200, attack: 88, plating: 8, damageReduction: 0.08, speed: 20, attackRange: 15, attackCooldown: 3500, pullRange: 160 },
     behavior: 'melee', attackStyle: 'impact', biome: 'desert',
     rewards: { essence: 170, essenceType: 'yellow', level: 4, biomeXp: 1020 },
     ai: { wanderRadius: 100, leashRange: 450, idleMinMs: 4500, idleMaxMs: 12000 },

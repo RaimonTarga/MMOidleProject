@@ -371,28 +371,6 @@
   text-shadow: 0 0 7px rgba(255, 170, 34, 0.45);
 }
 
-/* ── Weapon buff bars ────────────────────────────────────────────────────── */
-.mech-bar-fill--sacred {
-  background: linear-gradient(90deg, #aa7700, #cc9900);
-  transition: width 0.4s ease;
-}
-
-.mech-bar-fill--sacred-active {
-  background: linear-gradient(90deg, #ddcc33, #ffee44);
-  animation: sacred-burst 0.35s ease-in-out infinite alternate;
-}
-
-@keyframes sacred-burst {
-  from { opacity: 0.6; filter: brightness(0.85); }
-  to   { opacity: 1.0; filter: brightness(1.18); }
-}
-
-.mech-label--sacred-active {
-  color: #ffee44;
-  font-weight: bold;
-  text-shadow: 0 0 8px rgba(255, 238, 68, 0.5);
-}
-
 /* ── Summoner summon slots ───────────────────────────────────────────────── */
 .summon-slots {
   display: flex;

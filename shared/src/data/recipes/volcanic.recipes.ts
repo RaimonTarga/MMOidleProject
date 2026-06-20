@@ -5,7 +5,7 @@ import type { Recipe } from './types';
 // (see mountain.recipes.ts header).
 
 export const volcanicRecipeEntries = [
-  
+
   ['volcanic-cinderlash', {
     id: 'volcanic-cinderlash', name: 'Cinderlash',
     recipeGroup: 'volcanic', requiredBiomeLevel: 1, slot: 'weapon',
@@ -20,17 +20,32 @@ export const volcanicRecipeEntries = [
     ],
   }],
 
+  ['volcanic-vest-t3', {
+    id: 'volcanic-vest-t3', name: 'Emberforge Plate',
+    recipeGroup: 'volcanic', requiredBiomeLevel: 2, slot: 'armor',
+    cost: { red: 120, yellow: 30 }, stats: { maxHp: 90, plating: 20 },
+    mechanicEffects: { 'defense.hardening-per-sec': 3, 'defense.hardening-max': 24, 'defense.hardening-reset-pct': 0.25 },
+    tier: 3,
+    icon: 'items/armor/volcano-armor-1.png',
+    description: 'Plate quenched in a lava flow; it thickens against a steady fire and cracks only to a true blow.',
+    upgrades: [
+      { stats: { maxHp: 20, plating: 5 }, cost: { red: 100, yellow: 50 },  requiredBiomeLevel: 3 },
+      { stats: { maxHp: 20, plating: 5 }, cost: { red: 200, yellow: 100 }, requiredBiomeLevel: 4 },
+      { stats: { maxHp: 20, plating: 5 }, cost: { red: 400, yellow: 200 }, requiredBiomeLevel: 4 },
+    ],
+  }],
+
   // Charm: hpRegen flat; upgrades ramp in-combat-regen 0.14 -> 0.20 AND kill-burst 0.08 -> 0.14.
   ['volcanic-charm-t3', {
     id: 'volcanic-charm-t3', name: 'Magmaheart Core',
-    recipeGroup: 'volcanic', requiredBiomeLevel: 2, slot: 'recovery',
+    recipeGroup: 'volcanic', requiredBiomeLevel: 3, slot: 'recovery',
     cost: { red: 75, yellow: 25 }, stats: { hpRegen: 11 },
-    mechanicEffects: { 'defense.in-combat-regen-pct': 0.14, 'defense.kill-burst-pct': 0.08 },
+    mechanicEffects: { 'defense.in-combat-regen-pct': 0.06, 'defense.kill-burst-pct': 0.04 },
     tier: 3,
     icon: 'items/charms/volcano-crystal.png',
     description: 'A still-molten heart that mends you mid-fight, and flares with every kill.',
     upgrades: [
-      { mechanicEffects: { 'defense.in-combat-regen-pct': 0.02, 'defense.kill-burst-pct': 0.02 }, cost: { red: 50, yellow: 25 },  requiredBiomeLevel: 3 },
+      { mechanicEffects: { 'defense.in-combat-regen-pct': 0.02, 'defense.kill-burst-pct': 0.02 }, cost: { red: 50, yellow: 25 },  requiredBiomeLevel: 4 },
       { mechanicEffects: { 'defense.in-combat-regen-pct': 0.02, 'defense.kill-burst-pct': 0.02 }, cost: { red: 100, yellow: 50 }, requiredBiomeLevel: 4 },
       { mechanicEffects: { 'defense.in-combat-regen-pct': 0.02, 'defense.kill-burst-pct': 0.02 }, cost: { red: 200, yellow: 100 }, requiredBiomeLevel: 4 },
     ],
@@ -38,7 +53,7 @@ export const volcanicRecipeEntries = [
 
   ['volcanic-boots-t3', {
     id: 'volcanic-boots-t3', name: 'Magma Walkers',
-    recipeGroup: 'volcanic', requiredBiomeLevel: 3, slot: 'mobility',
+    recipeGroup: 'volcanic', requiredBiomeLevel: 4, slot: 'mobility',
     cost: { red: 74 }, stats: { speed: 36 }, tier: 3,
     mechanicEffects: { 'mobility.passive-speed-pct': 0.55, 'mobility.suppress-ms': 4000 },
     icon: 'items/boots/volcano-boots-1.png',
@@ -47,21 +62,6 @@ export const volcanicRecipeEntries = [
       { stats: { speed: 8 },  cost: { red: 30 },  requiredBiomeLevel: 4 },
       { stats: { speed: 12 }, cost: { red: 62 },  requiredBiomeLevel: 4 },
       { stats: { speed: 16 }, cost: { red: 104 }, requiredBiomeLevel: 4 },
-    ],
-  }],
-
-  ['volcanic-vest-t3', {
-    id: 'volcanic-vest-t3', name: 'Emberforge Plate',
-    recipeGroup: 'volcanic', requiredBiomeLevel: 4, slot: 'armor',
-    cost: { red: 120, yellow: 30 }, stats: { maxHp: 90, plating: 20 },
-    mechanicEffects: { 'defense.hardening-per-sec': 3, 'defense.hardening-max': 24, 'defense.hardening-reset-pct': 0.25 },
-    tier: 3,
-    icon: 'items/armor/volcano-armor-1.png',
-    description: 'Plate quenched in a lava flow; it thickens against a steady fire and cracks only to a true blow.',
-    upgrades: [
-      { stats: { maxHp: 20, plating: 5 }, cost: { red: 100, yellow: 50 },  requiredBiomeLevel: 4 },
-      { stats: { maxHp: 20, plating: 5 }, cost: { red: 200, yellow: 100 }, requiredBiomeLevel: 4 },
-      { stats: { maxHp: 20, plating: 5 }, cost: { red: 400, yellow: 200 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -85,35 +85,20 @@ export const volcanicRecipeEntries = [
     recipeGroup: 'volcanic', requiredBiomeLevel: 5, slot: 'weapon',
     // ⚠ INHERITED (Swamp fast-DoT lineage) — base attack carried from doc.
     //   VERIFY in the DoT-conversion budget pass.
-    cost: { red: 290 }, stats: { attack: 64 }, attacksPerSecond: 1.20, tier: 4,
-    mechanicEffects: { 'weapon.dot-conversion-pct': 0.50, 'weapon.dot-stacks': 5 },
+    cost: { red: 290 }, stats: { attack: 70 }, attacksPerSecond: 1.20, tier: 4,
+    weaponDot: { effectId: 'blightbrand-burn', convPct: 0.50, tickIntervalMs: 1000, drainDurationMs: 4500, dotMultiplier: 1.50, element: 'fire' },
     icon: 'items/weapons/lava-blade.png',
     description: 'It leaves a fire under the skin that does the rest of the work while you move on.',
     upgrades: [
-      { stats: { attack: 14 }, cost: { red: 435 }, requiredBiomeLevel: 6 },
-      { stats: { attack: 14 }, cost: { red: 870 }, requiredBiomeLevel: 7 },
-      { stats: { attack: 14 }, cost: { red: 1740 }, requiredBiomeLevel: 8 },
-    ],
-  }],
-
-  ['volcanic-charm-t4', {
-    id: 'volcanic-charm-t4', name: 'Inferno Core',
-    recipeGroup: 'volcanic', requiredBiomeLevel: 6, slot: 'recovery',
-    cost: { red: 200, yellow: 50 }, stats: { hpRegen: 16 },
-    mechanicEffects: { 'defense.in-combat-regen-pct': 0.19, 'defense.kill-burst-pct': 0.11 },
-    tier: 4,
-    icon: 'items/charms/volcano-crystal.png',
-    description: 'A heart that never fully cools — it mends you mid-swing and flares brighter with every fallen foe.',
-    upgrades: [
-      { mechanicEffects: { 'defense.in-combat-regen-pct': 0.025, 'defense.kill-burst-pct': 0.025 }, cost: { red: 110, yellow: 30 }, requiredBiomeLevel: 7 },
-      { mechanicEffects: { 'defense.in-combat-regen-pct': 0.025, 'defense.kill-burst-pct': 0.025 }, cost: { red: 220, yellow: 60 }, requiredBiomeLevel: 8 },
-      { mechanicEffects: { 'defense.in-combat-regen-pct': 0.025, 'defense.kill-burst-pct': 0.025 }, cost: { red: 340, yellow: 90 }, requiredBiomeLevel: 8 },
+      { stats: { attack: 20 }, cost: { red: 435 }, requiredBiomeLevel: 6 },
+      { stats: { attack: 20 }, cost: { red: 870 }, requiredBiomeLevel: 7 },
+      { stats: { attack: 20 }, cost: { red: 1740 }, requiredBiomeLevel: 8 },
     ],
   }],
 
   ['volcanic-vest-t4', {
     id: 'volcanic-vest-t4', name: 'Pyroclasm Mantle',
-    recipeGroup: 'volcanic', requiredBiomeLevel: 8, slot: 'armor',
+    recipeGroup: 'volcanic', requiredBiomeLevel: 6, slot: 'armor',
     cost: { red: 220, yellow: 55 }, stats: { maxHp: 165, plating: 38 },
     // † hardening-max-dr-bonus: at max hardening, +6% DR for 3s before reset.
     mechanicEffects: {
@@ -124,7 +109,7 @@ export const volcanicRecipeEntries = [
     icon: 'items/armor/volcano-armor-2.png',
     description: 'It thickens against a steady fire until, at its hardest, it shrugs off even a true blow — once.',
     upgrades: [
-      { stats: { maxHp: 40, plating: 10 }, cost: { red: 200, yellow: 100 }, requiredBiomeLevel: 8 },
+      { stats: { maxHp: 40, plating: 10 }, cost: { red: 200, yellow: 100 }, requiredBiomeLevel: 7 },
       { stats: { maxHp: 40, plating: 10 }, cost: { red: 400, yellow: 200 }, requiredBiomeLevel: 8 },
       { stats: { maxHp: 40, plating: 10 }, cost: { red: 800, yellow: 300 }, requiredBiomeLevel: 8 },
     ],
@@ -132,7 +117,7 @@ export const volcanicRecipeEntries = [
 
   ['volcanic-vest-t4-lavatempered', {
     id: 'volcanic-vest-t4-lavatempered', name: 'Lava-Tempered Hide',
-    recipeGroup: 'volcanic', requiredBiomeLevel: 8, slot: 'armor',
+    recipeGroup: 'volcanic', requiredBiomeLevel: 6, slot: 'armor',
     cost: { red: 220, yellow: 55 }, stats: { maxHp: 150, plating: 28 },
     // † overheal-shield-pct: overheal from in-combat-regen becomes temp shield.
     //   Pairs naturally with Inferno Core. (new key)
@@ -144,16 +129,31 @@ export const volcanicRecipeEntries = [
     icon: 'items/armor/volcano-armor-1.png',
     description: 'Quenched in a living flow, it banks the overflow of your own healing into a crust of fresh stone.',
     upgrades: [
-      { stats: { maxHp: 36, plating: 7 }, cost: { red: 200, yellow: 100 }, requiredBiomeLevel: 8 },
+      { stats: { maxHp: 36, plating: 7 }, cost: { red: 200, yellow: 100 }, requiredBiomeLevel: 7 },
       { stats: { maxHp: 36, plating: 7 }, cost: { red: 400, yellow: 200 }, requiredBiomeLevel: 8 },
       { stats: { maxHp: 36, plating: 7 }, cost: { red: 800, yellow: 300 }, requiredBiomeLevel: 8 },
+    ],
+  }],
+
+  ['volcanic-charm-t4', {
+    id: 'volcanic-charm-t4', name: 'Inferno Core',
+    recipeGroup: 'volcanic', requiredBiomeLevel: 7, slot: 'recovery',
+    cost: { red: 200, yellow: 50 }, stats: { hpRegen: 16 },
+    mechanicEffects: { 'defense.in-combat-regen-pct': 0.06, 'defense.kill-burst-pct': 0.04 },
+    tier: 4,
+    icon: 'items/charms/volcano-crystal.png',
+    description: 'A heart that never fully cools — it mends you mid-swing and flares brighter with every fallen foe.',
+    upgrades: [
+      { mechanicEffects: { 'defense.in-combat-regen-pct': 0.02, 'defense.kill-burst-pct': 0.02 }, cost: { red: 110, yellow: 30 }, requiredBiomeLevel: 8 },
+      { mechanicEffects: { 'defense.in-combat-regen-pct': 0.02, 'defense.kill-burst-pct': 0.02 }, cost: { red: 220, yellow: 60 }, requiredBiomeLevel: 8 },
+      { mechanicEffects: { 'defense.in-combat-regen-pct': 0.02, 'defense.kill-burst-pct': 0.02 }, cost: { red: 340, yellow: 90 }, requiredBiomeLevel: 8 },
     ],
   }],
 
   // T4 boots — passive-speed (fast, suppressed when hit). T3 0.55/4000 → T4 0.70/3500.
   ['volcanic-boots-t4', {
     id: 'volcanic-boots-t4', name: 'Pyroclast Treads',
-    recipeGroup: 'volcanic', requiredBiomeLevel: 7, slot: 'mobility',
+    recipeGroup: 'volcanic', requiredBiomeLevel: 8, slot: 'mobility',
     cost: { red: 163 }, stats: { speed: 50 }, tier: 4,
     mechanicEffects: { 'mobility.passive-speed-pct': 0.70, 'mobility.suppress-ms': 3500 },
     icon: 'items/boots/volcano-boots-2.png',

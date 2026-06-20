@@ -23,7 +23,8 @@ export function updateSingularExtraction(world: World, dt: number): void {
     } else {
       cd.singularNoTargetMs += dt;
 
-      if (cd.singularNoTargetMs >= SINGULAR_NO_TARGET_MS) {
+      const noTargetMs = entity.usesSkills.passives['cooldown.singular-no-target-ms'] ?? SINGULAR_NO_TARGET_MS;
+      if (cd.singularNoTargetMs >= noTargetMs) {
         cd.executionCooldownMs = 0;
         if (!isEmpoweredAttack(entity)) setEmpoweredAttack(world, entity);
         cd.singularNoTargetMs = 0;

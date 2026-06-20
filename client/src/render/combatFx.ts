@@ -263,6 +263,33 @@ export function dispatchCombatEvent(
     return;
   }
 
+  if (ev.kind === "player-evade") {
+    if (!shouldRunClientFx()) return;
+    const sprite = state.sprite.get(ev.playerId);
+    const target =
+      (sprite ? { x: sprite.x, y: sprite.y } : null) ?? ev.targetPos ?? null;
+    if (target) {
+      const text = scene.add
+        .text(target.x, target.y - 40, "DODGE", {
+          fontFamily: "monospace",
+          fontSize: "14px",
+          color: "#ddddff",
+          stroke: "#000000",
+          strokeThickness: 3,
+        })
+        .setOrigin(0.5)
+        .setDepth(DEPTH.FX);
+      scene.tweens.add({
+        targets: text,
+        y: text.y - 28,
+        alpha: 0,
+        duration: 650,
+        onComplete: () => text.destroy(),
+      });
+    }
+    return;
+  }
+
   if (ev.kind === "player-miss") {
     if (!shouldRunClientFx()) return;
     const target =

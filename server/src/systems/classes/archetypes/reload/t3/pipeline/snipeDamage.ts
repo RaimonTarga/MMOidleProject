@@ -15,7 +15,8 @@ export function registerSnipeDamage(): void {
     const monster = ctx.defender;
     if ((player.usesSkills.passives['reload.snipe'] ?? 0) <= 0) return;
 
-    if (monster.hasHealth.hp >= monster.hasHealth.maxHp * FULL_HP_THRESHOLD) {
+    const fullHpThreshold = player.usesSkills.passives['reload.snipe-fullhp-threshold'] ?? FULL_HP_THRESHOLD;
+    if (monster.hasHealth.hp >= monster.hasHealth.maxHp * fullHpThreshold) {
       const fullHpMult = player.usesSkills.passives['reload.snipe-fullhp-mult'] ?? DEFAULT_SNIPE_FULL_HP_MULT;
       ctx.damage = Math.max(1, Math.round(ctx.damage * fullHpMult));
       ctx.metadata['reloadSnipeFullHp'] = true;

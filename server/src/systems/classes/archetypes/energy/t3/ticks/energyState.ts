@@ -34,7 +34,8 @@ export function updateEnergyState(world: World, dt: number): void {
     const passives = player.usesSkills.passives;
 
     if ((passives['energy.overdrive'] ?? 0) > 0 && energy.overdriveActive) {
-      energy.energy = Math.max(0, energy.energy - OVERDRIVE_DECAY_PER_SEC * dt / 1000);
+      const decayPerSec = Math.max(0, passives['energy.overdrive-decay-per-sec'] ?? OVERDRIVE_DECAY_PER_SEC);
+      energy.energy = Math.max(0, energy.energy - decayPerSec * dt / 1000);
       if (energy.energy <= 0) {
         energy.energy = 0;
         energy.overdriveActive = false;
@@ -44,7 +45,9 @@ export function updateEnergyState(world: World, dt: number): void {
     if ((passives['energy.upkeep'] ?? 0) > 0) {
       // Decay ramps with sustain time — caps the infinite stacking.
       const upkeepSec = energy.upkeepTimerMs / 1000;
-      const decayPerSec = UPKEEP_DECAY_BASE + UPKEEP_DECAY_RAMP_PER_SEC * upkeepSec;
+      const decayBase = Math.max(0, passives['energy.upkeep-decay-base'] ?? UPKEEP_DECAY_BASE);
+      const decayRamp = Math.max(0, passives['energy.upkeep-decay-ramp-per-sec'] ?? UPKEEP_DECAY_RAMP_PER_SEC);
+      const decayPerSec = decayBase + decayRamp * upkeepSec;
       energy.energy = Math.max(0, energy.energy - decayPerSec * dt / 1000);
       // Flow persists as long as you have ANY energy; it only resets the instant
       // energy hits 0 (the ramping decay is what eventually forces that).
@@ -56,7 +59,9 @@ export function updateEnergyState(world: World, dt: number): void {
     // Reassert each tick from a cached clean base; if attackCooldown no longer matches
     // what we last wrote, a recalc reset it — recapture the fresh base and reapply.
     if ((passives['energy.binary-cycle'] ?? 0) > 0) {
-      const factor = energy.binaryDischargeState ? BINARY_DISCHARGE_SPEED_FACTOR : BINARY_CHARGE_SPEED_FACTOR;
+      const chargeFactor = Math.max(0.01, passives['energy.binary-charge-speed-factor'] ?? BINARY_CHARGE_SPEED_FACTOR);
+      const dischargeFactor = Math.max(0.01, passives['energy.binary-discharge-speed-factor'] ?? BINARY_DISCHARGE_SPEED_FACTOR);
+      const factor = energy.binaryDischargeState ? dischargeFactor : chargeFactor;
       if (player.performsAttack.attackCooldown !== energy.binaryAppliedCd) {
         energy.binaryBaseCd = player.performsAttack.attackCooldown;
       }
@@ -70,7 +75,8 @@ export function updateEnergyState(world: World, dt: number): void {
 
     if ((passives['energy.critical-mass'] ?? 0) > 0 && energy.criticalMassStacks > 0) {
       energy.criticalMassGapMs += dt;
-      if (energy.criticalMassGapMs >= CRITICAL_MASS_RESET_MS) energy.criticalMassStacks = 0;
+      const resetMs = Math.max(100, passives['energy.critical-mass-reset-ms'] ?? CRITICAL_MASS_RESET_MS);
+      if (energy.criticalMassGapMs >= resetMs) energy.criticalMassStacks = 0;
     }
 
     if ((passives['energy.endless-storm'] ?? 0) > 0) anyStorm = true;

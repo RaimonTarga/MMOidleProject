@@ -29,9 +29,28 @@ export const trenchRecipeEntries = [
     ],
   }],
 
+  ['trench-vest-t4', {
+    id: 'trench-vest-t4', name: 'Deep Sea Carapace',
+    recipeGroup: 'trench', requiredBiomeLevel: 2, slot: 'armor',
+    // Premium-DR tank profile (Cave inheritor): low HP, high DR.
+    cost: { green: 220 }, stats: { maxHp: 90, plating: 24, damageReduction: 0.22 },
+    // † sustained-fight-dr-bonus: +1% DR per ~2s of sustained combat, cap +5% at 10s.
+    mechanicEffects: {
+      'defense.sustained-fight-dr-bonus': 0.01, 'defense.sustained-fight-dr-max': 0.05, 'defense.sustained-fight-ramptime-ms': 10000,
+    },
+    tier: 4,
+    icon: 'items/armor/plate-armor-1.png',
+    description: 'Pressure-forged over an age in the dark; the longer the fight, the more of the deep\'s weight it turns against your foe.',
+    upgrades: [
+      { stats: { maxHp: 22, plating: 6, damageReduction: 0.02 }, cost: { green: 200 }, requiredBiomeLevel: 3 },
+      { stats: { maxHp: 22, plating: 6, damageReduction: 0.02 }, cost: { green: 400 }, requiredBiomeLevel: 4 },
+      { stats: { maxHp: 22, plating: 6, damageReduction: 0.02 }, cost: { green: 700 }, requiredBiomeLevel: 4 },
+    ],
+  }],
+
   ['trench-charm-t4', {
     id: 'trench-charm-t4', name: 'Pressure Vessel',
-    recipeGroup: 'trench', requiredBiomeLevel: 2, slot: 'recovery',
+    recipeGroup: 'trench', requiredBiomeLevel: 3, slot: 'recovery',
     cost: { green: 150 }, stats: { hpRegen: 16 },
     mechanicEffects: {
       'defense.absorb-pct': 0.16,
@@ -41,7 +60,7 @@ export const trenchRecipeEntries = [
     icon: 'items/charms/depths-charm-1.png',
     description: 'Built to hold against a crushing deep — it softens the one enormous blow and breathes life back on a slow count.',
     upgrades: [
-      { mechanicEffects: { 'defense.absorb-pct': 0.03, 'defense.regen-burst-pct': 0.02 }, cost: { green: 100 }, requiredBiomeLevel: 3 },
+      { mechanicEffects: { 'defense.absorb-pct': 0.03, 'defense.regen-burst-pct': 0.02 }, cost: { green: 100 }, requiredBiomeLevel: 4 },
       { mechanicEffects: { 'defense.absorb-pct': 0.03, 'defense.regen-burst-pct': 0.02 }, cost: { green: 200 }, requiredBiomeLevel: 4 },
       { mechanicEffects: { 'defense.absorb-pct': 0.03, 'defense.regen-burst-pct': 0.02 }, cost: { green: 330 }, requiredBiomeLevel: 4 },
     ],
@@ -49,7 +68,7 @@ export const trenchRecipeEntries = [
 
   ['trench-boots-t4-stalkers', {
     id: 'trench-boots-t4-stalkers', name: 'Abyssal Stalkers',
-    recipeGroup: 'trench', requiredBiomeLevel: 3, slot: 'mobility',
+    recipeGroup: 'trench', requiredBiomeLevel: 4, slot: 'mobility',
     // Cave stealth-boot inheritor — soft stealth: reduces enemy detection radius.
     cost: { green: 80 }, stats: { speed: 52 }, tier: 4,
     mechanicEffects: { 'mobility.stealth-pct': 0.72 },
@@ -64,7 +83,7 @@ export const trenchRecipeEntries = [
 
   ['trench-boots-t4-treaders', {
     id: 'trench-boots-t4-treaders', name: 'Abyssal Treaders',
-    recipeGroup: 'trench', requiredBiomeLevel: 3, slot: 'mobility',
+    recipeGroup: 'trench', requiredBiomeLevel: 4, slot: 'mobility',
     // † tenacity-pct: flat, always-on CC duration reduction (distinct from
     //   Graveyard's kill-stack tenacity). Suits the Trench's slow heavy hitters.
     cost: { green: 80 }, stats: { speed: 48 }, tier: 4,
@@ -75,25 +94,6 @@ export const trenchRecipeEntries = [
       { stats: { speed: 5 }, cost: { green: 40 },  requiredBiomeLevel: 4 },
       { stats: { speed: 5 }, cost: { green: 80 },  requiredBiomeLevel: 4 },
       { stats: { speed: 5 }, cost: { green: 132 }, requiredBiomeLevel: 4 },
-    ],
-  }],
-
-  ['trench-vest-t4', {
-    id: 'trench-vest-t4', name: 'Deep Sea Carapace',
-    recipeGroup: 'trench', requiredBiomeLevel: 4, slot: 'armor',
-    // Premium-DR tank profile (Cave inheritor): low HP, high DR.
-    cost: { green: 220 }, stats: { maxHp: 90, plating: 24, damageReduction: 0.22 },
-    // † sustained-fight-dr-bonus: +1% DR per ~2s of sustained combat, cap +5% at 10s.
-    mechanicEffects: {
-      'defense.sustained-fight-dr-bonus': 0.01, 'defense.sustained-fight-dr-max': 0.05, 'defense.sustained-fight-ramptime-ms': 10000,
-    },
-    tier: 4,
-    icon: 'items/armor/plate-armor-1.png',
-    description: 'Pressure-forged over an age in the dark; the longer the fight, the more of the deep’s weight it turns against your foe.',
-    upgrades: [
-      { stats: { maxHp: 22, plating: 6, damageReduction: 0.02 }, cost: { green: 200 }, requiredBiomeLevel: 4 },
-      { stats: { maxHp: 22, plating: 6, damageReduction: 0.02 }, cost: { green: 400 }, requiredBiomeLevel: 4 },
-      { stats: { maxHp: 22, plating: 6, damageReduction: 0.02 }, cost: { green: 700 }, requiredBiomeLevel: 4 },
     ],
   }],
 

@@ -20,42 +20,9 @@ export const tundraRecipeEntries = [
     ],
   }],
 
-  // Charm: hpRegen flat; upgrades ramp shield 0.12 -> 0.18 AND absorb 0.08 -> 0.14.
-  ['tundra-charm-t3', {
-    id: 'tundra-charm-t3', name: 'Frostward Charm',
-    recipeGroup: 'tundra', requiredBiomeLevel: 2, slot: 'recovery',
-    cost: { blue: 75, purple: 25 }, stats: { hpRegen: 11 },
-    mechanicEffects: {
-      'defense.shield-pct': 0.12, 'defense.shield-interval-ms': 9000, 'defense.shield-duration-ms': 9000,
-      'defense.absorb-pct': 0.08,
-    },
-    tier: 3,
-    icon: 'items/charms/stone-hand-charm-2.png',
-    description: 'A rime-cold ward that throws up a sheet of ice, and drinks the blows that get through.',
-    upgrades: [
-      { mechanicEffects: { 'defense.shield-pct': 0.02, 'defense.absorb-pct': 0.02 }, cost: { blue: 50, purple: 25 },  requiredBiomeLevel: 3 },
-      { mechanicEffects: { 'defense.shield-pct': 0.02, 'defense.absorb-pct': 0.02 }, cost: { blue: 100, purple: 50 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'defense.shield-pct': 0.02, 'defense.absorb-pct': 0.02 }, cost: { blue: 200, purple: 100 }, requiredBiomeLevel: 4 },
-    ],
-  }],
-
-  ['tundra-boots-t3', {
-    id: 'tundra-boots-t3', name: 'Glacier Striders',
-    recipeGroup: 'tundra', requiredBiomeLevel: 3, slot: 'mobility',
-    cost: { blue: 80 }, stats: { speed: 30 }, tier: 3,
-    mechanicEffects: { 'mobility.ramp-speed-pct': 0.60, 'mobility.ramp-rate': 0.30 },
-    icon: 'items/boots/plate-boots-4.png',
-    description: 'They gather momentum across the ice and are loath to give it back.',
-    upgrades: [
-      { stats: { speed: 8 },  cost: { blue: 30 },  requiredBiomeLevel: 4 },
-      { stats: { speed: 12 }, cost: { blue: 60 },  requiredBiomeLevel: 4 },
-      { stats: { speed: 16 }, cost: { blue: 100 }, requiredBiomeLevel: 4 },
-    ],
-  }],
-
   ['tundra-vest-t3', {
     id: 'tundra-vest-t3', name: 'Glacial Bulwark',
-    recipeGroup: 'tundra', requiredBiomeLevel: 4, slot: 'armor',
+    recipeGroup: 'tundra', requiredBiomeLevel: 2, slot: 'armor',
     cost: { blue: 100, red: 25 }, stats: { maxHp: 100, plating: 15 },
     mechanicEffects: {
       'defense.stationary-dr-pct': 0.15, 'defense.stationary-dr-ramptime-ms': 6000,
@@ -65,9 +32,42 @@ export const tundraRecipeEntries = [
     icon: 'items/armor/frozen-armor-1.png',
     description: 'Stand still and the ice creeps over the plate, until you are part of the glacier itself.',
     upgrades: [
-      { stats: { maxHp: 22, plating: 4 }, cost: { blue: 90, red: 40 },  requiredBiomeLevel: 4 },
+      { stats: { maxHp: 22, plating: 4 }, cost: { blue: 90, red: 40 },  requiredBiomeLevel: 3 },
       { stats: { maxHp: 22, plating: 4 }, cost: { blue: 180, red: 60 }, requiredBiomeLevel: 4 },
       { stats: { maxHp: 22, plating: 4 }, cost: { blue: 270, red: 80 }, requiredBiomeLevel: 4 },
+    ],
+  }],
+
+  // Charm: hpRegen flat; upgrades ramp shield 0.12 -> 0.18 AND absorb 0.08 -> 0.14.
+  ['tundra-charm-t3', {
+    id: 'tundra-charm-t3', name: 'Frostward Charm',
+    recipeGroup: 'tundra', requiredBiomeLevel: 3, slot: 'recovery',
+    cost: { blue: 75, purple: 25 }, stats: { hpRegen: 11 },
+    mechanicEffects: {
+      'defense.shield-pct': 0.12, 'defense.shield-interval-ms': 9000, 'defense.shield-duration-ms': 9000,
+      'defense.absorb-pct': 0.08,
+    },
+    tier: 3,
+    icon: 'items/charms/stone-hand-charm-2.png',
+    description: 'A rime-cold ward that throws up a sheet of ice, and drinks the blows that get through.',
+    upgrades: [
+      { mechanicEffects: { 'defense.shield-pct': 0.02, 'defense.absorb-pct': 0.02 }, cost: { blue: 50, purple: 25 },  requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.shield-pct': 0.02, 'defense.absorb-pct': 0.02 }, cost: { blue: 100, purple: 50 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.shield-pct': 0.02, 'defense.absorb-pct': 0.02 }, cost: { blue: 200, purple: 100 }, requiredBiomeLevel: 4 },
+    ],
+  }],
+
+  ['tundra-boots-t3', {
+    id: 'tundra-boots-t3', name: 'Glacier Striders',
+    recipeGroup: 'tundra', requiredBiomeLevel: 4, slot: 'mobility',
+    cost: { blue: 80 }, stats: { speed: 30 }, tier: 3,
+    mechanicEffects: { 'mobility.ramp-speed-pct': 0.60, 'mobility.ramp-rate': 0.30 },
+    icon: 'items/boots/plate-boots-4.png',
+    description: 'They gather momentum across the ice and are loath to give it back.',
+    upgrades: [
+      { stats: { speed: 8 },  cost: { blue: 30 },  requiredBiomeLevel: 4 },
+      { stats: { speed: 12 }, cost: { blue: 60 },  requiredBiomeLevel: 4 },
+      { stats: { speed: 16 }, cost: { blue: 100 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -97,7 +97,7 @@ export const tundraRecipeEntries = [
     // ⚠ INHERITED (Swamp slow-DoT lineage) — base attack carried from doc, not
     //   scaled from a T3 ancestor. VERIFY in the DoT-conversion budget pass.
     cost: { blue: 258 }, stats: { attack: 155 }, attacksPerSecond: 0.60, tier: 4,
-    mechanicEffects: { 'weapon.dot-conversion-pct': 0.70, 'weapon.dot-stacks': 3 },
+    weaponDot: { effectId: 'rimebrand-burn', convPct: 0.70, tickIntervalMs: 1000, drainDurationMs: 4500, dotMultiplier: 1.50, element: 'frost' },
     icon: 'items/weapons/frozen-sword.png',
     description: 'It does not cut so much as plant a cold that goes on spreading after the blade is gone.',
     upgrades: [
@@ -107,9 +107,27 @@ export const tundraRecipeEntries = [
     ],
   }],
 
+  ['tundra-vest-t4', {
+    id: 'tundra-vest-t4', name: 'Permafrost Sovereign',
+    recipeGroup: 'tundra', requiredBiomeLevel: 6, slot: 'armor',
+    cost: { blue: 256, red: 64 }, stats: { maxHp: 180, plating: 28 },
+    mechanicEffects: {
+      'defense.stationary-dr-pct': 0.20, 'defense.stationary-dr-ramptime-ms': 5000,
+      'defense.max-hit-pct': 0.25, 'defense.max-hit-mult': 0.5,
+    },
+    tier: 4,
+    icon: 'items/armor/tundra-armor-1.png',
+    description: 'Hold your ground and the glacier claims you for its own — and nothing moves a glacier.',
+    upgrades: [
+      { stats: { maxHp: 42, plating: 7 }, cost: { blue: 290, red: 96 },  requiredBiomeLevel: 7 },
+      { stats: { maxHp: 42, plating: 7 }, cost: { blue: 572, red: 192 }, requiredBiomeLevel: 8 },
+      { stats: { maxHp: 42, plating: 7 }, cost: { blue: 858, red: 290 }, requiredBiomeLevel: 8 },
+    ],
+  }],
+
   ['tundra-charm-t4', {
     id: 'tundra-charm-t4', name: 'Glacial Ward',
-    recipeGroup: 'tundra', requiredBiomeLevel: 6, slot: 'recovery',
+    recipeGroup: 'tundra', requiredBiomeLevel: 7, slot: 'recovery',
     cost: { blue: 220, purple: 30 }, stats: { hpRegen: 16 },
     mechanicEffects: {
       'defense.shield-pct': 0.17, 'defense.shield-interval-ms': 9000, 'defense.shield-duration-ms': 9000,
@@ -119,7 +137,7 @@ export const tundraRecipeEntries = [
     icon: 'items/charms/frozen-crystal.png',
     description: 'A sheet of ice thrown up against the blow, and a slow cold that drinks whatever slips past it.',
     upgrades: [
-      { mechanicEffects: { 'defense.shield-pct': 0.03, 'defense.absorb-pct': 0.03 }, cost: { blue: 110, purple: 30 }, requiredBiomeLevel: 7 },
+      { mechanicEffects: { 'defense.shield-pct': 0.03, 'defense.absorb-pct': 0.03 }, cost: { blue: 110, purple: 30 }, requiredBiomeLevel: 8 },
       { mechanicEffects: { 'defense.shield-pct': 0.03, 'defense.absorb-pct': 0.03 }, cost: { blue: 220, purple: 60 }, requiredBiomeLevel: 8 },
       { mechanicEffects: { 'defense.shield-pct': 0.03, 'defense.absorb-pct': 0.03 }, cost: { blue: 340, purple: 90 }, requiredBiomeLevel: 8 },
     ],
@@ -127,7 +145,7 @@ export const tundraRecipeEntries = [
 
   ['tundra-charm-t4-deepfreeze', {
     id: 'tundra-charm-t4-deepfreeze', name: 'Deepfreeze Ward',
-    recipeGroup: 'tundra', requiredBiomeLevel: 6, slot: 'recovery',
+    recipeGroup: 'tundra', requiredBiomeLevel: 7, slot: 'recovery',
     cost: { blue: 220, purple: 30 }, stats: { hpRegen: 16 },
     // † absorb-ramp: absorb starts at 0.04 and climbs to 0.18 over 12s in combat
     //   (weaker early, stronger in long fights). (new keys)
@@ -139,34 +157,16 @@ export const tundraRecipeEntries = [
     icon: 'items/charms/stone-hand-charm-1.png',
     description: 'The longer the cold has to settle in, the more of the blow it swallows whole.',
     upgrades: [
-      { mechanicEffects: { 'defense.shield-pct': 0.03, 'defense.absorb-ramp-max-pct': 0.03 }, cost: { blue: 110, purple: 30 }, requiredBiomeLevel: 7 },
+      { mechanicEffects: { 'defense.shield-pct': 0.03, 'defense.absorb-ramp-max-pct': 0.03 }, cost: { blue: 110, purple: 30 }, requiredBiomeLevel: 8 },
       { mechanicEffects: { 'defense.shield-pct': 0.03, 'defense.absorb-ramp-max-pct': 0.03 }, cost: { blue: 220, purple: 60 }, requiredBiomeLevel: 8 },
       { mechanicEffects: { 'defense.shield-pct': 0.03, 'defense.absorb-ramp-max-pct': 0.03 }, cost: { blue: 340, purple: 90 }, requiredBiomeLevel: 8 },
-    ],
-  }],
-
-  ['tundra-vest-t4', {
-    id: 'tundra-vest-t4', name: 'Permafrost Sovereign',
-    recipeGroup: 'tundra', requiredBiomeLevel: 8, slot: 'armor',
-    cost: { blue: 256, red: 64 }, stats: { maxHp: 180, plating: 28 },
-    mechanicEffects: {
-      'defense.stationary-dr-pct': 0.20, 'defense.stationary-dr-ramptime-ms': 5000,
-      'defense.max-hit-pct': 0.25, 'defense.max-hit-mult': 0.5,
-    },
-    tier: 4,
-    icon: 'items/armor/tundra-armor-1.png',
-    description: 'Hold your ground and the glacier claims you for its own — and nothing moves a glacier.',
-    upgrades: [
-      { stats: { maxHp: 42, plating: 7 }, cost: { blue: 290, red: 96 },  requiredBiomeLevel: 8 },
-      { stats: { maxHp: 42, plating: 7 }, cost: { blue: 572, red: 192 }, requiredBiomeLevel: 8 },
-      { stats: { maxHp: 42, plating: 7 }, cost: { blue: 858, red: 290 }, requiredBiomeLevel: 8 },
     ],
   }],
 
   // T4 boots — ramp-speed (momentum builds while moving). T3 0.60/0.30 → T4 0.75/0.35.
   ['tundra-boots-t4', {
     id: 'tundra-boots-t4', name: 'Avalanche Striders',
-    recipeGroup: 'tundra', requiredBiomeLevel: 7, slot: 'mobility',
+    recipeGroup: 'tundra', requiredBiomeLevel: 8, slot: 'mobility',
     cost: { blue: 176 }, stats: { speed: 42 }, tier: 4,
     mechanicEffects: { 'mobility.ramp-speed-pct': 0.75, 'mobility.ramp-rate': 0.35 },
     icon: 'items/boots/ice-boots-1.png',

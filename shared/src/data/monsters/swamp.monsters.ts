@@ -34,21 +34,21 @@ export const swampMonsterEntries = [
   ['bog-slime', {
     id: 'bog-slime', name: 'Bog Slime', color: 0x558833,
     // A weak slap, but the toxin does the real work over time.
-    stats: { hp: 110, attack: 4, plating: 0, damageReduction: 0, speed: 28, attackRange: 12, attackCooldown: 2200, pullRange: 165 },
+    stats: { hp: 110, attack: 8, plating: 0, damageReduction: 0, speed: 28, attackRange: 12, attackCooldown: 2200, pullRange: 165 },
     behavior: 'melee', attackStyle: 'poison', biome: 'swamp',
     rewards: { essence: 5, essenceType: 'purple', level: 1, biomeXp: 35 },
     ai: { wanderRadius: 160, leashRange: 530, idleMinMs: 2000, idleMaxMs: 5500 },
-    dotEffect: { debuffId: 'swamp-poison', label: 'Poison', damagePerStack: 3, maxStacks: 4, tickIntervalMs: 1500, durationMs: 3000 },
+    dotEffect: { debuffId: 'swamp-poison', label: 'Poison', damagePerStack: 2, maxStacks: 4, tickIntervalMs: 1500, durationMs: 3000 },
   }],
 
   ['mud-toad', {
     id: 'mud-toad', name: 'Mud Toad', color: 0x778844,
     // Sturdier; a feeble strike but a deeper, faster-stacking poison.
-    stats: { hp: 145, attack: 5, plating: 2, damageReduction: 0, speed: 30, attackRange: 12, attackCooldown: 2400, pullRange: 180 },
+    stats: { hp: 145, attack: 10, plating: 2, damageReduction: 0, speed: 30, attackRange: 12, attackCooldown: 2400, pullRange: 180 },
     behavior: 'melee', attackStyle: 'poison', biome: 'swamp',
     rewards: { essence: 6, essenceType: 'purple', level: 1, biomeXp: 42 },
     ai: { wanderRadius: 180, leashRange: 550, idleMinMs: 1800, idleMaxMs: 5000 },
-    dotEffect: { debuffId: 'swamp-poison', label: 'Poison', damagePerStack: 3, maxStacks: 4, tickIntervalMs: 1500, durationMs: 3000 },
+    dotEffect: { debuffId: 'swamp-poison', label: 'Poison', damagePerStack: 2, maxStacks: 4, tickIntervalMs: 1500, durationMs: 3000 },
   }],
 
   // ── SWAMP T2 — DoT engines; trivial direct hits, brutal stacking poison ──
@@ -56,31 +56,31 @@ export const swampMonsterEntries = [
     id: 'swamp-hydra', name: 'Swamp Hydra', color: 0x335533,
     // Multi-headed DoT engine; lives long enough to stack poison deep. Direct
     // bite is almost nothing — the venom is the whole fight.
-    stats: { hp: 320, attack: 8, plating: 0, damageReduction: 0.10, speed: 28, attackRange: 15, attackCooldown: 2200, pullRange: 185 },
+    stats: { hp: 370, attack: 12, plating: 0, damageReduction: 0.10, speed: 28, attackRange: 15, attackCooldown: 2200, pullRange: 185 },
     behavior: 'melee', attackStyle: 'poison', biome: 'swamp',
     rewards: { essence: 12, essenceType: 'purple', level: 1, biomeXp: 68 },
     ai: { wanderRadius: 170, leashRange: 560, idleMinMs: 2500, idleMaxMs: 7000 },
-    dotEffect: { debuffId: 'hydra-venom', label: 'Hydra Venom', damagePerStack: 8, maxStacks: 5, tickIntervalMs: 1000, durationMs: 2400 },
+    dotEffect: { debuffId: 'hydra-venom', label: 'Hydra Venom', damagePerStack: 5, maxStacks: 5, tickIntervalMs: 1000, durationMs: 2400 },
   }],
 
   ['bog-witch', {
     id: 'bog-witch', name: 'Bog Witch', color: 0x884499,
     // Ranged curse — flings a weak hex that festers; the DoT poke of the marsh.
-    stats: { hp: 180, attack: 10, plating: 0, damageReduction: 0.05, speed: 38, attackRange: 180, attackCooldown: 2200, pullRange: 215 },
+    stats: { hp: 230, attack: 16, plating: 0, damageReduction: 0.05, speed: 38, attackRange: 180, attackCooldown: 2200, pullRange: 215 },
     behavior: 'melee', attackStyle: 'magic', isRanged: true, biome: 'swamp',
     rewards: { essence: 11, essenceType: 'purple', level: 1, biomeXp: 62 },
     ai: { wanderRadius: 200, leashRange: 580, idleMinMs: 1500, idleMaxMs: 4500 },
-    dotEffect: { debuffId: 'swamp-hex', label: 'Swamp Hex', damagePerStack: 6, maxStacks: 4, tickIntervalMs: 1000, durationMs: 2400 },
+    dotEffect: { debuffId: 'swamp-hex', label: 'Swamp Hex', damagePerStack: 4, maxStacks: 4, tickIntervalMs: 1000, durationMs: 2400 },
   }],
 
   ['mire-stalker', {
     id: 'mire-stalker', name: 'Mire Stalker', color: 0x445533,
     // Ambush venom-hunter; light touch, heavy toxin, and it dodges some blows.
-    stats: { hp: 280, attack: 7, plating: 0, damageReduction: 0.12, speed: 32, attackRange: 12, attackCooldown: 2600, pullRange: 155 },
+    stats: { hp: 320, attack: 22, plating: 0, damageReduction: 0.12, speed: 40, attackRange: 12, attackCooldown: 2600, pullRange: 155 },
     behavior: 'melee', attackStyle: 'poison', biome: 'swamp',
     rewards: { essence: 13, essenceType: 'purple', level: 1, biomeXp: 75 },
     ai: { wanderRadius: 170, leashRange: 540, idleMinMs: 2000, idleMaxMs: 6000 },
-    dotEffect: { debuffId: 'stalker-venom', label: 'Stalker Venom', damagePerStack: 6, maxStacks: 4, tickIntervalMs: 1000, durationMs: 2800 },
+    dotEffect: { debuffId: 'stalker-venom', label: 'Stalker Venom', damagePerStack: 3, maxStacks: 4, tickIntervalMs: 1000, durationMs: 2800 },
     evasion: 0.2,
   }],
 
@@ -91,34 +91,34 @@ export const swampMonsterEntries = [
     id: 'plague-hydra', name: 'Plague Hydra', color: 0x335533,
     // DoT engine wall: bulky, DR, lives long enough to stack venom deep. The bite
     // is nothing; the poison is the whole fight. Kitable, but DoT ticks regardless.
-    stats: { hp: 720, attack: 14, plating: 0, damageReduction: 0.12, speed: 26, attackRange: 15, attackCooldown: 2200, pullRange: 185 },
+    stats: { hp: 820, attack: 26, plating: 0, damageReduction: 0.12, speed: 26, attackRange: 15, attackCooldown: 2200, pullRange: 185 },
     behavior: 'melee', attackStyle: 'poison', biome: 'swamp',
     rewards: { essence: 65, essenceType: 'purple', level: 3, biomeXp: 390 },
     ai: { wanderRadius: 150, leashRange: 520, idleMinMs: 2800, idleMaxMs: 8000 },
-    dotEffect: { debuffId: 'plague-venom', label: 'Plague', damagePerStack: 16, maxStacks: 6, tickIntervalMs: 1000, durationMs: 6000 },
+    dotEffect: { debuffId: 'plague-venom', label: 'Plague', damagePerStack: 7, maxStacks: 6, tickIntervalMs: 1000, durationMs: 6000 },
   }],
 
   ['mire-hex-spitter', {
     id: 'mire-hex-spitter', name: 'Mire Hex Spitter', color: 0x884499,
     // Ranged DoT KITER: plinks festering hexes, backs away. Anti-Close — chasing
     // it just walks you through more poison. Speed 36 (catchable on charge).
-    stats: { hp: 400, attack: 16, plating: 0, damageReduction: 0, speed: 36, attackRange: 200, attackCooldown: 2200, pullRange: 230 },
+    stats: { hp: 500, attack: 30, plating: 0, damageReduction: 0, speed: 36, attackRange: 200, attackCooldown: 2200, pullRange: 230 },
     behavior: 'melee', attackStyle: 'magic', isRanged: true, kite: true, biome: 'swamp',
     rewards: { essence: 35, essenceType: 'purple', level: 2, biomeXp: 210 },
     ai: { wanderRadius: 200, leashRange: 580, idleMinMs: 1500, idleMaxMs: 4500 },
-    dotEffect: { debuffId: 'mire-hex', label: 'Mire Hex', damagePerStack: 12, maxStacks: 5, tickIntervalMs: 1000, durationMs: 4500 },
+    dotEffect: { debuffId: 'mire-hex', label: 'Mire Hex', damagePerStack: 5, maxStacks: 5, tickIntervalMs: 1000, durationMs: 4500 },
   }],
 
   ['bog-lurker', {
     id: 'bog-lurker', name: 'Bog Lurker', color: 0x445533,
     // Evasive ambush DoT wall: dodges every 5th hit (many-hit weapons whiff) +
     // DR bulk + heavy toxin. The "regen/bulk wall" texture — hard to burn down fast.
-    stats: { hp: 620, attack: 12, plating: 0, damageReduction: 0.14, speed: 30, attackRange: 12, attackCooldown: 2600, pullRange: 155 },
+    stats: { hp: 720, attack: 28, plating: 0, damageReduction: 0.14, speed: 30, attackRange: 12, attackCooldown: 2600, pullRange: 155 },
     behavior: 'melee', attackStyle: 'poison', biome: 'swamp',
     rewards: { essence: 57, essenceType: 'purple', level: 3, biomeXp: 345 },
     ai: { wanderRadius: 160, leashRange: 540, idleMinMs: 2200, idleMaxMs: 6500 },
     evasion: 0.25,
-    dotEffect: { debuffId: 'lurker-venom', label: 'Lurker Venom', damagePerStack: 14, maxStacks: 5, tickIntervalMs: 1000, durationMs: 4500 },
+    dotEffect: { debuffId: 'lurker-venom', label: 'Lurker Venom', damagePerStack: 6, maxStacks: 5, tickIntervalMs: 1000, durationMs: 4500 },
   }],
 
 

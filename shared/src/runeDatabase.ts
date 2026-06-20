@@ -13,6 +13,7 @@ export type RuneChannel =
   | "MOVEMENT"
   | "TARGETING"
   | "OOC_MAINTENANCE"
+  | "RESOURCE_MAINTENANCE"
   | "GLOBAL_STRATEGY"
   | "CONTROL";
 
@@ -73,6 +74,7 @@ export const RUNE_CHANNELS: RuneChannel[] = [
   "MOVEMENT",
   "TARGETING",
   "OOC_MAINTENANCE",
+  "RESOURCE_MAINTENANCE",
   "GLOBAL_STRATEGY",
   "CONTROL",
 ];
@@ -293,7 +295,7 @@ export const ACTION_DATABASE = new Map<string, ActionDef>([
       blurb: "Out of combat, pause to refill reload-class clips.",
       cost: 1,
       tier: 1,
-      channel: "OOC_MAINTENANCE",
+      channel: "RESOURCE_MAINTENANCE",
       allowedConditionIds: RECOVERY_CONDITIONS,
       requiredArchetype: "reload",
     },
@@ -373,12 +375,15 @@ export const DEFAULT_RUNE_LOADOUT: EquippedRule[] = [
 ];
 
 export const STARTER_RUNE_IDS: string[] = Array.from(
-  new Set(
-    DEFAULT_RUNE_LOADOUT.flatMap((rule) => [
-      rule.conditionId,
-      rule.actionId,
-    ]),
-  ),
+  new Set([
+    ...DEFAULT_RUNE_LOADOUT.flatMap((rule) => [rule.conditionId, rule.actionId]),
+    // Party runes and basic targeting are available from the start
+    "in-party",
+    "lead-the-way",
+    "follow-and-assist",
+    "taunt-current-target",
+    "focus-closest",
+  ]),
 );
 
 export function isRuneFragmentKnown(id: string): boolean {
@@ -436,6 +441,8 @@ export function runeChannelLabel(channel: RuneChannel): string {
       return "Targeting";
     case "OOC_MAINTENANCE":
       return "Recovery";
+    case "RESOURCE_MAINTENANCE":
+      return "Resource";
     case "GLOBAL_STRATEGY":
       return "Search";
     case "CONTROL":
@@ -662,6 +669,7 @@ export interface DerivedRuneConfig {
   movementAction: RuneActionId | null;
   targetingAction: RuneActionId | null;
   oocMaintenanceAction: RuneActionId | null;
+  resourceMaintenanceAction: RuneActionId | null;
   globalStrategyAction: RuneActionId | null;
   controlAction: RuneActionId | null;
   fleeRequested: boolean;
@@ -682,6 +690,7 @@ function emptyClaims(): ClaimedRuneChannels {
     MOVEMENT: null,
     TARGETING: null,
     OOC_MAINTENANCE: null,
+    RESOURCE_MAINTENANCE: null,
     GLOBAL_STRATEGY: null,
     CONTROL: null,
   };
@@ -717,6 +726,7 @@ export function deriveAutoConfigFromRunes(
     movementAction: null,
     targetingAction: null,
     oocMaintenanceAction: null,
+    resourceMaintenanceAction: null,
     globalStrategyAction: null,
     controlAction: null,
     fleeRequested: false,
@@ -738,6 +748,13 @@ export function deriveAutoConfigFromRunes(
     if (!condition || !action) continue;
     if (!isRuneRuleCompatibleForArchetype(raw, ctx.combatArchetype)) continue;
     if (
+      (action.channel === "OOC_MAINTENANCE" ||
+        action.channel === "RESOURCE_MAINTENANCE") &&
+      ctx.inCombat
+    ) {
+      continue;
+    }
+    if (
       action.channel === "GLOBAL_STRATEGY" &&
       action.id !== "lead-the-way" &&
       !(action.id === "auto-path-enemy" && condition.id === "always") &&
@@ -755,6 +772,8 @@ export function deriveAutoConfigFromRunes(
   derived.movementAction = claimed.MOVEMENT?.action.id ?? null;
   derived.targetingAction = claimed.TARGETING?.action.id ?? null;
   derived.oocMaintenanceAction = claimed.OOC_MAINTENANCE?.action.id ?? null;
+  derived.resourceMaintenanceAction =
+    claimed.RESOURCE_MAINTENANCE?.action.id ?? null;
   derived.globalStrategyAction = claimed.GLOBAL_STRATEGY?.action.id ?? null;
   derived.controlAction = claimed.CONTROL?.action.id ?? null;
 
@@ -798,7 +817,7 @@ export function deriveAutoConfigFromRunes(
   if (derived.oocMaintenanceAction === "wait-for-regen") {
     derived.waitForRegen = true;
   }
-  if (derived.oocMaintenanceAction === "tactical-reload") {
+  if (derived.resourceMaintenanceAction === "tactical-reload") {
     derived.tacticalReload = true;
   }
   if (derived.oocMaintenanceAction === "wait-for-execution") {

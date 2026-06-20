@@ -83,10 +83,6 @@ export function attachPlayerEntity(
       ...player.usesSkills,
       passives: {},
     },
-    showsSacred: {
-      sacredBuffActive: false,
-      sacredBuffPct: 0,
-    },
   };
   entity.hasHitbox = resolvePlayerHitbox(entity);
   world.ecs.add(entity);

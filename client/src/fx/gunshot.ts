@@ -52,7 +52,7 @@ export function fxDuelistShot(scene: GameScene, fromX: number, fromY: number, to
  * shot, so the alternating attack/on-hit rhythm reads at a glance.
  */
 export function fxAltShot(scene: GameScene, fromX: number, fromY: number, toX: number, toY: number): void {
-  const core = 0xeaffff;   // near-white cyan core
+  const core = 0xf8fc03;   // yellow core
   const blue = 0x3aa0ff;   // electric blue body
 
   const g = scene.add.graphics().setDepth(DEPTH.FX);

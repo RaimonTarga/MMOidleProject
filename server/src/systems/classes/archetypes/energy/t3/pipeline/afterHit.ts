@@ -114,7 +114,8 @@ export function registerAfterHit(): void {
     if (hasPassive(player, "energy.singularity-execute")) {
       // Max energy is set in recalc (resolveEnergyMax) — gain just accelerates with fill.
       const fillPct = energyPercent(energy);
-      const scaledGain = Math.round(baseGain * (1 + fillPct * SE_ACCEL_SCALE));
+      const accelScale = Math.max(0, passives["energy.singularity-gain-accel-scale"] ?? SE_ACCEL_SCALE);
+      const scaledGain = Math.round(baseGain * (1 + fillPct * accelScale));
       energy.energy = Math.min(energy.energy + scaledGain, energy.energyMax);
       if (energy.energy >= energy.energyMax) {
         energy.dischargeEnergy = energy.energyMax; // captured for discharge scaling
@@ -154,7 +155,9 @@ export function registerAfterHit(): void {
 
     // Binary Cycle: Charge State gains energy SLOWLY, Discharge State gains FAST.
     if (hasPassive(player, "energy.binary-cycle")) {
-      const gain = Math.round(baseGain * (energy.binaryDischargeState ? BINARY_DISCHARGE_GAIN_MULT : BINARY_CHARGE_GAIN_MULT));
+      const chargeGainMult = Math.max(0, passives["energy.binary-charge-gain-mult"] ?? BINARY_CHARGE_GAIN_MULT);
+      const dischargeGainMult = Math.max(0, passives["energy.binary-discharge-gain-mult"] ?? BINARY_DISCHARGE_GAIN_MULT);
+      const gain = Math.round(baseGain * (energy.binaryDischargeState ? dischargeGainMult : chargeGainMult));
       energy.energy = Math.min(energy.energy + gain, energy.energyMax);
       if (energy.energy >= energy.energyMax) {
         energy.dischargeEnergy = energy.energyMax;
@@ -168,7 +171,8 @@ export function registerAfterHit(): void {
     // Critical Mass: resets the no-damage gap and gains energy faster per stack.
     if (hasPassive(player, "energy.critical-mass")) {
       energy.criticalMassGapMs = 0;
-      const gain = Math.round(baseGain * (1 + energy.criticalMassStacks * CRITICAL_MASS_GAIN_PER_STACK));
+      const gainPerStack = Math.max(0, passives["energy.critical-mass-gain-per-stack"] ?? CRITICAL_MASS_GAIN_PER_STACK);
+      const gain = Math.round(baseGain * (1 + energy.criticalMassStacks * gainPerStack));
       energy.energy = Math.min(energy.energy + gain, energy.energyMax);
       if (energy.energy >= energy.energyMax) {
         energy.dischargeEnergy = energy.energyMax;

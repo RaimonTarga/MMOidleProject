@@ -36,7 +36,7 @@ export const caveMonsterEntries = [
   ['cave-lurker', {
     id: 'cave-lurker', name: 'Cave Lurker', color: 0x664466,
     // The fast elite of the pair — quick, armored a little, relentless.
-    stats: { hp: 200, attack: 16, plating: 4, damageReduction: 0.05, speed: 60, attackRange: 12, attackCooldown: 1400, pullRange: 220 },
+    stats: { hp: 250, attack: 16, plating: 4, damageReduction: 0.05, speed: 60, attackRange: 12, attackCooldown: 1400, pullRange: 220 },
     behavior: 'melee', attackStyle: 'impact', biome: 'cave',
     rewards: { essence: 10, essenceType: 'red', level: 1, biomeXp: 70 },
     ai: { wanderRadius: 200, leashRange: 560, idleMinMs: 2000, idleMaxMs: 6000 },
@@ -46,7 +46,7 @@ export const caveMonsterEntries = [
     id: 'cave-brute', name: 'Cave Brute', color: 0x443344,
     // The bruiser elite — a cap-tripping slam, slow, charges to connect, and
     // armored enough that fast weapons don't trivially shred it.
-    stats: { hp: 350, attack: 40, plating: 2, damageReduction: 0.10, speed: 18, attackRange: 12, attackCooldown: 3800, pullRange: 145 },
+    stats: { hp: 400, attack: 40, plating: 2, damageReduction: 0.10, speed: 18, attackRange: 12, attackCooldown: 3800, pullRange: 145 },
     behavior: 'melee', attackStyle: 'impact', biome: 'cave',
     rewards: { essence: 13, essenceType: 'red', level: 1, biomeXp: 90 },
     ai: { wanderRadius: 130, leashRange: 460, idleMinMs: 3000, idleMaxMs: 8000 },
@@ -57,7 +57,7 @@ export const caveMonsterEntries = [
   ['giant-spider', {
     id: 'giant-spider', name: 'Giant Spider', color: 0x992266,
     // Fast ambush hunter; DR hide + evasion make it slippery, plus a little venom.
-    stats: { hp: 360, attack: 22, plating: 0, damageReduction: 0.08, speed: 72, attackRange: 12, attackCooldown: 1800, pullRange: 220 },
+    stats: { hp: 460, attack: 22, plating: 0, damageReduction: 0.08, speed: 72, attackRange: 12, attackCooldown: 1800, pullRange: 220 },
     behavior: 'melee', attackStyle: 'poison', biome: 'cave',
     rewards: { essence: 15, essenceType: 'red', level: 1, biomeXp: 85 },
     ai: { wanderRadius: 260, leashRange: 680, idleMinMs: 800, idleMaxMs: 3200 },
@@ -69,7 +69,7 @@ export const caveMonsterEntries = [
     id: 'cave-troll', name: 'Cave Troll', color: 0x334433,
     // Colossal slow bruiser; cap-tripping slam, charges to close, heavy DR + plating.
     // The elite where slow/piercing weapons pay off.
-    stats: { hp: 640, attack: 65, plating: 4, damageReduction: 0.15, speed: 15, attackRange: 15, attackCooldown: 3600, pullRange: 150 },
+    stats: { hp: 740, attack: 65, plating: 4, damageReduction: 0.15, speed: 15, attackRange: 15, attackCooldown: 3600, pullRange: 150 },
     behavior: 'melee', attackStyle: 'impact', biome: 'cave',
     rewards: { essence: 23, essenceType: 'red', level: 1, biomeXp: 145 },
     ai: { wanderRadius: 130, leashRange: 470, idleMinMs: 3000, idleMaxMs: 8500 },
@@ -79,7 +79,7 @@ export const caveMonsterEntries = [
   ['cave-gargoyle', {
     id: 'cave-gargoyle', name: 'Cave Gargoyle', color: 0x554455,
     // Ranged elite — hurls stalactites from its perch; armored and patient.
-    stats: { hp: 430, attack: 32, plating: 3, damageReduction: 0.10, speed: 22, attackRange: 200, attackCooldown: 3200, pullRange: 185 },
+    stats: { hp: 530, attack: 32, plating: 3, damageReduction: 0.10, speed: 22, attackRange: 200, attackCooldown: 3200, pullRange: 185 },
     behavior: 'melee', attackStyle: 'gunshot', isRanged: true, biome: 'cave',
     rewards: { essence: 18, essenceType: 'red', level: 1, biomeXp: 100 },
     ai: { wanderRadius: 130, leashRange: 460, idleMinMs: 2500, idleMaxMs: 7000 },
@@ -93,7 +93,7 @@ export const caveMonsterEntries = [
     id: 'deep-spider', name: 'Deep Spider', color: 0x992266,
     // Fast dodgy elite: high speed catches kiters (anti-Far), evasion whiffs many-hit
     // weapons, consistent medium hits = %DR's home. Light venom.
-    stats: { hp: 800, attack: 42, plating: 0, damageReduction: 0.08, speed: 70, attackRange: 12, attackCooldown: 1500, pullRange: 220 },
+    stats: { hp: 1000, attack: 42, plating: 0, damageReduction: 0.08, speed: 70, attackRange: 12, attackCooldown: 1500, pullRange: 220 },
     behavior: 'melee', attackStyle: 'poison', biome: 'cave',
     rewards: { essence: 55, essenceType: 'red', level: 3, biomeXp: 330 },
     ai: { wanderRadius: 260, leashRange: 680, idleMinMs: 800, idleMaxMs: 3200 },
@@ -105,7 +105,7 @@ export const caveMonsterEntries = [
     id: 'cavern-troll', name: 'Cavern Troll', color: 0x334433,
     // The elite ceiling: armored cap-tripping bruiser, charges to connect. Heavy
     // DR + plating means slow/piercing weapons earn their keep. Anti-Far.
-    stats: { hp: 1400, attack: 88, plating: 4, damageReduction: 0.15, speed: 14, attackRange: 15, attackCooldown: 3600, pullRange: 150 },
+    stats: { hp: 1600, attack: 88, plating: 4, damageReduction: 0.15, speed: 14, attackRange: 15, attackCooldown: 3600, pullRange: 150 },
     behavior: 'melee', attackStyle: 'impact', biome: 'cave',
     rewards: { essence: 83, essenceType: 'red', level: 3, biomeXp: 500 },
     ai: { wanderRadius: 120, leashRange: 460, idleMinMs: 3000, idleMaxMs: 8500 },
@@ -116,7 +116,7 @@ export const caveMonsterEntries = [
     id: 'crystal-gargoyle', name: 'Crystal Gargoyle', color: 0x554455,
     // Armored ranged sentry — perched, patient, hurls shards. Stationary ranged
     // (NOT a kiter: it holds its perch), armored so it isn't trivially bursted.
-    stats: { hp: 950, attack: 60, plating: 3, damageReduction: 0.10, speed: 20, attackRange: 210, attackCooldown: 3200, pullRange: 185 },
+    stats: { hp: 1150, attack: 60, plating: 3, damageReduction: 0.10, speed: 20, attackRange: 210, attackCooldown: 3200, pullRange: 185 },
     behavior: 'melee', attackStyle: 'gunshot', isRanged: true, biome: 'cave',
     rewards: { essence: 60, essenceType: 'red', level: 3, biomeXp: 360 },
     ai: { wanderRadius: 120, leashRange: 450, idleMinMs: 2500, idleMaxMs: 7000 },

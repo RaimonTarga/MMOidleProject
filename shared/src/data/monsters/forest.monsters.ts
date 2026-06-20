@@ -32,7 +32,7 @@ export const forestMonsterEntries = [
   ['forest-slime', {
     id: 'forest-slime', name: 'Forest Slime', color: 0x55ff55,
     // Attacks faster than its plains cousin — frequency over force.
-    stats: { hp: 60, attack: 10, plating: 0, damageReduction: 0, speed: 54, attackRange: 12, attackCooldown: 1500, pullRange: 210 },
+    stats: { hp: 100, attack: 10, plating: 0, damageReduction: 0, speed: 54, attackRange: 12, attackCooldown: 1500, pullRange: 210 },
     behavior: 'melee', attackStyle: 'impact', biome: 'forest',
     rewards: { essence: 3, essenceType: 'green', level: 1, biomeXp: 18 },
     ai: { wanderRadius: 230, leashRange: 620, idleMinMs: 1200, idleMaxMs: 4000 },
@@ -41,7 +41,7 @@ export const forestMonsterEntries = [
   ['wolf', {
     id: 'wolf', name: 'Wolf', color: 0xaaaacc,
     // Fast baseline speed IS the anti-kite — no charge needed. Frequent light bites.
-    stats: { hp: 60, attack: 11, plating: 0, damageReduction: 0, speed: 82, attackRange: 12, attackCooldown: 1200, pullRange: 255 },
+    stats: { hp: 60, attack: 14, plating: 0, damageReduction: 0, speed: 82, attackRange: 12, attackCooldown: 1200, pullRange: 255 },
     behavior: 'melee', attackStyle: 'slash', biome: 'forest',
     rewards: { essence: 4, essenceType: 'green', level: 1, biomeXp: 25 },
     ai: { wanderRadius: 290, leashRange: 720, idleMinMs: 700, idleMaxMs: 2800 },
@@ -52,7 +52,7 @@ export const forestMonsterEntries = [
   ['ancient-wolf', {
     id: 'ancient-wolf', name: 'Ancient Wolf', color: 0x8888ff,
     // Explosive fast charger; closes instantly then bites in a blur.
-    stats: { hp: 165, attack: 20, plating: 0, damageReduction: 0, speed: 96, attackRange: 12, attackCooldown: 1100, pullRange: 280 },
+    stats: { hp: 225, attack: 28, plating: 0, damageReduction: 0, speed: 96, attackRange: 12, attackCooldown: 1100, pullRange: 280 },
     behavior: 'melee', attackStyle: 'slash', biome: 'forest',
     rewards: { essence: 8, essenceType: 'green', level: 1, biomeXp: 45 },
     ai: { wanderRadius: 300, leashRange: 750, idleMinMs: 600, idleMaxMs: 2500 },
@@ -64,7 +64,7 @@ export const forestMonsterEntries = [
     // SHAPE CHANGED: no longer a DR tank (off-identity for forest). Now a slow-
     // moving but VERY fast-ATTACKING sentinel — frequency is the threat evasion
     // answers; squishy (no DR) so it still dies to burst. TODO rename.
-    stats: { hp: 150, attack: 15, plating: 0, damageReduction: 0, speed: 22, attackRange: 15, attackCooldown: 900, pullRange: 150 },
+    stats: { hp: 200, attack: 26, plating: 0, damageReduction: 0, speed: 22, attackRange: 15, attackCooldown: 900, pullRange: 150 },
     behavior: 'melee', attackStyle: 'impact', biome: 'forest',
     rewards: { essence: 10, essenceType: 'green', level: 1, biomeXp: 58 },
     ai: { wanderRadius: 120, leashRange: 480, idleMinMs: 2500, idleMaxMs: 7000 },
@@ -73,7 +73,7 @@ export const forestMonsterEntries = [
   ['canopy-sprite', {
     id: 'canopy-sprite', name: 'Canopy Sprite', color: 0x88ff44,
     // Ranged thorn-volleys; frequent, light, from the treetops.
-    stats: { hp: 140, attack: 18, plating: 0, damageReduction: 0, speed: 48, attackRange: 190, attackCooldown: 2400, pullRange: 250 },
+    stats: { hp: 190, attack: 26, plating: 0, damageReduction: 0, speed: 48, attackRange: 190, attackCooldown: 2400, pullRange: 250 },
     behavior: 'melee', attackStyle: 'gunshot', isRanged: true, biome: 'forest',
     rewards: { essence: 9, essenceType: 'green', level: 1, biomeXp: 50 },
     ai: { wanderRadius: 240, leashRange: 650, idleMinMs: 1200, idleMaxMs: 3500 },

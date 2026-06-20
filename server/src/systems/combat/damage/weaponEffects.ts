@@ -6,23 +6,14 @@ import {
   computeReservoirDotTick,
   getCounter,
   addCounter,
-  getFlag,
-  setFlag,
-  isCooldownActive,
-  setCooldown,
-  getCooldown,
   getString,
   setString,
-  SACRED_FAMILY,
   BURN_FAMILY,
   weaponDotProfileForWeapon,
-  SACRED_DMG_MULT,
-  SACRED_APS_MULT,
   BRITTLE_EFFECT_ID,
   BRITTLE_DURATION_MS,
   DR_SHATTER_EFFECT_ID,
   VOID_CORRUPTION_EFFECT_ID,
-  CORRUPTION_SLOW_PER_STACK,
   type DamageElement,
 } from "@mmo-idle/shared";
 import { grantMonsterRewards } from "../../player/progression/rewards";
@@ -48,13 +39,6 @@ import { emitPlayerMonsterOnKill } from "./killHooks";
 
 const HITS_RECEIVED_KEY = "hitsReceived";
 const FIRST_STRIKE_EFFECT = "first-strike";
-
-const SACRED_STARTED = "sacredStarted";
-const SACRED_BUFF_FLAG = "sacredBuffActive";
-const SACRED_READY = "sacredReady";
-const SACRED_CD_KEY = "sacredCd";
-const SACRED_BUFF_TIMER = "sacredBufTimer";
-const SACRED_ORIG_CD = "sacredOrigCd";
 
 const BURN_EFFECT_IDS = BURN_FAMILY
   .filter((b) => b.effectId !== VOID_CORRUPTION_EFFECT_ID)
@@ -199,44 +183,6 @@ export function initWeaponEffects(): void {
     });
   });
 
-  // ── Sacred family: 3× damage multiplier during the buff window ───────────────
-  // Buff only procs (activates) when the player makes an attack, even if the
-  // cooldown has already expired — prevents it from firing outside of combat.
-  registerCombatListener("onHit", (ctx, _world) => {
-    if (ctx.attackerType !== "player") return;
-    const player = ctx.attacker;
-    const timing = player.holdsInventory.equipment.weapon
-      ? SACRED_FAMILY[player.holdsInventory.equipment.weapon]
-      : undefined;
-    if (!timing) return;
-
-    const state = player.tracksCombat;
-
-    // If armed and ready, proc on this hit (triggering attack also gets the bonus).
-    if (getFlag(state, SACRED_READY) && !getFlag(state, SACRED_BUFF_FLAG)) {
-      setString(
-        state,
-        SACRED_ORIG_CD,
-        String(player.performsAttack.attackCooldown),
-      );
-      player.performsAttack.attackCooldown = Math.max(
-        200,
-        Math.round(player.performsAttack.attackCooldown / SACRED_APS_MULT),
-      );
-      setFlag(state, SACRED_BUFF_FLAG, true);
-      setFlag(state, SACRED_READY, false);
-      setCooldown(state, SACRED_BUFF_TIMER, timing.buffMs);
-      console.log(
-        `[Sacred] ${player.isPlayer.id}: BURST activated (cd=${player.performsAttack.attackCooldown}ms)`,
-      );
-    }
-
-    if (!getFlag(state, SACRED_BUFF_FLAG)) return;
-
-    ctx.damage = Math.round(ctx.damage * SACRED_DMG_MULT);
-    ctx.metadata["sacredBurst"] = true;
-  });
-
   // ── Generic weapon reservoir DoTs: convert remaining direct damage into a pool.
   registerCombatListener("onHit", (ctx, world) => {
     if (ctx.attackerType !== "player") return;
@@ -293,7 +239,6 @@ export function initWeaponEffects(): void {
 // ── Per-tick updates ──────────────────────────────────────────────────────────
 
 export function updateWeaponEffects(world: World, dt: number): void {
-  updateSacredCrossBuff(world);
   updateFlurryBuff(world);
   updateBurnEffects(world, dt);
   updateCorruptionEffects(world, dt);
@@ -335,69 +280,6 @@ function updateFlurryBuff(world: World): void {
       player.performsAttack.attackCooldown = next;
       markSliceDirty(world, player, "performsAttack");
     }
-  }
-}
-
-// ── Sacred family buff timer ───────────────────────────────────────────────────
-
-function updateSacredCrossBuff(world: World): void {
-  for (const player of world.livePlayers) {
-    const state = player.tracksCombat;
-
-    const timing = player.holdsInventory.equipment.weapon
-      ? SACRED_FAMILY[player.holdsInventory.equipment.weapon]
-      : undefined;
-
-    if (!timing) {
-      // Weapon not in sacred family — clean up if buff was active (restore cooldown)
-      if (getFlag(state, SACRED_BUFF_FLAG)) {
-        const origCd = Number(getString(state, SACRED_ORIG_CD));
-        if (origCd > 0) player.performsAttack.attackCooldown = origCd;
-        setFlag(state, SACRED_BUFF_FLAG, false);
-        setCooldown(state, SACRED_CD_KEY, 0);
-        setCooldown(state, SACRED_BUFF_TIMER, 0);
-      }
-      setFlag(state, SACRED_READY, false);
-      if (getFlag(state, SACRED_STARTED)) setFlag(state, SACRED_STARTED, false);
-      player.showsSacred.sacredBuffActive = false;
-      player.showsSacred.sacredBuffPct = 0;
-      continue;
-    }
-
-    const buffActive = getFlag(state, SACRED_BUFF_FLAG);
-
-    if (!getFlag(state, SACRED_STARTED)) {
-      // First tick with this weapon — arm the initial cooldown
-      setFlag(state, SACRED_STARTED, true);
-      setCooldown(state, SACRED_CD_KEY, timing.cdMs);
-    } else if (buffActive) {
-      if (!isCooldownActive(state, SACRED_BUFF_TIMER)) {
-        // Buff window just closed — restore cooldown, arm next cycle
-        const origCd = Number(getString(state, SACRED_ORIG_CD));
-        if (origCd > 0) player.performsAttack.attackCooldown = origCd;
-        setFlag(state, SACRED_BUFF_FLAG, false);
-        setCooldown(state, SACRED_CD_KEY, timing.cdMs);
-        console.log(
-          `[Sacred] ${player.isPlayer.id}: buff ended, next in ${timing.cdMs}ms`,
-        );
-      }
-    } else if (
-      !isCooldownActive(state, SACRED_CD_KEY) &&
-      !getFlag(state, SACRED_READY)
-    ) {
-      // Cooldown expired — arm the buff; it procs on the next attack hit.
-      setFlag(state, SACRED_READY, true);
-    }
-
-    // Mirror to the entity slice for HUD projection.
-    const isBuff = getFlag(state, SACRED_BUFF_FLAG);
-    player.showsSacred.sacredBuffActive = isBuff;
-    player.showsSacred.sacredBuffPct = isBuff
-      ? 100
-      : Math.round(
-          Math.max(0, 1 - getCooldown(state, SACRED_CD_KEY) / timing.cdMs) *
-            100,
-        );
   }
 }
 
@@ -542,21 +424,6 @@ function updateBurnEffects(world: World, dt: number): void {
 // ── Buff descriptors ──────────────────────────────────────────────────────────
 
 export const WEAPON_BUFFS = [
-  defineBuff(
-    "sacred-burst",
-    ({ player }) =>
-      player.showsSacred.sacredBuffActive
-        ? {
-            id: "sacred-burst",
-            label: "Holy",
-            stacks: 1,
-            durationPct: player.showsSacred.sacredBuffPct,
-            color: "#ffdd44",
-            logDetail: `+${Math.round((SACRED_DMG_MULT - 1) * 100)}% damage, +${Math.round((SACRED_APS_MULT - 1) * 100)}% attack speed`,
-          }
-        : null,
-    { label: "Holy", color: "#ffdd44", category: "weapon", shape: "square" },
-  ),
   defineBuff(
     "flurry",
     ({ player }) => {

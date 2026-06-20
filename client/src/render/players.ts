@@ -31,7 +31,11 @@ import {
 import { spawnAttackEffect } from "./combatFx";
 import { getDotPath } from "../fx/dot";
 import { spawnDamageNumber } from "../fx/particles";
-import { resolvePlayerDamageStyle } from "./damageNumberStyle";
+import {
+  resolvePlayerDamageStyle,
+  SHIELD_DAMAGE_COLOR,
+  SHIELD_DAMAGE_SYMBOL,
+} from "./damageNumberStyle";
 import { flashShiftTint, spawnFlashAttackAfterimage } from "./movementEffects";
 import { auraTint } from "../fx/aura";
 
@@ -290,12 +294,13 @@ export function upsertPlayer(
 
   updateLabelForLivePlayer(state, player.id, player, scene);
 
+  const damageHint = state.damageStyleHints.get(player.id);
   if (player.hp < prevHp) {
     const sprite = state.sprite.get(player.id);
     const meta = state.spriteMeta.get(player.id);
     if (sprite && meta) {
       const { color, style } = resolvePlayerDamageStyle(
-        state.damageStyleHints.get(player.id),
+        damageHint,
         isOwn ? "#ff4444" : "#ff8844",
       );
       spawnDamageNumber(
@@ -305,6 +310,23 @@ export function upsertPlayer(
         Math.round(prevHp - player.hp),
         color,
         style,
+      );
+    }
+  }
+
+  // Shield-absorbed damage renders as a separate blue number, independent of the
+  // HP delta — so a fully absorbed incoming hit (no HP loss) still shows feedback.
+  if (damageHint?.shieldAbsorbed && damageHint.shieldAbsorbed > 0) {
+    const sprite = state.sprite.get(player.id);
+    const meta = state.spriteMeta.get(player.id);
+    if (sprite && meta) {
+      spawnDamageNumber(
+        scene,
+        { x: sprite.x, y: sprite.y },
+        meta.barOffsetY,
+        Math.round(damageHint.shieldAbsorbed),
+        SHIELD_DAMAGE_COLOR,
+        { symbol: SHIELD_DAMAGE_SYMBOL },
       );
     }
   }

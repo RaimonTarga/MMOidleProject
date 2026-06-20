@@ -3,7 +3,8 @@ export const CADENCE_SPEED_PER_STACK_MS = 80;
 export const CADENCE_MAX_SPEED_STACKS   = 5;
 
 // Rising Tide (cadence-balanced-t3-b)
-export const MOMENTUM_ECHO_HITS  = 5;
+// Echo hit count is authored on the node (cadence.momentum-echo); only the bonus
+// is a fallback default here (cadence.momentum-echo-bonus overrides it).
 export const MOMENTUM_ECHO_BONUS = 0.5;
 
 // Verdict (cadence-balanced-t3-c) — each finisher banks execution power into a

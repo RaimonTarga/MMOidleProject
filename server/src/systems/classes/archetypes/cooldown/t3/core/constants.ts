@@ -23,6 +23,7 @@ export const TEMPORAL_EXTEND_MS = 1_000; // buff duration added per normal attac
 
 // Battery (cooldown-balanced-T3-b)
 export const BATTERY_ATK_PER_STACK = 2; // flat attack damage added per stack
+export const BATTERY_STACK_INTERVAL_MS = 1_000;
 
 // Alignment (cooldown-balanced-T3-c)
 export const ALIGNMENT_BUFF_MS      = 2_000;
@@ -34,11 +35,10 @@ export const ENTROPY_DURATION_MS = 8_000;
 export const ENTROPY_TICK_MS     = 1_000;
 
 // Singular Extraction (cooldown-heavy-T3-b)
+// Fallback default; live value authored on the node (cooldown.singular-no-target-ms).
+// The node also applies the CD (-4000ms) and the +1.5× empowered-mult delta that
+// lands the heavy frame (9000ms / 3.5×) at 4000ms / 5.0×.
 export const SINGULAR_NO_TARGET_MS = 4_000; // ms without a target before CD resets
-// Design targets (absolute): CD 4000ms, multiplier 5.0. The node applies these as
-// deltas on the heavy frame (9000ms / 3.0×): -5000ms and +2.0×.
-export const SINGULAR_EXTRACTION_CD_MS = 4_000;
-export const SINGULAR_EXTRACTION_MULT  = 5.0;
 
 // ── T4 specs (placeholder constants — replaced at the balance pass) ───────────
 

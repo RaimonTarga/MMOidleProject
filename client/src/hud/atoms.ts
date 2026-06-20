@@ -154,9 +154,6 @@ export const summonSlotCountAtom = atom<number>(0);
 export const summonRespawnMaxMsAtom = atom<number>(0);
 export const summonSlotsAtom = atom<SummonSlotView[]>([]);
 
-export const sacredBuffPctAtom = atom<number>(0);
-export const sacredBuffActiveAtom = atom<boolean>(false);
-
 export const isChannelingAtom = atom<boolean>(false);
 export const channelingPctAtom = atom<number>(0);
 export const cannonChargePctAtom = atom<number>(0);
@@ -234,6 +231,10 @@ export const craftTabAtom = atom<'biome' | 'forge' | 'upgrade' | null>(null);
 export const questOpenAtom = atom<boolean>(false);
 export const settingsOpenAtom = atom<boolean>(false);
 export const debugPanelOpenAtom = atom<boolean>(false);
+/** Whether the bestiary detail overlay is open. */
+export const bestiaryOpenAtom = atom<boolean>(false);
+/** Which monster the bestiary detail overlay has selected (null = first/none). */
+export const bestiaryDetailIdAtom = atom<string | null>(null);
 export const mapHighlightNodesAtom = atom<string[]>([]);
 
 export interface GamepadStatus {
@@ -541,8 +542,6 @@ function resetPlayerAtoms(): void {
   store.set(laserOverheatedAtom, false);
   store.set(targetDotStacksAtom, 0);
   store.set(targetChillStacksAtom, 0);
-  store.set(sacredBuffPctAtom, 0);
-  store.set(sacredBuffActiveAtom, false);
   store.set(isChannelingAtom, false);
   store.set(channelingPctAtom, 0);
   store.set(skillPointsAtom, 0);
@@ -641,8 +640,6 @@ export function syncPlayerAtoms(player: PlayerView | null): void {
   setIfChanged(summonSlotCountAtom, player.summonsMinions);
   setIfChanged(summonRespawnMaxMsAtom, player.summonRespawnMaxMs);
   setIfSummonSlotsEqual(player.summonSlots);
-  setIfChanged(sacredBuffPctAtom, player.sacredBuffPct);
-  setIfChanged(sacredBuffActiveAtom, player.sacredBuffActive);
   setIfChanged(isChannelingAtom, player.isChanneling);
   setIfChanged(channelingPctAtom, player.channelingPct);
   setIfChanged(cannonChargePctAtom, player.cannonChargePct);

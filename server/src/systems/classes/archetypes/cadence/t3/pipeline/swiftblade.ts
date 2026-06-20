@@ -12,7 +12,8 @@ import { SWIFTBLADE_EFFECT } from '../core/constants';
  * The primary hit is dealt by the normal pipeline (its damage is finalized by the
  * time `afterHit` runs). Here we deal each EXTRA strike as its own damage instance
  * — separate damage number, own dual-slash FX — equal to that finalized per-hit
- * damage. We deliberately do NOT use applyPlayerProcDamage's kill handling: we
+ * damage scaled by `cadence.extra-trigger-damage-mult`. We deliberately do NOT
+ * use applyPlayerProcDamage's kill handling: we
  * just subtract HP and let combat.ts's own post-hit kill check resolve the death
  * exactly once (so rewards aren't double-granted).
  */
@@ -32,7 +33,11 @@ export function registerCadenceSwiftblade(): void {
     if (triggerCount <= 1) return;
 
     const target = ctx.defender;
-    const perStrike = ctx.damage;
+    const extraStrikeMult = Math.max(
+      0,
+      player.usesSkills.passives['cadence.extra-trigger-damage-mult'] ?? 1,
+    );
+    const perStrike = Math.max(0, Math.round(ctx.damage * extraStrikeMult));
     // Nothing to add if the finisher already killed the target, or it dealt no
     // direct damage (e.g. Hemorrhage converted it to a bleed).
     if (perStrike <= 0 || target.hasHealth.hp <= 0) return;

@@ -29,7 +29,8 @@ export function registerBeforeAttack(): void {
       if (empowered) {
         ctx.platingMult = 0; // execution ignores plating entirely
       } else if (entity.usesCooldown.ruptureWindowMs > 0) {
-        ctx.platingMult = Math.min(ctx.platingMult, RUPTURE_WINDOW_PLATING_MULT);
+        const platingMult = entity.usesSkills.passives['cooldown.rupture-window-plating-mult'] ?? RUPTURE_WINDOW_PLATING_MULT;
+        ctx.platingMult = Math.min(ctx.platingMult, platingMult);
         ctx.drPierce = Math.max(
           ctx.drPierce,
           entity.usesSkills.passives['cooldown.rupture-dr-pierce'] ?? RUPTURE_DR_PIERCE,

@@ -44,7 +44,6 @@ export const BUFF_IDS = [
   'reload-cover-fire',
   'reload-momentum',
   'reload-cannon',
-  'sacred-burst',
   'flurry',
   'debuff-slow',
   'debuff-root',

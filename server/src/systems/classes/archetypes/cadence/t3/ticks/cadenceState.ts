@@ -27,9 +27,10 @@ export function updateCadenceState(world: World, dt: number): void {
         cadence.rampageDecayMs = 0;
       } else {
         cadence.rampageDecayMs += dt;
+        const decayInterval = passives['cadence.rampage-decay-interval-ms'] ?? RAMPAGE_DECAY_INTERVAL_MS;
         let decayed = false;
-        while (cadence.rampageStacks > 0 && cadence.rampageDecayMs >= RAMPAGE_DECAY_INTERVAL_MS) {
-          cadence.rampageDecayMs -= RAMPAGE_DECAY_INTERVAL_MS;
+        while (cadence.rampageStacks > 0 && cadence.rampageDecayMs >= decayInterval) {
+          cadence.rampageDecayMs -= decayInterval;
           cadence.rampageStacks--;
           decayed = true;
         }

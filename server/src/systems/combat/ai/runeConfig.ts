@@ -1,6 +1,6 @@
 import {
   deriveAutoConfigFromRunes,
-  GAME_CONFIG,
+  getFlag,
   RUNE_NODE_ACQUIRE_RADIUS,
   setFlag,
   type RuneContext,
@@ -14,23 +14,12 @@ export const RUNE_FLEE_FLAG = "rune.flee";
 export const RUNE_KEEP_DISTANCE_FLAG = "rune.keepDistance";
 export const RUNE_WAIT_FOR_REGEN_FLAG = "rune.waitForRegen";
 export const RUNE_WAIT_FOR_EXECUTION_FLAG = "rune.waitForExecution";
+export const RUNE_TACTICAL_RELOAD_FLAG = "rune.tacticalReload";
 export const RUNE_FOLLOW_LEADER_FLAG = "rune.followLeader";
 export const RUNE_LEAD_THE_WAY_FLAG = "rune.leadTheWay";
 export const RUNE_TAUNT_CURRENT_TARGET_FLAG = "rune.tauntCurrentTarget";
 export const RUNE_LET_DOTS_FINISH_FLAG = "rune.letDotsFinish";
 export const RUNE_SPREAD_DOTS_FLAG = "rune.spreadDots";
-
-/**
- * "In combat" for rune evaluation: an active attack target, or recent
- * engagement within the combat-regen grace window. Matches the predicate used
- * by `isReloadPlayerInCombat` in autoTarget.ts so the derivation and the
- * steering both agree on combat state.
- */
-function isPlayerInCombat(player: PlayerEntity, now: number): boolean {
-  if (player.hasAttackTarget !== undefined) return true;
-  const last = player.tracksEngagement;
-  return last !== undefined && now - last < GAME_CONFIG.COMBAT_REGEN_DELAY;
-}
 
 function aggroCount(world: World, player: PlayerEntity): number {
   let count = 0;
@@ -53,14 +42,21 @@ function aggroCount(world: World, player: PlayerEntity): number {
  * overwriting any stale settings-tab values, and the flee / keep-distance flags
  * are written to the server-only combat-state bag.
  */
-export function updateRuneDerivedConfig(world: World, now: number): void {
+export function updateRuneDerivedConfig(world: World): void {
   for (const player of world.livePlayers) {
+    const currentAggroCount = aggroCount(world, player);
+    const attackTargetId = player.hasAttackTarget?.targetId;
     const ctx: RuneContext = {
       hpPct:
         player.hasHealth.hp / Math.max(1, player.hasHealth.maxHp),
-      inCombat: isPlayerInCombat(player, now),
+      // Rune "in combat" means an active fight, not the post-fight regen
+      // cooldown. Recovery actions can therefore stop scouting immediately
+      // while HP regeneration itself still observes COMBAT_REGEN_DELAY.
+      inCombat:
+        (attackTargetId !== undefined && world.hasMonster(attackTargetId)) ||
+        currentAggroCount > 0,
       inParty: player.inParty !== undefined,
-      aggroCount: aggroCount(world, player),
+      aggroCount: currentAggroCount,
       combatArchetype: player.usesSkills.combatArchetype,
     };
 
@@ -95,8 +91,28 @@ export function updateRuneDerivedConfig(world: World, now: number): void {
 
     setFlag(player.tracksCombat, RUNE_FLEE_FLAG, d.fleeRequested);
     setFlag(player.tracksCombat, RUNE_KEEP_DISTANCE_FLAG, d.orbit);
-    setFlag(player.tracksCombat, RUNE_WAIT_FOR_REGEN_FLAG, d.waitForRegen);
+    // "Recover First" latches to full HP. A threshold condition such as
+    // hp-below-25 stops being active the moment HP climbs back over 25%, but the
+    // rule should keep the player resting until full once recovery has started.
+    // Keep the flag set while out of combat, still below max HP, and the rule
+    // remains equipped — so "HP Below 25% -> Recover First" tops off instead of
+    // bailing at 26%. ("Out of Combat -> Recover First" already stays active
+    // out of combat, so this is a no-op for it.)
+    const belowFullHp = player.hasHealth.hp < player.hasHealth.maxHp;
+    const recoveringLatched =
+      getFlag(player.tracksCombat, RUNE_WAIT_FOR_REGEN_FLAG) &&
+      belowFullHp &&
+      !ctx.inCombat &&
+      player.tracksProgression.runesEquipped.some(
+        (rule) => rule.actionId === "wait-for-regen",
+      );
+    setFlag(
+      player.tracksCombat,
+      RUNE_WAIT_FOR_REGEN_FLAG,
+      (d.waitForRegen || recoveringLatched) && belowFullHp,
+    );
     setFlag(player.tracksCombat, RUNE_WAIT_FOR_EXECUTION_FLAG, d.waitForExecution);
+    setFlag(player.tracksCombat, RUNE_TACTICAL_RELOAD_FLAG, d.tacticalReload);
     setFlag(player.tracksCombat, RUNE_FOLLOW_LEADER_FLAG, d.followLeader);
     setFlag(player.tracksCombat, RUNE_LEAD_THE_WAY_FLAG, d.leadTheWay);
     setFlag(

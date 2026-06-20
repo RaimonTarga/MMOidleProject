@@ -35,7 +35,7 @@ export function registerReloadBalancedT3(): void {
     if ((passives['reload.death-mark'] ?? 0) > 0) {
       applyStatusEffect(monsterState, {
         id: DEATH_MARK_EFFECT_ID,
-        maxStacks: DEFAULT_DEATH_MARK_MAX,
+        maxStacks: Math.max(1, Math.round(passives['reload.death-mark-max'] ?? DEFAULT_DEATH_MARK_MAX)),
         refreshable: true,
         remainingMs: DEFAULT_DEATH_MARK_DURATION_MS,
         sourceId,

@@ -15,6 +15,13 @@ import { setAttackTarget } from "./targeting";
 const GATE_ORDER: NodeDirection[] = ["north", "south", "west", "east"];
 const FULL_HP_EPSILON = 0.01;
 
+/**
+ * Distance (px) from any node edge a recovering player must reach before it holds
+ * to heal. Parking inside the gate band (~20px) bounces the player back through
+ * the gate once the transition cooldown lapses, so it never heals or returns.
+ */
+const GATE_CLEAR_MARGIN = 120;
+
 export function isFleeing(player: PlayerEntity): boolean {
   return player.isFleeing !== undefined;
 }
@@ -78,12 +85,28 @@ export function stepFlee(world: World, player: PlayerEntity): void {
     }
 
     case "recover": {
+      // Healed up — head home regardless of where we settled. This check is
+      // FIRST (before the reposition below) so a player that reached full HP
+      // while still in a gate band, or that could not path to the interior,
+      // still advances to return instead of waiting at full HP forever.
+      if (isRecoveryComplete(world, player)) {
+        attachComponent(world, player, "isFleeing", {
+          ...state,
+          phase: "return",
+        });
+        return;
+      }
+
+      // Still hurt: step off the gate band into the node interior so we don't
+      // bounce back through the gate (or sit in edge combat) while regenerating.
+      if (!isClearOfGateBands(player)) {
+        const center = nodeCenter(player.hasPosition.nodeId);
+        if (center) {
+          setEntityMotion(world, player, center);
+          return;
+        }
+      }
       stopEntity(world, player);
-      if (!isRecoveryComplete(world, player)) return;
-      attachComponent(world, player, "isFleeing", {
-        ...state,
-        phase: "return",
-      });
       return;
     }
 
@@ -128,6 +151,35 @@ function nearestGateTarget(player: PlayerEntity) {
     }
   }
   return bestDir ? gateTargetForDirection(player.hasPosition.nodeId, bestDir) : null;
+}
+
+function nodeCenter(nodeId: string) {
+  const node = NODE_REGISTRY.get(nodeId);
+  if (!node) return null;
+  return { x: node.width / 2, y: node.height / 2 };
+}
+
+/**
+ * True once the player sits at least {@link GATE_CLEAR_MARGIN} from every node
+ * edge — clear of all gate bands, so a recovering player can hold without being
+ * yanked back through a gate. The margin is clamped on small nodes so the
+ * interior region is never empty (reaching center always satisfies it).
+ */
+function isClearOfGateBands(player: PlayerEntity): boolean {
+  const node = NODE_REGISTRY.get(player.hasPosition.nodeId);
+  if (!node) return true;
+  const margin = Math.min(
+    GATE_CLEAR_MARGIN,
+    node.width / 2 - 1,
+    node.height / 2 - 1,
+  );
+  const p = player.hasPosition.current;
+  return (
+    p.x >= margin &&
+    p.x <= node.width - margin &&
+    p.y >= margin &&
+    p.y <= node.height - margin
+  );
 }
 
 function isRecoveryComplete(world: World, player: PlayerEntity): boolean {

@@ -51,7 +51,6 @@ import type {
   PerformsAttack,
   ScriptsBoss,
   ScriptsUltimate,
-  ShowsSacred,
   SummonsMinions,
   TracksCombat,
   TracksProgression,
@@ -153,7 +152,6 @@ export interface ServerEntity {
   tracksProgression?: TracksProgression;
   holdsInventory?: HoldsInventory;
   usesSkills?: UsesSkills;
-  showsSacred?: ShowsSacred;
   summonsMinions?: SummonsMinions;
   inParty?: InParty;
   usesCadence?: UsesCadence;
@@ -234,7 +232,6 @@ export type PlayerEntity = With<
   | "tracksProgression"
   | "holdsInventory"
   | "usesSkills"
-  | "showsSacred"
 >;
 
 export function isPlayerEntity(e: ServerEntity): e is PlayerEntity {

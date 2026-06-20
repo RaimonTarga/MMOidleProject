@@ -149,14 +149,14 @@ export const bossMonsterEntriesT4 = [
   ['verdant-crown-predator', {
     id: 'verdant-crown-predator', name: 'Verdant-Crown Predator', color: 0x115522,
     isBoss: true,
-    stats: { hp: 8000, attack: 112, plating: 0, damageReduction: 0.04, speed: 76, attackRange: 20, attackCooldown: 1400, pullRange: 400 },
+    stats: { hp: 8000, attack: 90, plating: 0, damageReduction: 0.04, speed: 76, attackRange: 20, attackCooldown: 1400, pullRange: 400 },
     behavior: 'melee', attackStyle: 'slash', biome: 'jungle',
     rewards: { essence: 605, essenceType: 'green', level: 5, biomeXp: 908 },
     ai: { wanderRadius: 150, leashRange: 960, idleMinMs: 2000, idleMaxMs: 6000 },
     chargeOnAggro: { speedMult: 2.8, durationMs: 900 },
     evasion: 0.25,
     cadenceFinisher: { everyNAttacks: 5, multiplier: 2.1 },   // 235
-    dotEffect: { debuffId: 'verdant-crown-venom', label: 'Crown Venom', damagePerStack: 14, maxStacks: 5, tickIntervalMs: 1000, durationMs: 3500 },
+    dotEffect: { debuffId: 'verdant-crown-venom', label: 'Crown Venom', damagePerStack: 6, maxStacks: 5, tickIntervalMs: 1000, durationMs: 3500 },
     bossScript: {
       phases: [
         { hpPct: 0.5, actions: [
@@ -232,14 +232,14 @@ export const bossMonsterEntriesT4 = [
   ['caldera-sovereign', {
     id: 'caldera-sovereign', name: 'Caldera Sovereign', color: 0xee3300,
     isBoss: true,
-    stats: { hp: 9000, attack: 118, plating: 10, damageReduction: 0.05, speed: 24, attackRange: 20, attackCooldown: 2600, pullRange: 400 },
+    stats: { hp: 9000, attack: 100, plating: 10, damageReduction: 0.05, speed: 24, attackRange: 20, attackCooldown: 2600, pullRange: 400 },
     behavior: 'melee', attackStyle: 'fire', biome: 'volcanic',
     rewards: { essence: 625, essenceType: 'red', level: 5, biomeXp: 938 },
     ai: { wanderRadius: 120, leashRange: 960, idleMinMs: 2500, idleMaxMs: 7000 },
     chargeOnAggro: { speedMult: 2.5, durationMs: 1000 },
     aoeAttack: { radius: 130, damageMult: 0.6 },
     rampOnCombat: { stat: 'attack', perTickPct: 0.10, maxPct: 0.80, tickIntervalMs: 2000 },
-    dotEffect: { debuffId: 'caldera-burn', label: 'Caldera Burn', damagePerStack: 16, maxStacks: 5, tickIntervalMs: 1000, durationMs: 3000 },
+    dotEffect: { debuffId: 'caldera-burn', label: 'Caldera Burn', damagePerStack: 8, maxStacks: 5, tickIntervalMs: 1000, durationMs: 3000 },
     bossScript: {
       repeating: [
         // Eruption slam every 6s. At 1.3× early = 153; at full ramp = 213. Escalating threat.
@@ -279,7 +279,7 @@ export const bossMonsterEntriesT4 = [
     rewards: { essence: 615, essenceType: 'purple', level: 5, biomeXp: 923 },
     ai: { wanderRadius: 105, leashRange: 960, idleMinMs: 3000, idleMaxMs: 8000 },
     chargeOnAggro: { speedMult: 2.0, durationMs: 1100 },
-    dotEffect: { debuffId: 'charnel-crown-decay', label: 'Crown Decay', damagePerStack: 22, maxStacks: 6, tickIntervalMs: 1000, durationMs: 5000 },
+    dotEffect: { debuffId: 'charnel-crown-decay', label: 'Crown Decay', damagePerStack: 7, maxStacks: 6, tickIntervalMs: 1000, durationMs: 5000 },
     aoeAttack: { radius: 130, damageMult: 0.5 },
     bossScript: {
       phases: [

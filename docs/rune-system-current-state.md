@@ -29,6 +29,7 @@ Current channels:
 - `MOVEMENT`
 - `TARGETING`
 - `OOC_MAINTENANCE`
+- `RESOURCE_MAINTENANCE`
 - `GLOBAL_STRATEGY`
 - `CONTROL`
 
@@ -155,6 +156,7 @@ The derived rune result is translated into existing AI controls:
 - `orbit` and temporary `step-back` set `rune.keepDistance`
 - `wait-for-regen` sets `rune.waitForRegen`
 - `wait-for-execution` sets `rune.waitForExecution`
+- `tactical-reload` sets `rune.tacticalReload`
 - `follow-and-assist` sets `rune.followLeader` and `focusLeaderTarget`
 - `lead-the-way` sets `rune.leadTheWay` and uses the same local enemy-search
   behavior as `auto-path-enemy` while out of combat
@@ -168,12 +170,17 @@ The derived rune result is translated into existing AI controls:
 - `autoTraverse` is stamped false; overworld auto-traverse is no longer the rune
   strategy action
 
+Rune combat state means an active live attack target or active monster aggro. It
+does not include the post-combat regeneration cooldown, allowing recovery and
+resource-maintenance rules to stop scouting immediately after a fight while HP
+regeneration itself still observes `COMBAT_REGEN_DELAY`.
+
 ## AI Consumers
 
 `rune.flee` is read by `server/src/systems/combat/ai/targetPriority.ts`.
 
-`rune.keepDistance`, `rune.waitForRegen`, and `rune.waitForExecution` are read by
-`server/src/systems/combat/ai/autoTarget.ts`.
+`rune.keepDistance`, `rune.waitForRegen`, `rune.waitForExecution`, and
+`rune.tacticalReload` are read by `server/src/systems/combat/ai/autoTarget.ts`.
 
 `rune.followLeader` and `rune.leadTheWay` are read by party automation systems.
 The effective automation leader is the first party roster member with
@@ -184,11 +191,23 @@ combat and assist the leader's current target in combat.
 
 `auto-path-enemy` currently reuses the existing auto-targeting/approach loop with
 a very large acquire radius so the player can find valid enemies anywhere in the
-current node. It does not route to other nodes.
+current node. Plain `nearest` / `focus-closest` selection is a strict geometric
+distance ordering followed by the existing path-reachability check; threat,
+quest, cluster, and empowered-attack score bonuses cannot select a farther target,
+and the normal target-switch margin is not applied. Explicit targeting strategies
+such as `let-dots-finish`, `spread-dots`, and party leader focus continue to use
+the weighted scorer. It does not route to other nodes.
 
-`tactical-reload` currently claims the OOC maintenance channel. Reload classes
-already auto-start an out-of-combat reload when their clip is partially spent, so
-no separate reload command has been added yet.
+`tactical-reload` claims the resource-maintenance channel independently from
+recovery rules such as `wait-for-regen`. It is read by the reload archetype to
+start a partial-clip reload after active combat ends, accelerate that OOC reload,
+and pause autonomous movement until it completes. Without the rune, partial clips
+remain spent; empty-clip reloads remain core class behavior and progress at normal
+speed.
+
+`wait-for-regen` stops autonomous movement as soon as active targets and aggro are
+gone, including during the post-combat regen cooldown. Once regeneration is
+allowed, it keeps the player stopped until HP is full.
 
 `wait-for-execution` stops cooldown classes out of combat until their execution
 is armed (`hasEmpoweredAttack`), then normal targeting/search resumes.

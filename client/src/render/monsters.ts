@@ -9,7 +9,11 @@ import { ensureCdBar } from './cooldownBars';
 import { applyLunge } from './interpolation';
 import { spawnAttackEffect } from './combatFx';
 import { spawnDamageNumber } from '../fx/particles';
-import { resolveMonsterDamageStyle } from './damageNumberStyle';
+import {
+  resolveMonsterDamageStyle,
+  SHIELD_DAMAGE_COLOR,
+  SHIELD_DAMAGE_SYMBOL,
+} from './damageNumberStyle';
 import { applySpriteTint, resetSpriteTint } from './sprites';
 import { VOID_OVERLORD_DISPLAY } from '../sprites/voidOverlordSheet';
 import {
@@ -193,12 +197,11 @@ export function upsertMonster(
     });
   }
 
+  const hint = state.damageStyleHints.get(monster.id);
   if (monster.hp < prevHp) {
     const sprite = state.sprite.get(monster.id);
     if (sprite && meta) {
-      const { color, style } = resolveMonsterDamageStyle(
-        state.damageStyleHints.get(monster.id),
-      );
+      const { color, style } = resolveMonsterDamageStyle(hint);
       spawnDamageNumber(
         scene,
         { x: sprite.x, y: sprite.y },
@@ -206,6 +209,22 @@ export function upsertMonster(
         Math.round(prevHp - monster.hp),
         color,
         style,
+      );
+    }
+  }
+
+  // Shield-absorbed damage renders as a separate blue number, independent of the
+  // HP delta — so a fully absorbed hit (no HP loss) still shows feedback.
+  if (hint?.shieldAbsorbed && hint.shieldAbsorbed > 0) {
+    const sprite = state.sprite.get(monster.id);
+    if (sprite && meta) {
+      spawnDamageNumber(
+        scene,
+        { x: sprite.x, y: sprite.y },
+        meta.barOffsetY,
+        Math.round(hint.shieldAbsorbed),
+        SHIELD_DAMAGE_COLOR,
+        { symbol: SHIELD_DAMAGE_SYMBOL },
       );
     }
   }

@@ -39,7 +39,8 @@ export function resolveReloadTimeMs(player: PlayerEntity): number {
     const perStack =
       player.usesSkills.passives['reload.momentum-reload-reduction'] ??
       DEFAULT_MOMENTUM_RELOAD_REDUCTION;
-    const factor = Math.max(MOMENTUM_RELOAD_REDUCTION_FLOOR, 1 - stacks * perStack);
+    const floor = player.usesSkills.passives['reload.momentum-reload-reduction-floor'] ?? MOMENTUM_RELOAD_REDUCTION_FLOOR;
+    const factor = Math.max(floor, 1 - stacks * perStack);
     ms = Math.max(100, Math.round(ms * factor));
   }
 

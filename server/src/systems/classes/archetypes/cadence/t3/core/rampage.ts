@@ -19,8 +19,11 @@ export function recomputeRampageStats(player: PlayerEntity): void {
   if (!cadence) return;
   const passives = player.usesSkills.passives;
 
+  const thresholdFloor = Math.max(1, Math.round(passives['cadence.rampage-threshold-floor'] ?? RAMPAGE_THRESHOLD_FLOOR));
+  const apsPerStackMs  = passives['cadence.rampage-aps-per-stack-ms'] ?? RAMPAGE_APS_PER_STACK_MS;
+
   const baseThreshold = Math.max(
-    RAMPAGE_THRESHOLD_FLOOR,
+    thresholdFloor,
     Math.round(
       (passives['cadence.empowered-threshold'] ?? CADENCE_THRESHOLD_DEFAULT) +
         (passives['cadence.threshold-mod'] ?? 0),
@@ -28,12 +31,12 @@ export function recomputeRampageStats(player: PlayerEntity): void {
   );
 
   player.performsAttack.attackCooldown += cadence.rampageCdReduction;
-  const desired = cadence.rampageStacks * RAMPAGE_APS_PER_STACK_MS;
+  const desired = cadence.rampageStacks * apsPerStackMs;
   cadence.rampageCdReduction = Math.min(
     desired,
     Math.max(0, player.performsAttack.attackCooldown - ATTACK_COOLDOWN_FLOOR_MS),
   );
   player.performsAttack.attackCooldown -= cadence.rampageCdReduction;
 
-  cadence.threshold = Math.max(RAMPAGE_THRESHOLD_FLOOR, baseThreshold - cadence.rampageStacks);
+  cadence.threshold = Math.max(thresholdFloor, baseThreshold - cadence.rampageStacks);
 }

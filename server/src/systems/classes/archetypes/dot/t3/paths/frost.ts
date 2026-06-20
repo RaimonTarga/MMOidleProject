@@ -5,14 +5,15 @@ import {
 import { attachMarker, detachMarker } from '../../../../../../ecs/markerHelpers';
 import { applyKnockback } from '../../../../../combat/damage/knockback';
 import {
-  DOT_EFFECT_ID, CHILL_EFFECT, FROZEN_EFFECT, FREEZE_MS,
+  DOT_EFFECT_ID, CHILL_EFFECT, FROZEN_EFFECT, FREEZE_MS, FREEZE_BONUS,
   FROSTBITE_DOT_TAKEN_PER_STACK, FROSTBITE_EFFECT, FROSTBITE_MS,
 } from '../core/constants';
 import { hasPassive, markMonsterDot, clearMonsterDot } from '../core/helpers';
 import type { DotT3PathContext } from './_types';
 import {
   PERM_MAX_STACKS, PERM_MAX_HITS,
-  CHILL_MAX, CHILL_MS,
+  CHILL_MAX, CHILL_MS, CHILL_SPEED_MULT, CHILL_ATK_MULT,
+  FREEZE_SPEED_MULT, FREEZE_ATK_MULT,
   GLACIAL_FRACTURE_KNOCKBACK_PX, GLACIAL_FRACTURE_KNOCKBACK_MS,
   RIMESHATTER_DR_DEBUFF, RIMESHATTER_DR_MS,
   FROSTBITE_MAX_STACKS,
@@ -29,6 +30,9 @@ import {
 export function tryRimeshatter(pc: DotT3PathContext): boolean {
   if (!hasPassive(pc.player, 'dot.rimeshatter')) return false;
   const { ctx, world, player, monster, monsterState, maxStacks, convPct, dmgPerStack, durationMs, tickIntervalMs } = pc;
+  const passives = player.usesSkills.passives;
+  const drReduction = Math.max(0, passives['dot.rimeshatter-dr-reduction'] ?? RIMESHATTER_DR_DEBUFF);
+  const debuffMs = Math.max(100, Math.round(passives['dot.rimeshatter-duration-ms'] ?? RIMESHATTER_DR_MS));
 
   const stacks = getTotalStacks(monsterState, DOT_EFFECT_ID);
   if (stacks >= maxStacks) {
@@ -40,8 +44,8 @@ export function tryRimeshatter(pc: DotT3PathContext): boolean {
     // DR debuff via the brittle effect (read by effectiveDamageReductionAfterBrittle).
     applyStatusEffect(monsterState, {
       id: BRITTLE_EFFECT_ID, instanced: false, maxStacks: 1, refreshable: true,
-      remainingMs: RIMESHATTER_DR_MS, sourceId: player.isPlayer.id,
-      data: { platingPerStack: 0, drPerStack: RIMESHATTER_DR_DEBUFF },
+      remainingMs: debuffMs, sourceId: player.isPlayer.id,
+      data: { platingPerStack: 0, drPerStack: drReduction, totalMs: debuffMs },
     });
   } else {
     const eff = applyStatusEffect(monsterState, {
@@ -135,6 +139,15 @@ export function tryPermafrost(pc: DotT3PathContext): boolean {
 export function tryFreezingCold(pc: DotT3PathContext): boolean {
   if (!hasPassive(pc.player, 'dot.freezing-cold')) return false;
   const { ctx, world, player, monster, monsterState, maxStacks, dmgPerStack, durationMs, tickIntervalMs } = pc;
+  const passives = player.usesSkills.passives;
+  const chillMax = Math.max(1, Math.round(passives['dot.chill-max-stacks'] ?? CHILL_MAX));
+  const chillMs = Math.max(100, Math.round(passives['dot.chill-duration-ms'] ?? CHILL_MS));
+  const chillMoveSlow = Math.max(0, passives['dot.chill-move-slow-per-stack'] ?? CHILL_SPEED_MULT);
+  const chillAttackSlow = Math.max(0, passives['dot.chill-attack-slow-per-stack'] ?? CHILL_ATK_MULT);
+  const freezeMs = Math.max(100, Math.round(passives['dot.freeze-duration-ms'] ?? FREEZE_MS));
+  const freezeDamageTaken = Math.max(0, passives['dot.freeze-damage-taken-pct'] ?? FREEZE_BONUS);
+  const freezeMoveSlow = Math.max(0, passives['dot.freeze-move-slow-pct'] ?? FREEZE_SPEED_MULT);
+  const freezeAttackSlow = Math.max(0, passives['dot.freeze-attack-slow-pct'] ?? FREEZE_ATK_MULT);
 
   const fc = applyStatusEffect(monsterState, {
     id: DOT_EFFECT_ID, maxStacks, instanced: false,
@@ -147,18 +160,25 @@ export function tryFreezingCold(pc: DotT3PathContext): boolean {
 
   if (!hasStatusEffect(monsterState, FROZEN_EFFECT)) {
     applyStatusEffect(monsterState, {
-      id: CHILL_EFFECT, maxStacks: CHILL_MAX, instanced: false,
-      remainingMs: CHILL_MS, refreshable: true, sourceId: player.isPlayer.id, data: {},
+      id: CHILL_EFFECT, maxStacks: chillMax, instanced: false,
+      remainingMs: chillMs, refreshable: true, sourceId: player.isPlayer.id,
+      data: { moveSlowPerStack: chillMoveSlow, attackSlowPerStack: chillAttackSlow, totalMs: chillMs },
     });
     attachMarker(world, monster, 'hasChill');
-    if (getTotalStacks(monsterState, CHILL_EFFECT) >= CHILL_MAX) {
+    if (getTotalStacks(monsterState, CHILL_EFFECT) >= chillMax) {
       const chillEffect = getStatusEffect(monsterState, CHILL_EFFECT);
       const sid = chillEffect?.sourceId ?? player.isPlayer.id;
       removeStatusEffect(monsterState, CHILL_EFFECT);
       detachMarker(world, monster, 'hasChill');
       applyStatusEffect(monsterState, {
         id: FROZEN_EFFECT, instanced: false, maxStacks: 1,
-        remainingMs: FREEZE_MS, sourceId: sid, data: {},
+        remainingMs: freezeMs, sourceId: sid,
+        data: {
+          damageTakenPct: freezeDamageTaken,
+          moveSlowPct: freezeMoveSlow,
+          attackSlowPct: freezeAttackSlow,
+          totalMs: freezeMs,
+        },
       });
       attachMarker(world, monster, 'hasFrozen');
       console.log(`[FreezingCold] ${player.isPlayer.id}: ${monster.isMonster.id} frozen!`);

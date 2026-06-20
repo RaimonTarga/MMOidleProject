@@ -4,7 +4,7 @@ import { hasPassive, markMonsterDot, clearMonsterDot } from '../core/helpers';
 import type { DotT3PathContext } from './_types';
 import {
   PE_MAX_STACKS, PE_BURST_TICKS,
-  ED_MAX_STACKS, ED_BASE_STACKS,
+  ED_MAX_STACKS, ED_BASE_STACKS, ED_DIMINISH_RATE,
   IT_ATK_PER_STACK,
 } from './_constants';
 
@@ -27,17 +27,20 @@ export function applyInvigoratingToxins(pc: DotT3PathContext): void {
 export function tryPoisonExplosion(pc: DotT3PathContext): boolean {
   if (!hasPassive(pc.player, 'dot.poison-explosion')) return false;
   const { ctx, world, player, monster, monsterState, dmgPerStack, durationMs, tickIntervalMs } = pc;
+  const passives = player.usesSkills.passives;
+  const maxStacks = Math.max(1, Math.round(passives['dot.poison-explosion-max-stacks'] ?? PE_MAX_STACKS));
+  const burstTicks = Math.max(0, passives['dot.poison-explosion-burst-ticks'] ?? PE_BURST_TICKS);
 
   const pe = applyStatusEffect(monsterState, {
-    id: DOT_EFFECT_ID, maxStacks: PE_MAX_STACKS, instanced: false,
+    id: DOT_EFFECT_ID, maxStacks, instanced: false,
     sourceId: player.isPlayer.id, remainingMs: durationMs, refreshable: true,
     data: { damagePerStack: dmgPerStack, nextTickIn: tickIntervalMs, tickIntervalMs, tickOnExpire: 1 },
   });
   pe.data.damagePerStack = dmgPerStack;
   pe.data.tickIntervalMs = tickIntervalMs;
   pe.data.tickOnExpire = 1;
-  if (getTotalStacks(monsterState, DOT_EFFECT_ID) >= PE_MAX_STACKS) {
-    const burst = PE_MAX_STACKS * dmgPerStack * PE_BURST_TICKS;
+  if (getTotalStacks(monsterState, DOT_EFFECT_ID) >= maxStacks) {
+    const burst = maxStacks * dmgPerStack * burstTicks;
     ctx.damage += burst;
     clearMonsterDot(world, monster, monsterState);
     // Real empowered detonation: crit styling + the standard empowered AoE splash.
@@ -62,13 +65,17 @@ export function tryPoisonExplosion(pc: DotT3PathContext): boolean {
 export function tryEternalDoom(pc: DotT3PathContext): boolean {
   if (!hasPassive(pc.player, 'dot.eternal-doom')) return false;
   const { ctx, world, player, monster, monsterState, dmgPerStack, durationMs, tickIntervalMs } = pc;
+  const passives = player.usesSkills.passives;
+  const maxStacks = Math.max(1, Math.round(passives['dot.eternal-doom-max-stacks'] ?? ED_MAX_STACKS));
+  const fullStacks = Math.max(0, Math.round(passives['dot.eternal-doom-full-stacks'] ?? ED_BASE_STACKS));
+  const diminishRate = Math.max(0, passives['dot.eternal-doom-diminish-rate'] ?? ED_DIMINISH_RATE);
 
   const ed = applyStatusEffect(monsterState, {
-    id: DOT_EFFECT_ID, maxStacks: ED_MAX_STACKS, instanced: false,
+    id: DOT_EFFECT_ID, maxStacks, instanced: false,
     sourceId: player.isPlayer.id, remainingMs: durationMs, refreshable: true,
     data: {
       damagePerStack: dmgPerStack, nextTickIn: tickIntervalMs, tickIntervalMs, tickOnExpire: 1,
-      isEternalDoom: 1, edBaseStacks: ED_BASE_STACKS,
+      isEternalDoom: 1, edFullStacks: fullStacks, edDiminishRate: diminishRate,
     },
   });
   ed.data.damagePerStack = dmgPerStack;

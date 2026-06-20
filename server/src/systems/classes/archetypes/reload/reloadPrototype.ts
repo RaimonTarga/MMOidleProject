@@ -1,7 +1,9 @@
 import { registerCombatListener } from '../../../combat/engine/combatPipeline';
 import { registerEmpoweredMultiplier, setEmpoweredAttack } from '../../../combat/engine/empoweredAttacks';
 import type { World } from '../../../../world/World';
-import { GAME_CONFIG, resetCounter } from '@mmo-idle/shared';
+import { getFlag, resetCounter } from '@mmo-idle/shared';
+import { isPlayerActivelyInCombat } from '../../../combat/ai/engagement';
+import { RUNE_TACTICAL_RELOAD_FLAG } from '../../../combat/ai/runeConfig';
 import { initReloadT3 } from './t3';
 import { DEFAULT_EXPLODING_CLIP_MULT } from './t3/core/constants';
 import {
@@ -19,7 +21,7 @@ import {
 
 const RELOAD_MAX_AMMO = 10;
 
-export function updateReloadArchetype(world: World, dt: number, now: number): void {
+export function updateReloadArchetype(world: World, dt: number): void {
   for (const entity of world.reloadPlayers) {
     const reload = entity.usesReload;
 
@@ -33,18 +35,27 @@ export function updateReloadArchetype(world: World, dt: number, now: number): vo
       }
     }
 
-    const lastCombatAt = entity.tracksEngagement;
-    const inCombat = entity.hasAttackTarget !== undefined ||
-      (lastCombatAt !== undefined && (now - lastCombatAt) < GAME_CONFIG.COMBAT_REGEN_DELAY);
+    const tacticalReload = getFlag(
+      entity.tracksCombat,
+      RUNE_TACTICAL_RELOAD_FLAG,
+    );
+    const inCombat =
+      tacticalReload && isPlayerActivelyInCombat(world, entity);
 
-    if (!inCombat && reload.ammo < reload.ammoMax && reload.reloadingMs <= 0 && reload.ammo > 0) {
+    if (
+      tacticalReload &&
+      !inCombat &&
+      reload.ammo < reload.ammoMax &&
+      reload.reloadingMs <= 0 &&
+      reload.ammo > 0
+    ) {
       const reloadTimeMs = resolveReloadTimeMs(entity);
       startReloadTimer(world, entity, reloadTimeMs);
       emitReloadStart(world, entity);
     }
 
     if (reload.reloadingMs > 0) {
-      const tickMs = inCombat ? dt : dt * 2;
+      const tickMs = tacticalReload && !inCombat ? dt * 2 : dt;
       reload.reloadingMs = Math.max(0, reload.reloadingMs - tickMs);
     }
 

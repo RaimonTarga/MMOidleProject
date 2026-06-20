@@ -46,6 +46,15 @@ export const GAME_CONFIG = {
   /** Minimum pixel distance between two monsters at spawn time */
   MONSTER_MIN_SPAWN_DIST: 120,
 
+  // ── Dungeon scaling ─────────────────────────────────────────────────────────
+  // Regular (non-gauntlet) dungeon nodes scale up their normal monster population.
+  // Boss stats come from the database directly (no mult). Single source of truth
+  // shared by the server spawner and the client bestiary.
+  /** HP multiplier applied to non-boss monsters in regular dungeon nodes. */
+  DUNGEON_HP_MULT: 2.0,
+  /** Attack multiplier applied to non-boss monsters in regular dungeon nodes. */
+  DUNGEON_ATK_MULT: 1.6,
+
   // ── Evasion (fully deterministic — fractional accumulator, no RNG) ─────────────
   /**
    * Baseline fraction of a hit's damage avoided when it is evaded (0.5 = half).
@@ -86,8 +95,13 @@ export const GAME_CONFIG = {
 
   BIOME_XP_BASE: 25,
   BIOME_XP_EXPONENT: 2.8,
-  BIOME_XP_ESSENCE_MULT: [
-    1.0, 2.0, 1.1, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0,
+  /** Per-tier multiplier on biomeXp granted to the player. Front-loads early progression. Index = biomeTier. */
+  BIOME_XP_REWARD_MULT_BY_TIER: [
+    1.0, 1.5, 1.25, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0,
+  ] as unknown as readonly number[],
+  /** Per-tier multiplier on essence granted to the player. Dampens late-game essence flooding. Index = biomeTier. */
+  BIOME_ESSENCE_TIER_MULT: [
+    1.0, 1.0, 0.85, 0.70, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55,
   ] as unknown as readonly number[],
   BIOME_LEVEL_CAP_BY_TIER: [
     5, 5, 9, 13, 17, 21, 25, 29, 33, 37, 41,

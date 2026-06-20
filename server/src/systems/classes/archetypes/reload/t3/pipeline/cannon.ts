@@ -48,7 +48,8 @@ export function registerCannon(): void {
       const targetId = player.hasAttackTarget?.targetId;
       if (!targetId) return;
 
-      const chargeMs = Math.max(1, Math.round(reload.reloadingMs * CANNON_CHARGE_FRACTION));
+      const chargeFraction = player.usesSkills.passives['reload.cannon-charge-fraction'] ?? CANNON_CHARGE_FRACTION;
+      const chargeMs = Math.max(1, Math.round(reload.reloadingMs * chargeFraction));
       reload.cannonFireMs = chargeMs;
       reload.cannonChargeTotalMs = chargeMs;
       reload.cannonTargetId = targetId;

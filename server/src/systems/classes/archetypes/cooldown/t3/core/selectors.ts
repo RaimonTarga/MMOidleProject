@@ -5,6 +5,7 @@ import {
   PATIENCE_PAID_RAMP_MS, RUPTURE_WINDOW_MS,
   EC_CHARGE_FX, TE_BUFF_FX, BAT_CHARGE_FX,
   ETERNAL_CYCLE_FLAT_PER_STACK, ETERNAL_CYCLE_UNLOCK_TIER,
+  BATTERY_ATK_PER_STACK, PATIENCE_PAID_ATK_MAX, PATIENCE_PAID_EXEC_MAX,
   VENGEANCE_MULTIPLIER, VENGEANCE_FLOOR,
 } from './constants';
 
@@ -14,21 +15,30 @@ import {
  * is ~0 so this reads ~1 on a full natural cycle; an early trigger reads lower.
  */
 export function rampFactorFor(cd: UsesCooldown, player: PlayerEntity): number {
-  const cdMs = player.usesSkills.passives['cooldown.empowered-cd-ms'] ?? PATIENCE_PAID_RAMP_MS;
+  const rampMs = Math.max(
+    100,
+    player.usesSkills.passives['cooldown.patience-ramp-ms'] ?? PATIENCE_PAID_RAMP_MS,
+  );
+  const cdMs = player.usesSkills.passives['cooldown.empowered-cd-ms'] ?? rampMs;
   const elapsed = cdMs - cd.executionCooldownMs;
-  return Math.max(0, Math.min(1, elapsed / PATIENCE_PAID_RAMP_MS));
+  return Math.max(0, Math.min(1, elapsed / rampMs));
 }
 
 // ── buffSync HUD selectors ───────────────────────────────────────────────────
 
 export function getOverdrivePct(player: PlayerEntity): number {
   if (!player.hasOverdrive) return 0;
-  return Math.round((player.hasOverdrive.remainingMs / OVERDRIVE_BUFF_MS) * 100);
+  const durationMs = Math.max(
+    100,
+    player.usesSkills.passives['cooldown.overdrive-duration-ms'] ?? OVERDRIVE_BUFF_MS,
+  );
+  return Math.round((player.hasOverdrive.remainingMs / durationMs) * 100);
 }
 
 export function getRupturePct(player: PlayerEntity): number {
   const ms = player.usesCooldown?.ruptureWindowMs ?? 0;
-  return ms > 0 ? Math.round((ms / RUPTURE_WINDOW_MS) * 100) : 0;
+  const windowMs = Math.max(1, player.usesSkills.passives['cooldown.rupture-window-ms'] ?? RUPTURE_WINDOW_MS);
+  return ms > 0 ? Math.round((ms / windowMs) * 100) : 0;
 }
 
 export function getEternalChargeStacks(state: TracksCombat): number {
@@ -56,6 +66,18 @@ export function getTemporalExtPct(state: TracksCombat): number {
 
 export function getBatteryStacks(state: TracksCombat): number {
   return getStatusEffect(state, BAT_CHARGE_FX)?.stacks ?? 0;
+}
+
+export function batteryDamagePerStack(player: PlayerEntity): number {
+  return Math.max(0, player.usesSkills.passives['cooldown.battery-damage-per-stack'] ?? BATTERY_ATK_PER_STACK);
+}
+
+export function patienceAttackMax(player: PlayerEntity): number {
+  return Math.max(0, player.usesSkills.passives['cooldown.patience-attack-max'] ?? PATIENCE_PAID_ATK_MAX);
+}
+
+export function patienceExecutionMax(player: PlayerEntity): number {
+  return Math.max(0, player.usesSkills.passives['cooldown.patience-execution-max'] ?? PATIENCE_PAID_EXEC_MAX);
 }
 
 /** Avenger: damage banked since the last execution (the buff's stack count). */

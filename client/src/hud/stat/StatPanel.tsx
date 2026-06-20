@@ -40,8 +40,6 @@ import {
   platingAtom,
   playerIdAtom,
   playerNameAtom,
-  sacredBuffActiveAtom,
-  sacredBuffPctAtom,
   shieldsAtom,
   speedAtom,
   statusAtom,
@@ -92,8 +90,6 @@ export function StatPanel() {
   const targetDotStacks = useAtomValue(targetDotStacksAtom);
   const targetChillStacks = useAtomValue(targetChillStacksAtom);
   const equipment = useAtomValue(equipmentAtom);
-  const sacredBuffPct = useAtomValue(sacredBuffPctAtom);
-  const sacredBuffActive = useAtomValue(sacredBuffActiveAtom);
   const dodgeRate = useAtomValue(dodgeRateAtom);
   const evadeMitigation = useAtomValue(evadeMitigationAtom);
   const summonActiveCount = useAtomValue(summonActiveCountAtom);
@@ -137,8 +133,6 @@ export function StatPanel() {
       targetDotStacks,
       targetChillStacks,
       equipment,
-      sacredBuffPct,
-      sacredBuffActive,
       dodgeRate,
       evadeMitigation,
       summonActiveCount,

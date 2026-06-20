@@ -50,10 +50,17 @@ export function computeReservoirDotTick(
  * Tick damage for Eternal Doom: full rate for the first ED_BASE_STACKS stacks,
  * 50% per stack beyond that.
  */
-export function computeEternalDoomDamage(stacks: number, basePerStack: number): number {
-  if (stacks <= ED_BASE_STACKS) return stacks * basePerStack;
+export function computeEternalDoomDamage(
+  stacks: number,
+  basePerStack: number,
+  fullValueStacks = ED_BASE_STACKS,
+  diminishRate = ED_DIMINISH_RATE,
+): number {
+  const fullStacks = Math.max(0, Math.round(fullValueStacks));
+  const reducedRate = Math.max(0, diminishRate);
+  if (stacks <= fullStacks) return stacks * basePerStack;
   return Math.round(
-    ED_BASE_STACKS * basePerStack +
-    (stacks - ED_BASE_STACKS) * basePerStack * ED_DIMINISH_RATE,
+    fullStacks * basePerStack +
+    (stacks - fullStacks) * basePerStack * reducedRate,
   );
 }

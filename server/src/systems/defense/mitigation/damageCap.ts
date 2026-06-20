@@ -23,6 +23,8 @@ export function registerDamageCap(): void {
 
     const mult = player.usesSkills.passives['defense.max-hit-mult'] ?? 1;
     ctx.damage = Math.ceil(threshold + (ctx.damage - threshold) * mult);
+    // Flag for the client damage-number styling (capped hits render distinctly).
+    ctx.metadata['damageCapped'] = true;
 
     // Titan's Keep: a cap trigger immediately rearms the periodic shield by
     // clearing its cooldown, so runPeriodicShield re-applies on the next tick.

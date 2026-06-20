@@ -62,7 +62,7 @@ export function registerCadenceEmpoweredHit(): void {
     // power can't be sustained indefinitely. Stacks decay slowly out of combat.
     // TODO(engine): stacks reset on recalc (re-equip) because the slice is rebuilt.
     if ((passives['cadence.rampage'] ?? 0) > 0) {
-      if (cadence.rampageStacks >= RAMPAGE_MAX_STACKS) {
+      if (cadence.rampageStacks >= (passives['cadence.rampage-max-stacks'] ?? RAMPAGE_MAX_STACKS)) {
         cadence.rampageStacks = 0; // overload — rampage crashes
       } else {
         cadence.rampageStacks++;
@@ -70,7 +70,8 @@ export function registerCadenceEmpoweredHit(): void {
       }
       recomputeRampageStats(player);
       if (cadence.rampageStacks > 0) {
-        ctx.damage = Math.round(ctx.damage * (1 + cadence.rampageStacks * RAMPAGE_MULT_PER_STACK));
+        const multPerStack = passives['cadence.rampage-mult-per-stack'] ?? RAMPAGE_MULT_PER_STACK;
+        ctx.damage = Math.round(ctx.damage * (1 + cadence.rampageStacks * multPerStack));
       }
     }
 
@@ -78,7 +79,7 @@ export function registerCadenceEmpoweredHit(): void {
     // (time-based, front-loaded then heavy DR — see core/crescendo.ts). Not consumed:
     // it keeps climbing while you stay in combat and resets instantly when it ends.
     if ((passives['cadence.crescendo'] ?? 0) > 0 && cadence.crescendoTimerMs > 0) {
-      ctx.damage = Math.round(ctx.damage * (1 + crescendoMultiplier(cadence.crescendoTimerMs)));
+      ctx.damage = Math.round(ctx.damage * (1 + crescendoMultiplier(cadence.crescendoTimerMs, passives)));
     }
 
     // Hemorrhage: convert finisher damage to a non-stacking bleed DoT. Remaining
@@ -86,7 +87,10 @@ export function registerCadenceEmpoweredHit(): void {
     // as a clear countdown (4 → 3 → 2 → …) instead of a static ∞.
     if ((passives['cadence.hemorrhage'] ?? 0) > 0 && ctx.defenderType === 'monster' && !evadeBlocksDebuffs(ctx)) {
       const monsterState = ctx.defender.tracksCombat;
-      const damagePerTick = Math.max(1, Math.round(ctx.damage * HEMORRHAGE_MULT / HEMORRHAGE_TICKS));
+      const hemoMult  = passives['cadence.hemorrhage-mult'] ?? HEMORRHAGE_MULT;
+      const hemoTicks = Math.max(1, Math.round(passives['cadence.hemorrhage-ticks'] ?? HEMORRHAGE_TICKS));
+      const hemoTickMs = passives['cadence.hemorrhage-tick-ms'] ?? HEMORRHAGE_TICK_MS;
+      const damagePerTick = Math.max(1, Math.round(ctx.damage * hemoMult / hemoTicks));
       removeStatusEffect(monsterState, 'cadence-hemorrhage');
       const bleed = applyStatusEffect(monsterState, {
         id:          'cadence-hemorrhage',
@@ -95,11 +99,11 @@ export function registerCadenceEmpoweredHit(): void {
         sourceId:    player.isPlayer.id,
         data: {
           damagePerTick,
-          nextTickIn:     HEMORRHAGE_TICK_MS,
-          tickIntervalMs: HEMORRHAGE_TICK_MS,
+          nextTickIn:     hemoTickMs,
+          tickIntervalMs: hemoTickMs,
         },
       });
-      bleed.stacks = HEMORRHAGE_TICKS; // one stack per remaining tick
+      bleed.stacks = hemoTicks; // one stack per remaining tick
       attachMarker(world, ctx.defender, 'hasHemorrhage');
       ctx.damage = 0;
     }
@@ -141,7 +145,7 @@ export function registerCadenceEmpoweredHit(): void {
 
     // Aftershock: arm the next few regular attacks to fire their on-hit twice.
     if ((passives['cadence.aftershock'] ?? 0) > 0) {
-      cadence.aftershockCharges = AFTERSHOCK_ATTACKS;
+      cadence.aftershockCharges = Math.max(1, Math.round(passives['cadence.aftershock-attacks'] ?? AFTERSHOCK_ATTACKS));
     }
 
     // Rising Tide echo: arm the post-finisher echo counter for subsequent hits.

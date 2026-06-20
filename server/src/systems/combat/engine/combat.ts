@@ -22,7 +22,6 @@ import {
   FROST_RAMP_EFFECT_ID,
   frostRampMaxStacks,
   frostRampAtkSlowPct,
-  CHAOTIC_FAMILY,
   CHAOTIC_HIT_COUNTER_KEY,
 } from "@mmo-idle/shared";
 import { getAntiHealMult } from "../../defense";
@@ -103,17 +102,10 @@ export function runPlayerAttack(
   // ammo and the empowered multiplier preserve its charge. Peek the counter
   // before beforeAttack; commit it only once the attack is confirmed to fire so
   // a cancelled attack (empty clip / mid-reload) never advances the cycle.
-  const chaoticWeapon = player.holdsInventory.equipment.weapon;
   // Dead-swing cadence is data-driven from the equipped weapon's
-  // `weapon.dead-swing-interval` mechanic. CHAOTIC_FAMILY remains a fallback for
-  // legacy weapons predating the key (e.g. frenzied-greataxe, which has no recipe).
+  // `weapon.dead-swing-interval` mechanic (authored on the recipe).
   const deadSwingInterval = player.usesSkills.passives["weapon.dead-swing-interval"] ?? 0;
-  const chaoticMissEvery =
-    deadSwingInterval > 0
-      ? Math.round(deadSwingInterval)
-      : chaoticWeapon
-        ? CHAOTIC_FAMILY[chaoticWeapon]
-        : undefined;
+  const chaoticMissEvery = deadSwingInterval > 0 ? Math.round(deadSwingInterval) : 0;
   if (
     chaoticMissEvery &&
     (getCounter(player.tracksCombat, CHAOTIC_HIT_COUNTER_KEY) + 1) %
@@ -155,11 +147,6 @@ export function runPlayerAttack(
         ctx.metadata["evadeBlocksDebuffs"] = true;
       }
       ctx.metadata["evaded"] = true;
-      world.pushEvent(player.hasPosition.nodeId, {
-        kind: "monster-dodge",
-        monsterId: target.isMonster.id,
-        targetPos: { ...target.hasPosition.current },
-      });
       recordWorldLogEvent(
         world,
         {
@@ -174,8 +161,17 @@ export function runPlayerAttack(
           nodeId: player.hasPosition.nodeId,
         },
       );
-      // Full avoidance preserves the legacy "dodged" outcome (no damage, no debuffs).
-      if (evadeMult >= 1) return "dodged";
+      // Full avoidance preserves the legacy "dodged" outcome (no damage, no
+      // debuffs) and renders the "DODGE" floater. A partial evade falls through
+      // and instead restyles the reduced damage number (player-hit.evadedPartial).
+      if (evadeMult >= 1) {
+        world.pushEvent(player.hasPosition.nodeId, {
+          kind: "monster-dodge",
+          monsterId: target.isMonster.id,
+          targetPos: { ...target.hasPosition.current },
+        });
+        return "dodged";
+      }
     } else {
       setCounter(target.tracksCombat, "evadeAcc", acc);
     }
@@ -261,7 +257,9 @@ export function runPlayerAttack(
   // amount, then drain the periodic absorb barrier before HP. Both are no-ops
   // unless the monster defines enemySoftCap / enemyShield. Like the player's own
   // cap/shield they act on the direct combat-pipeline hit only (DoT/AoE bypass).
+  const preCapDamage = ctx.damage;
   ctx.damage = applyEnemySoftCap(target, monsterDef, ctx.damage);
+  const enemyCapped = ctx.damage < preCapDamage;
   const enemyShieldResult = applyEnemyShield(target, monsterDef, ctx.damage, now);
   ctx.damage = enemyShieldResult.damage;
   const enemyShieldAbsorbed = enemyShieldResult.absorbed;
@@ -380,6 +378,11 @@ export function runPlayerAttack(
       typeof ctx.metadata["blunderbussPelletTotal"] === "number"
         ? (ctx.metadata["blunderbussPelletTotal"] as number)
         : undefined,
+    shieldAbsorbed: enemyShieldAbsorbed > 0 ? enemyShieldAbsorbed : undefined,
+    // `evaded` is only still set here on a PARTIAL evade — a full avoid returned
+    // "dodged" earlier and never reaches this event.
+    evadedPartial: evaded ? true : undefined,
+    capped: enemyCapped ? true : undefined,
   });
 
   if (ctx.metadata.chaoticMiss) {
@@ -558,6 +561,29 @@ export function runMonsterAttack(
         nodeId: target.hasPosition.nodeId,
       },
     );
+  }
+
+  // Incoming damage-number styling for the player. A fully evaded hit dealt no
+  // damage → "DODGE" floater; otherwise a monster-hit carries the mitigation
+  // hints so a partial evade / damage-cap trip / shield absorb render distinctly
+  // (the shielded amount shows even when no HP was lost).
+  const playerEvaded = ctx.metadata["evaded"] === true;
+  if (playerEvaded && ctx.metadata["evadeFull"] === true) {
+    world.pushEvent(target.hasPosition.nodeId, {
+      kind: "player-evade",
+      playerId: target.isPlayer.id,
+      targetPos: { ...target.hasPosition.current },
+    });
+  } else {
+    world.pushEvent(target.hasPosition.nodeId, {
+      kind: "monster-hit",
+      targetId: target.isPlayer.id,
+      empowered: empoweredMult > 1 ? true : undefined,
+      damage: ctx.damage,
+      shieldAbsorbed: shieldAbsorbed > 0 ? shieldAbsorbed : undefined,
+      evadedPartial: playerEvaded ? true : undefined,
+      capped: ctx.metadata["damageCapped"] === true ? true : undefined,
+    });
   }
 
   target.hasHealth.hp -= ctx.damage;

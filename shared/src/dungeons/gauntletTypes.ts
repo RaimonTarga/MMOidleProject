@@ -29,6 +29,8 @@ export interface DungeonMonsterModifiers {
   moveSpeedMult?: number;
   armorMult?: number;
   drAdd?: number;
+  /** Multiplies damagePerStack on the monster's dotEffect, if it has one. */
+  dotMult?: number;
 }
 
 export interface GauntletPhaseDef {

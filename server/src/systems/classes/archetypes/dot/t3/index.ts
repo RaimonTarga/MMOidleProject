@@ -1,7 +1,6 @@
 import {
   computeDotClassDamagePerStack,
   getStatusEffect,
-  hasStatusEffect,
   applyStatusEffect,
   getTotalStacks,
   resolveDotClassProfile,
@@ -107,18 +106,23 @@ export function initDotT3(): void {
     if (!player.appliesDots) return;
     if ((player.usesSkills.passives['dot.frenzy'] ?? 0) <= 0) return;
 
-    const maxStacks = Math.round(player.usesSkills.passives['dot.max-stacks'] ?? 6);
+    const passives = player.usesSkills.passives;
+    const maxStacks = Math.round(passives['dot.max-stacks'] ?? 6);
+    const frenzyDurationMs = Math.max(100, Math.round(
+      passives['dot.frenzy-duration-ms'] ?? FRENZY_DURATION_MS,
+    ));
     const stacks = getTotalStacks(ctx.defender.tracksCombat, DOT_EFFECT_ID);
     if (maxStacks > 0 && stacks >= maxStacks) {
       applyStatusEffect(player.tracksCombat, {
         id: FRENZY_FX, instanced: false, refreshable: true,
-        remainingMs: FRENZY_DURATION_MS, sourceId: player.isPlayer.id,
-        data: { totalMs: FRENZY_DURATION_MS },
+        remainingMs: frenzyDurationMs, sourceId: player.isPlayer.id,
+        data: { totalMs: frenzyDurationMs },
       });
     }
     if (getStatusEffect(player.tracksCombat, FRENZY_FX)) {
       const tierMult = Math.max(1, (player.tracksProgression?.playerTier ?? FRENZY_UNLOCK_TIER) - FRENZY_UNLOCK_TIER + 1);
-      ctx.damage += Math.round(FRENZY_ONHIT_PER_TIER * tierMult);
+      const onHitPerTier = Math.max(0, passives['dot.frenzy-onhit-per-tier'] ?? FRENZY_ONHIT_PER_TIER);
+      ctx.damage += Math.round(onHitPerTier * tierMult);
     }
   });
 
@@ -132,8 +136,9 @@ export function initDotT3(): void {
     if (smolder) {
       ctx.damage = Math.round(ctx.damage * (1 + smolder.stacks * SE_VULN_PER_STACK));
     }
-    if (hasStatusEffect(monsterState, FROZEN_EFFECT)) {
-      ctx.damage = Math.round(ctx.damage * (1 + FREEZE_BONUS));
+    const frozen = getStatusEffect(monsterState, FROZEN_EFFECT);
+    if (frozen) {
+      ctx.damage = Math.round(ctx.damage * (1 + (frozen.data.damageTakenPct ?? FREEZE_BONUS)));
     }
   });
 }

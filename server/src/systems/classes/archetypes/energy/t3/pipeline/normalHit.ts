@@ -4,7 +4,7 @@ import { evadeBlocksDebuffs } from '../../../../../defense/mitigation/evasion';
 import {
   applyStatusEffect, removeStatusEffect, getStatusEffect, getTotalStacks,
 } from '@mmo-idle/shared';
-import { upkeepStacks, upkeepOnHitBonus, UPKEEP_UNLOCK_TIER } from '@mmo-idle/shared';
+import { resolveUpkeepConfig, upkeepStacks, upkeepOnHitBonus, UPKEEP_UNLOCK_TIER } from '@mmo-idle/shared';
 import { hasPassive, energyPercent, chargeStateMult } from '../core/helpers';
 import {
   FLASH_MAX_DAMAGE_SHIFT_PCT,
@@ -17,6 +17,7 @@ import {
   BINARY_DISCHARGE_ATK_BONUS, BINARY_CHARGE_ONHIT_BONUS,
   BINARY_CHARGE_ONHIT_PER_TIER, BINARY_UNLOCK_TIER,
   AWAKENED_MULT,
+  CHARGE_STATE_MIN, CHARGE_STATE_MAX,
   STORM_FX, ENDLESS_STORM_EXTEND_MS, ENDLESS_STORM_MAX_MS,
 } from '../core/constants';
 
@@ -47,11 +48,13 @@ export function registerNormalHit(): void {
 
     const player = entity;
     const state  = entity.tracksCombat;
+    const passives = player.usesSkills.passives;
     const energy = entity.usesEnergy;
 
     if (hasPassive(player, 'energy.flash')) {
       const fillPct = energyPercent(energy);
-      const damageMult = 1 + FLASH_MAX_DAMAGE_SHIFT_PCT - fillPct * FLASH_MAX_DAMAGE_SHIFT_PCT * 2;
+      const maxShift = Math.max(0, passives['energy.flash-max-damage-shift-pct'] ?? FLASH_MAX_DAMAGE_SHIFT_PCT);
+      const damageMult = 1 + maxShift - fillPct * maxShift * 2;
       ctx.damage = Math.max(1, Math.round(ctx.damage * damageMult));
       return;
     }
@@ -110,7 +113,8 @@ export function registerNormalHit(): void {
 
     // Overdrive: +ATK% while the mode is active (energy decaying in the tick).
     if (hasPassive(player, 'energy.overdrive') && energy.overdriveActive) {
-      ctx.damage = Math.round(ctx.damage * (1 + ENERGY_OVERDRIVE_ATK_PCT));
+      const attackBonus = Math.max(0, passives['energy.overdrive-attack-damage-pct'] ?? ENERGY_OVERDRIVE_ATK_PCT);
+      ctx.damage = Math.round(ctx.damage * (1 + attackBonus));
       // Aesthetic-only crits while Surge is active: yellow "!" styling, no AoE.
       ctx.metadata['empoweredAttack'] = true;
       ctx.metadata['suppressEmpoweredAoe'] = true;
@@ -119,10 +123,11 @@ export function registerNormalHit(): void {
     // Energy Upkeep (Channeler): ADD flat on-hit damage from upkeep stacks — strictly
     // on-hit (post-mitigation, no attack scaling), per tier with diminishing returns.
     if (hasPassive(player, 'energy.upkeep')) {
-      const stacks = upkeepStacks(energy);
+      const upkeep = resolveUpkeepConfig(passives);
+      const stacks = upkeepStacks(energy, upkeep.stackIntervalMs);
       if (stacks > 0) {
         const tier = player.tracksProgression?.playerTier ?? UPKEEP_UNLOCK_TIER;
-        ctx.damage += upkeepOnHitBonus(stacks, tier);
+        ctx.damage += upkeepOnHitBonus(stacks, tier, upkeep);
       }
     }
 
@@ -131,26 +136,32 @@ export function registerNormalHit(): void {
     if (hasPassive(player, 'energy.binary-cycle')) {
       if (energy.binaryDischargeState) {
         // Discharge: attack-damage bonus (percentage).
-        ctx.damage = Math.round(ctx.damage * (1 + BINARY_DISCHARGE_ATK_BONUS));
+        const attackBonus = Math.max(0, passives['energy.binary-discharge-attack-bonus'] ?? BINARY_DISCHARGE_ATK_BONUS);
+        ctx.damage = Math.round(ctx.damage * (1 + attackBonus));
       } else {
         // Charge: +on-hit% on existing on-hit AND flat on-hit per tier (shockblade-style).
-        ctx.metadata['onHitDamageMult'] = 1 + BINARY_CHARGE_ONHIT_BONUS;
+        const onHitBonus = Math.max(0, passives['energy.binary-charge-onhit-bonus'] ?? BINARY_CHARGE_ONHIT_BONUS);
+        const onHitPerTier = Math.max(0, passives['energy.binary-charge-onhit-per-tier'] ?? BINARY_CHARGE_ONHIT_PER_TIER);
+        ctx.metadata['onHitDamageMult'] = 1 + onHitBonus;
         const tierMult = Math.max(1, (player.tracksProgression?.playerTier ?? BINARY_UNLOCK_TIER) - BINARY_UNLOCK_TIER + 1);
-        ctx.damage += BINARY_CHARGE_ONHIT_PER_TIER * tierMult;
+        ctx.damage += onHitPerTier * tierMult;
       }
     }
 
     // Charge State (Aetherist): attack mult oscillates with energy — 0.5× empty,
     // 1.0× at half (neutral), 2.0× full. Strongest right before discharge.
     if (hasPassive(player, 'energy.charge-state')) {
-      ctx.damage = Math.max(1, Math.round(ctx.damage * chargeStateMult(energyPercent(energy))));
+      const minMult = Math.max(0, passives['energy.charge-state-min-mult'] ?? CHARGE_STATE_MIN);
+      const maxMult = Math.max(0, passives['energy.charge-state-max-mult'] ?? CHARGE_STATE_MAX);
+      ctx.damage = Math.max(1, Math.round(ctx.damage * chargeStateMult(energyPercent(energy), minMult, maxMult)));
     }
 
     // Awakened Lightning (Stormbringer): spend a charge from the discharge. These are
     // REAL empowered attacks — set the flag so empowered-triggered gear + crit styling
     // + the empowered splash all apply, uniform with the discharge strike.
     if (hasPassive(player, 'energy.awakened-lightning') && energy.awakenedCharges > 0) {
-      ctx.damage = Math.round(ctx.damage * AWAKENED_MULT);
+      const damageMult = Math.max(0, passives['energy.awakened-damage-mult'] ?? AWAKENED_MULT);
+      ctx.damage = Math.round(ctx.damage * damageMult);
       ctx.metadata['empoweredAttack'] = true;
       energy.awakenedCharges--;
     }
@@ -159,7 +170,9 @@ export function registerNormalHit(): void {
     // capped — trivial to upkeep even with a slow weapon.
     if (hasPassive(player, 'energy.endless-storm') && ctx.defenderType === 'monster') {
       const storm = getStatusEffect(ctx.defender.tracksCombat, STORM_FX);
-      if (storm) storm.remainingMs = Math.min(ENDLESS_STORM_MAX_MS, storm.remainingMs + ENDLESS_STORM_EXTEND_MS);
+      const extendMs = Math.max(0, Math.round(passives['energy.endless-storm-extend-ms'] ?? ENDLESS_STORM_EXTEND_MS));
+      const maxMs = Math.max(100, Math.round(passives['energy.endless-storm-max-ms'] ?? ENDLESS_STORM_MAX_MS));
+      if (storm) storm.remainingMs = Math.min(maxMs, storm.remainingMs + extendMs);
     }
   });
 }

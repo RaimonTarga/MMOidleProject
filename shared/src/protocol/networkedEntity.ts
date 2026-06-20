@@ -22,7 +22,6 @@ import type {
   IsPlayer,
   MitigatesDamage,
   PerformsAttack,
-  ShowsSacred,
   SummonsMinions,
   TracksProgression,
   UsesAutocombat,
@@ -57,7 +56,6 @@ export const NETWORKED_PLAYER_KEYS = [
   "holdsInventory",
   "usesSkills",
   "hasStatus",
-  "showsSacred",
   "inParty",
   "usesCadence",
   "usesEnergy",
@@ -127,7 +125,6 @@ export interface NetworkedEntity {
   holdsInventory?: HoldsInventory;
   usesSkills?: UsesSkills;
   hasStatus?: HasStatus;
-  showsSacred?: ShowsSacred;
   inParty?: InParty;
   summonsMinions?: SummonsMinions;
   usesCadence?: UsesCadence;

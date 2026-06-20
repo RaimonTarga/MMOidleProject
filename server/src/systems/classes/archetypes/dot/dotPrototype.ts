@@ -90,7 +90,12 @@ export function updateDotArchetype(world: World, dt: number): void {
     if (effect.data.nextTickIn > 0) continue;
 
     let damage = effect.data.isEternalDoom
-      ? computeEternalDoomDamage(effect.stacks, effect.data.damagePerStack)
+      ? computeEternalDoomDamage(
+          effect.stacks,
+          effect.data.damagePerStack,
+          effect.data.edFullStacks,
+          effect.data.edDiminishRate,
+        )
       : computeScaledDotDamage(effect);
 
     // Apply DoT vulnerability effects to DoT ticks.

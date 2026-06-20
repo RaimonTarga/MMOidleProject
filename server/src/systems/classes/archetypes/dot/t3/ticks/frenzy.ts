@@ -17,7 +17,10 @@ export function updateFrenzy(world: World): void {
     const active = getStatusEffect(player.tracksCombat, FRENZY_FX) !== undefined;
 
     if (active) {
-      const apsBonus = FRENZY_APS; // flat — attack speed does NOT scale per tier
+      const apsBonus = Math.max(
+        0,
+        player.usesSkills.passives['dot.frenzy-attack-speed-pct'] ?? FRENZY_APS,
+      ); // flat — attack speed does NOT scale per tier
       if (player.performsAttack.attackCooldown !== dots.frenzyAppliedCd) {
         dots.frenzyBaseCd = player.performsAttack.attackCooldown; // clean base (post-recalc)
       }

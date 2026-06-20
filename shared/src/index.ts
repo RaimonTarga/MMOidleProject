@@ -29,6 +29,8 @@ export * from './systems/monsterDebuffs';
 export * from './systems/dotElements';
 export * from './systems/dotClassProfile';
 export * from './systems/monsterDotFlavor';
+export * from './systems/bestiary';
+export * from './systems/bestiaryMechanics';
 export * from './hitbox/types';
 export * from './hitbox/constants';
 export * from './hitbox/resolveHitbox';

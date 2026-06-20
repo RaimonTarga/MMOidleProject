@@ -249,12 +249,6 @@ export interface UsesSkills {
   combatArchetype: CombatArchetype;
 }
 
-/** Sacred Cross weapon-effect mirrors for wire display. */
-export interface ShowsSacred {
-  sacredBuffActive: boolean;
-  sacredBuffPct: number;
-}
-
 // ─── Monster-specific ─────────────────────────────────────────────────────────
 
 /** Static-ish monster identity. */

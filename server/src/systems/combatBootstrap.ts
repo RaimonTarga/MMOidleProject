@@ -39,7 +39,7 @@ export function initCombatSystems(): void {
 
   // Class mechanics: each module's `init` registers its combat listeners once.
   initAllMechanics();
-  // Weapon-specific hooks (Chaotic Axe, Sacred Cross, Ashbrand Blade, ...).
+  // Weapon-specific hooks (first-strike, brittle, flurry, reservoir DoTs, ...).
   initWeaponEffects();
   // Evasion + shield absorption onDamageTaken listeners (after weapon effects).
   initDefenseSystems();

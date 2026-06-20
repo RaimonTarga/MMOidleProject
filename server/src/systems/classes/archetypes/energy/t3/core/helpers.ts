@@ -17,11 +17,15 @@ export function energyPercent(energy: UsesEnergy): number {
  * Aetherist (charge-state) attack multiplier: piecewise-linear oscillation with a
  * neutral midpoint — MIN at empty, 1.0× at half energy, MAX at full.
  */
-export function chargeStateMult(fillPct: number): number {
+export function chargeStateMult(
+  fillPct: number,
+  minMult = CHARGE_STATE_MIN,
+  maxMult = CHARGE_STATE_MAX,
+): number {
   const f = Math.max(0, Math.min(1, fillPct));
   return f <= 0.5
-    ? CHARGE_STATE_MIN + (1 - CHARGE_STATE_MIN) * (f * 2)
-    : 1 + (CHARGE_STATE_MAX - 1) * ((f - 0.5) * 2);
+    ? minMult + (1 - minMult) * (f * 2)
+    : 1 + (maxMult - 1) * ((f - 0.5) * 2);
 }
 
 /**

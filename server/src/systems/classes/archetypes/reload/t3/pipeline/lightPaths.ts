@@ -35,11 +35,12 @@ export function registerReloadLightT3(): void {
     if ((passives['reload.alternating-cadence'] ?? 0) > 0) {
       const shotPos = reload.ammoMax - reload.ammo; // 1-indexed shot just fired
       if (shotPos % 2 === 0) {
-        ctx.damage = Math.max(1, Math.round(ctx.damage * ALT_CADENCE_ATTACK_MULT));
+        const attackMult = passives['reload.alternating-attack-mult'] ?? ALT_CADENCE_ATTACK_MULT;
+        ctx.damage = Math.max(1, Math.round(ctx.damage * attackMult));
         ctx.metadata['onHitDamageMult'] = 0;
       } else {
         ctx.damage = 0;
-        ctx.metadata['onHitDamageMult'] = ALT_CADENCE_ONHIT_MULT;
+        ctx.metadata['onHitDamageMult'] = passives['reload.alternating-onhit-mult'] ?? ALT_CADENCE_ONHIT_MULT;
         // Odd shot = the on-hit-focused round → tag the blue shot FX.
         const existing = ctx.metadata['clientEffects'];
         const effects = Array.isArray(existing)

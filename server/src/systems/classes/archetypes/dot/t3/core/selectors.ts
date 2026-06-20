@@ -8,6 +8,7 @@ import {
   SE_VULN_PER_STACK, FREEZE_BONUS, FREEZE_MS, CONF_TICKS, FROSTBITE_DOT_TAKEN_PER_STACK,
   FROSTBITE_MS,
 } from './constants';
+import { CHILL_ATK_MULT, CHILL_SPEED_MULT } from '../paths/_constants';
 
 // ── Exported selectors used by dotPrototype.ts and combat / ai ───────────────
 
@@ -19,7 +20,8 @@ export function getSmolderMult(monsterState: TracksCombat): number {
 
 /** Damage multiplier from Frozen status (1.35 if frozen, 1.0 otherwise). */
 export function getFrozenMult(monsterState: TracksCombat): number {
-  return hasStatusEffect(monsterState, FROZEN_EFFECT) ? (1 + FREEZE_BONUS) : 1;
+  const frozen = getStatusEffect(monsterState, FROZEN_EFFECT);
+  return frozen ? (1 + (frozen.data.damageTakenPct ?? FREEZE_BONUS)) : 1;
 }
 
 /** DoT-only damage multiplier from Wind Spirit's Frostbite debuff. */
@@ -51,7 +53,19 @@ export function isTargetFrozen(monsterState: TracksCombat): boolean {
 export function getTargetFrozenRemainingPct(monsterState: TracksCombat): number {
   const e = getStatusEffect(monsterState, FROZEN_EFFECT);
   if (!e || e.remainingMs <= 0) return 0;
-  return Math.round((e.remainingMs / FREEZE_MS) * 100);
+  return Math.round((e.remainingMs / (e.data.totalMs ?? FREEZE_MS)) * 100);
+}
+
+export function getTargetChillMoveSlowPerStack(monsterState: TracksCombat): number {
+  return getStatusEffect(monsterState, CHILL_EFFECT)?.data.moveSlowPerStack ?? CHILL_SPEED_MULT;
+}
+
+export function getTargetChillAttackSlowPerStack(monsterState: TracksCombat): number {
+  return getStatusEffect(monsterState, CHILL_EFFECT)?.data.attackSlowPerStack ?? CHILL_ATK_MULT;
+}
+
+export function getTargetFrozenDamageTakenPct(monsterState: TracksCombat): number {
+  return getStatusEffect(monsterState, FROZEN_EFFECT)?.data.damageTakenPct ?? FREEZE_BONUS;
 }
 
 export function getTargetFrostbiteRemainingPct(monsterState: TracksCombat): number {
@@ -68,7 +82,8 @@ export function getTargetFrostbiteDotTakenPerStack(monsterState: TracksCombat): 
 export function getConflagrationRemainingPct(monsterState: TracksCombat): number {
   const e = getStatusEffect(monsterState, CONF_EFFECT_ID);
   if (!e) return 0;
-  return Math.round((e.data.ticksLeft / CONF_TICKS) * 100);
+  const totalTicks = Math.max(1, e.data.totalTicks ?? CONF_TICKS);
+  return Math.round((e.data.ticksLeft / totalTicks) * 100);
 }
 
 export function isConflagrationActive(monsterState: TracksCombat): boolean {

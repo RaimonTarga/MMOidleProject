@@ -46,7 +46,7 @@ export const tundraMonsterEntries = [
     id: 'frost-lurker', name: 'Frost Lurker', color: 0xaaddff,
     // Slow mover, hard-ish hit, applies a flat slow on you → catches Far. The basic
     // teaching unit: kitable until it lands the slow, then it closes.
-    stats: { hp: 460, attack: 40, plating: 0, damageReduction: 0.10, speed: 26, attackRange: 12, attackCooldown: 2600, pullRange: 170 },
+    stats: { hp: 560, attack: 40, plating: 0, damageReduction: 0.10, speed: 26, attackRange: 12, attackCooldown: 2600, pullRange: 170 },
     behavior: 'melee', attackStyle: 'frost', biome: 'tundra',
     rewards: { essence: 29, essenceType: 'blue', level: 2, biomeXp: 175 },
     ai: { wanderRadius: 150, leashRange: 510, idleMinMs: 2500, idleMaxMs: 7000 },
@@ -58,7 +58,7 @@ export const tundraMonsterEntries = [
     // The ramping-debuff carrier: each hit stacks slow + attack-slow on you, capped.
     // If the fight drags the debuff bites — but the cap guarantees you can still kill.
     // Plant-vs-burst tension: your stationary-DR armor ALSO rewards the long fight.
-    stats: { hp: 780, attack: 64, plating: 0, damageReduction: 0.14, speed: 22, attackRange: 15, attackCooldown: 3200, pullRange: 175 },
+    stats: { hp: 880, attack: 64, plating: 0, damageReduction: 0.14, speed: 22, attackRange: 15, attackCooldown: 3200, pullRange: 175 },
     behavior: 'melee', attackStyle: 'frost', biome: 'tundra',
     rewards: { essence: 65, essenceType: 'blue', level: 3, biomeXp: 390 },
     ai: { wanderRadius: 140, leashRange: 500, idleMinMs: 3000, idleMaxMs: 8500 },
@@ -73,7 +73,7 @@ export const tundraMonsterEntries = [
     id: 'rime-caster', name: 'Rime Caster', color: 0xccffff,
     // Ranged frost KITER: backs off, plinks, and keeps you slowed so you can't close —
     // anti-Close, and it feeds the bears' debuff window. Speed 30 (catchable on charge).
-    stats: { hp: 420, attack: 46, plating: 0, damageReduction: 0.08, speed: 30, attackRange: 200, attackCooldown: 2800, pullRange: 230 },
+    stats: { hp: 520, attack: 46, plating: 0, damageReduction: 0.08, speed: 30, attackRange: 200, attackCooldown: 2800, pullRange: 230 },
     behavior: 'melee', attackStyle: 'frost', isRanged: true, kite: true, biome: 'tundra',
     rewards: { essence: 45, essenceType: 'blue', level: 2, biomeXp: 270 },
     ai: { wanderRadius: 200, leashRange: 600, idleMinMs: 1500, idleMaxMs: 4500 },
@@ -86,7 +86,7 @@ export const tundraMonsterEntries = [
     // CADENCE every 4 = a 240 freeze-slam that trips the cap + hard slow.
     // Heavy ICE PLATING (12) rewards the brittle weapon to crack it open.
     // Base 120 ≈ H_big. avg/attack (3·120+240)/4 = 150 → ×(1000/3500) = 43.
-    stats: { hp: 1250, attack: 120, plating: 12, damageReduction: 0, speed: 18, attackRange: 15, attackCooldown: 3500, pullRange: 165 },
+    stats: { hp: 1400, attack: 120, plating: 12, damageReduction: 0, speed: 18, attackRange: 15, attackCooldown: 3500, pullRange: 165 },
     behavior: 'melee', attackStyle: 'frost', biome: 'tundra',
     rewards: { essence: 110, essenceType: 'blue', level: 4, biomeXp: 660 },
     ai: { wanderRadius: 140, leashRange: 490, idleMinMs: 3500, idleMaxMs: 9500 },
@@ -100,7 +100,7 @@ export const tundraMonsterEntries = [
     // The ramping-debuff carrier: each hit stacks move-slow + atk-slow (both
     // capped — never a full root). Plant-vs-burst tension with your stationary
     // DR armor. DPS 105 × (1000/3200) = 33 base, but the debuff escalates the fight.
-    stats: { hp: 1700, attack: 105, plating: 0, damageReduction: 0.14, speed: 18, attackRange: 15, attackCooldown: 3200, pullRange: 175 },
+    stats: { hp: 1850, attack: 105, plating: 0, damageReduction: 0.14, speed: 18, attackRange: 15, attackCooldown: 3200, pullRange: 175 },
     behavior: 'melee', attackStyle: 'frost', biome: 'tundra',
     rewards: { essence: 150, essenceType: 'blue', level: 4, biomeXp: 900 },
     ai: { wanderRadius: 130, leashRange: 490, idleMinMs: 3500, idleMaxMs: 9000 },
@@ -116,7 +116,7 @@ export const tundraMonsterEntries = [
     // Ranged KITER (hurls ice chunks): maintains standoff, applies ramp debuff
     // from afar. Anti-Close — chasing while its stacks build hurts. Speed 36
     // (catchable on charge). DPS 86 × (1000/2900) = 30 + escalating debuff.
-    stats: { hp: 910, attack: 86, plating: 0, damageReduction: 0.08, speed: 36, attackRange: 220, attackCooldown: 2900, pullRange: 260 },
+    stats: { hp: 1050, attack: 86, plating: 0, damageReduction: 0.08, speed: 36, attackRange: 220, attackCooldown: 2900, pullRange: 260 },
     behavior: 'melee', attackStyle: 'frost', isRanged: true, kite: true, biome: 'tundra',
     rewards: { essence: 62, essenceType: 'blue', level: 3, biomeXp: 370 },
     ai: { wanderRadius: 210, leashRange: 620, idleMinMs: 1500, idleMaxMs: 4500 },
@@ -133,7 +133,7 @@ export const tundraMonsterEntries = [
     // — the full weapon-matchup exam: brittle weapon strips the plate (shatter
     // window), fast consistent damage beats the soft-cap, empowered-only builds
     // struggle. Base 100 ≈ H_med (survivable between slams).
-    stats: { hp: 2600, attack: 100, plating: 20, damageReduction: 0.12, speed: 12, attackRange: 15, attackCooldown: 4000, pullRange: 140 },
+    stats: { hp: 2900, attack: 100, plating: 20, damageReduction: 0.12, speed: 12, attackRange: 15, attackCooldown: 4000, pullRange: 140 },
     behavior: 'melee', attackStyle: 'frost', biome: 'tundra',
     rewards: { essence: 260, essenceType: 'blue', level: 4, biomeXp: 1560 },
     ai: { wanderRadius: 70, leashRange: 380, idleMinMs: 6000, idleMaxMs: 15000 },

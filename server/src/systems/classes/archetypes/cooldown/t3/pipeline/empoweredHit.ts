@@ -25,6 +25,13 @@ export function registerEmpoweredHit(): void {
     if (!player.usesCooldown) return;
 
     if (hasPassive(player, 'cooldown.overdrive')) {
+      const overdriveMs = Math.max(100, Math.round(
+        player.usesSkills.passives['cooldown.overdrive-duration-ms'] ?? OVERDRIVE_BUFF_MS,
+      ));
+      const attackSpeedPct = Math.max(
+        0,
+        player.usesSkills.passives['cooldown.overdrive-attack-speed-pct'] ?? OVERDRIVE_ATTACK_SPEED_PCT,
+      );
       const active = player.hasOverdrive;
       if (!active) {
         // "Burst": a flat +OVERDRIVE_ATTACK_SPEED_PCT attack-speed buff. Applied as
@@ -33,11 +40,11 @@ export function registerEmpoweredHit(): void {
         const baseCd = player.performsAttack.attackCooldown;
         player.performsAttack.attackCooldown = Math.max(
           200,
-          Math.round(baseCd / (1 + OVERDRIVE_ATTACK_SPEED_PCT)),
+          Math.round(baseCd / (1 + attackSpeedPct)),
         );
-        attachComponent(world, player, 'hasOverdrive', { remainingMs: OVERDRIVE_BUFF_MS, baseCd });
+        attachComponent(world, player, 'hasOverdrive', { remainingMs: overdriveMs, baseCd });
       } else {
-        active.remainingMs = OVERDRIVE_BUFF_MS;
+        active.remainingMs = overdriveMs;
       }
       return;
     }
@@ -48,7 +55,7 @@ export function registerEmpoweredHit(): void {
       // ticks damage (and on-hit) every BEAM_TICK_MS for BEAM_DURATION_MS. The
       // first tick fires immediately (nextTickMs 0) so the beam feels responsive.
       attachComponent(world, player, 'isChanneling', {
-        remainingMs: BEAM_DURATION_MS,
+        remainingMs: player.usesSkills.passives['cooldown.beam-duration-ms'] ?? BEAM_DURATION_MS,
         nextTickMs: 0,
         targetId: ctx.defender.isMonster.id,
         pct: 0,

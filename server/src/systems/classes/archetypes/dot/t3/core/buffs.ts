@@ -1,8 +1,11 @@
 import { defineBuff, type BuffDescriptor } from '../../../../../combat/buffs/descriptor';
 import {
   getTargetChillStacks,
+  getTargetChillMoveSlowPerStack,
+  getTargetChillAttackSlowPerStack,
   isTargetFrozen,
   getTargetFrozenRemainingPct,
+  getTargetFrozenDamageTakenPct,
   getConflagrationRemainingPct,
   isConflagrationActive,
   getTargetFrostbiteStacks,
@@ -10,9 +13,8 @@ import {
   getTargetFrostbiteDotTakenPerStack,
 } from './selectors';
 import { getStatusEffect } from '@mmo-idle/shared';
-import { FREEZE_BONUS } from './constants';
 import {
-  CHILL_ATK_MULT, CHILL_SPEED_MULT, IT_ATK_PER_STACK, IT_SPEED_CAP, IT_SPEED_PER_STACK,
+  IT_ATK_PER_STACK, IT_SPEED_CAP, IT_SPEED_PER_STACK,
   FRENZY_FX, FRENZY_DURATION_MS, FRENZY_APS, FRENZY_ONHIT_PER_TIER, FRENZY_UNLOCK_TIER,
 } from '../paths/_constants';
 
@@ -22,12 +24,15 @@ export const DOT_T3_BUFFS = [
     if ((player.usesSkills.passives['dot.frenzy'] ?? 0) <= 0) return null;
     const fx = getStatusEffect(player.tracksCombat, FRENZY_FX);
     if (!fx || fx.remainingMs <= 0) return null;
-    const total = fx.data['totalMs'] ?? FRENZY_DURATION_MS;
+    const passives = player.usesSkills.passives;
+    const total = fx.data['totalMs'] ?? Math.max(100, passives['dot.frenzy-duration-ms'] ?? FRENZY_DURATION_MS);
     const pct = total > 0 ? Math.round((fx.remainingMs / total) * 100) : 0;
     const tierMult = Math.max(1, (player.tracksProgression?.playerTier ?? FRENZY_UNLOCK_TIER) - FRENZY_UNLOCK_TIER + 1);
+    const attackSpeedPct = Math.max(0, passives['dot.frenzy-attack-speed-pct'] ?? FRENZY_APS);
+    const onHitPerTier = Math.max(0, passives['dot.frenzy-onhit-per-tier'] ?? FRENZY_ONHIT_PER_TIER);
     return {
       id: 'dot-frenzy', label: 'Frenzy', stacks: 1, durationPct: pct, color: '#ff3355',
-      logDetail: `+${Math.round(FRENZY_APS * 100)}% attack speed, +${FRENZY_ONHIT_PER_TIER * tierMult} on-hit damage`,
+      logDetail: `+${Math.round(attackSpeedPct * 100)}% attack speed, +${Math.round(onHitPerTier * tierMult)} on-hit damage`,
     };
   }, { category: 'dot-poison', shape: 'square' }),
   defineBuff('dot-frostbite', ({ player, target, targetCs }) => {
@@ -79,7 +84,7 @@ export const DOT_T3_BUFFS = [
           durationPct: getConflagrationRemainingPct(targetCs),
           color: '#ff6600',
           logSourceName: 'DoT',
-          logDetail: 'burn ticks every 500ms',
+          logDetail: 'rapid burn active',
           logTargetId: target?.isMonster.id,
           logTargetName: target?.isMonster.name,
           logTargetType: target ? 'monster' : undefined,
@@ -91,8 +96,10 @@ export const DOT_T3_BUFFS = [
     if ((player.usesSkills.passives['dot.freezing-cold'] ?? 0) <= 0) return null;
     if (!targetCs) return null;
     const stacks = getTargetChillStacks(targetCs);
-    const speedReductionPct = Math.round(stacks * CHILL_SPEED_MULT * 100);
-    const attackSlowPct = Math.round(stacks * CHILL_ATK_MULT * 100);
+    const moveSlowPerStack = getTargetChillMoveSlowPerStack(targetCs);
+    const attackSlowPerStack = getTargetChillAttackSlowPerStack(targetCs);
+    const speedReductionPct = Math.round(stacks * moveSlowPerStack * 100);
+    const attackSlowPct = Math.round(stacks * attackSlowPerStack * 100);
     return stacks > 0
       ? {
           id: 'dot-chill',
@@ -120,7 +127,7 @@ export const DOT_T3_BUFFS = [
           durationPct: getTargetFrozenRemainingPct(targetCs),
           color: '#ffffff',
           logSourceName: 'DoT',
-          logDetail: `+${Math.round(FREEZE_BONUS * 100)}% damage taken`,
+          logDetail: `+${Math.round(getTargetFrozenDamageTakenPct(targetCs) * 100)}% damage taken`,
           logTargetId: target?.isMonster.id,
           logTargetName: target?.isMonster.name,
           logTargetType: target ? 'monster' : undefined,

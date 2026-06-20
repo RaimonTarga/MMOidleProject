@@ -168,7 +168,6 @@ export class World {
     "tracksProgression",
     "holdsInventory",
     "usesSkills",
-    "showsSacred",
   );
 
   /** Live players only — corpses excluded from gameplay ticks. */
@@ -337,11 +336,11 @@ export class World {
     this.tickCounter++;
     updateCombatState(this, dt);
     updateShields(this, dt);
+    updateRuneDerivedConfig(this);
     tickAllMechanics(this, dt, now);
     updateWeaponEffects(this, dt);
     updateBossScripts(this, dt);
     updateUltimateEncounters(this, dt);
-    updateRuneDerivedConfig(this, now);
     updatePartyFollow(this, now);
     updateAutoTraverse(this);
     updateAutoTargets(this, now);

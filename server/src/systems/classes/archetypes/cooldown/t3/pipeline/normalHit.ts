@@ -1,11 +1,14 @@
 import { applyStatusEffect, getStatusEffect } from '@mmo-idle/shared';
 import { registerCombatListener } from '../../../../../combat/engine/combatPipeline';
 import { hasPassive } from '../core/helpers';
-import { rampFactorFor, eternalCycleFlatPerStack } from '../core/selectors';
+import {
+  batteryDamagePerStack,
+  eternalCycleFlatPerStack,
+  patienceAttackMax,
+  rampFactorFor,
+} from '../core/selectors';
 import {
   ETERNAL_CHARGE_DURATION_MS,
-  BATTERY_ATK_PER_STACK,
-  PATIENCE_PAID_ATK_MAX,
   EC_CHARGE_FX, BAT_CHARGE_FX,
 } from '../core/constants';
 
@@ -37,7 +40,7 @@ export function registerNormalHit(): void {
       const charge = applyStatusEffect(state, {
         id:          EC_CHARGE_FX,
         instanced:   false,
-        remainingMs: ETERNAL_CHARGE_DURATION_MS,
+        remainingMs: player.usesSkills.passives['cooldown.eternal-charge-duration-ms'] ?? ETERNAL_CHARGE_DURATION_MS,
         refreshable: true,
         sourceId:    player.isPlayer.id,
         data:        {},
@@ -48,13 +51,13 @@ export function registerNormalHit(): void {
     if (hasPassive(player, 'cooldown.battery')) {
       const charge = getStatusEffect(state, BAT_CHARGE_FX);
       if (charge && charge.stacks > 0) {
-        ctx.damage += Math.round(charge.stacks * BATTERY_ATK_PER_STACK);
+        ctx.damage += Math.round(charge.stacks * batteryDamagePerStack(player));
       }
     }
 
     if (hasPassive(player, 'cooldown.patience-paid')) {
       const ramp = rampFactorFor(cd, player);
-      if (ramp > 0) ctx.damage = Math.round(ctx.damage * (1 + ramp * PATIENCE_PAID_ATK_MAX));
+      if (ramp > 0) ctx.damage = Math.round(ctx.damage * (1 + ramp * patienceAttackMax(player)));
     }
 
     if (hasPassive(player, 'cooldown.reverb')) {

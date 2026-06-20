@@ -1,6 +1,7 @@
 import type { World } from "./World";
 import type { MonsterEntity } from "../ecs/entity";
 import type { HasKnockback } from "../systems/combat/damage/knockback";
+import { setAttackTarget } from "../systems/combat/ai/targeting";
 
 /** O(1) typed lookup. Backed by world.monsterById, populated via onEntityAdded. */
 export function getMonsterEntity(world: World, id: string): MonsterEntity | undefined {
@@ -47,6 +48,11 @@ export function clearMonsterKnockback(world: World, id: string): void {
 export function removeMonsterEntity(world: World, id: string): void {
   const e = getMonsterEntity(world, id);
   if (!e) return;
+  for (const player of world.livePlayers) {
+    if (player.hasAttackTarget?.targetId === id) {
+      setAttackTarget(world, player, null);
+    }
+  }
   world.adjustMonsterCount(e.hasPosition.nodeId, -1, e.isMonster.isBoss);
   world.ecs.remove(e);
 }

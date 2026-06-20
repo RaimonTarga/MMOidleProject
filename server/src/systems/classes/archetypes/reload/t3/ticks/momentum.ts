@@ -20,8 +20,9 @@ export function updateReloadMomentum(world: World, dt: number): void {
     // Out of combat: decay stacks one per interval. In combat: hold (reset timer).
     if (reload.momentumStacks > 0 && player.hasAttackTarget === undefined) {
       reload.momentumDecayMs += dt;
-      while (reload.momentumStacks > 0 && reload.momentumDecayMs >= MOMENTUM_DECAY_INTERVAL_MS) {
-        reload.momentumDecayMs -= MOMENTUM_DECAY_INTERVAL_MS;
+      const decayInterval = player.usesSkills.passives['reload.momentum-decay-interval-ms'] ?? MOMENTUM_DECAY_INTERVAL_MS;
+      while (reload.momentumStacks > 0 && reload.momentumDecayMs >= decayInterval) {
+        reload.momentumDecayMs -= decayInterval;
         reload.momentumStacks--;
         markSliceDirty(world, player, 'usesReload');
       }

@@ -5,7 +5,7 @@ import {
   computeEternalDoomDamage,
   resolveDotClassProfile,
 } from '@mmo-idle/shared';
-import { BuffBar, CadenceTimeline, StatRow, SummonSlotBar } from './components';
+import { CadenceTimeline, StatRow, SummonSlotBar } from './components';
 import { useHoverTooltip } from './tooltip';
 import {
   ammoCountAtom,
@@ -20,7 +20,6 @@ import {
   empoweredReadyAtom,
   energyCountAtom,
   energyMaxAtom,
-  equipmentAtom,
   executionCooldownPctAtom,
   executionReadyAtom,
   flashShiftPctAtom,
@@ -29,8 +28,6 @@ import {
   isChannelingAtom,
   laserOverheatedAtom,
   passivesAtom,
-  sacredBuffActiveAtom,
-  sacredBuffPctAtom,
   selectedSubVariantAtom,
   summonActiveCountAtom,
   summonSlotCountAtom,
@@ -82,10 +79,10 @@ function DotSummaryValue({
 
 /**
  * Per-archetype mechanic bars (ammo/heat, summon roster, cadence, execution,
- * energy, dot stacks, sacred buff). Reads atoms directly so it can be dropped
- * into both the desktop StatPanel and the mobile HUD with no prop threading;
- * exactly one archetype block renders at a time (plus the weapon-gated Sacred
- * Cross bar). Mobile compaction is handled purely in CSS via a wrapper class.
+ * energy, dot stacks). Reads atoms directly so it can be dropped into both the
+ * desktop StatPanel and the mobile HUD with no prop threading; exactly one
+ * archetype block renders at a time. Mobile compaction is handled purely in CSS
+ * via a wrapper class.
  */
 export function ArchetypeMechanics() {
   const combatArchetype = useAtomValue(combatArchetypeAtom);
@@ -114,9 +111,6 @@ export function ArchetypeMechanics() {
   const attackTargetId = useAtomValue(attackTargetIdAtom);
   const targetDotStacks = useAtomValue(targetDotStacksAtom);
   const targetChillStacks = useAtomValue(targetChillStacksAtom);
-  const equipment = useAtomValue(equipmentAtom);
-  const sacredBuffPct = useAtomValue(sacredBuffPctAtom);
-  const sacredBuffActive = useAtomValue(sacredBuffActiveAtom);
 
   const isFlash = (passives['energy.flash'] ?? 0) > 0;
   const flashShiftLabel = flashShiftPct >= 50 ? 'Red Shift' : 'Blue Shift';
@@ -401,17 +395,6 @@ export function ArchetypeMechanics() {
           </div>
         );
       })()}
-
-      {/* Sacred Cross weapon buff bar */}
-      {equipment.weapon === 'sacred-cross' && (
-        <BuffBar
-          label="Sacred Burst"
-          pct={sacredBuffPct}
-          active={sacredBuffActive}
-          activeLabel="BURST!"
-          variant="sacred"
-        />
-      )}
     </>
   );
 }

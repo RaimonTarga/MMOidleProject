@@ -14,34 +14,34 @@ export const graveyardMonsterEntries = [
     id: 'bone-crawler', name: 'Bone Crawler', color: 0x886688,
     // Swarm backbone. Fast, low individual HP, disease DoT every hit. The threat
     // is 8 of them at once. DPS 54 × (1000/1200) = 45 each (× the pack).
-    stats: { hp: 420, attack: 54, plating: 0, damageReduction: 0, speed: 78, attackRange: 12, attackCooldown: 1200, pullRange: 290 },
+    stats: { hp: 520, attack: 54, plating: 0, damageReduction: 0, speed: 78, attackRange: 12, attackCooldown: 1200, pullRange: 290 },
     behavior: 'melee', attackStyle: 'poison', biome: 'graveyard',
     rewards: { essence: 30, essenceType: 'purple', level: 3, biomeXp: 180 },
     ai: { wanderRadius: 330, leashRange: 820, idleMinMs: 600, idleMaxMs: 2500 },
-    dotEffect: { debuffId: 'bone-rot', label: 'Bone Rot', damagePerStack: 10, maxStacks: 5, tickIntervalMs: 1000, durationMs: 2000 },
+    dotEffect: { debuffId: 'bone-rot', label: 'Bone Rot', damagePerStack: 6, maxStacks: 5, tickIntervalMs: 1000, durationMs: 2000 },
   }],
 
   ['plague-hound', {
     id: 'plague-hound', name: 'Plague Hound', color: 0x664466,
     // Fast charging runner: closes instantly, spreads heavy disease DoT. Keeps
     // the pressure constant. DPS 76 × (1000/1500) = 51 + strong DoT.
-    stats: { hp: 700, attack: 76, plating: 0, damageReduction: 0, speed: 70, attackRange: 12, attackCooldown: 1500, pullRange: 270 },
+    stats: { hp: 800, attack: 76, plating: 0, damageReduction: 0, speed: 70, attackRange: 12, attackCooldown: 1500, pullRange: 270 },
     behavior: 'melee', attackStyle: 'poison', biome: 'graveyard',
     rewards: { essence: 50, essenceType: 'purple', level: 3, biomeXp: 300 },
     ai: { wanderRadius: 290, leashRange: 750, idleMinMs: 700, idleMaxMs: 3000 },
     chargeOnAggro: { speedMult: 2.5, durationMs: 900 },
-    dotEffect: { debuffId: 'hound-plague', label: 'Hound Plague', damagePerStack: 14, maxStacks: 5, tickIntervalMs: 1100, durationMs: 2500 },
+    dotEffect: { debuffId: 'hound-plague', label: 'Hound Plague', damagePerStack: 8, maxStacks: 5, tickIntervalMs: 1100, durationMs: 2500 },
   }],
 
   ['carrion-vulture', {
     id: 'carrion-vulture', name: 'Carrion Vulture', color: 0x996699,
     // Ranged contagion-lobber: stationary, fires disease projectiles from afar.
     // Background DoT while the swarm engages. DPS 64 × (1000/1700) = 38 + DoT.
-    stats: { hp: 580, attack: 64, plating: 0, damageReduction: 0, speed: 46, attackRange: 200, attackCooldown: 1700, pullRange: 260 },
+    stats: { hp: 680, attack: 64, plating: 0, damageReduction: 0, speed: 46, attackRange: 200, attackCooldown: 1700, pullRange: 260 },
     behavior: 'melee', attackStyle: 'poison', isRanged: true, biome: 'graveyard',
     rewards: { essence: 40, essenceType: 'purple', level: 3, biomeXp: 240 },
     ai: { wanderRadius: 240, leashRange: 650, idleMinMs: 1200, idleMaxMs: 4000 },
-    dotEffect: { debuffId: 'carrion-blight', label: 'Carrion Blight', damagePerStack: 12, maxStacks: 5, tickIntervalMs: 1000, durationMs: 2200 },
+    dotEffect: { debuffId: 'carrion-blight', label: 'Carrion Blight', damagePerStack: 7, maxStacks: 5, tickIntervalMs: 1000, durationMs: 2200 },
   }],
 
   ['charnel-brute', {
@@ -49,12 +49,12 @@ export const graveyardMonsterEntries = [
     // Slow bone-armored anchor. CADENCE every 4 = a 216 necrotic slam + massive
     // DoT burst. Heavy plating (16) rewards Rupture/pierce. The swarm's anchor.
     // avg/attack (3·90+216)/4 = 121.5 → ×(1000/3200) = 38 + DoT.
-    stats: { hp: 1600, attack: 90, plating: 16, damageReduction: 0.08, speed: 18, attackRange: 15, attackCooldown: 3200, pullRange: 155 },
+    stats: { hp: 1800, attack: 90, plating: 16, damageReduction: 0.08, speed: 18, attackRange: 15, attackCooldown: 3200, pullRange: 155 },
     behavior: 'melee', attackStyle: 'poison', biome: 'graveyard',
     rewards: { essence: 160, essenceType: 'purple', level: 4, biomeXp: 960 },
     ai: { wanderRadius: 110, leashRange: 460, idleMinMs: 4000, idleMaxMs: 11000 },
     cadenceFinisher: { everyNAttacks: 4, multiplier: 2.4 },   // 216
-    dotEffect: { debuffId: 'charnel-decay', label: 'Charnel Decay', damagePerStack: 18, maxStacks: 5, tickIntervalMs: 1000, durationMs: 3500 },
+    dotEffect: { debuffId: 'charnel-decay', label: 'Decay', damagePerStack: 10, maxStacks: 5, tickIntervalMs: 1000, durationMs: 3500 },
   }],
 
   ['plague-rat', {
@@ -62,11 +62,11 @@ export const graveyardMonsterEntries = [
     // Ultra-fast trivial filler — the overwhelming-density unit. Individually
     // nothing; in packs of 8+ the tick-fast attacks make evasion-rate matter and
     // the cumulative DoT compounds fast. DPS 46 × (1000/950) = 48.
-    stats: { hp: 310, attack: 46, plating: 0, damageReduction: 0, speed: 92, attackRange: 12, attackCooldown: 950, pullRange: 310 },
+    stats: { hp: 400, attack: 46, plating: 0, damageReduction: 0, speed: 92, attackRange: 12, attackCooldown: 950, pullRange: 310 },
     behavior: 'melee', attackStyle: 'poison', biome: 'graveyard',
     rewards: { essence: 22, essenceType: 'purple', level: 3, biomeXp: 130 },
     ai: { wanderRadius: 360, leashRange: 860, idleMinMs: 400, idleMaxMs: 2000 },
-    dotEffect: { debuffId: 'rat-plague', label: 'Rat Plague', damagePerStack: 8, maxStacks: 3, tickIntervalMs: 1000, durationMs: 1800 },
+    dotEffect: { debuffId: 'rat-plague', label: 'Rat Plague', damagePerStack: 6, maxStacks: 3, tickIntervalMs: 1000, durationMs: 1800 },
   }],
 
 ] satisfies [string, MonsterDefinition][];

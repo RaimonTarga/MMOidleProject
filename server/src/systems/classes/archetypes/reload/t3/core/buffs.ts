@@ -40,7 +40,8 @@ export const RELOAD_T3_BUFFS = [
     if (stacks <= 0) return null;
     const apsPct = player.usesSkills.passives['reload.momentum-aps-per-stack'] ?? DEFAULT_MOMENTUM_APS_PER_STACK;
     const reloadPer = player.usesSkills.passives['reload.momentum-reload-reduction'] ?? DEFAULT_MOMENTUM_RELOAD_REDUCTION;
-    const reloadCut = Math.round((1 - Math.max(MOMENTUM_RELOAD_REDUCTION_FLOOR, 1 - stacks * reloadPer)) * 100);
+    const reloadFloor = player.usesSkills.passives['reload.momentum-reload-reduction-floor'] ?? MOMENTUM_RELOAD_REDUCTION_FLOOR;
+    const reloadCut = Math.round((1 - Math.max(reloadFloor, 1 - stacks * reloadPer)) * 100);
     return {
       id: 'reload-momentum',
       label: 'Streak',

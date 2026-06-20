@@ -56,7 +56,7 @@ export const mountainMonsterEntries = [
     id: 'granite-titan', name: 'Granite Titan', color: 0x99aabb,
     // The flagship cap-tripper: a slow, charging slam well over 25% of player HP.
     // No DR — it's a glass cannon you survive via the cap, not a sponge.
-    stats: { hp: 350, attack: 70, plating: 0, damageReduction: 0, speed: 18, attackRange: 15, attackCooldown: 3800, pullRange: 160 },
+    stats: { hp: 400, attack: 70, plating: 0, damageReduction: 0, speed: 18, attackRange: 15, attackCooldown: 3800, pullRange: 160 },
     behavior: 'melee', attackStyle: 'impact', biome: 'mountain',
     rewards: { essence: 14, essenceType: 'blue', level: 1, biomeXp: 80 },
     ai: { wanderRadius: 110, leashRange: 460, idleMinMs: 3500, idleMaxMs: 9000 },
@@ -67,7 +67,7 @@ export const mountainMonsterEntries = [
     id: 'stone-eagle', name: 'Stone Eagle', color: 0xccdde8,
     // REBALANCED: was a fast low-hitter. Now a swooping dive-bomber — faster than
     // the titan but still a heavy hit; the charge IS the dive.
-    stats: { hp: 240, attack: 50, plating: 0, damageReduction: 0, speed: 40, attackRange: 12, attackCooldown: 2800, pullRange: 285 },
+    stats: { hp: 290, attack: 50, plating: 0, damageReduction: 0, speed: 40, attackRange: 12, attackCooldown: 2800, pullRange: 285 },
     behavior: 'melee', attackStyle: 'slash', biome: 'mountain',
     rewards: { essence: 12, essenceType: 'blue', level: 1, biomeXp: 68 },
     ai: { wanderRadius: 320, leashRange: 800, idleMinMs: 500, idleMaxMs: 2000 },
@@ -78,7 +78,7 @@ export const mountainMonsterEntries = [
     id: 'peak-archer', name: 'Boulder Thrower', color: 0xaabbcc,
     // Ranged cap-tripper — a devastating boulder from extreme range; stand still
     // and a single shot can carve a quarter of your HP. No charge (ranged).
-    stats: { hp: 280, attack: 60, plating: 0, damageReduction: 0, speed: 28, attackRange: 240, attackCooldown: 3500, pullRange: 265 },
+    stats: { hp: 330, attack: 60, plating: 0, damageReduction: 0, speed: 28, attackRange: 240, attackCooldown: 3500, pullRange: 265 },
     behavior: 'melee', attackStyle: 'boulder', isRanged: true, biome: 'mountain',
     rewards: { essence: 13, essenceType: 'blue', level: 1, biomeXp: 75 },
     ai: { wanderRadius: 200, leashRange: 600, idleMinMs: 2000, idleMaxMs: 5000 },
@@ -88,7 +88,7 @@ export const mountainMonsterEntries = [
   ['mountain-colossus', {
     id: 'mountain-colossus', name: 'Mountain Colossus', color: 0x8899aa,
     // Flagship cap-tripper: a slow charging slam well past the cap. Anti-Far.
-    stats: { hp: 770, attack: 95, plating: 0, damageReduction: 0, speed: 16, attackRange: 15, attackCooldown: 3800, pullRange: 160 },
+    stats: { hp: 870, attack: 95, plating: 0, damageReduction: 0, speed: 16, attackRange: 15, attackCooldown: 3800, pullRange: 160 },
     behavior: 'melee', attackStyle: 'impact', biome: 'mountain',
     rewards: { essence: 75, essenceType: 'blue', level: 3, biomeXp: 440 },
     ai: { wanderRadius: 90, leashRange: 420, idleMinMs: 4000, idleMaxMs: 10500 },
@@ -98,7 +98,7 @@ export const mountainMonsterEntries = [
   ['avalanche-ram', {
     id: 'avalanche-ram', name: 'Avalanche Ram', color: 0x99aabb,
     // Faster charger, still a heavy (near-cap) hit — the mobile anti-Far threat.
-    stats: { hp: 520, attack: 64, plating: 0, damageReduction: 0, speed: 38, attackRange: 12, attackCooldown: 2600, pullRange: 245 },
+    stats: { hp: 620, attack: 64, plating: 0, damageReduction: 0, speed: 38, attackRange: 12, attackCooldown: 2600, pullRange: 245 },
     behavior: 'melee', attackStyle: 'impact', biome: 'mountain',
     rewards: { essence: 47, essenceType: 'blue', level: 2, biomeXp: 280 },
     ai: { wanderRadius: 300, leashRange: 760, idleMinMs: 500, idleMaxMs: 2200 },
@@ -109,7 +109,7 @@ export const mountainMonsterEntries = [
     id: 'crag-mortar', name: 'Crag Mortar', color: 0x778899,
     // Ranged cap-tripper that KITES — backs off, lobs boulders. Anti-Close:
     // melee chasing eats free 80-dmg hits. Slow (30) so a charge can still catch it.
-    stats: { hp: 600, attack: 80, plating: 0, damageReduction: 0, speed: 30, attackRange: 250, attackCooldown: 3600, pullRange: 360 },
+    stats: { hp: 700, attack: 80, plating: 0, damageReduction: 0, speed: 30, attackRange: 250, attackCooldown: 3600, pullRange: 360 },
     behavior: 'melee', attackStyle: 'boulder', isRanged: true, kite: true, biome: 'mountain',
     rewards: { essence: 60, essenceType: 'blue', level: 3, biomeXp: 360 },
     ai: { wanderRadius: 200, leashRange: 620, idleMinMs: 2000, idleMaxMs: 5000 },
@@ -123,7 +123,7 @@ export const mountainMonsterEntries = [
     // slam. Charges once to close, then lumbers. The Mountain teaching unit:
     // its NORMAL hit is scary, its finisher is lethal without the cap.
     // DPS: avg/attack (3·155+310)/4 = 194 → ×(1000/3600) = 54 (slow spiker; the spike is the threat).
-    stats: { hp: 1700, attack: 155, plating: 0, damageReduction: 0, speed: 16, attackRange: 15, attackCooldown: 3600, pullRange: 160 },
+    stats: { hp: 1900, attack: 155, plating: 0, damageReduction: 0, speed: 16, attackRange: 15, attackCooldown: 3600, pullRange: 160 },
     behavior: 'melee', attackStyle: 'impact', biome: 'mountain',
     rewards: { essence: 95, essenceType: 'blue', level: 4, biomeXp: 570 },
     ai: { wanderRadius: 90, leashRange: 430, idleMinMs: 4000, idleMaxMs: 11000 },
@@ -135,7 +135,7 @@ export const mountainMonsterEntries = [
     id: 'avalanche-tyrant', name: 'Avalanche Tyrant', color: 0x99aabb,
     // Fast charging bruiser, heavy near-cap hit. The mobile anti-Far threat —
     // a kiter that lets it close eats a 122 hit. DPS 122 × (1000/2500) = 49.
-    stats: { hp: 1120, attack: 122, plating: 0, damageReduction: 0, speed: 42, attackRange: 12, attackCooldown: 2500, pullRange: 300 },
+    stats: { hp: 1300, attack: 122, plating: 0, damageReduction: 0, speed: 42, attackRange: 12, attackCooldown: 2500, pullRange: 300 },
     behavior: 'melee', attackStyle: 'impact', biome: 'mountain',
     rewards: { essence: 68, essenceType: 'blue', level: 3, biomeXp: 410 },
     ai: { wanderRadius: 300, leashRange: 760, idleMinMs: 600, idleMaxMs: 2500 },
@@ -147,7 +147,7 @@ export const mountainMonsterEntries = [
     // Ranged KITER: backs off and drops boulders that trip the cap from afar.
     // Anti-Close — chasing it in melee eats a 150 hit every 3.5s. Speed 34
     // (catchable on charge). DPS 150 × (1000/3500) = 43 (kiter; safety > DPS).
-    stats: { hp: 1300, attack: 150, plating: 0, damageReduction: 0, speed: 34, attackRange: 260, attackCooldown: 3500, pullRange: 380 },
+    stats: { hp: 1400, attack: 150, plating: 0, damageReduction: 0, speed: 34, attackRange: 260, attackCooldown: 3500, pullRange: 380 },
     behavior: 'melee', attackStyle: 'boulder', isRanged: true, kite: true, biome: 'mountain',
     rewards: { essence: 75, essenceType: 'blue', level: 3, biomeXp: 450 },
     ai: { wanderRadius: 210, leashRange: 640, idleMinMs: 2000, idleMaxMs: 5500 },
@@ -159,7 +159,7 @@ export const mountainMonsterEntries = [
     // every 10s = 304 (deep cap trip). Heavy plating + ENEMY SOFT-CAP: the
     // weapon-matchup exam — pierce tools (Rupture/Sunder/brittle) beat the plate,
     // fast consistent damage beats the soft-cap, slow empowered builds struggle.
-    stats: { hp: 2100, attack: 95, plating: 16, damageReduction: 0.06, speed: 14, attackRange: 15, attackCooldown: 3800, pullRange: 150 },
+    stats: { hp: 2250, attack: 95, plating: 16, damageReduction: 0.06, speed: 14, attackRange: 15, attackCooldown: 3800, pullRange: 150 },
     behavior: 'melee', attackStyle: 'impact', biome: 'mountain',
     rewards: { essence: 185, essenceType: 'blue', level: 4, biomeXp: 1110 },
     ai: { wanderRadius: 80, leashRange: 400, idleMinMs: 5000, idleMaxMs: 13000 },

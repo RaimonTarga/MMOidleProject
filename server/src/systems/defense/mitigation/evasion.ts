@@ -47,6 +47,10 @@ export function registerEvasion(): void {
     const mit = typeof ctx.metadata['evadeMitigation'] === 'number'
       ? (ctx.metadata['evadeMitigation'] as number)
       : GAME_CONFIG.EVADE_MITIGATION_BASE;
+    // Full mitigation fully avoids the hit (→ "DODGE" floater client-side); a
+    // partial evade restyles the reduced damage number. Flag which one for the
+    // monster-attack path to translate into the right client event.
+    ctx.metadata['evadeFull'] = mit >= 1;
     ctx.damage = Math.max(0, Math.round(ctx.damage * (1 - mit)));
   });
 }

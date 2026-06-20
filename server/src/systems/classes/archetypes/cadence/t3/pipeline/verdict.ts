@@ -31,7 +31,8 @@ export function registerCadenceVerdict(): void {
 
     // Bank a fraction of this finisher's damage into the pool (persists across
     // targets). Banking happens even if the finisher itself killed the target.
-    cadence.verdictStored += Math.round(ctx.damage * VERDICT_BANK_PCT);
+    const bankPct = player.usesSkills.passives['cadence.verdict-bank-pct'] ?? VERDICT_BANK_PCT;
+    cadence.verdictStored += Math.round(ctx.damage * bankPct);
 
     // Execute: target survived the finisher but is within the banked pool.
     if (target.hasHealth.hp > 0 && target.hasHealth.hp <= cadence.verdictStored) {

@@ -13,15 +13,14 @@ import {
   ITEM_DATABASE,
   MONSTER_DATABASE,
   recalculatePlayerStats,
+  resolveUpkeepConfig,
   resolveDotClassProfile,
   resolveEmpoweredMultiplier,
   resolveEnergyMax,
-  SACRED_APS_MULT,
-  SACRED_DMG_MULT,
-  SACRED_FAMILY,
   SKILL_TREE,
   upgradeMechanicEffectsTotal,
   upgradeStatBonusTotal,
+  upkeepOnHitBonus,
   weaponDotProfileForWeapon,
   type CombatArchetype,
   type ItemDefinition,
@@ -531,7 +530,21 @@ function reloadCycleRate(stats: PlayerStatsTarget, passives: PassiveMap, baseHit
   if ((passives['reload.blunderbuss'] ?? 0) > 0) {
     return ammo / (secondsPerShot + reloadMs / 1000);
   }
-  return ammo / (ammo * secondsPerShot + reloadMs / 1000);
+
+  // Hair Trigger: each shot in the clip ramps attack speed (stacks reset on reload),
+  // so the clip's shots fire progressively faster. Sum the per-shot intervals
+  // instead of assuming a flat cadence.
+  let clipShotTime = ammo * secondsPerShot;
+  if ((passives['reload.hair-trigger'] ?? 0) > 0) {
+    const pct = passives['reload.hair-trigger-pct-per-shot'] ?? 0.07;
+    const maxStacks = Math.max(0, Math.round(passives['reload.hair-trigger-max-stacks'] ?? 5));
+    clipShotTime = 0;
+    for (let i = 0; i < ammo; i++) {
+      const stacks = Math.min(i, maxStacks); // first shot fires at base speed, then ramps
+      clipShotTime += Math.max(0.2, secondsPerShot / (1 + stacks * pct));
+    }
+  }
+  return ammo / (clipShotTime + reloadMs / 1000);
 }
 
 function applyEncounterAverages(
@@ -566,19 +579,60 @@ function applyEncounterAverages(
   return { directPerHit, weaponProcPerHit, notes };
 }
 
-function applySacredAverage(
-  weaponId: string,
-  baseDps: number,
-): { extraDps: number; notes: string[] } {
-  const sacred = SACRED_FAMILY[weaponId];
-  if (!sacred) return { extraDps: 0, notes: [] };
-  const cycle = sacred.cdMs + sacred.buffMs;
-  const burstWeight = sacred.buffMs / cycle;
-  const steadyMult = (1 - burstWeight) + burstWeight * SACRED_DMG_MULT * SACRED_APS_MULT;
-  return {
-    extraDps: baseDps * (steadyMult - 1),
-    notes: [`sacred burst steady multiplier ${steadyMult.toFixed(2)}x`],
-  };
+function hitsToEnergyCap(
+  energyMax: number,
+  perHit: number,
+  gainMult = 1,
+  accelerationScale = 0,
+): number {
+  let energy = 0;
+  let hits = 0;
+  while (energy < energyMax && hits < 10_000) {
+    const fillPct = energyMax > 0 ? energy / energyMax : 0;
+    const gain = Math.max(1, Math.round(perHit * gainMult * (1 + fillPct * accelerationScale)));
+    energy = Math.min(energyMax, energy + gain);
+    hits++;
+  }
+  return Math.max(1, hits);
+}
+
+function chargeStateMultiplier(fillPct: number, minMult: number, maxMult: number): number {
+  const fill = Math.max(0, Math.min(1, fillPct));
+  return fill <= 0.5
+    ? minMult + (1 - minMult) * fill * 2
+    : 1 + (maxMult - 1) * (fill - 0.5) * 2;
+}
+
+/**
+ * Average Juggernaut crescendo finisher bonus over a sustained combat window.
+ * Mirrors server crescendoMultiplier: a front-loaded ramp to `rampMult` over
+ * `rampSeconds`, then an unbounded `tailPerSec` tail. Sampled at second
+ * midpoints over the horizon (combat assumed continuous; resets out of combat).
+ */
+function averageCrescendoBonus(passives: PassiveMap, horizonSec: number): number {
+  const rampSeconds = Math.max(0.1, passives['cadence.crescendo-ramp-seconds'] ?? 15);
+  const rampMult = Math.max(0, passives['cadence.crescendo-ramp-mult'] ?? 0.45);
+  const tailPerSec = Math.max(0, passives['cadence.crescendo-tail-per-sec'] ?? 0.01);
+  const steps = Math.max(1, Math.round(horizonSec));
+  let sum = 0;
+  for (let s = 0; s < steps; s++) {
+    const t = s + 0.5;
+    let mult = rampMult * (Math.min(t, rampSeconds) / rampSeconds);
+    if (t > rampSeconds) mult += (t - rampSeconds) * tailPerSec;
+    sum += mult;
+  }
+  return sum / steps;
+}
+
+function averageScaledDotTick(observedStacks: number, damagePerStack: number, effectMaxStacks = observedStacks): number {
+  let total = 0;
+  for (let stacks = 1; stacks <= observedStacks; stacks++) {
+    total += computeScaledDotDamage({
+      id: 'dot', stacks, maxStacks: effectMaxStacks, remainingMs: -1, sourceId: 'report',
+      data: { damagePerStack },
+    });
+  }
+  return total / Math.max(1, observedStacks);
 }
 
 function estimateClassDamage(
@@ -603,38 +657,104 @@ function estimateClassDamage(
   let effectiveHitRate = hitRate;
 
   if (archetype === 'cadence') {
-    const threshold = Math.max(2, Math.round((p['cadence.empowered-threshold'] ?? 5) + (p['cadence.threshold-mod'] ?? 0)));
-    const mult = empowered?.effective ?? p['cadence.empowered-mult'] ?? CADENCE_DAMAGE_MULT_DEFAULT;
-    const triggerCount = Math.max(1, Math.round(p['cadence.trigger-count'] ?? 1));
-    const normalHits = threshold - 1;
-    let normal = baseWithOnHit;
-    let finisher = directNoOnHit(stats.dealsDamage.attack * mult, targetWithDebuffs, platingMult) + stats.dealsDamage.onHitDamage;
+    if ((p['cadence.rampage'] ?? 0) > 0) {
+      // Berserker: simulate one full rampage cycle. Each finisher adds a stack
+      // (shorter combo, faster attacks, weaker regulars, stronger finisher) until
+      // the cap, where the next finisher OVERLOADS (stacks → 0, no rampage mult)
+      // and the cycle restarts. Stacks update on the finisher and govern the NEXT
+      // buildup's threshold/cooldown/penalty, matching the live recompute order.
+      // We sum damage and time across the cycle for an in-combat average DPS.
+      const mult = empowered?.effective ?? p['cadence.empowered-mult'] ?? CADENCE_DAMAGE_MULT_DEFAULT;
+      const maxStacks = Math.max(1, Math.round(p['cadence.rampage-max-stacks'] ?? 10));
+      const thresholdFloor = Math.max(1, Math.round(p['cadence.rampage-threshold-floor'] ?? 2));
+      const apsPerStackMs = Math.max(0, p['cadence.rampage-aps-per-stack-ms'] ?? 60);
+      const atkPenPerStack = Math.max(0, p['cadence.rampage-atk-pen-per-stack'] ?? 0.08);
+      const multPerStack = Math.max(0, p['cadence.rampage-mult-per-stack'] ?? 0.15);
+      const baseThreshold = Math.max(thresholdFloor, Math.round((p['cadence.empowered-threshold'] ?? 5) + (p['cadence.threshold-mod'] ?? 0)));
+      const baseCooldownMs = Math.max(200, stats.performsAttack.attackCooldown);
+      const baseFinisher = directNoOnHit(stats.dealsDamage.attack * mult, targetWithDebuffs, platingMult) + stats.dealsDamage.onHitDamage;
 
-    if ((p['cadence.metronome'] ?? 0) > 0) {
-      const flat = (p['cadence.metronome-flat'] ?? 12) * Math.max(1, stats.playerTier ?? 1);
-      classMechanicPerSec += ((normalHits * (normalHits - 1)) / 2 + normalHits) * flat / threshold * hitRate;
-      notes.push('metronome flat cycle estimate');
+      let cycleDamage = 0;
+      let cycleTimeMs = 0;
+      for (let k = 1; k <= maxStacks + 1; k++) {
+        const buildupStacks = k - 1; // stacks in effect during this finisher's buildup
+        const threshold = Math.max(thresholdFloor, baseThreshold - buildupStacks);
+        const cooldownMs = Math.max(200, baseCooldownMs - buildupStacks * apsPerStackMs);
+        const penalty = Math.min(0.9, buildupStacks * atkPenPerStack);
+        const normalHits = Math.max(0, threshold - 1);
+        const normalDmg = baseWithOnHit * (1 - penalty);
+        const finisherStacks = k <= maxStacks ? k : 0; // overload finisher gets no mult
+        const finisherDmg = baseFinisher * (1 + finisherStacks * multPerStack);
+        cycleDamage += normalHits * normalDmg + finisherDmg;
+        cycleTimeMs += threshold * cooldownMs;
+      }
+      const rampageDps = cycleDamage / Math.max(0.001, cycleTimeMs / 1000);
+      directPerHit = baseWithOnHit;
+      classMechanicPerSec += rampageDps - baseWithOnHit * hitRate;
+      notes.push(`berserker rampage cycle simulated (1→${maxStacks} stacks then overload), +${Math.round(multPerStack * 100)}% finisher/stack`);
+    } else {
+      const threshold = Math.max(2, Math.round((p['cadence.empowered-threshold'] ?? 5) + (p['cadence.threshold-mod'] ?? 0)));
+      const mult = empowered?.effective ?? p['cadence.empowered-mult'] ?? CADENCE_DAMAGE_MULT_DEFAULT;
+      const triggerCount = Math.max(1, Math.round(p['cadence.trigger-count'] ?? 1));
+      const extraTriggerMult = Math.max(0, p['cadence.extra-trigger-damage-mult'] ?? 1);
+      const normalHits = threshold - 1;
+      let normal = baseWithOnHit;
+      let finisher = directNoOnHit(stats.dealsDamage.attack * mult, targetWithDebuffs, platingMult) + stats.dealsDamage.onHitDamage;
+
+      if ((p['cadence.metronome'] ?? 0) > 0) {
+        // Per-tier flat scales as max(1, playerTier - unlock(4) + 1), matching live.
+        const flat = (p['cadence.metronome-flat'] ?? 12) * Math.max(1, (stats.playerTier ?? 4) - 4 + 1);
+        classMechanicPerSec += ((normalHits * (normalHits - 1)) / 2 + normalHits) * flat / threshold * hitRate;
+        notes.push('metronome flat cycle estimate');
+      }
+      if ((p['cadence.momentum-buildup'] ?? 0) > 0) {
+        finisher *= 1 + normalHits * (p['cadence.momentum-buildup'] ?? 0);
+        const echoHits = Math.round(p['cadence.momentum-echo'] ?? 0);
+        const echoBonus = p['cadence.momentum-echo-bonus'] ?? 0.5;
+        classMechanicPerSec += Math.min(echoHits, normalHits) * normal * echoBonus / threshold * hitRate;
+        notes.push('wavecrest resonance/echo steady estimate');
+      }
+      if ((p['cadence.crescendo'] ?? 0) > 0) {
+        const avgCrescendo = averageCrescendoBonus(p, REPORT_HORIZON_SEC);
+        finisher *= 1 + avgCrescendo;
+        notes.push(`juggernaut crescendo averaged +${Math.round(avgCrescendo * 100)}% finisher over ${REPORT_HORIZON_SEC}s`);
+      }
+      if ((p['cadence.hemorrhage'] ?? 0) > 0) {
+        const hemoMult = p['cadence.hemorrhage-mult'] ?? 1.5;
+        dotPerSec += (finisher * hemoMult / threshold) * hitRate;
+        finisher = 0;
+        notes.push('hemorrhage converts finishers to bleed');
+      }
+      if ((p['cadence.debuff-vuln-pct'] ?? 0) > 0) {
+        const vuln = (p['cadence.debuff-vuln-pct'] ?? 0) / 100;
+        normal *= 1 + vuln;
+        finisher *= 1 + vuln;
+        notes.push('cursed finale vulnerability treated as steady-state');
+      }
+      const finisherTotal = finisher * (1 + (triggerCount - 1) * extraTriggerMult);
+      if (triggerCount > 1) {
+        notes.push(`${triggerCount - 1} extra finisher hit(s) at ${Math.round(extraTriggerMult * 100)}% damage`);
+      }
+      if ((p['cadence.aftershock'] ?? 0) > 0) {
+        // Shockblade: the next N regular attacks after a finisher fire on-hit twice
+        // (the flat on-hit scaling is already folded into onHitDamage by recalc).
+        const aftershockAttacks = Math.max(1, Math.round(p['cadence.aftershock-attacks'] ?? 3));
+        const armed = Math.min(aftershockAttacks, normalHits);
+        classMechanicPerSec += armed * stats.dealsDamage.onHitDamage * hitRate / threshold;
+        notes.push(`shockblade: ${armed} post-finisher attack(s) fire on-hit twice`);
+      }
+      if ((p['cadence.detonation'] ?? 0) > 0) {
+        // Justicar: each finisher banks bankPct of its damage into an execute pool
+        // that is eventually spent. Optimistic upper bound — ignores the overshoot
+        // wasted when the pool resets on an execute that needed less than banked.
+        const bankPct = Math.max(0, p['cadence.verdict-bank-pct'] ?? 0.30);
+        classMechanicPerSec += bankPct * finisherTotal * hitRate / threshold;
+        notes.push(`justicar verdict: +${Math.round(bankPct * 100)}% finisher banked as execute (optimistic)`);
+      }
+      const cadenceAveragePerHit = (normalHits * normal + finisherTotal) / threshold;
+      classMechanicPerSec += (cadenceAveragePerHit - baseWithOnHit) * hitRate;
+      directPerHit = baseWithOnHit;
     }
-    if ((p['cadence.momentum-buildup'] ?? 0) > 0) {
-      finisher *= 1 + normalHits * (p['cadence.momentum-buildup'] ?? 0);
-      const echoHits = Math.round(p['cadence.momentum-echo'] ?? 0);
-      classMechanicPerSec += Math.min(echoHits, normalHits) * normal * 0.5 / threshold * hitRate;
-      notes.push('wavecrest resonance/echo steady estimate');
-    }
-    if ((p['cadence.hemorrhage'] ?? 0) > 0) {
-      dotPerSec += (finisher * 1.5 / threshold) * hitRate;
-      finisher = 0;
-      notes.push('hemorrhage converts finishers to bleed');
-    }
-    if ((p['cadence.debuff-vuln-pct'] ?? 0) > 0) {
-      const vuln = (p['cadence.debuff-vuln-pct'] ?? 0) / 100;
-      normal *= 1 + vuln;
-      finisher *= 1 + vuln;
-      notes.push('cursed finale vulnerability treated as steady-state');
-    }
-    const cadenceAveragePerHit = (normalHits * normal + triggerCount * finisher) / threshold;
-    classMechanicPerSec += (cadenceAveragePerHit - baseWithOnHit) * hitRate;
-    directPerHit = baseWithOnHit;
   } else if (archetype === 'cooldown') {
     const cdSec = Math.max(0.1, (p['cooldown.empowered-cd-ms'] ?? 7000) / 1000);
     const execRate = 1 / cdSec;
@@ -652,9 +772,32 @@ function estimateClassDamage(
       classMechanicPerSec += Math.max(0, exec - baseWithOnHit) * execRate;
     }
     if ((p['cooldown.overdrive'] ?? 0) > 0) {
-      const uptime = Math.min(1, 2.5 / cdSec);
-      classMechanicPerSec += baseWithOnHit * hitRate * uptime;
-      notes.push('overdrive attack-speed buff averaged');
+      const durationSec = Math.max(0.1, (p['cooldown.overdrive-duration-ms'] ?? 2500) / 1000);
+      const attackSpeedPct = Math.max(0, p['cooldown.overdrive-attack-speed-pct'] ?? 1);
+      const uptime = Math.min(1, durationSec / cdSec);
+      classMechanicPerSec += baseWithOnHit * hitRate * attackSpeedPct * uptime;
+      notes.push(`${Math.round(attackSpeedPct * 100)}% overdrive attack speed averaged at ${Math.round(uptime * 100)}% uptime`);
+    }
+    if ((p['cooldown.battery'] ?? 0) > 0) {
+      const intervalSec = Math.max(0.1, (p['cooldown.battery-stack-interval-ms'] ?? 1000) / 1000);
+      const damagePerStack = Math.max(0, p['cooldown.battery-damage-per-stack'] ?? 2);
+      const stacksAtExecution = Math.max(0, Math.floor(cdSec / intervalSec));
+      const averageStacks = stacksAtExecution / 2;
+      classMechanicPerSec += damagePerStack * averageStacks * hitRate;
+      classMechanicPerSec += damagePerStack * stacksAtExecution * execRate;
+      notes.push(`dynamo averaged ${asNumber(averageStacks)} regular-hit stacks, ${stacksAtExecution} on execution`);
+    }
+    if ((p['cooldown.patience-paid'] ?? 0) > 0) {
+      const rampSec = Math.max(0.1, (p['cooldown.patience-ramp-ms'] ?? 7000) / 1000);
+      const attackMax = Math.max(0, p['cooldown.patience-attack-max'] ?? 0.5);
+      const executionMax = Math.max(0, p['cooldown.patience-execution-max'] ?? 0.75);
+      const averageRamp = cdSec <= rampSec
+        ? cdSec / (2 * rampSec)
+        : 1 - rampSec / (2 * cdSec);
+      const executionRamp = Math.min(1, cdSec / rampSec);
+      classMechanicPerSec += baseWithOnHit * hitRate * attackMax * averageRamp;
+      classMechanicPerSec += exec * execRate * executionMax * executionRamp;
+      notes.push(`stalwart linear ramp averaged; ${Math.round(attackMax * 100)}% attack/${Math.round(executionMax * 100)}% execution caps`);
     }
     if ((p['cooldown.reverb'] ?? 0) > 0) {
       classMechanicPerSec += exec * Math.floor(cdSec * hitRate) * (p['cooldown.reverb-bonus-per-attack'] ?? 0.04) * execRate;
@@ -664,63 +807,243 @@ function estimateClassDamage(
       classMechanicPerSec += (p['cooldown.vengeance-floor'] ?? 30) * execRate;
       notes.push('vengeance uses floor only; incoming damage is not modeled');
     }
+    if ((p['cooldown.eternal-cycle'] ?? 0) > 0) {
+      // Transcendant: each normal attack banks a stack and adds (stacks × flat) to
+      // that hit (ramping); the execution adds the full stack total again, then
+      // clears. flat scales per tier above unlock(4), matching live.
+      const flat = Math.round((p['cooldown.eternal-cycle-flat'] ?? 8) * Math.max(1, (stats.playerTier ?? 4) - 4 + 1));
+      const durationSec = Math.max(0.1, (p['cooldown.eternal-charge-duration-ms'] ?? 10000) / 1000);
+      const windowSec = Math.min(cdSec, durationSec);
+      const n = Math.max(0, Math.floor(windowSec * hitRate)); // normal hits between executions
+      const rampBonus = flat * (n * (n + 1)) / 2; // 1×+2×+…+n× across the buildup
+      const execBonus = flat * n;                 // execution spends the full stack total
+      classMechanicPerSec += (rampBonus + execBonus) * execRate;
+      notes.push(`eternal cycle ramps ${n} stacks at ${flat}/stack between executions`);
+    }
+    if ((p['cooldown.rupture'] ?? 0) > 0) {
+      // Duelist: execution ignores plating entirely (platingMult 0). For a window
+      // after, regular attacks get reduced plating + partial DR pierce.
+      const windowSec = Math.max(0, (p['cooldown.rupture-window-ms'] ?? 2000) / 1000);
+      const windowPlatingMult = Math.max(0, p['cooldown.rupture-window-plating-mult'] ?? 0.5);
+      const drPierce = Math.max(0, Math.min(1, p['cooldown.rupture-dr-pierce'] ?? 0.10));
+      const uptime = Math.min(1, cdSec > 0 ? windowSec / cdSec : 1);
+      const windowTarget = { ...targetWithDebuffs, damageReduction: targetWithDebuffs.damageReduction * (1 - drPierce) };
+      const windowHit = directHit(stats.dealsDamage.attack, stats.dealsDamage.onHitDamage, windowTarget, windowPlatingMult);
+      classMechanicPerSec += (windowHit - baseWithOnHit) * uptime * hitRate;
+      const ruptureExec = directNoOnHit(stats.dealsDamage.attack * mult, targetWithDebuffs, 0) + stats.dealsDamage.onHitDamage;
+      classMechanicPerSec += (ruptureExec - exec) * execRate;
+      notes.push(`rupture: ${Math.round(uptime * 100)}% window (plating ×${windowPlatingMult}, ${Math.round(drPierce * 100)}% DR pierce); execution ignores plating`);
+    }
   } else if (archetype === 'energy') {
     const maxEnergy = resolveEnergyMax(p, stats.playerTier ?? 0);
     const perHit = Math.max(1, Math.round(p['energy.per-hit'] ?? 14));
-    const normalHits = Math.ceil(maxEnergy / perHit);
     const mult = empowered?.effective ?? p['energy.empowered-mult'] ?? 2;
-    let empoweredHit = directNoOnHit(stats.dealsDamage.attack * mult, targetWithDebuffs, platingMult) + stats.dealsDamage.onHitDamage;
-    if ((p['energy.awakened-lightning'] ?? 0) > 0) {
-      classMechanicPerSec += Math.max(0, empoweredHit - baseWithOnHit) * 3 * hitRate / (normalHits + 4);
-      notes.push('awakened lightning next-three empowered hits included');
+    const genericEmpoweredHit = directNoOnHit(stats.dealsDamage.attack * mult, targetWithDebuffs, platingMult) + stats.dealsDamage.onHitDamage;
+    let modeledCycle = false;
+
+    if ((p['energy.flash'] ?? 0) > 0) {
+      const damageShift = Math.max(0, p['energy.flash-max-damage-shift-pct'] ?? 0.45);
+      const speedBonus = Math.min(0.95, Math.max(0, p['energy.flash-max-speed-bonus-pct'] ?? 0.45));
+      directPerHit = directHit(
+        stats.dealsDamage.attack * (1 - damageShift),
+        stats.dealsDamage.onHitDamage,
+        targetWithDebuffs,
+        platingMult,
+      );
+      effectiveHitRate = hitRate / (1 - speedBonus);
+      modeledCycle = true;
+      notes.push(`flash modeled at full red shift: ${Math.round(damageShift * 100)}% attack loss, ${Math.round(speedBonus * 100)}% cooldown reduction`);
+    } else if ((p['energy.overdrive'] ?? 0) > 0) {
+      const normalHits = hitsToEnergyCap(maxEnergy, perHit);
+      const attackBonus = Math.max(0, p['energy.overdrive-attack-damage-pct'] ?? 0.40);
+      const decayPerSec = Math.max(0.01, p['energy.overdrive-decay-per-sec'] ?? 18);
+      const buildSec = normalHits / hitRate;
+      const activeSec = maxEnergy / decayPerSec;
+      const uptime = activeSec / (buildSec + activeSec);
+      classMechanicPerSec += directNoOnHit(stats.dealsDamage.attack * attackBonus, targetWithDebuffs, platingMult) * hitRate * uptime;
+      modeledCycle = true;
+      notes.push(`surge ${Math.round(attackBonus * 100)}% attack bonus averaged at ${Math.round(uptime * 100)}% uptime`);
+    } else if ((p['energy.upkeep'] ?? 0) > 0) {
+      const upkeep = resolveUpkeepConfig(p);
+      const decayBase = Math.max(0, p['energy.upkeep-decay-base'] ?? 12);
+      const decayRamp = Math.max(0, p['energy.upkeep-decay-ramp-per-sec'] ?? 1.5);
+      const gainPerSec = perHit * hitRate;
+      let sustainSec = REPORT_HORIZON_SEC;
+      if (decayRamp > 0) {
+        const peakSec = Math.max(0, (gainPerSec - decayBase) / decayRamp);
+        const peakEnergy = Math.min(maxEnergy, perHit + 0.5 * Math.max(0, gainPerSec - decayBase) * peakSec);
+        sustainSec = Math.min(REPORT_HORIZON_SEC, peakSec + Math.sqrt(2 * peakEnergy / decayRamp));
+      } else if (gainPerSec <= decayBase) {
+        sustainSec = Math.min(REPORT_HORIZON_SEC, perHit / Math.max(0.01, decayBase - gainPerSec));
+      }
+      const averageStacks = Math.max(0, Math.floor((sustainSec * 1000 / upkeep.stackIntervalMs) / 2));
+      const tier = (stats.playerTier ?? 3) + 1;
+      const flowOnHit = upkeepOnHitBonus(averageStacks, tier, upkeep);
+      classMechanicPerSec += flowOnHit * hitRate;
+      modeledCycle = true;
+      notes.push(`flow averaged at ${averageStacks} stacks over a ${asNumber(sustainSec)}s sustain window`);
+    } else if ((p['energy.binary-cycle'] ?? 0) > 0) {
+      const chargeGain = Math.max(0.01, p['energy.binary-charge-gain-mult'] ?? 0.6);
+      const dischargeGain = Math.max(0.01, p['energy.binary-discharge-gain-mult'] ?? 1.5);
+      const chargeSpeed = Math.max(0.01, p['energy.binary-charge-speed-factor'] ?? 1.25);
+      const dischargeSpeed = Math.max(0.01, p['energy.binary-discharge-speed-factor'] ?? 0.75);
+      const chargeHits = hitsToEnergyCap(maxEnergy, perHit, chargeGain);
+      const dischargeHits = hitsToEnergyCap(maxEnergy, perHit, dischargeGain);
+      const chargeOnHitBonus = Math.max(0, p['energy.binary-charge-onhit-bonus'] ?? 0.30);
+      const chargeOnHitPerTier = Math.max(0, p['energy.binary-charge-onhit-per-tier'] ?? 6);
+      const dischargeAttackBonus = Math.max(0, p['energy.binary-discharge-attack-bonus'] ?? 0.30);
+      const chargeDischargeMult = Math.max(0, p['energy.binary-charge-discharge-mult'] ?? 0.8);
+      const dischargeDischargeMult = Math.max(0, p['energy.binary-discharge-discharge-mult'] ?? 1.3);
+      const tierMult = Math.max(1, (stats.playerTier ?? 3) - 3 + 1);
+      const chargeHit = directHit(stats.dealsDamage.attack, stats.dealsDamage.onHitDamage * (1 + chargeOnHitBonus), targetWithDebuffs, platingMult)
+        + chargeOnHitPerTier * tierMult;
+      const dischargeHit = directHit(stats.dealsDamage.attack * (1 + dischargeAttackBonus), stats.dealsDamage.onHitDamage, targetWithDebuffs, platingMult);
+      const weakDischarge = directNoOnHit(stats.dealsDamage.attack * mult * chargeDischargeMult, targetWithDebuffs, platingMult) + stats.dealsDamage.onHitDamage;
+      const strongDischarge = directNoOnHit(stats.dealsDamage.attack * mult * dischargeDischargeMult, targetWithDebuffs, platingMult) + stats.dealsDamage.onHitDamage;
+      const chargeRate = hitRate / chargeSpeed;
+      const dischargeRate = hitRate / dischargeSpeed;
+      const cycleSec = (chargeHits + 1) / chargeRate + (dischargeHits + 1) / dischargeRate;
+      const cycleDamage = chargeHits * chargeHit + weakDischarge + dischargeHits * dischargeHit + strongDischarge;
+      classMechanicPerSec += cycleDamage / cycleSec - baseWithOnHit * hitRate;
+      modeledCycle = true;
+      notes.push(`binary cycle uses ${chargeHits} charge-state and ${dischargeHits} discharge-state builders`);
+    } else if ((p['energy.awakened-lightning'] ?? 0) > 0) {
+      const normalHits = hitsToEnergyCap(maxEnergy, perHit);
+      const strikeCount = Math.max(1, Math.round(p['energy.awakened-strike-count'] ?? 4));
+      const damageMult = Math.max(0, p['energy.awakened-damage-mult'] ?? 1.5);
+      const strike = directNoOnHit(stats.dealsDamage.attack * damageMult, targetWithDebuffs, platingMult) + stats.dealsDamage.onHitDamage;
+      const cycleAverage = (normalHits * baseWithOnHit + strikeCount * strike) / (normalHits + strikeCount);
+      classMechanicPerSec += (cycleAverage - baseWithOnHit) * hitRate;
+      modeledCycle = true;
+      notes.push(`${strikeCount} awakened strikes at ${damageMult}x per discharge cycle`);
+    } else if ((p['energy.charge-state'] ?? 0) > 0) {
+      const normalHits = hitsToEnergyCap(maxEnergy, perHit);
+      const minMult = Math.max(0, p['energy.charge-state-min-mult'] ?? 0.5);
+      const maxMult = Math.max(0, p['energy.charge-state-max-mult'] ?? 2.0);
+      let cycleDamage = genericEmpoweredHit;
+      let energy = 0;
+      for (let i = 0; i < normalHits; i++) {
+        const attackMult = chargeStateMultiplier(energy / maxEnergy, minMult, maxMult);
+        cycleDamage += directHit(stats.dealsDamage.attack * attackMult, stats.dealsDamage.onHitDamage, targetWithDebuffs, platingMult);
+        energy = Math.min(maxEnergy, energy + perHit);
+      }
+      const cycleAverage = cycleDamage / (normalHits + 1);
+      classMechanicPerSec += (cycleAverage - baseWithOnHit) * hitRate;
+      modeledCycle = true;
+      notes.push(`aether oscillation sampled across ${normalHits} energy-building hits`);
+    } else if ((p['energy.singularity-execute'] ?? 0) > 0) {
+      const accelScale = Math.max(0, p['energy.singularity-gain-accel-scale'] ?? 0.5);
+      const normalHits = hitsToEnergyCap(maxEnergy, perHit, 1, accelScale);
+      const dischargeScale = maxEnergy / 100;
+      const discharge = directNoOnHit(stats.dealsDamage.attack * mult * dischargeScale, targetWithDebuffs, platingMult)
+        + stats.dealsDamage.onHitDamage;
+      const cycleAverage = (normalHits * baseWithOnHit + discharge) / (normalHits + 1);
+      classMechanicPerSec += (cycleAverage - baseWithOnHit) * hitRate;
+      modeledCycle = true;
+      notes.push(`singularity accelerated gain reaches ${maxEnergy} energy in ${normalHits} hits; early execute averaged separately`);
+    } else if ((p['energy.critical-mass'] ?? 0) > 0) {
+      const stacks = Math.max(1, Math.round(p['energy.critical-mass-max-stacks'] ?? 3));
+      const gainPerStack = Math.max(0, p['energy.critical-mass-gain-per-stack'] ?? 0.20);
+      const damagePerStack = Math.max(0, p['energy.critical-mass-discharge-per-stack'] ?? 0.20);
+      const normalHits = hitsToEnergyCap(maxEnergy, perHit, 1 + stacks * gainPerStack);
+      const discharge = genericEmpoweredHit * (1 + stacks * damagePerStack);
+      const cycleAverage = (normalHits * baseWithOnHit + discharge) / (normalHits + 1);
+      classMechanicPerSec += (cycleAverage - baseWithOnHit) * hitRate;
+      modeledCycle = true;
+      notes.push(`critical mass assumes sustained ${stacks}-stack uptime`);
+    } else if ((p['energy.endless-storm'] ?? 0) > 0) {
+      const normalHits = hitsToEnergyCap(maxEnergy, perHit);
+      const totalMult = Math.max(0, p['energy.endless-storm-total-mult'] ?? 8);
+      const durationSec = Math.max(0.1, (p['energy.endless-storm-duration-ms'] ?? 4500) / 1000);
+      const extendSec = Math.max(0, (p['energy.endless-storm-extend-ms'] ?? 1000) / 1000);
+      const maxSec = Math.max(durationSec, (p['energy.endless-storm-max-ms'] ?? 7500) / 1000);
+      const cycleSec = (normalHits + 1) / hitRate;
+      const stormLifeSec = Math.min(maxSec, durationSec + normalHits * extendSec);
+      const uptime = Math.min(1, stormLifeSec / cycleSec);
+      dotPerSec += stats.dealsDamage.attack * totalMult / durationSec * uptime;
+      const cycleAverage = (normalHits * baseWithOnHit + baseWithOnHit) / (normalHits + 1);
+      classMechanicPerSec += (cycleAverage - baseWithOnHit) * hitRate;
+      modeledCycle = true;
+      notes.push(`endless storm ${totalMult}x budget at ${Math.round(uptime * 100)}% uptime after extensions`);
     }
-    if ((p['energy.overdrive'] ?? 0) > 0) {
-      empoweredHit = baseWithOnHit;
-      classMechanicPerSec += baseWithOnHit * hitRate * 0.35;
-      notes.push('surge overdrive approximated as 35% steady attack gain');
+
+    if (!modeledCycle) {
+      const normalHits = hitsToEnergyCap(maxEnergy, perHit);
+      const energyAveragePerHit = (normalHits * baseWithOnHit + genericEmpoweredHit) / (normalHits + 1);
+      classMechanicPerSec += (energyAveragePerHit - baseWithOnHit) * hitRate;
     }
-    if ((p['energy.endless-storm'] ?? 0) > 0) {
-      dotPerSec += stats.dealsDamage.attack * 8 * hitRate / (normalHits + 1);
-      notes.push('endless storm DoT budget included per discharge');
-    }
-    const energyAveragePerHit = (normalHits * baseWithOnHit + empoweredHit) / (normalHits + 1);
-    classMechanicPerSec += (energyAveragePerHit - baseWithOnHit) * hitRate;
-    directPerHit = baseWithOnHit;
   } else if (archetype === 'dot') {
     const profile = resolveDotClassProfile(p, stats.usesSkills.selectedSubVariant);
     const dmgPerStack = computeDotClassDamagePerStack(stats.dealsDamage.attack, profile);
-    const maxStacks = (p['dot.poison-explosion'] ?? 0) > 0 ? 10 : profile.maxStacks;
+    const poisonExplosion = (p['dot.poison-explosion'] ?? 0) > 0;
+    const maxStacks = poisonExplosion
+      ? Math.max(1, Math.round(p['dot.poison-explosion-max-stacks'] ?? 10))
+      : profile.maxStacks;
+    const tickSec = Math.max(0.1, profile.tickIntervalMs / 1000);
     directPerHit = Math.max(1, Math.round(baseWithOnHit * (1 - profile.conversionPct)));
-    if ((p['dot.eternal-doom'] ?? 0) > 0) {
-      const steadyStacks = Math.min(40, Math.max(maxStacks, Math.round(hitRate * profile.durationMs / 1000)));
-      dotPerSec += computeEternalDoomDamage(steadyStacks, dmgPerStack) / (profile.tickIntervalMs / 1000);
-      notes.push('eternal doom capped to 40 steady stacks for report sanity');
+
+    if (poisonExplosion) {
+      const rampStacks = Math.max(0, maxStacks - 1);
+      if (rampStacks > 0) dotPerSec = averageScaledDotTick(rampStacks, dmgPerStack, maxStacks) / tickSec;
+      const burstTicks = Math.max(0, p['dot.poison-explosion-burst-ticks'] ?? 10);
+      classMechanicPerSec += maxStacks * dmgPerStack * burstTicks * hitRate / maxStacks;
+      notes.push(`poison explosion ${maxStacks}-hit cycle with ${burstTicks} full-tick burst equivalents`);
+    } else if ((p['dot.eternal-doom'] ?? 0) > 0) {
+      const fullStacks = Math.max(0, Math.round(p['dot.eternal-doom-full-stacks'] ?? 8));
+      const diminishRate = Math.max(0, p['dot.eternal-doom-diminish-rate'] ?? 0.5);
+      const stackCap = Math.max(1, Math.round(p['dot.eternal-doom-max-stacks'] ?? 50));
+      const steadyStacks = Math.min(stackCap, Math.max(fullStacks, Math.round(hitRate * REPORT_HORIZON_SEC)));
+      dotPerSec = computeEternalDoomDamage(steadyStacks, dmgPerStack, fullStacks, diminishRate) / tickSec;
+      notes.push(`eternal doom estimated at ${steadyStacks}/${stackCap} stacks over the report horizon`);
     } else {
-      dotPerSec += computeScaledDotDamage({
+      dotPerSec = computeScaledDotDamage({
         id: 'dot',
         stacks: maxStacks,
         maxStacks,
         remainingMs: -1,
         sourceId: 'report',
         data: { damagePerStack: dmgPerStack },
-      }) / (profile.tickIntervalMs / 1000);
+      }) / tickSec;
     }
-    if ((p['dot.poison-explosion'] ?? 0) > 0) {
-      dotPerSec += computeScaledDotDamage({
-        id: 'dot',
-        stacks: 10,
-        maxStacks: 10,
-        remainingMs: -1,
-        sourceId: 'report',
-        data: { damagePerStack: dmgPerStack },
-      }) * hitRate / 10;
-      notes.push('poison explosion averaged every 10 stacks');
-    }
+
     if ((p['dot.frenzy'] ?? 0) > 0) {
-      effectiveHitRate *= 1.8;
-      classMechanicPerSec += 10 * Math.max(1, stats.playerTier ?? 1) * hitRate;
-      notes.push('frenzy estimated at high uptime');
+      const durationMs = Math.max(100, Math.round(p['dot.frenzy-duration-ms'] ?? 6000));
+      const attackSpeedPct = Math.max(0, p['dot.frenzy-attack-speed-pct'] ?? 0.30);
+      const onHitPerTier = Math.max(0, p['dot.frenzy-onhit-per-tier'] ?? 10);
+      const tierMult = Math.max(1, (stats.playerTier ?? 3) - 3 + 1);
+      effectiveHitRate *= 1 + attackSpeedPct;
+      classMechanicPerSec += onHitPerTier * tierMult * effectiveHitRate;
+      notes.push(`frenzy ${Math.round(attackSpeedPct * 100)}% attack speed and ${onHitPerTier * tierMult} on-hit (${durationMs / 1000}s, high uptime)`);
     }
+
+    if ((p['dot.fan-the-flames'] ?? 0) > 0) {
+      const stackDamageMult = Math.max(0, p['dot.fan-the-flames-stack-damage-mult'] ?? 0.5);
+      const stacksPerHit = Math.max(1, Math.round(p['dot.fan-the-flames-stacks-per-hit'] ?? 2));
+      const bonusMult = Math.max(0, p['dot.fan-the-flames-max-stack-bonus-mult'] ?? 2);
+      dotPerSec *= stackDamageMult;
+      classMechanicPerSec += maxStacks * dmgPerStack * bonusMult * effectiveHitRate;
+      notes.push(`${stacksPerHit} burn stacks/hit at ${Math.round(stackDamageMult * 100)}% value; max-stack bonus ${bonusMult}x`);
+    }
+
+    if ((p['dot.ignition'] ?? 0) > 0) {
+      const stackDamageMult = Math.max(0, p['dot.ignition-stack-damage-mult'] ?? 0.6);
+      dotPerSec *= stackDamageMult;
+      directPerHit = baseWithOnHit;
+      notes.push(`ignition uses ${Math.round(stackDamageMult * 100)}% burn stacks and full direct hits at max stacks`);
+    }
+
+    if ((p['dot.conflagration'] ?? 0) > 0) {
+      const ticks = Math.max(1, Math.round(p['dot.conflagration-ticks'] ?? 10));
+      const confTickSec = Math.max(0.1, (p['dot.conflagration-tick-ms'] ?? 250) / 1000);
+      const damageFactor = Math.max(0, p['dot.conflagration-damage-factor'] ?? 1);
+      const buildSec = maxStacks / effectiveHitRate;
+      const confSec = ticks * confTickSec;
+      const buildDotPerSec = averageScaledDotTick(maxStacks, dmgPerStack) / tickSec;
+      const confTotal = maxStacks * dmgPerStack * damageFactor * ticks;
+      dotPerSec = (buildDotPerSec * buildSec + confTotal) / (buildSec + confSec);
+      notes.push(`conflagration cycle: ${ticks} ticks every ${Math.round(confTickSec * 1000)}ms at ${damageFactor}x factor`);
+    }
+
     if ((p['dot.wind-spirit'] ?? 0) > 0) {
       const frostbitePerStack = p['dot.frostbite-dot-taken-pct'] ?? WIND_SPIRIT_FROSTBITE_PER_STACK_DEFAULT;
       const frostbiteMaxStacks = Math.max(1, Math.round(p['dot.frostbite-max-stacks'] ?? WIND_SPIRIT_FROSTBITE_MAX_STACKS_DEFAULT));
@@ -730,9 +1053,28 @@ function estimateClassDamage(
       directPerHit = 0;
       notes.push(`wind spirit frostbite estimated at ${asNumber(frostbiteStacks)} steady stacks`);
     }
-    if ((p['dot.rimeshatter'] ?? 0) > 0 || (p['dot.ignition'] ?? 0) > 0) {
-      directPerHit = baseWithOnHit;
-      notes.push('max-stack direct bypass treated as steady-state');
+
+    if ((p['dot.rimeshatter'] ?? 0) > 0) {
+      const drReduction = Math.max(0, p['dot.rimeshatter-dr-reduction'] ?? 0.08);
+      const debuffMs = Math.max(100, p['dot.rimeshatter-duration-ms'] ?? 2000);
+      const reducedTarget = {
+        ...targetWithDebuffs,
+        damageReduction: Math.max(0, targetWithDebuffs.damageReduction - drReduction),
+      };
+      directPerHit = directHit(stats.dealsDamage.attack, stats.dealsDamage.onHitDamage, reducedTarget, platingMult);
+      notes.push(`max-stack direct bypass with ${Math.round(drReduction * 100)}% DR reduction (${debuffMs / 1000}s, high uptime)`);
+    }
+
+    if ((p['dot.freezing-cold'] ?? 0) > 0) {
+      const chillMax = Math.max(1, Math.round(p['dot.chill-max-stacks'] ?? 9));
+      const freezeSec = Math.max(0.1, (p['dot.freeze-duration-ms'] ?? 2000) / 1000);
+      const damageTakenPct = Math.max(0, p['dot.freeze-damage-taken-pct'] ?? 0.35);
+      const buildSec = chillMax / effectiveHitRate;
+      const freezeUptime = freezeSec / (buildSec + freezeSec);
+      const averageMult = 1 + damageTakenPct * freezeUptime;
+      directPerHit *= averageMult;
+      dotPerSec *= averageMult;
+      notes.push(`freeze damage bonus averaged at ${Math.round(freezeUptime * 100)}% uptime (${chillMax} hits, ${freezeSec}s freeze)`);
     }
   } else if (archetype === 'reload') {
     if ((p['reload.laser'] ?? 0) > 0) {
@@ -759,10 +1101,41 @@ function estimateClassDamage(
     } else if ((p['reload.cannon'] ?? 0) > 0) {
       classMechanicPerSec += stats.dealsDamage.attack * (p['reload.cannon-damage-per-shot'] ?? 0.5) * effectiveHitRate;
       notes.push('cannon stored pool averaged per shot');
+    } else if ((p['reload.exploding-clip'] ?? 0) > 0) {
+      // Duelist: the last round of each clip is armed empowered (reload.empowered-mult)
+      // and gets the standard empowered splash (single-target here, so splash ignored).
+      const empMult = empowered?.effective ?? p['reload.empowered-mult'] ?? 3.5;
+      const ammo = Math.max(1, Math.round(p['reload.max-ammo'] ?? 10));
+      const empoweredShot = directNoOnHit(stats.dealsDamage.attack * empMult, targetWithDebuffs, platingMult) + stats.dealsDamage.onHitDamage;
+      classMechanicPerSec += (empoweredShot - baseWithOnHit) * effectiveHitRate / ammo;
+      notes.push(`exploding clip: empowered last shot (${empMult}x) once per ${ammo}-round clip`);
     }
     if ((p['reload.snipe-fullhp-mult'] ?? 0) > 1) {
-      weaponProcPerSec += baseWithOnHit * ((p['reload.snipe-fullhp-mult'] ?? 1) - 1) / REPORT_HORIZON_SEC;
-      notes.push('sniper full-HP bonus amortized once per report horizon');
+      // Full-HP bonus: every shot landed while the target is above the threshold deals
+      // fullHpMult x damage (snipeDamage.ts). It only ever applies to the top
+      // (1 - threshold) slice of a fresh target's HP bar, so its real value is a
+      // start-of-kill burst, not a sustained proc. Model it as the exact kill-time
+      // speed-up: ratio of shots-to-kill without the bonus vs. with it, at constant
+      // cadence. Folding it into directPerHit (rather than weaponProc) lets it inherit
+      // shared.damage-mult and weapon-DoT conversion, matching the live order where the
+      // full-HP mult lands in the onHit listener after those layers.
+      const fullHpMult = p['reload.snipe-fullhp-mult'] ?? 1;
+      const threshold = p['reload.snipe-fullhp-threshold'] ?? 0.95;
+      const normalShot = Math.max(1, directPerHit);
+      const fullHpShot = normalShot * fullHpMult;
+      const windowHp = target.hp * Math.max(0, 1 - threshold);
+      // Shots that land above the threshold: enough 4x shots to clear the window,
+      // never more than it takes to kill, at least one.
+      const bonusShots = Math.max(1, Math.min(
+        Math.ceil(windowHp / fullHpShot),
+        Math.ceil(target.hp / fullHpShot),
+      ));
+      const shotsNoBonus = Math.max(1, Math.ceil(target.hp / normalShot));
+      const remainingHp = Math.max(0, target.hp - bonusShots * fullHpShot);
+      const shotsWithBonus = Math.max(1, bonusShots + Math.ceil(remainingHp / normalShot));
+      const killSpeedup = shotsNoBonus / shotsWithBonus;
+      directPerHit *= killSpeedup;
+      notes.push(`sniper full-HP ${fullHpMult}x on top ${Math.round((1 - threshold) * 100)}% HP: ${bonusShots} bonus shot(s)/kill, +${Math.round((killSpeedup - 1) * 100)}% direct vs avg tier HP`);
     }
   } else if (archetype === 'summoner') {
     const baseCount = p['summoner.minion-count'] ?? 3;
@@ -787,8 +1160,21 @@ function estimateClassDamage(
   directPerHit = encounter.directPerHit;
   weaponProcPerSec += encounter.weaponProcPerHit * effectiveHitRate;
 
-  const profile = weaponDotProfileForWeapon(weapon.id);
   let directDps = directPerHit * effectiveHitRate;
+
+  // shared.damage-mult is applied to ctx.damage in the live pipeline (combat.ts) before
+  // the onHit event, so it boosts both the direct hit and any class mechanic that scales
+  // from it. Apply it here, before the weapon-DoT conversion, so the converted reservoir
+  // portion inherits the boost too. Standalone class DoT (dotPerSec) goes through a
+  // separate live damage path and is intentionally left untouched.
+  const sharedDamageMult = Math.max(0, p['shared.damage-mult'] ?? 0);
+  if (sharedDamageMult > 0) {
+    directDps *= 1 + sharedDamageMult;
+    classMechanicPerSec *= 1 + sharedDamageMult;
+    notes.push(`shared.damage-mult +${Math.round(sharedDamageMult * 100)}% applied to direct + class`);
+  }
+
+  const profile = weaponDotProfileForWeapon(weapon.id);
   if (profile) {
     const convertedDirect = directDps * profile.convPct;
     const convertedClass = Math.max(0, classMechanicPerSec) * profile.convPct;
@@ -798,10 +1184,6 @@ function estimateClassDamage(
     weaponProcPerSec += converted * profile.dotMultiplier;
     notes.push(`${profile.effectId} reservoir DoT from weapon profile`);
   }
-
-  const sacred = applySacredAverage(weapon.id, directDps + classMechanicPerSec + dotPerSec + weaponProcPerSec);
-  weaponProcPerSec += sacred.extraDps;
-  notes.push(...sacred.notes);
 
   return {
     direct: directDps,
@@ -1216,11 +1598,37 @@ function mechanicFrequency(stats: PlayerStatsTarget): string {
   if (archetype === 'energy') {
     const maxEnergy = resolveEnergyMax(p, stats.playerTier ?? 0);
     const perHit = Math.max(1, Math.round(p['energy.per-hit'] ?? 14));
-    const normalHits = Math.ceil(maxEnergy / perHit);
+    if ((p['energy.flash'] ?? 0) > 0) {
+      return `no discharge; +${asNumber(p['energy.flash-energy-per-hit'] ?? 5)} energy/hit toward shift`;
+    }
+    if ((p['energy.upkeep'] ?? 0) > 0) {
+      return `no discharge; 1 Flow stack/${asNumber(p['energy.upkeep-stack-interval-ms'] ?? 1000)}ms while sustained`;
+    }
+    const accel = (p['energy.singularity-execute'] ?? 0) > 0
+      ? Math.max(0, p['energy.singularity-gain-accel-scale'] ?? 0.5)
+      : 0;
+    const gainMult = (p['energy.critical-mass'] ?? 0) > 0
+      ? 1 + Math.max(1, p['energy.critical-mass-max-stacks'] ?? 3) * Math.max(0, p['energy.critical-mass-gain-per-stack'] ?? 0.2)
+      : 1;
+    const normalHits = hitsToEnergyCap(maxEnergy, perHit, gainMult, accel);
+    if ((p['energy.awakened-lightning'] ?? 0) > 0) {
+      const strikes = Math.max(1, Math.round(p['energy.awakened-strike-count'] ?? 4));
+      return `${strikes} empowered strikes every ${normalHits + strikes} total attacks`;
+    }
+    if ((p['energy.overdrive'] ?? 0) > 0) {
+      const activeSec = maxEnergy / Math.max(0.01, p['energy.overdrive-decay-per-sec'] ?? 18);
+      return `Overdrive after ${normalHits} builders; active ${asNumber(activeSec)}s`;
+    }
     return `discharge every ${normalHits + 1} hits (${asNumber(hitRate / (normalHits + 1))}/s)`;
   }
   if (archetype === 'dot') {
     const profile = resolveDotClassProfile(p, stats.usesSkills.selectedSubVariant);
+    if ((p['dot.poison-explosion'] ?? 0) > 0) {
+      return `detonation every ${Math.max(1, Math.round(p['dot.poison-explosion-max-stacks'] ?? 10))} hits`;
+    }
+    if ((p['dot.freezing-cold'] ?? 0) > 0) {
+      return `freeze every ${Math.max(1, Math.round(p['dot.chill-max-stacks'] ?? 9))} chill hits for ${asNumber((p['dot.freeze-duration-ms'] ?? 2000) / 1000)}s`;
+    }
     return `DoT cap ${profile.maxStacks} stacks, tick ${asNumber(profile.tickIntervalMs)}ms`;
   }
   if (archetype === 'reload') {
@@ -1573,7 +1981,6 @@ function renderLlmPacket(reportTier: number, rows: ReportRow[]): string {
       const formulas = [
         weapon.attacksPerSecond ? `${asNumber(weapon.attacksPerSecond)} APS base` : '',
         profile ? `${profile.effectId} DoT reservoir ${asNumber(profile.convPct * 100)}% conversion x${asNumber(profile.dotMultiplier)}` : '',
-        SACRED_FAMILY[weapon.id] ? `sacred burst ${SACRED_DMG_MULT}x dmg and ${SACRED_APS_MULT}x APS during buff` : '',
       ].filter(Boolean).join('; ') || '-';
       return [
         weapon.name,
@@ -1701,7 +2108,7 @@ ${mdTable(
 ## 11. Formula Caveats / Unmapped Mechanics
 
 - Direct hit formula is shared \`estimatePlayerHitDamage\`; stats are rebuilt through shared \`recalculatePlayerStats\`.
-- ${modeledMechanics.join(', ')}, weapon debuffs, weapon DoT reservoirs, and sacred-family burst effects are deterministic steady-state estimates.
+- ${modeledMechanics.join(', ')}, weapon debuffs, and weapon DoT reservoirs are deterministic steady-state estimates.
 - Runtime combat events, proc randomness, target swapping, overkill, downtime, minion death/pathing, AoE splash value, and enemy offensive pressure are not modeled.
 - Report notes observed in this tier: ${caveatNotes.length ? caveatNotes.map((note) => `\`${md(note)}\``).join(', ') : 'none'}.
 `;
@@ -1847,7 +2254,7 @@ Generated from \`SKILL_TREE\`, shared stat rebuild rules, and the report's formu
 - Skill stat effects apply additively. \`attackSpeedPct\` sources sum, then cooldown becomes \`round(cooldown / max(0.1, 1 + attackSpeedPct))\`, floored to 200 ms before reload-specific layers.
 - Equipment stats and item upgrade stats apply after skill stats. Mechanic effects merge into \`usesSkills.passives\`.
 - Close range gets its authored range node plus class-specific close bonus from the stat pipeline: Squire +5 plating/+1 hpRegen, Apprentice +4/+2, Striker +3/+3, Slinger +2/+4, Spirit +1/+5.
-- \`shared.damage-mult\` is additive final damage after plating/DR: final direct pipeline damage is multiplied by \`1 + shared.damage-mult\`.
+- \`shared.damage-mult\` matches the live pipeline (combat.ts): direct DPS and class-mechanic DPS are multiplied by \`1 + shared.damage-mult\` (applied before weapon-DoT conversion so the converted reservoir inherits it). Standalone class DoT is unaffected, mirroring the separate live DoT path.
 - Empowered multiplier formula: \`effective = (archetypeBase + archetypeAdd + shared.empowered-mult-add) * (1 + weapon.empowered-mult-bonus)\`, then \`ctx.damage = floor(ctx.damage * effective)\`.
 
 ## Root / Base Stat Bonuses

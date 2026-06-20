@@ -60,7 +60,7 @@ function assertEq<T>(actual: T, expected: T, msg: string): void {
 {
   const fire = resolveDotClassProfile({}, 'balanced');
   const stack = computeDotClassDamagePerStack(100, fire);
-  assertEq(stack, 14, 'fire stack damage uses attack profile');
+  assertEq(stack, 15, 'fire stack damage uses attack profile');
   assert(
     stack !== computeDotClassDamagePerStack(200, fire),
     'stack damage is sensitive to attack base only',
@@ -70,7 +70,7 @@ function assertEq<T>(actual: T, expected: T, msg: string): void {
 {
   const frost = resolveDotClassProfile({}, 'heavy');
   const fullStackTick = computeDotClassDamagePerStack(100, frost) * frost.maxStacks;
-  assertEq(fullStackTick, 168, 'frost full-stack tick includes mechanic multiplier');
+  assertEq(fullStackTick, 162, 'frost full-stack tick includes mechanic multiplier');
 }
 
 console.log('dotClassProfile.test.ts: ok');

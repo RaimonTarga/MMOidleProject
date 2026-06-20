@@ -59,7 +59,18 @@
       "PowerShell(Set-Location \"C:\\\\Users\\\\osaif\\\\Documents\\\\Claude\\\\Projects\\\\MMO idle\"; \\(Get-Content package.json -Raw | ConvertFrom-Json\\).scripts | Format-List)",
       "Read(//c/c/Users/osaif/Documents/Claude/Projects/MMO idle/shared/src/data/skillTree/**)",
       "Read(//c/c/Users/osaif/Documents/Claude/Projects/MMO idle/shared/src/data/**)",
-      "Bash(xargs grep -l \"NODE_BIOMES\\\\|BIOME_DATABASE\")"
+      "Bash(xargs grep -l \"NODE_BIOMES\\\\|BIOME_DATABASE\")",
+      "Bash(npx tsx *)",
+      "Bash(git stash *)",
+      "Bash(pnpm ehp:report)",
+      "Bash(pnpm ehp:llm --tier=4)",
+      "Bash(ls -la node_modules/@mmo-idle/)",
+      "Bash(ls -la server/node_modules/@mmo-idle/)",
+      "Bash(cd \"c:/Users/osaif/Documents/Claude/Projects/MMO idle/server\" && pnpm exec tsx --conditions=development ../tools/mob-report.ts --llm-packet --tier=3 2>&1 | head -3 && echo \"---\" && sed -n '23,57p' \"../reports/mob-llm-packet-t3.md\")",
+      "Read(//c/Users/osaif/Documents/Claude/Projects/reports/**)",
+      "PowerShell(cd \"c:\\\\Users\\\\osaif\\\\Documents\\\\Claude\\\\Projects\\\\MMO idle\"; pnpm typecheck 2>&1 | Where-Object { $_ -match \"gauntlet|wave|error TS\" } | Select-Object -First 30)",
+      "PowerShell($out = pnpm --filter @mmo-idle/server exec tsc --noEmit 2>&1 | Out-String; $hits = \\($out -split \"`n\"\\) | Select-String -Pattern \"autoTarget|targetPriority\"; if \\($hits\\) { Write-Output \"ERRORS IN EDITED FILES:\"; $hits } else { Write-Output \"NO ERRORS IN autoTarget.ts / targetPriority.ts\" })",
+      "Bash(xargs grep -l \"rune\")"
     ]
   }
 }

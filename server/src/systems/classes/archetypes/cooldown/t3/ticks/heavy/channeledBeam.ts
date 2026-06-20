@@ -44,7 +44,8 @@ export function updateChanneledBeam(world: World, dt: number, now: number): void
     }
 
     channel.remainingMs = remaining;
-    channel.pct = Math.round((1 - remaining / BEAM_DURATION_MS) * 100);
+    const beamDurationMs = player.usesSkills.passives['cooldown.beam-duration-ms'] ?? BEAM_DURATION_MS;
+    channel.pct = Math.round((1 - remaining / beamDurationMs) * 100);
 
     if (!channel.targetId) { endChannel(world, player); continue; }
 
@@ -57,7 +58,7 @@ export function updateChanneledBeam(world: World, dt: number, now: number): void
 
     const nextTick = channel.nextTickMs - dt;
     if (nextTick > 0) { channel.nextTickMs = nextTick; continue; }
-    channel.nextTickMs = nextTick + BEAM_TICK_MS;
+    channel.nextTickMs = nextTick + (player.usesSkills.passives['cooldown.beam-tick-ms'] ?? BEAM_TICK_MS);
 
     const killed = applyBeamTick(world, player, monster, now);
     if (killed) {

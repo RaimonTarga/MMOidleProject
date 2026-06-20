@@ -86,6 +86,7 @@ export const CADENCE_KEYS = [
   'cadence.damage-mult-add',
   'cadence.speed-stack',
   'cadence.trigger-count',
+  'cadence.extra-trigger-damage-mult',
   'cadence.debuff-vuln-pct',
   'cadence.debuff-vuln-ms',
   'cadence.debuff-plating-shred',
@@ -108,17 +109,43 @@ export const CADENCE_KEYS = [
   'cadence.rampage',
   // Crescendo (heavy): in-combat time ramps a finisher multiplier (resets out of combat).
   'cadence.crescendo',
+  // ── T4 spec tuning knobs (node-authored; constants are fallback defaults) ────
+  // Shockblade: number of post-finisher regular attacks that fire on-hit twice.
+  'cadence.aftershock-attacks',
+  // Wavecrest: bonus damage fraction applied to each post-finisher echo hit.
+  'cadence.momentum-echo-bonus',
+  // Justicar: fraction of each finisher banked into the Verdict execution pool.
+  'cadence.verdict-bank-pct',
+  // Berserker rampage tuning: cap, threshold floor, per-stack APS/penalty/mult, OOC decay.
+  'cadence.rampage-max-stacks',
+  'cadence.rampage-threshold-floor',
+  'cadence.rampage-aps-per-stack-ms',
+  'cadence.rampage-atk-pen-per-stack',
+  'cadence.rampage-mult-per-stack',
+  'cadence.rampage-decay-interval-ms',
+  // Hemomancer bleed: total-damage multiplier, tick count, tick interval.
+  'cadence.hemorrhage-mult',
+  'cadence.hemorrhage-ticks',
+  'cadence.hemorrhage-tick-ms',
+  // Juggernaut crescendo: ramp window (s), bonus across the ramp, post-ramp tail per second.
+  'cadence.crescendo-ramp-seconds',
+  'cadence.crescendo-ramp-mult',
+  'cadence.crescendo-tail-per-sec',
 ] as const;
 
 export const COOLDOWN_KEYS = [
   'cooldown.empowered-cd-ms',
   'cooldown.empowered-mult',
   'cooldown.overdrive',
+  'cooldown.overdrive-duration-ms',
+  'cooldown.overdrive-attack-speed-pct',
   'cooldown.eternal-cycle',
   'cooldown.eternal-cycle-flat',
   'cooldown.temporal-extension',
   'cooldown.acceleration-ms',
   'cooldown.battery',
+  'cooldown.battery-stack-interval-ms',
+  'cooldown.battery-damage-per-stack',
   'cooldown.alignment',
   'cooldown.entropy-collapse',
   'cooldown.singular-extraction',
@@ -139,10 +166,24 @@ export const COOLDOWN_KEYS = [
   'cooldown.reverb-bonus-per-attack',
   // Patience Paid (balanced): uninterrupted CD ramps attack + execution damage.
   'cooldown.patience-paid',
+  'cooldown.patience-ramp-ms',
+  'cooldown.patience-attack-max',
+  'cooldown.patience-execution-max',
   // Vengeance (heavy): execution bonus from damage taken since last execution.
   'cooldown.vengeance',
   'cooldown.vengeance-mult',
   'cooldown.vengeance-floor',
+  // ── T4 spec tuning knobs (node-authored; constants are fallback defaults) ────
+  // Transcendant: ms of idle before banked stacks fall off.
+  'cooldown.eternal-charge-duration-ms',
+  // Sunderer: post-execution window (ms) + the plating multiplier applied during it.
+  'cooldown.rupture-window-ms',
+  'cooldown.rupture-window-plating-mult',
+  // Destroyer: ms without a target before the primed execution cooldown resets.
+  'cooldown.singular-no-target-ms',
+  // Devout Priest: holy-beam channel duration and per-tick interval (ms).
+  'cooldown.beam-duration-ms',
+  'cooldown.beam-tick-ms',
 ] as const;
 
 export const RELOAD_KEYS = [
@@ -162,6 +203,8 @@ export const RELOAD_KEYS = [
   'reload.snipe-cadence-ms',
   'reload.snipe-as-to-dmg',
   'reload.snipe-fullhp-mult',
+  // HP fraction at/above which a target counts as "full HP" for the snipe bonus.
+  'reload.snipe-fullhp-threshold',
   'reload.gatling',
   'reload.exploding-clip',
   'reload.exploding-clip-mult',
@@ -174,9 +217,13 @@ export const RELOAD_KEYS = [
   'reload.blunderbuss-spread-rad',
   'reload.blunderbuss-knockback-distance-per-pellet',
   'reload.blunderbuss-knockback-ms-per-pellet',
+  // Fixed self-recoil distance the shooter takes per volley.
+  'reload.blunderbuss-self-knockback-dist',
   'reload.reload-time-mult',
   'reload.death-mark',
   'reload.death-mark-detonate-mult',
+  // Max Death Mark stacks a target can hold.
+  'reload.death-mark-max',
   'reload.suppressing-fire',
   'reload.suppress-shred',
   'reload.suppress-max-stacks',
@@ -188,16 +235,24 @@ export const RELOAD_KEYS = [
   'reload.alternating-cadence',
   // Dualslinger also grants flat on-hit damage scaling with player tier ((tier+1) × this).
   'reload.alternating-onhit-per-tier',
+  // Even-shot attack multiplier / odd-shot on-hit multiplier.
+  'reload.alternating-attack-mult',
+  'reload.alternating-onhit-mult',
   // Momentum (balanced): each reload grants stacking attack speed (decays OOC).
   'reload.momentum',
   'reload.momentum-aps-per-stack',
   'reload.momentum-max-stacks',
   // Each stack also cuts reload time by this fraction (0.10 × 5 = 50% → ~1s at 2s base).
   'reload.momentum-reload-reduction',
+  // OOC stacks shed one per this interval; reload reduction is floored at this fraction of base.
+  'reload.momentum-decay-interval-ms',
+  'reload.momentum-reload-reduction-floor',
   // Cannon (heavy): each shot banks attack × per-shot into a stored pool; reloading
   // charges for half the reload then fires the whole pool as one burst.
   'reload.cannon',
   'reload.cannon-damage-per-shot',
+  // Fraction of the reload spent charging before the cannon fires.
+  'reload.cannon-charge-fraction',
 ] as const;
 
 export const ENERGY_KEYS = [
@@ -220,8 +275,48 @@ export const ENERGY_KEYS = [
   'energy.charge-state',       // balanced: attack damage scales with energy %
   'energy.critical-mass',      // heavy: consecutive discharges stack
   'energy.endless-storm',      // heavy: discharge applies a persistent storm DoT
+  'energy.endless-storm-total-mult',
   // Voidwalker: per-tier flat addition to BASE max energy (resolveEnergyMax).
   'energy.max-bonus',
+  'energy.flash-energy-per-hit',
+  'energy.flash-max-damage-shift-pct',
+  'energy.flash-max-speed-bonus-pct',
+  'energy.flash-max-evasion-bonus-pct',
+  'energy.flash-shift-decay-ms',
+  'energy.overdrive-attack-damage-pct',
+  'energy.overdrive-decay-per-sec',
+  'energy.upkeep-stack-interval-ms',
+  'energy.upkeep-decay-base',
+  'energy.upkeep-decay-ramp-per-sec',
+  'energy.upkeep-band-1-end',
+  'energy.upkeep-band-2-end',
+  'energy.upkeep-band-3-end',
+  'energy.upkeep-band-1-onhit-per-tier',
+  'energy.upkeep-band-2-onhit-per-tier',
+  'energy.upkeep-band-3-onhit-per-tier',
+  'energy.upkeep-overflow-onhit-per-tier',
+  'energy.binary-charge-onhit-bonus',
+  'energy.binary-charge-onhit-per-tier',
+  'energy.binary-discharge-attack-bonus',
+  'energy.binary-charge-gain-mult',
+  'energy.binary-discharge-gain-mult',
+  'energy.binary-charge-speed-factor',
+  'energy.binary-discharge-speed-factor',
+  'energy.binary-charge-discharge-mult',
+  'energy.binary-discharge-discharge-mult',
+  'energy.awakened-strike-count',
+  'energy.awakened-damage-mult',
+  'energy.charge-state-min-mult',
+  'energy.charge-state-max-mult',
+  'energy.singularity-gain-accel-scale',
+  'energy.critical-mass-max-stacks',
+  'energy.critical-mass-discharge-per-stack',
+  'energy.critical-mass-gain-per-stack',
+  'energy.critical-mass-reset-ms',
+  'energy.endless-storm-tick-ms',
+  'energy.endless-storm-duration-ms',
+  'energy.endless-storm-extend-ms',
+  'energy.endless-storm-max-ms',
 ] as const;
 
 export const DOT_KEYS = [
@@ -242,8 +337,33 @@ export const DOT_KEYS = [
   'dot.frostbite-dot-taken-pct',
   'dot.frostbite-max-stacks',
   'dot.frostbite-duration-ms',
+  'dot.poison-explosion-max-stacks',
+  'dot.poison-explosion-burst-ticks',
+  'dot.eternal-doom-full-stacks',
+  'dot.eternal-doom-diminish-rate',
+  'dot.eternal-doom-max-stacks',
+  'dot.fan-the-flames-stacks-per-hit',
+  'dot.fan-the-flames-stack-damage-mult',
+  'dot.fan-the-flames-max-stack-bonus-mult',
+  'dot.ignition-stack-damage-mult',
+  'dot.conflagration-ticks',
+  'dot.conflagration-tick-ms',
+  'dot.conflagration-damage-factor',
+  'dot.rimeshatter-dr-reduction',
+  'dot.rimeshatter-duration-ms',
+  'dot.chill-max-stacks',
+  'dot.chill-move-slow-per-stack',
+  'dot.chill-attack-slow-per-stack',
+  'dot.chill-duration-ms',
+  'dot.freeze-duration-ms',
+  'dot.freeze-damage-taken-pct',
+  'dot.freeze-move-slow-pct',
+  'dot.freeze-attack-slow-pct',
   // T4 specs ─────────────────────────────────────────────────────────────────
-  'dot.frenzy',         // poison: double APS while at max stacks
+  'dot.frenzy',         // poison: attack speed and on-hit damage while at max stacks
+  'dot.frenzy-duration-ms',
+  'dot.frenzy-attack-speed-pct',
+  'dot.frenzy-onhit-per-tier',
   'dot.ignition',       // fire: front-load all stacks on a fresh target
   'dot.rimeshatter',    // frost: at max stacks, full direct + DR debuff
   'dot.wind-spirit',    // frost: max-stack hits apply Frostbite DoT vulnerability
@@ -262,8 +382,7 @@ export const SHARED_KEYS = [
   // Damage multiplier applied on the very first hit ever landed on a fresh monster entity.
   'weapon.first-strike-mult',
   // Chaotic ("dead swing") cadence: every Nth player hit deals 0 damage but still
-  // applies on-hit effects. Read in runPlayerAttack; CHAOTIC_FAMILY is the legacy
-  // fallback for weapons without this key.
+  // applies on-hit effects. Authored per-weapon on the recipe; read in runPlayerAttack.
   'weapon.dead-swing-interval',
   // Plague Axe: the dead swing applies `vulnerability` (+damage-taken) instead of
   // damage. -pct is the fraction added (0.20 = +20%), -ms the debuff duration.

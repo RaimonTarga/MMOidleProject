@@ -33,7 +33,8 @@ export function registerCadenceNormalHit(): void {
 
     // Rampage: regular attacks are progressively suppressed as stacks build.
     if (cadence.rampageStacks > 0) {
-      const pen = Math.min(0.9, cadence.rampageStacks * RAMPAGE_ATK_PEN_PER_STACK);
+      const penPerStack = passives['cadence.rampage-atk-pen-per-stack'] ?? RAMPAGE_ATK_PEN_PER_STACK;
+      const pen = Math.min(0.9, cadence.rampageStacks * penPerStack);
       ctx.damage = Math.max(1, Math.round(ctx.damage * (1 - pen)));
     }
 
@@ -45,7 +46,8 @@ export function registerCadenceNormalHit(): void {
 
     // Rising Tide echo bonus: boost this hit if the echo counter is running.
     if (cadence.echo > 0 && (passives['cadence.momentum-echo'] ?? 0) > 0) {
-      ctx.damage = Math.round(ctx.damage * (1 + MOMENTUM_ECHO_BONUS));
+      const echoBonus = passives['cadence.momentum-echo-bonus'] ?? MOMENTUM_ECHO_BONUS;
+      ctx.damage = Math.round(ctx.damage * (1 + echoBonus));
       cadence.echo--;
     }
 

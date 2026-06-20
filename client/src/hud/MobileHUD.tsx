@@ -1,5 +1,5 @@
 import { useState, useRef, type ReactNode } from 'react';
-import { useAtom, useAtomValue } from 'jotai';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { hudBus } from '../hudBus';
 import { SkillTreePanel } from '../ui/SkillTreePanel';
 import { RunesPanel } from '../ui/RunesPanel';
@@ -15,6 +15,7 @@ import { SettingsPanel } from './settings/SettingsPanel';
 import { useIsMobile } from './useIsMobile';
 import {
   autoAtom,
+  bestiaryOpenAtom,
   deathOverlayAtom,
   hpAtom,
   incomingDotAtom,
@@ -52,6 +53,7 @@ function MobileHUDContent() {
   const [view, setView] = useState<MobileView>(null);
   const [craftTab, setCraftTab] = useState<'biome' | 'forge' | 'upgrade'>('forge');
   const [settingsOpen, setSettingsOpen] = useAtom(settingsOpenAtom);
+  const setBestiaryOpen = useSetAtom(bestiaryOpenAtom);
 
   const status = useAtomValue(statusAtom);
   const playerName = useAtomValue(playerNameAtom);
@@ -183,6 +185,7 @@ function MobileHUDContent() {
         <MobileSheet title="More" onClose={close}>
           <div className="mhud-more">
             <button className="mhud-more__btn" onClick={() => setView('runes')}>Runes</button>
+            <button className="mhud-more__btn" onClick={() => { setBestiaryOpen(true); setView(null); }}>Bestiary</button>
             <button className="mhud-more__btn" onClick={() => { setSettingsOpen(true); setView(null); }}>Settings</button>
             <button className="mhud-more__btn" onClick={() => hudBus.toggleTacticalView()}>Tactical Mode</button>
           </div>
