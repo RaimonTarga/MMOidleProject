@@ -131,6 +131,11 @@ function fmt(v: DebugValue): string {
 export function DebugPanel() {
   const [open, setOpen] = useAtom(debugPanelOpenAtom);
 
+  // Dev tooling only: the panel (reset/rename/live combat readouts) is hidden in
+  // production builds, matching the server, which only registers debug:* handlers
+  // when IS_DEV.
+  if (!DEV_TOOLS_ENABLED) return null;
+
   return (
     <div className="debug-panel">
       <button className="debug-panel__toggle" onClick={() => setOpen(o => !o)}>
