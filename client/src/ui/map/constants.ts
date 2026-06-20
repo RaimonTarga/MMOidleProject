@@ -19,6 +19,7 @@ export const BIOME_TILE_COLORS: Record<string, string> = {
   volcanic:   '#4a1010',
   graveyard: '#1e0e2a',
   trench:     '#001a4d',
+  abyss:      '#0a0014',
 };
 
 export function tileColor(biomeGroup: string): string {
@@ -39,6 +40,7 @@ export const BIOME_ICONS: Record<string, string> = {
   volcanic:  'UI_icons/volcano-icon.png',
   graveyard: 'UI_icons/graveyard-icon.png',
   trench:    'UI_icons/trench-icon.png',
+  abyss:     'UI_icons/abyss-icon.png',
 };
 
 /** Map badge for dungeon nodes — Void Overlord throne uses a distinct label. */

@@ -24,7 +24,7 @@ live **expected matches** count update, then activate **Run ▶**.
 
 - **Boss** — the solo dungeon-boss matrix (one bot per build × content tier).
 - **Overlord (4-party)** — runs a **4-bot party** against an overlord (an
-  objective `ultimateEncounter` boss, currently the void-overlord at `node-9-0`).
+  objective `ultimateEncounter` boss, currently the void-overlord at `node-10-0`).
   It enumerates every party of **4 distinct classes** — one build drawn from each
   of 4 different classes, across every build variation. **No class is ever
   repeated** in a party (a real group rarely runs 4 of the same type), which keeps

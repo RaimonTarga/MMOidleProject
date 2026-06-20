@@ -214,7 +214,7 @@ export function enumerateBuildsForContentTier(
 /**
  * Every overlord encounter in the world: a dungeon node whose boss is an
  * objective-driven `ultimateEncounter`. Currently just the void-overlord
- * (`node-9-0`, abyss T4), but new overlords are picked up automatically.
+ * (`node-10-0`, abyss T4), but new overlords are picked up automatically.
  */
 export function enumerateOverlordTargets(filter?: MatrixFilter): ContentTarget[] {
   const targets: ContentTarget[] = [];

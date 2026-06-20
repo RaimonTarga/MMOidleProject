@@ -125,7 +125,7 @@ export const NODE_FEATURES: Record<string, NodeFeatureSpec[]> = {
       // No `blocksMovement`: players (and minions) can walk through it freely.
     },
   ],
-  "node-9-0": [
+  "node-10-0": [
     {
       id: "abyssal_throne",
       x: GAME_CONFIG.NODE_WIDTH / 2,

@@ -72,7 +72,7 @@ assert(
   'gate bounds map to collision half extents',
 );
 
-const throne = buildStaticCollisionRegions('node-9-0');
+const throne = buildStaticCollisionRegions('node-10-0');
 const blockers = throne.filter(r => r.kind === 'block');
 assert(blockers.length === 1, 'void throne block region');
 

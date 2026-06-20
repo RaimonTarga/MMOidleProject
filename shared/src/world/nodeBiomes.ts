@@ -161,6 +161,7 @@ export const NODE_BIOMES: Record<string, NodeBiomeInfo> = {
   'node-8-9': { biomeGroup: 'volcanic', biomeTier: 3, isDungeon: true },   // Cinder Shell Magma Salamander
   'node-8-10': { biomeGroup: 'volcanic', biomeTier: 4 },
 
+  'node-9-0': { biomeGroup: 'trench', biomeTier: 4, isDungeon: true },   // Deep-Sea Trench dungeon (Elder Trench Serpent)
   'node-9-1': { biomeGroup: 'desert', biomeTier: 3 },
   'node-9-2': { biomeGroup: 'desert', biomeTier: 3 },
   'node-9-3': { biomeGroup: 'desert', biomeTier: 3 },
@@ -172,7 +173,7 @@ export const NODE_BIOMES: Record<string, NodeBiomeInfo> = {
   'node-9-9': { biomeGroup: 'volcanic', biomeTier: 3 },
   'node-9-10': { biomeGroup: 'volcanic', biomeTier: 4 },
 
-  'node-10-0': { biomeGroup: 'trench', biomeTier: 4, isDungeon: true },   // Void Overlord
+  'node-10-0': { biomeGroup: 'abyss', biomeTier: 4, isDungeon: true, bossTypeId: 'void-overlord', mobDensity: 0 },   // Void Overlord throne (abyssal_throne feature + ultimate encounter)
   'node-10-1': { biomeGroup: 'trench', biomeTier: 4 },
   'node-10-2': { biomeGroup: 'desert', biomeTier: 4, isDungeon: true },   // Desert Eternal
   'node-10-3': { biomeGroup: 'desert', biomeTier: 4 },

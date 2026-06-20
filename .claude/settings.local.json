@@ -70,7 +70,9 @@
       "Read(//c/Users/osaif/Documents/Claude/Projects/reports/**)",
       "PowerShell(cd \"c:\\\\Users\\\\osaif\\\\Documents\\\\Claude\\\\Projects\\\\MMO idle\"; pnpm typecheck 2>&1 | Where-Object { $_ -match \"gauntlet|wave|error TS\" } | Select-Object -First 30)",
       "PowerShell($out = pnpm --filter @mmo-idle/server exec tsc --noEmit 2>&1 | Out-String; $hits = \\($out -split \"`n\"\\) | Select-String -Pattern \"autoTarget|targetPriority\"; if \\($hits\\) { Write-Output \"ERRORS IN EDITED FILES:\"; $hits } else { Write-Output \"NO ERRORS IN autoTarget.ts / targetPriority.ts\" })",
-      "Bash(xargs grep -l \"rune\")"
+      "Bash(xargs grep -l \"rune\")",
+      "PowerShell(git -C \"c:\\\\Users\\\\osaif\\\\Documents\\\\Claude\\\\Projects\\\\MMO idle\" log --all -S \"node-9-0\" --oneline -- shared/src/world/nodeBiomes.ts)",
+      "PowerShell(git -C \"c:\\\\Users\\\\osaif\\\\Documents\\\\Claude\\\\Projects\\\\MMO idle\" show -s --format=\"%ci %h %s\" a46c7e6 d75ae03)"
     ]
   }
 }

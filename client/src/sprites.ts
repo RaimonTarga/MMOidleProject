@@ -103,6 +103,7 @@ export const BIOME_TEXTURES: Record<string, string> = {
   volcanic: "biome_volcano",
   graveyard: "biome_graveyard",
   trench: "biome_trench",
+  abyss: "biome_abyss",
 };
 
 /** Client-only visual art for a shared NODE_FEATURES entry. */
@@ -126,7 +127,7 @@ export const NODE_DECOR: Record<string, NodeDecorArt[]> = {
       file: "/assets/environment/rune_altar.png",
     },
   ],
-  "node-9-0": [
+  "node-10-0": [
     {
       featureId: "abyssal_throne",
       key: "abyssal_throne",

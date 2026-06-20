@@ -2,7 +2,9 @@
 
 .boss-bar {
   position: absolute;
-  top: 12px;
+  /* Bottom-center, in-line with the dungeon gauntlet altar overlay, so it no
+     longer overlaps the top-center target frame. */
+  bottom: calc(74px + env(safe-area-inset-bottom, 0px));
   left: 50%;
   transform: translateX(-50%);
   width: min(520px, calc(100vw - 24px));
@@ -126,7 +128,7 @@
 
 @media (max-width: 1100px) {
   .boss-bar {
-    top: 56px;
+    bottom: calc(var(--mhud-bottom-h, 86px) + env(safe-area-inset-bottom, 0px) + 86px);
     width: min(520px, calc(100vw - 16px));
   }
 }

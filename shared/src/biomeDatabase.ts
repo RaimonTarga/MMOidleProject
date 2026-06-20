@@ -247,4 +247,15 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
     essenceType: 'essence',
     mobDensity: 5,
   }],
+
+  // ABYSS (T4) — the Void Overlord's throne. Has NO ambient monsters: the only
+  // occupant is the overlord, placed explicitly via nodeBiomes bossTypeId on its
+  // throne node. Empty pools = nothing ever spawns here ambiently.
+  ['abyss', {
+    id: 'abyss', name: 'The Abyss',
+    backgroundColor: 0x0a0014,
+    monsterPoolByTier: {},
+    essenceType: 'essence',
+    mobDensity: 0,
+  }],
 ]);
