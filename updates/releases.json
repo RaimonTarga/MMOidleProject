@@ -11,6 +11,12 @@
       "title": "Release 0.2",
       "releasedAt": 1780778921397,
       "markdownPath": "v0.2/changelog.md"
+    },
+    {
+      "version": "0.3",
+      "title": "Release 0.3",
+      "releasedAt": 1781974694682,
+      "markdownPath": "v0.3/changelog.md"
     }
   ]
 }

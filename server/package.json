@@ -1,6 +1,6 @@
 {
   "name": "@mmo-idle/server",
-  "version": "0.2",
+  "version": "0.3",
   "private": true,
   "scripts": {
     "bake:hitboxes": "tsx --conditions=development src/hitbox/bakeCli.ts",
