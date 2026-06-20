@@ -78,7 +78,8 @@ function cutRelease(version, flags) {
   ensureNoUnrelatedChanges(version);
 
   if (!flags.has('--skip-checks')) {
-    run('pnpm', ['typecheck'], { stdio: 'inherit' });
+    const pnpm = process.platform === 'win32' ? 'pnpm.cmd' : 'pnpm';
+    run(pnpm, ['typecheck'], { stdio: 'inherit' });
   }
 
   commitReleaseChanges(version);
@@ -168,11 +169,15 @@ function ensureNoUnrelatedChanges(version) {
     `updates/v${version}/changelog.md`,
   ]);
   const allowedDir = `updates/v${version}/`;
-  const status = git(['status', '--porcelain']).trim();
-  if (!status) return;
+  // Split into lines without trimming: porcelain prefixes each path with a
+  // 2-char status field + space, and a leading-space status (e.g. " M path")
+  // would lose its first path character to a whole-output .trim().
+  const lines = git(['status', '--porcelain'])
+    .split(/\r?\n/)
+    .filter((line) => line.length > 0);
+  if (lines.length === 0) return;
 
-  const unrelated = status
-    .split('\n')
+  const unrelated = lines
     .map((line) => line.slice(3))
     .filter((file) => !allowed.has(file) && !file.startsWith(allowedDir));
   if (unrelated.length > 0) {
@@ -182,9 +187,8 @@ function ensureNoUnrelatedChanges(version) {
 
 function statusReleasePaths() {
   return git(['status', '--porcelain', '--', ...RELEASE_PATHS, 'updates'])
-    .trim()
-    .split('\n')
-    .filter(Boolean)
+    .split(/\r?\n/)
+    .filter((line) => line.length > 0)
     .map((line) => line.slice(3));
 }
 
