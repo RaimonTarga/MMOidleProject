@@ -5,6 +5,7 @@ import type { PlayerEntity } from '../../../ecs/entity';
 import { syncArchetypeSlices } from '../../../ecs/archetypeSliceSync';
 import { canUnlockEntitySkill, recalculatePlayerEntityStats } from '../../../ecs/playerEntityFormulas';
 import { despawnMinionsForOwner } from '../../classes/archetypes/summoner';
+import { CONDUIT_ENABLED } from '../../../env';
 
 export { canUnlockSkill, canUnlockSkillFromView } from '@mmo-idle/shared';
 export type { UnlockResult } from '@mmo-idle/shared';
@@ -20,6 +21,9 @@ const CLASS_ARCHETYPES: Record<string, CombatArchetype> = {
 
 /** Validate and apply a skill unlock. Returns false if validation fails. */
 export function unlockSkill(world: World, entity: PlayerEntity, skillId: string): boolean {
+  // Conduit is disabled for production playtests; reject new selections there.
+  if (skillId === 'summoner-root' && !CONDUIT_ENABLED) return false;
+
   const result = canUnlockEntitySkill(entity, skillId);
   if (!result.ok) return false;
 

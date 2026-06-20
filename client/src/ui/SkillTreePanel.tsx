@@ -5,6 +5,7 @@ import { SKILL_TREE, canUnlockSkill } from '@mmo-idle/shared';
 import type { CSSProperties } from 'react';
 import type { SkillNode, StatEffects, SubVariant } from '@mmo-idle/shared';
 import { hudBus } from '../hudBus';
+import { CONDUIT_ENABLED } from '../featureFlags';
 import { useIsMobile } from '../hud/useIsMobile';
 import {
   currentSkillTierAtom,
@@ -58,6 +59,18 @@ function costLabel(cost: number): string {
   return `${cost} pt${cost !== 1 ? 's' : ''}`;
 }
 
+// Conduit (summoner) is hidden from players this playtest: its orb stays visible
+// but reads as unavailable, with the description below replacing its flavor text.
+const CONDUIT_BLOCKED_DESC = 'In development — not available this playtest.';
+
+function isBlockedConduit(node: SkillNode): boolean {
+  return node.id === 'summoner-root' && !CONDUIT_ENABLED;
+}
+
+function nodeDescription(node: SkillNode): string {
+  return isBlockedConduit(node) ? CONDUIT_BLOCKED_DESC : node.description;
+}
+
 type NodeStatus = 'unlocked' | 'available' | 'locked';
 
 interface SkillPlayer {
@@ -71,6 +84,7 @@ interface SkillPlayer {
 
 function getNodeStatus(node: SkillNode, player: SkillPlayer | null): NodeStatus {
   if (!player) return 'locked';
+  if (isBlockedConduit(node)) return 'locked';
   if (player.unlockedSkills.includes(node.id)) return 'unlocked';
   return canUnlockSkill(
     {
@@ -200,7 +214,7 @@ function NodeDesc({
         <span className="skill-desc__cost">{costLabel(node.cost)}</span>
       </div>
       {effects && <div className="skill-desc__effects">{effects}</div>}
-      {node.description && <div className="skill-desc__text">{node.description}</div>}
+      {node.description && <div className="skill-desc__text">{nodeDescription(node)}</div>}
       {isMobile && status === 'available' && (
         <button className="skill-confirm-btn" onClick={() => onUnlock(node)}>
           Unlock — {costLabel(node.cost)}
@@ -262,7 +276,7 @@ function ClassSelectionView({
               {displayEffects && (
                 <span className="skill-class-orbit__info-effects">{displayEffects}</span>
               )}
-              <span className="skill-class-orbit__info-text">{displayClass.description}</span>
+              <span className="skill-class-orbit__info-text">{nodeDescription(displayClass)}</span>
               {isMobile && displayStatus === 'available' && (
                 <button
                   className="skill-confirm-btn skill-confirm-btn--orbit"
