@@ -4,6 +4,7 @@ import {
   moverOverlapsBlockShapes,
   type Vec2,
 } from '../systems/spatial';
+import { EXIT_TRIGGER } from './nodeAdjacency';
 import { blockShapesForMover } from './staticRegions';
 
 /** Nav grid cell size in node-local pixels. */
@@ -81,6 +82,32 @@ function isCellBlocked(
   return moverOverlapsBlockShapes(center, shapes, pad);
 }
 
+/**
+ * Cells whose center falls in the EXIT_TRIGGER gate band along any edge. The cell
+ * size (32px) is wider than the band (20px), so the outermost cells centre inside
+ * it; routing a waypoint there steers the mover across the boundary. Blocking them
+ * keeps paths that run parallel to an edge — e.g. turning toward a perpendicular
+ * gate right after entering a node — from re-triggering the transition just used.
+ * Crossings are unaffected: gateApproachTarget aims past the edge, and the final
+ * path segment to that off-grid goal still carries the mover through the band.
+ */
+function isCellInGateBand(
+  col: number,
+  row: number,
+  cellSize: number,
+  width: number,
+  height: number,
+): boolean {
+  const cx = col * cellSize + cellSize / 2;
+  const cy = row * cellSize + cellSize / 2;
+  return (
+    cx < EXIT_TRIGGER ||
+    cx > width - EXIT_TRIGGER ||
+    cy < EXIT_TRIGGER ||
+    cy > height - EXIT_TRIGGER
+  );
+}
+
 export function buildNavGrid(
   nodeId: string,
   mover: FeatureTarget,
@@ -102,7 +129,10 @@ export function buildNavGrid(
 
   for (let row = 0; row < rows; row++) {
     for (let col = 0; col < cols; col++) {
-      if (isCellBlocked(shapes, pathPad, col, row, cellSize)) {
+      if (
+        isCellInGateBand(col, row, cellSize, width, height) ||
+        isCellBlocked(shapes, pathPad, col, row, cellSize)
+      ) {
         blocked[row * cols + col] = 1;
       }
     }
@@ -128,7 +158,13 @@ export function clearNavGridCache(): void {
 }
 
 /**
- * Find nearest walkable cell to `pos`, searching outward in a spiral.
+ * Find nearest walkable cell to `pos`, searching outward ring by ring.
+ *
+ * Within a ring the geometrically closest walkable cell wins, not the first one
+ * hit in iteration order. An order-biased pick skews off-grid goals (e.g. a gate
+ * target placed past an edge, whose on-grid cells are blocked gate-band cells)
+ * consistently sideways; because the steering goal is recomputed each tick from
+ * the drifted position, that skew compounds into a slide along the border.
  * Returns null when no walkable cell exists within `maxRadius` cells.
  */
 export function nearestWalkableCell(
@@ -140,20 +176,23 @@ export function nearestWalkableCell(
   if (isCellWalkable(grid, start.col, start.row)) return start;
 
   for (let r = 1; r <= maxRadius; r++) {
+    let best: { col: number; row: number } | null = null;
+    let bestDistSq = Infinity;
     for (let dc = -r; dc <= r; dc++) {
-      for (const dr of [-r, r]) {
+      for (let dr = -r; dr <= r; dr++) {
+        if (Math.max(Math.abs(dc), Math.abs(dr)) !== r) continue; // ring edge only
         const col = start.col + dc;
         const row = start.row + dr;
-        if (isCellWalkable(grid, col, row)) return { col, row };
+        if (!isCellWalkable(grid, col, row)) continue;
+        const center = cellToWorld(grid, col, row);
+        const distSq = (center.x - pos.x) ** 2 + (center.y - pos.y) ** 2;
+        if (distSq < bestDistSq) {
+          bestDistSq = distSq;
+          best = { col, row };
+        }
       }
     }
-    for (let dr = -r + 1; dr <= r - 1; dr++) {
-      for (const dc of [-r, r]) {
-        const col = start.col + dc;
-        const row = start.row + dr;
-        if (isCellWalkable(grid, col, row)) return { col, row };
-      }
-    }
+    if (best) return best;
   }
   return null;
 }

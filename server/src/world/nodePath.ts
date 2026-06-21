@@ -98,6 +98,41 @@ export function gateTargetForDirection(nodeId: string, direction: NodeDirection)
   }
 }
 
+/**
+ * How far past the node border the steering goal is placed. The whole border is a
+ * gate now, so travelers head for the *closest* point on the destination edge
+ * (their own lateral position) rather than the edge center. The goal is pushed
+ * beyond the edge because the path arrival threshold (24px) is wider than the
+ * EXIT_TRIGGER band (20px): aiming at the edge itself stops the mover ~24px short
+ * and it never enters the trigger. Pushing past guarantees the mover walks into
+ * the band, where {@link transitions.ts} fires the crossing before it leaves bounds.
+ */
+const BORDER_PUSH = 30;
+/** Keep the lateral approach off the corners so a perpendicular edge's gate band
+ *  isn't entered by accident (its trigger is checked before north/south). */
+const CORNER_MARGIN = 50;
+
+/**
+ * Steering goal that walks a mover across the {@link direction} border at the
+ * point closest to {@link from}. Used by map navigation, auto-traverse, and party
+ * following so crossings fire reliably instead of stalling on the border.
+ */
+export function gateApproachTarget(
+  nodeId: string,
+  direction: NodeDirection,
+  from: Vec2,
+): Vec2 {
+  const node = NODE_REGISTRY.get(nodeId)!;
+  const lx = Math.max(CORNER_MARGIN, Math.min(node.width - CORNER_MARGIN, from.x));
+  const ly = Math.max(CORNER_MARGIN, Math.min(node.height - CORNER_MARGIN, from.y));
+  switch (direction) {
+    case 'north': return { x: lx, y: -BORDER_PUSH };
+    case 'south': return { x: lx, y: node.height + BORDER_PUSH };
+    case 'west':  return { x: -BORDER_PUSH, y: ly };
+    case 'east':  return { x: node.width + BORDER_PUSH, y: ly };
+  }
+}
+
 /** Must stay outside {@link transitions.ts} EXIT_TRIGGER (20px) so dev teleports don't fire a gate crossing. */
 const ENTRANCE_SPAWN_INSET = 25;
 

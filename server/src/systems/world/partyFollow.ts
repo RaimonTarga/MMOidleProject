@@ -3,7 +3,7 @@ import { setEntityMotion, stopEntity } from "./movement";
 import {
   directionFromTo,
   findShortestNodePath,
-  gateTargetForDirection,
+  gateApproachTarget,
 } from "../../world/nodePath";
 import { steerTowardTarget } from "../combat/ai/autoTarget";
 import { isFleeing } from "../combat/ai/flee";
@@ -48,7 +48,7 @@ export function updatePartyFollow(world: World, now: number): void {
           setEntityMotion(
             world,
             player,
-            gateTargetForDirection(playerNode, dir),
+            gateApproachTarget(playerNode, dir, player.hasPosition.current),
           );
           continue;
         }

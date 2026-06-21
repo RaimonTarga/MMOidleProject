@@ -20,7 +20,7 @@ import {
   findDungeonNodeFor,
   findRegularNodeFor,
   findShortestNodePath,
-  gateTargetForDirection,
+  gateApproachTarget,
 } from "../../world/nodePath";
 import { setEntityMotion, stopEntity } from "./movement";
 import { isEffectivePartyFollower } from "../player/party/partySystem";
@@ -168,7 +168,7 @@ function continueAutoTraversePath(world: World, player: PlayerEntity): boolean {
   setEntityMotion(
     world,
     player,
-    gateTargetForDirection(player.hasPosition.nodeId, dir),
+    gateApproachTarget(player.hasPosition.nodeId, dir, player.hasPosition.current),
   );
   return true;
 }

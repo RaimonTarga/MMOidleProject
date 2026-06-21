@@ -7,7 +7,7 @@ import { NODE_REGISTRY } from "../../../world/nodeRegistry";
 import {
   directionFromTo,
   findShortestNodePath,
-  gateTargetForDirection,
+  gateApproachTarget,
 } from "../../../world/nodePath";
 import { setEntityMotion, stopEntity } from "../../world/movement";
 import { setAttackTarget } from "./targeting";
@@ -128,7 +128,7 @@ export function stepFlee(world: World, player: PlayerEntity): void {
       setEntityMotion(
         world,
         player,
-        gateTargetForDirection(player.hasPosition.nodeId, dir),
+        gateApproachTarget(player.hasPosition.nodeId, dir, player.hasPosition.current),
       );
       return;
     }
@@ -143,14 +143,16 @@ function nearestGateTarget(player: PlayerEntity) {
   let bestDist = Infinity;
   for (const dir of GATE_ORDER) {
     if (!node.exits[dir]) continue;
-    const gate = gateTargetForDirection(player.hasPosition.nodeId, dir);
+    const gate = gateApproachTarget(player.hasPosition.nodeId, dir, player.hasPosition.current);
     const d = distanceSq(player.hasPosition.current, gate);
     if (d < bestDist) {
       bestDist = d;
       bestDir = dir;
     }
   }
-  return bestDir ? gateTargetForDirection(player.hasPosition.nodeId, bestDir) : null;
+  return bestDir
+    ? gateApproachTarget(player.hasPosition.nodeId, bestDir, player.hasPosition.current)
+    : null;
 }
 
 function nodeCenter(nodeId: string) {
