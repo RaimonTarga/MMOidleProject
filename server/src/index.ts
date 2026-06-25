@@ -142,6 +142,7 @@ export { IS_DEV };
 const AUTOCOMBAT_PRIORITY_MODES: readonly AutocombatPriorityMode[] = [
   "nearest",
   "lowest-hp",
+  "highest-max-hp",
   "damage",
   "threat",
   "balanced",

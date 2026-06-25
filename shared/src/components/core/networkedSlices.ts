@@ -143,7 +143,13 @@ export interface IsPlayer {
   name: string;
 }
 
-export type AutocombatPriorityMode = 'nearest' | 'lowest-hp' | 'damage' | 'threat' | 'balanced';
+export type AutocombatPriorityMode =
+  | 'nearest'
+  | 'lowest-hp'
+  | 'highest-max-hp'
+  | 'damage'
+  | 'threat'
+  | 'balanced';
 
 /** User-tunable server-side auto-combat behavior. */
 export interface AutocombatConfig {

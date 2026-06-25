@@ -76,7 +76,7 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
       2: ['apex-timberclaw'],
     },
     essenceType: 'essence',
-    mobDensity: 13,
+    mobDensity: 18,
   }],
 
   // MOUNTAIN — rare HUGE hits that trip the damage cap; slow + charge to connect.
@@ -115,7 +115,7 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
       2: ['gorging-razortusk'],
     },
     essenceType: 'essence',
-    mobDensity: 16,
+    mobDensity: 24,
   }],
 
   // SWAMP — trivial direct damage, heavy stacking DoT; attrition. Dot-resist's

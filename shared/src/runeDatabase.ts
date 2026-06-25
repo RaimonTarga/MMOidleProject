@@ -15,6 +15,7 @@ export type RuneChannel =
   | "OOC_MAINTENANCE"
   | "RESOURCE_MAINTENANCE"
   | "GLOBAL_STRATEGY"
+  | "PATHING"
   | "CONTROL"
   // System rework Step 7: each ability slot gets its own channel so a Technique
   // override and a Guard override (and taunt in CONTROL) can be equipped at once.
@@ -42,6 +43,7 @@ export type RuneActionId =
   | "follow-and-assist"
   | "focus-closest"
   | "focus-lowest-hp"
+  | "focus-highest-max-hp"
   | "let-dots-finish"
   | "spread-dots"
   | "focus-elites"
@@ -49,6 +51,7 @@ export type RuneActionId =
   | "wait-for-execution"
   | "wait-for-regen"
   | "auto-path-enemy"
+  | "avoid-hazards"
   | "lead-the-way"
   | "taunt-current-target"
   // System rework Step 7: override the built-in auto-fire timing of an ability.
@@ -89,6 +92,7 @@ export const RUNE_CHANNELS: RuneChannel[] = [
   "OOC_MAINTENANCE",
   "RESOURCE_MAINTENANCE",
   "GLOBAL_STRATEGY",
+  "PATHING",
   "CONTROL",
   "TECHNIQUE",
   "GUARD",
@@ -116,6 +120,12 @@ const STRATEGY_CONDITIONS: readonly RuneConditionId[] = [
   "always",
   "when-idle",
   "in-party",
+];
+
+const PATHING_CONDITIONS: readonly RuneConditionId[] = [
+  "always",
+  "when-idle",
+  "in-combat",
 ];
 
 const CONTROL_CONDITIONS: readonly RuneConditionId[] = [
@@ -297,6 +307,18 @@ export const ACTION_DATABASE = new Map<string, ActionDef>([
     },
   ],
   [
+    "focus-highest-max-hp",
+    {
+      id: "focus-highest-max-hp",
+      name: "Focus Highest HP",
+      blurb: "Prefer the enemy with the largest maximum health pool.",
+      cost: 2,
+      tier: 1,
+      channel: "TARGETING",
+      allowedConditionIds: TARGETING_CONDITIONS,
+    },
+  ],
+  [
     "let-dots-finish",
     {
       id: "let-dots-finish",
@@ -383,6 +405,18 @@ export const ACTION_DATABASE = new Map<string, ActionDef>([
       tier: 1,
       channel: "GLOBAL_STRATEGY",
       allowedConditionIds: STRATEGY_CONDITIONS,
+    },
+  ],
+  [
+    "avoid-hazards",
+    {
+      id: "avoid-hazards",
+      name: "Avoid Hazards",
+      blurb: "Route around damaging and slowing terrain when pathing.",
+      cost: 2,
+      tier: 1,
+      channel: "PATHING",
+      allowedConditionIds: PATHING_CONDITIONS,
     },
   ],
   [
@@ -552,6 +586,8 @@ export function runeChannelLabel(channel: RuneChannel): string {
       return "Resource";
     case "GLOBAL_STRATEGY":
       return "Search";
+    case "PATHING":
+      return "Pathing";
     case "CONTROL":
       return "Control";
     case "TECHNIQUE":
@@ -655,6 +691,27 @@ export const NAMED_RULES = new Map<string, NamedRule>([
     },
   ],
   [
+    ruleKey("always", "avoid-hazards"),
+    {
+      name: "Careful Footing",
+      blurb: "Route around dangerous terrain whenever pathing can avoid it.",
+    },
+  ],
+  [
+    ruleKey("when-idle", "avoid-hazards"),
+    {
+      name: "Marshwise",
+      blurb: "Out of combat, route around dangerous terrain while moving.",
+    },
+  ],
+  [
+    ruleKey("in-combat", "avoid-hazards"),
+    {
+      name: "Watch Your Step",
+      blurb: "While fighting, route around dangerous terrain when repositioning.",
+    },
+  ],
+  [
     ruleKey("in-combat", "chase-enemy"),
     {
       name: "Brawler",
@@ -666,6 +723,13 @@ export const NAMED_RULES = new Map<string, NamedRule>([
     {
       name: "Pragmatist",
       blurb: "In combat, attack the closest valid target.",
+    },
+  ],
+  [
+    ruleKey("in-combat", "focus-highest-max-hp"),
+    {
+      name: "Cull The Large",
+      blurb: "In combat, focus the enemy with the largest maximum health pool.",
     },
   ],
   [
@@ -784,6 +848,7 @@ export interface DerivedRuneConfig {
   oocMaintenanceAction: RuneActionId | null;
   resourceMaintenanceAction: RuneActionId | null;
   globalStrategyAction: RuneActionId | null;
+  pathingAction: RuneActionId | null;
   controlAction: RuneActionId | null;
   techniqueAction: RuneActionId | null;
   guardAction: RuneActionId | null;
@@ -791,6 +856,7 @@ export interface DerivedRuneConfig {
   fleeRequested: boolean;
   orbit: boolean;
   autoPathEnemy: boolean;
+  avoidHazards: boolean;
   waitForRegen: boolean;
   tacticalReload: boolean;
   waitForExecution: boolean;
@@ -816,6 +882,7 @@ function emptyClaims(): ClaimedRuneChannels {
     OOC_MAINTENANCE: null,
     RESOURCE_MAINTENANCE: null,
     GLOBAL_STRATEGY: null,
+    PATHING: null,
     CONTROL: null,
     TECHNIQUE: null,
     GUARD: null,
@@ -855,6 +922,7 @@ export function deriveAutoConfigFromRunes(
     oocMaintenanceAction: null,
     resourceMaintenanceAction: null,
     globalStrategyAction: null,
+    pathingAction: null,
     controlAction: null,
     techniqueAction: null,
     guardAction: null,
@@ -862,6 +930,7 @@ export function deriveAutoConfigFromRunes(
     fleeRequested: false,
     orbit: false,
     autoPathEnemy: false,
+    avoidHazards: false,
     waitForRegen: false,
     tacticalReload: false,
     waitForExecution: false,
@@ -909,6 +978,7 @@ export function deriveAutoConfigFromRunes(
   derived.resourceMaintenanceAction =
     claimed.RESOURCE_MAINTENANCE?.action.id ?? null;
   derived.globalStrategyAction = claimed.GLOBAL_STRATEGY?.action.id ?? null;
+  derived.pathingAction = claimed.PATHING?.action.id ?? null;
   derived.controlAction = claimed.CONTROL?.action.id ?? null;
   derived.techniqueAction = claimed.TECHNIQUE?.action.id ?? null;
   derived.guardAction = claimed.GUARD?.action.id ?? null;
@@ -936,6 +1006,9 @@ export function deriveAutoConfigFromRunes(
   switch (derived.targetingAction) {
     case "focus-lowest-hp":
       derived.config.priorityMode = "lowest-hp";
+      break;
+    case "focus-highest-max-hp":
+      derived.config.priorityMode = "highest-max-hp";
       break;
     case "let-dots-finish":
       derived.letDotsFinish = true;
@@ -975,6 +1048,9 @@ export function deriveAutoConfigFromRunes(
   }
   if (derived.globalStrategyAction === "lead-the-way") {
     derived.leadTheWay = true;
+  }
+  if (derived.pathingAction === "avoid-hazards") {
+    derived.avoidHazards = true;
   }
   if (derived.controlAction === "taunt-current-target") {
     derived.tauntCurrentTarget = true;

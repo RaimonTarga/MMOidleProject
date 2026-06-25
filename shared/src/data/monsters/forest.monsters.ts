@@ -45,10 +45,20 @@ export const forestMonsterEntries = [
     behavior: 'melee', attackStyle: 'slash', biome: 'forest',
     rewards: { essence: 4, essenceType: 'green', level: 1, biomeXp: 25 },
     ai: { wanderRadius: 290, leashRange: 720, idleMinMs: 700, idleMaxMs: 2800 },
-    // Forest predator-pack follower: when spawned in an Ancient Wolf's pack, a wolf
-    // that engages calls its packmates within range onto the same target. (Placeholder
-    // callRange — user balance pass.) Solo-spawned wolves have no pack link → unaffected.
-    pack: { role: 'follower', callRange: 320 },
+    // Forest predator-pack ALPHA: a roaming adult wolf spawns with two young wolves
+    // and calls them onto anything it engages.
+    pack: { role: 'alpha', callRange: 320, followers: [{ typeId: 'young-wolf', count: 2 }] },
+  }],
+
+  ['young-wolf', {
+    id: 'young-wolf', name: 'Young Wolf', color: 0xaaaacc,
+    // Uses the wolf sprite for now. Slightly smaller/softer than the adult alpha,
+    // but still fast enough that the pack reads as one moving threat.
+    stats: { hp: 38, attack: 9, plating: 0, damageReduction: 0, speed: 86, attackRange: 12, attackCooldown: 1300, pullRange: 230 },
+    behavior: 'melee', attackStyle: 'slash', biome: 'forest',
+    rewards: { essence: 2, essenceType: 'green', level: 1, biomeXp: 12 },
+    ai: { wanderRadius: 260, leashRange: 680, idleMinMs: 700, idleMaxMs: 2800 },
+    pack: { role: 'follower', callRange: 300 },
   }],
 
 
@@ -62,14 +72,14 @@ export const forestMonsterEntries = [
     ai: { wanderRadius: 300, leashRange: 750, idleMinMs: 600, idleMaxMs: 2500 },
     chargeOnAggro: { speedMult: 3.0, durationMs: 900 },
     // Forest predator-pack ALPHA (the biome's T2 identity): spawns a MIXED pack —
-    // 2 wolf bruisers + 1 Canopy Sprite for ranged thorn support — clustered around
+    // 2 young wolves + 1 Canopy Sprite for ranged thorn support — clustered around
     // it, and is itself called in (charging via chargeOnAggro) when a packmate
     // engages. (Placeholder counts/range — user balance pass.)
     pack: {
       role: 'alpha',
       callRange: 320,
       followers: [
-        { typeId: 'wolf', count: 2 },
+        { typeId: 'young-wolf', count: 2 },
         { typeId: 'canopy-sprite', count: 1 },
       ],
     },

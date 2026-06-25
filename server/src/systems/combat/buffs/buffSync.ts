@@ -135,6 +135,29 @@ const DEBUFF_BUFFS = [
     { category: "neutral", shape: "diamond", color: "#88bb55", label: "DoT" },
   ),
   defineBuff(
+    "debuff-swamp-rot",
+    ({ playerCs }) => {
+      if (!playerCs) return null;
+      const rot = getStatusEffect(playerCs, "swamp-rot");
+      if (!rot || rot.stacks <= 0) return null;
+      const perStack = Math.round(rot.data["damagePerStack"] ?? 0);
+      return {
+        id: "debuff-swamp-rot",
+        label: "ROT",
+        stacks: rot.stacks,
+        durationPct:
+          rot.remainingMs > 0
+            ? (rot.remainingMs / Math.max(1, rot.data["totalMs"] ?? rot.remainingMs)) * 100
+            : -1,
+        color: "#88bb44",
+        logSourceName: "Swamp rot",
+        logSourceSide: "enemy",
+        logDetail: `${perStack} dmg/stack per tick`,
+      };
+    },
+    { category: "neutral", shape: "diamond", color: "#88bb44", label: "ROT" },
+  ),
+  defineBuff(
     "debuff-sun-mark",
     ({ playerCs, world }) => {
       if (!playerCs) return null;

@@ -153,6 +153,23 @@ export function blockShapesForMover(
     .map(region => region.shape);
 }
 
+export function hazardAvoidanceShapesForMover(
+  nodeId: string,
+  mover: FeatureTarget,
+): NodeFeatureShape[] {
+  const features = RESOLVED_NODE_FEATURES[nodeId];
+  if (!features) return [];
+
+  const shapes: NodeFeatureShape[] = [];
+  for (const feature of features) {
+    const hurtsMover = feature.damage?.targets.includes(mover) ?? false;
+    const affectsMover =
+      feature.statusWhileInside?.targets.includes(mover) ?? false;
+    if (hurtsMover || affectsMover) shapes.push(feature.shape);
+  }
+  return shapes;
+}
+
 export function gateDirectionAtPoint(
   nodeId: string,
   pos: { x: number; y: number },

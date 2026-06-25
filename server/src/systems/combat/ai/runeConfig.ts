@@ -21,6 +21,7 @@ export const RUNE_TAUNT_CURRENT_TARGET_FLAG = "rune.tauntCurrentTarget";
 export const RUNE_LET_DOTS_FINISH_FLAG = "rune.letDotsFinish";
 export const RUNE_SPREAD_DOTS_FLAG = "rune.spreadDots";
 export const RUNE_FOCUS_ELITES_FLAG = "rune.focusElites";
+export const RUNE_AVOID_NODE_HAZARDS_FLAG = "rune.avoidNodeHazards";
 /** System rework Step 7: a fire-technique / fire-guard rule is active this tick. */
 export const RUNE_FIRE_TECHNIQUE_FLAG = "rune.fireTechnique";
 export const RUNE_FIRE_GUARD_FLAG = "rune.fireGuard";
@@ -129,6 +130,7 @@ export function updateRuneDerivedConfig(world: World): void {
     setFlag(player.tracksCombat, RUNE_LET_DOTS_FINISH_FLAG, d.letDotsFinish);
     setFlag(player.tracksCombat, RUNE_SPREAD_DOTS_FLAG, d.spreadDots);
     setFlag(player.tracksCombat, RUNE_FOCUS_ELITES_FLAG, d.focusElites);
+    setFlag(player.tracksCombat, RUNE_AVOID_NODE_HAZARDS_FLAG, d.avoidHazards);
     setFlag(player.tracksCombat, RUNE_FIRE_TECHNIQUE_FLAG, d.fireTechnique);
     setFlag(player.tracksCombat, RUNE_FIRE_GUARD_FLAG, d.fireGuard);
     setFlag(player.tracksCombat, RUNE_SWITCH_STANCE_FLAG, d.switchStance);

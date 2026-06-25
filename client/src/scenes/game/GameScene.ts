@@ -36,6 +36,7 @@ export class GameScene extends Phaser.Scene {
   bgGrid!: Phaser.GameObjects.TileSprite;
   bgTile: Phaser.GameObjects.TileSprite | null = null;
   nodeDecor: Phaser.GameObjects.Image[] = [];
+  nodePlaceholders: Phaser.GameObjects.Graphics[] = [];
   /** Scattered forest trees in the active node, depth-sorted for walk-behind. */
   nodeTrees: Phaser.GameObjects.Image[] = [];
   debugGraphics!: Phaser.GameObjects.Graphics;

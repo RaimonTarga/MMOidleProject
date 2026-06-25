@@ -7,6 +7,7 @@ import type {
 import {
   distanceSq,
   MONSTER_DATABASE,
+  RESOLVED_NODE_FEATURES,
   pointFromMotion,
   type AggroTargetKind,
   type MonsterDefinition,
@@ -311,7 +312,8 @@ export function updateMonsters(world: World, dt: number, now: number) {
       setAttackTarget(world, e, null);
 
       // Fixed patrol route (if any) replaces random wander while un-aggroed.
-      const patrol = MONSTER_DATABASE.get(e.isMonster.monsterTypeId)?.patrol;
+      const monsterDef = MONSTER_DATABASE.get(e.isMonster.monsterTypeId);
+      const patrol = monsterDef?.patrol;
 
       switch (e.hasAwareness.state) {
         case "chasing":
@@ -363,24 +365,14 @@ export function updateMonsters(world: World, dt: number, now: number) {
               e.hasAwareness.state = "wandering";
               setMonsterTarget(world, e, advancePatrol(ai, patrol, node));
             } else {
-              const angle = Math.random() * 2 * Math.PI;
-              const radius = Math.random() * ai.wanderRadius;
-              const margin = 40;
-              const minX = node ? margin : 0;
-              const maxX = node ? node.width - margin : Infinity;
-              const minY = node ? margin : 0;
-              const maxY = node ? node.height - margin : Infinity;
               e.hasAwareness.state = "wandering";
-              setMonsterTarget(world, e, {
-                x: Math.max(
-                  minX,
-                  Math.min(maxX, ai.spawn.x + Math.cos(angle) * radius),
-                ),
-                y: Math.max(
-                  minY,
-                  Math.min(maxY, ai.spawn.y + Math.sin(angle) * radius),
-                ),
-              });
+              setMonsterTarget(
+                world,
+                e,
+                monsterDef?.biome === "swamp" && Math.random() < 0.65
+                  ? swampPoolWanderTarget(e, node) ?? randomWanderTarget(ai, node)
+                  : randomWanderTarget(ai, node),
+              );
             }
           } else {
             stopMonster(world, e);
@@ -393,6 +385,66 @@ export function updateMonsters(world: World, dt: number, now: number) {
 
 function randBetween(min: number, max: number): number {
   return min + Math.random() * (max - min);
+}
+
+function randomWanderTarget(
+  ai: ControlsMonster,
+  node: { width: number; height: number } | undefined,
+): Vec2 {
+  const angle = Math.random() * 2 * Math.PI;
+  const radius = Math.random() * ai.wanderRadius;
+  const margin = 40;
+  const minX = node ? margin : 0;
+  const maxX = node ? node.width - margin : Infinity;
+  const minY = node ? margin : 0;
+  const maxY = node ? node.height - margin : Infinity;
+  return {
+    x: Math.max(
+      minX,
+      Math.min(maxX, ai.spawn.x + Math.cos(angle) * radius),
+    ),
+    y: Math.max(
+      minY,
+      Math.min(maxY, ai.spawn.y + Math.sin(angle) * radius),
+    ),
+  };
+}
+
+function swampPoolWanderTarget(
+  monster: MonsterEntity,
+  node: { width: number; height: number } | undefined,
+): Vec2 | null {
+  const pools = RESOLVED_NODE_FEATURES[monster.hasPosition.nodeId]?.filter(
+    (feature) =>
+      feature.shape.kind === "circle" &&
+      feature.damage?.targets.includes("player"),
+  );
+  if (!pools || pools.length === 0) return null;
+
+  const origin = monster.controlsMonster.spawn;
+  let best = pools[0];
+  let bestDistSq = distanceSq(origin, best.shape);
+  for (const pool of pools.slice(1)) {
+    const d2 = distanceSq(origin, pool.shape);
+    if (d2 < bestDistSq) {
+      best = pool;
+      bestDistSq = d2;
+    }
+  }
+
+  const shape = best.shape;
+  if (shape.kind !== "circle") return null;
+  const angle = Math.random() * 2 * Math.PI;
+  const radius = shape.radius + 40 + Math.random() * 140;
+  const margin = 40;
+  const minX = node ? margin : 0;
+  const maxX = node ? node.width - margin : Infinity;
+  const minY = node ? margin : 0;
+  const maxY = node ? node.height - margin : Infinity;
+  return {
+    x: Math.max(minX, Math.min(maxX, shape.x + Math.cos(angle) * radius)),
+    y: Math.max(minY, Math.min(maxY, shape.y + Math.sin(angle) * radius)),
+  };
 }
 
 type PatrolSpec = NonNullable<MonsterDefinition["patrol"]>;

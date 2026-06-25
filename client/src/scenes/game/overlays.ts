@@ -217,17 +217,27 @@ function buildNodePlaceholderFeatures(
       g.fillStyle(PLACEHOLDER_BLOCK_FILL, 0.95);
       g.lineStyle(4, PLACEHOLDER_BLOCK_LINE, 1);
     } else {
-      g.fillStyle(PLACEHOLDER_HAZARD_FILL, 0.4);
-      g.lineStyle(3, PLACEHOLDER_HAZARD_LINE, 0.8);
+      g.fillStyle(PLACEHOLDER_HAZARD_FILL, 0.34);
+      g.lineStyle(4, PLACEHOLDER_HAZARD_LINE, 0.9);
     }
     const cx = offsetX + shape.x;
     const cy = offsetY + shape.y;
     if (shape.kind === "circle") {
       g.fillCircle(cx, cy, shape.radius);
       g.strokeCircle(cx, cy, shape.radius);
+      if (isHazard && !isBlock) {
+        g.lineStyle(2, PLACEHOLDER_HAZARD_LINE, 0.35);
+        g.strokeCircle(cx, cy, shape.radius * 0.72);
+        g.strokeCircle(cx, cy, shape.radius * 0.46);
+      }
     } else if (shape.kind === "ellipse") {
       g.fillEllipse(cx, cy, shape.halfW * 2, shape.halfH * 2);
       g.strokeEllipse(cx, cy, shape.halfW * 2, shape.halfH * 2);
+      if (isHazard && !isBlock) {
+        g.lineStyle(2, PLACEHOLDER_HAZARD_LINE, 0.35);
+        g.strokeEllipse(cx, cy, shape.halfW * 1.45, shape.halfH * 1.45);
+        g.strokeEllipse(cx, cy, shape.halfW * 0.9, shape.halfH * 0.9);
+      }
     } else {
       g.fillRect(cx - shape.halfW, cy - shape.halfH, shape.halfW * 2, shape.halfH * 2);
       g.strokeRect(cx - shape.halfW, cy - shape.halfH, shape.halfW * 2, shape.halfH * 2);
@@ -441,6 +451,8 @@ function updateBiomeBackgroundForNode(scene: GameScene, nodeId: string): void {
 function updateNodeDecorForNode(scene: GameScene, nodeId: string): void {
   for (const img of scene.nodeDecor) img.destroy();
   scene.nodeDecor = [];
+  for (const g of scene.nodePlaceholders) g.destroy();
+  scene.nodePlaceholders = [];
   for (const img of scene.nodeTrees) img.destroy();
   scene.nodeTrees = [];
 
@@ -453,6 +465,13 @@ function updateNodeDecorForNode(scene: GameScene, nodeId: string): void {
     0,
     0,
     throneOpen,
+  );
+  scene.nodePlaceholders = buildNodePlaceholderFeatures(
+    scene,
+    nodeId,
+    0,
+    0,
+    0,
   );
   scene.nodeTrees = buildNodeTreeImages(scene, nodeId, 0, 0, {
     ySort: true,

@@ -2,11 +2,15 @@ import type { World } from "../../../world/World";
 import type { MonsterEntity, PlayerEntity } from "../../../ecs/entity";
 import {
   GAME_CONFIG,
+  distanceSq,
   getFlag,
   hitboxGap,
   MELEE_CONTACT_MARGIN,
+  pointInNodeFeatureShape,
   posHitboxFromEntity,
+  RESOLVED_NODE_FEATURES,
   setFlag,
+  type NodeFeatureShape,
   type Vec2,
 } from "@mmo-idle/shared";
 import { NODE_REGISTRY } from "../../../world/nodeRegistry";
@@ -19,6 +23,7 @@ import {
 } from "./targetPriority";
 import {
   RUNE_FOLLOW_LEADER_FLAG,
+  RUNE_AVOID_NODE_HAZARDS_FLAG,
   RUNE_KEEP_DISTANCE_FLAG,
   RUNE_TACTICAL_RELOAD_FLAG,
   RUNE_WAIT_FOR_EXECUTION_FLAG,
@@ -81,6 +86,9 @@ const DIRECT_APPROACH_DIST = 100;
  * that far — i.e. the mob does not outrange the player.
  */
 const RANGED_SAFE_BUFFER = 45;
+const HAZARD_PULL_EDGE_BUFFER = 72;
+const HAZARD_PULL_ARRIVE_SQ = 42 * 42;
+const HAZARD_SKIRT_ANGLE = 0.65;
 
 function clampToNode(world: World, nodeId: string, pos: Vec2): Vec2 {
   const node = NODE_REGISTRY.get(nodeId);
@@ -101,6 +109,54 @@ function isPlayerInCombat(player: PlayerEntity, now: number): boolean {
   if (player.hasAttackTarget !== undefined) return true;
   const last = player.tracksEngagement;
   return last !== undefined && now - last < GAME_CONFIG.COMBAT_REGEN_DELAY;
+}
+
+function playerHazardContainingPoint(nodeId: string, pos: Vec2): NodeFeatureShape | null {
+  const features = RESOLVED_NODE_FEATURES[nodeId];
+  if (!features) return null;
+  for (const feature of features) {
+    if (!feature.damage?.targets.includes("player")) continue;
+    if (pointInNodeFeatureShape(pos, feature.shape)) return feature.shape;
+  }
+  return null;
+}
+
+function hazardPullPoint(
+  hazard: NodeFeatureShape,
+  playerPos: Vec2,
+  targetPos: Vec2,
+): Vec2 | null {
+  if (hazard.kind !== "circle") return null;
+  let dx = targetPos.x - hazard.x;
+  let dy = targetPos.y - hazard.y;
+  let dist = Math.hypot(dx, dy);
+  if (dist === 0) {
+    dx = playerPos.x - hazard.x;
+    dy = playerPos.y - hazard.y;
+    dist = Math.hypot(dx, dy);
+  }
+  if (dist === 0) return null;
+  const radius = hazard.radius + HAZARD_PULL_EDGE_BUFFER;
+  return {
+    x: hazard.x + (dx / dist) * radius,
+    y: hazard.y + (dy / dist) * radius,
+  };
+}
+
+function hazardSkirtPoint(
+  hazard: NodeFeatureShape,
+  playerPos: Vec2,
+  targetPos: Vec2,
+): Vec2 | null {
+  if (hazard.kind !== "circle") return null;
+  const base = hazardPullPoint(hazard, playerPos, targetPos);
+  if (!base) return null;
+  const angle = Math.atan2(base.y - hazard.y, base.x - hazard.x) + HAZARD_SKIRT_ANGLE;
+  const radius = hazard.radius + HAZARD_PULL_EDGE_BUFFER;
+  return {
+    x: hazard.x + Math.cos(angle) * radius,
+    y: hazard.y + Math.sin(angle) * radius,
+  };
 }
 
 export function updateAutoTargets(world: World, now: number) {
@@ -238,7 +294,48 @@ export function steerTowardTarget(
   // players. Its behavior is context-dependent on the player's *live* combat
   // state, not on which condition raised the flag.
   const keepDist = getFlag(player.tracksCombat, RUNE_KEEP_DISTANCE_FLAG);
+  const avoidHazards = getFlag(player.tracksCombat, RUNE_AVOID_NODE_HAZARDS_FLAG);
   const inCombat = isPlayerInCombat(player, now);
+
+  if (avoidHazards) {
+    const targetHazard = playerHazardContainingPoint(
+      player.hasPosition.nodeId,
+      targetPos,
+    );
+    const playerHazard = playerHazardContainingPoint(
+      player.hasPosition.nodeId,
+      playerPos,
+    );
+    const pullPoint = targetHazard
+      ? hazardPullPoint(targetHazard, playerPos, targetPos)
+      : null;
+    if (targetHazard && pullPoint && !playerHazard) {
+      const clamped = clampToNode(world, player.hasPosition.nodeId, pullPoint);
+      const inRange = world.collision.canReach(player, target, attackRange);
+      const arrivedAtPull = distanceSq(playerPos, clamped) <= HAZARD_PULL_ARRIVE_SQ;
+      if (inRange) {
+        setFlag(player.tracksCombat, AUTO_FIRING_FLAG, inRange);
+        stopEntity(world, player);
+      } else if (arrivedAtPull) {
+        const skirtPoint = hazardSkirtPoint(targetHazard, playerPos, targetPos);
+        if (skirtPoint) {
+          setFlag(player.tracksCombat, AUTO_FIRING_FLAG, false);
+          setEntityMotion(
+            world,
+            player,
+            clampToNode(world, player.hasPosition.nodeId, skirtPoint),
+            { avoidHazards: true },
+          );
+        } else {
+          stopEntity(world, player);
+        }
+      } else {
+        setFlag(player.tracksCombat, AUTO_FIRING_FLAG, false);
+        setEntityMotion(world, player, clamped, { avoidHazards: true });
+      }
+      return;
+    }
+  }
 
   if (keepDist && inCombat && dist > 0) {
     // In combat: full kite formula — reposition to the ideal standoff gap,

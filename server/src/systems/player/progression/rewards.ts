@@ -8,7 +8,6 @@ import { recordWorldLogEvent } from '../../../world/worldLog';
 import { actorFromPlayer } from '../../../world/worldLogActors';
 import { notifyVoidOverlordDeath } from '../../combat/ai/ultimateEncounter';
 import { onDungeonMonsterRewarded } from '../../world/dungeons/gauntlet';
-import { onPackAlphaDead } from '../../combat/ai/packs';
 
 export interface KillRewards {
   essence: number;
@@ -279,10 +278,6 @@ export function grantMonsterRewards(
 
   if (monster.isMonster.monsterTypeId === 'void-overlord') {
     notifyVoidOverlordDeath(world, monster, killerPlayerId);
-  }
-
-  if (monster.inPack?.role === 'alpha') {
-    onPackAlphaDead(world, monster);
   }
 
   // Despawn any adds the boss spawned via a 'spawn-adds' script action.

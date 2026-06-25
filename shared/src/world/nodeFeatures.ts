@@ -137,7 +137,13 @@ function buildResolvedNodeFeatures(): Record<string, ResolvedNodeFeature[]> {
  * Targets players only, so mobs wade their own marsh freely and random spawns are
  * never affected. Placeholder values — user balance pass.
  */
-function rotPool(id: string, x: number, y: number, radius: number): NodeFeatureSpec {
+function rotPool(
+  id: string,
+  x: number,
+  y: number,
+  radius: number,
+  damagePerStack = 1,
+): NodeFeatureSpec {
   return {
     id,
     x,
@@ -147,7 +153,7 @@ function rotPool(id: string, x: number, y: number, radius: number): NodeFeatureS
     shape: { kind: "circle", x, y, radius },
     damage: {
       effectId: "swamp-rot",
-      damagePerStack: 3,
+      damagePerStack,
       tickIntervalMs: 1000,
       maxStacks: 4,
       refreshMs: 1000,
@@ -305,23 +311,108 @@ export const NODE_FEATURES: Record<string, NodeFeatureSpec[]> = {
       blocksMovement: ["player"],
     },
   ],
-  // SWAMP T1 (node-6-6) — "attrition terrain": ambient rot pools scattered with
-  // clear lanes between them. Hazard-aware movement (weaving the gaps) is the read;
-  // dot-resistance / cleanse / regen is the build answer. Non-blocking → no
-  // passability concern. Placeholder toxic-green fills until real rot-pool sprites.
+  // SWAMP — "attrition terrain": each node has a few varied rot pools with clear
+  // lanes between them. Hazard-aware movement is the read; dot-resistance /
+  // cleanse / regen is the build answer. Pool count stays restrained by tier.
+  "node-6-5": [
+    rotPool("rot_pool_a", 760, 680, 240),
+    rotPool("rot_pool_b", 2030, 1040, 310),
+    rotPool("rot_pool_c", 1260, 1780, 260),
+    rotPool("rot_pool_d", 2680, 1760, 150),
+    rotPool("rot_pool_e", 430, 1520, 170),
+  ],
   "node-6-6": [
     rotPool("rot_pool_a", 820, 720, 300),
-    rotPool("rot_pool_b", 2350, 760, 280),
+    rotPool("rot_pool_b", 2350, 760, 240),
     rotPool("rot_pool_c", 1500, 1650, 320),
-    rotPool("rot_pool_d", 2420, 1800, 280),
+    rotPool("rot_pool_d", 520, 1740, 160),
+    rotPool("rot_pool_e", 2660, 1440, 180),
   ],
   // SWAMP T1 dungeon (node-7-4, Grave Toadeater) — the boss exam is a hazard field:
   // pools ring the arena (center left clear for the boss), so "survive the rot"
   // pressures positioning during the fight too.
   "node-7-4": [
-    rotPool("boss_rot_a", 900, 800, 280),
-    rotPool("boss_rot_b", 2300, 900, 280),
-    rotPool("boss_rot_c", 1600, 1780, 300),
+    rotPool("boss_rot_a", 900, 800, 250),
+    rotPool("boss_rot_b", 2300, 900, 300),
+    rotPool("boss_rot_c", 1600, 1780, 270),
+    rotPool("boss_rot_d", 620, 1660, 150),
+  ],
+  "node-7-5": [
+    rotPool("rot_pool_a", 620, 1440, 280),
+    rotPool("rot_pool_b", 1700, 620, 230),
+    rotPool("rot_pool_c", 2500, 1620, 310),
+    rotPool("rot_pool_d", 840, 520, 160),
+    rotPool("rot_pool_e", 1740, 1860, 170),
+  ],
+  "node-7-6": [
+    rotPool("rot_pool_a", 1020, 520, 220),
+    rotPool("rot_pool_b", 2460, 1040, 330),
+    rotPool("rot_pool_c", 1180, 1880, 270),
+    rotPool("rot_pool_d", 480, 1180, 150),
+    rotPool("rot_pool_e", 2060, 1840, 170),
+  ],
+  "node-7-7": [
+    rotPool("rot_pool_a", 740, 900, 300, 3),
+    rotPool("rot_pool_b", 1660, 1550, 250, 3),
+    rotPool("rot_pool_c", 2600, 580, 270, 3),
+    rotPool("rot_pool_d", 650, 1840, 160, 3),
+    rotPool("rot_pool_e", 2420, 1760, 150, 3),
+  ],
+  "node-8-4": [
+    rotPool("rot_pool_a", 860, 620, 260, 2),
+    rotPool("rot_pool_b", 1600, 1500, 310, 2),
+    rotPool("rot_pool_c", 2550, 1040, 230, 2),
+    rotPool("rot_pool_d", 520, 1620, 180, 2),
+    rotPool("rot_pool_e", 2200, 1840, 150, 2),
+  ],
+  "node-8-5": [
+    rotPool("rot_pool_a", 560, 1100, 240, 2),
+    rotPool("rot_pool_b", 1840, 760, 320, 2),
+    rotPool("rot_pool_c", 2400, 1840, 260, 2),
+    rotPool("rot_pool_d", 980, 1840, 160, 2),
+    rotPool("rot_pool_e", 2650, 780, 150, 2),
+  ],
+  "node-8-6": [
+    rotPool("boss_rot_a", 760, 760, 280, 2),
+    rotPool("boss_rot_b", 2400, 760, 260, 2),
+    rotPool("boss_rot_c", 1600, 1780, 300, 2),
+    rotPool("boss_rot_d", 620, 1660, 160, 2),
+    rotPool("boss_rot_e", 2600, 1660, 150, 2),
+  ],
+  "node-8-7": [
+    rotPool("rot_pool_a", 980, 1680, 290, 3),
+    rotPool("rot_pool_b", 1720, 520, 240, 3),
+    rotPool("rot_pool_c", 2460, 1780, 270, 3),
+    rotPool("rot_pool_d", 540, 760, 160, 3),
+    rotPool("rot_pool_e", 2720, 800, 150, 3),
+  ],
+  "node-9-4": [
+    rotPool("boss_rot_a", 820, 920, 300, 3),
+    rotPool("boss_rot_b", 2320, 820, 250, 3),
+    rotPool("boss_rot_c", 1660, 1720, 280, 3),
+    rotPool("boss_rot_d", 520, 1740, 150, 3),
+    rotPool("boss_rot_e", 2660, 1540, 160, 3),
+  ],
+  "node-9-5": [
+    rotPool("rot_pool_a", 720, 640, 230, 3),
+    rotPool("rot_pool_b", 1400, 1700, 320, 3),
+    rotPool("rot_pool_c", 2600, 940, 280, 3),
+    rotPool("rot_pool_d", 520, 1580, 170, 3),
+    rotPool("rot_pool_e", 1960, 520, 150, 3),
+  ],
+  "node-9-6": [
+    rotPool("rot_pool_a", 940, 1380, 310, 3),
+    rotPool("rot_pool_b", 1800, 660, 250, 3),
+    rotPool("rot_pool_c", 2500, 1780, 230, 3),
+    rotPool("rot_pool_d", 540, 620, 150, 3),
+    rotPool("rot_pool_e", 1510, 1960, 160, 3),
+  ],
+  "node-9-7": [
+    rotPool("rot_pool_a", 620, 1760, 270, 3),
+    rotPool("rot_pool_b", 1540, 820, 300, 3),
+    rotPool("rot_pool_c", 2480, 620, 250, 3),
+    rotPool("rot_pool_d", 820, 620, 160, 3),
+    rotPool("rot_pool_e", 2360, 1780, 170, 3),
   ],
   // JUNGLE T2 (node-3-7, node-3-8) — "ambush ecology": dense overgrowth thickets
   // that slow the player AND conceal a dormant hunting pack (jungle-ape + 2 snakes,

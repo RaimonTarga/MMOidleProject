@@ -58,6 +58,15 @@ import {
 export type PlayerAttackOutcome = "cancelled" | "dodged" | "hit" | "killed";
 export type MonsterAttackOutcome = "cancelled" | "hit" | "killed";
 
+function hasActiveDamagingNodeFeature(player: PlayerEntity): boolean {
+  if (!player.hasNodeFeatureEffect) return false;
+  return player.tracksCombat.statusEffects.some(
+    effect =>
+      effect.data.isNodeFeature != null &&
+      effect.data.damagePerStack != null,
+  );
+}
+
 /**
  * Tundra ICE-ARMOR shatter (fires when a player hit breaks the mob's frost barrier).
  * Cracks the shell for bonus self-damage (rewarding the burst that broke it) and sends
@@ -824,7 +833,10 @@ export function updateCombat(world: World, dt: number, now: number) {
     if (player.cannotAttack) {
       setAttackTarget(world, player, null);
       const lastCombat = player.tracksEngagement;
-      if (lastCombat === undefined || now - lastCombat > oocRegenDelay(player)) {
+      if (
+        !hasActiveDamagingNodeFeature(player) &&
+        (lastCombat === undefined || now - lastCombat > oocRegenDelay(player))
+      ) {
         const cs = player.tracksCombat;
         const rawRegen = player.hasHealth.maxHp * ((player.hasHealth.hpRegen ?? 0) / 100) * (dt / 1000);
         const healAmount = cs ? rawRegen * getAntiHealMult(cs) : rawRegen;
@@ -889,8 +901,9 @@ export function updateCombat(world: World, dt: number, now: number) {
 
       const lastCombat = player.tracksEngagement;
       if (
-        lastCombat === undefined ||
-        now - lastCombat > oocRegenDelay(player)
+        !hasActiveDamagingNodeFeature(player) &&
+        (lastCombat === undefined ||
+          now - lastCombat > oocRegenDelay(player))
       ) {
         const cs = player.tracksCombat;
         const rawRegen =

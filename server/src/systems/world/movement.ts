@@ -3,6 +3,7 @@ import {
   advanceMotion,
   depenetrateToWalkable,
   distanceSq,
+  getFlag,
   getStatusEffect,
   moverOverlapsBlockShapes,
   posHitboxFromEntity,
@@ -42,6 +43,7 @@ type MovableEntity = ServerEntity & {
 export interface SetEntityMotionOptions {
   mover?: FeatureTarget;
   mode?: 'path' | 'direct';
+  avoidHazards?: boolean;
 }
 
 export function setEntityMotion(
@@ -55,7 +57,16 @@ export function setEntityMotion(
     return;
   }
 
-  requestNavMotion(world, entity, target, moverPad(entity), opts);
+  const avoidHazards =
+    opts?.avoidHazards ??
+    (entity.isPlayer !== undefined && entity.tracksCombat !== undefined
+      ? getFlag(entity.tracksCombat, 'rune.avoidNodeHazards')
+      : false);
+
+  requestNavMotion(world, entity, target, moverPad(entity), {
+    ...opts,
+    avoidHazards,
+  });
 }
 
 export function stopEntity(world: World, entity: ServerEntity): void {

@@ -107,9 +107,10 @@ const DEATH_MARK_BLAST_CLIENT_EFFECT = "death-mark-blast";
 const CANNON_BLAST_CLIENT_EFFECT = "reload-cannon-blast";
 const VOID_DISCHARGE_CLIENT_EFFECT = "void-discharge";
 
-// Biome-ecology call-allies pulse — a warm warning ring radiating off an alerted
-// pack member. Tuned to read as a "the pack woke up" tell, not a damage effect.
-const ECOLOGY_PULSE_RADIUS = 70;
+// Biome-ecology call-allies pulse — a warm warning accent on an alerted pack
+// member. It should read as "the pack noticed you" without looking like damage.
+const PACK_CALL_PULSE_COLOR = 0xffaa55;
+const PACK_CALL_PULSE_DARK = 0x7a2f13;
 const ECOLOGY_PULSE_COLOR = 0xff7733;
 // Desert Sun Mark — a hotter amber ring when a marker paints its target, distinct
 // from the pack-call orange so the "you're marked" tell reads on its own.
@@ -159,6 +160,44 @@ function fxAoeRing(
     duration: 420,
     ease: "Power2",
     onComplete: () => ring.destroy(),
+  });
+}
+
+function fxPackCall(scene: GameScene, pos: Vec2): void {
+  const scenePos = nodeToScene(pos.x, pos.y);
+  const g = scene.add.graphics({ x: scenePos.x, y: scenePos.y }).setDepth(DEPTH.FX);
+  const state = { t: 0, alpha: 1 };
+
+  scene.tweens.add({
+    targets: state,
+    t: 1,
+    alpha: 0,
+    duration: 520,
+    ease: "Cubic.Out",
+    onUpdate: () => {
+      const t = state.t;
+      const outer = 18 + t * 34;
+      const inner = 9 + t * 14;
+      g.clear();
+      g.lineStyle(3, PACK_CALL_PULSE_DARK, 0.28 * state.alpha);
+      g.strokeCircle(0, 0, outer + 1.5);
+      g.lineStyle(1.5, PACK_CALL_PULSE_COLOR, 0.78 * state.alpha);
+      g.strokeCircle(0, 0, outer);
+      g.lineStyle(1, PACK_CALL_PULSE_COLOR, 0.38 * state.alpha);
+      g.strokeCircle(0, 0, inner);
+
+      for (let i = 0; i < 3; i++) {
+        const angle = -Math.PI / 2 + (i - 1) * 0.62;
+        const r0 = outer + 6;
+        const r1 = outer + 14;
+        g.lineStyle(2, PACK_CALL_PULSE_COLOR, 0.55 * state.alpha);
+        g.beginPath();
+        g.moveTo(Math.cos(angle) * r0, Math.sin(angle) * r0);
+        g.lineTo(Math.cos(angle) * r1, Math.sin(angle) * r1);
+        g.strokePath();
+      }
+    },
+    onComplete: () => g.destroy(),
   });
 }
 
@@ -333,16 +372,19 @@ export function dispatchCombatEvent(
   }
 
   if (ev.kind === "ecology-pulse") {
-    // Call-allies telegraph — a one-shot ring at the alerted mob (fxAoeRing
-    // converts node→scene). Node-wide, not own-player gated.
+    // Node-wide ecology tells, not own-player gated.
     if (shouldRunClientFx()) {
+      if (ev.pulse === "pack-call") {
+        fxPackCall(scene, ev.pos);
+        return;
+      }
       const color =
         ev.pulse === "sun-mark"
           ? SUN_MARK_PULSE_COLOR
           : ev.pulse === "frost-shatter"
             ? FROST_SHATTER_PULSE_COLOR
             : ECOLOGY_PULSE_COLOR;
-      fxAoeRing(scene, ev.pos, ECOLOGY_PULSE_RADIUS, color);
+      fxAoeRing(scene, ev.pos, 70, color);
     }
     return;
   }

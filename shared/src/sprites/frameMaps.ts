@@ -66,6 +66,7 @@ export const MONSTER_FRAMES: Record<string, string> = {
   // ── T1: Forest ──────────────────────────────────────────────────────────────
   'forest-slime': 'sprites/monsters/greenslime.png',
   'wolf':         'sprites/monsters/wolf.png',
+  'young-wolf':   'sprites/monsters/wolf.png',
 
   // ── T1: Mountain ────────────────────────────────────────────────────────────
   'cliff-hopper': 'sprites/monsters/jumper.png',

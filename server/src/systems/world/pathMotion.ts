@@ -21,6 +21,7 @@ type PathEntity = ServerEntity & {
     goal: Vec2;
     waypoints: Vec2[];
     mover: FeatureTarget;
+    avoidHazards?: boolean;
   };
 };
 
@@ -61,6 +62,7 @@ function planPath(
   goal: Vec2,
   mover: FeatureTarget,
   pad: Vec2,
+  avoidHazards: boolean,
 ): Vec2[] | null {
   return findPathForMover(
     entity.hasPosition.nodeId,
@@ -69,6 +71,7 @@ function planPath(
     entity.hasPosition.current,
     goal,
     suppressedFeatureIdsForNode(world, entity.hasPosition.nodeId),
+    avoidHazards,
   );
 }
 
@@ -78,6 +81,7 @@ export function setMovePath(
   goal: Vec2,
   waypoints: Vec2[],
   mover: FeatureTarget,
+  avoidHazards = false,
 ): void {
   if (waypoints.length === 0) {
     clearMovePath(world, entity);
@@ -89,6 +93,7 @@ export function setMovePath(
     goal: { x: goal.x, y: goal.y },
     waypoints: waypoints.map(wp => ({ x: wp.x, y: wp.y })),
     mover,
+    avoidHazards,
   });
   attachMotionToward(world, entity, waypoints[0]);
 }
@@ -135,11 +140,23 @@ export function replanIfBlocked(
     if (now - last < REPLAN_COOLDOWN_MS) return false;
   }
 
-  const waypoints = planPath(world, entity, path.goal, path.mover, pad);
-  if (!waypoints || waypoints.length === 0) return false;
+  const waypoints = planPath(
+    world,
+    entity,
+    path.goal,
+    path.mover,
+    pad,
+    path.avoidHazards === true,
+  );
+  const fallbackWaypoints =
+    (!waypoints || waypoints.length === 0) && path.avoidHazards === true
+      ? planPath(world, entity, path.goal, path.mover, pad, false)
+      : null;
+  const nextWaypoints = waypoints && waypoints.length > 0 ? waypoints : fallbackWaypoints;
+  if (!nextWaypoints || nextWaypoints.length === 0) return false;
 
   replanCooldown.set(entity.entityId, now);
-  setMovePath(world, entity, path.goal, waypoints, path.mover);
+  setMovePath(world, entity, path.goal, nextWaypoints, path.mover, path.avoidHazards === true);
   return true;
 }
 
@@ -148,10 +165,11 @@ export function requestNavMotion(
   entity: PathEntity,
   goal: Vec2,
   pad: Vec2,
-  opts?: { mover?: FeatureTarget; mode?: 'path' | 'direct' },
+  opts?: { mover?: FeatureTarget; mode?: 'path' | 'direct'; avoidHazards?: boolean },
 ): void {
   const mover = opts?.mover ?? inferMoverTarget(entity);
   const mode = opts?.mode ?? 'path';
+  const avoidHazards = opts?.avoidHazards === true;
 
   if (mode === 'direct') {
     clearMovePath(world, entity);
@@ -165,17 +183,23 @@ export function requestNavMotion(
     && goalsNearEnough(existing.goal, goal)
     && existing.waypoints.length > 0
     && existing.mover === mover
+    && (existing.avoidHazards === true) === avoidHazards
   ) {
     attachMotionToward(world, entity, existing.waypoints[0]);
     return;
   }
 
-  const waypoints = planPath(world, entity, goal, mover, pad);
-  if (!waypoints || waypoints.length === 0) {
+  const waypoints = planPath(world, entity, goal, mover, pad, avoidHazards);
+  const fallbackWaypoints =
+    (!waypoints || waypoints.length === 0) && avoidHazards
+      ? planPath(world, entity, goal, mover, pad, false)
+      : null;
+  const nextWaypoints = waypoints && waypoints.length > 0 ? waypoints : fallbackWaypoints;
+  if (!nextWaypoints || nextWaypoints.length === 0) {
     clearMovePath(world, entity);
     detachComponent(world, entity, 'isMoving');
     return;
   }
 
-  setMovePath(world, entity, goal, waypoints, mover);
+  setMovePath(world, entity, goal, nextWaypoints, mover, avoidHazards);
 }

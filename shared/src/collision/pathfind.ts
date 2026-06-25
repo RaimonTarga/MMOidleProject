@@ -227,8 +227,9 @@ export function findPathForMover(
   from: Vec2,
   to: Vec2,
   suppressedFeatureIds: ReadonlySet<string> = new Set(),
+  avoidHazards = false,
 ): Vec2[] | null {
-  const grid = buildNavGrid(nodeId, mover, pad, suppressedFeatureIds);
+  const grid = buildNavGrid(nodeId, mover, pad, suppressedFeatureIds, avoidHazards);
   return findPathOnGrid(grid, from, to);
 }
 

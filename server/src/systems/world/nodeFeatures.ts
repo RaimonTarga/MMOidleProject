@@ -25,9 +25,11 @@ import type { World } from '../../world/World';
 import { buildSimpleBreakdown, recordPlayerDamaged } from '../../world/worldLogCombat';
 import { isInvulnerableMonster, isInvulnerablePlayer } from '../combat/invulnerability';
 import { isPlayerInCombat } from '../combat/ai/engagement';
+import { pushPlayerDotTickEvent } from '../combat/damage/dotTickEvent';
 
 /** Distinct from boss environmental-dot (`isEnvironmental === 1`). */
 const NODE_FEATURE_FLAG = 2;
+const DEFAULT_NODE_FEATURE_STACK_INTERVAL_MS = 1000;
 
 const SPAWN_MARGIN = 96;
 
@@ -278,6 +280,7 @@ function tickHeatBurn(
   );
 
   player.hasHealth.hp -= damage;
+  markSliceDirty(world, player, 'hasHealth');
   if (player.hasHealth.hp <= 0) {
     world.killPlayer(player.isPlayer.id, {
       kind: 'dot',
@@ -471,20 +474,7 @@ function applyFeatureEffectsToEntity(
   if (feature.damage?.targets.includes(target)) {
     const d = feature.damage;
     if (inDamageContact) {
-      applyStatusEffect(tracksCombat, {
-        id: d.effectId,
-        maxStacks: d.maxStacks,
-        instanced: false,
-        sourceId,
-        remainingMs: d.refreshMs * 3,
-        refreshable: true,
-        data: {
-          damagePerStack: d.damagePerStack,
-          nextTickIn: d.tickIntervalMs,
-          tickIntervalMs: d.tickIntervalMs,
-          isNodeFeature: NODE_FEATURE_FLAG,
-        },
-      });
+      refreshNodeFeatureDamageEffect(tracksCombat, sourceId, d);
       active = true;
     } else if (ownsFeatureStatus(d.effectId)) {
       removeStatusEffect(tracksCombat, d.effectId);
@@ -492,6 +482,48 @@ function applyFeatureEffectsToEntity(
   }
 
   return active;
+}
+
+function refreshNodeFeatureDamageEffect(
+  tracksCombat: PlayerEntity['tracksCombat'],
+  sourceId: string,
+  damage: NonNullable<ResolvedNodeFeature['damage']>,
+): void {
+  const remainingMs = damage.refreshMs * 3;
+  const existing = getStatusEffect(tracksCombat, damage.effectId);
+  if (
+    existing &&
+    existing.data.isNodeFeature === NODE_FEATURE_FLAG
+  ) {
+    existing.remainingMs = remainingMs;
+    existing.maxStacks = damage.maxStacks;
+    existing.sourceId = sourceId;
+    existing.data.damagePerStack = damage.damagePerStack;
+    existing.data.tickIntervalMs = damage.tickIntervalMs;
+    existing.data.stackIntervalMs =
+      existing.data.stackIntervalMs ?? damage.tickIntervalMs;
+    existing.data.totalMs = remainingMs;
+    existing.data.isNodeFeature = NODE_FEATURE_FLAG;
+    return;
+  }
+
+  applyStatusEffect(tracksCombat, {
+    id: damage.effectId,
+    maxStacks: damage.maxStacks,
+    instanced: false,
+    sourceId,
+    remainingMs,
+    refreshable: true,
+    data: {
+      damagePerStack: damage.damagePerStack,
+      nextTickIn: damage.tickIntervalMs,
+      tickIntervalMs: damage.tickIntervalMs,
+      nextStackIn: damage.tickIntervalMs,
+      stackIntervalMs: damage.tickIntervalMs,
+      totalMs: remainingMs,
+      isNodeFeature: NODE_FEATURE_FLAG,
+    },
+  });
 }
 
 function tickEntityNodeFeatureDamage(
@@ -504,62 +536,92 @@ function tickEntityNodeFeatureDamage(
     if (effect.data.isNodeFeature !== NODE_FEATURE_FLAG) continue;
     if (effect.data.damagePerStack == null) continue;
 
-    effect.data.nextTickIn -= dt;
-    if (effect.data.nextTickIn > 0) continue;
-
-    const base = computeScaledDotDamage(effect);
-
+    effect.data.nextTickIn =
+      (effect.data.nextTickIn ?? effect.data.tickIntervalMs ?? 1000) - dt;
     if (isPlayer) {
       const player = entity as PlayerEntity;
       if (isInvulnerablePlayer(player)) continue;
-      const dotResist = Math.min(
-        0.9,
-        player.usesSkills.passives['defense.dot-resistance'] ?? 0,
-      );
-      const damage = Math.max(
-        1,
-        Math.round(
-          base *
-            (1 - player.mitigatesDamage.damageReduction) *
-            (1 - dotResist),
-        ),
-      );
+      if (effect.data.nextTickIn <= 0) {
+        const base = computeScaledDotDamage(effect);
+        const dotResist = Math.min(
+          0.9,
+          player.usesSkills.passives['defense.dot-resistance'] ?? 0,
+        );
+        const damage = Math.max(
+          1,
+          Math.round(
+            base *
+              (1 - player.mitigatesDamage.damageReduction) *
+              (1 - dotResist),
+          ),
+        );
 
-      recordPlayerDamaged(
-        world,
-        player,
-        ENV_FEATURE_ACTOR,
-        damage,
-        0,
-        'dot',
-        buildSimpleBreakdown(base, damage),
-      );
-
-      player.hasHealth.hp -= damage;
-      if (player.hasHealth.hp <= 0) {
-        detachComponent(world, player, 'hasNodeFeatureEffect');
-        world.killPlayer(player.isPlayer.id, {
-          kind: 'dot',
-          killer: deathKillerForNode(player.hasPosition.nodeId),
+        recordPlayerDamaged(
+          world,
+          player,
+          ENV_FEATURE_ACTOR,
           damage,
-          stacks: effect.stacks,
-        });
-      } else {
-        effect.data.nextTickIn = effect.data.tickIntervalMs;
+          0,
+          'dot',
+          buildSimpleBreakdown(base, damage),
+        );
+
+        if (effect.id === 'swamp-rot') {
+          pushPlayerDotTickEvent(world, player, 'poison', damage, {
+            sourceType: 'special',
+          });
+        }
+
+        player.hasHealth.hp -= damage;
+        markSliceDirty(world, player, 'hasHealth');
+        if (player.hasHealth.hp <= 0) {
+          detachComponent(world, player, 'hasNodeFeatureEffect');
+          world.killPlayer(player.isPlayer.id, {
+            kind: 'dot',
+            killer: deathKillerForNode(player.hasPosition.nodeId),
+            damage,
+            stacks: effect.stacks,
+          });
+          continue;
+        }
+        effect.data.nextTickIn += effect.data.tickIntervalMs ?? 1000;
       }
+      rampNodeFeatureDamageStacks(effect, dt);
     } else {
       const monster = entity as MonsterEntity;
-      const damage = Math.max(
-        1,
-        Math.round(base * (1 - monster.mitigatesDamage.damageReduction)),
-      );
-      monster.hasHealth.hp -= damage;
-      if (monster.hasHealth.hp <= 0) {
-        world.removeMonsterEntity(monster.isMonster.id);
-      } else {
-        effect.data.nextTickIn = effect.data.tickIntervalMs;
+      if (effect.data.nextTickIn <= 0) {
+        const base = computeScaledDotDamage(effect);
+        const damage = Math.max(
+          1,
+          Math.round(base * (1 - monster.mitigatesDamage.damageReduction)),
+        );
+        monster.hasHealth.hp -= damage;
+        markSliceDirty(world, monster, 'hasHealth');
+        if (monster.hasHealth.hp <= 0) {
+          world.removeMonsterEntity(monster.isMonster.id);
+          continue;
+        }
+        effect.data.nextTickIn += effect.data.tickIntervalMs ?? 1000;
       }
+      rampNodeFeatureDamageStacks(effect, dt);
     }
+  }
+}
+
+function rampNodeFeatureDamageStacks(
+  effect: PlayerEntity['tracksCombat']['statusEffects'][number],
+  dt: number,
+): void {
+  const maxStacks = Math.max(1, effect.maxStacks);
+  if (effect.stacks >= maxStacks) return;
+  const interval =
+    effect.data.stackIntervalMs ??
+    effect.data.tickIntervalMs ??
+    DEFAULT_NODE_FEATURE_STACK_INTERVAL_MS;
+  effect.data.nextStackIn = (effect.data.nextStackIn ?? interval) - dt;
+  while (effect.data.nextStackIn <= 0 && effect.stacks < maxStacks) {
+    effect.stacks++;
+    effect.data.nextStackIn += interval;
   }
 }
 

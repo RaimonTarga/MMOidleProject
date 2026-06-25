@@ -70,6 +70,8 @@ export const plainsMonsterEntries = [
     // rallies a slime swarm — spawns with 3 Plains Slimes and pulls them onto its
     // target via call-allies when it engages. Placeholder counts/range — user pass.
     pack: { role: 'alpha', callRange: 300, followers: [{ typeId: 'plains-slime', count: 3 }] },
+    // The alpha should wander with the herd it spawns, not path independently of it.
+    swarm: { cohesion: 0.12, separation: 52 },
   }],
 
   ['stampede-bull', {

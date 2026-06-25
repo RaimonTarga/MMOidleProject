@@ -3,6 +3,7 @@ import {
   NODE_BIOMES,
   MONSTER_DATABASE,
   BIOME_DATABASE,
+  RESOLVED_NODE_FEATURES,
   TEST_ROOM_NODE_ID,
   distanceSq,
   isGauntletDungeonNode,
@@ -34,6 +35,21 @@ import { applyDormantUltimateBoss } from "../../combat/ai/ultimateEncounter";
 // Multipliers live in shared GAME_CONFIG so the client bestiary shows the same scaled stats.
 const DUNGEON_HP_MULT = GAME_CONFIG.DUNGEON_HP_MULT;
 const DUNGEON_ATK_MULT = GAME_CONFIG.DUNGEON_ATK_MULT;
+const PACK_BIASED_SPAWN_ATTEMPTS = 2;
+const TOTAL_SPAWN_ATTEMPTS = 20;
+const SPAWN_PACK_LINK_RANGE = 260;
+const SPAWN_PACK_TARGET_MAX = 3;
+const SPAWN_SWARM_LOCAL_MAX = 4;
+const SPAWN_PACK_MIN_OFFSET = GAME_CONFIG.MONSTER_MIN_SPAWN_DIST + 56;
+const SPAWN_PACK_MAX_OFFSET = 250;
+const MONSTER_PLAYER_SPAWN_EXCLUSION = 520;
+const DISPERSAL_RANDOM_SAMPLES = 8;
+const DISPERSAL_NEIGHBOR_RANGE = 560;
+const PACK_ALPHA_DISPERSAL_SAMPLES = 12;
+const PACK_ALPHA_SEPARATION_RANGE = 820;
+const SWAMP_POOL_BIASED_SPAWN_ATTEMPTS = 8;
+const SWAMP_POOL_MIN_EDGE_OFFSET = 72;
+const SWAMP_POOL_MAX_EDGE_OFFSET = 210;
 
 /**
  * Create a monster of the given type at `pos` in nodeId.
@@ -162,32 +178,276 @@ export function spawnMonster(world: World, nodeId: string): boolean {
   if (pool.length === 0) return false;
 
   const typeId = pool[Math.floor(Math.random() * pool.length)];
+  const typeDef = MONSTER_DATABASE.get(typeId);
   const node = NODE_REGISTRY.get(nodeId) ?? world.node;
   const minDistSq = GAME_CONFIG.MONSTER_MIN_SPAWN_DIST ** 2;
 
-  for (let attempt = 0; attempt < 15; attempt++) {
-    const pos: Vec2 = {
-      x: Math.floor(Math.random() * (node.width - 128)) + 64,
-      y: Math.floor(Math.random() * (node.height - 128)) + 64,
-    };
+  for (let attempt = 0; attempt < TOTAL_SPAWN_ATTEMPTS; attempt++) {
+    const pos =
+      typeDef?.pack?.role === "alpha"
+        ? dispersedPackAlphaSpawnPos(world, nodeId, typeDef.biome, node)
+        : typeDef?.biome === "swamp" && attempt < SWAMP_POOL_BIASED_SPAWN_ATTEMPTS
+        ? swampPoolEdgeSpawnPos(world, nodeId, node) ??
+          dispersedSpawnPos(world, nodeId, node)
+        : attempt < PACK_BIASED_SPAWN_ATTEMPTS
+        ? biasedPackSpawnPos(world, nodeId, typeId, node) ??
+          dispersedSpawnPos(world, nodeId, node)
+        : dispersedSpawnPos(world, nodeId, node);
 
-    let tooClose = false;
-    for (const e of world.monsterEntities) {
-      if (e.hasPosition.nodeId !== nodeId) continue;
-      if (distanceSq(e.hasPosition.current, pos) < minDistSq) {
-        tooClose = true;
-        break;
-      }
+    if (!isAmbientSpawnPosClear(world, nodeId, pos, minDistSq, typeDef)) {
+      continue;
     }
-    if (tooClose) continue;
 
-    if (MONSTER_DATABASE.get(typeId)?.pack?.role === "alpha") {
+    if (typeDef?.pack?.role === "alpha") {
       return spawnPack(world, nodeId, typeId, pos) !== null;
     }
     return createMonster(world, nodeId, typeId, pos) !== null;
   }
 
   return false;
+}
+
+function isAmbientSpawnPosClear(
+  world: World,
+  nodeId: string,
+  pos: Vec2,
+  minMonsterDistSq: number,
+  typeDef: ReturnType<typeof MONSTER_DATABASE.get> | undefined,
+): boolean {
+  for (const e of world.monsterEntities) {
+    if (e.hasPosition.nodeId !== nodeId) continue;
+    if (distanceSq(e.hasPosition.current, pos) < minMonsterDistSq) return false;
+  }
+
+  const playerExclusionSq =
+    MONSTER_PLAYER_SPAWN_EXCLUSION * MONSTER_PLAYER_SPAWN_EXCLUSION;
+  for (const player of world.livePlayersInNode(nodeId)) {
+    if (distanceSq(player.hasPosition.current, pos) < playerExclusionSq) {
+      return false;
+    }
+  }
+
+  if (
+    typeDef?.swarm &&
+    localSwarmCount(world, nodeId, typeDef.biome, pos) >= SPAWN_SWARM_LOCAL_MAX
+  ) {
+    return false;
+  }
+
+  return true;
+}
+
+function randomSpawnPos(node: { width: number; height: number }): Vec2 {
+  return {
+    x: Math.floor(Math.random() * (node.width - 128)) + 64,
+    y: Math.floor(Math.random() * (node.height - 128)) + 64,
+  };
+}
+
+function dispersedSpawnPos(
+  world: World,
+  nodeId: string,
+  node: { width: number; height: number },
+): Vec2 {
+  let best = randomSpawnPos(node);
+  let bestScore = spawnDispersalScore(world, nodeId, best);
+
+  for (let i = 1; i < DISPERSAL_RANDOM_SAMPLES; i++) {
+    const pos = randomSpawnPos(node);
+    const score = spawnDispersalScore(world, nodeId, pos);
+    if (score < bestScore) {
+      best = pos;
+      bestScore = score;
+    }
+  }
+
+  return best;
+}
+
+function spawnDispersalScore(world: World, nodeId: string, pos: Vec2): number {
+  const neighborSq = DISPERSAL_NEIGHBOR_RANGE * DISPERSAL_NEIGHBOR_RANGE;
+  let score = 0;
+  for (const e of world.monsterEntities) {
+    if (e.hasPosition.nodeId !== nodeId) continue;
+    const d2 = distanceSq(e.hasPosition.current, pos);
+    if (d2 <= neighborSq) {
+      score += 1 + (neighborSq - d2) / neighborSq;
+    }
+  }
+  return score;
+}
+
+function dispersedPackAlphaSpawnPos(
+  world: World,
+  nodeId: string,
+  biome: string,
+  node: { width: number; height: number },
+): Vec2 {
+  let best = randomSpawnPos(node);
+  let bestScore = packAlphaDispersalScore(world, nodeId, biome, best);
+
+  for (let i = 1; i < PACK_ALPHA_DISPERSAL_SAMPLES; i++) {
+    const pos = randomSpawnPos(node);
+    const score = packAlphaDispersalScore(world, nodeId, biome, pos);
+    if (score < bestScore) {
+      best = pos;
+      bestScore = score;
+    }
+  }
+
+  return best;
+}
+
+function packAlphaDispersalScore(
+  world: World,
+  nodeId: string,
+  biome: string,
+  pos: Vec2,
+): number {
+  const separationSq =
+    PACK_ALPHA_SEPARATION_RANGE * PACK_ALPHA_SEPARATION_RANGE;
+  let score = spawnDispersalScore(world, nodeId, pos) * 0.35;
+
+  for (const center of packCenters(world, nodeId, biome)) {
+    const d2 = distanceSq(center, pos);
+    if (d2 <= separationSq) {
+      score += 8 + 8 * ((separationSq - d2) / separationSq);
+    }
+  }
+
+  return score;
+}
+
+function packCenters(world: World, nodeId: string, biome: string): Vec2[] {
+  const packs = new Map<string, { x: number; y: number; count: number }>();
+  for (const e of world.monsterEntities) {
+    if (e.hasPosition.nodeId !== nodeId || !e.inPack) continue;
+    const def = MONSTER_DATABASE.get(e.isMonster.monsterTypeId);
+    if (def?.biome !== biome) continue;
+
+    const pack =
+      packs.get(e.inPack.packId) ?? { x: 0, y: 0, count: 0 };
+    pack.x += e.hasPosition.current.x;
+    pack.y += e.hasPosition.current.y;
+    pack.count += 1;
+    packs.set(e.inPack.packId, pack);
+  }
+
+  const centers: Vec2[] = [];
+  for (const pack of packs.values()) {
+    centers.push({ x: pack.x / pack.count, y: pack.y / pack.count });
+  }
+  return centers;
+}
+
+function swampPoolEdgeSpawnPos(
+  world: World,
+  nodeId: string,
+  node: { width: number; height: number },
+): Vec2 | null {
+  const pools = RESOLVED_NODE_FEATURES[nodeId]?.filter(
+    (feature) =>
+      feature.shape.kind === "circle" &&
+      feature.damage?.targets.includes("player"),
+  );
+  if (!pools || pools.length === 0) return null;
+
+  const pool = pools[Math.floor(Math.random() * pools.length)];
+  const shape = pool.shape;
+  if (shape.kind !== "circle") return null;
+
+  const angle = Math.random() * Math.PI * 2;
+  const radius =
+    shape.radius +
+    SWAMP_POOL_MIN_EDGE_OFFSET +
+    Math.random() * (SWAMP_POOL_MAX_EDGE_OFFSET - SWAMP_POOL_MIN_EDGE_OFFSET);
+  const margin = 64;
+  const pos: Vec2 = {
+    x: Math.max(
+      margin,
+      Math.min(node.width - margin, shape.x + Math.cos(angle) * radius),
+    ),
+    y: Math.max(
+      margin,
+      Math.min(node.height - margin, shape.y + Math.sin(angle) * radius),
+    ),
+  };
+
+  return spawnDispersalScore(world, nodeId, pos) <= 3.5 ? pos : null;
+}
+
+function biasedPackSpawnPos(
+  world: World,
+  nodeId: string,
+  typeId: string,
+  node: { width: number; height: number },
+): Vec2 | null {
+  const def = MONSTER_DATABASE.get(typeId);
+  if (!def?.swarm || def.pack?.role === "alpha" || def.isBoss) return null;
+
+  const anchors = lowCountSwarmAnchors(world, nodeId, def.biome);
+  if (anchors.length === 0) return null;
+
+  const anchor = anchors[Math.floor(Math.random() * anchors.length)];
+  const angle = Math.random() * Math.PI * 2;
+  const radius =
+    SPAWN_PACK_MIN_OFFSET +
+    Math.random() * (SPAWN_PACK_MAX_OFFSET - SPAWN_PACK_MIN_OFFSET);
+  const margin = 64;
+  const pos: Vec2 = {
+    x: Math.max(
+      margin,
+      Math.min(
+        node.width - margin,
+        anchor.hasPosition.current.x + Math.cos(angle) * radius,
+      ),
+    ),
+    y: Math.max(
+      margin,
+      Math.min(
+        node.height - margin,
+        anchor.hasPosition.current.y + Math.sin(angle) * radius,
+      ),
+    ),
+  };
+
+  // Do not deliberately add to an already-full local pack.
+  return localSwarmCount(world, nodeId, def.biome, pos) < SPAWN_PACK_TARGET_MAX
+    ? pos
+    : null;
+}
+
+function lowCountSwarmAnchors(
+  world: World,
+  nodeId: string,
+  biome: string,
+): MonsterEntity[] {
+  const anchors: MonsterEntity[] = [];
+  for (const e of world.monsterEntities) {
+    if (e.hasPosition.nodeId !== nodeId) continue;
+    const def = MONSTER_DATABASE.get(e.isMonster.monsterTypeId);
+    if (def?.biome !== biome || !def.swarm) continue;
+    const count = localSwarmCount(world, nodeId, biome, e.hasPosition.current);
+    if (count > 0 && count < SPAWN_PACK_TARGET_MAX) anchors.push(e);
+  }
+  return anchors;
+}
+
+function localSwarmCount(
+  world: World,
+  nodeId: string,
+  biome: string,
+  pos: Vec2,
+): number {
+  const linkSq = SPAWN_PACK_LINK_RANGE * SPAWN_PACK_LINK_RANGE;
+  let count = 0;
+  for (const e of world.monsterEntities) {
+    if (e.hasPosition.nodeId !== nodeId) continue;
+    const def = MONSTER_DATABASE.get(e.isMonster.monsterTypeId);
+    if (def?.biome !== biome || !def.swarm) continue;
+    if (distanceSq(e.hasPosition.current, pos) <= linkSq) count++;
+  }
+  return count;
 }
 
 /**

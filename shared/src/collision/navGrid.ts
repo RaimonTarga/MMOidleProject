@@ -5,7 +5,7 @@ import {
   type Vec2,
 } from '../systems/spatial';
 import { EXIT_TRIGGER } from './nodeAdjacency';
-import { blockShapesForMover } from './staticRegions';
+import { blockShapesForMover, hazardAvoidanceShapesForMover } from './staticRegions';
 
 /** Nav grid cell size in node-local pixels. */
 export const NAV_CELL_SIZE = 32;
@@ -40,9 +40,10 @@ function cacheKey(
   mover: FeatureTarget,
   pad: Vec2,
   suppressed: ReadonlySet<string>,
+  avoidHazards: boolean,
 ): string {
   const suppressedKey = [...suppressed].sort().join(',');
-  return `${nodeId}:${mover}:${pad.x},${pad.y}:${suppressedKey}`;
+  return `${nodeId}:${mover}:${pad.x},${pad.y}:${suppressedKey}:${avoidHazards ? 'avoid-hazards' : 'normal'}`;
 }
 
 export function worldToCell(grid: NavGrid, pos: Vec2): { col: number; row: number } {
@@ -113,9 +114,10 @@ export function buildNavGrid(
   mover: FeatureTarget,
   pad: Vec2,
   suppressedFeatureIds: ReadonlySet<string> = new Set(),
+  avoidHazards = false,
 ): NavGrid {
   const pathPad = effectivePathfindingPad(pad);
-  const key = cacheKey(nodeId, mover, pathPad, suppressedFeatureIds);
+  const key = cacheKey(nodeId, mover, pathPad, suppressedFeatureIds, avoidHazards);
   const cached = gridCache.get(key);
   if (cached) return cached;
 
@@ -124,7 +126,10 @@ export function buildNavGrid(
   const cellSize = NAV_CELL_SIZE;
   const cols = Math.ceil(width / cellSize);
   const rows = Math.ceil(height / cellSize);
-  const shapes = blockShapesForMover(nodeId, mover, suppressedFeatureIds);
+  const shapes = [
+    ...blockShapesForMover(nodeId, mover, suppressedFeatureIds),
+    ...(avoidHazards ? hazardAvoidanceShapesForMover(nodeId, mover) : []),
+  ];
   const blocked = new Uint8Array(cols * rows);
 
   for (let row = 0; row < rows; row++) {

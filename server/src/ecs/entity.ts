@@ -86,6 +86,7 @@ export interface HasMovePath {
   goal: Vec2;
   waypoints: Vec2[];
   mover: FeatureTarget;
+  avoidHazards?: boolean;
 }
 
 /**

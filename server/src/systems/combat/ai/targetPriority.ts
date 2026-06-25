@@ -123,6 +123,7 @@ const EPS = 0.001;
 const WEIGHT_PRESETS: Record<AutocombatPriorityMode, ScoreWeights> = {
   nearest: { damage: 0, distance: 1.4, threat: 0.6 },
   "lowest-hp": { damage: 0, distance: 0.001, threat: 0 },
+  "highest-max-hp": { damage: 0, distance: 0.001, threat: 0 },
   damage: { damage: 1.8, distance: 0.55, threat: 0.6 },
   threat: { damage: 0.8, distance: 0.55, threat: 1.7 },
   balanced: { damage: 1.15, distance: 0.8, threat: 1.0 },
@@ -353,6 +354,10 @@ function scoreCandidate(
 
   if (ctx.cfg.priorityMode === "lowest-hp") {
     return 1 / Math.max(1, monster.hasHealth.hp) - ctx.weights.distance * distancePenalty;
+  }
+
+  if (ctx.cfg.priorityMode === "highest-max-hp") {
+    return monster.hasHealth.maxHp - ctx.weights.distance * distancePenalty;
   }
 
   const damage = estimatedPlayerDamage(player, monster);
