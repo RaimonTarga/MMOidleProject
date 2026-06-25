@@ -11,6 +11,25 @@ export const ESSENCE_COLORS: Record<EssenceType, string> = {
   purple: '#bb55ff',
 };
 
+/**
+ * Player-facing aspect names for each essence. The internal keys stay as colors
+ * (persistence + protocol + recipe authoring all key on the color), but every
+ * UI surface and player-facing message renders the aspect name instead.
+ *   Might ← yellow · Wild ← green · Rot ← purple · Stone ← blue · Deep ← red
+ */
+export const ESSENCE_LABELS: Record<EssenceType, string> = {
+  yellow: 'Might',
+  green:  'Wild',
+  purple: 'Rot',
+  blue:   'Stone',
+  red:    'Deep',
+};
+
+/** Aspect name for an essence key (player-facing). */
+export function essenceLabel(type: EssenceType): string {
+  return ESSENCE_LABELS[type];
+}
+
 /** Primary essence produced by each biome — used by recipes for their main cost. */
 export const BIOME_PRIMARY_ESSENCE: Record<string, EssenceType> = {
   clearing: 'green',
@@ -29,18 +48,29 @@ import type { MechanicEffects } from './passives';
 
 // ─── Equipment slots ──────────────────────────────────────────────────────────
 
-export type EquipmentSlot = 'weapon' | 'armor' | 'recovery' | 'mobility';
+export type EquipmentSlot = 'weapon' | 'armor' | 'recovery' | 'mobility' | 'core';
 
 export const EQUIPMENT_SLOTS: EquipmentSlot[] = [
-  'weapon', 'armor', 'recovery', 'mobility',
+  'weapon', 'armor', 'recovery', 'mobility', 'core',
 ];
 
 /** Null in a slot means nothing is equipped there. */
 export type EquipmentMap = Record<EquipmentSlot, string | null>;
 
 export function emptyEquipment(): EquipmentMap {
-  return { weapon: null, armor: null, recovery: null, mobility: null };
+  return { weapon: null, armor: null, recovery: null, mobility: null, core: null };
 }
+
+// ─── Cores (system rework Step 9) ───────────────────────────────────────────────
+
+/**
+ * Range tag for a core (the 5th equipment slot's role/range amplifier).
+ *   close/mid/far — full effect ONLY when the player's selectedRange matches; off otherwise.
+ *   universal     — weaker but always-on, regardless of range.
+ *   party         — role-flavored, always-on in v1 (cross-range party roles may deepen later).
+ * See systems/cores.ts `coreIsActive`.
+ */
+export type CoreRange = 'close' | 'mid' | 'far' | 'universal' | 'party';
 
 // ─── Item stat modifiers ──────────────────────────────────────────────────────
 
@@ -71,6 +101,11 @@ export interface UpgradeStep {
   stats?: Partial<ItemStats>;
   mechanicEffects?: Record<string, number>;
   cost: Partial<Record<EssenceType, number>>;
+  /**
+   * Optional biome-catalyst cost for this step, keyed by biome group (e.g.
+   * `{ forest: 2 }`). Parallel axis to `cost`; both are spent on upgrade.
+   */
+  catalystCost?: Partial<Record<string, number>>;
   requiredBiomeLevel: number;
 }
 
@@ -107,6 +142,13 @@ export interface ItemDefinition {
    *   defense.shield-duration-ms   — ms before a shield expires even if not depleted; omit for permanent shields
    *   defense.cleanse-stacks       — stacks removed per cleanse trigger
    *   defense.cleanse-interval-ms  — ms between cleanse triggers
+   *
+   * Guard-ability amplifiers (system rework Step 8) — only do anything while a
+   * Guard ability is equipped; read at fire time in abilities/abilityFiring.ts:
+   *   guard.cooldown-reduction-pct — shorten the Guard ability cooldown by this fraction
+   *   guard.potency-pct            — scale the Guard effect magnitude (e.g. drPct) by (1 + X)
+   *   guard.duration-pct           — extend the Guard buff duration by (1 + X)
+   *   guard.heal-on-fire-pct       — heal X% of maxHp into the recovery pool when the Guard fires
    */
   mechanicEffects?: MechanicEffects;
   /**
@@ -120,4 +162,15 @@ export interface ItemDefinition {
   upgrades?: UpgradeStep[];
   /** Frame name in the /assets/icons.png atlas for the item's inventory icon. */
   icon?: string;
+  /** Lineage this item belongs to (system rework Step 6). Mirrors Recipe.lineageId. */
+  lineageId?: string;
+  /** Predecessor recipe/item id this evolved from. Mirrors Recipe.evolvesFrom. */
+  evolvesFrom?: string;
+  /**
+   * Core slot only (system rework Step 9). Range tag gating the core's effect:
+   * close/mid/far apply their stats/mechanicEffects ONLY when selectedRange matches;
+   * universal/party always apply. Read by systems/cores.ts `coreIsActive` in the
+   * stat rebuild. Mirrors Recipe.rangeTag.
+   */
+  rangeTag?: CoreRange;
 }

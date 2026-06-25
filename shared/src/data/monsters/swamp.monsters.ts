@@ -46,7 +46,7 @@ export const swampMonsterEntries = [
     // Sturdier; a feeble strike but a deeper, faster-stacking poison.
     stats: { hp: 145, attack: 10, plating: 2, damageReduction: 0, speed: 30, attackRange: 12, attackCooldown: 2400, pullRange: 180 },
     behavior: 'melee', attackStyle: 'poison', biome: 'swamp',
-    rewards: { essence: 6, essenceType: 'purple', level: 1, biomeXp: 42 },
+    rewards: { essence: 6, essenceType: 'green', level: 1, biomeXp: 42 }, // beast → Wild (biome mixture; tunable)
     ai: { wanderRadius: 180, leashRange: 550, idleMinMs: 1800, idleMaxMs: 5000 },
     dotEffect: { debuffId: 'swamp-poison', label: 'Poison', damagePerStack: 2, maxStacks: 4, tickIntervalMs: 1500, durationMs: 3000 },
   }],

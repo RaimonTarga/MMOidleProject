@@ -3,6 +3,9 @@ import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { hudBus } from '../hudBus';
 import { SkillTreePanel } from '../ui/SkillTreePanel';
 import { RunesPanel } from '../ui/RunesPanel';
+import { AbilitiesPanel } from '../ui/AbilitiesPanel';
+import { StancesPanel } from '../ui/StancesPanel';
+import { RitesPanel } from '../ui/RitesPanel';
 import { InventoryPanel } from '../ui/InventoryPanel';
 import { CraftingPanel } from '../ui/CraftingPanel';
 import { MapPanel } from '../ui/MapPanel';
@@ -46,6 +49,9 @@ type MobileView =
   | 'map'
   | 'quests'
   | 'runes'
+  | 'abilities'
+  | 'stances'
+  | 'rites'
   | 'more'
   | null;
 
@@ -185,6 +191,9 @@ function MobileHUDContent() {
         <MobileSheet title="More" onClose={close}>
           <div className="mhud-more">
             <button className="mhud-more__btn" onClick={() => setView('runes')}>Runes</button>
+            <button className="mhud-more__btn" onClick={() => setView('abilities')}>Abilities</button>
+            <button className="mhud-more__btn" onClick={() => setView('stances')}>Stances</button>
+            <button className="mhud-more__btn" onClick={() => setView('rites')}>Rites</button>
             <button className="mhud-more__btn" onClick={() => { setBestiaryOpen(true); setView(null); }}>Bestiary</button>
             <button className="mhud-more__btn" onClick={() => { setSettingsOpen(true); setView(null); }}>Settings</button>
             <button className="mhud-more__btn" onClick={() => hudBus.toggleTacticalView()}>Tactical Mode</button>
@@ -204,6 +213,9 @@ function MobileHUDContent() {
       )}
       {view === 'map'    && <MapPanel onClose={close} />}
       {view === 'runes'  && <RunesPanel onClose={close} />}
+      {view === 'abilities' && <AbilitiesPanel onClose={close} />}
+      {view === 'stances' && <StancesPanel onClose={close} />}
+      {view === 'rites' && <RitesPanel onClose={close} />}
       {settingsOpen && <SettingsPanel onClose={() => setSettingsOpen(false)} />}
     </>
   );

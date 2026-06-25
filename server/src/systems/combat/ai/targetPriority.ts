@@ -28,7 +28,9 @@ import {
   RUNE_FLEE_FLAG,
   RUNE_LET_DOTS_FINISH_FLAG,
   RUNE_SPREAD_DOTS_FLAG,
+  RUNE_FOCUS_ELITES_FLAG,
 } from "./runeConfig";
+import { MONSTER_DATABASE } from "@mmo-idle/shared";
 import { effectivePartyLeaderId } from "../../player/party/partySystem";
 
 export type AutoCombatAction =
@@ -51,6 +53,7 @@ interface CandidateContext {
   acquireRadius: number;
   letDotsFinish: boolean;
   spreadDots: boolean;
+  focusElites: boolean;
 }
 
 interface TargetCandidate {
@@ -108,6 +111,13 @@ const QUEST_WEIGHT = 0.35;
 const BIOME_VALUE_WEIGHT = 0.12;
 const EMPOWERED_DUMP_WEIGHT = 0.18;
 const LEADER_FOCUS_WEIGHT = 2.0;
+/**
+ * `focus-elites` rune bonus: large enough that an elite within the acquire radius
+ * outranks ordinary mobs (so necromancers / apex predators are killed first), but
+ * still finite so proximity breaks ties among multiple elites and the player never
+ * sprints across the node ignoring everything.
+ */
+const ELITE_FOCUS_WEIGHT = 3.0;
 const EPS = 0.001;
 
 const WEIGHT_PRESETS: Record<AutocombatPriorityMode, ScoreWeights> = {
@@ -139,6 +149,7 @@ export function selectAutoCombatAction(
     acquireRadius: effectiveAcquireRadius(player, cfg, ranged),
     letDotsFinish: getFlag(player.tracksCombat, RUNE_LET_DOTS_FINISH_FLAG),
     spreadDots: getFlag(player.tracksCombat, RUNE_SPREAD_DOTS_FLAG),
+    focusElites: getFlag(player.tracksCombat, RUNE_FOCUS_ELITES_FLAG),
   };
 
   const strictNearest = usesStrictNearest(ctx);
@@ -233,6 +244,7 @@ function usesStrictNearest(ctx: CandidateContext): boolean {
     ctx.cfg.priorityMode === "nearest" &&
     !ctx.letDotsFinish &&
     !ctx.spreadDots &&
+    !ctx.focusElites &&
     !ctx.cfg.focusLeaderTarget
   );
 }
@@ -361,6 +373,10 @@ function scoreCandidate(
   score += AOE_CLUSTER_WEIGHT * aoeClusterCount(world, monster);
   score += questValue(player, monster);
   score += biomeValue(player);
+
+  if (ctx.focusElites && MONSTER_DATABASE.get(monster.isMonster.monsterTypeId)?.elite) {
+    score += ELITE_FOCUS_WEIGHT;
+  }
 
   if (player.hasEmpoweredAttack) {
     score +=

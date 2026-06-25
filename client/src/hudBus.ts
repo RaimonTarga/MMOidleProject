@@ -1,4 +1,4 @@
-import type { AutocombatConfig, EquipmentSlot, EquippedRule } from '@mmo-idle/shared';
+import type { AbilitySlot, AutocombatConfig, EquipmentSlot, EquippedRule, EvolveMode, StanceSlot } from '@mmo-idle/shared';
 import { intents } from './intents';
 
 type RecipeUnlockListener = (name: string, biomeGroup: string) => void;
@@ -33,6 +33,36 @@ export const hudBus = {
     intents.emit('craftRuneRecipe', recipeId);
   },
 
+  /** Learn an ability (craft its recipe); server validates gate + cost. */
+  requestCraftAbilityRecipe(recipeId: string): void {
+    intents.emit('craftAbilityRecipe', recipeId);
+  },
+
+  /** Equip/clear an ability in a slot (`abilityId: null` clears it). */
+  requestSetAbilityLoadout(slot: AbilitySlot, abilityId: string | null): void {
+    intents.emit('setAbilityLoadout', { slot, abilityId });
+  },
+
+  /** Learn a stance (craft its recipe); server validates gate + cost. */
+  requestCraftStanceRecipe(recipeId: string): void {
+    intents.emit('craftStanceRecipe', recipeId);
+  },
+
+  /** Equip/clear a stance in a slot (`stanceId: null` clears it). */
+  requestSetStanceLoadout(slot: StanceSlot, stanceId: string | null): void {
+    intents.emit('setStanceLoadout', { slot, stanceId });
+  },
+
+  /** Learn a rite (craft its recipe); server validates gate + cost. */
+  requestCraftRiteRecipe(recipeId: string): void {
+    intents.emit('craftRiteRecipe', recipeId);
+  },
+
+  /** Set the full equipped-rite list (interchangeable slots, capped server-side). */
+  requestSetRiteLoadout(riteIds: string[]): void {
+    intents.emit('setRiteLoadout', { riteIds });
+  },
+
   requestActivateDungeonAltar(): void {
     intents.emit('activateDungeonAltar', undefined);
   },
@@ -55,6 +85,11 @@ export const hudBus = {
   /** Called by CraftingPanel — GameScene picks this up and emits the socket event. */
   requestCraftRecipe(recipeId: string): void {
     intents.emit('craftRecipe', recipeId);
+  },
+
+  /** Called by the Forge tab for evolved recipes — evolve (consume +3 predecessor) or reconstruct. */
+  requestEvolveItem(recipeId: string, mode: EvolveMode): void {
+    intents.emit('evolveItem', { recipeId, mode });
   },
 
   /** Called by the Upgrade tab — GameScene picks this up and emits the socket event. */

@@ -1,18 +1,26 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useAtomValue } from 'jotai';
 import type { EssenceType } from '@mmo-idle/shared';
-import { RECIPE_DATABASE, TEST_ROOM_NODE_ID } from '@mmo-idle/shared';
+import {
+  RECIPE_DATABASE,
+  TEST_ROOM_NODE_ID,
+  checkEvolve,
+  checkReconstruct,
+  isEvolvedRecipe,
+} from '@mmo-idle/shared';
 import { hudBus } from '../../hudBus';
 import {
+  catalystsAtom,
   equipmentAtom,
   essencesAtom,
   inventoryAtom,
+  itemUpgradesAtom,
   playerNodeIdAtom,
   playerTierAtom,
   unlockedRecipesAtom,
 } from '../../hud/atoms';
 import { SLOT_ABBR, SLOT_LABELS, biomeName, tierColor } from './common';
-import { CostDisplay, EssenceSummary } from './shared';
+import { CostDisplay, EssenceSummary, affordsCatalysts } from './shared';
 import { statEntries, formatMechanicEffects, formatWeaponEffects } from './itemDisplay';
 import { ItemIcon } from '../ItemIcon';
 
@@ -29,8 +37,10 @@ export function ForgeTab() {
   const playerTier        = useAtomValue(playerTierAtom);
   const unlockedRecipeIds = useAtomValue(unlockedRecipesAtom);
   const essences          = useAtomValue(essencesAtom);
+  const catalysts         = useAtomValue(catalystsAtom);
   const inventory         = useAtomValue(inventoryAtom);
   const equipment         = useAtomValue(equipmentAtom);
+  const itemUpgrades      = useAtomValue(itemUpgradesAtom);
 
   const isTestRoom        = nodeId === TEST_ROOM_NODE_ID;
   const lastCraftedIdRef  = useRef<string | null>(null);
@@ -97,12 +107,13 @@ export function ForgeTab() {
       const cat = (r: typeof a) => {
         if (ownedSet.has(r.id)) return 2;
         const canAfford = (Object.entries(r.cost) as [EssenceType, number][])
-          .every(([type, amt]) => (essences[type] ?? 0) >= amt);
+          .every(([type, amt]) => (essences[type] ?? 0) >= amt)
+          && affordsCatalysts(r.catalystCost, catalysts);
         return canAfford ? 0 : 1;
       };
       return cat(a) - cat(b);
     });
-  }, [unlockedRecipes, filterBiome, filterSlot, filterTier, filterUltimate, ownedSet, essences]);
+  }, [unlockedRecipes, filterBiome, filterSlot, filterTier, filterUltimate, ownedSet, essences, catalysts]);
 
   const toggleBiome = (g: string) => setFilterBiome(v => v === g ? null : g);
   const toggleSlot  = (s: string) => setFilterSlot(v  => v === s ? null : s);
@@ -136,7 +147,7 @@ export function ForgeTab() {
             className={`craft-filter-chip${!filterSlot ? ' craft-filter-chip--active' : ''}`}
             onClick={() => setFilterSlot(null)}
           >All Slots</button>
-          {(['weapon', 'armor', 'recovery', 'mobility'] as const).map(s => (
+          {(['weapon', 'armor', 'recovery', 'mobility', 'core'] as const).map(s => (
             <button
               key={s}
               className={`craft-filter-chip craft-filter-chip--slot${filterSlot === s ? ' craft-filter-chip--active' : ''}`}
@@ -175,14 +186,30 @@ export function ForgeTab() {
         <div className="craft-list">
           {filtered.map(recipe => {
             const costEntries = Object.entries(recipe.cost) as [EssenceType, number][];
-            const canAfford   = costEntries.every(([type, amount]) => (essences[type] ?? 0) >= amount);
+            const canAfford   = costEntries.every(([type, amount]) => (essences[type] ?? 0) >= amount)
+              && affordsCatalysts(recipe.catalystCost, catalysts);
             const canCraft    = isTestRoom || canAfford;
             const owned       = ownedSet.has(recipe.id);
+            const isEvolved   = isEvolvedRecipe(recipe);
+            const evolveCheck = isEvolved
+              ? checkEvolve({ recipe, inventory, itemUpgrades, essences, catalysts, isTestRoom })
+              : null;
+            const reconstructCheck = isEvolved && recipe.reconstructCost
+              ? checkReconstruct({ recipe, essences, catalysts, isTestRoom })
+              : null;
+            const predecessor = recipe.evolvesFrom
+              ? RECIPE_DATABASE.get(recipe.evolvesFrom)
+              : undefined;
             const statList    = statEntries(
               recipe.stats,
               recipe.slot === 'weapon' ? recipe.attacksPerSecond : undefined,
             );
             const effectLines = [
+              ...(recipe.slot === 'core' && recipe.rangeTag
+                ? [recipe.rangeTag === 'universal' || recipe.rangeTag === 'party'
+                    ? `Works at any range (${recipe.rangeTag})`
+                    : `Full effect only at ${recipe.rangeTag.toUpperCase()} range`]
+                : []),
               ...formatMechanicEffects(recipe.mechanicEffects),
               ...(recipe.slot === 'weapon' ? formatWeaponEffects(recipe.id) : []),
             ];
@@ -254,25 +281,74 @@ export function ForgeTab() {
                     </ul>
                   )}
 
-                  <CostDisplay cost={recipe.cost} essences={essences} />
+                  <CostDisplay cost={recipe.cost} essences={essences} catalystCost={recipe.catalystCost} catalysts={catalysts} />
 
-                  <div className="craft-recipe__footer">
-                    {recipe.description && (
-                      <span className="craft-recipe__desc">{recipe.description}</span>
-                    )}
-                    <button
-                      className="craft-recipe__btn"
-                      disabled={!canCraft || owned}
-                      onClick={() => {
-                        if (!owned) {
-                          lastCraftedIdRef.current = recipe.id;
-                          hudBus.requestCraftRecipe(recipe.id);
-                        }
-                      }}
-                    >
-                      {owned ? (equippedSet.has(recipe.id) ? 'Equipped' : 'In inventory') : canCraft ? 'Craft' : 'Insufficient'}
-                    </button>
-                  </div>
+                  {isEvolved ? (
+                    <>
+                      {predecessor && (
+                        <div className="craft-recipe__effect-line">
+                          Evolves from {predecessor.name} +3 (consumed)
+                        </div>
+                      )}
+                      {recipe.reconstructCost && (
+                        <div className="craft-recipe__effect-line">
+                          Reconstruct (no predecessor):{' '}
+                          <CostDisplay cost={recipe.reconstructCost} essences={essences} catalystCost={recipe.reconstructCatalystCost} catalysts={catalysts} />
+                        </div>
+                      )}
+                      <div className="craft-recipe__footer">
+                        {recipe.description && (
+                          <span className="craft-recipe__desc">{recipe.description}</span>
+                        )}
+                        <button
+                          className="craft-recipe__btn"
+                          disabled={owned || !(evolveCheck?.ok)}
+                          title={evolveCheck?.reason}
+                          onClick={() => {
+                            if (!owned && evolveCheck?.ok) {
+                              lastCraftedIdRef.current = recipe.id;
+                              hudBus.requestEvolveItem(recipe.id, 'evolve');
+                            }
+                          }}
+                        >
+                          {owned ? 'Owned' : evolveCheck?.ok ? 'Evolve' : 'Need +3'}
+                        </button>
+                        {recipe.reconstructCost && (
+                          <button
+                            className="craft-recipe__btn"
+                            disabled={owned || !(reconstructCheck?.ok)}
+                            title={reconstructCheck?.reason}
+                            onClick={() => {
+                              if (!owned && reconstructCheck?.ok) {
+                                lastCraftedIdRef.current = recipe.id;
+                                hudBus.requestEvolveItem(recipe.id, 'reconstruct');
+                              }
+                            }}
+                          >
+                            {reconstructCheck?.ok ? 'Reconstruct' : 'Insufficient'}
+                          </button>
+                        )}
+                      </div>
+                    </>
+                  ) : (
+                    <div className="craft-recipe__footer">
+                      {recipe.description && (
+                        <span className="craft-recipe__desc">{recipe.description}</span>
+                      )}
+                      <button
+                        className="craft-recipe__btn"
+                        disabled={!canCraft || owned}
+                        onClick={() => {
+                          if (!owned) {
+                            lastCraftedIdRef.current = recipe.id;
+                            hudBus.requestCraftRecipe(recipe.id);
+                          }
+                        }}
+                      >
+                        {owned ? (equippedSet.has(recipe.id) ? 'Equipped' : 'In inventory') : canCraft ? 'Craft' : 'Insufficient'}
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
             );

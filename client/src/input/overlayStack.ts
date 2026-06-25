@@ -7,6 +7,9 @@ import {
   questOpenAtom,
   releaseAnnouncementAtom,
   runesOpenAtom,
+  abilitiesOpenAtom,
+  stancesOpenAtom,
+  ritesOpenAtom,
   settingsOpenAtom,
   skillTreeOpenAtom,
 } from '../hud/atoms';
@@ -35,6 +38,18 @@ export function closeTopmostOverlay(): void {
   }
   if (store.get(runesOpenAtom)) {
     store.set(runesOpenAtom, false);
+    return;
+  }
+  if (store.get(abilitiesOpenAtom)) {
+    store.set(abilitiesOpenAtom, false);
+    return;
+  }
+  if (store.get(stancesOpenAtom)) {
+    store.set(stancesOpenAtom, false);
+    return;
+  }
+  if (store.get(ritesOpenAtom)) {
+    store.set(ritesOpenAtom, false);
     return;
   }
   if (store.get(inventoryOpenAtom)) {

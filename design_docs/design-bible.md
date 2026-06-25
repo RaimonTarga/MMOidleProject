@@ -6,7 +6,7 @@
 
 ## 1. Core invariants (never violate)
 
-- **Deterministic.** No RNG. "Dodge" = 1-in-N counter, not a %. Procs/bursts trigger on countable conditions (every Nth hit, on full-HP target, on kill), never on a roll.
+- **Deterministic.** No RNG. "Dodge" = deterministic counter: each hit adds `evasion` to a running counter; when it reaches 1 it drains and the next hit is dodged. Procs/bursts trigger on countable conditions (every Nth hit, on full-HP target, on kill), never on a roll.
 - **Separated budgets.** Offense and defense are independent pools. No scaling offense via defense or vice-versa. The *only* stats any node/option may *reduce* are attack speed and move speed (DPS/mobility levers); never eHP.
 - **No regression.** Every node adds positive budget; the choices (light/bal/heavy, close/mid/far, tier-ups) re-allocate it. A new tier must feel like a power gain.
 - **Fully auto.** No manual inputs in combat. Only player lever is a charge<->kite behavior toggle.
@@ -102,23 +102,23 @@ Each mechanic has ONE home biome. Others borrow it as a cross or scaled variant,
 
 ### Advanced biomes — gear T2->T4
 
-**JUNGLE (intro T2, high density)** *(tent.)* — cross biome: evasion + recovery + **hardening**. Weapon: **on-hit rapier variant** (atk->on-hit weight; higher DPS; on-hit ignores empowered scaling). Armor: hardening (ramp plating in combat, big hit resets) + evasion. Charm: regen that ramps with combat duration (mirrors hardening). Hybridizing IS its identity.
+**JUNGLE (intro T2, high density)** — cross biome: evasion + recovery + **hardening**. Weapon: **on-hit rapier variant** (atk->on-hit weight; higher DPS; on-hit ignores empowered scaling). Armor: hardening (ramp plating in combat, big hit resets) + evasion. Charm: regen that ramps with combat duration (mirrors hardening). Hybridizing IS its identity. Monsters and recipes authored T2–T4.
 
-**DESERT (intro T2, low density) — "the standoff" (locked).** Few tough, debuff-laden enemies. Weapon: **Ambush** (reworked Sacred Cross — empowered on striking a full-HP target). Armor: **last-stand** (one deterministic cheat-death per fight; exact trigger TBD) + **cleanse** secondary. Charm: cleanse / burst-heal-on-kill. Coheres as: alpha-strike the tough target, strip its debuffs, survive if it bites back.
+**DESERT (intro T2, low density)** — "the standoff." Few tough, debuff-laden enemies. Weapon: **Ambush** (empowered on striking a full-HP target). Armor: **last-stand** (one deterministic cheat-death per fight) + **cleanse** secondary. Charm: cleanse / burst-heal-on-kill. Coheres as: alpha-strike the tough target, strip its debuffs, survive if it bites back. Monsters and recipes authored T2–T4.
 
-**TUNDRA (intro T3, low-mid density)** *(tent.)* — slow hard hitters (frozen). Armor home: **hit-to-dot debt** + high bulk. Weapon: **frost / slow-debuff** — slows enemy attack speed (a debuff; party hook). Charm: bulk regen (TBD).
+**TUNDRA (intro T3, low-mid density)** — slow hard hitters (frozen). Armor home: **hit-to-dot debt** + high bulk. Weapon: **frost / slow-debuff** — slows enemy attack speed (party hook). Charm: bulk regen. Monsters and recipes authored T3–T4.
 
-**VOLCANIC (intro T4, high density)** *(tent.)* — sustained heat/fire. Charm home: **in-combat-regen** (attrition signature). Weapon: fire/DoT or burn-aura variant. Armor: bulk + regen.
+**VOLCANIC (intro T4, high density)** — sustained heat/fire. Charm home: **in-combat-regen** (attrition signature). Weapon: fire/DoT or burn-aura variant. Armor: bulk + regen. Monsters and recipes authored T4.
 
-**GRAVEYARD (intro T4, EXTREME high density)** *(tent.)* — overwhelming weak undead. Must carry a NEW mechanic, not re-run plains: candidate weapon **Plague** (DoT spreads on kill / contagion); defensive candidate "overwhelm" (mitigation scales with enemy count). Echoes swarm theme but at the density extreme.
+**GRAVEYARD (intro T4, EXTREME high density)** — overwhelming weak undead. Weapon: **Plague** (DoT spreads on kill / contagion); defensive candidate "overwhelm" (mitigation scales with enemy count). Monsters and recipes authored T4.
 
-**DEEP-SEA TRENCH (intro T4, EXTREME low density)** *(tent.)* — rare abyssal terrors. Must carry a NEW mechanic, not re-run desert: candidate weapon **Execute** (empowered vs low-HP / finisher) or a crush/pressure mechanic; defensive candidate a heavy single-target damage-cap or a "brace" stance. The single-tough-target extreme.
+**DEEP-SEA TRENCH (intro T4, EXTREME low density)** *(under review — may be cut/reshaped)* — rare abyssal terrors. Weapon: **Execute** (empowered vs low-HP targets / finisher). Defensive candidate: heavy single-target damage-cap or "brace" stance. Monsters and recipes partially authored; design direction still open.
 
 ---
 
 ## 6. Weapon archetypes & variant tree
 
-Five base archetypes (= the five starters). Variants keep the archetype's *feel*, shift its *profile*. **Tentative** unless noted; invent freely, cull later.
+Five base archetypes (= the five starters). Variants keep the archetype's *feel*, shift its *profile*. Items marked *(tent.)* are designed but not yet authored in item files.
 
 | Base | Variant | Profile shift | Home |
 |---|---|---|---|
@@ -148,9 +148,9 @@ Five base archetypes (= the five starters). Variants keep the archetype's *feel*
 **Base stats:** HP 100, ATK 15, PLT 2, DR 0, hpRegen 10%/s OOC (4s delay), speed 120. Class root adds up to ~+50 HP (Cooldown).
 
 **eHP (vs a reference hit H):**
-`eHP = HP * H / [ (H - plating) * (1 - DR) ]`, with `per-hit dmg = max(1, (H - plating)) * (1 - DR)`. Evasion multiplies eHP by `1/(1 - dodgeRate*mitQuality)`; dodgeRate is a soft-capped function of summed evasion. Damage cap only affects hits > threshold*maxHP (dormant otherwise).
+`eHP = HP * H / [ (H - plating) * (1 - DR) ]`, with `per-hit dmg = max(1, (H - plating)) * (1 - DR)`. Evasion multiplies eHP by `1/(1 - dodgeRate*mitQuality)`; `dodgeRate` is the deterministic counter fraction (0.25 = 1-in-4 dodge). Damage cap only affects hits > threshold*maxHP (dormant otherwise).
 
-**Reference hit per tier (starting anchors — replace with monster-table medians):** T1 ~24, T2 ~45, T3 ~85, T4 ~160. Set player HP/armor budgets per tier so **eHP/H stays ~constant** (survive ~the same hit-count each tier — the "bigger numbers, same feel" treadmill).
+**Confirmed reference hit medians (from real monster data):** T1 ~12, T2 ~23, T3 ~44, T4 ~84 (`H_big` ~1.6× these). Set player HP/armor budgets per tier so **eHP/H stays ~constant** (survive ~the same hit-count each tier — the "bigger numbers, same feel" treadmill). See `player-power-curve.md` for the full lookup table.
 
 **DPS:** `DPS = ATK * APS * mechFactor`. Across weapon archetypes raw DPS is *intentionally unequal along the fast<->slow axis*: fast = highest raw (pays to plating, weak empowered); slow = lower raw (ignores plating, strong empowered). Do NOT equalize raw DPS — equalize *effective* DPS after the plating/empowered tradeoff.
 
@@ -177,11 +177,27 @@ Five base archetypes (= the five starters). Variants keep the archetype's *feel*
 
 ---
 
-## 9. Open forks / TBD
+## 9. Summoner (sixth archetype)
 
-- **Cheat-death (desert last-stand):** exact trigger/effect TBD (threshold? recover-to-X%? cooldown?).
-- **T4 graveyard/trench:** confirm each carries a NEW mechanic (plague / execute candidates) rather than re-running plains/desert.
-- **Per-tier reference-hit + HP curves:** §7 anchors are placeholders — calibrate to real monster tables via sim.
-- **Boots:** all identical today; distinct boot designs deferred to a separate pass.
-- **Summoner:** frames don't differentiate offense; needs bespoke pass (not yet playtested).
-- **Biome lifespan** only bites at t5+; t0-t4 roster is naturally bounded.
+Summoner (`summoner-root`) exists as a sixth archetype. Core identity: players command minions that fight for them; command intent arrives via `player:commandSummons`. Root and frames authored; T3 path (`t3Summoner.ts`) authored. T4 specs not yet designed. Balance pass deferred — currently not enough playtesting data.
+
+Budgeting note: offense budget must price the minion DPS, not just the player attack. Frames don't differentiate offense the way the other five do; a bespoke frame-identity pass is needed before T4.
+
+---
+
+## 10. Rune system
+
+Rune loadout slots exist on the character; `rune:setLoadout` is a live socket event. Design (costs, RP budget, fragment drops, loadout validation) is partially authored but not fully balanced. Wave-1 rune pass (costs + RP budget, validation, starter fragments via early quests) is a near-term priority. Waves 2–4 are deferred.
+
+Constraint: runes must respect budget separation — a rune can add offense or defense, never both on the same rune. The rune budget is an additional axis on top of gear, not a replacement.
+
+---
+
+## 11. Open forks / TBD
+
+- **T4 class specs:** 45 specs designed (`t4-spec-designs-reference.md`); partially implemented. Pilot class sets the per-spec cost estimate.
+- **T4 boss design:** boss intent pass (defense-break windows, enrage scripts) is deferred to after T4 balance pass. See `boss-design.md` for the per-tier layer curve.
+- **Trench design direction:** biome authored but under review — may be reshaped or cut.
+- **Desert last-stand:** exact trigger still open (threshold? recover-to-X%? cooldown?).
+- **Boot designs:** mobility boot values authored but HUD tiles not yet built.
+- **Biome lifespan** only bites at T5+; T0–T4 roster is naturally bounded by the authored set.

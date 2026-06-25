@@ -1,4 +1,4 @@
-import type { EquipmentSlot, ItemStats, EssenceType, UpgradeStep } from '../../items';
+import type { EquipmentSlot, ItemStats, EssenceType, UpgradeStep, CoreRange } from '../../items';
 import type { DamageElement } from '../../systems/dotElements';
 
 /**
@@ -29,14 +29,21 @@ export interface Recipe {
   /** Biome group this recipe belongs to — matches the key in player biomeLevel. */
   recipeGroup: string;
   /**
-   * Biome level required in recipeGroup for this recipe to unlock.
-   * The level cap is gated by playerTier via GAME_CONFIG.BIOME_LEVEL_CAP_BY_TIER,
-   * so higher-tier recipes are implicitly gated by the character's progression.
+   * Biome level required in recipeGroup for this recipe to unlock. Biome-local
+   * absolute level (spans tier segments of BIOME_LEVELS_PER_TIER each). The level
+   * cap is gated by playerTier via biomeLevelCap(), so higher-tier recipes are
+   * implicitly gated by the character's progression.
    */
   requiredBiomeLevel: number;
   slot: EquipmentSlot;
   /** Essence costs keyed by type. Only types with non-zero amounts are listed. */
   cost: Partial<Record<EssenceType, number>>;
+  /**
+   * Optional biome-catalyst costs keyed by biome group (e.g. `{ forest: 3 }`).
+   * Parallel axis to `cost` — crafting checks and spends both. Only listed when
+   * the recipe demands catalysts; absent means essence-only.
+   */
+  catalystCost?: Partial<Record<string, number>>;
   stats: Partial<ItemStats>;
   tier: number;
   /**
@@ -66,4 +73,28 @@ export interface Recipe {
   requiredBossClear?: string;
   /** T4 endgame gear — surfaced in Forge Ultimate filter. */
   ultimate?: boolean;
+  // ── Lineage / evolution (system rework Step 6) ──────────────────────────────
+  /** Lineage this recipe belongs to (e.g. `"rapier"`). Shared by base + all branches. */
+  lineageId?: string;
+  /**
+   * Predecessor recipe id this evolves from. Present ⇒ this is an EVOLVED recipe:
+   * craftable by consuming the predecessor at +{@link EVOLUTION_REQUIRED_PLUS}
+   * (paying `cost`/`catalystCost`), or by reconstruction (paying `reconstructCost`).
+   * Sibling recipes sharing an `evolvesFrom` are alternate branches.
+   */
+  evolvesFrom?: string;
+  /**
+   * Reconstruction (skip-the-chain) essence cost — higher than the evolution `cost`,
+   * needs no predecessor. Only meaningful on evolved recipes. Absent ⇒ no reconstruct path.
+   */
+  reconstructCost?: Partial<Record<EssenceType, number>>;
+  /** Reconstruction catalyst cost, parallel to `reconstructCost`. */
+  reconstructCatalystCost?: Partial<Record<string, number>>;
+  // ── Cores (system rework Step 9) ────────────────────────────────────────────
+  /**
+   * Core slot only. Range tag gating the core's effect — close/mid/far apply only
+   * when the player's selectedRange matches; universal/party always apply. Carried
+   * to ItemDefinition.rangeTag and read by systems/cores.ts `coreIsActive`.
+   */
+  rangeTag?: CoreRange;
 }

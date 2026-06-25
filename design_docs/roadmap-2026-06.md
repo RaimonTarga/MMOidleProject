@@ -1,3 +1,7 @@
+> **✅ COMPLETED (2026-06-23).** This milestone shipped — content through T4 is
+> implemented, balanced, and playable. The playtest that followed produced the next
+> initiative: see `docs/system-rework-roadmap.md`. Kept for historical decisions/rationale.
+
 # Roadmap — T4 Playable (2 weeks, part-time)
 
 **Goal:** content through T4 polished, balanced, playable. Includes QoL wedges.

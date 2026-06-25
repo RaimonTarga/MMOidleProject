@@ -1,11 +1,11 @@
 # Player Power Curve — Target Guideline (T0–T4)
 
-**Status: TARGET / forward-spec, not an audit of current state.**
-Passives are pulled from the agreed `rootsAndFrames_balanced.ts`. Items are
-**unfinished** — so all gear contribution below is a *budget the items should be
-tuned to hit*, not a readout of what's in the item files today. When we do the
-item re-spec pass, aim items at the gear budgets in §5 and the player should land
-in the bands in §4.
+**Status: TARGET / partially-verified spec.**
+Passives are pulled from `rootsAndFrames_balanced.ts` (confirmed). Skill tree
+T0–T3 is fully authored; T4 is in progress. Items are authored through T4
+but numerical balance is an ongoing pass — treat §4–§5 figures as targets /
+right-order-of-magnitude until a sim confirms stacking for a given tier.
+When numbers shift, re-run `pnpm mob:report` and `pnpm ehp:report` and update §3.
 
 This is the third pinned doc. Paste it alongside `design-bible.md` and
 `content-roster-t0-t4.md` at the top of a session. Its job: turn monster tuning
@@ -33,10 +33,8 @@ of a re-derivation.
 | Base attack range | 12 (melee) |
 
 Total attack = `15 + root + frame + weapon`. APS = `weapon.attacksPerSecond × (1 + Σ attackSpeedPct)`.
-Tree depth: **T0 = root, T1 = +frame, T2 = +range node.** The tree as written
-**stops at T2** — so in this doc, T3–T4 player growth comes entirely from **gear**,
-with the class tree frozen at the T2 node. (When we add T3+ tree nodes, this doc's
-T3–T4 player side will need a bump.)
+Tree depth: **T0 = root, T1 = +frame, T2 = +range node, T3 = +path modifier (9 options per class).** T4 spec nodes are in progress.
+The §4 power bands below reflect the **T2 snapshot** (root + frame + range only) because T3 paths vary too widely to average cleanly. When running a T3+ balance session, use the `pnpm dps:report` and `pnpm ehp:report` tools which enumerate every build combo explicitly.
 
 ---
 
@@ -242,18 +240,18 @@ glass through the shield. That's the ceiling on T4 `H_med`.)
 
 ---
 
-## 8. Open items feeding back into other docs
+## 8. Status of open items
+
 - **Evasion model — RESOLVED** (§2): deterministic counter, eHP = `1/(1 − rate×mit)`,
   flat across hit sizes, ~5× gear ceiling. Reload band locked.
-- **Plating cliff is intended, not a bug** (§6.1): plating is an early-game /
-  small-fast-hit specialist that naturally goes obsolete as hit sizes outgrow it. No
-  formula change — the only discipline required is tuning monster hit sizes *against*
-  the cliff (which §7 enforces).
-- **Gear budgets (§5)** are guesses — the item re-spec is where they get real; then
-  re-run `power_curve.py` and replace §4.
-- **T3–T4 tree nodes don't exist yet** — when added, player T3–T4 power rises and
-  the enemy curve (§3) may need a matching nudge.
-- **Heal-throughput soft cap + debt-conversion cap** must land in the Phase-0 engine
-  gate before sim, per §6.4.
-- Boss tuning is a **separate pass** (they're the only single entity meant to
-  threaten a tank / trip the Cadence cap).
+- **Plating cliff is intended, not a bug** (§6.1): treat it as a structural constraint
+  when tuning monster hit sizes (§7 enforces this).
+- **Gear budgets (§5)** are targets; items have been authored through T4 but exact
+  stacking is unconfirmed. Run `pnpm ehp:report` to read back actual player stats
+  from the live item + skill formulas.
+- **T3–T4 tree nodes** — T3 is fully implemented; T4 is in progress. §4 bands are
+  still the T2 snapshot; T3 paths add meaningful variance (use the report tools for
+  per-spec data at T3+).
+- **Heal-throughput soft cap + debt-conversion cap** — engine gates in place per §6.4.
+- **Boss tuning** is a separate pass; see `boss-design.md`. T1–T3 bosses have been
+  rebalanced; T4 boss intent pass is pending.

@@ -306,6 +306,11 @@
   background: rgba(40, 14, 70, 0.50);
   color: #8855cc;
 }
+.craft-recipe__icon[data-slot="core"] {
+  border-color: rgba(40, 170, 200, 0.50);
+  background: rgba(6, 40, 50, 0.50);
+  color: #3fb8d0;
+}
 
 /* ── Card content ────────────────────────────────────────────────────────── */
 .craft-recipe__content {
@@ -349,6 +354,7 @@
 .craft-recipe__slot-badge[data-slot="armor"]    { color: #4488bb; border-color: rgba(50,100,190,0.40); background: rgba(10,26,60,0.60); }
 .craft-recipe__slot-badge[data-slot="recovery"] { color: #44aa66; border-color: rgba(40,150,90,0.40);  background: rgba(6,40,22,0.60);  }
 .craft-recipe__slot-badge[data-slot="mobility"] { color: #8855cc; border-color: rgba(130,70,210,0.40); background: rgba(32,10,56,0.60); }
+.craft-recipe__slot-badge[data-slot="core"]     { color: #3fb8d0; border-color: rgba(40,170,200,0.40); background: rgba(6,36,46,0.60);  }
 
 .craft-recipe__tier-badge {
   font-size: 9px;
@@ -679,6 +685,7 @@
 .craft-unlock-row__slot[data-slot="armor"]    { color: #4488bb; border-color: rgba(50,100,190,0.35); }
 .craft-unlock-row__slot[data-slot="recovery"] { color: #44aa66; border-color: rgba(40,150,90,0.35); }
 .craft-unlock-row__slot[data-slot="mobility"] { color: #8855cc; border-color: rgba(130,70,210,0.35); }
+.craft-unlock-row__slot[data-slot="core"]     { color: #3fb8d0; border-color: rgba(40,170,200,0.35); }
 
 .craft-unlock-row__tier {
   font-size: 8px;
@@ -747,11 +754,13 @@
 .craft-filter-chip--slot[data-slot="armor"]    { color: #336699; border-color: rgba(40,80,160,0.35); }
 .craft-filter-chip--slot[data-slot="recovery"] { color: #337755; border-color: rgba(30,120,70,0.35); }
 .craft-filter-chip--slot[data-slot="mobility"] { color: #664499; border-color: rgba(100,55,170,0.35); }
+.craft-filter-chip--slot[data-slot="core"]     { color: #2f8ca0; border-color: rgba(40,140,160,0.35); }
 
 .craft-filter-chip--slot.craft-filter-chip--active[data-slot="weapon"]   { color: #cc7730; background: rgba(45,16,5,0.85); border-color: rgba(180,100,40,0.60); }
 .craft-filter-chip--slot.craft-filter-chip--active[data-slot="armor"]    { color: #4488bb; background: rgba(8,22,55,0.85);  border-color: rgba(50,100,190,0.60); }
 .craft-filter-chip--slot.craft-filter-chip--active[data-slot="recovery"] { color: #44aa66; background: rgba(5,35,18,0.85);  border-color: rgba(40,150,90,0.60);  }
 .craft-filter-chip--slot.craft-filter-chip--active[data-slot="mobility"] { color: #8855cc; background: rgba(28,8,50,0.85);  border-color: rgba(130,70,210,0.60); }
+.craft-filter-chip--slot.craft-filter-chip--active[data-slot="core"]     { color: #3fb8d0; background: rgba(5,34,42,0.85);  border-color: rgba(40,170,200,0.60); }
 
 .craft-filter-chip--tier { color: #aa9944; border-color: rgba(180,160,40,0.35); }
 .craft-filter-chip--tier.craft-filter-chip--active { color: #ffdd44; background: rgba(40,32,6,0.88); border-color: rgba(220,190,40,0.65); }

@@ -11,6 +11,8 @@ import {
 import { initMobilityBoots } from "./world/mobility/mobilityBoots";
 import { initRuneTauntSystem } from "./combat/ai/taunt";
 import { initDungeonGauntletCombatHooks } from "./world/dungeons/gauntlet";
+import { initAbilitySystems } from "./player/abilities/abilityEffects";
+import { initRiteListeners } from "./player/rites/riteOoc";
 
 let initialized = false;
 
@@ -53,6 +55,10 @@ export function initCombatSystems(): void {
   initRuneTauntSystem();
   // Dungeon gauntlet participant tracking.
   initDungeonGauntletCombatHooks();
+  // Abilities (Step 7): Technique rider applied on hit (consumes hasArmedAbility).
+  initAbilitySystems();
+  // Rites (Step 11): Hunter's Instinct onKill movement-haste buff.
+  initRiteListeners();
   // Summoner mountain-path cover + damage sponge (after defense systems).
   registerMountainPathHooks();
   registerSummonerDamageSponge();

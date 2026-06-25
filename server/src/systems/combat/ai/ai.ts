@@ -9,8 +9,10 @@ import {
   MONSTER_DATABASE,
   pointFromMotion,
   type AggroTargetKind,
+  type MonsterDefinition,
   type Vec2,
 } from "@mmo-idle/shared";
+import type { ControlsMonster } from "@mmo-idle/shared";
 import { NODE_REGISTRY } from "../../../world/nodeRegistry";
 import { isMonsterStunned } from "../status/stun";
 import { isMonsterKnockedBack } from "../damage/knockback";
@@ -308,6 +310,9 @@ export function updateMonsters(world: World, dt: number, now: number) {
           : ai.baseSpeed;
       setAttackTarget(world, e, null);
 
+      // Fixed patrol route (if any) replaces random wander while un-aggroed.
+      const patrol = MONSTER_DATABASE.get(e.isMonster.monsterTypeId)?.patrol;
+
       switch (e.hasAwareness.state) {
         case "chasing":
         case "attacking":
@@ -334,7 +339,16 @@ export function updateMonsters(world: World, dt: number, now: number) {
             : e.hasPosition.current;
           if (distanceSq(e.hasPosition.current, targetPoint) < 16) {
             e.hasAwareness.state = "idle";
-            ai.idleUntil = now + randBetween(ai.idleMinMs, ai.idleMaxMs);
+            // Patrol mobs hold at the waypoint per their patrol timing; otherwise
+            // use the normal random idle window.
+            ai.idleUntil =
+              now +
+              (patrol
+                ? randBetween(
+                    patrol.holdMinMs ?? ai.idleMinMs,
+                    patrol.holdMaxMs ?? ai.idleMaxMs,
+                  )
+                : randBetween(ai.idleMinMs, ai.idleMaxMs));
             stopMonster(world, e);
           }
           break;
@@ -343,25 +357,31 @@ export function updateMonsters(world: World, dt: number, now: number) {
         case "idle":
         default:
           if (now >= ai.idleUntil) {
-            const angle = Math.random() * 2 * Math.PI;
-            const radius = Math.random() * ai.wanderRadius;
             const node = NODE_REGISTRY.get(e.hasPosition.nodeId);
-            const margin = 40;
-            const minX = node ? margin : 0;
-            const maxX = node ? node.width - margin : Infinity;
-            const minY = node ? margin : 0;
-            const maxY = node ? node.height - margin : Infinity;
-            e.hasAwareness.state = "wandering";
-            setMonsterTarget(world, e, {
-              x: Math.max(
-                minX,
-                Math.min(maxX, ai.spawn.x + Math.cos(angle) * radius),
-              ),
-              y: Math.max(
-                minY,
-                Math.min(maxY, ai.spawn.y + Math.sin(angle) * radius),
-              ),
-            });
+            if (patrol && patrol.waypoints.length > 0) {
+              // Deterministic patrol leg toward the next waypoint.
+              e.hasAwareness.state = "wandering";
+              setMonsterTarget(world, e, advancePatrol(ai, patrol, node));
+            } else {
+              const angle = Math.random() * 2 * Math.PI;
+              const radius = Math.random() * ai.wanderRadius;
+              const margin = 40;
+              const minX = node ? margin : 0;
+              const maxX = node ? node.width - margin : Infinity;
+              const minY = node ? margin : 0;
+              const maxY = node ? node.height - margin : Infinity;
+              e.hasAwareness.state = "wandering";
+              setMonsterTarget(world, e, {
+                x: Math.max(
+                  minX,
+                  Math.min(maxX, ai.spawn.x + Math.cos(angle) * radius),
+                ),
+                y: Math.max(
+                  minY,
+                  Math.min(maxY, ai.spawn.y + Math.sin(angle) * radius),
+                ),
+              });
+            }
           } else {
             stopMonster(world, e);
           }
@@ -373,4 +393,48 @@ export function updateMonsters(world: World, dt: number, now: number) {
 
 function randBetween(min: number, max: number): number {
   return min + Math.random() * (max - min);
+}
+
+type PatrolSpec = NonNullable<MonsterDefinition["patrol"]>;
+
+/**
+ * Compute the next patrol destination (spawn + the current relative waypoint,
+ * clamped to node bounds) and advance the waypoint pointer for the following leg.
+ * Index-based and deterministic — no RNG. Loop wraps; pingpong flips direction at
+ * the ends. A single-waypoint route resolves to a held post.
+ */
+function advancePatrol(
+  ai: ControlsMonster,
+  patrol: PatrolSpec,
+  node: { width: number; height: number } | undefined,
+): Vec2 {
+  const n = patrol.waypoints.length;
+  const i = Math.min(ai.patrolIndex ?? 0, n - 1);
+  const wp = patrol.waypoints[i];
+
+  if (patrol.mode === "pingpong" && n > 1) {
+    let dir = ai.patrolDir ?? 1;
+    let next = i + dir;
+    if (next >= n) {
+      dir = -1;
+      next = i + dir;
+    } else if (next < 0) {
+      dir = 1;
+      next = i + dir;
+    }
+    ai.patrolDir = dir;
+    ai.patrolIndex = Math.max(0, Math.min(n - 1, next));
+  } else {
+    ai.patrolIndex = (i + 1) % n;
+  }
+
+  const margin = 40;
+  const minX = node ? margin : 0;
+  const maxX = node ? node.width - margin : Infinity;
+  const minY = node ? margin : 0;
+  const maxY = node ? node.height - margin : Infinity;
+  return {
+    x: Math.max(minX, Math.min(maxX, ai.spawn.x + wp.x)),
+    y: Math.max(minY, Math.min(maxY, ai.spawn.y + wp.y)),
+  };
 }

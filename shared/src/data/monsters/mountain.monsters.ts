@@ -36,9 +36,12 @@ export const mountainMonsterEntries = [
     // fast mob. Charges once to close, then lumbers. TODO rename in cosmetic pass.
     stats: { hp: 170, attack: 36, plating: 0, damageReduction: 0, speed: 28, attackRange: 12, attackCooldown: 3500, pullRange: 275 },
     behavior: 'melee', attackStyle: 'impact', biome: 'mountain',
-    rewards: { essence: 6, essenceType: 'blue', level: 1, biomeXp: 42 },
+    rewards: { essence: 6, essenceType: 'yellow', level: 1, biomeXp: 42 }, // charging brute → Might (biome mixture; tunable)
     ai: { wanderRadius: 200, leashRange: 640, idleMinMs: 1500, idleMaxMs: 4500 },
     chargeOnAggro: { speedMult: 3.0, durationMs: 1200 },
+    // Mountain SENTINEL: holds its post, pacing a short fixed line instead of
+    // random wander — the guarded-position identity. Placeholder route — user pass.
+    patrol: { waypoints: [{ x: -160, y: 0 }, { x: 160, y: 0 }], mode: 'pingpong', holdMinMs: 1500, holdMaxMs: 3500 },
   }],
 
   ['ridge-archer', {
@@ -61,6 +64,8 @@ export const mountainMonsterEntries = [
     rewards: { essence: 14, essenceType: 'blue', level: 1, biomeXp: 80 },
     ai: { wanderRadius: 110, leashRange: 460, idleMinMs: 3500, idleMaxMs: 9000 },
     chargeOnAggro: { speedMult: 2.5, durationMs: 1200 },
+    // T2 sentinel — an even slower, shorter hold (it barely budges from its post).
+    patrol: { waypoints: [{ x: -120, y: 0 }, { x: 120, y: 0 }], mode: 'pingpong', holdMinMs: 2500, holdMaxMs: 5000 },
   }],
 
   ['stone-eagle', {
@@ -160,7 +165,7 @@ export const mountainMonsterEntries = [
     // weapon-matchup exam — pierce tools (Rupture/Sunder/brittle) beat the plate,
     // fast consistent damage beats the soft-cap, slow empowered builds struggle.
     stats: { hp: 2250, attack: 95, plating: 16, damageReduction: 0.06, speed: 14, attackRange: 15, attackCooldown: 3800, pullRange: 150 },
-    behavior: 'melee', attackStyle: 'impact', biome: 'mountain',
+    behavior: 'melee', attackStyle: 'impact', biome: 'mountain', elite: true,
     rewards: { essence: 185, essenceType: 'blue', level: 4, biomeXp: 1110 },
     ai: { wanderRadius: 80, leashRange: 400, idleMinMs: 5000, idleMaxMs: 13000 },
     chargeOnAggro: { speedMult: 2.2, durationMs: 1300 },

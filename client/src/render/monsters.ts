@@ -1,4 +1,4 @@
-import type { MonsterView } from '@mmo-idle/shared';
+import { MONSTER_DATABASE, type MonsterView } from '@mmo-idle/shared';
 import type { RenderState } from './state';
 import type { GameScene } from '../scenes/GameScene';
 import { ensureSprite, updateSpriteFrame } from './sprites';
@@ -24,6 +24,23 @@ import {
 
 const THRONE_HEAL_TINT = 0xbb66ff;
 const GUARDIAN_TINT = 0xffcc44;
+// Persistent pack-alpha marker tint (warm red, same family as the call-allies pulse).
+// Derived from the monster type — a `pack.role: 'alpha'` type is always a pack leader —
+// so no networked field is needed. Guardian/throne states take precedence.
+const PACK_ALPHA_TINT = 0xff7755;
+// Persistent ELITE marker tint (bright yellow) — the biome's standout dangerous mob
+// (necromancers, apex predators). Derived from the static `elite` def flag, so no
+// networked field is needed. Takes precedence over the pack-alpha tint (an elite that
+// also leads a pack still reads as "the dangerous one"); guardian/throne win above it.
+const ELITE_TINT = 0xffdd33;
+
+function isPackAlphaType(typeId: string): boolean {
+  return MONSTER_DATABASE.get(typeId)?.pack?.role === 'alpha';
+}
+
+function isEliteType(typeId: string): boolean {
+  return MONSTER_DATABASE.get(typeId)?.elite === true;
+}
 
 function syncMonsterThroneTint(
   state: RenderState,
@@ -35,6 +52,10 @@ function syncMonsterThroneTint(
     applySpriteTint(sprite, GUARDIAN_TINT);
   } else if (monster.throneHealing) {
     applySpriteTint(sprite, THRONE_HEAL_TINT);
+  } else if (isEliteType(monster.monsterTypeId)) {
+    applySpriteTint(sprite, ELITE_TINT);
+  } else if (isPackAlphaType(monster.monsterTypeId)) {
+    applySpriteTint(sprite, PACK_ALPHA_TINT);
   } else {
     resetSpriteTint(sprite, monster.color);
   }

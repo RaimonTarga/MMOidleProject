@@ -7,7 +7,7 @@ import {
   isRuneFragmentKnown,
 } from "./runeDatabase";
 
-export type RuneRecipeKind = "unlock-rune" | "increase-rune-points";
+export type RuneRecipeKind = "unlock-rune";
 export type RuneFragmentKind = "condition" | "action";
 
 export interface RuneRecipe {
@@ -17,12 +17,27 @@ export interface RuneRecipe {
   kind: RuneRecipeKind;
   tier: number;
   cost: Partial<Record<EssenceType, number>>;
+  /**
+   * Biome-mastery gate (system rework Step 5): recipe unlocks at
+   * `requiredBiomeLevel` in `recipeGroup`. Basic/biome-problem runes use this.
+   * Mirrors gear recipe gating.
+   */
+  recipeGroup?: string;
+  requiredBiomeLevel?: number;
+  /**
+   * Boss gate: recipe unlocks when this token is in `bossesCleared`. Reserved for
+   * advanced/signature/boss-reactive runes (authored with Step 13). A recipe may
+   * carry both gates; both must be satisfied.
+   */
   requiredBossClear?: string;
   runeId?: string;
   runeKind?: RuneFragmentKind;
-  runePointBonus?: number;
 }
 
+// System rework Step 5: all current (basic) runes source from BIOME MASTERY
+// (recipeGroup + requiredBiomeLevel), not boss clears. The boss channel
+// (requiredBossClear) is kept free for the advanced/signature runes Step 13 adds.
+// requiredBiomeLevel values are PLACEHOLDERS — user balance pass owns the numbers.
 const recipes: RuneRecipe[] = [
   {
     id: "rune-recipe-out-of-combat",
@@ -30,7 +45,8 @@ const recipes: RuneRecipe[] = [
     description: "Unlocks the situation for rules that run after combat ends.",
     kind: "unlock-rune",
     tier: 1,
-    requiredBossClear: "forest:1",
+    recipeGroup: "forest",
+    requiredBiomeLevel: 2,
     runeId: "when-idle",
     runeKind: "condition",
     cost: { green: 180 },
@@ -41,7 +57,8 @@ const recipes: RuneRecipe[] = [
     description: "Unlocks out-of-combat reload maintenance for reload classes.",
     kind: "unlock-rune",
     tier: 1,
-    requiredBossClear: "forest:1",
+    recipeGroup: "forest",
+    requiredBiomeLevel: 2,
     runeId: "tactical-reload",
     runeKind: "action",
     cost: { green: 140, blue: 60 },
@@ -52,20 +69,11 @@ const recipes: RuneRecipe[] = [
     description: "Unlocks out-of-combat execution waiting for cooldown classes.",
     kind: "unlock-rune",
     tier: 1,
-    requiredBossClear: "forest:1",
+    recipeGroup: "forest",
+    requiredBiomeLevel: 3,
     runeId: "wait-for-execution",
     runeKind: "action",
     cost: { green: 140, red: 60 },
-  },
-  {
-    id: "rune-recipe-rp-forest-1",
-    name: "Rune Capacity I",
-    description: "Permanently increases maximum rune points by 1.",
-    kind: "increase-rune-points",
-    tier: 1,
-    requiredBossClear: "forest:1",
-    runePointBonus: 1,
-    cost: { green: 280, blue: 100 },
   },
   {
     id: "rune-recipe-low-hp",
@@ -73,7 +81,8 @@ const recipes: RuneRecipe[] = [
     description: "Unlocks the situation for emergency behavior.",
     kind: "unlock-rune",
     tier: 1,
-    requiredBossClear: "cave:1",
+    recipeGroup: "cave",
+    requiredBiomeLevel: 2,
     runeId: "hp-below-25",
     runeKind: "condition",
     cost: { red: 180 },
@@ -84,7 +93,8 @@ const recipes: RuneRecipe[] = [
     description: "Unlocks retreat behavior for dangerous fights.",
     kind: "unlock-rune",
     tier: 1,
-    requiredBossClear: "cave:1",
+    recipeGroup: "cave",
+    requiredBiomeLevel: 2,
     runeId: "flee",
     runeKind: "action",
     cost: { red: 160, green: 80 },
@@ -95,7 +105,8 @@ const recipes: RuneRecipe[] = [
     description: "Unlocks waiting for full health after combat.",
     kind: "unlock-rune",
     tier: 1,
-    requiredBossClear: "cave:1",
+    recipeGroup: "cave",
+    requiredBiomeLevel: 3,
     runeId: "wait-for-regen",
     runeKind: "action",
     cost: { red: 140, green: 100 },
@@ -106,20 +117,11 @@ const recipes: RuneRecipe[] = [
     description: "Unlocks kiting movement while attacking.",
     kind: "unlock-rune",
     tier: 1,
-    requiredBossClear: "mountain:1",
+    recipeGroup: "mountain",
+    requiredBiomeLevel: 3,
     runeId: "orbit",
     runeKind: "action",
     cost: { blue: 180, yellow: 80 },
-  },
-  {
-    id: "rune-recipe-rp-mountain-1",
-    name: "Rune Capacity II",
-    description: "Permanently increases maximum rune points by 1.",
-    kind: "increase-rune-points",
-    tier: 1,
-    requiredBossClear: "mountain:1",
-    runePointBonus: 1,
-    cost: { blue: 320, yellow: 120 },
   },
   {
     id: "rune-recipe-surrounded",
@@ -127,7 +129,8 @@ const recipes: RuneRecipe[] = [
     description: "Unlocks rules for being chased by three or more enemies.",
     kind: "unlock-rune",
     tier: 2,
-    requiredBossClear: "swamp:1",
+    recipeGroup: "swamp",
+    requiredBiomeLevel: 3,
     runeId: "n-aggro-3",
     runeKind: "condition",
     cost: { purple: 240, red: 100 },
@@ -138,7 +141,8 @@ const recipes: RuneRecipe[] = [
     description: "Unlocks target selection for finishing weakened enemies.",
     kind: "unlock-rune",
     tier: 2,
-    requiredBossClear: "swamp:1",
+    recipeGroup: "swamp",
+    requiredBiomeLevel: 2,
     runeId: "focus-lowest-hp",
     runeKind: "action",
     cost: { purple: 240, yellow: 120 },
@@ -149,7 +153,8 @@ const recipes: RuneRecipe[] = [
     description: "Unlocks DoT-class target selection that leaves enemies your DoTs should finish.",
     kind: "unlock-rune",
     tier: 2,
-    requiredBossClear: "swamp:1",
+    recipeGroup: "swamp",
+    requiredBiomeLevel: 3,
     runeId: "let-dots-finish",
     runeKind: "action",
     cost: { purple: 220, green: 120 },
@@ -160,20 +165,26 @@ const recipes: RuneRecipe[] = [
     description: "Unlocks DoT-class target selection that rotates between enemies to upkeep DoTs.",
     kind: "unlock-rune",
     tier: 2,
-    requiredBossClear: "swamp:1",
+    recipeGroup: "swamp",
+    requiredBiomeLevel: 4,
     runeId: "spread-dots",
     runeKind: "action",
     cost: { purple: 280, red: 120 },
   },
   {
-    id: "rune-recipe-rp-swamp-1",
-    name: "Rune Capacity III",
-    description: "Permanently increases maximum rune points by 1.",
-    kind: "increase-rune-points",
-    tier: 2,
-    requiredBossClear: "swamp:1",
-    runePointBonus: 1,
-    cost: { purple: 360, red: 160 },
+    // Graveyard teaches the counter to its own necromancers: prioritize the
+    // yellow-outlined elites (reusable in any biome with a priority threat — trench
+    // apex predators, etc.). requiredBiomeLevel is a PLACEHOLDER (Step 15 numbers).
+    id: "rune-recipe-focus-elites",
+    name: "Focus Elites",
+    description: "Unlocks target selection that prioritizes elite enemies (the yellow-outlined standouts) before the rest.",
+    kind: "unlock-rune",
+    tier: 4,
+    recipeGroup: "graveyard",
+    requiredBiomeLevel: 4,
+    runeId: "focus-elites",
+    runeKind: "action",
+    cost: { purple: 320, blue: 140 },
   },
 ];
 
@@ -192,15 +203,25 @@ export function runeIdsFromCraftedRecipes(craftedRecipeIds: readonly string[]): 
   return [...ids];
 }
 
-export function runePointBonusFromCraftedRecipes(craftedRecipeIds: readonly string[]): number {
-  let bonus = 0;
-  for (const recipeId of craftedRecipeIds) {
-    const recipe = RUNE_RECIPE_DATABASE.get(recipeId);
-    if (recipe?.kind === "increase-rune-points") {
-      bonus += Math.max(0, recipe.runePointBonus ?? 0);
-    }
+/** Progression inputs that gate whether a rune recipe is unlocked yet. */
+export interface RuneRecipeGateInput {
+  biomeLevel: Record<string, number>;
+  bossesCleared: readonly string[];
+}
+
+/**
+ * Whether the recipe's unlock requirements are met. Biome-mastery recipes gate on
+ * `requiredBiomeLevel` in `recipeGroup`; advanced recipes gate on `requiredBossClear`.
+ * A recipe carrying both must satisfy both. Recipes with neither are always unlocked.
+ */
+export function isRuneRecipeUnlocked(recipe: RuneRecipe, input: RuneRecipeGateInput): boolean {
+  if (recipe.recipeGroup && recipe.requiredBiomeLevel !== undefined) {
+    if ((input.biomeLevel[recipe.recipeGroup] ?? 0) < recipe.requiredBiomeLevel) return false;
   }
-  return bonus;
+  if (recipe.requiredBossClear) {
+    if (!input.bossesCleared.includes(recipe.requiredBossClear)) return false;
+  }
+  return true;
 }
 
 export function runeRecipeRequiredArchetype(recipe: RuneRecipe): Exclude<CombatArchetype, null> | null {
@@ -227,9 +248,6 @@ export function validateRuneRecipes(): string[] {
       } else if (recipe.runeKind === "action" && !ACTION_DATABASE.has(recipe.runeId)) {
         errors.push(`${recipe.id} marks a condition as an action.`);
       }
-    }
-    if (recipe.kind === "increase-rune-points" && (recipe.runePointBonus ?? 0) <= 0) {
-      errors.push(`${recipe.id} must grant positive rune points.`);
     }
   }
   return errors;

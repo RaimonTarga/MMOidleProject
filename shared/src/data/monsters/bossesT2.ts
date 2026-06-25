@@ -40,9 +40,24 @@ export const bossMonsterEntriesT2 = [
     behavior: 'melee', attackStyle: 'impact', biome: 'plains',
     rewards: { essence: 150, essenceType: 'yellow', level: 5, biomeXp: 225 },
     ai: { wanderRadius: 140, leashRange: 850, idleMinMs: 2000, idleMaxMs: 5500 },
+    // PLAINS EXAM = "survive the swarm", T2 escalation: a constant slime trickle plus
+    // two phase beats (50% = enrage + slime wave, 25% = a boar pair + more slimes).
+    // Adds despawn on boss death. Numbers placeholder — user balance pass.
     bossScript: {
       phases: [
-        { hpPct: 0.5, actions: [{ type: 'enrage', atkMult: 1.30, cdMult: 0.85 }] },
+        { hpPct: 0.5, actions: [
+          { type: 'enrage', atkMult: 1.30, cdMult: 0.85 },
+          { type: 'spawn-adds', monsterTypeId: 'plains-slime', count: 5, offsetRange: 220 },
+        ] },
+        { hpPct: 0.25, actions: [
+          { type: 'spawn-adds', monsterTypeId: 'boar', count: 2, offsetRange: 220 },
+          { type: 'spawn-adds', monsterTypeId: 'plains-slime', count: 4, offsetRange: 220 },
+        ] },
+      ],
+      repeating: [
+        { intervalMs: 10000, initialDelayMs: 6000, actions: [
+          { type: 'spawn-adds', monsterTypeId: 'plains-slime', count: 2, offsetRange: 240 },
+        ] },
       ],
     },
   }],
@@ -55,9 +70,24 @@ export const bossMonsterEntriesT2 = [
     behavior: 'melee', attackStyle: 'slash', biome: 'forest',
     rewards: { essence: 155, essenceType: 'green', level: 5, biomeXp: 232 },
     ai: { wanderRadius: 130, leashRange: 830, idleMinMs: 1200, idleMaxMs: 4000 },
+    // FOREST EXAM = "survive the pack", T2 escalation: sustained pack pressure on a
+    // timer plus two readable phase beats (50% = enrage + wolf wave, 25% = a lieutenant
+    // Ancient Wolf joins). Adds despawn on boss death. Numbers placeholder — user pass.
     bossScript: {
       phases: [
-        { hpPct: 0.5, actions: [{ type: 'enrage', atkMult: 1.15, cdMult: 0.70 }] }, // frequency surge
+        { hpPct: 0.5, actions: [
+          { type: 'enrage', atkMult: 1.15, cdMult: 0.70 }, // frequency surge
+          { type: 'spawn-adds', monsterTypeId: 'wolf', count: 3, offsetRange: 200 },
+        ] },
+        { hpPct: 0.25, actions: [
+          { type: 'spawn-adds', monsterTypeId: 'ancient-wolf', count: 1, offsetRange: 200 }, // lieutenant
+          { type: 'spawn-adds', monsterTypeId: 'wolf', count: 2, offsetRange: 200 },
+        ] },
+      ],
+      repeating: [
+        { intervalMs: 12000, initialDelayMs: 8000, actions: [
+          { type: 'spawn-adds', monsterTypeId: 'wolf', count: 1, offsetRange: 220 },
+        ] },
       ],
     },
   }],
@@ -72,9 +102,20 @@ export const bossMonsterEntriesT2 = [
     ai: { wanderRadius: 120, leashRange: 850, idleMinMs: 3000, idleMaxMs: 7500 },
     chargeOnAggro: { speedMult: 2.5, durationMs: 1200 },
     aoeAttack: { radius: 120, damageMult: 0.6 },
+    // MOUNTAIN EXAM = "break the guarded position", T2 escalation: it calls a pair of
+    // Boulder Throwers (ranged behind the frontline) at 50% and periodically digs in
+    // (a timed shield) — break the defended position before the ranged grind wins.
     bossScript: {
       phases: [
-        { hpPct: 0.5, actions: [{ type: 'enrage', atkMult: 1.30, cdMult: 0.85 }] }, // deeper, faster cap-trips
+        { hpPct: 0.5, actions: [
+          { type: 'enrage', atkMult: 1.30, cdMult: 0.85 }, // deeper, faster cap-trips
+          { type: 'spawn-adds', monsterTypeId: 'peak-archer', count: 2, offsetRange: 240 },
+        ] },
+      ],
+      repeating: [
+        { intervalMs: 14000, initialDelayMs: 9000, actions: [
+          { type: 'shield', drAdd: 0.25, durationMs: 4000 },
+        ] },
       ],
     },
   }],
@@ -89,9 +130,15 @@ export const bossMonsterEntriesT2 = [
     ai: { wanderRadius: 110, leashRange: 800, idleMinMs: 2500, idleMaxMs: 6000 },
     dotEffect: { debuffId: 'mire-gorged-venom', label: 'Gorged Venom', damagePerStack: 4, maxStacks: 4, tickIntervalMs: 1000, durationMs: 5000 },
     aoeAttack: { radius: 120, damageMult: 0.6 },
+    // SWAMP EXAM = "survive the rot", T2 escalation: arena pools + at 50% it stacks
+    // venom faster (enrage) AND calls two Mire Hex Spitters (ranged DoT kiters) to
+    // grind you through the marsh. Adds despawn on boss death. Numbers placeholder.
     bossScript: {
       phases: [
-        { hpPct: 0.5, actions: [{ type: 'enrage', atkMult: 1.10, cdMult: 0.70 }] }, // DoT stacks faster
+        { hpPct: 0.5, actions: [
+          { type: 'enrage', atkMult: 1.10, cdMult: 0.70 }, // DoT stacks faster
+          { type: 'spawn-adds', monsterTypeId: 'mire-hex-spitter', count: 2, offsetRange: 260 },
+        ] },
       ],
     },
   }],
@@ -106,17 +153,24 @@ export const bossMonsterEntriesT2 = [
     ai: { wanderRadius: 90, leashRange: 800, idleMinMs: 3000, idleMaxMs: 7500 },
     chargeOnAggro: { speedMult: 2.0, durationMs: 1200 },
     aoeAttack: { radius: 120, damageMult: 0.6 },
+    // CAVE EXAM = "survive the elite", T2 escalation: at 50% it enrages, closes faster,
+    // AND a Cave Troll elite joins — now you must outlast two armored brutes. Add
+    // despawns on boss death. Numbers placeholder — user balance pass.
     bossScript: {
       phases: [
         { hpPct: 0.5, actions: [
           { type: 'enrage', atkMult: 1.25, cdMult: 0.90 },
           { type: 'stat-buff', stat: 'speed', mult: 1.2 }, // closes faster (permanent)
+          { type: 'spawn-adds', monsterTypeId: 'cave-troll', count: 1, offsetRange: 240 },
         ] },
       ],
     },
   }],
 
-  // DESERT (debut T2) — debuffer with reach; phase keeps it on your heels. Single-target.
+  // DESERT (debut T2) — the DUEL exam "win the duel". The Emperor opens with a lethal
+  // alpha strike (openingStrike → last-stand answers); at 50% it summons Dust-Djinn
+  // painters that paint Sun Mark, and the Emperor's markedStrike cashes the mark for
+  // an amplified hit (cleanse the mark or eat it). Keeps its slow. Single-target.
   ['dune-stalker-emperor', {
     id: 'dune-stalker-emperor', name: 'Dune-Stalker Emperor', color: 0xddcc44,
     isBoss: true,
@@ -125,18 +179,24 @@ export const bossMonsterEntriesT2 = [
     rewards: { essence: 150, essenceType: 'yellow', level: 5, biomeXp: 225 },
     ai: { wanderRadius: 140, leashRange: 880, idleMinMs: 2000, idleMaxMs: 5500 },
     slowEffect: { speedMult: 0.6, durationMs: 2000 }, // debuff identity
+    openingStrike: { multiplier: 2.5 },   // placeholder — user balance pass
+    markedStrike: { multiplier: 2.0 },    // placeholder — user balance pass
     bossScript: {
       phases: [
         { hpPct: 0.5, actions: [
           { type: 'enrage', atkMult: 1.20, cdMult: 0.85 },
           { type: 'stat-buff', stat: 'speed', mult: 1.3 },
+          { type: 'spawn-adds', monsterTypeId: 'dust-djinn', count: 2, offsetRange: 280 },
         ] },
       ],
     },
   }],
 
   // JUNGLE (debut T2) — fast, frequent, squishy (plating stripped); phase = frequency
-  // storm + chase. Single-target (fast enough to keep pace with summons).
+  // storm + chase. ECOLOGY exam "survive the ambush": opens with a pounce (openingStrike
+  // → damage-cap answers), and at 50% the pack leaps from the thickets (spawn-adds:
+  // snakes + an ape) so the ambush identity carries into the boss room. Adds are
+  // lone mobs (createMonster), not packs — no recursion. Single-target.
   ['jungle-dread-gorger', {
     id: 'jungle-dread-gorger', name: 'Jungle Dread-Gorger', color: 0x117722,
     isBoss: true,
@@ -144,11 +204,14 @@ export const bossMonsterEntriesT2 = [
     behavior: 'melee', attackStyle: 'slash', biome: 'jungle',
     rewards: { essence: 145, essenceType: 'green', level: 5, biomeXp: 218 },
     ai: { wanderRadius: 150, leashRange: 840, idleMinMs: 1800, idleMaxMs: 4500 },
+    openingStrike: { multiplier: 2.5 },   // placeholder — user balance pass
     bossScript: {
       phases: [
         { hpPct: 0.5, actions: [
           { type: 'enrage', atkMult: 1.10, cdMult: 0.70 },
           { type: 'stat-buff', stat: 'speed', mult: 1.35 },
+          { type: 'spawn-adds', monsterTypeId: 'jungle-snake', count: 2, offsetRange: 260 },
+          { type: 'spawn-adds', monsterTypeId: 'jungle-ape', count: 1, offsetRange: 260 },
         ] },
       ],
     },

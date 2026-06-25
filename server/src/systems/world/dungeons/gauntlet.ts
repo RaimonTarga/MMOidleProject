@@ -4,6 +4,8 @@ import {
   distanceSq,
   getDungeonGauntletDef,
   isGauntletDungeonNode,
+  BIOME_GUARDIAN_NAMES,
+  BIOME_GAUNTLET_MESSAGES,
   type DungeonGauntletDef,
   type DungeonGauntletView,
   type DungeonMonsterModifiers,
@@ -305,7 +307,8 @@ function spawnIdleGuardians(
       leashRadius: GUARDIAN_LEASH_RADIUS,
     });
     if (!monster) continue;
-    monster.isMonster.name = `${def.biomeGroup[0].toUpperCase()}${def.biomeGroup.slice(1)} Guardian`;
+    monster.isMonster.name = BIOME_GUARDIAN_NAMES[def.biomeGroup]
+      ?? `${def.biomeGroup[0].toUpperCase()}${def.biomeGroup.slice(1)} Guardian`;
     markSliceDirty(world, monster, "isMonster");
     state.idleGuardianIds.push(monster.isMonster.id);
   }
@@ -377,7 +380,8 @@ function convertSurvivingGuardians(
     monster.hasAwareness.leashRange = ACTIVE_LEASH_RADIUS;
     forceGauntletAggro(world, monster);
   }
-  pushGauntletMessage(world, def.nodeId, "The guardians awaken.");
+  const activationMsg = BIOME_GAUNTLET_MESSAGES[def.biomeGroup]?.activation ?? "The guardians awaken.";
+  pushGauntletMessage(world, def.nodeId, activationMsg);
 }
 
 function advanceGauntlet(world: World, nodeId: string): void {
@@ -452,7 +456,8 @@ function startBossAwakening(
   state.activeMonsterIds = [];
   state.bossMonsterId = undefined;
   state.bossAwakensAtMs = Date.now() + def.bossAwakeningDelayMs;
-  pushGauntletMessage(world, def.nodeId, "The boss is awakening.");
+  const awakeningMsg = BIOME_GAUNTLET_MESSAGES[def.biomeGroup]?.bossAwakening ?? "Something stirs.";
+  pushGauntletMessage(world, def.nodeId, awakeningMsg);
 }
 
 function spawnGauntletBoss(
@@ -485,7 +490,8 @@ function spawnGauntletBoss(
   state.requiredKillsForCurrentPhase = 1;
   state.bossAwakensAtMs = undefined;
   state.bossMonsterId = boss.isMonster.id;
-  pushGauntletMessage(world, def.nodeId, "The boss awakens.");
+  const bossName = MONSTER_DATABASE.get(def.boss.bossId)?.name ?? "The boss";
+  pushGauntletMessage(world, def.nodeId, `${bossName} awakens.`);
 }
 
 function completeGauntlet(
@@ -550,6 +556,9 @@ function applyDungeonModifiers(
         damagePerStack: Math.max(1, Math.round(baseDot.damagePerStack * modifiers.dotMult)),
       };
     }
+  }
+  if (modifiers.openingStrikeMult !== undefined && monster.tracksDungeon) {
+    monster.tracksDungeon.openingStrikeMult = modifiers.openingStrikeMult;
   }
 }
 

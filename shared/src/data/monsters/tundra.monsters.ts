@@ -67,6 +67,13 @@ export const tundraMonsterEntries = [
       atkSlowPerHit: 0.05,  atkSlowMaxPct: 0.30,     // ⚠ cap load-bearing (anti-spiral)
       stackDurationMs: 4000,                          // each stack decays if you disengage
     },
+    // ECOLOGY: ICE ARMOR — periodic frost barrier; chip wastes against it, a BURST
+    // pops it and SHATTERS (bonus self-dmg + a freezing shockwave that briefly stuns
+    // nearby enemies). The signature Tundra "shatter window": time your burst.
+    enemyShield: {
+      shieldPct: 0.20, intervalMs: 11000, durationMs: 6000,
+      shatter: { selfDamagePct: 0.12, freezeRadius: 200, freezeDurationMs: 1500 },
+    },
   }],
 
   ['rime-caster', {
@@ -109,6 +116,12 @@ export const tundraMonsterEntries = [
       atkSlowPerHit:  0.06, atkSlowMaxPct:  0.40,   // cap load-bearing (anti-spiral)
       stackDurationMs: 5000,
     },
+    // ECOLOGY: ICE ARMOR + SHATTER (T4 successor of glacier-bear). Bigger shell, bigger
+    // crack + wider freezing shockwave. Burst the shell to shatter it.
+    enemyShield: {
+      shieldPct: 0.22, intervalMs: 12000, durationMs: 6000,
+      shatter: { selfDamagePct: 0.12, freezeRadius: 230, freezeDurationMs: 1800 },
+    },
   }],
 
   ['hoarfrost-yeti', {
@@ -134,7 +147,7 @@ export const tundraMonsterEntries = [
     // window), fast consistent damage beats the soft-cap, empowered-only builds
     // struggle. Base 100 ≈ H_med (survivable between slams).
     stats: { hp: 2900, attack: 100, plating: 20, damageReduction: 0.12, speed: 12, attackRange: 15, attackCooldown: 4000, pullRange: 140 },
-    behavior: 'melee', attackStyle: 'frost', biome: 'tundra',
+    behavior: 'melee', attackStyle: 'frost', biome: 'tundra', elite: true,
     rewards: { essence: 260, essenceType: 'blue', level: 4, biomeXp: 1560 },
     ai: { wanderRadius: 70, leashRange: 380, idleMinMs: 6000, idleMaxMs: 15000 },
     chargeOnAggro: { speedMult: 2.0, durationMs: 1400 },

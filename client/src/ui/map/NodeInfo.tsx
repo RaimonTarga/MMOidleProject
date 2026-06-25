@@ -2,7 +2,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { useAtomValue } from 'jotai';
 import type { EssenceType, MonsterDefinition, Recipe } from '@mmo-idle/shared';
 import {
-  NODE_BIOMES, BIOME_DATABASE, MONSTER_DATABASE, RECIPE_DATABASE, ESSENCE_COLORS,
+  NODE_BIOMES, BIOME_DATABASE, MONSTER_DATABASE, RECIPE_DATABASE, ESSENCE_COLORS, ESSENCE_LABELS,
+  catalystLabel,
   biomeLevelCap, biomeXpForBiomeLevel, formatNodeCoord, formatRespawnRemaining, nodeIdToCoord,
 } from '@mmo-idle/shared';
 import { biomeLevelAtom, biomeXPAtom, bossFelledByNodeAtom, playerTierAtom } from '../../hud/atoms';
@@ -88,7 +89,10 @@ function RecipeRow({ r, unlocked, open, onToggle }: {
         <span className="map-recipe-name">{r.name}</span>
         <span className="map-recipe-cost">
           {costs.map(([type, amt]) => (
-            <span key={type} style={{ color: ESSENCE_COLORS[type], marginLeft: 4 }}>{amt} {type}</span>
+            <span key={type} style={{ color: ESSENCE_COLORS[type], marginLeft: 4 }}>{amt} {ESSENCE_LABELS[type]}</span>
+          ))}
+          {(Object.entries(r.catalystCost ?? {}) as [string, number][]).map(([group, amt]) => (
+            <span key={group} style={{ marginLeft: 4 }}>{amt} {catalystLabel(group)}</span>
           ))}
         </span>
       </button>

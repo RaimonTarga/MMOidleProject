@@ -1,8 +1,10 @@
 import type { EssenceType } from "@mmo-idle/shared";
 import {
   ESSENCE_TYPES,
+  ESSENCE_LABELS,
   RECIPE_DATABASE,
   TEST_ROOM_NODE_ID,
+  catalystLabel,
 } from "@mmo-idle/shared";
 import type { World } from "../../../world/World";
 import type { PlayerEntity } from "../../../ecs/entity";
@@ -22,11 +24,19 @@ export function craftRecipe(
 ): CraftResult {
   const recipe = RECIPE_DATABASE.get(recipeId);
   if (!recipe) return { success: false, reason: "Unknown recipe." };
+  // Evolved recipes are crafted via the evolve/reconstruct path, not plain crafting
+  // (which would skip consuming the +3 predecessor). See economy/itemEvolution.ts.
+  if (recipe.evolvesFrom) {
+    return { success: false, reason: "This item must be evolved or reconstructed." };
+  }
 
   const isTestRoom = entity.hasPosition.nodeId === TEST_ROOM_NODE_ID;
   if (isTestRoom) {
     for (const type of ESSENCE_TYPES) {
       entity.tracksProgression.essences[type] = TEST_ROOM_ESSENCE_AMOUNT;
+    }
+    for (const group of Object.keys(recipe.catalystCost ?? {})) {
+      entity.tracksProgression.catalysts[group] = TEST_ROOM_ESSENCE_AMOUNT;
     }
     markSliceDirty(world, entity, "tracksProgression");
   } else {
@@ -53,13 +63,28 @@ export function craftRecipe(
     if (held < amount) {
       return {
         success: false,
-        reason: `Not enough ${type} essence. Need ${amount}, have ${held}.`,
+        reason: `Not enough ${ESSENCE_LABELS[type]} essence. Need ${amount}, have ${held}.`,
+      };
+    }
+  }
+
+  const catalystEntries = Object.entries(recipe.catalystCost ?? {}) as [string, number][];
+  for (const [group, amount] of catalystEntries) {
+    const held = entity.tracksProgression.catalysts[group] ?? 0;
+    if (held < amount) {
+      return {
+        success: false,
+        reason: `Not enough ${catalystLabel(group)}. Need ${amount}, have ${held}.`,
       };
     }
   }
 
   for (const [type, amount] of costEntries) {
     entity.tracksProgression.essences[type] -= amount;
+  }
+  for (const [group, amount] of catalystEntries) {
+    entity.tracksProgression.catalysts[group] =
+      (entity.tracksProgression.catalysts[group] ?? 0) - amount;
   }
 
   entity.holdsInventory.inventory = [

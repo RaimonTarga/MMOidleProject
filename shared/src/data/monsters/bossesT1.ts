@@ -37,8 +37,19 @@ export const bossMonsterEntriesT1 = [
     isBoss: true,
     stats: { hp: 1500, attack: 42, plating: 4, damageReduction: 0.02, speed: 50, attackRange: 15, attackCooldown: 2000, pullRange: 280 },
     behavior: 'melee', attackStyle: 'impact', biome: 'plains',
-    rewards: { essence: 100, essenceType: 'yellow', level: 5, biomeXp: 150 },
+    rewards: { essence: 100, essenceType: 'yellow', level: 5, biomeXp: 150, catalystBundle: 5 }, // one-time first-clear bundle (placeholder)
     ai: { wanderRadius: 120, leashRange: 750, idleMinMs: 1500, idleMaxMs: 4500 },
+    // PLAINS EXAM = "survive the swarm". T1 stays simple: one 50% beat where the
+    // razorback rallies a slime swarm (adds despawn on boss death) + a light enrage.
+    // Numbers placeholder — user balance pass; structure formalizes in Step 13.
+    bossScript: {
+      phases: [
+        { hpPct: 0.5, actions: [
+          { type: 'spawn-adds', monsterTypeId: 'plains-slime', count: 5, offsetRange: 200 },
+          { type: 'enrage', atkMult: 1.1, cdMult: 0.9 },
+        ] },
+      ],
+    },
   }],
 
   // FOREST — fast, frequent, frail. The evasion exam. (fast: single-target)
@@ -47,8 +58,19 @@ export const bossMonsterEntriesT1 = [
     isBoss: true,
     stats: { hp: 1250, attack: 36, plating: 0, damageReduction: 0, speed: 60, attackRange: 15, attackCooldown: 1400, pullRange: 300 },
     behavior: 'melee', attackStyle: 'slash', biome: 'forest',
-    rewards: { essence: 100, essenceType: 'green', level: 5, biomeXp: 150 },
+    rewards: { essence: 100, essenceType: 'green', level: 5, biomeXp: 150, catalystBundle: 5 },
     ai: { wanderRadius: 160, leashRange: 800, idleMinMs: 1200, idleMaxMs: 4000 },
+    // FOREST EXAM = "survive the pack". T1 stays simple: one readable 50% beat where
+    // the alpha howls and a wolf pack joins (adds despawn on boss death). Numbers
+    // placeholder — user balance pass; tells/structure formalize in Step 13.
+    bossScript: {
+      phases: [
+        { hpPct: 0.5, actions: [
+          { type: 'spawn-adds', monsterTypeId: 'wolf', count: 3, offsetRange: 180 },
+          { type: 'enrage', atkMult: 1.1, cdMult: 0.85 },
+        ] },
+      ],
+    },
   }],
 
   // MOUNTAIN — slow charging mega-slam that trips the cap. Burst exam. Cleaves.
@@ -57,10 +79,21 @@ export const bossMonsterEntriesT1 = [
     isBoss: true,
     stats: { hp: 1400, attack: 60, plating: 0, damageReduction: 0, speed: 22, attackRange: 18, attackCooldown: 3500, pullRange: 280 },
     behavior: 'melee', attackStyle: 'impact', biome: 'mountain',
-    rewards: { essence: 105, essenceType: 'blue', level: 5, biomeXp: 158 },
+    rewards: { essence: 105, essenceType: 'blue', level: 5, biomeXp: 158, catalystBundle: 5 },
     ai: { wanderRadius: 120, leashRange: 750, idleMinMs: 2000, idleMaxMs: 5000 },
     chargeOnAggro: { speedMult: 3.0, durationMs: 1200 },
     aoeAttack: { radius: 120, damageMult: 0.6 },
+    // MOUNTAIN EXAM = "break the guarded position". T1: at 50% it digs in (a timed
+    // shield) and calls a Ridge Archer to pelt from behind while you grind it down.
+    // Numbers placeholder — user balance pass; structure formalizes in Step 13.
+    bossScript: {
+      phases: [
+        { hpPct: 0.5, actions: [
+          { type: 'shield', drAdd: 0.3, durationMs: 5000 },
+          { type: 'spawn-adds', monsterTypeId: 'ridge-archer', count: 1, offsetRange: 220 },
+        ] },
+      ],
+    },
   }],
 
   // SWAMP — trivial direct hit, real (beatable) DoT. dot-resist exam. Cleaves
@@ -70,10 +103,21 @@ export const bossMonsterEntriesT1 = [
     isBoss: true,
     stats: { hp: 1150, attack: 12, plating: 2, damageReduction: 0.02, speed: 28, attackRange: 15, attackCooldown: 2600, pullRange: 260 },
     behavior: 'melee', attackStyle: 'poison', biome: 'swamp',
-    rewards: { essence: 100, essenceType: 'purple', level: 5, biomeXp: 150 },
+    rewards: { essence: 100, essenceType: 'purple', level: 5, biomeXp: 150, catalystBundle: 5 },
     ai: { wanderRadius: 100, leashRange: 700, idleMinMs: 2000, idleMaxMs: 5500 },
     dotEffect: { debuffId: 'grave-toadeater-poison', label: 'Toad Poison', damagePerStack: 3, maxStacks: 3, tickIntervalMs: 1000, durationMs: 4000 },
     aoeAttack: { radius: 120, damageMult: 0.6 },
+    // SWAMP EXAM = "survive the rot". T1: the arena pools already pressure position;
+    // at 50% it calls a Bog Witch (ranged hex) to layer more DoT + a light enrage.
+    // Numbers placeholder — user balance pass; structure formalizes in Step 13.
+    bossScript: {
+      phases: [
+        { hpPct: 0.5, actions: [
+          { type: 'spawn-adds', monsterTypeId: 'bog-witch', count: 1, offsetRange: 240 },
+          { type: 'enrage', atkMult: 1.15, cdMult: 0.85 },
+        ] },
+      ],
+    },
   }],
 
   // CAVE — tanky mixed elite: high HP, DR + plating, charges. Endurance exam. Cleaves.
@@ -82,10 +126,21 @@ export const bossMonsterEntriesT1 = [
     isBoss: true,
     stats: { hp: 1050, attack: 40, plating: 6, damageReduction: 0.10, speed: 24, attackRange: 18, attackCooldown: 2800, pullRange: 240 },
     behavior: 'melee', attackStyle: 'impact', biome: 'cave',
-    rewards: { essence: 110, essenceType: 'red', level: 5, biomeXp: 165 },
+    rewards: { essence: 110, essenceType: 'red', level: 5, biomeXp: 165, catalystBundle: 5 },
     ai: { wanderRadius: 80, leashRange: 680, idleMinMs: 2500, idleMaxMs: 6500 },
     chargeOnAggro: { speedMult: 2.5, durationMs: 1200 },
     aoeAttack: { radius: 120, damageMult: 0.6 },
+    // CAVE EXAM = "survive the elite" (a durable %DR sponge). T1: at 50% the Broodmother
+    // digs in (timed shield) and hatches a small spider brood — endurance through a
+    // defended elite. Adds despawn on boss death. Numbers placeholder — user pass.
+    bossScript: {
+      phases: [
+        { hpPct: 0.5, actions: [
+          { type: 'shield', drAdd: 0.25, durationMs: 5000 },
+          { type: 'spawn-adds', monsterTypeId: 'giant-spider', count: 2, offsetRange: 220 },
+        ] },
+      ],
+    },
   }],
 
   

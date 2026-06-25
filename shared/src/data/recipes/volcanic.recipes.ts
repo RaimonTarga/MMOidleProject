@@ -37,7 +37,7 @@ export const volcanicRecipeEntries = [
 
   // Charm: hpRegen flat; upgrades ramp in-combat-regen 0.14 -> 0.20 AND kill-burst 0.08 -> 0.14.
   ['volcanic-charm-t3', {
-    id: 'volcanic-charm-t3', name: 'Magmaheart Core',
+    id: 'volcanic-charm-t3', name: 'Magmaheart Stone',
     recipeGroup: 'volcanic', requiredBiomeLevel: 3, slot: 'recovery',
     cost: { red: 75, yellow: 25 }, stats: { hpRegen: 11 },
     mechanicEffects: { 'defense.in-combat-regen-pct': 0.06, 'defense.kill-burst-pct': 0.04 },
@@ -68,21 +68,21 @@ export const volcanicRecipeEntries = [
   // ── T4 ──
   ['volcanic-eruption-lash', {
     id: 'volcanic-eruption-lash', name: 'Eruption Lash',
-    recipeGroup: 'volcanic', requiredBiomeLevel: 5, slot: 'weapon',
+    recipeGroup: 'volcanic', requiredBiomeLevel: 7, slot: 'weapon',
     cost: { red: 308 }, stats: { attack: 58 }, attacksPerSecond: 1.80, tier: 4,
     mechanicEffects: { 'weapon.flurry-pct': 0.04, 'weapon.flurry-stacks': 5 },
     icon: 'items/weapons/lava-rapier.png',
     description: 'A braided whip of ember that strikes faster the longer it is allowed to burn.',
     upgrades: [
-      { stats: { attack: 11 }, cost: { red: 462 }, requiredBiomeLevel: 6 },
-      { stats: { attack: 11 }, cost: { red: 924 }, requiredBiomeLevel: 7 },
-      { stats: { attack: 11 }, cost: { red: 1848 }, requiredBiomeLevel: 8 },
+      { stats: { attack: 11 }, cost: { red: 462 }, requiredBiomeLevel: 8 },
+      { stats: { attack: 11 }, cost: { red: 924 }, requiredBiomeLevel: 9 },
+      { stats: { attack: 11 }, cost: { red: 1848 }, requiredBiomeLevel: 10 },
     ],
   }],
 
   ['volcanic-blightbrand', {
     id: 'volcanic-blightbrand', name: 'Volcanic Blightbrand',
-    recipeGroup: 'volcanic', requiredBiomeLevel: 5, slot: 'weapon',
+    recipeGroup: 'volcanic', requiredBiomeLevel: 7, slot: 'weapon',
     // ⚠ INHERITED (Swamp fast-DoT lineage) — base attack carried from doc.
     //   VERIFY in the DoT-conversion budget pass.
     cost: { red: 290 }, stats: { attack: 70 }, attacksPerSecond: 1.20, tier: 4,
@@ -90,15 +90,15 @@ export const volcanicRecipeEntries = [
     icon: 'items/weapons/lava-blade.png',
     description: 'It leaves a fire under the skin that does the rest of the work while you move on.',
     upgrades: [
-      { stats: { attack: 20 }, cost: { red: 435 }, requiredBiomeLevel: 6 },
-      { stats: { attack: 20 }, cost: { red: 870 }, requiredBiomeLevel: 7 },
-      { stats: { attack: 20 }, cost: { red: 1740 }, requiredBiomeLevel: 8 },
+      { stats: { attack: 20 }, cost: { red: 435 }, requiredBiomeLevel: 8 },
+      { stats: { attack: 20 }, cost: { red: 870 }, requiredBiomeLevel: 9 },
+      { stats: { attack: 20 }, cost: { red: 1740 }, requiredBiomeLevel: 10 },
     ],
   }],
 
   ['volcanic-vest-t4', {
     id: 'volcanic-vest-t4', name: 'Pyroclasm Mantle',
-    recipeGroup: 'volcanic', requiredBiomeLevel: 6, slot: 'armor',
+    recipeGroup: 'volcanic', requiredBiomeLevel: 8, slot: 'armor',
     cost: { red: 220, yellow: 55 }, stats: { maxHp: 165, plating: 38 },
     // † hardening-max-dr-bonus: at max hardening, +6% DR for 3s before reset.
     mechanicEffects: {
@@ -109,18 +109,18 @@ export const volcanicRecipeEntries = [
     icon: 'items/armor/volcano-armor-2.png',
     description: 'It thickens against a steady fire until, at its hardest, it shrugs off even a true blow — once.',
     upgrades: [
-      { stats: { maxHp: 40, plating: 10 }, cost: { red: 200, yellow: 100 }, requiredBiomeLevel: 7 },
-      { stats: { maxHp: 40, plating: 10 }, cost: { red: 400, yellow: 200 }, requiredBiomeLevel: 8 },
-      { stats: { maxHp: 40, plating: 10 }, cost: { red: 800, yellow: 300 }, requiredBiomeLevel: 8 },
+      { stats: { maxHp: 40, plating: 10 }, cost: { red: 200, yellow: 100 }, requiredBiomeLevel: 9 },
+      { stats: { maxHp: 40, plating: 10 }, cost: { red: 400, yellow: 200 }, requiredBiomeLevel: 10 },
+      { stats: { maxHp: 40, plating: 10 }, cost: { red: 800, yellow: 300 }, requiredBiomeLevel: 10 },
     ],
   }],
 
   ['volcanic-vest-t4-lavatempered', {
     id: 'volcanic-vest-t4-lavatempered', name: 'Lava-Tempered Hide',
-    recipeGroup: 'volcanic', requiredBiomeLevel: 6, slot: 'armor',
+    recipeGroup: 'volcanic', requiredBiomeLevel: 8, slot: 'armor',
     cost: { red: 220, yellow: 55 }, stats: { maxHp: 150, plating: 28 },
     // † overheal-shield-pct: overheal from in-combat-regen becomes temp shield.
-    //   Pairs naturally with Inferno Core. (new key)
+    //   Pairs naturally with Inferno Heart. (new key)
     mechanicEffects: {
       'defense.hardening-per-sec': 3, 'defense.hardening-max': 24, 'defense.hardening-reset-pct': 0.25,
       'defense.overheal-shield-pct': 0.50,
@@ -129,39 +129,39 @@ export const volcanicRecipeEntries = [
     icon: 'items/armor/volcano-armor-1.png',
     description: 'Quenched in a living flow, it banks the overflow of your own healing into a crust of fresh stone.',
     upgrades: [
-      { stats: { maxHp: 36, plating: 7 }, cost: { red: 200, yellow: 100 }, requiredBiomeLevel: 7 },
-      { stats: { maxHp: 36, plating: 7 }, cost: { red: 400, yellow: 200 }, requiredBiomeLevel: 8 },
-      { stats: { maxHp: 36, plating: 7 }, cost: { red: 800, yellow: 300 }, requiredBiomeLevel: 8 },
+      { stats: { maxHp: 36, plating: 7 }, cost: { red: 200, yellow: 100 }, requiredBiomeLevel: 9 },
+      { stats: { maxHp: 36, plating: 7 }, cost: { red: 400, yellow: 200 }, requiredBiomeLevel: 10 },
+      { stats: { maxHp: 36, plating: 7 }, cost: { red: 800, yellow: 300 }, requiredBiomeLevel: 10 },
     ],
   }],
 
   ['volcanic-charm-t4', {
-    id: 'volcanic-charm-t4', name: 'Inferno Core',
-    recipeGroup: 'volcanic', requiredBiomeLevel: 7, slot: 'recovery',
+    id: 'volcanic-charm-t4', name: 'Inferno Heart',
+    recipeGroup: 'volcanic', requiredBiomeLevel: 9, slot: 'recovery',
     cost: { red: 200, yellow: 50 }, stats: { hpRegen: 16 },
     mechanicEffects: { 'defense.in-combat-regen-pct': 0.06, 'defense.kill-burst-pct': 0.04 },
     tier: 4,
     icon: 'items/charms/volcano-crystal.png',
     description: 'A heart that never fully cools — it mends you mid-swing and flares brighter with every fallen foe.',
     upgrades: [
-      { mechanicEffects: { 'defense.in-combat-regen-pct': 0.02, 'defense.kill-burst-pct': 0.02 }, cost: { red: 110, yellow: 30 }, requiredBiomeLevel: 8 },
-      { mechanicEffects: { 'defense.in-combat-regen-pct': 0.02, 'defense.kill-burst-pct': 0.02 }, cost: { red: 220, yellow: 60 }, requiredBiomeLevel: 8 },
-      { mechanicEffects: { 'defense.in-combat-regen-pct': 0.02, 'defense.kill-burst-pct': 0.02 }, cost: { red: 340, yellow: 90 }, requiredBiomeLevel: 8 },
+      { mechanicEffects: { 'defense.in-combat-regen-pct': 0.02, 'defense.kill-burst-pct': 0.02 }, cost: { red: 110, yellow: 30 }, requiredBiomeLevel: 10 },
+      { mechanicEffects: { 'defense.in-combat-regen-pct': 0.02, 'defense.kill-burst-pct': 0.02 }, cost: { red: 220, yellow: 60 }, requiredBiomeLevel: 10 },
+      { mechanicEffects: { 'defense.in-combat-regen-pct': 0.02, 'defense.kill-burst-pct': 0.02 }, cost: { red: 340, yellow: 90 }, requiredBiomeLevel: 10 },
     ],
   }],
 
   // T4 boots — passive-speed (fast, suppressed when hit). T3 0.55/4000 → T4 0.70/3500.
   ['volcanic-boots-t4', {
     id: 'volcanic-boots-t4', name: 'Pyroclast Treads',
-    recipeGroup: 'volcanic', requiredBiomeLevel: 8, slot: 'mobility',
+    recipeGroup: 'volcanic', requiredBiomeLevel: 10, slot: 'mobility',
     cost: { red: 163 }, stats: { speed: 50 }, tier: 4,
     mechanicEffects: { 'mobility.passive-speed-pct': 0.70, 'mobility.suppress-ms': 3500 },
     icon: 'items/boots/volcano-boots-2.png',
     description: 'Swift as a thrown ember — until a solid blow stalls them, and the heat must build again.',
     upgrades: [
-      { stats: { speed: 10 }, cost: { red: 66 },  requiredBiomeLevel: 8 },
-      { stats: { speed: 14 }, cost: { red: 136 }, requiredBiomeLevel: 8 },
-      { stats: { speed: 18 }, cost: { red: 229 }, requiredBiomeLevel: 8 },
+      { stats: { speed: 10 }, cost: { red: 66 },  requiredBiomeLevel: 10 },
+      { stats: { speed: 14 }, cost: { red: 136 }, requiredBiomeLevel: 10 },
+      { stats: { speed: 18 }, cost: { red: 229 }, requiredBiomeLevel: 10 },
     ],
   }],
 

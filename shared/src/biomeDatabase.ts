@@ -31,6 +31,17 @@ export interface BiomeDefinition {
   mobDensity?: number;
 }
 
+/**
+ * Player-facing name for a biome's catalyst, e.g. `forest` → "Forest Catalyst".
+ * Falls back to the capitalized group key if the biome is unknown.
+ */
+export function catalystLabel(biomeGroup: string): string {
+  const name =
+    BIOME_DATABASE.get(biomeGroup)?.name ??
+    biomeGroup.charAt(0).toUpperCase() + biomeGroup.slice(1);
+  return `${name} Catalyst`;
+}
+
 export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
 
   ['clearing', {
@@ -223,7 +234,7 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
     id: 'graveyard', name: 'Graveyard',
     backgroundColor: 0x0c0810,
     monsterPoolByTier: {
-      4: ['bone-crawler', 'plague-hound', 'carrion-vulture', 'charnel-brute', 'plague-rat'],
+      4: ['bone-crawler', 'plague-hound', 'carrion-vulture', 'charnel-brute', 'plague-rat', 'gravewright'],
     },
     bossPoolByTier: {
       4: ['charnel-crown-sovereign'],

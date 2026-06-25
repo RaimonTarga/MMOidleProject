@@ -1,4 +1,7 @@
 import type { EquipmentSlot } from "../items";
+import type { AbilitySlot } from "../abilities";
+import type { StanceSlot } from "../stances";
+import type { EvolveMode } from "../systems/evolution";
 import type { AutocombatConfig } from "../components/core/networkedSlices";
 import type { EquippedRule } from "../runeDatabase";
 import type { BossFelledMarker } from "./bossFelled";
@@ -24,6 +27,12 @@ export interface ServerToClientEvents {
   /** Immediate result of a crafting attempt — success or reason for failure. */
   "crafting:result": (result: { success: boolean; reason?: string }) => void;
   "rune:craftResult": (result: { recipeId: string; success: boolean; reason?: string }) => void;
+  /** Immediate result of learning an ability (crafting an ability recipe). */
+  "ability:craftResult": (result: { recipeId: string; success: boolean; reason?: string }) => void;
+  /** Immediate result of learning a stance (crafting a stance recipe). */
+  "stance:craftResult": (result: { recipeId: string; success: boolean; reason?: string }) => void;
+  /** Immediate result of learning a rite (crafting a rite recipe). */
+  "rite:craftResult": (result: { recipeId: string; success: boolean; reason?: string }) => void;
   /** Immediate result of an item upgrade attempt. */
   "inventory:upgradeResult": (result: {
     success: boolean;
@@ -82,12 +91,29 @@ export interface ClientToServerEvents {
   /** Set the player's equipped rune loadout (ordered). Server validates ownership/catalog. */
   "rune:setLoadout": (rules: EquippedRule[]) => void;
   "rune:craftRecipe": (recipeId: string) => void;
+  /** Learn an ability by crafting its recipe. Server validates gate + cost. */
+  "ability:craftRecipe": (recipeId: string) => void;
+  /** Equip/clear an ability in a slot. `abilityId: null` clears the slot. */
+  "ability:setLoadout": (payload: { slot: AbilitySlot; abilityId: string | null }) => void;
+  /** Learn a stance by crafting its recipe. Server validates gate + cost. */
+  "stance:craftRecipe": (recipeId: string) => void;
+  /** Equip/clear a stance in a slot. `stanceId: null` clears the slot. */
+  "stance:setLoadout": (payload: { slot: StanceSlot; stanceId: string | null }) => void;
+  /** Learn a rite by crafting its recipe. Server validates gate + cost. */
+  "rite:craftRecipe": (recipeId: string) => void;
+  /** Set the full equipped-rite list (interchangeable slots; length ≤ slot count). */
+  "rite:setLoadout": (payload: { riteIds: string[] }) => void;
   /** Equip an item from inventory by its definition ID. */
   "inventory:equipItem": (definitionId: string) => void;
   /** Move the item in the given slot back to inventory. */
   "inventory:unequip": (slot: EquipmentSlot) => void;
   /** Attempt to craft a recipe by ID. Server validates and applies. */
   "crafting:craftRecipe": (recipeId: string) => void;
+  /**
+   * Attempt to evolve/reconstruct into an evolved recipe (system rework Step 6).
+   * `evolve` consumes the +3 predecessor; `reconstruct` skips it for a higher cost.
+   */
+  "crafting:evolveItem": (payload: { recipeId: string; mode: EvolveMode }) => void;
   /** Attempt to upgrade an owned item by ID (+1). Server validates and applies. */
   "inventory:upgradeItem": (itemId: string) => void;
   /** Join the party of the target player (the target's leader becomes your leader). */

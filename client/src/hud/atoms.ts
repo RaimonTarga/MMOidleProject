@@ -1,8 +1,11 @@
 import { atom, getDefaultStore, type PrimitiveAtom } from 'jotai';
 import { intents } from '../intents';
+import { globalMastery } from '@mmo-idle/shared';
 import type {
   CombatArchetype,
   EquipmentMap,
+  EquippedAbilities,
+  EquippedStances,
   EquippedRule,
   EssenceType,
   PartyMember,
@@ -36,6 +39,7 @@ const DEFAULT_EQUIPMENT: EquipmentMap = {
   armor: null,
   recovery: null,
   mobility: null,
+  core: null,
 };
 
 export const statusAtom = atom<HudConnectionStatus>('connecting');
@@ -167,9 +171,13 @@ export const itemUpgradesAtom = atom<Record<string, number>>({});
 export const unlockedRecipesAtom = atom<string[]>([]);
 export const bossesClearedAtom = atom<string[]>([]);
 export const biomeLevelAtom = atom<Record<string, number>>({});
+/** Derived sum of all biome levels (system rework Step 4) — RP budget + upgrade ceiling. */
+export const globalMasteryAtom = atom((get) => globalMastery(get(biomeLevelAtom)));
 export const biomeXPAtom = atom<Record<string, number>>({});
 export const questProgressAtom = atom<Record<string, number>>({});
 export const essencesAtom = atom<Record<EssenceType, number>>({ ...DEFAULT_ESSENCES });
+export const catalystsAtom = atom<Record<string, number>>({});
+export const catalystProgressAtom = atom<Record<string, number>>({});
 
 export const activeBuffsAtom = atom<PlayerBuff[]>([]);
 export const autoPathAtom = atom<string[] | null>(null);
@@ -219,11 +227,38 @@ export const partyAtom = atom<{ leaderId: string; members: PartyMember[] } | nul
 
 export const runesOwnedAtom = atom<string[]>([]);
 export const runeRecipesCraftedAtom = atom<string[]>([]);
-export const runePointBonusAtom = atom<number>(0);
 export const runesEquippedAtom = atom<EquippedRule[]>([]);
+
+/** Abilities learned (crafted) — the slottable pool (system rework Step 7). */
+export const knownAbilitiesAtom = atom<string[]>([]);
+/** Equipped abilities by slot: Technique + Guard. */
+export const equippedAbilitiesAtom = atom<EquippedAbilities>({
+  technique: null,
+  guard: null,
+});
+
+/** Stances learned (crafted) — the slottable pool (system rework Step 10). */
+export const knownStancesAtom = atom<string[]>([]);
+/** Equipped stances by slot: default (active posture) + reactive (auto-switch). */
+export const equippedStancesAtom = atom<EquippedStances>({
+  default: null,
+  reactive: null,
+});
+/** Which posture is currently active (folded into stats). */
+export const activeStanceAtom = atom<string | null>(null);
+
+/** Rites learned (crafted) — the slottable pool (system rework Step 11). */
+export const knownRitesAtom = atom<string[]>([]);
+/** Equipped rites — interchangeable list (always-on OOC), length ≤ riteSlots. */
+export const equippedRitesAtom = atom<string[]>([]);
+/** Number of rite slots available (GM-derived; flat 2 for v1). */
+export const riteSlotsAtom = atom<number>(0);
 
 export const skillTreeOpenAtom = atom<boolean>(false);
 export const runesOpenAtom = atom<boolean>(false);
+export const abilitiesOpenAtom = atom<boolean>(false);
+export const stancesOpenAtom = atom<boolean>(false);
+export const ritesOpenAtom = atom<boolean>(false);
 export const runePanelTabAtom = atom<'loadout' | 'forge'>('loadout');
 export const inventoryOpenAtom = atom<boolean>(false);
 export const mapOpenAtom = atom<boolean>(false);
@@ -463,6 +498,20 @@ function setRunesEquipped(next: EquippedRule[]): void {
   store.set(runesEquippedAtom, next);
 }
 
+function setEquippedAbilities(next: EquippedAbilities): void {
+  const store = getDefaultStore();
+  const prev = store.get(equippedAbilitiesAtom);
+  if (prev.technique === next.technique && prev.guard === next.guard) return;
+  store.set(equippedAbilitiesAtom, next);
+}
+
+function setEquippedStances(next: EquippedStances): void {
+  const store = getDefaultStore();
+  const prev = store.get(equippedStancesAtom);
+  if (prev.default === next.default && prev.reactive === next.reactive) return;
+  store.set(equippedStancesAtom, next);
+}
+
 function buffsEqual(a: readonly PlayerBuff[], b: readonly PlayerBuff[]): boolean {
   if (a === b) return true;
   if (a.length !== b.length) return false;
@@ -554,8 +603,15 @@ function resetPlayerAtoms(): void {
   setIfShallowArrayEqual(unlockedSkillsAtom, []);
   setIfShallowArrayEqual(runesOwnedAtom, []);
   setIfShallowArrayEqual(runeRecipesCraftedAtom, []);
-  setIfChanged(runePointBonusAtom, 0);
   setRunesEquipped([]);
+  setIfShallowArrayEqual(knownAbilitiesAtom, []);
+  setEquippedAbilities({ technique: null, guard: null });
+  setIfShallowArrayEqual(knownStancesAtom, []);
+  setEquippedStances({ default: null, reactive: null });
+  setIfChanged(activeStanceAtom, null);
+  setIfShallowArrayEqual(knownRitesAtom, []);
+  setIfShallowArrayEqual(equippedRitesAtom, []);
+  setIfChanged(riteSlotsAtom, 0);
   setIfShallowArrayEqual(inventoryAtom, []);
   setIfShallowArrayEqual(unlockedRecipesAtom, []);
   setIfShallowArrayEqual(bossesClearedAtom, []);
@@ -567,6 +623,8 @@ function resetPlayerAtoms(): void {
   setIfShallowObjectEqual(biomeXPAtom, {});
   setIfShallowObjectEqual(questProgressAtom, {});
   setIfShallowObjectEqual(essencesAtom, { ...DEFAULT_ESSENCES });
+  setIfShallowObjectEqual(catalystsAtom, {});
+  setIfShallowObjectEqual(catalystProgressAtom, {});
   setAutoPath(null);
   setParty(null);
   setZonePlayers([]);
@@ -649,8 +707,15 @@ export function syncPlayerAtoms(player: PlayerView | null): void {
   setIfShallowArrayEqual(unlockedSkillsAtom, player.unlockedSkills);
   setIfShallowArrayEqual(runesOwnedAtom, player.runesOwned);
   setIfShallowArrayEqual(runeRecipesCraftedAtom, player.runeRecipesCrafted);
-  setIfChanged(runePointBonusAtom, player.runePointBonus);
   setRunesEquipped(player.runesEquipped);
+  setIfShallowArrayEqual(knownAbilitiesAtom, player.knownAbilities);
+  setEquippedAbilities(player.equippedAbilities);
+  setIfShallowArrayEqual(knownStancesAtom, player.knownStances);
+  setEquippedStances(player.equippedStances);
+  setIfChanged(activeStanceAtom, player.activeStance);
+  setIfShallowArrayEqual(knownRitesAtom, player.knownRites);
+  setIfShallowArrayEqual(equippedRitesAtom, player.equippedRites);
+  setIfChanged(riteSlotsAtom, player.riteSlots);
   setIfShallowArrayEqual(inventoryAtom, player.inventory);
   setIfShallowArrayEqual(unlockedRecipesAtom, player.unlockedRecipes);
   setIfShallowArrayEqual(bossesClearedAtom, player.bossesCleared);
@@ -662,6 +727,8 @@ export function syncPlayerAtoms(player: PlayerView | null): void {
   setIfShallowObjectEqual(biomeXPAtom, player.biomeXP);
   setIfShallowObjectEqual(questProgressAtom, player.questProgress);
   setIfShallowObjectEqual(essencesAtom, player.essences);
+  setIfShallowObjectEqual(catalystsAtom, player.catalysts);
+  setIfShallowObjectEqual(catalystProgressAtom, player.catalystProgress);
 
   setParty(
     player.partyLeaderId

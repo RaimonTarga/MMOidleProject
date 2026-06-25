@@ -6,6 +6,8 @@ import {
   monsterDotFlavorByCode,
   resolveMonsterDotDebuff,
   FROST_RAMP_EFFECT_ID,
+  SUN_MARK_EFFECT_ID,
+  VOLCANIC_HEAT_EFFECT_ID,
   frostRampMoveSlowPct,
   frostRampAtkSlowPct,
   type StatusEffect,
@@ -20,6 +22,7 @@ import { collectMechanicBuffs } from "../../classes/registry";
 import { DEFENSE_BUFFS } from "../../defense";
 import { WEAPON_BUFFS } from "../damage/weaponEffects";
 import { MOBILITY_BUFFS } from "../../world/mobility/mobilityBoots";
+import { ABILITY_BUFFS } from "../../player/abilities/abilityBuffs";
 import { defineBuff, type BuffDescriptor, type BuffProjectionContext } from "./descriptor";
 
 const DEBUFF_BUFFS = [
@@ -131,6 +134,79 @@ const DEBUFF_BUFFS = [
     },
     { category: "neutral", shape: "diamond", color: "#88bb55", label: "DoT" },
   ),
+  defineBuff(
+    "debuff-sun-mark",
+    ({ playerCs, world }) => {
+      if (!playerCs) return null;
+      const mark = getStatusEffect(playerCs, SUN_MARK_EFFECT_ID);
+      if (!mark) return null;
+      const totalMs = mark.data["totalMs"] ?? mark.remainingMs;
+      const source = world.getMonsterEntity(mark.sourceId);
+      return {
+        id: "debuff-sun-mark",
+        label: "MARKED",
+        stacks: mark.stacks,
+        durationPct:
+          totalMs > 0 && mark.remainingMs > 0
+            ? (mark.remainingMs / totalMs) * 100
+            : -1,
+        color: "#ffaa33",
+        logSourceName: source?.isMonster.name ?? "Monster debuff",
+        logSourceSide: "enemy",
+        logDetail: "marked — the next heavy hit lands amplified (cleanse it)",
+      };
+    },
+    { category: "neutral", shape: "diamond", color: "#ffaa33", label: "MARKED" },
+  ),
+  defineBuff(
+    "debuff-volcanic-heat",
+    ({ playerCs }) => {
+      if (!playerCs) return null;
+      const heat = getStatusEffect(playerCs, VOLCANIC_HEAT_EFFECT_ID);
+      if (!heat || heat.stacks <= 0) return null;
+      const maxStacks = heat.data["maxStacks"] ?? 0;
+      const perStack = Math.round(heat.data["damagePerStack"] ?? 0);
+      return {
+        id: "debuff-volcanic-heat",
+        label: "HEAT",
+        stacks: heat.stacks,
+        // Fill toward max stacks (the soft-timer read), not a fixed duration.
+        durationPct: maxStacks > 0 ? (heat.stacks / maxStacks) * 100 : -1,
+        color: "#ff5522",
+        logSourceName: "Volcanic heat",
+        logSourceSide: "enemy",
+        logDetail: `the node heats up — ${perStack} burn/stack per tick (burst it or out-regen)`,
+      };
+    },
+    { category: "neutral", shape: "diamond", color: "#ff5522", label: "HEAT" },
+  ),
+  defineBuff(
+    "debuff-antiheal",
+    ({ playerCs, world }) => {
+      if (!playerCs) return null;
+      const ah = getStatusEffect(playerCs, "antiheal");
+      if (!ah || ah.stacks <= 0) return null;
+      const totalMs = ah.data["totalMs"] ?? ah.remainingMs;
+      const source = world.getMonsterEntity(ah.sourceId);
+      const suppressPct = Math.round(
+        Math.min(0.9, ah.stacks * (ah.data["reductionPerStack"] ?? 0)) * 100,
+      );
+      return {
+        id: "debuff-antiheal",
+        label: "ANTIHEAL",
+        stacks: ah.stacks,
+        durationPct:
+          totalMs > 0 && ah.remainingMs > 0
+            ? (ah.remainingMs / totalMs) * 100
+            : -1,
+        color: "#7755aa",
+        logSourceName: source?.isMonster.name ?? "Abyssal pressure",
+        logSourceSide: "enemy",
+        logDetail: `healing suppressed ${suppressPct}% — burst/execute, don't out-heal`,
+      };
+    },
+    { category: "neutral", shape: "diamond", color: "#7755aa", label: "ANTIHEAL" },
+  ),
 ] as const satisfies readonly BuffDescriptor[];
 
 /** Compile-time guard: shared BUFF_IDS must match server descriptor ids. */
@@ -151,6 +227,7 @@ export const ALL_BUFFS = [
   ...WEAPON_BUFFS,
   ...DEFENSE_BUFFS,
   ...MOBILITY_BUFFS,
+  ...ABILITY_BUFFS,
   ...DEBUFF_BUFFS,
 ] as const satisfies readonly BuffDescriptor[];
 

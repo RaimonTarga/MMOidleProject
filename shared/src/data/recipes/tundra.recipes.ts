@@ -74,7 +74,7 @@ export const tundraRecipeEntries = [
   // T4
   ['tundra-glacial-tyrant-maul', {
     id: 'tundra-glacial-tyrant-maul', name: 'Glacial Tyrant Maul',
-    recipeGroup: 'tundra', requiredBiomeLevel: 5, slot: 'weapon',
+    recipeGroup: 'tundra', requiredBiomeLevel: 7, slot: 'weapon',
     cost: { blue: 273 }, stats: { attack: 200 }, attacksPerSecond: 0.50, tier: 4,
     // † brittle-shatter-threshold: at max brittle stacks (8), strip the target's
     //   DR for 2s (brittle-shatter-dr-strip-ms). (new key)
@@ -85,15 +85,15 @@ export const tundraRecipeEntries = [
     icon: 'items/weapons/frozen-hammer.png',
     description: 'Every blow leaves a deeper frost-crack; the eighth simply ends the argument about whether armor holds.',
     upgrades: [
-      { stats: { attack: 50 }, cost: { blue: 410 },  requiredBiomeLevel: 6 },
-      { stats: { attack: 50 }, cost: { blue: 819 },  requiredBiomeLevel: 7 },
-      { stats: { attack: 50 }, cost: { blue: 1638 }, requiredBiomeLevel: 8 },
+      { stats: { attack: 50 }, cost: { blue: 410 },  requiredBiomeLevel: 8 },
+      { stats: { attack: 50 }, cost: { blue: 819 },  requiredBiomeLevel: 9 },
+      { stats: { attack: 50 }, cost: { blue: 1638 }, requiredBiomeLevel: 10 },
     ],
   }],
 
   ['tundra-glacial-rimebrand', {
     id: 'tundra-glacial-rimebrand', name: 'Glacial Rimebrand',
-    recipeGroup: 'tundra', requiredBiomeLevel: 5, slot: 'weapon',
+    recipeGroup: 'tundra', requiredBiomeLevel: 7, slot: 'weapon',
     // ⚠ INHERITED (Swamp slow-DoT lineage) — base attack carried from doc, not
     //   scaled from a T3 ancestor. VERIFY in the DoT-conversion budget pass.
     cost: { blue: 258 }, stats: { attack: 155 }, attacksPerSecond: 0.60, tier: 4,
@@ -101,15 +101,15 @@ export const tundraRecipeEntries = [
     icon: 'items/weapons/frozen-sword.png',
     description: 'It does not cut so much as plant a cold that goes on spreading after the blade is gone.',
     upgrades: [
-      { stats: { attack: 35 }, cost: { blue: 387 },  requiredBiomeLevel: 6 },
-      { stats: { attack: 35 }, cost: { blue: 774 },  requiredBiomeLevel: 7 },
-      { stats: { attack: 35 }, cost: { blue: 1548 }, requiredBiomeLevel: 8 },
+      { stats: { attack: 35 }, cost: { blue: 387 },  requiredBiomeLevel: 8 },
+      { stats: { attack: 35 }, cost: { blue: 774 },  requiredBiomeLevel: 9 },
+      { stats: { attack: 35 }, cost: { blue: 1548 }, requiredBiomeLevel: 10 },
     ],
   }],
 
   ['tundra-vest-t4', {
     id: 'tundra-vest-t4', name: 'Permafrost Sovereign',
-    recipeGroup: 'tundra', requiredBiomeLevel: 6, slot: 'armor',
+    recipeGroup: 'tundra', requiredBiomeLevel: 8, slot: 'armor',
     cost: { blue: 256, red: 64 }, stats: { maxHp: 180, plating: 28 },
     mechanicEffects: {
       'defense.stationary-dr-pct': 0.20, 'defense.stationary-dr-ramptime-ms': 5000,
@@ -119,15 +119,15 @@ export const tundraRecipeEntries = [
     icon: 'items/armor/tundra-armor-1.png',
     description: 'Hold your ground and the glacier claims you for its own — and nothing moves a glacier.',
     upgrades: [
-      { stats: { maxHp: 42, plating: 7 }, cost: { blue: 290, red: 96 },  requiredBiomeLevel: 7 },
-      { stats: { maxHp: 42, plating: 7 }, cost: { blue: 572, red: 192 }, requiredBiomeLevel: 8 },
-      { stats: { maxHp: 42, plating: 7 }, cost: { blue: 858, red: 290 }, requiredBiomeLevel: 8 },
+      { stats: { maxHp: 42, plating: 7 }, cost: { blue: 290, red: 96 },  requiredBiomeLevel: 9 },
+      { stats: { maxHp: 42, plating: 7 }, cost: { blue: 572, red: 192 }, requiredBiomeLevel: 10 },
+      { stats: { maxHp: 42, plating: 7 }, cost: { blue: 858, red: 290 }, requiredBiomeLevel: 10 },
     ],
   }],
 
   ['tundra-charm-t4', {
     id: 'tundra-charm-t4', name: 'Glacial Ward',
-    recipeGroup: 'tundra', requiredBiomeLevel: 7, slot: 'recovery',
+    recipeGroup: 'tundra', requiredBiomeLevel: 9, slot: 'recovery',
     cost: { blue: 220, purple: 30 }, stats: { hpRegen: 16 },
     mechanicEffects: {
       'defense.shield-pct': 0.17, 'defense.shield-interval-ms': 9000, 'defense.shield-duration-ms': 9000,
@@ -137,15 +137,15 @@ export const tundraRecipeEntries = [
     icon: 'items/charms/frozen-crystal.png',
     description: 'A sheet of ice thrown up against the blow, and a slow cold that drinks whatever slips past it.',
     upgrades: [
-      { mechanicEffects: { 'defense.shield-pct': 0.03, 'defense.absorb-pct': 0.03 }, cost: { blue: 110, purple: 30 }, requiredBiomeLevel: 8 },
-      { mechanicEffects: { 'defense.shield-pct': 0.03, 'defense.absorb-pct': 0.03 }, cost: { blue: 220, purple: 60 }, requiredBiomeLevel: 8 },
-      { mechanicEffects: { 'defense.shield-pct': 0.03, 'defense.absorb-pct': 0.03 }, cost: { blue: 340, purple: 90 }, requiredBiomeLevel: 8 },
+      { mechanicEffects: { 'defense.shield-pct': 0.03, 'defense.absorb-pct': 0.03 }, cost: { blue: 110, purple: 30 }, requiredBiomeLevel: 10 },
+      { mechanicEffects: { 'defense.shield-pct': 0.03, 'defense.absorb-pct': 0.03 }, cost: { blue: 220, purple: 60 }, requiredBiomeLevel: 10 },
+      { mechanicEffects: { 'defense.shield-pct': 0.03, 'defense.absorb-pct': 0.03 }, cost: { blue: 340, purple: 90 }, requiredBiomeLevel: 10 },
     ],
   }],
 
   ['tundra-charm-t4-deepfreeze', {
     id: 'tundra-charm-t4-deepfreeze', name: 'Deepfreeze Ward',
-    recipeGroup: 'tundra', requiredBiomeLevel: 7, slot: 'recovery',
+    recipeGroup: 'tundra', requiredBiomeLevel: 9, slot: 'recovery',
     cost: { blue: 220, purple: 30 }, stats: { hpRegen: 16 },
     // † absorb-ramp: absorb starts at 0.04 and climbs to 0.18 over 12s in combat
     //   (weaker early, stronger in long fights). (new keys)
@@ -157,24 +157,24 @@ export const tundraRecipeEntries = [
     icon: 'items/charms/stone-hand-charm-1.png',
     description: 'The longer the cold has to settle in, the more of the blow it swallows whole.',
     upgrades: [
-      { mechanicEffects: { 'defense.shield-pct': 0.03, 'defense.absorb-ramp-max-pct': 0.03 }, cost: { blue: 110, purple: 30 }, requiredBiomeLevel: 8 },
-      { mechanicEffects: { 'defense.shield-pct': 0.03, 'defense.absorb-ramp-max-pct': 0.03 }, cost: { blue: 220, purple: 60 }, requiredBiomeLevel: 8 },
-      { mechanicEffects: { 'defense.shield-pct': 0.03, 'defense.absorb-ramp-max-pct': 0.03 }, cost: { blue: 340, purple: 90 }, requiredBiomeLevel: 8 },
+      { mechanicEffects: { 'defense.shield-pct': 0.03, 'defense.absorb-ramp-max-pct': 0.03 }, cost: { blue: 110, purple: 30 }, requiredBiomeLevel: 10 },
+      { mechanicEffects: { 'defense.shield-pct': 0.03, 'defense.absorb-ramp-max-pct': 0.03 }, cost: { blue: 220, purple: 60 }, requiredBiomeLevel: 10 },
+      { mechanicEffects: { 'defense.shield-pct': 0.03, 'defense.absorb-ramp-max-pct': 0.03 }, cost: { blue: 340, purple: 90 }, requiredBiomeLevel: 10 },
     ],
   }],
 
   // T4 boots — ramp-speed (momentum builds while moving). T3 0.60/0.30 → T4 0.75/0.35.
   ['tundra-boots-t4', {
     id: 'tundra-boots-t4', name: 'Avalanche Striders',
-    recipeGroup: 'tundra', requiredBiomeLevel: 8, slot: 'mobility',
+    recipeGroup: 'tundra', requiredBiomeLevel: 10, slot: 'mobility',
     cost: { blue: 176 }, stats: { speed: 42 }, tier: 4,
     mechanicEffects: { 'mobility.ramp-speed-pct': 0.75, 'mobility.ramp-rate': 0.35 },
     icon: 'items/boots/ice-boots-1.png',
     description: 'Slow to start and impossible to stop — by the far end of the ice you are a thing that simply happens to whatever is in the way.',
     upgrades: [
-      { stats: { speed: 10 }, cost: { blue: 66 },  requiredBiomeLevel: 8 },
-      { stats: { speed: 14 }, cost: { blue: 132 }, requiredBiomeLevel: 8 },
-      { stats: { speed: 18 }, cost: { blue: 220 }, requiredBiomeLevel: 8 },
+      { stats: { speed: 10 }, cost: { blue: 66 },  requiredBiomeLevel: 10 },
+      { stats: { speed: 14 }, cost: { blue: 132 }, requiredBiomeLevel: 10 },
+      { stats: { speed: 18 }, cost: { blue: 220 }, requiredBiomeLevel: 10 },
     ],
   }],
 

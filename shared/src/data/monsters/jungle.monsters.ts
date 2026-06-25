@@ -34,22 +34,32 @@ export const jungleMonsterEntries = [
     id: 'jungle-snake', name: 'Jungle Snake', color: 0x33cc44,
     // The frantic frequent-attacker: low per-hit but strikes constantly (frequency
     // is what evasion answers), plus a light creeping venom. Squishy, very fast.
+    // ECOLOGY: pack FOLLOWER + ambush POUNCE — bursts from the bush alongside its
+    // ape alpha (call-allies linked), the first strike out of concealment amplified.
     stats: { hp: 200, attack: 16, plating: 0, damageReduction: 0, speed: 76, attackRange: 12, attackCooldown: 1100, pullRange: 270 },
     behavior: 'melee', attackStyle: 'poison', biome: 'jungle',
     rewards: { essence: 7, essenceType: 'green', level: 1, biomeXp: 38 },
     ai: { wanderRadius: 290, leashRange: 740, idleMinMs: 600, idleMaxMs: 2600 },
     dotEffect: { debuffId: 'snake-venom', label: 'Snake Venom', damagePerStack: 6, maxStacks: 3, tickIntervalMs: 1000, durationMs: 1500 },
+    pack: { role: 'follower', callRange: 260 },
+    openingStrike: { multiplier: 2.2 },   // placeholder — user balance pass
   }],
- 
+
   ['jungle-ape', {
     id: 'jungle-ape', name: 'Jungle Ape', color: 0xaa6633,
     // Fast charging bruiser — closes the gap, hits a bit harder. DR removed: Jungle
     // is the evasion biome (squishy like Forest), not a DR biome.
+    // ECOLOGY: pack ALPHA (leads a 2-snake hunting pack) + ambush pounce + HARDENING
+    // ramp — the bush-seeded ambusher whose attack grows the longer the fight drags
+    // (the slow keeps you in it), the pressure Jungle's hardening charm answers.
     stats: { hp: 250, attack: 26, plating: 0, damageReduction: 0, speed: 62, attackRange: 12, attackCooldown: 1700, pullRange: 240 },
-    behavior: 'melee', attackStyle: 'impact', biome: 'jungle',
+    behavior: 'melee', attackStyle: 'impact', biome: 'jungle', elite: true,
     rewards: { essence: 8, essenceType: 'green', level: 1, biomeXp: 44 },
     ai: { wanderRadius: 250, leashRange: 660, idleMinMs: 1000, idleMaxMs: 3800 },
     chargeOnAggro: { speedMult: 2.8, durationMs: 1000 },
+    pack: { role: 'alpha', callRange: 260, followers: [{ typeId: 'jungle-snake', count: 2 }] },
+    openingStrike: { multiplier: 2.5 },   // placeholder — user balance pass
+    rampOnCombat: { stat: 'attack', perTickPct: 0.03, maxPct: 0.45, tickIntervalMs: 1000 },
   }],
  
   ['jungle-blowdarter', {
@@ -70,21 +80,28 @@ export const jungleMonsterEntries = [
     id: 'jungle-stalker', name: 'Jungle Stalker', color: 0x33cc44,
     // Fast frequent-attacker: low per-hit, attacks often (evasion's home), very
     // fast move runs down kiters. Light venom. Anti-Far.
+    // ECOLOGY: pack FOLLOWER + pounce (T3 successor of jungle-snake).
     stats: { hp: 440, attack: 26, plating: 0, damageReduction: 0, speed: 78, attackRange: 12, attackCooldown: 1000, pullRange: 270 },
     behavior: 'melee', attackStyle: 'poison', biome: 'jungle',
     rewards: { essence: 25, essenceType: 'green', level: 2, biomeXp: 150 },
     ai: { wanderRadius: 300, leashRange: 760, idleMinMs: 600, idleMaxMs: 2600 },
     dotEffect: { debuffId: 'stalker-venom', label: 'Stalker Venom', damagePerStack: 4, maxStacks: 3, tickIntervalMs: 1200, durationMs: 3600 },
+    pack: { role: 'follower', callRange: 260 },
+    openingStrike: { multiplier: 2.2 },   // placeholder — user balance pass
   }],
 
   ['silverback', {
     id: 'silverback', name: 'Silverback', color: 0xaa6633,
     // Fast charging bruiser: explosive close, mid hit, a little DR. Anti-Far.
+    // ECOLOGY: pack ALPHA (leads 2 stalkers) + pounce + hardening ramp (T3 ape).
     stats: { hp: 580, attack: 40, plating: 0, damageReduction: 0.05, speed: 60, attackRange: 12, attackCooldown: 1800, pullRange: 240 },
-    behavior: 'melee', attackStyle: 'impact', biome: 'jungle',
+    behavior: 'melee', attackStyle: 'impact', biome: 'jungle', elite: true,
     rewards: { essence: 35, essenceType: 'green', level: 2, biomeXp: 210 },
     ai: { wanderRadius: 250, leashRange: 660, idleMinMs: 1000, idleMaxMs: 3800 },
     chargeOnAggro: { speedMult: 2.8, durationMs: 1100 },
+    pack: { role: 'alpha', callRange: 260, followers: [{ typeId: 'jungle-stalker', count: 2 }] },
+    openingStrike: { multiplier: 2.5 },   // placeholder — user balance pass
+    rampOnCombat: { stat: 'attack', perTickPct: 0.03, maxPct: 0.45, tickIntervalMs: 1000 },
   }],
 
   ['canopy-harrier', {
@@ -103,22 +120,29 @@ export const jungleMonsterEntries = [
     id: 'hunting-panther', name: 'Hunting Panther', color: 0x33cc44,
     // Fast swarm filler: low per-hit, attacks constantly. FREQUENCY is what
     // evasion answers. DPS 60 × (1000/1200) = 50 (filler; volume compensates).
+    // ECOLOGY: pack FOLLOWER + pounce (T4 successor of the stalker).
     stats: { hp: 800, attack: 60, plating: 0, damageReduction: 0, speed: 82, attackRange: 12, attackCooldown: 1200, pullRange: 290 },
     behavior: 'melee', attackStyle: 'slash', biome: 'jungle',
     rewards: { essence: 45, essenceType: 'green', level: 3, biomeXp: 270 },
     ai: { wanderRadius: 320, leashRange: 800, idleMinMs: 600, idleMaxMs: 2400 },
+    pack: { role: 'follower', callRange: 280 },
+    openingStrike: { multiplier: 2.2 },   // placeholder — user balance pass
   }],
 
   ['apex-silverback', {
     id: 'apex-silverback', name: 'Apex Silverback', color: 0xaa6633,
     // Charging great ape with EVASION (dodges 1-in-4 player hits) — tests on-hit
     // gear / Harrier −evasion debuffs. Anti-Far via charge. DPS 88 × (1000/1800) = 49.
+    // ECOLOGY: pack ALPHA (leads 2 panthers) + pounce + hardening ramp (T4 ape).
     stats: { hp: 1200, attack: 88, plating: 0, damageReduction: 0.05, speed: 54, attackRange: 12, attackCooldown: 1800, pullRange: 250 },
-    behavior: 'melee', attackStyle: 'impact', biome: 'jungle',
+    behavior: 'melee', attackStyle: 'impact', biome: 'jungle', elite: true,
     rewards: { essence: 88, essenceType: 'green', level: 4, biomeXp: 528 },
     ai: { wanderRadius: 260, leashRange: 680, idleMinMs: 1000, idleMaxMs: 3600 },
     chargeOnAggro: { speedMult: 2.8, durationMs: 1000 },
     evasion: 0.25,
+    pack: { role: 'alpha', callRange: 280, followers: [{ typeId: 'hunting-panther', count: 2 }] },
+    openingStrike: { multiplier: 2.5 },   // placeholder — user balance pass
+    rampOnCombat: { stat: 'attack', perTickPct: 0.03, maxPct: 0.45, tickIntervalMs: 1000 },
   }],
 
   ['thornback-lizard', {
@@ -138,12 +162,15 @@ export const jungleMonsterEntries = [
     // 0.25. Tests cap, DoT-resist, AND on-hit all at once. Effective ~66 DPS:
     // avg/attack (3·84+168)/4 = 105 → ×(1000/1600) = 66, plus DoT.
     stats: { hp: 1600, attack: 76, plating: 0, damageReduction: 0.06, speed: 62, attackRange: 12, attackCooldown: 1600, pullRange: 280 },
-    behavior: 'melee', attackStyle: 'poison', biome: 'jungle',
+    behavior: 'melee', attackStyle: 'poison', biome: 'jungle', elite: true,
     rewards: { essence: 130, essenceType: 'green', level: 4, biomeXp: 780 },
     ai: { wanderRadius: 280, leashRange: 720, idleMinMs: 800, idleMaxMs: 3000 },
     cadenceFinisher: { everyNAttacks: 4, multiplier: 2.0 },   // 168
     dotEffect: { debuffId: 'constrictor-venom', label: 'Constrictor Venom', damagePerStack: 6, maxStacks: 5, tickIntervalMs: 1000, durationMs: 3000 },
     evasion: 0.25,
+    // ECOLOGY: solo elite that HARDENS over a drawn-out fight (the constrictor
+    // squeezes tighter) — the sustained pressure Jungle's hardening charm answers.
+    rampOnCombat: { stat: 'attack', perTickPct: 0.03, maxPct: 0.5, tickIntervalMs: 1000 },
   }],
 
 

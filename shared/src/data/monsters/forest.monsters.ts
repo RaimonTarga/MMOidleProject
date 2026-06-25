@@ -45,6 +45,10 @@ export const forestMonsterEntries = [
     behavior: 'melee', attackStyle: 'slash', biome: 'forest',
     rewards: { essence: 4, essenceType: 'green', level: 1, biomeXp: 25 },
     ai: { wanderRadius: 290, leashRange: 720, idleMinMs: 700, idleMaxMs: 2800 },
+    // Forest predator-pack follower: when spawned in an Ancient Wolf's pack, a wolf
+    // that engages calls its packmates within range onto the same target. (Placeholder
+    // callRange — user balance pass.) Solo-spawned wolves have no pack link → unaffected.
+    pack: { role: 'follower', callRange: 320 },
   }],
 
 
@@ -57,6 +61,18 @@ export const forestMonsterEntries = [
     rewards: { essence: 8, essenceType: 'green', level: 1, biomeXp: 45 },
     ai: { wanderRadius: 300, leashRange: 750, idleMinMs: 600, idleMaxMs: 2500 },
     chargeOnAggro: { speedMult: 3.0, durationMs: 900 },
+    // Forest predator-pack ALPHA (the biome's T2 identity): spawns a MIXED pack —
+    // 2 wolf bruisers + 1 Canopy Sprite for ranged thorn support — clustered around
+    // it, and is itself called in (charging via chargeOnAggro) when a packmate
+    // engages. (Placeholder counts/range — user balance pass.)
+    pack: {
+      role: 'alpha',
+      callRange: 320,
+      followers: [
+        { typeId: 'wolf', count: 2 },
+        { typeId: 'canopy-sprite', count: 1 },
+      ],
+    },
   }],
 
   ['ironwood-golem', {
@@ -66,7 +82,7 @@ export const forestMonsterEntries = [
     // answers; squishy (no DR) so it still dies to burst. TODO rename.
     stats: { hp: 200, attack: 26, plating: 0, damageReduction: 0, speed: 22, attackRange: 15, attackCooldown: 900, pullRange: 150 },
     behavior: 'melee', attackStyle: 'impact', biome: 'forest',
-    rewards: { essence: 10, essenceType: 'green', level: 1, biomeXp: 58 },
+    rewards: { essence: 10, essenceType: 'blue', level: 1, biomeXp: 58 }, // construct → Stone (biome mixture; tunable)
     ai: { wanderRadius: 120, leashRange: 480, idleMinMs: 2500, idleMaxMs: 7000 },
   }],
 
@@ -77,6 +93,10 @@ export const forestMonsterEntries = [
     behavior: 'melee', attackStyle: 'gunshot', isRanged: true, biome: 'forest',
     rewards: { essence: 9, essenceType: 'green', level: 1, biomeXp: 50 },
     ai: { wanderRadius: 240, leashRange: 650, idleMinMs: 1200, idleMaxMs: 3500 },
+    // Pack-support follower: when spawned in an Ancient Wolf pack, a sprite that's
+    // hit/engaged calls in via the same call-allies net (ranged thorns from the
+    // treetops while the wolves close). Roams solo when not spawned in a pack.
+    pack: { role: 'follower', callRange: 300 },
   }],
 
 ] satisfies [string, MonsterDefinition][];

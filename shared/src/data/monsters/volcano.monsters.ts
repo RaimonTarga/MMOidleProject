@@ -142,7 +142,7 @@ export const volcanoMonsterEntries = [
     // BURST over DoT/chip, a pointed test in a DoT-leaning biome. Ramps hard,
     // so the kill window matters. DPS 94 × (1000/2600) = 36 early → ~60 at max ramp.
     stats: { hp: 2200, attack: 94, plating: 6, damageReduction: 0.06, speed: 22, attackRange: 15, attackCooldown: 2600, pullRange: 160 },
-    behavior: 'melee', attackStyle: 'fire', biome: 'volcanic',
+    behavior: 'melee', attackStyle: 'fire', biome: 'volcanic', elite: true,
     rewards: { essence: 190, essenceType: 'red', level: 4, biomeXp: 1140 },
     ai: { wanderRadius: 120, leashRange: 470, idleMinMs: 4000, idleMaxMs: 11000 },
     rampOnCombat: { stat: 'attack', perTickPct: 0.10, maxPct: 0.65, tickIntervalMs: 2000 },

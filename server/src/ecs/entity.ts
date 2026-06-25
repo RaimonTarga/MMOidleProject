@@ -3,6 +3,7 @@ import type {
   CannotAttack,
   ChillsTarget,
   ControlsMonster,
+  InPack,
   DealsDamage,
   EvadesHits,
   HasAwareness,
@@ -87,6 +88,16 @@ export interface HasMovePath {
   mover: FeatureTarget;
 }
 
+/**
+ * Server-only marker (system rework Step 7): the player has a Technique armed, so
+ * the next landed attack carries that ability's rider (e.g. cleave). Consumed on
+ * hit by the ability-effects listener. Sibling to `hasEmpoweredAttack` — kept
+ * separate so it never collides with the class-mechanic-owned empowered flag.
+ */
+export interface HasArmedAbility {
+  abilityId: string;
+}
+
 export type DungeonMonsterSource =
   | "idleDungeonGuardian"
   | "gauntletPhase"
@@ -100,6 +111,8 @@ export interface TracksDungeon {
   gauntletPhaseId?: string;
   guardPost?: Vec2;
   leashRadius?: number;
+  /** Injected opening-strike multiplier (first hit of each aggro session). */
+  openingStrikeMult?: number;
 }
 
 /**
@@ -166,6 +179,7 @@ export interface ServerEntity {
   inAcChargePhase?: InAcChargePhase;
   inAcDischarge?: InAcDischarge;
   hasEmpoweredAttack?: HasEmpoweredAttack;
+  hasArmedAbility?: HasArmedAbility;
   hasEnvironmentalDot?: HasEnvironmentalDot;
   hasNodeFeatureEffect?: HasNodeFeatureEffect;
   isDead?: IsDead;
@@ -181,6 +195,7 @@ export interface ServerEntity {
 
   // ── Monster (S7) ──────────────────────────────────────────────
   controlsMonster?: ControlsMonster;
+  inPack?: InPack;
   hasKnockback?: HasKnockback;
   hasDetonation?: HasDetonation;
   hasHemorrhage?: HasHemorrhage;

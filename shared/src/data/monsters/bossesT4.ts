@@ -197,6 +197,13 @@ export const bossMonsterEntriesT4 = [
     chargeOnAggro: { speedMult: 2.0, durationMs: 1300 },
     aoeAttack: { radius: 140, damageMult: 0.5 },
     rampDebuff: { moveSlowPerHit: 0.08, moveSlowMaxPct: 0.50, atkSlowPerHit: 0.06, atkSlowMaxPct: 0.40, stackDurationMs: 5000 },
+    // ECOLOGY exam "shatter the ice" (apex): a thick periodic frost barrier — BURST it to
+    // shatter (bonus self-dmg + freezing shockwave that stuns any adds). Stacks with the
+    // 50% soft-cap + plating 22 to make weapon/burst matchup the whole fight.
+    enemyShield: {
+      shieldPct: 0.20, intervalMs: 13000, durationMs: 6500,
+      shatter: { selfDamagePct: 0.08, freezeRadius: 260, freezeDurationMs: 1800 },
+    },
     bossScript: {
       repeating: [
         // Permafrost slam every 9s. 1.5× = 217 — trips the cap.

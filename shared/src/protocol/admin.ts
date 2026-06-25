@@ -1,6 +1,8 @@
 import type { NodeTelemetrySnapshot } from './nodeTelemetry';
 import type { WorldLogEvent } from './worldLogEvents';
 import type { EssenceType } from '../items';
+import type { EquippedAbilities } from '../abilities';
+import type { EquippedStances } from '../stances';
 
 export type AdminLogLevel = 'trace' | 'debug' | 'info' | 'warn' | 'error' | 'fatal';
 
@@ -56,10 +58,22 @@ export interface AdminCharacterRecord {
   selectedRange: string | null;
   essences: Partial<Record<EssenceType, number>>;
   biomeLevel: Record<string, number>;
+  /** Derived sum of all biome levels (system rework Step 4). */
+  globalMastery: number;
   clearedNodes: string[];
   bossesCleared: string[];
   inventoryCount: number;
   equipmentCount: number;
+  /** Abilities learned + equipped (system rework Step 7). */
+  knownAbilities: string[];
+  equippedAbilities: EquippedAbilities;
+  /** Stances learned + equipped + active posture (system rework Step 10). */
+  knownStances: string[];
+  equippedStances: EquippedStances;
+  activeStance: string | null;
+  /** Rites learned + equipped (system rework Step 11). */
+  knownRites: string[];
+  equippedRites: string[];
   updatedAt: number;
 }
 

@@ -107,6 +107,16 @@ const DEATH_MARK_BLAST_CLIENT_EFFECT = "death-mark-blast";
 const CANNON_BLAST_CLIENT_EFFECT = "reload-cannon-blast";
 const VOID_DISCHARGE_CLIENT_EFFECT = "void-discharge";
 
+// Biome-ecology call-allies pulse — a warm warning ring radiating off an alerted
+// pack member. Tuned to read as a "the pack woke up" tell, not a damage effect.
+const ECOLOGY_PULSE_RADIUS = 70;
+const ECOLOGY_PULSE_COLOR = 0xff7733;
+// Desert Sun Mark — a hotter amber ring when a marker paints its target, distinct
+// from the pack-call orange so the "you're marked" tell reads on its own.
+const SUN_MARK_PULSE_COLOR = 0xffcc33;
+// Tundra ice-armor shatter — an icy blue burst when a frost shell breaks.
+const FROST_SHATTER_PULSE_COLOR = 0x88ddff;
+
 function snapOwnPlayerToServerTarget(
   state: RenderState,
   scene: GameScene,
@@ -318,6 +328,21 @@ export function dispatchCombatEvent(
         duration: 650,
         onComplete: () => text.destroy(),
       });
+    }
+    return;
+  }
+
+  if (ev.kind === "ecology-pulse") {
+    // Call-allies telegraph — a one-shot ring at the alerted mob (fxAoeRing
+    // converts node→scene). Node-wide, not own-player gated.
+    if (shouldRunClientFx()) {
+      const color =
+        ev.pulse === "sun-mark"
+          ? SUN_MARK_PULSE_COLOR
+          : ev.pulse === "frost-shatter"
+            ? FROST_SHATTER_PULSE_COLOR
+            : ECOLOGY_PULSE_COLOR;
+      fxAoeRing(scene, ev.pos, ECOLOGY_PULSE_RADIUS, color);
     }
     return;
   }

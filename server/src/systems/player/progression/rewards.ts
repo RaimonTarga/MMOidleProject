@@ -8,6 +8,7 @@ import { recordWorldLogEvent } from '../../../world/worldLog';
 import { actorFromPlayer } from '../../../world/worldLogActors';
 import { notifyVoidOverlordDeath } from '../../combat/ai/ultimateEncounter';
 import { onDungeonMonsterRewarded } from '../../world/dungeons/gauntlet';
+import { onPackAlphaDead } from '../../combat/ai/packs';
 
 export interface KillRewards {
   essence: number;
@@ -33,6 +34,27 @@ export function rewardPlayer(entity: PlayerEntity, rewards: KillRewards): void {
     entity.tracksProgression.essences[type] += rewards.essence;
   }
   entity.tracksProgression.level += rewards.level;
+}
+
+/**
+ * Add per-kill catalyst progress for a biome group and mint catalysts whenever
+ * progress crosses the threshold (carrying the remainder). No-op when the
+ * monster grants no weight. Caller marks the slice dirty.
+ */
+function grantCatalystProgress(
+  entity: PlayerEntity,
+  biomeGroup: string | undefined,
+  weight: number,
+): void {
+  if (!biomeGroup || weight <= 0) return;
+  const prog = entity.tracksProgression;
+  const per = GAME_CONFIG.CATALYST_PROGRESS_PER_UNIT;
+  const total = (prog.catalystProgress[biomeGroup] ?? 0) + weight;
+  const minted = Math.floor(total / per);
+  prog.catalystProgress[biomeGroup] = total - minted * per;
+  if (minted > 0) {
+    prog.catalysts[biomeGroup] = (prog.catalysts[biomeGroup] ?? 0) + minted;
+  }
 }
 
 
@@ -158,10 +180,21 @@ function applyKillRewardsToPlayer(
   const def = MONSTER_DATABASE.get(monster.isMonster.monsterTypeId);
   const rewards = def?.rewards ?? FALLBACK_REWARDS;
   const nodeId = monster.hasPosition.nodeId;
-  const biomeTier = NODE_BIOMES[nodeId]?.biomeTier ?? 1;
+  const biomeInfo = NODE_BIOMES[nodeId];
+  const biomeTier = biomeInfo?.biomeTier ?? 1;
+  const biomeGroup = biomeInfo?.biomeGroup;
   const essenceMult = GAME_CONFIG.BIOME_ESSENCE_TIER_MULT[biomeTier] ?? 1;
   const scaledEssence = Math.max(1, Math.round(rewards.essence * essenceMult));
   rewardPlayer(recipient, { ...rewards, essence: scaledEssence });
+  // Catalyst progress defaults to the monster's base essence reward — already a
+  // tuned per-mob toughness number (trash ~2-10, elites more, bosses ~100+). A
+  // monster can override with an explicit `catalystWeight`. Tune the global rate
+  // via GAME_CONFIG.CATALYST_PROGRESS_PER_UNIT.
+  const catalystWeight = def?.rewards.catalystWeight ?? rewards.essence;
+  if (catalystWeight > 0 && biomeGroup) {
+    grantCatalystProgress(recipient, biomeGroup, catalystWeight);
+    markSliceDirty(world, recipient, 'tracksProgression');
+  }
   const biomeResult = applyBiomeXP(
     world,
     recipient,
@@ -204,6 +237,12 @@ function applyKillRewardsToPlayer(
       const key = bossClearKey(info.biomeGroup, info.biomeTier);
       if (!recipient.tracksProgression.bossesCleared.includes(key)) {
         recipient.tracksProgression.bossesCleared.push(key);
+        // One-time catalyst bundle for the first clear of this biome boss.
+        const bundle = def?.rewards.catalystBundle ?? 0;
+        if (bundle > 0) {
+          recipient.tracksProgression.catalysts[info.biomeGroup] =
+            (recipient.tracksProgression.catalysts[info.biomeGroup] ?? 0) + bundle;
+        }
         markSliceDirty(world, recipient, 'tracksProgression');
       }
     }
@@ -240,6 +279,10 @@ export function grantMonsterRewards(
 
   if (monster.isMonster.monsterTypeId === 'void-overlord') {
     notifyVoidOverlordDeath(world, monster, killerPlayerId);
+  }
+
+  if (monster.inPack?.role === 'alpha') {
+    onPackAlphaDead(world, monster);
   }
 
   // Despawn any adds the boss spawned via a 'spawn-adds' script action.

@@ -31,6 +31,8 @@ export interface DungeonMonsterModifiers {
   drAdd?: number;
   /** Multiplies damagePerStack on the monster's dotEffect, if it has one. */
   dotMult?: number;
+  /** Injects an opening-strike multiplier on the first hit of each aggro session. */
+  openingStrikeMult?: number;
 }
 
 export interface GauntletPhaseDef {

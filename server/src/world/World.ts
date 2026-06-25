@@ -28,6 +28,8 @@ export type NodeSentSlices = Map<NetworkedComponentKey, string>;
 export type NodeDeltaState = Map<string, NodeSentSlices>;
 import { updateAutoTargets } from "../systems/combat/ai/autoTarget";
 import { updateRuneDerivedConfig } from "../systems/combat/ai/runeConfig";
+import { updateAbilityFiring } from "../systems/player/abilities/abilityFiring";
+import { updateStanceSwitch } from "../systems/player/stances/stanceSwitch";
 import { updateAutoTraverse } from "../systems/world/autoTraverse";
 import { updateAutoIntent } from "../systems/world/autoIntent";
 import { updateExpiredEmotes } from "../systems/player/emotes";
@@ -36,6 +38,8 @@ import { updateMovement } from "../systems/world/movement";
 import { updateMobilityState } from "../systems/world/mobility/mobilityBoots";
 import { updateNodeFeatures } from "../systems/world/nodeFeatures";
 import { updateMonsters } from "../systems/combat/ai/ai";
+import { updatePacks } from "../systems/combat/ai/packs";
+import { updateSwarm } from "../systems/combat/ai/swarm";
 import { updateCombat } from "../systems/combat/engine/combat";
 import { updateTransitions } from "../systems/world/transitions";
 import { updateCombatState } from "../systems/combat/engine/combatState";
@@ -49,6 +53,7 @@ import { syncPlayerBuffs } from "../systems/combat/buffs/buffSync";
 import { mirrorHpForecast } from "../systems/defense/core/hpForecast";
 import {
   createMonster as createMonsterInWorld,
+  spawnPack as spawnPackInWorld,
   spawnMonster as spawnMonsterInWorld,
   respawnPlayer as respawnPlayerInWorld,
   killPlayer as killPlayerInWorld,
@@ -344,13 +349,17 @@ export class World {
     updatePartyFollow(this, now);
     updateAutoTraverse(this);
     updateAutoTargets(this, now);
+    updateAbilityFiring(this);
+    updateStanceSwitch(this);
     updateKnockback(this, dt);
     updateMobilityState(this, dt);
     updateMovement(this, dt, now);
     updateNodeFeatures(this, dt);
     updateTransitions(this);
     if (IS_DEV) updateTestRoomInteract(this, now);
+    updatePacks(this, now);
     updateMonsters(this, dt, now);
+    updateSwarm(this);
     updateCombat(this, dt, now);
     updateDefensiveSystems(this, dt, now);
     syncPlayerBuffs(this, now);
@@ -401,6 +410,18 @@ export class World {
     pos: Vec2,
   ): MonsterEntity | null {
     return createMonsterInWorld(this, nodeId, typeId, pos);
+  }
+
+  /**
+   * Spawn a coordinated pack (alpha + followers) clustered at `anchor`, sharing a
+   * server-only `inPack` link. Returns the spawned members (alpha first) or null.
+   */
+  spawnPack(
+    nodeId: string,
+    alphaTypeId: string,
+    anchor: Vec2,
+  ): MonsterEntity[] | null {
+    return spawnPackInWorld(this, nodeId, alphaTypeId, anchor);
   }
 
   getMonsterEntity(id: string): MonsterEntity | undefined {

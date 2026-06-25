@@ -36,6 +36,8 @@
     "ehp:llm": "pnpm --dir server exec tsx --conditions=development ../tools/ehp-report.ts --llm-packet",
     "mob:report": "pnpm --dir server exec tsx --conditions=development ../tools/mob-report.ts",
     "mob:llm": "pnpm --dir server exec tsx --conditions=development ../tools/mob-report.ts --llm-packet",
+    "monster:ref": "pnpm --dir server exec tsx --conditions=development ../tools/monster-ref.ts",
+    "monster:ref:md": "pnpm --dir server exec tsx --conditions=development ../tools/monster-ref.ts --md",
     "test:spatial": "pnpm --filter @mmo-idle/server exec tsx ../shared/src/systems/spatialHitbox.test.ts && pnpm --filter @mmo-idle/server exec tsx ../shared/src/collision/collision.test.ts",
     "bake:hitboxes": "pnpm --filter @mmo-idle/server bake:hitboxes",
     "release:prepare": "node scripts/release.mjs prepare",

@@ -41,6 +41,12 @@ export type CombatEvent =
   // damage was zeroed but on-hit effects (DoT) still applied; renders a "MISS"
   // floater over the target. Not gated by own-player id — shown to the node.
   | { kind: 'player-miss'; playerId: string; targetId: string; targetPos?: Vec2 }
+  // Biome-ecology telegraph: a one-shot ring pulse at a monster's position, shown to
+  // the whole node (not player-scoped). `pack-call` = a pack member alerting allies
+  // (call-allies); `sun-mark` = a Desert marker painting its target; `frost-shatter` =
+  // a Tundra ice-armor shell breaking (freezing shockwave). Purely cosmetic — the
+  // underlying aggro/debuff/freeze is server-authoritative.
+  | { kind: 'ecology-pulse'; monsterId: string; pos: Vec2; pulse: 'pack-call' | 'sun-mark' | 'frost-shatter' }
   // Server forced the player to a new position (e.g. blunderbuss recoil). The
   // client owns own-player prediction, so it must be told to accept the move
   // even mid-movement; `pos` is the authoritative destination to slide to.

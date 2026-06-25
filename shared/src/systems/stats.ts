@@ -11,6 +11,9 @@ import type {
 import { SKILL_TREE } from '../skillTree';
 import { ITEM_DATABASE } from '../itemDatabase';
 import { EQUIPMENT_SLOTS } from '../items';
+import { coreIsActive } from './cores';
+import { stanceDef } from '../stances';
+import { riteDef } from '../rites';
 import { upgradeMechanicEffectsTotal, upgradeStatBonusTotal } from './itemUpgrades';
 import { GAME_CONFIG } from '../index';
 import { mergePassives, makeBurstAccumulator, finalizeBurst } from '../passives';
@@ -46,6 +49,17 @@ export interface PlayerStatsTarget {
   holdsInventory:  HoldsInventory;
   /** Player progression tier (0-indexed: T1=0 … T4=3). Drives per-tier class bonuses. */
   playerTier?:     number;
+  /**
+   * The currently-active stance id (system rework Step 10), if any. Its stat/mechanic
+   * deltas fold into the rebuild; the stance-switch system triggers a recalc on change.
+   */
+  activeStance?:   string | null;
+  /**
+   * Equipped rites (system rework Step 11). Always-on OOC passives; every equipped
+   * rite's `mechanicEffects` (the `rite.*` keys) folds into `usesSkills.passives` so
+   * the out-of-combat systems can read them. No in-combat stat path.
+   */
+  equippedRites?:  readonly string[];
   /** Optional callback when cadence threshold is recalculated (writes to usesCadence on server). */
   resetCadenceCounters?: (threshold: number) => void;
 }
@@ -134,6 +148,41 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
     p.hasPosition.speed           += e.speed           ?? 0;
     mergePassives(p.usesSkills.passives, node.mechanicEffects, burstAcc);
   }
+
+  // 2a. Apply the active stance posture (system rework Step 10). The active stance's
+  // stat/mechanic deltas apply while it is the current posture. Most fields fold here,
+  // before the attack-cooldown computation, so attackSpeedPct/evasion ride the same
+  // once-applied path as skill nodes. `damageReduction` is deferred to the equipment
+  // pass (below) so a negative DR tradeoff survives the intermediate [0,0.9] clamp and
+  // combines with gear before the final clamp. The stance-switch system recalcs on change.
+  const stance = stanceDef(p.activeStance);
+  if (stance?.statEffects) {
+    const e = stance.statEffects;
+    p.dealsDamage.attack          += e.attack          ?? 0;
+    p.mitigatesDamage.plating     += e.plating         ?? 0;
+    if ((e.evasion ?? 0) > 0) evasionChance += e.evasion!;
+    p.performsAttack.attackRange  += e.attackRange     ?? 0;
+    attackSpeedPct                 += e.attackSpeedPct  ?? 0;
+    p.hasHealth.maxHp             += e.maxHp           ?? 0;
+    p.hasHealth.hpRegen           = (p.hasHealth.hpRegen ?? 0) + (e.hpRegen ?? 0);
+    p.hasPosition.speed           += e.speed           ?? 0;
+  }
+  if (stance?.mechanicEffects) {
+    mergePassives(p.usesSkills.passives, stance.mechanicEffects, burstAcc);
+  }
+
+  // 2b. Fold equipped rites (system rework Step 11). Rites are always-on OOC
+  // passives: every equipped rite contributes only `rite.*` mechanic keys (no
+  // in-combat stat deltas), read later by the out-of-combat systems.
+  if (p.equippedRites) {
+    for (const id of p.equippedRites) {
+      const rite = riteDef(id);
+      if (rite?.mechanicEffects) {
+        mergePassives(p.usesSkills.passives, rite.mechanicEffects, burstAcc);
+      }
+    }
+  }
+
   p.performsAttack.attackCooldown = Math.round(
     p.performsAttack.attackCooldown / Math.max(0.1, 1 + attackSpeedPct),
   );
@@ -162,6 +211,9 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
     if (!defId) continue;
     const def = ITEM_DATABASE.get(defId);
     if (!def) continue;
+    // Core slot (Step 9): a directional core contributes nothing unless its range
+    // tag matches the player's selectedRange. Universal/party cores always apply.
+    if (slot === 'core' && !coreIsActive(def.rangeTag, p.usesSkills.selectedRange)) continue;
     for (const [stat, value] of Object.entries(def.statModifiers)) {
       if (stat === 'evasion') {
         if (value > 0) evasionChance += value;
@@ -201,6 +253,13 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
   const altOnHitPerTier = p.usesSkills.passives['reload.alternating-onhit-per-tier'] ?? 0;
   if (altOnHitPerTier > 0) {
     p.dealsDamage.onHitDamage += Math.max(1, (p.playerTier ?? 4) - 4 + 1) * altOnHitPerTier;
+  }
+
+  // Active-stance damageReduction (system rework Step 10): deferred from the 2a fold
+  // so a negative DR tradeoff combines with skill + equipment DR before the final
+  // clamp, instead of being zeroed by the intermediate step-2 clamp.
+  if (stance?.statEffects?.damageReduction) {
+    p.mitigatesDamage.damageReduction += stance.statEffects.damageReduction;
   }
 
   // Re-clamp damage reduction: equipment + upgrades are applied after the step-2 clamp.
@@ -252,6 +311,34 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
       }
     }
   }
+
+  // 3c. Core multiplier layer (system rework Step 9). Cores express their effects as
+  // percentage multipliers on the FINAL summed stat (base + skills + equipment), applied
+  // once here. Sources add (two +10% → +20%); negative values reduce. The separate
+  // multiplicative DR layer (`core.dr-layer-pct`) is applied in the combat pipeline, not
+  // here. maxHp is multiplied BEFORE the hp-clamp below so the new ceiling takes effect.
+  const passives = p.usesSkills.passives;
+  const attackMult    = passives['core.attack-mult']       ?? 0;
+  const maxHpMult     = passives['core.maxhp-mult']         ?? 0;
+  const platMult      = passives['core.plating-mult']       ?? 0;
+  const speedMult     = passives['core.speed-mult']         ?? 0;
+  const hpRegenMult   = passives['core.hpregen-mult']       ?? 0;
+  const atkSpeedMult  = passives['core.attack-speed-mult']  ?? 0;
+  if (attackMult !== 0)
+    p.dealsDamage.attack = Math.max(1, Math.round(p.dealsDamage.attack * (1 + attackMult)));
+  if (maxHpMult !== 0)
+    p.hasHealth.maxHp = Math.max(1, Math.round(p.hasHealth.maxHp * (1 + maxHpMult)));
+  if (platMult !== 0)
+    p.mitigatesDamage.plating = Math.max(0, Math.round(p.mitigatesDamage.plating * (1 + platMult)));
+  if (speedMult !== 0)
+    p.hasPosition.speed = Math.max(0, Math.round(p.hasPosition.speed * (1 + speedMult)));
+  if (hpRegenMult !== 0)
+    p.hasHealth.hpRegen = Math.max(0, Math.round((p.hasHealth.hpRegen ?? 0) * (1 + hpRegenMult)));
+  if (atkSpeedMult !== 0)
+    p.performsAttack.attackCooldown = Math.max(
+      100,
+      Math.round(p.performsAttack.attackCooldown / Math.max(0.1, 1 + atkSpeedMult)),
+    );
 
   // 4. Range floor. Negative range bonuses can reduce ranged builds down to
   // melee, but should never remove the base contact reach needed to attack.

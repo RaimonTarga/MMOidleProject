@@ -35,7 +35,10 @@ import type { DamageElement } from '../../systems/dotElements';
  *   modify-ramp-debuff — raise the caps on this boss's rampDebuff. Patches live
  *               frost-ramp stacks on players in-node and all future applications.
  *   spawn-adds     — spawn a burst of trash adds near the boss (same as summon) and
- *               track them so they are despawned when the boss dies.
+ *               track them so they are despawned when the boss dies. `maxAlive` caps
+ *               the tracked living adds: a repeating spawn-adds tops the swarm back up
+ *               to (not past) the cap, so a long-lived summoner (e.g. a graveyard
+ *               necromancer with this on a repeating timer) can never flood the node.
  *
  * `stat-buff` supports `evasion` in addition to the entity stats: it multiplies the
  * boss's effective per-hit dodge fraction via a runtime override (mult 0 = stop
@@ -54,7 +57,7 @@ export type BossAction =
   | { type: 'apply-soft-cap'; capPct: number; capMult: number }
   | { type: 'shed-defense' }
   | { type: 'modify-ramp-debuff'; moveSlowMaxPct: number; atkSlowMaxPct: number }
-  | { type: 'spawn-adds'; monsterTypeId: string; count: number; offsetRange?: number }
+  | { type: 'spawn-adds'; monsterTypeId: string; count: number; offsetRange?: number; maxAlive?: number }
   | {
       type: 'morph';
       isRanged?: boolean;
@@ -239,7 +242,23 @@ export interface MonsterDefinition {
    * the derived text — the intended home for hand-written flavor/lore later.
    */
   profile?: string;
-  rewards: { essence: number; essenceType: EssenceType; level: number; biomeXp?: number };
+  rewards: {
+    essence: number;
+    essenceType: EssenceType;
+    level: number;
+    biomeXp?: number;
+    /**
+     * Per-kill catalyst progress contributed toward this biome's catalyst.
+     * Scaled by toughness tier (normal < tanky < elite < guardian). Omitted/0
+     * means the monster grants no catalyst progress.
+     */
+    catalystWeight?: number;
+    /**
+     * One-time catalyst bundle granted the first time this monster is cleared
+     * (guardians / bosses). Applied only on the newly-recorded boss clear.
+     */
+    catalystBundle?: number;
+  };
   ai: {
     wanderRadius: number;
     leashRange: number;
@@ -248,6 +267,14 @@ export interface MonsterDefinition {
   };
   /** True for dungeon boss monsters — affects spawn logic and client visuals. */
   isBoss?: boolean;
+  /**
+   * Marks a standout "elite" of its biome — the strong/dangerous one the player
+   * should notice and (often) kill first (graveyard necromancers, trench apex
+   * predators). Drives a yellow client outline (derived from this flag, no networked
+   * field) and the `focus-elites` targeting rune's priority bonus. Purely a
+   * classification tag — it grants no stats on its own.
+   */
+  elite?: boolean;
   /** Fight script — opt-in boss mechanics (phases, regen, enrage, summons, etc.). */
   bossScript?: BossScript;
   /** Objective-driven multi-stage encounter controller. */
@@ -260,6 +287,57 @@ export interface MonsterDefinition {
    * The charge overrides the kite ramp for its duration.
    */
   chargeOnAggro?: { speedMult: number; durationMs: number };
+  /**
+   * Fixed patrol route. Presence replaces random wander: while un-aggroed the
+   * monster walks a deterministic path of waypoints (relative to its spawn, so one
+   * def works at any spawn anchor) instead of picking random wander points. Aggro
+   * interrupts normally; on return the monster resumes from its current waypoint
+   * index. Movement still uses A* — patrols route around `nodeFeatures` chokepoints.
+   */
+  patrol?: {
+    /** Waypoints RELATIVE to spawn. A single waypoint = a held post. */
+    waypoints: Vec2[];
+    /** 'loop' = …→last→first→…; 'pingpong' = …→last→…→first→…. */
+    mode: 'loop' | 'pingpong';
+    /** Pause at each waypoint before advancing. Defaults to the mob's idle timing. */
+    holdMinMs?: number;
+    holdMaxMs?: number;
+  };
+  /**
+   * Pack behavior. Presence opts the mob into coordinated grouped AI (handled by
+   * the server pack system, which only sets aggro INTENT — `updateMonsters` stays
+   * the executor). An aggroed pack member pulls un-aggroed mates that are within
+   * `callRange` of an already-aggroed member onto the shared target (assist /
+   * call-allies). Spawning: when the population top-up rolls an `alpha` type, the
+   * whole pack (alpha + `followers`) spawns clustered around one anchor.
+   */
+  pack?: {
+    role: 'alpha' | 'follower';
+    /**
+     * Max distance from an already-aggroed pack-mate at which this un-aggroed mob
+     * is alerted onto the shared target. Omit/0 = never alerted (still spawns with
+     * the pack and assists once it aggros on its own).
+     */
+    callRange?: number;
+    /**
+     * ALPHA ONLY: follower groups spawned alongside this alpha as one pack. An
+     * array so a pack can mix types (e.g. melee wolves + a ranged support).
+     */
+    followers?: { typeId: string; count: number }[];
+  };
+  /**
+   * Swarm flocking. Presence makes the mob steer as part of a group while chasing a
+   * shared target: a light boids cohesion+separation offset is added to its chase
+   * destination (handled by the server swarm system, which runs AFTER `updateMonsters`
+   * and only nudges the destination — never speed or leash). Turns "many mobs each
+   * peel off solo" into "many mobs converge as pressure". Position-derived, no RNG.
+   */
+  swarm?: {
+    /** Pull toward the group centroid, 0..1 (gentle — ~0.1). 0 = separation only. */
+    cohesion: number;
+    /** Mobs closer than this (px) push apart so they fan out instead of stacking. */
+    separation: number;
+  };
   /** Dev test-room target behavior. These monsters are interacted with by standing in attack range. */
   interactKind?: 'reset' | 'gainPoint';
   /**
@@ -293,6 +371,14 @@ export interface MonsterDefinition {
    * the player on every successful hit. The effect is refreshed on each hit.
    */
   slowEffect?: { speedMult: number; durationMs: number };
+  /**
+   * Trench "abyssal pressure" — on every landed hit this monster stacks the player's
+   * `antiheal` status (up to `maxStacks`), suppressing ALL of the player's healing by
+   * `reductionPerStack` per stack (read by `getAntiHealMult`). Decays `durationMs`
+   * after the last hit (refreshed each hit). The fantasy: you can't out-heal an
+   * abyssal terror — you must burst/execute it. Skipped on an evaded hit.
+   */
+  appliesAntiheal?: { reductionPerStack: number; maxStacks: number; durationMs: number };
   /**
    * If set, this monster's basic attack also deals splash damage to all players
    * AND enemy summons within `radius` px of the primary target. The primary target
@@ -354,6 +440,30 @@ export interface MonsterDefinition {
    */
   empoweredCooldown?: { cooldownMs: number; multiplier: number };
   /**
+   * Opening strike: the FIRST landed attack after acquiring a fresh aggro target is
+   * multiplied by `multiplier`, then disarms until the monster re-engages (a new
+   * combat session). The pounce-out-of-ambush (Jungle) and the duelist's lethal
+   * opener (Desert). Deterministic (armed per combat session, no RNG); resolves
+   * through the player's full defensive pipeline, so the spike is exactly what the
+   * player's damage-cap / last-stand armor is meant to answer.
+   */
+  openingStrike?: { multiplier: number };
+  /**
+   * Sun Mark — SETUP half of the Desert mark/finisher pair. On every landed hit this
+   * monster applies a cleansable "sun-mark" debuff to the player for `durationMs`.
+   * The mark does nothing on its own (expires harmlessly); it only enables a
+   * `markedStrike` finisher to land amplified. Desert's cleanse answer removes it
+   * (it is a normal non-DoT status the cleanse pass strips). Skipped on an evaded hit.
+   */
+  appliesMark?: { durationMs: number };
+  /**
+   * Sun Mark — FINISHER half. When this monster lands a hit on a player who carries
+   * the `sun-mark` debuff, that hit is multiplied by `multiplier` and the mark is
+   * consumed. The payoff the marker sets up; resolves through the player's full
+   * defensive pipeline like any other spike. No effect against an un-marked target.
+   */
+  markedStrike?: { multiplier: number };
+  /**
    * Periodic absorb barrier on the MONSTER — mirror of the player periodic shield
    * (defense.shield-pct). Every `intervalMs` the monster gains a shield equal to
    * `shieldPct × maxHp` lasting `durationMs`; it absorbs incoming player direct-hit
@@ -361,7 +471,20 @@ export interface MonsterDefinition {
    * only absorbs combat-pipeline hits). Rewards burst (one big hit pops it) and
    * punishes chip (small hits waste themselves against it). Timer is deterministic.
    */
-  enemyShield?: { shieldPct: number; intervalMs: number; durationMs: number };
+  enemyShield?: {
+    shieldPct: number;
+    intervalMs: number;
+    durationMs: number;
+    /**
+     * Tundra ICE ARMOR shatter window. Presence turns a plain absorb barrier into a
+     * brittle shell: when a player's hit DEPLETES the barrier (breaks it), it SHATTERS —
+     * dealing `selfDamagePct × maxHp` bonus damage to this monster (rewarding the burst
+     * that cracked it) and sending a freezing shockwave that STUNS other enemy monsters
+     * within `freezeRadius` for `freezeDurationMs` (crowd-control upside — never the
+     * player). Chip damage just chinks the shell; a burst pops it and triggers the shatter.
+     */
+    shatter?: { selfDamagePct: number; freezeRadius: number; freezeDurationMs: number };
+  };
   /**
    * Soft damage cap protecting the MONSTER — mirror of the player damage-cap
    * (defense.max-hit-pct / max-hit-mult). When a single player hit exceeds

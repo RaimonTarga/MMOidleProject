@@ -49,6 +49,9 @@ export const BUFF_IDS = [
   'debuff-root',
   'debuff-frost-ramp',
   'debuff-dot',
+  'debuff-sun-mark',
+  'debuff-volcanic-heat',
+  'debuff-antiheal',
   'defense-absorb',
   'defense-burst',
   'defense-debt',
@@ -62,6 +65,9 @@ export const BUFF_IDS = [
   'summoner-trample-boon',
   'summoner-debuff-immune',
   'debuff-stunned',
+  // Abilities (system rework Step 7): the active Guard-ability buff (e.g. Brace).
+  // One Guard slot ⇒ at most one active; the descriptor reads the equipped def.
+  'ability-guard',
   // Mobility boots (see server/src/systems/world/mobility/mobilityBoots.ts)
   'mob-sprint',   // Plains — out-of-combat sprint
   'mob-haste',    // Forest — on-kill haste

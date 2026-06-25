@@ -4,6 +4,7 @@ import {
   getDungeonGauntletDef,
   NODE_BIOMES,
   NODE_FEATURES,
+  resolveFeatureShape,
   TREE_CELL_PX,
   TREE_TRUNK_TOP_PX,
   getNodeTrees,
@@ -41,6 +42,8 @@ export interface NodeStaticGroup {
   bg: Phaser.GameObjects.TileSprite | Phaser.GameObjects.Rectangle | null;
   shade: Phaser.GameObjects.Rectangle | null;
   decor: Phaser.GameObjects.Image[];
+  /** Placeholder fills for blocking features that have no decor sprite yet. */
+  placeholders: Phaser.GameObjects.Graphics[];
   trees: Phaser.GameObjects.Image[];
   boundary: Phaser.GameObjects.Graphics;
 }
@@ -170,6 +173,70 @@ function buildNodeDecorImages(
   return decor;
 }
 
+const PLACEHOLDER_BLOCK_FILL = 0x4a4640;
+const PLACEHOLDER_BLOCK_LINE = 0x6f6a60;
+// Hazard zones (damage / status) render as a translucent toxic splotch so the
+// player can read & avoid them. Generic rot-green placeholder; real per-biome
+// hazard art (lava, rot, chill) replaces it via NODE_DECOR.
+const PLACEHOLDER_HAZARD_FILL = 0x6a8a2a;
+const PLACEHOLDER_HAZARD_LINE = 0x9ab84a;
+
+/**
+ * Visible placeholder for features that have no decor sprite yet:
+ *   - `blocksMovement` → flat gray rock fill (an obstacle).
+ *   - `damage` / `statusWhileInside` → translucent toxic splotch (a hazard zone).
+ * Without this a feature is invisible — the geometry blocks/hurts but nothing
+ * renders. Real biome art replaces it later by adding a NODE_DECOR entry (which
+ * suppresses the placeholder), with zero change to the collision/hazard geometry.
+ */
+function buildNodePlaceholderFeatures(
+  scene: GameScene,
+  nodeId: string,
+  offsetX: number,
+  offsetY: number,
+  depthBias: number,
+): Phaser.GameObjects.Graphics[] {
+  const features = NODE_FEATURES[nodeId];
+  if (!features) return [];
+  const arts = NODE_DECOR[nodeId];
+  const out: Phaser.GameObjects.Graphics[] = [];
+
+  for (const feature of features) {
+    const isBlock = !!feature.blocksMovement?.length;
+    const isHazard = !!(feature.damage || feature.statusWhileInside);
+    if (!isBlock && !isHazard) continue;
+    // Skip if a real decor sprite already covers this feature.
+    const hasSprite = arts?.some(
+      (a) => a.featureId === feature.id && scene.textures.exists(a.key),
+    );
+    if (hasSprite) continue;
+
+    const shape = resolveFeatureShape(feature);
+    const g = scene.add.graphics().setDepth(DEPTH.BG_DECOR + depthBias);
+    if (isBlock) {
+      g.fillStyle(PLACEHOLDER_BLOCK_FILL, 0.95);
+      g.lineStyle(4, PLACEHOLDER_BLOCK_LINE, 1);
+    } else {
+      g.fillStyle(PLACEHOLDER_HAZARD_FILL, 0.4);
+      g.lineStyle(3, PLACEHOLDER_HAZARD_LINE, 0.8);
+    }
+    const cx = offsetX + shape.x;
+    const cy = offsetY + shape.y;
+    if (shape.kind === "circle") {
+      g.fillCircle(cx, cy, shape.radius);
+      g.strokeCircle(cx, cy, shape.radius);
+    } else if (shape.kind === "ellipse") {
+      g.fillEllipse(cx, cy, shape.halfW * 2, shape.halfH * 2);
+      g.strokeEllipse(cx, cy, shape.halfW * 2, shape.halfH * 2);
+    } else {
+      g.fillRect(cx - shape.halfW, cy - shape.halfH, shape.halfW * 2, shape.halfH * 2);
+      g.strokeRect(cx - shape.halfW, cy - shape.halfH, shape.halfW * 2, shape.halfH * 2);
+    }
+    out.push(g);
+  }
+  return out;
+}
+
 /**
  * Scattered forest trees for a node. In the active node (`ySort`) each tree is
  * drawn in two passes: the full canopy sprite is depth-sorted by the bottom of
@@ -274,6 +341,13 @@ export function paintNodeStatic(
       depthBias,
       throneOpen,
     ),
+    placeholders: buildNodePlaceholderFeatures(
+      scene,
+      nodeId,
+      offsetX,
+      offsetY,
+      depthBias,
+    ),
     trees: buildNodeTreeImages(scene, nodeId, offsetX, offsetY, {
       ySort: false,
       depthBias,
@@ -288,6 +362,7 @@ export function destroyNodeStatic(group: NodeStaticGroup): void {
   group.bg?.destroy();
   group.shade?.destroy();
   for (const img of group.decor) img.destroy();
+  for (const g of group.placeholders) g.destroy();
   for (const img of group.trees) img.destroy();
   group.boundary.destroy();
 }

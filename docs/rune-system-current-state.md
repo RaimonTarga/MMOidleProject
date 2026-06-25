@@ -86,42 +86,41 @@ Budget is simple per-rule cost for now:
 ruleCost = condition.cost + action.cost
 ```
 
-The current budget helper is tuned for playtest:
+The budget helper is **GM-driven** as of the system rework. **Step 4** replaced the tier term with
+Global Mastery; **Step 5** retired the crafted rune-capacity recipes, so RP now comes *solely* from GM:
 
 ```ts
-runeBudgetForTier(playerTier, runePointBonus) = 8 + playerTier * 2 + runePointBonus
+// was: runeBudgetForTier(playerTier, runePointBonus) = 8 + playerTier * 2 + runePointBonus
+runeBudgetForGlobalMastery(globalMastery) = 8 + floor(globalMastery / 10)
 ```
 
-That base budget intentionally fits the mutable starter loadout. Rune point
-bonus recipes permanently increase the budget.
+The `/ 10` divisor is a non-regressive placeholder (≈ old `tier*2` at typical per-tier GM); it is the
+user's balance lever. The old `runePointBonus` slice/view field and `runePointBonusFromCraftedRecipes`
+helper were **deleted** (clean cutover, pre-release).
 
 ## Rune Forge
 
-Rune forge recipes live in `shared/src/runeRecipes.ts`.
+Rune forge recipes live in `shared/src/runeRecipes.ts`. Single kind: `unlock-rune` (unlocks one
+condition or response fragment). The `increase-rune-points` kind was retired in Step 5.
 
-Recipe kinds:
-
-- `unlock-rune`: unlocks one condition or response fragment.
-- `increase-rune-points`: permanently increases maximum rune points.
-
-Recipes show in the forge before their boss is cleared, but cannot be crafted
-until their `requiredBossClear` token is present in `bossesCleared` (for example,
-`forest:1`). Crafting is one-time only and costs essence. Test room bypasses cost
-gates for playtesting.
+**Gating (Step 5):** recipes carry a biome-mastery gate (`recipeGroup` + `requiredBiomeLevel`) and/or a
+boss gate (`requiredBossClear`). The shared predicate `isRuneRecipeUnlocked(recipe, { biomeLevel,
+bossesCleared })` is the single authority used by both server and the forge UI. All current (basic)
+runes are biome-gated; the boss channel is reserved for the advanced/signature runes Step 13 will add.
+`requiredBiomeLevel` values are placeholders pending the balance pass. Crafting is one-time, costs
+essence; the test room bypasses gates.
 
 The server applies rune forge crafts through
 `server/src/systems/player/economy/runeCrafting.ts`. It validates:
 
 - recipe id exists,
 - recipe has not already been crafted,
-- required boss clear is present unless in test room,
+- `isRuneRecipeUnlocked` (biome level / boss clear) passes unless in test room,
 - unlock recipes point at a known rune fragment,
 - the player has enough essence.
 
-On success, the server records the recipe id in `runeRecipesCrafted`, rebuilds
-`runesOwned` from starter fragments plus crafted unlock recipes, rebuilds
-`runePointBonus` from crafted capacity recipes, and marks `tracksProgression`
-dirty.
+On success, the server records the recipe id in `runeRecipesCrafted`, rebuilds `runesOwned` from
+starter fragments plus crafted unlock recipes, and marks `tracksProgression` dirty.
 
 ## Default Loadout
 
@@ -234,8 +233,8 @@ Rune ownership and equipped loadout live on `TracksProgression` in
 ```ts
 runesOwned: string[];
 runeRecipesCrafted: string[];
-runePointBonus: number;
 runesEquipped: EquippedRule[];
+// runePointBonus removed in Step 5 — RP budget is derived from Global Mastery.
 ```
 
 They persist through `server/src/db/playerRepo.ts`.

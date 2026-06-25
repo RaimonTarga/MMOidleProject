@@ -15,7 +15,14 @@ export type RuneChannel =
   | "OOC_MAINTENANCE"
   | "RESOURCE_MAINTENANCE"
   | "GLOBAL_STRATEGY"
-  | "CONTROL";
+  | "CONTROL"
+  // System rework Step 7: each ability slot gets its own channel so a Technique
+  // override and a Guard override (and taunt in CONTROL) can be equipped at once.
+  | "TECHNIQUE"
+  | "GUARD"
+  // System rework Step 10: the stance-switch action gets its own single-claim
+  // channel so it coexists with technique/guard overrides and a control taunt.
+  | "STANCE";
 
 export type RuneConditionId =
   | "always"
@@ -37,12 +44,18 @@ export type RuneActionId =
   | "focus-lowest-hp"
   | "let-dots-finish"
   | "spread-dots"
+  | "focus-elites"
   | "tactical-reload"
   | "wait-for-execution"
   | "wait-for-regen"
   | "auto-path-enemy"
   | "lead-the-way"
-  | "taunt-current-target";
+  | "taunt-current-target"
+  // System rework Step 7: override the built-in auto-fire timing of an ability.
+  | "fire-technique"
+  | "fire-guard"
+  // System rework Step 10: auto-switch to the equipped reactive stance.
+  | "switch-stance";
 
 export interface ConditionDef {
   id: RuneConditionId;
@@ -77,6 +90,9 @@ export const RUNE_CHANNELS: RuneChannel[] = [
   "RESOURCE_MAINTENANCE",
   "GLOBAL_STRATEGY",
   "CONTROL",
+  "TECHNIQUE",
+  "GUARD",
+  "STANCE",
 ];
 
 const COMBAT_CONDITIONS: readonly RuneConditionId[] = [
@@ -105,6 +121,25 @@ const STRATEGY_CONDITIONS: readonly RuneConditionId[] = [
 const CONTROL_CONDITIONS: readonly RuneConditionId[] = [
   "in-combat",
   "in-party",
+];
+
+// System rework Step 7: conditions a player can wire to an ability-fire override.
+const TECHNIQUE_CONDITIONS: readonly RuneConditionId[] = [
+  "in-combat",
+  "n-aggro-3",
+];
+
+const GUARD_CONDITIONS: readonly RuneConditionId[] = [
+  "in-combat",
+  "hp-below-25",
+  "n-aggro-3",
+];
+
+// System rework Step 10: situations a player can wire to a stance auto-switch.
+const STANCE_CONDITIONS: readonly RuneConditionId[] = [
+  "in-combat",
+  "hp-below-25",
+  "n-aggro-3",
 ];
 
 export const CONDITION_DATABASE = new Map<string, ConditionDef>([
@@ -288,6 +323,19 @@ export const ACTION_DATABASE = new Map<string, ActionDef>([
     },
   ],
   [
+    "focus-elites",
+    {
+      id: "focus-elites",
+      name: "Focus Elites",
+      blurb: "Prioritize elite enemies (the yellow-outlined standouts) — necromancers, apex predators — before clearing the rest.",
+      cost: 2,
+      tier: 2,
+      channel: "TARGETING",
+      allowedConditionIds: TARGETING_CONDITIONS,
+      // No requiredArchetype — focusing the dangerous one is a universal tactic.
+    },
+  ],
+  [
     "tactical-reload",
     {
       id: "tactical-reload",
@@ -361,6 +409,45 @@ export const ACTION_DATABASE = new Map<string, ActionDef>([
       allowedConditionIds: CONTROL_CONDITIONS,
     },
   ],
+  [
+    "fire-technique",
+    {
+      id: "fire-technique",
+      name: "Fire Technique",
+      blurb:
+        "Override your Technique's auto-timing: arm it when this situation holds instead of the default.",
+      cost: 1,
+      tier: 1,
+      channel: "TECHNIQUE",
+      allowedConditionIds: TECHNIQUE_CONDITIONS,
+    },
+  ],
+  [
+    "fire-guard",
+    {
+      id: "fire-guard",
+      name: "Fire Guard",
+      blurb:
+        "Override your Guard's auto-timing: trigger it when this situation holds instead of the default.",
+      cost: 1,
+      tier: 1,
+      channel: "GUARD",
+      allowedConditionIds: GUARD_CONDITIONS,
+    },
+  ],
+  [
+    "switch-stance",
+    {
+      id: "switch-stance",
+      name: "Switch Stance",
+      blurb:
+        "Switch to your reactive stance while this situation holds, reverting to your default otherwise.",
+      cost: 2,
+      tier: 2,
+      channel: "STANCE",
+      allowedConditionIds: STANCE_CONDITIONS,
+    },
+  ],
 ]);
 
 /** Every fragment id (conditions + actions). Useful for validation/tooling. */
@@ -383,6 +470,15 @@ export const STARTER_RUNE_IDS: string[] = Array.from(
     "follow-and-assist",
     "taunt-current-target",
     "focus-closest",
+    // Step 7: ability-fire overrides are available from the start (a timing
+    // preference for an ability you already had to unlock). Equipping still
+    // costs RP. The user can move these onto recipes in a later balance pass.
+    "fire-technique",
+    "fire-guard",
+    // Step 10: stance auto-switch is a timing preference for stances you already
+    // learned (the stance recipes are the real T2 gate). Equipping still costs RP
+    // and is inert with no reactive stance equipped.
+    "switch-stance",
   ]),
 );
 
@@ -417,9 +513,20 @@ export function normalizeRuneLoadout(rules: EquippedRule[]): EquippedRule[] {
     .map(normalizeRuneRule);
 }
 
-/** Tuned for the mutable starter loadout; adjust after playtest. */
-export function runeBudgetForTier(playerTier: number, runePointBonus = 0): number {
-  return 8 + Math.max(0, playerTier) * 2 + Math.max(0, runePointBonus);
+/**
+ * Rune-point budget. System rework Step 4: Global Mastery replaces the tier term —
+ * RP now scales with farmed breadth, not raw tier, so a high-tier/low-GM rusher is
+ * under-budgeted until they farm (the brainstorm's catch-up mechanism).
+ *
+ * PLACEHOLDER (non-regressive): the `/ 10` divisor is anchored so RP at equivalent
+ * progression is ≥ the old `8 + tier*2`. A tier-complete player levels ~5 biomes to
+ * ~level 4 (where content currently stops — auto-traverse skips the empty levels 5–6),
+ * so GM ≈ 20 per cleared tier → +2 RP/tier, matching the retired tier term. base 8 =
+ * old tier-0. The divisor is the user's balance lever. (Step 5 retired the crafted
+ * rune-capacity recipes; RP now comes solely from GM.)
+ */
+export function runeBudgetForGlobalMastery(globalMastery: number): number {
+  return 8 + Math.floor(Math.max(0, globalMastery) / 10);
 }
 
 export function runeRuleCost(rule: EquippedRule): number {
@@ -447,6 +554,12 @@ export function runeChannelLabel(channel: RuneChannel): string {
       return "Search";
     case "CONTROL":
       return "Control";
+    case "TECHNIQUE":
+      return "Technique";
+    case "GUARD":
+      return "Guard";
+    case "STANCE":
+      return "Stance";
   }
 }
 
@@ -672,6 +785,9 @@ export interface DerivedRuneConfig {
   resourceMaintenanceAction: RuneActionId | null;
   globalStrategyAction: RuneActionId | null;
   controlAction: RuneActionId | null;
+  techniqueAction: RuneActionId | null;
+  guardAction: RuneActionId | null;
+  stanceAction: RuneActionId | null;
   fleeRequested: boolean;
   orbit: boolean;
   autoPathEnemy: boolean;
@@ -683,6 +799,14 @@ export interface DerivedRuneConfig {
   tauntCurrentTarget: boolean;
   letDotsFinish: boolean;
   spreadDots: boolean;
+  /** A `focus-elites` rule is active this tick — prioritize elite-tagged enemies. */
+  focusElites: boolean;
+  /** A `fire-technique` rule's condition is active this tick (override Technique). */
+  fireTechnique: boolean;
+  /** A `fire-guard` rule's condition is active this tick (override Guard). */
+  fireGuard: boolean;
+  /** A `switch-stance` rule's condition is active this tick (use reactive stance). */
+  switchStance: boolean;
 }
 
 function emptyClaims(): ClaimedRuneChannels {
@@ -693,6 +817,9 @@ function emptyClaims(): ClaimedRuneChannels {
     RESOURCE_MAINTENANCE: null,
     GLOBAL_STRATEGY: null,
     CONTROL: null,
+    TECHNIQUE: null,
+    GUARD: null,
+    STANCE: null,
   };
 }
 
@@ -729,6 +856,9 @@ export function deriveAutoConfigFromRunes(
     resourceMaintenanceAction: null,
     globalStrategyAction: null,
     controlAction: null,
+    techniqueAction: null,
+    guardAction: null,
+    stanceAction: null,
     fleeRequested: false,
     orbit: false,
     autoPathEnemy: false,
@@ -740,6 +870,10 @@ export function deriveAutoConfigFromRunes(
     tauntCurrentTarget: false,
     letDotsFinish: false,
     spreadDots: false,
+    focusElites: false,
+    fireTechnique: false,
+    fireGuard: false,
+    switchStance: false,
   };
 
   for (const raw of normalizeRuneLoadout(equipped)) {
@@ -776,6 +910,9 @@ export function deriveAutoConfigFromRunes(
     claimed.RESOURCE_MAINTENANCE?.action.id ?? null;
   derived.globalStrategyAction = claimed.GLOBAL_STRATEGY?.action.id ?? null;
   derived.controlAction = claimed.CONTROL?.action.id ?? null;
+  derived.techniqueAction = claimed.TECHNIQUE?.action.id ?? null;
+  derived.guardAction = claimed.GUARD?.action.id ?? null;
+  derived.stanceAction = claimed.STANCE?.action.id ?? null;
 
   switch (derived.movementAction) {
     case "flee":
@@ -808,6 +945,12 @@ export function deriveAutoConfigFromRunes(
       derived.spreadDots = true;
       derived.config.priorityMode = "nearest";
       break;
+    case "focus-elites":
+      // Elites first, ties broken by proximity: keep the nearest distance weighting
+      // but route through the scored path (not strict-nearest) so the elite bonus applies.
+      derived.focusElites = true;
+      derived.config.priorityMode = "nearest";
+      break;
     case "focus-closest":
     default:
       derived.config.priorityMode = "nearest";
@@ -835,6 +978,15 @@ export function deriveAutoConfigFromRunes(
   }
   if (derived.controlAction === "taunt-current-target") {
     derived.tauntCurrentTarget = true;
+  }
+  if (derived.techniqueAction === "fire-technique") {
+    derived.fireTechnique = true;
+  }
+  if (derived.guardAction === "fire-guard") {
+    derived.fireGuard = true;
+  }
+  if (derived.stanceAction === "switch-stance") {
+    derived.switchStance = true;
   }
 
   return derived;

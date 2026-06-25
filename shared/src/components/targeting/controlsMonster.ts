@@ -24,4 +24,19 @@ export interface ControlsMonster {
   rampPct?: number;
   /** Ms accumulated toward the next rampOnCombat tick. */
   rampAccumMs?: number;
+  /** Index of the patrol waypoint to head toward next (monsters with a patrol def). */
+  patrolIndex?: number;
+  /** Patrol traversal direction for pingpong mode (+1 forward / -1 backward). */
+  patrolDir?: number;
+}
+
+/**
+ * Pack membership — SERVER-ONLY runtime link minted at spawn for monsters spawned
+ * as a coordinated pack. Never networked, never persisted (monsters are ephemeral).
+ * The pack system groups members by `packId` each tick to propagate shared aggro.
+ */
+export interface InPack {
+  /** Shared id for all members of one spawned pack. */
+  packId: string;
+  role: 'alpha' | 'follower';
 }

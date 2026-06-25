@@ -1,4 +1,4 @@
-import type { AutocombatConfig, EquipmentSlot, EquippedRule } from '@mmo-idle/shared';
+import type { AbilitySlot, AutocombatConfig, EquipmentSlot, EquippedRule, EvolveMode, StanceSlot } from '@mmo-idle/shared';
 
 export interface IntentMap {
   toggleAuto: undefined;
@@ -6,12 +6,19 @@ export interface IntentMap {
   setAutocombatConfig: AutocombatConfig;
   setRuneLoadout: EquippedRule[];
   craftRuneRecipe: string;
+  craftAbilityRecipe: string;
+  setAbilityLoadout: { slot: AbilitySlot; abilityId: string | null };
+  craftStanceRecipe: string;
+  setStanceLoadout: { slot: StanceSlot; stanceId: string | null };
+  craftRiteRecipe: string;
+  setRiteLoadout: { riteIds: string[] };
   activateDungeonAltar: undefined;
   unlockSkill: string;
   resetClass: undefined;
   equipItem: string;
   unequipItem: EquipmentSlot;
   craftRecipe: string;
+  evolveItem: { recipeId: string; mode: EvolveMode };
   upgradeItem: string;
   navigateTo: { path: string[] };
   goToTestRoom: undefined;

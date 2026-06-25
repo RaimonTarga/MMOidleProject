@@ -98,15 +98,14 @@ Anchor to these, then sim/playtest. Trash medians from player-power-curve §3.
 | T2 | ~200 | ~640 | ~2000–2400 (current ✓) | ~90 |
 | T3 | ~440 | ~1400 | ~4000–4400 | **~120–130** (placeholders at ~100 are too soft) |
 
-## Rebalance scope (what this implies for existing bosses)
+## Implementation status
 
-- **T1 bosses:** HP bump ~1.8× (clearly above same-tier elites); add cleave to the
-  slow ones (Mountain/Cave). No phase (T1 = pure shape).
-- **T2 bosses:** add the one HP-threshold phase each; add cleave to the slow ones;
-  numbers already roughly on-curve.
-- **T3 bosses:** rebuild from scratch (placeholders are kiteable sponges with no
-  biome mechanic). Phase + range-flip + capped enrage; cleave on the slow ones;
-  attack bumped to ~1.3–1.4× trash big-hit; charge/reach so they aren't kiteable.
+- **T1 bosses — authored and rebalanced.** HP above same-tier elites. Slow bosses (Mountain/Cave) have cleave. No phase (T1 = pure shape).
+- **T2 bosses — authored and rebalanced.** HP-threshold phase implemented. Slow bosses have cleave.
+- **T3 bosses — authored.** Phase + range-flip + capped enrage; cleave on slow bosses; attacks at ~1.3–1.4× trash big-hit; charge/reach. Balance pass ongoing.
+- **T4 bosses — authored (monster data exists).** Boss intent pass (defense-break windows, enrage tuning) is a pending design task. The T4 layer from the per-tier table above ("defense-break window") is not yet implemented.
+
+T5+ boss design (adds/packs) is deferred until packs land as a trash mechanic.
 
 ## New engine pieces
 

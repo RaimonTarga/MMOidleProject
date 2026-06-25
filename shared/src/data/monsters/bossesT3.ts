@@ -124,6 +124,12 @@ export const bossMonsterEntriesT3 = [
     chargeOnAggro: { speedMult: 2.0, durationMs: 1200 },
     aoeAttack: { radius: 120, damageMult: 0.6 },
     rampDebuff: { moveSlowPerHit: 0.06, moveSlowMaxPct: 0.40, atkSlowPerHit: 0.05, atkSlowMaxPct: 0.30, stackDurationMs: 4000 },
+    // ECOLOGY exam "shatter the ice": a periodic frost barrier the player must BURST to
+    // crack (shatter = bonus self-dmg + freezing shockwave). Chip-DPS stalls here.
+    enemyShield: {
+      shieldPct: 0.18, intervalMs: 12000, durationMs: 6000,
+      shatter: { selfDamagePct: 0.08, freezeRadius: 240, freezeDurationMs: 1500 },
+    },
     bossScript: {
       repeating: [
         { intervalMs: 7000, initialDelayMs: 4000, actions: [{ type: 'slam', radius: 200, damageMult: 1.4 }] },

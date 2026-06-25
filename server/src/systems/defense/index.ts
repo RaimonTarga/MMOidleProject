@@ -17,6 +17,7 @@ import { runStationaryDr } from "./mitigation/stationaryDr";
 import { runSustainedFightDr } from "./mitigation/sustainedFightDr";
 import { registerReactivePlating, runReactivePlating } from "./mitigation/reactivePlating";
 import { COMBAT_ELAPSED_KEY } from "./core/pools";
+import { runRiteOoc } from "../player/rites/riteOoc";
 
 /**
  * Register all defense-layer combat pipeline listeners.
@@ -95,6 +96,9 @@ export function updateDefensiveSystems(
     runStationaryDr(world, player, dt);
     runSustainedFightDr(world, player);
     runReactivePlating(world, player);
+    // Rites (system rework Step 11): OOC cleanse + buff-decay slowdown. Internally
+    // gated to out-of-combat, so it self-skips while the player is engaged.
+    runRiteOoc(world, player, dt, now);
   }
 }
 

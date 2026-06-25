@@ -17,7 +17,8 @@ import {
   resetTracksCombat,
   RESOLVED_NODE_FEATURES,
   RUNE_ALTAR_FEATURE_ID,
-  runeBudgetForTier,
+  runeBudgetForGlobalMastery,
+  globalMastery,
   sanitizeRuneLoadout,
   SKILL_TREE,
   TEST_ROOM_NODE_ID,
@@ -27,7 +28,20 @@ import { unlockSkill } from "./systems/player/progression/skills";
 import { checkRecipeUnlocks } from "./systems/player/progression/rewards";
 import { equipItem, unequipItem } from "./systems/player/economy/inventory";
 import { craftRecipe } from "./systems/player/economy/crafting";
+import { evolveItem } from "./systems/player/economy/itemEvolution";
 import { craftRuneRecipe } from "./systems/player/economy/runeCrafting";
+import {
+  craftAbilityRecipe,
+  setAbilityLoadout,
+} from "./systems/player/economy/abilityCrafting";
+import {
+  craftStanceRecipe,
+  setStanceLoadout,
+} from "./systems/player/economy/stanceCrafting";
+import {
+  craftRiteRecipe,
+  setRiteLoadout,
+} from "./systems/player/economy/riteCrafting";
 import { upgradeItem } from "./systems/player/economy/itemUpgrade";
 import { grantDevLoadout } from "./systems/player/economy/grantDevWeapon";
 import {
@@ -843,9 +857,8 @@ async function boot(): Promise<void> {
       if (!p) return;
       if (!Array.isArray(rules)) return;
       const owned = new Set(p.tracksProgression.runesOwned);
-      const budget = runeBudgetForTier(
-        p.tracksProgression.playerTier,
-        p.tracksProgression.runePointBonus ?? 0,
+      const budget = runeBudgetForGlobalMastery(
+        globalMastery(p.tracksProgression.biomeLevel),
       );
       const valid = sanitizeRuneLoadout(
         rules,
@@ -876,11 +889,67 @@ async function boot(): Promise<void> {
       socket.emit("crafting:result", result);
     });
 
+    socket.on("crafting:evolveItem", (payload) => {
+      const p = liveSelf();
+      if (!p || !payload || typeof payload.recipeId !== "string") return;
+      if (payload.mode !== "evolve" && payload.mode !== "reconstruct") return;
+      const result = evolveItem(world, p, payload.recipeId, payload.mode);
+      socket.emit("crafting:result", result);
+    });
+
     socket.on("rune:craftRecipe", (recipeId: string) => {
       const p = liveSelf();
       if (!p || typeof recipeId !== "string") return;
       const result = craftRuneRecipe(world, p, recipeId);
       socket.emit("rune:craftResult", result);
+    });
+
+    socket.on("ability:craftRecipe", (recipeId: string) => {
+      const p = liveSelf();
+      if (!p || typeof recipeId !== "string") return;
+      const result = craftAbilityRecipe(world, p, recipeId);
+      socket.emit("ability:craftResult", result);
+    });
+
+    socket.on("ability:setLoadout", (payload) => {
+      const p = liveSelf();
+      if (!p || !payload) return;
+      if (payload.slot !== "technique" && payload.slot !== "guard") return;
+      const abilityId =
+        typeof payload.abilityId === "string" ? payload.abilityId : null;
+      setAbilityLoadout(world, p, payload.slot, abilityId);
+    });
+
+    socket.on("stance:craftRecipe", (recipeId: string) => {
+      const p = liveSelf();
+      if (!p || typeof recipeId !== "string") return;
+      const result = craftStanceRecipe(world, p, recipeId);
+      socket.emit("stance:craftResult", result);
+    });
+
+    socket.on("stance:setLoadout", (payload) => {
+      const p = liveSelf();
+      if (!p || !payload) return;
+      if (payload.slot !== "default" && payload.slot !== "reactive") return;
+      const stanceId =
+        typeof payload.stanceId === "string" ? payload.stanceId : null;
+      setStanceLoadout(world, p, payload.slot, stanceId);
+    });
+
+    socket.on("rite:craftRecipe", (recipeId: string) => {
+      const p = liveSelf();
+      if (!p || typeof recipeId !== "string") return;
+      const result = craftRiteRecipe(world, p, recipeId);
+      socket.emit("rite:craftResult", result);
+    });
+
+    socket.on("rite:setLoadout", (payload) => {
+      const p = liveSelf();
+      if (!p || !payload || !Array.isArray(payload.riteIds)) return;
+      const riteIds = payload.riteIds.filter(
+        (id): id is string => typeof id === "string",
+      );
+      setRiteLoadout(world, p, riteIds);
     });
 
     socket.on("inventory:upgradeItem", (itemId: string) => {

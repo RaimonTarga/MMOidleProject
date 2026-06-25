@@ -36,6 +36,13 @@ export const plainsMonsterEntries = [
     behavior: 'melee', attackStyle: 'impact', biome: 'plains',
     rewards: { essence: 2, essenceType: 'yellow', level: 1, biomeXp: 10 },
     ai: { wanderRadius: 250, leashRange: 640, idleMinMs: 1200, idleMaxMs: 4000 },
+    // Plains swarm: while chasing, slimes converge as a group (gentle cohesion) and
+    // fan out rather than stacking on one pixel (separation). Many-body pressure.
+    // Placeholder tuning — user balance pass.
+    swarm: { cohesion: 0.1, separation: 40 },
+    // Also the swarm body a Prairie Wolf "caller" rallies: as a pack follower it
+    // joins the call-allies net (roams + swarms solo when not in a caller's pack).
+    pack: { role: 'follower', callRange: 280 },
   }],
 
   ['boar', {
@@ -46,6 +53,8 @@ export const plainsMonsterEntries = [
     rewards: { essence: 3, essenceType: 'yellow', level: 1, biomeXp: 18 },
     ai: { wanderRadius: 260, leashRange: 660, idleMinMs: 1000, idleMaxMs: 3500 },
     chargeOnAggro: { speedMult: 2.5, durationMs: 1000 },
+    // Boars charge in as a converging herd, not single-file (swarm-catcher pressure).
+    swarm: { cohesion: 0.08, separation: 56 },
   }],
 
 
@@ -57,6 +66,10 @@ export const plainsMonsterEntries = [
     behavior: 'melee', attackStyle: 'slash', biome: 'plains',
     rewards: { essence: 6, essenceType: 'yellow', level: 1, biomeXp: 35 },
     ai: { wanderRadius: 290, leashRange: 720, idleMinMs: 700, idleMaxMs: 2800 },
+    // Plains CALLER (the brainstorm's "callers / small swarm group"): the fast runner
+    // rallies a slime swarm — spawns with 3 Plains Slimes and pulls them onto its
+    // target via call-allies when it engages. Placeholder counts/range — user pass.
+    pack: { role: 'alpha', callRange: 300, followers: [{ typeId: 'plains-slime', count: 3 }] },
   }],
 
   ['stampede-bull', {
@@ -67,6 +80,8 @@ export const plainsMonsterEntries = [
     rewards: { essence: 7, essenceType: 'yellow', level: 1, biomeXp: 40 },
     ai: { wanderRadius: 260, leashRange: 680, idleMinMs: 800, idleMaxMs: 3000 },
     chargeOnAggro: { speedMult: 2.5, durationMs: 1000 },
+    // A stampede is a herd: bulls converge as a group as they charge in.
+    swarm: { cohesion: 0.08, separation: 64 },
   }],
 
   ['savanna-hawk', {
@@ -74,7 +89,7 @@ export const plainsMonsterEntries = [
     // Ranged poke — pecks from distance, the anti-kite-from-afar of the plains.
     stats: { hp: 140, attack: 30, plating: 0, damageReduction: 0, speed: 50, attackRange: 165, attackCooldown: 2400, pullRange: 245 },
     behavior: 'melee', attackStyle: 'slash', isRanged: true, biome: 'plains',
-    rewards: { essence: 7, essenceType: 'yellow', level: 1, biomeXp: 38 },
+    rewards: { essence: 7, essenceType: 'green', level: 1, biomeXp: 38 }, // wild bird → Wild (biome mixture; tunable)
     ai: { wanderRadius: 280, leashRange: 680, idleMinMs: 1000, idleMaxMs: 3200 },
   }],
 

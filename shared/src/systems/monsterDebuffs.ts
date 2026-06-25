@@ -13,6 +13,22 @@ import type { StatusEffect } from '../components/combat/effects';
  */
 export const FROST_RAMP_EFFECT_ID = 'frost-ramp';
 
+/**
+ * Sun Mark (Desert mark/finisher pair) — a cleansable, non-DoT status the marker
+ * mob paints on the player. It does nothing on its own (expires harmlessly); it
+ * only lets a `markedStrike` finisher land amplified, and is consumed when it does.
+ * A plain status id so the Desert cleanse pass strips it like any other debuff.
+ */
+export const SUN_MARK_EFFECT_ID = 'sun-mark';
+
+/**
+ * Volcanic ambient heat (nodeFeatures.ambientHeat) — a node-wide escalating burn
+ * status the heat system ramps on players who fight in a volcanic node. Stacks grow
+ * with combat dwell time and ramp the burn ticks; decays out of combat / on leaving.
+ * Self-managed by the server heat pass (NOT a node-feature damage status).
+ */
+export const VOLCANIC_HEAT_EFFECT_ID = 'volcanic-heat';
+
 /** Movement-slow fraction (0..moveSlowMaxPct) from the current frost-ramp stacks. */
 export function frostRampMoveSlowPct(effect: StatusEffect): number {
   const perHit = effect.data['moveSlowPerHit'] ?? 0;

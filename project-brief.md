@@ -1,75 +1,55 @@
-# Project Brief — Cooperative MMO Idle Game
+# Project Brief — MMO Idle
 
-Use this document as the opening prompt / context for a new conversation focused on project setup and environment configuration.
-
----
-
-## Project overview
-
-I'm building a browser-based hobbyist game that mixes MMORPG and incremental/idle game mechanics.
-
-**Core concept:**
-
-- 2D, sprite-based, top-down view.
-- The world is made up of **nodes / tiles**, each of which is its own **instance**. Players in the same node see each other.
-- Player characters move **automatically** around an area inside their current node, fighting NPC monsters to grow stronger.
-- Movement is **freeform** (not tile-based), with no complex Z levels.
-- Combat is **automatic** — the player builds the character and makes strategic decisions, but doesn't twitch-dodge or parry. This means low refresh rates are acceptable and netcode can be simple.
-- Players can **see other players** and **party up** with them.
-- **No PvP.** The game is purely cooperative.
-
-**Scope:**
-
-- Hobbyist project — I'm making this to play with friends.
-- Target ceiling: **~100 concurrent players**. We do NOT design for thousands of players. If the game ever grows past that scope, we'll re-architect then.
-- I'll be using LLMs (Claude) to write most of the code, so the stack was chosen to maximize LLM training-data coverage and idiomatic-pattern density.
-
-**My background:**
-
-- Comfortable with JavaScript / TypeScript.
-- Limited backend expertise — I trust the LLM's judgment on architecture decisions.
+Brief overview for opening a new conversation. For agent context, the main reference
+is `CLAUDE.md`. For design context, see `design_docs/game-overview.md`.
 
 ---
 
-## Tech stack (decided)
+## What this is
 
-**Language**
+A browser-based hobbyist MMORPG / idle game for a small group of friends (~100 players).
+Characters fight automatically in a 2D top-down world. No twitch input — you build the
+character and make strategic decisions, the server resolves all outcomes.
 
-- **TypeScript** on both client and server. Shared types live in a shared package so client and server agree on entity shapes, socket message payloads, and game balance constants.
+- Fully cooperative, no PvP
+- Mobile and tablet friendly (portrait-first HUD)
+- Server authoritative ECS, split tick: 10 Hz logic / 5 Hz broadcast
 
-**Client**
+## Tech stack (current)
 
-- **Phaser 3** as the 2D game framework (handles sprites, animation, input, camera, scenes, tweens).
-- **No React.** In-game UI is built with Phaser; login / character-select pages are plain HTML.
-- **Vite** as the build tool and dev server.
-- Placeholder colored rectangles for art for now — real sprites/assets to be decided later.
+- **Language:** TypeScript (strict, everywhere)
+- **Client:** Phaser 3 + React 19 HUD + Vite on :3000
+- **Admin:** React ops dashboard + Vite on :3001
+- **Server:** Node.js + Express + Socket.IO + miniplex ECS on :4000
+- **Database:** PostgreSQL (game DB :5432, log DB :5433) + Drizzle ORM
+- **Cache:** Redis :6379
+- **Auth:** localStorage UUID (Discord OAuth is a TODO)
+- **Packages:** pnpm workspaces monorepo
 
-**Server**
+## Repo shape
 
-- **Node.js + Express** for HTTP routes (auth, account/character management, etc.).
-- **Socket.IO** for realtime player presence, with **one Socket.IO room per node instance**. Players in the same node see each other's positions/actions; leaving a node = leaving the room.
-- Server tick rate to be decided during implementation (likely 1–5 Hz given automatic combat).
+```
+client/   Phaser + React player app
+admin/    React ops dashboard
+server/   Express + Socket.IO + authoritative ECS simulation
+shared/   Cross-boundary types, protocol, pure formulas, static data
+tools/    Balance reports (dps-report, ehp-report, mob-report) + Rust TUI
+```
 
-**Database**
+## Current state (June 2026)
 
-- **SQLite** (single file on the VPS — easy backup, no separate DB process).
-- **Drizzle ORM** for type-safe queries and migrations.
+- Content authored through T4 (11×11 grid, 11 biomes, T0–T4 monsters + bosses + recipes)
+- 6 class archetypes: Cadence, Energy, DoT, Cooldown, Reload, Summoner
+- T0–T3 skill tree fully implemented; T4 specs in progress
+- Rune loadout system live; rune balance pass pending
+- Mobile HUD shell done; panel internals redesign in progress
+- Railway-style deployment in progress; admin auth not yet implemented
 
-**Auth**
+## Key design documents
 
-- **Discord OAuth.** No passwords to manage, everyone playing has Discord, free username + avatar.
-
-**Hosting (eventual deployment target)**
-
-- **Hetzner CX22** VPS (~€4/month) running Linux.
-- **Caddy** as reverse proxy (automatic HTTPS via Let's Encrypt).
-- **PM2** to keep the Node process alive and restart on crash.
-
-**Project layout**
-
-- **pnpm workspaces** monorepo with three packages:
-  - `client/` — Phaser game + Vite build
-  - `server/` — Express + Socket.IO + Drizzle
-  - `shared/` — TypeScript types and constants used by both sides
-
----
+- `design_docs/game-overview.md` — what the game is and how it plays (start here)
+- `design_docs/design-bible.md` — core invariants, biome roster, weapon archetypes, math baseline
+- `design_docs/player-power-curve.md` — stat bands, eHP/DPS lookup tables, monster tuning guide
+- `design_docs/boss-design.md` — boss philosophy, per-tier layer curve, stat anchors
+- `design_docs/roadmap-2026-06.md` — current active roadmap (T4 playable, ~2 weeks)
+- `CLAUDE.md` — agent coding guide (architecture rules, commands, ECS conventions)

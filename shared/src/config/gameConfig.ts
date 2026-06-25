@@ -103,9 +103,12 @@ export const GAME_CONFIG = {
   BIOME_ESSENCE_TIER_MULT: [
     1.0, 1.0, 0.85, 0.70, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55,
   ] as unknown as readonly number[],
-  BIOME_LEVEL_CAP_BY_TIER: [
-    5, 5, 9, 13, 17, 21, 25, 29, 33, 37, 41,
-  ] as unknown as readonly number[],
+  // ── Biome catalysts ─────────────────────────────────────────────────────────
+  /**
+   * Accumulated kill-weight (Σ monster `catalystWeight`) required to mint one
+   * biome catalyst. Placeholder — tuned in the balance pass (Step 15).
+   */
+  CATALYST_PROGRESS_PER_UNIT: 100,
 } as const;
 
 /**
@@ -147,8 +150,14 @@ export const BIOME_START_TIER_BY_GROUP: Record<string, number> = (() => {
   return map;
 })();
 
-/** Each tier spans this many biome levels. */
-export const BIOME_LEVELS_PER_TIER = 4;
+/**
+ * Each tier spans this many biome levels. Expanded 4 → 6 (system rework Step 3) to
+ * make reward space for skills/runes/cores. Levels 1–4 of each segment hold the
+ * existing item recipes; levels 5–6 are reward space filled by later steps. Drives
+ * {@link biomeLevelCap}, {@link biomeLevelOffset}, the XP-curve mapping, and the
+ * generic upgrade-requirement fallback in itemUpgrades.ts.
+ */
+export const BIOME_LEVELS_PER_TIER = 6;
 
 /**
  * Level offset for a biome whose start tier is above T1. A biome starting at
@@ -193,6 +202,22 @@ export function biomeXpForBiomeLevel(biomeGroup: string, n: number): number {
   const offset = biomeLevelOffset(biomeGroup);
   if (offset === 0) return biomeXpForLevel(n);
   return biomeXpForLevel(n + offset) - biomeXpForLevel(offset);
+}
+
+/**
+ * Global Mastery (system rework Step 4): a derived account-wide aggregate equal to
+ * the sum of every biome's level. Not persisted — recomputed from `biomeLevel`
+ * wherever it's needed. Rewards breadth (farming any biome raises it) and drives
+ * system-depth caps (rune-point budget, item upgrade ceiling) instead of granting
+ * direct stats. The `clearing` tutorial hub is excluded — it is not a real biome.
+ */
+export function globalMastery(biomeLevel: Record<string, number>): number {
+  let total = 0;
+  for (const [group, level] of Object.entries(biomeLevel)) {
+    if (group === 'clearing') continue;
+    total += Math.max(0, level);
+  }
+  return total;
 }
 
 export interface NodeSceneBounds {

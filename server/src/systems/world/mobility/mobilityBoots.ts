@@ -42,7 +42,9 @@ import {
 } from "../../combat/buffs/descriptor";
 
 // ── Status-effect ids (player tracksCombat) ─────────────────────────────────────
-const FOREST_HASTE = "mob-forest-haste"; // Forest on-kill speed
+// Exported so the Hunter's Instinct rite (system rework Step 11) can reuse the same
+// on-kill haste buff — the `mob-haste` descriptor projects it unconditionally.
+export const FOREST_HASTE = "mob-forest-haste"; // Forest on-kill speed
 const MOUNTAIN_BURST = "mob-mountain-burst"; // Mountain on-acquire speed
 const GRAVEYARD_HASTE = "mob-graveyard-haste"; // Graveyard on-kill speed + tenacity (stacks)
 const VOLCANIC_SUPPRESS = "mob-volcanic-suppress"; // Volcanic: suppresses passive speed on hit

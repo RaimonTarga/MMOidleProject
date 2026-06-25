@@ -313,12 +313,45 @@ const BIOME_GUARDIAN_MODIFIERS: Record<string, DungeonMonsterModifiers> = {
   mountain:  { hpMult: 1.15, atkMult: 1.35 },
   swamp:     { hpMult: 1.05, atkMult: 1.05, dotMult: 1.3 },
   cave:      { hpMult: 1.3, atkMult: 1.15, drAdd: 0.05 },
-  desert:    { hpMult: 1.2, atkMult: 1.15 },
-  jungle:    { atkMult: 1.05, attackSpeedMult: 1.2, moveSpeedMult: 1.08, dotMult: 1.2 },
+  desert:    { hpMult: 1.2, atkMult: 1.15, openingStrikeMult: 1.7 },
+  jungle:    { atkMult: 1.05, attackSpeedMult: 1.2, moveSpeedMult: 1.08, dotMult: 1.2, openingStrikeMult: 1.8 },
   tundra:    { hpMult: 1.2, atkMult: 1.05 },
   volcanic:  { hpMult: 1.0, atkMult: 1.25, attackSpeedMult: 1.1, dotMult: 1.25 },
   graveyard: { attackSpeedMult: 1.2, moveSpeedMult: 1.1, dotMult: 1.25 },
-  trench:    { hpMult: 1.35, atkMult: 1.3 },
+  trench:    { hpMult: 1.35, atkMult: 1.3, openingStrikeMult: 1.9 },
+};
+
+export const BIOME_GUARDIAN_NAMES: Record<string, string> = {
+  plains:    "Prairie Defender",
+  forest:    "Forest Sentinel",
+  mountain:  "Stone Warden",
+  swamp:     "Mire Keeper",
+  cave:      "Deep Stalker",
+  desert:    "Dune Keeper",
+  jungle:    "Jungle Warden",
+  tundra:    "Frost Warden",
+  volcanic:  "Ember Warden",
+  graveyard: "Grave Warden",
+  trench:    "Abyssal Guardian",
+};
+
+export interface BiomeGauntletMessages {
+  activation: string;
+  bossAwakening: string;
+}
+
+export const BIOME_GAUNTLET_MESSAGES: Record<string, BiomeGauntletMessages> = {
+  plains:    { activation: "The sentinels raise their shields.", bossAwakening: "Something massive stirs at the heart of the plains." },
+  forest:    { activation: "The sentinels stir. The canopy closes in.", bossAwakening: "Ancient roots tremble. The forest's guardian awakens." },
+  mountain:  { activation: "The stone wardens rumble to life.", bossAwakening: "The summit shudders. A great weight stirs from below." },
+  swamp:     { activation: "The mire answers. The keepers close in.", bossAwakening: "The miasma thickens. The rot-lord stirs." },
+  cave:      { activation: "The deep answers. Stalkers emerge from the dark.", bossAwakening: "The depths roar. Something old stirs in the dark." },
+  desert:    { activation: "The sands shift. The dune keepers rise.", bossAwakening: "The dunes heave. The desert's warden rises." },
+  jungle:    { activation: "The canopy erupts. Wardens spring from the shadows.", bossAwakening: "The canopy falls silent. A predator approaches." },
+  tundra:    { activation: "The cold deepens. Frost wardens advance.", bossAwakening: "The cold sharpens. The tundra's sovereign stirs." },
+  volcanic:  { activation: "The heat surges. Ember wardens ignite.", bossAwakening: "The magma surges. An infernal lord awakens." },
+  graveyard: { activation: "The dead answer. Grave wardens shamble forth.", bossAwakening: "The grave hums. The death-lord stirs." },
+  trench:    { activation: "The deep opens. Abyssal guardians surface.", bossAwakening: "The pressure drops. Something vast rises from the abyss." },
 };
 
 const BIOME_GUARDIAN_COUNTS: Record<string, number> = {

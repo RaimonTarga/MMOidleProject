@@ -6,7 +6,7 @@ import {
   TEST_ROOM_NODE_ID,
   distanceSq,
 } from "@mmo-idle/shared";
-import type { AggroTargetKind, Vec2 } from "@mmo-idle/shared";
+import type { AggroTargetKind, MonsterDefinition, Vec2 } from "@mmo-idle/shared";
 import { grantMonsterRewards } from "../../player/progression/rewards";
 import { makeCombatContext, emitCombatEvent } from "./combatPipeline";
 import {
@@ -19,7 +19,9 @@ import {
   setCounter,
   addCounter,
   getStatusEffect,
+  removeStatusEffect,
   FROST_RAMP_EFFECT_ID,
+  SUN_MARK_EFFECT_ID,
   frostRampMaxStacks,
   frostRampAtkSlowPct,
   CHAOTIC_HIT_COUNTER_KEY,
@@ -28,9 +30,10 @@ import { getAntiHealMult } from "../../defense";
 import { applyPlayerAoe, applyMonsterAoe } from "../damage/aoeDamage";
 import { canApplyPlayerDebuff } from "../../classes/archetypes/summoner/t3/core/debuffGuard";
 import { evadeBlocksDebuffs } from "../../defense/mitigation/evasion";
-import { isMonsterStunned } from "../status/stun";
+import { isMonsterStunned, applyStun } from "../status/stun";
 import { setAggroTarget, setAttackTarget } from "../ai/targeting";
 import { markEngaged } from "../ai/engagement";
+import { oocRegenDelay } from "../../player/rites/riteOoc";
 import { mobilityTenacityDurationMult } from "../../world/mobility/mobilityBoots";
 import type {
   MinionEntity,
@@ -54,6 +57,48 @@ import {
 
 export type PlayerAttackOutcome = "cancelled" | "dodged" | "hit" | "killed";
 export type MonsterAttackOutcome = "cancelled" | "hit" | "killed";
+
+/**
+ * Tundra ICE-ARMOR shatter (fires when a player hit breaks the mob's frost barrier).
+ * Cracks the shell for bonus self-damage (rewarding the burst that broke it) and sends
+ * a freezing shockwave that briefly STUNS nearby non-boss enemies (crowd-control upside
+ * that helps melee fighting in the pile — never touches the player). Telegraphed by a
+ * frost-shatter pulse. No-op unless the mob defines `enemyShield.shatter`.
+ */
+function applyIceShatter(
+  world: World,
+  target: MonsterEntity,
+  def: MonsterDefinition | undefined,
+  _now: number,
+): void {
+  const shatter = def?.enemyShield?.shatter;
+  if (!shatter) return;
+
+  const bonus = Math.max(
+    1,
+    Math.round(target.hasHealth.maxHp * shatter.selfDamagePct),
+  );
+  target.hasHealth.hp -= bonus;
+
+  const nodeId = target.hasPosition.nodeId;
+  const r2 = shatter.freezeRadius * shatter.freezeRadius;
+  for (const other of world.monsterEntitiesInNode(nodeId)) {
+    if (other === target || other.isMonster.isBoss) continue;
+    if (
+      distanceSq(other.hasPosition.current, target.hasPosition.current) > r2
+    ) {
+      continue;
+    }
+    applyStun(other.tracksCombat, shatter.freezeDurationMs, target.isMonster.id);
+  }
+
+  world.pushEvent(nodeId, {
+    kind: "ecology-pulse",
+    monsterId: target.isMonster.id,
+    pos: { ...target.hasPosition.current },
+    pulse: "frost-shatter",
+  });
+}
 
 /**
  * Run a single attack from `player` onto `target`. Drives the full combat
@@ -330,6 +375,12 @@ export function runPlayerAttack(
   }
 
   target.hasHealth.hp -= ctx.damage;
+  // Tundra ice-armor shatter: breaking the frost barrier cracks it for bonus damage
+  // and freezes nearby enemies (applied before the death check below so the bonus can
+  // finish the mob). No-op unless the mob defines enemyShield.shatter.
+  if (enemyShieldResult.broke) {
+    applyIceShatter(world, target, monsterDef, now);
+  }
   target.controlsMonster.spawn = { ...target.hasPosition.current };
 
   if (
@@ -481,23 +532,42 @@ export function runMonsterAttack(
 
   emitCombatEvent("onAttack", ctx, world);
 
+  // Core second DR layer (system rework Step 9): a separate MULTIPLICATIVE damage-
+  // reduction layer stacked with base DR — final = base × (1 − DR) × (1 − drLayer2).
+  // So 50% base + 50% layer ⇒ 25% taken, not immunity. Read from the player's core
+  // passive (mirrors how shared.damage-mult is read in the pipeline); clamped to 0.9.
+  const drLayer2 = Math.min(0.9, Math.max(0, target.usesSkills.passives['core.dr-layer-pct'] ?? 0));
   ctx.damage = Math.max(
     1,
     Math.round(
       Math.max(0, monster.dealsDamage.attack - target.mitigatesDamage.plating) *
-        (1 - target.mitigatesDamage.damageReduction),
+        (1 - target.mitigatesDamage.damageReduction) *
+        (1 - drLayer2),
     ),
   );
 
-  // T4 monster empowered attacks (cadence finisher / cooldown spike). Multiply
-  // the already-mitigated damage BEFORE onHit/onDamageTaken so the player's
-  // damage-cap, shields, plating and DR all apply to the boosted hit — the same
-  // path a player empowered attack takes. Deterministic (counter + timer).
-  const empoweredMult = monsterEmpoweredMultiplier(
-    monster,
-    MONSTER_DATABASE.get(monster.isMonster.monsterTypeId),
-    now,
-  );
+  const def = MONSTER_DATABASE.get(monster.isMonster.monsterTypeId);
+
+  // T4 monster empowered attacks (cadence finisher / cooldown spike / opening
+  // strike). Multiply the already-mitigated damage BEFORE onHit/onDamageTaken so
+  // the player's damage-cap, shields, plating and DR all apply to the boosted hit —
+  // the same path a player empowered attack takes. Deterministic (counter + timer).
+  let empoweredMult = monsterEmpoweredMultiplier(monster, def, now);
+
+  // Sun Mark finisher (Desert): a hit landed on a marked player is amplified and
+  // consumes the mark. The marker mob (`appliesMark`) sets it up; the finisher
+  // (`markedStrike`) cashes it in. Folds into the same empowered spike path.
+  const markedStrike = def?.markedStrike;
+  if (
+    markedStrike &&
+    markedStrike.multiplier > 1 &&
+    getStatusEffect(target.tracksCombat, SUN_MARK_EFFECT_ID)
+  ) {
+    empoweredMult *= markedStrike.multiplier;
+    removeStatusEffect(target.tracksCombat, SUN_MARK_EFFECT_ID);
+    ctx.metadata["sunMarkConsumed"] = true;
+  }
+
   if (empoweredMult > 1) {
     ctx.damage = Math.max(1, Math.round(ctx.damage * empoweredMult));
     ctx.metadata["empoweredAttack"] = true;
@@ -589,9 +659,34 @@ export function runMonsterAttack(
   target.hasHealth.hp -= ctx.damage;
   monster.performsAttack.lastAttackAt = now;
 
-  const slow = MONSTER_DATABASE.get(
-    monster.isMonster.monsterTypeId,
-  )?.slowEffect;
+  // Sun Mark setup (Desert): the marker paints a cleansable mark the finisher cashes
+  // in. Edge-triggered telegraph — a one-shot pulse only when the mark is freshly
+  // applied (not on every refresh). Skipped on an evaded hit, like every debuff.
+  const mark = def?.appliesMark;
+  if (mark && canApplyPlayerDebuff(target) && !evadeBlocksDebuffs(ctx)) {
+    const fresh = !getStatusEffect(target.tracksCombat, SUN_MARK_EFFECT_ID);
+    const markMs = Math.round(
+      mark.durationMs * mobilityTenacityDurationMult(target),
+    );
+    applyStatusEffect(target.tracksCombat, {
+      id: SUN_MARK_EFFECT_ID,
+      maxStacks: 1,
+      remainingMs: markMs,
+      refreshable: true,
+      sourceId: monster.isMonster.id,
+      data: { totalMs: markMs },
+    });
+    if (fresh) {
+      world.pushEvent(target.hasPosition.nodeId, {
+        kind: "ecology-pulse",
+        monsterId: monster.isMonster.id,
+        pos: { ...monster.hasPosition.current },
+        pulse: "sun-mark",
+      });
+    }
+  }
+
+  const slow = def?.slowEffect;
   if (slow && canApplyPlayerDebuff(target) && !evadeBlocksDebuffs(ctx)) {
     // Mobility-boot tenacity (Swamp + Graveyard stacks) shortens the CC duration.
     const slowMs = Math.round(
@@ -610,11 +705,27 @@ export function runMonsterAttack(
     });
   }
 
+  // Trench "abyssal pressure" — stack the player's `antiheal` status (suppresses ALL
+  // healing via getAntiHealMult), so you can't out-heal an abyssal terror and must
+  // burst/execute it. Decays after the last hit. Skipped on an evaded hit.
+  const antiheal = def?.appliesAntiheal;
+  if (antiheal && canApplyPlayerDebuff(target) && !evadeBlocksDebuffs(ctx)) {
+    const durMs = Math.round(
+      antiheal.durationMs * mobilityTenacityDurationMult(target),
+    );
+    applyStatusEffect(target.tracksCombat, {
+      id: "antiheal",
+      maxStacks: antiheal.maxStacks,
+      remainingMs: durMs,
+      refreshable: true,
+      sourceId: monster.isMonster.id,
+      data: { reductionPerStack: antiheal.reductionPerStack, totalMs: durMs },
+    });
+  }
+
   // Tundra rampDebuff — stacking move-slow + attack-slow on the player, each
   // capped, decaying stackDurationMs after the last hit (refreshed every hit).
-  const rampDebuff = MONSTER_DATABASE.get(
-    monster.isMonster.monsterTypeId,
-  )?.rampDebuff;
+  const rampDebuff = def?.rampDebuff;
   if (rampDebuff && canApplyPlayerDebuff(target) && !evadeBlocksDebuffs(ctx)) {
     const durMs = Math.round(
       rampDebuff.stackDurationMs * mobilityTenacityDurationMult(target),
@@ -713,7 +824,7 @@ export function updateCombat(world: World, dt: number, now: number) {
     if (player.cannotAttack) {
       setAttackTarget(world, player, null);
       const lastCombat = player.tracksEngagement;
-      if (lastCombat === undefined || now - lastCombat > GAME_CONFIG.COMBAT_REGEN_DELAY) {
+      if (lastCombat === undefined || now - lastCombat > oocRegenDelay(player)) {
         const cs = player.tracksCombat;
         const rawRegen = player.hasHealth.maxHp * ((player.hasHealth.hpRegen ?? 0) / 100) * (dt / 1000);
         const healAmount = cs ? rawRegen * getAntiHealMult(cs) : rawRegen;
@@ -779,7 +890,7 @@ export function updateCombat(world: World, dt: number, now: number) {
       const lastCombat = player.tracksEngagement;
       if (
         lastCombat === undefined ||
-        now - lastCombat > GAME_CONFIG.COMBAT_REGEN_DELAY
+        now - lastCombat > oocRegenDelay(player)
       ) {
         const cs = player.tracksCombat;
         const rawRegen =

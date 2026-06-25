@@ -482,6 +482,28 @@ export function formatMechanicEffects(fx: Record<string, number> | undefined): s
     mark('defense.evade-mitigation');
   }
 
+  // Cores (Step 9): percentage multipliers on overall stats + a separate
+  // multiplicative damage-reduction layer. Signed so decreases read as "-15%".
+  const signedPctK = (k: string) => {
+    const v = Math.round((fx[k] ?? 0) * 100);
+    return `${v >= 0 ? '+' : ''}${v}%`;
+  };
+  const coreMults: [string, string][] = [
+    ['core.attack-mult',       'attack'],
+    ['core.maxhp-mult',        'max HP'],
+    ['core.plating-mult',      'plating'],
+    ['core.speed-mult',        'move speed'],
+    ['core.attack-speed-mult', 'attack speed'],
+    ['core.hpregen-mult',      'HP regen'],
+  ];
+  for (const [k, label] of coreMults) {
+    if (has(k)) { lines.push(`${signedPctK(k)} ${label}`); mark(k); }
+  }
+  if (has('core.dr-layer-pct')) {
+    lines.push(`${pctK('core.dr-layer-pct')} damage reduction (separate multiplicative layer)`);
+    mark('core.dr-layer-pct');
+  }
+
   // Burn-DoT weapons describe their effect via formatWeaponEffects (BURN_FAMILY,
   // derived from the recipe's weaponDot block) — no mirror mechanic keys to consume.
 

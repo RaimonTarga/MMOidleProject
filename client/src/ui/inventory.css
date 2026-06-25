@@ -216,6 +216,13 @@
   background: rgba(8, 26, 14, 0.98);
 }
 
+/* Core whose range tag doesn't match the selected range — equipped but contributing
+   nothing (Step 9). Dimmed + warm border to read as "inactive". */
+.inv-equip-slot--inactive {
+  opacity: 0.5;
+  border-color: rgba(160, 90, 70, 0.6) !important;
+}
+
 /* Icon strip — fixed width on the left */
 .inv-equip-slot__icon {
   flex: 0 0 44px;
@@ -395,6 +402,19 @@
   color: #666688;
   text-transform: uppercase;
   letter-spacing: 0.7px;
+}
+
+/* Core range tag (Step 9) */
+.inv-stat-sheet__core-range {
+  margin-top: 2px;
+  font-size: 9px;
+  color: #6fd0ff;
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+}
+
+.inv-stat-sheet__core-range--inactive {
+  color: #cc6655;
 }
 
 /* Stat rows */

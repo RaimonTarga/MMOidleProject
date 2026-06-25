@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useAtomValue } from "jotai";
-import { ESSENCE_TYPES, ESSENCE_COLORS } from "@mmo-idle/shared";
+import { ESSENCE_TYPES, ESSENCE_COLORS, ESSENCE_LABELS } from "@mmo-idle/shared";
 import type { EssenceType } from "@mmo-idle/shared";
 import { essencesAtom } from "./atoms";
 import "./essence.css";
@@ -50,7 +50,7 @@ export function EssencePanel() {
             >
               <span className="essence-dot" style={{ background: ESSENCE_COLORS[type] }} />
               <span className="essence-name">
-                {type.charAt(0).toUpperCase() + type.slice(1)}
+                {ESSENCE_LABELS[type]}
               </span>
               <span className="essence-value" style={{ color: ESSENCE_COLORS[type] }}>
                 {essences[type] ?? 0}

@@ -1,4 +1,4 @@
-import type { AutocombatConfig, EquipmentSlot, EquippedRule, Vec2 } from '@mmo-idle/shared';
+import type { AbilitySlot, AutocombatConfig, EquipmentSlot, EquippedRule, EvolveMode, StanceSlot, Vec2 } from '@mmo-idle/shared';
 import type { GameSocket } from './socket';
 
 export function sendMove(socket: GameSocket, pos: Vec2): void {
@@ -59,6 +59,39 @@ export function sendCraftRuneRecipe(socket: GameSocket, recipeId: string): void 
   socket.emit('rune:craftRecipe', recipeId);
 }
 
+export function sendCraftAbilityRecipe(socket: GameSocket, recipeId: string): void {
+  socket.emit('ability:craftRecipe', recipeId);
+}
+
+export function sendSetAbilityLoadout(
+  socket: GameSocket,
+  payload: { slot: AbilitySlot; abilityId: string | null },
+): void {
+  socket.emit('ability:setLoadout', payload);
+}
+
+export function sendCraftStanceRecipe(socket: GameSocket, recipeId: string): void {
+  socket.emit('stance:craftRecipe', recipeId);
+}
+
+export function sendSetStanceLoadout(
+  socket: GameSocket,
+  payload: { slot: StanceSlot; stanceId: string | null },
+): void {
+  socket.emit('stance:setLoadout', payload);
+}
+
+export function sendCraftRiteRecipe(socket: GameSocket, recipeId: string): void {
+  socket.emit('rite:craftRecipe', recipeId);
+}
+
+export function sendSetRiteLoadout(
+  socket: GameSocket,
+  payload: { riteIds: string[] },
+): void {
+  socket.emit('rite:setLoadout', payload);
+}
+
 export function sendEquipItem(socket: GameSocket, definitionId: string): void {
   socket.emit('inventory:equipItem', definitionId);
 }
@@ -69,6 +102,13 @@ export function sendUnequip(socket: GameSocket, slot: EquipmentSlot): void {
 
 export function sendCraftRecipe(socket: GameSocket, recipeId: string): void {
   socket.emit('crafting:craftRecipe', recipeId);
+}
+
+export function sendEvolveItem(
+  socket: GameSocket,
+  payload: { recipeId: string; mode: EvolveMode },
+): void {
+  socket.emit('crafting:evolveItem', payload);
 }
 
 export function sendUpgradeItem(socket: GameSocket, itemId: string): void {

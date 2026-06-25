@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useAtomValue } from 'jotai';
 import type { AdminCharacterRecord } from '@mmo-idle/shared';
-import { ESSENCE_TYPES } from '@mmo-idle/shared';
+import { ESSENCE_TYPES, ESSENCE_LABELS } from '@mmo-idle/shared';
 import { charactersAtom, playersAtom } from '../state';
 import { requestCharacters } from '../socket';
 import { Badge } from '@/components/ui/badge';
@@ -110,7 +110,7 @@ function CharacterRow({
       </td>
       <td className="px-3 py-3">{character.nodeId}</td>
       <td className="px-3 py-3">
-        <div>Lv {character.level} · T{character.playerTier} · {character.skillPoints} pts</div>
+        <div>Lv {character.level} · T{character.playerTier} · {character.skillPoints} pts · GM {character.globalMastery}</div>
         <div className="mt-1 h-1.5 rounded-full bg-red-950/80">
           <div
             className="h-1.5 rounded-full bg-red-400"
@@ -128,12 +128,24 @@ function CharacterRow({
       <td className="px-3 py-3">
         <div>{character.inventoryCount} bag</div>
         <div className="text-xs text-red-200/35">{character.equipmentCount} equipped</div>
+        <div className="text-xs text-red-200/35">
+          T:{character.equippedAbilities?.technique ?? '—'} / G:{character.equippedAbilities?.guard ?? '—'}
+          {` (${character.knownAbilities?.length ?? 0} known)`}
+        </div>
+        <div className="text-xs text-red-200/35">
+          Stance:{character.equippedStances?.default ?? '—'} / {character.equippedStances?.reactive ?? '—'}
+          {` (active: ${character.activeStance ?? '—'}, ${character.knownStances?.length ?? 0} known)`}
+        </div>
+        <div className="text-xs text-red-200/35">
+          Rites:{character.equippedRites?.length ? character.equippedRites.join(', ') : '—'}
+          {` (${character.knownRites?.length ?? 0} known)`}
+        </div>
       </td>
       <td className="px-3 py-3">
         <div className="grid grid-cols-2 gap-x-3 gap-y-1 text-xs">
           {ESSENCE_TYPES.map((type) => (
             <span key={type}>
-              <span className="text-red-200/35">{type}</span> {character.essences[type] ?? 0}
+              <span className="text-red-200/35">{ESSENCE_LABELS[type]}</span> {character.essences[type] ?? 0}
             </span>
           ))}
         </div>

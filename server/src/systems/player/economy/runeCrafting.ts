@@ -4,9 +4,9 @@ import {
   RUNE_RECIPE_DATABASE,
   TEST_ROOM_NODE_ID,
   isRuneRecipeAvailableForArchetype,
+  isRuneRecipeUnlocked,
   isRuneFragmentKnown,
   runeIdsFromCraftedRecipes,
-  runePointBonusFromCraftedRecipes,
 } from "@mmo-idle/shared";
 import type { World } from "../../../world/World";
 import type { PlayerEntity } from "../../../ecs/entity";
@@ -39,10 +39,15 @@ export function craftRuneRecipe(
       entity.tracksProgression.essences[type] = TEST_ROOM_ESSENCE_AMOUNT;
     }
   } else if (
-    recipe.requiredBossClear &&
-    !entity.tracksProgression.bossesCleared.includes(recipe.requiredBossClear)
+    !isRuneRecipeUnlocked(recipe, {
+      biomeLevel: entity.tracksProgression.biomeLevel,
+      bossesCleared: entity.tracksProgression.bossesCleared,
+    })
   ) {
-    return { recipeId, success: false, reason: "Defeat the linked boss to unlock this recipe." };
+    const reason = recipe.recipeGroup
+      ? `Reach ${recipe.recipeGroup} level ${recipe.requiredBiomeLevel} to unlock this recipe.`
+      : "Defeat the linked boss to unlock this recipe.";
+    return { recipeId, success: false, reason };
   }
 
   if (recipe.kind === "unlock-rune") {
@@ -78,7 +83,6 @@ export function craftRuneRecipe(
   const nextCrafted = [...crafted, recipeId];
   entity.tracksProgression.runeRecipesCrafted = nextCrafted;
   entity.tracksProgression.runesOwned = runeIdsFromCraftedRecipes(nextCrafted);
-  entity.tracksProgression.runePointBonus = runePointBonusFromCraftedRecipes(nextCrafted);
   markSliceDirty(world, entity, "tracksProgression");
   return { recipeId, success: true };
 }

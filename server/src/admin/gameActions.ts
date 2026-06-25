@@ -1,6 +1,9 @@
 import {
   DEFAULT_RUNE_LOADOUT,
   emptyEquipment,
+  emptyEquippedAbilities,
+  emptyEquippedStances,
+  emptyEquippedRites,
   ESSENCE_TYPES,
   GAME_CONFIG,
   NODE_BIOMES,
@@ -84,9 +87,15 @@ export function resetPlayerProgress(world: World, player: PlayerEntity): GameAct
   player.tracksProgression.bossesCleared = [];
   player.tracksProgression.clearedNodes = [];
   player.tracksProgression.runeRecipesCrafted = [];
-  player.tracksProgression.runePointBonus = 0;
   player.tracksProgression.runesOwned = runeIdsFromCraftedRecipes([]);
   player.tracksProgression.runesEquipped = DEFAULT_RUNE_LOADOUT.map((rule) => ({ ...rule }));
+  player.tracksProgression.knownAbilities = [];
+  player.tracksProgression.equippedAbilities = emptyEquippedAbilities();
+  player.tracksProgression.knownStances = [];
+  player.tracksProgression.equippedStances = emptyEquippedStances();
+  player.tracksProgression.activeStance = null;
+  player.tracksProgression.knownRites = [];
+  player.tracksProgression.equippedRites = emptyEquippedRites();
   for (const type of ESSENCE_TYPES) {
     player.tracksProgression.essences[type] = 0;
   }

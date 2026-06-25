@@ -501,6 +501,57 @@ export const MOBILITY_KEYS = [
   'mobility.kill-stack-ms',
 ] as const;
 
+// Guard-ability amplifiers (system rework Step 8). Carried by charms (recovery
+// slot); only do anything while a Guard ability is equipped. Read at fire time in
+// server/src/systems/player/abilities/abilityFiring.ts.
+export const GUARD_KEYS = [
+  // Shorten the Guard ability's cooldown by this fraction (fire it more often).
+  'guard.cooldown-reduction-pct',
+  // Scale the Guard effect magnitude (e.g. damage-reduction drPct) by (1 + X).
+  'guard.potency-pct',
+  // Extend the Guard buff duration by (1 + X).
+  'guard.duration-pct',
+  // Heal X% of maxHp into the recovery pool when the Guard fires.
+  'guard.heal-on-fire-pct',
+] as const;
+
+// Core amplifiers (system rework Step 9). Carried by the `core` equipment slot.
+// Percentage multipliers on the FINAL summed stat — sources add (e.g. two +10%
+// = +20%), applied once in recalculatePlayerStats' core-multiplier pass. Negative
+// values reduce (e.g. -0.15 = -15%). `core.dr-layer-pct` is the exception: it is a
+// SEPARATE multiplicative damage-reduction layer applied in the combat pipeline
+// (final = base × (1 − DR) × (1 − dr-layer)), clamped to 0.9, NOT a stat multiplier.
+export const CORE_KEYS = [
+  'core.attack-mult',
+  'core.maxhp-mult',
+  'core.plating-mult',
+  'core.speed-mult',
+  'core.attack-speed-mult',
+  'core.hpregen-mult',
+  'core.dr-layer-pct',
+] as const;
+
+// Rite OOC behaviors (system rework Step 11). Carried by equipped rites (always-on
+// while equipped); fold into usesSkills.passives like any mechanicEffect, then read
+// by the out-of-combat systems (not the in-combat stat path). See
+// server/src/systems/player/rites/riteOoc.ts + server/src/systems/defense/index.ts.
+export const RITE_KEYS = [
+  // Quickened Breath: shorten the post-combat regen delay by this fraction (regen
+  // resumes sooner). Read by the defense regen gate.
+  'rite.ooc-regen-delay-reduction-pct',
+  // Cleansing Breath: every `interval-ms` while OOC, strip this many stacks from
+  // each debuff/DoT status effect on the player.
+  'rite.ooc-cleanse-stacks',
+  'rite.ooc-cleanse-interval-ms',
+  // Lingering Momentum: slow the OOC decay of neutral buffs by this fraction
+  // (extend their remaining duration each tick while out of combat).
+  'rite.ooc-buff-decay-slowdown-pct',
+  // Hunter's Instinct: on kill, grant a movement-haste buff of this magnitude for
+  // this duration (reuses the mobility on-kill haste machinery).
+  'rite.on-kill-haste-pct',
+  'rite.on-kill-haste-ms',
+] as const;
+
 // ── Derived types (zero duplication) ──────────────────────────────────────────
 
 export type DefensePassiveKey  = typeof DEFENSE_KEYS[number];
@@ -512,11 +563,15 @@ export type DotPassiveKey      = typeof DOT_KEYS[number];
 export type SharedPassiveKey   = typeof SHARED_KEYS[number];
 export type SummonerPassiveKey = typeof SUMMONER_KEYS[number];
 export type MobilityPassiveKey = typeof MOBILITY_KEYS[number];
+export type GuardPassiveKey    = typeof GUARD_KEYS[number];
+export type CorePassiveKey     = typeof CORE_KEYS[number];
+export type RitePassiveKey     = typeof RITE_KEYS[number];
 
 export type PassiveKey =
   | DefensePassiveKey | CadencePassiveKey | CooldownPassiveKey
   | ReloadPassiveKey  | EnergyPassiveKey  | DotPassiveKey
-  | SharedPassiveKey  | SummonerPassiveKey | MobilityPassiveKey;
+  | SharedPassiveKey  | SummonerPassiveKey | MobilityPassiveKey
+  | GuardPassiveKey   | CorePassiveKey    | RitePassiveKey;
 
 export type PassiveMap      = Partial<Record<PassiveKey, number>>;
 export type MechanicEffects = Partial<Record<PassiveKey, number>>;
@@ -525,7 +580,7 @@ export type MechanicEffects = Partial<Record<PassiveKey, number>>;
 export const ALL_PASSIVE_KEYS = [
   ...DEFENSE_KEYS, ...CADENCE_KEYS, ...COOLDOWN_KEYS,
   ...RELOAD_KEYS, ...ENERGY_KEYS, ...DOT_KEYS, ...SHARED_KEYS, ...SUMMONER_KEYS,
-  ...MOBILITY_KEYS,
+  ...MOBILITY_KEYS, ...GUARD_KEYS, ...CORE_KEYS, ...RITE_KEYS,
 ] as const;
 
 // ── Helpers ───────────────────────────────────────────────────────────────────

@@ -5,6 +5,7 @@ import {
   GAME_CONFIG,
   ITEM_DATABASE, RECIPE_DATABASE, upgradeStatBonusTotal,
   resolveEmpoweredMultiplier,
+  coreIsActive, isDirectionalCore,
 } from '@mmo-idle/shared';
 import { hudBus } from '../../hudBus';
 import {
@@ -22,6 +23,7 @@ import {
   onHitDamageAtom,
   passivesAtom,
   platingAtom,
+  selectedRangeAtom,
   speedAtom,
 } from '../../hud/atoms';
 import { SLOT_LABELS, biomeName, tierColor } from './constants';
@@ -76,6 +78,7 @@ export function StatSheet({ focused, onFocus }: Props) {
   const itemUpgrades    = useAtomValue(itemUpgradesAtom);
   const passives        = useAtomValue(passivesAtom);
   const combatArchetype = useAtomValue(combatArchetypeAtom);
+  const selectedRange   = useAtomValue(selectedRangeAtom);
 
   const empMult = resolveEmpoweredMultiplier(passives, combatArchetype);
 
@@ -176,6 +179,19 @@ export function StatSheet({ focused, onFocus }: Props) {
           {info.recipe?.recipeGroup && (
             <div className="inv-stat-sheet__biome">{biomeName(info.recipe.recipeGroup)}</div>
           )}
+          {info.slot === 'core' && info.itemDef.rangeTag && (() => {
+            const tag      = info.itemDef.rangeTag;
+            const active   = coreIsActive(tag, selectedRange);
+            const gated    = isDirectionalCore(tag);
+            const label    = gated
+              ? `${tag.toUpperCase()} range`
+              : tag === 'universal' ? 'Universal (any range)' : 'Party (any range)';
+            return (
+              <div className={`inv-stat-sheet__core-range${active ? '' : ' inv-stat-sheet__core-range--inactive'}`}>
+                {label}{gated ? (active ? ' · active' : ' · inactive') : ''}
+              </div>
+            );
+          })()}
         </div>
       ) : (
         <div className="inv-stat-sheet__heading">YOUR STATS</div>

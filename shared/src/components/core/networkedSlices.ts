@@ -14,6 +14,9 @@ import type { SubVariant } from '../../skillTree';
 import type { CombatArchetype, MonsterAIState } from '../../types/combat';
 import type { HasHitbox } from '../../hitbox/types';
 import type { EquippedRule } from '../../runeDatabase';
+import type { EquippedAbilities } from '../../abilities';
+import type { EquippedStances } from '../../stances';
+import type { EquippedRites } from '../../rites';
 
 export type { HasHitbox };
 
@@ -211,6 +214,19 @@ export interface TracksProgression {
   level: number;
   skillPoints: number;
   essences: Record<EssenceType, number>;
+  /**
+   * Biome catalysts wallet, keyed by biome group (e.g. `forest`). One catalyst
+   * per biome group, uncapped. Minted from `catalystProgress` crossing a
+   * threshold; spent alongside essence on catalyst-gated recipes/upgrades.
+   */
+  catalysts: Record<string, number>;
+  /**
+   * Accumulating kill-progress toward the next catalyst, keyed by biome group.
+   * Each kill adds the monster's catalyst weight; crossing
+   * `GAME_CONFIG.CATALYST_PROGRESS_PER_UNIT` mints 1 catalyst and carries the
+   * remainder.
+   */
+  catalystProgress: Record<string, number>;
   biomeXP: Record<string, number>;
   biomeLevel: Record<string, number>;
   unlockedRecipes: string[];
@@ -225,10 +241,39 @@ export interface TracksProgression {
   runesOwned: string[];
   /** One-time rune forge recipes the player has crafted. */
   runeRecipesCrafted: string[];
-  /** Permanent bonus rune points from crafted capacity recipes. */
-  runePointBonus: number;
   /** Assembled rune rules, ordered (loadout). Drives the auto-combat config. */
   runesEquipped: EquippedRule[];
+  /**
+   * Abilities the player has learned (crafted) — the slottable pool
+   * (system rework Step 7). Stored here like runes (build/loadout data).
+   */
+  knownAbilities: string[];
+  /** Equipped abilities by slot: Technique (offensive) + Guard (defensive). */
+  equippedAbilities: EquippedAbilities;
+  /**
+   * Stances the player has learned (crafted) — the slottable pool
+   * (system rework Step 10). Stored here like runes/abilities (build/loadout data).
+   */
+  knownStances: string[];
+  /** Equipped stances by slot: default (active posture) + reactive (auto-switch target). */
+  equippedStances: EquippedStances;
+  /**
+   * Runtime: which posture is currently folded into stats. Initialized to
+   * `equippedStances.default` on attach and reconciled each tick by the stance-switch
+   * system; a switch triggers a stat recalc. Networked so the client shows it.
+   */
+  activeStance: string | null;
+  /**
+   * Rites the player has learned (crafted) — the slottable pool (system rework
+   * Step 11). Stored here like runes/abilities/stances (build/loadout data).
+   */
+  knownRites: string[];
+  /**
+   * Equipped rites — an interchangeable list (length ≤ `riteSlotCount`). Rites are
+   * always-on OOC passives, so there is no active/slot-role distinction. Their
+   * `mechanicEffects` fold into stats on recalc; the OOC systems read the `rite.*` keys.
+   */
+  equippedRites: EquippedRites;
 }
 
 /** Owned items, by inventory bag and equipment slot. */

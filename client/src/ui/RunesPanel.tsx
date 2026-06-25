@@ -9,8 +9,9 @@ import {
   TEST_ROOM_NODE_ID,
   getRuleName,
   isRuneRecipeAvailableForArchetype,
+  isRuneRecipeUnlocked,
   isRuneRuleCompatibleForArchetype,
-  runeBudgetForTier,
+  runeBudgetForGlobalMastery,
   runeChannelLabel,
   runeLoadoutCost,
   runeRuleCost,
@@ -26,9 +27,9 @@ import {
   combatArchetypeAtom,
   essencesAtom,
   playerNodeIdAtom,
-  playerTierAtom,
+  globalMasteryAtom,
+  biomeLevelAtom,
   runePanelTabAtom,
-  runePointBonusAtom,
   runeRecipesCraftedAtom,
   runesEquippedAtom,
   runesOwnedAtom,
@@ -49,6 +50,9 @@ const CHANNEL_COLOR: Record<string, string> = {
   RESOURCE_MAINTENANCE: '#73d7ff',
   GLOBAL_STRATEGY: '#7affc0',
   CONTROL: '#ff7a9a',
+  TECHNIQUE: '#ffd76b',
+  GUARD: '#9ad0ff',
+  STANCE: '#c0ff9a',
 };
 
 function ruleLabel(rule: EquippedRule): { title: string; subtitle: string } {
@@ -152,8 +156,7 @@ function RunePointMeter({ spent, budget }: { spent: number; budget: number }) {
 export function RunesPanel({ onClose }: Props) {
   const owned = useAtomValue(runesOwnedAtom);
   const equipped = useAtomValue(runesEquippedAtom);
-  const playerTier = useAtomValue(playerTierAtom);
-  const runePointBonus = useAtomValue(runePointBonusAtom);
+  const gm = useAtomValue(globalMasteryAtom);
   const combatArchetype = useAtomValue(combatArchetypeAtom);
 
   const [tab, setTab] = useAtom(runePanelTabAtom);
@@ -188,7 +191,7 @@ export function RunesPanel({ onClose }: Props) {
     ? isRuneRuleCompatibleForArchetype(pendingRule, combatArchetype)
     : false;
   const pendingCost = pendingRule ? runeRuleCost(pendingRule) : 0;
-  const budget = runeBudgetForTier(playerTier, runePointBonus);
+  const budget = runeBudgetForGlobalMastery(gm);
   const spent = runeLoadoutCost(loadout);
   const pendingOverBudget = pendingRule
     ? spent + pendingCost > budget
@@ -440,7 +443,7 @@ export function RunesPanel({ onClose }: Props) {
 
             </>
           ) : (
-            <RuneForgeTab budget={budget} runePointBonus={runePointBonus} />
+            <RuneForgeTab budget={budget} />
           )}
         </div>
         {confirmReset && (
@@ -511,9 +514,6 @@ function canAffordRecipe(
 }
 
 function recipeRuneLabel(recipe: RuneRecipe): string {
-  if (recipe.kind === 'increase-rune-points') {
-    return `+${recipe.runePointBonus ?? 0} RP`;
-  }
   if (!recipe.runeId) return 'Rune';
   return (
     CONDITION_DATABASE.get(recipe.runeId)?.name ??
@@ -523,28 +523,32 @@ function recipeRuneLabel(recipe: RuneRecipe): string {
 }
 
 function recipeTypeLabel(recipe: RuneRecipe): string {
-  if (recipe.kind === 'increase-rune-points') return 'Capacity';
   return recipe.runeKind === 'condition' ? 'Situation' : 'Response';
 }
 
-function bossRequirementLabel(requiredBossClear: string | undefined): string {
-  if (!requiredBossClear) return 'Unlocked';
-  const [group, tier] = requiredBossClear.split(':');
-  if (!group || !tier) return requiredBossClear;
-  return `Defeat ${biomeName(group)} T${tier} boss`;
+/** Player-facing "how to unlock" label: biome-mastery gate, else boss gate, else free. */
+function recipeRequirementLabel(recipe: RuneRecipe): string {
+  if (recipe.recipeGroup && recipe.requiredBiomeLevel !== undefined) {
+    return `Reach ${biomeName(recipe.recipeGroup)} Lv ${recipe.requiredBiomeLevel}`;
+  }
+  if (recipe.requiredBossClear) {
+    const [group, tier] = recipe.requiredBossClear.split(':');
+    if (group && tier) return `Defeat ${biomeName(group)} T${tier} boss`;
+    return recipe.requiredBossClear;
+  }
+  return 'Unlocked';
 }
 
 function RuneForgeTab({
   budget,
-  runePointBonus,
 }: {
   budget: number;
-  runePointBonus: number;
 }) {
   const nodeId = useAtomValue(playerNodeIdAtom);
   const combatArchetype = useAtomValue(combatArchetypeAtom);
   const essences = useAtomValue(essencesAtom);
   const bossesCleared = useAtomValue(bossesClearedAtom);
+  const biomeLevel = useAtomValue(biomeLevelAtom);
   const craftedRecipeIds = useAtomValue(runeRecipesCraftedAtom);
   const ownedRuneIds = useAtomValue(runesOwnedAtom);
   const [craftResult, setCraftResult] = useState<{
@@ -584,11 +588,7 @@ function RuneForgeTab({
       .sort((a, b) => {
         const unlocked = (recipe: RuneRecipe) => {
           if (craftedSet.has(recipe.id)) return true;
-          return (
-            recipe.kind === 'unlock-rune' &&
-            recipe.runeId !== undefined &&
-            ownedSet.has(recipe.runeId)
-          );
+          return recipe.runeId !== undefined && ownedSet.has(recipe.runeId);
         };
         const unlockedDelta = Number(unlocked(a)) - Number(unlocked(b));
         if (unlockedDelta !== 0) return unlockedDelta;
@@ -619,9 +619,6 @@ function RuneForgeTab({
       >
         <span>Rune Points</span>
         <strong style={{ color: '#ffe084' }}>{budget} max</strong>
-        {runePointBonus > 0 && (
-          <span style={{ color: '#7affc0' }}>+{runePointBonus} forged</span>
-        )}
       </div>
 
       {visibleRecipes.length === 0 ? (
@@ -631,22 +628,15 @@ function RuneForgeTab({
           {visibleRecipes.map((recipe) => {
             const crafted = craftedSet.has(recipe.id);
             const alreadyOwned =
-              recipe.kind === 'unlock-rune' &&
-              recipe.runeId !== undefined &&
-              ownedSet.has(recipe.runeId);
-            const bossLocked =
+              recipe.runeId !== undefined && ownedSet.has(recipe.runeId);
+            const locked =
               !isTestRoom &&
-              recipe.requiredBossClear !== undefined &&
-              !bossesCleared.includes(recipe.requiredBossClear);
+              !isRuneRecipeUnlocked(recipe, { biomeLevel, bossesCleared });
             const canAfford = isTestRoom || canAffordRecipe(recipe, essences);
-            const canCraft = !crafted && !alreadyOwned && !bossLocked && canAfford;
+            const canCraft = !crafted && !alreadyOwned && !locked && canAfford;
             const result = craftResult?.recipeId === recipe.id ? craftResult : null;
             const accent =
-              recipe.kind === 'increase-rune-points'
-                ? '#ffe084'
-                : recipe.runeKind === 'condition'
-                  ? '#7ab8ff'
-                  : '#7affc0';
+              recipe.runeKind === 'condition' ? '#7ab8ff' : '#7affc0';
 
             return (
               <div
@@ -654,8 +644,8 @@ function RuneForgeTab({
                 className={[
                   'craft-recipe',
                   crafted || alreadyOwned ? 'craft-recipe--owned' : '',
-                  bossLocked ? 'craft-recipe--locked' : '',
-                  !crafted && !alreadyOwned && !bossLocked && !canAfford ? 'craft-recipe--unaffordable' : '',
+                  locked ? 'craft-recipe--locked' : '',
+                  !crafted && !alreadyOwned && !locked && !canAfford ? 'craft-recipe--unaffordable' : '',
                 ].filter(Boolean).join(' ')}
               >
                 {result && (
@@ -673,12 +663,10 @@ function RuneForgeTab({
                     borderColor: `${accent}77`,
                     background: `${accent}14`,
                     color: accent,
-                    fontSize: recipe.kind === 'increase-rune-points' ? 12 : 18,
+                    fontSize: 18,
                   }}
                 >
-                  {recipe.kind === 'increase-rune-points'
-                    ? `+${recipe.runePointBonus ?? 0}`
-                    : recipe.runeKind === 'condition' ? '?' : '>'}
+                  {recipe.runeKind === 'condition' ? '?' : '>'}
                 </div>
 
                 <div className="craft-recipe__content">
@@ -688,7 +676,7 @@ function RuneForgeTab({
                     <span className="craft-recipe__owned-badge" style={{ color: accent }}>
                       {recipeTypeLabel(recipe)}
                     </span>
-                    {bossLocked && (
+                    {locked && (
                       <span className="craft-recipe__source">LOCKED</span>
                     )}
                     {(crafted || alreadyOwned) && (
@@ -711,11 +699,11 @@ function RuneForgeTab({
 
                   <div className="craft-recipe__footer">
                     <span
-                      className={`craft-recipe__desc${bossLocked ? ' craft-recipe__locked-label' : ''}`}
+                      className={`craft-recipe__desc${locked ? ' craft-recipe__locked-label' : ''}`}
                     >
                       {crafted || alreadyOwned
                         ? 'Unlocked'
-                        : bossRequirementLabel(recipe.requiredBossClear)}
+                        : recipeRequirementLabel(recipe)}
                     </span>
                     <button
                       className="craft-recipe__btn"
@@ -724,7 +712,7 @@ function RuneForgeTab({
                     >
                       {crafted || alreadyOwned
                         ? 'Unlocked'
-                        : bossLocked
+                        : locked
                           ? 'Locked'
                           : canAfford ? 'Forge' : 'Insufficient'}
                     </button>

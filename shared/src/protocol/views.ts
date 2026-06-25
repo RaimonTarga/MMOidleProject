@@ -11,11 +11,15 @@ import type {
 } from "../types/combat";
 import type { HitboxRect } from "../hitbox/types";
 import type { EquippedRule } from "../runeDatabase";
+import { emptyEquippedAbilities, type EquippedAbilities } from "../abilities";
+import { emptyEquippedStances, type EquippedStances } from "../stances";
+import { emptyEquippedRites, riteSlotCount, type EquippedRites } from "../rites";
 import {
   FALLBACK_MONSTER_AABB,
   FALLBACK_PLAYER_AABB,
 } from "../hitbox/constants";
 import { pointFromMotion, type Vec2 } from "../systems/spatial";
+import { globalMastery } from "../config/gameConfig";
 import type { MinionMonsterType } from "../components/archetypes/summoner/isMinion";
 import {
   computeSummonRespawnMaxMs,
@@ -61,6 +65,10 @@ export interface PlayerView {
   partyMembers: PartyMember[];
   nodeId: string;
   essences: Record<EssenceType, number>;
+  /** Biome catalysts wallet, keyed by biome group. */
+  catalysts: Record<string, number>;
+  /** Accumulating progress toward the next catalyst, keyed by biome group. */
+  catalystProgress: Record<string, number>;
   level: number;
   skillPoints: number;
   unlockedSkills: string[];
@@ -78,6 +86,8 @@ export interface PlayerView {
   itemUpgrades: Record<string, number>;
   biomeXP: Record<string, number>;
   biomeLevel: Record<string, number>;
+  /** Derived sum of all biome levels (system rework Step 4) — drives RP budget + upgrade ceiling. */
+  globalMastery: number;
   unlockedRecipes: string[];
   combatArchetype: CombatArchetype;
   cadenceCount: number;
@@ -116,8 +126,23 @@ export interface PlayerView {
   clearedNodes: string[];
   runesOwned: string[];
   runeRecipesCrafted: string[];
-  runePointBonus: number;
   runesEquipped: EquippedRule[];
+  /** Abilities learned (crafted) — the slottable pool (system rework Step 7). */
+  knownAbilities: string[];
+  /** Equipped abilities by slot: Technique (offensive) + Guard (defensive). */
+  equippedAbilities: EquippedAbilities;
+  /** Stances learned (crafted) — the slottable pool (system rework Step 10). */
+  knownStances: string[];
+  /** Equipped stances by slot: default (active posture) + reactive (auto-switch). */
+  equippedStances: EquippedStances;
+  /** Which posture is currently active (folded into stats). */
+  activeStance: string | null;
+  /** Rites learned (crafted) — the slottable pool (system rework Step 11). */
+  knownRites: string[];
+  /** Equipped rites — interchangeable list (length ≤ `riteSlots`), always-on OOC. */
+  equippedRites: EquippedRites;
+  /** Number of rite slots available (GM-derived; flat 2 for v1). */
+  riteSlots: number;
   hitboxRects: HitboxRect[];
   /** Number of minion slots the player has. 0 if not a summoner. */
   summonsMinions: number;
@@ -206,6 +231,7 @@ const EMPTY_EQUIPMENT = {
   armor: null,
   recovery: null,
   mobility: null,
+  core: null,
 } as EquipmentMap;
 
 export function composePlayerView(entity: NetworkedEntity): PlayerView | null {
@@ -272,6 +298,8 @@ export function composePlayerView(entity: NetworkedEntity): PlayerView | null {
     partyMembers: entity.inParty?.members ?? [],
     nodeId: entity.hasPosition.nodeId,
     essences: progression.essences,
+    catalysts: progression.catalysts,
+    catalystProgress: progression.catalystProgress,
     level: progression.level,
     skillPoints: progression.skillPoints,
     unlockedSkills: skills.unlockedSkills,
@@ -289,6 +317,7 @@ export function composePlayerView(entity: NetworkedEntity): PlayerView | null {
     itemUpgrades: inventory.itemUpgrades ?? {},
     biomeXP: progression.biomeXP,
     biomeLevel: progression.biomeLevel,
+    globalMastery: globalMastery(progression.biomeLevel),
     unlockedRecipes: progression.unlockedRecipes,
     combatArchetype: skills.combatArchetype,
     cadenceCount: entity.usesCadence?.count ?? 0,
@@ -351,8 +380,15 @@ export function composePlayerView(entity: NetworkedEntity): PlayerView | null {
     clearedNodes: progression.clearedNodes ?? [],
     runesOwned: progression.runesOwned ?? [],
     runeRecipesCrafted: progression.runeRecipesCrafted ?? [],
-    runePointBonus: progression.runePointBonus ?? 0,
     runesEquipped: progression.runesEquipped ?? [],
+    knownAbilities: progression.knownAbilities ?? [],
+    equippedAbilities: progression.equippedAbilities ?? emptyEquippedAbilities(),
+    knownStances: progression.knownStances ?? [],
+    equippedStances: progression.equippedStances ?? emptyEquippedStances(),
+    activeStance: progression.activeStance ?? null,
+    knownRites: progression.knownRites ?? [],
+    equippedRites: progression.equippedRites ?? emptyEquippedRites(),
+    riteSlots: riteSlotCount(globalMastery(progression.biomeLevel)),
     hitboxRects: entity.hasHitbox?.rects ?? [FALLBACK_PLAYER_AABB],
     summonsMinions: entity.summonsMinions?.targetCount ?? 0,
     summonActiveCount,

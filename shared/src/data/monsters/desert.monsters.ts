@@ -45,23 +45,33 @@ export const desertMonsterEntries = [
     id: 'stone-basilisk', name: 'Stone Basilisk', color: 0xaa8833,
     // Root bruiser: a petrifying gaze briefly pins you in place (speedMult 0) — the
     // lockdown setup that lets the scorpions and djinn pile on. Slow, sturdier DR.
+    // ECOLOGY: the DUEL FINISHER — opens with a heavy alpha strike (openingStrike),
+    // and cashes in the djinn's Sun Mark for an amplified hit (markedStrike) while
+    // its root holds you. Answered by last-stand (survive the spike) + cleanse
+    // (strip the mark before it lands).
     stats: { hp: 320, attack: 36, plating: 0, damageReduction: 0.12, speed: 28, attackRange: 12, attackCooldown: 2600, pullRange: 175 },
     behavior: 'melee', attackStyle: 'impact', biome: 'desert',
     rewards: { essence: 8, essenceType: 'yellow', level: 1, biomeXp: 46 },
     ai: { wanderRadius: 180, leashRange: 560, idleMinMs: 2000, idleMaxMs: 5500 },
     slowEffect: { speedMult: 0, durationMs: 1200 },
+    openingStrike: { multiplier: 2.5 },   // placeholder — user balance pass
+    markedStrike: { multiplier: 2.0 },    // placeholder — user balance pass
   }],
- 
+
   ['dust-djinn', {
     id: 'dust-djinn', name: 'Dust Djinn', color: 0xeecc66,
     // Desert's ranged debuffer (Sand-Scorpion's reach version): flings stinging
     // sand that slows from afar. Stationary ranged at T2 — becomes the standoff
     // kiter (Sandweaver) at T3. Light DR.
+    // ECOLOGY: the SUN MARK painter — marks you from range (appliesMark) so the
+    // basilisk's finisher lands amplified. Cleanse removes the mark; it expires
+    // harmlessly if you break line of sight before the finisher connects.
     stats: { hp: 200, attack: 34, plating: 0, damageReduction: 0.05, speed: 40, attackRange: 185, attackCooldown: 2100, pullRange: 230 },
     behavior: 'melee', attackStyle: 'magic', isRanged: true, biome: 'desert',
     rewards: { essence: 8, essenceType: 'yellow', level: 1, biomeXp: 42 },
     ai: { wanderRadius: 220, leashRange: 620, idleMinMs: 1200, idleMaxMs: 4000 },
     slowEffect: { speedMult: 0.6, durationMs: 2000 },
+    appliesMark: { durationMs: 4000 },    // placeholder — user balance pass
   }],
 
   // ══════════════════ DESERT — debuff appliers + KITER showcase ══════════════════
@@ -81,22 +91,29 @@ export const desertMonsterEntries = [
     id: 'desert-basilisk', name: 'Desert Basilisk', color: 0xaa8833,
     // Root-applier bruiser: a brief full root (speedMult 0) pins you so the
     // kiters/slows punish — the debuff "setup" piece. Armored.
+    // ECOLOGY: the DUEL FINISHER (T3) — alpha-strike opener + cashes the sandweaver's
+    // Sun Mark while its root holds you. Last-stand + cleanse is the answer.
     stats: { hp: 700, attack: 46, plating: 0, damageReduction: 0.12, speed: 28, attackRange: 12, attackCooldown: 2600, pullRange: 175 },
     behavior: 'melee', attackStyle: 'impact', biome: 'desert',
     rewards: { essence: 45, essenceType: 'yellow', level: 2, biomeXp: 270 },
     ai: { wanderRadius: 180, leashRange: 560, idleMinMs: 2000, idleMaxMs: 5500 },
     slowEffect: { speedMult: 0, durationMs: 1200 },
+    openingStrike: { multiplier: 2.5 },   // placeholder — user balance pass
+    markedStrike: { multiplier: 2.0 },    // placeholder — user balance pass
   }],
 
   ['sandweaver', {
     id: 'sandweaver', name: 'Sandweaver', color: 0xcc9933,
     // THE kiter: maintains standoff, plinks hard, and SLOWS you so you can't close.
     // Pure anti-Close — Close/melee suffers most here; Mid/Far shine. Speed 40.
+    // ECOLOGY: the SUN MARK painter (T3) — paints from the standoff so the basilisk's
+    // finisher lands amplified. Cleanse strips it; it expires if you escape the window.
     stats: { hp: 460, attack: 44, plating: 0, damageReduction: 0, speed: 40, attackRange: 220, attackCooldown: 2200, pullRange: 250 },
     behavior: 'melee', attackStyle: 'magic', isRanged: true, kite: true, biome: 'desert',
     rewards: { essence: 47, essenceType: 'yellow', level: 2, biomeXp: 285 },
     ai: { wanderRadius: 220, leashRange: 640, idleMinMs: 1200, idleMaxMs: 4000 },
     slowEffect: { speedMult: 0.6, durationMs: 2000 },
+    appliesMark: { durationMs: 4000 },    // placeholder — user balance pass
   }],
 
   // T4
@@ -130,12 +147,15 @@ export const desertMonsterEntries = [
     // it eats slowed hits. The shield rewards the alpha-strike weapon: a
     // first-strike burst tears the barrier before the slow stack bites.
     // DPS 84 × (1000/2200) = 38 (kiter).
+    // ECOLOGY: the SUN MARK painter (T4) — paints from the kiting standoff so the
+    // dune-tyrant's slam lands amplified into a marked target. Cleanse strips it.
     stats: { hp: 930, attack: 84, plating: 0, damageReduction: 0, speed: 38, attackRange: 230, attackCooldown: 2200, pullRange: 280 },
     behavior: 'melee', attackStyle: 'magic', isRanged: true, kite: true, biome: 'desert',
     rewards: { essence: 58, essenceType: 'yellow', level: 3, biomeXp: 350 },
     ai: { wanderRadius: 240, leashRange: 660, idleMinMs: 1200, idleMaxMs: 4000 },
     slowEffect: { speedMult: 0.6, durationMs: 2500 },
     enemyShield: { shieldPct: 0.22, intervalMs: 12000, durationMs: 6000 },
+    appliesMark: { durationMs: 4500 },    // placeholder — user balance pass
   }],
 
   ['dune-tyrant', {
@@ -143,12 +163,16 @@ export const desertMonsterEntries = [
     // Slow elite (great desert lizard). COOLDOWN slam every 10s = 246 that also
     // dumps a long heavy slow. The Desert exam: last-stand + debuff-resist both
     // tested. Base 88 ≈ H_med (survivable); the slam is the spike.
+    // ECOLOGY: the DUEL FINISHER (T4) — its cooldown slam is the alpha strike, and a
+    // marked target (cobra's Sun Mark) eats it AMPLIFIED (markedStrike). The exam:
+    // cleanse the mark or last-stand the slam.
     stats: { hp: 2200, attack: 88, plating: 8, damageReduction: 0.08, speed: 20, attackRange: 15, attackCooldown: 3500, pullRange: 160 },
-    behavior: 'melee', attackStyle: 'impact', biome: 'desert',
+    behavior: 'melee', attackStyle: 'impact', biome: 'desert', elite: true,
     rewards: { essence: 170, essenceType: 'yellow', level: 4, biomeXp: 1020 },
     ai: { wanderRadius: 100, leashRange: 450, idleMinMs: 4500, idleMaxMs: 12000 },
     empoweredCooldown: { cooldownMs: 10000, multiplier: 2.8 },  // 246
     slowEffect: { speedMult: 0.4, durationMs: 4000 },
+    markedStrike: { multiplier: 1.8 },    // placeholder — user balance pass
   }],
 
 

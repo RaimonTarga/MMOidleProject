@@ -122,6 +122,8 @@ export function createMonster(
       baseSpeed: def.stats.speed,
       kiteTimer: 0,
       chargeRemainingMs: 0,
+      patrolIndex: 0,
+      patrolDir: 1,
     },
     tracksCombat: makeTracksCombat(),
     hasHitbox: resolveMonsterHitbox(typeId, isBoss, id),
@@ -148,6 +150,7 @@ export function createMonster(
 /**
  * Pick a random monster type from the node's biome pool and attempt to
  * place it at a position that respects minimum spacing. Returns true on success.
+ * When the rolled type is a pack alpha, the whole pack spawns clustered at the spot.
  */
 export function spawnMonster(world: World, nodeId: string): boolean {
   const biomeInfo = NODE_BIOMES[nodeId];
@@ -178,10 +181,79 @@ export function spawnMonster(world: World, nodeId: string): boolean {
     }
     if (tooClose) continue;
 
+    if (MONSTER_DATABASE.get(typeId)?.pack?.role === "alpha") {
+      return spawnPack(world, nodeId, typeId, pos) !== null;
+    }
     return createMonster(world, nodeId, typeId, pos) !== null;
   }
 
   return false;
+}
+
+/**
+ * Spawn a coordinated pack: the alpha at `anchor`, plus its `followers` clustered
+ * in a ring around it. Every member gets a shared server-only `inPack` link
+ * (`packId`) the pack system reads to propagate aggro. Falls back to a single
+ * spawn if the type is not a pack alpha. Returns the spawned members (alpha first)
+ * so callers can post-process them (e.g. tag bush ambushers dormant), or null on
+ * failure.
+ */
+export function spawnPack(
+  world: World,
+  nodeId: string,
+  alphaTypeId: string,
+  anchor: Vec2,
+): MonsterEntity[] | null {
+  const packDef = MONSTER_DATABASE.get(alphaTypeId)?.pack;
+  if (!packDef || packDef.role !== "alpha") {
+    const lone = createMonster(world, nodeId, alphaTypeId, anchor);
+    return lone ? [lone] : null;
+  }
+
+  const packId = `${nodeId}:pack:${packSeq++}`;
+  const alpha = createMonster(world, nodeId, alphaTypeId, anchor);
+  if (!alpha) return null;
+  world.ecs.addComponent(alpha, "inPack", { packId, role: "alpha" });
+  const members: MonsterEntity[] = [alpha];
+
+  const groups = packDef.followers;
+  if (groups && groups.length > 0) {
+    const node = NODE_REGISTRY.get(nodeId);
+    const total = groups.reduce((n, g) => n + g.count, 0);
+    let idx = 0;
+    for (const group of groups) {
+      for (let i = 0; i < group.count; i++) {
+        const pos = followerSpawnPos(anchor, idx, total, node);
+        const f = createMonster(world, nodeId, group.typeId, pos);
+        if (f) {
+          world.ecs.addComponent(f, "inPack", { packId, role: "follower" });
+          members.push(f);
+        }
+        idx++;
+      }
+    }
+  }
+  return members;
+}
+
+let packSeq = 0;
+
+const FOLLOWER_RING_RADIUS = 64;
+
+function followerSpawnPos(
+  anchor: Vec2,
+  i: number,
+  count: number,
+  node: { width: number; height: number } | undefined,
+): Vec2 {
+  const angle = (i / Math.max(1, count)) * Math.PI * 2;
+  const margin = 48;
+  const x = anchor.x + Math.cos(angle) * FOLLOWER_RING_RADIUS;
+  const y = anchor.y + Math.sin(angle) * FOLLOWER_RING_RADIUS;
+  return {
+    x: node ? Math.max(margin, Math.min(node.width - margin, x)) : x,
+    y: node ? Math.max(margin, Math.min(node.height - margin, y)) : y,
+  };
 }
 
 /**
@@ -250,11 +322,11 @@ export { killPlayer, updateDeadPlayers } from "../playerIncapacitation";
 
 export function ensurePopulation(world: World, nodeId: string): number {
   if (isGauntletDungeonNode(nodeId)) return 0;
-  let count = world.getMonsterCountInNode(nodeId);
   const targetCount = world.getMobDensity(nodeId);
-  while (count < targetCount) {
+  // Re-read the count each iteration: a pack alpha spawns several mobs at once,
+  // so a fixed +1 would overshoot the density target.
+  while (world.getMonsterCountInNode(nodeId) < targetCount) {
     if (!spawnMonster(world, nodeId)) break;
-    count++;
   }
   return 0;
 }

@@ -387,7 +387,14 @@ function applyAction(
       const offsetRange = action.offsetRange ?? 200;
 
       state.spawnedAddIds ??= [];
-      for (let i = 0; i < action.count; i++) {
+      // Prune dead adds, then (if capped) only top the swarm back up to maxAlive —
+      // so a repeating summoner (necromancer) can never flood the node.
+      state.spawnedAddIds = state.spawnedAddIds.filter((id) => world.hasMonster(id));
+      let budget = action.count;
+      if (action.maxAlive !== undefined) {
+        budget = Math.min(budget, Math.max(0, action.maxAlive - state.spawnedAddIds.length));
+      }
+      for (let i = 0; i < budget; i++) {
         const angle = Math.random() * Math.PI * 2;
         const dist  = Math.random() * offsetRange;
         const pos = {

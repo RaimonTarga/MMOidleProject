@@ -17,6 +17,7 @@ import type { MonsterEntity } from "../../../ecs/entity";
 const CADENCE_COUNTER_KEY = "t4CadenceCount";
 const EMP_CD_NEXT_KEY = "t4EmpCooldownNextAt";
 const EMP_CD_SESSION_KEY = "t4EmpCooldownSession";
+const OPENING_FIRED_SESSION_KEY = "openingStrikeFiredSession";
 const SHIELD_AMOUNT_KEY = "t4EnemyShieldAmount";
 const SHIELD_EXPIRES_KEY = "t4EnemyShieldExpiresAt";
 const SHIELD_NEXT_KEY = "t4EnemyShieldNextAt";
@@ -72,6 +73,20 @@ export function monsterEmpoweredMultiplier(
     }
   }
 
+  // Opening strike — the FIRST landed attack of each combat session is amplified
+  // (the ambush pounce / duelist's lethal opener), then disarms until the monster
+  // re-engages (a new session). Session-keyed like empoweredCooldown, so it re-arms
+  // every fresh aggro rather than once per life. Deterministic (no RNG).
+  // Also fires when injected at spawn via tracksDungeon.openingStrikeMult (guardians).
+  const openingMult = monster.tracksDungeon?.openingStrikeMult ?? def?.openingStrike?.multiplier ?? 1;
+  if (openingMult > 1) {
+    const session = combatSession(monster, now);
+    if (getCounter(cs, OPENING_FIRED_SESSION_KEY) !== session) {
+      mult *= openingMult;
+      setCounter(cs, OPENING_FIRED_SESSION_KEY, session);
+    }
+  }
+
   return mult;
 }
 
@@ -103,19 +118,20 @@ export function applyEnemySoftCap(
  * combat-pipeline direct hit; a big burst pops it in one go while small chip
  * hits waste themselves against it. Deterministic (timer off `now`).
  *
- * Returns the post-absorb damage and the amount absorbed. No-op (absorbed 0)
- * unless `enemyShield` is defined.
+ * Returns the post-absorb damage, the amount absorbed, and whether THIS hit broke
+ * the barrier (depleted it to zero) — the Tundra ice-armor shatter trigger. No-op
+ * (absorbed 0, broke false) unless `enemyShield` is defined.
  */
 export function applyEnemyShield(
   monster: MonsterEntity,
   def: MonsterDefinition | undefined,
   damage: number,
   now: number,
-): { damage: number; absorbed: number } {
+): { damage: number; absorbed: number; broke: boolean } {
   // shed-defense suppresses both the runtime override and any static barrier.
-  if (monster.scriptsBoss?.defenseShed) return { damage, absorbed: 0 };
+  if (monster.scriptsBoss?.defenseShed) return { damage, absorbed: 0, broke: false };
   const shield = monster.scriptsBoss?.shieldOverride ?? def?.enemyShield;
-  if (!shield || damage <= 0) return { damage, absorbed: 0 };
+  if (!shield || damage <= 0) return { damage, absorbed: 0, broke: false };
   const cs = monster.tracksCombat;
 
   // New combat session: reset the cadence so the first barrier is up immediately
@@ -140,11 +156,13 @@ export function applyEnemyShield(
   }
 
   // Absorb only while the active barrier is still up.
-  if (now >= getCounter(cs, SHIELD_EXPIRES_KEY)) return { damage, absorbed: 0 };
+  if (now >= getCounter(cs, SHIELD_EXPIRES_KEY)) return { damage, absorbed: 0, broke: false };
   const amount = getCounter(cs, SHIELD_AMOUNT_KEY);
-  if (amount <= 0) return { damage, absorbed: 0 };
+  if (amount <= 0) return { damage, absorbed: 0, broke: false };
 
   const absorbed = Math.min(amount, damage);
-  setCounter(cs, SHIELD_AMOUNT_KEY, amount - absorbed);
-  return { damage: damage - absorbed, absorbed };
+  const remaining = amount - absorbed;
+  setCounter(cs, SHIELD_AMOUNT_KEY, remaining);
+  // The barrier broke if this hit drained the last of it (was up, now empty).
+  return { damage: damage - absorbed, absorbed, broke: remaining <= 0 };
 }

@@ -19,5 +19,8 @@ for (const recipe of RECIPE_DATABASE.values()) {
     description: recipe.description,
     upgrades: recipe.upgrades,
     icon: recipe.icon,
+    lineageId: recipe.lineageId,
+    evolvesFrom: recipe.evolvesFrom,
+    rangeTag: recipe.rangeTag,
   });
 }

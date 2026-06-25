@@ -8,12 +8,15 @@ import {
   getMaxUpgrade,
   requiredBiomeLevelForUpgrade,
   upgradeCostFor,
+  upgradeCatalystCostFor,
 } from '@mmo-idle/shared';
 import { hudBus } from '../../hudBus';
 import {
   biomeLevelAtom,
+  catalystsAtom,
   equipmentAtom,
   essencesAtom,
+  globalMasteryAtom,
   inventoryAtom,
   itemUpgradesAtom,
   playerNodeIdAtom,
@@ -35,7 +38,9 @@ export function UpgradeTab() {
   const equipment    = useAtomValue(equipmentAtom);
   const itemUpgrades = useAtomValue(itemUpgradesAtom);
   const essences     = useAtomValue(essencesAtom);
+  const catalysts    = useAtomValue(catalystsAtom);
   const biomeLevel   = useAtomValue(biomeLevelAtom);
+  const gm           = useAtomValue(globalMasteryAtom);
   const nodeId       = useAtomValue(playerNodeIdAtom);
   const isTestRoom   = nodeId === TEST_ROOM_NODE_ID;
 
@@ -174,7 +179,8 @@ export function UpgradeTab() {
             const haveLevel   = def.biomeGroup ? (biomeLevel[def.biomeGroup] ?? 0) : 0;
             const levelMet    = isTestRoom || haveLevel >= reqLevel;
             const cost        = upgradeCostFor(def, currentPlus + 1);
-            const check       = checkUpgrade({ item: def, currentPlus, biomeLevel: haveLevel, essences });
+            const catalystCost = upgradeCatalystCostFor(def, currentPlus + 1);
+            const check       = checkUpgrade({ item: def, currentPlus, biomeLevel: haveLevel, essences, catalysts, globalMastery: gm });
             const canUpgrade  = !isMaxed && (isTestRoom || check.ok);
 
             const cardResult = result?.itemId === def.id ? result : null;
@@ -245,7 +251,7 @@ export function UpgradeTab() {
                   ) : null}
 
                   {!isMaxed && cost && (
-                    <CostDisplay cost={cost} essences={essences} />
+                    <CostDisplay cost={cost} essences={essences} catalystCost={catalystCost ?? undefined} catalysts={catalysts} />
                   )}
 
                   {!isMaxed && (

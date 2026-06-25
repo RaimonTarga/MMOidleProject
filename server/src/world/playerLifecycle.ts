@@ -5,8 +5,8 @@ import {
   makeTracksCombat,
   normalizeRuneLoadout,
   runeIdsFromCraftedRecipes,
-  runePointBonusFromCraftedRecipes,
-  runeBudgetForTier,
+  runeBudgetForGlobalMastery,
+  globalMastery,
   sanitizeRuneLoadout,
 } from "@mmo-idle/shared";
 import type { World } from "./World";
@@ -28,11 +28,9 @@ export function attachPlayerEntity(
   const craftedRuneRecipes = player.tracksProgression.runeRecipesCrafted ?? [];
   player.tracksProgression.runeRecipesCrafted = craftedRuneRecipes;
   player.tracksProgression.runesOwned = runeIdsFromCraftedRecipes(craftedRuneRecipes);
-  player.tracksProgression.runePointBonus = runePointBonusFromCraftedRecipes(craftedRuneRecipes);
   const owned = new Set(player.tracksProgression.runesOwned);
-  const budget = runeBudgetForTier(
-    player.tracksProgression.playerTier,
-    player.tracksProgression.runePointBonus,
+  const budget = runeBudgetForGlobalMastery(
+    globalMastery(player.tracksProgression.biomeLevel),
   );
   const persistedRules = Array.isArray(player.tracksProgression.runesEquipped)
     ? normalizeRuneLoadout(player.tracksProgression.runesEquipped)

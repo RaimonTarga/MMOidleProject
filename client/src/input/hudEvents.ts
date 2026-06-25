@@ -3,7 +3,14 @@ import { hudBus } from "../hudBus";
 import { intents } from "../intents";
 import {
   sendCraftRecipe,
+  sendEvolveItem,
   sendCraftRuneRecipe,
+  sendCraftAbilityRecipe,
+  sendSetAbilityLoadout,
+  sendCraftStanceRecipe,
+  sendSetStanceLoadout,
+  sendCraftRiteRecipe,
+  sendSetRiteLoadout,
   sendEquipItem,
   sendGoToTestRoom,
   sendJoinParty,
@@ -64,9 +71,44 @@ export function attachHudEvents(scene: GameScene): void {
     sendCraftRecipe(scene.socket, recipeId);
   });
 
+  intents.on("evolveItem", (payload) => {
+    if (isDeathOverlayActive()) return;
+    sendEvolveItem(scene.socket, payload);
+  });
+
   intents.on("craftRuneRecipe", (recipeId) => {
     if (isDeathOverlayActive()) return;
     sendCraftRuneRecipe(scene.socket, recipeId);
+  });
+
+  intents.on("craftAbilityRecipe", (recipeId) => {
+    if (isDeathOverlayActive()) return;
+    sendCraftAbilityRecipe(scene.socket, recipeId);
+  });
+
+  intents.on("setAbilityLoadout", (payload) => {
+    if (isDeathOverlayActive()) return;
+    sendSetAbilityLoadout(scene.socket, payload);
+  });
+
+  intents.on("craftStanceRecipe", (recipeId) => {
+    if (isDeathOverlayActive()) return;
+    sendCraftStanceRecipe(scene.socket, recipeId);
+  });
+
+  intents.on("setStanceLoadout", (payload) => {
+    if (isDeathOverlayActive()) return;
+    sendSetStanceLoadout(scene.socket, payload);
+  });
+
+  intents.on("craftRiteRecipe", (recipeId) => {
+    if (isDeathOverlayActive()) return;
+    sendCraftRiteRecipe(scene.socket, recipeId);
+  });
+
+  intents.on("setRiteLoadout", (payload) => {
+    if (isDeathOverlayActive()) return;
+    sendSetRiteLoadout(scene.socket, payload);
   });
 
   intents.on("activateDungeonAltar", () => {
