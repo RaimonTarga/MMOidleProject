@@ -176,6 +176,13 @@ function applyGuardEffect(
     const potency = passives["guard.potency-pct"] ?? 0;
     const durationBonus = passives["guard.duration-pct"] ?? 0;
     const drPct = Math.min(GUARD_DR_CAP, effect.drPct * (1 + Math.max(0, potency)));
+    const knockbackResistPct =
+      effect.knockbackResistPct !== undefined
+        ? Math.min(
+            GUARD_DR_CAP,
+            effect.knockbackResistPct * (1 + Math.max(0, potency)),
+          )
+        : undefined;
     const durationMs = Math.round(effect.durationMs * (1 + Math.max(0, durationBonus)));
     // Explicit buff: a status effect on TracksCombat. updateTracksCombat decrements
     // remainingMs; abilityEffects' onDamageTaken reads drPct; the buff descriptor
@@ -185,7 +192,11 @@ function applyGuardEffect(
       remainingMs: durationMs,
       refreshable: true,
       sourceId: player.isPlayer.id,
-      data: { totalMs: durationMs, drPct },
+      data: {
+        totalMs: durationMs,
+        drPct,
+        ...(knockbackResistPct !== undefined ? { knockbackResistPct } : {}),
+      },
     });
   }
   // `cleave` is a Technique rider, never a Guard immediate — ignored here.

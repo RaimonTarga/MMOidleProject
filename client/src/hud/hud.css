@@ -692,6 +692,41 @@
   to   { filter: brightness(1.32) saturate(1.08); }
 }
 
+/* ── Ability bar (bottom-left equipped Technique/Guard; AbilityBar.tsx) ─────── */
+.ability-icon {
+  /* base look set inline; glow states below */
+  transition: box-shadow 120ms ease-out, filter 120ms ease-out;
+}
+/* Just-fired flash — a quick bright bloom when the ability triggers. */
+.ability-icon--fired {
+  animation: ability-fired 0.65s ease-out;
+}
+/* Guard boon active — steady breathing glow while its buff is up. */
+.ability-icon--active {
+  animation: ability-active 1.1s ease-in-out infinite;
+}
+@keyframes ability-fired {
+  0%   { transform: scale(1.0);  filter: brightness(2.2) saturate(1.3); }
+  35%  { transform: scale(1.18); filter: brightness(1.8) saturate(1.2); }
+  100% { transform: scale(1.0);  filter: brightness(1.0); }
+}
+@keyframes ability-active {
+  0%, 100% { filter: brightness(1.0);  }
+  50%      { filter: brightness(1.35) saturate(1.15); }
+}
+
+/* Mobile: buffs are pinned bottom-left, so float the ability bar just above them
+   (still bottom-left) and shrink it to match the buff row's scale. */
+@media (max-width: 1100px) {
+  .ability-bar-root {
+    position: fixed !important;
+    bottom: calc(var(--mhud-bottom-h, 86px) + env(safe-area-inset-bottom, 0px) + 68px) !important;
+    left: 6px !important;
+    transform: scale(0.72);
+    transform-origin: bottom left;
+  }
+}
+
 /* ── Connection status dot ───────────────────────────────────────────────── */
 .status-dot {
   width: 7px;

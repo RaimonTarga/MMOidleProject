@@ -182,6 +182,25 @@ export const catalystProgressAtom = atom<Record<string, number>>({});
 export const activeBuffsAtom = atom<PlayerBuff[]>([]);
 export const autoPathAtom = atom<string[] | null>(null);
 
+/**
+ * Last-fired wall-clock ms per ability slot — drives the bottom-left ability bar's
+ * pulse + client-approximated cooldown sweep (system rework Step 7 HUD). Set from
+ * the combat FX dispatcher when an ability's client-effect tag arrives. The Guard
+ * slot also derives its active/cooldown state from its buff, so this is primarily
+ * the Technique fire signal (Techniques carry no buff).
+ */
+export const abilityFiredAtAtom = atom<{ technique: number; guard: number }>({
+  technique: 0,
+  guard: 0,
+});
+
+/** Stamp an ability slot as just-fired (called from combat FX, client-side). */
+export function notifyAbilityFired(slot: 'technique' | 'guard'): void {
+  const store = getDefaultStore();
+  const prev = store.get(abilityFiredAtAtom);
+  store.set(abilityFiredAtAtom, { ...prev, [slot]: Date.now() });
+}
+
 export interface ZonePlayer {
   id: string;
   name: string;
@@ -616,6 +635,7 @@ function resetPlayerAtoms(): void {
   setIfShallowArrayEqual(unlockedRecipesAtom, []);
   setIfShallowArrayEqual(bossesClearedAtom, []);
   setIfShallowArrayEqual(activeBuffsAtom, []);
+  store.set(abilityFiredAtAtom, { technique: 0, guard: 0 });
   setIfShallowObjectEqual(passivesAtom, {});
   setIfShallowObjectEqual(equipmentAtom, { ...DEFAULT_EQUIPMENT });
   setIfShallowObjectEqual(itemUpgradesAtom, {});

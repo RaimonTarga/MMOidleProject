@@ -85,7 +85,7 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
     id: 'mountain', name: 'Mountain',
     backgroundColor: 0x141418,
     monsterPoolByTier: {
-      1: ['cliff-hopper', 'ridge-archer'],
+      1: ['cliff-hopper', 'cliff-hopper', 'ridge-archer'],
       2: ['granite-titan', 'stone-eagle', 'peak-archer'],
       3: ['mountain-colossus', 'avalanche-ram', 'crag-mortar'],
       4: ['granite-mammoth', 'avalanche-tyrant', 'cliffside-roc', 'cragback-rhino'],
@@ -97,7 +97,7 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
       4: ['iron-crest-titan'],
     },
     essenceType: 'essence',
-    mobDensity: 10,
+    mobDensity: 12,
   }],
 
   // PLAINS — swarm of small, fast, low-per-hit mobs; volume is the threat.

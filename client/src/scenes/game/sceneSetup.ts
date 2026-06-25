@@ -53,6 +53,7 @@ import { drawLabels } from "../../render/labels";
 import { drawThoughtBubbles } from "../../render/thoughtBubbles";
 import { drawHealthBars } from "../../render/healthBars";
 import { drawCooldownBars } from "../../render/cooldownBars";
+import { drawCastBars } from "../../render/castBars";
 import { updateEffectOverlays } from "../../render/effectOverlays";
 import { updateMovementEffects } from "../../render/movementEffects";
 import {
@@ -328,6 +329,7 @@ export function updateGameScene(scene: GameScene, delta: number): void {
 
   if (!isClientRenderPaused()) {
     drawCooldownBars(scene.state);
+    drawCastBars(scene.state, scene);
     updateEffectOverlays(scene.state, scene, dt);
     updateMovementEffects(scene.state, scene);
     updateLaserBeam(scene.state, scene);

@@ -7,6 +7,7 @@ import { GameScene } from './scenes/GameScene';
 import { LeftSidebar } from './hud/HUD';
 import { RightSidebar } from './hud/MenuButtons';
 import { BuffBar } from './hud/BuffBar';
+import { AbilityBar } from './hud/AbilityBar';
 import { AutoCombatButton } from './hud/AutoCombatButton';
 import { MobileHUD } from './hud/MobileHUD';
 import { RecipeToastLayer } from './hud/RecipeToastLayer';
@@ -68,6 +69,7 @@ game.events.once(Phaser.Core.Events.READY, () => {
 createRoot(document.getElementById('left-sidebar')!).render(createElement(LeftSidebar));
 createRoot(document.getElementById('right-sidebar')!).render(createElement(RightSidebar));
 createRoot(document.getElementById('buff-overlay')!).render(createElement(BuffBar));
+createRoot(document.getElementById('ability-overlay')!).render(createElement(AbilityBar));
 createRoot(document.getElementById('auto-btn-overlay')!).render(createElement(AutoCombatButton));
 createRoot(document.getElementById('mobile-hud')!).render(createElement(MobileHUD));
 createRoot(document.getElementById('toast-overlay')!).render(createElement(RecipeToastLayer));

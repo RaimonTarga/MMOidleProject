@@ -1,4 +1,5 @@
 import {
+  ABILITY_SWEEP_FX,
   ESSENCE_COLORS,
   GAME_CONFIG,
   isRangedPlayerView,
@@ -38,7 +39,11 @@ import { fxVoid } from "../fx/voidFx";
 import { fxFirstStrike } from "../fx/firstStrike";
 import { fxAftershock } from "../fx/aftershock";
 import { fxDualSlash } from "../fx/dualSlash";
+import { fxSweep } from "../fx/sweep";
+import { fxPowerShot } from "../fx/powerShot";
 import { shouldRunClientFx } from "../fx/guard";
+import { startCastBar, endCastBar } from "./castBars";
+import { notifyAbilityFired } from "../hud/atoms";
 import type { GameScene } from "../scenes/GameScene";
 import { applyLunge } from "./interpolation";
 import { nodeToScene } from "./sceneCoords";
@@ -389,6 +394,32 @@ export function dispatchCombatEvent(
     return;
   }
 
+  if (ev.kind === "monster-cast-start") {
+    // Node-wide telegraph: open the cast bar over the charging monster.
+    startCastBar(state, ev.monsterId, ev.castMs, ev.label);
+    return;
+  }
+
+  if (ev.kind === "monster-cast-end") {
+    endCastBar(state, ev.monsterId);
+    // On a fired shot, rip the flashy projectile from the monster to its target.
+    if (ev.fired && shouldRunClientFx()) {
+      const monster = state.sprite.get(ev.monsterId);
+      const target = ev.targetId ? state.sprite.get(ev.targetId) : undefined;
+      if (monster && target) {
+        if (ev.fx === "strong-kick") {
+          const targetNode = state.view.get(ev.targetId ?? "");
+          if (targetNode) {
+            fxAoeRing(scene, targetNode.pos, 34, 0xd8e2ef);
+          }
+        } else {
+          fxPowerShot(scene, monster.x, monster.y, target.x, target.y);
+        }
+      }
+    }
+    return;
+  }
+
   if (ev.playerId !== scene.myId) return;
 
   if (ev.kind === "player-knockback") {
@@ -559,6 +590,14 @@ function runFxForAttackStyle(
     if (effectId === DEATH_MARK_BLAST_CLIENT_EFFECT) continue; // handled above
     if (effectId === CANNON_BLAST_CLIENT_EFFECT) continue; // handled above
     if (effectId === VOID_DISCHARGE_CLIENT_EFFECT) continue; // handled above
+    if (effectId === ABILITY_SWEEP_FX) {
+      // Sweep Technique: a bold horizontal cleave ON TOP of the normal attack FX,
+      // plus a Technique HUD-icon pulse so the fire is visible both in-world and
+      // on the ability bar.
+      fxSweep(scene, from.x, from.y, to.x, to.y, ev.empowered);
+      notifyAbilityFired("technique");
+      continue;
+    }
     if (effectId === FIRST_STRIKE_CLIENT_EFFECT) {
       fxFirstStrike(scene, to.x, to.y);
       continue;

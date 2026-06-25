@@ -63,6 +63,10 @@ export interface RenderState {
   label: Map<NetworkId, Phaser.GameObjects.Text>;
   hpBar: Map<NetworkId, Phaser.GameObjects.Graphics>;
   cdBar: Map<NetworkId, Phaser.GameObjects.Graphics>;
+  /** Monster charged-attack wind-up: the skill-name label (the bar reuses the
+   *  cooldown bar, tinted red) + the cast timing, keyed by monster id. */
+  castLabel: Map<NetworkId, Phaser.GameObjects.Text>;
+  castState: Map<NetworkId, { startedAt: number; castMs: number; label: string }>;
   hpBarCache: Map<
     NetworkId,
     {
@@ -79,7 +83,8 @@ export interface RenderState {
       x: number;
       y: number;
       bucket: number;
-      hasTarget: boolean;
+      show: boolean;
+      casting: boolean;
     }
   >;
 
@@ -156,6 +161,7 @@ export interface RenderState {
   /** True after the Void Overlord dies until a new one spawns (client prediction). */
   voidThroneHazardLifted: boolean;
   movementEffectNextAt: Map<string, number>;
+  ledgeHopNextAt: Map<string, number>;
   knownUnlockedRecipes: Set<string>;
   knownUnlockedRecipesInitialized: boolean;
   gameplaySettingsSynced: boolean;
@@ -193,6 +199,8 @@ export function createRenderState(): RenderState {
     label: new Map(),
     hpBar: new Map(),
     cdBar: new Map(),
+    castLabel: new Map(),
+    castState: new Map(),
     hpBarCache: new Map(),
     cdBarCache: new Map(),
     effectOverlays: new Map(),
@@ -216,6 +224,7 @@ export function createRenderState(): RenderState {
     voidOverlordRespawn: null,
     voidThroneHazardLifted: false,
     movementEffectNextAt: new Map(),
+    ledgeHopNextAt: new Map(),
     knownUnlockedRecipes: new Set(),
     knownUnlockedRecipesInitialized: false,
     gameplaySettingsSynced: false,

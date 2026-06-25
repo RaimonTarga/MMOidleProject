@@ -38,6 +38,11 @@ const RETURN_SPEED_MULT = 1.6; // how fast monsters snap back to spawn
 // stay below player base 120) and never retreats past its leash — see updateMonsters.
 const KITE_RETREAT_FRAC = 0.6;
 const KITE_STANDOFF_FRAC = 0.8;
+const HOLD_POST_ARRIVE_SQ = 28 * 28;
+const MOUNTAIN_WANDER_SAMPLES = 8;
+const MOUNTAIN_WANDER_SEPARATION_RANGE = 620;
+const CAVE_LURKER_WANDER_SAMPLES = 8;
+const CAVE_LURKER_BRUTE_AVOID_RANGE = 560;
 
 /**
  * Volcano in-combat attack ramp. While engaged, the monster's attack grows by
@@ -235,7 +240,6 @@ export function updateMonsters(world: World, dt: number, now: number) {
       const monsterDef = MONSTER_DATABASE.get(e.isMonster.monsterTypeId);
       // A boss 'morph' action can flip the kite flag at runtime.
       const isKiter = (e.scriptsBoss?.kiteOverride ?? monsterDef?.kite) === true;
-
       const targetPos = aggroPosition(target);
       const inReach = world.collision.canReach(
         e,
@@ -244,13 +248,14 @@ export function updateMonsters(world: World, dt: number, now: number) {
       );
       const hasLine =
         inReach
-        && resolveObstaclesForNode(
-          world,
-          e.hasPosition.nodeId,
-          e.hasPosition.current,
-          targetPos,
-          'monster',
-        ) === targetPos;
+        && (e.isMonster.isRanged ||
+          resolveObstaclesForNode(
+            world,
+            e.hasPosition.nodeId,
+            e.hasPosition.current,
+            targetPos,
+            'monster',
+          ) === targetPos);
 
       if (hasLine) {
         // Only pre-load the attack timer when first stumbling onto a target (idle/wander/return),
@@ -313,7 +318,54 @@ export function updateMonsters(world: World, dt: number, now: number) {
 
       // Fixed patrol route (if any) replaces random wander while un-aggroed.
       const monsterDef = MONSTER_DATABASE.get(e.isMonster.monsterTypeId);
-      const patrol = monsterDef?.patrol;
+      const patrol = ai.patrolOverride ?? monsterDef?.patrol;
+      const holdPost = ai.holdPost;
+      if (holdPost) {
+        const holdPatrol = ai.holdPatrol;
+        switch (e.hasAwareness.state) {
+          case "chasing":
+          case "attacking":
+          case "returning":
+            if (distanceSq(e.hasPosition.current, holdPost) > HOLD_POST_ARRIVE_SQ) {
+              e.hasAwareness.state = "returning";
+              setMonsterTarget(world, e, holdPost);
+            } else {
+              e.hasAwareness.state = "idle";
+              ai.idleUntil = now + randBetween(ai.idleMinMs, ai.idleMaxMs);
+              stopMonster(world, e);
+            }
+            break;
+
+          case "wandering": {
+            const targetPoint = e.isMoving
+              ? pointFromMotion(e.hasPosition.current, e.isMoving.motion)
+              : e.hasPosition.current;
+            if (distanceSq(e.hasPosition.current, targetPoint) < 16) {
+              e.hasAwareness.state = "idle";
+              ai.idleUntil = now + randBetween(ai.idleMinMs, ai.idleMaxMs);
+              stopMonster(world, e);
+            }
+            break;
+          }
+
+          case "idle":
+          default:
+            if (holdPatrol && holdPatrol.length > 0 && now >= ai.idleUntil) {
+              const idx = ai.holdPatrolIndex ?? 0;
+              const targetPoint = holdPatrol[idx % holdPatrol.length];
+              ai.holdPatrolIndex = (idx + 1) % holdPatrol.length;
+              e.hasAwareness.state = "wandering";
+              setMonsterTarget(world, e, targetPoint);
+            } else if (distanceSq(e.hasPosition.current, holdPost) > HOLD_POST_ARRIVE_SQ) {
+              e.hasAwareness.state = "returning";
+              setMonsterTarget(world, e, holdPost);
+            } else {
+              stopMonster(world, e);
+            }
+            break;
+        }
+        continue;
+      }
 
       switch (e.hasAwareness.state) {
         case "chasing":
@@ -371,6 +423,10 @@ export function updateMonsters(world: World, dt: number, now: number) {
                 e,
                 monsterDef?.biome === "swamp" && Math.random() < 0.65
                   ? swampPoolWanderTarget(e, node) ?? randomWanderTarget(ai, node)
+                  : isCaveLurker(e)
+                  ? caveLurkerWanderTarget(world, e, node)
+                  : monsterDef?.biome === "mountain"
+                  ? mountainSpreadWanderTarget(world, e, node)
                   : randomWanderTarget(ai, node),
               );
             }
@@ -410,6 +466,108 @@ function randomWanderTarget(
   };
 }
 
+function mountainSpreadWanderTarget(
+  world: World,
+  monster: MonsterEntity,
+  node: { width: number; height: number } | undefined,
+): Vec2 {
+  let best = randomWanderTarget(monster.controlsMonster, node);
+  let bestScore = mountainWanderScore(world, monster, best);
+
+  for (let i = 1; i < MOUNTAIN_WANDER_SAMPLES; i++) {
+    const candidate = randomWanderTarget(monster.controlsMonster, node);
+    const score = mountainWanderScore(world, monster, candidate);
+    if (score < bestScore) {
+      best = candidate;
+      bestScore = score;
+    }
+  }
+
+  return best;
+}
+
+function mountainWanderScore(
+  world: World,
+  monster: MonsterEntity,
+  pos: Vec2,
+): number {
+  const separationSq =
+    MOUNTAIN_WANDER_SEPARATION_RANGE * MOUNTAIN_WANDER_SEPARATION_RANGE;
+  let score = 0;
+
+  for (const other of world.monsterEntitiesInNode(monster.hasPosition.nodeId)) {
+    if (other.entityId === monster.entityId) continue;
+    const def = MONSTER_DATABASE.get(other.isMonster.monsterTypeId);
+    if (def?.biome !== "mountain") continue;
+
+    const d2 = distanceSq(other.hasPosition.current, pos);
+    if (d2 > separationSq) continue;
+    const closeness = (separationSq - d2) / separationSq;
+    score += 1 + 4 * closeness;
+    if (!other.controlsMonster.holdPost) {
+      score += 2 * closeness;
+    }
+  }
+
+  return score;
+}
+
+function isCaveLurker(monster: MonsterEntity): boolean {
+  return monster.isMonster.monsterTypeId === "cave-lurker";
+}
+
+function caveLurkerWanderTarget(
+  world: World,
+  monster: MonsterEntity,
+  node: { width: number; height: number } | undefined,
+): Vec2 {
+  let best = randomWanderTarget(monster.controlsMonster, node);
+  let bestScore = caveLurkerWanderScore(world, monster, best);
+
+  for (let i = 1; i < CAVE_LURKER_WANDER_SAMPLES; i++) {
+    const candidate = randomWanderTarget(monster.controlsMonster, node);
+    const score = caveLurkerWanderScore(world, monster, candidate);
+    if (score < bestScore) {
+      best = candidate;
+      bestScore = score;
+    }
+  }
+
+  return best;
+}
+
+function caveLurkerWanderScore(
+  world: World,
+  monster: MonsterEntity,
+  pos: Vec2,
+): number {
+  const avoidSq =
+    CAVE_LURKER_BRUTE_AVOID_RANGE * CAVE_LURKER_BRUTE_AVOID_RANGE;
+  let score = 0;
+
+  for (const other of world.monsterEntitiesInNode(monster.hasPosition.nodeId)) {
+    if (other.entityId === monster.entityId) continue;
+    const def = MONSTER_DATABASE.get(other.isMonster.monsterTypeId);
+    if (def?.biome !== "cave" || def.patrol === undefined) continue;
+
+    const d2 = distanceSq(other.hasPosition.current, pos);
+    if (d2 <= avoidSq) {
+      score += 6 * ((avoidSq - d2) / avoidSq);
+    }
+
+    const spawnD2 = distanceSq(other.controlsMonster.spawn, pos);
+    if (spawnD2 <= avoidSq) {
+      score += 3 * ((avoidSq - spawnD2) / avoidSq);
+    }
+  }
+
+  const travelSq = distanceSq(monster.hasPosition.current, pos);
+  const wanderSq =
+    monster.controlsMonster.wanderRadius * monster.controlsMonster.wanderRadius;
+  score -= Math.min(1, travelSq / Math.max(1, wanderSq)) * 1.5;
+  return score;
+}
+
 function swampPoolWanderTarget(
   monster: MonsterEntity,
   node: { width: number; height: number } | undefined,
@@ -447,7 +605,9 @@ function swampPoolWanderTarget(
   };
 }
 
-type PatrolSpec = NonNullable<MonsterDefinition["patrol"]>;
+type PatrolSpec = NonNullable<MonsterDefinition["patrol"]> & {
+  absolute?: boolean;
+};
 
 /**
  * Compute the next patrol destination (spawn + the current relative waypoint,
@@ -485,8 +645,10 @@ function advancePatrol(
   const maxX = node ? node.width - margin : Infinity;
   const minY = node ? margin : 0;
   const maxY = node ? node.height - margin : Infinity;
+  const x = patrol.absolute ? wp.x : ai.spawn.x + wp.x;
+  const y = patrol.absolute ? wp.y : ai.spawn.y + wp.y;
   return {
-    x: Math.max(minX, Math.min(maxX, ai.spawn.x + wp.x)),
-    y: Math.max(minY, Math.min(maxY, ai.spawn.y + wp.y)),
+    x: Math.max(minX, Math.min(maxX, x)),
+    y: Math.max(minY, Math.min(maxY, y)),
   };
 }

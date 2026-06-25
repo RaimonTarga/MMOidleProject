@@ -35,10 +35,11 @@ export type AbilityTrigger =
  * - `cleave`: Technique rider — the armed next attack splashes to nearby enemies.
  * - `damage-reduction`: Guard immediate — an EXPLICIT BUFF (shows in the buff bar,
  *   {@link ABILITY_GUARD_EFFECT_ID}) granting `drPct` damage reduction for `durationMs`.
+ *   `knockbackResistPct`, when present, reduces incoming knockback distance.
  */
 export type AbilityEffectSpec =
   | { kind: "cleave"; splashPct: number; radius: number }
-  | { kind: "damage-reduction"; drPct: number; durationMs: number };
+  | { kind: "damage-reduction"; drPct: number; durationMs: number; knockbackResistPct?: number };
 
 /**
  * Status-effect id for the active Guard-ability buff (system rework Step 7). One
@@ -47,6 +48,16 @@ export type AbilityEffectSpec =
  * to the buff bar (label/color from the equipped ability). Doubles as the buff id.
  */
 export const ABILITY_GUARD_EFFECT_ID = "ability-guard";
+
+/**
+ * Client-effect tag (system rework Step 7) emitted on a `player-hit` event when a
+ * Sweep Technique lands, so the client overlays a horizontal cleave slash on top
+ * of the normal attack FX and pulses the Technique HUD icon. Shared so the server
+ * (which stamps `ctx.metadata.clientEffects`) and the client FX dispatcher agree
+ * on the string. Add a sibling constant per Technique as more FX-bearing
+ * techniques land.
+ */
+export const ABILITY_SWEEP_FX = "ability-sweep";
 
 export interface AbilityDef {
   id: string;
@@ -93,9 +104,9 @@ const abilities: AbilityDef[] = [
     slot: "guard",
     tags: [],
     blurb: "Brace for impact — reduce incoming damage when under heavy pressure.",
-    cooldownMs: 8000,
+    cooldownMs: 7000,
     trigger: { kind: "hp-below", hpPct: 0.5 },
-    effect: { kind: "damage-reduction", drPct: 0.4, durationMs: 5000 },
+    effect: { kind: "damage-reduction", drPct: 0.4, durationMs: 3000, knockbackResistPct: 0.55 },
     icon: "brace",
   },
 ];

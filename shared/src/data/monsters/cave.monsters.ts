@@ -36,10 +36,10 @@ export const caveMonsterEntries = [
   ['cave-lurker', {
     id: 'cave-lurker', name: 'Cave Lurker', color: 0x664466,
     // The fast elite of the pair — quick, armored a little, relentless.
-    stats: { hp: 250, attack: 16, plating: 4, damageReduction: 0.05, speed: 60, attackRange: 12, attackCooldown: 1400, pullRange: 220 },
+    stats: { hp: 250, attack: 16, plating: 4, damageReduction: 0.05, speed: 68, attackRange: 12, attackCooldown: 1400, pullRange: 200 },
     behavior: 'melee', attackStyle: 'impact', biome: 'cave', elite: true,
     rewards: { essence: 10, essenceType: 'red', level: 1, biomeXp: 70 },
-    ai: { wanderRadius: 200, leashRange: 560, idleMinMs: 2000, idleMaxMs: 6000 },
+    ai: { wanderRadius: 380, leashRange: 620, idleMinMs: 450, idleMaxMs: 1500 },
   }],
 
   ['cave-brute', {

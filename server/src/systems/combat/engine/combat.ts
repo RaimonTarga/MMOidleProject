@@ -1,5 +1,6 @@
 import type { World } from "../../../world/World";
 import {
+  ABILITY_GUARD_EFFECT_ID,
   applyStatusEffect,
   GAME_CONFIG,
   MONSTER_DATABASE,
@@ -13,7 +14,13 @@ import {
   monsterEmpoweredMultiplier,
   applyEnemySoftCap,
   applyEnemyShield,
+  chargedCastEndsAt,
+  chargeReady,
+  beginCharge,
+  completeCharge,
+  cancelCharge,
 } from "./monsterMechanics";
+import { isMonsterFrozen } from "../../classes/archetypes/dot/t3/core/selectors";
 import {
   getCounter,
   setCounter,
@@ -28,6 +35,7 @@ import {
 } from "@mmo-idle/shared";
 import { getAntiHealMult } from "../../defense";
 import { applyPlayerAoe, applyMonsterAoe } from "../damage/aoeDamage";
+import { applyPlayerKnockback } from "../damage/knockback";
 import { canApplyPlayerDebuff } from "../../classes/archetypes/summoner/t3/core/debuffGuard";
 import { evadeBlocksDebuffs } from "../../defense/mitigation/evasion";
 import { isMonsterStunned, applyStun } from "../status/stun";
@@ -57,6 +65,8 @@ import {
 
 export type PlayerAttackOutcome = "cancelled" | "dodged" | "hit" | "killed";
 export type MonsterAttackOutcome = "cancelled" | "hit" | "killed";
+
+const PLAYER_KNOCKBACK_RESIST_CAP = 0.9;
 
 function hasActiveDamagingNodeFeature(player: PlayerEntity): boolean {
   if (!player.hasNodeFeatureEffect) return false;
@@ -529,6 +539,7 @@ export function runMonsterAttack(
   monster: MonsterEntity,
   target: PlayerEntity,
   now: number,
+  chargeMult = 1,
 ): MonsterAttackOutcome {
   const ctx = makeCombatContext(monster, "monster", target, "player");
 
@@ -562,6 +573,10 @@ export function runMonsterAttack(
   // the player's damage-cap, shields, plating and DR all apply to the boosted hit —
   // the same path a player empowered attack takes. Deterministic (counter + timer).
   let empoweredMult = monsterEmpoweredMultiplier(monster, def, now);
+
+  // Charged (cast-time) attack multiplier — folds into the same empowered spike
+  // path so the player's damage-cap / DR / Brace all apply to the telegraphed hit.
+  if (chargeMult > 1) empoweredMult *= chargeMult;
 
   // Sun Mark finisher (Desert): a hit landed on a marked player is amplified and
   // consumes the mark. The marker mob (`appliesMark`) sets it up; the finisher
@@ -775,6 +790,58 @@ export function runMonsterAttack(
 }
 
 /**
+ * Abort an in-progress charged-attack wind-up and tell the node to clear the cast
+ * bar. No-op when the monster isn't casting. Used on every bail path (interrupt,
+ * target lost, out of range, can't-attack) so a cast never lingers silently.
+ */
+function abortMonsterCast(world: World, monster: MonsterEntity): void {
+  if (chargedCastEndsAt(monster) <= 0) return; // no pending cast
+  cancelCharge(monster);
+  world.pushEvent(monster.hasPosition.nodeId, {
+    kind: "monster-cast-end",
+    monsterId: monster.isMonster.id,
+    fired: false,
+  });
+}
+
+function playerKnockbackResistPct(player: PlayerEntity): number {
+  const guard = getStatusEffect(player.tracksCombat, ABILITY_GUARD_EFFECT_ID);
+  if (!guard || guard.remainingMs <= 0) return 0;
+  return Math.max(
+    0,
+    Math.min(
+      PLAYER_KNOCKBACK_RESIST_CAP,
+      guard.data["knockbackResistPct"] ?? 0,
+    ),
+  );
+}
+
+function applyChargedAttackKnockback(
+  world: World,
+  monster: MonsterEntity,
+  target: PlayerEntity,
+  charged: NonNullable<MonsterDefinition["chargedAttack"]>,
+): void {
+  const baseDistance = charged.knockback?.distance ?? 0;
+  if (baseDistance <= 0) return;
+  const resist = playerKnockbackResistPct(target);
+  const distance = Math.max(0, Math.round(baseDistance * (1 - resist)));
+  if (distance <= 0) return;
+  const end = applyPlayerKnockback(
+    world,
+    target,
+    monster.hasPosition.current,
+    distance,
+  );
+  if (!end) return;
+  world.pushEvent(target.hasPosition.nodeId, {
+    kind: "player-knockback",
+    playerId: target.isPlayer.id,
+    pos: end,
+  });
+}
+
+/**
  * Run a single monster attack against a minion. Bypasses the combat pipeline
  * intentionally — minions are damage sponges, not full combatants. They have
  * no buffs, no shields, no DoT resistance; HP reduction is raw modulo plating.
@@ -932,23 +999,107 @@ export function updateCombat(world: World, dt: number, now: number) {
     }
     // Same rule as players: a monster with the CannotAttack marker cannot strike.
     if (e.cannotAttack) {
+      abortMonsterCast(world, e);
       setAttackTarget(world, e, null);
       continue;
     }
-    if (e.hasAwareness.state !== "attacking") continue;
+    if (e.hasAwareness.state !== "attacking") {
+      abortMonsterCast(world, e);
+      continue;
+    }
 
     if (e.hasAggroTarget.targetKind === "player") {
       const target = world.getPlayerEntity(e.hasAggroTarget.targetId) ?? null;
       if (!target || target.hasPosition.nodeId !== e.hasPosition.nodeId) {
+        abortMonsterCast(world, e);
         setAggroTarget(world, e, null, now);
         setAttackTarget(world, e, null);
         continue;
       }
       if (!world.collision.canReach(e, target, e.performsAttack.attackRange)) {
+        // Target slipped out of range — drop any wind-up (the telegraph is broken).
+        abortMonsterCast(world, e);
         setAttackTarget(world, e, null);
         continue;
       }
       setAttackTarget(world, e, target.isPlayer.id);
+
+      // Charged (cast-time) attack state machine — telegraphed big hit (e.g. the
+      // Ridge Archer's Power Shot). Takes priority over the normal attack while
+      // active; pauses normal attacks/movement during the wind-up.
+      const charged = MONSTER_DATABASE.get(e.isMonster.monsterTypeId)?.chargedAttack;
+      if (charged) {
+        // A cast is pending while castEndsAt > 0 (set on begin, cleared on
+        // fire/abort). Gate on that, NOT on "still winding up" (castEndsAt > now) —
+        // otherwise the resolve tick (now >= castEndsAt) would fall through to
+        // "begin" and re-arm forever, never firing.
+        if (chargedCastEndsAt(e) > 0) {
+          // Stun/freeze during the wind-up interrupts it (player counterplay).
+          if (
+            isMonsterStunned(world, e.isMonster.id) ||
+            isMonsterFrozen(world, e.isMonster.id)
+          ) {
+            abortMonsterCast(world, e);
+            continue;
+          }
+          if (now < chargedCastEndsAt(e)) continue; // still winding up — hold
+          // Wind-up complete → resolve the ×multiplier shot and put it on cooldown.
+          completeCharge(e, now, charged.cooldownMs);
+          const outcome = runMonsterAttack(world, e, target, now, charged.multiplier);
+          if (outcome === "hit") {
+            applyChargedAttackKnockback(world, e, target, charged);
+          }
+          world.pushEvent(e.hasPosition.nodeId, {
+            kind: "monster-cast-end",
+            monsterId: e.isMonster.id,
+            fired: true,
+            targetId: target.isPlayer.id,
+            fx: charged.fx,
+          });
+          if (
+            (outcome === "hit" || outcome === "killed") &&
+            world.hasMonster(e.isMonster.id)
+          ) {
+            applyMonsterAttackSplash(
+              world,
+              e,
+              target.hasPosition.current,
+              target.isPlayer.id,
+            );
+          }
+          if (outcome === "hit") {
+            e.controlsMonster.kiteTimer = Math.floor(
+              e.controlsMonster.kiteTimer / 2,
+            );
+            const t = world.getPlayerEntity(target.isPlayer.id);
+            if (t) markEngaged(world, t, now);
+          }
+          continue;
+        }
+        // Not casting. ARM-THE-NEXT-ATTACK: the charge cooldown only arms the mob;
+        // it begins the cast at the mob's next NORMAL attack opportunity (respecting
+        // its attack rhythm), turning that attack into the Power Shot. So gate on
+        // both the attack cooldown AND the charge being ready (and not mid-stun).
+        const attackDue =
+          now - e.performsAttack.lastAttackAt >= e.performsAttack.attackCooldown;
+        const initialCd = charged.initialCooldownMs ?? charged.cooldownMs;
+        if (
+          attackDue &&
+          chargeReady(e, now, initialCd) &&
+          !isMonsterStunned(world, e.isMonster.id)
+        ) {
+          beginCharge(e, now, charged.castMs);
+          world.pushEvent(e.hasPosition.nodeId, {
+            kind: "monster-cast-start",
+            monsterId: e.isMonster.id,
+            castMs: charged.castMs,
+            label: charged.name,
+            fx: charged.fx,
+          });
+          continue;
+        }
+      }
+
       // Frozen no longer blocks attacks (it's a severe slow, not full CC); the
       // lengthened attack cooldown applied in updateChillAndFreeze paces them.
       if (
@@ -977,6 +1128,7 @@ export function updateCombat(world: World, dt: number, now: number) {
     }
 
     // targetKind === 'minion'
+    abortMonsterCast(world, e);
     const minion = world.getMinionEntity(e.hasAggroTarget.targetId) ?? null;
     if (
       !minion ||

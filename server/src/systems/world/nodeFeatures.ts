@@ -51,8 +51,21 @@ export function resolveObstaclesForNode(
   to: Vec2,
   target: FeatureTarget,
   pad?: Vec2,
+  suppressedFeatureIds?: ReadonlySet<string>,
 ): Vec2 {
-  const shapes = world.collision.blockShapes(nodeId, target);
+  const baseShapes = world.collision.blockShapes(nodeId, target);
+  const shapes =
+    suppressedFeatureIds && suppressedFeatureIds.size > 0
+      ? world.collision
+          .staticRegions(nodeId)
+          .filter(region => {
+            if (region.kind !== 'block') return false;
+            if (region.data?.blockTarget !== target) return false;
+            const featureId = region.data?.featureId;
+            return typeof featureId !== 'string' || !suppressedFeatureIds.has(featureId);
+          })
+          .map(region => region.shape)
+      : baseShapes;
   if (shapes.length === 0) return to;
   return resolveMoveAgainstBlocks(from, to, shapes, pad);
 }

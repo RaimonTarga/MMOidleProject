@@ -2,6 +2,8 @@ import {
   distanceSq,
   findPathForMover,
   goalsNearEnough,
+  MONSTER_DATABASE,
+  mountainLedgeFeatureIdsForNode,
   PATH_ARRIVAL_THRESHOLD,
   vectorTo,
   type FeatureTarget,
@@ -38,6 +40,22 @@ export function suppressedFeatureIdsForNode(world: World, nodeId: string): Set<s
   return ids;
 }
 
+export function suppressedFeatureIdsForEntity(
+  world: World,
+  entity: ServerEntity,
+): Set<string> {
+  const nodeId = entity.hasPosition?.nodeId;
+  if (!nodeId) return new Set();
+  const ids = suppressedFeatureIdsForNode(world, nodeId);
+  if (
+    entity.isMonster &&
+    MONSTER_DATABASE.get(entity.isMonster.monsterTypeId)?.vaultsMountainLedges === true
+  ) {
+    for (const id of mountainLedgeFeatureIdsForNode(nodeId)) ids.add(id);
+  }
+  return ids;
+}
+
 export function clearMovePath(world: World, entity: ServerEntity): void {
   detachComponent(world, entity, 'hasMovePath');
   replanCooldown.delete(entity.entityId);
@@ -70,7 +88,7 @@ function planPath(
     pad,
     entity.hasPosition.current,
     goal,
-    suppressedFeatureIdsForNode(world, entity.hasPosition.nodeId),
+    suppressedFeatureIdsForEntity(world, entity),
     avoidHazards,
   );
 }

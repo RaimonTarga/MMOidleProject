@@ -23,6 +23,11 @@ const SHIELD_EXPIRES_KEY = "t4EnemyShieldExpiresAt";
 const SHIELD_NEXT_KEY = "t4EnemyShieldNextAt";
 const SHIELD_SESSION_KEY = "t4EnemyShieldSession";
 
+// Charged (cast-time) attack state — the telegraphed Power-Shot wind-up.
+const CHARGE_CAST_ENDS_KEY = "chargeCastEndsAt"; // >now while winding up (0 = idle)
+const CHARGE_CD_NEXT_KEY = "chargeCdNextAt"; // earliest time the next cast may begin
+const CHARGE_SESSION_KEY = "chargeSession"; // combat-session token (re-arm on engage)
+
 /** Combat-entry timestamp for the monster's current aggro session (or `now`). */
 function combatSession(monster: MonsterEntity, now: number): number {
   return monster.hasAggroTarget?.sinceMs ?? now;
@@ -88,6 +93,71 @@ export function monsterEmpoweredMultiplier(
   }
 
   return mult;
+}
+
+// ── Charged (cast-time) attacks ──────────────────────────────────────────────
+//
+// A telegraphed big hit: when the per-combat cooldown is ready and the monster is
+// in range, it begins a cast (a cast bar shows client-side); the caller skips
+// movement/normal attacks during the wind-up, then resolves a ×multiplier hit when
+// it completes. Stun/freeze during the wind-up interrupts it. State lives on the
+// monster's `tracksCombat` scratch; keys are private to this module.
+
+/** True while the monster is mid wind-up of a charged attack. */
+export function isMonsterCharging(monster: MonsterEntity, now: number): boolean {
+  return getCounter(monster.tracksCombat, CHARGE_CAST_ENDS_KEY) > now;
+}
+
+/** Timestamp the current wind-up completes at (0 when not casting). */
+export function chargedCastEndsAt(monster: MonsterEntity): number {
+  return getCounter(monster.tracksCombat, CHARGE_CAST_ENDS_KEY);
+}
+
+/**
+ * Whether the charged attack is ARMED (off its per-combat cooldown). The caller
+ * only consults this at a normal-attack opportunity, so an armed charge turns the
+ * mob's NEXT attack into the cast. Re-arms on a new combat session using
+ * `initialCooldownMs` (session-keyed like empoweredCooldown) so the first cast
+ * lands a couple of attacks in; `completeCharge` then uses the recurring cooldown.
+ */
+export function chargeReady(
+  monster: MonsterEntity,
+  now: number,
+  initialCooldownMs: number,
+): boolean {
+  const cs = monster.tracksCombat;
+  const session = combatSession(monster, now);
+  if (getCounter(cs, CHARGE_SESSION_KEY) !== session) {
+    setCounter(cs, CHARGE_SESSION_KEY, session);
+    setCounter(cs, CHARGE_CD_NEXT_KEY, session + initialCooldownMs);
+    setCounter(cs, CHARGE_CAST_ENDS_KEY, 0);
+  }
+  return now >= getCounter(cs, CHARGE_CD_NEXT_KEY);
+}
+
+/** Open a `castMs` wind-up. */
+export function beginCharge(
+  monster: MonsterEntity,
+  now: number,
+  castMs: number,
+): void {
+  setCounter(monster.tracksCombat, CHARGE_CAST_ENDS_KEY, now + castMs);
+}
+
+/** Consume a completed cast and put the charged attack on cooldown. */
+export function completeCharge(
+  monster: MonsterEntity,
+  now: number,
+  cooldownMs: number,
+): void {
+  setCounter(monster.tracksCombat, CHARGE_CAST_ENDS_KEY, 0);
+  setCounter(monster.tracksCombat, CHARGE_CD_NEXT_KEY, now + cooldownMs);
+}
+
+/** Abort an in-progress wind-up (interrupt / out-of-range / target lost). Leaves
+ *  the cooldown untouched so it retries once the situation allows. */
+export function cancelCharge(monster: MonsterEntity): void {
+  setCounter(monster.tracksCombat, CHARGE_CAST_ENDS_KEY, 0);
 }
 
 /**

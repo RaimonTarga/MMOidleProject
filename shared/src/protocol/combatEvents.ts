@@ -47,6 +47,13 @@ export type CombatEvent =
   // a Tundra ice-armor shell breaking (freezing shockwave). Purely cosmetic — the
   // underlying aggro/debuff/freeze is server-authoritative.
   | { kind: 'ecology-pulse'; monsterId: string; pos: Vec2; pulse: 'pack-call' | 'sun-mark' | 'frost-shatter' }
+  // Monster charged (cast-time) attack telegraph, shown to the whole node. `start`
+  // opens a `castMs` cast bar over the monster (label = ability name). `end` clears
+  // it: `fired` true ⇒ the charged shot landed (play the flashy FX toward `targetId`),
+  // false ⇒ the wind-up was interrupted/aborted (just clear the bar). Purely cosmetic —
+  // the damage + interrupt are server-authoritative. `fx` selects the charged-shot art.
+  | { kind: 'monster-cast-start'; monsterId: string; castMs: number; label: string; fx?: string }
+  | { kind: 'monster-cast-end'; monsterId: string; fired: boolean; targetId?: string; fx?: string }
   // Server forced the player to a new position (e.g. blunderbuss recoil). The
   // client owns own-player prediction, so it must be told to accept the move
   // even mid-movement; `pos` is the authoritative destination to slide to.

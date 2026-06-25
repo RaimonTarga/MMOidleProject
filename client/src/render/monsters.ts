@@ -1,4 +1,10 @@
-import { MONSTER_DATABASE, type MonsterView } from '@mmo-idle/shared';
+import {
+  MONSTER_DATABASE,
+  RESOLVED_NODE_FEATURES,
+  type MonsterView,
+  type NodeFeatureShape,
+  type Vec2,
+} from '@mmo-idle/shared';
 import type { RenderState } from './state';
 import type { GameScene } from '../scenes/GameScene';
 import { ensureSprite, updateSpriteFrame } from './sprites';
@@ -33,6 +39,9 @@ const PACK_ALPHA_TINT = 0xff7755;
 // networked field is needed. Takes precedence over the pack-alpha tint (an elite that
 // also leads a pack still reads as "the dangerous one"); guardian/throne win above it.
 const ELITE_TINT = 0xffdd33;
+const LEDGE_HOP_COOLDOWN_MS = 450;
+const LEDGE_HOP_HEIGHT = 34;
+const LEDGE_HOP_DURATION_MS = 260;
 
 function isPackAlphaType(typeId: string): boolean {
   return MONSTER_DATABASE.get(typeId)?.pack?.role === 'alpha';
@@ -40,6 +49,68 @@ function isPackAlphaType(typeId: string): boolean {
 
 function isEliteType(typeId: string): boolean {
   return MONSTER_DATABASE.get(typeId)?.elite === true;
+}
+
+function canPlayLedgeHop(typeId: string): boolean {
+  return MONSTER_DATABASE.get(typeId)?.vaultsMountainLedges === true;
+}
+
+function rectSegmentCrossesShape(from: Vec2, to: Vec2, shape: NodeFeatureShape): boolean {
+  if (shape.kind !== 'rect') return false;
+  const minX = shape.x - shape.halfW;
+  const maxX = shape.x + shape.halfW;
+  const minY = shape.y - shape.halfH;
+  const maxY = shape.y + shape.halfH;
+  const steps = Math.max(2, Math.ceil(Math.hypot(to.x - from.x, to.y - from.y) / 24));
+  let wasInside = from.x >= minX && from.x <= maxX && from.y >= minY && from.y <= maxY;
+  for (let i = 1; i <= steps; i++) {
+    const t = i / steps;
+    const p = {
+      x: from.x + (to.x - from.x) * t,
+      y: from.y + (to.y - from.y) * t,
+    };
+    const inside = p.x >= minX && p.x <= maxX && p.y >= minY && p.y <= maxY;
+    if (inside !== wasInside) return true;
+    wasInside = inside;
+  }
+  return false;
+}
+
+function crossesMountainLedge(monster: MonsterView, prevPos: Vec2): boolean {
+  const features = RESOLVED_NODE_FEATURES[monster.nodeId] ?? [];
+  return features.some((feature) =>
+    feature.id.startsWith('mountain_') &&
+    feature.blocksMovement?.includes('monster') &&
+    rectSegmentCrossesShape(prevPos, monster.pos, feature.shape),
+  );
+}
+
+function maybePlayLedgeHop(
+  state: RenderState,
+  monster: MonsterView,
+  prevPos: Vec2,
+  scene: GameScene,
+): void {
+  if (!canPlayLedgeHop(monster.monsterTypeId)) return;
+  const now = scene.time.now;
+  if ((state.ledgeHopNextAt.get(monster.id) ?? 0) > now) return;
+  if (!crossesMountainLedge(monster, prevPos)) return;
+
+  const meta = state.spriteMeta.get(monster.id);
+  if (!meta) return;
+  scene.tweens.killTweensOf(meta);
+  meta.visualOffsetY = 0;
+  state.ledgeHopNextAt.set(monster.id, now + LEDGE_HOP_COOLDOWN_MS);
+  scene.tweens.add({
+    targets: meta,
+    visualOffsetY: -LEDGE_HOP_HEIGHT,
+    duration: LEDGE_HOP_DURATION_MS / 2,
+    yoyo: true,
+    ease: 'Sine.easeOut',
+    onComplete: () => {
+      meta.visualOffsetY = 0;
+    },
+  });
 }
 
 function syncMonsterThroneTint(
@@ -162,6 +233,7 @@ export function upsertMonster(
   const prev = state.view.get(monster.id) as MonsterView | undefined;
   const prevAttackAt = prev?.lastAttackAt ?? 0;
   const prevHp = prev?.hp ?? monster.hp;
+  const prevPos = prev?.pos ? { ...prev.pos } : { ...monster.pos };
 
   const interp = state.interpolation.get(monster.id);
   if (interp) {
@@ -173,6 +245,7 @@ export function upsertMonster(
   }
 
   state.view.set(monster.id, monster);
+  maybePlayLedgeHop(state, monster, prevPos, scene);
   const transform = state.transform.get(monster.id);
   if (transform) {
     transform.target = { ...monster.target };

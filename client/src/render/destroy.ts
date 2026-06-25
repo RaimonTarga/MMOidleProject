@@ -5,6 +5,7 @@ import { destroyShadow } from './shadows';
 import { destroyLabel } from './labels';
 import { destroyHpBar } from './healthBars';
 import { destroyCdBar } from './cooldownBars';
+import { destroyCastBar } from './castBars';
 import { destroyEffectOverlays } from './effectOverlays';
 import { destroyThoughtBubble } from './thoughtBubbles';
 import { clearMovementEffectsForEntity } from './movementEffects';
@@ -25,6 +26,7 @@ export function destroyEntity(
   destroyLabel(state, id);
   destroyHpBar(state, id);
   destroyCdBar(state, id);
+  destroyCastBar(state, id);
   destroyEffectOverlays(state, id);
   destroyThoughtBubble(state, id);
 
@@ -36,5 +38,6 @@ export function destroyEntity(
   state.interpolation.delete(id);
   state.spriteMeta.delete(id);
   state.debugRanges.delete(id);
+  state.ledgeHopNextAt.delete(id);
   clearMovementEffectsForEntity(state, id);
 }

@@ -304,6 +304,12 @@ export interface MonsterDefinition {
     holdMaxMs?: number;
   };
   /**
+   * Movement ecology tag. When true, this monster can cross mountain ledge
+   * node-features for pathing and movement. The client may present the crossing
+   * as a hop, but the server remains authoritative.
+   */
+  vaultsMountainLedges?: boolean;
+  /**
    * Pack behavior. Presence opts the mob into coordinated grouped AI (handled by
    * the server pack system, which only sets aggro INTENT — `updateMonsters` stays
    * the executor). An aggroed pack member pulls un-aggroed mates that are within
@@ -511,4 +517,35 @@ export interface MonsterDefinition {
    * dodges the hit. Default false (a dodged hit applies no debuffs).
    */
   appliesThroughEvade?: boolean;
+  /**
+   * Charged (cast-time) special attack — a TELEGRAPHED big hit. When the per-combat
+   * `cooldownMs` is ready and the monster is in range, it begins a `castMs` wind-up
+   * (a cast bar shows over its head; no movement/normal attacks during the cast).
+   * When the cast completes it lands a single attack multiplied by `multiplier`,
+   * resolved through the player's full defensive pipeline (so the damage cap / DR /
+   * Brace all apply to the spike — same as any empowered monster hit). A STUN or
+   * FREEZE during the wind-up INTERRUPTS it (no shot). The cooldown timer starts on
+   * combat entry, so the first cast comes after a few normal attacks, not on contact.
+   * The flagship of Mountain's "telegraphed huge hit you survive via mitigation" loop
+   * — and the trigger the `target-casting` rune condition reacts to. `fx` selects the
+   * client charged-shot animation (defaults to a generic power shot).
+   */
+  chargedAttack?: {
+    name: string;
+    castMs: number;
+    cooldownMs: number;
+    multiplier: number;
+    /**
+     * Cooldown used for the FIRST cast of a combat session (defaults to `cooldownMs`).
+     * Set shorter so the empowered shot lands a couple of normal attacks into the
+     * fight, then `cooldownMs` governs the recurring rhythm.
+     */
+    initialCooldownMs?: number;
+    fx?: string;
+    /**
+     * Optional rider applied when the charged hit actually lands. Distance is in
+     * pixels and can be reduced by player knockback resistance effects.
+     */
+    knockback?: { distance: number };
+  };
 }

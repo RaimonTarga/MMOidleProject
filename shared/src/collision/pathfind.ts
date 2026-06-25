@@ -141,7 +141,9 @@ export function findPathOnGrid(grid: NavGrid, from: Vec2, to: Vec2): Vec2[] | nu
 
     if (current === endIdx) {
       const path = reconstructPath(grid, endIdx, cameFrom, cols);
-      const trimmed = trimPathWaypoints(from, to, path);
+      const endWorld = cellToWorld(grid, endCell.col, endCell.row);
+      const finalGoal = isPaddedSegmentClear(grid, endWorld, to) ? to : endWorld;
+      const trimmed = trimPathWaypoints(from, finalGoal, path);
       if (!isPathPaddedClear(grid, trimmed)) return null;
       return trimmed;
     }

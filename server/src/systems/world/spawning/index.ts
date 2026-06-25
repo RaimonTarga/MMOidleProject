@@ -3,10 +3,14 @@ import {
   NODE_BIOMES,
   MONSTER_DATABASE,
   BIOME_DATABASE,
+  mountainLedgeHoldPointsForNode,
+  mountainLedgePatrolForPost,
+  mountainChokepointsForNode,
   RESOLVED_NODE_FEATURES,
   TEST_ROOM_NODE_ID,
   distanceSq,
   isGauntletDungeonNode,
+  type MonsterPatrolRoute,
   type Vec2,
 } from "@mmo-idle/shared";
 import type { World } from "../../../world/World";
@@ -47,9 +51,87 @@ const DISPERSAL_RANDOM_SAMPLES = 8;
 const DISPERSAL_NEIGHBOR_RANGE = 560;
 const PACK_ALPHA_DISPERSAL_SAMPLES = 12;
 const PACK_ALPHA_SEPARATION_RANGE = 820;
+const MOUNTAIN_WANDERER_DISPERSAL_SAMPLES = 18;
+const MOUNTAIN_WANDERER_SEPARATION_RANGE = 760;
 const SWAMP_POOL_BIASED_SPAWN_ATTEMPTS = 8;
 const SWAMP_POOL_MIN_EDGE_OFFSET = 72;
 const SWAMP_POOL_MAX_EDGE_OFFSET = 210;
+const MOUNTAIN_CHOKE_OCCUPY_RADIUS = 220;
+const MOUNTAIN_CHOKE_SPAWN_JITTER = 34;
+const MOUNTAIN_ARCHER_HOLD_LEASH = 460;
+const MOUNTAIN_HOPPER_HOLD_LEASH = 720;
+const CAVE_PATROL_OCCUPY_RADIUS = 760;
+const CAVE_PATROL_LEASH = 980;
+const CAVE_PATROL_WANDER_RADIUS = 80;
+
+interface CavePatrolAssignment {
+  anchor: Vec2;
+  patrol: MonsterPatrolRoute;
+}
+
+const CAVE_PATROL_ROUTES: CavePatrolAssignment[] = [
+  {
+    anchor: { x: 360, y: 360 },
+    patrol: {
+      absolute: true,
+      mode: "loop",
+      waypoints: [
+        { x: 360, y: 360 },
+        { x: GAME_CONFIG.NODE_WIDTH - 360, y: 360 },
+        { x: GAME_CONFIG.NODE_WIDTH - 360, y: GAME_CONFIG.NODE_HEIGHT - 360 },
+        { x: 360, y: GAME_CONFIG.NODE_HEIGHT - 360 },
+      ],
+      holdMinMs: 900,
+      holdMaxMs: 1800,
+    },
+  },
+  {
+    anchor: {
+      x: GAME_CONFIG.NODE_WIDTH - 360,
+      y: GAME_CONFIG.NODE_HEIGHT - 360,
+    },
+    patrol: {
+      absolute: true,
+      mode: "loop",
+      waypoints: [
+        { x: GAME_CONFIG.NODE_WIDTH - 360, y: GAME_CONFIG.NODE_HEIGHT - 360 },
+        { x: 360, y: GAME_CONFIG.NODE_HEIGHT - 360 },
+        { x: 360, y: 360 },
+        { x: GAME_CONFIG.NODE_WIDTH - 360, y: 360 },
+      ],
+      holdMinMs: 900,
+      holdMaxMs: 1800,
+    },
+  },
+  {
+    anchor: { x: GAME_CONFIG.NODE_WIDTH / 2, y: 360 },
+    patrol: {
+      absolute: true,
+      mode: "pingpong",
+      waypoints: [
+        { x: GAME_CONFIG.NODE_WIDTH / 2, y: 360 },
+        { x: GAME_CONFIG.NODE_WIDTH / 2, y: GAME_CONFIG.NODE_HEIGHT / 2 },
+        { x: GAME_CONFIG.NODE_WIDTH / 2, y: GAME_CONFIG.NODE_HEIGHT - 360 },
+      ],
+      holdMinMs: 800,
+      holdMaxMs: 1600,
+    },
+  },
+  {
+    anchor: { x: 360, y: GAME_CONFIG.NODE_HEIGHT / 2 },
+    patrol: {
+      absolute: true,
+      mode: "pingpong",
+      waypoints: [
+        { x: 360, y: GAME_CONFIG.NODE_HEIGHT / 2 },
+        { x: GAME_CONFIG.NODE_WIDTH / 2, y: GAME_CONFIG.NODE_HEIGHT / 2 },
+        { x: GAME_CONFIG.NODE_WIDTH - 360, y: GAME_CONFIG.NODE_HEIGHT / 2 },
+      ],
+      holdMinMs: 800,
+      holdMaxMs: 1600,
+    },
+  },
+];
 
 /**
  * Create a monster of the given type at `pos` in nodeId.
@@ -183,16 +265,36 @@ export function spawnMonster(world: World, nodeId: string): boolean {
   const minDistSq = GAME_CONFIG.MONSTER_MIN_SPAWN_DIST ** 2;
 
   for (let attempt = 0; attempt < TOTAL_SPAWN_ATTEMPTS; attempt++) {
-    const pos =
-      typeDef?.pack?.role === "alpha"
-        ? dispersedPackAlphaSpawnPos(world, nodeId, typeDef.biome, node)
-        : typeDef?.biome === "swamp" && attempt < SWAMP_POOL_BIASED_SPAWN_ATTEMPTS
-        ? swampPoolEdgeSpawnPos(world, nodeId, node) ??
-          dispersedSpawnPos(world, nodeId, node)
-        : attempt < PACK_BIASED_SPAWN_ATTEMPTS
-        ? biasedPackSpawnPos(world, nodeId, typeId, node) ??
-          dispersedSpawnPos(world, nodeId, node)
-        : dispersedSpawnPos(world, nodeId, node);
+    let shouldAssignMountainHoldPost = false;
+    let cavePatrol: CavePatrolAssignment | null = null;
+    let pos: Vec2;
+    if (typeDef?.pack?.role === "alpha") {
+      pos = dispersedPackAlphaSpawnPos(world, nodeId, typeDef.biome, node);
+    } else {
+      const mountainPostPos = mountainHoldSpawnPos(world, nodeId, typeDef);
+      cavePatrol = cavePatrolAssignment(world, nodeId, typeDef);
+      if (mountainPostPos) {
+        shouldAssignMountainHoldPost = true;
+        pos = mountainPostPos;
+      } else if (cavePatrol) {
+        pos = { ...cavePatrol.anchor };
+      } else if (typeDef?.biome === "mountain") {
+        pos = mountainWandererSpawnPos(world, nodeId, node);
+      } else if (
+        typeDef?.biome === "swamp" &&
+        attempt < SWAMP_POOL_BIASED_SPAWN_ATTEMPTS
+      ) {
+        pos =
+          swampPoolEdgeSpawnPos(world, nodeId, node) ??
+          dispersedSpawnPos(world, nodeId, node);
+      } else if (attempt < PACK_BIASED_SPAWN_ATTEMPTS) {
+        pos =
+          biasedPackSpawnPos(world, nodeId, typeId, node) ??
+          dispersedSpawnPos(world, nodeId, node);
+      } else {
+        pos = dispersedSpawnPos(world, nodeId, node);
+      }
+    }
 
     if (!isAmbientSpawnPosClear(world, nodeId, pos, minDistSq, typeDef)) {
       continue;
@@ -201,10 +303,179 @@ export function spawnMonster(world: World, nodeId: string): boolean {
     if (typeDef?.pack?.role === "alpha") {
       return spawnPack(world, nodeId, typeId, pos) !== null;
     }
-    return createMonster(world, nodeId, typeId, pos) !== null;
+    const monster = createMonster(world, nodeId, typeId, pos);
+    if (!monster) return false;
+    if (shouldAssignMountainHoldPost) {
+      assignMountainHoldPost(world, nodeId, monster, typeDef, pos);
+    }
+    if (cavePatrol) {
+      assignCavePatrol(monster, typeDef, cavePatrol);
+    }
+    return true;
   }
 
   return false;
+}
+
+function cavePatrolAssignment(
+  world: World,
+  nodeId: string,
+  typeDef: ReturnType<typeof MONSTER_DATABASE.get> | undefined,
+): CavePatrolAssignment | null {
+  if (!isCavePatrolBrute(typeDef)) return null;
+  const occupySq = CAVE_PATROL_OCCUPY_RADIUS * CAVE_PATROL_OCCUPY_RADIUS;
+  const occupied: Vec2[] = [];
+  for (const e of world.monsterEntitiesInNode(nodeId)) {
+    const def = MONSTER_DATABASE.get(e.isMonster.monsterTypeId);
+    if (!isCavePatrolBrute(def)) continue;
+    occupied.push(e.controlsMonster.spawn);
+  }
+
+  const free = CAVE_PATROL_ROUTES.filter((route) =>
+    occupied.every((pos) => distanceSq(pos, route.anchor) > occupySq),
+  );
+  if (free.length > 0) {
+    return free[Math.floor(Math.random() * free.length)];
+  }
+  return null;
+}
+
+function isCavePatrolBrute(
+  typeDef: ReturnType<typeof MONSTER_DATABASE.get> | undefined,
+): boolean {
+  return typeDef?.biome === "cave" && typeDef.patrol !== undefined;
+}
+
+function assignCavePatrol(
+  monster: MonsterEntity,
+  typeDef: ReturnType<typeof MONSTER_DATABASE.get> | undefined,
+  assignment: CavePatrolAssignment,
+): void {
+  if (!isCavePatrolBrute(typeDef)) return;
+  monster.hasPosition.current = { ...assignment.anchor };
+  monster.controlsMonster.spawn = { ...assignment.anchor };
+  monster.controlsMonster.patrolOverride = {
+    ...assignment.patrol,
+    waypoints: assignment.patrol.waypoints.map((wp) => ({ ...wp })),
+  };
+  monster.controlsMonster.patrolIndex = 1;
+  monster.controlsMonster.patrolDir = 1;
+  monster.controlsMonster.wanderRadius = Math.min(
+    monster.controlsMonster.wanderRadius,
+    CAVE_PATROL_WANDER_RADIUS,
+  );
+  monster.controlsMonster.leashRange = Math.max(
+    monster.controlsMonster.leashRange,
+    CAVE_PATROL_LEASH,
+  );
+  monster.hasAwareness.leashRange = monster.controlsMonster.leashRange;
+}
+
+function mountainHoldSpawnPos(
+  world: World,
+  nodeId: string,
+  typeDef: ReturnType<typeof MONSTER_DATABASE.get> | undefined,
+): Vec2 | null {
+  if (typeDef?.biome !== "mountain") return null;
+  const free = typeDef.isRanged
+    ? freeMountainPosts(world, nodeId, mountainChokepointsForNode(nodeId), isRangedMountainHolder)
+    : typeDef.vaultsMountainLedges === true
+    ? freeMountainPosts(world, nodeId, mountainLedgeHoldPointsForNode(nodeId), isVaultingMountainHolder)
+    : [];
+  if (free.length === 0) return null;
+  const post = free[Math.floor(Math.random() * free.length)];
+  return jitteredMountainPost(post);
+}
+
+function assignMountainHoldPost(
+  world: World,
+  nodeId: string,
+  monster: MonsterEntity,
+  typeDef: ReturnType<typeof MONSTER_DATABASE.get> | undefined,
+  spawnPos: Vec2,
+): void {
+  if (typeDef?.biome !== "mountain") return;
+  const posts = typeDef.isRanged
+    ? mountainChokepointsForNode(nodeId)
+    : typeDef.vaultsMountainLedges === true
+    ? mountainLedgeHoldPointsForNode(nodeId)
+    : [];
+  if (posts.length === 0) return;
+  const post = nearestMountainPost(posts, spawnPos);
+  if (!post) return;
+  const occupySq = MOUNTAIN_CHOKE_OCCUPY_RADIUS * MOUNTAIN_CHOKE_OCCUPY_RADIUS;
+  if (distanceSq(post, spawnPos) > occupySq) return;
+  monster.controlsMonster.holdPost = { ...post };
+  monster.controlsMonster.spawn = { ...post };
+  if (typeDef.vaultsMountainLedges === true) {
+    monster.controlsMonster.holdPatrol = mountainLedgePatrolForPost(post);
+    monster.controlsMonster.holdPatrolIndex = 0;
+  }
+  monster.controlsMonster.wanderRadius = Math.min(
+    monster.controlsMonster.wanderRadius,
+    90,
+  );
+  const holdLeash =
+    typeDef.vaultsMountainLedges === true
+      ? MOUNTAIN_HOPPER_HOLD_LEASH
+      : MOUNTAIN_ARCHER_HOLD_LEASH;
+  monster.controlsMonster.leashRange = Math.min(
+    monster.controlsMonster.leashRange,
+    holdLeash,
+  );
+  monster.hasAwareness.leashRange = monster.controlsMonster.leashRange;
+}
+
+function freeMountainPosts(
+  world: World,
+  nodeId: string,
+  posts: Vec2[],
+  holder: (typeDef: ReturnType<typeof MONSTER_DATABASE.get>) => boolean,
+): Vec2[] {
+  const occupySq = MOUNTAIN_CHOKE_OCCUPY_RADIUS * MOUNTAIN_CHOKE_OCCUPY_RADIUS;
+  return posts.filter((post) => {
+    for (const e of world.monsterEntitiesInNode(nodeId)) {
+      const def = MONSTER_DATABASE.get(e.isMonster.monsterTypeId);
+      if (def?.biome !== "mountain" || !holder(def)) continue;
+      const holdPost = e.controlsMonster.holdPost ?? e.controlsMonster.spawn;
+      if (distanceSq(holdPost, post) <= occupySq) return false;
+    }
+    return true;
+  }).map((post) => ({ ...post }));
+}
+
+function isRangedMountainHolder(
+  typeDef: ReturnType<typeof MONSTER_DATABASE.get>,
+): boolean {
+  return typeDef?.isRanged === true;
+}
+
+function isVaultingMountainHolder(
+  typeDef: ReturnType<typeof MONSTER_DATABASE.get>,
+): boolean {
+  return typeDef?.vaultsMountainLedges === true;
+}
+
+function nearestMountainPost(posts: Vec2[], pos: Vec2): Vec2 | null {
+  let best: Vec2 | null = null;
+  let bestDist = Infinity;
+  for (const post of posts) {
+    const d = distanceSq(pos, post);
+    if (d < bestDist) {
+      best = post;
+      bestDist = d;
+    }
+  }
+  return best ? { ...best } : null;
+}
+
+function jitteredMountainPost(post: Vec2): Vec2 {
+  const angle = Math.random() * Math.PI * 2;
+  const radius = Math.random() * MOUNTAIN_CHOKE_SPAWN_JITTER;
+  return {
+    x: post.x + Math.cos(angle) * radius,
+    y: post.y + Math.sin(angle) * radius,
+  };
 }
 
 function isAmbientSpawnPosClear(
@@ -274,6 +545,51 @@ function spawnDispersalScore(world: World, nodeId: string, pos: Vec2): number {
       score += 1 + (neighborSq - d2) / neighborSq;
     }
   }
+  return score;
+}
+
+function mountainWandererSpawnPos(
+  world: World,
+  nodeId: string,
+  node: { width: number; height: number },
+): Vec2 {
+  let best = randomSpawnPos(node);
+  let bestScore = mountainWandererDispersalScore(world, nodeId, best);
+
+  for (let i = 1; i < MOUNTAIN_WANDERER_DISPERSAL_SAMPLES; i++) {
+    const pos = randomSpawnPos(node);
+    const score = mountainWandererDispersalScore(world, nodeId, pos);
+    if (score < bestScore) {
+      best = pos;
+      bestScore = score;
+    }
+  }
+
+  return best;
+}
+
+function mountainWandererDispersalScore(
+  world: World,
+  nodeId: string,
+  pos: Vec2,
+): number {
+  const separationSq =
+    MOUNTAIN_WANDERER_SEPARATION_RANGE * MOUNTAIN_WANDERER_SEPARATION_RANGE;
+  let score = spawnDispersalScore(world, nodeId, pos) * 0.25;
+
+  for (const e of world.monsterEntities) {
+    if (e.hasPosition.nodeId !== nodeId) continue;
+    const def = MONSTER_DATABASE.get(e.isMonster.monsterTypeId);
+    if (def?.biome !== "mountain") continue;
+    const d2 = distanceSq(e.hasPosition.current, pos);
+    if (d2 <= separationSq) {
+      score += 4 + 8 * ((separationSq - d2) / separationSq);
+      if (!e.controlsMonster.holdPost) {
+        score += 3 * ((separationSq - d2) / separationSq);
+      }
+    }
+  }
+
   return score;
 }
 

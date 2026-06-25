@@ -2,6 +2,7 @@ import type { World } from "../../../world/World";
 import type { MonsterEntity, PlayerEntity } from "../../../ecs/entity";
 import {
   GAME_CONFIG,
+  MONSTER_DATABASE,
   distanceSq,
   getFlag,
   hitboxGap,
@@ -24,6 +25,7 @@ import {
 import {
   RUNE_FOLLOW_LEADER_FLAG,
   RUNE_AVOID_NODE_HAZARDS_FLAG,
+  RUNE_CAREFUL_PULLING_FLAG,
   RUNE_KEEP_DISTANCE_FLAG,
   RUNE_TACTICAL_RELOAD_FLAG,
   RUNE_WAIT_FOR_EXECUTION_FLAG,
@@ -86,6 +88,9 @@ const DIRECT_APPROACH_DIST = 100;
  * that far — i.e. the mob does not outrange the player.
  */
 const RANGED_SAFE_BUFFER = 45;
+const CAREFUL_PULLING_MAX_THREAT_RADIUS = 720;
+const CAREFUL_PULLING_MIN_THREAT_RADIUS = 280;
+const CAREFUL_PULLING_SIDE_STEP = 220;
 const HAZARD_PULL_EDGE_BUFFER = 72;
 const HAZARD_PULL_ARRIVE_SQ = 42 * 42;
 const HAZARD_SKIRT_ANGLE = 0.65;
@@ -157,6 +162,50 @@ function hazardSkirtPoint(
     x: hazard.x + Math.cos(angle) * radius,
     y: hazard.y + Math.sin(angle) * radius,
   };
+}
+
+function carefulPullingDest(
+  world: World,
+  player: PlayerEntity,
+  target: MonsterEntity,
+  dest: Vec2,
+): Vec2 {
+  if (!getFlag(player.tracksCombat, RUNE_CAREFUL_PULLING_FLAG)) return dest;
+
+  let pushX = 0;
+  let pushY = 0;
+  for (const other of world.monsterEntitiesInNode(player.hasPosition.nodeId)) {
+    if (other.entityId === target.entityId) continue;
+    const def = MONSTER_DATABASE.get(other.isMonster.monsterTypeId);
+    if (!def?.elite) continue;
+
+    const radius = Math.max(
+      CAREFUL_PULLING_MIN_THREAT_RADIUS,
+      Math.min(CAREFUL_PULLING_MAX_THREAT_RADIUS, other.controlsMonster.leashRange),
+    );
+    const radiusSq = radius * radius;
+    const points = [other.hasPosition.current, other.controlsMonster.spawn];
+
+    for (const point of points) {
+      const dx = dest.x - point.x;
+      const dy = dest.y - point.y;
+      const d2 = dx * dx + dy * dy;
+      if (d2 > radiusSq) continue;
+      const dist = Math.sqrt(Math.max(1, d2));
+      const pressure = (radius - dist) / radius;
+      pushX += (dx / dist) * pressure;
+      pushY += (dy / dist) * pressure;
+    }
+  }
+
+  const mag = Math.hypot(pushX, pushY);
+  if (mag < 0.001) return dest;
+
+  const nudged = {
+    x: dest.x + (pushX / mag) * CAREFUL_PULLING_SIDE_STEP,
+    y: dest.y + (pushY / mag) * CAREFUL_PULLING_SIDE_STEP,
+  };
+  return clampToNode(world, player.hasPosition.nodeId, nudged);
 }
 
 export function updateAutoTargets(world: World, now: number) {
@@ -382,7 +431,12 @@ export function steerTowardTarget(
     setEntityMotion(
       world,
       player,
-      clampToNode(world, player.hasPosition.nodeId, candidate),
+      carefulPullingDest(
+        world,
+        player,
+        target,
+        clampToNode(world, player.hasPosition.nodeId, candidate),
+      ),
     );
     return;
   }
@@ -456,6 +510,11 @@ export function steerTowardTarget(
   setEntityMotion(
     world,
     player,
-    clampToNode(world, player.hasPosition.nodeId, dest),
+    carefulPullingDest(
+      world,
+      player,
+      target,
+      clampToNode(world, player.hasPosition.nodeId, dest),
+    ),
   );
 }

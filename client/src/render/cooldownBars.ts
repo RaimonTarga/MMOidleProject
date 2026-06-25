@@ -21,34 +21,49 @@ export function drawCooldownBars(state: RenderState): void {
     const snap = state.view.get(id);
     if (!sprite || !cdBar || !meta || !snap) continue;
 
-    const hasTarget = snap.attackTargetId !== null;
+    // Charged-attack wind-up reuses this same bar, tinted red, showing cast
+    // progress (the telegraph). Otherwise it shows the normal attack cooldown.
+    const cast = state.castState.get(id);
+    const casting = !!cast;
     const barY = sprite.y - meta.barOffsetY + 6;
-    const cdPct = hasTarget
-      ? Math.min(1, (now - snap.lastAttackAt) / Math.max(1, snap.attackCooldown))
-      : 0;
-    const bucket = Math.round(cdPct * 64);
+    let pct: number;
+    let show: boolean;
+    if (cast) {
+      // Wind-up DEPLETES: starts full and drains to empty; the shot fires when it
+      // empties. Reads as an incoming-danger countdown rather than a second cooldown.
+      pct = Math.max(0, 1 - (now - cast.startedAt) / Math.max(1, cast.castMs));
+      show = true;
+    } else {
+      show = snap.attackTargetId !== null;
+      pct = show
+        ? Math.min(1, (now - snap.lastAttackAt) / Math.max(1, snap.attackCooldown))
+        : 0;
+    }
+
+    const bucket = Math.round(pct * 64);
     const prev = state.cdBarCache.get(id);
     if (
       prev &&
       prev.x === sprite.x &&
       prev.y === barY &&
       prev.bucket === bucket &&
-      prev.hasTarget === hasTarget
+      prev.show === show &&
+      prev.casting === casting
     ) {
       continue;
     }
-    state.cdBarCache.set(id, { x: sprite.x, y: barY, bucket, hasTarget });
+    state.cdBarCache.set(id, { x: sprite.x, y: barY, bucket, show, casting });
 
     cdBar.setDepth(DEPTH.UI + sprite.y);
     cdBar.clear();
-    if (!hasTarget) continue;
+    if (!show) continue;
 
-    const cdColor = cdPct >= 1 ? 0xffdd22 : 0x4466cc;
+    const color = casting ? 0xff3322 : pct >= 1 ? 0xffdd22 : 0x4466cc;
 
     cdBar.fillStyle(0x1a1a1a);
     cdBar.fillRect(sprite.x - 16, barY, 32, 3);
-    cdBar.fillStyle(cdColor);
-    cdBar.fillRect(sprite.x - 16, barY, Math.round(32 * cdPct), 3);
+    cdBar.fillStyle(color);
+    cdBar.fillRect(sprite.x - 16, barY, Math.round(32 * pct), 3);
     cdBar.lineStyle(1, 0x000000, 0.75);
     cdBar.strokeRect(sprite.x - 16.5, barY - 0.5, 33, 4);
   }

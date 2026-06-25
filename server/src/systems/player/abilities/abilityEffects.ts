@@ -12,6 +12,7 @@
 import {
   ABILITY_DATABASE,
   ABILITY_GUARD_EFFECT_ID,
+  ABILITY_SWEEP_FX,
   getStatusEffect,
   type AbilityDef,
 } from "@mmo-idle/shared";
@@ -61,6 +62,15 @@ function applyTechniqueRider(
 
   const effect = ability.effect;
   if (effect.kind === "cleave") {
+    // Tag this landed hit so the client overlays the Sweep slash FX on the normal
+    // attack and pulses the Technique HUD icon. Stamped before the splash check so
+    // the slash still reads even when the splash rounds to 0. combat.ts reads
+    // `clientEffects` when it pushes the primary `player-hit` event (post-onHit).
+    const existing = ctx.metadata["clientEffects"];
+    ctx.metadata["clientEffects"] = Array.isArray(existing)
+      ? [...existing, ABILITY_SWEEP_FX]
+      : [ABILITY_SWEEP_FX];
+
     const splash = Math.floor(ctx.damage * effect.splashPct);
     if (splash <= 0) return;
     applyPlayerAoe(

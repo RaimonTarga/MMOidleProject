@@ -1,8 +1,14 @@
 import type { World } from '../../../world/World';
 import { NODE_REGISTRY } from '../../../world/nodeRegistry';
-import type { HasKnockback, Vec2 } from '@mmo-idle/shared';
+import {
+  aabbHalfExtents,
+  posHitboxFromEntity,
+  type HasKnockback,
+  type Vec2,
+} from '@mmo-idle/shared';
 import type { PlayerEntity } from '../../../ecs/entity';
 import { stopEntity } from '../../world/movement';
+import { resolveObstaclesForNode } from '../../world/nodeFeatures';
 import { setAttackTarget } from '../ai/targeting';
 import { markSliceDirty } from '../../../ecs/dirtyHelpers';
 
@@ -105,10 +111,20 @@ export function applyPlayerKnockback(
     end.y = Math.max(MONSTER_BOUND_MARGIN, Math.min(node.height - MONSTER_BOUND_MARGIN, end.y));
   }
 
-  position.current = end;
+  const pad = aabbHalfExtents(posHitboxFromEntity(player).rects);
+  const resolved = resolveObstaclesForNode(
+    world,
+    position.nodeId,
+    position.current,
+    end,
+    'player',
+    pad,
+  );
+
+  position.current = resolved;
   markSliceDirty(world, player, 'hasPosition');
   stopEntity(world, player);
-  return end;
+  return resolved;
 }
 
 /** True while the monster has an active knockback component. */

@@ -29,7 +29,7 @@ import {
   inferMoverTarget,
   replanIfBlocked,
   requestNavMotion,
-  suppressedFeatureIdsForNode,
+  suppressedFeatureIdsForEntity,
 } from './pathMotion';
 
 // Monsters stay this many pixels from the node edge at all times.
@@ -88,7 +88,17 @@ function depenetrateIfWedged(
 ): void {
   const pad = moverPad(entity);
   const nodeId = entity.hasPosition.nodeId;
-  const shapes = world.collision.blockShapes(nodeId, mover);
+  const suppressed = suppressedFeatureIdsForEntity(world, entity);
+  const shapes = suppressed.size > 0
+    ? world.collision
+        .staticRegions(nodeId)
+        .filter(region =>
+          region.kind === 'block' &&
+          region.data?.blockTarget === mover &&
+          (typeof region.data?.featureId !== 'string' ||
+            !suppressed.has(region.data.featureId)))
+        .map(region => region.shape)
+    : world.collision.blockShapes(nodeId, mover);
   const from = entity.hasPosition.current;
   if (!moverOverlapsBlockShapes(from, shapes, pad)) return;
 
@@ -97,7 +107,7 @@ function depenetrateIfWedged(
     mover,
     pad,
     from,
-    suppressedFeatureIdsForNode(world, nodeId),
+    suppressed,
   );
   if (!freed) return;
 
@@ -131,11 +141,22 @@ function processMoverStep(
     next.position,
     mover,
     pad,
+    suppressedFeatureIdsForEntity(world, entity),
   );
   const intendedBlocked = resolved !== next.position;
 
   if (intendedBlocked && distanceSq(from, resolved) < PROGRESS_EPS_SQ) {
-    const shapes = world.collision.blockShapes(entity.hasPosition.nodeId, mover);
+    const suppressed = suppressedFeatureIdsForEntity(world, entity);
+    const shapes = suppressed.size > 0
+      ? world.collision
+          .staticRegions(entity.hasPosition.nodeId)
+          .filter(region =>
+            region.kind === 'block' &&
+            region.data?.blockTarget === mover &&
+            (typeof region.data?.featureId !== 'string' ||
+              !suppressed.has(region.data.featureId)))
+          .map(region => region.shape)
+      : world.collision.blockShapes(entity.hasPosition.nodeId, mover);
     const slid = slideMoveAgainstBlocks(from, next.position, shapes, pad);
     if (distanceSq(from, slid) >= PROGRESS_EPS_SQ) {
       resolved = slid;

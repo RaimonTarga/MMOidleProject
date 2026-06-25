@@ -84,6 +84,25 @@ single-claim). `shared/src/runeDatabase.ts`:
 - Admin: `AdminCharacterRecord` carries `knownAbilities` + `equippedAbilities`; `CharactersTab` shows
   `T:/G: (n known)`.
 
+## In-combat HUD + Sweep FX (placeholder visuals)
+
+The equipped Technique/Guard now show as a **bottom-left ability bar** (`AbilityBar.tsx`,
+mounted in `#ability-overlay`), styled after the buff bar (colored placeholder shapes + glyph +
+short label + a `T`/`G` slot badge). State is derived **client-side** (no protocol churn):
+- **Cooldown sweep** — a dark conic overlay of the REMAINING cooldown, approximated from the
+  last-fired wall clock (`abilityFiredAtAtom`) + the ability's `cooldownMs`. Approximate (rune
+  timing overrides / Step 8 `guard.*` charms shift the real cd), fine for a placeholder.
+- **Technique fire** is signalled by a new shared client-effect tag `ABILITY_SWEEP_FX`
+  (`"ability-sweep"`): `abilityEffects.ts` stamps it into `ctx.metadata.clientEffects` when
+  Sweep's cleave lands, combat.ts forwards it on the `player-hit` event, and `combatFx.ts` both
+  plays `fxSweep` (a bold horizontal cleave arc laid ON TOP of the normal attack FX, `fx/sweep.ts`)
+  and pulses the Technique icon via `notifyAbilityFired('technique')`.
+- **Guard** derives active-glow + cooldown from the rising/falling edge of its `ability-guard`
+  buff (already in `activeBuffs`); no FX tag needed.
+- Mobile: buffs occupy bottom-left, so the ability bar floats just above them (hud.css media query).
+
+All HUD colors/glyphs are placeholders — swap for real icon textures without touching layout.
+
 ## Worked content (placeholders)
 
 - **Sweep** (Technique, forest): trigger `in-combat`, cleave 60% / radius 90, cd 4 s. Recipe
@@ -105,7 +124,5 @@ channels, and the `ability-guard` buff projecting (label from equipped ability, 
 - **Ability evolution** (Sweep→Whirlwind families) + generalizing Step 6's machinery — follow-up.
 - Per-biome ability content beyond the forest Sweep/Brace pair (user content pass).
 - Mobility-tag *movement* effects (Leap Strike etc.) beyond the tag.
-- "Technique armed" HUD indicator (would need networking `hasArmedAbility` or a derived view bool).
-- In-combat ability bar (equipped slots + cooldown sweep). Guard buffs already show in the buff bar.
 - Admin **grant** action (read-only for now).
 - All numbers/balance; Step 8's charm `guard.*` amplifier keys off the Guard ability shape defined here.

@@ -8,6 +8,7 @@ import {
 import type { World } from "../../../world/World";
 import type { PlayerEntity } from "../../../ecs/entity";
 import { markSliceDirty } from "../../../ecs/dirtyHelpers";
+import { isMonsterCharging } from "../engine/monsterMechanics";
 
 /** Server-only runtime flags read by the auto-combat systems. */
 export const RUNE_FLEE_FLAG = "rune.flee";
@@ -22,23 +23,31 @@ export const RUNE_LET_DOTS_FINISH_FLAG = "rune.letDotsFinish";
 export const RUNE_SPREAD_DOTS_FLAG = "rune.spreadDots";
 export const RUNE_FOCUS_ELITES_FLAG = "rune.focusElites";
 export const RUNE_AVOID_NODE_HAZARDS_FLAG = "rune.avoidNodeHazards";
+export const RUNE_CAREFUL_PULLING_FLAG = "rune.carefulPulling";
 /** System rework Step 7: a fire-technique / fire-guard rule is active this tick. */
 export const RUNE_FIRE_TECHNIQUE_FLAG = "rune.fireTechnique";
 export const RUNE_FIRE_GUARD_FLAG = "rune.fireGuard";
 /** System rework Step 10: a switch-stance rule's condition is active this tick. */
 export const RUNE_SWITCH_STANCE_FLAG = "rune.switchStance";
 
-function aggroCount(world: World, player: PlayerEntity): number {
+/** Count enemies aggroed onto this player and whether any is winding up a cast. */
+function aggroStats(
+  world: World,
+  player: PlayerEntity,
+  now: number,
+): { count: number; charging: boolean } {
   let count = 0;
+  let charging = false;
   for (const monster of world.aggroedMonsters) {
     if (
       monster.hasAggroTarget.targetKind === "player" &&
       monster.hasAggroTarget.targetId === player.isPlayer.id
     ) {
       count++;
+      if (!charging && isMonsterCharging(monster, now)) charging = true;
     }
   }
-  return count;
+  return { count, charging };
 }
 
 /**
@@ -49,9 +58,13 @@ function aggroCount(world: World, player: PlayerEntity): number {
  * overwriting any stale settings-tab values, and the flee / keep-distance flags
  * are written to the server-only combat-state bag.
  */
-export function updateRuneDerivedConfig(world: World): void {
+export function updateRuneDerivedConfig(world: World, now: number): void {
   for (const player of world.livePlayers) {
-    const currentAggroCount = aggroCount(world, player);
+    const { count: currentAggroCount, charging: enemyCharging } = aggroStats(
+      world,
+      player,
+      now,
+    );
     const attackTargetId = player.hasAttackTarget?.targetId;
     const ctx: RuneContext = {
       hpPct:
@@ -65,6 +78,7 @@ export function updateRuneDerivedConfig(world: World): void {
       inParty: player.inParty !== undefined,
       aggroCount: currentAggroCount,
       combatArchetype: player.usesSkills.combatArchetype,
+      enemyCharging,
     };
 
     const d = deriveAutoConfigFromRunes(
@@ -131,6 +145,7 @@ export function updateRuneDerivedConfig(world: World): void {
     setFlag(player.tracksCombat, RUNE_SPREAD_DOTS_FLAG, d.spreadDots);
     setFlag(player.tracksCombat, RUNE_FOCUS_ELITES_FLAG, d.focusElites);
     setFlag(player.tracksCombat, RUNE_AVOID_NODE_HAZARDS_FLAG, d.avoidHazards);
+    setFlag(player.tracksCombat, RUNE_CAREFUL_PULLING_FLAG, d.carefulPulling);
     setFlag(player.tracksCombat, RUNE_FIRE_TECHNIQUE_FLAG, d.fireTechnique);
     setFlag(player.tracksCombat, RUNE_FIRE_GUARD_FLAG, d.fireGuard);
     setFlag(player.tracksCombat, RUNE_SWITCH_STANCE_FLAG, d.switchStance);

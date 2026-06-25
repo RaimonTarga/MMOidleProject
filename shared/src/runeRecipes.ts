@@ -124,6 +124,18 @@ const recipes: RuneRecipe[] = [
     cost: { red: 160, green: 80 },
   },
   {
+    id: "rune-recipe-careful-pulling",
+    name: "Careful Pulling",
+    description: "Unlocks approach pathing that avoids drifting toward nearby elite enemies.",
+    kind: "unlock-rune",
+    tier: 1,
+    recipeGroup: "cave",
+    requiredBiomeLevel: 3,
+    runeId: "careful-pulling",
+    runeKind: "action",
+    cost: { red: 180 },
+  },
+  {
     id: "rune-recipe-recover-first",
     name: "Recover First",
     description: "Unlocks waiting for full health after combat.",

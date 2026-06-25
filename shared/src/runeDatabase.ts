@@ -31,8 +31,10 @@ export type RuneConditionId =
   | "when-idle"
   | "hp-below-25"
   | "in-party"
-  // Future telegraph hook. Keep out of CONDITION_DATABASE until casts are live.
-  // | "target-casting"
+  // Reactive telegraph hook: active while an enemy attacking you is charging a
+  // cast-time attack (e.g. the Ridge Archer's Power Shot). Pairs with Fire Guard /
+  // Switch Stance for read-and-react defense.
+  | "target-casting"
   | "n-aggro-3";
 
 export type RuneActionId =
@@ -52,6 +54,7 @@ export type RuneActionId =
   | "wait-for-regen"
   | "auto-path-enemy"
   | "avoid-hazards"
+  | "careful-pulling"
   | "lead-the-way"
   | "taunt-current-target"
   // System rework Step 7: override the built-in auto-fire timing of an ability.
@@ -142,6 +145,7 @@ const TECHNIQUE_CONDITIONS: readonly RuneConditionId[] = [
 const GUARD_CONDITIONS: readonly RuneConditionId[] = [
   "in-combat",
   "hp-below-25",
+  "target-casting",
   "n-aggro-3",
 ];
 
@@ -149,6 +153,7 @@ const GUARD_CONDITIONS: readonly RuneConditionId[] = [
 const STANCE_CONDITIONS: readonly RuneConditionId[] = [
   "in-combat",
   "hp-below-25",
+  "target-casting",
   "n-aggro-3",
 ];
 
@@ -216,6 +221,17 @@ export const CONDITION_DATABASE = new Map<string, ConditionDef>([
       blurb: "Works when three or more enemies are chasing you.",
       cost: 2,
       tier: 4,
+      kind: "state",
+    },
+  ],
+  [
+    "target-casting",
+    {
+      id: "target-casting",
+      name: "Enemy Charging",
+      blurb: "Works while an enemy attacking you is winding up a cast-time attack.",
+      cost: 2,
+      tier: 2,
       kind: "state",
     },
   ],
@@ -420,6 +436,18 @@ export const ACTION_DATABASE = new Map<string, ActionDef>([
     },
   ],
   [
+    "careful-pulling",
+    {
+      id: "careful-pulling",
+      name: "Careful Pulling",
+      blurb: "While approaching a target, bias movement away from nearby non-target elites.",
+      cost: 2,
+      tier: 1,
+      channel: "PATHING",
+      allowedConditionIds: PATHING_CONDITIONS,
+    },
+  ],
+  [
     "lead-the-way",
     {
       id: "lead-the-way",
@@ -513,6 +541,9 @@ export const STARTER_RUNE_IDS: string[] = Array.from(
     // learned (the stance recipes are the real T2 gate). Equipping still costs RP
     // and is inert with no reactive stance equipped.
     "switch-stance",
+    // Reactive "enemy is charging a cast" condition — available from the start so
+    // players can answer telegraphed casts once they meet a charging mob.
+    "target-casting",
   ]),
 );
 
@@ -712,6 +743,13 @@ export const NAMED_RULES = new Map<string, NamedRule>([
     },
   ],
   [
+    ruleKey("in-combat", "careful-pulling"),
+    {
+      name: "Careful Pulling",
+      blurb: "While fighting, approach your target from safer angles away from nearby elites.",
+    },
+  ],
+  [
     ruleKey("in-combat", "chase-enemy"),
     {
       name: "Brawler",
@@ -830,6 +868,8 @@ export interface RuneContext {
   inParty: boolean;
   aggroCount: number;
   combatArchetype?: CombatArchetype;
+  /** An enemy attacking this player is currently winding up a cast-time attack. */
+  enemyCharging?: boolean;
 }
 
 export interface ClaimedRuneAction {
@@ -857,6 +897,7 @@ export interface DerivedRuneConfig {
   orbit: boolean;
   autoPathEnemy: boolean;
   avoidHazards: boolean;
+  carefulPulling: boolean;
   waitForRegen: boolean;
   tacticalReload: boolean;
   waitForExecution: boolean;
@@ -904,6 +945,8 @@ function isConditionActive(conditionId: string, ctx: RuneContext): boolean {
       return ctx.inParty;
     case "n-aggro-3":
       return ctx.aggroCount >= 3;
+    case "target-casting":
+      return ctx.enemyCharging ?? false;
     default:
       return false;
   }
@@ -931,6 +974,7 @@ export function deriveAutoConfigFromRunes(
     orbit: false,
     autoPathEnemy: false,
     avoidHazards: false,
+    carefulPulling: false,
     waitForRegen: false,
     tacticalReload: false,
     waitForExecution: false,
@@ -1051,6 +1095,9 @@ export function deriveAutoConfigFromRunes(
   }
   if (derived.pathingAction === "avoid-hazards") {
     derived.avoidHazards = true;
+  }
+  if (derived.pathingAction === "careful-pulling") {
+    derived.carefulPulling = true;
   }
   if (derived.controlAction === "taunt-current-target") {
     derived.tauntCurrentTarget = true;

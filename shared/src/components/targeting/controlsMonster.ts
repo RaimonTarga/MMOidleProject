@@ -3,6 +3,15 @@
  */
 import type { Vec2 } from '../../systems/spatial';
 
+export interface MonsterPatrolRoute {
+  waypoints: Vec2[];
+  mode: 'loop' | 'pingpong';
+  holdMinMs?: number;
+  holdMaxMs?: number;
+  /** If true, waypoints are node-local absolute coordinates instead of spawn-relative. */
+  absolute?: boolean;
+}
+
 export interface ControlsMonster {
   spawn: Vec2;
   wanderRadius: number;
@@ -28,6 +37,14 @@ export interface ControlsMonster {
   patrolIndex?: number;
   /** Patrol traversal direction for pingpong mode (+1 forward / -1 backward). */
   patrolDir?: number;
+  /** Optional runtime patrol assignment, used when spawn logic chooses a route. */
+  patrolOverride?: MonsterPatrolRoute;
+  /** Optional terrain post this monster should hold instead of free-wandering. */
+  holdPost?: Vec2;
+  /** Optional absolute waypoint loop around a terrain post. */
+  holdPatrol?: Vec2[];
+  /** Index of the next holdPatrol waypoint. */
+  holdPatrolIndex?: number;
 }
 
 /**

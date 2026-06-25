@@ -341,7 +341,7 @@ export class World {
     this.tickCounter++;
     updateCombatState(this, dt);
     updateShields(this, dt);
-    updateRuneDerivedConfig(this);
+    updateRuneDerivedConfig(this, now);
     tickAllMechanics(this, dt, now);
     updateWeaponEffects(this, dt);
     updateBossScripts(this, dt);
