@@ -3,7 +3,7 @@ import {
   gateCollisionShapeFromBounds,
   gateEntityToCollisionRegion,
 } from './gates';
-import { inAttackRange, type PosHitbox } from '../systems/spatial';
+import { inAttackRange, resolveMoveAgainstBlocks, type PosHitbox } from '../systems/spatial';
 
 import {
   buildStaticCollisionRegions,
@@ -208,5 +208,28 @@ for (let row = 0; row < narrowGrid.rows; row++) {
 }
 const tooNarrow = findPathOnGrid(narrowGrid, { x: 80, y: 160 }, { x: 560, y: 160 });
 assert(tooNarrow === null, 'padded path rejects corridor narrower than body');
+
+const mountainCornerGrid = buildNavGrid('node-0-3', 'player', { x: 32, y: 32 });
+const mountainCornerFrom = { x: 2366.193084267113, y: 1599.65059603251 };
+const mountainCornerGoal = { x: 1039.472682418615, y: 374.1983038044353 };
+const mountainCornerPath = findPathOnGrid(
+  mountainCornerGrid,
+  mountainCornerFrom,
+  mountainCornerGoal,
+);
+assert(mountainCornerPath !== null, 'mountain corner path routes around ledge');
+if (mountainCornerPath) {
+  const first = mountainCornerPath[0];
+  const resolvedFirst = resolveMoveAgainstBlocks(
+    mountainCornerFrom,
+    first,
+    mountainCornerGrid.shapes,
+    mountainCornerGrid.pad,
+  );
+  assert(
+    Math.abs(resolvedFirst.x - first.x) < 1e-6 && Math.abs(resolvedFirst.y - first.y) < 1e-6,
+    'mountain corner path keeps the first reachable dogleg',
+  );
+}
 
 console.log('collision tests ok');

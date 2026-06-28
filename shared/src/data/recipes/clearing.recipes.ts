@@ -14,6 +14,8 @@ export const clearingRecipeEntries = [
       { stats: { attack: 1 }, cost: { green: 2  }, requiredBiomeLevel: 2 },
       { stats: { attack: 1 }, cost: { green: 4 }, requiredBiomeLevel: 3 },
       { stats: { attack: 1 }, cost: { green: 8 }, requiredBiomeLevel: 4 },
+      { stats: { attack: 1 }, cost: { green: 8 }, requiredBiomeLevel: 4 },
+      { stats: { attack: 1 }, cost: { green: 8 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -26,6 +28,8 @@ export const clearingRecipeEntries = [
     upgrades: [
       { stats: { maxHp: 1, plating: 1 }, cost: { green: 2 }, requiredBiomeLevel: 3 },
       { stats: { maxHp: 1, plating: 1 }, cost: { green: 4 }, requiredBiomeLevel: 4 },
+      { stats: { maxHp: 1, plating: 1 }, cost: { green: 8 }, requiredBiomeLevel: 4 },
+      { stats: { maxHp: 1, plating: 1 }, cost: { green: 8 }, requiredBiomeLevel: 4 },
       { stats: { maxHp: 1, plating: 1 }, cost: { green: 8 }, requiredBiomeLevel: 4 },
     ],
   }],
@@ -41,6 +45,8 @@ export const clearingRecipeEntries = [
       { stats: { hpRegen: 1 }, cost: { green: 1 }, requiredBiomeLevel: 4 },
       { stats: { hpRegen: 1 }, cost: { green: 3 }, requiredBiomeLevel: 4 },
       { stats: { hpRegen: 1 }, cost: { green: 6 }, requiredBiomeLevel: 4 },
+      { stats: { hpRegen: 1 }, cost: { green: 6 }, requiredBiomeLevel: 4 },
+      { stats: { hpRegen: 1 }, cost: { green: 6 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -53,6 +59,8 @@ export const clearingRecipeEntries = [
     upgrades: [
       { stats: { speed: 3 }, cost: { green: 1 }, requiredBiomeLevel: 4 },
       { stats: { speed: 4 }, cost: { green: 2 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 5 }, cost: { green: 4 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 5 }, cost: { green: 4 }, requiredBiomeLevel: 4 },
       { stats: { speed: 5 }, cost: { green: 4 }, requiredBiomeLevel: 4 },
     ],
   }],

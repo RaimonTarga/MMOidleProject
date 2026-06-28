@@ -14,6 +14,288 @@ standing boss" with short altar-started gauntlets:
 5. The boss spawns only after the gauntlet clears.
 6. Boss death completes the dungeon and starts a short altar cooldown.
 
+## T1 Dungeon Rule — IMPLEMENTED (pre-encounter + boss)
+
+T1 dungeons deliberately do **not** run the multi-phase gauntlet wave system.
+A T1 dungeon is just **pre-encounter + boss fight**:
+
+1. Idle guardians (biome-specific pre-threats) stand around the altar.
+2. The player may clear some/all guardians before activating the altar.
+3. Activating the altar (the explicit altar/activation flow is unchanged) checks
+   which guardians are still alive, then goes **straight to boss awakening** — no
+   wave to grind through.
+4. Surviving (uncleared) guardians make the boss fight harder via a single,
+   data-driven, biome-authored hook. Clearing them first removes the hook.
+5. There are **no bonus rewards** for leaving threats alive (killing a guardian
+   gives the same normal monster reward whenever you kill it; uncleared guardians
+   consumed by an "empower"/"adds"/"hazard" hook simply forfeit their loot).
+
+### The uncleared-threat hook (`DungeonGauntletDef.unclearedThreat`)
+
+`shared/src/dungeons/gauntletTypes.ts` defines `UnclearedThreatEffect` with four
+modes; `gauntletDatabase.ts` resolves one per dungeon
+(`content.unclearedThreat` → `BIOME_UNCLEARED_THREAT[biome]` → default `join`):
+
+- `join` — surviving guardians keep fighting alongside the boss (default; needs
+  no tuning numbers).
+- `empower` — the boss gains stats per surviving guardian
+  (`empowerPerGuardian`, additive-per-guardian).
+- `extra-adds` — extra adds spawn with the boss, scaled by surviving count
+  (`extraAddsPerGuardian`, capped by `maxExtraAdds`).
+- `hazard` — enables an extra hazard (**placeholder** — concrete biome hazard
+  wiring is a later pass; currently only emits a flavor message).
+
+Only `mountain` T1 carries a worked placeholder (`empower`, untuned numbers) so
+every concrete code path has at least one consumer; all other biomes default to
+`join`. Per-biome identity tuning is deferred.
+
+### Server wiring (`server/src/systems/world/dungeons/gauntlet.ts`)
+
+- `isPreEncounterDungeon(def)` = `def.biomeTier === 1`. T2+ keep the existing
+  wave path (`convertSurvivingGuardians` → phases → boss) untouched.
+- T1 activation calls `beginPreEncounterBoss`: records `unclearedThreatCount`,
+  applies the hook, then `startBossAwakening` immediately.
+  - `join`: surviving guardians are re-tagged `tracksDungeon.source =
+    "preEncounterThreat"` and tracked in a dedicated `state.preEncounterThreatIds`
+    list (kept separate from the wave-gating `activeMonsterIds`, which the
+    awakening/boss transitions reset).
+  - `empower`/`extra-adds`/`hazard`: surviving guardians are despawned now and
+    folded into the boss at `spawnGauntletBoss` via `applyUnclearedThreatToBoss`.
+- `preEncounterThreat` monsters **never gate the boss** (`requiredKills` stays 1 =
+  the boss), grant only normal rewards, and don't suppress boss respawn. They are
+  despawned by the reset/cooldown/freeze paths like any other gauntlet monster.
+- The compact `DungeonGauntletView` gained `unclearedThreatMode` /
+  `unclearedThreatCount`, and the view's `activeMonsterIds` now also surfaces the
+  pre-encounter threats for client display.
+
+### Cleared/respawn/reset semantics
+
+- Cleared guardians do **not** respawn for that boss attempt; they only come back
+  via the existing reset paths (idle pre-clear timeout, node wipe, freeze/thaw,
+  cooldown completion).
+- **Failure = node wipe = reset to initial idle stage.** This already works and
+  needs no new code:
+  - On player death, `resetGauntletIfNodeWiped` resets the dungeon to idle (and
+    respawns guardians) when no live players remain in the node — regardless of
+    party membership.
+  - `freezeNode` (the node empties) discards the gauntlet runtime via
+    `clearDungeonGauntletRuntime`; `thawNode` rebuilds a fresh idle state with
+    guardians. So a freeze also returns the dungeon to its initial stage.
+
+### Recent ability/combat compatibility
+
+The pre-encounter rule is independent of the empowered-attack changes: empowered
+attacks no longer carry inherent AoE (Sweep is the basic AoE Technique), and the
+"trigger an ability before an empowered attack" rune path is untouched. Dungeon
+guardians/boss only use the existing monster modifier + `openingStrikeMult` knobs.
+
+### Smoke test
+
+`server/test/dungeonPreEncounter.test.ts` proves uncleared pre-threat state
+affects boss start: a cleared baseline boss vs. an empowered boss (HP/atk scale
+with surviving count) on mountain T1, plus the `join` path (guardians persist
+through boss spawn, never gate the boss, killing one doesn't complete the trial,
+boss death starts cooldown).
+
+## Per-biome T1 dungeons (authored)
+
+### Authoring transition: `preEncounter` replaces generated guardian rings
+
+Forward T1 content should use `DungeonGauntletDef.preEncounter`: authored packs,
+dens, basins, or other local pre-boss groups. `guardianPhase` remains as a
+migration fallback for old/generated guardian rings and for higher-tier phase
+scaffolding, but it should not be the authoring surface for new T1 biome exams.
+
+For authored pre-encounters, only the configured uncleared role counts as the
+boss-start threat (for example Plains callers, Forest alpha, Swamp keepers).
+Leftover weak followers alone do not make the boss start harder.
+
+### Plains T1 - herd swarm / body-pressure (`node-4-3`, Tusked Razorback)
+
+Plains's T1 exam is **concentrated swarm/body pressure**. It is intentionally
+not a generic ring of renamed guardians.
+
+**Pre-encounter - three local herds:**
+- `preEncounter.id = "plains-herds"` authors three separate local packs around
+  the arena.
+- Each herd has one `prairie-wolf` caller (`Prairie Caller`) plus weak bodies
+  (3 `plains-slime`, 1 `boar`). Members keep a shared `inPack` link so existing
+  call-allies pulls the herd together.
+- Callers have a small local damage aura (placeholder 1.08x) for nearby herd
+  members. Herds have short wander/leash ranges so they read as local groups,
+  not one node-wide blob.
+
+**Activation rule (`extra-adds`):**
+- Only living callers count as uncleared threats. If callers are killed first,
+  leftover weak bodies do not make the boss start harder.
+- Uncleared callers are consumed at activation and add capped extra bodies to
+  the boss start. There are no extra rewards for leaving callers alive.
+
+**Boss changes (Tusked Razorback):**
+- Periodically tops up a small capped slime trickle.
+- At 50% HP, calls a larger modest herd (slimes + one boar) and lightly enrages.
+- Add counts are capped through `spawn-adds.maxAlive` to avoid uncontrolled
+  swarm growth.
+
+**Smoke test:** `server/test/dungeonPlains.test.ts` checks authored herd
+spawning, caller-only uncleared counting, clean start after caller clear,
+uncleared callers adding boss-start pressure, boss add script wiring, and boss
+clear/cooldown.
+
+### Forest T1 — alpha-priority / predator-burst (`node-6-7`, Gnarled Greatbear)
+
+Forest's T1 exam is **target-priority + burst + Brace timing**, deliberately
+*not* another Plains-style swarm.
+
+**Current authoring note:** Forest uses `preEncounter.id = "forest-alpha-den"`
+(an authored pre-encounter pack). The den is one `wolf` alpha plus two
+`young-wolf` followers, but only the alpha is the uncleared threat that affects
+boss start; leftover pups alone do not.
+
+**Pre-encounter — one alpha den (not a ring of bodies):**
+- `preEncounter.groups[0]` is a single `kind: "pack"` group: the `wolf` pack
+  alpha (`leaderName: "Pack Alpha"`) + two authored `young-wolf` followers
+  (3 bodies total). Server `spawnPreEncounterPack` (in `gauntlet.ts`) tags every
+  member as `idleDungeonGuardian`, links them with a shared `inPack` id (so the
+  existing call-allies pounce works), and pins the alpha to its post
+  (`localWanderRadius: 0`, reduced `pullRange`) so it reads **territorial /
+  stationary near the den**, not like an ambient forest pack.
+- Only the **alpha** is buffed (`leaderModifiers`: faster attacks + move speed)
+  and renamed — the alpha is the danger; the pups stay modest bodies.
+- **Predator howl (damage aura).** The alpha carries `aura: { kind: "damage",
+  range: 220, mult: 1.18 }` (the same machinery as the Plains caller): while a
+  living alpha is near, its young wolves hit harder. Killing the alpha **first
+  defangs the pups** — reinforcing the alpha-priority lesson. Placeholder numbers.
+- **Aura buff indicator.** The aura SOURCE (the alpha) is stamped with a
+  display-only `pre-encounter-aura` status (`PRE_ENCOUNTER_AURA_EFFECT_ID`) so the
+  HUD target frame shows a **"Rally"** buff tile — the readable "this one is
+  buffing its allies, kill it first" signal. It rides the existing `targetStatus`
+  mirror (no new networked field) and is purely cosmetic; the aura mechanic itself
+  rides `TracksDungeon.preEncounterAura`. (The Plains caller shows the same tile.)
+- The den anchors across the arena from the altar, so the player can choose to
+  clear it first or leave it.
+
+**Activation rule (reuses the shared T1 uncleared-threat hook, mode `join`):**
+- Clear the den before activating → clean boss start (no join).
+- Leave any den member alive → it joins the boss fight (becomes
+  `preEncounterThreat`, persists through boss spawn, never gates the boss, normal
+  rewards only — no bonus for leaving it). The uncleared **alpha** is the counted
+  threat; leftover pups alone do not make the boss start harder. (`join` is the
+  shipped choice; the spec's alternative — empower the boss's first mark/pounce —
+  remains an open option, see playtest doc.)
+
+**Boss changes (Gnarled Greatbear) — the Marked-Prey predator, single-target:**
+- **Marked Prey → Savage Maul** is now the boss's whole identity, a readable
+  two-beat sequence built on existing mechanics:
+  1. **Scent of Blood (the mark).** The charged Maul carries
+     `chargedAttack.marksTarget: { durationMs: 1800 }`. When the charge **begins**,
+     the boss paints the shared "MARKED" debuff (`sun-mark`) on its target — a
+     distinct readable tell shown in the player buff bar throughout the wind-up,
+     plus the marker pulse. **Cleanse strips it early.**
+  2. **The charged pounce.** After the ~1.2s wind-up cast bar (`fx: strong-kick`),
+     the Maul lands a ×2.4 single-target spike with a short pounce-shove knockback.
+     It resolves through the full player defensive pipeline, so **Brace reduces
+     both the hit and the knockback**, and a **stun/freeze in the wind-up
+     interrupts** the pounce. The mark is **consumed** when the pounce lands (and
+     otherwise expires harmlessly if the cast was interrupted).
+  Tests Brace timing + burst, *not* AoE. Placeholder numbers.
+- **50% wolf call (reduced — no add spam).** The single 50% phase now calls a
+  small `young-wolf` **pair** (count `2`, `maxAlive` `2`) + a light enrage, **once**,
+  to split focus (target-priority test). There is no `repeating` add beat — the
+  Maul, not the adds, is the threat. Adds despawn on boss death.
+- No `aoeAttack` (Forest boss stays single-target by the T1 design).
+
+**Smoke test:** `server/test/dungeonForest.test.ts` — def wiring (den is a pack
+with a damage aura; the Maul has `marksTarget`; the 50% call is a capped pair ≤2
+with no repeating beat); den spawns (1 alpha + 2 young, alpha is the standout and
+carries the "Rally" aura indicator, pups do not); cleared den → clean boss start;
+uncleared alpha joins + boss still clearable; and the Maul drives `updateCombat`
+to prove it **marks the player at cast-start**, opens a readable cast bar
+(`monster-cast-start` "Savage Maul"), deals no damage during the wind-up, then
+lands a spike on resolve and **consumes the mark**.
+
+### Swamp T1 - rot basins / attrition-positioning (`node-7-4`, Grave Toadeater)
+
+Swamp's T1 exam is **rot, attrition, and positioning**. It rewards hazard-aware
+movement, dot resistance, sustain, and cleanse without making hazard avoidance
+mandatory.
+
+**Pre-encounter - three rot basins:**
+- `preEncounter.id = "swamp-rot-basins"` authors three basin groups around the
+  arena.
+- Each basin has one nearby `Rot Keeper` (`mud-toad` with light placeholder
+  modifiers). The keeper is the clearable control point for that basin.
+
+**Activation rule (`hazard`):**
+- Only living keepers count as uncleared threats.
+- Cleared keepers disable their basin for that boss attempt.
+- Uncleared keepers seed temporary boss rot pools at boss start. No extra rewards
+  are added for leaving keepers alive.
+
+**Boss changes (Grave Toadeater):**
+- While the boss is active, dungeon runtime periodically creates capped temporary
+  rot pools with short lifetimes. These pools slow and poison players, then expire.
+- Temporary pools are server-owned runtime hazards surfaced through
+  `DungeonGauntletView.temporaryHazards`; the client draws them with a brighter
+  pulsing outline so they are visually distinct from permanent swamp terrain pools.
+- The existing 50% beat remains a modest `bog-witch` call + light enrage.
+
+**Smoke test:** `server/test/dungeonSwamp.test.ts` checks basin/keeper spawning,
+clean start after keeper clear, uncleared keepers seeding temporary pools,
+periodic pool maintenance/expiry, boss script wiring, and boss clear/cooldown.
+
+### Cave T1 — sparse-elite / careful-pulling (`node-3-6`, Obsidian Broodmother)
+
+Cave's T1 exam is **the sparse-elite / careful-pulling fight**: dangerous because
+each enemy matters, not because there are many. It is deliberately *not* a swarm
+(Plains) and *not* a ring of bodies — three patrolling elite guardians that circle
+the altar.
+
+**Pre-encounter — the Deep Watch (3 elites orbiting the altar):**
+- `preEncounter.id = "cave-deep-watch"` authors **3 `cave-brute` "Cave Sentinel"
+  guardians**, each a solo single-mob "pack" leader (no follower bodies). Total
+  live density = 3.
+- The sentinels **orbit the altar** on a bespoke absolute patrol ring (300px
+  radius, 8 waypoints, `mode: loop`), evenly phase-offset so the three circle the
+  altar **separated by 120°** in formation. This `patrolOverride` is applied to
+  the leader at spawn and **replaces the brute's open-world patrol loop**, so the
+  dungeon route reads differently from the overworld one. `localWanderRadius = 0`:
+  the orbit, not random wander, supplies their movement.
+- They keep the **high-detection pull range** (240, the Cave overpull-risk
+  identity). The 300px orbit sits just outside that 240 pull from the altar
+  center, so a careful player can reach the altar between passes; a sloppy
+  approach drags a sentinel in.
+- Light placeholder guardian buffs (`hpMult 1.2 / atkMult 1.1 / drAdd 0.05`).
+  Generous idle leash (760) so an aggroed sentinel can chase across the orbit
+  without snapping back mid-fight (active leash widens to the gauntlet default
+  once the trial starts).
+
+**Activation rule (shared T1 hook, mode `join`):**
+- `unclearedRole = "leader"` — every sentinel is a leader, so **any left alive
+  joins the boss fight** (`preEncounterThreat`: persists through boss spawn, never
+  gates the boss, normal rewards only — no bonus for leaving them).
+- Clear all three before activating → clean boss start.
+
+**Boss changes (Obsidian Broodmother) — single adds, never a swarm:**
+- The boss stays a **durable %DR sponge** (high plating/DR, charge, cleave).
+- **Repeating beat:** infrequently (`intervalMs 24s`, `initialDelayMs 12s`)
+  hatches **one `cave-lurker`**, hard-capped at `maxAlive 1` (one lurker at a
+  time, only replaced after it dies).
+- **50% beat:** digs in (timed `shield drAdd 0.25`) and hatches **one stronger
+  `giant-spider` brood add** (was a 2-spider mini-swarm — reduced to a single
+  capped add). Adds despawn on boss death.
+- The sparse, predictable single adds keep the fight about grinding a defended
+  elite: **Heavy Strike** (single-target burst) and **Second Wind** (sustain) both
+  pay off. Numbers are placeholders.
+
+**Smoke test:** `server/test/dungeonCave.test.ts` checks def wiring (tier-1
+pre-encounter, no waves, `join`, zero follower bodies, the infrequent capped lurker
+beat), Deep Watch spawning (3 brutes, each with the absolute altar-orbit patrol
+override + high pull range, sitting on the orbit ring and mutually separated),
+clean start after clearing, all 3 uncleared elites joining the boss (and clearing
+on boss death), boss clear/cooldown, and — by driving `updateBossScripts` — that
+the periodic lurker beat fires and stays capped at one alive (no swarm growth).
+
 ## Locked Decisions From Pre-Implementation Review
 
 - Mountain T1 is the prototype dungeon for the first implementation and tuning

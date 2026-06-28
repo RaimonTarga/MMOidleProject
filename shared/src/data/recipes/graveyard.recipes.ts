@@ -26,6 +26,8 @@ export const graveyardRecipeEntries = [
       { stats: { attack: 30 }, cost: { purple: 405 }, requiredBiomeLevel: 2 },
       { stats: { attack: 30 }, cost: { purple: 810 }, requiredBiomeLevel: 3 },
       { stats: { attack: 30 }, cost: { purple: 1620 }, requiredBiomeLevel: 4 },
+      { stats: { attack: 30 }, cost: { purple: 1620 }, requiredBiomeLevel: 4 },
+      { stats: { attack: 30 }, cost: { purple: 1620 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -45,6 +47,8 @@ export const graveyardRecipeEntries = [
     upgrades: [
       { stats: { maxHp: 36, plating: 6 }, cost: { purple: 200 }, requiredBiomeLevel: 3 },
       { stats: { maxHp: 36, plating: 6 }, cost: { purple: 400 }, requiredBiomeLevel: 4 },
+      { stats: { maxHp: 36, plating: 6 }, cost: { purple: 700 }, requiredBiomeLevel: 4 },
+      { stats: { maxHp: 36, plating: 6 }, cost: { purple: 700 }, requiredBiomeLevel: 4 },
       { stats: { maxHp: 36, plating: 6 }, cost: { purple: 700 }, requiredBiomeLevel: 4 },
     ],
   }],
@@ -66,6 +70,8 @@ export const graveyardRecipeEntries = [
       { stats: { maxHp: 36, plating: 4 }, cost: { purple: 200 }, requiredBiomeLevel: 3 },
       { stats: { maxHp: 36, plating: 4 }, cost: { purple: 400 }, requiredBiomeLevel: 4 },
       { stats: { maxHp: 36, plating: 4 }, cost: { purple: 700 }, requiredBiomeLevel: 4 },
+      { stats: { maxHp: 36, plating: 4 }, cost: { purple: 700 }, requiredBiomeLevel: 4 },
+      { stats: { maxHp: 36, plating: 4 }, cost: { purple: 700 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -80,6 +86,8 @@ export const graveyardRecipeEntries = [
     upgrades: [
       { mechanicEffects: { 'defense.regen-burst-pct': 0.03 }, cost: { purple: 100 }, requiredBiomeLevel: 4 },
       { mechanicEffects: { 'defense.regen-burst-pct': 0.03 }, cost: { purple: 200 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.regen-burst-pct': 0.03 }, cost: { purple: 330 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.regen-burst-pct': 0.03 }, cost: { purple: 330 }, requiredBiomeLevel: 4 },
       { mechanicEffects: { 'defense.regen-burst-pct': 0.03 }, cost: { purple: 330 }, requiredBiomeLevel: 4 },
     ],
   }],
@@ -100,6 +108,8 @@ export const graveyardRecipeEntries = [
       { mechanicEffects: { 'defense.regen-burst-pct': 0.01, 'defense.in-combat-regen-pct': 0.01 }, cost: { purple: 100 }, requiredBiomeLevel: 4 },
       { mechanicEffects: { 'defense.regen-burst-pct': 0.01, 'defense.in-combat-regen-pct': 0.01 }, cost: { purple: 200 }, requiredBiomeLevel: 4 },
       { mechanicEffects: { 'defense.regen-burst-pct': 0.01, 'defense.in-combat-regen-pct': 0.01 }, cost: { purple: 330 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.regen-burst-pct': 0.01, 'defense.in-combat-regen-pct': 0.01 }, cost: { purple: 330 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.regen-burst-pct': 0.01, 'defense.in-combat-regen-pct': 0.01 }, cost: { purple: 330 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -118,6 +128,8 @@ export const graveyardRecipeEntries = [
     upgrades: [
       { stats: { speed: 8 },  cost: { purple: 40 },  requiredBiomeLevel: 4 },
       { stats: { speed: 12 }, cost: { purple: 80 },  requiredBiomeLevel: 4 },
+      { stats: { speed: 16 }, cost: { purple: 132 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 16 }, cost: { purple: 132 }, requiredBiomeLevel: 4 },
       { stats: { speed: 16 }, cost: { purple: 132 }, requiredBiomeLevel: 4 },
     ],
   }],

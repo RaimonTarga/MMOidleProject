@@ -230,6 +230,10 @@ const DEBUFF_BUFFS = [
     },
     { category: "neutral", shape: "diamond", color: "#7755aa", label: "ANTIHEAL" },
   ),
+  // Note: Expose Weakness (the ability technique) is a debuff on the MONSTER, so
+  // it is shown only on the enemy target frame (client targetStatusMeta keys off
+  // the raw `expose-weakness` status id). It is intentionally NOT projected onto
+  // the player's own buff bar.
 ] as const satisfies readonly BuffDescriptor[];
 
 /** Compile-time guard: shared BUFF_IDS must match server descriptor ids. */

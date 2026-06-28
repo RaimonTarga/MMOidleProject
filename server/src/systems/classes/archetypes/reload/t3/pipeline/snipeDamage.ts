@@ -21,10 +21,8 @@ export function registerSnipeDamage(): void {
       ctx.damage = Math.max(1, Math.round(ctx.damage * fullHpMult));
       ctx.metadata['reloadSnipeFullHp'] = true;
       // Tag the full-HP shot as empowered for the aesthetic only — yellow "!" crit
-      // styling + empowered ring — but suppress the splash, since the sniper is a
-      // single-target precision shot. (Set after the mult so it's only the bonus shot.)
+      // styling + empowered ring. (Set after the mult so it's only the bonus shot.)
       ctx.metadata['empoweredAttack'] = true;
-      ctx.metadata['suppressEmpoweredAoe'] = true;
     }
   });
 }

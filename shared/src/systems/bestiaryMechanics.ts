@@ -1,4 +1,5 @@
 import type { MonsterDefinition, BossAction } from '../data/monsters/types';
+import { monsterIsRanged, monsterKites } from '../data/monsters/behavior';
 import type { DungeonMonsterModifiers } from '../dungeons/gauntletTypes';
 import { resolveMonsterDotDebuff } from './monsterDotFlavor';
 
@@ -75,7 +76,14 @@ export function describeMonsterMechanics(
 ): MechanicLine[] {
   const lines: MechanicLine[] = [];
 
-  if (def.isRanged) {
+  if (monsterKites(def)) {
+    lines.push({
+      id: 'kiter',
+      icon: '➶',
+      label: 'Kiter',
+      detail: `Attacks from up to ${def.stats.attackRange}px away and backs off as you close in.`,
+    });
+  } else if (monsterIsRanged(def)) {
     lines.push({
       id: 'ranged',
       icon: '➶',

@@ -27,19 +27,32 @@ export type AbilityTrigger =
   /** Guard: fire when HP fraction is at/below `hpPct` (0..1) and off cooldown. */
   | { kind: "hp-below"; hpPct: number }
   /** Guard: fire when `count`+ enemies are aggroed onto the player (off cooldown). */
-  | { kind: "n-aggro"; count: number };
+  | { kind: "n-aggro"; count: number }
+  /** Guard: fire when the player carries a harmful debuff/DoT (and off cooldown). */
+  | { kind: "has-debuff" };
 
 /**
  * What an ability does when it fires. Deliberately narrow for v1 — extend the
  * union as content lands, don't over-generalize up front.
  * - `cleave`: Technique rider — the armed next attack splashes to nearby enemies.
+ * - `empower`: Technique rider — the armed next attack hits one target for
+ *   `damageMult`× damage (single-target burst; no splash).
  * - `damage-reduction`: Guard immediate — an EXPLICIT BUFF (shows in the buff bar,
  *   {@link ABILITY_GUARD_EFFECT_ID}) granting `drPct` damage reduction for `durationMs`.
  *   `knockbackResistPct`, when present, reduces incoming knockback distance.
+ * - `cleanse`: Guard immediate — strips up to `stacks` from each harmful debuff/DoT
+ *   on the player. When `drPct`/`durationMs` are set, also grants a short
+ *   damage-reduction guard buff (post-cleanse resilience), reusing the same buff.
+ * - `heal`: Guard heal-over-time — recover `healPct` of max HP over `durationMs`
+ *   (antiheal applies), a cooldown sustain button.
  */
 export type AbilityEffectSpec =
   | { kind: "cleave"; splashPct: number; radius: number }
-  | { kind: "damage-reduction"; drPct: number; durationMs: number; knockbackResistPct?: number };
+  | { kind: "empower"; damageMult: number }
+  | { kind: "expose-weakness"; damageTakenPct: number; durationMs: number }
+  | { kind: "damage-reduction"; drPct: number; durationMs: number; knockbackResistPct?: number }
+  | { kind: "cleanse"; stacks: number; drPct?: number; durationMs?: number }
+  | { kind: "heal"; healPct: number; durationMs?: number };
 
 /**
  * Status-effect id for the active Guard-ability buff (system rework Step 7). One
@@ -48,6 +61,7 @@ export type AbilityEffectSpec =
  * to the buff bar (label/color from the equipped ability). Doubles as the buff id.
  */
 export const ABILITY_GUARD_EFFECT_ID = "ability-guard";
+export const ABILITY_SECOND_WIND_EFFECT_ID = "ability-second-wind";
 
 /**
  * Client-effect tag (system rework Step 7) emitted on a `player-hit` event when a
@@ -58,6 +72,21 @@ export const ABILITY_GUARD_EFFECT_ID = "ability-guard";
  * techniques land.
  */
 export const ABILITY_SWEEP_FX = "ability-sweep";
+
+export const EXPOSE_WEAKNESS_EFFECT_ID = "expose-weakness";
+
+/**
+ * Client-effect tag for a landed Expose Weakness Technique. The client overlays
+ * a targeting/impact cue on the normal attack FX and pulses the Technique HUD
+ * icon. Sibling of {@link ABILITY_SWEEP_FX}.
+ */
+export const ABILITY_EXPOSE_WEAKNESS_FX = "ability-expose-weakness";
+
+/**
+ * Generic client-effect tag for Techniques that do not need bespoke in-world FX.
+ * The client uses it to pulse the Technique HUD icon and start the cooldown sweep.
+ */
+export const ABILITY_TECHNIQUE_FIRED_FX = "ability-technique-fired";
 
 export interface AbilityDef {
   id: string;
@@ -108,6 +137,40 @@ const abilities: AbilityDef[] = [
     trigger: { kind: "hp-below", hpPct: 0.5 },
     effect: { kind: "damage-reduction", drPct: 0.4, durationMs: 3000, knockbackResistPct: 0.55 },
     icon: "brace",
+  },
+  // ── Step 7 follow-up: rough T1 per-biome abilities (placeholder numbers). ──
+  {
+    id: "cleanse",
+    name: "Cleanse",
+    slot: "guard",
+    tags: [],
+    blurb: "Purge rot and debuffs, then steel yourself briefly against further harm.",
+    cooldownMs: 9000,
+    trigger: { kind: "has-debuff" },
+    effect: { kind: "cleanse", stacks: 3, drPct: 0.2, durationMs: 3000 },
+    icon: "cleanse",
+  },
+  {
+    id: "heavy-strike",
+    name: "Expose Weakness",
+    slot: "technique",
+    tags: [],
+    blurb: "Arms your next attack to expose the target, increasing all damage it takes.",
+    cooldownMs: 12000,
+    trigger: { kind: "in-combat" },
+    effect: { kind: "expose-weakness", damageTakenPct: 0.2, durationMs: 4000 },
+    icon: "expose-weakness",
+  },
+  {
+    id: "second-wind",
+    name: "Second Wind",
+    slot: "guard",
+    tags: [],
+    blurb: "Catch your breath and recover health over a few seconds.",
+    cooldownMs: 12000,
+    trigger: { kind: "in-combat" },
+    effect: { kind: "heal", healPct: 0.3, durationMs: 4000 },
+    icon: "second-wind",
   },
 ];
 

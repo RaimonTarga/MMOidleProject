@@ -63,7 +63,7 @@ export const plainsMonsterEntries = [
     id: 'prairie-wolf', name: 'Prairie Wolf', color: 0xddaa55,
     // Fastest plains mob; high base speed is its anti-kite. Glassy, low per-hit.
     stats: { hp: 150, attack: 32, plating: 0, damageReduction: 0, speed: 92, attackRange: 12, attackCooldown: 1200, pullRange: 275 },
-    behavior: 'melee', attackStyle: 'slash', biome: 'plains',
+    behavior: 'melee', attackStyle: 'bite', biome: 'plains',
     rewards: { essence: 6, essenceType: 'yellow', level: 1, biomeXp: 35 },
     ai: { wanderRadius: 290, leashRange: 720, idleMinMs: 700, idleMaxMs: 2800 },
     // Plains CALLER (the brainstorm's "callers / small swarm group"): the fast runner
@@ -90,7 +90,7 @@ export const plainsMonsterEntries = [
     id: 'savanna-hawk', name: 'Savanna Hawk', color: 0xddcc66,
     // Ranged poke — pecks from distance, the anti-kite-from-afar of the plains.
     stats: { hp: 140, attack: 30, plating: 0, damageReduction: 0, speed: 50, attackRange: 165, attackCooldown: 2400, pullRange: 245 },
-    behavior: 'melee', attackStyle: 'slash', isRanged: true, biome: 'plains',
+    behavior: 'ranged', attackStyle: 'slash', biome: 'plains',
     rewards: { essence: 7, essenceType: 'green', level: 1, biomeXp: 38 }, // wild bird → Wild (biome mixture; tunable)
     ai: { wanderRadius: 280, leashRange: 680, idleMinMs: 1000, idleMaxMs: 3200 },
   }],

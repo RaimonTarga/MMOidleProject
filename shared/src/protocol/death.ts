@@ -15,6 +15,7 @@ export interface DeathKiller {
 
 export type DeathCause =
   | { kind: "melee"; killer: DeathKiller; damage: number }
+  | { kind: "ranged"; killer: DeathKiller; damage: number }
   | { kind: "dot"; killer: DeathKiller; damage: number; stacks: number }
   | { kind: "aoe"; killer: DeathKiller; damage: number }
   | { kind: "debt"; damage: number; nodeId: string; killer?: DeathKiller };
@@ -30,6 +31,8 @@ export function formatDeathCauseLabel(cause: DeathCause): string {
   switch (cause.kind) {
     case "melee":
       return "Melee attack";
+    case "ranged":
+      return "Ranged attack";
     case "dot":
       return "Poison DoT";
     case "aoe":

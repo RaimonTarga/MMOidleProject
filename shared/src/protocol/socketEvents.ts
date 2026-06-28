@@ -11,6 +11,11 @@ import type { NodeTelemetrySnapshot } from "./nodeTelemetry";
 import type { WorldLogEvent } from "./worldLogEvents";
 import type { Vec2 } from "../systems/spatial";
 
+export type PlayerMoveMode = "path" | "direct";
+export interface PlayerMoveOptions {
+  mode?: PlayerMoveMode;
+}
+
 export interface ReleaseAnnouncementPayload {
   version: string;
   title: string;
@@ -62,8 +67,8 @@ export interface ServerToClientEvents {
 
 /** Events clients send to the server */
 export interface ClientToServerEvents {
-  /** Set the player's movement destination (click-to-move or AI-issued). */
-  "player:move": (pos: Vec2) => void;
+  /** Set the player's movement destination. Clicks pathfind; keyboard/gamepad slides directly. */
+  "player:move": (pos: Vec2, opts?: PlayerMoveOptions) => void;
   /** Summoner: shift+click command — focus a clicked enemy or move minions to a point. */
   "player:commandSummons": (pos: Vec2) => void;
   /** Enable or disable server-side auto-targeting for this player. */

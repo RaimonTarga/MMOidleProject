@@ -18,6 +18,7 @@ import {
   CRITICAL_MASS_RESET_MS,
   STORM_FX, ENDLESS_STORM_DPS, ENDLESS_STORM_TICK_MS,
 } from '../core/constants';
+import { applyMonsterDamageTakenDebuffs } from '../../../../shared/debuffs';
 
 /**
  * Per-tick energy T4 state:
@@ -96,7 +97,8 @@ export function updateEnergyState(world: World, dt: number): void {
     const tickMs = storm.data.tickIntervalMs ?? ENDLESS_STORM_TICK_MS;
     storm.data.nextTickIn = tickMs;
 
-    const dmg = Math.max(1, Math.round(storm.data.damagePerTick ?? ((storm.data.dps ?? ENDLESS_STORM_DPS) * tickMs / 1000)));
+    const baseDmg = Math.max(1, Math.round(storm.data.damagePerTick ?? ((storm.data.dps ?? ENDLESS_STORM_DPS) * tickMs / 1000)));
+    const dmg = Math.max(1, applyMonsterDamageTakenDebuffs(monster.tracksCombat, baseDmg));
     // Apply as a DoT so the number renders stormy (purple ⚡), not a white direct hit.
     recordMonsterDamagedByPlayer(
       world, storm.sourceId, actorFromSourceId(world, storm.sourceId), monster, dmg,

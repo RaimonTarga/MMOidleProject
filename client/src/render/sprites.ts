@@ -176,6 +176,63 @@ export function resetSpriteTint(
   sprite.clearTint();
 }
 
+const OUTLINE_DATA_KEY = "spriteOutlineFx";
+// Kept subtle: a low outer strength and tight glow distance read as a thin rim
+// rather than a heavy halo that washes out the sprite.
+const OUTLINE_OUTER_STRENGTH = 2;
+const OUTLINE_DISTANCE = 6;
+
+/**
+ * Draw a colored outline/glow around a sprite, leaving its own colors intact —
+ * used to mark dangerous mobs (elites, dungeon guardians) without tinting them.
+ * Uses Phaser's per-object preFX glow (WebGL only); falls back to a stroke for
+ * the rectangle placeholder. Idempotent: safe to call every frame.
+ */
+export function applySpriteOutline(
+  sprite:
+    | Phaser.GameObjects.Image
+    | Phaser.GameObjects.Sprite
+    | Phaser.GameObjects.Rectangle,
+  color: number,
+): void {
+  if (sprite instanceof Phaser.GameObjects.Rectangle) {
+    sprite.setStrokeStyle(3, color, 1);
+    return;
+  }
+  // preFX is WebGL-only; bail cleanly under the Canvas renderer.
+  if (!sprite.preFX) return;
+  let glow = sprite.getData(OUTLINE_DATA_KEY) as Phaser.FX.Glow | undefined;
+  if (!glow) {
+    glow = sprite.preFX.addGlow(
+      color,
+      OUTLINE_OUTER_STRENGTH,
+      0,
+      false,
+      0.1,
+      OUTLINE_DISTANCE,
+    );
+    sprite.setData(OUTLINE_DATA_KEY, glow);
+  }
+  glow.color = color;
+}
+
+export function clearSpriteOutline(
+  sprite:
+    | Phaser.GameObjects.Image
+    | Phaser.GameObjects.Sprite
+    | Phaser.GameObjects.Rectangle,
+): void {
+  if (sprite instanceof Phaser.GameObjects.Rectangle) {
+    sprite.setStrokeStyle();
+    return;
+  }
+  const glow = sprite.getData(OUTLINE_DATA_KEY) as Phaser.FX.Glow | undefined;
+  if (glow && sprite.preFX) {
+    sprite.preFX.remove(glow);
+    sprite.setData(OUTLINE_DATA_KEY, undefined);
+  }
+}
+
 export function destroySprite(state: RenderState, id: string): void {
   state.sprite.get(id)?.destroy();
   state.sprite.delete(id);

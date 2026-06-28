@@ -39,6 +39,9 @@ const monsterEntries: [string, MonsterDefinition][] = [
 
 export const MONSTER_DATABASE: Map<string, MonsterDefinition> = new Map(monsterEntries);
 
+export { monsterIsRanged, monsterKites } from './behavior';
+export type { MonsterBehavior } from './behavior';
+
 export type {
   BossAction,
   BossPhase,

@@ -5,10 +5,12 @@ import {
   ITEM_DATABASE,
   TEST_ROOM_NODE_ID,
   checkUpgrade,
+  globalMasteryRequiredForUpgrade,
   getMaxUpgrade,
   requiredBiomeLevelForUpgrade,
   upgradeCostFor,
   upgradeCatalystCostFor,
+  upgradeCeilingFromGlobalMastery,
 } from '@mmo-idle/shared';
 import { hudBus } from '../../hudBus';
 import {
@@ -70,20 +72,24 @@ export function UpgradeTab() {
     [equipment],
   );
 
-  // All owned upgradeable items — equipped items sorted first, then by tier, then name.
+  // Owned upgradeable items that still have headroom — fully-upgraded gear drops
+  // off the list entirely. Equipped items sort first, then by tier, then name.
   // The dev test room also exposes legacy/dev gear so it can be bumped without
   // needing a biome-backed recipe.
   const items = useMemo(() => {
     const ids = new Set<string>([...inventory, ...equippedSet]);
     return Array.from(ids)
       .map(id => ITEM_DATABASE.get(id))
-      .filter((def): def is NonNullable<typeof def> => !!def && (isTestRoom || !!def.biomeGroup))
+      .filter((def): def is NonNullable<typeof def> =>
+        !!def
+        && (isTestRoom || !!def.biomeGroup)
+        && (itemUpgrades[def.id] ?? 0) < getMaxUpgrade(def))
       .sort((a, b) => {
         const aEq = equippedSet.has(a.id) ? 0 : 1;
         const bEq = equippedSet.has(b.id) ? 0 : 1;
         return aEq - bEq || a.tier - b.tier || a.name.localeCompare(b.name);
       });
-  }, [inventory, equippedSet, isTestRoom]);
+  }, [inventory, equippedSet, isTestRoom, itemUpgrades]);
 
   const biomeGroups = useMemo(() => {
     const groups = new Set<string>();
@@ -172,12 +178,17 @@ export function UpgradeTab() {
           {filtered.map(def => {
             const slot        = def.slot as EquipmentSlot;
             const currentPlus = itemUpgrades[def.id] ?? 0;
-            const isMaxed     = currentPlus >= getMaxUpgrade(def);
+            const structuralMax = getMaxUpgrade(def);
+            const gmCeiling   = isTestRoom ? structuralMax : upgradeCeilingFromGlobalMastery(gm);
+            const isMaxed     = currentPlus >= structuralMax;
+            const gmLocked    = !isTestRoom && !isMaxed && currentPlus + 1 > gmCeiling;
             const diff        = isMaxed ? [] : computeUpgradeDiff(def, currentPlus);
 
             const reqLevel    = requiredBiomeLevelForUpgrade(def, currentPlus + 1);
+            const reqMastery  = globalMasteryRequiredForUpgrade(currentPlus + 1);
             const haveLevel   = def.biomeGroup ? (biomeLevel[def.biomeGroup] ?? 0) : 0;
             const levelMet    = isTestRoom || haveLevel >= reqLevel;
+            const masteryMet  = isTestRoom || gm >= reqMastery;
             const cost        = upgradeCostFor(def, currentPlus + 1);
             const catalystCost = upgradeCatalystCostFor(def, currentPlus + 1);
             const check       = checkUpgrade({ item: def, currentPlus, biomeLevel: haveLevel, essences, catalysts, globalMastery: gm });
@@ -261,12 +272,19 @@ export function UpgradeTab() {
                           ? 'Test room bypass'
                           : `${biomeName(def.biomeGroup!)} Lv ${reqLevel}${!levelMet ? ` (have ${haveLevel})` : ''}`}
                       </span>
+                      {!isTestRoom && (
+                        <span className={`craft-upgrade__req${masteryMet ? ' craft-upgrade__req--ok' : ' craft-upgrade__req--bad'}`}>
+                          GM {reqMastery}{!masteryMet ? ` (have ${gm})` : ''}
+                        </span>
+                      )}
                       <button
                         className="craft-recipe__btn"
                         disabled={!canUpgrade}
                         onClick={() => { if (canUpgrade) hudBus.requestUpgradeItem(def.id); }}
                       >
-                        {canUpgrade ? `Upgrade +${currentPlus + 1}` : !levelMet ? 'Locked' : 'Insufficient'}
+                        {canUpgrade
+                          ? `Upgrade +${currentPlus + 1}`
+                          : gmLocked ? 'Mastery Locked' : !levelMet ? 'Locked' : 'Insufficient'}
                       </button>
                     </div>
                   )}

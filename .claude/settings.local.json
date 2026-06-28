@@ -101,7 +101,28 @@
       "PowerShell($env:NF_DEBUG='1'; pnpm --filter @mmo-idle/server exec tsx test/_swampSanity.ts 2>&1 | Select-String \"NF_DEBUG apply\"; Remove-Item Env:NF_DEBUG)",
       "PowerShell($env:NF_DEBUG='1'; pnpm --filter @mmo-idle/server exec tsx test/_swampSanity.ts 2>&1 | Select-String \"NF_DEBUG feat\"; Remove-Item Env:NF_DEBUG)",
       "Bash(grep -iv \"buff\\\\|label\\\\|//\\\\|heal\")",
-      "Bash(grep -v \"comment\\\\|//\")"
+      "Bash(grep -v \"comment\\\\|//\")",
+      "Bash(pnpm --filter @mmo-idle/server exec tsx --test test/targetPriority.test.ts test/runeMaintenance.test.ts)",
+      "Read(//c/Users/osaif/Documents/Claude/Projects/**)",
+      "Bash(rm -f server/__beforeEmpoweredSanity.ts)",
+      "Bash(pnpm --filter @mmo-idle/server exec tsx ../server/test/dungeonPreEncounter.test.ts)",
+      "Bash(pnpm --filter @mmo-idle/server exec tsx ../server/test/dungeonCave.test.ts)",
+      "Bash(pnpm --filter @mmo-idle/server typecheck)",
+      "PowerShell(pnpm --filter @mmo-idle/client typecheck)",
+      "Bash(pnpm --filter ./client typecheck)",
+      "Bash(xargs grep -ln \"interface HasStatus\")",
+      "Bash(ls client/public/assets/animations/)",
+      "Bash(find client/public/assets -iname \"*buff*\" -o -iname \"*aura*\" -o -iname \"*rally*\" -o -iname \"*glow*\" -o -iname \"*howl*\")",
+      "Bash(xargs grep -l \"EFFECT_BY_ID\\\\|EFFECT_DEFS\\\\|EffectDef\")",
+      "Bash(git rm *)",
+      "PowerShell(pnpm typecheck)",
+      "Bash(grep -rB5 \"attackStyle: 'gunshot'\" shared/src/data/monsters/cave.monsters.ts)",
+      "Bash(pnpm --filter @mmo-idle/shared typecheck)",
+      "Bash(ls shared/*.config.* shared/vitest*)",
+      "Bash(grep -rE 'vitest|\"test\"' shared/package.json server/package.json)",
+      "Bash(grep -rE \"vitest|jest|mocha\" package.json shared/package.json)",
+      "Bash(ls *.config.ts vitest.config.*)",
+      "Bash(find . -maxdepth 2 -name \"vitest.config.*\" -not -path \"*/node_modules/*\")"
     ]
   }
 }

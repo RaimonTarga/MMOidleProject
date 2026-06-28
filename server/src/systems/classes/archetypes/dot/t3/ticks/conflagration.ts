@@ -13,6 +13,7 @@ import { isInvulnerableMonster } from '../../../../../combat/invulnerability';
 import { pushDotTickEvent } from '../../../../../combat/damage/dotTickEvent';
 import { emitPlayerMonsterOnKill } from '../../../../../combat/damage/killHooks';
 import { getFrostbiteDotTakenMult } from '../core/selectors';
+import { applyMonsterDamageTakenDebuffs } from '../../../../shared/debuffs';
 
 /**
  * Conflagration fast-tick DoT. Independent of the normal DoT updater —
@@ -38,7 +39,8 @@ export function updateConflagration(world: World, dt: number): void {
     effect.data.nextTickIn = effect.data.tickIntervalMs;
     effect.data.ticksLeft--;
 
-    const damage = Math.max(1, Math.round(effect.data.damagePerTick * getFrostbiteDotTakenMult(monsterState)));
+    const baseDamage = Math.max(1, Math.round(effect.data.damagePerTick * getFrostbiteDotTakenMult(monsterState)));
+    const damage = Math.max(1, applyMonsterDamageTakenDebuffs(monsterState, baseDamage));
     const source = actorFromSourceId(world, effect.sourceId);
     recordMonsterDamagedByPlayer(
       world,
@@ -51,7 +53,6 @@ export function updateConflagration(world: World, dt: number): void {
     );
     entity.hasHealth.hp -= damage;
     pushDotTickEvent(world, entity, 'fire', damage, { sourceType: 'class', fx: 'conflagration' });
-    console.log(`[Conflagration] ${monsterId}: ${damage} tick (${effect.data.ticksLeft} left)`);
 
     if (entity.hasHealth.hp <= 0) {
       toKill.push({ monsterId, sourceId: effect.sourceId, damage });

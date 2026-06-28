@@ -49,7 +49,6 @@ export function tryPoisonExplosion(pc: DotT3PathContext): boolean {
     ctx.metadata['clientEffects'] = Array.isArray(existing)
       ? [...existing, 'poison-explosion']
       : ['poison-explosion'];
-    console.log(`[PoisonExplosion] ${player.isPlayer.id}: detonated → +${burst} burst`);
   } else {
     markMonsterDot(world, monster);
   }

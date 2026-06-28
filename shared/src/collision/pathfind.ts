@@ -1,4 +1,10 @@
-import { distanceSq, moverOverlapsBlockShapes, resolveMoveAgainstBlocks, type Vec2 } from '../systems/spatial';
+import {
+  distanceSq,
+  moverOverlapsBlockShapes,
+  projectOutOfBlockShapes,
+  resolveMoveAgainstBlocks,
+  type Vec2,
+} from '../systems/spatial';
 import type { FeatureTarget } from '../world/nodeFeatures';
 import {
   buildNavGrid,
@@ -143,8 +149,8 @@ export function findPathOnGrid(grid: NavGrid, from: Vec2, to: Vec2): Vec2[] | nu
       const path = reconstructPath(grid, endIdx, cameFrom, cols);
       const endWorld = cellToWorld(grid, endCell.col, endCell.row);
       const finalGoal = isPaddedSegmentClear(grid, endWorld, to) ? to : endWorld;
-      const trimmed = trimPathWaypoints(from, finalGoal, path);
-      if (!isPathPaddedClear(grid, trimmed)) return null;
+      const trimmed = trimPathWaypoints(grid, from, finalGoal, path);
+      if (!isPathPaddedClear(grid, from, trimmed)) return null;
       return trimmed;
     }
 
@@ -188,12 +194,17 @@ export function findPathOnGrid(grid: NavGrid, from: Vec2, to: Vec2): Vec2[] | nu
   return null;
 }
 
-function trimPathWaypoints(from: Vec2, goal: Vec2, path: Vec2[]): Vec2[] {
+function trimPathWaypoints(grid: NavGrid, from: Vec2, goal: Vec2, path: Vec2[]): Vec2[] {
   if (path.length === 0) return [goal];
 
   const out: Vec2[] = [];
-  for (const wp of path) {
+  for (let i = 0; i < path.length; i++) {
+    const wp = path[i];
     if (out.length === 0 && distanceSq(from, wp) <= PATH_ARRIVAL_THRESHOLD * PATH_ARRIVAL_THRESHOLD) {
+      const next = path[i + 1] ?? goal;
+      if (!isPaddedSegmentClear(grid, from, next)) {
+        out.push(wp);
+      }
       continue;
     }
     out.push(wp);
@@ -214,8 +225,9 @@ function trimPathWaypoints(from: Vec2, goal: Vec2, path: Vec2[]): Vec2[] {
   return out;
 }
 
-function isPathPaddedClear(grid: NavGrid, path: Vec2[]): boolean {
+function isPathPaddedClear(grid: NavGrid, from: Vec2, path: Vec2[]): boolean {
   if (path.length === 0) return false;
+  if (!isPaddedSegmentClear(grid, from, path[0])) return false;
   for (let i = 1; i < path.length; i++) {
     if (!isPaddedSegmentClear(grid, path[i - 1], path[i])) return false;
   }
@@ -253,6 +265,9 @@ export function depenetrateToWalkable(
 ): Vec2 | null {
   const grid = buildNavGrid(nodeId, mover, pad, suppressedFeatureIds);
   if (!moverOverlapsBlockShapes(pos, grid.shapes, pad)) return null;
+
+  const projected = projectOutOfBlockShapes(pos, grid.shapes, pad);
+  if (projected) return projected;
 
   const cell = nearestWalkableCell(grid, pos, 24);
   if (!cell) return null;

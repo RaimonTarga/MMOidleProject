@@ -37,7 +37,7 @@ export const caveMonsterEntries = [
     id: 'cave-lurker', name: 'Cave Lurker', color: 0x664466,
     // The fast elite of the pair — quick, armored a little, relentless.
     stats: { hp: 250, attack: 16, plating: 4, damageReduction: 0.05, speed: 68, attackRange: 12, attackCooldown: 1400, pullRange: 200 },
-    behavior: 'melee', attackStyle: 'impact', biome: 'cave', elite: true,
+    behavior: 'melee', attackStyle: 'impact', biome: 'cave', elite: false,
     rewards: { essence: 10, essenceType: 'red', level: 1, biomeXp: 70 },
     ai: { wanderRadius: 380, leashRange: 620, idleMinMs: 450, idleMaxMs: 1500 },
   }],
@@ -93,7 +93,7 @@ export const caveMonsterEntries = [
     id: 'cave-gargoyle', name: 'Cave Gargoyle', color: 0x554455,
     // Ranged elite — hurls stalactites from its perch; armored and patient.
     stats: { hp: 530, attack: 32, plating: 3, damageReduction: 0.10, speed: 22, attackRange: 200, attackCooldown: 3200, pullRange: 185 },
-    behavior: 'melee', attackStyle: 'gunshot', isRanged: true, biome: 'cave', elite: true,
+    behavior: 'ranged', attackStyle: 'stonespit', biome: 'cave', elite: true,
     rewards: { essence: 18, essenceType: 'blue', level: 1, biomeXp: 100 }, // stone construct → Stone (biome mixture; tunable)
     ai: { wanderRadius: 130, leashRange: 460, idleMinMs: 2500, idleMaxMs: 7000 },
   }],
@@ -133,7 +133,7 @@ export const caveMonsterEntries = [
     // Armored ranged sentry — perched, patient, hurls shards. Stationary ranged
     // (NOT a kiter: it holds its perch), armored so it isn't trivially bursted.
     stats: { hp: 1150, attack: 60, plating: 3, damageReduction: 0.10, speed: 20, attackRange: 210, attackCooldown: 3200, pullRange: 185 },
-    behavior: 'melee', attackStyle: 'gunshot', isRanged: true, biome: 'cave', elite: true,
+    behavior: 'ranged', attackStyle: 'stonespit', biome: 'cave', elite: true,
     rewards: { essence: 60, essenceType: 'red', level: 3, biomeXp: 360 },
     ai: { wanderRadius: 120, leashRange: 450, idleMinMs: 2500, idleMaxMs: 7000 },
   }],

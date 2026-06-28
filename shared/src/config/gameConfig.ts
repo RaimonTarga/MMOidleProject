@@ -78,15 +78,13 @@ export const GAME_CONFIG = {
    */
   EVADE_OOC_RESET: 0,
 
-  // ── AoE splash ────────────────────────────────────────────────────────────────
-  /** Pixel radius of the empowered-attack splash, centered on the primary target. */
-  EMPOWERED_AOE_RADIUS: 80,
+  // ── Empowered-hit radius ───────────────────────────────────────────────────────
   /**
-   * Fraction of the attacker's raw `attack` stat dealt as splash damage to each
-   * secondary target. Using the attack stat (not the empowered hit damage) keeps
-   * splash independent of each archetype's multiplier.
+   * Pixel radius associated with an empowered hit. Empowered attacks no longer deal
+   * inherent splash damage (AoE is opt-in now — see the Sweep ability's cleave); this
+   * is retained for the client empowered-ring FX and the AI's cluster-target heuristic.
    */
-  EMPOWERED_AOE_MULT: 0.5,
+  EMPOWERED_AOE_RADIUS: 80,
 
   // ── Biome progression ─────────────────────────────────────────────────────────
   // Was 40 before, now tuned to be about 25 

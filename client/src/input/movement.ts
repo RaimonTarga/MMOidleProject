@@ -61,13 +61,13 @@ export function sendClampedMove(
 
   if (opts?.pathfind) {
     const steering = planOwnClickPath(scene, from, dest);
-    sendMove(scene.socket, dest);
+    sendMove(scene.socket, dest, { mode: 'path' });
     return steering;
   }
 
   clearOwnMovePath(scene.state);
   const clamped = resolveOwnMoveAgainstBlocks(scene, from, dest);
-  sendMove(scene.socket, clamped);
+  sendMove(scene.socket, clamped, { mode: 'direct' });
   return clamped;
 }
 
@@ -109,7 +109,7 @@ export function cancelActiveMove(scene: GameScene): void {
     x: Math.round(origin.x),
     y: Math.round(origin.y),
   };
-  sendMove(scene.socket, stop);
+  sendMove(scene.socket, stop, { mode: 'direct' });
   transform.target = stop;
   beginPendingStop(stop, performance.now());
 }
@@ -152,7 +152,7 @@ function tickMovement(scene: GameScene): void {
         x: Math.round(origin.x),
         y: Math.round(origin.y),
       };
-      sendMove(scene.socket, stop);
+      sendMove(scene.socket, stop, { mode: 'direct' });
       transform.target = stop;
       beginPendingStop(stop, performance.now());
     }
@@ -180,6 +180,6 @@ function tickMovement(scene: GameScene): void {
   const predicted = shapes.length > 0
     ? slideMoveAgainstBlocks(origin, dest, shapes, pad)
     : dest;
-  sendMove(scene.socket, dest);
+  sendMove(scene.socket, dest, { mode: 'direct' });
   transform.target = predicted;
 }

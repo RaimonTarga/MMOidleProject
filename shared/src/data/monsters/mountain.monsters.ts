@@ -53,7 +53,7 @@ export const mountainMonsterEntries = [
     // Hurls boulders — a big, slow hit from range. Punishes standing still; the
     // ranged half of mountain's "stand and trade" pressure. No charge (ranged).
     stats: { hp: 200, attack: 32, plating: 0, damageReduction: 0, speed: 26, attackRange: 210, attackCooldown: 3500, pullRange: 350 },
-    behavior: 'melee', attackStyle: 'gunshot', isRanged: true, biome: 'mountain',
+    behavior: 'ranged', attackStyle: 'arrow', holdsChokepoints: true, biome: 'mountain',
     rewards: { essence: 8, essenceType: 'blue', level: 1, biomeXp: 52 },
     ai: { wanderRadius: 210, leashRange: 600, idleMinMs: 1500, idleMaxMs: 4500 },
     // POWER SHOT — a telegraphed 2× boulder. 2 s wind-up; armed ~3.5 s into the fight
@@ -92,7 +92,7 @@ export const mountainMonsterEntries = [
     // Ranged cap-tripper — a devastating boulder from extreme range; stand still
     // and a single shot can carve a quarter of your HP. No charge (ranged).
     stats: { hp: 330, attack: 60, plating: 0, damageReduction: 0, speed: 28, attackRange: 240, attackCooldown: 3500, pullRange: 265 },
-    behavior: 'melee', attackStyle: 'boulder', isRanged: true, biome: 'mountain',
+    behavior: 'ranged', attackStyle: 'boulder', holdsChokepoints: true, biome: 'mountain',
     rewards: { essence: 13, essenceType: 'blue', level: 1, biomeXp: 75 },
     ai: { wanderRadius: 200, leashRange: 600, idleMinMs: 2000, idleMaxMs: 5000 },
   }],
@@ -123,7 +123,7 @@ export const mountainMonsterEntries = [
     // Ranged cap-tripper that KITES — backs off, lobs boulders. Anti-Close:
     // melee chasing eats free 80-dmg hits. Slow (30) so a charge can still catch it.
     stats: { hp: 700, attack: 80, plating: 0, damageReduction: 0, speed: 30, attackRange: 250, attackCooldown: 3600, pullRange: 360 },
-    behavior: 'melee', attackStyle: 'boulder', isRanged: true, kite: true, biome: 'mountain',
+    behavior: 'kiter', attackStyle: 'boulder', biome: 'mountain',
     rewards: { essence: 60, essenceType: 'blue', level: 3, biomeXp: 360 },
     ai: { wanderRadius: 200, leashRange: 620, idleMinMs: 2000, idleMaxMs: 5000 },
   }],
@@ -161,7 +161,7 @@ export const mountainMonsterEntries = [
     // Anti-Close — chasing it in melee eats a 150 hit every 3.5s. Speed 34
     // (catchable on charge). DPS 150 × (1000/3500) = 43 (kiter; safety > DPS).
     stats: { hp: 1400, attack: 150, plating: 0, damageReduction: 0, speed: 34, attackRange: 260, attackCooldown: 3500, pullRange: 380 },
-    behavior: 'melee', attackStyle: 'boulder', isRanged: true, kite: true, biome: 'mountain',
+    behavior: 'kiter', attackStyle: 'boulder', biome: 'mountain',
     rewards: { essence: 75, essenceType: 'blue', level: 3, biomeXp: 450 },
     ai: { wanderRadius: 210, leashRange: 640, idleMinMs: 2000, idleMaxMs: 5500 },
   }],

@@ -36,7 +36,7 @@ Update this doc at the end of every session. The roadmap says *what and why*; th
 | 10 | Stances | T2 | 🔨 | resolved | `stances-*.md` | IMPLEMENTED (machinery + 3 worked stances). Default+reactive slot model (mirrors abilities `{technique,guard}`); `switch-stance` rune action on new `STANCE` channel (anti-thrash switch cooldown); state on `TracksProgression` (`knownStances`/`equippedStances`/`activeStance`); active stance folds into `recalculatePlayerStats` (recalc on switch via `stanceSwitch.ts` tick system); `StanceRecipe` T2 biome-level gating. Numbers = your pass |
 | 11 | Rites (name locked) | T3 | 🔨 | resolved | `rites-*.md` | IMPLEMENTED (machinery + 4 worked rites). Always-on OOC passives (NO rune action/channel/reconciler); 2 fixed slots + stubbed `riteSlotCount(GM)`; state on `TracksProgression` (`knownRites`/`equippedRites`); rites carry `rite.*` mechanicEffects folded in `recalculatePlayerStats`, read by OOC systems. Quickened Breath (regen-delay seam in combat.ts), Cleansing Breath + Lingering Momentum (`riteOoc.ts` via defense/index), Hunter's Instinct (onKill `mob-haste` reuse). `RiteRecipe` T3 biome-level gating. Numbers = your pass |
 | 12 | Biome identity / combat ecology | all | 🔨 | resolved | `biome-ecology-*.md` | **multi-session program**. PRIMITIVES + TELEGRAPHS done (A1 packs+call-allies / A2 patrols / A3 swarm; alpha tint + `ecology-pulse`). **ALL 5 STARTERS authored end-to-end** (Forest packs / Plains swarm+caller / Mountain sentinel-patrols+chokepoint-terrain / Swamp rot-pool-hazard-terrain / Cave patrolled-elites+high-detection). Each: open-world primitive tags + biome boss exams + terrain where core identity. **ALL 6 ADVANCED BIOMES authored** (Jungle/Desert/Volcanic/Tundra/Graveyard/Trench) + 5 new shared mechanics + an ELITE-TAG SYSTEM: `openingStrike` (jungle pounce / desert alpha-strike), Sun Mark (`appliesMark`+`markedStrike`, cleansable), `ambientHeat` (Volcanic node-wide soft-timer, `updateAmbientHeat`), `enemyShield.shatter` (Tundra ice-armor break → bonus + freeze via applyStun), `appliesAntiheal` (Trench abyssal pressure, stacks the existing `antiheal` status). ELITE system = `elite` def tag + yellow client outline (derived, no networked field) + `focus-elites` TARGETING rune (ELITE_FOCUS_WEIGHT in targetPriority) + `spawn-adds maxAlive` cap. Graveyard REWORKED to necromancers (`gravewright` raises capped undead that crumble on death — a normal mob with a repeating-spawn-adds bossScript). Terrain helpers: `denseBush()`/`lavaVent()`/`volcanicHeat()`. Reusable terrain placeholder visual (block=gray, hazard=toxic-green). REMAINING: Step 13 boss scaffolding, onAlphaDeath, real terrain sprites, numbers (Step 15) |
-| 13 | Dungeons/Guardians/Bosses as exams | all | 📋 | resolved | `dungeon-*.md` (exists) | gauntlet already designed; scaffolding once + boss authoring folds into Step 12; boss-access gating is structural |
+| 13 | Dungeons/Guardians/Bosses as exams | all | 🔨 | resolved | `dungeon-*.md` (exists) | gauntlet system implemented; **T1 pre-encounter rule IMPLEMENTED** (T1 = pre-threats + boss, no waves; data-driven `unclearedThreat` hook join/empower/extra-adds/hazard, default join, mountain=empower placeholder; failure/freeze reset already correct). Per-biome hook tuning + concrete hazard wiring + boss-exam authoring (folds into Step 12) remain |
 | 14 | UI / clarity / failure diagnosis | all | 📋 | resolved | — | MVP = new-system visibility + boss seal/exam; failure diagnosis deferred |
 | 15 | Balance + simulation tooling pass | all | 📋 | resolved | — | Claude builds tooling (dps/eHP, bench, NEW economy sim, monster-ref); you tune |
 | — | Relics | T4+ | ⏸️ | — | — | planned separately |
@@ -45,6 +45,12 @@ Update this doc at the end of every session. The roadmap says *what and why*; th
 | — | Group content | — | ⏸️ | — | — | future |
 
 ---
+
+Step 13 current note: T1 now has an authored `preEncounter` path for worked
+biome exams, replacing generated guardian rings where migrated. Plains, Forest,
+and Swamp T1 are authored and smoke-tested; Swamp includes concrete temporary
+rot-pool hazard wiring. The legacy `guardianPhase` fallback remains for
+unmigrated/old content and higher-tier phase scaffolding.
 
 ## Recommended implementation order
 
@@ -280,6 +286,221 @@ current-state docs are linked where available; the rest are filled at the step's
 Append one line per working session: date · step(s) touched · outcome.
 
 ```text
+2026-06-28  Step 13 (Forest T1 rework, user dir): sharpened the Forest dungeon into a true
+            alpha-priority / predator-burst exam. PRE-FIGHT: added a PREDATOR HOWL to the alpha den —
+            the `wolf` alpha now carries `aura: {kind:"damage", range:220, mult:1.18}` (same machinery as
+            the Plains caller) so its young wolves hit harder while it lives; kill the alpha first to defang
+            the pups. The alpha was already territorial (localWanderRadius 0). BOSS: made MARKED PREY → SAVAGE
+            MAUL the whole identity. New `chargedAttack.marksTarget {durationMs}` field (shared types): when
+            the charged Maul's wind-up BEGINS, the boss paints the shared `sun-mark` "MARKED" debuff on the
+            target (a cleansable buff-bar tell + marker pulse, ~8 lines in combat.ts at the beginCharge site),
+            then the ~1.2s cast bar resolves the ×2.4 spike + pounce-shove, CONSUMING the mark on land (expires
+            if interrupted). Reuses the entire mark status/buff/pulse/cleanse infra — zero new client plumbing.
+            Reduced the 50% young-wolf call from ×3 → a one-time capped PAIR (count 2 / maxAlive 2); no repeating
+            beat, so the Maul (not adds) is the threat. Uncleared rule unchanged (`join`; alpha is the counted
+            threat). NEW (user follow-up): an AURA BUFF INDICATOR for both the Plains caller and the Forest
+            alpha — the aura SOURCE is stamped with a display-only `pre-encounter-aura` status
+            (`PRE_ENCOUNTER_AURA_EFFECT_ID`, shared) at spawn (`applyAuraIndicator` in gauntlet.ts), which the
+            existing `targetStatus` mirror surfaces as a "Rally" tile on the HUD target frame (new
+            `targetStatusMeta` entry) — no new networked field. Purely cosmetic; aura mechanic still rides
+            `TracksDungeon.preEncounterAura`. VERIFIED: shared rebuilt; full 4-pkg typecheck clean;
+            dungeonForest test extended (den damage aura + alpha "Rally" indicator / pups none; Maul
+            marksTarget; 50% call ≤2 capped + no repeating beat; mark applied at cast-start + consumed on land)
+            and dungeonPlains test extended (caller "Rally" indicator); dungeonForest/Plains/Swamp/Cave/
+            PreEncounter + targetPriority + runeMaintenance all pass. Docs: dungeon plan (Forest T1 section) +
+            biome-refactor-playtest (Forest notes/questions) + this log. REMAINING (Forest): numbers (Step 15);
+            onPackAlphaDead pup-scatter still unwired; bespoke "Scent of Blood" label/FX + howl pulse; a
+            world-space (over-sprite) aura indicator would need new art (deferred — target-frame only for now).
+2026-06-28  Step 13 (Cave T1 revision, user dir): changed the Deep Watch to 3 `cave-brute` sentinels (no
+            lurker) that ORBIT the altar instead of patrolling their open-world routes. Added a
+            `patrolOverride?: MonsterPatrolRoute` field to `PreEncounterPackDef` (shared) — applied to the
+            group leader's `controlsMonster.patrolOverride` at spawn (server spawnPreEncounterPack), which
+            `ai.ts` already prefers over `monsterDef.patrol`. `caveSentinel(slot,total,label)` now generates
+            a per-brute phase-offset ABSOLUTE patrol ring (300px radius, 8 waypoints, loop) so the three
+            circle the altar evenly separated (120° apart); leash widened to 760 so an aggroed sentinel can
+            chase across the orbit. The 300px ring sits just outside the 240 pull from the altar center so a
+            careful player can slip in to activate between passes (leash only applies while aggroed → the
+            un-aggroed orbit is unrestricted). BOSS: made the periodic lurker much rarer — intervalMs 12s→24s,
+            initialDelay 6s→12s, maxAlive 2→1 (one lurker at a time). Updated dungeonCave.test.ts (3 brutes
+            with the absolute orbit override, sitting on the ring + mutually separated; infrequent capped
+            lurker). VERIFIED: shared rebuilt, full typecheck clean, dungeonCave + all other dungeon +
+            targetPriority + runeMaintenance tests pass. Docs (plan/playtest/log) updated.
+2026-06-28  Step 13: authored the CAVE T1 DUNGEON (node-3-6, Obsidian Broodmother) = the sparse-elite /
+            careful-pulling exam (the deliberate OPPOSITE of Plains: dangerous because each enemy matters,
+            NOT because there are many; no full gauntlet, pre-encounter + boss only). Reused existing
+            systems end-to-end. PRE-ENCOUNTER = the "Deep Watch": 2 patrolling `cave-brute` "Cave Sentinel"
+            guardians + 1 roaming `cave-lurker` "Deep Lurker" disruptor, each authored as a SOLO single-mob
+            "pack" leader (no follower bodies) → live density 3. The brutes keep their own `cave-brute.patrol`
+            loop (relative to each anchor) + high-detection pull range (240, the Cave overpull-risk identity)
+            via `localWanderRadius:0` + `pullRange:240` (the pre-encounter spawn's Math.min preserves the
+            brute's natural 240); the lurker roams (localWander 220 / leash 520). New shared helper
+            `caveSentinel()` in gauntletDatabase. ACTIVATION = shared T1 `join` hook with `unclearedRole:
+            "leader"` (every elite is a leader) → cleared elites = clean boss start; any left alive join the
+            boss (preEncounterThreat, never gate, normal rewards, no bonus for leaving). BOSS (obsidian-
+            broodmother, data-only) kept durable (%DR sponge) but reshaped to SINGLE adds not a swarm: added
+            a `repeating` beat (12s / initialDelay 6s) that hatches ONE `cave-lurker` hard-capped at maxAlive
+            2, and changed the 50% beat from a 2-`giant-spider` call to ONE stronger giant-spider (still
+            behind the timed shield + maxAlive 2). Sparse predictable adds keep the fight about grinding a
+            defended elite → Heavy Strike (single-target burst) + Second Wind (sustain) both pay off. No
+            reward logic, no gauntlet waves, no other biomes touched. VERIFIED: shared rebuilt; shared+server
+            typecheck clean; NEW server/test/dungeonCave.test.ts (def wiring incl. zero follower bodies; Deep
+            Watch spawn = 2 patrolling brutes keeping patrol+240 pull / 1 lurker, all leaders; cleared→clean
+            start; all 3 uncleared join + clear on boss death; boss clear→cooldown; and a real
+            `updateBossScripts` drive proving the periodic lurker fires and stays capped ≤2 = no swarm);
+            dungeonForest/Plains/Swamp/PreEncounter + targetPriority + runeMaintenance still pass. Docs:
+            dungeon plan (Cave T1 section) + biome-refactor-playtest (Cave notes/questions) + this log.
+            REMAINING (Cave): numbers (Step 15); bespoke guardian/altar + brood-add art; the 50% "stronger
+            brood" reuses giant-spider as a placeholder. NEXT = Mountain T1 author / migrate, or Step 13 boss
+            scaffolding.
+2026-06-27  Step 13: transitioned T1 dungeon authoring away from generated guardian rings for worked
+            biome exams by adding `DungeonGauntletDef.preEncounter` (authored packs/basins/groups) while
+            leaving `guardianPhase` as a migration fallback for old rings and higher-tier phase scaffolding.
+            Authored pre-encounters count only their configured uncleared role (caller/alpha/keeper) for
+            boss-start difficulty; leftover weak followers alone no longer secretly make the boss harder.
+            PLAINS T1 (node-4-3): three local herds, each a `Prairie Caller` + 3 slimes + 1 boar linked as
+            a pack, with a small server-only local damage aura; uncleared callers use `extra-adds` to seed
+            capped boss-start pressure. Tusked Razorback now has capped periodic slime adds plus a 50% larger
+            herd call. FOREST T1: moved from the temporary `GauntletPhaseDef.den` bridge to
+            `preEncounter.id="forest-alpha-den"`; alpha is explicitly `Pack Alpha`, only alpha joins on
+            uncleared start, pups alone do not affect boss start; Maul/50% wolf call retained. SWAMP T1
+            (node-7-4): three rot basins with `Rot Keeper` control mobs; uncleared keepers use the concrete
+            `hazard` path to seed temporary boss rot pools. Grave Toadeater now has dungeon-runtime capped
+            temporary rot pools that slow/poison, expire, and are surfaced to the client as brighter pulsing
+            hazards distinct from permanent swamp terrain; 50% bog-witch call retained. Added client runtime
+            hazard renderer, updated altar copy for authored encounter labels, and added/updated smoke tests:
+            dungeonPlains, dungeonSwamp, dungeonForest, dungeonPreEncounter. VERIFIED: shared build, full
+            `pnpm typecheck`, and all four focused dungeon smoke tests pass. Docs updated: dungeon plan +
+            biome playtest notes + this log. NEXT: migrate/author remaining T1 biomes and decide when to
+            delete/rename the legacy guardian fallback.
+2026-06-27  Step 13: authored the FOREST T1 DUNGEON (node-6-7, Gnarled Greatbear) = the alpha-priority /
+            predator-burst exam (deliberately NOT a Plains swarm). Reused existing systems end-to-end,
+            net-new code minimal. (1) ALPHA DEN pre-encounter: new `GauntletPhaseDef.den
+            { alphaMonsterId }` field (shared) + server `spawnDungeonDen` (gauntlet.ts) — when a guardian
+            phase sets `den`, it spawns ONE pack via the existing `world.spawnPack` (the `wolf` alpha + its
+            2 authored `young-wolf` followers) instead of a ring of bodies, tags all as idleDungeonGuardian,
+            pins them to guard posts (wanderRadius 0, reduced pull), and buffs/renames ONLY the alpha (the
+            danger) — pups stay modest. Pack keeps `inPack` so the existing call-allies pounce works. Forest
+            T1 content entry in gauntletDatabase (den + `unclearedThreat: join`). (2) ACTIVATION: reuses the
+            shared T1 join hook — cleared den = clean boss start; uncleared den joins the boss (preEncounter
+            Threat, never gates, normal rewards, no bonus for leaving). (3) BOSS (gnarled-greatbear, data-only):
+            charged "Savage Maul" via the PRE-EXISTING `chargedAttack` telegraph mechanic (cast bar +
+            ×2.4 single-target spike + pounce-shove knockback, ~1.2s wind-up; resolves through the full player
+            pipeline so Brace cuts hit+knockback and stun/freeze interrupts) — tests Brace timing/burst NOT
+            AoE; refined the existing 50% phase to call a young-wolf group (×3, maxAlive 3) + light enrage
+            (target-priority split); no aoeAttack (forest stays single-target). DISCOVERED: `onPackAlphaDead`
+            (pup-scatter on alpha death) is unwired dead code — left as-is, flagged in playtest doc (wiring it
+            would strengthen the "kill the alpha" lesson; AI-pass item). VERIFIED: shared rebuilt; shared+server
+            typecheck clean (client typecheck fails on a PRE-EXISTING unrelated `../ui/AbilitiesPanel` missing-
+            module error in the user's in-progress HUD files — not touched by this work); NEW
+            server/test/dungeonForest.test.ts (def wiring; den spawn = 1 alpha+2 young, alpha is the standout;
+            cleared→clean / uncleared→join + boss clearable; Maul drives real updateCombat → cast-bar telegraph,
+            no dmg during wind-up, spike on resolve); dungeonPreEncounter + targetPriority + runeMaintenance
+            still pass. Docs: dungeon plan (Forest T1 section) + NEW biome-refactor-playtest.md (Forest notes/
+            questions). REMAINING (Forest): numbers (Step 15), onPackAlphaDead wiring, bespoke Maul FX, wolf-
+            specific alpha name; consider the "empower the 50% call" alt hook. NEXT = next biome (Swamp).
+2026-06-27  Step 13: implemented the shared T1 DUNGEON RULE on top of the already-built gauntlet system.
+            T1 dungeon = pre-encounter + boss fight (NO waves). The existing code converted surviving
+            guardians into a must-kill wave phase; T1 now skips that — on altar activation it goes
+            STRAIGHT to boss awakening and surviving (uncleared) guardians instead make the boss fight
+            harder via a single data-driven, biome-authored hook. NEW shared contract
+            `UnclearedThreatEffect` (gauntletTypes.ts) with 4 modes: `join` (guardians keep fighting
+            alongside the boss — default, no numbers needed), `empower` (boss +stat per surviving
+            guardian), `extra-adds` (extra adds spawn with boss, scaled+capped), `hazard` (PLACEHOLDER —
+            flavor message only, concrete biome wiring deferred). Resolved per dungeon in gauntletDatabase
+            (`content.unclearedThreat` → `BIOME_UNCLEARED_THREAT[biome]` → DEFAULT join); only `mountain`
+            T1 carries a worked `empower` placeholder (untuned) so every code path has a consumer.
+            `DungeonGauntletDef.unclearedThreat` + view fields `unclearedThreatMode`/`unclearedThreatCount`.
+            SERVER (gauntlet.ts): `isPreEncounterDungeon(def)=biomeTier===1` gates the new path (T2+ keep
+            the wave system untouched); `beginPreEncounterBoss` records the surviving count, applies the
+            hook, then `startBossAwakening`; new server-only `tracksDungeon.source="preEncounterThreat"`
+            (entity.ts) for joined guardians/adds, tracked in a dedicated `state.preEncounterThreatIds`
+            list (separate from wave-gating `activeMonsterIds`, which the awakening/boss transitions reset
+            — this was the key bug: both `startBossAwakening` and `spawnGauntletBoss` wipe activeMonsterIds).
+            Pre-encounter threats NEVER gate the boss (requiredKills stays 1), give only normal rewards
+            (no bonus for leaving them), and are despawned by reset/cooldown/freeze like any gauntlet mob.
+            `empower`/`extra-adds`/`hazard` consume the survivors at spawn via `applyUnclearedThreatToBoss`.
+            FAILURE/FREEZE RESET: confirmed already correct — `resetGauntletIfNodeWiped` (on player death,
+            resets to idle when no live players remain in node, party-agnostic) + `freezeNode`/`thawNode`
+            (discard runtime → rebuild fresh idle on return). No change needed; new threat list wired into
+            both reset paths. ABILITY/COMBAT COMPAT: independent of the empowered-attack AoE removal / Sweep
+            / before-empowered rune (dungeon only uses monster modifiers + openingStrikeMult). Preserved
+            the explicit altar activation flow. VERIFIED: shared rebuilt; 4-pkg typecheck clean; NEW
+            `server/test/dungeonPreEncounter.test.ts` (cleared-baseline vs empowered boss HP/atk scaling on
+            mountain T1; join: guardians persist through boss spawn, don't gate, killing one ≠ complete,
+            boss death → cooldown); targetPriority + runeMaintenance tests still pass. REMAINING (biome
+            passes): per-biome hook choice + numbers, concrete `hazard` wiring, boss-exam authoring.
+2026-06-27  Step 7 follow-up: wired the 3 T1 abilities into biome UNLOCK recipes (mostly confirm + place).
+            The recipes already existed from the abilities-authoring pass (Cleanse/swamp, Heavy Strike/
+            mountain, Second Wind/cave) and were already correctly wired end-to-end — biome-gated via
+            AbilityRecipe (recipeGroup + requiredBiomeLevel), no boss-clear, learned permanently into
+            knownAbilities (craftAbilityRecipe), and auto-surfaced in the AbilitiesPanel "Learn" list +
+            forge (both iterate ABILITY_RECIPE_DATABASE, gate on isAbilityRecipeUnlocked). SUBSTANTIVE
+            CHANGE: moved all three from requiredBiomeLevel 2 → 3 to honor the "mid-biome answer tool"
+            placement (T1 content band is L1–4; L3 = mid, so the player meets the biome's challenge then
+            earns the response). Costs/levels remain placeholders. NO lineages; Sweep unchanged (still a
+            generic cleave, no DoTs); NO T2 DoT-AoE added — left a deferred doc note (DoT AoE/spread is a
+            future T2 ability direction; Sweep remains generic cleave). Technique/Guard rune-override
+            compat (fire-technique/fire-guard + before-empowered) preserved. VERIFIED: 4-pkg typecheck;
+            shared rebuilt; targetPriority + runeMaintenance tests; throwaway sanity (31 checks: validation,
+            each recipe → right biome group / L3 gate / no boss-clear / learns the right ability of the
+            right slot, locked at L2 / unlocked L3–4, and not unlocked by leveling OTHER biomes).
+2026-06-27  Step 7 follow-up: new rune "Empowered Ready" (`before-empowered` CONDITION) lets you land
+            your Technique on the empowered hit. Reuses the entire fire-technique override path — it's
+            just a new condition wired to the existing `fire-technique` action (TECHNIQUE channel). The
+            class-specific "empowered imminent" detection collapses to ONE unified signal: the shared
+            `hasEmpoweredAttack` flag (which cadence sets after (N-1) hits = finisher armed, cooldown
+            sets when the execution timer is ready, energy sets at max energy). So runeConfig's
+            RuneContext gains `empoweredImminent = player.hasEmpoweredAttack !== undefined`; `before-
+            empowered` reads it in isConditionActive. Naturally INERT for DoT/reload/summoner baseline
+            (they never arm hasEmpoweredAttack) and AUTOMATICALLY works for any future T3/T4 path that
+            arms it (the per-class "specific implementations" the user flagged for later are only needed
+            for empowered-like mechanics that DON'T use hasEmpoweredAttack). Added to TECHNIQUE_CONDITIONS
+            only (Technique-scoped per the user's examples; not guard/stance). NAMED_RULE "Finishing
+            Technique". TEMPORARY starter (user will move it onto a rune-recipe reward later). cost/tier
+            = placeholder (2/2). Surfaces automatically in RunesPanel (iterates the DBs). VERIFIED: 4-pkg
+            typecheck; shared rebuilt; targetPriority + runeMaintenance tests; throwaway sanity (11
+            checks: fragment+starter, compat allowed-with-fire-technique / not-fire-guard, named rule,
+            derive fires only when empoweredImminent true / inert when false/absent, in-combat regression);
+            idle bench clean. NEXT = reward placement + per-class T4 empowered variants.
+2026-06-27  Cleanup: removed the OLD inherent-AoE-on-empowered-attacks artifact (now that Sweep provides
+            opt-in AoE). Deleted the `if (isEmpowered && !suppressEmpoweredAoe) applyPlayerAoe(...)` block
+            from BOTH player attack paths that replicated it — combat.ts (main) + reload T3 laser.ts.
+            `isEmpowered`/`isExecution` kept (still drive crit styling / FX tags). The `suppressEmpoweredAoe`
+            opt-out flag became dead (combat.ts was its only reader) → removed all writes + tidied comments
+            (energy normalHit/empoweredHit, reloadPrototype blunderbuss, snipeDamage, blunderbuss.ts, dot
+            fire.ts); those specs keep `empoweredAttack: true` for the aesthetic crit. Config: deleted the
+            now-unused `EMPOWERED_AOE_MULT`; kept `EMPOWERED_AOE_RADIUS` (still used by the client empowered
+            ring FX + targetPriority's cluster heuristic) with an updated comment. KEPT (judgment calls, not
+            removed): the client empowered ring FX (shared empowered/execution visual across 4 archetype FX
+            paths, not just a splash tell) and targetPriority's `aoeClusterCount` cluster-preference (soft
+            weight, still useful for AoE builds). Monster splash (def-driven `aoeAttack`) untouched. VERIFIED:
+            4-pkg typecheck; shared rebuilt; both tests; idle bench clean.
+2026-06-27  Step 7 follow-up: authored 3 rough T1 ABILITIES in the existing Abilities system (no
+            lineages, placeholder numbers, no new UI beyond the auto-driven panel/forge lists).
+            (1) CLEANSE (Guard/swamp, recipe swamp L2) — new `cleanse` effect: strips up to N stacks
+            from each harmful debuff/DoT on the player + optional short post-cleanse `ability-guard`
+            DR buff (reuses the Brace buff path via a new shared `applyGuardDrBuff` helper). New
+            `has-debuff` trigger (fctx.hasHarmfulDebuff). (2) HEAVY STRIKE (Technique/mountain,
+            mountain L2) — new `empower` rider in abilityEffects' onHit: ×mult single-target damage
+            (no splash), mitigated normally downstream. (3) SECOND WIND (Guard/cave, cave L2) — new
+            `heal` effect: deposits maxHp×pct into the recovery BURST_POOL (antiheal applies, Regen
+            tile shows), trigger `hp-below`. Extended shared unions: AbilityTrigger += `has-debuff`,
+            AbilityEffectSpec += `empower`/`cleanse`/`heal`. NET-NEW SHARED AUTHORITY:
+            `isHarmfulPlayerStatusEffect(id,data)` (monsterDebuffs.ts) — one definition of "a player
+            debuff/DoT" (slow/frost-ramp/sun-mark/volcanic-heat/antiheal/swamp-rot/monster-DoT/
+            isDot/isNodeFeature). Refactored riteOoc's local `isHarmfulEffect` onto it (Cleansing
+            Breath + Lingering Momentum) — broadened the set (strict improvement; also stops Lingering
+            Momentum from extending rot/antiheal/heat debuffs, a latent bug). 3 abilities + 3 recipes
+            appear automatically in the existing AbilitiesPanel/forge (both iterate the DBs); Guard
+            rune-override + Technique/Guard channels unchanged. VERIFIED: 4-pkg typecheck clean; shared
+            rebuilt; targetPriority + runeMaintenance tests pass; throwaway sanity (28 checks: slot/
+            trigger/effect wiring, recipe validation + swamp-L2 gating, the full harmful-predicate
+            matrix incl. buffs-are-not-harmful); idle bench clean (p50 0.07–0.95ms 0–100 players).
+            PLACEHOLDER/TUNING: all numbers (stacks/mult/heal%/DR/cooldowns/biome levels/costs);
+            DEFERRED POLISH: Heavy Strike has no FX tag (no Technique icon pulse/cd-sweep), Second
+            Wind grants no ability-guard buff (no Guard glow; Regen tile covers it), no target-quality
+            preference, real DoT-specific resistance (generic DR stand-in for now). NEXT = Step 13 or
+            per-biome ability content + numbers.
 2026-06-25  Step 12 GRAVEYARD + TRENCH authored end-to-end (5th + 6th ADVANCED — ALL 6 ADVANCED DONE)
             + a new shared ELITE-TAG SYSTEM (user-requested, reusable). Graveyard REWORKED from a plain
             DoT biome into a necromancer/revival biome; Trench got the "abyssal pressure" + hunting-territory

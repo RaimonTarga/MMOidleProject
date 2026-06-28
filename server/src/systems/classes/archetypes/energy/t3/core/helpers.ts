@@ -39,5 +39,4 @@ export function endACDischarge(world: World, player: PlayerEntity): void {
   }
   detachComponent(world, player, 'inAcDischarge');
   attachComponent(world, player, 'inAcChargePhase', {});
-  console.log(`[AltCurrents] ${player.isPlayer.id}: discharge → charge phase`);
 }

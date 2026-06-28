@@ -30,11 +30,18 @@ export type RuneConditionId =
   | "in-combat"
   | "when-idle"
   | "hp-below-25"
+  | "has-debuff"
   | "in-party"
   // Reactive telegraph hook: active while an enemy attacking you is charging a
   // cast-time attack (e.g. the Ridge Archer's Power Shot). Pairs with Fire Guard /
   // Switch Stance for read-and-react defense.
   | "target-casting"
+  // Active while your NEXT attack is empowered (the finisher / execution / discharge
+  // is armed and waiting to land). Class-agnostic: it reads the shared empowered flag,
+  // so it fires for cadence (finisher armed), cooldown (execution ready), and energy
+  // (energy maxed). Inert for classes with no empowered attack (DoT/reload/summoner
+  // baseline). Pairs with Fire Technique to land your Technique on the empowered hit.
+  | "before-empowered"
   | "n-aggro-3";
 
 export type RuneActionId =
@@ -105,6 +112,7 @@ export const RUNE_CHANNELS: RuneChannel[] = [
 const COMBAT_CONDITIONS: readonly RuneConditionId[] = [
   "in-combat",
   "hp-below-25",
+  "has-debuff",
   "n-aggro-3",
 ];
 
@@ -139,12 +147,14 @@ const CONTROL_CONDITIONS: readonly RuneConditionId[] = [
 // System rework Step 7: conditions a player can wire to an ability-fire override.
 const TECHNIQUE_CONDITIONS: readonly RuneConditionId[] = [
   "in-combat",
+  "before-empowered",
   "n-aggro-3",
 ];
 
 const GUARD_CONDITIONS: readonly RuneConditionId[] = [
   "in-combat",
   "hp-below-25",
+  "has-debuff",
   "target-casting",
   "n-aggro-3",
 ];
@@ -153,6 +163,7 @@ const GUARD_CONDITIONS: readonly RuneConditionId[] = [
 const STANCE_CONDITIONS: readonly RuneConditionId[] = [
   "in-combat",
   "hp-below-25",
+  "has-debuff",
   "target-casting",
   "n-aggro-3",
 ];
@@ -203,6 +214,17 @@ export const CONDITION_DATABASE = new Map<string, ConditionDef>([
     },
   ],
   [
+    "has-debuff",
+    {
+      id: "has-debuff",
+      name: "When Debuffed",
+      blurb: "Works while you are carrying a harmful debuff or damage-over-time effect.",
+      cost: 1,
+      tier: 1,
+      kind: "state",
+    },
+  ],
+  [
     "in-party",
     {
       id: "in-party",
@@ -230,6 +252,19 @@ export const CONDITION_DATABASE = new Map<string, ConditionDef>([
       id: "target-casting",
       name: "Enemy Charging",
       blurb: "Works while an enemy attacking you is winding up a cast-time attack.",
+      cost: 2,
+      tier: 2,
+      kind: "state",
+    },
+  ],
+  [
+    "before-empowered",
+    {
+      id: "before-empowered",
+      name: "Empowered Ready",
+      // Numbers (cost/tier) are PLACEHOLDERS — user balance pass.
+      blurb:
+        "Works the instant your next attack becomes empowered — a finisher, execution, or full-energy discharge that is armed and waiting to land.",
       cost: 2,
       tier: 2,
       kind: "state",
@@ -525,6 +560,8 @@ export const DEFAULT_RUNE_LOADOUT: EquippedRule[] = [
 
 export const STARTER_RUNE_IDS: string[] = Array.from(
   new Set([
+    // Situations are baseline vocabulary. Progression unlocks new responses.
+    ...CONDITION_DATABASE.keys(),
     ...DEFAULT_RUNE_LOADOUT.flatMap((rule) => [rule.conditionId, rule.actionId]),
     // Party runes and basic targeting are available from the start
     "in-party",
@@ -544,6 +581,9 @@ export const STARTER_RUNE_IDS: string[] = Array.from(
     // Reactive "enemy is charging a cast" condition — available from the start so
     // players can answer telegraphed casts once they meet a charging mob.
     "target-casting",
+    // "Empowered Ready" condition. TEMPORARY starter so it's usable now; intended to
+    // become an earned reward later (move it onto a rune recipe in the reward pass).
+    "before-empowered",
   ]),
 );
 
@@ -590,8 +630,10 @@ export function normalizeRuneLoadout(rules: EquippedRule[]): EquippedRule[] {
  * old tier-0. The divisor is the user's balance lever. (Step 5 retired the crafted
  * rune-capacity recipes; RP now comes solely from GM.)
  */
+export const RUNE_POINT_GLOBAL_MASTERY_STEP = 10;
+
 export function runeBudgetForGlobalMastery(globalMastery: number): number {
-  return 8 + Math.floor(Math.max(0, globalMastery) / 10);
+  return 8 + Math.floor(Math.max(0, globalMastery) / RUNE_POINT_GLOBAL_MASTERY_STEP);
 }
 
 export function runeRuleCost(rule: EquippedRule): number {
@@ -827,6 +869,14 @@ export const NAMED_RULES = new Map<string, NamedRule>([
     },
   ],
   [
+    ruleKey("before-empowered", "fire-technique"),
+    {
+      name: "Finishing Technique",
+      blurb:
+        "Arm your Technique the instant your next attack becomes empowered, so the big hit also carries it.",
+    },
+  ],
+  [
     ruleKey("in-combat", "taunt-current-target"),
     {
       name: "Challenge",
@@ -868,8 +918,16 @@ export interface RuneContext {
   inParty: boolean;
   aggroCount: number;
   combatArchetype?: CombatArchetype;
+  /** Player currently has a harmful debuff or DoT. */
+  debuffed?: boolean;
   /** An enemy attacking this player is currently winding up a cast-time attack. */
   enemyCharging?: boolean;
+  /**
+   * This player's next attack is empowered (the shared empowered-attack flag is
+   * armed). Drives the `before-empowered` condition. False/absent for classes that
+   * have no empowered attack armed.
+   */
+  empoweredImminent?: boolean;
 }
 
 export interface ClaimedRuneAction {
@@ -941,12 +999,16 @@ function isConditionActive(conditionId: string, ctx: RuneContext): boolean {
       return !ctx.inCombat;
     case "hp-below-25":
       return ctx.hpPct <= 0.25;
+    case "has-debuff":
+      return ctx.debuffed ?? false;
     case "in-party":
       return ctx.inParty;
     case "n-aggro-3":
       return ctx.aggroCount >= 3;
     case "target-casting":
       return ctx.enemyCharging ?? false;
+    case "before-empowered":
+      return ctx.empoweredImminent ?? false;
     default:
       return false;
   }

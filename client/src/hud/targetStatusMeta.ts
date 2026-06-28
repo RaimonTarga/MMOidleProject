@@ -30,6 +30,9 @@ const STATUS_META: Record<string, StatusMeta> = {
   'void-corruption':         { label: 'Corrupt', color: '#b06cff' },
   vuln:            { label: 'Vuln',    color: '#ff5577' },
   vulnerability:   { label: 'Vuln',    color: '#ff5577' },
+  'expose-weakness': { label: 'Exposed', color: '#ff5577' },
+  // Pre-encounter aura SOURCE (pack caller / den alpha) — "this one buffs its allies".
+  'pre-encounter-aura': { label: 'Rally', color: '#ff9944' },
 };
 
 const BOSS_META: Record<string, StatusMeta> = {

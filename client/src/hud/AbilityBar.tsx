@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useAtomValue } from "jotai";
 import {
   ABILITY_GUARD_EFFECT_ID,
+  ABILITY_SECOND_WIND_EFFECT_ID,
   abilityDef,
   type AbilityDef,
   type AbilitySlot,
@@ -156,7 +157,9 @@ export function AbilityBar() {
   // Tick a wall clock so cooldown sweeps / flashes animate. The bar only mounts
   // content when an ability is equipped, so this stays cheap.
   const [now, setNow] = useState(() => Date.now());
-  const guardActive = buffs.some((b) => b.id === ABILITY_GUARD_EFFECT_ID);
+  const guardActive = buffs.some(
+    (b) => b.id === ABILITY_GUARD_EFFECT_ID || b.id === ABILITY_SECOND_WIND_EFFECT_ID,
+  );
 
   // Rising edge of the Guard buff = the Guard fired → stamp it so the cooldown
   // sweep can run once the buff drops (Guard carries no FX tag of its own).

@@ -499,6 +499,112 @@ function inflateShape(shape: NodeFeatureShape, pad: Vec2): NodeFeatureShape {
   }
 }
 
+function projectPointOutOfShape(pos: Vec2, shape: NodeFeatureShape): Vec2 | null {
+  if (!pointInNodeFeatureShape(pos, shape)) return null;
+  const epsilon = 0.75;
+
+  switch (shape.kind) {
+    case 'circle': {
+      const dx = pos.x - shape.x;
+      const dy = pos.y - shape.y;
+      const dist = Math.hypot(dx, dy);
+      if (dist < 1e-6) return { x: shape.x + shape.radius + epsilon, y: shape.y };
+      const reach = shape.radius + epsilon;
+      return {
+        x: shape.x + (dx / dist) * reach,
+        y: shape.y + (dy / dist) * reach,
+      };
+    }
+    case 'ellipse': {
+      const dx = pos.x - shape.x;
+      const dy = pos.y - shape.y;
+      const norm = Math.sqrt(
+        (dx * dx) / (shape.halfW * shape.halfW) +
+          (dy * dy) / (shape.halfH * shape.halfH),
+      );
+      if (norm < 1e-6) return { x: shape.x + shape.halfW + epsilon, y: shape.y };
+      const scale = (1 + epsilon / Math.min(shape.halfW, shape.halfH)) / norm;
+      return {
+        x: shape.x + dx * scale,
+        y: shape.y + dy * scale,
+      };
+    }
+    case 'rect': {
+      const minX = shape.x - shape.halfW;
+      const maxX = shape.x + shape.halfW;
+      const minY = shape.y - shape.halfH;
+      const maxY = shape.y + shape.halfH;
+      const distances = [
+        { axis: 'x' as const, value: minX - epsilon, distance: pos.x - minX },
+        { axis: 'x' as const, value: maxX + epsilon, distance: maxX - pos.x },
+        { axis: 'y' as const, value: minY - epsilon, distance: pos.y - minY },
+        { axis: 'y' as const, value: maxY + epsilon, distance: maxY - pos.y },
+      ];
+      distances.sort((a, b) => a.distance - b.distance);
+      const nearest = distances[0];
+      return nearest.axis === 'x'
+        ? { x: nearest.value, y: pos.y }
+        : { x: pos.x, y: nearest.value };
+    }
+  }
+}
+
+/**
+ * Push a mover center out of inflated block shapes if it has penetrated terrain.
+ * Normal movement should prevent penetration; this is an authoritative failsafe.
+ */
+export function projectOutOfBlockShapes(
+  pos: Vec2,
+  shapes: NodeFeatureShape[],
+  pad: Vec2 = { x: 0, y: 0 },
+): Vec2 | null {
+  if (shapes.length === 0) return null;
+  const padded = pad.x !== 0 || pad.y !== 0;
+  let current = { x: pos.x, y: pos.y };
+  let moved = false;
+
+  for (let i = 0; i < 12; i++) {
+    let projectedThisPass = false;
+    for (const shape of shapes) {
+      const s = padded ? inflateShape(shape, pad) : shape;
+      const projected = projectPointOutOfShape(current, s);
+      if (!projected) continue;
+      current = projected;
+      moved = true;
+      projectedThisPass = true;
+    }
+    if (!projectedThisPass) break;
+  }
+
+  if (moved && !moverOverlapsBlockShapes(current, shapes, pad)) return current;
+
+  // Complex multi-rect terrain can make axis projections bounce between pieces.
+  // As a final failsafe, search outward from the original point and pick the
+  // first nearby non-overlapping center. This keeps future terrain authoring
+  // mistakes from becoming permanent wedged states.
+  const directions = [
+    { x: 1, y: 0 },
+    { x: -1, y: 0 },
+    { x: 0, y: 1 },
+    { x: 0, y: -1 },
+    { x: Math.SQRT1_2, y: Math.SQRT1_2 },
+    { x: Math.SQRT1_2, y: -Math.SQRT1_2 },
+    { x: -Math.SQRT1_2, y: Math.SQRT1_2 },
+    { x: -Math.SQRT1_2, y: -Math.SQRT1_2 },
+  ];
+  for (let radius = 4; radius <= 256; radius *= 2) {
+    for (const dir of directions) {
+      const candidate = {
+        x: pos.x + dir.x * radius,
+        y: pos.y + dir.y * radius,
+      };
+      if (!moverOverlapsBlockShapes(candidate, shapes, pad)) return candidate;
+    }
+  }
+
+  return null;
+}
+
 /**
  * Clamp the segment `from`→`to` so it stops just before entering any of `shapes`.
  * Shapes that already contain `from` are ignored (the mover is already inside, so
@@ -563,6 +669,11 @@ export function resolveMoveAgainstBlocks(
   pad: Vec2 = { x: 0, y: 0 },
 ): Vec2 {
   if (shapes.length === 0) return to;
+
+  if (moverOverlapsBlockShapes(from, shapes, pad)) {
+    if (!moverOverlapsBlockShapes(to, shapes, pad)) return to;
+    return projectOutOfBlockShapes(from, shapes, pad) ?? { x: from.x, y: from.y };
+  }
 
   const candidate = clampSegmentBeforeShapes(from, to, shapes, pad);
   if (!moverOverlapsBlockShapes(candidate, shapes, pad)) return candidate;

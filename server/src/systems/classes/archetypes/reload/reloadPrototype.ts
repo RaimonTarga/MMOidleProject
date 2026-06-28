@@ -127,9 +127,8 @@ export function initReloadArchetype(): void {
       ctx.metadata['blunderbussLastPellet'] = pelletCount === 1;
       ctx.metadata['blunderbussVolleyTrigger'] = true;
       // Aesthetic-only crits: every pellet gets the yellow "!" styling (and yellow
-      // tracer), with no AoE splash. Suppress keeps it cosmetic, not mechanical.
+      // tracer). Cosmetic only, not mechanical.
       ctx.metadata['empoweredAttack'] = true;
-      ctx.metadata['suppressEmpoweredAoe'] = true;
       if (entity.tracksCombat) {
         resetCounter(entity.tracksCombat, BLUNDERBUSS_VOLLEY_HITS_COUNTER);
       }

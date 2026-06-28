@@ -3,10 +3,8 @@ import { useAtom, useAtomValue } from "jotai";
 import { UIIcon } from "../ui/UIIcon";
 import { hudBus } from "../hudBus";
 import { SkillTreePanel } from "../ui/SkillTreePanel";
-import { RunesPanel } from "../ui/RunesPanel";
-import { AbilitiesPanel } from "../ui/AbilitiesPanel";
-import { StancesPanel } from "../ui/StancesPanel";
-import { RitesPanel } from "../ui/RitesPanel";
+import { BuildPanel } from "../ui/BuildPanel";
+import { MasteryPanel } from "../ui/MasteryPanel";
 import { InventoryPanel } from "../ui/InventoryPanel";
 import { CraftingPanel } from "../ui/CraftingPanel";
 import { MapPanel } from "../ui/MapPanel";
@@ -15,19 +13,26 @@ import { CatalystPanel } from "./CatalystPanel";
 import { QuestPanel } from "../ui/QuestPanel";
 import { SettingsPanel } from "./settings/SettingsPanel";
 import { QuestOverlay } from "./quest/QuestOverlay";
-import { SKILL_TREE, NODE_BIOMES, BIOME_DATABASE } from "@mmo-idle/shared";
+import {
+  SKILL_TREE,
+  NODE_BIOMES,
+  BIOME_DATABASE,
+  runeBudgetForGlobalMastery,
+  upgradeCeilingFromGlobalMastery,
+  MAX_UPGRADE,
+} from "@mmo-idle/shared";
 import {
   craftTabAtom,
   deathOverlayAtom,
+  buildOpenAtom,
+  buildPanelTabAtom,
+  type BuildPanelTab,
+  globalMasteryAtom,
   inventoryOpenAtom,
   mapHighlightNodesAtom,
   mapOpenAtom,
+  masteryOpenAtom,
   playerNodeIdAtom,
-  runePanelTabAtom,
-  runesOpenAtom,
-  abilitiesOpenAtom,
-  stancesOpenAtom,
-  ritesOpenAtom,
   selectedClassAtom,
   selectedRangeAtom,
   selectedSubVariantAtom,
@@ -40,11 +45,9 @@ import "./hud.css";
 
 export function RightSidebar() {
   const [treeOpen, setTreeOpen] = useAtom(skillTreeOpenAtom);
-  const [runesOpen, setRunesOpen] = useAtom(runesOpenAtom);
-  const [abilitiesOpen, setAbilitiesOpen] = useAtom(abilitiesOpenAtom);
-  const [stancesOpen, setStancesOpen] = useAtom(stancesOpenAtom);
-  const [ritesOpen, setRitesOpen] = useAtom(ritesOpenAtom);
-  const [runePanelTab, setRunePanelTab] = useAtom(runePanelTabAtom);
+  const [buildOpen, setBuildOpen] = useAtom(buildOpenAtom);
+  const [buildPanelTab, setBuildPanelTab] = useAtom(buildPanelTabAtom);
+  const [masteryOpen, setMasteryOpen] = useAtom(masteryOpenAtom);
   const [invOpen, setInvOpen] = useAtom(inventoryOpenAtom);
   const [craftTab, setCraftTab] = useAtom(craftTabAtom);
   const [mapOpen, setMapOpen] = useAtom(mapOpenAtom);
@@ -68,8 +71,18 @@ export function RightSidebar() {
   const selectedRange = useAtomValue(selectedRangeAtom);
   const unlockedSkills = useAtomValue(unlockedSkillsAtom);
   const skillPoints = useAtomValue(skillPointsAtom);
+  const globalMastery = useAtomValue(globalMasteryAtom);
   const nodeId = useAtomValue(playerNodeIdAtom);
   const dead = useAtomValue(deathOverlayAtom).active;
+
+  function openBuildTab(tab: BuildPanelTab): void {
+    if (buildOpen && buildPanelTab === tab) {
+      setBuildOpen(false);
+      return;
+    }
+    setBuildPanelTab(tab);
+    setBuildOpen(true);
+  }
 
   const className = (() => {
     if (!selectedClass) return null;
@@ -137,73 +150,55 @@ export function RightSidebar() {
       </div>
 
       <div className="sidebar-panel">
-        <div className="panel-title">Runes</div>
+        <div className="panel-title">Mastery</div>
         <button
-          className={`auto-btn${runesOpen && runePanelTab === "loadout" ? " active" : ""}`}
+          className={`auto-btn${masteryOpen ? " active" : ""}`}
           style={{ display: 'flex', alignItems: 'center', gap: 6 }}
-          onClick={() => {
-            if (runesOpen && runePanelTab === "loadout") {
-              setRunesOpen(false);
-              return;
-            }
-            setRunePanelTab('loadout');
-            setRunesOpen(true);
-          }}
+          onClick={() => setMasteryOpen((v) => !v)}
         >
-          <UIIcon frameName="UI_icons/runes-icon.png" size={18} />
-          {runesOpen && runePanelTab === "loadout" ? "CLOSE RUNES" : "OPEN RUNES"}
+          <UIIcon frameName="UI_icons/progress-icon.png" size={18} />
+          {masteryOpen ? "CLOSE MASTERY" : "OPEN MASTERY"}
         </button>
-        <button
-          className={`auto-btn${runesOpen && runePanelTab === "forge" ? " active" : ""}`}
-          style={{ marginTop: 4, display: 'flex', alignItems: 'center', gap: 6 }}
-          onClick={() => {
-            if (runesOpen && runePanelTab === "forge") {
-              setRunesOpen(false);
-              return;
-            }
-            setRunePanelTab('forge');
-            setRunesOpen(true);
-          }}
-        >
-          <UIIcon frameName="UI_icons/forge-icon.png" size={18} />
-          {runesOpen && runePanelTab === "forge" ? "CLOSE RUNE FORGE" : "RUNE FORGE"}
-        </button>
+        <div className="stat-section">
+          <div className="stat-row">
+            <span className="stat-label">Global</span>
+            <span className="stat-value">{globalMastery}</span>
+          </div>
+          <div className="stat-row">
+            <span className="stat-label">Upgrade Cap</span>
+            <span className="stat-value">+{Math.min(MAX_UPGRADE, upgradeCeilingFromGlobalMastery(globalMastery))}</span>
+          </div>
+          <div className="stat-row">
+            <span className="stat-label">Rune Points</span>
+            <span className="stat-value">{runeBudgetForGlobalMastery(globalMastery)}</span>
+          </div>
+        </div>
       </div>
 
       <div className="sidebar-panel">
-        <div className="panel-title">Abilities</div>
-        <button
-          className={`auto-btn${abilitiesOpen ? " active" : ""}`}
-          style={{ display: 'flex', alignItems: 'center', gap: 6 }}
-          onClick={() => setAbilitiesOpen((v) => !v)}
-        >
-          <UIIcon frameName="UI_icons/passives-icon.png" size={18} />
-          {abilitiesOpen ? "CLOSE ABILITIES" : "OPEN ABILITIES"}
-        </button>
-      </div>
-
-      <div className="sidebar-panel">
-        <div className="panel-title">Stances</div>
-        <button
-          className={`auto-btn${stancesOpen ? " active" : ""}`}
-          style={{ display: 'flex', alignItems: 'center', gap: 6 }}
-          onClick={() => setStancesOpen((v) => !v)}
-        >
-          <UIIcon frameName="UI_icons/passives-icon.png" size={18} />
-          {stancesOpen ? "CLOSE STANCES" : "OPEN STANCES"}
-        </button>
-      </div>
-
-      <div className="sidebar-panel">
-        <div className="panel-title">Rites</div>
-        <button
-          className={`auto-btn${ritesOpen ? " active" : ""}`}
-          style={{ display: 'flex', alignItems: 'center', gap: 6 }}
-          onClick={() => setRitesOpen((v) => !v)}
-        >
-          <UIIcon frameName="UI_icons/passives-icon.png" size={18} />
-          {ritesOpen ? "CLOSE RITES" : "OPEN RITES"}
-        </button>
+        <div className="panel-title">Build</div>
+        {([
+          ["overview", "Overview", "UI_icons/progress-icon.png"],
+          ["abilities", "Abilities", "UI_icons/passives-icon.png"],
+          ["stances", "Stances", "UI_icons/passives-icon.png"],
+          ["rites", "Rites", "UI_icons/passives-icon.png"],
+          ["runes", "Runes", "UI_icons/runes-icon.png"],
+        ] as const).map(([tab, label, icon], index) => (
+          <button
+            key={tab}
+            className={`auto-btn${buildOpen && buildPanelTab === tab ? " active" : ""}`}
+            style={{
+              marginTop: index === 0 ? 0 : 4,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 6,
+            }}
+            onClick={() => openBuildTab(tab)}
+          >
+            <UIIcon frameName={icon} size={18} />
+            {buildOpen && buildPanelTab === tab ? `CLOSE ${label.toUpperCase()}` : label.toUpperCase()}
+          </button>
+        ))}
       </div>
 
       <EssencePanel />
@@ -321,10 +316,8 @@ export function RightSidebar() {
       </div>
 
       {treeOpen && <SkillTreePanel onClose={() => setTreeOpen(false)} />}
-      {runesOpen && <RunesPanel onClose={() => setRunesOpen(false)} />}
-      {abilitiesOpen && <AbilitiesPanel onClose={() => setAbilitiesOpen(false)} />}
-      {stancesOpen && <StancesPanel onClose={() => setStancesOpen(false)} />}
-      {ritesOpen && <RitesPanel onClose={() => setRitesOpen(false)} />}
+      {buildOpen && <BuildPanel onClose={() => setBuildOpen(false)} />}
+      {masteryOpen && <MasteryPanel onClose={() => setMasteryOpen(false)} />}
       {invOpen && <InventoryPanel onClose={() => setInvOpen(false)} />}
       {craftTab !== null && (
         <CraftingPanel

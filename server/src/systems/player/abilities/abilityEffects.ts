@@ -11,8 +11,12 @@
  */
 import {
   ABILITY_DATABASE,
+  ABILITY_EXPOSE_WEAKNESS_FX,
   ABILITY_GUARD_EFFECT_ID,
   ABILITY_SWEEP_FX,
+  ABILITY_TECHNIQUE_FIRED_FX,
+  EXPOSE_WEAKNESS_EFFECT_ID,
+  applyStatusEffect,
   getStatusEffect,
   type AbilityDef,
 } from "@mmo-idle/shared";
@@ -81,6 +85,32 @@ function applyTechniqueRider(
       splash,
       ctx.defender.isMonster.id,
     );
+  } else if (effect.kind === "empower") {
+    const existing = ctx.metadata["clientEffects"];
+    ctx.metadata["clientEffects"] = Array.isArray(existing)
+      ? [...existing, ABILITY_TECHNIQUE_FIRED_FX]
+      : [ABILITY_TECHNIQUE_FIRED_FX];
+    // Empower: scale the landed hit's damage;
+    // no splash. Runs in onHit so onDamageTaken still mitigates the boosted value.
+    ctx.damage = Math.max(0, Math.round(ctx.damage * effect.damageMult));
+  } else if (effect.kind === "expose-weakness") {
+    const existing = ctx.metadata["clientEffects"];
+    ctx.metadata["clientEffects"] = Array.isArray(existing)
+      ? [...existing, ABILITY_EXPOSE_WEAKNESS_FX]
+      : [ABILITY_EXPOSE_WEAKNESS_FX];
+    applyStatusEffect(ctx.defender.tracksCombat, {
+      id: EXPOSE_WEAKNESS_EFFECT_ID,
+      instanced: false,
+      maxStacks: 1,
+      refreshable: true,
+      remainingMs: effect.durationMs,
+      sourceId: ctx.attacker.isPlayer.id,
+      data: {
+        damageTakenPct: effect.damageTakenPct,
+        totalMs: effect.durationMs,
+      },
+    });
   }
-  // `shield` is a Guard immediate effect, never a Technique rider — ignored here.
+  // `damage-reduction`/`cleanse`/`heal` are Guard immediates, never Technique
+  // riders — applied in abilityFiring.ts, ignored here.
 }

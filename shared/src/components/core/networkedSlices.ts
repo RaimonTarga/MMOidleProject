@@ -12,6 +12,7 @@ import type { PassiveMap } from '../../passives';
 import type { PlayerBuff } from '../combat/buffs';
 import type { SubVariant } from '../../skillTree';
 import type { CombatArchetype, MonsterAIState } from '../../types/combat';
+import type { MonsterBehavior } from '../../data/monsters/behavior';
 import type { HasHitbox } from '../../hitbox/types';
 import type { EquippedRule } from '../../runeDatabase';
 import type { EquippedAbilities } from '../../abilities';
@@ -309,7 +310,7 @@ export interface IsMonster {
   color: number;
   name: string;
   isBoss: boolean;
-  behavior: string;
+  behavior: MonsterBehavior;
   isRanged?: boolean;
   combatArchetype?: CombatArchetype;
 }

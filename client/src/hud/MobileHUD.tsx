@@ -2,10 +2,8 @@ import { useState, useRef, type ReactNode } from 'react';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { hudBus } from '../hudBus';
 import { SkillTreePanel } from '../ui/SkillTreePanel';
-import { RunesPanel } from '../ui/RunesPanel';
-import { AbilitiesPanel } from '../ui/AbilitiesPanel';
-import { StancesPanel } from '../ui/StancesPanel';
-import { RitesPanel } from '../ui/RitesPanel';
+import { BuildPanel } from '../ui/BuildPanel';
+import { MasteryPanel } from '../ui/MasteryPanel';
 import { InventoryPanel } from '../ui/InventoryPanel';
 import { CraftingPanel } from '../ui/CraftingPanel';
 import { MapPanel } from '../ui/MapPanel';
@@ -19,6 +17,8 @@ import { useIsMobile } from './useIsMobile';
 import {
   autoAtom,
   bestiaryOpenAtom,
+  buildPanelTabAtom,
+  type BuildPanelTab,
   deathOverlayAtom,
   hpAtom,
   incomingDotAtom,
@@ -48,10 +48,8 @@ type MobileView =
   | 'craft'
   | 'map'
   | 'quests'
-  | 'runes'
-  | 'abilities'
-  | 'stances'
-  | 'rites'
+  | 'build'
+  | 'mastery'
   | 'more'
   | null;
 
@@ -59,6 +57,7 @@ function MobileHUDContent() {
   const [view, setView] = useState<MobileView>(null);
   const [craftTab, setCraftTab] = useState<'biome' | 'forge' | 'upgrade'>('forge');
   const [settingsOpen, setSettingsOpen] = useAtom(settingsOpenAtom);
+  const [, setBuildPanelTab] = useAtom(buildPanelTabAtom);
   const setBestiaryOpen = useSetAtom(bestiaryOpenAtom);
 
   const status = useAtomValue(statusAtom);
@@ -96,6 +95,11 @@ function MobileHUDContent() {
     if ((key === 'bag' || key === 'craft') && dead) return;
     if (key === 'craft' && view !== 'craft') setCraftTab('forge');
     setView(v => (v === key ? null : key));
+  }
+
+  function openBuildTab(tab: BuildPanelTab) {
+    setBuildPanelTab(tab);
+    setView('build');
   }
 
   const tabs: { key: Exclude<MobileView, null>; icon: string; label: string; badge?: boolean; disabled?: boolean }[] = [
@@ -190,10 +194,12 @@ function MobileHUDContent() {
       {view === 'more' && (
         <MobileSheet title="More" onClose={close}>
           <div className="mhud-more">
-            <button className="mhud-more__btn" onClick={() => setView('runes')}>Runes</button>
-            <button className="mhud-more__btn" onClick={() => setView('abilities')}>Abilities</button>
-            <button className="mhud-more__btn" onClick={() => setView('stances')}>Stances</button>
-            <button className="mhud-more__btn" onClick={() => setView('rites')}>Rites</button>
+            <button className="mhud-more__btn" onClick={() => openBuildTab('overview')}>Build Overview</button>
+            <button className="mhud-more__btn" onClick={() => openBuildTab('abilities')}>Abilities</button>
+            <button className="mhud-more__btn" onClick={() => openBuildTab('stances')}>Stances</button>
+            <button className="mhud-more__btn" onClick={() => openBuildTab('rites')}>Rites</button>
+            <button className="mhud-more__btn" onClick={() => openBuildTab('runes')}>Runes</button>
+            <button className="mhud-more__btn" onClick={() => setView('mastery')}>Mastery</button>
             <button className="mhud-more__btn" onClick={() => { setBestiaryOpen(true); setView(null); }}>Bestiary</button>
             <button className="mhud-more__btn" onClick={() => { setSettingsOpen(true); setView(null); }}>Settings</button>
             <button className="mhud-more__btn" onClick={() => hudBus.toggleTacticalView()}>Tactical Mode</button>
@@ -212,10 +218,8 @@ function MobileHUDContent() {
         />
       )}
       {view === 'map'    && <MapPanel onClose={close} />}
-      {view === 'runes'  && <RunesPanel onClose={close} />}
-      {view === 'abilities' && <AbilitiesPanel onClose={close} />}
-      {view === 'stances' && <StancesPanel onClose={close} />}
-      {view === 'rites' && <RitesPanel onClose={close} />}
+      {view === 'build' && <BuildPanel onClose={close} />}
+      {view === 'mastery' && <MasteryPanel onClose={close} />}
       {settingsOpen && <SettingsPanel onClose={() => setSettingsOpen(false)} />}
     </>
   );

@@ -102,6 +102,7 @@ export interface HasArmedAbility {
 export type DungeonMonsterSource =
   | "idleDungeonGuardian"
   | "gauntletPhase"
+  | "preEncounterThreat"
   | "gauntletBoss";
 
 /** Server-only runtime metadata for monsters owned by a dungeon gauntlet. */
@@ -110,6 +111,13 @@ export interface TracksDungeon {
   dungeonNodeId: string;
   gauntletPhaseIndex?: number;
   gauntletPhaseId?: string;
+  preEncounterGroupId?: string;
+  preEncounterRole?: "leader" | "follower" | "keeper";
+  preEncounterAura?: {
+    kind: "damage" | "attack-speed";
+    range: number;
+    mult: number;
+  };
   guardPost?: Vec2;
   leashRadius?: number;
   /** Injected opening-strike multiplier (first hit of each aggro session). */

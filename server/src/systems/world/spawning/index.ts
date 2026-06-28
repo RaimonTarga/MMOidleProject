@@ -3,13 +3,18 @@ import {
   NODE_BIOMES,
   MONSTER_DATABASE,
   BIOME_DATABASE,
+  monsterIsRanged,
   mountainLedgeHoldPointsForNode,
   mountainLedgePatrolForPost,
+  mountainLedgeFeatureIdsForNode,
   mountainChokepointsForNode,
   RESOLVED_NODE_FEATURES,
   TEST_ROOM_NODE_ID,
+  aabbHalfExtents,
+  depenetrateToWalkable,
   distanceSq,
   isGauntletDungeonNode,
+  type HasHitbox,
   type MonsterPatrolRoute,
   type Vec2,
 } from "@mmo-idle/shared";
@@ -63,6 +68,7 @@ const MOUNTAIN_HOPPER_HOLD_LEASH = 720;
 const CAVE_PATROL_OCCUPY_RADIUS = 760;
 const CAVE_PATROL_LEASH = 980;
 const CAVE_PATROL_WANDER_RADIUS = 80;
+const MONSTER_TERRAIN_SPAWN_MARGIN = 48;
 
 interface CavePatrolAssignment {
   anchor: Vec2;
@@ -133,6 +139,46 @@ const CAVE_PATROL_ROUTES: CavePatrolAssignment[] = [
   },
 ];
 
+function clampMonsterSpawnToNode(nodeId: string, pos: Vec2): Vec2 {
+  const node = NODE_REGISTRY.get(nodeId);
+  if (!node) return pos;
+  return {
+    x: Math.max(
+      MONSTER_TERRAIN_SPAWN_MARGIN,
+      Math.min(node.width - MONSTER_TERRAIN_SPAWN_MARGIN, pos.x),
+    ),
+    y: Math.max(
+      MONSTER_TERRAIN_SPAWN_MARGIN,
+      Math.min(node.height - MONSTER_TERRAIN_SPAWN_MARGIN, pos.y),
+    ),
+  };
+}
+
+function suppressedMonsterSpawnFeatureIds(
+  nodeId: string,
+  typeDef: ReturnType<typeof MONSTER_DATABASE.get> | undefined,
+): ReadonlySet<string> {
+  return typeDef?.vaultsMountainLedges === true
+    ? mountainLedgeFeatureIdsForNode(nodeId)
+    : new Set();
+}
+
+function terrainSafeMonsterSpawnPos(
+  nodeId: string,
+  typeDef: ReturnType<typeof MONSTER_DATABASE.get> | undefined,
+  pos: Vec2,
+  hitbox: HasHitbox,
+): Vec2 {
+  const clamped = clampMonsterSpawnToNode(nodeId, pos);
+  return depenetrateToWalkable(
+    nodeId,
+    "monster",
+    aabbHalfExtents(hitbox.rects),
+    clamped,
+    suppressedMonsterSpawnFeatureIds(nodeId, typeDef),
+  ) ?? clamped;
+}
+
 /**
  * Create a monster of the given type at `pos` in nodeId.
  * All stats and AI parameters come from MONSTER_DATABASE.
@@ -146,13 +192,14 @@ export function createMonster(
 ): MonsterEntity | null {
   const def = MONSTER_DATABASE.get(typeId);
   if (!def) {
-    console.warn(`[World] Unknown monster type: "${typeId}"`);
     return null;
   }
 
   const id = world.allocMonsterId(nodeId);
 
   const isBoss = def.isBoss ?? false;
+  const hitbox = resolveMonsterHitbox(typeId, isBoss, id);
+  const spawnPos = terrainSafeMonsterSpawnPos(nodeId, def, pos, hitbox);
   const nodeDef = NODE_REGISTRY.get(nodeId);
   const isDungeon = nodeDef?.isDungeon ?? false;
   const usesGauntlet = isGauntletDungeonNode(nodeId);
@@ -178,10 +225,10 @@ export function createMonster(
       name: def.name,
       isBoss,
       behavior: def.behavior,
-      isRanged: def.isRanged,
+      isRanged: monsterIsRanged(def),
     },
     hasPosition: {
-      current: pos,
+      current: spawnPos,
       nodeId,
       speed: def.stats.speed,
     },
@@ -210,7 +257,7 @@ export function createMonster(
     },
     hasStatus: {},
     controlsMonster: {
-      spawn: pos,
+      spawn: spawnPos,
       wanderRadius,
       idleUntil: Date.now(),
       leashRange: def.ai.leashRange,
@@ -224,7 +271,7 @@ export function createMonster(
       patrolDir: 1,
     },
     tracksCombat: makeTracksCombat(),
-    hasHitbox: resolveMonsterHitbox(typeId, isBoss, id),
+    hasHitbox: hitbox,
   };
   world.ecs.add(entity);
 
@@ -296,6 +343,13 @@ export function spawnMonster(world: World, nodeId: string): boolean {
       }
     }
 
+    pos = terrainSafeMonsterSpawnPos(
+      nodeId,
+      typeDef,
+      pos,
+      resolveMonsterHitbox(typeId, typeDef?.isBoss ?? false),
+    );
+
     if (!isAmbientSpawnPosClear(world, nodeId, pos, minDistSq, typeDef)) {
       continue;
     }
@@ -306,7 +360,7 @@ export function spawnMonster(world: World, nodeId: string): boolean {
     const monster = createMonster(world, nodeId, typeId, pos);
     if (!monster) return false;
     if (shouldAssignMountainHoldPost) {
-      assignMountainHoldPost(world, nodeId, monster, typeDef, pos);
+      assignMountainHoldPost(world, nodeId, monster, typeDef, monster.hasPosition.current);
     }
     if (cavePatrol) {
       assignCavePatrol(monster, typeDef, cavePatrol);
@@ -377,8 +431,8 @@ function mountainHoldSpawnPos(
   typeDef: ReturnType<typeof MONSTER_DATABASE.get> | undefined,
 ): Vec2 | null {
   if (typeDef?.biome !== "mountain") return null;
-  const free = typeDef.isRanged
-    ? freeMountainPosts(world, nodeId, mountainChokepointsForNode(nodeId), isRangedMountainHolder)
+  const free = typeDef.holdsChokepoints === true
+    ? freeMountainPosts(world, nodeId, mountainChokepointsForNode(nodeId), isChokepointHolder)
     : typeDef.vaultsMountainLedges === true
     ? freeMountainPosts(world, nodeId, mountainLedgeHoldPointsForNode(nodeId), isVaultingMountainHolder)
     : [];
@@ -395,7 +449,7 @@ function assignMountainHoldPost(
   spawnPos: Vec2,
 ): void {
   if (typeDef?.biome !== "mountain") return;
-  const posts = typeDef.isRanged
+  const posts = typeDef.holdsChokepoints === true
     ? mountainChokepointsForNode(nodeId)
     : typeDef.vaultsMountainLedges === true
     ? mountainLedgeHoldPointsForNode(nodeId)
@@ -444,10 +498,10 @@ function freeMountainPosts(
   }).map((post) => ({ ...post }));
 }
 
-function isRangedMountainHolder(
+function isChokepointHolder(
   typeDef: ReturnType<typeof MONSTER_DATABASE.get>,
 ): boolean {
-  return typeDef?.isRanged === true;
+  return typeDef?.holdsChokepoints === true;
 }
 
 function isVaultingMountainHolder(

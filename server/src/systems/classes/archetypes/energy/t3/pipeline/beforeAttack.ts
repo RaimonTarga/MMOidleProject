@@ -133,9 +133,6 @@ export function registerBeforeAttack(): void {
         // set it here too — otherwise the empowered multiplier double-applies on top of
         // empoweredHit's own ×empMult, blowing the discharge past its projected damage.
         ctx.metadata["suppressEmpoweredMult"] = true;
-        console.log(
-          `[SingularityExec] ${player.isPlayer.id}: execute (spent ${energy.dischargeEnergy}) — ${ctx.defender.hasHealth.hp} HP <= ${projected} projected`,
-        );
       }
     }
   });

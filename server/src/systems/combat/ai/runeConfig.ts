@@ -1,6 +1,7 @@
 import {
   deriveAutoConfigFromRunes,
   getFlag,
+  isHarmfulPlayerStatusEffect,
   RUNE_NODE_ACQUIRE_RADIUS,
   setFlag,
   type RuneContext,
@@ -78,7 +79,14 @@ export function updateRuneDerivedConfig(world: World, now: number): void {
       inParty: player.inParty !== undefined,
       aggroCount: currentAggroCount,
       combatArchetype: player.usesSkills.combatArchetype,
+      debuffed: player.tracksCombat.statusEffects.some(
+        (e) => e.stacks > 0 && isHarmfulPlayerStatusEffect(e.id, e.data),
+      ),
       enemyCharging,
+      // The shared empowered-attack flag is armed → the next attack is empowered.
+      // Set by each class when its finisher/execution/discharge becomes ready
+      // (cadence/cooldown/energy); absent for classes with no empowered attack.
+      empoweredImminent: player.hasEmpoweredAttack !== undefined,
     };
 
     const d = deriveAutoConfigFromRunes(

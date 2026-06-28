@@ -20,7 +20,12 @@ import {
   SHIELD_DAMAGE_COLOR,
   SHIELD_DAMAGE_SYMBOL,
 } from './damageNumberStyle';
-import { applySpriteTint, resetSpriteTint } from './sprites';
+import {
+  applySpriteTint,
+  resetSpriteTint,
+  applySpriteOutline,
+  clearSpriteOutline,
+} from './sprites';
 import { VOID_OVERLORD_DISPLAY } from '../sprites/voidOverlordSheet';
 import {
   ensureVoidOverlordBossSprite,
@@ -29,16 +34,18 @@ import {
 } from './ultimateBossSprites';
 
 const THRONE_HEAL_TINT = 0xbb66ff;
-const GUARDIAN_TINT = 0xffcc44;
+// Dungeon guardians wear a red outline (glow) rather than a tint, so their own
+// sprite colors stay readable while still flagging them as the room's threat.
+const GUARDIAN_OUTLINE = 0xff3333;
 // Persistent pack-alpha marker tint (warm red, same family as the call-allies pulse).
 // Derived from the monster type — a `pack.role: 'alpha'` type is always a pack leader —
 // so no networked field is needed. Guardian/throne states take precedence.
 const PACK_ALPHA_TINT = 0xff7755;
-// Persistent ELITE marker tint (bright yellow) — the biome's standout dangerous mob
-// (necromancers, apex predators). Derived from the static `elite` def flag, so no
-// networked field is needed. Takes precedence over the pack-alpha tint (an elite that
-// also leads a pack still reads as "the dangerous one"); guardian/throne win above it.
-const ELITE_TINT = 0xffdd33;
+// Persistent ELITE marker — a bright yellow outline (glow) on the biome's standout
+// dangerous mob (necromancers, apex predators). Derived from the static `elite` def
+// flag, so no networked field is needed. Takes precedence over the pack-alpha tint (an
+// elite that also leads a pack still reads as "the dangerous one"); guardian/throne win.
+const ELITE_OUTLINE = 0xffdd33;
 const LEDGE_HOP_COOLDOWN_MS = 450;
 const LEDGE_HOP_HEIGHT = 34;
 const LEDGE_HOP_DURATION_MS = 260;
@@ -120,14 +127,19 @@ function syncMonsterThroneTint(
   const sprite = state.sprite.get(monster.id);
   if (!sprite) return;
   if (state.dungeonGuardianIds.has(monster.id)) {
-    applySpriteTint(sprite, GUARDIAN_TINT);
+    resetSpriteTint(sprite, monster.color);
+    applySpriteOutline(sprite, GUARDIAN_OUTLINE);
   } else if (monster.throneHealing) {
+    clearSpriteOutline(sprite);
     applySpriteTint(sprite, THRONE_HEAL_TINT);
   } else if (isEliteType(monster.monsterTypeId)) {
-    applySpriteTint(sprite, ELITE_TINT);
+    resetSpriteTint(sprite, monster.color);
+    applySpriteOutline(sprite, ELITE_OUTLINE);
   } else if (isPackAlphaType(monster.monsterTypeId)) {
+    clearSpriteOutline(sprite);
     applySpriteTint(sprite, PACK_ALPHA_TINT);
   } else {
+    clearSpriteOutline(sprite);
     resetSpriteTint(sprite, monster.color);
   }
 }

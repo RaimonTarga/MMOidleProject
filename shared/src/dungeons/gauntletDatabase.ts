@@ -5,7 +5,9 @@ import type {
   DungeonGauntletDef,
   GauntletBossDef,
   DungeonMonsterModifiers,
+  DungeonPreEncounterDef,
   GauntletPhaseDef,
+  UnclearedThreatEffect,
 } from "./gauntletTypes";
 
 export const DUNGEON_SUCCESS_COOLDOWN_MS = 60_000;
@@ -16,12 +18,18 @@ export const DUNGEON_ALTAR_RADIUS = 96;
 const ALTAR_X = GAME_CONFIG.NODE_WIDTH / 2;
 const ALTAR_Y = GAME_CONFIG.NODE_HEIGHT / 2;
 
+const CAVE_SENTINEL_ORBIT_RADIUS = 300;
+const CAVE_SENTINEL_ORBIT_SEGMENTS = 8;
+
 interface DungeonGauntletContent {
   successCooldownMs?: number;
   bossAwakeningDelayMs?: number;
   guardianPhase?: Partial<GauntletPhaseDef>;
+  preEncounter?: DungeonPreEncounterDef;
   phases?: GauntletPhaseDef[];
   boss?: Partial<GauntletBossDef>;
+  /** T1 pre-encounter override (see UnclearedThreatEffect). */
+  unclearedThreat?: UnclearedThreatEffect;
 }
 
 function biomeTierKey(biomeGroup: string, biomeTier: number): string {
@@ -35,6 +43,23 @@ function biomeTierKey(biomeGroup: string, biomeTier: number): string {
  * start small and become more bespoke over time.
  */
 export const DUNGEON_GAUNTLET_CONTENT_BY_BIOME_TIER: Record<string, DungeonGauntletContent> = {
+  // PLAINS T1 = authored herds / body-pressure exam. This deliberately replaces
+  // the generated guardian ring with local packs: each herd has one caller plus
+  // weak bodies. Uncleared callers feed the boss's opening swarm pressure.
+  [biomeTierKey("plains", 1)]: {
+    preEncounter: {
+      id: "plains-herds",
+      label: "Wandering Herds",
+      unclearedRole: "leader",
+      groups: [
+        plainsHerd("north-herd", "North Herd", { x: ALTAR_X - 430, y: ALTAR_Y - 310 }),
+        plainsHerd("east-herd", "East Herd", { x: ALTAR_X + 500, y: ALTAR_Y + 40 }),
+        plainsHerd("south-herd", "South Herd", { x: ALTAR_X - 220, y: ALTAR_Y + 360 }),
+      ],
+    },
+    unclearedThreat: { mode: "extra-adds", extraAddsPerGuardian: 2, maxExtraAdds: 6 },
+    phases: [],
+  },
   [biomeTierKey("mountain", 1)]: {
     guardianPhase: {
       requiredKills: 4,
@@ -44,6 +69,85 @@ export const DUNGEON_GAUNTLET_CONTENT_BY_BIOME_TIER: Record<string, DungeonGaunt
         { monsterId: "ridge-archer", weight: 2 },
       ],
     },
+    phases: [],
+  },
+  // FOREST T1 = the alpha-priority / predator-burst exam (NOT another swarm).
+  // One alpha den (1 adult Wolf alpha + its 2 Young Wolves) instead of a ring of
+  // bodies. The alpha is the danger; clearing it before the altar leaves a clean
+  // boss start, leaving it alive sends the den into the boss fight (join).
+  [biomeTierKey("forest", 1)]: {
+    preEncounter: {
+      id: "forest-alpha-den",
+      label: "Alpha Den",
+      unclearedRole: "leader",
+      groups: [
+        {
+          kind: "pack",
+          id: "alpha-den",
+          label: "Alpha Den",
+          anchor: { x: ALTAR_X, y: ALTAR_Y - 360 },
+          leaderMonsterId: "wolf",
+          followers: [{ monsterId: "young-wolf", count: 2 }],
+          leaderName: "Pack Alpha",
+          leaderModifiers: { attackSpeedMult: 1.25, moveSpeedMult: 1.12 },
+          // Predator howl: while the alpha lives near the den, its young wolves hit
+          // harder (a damage aura, the same machinery as the Plains caller). Killing
+          // the alpha first defangs the pups — reinforcing the alpha-priority lesson.
+          // The aura source shows a MARKED-style "Rally" buff tile on its target frame.
+          aura: { kind: "damage", range: 220, mult: 1.18 },
+          localWanderRadius: 0,
+          leashRadius: 260,
+          pullRange: 180,
+        },
+      ],
+    },
+    unclearedThreat: { mode: "join" },
+    phases: [],
+  },
+  // SWAMP T1 = rot basins / attrition-positioning exam. Keepers are the
+  // pre-threat; killing one disables that basin for the boss attempt.
+  [biomeTierKey("swamp", 1)]: {
+    preEncounter: {
+      id: "swamp-rot-basins",
+      label: "Rot Basins",
+      unclearedRole: "keeper",
+      groups: [
+        swampBasin("north-basin", "North Rot Basin", { x: ALTAR_X - 420, y: ALTAR_Y - 280 }),
+        swampBasin("east-basin", "East Rot Basin", { x: ALTAR_X + 440, y: ALTAR_Y + 80 }),
+        swampBasin("south-basin", "South Rot Basin", { x: ALTAR_X - 140, y: ALTAR_Y + 370 }),
+      ],
+      bossRotPools: {
+        kind: "rot-pool",
+        intervalMs: 8_000,
+        initialDelayMs: 3_000,
+        durationMs: 7_000,
+        radius: 150,
+        maxAlive: 3,
+        damagePerTick: 2,
+        tickIntervalMs: 1_000,
+        slowSpeedMult: 0.72,
+      },
+    },
+    unclearedThreat: { mode: "hazard", hazardId: "swamp-rot-basin" },
+    phases: [],
+  },
+  // CAVE T1 = sparse-elite / careful-pulling exam. NOT a swarm and NOT a ring of
+  // bodies: three patrolling elite guardians that CIRCLE the altar (each evenly
+  // separated), using their high-detection (overpull-risk) behavior. The orbit is
+  // a bespoke altar route, distinct from the brute's open-world patrol. Uncleared
+  // elites simply join the boss fight.
+  [biomeTierKey("cave", 1)]: {
+    preEncounter: {
+      id: "cave-deep-watch",
+      label: "Deep Watch",
+      unclearedRole: "leader",
+      groups: [
+        caveSentinel(0, 3, "Cave Sentinel"),
+        caveSentinel(1, 3, "Cave Sentinel"),
+        caveSentinel(2, 3, "Cave Sentinel"),
+      ],
+    },
+    unclearedThreat: { mode: "join" },
     phases: [],
   },
   // Mountain (density 10 → 3): one of each type — ram, archer, titan
@@ -321,6 +425,36 @@ const BIOME_GUARDIAN_MODIFIERS: Record<string, DungeonMonsterModifiers> = {
   trench:    { hpMult: 1.35, atkMult: 1.3, openingStrikeMult: 1.9 },
 };
 
+/**
+ * Default T1 pre-encounter hook: leaving guardians alive adds no extra boss
+ * modifier beyond those guardians joining the fight. "join" needs no tuning
+ * numbers, so it is the safe default until a biome authors a more bespoke hook
+ * below.
+ */
+export const DEFAULT_UNCLEARED_THREAT: UnclearedThreatEffect = { mode: "join" };
+
+/**
+ * Per-biome T1 pre-encounter hooks. Intentionally minimal for now — biome
+ * identity work lands in a later pass. All surviving guardians join the fight;
+ * these hooks define the extra boss pressure counted survivors add. Unlisted
+ * biomes fall back to DEFAULT_UNCLEARED_THREAT ("join"). Numbers here are
+ * placeholders.
+ */
+export const BIOME_UNCLEARED_THREAT: Record<string, UnclearedThreatEffect> = {
+  // Placeholder smoke wiring: a single worked example of the "empower" hook so
+  // every mode has at least one concrete consumer. Values are untuned.
+  mountain: {
+    mode: "empower",
+    empowerPerGuardian: { hpMult: 0.08, atkMult: 0.06 },
+  },
+};
+
+export function unclearedThreatForBiome(
+  biomeGroup: string,
+): UnclearedThreatEffect {
+  return BIOME_UNCLEARED_THREAT[biomeGroup] ?? DEFAULT_UNCLEARED_THREAT;
+}
+
 export const BIOME_GUARDIAN_NAMES: Record<string, string> = {
   plains:    "Prairie Defender",
   forest:    "Forest Sentinel",
@@ -418,6 +552,100 @@ function smallWave(
   };
 }
 
+function plainsHerd(
+  id: string,
+  label: string,
+  anchor: { x: number; y: number },
+): DungeonPreEncounterDef["groups"][number] {
+  return {
+    kind: "pack",
+    id,
+    label,
+    anchor,
+    leaderMonsterId: "prairie-wolf",
+    followers: [
+      { monsterId: "plains-slime", count: 3 },
+      { monsterId: "boar", count: 1 },
+    ],
+    leaderName: "Prairie Caller",
+    leaderModifiers: { hpMult: 1.25, attackSpeedMult: 1.12 },
+    followerModifiers: { hpMult: 0.8, atkMult: 0.85 },
+    aura: { kind: "damage", range: 190, mult: 1.08 },
+    localWanderRadius: 110,
+    leashRadius: 300,
+    pullRange: 175,
+  };
+}
+
+/**
+ * A single patrolling Cave brute guardian (no followers) that ORBITS the altar.
+ * Spawned as a one-mob "pack" so it counts as the uncleared `leader` threat.
+ *
+ * `slot`/`total` evenly space the sentinels around the altar (e.g. 3 brutes at
+ * 120° apart) and give each a phase-offset absolute patrol ring, so they circle
+ * the altar in formation, separated, rather than overlapping. The 300px orbit
+ * sits outside the brute's 240 pull range from the altar center, so a careful
+ * player can reach the altar between passes; sloppy pulls drag a brute in. The
+ * bespoke `patrolOverride` replaces the brute's open-world patrol loop.
+ */
+function caveSentinel(
+  slot: number,
+  total: number,
+  label: string,
+): DungeonPreEncounterDef["groups"][number] {
+  const startAngle = (slot / total) * Math.PI * 2;
+  const ringPoint = (angle: number) => ({
+    x: ALTAR_X + Math.cos(angle) * CAVE_SENTINEL_ORBIT_RADIUS,
+    y: ALTAR_Y + Math.sin(angle) * CAVE_SENTINEL_ORBIT_RADIUS,
+  });
+  const anchor = ringPoint(startAngle);
+  const waypoints = [];
+  for (let i = 1; i <= CAVE_SENTINEL_ORBIT_SEGMENTS; i++) {
+    waypoints.push(ringPoint(startAngle + (i / CAVE_SENTINEL_ORBIT_SEGMENTS) * Math.PI * 2));
+  }
+  return {
+    kind: "pack",
+    id: `sentinel-${slot}`,
+    label,
+    anchor,
+    leaderMonsterId: "cave-brute",
+    leaderName: label,
+    leaderModifiers: { hpMult: 1.2, atkMult: 1.1, drAdd: 0.05 },
+    localWanderRadius: 0,
+    // Generous leash: an aggroed brute may have to chase across the far side of
+    // its orbit (~2× the orbit radius from its anchor) before re-engaging.
+    leashRadius: 760,
+    pullRange: 240,
+    patrolOverride: {
+      waypoints,
+      mode: "loop",
+      absolute: true,
+      holdMinMs: 600,
+      holdMaxMs: 1400,
+    },
+  };
+}
+
+function swampBasin(
+  id: string,
+  label: string,
+  anchor: { x: number; y: number },
+): DungeonPreEncounterDef["groups"][number] {
+  return {
+    kind: "basin",
+    id,
+    label,
+    anchor,
+    keeperMonsterId: "mud-toad",
+    keeperName: "Rot Keeper",
+    keeperModifiers: { hpMult: 1.15, atkMult: 1.05, dotMult: 1.15 },
+    radius: 165,
+    localWanderRadius: 70,
+    leashRadius: 260,
+    pullRange: 170,
+  };
+}
+
 function tieredWave(
   id: string,
   label: string,
@@ -460,8 +688,10 @@ function buildDungeonGauntletDef(nodeId: string): DungeonGauntletDef | null {
     bossAwakeningDelayMs: content?.bossAwakeningDelayMs ?? DUNGEON_BOSS_AWAKENING_DELAY_MS,
     idlePreclearResetMs: DUNGEON_IDLE_PRECLEAR_RESET_MS,
     guardianPhase,
+    preEncounter: content?.preEncounter,
     phases: content?.phases ?? [],
     boss,
+    unclearedThreat: content?.unclearedThreat ?? unclearedThreatForBiome(info.biomeGroup),
   };
 }
 

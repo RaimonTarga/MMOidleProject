@@ -3,6 +3,19 @@ import { createPortal } from 'react-dom';
 import { useAtom, useAtomValue } from 'jotai';
 import { gamepadStatusAtom } from '../atoms';
 import {
+  sfxVolumeAtom,
+  musicVolumeAtom,
+  sfxMutedAtom,
+  musicMutedAtom,
+} from '../../audio/audioSettings';
+import {
+  setSfxVolume,
+  setMusicVolume,
+  setSfxMuted,
+  setMusicMuted,
+  playSfx,
+} from '../../audio/audioEngine';
+import {
   ACTION_LABELS,
   cloneBindings,
   codeToLabel,
@@ -17,8 +30,12 @@ import {
   type CaptureRequest,
 } from '../../settings/keybinds';
 import {
+  applyUiFontScale,
   loadGameplaySettings,
   saveGameplaySettings,
+  UI_FONT_SCALE_MAX,
+  UI_FONT_SCALE_MIN,
+  UI_FONT_SCALE_STEP,
 } from '../../settings/gameplaySettings';
 import {
   canUseNotifications,
@@ -35,7 +52,7 @@ import '../hud.css';
 import '../../ui/inventory.css';
 import './settings.css';
 
-type SettingsTab = 'controls' | 'gameplay';
+type SettingsTab = 'controls' | 'gameplay' | 'audio';
 
 interface Props {
   onClose: () => void;
@@ -46,11 +63,18 @@ export function SettingsPanel({ onClose }: Props) {
   const [bindings, setBindings] = useAtom(keybindsAtom);
   const [capture, setCapture] = useAtom(captureModeAtom);
   const padStatus = useAtomValue(gamepadStatusAtom);
+  const sfxVolume = useAtomValue(sfxVolumeAtom);
+  const musicVolume = useAtomValue(musicVolumeAtom);
+  const sfxMuted = useAtomValue(sfxMutedAtom);
+  const musicMuted = useAtomValue(musicMutedAtom);
   const [autoTraverseEnabled, setAutoTraverseEnabled] = useState(
     () => loadGameplaySettings().autoTraverseEnabled,
   );
   const [deathNotificationsEnabled, setDeathNotificationsEnabled] = useState(
     () => loadGameplaySettings().deathNotificationsEnabled,
+  );
+  const [uiFontScale, setUiFontScale] = useState(
+    () => loadGameplaySettings().uiFontScale,
   );
   const [notificationPermission, setNotificationPermission] = useState(
     getNotificationPermission,
@@ -162,6 +186,12 @@ export function SettingsPanel({ onClose }: Props) {
     hudBus.requestSetAutoTraverse(enabled);
   }
 
+  function handleUiFontScaleChange(scale: number): void {
+    const next = saveGameplaySettings({ uiFontScale: scale }).uiFontScale;
+    setUiFontScale(next);
+    applyUiFontScale(next);
+  }
+
   const deathNotificationsOn = isDeathNotificationEffectivelyOn(
     deathNotificationsEnabled,
     notificationPermission,
@@ -215,6 +245,13 @@ export function SettingsPanel({ onClose }: Props) {
           >
             Gameplay
           </button>
+          <button
+            type="button"
+            className={`settings-tab${tab === 'audio' ? ' settings-tab--active' : ''}`}
+            onClick={() => setTab('audio')}
+          >
+            Audio
+          </button>
         </div>
 
         <div className="settings-body">
@@ -267,7 +304,7 @@ export function SettingsPanel({ onClose }: Props) {
               RESET TO DEFAULTS
             </button>
           </>
-        ) : (
+        ) : tab === 'gameplay' ? (
           <div className="settings-gameplay">
             <label className="settings-toggle-row">
               <input
@@ -302,6 +339,33 @@ export function SettingsPanel({ onClose }: Props) {
                 Notifications are blocked in your browser settings for this site.
               </p>
             )}
+
+            <label className="settings-slider-row">
+              <span>UI font scale</span>
+              <input
+                type="range"
+                min={UI_FONT_SCALE_MIN}
+                max={UI_FONT_SCALE_MAX}
+                step={UI_FONT_SCALE_STEP}
+                value={uiFontScale}
+                onChange={(e) => handleUiFontScaleChange(Number(e.target.value))}
+              />
+              <span className="settings-slider-value">
+                {Math.round(uiFontScale * 100)}%
+              </span>
+            </label>
+            <p className="settings-help">
+              Adjusts the size of HUD and menu text on this device.
+            </p>
+            <button
+              type="button"
+              className="auto-btn settings-reset"
+              onClick={() => handleUiFontScaleChange(1)}
+              disabled={uiFontScale === 1}
+            >
+              RESET UI FONT SCALE
+            </button>
+
             <button
               type="button"
               className="auto-btn settings-reset"
@@ -310,6 +374,63 @@ export function SettingsPanel({ onClose }: Props) {
             >
               SEND TEST NOTIFICATION
             </button>
+          </div>
+        ) : (
+          <div className="settings-gameplay">
+            <label className="settings-toggle-row">
+              <input
+                type="checkbox"
+                checked={!sfxMuted}
+                onChange={(e) => setSfxMuted(!e.target.checked)}
+              />
+              <span>Sound effects</span>
+            </label>
+            <label className="settings-slider-row">
+              <span>SFX volume</span>
+              <input
+                type="range"
+                min={0}
+                max={1}
+                step={0.05}
+                value={sfxVolume}
+                disabled={sfxMuted}
+                onChange={(e) => setSfxVolume(Number(e.target.value))}
+                onMouseUp={() => playSfx('attack-melee')}
+              />
+              <span className="settings-slider-value">
+                {Math.round(sfxVolume * 100)}%
+              </span>
+            </label>
+            <p className="settings-help">
+              Combat cues — attacks, taking damage, kills. Release the slider to preview.
+            </p>
+
+            <label className="settings-toggle-row">
+              <input
+                type="checkbox"
+                checked={!musicMuted}
+                onChange={(e) => setMusicMuted(!e.target.checked)}
+              />
+              <span>Background music</span>
+            </label>
+            <label className="settings-slider-row">
+              <span>Music volume</span>
+              <input
+                type="range"
+                min={0}
+                max={1}
+                step={0.05}
+                value={musicVolume}
+                disabled={musicMuted}
+                onChange={(e) => setMusicVolume(Number(e.target.value))}
+              />
+              <span className="settings-slider-value">
+                {Math.round(musicVolume * 100)}%
+              </span>
+            </label>
+            <p className="settings-help">
+              Ambient track for the area you're in. Changes take effect immediately.
+            </p>
           </div>
         )}
         </div>

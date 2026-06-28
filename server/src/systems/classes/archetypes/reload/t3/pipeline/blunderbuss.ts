@@ -58,9 +58,8 @@ function fireBlunderbussPellet(
       blunderbussPelletTotal: opts.pelletTotal,
       blunderbussLastPellet: opts.isLastPellet,
       aimPos: blunderbussAimPos(from, to, opts.spreadRad),
-      // Aesthetic-only crits on every pellet (yellow "!" + tracer), no AoE splash.
+      // Aesthetic-only crits on every pellet (yellow "!" + tracer).
       empoweredAttack: true,
-      suppressEmpoweredAoe: true,
     },
   });
 }

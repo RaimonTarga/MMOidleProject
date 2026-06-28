@@ -51,6 +51,7 @@ import {
   actorFromSourceId,
 } from "../../../../world/worldLogActors";
 import { isInvulnerableMonster, isInvulnerablePlayer } from "../../../combat/invulnerability";
+import { applyMonsterDamageTakenDebuffs } from "../../shared/debuffs";
 import { tryCheatDeath } from "../../../defense/mitigation/cheatDeath";
 import { drainPlayerShields } from "../../../defense/shields/shields";
 import { DOT_DURATION_MS, DOT_EFFECT_ID } from "./t3/core/constants";
@@ -100,6 +101,7 @@ export function updateDotArchetype(world: World, dt: number): void {
 
     // Apply DoT vulnerability effects to DoT ticks.
     damage = Math.max(1, Math.round(damage * getSmolderMult(state) * getFrozenMult(state) * getFrostbiteDotTakenMult(state)));
+    damage = Math.max(1, applyMonsterDamageTakenDebuffs(state, damage));
 
     const source = actorFromSourceId(world, effect.sourceId);
     recordMonsterDamagedByPlayer(

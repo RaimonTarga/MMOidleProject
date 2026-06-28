@@ -50,7 +50,6 @@ export function registerEmpoweredHit(): void {
           refreshable: false, sourceId: player.isPlayer.id, data: {},
         });
       }
-      console.log(`[PolarityDecay] ${player.isPlayer.id}: discharge ${ctx.damage} dmg -> ${PD_OVERCHARGE_COUNT} overcharge`);
       return;
     }
 
@@ -61,7 +60,6 @@ export function registerEmpoweredHit(): void {
       ctx.damage = tags > 0
         ? Math.max(1, Math.floor(player.dealsDamage.attack * Math.pow(CI_BASE_MULT, tags)))
         : player.dealsDamage.attack;
-      console.log(`[CascadeInduct] ${player.isPlayer.id}: ${tags} tags -> ${ctx.damage} burst on ${ctx.defender.isMonster.id}`);
       return;
     }
 
@@ -71,7 +69,6 @@ export function registerEmpoweredHit(): void {
       // ctx.damage is already plating/DR-reduced base; pool bypasses both.
       ctx.damage = Math.floor(ctx.damage * empMult) + pool;
       energy.smChargePool = 0;
-      console.log(`[SuperconductM] ${player.isPlayer.id}: ${empMult}x base + ${pool} stored charge -> ${ctx.damage} total`);
       return;
     }
 
@@ -80,7 +77,6 @@ export function registerEmpoweredHit(): void {
       const reservoir = energy.csReservoir;
       const ampFactor = 1 + reservoir / CS_RESERVOIR_SCALE;
       ctx.damage      = Math.max(1, Math.floor(player.dealsDamage.attack * empMult * ampFactor));
-      console.log(`[CapacitorShunt] ${player.isPlayer.id}: ${empMult}xbase x ${ampFactor.toFixed(2)} (res=${Math.round(reservoir)}) -> ${ctx.damage}`);
       return;
     }
 
@@ -120,10 +116,9 @@ export function registerEmpoweredHit(): void {
 
     // Endless Storm: discharge deals normal damage AND applies/refreshes a storm DoT.
     if (hasPassive(player, 'energy.endless-storm') && ctx.defenderType === 'monster') {
-      // Discharge deals NORMAL damage (mult suppressed in beforeAttack) with no splash —
-      // the entire empowered payload is the storm DoT: total = attack × TOTAL_MULT over the
-      // base duration, captured per-tick at cast time. Extending the storm = more total.
-      ctx.metadata['suppressEmpoweredAoe'] = true;
+      // Discharge deals NORMAL damage (mult suppressed in beforeAttack) — the entire
+      // empowered payload is the storm DoT: total = attack × TOTAL_MULT over the base
+      // duration, captured per-tick at cast time. Extending the storm = more total.
       const tickMs = Math.max(100, Math.round(passives['energy.endless-storm-tick-ms'] ?? ENDLESS_STORM_TICK_MS));
       const durationMs = Math.max(100, Math.round(passives['energy.endless-storm-duration-ms'] ?? ENDLESS_STORM_DURATION_MS));
       const maxMs = Math.max(durationMs, Math.round(passives['energy.endless-storm-max-ms'] ?? ENDLESS_STORM_MAX_MS));

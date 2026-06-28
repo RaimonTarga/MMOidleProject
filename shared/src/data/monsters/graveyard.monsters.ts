@@ -38,7 +38,7 @@ export const graveyardMonsterEntries = [
     // Ranged contagion-lobber: stationary, fires disease projectiles from afar.
     // Background DoT while the swarm engages. DPS 64 × (1000/1700) = 38 + DoT.
     stats: { hp: 680, attack: 64, plating: 0, damageReduction: 0, speed: 46, attackRange: 200, attackCooldown: 1700, pullRange: 260 },
-    behavior: 'melee', attackStyle: 'poison', isRanged: true, biome: 'graveyard',
+    behavior: 'ranged', attackStyle: 'poison', biome: 'graveyard',
     rewards: { essence: 40, essenceType: 'purple', level: 3, biomeXp: 240 },
     ai: { wanderRadius: 240, leashRange: 650, idleMinMs: 1200, idleMaxMs: 4000 },
     dotEffect: { debuffId: 'carrion-blight', label: 'Carrion Blight', damagePerStack: 7, maxStacks: 5, tickIntervalMs: 1000, durationMs: 2200 },
@@ -65,7 +65,7 @@ export const graveyardMonsterEntries = [
     // Squishy + ranged → reachable and dies fast once you commit. Yellow elite outline;
     // the `focus-elites` rune (taught by the graveyard recipe) is the intended counter.
     stats: { hp: 720, attack: 40, plating: 0, damageReduction: 0, speed: 40, attackRange: 200, attackCooldown: 1900, pullRange: 300 },
-    behavior: 'melee', attackStyle: 'magic', isRanged: true, biome: 'graveyard',
+    behavior: 'ranged', attackStyle: 'magic', biome: 'graveyard',
     elite: true,
     rewards: { essence: 70, essenceType: 'purple', level: 3, biomeXp: 420 },
     ai: { wanderRadius: 200, leashRange: 640, idleMinMs: 1500, idleMaxMs: 4500 },

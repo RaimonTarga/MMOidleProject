@@ -97,7 +97,10 @@ export function ForgeTab() {
   }, [unlockedRecipes]);
 
   const filtered = useMemo(() => {
+    // Already-crafted gear drops off the forge list entirely — owners manage it
+    // from inventory/upgrade, not here.
     const base = unlockedRecipes.filter(r =>
+      !ownedSet.has(r.id) &&
       (!filterUltimate || r.ultimate) &&
       (!filterBiome || r.recipeGroup === filterBiome) &&
       (!filterSlot  || r.slot        === filterSlot) &&
@@ -105,7 +108,6 @@ export function ForgeTab() {
     );
     return base.slice().sort((a, b) => {
       const cat = (r: typeof a) => {
-        if (ownedSet.has(r.id)) return 2;
         const canAfford = (Object.entries(r.cost) as [EssenceType, number][])
           .every(([type, amt]) => (essences[type] ?? 0) >= amt)
           && affordsCatalysts(r.catalystCost, catalysts);

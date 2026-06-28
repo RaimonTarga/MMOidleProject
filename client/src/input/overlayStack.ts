@@ -3,13 +3,11 @@ import {
   craftTabAtom,
   debugPanelOpenAtom,
   inventoryOpenAtom,
+  buildOpenAtom,
   mapOpenAtom,
+  masteryOpenAtom,
   questOpenAtom,
   releaseAnnouncementAtom,
-  runesOpenAtom,
-  abilitiesOpenAtom,
-  stancesOpenAtom,
-  ritesOpenAtom,
   settingsOpenAtom,
   skillTreeOpenAtom,
 } from '../hud/atoms';
@@ -36,20 +34,12 @@ export function closeTopmostOverlay(): void {
     store.set(craftTabAtom, null);
     return;
   }
-  if (store.get(runesOpenAtom)) {
-    store.set(runesOpenAtom, false);
+  if (store.get(buildOpenAtom)) {
+    store.set(buildOpenAtom, false);
     return;
   }
-  if (store.get(abilitiesOpenAtom)) {
-    store.set(abilitiesOpenAtom, false);
-    return;
-  }
-  if (store.get(stancesOpenAtom)) {
-    store.set(stancesOpenAtom, false);
-    return;
-  }
-  if (store.get(ritesOpenAtom)) {
-    store.set(ritesOpenAtom, false);
+  if (store.get(masteryOpenAtom)) {
+    store.set(masteryOpenAtom, false);
     return;
   }
   if (store.get(inventoryOpenAtom)) {

@@ -17,6 +17,8 @@ export const desertRecipeEntries = [
       { stats: { attack: 9 }, cost: { yellow: 100 }, requiredBiomeLevel: 2 },
       { stats: { attack: 9 }, cost: { yellow: 200 }, requiredBiomeLevel: 3 },
       { stats: { attack: 9 }, cost: { yellow: 300 }, requiredBiomeLevel: 4 },
+      { stats: { attack: 9 }, cost: { yellow: 300 }, requiredBiomeLevel: 4 },
+      { stats: { attack: 9 }, cost: { yellow: 300 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -31,6 +33,8 @@ export const desertRecipeEntries = [
     upgrades: [
       { stats: { maxHp: 12, plating: 3 }, cost: { yellow: 75, purple: 25 }, requiredBiomeLevel: 3 },
       { stats: { maxHp: 12, plating: 3 }, cost: { yellow: 150, purple: 50 }, requiredBiomeLevel: 4 },
+      { stats: { maxHp: 12, plating: 3 }, cost: { yellow: 200, purple: 100 }, requiredBiomeLevel: 4 },
+      { stats: { maxHp: 12, plating: 3 }, cost: { yellow: 200, purple: 100 }, requiredBiomeLevel: 4 },
       { stats: { maxHp: 12, plating: 3 }, cost: { yellow: 200, purple: 100 }, requiredBiomeLevel: 4 },
     ],
   }],
@@ -48,6 +52,8 @@ export const desertRecipeEntries = [
       { mechanicEffects: { 'defense.cleanse-empty-heal-pct': 0.01 }, cost: { yellow: 25, purple: 15 }, requiredBiomeLevel: 4 },
       { mechanicEffects: { 'defense.cleanse-empty-heal-pct': 0.01 }, cost: { yellow: 60, purple: 30 }, requiredBiomeLevel: 4 },
       { mechanicEffects: { 'defense.cleanse-empty-heal-pct': 0.01 }, cost: { yellow: 100, purple: 50 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.cleanse-empty-heal-pct': 0.01 }, cost: { yellow: 100, purple: 50 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.cleanse-empty-heal-pct': 0.01 }, cost: { yellow: 100, purple: 50 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -61,6 +67,8 @@ export const desertRecipeEntries = [
     upgrades: [
       { stats: { speed: 8 },  cost: { yellow: 28 }, requiredBiomeLevel: 4 },
       { stats: { speed: 12 }, cost: { yellow: 58 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 16 }, cost: { yellow: 96 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 16 }, cost: { yellow: 96 }, requiredBiomeLevel: 4 },
       { stats: { speed: 16 }, cost: { yellow: 96 }, requiredBiomeLevel: 4 },
     ],
   }],
@@ -77,6 +85,8 @@ export const desertRecipeEntries = [
       { stats: { attack: 12 }, cost: { yellow: 170 },  requiredBiomeLevel: 8 },
       { stats: { attack: 12 }, cost: { yellow: 340 }, requiredBiomeLevel: 9 },
       { stats: { attack: 12 }, cost: { yellow: 570 }, requiredBiomeLevel: 10 },
+      { stats: { attack: 12 }, cost: { yellow: 570 }, requiredBiomeLevel: 10 },
+      { stats: { attack: 12 }, cost: { yellow: 570 }, requiredBiomeLevel: 10 },
     ],
   }],
 
@@ -91,6 +101,8 @@ export const desertRecipeEntries = [
     upgrades: [
       { stats: { maxHp: 20, plating: 5 }, cost: { yellow: 100, purple: 50 },  requiredBiomeLevel: 9 },
       { stats: { maxHp: 20, plating: 5 }, cost: { yellow: 200, purple: 100 }, requiredBiomeLevel: 10 },
+      { stats: { maxHp: 20, plating: 5 }, cost: { yellow: 450, purple: 150 }, requiredBiomeLevel: 10 },
+      { stats: { maxHp: 20, plating: 5 }, cost: { yellow: 450, purple: 150 }, requiredBiomeLevel: 10 },
       { stats: { maxHp: 20, plating: 5 }, cost: { yellow: 450, purple: 150 }, requiredBiomeLevel: 10 },
     ],
   }],
@@ -108,6 +120,8 @@ export const desertRecipeEntries = [
       { mechanicEffects: { 'defense.cleanse-empty-heal-pct': 0.01 }, cost: { yellow: 35, purple: 25 },  requiredBiomeLevel: 10 },
       { mechanicEffects: { 'defense.cleanse-empty-heal-pct': 0.01 }, cost: { yellow: 140, purple: 35 }, requiredBiomeLevel: 10 },
       { mechanicEffects: { 'defense.cleanse-empty-heal-pct': 0.01 }, cost: { yellow: 280, purple: 70 }, requiredBiomeLevel: 10 },
+      { mechanicEffects: { 'defense.cleanse-empty-heal-pct': 0.01 }, cost: { yellow: 280, purple: 70 }, requiredBiomeLevel: 10 },
+      { mechanicEffects: { 'defense.cleanse-empty-heal-pct': 0.01 }, cost: { yellow: 280, purple: 70 }, requiredBiomeLevel: 10 },
     ],
   }],
 
@@ -121,6 +135,8 @@ export const desertRecipeEntries = [
     upgrades: [
       { stats: { speed: 10 }, cost: { yellow: 40 },  requiredBiomeLevel: 10 },
       { stats: { speed: 14 }, cost: { yellow: 80 },  requiredBiomeLevel: 10 },
+      { stats: { speed: 18 }, cost: { yellow: 138 }, requiredBiomeLevel: 10 },
+      { stats: { speed: 18 }, cost: { yellow: 138 }, requiredBiomeLevel: 10 },
       { stats: { speed: 18 }, cost: { yellow: 138 }, requiredBiomeLevel: 10 },
     ],
   }],
@@ -138,6 +154,8 @@ export const desertRecipeEntries = [
     upgrades: [
       { stats: { attack: 20 }, cost: { yellow: 383 }, requiredBiomeLevel: 14 },
       { stats: { attack: 20 }, cost: { yellow: 765 }, requiredBiomeLevel: 15 },
+      { stats: { attack: 20 }, cost: { yellow: 1530 }, requiredBiomeLevel: 16 },
+      { stats: { attack: 20 }, cost: { yellow: 1530 }, requiredBiomeLevel: 16 },
       { stats: { attack: 20 }, cost: { yellow: 1530 }, requiredBiomeLevel: 16 },
     ],
   }],
@@ -159,6 +177,8 @@ export const desertRecipeEntries = [
       { stats: { maxHp: 40, plating: 9 }, cost: { yellow: 200, purple: 100 }, requiredBiomeLevel: 15 },
       { stats: { maxHp: 40, plating: 9 }, cost: { yellow: 400, purple: 200 }, requiredBiomeLevel: 16 },
       { stats: { maxHp: 40, plating: 9 }, cost: { yellow: 900, purple: 300 }, requiredBiomeLevel: 16 },
+      { stats: { maxHp: 40, plating: 9 }, cost: { yellow: 900, purple: 300 }, requiredBiomeLevel: 16 },
+      { stats: { maxHp: 40, plating: 9 }, cost: { yellow: 900, purple: 300 }, requiredBiomeLevel: 16 },
     ],
   }],
 
@@ -178,6 +198,8 @@ export const desertRecipeEntries = [
       { mechanicEffects: { 'defense.cleanse-empty-heal-pct': 0.015 }, cost: { yellow: 100, purple: 40 }, requiredBiomeLevel: 16 },
       { mechanicEffects: { 'defense.cleanse-empty-heal-pct': 0.015 }, cost: { yellow: 280, purple: 70 }, requiredBiomeLevel: 16 },
       { mechanicEffects: { 'defense.cleanse-empty-heal-pct': 0.015 }, cost: { yellow: 480, purple: 120 }, requiredBiomeLevel: 16 },
+      { mechanicEffects: { 'defense.cleanse-empty-heal-pct': 0.015 }, cost: { yellow: 480, purple: 120 }, requiredBiomeLevel: 16 },
+      { mechanicEffects: { 'defense.cleanse-empty-heal-pct': 0.015 }, cost: { yellow: 480, purple: 120 }, requiredBiomeLevel: 16 },
     ],
   }],
 
@@ -192,6 +214,8 @@ export const desertRecipeEntries = [
     upgrades: [
       { stats: { speed: 14 }, cost: { yellow: 88 },  requiredBiomeLevel: 16 },
       { stats: { speed: 18 }, cost: { yellow: 176 }, requiredBiomeLevel: 16 },
+      { stats: { speed: 22 }, cost: { yellow: 304 }, requiredBiomeLevel: 16 },
+      { stats: { speed: 22 }, cost: { yellow: 304 }, requiredBiomeLevel: 16 },
       { stats: { speed: 22 }, cost: { yellow: 304 }, requiredBiomeLevel: 16 },
     ],
   }],

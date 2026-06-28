@@ -42,6 +42,9 @@ export function DungeonAltarOverlay() {
 
   const progressText = (() => {
     if (gauntlet.status === "idle") {
+      if (gauntlet.preEncounterLabel) {
+        return `${gauntlet.guardianAlive}/${gauntlet.guardianTotal} ${gauntlet.preEncounterLabel} threats remain`;
+      }
       return `${gauntlet.guardianAlive}/${gauntlet.guardianTotal} guardians remain`;
     }
     if (gauntlet.status === "active") {

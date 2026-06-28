@@ -28,10 +28,10 @@ import type { MonsterDefinition } from './types';
 //   Volcano/Tundra = DEBUT T3 (clean, legible single-mechanic intros).
 //
 // NEW fields used below (engine gate — see bottom of file):
-//   kite: true            — ranged AI maintains standoff (pairs with isRanged)
+//   behavior: 'kiter'     — ranged AI maintains standoff (see monsterKites)
 //   rampOnCombat: {...}    — Volcano: attack ramps while in combat, capped
 //   rampDebuff: {...}      — Tundra: stacking slow/atk-slow on the PLAYER, capped
-// Existing/reused: chargeOnAggro, isRanged, dotEffect, evasion, slowEffect.
+// Existing/reused: chargeOnAggro, behavior: 'ranged', dotEffect, evasion, slowEffect.
 // Costs/essence/biomeXp = placeholder (economy deferred).
 // ─────────────────────────────────────────────────────────────────────────
 
@@ -81,7 +81,7 @@ export const tundraMonsterEntries = [
     // Ranged frost KITER: backs off, plinks, and keeps you slowed so you can't close —
     // anti-Close, and it feeds the bears' debuff window. Speed 30 (catchable on charge).
     stats: { hp: 520, attack: 46, plating: 0, damageReduction: 0.08, speed: 30, attackRange: 200, attackCooldown: 2800, pullRange: 230 },
-    behavior: 'melee', attackStyle: 'frost', isRanged: true, kite: true, biome: 'tundra',
+    behavior: 'kiter', attackStyle: 'frost', biome: 'tundra',
     rewards: { essence: 45, essenceType: 'blue', level: 2, biomeXp: 270 },
     ai: { wanderRadius: 200, leashRange: 600, idleMinMs: 1500, idleMaxMs: 4500 },
     slowEffect: { speedMult: 0.6, durationMs: 2200 },
@@ -130,7 +130,7 @@ export const tundraMonsterEntries = [
     // from afar. Anti-Close — chasing while its stacks build hurts. Speed 36
     // (catchable on charge). DPS 86 × (1000/2900) = 30 + escalating debuff.
     stats: { hp: 1050, attack: 86, plating: 0, damageReduction: 0.08, speed: 36, attackRange: 220, attackCooldown: 2900, pullRange: 260 },
-    behavior: 'melee', attackStyle: 'frost', isRanged: true, kite: true, biome: 'tundra',
+    behavior: 'kiter', attackStyle: 'frost', biome: 'tundra',
     rewards: { essence: 62, essenceType: 'blue', level: 3, biomeXp: 370 },
     ai: { wanderRadius: 210, leashRange: 620, idleMinMs: 1500, idleMaxMs: 4500 },
     rampDebuff: {

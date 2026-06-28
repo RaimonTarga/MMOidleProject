@@ -34,6 +34,8 @@ export const forestRecipeEntries = [
       { stats: { maxHp: 6, plating: 1, evasion: 0.04 }, cost: { green: 30 }, requiredBiomeLevel: 3 },
       { stats: { maxHp: 6, plating: 1, evasion: 0.04 }, cost: { green: 60 }, requiredBiomeLevel: 4 },
       { stats: { maxHp: 6, plating: 1, evasion: 0.04 }, cost: { green: 120 }, requiredBiomeLevel: 4 },
+      { stats: { maxHp: 6, plating: 1, evasion: 0.04 }, cost: { green: 120 }, requiredBiomeLevel: 4 },
+      { stats: { maxHp: 6, plating: 1, evasion: 0.04 }, cost: { green: 120 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -50,6 +52,8 @@ export const forestRecipeEntries = [
       { stats: { hpRegen: 2 }, cost: { green: 15 }, requiredBiomeLevel: 4 },
       { stats: { hpRegen: 2 }, cost: { green: 30 }, requiredBiomeLevel: 4 },
       { stats: { hpRegen: 2 }, cost: { green: 60 }, requiredBiomeLevel: 4 },
+      { stats: { hpRegen: 2 }, cost: { green: 60 }, requiredBiomeLevel: 4 },
+      { stats: { hpRegen: 2 }, cost: { green: 60 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -63,6 +67,8 @@ export const forestRecipeEntries = [
     upgrades: [
       { stats: { speed: 3 }, cost: { green: 10 }, requiredBiomeLevel: 4 },
       { stats: { speed: 4 }, cost: { green: 20 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 4 }, cost: { green: 40 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 4 }, cost: { green: 40 }, requiredBiomeLevel: 4 },
       { stats: { speed: 4 }, cost: { green: 40 }, requiredBiomeLevel: 4 },
     ],
   }],
@@ -117,6 +123,8 @@ export const forestRecipeEntries = [
       { stats: { maxHp: 12, plating: 2, evasion: 0.06 }, cost: { green: 45, yellow: 15 }, requiredBiomeLevel: 9 },
       { stats: { maxHp: 12, plating: 2, evasion: 0.06 }, cost: { green: 90, yellow: 30 }, requiredBiomeLevel: 10 },
       { stats: { maxHp: 12, plating: 2, evasion: 0.06 }, cost: { green: 180, yellow: 60 }, catalystCost: { forest: 1 }, requiredBiomeLevel: 10 },
+      { stats: { maxHp: 12, plating: 2, evasion: 0.06 }, cost: { green: 180, yellow: 60 }, catalystCost: { forest: 1 }, requiredBiomeLevel: 10 },
+      { stats: { maxHp: 12, plating: 2, evasion: 0.06 }, cost: { green: 180, yellow: 60 }, catalystCost: { forest: 1 }, requiredBiomeLevel: 10 },
     ],
   }],
 
@@ -131,6 +139,8 @@ export const forestRecipeEntries = [
       { stats: { hpRegen: 3 }, cost: { green: 30 }, requiredBiomeLevel: 10 },
       { stats: { hpRegen: 3 }, cost: { green: 60 }, requiredBiomeLevel: 10 },
       { stats: { hpRegen: 3 }, cost: { green: 120 }, requiredBiomeLevel: 10 },
+      { stats: { hpRegen: 3 }, cost: { green: 120 }, requiredBiomeLevel: 10 },
+      { stats: { hpRegen: 3 }, cost: { green: 120 }, requiredBiomeLevel: 10 },
     ],
   }],
 
@@ -144,6 +154,8 @@ export const forestRecipeEntries = [
     upgrades: [
       { stats: { speed: 3 }, cost: { green: 20 }, requiredBiomeLevel: 10 },
       { stats: { speed: 4 }, cost: { green: 40 }, requiredBiomeLevel: 10 },
+      { stats: { speed: 5 }, cost: { green: 80 }, requiredBiomeLevel: 10 },
+      { stats: { speed: 5 }, cost: { green: 80 }, requiredBiomeLevel: 10 },
       { stats: { speed: 5 }, cost: { green: 80 }, requiredBiomeLevel: 10 },
     ],
   }],

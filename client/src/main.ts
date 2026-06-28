@@ -20,10 +20,13 @@ import { BossBar } from './hud/BossBar';
 import { TargetFrame } from './hud/TargetFrame';
 import { EmoteWheel } from './hud/EmoteWheel';
 import { DungeonAltarOverlay } from './hud/DungeonAltarOverlay';
+import { applyUiFontScale } from './settings/gameplaySettings';
 
 if (DEV_TOOLS_ENABLED) {
   registerDevItems(ITEM_DATABASE);
 }
+
+applyUiFontScale();
 
 function blockMouseHistoryButtons(event: Event) {
   if (!(event instanceof MouseEvent)) return;

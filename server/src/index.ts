@@ -748,13 +748,15 @@ async function boot(): Promise<void> {
       world.respawnPlayer(socket.id);
     });
 
-    socket.on("player:move", (pos) => {
+    socket.on("player:move", (pos, opts) => {
       const p = liveSelf();
       if (!p) return;
       if (p.isChanneling) return;
       clearSummonerCommand(world, p);
       const clamped = clampMoveTargetToNode(p.hasPosition.nodeId, pos);
-      setEntityMotion(world, p, clamped);
+      setEntityMotion(world, p, clamped, {
+        mode: opts?.mode === "direct" ? "direct" : "path",
+      });
       if (p.isMoving) {
         attachComponent(world, p, "hasManualMoveIntent", {});
       } else {

@@ -100,15 +100,22 @@ function depenetrateIfWedged(
         .map(region => region.shape)
     : world.collision.blockShapes(nodeId, mover);
   const from = entity.hasPosition.current;
+  if (entity.controlsMonster && moverOverlapsBlockShapes(entity.controlsMonster.spawn, shapes, pad)) {
+    const freedSpawn = depenetrateToWalkable(
+      nodeId,
+      mover,
+      pad,
+      entity.controlsMonster.spawn,
+      suppressed,
+    );
+    if (freedSpawn) {
+      entity.controlsMonster.spawn = freedSpawn;
+    }
+  }
+
   if (!moverOverlapsBlockShapes(from, shapes, pad)) return;
 
-  const freed = depenetrateToWalkable(
-    nodeId,
-    mover,
-    pad,
-    from,
-    suppressed,
-  );
+  const freed = depenetrateToWalkable(nodeId, mover, pad, from, suppressed);
   if (!freed) return;
 
   entity.hasPosition.current = freed;

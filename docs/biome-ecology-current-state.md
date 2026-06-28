@@ -6,6 +6,12 @@
 This captures what exists in code today before the Step 12 program touches it. Read source
 when it disagrees with this doc.
 
+> **Update 2026-06-28:** monster attack-mode was refactored — `ranged`/`kite` are no longer
+> separate booleans but derive from a single `behavior: 'melee' | 'ranged' | 'kiter'` field, and
+> mountain chokepoint-holding is now an explicit `holdsChokepoints` flag (was inferred from
+> `isRanged`). See `docs/monster-behavior-current-state.md`. Where this doc says "ranged/kite",
+> read it as the `behavior` field.
+
 ---
 
 ## 1. Monster AI loop

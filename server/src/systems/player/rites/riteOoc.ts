@@ -14,13 +14,12 @@
  */
 import {
   GAME_CONFIG,
-  FROST_RAMP_EFFECT_ID,
   isCooldownActive,
   setCooldown,
   getStatusEffect,
   removeStatusEffectStacks,
   applyStatusEffect,
-  isMonsterDotStatusEffectId,
+  isHarmfulPlayerStatusEffect,
 } from "@mmo-idle/shared";
 import type { PlayerEntity } from "../../../ecs/entity";
 import type { World } from "../../../world/World";
@@ -42,18 +41,6 @@ export function oocRegenDelay(player: PlayerEntity): number {
 }
 
 /**
- * A player status effect that is HARMFUL (a debuff or DoT) — the only effects
- * Cleansing Breath strips and the ones Lingering Momentum must NOT extend. Kept
- * precise so beneficial buffs (mobility haste, defense buffs) are left alone.
- */
-function isHarmfulEffect(id: string, data: Record<string, number>): boolean {
-  if (id === "slow" || id === FROST_RAMP_EFFECT_ID) return true;
-  if (isMonsterDotStatusEffectId(id)) return true;
-  if ((data["isDot"] ?? 0) !== 0) return true;
-  return false;
-}
-
-/**
  * Per-tick OOC rite behaviors. Runs from `updateDefensiveSystems` ONLY while the
  * player is out of combat. No-op when no rite key is present.
  */
@@ -69,7 +56,7 @@ export function runRiteOoc(world: World, player: PlayerEntity, dt: number, now: 
     const harmfulIds = [
       ...new Set(
         cs.statusEffects
-          .filter((e) => !e.instanced && isHarmfulEffect(e.id, e.data))
+          .filter((e) => !e.instanced && isHarmfulPlayerStatusEffect(e.id, e.data))
           .map((e) => e.id),
       ),
     ];
@@ -86,7 +73,7 @@ export function runRiteOoc(world: World, player: PlayerEntity, dt: number, now: 
   if (slowdown > 0) {
     for (const e of cs.statusEffects) {
       if (e.instanced || e.remainingMs <= 0) continue;
-      if (isHarmfulEffect(e.id, e.data)) continue;
+      if (isHarmfulPlayerStatusEffect(e.id, e.data)) continue;
       const totalMs = e.data["totalMs"];
       const extended = e.remainingMs + slowdown * dt;
       e.remainingMs = totalMs && totalMs > 0 ? Math.min(totalMs, extended) : extended;

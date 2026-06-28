@@ -19,6 +19,8 @@ export const plainsRecipeEntries = [
       { stats: { attack: 4 }, cost: { yellow: 20 }, requiredBiomeLevel: 2 },
       { stats: { attack: 4 }, cost: { yellow: 30 }, requiredBiomeLevel: 3 },
       { stats: { attack: 4 }, cost: { yellow: 60 }, requiredBiomeLevel: 4 },
+      { stats: { attack: 4 }, cost: { yellow: 60 }, requiredBiomeLevel: 4 },
+      { stats: { attack: 4 }, cost: { yellow: 60 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -32,6 +34,8 @@ export const plainsRecipeEntries = [
     upgrades: [
       { stats: { maxHp: 4, plating: 3 }, cost: { yellow: 30 }, requiredBiomeLevel: 3 },
       { stats: { maxHp: 4, plating: 3 }, cost: { yellow: 60 }, requiredBiomeLevel: 4 },
+      { stats: { maxHp: 4, plating: 3 }, cost: { yellow: 120 }, requiredBiomeLevel: 4 },
+      { stats: { maxHp: 4, plating: 3 }, cost: { yellow: 120 }, requiredBiomeLevel: 4 },
       { stats: { maxHp: 4, plating: 3 }, cost: { yellow: 120 }, requiredBiomeLevel: 4 },
     ],
   }],
@@ -50,6 +54,8 @@ export const plainsRecipeEntries = [
       { mechanicEffects: { 'defense.kill-burst-pct': 0.01 }, cost: { yellow: 12 }, requiredBiomeLevel: 4 },
       { mechanicEffects: { 'defense.kill-burst-pct': 0.01 }, cost: { yellow: 24 }, requiredBiomeLevel: 4 },
       { mechanicEffects: { 'defense.kill-burst-pct': 0.01 }, cost: { yellow: 48 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.kill-burst-pct': 0.01 }, cost: { yellow: 48 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.kill-burst-pct': 0.01 }, cost: { yellow: 48 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -63,6 +69,8 @@ export const plainsRecipeEntries = [
     upgrades: [
       { stats: { speed: 3 }, cost: { yellow: 10 }, requiredBiomeLevel: 4 },
       { stats: { speed: 4 }, cost: { yellow: 20 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 4 }, cost: { yellow: 40 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 4 }, cost: { yellow: 40 }, requiredBiomeLevel: 4 },
       { stats: { speed: 4 }, cost: { yellow: 40 }, requiredBiomeLevel: 4 },
     ],
   }],
@@ -78,6 +86,8 @@ export const plainsRecipeEntries = [
       { stats: { attack: 10 }, cost: { yellow: 45 }, requiredBiomeLevel: 8 },
       { stats: { attack: 10 }, cost: { yellow: 90 }, requiredBiomeLevel: 9 },
       { stats: { attack: 10 }, cost: { yellow: 180 }, requiredBiomeLevel: 10 },
+      { stats: { attack: 10 }, cost: { yellow: 180 }, requiredBiomeLevel: 10 },
+      { stats: { attack: 10 }, cost: { yellow: 180 }, requiredBiomeLevel: 10 },
     ],
   }],
 
@@ -90,6 +100,8 @@ export const plainsRecipeEntries = [
     upgrades: [
       { stats: { maxHp: 6, plating: 4 }, cost: { yellow: 60 }, requiredBiomeLevel: 9 },
       { stats: { maxHp: 6, plating: 4 }, cost: { yellow: 120 }, requiredBiomeLevel: 10 },
+      { stats: { maxHp: 6, plating: 4 }, cost: { yellow: 240 }, requiredBiomeLevel: 10 },
+      { stats: { maxHp: 6, plating: 4 }, cost: { yellow: 240 }, requiredBiomeLevel: 10 },
       { stats: { maxHp: 6, plating: 4 }, cost: { yellow: 240 }, requiredBiomeLevel: 10 },
     ],
   }],
@@ -107,6 +119,8 @@ export const plainsRecipeEntries = [
       { mechanicEffects: { 'defense.kill-burst-pct': 0.01 }, cost: { yellow: 30 }, requiredBiomeLevel: 10 },
       { mechanicEffects: { 'defense.kill-burst-pct': 0.01 }, cost: { yellow: 60 }, requiredBiomeLevel: 10 },
       { mechanicEffects: { 'defense.kill-burst-pct': 0.01 }, cost: { yellow: 120 }, requiredBiomeLevel: 10 },
+      { mechanicEffects: { 'defense.kill-burst-pct': 0.01 }, cost: { yellow: 120 }, requiredBiomeLevel: 10 },
+      { mechanicEffects: { 'defense.kill-burst-pct': 0.01 }, cost: { yellow: 120 }, requiredBiomeLevel: 10 },
     ],
   }],
 
@@ -120,6 +134,8 @@ export const plainsRecipeEntries = [
     upgrades: [
       { stats: { speed: 3 }, cost: { yellow: 20 }, requiredBiomeLevel: 10 },
       { stats: { speed: 4 }, cost: { yellow: 40 }, requiredBiomeLevel: 10 },
+      { stats: { speed: 5 }, cost: { yellow: 80 }, requiredBiomeLevel: 10 },
+      { stats: { speed: 5 }, cost: { yellow: 80 }, requiredBiomeLevel: 10 },
       { stats: { speed: 5 }, cost: { yellow: 80 }, requiredBiomeLevel: 10 },
     ],
   }],

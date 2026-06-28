@@ -1,4 +1,9 @@
-import { resolveMonsterDotDebuff, type MonsterDefinition } from '@mmo-idle/shared';
+import {
+  monsterIsRanged,
+  monsterKites,
+  resolveMonsterDotDebuff,
+  type MonsterDefinition,
+} from '@mmo-idle/shared';
 
 // Readable presentation of a monster's combat profile for the map info panel:
 // a stat grid, short capability tags (collapsed row), and a full plain-English
@@ -31,13 +36,14 @@ export function monsterStatRows(def: MonsterDefinition): StatCell[] {
 export function monsterTags(def: MonsterDefinition): string[] {
   const tags: string[] = [];
   if (def.isBoss)        tags.push('BOSS');
-  if (def.isRanged)      tags.push('RANGED');
+  if (monsterKites(def)) tags.push('KITER');
+  else if (monsterIsRanged(def)) tags.push('RANGED');
+  if (def.holdsChokepoints) tags.push('HOLDS');
   if (def.chargeOnAggro) tags.push('CHARGE');
   if (def.dotEffect)     tags.push('DOT');
   if (def.slowEffect)    tags.push(def.slowEffect.speedMult === 0 ? 'ROOT' : 'SLOW');
   if (def.aoeAttack)     tags.push('AOE');
   if (def.evasion)       tags.push('EVADE');
-  if (def.kite)          tags.push('KITE');
   if (def.rampOnCombat || def.rampDebuff) tags.push('RAMP');
   return tags;
 }
@@ -69,7 +75,9 @@ function summarizeBossScript(def: MonsterDefinition): string | null {
 export function formatMonsterMechanics(def: MonsterDefinition): string[] {
   const lines: string[] = [];
 
-  lines.push(def.isRanged
+  lines.push(monsterKites(def)
+    ? `Kiter — attacks from range (${def.attackStyle} style)`
+    : monsterIsRanged(def)
     ? `Attacks from range (${def.attackStyle} style)`
     : `Melee attacker (${def.attackStyle} style)`);
 
@@ -98,8 +106,12 @@ export function formatMonsterMechanics(def: MonsterDefinition): string[] {
     lines.push(`Attacks splash to everyone within ${a.radius}px of the target${mult}`);
   }
 
-  if (def.kite) {
+  if (monsterKites(def)) {
     lines.push('Kites — keeps its distance, backing away as you close in');
+  }
+
+  if (def.holdsChokepoints) {
+    lines.push('Holds a chokepoint — guards the pass instead of roaming');
   }
 
   if (def.rampOnCombat) {

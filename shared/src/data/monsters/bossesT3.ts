@@ -7,7 +7,7 @@ export const bossMonsterEntriesT3 = [
     id: 'crag-gorged-horn-behemoth', name: 'Crag-Gorged Horn-Behemoth', color: 0x6688cc,
     isBoss: true,
     stats: { hp: 5200, attack: 125, plating: 12, damageReduction: 0.05, speed: 18, attackRange: 72, attackCooldown: 4200, pullRange: 360 },
-    behavior: 'melee', attackStyle: 'impact', biome: 'mountain',
+    behavior: 'melee', attackStyle: 'quake', biome: 'mountain',
     rewards: { essence: 340, essenceType: 'blue', level: 5, biomeXp: 510 },
     ai: { wanderRadius: 100, leashRange: 920, idleMinMs: 3500, idleMaxMs: 8500 },
     chargeOnAggro: { speedMult: 2.5, durationMs: 1200 },
@@ -27,7 +27,7 @@ export const bossMonsterEntriesT3 = [
     id: 'deep-core-burrow-gorger', name: 'Deep-Core Burrow-Gorger', color: 0x332244,
     isBoss: true,
     stats: { hp: 5400, attack: 120, plating: 16, damageReduction: 0.15, speed: 16, attackRange: 72, attackCooldown: 4500, pullRange: 330 },
-    behavior: 'melee', attackStyle: 'impact', biome: 'cave',
+    behavior: 'melee', attackStyle: 'quake', biome: 'cave',
     rewards: { essence: 355, essenceType: 'red', level: 5, biomeXp: 530 },
     ai: { wanderRadius: 85, leashRange: 890, idleMinMs: 4000, idleMaxMs: 10000 },
     chargeOnAggro: { speedMult: 2.0, durationMs: 1200 },
@@ -62,7 +62,7 @@ export const bossMonsterEntriesT3 = [
     id: 'dune-carapace-monarch', name: 'Dune-Carapace Monarch', color: 0xccaa22,
     isBoss: true,
     stats: { hp: 5000, attack: 120, plating: 10, damageReduction: 0.08, speed: 42, attackRange: 20, attackCooldown: 3000, pullRange: 350 },
-    behavior: 'melee', attackStyle: 'magic', biome: 'desert',
+    behavior: 'melee', attackStyle: 'sandblast', biome: 'desert',
     rewards: { essence: 345, essenceType: 'yellow', level: 5, biomeXp: 518 },
     ai: { wanderRadius: 140, leashRange: 900, idleMinMs: 2200, idleMaxMs: 6500 },
     chargeOnAggro: { speedMult: 2.5, durationMs: 1000 },
@@ -70,7 +70,7 @@ export const bossMonsterEntriesT3 = [
     bossScript: {
       phases: [
         { hpPct: 0.5, actions: [
-          { type: 'morph', isRanged: true, attackStyle: 'magic', attackRange: 240, kite: true },
+          { type: 'morph', isRanged: true, attackStyle: 'sandblast', attackRange: 240, kite: true },
           { type: 'enrage', atkMult: 1.15, cdMult: 0.90 },
         ] },
         { hpPct: 0.25, actions: [{ type: 'stat-buff', stat: 'speed', mult: 1.3 }, { type: 'slam', radius: 200, damageMult: 1.6 }] },

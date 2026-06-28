@@ -62,7 +62,16 @@ function StatGrid({ entry }: { entry: BestiaryEntry }) {
         <Stat label="Attack range" value={`${s.attackRange}px`} />
         <Stat label="Pull range" value={`${s.pullRange}px`} />
         <Stat label="Leash range" value={`${s.leashRange}px`} />
-        <Stat label="Combat" value={s.isRanged ? 'Ranged' : 'Melee'} />
+        <Stat
+          label="Combat"
+          value={
+            s.behavior === 'kiter'
+              ? 'Kiter'
+              : s.behavior === 'ranged'
+                ? 'Ranged'
+                : 'Melee'
+          }
+        />
       </div>
       <div className="bestiary-detail__rewards">
         Rewards: <b>{r.essence}</b> {r.essenceType} essence

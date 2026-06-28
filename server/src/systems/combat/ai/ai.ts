@@ -7,6 +7,7 @@ import type {
 import {
   distanceSq,
   MONSTER_DATABASE,
+  monsterKites,
   RESOLVED_NODE_FEATURES,
   pointFromMotion,
   type AggroTargetKind,
@@ -239,7 +240,9 @@ export function updateMonsters(world: World, dt: number, now: number) {
 
       const monsterDef = MONSTER_DATABASE.get(e.isMonster.monsterTypeId);
       // A boss 'morph' action can flip the kite flag at runtime.
-      const isKiter = (e.scriptsBoss?.kiteOverride ?? monsterDef?.kite) === true;
+      const isKiter =
+        e.scriptsBoss?.kiteOverride ??
+        (monsterDef ? monsterKites(monsterDef) : false);
       const targetPos = aggroPosition(target);
       const inReach = world.collision.canReach(
         e,

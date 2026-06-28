@@ -28,10 +28,10 @@ import type { MonsterDefinition } from './types';
 //   Volcano/Tundra = DEBUT T3 (clean, legible single-mechanic intros).
 //
 // NEW fields used below (engine gate — see bottom of file):
-//   kite: true            — ranged AI maintains standoff (pairs with isRanged)
+//   behavior: 'kiter'     — ranged AI maintains standoff (see monsterKites)
 //   rampOnCombat: {...}    — Volcano: attack ramps while in combat, capped
 //   rampDebuff: {...}      — Tundra: stacking slow/atk-slow on the PLAYER, capped
-// Existing/reused: chargeOnAggro, isRanged, dotEffect, evasion, slowEffect.
+// Existing/reused: chargeOnAggro, behavior: 'ranged', dotEffect, evasion, slowEffect.
 // Costs/essence/biomeXp = placeholder (economy deferred).
 // ─────────────────────────────────────────────────────────────────────────
 
@@ -79,7 +79,7 @@ export const volcanoMonsterEntries = [
     // Ranged ember-lobber that ramps — pokes while the swarm closes; ignoring it
     // lets its ramp build. Stationary ranged (not a kiter — Volcano is aggressive).
     stats: { hp: 420, attack: 34, plating: 2, damageReduction: 0, speed: 44, attackRange: 180, attackCooldown: 2000, pullRange: 230 },
-    behavior: 'melee', attackStyle: 'fire', isRanged: true, biome: 'volcanic',
+    behavior: 'ranged', attackStyle: 'fire', biome: 'volcanic',
     rewards: { essence: 27, essenceType: 'red', level: 2, biomeXp: 165 },
     ai: { wanderRadius: 220, leashRange: 600, idleMinMs: 1200, idleMaxMs: 4000 },
     rampOnCombat: { stat: 'attack', perTickPct: 0.10, maxPct: 0.50, tickIntervalMs: 2000 },
@@ -129,7 +129,7 @@ export const volcanoMonsterEntries = [
     // Ranged fire-lobber that ramps. Stationary (not a kiter). High DoT.
     // Ignoring it lets the background fire stack. DPS 70 × (1000/1900) = 37 + DoT.
     stats: { hp: 900, attack: 70, plating: 2, damageReduction: 0, speed: 46, attackRange: 190, attackCooldown: 1900, pullRange: 250 },
-    behavior: 'melee', attackStyle: 'fire', isRanged: true, biome: 'volcanic',
+    behavior: 'ranged', attackStyle: 'fire', biome: 'volcanic',
     rewards: { essence: 52, essenceType: 'red', level: 3, biomeXp: 310 },
     ai: { wanderRadius: 230, leashRange: 630, idleMinMs: 1200, idleMaxMs: 4000 },
     rampOnCombat: { stat: 'attack', perTickPct: 0.08, maxPct: 0.50, tickIntervalMs: 2000 },

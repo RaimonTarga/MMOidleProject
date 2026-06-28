@@ -67,7 +67,7 @@ export const jungleMonsterEntries = [
     // Re-added: Jungle's ranged poke (its Canopy-Sprite analog). Hidden in foliage,
     // spits poisoned darts — frequent light hits + DoT from range. Squishy.
     stats: { hp: 190, attack: 16, plating: 0, damageReduction: 0, speed: 48, attackRange: 190, attackCooldown: 1900, pullRange: 250 },
-    behavior: 'melee', attackStyle: 'poison', isRanged: true, biome: 'jungle',
+    behavior: 'ranged', attackStyle: 'poison', biome: 'jungle',
     rewards: { essence: 7, essenceType: 'green', level: 1, biomeXp: 38 },
     ai: { wanderRadius: 250, leashRange: 660, idleMinMs: 1200, idleMaxMs: 4000 },
     dotEffect: { debuffId: 'dart-poison', label: 'Dart Poison', damagePerStack: 6, maxStacks: 4, tickIntervalMs: 1000, durationMs: 2100 },
@@ -109,7 +109,7 @@ export const jungleMonsterEntries = [
     // Frequent ranged thorn-volleys from the canopy — fast cooldown, light hits.
     // Stationary ranged (relentless poke, not a standoff kiter). Adds chip volume.
     stats: { hp: 400, attack: 22, plating: 0, damageReduction: 0, speed: 52, attackRange: 190, attackCooldown: 1400, pullRange: 250 },
-    behavior: 'melee', attackStyle: 'gunshot', isRanged: true, biome: 'jungle',
+    behavior: 'ranged', attackStyle: 'arrow', biome: 'jungle',
     rewards: { essence: 27, essenceType: 'green', level: 2, biomeXp: 165 },
     ai: { wanderRadius: 240, leashRange: 650, idleMinMs: 1200, idleMaxMs: 3500 },
   }],
@@ -150,7 +150,7 @@ export const jungleMonsterEntries = [
     // Ranged stationary spitter: frequent light hits + stacking venom DoT.
     // Background chip while the swarm closes. DPS 60 × (1000/1500) = 40 + DoT.
     stats: { hp: 850, attack: 60, plating: 0, damageReduction: 0, speed: 50, attackRange: 200, attackCooldown: 1500, pullRange: 260 },
-    behavior: 'melee', attackStyle: 'poison', isRanged: true, biome: 'jungle',
+    behavior: 'ranged', attackStyle: 'poison', biome: 'jungle',
     rewards: { essence: 50, essenceType: 'green', level: 3, biomeXp: 300 },
     ai: { wanderRadius: 250, leashRange: 660, idleMinMs: 1200, idleMaxMs: 4000 },
     dotEffect: { debuffId: 'thornback-venom', label: 'Thorn Venom', damagePerStack: 6, maxStacks: 5, tickIntervalMs: 1000, durationMs: 2500 },

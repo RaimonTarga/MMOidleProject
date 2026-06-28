@@ -263,9 +263,6 @@ function performCrossing(
   // Carry live summons into the new node at the player's entry point.
   relocateMinionsForOwner(world, entity);
 
-  console.log(
-    `[trans] ✓ ${entity.isPlayer.name} ${fromNodeId} → ${targetNodeId} via ${direction}  pos=(${Math.round(position.current.x)}, ${Math.round(position.current.y)})`,
-  );
 }
 
 export function updateTransitions(world: World): void {

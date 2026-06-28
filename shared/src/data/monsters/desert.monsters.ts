@@ -67,7 +67,7 @@ export const desertMonsterEntries = [
     // basilisk's finisher lands amplified. Cleanse removes the mark; it expires
     // harmlessly if you break line of sight before the finisher connects.
     stats: { hp: 200, attack: 34, plating: 0, damageReduction: 0.05, speed: 40, attackRange: 185, attackCooldown: 2100, pullRange: 230 },
-    behavior: 'melee', attackStyle: 'magic', isRanged: true, biome: 'desert',
+    behavior: 'ranged', attackStyle: 'magic', biome: 'desert',
     rewards: { essence: 8, essenceType: 'yellow', level: 1, biomeXp: 42 },
     ai: { wanderRadius: 220, leashRange: 620, idleMinMs: 1200, idleMaxMs: 4000 },
     slowEffect: { speedMult: 0.6, durationMs: 2000 },
@@ -109,7 +109,7 @@ export const desertMonsterEntries = [
     // ECOLOGY: the SUN MARK painter (T3) — paints from the standoff so the basilisk's
     // finisher lands amplified. Cleanse strips it; it expires if you escape the window.
     stats: { hp: 460, attack: 44, plating: 0, damageReduction: 0, speed: 40, attackRange: 220, attackCooldown: 2200, pullRange: 250 },
-    behavior: 'melee', attackStyle: 'magic', isRanged: true, kite: true, biome: 'desert',
+    behavior: 'kiter', attackStyle: 'magic', biome: 'desert',
     rewards: { essence: 47, essenceType: 'yellow', level: 2, biomeXp: 285 },
     ai: { wanderRadius: 220, leashRange: 640, idleMinMs: 1200, idleMaxMs: 4000 },
     slowEffect: { speedMult: 0.6, durationMs: 2000 },
@@ -150,7 +150,7 @@ export const desertMonsterEntries = [
     // ECOLOGY: the SUN MARK painter (T4) — paints from the kiting standoff so the
     // dune-tyrant's slam lands amplified into a marked target. Cleanse strips it.
     stats: { hp: 930, attack: 84, plating: 0, damageReduction: 0, speed: 38, attackRange: 230, attackCooldown: 2200, pullRange: 280 },
-    behavior: 'melee', attackStyle: 'magic', isRanged: true, kite: true, biome: 'desert',
+    behavior: 'kiter', attackStyle: 'magic', biome: 'desert',
     rewards: { essence: 58, essenceType: 'yellow', level: 3, biomeXp: 350 },
     ai: { wanderRadius: 240, leashRange: 660, idleMinMs: 1200, idleMaxMs: 4000 },
     slowEffect: { speedMult: 0.6, durationMs: 2500 },

@@ -23,6 +23,8 @@ export const mountainRecipeEntries = [
       { stats: { attack: 10 }, cost: { blue: 30 }, requiredBiomeLevel: 2 },
       { stats: { attack: 10 }, cost: { blue: 66 }, requiredBiomeLevel: 3 },
       { stats: { attack: 10 }, cost: { blue: 126 }, requiredBiomeLevel: 4 },
+      { stats: { attack: 10 }, cost: { blue: 126 }, requiredBiomeLevel: 4 },
+      { stats: { attack: 10 }, cost: { blue: 126 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -37,6 +39,8 @@ export const mountainRecipeEntries = [
     upgrades: [
       { stats: { maxHp: 6, plating: 2 }, cost: { blue: 30 }, requiredBiomeLevel: 3 },
       { stats: { maxHp: 6, plating: 2 }, cost: { blue: 66 }, requiredBiomeLevel: 4 },
+      { stats: { maxHp: 6, plating: 2 }, cost: { blue: 126 }, requiredBiomeLevel: 4 },
+      { stats: { maxHp: 6, plating: 2 }, cost: { blue: 126 }, requiredBiomeLevel: 4 },
       { stats: { maxHp: 6, plating: 2 }, cost: { blue: 126 }, requiredBiomeLevel: 4 },
     ],
   }],
@@ -54,6 +58,8 @@ export const mountainRecipeEntries = [
       { mechanicEffects: { 'defense.shield-pct': 0.01 }, cost: { blue: 15 }, requiredBiomeLevel: 4 },
       { mechanicEffects: { 'defense.shield-pct': 0.01 }, cost: { blue: 33 }, requiredBiomeLevel: 4 },
       { mechanicEffects: { 'defense.shield-pct': 0.01 }, cost: { blue: 63 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.shield-pct': 0.01 }, cost: { blue: 63 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.shield-pct': 0.01 }, cost: { blue: 63 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -67,6 +73,8 @@ export const mountainRecipeEntries = [
     upgrades: [
       { stats: { speed: 3 }, cost: { blue: 10 }, requiredBiomeLevel: 4 },
       { stats: { speed: 4 }, cost: { blue: 22 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 4 }, cost: { blue: 42 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 4 }, cost: { blue: 42 }, requiredBiomeLevel: 4 },
       { stats: { speed: 4 }, cost: { blue: 42 }, requiredBiomeLevel: 4 },
     ],
   }],
@@ -83,6 +91,8 @@ export const mountainRecipeEntries = [
       { stats: { attack: 24 }, cost: { blue: 78 }, requiredBiomeLevel: 8 },
       { stats: { attack: 24 }, cost: { blue: 156 }, requiredBiomeLevel: 9 },
       { stats: { attack: 24 }, cost: { blue: 312 }, requiredBiomeLevel: 10 },
+      { stats: { attack: 24 }, cost: { blue: 312 }, requiredBiomeLevel: 10 },
+      { stats: { attack: 24 }, cost: { blue: 312 }, requiredBiomeLevel: 10 },
     ],
   }],
 
@@ -97,6 +107,8 @@ export const mountainRecipeEntries = [
     upgrades: [
       { stats: { maxHp: 8, plating: 3 }, cost: { blue: 78 }, requiredBiomeLevel: 9 },
       { stats: { maxHp: 8, plating: 3 }, cost: { blue: 156 }, requiredBiomeLevel: 10 },
+      { stats: { maxHp: 8, plating: 3 }, cost: { blue: 276 }, requiredBiomeLevel: 10 },
+      { stats: { maxHp: 8, plating: 3 }, cost: { blue: 276 }, requiredBiomeLevel: 10 },
       { stats: { maxHp: 8, plating: 3 }, cost: { blue: 276 }, requiredBiomeLevel: 10 },
     ],
   }],
@@ -114,6 +126,8 @@ export const mountainRecipeEntries = [
       { mechanicEffects: { 'defense.shield-pct': 0.02 }, cost: { blue: 30 }, requiredBiomeLevel: 10 },
       { mechanicEffects: { 'defense.shield-pct': 0.02 }, cost: { blue: 60 }, requiredBiomeLevel: 10 },
       { mechanicEffects: { 'defense.shield-pct': 0.02 }, cost: { blue: 112 }, requiredBiomeLevel: 10 },
+      { mechanicEffects: { 'defense.shield-pct': 0.02 }, cost: { blue: 112 }, requiredBiomeLevel: 10 },
+      { mechanicEffects: { 'defense.shield-pct': 0.02 }, cost: { blue: 112 }, requiredBiomeLevel: 10 },
     ],
   }],
 
@@ -127,6 +141,8 @@ export const mountainRecipeEntries = [
     upgrades: [
       { stats: { speed: 3 }, cost: { blue: 20 }, requiredBiomeLevel: 10 },
       { stats: { speed: 4 }, cost: { blue: 42 }, requiredBiomeLevel: 10 },
+      { stats: { speed: 5 }, cost: { blue: 75 }, requiredBiomeLevel: 10 },
+      { stats: { speed: 5 }, cost: { blue: 75 }, requiredBiomeLevel: 10 },
       { stats: { speed: 5 }, cost: { blue: 75 }, requiredBiomeLevel: 10 },
     ],
   }],
@@ -143,6 +159,8 @@ export const mountainRecipeEntries = [
       { stats: { attack: 28 }, cost: { blue: 174 },  requiredBiomeLevel: 14 },
       { stats: { attack: 28 }, cost: { blue: 348 }, requiredBiomeLevel: 15 },
       { stats: { attack: 28 }, cost: { blue: 588 }, requiredBiomeLevel: 16 },
+      { stats: { attack: 28 }, cost: { blue: 588 }, requiredBiomeLevel: 16 },
+      { stats: { attack: 28 }, cost: { blue: 588 }, requiredBiomeLevel: 16 },
     ],
   }],
 
@@ -157,6 +175,8 @@ export const mountainRecipeEntries = [
     upgrades: [
       { stats: { maxHp: 14, plating: 6 }, cost: { blue: 130, red: 44},  requiredBiomeLevel: 15 },
       { stats: { maxHp: 14, plating: 6 }, cost: { blue: 260, red: 88 }, requiredBiomeLevel: 16 },
+      { stats: { maxHp: 14, plating: 6 }, cost: { blue: 390, red: 132 }, requiredBiomeLevel: 16 },
+      { stats: { maxHp: 14, plating: 6 }, cost: { blue: 390, red: 132 }, requiredBiomeLevel: 16 },
       { stats: { maxHp: 14, plating: 6 }, cost: { blue: 390, red: 132 }, requiredBiomeLevel: 16 },
     ],
   }],
@@ -174,6 +194,8 @@ export const mountainRecipeEntries = [
       { mechanicEffects: { 'defense.shield-pct': 0.03 }, cost: { blue: 50, red: 25 },  requiredBiomeLevel: 16 },
       { mechanicEffects: { 'defense.shield-pct': 0.03 }, cost: { blue: 100, red: 50 }, requiredBiomeLevel: 16 },
       { mechanicEffects: { 'defense.shield-pct': 0.03 }, cost: { blue: 150, red: 75 }, requiredBiomeLevel: 16 },
+      { mechanicEffects: { 'defense.shield-pct': 0.03 }, cost: { blue: 150, red: 75 }, requiredBiomeLevel: 16 },
+      { mechanicEffects: { 'defense.shield-pct': 0.03 }, cost: { blue: 150, red: 75 }, requiredBiomeLevel: 16 },
     ],
   }],
 
@@ -187,6 +209,8 @@ export const mountainRecipeEntries = [
     upgrades: [
       { stats: { speed: 3 }, cost: { blue: 20 }, requiredBiomeLevel: 16 },
       { stats: { speed: 4 }, cost: { blue: 42 }, requiredBiomeLevel: 16 },
+      { stats: { speed: 5 }, cost: { blue: 75 }, requiredBiomeLevel: 16 },
+      { stats: { speed: 5 }, cost: { blue: 75 }, requiredBiomeLevel: 16 },
       { stats: { speed: 5 }, cost: { blue: 75 }, requiredBiomeLevel: 16 },
     ],
   }],
@@ -202,6 +226,8 @@ export const mountainRecipeEntries = [
     upgrades: [
       { stats: { attack: 60 }, cost: { blue: 384 },  requiredBiomeLevel: 20 },
       { stats: { attack: 60 }, cost: { blue: 768 },  requiredBiomeLevel: 21 },
+      { stats: { attack: 60 }, cost: { blue: 1290 }, requiredBiomeLevel: 22 },
+      { stats: { attack: 60 }, cost: { blue: 1290 }, requiredBiomeLevel: 22 },
       { stats: { attack: 60 }, cost: { blue: 1290 }, requiredBiomeLevel: 22 },
     ],
   }],
@@ -223,6 +249,8 @@ export const mountainRecipeEntries = [
       { stats: { attack: 50 }, cost: { blue: 360 },  requiredBiomeLevel: 20 },
       { stats: { attack: 50 }, cost: { blue: 720 },  requiredBiomeLevel: 21 },
       { stats: { attack: 50 }, cost: { blue: 1200 }, requiredBiomeLevel: 22 },
+      { stats: { attack: 50 }, cost: { blue: 1200 }, requiredBiomeLevel: 22 },
+      { stats: { attack: 50 }, cost: { blue: 1200 }, requiredBiomeLevel: 22 },
     ],
   }],
 
@@ -242,6 +270,8 @@ export const mountainRecipeEntries = [
     upgrades: [
       { stats: { maxHp: 25, plating: 10 }, cost: { blue: 290, red: 96 },  requiredBiomeLevel: 21 },
       { stats: { maxHp: 25, plating: 10 }, cost: { blue: 572, red: 192 }, requiredBiomeLevel: 22 },
+      { stats: { maxHp: 25, plating: 10 }, cost: { blue: 858, red: 290 }, requiredBiomeLevel: 22 },
+      { stats: { maxHp: 25, plating: 10 }, cost: { blue: 858, red: 290 }, requiredBiomeLevel: 22 },
       { stats: { maxHp: 25, plating: 10 }, cost: { blue: 858, red: 290 }, requiredBiomeLevel: 22 },
     ],
   }],
@@ -263,6 +293,8 @@ export const mountainRecipeEntries = [
       { stats: { maxHp: 25, plating: 8 }, cost: { blue: 290, red: 96 },  requiredBiomeLevel: 21 },
       { stats: { maxHp: 25, plating: 8 }, cost: { blue: 572, red: 192 }, requiredBiomeLevel: 22 },
       { stats: { maxHp: 25, plating: 8 }, cost: { blue: 858, red: 290 }, requiredBiomeLevel: 22 },
+      { stats: { maxHp: 25, plating: 8 }, cost: { blue: 858, red: 290 }, requiredBiomeLevel: 22 },
+      { stats: { maxHp: 25, plating: 8 }, cost: { blue: 858, red: 290 }, requiredBiomeLevel: 22 },
     ],
   }],
 
@@ -277,6 +309,8 @@ export const mountainRecipeEntries = [
     upgrades: [
       { mechanicEffects: { 'defense.shield-pct': 0.04 }, cost: { blue: 110, red: 30 }, requiredBiomeLevel: 22 },
       { mechanicEffects: { 'defense.shield-pct': 0.04 }, cost: { blue: 220, red: 60 }, requiredBiomeLevel: 22 },
+      { mechanicEffects: { 'defense.shield-pct': 0.04 }, cost: { blue: 340, red: 90 }, requiredBiomeLevel: 22 },
+      { mechanicEffects: { 'defense.shield-pct': 0.04 }, cost: { blue: 340, red: 90 }, requiredBiomeLevel: 22 },
       { mechanicEffects: { 'defense.shield-pct': 0.04 }, cost: { blue: 340, red: 90 }, requiredBiomeLevel: 22 },
     ],
   }],
@@ -298,6 +332,8 @@ export const mountainRecipeEntries = [
       { mechanicEffects: { 'defense.shield-pct': 0.03 }, cost: { blue: 110, red: 30 }, requiredBiomeLevel: 22 },
       { mechanicEffects: { 'defense.shield-pct': 0.03 }, cost: { blue: 220, red: 60 }, requiredBiomeLevel: 22 },
       { mechanicEffects: { 'defense.shield-pct': 0.03 }, cost: { blue: 340, red: 90 }, requiredBiomeLevel: 22 },
+      { mechanicEffects: { 'defense.shield-pct': 0.03 }, cost: { blue: 340, red: 90 }, requiredBiomeLevel: 22 },
+      { mechanicEffects: { 'defense.shield-pct': 0.03 }, cost: { blue: 340, red: 90 }, requiredBiomeLevel: 22 },
     ],
   }],
 
@@ -311,6 +347,8 @@ export const mountainRecipeEntries = [
     upgrades: [
       { stats: { speed: 4 }, cost: { blue: 44 },  requiredBiomeLevel: 22 },
       { stats: { speed: 5 }, cost: { blue: 92 },  requiredBiomeLevel: 22 },
+      { stats: { speed: 6 }, cost: { blue: 165 }, requiredBiomeLevel: 22 },
+      { stats: { speed: 6 }, cost: { blue: 165 }, requiredBiomeLevel: 22 },
       { stats: { speed: 6 }, cost: { blue: 165 }, requiredBiomeLevel: 22 },
     ],
   }],

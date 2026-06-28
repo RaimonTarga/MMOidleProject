@@ -45,8 +45,14 @@ export const bossMonsterEntriesT1 = [
     bossScript: {
       phases: [
         { hpPct: 0.5, actions: [
-          { type: 'spawn-adds', monsterTypeId: 'plains-slime', count: 5, offsetRange: 200 },
+          { type: 'spawn-adds', monsterTypeId: 'plains-slime', count: 4, maxAlive: 6, offsetRange: 220 },
+          { type: 'spawn-adds', monsterTypeId: 'boar', count: 1, maxAlive: 6, offsetRange: 220 },
           { type: 'enrage', atkMult: 1.1, cdMult: 0.9 },
+        ] },
+      ],
+      repeating: [
+        { intervalMs: 10_000, initialDelayMs: 4_000, actions: [
+          { type: 'spawn-adds', monsterTypeId: 'plains-slime', count: 2, maxAlive: 5, offsetRange: 220 },
         ] },
       ],
     },
@@ -60,13 +66,22 @@ export const bossMonsterEntriesT1 = [
     behavior: 'melee', attackStyle: 'slash', biome: 'forest',
     rewards: { essence: 100, essenceType: 'green', level: 5, biomeXp: 150, catalystBundle: 5 },
     ai: { wanderRadius: 160, leashRange: 800, idleMinMs: 1200, idleMaxMs: 4000 },
-    // FOREST EXAM = "survive the pack". T1 stays simple: one readable 50% beat where
-    // the alpha howls and a wolf pack joins (adds despawn on boss death). Numbers
-    // placeholder — user balance pass; tells/structure formalize in Step 13.
+    // FOREST EXAM = alpha-priority / predator-burst. The boss's whole identity is the
+    // MARKED-PREY → SAVAGE MAUL sequence: it paints "Scent of Blood" on you (a readable
+    // MARKED tell, `marksTarget`), then — after the ~1.2s wind-up cast bar — lands the
+    // charged Maul (single-target ×spike + a short pounce-shove on impact). The mark
+    // opens at cast-start and is consumed when the Maul lands; cleanse strips it early,
+    // a stun/freeze in the wind-up interrupts the pounce, and Brace cuts both the hit
+    // and the knockback. Tests Brace timing + burst, NOT AoE survival. Placeholder
+    // numbers — user balance pass.
+    chargedAttack: { name: 'Savage Maul', castMs: 1200, cooldownMs: 6500, initialCooldownMs: 3500, multiplier: 2.4, fx: 'savage-maul', knockback: { distance: 130 }, marksTarget: { durationMs: 1800 } },
+    // One readable 50% beat: the alpha calls a SMALL young-wolf pair ONCE to split your
+    // focus (target-priority test). Deliberately a one-time call of 2, capped — no
+    // repeated add spam; the Maul, not the adds, is the threat. Adds despawn on boss death.
     bossScript: {
       phases: [
         { hpPct: 0.5, actions: [
-          { type: 'spawn-adds', monsterTypeId: 'wolf', count: 3, offsetRange: 180 },
+          { type: 'spawn-adds', monsterTypeId: 'young-wolf', count: 2, maxAlive: 2, offsetRange: 180 },
           { type: 'enrage', atkMult: 1.1, cdMult: 0.85 },
         ] },
       ],
@@ -78,7 +93,7 @@ export const bossMonsterEntriesT1 = [
     id: 'crag-behemoth', name: 'Crag Behemoth', color: 0x8899bb,
     isBoss: true,
     stats: { hp: 1400, attack: 60, plating: 0, damageReduction: 0, speed: 22, attackRange: 18, attackCooldown: 3500, pullRange: 280 },
-    behavior: 'melee', attackStyle: 'impact', biome: 'mountain',
+    behavior: 'melee', attackStyle: 'quake', biome: 'mountain',
     rewards: { essence: 105, essenceType: 'blue', level: 5, biomeXp: 158, catalystBundle: 5 },
     ai: { wanderRadius: 120, leashRange: 750, idleMinMs: 2000, idleMaxMs: 5000 },
     chargeOnAggro: { speedMult: 3.0, durationMs: 1200 },
@@ -125,19 +140,27 @@ export const bossMonsterEntriesT1 = [
     id: 'obsidian-broodmother', name: 'Obsidian Broodmother', color: 0x334455,
     isBoss: true,
     stats: { hp: 1050, attack: 40, plating: 6, damageReduction: 0.10, speed: 24, attackRange: 18, attackCooldown: 2800, pullRange: 240 },
-    behavior: 'melee', attackStyle: 'impact', biome: 'cave',
+    behavior: 'melee', attackStyle: 'quake', biome: 'cave',
     rewards: { essence: 110, essenceType: 'red', level: 5, biomeXp: 165, catalystBundle: 5 },
     ai: { wanderRadius: 80, leashRange: 680, idleMinMs: 2500, idleMaxMs: 6500 },
     chargeOnAggro: { speedMult: 2.5, durationMs: 1200 },
     aoeAttack: { radius: 120, damageMult: 0.6 },
-    // CAVE EXAM = "survive the elite" (a durable %DR sponge). T1: at 50% the Broodmother
-    // digs in (timed shield) and hatches a small spider brood — endurance through a
-    // defended elite. Adds despawn on boss death. Numbers placeholder — user pass.
+    // CAVE EXAM = "survive the elite" (a durable %DR sponge). T1: a sparse, single-add
+    // fight, NOT a swarm. It periodically hatches ONE lurker (hard-capped at 2 alive),
+    // and at 50% it digs in (timed shield) and hatches ONE stronger brood spider. The
+    // single, predictable adds keep the focus on grinding the durable boss — Heavy
+    // Strike (single-target burst) and Second Wind (sustain) both pay off here. Adds
+    // despawn on boss death. Numbers placeholder — user pass.
     bossScript: {
       phases: [
         { hpPct: 0.5, actions: [
           { type: 'shield', drAdd: 0.25, durationMs: 5000 },
-          { type: 'spawn-adds', monsterTypeId: 'giant-spider', count: 2, offsetRange: 220 },
+          { type: 'spawn-adds', monsterTypeId: 'giant-spider', count: 1, maxAlive: 2, offsetRange: 220 },
+        ] },
+      ],
+      repeating: [
+        { intervalMs: 24_000, initialDelayMs: 12_000, actions: [
+          { type: 'spawn-adds', monsterTypeId: 'cave-lurker', count: 1, maxAlive: 1, offsetRange: 200 },
         ] },
       ],
     },

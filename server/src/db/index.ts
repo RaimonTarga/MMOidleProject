@@ -21,9 +21,6 @@ if (!connectionString) {
     );
   }
   connectionString = DEV_DEFAULT_DATABASE_URL;
-  console.warn(
-    `[db] DATABASE_URL not set — falling back to local dev Postgres (${DEV_DEFAULT_DATABASE_URL}).`,
-  );
 }
 
 // SSL is opt-in: local Postgres (docker-compose) and Railway's private-network
@@ -56,5 +53,4 @@ export async function runMigrations(): Promise<void> {
   // prod: server/dist/db -> server/src/db/migrations
   const migrationsFolder = path.join(__dirname, '..', '..', 'src', 'db', 'migrations');
   await migrate(db, { migrationsFolder });
-  console.log('[db] migrations applied');
 }

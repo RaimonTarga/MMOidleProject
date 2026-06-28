@@ -34,6 +34,7 @@ import { isInvulnerableMonster } from "../invulnerability";
 import { evadeBlocksDebuffs } from "../../defense/mitigation/evasion";
 import { pushDotTickEvent } from "./dotTickEvent";
 import { emitPlayerMonsterOnKill } from "./killHooks";
+import { applyMonsterDamageTakenDebuffs } from "../../classes/shared/debuffs";
 
 // ── Internal combat state keys ────────────────────────────────────────────────
 
@@ -308,19 +309,20 @@ function updateCorruptionEffects(world: World, dt: number): void {
     effect.data.nextTickIn -= dt;
     if (effect.data.nextTickIn <= 0) {
       effect.data.nextTickIn = effect.data.tickIntervalMs;
-      const damage = Math.round(computeReservoirDotTick(
+      const baseDamage = Math.round(computeReservoirDotTick(
         effect.data.pool ?? 0,
         effect.data.tickIntervalMs,
         effect.data.drainDurationMs,
       ));
-      if (damage <= 0) {
+      if (baseDamage <= 0) {
         if (effect.remainingMs <= 0) {
           removeStatusEffect(state, VOID_CORRUPTION_EFFECT_ID);
           detachMarkerIfNoEffect(world, e, "hasVoidCorruption", state, VOID_CORRUPTION_EFFECT_ID);
         }
         continue;
       }
-      effect.data.pool = Math.max(0, (effect.data.pool ?? 0) - damage);
+      const damage = applyMonsterDamageTakenDebuffs(state, baseDamage);
+      effect.data.pool = Math.max(0, (effect.data.pool ?? 0) - baseDamage);
       recordMonsterDamagedByPlayer(
         world,
         effect.sourceId,
@@ -372,16 +374,17 @@ function updateBurnEffects(world: World, dt: number): void {
       effect.data.nextTickIn -= dt;
       if (effect.data.nextTickIn <= 0) {
         effect.data.nextTickIn = effect.data.tickIntervalMs;
-        const damage = Math.round(computeReservoirDotTick(
+        const baseDamage = Math.round(computeReservoirDotTick(
           effect.data.pool ?? 0,
           effect.data.tickIntervalMs,
           effect.data.drainDurationMs,
         ));
-        if (damage <= 0) {
+        if (baseDamage <= 0) {
           if (effect.remainingMs <= 0) removeStatusEffect(state, effectId);
           continue;
         }
-        effect.data.pool = Math.max(0, (effect.data.pool ?? 0) - damage);
+        const damage = applyMonsterDamageTakenDebuffs(state, baseDamage);
+        effect.data.pool = Math.max(0, (effect.data.pool ?? 0) - baseDamage);
         recordMonsterDamagedByPlayer(
           world,
           effect.sourceId,

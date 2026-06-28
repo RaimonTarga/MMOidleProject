@@ -15,9 +15,6 @@ if (!connectionString) {
     );
   }
   connectionString = DEV_DEFAULT_LOG_DATABASE_URL;
-  console.warn(
-    `[logdb] LOG_DATABASE_URL not set — falling back to local dev Postgres (${DEV_DEFAULT_LOG_DATABASE_URL}).`,
-  );
 }
 
 const wantsSsl =
@@ -43,5 +40,4 @@ export const logDb = drizzle(logPool, { schema });
 export async function runLogMigrations(): Promise<void> {
   const migrationsFolder = path.join(__dirname, '..', '..', 'src', 'logdb', 'migrations');
   await migrate(logDb, { migrationsFolder });
-  console.log('[logdb] migrations applied');
 }

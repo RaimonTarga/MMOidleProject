@@ -17,6 +17,8 @@ export const tundraRecipeEntries = [
       { stats: { attack: 30 }, cost: { blue: 186 },  requiredBiomeLevel: 2 },
       { stats: { attack: 30 }, cost: { blue: 372 }, requiredBiomeLevel: 3 },
       { stats: { attack: 30 }, cost: { blue: 744 }, requiredBiomeLevel: 4 },
+      { stats: { attack: 30 }, cost: { blue: 744 }, requiredBiomeLevel: 4 },
+      { stats: { attack: 30 }, cost: { blue: 744 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -34,6 +36,8 @@ export const tundraRecipeEntries = [
     upgrades: [
       { stats: { maxHp: 22, plating: 4 }, cost: { blue: 90, red: 40 },  requiredBiomeLevel: 3 },
       { stats: { maxHp: 22, plating: 4 }, cost: { blue: 180, red: 60 }, requiredBiomeLevel: 4 },
+      { stats: { maxHp: 22, plating: 4 }, cost: { blue: 270, red: 80 }, requiredBiomeLevel: 4 },
+      { stats: { maxHp: 22, plating: 4 }, cost: { blue: 270, red: 80 }, requiredBiomeLevel: 4 },
       { stats: { maxHp: 22, plating: 4 }, cost: { blue: 270, red: 80 }, requiredBiomeLevel: 4 },
     ],
   }],
@@ -54,6 +58,8 @@ export const tundraRecipeEntries = [
       { mechanicEffects: { 'defense.shield-pct': 0.02, 'defense.absorb-pct': 0.02 }, cost: { blue: 50, purple: 25 },  requiredBiomeLevel: 4 },
       { mechanicEffects: { 'defense.shield-pct': 0.02, 'defense.absorb-pct': 0.02 }, cost: { blue: 100, purple: 50 }, requiredBiomeLevel: 4 },
       { mechanicEffects: { 'defense.shield-pct': 0.02, 'defense.absorb-pct': 0.02 }, cost: { blue: 200, purple: 100 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.shield-pct': 0.02, 'defense.absorb-pct': 0.02 }, cost: { blue: 200, purple: 100 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.shield-pct': 0.02, 'defense.absorb-pct': 0.02 }, cost: { blue: 200, purple: 100 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -67,6 +73,8 @@ export const tundraRecipeEntries = [
     upgrades: [
       { stats: { speed: 8 },  cost: { blue: 30 },  requiredBiomeLevel: 4 },
       { stats: { speed: 12 }, cost: { blue: 60 },  requiredBiomeLevel: 4 },
+      { stats: { speed: 16 }, cost: { blue: 100 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 16 }, cost: { blue: 100 }, requiredBiomeLevel: 4 },
       { stats: { speed: 16 }, cost: { blue: 100 }, requiredBiomeLevel: 4 },
     ],
   }],
@@ -88,6 +96,8 @@ export const tundraRecipeEntries = [
       { stats: { attack: 50 }, cost: { blue: 410 },  requiredBiomeLevel: 8 },
       { stats: { attack: 50 }, cost: { blue: 819 },  requiredBiomeLevel: 9 },
       { stats: { attack: 50 }, cost: { blue: 1638 }, requiredBiomeLevel: 10 },
+      { stats: { attack: 50 }, cost: { blue: 1638 }, requiredBiomeLevel: 10 },
+      { stats: { attack: 50 }, cost: { blue: 1638 }, requiredBiomeLevel: 10 },
     ],
   }],
 
@@ -103,6 +113,8 @@ export const tundraRecipeEntries = [
     upgrades: [
       { stats: { attack: 35 }, cost: { blue: 387 },  requiredBiomeLevel: 8 },
       { stats: { attack: 35 }, cost: { blue: 774 },  requiredBiomeLevel: 9 },
+      { stats: { attack: 35 }, cost: { blue: 1548 }, requiredBiomeLevel: 10 },
+      { stats: { attack: 35 }, cost: { blue: 1548 }, requiredBiomeLevel: 10 },
       { stats: { attack: 35 }, cost: { blue: 1548 }, requiredBiomeLevel: 10 },
     ],
   }],
@@ -122,6 +134,8 @@ export const tundraRecipeEntries = [
       { stats: { maxHp: 42, plating: 7 }, cost: { blue: 290, red: 96 },  requiredBiomeLevel: 9 },
       { stats: { maxHp: 42, plating: 7 }, cost: { blue: 572, red: 192 }, requiredBiomeLevel: 10 },
       { stats: { maxHp: 42, plating: 7 }, cost: { blue: 858, red: 290 }, requiredBiomeLevel: 10 },
+      { stats: { maxHp: 42, plating: 7 }, cost: { blue: 858, red: 290 }, requiredBiomeLevel: 10 },
+      { stats: { maxHp: 42, plating: 7 }, cost: { blue: 858, red: 290 }, requiredBiomeLevel: 10 },
     ],
   }],
 
@@ -139,6 +153,8 @@ export const tundraRecipeEntries = [
     upgrades: [
       { mechanicEffects: { 'defense.shield-pct': 0.03, 'defense.absorb-pct': 0.03 }, cost: { blue: 110, purple: 30 }, requiredBiomeLevel: 10 },
       { mechanicEffects: { 'defense.shield-pct': 0.03, 'defense.absorb-pct': 0.03 }, cost: { blue: 220, purple: 60 }, requiredBiomeLevel: 10 },
+      { mechanicEffects: { 'defense.shield-pct': 0.03, 'defense.absorb-pct': 0.03 }, cost: { blue: 340, purple: 90 }, requiredBiomeLevel: 10 },
+      { mechanicEffects: { 'defense.shield-pct': 0.03, 'defense.absorb-pct': 0.03 }, cost: { blue: 340, purple: 90 }, requiredBiomeLevel: 10 },
       { mechanicEffects: { 'defense.shield-pct': 0.03, 'defense.absorb-pct': 0.03 }, cost: { blue: 340, purple: 90 }, requiredBiomeLevel: 10 },
     ],
   }],
@@ -160,6 +176,8 @@ export const tundraRecipeEntries = [
       { mechanicEffects: { 'defense.shield-pct': 0.03, 'defense.absorb-ramp-max-pct': 0.03 }, cost: { blue: 110, purple: 30 }, requiredBiomeLevel: 10 },
       { mechanicEffects: { 'defense.shield-pct': 0.03, 'defense.absorb-ramp-max-pct': 0.03 }, cost: { blue: 220, purple: 60 }, requiredBiomeLevel: 10 },
       { mechanicEffects: { 'defense.shield-pct': 0.03, 'defense.absorb-ramp-max-pct': 0.03 }, cost: { blue: 340, purple: 90 }, requiredBiomeLevel: 10 },
+      { mechanicEffects: { 'defense.shield-pct': 0.03, 'defense.absorb-ramp-max-pct': 0.03 }, cost: { blue: 340, purple: 90 }, requiredBiomeLevel: 10 },
+      { mechanicEffects: { 'defense.shield-pct': 0.03, 'defense.absorb-ramp-max-pct': 0.03 }, cost: { blue: 340, purple: 90 }, requiredBiomeLevel: 10 },
     ],
   }],
 
@@ -174,6 +192,8 @@ export const tundraRecipeEntries = [
     upgrades: [
       { stats: { speed: 10 }, cost: { blue: 66 },  requiredBiomeLevel: 10 },
       { stats: { speed: 14 }, cost: { blue: 132 }, requiredBiomeLevel: 10 },
+      { stats: { speed: 18 }, cost: { blue: 220 }, requiredBiomeLevel: 10 },
+      { stats: { speed: 18 }, cost: { blue: 220 }, requiredBiomeLevel: 10 },
       { stats: { speed: 18 }, cost: { blue: 220 }, requiredBiomeLevel: 10 },
     ],
   }],

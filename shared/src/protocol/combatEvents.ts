@@ -57,4 +57,15 @@ export type CombatEvent =
   // Server forced the player to a new position (e.g. blunderbuss recoil). The
   // client owns own-player prediction, so it must be told to accept the move
   // even mid-movement; `pos` is the authoritative destination to slide to.
-  | { kind: 'player-knockback'; playerId: string; pos: Vec2 };
+  | { kind: 'player-knockback'; playerId: string; pos: Vec2 }
+  // A boss scripted-action cue, shown to the whole node (purely cosmetic). `slam`
+  // is a telegraphed AoE ground-slam (`radius` in world units, `element` from the
+  // boss's attackStyle tints the shockwave); `summon` marks an add-spawn beat;
+  // `shield` a barrier coming up; `morph` a shape/range flip. The damage/spawn/
+  // shield are all server-authoritative — this only drives the animation.
+  | { kind: 'boss-fx'; monsterId: string; pos: Vec2; fx: 'slam' | 'summon' | 'shield' | 'morph'; radius?: number; element?: string }
+  // A self-facing Guard ability fired (Brace / Cleanse / Second Wind). Drives the
+  // in-world Guard FX on the player's sprite, shown to the whole node so allies see
+  // each other react. `ability` is the ability id; the client picks the FX by id.
+  // Purely cosmetic — the buff/heal/cleanse is server-authoritative.
+  | { kind: 'player-guard'; playerId: string; ability: string };

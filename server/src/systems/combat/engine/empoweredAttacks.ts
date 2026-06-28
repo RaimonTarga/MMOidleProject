@@ -96,8 +96,8 @@ export function registerEmpoweredMultiplier(
     }
 
     // Chaotic miss: the attack whiffs. Don't consume the empowered charge, don't
-    // multiply, don't set empoweredAttack metadata (which would fire the AoE splash
-    // and restart cooldowns). The charge stays armed for the next real hit.
+    // multiply, don't set empoweredAttack metadata (which would restart cooldowns and
+    // mark the hit empowered). The charge stays armed for the next real hit.
     if (ctx.metadata['chaoticMiss']) return;
 
     if (!consumeEmpoweredAttack(world, ctx.attacker)) return;
@@ -139,11 +139,5 @@ export function registerEmpoweredMultiplier(
     ctx.metadata['empoweredMultiplier'] = effectiveMult;
     ctx.metadata['empoweredBonus']      = ctx.damage - base;
 
-    if (!process.env.BALANCE_BENCH) {
-      console.log(
-        `[Empowered] ${ctx.attacker.entityId}: ${effectiveMult}x hit on ${ctx.defender.entityId} — ` +
-          `${base} → ${ctx.damage} dmg (+${ctx.damage - base})`,
-      );
-    }
   });
 }

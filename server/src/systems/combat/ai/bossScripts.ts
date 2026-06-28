@@ -40,6 +40,7 @@ import { initScriptsBoss } from '@mmo-idle/shared';
 import { attachComponent } from '../../../ecs/markerHelpers';
 import { markSliceDirty } from '../../../ecs/dirtyHelpers';
 import { applyMonsterAoe } from '../damage/aoeDamage';
+import { setAggroTarget, setAttackTarget } from './targeting';
 
 export type { ScriptsBoss, ActiveBossEffect } from '@mmo-idle/shared';
 export { initScriptsBoss } from '@mmo-idle/shared';
@@ -168,6 +169,40 @@ function tickRepeatingActions(
   }
 }
 
+function inheritBossTarget(world: World, boss: MonsterEntity, add: MonsterEntity): void {
+  const aggroTarget = boss.hasAggroTarget;
+  if (!aggroTarget) return;
+
+  setAggroTarget(
+    world,
+    add,
+    { id: aggroTarget.targetId, kind: aggroTarget.targetKind },
+    Date.now(),
+  );
+  setAttackTarget(world, add, boss.hasAttackTarget?.targetId ?? aggroTarget.targetId);
+}
+
+/**
+ * Push a cosmetic node-wide boss cue so the client can animate a scripted action
+ * (telegraphed slam, add-summon, barrier-up, morph). The mechanic itself is
+ * already applied server-side — this only drives the FX.
+ */
+function pushBossFx(
+  world: World,
+  monster: MonsterEntity,
+  fx: 'slam' | 'summon' | 'shield' | 'morph',
+  extra?: { radius?: number; element?: string },
+): void {
+  world.pushEvent(monster.hasPosition.nodeId, {
+    kind: 'boss-fx',
+    monsterId: monster.isMonster.id,
+    pos: { ...monster.hasPosition.current },
+    fx,
+    ...(extra?.radius !== undefined ? { radius: extra.radius } : {}),
+    ...(extra?.element !== undefined ? { element: extra.element } : {}),
+  });
+}
+
 function applyAction(
   action: BossAction,
   monster: MonsterEntity,
@@ -207,6 +242,7 @@ function applyAction(
       };
       monster.mitigatesDamage.damageReduction = Math.min(0.95, monster.mitigatesDamage.damageReduction + action.drAdd);
       state.activeEffects.push(effect);
+      pushBossFx(world, monster, 'shield');
       break;
     }
 
@@ -262,8 +298,10 @@ function applyAction(
           x: Math.max(64, Math.min(nodeWidth  - 64, monster.hasPosition.current.x + Math.cos(angle) * dist)),
           y: Math.max(64, Math.min(nodeHeight - 64, monster.hasPosition.current.y + Math.sin(angle) * dist)),
         };
-        world.createMonster(monster.hasPosition.nodeId, action.monsterTypeId, pos);
+        const summon = world.createMonster(monster.hasPosition.nodeId, action.monsterTypeId, pos);
+        if (summon) inheritBossTarget(world, monster, summon);
       }
+      pushBossFx(world, monster, 'summon');
       break;
     }
 
@@ -306,6 +344,7 @@ function applyAction(
 
       // Only track the effect when it can expire — a permanent morph needs no bookkeeping.
       if (timed) state.activeEffects.push(effect);
+      pushBossFx(world, monster, 'morph');
       break;
     }
 
@@ -319,6 +358,11 @@ function applyAction(
         action.radius,
         monster.dealsDamage.attack * (action.damageMult ?? 1),
       );
+      // Telegraphed ground-slam shockwave, element-tinted by the boss's style.
+      pushBossFx(world, monster, 'slam', {
+        radius: action.radius,
+        element: MONSTER_DATABASE.get(monster.isMonster.monsterTypeId)?.attackStyle,
+      });
       break;
     }
 
@@ -330,6 +374,7 @@ function applyAction(
         intervalMs: action.intervalMs,
         durationMs: action.durationMs,
       };
+      pushBossFx(world, monster, 'shield');
       break;
     }
 
@@ -402,8 +447,12 @@ function applyAction(
           y: Math.max(64, Math.min(nodeHeight - 64, monster.hasPosition.current.y + Math.sin(angle) * dist)),
         };
         const add = world.createMonster(monster.hasPosition.nodeId, action.monsterTypeId, pos);
-        if (add) state.spawnedAddIds.push(add.isMonster.id);
+        if (add) {
+          inheritBossTarget(world, monster, add);
+          state.spawnedAddIds.push(add.isMonster.id);
+        }
       }
+      if (budget > 0) pushBossFx(world, monster, 'summon');
       break;
     }
   }

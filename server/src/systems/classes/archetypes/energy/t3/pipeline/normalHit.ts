@@ -2,7 +2,7 @@ import { registerCombatListener } from '../../../../../combat/engine/combatPipel
 import { isEmpoweredAttack } from '../../../../../combat/engine/empoweredAttacks';
 import { evadeBlocksDebuffs } from '../../../../../defense/mitigation/evasion';
 import {
-  applyStatusEffect, removeStatusEffect, getStatusEffect, getTotalStacks,
+  applyStatusEffect, removeStatusEffect, getStatusEffect,
 } from '@mmo-idle/shared';
 import { resolveUpkeepConfig, upkeepStacks, upkeepOnHitBonus, UPKEEP_UNLOCK_TIER } from '@mmo-idle/shared';
 import { hasPassive, energyPercent, chargeStateMult } from '../core/helpers';
@@ -63,7 +63,6 @@ export function registerNormalHit(): void {
       if (energyPercent(energy) > MV_THRESHOLD && energy.energy >= MV_ENERGY_COST) {
         energy.energy = Math.max(0, energy.energy - MV_ENERGY_COST);
         ctx.damage += MV_FLAT_DAMAGE;
-        console.log(`[MicroVenting] ${player.isPlayer.id}: vent -> +${MV_FLAT_DAMAGE} dmg`);
       }
     }
 
@@ -73,7 +72,6 @@ export function registerNormalHit(): void {
         ctx.damage += PD_STACK_FLAT_DMG;
         oc.stacks   = Math.max(0, oc.stacks - 1);
         if (oc.stacks === 0) removeStatusEffect(state, PD_OVERCHARGE_FX);
-        console.log(`[PolarityDecay] ${player.isPlayer.id}: 1 overcharge consumed -> +${PD_STACK_FLAT_DMG} dmg`);
       }
     }
 
@@ -99,14 +97,12 @@ export function registerNormalHit(): void {
           remainingMs: CI_TAG_MS, refreshable: true,
           sourceId: player.isPlayer.id, data: {},
         });
-        console.log(`[CascadeInduct] ${player.isPlayer.id}: tag planted -> ${getTotalStacks(monsterState, CI_TAG_FX)} on ${ctx.defender.isMonster.id}`);
       }
     }
 
     if (hasPassive(player, 'energy.superconducting-mass')) {
       ctx.damage = 0;
       energy.smChargePool += player.dealsDamage.attack;
-      console.log(`[SuperconductM] ${player.isPlayer.id}: +${player.dealsDamage.attack} stored (pool=${energy.smChargePool})`);
     }
 
     // ── T4 specs ───────────────────────────────────────────────────────────────
@@ -115,9 +111,8 @@ export function registerNormalHit(): void {
     if (hasPassive(player, 'energy.overdrive') && energy.overdriveActive) {
       const attackBonus = Math.max(0, passives['energy.overdrive-attack-damage-pct'] ?? ENERGY_OVERDRIVE_ATK_PCT);
       ctx.damage = Math.round(ctx.damage * (1 + attackBonus));
-      // Aesthetic-only crits while Surge is active: yellow "!" styling, no AoE.
+      // Aesthetic-only crits while Surge is active: yellow "!" styling.
       ctx.metadata['empoweredAttack'] = true;
-      ctx.metadata['suppressEmpoweredAoe'] = true;
     }
 
     // Energy Upkeep (Channeler): ADD flat on-hit damage from upkeep stacks — strictly

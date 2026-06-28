@@ -19,6 +19,8 @@ export const caveRecipeEntries = [
       { stats: { attack: 7 }, cost: { red: 30 }, requiredBiomeLevel: 2 },
       { stats: { attack: 7}, cost: { red: 66 }, requiredBiomeLevel: 3 },
       { stats: { attack: 8 }, cost: { red: 126 }, requiredBiomeLevel: 4 },
+      { stats: { attack: 8 }, cost: { red: 126 }, requiredBiomeLevel: 4 },
+      { stats: { attack: 8 }, cost: { red: 126 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -31,6 +33,8 @@ export const caveRecipeEntries = [
     upgrades: [
       { stats: { maxHp: 7, plating: 1, damageReduction: 0.02 }, cost: { red: 50 }, requiredBiomeLevel: 3 },
       { stats: { maxHp: 7, plating: 1, damageReduction: 0.02 }, cost: { red: 100 }, requiredBiomeLevel: 4 },
+      { stats: { maxHp: 7, plating: 1, damageReduction: 0.02 }, cost: { red: 150 }, requiredBiomeLevel: 4 },
+      { stats: { maxHp: 7, plating: 1, damageReduction: 0.02 }, cost: { red: 150 }, requiredBiomeLevel: 4 },
       { stats: { maxHp: 7, plating: 1, damageReduction: 0.02 }, cost: { red: 150 }, requiredBiomeLevel: 4 },
     ],
   }],
@@ -48,6 +52,8 @@ export const caveRecipeEntries = [
       { mechanicEffects: { 'defense.regen-burst-pct': 0.01 }, cost: { red: 15 }, requiredBiomeLevel: 4 },
       { mechanicEffects: { 'defense.regen-burst-pct': 0.01 }, cost: { red: 33 }, requiredBiomeLevel: 4 },
       { mechanicEffects: { 'defense.regen-burst-pct': 0.01 }, cost: { red: 63 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.regen-burst-pct': 0.01 }, cost: { red: 63 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.regen-burst-pct': 0.01 }, cost: { red: 63 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -61,6 +67,8 @@ export const caveRecipeEntries = [
     upgrades: [
       { stats: { speed: 3 }, cost: { red: 10 }, requiredBiomeLevel: 4 },
       { stats: { speed: 4 }, cost: { red: 22 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 4 }, cost: { red: 42 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 4 }, cost: { red: 42 }, requiredBiomeLevel: 4 },
       { stats: { speed: 4 }, cost: { red: 42 }, requiredBiomeLevel: 4 },
     ],
   }],
@@ -77,6 +85,8 @@ export const caveRecipeEntries = [
       { stats: { attack: 14 }, cost: { red: 78 }, requiredBiomeLevel: 8 },
       { stats: { attack: 14 }, cost: { red: 162 }, requiredBiomeLevel: 9 },
       { stats: { attack: 14 }, cost: { red: 288 }, requiredBiomeLevel: 10 },
+      { stats: { attack: 14 }, cost: { red: 288 }, requiredBiomeLevel: 10 },
+      { stats: { attack: 14 }, cost: { red: 288 }, requiredBiomeLevel: 10 },
     ],
   }],
 
@@ -89,6 +99,8 @@ export const caveRecipeEntries = [
     upgrades: [
       { stats: { maxHp: 10, plating: 2, damageReduction: 0.02 }, cost: { red: 80 }, requiredBiomeLevel: 9 },
       { stats: { maxHp: 10, plating: 2, damageReduction: 0.02 }, cost: { red: 175 }, requiredBiomeLevel: 10 },
+      { stats: { maxHp: 10, plating: 2, damageReduction: 0.02 }, cost: { red: 300 }, requiredBiomeLevel: 10 },
+      { stats: { maxHp: 10, plating: 2, damageReduction: 0.02 }, cost: { red: 300 }, requiredBiomeLevel: 10 },
       { stats: { maxHp: 10, plating: 2, damageReduction: 0.02 }, cost: { red: 300 }, requiredBiomeLevel: 10 },
     ],
   }],
@@ -106,6 +118,8 @@ export const caveRecipeEntries = [
       { mechanicEffects: { 'defense.regen-burst-pct': 0.02 }, cost: { red: 33 }, requiredBiomeLevel: 10 },
       { mechanicEffects: { 'defense.regen-burst-pct': 0.02 }, cost: { red: 66 }, requiredBiomeLevel: 10 },
       { mechanicEffects: { 'defense.regen-burst-pct': 0.02 }, cost: { red: 120 }, requiredBiomeLevel: 10 },
+      { mechanicEffects: { 'defense.regen-burst-pct': 0.02 }, cost: { red: 120 }, requiredBiomeLevel: 10 },
+      { mechanicEffects: { 'defense.regen-burst-pct': 0.02 }, cost: { red: 120 }, requiredBiomeLevel: 10 },
     ],
   }],
 
@@ -119,6 +133,8 @@ export const caveRecipeEntries = [
     upgrades: [
       { stats: { speed: 3 }, cost: { red: 22 }, requiredBiomeLevel: 10 },
       { stats: { speed: 4 }, cost: { red: 44 }, requiredBiomeLevel: 10 },
+      { stats: { speed: 5 }, cost: { red: 78 }, requiredBiomeLevel: 10 },
+      { stats: { speed: 5 }, cost: { red: 78 }, requiredBiomeLevel: 10 },
       { stats: { speed: 5 }, cost: { red: 78 }, requiredBiomeLevel: 10 },
     ],
   }],
@@ -135,6 +151,8 @@ export const caveRecipeEntries = [
       { stats: { attack: 16 }, cost: { red: 174 },  requiredBiomeLevel: 14 },
       { stats: { attack: 16 }, cost: { red: 348 }, requiredBiomeLevel: 15 },
       { stats: { attack: 16 }, cost: { red: 588 }, requiredBiomeLevel: 16 },
+      { stats: { attack: 16 }, cost: { red: 588 }, requiredBiomeLevel: 16 },
+      { stats: { attack: 16 }, cost: { red: 588 }, requiredBiomeLevel: 16 },
     ],
   }],
 
@@ -148,6 +166,8 @@ export const caveRecipeEntries = [
     upgrades: [
       { stats: { maxHp: 15, plating: 2, damageReduction: 0.02 }, cost: { red: 135, yellow: 45 },  requiredBiomeLevel: 15 },
       { stats: { maxHp: 15, plating: 2, damageReduction: 0.02 }, cost: { red: 270, yellow: 90 }, requiredBiomeLevel: 16 },
+      { stats: { maxHp: 15, plating: 2, damageReduction: 0.02 }, cost: { red: 450, yellow: 150 }, requiredBiomeLevel: 16 },
+      { stats: { maxHp: 15, plating: 2, damageReduction: 0.02 }, cost: { red: 450, yellow: 150 }, requiredBiomeLevel: 16 },
       { stats: { maxHp: 15, plating: 2, damageReduction: 0.02 }, cost: { red: 450, yellow: 150 }, requiredBiomeLevel: 16 },
     ],
   }],
@@ -166,6 +186,8 @@ export const caveRecipeEntries = [
       { mechanicEffects: { 'defense.regen-burst-pct': 0.02, 'defense.in-combat-regen-pct': 0.01 }, cost: { red: 50, green: 25 },  requiredBiomeLevel: 16 },
       { mechanicEffects: { 'defense.regen-burst-pct': 0.02, 'defense.in-combat-regen-pct': 0.01 }, cost: { red: 112, green: 38}, requiredBiomeLevel: 16 },
       { mechanicEffects: { 'defense.regen-burst-pct': 0.02, 'defense.in-combat-regen-pct': 0.01 }, cost: { red: 200, green: 50 }, requiredBiomeLevel: 16 },
+      { mechanicEffects: { 'defense.regen-burst-pct': 0.02, 'defense.in-combat-regen-pct': 0.01 }, cost: { red: 200, green: 50 }, requiredBiomeLevel: 16 },
+      { mechanicEffects: { 'defense.regen-burst-pct': 0.02, 'defense.in-combat-regen-pct': 0.01 }, cost: { red: 200, green: 50 }, requiredBiomeLevel: 16 },
     ],
   }],
 
@@ -180,6 +202,8 @@ export const caveRecipeEntries = [
     upgrades: [
       { stats: { speed: 4 }, cost: { red: 30 },  requiredBiomeLevel: 16 },
       { stats: { speed: 5 }, cost: { red: 60 },  requiredBiomeLevel: 16 },
+      { stats: { speed: 6 }, cost: { red: 105 }, requiredBiomeLevel: 16 },
+      { stats: { speed: 6 }, cost: { red: 105 }, requiredBiomeLevel: 16 },
       { stats: { speed: 6 }, cost: { red: 105 }, requiredBiomeLevel: 16 },
     ],
   }],

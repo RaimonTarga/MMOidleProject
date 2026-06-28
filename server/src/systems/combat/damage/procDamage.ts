@@ -16,6 +16,7 @@ import {
   recordMonsterDamagedByPlayer,
   recordPlayerKillMonster,
 } from '../../../world/worldLogCombat';
+import { applyMonsterDamageTakenDebuffs } from '../../classes/shared/debuffs';
 
 export interface PlayerProcDamageOpts {
   tags?: string[];
@@ -39,7 +40,10 @@ export function applyPlayerProcDamage(
   if (damage <= 0) return 'skipped';
   if (isInvulnerableMonster(target)) return 'skipped';
 
-  const hpDamage = Math.max(1, Math.round(damage));
+  const hpDamage = Math.max(
+    1,
+    applyMonsterDamageTakenDebuffs(target.tracksCombat, Math.round(damage)),
+  );
   const nodeId = player.hasPosition.nodeId;
   const playerId = player.isPlayer.id;
   const source = actorFromPlayer(player);

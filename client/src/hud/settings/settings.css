@@ -214,6 +214,13 @@
   accent-color: var(--hud-primary);
 }
 
+.settings-slider-value {
+  min-width: 42px;
+  color: var(--hud-primary-strong);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
 .settings-field-row select {
   min-width: 150px;
   padding: 4px 8px;

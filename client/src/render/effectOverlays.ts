@@ -2,6 +2,10 @@ import type Phaser from 'phaser';
 import { EFFECT_BY_ID, EFFECT_FRAME_COUNT, type MinionView, type MonsterView, type PlayerView } from '@mmo-idle/shared';
 import type { RenderState } from './state';
 import type { GameScene } from '../scenes/GameScene';
+import { playSfx } from '../audio/audioEngine';
+
+// Frost-family overlays voice the `frozen` cue when they first land on you.
+const FROST_EFFECT_IDS = new Set(['freeze', 'glacial-fracture', 'permafrost']);
 
 type OverlayView = PlayerView | MonsterView | MinionView;
 
@@ -92,6 +96,8 @@ function updateOverlayForEffect(
       .sprite(sprite.x, sprite.y, def.key)
       .setDepth(sprite.depth + 1);
     overlays.set(effectId, overlay);
+    // A frost overlay just appeared on the local player — play the ice cue.
+    if (id === scene.myId && FROST_EFFECT_IDS.has(effectId)) playSfx('frozen');
   }
 
   let rawFrame: number;

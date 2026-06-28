@@ -218,7 +218,7 @@ Pyromancer / Firebrand / Cinder Lord · **Frost (heavy)** Icebreaker / Winter Wa
   granting/adding lives in `t3/index.ts`; the attack-speed reassert (recalc-safe) in `ticks/frenzy.ts`
   via `appliesDots.frenzyBaseCd/frenzyAppliedCd`.
 - **Pyromancer (fan-the-flames):** full-stack bonus hit nerfed 3×→2×, flagged as an aesthetic crit
-  (`empoweredAttack` + `suppressEmpoweredAoe`).
+  (`empoweredAttack`; empowered hits no longer carry an inherent AoE splash).
 - **Firebrand (ignition):** first hit on a fresh target sears in all stacks at 60% tick value and
   pushes the `'firebrand'` client effect (`fxFirebrand`). Once fully branded, hits **bypass the DoT
   conversion** and land as full 100% direct attacks (dividing out the dispatcher's `convPct` cut, same

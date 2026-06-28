@@ -20,6 +20,8 @@ export const swampRecipeEntries = [
       { stats: { attack: 4 }, cost: { purple: 30 }, requiredBiomeLevel: 2 },
       { stats: { attack: 4 }, cost: { purple: 60 }, requiredBiomeLevel: 3 },
       { stats: { attack: 4 }, cost: { purple: 120 }, requiredBiomeLevel: 4 },
+      { stats: { attack: 4 }, cost: { purple: 120 }, requiredBiomeLevel: 4 },
+      { stats: { attack: 4 }, cost: { purple: 120 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -34,6 +36,8 @@ export const swampRecipeEntries = [
     upgrades: [
       { stats: { maxHp: 6, plating: 2 }, cost: { purple: 30 }, requiredBiomeLevel: 3 },
       { stats: { maxHp: 6, plating: 2 }, cost: { purple: 60 }, requiredBiomeLevel: 4 },
+      { stats: { maxHp: 6, plating: 2 }, cost: { purple: 120 }, requiredBiomeLevel: 4 },
+      { stats: { maxHp: 6, plating: 2 }, cost: { purple: 120 }, requiredBiomeLevel: 4 },
       { stats: { maxHp: 6, plating: 2 }, cost: { purple: 120 }, requiredBiomeLevel: 4 },
     ],
   }],
@@ -51,6 +55,8 @@ export const swampRecipeEntries = [
       { mechanicEffects: { 'defense.absorb-pct': 0.01 }, cost: { purple: 15 }, requiredBiomeLevel: 4 },
       { mechanicEffects: { 'defense.absorb-pct': 0.01 }, cost: { purple: 33 }, requiredBiomeLevel: 4 },
       { mechanicEffects: { 'defense.absorb-pct': 0.01 }, cost: { purple: 63 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.absorb-pct': 0.01 }, cost: { purple: 63 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.absorb-pct': 0.01 }, cost: { purple: 63 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -64,6 +70,8 @@ export const swampRecipeEntries = [
     upgrades: [
       { stats: { speed: 3 }, cost: { purple: 10 }, requiredBiomeLevel: 4 },
       { stats: { speed: 4 }, cost: { purple: 22 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 4 }, cost: { purple: 42 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 4 }, cost: { purple: 42 }, requiredBiomeLevel: 4 },
       { stats: { speed: 4 }, cost: { purple: 42 }, requiredBiomeLevel: 4 },
     ],
   }],
@@ -80,6 +88,8 @@ export const swampRecipeEntries = [
       { stats: { attack: 10 }, cost: { purple: 78 }, requiredBiomeLevel: 8 },
       { stats: { attack: 10 }, cost: { purple: 156 }, requiredBiomeLevel: 9 },
       { stats: { attack: 10 }, cost: { purple: 312 }, requiredBiomeLevel: 10 },
+      { stats: { attack: 10 }, cost: { purple: 312 }, requiredBiomeLevel: 10 },
+      { stats: { attack: 10 }, cost: { purple: 312 }, requiredBiomeLevel: 10 },
     ],
   }],
 
@@ -93,6 +103,8 @@ export const swampRecipeEntries = [
     upgrades: [
       { stats: { attack: 12 }, cost: { purple: 80 }, requiredBiomeLevel: 8 },
       { stats: { attack: 12 }, cost: { purple: 160 }, requiredBiomeLevel: 9 },
+      { stats: { attack: 12 }, cost: { purple: 320 }, requiredBiomeLevel: 10 },
+      { stats: { attack: 12 }, cost: { purple: 320 }, requiredBiomeLevel: 10 },
       { stats: { attack: 12 }, cost: { purple: 320 }, requiredBiomeLevel: 10 },
     ],
   }],
@@ -108,6 +120,8 @@ export const swampRecipeEntries = [
     upgrades: [
       { stats: { maxHp: 12, plating: 2 }, cost: { purple: 75 }, requiredBiomeLevel: 9 },
       { stats: { maxHp: 12, plating: 2 }, cost: { purple: 150 }, requiredBiomeLevel: 10 },
+      { stats: { maxHp: 12, plating: 2 }, cost: { purple: 300 }, requiredBiomeLevel: 10 },
+      { stats: { maxHp: 12, plating: 2 }, cost: { purple: 300 }, requiredBiomeLevel: 10 },
       { stats: { maxHp: 12, plating: 2 }, cost: { purple: 300 }, requiredBiomeLevel: 10 },
     ],
   }],
@@ -125,6 +139,8 @@ export const swampRecipeEntries = [
       { mechanicEffects: { 'defense.absorb-pct': 0.02 }, cost: { purple: 30 }, requiredBiomeLevel: 10 },
       { mechanicEffects: { 'defense.absorb-pct': 0.02 }, cost: { purple: 60 }, requiredBiomeLevel: 10 },
       { mechanicEffects: { 'defense.absorb-pct': 0.02 }, cost: { purple: 120 }, requiredBiomeLevel: 10 },
+      { mechanicEffects: { 'defense.absorb-pct': 0.02 }, cost: { purple: 120 }, requiredBiomeLevel: 10 },
+      { mechanicEffects: { 'defense.absorb-pct': 0.02 }, cost: { purple: 120 }, requiredBiomeLevel: 10 },
     ],
   }],
 
@@ -138,6 +154,8 @@ export const swampRecipeEntries = [
     upgrades: [
       { stats: { speed: 3 }, cost: { purple: 22 }, requiredBiomeLevel: 10 },
       { stats: { speed: 4 }, cost: { purple: 44 }, requiredBiomeLevel: 10 },
+      { stats: { speed: 5 }, cost: { purple: 78 }, requiredBiomeLevel: 10 },
+      { stats: { speed: 5 }, cost: { purple: 78 }, requiredBiomeLevel: 10 },
       { stats: { speed: 5 }, cost: { purple: 78 }, requiredBiomeLevel: 10 },
     ],
   }],
@@ -154,6 +172,8 @@ export const swampRecipeEntries = [
       { stats: { attack: 14 }, cost: { purple: 170 },  requiredBiomeLevel: 14 },
       { stats: { attack: 14 }, cost: { purple: 340 }, requiredBiomeLevel: 15 },
       { stats: { attack: 14 }, cost: { purple: 696 }, requiredBiomeLevel: 16 },
+      { stats: { attack: 14 }, cost: { purple: 696 }, requiredBiomeLevel: 16 },
+      { stats: { attack: 14 }, cost: { purple: 696 }, requiredBiomeLevel: 16 },
     ],
   }],
 
@@ -167,6 +187,8 @@ export const swampRecipeEntries = [
     upgrades: [
       { stats: { attack: 18 }, cost: { purple: 180 },  requiredBiomeLevel: 14 },
       { stats: { attack: 18 }, cost: { purple: 360 }, requiredBiomeLevel: 15 },
+      { stats: { attack: 18 }, cost: { purple: 720 }, requiredBiomeLevel: 16 },
+      { stats: { attack: 18 }, cost: { purple: 720 }, requiredBiomeLevel: 16 },
       { stats: { attack: 18 }, cost: { purple: 720 }, requiredBiomeLevel: 16 },
     ],
   }],
@@ -182,6 +204,8 @@ export const swampRecipeEntries = [
     upgrades: [
       { stats: { maxHp: 18, plating: 3 }, cost: { purple: 180 },  requiredBiomeLevel: 15 },
       { stats: { maxHp: 18, plating: 3 }, cost: { purple: 360 }, requiredBiomeLevel: 16 },
+      { stats: { maxHp: 18, plating: 3 }, cost: { purple: 720 }, requiredBiomeLevel: 16 },
+      { stats: { maxHp: 18, plating: 3 }, cost: { purple: 720 }, requiredBiomeLevel: 16 },
       { stats: { maxHp: 18, plating: 3 }, cost: { purple: 720 }, requiredBiomeLevel: 16 },
     ],
   }],
@@ -199,6 +223,8 @@ export const swampRecipeEntries = [
       { mechanicEffects: { 'defense.absorb-pct': 0.04 }, cost: { purple: 75 },  requiredBiomeLevel: 16 },
       { mechanicEffects: { 'defense.absorb-pct': 0.04 }, cost: { purple: 150 }, requiredBiomeLevel: 16 },
       { mechanicEffects: { 'defense.absorb-pct': 0.04 }, cost: { purple: 300 }, requiredBiomeLevel: 16 },
+      { mechanicEffects: { 'defense.absorb-pct': 0.04 }, cost: { purple: 300 }, requiredBiomeLevel: 16 },
+      { mechanicEffects: { 'defense.absorb-pct': 0.04 }, cost: { purple: 300 }, requiredBiomeLevel: 16 },
     ],
   }],
 
@@ -212,6 +238,8 @@ export const swampRecipeEntries = [
     upgrades: [
       { stats: { speed: 4 }, cost: { purple: 30 },  requiredBiomeLevel: 16 },
       { stats: { speed: 5 }, cost: { purple: 60 },  requiredBiomeLevel: 16 },
+      { stats: { speed: 6 }, cost: { purple: 105 }, requiredBiomeLevel: 16 },
+      { stats: { speed: 6 }, cost: { purple: 105 }, requiredBiomeLevel: 16 },
       { stats: { speed: 6 }, cost: { purple: 105 }, requiredBiomeLevel: 16 },
     ],
   }],

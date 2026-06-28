@@ -66,7 +66,7 @@ export const bossMonsterEntriesT4 = [
     id: 'iron-crest-titan', name: 'Iron-Crest Titan', color: 0x8899bb,
     isBoss: true,
     stats: { hp: 8500, attack: 175, plating: 14, damageReduction: 0.06, speed: 16, attackRange: 20, attackCooldown: 4200, pullRange: 420 },
-    behavior: 'melee', attackStyle: 'impact', biome: 'mountain',
+    behavior: 'melee', attackStyle: 'quake', biome: 'mountain',
     rewards: { essence: 620, essenceType: 'blue', level: 5, biomeXp: 930 },
     ai: { wanderRadius: 95, leashRange: 960, idleMinMs: 4000, idleMaxMs: 10000 },
     chargeOnAggro: { speedMult: 2.5, durationMs: 1200 },
@@ -108,7 +108,7 @@ export const bossMonsterEntriesT4 = [
     id: 'dune-throne-sovereign', name: 'Dune-Throne Sovereign', color: 0xddbb33,
     isBoss: true,
     stats: { hp: 7800, attack: 142, plating: 8, damageReduction: 0.08, speed: 44, attackRange: 20, attackCooldown: 2800, pullRange: 400 },
-    behavior: 'melee', attackStyle: 'magic', biome: 'desert',
+    behavior: 'melee', attackStyle: 'sandblast', biome: 'desert',
     rewards: { essence: 595, essenceType: 'yellow', level: 5, biomeXp: 893 },
     ai: { wanderRadius: 140, leashRange: 960, idleMinMs: 2500, idleMaxMs: 7000 },
     chargeOnAggro: { speedMult: 2.5, durationMs: 1000 },
@@ -121,7 +121,7 @@ export const bossMonsterEntriesT4 = [
       phases: [
         { hpPct: 0.5, actions: [
           // Transforms to ranged kiter — maintains standoff and plinks.
-          { type: 'morph', isRanged: true, attackStyle: 'magic', attackRange: 250, kite: true },
+          { type: 'morph', isRanged: true, attackStyle: 'sandblast', attackRange: 250, kite: true },
           { type: 'enrage', atkMult: 1.15, cdMult: 0.90 },
         ] },
         { hpPct: 0.25, actions: [

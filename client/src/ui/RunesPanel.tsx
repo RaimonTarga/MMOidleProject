@@ -49,6 +49,7 @@ const CHANNEL_COLOR: Record<string, string> = {
   OOC_MAINTENANCE: '#7ab8ff',
   RESOURCE_MAINTENANCE: '#73d7ff',
   GLOBAL_STRATEGY: '#7affc0',
+  PATHING: '#8fd48b',
   CONTROL: '#ff7a9a',
   TECHNIQUE: '#ffd76b',
   GUARD: '#9ad0ff',
@@ -582,6 +583,7 @@ function RuneForgeTab({
 
   const visibleRecipes = useMemo(() => {
     return [...RUNE_RECIPE_DATABASE.values()]
+      .filter((recipe) => recipe.runeKind !== 'condition')
       .filter((recipe) =>
         isRuneRecipeAvailableForArchetype(recipe, combatArchetype),
       )

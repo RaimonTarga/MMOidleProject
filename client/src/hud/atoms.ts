@@ -274,10 +274,14 @@ export const equippedRitesAtom = atom<string[]>([]);
 export const riteSlotsAtom = atom<number>(0);
 
 export const skillTreeOpenAtom = atom<boolean>(false);
+export type BuildPanelTab = 'overview' | 'abilities' | 'stances' | 'rites' | 'runes';
+export const buildOpenAtom = atom<boolean>(false);
+export const buildPanelTabAtom = atom<BuildPanelTab>('overview');
 export const runesOpenAtom = atom<boolean>(false);
 export const abilitiesOpenAtom = atom<boolean>(false);
 export const stancesOpenAtom = atom<boolean>(false);
 export const ritesOpenAtom = atom<boolean>(false);
+export const masteryOpenAtom = atom<boolean>(false);
 export const runePanelTabAtom = atom<'loadout' | 'forge'>('loadout');
 export const inventoryOpenAtom = atom<boolean>(false);
 export const mapOpenAtom = atom<boolean>(false);

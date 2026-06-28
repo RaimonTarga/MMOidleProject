@@ -19,8 +19,10 @@ churn. Two fields added (`shared/src/components/core/networkedSlices.ts`):
 
 Static catalog — `shared/src/abilities.ts`:
 - `AbilitySlot` (`technique` | `guard`), `AbilityTag` (`mobility`, grows), `AbilityTrigger`
-  (`in-combat` | `hp-below` | `n-aggro`), `AbilityEffectSpec` (`cleave` | `shield`), `AbilityDef`.
-- `ABILITY_DATABASE` (Sweep, Brace), `abilityDef()`, `validAbilityIds()`, `emptyEquippedAbilities()`.
+  (`in-combat` | `hp-below` | `n-aggro` | `has-debuff`), `AbilityEffectSpec`
+  (`cleave` | `empower` | `damage-reduction` | `cleanse` | `heal`), `AbilityDef`.
+- `ABILITY_DATABASE` (Sweep, Brace, Cleanse, Heavy Strike, Second Wind), `abilityDef()`,
+  `validAbilityIds()`, `emptyEquippedAbilities()`.
 
 Recipes — `shared/src/abilityRecipes.ts` (parallel to `RuneRecipe`):
 - `AbilityRecipe` (essence `cost` + `catalystCost`, `recipeGroup`+`requiredBiomeLevel` gate,
@@ -109,7 +111,44 @@ All HUD colors/glyphs are placeholders — swap for real icon textures without t
   `ability-recipe-sweep` (forest L2, 160 green).
 - **Brace** (Guard, forest): trigger `hp-below 0.5`, **damage-reduction buff** 40% for 5 s (explicit
   `ability-guard` buff), cd 8 s. Recipe `ability-recipe-brace` (forest L2, 140 green + 60 blue).
+
+### Rough T1 per-biome additions (Step 7 follow-up — placeholder numbers)
+Each is its biome's **mid-biome "answer tool"** — gated at biome level **3** (mid of the L1–4 T1
+band) so the player meets the biome's challenge first and then earns the response. All learned
+**permanently** into `knownAbilities` via the existing AbilityRecipe path (biome-gated by
+`recipeGroup` + `requiredBiomeLevel`, **no boss-clear requirement**), surfaced automatically in the
+Abilities panel's "Learn Abilities" list + the forge (both iterate `ABILITY_RECIPE_DATABASE` and gate
+on `isAbilityRecipeUnlocked`). Costs/levels are PLACEHOLDERS (user balance pass).
+- **Cleanse** (Guard, swamp): trigger `has-debuff`, **strips** up to 3 stacks from each harmful
+  debuff/DoT on the player (rot/slow/antiheal/marks/monster-DoT/node-hazard) AND applies a short
+  post-cleanse `ability-guard` DR buff (20% for 3 s), cd 9 s. Recipe `ability-recipe-cleanse`
+  (**swamp L3**, 150 green). The defensive answer to rot/DoT/debuff pressure.
+- **Heavy Strike** (Technique, mountain): trigger `in-combat`, `empower` rider — next landed hit deals
+  ×1.8 **single-target** damage (no splash; applied in the `onHit` rider, mitigated normally by
+  `onDamageTaken`), cd 5 s. Recipe `ability-recipe-heavy-strike` (**mountain L3**, 150 yellow).
+- **Second Wind** (Guard, cave): trigger `hp-below 0.35`, `heal` — deposits 30% max HP into the
+  recovery burst pool (antiheal applies; shows the **Regen** tile), cd 12 s. Recipe
+  `ability-recipe-second-wind` (**cave L3**, 150 purple). Emergency sustain vs. sparse elite pressure.
+
+> **Deferred (T2 direction):** DoT AoE/spread is reserved for a future **T2 ability** — Sweep
+> remains a **generic cleave** (it does not apply DoTs, and there is no DoT-AoE/spread ability yet).
+> Technique/Guard **rune-override** compatibility (`fire-technique`/`fire-guard`, plus the
+> `before-empowered` condition) is preserved for all of these — they are normal Technique/Guard
+> abilities that the override channels drive like Sweep/Brace.
+
+**Shared authority added:** `isHarmfulPlayerStatusEffect(id, data)` (`shared/src/systems/monsterDebuffs.ts`)
+is now the single definition of "a debuff/DoT on the player" — used by Cleanse, the `has-debuff` trigger,
+AND the Cleansing Breath rite + Lingering Momentum (refactored off their local copy; it also broadened
+the set to cover rot/antiheal/marks/heat/node-hazards, a strict improvement that incidentally stops
+Lingering Momentum from extending those debuffs).
+
 - All numbers are PLACEHOLDERS (user balance pass).
+- **Deferred polish:** Heavy Strike has no client FX tag (so the Technique HUD icon doesn't pulse and
+  its cooldown sweep doesn't animate); Second Wind grants no `ability-guard` buff, so the Guard HUD
+  icon's active-glow/cooldown sweep doesn't run for it (the Regen tile covers it). No target-quality
+  preference on Heavy Strike (fires on plain `in-combat`); "HP low while debuffed" is folded into the
+  plain `has-debuff` trigger for Cleanse. Real DoT-specific resistance (vs. the generic DR stand-in)
+  is deferred.
 
 ## Verified
 

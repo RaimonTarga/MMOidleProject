@@ -26,6 +26,8 @@ export const trenchRecipeEntries = [
       { stats: { attack: 24 }, cost: { green: 405 }, requiredBiomeLevel: 2 },
       { stats: { attack: 24 }, cost: { green: 810 }, requiredBiomeLevel: 3 },
       { stats: { attack: 24 }, cost: { green: 1620 }, requiredBiomeLevel: 4 },
+      { stats: { attack: 24 }, cost: { green: 1620 }, requiredBiomeLevel: 4 },
+      { stats: { attack: 24 }, cost: { green: 1620 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -45,6 +47,8 @@ export const trenchRecipeEntries = [
       { stats: { maxHp: 22, plating: 6, damageReduction: 0.02 }, cost: { green: 200 }, requiredBiomeLevel: 3 },
       { stats: { maxHp: 22, plating: 6, damageReduction: 0.02 }, cost: { green: 400 }, requiredBiomeLevel: 4 },
       { stats: { maxHp: 22, plating: 6, damageReduction: 0.02 }, cost: { green: 700 }, requiredBiomeLevel: 4 },
+      { stats: { maxHp: 22, plating: 6, damageReduction: 0.02 }, cost: { green: 700 }, requiredBiomeLevel: 4 },
+      { stats: { maxHp: 22, plating: 6, damageReduction: 0.02 }, cost: { green: 700 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -63,6 +67,8 @@ export const trenchRecipeEntries = [
       { mechanicEffects: { 'defense.absorb-pct': 0.03, 'defense.regen-burst-pct': 0.02 }, cost: { green: 100 }, requiredBiomeLevel: 4 },
       { mechanicEffects: { 'defense.absorb-pct': 0.03, 'defense.regen-burst-pct': 0.02 }, cost: { green: 200 }, requiredBiomeLevel: 4 },
       { mechanicEffects: { 'defense.absorb-pct': 0.03, 'defense.regen-burst-pct': 0.02 }, cost: { green: 330 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.absorb-pct': 0.03, 'defense.regen-burst-pct': 0.02 }, cost: { green: 330 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.absorb-pct': 0.03, 'defense.regen-burst-pct': 0.02 }, cost: { green: 330 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -77,6 +83,8 @@ export const trenchRecipeEntries = [
     upgrades: [
       { stats: { speed: 6 }, cost: { green: 40 },  requiredBiomeLevel: 4 },
       { stats: { speed: 6 }, cost: { green: 80 },  requiredBiomeLevel: 4 },
+      { stats: { speed: 6 }, cost: { green: 132 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 6 }, cost: { green: 132 }, requiredBiomeLevel: 4 },
       { stats: { speed: 6 }, cost: { green: 132 }, requiredBiomeLevel: 4 },
     ],
   }],
@@ -93,6 +101,8 @@ export const trenchRecipeEntries = [
     upgrades: [
       { stats: { speed: 5 }, cost: { green: 40 },  requiredBiomeLevel: 4 },
       { stats: { speed: 5 }, cost: { green: 80 },  requiredBiomeLevel: 4 },
+      { stats: { speed: 5 }, cost: { green: 132 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 5 }, cost: { green: 132 }, requiredBiomeLevel: 4 },
       { stats: { speed: 5 }, cost: { green: 132 }, requiredBiomeLevel: 4 },
     ],
   }],

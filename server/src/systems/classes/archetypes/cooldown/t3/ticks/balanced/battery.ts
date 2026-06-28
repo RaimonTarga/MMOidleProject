@@ -1,4 +1,4 @@
-import { applyStatusEffect, getStatusEffect } from '@mmo-idle/shared';
+import { applyStatusEffect } from '@mmo-idle/shared';
 import type { World } from '../../../../../../../world/World';
 import { hasPassive } from '../../core/helpers';
 import { BAT_CHARGE_FX, BATTERY_STACK_INTERVAL_MS } from '../../core/constants';
@@ -36,9 +36,5 @@ export function updateBattery(world: World, dt: number): void {
       });
     }
 
-    if (newStacks > 0) {
-      const total = getStatusEffect(state, BAT_CHARGE_FX)?.stacks ?? 0;
-      console.log(`[Battery] ${entity.isPlayer.id}: +${newStacks} stack(s) -> ${total} total`);
-    }
   }
 }

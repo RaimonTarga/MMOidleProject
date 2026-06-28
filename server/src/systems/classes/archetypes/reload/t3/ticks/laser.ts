@@ -1,11 +1,10 @@
-import { GAME_CONFIG, TEST_ROOM_NODE_ID, hitboxGap, inAttackRange, posHitboxFromEntity, type UsesReload } from '@mmo-idle/shared';
+import { TEST_ROOM_NODE_ID, hitboxGap, inAttackRange, posHitboxFromEntity, type UsesReload } from '@mmo-idle/shared';
 import type { World } from '../../../../../../world/World';
 import type { MonsterEntity, PlayerEntity } from '../../../../../../ecs/entity';
 import {
   emitCombatEvent,
   makeCombatContext,
 } from '../../../../../combat/engine/combatPipeline';
-import { applyPlayerAoe } from '../../../../../combat/damage/aoeDamage';
 import { setAggroTarget, setAttackTarget } from '../../../../../combat/ai/targeting';
 import { markEngaged } from '../../../../../combat/ai/engagement';
 import { grantMonsterRewards } from '../../../../../player/progression/rewards';
@@ -113,17 +112,10 @@ function applyLaserTick(world: World, player: PlayerEntity, target: MonsterEntit
   // adds the on-hit DAMAGE stat too, rewarding on-hit builds on a continuous weapon.
   if (player.dealsDamage.onHitDamage > 0) ctx.damage += player.dealsDamage.onHitDamage;
 
+  // Empowered attacks no longer carry an inherent AoE splash (AoE is opt-in, e.g.
+  // the Sweep ability). `isEmpowered`/`isExecution` only drive FX tagging below.
   const isEmpowered = !!ctx.metadata['empoweredAttack'];
   const isExecution = isEmpowered && player.usesCooldown !== undefined;
-  if (isEmpowered) {
-    applyPlayerAoe(
-      world, player,
-      target.hasPosition.current,
-      GAME_CONFIG.EMPOWERED_AOE_RADIUS,
-      Math.round(player.dealsDamage.attack * GAME_CONFIG.EMPOWERED_AOE_MULT),
-      target.isMonster.id,
-    );
-  }
 
   emitCombatEvent('onDamageTaken', ctx, world);
 

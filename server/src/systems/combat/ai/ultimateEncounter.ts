@@ -548,7 +548,6 @@ function spawnTracked(
   kind: "add" | "elite",
 ): void {
   if (!MONSTER_DATABASE.has(monsterTypeId)) {
-    console.warn(`[ultimateEncounter] Unknown monster type: "${monsterTypeId}"`);
     return;
   }
 

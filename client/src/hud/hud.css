@@ -1,4 +1,5 @@
 :root {
+  --ui-font-scale: 1;
   --hud-bg: rgba(14, 12, 9, 0.97);
   --hud-panel-bg: #221f18;
   --hud-panel-border: #3e3a30;
@@ -21,6 +22,30 @@
 }
 
 /* ── Sidebar shells ──────────────────────────────────────────────────────── */
+#left-sidebar > *,
+#right-sidebar > *,
+#mobile-hud > *,
+#buff-overlay > *,
+#ability-overlay > *,
+#biome-xp-overlay > *,
+#boss-bar-overlay > *,
+#target-frame-overlay > *,
+#dungeon-altar-overlay > *,
+#auto-btn-overlay > *,
+#toast-overlay > *,
+#node-loading-overlay > *,
+#tab-resync-overlay > *,
+#death-overlay > *,
+#release-announcement-overlay > *,
+#emote-wheel-overlay > *,
+.inv-overlay > *,
+.skill-tree-overlay > *,
+.craft-overlay > *,
+.map-overlay > *,
+.hud-tooltip {
+  zoom: var(--ui-font-scale);
+}
+
 .sidebar {
   display: flex;
   flex-direction: column;

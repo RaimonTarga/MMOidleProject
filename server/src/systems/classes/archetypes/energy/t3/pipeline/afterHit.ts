@@ -83,9 +83,6 @@ export function registerAfterHit(): void {
             tickNext: AC_TICK_INTERVAL_MS,
             baseCd,
           });
-          console.log(
-            `[AltCurrents] ${player.isPlayer.id}: charge -> discharge (speed boosted)`,
-          );
         }
       }
       ctx.metadata["energyHandled"] = true;
@@ -103,9 +100,6 @@ export function registerAfterHit(): void {
       if (energy.energy >= energy.energyMax) {
         energy.energy = 0;
         setEmpoweredAttack(world, player);
-        console.log(
-          `[CapacitorShunt] ${player.isPlayer.id}: discharge armed (reservoir=${Math.round(energy.csReservoir)})`,
-        );
       }
       ctx.metadata["energyHandled"] = true;
       return;
@@ -121,9 +115,6 @@ export function registerAfterHit(): void {
         energy.dischargeEnergy = energy.energyMax; // captured for discharge scaling
         energy.energy = 0;
         setEmpoweredAttack(world, player);
-        console.log(
-          `[SingularityExec] ${player.isPlayer.id}: max energy (${energy.energyMax}) - discharge armed`,
-        );
       }
       ctx.metadata["energyHandled"] = true;
       return;

@@ -1,6 +1,7 @@
 import type { EssenceType } from '../../items';
 import type { Vec2 } from '../../systems/spatial';
 import type { DamageElement } from '../../systems/dotElements';
+import type { MonsterBehavior } from './behavior';
 
 // ── Boss script types ─────────────────────────────────────────────────────────
 
@@ -227,10 +228,11 @@ export interface MonsterDefinition {
     attackCooldown: number;
     pullRange: number;
   };
-  /** Combat style — only 'melee' exists; extend union for ranged/caster/etc. */
-  behavior: 'melee';
-  /** True for monsters that attack from range and should not play a lunge animation. */
-  isRanged?: boolean;
+  /**
+   * Combat behavior — the single source of truth for how this monster fights.
+   * `monsterIsRanged()` / `monsterKites()` derive the mechanical flags from it.
+   */
+  behavior: MonsterBehavior;
   /** Visual style for attack animations: 'slash' | 'impact' | 'poison' | 'magic' */
   attackStyle: string;
   /** Biome group this monster belongs to — must match a BiomeDefinition id. */
@@ -309,6 +311,16 @@ export interface MonsterDefinition {
    * as a hop, but the server remains authoritative.
    */
   vaultsMountainLedges?: boolean;
+  /**
+   * Defensive-post ecology tag. When true, this monster spawns ON a terrain
+   * chokepoint and holds it (short leash + reduced wander) instead of roaming —
+   * the "archer guarding the pass" fantasy. Explicit intent, NOT inferred from
+   * `behavior: 'ranged'`, so a roaming/kiting ranged mob is not accidentally
+   * pinned to a post. Chokepoint geometry currently exists only for mountain
+   * nodes (`mountainChokepointsForNode`), so today it only takes effect there;
+   * other biomes can opt in once they define chokepoints.
+   */
+  holdsChokepoints?: boolean;
   /**
    * Pack behavior. Presence opts the mob into coordinated grouped AI (handled by
    * the server pack system, which only sets aggro INTENT — `updateMonsters` stays
@@ -395,13 +407,6 @@ export interface MonsterDefinition {
    * enrage / stat-buff / morph.
    */
   aoeAttack?: { radius: number; damageMult?: number };
-  /**
-   * Ranged kiter: when paired with isRanged, the AI steers to MAINTAIN attackRange
-   * (backs off as the player closes, re-closes if the player flees). Kiter move
-   * speed MUST stay below player base (120) so a charge can always catch it.
-   * NOTE: behavior not yet implemented — this is the data gate only.
-   */
-  kite?: boolean;
   /**
    * In-combat attack ramp. While the monster has an aggro target, a multiplier on
    * `stat` grows by perTickPct every tickIntervalMs, clamped at maxPct. Deterministic
@@ -547,5 +552,15 @@ export interface MonsterDefinition {
      * pixels and can be reduced by player knockback resistance effects.
      */
     knockback?: { distance: number };
+    /**
+     * Marked-prey tell. When the charge BEGINS, the monster paints a cleansable
+     * "marked" debuff on its target for `durationMs` (reuses the shared sun-mark
+     * status + the MARKED buff tile + the marker pulse). The mark is the readable
+     * "you are the prey, the pounce is coming" beat shown during the wind-up, a
+     * distinct layer over the cast bar; it is consumed when the charged hit lands
+     * (and otherwise expires harmlessly if the cast is interrupted). Forest's
+     * Scent-of-Blood → Savage Maul predator sequence.
+     */
+    marksTarget?: { durationMs: number };
   };
 }

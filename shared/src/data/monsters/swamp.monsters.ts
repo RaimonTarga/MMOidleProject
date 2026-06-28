@@ -67,7 +67,7 @@ export const swampMonsterEntries = [
     id: 'bog-witch', name: 'Bog Witch', color: 0x884499,
     // Ranged curse — flings a weak hex that festers; the DoT poke of the marsh.
     stats: { hp: 230, attack: 16, plating: 0, damageReduction: 0.05, speed: 38, attackRange: 180, attackCooldown: 2200, pullRange: 215 },
-    behavior: 'melee', attackStyle: 'magic', isRanged: true, biome: 'swamp',
+    behavior: 'ranged', attackStyle: 'hex', biome: 'swamp',
     rewards: { essence: 11, essenceType: 'purple', level: 1, biomeXp: 62 },
     ai: { wanderRadius: 200, leashRange: 580, idleMinMs: 1500, idleMaxMs: 4500 },
     dotEffect: { debuffId: 'swamp-hex', label: 'Swamp Hex', damagePerStack: 4, maxStacks: 4, tickIntervalMs: 1000, durationMs: 2400 },
@@ -103,7 +103,7 @@ export const swampMonsterEntries = [
     // Ranged DoT KITER: plinks festering hexes, backs away. Anti-Close — chasing
     // it just walks you through more poison. Speed 36 (catchable on charge).
     stats: { hp: 500, attack: 30, plating: 0, damageReduction: 0, speed: 36, attackRange: 200, attackCooldown: 2200, pullRange: 230 },
-    behavior: 'melee', attackStyle: 'magic', isRanged: true, kite: true, biome: 'swamp',
+    behavior: 'kiter', attackStyle: 'hex', biome: 'swamp',
     rewards: { essence: 35, essenceType: 'purple', level: 2, biomeXp: 210 },
     ai: { wanderRadius: 200, leashRange: 580, idleMinMs: 1500, idleMaxMs: 4500 },
     dotEffect: { debuffId: 'mire-hex', label: 'Mire Hex', damagePerStack: 5, maxStacks: 5, tickIntervalMs: 1000, durationMs: 4500 },

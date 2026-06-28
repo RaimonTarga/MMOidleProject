@@ -15,6 +15,7 @@ import {
 } from "../../../world/worldLogCombat";
 import { recordWorldLogEvent } from "../../../world/worldLog";
 import { isInvulnerableMonster, isInvulnerablePlayer } from "../invulnerability";
+import { applyMonsterDamageTakenDebuffs } from "../../classes/shared/debuffs";
 
 /**
  * Apply splash AoE damage from a player to all monsters within radius of a
@@ -49,7 +50,8 @@ export function applyPlayerAoe(
       platingMult: 1,
       damageReduction: monster.mitigatesDamage.damageReduction,
     });
-    const effectiveDmg = mitigation.hpDamage;
+    const effectiveDmg = applyMonsterDamageTakenDebuffs(monster.tracksCombat, mitigation.hpDamage);
+    mitigation.hpDamage = effectiveDmg;
 
     recordMonsterDamagedByPlayer(
       world,

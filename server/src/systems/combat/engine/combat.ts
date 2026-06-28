@@ -34,7 +34,7 @@ import {
   CHAOTIC_HIT_COUNTER_KEY,
 } from "@mmo-idle/shared";
 import { getAntiHealMult } from "../../defense";
-import { applyPlayerAoe, applyMonsterAoe } from "../damage/aoeDamage";
+import { applyMonsterAoe } from "../damage/aoeDamage";
 import { applyPlayerKnockback } from "../damage/knockback";
 import { canApplyPlayerDebuff } from "../../classes/archetypes/summoner/t3/core/debuffGuard";
 import { evadeBlocksDebuffs } from "../../defense/mitigation/evasion";
@@ -290,18 +290,10 @@ export function runPlayerAttack(
   const isEmpowered = !!ctx.metadata["empoweredAttack"];
   const isExecution = isEmpowered && player.usesCooldown !== undefined;
 
-  // suppressEmpoweredAoe lets a spec wear the empowered tag (crit styling + ring)
-  // without the splash — e.g. Sniper's precision full-HP shot is single-target.
-  if (isEmpowered && !ctx.metadata["suppressEmpoweredAoe"]) {
-    applyPlayerAoe(
-      world,
-      player,
-      target.hasPosition.current,
-      GAME_CONFIG.EMPOWERED_AOE_RADIUS,
-      Math.round(player.dealsDamage.attack * GAME_CONFIG.EMPOWERED_AOE_MULT),
-      target.isMonster.id,
-    );
-  }
+  // NOTE: empowered attacks no longer carry an inherent AoE splash. AoE is now an
+  // opt-in effect (e.g. the Sweep ability's cleave rider) rather than a built-in
+  // property of every empowered hit. `isEmpowered` here only drives crit styling /
+  // FX tagging below.
 
   emitCombatEvent("onDamageTaken", ctx, world);
 
@@ -780,7 +772,9 @@ export function runMonsterAttack(
   if (target.hasHealth.hp <= 0) {
     emitCombatEvent("onKill", ctx, world);
     world.killPlayer(target.isPlayer.id, {
-      kind: "melee",
+      // Live instance flag (reflects a boss that morphed to ranged), so an
+      // archer's kill reads "Ranged attack" and a brawler's reads "Melee attack".
+      kind: monster.isMonster.isRanged ? "ranged" : "melee",
       killer: buildKillerFromMonster(monster),
       damage: ctx.damage,
     });
@@ -814,6 +808,40 @@ function playerKnockbackResistPct(player: PlayerEntity): number {
       guard.data["knockbackResistPct"] ?? 0,
     ),
   );
+}
+
+/**
+ * Marked-prey tell: when a `marksTarget` charge BEGINS, paint the shared sun-mark
+ * "MARKED" debuff on the target for the readable wind-up (the Forest Scent-of-Blood
+ * beat). Reuses the mark status/pulse so it shows in the player buff bar and is
+ * cleansable. Edge-triggered pulse only on a fresh mark.
+ */
+function applyChargedAttackMark(
+  world: World,
+  monster: MonsterEntity,
+  target: PlayerEntity,
+  charged: NonNullable<MonsterDefinition["chargedAttack"]>,
+): void {
+  const mark = charged.marksTarget;
+  if (!mark || !canApplyPlayerDebuff(target)) return;
+  const markMs = Math.round(mark.durationMs * mobilityTenacityDurationMult(target));
+  const fresh = !getStatusEffect(target.tracksCombat, SUN_MARK_EFFECT_ID);
+  applyStatusEffect(target.tracksCombat, {
+    id: SUN_MARK_EFFECT_ID,
+    maxStacks: 1,
+    remainingMs: markMs,
+    refreshable: true,
+    sourceId: monster.isMonster.id,
+    data: { totalMs: markMs },
+  });
+  if (fresh) {
+    world.pushEvent(target.hasPosition.nodeId, {
+      kind: "ecology-pulse",
+      monsterId: monster.isMonster.id,
+      pos: { ...monster.hasPosition.current },
+      pulse: "sun-mark",
+    });
+  }
 }
 
 function applyChargedAttackKnockback(
@@ -1045,6 +1073,12 @@ export function updateCombat(world: World, dt: number, now: number) {
           if (now < chargedCastEndsAt(e)) continue; // still winding up — hold
           // Wind-up complete → resolve the ×multiplier shot and put it on cooldown.
           completeCharge(e, now, charged.cooldownMs);
+          // The pounce caught the marked prey: consume the Scent-of-Blood mark so the
+          // MARKED tell clears once the Maul resolves (it expires on its own if the
+          // wind-up was interrupted instead).
+          if (charged.marksTarget) {
+            removeStatusEffect(target.tracksCombat, SUN_MARK_EFFECT_ID);
+          }
           const outcome = runMonsterAttack(world, e, target, now, charged.multiplier);
           if (outcome === "hit") {
             applyChargedAttackKnockback(world, e, target, charged);
@@ -1089,6 +1123,7 @@ export function updateCombat(world: World, dt: number, now: number) {
           !isMonsterStunned(world, e.isMonster.id)
         ) {
           beginCharge(e, now, charged.castMs);
+          applyChargedAttackMark(world, e, target, charged);
           world.pushEvent(e.hasPosition.nodeId, {
             kind: "monster-cast-start",
             monsterId: e.isMonster.id,

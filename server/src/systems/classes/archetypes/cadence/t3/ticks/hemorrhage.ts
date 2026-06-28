@@ -11,6 +11,7 @@ import { actorFromSourceId } from '../../../../../../world/worldLogActors';
 import { isInvulnerableMonster } from '../../../../../combat/invulnerability';
 import { pushDotTickEvent } from '../../../../../combat/damage/dotTickEvent';
 import { emitPlayerMonsterOnKill } from '../../../../../combat/damage/killHooks';
+import { applyMonsterDamageTakenDebuffs } from '../../../../shared/debuffs';
 
 export function updateHemorrhages(world: World, dt: number): void {
   const toKill: Array<{ monsterId: string; sourceId: string; damage: number }> = [];
@@ -31,7 +32,7 @@ export function updateHemorrhages(world: World, dt: number): void {
 
       bleed.data['nextTickIn'] = bleed.data['tickIntervalMs'];
       bleed.stacks--; // consume a stack — drives the target-frame countdown
-      const tickDmg = bleed.data['damagePerTick'];
+      const tickDmg = applyMonsterDamageTakenDebuffs(state, bleed.data['damagePerTick']);
       recordMonsterDamagedByPlayer(
         world,
         bleed.sourceId,

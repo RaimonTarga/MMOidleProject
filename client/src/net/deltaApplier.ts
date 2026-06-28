@@ -19,10 +19,14 @@ import { upsertMinion } from "../render/minions";
 import { destroyEntity } from "../render/destroy";
 import { getOwnView } from "../render/state";
 import { dispatchCombatEvent } from "../render/combatFx";
-import { notifyDeltaAppliedDuringTabResync } from "../fx/guard";
+import { fxBossDeath, fxMobDeath } from "../fx/monsterDeath";
+import { playSfx } from "../audio/audioEngine";
+import { notePlayerStatusCues } from "../audio/statusCues";
+import { notifyDeltaAppliedDuringTabResync, shouldRunClientFx } from "../fx/guard";
 import { refreshNodeDecorState } from "../scenes/game/overlays";
 import { setVoidThroneHazardLifted } from "../scenes/game/voidThrone";
 import { syncVoidOverlordRespawn } from "../render/voidOverlordTomb";
+import { syncDungeonHazards } from "../render/dungeonHazards";
 
 // Last frame's resolved target — lets us detect when a target dies (its id
 // vanishes from view) so the target frame can drain HP to 0 before fading.
@@ -122,10 +126,26 @@ export function applyDelta(
     if (entity?.isMonster?.monsterTypeId === "void-overlord") {
       setVoidThroneHazardLifted(scene, true);
     }
+    // A monster leaving the live node via a patch delta means it died (node
+    // changes come through the full-sync path below, not here). Play the retro
+    // bar-fade dissolve off its still-present sprite before it is destroyed —
+    // the full boss version (with sting) for bosses, a lighter one for mobs.
+    if (entity?.isMonster && shouldRunClientFx()) {
+      const sprite = state.sprite.get(netId);
+      if (sprite) {
+        if (entity.isMonster.isBoss) {
+          fxBossDeath(scene, sprite);
+          playSfx("boss-death");
+        } else {
+          fxMobDeath(scene, sprite);
+        }
+      }
+    }
     destroyEntity(state, netId, scene);
   }
   syncVoidOverlordRespawn(state, snapshot.voidOverlordRespawn, scene);
   setDungeonGauntlet(snapshot.dungeonGauntlet ?? null);
+  syncDungeonHazards(scene, snapshot.dungeonGauntlet);
   refreshMonsterTints(state);
   if (snapshot.voidOverlordRespawn) {
     setVoidThroneHazardLifted(scene, true);
@@ -155,6 +175,7 @@ export function applyDelta(
       }
     }
     syncPlayerAtoms(own);
+    notePlayerStatusCues(own);
 
     const zonePlayers: ZonePlayer[] = [];
     for (const id of state.ids) {

@@ -181,7 +181,6 @@ export function tryFreezingCold(pc: DotT3PathContext): boolean {
         },
       });
       attachMarker(world, monster, 'hasFrozen');
-      console.log(`[FreezingCold] ${player.isPlayer.id}: ${monster.isMonster.id} frozen!`);
     }
   }
   markMonsterDot(world, monster);
@@ -216,7 +215,6 @@ export function tryGlacialFracture(pc: DotT3PathContext): boolean {
       GLACIAL_FRACTURE_KNOCKBACK_PX,
       GLACIAL_FRACTURE_KNOCKBACK_MS,
     );
-    console.log(`[GlacialFract] ${player.isPlayer.id}: shatter ${currentStacks} stacks → +${burst} (knockback ${GLACIAL_FRACTURE_KNOCKBACK_PX}px over ${GLACIAL_FRACTURE_KNOCKBACK_MS}ms)`);
   }
   const gf = applyStatusEffect(monsterState, {
     id: DOT_EFFECT_ID, maxStacks, instanced: false,

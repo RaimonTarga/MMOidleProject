@@ -34,7 +34,6 @@ export function updateCooldownArchetype(world: World, dt: number): void {
       cd.executionCooldownMs = cdMs;
       cd.initialized         = true;
       cd.executionCooldownPct = 0;
-      console.log(`[Cooldown] ${entity.isPlayer.id}: execution cycle started (${cdMs}ms)`);
       continue;
     }
 
@@ -46,7 +45,6 @@ export function updateCooldownArchetype(world: World, dt: number): void {
     // Cycle expired and no empowered attack pending → arm execution.
     if (cd.executionCooldownMs <= 0 && !isEmpoweredAttack(entity)) {
       setEmpoweredAttack(world, entity);
-      console.log(`[Cooldown] ${entity.isPlayer.id}: execution ready!`);
     }
 
     // Mirror to the entity slice so projection can expose preparation progress.
@@ -100,10 +98,5 @@ export function initCooldownArchetype(): void {
 
     const cdMs = entity.usesSkills.passives['cooldown.empowered-cd-ms'] ?? EXECUTION_COOLDOWN_MS;
     cd.executionCooldownMs = cdMs;
-
-    console.log(
-      `[Cooldown] ${entity.isPlayer.id}: execution strike on ${ctx.defender.entityId} — ` +
-      `cycle restarted (${cdMs}ms)`,
-    );
   });
 }

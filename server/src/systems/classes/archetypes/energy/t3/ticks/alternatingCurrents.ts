@@ -11,6 +11,7 @@ import {
 } from '../../../../../../world/worldLogCombat';
 import { actorFromPlayer } from '../../../../../../world/worldLogActors';
 import { isInvulnerableMonster } from '../../../../../combat/invulnerability';
+import { applyMonsterDamageTakenDebuffs } from '../../../../shared/debuffs';
 
 interface PendingKill {
   monsterId: string;
@@ -57,7 +58,8 @@ export function updateAlternatingCurrents(world: World, dt: number): void {
           monster.hasPosition.nodeId === player.hasPosition.nodeId &&
           !isInvulnerableMonster(monster)
         ) {
-          const tickDmg = Math.max(1, Math.round(player.dealsDamage.attack * AC_TICK_DAMAGE_MULT));
+          const baseTickDmg = Math.max(1, Math.round(player.dealsDamage.attack * AC_TICK_DAMAGE_MULT));
+          const tickDmg = Math.max(1, applyMonsterDamageTakenDebuffs(monster.tracksCombat, baseTickDmg));
           recordMonsterDamagedByPlayer(
             world,
             player.isPlayer.id,
@@ -68,7 +70,6 @@ export function updateAlternatingCurrents(world: World, dt: number): void {
             buildSimpleBreakdown(tickDmg, tickDmg),
           );
           monster.hasHealth.hp -= tickDmg;
-          console.log(`[AltCurrents] ${player.isPlayer.id}: ${tickDmg} discharge tick on ${targetId}, hp=${Math.max(0, monster.hasHealth.hp)}`);
           if (monster.hasHealth.hp <= 0) toKill.push({ monsterId: targetId, sourceId: player.isPlayer.id });
         }
       }

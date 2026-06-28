@@ -1,8 +1,17 @@
-import type { AbilitySlot, AutocombatConfig, EquipmentSlot, EquippedRule, EvolveMode, StanceSlot, Vec2 } from '@mmo-idle/shared';
+import type {
+  AbilitySlot,
+  AutocombatConfig,
+  EquipmentSlot,
+  EquippedRule,
+  EvolveMode,
+  PlayerMoveOptions,
+  StanceSlot,
+  Vec2,
+} from '@mmo-idle/shared';
 import type { GameSocket } from './socket';
 
-export function sendMove(socket: GameSocket, pos: Vec2): void {
-  socket.emit('player:move', pos);
+export function sendMove(socket: GameSocket, pos: Vec2, opts?: PlayerMoveOptions): void {
+  socket.emit('player:move', pos, opts);
 }
 
 export function sendCommandSummons(socket: GameSocket, pos: Vec2): void {

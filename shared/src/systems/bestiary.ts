@@ -1,7 +1,8 @@
 import { NODE_BIOMES } from '../world/nodeBiomes';
 import { BIOME_DATABASE } from '../biomeDatabase';
-import { MONSTER_DATABASE } from '../data/monsters';
+import { MONSTER_DATABASE, monsterIsRanged, monsterKites } from '../data/monsters';
 import type { MonsterDefinition } from '../data/monsters/types';
+import type { MonsterBehavior } from '../data/monsters/behavior';
 import { getDungeonGauntletDef } from '../dungeons/gauntletDatabase';
 import type { DungeonMonsterModifiers } from '../dungeons/gauntletTypes';
 import { GAME_CONFIG } from '../config/gameConfig';
@@ -31,6 +32,7 @@ export interface BestiaryStats {
   /** Per-hit dodge fraction (0–1). */
   evasion: number;
   isRanged: boolean;
+  behavior: MonsterBehavior;
 }
 
 export interface BestiaryEntry {
@@ -84,7 +86,7 @@ export function resolveMonsterProfile(def: MonsterDefinition): string {
     !!def.cadenceFinisher || !!def.empoweredCooldown || !!def.enemySoftCap;
   const dot = !!def.dotEffect;
   const charges = !!def.chargeOnAggro;
-  const ranged = !!def.isRanged;
+  const ranged = monsterIsRanged(def);
   const shielded = !!def.enemyShield;
   const evasive = !!def.evasion;
   const disables = !!def.slowEffect || !!def.rampDebuff;
@@ -99,6 +101,7 @@ export function resolveMonsterProfile(def: MonsterDefinition): string {
   else if (swarm) noun = 'swarmer';
   else if (dot) noun = 'attrition specialist';
   else if (disables) noun = 'disabler';
+  else if (monsterKites(def)) noun = 'kiter';
   else if (ranged) noun = 'ranged attacker';
   else if (evasive) noun = 'evasive skirmisher';
   else if (shielded) noun = 'shielded fighter';
@@ -146,7 +149,8 @@ function computeStats(
     pullRange: s.pullRange,
     leashRange: def.ai.leashRange,
     evasion: def.evasion ?? 0,
-    isRanged: def.isRanged ?? false,
+    isRanged: monsterIsRanged(def),
+    behavior: def.behavior,
   };
 }
 

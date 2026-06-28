@@ -17,6 +17,8 @@ export const volcanicRecipeEntries = [
       { stats: { attack: 6 }, cost: { red: 200 },  requiredBiomeLevel: 2 },
       { stats: { attack: 6 }, cost: { red: 400 }, requiredBiomeLevel: 3 },
       { stats: { attack: 6 }, cost: { red: 800 }, requiredBiomeLevel: 4 },
+      { stats: { attack: 6 }, cost: { red: 800 }, requiredBiomeLevel: 4 },
+      { stats: { attack: 6 }, cost: { red: 800 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -31,6 +33,8 @@ export const volcanicRecipeEntries = [
     upgrades: [
       { stats: { maxHp: 20, plating: 5 }, cost: { red: 100, yellow: 50 },  requiredBiomeLevel: 3 },
       { stats: { maxHp: 20, plating: 5 }, cost: { red: 200, yellow: 100 }, requiredBiomeLevel: 4 },
+      { stats: { maxHp: 20, plating: 5 }, cost: { red: 400, yellow: 200 }, requiredBiomeLevel: 4 },
+      { stats: { maxHp: 20, plating: 5 }, cost: { red: 400, yellow: 200 }, requiredBiomeLevel: 4 },
       { stats: { maxHp: 20, plating: 5 }, cost: { red: 400, yellow: 200 }, requiredBiomeLevel: 4 },
     ],
   }],
@@ -48,6 +52,8 @@ export const volcanicRecipeEntries = [
       { mechanicEffects: { 'defense.in-combat-regen-pct': 0.02, 'defense.kill-burst-pct': 0.02 }, cost: { red: 50, yellow: 25 },  requiredBiomeLevel: 4 },
       { mechanicEffects: { 'defense.in-combat-regen-pct': 0.02, 'defense.kill-burst-pct': 0.02 }, cost: { red: 100, yellow: 50 }, requiredBiomeLevel: 4 },
       { mechanicEffects: { 'defense.in-combat-regen-pct': 0.02, 'defense.kill-burst-pct': 0.02 }, cost: { red: 200, yellow: 100 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.in-combat-regen-pct': 0.02, 'defense.kill-burst-pct': 0.02 }, cost: { red: 200, yellow: 100 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.in-combat-regen-pct': 0.02, 'defense.kill-burst-pct': 0.02 }, cost: { red: 200, yellow: 100 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -61,6 +67,8 @@ export const volcanicRecipeEntries = [
     upgrades: [
       { stats: { speed: 8 },  cost: { red: 30 },  requiredBiomeLevel: 4 },
       { stats: { speed: 12 }, cost: { red: 62 },  requiredBiomeLevel: 4 },
+      { stats: { speed: 16 }, cost: { red: 104 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 16 }, cost: { red: 104 }, requiredBiomeLevel: 4 },
       { stats: { speed: 16 }, cost: { red: 104 }, requiredBiomeLevel: 4 },
     ],
   }],
@@ -77,6 +85,8 @@ export const volcanicRecipeEntries = [
       { stats: { attack: 11 }, cost: { red: 462 }, requiredBiomeLevel: 8 },
       { stats: { attack: 11 }, cost: { red: 924 }, requiredBiomeLevel: 9 },
       { stats: { attack: 11 }, cost: { red: 1848 }, requiredBiomeLevel: 10 },
+      { stats: { attack: 11 }, cost: { red: 1848 }, requiredBiomeLevel: 10 },
+      { stats: { attack: 11 }, cost: { red: 1848 }, requiredBiomeLevel: 10 },
     ],
   }],
 
@@ -92,6 +102,8 @@ export const volcanicRecipeEntries = [
     upgrades: [
       { stats: { attack: 20 }, cost: { red: 435 }, requiredBiomeLevel: 8 },
       { stats: { attack: 20 }, cost: { red: 870 }, requiredBiomeLevel: 9 },
+      { stats: { attack: 20 }, cost: { red: 1740 }, requiredBiomeLevel: 10 },
+      { stats: { attack: 20 }, cost: { red: 1740 }, requiredBiomeLevel: 10 },
       { stats: { attack: 20 }, cost: { red: 1740 }, requiredBiomeLevel: 10 },
     ],
   }],
@@ -111,6 +123,8 @@ export const volcanicRecipeEntries = [
     upgrades: [
       { stats: { maxHp: 40, plating: 10 }, cost: { red: 200, yellow: 100 }, requiredBiomeLevel: 9 },
       { stats: { maxHp: 40, plating: 10 }, cost: { red: 400, yellow: 200 }, requiredBiomeLevel: 10 },
+      { stats: { maxHp: 40, plating: 10 }, cost: { red: 800, yellow: 300 }, requiredBiomeLevel: 10 },
+      { stats: { maxHp: 40, plating: 10 }, cost: { red: 800, yellow: 300 }, requiredBiomeLevel: 10 },
       { stats: { maxHp: 40, plating: 10 }, cost: { red: 800, yellow: 300 }, requiredBiomeLevel: 10 },
     ],
   }],
@@ -132,6 +146,8 @@ export const volcanicRecipeEntries = [
       { stats: { maxHp: 36, plating: 7 }, cost: { red: 200, yellow: 100 }, requiredBiomeLevel: 9 },
       { stats: { maxHp: 36, plating: 7 }, cost: { red: 400, yellow: 200 }, requiredBiomeLevel: 10 },
       { stats: { maxHp: 36, plating: 7 }, cost: { red: 800, yellow: 300 }, requiredBiomeLevel: 10 },
+      { stats: { maxHp: 36, plating: 7 }, cost: { red: 800, yellow: 300 }, requiredBiomeLevel: 10 },
+      { stats: { maxHp: 36, plating: 7 }, cost: { red: 800, yellow: 300 }, requiredBiomeLevel: 10 },
     ],
   }],
 
@@ -147,6 +163,8 @@ export const volcanicRecipeEntries = [
       { mechanicEffects: { 'defense.in-combat-regen-pct': 0.02, 'defense.kill-burst-pct': 0.02 }, cost: { red: 110, yellow: 30 }, requiredBiomeLevel: 10 },
       { mechanicEffects: { 'defense.in-combat-regen-pct': 0.02, 'defense.kill-burst-pct': 0.02 }, cost: { red: 220, yellow: 60 }, requiredBiomeLevel: 10 },
       { mechanicEffects: { 'defense.in-combat-regen-pct': 0.02, 'defense.kill-burst-pct': 0.02 }, cost: { red: 340, yellow: 90 }, requiredBiomeLevel: 10 },
+      { mechanicEffects: { 'defense.in-combat-regen-pct': 0.02, 'defense.kill-burst-pct': 0.02 }, cost: { red: 340, yellow: 90 }, requiredBiomeLevel: 10 },
+      { mechanicEffects: { 'defense.in-combat-regen-pct': 0.02, 'defense.kill-burst-pct': 0.02 }, cost: { red: 340, yellow: 90 }, requiredBiomeLevel: 10 },
     ],
   }],
 
@@ -161,6 +179,8 @@ export const volcanicRecipeEntries = [
     upgrades: [
       { stats: { speed: 10 }, cost: { red: 66 },  requiredBiomeLevel: 10 },
       { stats: { speed: 14 }, cost: { red: 136 }, requiredBiomeLevel: 10 },
+      { stats: { speed: 18 }, cost: { red: 229 }, requiredBiomeLevel: 10 },
+      { stats: { speed: 18 }, cost: { red: 229 }, requiredBiomeLevel: 10 },
       { stats: { speed: 18 }, cost: { red: 229 }, requiredBiomeLevel: 10 },
     ],
   }],

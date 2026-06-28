@@ -42,7 +42,7 @@ export const forestMonsterEntries = [
     id: 'wolf', name: 'Wolf', color: 0xaaaacc,
     // Fast baseline speed IS the anti-kite — no charge needed. Frequent light bites.
     stats: { hp: 60, attack: 14, plating: 0, damageReduction: 0, speed: 82, attackRange: 12, attackCooldown: 1200, pullRange: 255 },
-    behavior: 'melee', attackStyle: 'slash', biome: 'forest',
+    behavior: 'melee', attackStyle: 'bite', biome: 'forest',
     rewards: { essence: 4, essenceType: 'green', level: 1, biomeXp: 25 },
     ai: { wanderRadius: 290, leashRange: 720, idleMinMs: 700, idleMaxMs: 2800 },
     // Forest predator-pack ALPHA: a roaming adult wolf spawns with two young wolves
@@ -55,7 +55,7 @@ export const forestMonsterEntries = [
     // Uses the wolf sprite for now. Slightly smaller/softer than the adult alpha,
     // but still fast enough that the pack reads as one moving threat.
     stats: { hp: 38, attack: 9, plating: 0, damageReduction: 0, speed: 86, attackRange: 12, attackCooldown: 1300, pullRange: 230 },
-    behavior: 'melee', attackStyle: 'slash', biome: 'forest',
+    behavior: 'melee', attackStyle: 'bite', biome: 'forest',
     rewards: { essence: 2, essenceType: 'green', level: 1, biomeXp: 12 },
     ai: { wanderRadius: 260, leashRange: 680, idleMinMs: 700, idleMaxMs: 2800 },
     pack: { role: 'follower', callRange: 300 },
@@ -67,7 +67,7 @@ export const forestMonsterEntries = [
     id: 'ancient-wolf', name: 'Ancient Wolf', color: 0x8888ff,
     // Explosive fast charger; closes instantly then bites in a blur.
     stats: { hp: 225, attack: 28, plating: 0, damageReduction: 0, speed: 96, attackRange: 12, attackCooldown: 1100, pullRange: 280 },
-    behavior: 'melee', attackStyle: 'slash', biome: 'forest',
+    behavior: 'melee', attackStyle: 'bite', biome: 'forest',
     rewards: { essence: 8, essenceType: 'green', level: 1, biomeXp: 45 },
     ai: { wanderRadius: 300, leashRange: 750, idleMinMs: 600, idleMaxMs: 2500 },
     chargeOnAggro: { speedMult: 3.0, durationMs: 900 },
@@ -100,7 +100,7 @@ export const forestMonsterEntries = [
     id: 'canopy-sprite', name: 'Canopy Sprite', color: 0x88ff44,
     // Ranged thorn-volleys; frequent, light, from the treetops.
     stats: { hp: 190, attack: 26, plating: 0, damageReduction: 0, speed: 48, attackRange: 190, attackCooldown: 2400, pullRange: 250 },
-    behavior: 'melee', attackStyle: 'gunshot', isRanged: true, biome: 'forest',
+    behavior: 'ranged', attackStyle: 'arrow', biome: 'forest',
     rewards: { essence: 9, essenceType: 'green', level: 1, biomeXp: 50 },
     ai: { wanderRadius: 240, leashRange: 650, idleMinMs: 1200, idleMaxMs: 3500 },
     // Pack-support follower: when spawned in an Ancient Wolf pack, a sprite that's

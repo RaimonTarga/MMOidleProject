@@ -2,6 +2,7 @@ import type { EquipmentMap, EssenceType } from "../items";
 import type { HasAutoIntent, HasEmote, PartyMember, TargetStatusView, UltimateStatus } from "../components";
 import type { PassiveMap } from "../passives";
 import { isRangedCombatant, type SubVariant } from "../skillTree";
+import type { MonsterBehavior } from "../data/monsters/behavior";
 import { resolveUpkeepConfig, upkeepStacks, upkeepStage } from "../systems/energyUpkeep";
 import type { BuffId, PlayerBuff } from "../components/combat/buffs";
 import type {
@@ -214,7 +215,7 @@ export interface MonsterView {
   nodeId: string;
   attackStyle: string;
   isBoss: boolean;
-  behavior: string;
+  behavior: MonsterBehavior;
   isRanged: boolean;
   combatArchetype?: CombatArchetype;
   activeEffects?: Record<string, number>;

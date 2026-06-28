@@ -1,5 +1,6 @@
-export { MONSTER_DATABASE } from './data/monsters';
+export { MONSTER_DATABASE, monsterIsRanged, monsterKites } from './data/monsters';
 export type {
+  MonsterBehavior,
   BossAction,
   BossPhase,
   BossScript,

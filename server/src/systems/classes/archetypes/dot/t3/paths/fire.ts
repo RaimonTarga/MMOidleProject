@@ -83,10 +83,8 @@ export function tryFanTheFlames(pc: DotT3PathContext): boolean {
   const currentStacks = getTotalStacks(monsterState, DOT_EFFECT_ID);
   if (currentStacks >= maxStacks) {
     ctx.damage += Math.floor(maxStacks * dmgPerStack * maxStackBonusMult);
-    // Aesthetic-only crit on the full-stack bonus hit (yellow "!"), no AoE.
+    // Aesthetic-only crit on the full-stack bonus hit (yellow "!").
     ctx.metadata['empoweredAttack'] = true;
-    ctx.metadata['suppressEmpoweredAoe'] = true;
-    console.log(`[FanTheFlames] ${player.isPlayer.id}: at max — +${Math.floor(maxStacks * dmgPerStack * maxStackBonusMult)} bonus`);
   } else {
     const toApply = Math.min(stacksPerHit, maxStacks - currentStacks);
     let ftfEff = applyStatusEffect(monsterState, {
@@ -180,7 +178,6 @@ export function tryConflagration(pc: DotT3PathContext): boolean {
       },
     });
     attachMarker(world, monster, 'hasConflagration');
-    console.log(`[Conflagration] ${player.isPlayer.id}: triggered — ${confDmg}/tick × ${ticks}`);
   } else {
     const cf = applyStatusEffect(monsterState, {
       id: DOT_EFFECT_ID, maxStacks, instanced: false,

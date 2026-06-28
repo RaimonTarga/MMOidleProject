@@ -10,16 +10,19 @@ import { BIOME_LEVELS_PER_TIER } from '../config/gameConfig';
  */
 export const MAX_UPGRADE = 5;
 
+export const GLOBAL_MASTERY_PER_ITEM_UPGRADE = 6;
+
+export function globalMasteryRequiredForUpgrade(targetPlus: number): number {
+  return Math.max(0, targetPlus) * GLOBAL_MASTERY_PER_ITEM_UPGRADE;
+}
+
 /**
- * Global-Mastery-derived ceiling on item upgrade level (system rework Step 4).
- * GM opens the cap instead of tier doing so. PLACEHOLDER + non-binding seam: it
- * returns a value ≥ every current structural max so no existing +3 item regresses.
- * Step 6 (gear evolution, cap → +5) tightens this into a real GM gate; the numbers
- * are the user's balance lever. Callers without a GM value treat it as non-binding.
+ * Global-Mastery-derived ceiling on item upgrade level.
+ * Every 6 GM opens the next +N state: 0 = +0, 6 = +1, 12 = +2,
+ * 18 = +3, and so on. Structural item caps still apply on top.
  */
 export function upgradeCeilingFromGlobalMastery(globalMastery: number): number {
-  // Non-binding placeholder: never below the current +3 / +5 structural ceilings.
-  return Math.max(5, 3 + Math.floor(Math.max(0, globalMastery) / 1000));
+  return Math.floor(Math.max(0, globalMastery) / GLOBAL_MASTERY_PER_ITEM_UPGRADE);
 }
 
 /** Primary stat each slot's generic upgrade buffs. (Cores never upgrade — see getMaxUpgrade.) */
@@ -136,13 +139,16 @@ export function checkUpgrade(params: {
   globalMastery?: number;
 }): UpgradeCheck {
   const { item, currentPlus, biomeLevel, essences, catalysts, globalMastery } = params;
+  const targetPlus = currentPlus + 1;
   if (!item.biomeGroup) return { ok: false, reason: 'This item cannot be upgraded.' };
   if (currentPlus >= getMaxUpgrade(item)) return { ok: false, reason: 'Already at maximum upgrade.' };
-  if (globalMastery !== undefined && currentPlus >= upgradeCeilingFromGlobalMastery(globalMastery)) {
-    return { ok: false, reason: 'Requires more Global Mastery to upgrade further.' };
+  if (globalMastery !== undefined && targetPlus > upgradeCeilingFromGlobalMastery(globalMastery)) {
+    return {
+      ok: false,
+      reason: `Requires Global Mastery ${globalMasteryRequiredForUpgrade(targetPlus)}.`,
+    };
   }
 
-  const targetPlus = currentPlus + 1;
   const reqLevel = requiredBiomeLevelForUpgrade(item, targetPlus);
   if (biomeLevel < reqLevel) {
     return { ok: false, reason: `Requires ${item.biomeGroup} level ${reqLevel}.` };

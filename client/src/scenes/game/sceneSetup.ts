@@ -62,6 +62,15 @@ import {
   onDocumentHidden,
 } from "../../fx/guard";
 import { maybeNotifyDeath } from "../../notifications/deathNotification";
+import { initAudio, playSfx } from "../../audio/audioEngine";
+import {
+  MUSIC_MANIFEST,
+  SFX_MANIFEST,
+  musicKey,
+  sfxFiles,
+  sfxKey,
+  type SfxId,
+} from "../../audio/manifest";
 import { initParticleTextures, initEffectFrames } from "../../fx/particles";
 import { updateLaserBeam } from "../../fx/laser";
 import { updateHolyBeam } from "../../fx/holyBeam";
@@ -213,6 +222,16 @@ export function preloadGameAssets(scene: GameScene): void {
   for (const key of Object.values(BIOME_TEXTURES)) {
     scene.load.image(key, `/assets/${key}.png`);
   }
+  // Audio: only entries with a real file are registered (manifest files are
+  // undefined until assets land, so the engine synthesizes fallbacks meanwhile).
+  for (const id of Object.keys(SFX_MANIFEST) as SfxId[]) {
+    sfxFiles(SFX_MANIFEST[id]).forEach((file, i) => {
+      scene.load.audio(sfxKey(id, i), file);
+    });
+  }
+  for (const [group, file] of Object.entries(MUSIC_MANIFEST)) {
+    if (file) scene.load.audio(musicKey(group), file);
+  }
   const decorKeysSeen = new Set<string>();
   for (const specs of Object.values(NODE_DECOR)) {
     for (const s of specs) {
@@ -235,6 +254,7 @@ export function createGameScene(scene: GameScene): void {
   initEffectFrames(scene);
   initVoidOverlordSheet(scene);
   initMistPostFx(scene);
+  initAudio(scene);
 
   const cam = scene.cameras.main;
   scene.bgRect = scene.add
@@ -443,6 +463,7 @@ function connectSocket(scene: GameScene): void {
     },
     onPlayerDied: (payload) => {
       triggerDeathOverlay(payload);
+      playSfx("death");
       maybeNotifyDeath();
     },
     onWorldEvents: (events) => {

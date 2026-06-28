@@ -83,6 +83,21 @@ interface VariantFoot {
   bottom: number;
 }
 
+/**
+ * Trunk rect per variant — the single largest-area baked rect. Collision uses a
+ * smooth convex shape fitted to this rect (see `generateNodeTrees`) instead of
+ * the full jagged rect union: the thin root rects are drawn *under* the player
+ * (walk-on ground), and a union of offset AABBs forms concave pockets that movers
+ * snag in while rounding the trunk. A single convex ellipse has a unique outward
+ * normal everywhere, so sliding around it is smooth and depenetration is
+ * unambiguous — eliminating the whole class of "stuck going around a tree" bugs.
+ */
+const VARIANT_TRUNK: readonly HitboxRect[] = TREE_HITBOX_RECTS.map((rects) =>
+  rects.reduce((best, r) =>
+    r.halfW * r.halfH > best.halfW * best.halfH ? r : best,
+  ),
+);
+
 /** Footprint bbox per variant — derived once from the baked rects. */
 const VARIANT_FEET: readonly VariantFoot[] = TREE_HITBOX_RECTS.map((rects) => {
   let minX = Infinity;
@@ -222,13 +237,18 @@ function generateNodeTrees(nodeId: string): TreeInstance[] {
     const spriteX = footX - foot.centerX * scale;
     const spriteY = footY - foot.centerY * scale;
 
-    const shapes: NodeFeatureShape[] = TREE_HITBOX_RECTS[variant].map((r) => ({
-      kind: "rect",
-      x: spriteX + r.offsetX * scale,
-      y: spriteY + r.offsetY * scale,
-      halfW: r.halfW * scale,
-      halfH: r.halfH * scale,
-    }));
+    // One smooth convex collision shape per tree, fitted to the trunk rect. Roots
+    // are walk-on ground and intentionally do not block (see VARIANT_TRUNK).
+    const trunk = VARIANT_TRUNK[variant];
+    const shapes: NodeFeatureShape[] = [
+      {
+        kind: "ellipse",
+        x: spriteX + trunk.offsetX * scale,
+        y: spriteY + trunk.offsetY * scale,
+        halfW: trunk.halfW * scale,
+        halfH: trunk.halfH * scale,
+      },
+    ];
     if (treeIntersectsDungeonCenterClearing(nodeId, shapes)) continue;
 
     anchors.push({ x: footX, y: footY });
@@ -271,15 +291,13 @@ function treeIntersectsDungeonCenterClearing(
     DUNGEON_CENTER_TREE_CLEAR_RADIUS * DUNGEON_CENTER_TREE_CLEAR_RADIUS;
 
   return shapes.some((shape) => {
-    if (shape.kind !== "rect") return false;
-    const closestX = Math.max(
-      shape.x - shape.halfW,
-      Math.min(cx, shape.x + shape.halfW),
-    );
-    const closestY = Math.max(
-      shape.y - shape.halfH,
-      Math.min(cy, shape.y + shape.halfH),
-    );
+    // Conservative bbox-vs-clearing test (covers rect and ellipse trunk shapes):
+    // an ellipse never reaches past its bounding box, so a clear bbox is a clear
+    // shape. Over-rejecting a tree near the clearing edge is harmless.
+    const halfW = "halfW" in shape ? shape.halfW : shape.radius;
+    const halfH = "halfH" in shape ? shape.halfH : shape.radius;
+    const closestX = Math.max(shape.x - halfW, Math.min(cx, shape.x + halfW));
+    const closestY = Math.max(shape.y - halfH, Math.min(cy, shape.y + halfH));
     const dx = closestX - cx;
     const dy = closestY - cy;
     return dx * dx + dy * dy < radiusSq;

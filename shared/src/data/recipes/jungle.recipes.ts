@@ -17,6 +17,8 @@ export const jungleRecipeEntries = [
       { stats: { attack: 4, onHitDamage: 3 }, cost: { green: 66 }, requiredBiomeLevel: 2 },
       { stats: { attack: 4, onHitDamage: 3 }, cost: { green: 132 }, requiredBiomeLevel: 3 },
       { stats: { attack: 4, onHitDamage: 3 }, cost: { green: 264 }, requiredBiomeLevel: 4 },
+      { stats: { attack: 4, onHitDamage: 3 }, cost: { green: 264 }, requiredBiomeLevel: 4 },
+      { stats: { attack: 4, onHitDamage: 3 }, cost: { green: 264 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -30,6 +32,8 @@ export const jungleRecipeEntries = [
     upgrades: [
       { stats: { maxHp: 12, plating: 2, evasion: 0.04 }, cost: { green: 55, yellow: 11 }, requiredBiomeLevel: 3 },
       { stats: { maxHp: 12, plating: 2, evasion: 0.04 }, cost: { green: 100, yellow: 44 }, requiredBiomeLevel: 4 },
+      { stats: { maxHp: 12, plating: 2, evasion: 0.04 }, cost: { green: 200, yellow: 55 }, requiredBiomeLevel: 4 },
+      { stats: { maxHp: 12, plating: 2, evasion: 0.04 }, cost: { green: 200, yellow: 55 }, requiredBiomeLevel: 4 },
       { stats: { maxHp: 12, plating: 2, evasion: 0.04 }, cost: { green: 200, yellow: 55 }, requiredBiomeLevel: 4 },
     ],
   }],
@@ -51,6 +55,8 @@ export const jungleRecipeEntries = [
       { mechanicEffects: { 'defense.ramp-regen-max-pct': 0.02 }, cost: { green: 33 }, requiredBiomeLevel: 4 },
       { mechanicEffects: { 'defense.ramp-regen-max-pct': 0.02 }, cost: { green: 66 }, requiredBiomeLevel: 4 },
       { mechanicEffects: { 'defense.ramp-regen-max-pct': 0.02 }, cost: { green: 120 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.ramp-regen-max-pct': 0.02 }, cost: { green: 120 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.ramp-regen-max-pct': 0.02 }, cost: { green: 120 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -64,6 +70,8 @@ export const jungleRecipeEntries = [
     upgrades: [
       { stats: { speed: 5 }, cost: { green: 20 }, requiredBiomeLevel: 4 },
       { stats: { speed: 7 }, cost: { green: 40 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 9 }, cost: { green: 80 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 9 }, cost: { green: 80 }, requiredBiomeLevel: 4 },
       { stats: { speed: 9 }, cost: { green: 80 }, requiredBiomeLevel: 4 },
     ],
   }],
@@ -79,6 +87,8 @@ export const jungleRecipeEntries = [
       { stats: { attack: 4, onHitDamage: 4 }, cost: { green: 180 },  requiredBiomeLevel: 8 },
       { stats: { attack: 4, onHitDamage: 4 }, cost: { green: 270 }, requiredBiomeLevel: 9 },
       { stats: { attack: 4, onHitDamage: 4 }, cost: { green: 360 }, requiredBiomeLevel: 10 },
+      { stats: { attack: 4, onHitDamage: 4 }, cost: { green: 360 }, requiredBiomeLevel: 10 },
+      { stats: { attack: 4, onHitDamage: 4 }, cost: { green: 360 }, requiredBiomeLevel: 10 },
     ],
   }],
 
@@ -92,6 +102,8 @@ export const jungleRecipeEntries = [
     upgrades: [
       { stats: { maxHp: 18, plating: 3, evasion: 0.05 }, cost: { green: 100, yellow: 50 },  requiredBiomeLevel: 9 },
       { stats: { maxHp: 18, plating: 3, evasion: 0.05 }, cost: { green: 225, yellow: 75 }, requiredBiomeLevel: 10 },
+      { stats: { maxHp: 18, plating: 3, evasion: 0.05 }, cost: { green: 300, yellow: 150 }, requiredBiomeLevel: 10 },
+      { stats: { maxHp: 18, plating: 3, evasion: 0.05 }, cost: { green: 300, yellow: 150 }, requiredBiomeLevel: 10 },
       { stats: { maxHp: 18, plating: 3, evasion: 0.05 }, cost: { green: 300, yellow: 150 }, requiredBiomeLevel: 10 },
     ],
   }],
@@ -113,6 +125,8 @@ export const jungleRecipeEntries = [
       { mechanicEffects: { 'defense.ramp-regen-max-pct': 0.02 }, cost: { green: 75 },  requiredBiomeLevel: 10 },
       { mechanicEffects: { 'defense.ramp-regen-max-pct': 0.02 }, cost: { green: 150 }, requiredBiomeLevel: 10 },
       { mechanicEffects: { 'defense.ramp-regen-max-pct': 0.02 }, cost: { green: 225 }, requiredBiomeLevel: 10 },
+      { mechanicEffects: { 'defense.ramp-regen-max-pct': 0.02 }, cost: { green: 225 }, requiredBiomeLevel: 10 },
+      { mechanicEffects: { 'defense.ramp-regen-max-pct': 0.02 }, cost: { green: 225 }, requiredBiomeLevel: 10 },
     ],
   }],
 
@@ -127,6 +141,8 @@ export const jungleRecipeEntries = [
       { stats: { speed: 6 },  cost: { green: 25 }, requiredBiomeLevel: 10 },
       { stats: { speed: 8 },  cost: { green: 50 }, requiredBiomeLevel: 10 },
       { stats: { speed: 10 }, cost: { green: 100 }, requiredBiomeLevel: 10 },
+      { stats: { speed: 10 }, cost: { green: 100 }, requiredBiomeLevel: 10 },
+      { stats: { speed: 10 }, cost: { green: 100 }, requiredBiomeLevel: 10 },
     ],
   }],
 
@@ -140,6 +156,8 @@ export const jungleRecipeEntries = [
     upgrades: [
       { stats: { attack: 10, onHitDamage: 8 }, cost: { green: 396 }, requiredBiomeLevel: 14 },
       { stats: { attack: 10, onHitDamage: 8 }, cost: { green: 792 }, requiredBiomeLevel: 15 },
+      { stats: { attack: 10, onHitDamage: 8 }, cost: { green: 1584 }, requiredBiomeLevel: 16 },
+      { stats: { attack: 10, onHitDamage: 8 }, cost: { green: 1584 }, requiredBiomeLevel: 16 },
       { stats: { attack: 10, onHitDamage: 8 }, cost: { green: 1584 }, requiredBiomeLevel: 16 },
     ],
   }],
@@ -158,6 +176,8 @@ export const jungleRecipeEntries = [
       { stats: { maxHp: 35, plating: 6, evasion: 0.03 }, cost: { green: 200, yellow: 100 }, requiredBiomeLevel: 15 },
       { stats: { maxHp: 35, plating: 6, evasion: 0.03 }, cost: { green: 450, yellow: 150 }, requiredBiomeLevel: 16 },
       { stats: { maxHp: 35, plating: 6, evasion: 0.03 }, cost: { green: 600, yellow: 300 }, requiredBiomeLevel: 16 },
+      { stats: { maxHp: 35, plating: 6, evasion: 0.03 }, cost: { green: 600, yellow: 300 }, requiredBiomeLevel: 16 },
+      { stats: { maxHp: 35, plating: 6, evasion: 0.03 }, cost: { green: 600, yellow: 300 }, requiredBiomeLevel: 16 },
     ],
   }],
 
@@ -174,6 +194,8 @@ export const jungleRecipeEntries = [
     upgrades: [
       { mechanicEffects: { 'defense.ramp-regen-max-pct': 0.02 }, cost: { green: 150 }, requiredBiomeLevel: 16 },
       { mechanicEffects: { 'defense.ramp-regen-max-pct': 0.02 }, cost: { green: 300 }, requiredBiomeLevel: 16 },
+      { mechanicEffects: { 'defense.ramp-regen-max-pct': 0.02 }, cost: { green: 450 }, requiredBiomeLevel: 16 },
+      { mechanicEffects: { 'defense.ramp-regen-max-pct': 0.02 }, cost: { green: 450 }, requiredBiomeLevel: 16 },
       { mechanicEffects: { 'defense.ramp-regen-max-pct': 0.02 }, cost: { green: 450 }, requiredBiomeLevel: 16 },
     ],
   }],
@@ -194,6 +216,8 @@ export const jungleRecipeEntries = [
       { mechanicEffects: { 'defense.ramp-regen-max-pct': 0.02 }, cost: { green: 150 }, requiredBiomeLevel: 16 },
       { mechanicEffects: { 'defense.ramp-regen-max-pct': 0.02 }, cost: { green: 300 }, requiredBiomeLevel: 16 },
       { mechanicEffects: { 'defense.ramp-regen-max-pct': 0.02 }, cost: { green: 450 }, requiredBiomeLevel: 16 },
+      { mechanicEffects: { 'defense.ramp-regen-max-pct': 0.02 }, cost: { green: 450 }, requiredBiomeLevel: 16 },
+      { mechanicEffects: { 'defense.ramp-regen-max-pct': 0.02 }, cost: { green: 450 }, requiredBiomeLevel: 16 },
     ],
   }],
 
@@ -208,6 +232,8 @@ export const jungleRecipeEntries = [
     upgrades: [
       { stats: { speed: 8 },  cost: { green: 55 },  requiredBiomeLevel: 16 },
       { stats: { speed: 10 }, cost: { green: 110 }, requiredBiomeLevel: 16 },
+      { stats: { speed: 12 }, cost: { green: 220 }, requiredBiomeLevel: 16 },
+      { stats: { speed: 12 }, cost: { green: 220 }, requiredBiomeLevel: 16 },
       { stats: { speed: 12 }, cost: { green: 220 }, requiredBiomeLevel: 16 },
     ],
   }],

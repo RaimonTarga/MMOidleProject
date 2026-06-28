@@ -49,6 +49,40 @@ const recipes: AbilityRecipe[] = [
     requiredBiomeLevel: 2,
     cost: { green: 140, blue: 60 },
   },
+  // ── Step 7 follow-up: rough T1 per-biome ability unlocks (placeholder gates/costs). ──
+  // Each is the biome's "answer tool" — placed MID-biome (L3 of the L1–4 T1 band) so the
+  // player meets the biome's challenge first, then earns the response. requiredBiomeLevel
+  // + costs are PLACEHOLDERS (user balance pass). No boss-clear requirement yet.
+  {
+    id: "ability-recipe-cleanse",
+    name: "Cleanse",
+    description: "Learn the Cleanse guard: purge rot and debuffs under pressure.",
+    abilityId: "cleanse",
+    tier: 1,
+    recipeGroup: "swamp",
+    requiredBiomeLevel: 3,
+    cost: { green: 150 },
+  },
+  {
+    id: "ability-recipe-heavy-strike",
+    name: "Expose Weakness",
+    description: "Learn the Expose Weakness technique: make a target take increased damage.",
+    abilityId: "heavy-strike",
+    tier: 1,
+    recipeGroup: "mountain",
+    requiredBiomeLevel: 3,
+    cost: { yellow: 150 },
+  },
+  {
+    id: "ability-recipe-second-wind",
+    name: "Second Wind",
+    description: "Learn the Second Wind guard: recover health when badly wounded.",
+    abilityId: "second-wind",
+    tier: 1,
+    recipeGroup: "cave",
+    requiredBiomeLevel: 3,
+    cost: { purple: 150 },
+  },
 ];
 
 export const ABILITY_RECIPE_DATABASE = new Map<string, AbilityRecipe>(

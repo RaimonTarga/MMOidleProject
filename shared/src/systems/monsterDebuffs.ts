@@ -1,4 +1,5 @@
 import type { StatusEffect } from '../components/combat/effects';
+import { isMonsterDotStatusEffectId } from './monsterDotFlavor';
 
 /**
  * Tundra rampDebuff (MonsterDefinition.rampDebuff) — a single stacking status
@@ -59,4 +60,28 @@ export function frostRampMaxStacks(def: {
       def.atkSlowMaxPct / def.atkSlowPerHit,
     ),
   );
+}
+
+/**
+ * Whether a player status effect is HARMFUL (a debuff or DoT). The single shared
+ * authority for "what counts as a debuff on the player" — used by the Cleanse
+ * ability, the Cleansing Breath rite (what it strips), and Lingering Momentum
+ * (what it must NOT extend). Kept precise so beneficial buffs (mobility haste,
+ * guard buffs, shields) are left alone.
+ *
+ * Covers the explicit debuff ids (slow/root, frost-ramp, Sun Mark, volcanic heat,
+ * antiheal, swamp rot) plus the generic markers any DoT/node-hazard status carries
+ * (`data.isDot`, `data.isNodeFeature`) and monster-inflicted DoT ids.
+ */
+export function isHarmfulPlayerStatusEffect(
+  id: string,
+  data: Record<string, number>,
+): boolean {
+  if (id === 'slow' || id === FROST_RAMP_EFFECT_ID) return true;
+  if (id === SUN_MARK_EFFECT_ID || id === VOLCANIC_HEAT_EFFECT_ID) return true;
+  if (id === 'antiheal' || id === 'swamp-rot') return true;
+  if (isMonsterDotStatusEffectId(id)) return true;
+  if ((data['isDot'] ?? 0) !== 0) return true;
+  if ((data['isNodeFeature'] ?? 0) !== 0) return true;
+  return false;
 }

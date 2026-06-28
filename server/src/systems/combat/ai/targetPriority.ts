@@ -4,6 +4,7 @@ import { suppressedFeatureIdsForNode } from "../../world/pathMotion";
 import {
   aabbHalfExtents,
   areAllBiomeRecipesUnlocked,
+  approachPoint,
   computeEternalDoomDamage,
   computeScaledDotDamage,
   distanceSq,
@@ -21,8 +22,10 @@ import {
   posHitboxFromEntity,
   QUEST_DATABASE,
   setString,
+  withinReach,
   type AutocombatPriorityMode,
   type UsesAutocombat,
+  type Vec2,
 } from "@mmo-idle/shared";
 import {
   RUNE_FLEE_FLAG,
@@ -312,16 +315,55 @@ function monsterHasPath(
   player: PlayerEntity,
   monster: MonsterEntity,
 ): boolean {
+  if (world.collision.canReach(player, monster, player.performsAttack.attackRange)) {
+    return true;
+  }
   const pad = aabbHalfExtents(posHitboxFromEntity(player).rects);
+  const goal = attackPathGoal(player, monster);
   const path = findPathForMover(
     player.hasPosition.nodeId,
     "player",
     pad,
     player.hasPosition.current,
-    monster.hasPosition.current,
+    goal,
     suppressedFeatureIdsForNode(world, player.hasPosition.nodeId),
   );
-  return !!path && path.length > 0;
+  return pathEndsInAttackRange(player, monster, path);
+}
+
+/**
+ * True only when following `path` lands the player within attack range of the
+ * monster. A non-empty path is not enough: the nav layer truncates an unreachable
+ * goal to the nearest walkable cell, so a mob tucked inside a tree trunk or ledge
+ * pocket still yields a path — one that stops at the obstacle's edge, out of reach.
+ * Accepting that path is the softlock where a melee player walks up to a tree and
+ * sits there forever; verifying the endpoint actually reaches lets the selector
+ * skip the unreachable mob and retarget. (Ranged attacks are not LOS-blocked, so
+ * their longer reach passes this test and they still fire over the obstacle.)
+ */
+function pathEndsInAttackRange(
+  player: PlayerEntity,
+  monster: MonsterEntity,
+  path: Vec2[] | null,
+): boolean {
+  if (!path || path.length === 0) return false;
+  const endpoint = path[path.length - 1];
+  return withinReach(
+    { pos: endpoint, rects: posHitboxFromEntity(player).rects },
+    posHitboxFromEntity(monster),
+    player.performsAttack.attackRange,
+  );
+}
+
+function attackPathGoal(player: PlayerEntity, monster: MonsterEntity): Vec2 {
+  const approach = approachPoint(
+    player.hasPosition.current,
+    posHitboxFromEntity(player),
+    monster.hasPosition.current,
+    posHitboxFromEntity(monster),
+    player.performsAttack.attackRange,
+  );
+  return approach.dest;
 }
 
 /** Prefer `preferred`, else the next candidate in the caller's priority order. */
@@ -481,15 +523,18 @@ export function nearestEngageableMonster(
   candidates.sort((a, b) => a.distSq - b.distSq);
 
   for (const { monster } of candidates) {
+    if (world.collision.canReach(player, monster, player.performsAttack.attackRange)) {
+      return monster;
+    }
     const path = findPathForMover(
       nodeId,
       "player",
       pad,
       from,
-      monster.hasPosition.current,
+      attackPathGoal(player, monster),
       suppressed,
     );
-    if (path && path.length > 0) return monster;
+    if (pathEndsInAttackRange(player, monster, path)) return monster;
   }
 
   return null;

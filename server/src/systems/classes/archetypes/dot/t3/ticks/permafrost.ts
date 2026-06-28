@@ -14,6 +14,7 @@ import { actorFromPlayer } from '../../../../../../world/worldLogActors';
 import { isInvulnerableMonster } from '../../../../../combat/invulnerability';
 import { pushDotTickEvent } from '../../../../../combat/damage/dotTickEvent';
 import { emitPlayerMonsterOnKill } from '../../../../../combat/damage/killHooks';
+import { applyMonsterDamageTakenDebuffs } from '../../../../shared/debuffs';
 
 /**
  * Permafrost tick. Walks every monster with the `hasDot` marker, but only
@@ -46,7 +47,8 @@ export function updatePermafrost(world: World, dt: number): void {
     const hits   = Math.min(PERM_MAX_HITS, effect.data.hits ?? 0);
     const pct    = hits * PERM_PCT_PER_HIT;
     const base   = Math.max(1, Math.round(source.dealsDamage.attack * pct));
-    const damage = Math.round(base * getSmolderMult(monsterState) * getFrozenMult(monsterState) * getFrostbiteDotTakenMult(monsterState));
+    let damage = Math.round(base * getSmolderMult(monsterState) * getFrozenMult(monsterState) * getFrostbiteDotTakenMult(monsterState));
+    damage = Math.max(1, applyMonsterDamageTakenDebuffs(monsterState, damage));
     recordMonsterDamagedByPlayer(
       world,
       effect.sourceId,
@@ -58,7 +60,6 @@ export function updatePermafrost(world: World, dt: number): void {
     );
     entity.hasHealth.hp -= damage;
     pushDotTickEvent(world, entity, 'frost', damage, { sourceType: 'class' });
-    console.log(`[Permafrost] ${monsterId}: ${damage} tick (${hits}/${PERM_MAX_HITS} hits = ${Math.round(pct * 100)}% ATK)`);
 
     if (entity.hasHealth.hp <= 0) toKill.push({ monsterId, sourceId: effect.sourceId, damage });
   }
