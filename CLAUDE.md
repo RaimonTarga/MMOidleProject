@@ -78,6 +78,29 @@ pnpm bake:hitboxes
 pnpm size:check
 ```
 
+## Tests
+
+Tests are plain tsx scripts, not a test framework (no vitest/jest). Each file
+constructs real `World`/component state and throws via a hand-rolled `assert`
+on failure; a trailing `console.log("<name>: ok")` marks completion.
+
+- Locations: `server/test/*.test.ts` and `shared/src/**/*.test.ts`.
+- Run everything: `pnpm test` (runs `scripts/run-tests.mjs`, which discovers
+  and runs every file via
+  `pnpm --filter @mmo-idle/server exec tsx --conditions=development <file>`,
+  prints a per-file pass/fail summary, and exits nonzero on any failure).
+- Run a single file the same way, e.g.
+  `pnpm --filter @mmo-idle/server exec tsx --conditions=development test/dungeonPlains.test.ts`.
+- `pnpm test:spatial` remains a narrower legacy alias for the two spatial/collision suites.
+- CI (`.github/workflows/ci.yml`) runs `pnpm typecheck` then `pnpm test` on
+  push/PR to `develop`/`master`. No Postgres/Redis services are provisioned —
+  tests must not depend on them (construct `World` directly instead).
+- New mechanics should ship with a wiring smoke test: attach the component,
+  tick the world, assert observable invariants (component presence, state
+  transitions, no throw) — not balance numbers.
+- Files prefixed with `_` are throwaway sanity scripts and are skipped by the
+  runner.
+
 ## Runtime Dependencies
 
 Local compose starts:

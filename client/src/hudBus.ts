@@ -23,12 +23,12 @@ export const hudBus = {
     intents.emit('setAutocombatConfig', config);
   },
 
-  /** Called by RunesPanel — push the equipped rune loadout to the server. */
+  /** Called by BuildRunesTab — push the equipped rune loadout to the server. */
   requestSetRuneLoadout(rules: EquippedRule[]): void {
     intents.emit('setRuneLoadout', rules);
   },
 
-  /** Called by RunesPanel forge tab; server validates unlocks and costs. */
+  /** Called by BuildRunesTab forge tab; server validates unlocks and costs. */
   requestCraftRuneRecipe(recipeId: string): void {
     intents.emit('craftRuneRecipe', recipeId);
   },
