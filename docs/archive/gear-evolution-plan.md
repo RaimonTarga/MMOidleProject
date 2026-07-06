@@ -1,3 +1,5 @@
+> **ARCHIVED (2026-07-07) — HISTORICAL.** Implemented; live state in `docs/gear-evolution-current-state.md`. Kept for design rationale — do not treat as current.
+
 # Step 6 — Gear Evolution & Reconstruction — Plan
 
 **Scope (locked Q&A 2026-06-23):** build the **structural machinery + ONE worked lineage**

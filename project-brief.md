@@ -51,5 +51,5 @@ tools/    Balance reports (dps-report, ehp-report, mob-report) + Rust TUI
 - `design_docs/design-bible.md` — core invariants, biome roster, weapon archetypes, math baseline
 - `design_docs/player-power-curve.md` — stat bands, eHP/DPS lookup tables, monster tuning guide
 - `design_docs/boss-design.md` — boss philosophy, per-tier layer curve, stat anchors
-- `design_docs/roadmap-2026-06.md` — current active roadmap (T4 playable, ~2 weeks)
+- `docs/system-rework-roadmap.md` + `docs/system-rework-status.md` — current roadmap and live scoreboard (post-T4 system rework). The old `design_docs/archive/roadmap-2026-06.md` (T4 milestone) is archived/historical.
 - `CLAUDE.md` — agent coding guide (architecture rules, commands, ECS conventions)

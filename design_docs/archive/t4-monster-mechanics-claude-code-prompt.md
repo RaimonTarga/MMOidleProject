@@ -1,3 +1,5 @@
+> **HISTORICAL (archived 2026-07-07).** T4 authoring prompt; T4 shipped. Kept for rationale. Not current.
+
 # Claude Code Task: T4 Monster Mechanics
 
 ## Context

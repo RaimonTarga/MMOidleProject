@@ -1,3 +1,5 @@
+> **ARCHIVED (2026-07-07) — HISTORICAL.** Implemented; live state in `docs/abilities-current-state.md`. Kept for design rationale — do not treat as current.
+
 # Step 7 — Abilities — Implementation Plan
 
 Paired with `docs/abilities-current-state.md` (the audit) and `docs/system-rework-roadmap.md`

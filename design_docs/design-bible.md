@@ -195,7 +195,7 @@ Constraint: runes must respect budget separation — a rune can add offense or d
 
 ## 11. Open forks / TBD
 
-- **T4 class specs:** 45 specs designed (`t4-spec-designs-reference.md`); partially implemented. Pilot class sets the per-spec cost estimate.
+- **T4 class specs:** 45 specs designed (`archive/t4-spec-designs-reference.md`); partially implemented. Pilot class sets the per-spec cost estimate.
 - **T4 boss design:** boss intent pass (defense-break windows, enrage scripts) is deferred to after T4 balance pass. See `boss-design.md` for the per-tier layer curve.
 - **Trench design direction:** biome authored but under review — may be reshaped or cut.
 - **Desert last-stand:** exact trigger still open (threshold? recover-to-X%? cooldown?).

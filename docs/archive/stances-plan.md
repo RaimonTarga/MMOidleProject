@@ -1,3 +1,5 @@
+> **ARCHIVED (2026-07-07) — HISTORICAL.** Implemented; live state in `docs/stances-current-state.md`. Kept for design rationale — do not treat as current.
+
 # Stances — Implementation Plan (Step 10)
 
 Companion to `docs/stances-current-state.md`. Roadmap: `docs/system-rework-roadmap.md` §Step 10.

@@ -1,7 +1,7 @@
 # Aspects + Catalysts — Current State (pre-implementation)
 
 **Steps:** 1 (Aspect Essence economy) + 2 (Biome Catalysts), implemented together.
-**Companion:** `docs/aspects-catalysts-plan.md`. **Index:** `docs/system-rework-roadmap.md`.
+**Companion:** `docs/archive/aspects-catalysts-plan.md`. **Index:** `docs/system-rework-roadmap.md`.
 **Audited:** 2026-06-23 (code read, not assumed).
 
 ---

@@ -1,6 +1,6 @@
 # Cores — Current State (audited 2026-06-23)
 
-Companion to `docs/cores-plan.md`. Captures what exists in code **before** Step 9, so the
+Companion to `docs/archive/cores-plan.md`. Captures what exists in code **before** Step 9, so the
 plan can lean on existing seams instead of inventing them.
 
 ## TL;DR

@@ -1,3 +1,5 @@
+> **ARCHIVED (2026-07-07) — HISTORICAL.** Implemented; live state in `docs/dungeon-current-state-and-gauntlet-plan.md`. Kept for design rationale — do not treat as current.
+
 # Dungeon Gauntlet Rework — Implementation Plan
 
 ## Purpose

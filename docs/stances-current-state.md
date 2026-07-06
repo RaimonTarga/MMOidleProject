@@ -1,10 +1,10 @@
 # Stances — Current State
 
-Companion to `docs/stances-plan.md`. Roadmap: `docs/system-rework-roadmap.md` §Step 10.
+Companion to `docs/archive/stances-plan.md`. Roadmap: `docs/system-rework-roadmap.md` §Step 10.
 
 > **🔨 IMPLEMENTED 2026-06-24** — machinery + 3 worked stances (Offensive / Defensive / Tanking),
 > the default+reactive slot model, the `switch-stance` rune action, and the full stack (stats fold,
-> tick reconciler, crafting, protocol, client panel, admin). Built exactly per `stances-plan.md` with
+> tick reconciler, crafting, protocol, client panel, admin). Built exactly per `docs/archive/stances-plan.md` with
 > the two locked decisions (default+reactive slot; stat recalc on switch). Verified: 4-pkg typecheck,
 > shared rebuild, both server tests (`targetPriority`, `runeMaintenance`), a clean idle combat bench,
 > and a sanity script (catalog/gating/rune-flag/stats-fold/DR-tradeoff clamp). All numbers are

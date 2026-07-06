@@ -1,3 +1,5 @@
+> **HISTORICAL (archived 2026-07-07).** T3 shipped; live power/design references are `design_docs/design-bible.md` + `design_docs/player-power-curve.md`. Not current.
+
 # Tier 3 — Design Plan
 
 **Purpose:** the T3 reference. Slots alongside `design-bible.md` and `player-power-curve.md`. Terse on purpose. "Open" = needs your call (see §9). Mechanics-first; absolute numbers calibrate via sim later.

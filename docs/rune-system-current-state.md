@@ -1,7 +1,7 @@
 # Rune System Current State
 
 Snapshot of what is implemented right now. The working rework proposal lives in
-`docs/rune-system-plan.md`.
+`docs/archive/rune-system-plan.md`.
 
 ## Core Model
 

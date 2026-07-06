@@ -240,6 +240,24 @@ Player client-to-server highlights:
 - Ranged monsters with generic impact should use `gunshot`; thematic styles can stay.
 - Monster `evasion` is a per-hit dodge fraction (0–1), the same notation as the player evasion stat (0.2 ≈ 1 in 5); keep it ≤ 0.25 (≈ 1 in 4).
 - Slow/root effects must store `totalMs` in status effect data for buff UI clocks.
+- Root-level `shared/src/*.ts` files (e.g. `monsterDatabase.ts`, `itemDatabase.ts`) are legacy
+  shims/entrypoints, not authoring locations; NEW static data goes in `shared/src/data/`.
+
+## Docs
+
+- Living design/architecture docs live flat in `docs/` and `design_docs/`. The
+  `docs/archive/` and `design_docs/archive/` subdirs are HISTORICAL — implemented
+  plans and superseded brainstorms. Do not trust `archive/` as current; every
+  archived file carries a header pointing to its live successor.
+- Each reworked system has a paired `docs/<system>-current-state.md` (the living
+  truth) and an archived `docs/archive/<system>-plan.md` (the original plan, kept
+  for rationale). `docs/system-rework-status.md` is the scoreboard; if it and a
+  current-state doc disagree, read the code.
+- When a plan ships: fold anything still true into the `*-current-state.md`, then
+  git-move the plan into `archive/` with a one-line "ARCHIVED — implemented; live
+  state in X" header. Don't leave shipped plans flat next to living docs.
+- New feature ideas start in `docs/future-plans.md`, not a fresh top-level doc.
+- If code and any doc disagree, the code wins — fix the doc.
 
 ## Current Priority / Known Gaps
 

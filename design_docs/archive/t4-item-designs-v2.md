@@ -1,3 +1,5 @@
+> **HISTORICAL (archived 2026-07-07).** T4 shipped; these designs are implemented. Kept for design rationale. Not current.
+
 # T4 Item Designs — ✅ LOCKED
 
 **Phase status: CLOSED.** All biome items are finalized for the design pass. Numbers are order-of-magnitude baselines pending the math/balance pass. Do not reopen for new ideas — post-launch iteration handles changes.

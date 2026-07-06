@@ -1,3 +1,5 @@
+> **ARCHIVED (2026-07-07) — HISTORICAL.** Implemented; live state in `docs/cores-current-state.md`. Kept for design rationale — do not treat as current.
+
 # Cores — Implementation Plan (Step 9)
 
 Companion to `docs/cores-current-state.md`. Roadmap: `docs/system-rework-roadmap.md` §Step 9.

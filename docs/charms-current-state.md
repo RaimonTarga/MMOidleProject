@@ -1,6 +1,6 @@
 # Step 8 — Charms & Recovery Layers — Current State
 
-Paired with `docs/charms-plan.md`. Reflects what shipped: the **Guard-ability amplifier machinery +
+Paired with `docs/archive/charms-plan.md`. Reflects what shipped: the **Guard-ability amplifier machinery +
 2 worked charms + the "X Core" rename**. Per-biome charm amplifier identities and all numbers are a
 later user pass.
 

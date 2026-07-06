@@ -1,3 +1,5 @@
+> **ARCHIVED (2026-07-07) — HISTORICAL.** Implemented; live state in `docs/global-mastery-current-state.md`. Kept for design rationale — do not treat as current.
+
 # Steps 3 + 4 — Implementation Plan
 
 Paired with `docs/global-mastery-current-state.md`. Builds **Step 3 (biome-levels-per-tier 4→6

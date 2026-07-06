@@ -1,7 +1,9 @@
+> **ARCHIVED (2026-07-07) — HISTORICAL.** Implemented; live state in `docs/charms-current-state.md`. Kept for design rationale — do not treat as current.
+
 # Step 8 — Charms & Recovery Layers — Plan
 
 Paired with `docs/charms-current-state.md`. Source: `docs/system-rework-roadmap.md` Step 8 +
-`design_docs/system-rework-brainstorming-final.md` §8.
+`design_docs/archive/system-rework-brainstorming-final.md` §8.
 
 ## Goal
 

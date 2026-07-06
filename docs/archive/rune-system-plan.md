@@ -1,3 +1,5 @@
+> **ARCHIVED (2026-07-07) — HISTORICAL.** Implemented; live state in `docs/rune-system-current-state.md`. Kept for design rationale — do not treat as current.
+
 # Design Document: Automated Behavior Engine & Rule Arbitrator
 
 **Status:** Working Draft (Wave 1 Rework Architecture)

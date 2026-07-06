@@ -1,3 +1,5 @@
+> **ARCHIVED (2026-07-07) — HISTORICAL.** Implemented; live state in `docs/aspects-catalysts-current-state.md`. Kept for design rationale — do not treat as current.
+
 # Aspects + Catalysts — Implementation Plan
 
 **Steps:** 1 (Aspect Essence economy) + 2 (Biome Catalysts), built together in one session.

@@ -1,3 +1,5 @@
+> **HISTORICAL (archived 2026-07-07).** Early HUD/clarity brainstorm; superseded by the shipped HUD + `docs/system-rework-status.md` Step 14. Not current.
+
 # Information Design — Bestiary, Monitoring, Wiki
 
 **Scope:** the player-facing information surfaces (mob info panel / bestiary,

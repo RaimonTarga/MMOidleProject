@@ -1,3 +1,5 @@
+> **ARCHIVED (2026-07-07) — HISTORICAL.** Implemented; live state in `docs/biome-ecology-current-state.md`. Kept for design rationale — do not treat as current.
+
 # Biome Identity / Combat Ecology — Program Plan (Step 12)
 
 **Companion to:** `docs/biome-ecology-current-state.md` (the audit).

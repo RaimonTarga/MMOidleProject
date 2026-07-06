@@ -1,3 +1,5 @@
+> **HISTORICAL (archived 2026-07-07).** Consolidated brainstorm; turned into `docs/system-rework-roadmap.md` + `docs/system-rework-status.md`. Kept for the major decisions it captured. Not current.
+
 # System Rework Brainstorming — Final Consolidated Draft
 
 **Status:** consolidated brainstorm, not final implementation spec.  

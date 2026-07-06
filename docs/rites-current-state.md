@@ -1,6 +1,6 @@
 # Rites — Current State
 
-Companion to `docs/rites-plan.md`. Roadmap: `docs/system-rework-roadmap.md` §Step 11.
+Companion to `docs/archive/rites-plan.md`. Roadmap: `docs/system-rework-roadmap.md` §Step 11.
 
 > **🔨 IMPLEMENTED 2026-06-24** — machinery + the four worked rites (Quickened Breath,
 > Cleansing Breath, Lingering Momentum, Hunter's Instinct), the always-on 2-slot model, and

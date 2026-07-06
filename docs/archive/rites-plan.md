@@ -1,3 +1,5 @@
+> **ARCHIVED (2026-07-07) — HISTORICAL.** Implemented; live state in `docs/rites-current-state.md`. Kept for design rationale — do not treat as current.
+
 # Rites — Implementation Plan (System Rework Step 11)
 
 Companion to `docs/rites-current-state.md`. Roadmap: `docs/system-rework-roadmap.md` §Step 11.

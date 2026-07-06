@@ -1,6 +1,6 @@
 # Step 7 — Abilities — Current State
 
-Paired with `docs/abilities-plan.md`. Reflects what shipped this session: the **full
+Paired with `docs/archive/abilities-plan.md`. Reflects what shipped this session: the **full
 Abilities system + the Sweep / Brace worked pair**. Authoring more abilities, ability
 evolution, and tuning the numbers are later passes.
 

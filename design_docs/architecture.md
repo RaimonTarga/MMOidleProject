@@ -1,6 +1,8 @@
 # MMO Idle Architecture
 
-This is the standing reference for how the codebase is structured. Read it end-to-end the first time, then use it as a lookup when adding new mechanics.
+Status: current as of 2026-07-06.
+
+This is the standing reference for how the codebase is structured. Read it end-to-end the first time, then use it as a lookup when adding new mechanics. If this doc and the code disagree, the code wins — file it as a doc bug. For per-system implementation detail and balance-in-progress notes beyond what's covered here, see the paired `docs/<system>-plan.md` / `docs/<system>-current-state.md` docs and the scoreboard in `docs/system-rework-status.md`.
 
 The architectural axioms that all rules below derive from:
 
@@ -19,7 +21,7 @@ flowchart LR
   shared["shared/ — contracts, pure formulas, registries"]
   server["server/ — authoritative ECS simulation"]
   client["client/ — thin renderer + input"]
-  db["SQLite persistence"]
+  db["Postgres persistence (Drizzle)"]
   proto["Socket.IO transport"]
 
   shared --> server
@@ -38,7 +40,7 @@ flowchart LR
 
 Hard rules:
 
-- `shared/` must not import from `server/`, `client/`, Phaser, Socket.IO, SQLite, Express, miniplex, or any Node-only API.
+- `shared/` must not import from `server/`, `client/`, Phaser, Socket.IO, Postgres/Drizzle, Express, miniplex, or any Node-only API.
 - `client/` must not import from `server/`.
 - `server/` must not import from `client/`.
 - Anything stateful, mutable, or time-dependent lives in `server/`. Anything pure and deterministic that both sides need lives in `shared/`.
@@ -82,7 +84,7 @@ Forbidden in `shared/`:
 
 - Functions that mutate world state.
 - Anything that reads `Date.now()`, randomness, or filesystem.
-- Imports from `phaser`, `miniplex`, `socket.io`, `better-sqlite3`, `express`.
+- Imports from `phaser`, `miniplex`, `socket.io`, `pg`/`drizzle-orm`, `express`.
 
 ---
 
@@ -236,7 +238,7 @@ server/src/
     playerEntityFormulas.ts   ← entity-native wrappers for shared formulas
     markerInvariants.ts       ← [marker-invariants] / [network-invariants] dev checks
   world/
-    world.ts                  ← World class: queries, tick(), buildNodeDelta()
+    World.ts                  ← World class: queries, tick(), buildNodeDelta()
     nodeRegistry.ts, nodeDelta.ts, monsterLifecycle.ts, playerLifecycle.ts, testRoom.ts
   systems/
     classes/
@@ -247,39 +249,61 @@ server/src/
       shared/                 ← cross-archetype helpers: classActive, debuffs, resources
     combat/
       engine/                 ← combat, combatPipeline, combatState, attackCounter, empoweredAttacks
-      ai/                     ← ai, autoTarget, bossScripts, engagement, targeting
+      ai/                     ← ai, autoTarget, bossScripts, engagement, targeting, packs, swarm
       damage/                 ← aoeDamage, knockback, weaponEffects
       buffs/                  ← buffSync, descriptor
     defense/                  ← regen/, shields/, mitigation/, core/
     player/
       economy/                ← inventory, crafting
       progression/            ← skills, rewards, quests
-    world/                    ← movement, spawning, transitions, testRoomInteract
-  db/                         ← Drizzle + SQLite, component-shaped persistence
+      abilities/               ← abilityFiring.ts, abilityEffects.ts (Technique/Guard)
+      stances/                 ← stanceSwitch.ts
+      rites/                   ← riteOoc.ts
+    world/                    ← movement, spawning, transitions, testRoomInteract, mobility/mobilityBoots.ts
+    world/dungeons/gauntlet.ts ← dungeon gauntlet/boss-exam state machine
+    combatBootstrap.ts        ← initCombatSystems(): the only place combat-pipeline listeners register
+  db/                         ← Drizzle + Postgres, component-shaped persistence
   index.ts                    ← Express + Socket.IO + game loop wiring
 ```
 
 ### Tick schedule
 
-`World.tick(dt, now)` runs at 10 Hz and is the only place that orders systems:
+`World.tick(dt, now)` runs at 10 Hz and is the only place that orders systems. Current order (`server/src/world/World.ts`), including everything the post-rework systems added:
 
 ```ts
 updateCombatState(world, dt);          // decrement durations, statusEffect lifecycle
 updateShields(world, dt);
+updateRuneDerivedConfig(world, now);   // stamps rune-derived flags read later this tick
 tickAllMechanics(world, dt, now);      // class registry: cooldown → energy → reload → dot → cadence
 updateWeaponEffects(world, dt);
 updateBossScripts(world, dt);
-updateAutoTargets(world);
+updateUltimateEncounters(world, dt);
+updatePartyFollow(world, now);
+updateAutoTraverse(world);
+updateAutoTargets(world, now);
+updateAbilityFiring(world);            // Technique/Guard: fires abilities, arms hasArmedAbility
+updateStanceSwitch(world);             // switches activeStance (anti-thrash cooldown), recalcs stats
 updateKnockback(world, dt);
-updateMovement(world, dt);
+updateMobilityState(world, dt);        // boot ramp timers, on-acquire edge detection
+updateMovement(world, dt, now);
+updateNodeFeatures(world, dt);
 updateTransitions(world);
-updateMonsters(world, dt, now);
+if (IS_DEV) updateTestRoomInteract(world, now);
+updatePacks(world, now);               // pack aggro propagation + alpha-call telegraphs
+updateMonsters(world, dt, now);        // the single AI/movement/attack executor
+updateSwarm(world);                    // bends this tick's motion with separation/cohesion
 updateCombat(world, dt, now);          // emits combat pipeline events
 updateDefensiveSystems(world, dt, now);
-syncPlayerBuffs(world);                // populates hasStatus.activeBuffs
+updateAbilityHealing(world, dt);
+syncPlayerBuffs(world, now);           // populates hasStatus.activeBuffs
+mirrorHpForecast(world);
+updateAutoIntent(world);
+updateExpiredEmotes(world, now);
+updateDeadPlayersInWorld(world, now);
+tickDungeonGauntlets(world, now);      // gauntlet/boss-exam state machine
 ```
 
-Each system iterates a narrow miniplex query (`world.dottedMonsters`, `world.cadencePlayers`, …). Archetypes register themselves through the mechanic registry; `World.tick()` itself never grows when an archetype, T3 path, or buff is added.
+Each system iterates a narrow miniplex query (`world.dottedMonsters`, `world.cadencePlayers`, …). Archetypes register themselves through the mechanic registry; new *loadout* layers (abilities/stances/rites) instead added one ordered call each directly in `tick()` — they aren't archetypes, so they don't go through the mechanic registry, but each is still a single self-contained system call reading component presence, not a branch inside an existing one. `World.tick()` grows by one line per genuinely new system; it never grows for a new archetype, ability, stance, rite, core, or buff.
 
 ### Combat pipeline
 
@@ -289,7 +313,9 @@ Each system iterates a narrow miniplex query (`world.dottedMonsters`, `world.cad
 beforeAttack → onAttack → onHit → onDamageTaken → afterHit → onKill
 ```
 
-Listeners read/write `CombatContext.damage`, `metadata`, and `cancelled`. The pipeline is the canonical extension point: weapon effects, defense (evasion, shields, hit-to-DoT), archetype hits, and debuff multipliers all register listeners rather than mutating the attack inline. Listener ordering by registration is meaningful — more specific handlers register first and can claim a hit via `ctx.metadata['dotHandled']` (or equivalent flags) so the generic handler skips.
+Listeners read/write `CombatContext.damage`, `metadata`, and `cancelled`. The pipeline is the canonical extension point: weapon effects, defense (evasion, shields, hit-to-DoT), archetype hits, debuff multipliers, ability Technique riders, and mobility-boot procs all register listeners rather than mutating the attack inline. Listener ordering by registration is meaningful — more specific handlers register first and can claim a hit via `ctx.metadata['dotHandled']` (or equivalent flags) so the generic handler skips.
+
+`server/src/systems/combatBootstrap.ts` (`initCombatSystems()`) is the single place every module's combat-pipeline listeners get registered, for both the live server and bench harnesses — see CLAUDE.md. Adding a new `onHit`/`onKill`/etc. listener always means adding one call inside `initCombatSystems()`, never registering ad hoc from elsewhere.
 
 ### Networked snapshot
 
@@ -308,20 +334,95 @@ Component attach/detach automatically marks the slice dirty; the encoder reads `
 
 ### Persistence
 
-`server/src/db/` persists one JSON blob per long-lived player slice: `isPlayer`, `hasPosition`, `hasHealth`, `tracksProgression`, `holdsInventory`, `usesSkills`. Runtime-only slices and derived state (passives, archetype slices, combat state) are rebuilt on attach via `syncArchetypeSlices` + `recalculatePlayerEntityStats`. Save fires on disconnect and every 30 s.
+`server/src/db/` (Drizzle over Postgres) persists one JSON blob per long-lived player slice: `isPlayer`, `hasPosition`, `hasHealth`, `tracksProgression`, `holdsInventory`, `usesSkills`. `playerRepo.ts` is the hydrate/save boundary. Runtime-only slices and derived state (passives, archetype slices, combat state) are rebuilt on attach via `syncArchetypeSlices` + `recalculatePlayerEntityStats`. Save fires on disconnect and every 30 s.
+
+Every post-rework loadout system (abilities, stances, rites, cores, catalysts, global mastery) added **zero new persisted slices** — they all fold into the existing `tracksProgression` JSON blob (`knownAbilities`/`equippedAbilities`, `knownStances`/`equippedStances`/`activeStance`, `knownRites`/`equippedRites`, `catalysts`/`catalystProgress`) or, for cores, into the existing `holdsInventory.equipment` map as a 5th slot. This is the intended pattern for new player-facing state: extend an existing whole-slice JSON blob rather than adding a persisted column, unless the state is genuinely a new top-level concern.
 
 ### Buffs
 
-`BuffDescriptor` (in `server/src/systems/combat/buffs/descriptor.ts`) packages everything about a buff:
+`BuffDescriptor` (in `server/src/systems/combat/buffs/descriptor.ts`) packages everything about a buff — id, a projection function from player state to an active-or-null buff, and display metadata including a required `category`:
 
 ```ts
-defineBuff('cooldown-execution', (ctx) => {
-  if (!ctx.player.hasEmpoweredAttack) return null;
-  return { id: 'cooldown-execution', stacks: 1, durationPct: 1 };
-}, { label: 'EXEC', color: '#ffcc44' });
+defineBuff('ability-guard', (ctx) => {
+  if (!ctx.player.hasStatus?.statusEffects['ability-guard']) return null;
+  return { id: 'ability-guard', stacks: 1, durationPct: 1 };
+}, { label: 'GUARD', color: '#88ccff', category: 'neutral' });
 ```
 
-`syncPlayerBuffs` projects every descriptor and writes the result to `hasStatus.activeBuffs`. Adding a buff is one descriptor in the owning module and requires *zero* client changes — `BuffBar.tsx` reads the wire payload and renders.
+`syncPlayerBuffs` projects every descriptor and writes the result to `hasStatus.activeBuffs`. Adding a buff is one descriptor in the owning module and requires *zero* client changes — `BuffBar.tsx` reads the wire payload and renders. Abilities, stances, and mobility boots all add their buffs this way (`abilityBuffs.ts`, `MOBILITY_BUFFS` in `mobilityBoots.ts`) rather than inventing their own status-bar plumbing.
+
+---
+
+## Post-rework systems
+
+The systems below shipped in the "system rework" (see `docs/system-rework-status.md` and each system's `docs/<system>-current-state.md`). They are covered here at architecture level only — where state lives, who owns the mechanic, and the extension point. Balance numbers, per-biome content, and exhaustive item lists live in the paired docs, not here. Where a current-state doc's prose disagreed with the code as of this refresh, the note below says so explicitly; code wins.
+
+Four of these (Abilities, Stances, Rites, Cores) are **loadout layers**: player-chosen, slotted, persisted in `TracksProgression` (or, for Cores, the existing equipment map), and folded into `recalculatePlayerEntityStats` alongside skills and gear. They are listed in decreasing "activity": Abilities fire on triggers mid-combat, Stances switch reactively, Rites are always-on, Cores are pure equipped modifiers.
+
+### Abilities (Technique / Guard)
+
+- **State:** `TracksProgression.knownAbilities` (learned) + `equippedAbilities: {technique, guard}` (networked, persisted — one JSON blob, no migration). A server-only, non-networked sibling component `HasArmedAbility` (`server/src/ecs/entity.ts`) tracks "next hit fires the armed Technique," deliberately kept separate from the pre-existing class-owned `HasEmpoweredAttack` so the two "next hit is special" mechanisms never collide.
+- **Owner:** `server/src/systems/player/abilities/abilityFiring.ts` (`updateAbilityFiring`, ticked after `updateAutoTargets`) decides trigger/cooldown and arms Technique / fires Guard. `abilityEffects.ts` registers the Technique's `onHit` rider and the Guard's `onDamageTaken` reader through `initCombatSystems()`.
+- **Extension point:** a new ability is one `AbilityDef` (trigger + effect kind) in `shared/src/abilities.ts` plus one `AbilityRecipe` (biome-level gated, same shape as `RuneRecipe`). New trigger/effect *kinds* need a branch in `abilityFiring.ts`/`abilityEffects.ts`; existing kinds need nothing else.
+- **Composition:** Technique riders are ordinary combat-pipeline listeners; Guard effects are ordinary buffs; both Technique and Guard have an optional rune override on two new but structurally ordinary rune-action channels (`TECHNIQUE`/`GUARD`), parallel to the pre-existing `CONTROL` channel pattern (e.g. `taunt.ts`).
+
+### Stances
+
+- **State:** `TracksProgression.knownStances`, `equippedStances: {default, reactive}`, and `activeStance` (networked so the client can render current posture; server-derived, not player-writable directly). Slot shape mirrors Abilities' `{technique, guard}` almost verbatim — the third near-identical loadout template after Abilities.
+- **Owner:** `server/src/systems/player/stances/stanceSwitch.ts` (`updateStanceSwitch`, ticked right after ability firing). Compares the desired stance (reactive stance's rune condition + an anti-thrash switch cooldown) against `activeStance`; on a change it calls `recalculatePlayerEntityStats` and marks the slice dirty.
+- **Extension point:** a new stance is one `StanceDef` (`statEffects`/`mechanicEffects`) in `shared/src/stances.ts` plus a `StanceRecipe`. Pure stat-delta stances need no other code — the stats pipeline already folds any equipped stance's effects in.
+- **Composition:** stance stat deltas fold into the same accumulators skill-tree nodes and gear use in `shared/src/systems/stats.ts`; switching rides a new `STANCE` rune channel + `switch-stance` action, structurally identical to every other rune-derived flag. One deliberate one-off: a stance's `damageReduction` is folded *after* the mid-pipeline `[0, 0.9]` DR clamp so a negative-DR tradeoff stance still combines correctly with gear before the final clamp.
+
+### Rites
+
+- **State:** `TracksProgression.knownRites` + `equippedRites` (type alias `EquippedRites = string[]`) — a flat, interchangeable list, unlike Abilities'/Stances' role-based slots. No `activeStance`-style runtime field: rites are always-on while equipped.
+- **Owner:** no per-tick driver exists — rites have no firing logic and no rune-action channel at all (a deliberate divergence: a channel would contradict "always-on passive" framing). `server/src/systems/player/rites/riteOoc.ts` exposes out-of-combat hooks (`oocRegenDelay()`, read by `combat.ts`; `runRiteOoc()`, called from `defense/index.ts` gated to out-of-combat) and one `onKill` combat listener registered through `initCombatSystems()`. `riteSlotCount(globalMastery)` in `shared/src/rites.ts` is currently a stub hardcoded to 2.
+- **Extension point:** a new rite is one `RiteDef` (`mechanicEffects`, `rite.*` keys) plus a `RiteRecipe` (T3-band biome gate). A rite that only sets a passive already read somewhere (regen delay, cleanse, buff decay) needs no other code; a new *behavior* needs a new read site in `riteOoc.ts` or a new combat listener.
+- **Composition:** rites fold into `usesSkills.passives` via the same `mergePassives` path as skills/stances/equipment — no bespoke state. Note: Rites' harmful-debuff predicate (`isHarmfulPlayerStatusEffect`, used by Cleansing Breath) is shared authority also used by Abilities' Cleanse — changing that one function changes both systems.
+
+### Cores
+
+- **State:** no new component at all — `'core'` is simply the 5th value of `EquipmentSlot`, living inside the pre-existing `HoldsInventory.equipment` map. Fully networked and persisted for free through the existing equipment plumbing (old saves default the slot to `null` via `emptyEquipment()`).
+- **Owner:** no bespoke tick system. The only core-specific logic is `coreIsActive(rangeTag, selectedRange)` (`shared/src/systems/cores.ts`), called from the equipment loop in `shared/src/systems/stats.ts` to skip a directional core's stats/effects entirely when it doesn't match the player's `selectedRange` (a pre-existing, already-mechanical field). Rank-ups reuse the gear evolution machinery (`shared/src/systems/evolution.ts`) with `requiredPlusFor(recipe)` returning `0` for the `core` slot — cores rank up by owning the predecessor outright, not by upgrading it to +3 first like every other slot.
+- **Extension point:** a new core is an ordinary `Recipe`/item with `slot: 'core'` and a `rangeTag` (`close`/`mid`/`far`/`universal`/`party`) — it flows through `ITEM_DATABASE` and the generic equip/forge UI automatically.
+- **Composition:** the strongest reuse case of the four loadout layers — equip, persist, network, and most UI needed **zero** new code; only the stats-loop range-gate and the evolution required-plus parameter are genuinely new.
+
+### Aspects & Biome Catalysts economy
+
+- **State:** `TracksProgression.essences` (existing) plus new `catalysts` and `catalystProgress` (both `Record<string, number>` keyed by biome group) — all inside the already-networked/persisted `tracksProgression` slice, so no allowlist or migration work was needed to add them.
+- **Owner:** `grantCatalystProgress()` (`server/src/systems/player/progression/rewards.ts`) accumulates per-kill weight and mints whole catalysts at a configured threshold, carrying the remainder. Every crafting/upgrade/evolution site that spends catalysts follows the same read-then-subtract pattern as essence spending.
+- **Extension point:** a new catalyst axis is just a new key in the `Record<string, number>` maps plus a weight source and a cost entry at the relevant crafting site.
+- **Note:** `docs/aspects-catalysts-current-state.md` is titled and written as a pre-implementation audit ("catalysts don't exist yet") — that is stale; catalysts are fully implemented as described above. Trust this section and the code, not that doc's prose, until it's refreshed.
+
+### Biome ecology AI primitives (packs, patrol, swarm, telegraphs)
+
+- **State:** coordination state lives on the existing server-only `ControlsMonster` (patrol index/direction/override, per-mob scratch) plus a new server-only, non-networked, non-persisted `InPack { packId, role }` component. Nothing here is persisted — monsters are always ephemeral (world axiom).
+- **Owner:** three new tick calls bracket the existing `updateMonsters` executor rather than replacing it: `updatePacks` (propagates an aggroed pack member's target onto un-aggroed packmates, scatters survivors via `onPackAlphaDead`) runs *before* `updateMonsters`; `updateSwarm` (boids separation/cohesion bending the tick's motion vector) runs *after* it. Patrol is a data-driven replacement for random wander on `ControlsMonster`, read inside `updateMonsters` itself. Telegraphs are one-shot `world.pushEvent(nodeId, { kind: 'ecology-pulse', ... })` animation events — no networked per-tick booleans, matching the existing anti-pattern rule against flag-based animation state.
+- **Extension point:** retrofitting a new biome is adding optional `pack` / `swarm` / `patrol` / `chargeOnAggro` fields to that biome's monster defs (`shared/src/data/monsters/`) — no server code changes for the primitive itself, only for a genuinely new primitive shape.
+- **Composition:** this is the rare case of three genuinely new coordination systems (no existing system iterated multiple monsters together), justified because no existing tick or combat-pipeline event could express cross-entity coordination. Terrain, hazards, DoTs, and boss scripting were all pre-existing and are reused as-is.
+
+### Elite-tag targeting
+
+- **State:** none. `elite?: boolean` is a static flag on the monster definition — no component, no networked field, no runtime state. Because it's def-level, a monster can never become elite only at runtime (e.g. a boss script can't "promote" a normal add mid-fight).
+- **Owner:** two independent call sites re-derive the same static flag: the client outline color (`client/src/render/monsters.ts`, yellow, lower precedence than pack-alpha/guardian/throne tints) and the server auto-combat scorer (`targetPriority.ts`, `ELITE_FOCUS_WEIGHT` bonus gated behind the `focus-elites` rune). This is unrelated to monster-side aggro *policy* (`monsterTargeting.ts` / `docs/monster-targeting-current-state.md`), which governs which player a monster attacks, not which monster a player's autocombat prefers.
+- **Extension point:** tag a monster def `elite: true`; both consumers pick it up with no further wiring.
+- **Composition:** pure reuse — the elite system's only "new" code is the `focus-elites` rune (cloned from an existing targeting rune) and one scoring-weight constant.
+
+### Dungeon gauntlets / boss exams
+
+- **State:** `TracksDungeon`, a server-only, non-networked, non-persisted component (source tag: `idleDungeonGuardian` / `gauntletPhase` / `preEncounterThreat` / `gauntletBoss`, plus phase/role bookkeeping). Gauntlet runtime state (`GauntletState`: phase, kill counts, participant ids) is keyed by node id inside `World` and is never persisted, consistent with monsters being ephemeral.
+- **Owner:** `server/src/systems/world/dungeons/gauntlet.ts` is the state machine (`idle → active → boss → cooldown`, altar activation, node-wipe/freeze reset). Shared defs (`DungeonGauntletDef`, `preEncounter`, `UnclearedThreatEffect` with four modes: `join`/`empower`/`extra-adds`/`hazard`) live in `shared/src/dungeons/gauntletTypes.ts`.
+- **T1 rule (architectural, not a balance choice):** `isPreEncounterDungeon(def) = def.biomeTier === 1` — T1 dungeons are pre-encounter + boss only, no wave/kill-count gating beyond the boss itself. T2+ still use the older `guardianPhase` → wave path. Pre-encounter threats never gate the boss and grant only normal (not bonus) rewards for being left alive — an invariant enforced in code, worth knowing before touching gauntlet.ts.
+- **Extension point:** a new T1 boss exam is authored data — a `preEncounter` group (packs/dens/basins reusing the ecology primitives above) plus an `unclearedThreat` mode plus a `bossScript` built from existing phase actions (`summon`/`shield`/`enrage`/`chargedAttack`). The exam-specific "identity" (mark-and-pounce, rot pools, altar-orbit patrol) is expressed as data over existing primitives, not new engine code.
+- **Composition:** reuses `bossScript` wholesale for the boss half, ecology primitives for the pre-encounter half, and the ordinary combat pipeline for marks/knockback/interaction. Only the gauntlet state machine itself (activation, reset, the T1 pre-encounter rule) is genuinely new.
+- **Note:** per `docs/codebase-cleanup-plan.md` Task 3, `runPlayerAttack` and `gauntlet.ts`'s data-driven refactor are both explicitly deferred — read this section for how gauntlets fit today, but don't take it as a signal the file is due for a rewrite.
+
+### Mobility boots
+
+- **State:** entirely passive-driven — `usesSkills.passives['mobility.<key>']` numeric entries (stealth, kite/ooc-speed, tenacity, ramp), read live each tick. Transient effects (e.g. on-kill haste) ride the ordinary status-effect/buff machinery; a few server-only scratch fields live directly in `TracksCombat` (a move timer, last-target id, an acquire cooldown) and are never persisted.
+- **Owner:** `server/src/systems/world/mobility/mobilityBoots.ts` — four collapsed helper functions (speed multiplier, detection/pull-range multiplier, incoming-CC duration multiplier, and a per-tick bookkeeping pass wired into `World.tick` as `updateMobilityState`) plus event-triggered boot buffs registered as ordinary `onKill`/`onDamageTaken` combat listeners through `initCombatSystems()`.
+- **Extension point:** a new boot passive is a new `mobility.<key>` entry read by one of the four existing helper functions — the equipment `mechanicEffects → usesSkills.passives` pipeline already turns gear into passives, so no new plumbing is needed unless the trigger shape itself is new (in which case: a new status-effect id + a `MOBILITY_BUFFS` entry for the HUD).
+- **Note:** the Trench boot's "every Nth hit" trigger shape is explicitly not implemented yet — the file's own primitive set doesn't cover a discrete per-hit counter trigger, flagged in a comment at the top of the file.
 
 ---
 
@@ -329,7 +430,7 @@ defineBuff('cooldown-execution', (ctx) => {
 
 ```text
 client/src/
-  scenes/GameScene.ts         ← lifecycle, system schedule
+  scenes/GameScene.ts         ← compat re-export; real lifecycle/system schedule is scenes/game/GameScene.ts
   net/
     socket.ts                 ← Socket.IO event registration
     deltaApplier.ts           ← applyDelta(state, snapshot, scene)
@@ -339,13 +440,19 @@ client/src/
     sprites.ts shadows.ts labels.ts healthBars.ts cooldownBars.ts
     interpolation.ts effectOverlays.ts combatFx.ts
     players.ts monsters.ts destroy.ts
+    castBars.ts dungeonHazards.ts minions.ts movementEffects.ts
+    nodeGates.ts thoughtBubbles.ts ultimateBossSprites.ts depth.ts
   fx/                         ← one file per attack style
   input/                      ← clickToMove, autoPath, keyboard, debug
-  hud/                        ← React HUD components (BuffBar, StatPanel, ...)
-  ui/                         ← React panels (SkillTree, Inventory, Crafting, Map, Quest)
+  audio/                      ← sound engine
+  hud/                        ← React HUD components (BuffBar, StatPanel, AbilityBar, CatalystPanel, ...)
+  ui/                         ← React panels (SkillTree, Inventory, Crafting, Map, Quest,
+                                 AbilitiesPanel, StancesPanel, RitesPanel, BuildRunesTab, MasteryPanel)
   hudBus.ts                   ← reactive event bus for HUD state
   main.ts                     ← Phaser bootstrap + React mounts
 ```
+
+Each new post-rework loadout system (abilities, stances, rites, cores, catalysts, mastery) shipped as one more React panel reading its own slice of `PlayerView` off `hudBus` — no new render pipeline, no god object. The pattern in "Pipeline" below still holds unchanged.
 
 ### Pipeline
 
@@ -449,3 +556,11 @@ Add one `defineBuff(...)` descriptor in the owning module. Add the `BuffId` to `
 | New buff icon | `defineBuff(...)` in the owning module; add ID to `BUFF_IDS` |
 | New persistent visual overlay | descriptor in `shared/src/registries/effects.ts`; server emits the ID; client overlay system picks it up |
 | New attack-style FX | one file in `client/src/fx/` + one dispatcher entry |
+| New ability | `AbilityDef` in `shared/src/abilities.ts` + `AbilityRecipe`; new trigger/effect kinds need a branch in `abilityFiring.ts`/`abilityEffects.ts` |
+| New stance | `StanceDef` in `shared/src/stances.ts` + `StanceRecipe`; pure stat deltas need no other code |
+| New rite | `RiteDef` in `shared/src/rites.ts` + `RiteRecipe`; new OOC behavior needs a read site in `riteOoc.ts` |
+| New core | ordinary `Recipe`/item with `slot: 'core'` + `rangeTag`; flows through `ITEM_DATABASE` and generic equip/forge UI |
+| New biome ecology retrofit | `pack`/`swarm`/`patrol`/`chargeOnAggro` fields on that biome's monster defs in `shared/src/data/monsters/` |
+| New elite mob | `elite: true` on the monster def; client outline + `focus-elites` targeting bonus apply with no further wiring |
+| New T1 boss exam | `preEncounter` group + `unclearedThreat` mode + `bossScript` in `gauntletDatabase.ts` — data over existing primitives |
+| New mobility boot passive | `mobility.<key>` entry read by an existing helper in `mobilityBoots.ts`; new trigger shape needs a status-effect id + `MOBILITY_BUFFS` entry |

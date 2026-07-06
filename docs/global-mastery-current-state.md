@@ -1,6 +1,6 @@
 # Steps 3 + 4 — Current State (audited 2026-06-23)
 
-Paired with `docs/global-mastery-plan.md`. Covers **Step 3 (Recipe system + Biome Mastery,
+Paired with `docs/archive/global-mastery-plan.md`. Covers **Step 3 (Recipe system + Biome Mastery,
 incl. the biome-levels-per-tier 4→6 expansion)** and **Step 4 (Global Mastery)**, planned and
 built together because GM derives from the biome-level track Step 3 reshapes.
 

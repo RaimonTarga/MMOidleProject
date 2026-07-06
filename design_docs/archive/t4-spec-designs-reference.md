@@ -1,3 +1,5 @@
+> **HISTORICAL (archived 2026-07-07).** T4 spec reference; T4 shipped. Kept for rationale. Not current.
+
 # T4 Spec Designs — Reference Document
 
 **Purpose:** authoritative design reference for the T4 specialisation layer. Covers all five active classes (Summoner deferred). Use alongside `design-bible.md` and `player-power-curve.md` for the balance pass. All numerical values marked TBD are placeholders — lock mechanics first, then numbers.

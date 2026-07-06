@@ -1,3 +1,5 @@
+> **HISTORICAL (archived 2026-07-07).** T4 implementation/tuning notes; T4 shipped. Kept for rationale. Not current.
+
 # T4 (tier-3) Class Spec — Implementation & Tuning Notes
 
 Implementation reference for the T4 specialisation layer (design = "T4", code = `tier: 3`).

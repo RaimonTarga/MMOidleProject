@@ -1,3 +1,5 @@
+> **HISTORICAL (archived 2026-07-07).** Early brainstorm; implemented as the rune system — see `docs/rune-system-current-state.md`. Not current.
+
 # Rune System — Diagnosis & Rebuild Plan
 
 **Scope:** how to get the rune system from "underbaked MVP" to the game's signature

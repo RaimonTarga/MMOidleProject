@@ -1,6 +1,6 @@
 # Step 6 — Gear Evolution & Reconstruction — Current State
 
-Paired with `docs/gear-evolution-plan.md`. Reflects what shipped this session: the **structural
+Paired with `docs/archive/gear-evolution-plan.md`. Reflects what shipped this session: the **structural
 machinery + one worked lineage**. Authoring the remaining lineages and tuning +4/+5 / evolution
 costs is the user's later pass.
 

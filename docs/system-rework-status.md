@@ -173,7 +173,7 @@ current-state docs are linked where available; the rest are filled at the step's
   with class mechanics that own the empowered flag); CONTROL rune channel + `taunt.ts` is the
   ability-fire template; `RuneRecipe` is the precedent for a parallel `AbilityRecipe`. Talent tree
   (`UsesSkills`) kept untouched (name collision).
-- Plan (`docs/abilities-plan.md`): new networked+persisted `UsesAbilities` (knownAbilities +
+- Plan (`docs/archive/abilities-plan.md`): new networked+persisted `UsesAbilities` (knownAbilities +
   technique/guard slots, free slotting); Technique = arm-next-attack rider, Guard = immediate
   self-facing; built-in per-ability trigger + cooldown, `fire-technique`/`fire-guard` CONTROL rune
   override; ability recipes gated by biome mastery. 5-phase build; worked pair = Sweep + Brace (forest).
@@ -242,7 +242,7 @@ current-state docs are linked where available; the rest are filled at the step's
   already-networked equipment map), and most UI are generic over `EQUIPMENT_SLOTS`. `selectedRange`
   (close/mid/far) already exists and is already mechanical (combat AI). Net-new = **range-gating** in
   the `stats.ts` equipment loop + a `rangeTag` axis on cores.
-- Plan (`docs/cores-plan.md`): add `'core'` to `EQUIPMENT_SLOTS`; `rangeTag` (close/mid/far/universal/
+- Plan (`docs/archive/cores-plan.md`): add `'core'` to `EQUIPMENT_SLOTS`; `rangeTag` (close/mid/far/universal/
   party) on `Recipe`+`ItemDefinition`→`ITEM_DATABASE`; `coreIsActive()` shared helper gates the stats
   loop (directional core off unless `selectedRange` matches; universal/party always on); ranks reuse
   Step 6 evolution machinery with **required-plus 0** for the `core` slot (cores stay off the +N track);
@@ -262,7 +262,7 @@ current-state docs are linked where available; the rest are filled at the step's
   at random (no packs/patrol anchors); terrain (`nodeFeatures`: block/damage/slow) + boss systems
   (`bossScript`/`ultimateEncounter`/gauntlet) + ranged/kite/charge/DoT ALL already exist. Net-new =
   coordinated AI (packs/patrols/swarm) + telegraphs only. Monsters are ephemeral → no persistence.
-- Plan (`biome-ecology-plan.md`): Q&A locked all-ambitious — full-program design, all 3 primitives,
+- Plan (`docs/archive/biome-ecology-plan.md`): Q&A locked all-ambitious — full-program design, all 3 primitives,
   retrofit existing mobs, networked telegraphs. Part A = 3 primitives (component-gated; `updatePacks`/
   patrol-in-`updateMonsters`/`updateSwarm` set INTENT, `updateMonsters` stays the single executor;
   new server-only `inPack` + `controlsMonster` patrol scratch; telegraphs via networked alpha field +

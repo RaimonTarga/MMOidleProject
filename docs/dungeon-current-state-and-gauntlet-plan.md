@@ -1,7 +1,7 @@
 # Dungeon Current State and Gauntlet Migration Plan
 
 This document summarizes the dungeon system that exists today, then maps the
-new gauntlet design in `docs/dungeon-gauntlet-implementation-plan.md` onto the
+new gauntlet design in `docs/archive/dungeon-gauntlet-implementation-plan.md` onto the
 current repo.
 
 The goal is to replace dungeon nodes as "normal node plus stronger mobs plus a

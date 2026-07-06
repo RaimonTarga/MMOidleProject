@@ -1,6 +1,6 @@
 # Biome Identity / Combat Ecology — Current State (audited 2026-06-24)
 
-**Companion to:** `docs/biome-ecology-plan.md` (the program plan).
+**Companion to:** `docs/archive/biome-ecology-plan.md` (the program plan).
 **Roadmap step:** 12. **Status:** 📋 spec'd, primitives not yet built.
 
 This captures what exists in code today before the Step 12 program touches it. Read source

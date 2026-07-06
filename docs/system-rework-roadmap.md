@@ -1,8 +1,8 @@
 # System Rework — Implementation Roadmap
 
-**Status:** Active planning. Source brainstorm: `design_docs/system-rework-brainstorming-final.md`.
+**Status:** Active planning. Source brainstorm: `design_docs/archive/system-rework-brainstorming-final.md`.
 **Companion doc:** `docs/system-rework-status.md` tracks what is implemented vs. pending.
-**Origin:** results of the post-T4 playtest. The prior `design_docs/roadmap-2026-06.md`
+**Origin:** results of the post-T4 playtest. The prior `design_docs/archive/roadmap-2026-06.md`
 (T4-playable milestone) is **complete**; this roadmap supersedes it as the active plan.
 
 ---

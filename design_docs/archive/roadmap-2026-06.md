@@ -1,3 +1,5 @@
+> **HISTORICAL (archived 2026-07-07).** The T4 milestone shipped; superseded by `docs/system-rework-roadmap.md` + `docs/system-rework-status.md`. Kept for historical decisions/rationale.
+
 > **✅ COMPLETED (2026-06-23).** This milestone shipped — content through T4 is
 > implemented, balanced, and playable. The playtest that followed produced the next
 > initiative: see `docs/system-rework-roadmap.md`. Kept for historical decisions/rationale.

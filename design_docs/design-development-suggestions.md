@@ -3,7 +3,7 @@
 **Scope:** forward-looking ideas for developing the game, written against the
 existing axioms (deterministic, fully-auto, build-test-not-reflex-test, separated
 budgets, solo-complete/party-incentivized, server-authoritative). Everything here
-is a proposal — graded by cost where useful. Companion: `design-audit-2026-06.md`.
+is a proposal — graded by cost where useful. Companion: `archive/design-audit-2026-06.md`.
 
 The framing I'd push hardest: **your game's "skill" is preparation — builds,
 gear, routing, and (uniquely) programming your character's AI.** Every suggestion
@@ -18,7 +18,7 @@ patterns.
 ## 1. Dungeons — from "harder node" to the game's exam room
 
 > **Superseded:** this section is expanded and revised in
-> `dungeon-design-brainstorm.md` (which also corrects §1.6 — current-tier gear
+> `archive/dungeon-design-brainstorm.md` (which also corrects §1.6 — current-tier gear
 > gating was rejected; boss rewards must be carry-forward value).
 
 ### 1.0 Diagnosis: why they're bland
@@ -157,7 +157,7 @@ the no-RNG axiom; flags are the deterministic-native version.) Concretely:
   rewards obsolete power — next-tier +0 weapons already beat last-tier +3, and
   the boss kill lands exactly when you're moving on. Lesson kept as a rule:
   **boss flags must gate carry-forward value** (relics, rune fragments, account
-  flags), never current-tier gear power. See dungeon-design-brainstorm.md §4.
+  flags), never current-tier gear power. See archive/dungeon-design-brainstorm.md §4.
 - **Relic recipes (T4+, the strongest repeatable identity):** relics are a new
   slot with no legacy recipe rules to break. Let each T4 dungeon boss unlock a
   different relic recipe line matching its biome's character (Mountain boss →

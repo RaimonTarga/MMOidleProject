@@ -1,7 +1,9 @@
+> **HISTORICAL (archived 2026-07-07).** June 2026 T4-era design-doc audit. Kept for rationale; not a current reference.
+
 # Design Audit — June 2026
 
 **Scope:** review of the existing design documentation, with focus on the T4 layer
-(specs, items, monsters). Companion doc: `design-development-suggestions.md`
+(specs, items, monsters). Companion doc: `../design-development-suggestions.md`
 (forward-looking brainstorm: dungeons, itemization, new directions).
 **Status: external review, not canon.** Where this doc and the bible disagree, the
 bible wins until you decide otherwise.

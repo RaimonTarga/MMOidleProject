@@ -1,3 +1,5 @@
+> **ARCHIVED (2026-07-07) — HISTORICAL.** Implemented (first pass); live state in `docs/dot-systems-current-state.md`. Kept for design rationale — do not treat as current.
+
 # Damage Over Time Rework Plan
 
 ## Purpose

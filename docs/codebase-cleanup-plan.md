@@ -205,7 +205,7 @@ No broken/half-wired systems were found — abilities, stances, rites, cores,
 biome-ecology primitives, and elite targeting all behaved exactly per their
 current-state docs once the tests accounted for the rune-ownership gotcha above.
 
-## Task 4 — Extract player socket handlers from index.ts  [model: Opus preferred | size: M]
+## Task 4 — Extract player socket handlers from index.ts  [DONE 2026-07-06] [model: Opus preferred | size: M]
 
 `server/src/index.ts` is 1,078 lines: boot + 36 inline `socket.on` handlers +
 7 intervals. Mirror the admin pattern (`server/src/admin/namespace.ts`).
@@ -224,7 +224,48 @@ Acceptance: `pnpm typecheck`; manual smoke — `pnpm dev:server` + `pnpm dev:cli
 log in, move, equip an item, join a party, background/foreground the tab
 (resync path), die and ack. Target: index.ts < ~600 lines.
 
-## Task 5 — Doc hygiene  [model: Sonnet | size: S]
+**Result:** Created `server/src/net/playerHandlers.ts` (534 lines) exporting
+`registerPlayerHandlers(socket, deps)`. Pure MOVE-ONLY: all 36 `socket.on`
+handlers (28 player + 7 dev debug + `disconnect`) moved verbatim — no validation,
+event-name, or behavior changes. `deps` is an explicit `PlayerHandlerDeps`
+interface carrying exactly what the closures captured: `world`, `db`, `accId`,
+`adminControls`, the three connection-tracking maps/sets (`socketByAccount`,
+`inactiveSockets`, `sessionStartedAtBySocket`), and the two boot helpers the
+handlers call (`recordSessionEnd`, `emitBossFelledState`). No module-level
+mutable state in the new file. `sanitizeAutocombatConfig` / `clampNumber` /
+`AUTOCOMBAT_PRIORITY_MODES` moved with their only caller
+(`player:setAutocombatConfig`). Boot sequence, intervals, HTTP routes, and the
+per-connection setup (account login, entity attach, initial `state:sync`,
+session-start analytics) all stayed in index.ts; the connection callback now
+ends by calling `registerPlayerHandlers`.
+
+- index.ts: **1,078 → 617 lines**. (Slightly over the ~600 target; the remaining
+  gap is pre-existing dead imports left untouched — see below. Removing those
+  would land it ~610.)
+- `pnpm typecheck` clean; `pnpm test` 19/19.
+- The two helper closures `liveSelf` and `teleportLiveSelfToNode` moved into
+  `registerPlayerHandlers`.
+
+**Flagged, NOT changed (move-only scope):**
+- `teleportLiveSelfToNode` is DEAD — grep finds zero callers anywhere in the
+  repo. Moved verbatim (with a `// NOTE: unused` comment) to keep this a pure
+  move; it drags in ~4 imports used nowhere else. Safe to delete in a follow-up.
+- index.ts already had **pre-existing dead imports** before this task (verified
+  count-1 in HEAD): `checkRecipeUnlocks`, `grantDevLoadout`, `ensurePopulation`,
+  `ensureBoss`, `initDeadPlayerGuard`, plus shared `emptyEquipment`,
+  `pointInNodeFeatureShape`, `resetTracksCombat`, `RESOLVED_NODE_FEATURES`,
+  `RUNE_ALTAR_FEATURE_ID`. Left in place (out of scope), but worth a look —
+  `initDeadPlayerGuard` / `ensurePopulation` / `ensureBoss` sound like boot
+  wiring that may have been dropped in an earlier refactor. Candidate for a
+  future dead-import sweep.
+
+**Manual smoke NOT run:** the login/move/equip/party/background/die-ack flow
+needs the full docker stack (db + logdb + redis) plus dev client and is
+interactive. Static verification is strong (typecheck + 19/19 tests + verified
+all 36 event names present and dep wiring exact), but a live smoke pass is still
+recommended before merge.
+
+## Task 5 — Doc hygiene  [DONE 2026-07-06] [model: Sonnet | size: S]
 
 1. `biome-refactor-playtest.md` exists in BOTH `docs/` and `design_docs/` with
    different content. Diff them, merge/keep the current one in `docs/`
@@ -237,7 +278,34 @@ log in, move, equip an item, join a party, background/foreground the tab
    `shared/src/*.ts` database files are legacy shims/entrypoints and NEW static
    data goes in `shared/src/data/`.
 
-## Task 6 — architecture.md refresh  [model: Opus | size: M | needs care]
+**Result:** The two `biome-refactor-playtest.md` files turned out to be
+genuinely different documents, not two versions of the same one: `design_docs/`
+held Step 1/2-era ambient biome-tuning playtest notes (mobDensity numbers, pack/
+patrol/swarm behavior, swamp rot pools — last touched `3bd901a`/`deeb141`,
+2026-06-25), while `docs/` holds the current Step 13 per-biome *dungeon boss*
+playtest notes (Forest/Plains/Swamp/Cave T1 exams — last touched `4e3c476`,
+2026-06-29). Grepped all references repo-wide: every existing reference
+(`docs/system-rework-status.md` x3) points at the `docs/` version already; the
+`design_docs/` copy was orphaned. Its ambient-tuning content is superseded at
+the architecture level by `docs/biome-ecology-current-state.md` +
+`docs/monster-behavior-current-state.md` (the exact tuning numbers are balance
+content, out of scope to port per the "no balance-number edits" rule). Deleted
+`design_docs/biome-refactor-playtest.md` via `git rm`; kept the `docs/` version
+as-is (no merge needed — no surviving unique, still-accurate, non-balance
+content to fold in).
+
+Replaced `AGENTS.md`'s body (which was a verbatim duplicate of CLAUDE.md) with
+a one-line pointer to CLAUDE.md, preserving the trailing empty "Imported Claude
+Cowork project instructions" header verbatim.
+
+Added a line to CLAUDE.md's Data Authoring section (with a real example,
+`monsterDatabase.ts`/`itemDatabase.ts`, verified against `shared/src/*.ts`)
+noting root-level `shared/src/*.ts` files are legacy shims/entrypoints and new
+static data goes in `shared/src/data/`.
+
+`pnpm typecheck` clean (docs-only change; no code touched).
+
+## Task 6 — architecture.md refresh  [DONE 2026-07-06] [model: Opus | size: M | needs care]
 
 `design_docs/architecture.md` predates the entire system rework (last touched
 2026-05-29) but CLAUDE.md sends every agent there. Verify every existing claim
@@ -247,6 +315,59 @@ rites, cores, aspects/catalysts, biome ecology primitives, elite system,
 dungeon gauntlets, mobility boots. Keep it architecture-level (where state
 lives, who owns what, extension points) — no balance content. If a
 current-state doc contradicts code, code wins; note the discrepancy.
+
+**Result:** Ran this with Sonnet (not Opus as tagged) via parallel research
+agents (verification of existing claims + one pass each over abilities/
+stances/rites/cores and over aspects-catalysts/biome-ecology/elite-targeting/
+dungeon-gauntlets/mobility-boots), then hand-wrote/synthesized every doc edit
+myself so voice and detail level stayed consistent; spot-checked the agents'
+highest-impact claims (tick order, DB driver, a couple of component names)
+directly against source before trusting them.
+
+Verified-and-fixed drift from the pre-rework doc (code wins, corrected in place):
+- Persistence is Postgres via Drizzle (`pg`/`drizzle-orm`), not SQLite — fixed
+  in the mermaid diagram, the shared/ import-boundary rules, the forbidden-
+  imports list, and the Persistence section.
+- The `World` class lives in `server/src/world/World.ts` (capital W), not
+  `world.ts` (that file is `ecs/world.ts`'s unrelated `createEcsWorld()`).
+- `World.tick()` runs ~29 ordered calls now, not 13 — rewrote the tick-schedule
+  block with the real current order (read directly from `World.ts:340-372`)
+  and explained why it grows by one line per genuinely new system instead of a
+  branch inside an existing one.
+- Named `server/src/systems/combatBootstrap.ts` / `initCombatSystems()` as the
+  actual single combat-listener registration point (old doc never named it).
+- Fixed the stale buff code sample (real `BuffOptions.category` is required;
+  the example buff id it used, `cooldown-execution`, no longer exists anywhere
+  in the codebase).
+- Updated the client directory tree: new rework-era panels/render files, and
+  `scenes/GameScene.ts` is now a compat re-export (real lifecycle file moved to
+  `scenes/game/GameScene.ts`).
+
+Added a new "Post-rework systems" section (architecture-level only — state
+location, mechanic owner, extension point, composition-vs-new-system call) for
+all 9 requested systems: Abilities, Stances, Rites, Cores, Aspects & Biome
+Catalysts economy, biome ecology AI primitives (packs/patrol/swarm/telegraphs),
+elite-tag targeting, dungeon gauntlets/boss exams, and mobility boots. Flagged
+one current-state doc as stale in-place: `docs/aspects-catalysts-current-state.md`
+is still written as a pre-implementation audit ("catalysts don't exist") even
+though catalysts are fully implemented — noted in the new section rather than
+edited (that doc is Task 7's territory, out of scope here). Added matching rows
+to the "quick reference: where to put things" table and a `Status: current as
+of 2026-07-06` header with a "code wins on disagreement" pointer.
+
+`pnpm typecheck` clean (docs-only change; no code touched).
+
+**Verification pass (Opus, 2026-07-06):** re-checked the load-bearing claims against
+source. The 29-line tick schedule matches `World.ts` verbatim; persistence/Drizzle,
+all component names (`HasArmedAbility`/`InPack`/`TracksDungeon`), all
+`TracksProgression` loadout fields, client panels, `gauntletDatabase.ts`, the
+`elite?: boolean` flag, and the `aspects-catalysts` stale-doc call-out all verified
+accurate. Fixed two Sonnet-era slips: (1) `gauntlet.ts` path was `server/src/world/
+dungeons/` in both the tree and the gauntlets "Owner" line — real path is
+`server/src/systems/world/dungeons/gauntlet.ts`; (2) the buff code sample used
+`category: 'ability'`, not a valid `BuffCategory` — changed to `'neutral'` (the real
+`ability-guard` descriptor's value). Also nested `combatBootstrap.ts` under `systems/`
+in the tree. Both slips were path/label-level, not conceptual.
 
 ## Task 7 — Docs lifecycle: archive retired docs, add status headers  [model: Sonnet | size: M | needs care]
 
@@ -285,6 +406,49 @@ mistake stale intent for current truth.
 
 Acceptance: no broken doc references (grep moved names); CLAUDE.md section
 added; PR lists every move and every unsure-skip.
+
+**Result [DONE 2026-07-07] [ran on Opus]:** Created `docs/archive/` and
+`design_docs/archive/`; all moves via `git mv` (history preserved).
+
+- **Archived to `docs/archive/` (12 implemented plans** — verified 🔨/✅ = IMPLEMENTED
+  in `system-rework-status.md` scoreboard, and confirmed each has a living
+  `*-current-state.md` companion): abilities, aspects-catalysts, biome-ecology,
+  charms, cores, dot-systems-rework, gear-evolution, global-mastery, rites,
+  rune-system, stances, dungeon-gauntlet-implementation. Each got a one-line
+  `ARCHIVED … live state in docs/<system>-current-state.md` header.
+- **Archived to `design_docs/archive/` (11 historical):** roadmap-2026-06,
+  dungeon-design-brainstorm, information-design-brainstorm, rune-system-brainstorm,
+  system-rework-brainstorming-final, design-audit-2026-06, the four t4-* docs,
+  tier3-design-plan. Each got a one-line `HISTORICAL — superseded by/implemented as X`
+  header.
+- **Kept flat (deliberate):** all `*-current-state.md`; the hybrid
+  `dungeon-current-state-and-gauntlet-plan.md` (it *is* the living dungeon
+  current-state — only the pure `dungeon-gauntlet-implementation-plan.md` was
+  archived); every NEVER-archive doc in both dirs.
+- **Unsure → NOT moved (flagged per rules):** `design_docs/design-development-suggestions.md`
+  — reads as a June-2026 forward-looking idea brainstorm (companion to the archived
+  design-audit), but its filename lacks `brainstorm` and it could be a live idea
+  backlog like `future-plans.md`. Left in place; its refs to now-archived docs were
+  repointed to `archive/`. Recommend a human call on whether it's historical.
+- **References fixed:** all living-doc navigation pointers (11 current-state
+  "Companion" lines, the roadmap's source-brainstorm + prior-roadmap links, the
+  status doc's Current-state-notes "Plan (…)" bullets, `design-bible.md`'s
+  t4-spec ref, `project-brief.md`'s roadmap link — which was also stale
+  ("current active roadmap" for a completed one), now repointed to the live
+  system-rework roadmap/status) and the handful of cross-boundary refs inside
+  archived docs. Intra-archive same-dir bare refs still resolve and were left.
+  **Left untouched:** dated session-log prose in `system-rework-status.md` that
+  mentions old plan filenames — it's append-only history, not navigation.
+- **Status headers:** did NOT stamp `current as of 2026-07-07` on the current-state
+  docs. I only link-touched them (mechanical ref fix), did not re-audit their
+  content, and each already carries its own `audited`/`IMPLEMENTED` date — a fresh
+  date would falsely imply re-verification. The living/historical split is now
+  carried structurally by the `archive/` dirs + headers instead.
+- CLAUDE.md: added a `## Docs` section (living vs. `archive/`, the plan↔current-state
+  pairing, the ship→fold→archive workflow, future-plans.md as the idea inbox,
+  code-wins-on-disagreement).
+
+`pnpm typecheck` clean (docs-only; no code touched).
 
 ## Deferred — do NOT hand these to Sonnet/Opus now
 
