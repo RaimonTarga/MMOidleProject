@@ -1,0 +1,131 @@
+{
+  "category": "environment",
+  "endpoint": "pixflux",
+  "styleRef": "style/terrain.png",
+  "noBackground": true,
+  "candidates": 3,
+  "entries": [
+    {
+      "id": "scuba",
+      "out": "files/emotes/fun/scuba.png",
+      "size": {
+        "w": 384,
+        "h": 320
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "thought_mask",
+      "out": "files/emotes/thoughts/thought_mask.png",
+      "size": {
+        "w": 1448,
+        "h": 1086
+      },
+      "prompt": "",
+      "status": "draft",
+      "notes": "Derived mask/hitbox asset — rebuild from its parent art, do not prompt-generate."
+    },
+    {
+      "id": "thought",
+      "out": "files/emotes/thoughts/thought.png",
+      "size": {
+        "w": 1448,
+        "h": 1086
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "abyssal_throne",
+      "out": "files/environment/abyssal_throne.png",
+      "size": {
+        "w": 1254,
+        "h": 1254
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "graves",
+      "out": "files/environment/graves.png",
+      "size": {
+        "w": 1254,
+        "h": 1254
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "pillars",
+      "out": "files/environment/pillars.png",
+      "size": {
+        "w": 2048,
+        "h": 2048
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "rune_altar",
+      "out": "files/environment/rune_altar.png",
+      "size": {
+        "w": 2048,
+        "h": 2048
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "trees_hitbox",
+      "out": "files/environment/trees/trees_hitbox.png",
+      "size": {
+        "w": 2048,
+        "h": 2048
+      },
+      "prompt": "",
+      "status": "draft",
+      "notes": "Derived mask/hitbox asset — rebuild from its parent art, do not prompt-generate."
+    },
+    {
+      "id": "trees",
+      "out": "files/environment/trees/trees.png",
+      "size": {
+        "w": 2048,
+        "h": 2048
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "void_throne_open",
+      "out": "files/environment/void_throne_open.png",
+      "size": {
+        "w": 1254,
+        "h": 1254
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "void_overlord",
+      "out": "files/ultimate_bosses/void_overlord.png",
+      "size": {
+        "w": 2172,
+        "h": 724
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "void_tomb",
+      "out": "files/ultimate_bosses/void_tomb.png",
+      "size": {
+        "w": 1254,
+        "h": 1254
+      },
+      "prompt": "",
+      "status": "draft"
+    }
+  ]
+}

@@ -2,7 +2,7 @@
 //   - alpha den (1 Wolf alpha + 2 Young Wolves) spawns as the pre-encounter
 //   - clearing the den → clean boss start; leaving it → it joins the boss (join)
 //   - the boss's charged "Savage Maul" telegraphs (cast bar) then lands a spike
-//   - the boss's 50% young-wolf call is wired
+//   - the boss's 50% beat is a light enrage only (no adds — T1 simplification)
 //   - the boss can still be cleared
 //
 // Run: pnpm --filter @mmo-idle/server exec tsx ../server/test/dungeonForest.test.ts
@@ -116,15 +116,16 @@ function setupForest(): { world: World; playerId: string } {
     (boss.chargedAttack?.marksTarget?.durationMs ?? 0) > 0,
     "the Maul marks its prey (Scent of Blood) before the charged pounce",
   );
-  const wolfCall = boss.bossScript?.phases?.[0]?.actions.find((a) => a.type === "spawn-adds");
+  // T1 simplification: no adds during the boss fight (Plains is the only T1 boss
+  // with adds) — the Maul, not adds, is the threat. The 50% beat is a light enrage.
   assert(
-    !!wolfCall && (wolfCall as { monsterTypeId: string }).monsterTypeId === "young-wolf",
-    "boss calls a young-wolf group at 50%",
+    !boss.bossScript?.phases?.some((p) => p.actions.some((a) => a.type === "spawn-adds")),
+    "the forest boss spawns no adds (T1 simplification)",
   );
-  // Reduced add pressure: a one-time pair, not repeated spam — the Maul is the threat.
-  const wolfCount = (wolfCall as { count?: number }).count ?? 0;
-  const wolfCap = (wolfCall as { maxAlive?: number }).maxAlive ?? 0;
-  assert(wolfCount <= 2 && wolfCap <= 2, "the 50% wolf call is a small capped pair (≤2), not a swarm");
+  assert(
+    boss.bossScript?.phases?.[0]?.actions.some((a) => a.type === "enrage") === true,
+    "the 50% beat is a light enrage",
+  );
   assert(
     !boss.bossScript?.repeating,
     "the forest boss has no repeating add beat (no continuous wolf spam)",

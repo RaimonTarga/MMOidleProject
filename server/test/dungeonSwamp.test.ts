@@ -70,9 +70,15 @@ function setupSwamp(): { world: World; playerId: string } {
   assert(def!.unclearedThreat?.mode === "hazard", "uncleared keepers enable extra rot hazards");
 
   const boss = MONSTER_DATABASE.get("grave-toadeater")!;
+  // T1 simplification: no adds during the boss fight (Plains is the only T1 boss
+  // with adds). The 50% beat is a light enrage.
   assert(
-    boss.bossScript?.phases?.[0]?.actions.some((a) => a.type === "spawn-adds" && a.monsterTypeId === "bog-witch") === true,
-    "50% boss beat calls a rot caster/keeper",
+    !boss.bossScript?.phases?.some((p) => p.actions.some((a) => a.type === "spawn-adds")),
+    "the swamp boss spawns no adds (T1 simplification)",
+  );
+  assert(
+    boss.bossScript?.phases?.[0]?.actions.some((a) => a.type === "enrage") === true,
+    "50% boss beat is a light enrage",
   );
 }
 

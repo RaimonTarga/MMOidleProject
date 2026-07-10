@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PixelLab review gallery</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #14161c; color: #d7dae2; font: 14px/1.45 system-ui, sans-serif; }
+  header { position: sticky; top: 0; z-index: 2; display: flex; gap: 16px; align-items: center;
+           padding: 10px 16px; background: #1b1e27; border-bottom: 1px solid #2a2e3b; }
+  header h1 { font-size: 15px; margin: 0 auto 0 0; font-weight: 600; }
+  header .muted { color: #8b90a0; font-size: 12px; }
+  select { background: #232735; color: inherit; border: 1px solid #363b4d; border-radius: 6px; padding: 4px 8px; }
+  main { padding: 16px; display: grid; gap: 14px; max-width: 1400px; margin: 0 auto; }
+  .card { background: #1b1e27; border: 1px solid #2a2e3b; border-radius: 10px; padding: 12px 14px; }
+  .card h2 { font-size: 13px; margin: 0 0 2px; font-weight: 600; }
+  .card .out { color: #8b90a0; font-size: 11px; word-break: break-all; }
+  .card .prompt { color: #aab; font-size: 12px; margin: 6px 0 10px; white-space: pre-wrap; }
+  .row { display: flex; gap: 14px; flex-wrap: wrap; align-items: flex-start; }
+  figure { margin: 0; text-align: center; }
+  figcaption { font-size: 11px; color: #8b90a0; margin-top: 4px; }
+  .imgbox { display: inline-block; padding: 6px; border-radius: 8px; border: 1px solid #2a2e3b;
+            background: repeating-conic-gradient(#20232e 0% 25%, #262a37 0% 50%) 0 0 / 16px 16px; }
+  img.px { image-rendering: pixelated; display: block; max-width: 280px; height: auto; }
+  .btn { cursor: pointer; border: 1px solid #363b4d; border-radius: 6px; background: #232735;
+         color: inherit; padding: 4px 12px; font-size: 12px; margin-top: 6px; }
+  .btn.accept { border-color: #2e7d4f; color: #7fd8a2; }
+  .btn.accept:hover { background: #1e3a2b; }
+  .btn.reject { border-color: #7d2e2e; color: #d88a7f; }
+  .btn.reject:hover { background: #3a1e1e; }
+  .pill { display: inline-block; font-size: 10px; padding: 1px 8px; border-radius: 999px;
+          border: 1px solid #363b4d; color: #8b90a0; margin-left: 6px; vertical-align: 1px; }
+  .pill.pending { color: #e8c268; border-color: #6a5a2c; }
+  .pill.accepted { color: #7fd8a2; border-color: #2e7d4f; }
+  .pill.regen { color: #d88a7f; border-color: #7d2e2e; }
+  .summary { color: #8b90a0; font-size: 12px; }
+  .empty { color: #8b90a0; text-align: center; padding: 40px 0; }
+</style>
+</head>
+<body>
+<header>
+  <h1>PixelLab review</h1>
+  <span class="muted" id="spend"></span>
+  <span class="muted" id="counts"></span>
+  <select id="catFilter"><option value="">all categories</option></select>
+</header>
+<main id="main"></main>
+<script>
+let state = null;
+const $ = (s) => document.querySelector(s);
+
+async function load() {
+  state = await (await fetch('/api/state')).json();
+  render();
+}
+
+function esc(s) { return s.replace(/[&<>"]/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+function render() {
+  const filter = $('#catFilter').value;
+  const opts = ['<option value="">all categories</option>'];
+  let review = 0, pending = 0, accepted = 0;
+  const cards = [];
+
+  for (const cat of state.categories) {
+    opts.push(`<option value="${cat.category}" ${cat.category === filter ? 'selected' : ''}>${cat.category}</option>`);
+    for (const e of cat.entries) {
+      if (e.candidates.length) review++;
+      if (e.status === 'pending') pending++;
+      if (e.status === 'accepted') accepted++;
+      if (filter && cat.category !== filter) continue;
+      if (!e.candidates.length) continue; // gallery shows only entries awaiting review
+      const current = e.hasCurrent
+        ? `<figure><div class="imgbox"><img class="px" src="/img/current?out=${encodeURIComponent(e.out)}"
+             style="width:${Math.min(280, e.size.w * 2)}px"></div><figcaption>current (${e.size.w}×${e.size.h})</figcaption></figure>`
+        : '';
+      const cands = e.candidates.map((f) => `
+        <figure>
+          <div class="imgbox"><img class="px" src="/img/candidate?category=${cat.category}&id=${e.id}&file=${f}"
+               style="width:${Math.min(280, e.size.w * 2)}px"></div>
+          <figcaption>${f}</figcaption>
+          <button class="btn accept" onclick="accept('${cat.category}','${e.id}','${f}')">Accept ✓</button>
+        </figure>`).join('');
+      cards.push(`
+        <section class="card">
+          <h2>${cat.category} / ${e.id} <span class="pill ${e.status}">${e.status}</span></h2>
+          <div class="out">${esc(e.out)}${e.sources.length ? ' — used by: ' + esc(e.sources.join(', ')) : ''}</div>
+          <div class="prompt">${esc(e.prompt)}</div>
+          <div class="row">${current}${cands}</div>
+          <button class="btn reject" onclick="reject('${cat.category}','${e.id}')">Reject all ✗ (note → regen)</button>
+        </section>`);
+    }
+  }
+  $('#catFilter').innerHTML = opts.join('');
+  $('#spend').textContent = `spend: $${state.spendUsd.toFixed(2)}`;
+  $('#counts').textContent = `${review} awaiting review · ${pending} pending · ${accepted} accepted`;
+  $('#main').innerHTML = cards.join('') ||
+    '<div class="empty">Nothing awaiting review. Generate candidates with <code>pnpm art:generate</code>.</div>';
+}
+
+async function post(url, body) {
+  const res = await fetch(url, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body) });
+  const json = await res.json();
+  if (!res.ok) alert(json.error || 'request failed');
+  await load();
+}
+
+function accept(category, id, file) { post('/api/accept', { category, id, file }); }
+function reject(category, id) {
+  const note = prompt('Why rejected? (stored in the manifest notes to guide the prompt tweak)') ?? '';
+  post('/api/reject', { category, id, note });
+}
+
+$('#catFilter').addEventListener('change', render);
+load();
+</script>
+</body>
+</html>

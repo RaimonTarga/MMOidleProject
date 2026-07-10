@@ -1,0 +1,1402 @@
+{
+  "category": "monsters",
+  "endpoint": "bitforge",
+  "styleRef": "style/creatures.png",
+  "noBackground": true,
+  "candidates": 3,
+  "entries": [
+    {
+      "id": "boss-cave-t1",
+      "out": "sprites/bosses/boss-cave-t1.png",
+      "size": {
+        "w": 128,
+        "h": 128
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "obsidian-broodmother"
+      ]
+    },
+    {
+      "id": "boss-cave-t2",
+      "out": "sprites/bosses/boss-cave-t2.png",
+      "size": {
+        "w": 128,
+        "h": 128
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "chitinous-dreadbore"
+      ]
+    },
+    {
+      "id": "boss-cave-t3",
+      "out": "sprites/bosses/boss-cave-t3.png",
+      "size": {
+        "w": 128,
+        "h": 128
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "deep-core-burrow-gorger"
+      ]
+    },
+    {
+      "id": "boss-desert-t2",
+      "out": "sprites/bosses/boss-desert-t2.png",
+      "size": {
+        "w": 128,
+        "h": 128
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "dune-stalker-emperor"
+      ]
+    },
+    {
+      "id": "boss-desert-t3",
+      "out": "sprites/bosses/boss-desert-t3.png",
+      "size": {
+        "w": 128,
+        "h": 128
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "dune-carapace-monarch"
+      ]
+    },
+    {
+      "id": "boss-forest-t1",
+      "out": "sprites/bosses/boss-forest-t1.png",
+      "size": {
+        "w": 128,
+        "h": 128
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "gnarled-greatbear"
+      ]
+    },
+    {
+      "id": "boss-forest-t2",
+      "out": "sprites/bosses/boss-forest-t2.png",
+      "size": {
+        "w": 128,
+        "h": 128
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "apex-timberclaw"
+      ]
+    },
+    {
+      "id": "boss-jungle-t2",
+      "out": "sprites/bosses/boss-jungle-t2.png",
+      "size": {
+        "w": 128,
+        "h": 128
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "jungle-dread-gorger"
+      ]
+    },
+    {
+      "id": "boss-jungle-t3",
+      "out": "sprites/bosses/boss-jungle-t3.png",
+      "size": {
+        "w": 128,
+        "h": 128
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "apex-bramble-slasher"
+      ]
+    },
+    {
+      "id": "boss-mountain-t1",
+      "out": "sprites/bosses/boss-mountain-t1.png",
+      "size": {
+        "w": 128,
+        "h": 128
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "crag-behemoth"
+      ]
+    },
+    {
+      "id": "boss-mountain-t2",
+      "out": "sprites/bosses/boss-mountain-t2.png",
+      "size": {
+        "w": 128,
+        "h": 128
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "stoneplate-juggernaut"
+      ]
+    },
+    {
+      "id": "boss-mountain-t3",
+      "out": "sprites/bosses/boss-mountain-t3.png",
+      "size": {
+        "w": 128,
+        "h": 128
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "crag-gorged-horn-behemoth"
+      ]
+    },
+    {
+      "id": "boss-plains-t1",
+      "out": "sprites/bosses/boss-plains-t1.png",
+      "size": {
+        "w": 128,
+        "h": 128
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "tusked-razorback"
+      ]
+    },
+    {
+      "id": "boss-plains-t2",
+      "out": "sprites/bosses/boss-plains-t2.png",
+      "size": {
+        "w": 128,
+        "h": 128
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "gorging-razortusk"
+      ]
+    },
+    {
+      "id": "boss-swamp-t1",
+      "out": "sprites/bosses/boss-swamp-t1.png",
+      "size": {
+        "w": 128,
+        "h": 128
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "grave-toadeater"
+      ]
+    },
+    {
+      "id": "boss-swamp-t2",
+      "out": "sprites/bosses/boss-swamp-t2.png",
+      "size": {
+        "w": 128,
+        "h": 128
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "mire-gorged-behemoth"
+      ]
+    },
+    {
+      "id": "boss-swamp-t3",
+      "out": "sprites/bosses/boss-swamp-t3.png",
+      "size": {
+        "w": 128,
+        "h": 128
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "rot-spore-croc-behemoth"
+      ]
+    },
+    {
+      "id": "boss-tundra-t3",
+      "out": "sprites/bosses/boss-tundra-t3.png",
+      "size": {
+        "w": 128,
+        "h": 128
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "frost-plated-rime-mammoth"
+      ]
+    },
+    {
+      "id": "boss-volcano-t3",
+      "out": "sprites/bosses/boss-volcano-t3.png",
+      "size": {
+        "w": 128,
+        "h": 128
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "cinder-shell-magma-salamander"
+      ]
+    },
+    {
+      "id": "t4-desert-boss",
+      "out": "sprites/bosses/t4-desert-boss.png",
+      "size": {
+        "w": 128,
+        "h": 128
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "dune-throne-sovereign"
+      ]
+    },
+    {
+      "id": "t4-graveyard-boss",
+      "out": "sprites/bosses/t4-graveyard-boss.png",
+      "size": {
+        "w": 128,
+        "h": 128
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "charnel-crown-sovereign"
+      ]
+    },
+    {
+      "id": "t4-jungle-boss",
+      "out": "sprites/bosses/t4-jungle-boss.png",
+      "size": {
+        "w": 128,
+        "h": 128
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "verdant-crown-predator"
+      ]
+    },
+    {
+      "id": "t4-mountain-boss",
+      "out": "sprites/bosses/t4-mountain-boss.png",
+      "size": {
+        "w": 128,
+        "h": 128
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "iron-crest-titan"
+      ]
+    },
+    {
+      "id": "t4-trench-boss",
+      "out": "sprites/bosses/t4-trench-boss.png",
+      "size": {
+        "w": 128,
+        "h": 128
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "elder-trench-serpent"
+      ]
+    },
+    {
+      "id": "t4-tundra-boss",
+      "out": "sprites/bosses/t4-tundra-boss.png",
+      "size": {
+        "w": 128,
+        "h": 128
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "glacial-patriarch"
+      ]
+    },
+    {
+      "id": "t4-volcano-boss",
+      "out": "sprites/bosses/t4-volcano-boss.png",
+      "size": {
+        "w": 128,
+        "h": 128
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "caldera-sovereign"
+      ]
+    },
+    {
+      "id": "ancient-wolf",
+      "out": "sprites/monsters/ancient-wolf.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "ancient-wolf"
+      ]
+    },
+    {
+      "id": "archer",
+      "out": "sprites/monsters/archer.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "ridge-archer"
+      ]
+    },
+    {
+      "id": "ash-slinger",
+      "out": "sprites/monsters/ash-slinger.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "ash-slinger"
+      ]
+    },
+    {
+      "id": "avalanche-ram",
+      "out": "sprites/monsters/avalanche-ram.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "avalanche-ram"
+      ]
+    },
+    {
+      "id": "boar",
+      "out": "sprites/monsters/boar.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "boar"
+      ]
+    },
+    {
+      "id": "bog-lurker",
+      "out": "sprites/monsters/bog-lurker.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "bog-lurker"
+      ]
+    },
+    {
+      "id": "bog-witch",
+      "out": "sprites/monsters/bog-witch.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "bog-witch"
+      ]
+    },
+    {
+      "id": "brute",
+      "out": "sprites/monsters/brute.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "cave-brute"
+      ]
+    },
+    {
+      "id": "canopy-harrier",
+      "out": "sprites/monsters/canopy-harrier.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "canopy-harrier"
+      ]
+    },
+    {
+      "id": "canopy-sprite",
+      "out": "sprites/monsters/canopy-sprite.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "canopy-sprite"
+      ]
+    },
+    {
+      "id": "cave-gargoyle",
+      "out": "sprites/monsters/cave-gargoyle.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "cave-gargoyle"
+      ]
+    },
+    {
+      "id": "cave-troll",
+      "out": "sprites/monsters/cave-troll.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "cave-troll"
+      ]
+    },
+    {
+      "id": "cavern-troll",
+      "out": "sprites/monsters/cavern-troll.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "cavern-troll"
+      ]
+    },
+    {
+      "id": "cinder-hound",
+      "out": "sprites/monsters/cinder-hound.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "cinder-hound"
+      ]
+    },
+    {
+      "id": "crag-mortar",
+      "out": "sprites/monsters/crag-mortar.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "crag-mortar"
+      ]
+    },
+    {
+      "id": "crawler",
+      "out": "sprites/monsters/crawler.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "cave-lurker"
+      ]
+    },
+    {
+      "id": "crystal-gargoyle",
+      "out": "sprites/monsters/crystal-gargoyle.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "crystal-gargoyle"
+      ]
+    },
+    {
+      "id": "deep-spider",
+      "out": "sprites/monsters/deep-spider.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "deep-spider"
+      ]
+    },
+    {
+      "id": "desert-basilisk",
+      "out": "sprites/monsters/desert-basilisk.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "desert-basilisk"
+      ]
+    },
+    {
+      "id": "dune-stalker",
+      "out": "sprites/monsters/dune-stalker.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "dune-stalker"
+      ]
+    },
+    {
+      "id": "dust-djinn",
+      "out": "sprites/monsters/dust-djinn.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "dust-djinn"
+      ]
+    },
+    {
+      "id": "ember-scuttler",
+      "out": "sprites/monsters/ember-scuttler.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "ember-scuttler"
+      ]
+    },
+    {
+      "id": "frog",
+      "out": "sprites/monsters/frog.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "mud-toad"
+      ]
+    },
+    {
+      "id": "frost-lurker",
+      "out": "sprites/monsters/frost-lurker.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "frost-lurker"
+      ]
+    },
+    {
+      "id": "giant-spider",
+      "out": "sprites/monsters/giant-spider.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "giant-spider"
+      ]
+    },
+    {
+      "id": "glacier-bear",
+      "out": "sprites/monsters/glacier-bear.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "glacier-bear"
+      ]
+    },
+    {
+      "id": "granite-titan",
+      "out": "sprites/monsters/granite-titan.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "granite-titan"
+      ]
+    },
+    {
+      "id": "greenslime",
+      "out": "sprites/monsters/greenslime.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "forest-slime"
+      ]
+    },
+    {
+      "id": "ironwood-golem",
+      "out": "sprites/monsters/ironwood-golem.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "ironwood-golem"
+      ]
+    },
+    {
+      "id": "jumper",
+      "out": "sprites/monsters/jumper.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "cliff-hopper"
+      ]
+    },
+    {
+      "id": "jungle-ape",
+      "out": "sprites/monsters/jungle-ape.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "jungle-ape"
+      ]
+    },
+    {
+      "id": "jungle-blowdarter",
+      "out": "sprites/monsters/jungle-blowdarter.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "jungle-blowdarter"
+      ]
+    },
+    {
+      "id": "jungle-snake",
+      "out": "sprites/monsters/jungle-snake.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "jungle-snake"
+      ]
+    },
+    {
+      "id": "jungle-stalker",
+      "out": "sprites/monsters/jungle-stalker.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "jungle-stalker"
+      ]
+    },
+    {
+      "id": "magma-brute",
+      "out": "sprites/monsters/magma-brute.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "magma-brute"
+      ]
+    },
+    {
+      "id": "mire-hex-spitter",
+      "out": "sprites/monsters/mire-hex-spitter.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "mire-hex-spitter"
+      ]
+    },
+    {
+      "id": "mire-stalker",
+      "out": "sprites/monsters/mire-stalker.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "mire-stalker"
+      ]
+    },
+    {
+      "id": "mountain-colossus",
+      "out": "sprites/monsters/mountain-colossus.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "mountain-colossus"
+      ]
+    },
+    {
+      "id": "peak-archer",
+      "out": "sprites/monsters/peak-archer.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "peak-archer"
+      ]
+    },
+    {
+      "id": "plague-hydra",
+      "out": "sprites/monsters/plague-hydra.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "plague-hydra"
+      ]
+    },
+    {
+      "id": "prairie-wolf",
+      "out": "sprites/monsters/prairie-wolf.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "prairie-wolf"
+      ]
+    },
+    {
+      "id": "rime-caster",
+      "out": "sprites/monsters/rime-caster.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "rime-caster"
+      ]
+    },
+    {
+      "id": "sand-scorpion",
+      "out": "sprites/monsters/sand-scorpion.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "sand-scorpion"
+      ]
+    },
+    {
+      "id": "sand-weaver",
+      "out": "sprites/monsters/sand-weaver.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "sandweaver"
+      ]
+    },
+    {
+      "id": "savanna-hawk",
+      "out": "sprites/monsters/savanna-hawk.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "savanna-hawk"
+      ]
+    },
+    {
+      "id": "silverback",
+      "out": "sprites/monsters/silverback.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "silverback"
+      ]
+    },
+    {
+      "id": "stampede-bull",
+      "out": "sprites/monsters/stampede-bull.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "stampede-bull"
+      ]
+    },
+    {
+      "id": "stone-basilisk",
+      "out": "sprites/monsters/stone-basilisk.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "stone-basilisk"
+      ]
+    },
+    {
+      "id": "stone-eagle",
+      "out": "sprites/monsters/stone-eagle.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "stone-eagle"
+      ]
+    },
+    {
+      "id": "swamp-hydra",
+      "out": "sprites/monsters/swamp-hydra.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "swamp-hydra"
+      ]
+    },
+    {
+      "id": "swampslime",
+      "out": "sprites/monsters/swampslime.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "bog-slime",
+        "slime"
+      ]
+    },
+    {
+      "id": "desert_cobra",
+      "out": "sprites/monsters/T4/desert_cobra.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "sandspitter-cobra"
+      ]
+    },
+    {
+      "id": "desert_iguana",
+      "out": "sprites/monsters/T4/desert_iguana.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "dune-basilisk"
+      ]
+    },
+    {
+      "id": "desert_snake",
+      "out": "sprites/monsters/T4/desert_snake.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "sand-viper"
+      ]
+    },
+    {
+      "id": "graveyard_dog",
+      "out": "sprites/monsters/T4/graveyard_dog.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "plague-hound"
+      ]
+    },
+    {
+      "id": "graveyard_gigaskeleton",
+      "out": "sprites/monsters/T4/graveyard_gigaskeleton.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "charnel-brute"
+      ]
+    },
+    {
+      "id": "graveyard_rat",
+      "out": "sprites/monsters/T4/graveyard_rat.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "plague-rat"
+      ]
+    },
+    {
+      "id": "graveyard_skeleton",
+      "out": "sprites/monsters/T4/graveyard_skeleton.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "bone-crawler"
+      ]
+    },
+    {
+      "id": "graveyard_vulture",
+      "out": "sprites/monsters/T4/graveyard_vulture.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "carrion-vulture"
+      ]
+    },
+    {
+      "id": "jungle_iguana",
+      "out": "sprites/monsters/T4/jungle_iguana.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "thornback-lizard"
+      ]
+    },
+    {
+      "id": "jungle_panther",
+      "out": "sprites/monsters/T4/jungle_panther.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "hunting-panther"
+      ]
+    },
+    {
+      "id": "jungle_silverback",
+      "out": "sprites/monsters/T4/jungle_silverback.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "apex-silverback"
+      ]
+    },
+    {
+      "id": "jungle_snake",
+      "out": "sprites/monsters/T4/jungle_snake.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "emerald-constrictor"
+      ]
+    },
+    {
+      "id": "mountain_big",
+      "out": "sprites/monsters/T4/mountain_big.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "permafrost-behemoth"
+      ]
+    },
+    {
+      "id": "mountain_dino",
+      "out": "sprites/monsters/T4/mountain_dino.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "cragback-rhino"
+      ]
+    },
+    {
+      "id": "mountain_elephant",
+      "out": "sprites/monsters/T4/mountain_elephant.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "granite-mammoth"
+      ]
+    },
+    {
+      "id": "mountain_ram",
+      "out": "sprites/monsters/T4/mountain_ram.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "avalanche-tyrant"
+      ]
+    },
+    {
+      "id": "mountain_roc",
+      "out": "sprites/monsters/T4/mountain_roc.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "cliffside-roc"
+      ]
+    },
+    {
+      "id": "trench_crab",
+      "out": "sprites/monsters/T4/trench_crab.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "hadal-stalker"
+      ]
+    },
+    {
+      "id": "trench_demon",
+      "out": "sprites/monsters/T4/trench_demon.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "elder-leviathan"
+      ]
+    },
+    {
+      "id": "trench_serpent",
+      "out": "sprites/monsters/T4/trench_serpent.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "abyssal-serpent"
+      ]
+    },
+    {
+      "id": "tundra_bear",
+      "out": "sprites/monsters/T4/tundra_bear.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "glacial-direbear"
+      ]
+    },
+    {
+      "id": "tundra_mammoth",
+      "out": "sprites/monsters/T4/tundra_mammoth.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "rime-tusk-mastodon"
+      ]
+    },
+    {
+      "id": "volcano_dog",
+      "out": "sprites/monsters/T4/volcano_dog.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "infernal-direhound"
+      ]
+    },
+    {
+      "id": "volcano_lizard",
+      "out": "sprites/monsters/T4/volcano_lizard.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "magma-salamander"
+      ]
+    },
+    {
+      "id": "volcano_spitter",
+      "out": "sprites/monsters/T4/volcano_spitter.png",
+      "size": {
+        "w": 117,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "ashspitter-salamander"
+      ]
+    },
+    {
+      "id": "volcano_tiny_lizard",
+      "out": "sprites/monsters/T4/volcano_tiny_lizard.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "ember-skink"
+      ]
+    },
+    {
+      "id": "volcano_turtle",
+      "out": "sprites/monsters/T4/volcano_turtle.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "obsidian-tortoise"
+      ]
+    },
+    {
+      "id": "tinyslime",
+      "out": "sprites/monsters/tinyslime.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "tiny-slime"
+      ]
+    },
+    {
+      "id": "wolf",
+      "out": "sprites/monsters/wolf.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "wolf",
+        "young-wolf"
+      ]
+    },
+    {
+      "id": "yellowslime",
+      "out": "sprites/monsters/yellowslime.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "plains-slime"
+      ]
+    }
+  ]
+}

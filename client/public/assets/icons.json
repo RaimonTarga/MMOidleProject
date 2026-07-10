@@ -2699,9 +2699,5 @@
 				}
 			]
 		}
-	],
-	"meta": {
-		"app": "http://free-tex-packer.com",
-		"version": "0.6.7"
-	}
+	]
 }

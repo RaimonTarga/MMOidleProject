@@ -78,6 +78,13 @@ pnpm bake:hitboxes
 pnpm size:check
 ```
 
+Art pipeline (PixelLab): `pnpm art:import|seed|generate|review|pack|status`.
+`art/src/` is the committed source of truth; the atlases in
+`client/public/assets` are build output of `art:pack`. Read
+`tools/pixellab/README.md` before touching sprites/icons; never edit packed
+atlas PNG/JSON by hand. `art:generate` spends real API credits — always
+`--dry-run` first.
+
 ## Tests
 
 Tests are plain tsx scripts, not a test framework (no vitest/jest). Each file

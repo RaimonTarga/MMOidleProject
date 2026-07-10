@@ -75,13 +75,11 @@ export const bossMonsterEntriesT1 = [
     // and the knockback. Tests Brace timing + burst, NOT AoE survival. Placeholder
     // numbers — user balance pass.
     chargedAttack: { name: 'Savage Maul', castMs: 1200, cooldownMs: 6500, initialCooldownMs: 3500, multiplier: 2.4, fx: 'savage-maul', knockback: { distance: 130 }, marksTarget: { durationMs: 1800 } },
-    // One readable 50% beat: the alpha calls a SMALL young-wolf pair ONCE to split your
-    // focus (target-priority test). Deliberately a one-time call of 2, capped — no
-    // repeated add spam; the Maul, not the adds, is the threat. Adds despawn on boss death.
+    // One readable 50% beat: a light enrage. The Maul, not adds, is the threat
+    // (T1 adds removed everywhere except Plains — fights stay simple).
     bossScript: {
       phases: [
         { hpPct: 0.5, actions: [
-          { type: 'spawn-adds', monsterTypeId: 'young-wolf', count: 2, maxAlive: 2, offsetRange: 180 },
           { type: 'enrage', atkMult: 1.1, cdMult: 0.85 },
         ] },
       ],
@@ -99,13 +97,12 @@ export const bossMonsterEntriesT1 = [
     chargeOnAggro: { speedMult: 3.0, durationMs: 1200 },
     aoeAttack: { radius: 120, damageMult: 0.6 },
     // MOUNTAIN EXAM = "break the guarded position". T1: at 50% it digs in (a timed
-    // shield) and calls a Ridge Archer to pelt from behind while you grind it down.
+    // shield) while you grind it down. (T1 adds removed except Plains.)
     // Numbers placeholder — user balance pass; structure formalizes in Step 13.
     bossScript: {
       phases: [
         { hpPct: 0.5, actions: [
           { type: 'shield', drAdd: 0.3, durationMs: 5000 },
-          { type: 'spawn-adds', monsterTypeId: 'ridge-archer', count: 1, offsetRange: 220 },
         ] },
       ],
     },
@@ -123,12 +120,11 @@ export const bossMonsterEntriesT1 = [
     dotEffect: { debuffId: 'grave-toadeater-poison', label: 'Toad Poison', damagePerStack: 3, maxStacks: 3, tickIntervalMs: 1000, durationMs: 4000 },
     aoeAttack: { radius: 120, damageMult: 0.6 },
     // SWAMP EXAM = "survive the rot". T1: the arena pools already pressure position;
-    // at 50% it calls a Bog Witch (ranged hex) to layer more DoT + a light enrage.
+    // at 50% it gets a light enrage. (T1 adds removed except Plains.)
     // Numbers placeholder — user balance pass; structure formalizes in Step 13.
     bossScript: {
       phases: [
         { hpPct: 0.5, actions: [
-          { type: 'spawn-adds', monsterTypeId: 'bog-witch', count: 1, offsetRange: 240 },
           { type: 'enrage', atkMult: 1.15, cdMult: 0.85 },
         ] },
       ],
@@ -145,22 +141,14 @@ export const bossMonsterEntriesT1 = [
     ai: { wanderRadius: 80, leashRange: 680, idleMinMs: 2500, idleMaxMs: 6500 },
     chargeOnAggro: { speedMult: 2.5, durationMs: 1200 },
     aoeAttack: { radius: 120, damageMult: 0.6 },
-    // CAVE EXAM = "survive the elite" (a durable %DR sponge). T1: a sparse, single-add
-    // fight, NOT a swarm. It periodically hatches ONE lurker (hard-capped at 2 alive),
-    // and at 50% it digs in (timed shield) and hatches ONE stronger brood spider. The
-    // single, predictable adds keep the focus on grinding the durable boss — Heavy
-    // Strike (single-target burst) and Second Wind (sustain) both pay off here. Adds
-    // despawn on boss death. Numbers placeholder — user pass.
+    // CAVE EXAM = "survive the elite" (a durable %DR sponge). T1: at 50% it digs in
+    // (timed shield) — the focus stays on grinding the durable boss; Heavy Strike
+    // (single-target burst) and Second Wind (sustain) both pay off here.
+    // (T1 adds removed except Plains.) Numbers placeholder — user pass.
     bossScript: {
       phases: [
         { hpPct: 0.5, actions: [
           { type: 'shield', drAdd: 0.25, durationMs: 5000 },
-          { type: 'spawn-adds', monsterTypeId: 'giant-spider', count: 1, maxAlive: 2, offsetRange: 220 },
-        ] },
-      ],
-      repeating: [
-        { intervalMs: 24_000, initialDelayMs: 12_000, actions: [
-          { type: 'spawn-adds', monsterTypeId: 'cave-lurker', count: 1, maxAlive: 1, offsetRange: 200 },
         ] },
       ],
     },

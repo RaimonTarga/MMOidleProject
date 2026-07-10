@@ -1,0 +1,152 @@
+{
+  "category": "backgrounds",
+  "endpoint": "pixflux",
+  "styleRef": "style/terrain.png",
+  "noBackground": false,
+  "candidates": 3,
+  "entries": [
+    {
+      "id": "biome_abyss",
+      "out": "files/biome_abyss.png",
+      "size": {
+        "w": 1254,
+        "h": 1254
+      },
+      "prompt": "",
+      "status": "draft",
+      "notes": "Shipped at 1254×1254; pixflux caps at 400×400. Candidates are generated at 400 and NN-upscaled to the manifest size on accept (lossless for pixel art)."
+    },
+    {
+      "id": "biome_cave",
+      "out": "files/biome_cave.png",
+      "size": {
+        "w": 1254,
+        "h": 1254
+      },
+      "prompt": "",
+      "status": "draft",
+      "notes": "Shipped at 1254×1254; pixflux caps at 400×400. Candidates are generated at 400 and NN-upscaled to the manifest size on accept (lossless for pixel art)."
+    },
+    {
+      "id": "biome_clearing",
+      "out": "files/biome_clearing.png",
+      "size": {
+        "w": 1254,
+        "h": 1254
+      },
+      "prompt": "",
+      "status": "draft",
+      "notes": "Shipped at 1254×1254; pixflux caps at 400×400. Candidates are generated at 400 and NN-upscaled to the manifest size on accept (lossless for pixel art)."
+    },
+    {
+      "id": "biome_desert",
+      "out": "files/biome_desert.png",
+      "size": {
+        "w": 1254,
+        "h": 1254
+      },
+      "prompt": "",
+      "status": "draft",
+      "notes": "Shipped at 1254×1254; pixflux caps at 400×400. Candidates are generated at 400 and NN-upscaled to the manifest size on accept (lossless for pixel art)."
+    },
+    {
+      "id": "biome_forest",
+      "out": "files/biome_forest.png",
+      "size": {
+        "w": 1254,
+        "h": 1254
+      },
+      "prompt": "",
+      "status": "draft",
+      "notes": "Shipped at 1254×1254; pixflux caps at 400×400. Candidates are generated at 400 and NN-upscaled to the manifest size on accept (lossless for pixel art)."
+    },
+    {
+      "id": "biome_graveyard",
+      "out": "files/biome_graveyard.png",
+      "size": {
+        "w": 1254,
+        "h": 1254
+      },
+      "prompt": "",
+      "status": "draft",
+      "notes": "Shipped at 1254×1254; pixflux caps at 400×400. Candidates are generated at 400 and NN-upscaled to the manifest size on accept (lossless for pixel art)."
+    },
+    {
+      "id": "biome_jungle",
+      "out": "files/biome_jungle.png",
+      "size": {
+        "w": 1254,
+        "h": 1254
+      },
+      "prompt": "",
+      "status": "draft",
+      "notes": "Shipped at 1254×1254; pixflux caps at 400×400. Candidates are generated at 400 and NN-upscaled to the manifest size on accept (lossless for pixel art)."
+    },
+    {
+      "id": "biome_mountain",
+      "out": "files/biome_mountain.png",
+      "size": {
+        "w": 1254,
+        "h": 1254
+      },
+      "prompt": "",
+      "status": "draft",
+      "notes": "Shipped at 1254×1254; pixflux caps at 400×400. Candidates are generated at 400 and NN-upscaled to the manifest size on accept (lossless for pixel art)."
+    },
+    {
+      "id": "biome_plains",
+      "out": "files/biome_plains.png",
+      "size": {
+        "w": 1254,
+        "h": 1254
+      },
+      "prompt": "",
+      "status": "draft",
+      "notes": "Shipped at 1254×1254; pixflux caps at 400×400. Candidates are generated at 400 and NN-upscaled to the manifest size on accept (lossless for pixel art)."
+    },
+    {
+      "id": "biome_swamp",
+      "out": "files/biome_swamp.png",
+      "size": {
+        "w": 1254,
+        "h": 1254
+      },
+      "prompt": "",
+      "status": "draft",
+      "notes": "Shipped at 1254×1254; pixflux caps at 400×400. Candidates are generated at 400 and NN-upscaled to the manifest size on accept (lossless for pixel art)."
+    },
+    {
+      "id": "biome_trench",
+      "out": "files/biome_trench.png",
+      "size": {
+        "w": 1254,
+        "h": 1254
+      },
+      "prompt": "",
+      "status": "draft",
+      "notes": "Shipped at 1254×1254; pixflux caps at 400×400. Candidates are generated at 400 and NN-upscaled to the manifest size on accept (lossless for pixel art)."
+    },
+    {
+      "id": "biome_tundra",
+      "out": "files/biome_tundra.png",
+      "size": {
+        "w": 1254,
+        "h": 1254
+      },
+      "prompt": "",
+      "status": "draft",
+      "notes": "Shipped at 1254×1254; pixflux caps at 400×400. Candidates are generated at 400 and NN-upscaled to the manifest size on accept (lossless for pixel art)."
+    },
+    {
+      "id": "biome_volcano",
+      "out": "files/biome_volcano.png",
+      "size": {
+        "w": 1254,
+        "h": 1254
+      },
+      "prompt": "",
+      "status": "draft",
+      "notes": "Shipped at 1254×1254; pixflux caps at 400×400. Candidates are generated at 400 and NN-upscaled to the manifest size on accept (lossless for pixel art)."
+    }
+  ]
+}

@@ -11,6 +11,10 @@ Status: current as of 2026-07-05.
 
 ## 1. Composite (paper-doll) character sprites
 
+**PROMOTED (2026-07-10):** absorbed into `docs/pixellab-pipeline-plan.md`
+(full-art-overhaul pipeline; this entry's bake-time design is carried over
+unchanged as the "Player composite" category and `art:bake-players` step).
+
 **Verdict: very feasible.** Touches zero server code, zero protocol, almost zero
 render code. Grounding facts (verified 2026-07-05): player appearance is derived
 client-side from networked `combatArchetype` + `unlockedSkills`
@@ -71,7 +75,9 @@ or every panel gets restyled twice.**
   button at once) + slot grids + `image-rendering: pixelated` with integer
   scaling + bitmap-style pixel font.
 - **Icons:** Pixellab batch-generation of the icon set in one consistent style
-  (replaces the current generic look faster than any CSS work).
+  (replaces the current generic look faster than any CSS work). *Icon/UI-asset
+  generation is now covered by `docs/pixellab-pipeline-plan.md`; this entry
+  keeps the primitives/theming work.*
 - **Additional tier skins are art-only:** recolored border strip + token values.
   The palette-remap tooling from feature 1 can generate tier variants of UI
   assets — shared infrastructure.

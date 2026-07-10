@@ -1,0 +1,1289 @@
+{
+  "category": "items",
+  "endpoint": "bitforge",
+  "styleRef": "style/icons.png",
+  "noBackground": true,
+  "candidates": 3,
+  "entries": [
+    {
+      "id": "bone-armor-1",
+      "out": "items/armor/bone-armor-1.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "bone-armor-2",
+      "out": "items/armor/bone-armor-2.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "copper-armor-1",
+      "out": "items/armor/copper-armor-1.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "copper-armor-2",
+      "out": "items/armor/copper-armor-2.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "dark-armor-1",
+      "out": "items/armor/dark-armor-1.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "forest-armor-1",
+      "out": "items/armor/forest-armor-1.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "frozen-armor-1",
+      "out": "items/armor/frozen-armor-1.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "holy-armor-1",
+      "out": "items/armor/holy-armor-1.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "jungle-armor-1",
+      "out": "items/armor/jungle-armor-1.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "jungle-armor-2",
+      "out": "items/armor/jungle-armor-2.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "leater-armor-2",
+      "out": "items/armor/leater-armor-2.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "leather-armor-1",
+      "out": "items/armor/leather-armor-1.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "leather-armor-3",
+      "out": "items/armor/leather-armor-3.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "leather-armor-4",
+      "out": "items/armor/leather-armor-4.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "leather-armor-5",
+      "out": "items/armor/leather-armor-5.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "plate-armor-1",
+      "out": "items/armor/plate-armor-1.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "plate-armor-2",
+      "out": "items/armor/plate-armor-2.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "plate-armor-3",
+      "out": "items/armor/plate-armor-3.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "plate-armor-4",
+      "out": "items/armor/plate-armor-4.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "plate-armor-5",
+      "out": "items/armor/plate-armor-5.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "plate-armor-6",
+      "out": "items/armor/plate-armor-6.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "plate-armor-7",
+      "out": "items/armor/plate-armor-7.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "plate-armor-8",
+      "out": "items/armor/plate-armor-8.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "plate-armor-9",
+      "out": "items/armor/plate-armor-9.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "rags-1",
+      "out": "items/armor/rags-1.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "rags-2",
+      "out": "items/armor/rags-2.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "rags-3",
+      "out": "items/armor/rags-3.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "tundra-armor-1",
+      "out": "items/armor/tundra-armor-1.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "tunic-1",
+      "out": "items/armor/tunic-1.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "tunic-2",
+      "out": "items/armor/tunic-2.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "volcano-armor-1",
+      "out": "items/armor/volcano-armor-1.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "volcano-armor-2",
+      "out": "items/armor/volcano-armor-2.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "dark-boots-1",
+      "out": "items/boots/dark-boots-1.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "dark-boots-2",
+      "out": "items/boots/dark-boots-2.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "forest-boots-1",
+      "out": "items/boots/forest-boots-1.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "graveyard-boots-1",
+      "out": "items/boots/graveyard-boots-1.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "ice-boots-1",
+      "out": "items/boots/ice-boots-1.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "knight-boots-1",
+      "out": "items/boots/knight-boots-1.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "leather-boots-1",
+      "out": "items/boots/leather-boots-1.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "leather-boots-2",
+      "out": "items/boots/leather-boots-2.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "leather-boots-3",
+      "out": "items/boots/leather-boots-3.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "leather-boots-4",
+      "out": "items/boots/leather-boots-4.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "leather-boots-5",
+      "out": "items/boots/leather-boots-5.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "leather-boots-6",
+      "out": "items/boots/leather-boots-6.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "leather-boots-7",
+      "out": "items/boots/leather-boots-7.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "leather-boots-8",
+      "out": "items/boots/leather-boots-8.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "lightning-boots-1",
+      "out": "items/boots/lightning-boots-1.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "mage-boots-1",
+      "out": "items/boots/mage-boots-1.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "plate-boots-1",
+      "out": "items/boots/plate-boots-1.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "plate-boots-2",
+      "out": "items/boots/plate-boots-2.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "plate-boots-3",
+      "out": "items/boots/plate-boots-3.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "plate-boots-4",
+      "out": "items/boots/plate-boots-4.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "plate-boots-5",
+      "out": "items/boots/plate-boots-5.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "plate-boots-6",
+      "out": "items/boots/plate-boots-6.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "plate-boots-7",
+      "out": "items/boots/plate-boots-7.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "sandals-1",
+      "out": "items/boots/sandals-1.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "sandals-2",
+      "out": "items/boots/sandals-2.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "trench-boots-1",
+      "out": "items/boots/trench-boots-1.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "trench-boots-2",
+      "out": "items/boots/trench-boots-2.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "volcano-boots-1",
+      "out": "items/boots/volcano-boots-1.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "volcano-boots-2",
+      "out": "items/boots/volcano-boots-2.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "wraps-1",
+      "out": "items/boots/wraps-1.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "wraps-2",
+      "out": "items/boots/wraps-2.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "wraps-3",
+      "out": "items/boots/wraps-3.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "bright-charm-1",
+      "out": "items/charms/bright-charm-1.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "bright-charm-2",
+      "out": "items/charms/bright-charm-2.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "bright-green-charm",
+      "out": "items/charms/bright-green-charm.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "bright-pink-charm",
+      "out": "items/charms/bright-pink-charm.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "depths-charm-1",
+      "out": "items/charms/depths-charm-1.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "depths-charm-2",
+      "out": "items/charms/depths-charm-2.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "eye-charm-1",
+      "out": "items/charms/eye-charm-1.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "eye-charm-2",
+      "out": "items/charms/eye-charm-2.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "eye-charm-3",
+      "out": "items/charms/eye-charm-3.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "eye-charm-4",
+      "out": "items/charms/eye-charm-4.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "eye-charm-5",
+      "out": "items/charms/eye-charm-5.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "frozen-crystal",
+      "out": "items/charms/frozen-crystal.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "heart-charm-1",
+      "out": "items/charms/heart-charm-1.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "heart-charm-2",
+      "out": "items/charms/heart-charm-2.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "heart-charm-3",
+      "out": "items/charms/heart-charm-3.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "heart-charm-4",
+      "out": "items/charms/heart-charm-4.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "jewel-charm-1",
+      "out": "items/charms/jewel-charm-1.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "jewel-charm-2",
+      "out": "items/charms/jewel-charm-2.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "jewel-charm-3",
+      "out": "items/charms/jewel-charm-3.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "pearl-1",
+      "out": "items/charms/pearl-1.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "pearl-2",
+      "out": "items/charms/pearl-2.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "shield-charm-1",
+      "out": "items/charms/shield-charm-1.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "shield-charm-2",
+      "out": "items/charms/shield-charm-2.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "stone-hand-charm-1",
+      "out": "items/charms/stone-hand-charm-1.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "stone-hand-charm-2",
+      "out": "items/charms/stone-hand-charm-2.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "tear-charm-1",
+      "out": "items/charms/tear-charm-1.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "tear-charm-2",
+      "out": "items/charms/tear-charm-2.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "volcano-crystal",
+      "out": "items/charms/volcano-crystal.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "wood-charm-1",
+      "out": "items/charms/wood-charm-1.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "wood-charm-2",
+      "out": "items/charms/wood-charm-2.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "wood-charm-3",
+      "out": "items/charms/wood-charm-3.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "wood-charm-4",
+      "out": "items/charms/wood-charm-4.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "axe-1",
+      "out": "items/weapons/axe-1.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "axe-2",
+      "out": "items/weapons/axe-2.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "bone-dagger",
+      "out": "items/weapons/bone-dagger.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "bow-1",
+      "out": "items/weapons/bow-1.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "club",
+      "out": "items/weapons/club.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "cross-1",
+      "out": "items/weapons/cross-1.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "cross-2",
+      "out": "items/weapons/cross-2.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "crystal-wand",
+      "out": "items/weapons/crystal-wand.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "dark-blade",
+      "out": "items/weapons/dark-blade.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "frozen-hammer",
+      "out": "items/weapons/frozen-hammer.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "frozen-sword",
+      "out": "items/weapons/frozen-sword.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "graveyard-axe",
+      "out": "items/weapons/graveyard-axe.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "hammer-1",
+      "out": "items/weapons/hammer-1.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "hammer-2",
+      "out": "items/weapons/hammer-2.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "jungle-rapier",
+      "out": "items/weapons/jungle-rapier.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "lava-blade",
+      "out": "items/weapons/lava-blade.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "lava-rapier",
+      "out": "items/weapons/lava-rapier.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "rapier-1",
+      "out": "items/weapons/rapier-1.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "rapier-2",
+      "out": "items/weapons/rapier-2.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "rapier-3",
+      "out": "items/weapons/rapier-3.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "rapier-4",
+      "out": "items/weapons/rapier-4.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "rune-sword-cold-1",
+      "out": "items/weapons/rune-sword-cold-1.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "rune-sword-cold-2",
+      "out": "items/weapons/rune-sword-cold-2.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "rune-sword-hot-1",
+      "out": "items/weapons/rune-sword-hot-1.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "rune-sword-hot-2",
+      "out": "items/weapons/rune-sword-hot-2.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "simple-axe",
+      "out": "items/weapons/simple-axe.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "spear-1",
+      "out": "items/weapons/spear-1.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "sword-1",
+      "out": "items/weapons/sword-1.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "sword-2",
+      "out": "items/weapons/sword-2.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "sword-3",
+      "out": "items/weapons/sword-3.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "sword-4",
+      "out": "items/weapons/sword-4.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "whirling-morning-star",
+      "out": "items/weapons/whirling-morning-star.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    }
+  ]
+}

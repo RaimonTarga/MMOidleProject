@@ -1,0 +1,219 @@
+{
+  "category": "ui-icons",
+  "endpoint": "bitforge",
+  "styleRef": "style/icons.png",
+  "noBackground": true,
+  "candidates": 3,
+  "entries": [
+    {
+      "id": "abyss-icon",
+      "out": "UI_icons/abyss-icon.png",
+      "size": {
+        "w": 35,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "cave-icon",
+      "out": "UI_icons/cave-icon.png",
+      "size": {
+        "w": 35,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "clearing_icon",
+      "out": "UI_icons/clearing_icon.png",
+      "size": {
+        "w": 35,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "desert-icon",
+      "out": "UI_icons/desert-icon.png",
+      "size": {
+        "w": 35,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "forest-icon",
+      "out": "UI_icons/forest-icon.png",
+      "size": {
+        "w": 35,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "forge-icon",
+      "out": "UI_icons/forge-icon.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "graveyard-icon",
+      "out": "UI_icons/graveyard-icon.png",
+      "size": {
+        "w": 35,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "inventory-icon",
+      "out": "UI_icons/inventory-icon.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "jungle-icon",
+      "out": "UI_icons/jungle-icon.png",
+      "size": {
+        "w": 36,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "map-icon",
+      "out": "UI_icons/map-icon.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "mountain-icon",
+      "out": "UI_icons/mountain-icon.png",
+      "size": {
+        "w": 35,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "passives-icon",
+      "out": "UI_icons/passives-icon.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "plains-icon",
+      "out": "UI_icons/plains-icon.png",
+      "size": {
+        "w": 36,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "progress-icon",
+      "out": "UI_icons/progress-icon.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "runes-icon",
+      "out": "UI_icons/runes-icon.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "settings-icon",
+      "out": "UI_icons/settings-icon.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "swamp-icon",
+      "out": "UI_icons/swamp-icon.png",
+      "size": {
+        "w": 35,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "trench-icon",
+      "out": "UI_icons/trench-icon.png",
+      "size": {
+        "w": 36,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "tundra-icon",
+      "out": "UI_icons/tundra-icon.png",
+      "size": {
+        "w": 35,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "upgrade-icon",
+      "out": "UI_icons/upgrade-icon.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    },
+    {
+      "id": "volcano-icon",
+      "out": "UI_icons/volcano-icon.png",
+      "size": {
+        "w": 35,
+        "h": 32
+      },
+      "prompt": "",
+      "status": "draft"
+    }
+  ]
+}

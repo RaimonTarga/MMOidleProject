@@ -1,0 +1,42 @@
+{
+  "category": "effects",
+  "endpoint": "animate-with-text",
+  "styleRef": null,
+  "noBackground": true,
+  "candidates": 1,
+  "entries": [
+    {
+      "id": "freezing_cold",
+      "out": "files/animations/freezing_cold.png",
+      "size": {
+        "w": 1280,
+        "h": 1280
+      },
+      "prompt": "",
+      "status": "draft",
+      "notes": "These are multi-frame strips. animate-with-text needs params.firstFrame (an art/src path) and params.action; generated frames are assembled into a horizontal strip."
+    },
+    {
+      "id": "glacial_fracture",
+      "out": "files/animations/glacial_fracture.png",
+      "size": {
+        "w": 1280,
+        "h": 1280
+      },
+      "prompt": "",
+      "status": "draft",
+      "notes": "These are multi-frame strips. animate-with-text needs params.firstFrame (an art/src path) and params.action; generated frames are assembled into a horizontal strip."
+    },
+    {
+      "id": "permafrost",
+      "out": "files/animations/permafrost.png",
+      "size": {
+        "w": 1280,
+        "h": 1280
+      },
+      "prompt": "",
+      "status": "draft",
+      "notes": "These are multi-frame strips. animate-with-text needs params.firstFrame (an art/src path) and params.action; generated frames are assembled into a horizontal strip."
+    }
+  ]
+}

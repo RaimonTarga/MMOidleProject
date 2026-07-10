@@ -1,0 +1,513 @@
+{
+  "category": "players",
+  "endpoint": "bitforge",
+  "styleRef": "style/characters.png",
+  "noBackground": true,
+  "candidates": 3,
+  "entries": [
+    {
+      "id": "breacher",
+      "out": "sprites/classes/breacher.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "reload-range-close"
+      ],
+      "notes": "DEFERRED: player visuals may move to the composite (paper-doll) scheme — see docs/visual_and_aesthetics_design/player-visual-identity-bible.md. Leave as draft until that decision lands."
+    },
+    {
+      "id": "cadence",
+      "out": "sprites/classes/cadence.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "cadence"
+      ],
+      "notes": "DEFERRED: player visuals may move to the composite (paper-doll) scheme — see docs/visual_and_aesthetics_design/player-visual-identity-bible.md. Leave as draft until that decision lands."
+    },
+    {
+      "id": "classless",
+      "out": "sprites/classes/classless.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "default"
+      ],
+      "notes": "DEFERRED: player visuals may move to the composite (paper-doll) scheme — see docs/visual_and_aesthetics_design/player-visual-identity-bible.md. Leave as draft until that decision lands."
+    },
+    {
+      "id": "cooldown",
+      "out": "sprites/classes/cooldown.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "cooldown"
+      ],
+      "notes": "DEFERRED: player visuals may move to the composite (paper-doll) scheme — see docs/visual_and_aesthetics_design/player-visual-identity-bible.md. Leave as draft until that decision lands."
+    },
+    {
+      "id": "deadeye",
+      "out": "sprites/classes/deadeye.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "reload-range-far"
+      ],
+      "notes": "DEFERRED: player visuals may move to the composite (paper-doll) scheme — see docs/visual_and_aesthetics_design/player-visual-identity-bible.md. Leave as draft until that decision lands."
+    },
+    {
+      "id": "dot",
+      "out": "sprites/classes/dot.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "dot"
+      ],
+      "notes": "DEFERRED: player visuals may move to the composite (paper-doll) scheme — see docs/visual_and_aesthetics_design/player-visual-identity-bible.md. Leave as draft until that decision lands."
+    },
+    {
+      "id": "energy",
+      "out": "sprites/classes/energy.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "energy"
+      ],
+      "notes": "DEFERRED: player visuals may move to the composite (paper-doll) scheme — see docs/visual_and_aesthetics_design/player-visual-identity-bible.md. Leave as draft until that decision lands."
+    },
+    {
+      "id": "enforcer",
+      "out": "sprites/classes/enforcer.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "reload-range-mid"
+      ],
+      "notes": "DEFERRED: player visuals may move to the composite (paper-doll) scheme — see docs/visual_and_aesthetics_design/player-visual-identity-bible.md. Leave as draft until that decision lands."
+    },
+    {
+      "id": "harbinger",
+      "out": "sprites/classes/harbinger.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "dot-range-far"
+      ],
+      "notes": "DEFERRED: player visuals may move to the composite (paper-doll) scheme — see docs/visual_and_aesthetics_design/player-visual-identity-bible.md. Leave as draft until that decision lands."
+    },
+    {
+      "id": "haunt",
+      "out": "sprites/classes/haunt.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "energy-range-close"
+      ],
+      "notes": "DEFERRED: player visuals may move to the composite (paper-doll) scheme — see docs/visual_and_aesthetics_design/player-visual-identity-bible.md. Leave as draft until that decision lands."
+    },
+    {
+      "id": "heavy_cadence",
+      "out": "sprites/classes/heavy_cadence.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "cadence-heavy"
+      ],
+      "notes": "DEFERRED: player visuals may move to the composite (paper-doll) scheme — see docs/visual_and_aesthetics_design/player-visual-identity-bible.md. Leave as draft until that decision lands."
+    },
+    {
+      "id": "heavy_cooldown",
+      "out": "sprites/classes/heavy_cooldown.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "cooldown-heavy"
+      ],
+      "notes": "DEFERRED: player visuals may move to the composite (paper-doll) scheme — see docs/visual_and_aesthetics_design/player-visual-identity-bible.md. Leave as draft until that decision lands."
+    },
+    {
+      "id": "heavy_dot",
+      "out": "sprites/classes/heavy_dot.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "dot-heavy"
+      ],
+      "notes": "DEFERRED: player visuals may move to the composite (paper-doll) scheme — see docs/visual_and_aesthetics_design/player-visual-identity-bible.md. Leave as draft until that decision lands."
+    },
+    {
+      "id": "heavy_energy",
+      "out": "sprites/classes/heavy_energy.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "energy-heavy"
+      ],
+      "notes": "DEFERRED: player visuals may move to the composite (paper-doll) scheme — see docs/visual_and_aesthetics_design/player-visual-identity-bible.md. Leave as draft until that decision lands."
+    },
+    {
+      "id": "heavy_reload",
+      "out": "sprites/classes/heavy_reload.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "reload-heavy"
+      ],
+      "notes": "DEFERRED: player visuals may move to the composite (paper-doll) scheme — see docs/visual_and_aesthetics_design/player-visual-identity-bible.md. Leave as draft until that decision lands."
+    },
+    {
+      "id": "hexblade",
+      "out": "sprites/classes/hexblade.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "dot-range-close"
+      ],
+      "notes": "DEFERRED: player visuals may move to the composite (paper-doll) scheme — see docs/visual_and_aesthetics_design/player-visual-identity-bible.md. Leave as draft until that decision lands."
+    },
+    {
+      "id": "in-fighter",
+      "out": "sprites/classes/in-fighter.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "cadence-range-close"
+      ],
+      "notes": "DEFERRED: player visuals may move to the composite (paper-doll) scheme — see docs/visual_and_aesthetics_design/player-visual-identity-bible.md. Leave as draft until that decision lands."
+    },
+    {
+      "id": "lancer",
+      "out": "sprites/classes/lancer.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "cadence-range-mid"
+      ],
+      "notes": "DEFERRED: player visuals may move to the composite (paper-doll) scheme — see docs/visual_and_aesthetics_design/player-visual-identity-bible.md. Leave as draft until that decision lands."
+    },
+    {
+      "id": "light_cadence",
+      "out": "sprites/classes/light_cadence.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "cadence-light"
+      ],
+      "notes": "DEFERRED: player visuals may move to the composite (paper-doll) scheme — see docs/visual_and_aesthetics_design/player-visual-identity-bible.md. Leave as draft until that decision lands."
+    },
+    {
+      "id": "light_cooldown",
+      "out": "sprites/classes/light_cooldown.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "cooldown-light"
+      ],
+      "notes": "DEFERRED: player visuals may move to the composite (paper-doll) scheme — see docs/visual_and_aesthetics_design/player-visual-identity-bible.md. Leave as draft until that decision lands."
+    },
+    {
+      "id": "light_dot",
+      "out": "sprites/classes/light_dot.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "dot-light"
+      ],
+      "notes": "DEFERRED: player visuals may move to the composite (paper-doll) scheme — see docs/visual_and_aesthetics_design/player-visual-identity-bible.md. Leave as draft until that decision lands."
+    },
+    {
+      "id": "light_energy",
+      "out": "sprites/classes/light_energy.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "energy-light"
+      ],
+      "notes": "DEFERRED: player visuals may move to the composite (paper-doll) scheme — see docs/visual_and_aesthetics_design/player-visual-identity-bible.md. Leave as draft until that decision lands."
+    },
+    {
+      "id": "light_reload",
+      "out": "sprites/classes/light_reload.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "reload-light"
+      ],
+      "notes": "DEFERRED: player visuals may move to the composite (paper-doll) scheme — see docs/visual_and_aesthetics_design/player-visual-identity-bible.md. Leave as draft until that decision lands."
+    },
+    {
+      "id": "medium_cadence",
+      "out": "sprites/classes/medium_cadence.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "cadence-balanced"
+      ],
+      "notes": "DEFERRED: player visuals may move to the composite (paper-doll) scheme — see docs/visual_and_aesthetics_design/player-visual-identity-bible.md. Leave as draft until that decision lands."
+    },
+    {
+      "id": "medium_cooldown",
+      "out": "sprites/classes/medium_cooldown.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "cooldown-balanced"
+      ],
+      "notes": "DEFERRED: player visuals may move to the composite (paper-doll) scheme — see docs/visual_and_aesthetics_design/player-visual-identity-bible.md. Leave as draft until that decision lands."
+    },
+    {
+      "id": "medium_dot",
+      "out": "sprites/classes/medium_dot.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "dot-balanced"
+      ],
+      "notes": "DEFERRED: player visuals may move to the composite (paper-doll) scheme — see docs/visual_and_aesthetics_design/player-visual-identity-bible.md. Leave as draft until that decision lands."
+    },
+    {
+      "id": "medium_energy",
+      "out": "sprites/classes/medium_energy.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "energy-balanced"
+      ],
+      "notes": "DEFERRED: player visuals may move to the composite (paper-doll) scheme — see docs/visual_and_aesthetics_design/player-visual-identity-bible.md. Leave as draft until that decision lands."
+    },
+    {
+      "id": "medium_reload",
+      "out": "sprites/classes/medium_reload.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "reload-balanced"
+      ],
+      "notes": "DEFERRED: player visuals may move to the composite (paper-doll) scheme — see docs/visual_and_aesthetics_design/player-visual-identity-bible.md. Leave as draft until that decision lands."
+    },
+    {
+      "id": "phalanx",
+      "out": "sprites/classes/phalanx.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "cooldown-range-mid"
+      ],
+      "notes": "DEFERRED: player visuals may move to the composite (paper-doll) scheme — see docs/visual_and_aesthetics_design/player-visual-identity-bible.md. Leave as draft until that decision lands."
+    },
+    {
+      "id": "phantom-blade",
+      "out": "sprites/classes/phantom-blade.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "cadence-range-far"
+      ],
+      "notes": "DEFERRED: player visuals may move to the composite (paper-doll) scheme — see docs/visual_and_aesthetics_design/player-visual-identity-bible.md. Leave as draft until that decision lands."
+    },
+    {
+      "id": "reload",
+      "out": "sprites/classes/reload.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "reload"
+      ],
+      "notes": "DEFERRED: player visuals may move to the composite (paper-doll) scheme — see docs/visual_and_aesthetics_design/player-visual-identity-bible.md. Leave as draft until that decision lands."
+    },
+    {
+      "id": "sentinel",
+      "out": "sprites/classes/sentinel.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "cooldown-range-far"
+      ],
+      "notes": "DEFERRED: player visuals may move to the composite (paper-doll) scheme — see docs/visual_and_aesthetics_design/player-visual-identity-bible.md. Leave as draft until that decision lands."
+    },
+    {
+      "id": "shade",
+      "out": "sprites/classes/shade.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "energy-range-mid"
+      ],
+      "notes": "DEFERRED: player visuals may move to the composite (paper-doll) scheme — see docs/visual_and_aesthetics_design/player-visual-identity-bible.md. Leave as draft until that decision lands."
+    },
+    {
+      "id": "vanguard",
+      "out": "sprites/classes/vanguard.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "cooldown-range-close"
+      ],
+      "notes": "DEFERRED: player visuals may move to the composite (paper-doll) scheme — see docs/visual_and_aesthetics_design/player-visual-identity-bible.md. Leave as draft until that decision lands."
+    },
+    {
+      "id": "warlock",
+      "out": "sprites/classes/warlock.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "dot-range-mid"
+      ],
+      "notes": "DEFERRED: player visuals may move to the composite (paper-doll) scheme — see docs/visual_and_aesthetics_design/player-visual-identity-bible.md. Leave as draft until that decision lands."
+    },
+    {
+      "id": "wisp",
+      "out": "sprites/classes/wisp.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "energy-range-far"
+      ],
+      "notes": "DEFERRED: player visuals may move to the composite (paper-doll) scheme — see docs/visual_and_aesthetics_design/player-visual-identity-bible.md. Leave as draft until that decision lands."
+    }
+  ]
+}

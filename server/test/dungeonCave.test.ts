@@ -3,7 +3,8 @@
 //   - each sentinel gets a bespoke absolute patrol ring, evenly separated
 //   - the brutes keep their high pull range (overpull-risk identity)
 //   - clearing the elites → clean boss start; leaving them → they join (join hook)
-//   - the boss (Obsidian Broodmother) summons a single lurker infrequently, capped
+//   - the boss (Obsidian Broodmother) spawns no adds (T1 simplification); the
+//     50% beat is the timed shield only
 //   - the boss can still be cleared
 //
 // Run: pnpm --filter @mmo-idle/server exec tsx ../server/test/dungeonCave.test.ts
@@ -125,28 +126,18 @@ function setupCave(): { world: World; playerId: string } {
   }
 
   const boss = MONSTER_DATABASE.get("obsidian-broodmother")!;
-  // 50% beat = shield + ONE stronger brood add (capped), not a 2-spider mini-swarm.
+  // T1 simplification: no adds during the boss fight (Plains is the only T1 boss
+  // with adds). The 50% beat is the timed shield only.
   const phase = boss.bossScript?.phases?.[0];
-  const brood = phase?.actions.find((a) => a.type === "spawn-adds") as
-    | { monsterTypeId: string; count: number; maxAlive?: number }
-    | undefined;
-  assert(!!brood && brood.monsterTypeId === "giant-spider", "50% hatches a stronger brood spider");
-  assert(brood!.count === 1, "50% brood add is a single add");
-  assert((brood!.maxAlive ?? Infinity) <= 2, "50% brood add is hard-capped");
+  assert(
+    !boss.bossScript?.phases?.some((p) => p.actions.some((a) => a.type === "spawn-adds")),
+    "the cave boss spawns no phase adds (T1 simplification)",
+  );
   assert(
     !!phase?.actions.find((a) => a.type === "shield"),
     "boss still digs in (timed shield) — stays durable",
   );
-
-  // Repeating beat = ONE lurker, INFREQUENT and hard-capped (no flood).
-  const rep = boss.bossScript?.repeating?.[0];
-  const lurker = rep?.actions.find((a) => a.type === "spawn-adds") as
-    | { monsterTypeId: string; count: number; maxAlive?: number }
-    | undefined;
-  assert(!!lurker && lurker.monsterTypeId === "cave-lurker", "boss periodically hatches a lurker");
-  assert(lurker!.count === 1, "periodic add is a single lurker");
-  assert((lurker!.maxAlive ?? Infinity) <= 1, "only one periodic lurker alive at a time");
-  assert((rep!.intervalMs ?? 0) >= 20_000, "lurker beat is infrequent (not spammy)");
+  assert(!boss.bossScript?.repeating, "the cave boss has no repeating add beat");
 }
 
 // ── 1. Deep Watch spawns 3 brute sentinels orbiting the altar ────────────────
@@ -242,7 +233,7 @@ function setupCave(): { world: World; playerId: string } {
   assert(state.preEncounterThreatIds.length === 0, "joined elites are cleared on boss death");
 }
 
-// ── 4. Boss summons occasional SINGLE adds, capped (no swarm) ────────────────
+// ── 4. Boss spawns no adds even as its script runs (T1 simplification) ───────
 {
   const world = new World();
   const node = "node-5-5";
@@ -255,18 +246,12 @@ function setupCave(): { world: World; playerId: string } {
   const boss = world.createMonster(node, "obsidian-broodmother", { x: 420, y: 400 })!;
   setAggroTarget(world, boss, { id: playerId, kind: "player" }, 10_000);
 
-  // The repeating lurker beat fires on its (infrequent) timer. Drive many
-  // intervals; the hard cap (maxAlive 1) keeps it to a single lurker — never a swarm.
+  // Drive the script well past where the old lurker beat would have fired.
   for (let i = 0; i < 24; i++) updateBossScripts(world, 12_000);
 
   const tracked = boss.scriptsBoss?.spawnedAddIds ?? [];
   const alive = tracked.filter((id) => world.hasMonster(id));
-  assert(alive.length > 0, "the boss actually hatched a periodic add");
-  assert(alive.length <= 1, "only one periodic lurker alive at a time (no swarm growth)");
-  assert(
-    alive.every((id) => world.getMonsterEntity(id)!.isMonster.monsterTypeId === "cave-lurker"),
-    "periodic adds are single lurkers",
-  );
+  assert(alive.length === 0, "the cave boss hatches no adds (T1 simplification)");
 }
 
 console.log("dungeonCave.test.ts: ok");
