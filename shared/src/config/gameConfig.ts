@@ -218,6 +218,22 @@ export function globalMastery(biomeLevel: Record<string, number>): number {
   return total;
 }
 
+/**
+ * Maximum Global Mastery attainable at `playerTier`: the sum of every real
+ * biome's {@link biomeLevelCap} at that tier (clearing excluded, matching
+ * {@link globalMastery}). Defines the per-tier GM bands the item upgrade
+ * ceiling is built on: tier T's band is
+ * (maxGlobalMasteryAtTier(T-1), maxGlobalMasteryAtTier(T)].
+ */
+export function maxGlobalMasteryAtTier(playerTier: number): number {
+  let total = 0;
+  for (const group of Object.keys(BIOME_START_TIER_BY_GROUP)) {
+    if (group === 'clearing') continue;
+    total += biomeLevelCap(playerTier, group);
+  }
+  return total;
+}
+
 export interface NodeSceneBounds {
   x: number;
   y: number;

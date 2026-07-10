@@ -19,8 +19,8 @@ export function fxSweep(
 ): void {
   const mainColor = empowered ? 0xffd24a : 0xffe6a0;
   const trailColor = 0xffb347;
-  const lineW = empowered ? 6 : 5;
-  const radius = empowered ? 78 : 64;
+  const lineW = empowered ? 7 : 6;
+  const radius = empowered ? 88 : 72;
 
   // Swing left→right when the attacker is to the left of the target, else mirror.
   const leftToRight = toX >= fromX;
@@ -31,12 +31,14 @@ export function fxSweep(
   const startA = leftToRight ? Math.PI * 0.86 : Math.PI * 0.14;
   const endA = leftToRight ? Math.PI * 0.14 : Math.PI * 0.86;
 
-  // Three offset passes (leading ghost → bright cleave → trailing fade) give the
-  // arc a sense of motion as it carves across.
+  // Offset passes (leading ghost → white-hot core → bright cleave → trailing
+  // fade) give the arc a sense of motion as it carves across.
   const passes = [
-    { delay: 0, width: lineW * 0.5, alpha: 0.4, r: radius * 0.86, color: trailColor },
+    { delay: 0, width: lineW * 0.5, alpha: 0.45, r: radius * 0.86, color: trailColor },
     { delay: 45, width: lineW, alpha: 1.0, r: radius, color: mainColor },
-    { delay: 95, width: lineW * 0.4, alpha: 0.3, r: radius * 1.12, color: trailColor },
+    { delay: 45, width: lineW * 0.45, alpha: 1.0, r: radius, color: 0xffffff },
+    { delay: 95, width: lineW * 0.5, alpha: 0.35, r: radius * 1.12, color: trailColor },
+    { delay: 145, width: lineW * 0.35, alpha: 0.25, r: radius * 1.24, color: trailColor },
   ] as const;
 
   for (const p of passes) {
@@ -60,28 +62,44 @@ export function fxSweep(
     });
   }
 
+  // Impact flash on the target — the cleave biting in.
+  const flash = scene.add.graphics({ x: toX, y: toY }).setDepth(DEPTH.FX);
+  flash.fillStyle(0xffffff, 0.7);
+  flash.fillCircle(0, 0, empowered ? 16 : 12);
+  scene.tweens.add({
+    targets: flash,
+    alpha: 0,
+    scaleX: 2.2,
+    scaleY: 2.2,
+    duration: 160,
+    ease: 'Quad.easeOut',
+    onComplete: () => flash.destroy(),
+  });
+
   // Spark spray flung along the swing arc.
   const sprayCentre = leftToRight ? 20 : 160;
-  burstFx(scene, 'ptx-spark', toX, toY, empowered ? 18 : 13, 300, {
+  burstFx(scene, 'ptx-spark', toX, toY, empowered ? 24 : 18, 340, {
     tint: mainColor,
-    speed: { min: 90, max: 280 },
-    angle: { min: sprayCentre - 55, max: sprayCentre + 55 },
-    scale: { start: 1.0, end: 0.1 },
+    speed: { min: 110, max: 330 },
+    angle: { min: sprayCentre - 60, max: sprayCentre + 60 },
+    scale: { start: 1.1, end: 0.1 },
     alpha: { start: 1, end: 0 },
     rotate: { min: 0, max: 360 },
   });
 
-  // Faint cleave ring — echoes that this strike splashes to nearby enemies.
-  const ring = scene.add.graphics({ x: toX, y: toY }).setDepth(DEPTH.FX);
-  ring.lineStyle(2, mainColor, 0.5);
-  ring.strokeCircle(0, 0, 14);
-  scene.tweens.add({
-    targets: ring,
-    scaleX: 6,
-    scaleY: 6,
-    alpha: 0,
-    duration: 360,
-    ease: 'Quad.easeOut',
-    onComplete: () => ring.destroy(),
-  });
+  // Cleave rings — echo that this strike splashes to nearby enemies.
+  for (let i = 0; i < 2; i++) {
+    const ring = scene.add.graphics({ x: toX, y: toY }).setDepth(DEPTH.FX);
+    ring.lineStyle(2.5 - i, i === 0 ? mainColor : trailColor, 0.55);
+    ring.strokeCircle(0, 0, 14 + i * 6);
+    scene.tweens.add({
+      targets: ring,
+      scaleX: 6 + i * 1.5,
+      scaleY: 6 + i * 1.5,
+      alpha: 0,
+      duration: 380 + i * 90,
+      ease: 'Quad.easeOut',
+      onComplete: () => ring.destroy(),
+    });
+  }
 }

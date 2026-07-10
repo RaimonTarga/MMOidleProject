@@ -2,6 +2,7 @@ import {
   ABILITY_EXPOSE_WEAKNESS_FX,
   ABILITY_SWEEP_FX,
   ABILITY_TECHNIQUE_FIRED_FX,
+  abilityDef,
   ESSENCE_COLORS,
   GAME_CONFIG,
   isRangedPlayerView,
@@ -61,6 +62,7 @@ import { shouldRunClientFx } from "../fx/guard";
 import { playSfx } from "../audio/audioEngine";
 import type { SfxId } from "../audio/manifest";
 import { startCastBar, endCastBar } from "./castBars";
+import { spawnSkillCallout } from "./skillCallouts";
 import { notifyAbilityFired } from "../hud/atoms";
 import type { GameScene } from "../scenes/GameScene";
 import { applyLunge } from "./interpolation";
@@ -345,6 +347,22 @@ const GUARD_FX_BY_ABILITY: Record<
   "second-wind": fxSecondWind,
 };
 
+// Skill-callout text colors: Guards keyed by ability id (matched to each Guard's
+// FX palette), Techniques share one offensive amber (matched to the Sweep arc).
+const GUARD_CALLOUT_COLORS: Record<string, string> = {
+  brace: "#9cd2ff",
+  cleanse: "#eef6ff",
+  "second-wind": "#9cff8a",
+};
+const GUARD_CALLOUT_FALLBACK = "#9cd2ff";
+const TECHNIQUE_CALLOUT_COLOR = "#ffd24a";
+
+const TECHNIQUE_CONSUMED_TAGS = [
+  ABILITY_SWEEP_FX,
+  ABILITY_EXPOSE_WEAKNESS_FX,
+  ABILITY_TECHNIQUE_FIRED_FX,
+];
+
 export function dispatchCombatEvent(
   state: RenderState,
   ev: CombatEvent,
@@ -530,14 +548,22 @@ export function dispatchCombatEvent(
   }
 
   if (ev.kind === "player-guard") {
-    // A self-facing Guard fired — overlay its FX on the player's sprite (shown to
-    // the whole node so allies see each other react). Pulse the HUD Guard icon for
-    // the local player only.
+    // A self-facing Guard fired — overlay its FX on the player's sprite plus a
+    // lingering skill-name callout (shown to the whole node so allies see each
+    // other react). Pulse the HUD Guard icon for the local player only.
     if (shouldRunClientFx()) {
       const sprite = state.sprite.get(ev.playerId);
       if (sprite) {
         const fx = GUARD_FX_BY_ABILITY[ev.ability];
         if (fx) fx(scene, sprite.x, sprite.y);
+        const name = abilityDef(ev.ability)?.name ?? ev.ability;
+        spawnSkillCallout(
+          state,
+          scene,
+          ev.playerId,
+          name,
+          GUARD_CALLOUT_COLORS[ev.ability] ?? GUARD_CALLOUT_FALLBACK,
+        );
       }
       if (ev.playerId === scene.myId) {
         playSfx("empowered");
@@ -545,6 +571,38 @@ export function dispatchCombatEvent(
       }
     }
     return;
+  }
+
+  if (ev.kind === "player-technique-armed") {
+    // A Technique armed the player's next attack. Track the armed state (drives
+    // the red cooldown-bar tint until the consuming hit clears it) and pop a
+    // lingering callout over the player. Node-wide, mirroring `player-guard`.
+    state.techniqueArmed.set(ev.playerId, {
+      abilityId: ev.ability,
+      armedAt: Date.now(),
+    });
+    if (shouldRunClientFx() && state.sprite.has(ev.playerId)) {
+      const name = abilityDef(ev.ability)?.name ?? ev.ability;
+      spawnSkillCallout(
+        state,
+        scene,
+        ev.playerId,
+        name,
+        TECHNIQUE_CALLOUT_COLOR,
+      );
+    }
+    return;
+  }
+
+  // A landed hit tagged with an ability client-effect consumed the armed
+  // Technique — clear the armed telegraph. Runs BEFORE the own-player gate so
+  // other players' red bars clear too (their hit FX stay snapshot-driven).
+  if (
+    ev.kind === "player-hit" &&
+    state.techniqueArmed.has(ev.playerId) &&
+    ev.effects?.some((fx) => TECHNIQUE_CONSUMED_TAGS.includes(fx))
+  ) {
+    state.techniqueArmed.delete(ev.playerId);
   }
 
   if (ev.playerId !== scene.myId) return;

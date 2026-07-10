@@ -179,13 +179,13 @@ export function UpgradeTab() {
             const slot        = def.slot as EquipmentSlot;
             const currentPlus = itemUpgrades[def.id] ?? 0;
             const structuralMax = getMaxUpgrade(def);
-            const gmCeiling   = isTestRoom ? structuralMax : upgradeCeilingFromGlobalMastery(gm);
+            const gmCeiling   = isTestRoom ? structuralMax : upgradeCeilingFromGlobalMastery(gm, def.tier);
             const isMaxed     = currentPlus >= structuralMax;
             const gmLocked    = !isTestRoom && !isMaxed && currentPlus + 1 > gmCeiling;
             const diff        = isMaxed ? [] : computeUpgradeDiff(def, currentPlus);
 
             const reqLevel    = requiredBiomeLevelForUpgrade(def, currentPlus + 1);
-            const reqMastery  = globalMasteryRequiredForUpgrade(currentPlus + 1);
+            const reqMastery  = globalMasteryRequiredForUpgrade(def.tier, currentPlus + 1);
             const haveLevel   = def.biomeGroup ? (biomeLevel[def.biomeGroup] ?? 0) : 0;
             const levelMet    = isTestRoom || haveLevel >= reqLevel;
             const masteryMet  = isTestRoom || gm >= reqMastery;

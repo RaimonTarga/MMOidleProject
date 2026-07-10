@@ -1,5 +1,5 @@
 {
-  "atlasHash": "ccc8527e828ea8a97573f7dea76f5a505102b155d4d85992e604648e969ded90",
+  "atlasHash": "beff2782e0eb259577124e3f7aaf2f6f4998aa8171ac5587be902d779564d03b",
   "frames": {
     "sprites/bosses/boss-cave-t1.png": {
       "sourceW": 128,
@@ -156,12 +156,6 @@
       "sourceH": 128,
       "footY": 62,
       "halfWAtFoot": 50.5
-    },
-    "sprites/monsters/T4/volcano_spitter.png": {
-      "sourceW": 117,
-      "sourceH": 64,
-      "footY": 27,
-      "halfWAtFoot": 44.5
     },
     "sprites/classes/breacher.png": {
       "sourceW": 64,
@@ -378,174 +372,6 @@
       "sourceH": 64,
       "footY": 26,
       "halfWAtFoot": 13.5
-    },
-    "sprites/monsters/T4/desert_cobra.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 25,
-      "halfWAtFoot": 27
-    },
-    "sprites/monsters/T4/desert_iguana.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 22,
-      "halfWAtFoot": 25
-    },
-    "sprites/monsters/T4/desert_snake.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 23,
-      "halfWAtFoot": 24
-    },
-    "sprites/monsters/T4/graveyard_dog.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 29,
-      "halfWAtFoot": 28.5
-    },
-    "sprites/monsters/T4/graveyard_gigaskeleton.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 29,
-      "halfWAtFoot": 30
-    },
-    "sprites/monsters/T4/graveyard_rat.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 28,
-      "halfWAtFoot": 18
-    },
-    "sprites/monsters/T4/graveyard_skeleton.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 31,
-      "halfWAtFoot": 29.5
-    },
-    "sprites/monsters/T4/graveyard_vulture.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 26,
-      "halfWAtFoot": 14
-    },
-    "sprites/monsters/T4/jungle_iguana.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 13,
-      "halfWAtFoot": 26
-    },
-    "sprites/monsters/T4/jungle_panther.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 25,
-      "halfWAtFoot": 27
-    },
-    "sprites/monsters/T4/jungle_silverback.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 30,
-      "halfWAtFoot": 26
-    },
-    "sprites/monsters/T4/jungle_snake.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 20,
-      "halfWAtFoot": 25
-    },
-    "sprites/monsters/T4/mountain_big.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 31,
-      "halfWAtFoot": 19
-    },
-    "sprites/monsters/T4/mountain_dino.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 28,
-      "halfWAtFoot": 20.5
-    },
-    "sprites/monsters/T4/mountain_elephant.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 31,
-      "halfWAtFoot": 20.5
-    },
-    "sprites/monsters/T4/mountain_ram.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 17,
-      "halfWAtFoot": 21.5
-    },
-    "sprites/monsters/T4/mountain_roc.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 29,
-      "halfWAtFoot": 10.5
-    },
-    "sprites/monsters/T4/mountain_wolf.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 30,
-      "halfWAtFoot": 24.5
-    },
-    "sprites/monsters/T4/trench_crab.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 29,
-      "halfWAtFoot": 21.5
-    },
-    "sprites/monsters/T4/trench_demon.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 28,
-      "halfWAtFoot": 22.5
-    },
-    "sprites/monsters/T4/trench_serpent.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 22,
-      "halfWAtFoot": 26
-    },
-    "sprites/monsters/T4/tundra_bear.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 16,
-      "halfWAtFoot": 30.5
-    },
-    "sprites/monsters/T4/tundra_mammoth.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 31,
-      "halfWAtFoot": 20
-    },
-    "sprites/monsters/T4/volcano_dog.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 31,
-      "halfWAtFoot": 12
-    },
-    "sprites/monsters/T4/volcano_iguana.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 26,
-      "halfWAtFoot": 25
-    },
-    "sprites/monsters/T4/volcano_lizard.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 16,
-      "halfWAtFoot": 28
-    },
-    "sprites/monsters/T4/volcano_tiny_lizard.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 19,
-      "halfWAtFoot": 18
-    },
-    "sprites/monsters/T4/volcano_turtle.png": {
-      "sourceW": 64,
-      "sourceH": 64,
-      "footY": 31,
-      "halfWAtFoot": 28
     },
     "sprites/monsters/ancient-wolf.png": {
       "sourceW": 64,
@@ -852,6 +678,180 @@
       "sourceH": 64,
       "footY": 17,
       "halfWAtFoot": 32
+    },
+    "sprites/monsters/T4/desert_cobra.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 25,
+      "halfWAtFoot": 27
+    },
+    "sprites/monsters/T4/desert_iguana.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 22,
+      "halfWAtFoot": 25
+    },
+    "sprites/monsters/T4/desert_snake.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 23,
+      "halfWAtFoot": 24
+    },
+    "sprites/monsters/T4/graveyard_dog.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 29,
+      "halfWAtFoot": 28.5
+    },
+    "sprites/monsters/T4/graveyard_gigaskeleton.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 29,
+      "halfWAtFoot": 30
+    },
+    "sprites/monsters/T4/graveyard_rat.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 28,
+      "halfWAtFoot": 18
+    },
+    "sprites/monsters/T4/graveyard_skeleton.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 31,
+      "halfWAtFoot": 29.5
+    },
+    "sprites/monsters/T4/graveyard_vulture.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 26,
+      "halfWAtFoot": 14
+    },
+    "sprites/monsters/T4/jungle_iguana.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 13,
+      "halfWAtFoot": 26
+    },
+    "sprites/monsters/T4/jungle_panther.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 25,
+      "halfWAtFoot": 27
+    },
+    "sprites/monsters/T4/jungle_silverback.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 30,
+      "halfWAtFoot": 26
+    },
+    "sprites/monsters/T4/jungle_snake.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 20,
+      "halfWAtFoot": 25
+    },
+    "sprites/monsters/T4/mountain_big.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 31,
+      "halfWAtFoot": 19
+    },
+    "sprites/monsters/T4/mountain_dino.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 28,
+      "halfWAtFoot": 20.5
+    },
+    "sprites/monsters/T4/mountain_elephant.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 31,
+      "halfWAtFoot": 20.5
+    },
+    "sprites/monsters/T4/mountain_ram.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 17,
+      "halfWAtFoot": 21.5
+    },
+    "sprites/monsters/T4/mountain_roc.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 29,
+      "halfWAtFoot": 10.5
+    },
+    "sprites/monsters/T4/mountain_wolf.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 30,
+      "halfWAtFoot": 24.5
+    },
+    "sprites/monsters/T4/trench_crab.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 29,
+      "halfWAtFoot": 21.5
+    },
+    "sprites/monsters/T4/trench_demon.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 28,
+      "halfWAtFoot": 22.5
+    },
+    "sprites/monsters/T4/trench_serpent.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 22,
+      "halfWAtFoot": 26
+    },
+    "sprites/monsters/T4/tundra_bear.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 16,
+      "halfWAtFoot": 30.5
+    },
+    "sprites/monsters/T4/tundra_mammoth.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 31,
+      "halfWAtFoot": 20
+    },
+    "sprites/monsters/T4/volcano_dog.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 31,
+      "halfWAtFoot": 12
+    },
+    "sprites/monsters/T4/volcano_iguana.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 26,
+      "halfWAtFoot": 25
+    },
+    "sprites/monsters/T4/volcano_lizard.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 16,
+      "halfWAtFoot": 28
+    },
+    "sprites/monsters/T4/volcano_spitter.png": {
+      "sourceW": 117,
+      "sourceH": 64,
+      "footY": 27,
+      "halfWAtFoot": 44.5
+    },
+    "sprites/monsters/T4/volcano_tiny_lizard.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 19,
+      "halfWAtFoot": 18
+    },
+    "sprites/monsters/T4/volcano_turtle.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 31,
+      "halfWAtFoot": 28
     },
     "sprites/monsters/tinyslime.png": {
       "sourceW": 64,

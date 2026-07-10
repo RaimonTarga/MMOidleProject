@@ -19,7 +19,7 @@ import {
   BIOME_DATABASE,
   runeBudgetForGlobalMastery,
   upgradeCeilingFromGlobalMastery,
-  MAX_UPGRADE,
+  MAX_ITEM_TIER,
 } from "@mmo-idle/shared";
 import {
   craftTabAtom,
@@ -166,7 +166,19 @@ export function RightSidebar() {
           </div>
           <div className="stat-row">
             <span className="stat-label">Upgrade Cap</span>
-            <span className="stat-value">+{Math.min(MAX_UPGRADE, upgradeCeilingFromGlobalMastery(globalMastery))}</span>
+            <span className="stat-value">
+              {(() => {
+                const caps = Array.from({ length: MAX_ITEM_TIER }, (_, i) =>
+                  upgradeCeilingFromGlobalMastery(globalMastery, i + 1),
+                );
+                const unlocked = caps
+                  .map((cap, i) => ({ tier: i + 1, cap }))
+                  .filter(({ cap }) => cap > 0);
+                return unlocked.length === 0
+                  ? "+0"
+                  : unlocked.map(({ tier, cap }) => `T${tier} +${cap}`).join(" ");
+              })()}
+            </span>
           </div>
           <div className="stat-row">
             <span className="stat-label">Rune Points</span>

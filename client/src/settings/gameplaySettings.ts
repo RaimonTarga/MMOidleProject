@@ -8,6 +8,8 @@ export interface GameplaySettings {
   autocombat: AutocombatConfig;
   deathNotificationsEnabled: boolean;
   uiFontScale: number;
+  /** Show the auto-combat intent thought bubble over characters. Off by default. */
+  intentBubblesEnabled: boolean;
 }
 
 const STORAGE_KEY = 'mmo_gameplay_settings_v1';
@@ -20,6 +22,7 @@ const DEFAULTS: GameplaySettings = {
   autocombat: { ...DEFAULT_AUTOCOMBAT_CONFIG },
   deathNotificationsEnabled: false,
   uiFontScale: 1,
+  intentBubblesEnabled: false,
 };
 
 function clampUiFontScale(value: unknown): number {
@@ -43,19 +46,30 @@ function normalizeSettings(patch: Partial<GameplaySettings>): GameplaySettings {
   };
 }
 
+/** Cache for hot-path readers (per-frame Phaser code); load/save keep it fresh. */
+let cached: GameplaySettings | null = null;
+
 export function loadGameplaySettings(): GameplaySettings {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return { ...DEFAULTS };
-    return normalizeSettings(JSON.parse(raw) as Partial<GameplaySettings>);
+    cached = raw
+      ? normalizeSettings(JSON.parse(raw) as Partial<GameplaySettings>)
+      : { ...DEFAULTS };
   } catch {
-    return { ...DEFAULTS };
+    cached = { ...DEFAULTS };
   }
+  return cached;
+}
+
+/** Cached read — safe to call every frame (no localStorage/JSON churn). */
+export function getGameplaySettings(): GameplaySettings {
+  return cached ?? loadGameplaySettings();
 }
 
 export function saveGameplaySettings(patch: Partial<GameplaySettings>): GameplaySettings {
   const next = normalizeSettings({ ...loadGameplaySettings(), ...patch });
   localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+  cached = next;
   return next;
 }
 

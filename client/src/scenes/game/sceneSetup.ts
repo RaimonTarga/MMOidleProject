@@ -48,12 +48,14 @@ import {
 } from "../../sprites";
 import { stepInterpolation, getOwnBase } from "../../render/interpolation";
 import { drawShadows } from "../../render/shadows";
+import { drawTargetIndicator } from "../../render/targetIndicator";
 import { setShadowDefs } from "../../render/shadowDefs";
 import { drawLabels } from "../../render/labels";
 import { drawThoughtBubbles } from "../../render/thoughtBubbles";
 import { drawHealthBars } from "../../render/healthBars";
 import { drawCooldownBars } from "../../render/cooldownBars";
 import { drawCastBars } from "../../render/castBars";
+import { drawSkillCallouts } from "../../render/skillCallouts";
 import { updateEffectOverlays } from "../../render/effectOverlays";
 import { updateMovementEffects } from "../../render/movementEffects";
 import {
@@ -348,8 +350,10 @@ export function updateGameScene(scene: GameScene, delta: number): void {
   drawHealthBars(scene.state);
 
   if (!isClientRenderPaused()) {
+    drawTargetIndicator(scene.state, scene);
     drawCooldownBars(scene.state);
     drawCastBars(scene.state, scene);
+    drawSkillCallouts(scene.state);
     updateEffectOverlays(scene.state, scene, dt);
     updateMovementEffects(scene.state, scene);
     updateLaserBeam(scene.state, scene);

@@ -18,8 +18,10 @@ still recipe id; `itemUpgrades` is still per-id.
 
 - `MAX_UPGRADE` raised **3 → 5** (`systems/itemUpgrades.ts`). Only affects generic-fallback items;
   items with explicit `upgrades[]` are bound by array length, so reaching +5 needs length-5 arrays.
-- The GM ceiling seam (`upgradeCeilingFromGlobalMastery`, Step 4) still gates the effective max and
-  stays non-binding (≥5). Tightening +4/+5 behind GM thresholds = user tuning of that function.
+- The GM ceiling seam (`upgradeCeilingFromGlobalMastery(gm, itemTier)`, Step 4) gates the effective
+  max and is now **tier-banded and binding** (2026-07-10): each item tier's +1…+5 unlocks spread
+  across that tier's GM band, with +5 landing at full mastery of the tier's biomes (T1 @ GM 30,
+  T2 @ 72, T3 @ 126, T4 @ 198). See `globalMasteryRequiredForUpgrade` in `systems/itemUpgrades.ts`.
 
 ## Shared authority — `systems/evolution.ts` (new)
 

@@ -50,6 +50,15 @@ art/
   boot when the sprites.png hash changes.
 - Endpoint size caps: bitforge 200², pixflux 400², generate-ui 792×688.
   Generation is proportionally clamped; accept NN-resizes to the manifest size.
+- Useful entry `params` (camelCase, passed through to the API):
+  `outline`, `shading`, `detail`, `view`, `direction`, `seed`,
+  `textGuidanceScale`, `styleStrength` (0–100, default 65 with a style anchor),
+  `colorPalette`, `frameCount`, `noBackground`, and for img2img:
+  `initImage` (art/src-relative path, or `"self"` = this entry's current art —
+  "same sprite, regenerated cleanly") with `initImageStrength` (1–999,
+  default 300; higher follows the source more closely).
+- Style anchors live in `art/style/` — see its README. Existing sprites copied
+  from `art/src/` make free anchors.
 - `players` category is DEFERRED pending the composite-sprite decision
   (`docs/visual_and_aesthetics_design/player-visual-identity-bible.md`).
 - Audio is out of scope: PixelLab is visuals-only.

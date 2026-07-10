@@ -3,6 +3,7 @@ import type { PlayerView } from "@mmo-idle/shared";
 import { isValidEmoteId } from "@mmo-idle/shared";
 import type { RenderState } from "./state";
 import type { GameScene } from "../scenes/GameScene";
+import { getGameplaySettings } from "../settings/gameplaySettings";
 import { DEPTH } from "./depth";
 import {
   ATLAS_KEY,
@@ -75,6 +76,10 @@ function resolveContent(
       animKey: emoteAnimKey(emote.emoteId),
     };
   }
+
+  // The intent telegraph is opt-in (Settings → Gameplay, off by default);
+  // emotes above always show regardless.
+  if (!getGameplaySettings().intentBubblesEnabled) return null;
 
   // Trust the server's intent: it is present exactly when the player is
   // performing an auto action (auto-combat targeting/follow/flee, or

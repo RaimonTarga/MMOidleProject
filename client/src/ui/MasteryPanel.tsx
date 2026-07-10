@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { useAtomValue } from 'jotai';
 import {
   BIOME_DATABASE,
-  GLOBAL_MASTERY_PER_ITEM_UPGRADE,
+  MAX_ITEM_TIER,
   MAX_UPGRADE,
   RUNE_POINT_GLOBAL_MASTERY_STEP,
   globalMasteryRequiredForUpgrade,
@@ -31,9 +31,13 @@ function biomeLabel(group: string): string {
 export function MasteryPanel({ onClose }: Props) {
   const gm = useAtomValue(globalMasteryAtom);
   const biomeLevel = useAtomValue(biomeLevelAtom);
-  const itemCeiling = upgradeCeilingFromGlobalMastery(gm);
+  const itemCaps = Array.from({ length: MAX_ITEM_TIER }, (_, i) => ({
+    tier: i + 1,
+    cap: upgradeCeilingFromGlobalMastery(gm, i + 1),
+  }));
+  const unlockedCaps = itemCaps.filter(({ cap }) => cap > 0);
+  const nextItemTier = itemCaps.find(({ cap }) => cap < MAX_UPGRADE);
   const runeBudget = runeBudgetForGlobalMastery(gm);
-  const nextItemReq = globalMasteryRequiredForUpgrade(itemCeiling + 1);
   const nextRuneReq =
     (Math.floor(gm / RUNE_POINT_GLOBAL_MASTERY_STEP) + 1) *
     RUNE_POINT_GLOBAL_MASTERY_STEP;
@@ -71,7 +75,12 @@ export function MasteryPanel({ onClose }: Props) {
             <span className="mastery-summary__value">{gm}</span>
           </div>
           <div className="mastery-summary__stats">
-            <span>Item cap +{Math.min(MAX_UPGRADE, itemCeiling)}</span>
+            <span>
+              Item cap{' '}
+              {unlockedCaps.length === 0
+                ? '+0'
+                : unlockedCaps.map(({ tier, cap }) => `T${tier} +${cap}`).join(' ')}
+            </span>
             <span>{runeBudget} RP</span>
           </div>
         </div>
@@ -80,41 +89,38 @@ export function MasteryPanel({ onClose }: Props) {
           <section className="craft-biome-section craft-biome-section--current">
             <div className="craft-biome-section__header">
               <span className="craft-biome-section__name">Item Upgrades</span>
-              <span className="craft-biome-section__level">
-                every {GLOBAL_MASTERY_PER_ITEM_UPGRADE} GM
-              </span>
+              <span className="craft-biome-section__level">per item tier</span>
             </div>
             <div className="craft-unlock-path">
-              <div className="craft-unlock-row craft-unlock-row--unlocked">
-                <span className="craft-unlock-row__level">GM 0</span>
-                <span className="craft-unlock-row__name">Base items</span>
-                <span className="craft-unlock-row__slot">+0</span>
-                <span className="craft-unlock-row__status craft-unlock-row__status--ok">OK</span>
-              </div>
-              {Array.from({ length: MAX_UPGRADE }, (_, i) => i + 1).map((plus) => {
-                const req = globalMasteryRequiredForUpgrade(plus);
-                const unlocked = gm >= req;
+              {itemCaps.map(({ tier, cap }) => {
+                const maxed = cap >= MAX_UPGRADE;
+                const nextReq = globalMasteryRequiredForUpgrade(tier, Math.min(cap + 1, MAX_UPGRADE));
                 return (
                   <div
-                    key={plus}
+                    key={tier}
                     className={[
                       'craft-unlock-row',
-                      unlocked ? 'craft-unlock-row--unlocked' : '',
+                      cap > 0 ? 'craft-unlock-row--unlocked' : '',
                     ].filter(Boolean).join(' ')}
                   >
-                    <span className="craft-unlock-row__level">GM {req}</span>
-                    <span className="craft-unlock-row__name">Item upgrade +{plus}</span>
-                    <span className="craft-unlock-row__slot">+{plus}</span>
-                    <span className={`craft-unlock-row__status${unlocked ? ' craft-unlock-row__status--ok' : ''}`}>
-                      {milestoneStatus(unlocked)}
+                    <span className="craft-unlock-row__level">
+                      GM {maxed ? globalMasteryRequiredForUpgrade(tier, MAX_UPGRADE) : nextReq}
+                    </span>
+                    <span className="craft-unlock-row__name">
+                      Tier {tier} items{maxed ? '' : ` — next +${cap + 1}`}
+                    </span>
+                    <span className="craft-unlock-row__slot">+{cap}</span>
+                    <span className={`craft-unlock-row__status${maxed ? ' craft-unlock-row__status--ok' : ''}`}>
+                      {milestoneStatus(maxed)}
                     </span>
                   </div>
                 );
               })}
             </div>
-            {itemCeiling < MAX_UPGRADE && (
+            {nextItemTier && (
               <div className="mastery-note">
-                Next item upgrade ceiling at GM {nextItemReq}.
+                Next: Tier {nextItemTier.tier} +{nextItemTier.cap + 1} at GM{' '}
+                {globalMasteryRequiredForUpgrade(nextItemTier.tier, nextItemTier.cap + 1)}.
               </div>
             )}
           </section>

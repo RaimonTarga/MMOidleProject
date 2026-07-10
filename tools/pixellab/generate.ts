@@ -92,10 +92,39 @@ const PARAM_MAP: Record<string, string> = {
   direction: 'direction',
   textGuidanceScale: 'text_guidance_scale',
   styleStrength: 'style_strength',
+  initImageStrength: 'init_image_strength',
   colorPalette: 'color_palette',
   frameCount: 'frame_count',
   seed: 'seed',
 };
+
+/**
+ * img2img source (bitforge/pixflux): params.initImage is an art/src-relative
+ * path, or the literal "self" for the entry's own current art at `out` —
+ * "this sprite, but regenerated cleanly". Returns null when unset.
+ */
+function initImagePathFor(r: ResolvedEntry): string | null {
+  const raw = r.entry.params?.initImage as string | undefined;
+  if (!raw) return null;
+  const out = raw === 'self' ? r.entry.out : raw;
+  return srcPathFor(out);
+}
+
+function initImageFor(r: ResolvedEntry): Base64Image | null {
+  const abs = initImagePathFor(r);
+  if (!abs) return null;
+  if (!fs.existsSync(abs)) {
+    throw new Error(`entry '${r.entry.id}': initImage not found at ${abs}`);
+  }
+  return toBase64Image(fs.readFileSync(abs));
+}
+
+function initImageSha(r: ResolvedEntry): string | null {
+  const abs = initImagePathFor(r);
+  if (!abs) return null;
+  if (!fs.existsSync(abs)) return 'MISSING';
+  return crypto.createHash('sha256').update(fs.readFileSync(abs)).digest('hex').slice(0, 16);
+}
 
 function passthroughParams(params: Record<string, unknown> | undefined): Record<string, unknown> {
   const out: Record<string, unknown> = {};
@@ -133,6 +162,7 @@ function requestHashFor(r: ResolvedEntry): string {
     genSize: genSizeFor(r),
     noBackground: r.noBackground,
     styleSha: styleSha(r),
+    initImageSha: initImageSha(r),
     params: passthroughParams(r.entry.params),
     candidates: r.candidates,
   };
@@ -175,11 +205,16 @@ async function callEndpoint(r: ResolvedEntry, seed: number): Promise<{ images: B
     seed,
     ...params,
   };
+  const init = r.endpoint === 'bitforge' || r.endpoint === 'pixflux' ? initImageFor(r) : null;
+  const initFields = init
+    ? { init_image: init, init_image_strength: (params.init_image_strength as number) ?? 300 }
+    : {};
   switch (r.endpoint) {
     case 'bitforge': {
       const style = styleImageFor(r);
       const res = await createImageBitforge({
         ...common,
+        ...initFields,
         ...(style
           ? { style_image: style, style_strength: (params.style_strength as number) ?? 65 }
           : {}),
@@ -187,7 +222,7 @@ async function callEndpoint(r: ResolvedEntry, seed: number): Promise<{ images: B
       return { images: [Buffer.from(res.image.base64, 'base64')], usage: res.usage ?? null };
     }
     case 'pixflux': {
-      const res = await createImagePixflux(common);
+      const res = await createImagePixflux({ ...common, ...initFields });
       return { images: [Buffer.from(res.image.base64, 'base64')], usage: res.usage ?? null };
     }
     case 'generate-ui': {

@@ -73,6 +73,9 @@ export function SettingsPanel({ onClose }: Props) {
   const [deathNotificationsEnabled, setDeathNotificationsEnabled] = useState(
     () => loadGameplaySettings().deathNotificationsEnabled,
   );
+  const [intentBubblesEnabled, setIntentBubblesEnabled] = useState(
+    () => loadGameplaySettings().intentBubblesEnabled,
+  );
   const [uiFontScale, setUiFontScale] = useState(
     () => loadGameplaySettings().uiFontScale,
   );
@@ -184,6 +187,11 @@ export function SettingsPanel({ onClose }: Props) {
     setAutoTraverseEnabled(enabled);
     saveGameplaySettings({ autoTraverseEnabled: enabled });
     hudBus.requestSetAutoTraverse(enabled);
+  }
+
+  function handleIntentBubblesToggle(enabled: boolean): void {
+    setIntentBubblesEnabled(enabled);
+    saveGameplaySettings({ intentBubblesEnabled: enabled });
   }
 
   function handleUiFontScaleChange(scale: number): void {
@@ -317,6 +325,20 @@ export function SettingsPanel({ onClose }: Props) {
             <p className="settings-help">
               Grinds the current biome until all recipes are unlocked, kills the boss last,
               then moves to the next biome. Re-visits a biome if your tier increases the level cap.
+            </p>
+
+            <label className="settings-toggle-row">
+              <input
+                type="checkbox"
+                checked={intentBubblesEnabled}
+                onChange={(e) => handleIntentBubblesToggle(e.target.checked)}
+              />
+              <span>Show intent bubble over characters</span>
+            </label>
+            <p className="settings-help">
+              A thought bubble above each character telegraphing their current auto
+              action — the monster they're hunting, where they're travelling, who
+              they're following. Emotes always show.
             </p>
 
             <label className="settings-toggle-row">

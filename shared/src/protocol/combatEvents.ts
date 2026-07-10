@@ -68,4 +68,10 @@ export type CombatEvent =
   // in-world Guard FX on the player's sprite, shown to the whole node so allies see
   // each other react. `ability` is the ability id; the client picks the FX by id.
   // Purely cosmetic — the buff/heal/cleanse is server-authoritative.
-  | { kind: 'player-guard'; playerId: string; ability: string };
+  | { kind: 'player-guard'; playerId: string; ability: string }
+  // A Technique armed the player's next attack (`hasArmedAbility` attached). Drives
+  // the armed telegraph over the player: a skill-name callout plus the cooldown bar
+  // tinted red until the charge is consumed (the consuming `player-hit` carries an
+  // ability client-effect tag which clears it). Purely cosmetic — the rider itself
+  // is server-authoritative. Shown to the whole node, mirroring `player-guard`.
+  | { kind: 'player-technique-armed'; playerId: string; ability: string };

@@ -129,11 +129,13 @@ current-state docs are linked where available; the rest are filled at the step's
 - RP budget: `runeBudgetForGlobalMastery(gm, runePointBonus) = 8 + floor(gm/10) + bonus`
   (`runeDatabase.ts`) — replaced `runeBudgetForTier` at all 3 call sites (playerLifecycle, index,
   RunesPanel). `/10` is a non-regressive placeholder (GM 0/20/40 → 8/10/12 = old T0/T1/T2).
-- Upgrade cap: `upgradeCeilingFromGlobalMastery(gm)` + `checkUpgrade({ …, globalMastery })` seam
-  (`itemUpgrades.ts`); effective max = `min(structural, gmCeiling)`. Placeholder ceiling is non-binding
-  (≥5) so no current +3 regresses — Step 6 tightens it with +5. GM threaded into server `itemUpgrade.ts`
-  + client `UpgradeTab`.
-- Numbers (RP divisor, GM upgrade ceiling) = user balance pass.
+- Upgrade cap: `upgradeCeilingFromGlobalMastery(gm, itemTier)` + `checkUpgrade({ …, globalMastery })`
+  seam (`itemUpgrades.ts`); effective max = `min(structural, gmCeiling)`. **Tier-banded since
+  2026-07-10**: each item tier owns the GM band `(maxGlobalMasteryAtTier(T-1), maxGlobalMasteryAtTier(T)]`
+  (derived from biome start tiers × `BIOME_LEVELS_PER_TIER`, clearing excluded); +1…+5 spread evenly
+  across the band so +5 lands at full tier mastery (T1 @ GM 30, T2 @ 72, T3 @ 126, T4 @ 198). GM
+  threaded into server `itemUpgrade.ts` + client `UpgradeTab`/`MasteryPanel`/`MenuButtons`.
+- Numbers (RP divisor) = user balance pass.
 
 ### 5. Rune reward sourcing & RP budget  — ✅ IMPLEMENTED
 - `RuneRecipe` gains `recipeGroup` + `requiredBiomeLevel` (biome-mastery gate) alongside the existing
@@ -999,4 +1001,18 @@ Append one line per working session: date · step(s) touched · outcome.
             into `docs/biome-ecology-plan.md` (section "Biome authoring methodology") — the per-biome
             recipe + primitive toolbox + terrain rules + boss-exam pattern + verification recipe +
             gotchas + file map + worked references. Read it first when authoring any further biome.**
+2026-07-10  Item upgrade GM ceiling made TIER-BANDED (was tier-agnostic — GM 30 wrongly opened +5 on
+            ALL tiers, leaving only the weaker biome-level gate on T2+ gear). New model: each item
+            tier owns the GM band (maxGlobalMasteryAtTier(T-1), maxGlobalMasteryAtTier(T)], derived
+            by summing biomeLevelCap over real biomes (clearing excluded) — bands 0-30 / 31-72 /
+            73-126 / 127-198 for T1-T4 (T4 counts 12 biomes incl. abyss). +1…+5 spread EVENLY across
+            each band (user call: "+5 at full tier mastery" over "flat 6 GM/step + slack"): T1 +1@6…
+            +5@30, T2 +1@38…+5@72, T3 +1@83…+5@126, T4 +1@140…+5@198; tier-0 starter gear clamps to
+            T1's band. Signatures now take itemTier: upgradeCeilingFromGlobalMastery(gm, tier),
+            globalMasteryRequiredForUpgrade(tier, plus); GLOBAL_MASTERY_PER_ITEM_UPGRADE deleted;
+            MAX_ITEM_TIER=4 added. checkUpgrade passes item.tier (server unchanged otherwise); client
+            UpgradeTab passes def.tier; MasteryPanel item section reworked to per-tier rows; MenuButtons
+            sidebar shows per-tier caps. New shared test itemUpgrades.test.ts (band boundaries,
+            thresholds fill bands, tier-scoped ceilings, checkUpgrade tier gating). Verified: 4-pkg
+            typecheck + full pnpm test 21/21.
 ```

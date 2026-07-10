@@ -105,6 +105,21 @@ short label + a `T`/`G` slot badge). State is derived **client-side** (no protoc
 
 All HUD colors/glyphs are placeholders — swap for real icon textures without touching layout.
 
+### In-world telegraphs (skill callouts + armed bar)
+
+Node-wide cosmetic events (both in `shared/src/protocol/combatEvents.ts`) drive in-world tells,
+mirroring the monster cast-bar telegraph:
+- **`player-technique-armed`** — pushed by `abilityFiring.ts` when a Technique arms. The client
+  (`combatFx.ts`) pops a lingering skill-name callout over the player ("Sweep", amber,
+  `render/skillCallouts.ts`) and tracks the armed state in `RenderState.techniqueArmed`, which
+  tints the player's **cooldown bar red** (`cooldownBars.ts`) until the consuming `player-hit`
+  arrives carrying one of the ability client-effect tags (sweep / expose-weakness /
+  technique-fired). A chaotic miss keeps both the server charge and the red bar armed — correct.
+- **`player-guard`** (pre-existing) — now also pops a callout ("Brace" / "Cleanse" /
+  "Second Wind", tinted to each Guard's FX palette) in addition to the in-world Guard FX.
+
+Callouts pop in, hold ~1.4 s, then drift up and fade (~1.85 s total); one per player, newest wins.
+
 ## Worked content (placeholders)
 
 - **Sweep** (Technique, forest): trigger `in-combat`, cleave 60% / radius 90, cd 4 s. Recipe

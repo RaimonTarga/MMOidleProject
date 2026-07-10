@@ -25,6 +25,9 @@ export function drawCooldownBars(state: RenderState): void {
     // progress (the telegraph). Otherwise it shows the normal attack cooldown.
     const cast = state.castState.get(id);
     const casting = !!cast;
+    // A player with a Technique armed keeps the normal cooldown fill but wears
+    // the danger-red tint until the consuming hit clears it (see combatFx.ts).
+    const armed = state.techniqueArmed.has(id);
     const barY = sprite.y - meta.barOffsetY + 6;
     let pct: number;
     let show: boolean;
@@ -48,17 +51,19 @@ export function drawCooldownBars(state: RenderState): void {
       prev.y === barY &&
       prev.bucket === bucket &&
       prev.show === show &&
-      prev.casting === casting
+      prev.casting === casting &&
+      prev.armed === armed
     ) {
       continue;
     }
-    state.cdBarCache.set(id, { x: sprite.x, y: barY, bucket, show, casting });
+    state.cdBarCache.set(id, { x: sprite.x, y: barY, bucket, show, casting, armed });
 
     cdBar.setDepth(DEPTH.UI + sprite.y);
     cdBar.clear();
     if (!show) continue;
 
-    const color = casting ? 0xff3322 : pct >= 1 ? 0xffdd22 : 0x4466cc;
+    const color =
+      casting || armed ? 0xff3322 : pct >= 1 ? 0xffdd22 : 0x4466cc;
 
     cdBar.fillStyle(0x1a1a1a);
     cdBar.fillRect(sprite.x - 16, barY, 32, 3);

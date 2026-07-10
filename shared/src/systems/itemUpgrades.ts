@@ -1,6 +1,6 @@
 import type { EquipmentSlot, EssenceType, ItemDefinition } from '../items';
 import { BIOME_PRIMARY_ESSENCE, ESSENCE_LABELS } from '../items';
-import { BIOME_LEVELS_PER_TIER } from '../config/gameConfig';
+import { BIOME_LEVELS_PER_TIER, maxGlobalMasteryAtTier } from '../config/gameConfig';
 
 /**
  * Highest upgrade level for items without explicit upgrade definitions. Raised
@@ -10,19 +10,37 @@ import { BIOME_LEVELS_PER_TIER } from '../config/gameConfig';
  */
 export const MAX_UPGRADE = 5;
 
-export const GLOBAL_MASTERY_PER_ITEM_UPGRADE = 6;
+/** Highest item tier the GM ceiling distinguishes; tier-0 starter gear shares tier 1's band. */
+export const MAX_ITEM_TIER = 4;
 
-export function globalMasteryRequiredForUpgrade(targetPlus: number): number {
-  return Math.max(0, targetPlus) * GLOBAL_MASTERY_PER_ITEM_UPGRADE;
+/**
+ * Global Mastery required to push a tier-`itemTier` item to `targetPlus`.
+ *
+ * Each item tier owns a GM band: (max GM attainable at tier-1, max GM at tier],
+ * derived from {@link maxGlobalMasteryAtTier}. The +1…+5 unlocks are spread
+ * evenly across the band, so a tier's +5 opens exactly when every biome
+ * available at that tier is fully mastered. Tier 1 (band 0–30): +1@6 … +5@30.
+ * Tier 2 (band 31–72): +1@38 … +5@72. Intermediate steps round to integers.
+ */
+export function globalMasteryRequiredForUpgrade(itemTier: number, targetPlus: number): number {
+  const tier = Math.max(1, itemTier);
+  const base = maxGlobalMasteryAtTier(tier - 1);
+  const band = maxGlobalMasteryAtTier(tier) - base;
+  const plus = Math.min(Math.max(0, targetPlus), MAX_UPGRADE);
+  return base + Math.round((band * plus) / MAX_UPGRADE);
 }
 
 /**
- * Global-Mastery-derived ceiling on item upgrade level.
- * Every 6 GM opens the next +N state: 0 = +0, 6 = +1, 12 = +2,
- * 18 = +3, and so on. Structural item caps still apply on top.
+ * Global-Mastery-derived ceiling on upgrade level for items of `itemTier`.
+ * Structural item caps still apply on top.
  */
-export function upgradeCeilingFromGlobalMastery(globalMastery: number): number {
-  return Math.floor(Math.max(0, globalMastery) / GLOBAL_MASTERY_PER_ITEM_UPGRADE);
+export function upgradeCeilingFromGlobalMastery(globalMastery: number, itemTier: number): number {
+  let ceiling = 0;
+  for (let plus = 1; plus <= MAX_UPGRADE; plus++) {
+    if (globalMastery < globalMasteryRequiredForUpgrade(itemTier, plus)) break;
+    ceiling = plus;
+  }
+  return ceiling;
 }
 
 /** Primary stat each slot's generic upgrade buffs. (Cores never upgrade — see getMaxUpgrade.) */
@@ -142,10 +160,10 @@ export function checkUpgrade(params: {
   const targetPlus = currentPlus + 1;
   if (!item.biomeGroup) return { ok: false, reason: 'This item cannot be upgraded.' };
   if (currentPlus >= getMaxUpgrade(item)) return { ok: false, reason: 'Already at maximum upgrade.' };
-  if (globalMastery !== undefined && targetPlus > upgradeCeilingFromGlobalMastery(globalMastery)) {
+  if (globalMastery !== undefined && targetPlus > upgradeCeilingFromGlobalMastery(globalMastery, item.tier)) {
     return {
       ok: false,
-      reason: `Requires Global Mastery ${globalMasteryRequiredForUpgrade(targetPlus)}.`,
+      reason: `Requires Global Mastery ${globalMasteryRequiredForUpgrade(item.tier, targetPlus)}.`,
     };
   }
 

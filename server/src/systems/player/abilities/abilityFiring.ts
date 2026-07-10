@@ -168,6 +168,14 @@ function maybeFireTechnique(
 
   attachComponent(world, player, "hasArmedAbility", { abilityId });
   setCooldown(player.tracksCombat, TECHNIQUE_CD_KEY, ability.cooldownMs);
+
+  // Cosmetic: tell the node the Technique armed so the client telegraphs it
+  // (skill-name callout + red cooldown bar until the charge is consumed).
+  world.pushEvent(player.hasPosition.nodeId, {
+    kind: "player-technique-armed",
+    playerId: player.isPlayer.id,
+    ability: abilityId,
+  });
 }
 
 function maybeFireGuard(

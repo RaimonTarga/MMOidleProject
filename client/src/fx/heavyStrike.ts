@@ -17,33 +17,51 @@ export function fxExposeWeakness(
   const lineW = empowered ? 5 : 4;
 
   const flash = scene.add.graphics({ x: toX, y: toY }).setDepth(DEPTH.FX);
-  flash.fillStyle(core, 0.9);
-  flash.fillCircle(0, 0, empowered ? 18 : 14);
+  flash.fillStyle(core, 0.95);
+  flash.fillCircle(0, 0, empowered ? 22 : 17);
+  flash.fillStyle(0xffffff, 0.85);
+  flash.fillCircle(0, 0, empowered ? 11 : 8);
   scene.tweens.add({
     targets: flash,
     alpha: 0,
-    scaleX: 2.2,
-    scaleY: 2.2,
-    duration: 170,
+    scaleX: 2.6,
+    scaleY: 2.6,
+    duration: 200,
     onComplete: () => flash.destroy(),
   });
 
+  // Targeting reticle — snaps in from outside, locks on, spins slightly, then
+  // fades. The lock-in motion sells "this enemy is now exposed".
   const mark = scene.add.graphics({ x: toX, y: toY }).setDepth(DEPTH.FX);
   mark.lineStyle(lineW, core, 0.95);
   mark.strokeCircle(0, 0, empowered ? 30 : 24);
-  mark.lineStyle(2, deep, 0.85);
+  mark.lineStyle(2.5, deep, 0.9);
   mark.lineBetween(-34, 0, -14, 0);
   mark.lineBetween(14, 0, 34, 0);
   mark.lineBetween(0, -34, 0, -14);
   mark.lineBetween(0, 14, 0, 34);
+  mark.setScale(1.8);
+  mark.setAlpha(0.3);
   scene.tweens.add({
     targets: mark,
-    scaleX: 1.25,
-    scaleY: 1.25,
-    alpha: 0,
-    duration: 420,
-    ease: 'Power2',
-    onComplete: () => mark.destroy(),
+    scaleX: 1,
+    scaleY: 1,
+    alpha: 1,
+    duration: 140,
+    ease: 'Quad.easeIn',
+    onComplete: () => {
+      scene.tweens.add({
+        targets: mark,
+        angle: 45,
+        scaleX: 1.2,
+        scaleY: 1.2,
+        alpha: 0,
+        delay: 160,
+        duration: 420,
+        ease: 'Power2',
+        onComplete: () => mark.destroy(),
+      });
+    },
   });
 
   const slash = scene.add.graphics({ x: toX, y: toY }).setDepth(DEPTH.FX);

@@ -67,6 +67,15 @@ export interface RenderState {
    *  cooldown bar, tinted red) + the cast timing, keyed by monster id. */
   castLabel: Map<NetworkId, Phaser.GameObjects.Text>;
   castState: Map<NetworkId, { startedAt: number; castMs: number; label: string }>;
+  /** Player skill-name callout (Technique armed / Guard fired), keyed by player id.
+   *  Pops in, lingers, then drifts up + fades (see skillCallouts.ts). */
+  skillCallout: Map<
+    NetworkId,
+    { label: Phaser.GameObjects.Text; expiresAt: number; driftY: number }
+  >;
+  /** Players with a Technique armed for their next attack — tints their cooldown
+   *  bar red until the consuming hit's ability client-effect tag clears it. */
+  techniqueArmed: Map<NetworkId, { abilityId: string; armedAt: number }>;
   hpBarCache: Map<
     NetworkId,
     {
@@ -85,6 +94,7 @@ export interface RenderState {
       bucket: number;
       show: boolean;
       casting: boolean;
+      armed: boolean;
     }
   >;
 
@@ -149,6 +159,10 @@ export interface RenderState {
   cannonCharge: {
     graphics: Phaser.GameObjects.Graphics | null;
   };
+  /** Red ground ring under the own player's attack target (see render/targetIndicator.ts). */
+  targetIndicator: {
+    graphics: Phaser.GameObjects.Graphics | null;
+  };
   /** Per-player transformation aura glow graphics (see client/src/fx/aura.ts). */
   auras: Map<string, Phaser.GameObjects.Graphics>;
   voidOverlordRespawn: {
@@ -201,6 +215,8 @@ export function createRenderState(): RenderState {
     cdBar: new Map(),
     castLabel: new Map(),
     castState: new Map(),
+    skillCallout: new Map(),
+    techniqueArmed: new Map(),
     hpBarCache: new Map(),
     cdBarCache: new Map(),
     effectOverlays: new Map(),
@@ -218,6 +234,9 @@ export function createRenderState(): RenderState {
       until: 0,
     },
     cannonCharge: {
+      graphics: null,
+    },
+    targetIndicator: {
       graphics: null,
     },
     auras: new Map(),
