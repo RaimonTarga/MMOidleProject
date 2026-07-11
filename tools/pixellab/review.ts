@@ -43,6 +43,20 @@ function candidateFiles(category: string, id: string): string[] {
     .sort();
 }
 
+function variantOuts(out: string): string[] {
+  const dir = path.dirname(out);
+  const ext = path.extname(out);
+  const stem = path.basename(out, ext);
+  const absDir = path.dirname(srcPathFor(out));
+  if (!fs.existsSync(absDir)) return [];
+  const prefix = `${stem}-variant-`;
+  return fs
+    .readdirSync(absDir)
+    .filter((file) => file.startsWith(prefix) && file.endsWith(ext))
+    .sort()
+    .map((file) => path.posix.join(dir.replace(/\\/g, '/'), file));
+}
+
 function buildState(): unknown {
   const manifests = loadManifests();
   return {
@@ -56,6 +70,8 @@ function buildState(): unknown {
         status: e.status,
         prompt: e.prompt,
         notes: e.notes ?? '',
+        tileable: e.params?.tileable === true,
+        variants: variantOuts(e.out),
         sources: e.sources ?? [],
         hasCurrent: fs.existsSync(srcPathFor(e.out)),
         candidates: candidateFiles(manifest.category, e.id),
@@ -94,7 +110,12 @@ function readBody(req: http.IncomingMessage): Promise<Record<string, string>> {
   });
 }
 
-async function accept(category: string, id: string, file: string): Promise<void> {
+async function copyCandidateTo(
+  category: string,
+  id: string,
+  file: string,
+  out: string,
+): Promise<void> {
   if (!SAFE_SEGMENT.test(file)) throw new Error('bad candidate filename');
   const r = findEntry(category, id);
   if (!r) throw new Error(`unknown entry ${category}/${id}`);
@@ -103,7 +124,7 @@ async function accept(category: string, id: string, file: string): Promise<void>
 
   const { w, h } = r.entry.size;
   const meta = await sharp(candidatePath).metadata();
-  const outPath = srcPathFor(r.entry.out);
+  const outPath = srcPathFor(out);
   fs.mkdirSync(path.dirname(outPath), { recursive: true });
   if (meta.width === w && meta.height === h) {
     fs.copyFileSync(candidatePath, outPath);
@@ -111,9 +132,38 @@ async function accept(category: string, id: string, file: string): Promise<void>
     // Nearest-neighbor keeps pixel art crisp when scaling to the ship size.
     await sharp(candidatePath).resize(w, h, { kernel: 'nearest' }).png().toFile(outPath);
   }
-  fs.rmSync(path.join(CANDIDATES_DIR, category, id), { recursive: true, force: true });
+}
+
+async function acceptPrimary(category: string, id: string, file: string): Promise<void> {
+  const r = findEntry(category, id);
+  if (!r) throw new Error(`unknown entry ${category}/${id}`);
+  await copyCandidateTo(category, id, file, r.entry.out);
   r.entry.status = 'accepted';
   saveManifest(r.loaded);
+}
+
+async function acceptVariant(category: string, id: string, file: string): Promise<string> {
+  const r = findEntry(category, id);
+  if (!r) throw new Error(`unknown entry ${category}/${id}`);
+  const ext = path.extname(r.entry.out);
+  const dir = path.dirname(r.entry.out);
+  const stem = path.basename(r.entry.out, ext);
+  let index = 2;
+  let out = path.posix.join(dir, `${stem}-variant-${index}${ext}`);
+  while (fs.existsSync(srcPathFor(out))) {
+    index++;
+    out = path.posix.join(dir, `${stem}-variant-${index}${ext}`);
+  }
+  await copyCandidateTo(category, id, file, out);
+  r.entry.status = 'accepted';
+  saveManifest(r.loaded);
+  return out;
+}
+
+function finishSelection(category: string, id: string): void {
+  const r = findEntry(category, id);
+  if (!r) throw new Error(`unknown entry ${category}/${id}`);
+  fs.rmSync(path.join(CANDIDATES_DIR, category, id), { recursive: true, force: true });
 }
 
 function reject(category: string, id: string, note: string): void {
@@ -153,7 +203,19 @@ const server = http.createServer(async (req, res) => {
     }
     if (req.method === 'POST' && url.pathname === '/api/accept') {
       const { category, id, file } = await readBody(req);
-      await accept(category, id, file);
+      await acceptPrimary(category, id, file);
+      sendJson(res, 200, { ok: true });
+      return;
+    }
+    if (req.method === 'POST' && url.pathname === '/api/accept-variant') {
+      const { category, id, file } = await readBody(req);
+      const out = await acceptVariant(category, id, file);
+      sendJson(res, 200, { ok: true, out });
+      return;
+    }
+    if (req.method === 'POST' && url.pathname === '/api/finish-selection') {
+      const { category, id } = await readBody(req);
+      finishSelection(category, id);
       sendJson(res, 200, { ok: true });
       return;
     }

@@ -3,13 +3,14 @@ import path from 'node:path';
 import { MANIFESTS_DIR } from './paths';
 
 export type AssetStatus = 'draft' | 'pending' | 'accepted' | 'regen';
-export type EndpointId = 'bitforge' | 'pixflux' | 'generate-ui' | 'animate-with-text';
+export type EndpointId = 'bitforge' | 'pixflux' | 'generate-ui' | 'animate-with-text' | 'tileset';
 
 export const ENDPOINT_IDS: EndpointId[] = [
   'bitforge',
   'pixflux',
   'generate-ui',
   'animate-with-text',
+  'tileset',
 ];
 const STATUSES: AssetStatus[] = ['draft', 'pending', 'accepted', 'regen'];
 

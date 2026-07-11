@@ -1,5 +1,5 @@
 {
-  "atlasHash": "beff2782e0eb259577124e3f7aaf2f6f4998aa8171ac5587be902d779564d03b",
+  "atlasHash": "23578ba15e3cf8095c43e02c8201f518e73edaeb017105ae0bfca8238a2ea490",
   "frames": {
     "sprites/bosses/boss-cave-t1.png": {
       "sourceW": 128,
@@ -76,14 +76,14 @@
     "sprites/bosses/boss-plains-t1.png": {
       "sourceW": 128,
       "sourceH": 128,
-      "footY": 36,
-      "halfWAtFoot": 38.5
+      "footY": 35,
+      "halfWAtFoot": 37
     },
     "sprites/bosses/boss-plains-t2.png": {
       "sourceW": 128,
       "sourceH": 128,
-      "footY": 34,
-      "halfWAtFoot": 45
+      "footY": 53,
+      "halfWAtFoot": 35.5
     },
     "sprites/bosses/boss-swamp-t1.png": {
       "sourceW": 128,
@@ -400,8 +400,8 @@
     "sprites/monsters/boar.png": {
       "sourceW": 64,
       "sourceH": 64,
-      "footY": 18,
-      "halfWAtFoot": 21
+      "footY": 22,
+      "halfWAtFoot": 18.5
     },
     "sprites/monsters/bog-lurker.png": {
       "sourceW": 64,
@@ -504,6 +504,12 @@
       "sourceH": 64,
       "footY": 21,
       "halfWAtFoot": 26.5
+    },
+    "sprites/monsters/field-hare.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 25,
+      "halfWAtFoot": 17.5
     },
     "sprites/monsters/frog.png": {
       "sourceW": 64,
@@ -616,8 +622,8 @@
     "sprites/monsters/prairie-wolf.png": {
       "sourceW": 64,
       "sourceH": 64,
-      "footY": 18,
-      "halfWAtFoot": 21
+      "footY": 25,
+      "halfWAtFoot": 18
     },
     "sprites/monsters/rime-caster.png": {
       "sourceW": 64,
@@ -640,8 +646,8 @@
     "sprites/monsters/savanna-hawk.png": {
       "sourceW": 64,
       "sourceH": 64,
-      "footY": 21,
-      "halfWAtFoot": 13
+      "footY": 16,
+      "halfWAtFoot": 3.5
     },
     "sprites/monsters/silverback.png": {
       "sourceW": 64,
@@ -652,8 +658,8 @@
     "sprites/monsters/stampede-bull.png": {
       "sourceW": 64,
       "sourceH": 64,
-      "footY": 20,
-      "halfWAtFoot": 21.5
+      "footY": 18,
+      "halfWAtFoot": 18
     },
     "sprites/monsters/stone-basilisk.png": {
       "sourceW": 64,
@@ -853,6 +859,12 @@
       "footY": 31,
       "halfWAtFoot": 28
     },
+    "sprites/monsters/tiny-wisp.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 18,
+      "halfWAtFoot": 14
+    },
     "sprites/monsters/tinyslime.png": {
       "sourceW": 64,
       "sourceH": 64,
@@ -870,6 +882,30 @@
       "sourceH": 64,
       "footY": 24,
       "halfWAtFoot": 27.5
+    },
+    "sprites/style-probes/brute-v8.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 28,
+      "halfWAtFoot": 26
+    },
+    "sprites/style-probes/plains-ground-probe.png": {
+      "sourceW": 128,
+      "sourceH": 128,
+      "footY": 63,
+      "halfWAtFoot": 64
+    },
+    "sprites/style-probes/plains-prop-probe.png": {
+      "sourceW": 48,
+      "sourceH": 48,
+      "footY": 16,
+      "halfWAtFoot": 13
+    },
+    "sprites/style-probes/wolf-painterly.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 25,
+      "halfWAtFoot": 18.5
     },
     "boss-0": {
       "sourceW": 543,

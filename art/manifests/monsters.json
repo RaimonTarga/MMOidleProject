@@ -1,6 +1,6 @@
 {
   "category": "monsters",
-  "endpoint": "bitforge",
+  "endpoint": "pixflux",
   "styleRef": "style/creatures.png",
   "noBackground": true,
   "candidates": 3,
@@ -168,11 +168,19 @@
         "w": 128,
         "h": 128
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a colossal plains boss boar called the Tusked Razorback, enormous scarred muscular body, huge upward-curving tusks, thick bristled ridge running along the spine, heavy lowered head, imposing braced stance dominating the frame, three-quarter view facing right, full body, painterly pixel art, soft volumetric shading, minimal outline, dark earthy brown and dusty tan hide with battle-scarred bony plating",
+      "status": "accepted",
       "sources": [
         "tusked-razorback"
-      ]
+      ],
+      "negative": "slime, magical glow, small, cute, rider, armor, front view, facing camera, cartoon, chibi, anthropomorphic, weapon, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      }
     },
     {
       "id": "boss-plains-t2",
@@ -181,11 +189,19 @@
         "w": 128,
         "h": 128
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a titanic plains apex boss boar called the Gorging Razortusk, immense bloated gorged body, massive splayed jagged tusks, gore-matted bristles, cracked leathery earthy hide, hulking dominant stance, three-quarter view facing right, full body, painterly pixel art, soft volumetric shading, minimal outline, deep umber brown and ochre dust hide with dark scarring",
+      "status": "accepted",
       "sources": [
         "gorging-razortusk"
-      ]
+      ],
+      "negative": "slime, magical glow, small, cute, rider, armor, front view, facing camera, cartoon, chibi, anthropomorphic, weapon, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      }
     },
     {
       "id": "boss-swamp-t1",
@@ -402,11 +418,20 @@
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a wild plains boar, stocky heavy-shouldered body, thick shaggy bristled hide with detailed coarse fur texture, lowered head with large prominent upward-curving tusks, small eyes, braced mid-charge stance, three-quarter view facing right, full body, painterly pixel art, soft volumetric shading, minimal outline, muted earthy brown and dusty tan hide with darker bristles along the spine, richly detailed",
+      "status": "accepted",
       "sources": [
         "boar"
-      ]
+      ],
+      "negative": "slime, magical glow, armor, saddle, small tusks, tuskless, front view, facing camera, cartoon, chibi, anthropomorphic, weapon, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "needs a bit more detail, maybe bigger tusks. Candidate 2 is the closest one "
     },
     {
       "id": "bog-lurker",
@@ -870,11 +895,20 @@
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a fierce lean prairie wolf standing alert, wiry predatory build, natural elongated wolf muzzle with bared fangs, ears pricked, animalistic snarl, all four legs planted square in a steady neutral standing stance, tail held low, three-quarter view facing right, full body, painterly pixel art, soft volumetric shading, minimal outline, dusty tan and sandy grey-brown coat with a paler muzzle and underside",
+      "status": "accepted",
       "sources": [
         "prairie-wolf"
-      ]
+      ],
+      "negative": "slime, magical glow, grey forest wolf, snow, armor, human-like face, humanlike expression, smiling, smirk, walking, mid-stride, running, raised paw, front view, facing camera, cartoon, chibi, anthropomorphic, weapon, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "needs to look more fierce, candidate 2 is the closest but the \"expression\" looks weird. More animal, less antropomorphic. Neutral stance on the legs, not walking"
     },
     {
       "id": "rime-caster",
@@ -922,11 +956,19 @@
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a savanna hawk swooping in low flight, broad wings spread, sharp hooked beak, talons tucked, diving strike posture, three-quarter view facing right, full body, painterly pixel art, soft volumetric shading, minimal outline, tawny brown and pale cream barred plumage",
+      "status": "accepted",
       "sources": [
         "savanna-hawk"
-      ]
+      ],
+      "negative": "slime, magical glow, perched, standing on ground, front view, facing camera, cartoon, chibi, anthropomorphic, weapon, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      }
     },
     {
       "id": "silverback",
@@ -948,11 +990,19 @@
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a heavy plains bull, massive muscular forequarters and thick neck, broad curved horns lowered to gore, head down mid-stampede charge, three-quarter view facing right, full body, painterly pixel art, soft volumetric shading, minimal outline, dusty russet-brown and dark earthy hide",
+      "status": "accepted",
       "sources": [
         "stampede-bull"
-      ]
+      ],
+      "negative": "slime, magical glow, saddle, armor, front view, facing camera, cartoon, chibi, anthropomorphic, weapon, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      }
     },
     {
       "id": "stone-basilisk",
@@ -1369,7 +1419,8 @@
       "status": "draft",
       "sources": [
         "tiny-slime"
-      ]
+      ],
+      "notes": "Superseded by tiny-wisp (tiny-slime reskin + minion de-slime). Legacy frame; prune after Tiny Wisp ships."
     },
     {
       "id": "wolf",
@@ -1396,7 +1447,53 @@
       "status": "draft",
       "sources": [
         "plains-slime"
-      ]
+      ],
+      "notes": "Superseded by field-hare (plains-slime reskin). Legacy frame; prune after Field Hare ships."
+    },
+    {
+      "id": "field-hare",
+      "out": "sprites/monsters/field-hare.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "a small wild field hare, low crouched body, long folded-back ears, lean quick legs, alert twitchy posture ready to bolt, three-quarter view facing right, full body, painterly pixel art, soft volumetric shading, minimal outline, muted dusty tan and warm grey-brown fur with a pale underbelly",
+      "negative": "magical glow, aura, spirit, slime, blob, jelly, cute cartoon mascot, standing upright, front view, facing camera, cartoon, chibi, anthropomorphic, weapon, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "status": "accepted",
+      "sources": [
+        "plains-slime"
+      ],
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "Plains-slime reconceptualized -> Field Hare (roadmap Phase 1). New frame; frameMaps repoints plains-slime on landing."
+    },
+    {
+      "id": "tiny-wisp",
+      "out": "sprites/monsters/tiny-wisp.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "a small floating spirit wisp, a soft diffuse glowing cloud of pale luminous mist, hazy wispy edges dispersing into faint tendrils, formless ethereal and cloudy, no defined tail, no head, faceless and featureless, gently hovering, three-quarter view facing right, painterly pixel art, soft volumetric shading, minimal outline, glowing pale light blue and soft warm yellow luminous mist",
+      "negative": "face, eyes, mouth, facial features, head, tadpole, sperm, spermatozoid, single tail, comma shape, teardrop with a tail, animal, legs, paws, slime, blob, solid body, drop shadow, front view, facing camera, blurry, 3d render, cartoon, chibi, hard black outline, text, watermark",
+      "status": "accepted",
+      "sources": [
+        "tiny-slime",
+        "slime"
+      ],
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "I like candidate 3 but I want it to look more like a spirit- no facial features, just a wisp, experiment with yellow or light blue colors, more \"cloudy\"- right now it kinda looks like a spermatozoid, and that is not a good look."
     }
   ]
 }

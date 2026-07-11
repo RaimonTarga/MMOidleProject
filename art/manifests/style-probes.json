@@ -1,0 +1,343 @@
+{
+  "category": "style-probes",
+  "endpoint": "pixflux",
+  "styleRef": null,
+  "noBackground": true,
+  "candidates": 1,
+  "entries": [
+    {
+      "id": "wolf-anchored",
+      "out": "sprites/style-probes/wolf-anchored.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "gray forest wolf prowling, full body side view, lean muscular fantasy RPG monster, bristling textured fur, bared fangs, detailed naturalistic pixel art, dark selective outline, muted forest palette of cool gray, brown and moss green",
+      "negative": "blurry, anti-aliased, smooth gradients, 3d render, photograph, cartoon, chibi, text, watermark",
+      "endpoint": "bitforge",
+      "styleRef": "src/sprites/monsters/stampede-bull.png",
+      "status": "draft",
+      "notes": "RETIRED round 1: incoherent mess — bitforge anchored on old hand-edited sprite produces garbage; anchor noise suspected.",
+      "params": {
+        "styleStrength": 65,
+        "outline": "selective outline",
+        "shading": "detailed shading",
+        "detail": "highly detailed"
+      }
+    },
+    {
+      "id": "wolf-anchored-loose",
+      "out": "sprites/style-probes/wolf-anchored-loose.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "gray forest wolf prowling, full body side view, lean muscular fantasy RPG monster, crisp readable silhouette, volumetric light, rich textured shading, detailed pixel art, muted forest palette of cool gray, brown and moss green",
+      "negative": "blurry, anti-aliased, smooth gradients, 3d render, photograph, cartoon, chibi, text, watermark",
+      "endpoint": "bitforge",
+      "styleRef": "src/sprites/monsters/stampede-bull.png",
+      "status": "draft",
+      "notes": "RETIRED round 1: incoherent mess — dirty-anchor bitforge, strength 35 no better than 65.",
+      "params": {
+        "styleStrength": 35,
+        "outline": "selective outline",
+        "shading": "detailed shading",
+        "detail": "highly detailed"
+      }
+    },
+    {
+      "id": "wolf-chunky",
+      "out": "sprites/style-probes/wolf-chunky.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "gray forest wolf prowling, full body side view, fantasy RPG monster sprite, bold chunky pixel art, thick black outline, flat cel shading, simplified readable shapes, high contrast palette of gray, brown and moss green",
+      "negative": "blurry, anti-aliased, smooth gradients, 3d render, photograph, noisy dithering, text, watermark",
+      "status": "draft",
+      "notes": "RETIRED round 1: user — overall not bad but prefers wolf-painterly; disliked green patch of fur (palette bleed from 'moss green' in prompt).",
+      "params": {
+        "outline": "single color black outline",
+        "shading": "flat shading",
+        "detail": "medium detail"
+      }
+    },
+    {
+      "id": "wolf-painterly",
+      "out": "sprites/style-probes/wolf-painterly.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "gray forest wolf prowling, full body side view, lean fantasy RPG monster, painterly pixel art, soft volumetric shading, minimal outline, atmospheric muted dreamlike palette of fog gray, dusk brown and deep moss",
+      "negative": "blurry, 3d render, photograph, cartoon, chibi, hard black outline, text, watermark",
+      "status": "accepted",
+      "notes": "Direction D: unanchored painterly-muted — near the user's taste but softer than the current sprites.",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed"
+      }
+    },
+    {
+      "id": "brute-anchored",
+      "out": "sprites/style-probes/brute-anchored.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "hulking cave brute, broad semi-humanoid silhouette, faceless head sunk between massive shoulders, stone and chitin plates over dark leather hide, heavy knuckled arms, patrolling stance, full body, detailed naturalistic pixel art, dark selective outline, cool slate gray and deep purple cave palette, dim underground light",
+      "negative": "human face, eyes, orc, goblin, green skin, medieval armor, weapon, blurry, smooth gradients, 3d render, cartoon, chibi, text, watermark",
+      "endpoint": "bitforge",
+      "styleRef": "src/sprites/monsters/crawler.png",
+      "status": "draft",
+      "notes": "RETIRED round 1: incoherent mess — dirty-anchor bitforge (crawler ref), same failure as wolf.",
+      "params": {
+        "styleStrength": 65,
+        "outline": "selective outline",
+        "shading": "detailed shading",
+        "detail": "highly detailed"
+      }
+    },
+    {
+      "id": "brute-anchored-loose",
+      "out": "sprites/style-probes/brute-anchored-loose.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "hulking cave brute, broad semi-humanoid silhouette, faceless head sunk between massive shoulders, stone and chitin plates over dark leather hide, heavy knuckled arms, patrolling stance, full body, crisp readable silhouette, volumetric light, rich textured shading, detailed pixel art, cool slate gray and deep purple cave palette",
+      "negative": "human face, eyes, orc, goblin, green skin, medieval armor, weapon, blurry, smooth gradients, 3d render, cartoon, chibi, text, watermark",
+      "endpoint": "bitforge",
+      "styleRef": "src/sprites/monsters/crawler.png",
+      "status": "draft",
+      "notes": "RETIRED round 1: incoherent mess — dirty-anchor bitforge, strength 35 no better than 65.",
+      "params": {
+        "styleStrength": 35,
+        "outline": "selective outline",
+        "shading": "detailed shading",
+        "detail": "highly detailed"
+      }
+    },
+    {
+      "id": "brute-chunky",
+      "out": "sprites/style-probes/brute-chunky.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "hulking cave brute, broad semi-humanoid silhouette, faceless head between massive shoulders, stone plates over dark hide, heavy arms, full body fantasy RPG monster sprite, bold chunky pixel art, thick black outline, flat cel shading, simplified readable shapes, slate gray and deep purple palette",
+      "negative": "human face, eyes, orc, goblin, green skin, medieval armor, weapon, blurry, smooth gradients, 3d render, noisy dithering, text, watermark",
+      "status": "draft",
+      "notes": "RETIRED round 1: painterly beat chunky on both subjects. (Also faced camera instead of right — facing-right is now a standing rule.)",
+      "params": {
+        "outline": "single color black outline",
+        "shading": "flat shading",
+        "detail": "medium detail"
+      }
+    },
+    {
+      "id": "brute-painterly",
+      "out": "sprites/style-probes/brute-painterly.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "hulking cave brute walking right, side profile view facing right, broad semi-humanoid silhouette, faceless head sunk between massive shoulders, stone and chitin plates over dark leather hide, patrolling stance, full body, painterly pixel art, soft volumetric shading, minimal outline, atmospheric dim cave palette of slate gray, deep purple and cold blue",
+      "negative": "human face, eyes, orc, goblin, green skin, medieval armor, weapon, front view, facing camera, symmetrical pose, blurry, 3d render, cartoon, chibi, hard black outline, text, watermark",
+      "status": "draft",
+      "candidates": 2,
+      "notes": "RETIRED round 2. User: candidate 2 closer but not chunky enough — wants original brute's big chunky upper body + metal faceplate; candidate 1 strict profile doesn't fit artstyle (view=side was a mistake, use low top-down). Standing rules extracted: humanoids always face-covered; 3/4 view facing right. Superseded by brute-v3.",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "side",
+        "direction": "east"
+      }
+    },
+    {
+      "id": "brute-painterly-anchored",
+      "out": "sprites/style-probes/brute-painterly-anchored.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "hulking cave brute walking right, side profile view facing right, broad semi-humanoid silhouette, faceless head sunk between massive shoulders, stone and chitin plates over dark leather hide, patrolling stance, full body, painterly pixel art, soft volumetric shading, minimal outline, atmospheric dim cave palette of slate gray, deep purple and cold blue",
+      "negative": "human face, eyes, orc, goblin, green skin, medieval armor, weapon, front view, facing camera, wolf, quadruped, blurry, 3d render, cartoon, chibi, hard black outline, text, watermark",
+      "endpoint": "bitforge",
+      "styleRef": "src/sprites/style-probes/wolf-painterly.png",
+      "status": "draft",
+      "candidates": 2,
+      "notes": "RETIRED round 2: still gibberish even with the CLEAN wolf-painterly anchor — bitforge itself is the problem (legacy S-M model), not anchor quality. BITFORGE VERDICT: dead for this project; all generation on pixflux, consistency via locked params + prompt template + color_image palettes (see art/style/README.md).",
+      "params": {
+        "styleStrength": 50,
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "side",
+        "direction": "east"
+      }
+    },
+    {
+      "id": "brute-v3",
+      "out": "sprites/style-probes/brute-v3.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "hulking cave brute monster, massive chunky upper body, huge hunched shoulders and heavy knuckled arms, short stocky legs, blank iron faceplate mask hiding the face, stone and chitin plates over dark leather hide, three-quarter view facing right, full body, painterly pixel art, soft volumetric shading, minimal outline, dim cave palette of slate gray, deep purple and cold blue",
+      "negative": "human face, eyes, mouth, facial expression, orc, goblin, green skin, knight armor, weapon, strict profile silhouette, front view, facing camera, skinny, lanky, blurry, 3d render, cartoon, chibi, hard black outline, text, watermark",
+      "status": "draft",
+      "candidates": 3,
+      "notes": "RETIRED round 3. User: perspective now correct (2/3 candidates; one ignored direction=east — pixflux adherence is probabilistic). NEW RULE extracted, all humanoids: less human — non-human skin (original brute's rock-brown), exaggerated proportions without cartoonish, golem before person. Bible §7 'Vessels, Not People'. Superseded by brute-v4.",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      }
+    },
+    {
+      "id": "brute-v4",
+      "out": "sprites/style-probes/brute-v4.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "massive golem-like cave brute monster, body of weathered rock-brown stone and dark hide, exaggerated inhuman proportions, huge boulder shoulders and chunky upper body, heavy stone-knuckled arms, short stocky legs, small head sunk low with a blank iron faceplate, three-quarter view facing right, full body, painterly pixel art, soft volumetric shading, minimal outline, slate gray and deep purple cave accents",
+      "negative": "human skin, flesh tone, realistic human anatomy, human face, eyes, mouth, facial expression, orc, goblin, green skin, knight armor, weapon, front view, facing camera, strict profile silhouette, skinny, lanky, cartoon, chibi, blurry, 3d render, hard black outline, text, watermark",
+      "status": "draft",
+      "candidates": 3,
+      "notes": "RETIRED round 4. User: candidate 2 closest; still too humanlike overall. Extracted: mask covers mouth ENTIRELY, narrow EMPTY eye slits (never red/glowing); brutes are non-sentient programmed task-doers — menace by indifference (bible §7 updated); go MORE top-heavy; cave palette (slate/purple) unconfirmed — final palette is a cave-biome-slice decision, not Phase 0. Superseded by brute-v5.",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      }
+    },
+    {
+      "id": "brute-v5",
+      "out": "sprites/style-probes/brute-v5.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "colossal golem-like cave brute, animated construct of weathered rock-brown stone and dark hide, extremely top-heavy inhuman proportions, enormous boulder shoulders and massive torso dwarfing short stocky legs, long heavy stone-knuckled arms, small low-slung head in a blunt iron faceplate fully covering the mouth, narrow empty eye slits with dark hollow sockets, impassive and expressionless, three-quarter view facing right, full body, painterly pixel art, soft volumetric shading, minimal outline, muted cold stone accents",
+      "negative": "human skin, flesh tone, realistic human anatomy, humanlike body proportions, human face, visible mouth, facial expression, glowing eyes, red eyes, angry snarl, orc, goblin, green skin, knight armor, weapon, front view, facing camera, strict profile silhouette, skinny, lanky, cartoon, chibi, blurry, 3d render, hard black outline, text, watermark",
+      "status": "draft",
+      "candidates": 3,
+      "notes": "RETIRED round 5. User: candidate 2 best, 1 and 3 too robotic overall, 3 faced wrong way. Wants more primal/primitive, ork-like, bigger faceplate, no horns, smaller legs to exaggerate top-heaviness, some non-human-colored skin exposed on lower torso/legs. Superseded by brute-v6.",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      }
+    },
+    {
+      "id": "brute-v6",
+      "out": "sprites/style-probes/brute-v6.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "primal savage cave brute, hulking ork-like tribal creature, extremely top-heavy build with an enormous muscular torso and heavy boulder shoulders dwarfing short stubby legs, thick rock-brown hide plated with stone and chitin across the back and shoulders, patches of bare weathered rock-brown skin exposed on the lower torso and legs, crude heavy stone-knuckled arms hanging low, small low-slung head almost swallowed by a large blunt iron faceplate fully covering the mouth and lower face, narrow empty eye slits, impassive and expressionless, three-quarter view facing right, full body, painterly pixel art, soft volumetric shading, minimal outline, muted cold stone accents",
+      "negative": "human skin, flesh tone, realistic human anatomy, humanlike body proportions, human face, visible mouth, facial expression, glowing eyes, red eyes, angry snarl, robot, mechanical, cyborg, metallic body, screws, bolts, rivets, horns, tusks, orc, goblin, green skin, knight armor, weapon, front view, facing camera, strict profile silhouette, long legs, skinny, lanky, cartoon, chibi, blurry, 3d render, hard black outline, text, watermark",
+      "status": "draft",
+      "candidates": 3,
+      "notes": "RETIRED round 6. User: went backwards — v6's pivot to exposed skin/less armor/primal-tribal directly contradicted what was actually wanted. Root cause diagnosed: rounds were flipping between two unresolved poles (armored construct vs primal beast) instead of converging. User locked the direction: armored golem-construct, NOT primal/tribal. Superseded by brute-v7.",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      }
+    },
+    {
+      "id": "brute-v7",
+      "out": "sprites/style-probes/brute-v7.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "hulking armored cave golem-brute, extremely top-heavy silhouette dwarfing short stubby light-boned legs, massive chunky armor plates of stone and dark iron covering the shoulders, chest and upper back, heavy armored gauntlets encasing thick forearms and fists, tall angular helmet dominating the head with a long faceplate fully covering the mouth and jaw, narrow dark empty eye slits, impassive and expressionless, bare weathered rock-toned hide visible on the lower torso and legs beneath the armor, three-quarter view facing right, full body, painterly pixel art, soft volumetric shading, minimal outline, muted cold stone accents",
+      "negative": "human skin, flesh tone, realistic human anatomy, humanlike body proportions, human face, visible mouth, facial expression, glowing eyes, red eyes, bright eyes, angry snarl, sci-fi robot, cyborg, screws, bolts, rivets, chrome, futuristic technology, shiny polished armor, ornate medieval knight armor, horns, tusks, orc, goblin, green skin, weapon, front view, facing camera, strict profile silhouette, bottom heavy silhouette, thin arms, small shoulders, long legs, skinny, lanky, cartoon, chibi, blurry, 3d render, hard black outline, text, watermark",
+      "status": "draft",
+      "candidates": 3,
+      "notes": "RETIRED round 7. User: candidate 1 close, but repeated proportion requests (more top-heavy, bigger fists, shorter legs) weren't landing via text alone. Diagnosed: pixflux has a soft prior toward readable/balanced humanoid proportions that adjectives only partially override at 64x64. Switching to img2img (initImage) against the original hand-authored art/src/sprites/monsters/brute.png, which already has close-to-target proportions, to pin structure while the prompt drives armor/helmet/faceplate detail. Also: user flagged Phase 0 proportion-tuning is inherently per-creature, not a universal humanoid value — the generalizable output of this probe is rendering style + design rules (bible §7) + this img2img workflow, not one fixed silhouette. Superseded by brute-v8.",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      }
+    },
+    {
+      "id": "brute-v8",
+      "out": "sprites/style-probes/brute-v8.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "hulking armored cave golem-brute, extremely top-heavy silhouette with an enormous chunky torso dwarfing very short stubby legs, massive chunky armor plates of stone and dark iron covering the shoulders, chest and upper back, huge armored gauntlets fusing the forearms and closed fists into one solid mass, fists larger than the head and clearly the creature's main weapon, tall angular helmet dominating the head, a separate riveted faceplate mounted on top of the helmet over the mouth and jaw opening rather than recessed into it, narrow dark empty eye slits, impassive and expressionless, bare weathered rock-toned hide visible on the lower torso and legs beneath the armor, three-quarter view facing right, full body, painterly pixel art, soft volumetric shading, minimal outline, muted cold stone accents",
+      "negative": "human skin, flesh tone, realistic human anatomy, humanlike body proportions, human face, visible mouth, facial expression, glowing eyes, red eyes, bright eyes, angry snarl, sci-fi robot, cyborg, screws, bolts, rivets everywhere, chrome, futuristic technology, shiny polished armor, ornate medieval knight armor, recessed visor, inset faceplate, small fists, tiny hands, horns, tusks, orc, goblin, green skin, weapon, front view, facing camera, strict profile silhouette, bottom heavy silhouette, thin arms, small shoulders, long legs, skinny, lanky, cartoon, chibi, blurry, 3d render, hard black outline, text, watermark",
+      "status": "accepted",
+      "candidates": 3,
+      "notes": "Round 8: img2img experiment. initImage = original brute.png (already close to target proportions), initImageStrength 450 (above default 300 to weight structure, but low enough that the prompt's new armor/helmet/faceplate/fist language can still reshape surface detail). Strength is a guess — retune up if proportions still drift toward balanced/human, down if it's just copying the original.",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east",
+        "initImage": "sprites/monsters/brute.png",
+        "initImageStrength": 450
+      }
+    },
+    {
+      "id": "plains-ground-probe",
+      "out": "sprites/style-probes/plains-ground-probe.png",
+      "size": {
+        "w": 128,
+        "h": 128
+      },
+      "prompt": "seamless top-down plains ground texture, low grass covering most of the surface in a muted natural green, a few small scattered shrubs with distinct clustered leaf clumps and visible branching structure, small patches of bare dirt and scattered pebbles breaking up the green, faint worn animal trail, open sparse terrain, painterly pixel art, soft volumetric shading, minimal outline, neutral muted palette of moss green, dry gold and warm gray",
+      "negative": "blurry, 3d render, photograph, cartoon, chibi, hard black outline, text, watermark, creature, character, object silhouette, dense foliage, trees, seams, tiling artifacts, grid lines, barren dirt field, desert, sand, dust, dead brown grass, mostly dirt, cartoonish, oversaturated, bright neon, cheery, candy-colored, vibrant saturated colors, blobby shrubs, shapeless mass, amorphous blob, formless smudge",
+      "status": "accepted",
+      "candidates": 2,
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down",
+        "noBackground": false
+      },
+      "notes": "RETIRED round 3. User: leaning toward candidate 2 overall, but the shrubs read as a blobby shapeless mass — need visible structure/branching, not higher rendering quality. Round 4 names the shrubs explicitly with structure language instead of leaving them emergent/unprompted."
+    },
+    {
+      "id": "plains-prop-probe",
+      "out": "sprites/style-probes/plains-prop-probe.png",
+      "size": {
+        "w": 48,
+        "h": 48
+      },
+      "prompt": "small tuft of dry plains grass with a few loose pebbles at its base, single decorative ground prop, wispy bending blades, painterly pixel art, soft volumetric shading, minimal outline, muted dusty green and pale gold palette",
+      "negative": "blurry, 3d render, photograph, cartoon, chibi, hard black outline, text, watermark, creature, character, tree, dense foliage",
+      "status": "accepted",
+      "candidates": 2,
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down"
+      }
+    }
+  ]
+}

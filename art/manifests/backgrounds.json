@@ -100,9 +100,16 @@
         "w": 1254,
         "h": 1254
       },
-      "prompt": "",
-      "status": "draft",
-      "notes": "Shipped at 1254×1254; pixflux caps at 400×400. Candidates are generated at 400 and NN-upscaled to the manifest size on accept (lossless for pixel art)."
+      "prompt": "top-down view of an open sparse plains battlefield floor, short muted moss-green grass covering most of the ground, scattered patches of bare dirt and pale pebbles, a faint worn animal trail curving across, a few small clustered leafy shrubs with visible branching structure, wide open and uncluttered, painterly pixel art, soft volumetric shading, minimal outline, muted natural palette of moss green, dry gold and warm grey",
+      "status": "accepted",
+      "notes": "Shipped at 1254×1254; pixflux caps at 400×400. Candidates are generated at 400 and NN-upscaled to the manifest size on accept (lossless for pixel art).",
+      "negative": "creatures, animals, characters, monsters, players, people, dense forest, wall of trees, maze, walls, fences, buildings, roads, river, lake, water, seams, visible tiling grid lines, hard black outline, text, watermark, ui, oversaturated, neon, bright cheery, cartoonish, barren desert, sand, snow",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down"
+      }
     },
     {
       "id": "biome_swamp",

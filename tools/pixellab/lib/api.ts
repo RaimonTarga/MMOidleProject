@@ -27,6 +27,10 @@ export interface JobStartResponse {
   status?: string;
 }
 
+interface TilesetStartResponse extends JobStartResponse {
+  tileset_id?: string;
+}
+
 export interface BalanceResponse {
   credits: { type: 'usd'; usd: number };
   subscription: {
@@ -163,6 +167,23 @@ export interface AnimateWithTextBody {
   seed?: number;
 }
 
+/** PixelLab's top-down Wang-tileset request. */
+export interface TilesetBody {
+  lower_description: string;
+  upper_description: string;
+  transition_description?: string;
+  tile_size: { width: number; height: number };
+  outline?: string;
+  shading?: string;
+  detail?: string;
+  view?: string;
+  seed?: number;
+  color_image?: Base64Image;
+  text_guidance_scale?: number;
+  /** 'pro' unlocks larger tiles (e.g. 64px); standard pipeline caps at 16/32px. */
+  mode?: string;
+}
+
 interface BackgroundJob {
   usage?: Usage | null;
   id: string;
@@ -173,6 +194,8 @@ interface BackgroundJob {
 export interface JobResult {
   images: Buffer[];
   usage: Usage | null;
+  /** Endpoint-specific result payload; needed to identify Wang tile corners. */
+  response: unknown;
 }
 
 /** Recursively collect every base64 image object in a background-job response. */
@@ -190,7 +213,11 @@ export function extractImages(value: unknown, found: Buffer[] = []): Buffer[] {
   return found;
 }
 
-async function pollJob(jobId: string, initialUsage: Usage | null | undefined): Promise<JobResult> {
+async function pollJob(
+  jobId: string,
+  initialUsage: Usage | null | undefined,
+  requireImages = true,
+): Promise<JobResult> {
   const startedAt = Date.now();
   const timeoutMs = 10 * 60_000;
   for (;;) {
@@ -201,10 +228,10 @@ async function pollJob(jobId: string, initialUsage: Usage | null | undefined): P
     const status = job.status.toLowerCase();
     if (status === 'completed' || status === 'complete' || status === 'succeeded') {
       const images = extractImages(job.last_response);
-      if (images.length === 0) {
+      if (requireImages && images.length === 0) {
         throw new Error(`PixelLab job ${jobId} completed but no images found in response`);
       }
-      return { images, usage: job.usage ?? initialUsage ?? null };
+      return { images, usage: job.usage ?? initialUsage ?? null, response: job.last_response };
     }
     if (status === 'failed' || status === 'error' || status === 'cancelled') {
       throw new Error(
@@ -223,6 +250,22 @@ export async function generateUi(body: GenerateUiBody): Promise<JobResult> {
 export async function animateWithText(body: AnimateWithTextBody): Promise<JobResult> {
   const start = await request<JobStartResponse>('/animate-with-text-v3', { body });
   return pollJob(start.background_job_id, start.usage);
+}
+
+export async function createTileset(body: TilesetBody): Promise<JobResult> {
+  const start = await request<TilesetStartResponse>('/tilesets', { body });
+  const completed = await pollJob(start.background_job_id, start.usage, false);
+  const result = completed.response as Record<string, unknown> | undefined;
+  const tilesetId = start.tileset_id ?? (result?.tileset_id as string | undefined);
+  if (!tilesetId) {
+    throw new Error(`PixelLab tileset job ${start.background_job_id} completed without a tileset_id`);
+  }
+  const tileset = await request<unknown>(`/tilesets/${tilesetId}`);
+  return {
+    images: extractImages(tileset),
+    usage: completed.usage,
+    response: tileset,
+  };
 }
 
 // ── Account ───────────────────────────────────────────────────────────────────

@@ -21,6 +21,7 @@ import path from 'node:path';
 import sharp from 'sharp';
 import {
   animateWithText,
+  createTileset,
   createImageBitforge,
   createImagePixflux,
   generateUi,
@@ -71,6 +72,7 @@ const ENDPOINT_MAX: Record<EndpointId, { w: number; h: number } | null> = {
   pixflux: { w: 400, h: 400 },
   'generate-ui': { w: 792, h: 688 },
   'animate-with-text': null, // size follows first_frame
+  tileset: null, // tile size is explicit in the manifest params
 };
 
 /** Even-numbered proportional clamp of the ship size into the endpoint's max. */
@@ -183,6 +185,28 @@ interface CandidateMeta {
   files: Array<{ file: string; seed: number }>;
 }
 
+function candidateNumber(file: string): number | null {
+  const match = /^candidate-(\d+)(?:-\d+)?\.png$/.exec(file);
+  return match ? Number(match[1]) : null;
+}
+
+/** Candidates that are completely present on disk for a prior request. */
+function completedCandidateNumbers(meta: CandidateMeta, dir: string): Set<number> {
+  const filesByCandidate = new Map<number, string[]>();
+  for (const { file } of meta.files) {
+    const number = candidateNumber(file);
+    if (number === null) continue;
+    const files = filesByCandidate.get(number) ?? [];
+    files.push(file);
+    filesByCandidate.set(number, files);
+  }
+  return new Set(
+    [...filesByCandidate].flatMap(([number, files]) =>
+      files.every((file) => fs.existsSync(path.join(dir, file))) ? [number] : [],
+    ),
+  );
+}
+
 function readMeta(dir: string): CandidateMeta | null {
   const metaPath = path.join(dir, 'meta.json');
   if (!fs.existsSync(metaPath)) return null;
@@ -194,6 +218,84 @@ function writeMeta(dir: string, meta: CandidateMeta): void {
 }
 
 /** One API call → one or more image buffers (animate strips are pre-assembled). */
+function tilesFromResponse(value: unknown): Array<Record<string, unknown>> | null {
+  if (Array.isArray(value)) {
+    for (const item of value) {
+      const found = tilesFromResponse(item);
+      if (found) return found;
+    }
+    return null;
+  }
+  if (!value || typeof value !== 'object') return null;
+  const obj = value as Record<string, unknown>;
+  if (Array.isArray(obj.tiles) && obj.tiles.every((tile) => tile && typeof tile === 'object')) {
+    return obj.tiles as Array<Record<string, unknown>>;
+  }
+  for (const child of Object.values(obj)) {
+    const found = tilesFromResponse(child);
+    if (found) return found;
+  }
+  return null;
+}
+
+function imageBuffer(value: unknown): Buffer | null {
+  if (typeof value === 'string') {
+    const data = value.startsWith('data:') ? value.slice(value.indexOf(',') + 1) : value;
+    return data.length > 0 ? Buffer.from(data, 'base64') : null;
+  }
+  if (!value || typeof value !== 'object') return null;
+  const obj = value as Record<string, unknown>;
+  if (typeof obj.base64 === 'string') return Buffer.from(obj.base64, 'base64');
+  for (const key of ['image', 'image_data', 'data']) {
+    const found = imageBuffer(obj[key]);
+    if (found) return found;
+  }
+  return null;
+}
+
+/**
+ * Pack PixelLab's 16 Wang tiles into a predictable 4×4 sheet. The slot bits
+ * are NW=1, NE=2, SW=4, SE=8; the renderer uses the same convention when it
+ * draws connected dirt patches over grass.
+ */
+async function wangTilesetSheet(response: unknown, tileSize: number): Promise<Buffer> {
+  const tiles = tilesFromResponse(response);
+  if (!tiles) throw new Error('tileset response had no tile list');
+  const slots = new Map<number, Buffer>();
+  for (const tile of tiles) {
+    const corners = tile.corners;
+    if (!corners || typeof corners !== 'object') continue;
+    const c = corners as Record<string, unknown>;
+    const slot =
+      (c.NW === 'upper' ? 1 : 0) |
+      (c.NE === 'upper' ? 2 : 0) |
+      (c.SW === 'upper' ? 4 : 0) |
+      (c.SE === 'upper' ? 8 : 0);
+    const image = imageBuffer(tile);
+    if (image) slots.set(slot, image);
+  }
+  if (slots.size !== 16) {
+    throw new Error(`tileset response had ${slots.size}/16 Wang corner combinations`);
+  }
+  return sharp({
+    create: {
+      width: tileSize * 4,
+      height: tileSize * 4,
+      channels: 4,
+      background: { r: 0, g: 0, b: 0, alpha: 0 },
+    },
+  })
+    .composite(
+      [...slots.entries()].map(([slot, input]) => ({
+        input,
+        left: (slot % 4) * tileSize,
+        top: Math.floor(slot / 4) * tileSize,
+      })),
+    )
+    .png()
+    .toBuffer();
+}
+
 async function callEndpoint(r: ResolvedEntry, seed: number): Promise<{ images: Buffer[]; usage: Usage | null }> {
   const params = passthroughParams(r.entry.params);
   const genSize = genSizeFor(r);
@@ -222,7 +324,20 @@ async function callEndpoint(r: ResolvedEntry, seed: number): Promise<{ images: B
       return { images: [Buffer.from(res.image.base64, 'base64')], usage: res.usage ?? null };
     }
     case 'pixflux': {
-      const res = await createImagePixflux({ ...common, ...initFields });
+      // A style anchor is not a PixFlux style-control input. In particular, a
+      // terrain reference can leak its composition (trees, paths, borders) into
+      // an otherwise unrelated prompt. Only pass an explicit colour swatch when
+      // an entry opts into it through params.colorImage.
+      const colorImage = r.entry.params?.colorImage as string | undefined;
+      const colorPath = colorImage ? srcPathFor(colorImage) : null;
+      if (colorPath && !fs.existsSync(colorPath)) {
+        throw new Error(`entry '${r.entry.id}': colorImage not found at ${colorPath}`);
+      }
+      const res = await createImagePixflux({
+        ...common,
+        ...initFields,
+        ...(colorPath ? { color_image: toBase64Image(fs.readFileSync(colorPath)) } : {}),
+      });
       return { images: [Buffer.from(res.image.base64, 'base64')], usage: res.usage ?? null };
     }
     case 'generate-ui': {
@@ -255,6 +370,34 @@ async function callEndpoint(r: ResolvedEntry, seed: number): Promise<{ images: B
       // Assemble the returned frames into one horizontal strip (the shipped format).
       const strip = await assembleStrip(res.images);
       return { images: [strip], usage: res.usage };
+    }
+    case 'tileset': {
+      const tileSize = Number(r.entry.params?.tileSize ?? r.entry.size.w);
+      if (!Number.isInteger(tileSize) || tileSize < 16 || tileSize > 128) {
+        throw new Error(`entry '${r.entry.id}': tileSize must be an integer from 16 to 128`);
+      }
+      const upperDescription = r.entry.params?.upperDescription as string | undefined;
+      if (!upperDescription) {
+        throw new Error(`entry '${r.entry.id}': tileset needs params.upperDescription`);
+      }
+      // Tiles larger than the standard 16/32px require the 'pro' pipeline; opt in
+      // automatically so a 64px manifest entry just works.
+      const tilesetMode =
+        (r.entry.params?.mode as string | undefined) ?? (tileSize > 32 ? 'pro' : undefined);
+      const res = await createTileset({
+        lower_description: r.entry.prompt,
+        upper_description: upperDescription,
+        transition_description: r.entry.params?.transitionDescription as string | undefined,
+        tile_size: { width: tileSize, height: tileSize },
+        outline: params.outline as string | undefined,
+        shading: params.shading as string | undefined,
+        detail: params.detail as string | undefined,
+        view: params.view as string | undefined,
+        seed,
+        text_guidance_scale: params.text_guidance_scale as number | undefined,
+        ...(tilesetMode ? { mode: tilesetMode } : {}),
+      });
+      return { images: [await wangTilesetSheet(res.response, tileSize)], usage: res.usage };
     }
   }
 }
@@ -301,8 +444,7 @@ async function main(): Promise<void> {
       const fresh =
         meta &&
         meta.requestHash === requestHashFor(r) &&
-        meta.files.length > 0 &&
-        meta.files.every((f) => fs.existsSync(path.join(dir, f.file)));
+        completedCandidateNumbers(meta, dir).size >= r.candidates;
       if (fresh) skipped.push(`${r.category}/${r.entry.id}`);
       return !fresh;
     });
@@ -349,21 +491,36 @@ async function main(): Promise<void> {
       break;
     }
     const dir = candidateDirFor(r);
-    fs.rmSync(dir, { recursive: true, force: true });
-    fs.mkdirSync(dir, { recursive: true });
     const requestHash = requestHashFor(r);
-    const meta: CandidateMeta = {
-      assetId: r.entry.id,
-      category: r.category,
-      requestHash,
-      endpoint: r.endpoint,
-      at: new Date().toISOString(),
-      prompt: r.entry.prompt,
-      files: [],
-    };
+    const prior = readMeta(dir);
+    const resume = prior?.requestHash === requestHash;
+    if (!resume) fs.rmSync(dir, { recursive: true, force: true });
+    fs.mkdirSync(dir, { recursive: true });
+    const meta: CandidateMeta = resume && prior
+      ? prior
+      : {
+          assetId: r.entry.id,
+          category: r.category,
+          requestHash,
+          endpoint: r.endpoint,
+          at: new Date().toISOString(),
+          prompt: r.entry.prompt,
+          files: [],
+        };
+    const complete = completedCandidateNumbers(meta, dir);
+    // Drop stale metadata for a partially written candidate. It will be
+    // regenerated below; completed candidates and their paid output survive.
+    meta.files = meta.files.filter((f) => {
+      const number = candidateNumber(f.file);
+      return number !== null && complete.has(number);
+    });
     process.stdout.write(`${r.category}/${r.entry.id} [${r.endpoint}] `);
     try {
       for (let n = 1; n <= r.candidates; n++) {
+        if (complete.has(n)) {
+          process.stdout.write(`cached-${n} `);
+          continue;
+        }
         const seed = crypto.randomInt(1, 2 ** 31);
         const { images, usage } = await callEndpoint(r, seed);
         const usd = usageUsd(usage);

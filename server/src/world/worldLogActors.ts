@@ -37,7 +37,7 @@ function minionDisplayName(monsterTypeId: MinionMonsterType): string {
   if (monsterName) return monsterName;
   switch (monsterTypeId) {
     case 'slime':
-      return 'Slime';
+      return 'Wisp';
     case 'plains-slime':
       return 'Plains Slime';
     case 'cave-lurker':

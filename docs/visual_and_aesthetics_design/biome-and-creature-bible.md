@@ -132,6 +132,21 @@ The rule:
 
 > Common mobs use readable creature or role nouns. Mystical language belongs mostly in modifiers, bosses, descriptions, and later tiers.
 
+### Biome Color Coherence (added 2026-07-10)
+
+The mobs of one biome share a tight, similar color scheme, and that scheme is
+chosen together with the biome's background so mobs are consistent with each
+other while standing out against the ground they walk on.
+
+Practical consequences for the art pipeline:
+
+- The style anchor (`art/style/creatures.png`) carries **rendering style**
+  (outline, shading, texture density) — not a global palette.
+- Each biome's sprite batch specifies its palette in the prompts (and
+  `colorPalette` params where useful), authored alongside that biome's
+  background so contrast is checked as a pair.
+- Palette contrast against the background must survive the elite tint.
+
 ---
 
 ## 6. Naming Pattern
@@ -205,6 +220,32 @@ Avoid names that make them sound like normal fantasy civilians or factions:
 - Cultist, unless a later biome explicitly supports ritual society
 
 A humanoid enemy should feel like a body shaped by the domain, not just a person standing in the biome.
+
+### Covered Faces (added 2026-07-10)
+
+Every humanoid's face is covered — mask, hood, helmet, faceplate, wrappings,
+or simply featureless. No humanoid ever shows a facial expression. This keeps
+them vessels shaped by the domain rather than people, and it holds at every
+tier.
+
+### Vessels, Not People (added 2026-07-10)
+
+Humanoid bodies are visibly not human:
+
+- **Skin is never a human tone** — it takes the biome's material instead
+  (rock-brown like weathered stone, bog-gray, ash, chitin). The Cave Brute
+  reads closer to a golem than a person.
+- **Proportions are exaggerated** — oversized upper bodies, heavy limbs,
+  sunken heads — while staying grounded, not cartoonish.
+
+Together with Covered Faces this is the visual half of the rule above: a
+humanoid enemy is a body shaped by the domain, and it should read that way
+at a glance.
+
+They are also not inherently evil, and may not even be sentient — they are
+domain-bound bodies performing the tasks they are "programmed" for. Their
+menace is indifference, not aggression: impassive masks with narrow empty
+eye slits, never glowing red eyes, snarls, or villain expressions.
 
 ---
 

@@ -11,6 +11,7 @@ export const ESTIMATED_USD_PER_CALL: Record<EndpointId, number> = {
   pixflux: 0.06,
   'generate-ui': 0.1,
   'animate-with-text': 0.15,
+  tileset: 0.01,
 };
 
 export function estimateCall(endpoint: EndpointId): number {

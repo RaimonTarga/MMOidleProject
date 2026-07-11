@@ -30,6 +30,7 @@ import { connectGameSocket, wireSocketHandlers } from "../../net/socket";
 import { applyDelta } from "../../net/deltaApplier";
 import {
   ATLAS_KEY,
+  BIOME_DECOR,
   BIOME_TEXTURES,
   GRAVES_KEY,
   GRAVE_FRAME_SIZE,
@@ -74,6 +75,8 @@ import {
   type SfxId,
 } from "../../audio/manifest";
 import { initParticleTextures, initEffectFrames } from "../../fx/particles";
+import { initProceduralGroundTextures, PLAINS_GROUND_TEXTURE_KEY } from "../../render/proceduralGround";
+import { preloadWangGround } from "../../render/wangGround";
 import { updateLaserBeam } from "../../fx/laser";
 import { updateHolyBeam } from "../../fx/holyBeam";
 import { updateCannonCharge } from "../../fx/cannonFx";
@@ -222,7 +225,18 @@ export function preloadGameAssets(scene: GameScene): void {
     }
   }
   for (const key of Object.values(BIOME_TEXTURES)) {
+    if (key === PLAINS_GROUND_TEXTURE_KEY) continue;
     scene.load.image(key, `/assets/${key}.png`);
+  }
+  preloadWangGround(scene);
+  const biomeDecorKeysSeen = new Set<string>();
+  for (const specs of Object.values(BIOME_DECOR)) {
+    if (!specs) continue;
+    for (const s of specs) {
+      if (biomeDecorKeysSeen.has(s.key)) continue;
+      biomeDecorKeysSeen.add(s.key);
+      scene.load.image(s.key, s.file);
+    }
   }
   // Audio: only entries with a real file are registered (manifest files are
   // undefined until assets land, so the engine synthesizes fallbacks meanwhile).
@@ -250,6 +264,7 @@ export function preloadGameAssets(scene: GameScene): void {
 }
 
 export function createGameScene(scene: GameScene): void {
+  initProceduralGroundTextures(scene);
   setShadowDefs(scene.cache.json.get(SHADOW_DEFS_KEY));
   initEmoteAnimations(scene);
   initParticleTextures(scene);
@@ -259,6 +274,11 @@ export function createGameScene(scene: GameScene): void {
   initAudio(scene);
 
   const cam = scene.cameras.main;
+  // Snap the camera scroll to whole pixels. A fractional scroll during motion
+  // lands tilemap tile edges between screen pixels, which bleeds the Wang ground
+  // tiles into visible seams — but only while moving. Rounding fixes it without
+  // changing sprite filtering (unlike a global pixelArt flag).
+  cam.roundPixels = true;
   scene.bgRect = scene.add
     .rectangle(0, 0, cam.width, cam.height, GAME_CONFIG.SCENE_BACKDROP_COLOR)
     .setOrigin(0, 0)

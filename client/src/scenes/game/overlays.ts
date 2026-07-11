@@ -20,7 +20,8 @@ import {
 } from "../../render/collisionLayer";
 import { DEPTH } from "../../render/depth";
 import { sceneDepthY } from "../../render/sceneCoords";
-import { BIOME_TEXTURES, NODE_DECOR, TREES_KEY } from "../../sprites";
+import { BIOME_DECOR, BIOME_TEXTURES, NODE_DECOR, TREES_KEY } from "../../sprites";
+import { buildWangGroundLayer } from "../../render/wangGround";
 import type { GameScene } from "./GameScene";
 import { MM_H, MM_PAD, MM_W } from "./nodeExits";
 import { isVoidThroneUnblocked } from "./voidThrone";
@@ -39,8 +40,13 @@ export interface NodeStaticGroup {
   nodeId: string;
   offsetX: number;
   offsetY: number;
-  bg: Phaser.GameObjects.TileSprite | Phaser.GameObjects.Rectangle | null;
+  bg:
+    | Phaser.GameObjects.TileSprite
+    | Phaser.GameObjects.Rectangle
+    | Phaser.Tilemaps.TilemapLayer
+    | null;
   shade: Phaser.GameObjects.Rectangle | null;
+  biomeDecor: Phaser.GameObjects.Image[];
   decor: Phaser.GameObjects.Image[];
   /** Placeholder fills for blocking features that have no decor sprite yet. */
   placeholders: Phaser.GameObjects.Graphics[];
@@ -67,14 +73,31 @@ function buildBiomeBg(
   offsetX: number,
   offsetY: number,
   depthBias: number,
-): Phaser.GameObjects.TileSprite | Phaser.GameObjects.Rectangle | null {
+):
+  | Phaser.GameObjects.TileSprite
+  | Phaser.GameObjects.Rectangle
+  | Phaser.Tilemaps.TilemapLayer
+  | null {
   const biomeInfo = NODE_BIOMES[nodeId];
   if (!biomeInfo) return null;
   const biome = BIOME_DATABASE.get(biomeInfo.biomeGroup);
   if (!biome) return null;
 
-  const textureKey = BIOME_TEXTURES[biomeInfo.biomeGroup];
   const depth = BG_DEPTH + depthBias;
+
+  // Prefer a painted Wang-tileset ground (grass + deterministic dirt patches)
+  // where the biome has one; otherwise fall back to the flat base texture/color.
+  const wang = buildWangGroundLayer(
+    scene,
+    biomeInfo.biomeGroup,
+    nodeId,
+    offsetX,
+    offsetY,
+    depth,
+  );
+  if (wang) return wang;
+
+  const textureKey = BIOME_TEXTURES[biomeInfo.biomeGroup];
 
   if (textureKey && scene.textures.exists(textureKey)) {
     const tile = scene.add
@@ -171,6 +194,80 @@ function buildNodeDecorImages(
     decor.push(img);
   }
   return decor;
+}
+
+function hashString(str: string): number {
+  let h = 0x811c9dc5;
+  for (let i = 0; i < str.length; i++) {
+    h ^= str.charCodeAt(i);
+    h = Math.imul(h, 0x01000193);
+  }
+  return h >>> 0;
+}
+
+function mulberry32(seed: number): () => number {
+  let a = seed >>> 0;
+  return () => {
+    a |= 0;
+    a = (a + 0x6d2b79f5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+/**
+ * Scatter visual-only biome dressing in stable node-local positions. Keeping
+ * this separate from NODE_FEATURES means an art iteration can never affect the
+ * authoritative collision or hazard layout. A broad center clearing protects
+ * combat readability and leaves dungeon arenas open.
+ */
+function buildBiomeDecorImages(
+  scene: GameScene,
+  nodeId: string,
+  offsetX: number,
+  offsetY: number,
+  depthBias: number,
+  preview: boolean,
+): Phaser.GameObjects.Image[] {
+  const biomeGroup = NODE_BIOMES[nodeId]?.biomeGroup;
+  if (!biomeGroup) return [];
+  const specs = BIOME_DECOR[biomeGroup] ?? [];
+  if (specs.length === 0) return [];
+
+  const rng = mulberry32(hashString(`${nodeId}:biome-decor:v1`));
+  const out: Phaser.GameObjects.Image[] = [];
+  const edgeMargin = 110;
+  const centerX = GAME_CONFIG.NODE_WIDTH / 2;
+  const centerY = GAME_CONFIG.NODE_HEIGHT / 2;
+  const centerClearRadius = 340;
+
+  for (const spec of specs) {
+    if (!scene.textures.exists(spec.key)) continue;
+    let placed = 0;
+    const maxAttempts = spec.count * 12;
+    for (let attempt = 0; attempt < maxAttempts && placed < spec.count; attempt++) {
+      const x = edgeMargin + rng() * (GAME_CONFIG.NODE_WIDTH - edgeMargin * 2);
+      const y = edgeMargin + rng() * (GAME_CONFIG.NODE_HEIGHT - edgeMargin * 2);
+      const dx = x - centerX;
+      const dy = y - centerY;
+      if (dx * dx + dy * dy < centerClearRadius * centerClearRadius) continue;
+
+      const scale = 0.82 + rng() * 0.36;
+      const ySort = !!spec.ySort && !preview;
+      const image = scene.add
+        .image(offsetX + x, offsetY + y, spec.key)
+        .setOrigin(0.5, 0.5)
+        .setDisplaySize(spec.displayW * scale, spec.displayH * scale)
+        .setDepth((ySort ? DEPTH.SPRITE + sceneDepthY(y) : DEPTH.BG_DECOR) + depthBias);
+      if (spec.flipX && rng() < 0.5) image.setFlipX(true);
+      if (spec.alpha != null) image.setAlpha(spec.alpha);
+      out.push(image);
+      placed++;
+    }
+  }
+
+  return out;
 }
 
 const PLACEHOLDER_BLOCK_FILL = 0x4a4640;
@@ -343,6 +440,14 @@ export function paintNodeStatic(
     shade: preview
       ? buildPreviewShade(scene, offsetX, offsetY, depthBias)
       : null,
+    biomeDecor: buildBiomeDecorImages(
+      scene,
+      nodeId,
+      offsetX,
+      offsetY,
+      depthBias,
+      preview,
+    ),
     decor: buildNodeDecorImages(
       scene,
       nodeId,
@@ -371,6 +476,7 @@ export function paintNodeStatic(
 export function destroyNodeStatic(group: NodeStaticGroup): void {
   group.bg?.destroy();
   group.shade?.destroy();
+  for (const img of group.biomeDecor) img.destroy();
   for (const img of group.decor) img.destroy();
   for (const g of group.placeholders) g.destroy();
   for (const img of group.trees) img.destroy();
@@ -420,12 +526,26 @@ function updateBiomeBackgroundForNode(scene: GameScene, nodeId: string): void {
   const biome = BIOME_DATABASE.get(biomeInfo.biomeGroup);
   if (!biome) return;
 
-  const textureKey = BIOME_TEXTURES[biomeInfo.biomeGroup];
-
   if (scene.bgTile) {
     scene.bgTile.destroy();
     scene.bgTile = null;
   }
+  if (scene.bgWang) {
+    scene.bgWang.destroy();
+    scene.bgWang = null;
+  }
+
+  // A painted Wang ground takes precedence over the flat base, matching the
+  // neighbor-node path so the active node and its neighbors render identically.
+  const wang = buildWangGroundLayer(scene, biomeInfo.biomeGroup, nodeId, 0, 0, BG_DEPTH);
+  if (wang) {
+    scene.bgWang = wang;
+    scene.bgNodeFill?.setVisible(false);
+    scene.bgGrid.setVisible(false);
+    return;
+  }
+
+  const textureKey = BIOME_TEXTURES[biomeInfo.biomeGroup];
 
   if (textureKey && scene.textures.exists(textureKey)) {
     scene.bgNodeFill?.setVisible(false);
@@ -449,6 +569,8 @@ function updateBiomeBackgroundForNode(scene: GameScene, nodeId: string): void {
 }
 
 function updateNodeDecorForNode(scene: GameScene, nodeId: string): void {
+  for (const img of scene.nodeBiomeDecor) img.destroy();
+  scene.nodeBiomeDecor = [];
   for (const img of scene.nodeDecor) img.destroy();
   scene.nodeDecor = [];
   for (const g of scene.nodePlaceholders) g.destroy();
@@ -458,6 +580,7 @@ function updateNodeDecorForNode(scene: GameScene, nodeId: string): void {
 
   const throneOpen =
     nodeId === scene.state.ownNodeId && isVoidThroneUnblocked(scene);
+  scene.nodeBiomeDecor = buildBiomeDecorImages(scene, nodeId, 0, 0, 0, false);
   scene.nodeDecor = buildNodeDecorImages(
     scene,
     nodeId,

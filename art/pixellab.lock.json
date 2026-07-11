@@ -1,0 +1,1621 @@
+{
+  "calls": [
+    {
+      "at": "2026-07-10T18:36:15.945Z",
+      "endpoint": "bitforge",
+      "category": "style-probes",
+      "assetId": "wolf-anchored",
+      "requestHash": "0c3d71d51a8982a7e0829081",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T18:36:33.545Z",
+      "endpoint": "bitforge",
+      "category": "style-probes",
+      "assetId": "wolf-anchored-loose",
+      "requestHash": "7dbf1509eaac9441caf1cd16",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T18:36:47.334Z",
+      "endpoint": "pixflux",
+      "category": "style-probes",
+      "assetId": "wolf-chunky",
+      "requestHash": "da99793916c3cc56302444c9",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T18:37:01.484Z",
+      "endpoint": "pixflux",
+      "category": "style-probes",
+      "assetId": "wolf-painterly",
+      "requestHash": "936f3cfc7ac447375773ba25",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T18:37:39.901Z",
+      "endpoint": "bitforge",
+      "category": "style-probes",
+      "assetId": "brute-anchored",
+      "requestHash": "b3055598e4981b5a4a5421e4",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T18:38:19.631Z",
+      "endpoint": "bitforge",
+      "category": "style-probes",
+      "assetId": "brute-anchored-loose",
+      "requestHash": "32b75d73521e8e7c539c6052",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T18:38:42.223Z",
+      "endpoint": "pixflux",
+      "category": "style-probes",
+      "assetId": "brute-chunky",
+      "requestHash": "211842681b8d648dba384fd9",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T18:39:00.719Z",
+      "endpoint": "pixflux",
+      "category": "style-probes",
+      "assetId": "brute-painterly",
+      "requestHash": "bd5f56449bc000af976d167b",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T18:47:53.010Z",
+      "endpoint": "pixflux",
+      "category": "style-probes",
+      "assetId": "brute-painterly",
+      "requestHash": "e15b429e6b411eba173023af",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T18:48:08.009Z",
+      "endpoint": "pixflux",
+      "category": "style-probes",
+      "assetId": "brute-painterly",
+      "requestHash": "e15b429e6b411eba173023af",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T18:48:23.796Z",
+      "endpoint": "bitforge",
+      "category": "style-probes",
+      "assetId": "brute-painterly-anchored",
+      "requestHash": "09a167fa25454fa1a4a4dbfd",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T18:48:46.634Z",
+      "endpoint": "bitforge",
+      "category": "style-probes",
+      "assetId": "brute-painterly-anchored",
+      "requestHash": "09a167fa25454fa1a4a4dbfd",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T19:01:27.382Z",
+      "endpoint": "pixflux",
+      "category": "style-probes",
+      "assetId": "brute-v3",
+      "requestHash": "deeb0e20e5a51ee55173696c",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T19:01:46.370Z",
+      "endpoint": "pixflux",
+      "category": "style-probes",
+      "assetId": "brute-v3",
+      "requestHash": "deeb0e20e5a51ee55173696c",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T19:02:18.665Z",
+      "endpoint": "pixflux",
+      "category": "style-probes",
+      "assetId": "brute-v3",
+      "requestHash": "deeb0e20e5a51ee55173696c",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T19:23:59.898Z",
+      "endpoint": "pixflux",
+      "category": "style-probes",
+      "assetId": "brute-v4",
+      "requestHash": "d416c9ae54ad81ea6b33c1e1",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T19:24:18.431Z",
+      "endpoint": "pixflux",
+      "category": "style-probes",
+      "assetId": "brute-v4",
+      "requestHash": "d416c9ae54ad81ea6b33c1e1",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T19:24:45.100Z",
+      "endpoint": "pixflux",
+      "category": "style-probes",
+      "assetId": "brute-v4",
+      "requestHash": "d416c9ae54ad81ea6b33c1e1",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T19:40:02.201Z",
+      "endpoint": "pixflux",
+      "category": "style-probes",
+      "assetId": "brute-v5",
+      "requestHash": "4115d0b849e21ad07f74993a",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T19:40:16.034Z",
+      "endpoint": "pixflux",
+      "category": "style-probes",
+      "assetId": "brute-v5",
+      "requestHash": "4115d0b849e21ad07f74993a",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T19:40:41.979Z",
+      "endpoint": "pixflux",
+      "category": "style-probes",
+      "assetId": "brute-v5",
+      "requestHash": "4115d0b849e21ad07f74993a",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T19:46:39.389Z",
+      "endpoint": "pixflux",
+      "category": "style-probes",
+      "assetId": "brute-v6",
+      "requestHash": "a1a5dc8ef17a0778cb220aff",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T19:47:04.970Z",
+      "endpoint": "pixflux",
+      "category": "style-probes",
+      "assetId": "brute-v6",
+      "requestHash": "a1a5dc8ef17a0778cb220aff",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T19:47:17.841Z",
+      "endpoint": "pixflux",
+      "category": "style-probes",
+      "assetId": "brute-v6",
+      "requestHash": "a1a5dc8ef17a0778cb220aff",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T19:55:38.032Z",
+      "endpoint": "pixflux",
+      "category": "style-probes",
+      "assetId": "brute-v7",
+      "requestHash": "4dea053736777ce477f3d676",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T19:55:55.962Z",
+      "endpoint": "pixflux",
+      "category": "style-probes",
+      "assetId": "brute-v7",
+      "requestHash": "4dea053736777ce477f3d676",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T19:56:08.029Z",
+      "endpoint": "pixflux",
+      "category": "style-probes",
+      "assetId": "brute-v7",
+      "requestHash": "4dea053736777ce477f3d676",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T20:04:56.956Z",
+      "endpoint": "pixflux",
+      "category": "style-probes",
+      "assetId": "brute-v8",
+      "requestHash": "56f0663a6de24bf038bb1510",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T20:05:21.381Z",
+      "endpoint": "pixflux",
+      "category": "style-probes",
+      "assetId": "brute-v8",
+      "requestHash": "56f0663a6de24bf038bb1510",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T20:05:38.553Z",
+      "endpoint": "pixflux",
+      "category": "style-probes",
+      "assetId": "brute-v8",
+      "requestHash": "56f0663a6de24bf038bb1510",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T20:13:10.402Z",
+      "endpoint": "pixflux",
+      "category": "style-probes",
+      "assetId": "plains-ground-probe",
+      "requestHash": "03810fde23405ade39fc02f4",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T20:13:34.271Z",
+      "endpoint": "pixflux",
+      "category": "style-probes",
+      "assetId": "plains-ground-probe",
+      "requestHash": "03810fde23405ade39fc02f4",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T20:13:55.389Z",
+      "endpoint": "pixflux",
+      "category": "style-probes",
+      "assetId": "plains-prop-probe",
+      "requestHash": "8de6bc7ec25d8ef96851f08d",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T20:14:13.000Z",
+      "endpoint": "pixflux",
+      "category": "style-probes",
+      "assetId": "plains-prop-probe",
+      "requestHash": "8de6bc7ec25d8ef96851f08d",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T20:40:03.737Z",
+      "endpoint": "pixflux",
+      "category": "style-probes",
+      "assetId": "plains-ground-probe",
+      "requestHash": "7722a81d88488e0bc39cff94",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T20:40:22.176Z",
+      "endpoint": "pixflux",
+      "category": "style-probes",
+      "assetId": "plains-ground-probe",
+      "requestHash": "7722a81d88488e0bc39cff94",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T20:44:20.627Z",
+      "endpoint": "pixflux",
+      "category": "style-probes",
+      "assetId": "plains-ground-probe",
+      "requestHash": "2f819743eaf2e3504abce07d",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T20:44:58.530Z",
+      "endpoint": "pixflux",
+      "category": "style-probes",
+      "assetId": "plains-ground-probe",
+      "requestHash": "2f819743eaf2e3504abce07d",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T20:48:41.404Z",
+      "endpoint": "pixflux",
+      "category": "style-probes",
+      "assetId": "plains-ground-probe",
+      "requestHash": "86e68ea85c772853b2bd437b",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T20:49:14.032Z",
+      "endpoint": "pixflux",
+      "category": "style-probes",
+      "assetId": "plains-ground-probe",
+      "requestHash": "86e68ea85c772853b2bd437b",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T21:17:06.092Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "boss-plains-t1",
+      "requestHash": "d9c828a8fbb1505d8f4e4632",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T21:17:43.209Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "boss-plains-t1",
+      "requestHash": "d9c828a8fbb1505d8f4e4632",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T21:18:12.622Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "boss-plains-t1",
+      "requestHash": "d9c828a8fbb1505d8f4e4632",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T21:18:42.664Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "boss-plains-t2",
+      "requestHash": "0031cb2e06179ba801158732",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T21:19:11.922Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "boss-plains-t2",
+      "requestHash": "0031cb2e06179ba801158732",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T21:19:38.805Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "boss-plains-t2",
+      "requestHash": "0031cb2e06179ba801158732",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T21:19:56.294Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "boar",
+      "requestHash": "5f94e0278592ac8f935c4d8f",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T21:20:10.483Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "boar",
+      "requestHash": "5f94e0278592ac8f935c4d8f",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T21:20:41.394Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "boar",
+      "requestHash": "5f94e0278592ac8f935c4d8f",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T21:21:02.970Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "prairie-wolf",
+      "requestHash": "e8ccb7d7717b62f04e1f9140",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T21:21:18.107Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "prairie-wolf",
+      "requestHash": "e8ccb7d7717b62f04e1f9140",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T21:21:44.273Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "prairie-wolf",
+      "requestHash": "e8ccb7d7717b62f04e1f9140",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T21:22:08.682Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "savanna-hawk",
+      "requestHash": "a600cdf7c71c38d6179219e0",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T21:22:29.249Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "savanna-hawk",
+      "requestHash": "a600cdf7c71c38d6179219e0",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T21:22:49.117Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "savanna-hawk",
+      "requestHash": "a600cdf7c71c38d6179219e0",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T21:23:05.449Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "stampede-bull",
+      "requestHash": "d0aa8862075a03fb42d3f49a",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T21:23:27.746Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "stampede-bull",
+      "requestHash": "d0aa8862075a03fb42d3f49a",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T21:23:48.370Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "stampede-bull",
+      "requestHash": "d0aa8862075a03fb42d3f49a",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T21:24:03.817Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "field-hare",
+      "requestHash": "509a854257e72375ebe0a2a3",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T21:24:33.105Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "field-hare",
+      "requestHash": "509a854257e72375ebe0a2a3",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T21:24:44.776Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "field-hare",
+      "requestHash": "509a854257e72375ebe0a2a3",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T21:25:11.933Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "tiny-wisp",
+      "requestHash": "cad67bef74fd2c83570375c5",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T21:25:38.678Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "tiny-wisp",
+      "requestHash": "cad67bef74fd2c83570375c5",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T21:25:54.748Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "tiny-wisp",
+      "requestHash": "cad67bef74fd2c83570375c5",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T21:26:48.709Z",
+      "endpoint": "pixflux",
+      "category": "backgrounds",
+      "assetId": "biome_plains",
+      "requestHash": "d613f60094b3b7fa2629ff97",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T21:30:21.243Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "boar",
+      "requestHash": "84173a395006829410f8546a",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T21:30:39.833Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "boar",
+      "requestHash": "84173a395006829410f8546a",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T21:31:08.841Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "boar",
+      "requestHash": "84173a395006829410f8546a",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T21:31:48.823Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "prairie-wolf",
+      "requestHash": "3059612dbd4964a91970bb90",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T21:32:12.235Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "prairie-wolf",
+      "requestHash": "3059612dbd4964a91970bb90",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T21:32:33.433Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "prairie-wolf",
+      "requestHash": "3059612dbd4964a91970bb90",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T21:32:51.109Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "tiny-wisp",
+      "requestHash": "1366ea143c03e94ad06ecbcc",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T21:33:11.177Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "tiny-wisp",
+      "requestHash": "1366ea143c03e94ad06ecbcc",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T21:33:38.447Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "tiny-wisp",
+      "requestHash": "1366ea143c03e94ad06ecbcc",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T22:06:19.715Z",
+      "endpoint": "pixflux",
+      "category": "environment",
+      "assetId": "plains-ground-tile",
+      "requestHash": "fb791fd0f3f6961ee4c9b372",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T22:06:39.314Z",
+      "endpoint": "pixflux",
+      "category": "environment",
+      "assetId": "plains-ground-tile",
+      "requestHash": "fb791fd0f3f6961ee4c9b372",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T22:07:05.335Z",
+      "endpoint": "pixflux",
+      "category": "environment",
+      "assetId": "plains-ground-tile",
+      "requestHash": "fb791fd0f3f6961ee4c9b372",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T22:07:20.391Z",
+      "endpoint": "pixflux",
+      "category": "environment",
+      "assetId": "plains-grass-tuft",
+      "requestHash": "c3f8ff8a82a93eadb49bb372",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T22:07:43.691Z",
+      "endpoint": "pixflux",
+      "category": "environment",
+      "assetId": "plains-grass-tuft",
+      "requestHash": "c3f8ff8a82a93eadb49bb372",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T22:07:58.547Z",
+      "endpoint": "pixflux",
+      "category": "environment",
+      "assetId": "plains-grass-tuft",
+      "requestHash": "c3f8ff8a82a93eadb49bb372",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T22:08:16.530Z",
+      "endpoint": "pixflux",
+      "category": "environment",
+      "assetId": "plains-pebble-cluster",
+      "requestHash": "743cd015e136a9e8d9b81b7d",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T22:08:30.263Z",
+      "endpoint": "pixflux",
+      "category": "environment",
+      "assetId": "plains-pebble-cluster",
+      "requestHash": "743cd015e136a9e8d9b81b7d",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T22:08:36.462Z",
+      "endpoint": "pixflux",
+      "category": "environment",
+      "assetId": "plains-pebble-cluster",
+      "requestHash": "743cd015e136a9e8d9b81b7d",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T22:08:50.807Z",
+      "endpoint": "pixflux",
+      "category": "environment",
+      "assetId": "plains-pebble-cluster",
+      "requestHash": "743cd015e136a9e8d9b81b7d",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T22:08:51.842Z",
+      "endpoint": "pixflux",
+      "category": "environment",
+      "assetId": "plains-pebble-cluster",
+      "requestHash": "743cd015e136a9e8d9b81b7d",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T22:09:08.326Z",
+      "endpoint": "pixflux",
+      "category": "environment",
+      "assetId": "plains-wildflower-patch",
+      "requestHash": "d4008aee55e9fc65143d3375",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T22:09:12.331Z",
+      "endpoint": "pixflux",
+      "category": "environment",
+      "assetId": "plains-pebble-cluster",
+      "requestHash": "743cd015e136a9e8d9b81b7d",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T22:09:20.763Z",
+      "endpoint": "pixflux",
+      "category": "environment",
+      "assetId": "plains-wildflower-patch",
+      "requestHash": "d4008aee55e9fc65143d3375",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T22:09:24.538Z",
+      "endpoint": "pixflux",
+      "category": "environment",
+      "assetId": "plains-wildflower-patch",
+      "requestHash": "d4008aee55e9fc65143d3375",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T22:09:28.829Z",
+      "endpoint": "pixflux",
+      "category": "environment",
+      "assetId": "plains-wildflower-patch",
+      "requestHash": "d4008aee55e9fc65143d3375",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T22:09:35.718Z",
+      "endpoint": "pixflux",
+      "category": "environment",
+      "assetId": "plains-wildflower-patch",
+      "requestHash": "d4008aee55e9fc65143d3375",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T22:09:44.592Z",
+      "endpoint": "pixflux",
+      "category": "environment",
+      "assetId": "plains-wildflower-patch",
+      "requestHash": "d4008aee55e9fc65143d3375",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T22:09:49.766Z",
+      "endpoint": "pixflux",
+      "category": "environment",
+      "assetId": "plains-wildflower-patch",
+      "requestHash": "d4008aee55e9fc65143d3375",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T22:10:01.001Z",
+      "endpoint": "pixflux",
+      "category": "environment",
+      "assetId": "plains-low-shrub",
+      "requestHash": "79e747191f6a67bfbe515179",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T22:10:06.585Z",
+      "endpoint": "pixflux",
+      "category": "environment",
+      "assetId": "plains-wildflower-patch",
+      "requestHash": "d4008aee55e9fc65143d3375",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T22:10:13.978Z",
+      "endpoint": "pixflux",
+      "category": "environment",
+      "assetId": "plains-low-shrub",
+      "requestHash": "79e747191f6a67bfbe515179",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T22:10:15.520Z",
+      "endpoint": "pixflux",
+      "category": "environment",
+      "assetId": "plains-wildflower-patch",
+      "requestHash": "d4008aee55e9fc65143d3375",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T22:10:27.385Z",
+      "endpoint": "pixflux",
+      "category": "environment",
+      "assetId": "plains-low-shrub",
+      "requestHash": "79e747191f6a67bfbe515179",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T22:10:30.668Z",
+      "endpoint": "pixflux",
+      "category": "environment",
+      "assetId": "plains-low-shrub",
+      "requestHash": "79e747191f6a67bfbe515179",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T22:10:44.148Z",
+      "endpoint": "pixflux",
+      "category": "environment",
+      "assetId": "plains-low-shrub",
+      "requestHash": "79e747191f6a67bfbe515179",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T22:10:54.081Z",
+      "endpoint": "pixflux",
+      "category": "environment",
+      "assetId": "plains-low-shrub",
+      "requestHash": "79e747191f6a67bfbe515179",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T22:10:57.245Z",
+      "endpoint": "pixflux",
+      "category": "environment",
+      "assetId": "plains-low-shrub",
+      "requestHash": "79e747191f6a67bfbe515179",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T22:10:57.509Z",
+      "endpoint": "pixflux",
+      "category": "environment",
+      "assetId": "plains-low-shrub",
+      "requestHash": "79e747191f6a67bfbe515179",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T22:10:58.456Z",
+      "endpoint": "pixflux",
+      "category": "environment",
+      "assetId": "plains-low-shrub",
+      "requestHash": "79e747191f6a67bfbe515179",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T22:11:10.387Z",
+      "endpoint": "pixflux",
+      "category": "environment",
+      "assetId": "plains-low-shrub",
+      "requestHash": "79e747191f6a67bfbe515179",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T22:11:14.321Z",
+      "endpoint": "pixflux",
+      "category": "environment",
+      "assetId": "plains-low-shrub",
+      "requestHash": "79e747191f6a67bfbe515179",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T22:22:45.970Z",
+      "endpoint": "tileset",
+      "category": "environment",
+      "assetId": "plains-grass-dirt-tileset",
+      "requestHash": "44fba5ae2e970b9564bc8e63",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T22:31:34.795Z",
+      "endpoint": "pixflux",
+      "category": "environment",
+      "assetId": "plains-grass-tuft",
+      "requestHash": "c3f8ff8a82a93eadb49bb372",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T22:31:46.519Z",
+      "endpoint": "pixflux",
+      "category": "environment",
+      "assetId": "plains-grass-tuft",
+      "requestHash": "c3f8ff8a82a93eadb49bb372",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T22:32:03.134Z",
+      "endpoint": "pixflux",
+      "category": "environment",
+      "assetId": "plains-grass-tuft",
+      "requestHash": "c3f8ff8a82a93eadb49bb372",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T22:32:17.975Z",
+      "endpoint": "pixflux",
+      "category": "environment",
+      "assetId": "plains-pebble-cluster",
+      "requestHash": "743cd015e136a9e8d9b81b7d",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T22:32:37.530Z",
+      "endpoint": "pixflux",
+      "category": "environment",
+      "assetId": "plains-pebble-cluster",
+      "requestHash": "743cd015e136a9e8d9b81b7d",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T22:32:53.862Z",
+      "endpoint": "pixflux",
+      "category": "environment",
+      "assetId": "plains-pebble-cluster",
+      "requestHash": "743cd015e136a9e8d9b81b7d",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T22:33:06.677Z",
+      "endpoint": "pixflux",
+      "category": "environment",
+      "assetId": "plains-wildflower-patch",
+      "requestHash": "d4008aee55e9fc65143d3375",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T22:33:27.094Z",
+      "endpoint": "pixflux",
+      "category": "environment",
+      "assetId": "plains-wildflower-patch",
+      "requestHash": "d4008aee55e9fc65143d3375",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T22:33:48.375Z",
+      "endpoint": "pixflux",
+      "category": "environment",
+      "assetId": "plains-wildflower-patch",
+      "requestHash": "d4008aee55e9fc65143d3375",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T22:34:18.565Z",
+      "endpoint": "pixflux",
+      "category": "environment",
+      "assetId": "plains-low-shrub",
+      "requestHash": "79e747191f6a67bfbe515179",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T22:34:33.423Z",
+      "endpoint": "pixflux",
+      "category": "environment",
+      "assetId": "plains-low-shrub",
+      "requestHash": "79e747191f6a67bfbe515179",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T22:35:03.124Z",
+      "endpoint": "pixflux",
+      "category": "environment",
+      "assetId": "plains-low-shrub",
+      "requestHash": "79e747191f6a67bfbe515179",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T22:45:13.878Z",
+      "endpoint": "pixflux",
+      "category": "environment",
+      "assetId": "plains-grass-tuft",
+      "requestHash": "ebc8880ee23c14cab06a5721",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T22:45:31.888Z",
+      "endpoint": "pixflux",
+      "category": "environment",
+      "assetId": "plains-grass-tuft",
+      "requestHash": "ebc8880ee23c14cab06a5721",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T22:45:52.932Z",
+      "endpoint": "pixflux",
+      "category": "environment",
+      "assetId": "plains-pebble-cluster",
+      "requestHash": "f858263df7b25dc6e3c50dfe",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T22:46:11.204Z",
+      "endpoint": "pixflux",
+      "category": "environment",
+      "assetId": "plains-pebble-cluster",
+      "requestHash": "f858263df7b25dc6e3c50dfe",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T22:46:30.800Z",
+      "endpoint": "pixflux",
+      "category": "environment",
+      "assetId": "plains-wildflower-patch",
+      "requestHash": "63fdcb7d4ca913a7898219c5",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T22:46:49.568Z",
+      "endpoint": "pixflux",
+      "category": "environment",
+      "assetId": "plains-wildflower-patch",
+      "requestHash": "63fdcb7d4ca913a7898219c5",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T22:47:19.723Z",
+      "endpoint": "pixflux",
+      "category": "environment",
+      "assetId": "plains-low-shrub",
+      "requestHash": "5d804f1222d1756fdbcfd7d6",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T22:47:50.104Z",
+      "endpoint": "pixflux",
+      "category": "environment",
+      "assetId": "plains-low-shrub",
+      "requestHash": "5d804f1222d1756fdbcfd7d6",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T22:57:21.276Z",
+      "endpoint": "tileset",
+      "category": "environment",
+      "assetId": "plains-grass-dirt-tileset",
+      "requestHash": "7fcd5ab9f85cbd95d3b1f2ad",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T23:27:30.114Z",
+      "endpoint": "tileset",
+      "category": "environment",
+      "assetId": "plains-grass-dirt-tileset",
+      "requestHash": "eb9f4ad2e4b3344360ba1e55",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T23:29:19.293Z",
+      "endpoint": "tileset",
+      "category": "environment",
+      "assetId": "plains-grass-dirt-tileset",
+      "requestHash": "eb9f4ad2e4b3344360ba1e55",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T23:43:32.849Z",
+      "endpoint": "tileset",
+      "category": "plains-bakeoff",
+      "assetId": "ground-a",
+      "requestHash": "d337dfa74a10e0b48a338df6",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T23:45:19.795Z",
+      "endpoint": "tileset",
+      "category": "plains-bakeoff",
+      "assetId": "ground-b",
+      "requestHash": "3090fa501f4f68f225bb2b1f",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T23:46:31.373Z",
+      "endpoint": "tileset",
+      "category": "plains-bakeoff",
+      "assetId": "ground-c",
+      "requestHash": "f194e9b32a2939c303798ebd",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T23:47:56.678Z",
+      "endpoint": "tileset",
+      "category": "plains-bakeoff",
+      "assetId": "ground-d",
+      "requestHash": "b46954316f9b89b1d7aee8a0",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T23:54:46.737Z",
+      "endpoint": "tileset",
+      "category": "plains-bakeoff",
+      "assetId": "ground-a",
+      "requestHash": "20ae57adc38aaa3770ec4135",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T23:55:54.392Z",
+      "endpoint": "tileset",
+      "category": "plains-bakeoff",
+      "assetId": "ground-b",
+      "requestHash": "e68b5a604b59c9c4e4f42c7a",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T23:57:10.741Z",
+      "endpoint": "tileset",
+      "category": "plains-bakeoff",
+      "assetId": "ground-c",
+      "requestHash": "bf53b9bffa6b36597dfdae6b",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-10T23:58:18.944Z",
+      "endpoint": "tileset",
+      "category": "plains-bakeoff",
+      "assetId": "ground-d",
+      "requestHash": "12e734e19ef700e04159bb9a",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-11T00:05:25.031Z",
+      "endpoint": "tileset",
+      "category": "plains-bakeoff",
+      "assetId": "ground-b",
+      "requestHash": "2a61acd3161b15dafba54ac9",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-11T00:06:37.682Z",
+      "endpoint": "tileset",
+      "category": "plains-bakeoff",
+      "assetId": "ground-c",
+      "requestHash": "99268b520c817c7d043f0811",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-11T00:08:31.382Z",
+      "endpoint": "tileset",
+      "category": "plains-bakeoff",
+      "assetId": "ground-a",
+      "requestHash": "9bd54f45fd15a1049fc1b325",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-11T00:10:00.094Z",
+      "endpoint": "tileset",
+      "category": "plains-bakeoff",
+      "assetId": "ground-d",
+      "requestHash": "450bdb71f1ed0d1a5ed7f835",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-11T00:13:30.243Z",
+      "endpoint": "tileset",
+      "category": "plains-bakeoff",
+      "assetId": "ground-c",
+      "requestHash": "38cbbe253c25e23d56c483c1",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-11T00:18:48.624Z",
+      "endpoint": "tileset",
+      "category": "plains-bakeoff",
+      "assetId": "ground-a",
+      "requestHash": "1ae9254cde4749fd3946c687",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-11T00:20:54.898Z",
+      "endpoint": "tileset",
+      "category": "plains-bakeoff",
+      "assetId": "ground-b",
+      "requestHash": "3b9a4db013b6c8635ffc530d",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-11T00:22:45.965Z",
+      "endpoint": "tileset",
+      "category": "plains-bakeoff",
+      "assetId": "ground-c",
+      "requestHash": "ea7a414c1087a079482fc45e",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-11T00:28:08.732Z",
+      "endpoint": "tileset",
+      "category": "plains-bakeoff",
+      "assetId": "ground-d",
+      "requestHash": "98ccf1b163c2f95315b04ea1",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    }
+  ]
+}

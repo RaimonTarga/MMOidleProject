@@ -1,4 +1,5 @@
 import type { PlayerView } from "@mmo-idle/shared";
+import { PLAINS_GROUND_TEXTURE_KEY } from './render/proceduralGround';
 import {
   MONSTER_FRAMES,
   PLAYER_FRAMES,
@@ -94,7 +95,7 @@ export const BIOME_TEXTURES: Record<string, string> = {
   clearing: "biome_clearing",
   forest: "biome_forest",
   mountain: "biome_mountain",
-  plains: "biome_plains",
+  plains: PLAINS_GROUND_TEXTURE_KEY,
   swamp: "biome_swamp",
   cave: "biome_cave",
   jungle: "biome_jungle",
@@ -104,6 +105,144 @@ export const BIOME_TEXTURES: Record<string, string> = {
   graveyard: "biome_graveyard",
   trench: "biome_trench",
   abyss: "biome_abyss",
+};
+
+/**
+ * Reusable, non-gameplay decoration for a biome. Unlike NODE_DECOR, these
+ * assets never describe collision, hazards, or an interactable.
+ */
+export interface BiomeDecorArt {
+  key: string;
+  file: string;
+  /** Number of instances to place in every node of this biome. */
+  count: number;
+  /** World-pixel display size before a small deterministic scale variation. */
+  displayW: number;
+  displayH: number;
+  /** Keep large art y-sorted with entities; ground decals remain underneath. */
+  ySort?: boolean;
+  /** Small assets may flip horizontally to make repeat patterns less obvious. */
+  flipX?: boolean;
+  /** Optional opacity multiplier for subtle surface dressing. */
+  alpha?: number;
+}
+
+/**
+ * Biome dressing is populated only after its source art passes review. The
+ * renderer and preload path are data-driven, so adding the Plains kit later
+ * remains a data change rather than another scene-system change.
+ */
+export const BIOME_DECOR: Partial<Record<string, BiomeDecorArt[]>> = {
+  plains: [
+    {
+      key: 'plains_grass_tuft',
+      file: '/assets/environment/plains/grass-tuft.png',
+      count: 14,
+      displayW: 52,
+      displayH: 52,
+      flipX: true,
+      alpha: 0.9,
+    },
+    {
+      key: 'plains_grass_tuft_variant_2',
+      file: '/assets/environment/plains/grass-tuft-variant-2.png',
+      count: 12,
+      displayW: 52,
+      displayH: 52,
+      flipX: true,
+      alpha: 0.9,
+    },
+    {
+      key: 'plains_grass_tuft_variant_3',
+      file: '/assets/environment/plains/grass-tuft-variant-3.png',
+      count: 12,
+      displayW: 52,
+      displayH: 52,
+      flipX: true,
+      alpha: 0.9,
+    },
+    {
+      key: 'plains_pebble_cluster',
+      file: '/assets/environment/plains/pebble-cluster.png',
+      count: 7,
+      displayW: 42,
+      displayH: 42,
+      flipX: true,
+      alpha: 0.82,
+    },
+    {
+      key: 'plains_pebble_cluster_variant_2',
+      file: '/assets/environment/plains/pebble-cluster-variant-2.png',
+      count: 6,
+      displayW: 42,
+      displayH: 42,
+      flipX: true,
+      alpha: 0.82,
+    },
+    {
+      key: 'plains_pebble_cluster_variant_3',
+      file: '/assets/environment/plains/pebble-cluster-variant-3.png',
+      count: 6,
+      displayW: 42,
+      displayH: 42,
+      flipX: true,
+      alpha: 0.82,
+    },
+    {
+      key: 'plains_wildflower_patch',
+      file: '/assets/environment/plains/wildflower-patch.png',
+      count: 5,
+      displayW: 50,
+      displayH: 50,
+      flipX: true,
+      alpha: 0.8,
+    },
+    {
+      key: 'plains_wildflower_patch_variant_2',
+      file: '/assets/environment/plains/wildflower-patch-variant-2.png',
+      count: 4,
+      displayW: 50,
+      displayH: 50,
+      flipX: true,
+      alpha: 0.8,
+    },
+    {
+      key: 'plains_wildflower_patch_variant_3',
+      file: '/assets/environment/plains/wildflower-patch-variant-3.png',
+      count: 4,
+      displayW: 50,
+      displayH: 50,
+      flipX: true,
+      alpha: 0.8,
+    },
+    {
+      key: 'plains_low_shrub',
+      file: '/assets/environment/plains/low-shrub.png',
+      count: 2,
+      displayW: 88,
+      displayH: 88,
+      ySort: true,
+      flipX: true,
+    },
+    {
+      key: 'plains_low_shrub_variant_2',
+      file: '/assets/environment/plains/low-shrub-variant-2.png',
+      count: 2,
+      displayW: 88,
+      displayH: 88,
+      ySort: true,
+      flipX: true,
+    },
+    {
+      key: 'plains_low_shrub_variant_3',
+      file: '/assets/environment/plains/low-shrub-variant-3.png',
+      count: 2,
+      displayW: 88,
+      displayH: 88,
+      ySort: true,
+      flipX: true,
+    },
+  ],
 };
 
 /** Client-only visual art for a shared NODE_FEATURES entry. */

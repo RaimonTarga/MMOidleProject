@@ -1,0 +1,97 @@
+{
+  "category": "plains-bakeoff",
+  "endpoint": "tileset",
+  "styleRef": null,
+  "noBackground": true,
+  "candidates": 1,
+  "entries": [
+    {
+      "id": "ground-a",
+      "out": "files/environment/plains/ground-a.png",
+      "size": {
+        "w": 256,
+        "h": 256
+      },
+      "status": "pending",
+      "notes": "BAKEOFF: refined pale wheat @64px pro. Delete after winner chosen.",
+      "prompt": "seamless top-down pale wheat plains grass, SLIGHTLY more muted and desaturated than bright wheat with a soft grey-sage undertone but still warm pale wheat (not drab, not grey), very uniform smooth ground cover, even all-over fine texture with NO clumps, NO tufts, NO distinct shapes and NO repeating motif, organic irregular subtle detail, gentle soft painterly shading, calm and easy on the eyes, seamlessly tileable with no visible repeat, not bright, no vivid yellow",
+      "params": {
+        "upperDescription": "seamless top-down worn dry earth, even muted tan and warm grey soil, very fine consistent grain, no distinct shapes, low saturation, painterly, evenly tileable, no plants",
+        "transitionDescription": "soft organic irregular edge where grass fades into bare soil, gradual and subtle, no hard line",
+        "tileSize": 64,
+        "outline": "lineless",
+        "shading": "detailed shading",
+        "detail": "medium detail",
+        "view": "high top-down",
+        "tileable": true,
+        "mode": "pro"
+      }
+    },
+    {
+      "id": "ground-b",
+      "out": "files/environment/plains/ground-b.png",
+      "size": {
+        "w": 256,
+        "h": 256
+      },
+      "status": "pending",
+      "notes": "BAKEOFF: refined pale wheat @64px pro. Delete after winner chosen.",
+      "prompt": "seamless top-down pale wheat plains grass, SLIGHTLY more muted and desaturated than bright wheat with a soft grey-sage undertone but still warm pale wheat (not drab, not grey), fine even grass with faint soft mottling, even all-over fine texture with NO clumps, NO tufts, NO distinct shapes and NO repeating motif, organic irregular subtle detail, gentle soft painterly shading, calm and easy on the eyes, seamlessly tileable with no visible repeat, not bright, no vivid yellow",
+      "params": {
+        "upperDescription": "seamless top-down worn dry earth, even muted tan and warm grey soil, very fine consistent grain, no distinct shapes, low saturation, painterly, evenly tileable, no plants",
+        "transitionDescription": "soft organic irregular edge where grass fades into bare soil, gradual and subtle, no hard line",
+        "tileSize": 64,
+        "outline": "lineless",
+        "shading": "detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down",
+        "tileable": true,
+        "mode": "pro"
+      }
+    },
+    {
+      "id": "ground-c",
+      "out": "files/environment/plains/ground-c.png",
+      "size": {
+        "w": 256,
+        "h": 256
+      },
+      "status": "pending",
+      "notes": "BAKEOFF: refined pale wheat @64px pro. Delete after winner chosen.",
+      "prompt": "seamless top-down pale wheat plains grass, SLIGHTLY more muted and desaturated than bright wheat with a soft grey-sage undertone but still warm pale wheat (not drab, not grey), thin fine blades spread evenly with no clustering, even all-over fine texture with NO clumps, NO tufts, NO distinct shapes and NO repeating motif, organic irregular subtle detail, gentle soft painterly shading, calm and easy on the eyes, seamlessly tileable with no visible repeat, not bright, no vivid yellow",
+      "params": {
+        "upperDescription": "seamless top-down worn dry earth, even muted tan and warm grey soil, very fine consistent grain, no distinct shapes, low saturation, painterly, evenly tileable, no plants",
+        "transitionDescription": "soft organic irregular edge where grass fades into bare soil, gradual and subtle, no hard line",
+        "tileSize": 64,
+        "outline": "lineless",
+        "shading": "detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down",
+        "tileable": true,
+        "mode": "pro"
+      }
+    },
+    {
+      "id": "ground-d",
+      "out": "files/environment/plains/ground-d.png",
+      "size": {
+        "w": 256,
+        "h": 256
+      },
+      "status": "pending",
+      "notes": "BAKEOFF: refined pale wheat @64px pro. Delete after winner chosen.",
+      "prompt": "seamless top-down pale wheat plains grass, SLIGHTLY more muted and desaturated than bright wheat with a soft grey-sage undertone but still warm pale wheat (not drab, not grey), soft organic mottled grass with faint tonal variation, even all-over fine texture with NO clumps, NO tufts, NO distinct shapes and NO repeating motif, organic irregular subtle detail, gentle soft painterly shading, calm and easy on the eyes, seamlessly tileable with no visible repeat, not bright, no vivid yellow",
+      "params": {
+        "upperDescription": "seamless top-down worn dry earth, even muted tan and warm grey soil, very fine consistent grain, no distinct shapes, low saturation, painterly, evenly tileable, no plants",
+        "transitionDescription": "soft organic irregular edge where grass fades into bare soil, gradual and subtle, no hard line",
+        "tileSize": 64,
+        "outline": "lineless",
+        "shading": "detailed shading",
+        "detail": "medium detail",
+        "view": "high top-down",
+        "tileable": true,
+        "mode": "pro"
+      }
+    }
+  ]
+}

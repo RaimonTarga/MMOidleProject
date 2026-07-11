@@ -30,7 +30,7 @@ import type { MonsterDefinition } from './types';
 export const plainsMonsterEntries = [
   // ══ PLAINS — swarm of small, fast, low-per-hit mobs; volume is the threat ══
   ['plains-slime', {
-    id: 'plains-slime', name: 'Plains Slime', color: 0xddee55,
+    id: 'plains-slime', name: 'Field Hare', color: 0xddee55,
     // Swarm filler. Tiny hits that plating eats to nothing; dangerous only in numbers.
     stats: { hp: 50, attack: 12, plating: 0, damageReduction: 0, speed: 46, attackRange: 12, attackCooldown: 2000, pullRange: 190 },
     behavior: 'melee', attackStyle: 'impact', biome: 'plains',

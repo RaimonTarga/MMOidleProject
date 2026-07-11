@@ -1,3 +1,4 @@
+import Phaser from 'phaser';
 import { getDefaultStore } from 'jotai';
 import type { GameScene } from '../scenes/GameScene';
 import { hudBus } from '../hudBus';
@@ -25,6 +26,9 @@ import { emoteForWheelDirection } from '@mmo-idle/shared';
 import { cancelActiveMove, setHoldStill, setKeyboardVector } from './movement';
 import { closeTopmostOverlay } from './overlayStack';
 import { ALTAR_ARC_CONFIG, getAltarArc } from '../scenes/game/runeAltar';
+import { cyclePlainsGround } from '../render/wangGround';
+import { paintActiveNode } from '../scenes/game/overlays';
+import { rebuildNeighborLayer } from '../render/neighborScenes';
 
 const MOBILE_QUERY = '(max-width: 1100px)';
 
@@ -44,6 +48,23 @@ export function attachKeyboard(scene: GameScene): () => void {
   const held = new Set<ActionId>();
   let stillHeld = false;
   let lastEmoteAt = 0;
+  // DEV-only Plains ground bake-off label (see the [ / ] handler below).
+  let groundLabel: Phaser.GameObjects.Text | null = null;
+  function showGroundLabel(text: string): void {
+    if (!groundLabel) {
+      groundLabel = scene.add
+        .text(14, 14, '', {
+          fontFamily: 'monospace',
+          fontSize: '18px',
+          color: '#ffffff',
+          backgroundColor: '#000000cc',
+          padding: { x: 8, y: 5 },
+        })
+        .setScrollFactor(0)
+        .setDepth(1_000_000);
+    }
+    groundLabel.setText(text).setVisible(true);
+  }
   // Debounce the zero-vector transition so a keyup→keydown gap during a
   // direction change (release one key a few ms before pressing the next)
   // doesn't emit a spurious stop that briefly halts the server-side mover
@@ -126,6 +147,23 @@ export function attachKeyboard(scene: GameScene): () => void {
       }
     }
     if (event.repeat) return;
+
+    // DEV: cycle the Plains ground bake-off variants with [ and ] to compare
+    // candidate tilesets live in-game. Removed once a winner is chosen.
+    if (
+      import.meta.env.DEV &&
+      (event.code === 'BracketRight' || event.code === 'BracketLeft')
+    ) {
+      event.preventDefault();
+      const r = cyclePlainsGround(event.code === 'BracketRight' ? 1 : -1);
+      const nodeId = scene.state.ownNodeId || scene.lastDrawnNodeId;
+      if (nodeId) {
+        paintActiveNode(scene, nodeId);
+        rebuildNeighborLayer(scene, nodeId);
+      }
+      showGroundLabel(`Plains ground ${r.index + 1}/${r.total}  —  ${r.label}`);
+      return;
+    }
 
     // Enter: trigger the rune altar interaction for the arc the player stands in.
     if (event.code === 'Enter' || event.code === 'NumpadEnter') {
@@ -233,6 +271,8 @@ export function attachKeyboard(scene: GameScene): () => void {
       window.clearTimeout(kbZeroTimer);
       kbZeroTimer = null;
     }
+    groundLabel?.destroy();
+    groundLabel = null;
     setKeyboardVector(0, 0);
   };
 }

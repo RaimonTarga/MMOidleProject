@@ -6,6 +6,127 @@
   "candidates": 3,
   "entries": [
     {
+      "id": "plains-ground-tile",
+      "out": "files/environment/plains/ground-tile.png",
+      "size": {
+        "w": 128,
+        "h": 128
+      },
+      "prompt": "perfectly seamless square tileable top-down plains ground texture, only short low natural grass with subtle uneven color and fine ground grain, open quiet surface with no objects, no shrubs, no stones, no flowers, no paths, no focal pattern, no borders, painterly pixel art, soft volumetric shading, minimal outline, muted moss green, dry gold and warm gray palette",
+      "negative": "seams, visible tiling grid, edge border, frame, objects, tree, bush, shrub, rock, pebble, flower, trail, road, creature, character, building, water, text, watermark, hard black outline, oversaturated, neon, barren dirt, sand, snow",
+      "status": "draft",
+      "candidates": 3,
+      "notes": "RETIRED: ordinary PixFlux images do not guarantee seamless edges, even when prompted. Replace with a dedicated PixelLab tileset entry.",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down",
+        "noBackground": false,
+        "tileable": true
+      }
+    },
+    {
+      "id": "plains-grass-dirt-tileset",
+      "out": "files/environment/plains/grass-dirt-wang.png",
+      "size": {
+        "w": 256,
+        "h": 256
+      },
+      "prompt": "seamless top-down pale wheat plains grass, SLIGHTLY more muted and desaturated than bright wheat with a soft grey-sage undertone but still warm pale wheat (not drab, not grey), thin fine blades spread evenly with no clustering, even all-over fine texture with NO clumps, NO tufts, NO distinct shapes and NO repeating motif, organic irregular subtle detail, gentle soft painterly shading, calm and easy on the eyes, seamlessly tileable with no visible repeat, not bright, no vivid yellow",
+      "status": "accepted",
+      "endpoint": "tileset",
+      "candidates": 2,
+      "notes": "4x4 corner-Wang sheet (grass=lower, dirt=upper), 64px tiles / mode pro. Winner: pale-wheat even-blades (from the plains bake-off). Renderer wangGround.ts (NW=1,NE=2,SW=4,SE=8).",
+      "params": {
+        "upperDescription": "seamless top-down worn dry earth, even muted tan and warm grey soil, very fine consistent grain, no distinct shapes, low saturation, painterly, evenly tileable, no plants",
+        "transitionDescription": "soft organic irregular edge where grass fades into bare soil, gradual and subtle, no hard line",
+        "tileSize": 64,
+        "outline": "lineless",
+        "shading": "detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down",
+        "tileable": true,
+        "mode": "pro"
+      }
+    },
+    {
+      "id": "plains-grass-tuft",
+      "out": "files/environment/plains/grass-tuft.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "small isolated tuft of dry plains grass, a few wispy bending blades and no other subject, top-down decorative ground prop, transparent background, painterly pixel art, soft volumetric shading, minimal outline, muted dusty green and pale gold",
+      "negative": "ground rectangle, scenery, tree, shrub, bush, flower, rock, creature, character, dense foliage, text, watermark, hard black outline, oversaturated, neon",
+      "status": "accepted",
+      "candidates": 2,
+      "notes": "Visual-only surface dressing. Regenerated without the old terrain reference image, which leaked scene composition into the first batch.",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down"
+      }
+    },
+    {
+      "id": "plains-pebble-cluster",
+      "out": "files/environment/plains/pebble-cluster.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "small isolated cluster of three to five pale weathered plains pebbles, low top-down decorative ground prop, transparent background, painterly pixel art, soft volumetric shading, minimal outline, muted warm gray and dry earth palette",
+      "negative": "ground rectangle, boulder, cliff, tree, shrub, grass tuft, flower, creature, character, building, text, watermark, hard black outline, oversaturated, neon",
+      "status": "accepted",
+      "candidates": 2,
+      "notes": "Visual-only surface dressing; keep the stones small enough to never imply a collision obstacle.",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down"
+      }
+    },
+    {
+      "id": "plains-wildflower-patch",
+      "out": "files/environment/plains/wildflower-patch.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "small sparse patch of low pale wildflowers and grass, isolated top-down decorative ground prop, transparent background, painterly pixel art, soft volumetric shading, minimal outline, muted cream petals, dry gold and moss green",
+      "negative": "ground rectangle, dense flower bed, bouquet, tall plant, tree, shrub, rock, creature, character, text, watermark, hard black outline, oversaturated, neon",
+      "status": "accepted",
+      "candidates": 2,
+      "notes": "Visual-only surface dressing. Keep it subdued so enemies and attack effects remain readable over it.",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down"
+      }
+    },
+    {
+      "id": "plains-low-shrub",
+      "out": "files/environment/plains/low-shrub.png",
+      "size": {
+        "w": 96,
+        "h": 96
+      },
+      "prompt": "single low windswept plains shrub with sparse dry branches and small clustered leaves, isolated top-down decorative prop, transparent background, painterly pixel art, soft volumetric shading, minimal outline, muted olive green and dry gold",
+      "negative": "ground rectangle, tree, dense bush wall, hedge, forest, flowers, rocks, creature, character, building, text, watermark, hard black outline, oversaturated, neon",
+      "status": "accepted",
+      "candidates": 2,
+      "notes": "Visual-only dressing, not an obstacle. Keep the silhouette low and sparse so Plains remains open.",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down"
+      }
+    },
+    {
       "id": "scuba",
       "out": "files/emotes/fun/scuba.png",
       "size": {

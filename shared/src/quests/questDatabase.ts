@@ -28,7 +28,7 @@ export const QUEST_DATABASE = new Map<string, QuestDefinition>([
   ['tier-0', {
     id: 'tier-0',
     name: 'First Blood',
-    description: 'Prove yourself in the Clearing by slaying 10 Tiny Slimes.',
+    description: 'Prove yourself in the Clearing by slaying 10 Tiny Wisps.',
     tierRequired: 0,
     targetMonsterTypes: ['tiny-slime'],
     killsRequired: 10,

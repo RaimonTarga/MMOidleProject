@@ -35,7 +35,11 @@ export class GameScene extends Phaser.Scene {
   nodeBoundaryFrame!: Phaser.GameObjects.Graphics;
   bgGrid!: Phaser.GameObjects.TileSprite;
   bgTile: Phaser.GameObjects.TileSprite | null = null;
+  /** Active-node painted Wang ground (grass + dirt patches), when the biome has one. */
+  bgWang: Phaser.Tilemaps.TilemapLayer | null = null;
   nodeDecor: Phaser.GameObjects.Image[] = [];
+  /** Deterministically scattered, non-gameplay decoration for the active biome. */
+  nodeBiomeDecor: Phaser.GameObjects.Image[] = [];
   nodePlaceholders: Phaser.GameObjects.Graphics[] = [];
   dungeonHazards: Map<string, Phaser.GameObjects.Graphics> = new Map();
   /** Scattered forest trees in the active node, depth-sorted for walk-behind. */

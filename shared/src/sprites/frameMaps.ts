@@ -52,15 +52,15 @@ export const PLAYER_FRAMES: Record<string, string> = {
 /** Key: monsterTypeId (matches MONSTER_DATABASE keys exactly).
  *
  * Note: `slime` is the summoner-archetype minion. It is not a `MonsterDefinition`
- * entry — it is rendered as a minion entity, aliased to the swamp slime spritesheet
- * so we get a creature look without authoring a new asset.
+ * entry — it is rendered as a minion entity, aliased to the Tiny Wisp sprite
+ * (a conjured spirit mote; a placeholder until the Conduit identity pass).
  *
  * Frame names must match the keys in sprites.json exactly (free-tex-packer
  * preserves the full relative path including the `sprites/` folder prefix).
  */
 export const MONSTER_FRAMES: Record<string, string> = {
   // ── T1: Plains ──────────────────────────────────────────────────────────────
-  'plains-slime': 'sprites/monsters/yellowslime.png',
+  'plains-slime': 'sprites/monsters/field-hare.png', // display: Field Hare
   'boar':         'sprites/monsters/boar.png',
 
   // ── T1: Forest ──────────────────────────────────────────────────────────────
@@ -227,8 +227,8 @@ export const MONSTER_FRAMES: Record<string, string> = {
   'elder-trench-serpent':   'sprites/bosses/t4-trench-boss.png',
 
   // ── Summoner minion ──────────────────────────────────────────────────────────
-  'slime':      'sprites/monsters/swampslime.png',
-  'tiny-slime': 'sprites/monsters/tinyslime.png',
+  'slime':      'sprites/monsters/tiny-wisp.png', // de-slimed: conjured spirit mote
+  'tiny-slime': 'sprites/monsters/tiny-wisp.png', // display: Tiny Wisp (T0 tutorial)
 };
 
 const VARIANTS = ['light', 'balanced', 'heavy'] as const;
