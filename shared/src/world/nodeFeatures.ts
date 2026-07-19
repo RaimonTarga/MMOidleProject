@@ -241,7 +241,15 @@ const MOUNTAIN_INNER_LEFT = 900;
 const MOUNTAIN_INNER_RIGHT = GAME_CONFIG.NODE_WIDTH - MOUNTAIN_INNER_LEFT;
 const MOUNTAIN_INNER_TOP = 650;
 const MOUNTAIN_INNER_BOTTOM = GAME_CONFIG.NODE_HEIGHT - MOUNTAIN_INNER_TOP;
-const MOUNTAIN_LEDGE_THICKNESS = 32;
+/**
+ * Ledge walls must stay expressible on the client's 64px Wang corner grid
+ * (a band thinner than one cell can slip between grid corners and vanish);
+ * 96px guarantees at least one corner row lands inside every wall so the
+ * painted rock face always tracks this exact blocking rect.
+ */
+const MOUNTAIN_LEDGE_THICKNESS = 96;
+/** Hold posts keep the same clearance from the rock face across thickness changes. */
+const MOUNTAIN_LEDGE_HOLD_OFFSET = MOUNTAIN_LEDGE_THICKNESS / 2 + 38;
 const MOUNTAIN_SIDE_ENTRANCE_FRAC = 0.24;
 const MOUNTAIN_CORNER_ENTRANCE_FRAC = 0.16;
 
@@ -310,24 +318,26 @@ export function mountainChokepointsForNode(nodeId: string): Vec2[] {
 
 export function mountainLedgeHoldPointsForNode(nodeId: string): Vec2[] {
   if (MOUNTAIN_NODE_LEDGE_VARIANTS[nodeId] === undefined) return [];
+  const off = MOUNTAIN_LEDGE_HOLD_OFFSET;
   return [
-    { x: GAME_CONFIG.NODE_WIDTH / 2, y: MOUNTAIN_OUTER_TOP + 54 },
-    { x: GAME_CONFIG.NODE_WIDTH / 2, y: MOUNTAIN_OUTER_BOTTOM - 54 },
-    { x: MOUNTAIN_OUTER_LEFT + 54, y: GAME_CONFIG.NODE_HEIGHT / 2 },
-    { x: MOUNTAIN_OUTER_RIGHT - 54, y: GAME_CONFIG.NODE_HEIGHT / 2 },
-    { x: GAME_CONFIG.NODE_WIDTH / 2, y: MOUNTAIN_INNER_TOP - 54 },
-    { x: GAME_CONFIG.NODE_WIDTH / 2, y: MOUNTAIN_INNER_BOTTOM + 54 },
-    { x: MOUNTAIN_INNER_LEFT - 54, y: GAME_CONFIG.NODE_HEIGHT / 2 },
-    { x: MOUNTAIN_INNER_RIGHT + 54, y: GAME_CONFIG.NODE_HEIGHT / 2 },
+    { x: GAME_CONFIG.NODE_WIDTH / 2, y: MOUNTAIN_OUTER_TOP + off },
+    { x: GAME_CONFIG.NODE_WIDTH / 2, y: MOUNTAIN_OUTER_BOTTOM - off },
+    { x: MOUNTAIN_OUTER_LEFT + off, y: GAME_CONFIG.NODE_HEIGHT / 2 },
+    { x: MOUNTAIN_OUTER_RIGHT - off, y: GAME_CONFIG.NODE_HEIGHT / 2 },
+    { x: GAME_CONFIG.NODE_WIDTH / 2, y: MOUNTAIN_INNER_TOP - off },
+    { x: GAME_CONFIG.NODE_WIDTH / 2, y: MOUNTAIN_INNER_BOTTOM + off },
+    { x: MOUNTAIN_INNER_LEFT - off, y: GAME_CONFIG.NODE_HEIGHT / 2 },
+    { x: MOUNTAIN_INNER_RIGHT + off, y: GAME_CONFIG.NODE_HEIGHT / 2 },
   ];
 }
 
 export function mountainLedgePatrolForPost(post: Vec2): Vec2[] {
+  const off = MOUNTAIN_LEDGE_HOLD_OFFSET;
   const nearHorizontal =
-    Math.abs(post.y - (MOUNTAIN_OUTER_TOP + 54)) < 4 ||
-    Math.abs(post.y - (MOUNTAIN_OUTER_BOTTOM - 54)) < 4 ||
-    Math.abs(post.y - (MOUNTAIN_INNER_TOP - 54)) < 4 ||
-    Math.abs(post.y - (MOUNTAIN_INNER_BOTTOM + 54)) < 4;
+    Math.abs(post.y - (MOUNTAIN_OUTER_TOP + off)) < 4 ||
+    Math.abs(post.y - (MOUNTAIN_OUTER_BOTTOM - off)) < 4 ||
+    Math.abs(post.y - (MOUNTAIN_INNER_TOP - off)) < 4 ||
+    Math.abs(post.y - (MOUNTAIN_INNER_BOTTOM + off)) < 4;
   const span = 190;
   return nearHorizontal
     ? [
@@ -578,8 +588,9 @@ export const NODE_FEATURES: Record<string, NodeFeatureSpec[]> = {
   ],
   // MOUNTAIN - "guarded ascent": two broken ledge rings. Ledges block players and
   // monsters for movement/pathing, but combat does not treat them as projectile
-  // cover, so archers can hold a pass and shoot across the rock line. Placeholder
-  // gray fills render until real mountain ledge sprites replace them.
+  // cover, so archers can hold a pass and shoot across the rock line. The client
+  // paints these rects with the mountain ledge Wang tileset (render/wangGround.ts),
+  // so the drawn rock face is exactly this blocking geometry.
   "node-0-3": mountainLedgeRings("mountain_0_3", MOUNTAIN_NODE_LEDGE_VARIANTS["node-0-3"]),
   "node-0-4": mountainLedgeRings("mountain_0_4", MOUNTAIN_NODE_LEDGE_VARIANTS["node-0-4"]),
   "node-0-5": mountainLedgeRings("mountain_0_5", MOUNTAIN_NODE_LEDGE_VARIANTS["node-0-5"]),

@@ -63,9 +63,9 @@ export const jungleMonsterEntries = [
   }],
  
   ['jungle-blowdarter', {
-    id: 'jungle-blowdarter', name: 'Jungle Blowdarter', color: 0x55bb44,
-    // Re-added: Jungle's ranged poke (its Canopy-Sprite analog). Hidden in foliage,
-    // spits poisoned darts — frequent light hits + DoT from range. Squishy.
+    id: 'jungle-blowdarter', name: 'Vine Chameleon', color: 0x55bb44,
+    // Chameleon line T2 (Jungle's ranged poke). Camouflaged in the vines, spits
+    // venom darts — frequent light hits + DoT from range. Squishy.
     stats: { hp: 190, attack: 16, plating: 0, damageReduction: 0, speed: 48, attackRange: 190, attackCooldown: 1900, pullRange: 250 },
     behavior: 'ranged', attackStyle: 'poison', biome: 'jungle',
     rewards: { essence: 7, essenceType: 'green', level: 1, biomeXp: 38 },
@@ -78,8 +78,9 @@ export const jungleMonsterEntries = [
   // (anti-Far). Answer: evasion + raw-regen. Frequency is the threat evasion eats.
   ['jungle-stalker', {
     id: 'jungle-stalker', name: 'Jungle Stalker', color: 0x33cc44,
-    // Fast frequent-attacker: low per-hit, attacks often (evasion's home), very
-    // fast move runs down kiters. Light venom. Anti-Far.
+    // Lean young panther (cat line T3, precursor of the Hunting Panther): low
+    // per-hit, attacks often (evasion's home), very fast move runs down kiters.
+    // Light venom. Anti-Far.
     // ECOLOGY: pack FOLLOWER + pounce (T3 successor of jungle-snake).
     stats: { hp: 440, attack: 26, plating: 0, damageReduction: 0, speed: 78, attackRange: 12, attackCooldown: 1000, pullRange: 270 },
     behavior: 'melee', attackStyle: 'poison', biome: 'jungle',
@@ -105,8 +106,8 @@ export const jungleMonsterEntries = [
   }],
 
   ['canopy-harrier', {
-    id: 'canopy-harrier', name: 'Canopy Harrier', color: 0x88ff44,
-    // Frequent ranged thorn-volleys from the canopy — fast cooldown, light hits.
+    id: 'canopy-harrier', name: 'Canopy Chameleon', color: 0x88ff44,
+    // Chameleon line T3. Frequent venom-dart volleys from the canopy — fast cooldown, light hits.
     // Stationary ranged (relentless poke, not a standoff kiter). Adds chip volume.
     stats: { hp: 400, attack: 22, plating: 0, damageReduction: 0, speed: 52, attackRange: 190, attackCooldown: 1400, pullRange: 250 },
     behavior: 'ranged', attackStyle: 'arrow', biome: 'jungle',
@@ -147,6 +148,7 @@ export const jungleMonsterEntries = [
 
   ['thornback-lizard', {
     id: 'thornback-lizard', name: 'Thornback Lizard', color: 0x55bb44,
+    // Chameleon line T4 apex: thorn-spiked elder chameleon.
     // Ranged stationary spitter: frequent light hits + stacking venom DoT.
     // Background chip while the swarm closes. DPS 60 × (1000/1500) = 40 + DoT.
     stats: { hp: 850, attack: 60, plating: 0, damageReduction: 0, speed: 50, attackRange: 200, attackCooldown: 1500, pullRange: 260 },

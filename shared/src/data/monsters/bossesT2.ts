@@ -72,7 +72,7 @@ export const bossMonsterEntriesT2 = [
     ai: { wanderRadius: 130, leashRange: 830, idleMinMs: 1200, idleMaxMs: 4000 },
     // FOREST EXAM = "survive the pack", T2 escalation: sustained pack pressure on a
     // timer plus two readable phase beats (50% = enrage + wolf wave, 25% = a lieutenant
-    // Ancient Wolf joins). Adds despawn on boss death. Numbers placeholder — user pass.
+    // Dire Wolf joins). Adds despawn on boss death. Numbers placeholder — user pass.
     bossScript: {
       phases: [
         { hpPct: 0.5, actions: [

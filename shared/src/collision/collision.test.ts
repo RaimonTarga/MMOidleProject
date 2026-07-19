@@ -209,9 +209,12 @@ for (let row = 0; row < narrowGrid.rows; row++) {
 const tooNarrow = findPathOnGrid(narrowGrid, { x: 80, y: 160 }, { x: 560, y: 160 });
 assert(tooNarrow === null, 'padded path rejects corridor narrower than body');
 
+// From the east corridor (between the inner and outer ledge rings) to the top
+// corridor — forces routing around the inner ring's NE corner. Points keep
+// clearance from the 96px-thick walls plus the 32px mover pad.
 const mountainCornerGrid = buildNavGrid('node-0-3', 'player', { x: 32, y: 32 });
-const mountainCornerFrom = { x: 2366.193084267113, y: 1599.65059603251 };
-const mountainCornerGoal = { x: 1039.472682418615, y: 374.1983038044353 };
+const mountainCornerFrom = { x: 2520, y: 1600 };
+const mountainCornerGoal = { x: 1040, y: 440 };
 const mountainCornerPath = findPathOnGrid(
   mountainCornerGrid,
   mountainCornerFrom,

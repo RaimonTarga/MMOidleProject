@@ -49,7 +49,7 @@ function minionDisplayName(monsterTypeId: MinionMonsterType): string {
     case 'cliff-hopper':
       return 'Cliff Hopper';
     case 'ridge-archer':
-      return 'Ridge Archer';
+      return 'Ridge Ambusher';
     case 'crag-behemoth':
       return 'Crag Behemoth';
   }

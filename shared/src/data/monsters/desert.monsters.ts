@@ -59,10 +59,10 @@ export const desertMonsterEntries = [
   }],
 
   ['dust-djinn', {
-    id: 'dust-djinn', name: 'Dust Djinn', color: 0xeecc66,
-    // Desert's ranged debuffer (Sand-Scorpion's reach version): flings stinging
-    // sand that slows from afar. Stationary ranged at T2 — becomes the standoff
-    // kiter (Sandweaver) at T3. Light DR.
+    id: 'dust-djinn', name: 'Sun Scarab', color: 0xeecc66,
+    // Scarab line T2 (desert's ranged debuffer): a sacred sun-beetle whose amber
+    // bolts sting and slow from afar. Stationary ranged at T2 — becomes the
+    // standoff kiter (Gilded Scarab) at T3. Light DR.
     // ECOLOGY: the SUN MARK painter — marks you from range (appliesMark) so the
     // basilisk's finisher lands amplified. Cleanse removes the mark; it expires
     // harmlessly if you break line of sight before the finisher connects.
@@ -79,6 +79,7 @@ export const desertMonsterEntries = [
   // that stop you closing. Answer: debuff-resist + cleanse + last-stand armor.
   ['dune-stalker', {
     id: 'dune-stalker', name: 'Dune Stalker', color: 0xddbb44,
+    // Scorpion line T3 (bigger sand scorpion; role-name kept).
     // Fast slow-applier: lands a debuff that catches Far, then keeps pace. Anti-Far.
     stats: { hp: 520, attack: 38, plating: 0, damageReduction: 0.08, speed: 56, attackRange: 12, attackCooldown: 2000, pullRange: 210 },
     behavior: 'melee', attackStyle: 'poison', biome: 'desert',
@@ -103,7 +104,7 @@ export const desertMonsterEntries = [
   }],
 
   ['sandweaver', {
-    id: 'sandweaver', name: 'Sandweaver', color: 0xcc9933,
+    id: 'sandweaver', name: 'Gilded Scarab', color: 0xcc9933,
     // THE kiter: maintains standoff, plinks hard, and SLOWS you so you can't close.
     // Pure anti-Close — Close/melee suffers most here; Mid/Far shine. Speed 40.
     // ECOLOGY: the SUN MARK painter (T3) — paints from the standoff so the basilisk's
@@ -142,8 +143,8 @@ export const desertMonsterEntries = [
   }],
 
   ['sandspitter-cobra', {
-    id: 'sandspitter-cobra', name: 'Sandspitter Cobra', color: 0xeecc66,
-    // Ranged KITER + ENEMY SHIELD (hooded carapace flares). Anti-Close — chasing
+    id: 'sandspitter-cobra', name: 'Sunshield Scarab', color: 0xeecc66,
+    // Scarab line T4 apex. Ranged KITER + ENEMY SHIELD (its carapace flares). Anti-Close — chasing
     // it eats slowed hits. The shield rewards the alpha-strike weapon: a
     // first-strike burst tears the barrier before the slow stack bites.
     // DPS 84 × (1000/2200) = 38 (kiter).
@@ -160,7 +161,8 @@ export const desertMonsterEntries = [
 
   ['dune-tyrant', {
     id: 'dune-tyrant', name: 'Dune Tyrant', color: 0xcc9922,
-    // Slow elite (great desert lizard). COOLDOWN slam every 10s = 246 that also
+    // Slow elite (colossal emperor scorpion — mob echo of the royal boss ladder).
+    // COOLDOWN slam (a pincer smash) every 10s = 246 that also
     // dumps a long heavy slow. The Desert exam: last-stand + debuff-resist both
     // tested. Base 88 ≈ H_med (survivable); the slam is the spike.
     // ECOLOGY: the DUEL FINISHER (T4) — its cooldown slam is the alpha strike, and a

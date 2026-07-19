@@ -6,4 +6,5 @@ export * from './query';
 export * from './projection';
 export * from './navGrid';
 export * from './pathfind';
+export * from './navigationBody';
 export * from './slide';

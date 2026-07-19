@@ -8,9 +8,10 @@ compiles into the existing atlases.
 Status: TOOLING SHIPPED (2026-07-10) — the full CLI suite in `tools/pixellab/`
 is implemented and verified (see its README for usage); no art has been
 generated yet. Next: style anchors, then monster prompts.
-Absorbs `docs/future-plans.md` §1 (composite player sprites — still deferred,
-see `docs/visual_and_aesthetics_design/player-visual-identity-bible.md`) and
-the icon bullet of §2 (tier-evolving UI).
+Absorbs `docs/future-plans.md` §1 (composite player sprites — SUPERSEDED
+2026-07-12: players use flat img2img evolution chains + runtime identity
+accents, see `docs/player-sprites-current-state.md`) and the icon bullet of
+§2 (tier-evolving UI).
 
 Implementation notes that superseded the plan below:
 - `art:import` was added (not in the original plan): it slices the shipped
@@ -21,7 +22,10 @@ Implementation notes that superseded the plan below:
 - No new dependencies: packing is a hand-rolled deterministic shelf packer
   (sharp raw-copy, no alpha-rounding) emitting the same JSON shape free-tex-packer
   produced; the gallery is a dependency-free node http server.
-- `art:bake-players` is NOT built (composite scheme deferred).
+- `art:bake-players` is NOT built and stays unbuilt: the composite/paper-doll
+  scheme was dropped 2026-07-12 in favor of flat img2img evolution chains +
+  runtime identity accents (`docs/player-sprites-current-state.md`). The
+  "Player composite" material below is historical.
 - Verified API facts: auth `Bearer`, pixflux ≤400², bitforge ≤200² with
   `style_image`, generate-ui ≤792×688 and animate-with-text-v3 are async
   background jobs. The current key is a trial subscription (40 generations,

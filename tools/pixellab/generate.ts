@@ -157,6 +157,18 @@ function styleSha(r: ResolvedEntry): string | null {
 
 /** Stable hash of everything that affects the output (minus random seeds). */
 function requestHashFor(r: ResolvedEntry): string {
+  // A colorImage palette pin shapes the output, so hash the referenced file's
+  // CONTENT (the path stays stable when its source is later regenerated). The
+  // key is added only when the pin is set — entries without one keep their
+  // exact historical hash, so parked pending entries (e.g. the plains
+  // bake-off) are not invalidated into an accidental re-roll.
+  const colorImage = r.entry.params?.colorImage as string | undefined;
+  const colorImagePath = colorImage ? srcPathFor(colorImage) : null;
+  const colorImageSha = colorImage
+    ? colorImagePath && fs.existsSync(colorImagePath)
+      ? crypto.createHash('sha256').update(fs.readFileSync(colorImagePath)).digest('hex').slice(0, 16)
+      : 'MISSING'
+    : null;
   const descriptor = {
     endpoint: r.endpoint,
     prompt: r.entry.prompt,
@@ -166,6 +178,7 @@ function requestHashFor(r: ResolvedEntry): string {
     styleSha: styleSha(r),
     initImageSha: initImageSha(r),
     params: passthroughParams(r.entry.params),
+    ...(colorImageSha ? { colorImageSha } : {}),
     candidates: r.candidates,
   };
   return crypto.createHash('sha256').update(JSON.stringify(descriptor)).digest('hex').slice(0, 24);
@@ -384,6 +397,13 @@ async function callEndpoint(r: ResolvedEntry, seed: number): Promise<{ images: B
       // automatically so a 64px manifest entry just works.
       const tilesetMode =
         (r.entry.params?.mode as string | undefined) ?? (tileSize > 32 ? 'pro' : undefined);
+      // Opt-in palette pin (same contract as pixflux's params.colorImage): lets a
+      // re-roll keep an accepted sheet's palette while re-rolling its composition.
+      const tilesetColorImage = r.entry.params?.colorImage as string | undefined;
+      const tilesetColorPath = tilesetColorImage ? srcPathFor(tilesetColorImage) : null;
+      if (tilesetColorPath && !fs.existsSync(tilesetColorPath)) {
+        throw new Error(`entry '${r.entry.id}': colorImage not found at ${tilesetColorPath}`);
+      }
       const res = await createTileset({
         lower_description: r.entry.prompt,
         upper_description: upperDescription,
@@ -396,6 +416,9 @@ async function callEndpoint(r: ResolvedEntry, seed: number): Promise<{ images: B
         seed,
         text_guidance_scale: params.text_guidance_scale as number | undefined,
         ...(tilesetMode ? { mode: tilesetMode } : {}),
+        ...(tilesetColorPath
+          ? { color_image: toBase64Image(fs.readFileSync(tilesetColorPath)) }
+          : {}),
       });
       return { images: [await wangTilesetSheet(res.response, tileSize)], usage: res.usage };
     }

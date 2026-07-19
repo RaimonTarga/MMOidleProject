@@ -1,8 +1,8 @@
 import type { World } from "../../../world/World";
 import type { MonsterEntity, PlayerEntity } from "../../../ecs/entity";
 import { suppressedFeatureIdsForNode } from "../../world/pathMotion";
+import { navigationPadForEntity } from "../../world/movement";
 import {
-  aabbHalfExtents,
   areAllBiomeRecipesUnlocked,
   approachPoint,
   computeEternalDoomDamage,
@@ -318,7 +318,7 @@ function monsterHasPath(
   if (world.collision.canReach(player, monster, player.performsAttack.attackRange)) {
     return true;
   }
-  const pad = aabbHalfExtents(posHitboxFromEntity(player).rects);
+  const pad = navigationPadForEntity(player);
   const goal = attackPathGoal(player, monster);
   const path = findPathForMover(
     player.hasPosition.nodeId,
@@ -494,7 +494,7 @@ export function nearestEngageableMonster(
 ): MonsterEntity | null {
   const skipBosses = shouldSkipBosses(player);
   const nodeId = player.hasPosition.nodeId;
-  const pad = aabbHalfExtents(posHitboxFromEntity(player).rects);
+  const pad = navigationPadForEntity(player);
   const suppressed = suppressedFeatureIdsForNode(world, nodeId);
   const from = player.hasPosition.current;
 

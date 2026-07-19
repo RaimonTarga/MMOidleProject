@@ -4,10 +4,12 @@ import {
   getDungeonGauntletDef,
   NODE_BIOMES,
   NODE_FEATURES,
+  RESOLVED_NODE_FEATURES,
   resolveFeatureShape,
   TREE_CELL_PX,
   TREE_TRUNK_TOP_PX,
   getNodeTrees,
+  type NodeFeatureShape,
 } from "@mmo-idle/shared";
 import {
   buildClientCollisionLayer,
@@ -21,7 +23,12 @@ import {
 import { DEPTH } from "../../render/depth";
 import { sceneDepthY } from "../../render/sceneCoords";
 import { BIOME_DECOR, BIOME_TEXTURES, NODE_DECOR, TREES_KEY } from "../../sprites";
-import { buildWangGroundLayer } from "../../render/wangGround";
+import { computeGroundLayout } from "../../render/groundLayout";
+import { drawMountainElevation } from "../../render/mountainLedges";
+import {
+  buildWangGroundLayer,
+  wangFunctionalFeatureIds,
+} from "../../render/wangGround";
 import type { GameScene } from "./GameScene";
 import { MM_H, MM_PAD, MM_W } from "./nodeExits";
 import { isVoidThroneUnblocked } from "./voidThrone";
@@ -216,11 +223,38 @@ function mulberry32(seed: number): () => number {
   };
 }
 
+/** Point-in-shape with a padding margin, for decor placement rejection. */
+function nearFeatureShape(shape: NodeFeatureShape, x: number, y: number, pad: number): boolean {
+  switch (shape.kind) {
+    case "circle": {
+      const dx = x - shape.x;
+      const dy = y - shape.y;
+      const r = shape.radius + pad;
+      return dx * dx + dy * dy < r * r;
+    }
+    case "ellipse": {
+      const dx = (x - shape.x) / (shape.halfW + pad);
+      const dy = (y - shape.y) / (shape.halfH + pad);
+      return dx * dx + dy * dy < 1;
+    }
+    case "rect":
+      return (
+        Math.abs(x - shape.x) < shape.halfW + pad &&
+        Math.abs(y - shape.y) < shape.halfH + pad
+      );
+  }
+}
+
 /**
  * Scatter visual-only biome dressing in stable node-local positions. Keeping
  * this separate from NODE_FEATURES means an art iteration can never affect the
  * authoritative collision or hazard layout. A broad center clearing protects
  * combat readability and leaves dungeon arenas open.
+ *
+ * Placement is blue-noise-ish: every candidate must keep a size-scaled gap to
+ * every prop already placed (across ALL specs), so dressing spreads instead of
+ * clumping. Specs flagged `avoidsDirt` also reject spots the ground layout
+ * marks as dirt, so greenery does not sprout out of a bare path.
  */
 function buildBiomeDecorImages(
   scene: GameScene,
@@ -235,25 +269,48 @@ function buildBiomeDecorImages(
   const specs = BIOME_DECOR[biomeGroup] ?? [];
   if (specs.length === 0) return [];
 
-  const rng = mulberry32(hashString(`${nodeId}:biome-decor:v1`));
+  const rng = mulberry32(hashString(`${nodeId}:biome-decor:v2`));
+  const groundLayout = computeGroundLayout(biomeGroup, nodeId);
   const out: Phaser.GameObjects.Image[] = [];
   const edgeMargin = 110;
   const centerX = GAME_CONFIG.NODE_WIDTH / 2;
   const centerY = GAME_CONFIG.NODE_HEIGHT / 2;
   const centerClearRadius = 340;
+  const spacingPad = 34;
+  // Dressing never lands inside a node feature's footprint (altar, rot pool,
+  // ledge wall, …) — those are either painted by the functional ground sheet
+  // or covered by their own decor sprite.
+  const featureShapes = (RESOLVED_NODE_FEATURES[nodeId] ?? []).map((f) => f.shape);
+  const featurePad = 30;
+  const placed: Array<{ x: number; y: number; r: number }> = [];
 
   for (const spec of specs) {
     if (!scene.textures.exists(spec.key)) continue;
-    let placed = 0;
-    const maxAttempts = spec.count * 12;
-    for (let attempt = 0; attempt < maxAttempts && placed < spec.count; attempt++) {
+    let count = 0;
+    const maxAttempts = spec.count * 24;
+    for (let attempt = 0; attempt < maxAttempts && count < spec.count; attempt++) {
       const x = edgeMargin + rng() * (GAME_CONFIG.NODE_WIDTH - edgeMargin * 2);
       const y = edgeMargin + rng() * (GAME_CONFIG.NODE_HEIGHT - edgeMargin * 2);
       const dx = x - centerX;
       const dy = y - centerY;
       if (dx * dx + dy * dy < centerClearRadius * centerClearRadius) continue;
+      if (spec.avoidsDirt && groundLayout?.isDirt(x, y)) continue;
+      if (featureShapes.some((s) => nearFeatureShape(s, x, y, featurePad))) continue;
 
       const scale = 0.82 + rng() * 0.36;
+      const radius = (Math.max(spec.displayW, spec.displayH) * scale) / 2;
+      let crowded = false;
+      for (const p of placed) {
+        const gap = p.r + radius + spacingPad;
+        const px = x - p.x;
+        const py = y - p.y;
+        if (px * px + py * py < gap * gap) {
+          crowded = true;
+          break;
+        }
+      }
+      if (crowded) continue;
+      placed.push({ x, y, r: radius });
       const ySort = !!spec.ySort && !preview;
       const image = scene.add
         .image(offsetX + x, offsetY + y, spec.key)
@@ -263,7 +320,7 @@ function buildBiomeDecorImages(
       if (spec.flipX && rng() < 0.5) image.setFlipX(true);
       if (spec.alpha != null) image.setAlpha(spec.alpha);
       out.push(image);
-      placed++;
+      count++;
     }
   }
 
@@ -296,12 +353,29 @@ function buildNodePlaceholderFeatures(
   const features = NODE_FEATURES[nodeId];
   if (!features) return [];
   const arts = NODE_DECOR[nodeId];
+  // Features painted by a functional Wang ground sheet (currently swamp rot
+  // pools) need no placeholder. Mountain ledges use their dedicated overlay.
+  const groundPainted = wangFunctionalFeatureIds(scene, nodeId);
   const out: Phaser.GameObjects.Graphics[] = [];
+  const isMountain = NODE_BIOMES[nodeId]?.biomeGroup === "mountain";
+  if (isMountain) {
+    const ledges = features
+      .filter((feature) => feature.id.startsWith("mountain_"))
+      .map((feature) => ({ id: feature.id, shape: resolveFeatureShape(feature) }));
+    const elevation = scene.add.graphics().setDepth(DEPTH.BG_DECOR + depthBias);
+    if (drawMountainElevation(elevation, ledges, offsetX, offsetY)) {
+      out.push(elevation);
+    } else {
+      elevation.destroy();
+    }
+  }
 
   for (const feature of features) {
     const isBlock = !!feature.blocksMovement?.length;
     const isHazard = !!(feature.damage || feature.statusWhileInside);
     if (!isBlock && !isHazard) continue;
+    if (isMountain && feature.id.startsWith("mountain_")) continue;
+    if (groundPainted.has(feature.id)) continue;
     // Skip if a real decor sprite already covers this feature.
     const hasSprite = arts?.some(
       (a) => a.featureId === feature.id && scene.textures.exists(a.key),

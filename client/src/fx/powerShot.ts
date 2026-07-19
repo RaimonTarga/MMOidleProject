@@ -3,7 +3,7 @@ import { burstFx } from './particles';
 import { DEPTH } from '../render/depth';
 
 /**
- * Power Shot — the Ridge Archer's charged release. A heavy, glowing projectile
+ * Power Shot — the Ridge Ambusher's charged release. A heavy, glowing projectile
  * rips from the monster to the target with a thick tracer and a charged muzzle
  * flash, then detonates in a big impact ring + spark spray. Deliberately bigger
  * and brighter than a normal gunshot so the telegraphed payoff reads as a heavy hit.

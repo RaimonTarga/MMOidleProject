@@ -32,7 +32,7 @@ export const swampMonsterEntries = [
   // ══ SWAMP — low DIRECT damage, heavy DoT; dot-resist + debt is the answer ══
   // (Per request: base attack lowered, DoT raised — same-ish DPS, DoT-weighted.)
   ['bog-slime', {
-    id: 'bog-slime', name: 'Bog Slime', color: 0x558833,
+    id: 'bog-slime', name: 'Mire Ooze', color: 0x558833,
     // A weak slap, but the toxin does the real work over time.
     stats: { hp: 110, attack: 8, plating: 0, damageReduction: 0, speed: 28, attackRange: 12, attackCooldown: 2200, pullRange: 165 },
     behavior: 'melee', attackStyle: 'poison', biome: 'swamp',
@@ -53,14 +53,14 @@ export const swampMonsterEntries = [
 
   // ── SWAMP T2 — DoT engines; trivial direct hits, brutal stacking poison ──
   ['swamp-hydra', {
-    id: 'swamp-hydra', name: 'Swamp Hydra', color: 0x335533,
-    // Multi-headed DoT engine; lives long enough to stack poison deep. Direct
-    // bite is almost nothing — the venom is the whole fight.
+    id: 'swamp-hydra', name: 'Moss-Shell Snapper', color: 0x335533,
+    // Giant snapping turtle DoT engine; lives long enough to stack poison deep.
+    // Direct bite is almost nothing — the festering venom is the whole fight.
     stats: { hp: 370, attack: 12, plating: 0, damageReduction: 0.10, speed: 28, attackRange: 15, attackCooldown: 2200, pullRange: 185 },
     behavior: 'melee', attackStyle: 'poison', biome: 'swamp',
     rewards: { essence: 12, essenceType: 'purple', level: 1, biomeXp: 68 },
     ai: { wanderRadius: 170, leashRange: 560, idleMinMs: 2500, idleMaxMs: 7000 },
-    dotEffect: { debuffId: 'hydra-venom', label: 'Hydra Venom', damagePerStack: 5, maxStacks: 5, tickIntervalMs: 1000, durationMs: 2400 },
+    dotEffect: { debuffId: 'hydra-venom', label: 'Snapper Venom', damagePerStack: 5, maxStacks: 5, tickIntervalMs: 1000, durationMs: 2400 },
   }],
 
   ['bog-witch', {
@@ -75,7 +75,7 @@ export const swampMonsterEntries = [
 
   ['mire-stalker', {
     id: 'mire-stalker', name: 'Mire Stalker', color: 0x445533,
-    // Ambush venom-hunter; light touch, heavy toxin, and it dodges some blows.
+    // Venomous marsh serpent; light strike, heavy toxin, and it dodges some blows.
     stats: { hp: 320, attack: 22, plating: 0, damageReduction: 0.12, speed: 40, attackRange: 12, attackCooldown: 2600, pullRange: 155 },
     behavior: 'melee', attackStyle: 'poison', biome: 'swamp',
     rewards: { essence: 13, essenceType: 'purple', level: 1, biomeXp: 75 },
@@ -88,9 +88,9 @@ export const swampMonsterEntries = [
   // Final tier. Trivial direct hits, brutal stacking DoT that ignores your spacing;
   // bulky/evasive walls. One ranged DoT-kiter. Answer: dot-resist + debt loop.
   ['plague-hydra', {
-    id: 'plague-hydra', name: 'Plague Hydra', color: 0x335533,
-    // DoT engine wall: bulky, DR, lives long enough to stack venom deep. The bite
-    // is nothing; the poison is the whole fight. Kitable, but DoT ticks regardless.
+    id: 'plague-hydra', name: 'Plague-Shell Snapper', color: 0x335533,
+    // Rotting snapper DoT wall: bulky, DR, lives long enough to stack venom deep.
+    // The bite is nothing; the poison is the whole fight. Kitable, but DoT ticks regardless.
     stats: { hp: 820, attack: 26, plating: 0, damageReduction: 0.12, speed: 26, attackRange: 15, attackCooldown: 2200, pullRange: 185 },
     behavior: 'melee', attackStyle: 'poison', biome: 'swamp',
     rewards: { essence: 65, essenceType: 'purple', level: 3, biomeXp: 390 },
@@ -111,8 +111,8 @@ export const swampMonsterEntries = [
 
   ['bog-lurker', {
     id: 'bog-lurker', name: 'Bog Lurker', color: 0x445533,
-    // Evasive ambush DoT wall: dodges every 5th hit (many-hit weapons whiff) +
-    // DR bulk + heavy toxin. The "regen/bulk wall" texture — hard to burn down fast.
+    // Half-submerged bog crocodile: evasive ambush DoT wall — dodges every 5th hit
+    // (slips underwater) + DR bulk + heavy toxin. Hard to burn down fast.
     stats: { hp: 720, attack: 28, plating: 0, damageReduction: 0.14, speed: 30, attackRange: 12, attackCooldown: 2600, pullRange: 155 },
     behavior: 'melee', attackStyle: 'poison', biome: 'swamp',
     rewards: { essence: 57, essenceType: 'purple', level: 3, biomeXp: 345 },

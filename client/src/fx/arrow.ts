@@ -10,7 +10,7 @@ const FLETCH = 0xdd4433; // red fletching
  * Arrow shot — a real arrow that flies from the shooter to the target on a fast,
  * nearly-flat trajectory, then thuds home. A bowstring twang puffs at the origin
  * and a small wood/feather impact bursts at the target. Used by bow/thorn-volley
- * mobs (Ridge Archer, Canopy Sprite, Canopy Harrier) — visually distinct from the
+ * mobs (Ridge Ambusher, Thorn Spitter, Canopy Chameleon) — visually distinct from the
  * gunshot tracer (a traveling object, not an instant beam) and the lobbed boulder.
  */
 export function fxArrow(

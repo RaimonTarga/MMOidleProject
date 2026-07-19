@@ -46,6 +46,7 @@ export const graveyardMonsterEntries = [
 
   ['charnel-brute', {
     id: 'charnel-brute', name: 'Charnel Brute', color: 0x553355,
+    // Bone amalgam hulk — a shambling mass of many beasts' fused bones.
     // Slow bone-armored anchor. CADENCE every 4 = a 216 necrotic slam + massive
     // DoT burst. Heavy plating (16) rewards Rupture/pierce. The swarm's anchor.
     // avg/attack (3·90+216)/4 = 121.5 → ×(1000/3200) = 38 + DoT.
@@ -59,6 +60,8 @@ export const graveyardMonsterEntries = [
 
   ['gravewright', {
     id: 'gravewright', name: 'Gravewright', color: 0xbb88cc,
+    // Skeletal shaman-elk (undead stag whose antlers drip plague-light — no zombies,
+    // no humanoids: the wasteland is all undead BEASTS).
     // ELITE backline NECROMANCER — the graveyard rework's centerpiece. Hangs back and
     // RAISES UNDEAD on a timer (capped at 4 alive); its risen dead CRUMBLE the instant
     // it dies (rewards.ts despawns tracked spawn-adds), so killing it stems the tide.
@@ -80,7 +83,7 @@ export const graveyardMonsterEntries = [
   }],
 
   ['plague-rat', {
-    id: 'plague-rat', name: 'Plague Rat', color: 0xaa88aa,
+    id: 'plague-rat', name: 'Bone Rat', color: 0xaa88aa,
     // Ultra-fast trivial filler — the overwhelming-density unit. Individually
     // nothing; in packs of 8+ the tick-fast attacks make evasion-rate matter and
     // the cumulative DoT compounds fast. DPS 46 × (1000/950) = 48.

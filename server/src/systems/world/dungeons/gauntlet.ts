@@ -528,6 +528,7 @@ function spawnPreEncounterMonster(
   const post = clampToNode(point);
   const monster = world.createMonster(def.nodeId, monsterId, post);
   if (!monster) return null;
+  const safePost = { ...monster.hasPosition.current };
   const leashRadius = group.leashRadius ?? GUARDIAN_LEASH_RADIUS;
   monster.tracksDungeon = {
     source: "idleDungeonGuardian",
@@ -536,10 +537,10 @@ function spawnPreEncounterMonster(
     gauntletPhaseId: def.preEncounter?.id ?? def.guardianPhase.id,
     preEncounterGroupId: group.id,
     preEncounterRole: role,
-    guardPost: post,
+    guardPost: safePost,
     leashRadius,
   };
-  monster.controlsMonster.spawn = post;
+  monster.controlsMonster.spawn = safePost;
   monster.controlsMonster.wanderRadius = group.localWanderRadius ?? 0;
   monster.controlsMonster.leashRange = leashRadius;
   monster.hasAwareness.leashRange = leashRadius;
@@ -640,7 +641,7 @@ function spawnDungeonMonster(
   if (!monster) return null;
 
   monster.tracksDungeon = dungeon;
-  monster.controlsMonster.spawn = { ...point };
+  monster.controlsMonster.spawn = { ...monster.hasPosition.current };
   monster.controlsMonster.wanderRadius = 0;
   if (dungeon.leashRadius) {
     monster.controlsMonster.leashRange = dungeon.leashRadius;

@@ -1,10 +1,8 @@
 import {
-  aabbHalfExtents,
   blockShapesForMover,
-  FALLBACK_PLAYER_AABB,
+  navigationBodyHalfExtents,
   resolveMoveAgainstBlocks,
   type NodeFeatureShape,
-  type PlayerView,
   type Vec2,
 } from '@mmo-idle/shared';
 import type { RenderState } from '../render/state';
@@ -20,10 +18,8 @@ export function getOwnBlockShapes(scene: GameScene): NodeFeatureShape[] {
 }
 
 export function getOwnMovePad(state: RenderState): Vec2 {
-  const ownId = state.ownId;
-  if (!ownId) return aabbHalfExtents([FALLBACK_PLAYER_AABB]);
-  const view = state.view.get(ownId) as PlayerView | undefined;
-  return aabbHalfExtents(view?.hitboxRects ?? [FALLBACK_PLAYER_AABB]);
+  void state;
+  return navigationBodyHalfExtents('player');
 }
 
 /** Box-vs-block move resolution using the caller's chosen segment start. */

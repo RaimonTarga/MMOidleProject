@@ -15,6 +15,10 @@ Status: current as of 2026-07-05.
 (full-art-overhaul pipeline; this entry's bake-time design is carried over
 unchanged as the "Player composite" category and `art:bake-players` step).
 
+**SUPERSEDED (2026-07-12):** the bake-time composite mechanism was dropped —
+players use flat img2img evolution chains + runtime identity accents instead.
+Living truth: `docs/player-sprites-current-state.md`.
+
 **Verdict: very feasible.** Touches zero server code, zero protocol, almost zero
 render code. Grounding facts (verified 2026-07-05): player appearance is derived
 client-side from networked `combatArchetype` + `unlockedSkills`

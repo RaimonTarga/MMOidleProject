@@ -1,12 +1,14 @@
 import {
-  aabbHalfExtents,
   advanceMotion,
+  buildNavGrid,
+  cellToWorld,
   depenetrateToWalkable,
   distanceSq,
   getFlag,
   getStatusEffect,
   moverOverlapsBlockShapes,
-  posHitboxFromEntity,
+  navigationBodyHalfExtents,
+  nearestWalkableCell,
   FROST_RAMP_EFFECT_ID,
   frostRampMoveSlowPct,
   slideMoveAgainstBlocks,
@@ -35,6 +37,15 @@ import {
 // Monsters stay this many pixels from the node edge at all times.
 const MONSTER_MARGIN = 40;
 const PROGRESS_EPS_SQ = 1;
+const STUCK_REPLAN_MS = 800;
+const STUCK_RECOVER_MS = 1_800;
+
+interface StuckState {
+  blockedMs: number;
+  replanned: boolean;
+}
+
+const stuckByEntity = new Map<string, StuckState>();
 
 type MovableEntity = ServerEntity & {
   hasPosition: NonNullable<ServerEntity['hasPosition']>;
@@ -63,7 +74,7 @@ export function setEntityMotion(
       ? getFlag(entity.tracksCombat, 'rune.avoidNodeHazards')
       : false);
 
-  requestNavMotion(world, entity, target, moverPad(entity), {
+  requestNavMotion(world, entity, target, navigationPadForEntity(entity), {
     ...opts,
     avoidHazards,
   });
@@ -77,8 +88,10 @@ export function stopEntity(world: World, entity: ServerEntity): void {
 
 /** Mover half-extents so obstacle collision keeps the body — not just the center
  *  point — clear of block shapes (prevents bounding-box intersection). */
-function moverPad(entity: MovableEntity): Vec2 {
-  return aabbHalfExtents(posHitboxFromEntity(entity).rects);
+export function navigationPadForEntity(entity: ServerEntity): Vec2 {
+  if (entity.isPlayer) return navigationBodyHalfExtents('player');
+  if (entity.isMinion) return navigationBodyHalfExtents('minion');
+  return navigationBodyHalfExtents('monster', entity.isMonster?.isBoss === true);
 }
 
 function depenetrateIfWedged(
@@ -86,7 +99,7 @@ function depenetrateIfWedged(
   entity: MovableEntity,
   mover: FeatureTarget,
 ): void {
-  const pad = moverPad(entity);
+  const pad = navigationPadForEntity(entity);
   const nodeId = entity.hasPosition.nodeId;
   const suppressed = suppressedFeatureIdsForEntity(world, entity);
   const shapes = suppressed.size > 0
@@ -122,6 +135,75 @@ function depenetrateIfWedged(
   markSliceDirty(world, entity, 'hasPosition');
 }
 
+function recoverStuckEntity(
+  world: World,
+  entity: MovableEntity,
+  mover: FeatureTarget,
+  pad: Vec2,
+): boolean {
+  const path = entity.hasMovePath;
+  const goal = path?.goal;
+  const avoidHazards = path?.avoidHazards === true;
+  const suppressed = suppressedFeatureIdsForEntity(world, entity);
+  const grid = buildNavGrid(
+    entity.hasPosition.nodeId,
+    mover,
+    pad,
+    suppressed,
+    avoidHazards,
+  );
+  const cell = nearestWalkableCell(grid, entity.hasPosition.current, 24);
+  if (!cell) return false;
+
+  const safe = cellToWorld(grid, cell.col, cell.row);
+  if (moverOverlapsBlockShapes(safe, grid.shapes, grid.pad)) return false;
+
+  entity.hasPosition.current = safe;
+  markSliceDirty(world, entity, 'hasPosition');
+  if (goal) {
+    requestNavMotion(world, entity, goal, pad, { mover, avoidHazards });
+  } else {
+    stopEntity(world, entity);
+  }
+  return true;
+}
+
+function handleBlockedMover(
+  world: World,
+  entity: MovableEntity,
+  mover: FeatureTarget,
+  pad: Vec2,
+  dt: number,
+  now: number,
+): void {
+  const state = stuckByEntity.get(entity.entityId) ?? {
+    blockedMs: 0,
+    replanned: false,
+  };
+  state.blockedMs += dt;
+
+  if (!state.replanned && state.blockedMs >= STUCK_REPLAN_MS) {
+    state.replanned = true;
+    if (replanIfBlocked(world, entity, pad, now, true)) {
+      stuckByEntity.set(entity.entityId, state);
+      return;
+    }
+  }
+
+  if (state.blockedMs >= STUCK_RECOVER_MS) {
+    recoverStuckEntity(world, entity, mover, pad);
+    stuckByEntity.delete(entity.entityId);
+    return;
+  }
+
+  stuckByEntity.set(entity.entityId, state);
+  // Preserve hasMovePath so the watchdog can replan the same goal on the next
+  // autonomous steering tick. Clearing it here turns a temporary corner catch
+  // into repeated fresh direct motions with no recovery context.
+  detachComponent(world, entity, 'isMoving');
+  detachComponent(world, entity, 'hasManualMoveIntent');
+}
+
 function processMoverStep(
   world: World,
   entity: MovableEntity,
@@ -135,7 +217,7 @@ function processMoverStep(
   if (!entity.isMoving) return;
 
   const from = entity.hasPosition.current;
-  const pad = moverPad(entity);
+  const pad = navigationPadForEntity(entity);
   const next = advanceMotion(
     from,
     entity.isMoving.motion,
@@ -174,11 +256,11 @@ function processMoverStep(
   entity.hasPosition.current = resolved;
   markSliceDirty(world, entity, 'hasPosition');
   if (intendedBlocked && !madeProgress) {
-    if (!replanIfBlocked(world, entity, pad, now, true)) {
-      stopEntity(world, entity);
-    }
+    handleBlockedMover(world, entity, mover, pad, dt, now);
     return;
   }
+
+  if (madeProgress) stuckByEntity.delete(entity.entityId);
 
   if (next.motion.magnitude > 0) {
     entity.isMoving.motion = next.motion;

@@ -207,7 +207,7 @@ export const DUNGEON_GAUNTLET_CONTENT_BY_BIOME_TIER: Record<string, DungeonGaunt
       ]),
     ],
   },
-  // Swamp (density 10 → 3): one of each type — hydra, witch, stalker
+  // Swamp (density 10 → 3): one of each type — snapper, witch, stalker
   [biomeTierKey("swamp", 2)]: {
     phases: [
       tieredWave("swamp-t2-wave-1", "Mire Guard", 3, [
@@ -231,7 +231,7 @@ export const DUNGEON_GAUNTLET_CONTENT_BY_BIOME_TIER: Record<string, DungeonGaunt
     ],
   },
 
-  // Swamp (density 10 → 4): DoT-heavy tide; hydra-led
+  // Swamp (density 10 → 4): DoT-heavy tide; snapper-led
   [biomeTierKey("swamp", 3)]: {
     phases: [
       tieredWave("swamp-t3-wave-1", "Plague Tide", 4, [

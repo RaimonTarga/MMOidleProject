@@ -12,11 +12,20 @@
         "w": 128,
         "h": 128
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a large fierce armored cave beast boss called the Obsidian Broodmother, brood-queen of the cave crawlers, a long lean powerful low-slung body under broad smooth swept-back carapace plates, exactly six strong legs ending in sharp claw tips, plate edges tapering to points, a narrow head with two narrowed pale glinting eyes, a few glossy obsidian-black plates along her spine crest, low prowling stance, large but compact in the frame, fierce predatory presence, three-quarter view facing right, full body, painterly pixel art, soft volumetric shading, minimal outline, pale bone-grey and dun shell with bone-pale plating and sparse obsidian accents",
+      "status": "accepted",
       "sources": [
         "obsidian-broodmother"
-      ]
+      ],
+      "negative": "fat, bulky, round body, chubby, plump, squat, cute, cartoon mascot, smiling, slow looking, walking, mid-stride, many legs, thin spindly legs, eight legs, spider legs, eye cluster, many eyes, compound eye detail, larva, grub, maggot, segmented worm, fine segmentation, antennae, realistic insect, horror, creepy, purple, violet, green, blue, red, colorful, glowing, magical glow, neon, black body, pitch dark, bright white, ground, floor, terrain, grass, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, standing upright, bipedal, rearing up, wings, small, front view, facing camera, cartoon, chibi, anthropomorphic, weapon, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "Round 4: T1 boss follows the sleek-predator crawler (user note was lost in gallery; direction re-confirmed) — leaner meaner brood-queen, sparse obsidian kept, still compact vs T2/T3."
     },
     {
       "id": "boss-cave-t2",
@@ -25,11 +34,20 @@
         "w": 128,
         "h": 128
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a massive armored cave beast boss called the Dreadbore, an adult cave crawler grown huge, very low wide body on exactly six thick sturdy legs, a wedge-shaped smooth armored head for tunneling with two pale glinting eyes, large interlocking carapace plates across its back forming a glossy obsidian-black ridge down the spine, short horns and a bony crest, filling most of the frame, stylized fantasy game creature, three-quarter view facing right, full body, painterly pixel art, soft volumetric shading, minimal outline, pale bone-grey and dun shell under heavy bone-pale plating with an obsidian spine ridge",
+      "status": "accepted",
       "sources": [
         "chitinous-dreadbore"
-      ]
+      ],
+      "negative": "many legs, thin spindly legs, eight legs, spider legs, eye cluster, many eyes, compound eye detail, larva, grub, maggot, segmented worm, fine segmentation, antennae, realistic insect, horror, creepy, purple, violet, green, blue, red, colorful, glowing, magical glow, neon, black body, pitch dark, bright white, ground, floor, terrain, grass, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, standing upright, bipedal, rearing up, wings, machine, mechanical drill, small, cute, front view, facing camera, cartoon, chibi, anthropomorphic, weapon, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "Round 3: T2 of the ladder — bigger (~85%), interlocking plates, FULL obsidian spine ridge, horns+crest appear. | ACCEPTED (status restored 2026-07-18: user's gallery accepts were clobbered by concurrent generate runs; art/src holds the user's final 23:12 picks — do not regenerate)."
     },
     {
       "id": "boss-cave-t3",
@@ -38,11 +56,20 @@
         "w": 128,
         "h": 128
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a titanic ancient armored cave beast boss called the Deep-Core Burrow-Gorger, the eldest of the cave crawlers, an immense low body stretching edge to edge across the frame on exactly six massive sturdy legs, fully armored in huge cracked ancient carapace plates, glossy obsidian armor crowning its head and jaw, long curved horns, old battle scars and broken plate edges, a wide fanged maw open in a roar beneath two pale glinting eyes, stylized fantasy game creature, three-quarter view facing right, full body, painterly pixel art, soft volumetric shading, minimal outline, pale bone-grey and dun shell under heavy ancient bone-pale plating with an obsidian crown and jaw armor",
+      "status": "accepted",
       "sources": [
         "deep-core-burrow-gorger"
-      ]
+      ],
+      "negative": "many legs, thin spindly legs, eight legs, spider legs, eye cluster, many eyes, compound eye detail, larva, grub, maggot, segmented worm, fine segmentation, antennae, realistic insect, horror, creepy, purple, violet, green, blue, red, colorful, glowing, magical glow, neon, black body, pitch dark, bright white, ground, floor, terrain, grass, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, standing upright, bipedal, rearing up, wings, machine, small, cute, front view, facing camera, cartoon, chibi, anthropomorphic, weapon, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "Round 3: T3 apex — wall-to-wall, cracked ancient armor, obsidian crown/jaw, horns + scars. | ACCEPTED (status restored 2026-07-18: user's gallery accepts were clobbered by concurrent generate runs; art/src holds the user's final 23:12 picks — do not regenerate)."
     },
     {
       "id": "boss-desert-t2",
@@ -51,11 +78,20 @@
         "w": 128,
         "h": 128
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a huge royal scorpion boss called the Dune-Stalker Emperor, large armored scorpion body, broad crab-like pincers held wide, segmented armored tail arched high over its back ending in a bulbous stinger, wide planted legs, a small crest of bright gold crowning its head, dominating stance, large but compact in the frame, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, dark umber and terracotta carapace with a gleaming sun-gold crown crest",
+      "status": "accepted",
       "sources": [
         "dune-stalker-emperor"
-      ]
+      ],
+      "negative": "shrimp, prawn, lobster, crayfish, curled-under tail, tail tucked beneath, crab body, cartoony, cute, clowny, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, ground, floor, terrain, sand underfoot, dune, dirt, rock underneath, stone platform, pedestal, base, perch, throne object, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, pale tan body, sandy beige body, bones, skeleton, green, bright green, glowing body, neon, colorful, small, cute, rider, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "Royal scorpion ladder T2: first gold crown-crest, ~70% frame. Levers: size / gilding spread / crown growth / scars."
     },
     {
       "id": "boss-desert-t3",
@@ -64,11 +100,20 @@
         "w": 128,
         "h": 128
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a massive royal scorpion boss called the Dune-Carapace Monarch, immense armored scorpion body, broad crab-like pincers held wide, segmented armored tail arched high over its back ending in a bulbous stinger, wide planted legs, gold-chased carapace segments along its back and a fuller gold crown on its head, dominating stance filling most of the frame, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, dark umber carapace with gilded segment edges and a gleaming sun-gold crown",
+      "status": "accepted",
       "sources": [
         "dune-carapace-monarch"
-      ]
+      ],
+      "negative": "shrimp, prawn, lobster, crayfish, curled-under tail, tail tucked beneath, crab body, cartoony, cute, clowny, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, ground, floor, terrain, sand underfoot, dune, dirt, rock underneath, stone platform, pedestal, base, perch, throne object, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, pale tan body, sandy beige body, bones, skeleton, green, bright green, glowing body, neon, colorful, small, cute, rider, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "Royal scorpion ladder T3: gilding spreads to the carapace, crown grows, ~85% frame."
     },
     {
       "id": "boss-forest-t1",
@@ -77,11 +122,20 @@
         "w": 128,
         "h": 128
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a colossal forest boss bear called the Gnarled Greatbear, prowling on all four legs in a low heavy quadruped stance, enormous muscular body, matted shaggy fur twisted with gnarled bark-like growths and old scars, huge paws with long ivory claws, heavy lowered head with a roaring open maw, dominating the frame, three-quarter view facing right, full body, painterly pixel art, soft volumetric shading, minimal outline, dark umber and charcoal-brown fur with weathered bark growths across the shoulders and deep matte berry-red eyes",
+      "status": "accepted",
       "sources": [
         "gnarled-greatbear"
-      ]
+      ],
+      "negative": "standing upright, bipedal, on hind legs, rearing up, humanoid posture, ground, grass, terrain, floor, base, pedestal, shadow on ground, scenery, background elements, small, cute, teddy bear, rider, armor, magical glow, front view, facing camera, cartoon, chibi, anthropomorphic, weapon, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "Regen round 2: all fours enforced, ground-under-sprite negatives added (round 1 came out upright with a ground plate)."
     },
     {
       "id": "boss-forest-t2",
@@ -90,11 +144,20 @@
         "w": 128,
         "h": 128
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a colossal monstrous wolf boss called the Apex Timberclaw, a huge ancient feral wolf prowling on all four legs in a low predatory quadruped stance, hulking scarred frame, massive oversized clawed paws, thick bristling shaggy coat with raised hackles, huge snarling wolf head with a natural elongated muzzle baring long fangs, dominating the frame, three-quarter view facing right, full body, painterly pixel art, soft volumetric shading, minimal outline, dark timber-brown and charcoal coat with rust highlights, ivory claws and deep matte berry-red eyes",
+      "status": "accepted",
       "sources": [
         "apex-timberclaw"
-      ]
+      ],
+      "negative": "werewolf, standing upright, bipedal, on hind legs, rearing up, humanoid posture, ground, grass, terrain, floor, base, pedestal, shadow on ground, scenery, background elements, small, cute, rider, armor, magical glow, front view, facing camera, cartoon, chibi, anthropomorphic, weapon, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "Regen round 2: pure huge wolf on all fours (round 1 read werewolf + upright + ground plate); ground negatives added."
     },
     {
       "id": "boss-jungle-t2",
@@ -103,11 +166,22 @@
         "w": 128,
         "h": 128
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a massive four-legged predatory great cat boss called the Jungle Dread-Gorger, prowling low on all four legs, heavy muscular feline body, an oversized gorging jaw with thick neck, long claws, coiled aggressive stance, large but compact in the frame, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, dark russet near-black coat with faint rosettes, dusky crimson eyes and faint crimson markings",
+      "status": "accepted",
       "sources": [
         "jungle-dread-gorger"
-      ]
+      ],
+      "negative": "standing upright, bipedal, on two legs, on hind legs, rearing up, humanoid posture, humanoid body, arms, hands, bramble, thorns, foliage, bright green, neon green, lime green, warm tan, sandy, glowing, magical glow, colorful, cartoony, cute, clowny, rounded soft shapes, toy-like, plush, mascot, ground, floor, terrain, grass underfoot, dirt, branch, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, small, rider, armor, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east",
+        "initImage": "sprites/bosses/boss-jungle-t3.png",
+        "initImageStrength": 250
+      },
+      "notes": "Round 2 per user: round 1 came out humanoid — now img2img from the ACCEPTED T3 Bramble-Slasher (same species family, all-fours silhouette), brambles negated, oversized jaw is the T2 tell."
     },
     {
       "id": "boss-jungle-t3",
@@ -116,11 +190,20 @@
         "w": 128,
         "h": 128
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a huge monstrous jungle cat boss called the Apex Bramble-Slasher, a lean colossal predator with dark bramble thorns tangled through its coat, enormous curved slashing claws, fangs bared, low prowling stance filling most of the frame, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, near-black russet coat threaded with dark bramble growth, dusky crimson eyes and crimson-tipped claws",
+      "status": "accepted",
       "sources": [
         "apex-bramble-slasher"
-      ]
+      ],
+      "negative": "standing upright, bipedal, on hind legs, rearing up, humanoid posture, bright green, neon green, lime green, warm tan, sandy, glowing, magical glow, colorful, cartoony, cute, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, ground, floor, terrain, grass underfoot, dirt, rock underneath, branch, tree, vine background, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, small, cute, rider, armor, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "Cat boss ladder T3: bigger (~85%), bramble coat + oversized claws appear."
     },
     {
       "id": "boss-mountain-t1",
@@ -129,11 +212,20 @@
         "w": 128,
         "h": 128
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a large rock-plated rhinoceros boss called the Crag Behemoth, heavy muscular body on four thick legs, a few jagged outcrops of dark weathered rock breaking through the hide along its spine, rough scarred skin, a solid ivory nose horn, small dark deep-set eyes, braced charging stance with head lowered, large but compact in the frame, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, warm dun-brown hide with sparse jagged blue-grey rock outcrops and an ivory horn",
+      "status": "accepted",
       "sources": [
         "crag-behemoth"
-      ]
+      ],
+      "negative": "standing upright, bipedal, on hind legs, rearing up, humanoid posture, cartoony, cute, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, ground, floor, terrain, grass, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, moss, mossy green, glowing bright, neon, colorful, dinosaur, shell, turtle shell, rider, armor, small, cute, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "Ladder v2 T1: mostly bare hide, first rock outcrops BREAKING THROUGH the skin (integration fix, no bolted-on shell). Jagged not rounded; ground ban reinforced (2/3 leaked in round 1)."
     },
     {
       "id": "boss-mountain-t2",
@@ -142,11 +234,20 @@
         "w": 128,
         "h": 128
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a massive rock-plated rhinoceros boss called the Stoneplate Juggernaut, hulking body on four thick legs, half its body armored: jagged slabs of dark weathered rock growing out of the hide across the back and shoulders, the plate edges fused into thick folds of scarred skin, flanks and legs still bare hide, a great ivory nose horn, small dark deep-set eyes, braced charging stance, filling most of the frame, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, warm dun-brown hide half-covered in jagged blue-grey rock growth with large ivory horns",
+      "status": "accepted",
       "sources": [
         "stoneplate-juggernaut"
-      ]
+      ],
+      "negative": "standing upright, bipedal, on hind legs, rearing up, humanoid posture, cartoony, cute, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, ground, floor, terrain, grass, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, moss, mossy green, glowing bright, neon, colorful, dinosaur, shell, turtle shell, saddle, rider, armor, small, cute, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "Ladder v2 T2: HALF-armored, plates GROW from the hide with fused skin-fold edges (the shell-integration answer). Jagged not rounded."
     },
     {
       "id": "boss-mountain-t3",
@@ -155,11 +256,20 @@
         "w": 128,
         "h": 128
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a colossal rock-plated rhinoceros boss called the Horn-Behemoth, immense scarred body on four massive legs, fully armored: jagged interlocking slabs of dark weathered rock covering back, flanks, legs and skull, grown from the hide with deep fused seams, an enormous curved ivory nose horn with jagged secondary horns along the crest, chipped plates and old scars, braced dominant stance dominating the frame, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, dark blue-grey rock armor over glimpses of dun-brown hide with huge scarred ivory horns",
+      "status": "accepted",
       "sources": [
         "crag-gorged-horn-behemoth"
-      ]
+      ],
+      "negative": "standing upright, bipedal, on hind legs, rearing up, humanoid posture, cartoony, cute, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, ground, floor, terrain, grass, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, moss, mossy green, glowing bright, neon, colorful, dinosaur, shell, turtle shell, rider, armor, small, cute, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "Ladder v2 T3: FULLY armored (user call) — rock covers body and skull, hide only in the seams. Jagged not rounded."
     },
     {
       "id": "boss-plains-t1",
@@ -210,11 +320,20 @@
         "w": 128,
         "h": 128
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a colossal grotesque boss toad called the Grave Toadeater, enormous bloated warty body squatting low on all fours, vast sagging throat, huge mouth gaping open, heavy-lidded baleful eyes, glossy diseased skin, dominating the frame, three-quarter view facing right, full body, painterly pixel art, soft volumetric shading, minimal outline, dark olive-brown warty hide slick with muck, a pallid distended cream belly and dim chartreuse warts",
+      "status": "accepted",
       "sources": [
         "grave-toadeater"
-      ]
+      ],
+      "negative": "standing upright, bipedal, on hind legs, rearing up, humanoid posture, ground, grass, terrain, floor, base, pedestal, shadow on ground, scenery, background elements, small, cute, cartoon frog, smiling, rider, armor, magical glow, front view, facing camera, cartoon, chibi, anthropomorphic, weapon, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "T1 boss = colossal cannibal toad (eats lesser toads; crowns the amphibian family)."
     },
     {
       "id": "boss-swamp-t2",
@@ -223,11 +342,20 @@
         "w": 128,
         "h": 128
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a massive bloated swamp beast boss called the Mire-Gorged Behemoth, a hulking four-legged beast between a giant boar and a hippopotamus, waterlogged swollen body, hide crusted with moss and dripping strands of muck, heavy lowered head with a huge jaw and short tusks, standing braced on all four thick legs, dominating the frame, three-quarter view facing right, full body, painterly pixel art, soft volumetric shading, minimal outline, dark bog-brown swollen hide with drab moss crust and a pallid underbelly",
+      "status": "accepted",
       "sources": [
         "mire-gorged-behemoth"
-      ]
+      ],
+      "negative": "standing upright, bipedal, on hind legs, rearing up, humanoid posture, ground, grass, terrain, floor, base, pedestal, shadow on ground, scenery, background elements, small, cute, rider, armor, magical glow, bright green, front view, facing camera, cartoon, chibi, anthropomorphic, weapon, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "T2 boss = bloated moss-hided boar/hippo beast."
     },
     {
       "id": "boss-swamp-t3",
@@ -236,11 +364,20 @@
         "w": 128,
         "h": 128
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a colossal ancient crocodile boss called the Rot-Spore Croc-Behemoth, immense armored body low on all four legs, ridged back overgrown with rotting fungus and pale spore clusters, massive scarred jaws parted wide, heavy dragging tail, glossy diseased hide, dominating the frame, three-quarter view facing right, full body, painterly pixel art, soft volumetric shading, minimal outline, dark olive-black ridged hide with bruised umber scarring and sickly chartreuse spore growths along the spine",
+      "status": "accepted",
       "sources": [
         "rot-spore-croc-behemoth"
-      ]
+      ],
+      "negative": "standing upright, bipedal, on hind legs, rearing up, humanoid posture, ground, grass, terrain, floor, base, pedestal, shadow on ground, scenery, background elements, small, cute, rider, armor, magical glow, dinosaur, front view, facing camera, cartoon, chibi, anthropomorphic, weapon, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "T3 boss kept: fungus-crusted ancient croc, caps the croc family (bog-lurker)."
     },
     {
       "id": "boss-tundra-t3",
@@ -249,11 +386,20 @@
         "w": 128,
         "h": 128
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a huge boss mammoth called the Frost-Plated Rime-Mammoth, massive shaggy dark-furred mammoth armored in interlocking plates of translucent blue ice across its back and flanks, colossal ice-sheathed tusks, trunk raised in a trumpeting roar, braced stance, large but compact in the frame, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, dark walnut fur under translucent blue-cyan frost plate with huge icy tusks",
+      "status": "accepted",
       "sources": [
         "frost-plated-rime-mammoth"
-      ]
+      ],
+      "negative": "standing upright, bipedal, on hind legs, rearing up, humanoid posture, cartoony, cute, clowny, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, ground, floor, terrain, snow underfoot, ice floor, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, white body, pale fur, cream fur, polar-white, warm brown, orange, red, yellow, warm hues, glowing bright, small, cute, rider, armor, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "Boss T3: the proboscidean crown (~80% frame). T4 patriarch out-scales it."
     },
     {
       "id": "boss-volcano-t3",
@@ -262,102 +408,175 @@
         "w": 128,
         "h": 128
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a huge boss fire salamander called the Cinder-Shell Magma-Salamander, massive low amphibian body, a cracked shell-like crust of cinder plates armoring its back, dim lava light in the deepest seams, broad head with a glowing ember maw, braced low stance, large but compact in the frame, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, dark cinder-grey crust plates over ash hide with dim ember-orange seam glow",
+      "status": "accepted",
       "sources": [
         "cinder-shell-magma-salamander"
-      ]
+      ],
+      "negative": "standing upright, bipedal, on hind legs, rearing up, humanoid posture, cartoony, cute, clowny, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, ground, floor, terrain, lava pool underfoot, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, fully glowing body, bright orange body, lava body, engulfed in flames, fire aura, cool blue, green, brown earth tones, dirt, small, cute, rider, armor, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "Salamander boss ladder T3: cinder-shell crust, compact (~75% frame). T4 escalates to the caldera crown."
     },
     {
-      "id": "t4-desert-boss",
-      "out": "sprites/bosses/t4-desert-boss.png",
+      "id": "boss-desert-t4",
+      "out": "sprites/bosses/boss-desert-t4.png",
       "size": {
         "w": 128,
         "h": 128
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a titanic royal scorpion boss called the Dune-Throne Sovereign, an immense ancient scorpion stretching edge to edge across the frame, broad crab-like pincers held wide, segmented armored tail arched high over its back ending in a bulbous stinger, wide planted legs, its entire carapace chased in gleaming gold over near-black umber plate, a grand many-pointed gold crown on its head, old battle scars across the gilding, tail arched like a monument, dominating regal stance, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, near-black umber carapace fully gold-chased with a grand sun-gold crown",
+      "negative": "shrimp, prawn, lobster, crayfish, curled-under tail, tail tucked beneath, crab body, cartoony, cute, clowny, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, ground, floor, terrain, sand underfoot, dune, dirt, rock underneath, stone platform, pedestal, base, perch, throne object, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, pale tan body, sandy beige body, bones, skeleton, green, bright green, glowing body, neon, colorful, small, cute, rider, throne, chair, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "status": "accepted",
       "sources": [
         "dune-throne-sovereign"
-      ]
+      ],
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "Royal scorpion ladder T4 apex: full gilding + grand crown + scars, wall-to-wall. New frame replaces t4-desert-boss.png."
     },
     {
-      "id": "t4-graveyard-boss",
-      "out": "sprites/bosses/t4-graveyard-boss.png",
+      "id": "boss-graveyard-t4",
+      "out": "sprites/bosses/boss-graveyard-t4.png",
       "size": {
         "w": 128,
         "h": 128
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a titanic charnel amalgam colossus boss called the Charnel-Crown Sovereign, a mountain of fused dirty bones from every beast of the wasteland — tusks, antlers, ribcages and skulls locked into one immense walking mass stretching edge to edge across the frame, crowned with a jagged corona of skulls and horns, deep necrotic green light welling in every hollow, slow dominating stance, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, dirty bone-grey and grey-brown fused bone with bruised violet shadows, a skull-and-horn crown and blazing plague-green hollows",
+      "negative": "clean white bone, bright white, zombie, rotting flesh, gore, blood, warm flesh tones, living skin, yellow-green, bright green body, cartoony, cute, clowny, rounded soft shapes, toy-like, plush, mascot, ground, floor, terrain, dirt, ash underfoot, grave, tombstone, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, single skeleton, humanoid skeleton, dragon, small, cute, rider, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "status": "accepted",
       "sources": [
         "charnel-crown-sovereign"
-      ]
+      ],
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "The final boss of the overhaul: the charnel colossus, 'Charnel-Crown' made literal. New frame replaces t4-graveyard-boss.png."
     },
     {
-      "id": "t4-jungle-boss",
-      "out": "sprites/bosses/t4-jungle-boss.png",
+      "id": "boss-jungle-t4",
+      "out": "sprites/bosses/boss-jungle-t4.png",
       "size": {
         "w": 128,
         "h": 128
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a titanic apex jungle cat boss called the Verdant-Crown Predator, an immense ancient panther on all four legs stretching edge to edge across the frame, thick moss and deep green foliage grown into its coat as a heavy mane across the neck and shoulders, the head clean and feline, colossal curved claws, deep old scars, fangs bared in a ferocious roar, low dominating prowl, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, near-black russet coat with a deep green moss mane, blazing dusky crimson eyes and crimson markings",
+      "negative": "horns, antlers, crown on head, head ornaments, standing upright, bipedal, on two legs, on hind legs, rearing up, humanoid posture, humanoid body, arms, hands, bright green, neon green, lime green, warm tan, sandy, glowing, magical glow, colorful, cartoony, cute, clowny, rounded soft shapes, toy-like, plush, mascot, ground, floor, terrain, grass underfoot, dirt, branch, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, small, rider, armor, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "status": "accepted",
       "sources": [
         "verdant-crown-predator"
-      ]
+      ],
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east",
+        "colorImage": "sprites/bosses/boss-jungle-t3.png"
+      },
+      "notes": "Round 2 per user: 'crown like antlers' grew HORNS (clowny, no horns on cats) — crown reinterpreted as a moss/foliage MANE on neck+shoulders, head clean, ferocity up (roar, scars). Palette pinned to accepted T3."
     },
     {
-      "id": "t4-mountain-boss",
-      "out": "sprites/bosses/t4-mountain-boss.png",
+      "id": "boss-mountain-t4",
+      "out": "sprites/bosses/boss-mountain-t4.png",
       "size": {
         "w": 128,
         "h": 128
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a titanic ancient rock-plated rhinoceros boss called the Iron-Crest Titan, an immense body stretching edge to edge across the frame on four massive legs, fully armored in ancient cracked weathered rock, jagged mountain-peak stone spires rising from its spine like a walking mountain ridge, a dark iron-grey crest crowning its skull, a colossal battle-worn ivory horn, a faint cold sky-blue glow deep in the oldest cracks, deep scars and broken plate edges, head lowered in a dominating charge stance, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, ancient blue-grey rock armor with peak-like spires, a dark iron crest, a colossal ivory horn and a faint cold blue glow in the fissures",
+      "negative": "standing upright, bipedal, on hind legs, rearing up, humanoid posture, cartoony, cute, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, ground, floor, terrain, grass, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, moss, mossy green, glowing bright, neon, colorful, dinosaur, shell, turtle shell, rider, armor, small, cute, volcano, lava, fire, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "status": "accepted",
       "sources": [
         "iron-crest-titan"
-      ]
+      ],
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "Ladder v2 T4: the WALKING MOUNTAIN twist (user-ratified) — peak spires on full ancient plate + the biome's cold blue glow reserved for the apex."
     },
     {
-      "id": "t4-trench-boss",
-      "out": "sprites/bosses/t4-trench-boss.png",
+      "id": "boss-trench-t4",
+      "out": "sprites/bosses/boss-trench-t4.png",
       "size": {
         "w": 128,
         "h": 128
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a titanic ancient sea serpent boss called the Elder Trench Serpent, an immense coiled body stretching edge to edge across the frame, scarred abyssal scales, a huge head with a gaping maw of enormous visible fangs, ancient ragged fins with glowing teal-cyan edges, rows of biolume spots blazing along its whole length, glowing cyan eyes, dominating reared posture, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, abyssal blue-black and deep violet scales with a pale underbelly and bright teal biolume",
+      "negative": "legs, arms, dragon wings, warm colors, red, orange, yellow, brown, green, bone, skeleton, demon, horns, ghost, supernatural aura, cartoony, cute, clowny, rounded soft shapes, toy-like, plush, mascot, ground, floor, terrain, seabed, sand underfoot, rock underneath, water surface, waves, bubbles background, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, small, cute, rider, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "status": "accepted",
       "sources": [
         "elder-trench-serpent"
-      ]
+      ],
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "Boss: the eldest serpent, wall-to-wall. New frame replaces t4-trench-boss.png. NOTE: elder-trench-serpent-warden stays SPRITELESS intentionally — Void Overlord fight scrapped pending redesign (user call)."
     },
     {
-      "id": "t4-tundra-boss",
-      "out": "sprites/bosses/t4-tundra-boss.png",
+      "id": "boss-tundra-t4",
+      "out": "sprites/bosses/boss-tundra-t4.png",
       "size": {
         "w": 128,
         "h": 128
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a titanic ancient boss bear called the Glacial Patriarch, an immense scarred bear stretching edge to edge across the frame on all four legs, dark slate-grey fur, cracked slabs of ancient translucent cyan glacier ice clinging to its brow, shoulders and spine like armor, following the natural line of its body, deep pale cyan light welling in the ice cracks, a roaring maw with cold breath misting, dominating stance, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, dark slate-grey fur beneath body-hugging translucent cyan ice plates with deep inner glow",
+      "negative": "mountain on its back, mountain peak, landscape, terrain growing from the body, iceberg back, standing upright, bipedal, rearing up, cartoony, cute, toy-like, white body, pale fur, warm hues, ground, floor, terrain, snow underfoot, snowbank, snow drift, snow pile, kicked-up snow, snow spray, ground fog, mist at feet, ice floor, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, small, rider, armor, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "status": "accepted",
       "sources": [
         "glacial-patriarch"
-      ]
+      ],
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "Round 2 per user: round-1 ice mantle read as a MOUNTAIN on its back — now body-hugging cracked ice slabs following the bear's contours; mountain/landscape negatives added."
     },
     {
-      "id": "t4-volcano-boss",
-      "out": "sprites/bosses/t4-volcano-boss.png",
+      "id": "boss-volcano-t4",
+      "out": "sprites/bosses/boss-volcano-t4.png",
       "size": {
         "w": 128,
         "h": 128
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a titanic ancient fire salamander boss called the Caldera Sovereign, an immense salamander stretching edge to edge across the frame, its broad back cooled into a cracked obsidian caldera — a crater ridge crowning its spine with dim lava light welling inside the rim, ancient scarred crust hide, colossal clawed feet, a vast maw glowing with inner fire, low dominating stance, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, near-black obsidian crust with an ember-lit caldera crown and dim molten seams",
+      "negative": "standing upright, bipedal, on hind legs, rearing up, humanoid posture, cartoony, cute, clowny, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, ground, floor, terrain, lava pool underfoot, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, fully glowing body, bright orange body, lava body, engulfed in flames, fire aura, cool blue, green, brown earth tones, dirt, small, cute, rider, armor, volcano erupting, explosion, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "status": "accepted",
       "sources": [
         "caldera-sovereign"
-      ]
+      ],
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "Salamander boss ladder T4 apex: the caldera-backed ancient (user-ratified). New frame replaces t4-volcano-boss.png."
     },
     {
       "id": "ancient-wolf",
@@ -366,37 +585,65 @@
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a massive dire wolf, hulking heavy-shouldered predatory build, thick shaggy coat, huge head with a natural elongated muzzle baring long fangs in a snarl, old battle scars, all four legs planted in a braced dominant stance, tail held low, three-quarter view facing right, full body, painterly pixel art, soft volumetric shading, minimal outline, dark charcoal and umber coat with rust-brown highlights and deep matte berry-red eyes",
+      "status": "accepted",
       "sources": [
         "ancient-wolf"
-      ]
+      ],
+      "negative": "slime, magical glow, armor, saddle, small, cute, human-like face, humanlike expression, smiling, walking, mid-stride, running, raised paw, front view, facing camera, cartoon, chibi, anthropomorphic, weapon, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "Display renamed Ancient Wolf -> Dire Wolf (Forest slice). Reskin, frame name kept. Berry-red eyes are the biome accent."
     },
     {
-      "id": "archer",
-      "out": "sprites/monsters/archer.png",
+      "id": "ridge-ambusher",
+      "out": "sprites/monsters/ridge-ambusher.png",
       "size": {
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a hooded mountain vessel crouched in ambush, lean faceless humanoid figure kneeling low on one knee, wrapped in weathered stone-grey cloth and leather straps, skin of dark rough stone where exposed, a bow held ready in one hand with an arrow loosely nocked, not drawn, hood pulled low, coiled and waiting to strike, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, stone-grey and dun-brown wrappings over dark rock skin with a faint cold glint under the hood",
+      "negative": "human face, eyes, mouth, human skin, flesh tone, hair, beard, metal armor, medieval soldier uniform, knight, cartoony, cute, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, ground, floor, terrain, grass underfoot, dirt, rock underneath, stone platform, pedestal, base, perch, standing stones, stone circle, monument site, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, drawing the bow, drawn bowstring, shooting, magical, arcane, runes, glowing, glow, energy, floating rocks, crystals, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "status": "accepted",
       "sources": [
         "ridge-archer"
-      ]
+      ],
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east",
+        "colorImage": "sprites/monsters/peak-archer.png"
+      },
+      "notes": "Round 4: action poses abandoned (3 failures) — crouched ambush-ready pose matching its holdsChokepoints gameplay; palette pinned to accepted peak-archer via colorImage. | ACCEPTED (status restored: user's round-4 pick is in art/src; do not regenerate)."
     },
     {
-      "id": "ash-slinger",
-      "out": "sprites/monsters/ash-slinger.png",
+      "id": "ash-salamander",
+      "out": "sprites/monsters/ash-salamander.png",
       "size": {
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "an ash salamander, thick-bodied fire salamander with ash-grey crust skin, broad flat head with an open mouth glowing dim ember deep inside, low splayed amphibian stance with a thick tail, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, dark ash-grey crust hide with dim ember-orange throat and belly glow",
+      "negative": "standing upright, bipedal, on hind legs, rearing up, humanoid posture, cartoony, cute, clowny, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, ground, floor, terrain, lava pool underfoot, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, fully glowing body, bright orange body, lava body, engulfed in flames, fire aura, cool blue, green, brown earth tones, dirt, slinger, humanoid, arms throwing, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "status": "accepted",
       "sources": [
         "ash-slinger"
-      ]
+      ],
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "Salamander line T3 (was Ash Slinger — display renamed Ash Salamander, humanoid retired). New frame; frameMaps repointed."
     },
     {
       "id": "avalanche-ram",
@@ -405,11 +652,20 @@
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a heavy mountain ram, massive muscular body under thick layered wool and shag, enormous curled spiral horns framing the head, braced charging stance with head lowered, three-quarter view facing right, full body, painterly pixel art, soft volumetric shading, minimal outline, warm dun-brown and buff coat with a darker face and huge ivory spiral horns",
+      "status": "accepted",
       "sources": [
         "avalanche-ram"
-      ]
+      ],
+      "negative": "standing upright, bipedal, on hind legs, rearing up, humanoid posture, ground, floor, terrain, grass, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, moss, mossy green, mid-grey body, glowing, magical glow, neon, colorful, cute, farm sheep, small horns, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "Caprine line T3: the goat grown into a charging ram. Reskin in place."
     },
     {
       "id": "boar",
@@ -440,11 +696,20 @@
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a large bog crocodile, long low armored body in a dragging ambush crawl on short powerful legs, ridged scaly back slick with wet moss, powerful jaws parted showing teeth, heavy tail trailing, three-quarter view facing right, full body, painterly pixel art, soft volumetric shading, minimal outline, dark olive-black ridged hide with bog-brown mottling, a pallid jaw and underbelly, a dim chartreuse glint in the eyes",
+      "status": "accepted",
       "sources": [
         "bog-lurker"
-      ]
+      ],
+      "negative": "cute, cartoon, bright green, dry, dusty, standing upright, bipedal, on hind legs, rearing up, humanoid posture, front view, facing camera, cartoon, chibi, anthropomorphic, weapon, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "Bog Lurker reconceptualized -> half-submerged bog crocodile (family with the T3 croc boss). Name kept (role-name still fits)."
     },
     {
       "id": "bog-witch",
@@ -453,11 +718,20 @@
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a hunched swamp witch vessel, faceless figure draped in ragged moss-stained cloth and woven reeds, a cracked weathered wooden mask hiding any face, thin crooked frame with elongated inhuman proportions, gnarled hands clutching a bone charm trailing wisps of dim chartreuse witch-light, three-quarter view facing right, full body, painterly pixel art, soft volumetric shading, minimal outline, bog-grey and dark olive rags with pale bone trinkets, no visible skin",
+      "status": "accepted",
       "sources": [
         "bog-witch"
-      ]
+      ],
+      "negative": "human face, eyes, mouth, human skin, flesh tone, pretty, young woman, pointed witch hat, broomstick, bright glow, front view, facing camera, cartoon, chibi, anthropomorphic, weapon, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "Bog Witch kept, reskinned per bible §7: masked/faceless swamp vessel, not a fairy-tale witch. Humanoid: reference brute-v8 proportions handling."
     },
     {
       "id": "brute",
@@ -466,37 +740,66 @@
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a hulking cave brute, broad faceless top-heavy humanoid vessel, massive shoulders and long heavy arms, thick squat legs, skin like rough hewn stone and packed chitin, small featureless head sunk between the shoulders, standing in a heavy patrol stance, three-quarter view facing right, full body, painterly pixel art, soft volumetric shading, minimal outline, pale chitin-grey and dun-brown stone hide with bone-pale plating ridges and a faint pale glint at the eye sockets",
+      "status": "accepted",
       "sources": [
         "cave-brute"
-      ]
+      ],
+      "negative": "human face, eyes, mouth, human skin, flesh tone, handsome, hair, clothing, uniform, purple, violet, green, blue, red, colorful, glowing, magical glow, neon, black body, pitch dark, bright white, front view, facing camera, cartoon, chibi, anthropomorphic, weapon, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east",
+        "initImage": "sprites/style-probes/brute-v8.png",
+        "initImageStrength": 250
+      },
+      "notes": "Production Cave Brute (Phase 0's brute-v8 was only the style probe). img2img from brute-v8 @250 — proportions anchored, surface repainted to the colorless cave palette. T1 of the one-species bruiser line."
     },
     {
-      "id": "canopy-harrier",
-      "out": "sprites/monsters/canopy-harrier.png",
+      "id": "canopy-chameleon",
+      "out": "sprites/monsters/canopy-chameleon.png",
       "size": {
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a large horned chameleon, a crest of small thorns along its spine and brow horns, gripping coiled posture with a curled tail, turret eyes, mouth open mid-spit launching a venom dart, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, deep green-brown mottled hide with a dark russet thorn crest and dusky crimson eyes",
+      "negative": "bird, wings, feathers, blowpipe, humanoid, bright green, neon green, lime green, warm tan, sandy, glowing, magical glow, colorful, cartoony, cute, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, ground, floor, terrain, grass underfoot, dirt, rock underneath, branch, tree, vine background, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, small, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "status": "accepted",
       "sources": [
         "canopy-harrier"
-      ]
+      ],
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "Chameleon family T3 (was Canopy Harrier — display renamed Canopy Chameleon). New frame; frameMaps repointed."
     },
     {
-      "id": "canopy-sprite",
-      "out": "sprites/monsters/canopy-sprite.png",
+      "id": "thorn-spitter",
+      "out": "sprites/monsters/thorn-spitter.png",
       "size": {
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a small gnarled bramble creature, twisted dark bark body tangled with thorny vines, crouched on stubby root-like legs, a hollow tubular snout aimed forward as if spitting thorns, bristling thorn spikes along its back, three-quarter view facing right, full body, painterly pixel art, soft volumetric shading, minimal outline, dark bark-brown and umber body with matte berry-red thorn tips",
+      "negative": "fairy, pixie, wings, glowing, magical glow, humanoid, bright green leafy body, flower, cute, slime, front view, facing camera, cartoon, chibi, anthropomorphic, weapon, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "status": "accepted",
       "sources": [
         "canopy-sprite"
-      ]
+      ],
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "Canopy-sprite reconceptualized -> Thorn Spitter (creature/plant, not fairy; Forest slice). New frame; frameMaps repoints canopy-sprite on landing."
     },
     {
       "id": "cave-gargoyle",
@@ -505,11 +808,20 @@
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a stone cave gargoyle in flight, squat sentry carved from rough rock hovering mid-air on wide-spread jagged stone wings, blunt horned head, clawed feet tucked beneath its body, one clawed hand gripping a stalactite shard to hurl, three-quarter view facing right, full body, painterly pixel art, soft volumetric shading, minimal outline, pale weathered grey stone body with dun-brown erosion stains and a faint pale glint in the eye sockets",
+      "status": "accepted",
       "sources": [
         "cave-gargoyle"
-      ]
+      ],
+      "negative": "purple, violet, green, blue, red, colorful, glowing, magical glow, neon, black body, pitch dark, bright white, ground, grass, terrain, floor, base, pedestal, rock perch, shadow on ground, scenery, background elements, perched, standing, folded wings, demon, cute, front view, facing camera, cartoon, chibi, anthropomorphic, weapon, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "Round 2 per user: perch rock removed, now AIRBORNE (sprite moves in-game) — hovering, wings spread, feet tucked."
     },
     {
       "id": "cave-troll",
@@ -518,11 +830,22 @@
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a huge cave troll, the same broad faceless top-heavy vessel breed as a cave brute but larger and heavier, massive shoulders and long heavy arms, skin like rough hewn stone and packed chitin, crude slabs of stone strapped across the shoulders and forearms as armor plates, small featureless head, heavy patrol stance, three-quarter view facing right, full body, painterly pixel art, soft volumetric shading, minimal outline, pale chitin-grey and dun-brown stone hide with bone-pale plating and a faint pale glint at the eye sockets",
+      "status": "accepted",
       "sources": [
         "cave-troll"
-      ]
+      ],
+      "negative": "human face, eyes, mouth, human skin, flesh tone, handsome, hair, clothing, uniform, purple, violet, green, blue, red, colorful, glowing, magical glow, neon, black body, pitch dark, bright white, front view, facing camera, cartoon, chibi, anthropomorphic, weapon, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east",
+        "initImage": "sprites/style-probes/brute-v8.png",
+        "initImageStrength": 250
+      },
+      "notes": "T2 of the bruiser line: same species as Cave Brute, bigger + crude stone armor slabs. img2img from brute-v8 @250 keeps the family silhouette."
     },
     {
       "id": "cavern-troll",
@@ -531,11 +854,22 @@
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a colossal cavern troll, the same broad faceless top-heavy vessel breed as a cave brute at its most massive, enormous shoulders and long heavy arms, skin like rough hewn stone and packed chitin, heavy interlocking stone plates armoring the shoulders, back and forearms, cracked and battle-worn, small featureless head, dominating heavy stance, three-quarter view facing right, full body, painterly pixel art, soft volumetric shading, minimal outline, pale chitin-grey and dun-brown stone hide with bone-pale armor plating and a faint pale glint at the eye sockets",
+      "status": "accepted",
       "sources": [
         "cavern-troll"
-      ]
+      ],
+      "negative": "human face, eyes, mouth, human skin, flesh tone, handsome, hair, clothing, uniform, purple, violet, green, blue, red, colorful, glowing, magical glow, neon, black body, pitch dark, bright white, small, front view, facing camera, cartoon, chibi, anthropomorphic, weapon, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east",
+        "initImage": "sprites/style-probes/brute-v8.png",
+        "initImageStrength": 250
+      },
+      "notes": "T3 elite ceiling of the bruiser line: heaviest armor, most massive. img2img from brute-v8 @250."
     },
     {
       "id": "cinder-hound",
@@ -544,11 +878,20 @@
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a lean cinder hound, wolf-sized hound with charcoal-black cracked hide like cooled lava crust, dim ember seams glowing between the plates along its spine and jaw, bared fangs with a faint fire deep in the mouth, all four legs planted in an alert stance, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, charcoal and dark ash-grey crust hide with dim ember-orange seams",
+      "status": "accepted",
       "sources": [
         "cinder-hound"
-      ]
+      ],
+      "negative": "standing upright, bipedal, on hind legs, rearing up, humanoid posture, cartoony, cute, clowny, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, ground, floor, terrain, lava pool underfoot, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, fully glowing body, bright orange body, lava body, engulfed in flames, fire aura, cool blue, green, brown earth tones, dirt, walking, mid-stride, running, raised paw, smiling, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "Hound line T3 (fast ramping charger)."
     },
     {
       "id": "crag-mortar",
@@ -557,11 +900,20 @@
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a massive hunched mountain siege vessel, faceless humanoid giant of cracked weathered rock and taut hide straps, enormous rounded back carrying a woven basket stacked with boulders, huge arms mid-heave lobbing a boulder, low wide braced stance, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, dark weathered rock body with dun hide straps, pale lichen dusting on the shoulders and a faint cold glint where the eyes would be",
+      "status": "accepted",
       "sources": [
         "crag-mortar"
-      ]
+      ],
+      "negative": "human face, eyes, mouth, human skin, flesh tone, hair, beard, metal armor, medieval soldier uniform, knight, cartoony, cute, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, ground, floor, terrain, grass, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, moss, mossy green, glowing bright, neon, colorful, beetle, insect, catapult machine, wooden siege engine, wheels, small, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "Round 2: img2img dropped per user note (looked like the cavern brute). Same boulder-basket concept, own silhouette."
     },
     {
       "id": "crawler",
@@ -570,11 +922,20 @@
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a sleek armored cave crawler, low long lean predatory body under smooth swept-back carapace plates, exactly six strong agile legs ending in sharp claw tips, plate edges tapering to points, a narrow blunt head with two narrowed pale glinting eyes, low prowling hunting posture, fierce predatory presence, three-quarter view facing right, full body, painterly pixel art, soft volumetric shading, minimal outline, pale bone-grey and dun-brown shell with bone-pale plate edges",
+      "status": "accepted",
       "sources": [
         "cave-lurker"
-      ]
+      ],
+      "negative": "fat, bulky, round body, chubby, plump, squat, cute, cartoon mascot, smiling, slow looking, walking, mid-stride, many legs, thin spindly legs, eight legs, spider legs, eye cluster, many eyes, compound eye detail, larva, grub, maggot, segmented worm, fine segmentation, antennae, realistic insect, horror, creepy, purple, violet, green, blue, red, colorful, glowing, magical glow, neon, black body, pitch dark, bright white, ground, floor, terrain, grass, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, wings, front view, facing camera, cartoon, chibi, anthropomorphic, weapon, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "Round 4 per user: round-3 beetle was too cartoony/fat/slow — now a SLEEK CHITIN PREDATOR: lean streamlined swept-back plates, claw tips, pointed plate edges, narrowed eyes; 'stylized game creature' phrasing dropped. Anti-creep bans kept."
     },
     {
       "id": "crystal-gargoyle",
@@ -583,11 +944,20 @@
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a crystal-crusted stone gargoyle in flight, squat sentry carved from rough rock hovering mid-air on wide-spread jagged wings edged with pale translucent crystal shards, clusters of colorless crystal along its back and shoulders, blunt horned head, clawed feet tucked beneath its body, one clawed hand gripping a crystal shard to hurl, three-quarter view facing right, full body, painterly pixel art, soft volumetric shading, minimal outline, pale grey stone body with bone-dun erosion and clear colorless crystal facets catching a faint glint",
+      "status": "accepted",
       "sources": [
         "crystal-gargoyle"
-      ]
+      ],
+      "negative": "purple, violet, green, blue, red, colorful, glowing, magical glow, neon, black body, pitch dark, bright white, ground, grass, terrain, floor, base, pedestal, rock perch, shadow on ground, scenery, background elements, perched, standing, folded wings, demon, cute, rainbow, gemstone colors, front view, facing camera, cartoon, chibi, anthropomorphic, weapon, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "Round 2 per user: ground/shadow removed, airborne like cave-gargoyle. Crystal stays colorless (the glint accent)."
     },
     {
       "id": "deep-spider",
@@ -596,11 +966,20 @@
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a huge deep cave spider, broader and spikier than a giant spider, wide low armored body on eight thick jointed legs, jagged chitin spines along the abdomen, clustered pale eyes, long fangs bared, coiled predatory crouch, three-quarter view facing right, full body, painterly pixel art, soft volumetric shading, minimal outline, pale chitin-grey and bone-dun carapace with pale spine ridges and a colorless glint in the eye cluster",
+      "status": "accepted",
       "sources": [
         "deep-spider"
-      ]
+      ],
+      "negative": "purple, violet, green, blue, red, colorful, glowing, magical glow, neon, black body, pitch dark, bright white, cute, mascot, web, hanging from thread, small, front view, facing camera, cartoon, chibi, anthropomorphic, weapon, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "T3 chaotic natural; the giant spider grown spiky. Brood chitin language."
     },
     {
       "id": "desert-basilisk",
@@ -609,11 +988,20 @@
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a large desert basilisk lizard, massive low-slung armored body, jagged horn ridges over the brow and spine, a broad powerful head with burning amber eyes fixed in a petrifying stare, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, dark umber and burnt terracotta hide with heavier scute plating and dim amber eyes",
+      "status": "accepted",
       "sources": [
         "desert-basilisk"
-      ]
+      ],
+      "negative": "standing upright, bipedal, on hind legs, rearing up, humanoid posture, cartoony, cute, clowny, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, ground, floor, terrain, sand underfoot, dune, dirt, rock underneath, stone platform, pedestal, base, perch, throne object, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, pale tan body, sandy beige body, bones, skeleton, green, bright green, glowing body, neon, colorful, snake, legless, small, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "Basilisk line T3: bigger, horned."
     },
     {
       "id": "dune-stalker",
@@ -622,24 +1010,64 @@
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a large desert scorpion, long low powerful armored body, broad crab-like pincers held wide, segmented armored tail arched high over its back ending in a bulbous stinger, wide planted legs, prowling hunting stance, heavier plate ridges along the back, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, dark umber and burnt terracotta carapace with dusty dark gold ridge lines",
+      "status": "accepted",
       "sources": [
         "dune-stalker"
-      ]
+      ],
+      "negative": "shrimp, prawn, lobster, crayfish, curled-under tail, tail tucked beneath, crab body, cartoony, cute, clowny, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, ground, floor, terrain, sand underfoot, dune, dirt, rock underneath, stone platform, pedestal, base, perch, throne object, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, pale tan body, sandy beige body, bones, skeleton, green, bright green, glowing body, neon, colorful, horror, creepy, small, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "Scorpion line T3 (role-name kept): the sand scorpion grown long and predatory."
     },
     {
-      "id": "dust-djinn",
-      "out": "sprites/monsters/dust-djinn.png",
+      "id": "dune-tyrant",
+      "out": "sprites/monsters/dune-tyrant.png",
       "size": {
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a colossal emperor scorpion, massive heavily armored body, enormous crushing pincers held wide, a thick segmented tail arched high like a siege engine ending in a huge stinger, heavy plate ridges, wide planted legs in a dominating stance, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, near-black umber carapace with burnt terracotta joints and dusty dark gold plate edges",
+      "negative": "shrimp, prawn, lobster, crayfish, curled-under tail, tail tucked beneath, crab body, cartoony, cute, clowny, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, ground, floor, terrain, sand underfoot, dune, dirt, rock underneath, stone platform, pedestal, base, perch, throne object, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, pale tan body, sandy beige body, bones, skeleton, green, bright green, glowing body, neon, colorful, horror, creepy, small, cute, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "status": "accepted",
+      "sources": [
+        "dune-tyrant"
+      ],
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "T4 elite (mob echo of the royal boss ladder; pincer smash = its cooldown slam). FIRST-EVER sprite — this mob was unmapped/spriteless before."
+    },
+    {
+      "id": "sun-scarab",
+      "out": "sprites/monsters/sun-scarab.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "a sacred sun scarab beetle, compact domed carapace, six sturdy legs, a faint glowing amber sun-disc emblem on its shell, small horned head, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, dark umber-bronze carapace with a softly glowing sun-amber disc and amber seam light",
+      "negative": "shrimp, prawn, lobster, crayfish, curled-under tail, tail tucked beneath, crab body, cartoony, cute, clowny, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, ground, floor, terrain, sand underfoot, dune, dirt, rock underneath, stone platform, pedestal, base, perch, throne object, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, pale tan body, bones, green, neon, colorful, wings spread, flying, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "status": "accepted",
       "sources": [
         "dust-djinn"
-      ]
+      ],
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "Scarab line T2 (was Dust Djinn — display renamed Sun Scarab). The Sun-Mark painter: the amber glow is ITS accent by right (palette bible: sun-amber = marks + royals). New frame; frameMaps repointed."
     },
     {
       "id": "ember-scuttler",
@@ -648,11 +1076,20 @@
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a small young fire skink darting low, slender quick lizard body, skin of cooled ash-grey crust with fine cracks, a dim ember glow in the throat and along the belly seams, scuttling alert posture, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, dark basalt and ash-grey crust hide with small dim ember-orange seams",
+      "status": "accepted",
       "sources": [
         "ember-scuttler"
-      ]
+      ],
+      "negative": "standing upright, bipedal, on hind legs, rearing up, humanoid posture, cartoony, cute, clowny, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, ground, floor, terrain, lava pool underfoot, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, fully glowing body, bright orange body, lava body, engulfed in flames, fire aura, cool blue, green, brown earth tones, dirt, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "Fire-lizard line T3 (young skink; role-name kept). Cooled-crust body, dim ember accent only — the lava fields own bright orange (palette bible)."
     },
     {
       "id": "frog",
@@ -661,11 +1098,22 @@
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a squat heavy mud toad, broad warty body, thick stubby limbs, wide blunt head with heavy-lidded eyes, glossy damp mottled skin, three-quarter view facing right, full body, painterly pixel art, soft volumetric shading, minimal outline, dark olive-brown warty hide streaked with drying mud, a pallid cream throat and belly, small dim chartreuse warts",
+      "status": "accepted",
       "sources": [
         "mud-toad"
-      ]
+      ],
+      "negative": "cute cartoon mascot, smiling, bright green, dry, dusty, standing upright, front view, facing camera, cartoon, chibi, anthropomorphic, weapon, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east",
+        "initImage": "sprites/monsters/frog.png",
+        "initImageStrength": 250
+      },
+      "notes": "Mud Toad reskin via img2img from the beloved existing frog.png — keep its pose/character, repaint surface into locked painterly style + swamp palette. If candidates lose the charm, keep the original."
     },
     {
       "id": "frost-lurker",
@@ -674,11 +1122,20 @@
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a tundra wolverine, stocky powerful low-slung body, dark shaggy fur, broad head with a storm-grey mask, frost-rimed claws, cold breath misting faintly pale cyan, prowling low stance, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, dark walnut and storm-grey fur with a faint pale cyan frost rime",
+      "status": "accepted",
       "sources": [
         "frost-lurker"
-      ]
+      ],
+      "negative": "standing upright, bipedal, on hind legs, rearing up, humanoid posture, cartoony, cute, clowny, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, ground, floor, terrain, snow underfoot, ice floor, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, white body, pale fur, cream fur, polar-white, warm brown, orange, red, yellow, warm hues, glowing bright, badger, honey badger, small, cute, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "Frost Lurker = tundra WOLVERINE (role-name kept). Inverted palette: dark body on the palest ground; cyan breath/rime is the accent."
     },
     {
       "id": "giant-spider",
@@ -687,11 +1144,20 @@
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a giant cave spider, wide low body on eight thick jointed legs, plated chitinous abdomen, clustered pale eyes, fangs lowered ready to strike, quick predatory crouch, three-quarter view facing right, full body, painterly pixel art, soft volumetric shading, minimal outline, pale chitin-grey and dun-brown carapace with bone-pale leg joints and a colorless pale glint in the eye cluster",
+      "status": "accepted",
       "sources": [
         "giant-spider"
-      ]
+      ],
+      "negative": "purple, violet, green, blue, red, colorful, glowing, magical glow, neon, black body, pitch dark, bright white, cute, mascot, web, hanging from thread, front view, facing camera, cartoon, chibi, anthropomorphic, weapon, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "T2 chaotic natural; shares the brood chitin language."
     },
     {
       "id": "glacier-bear",
@@ -700,11 +1166,20 @@
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a glacier bear, massive bear on all four legs, dark slate blue-grey fur with a darker face and claws, a translucent sheath of pale cyan ice armor grown across its shoulders and back, cold breath misting, heavy planted stance, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, dark slate-grey fur under translucent pale cyan ice plates",
+      "status": "accepted",
       "sources": [
         "glacier-bear"
-      ]
+      ],
+      "negative": "standing upright, bipedal, on hind legs, rearing up, humanoid posture, cartoony, cute, clowny, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, ground, floor, terrain, snow underfoot, ice floor, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, white body, pale fur, cream fur, polar-white, warm brown, orange, red, yellow, warm hues, glowing bright, small, cute, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "Bear dynasty T3 (its enemyShield ice armor made visible — the shatter mechanic's cyan shell). NEVER white — cold dark grey-blue per palette bible."
     },
     {
       "id": "granite-titan",
@@ -713,50 +1188,87 @@
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a hulking rock golem, a squat massive pile of huge raw granite chunks come alive, blunt heavy asymmetric boulders for shoulders and fists, thick short legs of stacked rubble, deep cracks between the chunks, small dark hollow eye pits, ponderous heavy stance, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, cool blue-grey rough granite like a fresh rockslide, chunky and blunt, dark hollow eyes",
+      "status": "accepted",
       "sources": [
         "granite-titan"
-      ]
+      ],
+      "negative": "robot, mechanical, machine, metal plating, armor suit, geometric blocks, square slabs, angular panels, symmetrical construction, seams and rivets, cartoony, cute, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, magical, arcane, runes, glowing, glow, energy, floating rocks, crystals, ground, floor, terrain, grass underfoot, dirt, rock underneath, stone platform, pedestal, base, perch, standing stones, stone circle, monument site, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, small, slender, human face, flesh, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east",
+        "colorImage": "sprites/monsters/granite-mammoth.png"
+      },
+      "notes": "Round 4: chunkier + rockier per user (round 3 read magical/rounded) — raw rockslide chunks, no mystic language; palette pinned to accepted granite-mammoth via colorImage."
     },
     {
-      "id": "greenslime",
-      "out": "sprites/monsters/greenslime.png",
+      "id": "moss-rat",
+      "out": "sprites/monsters/moss-rat.png",
       "size": {
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a small scruffy forest rat, low darting body close to the ground, coarse patchy dark fur, long thin tail, twitchy alert posture mid-scurry, small clumps of moss growing along its back and haunches, three-quarter view facing right, full body, painterly pixel art, soft volumetric shading, minimal outline, dark umber and charcoal-brown fur with muted moss tufts and a dull berry-red glint in the eyes",
+      "negative": "slime, blob, jelly, magical glow, cute cartoon mascot, standing upright, bright green body, mouse ears, front view, facing camera, cartoon, chibi, anthropomorphic, weapon, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "status": "accepted",
       "sources": [
         "forest-slime"
-      ]
+      ],
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "Forest-slime reconceptualized -> Moss Rat (Forest slice). New frame; frameMaps repoints forest-slime on landing."
     },
     {
-      "id": "ironwood-golem",
-      "out": "sprites/monsters/ironwood-golem.png",
+      "id": "ironclaw-badger",
+      "out": "sprites/monsters/ironclaw-badger.png",
       "size": {
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a huge burly badger, very low wide heavy body, broad muscular shoulders, oversized digging fore-claws, bristling coarse grizzled fur, head lowered in a braced territorial stance, bold pale stripes running along its face, three-quarter view facing right, full body, painterly pixel art, soft volumetric shading, minimal outline, grizzled grey-brown and dark umber coat with charcoal legs and ivory face stripes",
+      "negative": "slime, magical glow, cute cartoon mascot, standing upright, armor, small, front view, facing camera, cartoon, chibi, anthropomorphic, weapon, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "status": "accepted",
       "sources": [
         "ironwood-golem"
-      ]
+      ],
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "Ironwood-golem reconceptualized -> Ironclaw Badger (territorial fast-flurry beast, Forest slice). New frame; frameMaps repoints ironwood-golem on landing."
     },
     {
-      "id": "jumper",
-      "out": "sprites/monsters/jumper.png",
+      "id": "cliff-hopper",
+      "out": "sprites/monsters/cliff-hopper.png",
       "size": {
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a sturdy mountain goat, muscular compact body with powerful hindquarters, thick warm shaggy coat, ridged backswept curved horns, hard black hooves, braced stance with head lowered ready to kick and charge, three-quarter view facing right, full body, painterly pixel art, soft volumetric shading, minimal outline, warm buff and tan coat with a paler chest and ivory horns",
+      "negative": "standing upright, bipedal, on hind legs, rearing up, humanoid posture, ground, floor, terrain, grass, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, moss, mossy green, mid-grey body, glowing, magical glow, neon, colorful, sheep, wool ball, cute, farm animal, floppy ears, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "status": "accepted",
       "sources": [
         "cliff-hopper"
-      ]
+      ],
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "Cliff-hopper reconceptualized -> mountain goat (caprine line T1; humanoid jumper retired). New frame; frameMaps repointed. Name kept."
     },
     {
       "id": "jungle-ape",
@@ -765,24 +1277,42 @@
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a jungle ape in a knuckle-walk stance, powerful compact body, long muscular arms, heavy brow over a dark face, coarse shaggy fur, alert aggressive posture, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, dark russet-brown fur with a deep umber face and chest and dusky crimson eyes",
+      "status": "accepted",
       "sources": [
         "jungle-ape"
-      ]
+      ],
+      "negative": "silver back fur, gorilla silverback, monkey tail, bright green, neon green, lime green, warm tan, sandy, glowing, magical glow, colorful, cartoony, cute, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, ground, floor, terrain, grass underfoot, dirt, rock underneath, branch, tree, vine background, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "Ape family T2 (pack alpha, bush ambusher). No silver saddle yet — that's the T3 tell."
     },
     {
-      "id": "jungle-blowdarter",
-      "out": "sprites/monsters/jungle-blowdarter.png",
+      "id": "vine-chameleon",
+      "out": "sprites/monsters/vine-chameleon.png",
       "size": {
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a chameleon crouched low, curled spiral tail, independently swiveling turret eyes, body patterned like layered leaves, mouth parted mid-spit launching a venom dart, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, deep green-brown leaf-mottled hide with a dusky crimson eye and a crimson throat patch",
+      "negative": "blowpipe, humanoid, lizard standing upright, bright green, neon green, lime green, warm tan, sandy, glowing, magical glow, colorful, cartoony, cute, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, ground, floor, terrain, grass underfoot, dirt, rock underneath, branch, tree, vine background, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "status": "accepted",
       "sources": [
         "jungle-blowdarter"
-      ]
+      ],
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "Chameleon family T2 (was Jungle Blowdarter — display renamed Vine Chameleon). New frame; frameMaps repointed."
     },
     {
       "id": "jungle-snake",
@@ -791,11 +1321,20 @@
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a jungle snake coiled to strike, slender muscular body in tight coils, head raised with fangs bared, glossy wet-sheen scales, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, deep green-brown scales with faint darker banding and dusky crimson eyes",
+      "status": "accepted",
       "sources": [
         "jungle-snake"
-      ]
+      ],
+      "negative": "legs, wings, cobra hood, bright green, neon green, lime green, warm tan, sandy, glowing, magical glow, colorful, cartoony, cute, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, ground, floor, terrain, grass underfoot, dirt, rock underneath, branch, tree, vine background, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "Snake family T2 (swarm follower; pounces from ambush bushes). Near-camo body, crimson accent carries readability (palette bible jungle rule)."
     },
     {
       "id": "jungle-stalker",
@@ -804,24 +1343,42 @@
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a lean young panther prowling low, sleek muscular body, long tail held low, ears flat, fangs bared in a silent snarl, coiled stalking crouch, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, dark russet near-black coat with faint darker rosettes and dusky crimson eyes",
+      "status": "accepted",
       "sources": [
         "jungle-stalker"
-      ]
+      ],
+      "negative": "standing upright, bipedal, on hind legs, rearing up, humanoid posture, bright green, neon green, lime green, warm tan, sandy, glowing, magical glow, colorful, cartoony, cute, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, ground, floor, terrain, grass underfoot, dirt, rock underneath, branch, tree, vine background, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, heavy bulky build, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "Cat family T3 (fast follower; role-name kept). Leaner than the T4 Hunting Panther."
     },
     {
-      "id": "magma-brute",
-      "out": "sprites/monsters/magma-brute.png",
+      "id": "magma-tortoise",
+      "out": "sprites/monsters/magma-tortoise.png",
       "size": {
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a molten tortoise, heavy domed shell of cracked cooling obsidian plates with dim ember light seeping through the seams, thick stumpy legs of grey crusted hide, blunt head held low, slow heavy stance, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, dark obsidian and ash-grey shell with dim ember-orange glow in the cracks",
+      "negative": "standing upright, bipedal, on hind legs, rearing up, humanoid posture, cartoony, cute, clowny, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, ground, floor, terrain, lava pool underfoot, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, fully glowing body, bright orange body, lava body, engulfed in flames, fire aura, cool blue, green, brown earth tones, dirt, cute cartoon turtle, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "status": "accepted",
       "sources": [
         "magma-brute"
-      ]
+      ],
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "Tortoise line T3 (was Magma Brute — display renamed Magma Tortoise, humanoid retired). New frame; frameMaps repointed."
     },
     {
       "id": "mire-hex-spitter",
@@ -830,11 +1387,20 @@
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "an elder swamp witch vessel, tall gaunt faceless figure of rotted reeds, bone and waterlogged cloth, a weathered bone mask hiding any face, elongated crooked inhuman frame stooped forward, skeletal hands trailing dim chartreuse hex-light, tattered robes dripping bog water, three-quarter view facing right, full body, painterly pixel art, soft volumetric shading, minimal outline, dark bog-grey and olive-black rags with pale bone ornaments, no visible skin",
+      "status": "accepted",
       "sources": [
         "mire-hex-spitter"
-      ]
+      ],
+      "negative": "human face, eyes, mouth, human skin, flesh tone, pretty, young woman, pointed witch hat, broomstick, bright glow, front view, facing camera, cartoon, chibi, anthropomorphic, weapon, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "Mire Hex Spitter = elder escalation of the Bog Witch vessel (T3 caster lineage). Humanoid: reference brute-v8 proportions handling."
     },
     {
       "id": "mire-stalker",
@@ -843,11 +1409,20 @@
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a venomous marsh serpent, thick muscular snake body weaving low through the mud in a coiled ambush posture, head raised ready to strike with fangs bared, glossy wet scales, three-quarter view facing right, full body, painterly pixel art, soft volumetric shading, minimal outline, dark olive-black scales with faint mottled banding, a pallid cream underbelly and a dim chartreuse venom drip at the fangs",
+      "status": "accepted",
       "sources": [
         "mire-stalker"
-      ]
+      ],
+      "negative": "legs, wings, cobra hood, cartoon, cute, bright green, dry, dusty, front view, facing camera, cartoon, chibi, anthropomorphic, weapon, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "Mire Stalker reconceptualized -> venomous marsh serpent (Swamp slice). Name kept (role-name still fits)."
     },
     {
       "id": "mountain-colossus",
@@ -856,11 +1431,21 @@
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a vast hunched rock giant, a towering golem of huge weathered granite masses leaning forward like a collapsing cliff, long heavy arms of jagged natural rock hanging low, cracked craggy body worn by wind, small dark hollow eye pits high on the hunched bulk, slow looming stance, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, cool blue-grey weathered crag rock, jagged and natural, dark hollow eyes",
+      "status": "accepted",
       "sources": [
         "mountain-colossus"
-      ]
+      ],
+      "negative": "robot, mechanical, machine, metal plating, armor suit, geometric blocks, square slabs, angular panels, symmetrical construction, seams and rivets, cartoony, cute, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, magical, arcane, runes, glowing, glow, energy, floating rocks, crystals, ground, floor, terrain, grass underfoot, dirt, rock underneath, stone platform, pedestal, base, perch, standing stones, stone circle, monument site, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, standing stones, monolith, megalith, square, small, squat, human face, flesh, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east",
+        "colorImage": "sprites/monsters/granite-mammoth.png"
+      },
+      "notes": "Round 4: standing-stone concept dropped (it drew square slabs AND a henge ground). Now a hunched cliff-like giant — taller and leaning vs the titan's squat pile; palette pinned to granite-mammoth via colorImage."
     },
     {
       "id": "peak-archer",
@@ -869,24 +1454,42 @@
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a broad heavy mountain vessel, faceless humanoid figure of dark rough stone and hide wrappings, wide heavy build with thick arms hoisting a huge boulder overhead with both hands, steady braced stance, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, dark weathered rock skin with dun leather wrappings and a faint cold glint where the eyes would be",
+      "status": "accepted",
       "sources": [
         "peak-archer"
-      ]
+      ],
+      "negative": "human face, eyes, mouth, human skin, flesh tone, hair, beard, metal armor, medieval soldier uniform, knight, cartoony, cute, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, ground, floor, terrain, grass, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, moss, mossy green, glowing bright, neon, colorful, lean, skinny, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "Round 2: img2img dropped (was reading as the cave brute). Same boulder-hoist concept, own silhouette from text."
     },
     {
-      "id": "plague-hydra",
-      "out": "sprites/monsters/plague-hydra.png",
+      "id": "plague-shell-snapper",
+      "out": "sprites/monsters/plague-shell-snapper.png",
       "size": {
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a colossal rotting snapping turtle, huge cracked domed shell overgrown with rotting fungus and diseased growths, heavy clawed legs, scarred thick neck with a hooked beak open in a hiss, glossy diseased hide, three-quarter view facing right, full body, painterly pixel art, soft volumetric shading, minimal outline, dark olive-black and bruised umber shell with sickly chartreuse fungal growths seated dimly in the cracks, pallid scarred throat",
+      "negative": "cute cartoon turtle, bright green, dry, dusty, small, standing upright, bipedal, on hind legs, rearing up, humanoid posture, front view, facing camera, cartoon, chibi, anthropomorphic, weapon, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "status": "accepted",
       "sources": [
         "plague-hydra"
-      ]
+      ],
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "Plague-hydra reconceptualized -> Plague-Shell Snapper (Swamp slice). New frame; frameMaps repoints plague-hydra on landing."
     },
     {
       "id": "prairie-wolf",
@@ -917,11 +1520,42 @@
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a young yeti, lean shaggy creature of dark storm-grey fur, long powerful arms, a heavy brow over a beastly face, one clawed hand raising a conjured shard of pale glowing rime ice to hurl, hunched ready stance, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, dark storm-grey shaggy fur with frost-rimed forearms and a pale cyan ice shard glow",
+      "status": "accepted",
       "sources": [
         "rime-caster"
-      ]
+      ],
+      "negative": "cartoony, cute, clowny, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, ground, floor, terrain, snow underfoot, ice floor, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, white body, pale fur, cream fur, polar-white, warm brown, orange, red, yellow, warm hues, glowing bright, large, massive, old, front view, facing camera, cartoon, chibi, human face, human skin, clothing, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "Yeti line T3 (role-name kept — it casts rime). Young and lean vs the T4 hulk. Yetis are naturally bipedal: anthropomorphic ban lifted."
+    },
+    {
+      "id": "hoarfrost-yeti",
+      "out": "sprites/monsters/hoarfrost-yeti.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "a hulking hoarfrost yeti, massive shaggy beast of dark storm-grey fur, immense shoulders and long arms with frost-rimed forearms, a heavy brow over a beastly snarling face, hoisting a huge jagged chunk of pale cyan glacier ice overhead to hurl, wide braced stance, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, dark storm-grey shaggy fur with pale cyan ice rime and a glowing ice chunk",
+      "negative": "cartoony, cute, clowny, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, ground, floor, terrain, snow underfoot, ice floor, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, white body, pale fur, cream fur, polar-white, warm brown, orange, red, yellow, warm hues, glowing bright, small, lean, young, front view, facing camera, cartoon, chibi, human face, human skin, clothing, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "status": "accepted",
+      "sources": [
+        "hoarfrost-yeti"
+      ],
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "Yeti line T4 apex — FIRST-EVER sprite (was unmapped, no art existed). frameMaps entry added."
     },
     {
       "id": "sand-scorpion",
@@ -930,24 +1564,42 @@
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a desert scorpion, compact armored body, broad crab-like pincers held wide, segmented armored tail arched high over its back ending in a bulbous stinger, wide planted legs, poised aggressive stance, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, dark sun-baked umber and terracotta carapace with dusty dark gold segment edges",
+      "status": "accepted",
       "sources": [
         "sand-scorpion"
-      ]
+      ],
+      "negative": "shrimp, prawn, lobster, crayfish, curled-under tail, tail tucked beneath, crab body, cartoony, cute, clowny, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, ground, floor, terrain, sand underfoot, dune, dirt, rock underneath, stone platform, pedestal, base, perch, throne object, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, pale tan body, sandy beige body, bones, skeleton, green, bright green, glowing body, neon, colorful, horror, creepy, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "Scorpion line T2 (fast slow-applier). Anti-shrimp spec: wide pincers, tail arched HIGH (old sprites read as dune shrimp). Dark body on the palest ground in the game (palette bible)."
     },
     {
-      "id": "sand-weaver",
-      "out": "sprites/monsters/sand-weaver.png",
+      "id": "gilded-scarab",
+      "out": "sprites/monsters/gilded-scarab.png",
       "size": {
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a large gilded scarab beetle, broad domed carapace chased with bright gold filigree lines, six sturdy legs, a glowing amber sun-disc emblem on its shell, horned head lowered, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, dark bronze-umber carapace with gold-chased filigree and a glowing sun-amber disc",
+      "negative": "shrimp, prawn, lobster, crayfish, curled-under tail, tail tucked beneath, crab body, cartoony, cute, clowny, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, ground, floor, terrain, sand underfoot, dune, dirt, rock underneath, stone platform, pedestal, base, perch, throne object, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, pale tan body, bones, green, neon, colorful, wings spread, flying, small, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "status": "accepted",
       "sources": [
         "sandweaver"
-      ]
+      ],
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "Scarab line T3 (was Sandweaver — display renamed Gilded Scarab). The standoff kiter; gilding grows. New frame; frameMaps repointed."
     },
     {
       "id": "savanna-hawk",
@@ -977,11 +1629,20 @@
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a massive silverback gorilla, hulking shoulders, knuckle-planted stance, heavy brow and fierce glare, coarse dark fur with a silver-grey saddle across the back, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, dark umber-brown fur with a pale silver back and dusky crimson eyes",
+      "status": "accepted",
       "sources": [
         "silverback"
-      ]
+      ],
+      "negative": "monkey tail, small, bright green, neon green, lime green, warm tan, sandy, glowing, magical glow, colorful, cartoony, cute, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, ground, floor, terrain, grass underfoot, dirt, rock underneath, branch, tree, vine background, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "Ape family T3: the silver saddle appears."
     },
     {
       "id": "stampede-bull",
@@ -1011,11 +1672,20 @@
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a heavy desert basilisk lizard, thick low-slung body on strong splayed legs, rough stone-like scute ridges along the back, a blunt powerful head with burning amber eyes fixed in a petrifying stare, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, dark sun-baked umber and terracotta hide with dim amber eyes",
+      "status": "accepted",
       "sources": [
         "stone-basilisk"
-      ]
+      ],
+      "negative": "standing upright, bipedal, on hind legs, rearing up, humanoid posture, cartoony, cute, clowny, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, ground, floor, terrain, sand underfoot, dune, dirt, rock underneath, stone platform, pedestal, base, perch, throne object, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, pale tan body, sandy beige body, bones, skeleton, green, bright green, glowing body, neon, colorful, snake, legless, frilled neck fan, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "Basilisk line T2 (root bruiser): the petrifying gaze IS the root — the amber stare is the one glow it gets."
     },
     {
       "id": "stone-eagle",
@@ -1024,24 +1694,42 @@
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a mountain eagle in a hunting swoop, wings swept back mid-dive, sharp hooked beak open in a cry, talons extended forward to strike, airborne with nothing beneath it, three-quarter view facing right, full body, painterly pixel art, soft volumetric shading, minimal outline, warm buff and tan feathers with slate-grey wingtips, an ivory beak and talons",
+      "status": "accepted",
       "sources": [
         "stone-eagle"
-      ]
+      ],
+      "negative": "ground, floor, terrain, grass, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, moss, mossy green, mid-grey body, glowing, magical glow, neon, colorful, perched, standing, folded wings, cute, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "Flyer line T2: dive-bombing eagle, airborne pose (charge IS the dive)."
     },
     {
-      "id": "swamp-hydra",
-      "out": "sprites/monsters/swamp-hydra.png",
+      "id": "moss-shell-snapper",
+      "out": "sprites/monsters/moss-shell-snapper.png",
       "size": {
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a giant snapping turtle, massive domed shell crusted with thick moss and bog growth, heavy clawed legs planted low in the muck, thick neck extended with a sharp hooked beak open to bite, glossy wet hide, three-quarter view facing right, full body, painterly pixel art, soft volumetric shading, minimal outline, dark olive-black shell with drab moss patches, bog-brown leathery skin and a pallid throat, a dim chartreuse film at the jaws",
+      "negative": "cute cartoon turtle, bright green, dry, dusty, standing upright, bipedal, on hind legs, rearing up, humanoid posture, front view, facing camera, cartoon, chibi, anthropomorphic, weapon, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "status": "accepted",
       "sources": [
         "swamp-hydra"
-      ]
+      ],
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "Swamp-hydra reconceptualized -> Moss-Shell Snapper (Swamp slice). New frame; frameMaps repoints swamp-hydra on landing."
     },
     {
       "id": "swampslime",
@@ -1050,377 +1738,617 @@
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a swamp slime creature, rounded slumping blob of thick dark bog muck, glossy wet dripping surface with slow oozing trickles, three-quarter view facing right, full body, painterly pixel art, soft volumetric shading, minimal outline, dark olive-black and bog-brown muck with a dim sickly chartreuse glisten",
+      "status": "accepted",
       "sources": [
         "bog-slime",
         "slime"
-      ]
+      ],
+      "negative": "jelly, translucent, bright green, cute, smiling face, googly eyes, mascot, dry, dusty, debris, leaves, sticks, front view, facing camera, cartoon, chibi, anthropomorphic, weapon, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east",
+        "initImage": "sprites/monsters/swampslime.png",
+        "initImageStrength": 250
+      },
+      "notes": "Regen round 2 per user: 'stick closer to the original, maybe img2img' — img2img from original swampslime.png @250 (frog recipe), debris clause dropped, blob silhouette kept; surface repainted muddy/wet. Display: Mire Ooze."
     },
     {
-      "id": "desert_cobra",
-      "out": "sprites/monsters/T4/desert_cobra.png",
+      "id": "sunshield-scarab",
+      "out": "sprites/monsters/sunshield-scarab.png",
       "size": {
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a great sunshield scarab beetle, wide carapace plates flared outward around its body like a radiant shield, gold-chased shell edges, six sturdy legs, a blazing amber sun-disc emblem at the center of its back, horned head, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, dark bronze-umber body under flared gold-edged shield plates with a blazing sun-amber disc",
+      "negative": "shrimp, prawn, lobster, crayfish, curled-under tail, tail tucked beneath, crab body, cartoony, cute, clowny, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, ground, floor, terrain, sand underfoot, dune, dirt, rock underneath, stone platform, pedestal, base, perch, throne object, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, pale tan body, bones, green, neon, colorful, wings spread, flying, small, snake, cobra, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "status": "accepted",
       "sources": [
         "sandspitter-cobra"
-      ]
+      ],
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "Scarab line T4 apex (was Sandspitter Cobra — display renamed Sunshield Scarab; its enemyShield carapace-flare made literal). New frame; frameMaps repointed."
     },
     {
-      "id": "desert_iguana",
-      "out": "sprites/monsters/T4/desert_iguana.png",
+      "id": "dune-basilisk",
+      "out": "sprites/monsters/dune-basilisk.png",
       "size": {
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a colossal desert basilisk lizard, immense low-slung heavily armored body, thick interlocking scute plates, a crown of jagged horns over the brow, a wide powerful head with burning amber eyes fixed in a petrifying stare, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, dark umber and burnt terracotta hide under heavy dusty-gold-edged plating with dim amber eyes",
+      "negative": "standing upright, bipedal, on hind legs, rearing up, humanoid posture, cartoony, cute, clowny, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, ground, floor, terrain, sand underfoot, dune, dirt, rock underneath, stone platform, pedestal, base, perch, throne object, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, pale tan body, sandy beige body, bones, skeleton, green, bright green, glowing body, neon, colorful, snake, legless, small, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "status": "accepted",
       "sources": [
         "dune-basilisk"
-      ]
+      ],
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "Basilisk line T4 apex (it has real plating). New id-named frame replaces T4/desert_iguana.png."
     },
     {
-      "id": "desert_snake",
-      "out": "sprites/monsters/T4/desert_snake.png",
+      "id": "sand-viper",
+      "out": "sprites/monsters/sand-viper.png",
       "size": {
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a desert sand viper coiled to strike, thick muscular body in loose coils, broad wedge-shaped head raised with fangs bared, keeled rough scales, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, dark umber scales with burnt terracotta banding and a dusty dark gold underside",
+      "negative": "legs, wings, cobra hood, cartoony, cute, clowny, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, ground, floor, terrain, sand underfoot, dune, dirt, rock underneath, stone platform, pedestal, base, perch, throne object, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, pale tan body, sandy beige body, bones, skeleton, green, bright green, glowing body, neon, colorful, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "status": "accepted",
       "sources": [
         "sand-viper"
-      ]
+      ],
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "T4 fast slow-applier (stays a snake for variety per user). New id-named frame replaces T4/desert_snake.png."
     },
     {
-      "id": "graveyard_dog",
-      "out": "sprites/monsters/T4/graveyard_dog.png",
+      "id": "plague-hound",
+      "out": "sprites/monsters/plague-hound.png",
       "size": {
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a skeletal plague hound, the weathered skeleton of a large hound with dried hide stretched over some bones, bared bone fangs, a necrotic green glow in the eye sockets and seeping between the ribs, fast lunging charge posture held low, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, dirty bone-grey and desiccated grey-brown with bruised violet shading and plague-green rib glow",
+      "negative": "clean white bone, bright white, zombie, rotting flesh, gore, blood, warm flesh tones, living skin, yellow-green, bright green body, cartoony, cute, clowny, rounded soft shapes, toy-like, plush, mascot, ground, floor, terrain, dirt, ash underfoot, grave, tombstone, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, standing upright, bipedal, on hind legs, rearing up, humanoid posture, walking, mid-stride, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "status": "accepted",
       "sources": [
         "plague-hound"
-      ]
+      ],
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "Fast charger: bone hound. New id-named frame replaces T4/graveyard_dog.png."
     },
     {
-      "id": "graveyard_gigaskeleton",
-      "out": "sprites/monsters/T4/graveyard_gigaskeleton.png",
+      "id": "charnel-brute",
+      "out": "sprites/monsters/charnel-brute.png",
       "size": {
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a hulking charnel amalgam beast, a shambling mass of many different animals' fused dirty bones — ribcages, tusks and antlers jutting from its bulk — walking on mismatched skeletal limbs, a necrotic green glow deep in its hollows, slow heavy anchor stance, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, dirty bone-grey and grey-brown fused bone mass with bruised violet shadows and plague-green glow in the gaps",
+      "negative": "clean white bone, bright white, zombie, rotting flesh, gore, blood, warm flesh tones, living skin, yellow-green, bright green body, cartoony, cute, clowny, rounded soft shapes, toy-like, plush, mascot, ground, floor, terrain, dirt, ash underfoot, grave, tombstone, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, single skeleton, humanoid skeleton, standing upright, bipedal, on hind legs, rearing up, humanoid posture, small, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "status": "accepted",
       "sources": [
         "charnel-brute"
-      ]
+      ],
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "Slow anchor: the bone AMALGAM hulk ('charnel' made literal). New id-named frame replaces T4/graveyard_gigaskeleton.png."
     },
     {
-      "id": "graveyard_rat",
-      "out": "sprites/monsters/T4/graveyard_rat.png",
+      "id": "bone-rat",
+      "out": "sprites/monsters/bone-rat.png",
       "size": {
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a skittering rat skeleton, tiny weathered rodent bones held in a scurrying posture, a long bare tail of vertebrae, pinprick necrotic green lights in the empty eye sockets, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, dirty bone-grey with grey-brown staining, bruised violet shading and tiny plague-green eye points",
+      "negative": "clean white bone, bright white, zombie, rotting flesh, gore, blood, warm flesh tones, living skin, yellow-green, bright green body, cartoony, cute, clowny, rounded soft shapes, toy-like, plush, mascot, ground, floor, terrain, dirt, ash underfoot, grave, tombstone, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, standing upright, bipedal, on hind legs, rearing up, humanoid posture, large, big, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "status": "accepted",
       "sources": [
         "plague-rat"
-      ]
+      ],
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "Flood unit (was Plague Rat — display renamed Bone Rat): the Gravewright's risen vermin. New frame; frameMaps repointed."
     },
     {
-      "id": "graveyard_skeleton",
-      "out": "sprites/monsters/T4/graveyard_skeleton.png",
+      "id": "bone-crawler",
+      "out": "sprites/monsters/bone-crawler.png",
       "size": {
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a skeletal beast crawler, low quadruped skeleton of a lean animal held together by dried sinew, dirty weathered bones, crouched scuttling posture, a dim necrotic green glow in the empty eye sockets, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, dirty bone-grey and grey-brown bones with bruised violet shadow tones and plague-green socket glow",
+      "negative": "clean white bone, bright white, zombie, rotting flesh, gore, blood, warm flesh tones, living skin, yellow-green, bright green body, cartoony, cute, clowny, rounded soft shapes, toy-like, plush, mascot, ground, floor, terrain, dirt, ash underfoot, grave, tombstone, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, standing upright, bipedal, on hind legs, rearing up, humanoid posture, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "status": "accepted",
       "sources": [
         "bone-crawler"
-      ]
+      ],
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "Swarm backbone: undead BEAST skeleton (no zombies — the wasteland rule). Dirty bone, never clean white. New id-named frame replaces T4/graveyard_skeleton.png."
     },
     {
-      "id": "graveyard_vulture",
-      "out": "sprites/monsters/T4/graveyard_vulture.png",
+      "id": "carrion-vulture",
+      "out": "sprites/monsters/carrion-vulture.png",
       "size": {
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "an undead carrion vulture in flight, ragged skeletal bird with tattered near-black feathers over exposed dirty bone, a bare bone skull head with a hooked beak, necrotic green glow in the eye sockets, wings spread mid-flap, airborne with nothing beneath it, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, tattered near-black feathers over dirty bone with bruised violet shading and plague-green eye glow",
+      "negative": "clean white bone, bright white, zombie, rotting flesh, gore, blood, warm flesh tones, living skin, yellow-green, bright green body, cartoony, cute, clowny, rounded soft shapes, toy-like, plush, mascot, ground, floor, terrain, dirt, ash underfoot, grave, tombstone, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, perched, standing, folded wings, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "status": "accepted",
       "sources": [
         "carrion-vulture"
-      ]
+      ],
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "Ranged contagion-lobber: bone vulture, airborne (flyer lesson). New id-named frame replaces T4/graveyard_vulture.png."
     },
     {
-      "id": "jungle_iguana",
-      "out": "sprites/monsters/T4/jungle_iguana.png",
+      "id": "thornback-lizard",
+      "out": "sprites/monsters/thornback-lizard.png",
       "size": {
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "an elder thornback chameleon, large gnarled heavy body bristling with long thorn spikes along the back and tail, weathered scaly hide, turret eyes, mouth open mid-spit dripping venom, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, deep green-brown gnarled hide with dark russet thorn spikes and dusky crimson eyes",
+      "negative": "bird, wings, humanoid, small, bright green, neon green, lime green, warm tan, sandy, glowing, magical glow, colorful, cartoony, cute, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, ground, floor, terrain, grass underfoot, dirt, rock underneath, branch, tree, vine background, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "status": "accepted",
       "sources": [
         "thornback-lizard"
-      ]
+      ],
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "Chameleon family T4 apex: the thorn-spiked elder. New id-named frame replaces T4/jungle_iguana.png."
     },
     {
-      "id": "jungle_panther",
-      "out": "sprites/monsters/T4/jungle_panther.png",
+      "id": "hunting-panther",
+      "out": "sprites/monsters/hunting-panther.png",
       "size": {
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a powerful hunting panther mid-prowl, heavy muscular shoulders, long low body, thick tail held low, fangs bared, intense forward stare, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, near-black dark russet coat with faint darker rosettes and dusky crimson eyes",
+      "negative": "standing upright, bipedal, on hind legs, rearing up, humanoid posture, bright green, neon green, lime green, warm tan, sandy, glowing, magical glow, colorful, cartoony, cute, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, ground, floor, terrain, grass underfoot, dirt, rock underneath, branch, tree, vine background, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, small, skinny, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "status": "accepted",
       "sources": [
         "hunting-panther"
-      ]
+      ],
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "Cat family T4 (swarm follower): the stalker grown heavy. New id-named frame replaces T4/jungle_panther.png."
     },
     {
-      "id": "jungle_silverback",
-      "out": "sprites/monsters/T4/jungle_silverback.png",
+      "id": "apex-silverback",
+      "out": "sprites/monsters/apex-silverback.png",
       "size": {
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a colossal scarred silverback gorilla, immense shoulders and arms, deep old battle scars across the chest and face, a broad pale silver mantle from shoulders to hips, knuckle-planted dominant stance, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, dark umber fur with a wide pale silver mantle, scarred hide and dusky crimson eyes",
+      "negative": "monkey tail, small, lean, bright green, neon green, lime green, warm tan, sandy, glowing, magical glow, colorful, cartoony, cute, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, ground, floor, terrain, grass underfoot, dirt, rock underneath, branch, tree, vine background, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "status": "accepted",
       "sources": [
         "apex-silverback"
-      ]
+      ],
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "Ape family T4 apex: bigger mantle + scars. New id-named frame replaces T4/jungle_silverback.png."
     },
     {
-      "id": "jungle_snake",
-      "out": "sprites/monsters/T4/jungle_snake.png",
+      "id": "emerald-constrictor",
+      "out": "sprites/monsters/emerald-constrictor.png",
       "size": {
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a massive emerald constrictor, thick powerful coils stacked in an ambush knot, broad head raised to lunge with fangs bared, glossy dark scales, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, deep dark emerald scales shading to near-black with a pallid underbelly and dusky crimson eyes",
+      "negative": "legs, wings, cobra hood, bright green, neon green, lime green, warm tan, sandy, glowing, magical glow, colorful, cartoony, cute, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, ground, floor, terrain, grass underfoot, dirt, rock underneath, branch, tree, vine background, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, thin, slender, small, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "status": "accepted",
       "sources": [
         "emerald-constrictor"
-      ]
+      ],
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "Snake family T4 apex (solo ramping elite — it squeezes tighter). Deep DARK emerald only, never bright. New id-named frame replaces T4/jungle_snake.png."
     },
     {
-      "id": "mountain_big",
-      "out": "sprites/monsters/T4/mountain_big.png",
+      "id": "permafrost-behemoth",
+      "out": "sprites/monsters/permafrost-behemoth.png",
       "size": {
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a colossal permafrost musk ox, immense shaggy body of dark walnut and storm-grey wool sheathed in massive slabs of translucent blue glacier ice, huge curved horns sweeping down and out, head lowered, a dim pale cyan glow deep inside the ice plate, slow dominating stance, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, dark shaggy coat under translucent blue-cyan glacier ice slabs with huge dark horns",
+      "negative": "standing upright, bipedal, on hind legs, rearing up, humanoid posture, cartoony, cute, clowny, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, ground, floor, terrain, snow underfoot, ice floor, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, white body, pale fur, cream fur, polar-white, warm brown, orange, red, yellow, warm hues, glowing bright, small, cute, bison, buffalo, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "status": "accepted",
       "sources": [
         "permafrost-behemoth"
-      ]
+      ],
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "Apex elite = ICE-PLATED MUSK OX (extreme plating made visible: a walking glacier). New id-named frame; previously borrowed T4/mountain_big.png cross-biome."
     },
     {
-      "id": "mountain_dino",
-      "out": "sprites/monsters/T4/mountain_dino.png",
+      "id": "cragback-rhino",
+      "out": "sprites/monsters/cragback-rhino.png",
       "size": {
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a massive mountain rhinoceros, heavy muscular body on four thick legs, jagged slabs of dark weathered rock armoring its back and shoulders like a crag, a huge ivory nose horn, a small dark deep-set eye beneath a heavy stone brow ridge, braced charging stance with head lowered, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, warm dun-brown hide under dark blue-grey rock plates with a massive ivory horn",
+      "negative": "standing upright, bipedal, on hind legs, rearing up, humanoid posture, cartoony, cute, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, ground, floor, terrain, grass, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, moss, mossy green, glowing bright, neon, colorful, dinosaur, triceratops, large eye, bright eye, cartoon eye, small, cute, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "status": "accepted",
       "sources": [
         "cragback-rhino"
-      ]
+      ],
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "Round 2 per user: stay close to round-1 candidate 1, fix the eye — small, dark, deep-set under a heavy brow (was reading weird)."
     },
     {
-      "id": "mountain_elephant",
-      "out": "sprites/monsters/T4/mountain_elephant.png",
+      "id": "granite-mammoth",
+      "out": "sprites/monsters/granite-mammoth.png",
       "size": {
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a colossal living rock golem shaped like a mammoth, four-legged mountain of stacked granite slabs with a shaggy silhouette of hanging stone shards, a huge stone head with long curved ivory tusks and a short rock trunk, slow heavy stance, pale lichen crusted along the back, a dim cold sky-blue glow in the eye seams, three-quarter view facing right, full body, painterly pixel art, soft volumetric shading, minimal outline, dark basalt-grey stone body with pale lichen crust, ivory tusks and a faint cold blue inner glow",
+      "negative": "standing upright, bipedal, on hind legs, rearing up, humanoid posture, ground, floor, terrain, grass, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, moss, mossy green, bright glow, neon, colorful, fur, flesh, realistic elephant, small, cute, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "status": "accepted",
       "sources": [
         "granite-mammoth"
-      ]
+      ],
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "Golem line T4 apex: the mammoth-shaped stone golem (name made honest). New id-named frame replaces legacy T4/mountain_elephant.png."
     },
     {
-      "id": "mountain_ram",
-      "out": "sprites/monsters/T4/mountain_ram.png",
+      "id": "avalanche-tyrant",
+      "out": "sprites/monsters/avalanche-tyrant.png",
       "size": {
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a colossal tyrant mountain ram, hulking scarred body of dense muscle under heavy matted wool, immense curled spiral horns with cracked and chipped edges, old battle scars across the face and flanks, braced dominant charging stance with head lowered, three-quarter view facing right, full body, painterly pixel art, soft volumetric shading, minimal outline, warm dun-brown and buff coat with a dark scarred face and massive ivory spiral horns",
+      "negative": "standing upright, bipedal, on hind legs, rearing up, humanoid posture, ground, floor, terrain, grass, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, moss, mossy green, mid-grey body, glowing, magical glow, neon, colorful, cute, farm sheep, small, small horns, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "status": "accepted",
       "sources": [
         "avalanche-tyrant"
-      ]
+      ],
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "Caprine line T4 apex: scarred tyrant ram. New id-named frame replaces legacy T4/mountain_ram.png; frameMaps repointed."
     },
     {
-      "id": "mountain_roc",
-      "out": "sprites/monsters/T4/mountain_roc.png",
+      "id": "cliffside-roc",
+      "out": "sprites/monsters/cliffside-roc.png",
       "size": {
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "an immense mountain roc in flight, vast spread wings, powerful talons clutching a large boulder to drop, sharp hooked ivory beak, fierce glinting eyes, airborne with nothing beneath it, three-quarter view facing right, full body, painterly pixel art, soft volumetric shading, minimal outline, warm dun-brown and buff feathers with slate-grey flight feathers, ivory beak and talons",
+      "negative": "ground, floor, terrain, grass, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, moss, mossy green, mid-grey body, glowing, magical glow, neon, colorful, perched, standing, folded wings, small, cute, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "status": "accepted",
       "sources": [
         "cliffside-roc"
-      ]
+      ],
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "Flyer line T4 apex: the roc drops boulders (kiter) — it CARRIES one. New id-named frame replaces legacy T4/mountain_roc.png."
     },
     {
-      "id": "trench_crab",
-      "out": "sprites/monsters/T4/trench_crab.png",
+      "id": "hadal-stalker",
+      "out": "sprites/monsters/hadal-stalker.png",
       "size": {
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a giant deep-sea spider crab, towering armored crab on long jointed spindly legs, one massive raised crusher claw, a spiked angular carapace, small glowing teal-cyan eyes and biolume points at the leg joints, looming stalking stance, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, deep violet-blue and blue-black shell with pale grey-blue joints and teal biolume points",
+      "negative": "warm colors, red, orange, yellow, brown, green, bone, skeleton, demon, horns, ghost, supernatural aura, cartoony, cute, clowny, rounded soft shapes, toy-like, plush, mascot, ground, floor, terrain, seabed, sand underfoot, rock underneath, water surface, waves, bubbles background, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, small, cute, shrimp, lobster, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "status": "accepted",
       "sources": [
         "hadal-stalker"
-      ]
+      ],
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "Cadence elite: the multi-limbed stalker made literal — its raised crusher claw is the every-5th slam. New id-named frame replaces T4/trench_crab.png."
     },
     {
-      "id": "trench_demon",
-      "out": "sprites/monsters/T4/trench_demon.png",
+      "id": "elder-leviathan",
+      "out": "sprites/monsters/elder-leviathan.png",
       "size": {
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a colossal abyssal anglerfish, immense bulbous body with a vast gaping maw of long curved translucent fangs, small dead pale eyes, a long dorsal stalk dangling a blazing teal-cyan lure before its jaws, ragged fins with glowing biolume edges, slow looming pose, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, abyssal blue-black hide with a pale grey-blue belly and a blazing teal biolume lure",
+      "negative": "warm colors, red, orange, yellow, brown, green, bone, skeleton, demon, horns, ghost, supernatural aura, cartoony, cute, clowny, rounded soft shapes, toy-like, plush, mascot, ground, floor, terrain, seabed, sand underfoot, rock underneath, water surface, waves, bubbles background, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, small, cute, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "status": "accepted",
       "sources": [
         "elder-leviathan"
-      ]
+      ],
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "APEX (was wearing trench_demon.png — supernatural retired per user): the colossal anglerfish, its lure = the biome's brightest light. New id-named frame replaces T4/trench_demon.png."
     },
     {
-      "id": "trench_serpent",
-      "out": "sprites/monsters/T4/trench_serpent.png",
+      "id": "abyssal-serpent",
+      "out": "sprites/monsters/abyssal-serpent.png",
       "size": {
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a huge abyssal sea serpent, long muscular eel-like body in heavy coils, head reared to strike with a maw of long visible needle fangs, rows of teal-cyan bioluminescent spots along its flanks and glowing ragged fin edges, glowing cyan eyes, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, abyssal blue-black scales with a pale grey-blue underbelly and bright teal biolume accents",
+      "negative": "legs, arms, dragon wings, warm colors, red, orange, yellow, brown, green, bone, skeleton, demon, horns, ghost, supernatural aura, cartoony, cute, clowny, rounded soft shapes, toy-like, plush, mascot, ground, floor, terrain, seabed, sand underfoot, rock underneath, water surface, waves, bubbles background, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "status": "accepted",
       "sources": [
         "abyssal-serpent"
-      ]
+      ],
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "Standard trench elite — the user's 'big sea serpent with visible fangs'. Mobs may OUTGLOW the ground here (they are the light sources). New id-named frame replaces T4/trench_serpent.png."
     },
     {
-      "id": "tundra_bear",
-      "out": "sprites/monsters/T4/tundra_bear.png",
+      "id": "glacial-direbear",
+      "out": "sprites/monsters/glacial-direbear.png",
       "size": {
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a huge glacial dire bear, hulking scarred bear on all four legs, dark slate blue-grey fur, thick translucent plates of pale cyan glacier ice armoring its shoulders, back and brow, cold breath misting, dominating planted stance, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, dark slate-grey fur under heavy translucent cyan ice plating",
+      "negative": "standing upright, bipedal, on hind legs, rearing up, humanoid posture, cartoony, cute, clowny, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, ground, floor, terrain, snow underfoot, ice floor, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, white body, pale fur, cream fur, polar-white, warm brown, orange, red, yellow, warm hues, glowing bright, small, cute, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "status": "accepted",
       "sources": [
         "glacial-direbear"
-      ]
+      ],
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "Bear dynasty T4: thicker ice shell, scars. New id-named frame replaces T4/tundra_bear.png."
     },
     {
-      "id": "tundra_mammoth",
-      "out": "sprites/monsters/T4/tundra_mammoth.png",
+      "id": "rime-tusk-mastodon",
+      "out": "sprites/monsters/rime-tusk-mastodon.png",
       "size": {
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a rime-tusk mastodon, massive shaggy mastodon on four heavy legs, dark walnut-brown coat, long curved tusks sheathed in pale blue ice, frost crusted along its back and trunk, head lowered in a braced stance, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, dark walnut fur with storm-grey undertones and pale cyan ice-sheathed tusks",
+      "negative": "standing upright, bipedal, rearing up, cartoony, cute, toy-like, white body, pale fur, cream fur, warm brown, orange, red, yellow, glowing bright, small, ground, floor, terrain, snow underfoot, snowbank, snow drift, snow pile, kicked-up snow, snow spray, ground fog, mist at feet, ice floor, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "status": "accepted",
       "sources": [
         "rime-tusk-mastodon"
-      ]
+      ],
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "Round 2 per user: round-1 candidate 1 was great except a drawn ground effect — same prompt, ground/snow-spray bans hardened."
     },
     {
-      "id": "volcano_dog",
-      "out": "sprites/monsters/T4/volcano_dog.png",
+      "id": "infernal-direhound",
+      "out": "sprites/monsters/infernal-direhound.png",
       "size": {
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a massive infernal direhound, hulking heavy-shouldered hound armored in cracked lava-crust plates, a mane of smoldering ash, dim ember seams blazing between the plates, snarling maw lit with inner fire, all four legs planted in a braced dominant stance, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, near-black charcoal crust hide with an ash-grey mane and dim ember-orange seams",
+      "negative": "standing upright, bipedal, on hind legs, rearing up, humanoid posture, cartoony, cute, clowny, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, ground, floor, terrain, lava pool underfoot, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, fully glowing body, bright orange body, lava body, engulfed in flames, fire aura, cool blue, green, brown earth tones, dirt, walking, mid-stride, running, raised paw, small, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "status": "accepted",
       "sources": [
         "infernal-direhound"
-      ]
+      ],
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "Hound line T4: the cinder hound grown dire. New id-named frame replaces T4/volcano_dog.png."
     },
     {
-      "id": "volcano_lizard",
-      "out": "sprites/monsters/T4/volcano_lizard.png",
+      "id": "magma-salamander",
+      "out": "sprites/monsters/magma-salamander.png",
       "size": {
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a huge elite magma salamander, massive armored fire salamander, lava-hardened hide of dark crust plates with dim molten seams between them, heavy low body, glowing ember eyes and maw, dominating braced stance, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, near-black lava-crust plates over ash-grey hide with dim ember-orange seams and eyes",
+      "negative": "standing upright, bipedal, on hind legs, rearing up, humanoid posture, cartoony, cute, clowny, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, ground, floor, terrain, lava pool underfoot, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, fully glowing body, bright orange body, lava body, engulfed in flames, fire aura, cool blue, green, brown earth tones, dirt, small, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "status": "accepted",
       "sources": [
         "magma-salamander"
-      ]
+      ],
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "Salamander elite (its enemyShield = the hardened hide flaring). New id-named frame replaces T4/volcano_lizard.png."
     },
     {
-      "id": "volcano_spitter",
-      "out": "sprites/monsters/T4/volcano_spitter.png",
+      "id": "ashspitter-salamander",
+      "out": "sprites/monsters/ashspitter-salamander.png",
       "size": {
-        "w": 117,
+        "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a large ashspitter salamander, thick heavy fire salamander with rough ash-crust hide, wide head tilted back mid-spit with a dim ember glow deep in its gullet, low splayed stance, thick tail, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, dark ash-grey and charcoal crust hide with dim ember-orange gullet and belly seams",
+      "negative": "standing upright, bipedal, on hind legs, rearing up, humanoid posture, cartoony, cute, clowny, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, ground, floor, terrain, lava pool underfoot, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, fully glowing body, bright orange body, lava body, engulfed in flames, fire aura, cool blue, green, brown earth tones, dirt, small, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "status": "accepted",
       "sources": [
         "ashspitter-salamander"
-      ]
+      ],
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "Salamander line T4 (ranged). New id-named frame replaces T4/volcano_spitter.png."
     },
     {
-      "id": "volcano_tiny_lizard",
-      "out": "sprites/monsters/T4/volcano_tiny_lizard.png",
+      "id": "ember-skink",
+      "out": "sprites/monsters/ember-skink.png",
       "size": {
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a fire skink, quick agile lizard body with cracked basalt-crust scales, dim ember seams along the flanks and a fiery glow in the throat, darting alert posture with tail raised, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, dark basalt-grey crust scales with dim ember-orange seams",
+      "negative": "standing upright, bipedal, on hind legs, rearing up, humanoid posture, cartoony, cute, clowny, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, ground, floor, terrain, lava pool underfoot, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, fully glowing body, bright orange body, lava body, engulfed in flames, fire aura, cool blue, green, brown earth tones, dirt, small, tiny, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "status": "accepted",
       "sources": [
         "ember-skink"
-      ]
+      ],
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "Fire-lizard line T4: the scuttler grown. New id-named frame replaces T4/volcano_tiny_lizard.png."
     },
     {
-      "id": "volcano_turtle",
-      "out": "sprites/monsters/T4/volcano_turtle.png",
+      "id": "obsidian-tortoise",
+      "out": "sprites/monsters/obsidian-tortoise.png",
       "size": {
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a colossal obsidian tortoise, immense domed shell of glossy black obsidian slabs deeply cracked with dim lava light welling in the fissures, massive crusted legs, an ancient blunt head with dim ember eyes, slow heavy stance, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, glossy near-black obsidian shell over ash-grey hide with dim ember-orange fissure glow",
+      "negative": "standing upright, bipedal, on hind legs, rearing up, humanoid posture, cartoony, cute, clowny, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, ground, floor, terrain, lava pool underfoot, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, fully glowing body, bright orange body, lava body, engulfed in flames, fire aura, cool blue, green, brown earth tones, dirt, cute cartoon turtle, small, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "status": "accepted",
       "sources": [
         "obsidian-tortoise"
-      ]
-    },
-    {
-      "id": "tinyslime",
-      "out": "sprites/monsters/tinyslime.png",
-      "size": {
-        "w": 64,
-        "h": 64
-      },
-      "prompt": "",
-      "status": "draft",
-      "sources": [
-        "tiny-slime"
       ],
-      "notes": "Superseded by tiny-wisp (tiny-slime reskin + minion de-slime). Legacy frame; prune after Tiny Wisp ships."
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "Tortoise line T4 apex (its cadence eruption = the shell venting). New id-named frame replaces T4/volcano_turtle.png."
     },
     {
       "id": "wolf",
@@ -1429,26 +2357,42 @@
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a fierce forest wolf standing alert, lean predatory build, natural elongated wolf muzzle with bared fangs, ears pricked, hackles raised, all four legs planted square in a steady neutral standing stance, tail held low, three-quarter view facing right, full body, painterly pixel art, soft volumetric shading, minimal outline, rusty grey-brown coat with a dark charcoal saddle and a paler muzzle and underside",
+      "status": "accepted",
       "sources": [
-        "wolf",
-        "young-wolf"
-      ]
+        "wolf"
+      ],
+      "negative": "slime, magical glow, sandy desert tan coloring, snow, armor, human-like face, humanlike expression, smiling, smirk, walking, mid-stride, running, raised paw, front view, facing camera, cartoon, chibi, anthropomorphic, weapon, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "Forest T1 pack alpha. Warm rust on cool moss floor (palette bible); distinct from dusty-tan prairie-wolf."
     },
     {
-      "id": "yellowslime",
-      "out": "sprites/monsters/yellowslime.png",
+      "id": "young-wolf",
+      "out": "sprites/monsters/young-wolf.png",
       "size": {
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a young juvenile forest wolf, smaller and leaner than an adult wolf, slightly gangly legs and oversized paws, softer fluffier fur, alert curious stance with ears pricked and tail held low, three-quarter view facing right, full body, painterly pixel art, soft volumetric shading, minimal outline, soft rusty grey-brown coat with a paler muzzle and underside",
+      "negative": "slime, magical glow, large adult wolf, massive build, armor, human-like face, smiling, walking, mid-stride, running, raised paw, front view, facing camera, cartoon, chibi, anthropomorphic, weapon, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "status": "accepted",
       "sources": [
-        "plains-slime"
+        "young-wolf"
       ],
-      "notes": "Superseded by field-hare (plains-slime reskin). Legacy frame; prune after Field Hare ships."
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "NEW FRAME: young-wolf previously shared wolf.png; gets its own smaller-silhouette sprite so packs read as adult + juveniles."
     },
     {
       "id": "field-hare",
@@ -1494,6 +2438,28 @@
         "direction": "east"
       },
       "notes": "I like candidate 3 but I want it to look more like a spirit- no facial features, just a wisp, experiment with yellow or light blue colors, more \"cloudy\"- right now it kinda looks like a spermatozoid, and that is not a good look."
+    },
+    {
+      "id": "gravewright",
+      "out": "sprites/monsters/gravewright.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "a skeletal shaman elk, the gaunt standing skeleton of a great stag with vast branching bone antlers, wisps of necrotic green light dripping from the antler tips and glowing in the eye sockets, tattered remnants of hide hanging from its spine, still commanding posture with head high, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, dirty bone-grey and desiccated brown bones, bruised violet shadows, plague-green antler-drip and socket glow",
+      "negative": "clean white bone, bright white, zombie, rotting flesh, gore, blood, warm flesh tones, living skin, yellow-green, bright green body, cartoony, cute, clowny, rounded soft shapes, toy-like, plush, mascot, ground, floor, terrain, dirt, ash underfoot, grave, tombstone, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, humanoid, robe, staff, necromancer robes, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "status": "accepted",
+      "sources": [
+        "gravewright"
+      ],
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "The centerpiece elite (raises the dead) — FIRST-EVER sprite (was unmapped). Skeletal shaman-elk: a beast caster, no zombies, no humanoids. frameMaps entry added."
     }
   ]
 }

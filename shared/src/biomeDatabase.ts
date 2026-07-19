@@ -231,7 +231,7 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
   // GRAVEYARD (T4) — EXTREME-high-density weak undead swarm; plague/contagion
   // theme. Debuts at T4 (all graveyard nodes are biomeTier 4 — no T3 pool).
   ['graveyard', {
-    id: 'graveyard', name: 'Graveyard',
+    id: 'graveyard', name: 'Wasteland',
     backgroundColor: 0x0c0810,
     monsterPoolByTier: {
       4: ['bone-crawler', 'plague-hound', 'carrion-vulture', 'charnel-brute', 'plague-rat', 'gravewright'],

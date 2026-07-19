@@ -30,7 +30,7 @@ import type { MonsterDefinition } from './types';
 export const forestMonsterEntries = [
   // ══ FOREST — fast movement + FREQUENT attacks; low per-hit; evasion's home ══
   ['forest-slime', {
-    id: 'forest-slime', name: 'Forest Slime', color: 0x55ff55,
+    id: 'forest-slime', name: 'Moss Rat', color: 0x55ff55,
     // Attacks faster than its plains cousin — frequency over force.
     stats: { hp: 100, attack: 10, plating: 0, damageReduction: 0, speed: 54, attackRange: 12, attackCooldown: 1500, pullRange: 210 },
     behavior: 'melee', attackStyle: 'impact', biome: 'forest',
@@ -64,7 +64,7 @@ export const forestMonsterEntries = [
 
   // ── FOREST T2 — fast charger, a frantic frequent-attacker, a ranged thorn ──
   ['ancient-wolf', {
-    id: 'ancient-wolf', name: 'Ancient Wolf', color: 0x8888ff,
+    id: 'ancient-wolf', name: 'Dire Wolf', color: 0x8888ff,
     // Explosive fast charger; closes instantly then bites in a blur.
     stats: { hp: 225, attack: 28, plating: 0, damageReduction: 0, speed: 96, attackRange: 12, attackCooldown: 1100, pullRange: 280 },
     behavior: 'melee', attackStyle: 'bite', biome: 'forest',
@@ -72,7 +72,7 @@ export const forestMonsterEntries = [
     ai: { wanderRadius: 300, leashRange: 750, idleMinMs: 600, idleMaxMs: 2500 },
     chargeOnAggro: { speedMult: 3.0, durationMs: 900 },
     // Forest predator-pack ALPHA (the biome's T2 identity): spawns a MIXED pack —
-    // 2 young wolves + 1 Canopy Sprite for ranged thorn support — clustered around
+    // 2 young wolves + 1 Thorn Spitter for ranged thorn support — clustered around
     // it, and is itself called in (charging via chargeOnAggro) when a packmate
     // engages. (Placeholder counts/range — user balance pass.)
     pack: {
@@ -86,10 +86,10 @@ export const forestMonsterEntries = [
   }],
 
   ['ironwood-golem', {
-    id: 'ironwood-golem', name: 'Ironwood Golem', color: 0x556633,
+    id: 'ironwood-golem', name: 'Ironclaw Badger', color: 0x556633,
     // SHAPE CHANGED: no longer a DR tank (off-identity for forest). Now a slow-
-    // moving but VERY fast-ATTACKING sentinel — frequency is the threat evasion
-    // answers; squishy (no DR) so it still dies to burst. TODO rename.
+    // moving but VERY fast-ATTACKING territorial beast — frequency is the threat
+    // evasion answers; squishy (no DR) so it still dies to burst.
     stats: { hp: 200, attack: 26, plating: 0, damageReduction: 0, speed: 22, attackRange: 15, attackCooldown: 900, pullRange: 150 },
     behavior: 'melee', attackStyle: 'impact', biome: 'forest',
     rewards: { essence: 10, essenceType: 'blue', level: 1, biomeXp: 58 }, // construct → Stone (biome mixture; tunable)
@@ -97,13 +97,13 @@ export const forestMonsterEntries = [
   }],
 
   ['canopy-sprite', {
-    id: 'canopy-sprite', name: 'Canopy Sprite', color: 0x88ff44,
+    id: 'canopy-sprite', name: 'Thorn Spitter', color: 0x88ff44,
     // Ranged thorn-volleys; frequent, light, from the treetops.
     stats: { hp: 190, attack: 26, plating: 0, damageReduction: 0, speed: 48, attackRange: 190, attackCooldown: 2400, pullRange: 250 },
     behavior: 'ranged', attackStyle: 'arrow', biome: 'forest',
     rewards: { essence: 9, essenceType: 'green', level: 1, biomeXp: 50 },
     ai: { wanderRadius: 240, leashRange: 650, idleMinMs: 1200, idleMaxMs: 3500 },
-    // Pack-support follower: when spawned in an Ancient Wolf pack, a sprite that's
+    // Pack-support follower: when spawned in a Dire Wolf pack, a spitter that's
     // hit/engaged calls in via the same call-allies net (ranged thorns from the
     // treetops while the wolves close). Roams solo when not spawned in a pack.
     pack: { role: 'follower', callRange: 300 },

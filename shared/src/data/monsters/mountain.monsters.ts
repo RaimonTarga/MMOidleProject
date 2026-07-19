@@ -32,8 +32,8 @@ export const mountainMonsterEntries = [
   // ══ MOUNTAIN — rare HUGE hits that trip the cap; slow + charge to connect ══
   ['cliff-hopper', {
     id: 'cliff-hopper', name: 'Cliff Hopper', color: 0x99aacc,
-    // SHAPE CHANGED: now a slow charging bruiser (atk trips the ~25%-HP cap), not a
-    // fast mob. Charges once to close, then lumbers. TODO rename in cosmetic pass.
+    // Sturdy mountain goat (caprine line T1: hopper -> ram -> tyrant). Slow charging
+    // bruiser (atk trips the ~25%-HP cap); charges once to close, then lumbers.
     stats: { hp: 170, attack: 36, plating: 0, damageReduction: 0, speed: 28, attackRange: 12, attackCooldown: 3500, pullRange: 420 },
     behavior: 'melee', attackStyle: 'impact', biome: 'mountain',
     rewards: { essence: 6, essenceType: 'yellow', level: 1, biomeXp: 42 }, // charging brute → Might (biome mixture; tunable)
@@ -49,9 +49,10 @@ export const mountainMonsterEntries = [
   }],
 
   ['ridge-archer', {
-    id: 'ridge-archer', name: 'Ridge Archer', color: 0x778899,
-    // Hurls boulders — a big, slow hit from range. Punishes standing still; the
-    // ranged half of mountain's "stand and trade" pressure. No charge (ranged).
+    id: 'ridge-archer', name: 'Ridge Ambusher', color: 0x778899,
+    // Stone-folk vessel crossbowman (artillery line T1: ambusher -> thrower -> mortar).
+    // A big, slow bolt from range. Punishes standing still; the ranged half of
+    // mountain's "stand and trade" pressure. No charge (ranged).
     stats: { hp: 200, attack: 32, plating: 0, damageReduction: 0, speed: 26, attackRange: 210, attackCooldown: 3500, pullRange: 350 },
     behavior: 'ranged', attackStyle: 'arrow', holdsChokepoints: true, biome: 'mountain',
     rewards: { essence: 8, essenceType: 'blue', level: 1, biomeXp: 52 },

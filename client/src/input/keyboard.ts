@@ -22,11 +22,11 @@ import {
   skillTreeOpenAtom,
   type EmoteWheelDirection,
 } from '../hud/atoms';
-import { emoteForWheelDirection } from '@mmo-idle/shared';
+import { emoteForWheelDirection, NODE_BIOMES } from '@mmo-idle/shared';
 import { cancelActiveMove, setHoldStill, setKeyboardVector } from './movement';
 import { closeTopmostOverlay } from './overlayStack';
 import { ALTAR_ARC_CONFIG, getAltarArc } from '../scenes/game/runeAltar';
-import { cyclePlainsGround } from '../render/wangGround';
+import { cycleGroundBakeoff } from '../render/wangGround';
 import { paintActiveNode } from '../scenes/game/overlays';
 import { rebuildNeighborLayer } from '../render/neighborScenes';
 
@@ -48,7 +48,7 @@ export function attachKeyboard(scene: GameScene): () => void {
   const held = new Set<ActionId>();
   let stillHeld = false;
   let lastEmoteAt = 0;
-  // DEV-only Plains ground bake-off label (see the [ / ] handler below).
+  // DEV-only ground bake-off label (see the [ / ] handler below).
   let groundLabel: Phaser.GameObjects.Text | null = null;
   function showGroundLabel(text: string): void {
     if (!groundLabel) {
@@ -148,20 +148,27 @@ export function attachKeyboard(scene: GameScene): () => void {
     }
     if (event.repeat) return;
 
-    // DEV: cycle the Plains ground bake-off variants with [ and ] to compare
-    // candidate tilesets live in-game. Removed once a winner is chosen.
+    // DEV: cycle the current biome's ground bake-off sheets with [ and ] to
+    // compare candidate tilesets live in-game (0 = the real per-node styles).
     if (
       import.meta.env.DEV &&
       (event.code === 'BracketRight' || event.code === 'BracketLeft')
     ) {
       event.preventDefault();
-      const r = cyclePlainsGround(event.code === 'BracketRight' ? 1 : -1);
       const nodeId = scene.state.ownNodeId || scene.lastDrawnNodeId;
+      const biomeGroup = nodeId ? NODE_BIOMES[nodeId]?.biomeGroup : undefined;
+      const r = biomeGroup
+        ? cycleGroundBakeoff(biomeGroup, event.code === 'BracketRight' ? 1 : -1)
+        : null;
+      if (!r) {
+        showGroundLabel(`No ground bake-off for biome "${biomeGroup ?? '?'}"`);
+        return;
+      }
       if (nodeId) {
         paintActiveNode(scene, nodeId);
         rebuildNeighborLayer(scene, nodeId);
       }
-      showGroundLabel(`Plains ground ${r.index + 1}/${r.total}  —  ${r.label}`);
+      showGroundLabel(`${biomeGroup} ground ${r.index + 1}/${r.total}  —  ${r.label}`);
       return;
     }
 

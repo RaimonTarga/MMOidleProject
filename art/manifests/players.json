@@ -1,23 +1,34 @@
 {
   "category": "players",
-  "endpoint": "bitforge",
-  "styleRef": "style/characters.png",
+  "endpoint": "pixflux",
+  "styleRef": null,
   "noBackground": true,
   "candidates": 3,
+  "notes": "EVOLUTION-CHAIN scheme (docs/player-sprites-current-state.md): player bodies are flat 64px sprites generated as img2img chains — vagrant (classless) → class root → 3 frames. Each link's initImage is its predecessor's accepted art in art/src, so a link stays 'draft' until its predecessor is accepted (otherwise img2img would run against the old placeholder). ENDPOINT LESSON (2026-07-12): v1 ran bitforge with style/creatures.png — a WOLF — as style anchor and the vagrant came out animalistic; players now use pixflux prompt-only like every accepted monster. Style consistency comes from the painterly prompt language + the initImage chain. Range bodies are RETIRED (identity accents — PLAYER_ACCENTS in shared/src/sprites/frameMaps.ts); summoner is DEFERRED pending its class identity pass. Non-cadence classes: author prompts after the Cadence slice is validated in-game.",
   "entries": [
     {
-      "id": "breacher",
-      "out": "sprites/classes/breacher.png",
+      "id": "classless",
+      "out": "sprites/classes/classless.png",
       "size": {
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "classless starter player sprite for a top-down fantasy RPG, full body 64px pixel art sprite, 3/4 top-down view facing south-east, anonymous hooded adventurer, neutral idle pose, compact readable silhouette, visible top of hood and shoulders, face fully hidden in black shadow, no visible skin, muted green hood and short cloak, tan tunic, brown belt with small pouch, brown gloves, brown boots, clean retro game sprite, limited palette, simple cel shading, clear outline, low-detail readable forms, designed as a game sprite not an illustration",
+      "negative": "painterly, volumetric shading, soft realistic shading, lineless, high detail texture noise, side view, front view, pure profile, platformer sprite, npc, villager, merchant, monk, peasant, hunched, slouched, face, eyes, mouth, nose, visible skin, hair, beard, weapon, sword, staff, bow, gun, shield, ornate armor, glowing eyes, ghost, undead, chibi, blurry, text, watermark, photograph, 3d render",
+      "status": "accepted",
       "sources": [
-        "reload-range-close"
+        "default"
       ],
-      "notes": "DEFERRED: player visuals may move to the composite (paper-doll) scheme — see docs/visual_and_aesthetics_design/player-visual-identity-bible.md. Leave as draft until that decision lands."
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "view": "low top-down",
+        "direction": "south-east",
+        "initImage": "sprites/classes/classless_reference.png",
+        "initImageStrength": 60
+      },
+      "notes": "missing direction, retrying with a different approach"
     },
     {
       "id": "cadence",
@@ -26,26 +37,94 @@
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "hooded masked fighter, face fully hidden by dark hood shadow and cloth face mask, no visible skin, brown leather belt, brown gloves, brown boots, chainmail shirt visible under the cloth and leather, small metal shoulder guards, neutral idle stance, empty hands with no weapon",
+      "negative": "visible eyes, visible face, ornate armor, gold trim, full plate, bulky armor, red, mage robe, side view, visible skin, bare hands, hair, beard, weapon, sword, dagger, staff, bow, gun, shield, holding item, glowing eyes",
+      "status": "accepted",
       "sources": [
         "cadence"
       ],
-      "notes": "DEFERRED: player visuals may move to the composite (paper-doll) scheme — see docs/visual_and_aesthetics_design/player-visual-identity-bible.md. Leave as draft until that decision lands."
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "view": "low top-down",
+        "direction": "south-east",
+        "initImage": "sprites/classes/classless.png",
+        "initImageStrength": 70
+      },
+      "notes": "CHAIN: Stage 1 Striker root, derived from accepted classless base. Keep the same successful sprite style recipe as classless and express identity through silhouette + 2-3 color blocks only. Main read: squared angular shoulders, armored torso, short cloak, single crimson sash. Avoid painterly rendering and excess detail."
     },
     {
-      "id": "classless",
-      "out": "sprites/classes/classless.png",
+      "id": "cadence-light",
+      "out": "sprites/classes/light_cadence.png",
       "size": {
         "w": 64,
         "h": 64
       },
-      "prompt": "",
+      "prompt": "the same faceless hooded human rhythm fighter with a lean agile duelist build, same compact stylized proportions, upright straight-backed posture, no skin visible, narrow sharp silhouette, light leather armor with minimal metal, trailing cloth scarf suggesting speed, poised stance, faint crimson motion streaks, no weapons, full body, three-quarter front view angled toward the right, painterly pixel art, soft volumetric shading, minimal outline, steel gray and crimson",
+      "negative": "animal, beast, creature, furry, fur, tail, muzzle, snout, claws, paws, quadruped, hunched, crouching, floating, ghost, wraith, translucent, scary, horror, sinister, undead, face, eyes, exposed skin, bare hands, hair, beard, weapon, sword, staff, gun, bow, shield, bulky armor, heavy pauldrons, male, female, chibi, cute, profile view, side view, facing left, back view, hard black outline, text, watermark, blurry, 3d render, photograph",
       "status": "draft",
       "sources": [
-        "default"
+        "cadence-light"
       ],
-      "notes": "DEFERRED: player visuals may move to the composite (paper-doll) scheme — see docs/visual_and_aesthetics_design/player-visual-identity-bible.md. Leave as draft until that decision lands."
+      "params": {
+        "outline": "lineless",
+        "shading": "detailed shading",
+        "detail": "medium detail",
+        "view": "low top-down",
+        "direction": "south-east",
+        "initImage": "sprites/classes/cadence.png",
+        "initImageStrength": 300
+      },
+      "notes": "CHAIN: flip to pending only after 'cadence' is accepted. Stage 2 light frame (duelist) — same character with visual budget reallocated to speed; must not read weak or regressive."
+    },
+    {
+      "id": "cadence-balanced",
+      "out": "sprites/classes/medium_cadence.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "the same faceless hooded human rhythm fighter as a composed skirmisher, same compact stylized proportions, upright straight-backed posture, no skin visible, clean medium armor of leather and banded light metal, chainmail hints at the joints, subtle rhythmic crimson markings on the chest, balanced grounded combat stance, no weapons, full body, three-quarter front view angled toward the right, painterly pixel art, soft volumetric shading, minimal outline, steel gray and warm crimson accents",
+      "negative": "animal, beast, creature, furry, fur, tail, muzzle, snout, claws, paws, quadruped, hunched, crouching, floating, ghost, wraith, translucent, scary, horror, sinister, undead, face, eyes, exposed skin, bare hands, hair, beard, weapon, sword, staff, gun, bow, shield, gold, ornate, male, female, chibi, cute, profile view, side view, facing left, back view, hard black outline, text, watermark, blurry, 3d render, photograph",
+      "status": "draft",
+      "sources": [
+        "cadence-balanced"
+      ],
+      "params": {
+        "outline": "lineless",
+        "shading": "detailed shading",
+        "detail": "medium detail",
+        "view": "low top-down",
+        "direction": "south-east",
+        "initImage": "sprites/classes/cadence.png",
+        "initImageStrength": 300
+      },
+      "notes": "CHAIN: flip to pending only after 'cadence' is accepted. Stage 2 balanced frame (skirmisher) — the class's most neutral identity; closest to the root."
+    },
+    {
+      "id": "cadence-heavy",
+      "out": "sprites/classes/heavy_cadence.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "the same faceless hooded human rhythm fighter as a heavy breaker, same compact stylized proportions, upright straight-backed posture, no skin visible, bulky armored build, large pauldrons and reinforced gauntlets, broad banded-metal chest over leather, weighty grounded stance with slow powerful finisher energy, deep crimson glow lines across the armor, no weapons, full body, three-quarter front view angled toward the right, painterly pixel art, soft volumetric shading, minimal outline, dark steel and deep crimson",
+      "negative": "animal, beast, creature, furry, fur, tail, muzzle, snout, claws, paws, quadruped, hunched, crouching, floating, ghost, wraith, translucent, scary, horror, sinister, undead, face, eyes, exposed skin, bare hands, hair, beard, weapon, sword, staff, gun, bow, shield, knight helmet plume, gold, ornate, male, female, chibi, cute, profile view, side view, facing left, back view, hard black outline, text, watermark, blurry, 3d render, photograph",
+      "status": "draft",
+      "sources": [
+        "cadence-heavy"
+      ],
+      "params": {
+        "outline": "lineless",
+        "shading": "detailed shading",
+        "detail": "medium detail",
+        "view": "low top-down",
+        "direction": "south-east",
+        "initImage": "sprites/classes/cadence.png",
+        "initImageStrength": 300
+      },
+      "notes": "CHAIN: flip to pending only after 'cadence' is accepted. Stage 2 heavy frame (breaker) — bigger shoulders/gauntlets, but still a Striker: must not drift into generic tank/Squire territory."
     },
     {
       "id": "cooldown",
@@ -59,11 +138,15 @@
       "sources": [
         "cooldown"
       ],
-      "notes": "DEFERRED: player visuals may move to the composite (paper-doll) scheme — see docs/visual_and_aesthetics_design/player-visual-identity-bible.md. Leave as draft until that decision lands."
+      "params": {
+        "initImage": "sprites/classes/classless.png",
+        "initImageStrength": 250
+      },
+      "notes": "Author after the Cadence slice is validated — copy the cadence chain recipe. Squire: plate armor, heavy or hooded helm, patient weight, pale iron glow, knightly but not a kingdom soldier."
     },
     {
-      "id": "deadeye",
-      "out": "sprites/classes/deadeye.png",
+      "id": "cooldown-light",
+      "out": "sprites/classes/light_cooldown.png",
       "size": {
         "w": 64,
         "h": 64
@@ -71,9 +154,49 @@
       "prompt": "",
       "status": "draft",
       "sources": [
-        "reload-range-far"
+        "cooldown-light"
       ],
-      "notes": "DEFERRED: player visuals may move to the composite (paper-doll) scheme — see docs/visual_and_aesthetics_design/player-visual-identity-bible.md. Leave as draft until that decision lands."
+      "params": {
+        "initImage": "sprites/classes/cooldown.png",
+        "initImageStrength": 300
+      },
+      "notes": "Chain from cooldown root once accepted. Still armored, but more aggressive and mobile."
+    },
+    {
+      "id": "cooldown-balanced",
+      "out": "sprites/classes/medium_cooldown.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "cooldown-balanced"
+      ],
+      "params": {
+        "initImage": "sprites/classes/cooldown.png",
+        "initImageStrength": 300
+      },
+      "notes": "Chain from cooldown root once accepted. Classic knight/squire identity."
+    },
+    {
+      "id": "cooldown-heavy",
+      "out": "sprites/classes/heavy_cooldown.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "cooldown-heavy"
+      ],
+      "params": {
+        "initImage": "sprites/classes/cooldown.png",
+        "initImageStrength": 300
+      },
+      "notes": "Chain from cooldown root once accepted. Fortress/bulwark silhouette."
     },
     {
       "id": "dot",
@@ -87,7 +210,65 @@
       "sources": [
         "dot"
       ],
-      "notes": "DEFERRED: player visuals may move to the composite (paper-doll) scheme — see docs/visual_and_aesthetics_design/player-visual-identity-bible.md. Leave as draft until that decision lands."
+      "params": {
+        "initImage": "sprites/classes/classless.png",
+        "initImageStrength": 250
+      },
+      "notes": "Author after the Cadence slice is validated. Apprentice: hooded stained robe, sigils, sealed sleeves, elemental wound marks; ritual not scholarly, no wand/staff."
+    },
+    {
+      "id": "dot-light",
+      "out": "sprites/classes/light_dot.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "dot-light"
+      ],
+      "params": {
+        "initImage": "sprites/classes/dot.png",
+        "initImageStrength": 300
+      },
+      "notes": "Chain from dot root once accepted."
+    },
+    {
+      "id": "dot-balanced",
+      "out": "sprites/classes/medium_dot.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "dot-balanced"
+      ],
+      "params": {
+        "initImage": "sprites/classes/dot.png",
+        "initImageStrength": 300
+      },
+      "notes": "Chain from dot root once accepted."
+    },
+    {
+      "id": "dot-heavy",
+      "out": "sprites/classes/heavy_dot.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "",
+      "status": "draft",
+      "sources": [
+        "dot-heavy"
+      ],
+      "params": {
+        "initImage": "sprites/classes/dot.png",
+        "initImageStrength": 300
+      },
+      "notes": "Chain from dot root once accepted."
     },
     {
       "id": "energy",
@@ -101,206 +282,14 @@
       "sources": [
         "energy"
       ],
-      "notes": "DEFERRED: player visuals may move to the composite (paper-doll) scheme — see docs/visual_and_aesthetics_design/player-visual-identity-bible.md. Leave as draft until that decision lands."
-    },
-    {
-      "id": "enforcer",
-      "out": "sprites/classes/enforcer.png",
-      "size": {
-        "w": 64,
-        "h": 64
+      "params": {
+        "initImage": "sprites/classes/classless.png",
+        "initImageStrength": 250
       },
-      "prompt": "",
-      "status": "draft",
-      "sources": [
-        "reload-range-mid"
-      ],
-      "notes": "DEFERRED: player visuals may move to the composite (paper-doll) scheme — see docs/visual_and_aesthetics_design/player-visual-identity-bible.md. Leave as draft until that decision lands."
+      "notes": "Author after the Cadence slice is validated. Spirit: floating robe, no visible feet, hooded void face, energy core, spectral glow — the most non-physical class."
     },
     {
-      "id": "harbinger",
-      "out": "sprites/classes/harbinger.png",
-      "size": {
-        "w": 64,
-        "h": 64
-      },
-      "prompt": "",
-      "status": "draft",
-      "sources": [
-        "dot-range-far"
-      ],
-      "notes": "DEFERRED: player visuals may move to the composite (paper-doll) scheme — see docs/visual_and_aesthetics_design/player-visual-identity-bible.md. Leave as draft until that decision lands."
-    },
-    {
-      "id": "haunt",
-      "out": "sprites/classes/haunt.png",
-      "size": {
-        "w": 64,
-        "h": 64
-      },
-      "prompt": "",
-      "status": "draft",
-      "sources": [
-        "energy-range-close"
-      ],
-      "notes": "DEFERRED: player visuals may move to the composite (paper-doll) scheme — see docs/visual_and_aesthetics_design/player-visual-identity-bible.md. Leave as draft until that decision lands."
-    },
-    {
-      "id": "heavy_cadence",
-      "out": "sprites/classes/heavy_cadence.png",
-      "size": {
-        "w": 64,
-        "h": 64
-      },
-      "prompt": "",
-      "status": "draft",
-      "sources": [
-        "cadence-heavy"
-      ],
-      "notes": "DEFERRED: player visuals may move to the composite (paper-doll) scheme — see docs/visual_and_aesthetics_design/player-visual-identity-bible.md. Leave as draft until that decision lands."
-    },
-    {
-      "id": "heavy_cooldown",
-      "out": "sprites/classes/heavy_cooldown.png",
-      "size": {
-        "w": 64,
-        "h": 64
-      },
-      "prompt": "",
-      "status": "draft",
-      "sources": [
-        "cooldown-heavy"
-      ],
-      "notes": "DEFERRED: player visuals may move to the composite (paper-doll) scheme — see docs/visual_and_aesthetics_design/player-visual-identity-bible.md. Leave as draft until that decision lands."
-    },
-    {
-      "id": "heavy_dot",
-      "out": "sprites/classes/heavy_dot.png",
-      "size": {
-        "w": 64,
-        "h": 64
-      },
-      "prompt": "",
-      "status": "draft",
-      "sources": [
-        "dot-heavy"
-      ],
-      "notes": "DEFERRED: player visuals may move to the composite (paper-doll) scheme — see docs/visual_and_aesthetics_design/player-visual-identity-bible.md. Leave as draft until that decision lands."
-    },
-    {
-      "id": "heavy_energy",
-      "out": "sprites/classes/heavy_energy.png",
-      "size": {
-        "w": 64,
-        "h": 64
-      },
-      "prompt": "",
-      "status": "draft",
-      "sources": [
-        "energy-heavy"
-      ],
-      "notes": "DEFERRED: player visuals may move to the composite (paper-doll) scheme — see docs/visual_and_aesthetics_design/player-visual-identity-bible.md. Leave as draft until that decision lands."
-    },
-    {
-      "id": "heavy_reload",
-      "out": "sprites/classes/heavy_reload.png",
-      "size": {
-        "w": 64,
-        "h": 64
-      },
-      "prompt": "",
-      "status": "draft",
-      "sources": [
-        "reload-heavy"
-      ],
-      "notes": "DEFERRED: player visuals may move to the composite (paper-doll) scheme — see docs/visual_and_aesthetics_design/player-visual-identity-bible.md. Leave as draft until that decision lands."
-    },
-    {
-      "id": "hexblade",
-      "out": "sprites/classes/hexblade.png",
-      "size": {
-        "w": 64,
-        "h": 64
-      },
-      "prompt": "",
-      "status": "draft",
-      "sources": [
-        "dot-range-close"
-      ],
-      "notes": "DEFERRED: player visuals may move to the composite (paper-doll) scheme — see docs/visual_and_aesthetics_design/player-visual-identity-bible.md. Leave as draft until that decision lands."
-    },
-    {
-      "id": "in-fighter",
-      "out": "sprites/classes/in-fighter.png",
-      "size": {
-        "w": 64,
-        "h": 64
-      },
-      "prompt": "",
-      "status": "draft",
-      "sources": [
-        "cadence-range-close"
-      ],
-      "notes": "DEFERRED: player visuals may move to the composite (paper-doll) scheme — see docs/visual_and_aesthetics_design/player-visual-identity-bible.md. Leave as draft until that decision lands."
-    },
-    {
-      "id": "lancer",
-      "out": "sprites/classes/lancer.png",
-      "size": {
-        "w": 64,
-        "h": 64
-      },
-      "prompt": "",
-      "status": "draft",
-      "sources": [
-        "cadence-range-mid"
-      ],
-      "notes": "DEFERRED: player visuals may move to the composite (paper-doll) scheme — see docs/visual_and_aesthetics_design/player-visual-identity-bible.md. Leave as draft until that decision lands."
-    },
-    {
-      "id": "light_cadence",
-      "out": "sprites/classes/light_cadence.png",
-      "size": {
-        "w": 64,
-        "h": 64
-      },
-      "prompt": "",
-      "status": "draft",
-      "sources": [
-        "cadence-light"
-      ],
-      "notes": "DEFERRED: player visuals may move to the composite (paper-doll) scheme — see docs/visual_and_aesthetics_design/player-visual-identity-bible.md. Leave as draft until that decision lands."
-    },
-    {
-      "id": "light_cooldown",
-      "out": "sprites/classes/light_cooldown.png",
-      "size": {
-        "w": 64,
-        "h": 64
-      },
-      "prompt": "",
-      "status": "draft",
-      "sources": [
-        "cooldown-light"
-      ],
-      "notes": "DEFERRED: player visuals may move to the composite (paper-doll) scheme — see docs/visual_and_aesthetics_design/player-visual-identity-bible.md. Leave as draft until that decision lands."
-    },
-    {
-      "id": "light_dot",
-      "out": "sprites/classes/light_dot.png",
-      "size": {
-        "w": 64,
-        "h": 64
-      },
-      "prompt": "",
-      "status": "draft",
-      "sources": [
-        "dot-light"
-      ],
-      "notes": "DEFERRED: player visuals may move to the composite (paper-doll) scheme — see docs/visual_and_aesthetics_design/player-visual-identity-bible.md. Leave as draft until that decision lands."
-    },
-    {
-      "id": "light_energy",
+      "id": "energy-light",
       "out": "sprites/classes/light_energy.png",
       "size": {
         "w": 64,
@@ -311,66 +300,14 @@
       "sources": [
         "energy-light"
       ],
-      "notes": "DEFERRED: player visuals may move to the composite (paper-doll) scheme — see docs/visual_and_aesthetics_design/player-visual-identity-bible.md. Leave as draft until that decision lands."
-    },
-    {
-      "id": "light_reload",
-      "out": "sprites/classes/light_reload.png",
-      "size": {
-        "w": 64,
-        "h": 64
+      "params": {
+        "initImage": "sprites/classes/energy.png",
+        "initImageStrength": 300
       },
-      "prompt": "",
-      "status": "draft",
-      "sources": [
-        "reload-light"
-      ],
-      "notes": "DEFERRED: player visuals may move to the composite (paper-doll) scheme — see docs/visual_and_aesthetics_design/player-visual-identity-bible.md. Leave as draft until that decision lands."
+      "notes": "Chain from energy root once accepted. Spark — fast, small, high motion/glow."
     },
     {
-      "id": "medium_cadence",
-      "out": "sprites/classes/medium_cadence.png",
-      "size": {
-        "w": 64,
-        "h": 64
-      },
-      "prompt": "",
-      "status": "draft",
-      "sources": [
-        "cadence-balanced"
-      ],
-      "notes": "DEFERRED: player visuals may move to the composite (paper-doll) scheme — see docs/visual_and_aesthetics_design/player-visual-identity-bible.md. Leave as draft until that decision lands."
-    },
-    {
-      "id": "medium_cooldown",
-      "out": "sprites/classes/medium_cooldown.png",
-      "size": {
-        "w": 64,
-        "h": 64
-      },
-      "prompt": "",
-      "status": "draft",
-      "sources": [
-        "cooldown-balanced"
-      ],
-      "notes": "DEFERRED: player visuals may move to the composite (paper-doll) scheme — see docs/visual_and_aesthetics_design/player-visual-identity-bible.md. Leave as draft until that decision lands."
-    },
-    {
-      "id": "medium_dot",
-      "out": "sprites/classes/medium_dot.png",
-      "size": {
-        "w": 64,
-        "h": 64
-      },
-      "prompt": "",
-      "status": "draft",
-      "sources": [
-        "dot-balanced"
-      ],
-      "notes": "DEFERRED: player visuals may move to the composite (paper-doll) scheme — see docs/visual_and_aesthetics_design/player-visual-identity-bible.md. Leave as draft until that decision lands."
-    },
-    {
-      "id": "medium_energy",
+      "id": "energy-balanced",
       "out": "sprites/classes/medium_energy.png",
       "size": {
         "w": 64,
@@ -381,11 +318,15 @@
       "sources": [
         "energy-balanced"
       ],
-      "notes": "DEFERRED: player visuals may move to the composite (paper-doll) scheme — see docs/visual_and_aesthetics_design/player-visual-identity-bible.md. Leave as draft until that decision lands."
+      "params": {
+        "initImage": "sprites/classes/energy.png",
+        "initImageStrength": 300
+      },
+      "notes": "Chain from energy root once accepted. Wraith — clean spectral body."
     },
     {
-      "id": "medium_reload",
-      "out": "sprites/classes/medium_reload.png",
+      "id": "energy-heavy",
+      "out": "sprites/classes/heavy_energy.png",
       "size": {
         "w": 64,
         "h": 64
@@ -393,37 +334,13 @@
       "prompt": "",
       "status": "draft",
       "sources": [
-        "reload-balanced"
+        "energy-heavy"
       ],
-      "notes": "DEFERRED: player visuals may move to the composite (paper-doll) scheme — see docs/visual_and_aesthetics_design/player-visual-identity-bible.md. Leave as draft until that decision lands."
-    },
-    {
-      "id": "phalanx",
-      "out": "sprites/classes/phalanx.png",
-      "size": {
-        "w": 64,
-        "h": 64
+      "params": {
+        "initImage": "sprites/classes/energy.png",
+        "initImageStrength": 300
       },
-      "prompt": "",
-      "status": "draft",
-      "sources": [
-        "cooldown-range-mid"
-      ],
-      "notes": "DEFERRED: player visuals may move to the composite (paper-doll) scheme — see docs/visual_and_aesthetics_design/player-visual-identity-bible.md. Leave as draft until that decision lands."
-    },
-    {
-      "id": "phantom-blade",
-      "out": "sprites/classes/phantom-blade.png",
-      "size": {
-        "w": 64,
-        "h": 64
-      },
-      "prompt": "",
-      "status": "draft",
-      "sources": [
-        "cadence-range-far"
-      ],
-      "notes": "DEFERRED: player visuals may move to the composite (paper-doll) scheme — see docs/visual_and_aesthetics_design/player-visual-identity-bible.md. Leave as draft until that decision lands."
+      "notes": "Chain from energy root once accepted. Phantasm — denser robe mass, heavier aura."
     },
     {
       "id": "reload",
@@ -437,11 +354,15 @@
       "sources": [
         "reload"
       ],
-      "notes": "DEFERRED: player visuals may move to the composite (paper-doll) scheme — see docs/visual_and_aesthetics_design/player-visual-identity-bible.md. Leave as draft until that decision lands."
+      "params": {
+        "initImage": "sprites/classes/classless.png",
+        "initImageStrength": 250
+      },
+      "notes": "Author after the Cadence slice is validated. Slinger: hood + mask with one painted false eye, ritual archer-like armor, targeting glyph symbolism, NO guns/bows/crossbows."
     },
     {
-      "id": "sentinel",
-      "out": "sprites/classes/sentinel.png",
+      "id": "reload-light",
+      "out": "sprites/classes/light_reload.png",
       "size": {
         "w": 64,
         "h": 64
@@ -449,13 +370,17 @@
       "prompt": "",
       "status": "draft",
       "sources": [
-        "cooldown-range-far"
+        "reload-light"
       ],
-      "notes": "DEFERRED: player visuals may move to the composite (paper-doll) scheme — see docs/visual_and_aesthetics_design/player-visual-identity-bible.md. Leave as draft until that decision lands."
+      "params": {
+        "initImage": "sprites/classes/reload.png",
+        "initImageStrength": 300
+      },
+      "notes": "Chain from reload root once accepted. Scout — sharp and mobile."
     },
     {
-      "id": "shade",
-      "out": "sprites/classes/shade.png",
+      "id": "reload-balanced",
+      "out": "sprites/classes/medium_reload.png",
       "size": {
         "w": 64,
         "h": 64
@@ -463,13 +388,17 @@
       "prompt": "",
       "status": "draft",
       "sources": [
-        "energy-range-mid"
+        "reload-balanced"
       ],
-      "notes": "DEFERRED: player visuals may move to the composite (paper-doll) scheme — see docs/visual_and_aesthetics_design/player-visual-identity-bible.md. Leave as draft until that decision lands."
+      "params": {
+        "initImage": "sprites/classes/reload.png",
+        "initImageStrength": 300
+      },
+      "notes": "Chain from reload root once accepted. Marksman — steady and composed."
     },
     {
-      "id": "vanguard",
-      "out": "sprites/classes/vanguard.png",
+      "id": "reload-heavy",
+      "out": "sprites/classes/heavy_reload.png",
       "size": {
         "w": 64,
         "h": 64
@@ -477,37 +406,13 @@
       "prompt": "",
       "status": "draft",
       "sources": [
-        "cooldown-range-close"
+        "reload-heavy"
       ],
-      "notes": "DEFERRED: player visuals may move to the composite (paper-doll) scheme — see docs/visual_and_aesthetics_design/player-visual-identity-bible.md. Leave as draft until that decision lands."
-    },
-    {
-      "id": "warlock",
-      "out": "sprites/classes/warlock.png",
-      "size": {
-        "w": 64,
-        "h": 64
+      "params": {
+        "initImage": "sprites/classes/reload.png",
+        "initImageStrength": 300
       },
-      "prompt": "",
-      "status": "draft",
-      "sources": [
-        "dot-range-mid"
-      ],
-      "notes": "DEFERRED: player visuals may move to the composite (paper-doll) scheme — see docs/visual_and_aesthetics_design/player-visual-identity-bible.md. Leave as draft until that decision lands."
-    },
-    {
-      "id": "wisp",
-      "out": "sprites/classes/wisp.png",
-      "size": {
-        "w": 64,
-        "h": 64
-      },
-      "prompt": "",
-      "status": "draft",
-      "sources": [
-        "energy-range-far"
-      ],
-      "notes": "DEFERRED: player visuals may move to the composite (paper-doll) scheme — see docs/visual_and_aesthetics_design/player-visual-identity-bible.md. Leave as draft until that decision lands."
+      "notes": "Chain from reload root once accepted. Artillerist — broader and anchored, still not a gunner."
     }
   ]
 }

@@ -63,14 +63,14 @@ const SEEDS: SeedSpec[] = [
   },
   {
     category: 'players',
-    endpoint: 'bitforge',
-    styleRef: 'style/characters.png',
+    endpoint: 'pixflux',
+    styleRef: null,
     noBackground: true,
     candidates: 3,
     note:
-      'DEFERRED: player visuals may move to the composite (paper-doll) scheme — see ' +
-      'docs/visual_and_aesthetics_design/player-visual-identity-bible.md. Leave as draft ' +
-      'until that decision lands.',
+      'Evolution-chain scheme (docs/player-sprites-current-state.md): bodies are flat ' +
+      'img2img chains vagrant → class root → frame. New entries chain from their ' +
+      'predecessor via params.initImage; stay draft until the predecessor is accepted.',
     collect: () =>
       [...groupByFrame(PLAYER_FRAMES)].map(([frame, ids]) => ({ out: frame, sources: ids })),
   },

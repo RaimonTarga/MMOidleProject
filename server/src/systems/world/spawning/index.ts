@@ -10,11 +10,14 @@ import {
   mountainChokepointsForNode,
   RESOLVED_NODE_FEATURES,
   TEST_ROOM_NODE_ID,
-  aabbHalfExtents,
+  buildNavGrid,
+  cellToWorld,
   depenetrateToWalkable,
   distanceSq,
   isGauntletDungeonNode,
-  type HasHitbox,
+  moverOverlapsBlockShapes,
+  navigationBodyHalfExtents,
+  nearestWalkableCell,
   type MonsterPatrolRoute,
   type Vec2,
 } from "@mmo-idle/shared";
@@ -139,17 +142,19 @@ const CAVE_PATROL_ROUTES: CavePatrolAssignment[] = [
   },
 ];
 
-function clampMonsterSpawnToNode(nodeId: string, pos: Vec2): Vec2 {
+function clampMonsterSpawnToNode(nodeId: string, pos: Vec2, pad: Vec2): Vec2 {
   const node = NODE_REGISTRY.get(nodeId);
   if (!node) return pos;
+  const marginX = Math.max(MONSTER_TERRAIN_SPAWN_MARGIN, pad.x);
+  const marginY = Math.max(MONSTER_TERRAIN_SPAWN_MARGIN, pad.y);
   return {
     x: Math.max(
-      MONSTER_TERRAIN_SPAWN_MARGIN,
-      Math.min(node.width - MONSTER_TERRAIN_SPAWN_MARGIN, pos.x),
+      marginX,
+      Math.min(node.width - marginX, pos.x),
     ),
     y: Math.max(
-      MONSTER_TERRAIN_SPAWN_MARGIN,
-      Math.min(node.height - MONSTER_TERRAIN_SPAWN_MARGIN, pos.y),
+      marginY,
+      Math.min(node.height - marginY, pos.y),
     ),
   };
 }
@@ -167,16 +172,36 @@ function terrainSafeMonsterSpawnPos(
   nodeId: string,
   typeDef: ReturnType<typeof MONSTER_DATABASE.get> | undefined,
   pos: Vec2,
-  hitbox: HasHitbox,
-): Vec2 {
-  const clamped = clampMonsterSpawnToNode(nodeId, pos);
-  return depenetrateToWalkable(
+): Vec2 | null {
+  const pad = navigationBodyHalfExtents(
+    "monster",
+    typeDef?.isBoss === true,
+  );
+  const suppressed = suppressedMonsterSpawnFeatureIds(nodeId, typeDef);
+  const clamped = clampMonsterSpawnToNode(nodeId, pos, pad);
+  const grid = buildNavGrid(nodeId, "monster", pad, suppressed);
+
+  if (!moverOverlapsBlockShapes(clamped, grid.shapes, pad)) return clamped;
+
+  const projected = depenetrateToWalkable(
     nodeId,
     "monster",
-    aabbHalfExtents(hitbox.rects),
+    pad,
     clamped,
-    suppressedMonsterSpawnFeatureIds(nodeId, typeDef),
-  ) ?? clamped;
+    suppressed,
+  );
+  if (projected) {
+    const bounded = clampMonsterSpawnToNode(nodeId, projected, pad);
+    if (!moverOverlapsBlockShapes(bounded, grid.shapes, pad)) return bounded;
+  }
+
+  // Projection can choose the outside of a tree near an edge. Fall back to the
+  // nearest conservative nav cell, which is both terrain-clear and inside the
+  // playable node. Never return the original penetrating point on failure.
+  const cell = nearestWalkableCell(grid, clamped, 24);
+  if (!cell) return null;
+  const fallback = cellToWorld(grid, cell.col, cell.row);
+  return moverOverlapsBlockShapes(fallback, grid.shapes, pad) ? null : fallback;
 }
 
 /**
@@ -199,7 +224,8 @@ export function createMonster(
 
   const isBoss = def.isBoss ?? false;
   const hitbox = resolveMonsterHitbox(typeId, isBoss, id);
-  const spawnPos = terrainSafeMonsterSpawnPos(nodeId, def, pos, hitbox);
+  const spawnPos = terrainSafeMonsterSpawnPos(nodeId, def, pos);
+  if (!spawnPos) return null;
   const nodeDef = NODE_REGISTRY.get(nodeId);
   const isDungeon = nodeDef?.isDungeon ?? false;
   const usesGauntlet = isGauntletDungeonNode(nodeId);
@@ -343,12 +369,13 @@ export function spawnMonster(world: World, nodeId: string): boolean {
       }
     }
 
-    pos = terrainSafeMonsterSpawnPos(
+    const terrainSafePos = terrainSafeMonsterSpawnPos(
       nodeId,
       typeDef,
       pos,
-      resolveMonsterHitbox(typeId, typeDef?.isBoss ?? false),
     );
+    if (!terrainSafePos) continue;
+    pos = terrainSafePos;
 
     if (!isAmbientSpawnPosClear(world, nodeId, pos, minDistSq, typeDef)) {
       continue;
@@ -406,8 +433,10 @@ function assignCavePatrol(
   assignment: CavePatrolAssignment,
 ): void {
   if (!isCavePatrolBrute(typeDef)) return;
-  monster.hasPosition.current = { ...assignment.anchor };
-  monster.controlsMonster.spawn = { ...assignment.anchor };
+  // createMonster has already terrain-corrected the authored anchor. Preserve
+  // that verified position for both the body and its return/leash origin.
+  const safeAnchor = { ...monster.hasPosition.current };
+  monster.controlsMonster.spawn = safeAnchor;
   monster.controlsMonster.patrolOverride = {
     ...assignment.patrol,
     waypoints: assignment.patrol.waypoints.map((wp) => ({ ...wp })),

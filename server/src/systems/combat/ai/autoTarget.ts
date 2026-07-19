@@ -15,7 +15,9 @@ import {
   type Vec2,
 } from "@mmo-idle/shared";
 import { NODE_REGISTRY } from "../../../world/nodeRegistry";
-import { setEntityMotion, stopEntity } from "../../world/movement";
+import { navigationPadForEntity, setEntityMotion, stopEntity } from "../../world/movement";
+import { resolveObstaclesForNode } from "../../world/nodeFeatures";
+import { suppressedFeatureIdsForEntity } from "../../world/pathMotion";
 import { isEffectivePartyFollower } from "../../player/party/partySystem";
 import { beginFlee, stepFlee } from "./flee";
 import {
@@ -94,6 +96,30 @@ const CAREFUL_PULLING_SIDE_STEP = 220;
 const HAZARD_PULL_EDGE_BUFFER = 72;
 const HAZARD_PULL_ARRIVE_SQ = 42 * 42;
 const HAZARD_SKIRT_ANGLE = 0.65;
+
+/**
+ * Direct steering is only safe when the mover's whole body has an unobstructed
+ * segment to the requested standoff. Distance alone is insufficient: two actors
+ * can be less than DIRECT_APPROACH_DIST apart while standing on opposite sides
+ * of a tree. In that case direct mode has no path to replan and will repeatedly
+ * drive into the trunk forever.
+ */
+function hasClearDirectApproach(
+  world: World,
+  player: PlayerEntity,
+  destination: Vec2,
+): boolean {
+  const resolved = resolveObstaclesForNode(
+    world,
+    player.hasPosition.nodeId,
+    player.hasPosition.current,
+    destination,
+    "player",
+    navigationPadForEntity(player),
+    suppressedFeatureIdsForEntity(world, player),
+  );
+  return resolved === destination;
+}
 
 function clampToNode(world: World, nodeId: string, pos: Vec2): Vec2 {
   const node = NODE_REGISTRY.get(nodeId);
@@ -488,13 +514,15 @@ export function steerTowardTarget(
       x: playerPos.x + (dx / dist) * standoffAdvance,
       y: playerPos.y + (dy / dist) * standoffAdvance,
     };
-    setEntityMotion(
+    const directDestination = clampToNode(
       world,
-      player,
-      clampToNode(world, player.hasPosition.nodeId, standoff),
-      { mode: "direct" },
+      player.hasPosition.nodeId,
+      standoff,
     );
-    return;
+    if (hasClearDirectApproach(world, player, directDestination)) {
+      setEntityMotion(world, player, directDestination, { mode: "direct" });
+      return;
+    }
   }
 
   // Far approach: pathfind toward a point a slack deeper than the firing standoff

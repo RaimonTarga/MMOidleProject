@@ -74,6 +74,12 @@ function buildState(): unknown {
         variants: variantOuts(e.out),
         sources: e.sources ?? [],
         hasCurrent: fs.existsSync(srcPathFor(e.out)),
+        // The gallery replaces its DOM after an accept, but the current-art URL
+        // otherwise stays identical. Include the file timestamp so browsers
+        // cannot reuse the image that was current before the accept.
+        currentVersion: fs.existsSync(srcPathFor(e.out))
+          ? fs.statSync(srcPathFor(e.out)).mtimeMs
+          : 0,
         candidates: candidateFiles(manifest.category, e.id),
       })),
     })),
@@ -163,7 +169,21 @@ async function acceptVariant(category: string, id: string, file: string): Promis
 function finishSelection(category: string, id: string): void {
   const r = findEntry(category, id);
   if (!r) throw new Error(`unknown entry ${category}/${id}`);
-  fs.rmSync(path.join(CANDIDATES_DIR, category, id), { recursive: true, force: true });
+  const candidateDir = path.join(CANDIDATES_DIR, category, id);
+  if (!fs.existsSync(candidateDir)) return;
+
+  // Finishing removes an entry from the active gallery, but must be reversible:
+  // an accidental click should never destroy paid API output. Keep archives
+  // outside category directories so buildState/candidateFiles will not show them.
+  const archiveRoot = path.join(CANDIDATES_DIR, '_finished', category);
+  fs.mkdirSync(archiveRoot, { recursive: true });
+  const stamp = new Date().toISOString().replace(/[:.]/g, '-');
+  let archiveDir = path.join(archiveRoot, `${id}-${stamp}`);
+  let suffix = 2;
+  while (fs.existsSync(archiveDir)) {
+    archiveDir = path.join(archiveRoot, `${id}-${stamp}-${suffix++}`);
+  }
+  fs.renameSync(candidateDir, archiveDir);
 }
 
 function reject(category: string, id: string, note: string): void {

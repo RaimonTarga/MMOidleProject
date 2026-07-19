@@ -44,6 +44,7 @@ export const volcanoMonsterEntries = [
   // catch Far, ramp punishes slow kills. Answer: hardening + in-combat-regen/kill-burst.
   ['ember-scuttler', {
     id: 'ember-scuttler', name: 'Ember Scuttler', color: 0xff6622,
+    // Young fire skink (role-name kept; grows into the T4 Ember Skink).
     // Swarm filler that heats up: starts weak, ramps if the fight drags. Fast.
     stats: { hp: 380, attack: 24, plating: 2, damageReduction: 0, speed: 64, attackRange: 12, attackCooldown: 1600, pullRange: 210 },
     behavior: 'melee', attackStyle: 'fire', biome: 'volcanic',
@@ -64,7 +65,8 @@ export const volcanoMonsterEntries = [
   }],
 
   ['magma-brute', {
-    id: 'magma-brute', name: 'Magma Brute', color: 0xcc2200,
+    id: 'magma-brute', name: 'Magma Tortoise', color: 0xcc2200,
+    // Molten tortoise (line T3, grows into the T4 Obsidian Tortoise).
     // Slow bruiser that ramps HARDER (cap +60%): kitable alone, but in the swarm you
     // can't kite freely, and a slow kill lets it spiral toward dangerous. Plt 6.
     stats: { hp: 800, attack: 56, plating: 6, damageReduction: 0, speed: 22, attackRange: 15, attackCooldown: 3000, pullRange: 150 },
@@ -75,9 +77,9 @@ export const volcanoMonsterEntries = [
   }],
 
   ['ash-slinger', {
-    id: 'ash-slinger', name: 'Ash Slinger', color: 0xff4422,
-    // Ranged ember-lobber that ramps — pokes while the swarm closes; ignoring it
-    // lets its ramp build. Stationary ranged (not a kiter — Volcano is aggressive).
+    id: 'ash-slinger', name: 'Ash Salamander', color: 0xff4422,
+    // Salamander line T3 (ranged ember-lobber that ramps) — pokes while the swarm
+    // closes; ignoring it lets its ramp build. Stationary ranged (not a kiter).
     stats: { hp: 420, attack: 34, plating: 2, damageReduction: 0, speed: 44, attackRange: 180, attackCooldown: 2000, pullRange: 230 },
     behavior: 'ranged', attackStyle: 'fire', biome: 'volcanic',
     rewards: { essence: 27, essenceType: 'red', level: 2, biomeXp: 165 },

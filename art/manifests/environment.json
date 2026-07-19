@@ -57,11 +57,11 @@
         "w": 64,
         "h": 64
       },
-      "prompt": "small isolated tuft of dry plains grass, a few wispy bending blades and no other subject, top-down decorative ground prop, transparent background, painterly pixel art, soft volumetric shading, minimal outline, muted dusty green and pale gold",
-      "negative": "ground rectangle, scenery, tree, shrub, bush, flower, rock, creature, character, dense foliage, text, watermark, hard black outline, oversaturated, neon",
+      "prompt": "small isolated tuft of dry plains grass, a few wispy bending blades and no other subject, top-down decorative ground prop, transparent background, painterly pixel art, soft volumetric shading, minimal outline, dusty sage-olive green with a warm grey undertone matching a pale wheat plains palette, not bright, no vivid or saturated green",
+      "negative": "ground rectangle, scenery, tree, shrub, bush, flower, rock, creature, character, dense foliage, text, watermark, hard black outline, oversaturated, neon, bright green, saturated green, vivid green",
       "status": "accepted",
       "candidates": 2,
-      "notes": "Visual-only surface dressing. Regenerated without the old terrain reference image, which leaked scene composition into the first batch.",
+      "notes": "Regen 2026-07-11: original blades were saturated mid-green against the muted pale-wheat/grey-sage wang ground; pulling toward the same sage-olive/grey-undertone family as the ground prompt so it echoes the palette instead of clashing. Candidates generated, awaiting your review in the gallery.",
       "params": {
         "outline": "lineless",
         "shading": "highly detailed shading",
@@ -95,11 +95,11 @@
         "w": 64,
         "h": 64
       },
-      "prompt": "small sparse patch of low pale wildflowers and grass, isolated top-down decorative ground prop, transparent background, painterly pixel art, soft volumetric shading, minimal outline, muted cream petals, dry gold and moss green",
-      "negative": "ground rectangle, dense flower bed, bouquet, tall plant, tree, shrub, rock, creature, character, text, watermark, hard black outline, oversaturated, neon",
+      "prompt": "small sparse patch of low pale wildflowers and grass, isolated top-down decorative ground prop, transparent background, painterly pixel art, soft volumetric shading, minimal outline, muted cream petals, dry gold and dusty sage-olive green with a grey undertone matching a pale wheat plains palette, not bright, no vivid or saturated green",
+      "negative": "ground rectangle, dense flower bed, bouquet, tall plant, tree, shrub, rock, creature, character, text, watermark, hard black outline, oversaturated, neon, bright green, saturated green, vivid green",
       "status": "accepted",
       "candidates": 2,
-      "notes": "Visual-only surface dressing. Keep it subdued so enemies and attack effects remain readable over it.",
+      "notes": "Regen 2026-07-11: nudging the grass-blade green toward the same sage-olive/grey-undertone family as the ground prompt, milder change than grass-tuft since flowers already break up the green. Candidates generated, awaiting your review in the gallery.",
       "params": {
         "outline": "lineless",
         "shading": "highly detailed shading",
@@ -119,6 +119,1438 @@
       "status": "accepted",
       "candidates": 2,
       "notes": "Visual-only dressing, not an obstacle. Keep the silhouette low and sparse so Plains remains open.",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down"
+      }
+    },
+    {
+      "id": "clearing-grass-dirt-wang",
+      "out": "files/environment/clearing/grass-dirt-wang.png",
+      "size": {
+        "w": 256,
+        "h": 256
+      },
+      "prompt": "seamless top-down neatly kept clearing grass, soft muted green with a warm sage undertone, calm and tended rather than wild, even all-over fine texture with NO clumps, NO tufts, NO distinct shapes and NO repeating motif, organic irregular subtle detail, gentle soft painterly shading, calm and easy on the eyes, seamlessly tileable with no visible repeat, not bright, no vivid green",
+      "status": "accepted",
+      "endpoint": "tileset",
+      "candidates": 2,
+      "notes": "T1 tileset refresh 2026-07-11 (decorative 1/2): tended clearing grass blended with a packed dirt path, mirroring the plains grass/dirt formula but a calmer, tended mood since Clearing is the T0 hub.",
+      "params": {
+        "upperDescription": "seamless top-down packed dirt path, even pale tan-grey soil worn smooth by foot traffic, very fine consistent grain, no distinct shapes, low saturation, painterly, evenly tileable, no plants, no loose stones",
+        "transitionDescription": "soft organic irregular edge where tended grass fades into packed dirt, gradual and subtle, no hard line",
+        "tileSize": 64,
+        "outline": "lineless",
+        "shading": "detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down",
+        "tileable": true,
+        "mode": "pro"
+      }
+    },
+    {
+      "id": "clearing-grass-paving-wang",
+      "out": "files/environment/clearing/grass-paving-wang.png",
+      "size": {
+        "w": 256,
+        "h": 256
+      },
+      "prompt": "seamless top-down neatly kept clearing grass, soft muted green with a warm sage undertone, calm and tended rather than wild, even all-over fine texture with NO clumps, NO tufts, NO distinct shapes and NO repeating motif, organic irregular subtle detail, gentle soft painterly shading, calm and easy on the eyes, seamlessly tileable with no visible repeat, not bright, no vivid green",
+      "status": "accepted",
+      "endpoint": "tileset",
+      "candidates": 2,
+      "notes": "T1 tileset refresh 2026-07-11 (decorative 2/2): tended grass blended with worn stone paving, reinforcing the Clearing's civilized/sanctuary read around the rune altar. In-game bake-off verdict (same day): the OTHER candidate won — files swapped so the winner holds this canonical name; grass-paving-wang-variant-2.png is the originally-accepted loser.",
+      "params": {
+        "upperDescription": "seamless top-down worn stone paving, pale weathered grey flagstones with faint mossy seams, subtle irregular joints, low saturation, painterly, evenly tileable, no plants, no rubble",
+        "transitionDescription": "soft organic edge where tended grass meets worn stone paving, gradual, no hard line",
+        "tileSize": 64,
+        "outline": "lineless",
+        "shading": "detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down",
+        "tileable": true,
+        "mode": "pro"
+      }
+    },
+    {
+      "id": "cave-floor-rubble-wang",
+      "out": "files/environment/cave/floor-rubble-wang.png",
+      "size": {
+        "w": 256,
+        "h": 256
+      },
+      "prompt": "seamless top-down dark cave stone floor, near-black desaturated charcoal grey with a faint cool damp sheen, very low contrast, fine uneven granular rock texture, no distinct shapes, organic irregular subtle detail, gentle soft painterly shading, seamlessly tileable with no visible repeat, unlit deep cave mood, dark but readable, no bright highlights, no warm tones",
+      "status": "accepted",
+      "endpoint": "tileset",
+      "candidates": 2,
+      "notes": "REGEN 2026-07-11 (in-game verdict: palette entirely wrong, read like daylight slate). New direction: charcoal darkness — near-black desaturated stone, unlit deep-cave mood, monsters/props pop against it. Was: T1 tileset refresh (decorative 1/2), floor + loose rubble.",
+      "params": {
+        "upperDescription": "seamless top-down loose cave rubble and gravel, very dark charcoal-grey broken stone fragments a shade rougher and slightly paler than the floor but still deep dark, very fine consistent grain, no distinct shapes, low saturation, painterly, evenly tileable, no plants, no crystals, no bright highlights",
+        "transitionDescription": "soft organic irregular edge where the dark cave floor fades into loose rubble, gradual and subtle, no hard line",
+        "tileSize": 64,
+        "outline": "lineless",
+        "shading": "detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down",
+        "tileable": true,
+        "mode": "pro"
+      }
+    },
+    {
+      "id": "cave-floor-patrol-path-wang",
+      "out": "files/environment/cave/floor-patrol-path-wang.png",
+      "size": {
+        "w": 256,
+        "h": 256
+      },
+      "prompt": "seamless top-down dark cave stone floor, near-black desaturated charcoal grey with a faint cool damp sheen, very low contrast, fine uneven granular rock texture, no distinct shapes, organic irregular subtle detail, gentle soft painterly shading, seamlessly tileable with no visible repeat, unlit deep cave mood, dark but readable, no bright highlights, no warm tones",
+      "status": "accepted",
+      "endpoint": "tileset",
+      "candidates": 2,
+      "notes": "REGEN 2026-07-11 (in-game verdict: palette entirely wrong). Same charcoal-darkness base as cave-floor-rubble-wang; upper = worn patrol trail, kept subtly lighter but still dark so the path reads without breaking the unlit mood. Ties into the cave's patrol/ambush domain law.",
+      "params": {
+        "upperDescription": "seamless top-down worn patrol trail through an unlit cave, packed dark grey-brown earth trodden smooth, subtly lighter than the surrounding charcoal stone floor but still dark and muted, very fine consistent grain, no distinct shapes, low saturation, painterly, evenly tileable, no plants, no stones, no bright highlights",
+        "transitionDescription": "soft organic irregular edge where the dark cave floor fades into the worn patrol trail, gradual and subtle, no hard line",
+        "tileSize": 64,
+        "outline": "lineless",
+        "shading": "detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down",
+        "tileable": true,
+        "mode": "pro"
+      }
+    },
+    {
+      "id": "forest-floor-light-undergrowth-wang",
+      "out": "files/environment/forest/floor-light-undergrowth-wang.png",
+      "size": {
+        "w": 256,
+        "h": 256
+      },
+      "prompt": "seamless top-down forest floor of moss and leaf litter, muted mossy green-brown with a soft earthy undertone, even all-over fine texture with NO clumps, NO distinct shapes and NO repeating motif, organic irregular subtle detail, gentle soft painterly shading, calm and easy on the eyes, seamlessly tileable with no visible repeat, not bright, no vivid green",
+      "status": "accepted",
+      "endpoint": "tileset",
+      "candidates": 2,
+      "notes": "T1 tileset refresh 2026-07-11 (decorative 1/2): forest floor blended with sparse low undergrowth, the lighter of two foliage-density variants.",
+      "params": {
+        "upperDescription": "seamless top-down sparse low forest undergrowth, thin scattered ferns and small leafy shoots spread evenly with no clustering, even all-over fine texture with NO clumps, NO tufts, NO distinct shapes, organic irregular subtle detail, gentle soft painterly shading, muted dusty green, seamlessly tileable with no visible repeat, not bright, no vivid green",
+        "transitionDescription": "soft organic irregular edge where forest floor fades into sparse undergrowth, gradual and subtle, no hard line",
+        "tileSize": 64,
+        "outline": "lineless",
+        "shading": "detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down",
+        "tileable": true,
+        "mode": "pro"
+      }
+    },
+    {
+      "id": "forest-floor-heavy-foliage-wang",
+      "out": "files/environment/forest/floor-heavy-foliage-wang.png",
+      "size": {
+        "w": 256,
+        "h": 256
+      },
+      "prompt": "seamless top-down forest floor of moss and leaf litter, muted mossy green-brown with a soft earthy undertone, even all-over fine texture with NO clumps, NO distinct shapes and NO repeating motif, organic irregular subtle detail, gentle soft painterly shading, calm and easy on the eyes, seamlessly tileable with no visible repeat, not bright, no vivid green",
+      "status": "accepted",
+      "endpoint": "tileset",
+      "candidates": 2,
+      "notes": "T1 tileset refresh 2026-07-11 (decorative 2/2): forest floor blended with dense low foliage, the heavier of two foliage-density variants.",
+      "params": {
+        "upperDescription": "seamless top-down dense low forest foliage, thick overlapping ferns and leafy brush with heavier all-over coverage, even fine texture with no repeating motif, organic irregular subtle detail, gentle soft painterly shading, deep muted green with a shadowed undertone, seamlessly tileable with no visible repeat, not bright, no vivid green",
+        "transitionDescription": "soft organic irregular edge where forest floor fades into dense foliage, gradual and subtle, no hard line",
+        "tileSize": 64,
+        "outline": "lineless",
+        "shading": "detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down",
+        "tileable": true,
+        "mode": "pro"
+      }
+    },
+    {
+      "id": "mountain-ground-scree-wang",
+      "out": "files/environment/mountain/ground-scree-wang.png",
+      "size": {
+        "w": 256,
+        "h": 256
+      },
+      "prompt": "seamless top-down rocky mountain ground, muted cool grey stone with a faint blue-slate undertone, fine uneven granular texture, no distinct shapes, organic irregular subtle detail, gentle soft painterly shading, calm and easy on the eyes, seamlessly tileable with no visible repeat, not bright, no warm dirt tones",
+      "status": "accepted",
+      "endpoint": "tileset",
+      "candidates": 2,
+      "notes": "RETIRED 2026-07-11: every mountain node has ledge rings, so this decorative sheet never renders in game — mountain is a ONE-sheet biome and the scree grain now lives in mountain-ground-ledge-wang's lower description. Asset kept on disk for the dev ground bake-off ([/]); do not regenerate.",
+      "params": {
+        "upperDescription": "seamless top-down loose mountain scree and gravel, even pale grey broken stone fragments, very fine consistent grain, no distinct shapes, low saturation, painterly, evenly tileable, no plants",
+        "transitionDescription": "soft organic irregular edge where rocky ground fades into loose scree, gradual and subtle, no hard line",
+        "tileSize": 64,
+        "outline": "lineless",
+        "shading": "detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down",
+        "tileable": true,
+        "mode": "pro"
+      }
+    },
+    {
+      "id": "mountain-ground-stone-wang",
+      "out": "files/environment/mountain/ground-stone-wang.png",
+      "size": {
+        "w": 256,
+        "h": 256
+      },
+      "prompt": "seamless flat top-down mountain floor, compact cool blue-grey rocky earth with fine restrained granular texture, low contrast and calm gameplay readability, painterly pixel art, evenly lit and seamlessly tileable, absolutely flat terrain with no cliffs, ledges, walls, elevation changes, drop shadows or raised platforms",
+      "status": "accepted",
+      "endpoint": "tileset",
+      "candidates": 2,
+      "notes": "Final regular mountain ground sheet. Ledges are rendered separately as modular overlays and must never be baked into this Wang terrain.",
+      "params": {
+        "upperDescription": "seamless flat weathered mountain stone pavement, pale cool grey slabs naturally fractured into subtle broad shapes, sparse hairline cracks, low contrast, painterly, evenly tileable, no plants, no rubble, no height or elevation cues",
+        "transitionDescription": "soft irregular ground-level blend between compact rocky earth and flat weathered stone, eroded feathered boundary with scattered tiny chips, no hard rim, no cliff face, no wall, no ledge, no drop shadow, no elevation change",
+        "tileSize": 64,
+        "outline": "lineless",
+        "shading": "detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down",
+        "tileable": true,
+        "mode": "pro"
+      }
+    },
+    {
+      "id": "swamp-ground-reeds-wang",
+      "out": "files/environment/swamp/ground-reeds-wang.png",
+      "size": {
+        "w": 256,
+        "h": 256
+      },
+      "prompt": "seamless top-down murky swamp ground, muted olive-brown with a damp grey-green undertone, fine uneven organic texture, no distinct shapes, organic irregular subtle detail, gentle soft painterly shading, calm and easy on the eyes, seamlessly tileable with no visible repeat, not bright, no vivid green",
+      "status": "accepted",
+      "endpoint": "tileset",
+      "candidates": 2,
+      "notes": "RETIRED 2026-07-11: every swamp node has rot pools, so this decorative sheet never renders in game — swamp is a ONE-sheet biome (bogpool). Asset kept on disk for the dev ground bake-off ([/]); do not regenerate. The 2026-07-11 re-roll candidates in art/candidates were generated before we caught this — ignore or delete them. Becomes useful again only if poolless swamp nodes are ever added to NODE_FEATURES.",
+      "params": {
+        "colorImage": "files/environment/swamp/ground-reeds-wang.png",
+        "upperDescription": "seamless top-down scattered dead reeds and root tangles over damp swamp ground, thin muted brown-grey fibrous texture spread evenly with no clustering, even all-over fine texture with no distinct shapes, organic irregular subtle detail, gentle soft painterly shading, seamlessly tileable with no visible repeat, not bright",
+        "transitionDescription": "soft organic irregular edge where swamp ground fades into the reed tangle, gradual and subtle, no hard line",
+        "tileSize": 64,
+        "outline": "lineless",
+        "shading": "detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down",
+        "tileable": true,
+        "mode": "pro"
+      }
+    },
+    {
+      "id": "swamp-ground-bogpool-wang",
+      "out": "files/environment/swamp/ground-bogpool-wang.png",
+      "size": {
+        "w": 256,
+        "h": 256
+      },
+      "prompt": "seamless top-down murky swamp ground, muted olive-brown with a damp grey-green undertone, fine uneven organic texture, no distinct shapes, organic irregular subtle detail, gentle soft painterly shading, calm and easy on the eyes, seamlessly tileable with no visible repeat, not bright, no vivid green",
+      "status": "accepted",
+      "endpoint": "tileset",
+      "candidates": 2,
+      "notes": "T1 tileset refresh 2026-07-11 (FUNCTIONAL 2/2): swamp ground blended with a stagnant bog/mud pool (matches server rotPool geometry in shared/src/world/nodeFeatures.ts — poisons + slows players). Deliberately a harder, more defined transition than the other 9 tilesets so the hazard boundary reads clearly — do not soften to match the decorative sets.",
+      "params": {
+        "upperDescription": "seamless top-down stagnant bog pool, murky dark olive-green water with a faint sickly sheen, subtle ripples, no plants, no reflections of sky, painterly, evenly tileable",
+        "transitionDescription": "sharp, clearly defined edge where swamp ground meets the bog pool, a distinct darker wet rim and slight raised muddy lip, not soft, not gradual, must read as a hazardous boundary at a glance, slight sickly-green glow along the edge to telegraph poison",
+        "tileSize": 64,
+        "outline": "lineless",
+        "shading": "detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down",
+        "tileable": true,
+        "mode": "pro"
+      }
+    },
+    {
+      "id": "desert-sand-hardpan-wang",
+      "out": "files/environment/desert/sand-hardpan-wang.png",
+      "size": {
+        "w": 256,
+        "h": 256
+      },
+      "prompt": "seamless top-down sun-bleached desert sand, pale muted gold-tan with a soft grey undertone, fine even wind-settled grain with NO clumps, NO dunes, NO distinct shapes and NO repeating motif, organic irregular subtle detail, gentle soft painterly shading, calm and easy on the eyes, seamlessly tileable with no visible repeat, not bright, no vivid orange, no saturated yellow",
+      "status": "accepted",
+      "endpoint": "tileset",
+      "candidates": 2,
+      "notes": "T2+ tileset rollout 2026-07-11 (1/6): desert = LOW-density standoff biome. Loose pale sand blended with cracked dry hardpan, mirroring the plains grass/dirt formula in an arid palette.",
+      "params": {
+        "upperDescription": "seamless top-down cracked dry hardpan earth, muted pale umber-grey baked clay fractured into subtle shallow cracks, low contrast, very fine consistent grain, no distinct shapes, low saturation, painterly, evenly tileable, no plants, no stones",
+        "transitionDescription": "soft organic irregular edge where loose sand thins out over the cracked hardpan, gradual and subtle, no hard line",
+        "tileSize": 64,
+        "outline": "lineless",
+        "shading": "detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down",
+        "tileable": true,
+        "mode": "pro"
+      }
+    },
+    {
+      "id": "jungle-floor-overgrowth-wang",
+      "out": "files/environment/jungle/floor-overgrowth-wang.png",
+      "size": {
+        "w": 256,
+        "h": 256
+      },
+      "prompt": "seamless top-down dense jungle floor, deep muted green-brown of damp earth and packed leaf litter, darker and richer than a temperate forest floor, even all-over fine texture with NO clumps, NO distinct shapes and NO repeating motif, organic irregular subtle detail, gentle soft painterly shading, seamlessly tileable with no visible repeat, not bright, no vivid green",
+      "status": "accepted",
+      "endpoint": "tileset",
+      "candidates": 2,
+      "notes": "T2+ tileset rollout 2026-07-11 (2/6): jungle = HIGH-density ambush biome. Damp dark floor blended with thick creeping overgrowth — deliberately darker and denser than the forest heavy-foliage sheet so the two biomes never read alike.",
+      "params": {
+        "upperDescription": "seamless top-down thick creeping jungle overgrowth, dense low tangle of dark leaves, thin vines and broad tropical foliage with heavy all-over coverage, even fine texture with no repeating motif, organic irregular subtle detail, gentle soft painterly shading, deep shadowed jungle green, seamlessly tileable with no visible repeat, not bright, no vivid green",
+        "transitionDescription": "soft organic irregular edge where the jungle floor disappears under creeping overgrowth, gradual and subtle, no hard line",
+        "tileSize": 64,
+        "outline": "lineless",
+        "shading": "detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down",
+        "tileable": true,
+        "mode": "pro"
+      }
+    },
+    {
+      "id": "tundra-snow-ice-wang",
+      "out": "files/environment/tundra/snow-ice-wang.png",
+      "size": {
+        "w": 256,
+        "h": 256
+      },
+      "prompt": "seamless top-down untouched tundra snow, pale cool white-grey powder snow with perfectly uniform fine grain like paper texture, absolutely featureless flat surface, NO patches, NO earth showing through, NO individual shapes, NO footprints, NO sparkle motifs, NO clumps, NO drifts and absolutely NO repeating motif, flat even ambient light with gentle soft painterly shading, calm and easy on the eyes, seamlessly tileable with no visible repeat, not pure white, no bright glare",
+      "status": "accepted",
+      "endpoint": "tileset",
+      "candidates": 2,
+      "notes": "REGEN roll 3, 2026-07-11 (roll-2 ALT candidate close to target; two remaining defects): (1) flat snow tile still had a repeating per-tile pattern — likely OUR 'faint patches of frozen earth' phrase, any distinct patch repeats every 64px by construction; removed, snow is now pure uniform grain; (2) some corner tiles had wrong shading — ice wedge shaded like a raised bevel; added flush/no-height/flat-light language. colorImage pins the palette to the roll-2 alt the user liked. If this roll still fails, STOP re-rolling: hand-fix corners in art/src or Aseprite inpaint (3-strikes lesson).",
+      "params": {
+        "colorImage": "files/environment/tundra/snow-ice-wang-variant-2.png",
+        "upperDescription": "seamless top-down hard wind-polished ice lying perfectly flush with the surrounding snow, muted blue-grey clearly distinct from the snow, faint pale internal fractures and a subtle cold sheen, absolutely flat with no height difference, no bevel, no raised edge, no cast shadow, flat even ambient light, no distinct shapes, low saturation, painterly, evenly tileable, no snow drifts, no bright highlights",
+        "transitionDescription": "clean gently defined edge where thin snow gives way to hard ice at the same ground level, readable at a glance but natural, a slight crusted snow lip along the boundary, flat even ambient light with no cast shadows and no bevel shading, no mushy blur, no hard black line",
+        "tileSize": 64,
+        "outline": "lineless",
+        "shading": "detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down",
+        "tileable": true,
+        "mode": "pro"
+      }
+    },
+    {
+      "id": "volcano-basalt-lava-wang",
+      "out": "files/environment/volcano/basalt-lava-wang.png",
+      "size": {
+        "w": 256,
+        "h": 256
+      },
+      "prompt": "seamless top-down dark volcanic basalt ground, near-black desaturated charcoal stone with a faint warm ashen undertone, fine uneven granular rock texture, no distinct shapes, organic irregular subtle detail, gentle soft painterly shading, seamlessly tileable with no visible repeat, dark but readable, no bright highlights",
+      "status": "accepted",
+      "endpoint": "tileset",
+      "candidates": 2,
+      "notes": "REGEN roll 2, 2026-07-12 (roll-1 design ON POINT, but the lava's long glowing channels break at tile edges — lines can't continue across independently generated tiles, and the client-side flip fix didn't rescue it). Same design, tileable structure: lava interior re-specified as rounded CELLULAR crust plates with short glowing seams (blobby patterns tolerate edge discontinuity, lines don't). colorImage pins the palette to the roll-1 sheet (kept as basalt-lava-wang-variant-2.png + bake-off backup). Rim/transition unchanged — it read great. FUNCTIONAL sheet: paints lava_vent_/boss_vent_ geometry (contactBandPx 40), keep the hard rim.",
+      "params": {
+        "colorImage": "files/environment/volcano/basalt-lava-wang-variant-2.png",
+        "upperDescription": "seamless top-down molten lava surface made of rounded cooling crust plates, small dark crusted cells separated by short glowing orange-red seams, evenly distributed cellular cracked pattern with NO long winding channels, NO directional flow lines and NO repeating motif, uniform all-over detail, clearly molten and dangerous, painterly, evenly tileable, no flames, no smoke",
+        "transitionDescription": "sharp, clearly defined edge where dark basalt meets molten lava, a distinct blackened crusted rim with a hot glowing seam, not soft, not gradual, must read as a hazardous boundary at a glance, faint ember glow along the edge to telegraph burning danger",
+        "tileSize": 64,
+        "outline": "lineless",
+        "shading": "detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down",
+        "tileable": true,
+        "mode": "pro"
+      }
+    },
+    {
+      "id": "trench-silt-biolume-wang",
+      "out": "files/environment/trench/silt-biolume-wang.png",
+      "size": {
+        "w": 256,
+        "h": 256
+      },
+      "prompt": "seamless top-down deep-sea trench floor, deep desaturated navy-blue abyssal silt, rich dark blue undertone that clearly reads as blue rather than grey, fine soft sediment texture with subtle organic variation, no distinct shapes, gentle soft painterly shading, seamlessly tileable with no visible repeat, unlit hadal seafloor mood, dark but readable, no warm tones, not grey, not black",
+      "status": "accepted",
+      "endpoint": "tileset",
+      "candidates": 2,
+      "notes": "REGEN 2026-07-11 (in-game verdict: too plain, biolume corners broken, wants MORE DEEP BLUE): (1) base pushed from near-black blue-grey to rich dark navy; (2) the biolume upper was so sparse/dim it barely differed from the base, which is why the single-corner transition tiles autotiled into broken-looking noise — upper now clearly brighter and denser so the wang blend has real material contrast to work with; (3) firmer glow boundary for corner readability. Was: T2+ rollout 5/6.",
+      "params": {
+        "upperDescription": "seamless top-down abyssal sediment strewn with clearly visible bioluminescent life, glowing cyan-teal plankton motes and thin luminous veins noticeably brighter than the surrounding dark blue silt, organic scattered detail with no repeating motif, soft ethereal glow, painterly, evenly tileable, no plants, no coral, no fish",
+        "transitionDescription": "gently defined organic edge where the dark silt gives way to the glowing bioluminescent field, the glow visibly begins at the boundary, readable but soft, no hard line",
+        "tileSize": 64,
+        "outline": "lineless",
+        "shading": "detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down",
+        "tileable": true,
+        "mode": "pro"
+      }
+    },
+    {
+      "id": "wasteland-ash-blight-wang",
+      "out": "files/environment/wasteland/ash-blight-wang.png",
+      "size": {
+        "w": 256,
+        "h": 256
+      },
+      "prompt": "seamless top-down blighted wasteland earth, dead grey-brown soil with a bruised grey-violet taint and thin sickly plague-green veining creeping through it, ominous and malevolent, even all-over fine texture with NO clumps, NO distinct shapes and NO repeating motif, organic irregular subtle detail, gentle soft painterly shading, seamlessly tileable with no visible repeat, corrupted and menacing but muted, no vivid color, no bright green",
+      "status": "accepted",
+      "endpoint": "tileset",
+      "candidates": 2,
+      "notes": "REGEN 2026-07-11 (in-game verdict: too neutral, wants it MORE EVIL): first roll read as generic desolation. Pulling in the charnel/plague elements from the rejected directions — bruised grey-violet taint (matches the 0x0c0810 purple-tinted background) and faint plague-green veining for the contagion monster theme — while keeping the ashen-blight base. User only ever saw ONE candidate of roll 1 (candidate-2 was lost to the mid-run review race). Was: T2+ rollout 6/6.",
+      "params": {
+        "upperDescription": "seamless top-down drifted bone-pale ash over cursed ground, soft grey ash blanket with fine wind-settled grain, darker charred flecks and a faint sickly violet undertone, no distinct shapes, low saturation, painterly, evenly tileable, no plants, no bones, no embers",
+        "transitionDescription": "soft organic irregular edge where the blighted earth disappears under drifted ash, gradual and subtle, no hard line",
+        "tileSize": 64,
+        "outline": "lineless",
+        "shading": "detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down",
+        "tileable": true,
+        "mode": "pro"
+      }
+    },
+    {
+      "id": "clearing-trim-grass-tuft",
+      "out": "files/environment/clearing/trim-grass-tuft.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "small isolated tuft of neatly kept soft grass, short rounded blades growing in an orderly loose cluster, tranquil civilized tutorial clearing decoration, high top-down decorative ground prop, transparent background, painterly pixel art, soft volumetric shading, minimal outline, fresh muted sage green with warm undertones, calm and healthy",
+      "negative": "ground rectangle, wild overgrown grass, tall grass, weeds, flowers, shrub, rock, tree, creature, character, text, watermark, hard black outline, oversaturated, neon",
+      "status": "accepted",
+      "candidates": 2,
+      "notes": "Clearing common family 1/4. Short, calm, tended vegetation; visual-only and non-colliding.",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down"
+      }
+    },
+    {
+      "id": "clearing-small-flower-patch",
+      "out": "files/environment/clearing/small-flower-patch.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "small tidy patch of a few low white and pale yellow flowers among short soft leaves, gently maintained rather than wild, tranquil civilized tutorial clearing decoration, isolated high top-down ground prop, transparent background, painterly pixel art, soft volumetric shading, minimal outline, muted fresh sage green and warm cream palette",
+      "negative": "ground rectangle, dense flower bed, bouquet, tall flowers, wild meadow, shrub, rock, tree, creature, character, text, watermark, hard black outline, oversaturated, neon",
+      "status": "accepted",
+      "candidates": 2,
+      "notes": "Clearing common family 2/4. Friendly low color accent; restrained enough to preserve the chill mood.",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down"
+      }
+    },
+    {
+      "id": "clearing-smooth-stones",
+      "out": "files/environment/clearing/smooth-stones.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "small orderly grouping of three to five smooth rounded garden stones, low and harmless, tranquil civilized tutorial clearing decoration, isolated high top-down ground prop, transparent background, painterly pixel art, soft volumetric shading, minimal outline, pale warm grey stone with subtle moss-softened edges",
+      "negative": "ground rectangle, boulder, sharp rocks, rubble, cliff, wall, plant, creature, character, building, text, watermark, hard black outline, oversaturated, neon",
+      "status": "accepted",
+      "candidates": 2,
+      "notes": "Clearing common family 3/4. Rounded, deliberately non-threatening stones.",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down"
+      }
+    },
+    {
+      "id": "clearing-low-leaf-clump",
+      "out": "files/environment/clearing/low-leaf-clump.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "small isolated clump of low healthy rounded leaves arranged like a gently tended herb plant, compact and close to the ground, tranquil civilized tutorial clearing decoration, high top-down prop, transparent background, painterly pixel art, soft volumetric shading, minimal outline, fresh muted sage and soft fern green",
+      "negative": "ground rectangle, tall plant, wild weeds, dense bush, shrub, tree, flowers, rock, creature, character, text, watermark, hard black outline, oversaturated, neon",
+      "status": "accepted",
+      "candidates": 2,
+      "notes": "Clearing common family 4/4. Compact greenery, never tall enough to obscure play.",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down"
+      }
+    },
+    {
+      "id": "clearing-flower-ring",
+      "out": "files/environment/clearing/flower-ring.png",
+      "size": {
+        "w": 96,
+        "h": 96
+      },
+      "prompt": "small loose natural ring of low white flowers and soft green leaves around an empty grassy center, peaceful cared-for sanctuary detail, subtle rare signature decoration for a tranquil tutorial clearing, isolated high top-down ground prop, transparent background, painterly pixel art, soft volumetric shading, minimal outline, muted sage green and warm cream",
+      "negative": "ground rectangle, magic circle, glowing runes, perfect geometric wreath, bouquet, tall flowers, dense bush, creature, character, text, watermark, hard black outline, oversaturated, neon",
+      "status": "accepted",
+      "candidates": 2,
+      "notes": "too bright",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down"
+      }
+    },
+    {
+      "id": "forest-fern-clump",
+      "out": "files/environment/forest/fern-clump.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "small isolated clump of lush healthy forest ferns, several overlapping low fronds with a clear feathery silhouette, high top-down decorative ground prop, transparent background, painterly pixel art, soft volumetric shading, minimal outline, deep muted fern green with soft mossy highlights",
+      "negative": "ground rectangle, tall plant, dead leaves, dry vegetation, tree, shrub, flowers, rock, creature, character, text, watermark, hard black outline, oversaturated, neon",
+      "status": "accepted",
+      "candidates": 2,
+      "notes": "Forest common family 1/4. Low undergrowth supporting the repeated collision trees.",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down"
+      }
+    },
+    {
+      "id": "forest-broadleaf-cover",
+      "out": "files/environment/forest/broadleaf-cover.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "small patch of lush healthy broad forest leaves spreading close to the ground, layered rounded and pointed leaves with an organic irregular outline, isolated high top-down decorative prop, transparent background, painterly pixel art, soft volumetric shading, minimal outline, rich muted green with shadowed moss undertones",
+      "negative": "ground rectangle, tall plant, tree, shrub, flowers, dead foliage, rock, creature, character, text, watermark, hard black outline, oversaturated, neon",
+      "status": "accepted",
+      "candidates": 2,
+      "notes": "Forest common family 2/4. Healthy ground cover; small silhouette below tree canopies.",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down"
+      }
+    },
+    {
+      "id": "forest-mushroom-cluster",
+      "out": "files/environment/forest/mushroom-cluster.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "tiny isolated cluster of three to six natural woodland mushrooms nestled among a few low leaves, healthy understated forest floor detail, high top-down decorative ground prop, transparent background, painterly pixel art, soft volumetric shading, minimal outline, muted tan caps, warm cream stems and moss green leaves",
+      "negative": "ground rectangle, giant mushroom, glowing mushroom, magical fungus, bright red cap, tall plant, tree, rock, creature, character, text, watermark, hard black outline, oversaturated, neon",
+      "status": "accepted",
+      "candidates": 2,
+      "notes": "Forest common family 3/4. Grounded T1 ecology, deliberately non-magical.",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down"
+      }
+    },
+    {
+      "id": "forest-leaf-litter",
+      "out": "files/environment/forest/leaf-litter.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "small sparse scattering of fallen healthy forest leaves and two tiny twigs, flat close-to-ground decal with an organic irregular shape, isolated high top-down decorative ground prop, transparent background, painterly pixel art, soft volumetric shading, minimal outline, muted olive green and earthy brown",
+      "negative": "ground rectangle, dense carpet, dead tree, large branch, roots, plant clump, rock, creature, character, text, watermark, hard black outline, oversaturated, neon",
+      "status": "accepted",
+      "candidates": 2,
+      "notes": "Forest common family 4/4. Quiet flat texture break between the denser living plants.",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down"
+      }
+    },
+    {
+      "id": "forest-exposed-roots",
+      "out": "files/environment/forest/exposed-roots.png",
+      "size": {
+        "w": 96,
+        "h": 96
+      },
+      "prompt": "small fan of old tree roots briefly emerging across the forest floor before sinking back into moss, low flat organic lines with a few healthy leaves, rare signature forest decoration, isolated high top-down ground prop, transparent background, painterly pixel art, soft volumetric shading, minimal outline, dark earthy brown and muted moss green",
+      "negative": "ground rectangle, full tree, stump, wall, large obstacle, tangled root barrier, dead tree, creature, character, text, watermark, hard black outline, oversaturated, neon",
+      "status": "regen",
+      "candidates": 2,
+      "notes": "still doesn't fit the current artstyle of the trees. New query: redo the tree assets. But those are bigger, I reckon- do I need access to a higher tier sub to get a big sprite like the ones I have?",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down"
+      }
+    },
+    {
+      "id": "mountain-scree-cluster",
+      "out": "files/environment/mountain/scree-cluster.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "small sparse cluster of loose angular mountain scree, many tiny flat chips and pebbles hugging the ground, isolated high top-down decorative prop, transparent background, painterly pixel art, soft volumetric shading, minimal outline, ground-matching grey granite and pale limestone, low contrast",
+      "negative": "ground rectangle, boulder, cliff, ledge, wall, warm brown stone, plant, creature, character, text, watermark, hard black outline, oversaturated, neon",
+      "status": "accepted",
+      "candidates": 2,
+      "notes": "Mountain common family 1/4. Ground-matching visual texture; never reads as terrain or collision.",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down"
+      }
+    },
+    {
+      "id": "mountain-flat-rock-shards",
+      "out": "files/environment/mountain/flat-rock-shards.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "small isolated grouping of three to five thin fractured mountain stone shards lying flat on the ground, sharp natural cracks but a very low silhouette, high top-down decorative prop, transparent background, painterly pixel art, soft volumetric shading, minimal outline, cool grey granite and pale limestone matching rocky terrain",
+      "negative": "ground rectangle, standing spikes, boulder, cliff, ledge, wall, warm brown stone, plant, creature, character, text, watermark, hard black outline, oversaturated, neon",
+      "status": "accepted",
+      "candidates": 2,
+      "notes": "Mountain common family 2/4. Fractured geology without duplicating functional ledges.",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down"
+      }
+    },
+    {
+      "id": "mountain-hardy-grass",
+      "out": "files/environment/mountain/hardy-grass.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "tiny isolated tuft of hardy high-altitude grass growing close to the rock, few short wind-bent blades with wide empty gaps, exposed alpine mountain ground decoration, high top-down prop, transparent background, painterly pixel art, soft volumetric shading, minimal outline, desaturated grey-green and pale straw",
+      "negative": "ground rectangle, lush grass, meadow, tall grass, flowers, shrub, tree, rock pile, creature, character, text, watermark, hard black outline, oversaturated, neon",
+      "status": "accepted",
+      "candidates": 2,
+      "notes": "Mountain common family 3/4. Sparse altitude-specific vegetation.",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down"
+      }
+    },
+    {
+      "id": "mountain-lichen-stone",
+      "out": "files/environment/mountain/lichen-stone.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "single small flat weathered limestone fragment with subtle crusty alpine lichen patches, very low mountain ground decoration, isolated high top-down prop, transparent background, painterly pixel art, soft volumetric shading, minimal outline, pale cool grey stone with subdued sage-grey lichen",
+      "negative": "ground rectangle, boulder, tall rock, cliff, ledge, bright green moss, flowers, shrub, tree, creature, character, text, watermark, hard black outline, oversaturated, neon",
+      "status": "accepted",
+      "candidates": 2,
+      "notes": "Mountain common family 4/4. A restrained vegetation/geology bridge matching the ground palette.",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down"
+      }
+    },
+    {
+      "id": "mountain-split-stone",
+      "out": "files/environment/mountain/split-stone.png",
+      "size": {
+        "w": 96,
+        "h": 96
+      },
+      "prompt": "small low granite stone split cleanly into two weathered halves with a narrow dark crack, both halves resting flat and clearly too small to block movement, rare signature mountain decoration, isolated high top-down prop, transparent background, painterly pixel art, soft volumetric shading, minimal outline, cool grey granite and pale limestone highlights matching the ground",
+      "negative": "ground rectangle, large boulder, cliff, ledge, wall, standing monolith, warm brown stone, plant, creature, character, text, watermark, hard black outline, oversaturated, neon",
+      "status": "accepted",
+      "candidates": 2,
+      "notes": "Mountain rare signature. Distinctive geology, but kept short and non-colliding beside functional ledges.",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down"
+      }
+    },
+    {
+      "id": "swamp-sedge-tuft",
+      "out": "files/environment/swamp/sedge-tuft.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "small isolated tuft of low marsh sedge growing on damp land, many thin bent blades in a dense but short irregular cluster, swamp ground decoration outside the bog pools, high top-down prop, transparent background, painterly pixel art, soft volumetric shading, minimal outline, muted olive green and damp brown-grey",
+      "negative": "ground rectangle, water, pool, lily pad, tall reeds, cattails, large bush, tree, rock, creature, character, text, watermark, hard black outline, oversaturated, neon",
+      "status": "accepted",
+      "candidates": 2,
+      "notes": "Swamp common family 1/4. Small land-only vegetation decal; density should come from repetition.",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down"
+      }
+    },
+    {
+      "id": "swamp-bogleaf-clump",
+      "out": "files/environment/swamp/bogleaf-clump.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "small clump of low broad swamp leaves rooted in wet soil, overlapping waxy leaves with slightly ragged edges, healthy but murky land vegetation outside bog pools, isolated high top-down decorative prop, transparent background, painterly pixel art, soft volumetric shading, minimal outline, deep muted olive and grey-green",
+      "negative": "ground rectangle, water, pool, floating leaves, lily pads, tall plant, large bush, tree, flowers, rock, creature, character, text, watermark, hard black outline, oversaturated, neon",
+      "status": "accepted",
+      "candidates": 2,
+      "notes": "Swamp common family 2/4. Denser living foliage, still short and decal-like.",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down"
+      }
+    },
+    {
+      "id": "swamp-dead-reed-scatter",
+      "out": "files/environment/swamp/dead-reed-scatter.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "small sparse scatter of broken dead reed stems and thin rotting twigs lying flat on damp swamp soil, irregular land-only ground decal, isolated high top-down decorative prop, transparent background, painterly pixel art, soft volumetric shading, minimal outline, muted brown-grey and dull olive",
+      "negative": "ground rectangle, water, pool, floating debris, tall reeds, standing branch, large log, tree, leaves, creature, character, text, watermark, hard black outline, oversaturated, neon",
+      "status": "accepted",
+      "candidates": 2,
+      "notes": "Swamp common family 3/4. Dead vegetation supports the decay theme without a large silhouette.",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down"
+      }
+    },
+    {
+      "id": "swamp-moss-clumps",
+      "out": "files/environment/swamp/moss-clumps.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "several tiny irregular clumps of dark bog moss and creeping ground growth with open gaps between them, flat damp-land swamp decoration outside bog pools, isolated high top-down prop, transparent background, painterly pixel art, soft volumetric shading, minimal outline, murky desaturated green-brown and charcoal olive",
+      "negative": "ground rectangle, water, pool, algae, floating plant, bright moss, tall plant, bush, tree, rock, creature, character, text, watermark, hard black outline, oversaturated, neon",
+      "status": "accepted",
+      "candidates": 2,
+      "notes": "Swamp common family 4/4. Very small surface dressing for high density with low visual obstruction.",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down"
+      }
+    },
+    {
+      "id": "swamp-rotted-root-crown",
+      "out": "files/environment/swamp/rotted-root-crown.png",
+      "size": {
+        "w": 96,
+        "h": 96
+      },
+      "prompt": "small collapsed crown of rotted roots and broken wood almost flush with damp swamp soil, a few low shoots growing through the decay, rare signature land decoration outside bog pools, isolated high top-down prop, transparent background, painterly pixel art, soft volumetric shading, minimal outline, dark wet brown, muted olive and grey-green",
+      "negative": "ground rectangle, water, pool, floating log, tall stump, standing tree, large obstacle, hollow monster face, creature, character, text, watermark, hard black outline, oversaturated, neon",
+      "status": "accepted",
+      "candidates": 2,
+      "notes": "too weird, too many appendagers and branches, needs to be simpler, more rotten",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down"
+      }
+    },
+    {
+      "id": "cave-loose-rubble",
+      "out": "files/environment/cave/loose-rubble.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "small sparse cluster of loose cave rubble, tiny angular charcoal stone fragments lying flat on an unseen floor, isolated high top-down decorative ground prop, transparent background, painterly pixel art, soft volumetric shading, minimal outline, near-black desaturated charcoal with restrained cool grey highlights, dark but readable",
+      "negative": "ground rectangle, boulder, cliff, wall, crystals, plants, moss, mushrooms, bones, creature, character, text, watermark, hard black outline, bright highlights, warm tones, oversaturated, neon",
+      "status": "accepted",
+      "candidates": 2,
+      "notes": "Cave common family 1/4. Arid, near-black floor dressing matching the revised cave palette.",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down"
+      }
+    },
+    {
+      "id": "cave-flat-rock-shards",
+      "out": "files/environment/cave/flat-rock-shards.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "small grouping of thin broken cave rock plates and sharp chips resting flat, low irregular silhouette on an unseen floor, isolated high top-down decorative prop, transparent background, painterly pixel art, soft volumetric shading, minimal outline, near-black charcoal stone with subtle cool grey edges, dark but readable",
+      "negative": "ground rectangle, standing spikes, boulder, cliff, wall, crystals, plants, moss, mushrooms, bones, creature, character, text, watermark, hard black outline, bright highlights, warm tones, oversaturated, neon",
+      "status": "accepted",
+      "candidates": 2,
+      "notes": "Cave common family 2/4. A slightly larger fractured-rock shape, still short and non-colliding.",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down"
+      }
+    },
+    {
+      "id": "cave-animal-bone-scatter",
+      "out": "files/environment/cave/animal-bone-scatter.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "single old weathered animal jawbone lying flat on a cave floor, one clear curved jaw silhouette with a row of worn teeth and nothing else, dangerous natural cave decoration, isolated high top-down ground prop, transparent background, painterly pixel art, soft volumetric shading, minimal outline, dirty desaturated bone grey dimmed for a dark charcoal cave",
+      "negative": "ground rectangle, bone pile, scattered fragments, multiple bones, complete skeleton, skull centerpiece, humanoid skull, ribs, gore, blood, fresh corpse, plants, mushrooms, crystals, creature, character, text, watermark, hard black outline, bright white bones, oversaturated, neon",
+      "status": "accepted",
+      "candidates": 3,
+      "notes": "REGEN roll 3, 2026-07-12 (rolls 1-2: 'still not isolated, still a mess'): redesigned from a multi-fragment scatter to ONE animal jawbone — the one-silhouette rule that got the wasteland/trench bone props accepted on their first roll. Id/filename kept for stability even though it's no longer a 'scatter'.",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down"
+      }
+    },
+    {
+      "id": "cave-humanoid-bone-scatter",
+      "out": "files/environment/cave/humanoid-bone-scatter.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "single partial humanoid forearm with hand bones still connected, fingers gently curled against the cave floor, one compact connected silhouette half-buried in dust, dangerous lore-bearing cave decoration without a complete body, isolated high top-down ground prop, transparent background, painterly pixel art, soft volumetric shading, minimal outline, dirty desaturated bone grey dimmed for a dark charcoal cave",
+      "negative": "ground rectangle, bone pile, scattered fragments, multiple separate bones, complete skeleton, skull, posed corpse, armor, clothing, gore, blood, fresh corpse, plants, mushrooms, crystals, creature, character, text, watermark, hard black outline, bright white bones, oversaturated, neon",
+      "status": "accepted",
+      "candidates": 3,
+      "notes": "REGEN roll 3, 2026-07-12 (rolls 1-2: 'still not isolated, still a mess'): redesigned from loose forearm/finger fragments to ONE connected forearm-and-hand silhouette, fingers curled — the one-silhouette rule that got the wasteland/trench bone props accepted first roll. Keeps the no-skull, no-complete-body lore intent. Id/filename kept for stability.",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down"
+      }
+    },
+    {
+      "id": "cave-partial-ribcage",
+      "out": "files/environment/cave/partial-ribcage.png",
+      "size": {
+        "w": 96,
+        "h": 96
+      },
+      "prompt": "old partial humanoid rib cage collapsed sideways among a few dark cave stones, incomplete and weathered with several ribs missing, subtle rare signature of a dangerous cave, low flat silhouette, isolated high top-down ground prop, transparent background, painterly pixel art, soft volumetric shading, minimal outline, dirty desaturated bone grey and near-black charcoal stone",
+      "negative": "ground rectangle, complete skeleton, skull, posed corpse, armor, clothing, gore, blood, fresh corpse, standing bones, plants, mushrooms, crystals, creature, character, text, watermark, hard black outline, bright white bones, oversaturated, neon",
+      "status": "accepted",
+      "candidates": 2,
+      "notes": "Cave rare signature. Place only 1-2 per node; dangerous lore, subtle and not visually dominant.",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down"
+      }
+    },
+    {
+      "id": "jungle-fern-clump",
+      "out": "files/environment/jungle/fern-clump.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "small isolated clump of dark tropical jungle ferns, several overlapping feathery fronds in a compact low cluster, damp shadowed undergrowth decoration, high top-down decorative ground prop, transparent background, painterly pixel art, soft volumetric shading, minimal outline, deep shadowed jungle green with muted moss highlights, noticeably darker and richer than temperate forest ferns, not bright, no vivid green",
+      "negative": "ground rectangle, tall plant, tree, palm tree, flowers, dry vegetation, rock, water, creature, character, text, watermark, hard black outline, oversaturated, neon, bright green, saturated green",
+      "status": "accepted",
+      "candidates": 3,
+      "notes": "Jungle common family 1/4 (overnight batch 2026-07-12). Darker sibling of forest-fern-clump; must sit on the deep green-brown jungle floor without vanishing or glowing.",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down"
+      }
+    },
+    {
+      "id": "jungle-broadleaf-plant",
+      "out": "files/environment/jungle/broadleaf-plant.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "small low tropical plant with a few broad waxy leaves spreading close to the ground, rounded overlapping tropical foliage with an organic irregular outline, isolated high top-down decorative prop, transparent background, painterly pixel art, soft volumetric shading, minimal outline, deep muted jungle green with darker shadowed undersides, not bright, no vivid green",
+      "negative": "ground rectangle, tall plant, banana tree, palm, tree, flowers, vines, rock, creature, character, text, watermark, hard black outline, oversaturated, neon, bright green, saturated green",
+      "status": "accepted",
+      "candidates": 3,
+      "notes": "Jungle common family 2/4. Broad-leaf silhouette contrast to the feathery ferns.",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down"
+      }
+    },
+    {
+      "id": "jungle-vine-tangle",
+      "out": "files/environment/jungle/vine-tangle.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "small flat tangle of thin creeping jungle vines lying close to the ground with a few small dark leaves, loose organic looping decal shape, isolated high top-down decorative ground prop, transparent background, painterly pixel art, soft volumetric shading, minimal outline, dark muted green and shadowed brown, not bright, no vivid green",
+      "negative": "ground rectangle, hanging vines, tree, branch, root wall, dense bush, flowers, rock, snake, creature, character, text, watermark, hard black outline, oversaturated, neon, bright green",
+      "status": "accepted",
+      "candidates": 3,
+      "notes": "Jungle common family 3/4. Flat decal texture-break; negative guards against snake-like reads.",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down"
+      }
+    },
+    {
+      "id": "jungle-flower-accent",
+      "out": "files/environment/jungle/flower-accent.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "small isolated tropical jungle flower plant, one or two muted dusky-red blossoms low among dark leaves, restrained color accent for a shadowed jungle floor, high top-down decorative ground prop, transparent background, painterly pixel art, soft volumetric shading, minimal outline, deep muted green foliage with desaturated dusky red petals, not bright, no vivid color",
+      "negative": "ground rectangle, bouquet, dense flower bed, tall flowers, bright petals, pink, tree, bush, rock, creature, character, text, watermark, hard black outline, oversaturated, neon",
+      "status": "accepted",
+      "candidates": 3,
+      "notes": "Jungle common family 4/4. The single color accent of the family; petals kept dusky so it accents rather than pops.",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down"
+      }
+    },
+    {
+      "id": "jungle-mossy-stone",
+      "out": "files/environment/jungle/mossy-stone.png",
+      "size": {
+        "w": 96,
+        "h": 96
+      },
+      "prompt": "single low ancient stone almost swallowed by thick dark moss and creeping jungle growth, soft rounded weathered silhouette lying flat, rare signature jungle decoration, isolated high top-down ground prop, transparent background, painterly pixel art, soft volumetric shading, minimal outline, dark grey stone under deep muted moss green, not bright, no vivid green",
+      "negative": "ground rectangle, boulder wall, standing stone, ruins, carved runes, statue, tree, bush, flowers, creature, character, text, watermark, hard black outline, oversaturated, neon, bright green",
+      "status": "accepted",
+      "candidates": 3,
+      "notes": "Jungle rare signature. Overgrown geology; keep low and clearly non-colliding. The functional ambush-bush rendering is a separate deferred task (wang sheet, not a prop).",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down"
+      }
+    },
+    {
+      "id": "desert-stone-cluster",
+      "out": "files/environment/desert/stone-cluster.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "small isolated cluster of three to five sun-bleached weathered desert stones, rounded wind-worn shapes lying low on unseen sand, high top-down decorative ground prop, transparent background, painterly pixel art, soft volumetric shading, minimal outline, pale warm grey and muted tan matching a pale gold-tan sand palette, not bright, no vivid orange",
+      "negative": "ground rectangle, boulder, cliff, cactus, plant, bones, skull, creature, character, building, text, watermark, hard black outline, oversaturated, neon",
+      "status": "accepted",
+      "candidates": 3,
+      "notes": "Desert common family 1/4 (overnight batch 2026-07-12). No bones in desert per art direction — that's the wasteland's identity.",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down"
+      }
+    },
+    {
+      "id": "desert-dry-shrub",
+      "out": "files/environment/desert/dry-shrub.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "single small hardy desert shrub with sparse dry twiggy branches and tiny dusty leaves, drought-worn but alive, isolated high top-down decorative prop, transparent background, painterly pixel art, soft volumetric shading, minimal outline, muted grey-olive and pale straw against a pale gold-tan sand palette, not bright",
+      "negative": "ground rectangle, cactus, tree, lush bush, flowers, grass meadow, rock, bones, creature, character, text, watermark, hard black outline, oversaturated, neon, vivid green",
+      "status": "accepted",
+      "candidates": 3,
+      "notes": "Desert common family 2/4. Keep silhouette low and sparse — desert is the LOW-density standoff biome and must stay open.",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down"
+      }
+    },
+    {
+      "id": "desert-cracked-slab",
+      "out": "files/environment/desert/cracked-slab.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "single flat weathered stone slab lying flush with the sand, sun-baked surface fractured by a few shallow cracks, very low silhouette, isolated high top-down decorative ground prop, transparent background, painterly pixel art, soft volumetric shading, minimal outline, muted pale umber-grey matching cracked desert hardpan, not bright",
+      "negative": "ground rectangle, boulder, standing stone, ruins, carved tablet, hieroglyphs, plant, bones, creature, character, text, watermark, hard black outline, oversaturated, neon",
+      "status": "accepted",
+      "candidates": 3,
+      "notes": "Desert common family 3/4. Echoes the hardpan upper material of the sand-hardpan wang sheet.",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down"
+      }
+    },
+    {
+      "id": "desert-pebble-drift",
+      "out": "files/environment/desert/pebble-drift.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "small sparse scatter of tiny desert pebbles with a faint wind-drifted sand tail on one side, flat close-to-ground decal, isolated high top-down decorative ground prop, transparent background, painterly pixel art, soft volumetric shading, minimal outline, pale warm grey, muted tan and dusty gold, not bright",
+      "negative": "ground rectangle, boulder, rock pile, dune, plant, bones, footprints, creature, character, text, watermark, hard black outline, oversaturated, neon",
+      "status": "accepted",
+      "candidates": 3,
+      "notes": "Desert common family 4/4. Tiny surface dressing; the wind-tail keeps it from reading as a plain recolor of other biomes' pebbles.",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down"
+      }
+    },
+    {
+      "id": "desert-stone-pile",
+      "out": "files/environment/desert/stone-pile.png",
+      "size": {
+        "w": 96,
+        "h": 96
+      },
+      "prompt": "small natural pile of flat sun-bleached desert stones stacked loosely by wind and time, low and clearly too small to block movement, rare signature desert decoration, isolated high top-down prop, transparent background, painterly pixel art, soft volumetric shading, minimal outline, pale warm grey and muted tan with soft sand dusting, not bright",
+      "negative": "ground rectangle, tall cairn, tower, monument, ruins, boulder, wall, plant, bones, creature, character, text, watermark, hard black outline, oversaturated, neon",
+      "status": "accepted",
+      "candidates": 3,
+      "notes": "Desert rare signature. Natural low wind-formed stack, not a man-made cairn.",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down"
+      }
+    },
+    {
+      "id": "tundra-frost-grass-tuft",
+      "out": "files/environment/tundra/frost-grass-tuft.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "small isolated tuft of frost-killed tundra grass poking through snow, a few stiff pale straw blades edged with frost, high top-down decorative ground prop, transparent background, painterly pixel art, soft volumetric shading, minimal outline, desaturated pale straw and cold grey-brown clearly readable against white-grey snow, not bright",
+      "negative": "ground rectangle, lush grass, green grass, flowers, shrub, tree, rock, creature, character, footprints, text, watermark, hard black outline, oversaturated, neon",
+      "status": "accepted",
+      "candidates": 3,
+      "notes": "Tundra common family 1/4 (overnight batch 2026-07-12). Ground sheet is near-featureless pale snow, so props carry the visual interest — tones must stay dark enough to read on white.",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down"
+      }
+    },
+    {
+      "id": "tundra-snowcapped-rock",
+      "out": "files/environment/tundra/snowcapped-rock.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "single small dark weathered rock with a soft cap of settled snow on top, low rounded silhouette, isolated high top-down decorative prop, transparent background, painterly pixel art, soft volumetric shading, minimal outline, cold dark grey stone under soft white-grey snow, muted and calm",
+      "negative": "ground rectangle, boulder, cliff, ledge, wall, ice spike, plant, creature, character, text, watermark, hard black outline, oversaturated, neon",
+      "status": "accepted",
+      "candidates": 3,
+      "notes": "Tundra common family 2/4. The dark stone anchors contrast against the pale ground.",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down"
+      }
+    },
+    {
+      "id": "tundra-snow-mound",
+      "out": "files/environment/tundra/snow-mound.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "small low wind-packed snow mound with a gently rippled surface, soft subtle drift shape rising barely above the ground, isolated high top-down decorative ground prop, transparent background, painterly pixel art, soft volumetric shading, minimal outline, pale white-grey snow with soft cool blue-grey shadowing, not pure white, no bright glare",
+      "negative": "ground rectangle, igloo, snowball, ice block, footprints, rock, plant, creature, character, text, watermark, hard black outline, oversaturated, neon",
+      "status": "accepted",
+      "candidates": 3,
+      "notes": "Tundra common family 3/4. Snow-on-snow, so the blue-grey shading has to do the work; if candidates read invisible in the gallery, reject and we'll push shadow contrast.",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down"
+      }
+    },
+    {
+      "id": "tundra-dead-shrub",
+      "out": "files/environment/tundra/dead-shrub.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "single small dead dwarf shrub with bare dark twisted twigs dusted by snow, sparse frozen silhouette, isolated high top-down decorative prop, transparent background, painterly pixel art, soft volumetric shading, minimal outline, dark grey-brown branches with white-grey snow dusting, muted and cold",
+      "negative": "ground rectangle, leaves, green foliage, tree, tall bush, berries, flowers, rock, creature, character, text, watermark, hard black outline, oversaturated, neon",
+      "status": "accepted",
+      "candidates": 3,
+      "notes": "Tundra common family 4/4. Dead vegetation theme; dark twigs give the pale biome its second contrast anchor.",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down"
+      }
+    },
+    {
+      "id": "tundra-split-boulder",
+      "out": "files/environment/tundra/split-boulder.png",
+      "size": {
+        "w": 96,
+        "h": 96
+      },
+      "prompt": "small low boulder split into two weathered halves half-buried in snow, snow settled in the dark crack between them, both halves low and clearly too small to block movement, rare signature tundra decoration, isolated high top-down prop, transparent background, painterly pixel art, soft volumetric shading, minimal outline, cold dark grey stone and soft white-grey snow, muted and calm",
+      "negative": "ground rectangle, large boulder, cliff, ledge, wall, standing monolith, ice spike, plant, creature, character, text, watermark, hard black outline, oversaturated, neon",
+      "status": "accepted",
+      "candidates": 3,
+      "notes": "Tundra rare signature. Cold sibling of mountain-split-stone; snow-buried so it reads tundra, not mountain.",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down"
+      }
+    },
+    {
+      "id": "volcano-basalt-shards",
+      "out": "files/environment/volcano/basalt-shards.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "small isolated cluster of sharp angular basalt shards lying flat, broken volcanic stone chips with a low silhouette, high top-down decorative ground prop, transparent background, painterly pixel art, soft volumetric shading, minimal outline, near-black desaturated charcoal with a faint warm ashen undertone, dark but readable, no bright highlights",
+      "negative": "ground rectangle, standing spikes, boulder, cliff, wall, lava, glow, embers, flames, smoke, crystals, plants, creature, character, text, watermark, hard black outline, oversaturated, neon",
+      "status": "accepted",
+      "candidates": 3,
+      "notes": "Volcano common family 1/4 (overnight batch 2026-07-12). Warm-ashen sibling of cave-flat-rock-shards; no glow on this one.",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down"
+      }
+    },
+    {
+      "id": "volcano-ember-patch",
+      "out": "files/environment/volcano/ember-patch.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "small patch of dark cooling cinders with a few faint dying orange embers glowing between them, dim and clearly cooling rather than molten, flat close-to-ground decal, isolated high top-down decorative ground prop, transparent background, painterly pixel art, soft volumetric shading, minimal outline, near-black charcoal with restrained muted ember orange, mostly dark, no bright glow",
+      "negative": "ground rectangle, lava pool, molten lava, flames, fire, smoke, torch, bright orange, glowing cracks, crystals, plants, creature, character, text, watermark, hard black outline, oversaturated, neon",
+      "status": "accepted",
+      "candidates": 3,
+      "notes": "Volcano common family 2/4. DIM is the key word — the functional lava sheet owns bright glow; this must never read as a hazard.",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down"
+      }
+    },
+    {
+      "id": "volcano-fumarole-crack",
+      "out": "files/environment/volcano/fumarole-crack.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "small flat patch of dark volcanic crust split by one short jagged fissure, thick pale yellow-grey sulfur mineral crust encrusting the fissure edges, one clear compact silhouette with an irregular organic outline lying flush with the ground, isolated high top-down decorative ground prop, transparent background, painterly pixel art, soft volumetric shading, minimal outline, near-black charcoal with muted pale sulfur yellow-grey, dark but readable, no glow",
+      "negative": "ground rectangle, square patch, thin floating line, lava, glowing crack, flames, smoke, steam cloud, geyser, chasm, pit, crystals, plants, creature, character, text, watermark, hard black outline, oversaturated, neon",
+      "status": "accepted",
+      "candidates": 3,
+      "notes": "REGEN roll 2, 2026-07-12 (roll 1 rejected in review with no note; rejected candidates were purged by the gallery so the failure is inferred): a thin bare fissure on transparency likely read as a floating line. Re-anchored as a compact crust patch containing the fissure with heavier sulfur encrusting — same decal approach as the accepted ash-drift/ember-patch. Was: Volcano common family 3/4, sulfur staining carries the color, no steam.",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down"
+      }
+    },
+    {
+      "id": "volcano-cinder-scatter",
+      "out": "files/environment/volcano/cinder-scatter.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "small sparse scatter of tiny dark porous volcanic cinders and ash flecks lying flat, irregular close-to-ground decal, isolated high top-down decorative ground prop, transparent background, painterly pixel art, soft volumetric shading, minimal outline, near-black charcoal and soft ash grey with a faint warm undertone, dark but readable, no glow",
+      "negative": "ground rectangle, embers, glow, lava, flames, smoke, boulder, rock pile, crystals, plants, creature, character, text, watermark, hard black outline, oversaturated, neon",
+      "status": "accepted",
+      "candidates": 3,
+      "notes": "Volcano common family 4/4. The quiet glow-free filler of the family.",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down"
+      }
+    },
+    {
+      "id": "volcano-cracked-slab",
+      "out": "files/environment/volcano/cracked-slab.png",
+      "size": {
+        "w": 96,
+        "h": 96
+      },
+      "prompt": "single large flat basalt slab fractured by a web of cracks with a faint dying ember glow deep inside the fissures, dim and cooling rather than molten, very low silhouette lying flush with the ground, rare signature volcano decoration, isolated high top-down ground prop, transparent background, painterly pixel art, soft volumetric shading, minimal outline, near-black charcoal stone with restrained muted ember orange seams, mostly dark, no bright glow",
+      "negative": "ground rectangle, lava pool, molten surface, flames, fire, smoke, bright glowing cracks, standing rock, boulder, wall, crystals, plants, creature, character, text, watermark, hard black outline, oversaturated, neon",
+      "status": "accepted",
+      "candidates": 3,
+      "notes": "Volcano rare signature (basalt + ember picks combined; user passed on the lava-swirl idea). Glow must stay dimmer than the functional lava sheet so it never reads as a hazard.",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down"
+      }
+    },
+    {
+      "id": "trench-coral-fan",
+      "out": "files/environment/trench/coral-fan.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "small isolated deep-sea cold-water coral fan, delicate pale branching skeleton growing low from unseen silt, high top-down decorative ground prop, transparent background, painterly pixel art, soft volumetric shading, minimal outline, desaturated bone-pale ivory with cold blue-grey shadows, dark but readable against deep navy silt, no warm tones",
+      "negative": "ground rectangle, tropical coral reef, bright colors, orange coral, pink coral, fish, seaweed, kelp, bubbles, creature, character, text, watermark, hard black outline, oversaturated, neon",
+      "status": "accepted",
+      "candidates": 3,
+      "notes": "Trench common family 1/4 (overnight batch 2026-07-12). Cold-water coral is colorless — the pale skeleton pops on the navy silt.",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down"
+      }
+    },
+    {
+      "id": "trench-tubeworm-cluster",
+      "out": "files/environment/trench/tubeworm-cluster.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "small cluster of deep-sea tube worms, a few slender pale tubes with faint glowing cyan-teal tips, low rounded colony silhouette, isolated high top-down decorative ground prop, transparent background, painterly pixel art, soft volumetric shading, minimal outline, pale grey-blue tubes with restrained soft cyan-teal bioluminescence, dark but readable, no warm tones",
+      "negative": "ground rectangle, worms crawling, tentacles, fish, coral reef, seaweed, bright glow, bubbles, creature, character, text, watermark, hard black outline, oversaturated, neon",
+      "status": "accepted",
+      "candidates": 3,
+      "notes": "Trench common family 2/4. Biolume tips echo the ground sheet's glowing upper material — glow kept soft so the functional biolume field still reads brighter.",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down"
+      }
+    },
+    {
+      "id": "trench-anemone-patch",
+      "out": "files/environment/trench/anemone-patch.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "small patch of two or three soft deep-sea anemones with short translucent tentacles and a faint cyan-teal inner glow, low rounded silhouettes on unseen silt, isolated high top-down decorative ground prop, transparent background, painterly pixel art, soft volumetric shading, minimal outline, muted blue-grey with restrained soft cyan-teal bioluminescence, dark but readable, no warm tones",
+      "negative": "ground rectangle, jellyfish, octopus, tentacle monster, coral reef, bright colors, fish, seaweed, bubbles, creature, character, text, watermark, hard black outline, oversaturated, neon",
+      "status": "accepted",
+      "candidates": 3,
+      "notes": "Trench common family 3/4. Second biolume accent with a rounder silhouette than the tube worms.",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down"
+      }
+    },
+    {
+      "id": "trench-silt-stones",
+      "out": "files/environment/trench/silt-stones.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "small isolated grouping of three to five smooth dark stones half-settled into abyssal silt, soft silt dusting over their tops, very low silhouette, high top-down decorative ground prop, transparent background, painterly pixel art, soft volumetric shading, minimal outline, dark desaturated blue-grey stone over deep navy sediment, dark but readable, no warm tones",
+      "negative": "ground rectangle, boulder, coral, shells, starfish, fish, seaweed, glow, bubbles, creature, character, text, watermark, hard black outline, oversaturated, neon",
+      "status": "accepted",
+      "candidates": 3,
+      "notes": "Trench common family 4/4. The glow-free filler; silt-dusted so it doesn't read as cave rubble recolored.",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down"
+      }
+    },
+    {
+      "id": "trench-whale-vertebra",
+      "out": "files/environment/trench/whale-vertebra.png",
+      "size": {
+        "w": 96,
+        "h": 96
+      },
+      "prompt": "single enormous weathered whale vertebra half-sunk in abyssal silt, one clear bone silhouette with soft sediment settled around its base, rare signature deep-sea trench decoration, isolated high top-down ground prop, transparent background, painterly pixel art, soft volumetric shading, minimal outline, desaturated pale bone grey dimmed by deep navy-blue water light, dark but readable, no warm tones",
+      "negative": "ground rectangle, complete skeleton, ribcage, skull, fish bones, scattered bones, coral, seaweed, fish, glow, bubbles, creature, character, text, watermark, hard black outline, bright white bone, oversaturated, neon",
+      "status": "accepted",
+      "candidates": 3,
+      "notes": "Trench rare signature — whale-fall lore beat. ONE bone, one silhouette (lesson from the failed cave bone scatters: multi-fragment bone prompts come out as a mess).",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down"
+      }
+    },
+    {
+      "id": "wasteland-buried-skull",
+      "out": "files/environment/wasteland/buried-skull.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "single old weathered humanoid skull half-buried in blighted ash-grey soil, one clear tilted silhouette with soil settled around it, isolated high top-down decorative ground prop, transparent background, painterly pixel art, soft volumetric shading, minimal outline, dirty desaturated bone grey with a faint bruised grey-violet shadow, muted and ominous, not bright",
+      "negative": "ground rectangle, complete skeleton, multiple skulls, bone pile, ribcage, gore, blood, fresh corpse, gravestone, plants, creature, character, text, watermark, hard black outline, bright white bone, oversaturated, neon",
+      "status": "accepted",
+      "candidates": 3,
+      "notes": "Wasteland common family 1/4 (overnight batch 2026-07-12). Bones-only direction, no grave markers. ONE skull, one silhouette (cave bone-scatter lesson).",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down"
+      }
+    },
+    {
+      "id": "wasteland-long-bone",
+      "out": "files/environment/wasteland/long-bone.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "single old cracked long bone lying flat on blighted ground, one clear weathered femur silhouette with a small chip beside it, isolated high top-down decorative ground prop, transparent background, painterly pixel art, soft volumetric shading, minimal outline, dirty desaturated bone grey with a faint bruised grey-violet shadow, muted and ominous, not bright",
+      "negative": "ground rectangle, bone pile, crossed bones, skeleton, skull, ribcage, gore, blood, fresh corpse, plants, creature, character, text, watermark, hard black outline, bright white bone, oversaturated, neon",
+      "status": "accepted",
+      "candidates": 3,
+      "notes": "Wasteland common family 2/4. One bone, one silhouette.",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down"
+      }
+    },
+    {
+      "id": "wasteland-thorn-shrub",
+      "out": "files/environment/wasteland/thorn-shrub.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "single small withered dead thorn shrub, blackened twisted branches with sharp bare thorns and no leaves, blighted and long dead, isolated high top-down decorative prop, transparent background, painterly pixel art, soft volumetric shading, minimal outline, charcoal grey-brown wood with a faint sickly grey-violet undertone, muted and ominous, not bright",
+      "negative": "ground rectangle, leaves, green foliage, living plant, flowers, tree, rose bush, berries, rock, bones, creature, character, text, watermark, hard black outline, oversaturated, neon",
+      "status": "accepted",
+      "candidates": 3,
+      "notes": "Wasteland common family 3/4. The only vegetation in the family — dead, thorny, blight-tinged.",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down"
+      }
+    },
+    {
+      "id": "wasteland-ash-drift",
+      "out": "files/environment/wasteland/ash-drift.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "small flat drift of bone-pale ash with a few darker charred flecks, soft wind-settled decal shape lying flush with the ground, isolated high top-down decorative ground prop, transparent background, painterly pixel art, soft volumetric shading, minimal outline, soft pale grey ash with a faint sickly violet undertone, muted, not bright",
+      "negative": "ground rectangle, embers, glow, fire, smoke, bones, footprints, snow, rock pile, plants, creature, character, text, watermark, hard black outline, oversaturated, neon",
+      "status": "accepted",
+      "candidates": 3,
+      "notes": "Wasteland common family 4/4. Echoes the drifted-ash upper material of the ash-blight wang sheet; 'no snow' guards the pale-drift read.",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down"
+      }
+    },
+    {
+      "id": "wasteland-collapsed-ribcage",
+      "out": "files/environment/wasteland/collapsed-ribcage.png",
+      "size": {
+        "w": 96,
+        "h": 96
+      },
+      "prompt": "old partial humanoid rib cage collapsed sideways into blighted ash-grey soil, incomplete and weathered with several ribs missing, one clear low flat silhouette, rare signature wasteland decoration, isolated high top-down ground prop, transparent background, painterly pixel art, soft volumetric shading, minimal outline, dirty desaturated bone grey with a faint bruised grey-violet shadow, muted and ominous, not bright",
+      "negative": "ground rectangle, complete skeleton, skull, posed corpse, armor, clothing, gravestone, gore, blood, fresh corpse, standing bones, plants, creature, character, text, watermark, hard black outline, bright white bones, oversaturated, neon",
+      "status": "accepted",
+      "candidates": 3,
+      "notes": "Wasteland rare signature. Direct adaptation of the ACCEPTED cave-partial-ribcage prompt into the wasteland palette — that structure worked once.",
       "params": {
         "outline": "lineless",
         "shading": "highly detailed shading",

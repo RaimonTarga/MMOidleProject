@@ -11,11 +11,12 @@ import { blockShapesForMover, hazardAvoidanceShapesForMover } from './staticRegi
 export const NAV_CELL_SIZE = 32;
 
 /**
- * Extra clearance (px per axis) baked into the nav grid beyond the mover's
- * hitbox half-extents. Covers discrete cell error and keeps paths from threading
- * gaps narrower than the mover's body.
+ * Extra clearance baked into the nav grid beyond the navigation body. Keep this
+ * at zero: movement and planning must agree on one collider. A previous hidden
+ * 8px inflation let movement legally enter a band from which A* could no longer
+ * replan, producing permanent corner stalls around trees.
  */
-export const NAV_PATH_PAD_MARGIN = 8;
+export const NAV_PATH_PAD_MARGIN = 0;
 
 export function effectivePathfindingPad(pad: Vec2): Vec2 {
   return { x: pad.x + NAV_PATH_PAD_MARGIN, y: pad.y + NAV_PATH_PAD_MARGIN };

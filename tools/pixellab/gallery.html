@@ -80,7 +80,7 @@ function render() {
       if (filter && cat.category !== filter) continue;
       if (!e.candidates.length) continue; // gallery shows only entries awaiting review
       const current = e.hasCurrent
-        ? `<figure><div class="imgbox"><img class="px" src="/img/current?out=${encodeURIComponent(e.out)}"
+        ? `<figure><div class="imgbox"><img class="px" src="/img/current?out=${encodeURIComponent(e.out)}&v=${encodeURIComponent(e.currentVersion)}"
              style="width:${Math.min(280, e.size.w * 2)}px"></div><figcaption>current (${e.size.w}×${e.size.h})</figcaption></figure>`
         : '';
       const cands = e.candidates.map((f) => `

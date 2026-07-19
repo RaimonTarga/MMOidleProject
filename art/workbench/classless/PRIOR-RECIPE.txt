@@ -1,0 +1,24 @@
+PRIOR accepted recipe for players/classless (saved 2026-07-12 before the
+from-scratch no-img2img re-roll). The live art it produced (candidate-3,
+upright) is preserved as candidate-3-upright.png; the old wide/hunched
+candidate-1 is v9-green-wide-125-ACCEPTED-copy.png. Restore these values into
+art/manifests/players.json if the fresh batch is rejected.
+
+endpoint: pixflux
+status: accepted
+candidates: 3
+
+prompt:
+the same hooded wanderer sprite kept identical in pose, composition and style, but with a wider chunkier body, broader shoulders and a slightly wider stance, the cloak and hood recolored to a light muted earthy green, brown leather gloves clenched into visible closed fists and matching worn brown leather boots, the dust-tan long tunic and simple belt unchanged, deep rounded hood raised with the face completely hidden in featureless black shadow, no skin visible anywhere, plain chest with no emblem, no weapons, full body, painterly pixel art, clean readable game sprite, soft volumetric shading, minimal outline, muted palette of earthy green hood and cloak over dusty tan cloth with brown leather accents
+
+negative:
+animal, beast, creature, wolf, furry, fur, tail, animal ears, muzzle, snout, claws, paws, quadruped, hunched, crouching, slouching, passive pose, floating, ghost, wraith, translucent, scary, horror, sinister, undead, skull, flame, fire, ember, glowing chest, chest emblem, logo, face, eyes, mouth, nose, exposed skin, bare hands, bare feet, hair, beard, weapon, sword, staff, gun, bow, armor plate, metal, gold, ornate, muscular, raised fists, fighting pose, action pose, lunging, male, female, chibi, cute, profile view, side view, facing left, back view, mirrored, hard black outline, text, watermark, blurry, 3d render, photograph
+
+params:
+  outline: lineless
+  shading: detailed shading
+  detail: medium detail
+  view: low top-down
+  direction: south-east
+  initImage: self
+  initImageStrength: 250

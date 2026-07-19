@@ -31,6 +31,7 @@ export const trenchMonsterEntries = [
 
   ['hadal-stalker', {
     id: 'hadal-stalker', name: 'Hadal Stalker', color: 0x335577,
+    // Giant deep-sea spider crab (the raised crusher claw is the slam).
     // Multi-limbed deep stalker. CADENCE every 5 = a 241 slam. The 5-attack
     // rhythm is slow but at heavy DR/plating the fight is long, so it recurs
     // often. avg/attack (4·86+241)/5 = 117 → ×(1000/3400) = 34 + the spikes.
@@ -47,6 +48,7 @@ export const trenchMonsterEntries = [
 
   ['elder-leviathan', {
     id: 'elder-leviathan', name: 'Elder Leviathan', color: 0x112244,
+    // Colossal abyssal anglerfish — its lure is the trench's brightest light.
     // APEX — the most dangerous non-boss in the game. Tests every T4 tool at once:
     //   ENEMY SHIELD: periodic barrier rewards burst over DoT/chip
     //   ENEMY SOFT-CAP: clips player big hits; rewards fast consistent damage

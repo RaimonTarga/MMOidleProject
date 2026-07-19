@@ -81,6 +81,7 @@ import { updateLaserBeam } from "../../fx/laser";
 import { updateHolyBeam } from "../../fx/holyBeam";
 import { updateCannonCharge } from "../../fx/cannonFx";
 import { updatePlayerAuras } from "../../fx/aura";
+import { updateIdentityAccents } from "../../fx/identityAccent";
 import { initMistPostFx, updateMistPostFx } from "../../fx/mistPostFx";
 import { updateAltarGlow } from "../../fx/altarGlow";
 import { updateAltarPrompt } from "../../render/altarPrompt";
@@ -380,6 +381,7 @@ export function updateGameScene(scene: GameScene, delta: number): void {
     updateHolyBeam(scene.state, scene);
     updateCannonCharge(scene.state, scene);
     updatePlayerAuras(scene.state, scene);
+    updateIdentityAccents(scene.state, scene);
     updateVoidOverlordRespawn(scene.state, scene);
     updateMistPostFx(scene, isVoidFloodActive(scene), scene.time.now, dt);
     updateAltarGlow(scene, dt);

@@ -59,6 +59,8 @@ art/
   default 300; higher follows the source more closely).
 - Style anchors live in `art/style/` — see its README. Existing sprites copied
   from `art/src/` make free anchors.
-- `players` category is DEFERRED pending the composite-sprite decision
-  (`docs/visual_and_aesthetics_design/player-visual-identity-bible.md`).
+- `players` category uses img2img EVOLUTION CHAINS (vagrant → class root →
+  frame): each link's `initImage` is its predecessor's accepted art, so links
+  stay `draft` until the predecessor lands. Recipe + rationale:
+  `docs/player-sprites-current-state.md`.
 - Audio is out of scope: PixelLab is visuals-only.

@@ -44,7 +44,8 @@ export const tundraMonsterEntries = [
   // DR + cap armor, shield + absorb charm.
   ['frost-lurker', {
     id: 'frost-lurker', name: 'Frost Lurker', color: 0xaaddff,
-    // Slow mover, hard-ish hit, applies a flat slow on you → catches Far. The basic
+    // Tundra wolverine (role-name kept). Slow mover, hard-ish hit, applies a flat
+    // slow on you → catches Far. The basic
     // teaching unit: kitable until it lands the slow, then it closes.
     stats: { hp: 560, attack: 40, plating: 0, damageReduction: 0.10, speed: 26, attackRange: 12, attackCooldown: 2600, pullRange: 170 },
     behavior: 'melee', attackStyle: 'frost', biome: 'tundra',
@@ -78,6 +79,7 @@ export const tundraMonsterEntries = [
 
   ['rime-caster', {
     id: 'rime-caster', name: 'Rime Caster', color: 0xccffff,
+    // Young yeti (role-name kept; grows into the T4 Hoarfrost Yeti).
     // Ranged frost KITER: backs off, plinks, and keeps you slowed so you can't close —
     // anti-Close, and it feeds the bears' debuff window. Speed 30 (catchable on charge).
     stats: { hp: 520, attack: 46, plating: 0, damageReduction: 0.08, speed: 30, attackRange: 200, attackCooldown: 2800, pullRange: 230 },
@@ -142,6 +144,7 @@ export const tundraMonsterEntries = [
 
   ['permafrost-behemoth', {
     id: 'permafrost-behemoth', name: 'Permafrost Behemoth', color: 0x4477aa,
+    // Colossal musk ox sheathed in glacier ice (the plating made visible).
     // Apex. COOLDOWN slam every 9s = 300. Extreme plating (20) + ENEMY SOFT-CAP
     // — the full weapon-matchup exam: brittle weapon strips the plate (shatter
     // window), fast consistent damage beats the soft-cap, empowered-only builds

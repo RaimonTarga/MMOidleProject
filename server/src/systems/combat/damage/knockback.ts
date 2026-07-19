@@ -1,8 +1,7 @@
 import type { World } from '../../../world/World';
 import { NODE_REGISTRY } from '../../../world/nodeRegistry';
 import {
-  aabbHalfExtents,
-  posHitboxFromEntity,
+  navigationBodyHalfExtents,
   type HasKnockback,
   type Vec2,
 } from '@mmo-idle/shared';
@@ -111,7 +110,7 @@ export function applyPlayerKnockback(
     end.y = Math.max(MONSTER_BOUND_MARGIN, Math.min(node.height - MONSTER_BOUND_MARGIN, end.y));
   }
 
-  const pad = aabbHalfExtents(posHitboxFromEntity(player).rects);
+  const pad = navigationBodyHalfExtents('player');
   const resolved = resolveObstaclesForNode(
     world,
     position.nodeId,

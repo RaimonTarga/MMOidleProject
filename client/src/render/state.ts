@@ -165,6 +165,8 @@ export interface RenderState {
   };
   /** Per-player transformation aura glow graphics (see client/src/fx/aura.ts). */
   auras: Map<string, Phaser.GameObjects.Graphics>;
+  /** Per-player identity accent overlays (see client/src/fx/identityAccent.ts). */
+  identityAccents: Map<string, Phaser.GameObjects.Image>;
   voidOverlordRespawn: {
     payload: VoidOverlordRespawnState;
     deadlineMs: number;
@@ -240,6 +242,7 @@ export function createRenderState(): RenderState {
       graphics: null,
     },
     auras: new Map(),
+    identityAccents: new Map(),
     voidOverlordRespawn: null,
     voidThroneHazardLifted: false,
     movementEffectNextAt: new Map(),
