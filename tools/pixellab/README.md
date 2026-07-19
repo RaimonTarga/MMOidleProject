@@ -4,6 +4,13 @@ Tooling for the full art overhaul (plan: `docs/pixellab-pipeline-plan.md`).
 Generates pixel art via the PixelLab API, curates it in a local gallery, and
 compiles the committed `art/src/` source tree into the shipped client assets.
 
+**Before running a sprite batch**, read
+`design_docs/visual_and_aesthetics_design/sprite-batch-methodology.md` — the
+proven per-biome workflow (brainstorm → flavor pass → prompts → review →
+regen → pack), the prompt template with its accumulated ban-lists, the
+img2img/colorImage techniques, and the operational rules (notably: never
+generate while the review gallery is open).
+
 ## Setup
 
 `PIXELLAB_API_KEY` in the repo-root `.env` (see `.env.example`). Never commit it.
