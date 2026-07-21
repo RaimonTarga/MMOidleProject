@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { EquipmentSlot } from '@mmo-idle/shared';
 
 export interface FocusedItem {
@@ -20,6 +20,10 @@ export function useFocusWithDelay() {
       timer.current = setTimeout(() => setFocused(null), 120);
     }
   }
+
+  useEffect(() => () => {
+    if (timer.current) clearTimeout(timer.current);
+  }, []);
 
   return { focused, focus };
 }

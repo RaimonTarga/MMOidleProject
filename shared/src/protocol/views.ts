@@ -58,7 +58,7 @@ export interface PlayerView {
   attackTargetId: string | null;
   auto: boolean;
   autoTraverse: boolean;
-  /** Telegraphed next auto-combat action; null when auto-combat is off. */
+  /** Current server-directed action; may remain during manual travel/engaged combat. */
   autoIntent: HasAutoIntent | null;
   /** Active emote; null when none is playing. */
   emote: HasEmote | null;
@@ -108,6 +108,8 @@ export interface PlayerView {
   flashEvasionBonusPct: number;
   empoweredReady: boolean;
   targetDotStacks: number;
+  /** Server-authored progress toward the current target's next primary DoT tick. */
+  targetDotTickPct: number;
   targetChillStacks: number;
   isChanneling: boolean;
   channelingPct: number;
@@ -344,6 +346,7 @@ export function composePlayerView(entity: NetworkedEntity): PlayerView | null {
       : 0,
     empoweredReady: entity.hasEmpoweredAttack !== undefined,
     targetDotStacks: entity.appliesDots?.targetDotStacks ?? 0,
+    targetDotTickPct: entity.appliesDots?.targetDotTickPct ?? 0,
     targetChillStacks: entity.chillsTarget?.targetChillStacks ?? 0,
     isChanneling: entity.isChanneling !== undefined,
     channelingPct: entity.isChanneling?.pct ?? 0,

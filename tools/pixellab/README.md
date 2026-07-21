@@ -64,6 +64,10 @@ art/
   `initImage` (art/src-relative path, or `"self"` = this entry's current art —
   "same sprite, regenerated cleanly") with `initImageStrength` (1–999,
   default 300; higher follows the source more closely).
+- `generationScale` generates candidates at an integer multiple of the final
+  manifest size (for example, `2` generates a 32px icon at 64px). Review
+  acceptance still nearest-neighbor resizes to the manifest's final size. Any
+  img2img `initImage` is nearest-neighbor resized to that generation size too.
 - Style anchors live in `art/style/` — see its README. Existing sprites copied
   from `art/src/` make free anchors.
 - `players` category uses img2img EVOLUTION CHAINS (vagrant → class root →

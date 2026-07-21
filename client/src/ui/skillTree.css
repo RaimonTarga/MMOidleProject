@@ -27,6 +27,21 @@
   flex-direction: column;
 }
 
+/* The primary Passive Tree now uses the shared dialog shell. Keep the legacy
+   shell rules above for the standalone mobile loadout destinations. */
+.game-dialog__panel.skill-tree-dialog {
+  max-width: min(980px, calc((100vw - 32px) / var(--ui-font-scale, 1)));
+}
+
+/* The global HUD font scale uses CSS zoom. Constrain the unzoomed desktop
+   panel against the available viewport so the rendered tree still fits. */
+@media (min-width: 1101px) {
+  .skill-tree-panel {
+    width: min(980px, calc((100vw - 32px) / var(--ui-font-scale)));
+    max-height: min(90vh, calc((100vh - 32px) / var(--ui-font-scale)));
+  }
+}
+
 /* ── Header ──────────────────────────────────────────────────────────────── */
 .skill-tree-header {
   display: flex;
@@ -643,4 +658,10 @@
 
   /* Detail panel — flexible height instead of the fixed desktop 116px */
   .skill-desc { height: auto; max-height: 42vh; padding: 9px 14px 12px; }
+}
+
+@media (max-width: 1100px) {
+  .game-dialog__panel.skill-tree-dialog {
+    max-width: none;
+  }
 }

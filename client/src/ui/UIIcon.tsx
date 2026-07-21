@@ -18,14 +18,16 @@ interface UIIconProps {
   size?: number;
   className?: string;
   style?: React.CSSProperties;
+  as?: 'div' | 'span';
 }
 
-export function UIIcon({ frameName, size = 20, className, style }: UIIconProps) {
+export function UIIcon({ frameName, size = 20, className, style, as = 'div' }: UIIconProps) {
   const rect = useUIFrame(frameName);
   if (!rect) return null;
   const scale = size / rect.h;
+  const Tag = as;
   return (
-    <div
+    <Tag
       className={className}
       style={{
         display: 'inline-block',

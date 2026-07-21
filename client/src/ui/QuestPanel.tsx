@@ -6,6 +6,7 @@ import {
   playerTierAtom,
   questProgressAtom,
 } from '../hud/atoms';
+import { HudPanel } from '../hud/primitives';
 
 interface Props {
   onFindDungeon?: (nodeIds: string[]) => void;
@@ -42,10 +43,10 @@ export function QuestPanel({ onFindDungeon }: Props) {
 
   if (!playerId || !nodeId) {
     return (
-      <div className="sidebar-panel quest-panel">
+      <HudPanel className="sidebar-panel quest-panel">
         <div className="panel-title">Tier Quest</div>
         <div className="quest-empty">Connecting…</div>
-      </div>
+      </HudPanel>
     );
   }
 
@@ -69,10 +70,20 @@ export function QuestPanel({ onFindDungeon }: Props) {
     if (dungeons.length > 0 && onFindDungeon) onFindDungeon(dungeons);
   }
 
+  const canLocateDungeons = dungeons.length > 0;
+
   return (
-    <div
-      className={`sidebar-panel quest-panel${dungeons.length > 0 ? ' quest-panel--clickable' : ''}`}
-      onClick={dungeons.length > 0 ? handleClick : undefined}
+    <HudPanel
+      className={`sidebar-panel quest-panel${canLocateDungeons ? ' quest-panel--clickable' : ''}`}
+      role={canLocateDungeons ? 'button' : undefined}
+      tabIndex={canLocateDungeons ? 0 : undefined}
+      aria-label={canLocateDungeons ? 'Locate tier quest dungeons on the map' : undefined}
+      onClick={canLocateDungeons ? handleClick : undefined}
+      onKeyDown={canLocateDungeons ? (event) => {
+        if (event.key !== 'Enter' && event.key !== ' ') return;
+        event.preventDefault();
+        handleClick();
+      } : undefined}
     >
       <div className="panel-title">Tier Quest</div>
 
@@ -103,6 +114,6 @@ export function QuestPanel({ onFindDungeon }: Props) {
           No quest for this tier — max tier reached!
         </div>
       )}
-    </div>
+    </HudPanel>
   );
 }

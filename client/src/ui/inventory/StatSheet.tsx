@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { Fragment, useMemo } from 'react';
 import { useAtomValue } from 'jotai';
 import type { EquipmentSlot } from '@mmo-idle/shared';
 import {
@@ -240,7 +240,7 @@ export function StatSheet({ focused, onFocus }: Props) {
           const dpsUp      = (proposedDps ?? currentDps) > currentDps;
 
           return (
-            <>
+            <Fragment key={cfg.key}>
               {mainRow}
               <div key="aps" className={['inv-stat-row inv-stat-row--derived', apsChanged ? (apsUp ? 'inv-stat-row--up' : 'inv-stat-row--down') : ''].filter(Boolean).join(' ')}>
                 <span className="inv-stat-row__label">APS</span>
@@ -268,7 +268,7 @@ export function StatSheet({ focused, onFocus }: Props) {
                   </>
                 )}
               </div>
-            </>
+            </Fragment>
           );
         })}
 
@@ -323,6 +323,7 @@ export function StatSheet({ focused, onFocus }: Props) {
         )}
         {info && (
           <button
+            type="button"
             className={`inv-stat-sheet__btn${info.isEquipped ? ' inv-stat-sheet__btn--unequip' : ''}`}
             onClick={handleAction}
           >

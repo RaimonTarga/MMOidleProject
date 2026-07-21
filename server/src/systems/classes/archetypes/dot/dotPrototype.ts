@@ -11,7 +11,6 @@ import { registerCombatListener } from "../../../combat/engine/combatPipeline";
 import {
   applyStatusEffect,
   getStatusEffects,
-  getTotalStacks,
   removeStatusEffect,
 } from "@mmo-idle/shared";
 import { grantMonsterRewards } from "../../../player/progression/rewards";
@@ -115,7 +114,10 @@ export function updateDotArchetype(world: World, dt: number): void {
     );
 
     entity.hasHealth.hp -= damage;
-    pushDotTickEvent(world, entity, dotElementForSource(world, effect.sourceId), damage, { sourceType: "class" });
+    pushDotTickEvent(world, entity, dotElementForSource(world, effect.sourceId), damage, {
+      sourceType: "class",
+      sourceId: effect.sourceId,
+    });
 
     if (entity.hasHealth.hp <= 0) {
       monstersToKill.push({ monsterId, sourceId: effect.sourceId, damage });
@@ -278,10 +280,17 @@ export function updateDotArchetype(world: World, dt: number): void {
     const targetId = entity.hasAttackTarget?.targetId;
     if (!targetId) {
       dot.targetDotStacks = 0;
+      dot.targetDotTickPct = 0;
     } else {
       const targetState = world.getMonsterEntity(targetId)?.tracksCombat;
-      dot.targetDotStacks = targetState
-        ? getTotalStacks(targetState, DOT_EFFECT_ID)
+      const targetEffect = targetState
+        ? getStatusEffects(targetState, DOT_EFFECT_ID)[0]
+        : undefined;
+      dot.targetDotStacks = targetEffect?.stacks ?? 0;
+      const interval = Math.max(1, targetEffect?.data.tickIntervalMs ?? 1);
+      const remaining = Math.max(0, Math.min(interval, targetEffect?.data.nextTickIn ?? interval));
+      dot.targetDotTickPct = targetEffect
+        ? Math.round((1 - remaining / interval) * 100)
         : 0;
     }
   }

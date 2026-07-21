@@ -1,0 +1,166 @@
+/* Party and nearby-presence presentation is desktop-only. The component is
+   mounted with the desktop rail, but the explicit scope protects future reuse. */
+@media (min-width: 1101px) {
+  .desktop-hud .party-panel__details {
+    margin-top: -2px;
+  }
+
+  .desktop-hud .party-panel__roster,
+  .desktop-hud .party-panel__nearby-list {
+    display: grid;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .desktop-hud .party-panel__member {
+    padding: 6px 0;
+    border-top: 1px solid rgba(117, 102, 77, 0.2);
+  }
+
+  .desktop-hud .party-panel__member:first-child {
+    border-top: 0;
+  }
+
+  .desktop-hud .party-panel__member-line,
+  .desktop-hud .party-panel__member-status,
+  .desktop-hud .party-panel__nearby-row {
+    display: flex;
+    min-width: 0;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 7px;
+  }
+
+  .desktop-hud .party-panel__member-name,
+  .desktop-hud .party-panel__nearby-name {
+    min-width: 0;
+    color: var(--hud-text);
+    font-size: 11px;
+    overflow-wrap: anywhere;
+  }
+
+  .desktop-hud .party-panel__you,
+  .desktop-hud .party-panel__role,
+  .desktop-hud .party-panel__presence,
+  .desktop-hud .party-panel__nearby-presence,
+  .desktop-hud .party-panel__hp-label {
+    flex: 0 0 auto;
+    font-size: 9px;
+    line-height: 1.3;
+  }
+
+  .desktop-hud .party-panel__you {
+    margin-left: 5px;
+    color: var(--hud-text-muted);
+  }
+
+  .desktop-hud .party-panel__role {
+    padding: 1px 4px;
+    color: var(--hud-primary-strong);
+    border: 1px solid rgba(200, 168, 96, 0.35);
+    background: rgba(88, 69, 29, 0.22);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .desktop-hud .party-panel__member-status {
+    margin-top: 2px;
+  }
+
+  .desktop-hud .party-panel__presence {
+    color: var(--hud-success);
+  }
+
+  .desktop-hud .party-panel__presence--away {
+    color: var(--hud-text-dim);
+  }
+
+  .desktop-hud .party-panel__hp-label {
+    color: var(--hud-text-muted);
+  }
+
+  .desktop-hud .party-panel__nearby-presence {
+    color: var(--hud-success);
+  }
+
+  .desktop-hud .party-panel__hp-track {
+    height: 5px;
+    margin-top: 4px;
+    overflow: hidden;
+    background: var(--hud-material-inset);
+    border: 1px solid rgba(5, 4, 3, 0.74);
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.64);
+  }
+
+  .desktop-hud .party-panel__hp-fill {
+    width: var(--party-hp);
+    height: 100%;
+    background: linear-gradient(90deg, #3c8e5b, var(--hud-success));
+    transition: width 120ms linear;
+  }
+
+  .desktop-hud .party-panel__hp-fill--critical {
+    background: linear-gradient(90deg, #8a392e, var(--hud-danger));
+  }
+
+  .desktop-hud .party-panel__action {
+    width: 100%;
+    margin-top: 7px;
+    text-transform: uppercase;
+  }
+
+  .desktop-hud .party-panel__solo-copy,
+  .desktop-hud .party-panel__empty {
+    margin: 1px 0 0;
+    color: var(--hud-text-muted);
+    font-size: 10px;
+    line-height: 1.45;
+  }
+
+  .desktop-hud .party-panel__nearby {
+    margin-top: 9px;
+    padding-top: 7px;
+    border-top: 1px solid var(--hud-edge-divider);
+  }
+
+  .desktop-hud .party-panel__nearby-header {
+    min-height: 18px;
+    color: var(--hud-primary);
+    font-size: 10px;
+    font-weight: bold;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+  }
+
+  .desktop-hud .party-panel__nearby-details {
+    margin-top: 5px;
+  }
+
+  .desktop-hud .party-panel__nearby-row {
+    min-height: 30px;
+    padding: 4px 0;
+    border-top: 1px solid rgba(117, 102, 77, 0.2);
+  }
+
+  .desktop-hud .party-panel__nearby-row:first-child {
+    border-top: 0;
+  }
+
+  .desktop-hud .party-panel__join {
+    width: auto;
+    min-width: 50px;
+    margin: 0;
+    padding: 4px 7px;
+    color: var(--hud-primary-strong);
+    font-size: 9px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .desktop-hud .party-panel__action:focus-visible,
+  .desktop-hud .party-panel__join:focus-visible {
+    outline: var(--hud-focus-width) solid var(--hud-focus-color);
+    outline-offset: var(--hud-focus-offset);
+  }
+}

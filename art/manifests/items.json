@@ -1545,7 +1545,7 @@
         "initImage": "items/weapons/iron-broadsword.png",
         "initImageStrength": 200
       },
-      "status": "pending",
+      "status": "accepted",
       "sources": [
         "item:knight-steelsword"
       ],
@@ -1571,7 +1571,7 @@
         "initImage": "items/weapons/flash-rapier.png",
         "initImageStrength": 200
       },
-      "status": "pending",
+      "status": "accepted",
       "sources": [
         "item:gale-needle"
       ],
@@ -1586,8 +1586,8 @@
       },
       "endpoint": "pixflux",
       "styleRef": null,
-      "prompt": "full-square fantasy game inventory item icon of a barbed thorn needle rapier, the same slender straight thrusting blade but lined with small backward-facing thorn barbs along its length, dark bramble-iron with a thorny guard and a faint dark-red bleed at the tip, centered and filling about 85 percent of the frame on a slight diagonal, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of dark bramble iron forest green and deep thorn red, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
-      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, broadsword, wide blade, heavy blade, axe, hammer, smooth clean edge, fire, frost, glow",
+      "prompt": "full-square fantasy game inventory item icon of a heavily barbed thorn needle rapier, unmistakably thorny rather than sleek, the same slender straight thrusting blade but lined with small backward-facing thorn barbs along its length, dark bramble-iron with a thorny guard and a faint dark-red bleed at the tip, centered and filling about 85 percent of the frame on a slight diagonal, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of dark bramble iron forest green and deep thorn red, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, broadsword, wide blade, heavy blade, axe, hammer, smooth clean edge, fire, frost, glow, polished silver blade, wind streaks, motion streaks, smooth clean unbarbed blade, machined needle point, pale blue tint",
       "params": {
         "outline": "selective outline",
         "shading": "flat shading",
@@ -1595,13 +1595,13 @@
         "textGuidanceScale": 11,
         "generationScale": 2,
         "initImage": "items/weapons/flash-rapier.png",
-        "initImageStrength": 200
+        "initImageStrength": 65
       },
       "status": "pending",
       "sources": [
         "item:thorn-needle"
       ],
-      "notes": "Batch 1. img2img seeded from accepted root flash-rapier (strength 200) so the line keeps its silhouette while the prompt drives tier escalation."
+      "notes": "too similar to the other one | R2: initImageStrength 200 -> 65 so the seed is only a light silhouette nudge and the prompt drives shape/escalation. Sibling divergence: banned gale-needle's polished/wind-streak look and pushed the barbed silhouette."
     },
     {
       "id": "quake-hammer",
@@ -1621,13 +1621,13 @@
         "textGuidanceScale": 11,
         "generationScale": 2,
         "initImage": "items/weapons/heavy-hammer.png",
-        "initImageStrength": 200
+        "initImageStrength": 65
       },
       "status": "pending",
       "sources": [
         "item:quake-hammer"
       ],
-      "notes": "Batch 1. img2img seeded from accepted root heavy-hammer (strength 200) so the line keeps its silhouette while the prompt drives tier escalation."
+      "notes": "too similar to the original hammer | R2: initImageStrength 200 -> 65 so the seed is only a light silhouette nudge and the prompt drives shape/escalation."
     },
     {
       "id": "avalanche-maul",
@@ -1647,13 +1647,13 @@
         "textGuidanceScale": 11,
         "generationScale": 2,
         "initImage": "items/weapons/heavy-hammer.png",
-        "initImageStrength": 200
+        "initImageStrength": 65
       },
       "status": "pending",
       "sources": [
         "item:mountain-avalanche-maul"
       ],
-      "notes": "Batch 1. img2img seeded from accepted root heavy-hammer (strength 200) so the line keeps its silhouette while the prompt drives tier escalation."
+      "notes": "too similar to the original hammer | R2: initImageStrength 200 -> 65 so the seed is only a light silhouette nudge and the prompt drives shape/escalation."
     },
     {
       "id": "earthsunder-maul",
@@ -1673,13 +1673,13 @@
         "textGuidanceScale": 11,
         "generationScale": 2,
         "initImage": "items/weapons/heavy-hammer.png",
-        "initImageStrength": 200
+        "initImageStrength": 65
       },
       "status": "pending",
       "sources": [
         "item:mountain-earthsunder-maul"
       ],
-      "notes": "Batch 1. img2img seeded from accepted root heavy-hammer (strength 200) so the line keeps its silhouette while the prompt drives tier escalation."
+      "notes": "too similar to the original hammer | R2: initImageStrength 200 -> 65 so the seed is only a light silhouette nudge and the prompt drives shape/escalation."
     },
     {
       "id": "warmaul",
@@ -1699,13 +1699,13 @@
         "textGuidanceScale": 11,
         "generationScale": 2,
         "initImage": "items/weapons/heavy-hammer.png",
-        "initImageStrength": 200
+        "initImageStrength": 65
       },
-      "status": "pending",
+      "status": "regen",
       "sources": [
         "item:mountain-warmaul"
       ],
-      "notes": "Batch 1. img2img seeded from accepted root heavy-hammer (strength 200) so the line keeps its silhouette while the prompt drives tier escalation."
+      "notes": "too similar to the original hammer | R2: initImageStrength 200 -> 65 so the seed is only a light silhouette nudge and the prompt drives shape/escalation."
     },
     {
       "id": "ruinous-axe",
@@ -1725,13 +1725,13 @@
         "textGuidanceScale": 11,
         "generationScale": 2,
         "initImage": "items/weapons/chaotic-axe.png",
-        "initImageStrength": 200
+        "initImageStrength": 65
       },
-      "status": "pending",
+      "status": "regen",
       "sources": [
         "item:ruinous-axe"
       ],
-      "notes": "Batch 1. img2img seeded from accepted root chaotic-axe (strength 200) so the line keeps its silhouette while the prompt drives tier escalation."
+      "notes": "too similar to the original axe | R2: initImageStrength 200 -> 65 so the seed is only a light silhouette nudge and the prompt drives shape/escalation."
     },
     {
       "id": "cataclysm-axe",
@@ -1751,13 +1751,13 @@
         "textGuidanceScale": 11,
         "generationScale": 2,
         "initImage": "items/weapons/chaotic-axe.png",
-        "initImageStrength": 200
+        "initImageStrength": 65
       },
-      "status": "pending",
+      "status": "regen",
       "sources": [
         "item:cave-cataclysm-axe"
       ],
-      "notes": "Batch 1. img2img seeded from accepted root chaotic-axe (strength 200) so the line keeps its silhouette while the prompt drives tier escalation."
+      "notes": "too similar to the original weapon | R2: initImageStrength 200 -> 65 so the seed is only a light silhouette nudge and the prompt drives shape/escalation."
     },
     {
       "id": "solar-falchion",
@@ -1777,13 +1777,13 @@
         "textGuidanceScale": 11,
         "generationScale": 2,
         "initImage": "items/weapons/sunsteel-falchion.png",
-        "initImageStrength": 200
+        "initImageStrength": 65
       },
-      "status": "pending",
+      "status": "regen",
       "sources": [
         "item:desert-solar-cross"
       ],
-      "notes": "Batch 1. img2img seeded from accepted root sunsteel-falchion (strength 200) so the line keeps its silhouette while the prompt drives tier escalation."
+      "notes": "too similar to the original weapon | R2: initImageStrength 200 -> 65 so the seed is only a light silhouette nudge and the prompt drives shape/escalation."
     },
     {
       "id": "zenith-falchion",
@@ -1803,13 +1803,13 @@
         "textGuidanceScale": 11,
         "generationScale": 2,
         "initImage": "items/weapons/sunsteel-falchion.png",
-        "initImageStrength": 200
+        "initImageStrength": 65
       },
-      "status": "pending",
+      "status": "regen",
       "sources": [
         "item:desert-zenith-cross"
       ],
-      "notes": "Batch 1. img2img seeded from accepted root sunsteel-falchion (strength 200) so the line keeps its silhouette while the prompt drives tier escalation."
+      "notes": "too similar to the original weapon | R2: initImageStrength 200 -> 65 so the seed is only a light silhouette nudge and the prompt drives shape/escalation."
     },
     {
       "id": "glacial-rimebrand",
@@ -1829,13 +1829,13 @@
         "textGuidanceScale": 11,
         "generationScale": 2,
         "initImage": "items/weapons/rimebrand.png",
-        "initImageStrength": 200
+        "initImageStrength": 65
       },
-      "status": "pending",
+      "status": "regen",
       "sources": [
         "item:tundra-glacial-rimebrand"
       ],
-      "notes": "Batch 1. img2img seeded from accepted root rimebrand (strength 200) so the line keeps its silhouette while the prompt drives tier escalation."
+      "notes": "too similar to the original weapon | R2: initImageStrength 200 -> 65 so the seed is only a light silhouette nudge and the prompt drives shape/escalation."
     },
     {
       "id": "primordial-club",
@@ -1855,7 +1855,7 @@
         "textGuidanceScale": 11,
         "generationScale": 2
       },
-      "status": "pending",
+      "status": "accepted",
       "sources": [
         "item:primordial-club"
       ],
@@ -1879,7 +1879,7 @@
         "textGuidanceScale": 11,
         "generationScale": 2
       },
-      "status": "pending",
+      "status": "accepted",
       "sources": [
         "item:jungle-stinger-rapier"
       ],
@@ -1903,7 +1903,7 @@
         "textGuidanceScale": 11,
         "generationScale": 2
       },
-      "status": "pending",
+      "status": "accepted",
       "sources": [
         "item:jungle-venomthorn-rapier"
       ],
@@ -1927,7 +1927,7 @@
         "textGuidanceScale": 11,
         "generationScale": 2
       },
-      "status": "pending",
+      "status": "accepted",
       "sources": [
         "item:jungle-deathfang-rapier"
       ],
@@ -1951,7 +1951,7 @@
         "textGuidanceScale": 11,
         "generationScale": 2
       },
-      "status": "pending",
+      "status": "accepted",
       "sources": [
         "item:tundra-permafrost-maul"
       ],
@@ -1975,7 +1975,7 @@
         "textGuidanceScale": 11,
         "generationScale": 2
       },
-      "status": "pending",
+      "status": "accepted",
       "sources": [
         "item:tundra-glacial-tyrant-maul"
       ],
@@ -1999,7 +1999,7 @@
         "textGuidanceScale": 11,
         "generationScale": 2
       },
-      "status": "pending",
+      "status": "accepted",
       "sources": [
         "item:volcanic-cinderlash"
       ],
@@ -2023,7 +2023,7 @@
         "textGuidanceScale": 11,
         "generationScale": 2
       },
-      "status": "pending",
+      "status": "accepted",
       "sources": [
         "item:volcanic-eruption-lash"
       ],
@@ -2047,7 +2047,7 @@
         "textGuidanceScale": 11,
         "generationScale": 2
       },
-      "status": "pending",
+      "status": "accepted",
       "sources": [
         "item:graveyard-plague-axe"
       ],
@@ -2071,7 +2071,7 @@
         "textGuidanceScale": 11,
         "generationScale": 2
       },
-      "status": "pending",
+      "status": "accepted",
       "sources": [
         "item:trench-abyssal-axe"
       ],

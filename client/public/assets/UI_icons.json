@@ -5,10 +5,115 @@
 			"format": "RGBA8888",
 			"size": {
 				"w": 256,
-				"h": 96
+				"h": 128
 			},
 			"scale": 1,
 			"frames": [
+				{
+					"filename": "UI_icons/abilities/brace.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "UI_icons/abilities/cleanse.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 32,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "UI_icons/abilities/expose-weakness.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 64,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "UI_icons/abilities/second-wind.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 96,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "UI_icons/abilities/sweep.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 128,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					}
+				},
 				{
 					"filename": "UI_icons/abyss-icon.png",
 					"rotated": false,
@@ -24,7 +129,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 0,
+						"x": 160,
 						"y": 0,
 						"w": 35,
 						"h": 32
@@ -45,7 +150,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 35,
+						"x": 195,
 						"y": 0,
 						"w": 35,
 						"h": 32
@@ -66,8 +171,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 70,
-						"y": 0,
+						"x": 0,
+						"y": 32,
 						"w": 35,
 						"h": 32
 					}
@@ -87,8 +192,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 105,
-						"y": 0,
+						"x": 35,
+						"y": 32,
 						"w": 35,
 						"h": 32
 					}
@@ -108,8 +213,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 140,
-						"y": 0,
+						"x": 70,
+						"y": 32,
 						"w": 35,
 						"h": 32
 					}
@@ -129,8 +234,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 175,
-						"y": 0,
+						"x": 105,
+						"y": 32,
 						"w": 32,
 						"h": 32
 					}
@@ -150,8 +255,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 207,
-						"y": 0,
+						"x": 137,
+						"y": 32,
 						"w": 35,
 						"h": 32
 					}
@@ -171,7 +276,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 0,
+						"x": 172,
 						"y": 32,
 						"w": 32,
 						"h": 32
@@ -192,7 +297,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 32,
+						"x": 204,
 						"y": 32,
 						"w": 36,
 						"h": 32
@@ -213,8 +318,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 68,
-						"y": 32,
+						"x": 0,
+						"y": 64,
 						"w": 32,
 						"h": 32
 					}
@@ -234,8 +339,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 100,
-						"y": 32,
+						"x": 32,
+						"y": 64,
 						"w": 35,
 						"h": 32
 					}
@@ -255,119 +360,14 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 135,
-						"y": 32,
+						"x": 67,
+						"y": 64,
 						"w": 32,
 						"h": 32
 					}
 				},
 				{
 					"filename": "UI_icons/plains-icon.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 36,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 36,
-						"h": 32
-					},
-					"frame": {
-						"x": 167,
-						"y": 32,
-						"w": 36,
-						"h": 32
-					}
-				},
-				{
-					"filename": "UI_icons/progress-icon.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 32,
-						"h": 32
-					},
-					"frame": {
-						"x": 203,
-						"y": 32,
-						"w": 32,
-						"h": 32
-					}
-				},
-				{
-					"filename": "UI_icons/runes-icon.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 32,
-						"h": 32
-					},
-					"frame": {
-						"x": 0,
-						"y": 64,
-						"w": 32,
-						"h": 32
-					}
-				},
-				{
-					"filename": "UI_icons/settings-icon.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 32,
-						"h": 32
-					},
-					"frame": {
-						"x": 32,
-						"y": 64,
-						"w": 32,
-						"h": 32
-					}
-				},
-				{
-					"filename": "UI_icons/swamp-icon.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 35,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 35,
-						"h": 32
-					},
-					"frame": {
-						"x": 64,
-						"y": 64,
-						"w": 35,
-						"h": 32
-					}
-				},
-				{
-					"filename": "UI_icons/trench-icon.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -388,6 +388,111 @@
 					}
 				},
 				{
+					"filename": "UI_icons/progress-icon.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 135,
+						"y": 64,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "UI_icons/runes-icon.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 167,
+						"y": 64,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "UI_icons/settings-icon.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 199,
+						"y": 64,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "UI_icons/swamp-icon.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 35,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 35,
+						"h": 32
+					},
+					"frame": {
+						"x": 0,
+						"y": 96,
+						"w": 35,
+						"h": 32
+					}
+				},
+				{
+					"filename": "UI_icons/trench-icon.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 36,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 36,
+						"h": 32
+					},
+					"frame": {
+						"x": 35,
+						"y": 96,
+						"w": 36,
+						"h": 32
+					}
+				},
+				{
 					"filename": "UI_icons/tundra-icon.png",
 					"rotated": false,
 					"trimmed": false,
@@ -402,8 +507,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 135,
-						"y": 64,
+						"x": 71,
+						"y": 96,
 						"w": 35,
 						"h": 32
 					}
@@ -423,8 +528,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 170,
-						"y": 64,
+						"x": 106,
+						"y": 96,
 						"w": 32,
 						"h": 32
 					}
@@ -444,8 +549,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 202,
-						"y": 64,
+						"x": 138,
+						"y": 96,
 						"w": 35,
 						"h": 32
 					}

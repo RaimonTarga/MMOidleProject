@@ -42,6 +42,10 @@ export function unlockSkill(world: World, entity: PlayerEntity, skillId: string)
     entity.usesSkills.selectedRange = skillId;
   }
 
+  // Attach the newly selected class slice before recalculation so class-specific
+  // callbacks (Cadence threshold, Energy max, etc.) have an authoritative target
+  // immediately. Reconcile once more afterward for passive-gated secondary slices.
+  syncArchetypeSlices(world, entity);
   recalculatePlayerEntityStats(world, entity);
   syncArchetypeSlices(world, entity);
 

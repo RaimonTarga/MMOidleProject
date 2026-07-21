@@ -63,6 +63,11 @@ monsters). Delegation: bake + diff-extract scripts are self-contained
 
 ## 2. Tier-evolving UI (Tibia-style reskin + per-tier skins + ascension animation)
 
+**PROMOTED (2026-07-20):** implementation sequencing, architecture guardrails,
+review gates, and model-budget recommendations now live in
+`docs/ui-redesign-plan.md`. This entry remains as the original feasibility and
+direction record.
+
 **Verdict: easier of the two; piggybacks on the planned mobile-HUD
 panel-internals milestone — do the reskin AS that migration, not after,
 or every panel gets restyled twice.**

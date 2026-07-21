@@ -1,4 +1,4 @@
-import type { DeltaSnapshot, MonsterView, NetworkedEntity, PlayerView } from "@mmo-idle/shared";
+import type { DeltaSnapshot, MinionView, MonsterView, NetworkedEntity, PlayerView } from "@mmo-idle/shared";
 import {
   composeMinionView,
   composeMonsterView,
@@ -8,7 +8,7 @@ import {
 import { loadGameplaySettings } from '../settings/gameplaySettings';
 import { sendSetAutocombatConfig, sendSetAutoTraverse } from './intents';
 import { hudBus } from "../hudBus";
-import { syncPlayerAtoms, nodeLoadingAtom, setDungeonGauntlet, setTargetFrame, setZoneBoss, setZonePlayers, type TargetFrameData, type ZonePlayer } from "../hud/atoms";
+import { notifyTargetDotTick, syncPlayerAtoms, nodeLoadingAtom, setDungeonGauntlet, setSummonHealth, setTargetFrame, setZoneBoss, setZonePlayers, type SummonHealthView, type TargetFrameData, type ZonePlayer } from "../hud/atoms";
 import { getDefaultStore } from "jotai";
 import type { GameScene } from "../scenes/GameScene";
 import type { RenderState, DamageNumberHint } from "../render/state";
@@ -118,8 +118,20 @@ export function applyDelta(
     upsertEntityView(state, delta.netId, entity, scene);
   }
 
-  // Events fire before removes: sprites still exist so reward/hit FX can read positions
-  for (const ev of snapshot.events) dispatchCombatEvent(state, ev, scene);
+  // Events fire before removes: sprites still exist so reward/hit FX can read positions.
+  // Only the local player's confirmed primary DoT tick drives their mechanic HUD.
+  const ownBeforeRemoves = getOwnView(state);
+  for (const ev of snapshot.events) {
+    if (
+      ev.kind === "dot-tick" &&
+      ev.sourceType === "class" &&
+      ev.sourceId === state.ownId &&
+      ev.targetId === ownBeforeRemoves?.attackTargetId
+    ) {
+      notifyTargetDotTick();
+    }
+    dispatchCombatEvent(state, ev, scene);
+  }
 
   for (const netId of pendingRemoves) {
     const entity = state.entity.get(netId);
@@ -176,6 +188,16 @@ export function applyDelta(
     }
     syncPlayerAtoms(own);
     notePlayerStatusCues(own);
+
+    const summonHealth: SummonHealthView[] = [];
+    for (const id of state.ids) {
+      if (state.kind.get(id) !== "minion") continue;
+      const minion = state.view.get(id) as MinionView | undefined;
+      if (!minion || minion.ownerPlayerId !== own.id || minion.nodeId !== own.nodeId) continue;
+      summonHealth.push({ slot: minion.slot, hp: minion.hp, maxHp: minion.maxHp });
+    }
+    summonHealth.sort((a, b) => a.slot - b.slot);
+    setSummonHealth(summonHealth);
 
     const zonePlayers: ZonePlayer[] = [];
     for (const id of state.ids) {

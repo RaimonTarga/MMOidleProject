@@ -83,13 +83,17 @@ export function BackpackGrid({ focused, onFocus }: Props) {
           {biomeGroups.length > 1 && (
             <div className="inv-filter-row">
               <button
+                type="button"
                 className={`inv-filter-chip${!filterBiome ? ' inv-filter-chip--active' : ''}`}
+                aria-pressed={!filterBiome}
                 onClick={() => setFilterBiome(null)}
               >All</button>
               {biomeGroups.map(g => (
                 <button
+                  type="button"
                   key={g}
                   className={`inv-filter-chip${filterBiome === g ? ' inv-filter-chip--active' : ''}`}
+                  aria-pressed={filterBiome === g}
                   onClick={() => toggleBiome(g)}
                 >{biomeName(g)}</button>
               ))}
@@ -98,14 +102,18 @@ export function BackpackGrid({ focused, onFocus }: Props) {
           {(biomeGroups.length > 1 || tiers.length > 1 || true) && (
             <div className="inv-filter-row">
               <button
+                type="button"
                 className={`inv-filter-chip${!filterSlot ? ' inv-filter-chip--active' : ''}`}
+                aria-pressed={!filterSlot}
                 onClick={() => setFilterSlot(null)}
               >All Slots</button>
               {(['weapon', 'armor', 'recovery', 'mobility'] as const).map(s => (
                 <button
+                  type="button"
                   key={s}
                   className={`inv-filter-chip inv-filter-chip--slot${filterSlot === s ? ' inv-filter-chip--active' : ''}`}
                   data-slot={s}
+                  aria-pressed={filterSlot === s}
                   onClick={() => toggleSlot(s)}
                 >{SLOT_LABELS[s]}</button>
               ))}
@@ -114,14 +122,18 @@ export function BackpackGrid({ focused, onFocus }: Props) {
           {tiers.length > 1 && (
             <div className="inv-filter-row">
               <button
+                type="button"
                 className={`inv-filter-chip${!filterTier ? ' inv-filter-chip--active' : ''}`}
+                aria-pressed={!filterTier}
                 onClick={() => setFilterTier(null)}
               >All Tiers</button>
               {tiers.map(t => (
                 <button
+                  type="button"
                   key={t}
                   className={`inv-filter-chip inv-filter-chip--tier${filterTier === t ? ' inv-filter-chip--active' : ''}`}
                   style={filterTier === t ? { color: tierColor(t), borderColor: `${tierColor(t)}aa`, background: `${tierColor(t)}18` } : { color: `${tierColor(t)}bb` }}
+                  aria-pressed={filterTier === t}
                   onClick={() => toggleTier(t)}
                 >T{t}</button>
               ))}
@@ -140,7 +152,8 @@ export function BackpackGrid({ focused, onFocus }: Props) {
             const plus      = defId ? (itemUpgrades[defId] ?? 0) : 0;
 
             return (
-              <div
+              <button
+                type="button"
                 key={defId ?? `empty-${i}`}
                 className={[
                   'inv-item-slot',
@@ -148,26 +161,32 @@ export function BackpackGrid({ focused, onFocus }: Props) {
                   isFocused ? 'inv-item-slot--focused' : '',
                 ].filter(Boolean).join(' ')}
                 style={color ? { borderColor: `${color}77` } : undefined}
+                aria-label={def ? `Equip ${def.name}` : 'Empty backpack slot'}
+                disabled={!defId || !def}
                 onMouseEnter={() => {
                   if (def && defId) onFocus({ defId, source: 'backpack', invIndex: invIndex ?? i });
                 }}
                 onMouseLeave={() => onFocus(null)}
+                onFocus={() => {
+                  if (def && defId) onFocus({ defId, source: 'backpack', invIndex: invIndex ?? i });
+                }}
+                onBlur={() => onFocus(null)}
                 onClick={() => { if (defId) hudBus.requestEquipItem(defId); }}
               >
                 {def && (
                   <>
-                    <div className="inv-item-slot__icon" style={{ background: `${color}0d` }}>
+                    <span className="inv-item-slot__icon" style={{ background: `${color}0d` }}>
                       {def.icon
                         ? <ItemIcon frameName={def.icon} />
                         : <span className="inv-slot-tier-pip" style={{ background: `${color}cc` }} />
                       }
-                    </div>
-                    <div className="inv-item-slot__name">
+                    </span>
+                    <span className="inv-item-slot__name">
                       {def.name}{plus > 0 ? ` +${plus}` : ''}
-                    </div>
+                    </span>
                   </>
                 )}
-              </div>
+              </button>
             );
           })}
         </div>

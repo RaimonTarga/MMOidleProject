@@ -21,12 +21,15 @@ import { TargetFrame } from './hud/TargetFrame';
 import { EmoteWheel } from './hud/EmoteWheel';
 import { DungeonAltarOverlay } from './hud/DungeonAltarOverlay';
 import { applyUiFontScale } from './settings/gameplaySettings';
+import { installUiTierSync } from './hud/uiTier';
+import './hud/tierApparatus.css';
 
 if (DEV_TOOLS_ENABLED) {
   registerDevItems(ITEM_DATABASE);
 }
 
 applyUiFontScale();
+installUiTierSync();
 
 function blockMouseHistoryButtons(event: Event) {
   if (!(event instanceof MouseEvent)) return;

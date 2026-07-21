@@ -1,4 +1,5 @@
 import type { CSSProperties } from 'react';
+import { UIIcon } from './UIIcon';
 
 export type BuildIconKind = 'ability' | 'stance' | 'rite' | 'rune';
 
@@ -24,15 +25,18 @@ export function BuildIcon({
   label,
   muted = false,
   size,
+  iconFrame,
 }: {
   kind: BuildIconKind;
   label: string;
   muted?: boolean;
   size?: number;
+  iconFrame?: string;
 }) {
   const style: CSSProperties | undefined = size
     ? { width: size, height: size, fontSize: Math.max(9, Math.round(size * 0.31)) }
     : undefined;
+  const iconSize = Math.max(16, (size ?? 36) - 4);
   return (
     <span
       className={`build-icon ${KIND_CLASS[kind]}${muted ? ' build-icon--muted' : ''}`}
@@ -40,7 +44,15 @@ export function BuildIcon({
       aria-hidden="true"
       title={label}
     >
-      {initials(label)}
+      <span className="build-icon__fallback">{initials(label)}</span>
+      {iconFrame && (
+        <UIIcon
+          as="span"
+          frameName={iconFrame}
+          size={iconSize}
+          className="build-icon__art"
+        />
+      )}
     </span>
   );
 }

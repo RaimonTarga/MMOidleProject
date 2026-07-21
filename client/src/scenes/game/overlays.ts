@@ -32,9 +32,17 @@ import {
 import type { GameScene } from "./GameScene";
 import { MM_H, MM_PAD, MM_W } from "./nodeExits";
 import { isVoidThroneUnblocked } from "./voidThrone";
+import { resolvedMinimapTierPalette, uiTierActivationIsActive } from "../../hud/uiTier";
 
 const BG_DEPTH = -11;
 const BOUNDARY_DEPTH = -9.5;
+const MOBILE_HUD_QUERY = "(max-width: 1100px)";
+/**
+ * At the largest supported HUD font scale, this leaves room between the 220px
+ * minimap and the centered Auto Combat control. The mobile decision itself is
+ * based on the browser viewport, not Phaser's rail-narrowed canvas.
+ */
+const MINIMAP_MIN_SCENE_WIDTH = 760;
 /** Tree trunk/root pass sits on the ground, just below shadows + entities. */
 const TREE_ROOT_DEPTH = DEPTH.SHADOW - 0.5;
 /**
@@ -707,10 +715,14 @@ export function drawExitMarkers(scene: GameScene): void {
 }
 
 export function drawMinimap(scene: GameScene): void {
-  // Mobile: no minimap — the full Map panel is one tap away in the HUD tab bar,
-  // and it would otherwise sit under the floating AUTO button. Breakpoint matches
-  // the DOM HUD's 1100px (the canvas spans the full viewport once sidebars hide).
-  if (scene.scale.width <= 1100) {
+  // Mobile: no minimap — the full Map panel is one tap away in the HUD tab bar.
+  // On desktop, keep it hidden only when the rail-narrowed canvas cannot fit it
+  // beside the centered Auto Combat control.
+  const isMobileViewport =
+    typeof window !== "undefined" &&
+    typeof window.matchMedia === "function" &&
+    window.matchMedia(MOBILE_HUD_QUERY).matches;
+  if (isMobileViewport || scene.scale.width < MINIMAP_MIN_SCENE_WIDTH) {
     scene.minimap.setVisible(false);
     return;
   }
@@ -730,9 +742,17 @@ export function drawMinimap(scene: GameScene): void {
 
   scene.minimap.clear();
 
-  scene.minimap.fillStyle(0x0a0a1a, 0.85);
+  const tierPalette = resolvedMinimapTierPalette();
+  scene.minimap.fillStyle(tierPalette.background, tierPalette.backgroundAlpha);
   scene.minimap.fillRect(mmX, mmY, MM_W, MM_H);
-  scene.minimap.lineStyle(1, 0x444466, 1);
+  scene.minimap.lineStyle(3, tierPalette.innerEdge, 0.9);
+  scene.minimap.strokeRect(mmX + 1, mmY + 1, MM_W - 2, MM_H - 2);
+  if (uiTierActivationIsActive()) {
+    const ignitionPulse = 0.58 + Math.sin(now / 72) * 0.32;
+    scene.minimap.lineStyle(5, tierPalette.edge, ignitionPulse);
+    scene.minimap.strokeRect(mmX - 2, mmY - 2, MM_W + 4, MM_H + 4);
+  }
+  scene.minimap.lineStyle(1, tierPalette.edge, 1);
   scene.minimap.strokeRect(mmX, mmY, MM_W, MM_H);
 
   paintCollisionLayer(scene.minimap, layer, projection, {

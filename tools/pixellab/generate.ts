@@ -79,10 +79,16 @@ const ENDPOINT_MAX: Record<EndpointId, { w: number; h: number } | null> = {
 function genSizeFor(r: ResolvedEntry): { width: number; height: number } {
   const max = ENDPOINT_MAX[r.endpoint];
   const { w, h } = r.entry.size;
-  if (!max) return { width: w, height: h };
-  const scale = Math.min(1, max.w / w, max.h / h);
-  const even = (n: number) => Math.max(16, 2 * Math.round((n * scale) / 2));
-  return { width: even(w), height: even(h) };
+  const requestedScale = Number(r.entry.params?.generationScale ?? 1);
+  const generationScale =
+    Number.isInteger(requestedScale) && requestedScale >= 1 ? requestedScale : 1;
+  const requestedW = w * generationScale;
+  const requestedH = h * generationScale;
+  if (!max) return { width: requestedW, height: requestedH };
+  const clampScale = Math.min(1, max.w / requestedW, max.h / requestedH);
+  const even = (n: number) =>
+    Math.max(16, 2 * Math.round((n * clampScale) / 2));
+  return { width: even(requestedW), height: even(requestedH) };
 }
 
 /** Manifest params passed through to the API body (camelCase → snake_case). */
@@ -112,13 +118,18 @@ function initImagePathFor(r: ResolvedEntry): string | null {
   return srcPathFor(out);
 }
 
-function initImageFor(r: ResolvedEntry): Base64Image | null {
+async function initImageFor(r: ResolvedEntry): Promise<Base64Image | null> {
   const abs = initImagePathFor(r);
   if (!abs) return null;
   if (!fs.existsSync(abs)) {
     throw new Error(`entry '${r.entry.id}': initImage not found at ${abs}`);
   }
-  return toBase64Image(fs.readFileSync(abs));
+  const genSize = genSizeFor(r);
+  const buffer = await sharp(abs)
+    .resize(genSize.width, genSize.height, { kernel: 'nearest' })
+    .png()
+    .toBuffer();
+  return toBase64Image(buffer);
 }
 
 function initImageSha(r: ResolvedEntry): string | null {
@@ -320,7 +331,8 @@ async function callEndpoint(r: ResolvedEntry, seed: number): Promise<{ images: B
     seed,
     ...params,
   };
-  const init = r.endpoint === 'bitforge' || r.endpoint === 'pixflux' ? initImageFor(r) : null;
+  const init =
+    r.endpoint === 'bitforge' || r.endpoint === 'pixflux' ? await initImageFor(r) : null;
   const initFields = init
     ? { init_image: init, init_image_strength: (params.init_image_strength as number) ?? 300 }
     : {};

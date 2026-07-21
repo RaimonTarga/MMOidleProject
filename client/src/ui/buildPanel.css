@@ -1,45 +1,45 @@
-.build-panel {
-  max-width: 920px;
-  position: relative;
+.build-dialog__body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 16px 18px 20px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--hud-edge-medium) transparent;
 }
 
-.build-panel-tabs {
-  margin: 12px 18px 0;
-  flex-shrink: 0;
+.build-dialog__body::-webkit-scrollbar {
+  width: 5px;
 }
 
-.build-tabs {
-  display: flex;
-  gap: 6px;
-  padding: 12px 18px 0;
-  flex-wrap: wrap;
+.build-dialog__body::-webkit-scrollbar-thumb {
+  background: var(--hud-edge-medium);
+  border-radius: 3px;
 }
 
-.build-tab {
-  min-height: 30px;
-  padding: 6px 11px;
-  border-top: 1px solid var(--bevel-light);
-  border-left: 1px solid var(--bevel-light);
-  border-right: 1px solid var(--bevel-dark);
-  border-bottom: 1px solid var(--bevel-dark);
+.build-rune-tabs {
+  margin: 0 0 12px;
+  border: 1px solid var(--hud-edge-divider);
+}
+
+.build-rule-remove {
+  width: 24px;
+  min-height: 24px;
+  padding: 0;
+  border: 1px solid var(--hud-edge-dark);
   border-radius: 2px;
-  background: var(--btn-bg);
+  background: var(--hud-material-control);
   color: var(--hud-text-muted);
-  font-family: monospace;
-  font-size: 10px;
-  font-weight: bold;
-  letter-spacing: 0.8px;
-  text-transform: uppercase;
+  font: bold 13px/1 monospace;
   cursor: pointer;
 }
 
-.build-tab--active {
-  color: var(--hud-primary-strong);
-  background: #221f18;
-  border-top-color: var(--bevel-dark);
-  border-left-color: var(--bevel-dark);
-  border-right-color: var(--bevel-light);
-  border-bottom-color: var(--bevel-light);
+.build-rule-remove:hover {
+  color: var(--hud-danger);
+}
+
+.build-rule-remove:focus-visible {
+  outline: var(--hud-focus-width) solid var(--hud-focus-color);
+  outline-offset: var(--hud-focus-offset);
 }
 
 .build-tab-body {
@@ -183,6 +183,8 @@
 }
 
 .build-icon {
+  position: relative;
+  overflow: hidden;
   width: 36px;
   height: 36px;
   border-radius: 5px;
@@ -199,9 +201,26 @@
 }
 
 .build-icon--ability {
-  background: linear-gradient(135deg, rgba(112, 72, 20, 0.95), rgba(46, 28, 10, 0.95));
-  border-color: rgba(255, 215, 107, 0.55);
-  color: #ffe69a;
+  background: #080706;
+  border-top-color: #827255;
+  border-left-color: #6d5e46;
+  border-right-color: #17130e;
+  border-bottom-color: #17130e;
+  color: #d7c6a2;
+  box-shadow: inset 0 0 0 1px #2f281d;
+}
+
+.build-icon__fallback {
+  position: relative;
+  z-index: 0;
+}
+
+.build-icon__art {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  margin: auto;
+  image-rendering: pixelated;
 }
 
 .build-icon--stance {

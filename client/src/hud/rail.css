@@ -1,0 +1,274 @@
+/* Desktop rail presentation. This file deliberately only owns the two React
+   rails; mobile HUD and modal components keep their existing visual language. */
+@media (min-width: 1101px) {
+  .desktop-hud.sidebar {
+    position: relative;
+    gap: 7px;
+    padding: var(--hud-space-2);
+    background:
+      linear-gradient(90deg, var(--hud-frame-highlight), transparent 7%, transparent 93%, rgba(0, 0, 0, 0.28)),
+      linear-gradient(
+        135deg,
+        color-mix(in srgb, var(--hud-material-rail) 78%, var(--hud-edge-light)),
+        var(--hud-material-rail) 36%,
+        color-mix(in srgb, var(--hud-material-rail) 72%, #000)
+      );
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.72);
+  }
+
+  .desktop-hud.sidebar::before,
+  .desktop-hud.sidebar::after {
+    position: absolute;
+    inset: 3px;
+    content: '';
+    pointer-events: none;
+  }
+
+  .desktop-hud.sidebar::before {
+    border: 1px solid var(--hud-edge-medium);
+    opacity: var(--hud-frame-complexity);
+  }
+
+  .desktop-hud.sidebar::after {
+    background: repeating-linear-gradient(0deg, var(--hud-frame-highlight) 0 1px, transparent 1px 4px);
+    opacity: var(--hud-ornament-opacity);
+  }
+
+  .desktop-hud.sidebar-left {
+    box-shadow:
+      inset -1px 0 color-mix(in srgb, var(--hud-edge-strong) 24%, transparent),
+      inset 0 0 0 1px rgba(0, 0, 0, 0.72);
+  }
+
+  .desktop-hud.sidebar-right {
+    box-shadow:
+      inset 1px 0 color-mix(in srgb, var(--hud-edge-strong) 24%, transparent),
+      inset 0 0 0 1px rgba(0, 0, 0, 0.72);
+  }
+
+  .desktop-hud .sidebar-panel,
+  .desktop-hud .combat-log,
+  .desktop-hud .right-system-nav {
+    background:
+      linear-gradient(145deg, var(--hud-frame-highlight), transparent 30%),
+      linear-gradient(
+        180deg,
+        color-mix(in srgb, var(--hud-material-panel) 82%, var(--hud-edge-light)),
+        var(--hud-material-panel) 56%,
+        color-mix(in srgb, var(--hud-material-panel) 76%, #000)
+      );
+    border: 1px solid var(--hud-edge-dark);
+    border-top-color: var(--hud-edge-light);
+    border-left-color: var(--hud-edge-light);
+    border-radius: 1px;
+    box-shadow:
+      inset 0 0 0 1px var(--hud-frame-highlight),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.55),
+      0 2px 5px rgba(0, 0, 0, 0.32),
+      0 0 7px var(--hud-energy-dormant);
+  }
+
+  .desktop-hud .sidebar-panel,
+  .desktop-hud .hud-panel {
+    padding: 9px var(--hud-space-3) 10px;
+  }
+
+  .desktop-hud .right-system-nav {
+    gap: 4px;
+    padding: 5px;
+  }
+
+  .desktop-hud .panel-title,
+  .desktop-hud .combat-log__header {
+    min-height: 27px;
+    margin: 0 0 8px;
+    padding: 6px 7px 5px;
+    color: var(--hud-primary-strong);
+    background:
+      linear-gradient(180deg, color-mix(in srgb, var(--hud-primary) 6%, transparent), transparent 52%),
+      linear-gradient(90deg, color-mix(in srgb, var(--hud-material-inset) 62%, transparent), color-mix(in srgb, var(--hud-material-control) 44%, transparent), color-mix(in srgb, var(--hud-material-inset) 62%, transparent));
+    border-top: 1px solid color-mix(in srgb, var(--hud-edge-strong) 52%, transparent);
+    border-bottom: 1px solid rgba(5, 4, 3, 0.9);
+    box-shadow: inset 0 1px rgba(255, 246, 216, 0.035);
+  }
+
+  .desktop-hud .panel-title {
+    font-size: 10px;
+    line-height: 15px;
+  }
+
+  .desktop-hud .panel-title--collapsible {
+    width: calc(100% + 14px);
+    margin-right: -7px;
+    margin-left: -7px;
+    text-align: left;
+  }
+
+  .desktop-hud .combat-log__header {
+    margin: 0;
+    color: var(--hud-text);
+  }
+
+  .desktop-hud .combat-log__header:hover {
+    background:
+      linear-gradient(180deg, rgba(255, 244, 204, 0.075), transparent 52%),
+      linear-gradient(90deg, rgba(12, 10, 7, 0.72), rgba(65, 56, 41, 0.56), rgba(12, 10, 7, 0.72));
+  }
+
+  .desktop-hud .combat-log__header:active {
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.6);
+    transform: translateY(1px);
+  }
+
+  .desktop-hud .combat-log__header:focus-visible,
+  .desktop-hud .bestiary__row:focus-visible,
+  .desktop-hud .quest-panel--clickable:focus-visible,
+  .desktop-hud .auto-btn:focus-visible,
+  .desktop-hud .debug-panel button:focus-visible {
+    outline: var(--hud-focus-width) solid var(--hud-focus-color);
+    outline-offset: var(--hud-focus-offset);
+  }
+
+  .desktop-hud .stat-section,
+  .desktop-hud .intent-panel {
+    border-color: var(--hud-edge-divider);
+  }
+
+  .desktop-hud .right-nav-button {
+    min-height: 40px;
+    padding: 5px;
+    color: var(--hud-text-muted);
+    background: linear-gradient(145deg, color-mix(in srgb, var(--hud-material-control) 78%, var(--hud-edge-light)), var(--hud-material-control) 58%, color-mix(in srgb, var(--hud-material-control) 74%, #000));
+    border-color: var(--hud-edge-dark);
+    border-top-color: #5a5142;
+    border-left-color: #5a5142;
+    border-radius: 1px;
+    box-shadow: inset 0 1px rgba(255, 245, 218, 0.035);
+  }
+
+  .desktop-hud .right-nav-button:hover:not(:disabled) {
+    color: var(--hud-text);
+    background: linear-gradient(145deg, color-mix(in srgb, var(--hud-material-control) 68%, var(--hud-edge-strong)), color-mix(in srgb, var(--hud-material-control) 90%, var(--hud-primary)) 58%, var(--hud-material-control));
+    border-top-color: var(--hud-edge-strong);
+    border-left-color: var(--hud-edge-strong);
+  }
+
+  .desktop-hud .right-nav-button:active:not(:disabled) {
+    background: linear-gradient(145deg, #1a1813, #27231c);
+    border-top-color: var(--hud-edge-dark);
+    border-left-color: var(--hud-edge-dark);
+    border-right-color: #5a5142;
+    border-bottom-color: #5a5142;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.55);
+  }
+
+  .desktop-hud .right-nav-button--selected {
+    color: var(--hud-primary-strong);
+    background: linear-gradient(145deg, color-mix(in srgb, var(--hud-material-control) 64%, var(--hud-primary)), color-mix(in srgb, var(--hud-material-control) 84%, var(--hud-primary)) 58%, var(--hud-material-control));
+    border-color: var(--hud-edge-strong);
+    box-shadow:
+      inset 0 0 0 1px var(--hud-accent-shadow),
+      inset 0 1px var(--hud-frame-highlight),
+      0 0 7px var(--hud-energy-dormant);
+  }
+
+  .desktop-hud .right-nav-button__icon {
+    background: linear-gradient(145deg, color-mix(in srgb, var(--hud-material-inset) 65%, transparent), color-mix(in srgb, var(--hud-material-control) 35%, transparent));
+    border: 1px solid color-mix(in srgb, var(--hud-edge-strong) 22%, transparent);
+  }
+
+  .desktop-hud .right-nav-button__badge {
+    background: var(--hud-success);
+    box-shadow: 0 0 4px rgba(85, 204, 119, 0.45);
+  }
+
+  .desktop-hud .quest-panel {
+    padding-top: 10px;
+    padding-bottom: 11px;
+  }
+
+  .desktop-hud .quest-panel--clickable:hover {
+    border-color: var(--hud-edge-medium);
+    box-shadow:
+      inset 0 0 0 1px rgba(255, 244, 205, 0.045),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.55),
+      0 2px 6px rgba(0, 0, 0, 0.38);
+  }
+
+  .desktop-hud .quest-panel--clickable:active {
+    transform: translateY(1px);
+    box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.62);
+  }
+
+  .desktop-hud .quest-tier-badge {
+    color: var(--hud-primary-strong);
+    text-shadow: none;
+  }
+
+  .desktop-hud .quest-name {
+    color: var(--hud-text);
+  }
+
+  .desktop-hud .quest-bar-track,
+  .desktop-hud .hp-bar-track,
+  .desktop-hud .hp-shield-strip {
+    border: 1px solid rgba(5, 4, 3, 0.78);
+    border-radius: 1px;
+    background: var(--hud-material-inset);
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.7);
+  }
+
+  .desktop-hud .quest-bar-fill {
+    background: linear-gradient(90deg, color-mix(in srgb, var(--hud-primary) 58%, var(--hud-material-inset)), var(--hud-primary-strong));
+  }
+
+  .desktop-hud .essence-row + .essence-row {
+    padding-top: 3px;
+    border-top: 1px solid rgba(117, 102, 77, 0.14);
+  }
+
+  .desktop-hud .tactical-mode-panel .auto-btn,
+  .desktop-hud .party-panel .auto-btn {
+    margin-top: 7px;
+    padding: 8px 9px;
+    background: linear-gradient(145deg, color-mix(in srgb, var(--hud-material-control) 78%, var(--hud-edge-light)), var(--hud-material-control) 58%, color-mix(in srgb, var(--hud-material-control) 74%, #000));
+    border-width: 1px;
+    border-color: var(--hud-edge-dark);
+    border-top-color: #5a5142;
+    border-left-color: #5a5142;
+    color: var(--hud-primary);
+    box-shadow: inset 0 1px rgba(255, 245, 218, 0.035);
+  }
+
+  .desktop-hud .tactical-mode-panel .auto-btn:hover,
+  .desktop-hud .party-panel .auto-btn:hover {
+    color: var(--hud-text);
+    background: linear-gradient(145deg, color-mix(in srgb, var(--hud-material-control) 68%, var(--hud-edge-strong)), color-mix(in srgb, var(--hud-material-control) 90%, var(--hud-primary)) 58%, var(--hud-material-control));
+  }
+
+  .desktop-hud .tactical-mode-panel .auto-btn:active,
+  .desktop-hud .party-panel .auto-btn:active,
+  .desktop-hud .tactical-mode-panel .auto-btn.active {
+    transform: translateY(1px);
+    border-top-color: var(--hud-edge-dark);
+    border-left-color: var(--hud-edge-dark);
+    border-right-color: #5a5142;
+    border-bottom-color: #5a5142;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.55);
+  }
+
+  .desktop-hud .tactical-mode-panel .auto-btn.active {
+    color: var(--hud-success);
+    background: linear-gradient(145deg, #1d281c, #172014);
+  }
+
+  .desktop-hud .combat-log__count {
+    border: 1px solid rgba(117, 102, 77, 0.25);
+    border-radius: 1px;
+    background: rgba(8, 7, 5, 0.46);
+  }
+
+  .desktop-hud .combat-log__row:nth-child(even) {
+    background: rgba(255, 247, 218, 0.018);
+  }
+}

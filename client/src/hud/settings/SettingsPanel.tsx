@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import { createPortal } from 'react-dom';
 import { useAtom, useAtomValue } from 'jotai';
 import { gamepadStatusAtom } from '../atoms';
+import { DialogHeader, DialogTab, DialogTabs, GameDialog } from '../primitives';
 import {
   sfxVolumeAtom,
   musicVolumeAtom,
@@ -49,7 +49,6 @@ import {
 import { hudBus } from '../../hudBus';
 import { clearCaptureSink, setCaptureSink } from '../../input/gamepad';
 import '../hud.css';
-import '../../ui/inventory.css';
 import './settings.css';
 
 type SettingsTab = 'controls' | 'gameplay' | 'audio';
@@ -154,8 +153,15 @@ export function SettingsPanel({ onClose }: Props) {
     };
   }, [capture, bindings, setBindings, setCapture]);
 
-  function handleOverlayClick(e: React.MouseEvent): void {
-    if (e.target === e.currentTarget) onClose();
+  function handleClose(): void {
+    setCapture(null);
+    onClose();
+  }
+
+  function handleEscape(): boolean {
+    if (!capture) return false;
+    setCapture(null);
+    return true;
   }
 
   function startCapture(action: ActionId, device: CaptureRequest['device']): void {
@@ -228,41 +234,23 @@ export function SettingsPanel({ onClose }: Props) {
     }
   }
 
-  return createPortal(
-    <div className="inv-overlay" onClick={handleOverlayClick}>
-      <div className="inv-panel settings-panel-wide" onClick={(e) => e.stopPropagation()}>
-        <div className="inv-header">
-          <span className="inv-title">Settings</span>
-          <button type="button" className="inv-close" onClick={onClose}>
-            ✕
-          </button>
-        </div>
+  return (
+    <GameDialog size="standard" className="settings-dialog" onClose={handleClose} onEscape={handleEscape}>
+      <DialogHeader title="Settings" closeLabel="Close settings" />
 
-        <div className="settings-tabs">
-          <button
-            type="button"
-            className={`settings-tab${tab === 'controls' ? ' settings-tab--active' : ''}`}
-            onClick={() => setTab('controls')}
-          >
-            Controls
-          </button>
-          <button
-            type="button"
-            className={`settings-tab${tab === 'gameplay' ? ' settings-tab--active' : ''}`}
-            onClick={() => setTab('gameplay')}
-          >
-            Gameplay
-          </button>
-          <button
-            type="button"
-            className={`settings-tab${tab === 'audio' ? ' settings-tab--active' : ''}`}
-            onClick={() => setTab('audio')}
-          >
-            Audio
-          </button>
-        </div>
+      <DialogTabs label="Settings sections">
+        <DialogTab selected={tab === 'controls'} controls="settings-panel-controls" onSelect={() => setTab('controls')}>
+          Controls
+        </DialogTab>
+        <DialogTab selected={tab === 'gameplay'} controls="settings-panel-gameplay" onSelect={() => setTab('gameplay')}>
+          Gameplay
+        </DialogTab>
+        <DialogTab selected={tab === 'audio'} controls="settings-panel-audio" onSelect={() => setTab('audio')}>
+          Audio
+        </DialogTab>
+      </DialogTabs>
 
-        <div className="settings-body">
+      <div id={`settings-panel-${tab}`} className="settings-body" role="tabpanel">
         {tab === 'controls' ? (
           <>
             <div
@@ -455,10 +443,8 @@ export function SettingsPanel({ onClose }: Props) {
             </p>
           </div>
         )}
-        </div>
       </div>
-    </div>,
-    document.body,
+    </GameDialog>
   );
 }
 

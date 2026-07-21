@@ -1,0 +1,126 @@
+{
+  "category": "ability-icons",
+  "endpoint": "pixflux",
+  "styleRef": null,
+  "noBackground": true,
+  "candidates": 3,
+  "entries": [
+    {
+      "id": "sweep",
+      "out": "UI_icons/abilities/sweep.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "full-square fantasy game ability icon for a fast sweeping slash attack, one bold curved streak of blood-red energy arcs across the frame from lower-left to upper-right, it is a disembodied slash trail of pure red light with no weapon and no object making it, shaped like a clean tapered crescent gash that is razor-thin and pointed at both ends and thickest only at its middle, one or two much thinner faint dark-red motion arcs trail just behind it to show speed and direction, the slash sweeps upward on a strong diagonal and occupies about 85 percent of the frame, pure black background, bold flat pixel-art icon readable instantly at 32x32, 64x64 pixel art, limited palette of black deep-crimson and bright blood-red, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "sword, longsword, rapier, dagger, knife, scimitar, katana, sword blade, metal blade, hilt, pommel, crossguard, any weapon, spear, axe, claymore, full crescent moon, thick solid crescent, complete circle, solid disc, celestial moon, moon in night sky, stars, eclipse, loading spinner, circular arrow, refresh icon, wind gust, tornado, swirl, ribbon, banner, boomerang, character, humanoid figure, hand, face, logo, clipart, transparent background, empty background, gradient, glow, soft blur, ornate, realistic, painterly, smooth vector art, 3d render, photograph, text, letters, numbers, watermark, decorative frame, badge, cast shadow",
+      "status": "accepted",
+      "sources": [
+        "ability:sweep"
+      ],
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2,
+        "noBackground": false
+      },
+      "notes": "R3 (per feedback: R2 rendered literal swords): removed all blade/weapon language; now a disembodied red-energy slash trail with no object making it; hard explicit weapon ban list added."
+    },
+    {
+      "id": "expose-weakness",
+      "out": "UI_icons/abilities/expose-weakness.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "full-square fantasy game ability icon for exposing an enemy's weak point, one single bold clean blood-red crosshair centered in the frame, a simple broken circular targeting ring with exactly four thick short straight marks pointing inward at the top bottom left and right, wide open gaps between the four marks, the very center is empty black with nothing inside and no dot, strong and clearly defined with heavy line weight and minimal detail, the crosshair fills about 85 percent of the frame, pure black background, bold flat pixel-art icon readable instantly at 32x32, 64x64 pixel art, limited palette of black and bright blood-red, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "humanoid figure, human bust, silhouette, person, body, head and shoulders, center dot, white dot, filled center, bright center point, letter X, diagonal cross, medical plus, plus sign, gun scope, rifle scope, firearm, radar, compass, bullseye with many rings, many ticks, tiny ticks, ornate reticle, thin faint lines, busy detail, loading spinner, circular arrow, refresh icon, glowing orb, lens flare, logo, clipart, transparent background, empty background, gradient, glow, soft blur, ornate, realistic, painterly, smooth vector art, 3d render, photograph, text, letters, numbers, watermark, decorative frame, badge, cast shadow",
+      "status": "accepted",
+      "sources": [
+        "ability:heavy-strike"
+      ],
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2,
+        "noBackground": false
+      },
+      "notes": "R3 (per feedback: liked candidate 1's crosshair-alone, wanted it less detailed, no center dot): dropped the humanoid bust; single bold clean four-mark reticle, empty black center, heavier line weight."
+    },
+    {
+      "id": "cleanse",
+      "out": "UI_icons/abilities/cleanse.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "full-square fantasy game ability icon for cleansing and purification, exactly three hollow ring bubbles rise upward in a strong organic zig-zag, dramatically staggered left then right then left so they never align in a line, each bubble a completely different single flat color to show a clear bottom-to-top purification transformation: the lowest and largest bubble is drawn entirely in deep saturated purple, the middle bubble is drawn entirely in light lavender-pink, the highest and smallest bubble is drawn entirely in pure bright white with absolutely no purple in it, every bubble is a thick hollow ring with a black hollow center, the rising sizes and alternating sides create buoyant upward floating motion, the three bubbles together fill about 85 percent of the frame, pure black background, bold flat pixel-art icon readable instantly at 32x32, 64x64 pixel art, limited palette of deep-purple lavender-pink and white on black, crisp intentional pixel clusters, thick uniform hollow ring outlines, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "all three bubbles the same color, all purple, all white, monochrome bubbles, purple top bubble, white bottom bubble, more than three bubbles, fewer than three bubbles, four bubbles, five bubbles, six bubbles, bubble trail, cluster of bubbles, straight line, aligned in a row, evenly spaced, identical sizes, filled circles, solid discs, shaded spheres, highlights, reflections, foam, soap suds, bubble bath, speech bubble, thought bubble, potion bottle, flask, water splash, smoke, cloud, skull, poison symbol, medical cross, sparkles, green, blue, transparent background, character, creature, logo, clipart, ornate, realistic, painterly, soft blur, smooth vector art, 3d render, photograph, text, letters, numbers, watermark, decorative frame, badge, cast shadow",
+      "status": "accepted",
+      "sources": [
+        "ability:cleanse"
+      ],
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2,
+        "noBackground": false
+      },
+      "notes": "R4 (per feedback: force the color climb harder; R3 came back all-purple + drifted to 5-6 bubbles): each bubble now a distinct SINGLE color (deep-purple / lavender-pink / pure-white top with no purple), hard count bans (four/five/six/bubble-trail) and 'purple top bubble' ban."
+    },
+    {
+      "id": "second-wind",
+      "out": "UI_icons/abilities/second-wind.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "full-square fantasy game ability icon for renewed health and recovery, exactly three separate upright green medical plus crosses arranged as a loose triangle on pure black, the largest cross at lower center, the medium cross at upper left, the smallest cross at upper right, keep all three crosses clearly separated with space between them, each cross stylized with a bold dark-green outline around a brighter vivid-green inner face for a two-tone game-icon look, the arms of each cross slightly rounded at the tips, a faint dim-green pixel halo behind the largest cross suggests healing energy, the three crosses together fill about 85 percent of the frame, 64x64 pixel art, limited palette of black dark-green vivid-green and pale-green, crisp intentional pixel clusters, hard clean outline, flat two-tone colors, minimal detail",
+      "negative": "single cross, one cross, only one cross, one big cross, two crosses, four crosses, missing cross, merged crosses, overlapping crosses, connected crosses, giant single cross, straight row, identical sizes, rotated cross, tilted cross, letter X, diagonal X, red cross, white cross, religious crucifix, grave marker, hospital building, heart, leaf, gradient, smooth shading, soft blur, blur, transparent background, detailed scene, weapon, character, hand, face, creature, logo, clipart, ornate, realistic, painterly, smooth vector art, 3d render, photograph, text, letters, numbers, watermark, decorative frame, badge, cast shadow",
+      "status": "pending",
+      "sources": [
+        "ability:second-wind"
+      ],
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2,
+        "noBackground": false,
+        "initImage": "UI_icons/abilities/second-wind.png",
+        "initImageStrength": 300
+      },
+      "notes": "R4 (per feedback: R3 was nicely stylized but collapsed to ONE cross): re-anchored to the existing three-cross art at strength 300 to hold the count of three while the prompt restyles the surface two-tone; hard single/one-cross bans."
+    },
+    {
+      "id": "brace",
+      "out": "UI_icons/abilities/brace.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "full-square fantasy game ability icon for bracing behind a shield, one large front-facing shield dominates about 85 percent of the frame, a strong simple classic shield silhouette with broad flat top shoulders, gently curved sides, and a decisive tapered lower point, the shield is built from just three flat nested layers with no shading: a thick dark-navy outer outline, a solid medium-blue face, and one narrow flat icy-blue vertical ridge down the center, absolutely flat colors with hard stepped pixel edges, pure black background, bold old-school game icon readable instantly at 32x32, 64x64 pixel art, limited palette of black navy medium-blue and icy-blue, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no glossy highlight, no shine, no shading, minimal detail",
+      "negative": "glossy, shiny, metallic sheen, gradient, reflection, highlight, app icon, phone app badge, rounded rectangle, multiple shields, tiny shield, round shield, buckler, coat of arms, heraldry, crest, lion, eagle, crown, rune, emblem, cross, star, rivets, bolts, scratches, dents, ornate border, filigree, gemstones, realistic metal, weapon, sword, character, knight, hand, arm, face, detailed scene, transparent background, logo, clipart, painterly, soft blur, smooth vector art, 3d render, photograph, text, letters, numbers, watermark, decorative frame, cast shadow",
+      "status": "accepted",
+      "sources": [
+        "ability:brace"
+      ],
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2,
+        "noBackground": false
+      },
+      "notes": "R2 KEEPER (user accepted): flat three-layer shield; do not regenerate."
+    }
+  ]
+}

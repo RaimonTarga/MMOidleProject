@@ -1,9 +1,9 @@
-import { createPortal } from 'react-dom';
 import { useAtomValue } from 'jotai';
 import { BiomeTab } from './BiomeTab';
 import { ForgeTab } from './ForgeTab';
 import { UpgradeTab } from './UpgradeTab';
 import { playerIdAtom } from '../../hud/atoms';
+import { DialogHeader, DialogTab, DialogTabs, GameDialog } from '../../hud/primitives';
 import '../crafting.css';
 
 export type CraftTab = 'biome' | 'forge' | 'upgrade';
@@ -17,43 +17,22 @@ interface Props {
 export function CraftingPanel({ tab, onTabChange, onClose }: Props) {
   const playerId = useAtomValue(playerIdAtom);
 
-  function handleOverlayClick(e: React.MouseEvent) {
-    if (e.target === e.currentTarget) onClose();
-  }
+  return (
+    <GameDialog size="compact" className="crafting-dialog" onClose={onClose}>
+      <DialogHeader title="Crafting" closeLabel="Close crafting" />
+      <DialogTabs label="Crafting sections">
+        <DialogTab selected={tab === 'biome'} controls="craft-panel-biome" onSelect={() => onTabChange('biome')}>
+          Biome Progress
+        </DialogTab>
+        <DialogTab selected={tab === 'forge'} controls="craft-panel-forge" onSelect={() => onTabChange('forge')}>
+          Forge
+        </DialogTab>
+        <DialogTab selected={tab === 'upgrade'} controls="craft-panel-upgrade" onSelect={() => onTabChange('upgrade')}>
+          Upgrade
+        </DialogTab>
+      </DialogTabs>
 
-  return createPortal(
-    <div className="craft-overlay" onClick={handleOverlayClick}>
-      <div className="craft-panel">
-
-        {/* Header */}
-        <div className="craft-header">
-          <span className="craft-title">Crafting</span>
-          <button className="craft-close" onClick={onClose}>✕</button>
-        </div>
-
-        {/* Tab bar */}
-        <div className="craft-tabs">
-          <button
-            className={`craft-tab${tab === 'biome' ? ' craft-tab--active' : ''}`}
-            onClick={() => onTabChange('biome')}
-          >
-            Biome Progress
-          </button>
-          <button
-            className={`craft-tab${tab === 'forge' ? ' craft-tab--active' : ''}`}
-            onClick={() => onTabChange('forge')}
-          >
-            Forge
-          </button>
-          <button
-            className={`craft-tab${tab === 'upgrade' ? ' craft-tab--active' : ''}`}
-            onClick={() => onTabChange('upgrade')}
-          >
-            Upgrade
-          </button>
-        </div>
-
-        {/* Content */}
+      <div id={`craft-panel-${tab}`} className="crafting-dialog__content" role="tabpanel">
         {playerId ? (
           tab === 'biome'
             ? <BiomeTab />
@@ -63,9 +42,7 @@ export function CraftingPanel({ tab, onTabChange, onClose }: Props) {
         ) : (
           <div className="craft-empty">Not connected.</div>
         )}
-
       </div>
-    </div>,
-    document.body,
+    </GameDialog>
   );
 }

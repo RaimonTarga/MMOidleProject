@@ -52,7 +52,11 @@ export function updateConflagration(world: World, dt: number): void {
       buildSimpleBreakdown(damage, damage),
     );
     entity.hasHealth.hp -= damage;
-    pushDotTickEvent(world, entity, 'fire', damage, { sourceType: 'class', fx: 'conflagration' });
+    pushDotTickEvent(world, entity, 'fire', damage, {
+      sourceType: 'class',
+      sourceId: effect.sourceId,
+      fx: 'conflagration',
+    });
 
     if (entity.hasHealth.hp <= 0) {
       toKill.push({ monsterId, sourceId: effect.sourceId, damage });

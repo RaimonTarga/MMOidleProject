@@ -14,6 +14,8 @@ import type { MonsterEntity, PlayerEntity } from "../../../ecs/entity";
 
 interface DotTickEventOptions {
   sourceType?: DotTickSourceType;
+  /** Owning player/monster when the tick can be attributed to one source. */
+  sourceId?: string;
   fx?: DotTickFx;
 }
 
@@ -37,6 +39,7 @@ export function pushDotTickEvent(
     amount: Math.round(amount),
     element,
     sourceType: options.sourceType ?? "class",
+    ...(options.sourceId ? { sourceId: options.sourceId } : {}),
     ...(options.fx ? { fx: options.fx } : {}),
   });
 }
@@ -67,6 +70,7 @@ export function pushPlayerDotTickEvent(
     amount: Math.round(amount),
     element,
     sourceType: options.sourceType ?? "monster",
+    ...(options.sourceId ? { sourceId: options.sourceId } : {}),
   });
 }
 

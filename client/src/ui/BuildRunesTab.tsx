@@ -42,6 +42,7 @@ import {
 import { CostDisplay, EssenceSummary } from "./crafting/shared";
 import { biomeName } from "./crafting/common";
 import { BuildIcon, type BuildIconKind } from "./BuildIcon";
+import { DialogTab, DialogTabs } from "../hud/primitives";
 import "./crafting.css";
 import "./buildPanel.css";
 
@@ -289,25 +290,17 @@ export function BuildRunesTab() {
 
   return (
     <div className="build-tab-body" style={{ position: "relative" }}>
-      <div className="craft-tabs">
-        <button
-          type="button"
-          className={`craft-tab${tab === "loadout" ? " craft-tab--active" : ""}`}
-          onClick={() => setTab("loadout")}
-        >
+      <DialogTabs label="Rune sections" className="build-rune-tabs">
+        <DialogTab selected={tab === "loadout"} controls="build-rune-loadout" onSelect={() => setTab("loadout")}>
           Loadout
-        </button>
-        <button
-          type="button"
-          className={`craft-tab${tab === "forge" ? " craft-tab--active" : ""}`}
-          onClick={() => setTab("forge")}
-        >
+        </DialogTab>
+        <DialogTab selected={tab === "forge"} controls="build-rune-forge" onSelect={() => setTab("forge")}>
           Forge
-        </button>
-      </div>
+        </DialogTab>
+      </DialogTabs>
 
       {tab === "loadout" ? (
-        <>
+        <div id="build-rune-loadout" role="tabpanel">
           <RunePointMeter spent={spent} budget={budget} />
 
           <div>
@@ -383,7 +376,7 @@ export function BuildRunesTab() {
                           v
                         </PriorityButton>
                       </div>
-                      <button className="skill-tree-close" onClick={() => removeRule(i)} title="Remove rule">
+                      <button className="build-rule-remove" onClick={() => removeRule(i)} title="Remove rule">
                         x
                       </button>
                     </div>
@@ -484,9 +477,11 @@ export function BuildRunesTab() {
               </div>
             )}
           </div>
-        </>
+        </div>
       ) : (
-        <RuneForgeTab budget={budget} />
+        <div id="build-rune-forge" role="tabpanel">
+          <RuneForgeTab budget={budget} />
+        </div>
       )}
 
       {confirmReset && (

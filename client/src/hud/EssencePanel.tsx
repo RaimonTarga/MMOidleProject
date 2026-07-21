@@ -3,6 +3,7 @@ import { useAtomValue } from "jotai";
 import { ESSENCE_TYPES, ESSENCE_COLORS, ESSENCE_LABELS } from "@mmo-idle/shared";
 import type { EssenceType } from "@mmo-idle/shared";
 import { essencesAtom } from "./atoms";
+import { HudPanel } from "./primitives";
 import "./essence.css";
 
 export function EssencePanel() {
@@ -34,7 +35,7 @@ export function EssencePanel() {
   }, [essences]);
 
   return (
-    <div className="sidebar-panel">
+    <HudPanel className="sidebar-panel economy-panel essence-panel">
       <div className="panel-title">Essence</div>
       <div className="essence-list">
         {ESSENCE_TYPES.map((type) => {
@@ -59,6 +60,6 @@ export function EssencePanel() {
           );
         })}
       </div>
-    </div>
+    </HudPanel>
   );
 }

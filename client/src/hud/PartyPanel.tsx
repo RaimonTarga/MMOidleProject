@@ -1,130 +1,179 @@
+import { useEffect, useId, useState, type CSSProperties } from "react";
 import { useAtomValue } from "jotai";
 import { hudBus } from "../hudBus";
 import { partyAtom, playerIdAtom, zonePlayersAtom } from "./atoms";
-import "./hud.css";
+import { DisclosureHeader, HudPanel } from "./primitives";
+import "./party.css";
+
+function countLabel(count: number, noun: string): string {
+  return `${count} ${noun}${count === 1 ? "" : "s"}`;
+}
 
 export function PartyPanel() {
   const playerId = useAtomValue(playerIdAtom);
   const party = useAtomValue(partyAtom);
   const zonePlayers = useAtomValue(zonePlayersAtom);
+  const [partyExpanded, setPartyExpanded] = useState(false);
+  const [nearbyExpanded, setNearbyExpanded] = useState(false);
+  const partyDetailsId = useId();
+  const nearbyDetailsId = useId();
+
+  // Joining opens the roster; leaving returns the solo module to its compact
+  // resting state. Roster updates within the same party respect the player's
+  // disclosure choice.
+  useEffect(() => {
+    setPartyExpanded(party !== null);
+  }, [party?.leaderId]);
+
+  const myLeaderId = party?.leaderId ?? null;
+  const hpById = new Map(zonePlayers.map((player) => [player.id, player]));
+  const partyMemberIds = new Set(party?.members.map((member) => member.id));
+  const nearbyPlayers = zonePlayers.filter((player) => player.id !== playerId);
+
+  useEffect(() => {
+    if (nearbyPlayers.length === 0) setNearbyExpanded(false);
+  }, [nearbyPlayers.length]);
 
   if (!playerId) return null;
 
-  const myLeaderId = party?.leaderId ?? null;
-  const others = zonePlayers.filter((zp) => zp.id !== playerId);
-  const hpById = new Map(zonePlayers.map((zp) => [zp.id, zp]));
+  const partySummary = party
+    ? countLabel(party.members.length, "member")
+    : "Solo";
+  const nearbySummary = nearbyPlayers.length > 0
+    ? countLabel(nearbyPlayers.length, "adventurer")
+    : "None";
 
   return (
-    <div className="sidebar-panel">
-      <div className="panel-title">Party</div>
+    <HudPanel className="sidebar-panel party-panel">
+      <DisclosureHeader
+        className="panel-title panel-title--collapsible party-panel__header"
+        title="Party"
+        summary={partySummary}
+        expanded={partyExpanded}
+        controls={partyDetailsId}
+        onToggle={() => setPartyExpanded((expanded) => !expanded)}
+      />
 
-      {party ? (
-        <>
-          <div className="stat-section">
-            {party.members.map((m) => {
-              const isLeader = m.id === party.leaderId;
-              const isSelf = m.id === playerId;
-              const hpInfo = hpById.get(m.id);
-              // Skip the HP bar for yourself — it's already in the stat panel above.
-              const hasHp = !isSelf && hpInfo !== undefined && hpInfo.maxHp > 0;
-              const pct = hasHp
-                ? Math.max(0, Math.min(1, hpInfo.hp / hpInfo.maxHp)) * 100
-                : 0;
-              return (
-                <div key={m.id} style={{ marginBottom: 6 }}>
-                  <div className="stat-row">
-                    <span className="stat-label" style={{ color: isLeader ? "#ffcc44" : undefined }}>
-                      {isLeader ? "★ " : ""}
-                      {m.name}
-                      {m.id === playerId ? " (you)" : ""}
-                    </span>
-                    <span className="stat-value" style={{ fontSize: 10 }}>
-                      {hasHp ? `${Math.ceil(hpInfo.hp)}/${hpInfo.maxHp}` : isSelf ? "" : "away"}
-                    </span>
-                  </div>
-                  {hasHp && (
-                    <div
-                      style={{
-                        height: 5,
-                        borderRadius: 3,
-                        background: "#1a1a2a",
-                        overflow: "hidden",
-                        marginTop: 2,
-                      }}
-                    >
-                      <div
-                        style={{
-                          height: "100%",
-                          width: `${pct}%`,
-                          background: pct > 30 ? "#44ff88" : "#ff5555",
-                          transition: "width 120ms linear",
-                        }}
-                      />
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-          <button
-            className="auto-btn"
-            style={{ marginTop: 6 }}
-            onClick={() => hudBus.requestLeaveParty()}
-          >
-            {myLeaderId === playerId ? "DISBAND PARTY" : "LEAVE PARTY"}
-          </button>
-        </>
-      ) : (
-        <div className="stat-section">
-          <div className="stat-row">
-            <span className="stat-label" style={{ color: "#33334a", fontSize: 10 }}>
-              Not in a party
-            </span>
-          </div>
+      {partyExpanded && (
+        <div id={partyDetailsId} className="party-panel__details">
+          {party ? (
+            <>
+              <ul className="party-panel__roster" aria-label="Party roster">
+                {party.members.map((member) => {
+                  const isLeader = member.id === party.leaderId;
+                  const isSelf = member.id === playerId;
+                  const hpInfo = hpById.get(member.id);
+                  const isNearby = hpInfo !== undefined;
+                  const hasHp = !isSelf && isNearby && hpInfo.maxHp > 0;
+                  const hpPct = hasHp
+                    ? Math.max(0, Math.min(1, hpInfo.hp / hpInfo.maxHp)) * 100
+                    : 0;
+                  const hpStyle = { "--party-hp": `${hpPct}%` } as CSSProperties;
+
+                  return (
+                    <li className="party-panel__member" key={member.id}>
+                      <div className="party-panel__member-line">
+                        <span className="party-panel__member-name">
+                          {member.name}
+                          {isSelf && <span className="party-panel__you">You</span>}
+                        </span>
+                        {isLeader && (
+                          <span
+                            className="party-panel__role"
+                            title="Party leader — can disband the party"
+                          >
+                            Leader
+                          </span>
+                        )}
+                      </div>
+                      <div className="party-panel__member-status">
+                        <span
+                          className={`party-panel__presence${isNearby || isSelf ? "" : " party-panel__presence--away"}`}
+                        >
+                          {isSelf ? "You are here" : isNearby ? "Here" : "Away"}
+                        </span>
+                        {hasHp && (
+                          <span className="party-panel__hp-label">
+                            {Math.ceil(hpInfo.hp)}/{hpInfo.maxHp} HP
+                          </span>
+                        )}
+                      </div>
+                      {hasHp && (
+                        <div
+                          className="party-panel__hp-track"
+                          role="progressbar"
+                          aria-label={`${member.name} health`}
+                          aria-valuemin={0}
+                          aria-valuemax={hpInfo.maxHp}
+                          aria-valuenow={Math.max(0, hpInfo.hp)}
+                        >
+                          <div
+                            className={`party-panel__hp-fill${hpPct <= 30 ? " party-panel__hp-fill--critical" : ""}`}
+                            style={hpStyle}
+                          />
+                        </div>
+                      )}
+                    </li>
+                  );
+                })}
+              </ul>
+              <button
+                type="button"
+                className="auto-btn party-panel__action"
+                onClick={() => hudBus.requestLeaveParty()}
+              >
+                {myLeaderId === playerId ? "Disband party" : "Leave party"}
+              </button>
+            </>
+          ) : (
+            <p className="party-panel__solo-copy">
+              Join a nearby adventurer to travel together.
+            </p>
+          )}
         </div>
       )}
 
-      <div className="panel-title" style={{ marginTop: 10 }}>
-        In Zone
-      </div>
-      <div className="stat-section">
-        {others.length === 0 && (
-          <div className="stat-row">
-            <span className="stat-label" style={{ color: "#33334a", fontSize: 10 }}>
-              No other players here
-            </span>
+      <div className="party-panel__nearby">
+        <DisclosureHeader
+          className="party-panel__nearby-header"
+          title="Nearby"
+          summary={nearbySummary}
+          expanded={nearbyExpanded}
+          controls={nearbyDetailsId}
+          onToggle={() => setNearbyExpanded((expanded) => !expanded)}
+        />
+
+        {nearbyExpanded && (
+          <div id={nearbyDetailsId} className="party-panel__nearby-details">
+            {nearbyPlayers.length === 0 ? (
+              <p className="party-panel__empty">No other adventurers in this node.</p>
+            ) : (
+              <ul className="party-panel__nearby-list" aria-label="Nearby adventurers">
+                {nearbyPlayers.map((player) => {
+                  const isPartyMember = partyMemberIds.has(player.id);
+                  return (
+                    <li className="party-panel__nearby-row" key={player.id}>
+                      <span className="party-panel__nearby-name">{player.name}</span>
+                      {isPartyMember ? (
+                        <span className="party-panel__nearby-presence">In party</span>
+                      ) : (
+                        <button
+                          type="button"
+                          className="auto-btn party-panel__join"
+                          aria-label={`Join ${player.name}'s party`}
+                          onClick={() => hudBus.requestJoinParty(player.id)}
+                        >
+                          Join
+                        </button>
+                      )}
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
           </div>
         )}
-        {others.map((zp) => {
-          const alreadyInMyParty = myLeaderId !== null && zp.partyLeaderId === myLeaderId;
-          const leadsAParty = zp.partyLeaderId === zp.id;
-          return (
-            <div
-              className="stat-row"
-              key={zp.id}
-              style={{ alignItems: "center" }}
-            >
-              <span className="stat-label">
-                {leadsAParty ? "★ " : ""}
-                {zp.name}
-              </span>
-              {alreadyInMyParty ? (
-                <span className="stat-value" style={{ color: "#44ff88", fontSize: 10 }}>
-                  In party
-                </span>
-              ) : (
-                <button
-                  className="auto-btn"
-                  style={{ width: "auto", padding: "2px 10px", marginTop: 0, fontSize: 10 }}
-                  onClick={() => hudBus.requestJoinParty(zp.id)}
-                >
-                  JOIN
-                </button>
-              )}
-            </div>
-          );
-        })}
       </div>
-    </div>
+    </HudPanel>
   );
 }

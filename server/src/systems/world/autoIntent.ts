@@ -1,4 +1,11 @@
-import { getFlag, NODE_BIOMES, type HasAutoIntent } from "@mmo-idle/shared";
+import {
+  ACTION_DATABASE,
+  getFlag,
+  getRuleName,
+  NODE_BIOMES,
+  type HasAutoIntent,
+  type RuneActionId,
+} from "@mmo-idle/shared";
 import type { World } from "../../world/World";
 import type { PlayerEntity } from "../../ecs/entity";
 import { attachComponent, detachComponent } from "../../ecs/markerHelpers";
@@ -8,19 +15,28 @@ import {
 } from "../player/party/partySystem";
 import { isFleeing } from "../combat/ai/flee";
 import { getAutoTargetId } from "../combat/ai/targetPriority";
-import { RUNE_FOLLOW_LEADER_FLAG } from "../combat/ai/runeConfig";
+import {
+  RUNE_FOCUS_ELITES_FLAG,
+  RUNE_FOLLOW_LEADER_FLAG,
+  RUNE_LET_DOTS_FINISH_FLAG,
+  RUNE_SPREAD_DOTS_FLAG,
+  RUNE_TACTICAL_RELOAD_FLAG,
+  RUNE_WAIT_FOR_EXECUTION_FLAG,
+  RUNE_WAIT_FOR_REGEN_FLAG,
+} from "../combat/ai/runeConfig";
 
 /**
- * Stamp the networked {@link HasAutoIntent} telegraph onto every auto-combat
- * player so the client can render a thought bubble of their next action.
+ * Stamp the networked {@link HasAutoIntent} telegraph onto every live player
+ * whose current behavior is server-directed.
  *
  * Runs at the end of `World.tick` (after movement/targeting/combat have settled)
  * and derives intent from the durable post-tick state that actually governs the
- * player's behavior, in priority order: flee → follow → travel → attack → idle.
+ * player's behavior, in priority order: flee → follow → travel → maintenance →
+ * attack → idle.
  *
- * Auto actions still telegraph with auto-combat OFF: server-driven map
+ * Auto actions can still telegraph with auto-combat off: server-driven map
  * navigation, and active combat (the player auto-attacks any mob in range
- * regardless of the toggle — "engaged with a mob"). The combat bubble clears
+ * regardless of the toggle — "engaged with a mob"). The combat intent clears
  * when the mob leaves range (i.e. the player manually disengages).
  *
  * Only writes when the resolved intent differs from the existing slice so the
@@ -37,38 +53,58 @@ function resolveIntent(
   world: World,
   player: PlayerEntity,
 ): HasAutoIntent | null {
-  // Auto actions available with auto-combat off: server-driven map navigation
-  // and active combat. The player auto-attacks any mob in range regardless of
-  // the toggle, so an attack target means "engaged with a mob" — show it, and
-  // let it clear naturally when they walk out of range (manual disengage).
   if (!player.usesAutocombat.auto) {
     return (
-      attackIntent(world, player, player.hasAttackTarget?.targetId) ??
-      travelIntent(player)
+      attackIntent(world, player, player.hasAttackTarget?.targetId, false) ??
+      travelIntent(player, false)
     );
   }
 
-  if (isFleeing(player)) return { kind: "flee" };
+  if (isFleeing(player)) {
+    const reason =
+      player.isFleeing?.phase === "recover"
+        ? "Recovering before returning"
+        : player.isFleeing?.phase === "return"
+          ? "Returning to the fight"
+          : "Retreating to safety";
+    return {
+      kind: "flee",
+      reason,
+      source: ruleLabel(player, "flee"),
+    };
+  }
 
   if (
     isEffectivePartyFollower(world, player) &&
     getFlag(player.tracksCombat, RUNE_FOLLOW_LEADER_FLAG)
   ) {
-    const leaderId = effectivePartyLeaderId(world, player);
-    return leaderId ? { kind: "follow", leaderId } : { kind: "follow" };
+    return {
+      kind: "follow",
+      leaderId: effectivePartyLeaderId(world, player) ?? undefined,
+      reason: "Staying with the party leader",
+      source: ruleLabel(player, "follow-and-assist"),
+    };
   }
 
-  const travel = travelIntent(player);
+  const travel = travelIntent(player, true);
   if (travel) return travel;
+
+  const maintenance = maintenanceIntent(player);
+  if (maintenance) return maintenance;
 
   const attack = attackIntent(
     world,
     player,
     getAutoTargetId(player) ?? player.hasAttackTarget?.targetId,
+    true,
   );
   if (attack) return attack;
 
-  return { kind: "idle" };
+  return {
+    kind: "idle",
+    reason: "No worthy target nearby",
+    source: "",
+  };
 }
 
 /** Attack intent toward a monster target id in the player's node, if any. */
@@ -76,23 +112,148 @@ function attackIntent(
   world: World,
   player: PlayerEntity,
   targetId: string | undefined,
+  automated: boolean,
 ): HasAutoIntent | null {
   if (!targetId) return null;
   const monster = world.getMonsterEntity(targetId);
   if (!monster || monster.hasPosition.nodeId !== player.hasPosition.nodeId) {
     return null;
   }
-  return { kind: "attack", targetMonsterTypeId: monster.isMonster.monsterTypeId };
+  const explanation = automated
+    ? attackExplanation(player)
+    : {
+        reason: "Locked in battle",
+        source: "",
+      };
+  return {
+    kind: "attack",
+    targetMonsterTypeId: monster.isMonster.monsterTypeId,
+    ...explanation,
+  };
 }
 
 /** Travel intent toward the destination of an active navigation path, if any. */
-function travelIntent(player: PlayerEntity): HasAutoIntent | null {
+function travelIntent(
+  player: PlayerEntity,
+  automated: boolean,
+): HasAutoIntent | null {
   const traverse = player.hasAutoTraversePath;
   if (!traverse || traverse.targetNodeId === player.hasPosition.nodeId) {
     return null;
   }
   const destBiomeGroup = NODE_BIOMES[traverse.targetNodeId]?.biomeGroup;
-  return destBiomeGroup ? { kind: "travel", destBiomeGroup } : null;
+  return destBiomeGroup
+    ? {
+        kind: "travel",
+        destBiomeGroup,
+        reason: automated
+          ? "Following the hunt's path"
+          : "Following your chosen path",
+        source: "",
+      }
+    : null;
+}
+
+function maintenanceIntent(player: PlayerEntity): HasAutoIntent | null {
+  if (
+    getFlag(player.tracksCombat, RUNE_WAIT_FOR_REGEN_FLAG) &&
+    player.hasAttackTarget === undefined &&
+    player.hasHealth.hp < player.hasHealth.maxHp
+  ) {
+    return {
+      kind: "idle",
+      reason: "Waiting to recover to full health",
+      source: ruleLabel(player, "wait-for-regen"),
+    };
+  }
+  if (
+    getFlag(player.tracksCombat, RUNE_WAIT_FOR_EXECUTION_FLAG) &&
+    player.hasAttackTarget === undefined &&
+    player.usesCooldown !== undefined &&
+    player.hasEmpoweredAttack === undefined
+  ) {
+    return {
+      kind: "idle",
+      reason: "Waiting for execution to recharge",
+      source: ruleLabel(player, "wait-for-execution"),
+    };
+  }
+  if (
+    getFlag(player.tracksCombat, RUNE_TACTICAL_RELOAD_FLAG) &&
+    player.hasAttackTarget === undefined &&
+    player.usesReload !== undefined &&
+    player.usesReload.reloadingMs > 0
+  ) {
+    return {
+      kind: "idle",
+      reason: "Waiting for reload to finish",
+      source: ruleLabel(player, "tactical-reload"),
+    };
+  }
+  return null;
+}
+
+function attackExplanation(
+  player: PlayerEntity,
+): Pick<HasAutoIntent, "reason" | "source"> {
+  if (getFlag(player.tracksCombat, RUNE_FOCUS_ELITES_FLAG)) {
+    return {
+      reason: "Elite target priority",
+      source: ruleLabel(player, "focus-elites"),
+    };
+  }
+  if (getFlag(player.tracksCombat, RUNE_SPREAD_DOTS_FLAG)) {
+    return {
+      reason: "Spreading damage-over-time effects",
+      source: ruleLabel(player, "spread-dots"),
+    };
+  }
+  if (getFlag(player.tracksCombat, RUNE_LET_DOTS_FINISH_FLAG)) {
+    return {
+      reason: "Avoiding damage-over-time overkill",
+      source: ruleLabel(player, "let-dots-finish"),
+    };
+  }
+
+  switch (player.usesAutocombat.priorityMode) {
+    case "lowest-hp":
+      return {
+        reason: "Lowest-health eligible target",
+        source: ruleLabel(player, "focus-lowest-hp"),
+      };
+    case "highest-max-hp":
+      return {
+        reason: "Largest eligible health pool",
+        source: ruleLabel(player, "focus-highest-max-hp"),
+      };
+    case "damage":
+      return { reason: "Best opening for damage", source: "" };
+    case "threat":
+      return { reason: "Most dangerous foe", source: "" };
+    case "balanced":
+      return { reason: "Best all-around target", source: "" };
+    case "nearest":
+    default:
+      return {
+        reason: "Nearest eligible target",
+        source: ruleLabel(player, "focus-closest"),
+      };
+  }
+}
+
+function ruleLabel(
+  player: PlayerEntity,
+  actionId: RuneActionId,
+): string {
+  const rule = player.tracksProgression.runesEquipped.find(
+    (entry) => entry.actionId === actionId,
+  );
+  if (!rule) return "";
+  return (
+    getRuleName(rule.conditionId, rule.actionId)?.name ??
+    ACTION_DATABASE.get(actionId)?.name ??
+    ""
+  );
 }
 
 function applyIntent(
@@ -115,6 +276,8 @@ function sameIntent(
   return (
     a !== undefined &&
     a.kind === b.kind &&
+    a.reason === b.reason &&
+    a.source === b.source &&
     a.targetMonsterTypeId === b.targetMonsterTypeId &&
     a.leaderId === b.leaderId &&
     a.destBiomeGroup === b.destBiomeGroup

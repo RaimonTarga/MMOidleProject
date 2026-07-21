@@ -1,4 +1,3 @@
-import { createPortal } from 'react-dom';
 import { useMemo } from 'react';
 import { useAtomValue } from 'jotai';
 import {
@@ -14,6 +13,7 @@ import {
   biomeLevelAtom,
   globalMasteryAtom,
 } from '../hud/atoms';
+import { DialogHeader, GameDialog } from '../hud/primitives';
 import './crafting.css';
 
 interface Props {
@@ -57,17 +57,10 @@ export function MasteryPanel({ onClose }: Props) {
     (_, i) => i * RUNE_POINT_GLOBAL_MASTERY_STEP,
   );
 
-  function handleOverlayClick(e: React.MouseEvent) {
-    if (e.target === e.currentTarget) onClose();
-  }
-
-  return createPortal(
-    <div className="craft-overlay" onClick={handleOverlayClick}>
-      <div className="craft-panel mastery-panel">
-        <div className="craft-header">
-          <span className="craft-title">Global Mastery</span>
-          <button className="craft-close" onClick={onClose}>x</button>
-        </div>
+  return (
+    <GameDialog size="standard" className="mastery-dialog" onClose={onClose}>
+      <DialogHeader title="Global Mastery" closeLabel="Close global mastery" />
+      <div className="mastery-dialog__content">
 
         <div className="mastery-summary">
           <div className="mastery-summary__main">
@@ -180,7 +173,6 @@ export function MasteryPanel({ onClose }: Props) {
           </section>
         </div>
       </div>
-    </div>,
-    document.body,
+    </GameDialog>
   );
 }

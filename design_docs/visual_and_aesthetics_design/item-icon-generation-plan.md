@@ -159,9 +159,15 @@ the target shape and let the prompt drive surface detail rather than shape.
 
 Rules for the vertical chains:
 
-- Use a **moderate `initImageStrength`** (below the 300 default), so the prompt can add tier
-  ornamentation (brighter/more ornate, bible §2) while the silhouette stays recognizably the
-  same. Too-high strength makes tiers near-identical with no escalation.
+- **`initImageStrength` ≈ 60–70 (calibrated).** Measured, not guessed: Batch 1 ran the
+  seeded entries at **200 and 10 of 12 were rejected** — every note some form of "too
+  similar to the original." The seed must be only a *light silhouette nudge*; the prompt
+  has to drive shape and tier escalation. Treat 65 as the default for item tier chains and
+  the 300 API default as far too strong for this use.
+- **Watch sibling convergence, not just root convergence.** Two branches seeded from the
+  same root can collapse into each other (Batch 1: `thorn-needle` was rejected as "too
+  similar to the other one", i.e. to `gale-needle`, not to `flash-rapier`). Fix by banning
+  the sibling's distinguishing look in the `negative`, not only by lowering strength.
 - **Dependency:** an img2img link can't generate until its predecessor is accepted. Each
   line runs strictly tiered: T1 accepted → T2 from T1 → T3 from T2 (mirrors the `players`
   category rule that links stay `draft` until the predecessor lands).

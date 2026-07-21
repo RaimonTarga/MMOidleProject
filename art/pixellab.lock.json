@@ -11703,6 +11703,160 @@
       "candidateFiles": [
         "candidate-3.png"
       ]
+    },
+    {
+      "at": "2026-07-21T18:49:27.426Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "thorn-needle",
+      "requestHash": "1b8009258a3a17cefc5296ff",
+      "usd": 0.007625631703270807,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T18:49:51.614Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "thorn-needle",
+      "requestHash": "1b8009258a3a17cefc5296ff",
+      "usd": 0.006905267794926962,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T18:50:12.820Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "thorn-needle",
+      "requestHash": "1b8009258a3a17cefc5296ff",
+      "usd": 0.00713978902498881,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T18:50:37.017Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "quake-hammer",
+      "requestHash": "40ea0f065cec522d688c3b56",
+      "usd": 0.006951004478666518,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T18:50:55.527Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "quake-hammer",
+      "requestHash": "40ea0f065cec522d688c3b56",
+      "usd": 0.006927461677127414,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T18:51:13.938Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "quake-hammer",
+      "requestHash": "40ea0f065cec522d688c3b56",
+      "usd": 0.0066504403220282666,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T18:51:36.271Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "avalanche-maul",
+      "requestHash": "1f7d34443041394e96eeeffd",
+      "usd": 0.006816085815429688,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T18:51:57.538Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "avalanche-maul",
+      "requestHash": "1f7d34443041394e96eeeffd",
+      "usd": 0.007222315258449978,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T18:52:23.879Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "avalanche-maul",
+      "requestHash": "1f7d34443041394e96eeeffd",
+      "usd": 0.00731915635532803,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T18:52:55.272Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "earthsunder-maul",
+      "requestHash": "78ebe29de157b44cb184c0a7",
+      "usd": 0.007945873498916626,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T18:53:15.153Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "earthsunder-maul",
+      "requestHash": "78ebe29de157b44cb184c0a7",
+      "usd": 0.006809493117862278,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T18:53:43.269Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "earthsunder-maul",
+      "requestHash": "78ebe29de157b44cb184c0a7",
+      "usd": 0.007569612741470337,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T18:54:02.656Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "warmaul",
+      "requestHash": "df81fb94f99d896e7bacee42",
+      "usd": 0.006656046840879653,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T18:54:23.811Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "warmaul",
+      "requestHash": "df81fb94f99d896e7bacee42",
+      "usd": 0.007148140377468533,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
     }
   ]
 }

@@ -12,6 +12,66 @@ import {
   skillTreeOpenAtom,
 } from '../hud/atoms';
 
+export type PrimaryOverlay =
+  | 'skill-tree'
+  | 'build'
+  | 'mastery'
+  | 'inventory'
+  | 'crafting'
+  | 'map'
+  | 'quests'
+  | 'settings';
+
+function primaryOverlayIsOpen(overlay: PrimaryOverlay): boolean {
+  const store = getDefaultStore();
+  switch (overlay) {
+    case 'skill-tree': return store.get(skillTreeOpenAtom);
+    case 'build': return store.get(buildOpenAtom);
+    case 'mastery': return store.get(masteryOpenAtom);
+    case 'inventory': return store.get(inventoryOpenAtom);
+    case 'crafting': return store.get(craftTabAtom) !== null;
+    case 'map': return store.get(mapOpenAtom);
+    case 'quests': return store.get(questOpenAtom);
+    case 'settings': return store.get(settingsOpenAtom);
+  }
+}
+
+export function closePrimaryOverlays(): void {
+  const store = getDefaultStore();
+  store.set(skillTreeOpenAtom, false);
+  store.set(buildOpenAtom, false);
+  store.set(masteryOpenAtom, false);
+  store.set(inventoryOpenAtom, false);
+  store.set(craftTabAtom, null);
+  store.set(mapOpenAtom, false);
+  store.set(questOpenAtom, false);
+  store.set(settingsOpenAtom, false);
+}
+
+/** Primary dialogs are mutually exclusive. Secondary overlays remain independent. */
+export function openPrimaryOverlay(overlay: PrimaryOverlay): void {
+  const store = getDefaultStore();
+  closePrimaryOverlays();
+  switch (overlay) {
+    case 'skill-tree': store.set(skillTreeOpenAtom, true); break;
+    case 'build': store.set(buildOpenAtom, true); break;
+    case 'mastery': store.set(masteryOpenAtom, true); break;
+    case 'inventory': store.set(inventoryOpenAtom, true); break;
+    case 'crafting': store.set(craftTabAtom, 'forge'); break;
+    case 'map': store.set(mapOpenAtom, true); break;
+    case 'quests': store.set(questOpenAtom, true); break;
+    case 'settings': store.set(settingsOpenAtom, true); break;
+  }
+}
+
+export function togglePrimaryOverlay(overlay: PrimaryOverlay): void {
+  if (primaryOverlayIsOpen(overlay)) {
+    closePrimaryOverlays();
+    return;
+  }
+  openPrimaryOverlay(overlay);
+}
+
 export function closeTopmostOverlay(): void {
   const store = getDefaultStore();
   if (store.get(releaseAnnouncementAtom)) {

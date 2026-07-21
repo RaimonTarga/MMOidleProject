@@ -1,6 +1,7 @@
 import { useAtomValue } from "jotai";
 import { catalystLabel, GAME_CONFIG } from "@mmo-idle/shared";
 import { catalystsAtom, catalystProgressAtom } from "./atoms";
+import { HudPanel } from "./primitives";
 import "./essence.css";
 
 /**
@@ -24,7 +25,7 @@ export function CatalystPanel() {
   const per = GAME_CONFIG.CATALYST_PROGRESS_PER_UNIT;
 
   return (
-    <div className="sidebar-panel">
+    <HudPanel className="sidebar-panel economy-panel catalyst-panel">
       <div className="panel-title">Catalysts</div>
       <div className="essence-list">
         {groups.map((group) => {
@@ -41,6 +42,6 @@ export function CatalystPanel() {
           );
         })}
       </div>
-    </div>
+    </HudPanel>
   );
 }

@@ -174,17 +174,21 @@ export interface UsesAutocombat extends AutocombatConfig {
   autoTraverse: boolean;
 }
 
-/** What an auto-combat player is about to do — telegraphed via a thought bubble. */
+/** What a server-directed player is about to do — telegraphed via HUD/bubbles. */
 export type AutoIntentKind = 'attack' | 'follow' | 'travel' | 'flee' | 'idle';
 
 /**
- * Networked telegraph of an auto-combat player's next action. Present only
- * while the player has auto-combat enabled. Carries enough denormalized data
- * (monster type, destination biome) that the client can render the right icon
- * even for entities/nodes it cannot currently see.
+ * Networked telegraph of the player's current server-directed action. This can
+ * remain present with auto-combat off while manual map navigation or an already
+ * engaged basic attack continues. The explanation text is authored by the
+ * server; clients only format the structured action target.
  */
 export interface HasAutoIntent {
   kind: AutoIntentKind;
+  /** Concise authoritative explanation of why this action currently owns. */
+  reason: string;
+  /** Governing automation source or named rune rule. */
+  source: string;
   /** 'attack' — monster type id of the target; the bubble shows that monster's sprite. */
   targetMonsterTypeId?: string;
   /** 'follow' — leader being followed; the client mirrors that leader's bubble. */

@@ -63,7 +63,7 @@ import { playSfx } from "../audio/audioEngine";
 import type { SfxId } from "../audio/manifest";
 import { startCastBar, endCastBar } from "./castBars";
 import { spawnSkillCallout } from "./skillCallouts";
-import { notifyAbilityFired } from "../hud/atoms";
+import { notifyAbilityCooldownStarted, notifyAbilityFired } from "../hud/atoms";
 import type { GameScene } from "../scenes/GameScene";
 import { applyLunge } from "./interpolation";
 import { nodeToScene } from "./sceneCoords";
@@ -567,6 +567,7 @@ export function dispatchCombatEvent(
       }
       if (ev.playerId === scene.myId) {
         playSfx("empowered");
+        notifyAbilityCooldownStarted("guard");
         notifyAbilityFired("guard");
       }
     }
@@ -581,6 +582,9 @@ export function dispatchCombatEvent(
       abilityId: ev.ability,
       armedAt: Date.now(),
     });
+    if (ev.playerId === scene.myId) {
+      notifyAbilityCooldownStarted("technique");
+    }
     if (shouldRunClientFx() && state.sprite.has(ev.playerId)) {
       const name = abilityDef(ev.ability)?.name ?? ev.ability;
       spawnSkillCallout(

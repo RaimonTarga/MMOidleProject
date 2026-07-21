@@ -1,4 +1,3 @@
-import { createPortal } from 'react-dom';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useAtomValue } from 'jotai';
 import { NODE_BIOMES, BIOME_DATABASE, formatRespawnRemaining } from '@mmo-idle/shared';
@@ -11,6 +10,7 @@ import { BiomeIcon } from './BiomeIcon';
 import { OverviewMap } from './OverviewMap';
 import { useMapClock } from './useMapClock';
 import { DEV_TOOLS_ENABLED } from '../../devTools';
+import { DialogHeader, GameDialog } from '../../hud/primitives';
 import '../map.css';
 
 interface Props {
@@ -80,10 +80,6 @@ export function MapPanel({ onClose, highlightNodes, focusNodeId }: Props) {
     setViewCol(c => Math.max(0, Math.min(MAX_VIEW_C, c + dc)));
   }
 
-  function handleOverlayClick(e: React.MouseEvent) {
-    if (e.target === e.currentTarget) onClose();
-  }
-
   const visibleTiles = useMemo(() =>
     Array.from({ length: VIEWPORT * VIEWPORT }, (_, i) => {
       const r = viewRow + Math.floor(i / VIEWPORT);
@@ -93,14 +89,12 @@ export function MapPanel({ onClose, highlightNodes, focusNodeId }: Props) {
     [viewRow, viewCol],
   );
 
-  return createPortal(
-    <div className="map-overlay" onClick={handleOverlayClick}>
-      <div className="map-panel map-panel--large">
-
-        <div className="map-header">
-          <div className="map-header__title-wrap">
-            <span className="map-title">World Map</span>
-          </div>
+  return (
+    <GameDialog size="wide" className="map-dialog" onClose={onClose}>
+      <DialogHeader
+        title="World Map"
+        closeLabel="Close world map"
+        actions={
           <OverviewMap
             viewRow={viewRow}
             viewCol={viewCol}
@@ -109,13 +103,13 @@ export function MapPanel({ onClose, highlightNodes, focusNodeId }: Props) {
             destNode={destNode}
             bossFelledByNode={bossFelledByNode}
           />
-          <button className="map-close" onClick={onClose}>✕</button>
-        </div>
+        }
+      />
 
-        <div className="map-body">
-          <div className="map-grid-wrap">
-            <button className="map-nav map-nav--up"    onClick={() => pan(-1,  0)} disabled={viewRow === 0}>▲</button>
-            <button className="map-nav map-nav--left"  onClick={() => pan( 0, -1)} disabled={viewCol === 0}>◀</button>
+      <div className="map-body">
+        <div className="map-grid-wrap">
+          <button className="map-nav map-nav--up"    onClick={() => pan(-1,  0)} disabled={viewRow === 0}>▲</button>
+          <button className="map-nav map-nav--left"  onClick={() => pan( 0, -1)} disabled={viewCol === 0}>◀</button>
 
             <div className="map-grid">
               {visibleTiles.map(({ id }) => {
@@ -175,16 +169,14 @@ export function MapPanel({ onClose, highlightNodes, focusNodeId }: Props) {
 
             <button className="map-nav map-nav--right" onClick={() => pan( 0,  1)} disabled={viewCol === MAX_VIEW_C}>▶</button>
             <button className="map-nav map-nav--down"  onClick={() => pan( 1,  0)} disabled={viewRow === MAX_VIEW_R}>▼</button>
-          </div>
+        </div>
 
-          <div className="map-info-panel">
-            {selectedId
-              ? <NodeInfo nodeId={selectedId} playerNodeId={playerNodeId} onClose={onClose} />
-              : <div className="map-info__empty">Select a zone to see details.</div>}
-          </div>
+        <div className="map-info-panel">
+          {selectedId
+            ? <NodeInfo nodeId={selectedId} playerNodeId={playerNodeId} onClose={onClose} />
+            : <div className="map-info__empty">Select a zone to see details.</div>}
         </div>
       </div>
-    </div>,
-    document.body,
+    </GameDialog>
   );
 }

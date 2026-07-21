@@ -3,6 +3,7 @@ import { intents } from '../intents';
 import { globalMastery } from '@mmo-idle/shared';
 import type {
   CombatArchetype,
+  HasAutoIntent,
   EquipmentMap,
   EquippedAbilities,
   EquippedStances,
@@ -128,6 +129,8 @@ export const attackStyleAtom = atom<string>('');
 export const attackTargetIdAtom = atom<string | null>(null);
 export const lastAttackAtAtom = atom<number>(0);
 export const autoAtom = atom<boolean>(false);
+/** Current server-directed action and its authoritative explanation. */
+export const autoIntentAtom = atom<HasAutoIntent | null>(null);
 
 export const cadenceCountAtom = atom<number>(0);
 export const cadenceThresholdAtom = atom<number>(0);
@@ -151,12 +154,28 @@ export const heatPctAtom = atom<number>(0);
 export const laserOverheatedAtom = atom<boolean>(false);
 
 export const targetDotStacksAtom = atom<number>(0);
+export const targetDotTickPctAtom = atom<number>(0);
+/** Monotonic receipt counter for confirmed ticks from this player's current target. */
+export const targetDotTickSerialAtom = atom<number>(0);
 export const targetChillStacksAtom = atom<number>(0);
+
+export function notifyTargetDotTick(): void {
+  if (typeof document !== 'undefined' && document.visibilityState === 'hidden') return;
+  const store = getDefaultStore();
+  store.set(targetDotTickSerialAtom, store.get(targetDotTickSerialAtom) + 1);
+}
 
 export const summonActiveCountAtom = atom<number>(0);
 export const summonSlotCountAtom = atom<number>(0);
 export const summonRespawnMaxMsAtom = atom<number>(0);
 export const summonSlotsAtom = atom<SummonSlotView[]>([]);
+/** Authoritative live minion health, joined to the player's slot projection by slot. */
+export interface SummonHealthView {
+  slot: number;
+  hp: number;
+  maxHp: number;
+}
+export const summonHealthAtom = atom<SummonHealthView[]>([]);
 
 export const isChannelingAtom = atom<boolean>(false);
 export const channelingPctAtom = atom<number>(0);
@@ -182,13 +201,7 @@ export const catalystProgressAtom = atom<Record<string, number>>({});
 export const activeBuffsAtom = atom<PlayerBuff[]>([]);
 export const autoPathAtom = atom<string[] | null>(null);
 
-/**
- * Last-fired wall-clock ms per ability slot — drives the bottom-left ability bar's
- * pulse + client-approximated cooldown sweep (system rework Step 7 HUD). Set from
- * the combat FX dispatcher when an ability's client-effect tag arrives. The Guard
- * slot also derives its active/cooldown state from its buff, so this is primarily
- * the Technique fire signal (Techniques carry no buff).
- */
+/** Last observed ability-effect time per slot; drives the brief HUD pulse. */
 export const abilityFiredAtAtom = atom<{ technique: number; guard: number }>({
   technique: 0,
   guard: 0,
@@ -199,6 +212,23 @@ export function notifyAbilityFired(slot: 'technique' | 'guard'): void {
   const store = getDefaultStore();
   const prev = store.get(abilityFiredAtAtom);
   store.set(abilityFiredAtAtom, { ...prev, [slot]: Date.now() });
+}
+
+/**
+ * Client receipt time for the server event that places an ability on cooldown.
+ * This is distinct from `abilityFiredAtAtom`: Techniques enter cooldown when
+ * armed, while their visible effect may land on a later attack.
+ */
+export const abilityCooldownStartedAtAtom = atom<{ technique: number; guard: number }>({
+  technique: 0,
+  guard: 0,
+});
+
+/** Stamp an ability slot as cooling from the server's fire or arm event. */
+export function notifyAbilityCooldownStarted(slot: 'technique' | 'guard'): void {
+  const store = getDefaultStore();
+  const prev = store.get(abilityCooldownStartedAtAtom);
+  store.set(abilityCooldownStartedAtAtom, { ...prev, [slot]: Date.now() });
 }
 
 export interface ZonePlayer {
@@ -365,6 +395,23 @@ export function setIfSummonSlotsEqual(next: SummonSlotView[]): void {
   const prev = store.get(summonSlotsAtom);
   if (summonSlotsEqual(prev, next)) return;
   store.set(summonSlotsAtom, next);
+}
+
+function summonHealthEqual(a: SummonHealthView[], b: SummonHealthView[]): boolean {
+  if (a === b) return true;
+  if (a.length !== b.length) return false;
+  for (let i = 0; i < a.length; i++) {
+    if (a[i].slot !== b[i].slot || a[i].hp !== b[i].hp || a[i].maxHp !== b[i].maxHp) {
+      return false;
+    }
+  }
+  return true;
+}
+
+export function setSummonHealth(next: SummonHealthView[]): void {
+  const store = getDefaultStore();
+  if (summonHealthEqual(store.get(summonHealthAtom), next)) return;
+  store.set(summonHealthAtom, next);
 }
 
 export function setAutoPath(path: string[] | null): void {
@@ -594,6 +641,7 @@ function resetPlayerAtoms(): void {
   store.set(attackTargetIdAtom, null);
   store.set(lastAttackAtAtom, 0);
   store.set(autoAtom, false);
+  store.set(autoIntentAtom, null);
 
   store.set(cadenceCountAtom, 0);
   store.set(cadenceThresholdAtom, 0);
@@ -613,6 +661,8 @@ function resetPlayerAtoms(): void {
   store.set(heatPctAtom, 0);
   store.set(laserOverheatedAtom, false);
   store.set(targetDotStacksAtom, 0);
+  store.set(targetDotTickPctAtom, 0);
+  store.set(targetDotTickSerialAtom, 0);
   store.set(targetChillStacksAtom, 0);
   store.set(isChannelingAtom, false);
   store.set(channelingPctAtom, 0);
@@ -620,6 +670,7 @@ function resetPlayerAtoms(): void {
 
   setIfShallowArrayEqual(shieldsAtom, []);
   setIfShallowArrayEqual(summonSlotsAtom, []);
+  setSummonHealth([]);
   setIfChanged(summonActiveCountAtom, 0);
   setIfChanged(summonSlotCountAtom, 0);
   setIfChanged(summonRespawnMaxMsAtom, 0);
@@ -640,6 +691,7 @@ function resetPlayerAtoms(): void {
   setIfShallowArrayEqual(bossesClearedAtom, []);
   setIfShallowArrayEqual(activeBuffsAtom, []);
   store.set(abilityFiredAtAtom, { technique: 0, guard: 0 });
+  store.set(abilityCooldownStartedAtAtom, { technique: 0, guard: 0 });
   setIfShallowObjectEqual(passivesAtom, {});
   setIfShallowObjectEqual(equipmentAtom, { ...DEFAULT_EQUIPMENT });
   setIfShallowObjectEqual(itemUpgradesAtom, {});
@@ -698,6 +750,7 @@ export function syncPlayerAtoms(player: PlayerView | null): void {
   setIfChanged(attackTargetIdAtom, player.attackTargetId);
   setIfChanged(lastAttackAtAtom, player.lastAttackAt);
   setIfChanged(autoAtom, player.auto);
+  setIfChanged(autoIntentAtom, player.autoIntent);
 
   setIfChanged(cadenceCountAtom, player.cadenceCount);
   setIfChanged(cadenceThresholdAtom, player.cadenceThreshold);
@@ -717,6 +770,7 @@ export function syncPlayerAtoms(player: PlayerView | null): void {
   setIfChanged(heatPctAtom, player.heatPct);
   setIfChanged(laserOverheatedAtom, player.laserOverheated);
   setIfChanged(targetDotStacksAtom, player.targetDotStacks);
+  setIfChanged(targetDotTickPctAtom, player.targetDotTickPct);
   setIfChanged(targetChillStacksAtom, player.targetChillStacks);
   setIfChanged(summonActiveCountAtom, player.summonActiveCount);
   setIfChanged(summonSlotCountAtom, player.summonsMinions);

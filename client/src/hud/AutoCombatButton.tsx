@@ -9,29 +9,16 @@ export function AutoCombatButton() {
   if (!playerId) return null;
 
   return (
-    <div
-      style={{
-        position: "fixed",
-        bottom: "calc(16px + env(safe-area-inset-bottom, 0px))",
-        left: "50%",
-        transform: "translateX(-50%)",
-        zIndex: 20,
-        pointerEvents: "auto",
-      }}
-    >
+    <div className="combat-auto-root">
       <button
-        className={`auto-btn${auto ? " active" : ""}`}
-        style={{
-          width: "auto",
-          padding: "12px 36px",
-          fontSize: 14,
-          letterSpacing: "1.5px",
-          marginTop: 0,
-        }}
+        type="button"
+        className={`combat-auto-button combat-auto-button--${auto ? "on" : "off"}`}
+        aria-pressed={auto}
         onClick={() => hudBus.requestAutoToggle()}
         title="Toggle server-side auto combat"
       >
-        AUTO COMBAT: {auto ? "ON" : "OFF"}
+        <span className="combat-auto-button__label">Auto Combat</span>
+        <span className="combat-auto-button__state">{auto ? "ON" : "OFF"}</span>
       </button>
     </div>
   );

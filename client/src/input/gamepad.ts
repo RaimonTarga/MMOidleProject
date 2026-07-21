@@ -3,15 +3,9 @@ import Phaser from 'phaser';
 import type { GameScene } from '../scenes/GameScene';
 import { hudBus } from '../hudBus';
 import {
-  craftTabAtom,
   deathOverlayAtom,
   debugPanelOpenAtom,
   gamepadStatusAtom,
-  inventoryOpenAtom,
-  mapOpenAtom,
-  questOpenAtom,
-  settingsOpenAtom,
-  skillTreeOpenAtom,
 } from '../hud/atoms';
 import {
   captureModeAtom,
@@ -24,7 +18,7 @@ import {
   type ActionId,
 } from '../settings/keybinds';
 import { setGamepadVector } from './movement';
-import { closeTopmostOverlay } from './overlayStack';
+import { closeTopmostOverlay, togglePrimaryOverlay } from './overlayStack';
 
 const MOBILE_QUERY = '(max-width: 1100px)';
 const STICK_DEADZONE = 0.18;
@@ -58,19 +52,19 @@ export function attachGamepad(scene: GameScene): () => void {
     }
     if (matchesPad(index, 'toggle.inventory', bindings)) {
       if (store.get(deathOverlayAtom).active) return;
-      store.set(inventoryOpenAtom, (v) => !v);
+      togglePrimaryOverlay('inventory');
       return;
     }
     if (matchesPad(index, 'toggle.map', bindings)) {
-      store.set(mapOpenAtom, (v) => !v);
+      togglePrimaryOverlay('map');
       return;
     }
     if (matchesPad(index, 'toggle.skillTree', bindings)) {
-      store.set(skillTreeOpenAtom, (v) => !v);
+      togglePrimaryOverlay('skill-tree');
       return;
     }
     if (matchesPad(index, 'toggle.quest', bindings)) {
-      store.set(questOpenAtom, (v) => !v);
+      togglePrimaryOverlay('quests');
       return;
     }
     if (matchesPad(index, 'toggle.debug', bindings)) {
@@ -78,12 +72,12 @@ export function attachGamepad(scene: GameScene): () => void {
       return;
     }
     if (matchesPad(index, 'toggle.settings', bindings)) {
-      store.set(settingsOpenAtom, (v) => !v);
+      togglePrimaryOverlay('settings');
       return;
     }
     if (matchesPad(index, 'toggle.crafting', bindings)) {
       if (store.get(deathOverlayAtom).active) return;
-      store.set(craftTabAtom, (t) => (t === 'forge' ? null : 'forge'));
+      togglePrimaryOverlay('crafting');
       return;
     }
     if (matchesPad(index, 'close.overlay', bindings)) {

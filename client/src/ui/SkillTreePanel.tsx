@@ -1,4 +1,3 @@
-import { createPortal } from 'react-dom';
 import { useState } from 'react';
 import { useAtomValue } from 'jotai';
 import { SKILL_TREE, canUnlockSkill } from '@mmo-idle/shared';
@@ -15,6 +14,7 @@ import {
   skillPointsAtom,
   unlockedSkillsAtom,
 } from '../hud/atoms';
+import { DialogHeader, GameDialog } from '../hud/primitives';
 import './skillTree.css';
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
@@ -453,23 +453,19 @@ export function SkillTreePanel({ onClose }: Props) {
     setSelectedNode(null);
   }
 
-  function handleOverlayClick(e: React.MouseEvent) {
-    if (e.target === e.currentTarget) onClose();
-  }
-
-  return createPortal(
-    <div className="skill-tree-overlay" onClick={handleOverlayClick}>
-      <div className="skill-tree-panel">
-
-        <div className="skill-tree-header">
-          <span className="skill-tree-title">Passive Skill Tree</span>
+  return (
+    <GameDialog size="wide" className="skill-tree-dialog" onClose={onClose}>
+      <DialogHeader
+        title="Passive Skill Tree"
+        closeLabel="Close passive skill tree"
+        actions={
           <div className="skill-tree-legend">
             <span className="legend-item legend-item--unlocked">● unlocked</span>
             <span className="legend-item legend-item--available">● available</span>
             <span className="legend-item legend-item--locked">● locked</span>
           </div>
-          <button className="skill-tree-close" onClick={onClose}>✕</button>
-        </div>
+        }
+      />
 
         <div className="skill-tree-body">
           {classChosen
@@ -490,12 +486,9 @@ export function SkillTreePanel({ onClose }: Props) {
               />}
         </div>
 
-        {classChosen && (
-          <NodeDesc node={activeNode} player={player} isMobile={isMobile} onUnlock={handleUnlock} />
-        )}
-
-      </div>
-    </div>,
-    document.body,
+      {classChosen && (
+        <NodeDesc node={activeNode} player={player} isMobile={isMobile} onUnlock={handleUnlock} />
+      )}
+    </GameDialog>
   );
 }

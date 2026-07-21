@@ -11,20 +11,14 @@ import {
   type ActionId,
 } from '../settings/keybinds';
 import {
-  craftTabAtom,
   deathOverlayAtom,
   debugPanelOpenAtom,
   flashEmoteWheel,
-  inventoryOpenAtom,
-  mapOpenAtom,
-  questOpenAtom,
-  settingsOpenAtom,
-  skillTreeOpenAtom,
   type EmoteWheelDirection,
 } from '../hud/atoms';
 import { emoteForWheelDirection, NODE_BIOMES } from '@mmo-idle/shared';
 import { cancelActiveMove, setHoldStill, setKeyboardVector } from './movement';
-import { closeTopmostOverlay } from './overlayStack';
+import { closeTopmostOverlay, togglePrimaryOverlay } from './overlayStack';
 import { ALTAR_ARC_CONFIG, getAltarArc } from '../scenes/game/runeAltar';
 import { cycleGroundBakeoff } from '../render/wangGround';
 import { paintActiveNode } from '../scenes/game/overlays';
@@ -204,19 +198,19 @@ export function attachKeyboard(scene: GameScene): () => void {
     if (matchesKey(event, 'toggle.inventory', bindings)) {
       if (dead) return;
       event.preventDefault();
-      store.set(inventoryOpenAtom, (v) => !v);
+      togglePrimaryOverlay('inventory');
       return;
     }
     if (matchesKey(event, 'toggle.map', bindings)) {
-      store.set(mapOpenAtom, (v) => !v);
+      togglePrimaryOverlay('map');
       return;
     }
     if (matchesKey(event, 'toggle.skillTree', bindings)) {
-      store.set(skillTreeOpenAtom, (v) => !v);
+      togglePrimaryOverlay('skill-tree');
       return;
     }
     if (matchesKey(event, 'toggle.quest', bindings)) {
-      store.set(questOpenAtom, (v) => !v);
+      togglePrimaryOverlay('quests');
       return;
     }
     if (matchesKey(event, 'toggle.debug', bindings)) {
@@ -229,12 +223,12 @@ export function attachKeyboard(scene: GameScene): () => void {
       return;
     }
     if (matchesKey(event, 'toggle.settings', bindings)) {
-      store.set(settingsOpenAtom, (v) => !v);
+      togglePrimaryOverlay('settings');
       return;
     }
     if (matchesKey(event, 'toggle.crafting', bindings)) {
       if (dead) return;
-      store.set(craftTabAtom, (t) => (t === 'forge' ? null : 'forge'));
+      togglePrimaryOverlay('crafting');
       return;
     }
     if (matchesKey(event, 'close.overlay', bindings)) {

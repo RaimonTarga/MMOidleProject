@@ -21,6 +21,7 @@ import {
   knownAbilitiesAtom,
 } from "../hud/atoms";
 import { BuildIcon } from "./BuildIcon";
+import { abilityIconFrame } from "./abilityIcons";
 import "./buildPanel.css";
 
 interface Props {
@@ -59,7 +60,12 @@ export function AbilitiesPanelContent() {
           const currentDef = abilityDef(current);
           return (
             <div key={slot} className="build-loadout-row">
-              <BuildIcon kind="ability" label={currentDef?.name ?? label} muted={!currentDef} />
+              <BuildIcon
+                kind="ability"
+                label={currentDef?.name ?? label}
+                muted={!currentDef}
+                iconFrame={currentDef ? abilityIconFrame(currentDef) : undefined}
+              />
               <div className="build-loadout-row__main">
                 <div className="build-field-label">{label}</div>
                 <div className="build-loadout-row__hint">{hint}</div>
@@ -126,7 +132,11 @@ export function AbilitiesPanelContent() {
                 key={recipe.id}
                 className={`build-learn-card${learned ? " build-learn-card--owned" : ""}`}
               >
-                <BuildIcon kind="ability" label={ability.name} />
+                <BuildIcon
+                  kind="ability"
+                  label={ability.name}
+                  iconFrame={abilityIconFrame(ability)}
+                />
                 <div>
                   <div className="build-learn-card__name">
                     {ability.name}{" "}

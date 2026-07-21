@@ -59,7 +59,10 @@ export function updatePermafrost(world: World, dt: number): void {
       buildSimpleBreakdown(base, damage),
     );
     entity.hasHealth.hp -= damage;
-    pushDotTickEvent(world, entity, 'frost', damage, { sourceType: 'class' });
+    pushDotTickEvent(world, entity, 'frost', damage, {
+      sourceType: 'class',
+      sourceId: effect.sourceId,
+    });
 
     if (entity.hasHealth.hp <= 0) toKill.push({ monsterId, sourceId: effect.sourceId, damage });
   }

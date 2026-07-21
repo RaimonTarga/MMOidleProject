@@ -34,8 +34,9 @@ export type CombatEvent =
   // still driven by the HP delta. `element` flavor only; non-elemental DoTs omit this event.
   // `fx` optionally requests a dedicated per-tick animation (beyond the element's
   // damage-number styling) — e.g. Cinder Lord's Conflagration burns. Omitted for
-  // plain DoT ticks, which only style the number by element.
-  | { kind: 'dot-tick'; targetId: string; targetPos: Vec2; amount: number; element: DamageElement; sourceType: DotTickSourceType; fx?: DotTickFx }
+  // plain DoT ticks, which only style the number by element. `sourceId` attributes
+  // owned ticks so a player's mechanic HUD never reacts to another player's DoT.
+  | { kind: 'dot-tick'; targetId: string; targetPos: Vec2; amount: number; element: DamageElement; sourceType: DotTickSourceType; sourceId?: string; fx?: DotTickFx }
   | { kind: 'monster-dodge'; monsterId: string; targetPos?: Vec2 }
   // Player attack whiffed (chaotic weapon family's every-Nth-hit miss). Direct
   // damage was zeroed but on-hit effects (DoT) still applied; renders a "MISS"

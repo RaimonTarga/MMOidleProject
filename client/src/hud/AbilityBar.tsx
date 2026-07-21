@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useAtomValue } from "jotai";
 import {
   ABILITY_GUARD_EFFECT_ID,
@@ -9,10 +9,14 @@ import {
 } from "@mmo-idle/shared";
 import {
   abilityFiredAtAtom,
+  abilityCooldownStartedAtAtom,
   activeBuffsAtom,
   equippedAbilitiesAtom,
-  notifyAbilityFired,
 } from "./atoms";
+import { UIIcon } from "../ui/UIIcon";
+import { abilityIconFrame } from "../ui/abilityIcons";
+import { useIsMobile } from "./useIsMobile";
+import { HudDock } from "./primitives";
 import "./hud.css";
 
 const ICON_SIZE = 46;
@@ -39,15 +43,18 @@ interface SlotStatus {
   active: boolean;
 }
 
+type DesktopAbilityState = "cooling" | "active" | "triggered" | "ready";
+
 function computeStatus(
+  cooldownStartedAt: number,
   firedAt: number,
   cooldownMs: number,
   now: number,
   active: boolean,
 ): SlotStatus {
   let remainingFrac = 0;
-  if (!active && firedAt > 0 && cooldownMs > 0) {
-    const elapsed = now - firedAt;
+  if (!active && cooldownStartedAt > 0 && cooldownMs > 0) {
+    const elapsed = now - cooldownStartedAt;
     if (elapsed < cooldownMs) remainingFrac = 1 - elapsed / cooldownMs;
   }
   const justFired = firedAt > 0 && now - firedAt < PULSE_MS;
@@ -149,9 +156,89 @@ function AbilityIcon({ ability, status }: { ability: AbilityDef; status: SlotSta
   );
 }
 
+interface DesktopAbilitySlotProps {
+  ability: AbilityDef;
+  status: SlotStatus;
+  /** Reserved for real activation bindings; omitted while abilities remain automatic. */
+  keyHint?: string;
+}
+
+function DesktopAbilitySlot({
+  ability,
+  status,
+  keyHint,
+}: DesktopAbilitySlotProps) {
+  const meta = SLOT_META[ability.slot];
+  const iconFrame = abilityIconFrame(ability);
+  const remainingPct = Math.max(0, Math.min(100, status.remainingFrac * 100));
+  const remainingSeconds = Math.ceil((status.remainingFrac * ability.cooldownMs) / 1000);
+  const cooling = remainingPct > 0;
+  const state: DesktopAbilityState = status.justFired
+    ? "triggered"
+    : status.active
+      ? "active"
+      : cooling
+        ? "cooling"
+        : "ready";
+  const stateLabel = state === "cooling"
+    ? "COOLING"
+    : state === "triggered"
+      ? "FIRED"
+      : state === "active"
+        ? "ACTIVE"
+        : null;
+  const tooltip = `${meta.label}: ${ability.name} — ${
+    state === "cooling" ? `cooling, ${remainingSeconds}s remaining` : state
+  }`;
+  return (
+    <div
+      className={`combat-ability-slot combat-ability-slot--${ability.slot} combat-ability-slot--${state}`}
+      data-ability-icon={ability.icon ?? ability.id}
+      data-ability-state={state}
+      role="listitem"
+      aria-label={tooltip}
+      title={tooltip}
+    >
+      <div className="combat-ability-slot__icon">
+        {/* The glyph remains as a fallback while the atlas loads or for abilities
+            that do not have an icon frame yet. */}
+        <span className="combat-ability-slot__glyph" aria-hidden>{meta.glyph}</span>
+        <UIIcon
+          frameName={iconFrame}
+          size={44}
+          className="combat-ability-slot__art"
+        />
+        {cooling && (
+          <div
+            className="combat-ability-slot__cooldown-sweep"
+            style={{
+              background: `conic-gradient(from -90deg, rgba(0,0,0,0.74) ${remainingPct}%, transparent ${remainingPct}%)`,
+            }}
+          />
+        )}
+        {cooling && <span className="combat-ability-slot__cooldown-time">{remainingSeconds}</span>}
+        {stateLabel && (
+          <span className="combat-ability-slot__state" aria-hidden="true">
+            {stateLabel}
+          </span>
+        )}
+        {keyHint && (
+          <span className="combat-ability-slot__key-hint" aria-hidden="true">
+            {keyHint}
+          </span>
+        )}
+      </div>
+
+      <div className="combat-ability-slot__name">{ability.name}</div>
+    </div>
+  );
+}
+
 export function AbilityBar() {
+  const isMobile = useIsMobile();
   const equipped = useAtomValue(equippedAbilitiesAtom);
   const firedAt = useAtomValue(abilityFiredAtAtom);
+  const cooldownStartedAt = useAtomValue(abilityCooldownStartedAtAtom);
   const buffs = useAtomValue(activeBuffsAtom);
 
   // Tick a wall clock so cooldown sweeps / flashes animate. The bar only mounts
@@ -160,14 +247,6 @@ export function AbilityBar() {
   const guardActive = buffs.some(
     (b) => b.id === ABILITY_GUARD_EFFECT_ID || b.id === ABILITY_SECOND_WIND_EFFECT_ID,
   );
-
-  // Rising edge of the Guard buff = the Guard fired → stamp it so the cooldown
-  // sweep can run once the buff drops (Guard carries no FX tag of its own).
-  const prevGuardActive = useRef(false);
-  useEffect(() => {
-    if (guardActive && !prevGuardActive.current) notifyAbilityFired("guard");
-    prevGuardActive.current = guardActive;
-  }, [guardActive]);
 
   const technique = abilityDef(equipped.technique);
   const guard = abilityDef(equipped.guard);
@@ -188,11 +267,17 @@ export function AbilityBar() {
     const active = slot === "guard" && guardActive;
     slots.push({
       ability,
-      status: computeStatus(firedAt[slot], ability.cooldownMs, now, active),
+      status: computeStatus(
+        cooldownStartedAt[slot],
+        firedAt[slot],
+        ability.cooldownMs,
+        now,
+        active,
+      ),
     });
   }
 
-  return (
+  if (isMobile) return (
     <div
       className="ability-bar-root"
       style={{
@@ -211,5 +296,19 @@ export function AbilityBar() {
         <AbilityIcon key={ability.id} ability={ability} status={status} />
       ))}
     </div>
+  );
+
+  return (
+    <HudDock
+      className="desktop-hud desktop-combat-abilities"
+      role="group"
+      aria-label="Automatic abilities"
+    >
+      <div className="desktop-combat-abilities__layout" role="list">
+        {slots.map(({ ability, status }) => (
+          <DesktopAbilitySlot key={ability.id} ability={ability} status={status} />
+        ))}
+      </div>
+    </HudDock>
   );
 }

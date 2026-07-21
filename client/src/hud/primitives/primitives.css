@@ -1,0 +1,113 @@
+@import "./tokens.css";
+
+.disclosure-header {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  padding-right: 0;
+  padding-left: 0;
+  background: transparent;
+  border-top: 0;
+  border-right: 0;
+  border-left: 0;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.disclosure-header__summary {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 5px;
+  color: var(--hud-text-muted);
+  font-size: 9px;
+  font-weight: normal;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.disclosure-header__summary > span:first-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.disclosure-header__chevron {
+  font-size: 9px;
+}
+
+/* Desktop frame changes require an explicit owner and the breakpoint.
+   Shared renderers in MobileHUD keep their existing presentation. */
+@media (min-width: 1101px) {
+  .desktop-hud .hud-panel {
+    padding: 10px var(--hud-space-3);
+    background: var(--hud-material-panel);
+    border-top-color: var(--hud-edge-light);
+    border-left-color: var(--hud-edge-light);
+    border-right-color: var(--hud-edge-dark);
+    border-bottom-color: var(--hud-edge-dark);
+  }
+
+  .desktop-hud .disclosure-header {
+    align-items: flex-start;
+    transition: color var(--hud-motion-fast) ease;
+  }
+
+  .desktop-hud .disclosure-header__title {
+    flex: 0 1 auto;
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .desktop-hud .disclosure-header__summary {
+    flex: 1 1 auto;
+    min-width: 0;
+    align-items: flex-start;
+    justify-content: flex-end;
+    text-align: right;
+  }
+
+  .desktop-hud .disclosure-header__summary > span:first-child {
+    overflow: visible;
+    text-overflow: clip;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  .desktop-hud .disclosure-header__chevron {
+    flex: 0 0 auto;
+    padding-top: 1px;
+  }
+
+  .desktop-hud .disclosure-header:hover {
+    color: var(--hud-primary-strong);
+  }
+
+  .desktop-hud .disclosure-header:hover .disclosure-header__summary {
+    color: var(--hud-text);
+  }
+
+  .desktop-hud .disclosure-header:focus-visible {
+    outline: var(--hud-focus-width) solid var(--hud-focus-color);
+    outline-offset: var(--hud-focus-offset);
+  }
+
+  .desktop-hud.hud-dock {
+    padding: 5px 7px 6px;
+    background: linear-gradient(
+      180deg,
+      var(--hud-material-dock-top),
+      var(--hud-material-dock-bottom)
+    );
+    border-top: 1px solid var(--hud-edge-strong);
+    border-left: 2px solid var(--hud-edge-medium);
+    border-right: 1px solid var(--hud-edge-dark);
+    border-bottom: 2px solid var(--hud-edge-dark);
+    box-shadow:
+      0 3px 7px rgba(0, 0, 0, 0.5),
+      inset 0 0 0 1px rgba(10, 8, 5, 0.62),
+      0 0 10px var(--hud-energy-dormant);
+  }
+}

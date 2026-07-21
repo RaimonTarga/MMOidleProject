@@ -140,7 +140,7 @@ function MobileHUDContent() {
 
         {/* Compact archetype mechanic — shares the desktop renderer */}
         <div className="mhud-mech">
-          <ArchetypeMechanics />
+          <ArchetypeMechanics compact />
         </div>
       </div>
 
