@@ -11857,6 +11857,182 @@
       "candidateFiles": [
         "candidate-2.png"
       ]
+    },
+    {
+      "at": "2026-07-21T18:54:42.136Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "warmaul",
+      "requestHash": "df81fb94f99d896e7bacee42",
+      "usd": 0.00650464039378696,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T18:55:05.889Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "ruinous-axe",
+      "requestHash": "8b57a2b2c3915e548cf9d3d4",
+      "usd": 0.0070535489453209775,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T18:55:33.574Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "ruinous-axe",
+      "requestHash": "8b57a2b2c3915e548cf9d3d4",
+      "usd": 0.007603138075934516,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T18:56:03.072Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "ruinous-axe",
+      "requestHash": "8b57a2b2c3915e548cf9d3d4",
+      "usd": 0.00776216287083096,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T18:56:30.900Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "cataclysm-axe",
+      "requestHash": "f3d28f2be5cbf372331007a8",
+      "usd": 0.007091373046239217,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T18:56:47.920Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "cataclysm-axe",
+      "requestHash": "f3d28f2be5cbf372331007a8",
+      "usd": 0.006435849481158787,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T18:57:09.286Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "cataclysm-axe",
+      "requestHash": "f3d28f2be5cbf372331007a8",
+      "usd": 0.007042332251866659,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T18:57:35.546Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "solar-falchion",
+      "requestHash": "8f9eadba0c39666da9ab18b3",
+      "usd": 0.0073273173703087705,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T18:57:53.673Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "solar-falchion",
+      "requestHash": "8f9eadba0c39666da9ab18b3",
+      "usd": 0.006594941271675958,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T18:58:05.868Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "solar-falchion",
+      "requestHash": "8f9eadba0c39666da9ab18b3",
+      "usd": 0.005986068858040703,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T18:58:20.055Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "zenith-falchion",
+      "requestHash": "3e6721bd7d099d22be83c945",
+      "usd": 0.006162877983517117,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T18:58:36.410Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "zenith-falchion",
+      "requestHash": "3e6721bd7d099d22be83c945",
+      "usd": 0.006360029617945353,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T18:59:01.276Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "zenith-falchion",
+      "requestHash": "3e6721bd7d099d22be83c945",
+      "usd": 0.007503556887308757,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T18:59:23.226Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "glacial-rimebrand",
+      "requestHash": "4ee3f20dbdc04788f22cc634",
+      "usd": 0.007226193745930989,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T18:59:54.329Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "glacial-rimebrand",
+      "requestHash": "4ee3f20dbdc04788f22cc634",
+      "usd": 0.007179947005377876,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T19:00:11.301Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "glacial-rimebrand",
+      "requestHash": "4ee3f20dbdc04788f22cc634",
+      "usd": 0.00665722754266527,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
     }
   ]
 }
