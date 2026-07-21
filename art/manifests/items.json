@@ -1,7 +1,7 @@
 {
   "category": "items",
-  "endpoint": "bitforge",
-  "styleRef": "style/icons.png",
+  "endpoint": "pixflux",
+  "styleRef": null,
   "noBackground": true,
   "candidates": 3,
   "entries": [
@@ -1303,7 +1303,7 @@
         "textGuidanceScale": 11,
         "generationScale": 2
       },
-      "status": "pending",
+      "status": "accepted",
       "sources": [
         "item:iron-broadsword"
       ],
@@ -1327,7 +1327,7 @@
         "textGuidanceScale": 11,
         "generationScale": 2
       },
-      "status": "pending",
+      "status": "accepted",
       "sources": [
         "item:flash-rapier"
       ],
@@ -1351,7 +1351,7 @@
         "textGuidanceScale": 11,
         "generationScale": 2
       },
-      "status": "pending",
+      "status": "accepted",
       "sources": [
         "item:heavy-hammer"
       ],
@@ -1375,7 +1375,7 @@
         "textGuidanceScale": 11,
         "generationScale": 2
       },
-      "status": "pending",
+      "status": "accepted",
       "sources": [
         "item:chaotic-axe"
       ],
@@ -1399,7 +1399,7 @@
         "textGuidanceScale": 11,
         "generationScale": 2
       },
-      "status": "pending",
+      "status": "accepted",
       "sources": [
         "item:ashbrand-blade"
       ],
@@ -1423,7 +1423,7 @@
         "textGuidanceScale": 11,
         "generationScale": 2
       },
-      "status": "pending",
+      "status": "accepted",
       "sources": [
         "item:swamp-mirebrand"
       ],
@@ -1447,7 +1447,7 @@
         "textGuidanceScale": 11,
         "generationScale": 2
       },
-      "status": "pending",
+      "status": "accepted",
       "sources": [
         "item:swamp-blightbrand"
       ],
@@ -1471,7 +1471,7 @@
         "textGuidanceScale": 11,
         "generationScale": 2
       },
-      "status": "pending",
+      "status": "accepted",
       "sources": [
         "item:tundra-rimebrand"
       ],
@@ -1495,7 +1495,7 @@
         "textGuidanceScale": 11,
         "generationScale": 2
       },
-      "status": "pending",
+      "status": "accepted",
       "sources": [
         "item:volcanic-blightbrand"
       ],
@@ -1519,11 +1519,563 @@
         "textGuidanceScale": 11,
         "generationScale": 2
       },
-      "status": "pending",
+      "status": "accepted",
       "sources": [
         "item:desert-sunsteel-cross"
       ],
       "notes": "Batch 0 style-lock probe (weapons). pixflux, no anchor. Flip draft->pending to arm generation; --dry-run first."
+    },
+    {
+      "id": "knight-steelsword",
+      "out": "items/weapons/knight-steelsword.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a knightly steel sword, the same straight double-edged one-handed sword shape but finer and better kept, polished blue-white steel blade with a crisp edge, a neat gold-trimmed crossguard and dark leather grip with a gold pommel, disciplined and proven, no magic and no glow, centered and filling about 85 percent of the frame on a slight diagonal, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of polished steel blue-white dark leather and gold, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, dagger, rapier, curved blade, axe, hammer, fire, flame, frost, ice, green venom, glowing runes, rusty ragged blade",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2,
+        "initImage": "items/weapons/iron-broadsword.png",
+        "initImageStrength": 200
+      },
+      "status": "pending",
+      "sources": [
+        "item:knight-steelsword"
+      ],
+      "notes": "Batch 1. img2img seeded from accepted root iron-broadsword (strength 200) so the line keeps its silhouette while the prompt drives tier escalation."
+    },
+    {
+      "id": "gale-needle",
+      "out": "items/weapons/gale-needle.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a refined gale needle rapier, the same very slender straight thrusting blade but sharper and finer with a machined needle point, pale wind-silver steel with a swept guard, two faint thin wind streaks trailing the blade, centered and filling about 85 percent of the frame on a slight diagonal, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of pale wind silver soft sky blue and muted green, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, broadsword, wide blade, heavy blade, dagger, curved blade, axe, hammer, fire, frost, green venom, thick blade",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2,
+        "initImage": "items/weapons/flash-rapier.png",
+        "initImageStrength": 200
+      },
+      "status": "pending",
+      "sources": [
+        "item:gale-needle"
+      ],
+      "notes": "Batch 1. img2img seeded from accepted root flash-rapier (strength 200) so the line keeps its silhouette while the prompt drives tier escalation."
+    },
+    {
+      "id": "thorn-needle",
+      "out": "items/weapons/thorn-needle.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a barbed thorn needle rapier, the same slender straight thrusting blade but lined with small backward-facing thorn barbs along its length, dark bramble-iron with a thorny guard and a faint dark-red bleed at the tip, centered and filling about 85 percent of the frame on a slight diagonal, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of dark bramble iron forest green and deep thorn red, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, broadsword, wide blade, heavy blade, axe, hammer, smooth clean edge, fire, frost, glow",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2,
+        "initImage": "items/weapons/flash-rapier.png",
+        "initImageStrength": 200
+      },
+      "status": "pending",
+      "sources": [
+        "item:thorn-needle"
+      ],
+      "notes": "Batch 1. img2img seeded from accepted root flash-rapier (strength 200) so the line keeps its silhouette while the prompt drives tier escalation."
+    },
+    {
+      "id": "quake-hammer",
+      "out": "items/weapons/quake-hammer.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a quake war hammer, the same massive blunt two-handed hammer shape but heavier and sturdier, a thicker banded iron head with deep impact fractures radiating across its face on a reinforced haft, centered and filling about 85 percent of the frame on a slight diagonal, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of dark iron grey stone grey and weathered brown, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, sword, blade, dagger, axe, curved edge, small light weapon, fire, frost, green venom, glow",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2,
+        "initImage": "items/weapons/heavy-hammer.png",
+        "initImageStrength": 200
+      },
+      "status": "pending",
+      "sources": [
+        "item:quake-hammer"
+      ],
+      "notes": "Batch 1. img2img seeded from accepted root heavy-hammer (strength 200) so the line keeps its silhouette while the prompt drives tier escalation."
+    },
+    {
+      "id": "avalanche-maul",
+      "out": "items/weapons/avalanche-maul.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of an avalanche maul, the same massive two-handed blunt hammer shape but enormous and slab-like, a huge rough granite block head bound in iron on a thick haft, loose scree chips falling from its face, centered and filling about 85 percent of the frame on a slight diagonal, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of granite grey dark iron and weathered brown, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, sword, blade, dagger, axe, curved edge, small light weapon, fire, frost, glow",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2,
+        "initImage": "items/weapons/heavy-hammer.png",
+        "initImageStrength": 200
+      },
+      "status": "pending",
+      "sources": [
+        "item:mountain-avalanche-maul"
+      ],
+      "notes": "Batch 1. img2img seeded from accepted root heavy-hammer (strength 200) so the line keeps its silhouette while the prompt drives tier escalation."
+    },
+    {
+      "id": "earthsunder-maul",
+      "out": "items/weapons/earthsunder-maul.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of an earthsunder maul, the same colossal two-handed blunt hammer shape, an immense fractured stone-and-iron head split by deep dark fault lines, ancient and grievous, faint dust shed from the cracks, centered and filling about 85 percent of the frame on a slight diagonal, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of dark granite blackened iron and dull bronze, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, sword, blade, dagger, axe, curved edge, small light weapon, bright fire, frost, green venom",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2,
+        "initImage": "items/weapons/heavy-hammer.png",
+        "initImageStrength": 200
+      },
+      "status": "pending",
+      "sources": [
+        "item:mountain-earthsunder-maul"
+      ],
+      "notes": "Batch 1. img2img seeded from accepted root heavy-hammer (strength 200) so the line keeps its silhouette while the prompt drives tier escalation."
+    },
+    {
+      "id": "warmaul",
+      "out": "items/weapons/warmaul.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a soldierly warmaul, the same two-handed blunt hammer shape but leaner and better balanced, a compact squared iron head with clean military banding on a slim haft, disciplined and quick, centered and filling about 85 percent of the frame on a slight diagonal, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of clean iron grey gunmetal and dark leather brown, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, sword, blade, dagger, axe, curved edge, huge bulky head, fire, frost, glow",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2,
+        "initImage": "items/weapons/heavy-hammer.png",
+        "initImageStrength": 200
+      },
+      "status": "pending",
+      "sources": [
+        "item:mountain-warmaul"
+      ],
+      "notes": "Batch 1. img2img seeded from accepted root heavy-hammer (strength 200) so the line keeps its silhouette while the prompt drives tier escalation."
+    },
+    {
+      "id": "ruinous-axe",
+      "out": "items/weapons/ruinous-axe.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a ruinous battle axe, the same top-heavy single crescent axe head with one chipped notch, but bigger and meaner and slightly better balanced, heavier dark iron with more nicks along the edge, centered and filling about 85 percent of the frame on a slight diagonal, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of dark iron deep red-brown and cave grey, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, sword, blade, dagger, rapier, hammer, double-bladed axe, clean unbroken smooth edge, fire, frost, glow",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2,
+        "initImage": "items/weapons/chaotic-axe.png",
+        "initImageStrength": 200
+      },
+      "status": "pending",
+      "sources": [
+        "item:ruinous-axe"
+      ],
+      "notes": "Batch 1. img2img seeded from accepted root chaotic-axe (strength 200) so the line keeps its silhouette while the prompt drives tier escalation."
+    },
+    {
+      "id": "cataclysm-axe",
+      "out": "items/weapons/cataclysm-axe.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a cataclysm battle axe, the same top-heavy single crescent axe head with one chipped notch, now huge and brutal with a jagged broken edge on a heavy iron-bound haft, faint dark cracks through the head, centered and filling about 85 percent of the frame on a slight diagonal, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of blackened iron deep red-brown and cave grey, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, sword, blade, dagger, rapier, hammer, double-bladed axe, clean unbroken smooth edge, bright fire, frost, glow",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2,
+        "initImage": "items/weapons/chaotic-axe.png",
+        "initImageStrength": 200
+      },
+      "status": "pending",
+      "sources": [
+        "item:cave-cataclysm-axe"
+      ],
+      "notes": "Batch 1. img2img seeded from accepted root chaotic-axe (strength 200) so the line keeps its silhouette while the prompt drives tier escalation."
+    },
+    {
+      "id": "solar-falchion",
+      "out": "items/weapons/solar-falchion.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a solar falchion, the same single-edged curved chopping sword shape but grander, brighter polished sun-gold steel with a radiating sun disc worked into the guard and a warm gleam held along the curved edge, centered and filling about 85 percent of the frame on a slight diagonal, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of bright sun gold warm sand and pale steel, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, straight double-edged sword, dagger, rapier, cross shape, crucifix, plus sign, religious cross, axe, hammer, fire, frost, green venom",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2,
+        "initImage": "items/weapons/sunsteel-falchion.png",
+        "initImageStrength": 200
+      },
+      "status": "pending",
+      "sources": [
+        "item:desert-solar-cross"
+      ],
+      "notes": "Batch 1. img2img seeded from accepted root sunsteel-falchion (strength 200) so the line keeps its silhouette while the prompt drives tier escalation."
+    },
+    {
+      "id": "zenith-falchion",
+      "out": "items/weapons/zenith-falchion.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a zenith falchion, the same single-edged curved chopping sword shape at its most exalted, blazing white-gold sun-steel with a full sun corona worked into the guard and light gathered along the curved edge, centered and filling about 85 percent of the frame on a slight diagonal, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of white gold brilliant sand and pale steel, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, straight double-edged sword, dagger, rapier, cross shape, crucifix, plus sign, religious cross, axe, hammer, frost, green venom",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2,
+        "initImage": "items/weapons/sunsteel-falchion.png",
+        "initImageStrength": 200
+      },
+      "status": "pending",
+      "sources": [
+        "item:desert-zenith-cross"
+      ],
+      "notes": "Batch 1. img2img seeded from accepted root sunsteel-falchion (strength 200) so the line keeps its silhouette while the prompt drives tier escalation."
+    },
+    {
+      "id": "glacial-rimebrand",
+      "out": "items/weapons/glacial-rimebrand.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a glacial rimebrand sword, the same broad straight ice-sheathed sword shape but larger and deeper frozen, thick blue glacial ice encasing the steel with long frost-cracks and hanging icicles, heavy cold vapour, centered and filling about 85 percent of the frame on a slight diagonal, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of deep glacial blue frost white and cold steel grey, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, fire, flame, ember, orange, red, heat, warm colors, thin dagger, poison green, glow bloom",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2,
+        "initImage": "items/weapons/rimebrand.png",
+        "initImageStrength": 200
+      },
+      "status": "pending",
+      "sources": [
+        "item:tundra-glacial-rimebrand"
+      ],
+      "notes": "Batch 1. img2img seeded from accepted root rimebrand (strength 200) so the line keeps its silhouette while the prompt drives tier escalation."
+    },
+    {
+      "id": "primordial-club",
+      "out": "items/weapons/primordial-club.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a crude primordial wooden club, a simple heavy tapered ironwood cudgel with a knotted thicker striking end and a bare narrow grip, rough bark texture and a few nicks, utterly plain and primitive, centered and filling about 85 percent of the frame on a slight diagonal, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of warm ironwood brown tan and muted bark grey, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, sword, blade, metal, dagger, axe, hammer head, mace spikes, fire, frost, green venom, glow, ornate",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "status": "pending",
+      "sources": [
+        "item:primordial-club"
+      ],
+      "notes": "Batch 1. Flat generation - new line root or distinct object, no accepted predecessor to seed from."
+    },
+    {
+      "id": "stinger-rapier",
+      "out": "items/weapons/stinger-rapier.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a jungle stinger rapier, a slender straight thrusting blade shaped like an insect stinger with a narrow tapered point, dark chitin-green guard and a vine-wrapped grip, a slick sheen of pale venom on the blade, centered and filling about 85 percent of the frame on a slight diagonal, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of vivid jungle green dark chitin and pale venom yellow, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, broadsword, wide blade, heavy blade, axe, hammer, fire, frost, ice, blue, thick blade",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "status": "pending",
+      "sources": [
+        "item:jungle-stinger-rapier"
+      ],
+      "notes": "Batch 1. Flat generation - new line root or distinct object, no accepted predecessor to seed from."
+    },
+    {
+      "id": "venomthorn-rapier",
+      "out": "items/weapons/venomthorn-rapier.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a venomthorn rapier, a slender straight thrusting blade lined with small thorn barbs, dark chitin-green guard and a vine-wrapped grip, thick thorn-sap venom running down the blade with a few dripping droplets, centered and filling about 85 percent of the frame on a slight diagonal, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of deep jungle green dark chitin and toxic yellow-green, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, broadsword, wide blade, heavy blade, axe, hammer, fire, frost, ice, blue, smooth clean blade",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "status": "pending",
+      "sources": [
+        "item:jungle-venomthorn-rapier"
+      ],
+      "notes": "Batch 1. Flat generation - new line root or distinct object, no accepted predecessor to seed from."
+    },
+    {
+      "id": "deathfang-rapier",
+      "out": "items/weapons/deathfang-rapier.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a deathfang rapier, a slender straight thrusting blade shaped like a long predator fang, blackened chitin guard and a sinew-wrapped grip, glistening with a dark perfected venom and a faint haze, centered and filling about 85 percent of the frame on a slight diagonal, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of blackened chitin deep jungle green and sickly yellow-green, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, broadsword, wide blade, heavy blade, axe, hammer, fire, frost, ice, blue, dull plain blade",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "status": "pending",
+      "sources": [
+        "item:jungle-deathfang-rapier"
+      ],
+      "notes": "Batch 1. Flat generation - new line root or distinct object, no accepted predecessor to seed from."
+    },
+    {
+      "id": "permafrost-maul",
+      "out": "items/weapons/permafrost-maul.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a permafrost maul, a massive two-handed blunt hammer with a great block of blue-white permafrost ice bound in iron as its head, mounted on a thick frost-rimed haft, cold vapour drifting from the head, centered and filling about 85 percent of the frame on a slight diagonal, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of pale ice blue frost white and cold iron grey, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, sword, blade, dagger, axe, curved edge, fire, flame, ember, orange, warm colors, green venom",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "status": "pending",
+      "sources": [
+        "item:tundra-permafrost-maul"
+      ],
+      "notes": "Batch 1. Flat generation - new line root or distinct object, no accepted predecessor to seed from."
+    },
+    {
+      "id": "glacial-tyrant-maul",
+      "out": "items/weapons/glacial-tyrant-maul.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a glacial tyrant maul, an enormous two-handed blunt hammer with a jagged glacier-block head of deep blue ice bound in blackened iron, long frost spikes jutting from its face, heavy freezing vapour, centered and filling about 85 percent of the frame on a slight diagonal, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of deep glacial blue frost white and blackened iron, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, sword, blade, dagger, axe, curved edge, fire, flame, ember, orange, warm colors, green venom",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "status": "pending",
+      "sources": [
+        "item:tundra-glacial-tyrant-maul"
+      ],
+      "notes": "Batch 1. Flat generation - new line root or distinct object, no accepted predecessor to seed from."
+    },
+    {
+      "id": "cinderlash",
+      "out": "items/weapons/cinderlash.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a cinderlash, a coiled whip of braided glowing ember cord with a dark leather-wrapped handle, the lash curling in an S shape with molten orange light between the braids and a few sparks, centered and filling about 85 percent of the frame on a slight diagonal, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of dark charcoal ember orange and hot yellow, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, sword, blade, dagger, axe, hammer, spear, straight rigid weapon, plain rope, frost, ice, blue, green venom",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "status": "pending",
+      "sources": [
+        "item:volcanic-cinderlash"
+      ],
+      "notes": "Batch 1. Flat generation - new line root or distinct object, no accepted predecessor to seed from."
+    },
+    {
+      "id": "eruption-lash",
+      "out": "items/weapons/eruption-lash.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of an eruption lash, a coiled whip of braided molten ember cord with a blackened iron handle, the lash curling in an S shape and splitting into bright erupting molten light with flying sparks, centered and filling about 85 percent of the frame on a slight diagonal, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of blackened iron brilliant molten orange and white-hot yellow, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, sword, blade, dagger, axe, hammer, spear, straight rigid weapon, plain rope, frost, ice, blue, green venom",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "status": "pending",
+      "sources": [
+        "item:volcanic-eruption-lash"
+      ],
+      "notes": "Batch 1. Flat generation - new line root or distinct object, no accepted predecessor to seed from."
+    },
+    {
+      "id": "plague-axe",
+      "out": "items/weapons/plague-axe.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a plague axe, a heavy single crescent axe head of pitted corroded iron mottled with necrotic rot, mounted on a bone-wrapped haft, a sickly purple-green miasma clinging to the blade, centered and filling about 85 percent of the frame on a slight diagonal, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of bone white necrotic purple and corroded grey-green, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, sword, blade, dagger, rapier, hammer, clean polished edge, fire, flame, frost, ice, blue, bright gold",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "status": "pending",
+      "sources": [
+        "item:graveyard-plague-axe"
+      ],
+      "notes": "Batch 1. Flat generation - new line root or distinct object, no accepted predecessor to seed from."
+    },
+    {
+      "id": "abyssal-axe",
+      "out": "items/weapons/abyssal-axe.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of an abyssal axe, a heavy single crescent axe head of dark pressure-forged deep-sea iron with a keen edge, mounted on a haft wound in dark cord, faint cold abyssal blue-green light along the edge, centered and filling about 85 percent of the frame on a slight diagonal, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of deep abyss blue-green dark iron and pale bioluminescent teal, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, sword, blade, dagger, rapier, hammer, fire, flame, ember, orange, warm colors, bright gold, green venom drip",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "status": "pending",
+      "sources": [
+        "item:trench-abyssal-axe"
+      ],
+      "notes": "Batch 1. Flat generation - new line root or distinct object, no accepted predecessor to seed from."
     }
   ]
 }

@@ -135,16 +135,27 @@ Icon coherence is two separate problems, each with its own tool. img2img belongs
 one of them.
 
 **Horizontal — the whole set reads as one game's icons** (line weight, shading, framing,
-palette). Tool: a shared **style anchor** in `art/style/` + `styleStrength`, plus an
-optional per-biome `colorPalette`. Always-on for every entry; **not img2img**. Makes
-everything cohere without forcing different objects to resemble each other.
+palette). Tools: **locked `params`** (outline/shading/detail/textGuidanceScale/
+generationScale), the **standard prompt template** below, and **per-biome palette pinning
+via `params.colorImage`**. Always-on for every entry; **not img2img**. Makes everything
+cohere without forcing different objects to resemble each other.
+
+> ⚠️ **Do NOT use bitforge or `styleRef` style-image anchoring.** `art/style/README.md`
+> records the Phase 0 verdict: bitforge was 6/6 incoherent at 64×64 with both dirty and
+> clean style anchors and is **dead for this project** — everything generates on
+> **pixflux**. The anchor PNGs in `art/style/` are reference images for prompt authors and
+> reviewers, **not API inputs**. Cross-batch consistency comes from locked params + prompt
+> template + `colorImage` palettes, not from a style anchor.
 
 **Vertical — one item line reads as "the same object, escalated" across tiers** (e.g.
 Poison Dagger → Venom Knife → Plague Fang; Heavy Hammer → Quake Hammer → Avalanche Maul →
 Earthsunder Maul). Tool: **img2img evolution chain** — each tier's `initImage` is its
 accepted predecessor's art (the technique the `players` category already uses). This is the
-one place img2img is worth it; cross-item *families* use the style anchor instead, because
-img2img across genuinely different objects fights the object change.
+one place img2img is worth it; cross-item *families* rely on the horizontal tools above
+instead, because img2img across genuinely different objects fights the object change.
+`art/style/README.md` independently endorses img2img for exactly this purpose: when a
+subject needs a silhouette far from pixflux's text prior, seed from art that already has
+the target shape and let the prompt drive surface detail rather than shape.
 
 Rules for the vertical chains:
 
@@ -156,8 +167,10 @@ Rules for the vertical chains:
   category rule that links stay `draft` until the predecessor lands).
 
 **Line roots** are the T1 (earliest-tier) item of each biome+slot line. They generate first,
-**without** img2img, against the style anchor; once accepted, each root both validates the
-horizontal family and becomes the img2img seed for its line's higher tiers.
+**without** img2img, against the locked params + template; once accepted, each root both
+validates the horizontal family and becomes the img2img seed for its line's higher tiers.
+**A line's higher tiers cannot generate in the same batch as their root** — img2img needs
+the predecessor's *accepted* art on disk, so chains span batches.
 
 ## Batch sequencing
 

@@ -10977,6 +10977,732 @@
       "candidateFiles": [
         "candidate-3.png"
       ]
+    },
+    {
+      "at": "2026-07-21T17:53:53.784Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "knight-steelsword",
+      "requestHash": "3e893822026b9d93f93fa262",
+      "usd": 0.006616434892018636,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T17:54:39.446Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "knight-steelsword",
+      "requestHash": "3e893822026b9d93f93fa262",
+      "usd": 0.007293612374199761,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T17:55:30.759Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "knight-steelsword",
+      "requestHash": "3e893822026b9d93f93fa262",
+      "usd": 0.0071447535885704894,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T17:56:01.167Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "gale-needle",
+      "requestHash": "4f41091aada41756db53420d",
+      "usd": 0.007277522246042887,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T17:56:29.733Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "gale-needle",
+      "requestHash": "4f41091aada41756db53420d",
+      "usd": 0.007379310025109186,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T17:57:09.208Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "gale-needle",
+      "requestHash": "4f41091aada41756db53420d",
+      "usd": 0.006594236903720432,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T17:57:39.614Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "thorn-needle",
+      "requestHash": "ce9263fc778fbe67bad72944",
+      "usd": 0.007811833646562365,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T17:57:58.200Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "thorn-needle",
+      "requestHash": "ce9263fc778fbe67bad72944",
+      "usd": 0.00655295205116272,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T17:58:18.338Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "thorn-needle",
+      "requestHash": "ce9263fc778fbe67bad72944",
+      "usd": 0.006628995762930976,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T17:58:56.345Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "quake-hammer",
+      "requestHash": "98d19e535d46b221736b465a",
+      "usd": 0.006527132034301758,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T17:59:10.963Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "quake-hammer",
+      "requestHash": "98d19e535d46b221736b465a",
+      "usd": 0.0061824932098388675,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T17:59:33.939Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "quake-hammer",
+      "requestHash": "98d19e535d46b221736b465a",
+      "usd": 0.007451031366984049,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T17:59:48.589Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "avalanche-maul",
+      "requestHash": "2c4d5986fb8687f06220cc60",
+      "usd": 0.00618132652176751,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T18:00:31.619Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "avalanche-maul",
+      "requestHash": "2c4d5986fb8687f06220cc60",
+      "usd": 0.007466648552152845,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T18:01:02.674Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "avalanche-maul",
+      "requestHash": "2c4d5986fb8687f06220cc60",
+      "usd": 0.007775507317648994,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T18:01:26.305Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "earthsunder-maul",
+      "requestHash": "ac50d1247bb08ec23599b415",
+      "usd": 0.006860701428519355,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T18:02:12.705Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "earthsunder-maul",
+      "requestHash": "ac50d1247bb08ec23599b415",
+      "usd": 0.00804404592514038,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T18:02:48.664Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "earthsunder-maul",
+      "requestHash": "ac50d1247bb08ec23599b415",
+      "usd": 0.006969785398907132,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T18:03:18.569Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "warmaul",
+      "requestHash": "14de80ab453b1019f7744d59",
+      "usd": 0.006977493047714233,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T18:03:40.447Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "warmaul",
+      "requestHash": "14de80ab453b1019f7744d59",
+      "usd": 0.006410859452353584,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T18:03:56.899Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "warmaul",
+      "requestHash": "14de80ab453b1019f7744d59",
+      "usd": 0.006380224121941461,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T18:04:20.343Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "ruinous-axe",
+      "requestHash": "f86f5c00cb8996f32a49994d",
+      "usd": 0.006763014978832669,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T18:04:49.499Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "ruinous-axe",
+      "requestHash": "f86f5c00cb8996f32a49994d",
+      "usd": 0.0075648682912190755,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T18:05:52.191Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "ruinous-axe",
+      "requestHash": "f86f5c00cb8996f32a49994d",
+      "usd": 0.007755884673860338,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T18:06:16.871Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "cataclysm-axe",
+      "requestHash": "8f80b02dd770a0a49803bda4",
+      "usd": 0.007370974328782824,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T18:06:39.810Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "cataclysm-axe",
+      "requestHash": "8f80b02dd770a0a49803bda4",
+      "usd": 0.006848599804772272,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T18:07:00.243Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "cataclysm-axe",
+      "requestHash": "8f80b02dd770a0a49803bda4",
+      "usd": 0.006945677174462213,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T18:07:24.036Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "solar-falchion",
+      "requestHash": "ba1d9e88903984c4313a0e15",
+      "usd": 0.0066950642002953425,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T18:08:09.736Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "solar-falchion",
+      "requestHash": "ba1d9e88903984c4313a0e15",
+      "usd": 0.00988474777009752,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T18:08:43.439Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "solar-falchion",
+      "requestHash": "ba1d9e88903984c4313a0e15",
+      "usd": 0.00724535960621304,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T18:09:06.364Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "zenith-falchion",
+      "requestHash": "f11575cb299c68a5078fcdfe",
+      "usd": 0.006735499540964762,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T18:09:40.566Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "zenith-falchion",
+      "requestHash": "f11575cb299c68a5078fcdfe",
+      "usd": 0.00828825871149699,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T18:10:10.361Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "zenith-falchion",
+      "requestHash": "f11575cb299c68a5078fcdfe",
+      "usd": 0.007308703025182089,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T18:10:32.103Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "glacial-rimebrand",
+      "requestHash": "057c65676dc7afa7ee833375",
+      "usd": 0.007184196339713202,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T18:11:54.370Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "glacial-rimebrand",
+      "requestHash": "057c65676dc7afa7ee833375",
+      "usd": 0.007186242871814304,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T18:12:16.486Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "glacial-rimebrand",
+      "requestHash": "057c65676dc7afa7ee833375",
+      "usd": 0.007267934375339085,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T18:13:06.564Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "primordial-club",
+      "requestHash": "5a46bb1707b8a98e4e62b234",
+      "usd": 0.0085712767706977,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T18:13:27.304Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "primordial-club",
+      "requestHash": "5a46bb1707b8a98e4e62b234",
+      "usd": 0.007121917724609375,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T18:13:55.135Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "primordial-club",
+      "requestHash": "5a46bb1707b8a98e4e62b234",
+      "usd": 0.006635023805830214,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T18:14:19.051Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "stinger-rapier",
+      "requestHash": "80baf5e7904e6048943b99ad",
+      "usd": 0.006820442014270359,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T18:15:12.079Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "stinger-rapier",
+      "requestHash": "80baf5e7904e6048943b99ad",
+      "usd": 0.0066643488142225475,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T18:15:31.853Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "stinger-rapier",
+      "requestHash": "80baf5e7904e6048943b99ad",
+      "usd": 0.0069794368214077425,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T18:16:02.694Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "venomthorn-rapier",
+      "requestHash": "fdbc1deec962cde9e9ae90aa",
+      "usd": 0.007342490990956624,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T18:16:49.842Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "venomthorn-rapier",
+      "requestHash": "fdbc1deec962cde9e9ae90aa",
+      "usd": 0.007267592271169026,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T18:17:28.247Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "venomthorn-rapier",
+      "requestHash": "fdbc1deec962cde9e9ae90aa",
+      "usd": 0.006970540550020006,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T18:17:53.653Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "deathfang-rapier",
+      "requestHash": "d86e7f0ed856f150a7e5c9c0",
+      "usd": 0.006787210861841838,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T18:18:20.055Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "deathfang-rapier",
+      "requestHash": "d86e7f0ed856f150a7e5c9c0",
+      "usd": 0.00681245681974623,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T18:19:39.729Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "deathfang-rapier",
+      "requestHash": "d86e7f0ed856f150a7e5c9c0",
+      "usd": 0.007732811980777317,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T18:20:01.672Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "permafrost-maul",
+      "requestHash": "e40492d7cbc932f11f892145",
+      "usd": 0.0064451618459489615,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T18:20:47.020Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "permafrost-maul",
+      "requestHash": "e40492d7cbc932f11f892145",
+      "usd": 0.006915972948074341,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T18:21:10.984Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "permafrost-maul",
+      "requestHash": "e40492d7cbc932f11f892145",
+      "usd": 0.006790111356311374,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T18:21:28.482Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "glacial-tyrant-maul",
+      "requestHash": "32017395a7b08b2a47d86da7",
+      "usd": 0.006704556756549412,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T18:21:46.150Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "glacial-tyrant-maul",
+      "requestHash": "32017395a7b08b2a47d86da7",
+      "usd": 0.006603535837597317,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T18:22:12.706Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "glacial-tyrant-maul",
+      "requestHash": "32017395a7b08b2a47d86da7",
+      "usd": 0.006830991983413697,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T18:22:29.368Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "cinderlash",
+      "requestHash": "07027e0e9f11f11d14a621a8",
+      "usd": 0.006454668521881104,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T18:22:54.507Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "cinderlash",
+      "requestHash": "07027e0e9f11f11d14a621a8",
+      "usd": 0.006819803317387899,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T18:23:15.383Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "cinderlash",
+      "requestHash": "07027e0e9f11f11d14a621a8",
+      "usd": 0.007173223283555773,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T18:24:07.338Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "eruption-lash",
+      "requestHash": "1a859e264c04db908e6b6580",
+      "usd": 0.010269736448923747,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T18:24:46.698Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "eruption-lash",
+      "requestHash": "1a859e264c04db908e6b6580",
+      "usd": 0.006826558510462443,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T18:25:07.520Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "eruption-lash",
+      "requestHash": "1a859e264c04db908e6b6580",
+      "usd": 0.006586341566509671,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T18:25:26.091Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "plague-axe",
+      "requestHash": "e8670e5c5d2df88a959c0c17",
+      "usd": 0.00692130364312066,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T18:25:51.087Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "plague-axe",
+      "requestHash": "e8670e5c5d2df88a959c0c17",
+      "usd": 0.00746983273824056,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T18:26:11.800Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "plague-axe",
+      "requestHash": "e8670e5c5d2df88a959c0c17",
+      "usd": 0.007177620384428237,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T18:26:30.761Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "abyssal-axe",
+      "requestHash": "abb8486d3fbb87691f761ba1",
+      "usd": 0.00690607417954339,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T18:26:54.563Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "abyssal-axe",
+      "requestHash": "abb8486d3fbb87691f761ba1",
+      "usd": 0.007241582128736709,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-21T18:27:30.144Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "abyssal-axe",
+      "requestHash": "abb8486d3fbb87691f761ba1",
+      "usd": 0.008387823343276979,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
     }
   ]
 }
