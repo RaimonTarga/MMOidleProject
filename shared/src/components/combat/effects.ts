@@ -10,7 +10,7 @@
  * shared to depend on server-only TracksCombat machinery.
  */
 export interface StatusEffect {
-  /** Effect type identifier — e.g. 'dot', 'ashbrand-burn', 'slow'. */
+  /** Effect type identifier — e.g. 'dot', 'poison-dagger-burn', 'slow'. */
   id: string;
   /** Current stack count. For non-stacking effects, always 1. */
   stacks: number;
@@ -29,7 +29,7 @@ export interface StatusEffect {
   refreshable: boolean;
   /**
    * If true, every application creates a new independent entry even when one
-   * with the same id already exists (used for Ashbrand burns running in parallel).
+   * with the same id already exists (used for weapon DoT burns running in parallel).
    * If false, applications add a stack to the existing entry instead.
    */
   instanced: boolean;

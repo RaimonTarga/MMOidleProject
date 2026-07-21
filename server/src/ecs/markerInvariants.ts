@@ -1,4 +1,10 @@
-import { getStatusEffect, getStatusEffects, isMonsterDotStatusEffectId } from "@mmo-idle/shared";
+import {
+  getStatusEffect,
+  getStatusEffects,
+  isMonsterDotStatusEffectId,
+  BURN_FAMILY,
+  VOID_CORRUPTION_EFFECT_ID,
+} from "@mmo-idle/shared";
 import {
   isNetworkedComponentKey,
   networkedKeysForKind,
@@ -8,6 +14,13 @@ import type { ServerEntity } from "./entity";
 import { entityNetworkKind } from "./entity";
 
 const ENT_DOT_FX = "entropy-collapse-dot";
+
+// Every weapon reservoir-DoT effect id (the shared `hasWeaponDot` marker covers all
+// of them). Derived from BURN_FAMILY minus the void-corruption reservoir, which has
+// its own marker.
+const WEAPON_DOT_EFFECT_IDS = BURN_FAMILY
+  .filter((b) => b.effectId !== VOID_CORRUPTION_EFFECT_ID)
+  .map((b) => b.effectId);
 
 interface MarkerCheck {
   marker: keyof ServerEntity;
@@ -32,7 +45,12 @@ const MONSTER_MARKER_CHECKS: MarkerCheck[] = [
   { marker: "hasFrozen", effectId: "dot-frozen" },
   { marker: "hasSmolder", effectId: "dot-smolder" },
   { marker: "hasEntropy", effectId: ENT_DOT_FX },
-  { marker: "hasAshbrandBurn", effectId: "ashbrand-burn" },
+  {
+    marker: "hasWeaponDot",
+    effectId: "weapon-dot",
+    hasEffect: (state) =>
+      WEAPON_DOT_EFFECT_IDS.some((id) => !!getStatusEffect(state, id)),
+  },
   { marker: "hasVoidCorruption", effectId: "void-corruption" },
 ];
 

@@ -7,7 +7,7 @@ import type { Recipe } from './types';
 export const desertRecipeEntries = [
   // ── T2 ──
   ['desert-sunsteel-cross', {
-    id: 'desert-sunsteel-cross', name: 'Sunsteel Cross',
+    id: 'desert-sunsteel-cross', name: 'Sunsteel Falchion',
     recipeGroup: 'desert', requiredBiomeLevel: 1, slot: 'weapon',
     cost: { yellow: 70 }, stats: { attack: 24 }, attacksPerSecond: 0.80, tier: 2,
     mechanicEffects: { 'weapon.first-strike-mult': 2.0 },
@@ -75,7 +75,7 @@ export const desertRecipeEntries = [
 
   // ── T3 ──
   ['desert-solar-cross', {
-    id: 'desert-solar-cross', name: 'Solar Cross',
+    id: 'desert-solar-cross', name: 'Solar Falchion',
     recipeGroup: 'desert', requiredBiomeLevel: 7, slot: 'weapon',
     cost: { yellow: 116 }, stats: { attack: 42 }, attacksPerSecond: 0.80, tier: 3,
     mechanicEffects: { 'weapon.first-strike-mult': 2.5 },
@@ -144,7 +144,7 @@ export const desertRecipeEntries = [
   // ── T4 ──
 
   ['desert-zenith-cross', {
-    id: 'desert-zenith-cross', name: 'Zenith Cross',
+    id: 'desert-zenith-cross', name: 'Zenith Falchion',
     recipeGroup: 'desert', requiredBiomeLevel: 13, slot: 'weapon',
     cost: { yellow: 255 }, stats: { attack: 110 }, attacksPerSecond: 0.80, tier: 4,
     // first-strike-mult progressed: T2 2.0 → T3 2.5 → T4 3.0 (doc said 2.5, = T3)

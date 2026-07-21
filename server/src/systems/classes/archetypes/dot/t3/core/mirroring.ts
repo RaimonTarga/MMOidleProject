@@ -115,7 +115,7 @@ export function mirrorStatusEffectsToClient(world: World): void {
     world.detonatedMonsters,
     world.hemorrhagedMonsters,
     world.entropyMonsters,
-    world.ashbrandMonsters,
+    world.weaponDotMonsters,
   ]) {
     for (const entity of query) {
       if (mirroredMonsters.has(entity.isMonster.id)) continue;

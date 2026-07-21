@@ -22,7 +22,7 @@ import type {
   HasEmpoweredAttack,
   HasEnvironmentalDot,
   HasNodeFeatureEffect,
-  HasAshbrandBurn,
+  HasWeaponDot,
   HasVoidCorruption,
   HasAlignment,
   HasAttackTarget,
@@ -214,7 +214,7 @@ export interface ServerEntity {
   hasFrozen?: HasFrozen;
   hasSmolder?: HasSmolder;
   hasEntropy?: HasEntropy;
-  hasAshbrandBurn?: HasAshbrandBurn;
+  hasWeaponDot?: HasWeaponDot;
   hasVoidCorruption?: HasVoidCorruption;
   scriptsBoss?: ScriptsBoss;
   scriptsUltimate?: ScriptsUltimate;

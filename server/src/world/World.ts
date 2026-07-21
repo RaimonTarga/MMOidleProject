@@ -151,7 +151,7 @@ export class World {
   readonly chilledMonsters = this.monsterEntities.with("hasChill");
   readonly frozenMonsters = this.monsterEntities.with("hasFrozen");
   readonly entropyMonsters = this.monsterEntities.with("hasEntropy");
-  readonly ashbrandMonsters = this.monsterEntities.with("hasAshbrandBurn");
+  readonly weaponDotMonsters = this.monsterEntities.with("hasWeaponDot");
   readonly voidCorruptionMonsters = this.monsterEntities.with("hasVoidCorruption");
   readonly smolderMonsters = this.monsterEntities.with("hasSmolder");
   readonly dungeonMonsters = this.monsterEntities.with("tracksDungeon");

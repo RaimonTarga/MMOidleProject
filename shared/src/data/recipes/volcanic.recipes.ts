@@ -91,12 +91,14 @@ export const volcanicRecipeEntries = [
   }],
 
   ['volcanic-blightbrand', {
-    id: 'volcanic-blightbrand', name: 'Volcanic Blightbrand',
+    // Recipe id kept stable (persisted); renamed off "blight" (now poison-coded)
+    // onto fire vocabulary — Volcanic owns the fire DoT line.
+    id: 'volcanic-blightbrand', name: 'Cinderbrand',
     recipeGroup: 'volcanic', requiredBiomeLevel: 7, slot: 'weapon',
-    // ⚠ INHERITED (Swamp fast-DoT lineage) — base attack carried from doc.
+    // ⚠ INHERITED (fast-DoT lineage) — base attack carried from doc.
     //   VERIFY in the DoT-conversion budget pass.
     cost: { red: 290 }, stats: { attack: 70 }, attacksPerSecond: 1.20, tier: 4,
-    weaponDot: { effectId: 'blightbrand-burn', convPct: 0.50, tickIntervalMs: 1000, drainDurationMs: 4500, dotMultiplier: 1.50, element: 'fire' },
+    weaponDot: { effectId: 'cinderbrand-burn', convPct: 0.50, tickIntervalMs: 1000, drainDurationMs: 4500, dotMultiplier: 1.50, element: 'fire' },
     icon: 'items/weapons/lava-blade.png',
     description: 'It leaves a fire under the skin that does the rest of the work while you move on.',
     upgrades: [

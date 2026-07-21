@@ -19,14 +19,14 @@ const STATUS_META: Record<string, StatusMeta> = {
   'cadence-hemorrhage': { label: 'Bleed', color: '#c41e1e' },
   'energy-storm':       { label: 'Storm', color: '#c77dff' },
   brittle:         { label: 'Brittle', color: '#d88a4a' },
-  'ashbrand-burn': { label: 'Burn',    color: '#ff7a3c' },
-  // Burn-family DoT weapons (fire → Burn, frost → Chill).
-  'swamp-mirebrand-burn':   { label: 'Burn',  color: '#ff7a3c' },
-  'swamp-blightbrand-burn': { label: 'Burn',  color: '#ff7a3c' },
-  'blightbrand-burn':       { label: 'Burn',  color: '#ff7a3c' },
-  'swamp-frostbrand-burn':  { label: 'Chill', color: '#6fd0ff' },
-  'swamp-rimebrand-burn':   { label: 'Chill', color: '#6fd0ff' },
-  'rimebrand-burn':         { label: 'Chill', color: '#6fd0ff' },
+  // Weapon reservoir-DoT effects (poison → Poison, fire → Burn, frost → Chill).
+  // Swamp owns poison, Volcanic owns fire, Tundra owns frost.
+  'poison-dagger-burn':     { label: 'Poison', color: '#7ac74f' },
+  'swamp-mirebrand-burn':   { label: 'Poison', color: '#7ac74f' },
+  'swamp-blightbrand-burn': { label: 'Poison', color: '#7ac74f' },
+  'cinderbrand-burn':       { label: 'Burn',   color: '#ff7a3c' },
+  'tundra-rimebrand-burn':  { label: 'Chill',  color: '#6fd0ff' },
+  'rimebrand-burn':         { label: 'Chill',  color: '#6fd0ff' },
   'void-corruption':         { label: 'Corrupt', color: '#b06cff' },
   vuln:            { label: 'Vuln',    color: '#ff5577' },
   vulnerability:   { label: 'Vuln',    color: '#ff5577' },

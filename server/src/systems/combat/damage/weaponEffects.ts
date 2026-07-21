@@ -230,7 +230,7 @@ export function initWeaponEffects(): void {
     if (profile.effectId === VOID_CORRUPTION_EFFECT_ID) {
       attachMarker(world, ctx.defender, "hasVoidCorruption");
     } else {
-      attachMarker(world, ctx.defender, "hasAshbrandBurn");
+      attachMarker(world, ctx.defender, "hasWeaponDot");
     }
 
     ctx.damage = Math.max(1, Math.round(ctx.damage * (1 - profile.convPct)));
@@ -356,13 +356,13 @@ function updateCorruptionEffects(world: World, dt: number): void {
   }
 }
 
-// ── Burn family tick (ashbrand / cinderfang / frostmourne) ────────────────────
+// ── Weapon reservoir DoT tick (poison / fire / frost burn pools) ──────────────
 
 function updateBurnEffects(world: World, dt: number): void {
   const toKill: Array<{ monsterId: string; sourceId: string; damage: number }> = [];
   const killed = new Set<string>();
 
-  for (const e of world.ashbrandMonsters) {
+  for (const e of world.weaponDotMonsters) {
     if (isInvulnerableMonster(e)) continue;
     const monsterId = e.isMonster.id;
     const state = e.tracksCombat;
@@ -407,7 +407,7 @@ function updateBurnEffects(world: World, dt: number): void {
     }
     if (!hasBurn) {
       for (const effectId of BURN_EFFECT_IDS) {
-        detachMarkerIfNoEffect(world, e, "hasAshbrandBurn", state, effectId);
+        detachMarkerIfNoEffect(world, e, "hasWeaponDot", state, effectId);
       }
       continue;
     }

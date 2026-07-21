@@ -2,20 +2,22 @@ import type { Recipe } from './types';
 
 // ─────────────────────────────────────────────────────────────────────────
 // SWAMP — full lineage (T1→T3). Identity: dot-resist (+debt at T2/T3) armor /
-// absorb charm / DoT-conversion weapon (+ the Frost variant at T3). Charm rework:
-// upgrades ramp absorb; hpRegen flat (see mountain.recipes.ts header).
-// ⚠ Rimebrand (frost variant) rebuilt from archetype — adjust if it drifted.
+// absorb charm / POISON DoT-conversion weapon. Charm rework: upgrades ramp
+// absorb; hpRegen flat (see mountain.recipes.ts header).
+// Swamp is the poison biome and owns the poison DoT weapon line. Frost DoT lives
+// on Tundra (from T3), fire DoT on Volcanic (from T4) — see item-identity-audit.md.
 // ─────────────────────────────────────────────────────────────────────────
 
 export const swampRecipeEntries = [
   // ── T1 ──
   ['ashbrand-blade', {
-    id: 'ashbrand-blade', name: 'Ashbrand Blade',
+    // Recipe id kept stable (persisted in saves); name/element/effect rethemed to poison.
+    id: 'ashbrand-blade', name: 'Poison Dagger',
     recipeGroup: 'swamp', requiredBiomeLevel: 1, slot: 'weapon',
     cost: { purple: 22 }, stats: { attack: 10 }, attacksPerSecond: 0.85, tier: 1,
-    weaponDot: { effectId: 'ashbrand-burn', convPct: 0.50, tickIntervalMs: 1000, drainDurationMs: 4500, dotMultiplier: 1.50, element: 'fire' },
+    weaponDot: { effectId: 'poison-dagger-burn', convPct: 0.50, tickIntervalMs: 1000, drainDurationMs: 4500, dotMultiplier: 1.50, element: 'poison' },
     icon: 'items/weapons/rune-sword-hot-1.png',
-    description: 'Crude iron scratched with heat-runes that never quite cool.',
+    description: 'A short blade kept slick with mire-venom that refuses to dry.',
     upgrades: [
       { stats: { attack: 4 }, cost: { purple: 30 }, requiredBiomeLevel: 2 },
       { stats: { attack: 4 }, cost: { purple: 60 }, requiredBiomeLevel: 3 },
@@ -78,12 +80,13 @@ export const swampRecipeEntries = [
 
   // ── T2 ──
   ['swamp-mirebrand', {
-    id: 'swamp-mirebrand', name: 'Mirebrand',
+    // Recipe id kept stable (persisted); rethemed fire → poison (Venom Knife).
+    id: 'swamp-mirebrand', name: 'Venom Knife',
     recipeGroup: 'swamp', requiredBiomeLevel: 7, slot: 'weapon',
     cost: { purple: 52 }, stats: { attack: 22 }, attacksPerSecond: 1.0, tier: 2,
-    weaponDot: { effectId: 'swamp-mirebrand-burn', convPct: 0.50, tickIntervalMs: 1000, drainDurationMs: 4500, dotMultiplier: 1.50, element: 'fire' },
+    weaponDot: { effectId: 'swamp-mirebrand-burn', convPct: 0.50, tickIntervalMs: 1000, drainDurationMs: 4500, dotMultiplier: 1.50, element: 'poison' },
     icon: 'items/weapons/rune-sword-hot-1.png',
-    description: 'The runes burn hotter now; what they touch keeps smouldering.',
+    description: 'The venom runs deeper now; what it touches keeps rotting.',
     upgrades: [
       { stats: { attack: 10 }, cost: { purple: 78 }, requiredBiomeLevel: 8 },
       { stats: { attack: 10 }, cost: { purple: 156 }, requiredBiomeLevel: 9 },
@@ -93,21 +96,7 @@ export const swampRecipeEntries = [
     ],
   }],
 
-  ['swamp-frostbrand', {
-    id: 'swamp-frostbrand', name: 'Frostbrand',
-    recipeGroup: 'swamp', requiredBiomeLevel: 7, slot: 'weapon',
-    cost: { purple: 54}, stats: { attack: 32 }, attacksPerSecond: 0.75, tier: 2,
-    weaponDot: { effectId: 'swamp-frostbrand-burn', convPct: 0.70, tickIntervalMs: 1000, drainDurationMs: 4500, dotMultiplier: 1.50, element: 'frost' },
-    icon: 'items/weapons/rune-sword-cold-1.png',
-    description: 'The first of the cold brands — slower and heavier, biting deep instead of often.',
-    upgrades: [
-      { stats: { attack: 12 }, cost: { purple: 80 }, requiredBiomeLevel: 8 },
-      { stats: { attack: 12 }, cost: { purple: 160 }, requiredBiomeLevel: 9 },
-      { stats: { attack: 12 }, cost: { purple: 320 }, requiredBiomeLevel: 10 },
-      { stats: { attack: 12 }, cost: { purple: 320 }, requiredBiomeLevel: 10 },
-      { stats: { attack: 12 }, cost: { purple: 320 }, requiredBiomeLevel: 10 },
-    ],
-  }],
+  // (T2 Frostbrand removed — frost DoT now lives on Tundra. See item-identity-audit.md.)
 
   ['swamp-vest-t2', {
     id: 'swamp-vest-t2', name: 'Bog Wrappings',
@@ -160,14 +149,16 @@ export const swampRecipeEntries = [
     ],
   }],
 
-  // ── T3 ── (base DoT weapon + Frost variant)
+  // ── T3 ── (poison DoT weapon; the old frost variant moved to Tundra)
   ['swamp-blightbrand', {
-    id: 'swamp-blightbrand', name: 'Flamebrand',
+    // Recipe id kept stable (persisted); the mis-named "Flamebrand" is now the
+    // poison-themed Plague Fang (fire → poison).
+    id: 'swamp-blightbrand', name: 'Plague Fang',
     recipeGroup: 'swamp', requiredBiomeLevel: 13, slot: 'weapon',
     cost: { purple: 116 }, stats: { attack: 46 }, attacksPerSecond: 1.00, tier: 3,
-    weaponDot: { effectId: 'swamp-blightbrand-burn', convPct: 0.50, tickIntervalMs: 1000, drainDurationMs: 4500, dotMultiplier: 1.50, element: 'fire' },
+    weaponDot: { effectId: 'swamp-blightbrand-burn', convPct: 0.50, tickIntervalMs: 1000, drainDurationMs: 4500, dotMultiplier: 1.50, element: 'poison' },
     icon: 'items/weapons/rune-sword-hot-2.png',
-    description: 'The flame it carries does more work than the edge ever could.',
+    description: 'The rot it carries does more work than the edge ever could.',
     upgrades: [
       { stats: { attack: 14 }, cost: { purple: 170 },  requiredBiomeLevel: 14 },
       { stats: { attack: 14 }, cost: { purple: 340 }, requiredBiomeLevel: 15 },
@@ -177,21 +168,8 @@ export const swampRecipeEntries = [
     ],
   }],
 
-  ['swamp-rimebrand', {
-    id: 'swamp-rimebrand', name: 'Rimebrand',
-    recipeGroup: 'swamp', requiredBiomeLevel: 13, slot: 'weapon',
-    cost: { purple: 116 }, stats: { attack: 58 }, attacksPerSecond: 0.75, tier: 3,
-    weaponDot: { effectId: 'swamp-rimebrand-burn', convPct: 0.70, tickIntervalMs: 1000, drainDurationMs: 4500, dotMultiplier: 1.50, element: 'frost' },
-    icon: 'items/weapons/rune-sword-cold-2.png',
-    description: 'Slower, colder, and heavier — it converts more of each blow into a deep, biting chill.',
-    upgrades: [
-      { stats: { attack: 18 }, cost: { purple: 180 },  requiredBiomeLevel: 14 },
-      { stats: { attack: 18 }, cost: { purple: 360 }, requiredBiomeLevel: 15 },
-      { stats: { attack: 18 }, cost: { purple: 720 }, requiredBiomeLevel: 16 },
-      { stats: { attack: 18 }, cost: { purple: 720 }, requiredBiomeLevel: 16 },
-      { stats: { attack: 18 }, cost: { purple: 720 }, requiredBiomeLevel: 16 },
-    ],
-  }],
+  // (T3 Rimebrand removed from Swamp — relocated to Tundra as its T3 frost DoT
+  //  weapon. See tundra.recipes.ts and item-identity-audit.md.)
 
   ['swamp-vest-t3', {
     id: 'swamp-vest-t3', name: 'Plaguebound Shroud',

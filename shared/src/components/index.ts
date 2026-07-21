@@ -34,7 +34,7 @@ export * from "./archetypes/cooldown/isChanneling";
 export * from "./archetypes/cooldown/usesCooldown";
 export * from "./archetypes/dot/appliesDots";
 export * from "./archetypes/dot/chillsTarget";
-export * from "./archetypes/dot/hasAshbrandBurn";
+export * from "./archetypes/dot/hasWeaponDot";
 export * from "./combat/hasVoidCorruption";
 export * from "./archetypes/dot/hasChill";
 export * from "./archetypes/dot/hasConflagration";

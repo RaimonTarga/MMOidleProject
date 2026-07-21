@@ -8,7 +8,7 @@
  *
  *   Instanced (instanced: true)  — each application always creates a new independent
  *             entry, even when the id already exists. Used for effects whose instances
- *             have independent timers (Ashbrand burns, separate damage-over-time sources).
+ *             have independent timers (weapon DoT burns, separate damage-over-time sources).
  *
  * Tick management:
  *   Per-effect tick timers live in effect.data (nextTickIn, tickIntervalMs, ticksLeft).

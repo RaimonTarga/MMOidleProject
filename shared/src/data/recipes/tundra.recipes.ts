@@ -3,6 +3,8 @@ import type { Recipe } from './types';
 // TUNDRA (debuts T3). Identity: stationary-ramp DR + cap armor / brittle weapon /
 // shield + absorb charm. Charm rework: upgrades ramp BOTH mechanics, hpRegen flat
 // (see mountain.recipes.ts header).
+// Tundra owns the FROST DoT weapon line (relocated from Swamp): Rimebrand (T3) →
+// Glacial Rimebrand (T4). See item-identity-audit.md.
 
 export const tundraRecipeEntries = [
 
@@ -19,6 +21,25 @@ export const tundraRecipeEntries = [
       { stats: { attack: 30 }, cost: { blue: 744 }, requiredBiomeLevel: 4 },
       { stats: { attack: 30 }, cost: { blue: 744 }, requiredBiomeLevel: 4 },
       { stats: { attack: 30 }, cost: { blue: 744 }, requiredBiomeLevel: 4 },
+    ],
+  }],
+
+  // Frost DoT weapon — relocated from Swamp (was `swamp-rimebrand`). The slow,
+  // heavy chill-brand: converts more of each blow into a lingering frost DoT.
+  // Evolves toward Glacial Rimebrand at T4. Numbers are placeholders (balance pass).
+  ['tundra-rimebrand', {
+    id: 'tundra-rimebrand', name: 'Rimebrand',
+    recipeGroup: 'tundra', requiredBiomeLevel: 3, slot: 'weapon',
+    cost: { blue: 120 }, stats: { attack: 96 }, attacksPerSecond: 0.60, tier: 3,
+    weaponDot: { effectId: 'tundra-rimebrand-burn', convPct: 0.70, tickIntervalMs: 1000, drainDurationMs: 4500, dotMultiplier: 1.50, element: 'frost' },
+    icon: 'items/weapons/rune-sword-cold-2.png',
+    description: 'The first true frost-brand — slow and heavy, planting a cold in the wound that goes on biting after the blade is gone.',
+    upgrades: [
+      { stats: { attack: 24 }, cost: { blue: 180 }, requiredBiomeLevel: 3 },
+      { stats: { attack: 24 }, cost: { blue: 360 }, requiredBiomeLevel: 4 },
+      { stats: { attack: 24 }, cost: { blue: 720 }, requiredBiomeLevel: 4 },
+      { stats: { attack: 24 }, cost: { blue: 720 }, requiredBiomeLevel: 4 },
+      { stats: { attack: 24 }, cost: { blue: 720 }, requiredBiomeLevel: 4 },
     ],
   }],
 
