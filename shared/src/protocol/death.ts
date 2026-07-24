@@ -1,5 +1,9 @@
 import { BIOME_DATABASE } from "../biomeDatabase";
-import { NODE_BIOMES } from "../world/nodeBiomes";
+import {
+  NODE_BIOMES,
+  formatNodeCoord,
+  nodeIdToCoord,
+} from "../world/nodeBiomes";
 import type { Vec2 } from "../systems/spatial";
 
 export { GRAVE_FRAME_COUNT } from "../components/combat/isDead";
@@ -44,19 +48,16 @@ export function formatDeathCauseLabel(cause: DeathCause): string {
 
 /** "Forest · T1 · [3, 6]" — biome name, tier badge, and map grid cell. */
 export function formatDeathLocation(diedAtNodeId: string): string {
-  const parts = diedAtNodeId.split("-");
-  const gridLabel =
-    parts.length === 3 && parts[0] === "node"
-      ? `[${parts[1]}, ${parts[2]}]`
-      : diedAtNodeId;
-
   const info = NODE_BIOMES[diedAtNodeId];
-  if (!info) return gridLabel;
+  if (!info) return diedAtNodeId;
 
-  const biomeName =
-    BIOME_DATABASE.get(info.biomeGroup)?.name ?? info.biomeGroup;
+  const placeName =
+    info.displayName ??
+    BIOME_DATABASE.get(info.biomeGroup)?.name ??
+    info.biomeGroup;
   const tierLabel = info.biomeTier === 0 ? "★" : `T${info.biomeTier}`;
-  return `${biomeName} · ${tierLabel} · ${gridLabel}`;
+  const coord = nodeIdToCoord(diedAtNodeId);
+  return `${placeName} · ${tierLabel}${coord ? ` · ${formatNodeCoord(coord)}` : ""}`;
 }
 
 export function formatDeathLogMessage(payload: PlayerDeathPayload): string {

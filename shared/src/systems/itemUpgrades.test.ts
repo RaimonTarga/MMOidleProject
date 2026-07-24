@@ -16,13 +16,13 @@ function assert(cond: boolean, msg: string): void {
 const NO_ESSENCES = {} as Record<EssenceType, number>;
 
 // Band boundaries derived from NODE_BIOMES start tiers (5 T1 biomes, +2 at T2,
-// +2 at T3, +3 at T4 incl. abyss) × 6 levels per tier, clearing excluded.
+// +2 at T3, +2 at T4) × 6 levels per tier; special nodes are excluded.
 function testBandBoundaries(): void {
   assert(maxGlobalMasteryAtTier(0) === 0, 'max GM at tier 0');
   assert(maxGlobalMasteryAtTier(1) === 30, 'max GM at tier 1');
   assert(maxGlobalMasteryAtTier(2) === 72, 'max GM at tier 2');
   assert(maxGlobalMasteryAtTier(3) === 126, 'max GM at tier 3');
-  assert(maxGlobalMasteryAtTier(4) === 198, 'max GM at tier 4');
+  assert(maxGlobalMasteryAtTier(4) === 192, 'max GM at tier 4');
 }
 
 function testTierOneThresholds(): void {
