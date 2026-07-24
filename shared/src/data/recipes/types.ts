@@ -41,7 +41,15 @@ export interface Recipe {
   /**
    * Optional biome-catalyst costs keyed by biome group (e.g. `{ forest: 3 }`).
    * Parallel axis to `cost` — crafting checks and spends both. Only listed when
-   * the recipe demands catalysts; absent means essence-only.
+   * the recipe demands catalysts; absent means essence-only. Keyed by combat
+   * FAMILY (alacrity/brutality/blight/volatility/predation) after the Map Variety
+   * Stage A re-key, not by biome group.
+   *
+   * TODO (Map Variety, deferred): the neutral Broadsword exception (design §2.3)
+   * needs a `catalystCostFlexible?: number` — a total payable with any combination
+   * of the five family wallets (greedy spend from the largest balance). No recipe
+   * uses it yet; wire it into crafting/upgrade affordability + the client cost
+   * display when a Broadsword milestone first needs it.
    */
   catalystCost?: Partial<Record<string, number>>;
   stats: Partial<ItemStats>;

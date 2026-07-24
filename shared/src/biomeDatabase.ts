@@ -1,3 +1,5 @@
+import { catalystFamilyLabel } from './world/nodeModifiers';
+
 export interface BiomeDefinition {
   id: string;
   name: string;
@@ -32,14 +34,14 @@ export interface BiomeDefinition {
 }
 
 /**
- * Player-facing name for a biome's catalyst, e.g. `forest` → "Forest Catalyst".
- * Falls back to the capitalized group key if the biome is unknown.
+ * Player-facing name for a catalyst, e.g. `alacrity` → "Alacrity Catalyst".
+ *
+ * Catalyst re-keyed from per-biome-group to per-combat-family (Map Variety Stage
+ * A). This delegates to `catalystFamilyLabel`; the name/signature/export are kept
+ * so the ~10 existing call sites compile unchanged.
  */
-export function catalystLabel(biomeGroup: string): string {
-  const name =
-    BIOME_DATABASE.get(biomeGroup)?.name ??
-    biomeGroup.charAt(0).toUpperCase() + biomeGroup.slice(1);
-  return `${name} Catalyst`;
+export function catalystLabel(familyKey: string): string {
+  return catalystFamilyLabel(familyKey);
 }
 
 export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([

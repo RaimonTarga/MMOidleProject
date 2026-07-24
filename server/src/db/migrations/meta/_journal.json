@@ -15,6 +15,13 @@
       "when": 1780763100000,
       "tag": "0001_add_account_last_login",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1785283200000,
+      "tag": "0002_wipe_catalyst_wallets",
+      "breakpoints": true
     }
   ]
 }

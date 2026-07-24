@@ -39,7 +39,7 @@ const recipes: StanceRecipe[] = [
     recipeGroup: "forest",
     requiredBiomeLevel: 7,
     cost: { green: 60 },
-    catalystCost: { forest: 2 },
+    catalystCost: { alacrity: 2 }, // family-tag: damage + tempo → Alacrity
   },
   {
     id: "stance-recipe-defensive",
@@ -50,7 +50,7 @@ const recipes: StanceRecipe[] = [
     recipeGroup: "forest",
     requiredBiomeLevel: 7,
     cost: { green: 60, blue: 20 },
-    catalystCost: { forest: 2 },
+    catalystCost: { volatility: 2 }, // family-tag: reliable generalist %DR wall → Volatility
   },
   {
     id: "stance-recipe-tanking",
@@ -61,7 +61,7 @@ const recipes: StanceRecipe[] = [
     recipeGroup: "forest",
     requiredBiomeLevel: 8,
     cost: { green: 70, blue: 30 },
-    catalystCost: { forest: 3 },
+    catalystCost: { brutality: 3 }, // family-tag: bulk/hold-the-line anti-spike → Brutality
   },
 ];
 

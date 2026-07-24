@@ -22,6 +22,7 @@ import {
   validAbilityIds,
   validStanceIds,
   validRiteIds,
+  PACE_FAMILIES,
   type Vec2,
 } from '@mmo-idle/shared';
 import type { PlayerEntity } from '../ecs/entity';
@@ -181,6 +182,19 @@ export async function listCharacters(db: DB): Promise<AdminCharacterRecord[]> {
 
 type CharacterRow = typeof characters.$inferSelect;
 
+/** Keep only combat-family keys in a catalyst wallet (drops stale biome keys). */
+function sanitizeFamilyWallet(
+  wallet: Record<string, number> | undefined,
+): Record<string, number> {
+  const out: Record<string, number> = {};
+  if (!wallet) return out;
+  for (const family of PACE_FAMILIES) {
+    const value = wallet[family];
+    if (typeof value === 'number') out[family] = value;
+  }
+  return out;
+}
+
 function hydratePlayerSlices(row: CharacterRow): PersistedPlayerSlices {
   const holdsInventory = parseSlice<HoldsInventory>(row.holdsInventory);
   holdsInventory.equipment = {
@@ -197,8 +211,11 @@ function hydratePlayerSlices(row: CharacterRow): PersistedPlayerSlices {
     hasHealth:         parseSlice<HasHealth>(row.hasHealth),
     tracksProgression: {
       ...tracksProgression,
-      catalysts:        tracksProgression.catalysts ?? {},
-      catalystProgress: tracksProgression.catalystProgress ?? {},
+      // Catalyst wallets are keyed by combat family (Map Variety Stage A). Filter
+      // to known family keys on load so any stray biome-keyed balance from before
+      // the re-key migration can never resurface.
+      catalysts:        sanitizeFamilyWallet(tracksProgression.catalysts),
+      catalystProgress: sanitizeFamilyWallet(tracksProgression.catalystProgress),
       bossesCleared: tracksProgression.bossesCleared ?? [],
       clearedNodes:   tracksProgression.clearedNodes ?? [],
       runeRecipesCrafted,

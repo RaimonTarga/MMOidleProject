@@ -1,4 +1,4 @@
-import { NODE_BIOMES, MONSTER_DATABASE, RECIPE_DATABASE, biomeLevelCap, biomeXpForBiomeLevel, bossClearKey, BIOME_DATABASE, ULTIMATE_CLEAR_VOID_OVERLORD, GAME_CONFIG } from '@mmo-idle/shared';
+import { NODE_BIOMES, NODE_MODIFIERS, densityRewardMult, MONSTER_DATABASE, RECIPE_DATABASE, biomeLevelCap, biomeXpForBiomeLevel, bossClearKey, BIOME_DATABASE, ULTIMATE_CLEAR_VOID_OVERLORD, GAME_CONFIG } from '@mmo-idle/shared';
 import type { EssenceType } from '@mmo-idle/shared';
 import type { MonsterEntity, PlayerEntity } from '../../../ecs/entity';
 import type { World } from '../../../world/World';
@@ -36,23 +36,24 @@ export function rewardPlayer(entity: PlayerEntity, rewards: KillRewards): void {
 }
 
 /**
- * Add per-kill catalyst progress for a biome group and mint catalysts whenever
- * progress crosses the threshold (carrying the remainder). No-op when the
- * monster grants no weight. Caller marks the slice dirty.
+ * Add per-kill catalyst progress under a combat-family key and mint catalysts
+ * whenever progress crosses the threshold (carrying the remainder). No-op when
+ * the node has no pace family (excluded node) or the monster grants no weight.
+ * Caller marks the slice dirty.
  */
 function grantCatalystProgress(
   entity: PlayerEntity,
-  biomeGroup: string | undefined,
+  familyKey: string | undefined,
   weight: number,
 ): void {
-  if (!biomeGroup || weight <= 0) return;
+  if (!familyKey || weight <= 0) return;
   const prog = entity.tracksProgression;
   const per = GAME_CONFIG.CATALYST_PROGRESS_PER_UNIT;
-  const total = (prog.catalystProgress[biomeGroup] ?? 0) + weight;
+  const total = (prog.catalystProgress[familyKey] ?? 0) + weight;
   const minted = Math.floor(total / per);
-  prog.catalystProgress[biomeGroup] = total - minted * per;
+  prog.catalystProgress[familyKey] = total - minted * per;
   if (minted > 0) {
-    prog.catalysts[biomeGroup] = (prog.catalysts[biomeGroup] ?? 0) + minted;
+    prog.catalysts[familyKey] = (prog.catalysts[familyKey] ?? 0) + minted;
   }
 }
 
@@ -181,24 +182,29 @@ function applyKillRewardsToPlayer(
   const nodeId = monster.hasPosition.nodeId;
   const biomeInfo = NODE_BIOMES[nodeId];
   const biomeTier = biomeInfo?.biomeTier ?? 1;
-  const biomeGroup = biomeInfo?.biomeGroup;
   const essenceMult = GAME_CONFIG.BIOME_ESSENCE_TIER_MULT[biomeTier] ?? 1;
-  const scaledEssence = Math.max(1, Math.round(rewards.essence * essenceMult));
+  // Map Variety Stage A: a node density modifier normalizes per-kill reward
+  // throughput inversely to its spawn factor (§1.6). PLACEHOLDER — user tunes the
+  // factors in shared/src/world/nodeModifiers.ts.
+  const rewardMult = densityRewardMult(NODE_MODIFIERS[nodeId]?.density);
+  const scaledEssence = Math.max(1, Math.round(rewards.essence * essenceMult * rewardMult));
   rewardPlayer(recipient, { ...rewards, essence: scaledEssence });
-  // Catalyst progress defaults to the monster's base essence reward — already a
-  // tuned per-mob toughness number (trash ~2-10, elites more, bosses ~100+). A
-  // monster can override with an explicit `catalystWeight`. Tune the global rate
-  // via GAME_CONFIG.CATALYST_PROGRESS_PER_UNIT.
-  const catalystWeight = def?.rewards.catalystWeight ?? rewards.essence;
-  if (catalystWeight > 0 && biomeGroup) {
-    grantCatalystProgress(recipient, biomeGroup, catalystWeight);
+  // Catalyst progress is keyed by the NODE'S pace family (not its biome): every
+  // kill in an Alacrity node grants Alacrity Catalyst regardless of biome. The
+  // weight defaults to the monster's base essence reward (a tuned per-mob
+  // toughness number) unless it sets an explicit `catalystWeight`. No modifier
+  // (clearing / test room / throne) → no grant.
+  const paceFamily = NODE_MODIFIERS[nodeId]?.pace;
+  const catalystWeight = Math.round((def?.rewards.catalystWeight ?? rewards.essence) * rewardMult);
+  if (catalystWeight > 0 && paceFamily) {
+    grantCatalystProgress(recipient, paceFamily, catalystWeight);
     markSliceDirty(world, recipient, 'tracksProgression');
   }
   const biomeResult = applyBiomeXP(
     world,
     recipient,
     nodeId,
-    rewards.biomeXp ?? 1,
+    Math.max(1, Math.round((rewards.biomeXp ?? 1) * rewardMult)),
   );
   const tierResult = registerKillForQuests(recipient, monster.isMonster.monsterTypeId);
   if (tierResult.advanced && tierResult.prevTier !== undefined && tierResult.newTier !== undefined) {
@@ -236,11 +242,14 @@ function applyKillRewardsToPlayer(
       const key = bossClearKey(info.biomeGroup, info.biomeTier);
       if (!recipient.tracksProgression.bossesCleared.includes(key)) {
         recipient.tracksProgression.bossesCleared.push(key);
-        // One-time catalyst bundle for the first clear of this biome boss.
+        // One-time catalyst bundle for the first clear — keyed by the node's pace
+        // family (the boss entity is immune, but the NODE's catalyst identity
+        // still applies; §2.2). Skipped on excluded nodes (e.g. the throne).
         const bundle = def?.rewards.catalystBundle ?? 0;
-        if (bundle > 0) {
-          recipient.tracksProgression.catalysts[info.biomeGroup] =
-            (recipient.tracksProgression.catalysts[info.biomeGroup] ?? 0) + bundle;
+        const bundleFamily = NODE_MODIFIERS[monster.hasPosition.nodeId]?.pace;
+        if (bundle > 0 && bundleFamily) {
+          recipient.tracksProgression.catalysts[bundleFamily] =
+            (recipient.tracksProgression.catalysts[bundleFamily] ?? 0) + bundle;
         }
         markSliceDirty(world, recipient, 'tracksProgression');
       }

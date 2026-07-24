@@ -39,7 +39,7 @@ const recipes: RiteRecipe[] = [
     recipeGroup: "forest",
     requiredBiomeLevel: 13,
     cost: { green: 120 },
-    catalystCost: { forest: 4 },
+    catalystCost: { alacrity: 4 }, // family-tag: faster recovery tempo → Alacrity
   },
   {
     id: "rite-recipe-cleansing-breath",
@@ -50,7 +50,7 @@ const recipes: RiteRecipe[] = [
     recipeGroup: "forest",
     requiredBiomeLevel: 13,
     cost: { green: 120, purple: 40 },
-    catalystCost: { forest: 4 },
+    catalystCost: { blight: 4 }, // family-tag: cleanses DoTs/debuffs → Blight (the DoT answer)
   },
   {
     id: "rite-recipe-lingering-momentum",
@@ -61,7 +61,7 @@ const recipes: RiteRecipe[] = [
     recipeGroup: "forest",
     requiredBiomeLevel: 14,
     cost: { green: 130, yellow: 40 },
-    catalystCost: { forest: 5 },
+    catalystCost: { alacrity: 5 }, // family-tag: momentum/uptime → Alacrity
   },
   {
     id: "rite-recipe-hunters-instinct",
@@ -72,7 +72,7 @@ const recipes: RiteRecipe[] = [
     recipeGroup: "forest",
     requiredBiomeLevel: 14,
     cost: { green: 130, red: 40 },
-    catalystCost: { forest: 5 },
+    catalystCost: { predation: 5 }, // family-tag: hunter / on-kill predator → Predation
   },
 ];
 
