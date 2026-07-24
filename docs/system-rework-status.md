@@ -40,11 +40,21 @@ Update this doc at the end of every session. The roadmap says *what and why*; th
 | 14 | UI / clarity / failure diagnosis | all | 📋 | resolved | `ui-redesign-plan.md` | Desktop UI redesign is phased with review gates and model-budget guidance; MVP new-system visibility remains part of Intent/disclosure work; failure diagnosis deferred. |
 | 15 | Balance + simulation tooling pass | all | 📋 | resolved | — | Claude builds tooling (dps/eHP, bench, NEW economy sim, monster-ref); you tune |
 | — | Relics | T4+ | ⏸️ | — | — | planned separately |
-| — | Map traversal | — | ⏸️ | — | — | unresolved |
+| — | Map traversal | — | 🔨 | resolved | `map-variety-plan.md` | Design LOCKED (v3). Stage A (node modifiers + catalyst re-key on the existing grid) IMPLEMENTED 2026-07-24; Stage B (regions) pending its own plan. See dated log below. |
 | — | World events | — | ⏸️ | — | — | future |
 | — | Group content | — | ⏸️ | — | — | future |
 
 ---
+
+Map Variety Stage A log (2026-07-24): shipped node modifiers + catalyst re-key on
+the existing 11×11 grid. Five pace families + two density modifiers authored per
+node (`shared/src/world/nodeModifiers.ts`, `nodeModifierMap.ts`), non-boss monster
+offense reshaped at the `createMonster` choke point (budget-neutral scalars +
+`moddedByNode` mechanic overlays; bosses immune), catalysts re-keyed from biome
+group to combat family with wallets wiped (migration 0002), and the map
+information contract surfaced client-side. All magnitudes/tags PLACEHOLDER. Stage B
+(regions) is outlined only in `docs/map-variety-implementation-plan.md` and not
+started. Design: `docs/map-variety-plan.md`.
 
 Step 13 current note: T1 now has an authored `preEncounter` path for worked
 biome exams, replacing generated guardian rings where migrated. Plains, Forest,

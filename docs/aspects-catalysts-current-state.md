@@ -34,6 +34,19 @@
 `jungle/desert/volcano/tundra/graveyard/trench` + `advancedBiomesB` + `bossesT1..T4` +
 `tutorial`), assembled via `index.ts` into `MONSTER_DATABASE`.
 
+> **Update 2026-07-24 (Map Variety Stage A):** catalysts are now keyed by **combat
+> family** (`alacrity`/`brutality`/`blight`/`volatility`/`predation`), not by biome
+> group. The five families, per-node assignment table, and reshaping math live in
+> `shared/src/world/nodeModifiers.ts` + `nodeModifierMap.ts`. Every kill grants the
+> **node's pace family** catalyst (`NODE_MODIFIERS[nodeId].pace`) via
+> `grantCatalystProgress` in `rewards.ts`; density modifiers normalize per-kill reward
+> throughput inversely (`densityRewardMult`). `catalystLabel` delegates to
+> `catalystFamilyLabel`. Authored sinks (forest recipes, stances, rites) were re-tagged
+> by each item's own combat expression. **Player wallets were wiped** (migration
+> `0002_wipe_catalyst_wallets.sql`) and are hydrate-sanitized to family keys on load
+> (`playerRepo.ts`). All magnitudes/tags are PLACEHOLDER (user tunes). Design authority:
+> `docs/map-variety-plan.md`; plan: `docs/map-variety-implementation-plan.md`.
+
 ## Catalysts (Step 2) — **nothing exists**
 
 - No catalyst currency, wallet, progress counter, monster weight, or recipe-cost axis.

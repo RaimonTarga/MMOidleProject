@@ -11,6 +11,7 @@ import {
   GAME_CONFIG,
   ITEM_DATABASE,
   NODE_BIOMES,
+  validateNodeModifiers,
   pointInNodeFeatureShape,
   registerDevItems,
   resetTracksCombat,
@@ -253,6 +254,12 @@ async function boot(): Promise<void> {
       log.error({ networkViolations }, "networked component invariant mismatch");
     } else {
       log.info("networked components OK");
+    }
+    const modifierViolations = validateNodeModifiers();
+    if (modifierViolations.length > 0) {
+      log.error({ modifierViolations }, "node modifier assignment invalid");
+    } else {
+      log.info("node modifiers OK");
     }
   }
 
