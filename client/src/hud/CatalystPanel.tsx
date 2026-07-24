@@ -1,26 +1,26 @@
 import { useAtomValue } from "jotai";
-import { catalystLabel, GAME_CONFIG } from "@mmo-idle/shared";
+import { catalystLabel, GAME_CONFIG, PACE_FAMILIES, PACE_FAMILY_COLORS } from "@mmo-idle/shared";
 import { catalystsAtom, catalystProgressAtom } from "./atoms";
 import { HudPanel } from "./primitives";
+import { GameIcon } from "../ui/GameIcon";
+import { CATALYST_PLACEHOLDER_ICON } from "../ui/economyIcons";
 import "./essence.css";
 
 /**
- * Biome catalysts wallet. Mirrors EssencePanel but is keyed by biome group and
- * only lists groups the player has touched (any catalysts or in-progress). The
- * whole panel hides until the player earns their first catalyst progress so it
- * doesn't clutter early game.
+ * Combat-family catalysts wallet. Keyed by pace family (Map Variety Stage A),
+ * rendered in the fixed PACE_FAMILIES order with per-family color accents. Only
+ * lists families the player has touched (any catalysts or in-progress); the whole
+ * panel hides until the first catalyst progress so it doesn't clutter early game.
  */
 export function CatalystPanel() {
   const catalysts = useAtomValue(catalystsAtom);
   const progress = useAtomValue(catalystProgressAtom);
 
-  const groups = Array.from(
-    new Set([...Object.keys(catalysts), ...Object.keys(progress)]),
-  )
-    .filter((g) => (catalysts[g] ?? 0) > 0 || (progress[g] ?? 0) > 0)
-    .sort();
+  const families = PACE_FAMILIES.filter(
+    (f) => (catalysts[f] ?? 0) > 0 || (progress[f] ?? 0) > 0,
+  );
 
-  if (groups.length === 0) return null;
+  if (families.length === 0) return null;
 
   const per = GAME_CONFIG.CATALYST_PROGRESS_PER_UNIT;
 
@@ -28,12 +28,22 @@ export function CatalystPanel() {
     <HudPanel className="sidebar-panel economy-panel catalyst-panel">
       <div className="panel-title">Catalysts</div>
       <div className="essence-list">
-        {groups.map((group) => {
-          const owned = catalysts[group] ?? 0;
-          const prog = progress[group] ?? 0;
+        {families.map((family) => {
+          const owned = catalysts[family] ?? 0;
+          const prog = progress[family] ?? 0;
           return (
-            <div key={group} className="essence-row">
-              <span className="essence-name">{catalystLabel(group)}</span>
+            <div key={family} className="essence-row">
+              <GameIcon
+                source={CATALYST_PLACEHOLDER_ICON}
+                size={16}
+                fallback="◇"
+                className="economy-icon"
+                decorative
+                style={{ color: PACE_FAMILY_COLORS[family] }}
+              />
+              <span className="essence-name" style={{ color: PACE_FAMILY_COLORS[family] }}>
+                {catalystLabel(family)}
+              </span>
               <span className="essence-value">{owned}</span>
               <span className="essence-progress">
                 {prog}/{per}

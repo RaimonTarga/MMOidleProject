@@ -1,5 +1,8 @@
 import { useAtomValue } from 'jotai';
-import { NODE_BIOMES, BIOME_DATABASE, biomeXpForBiomeLevel, biomeLevelCap } from '@mmo-idle/shared';
+import {
+  NODE_BIOMES, BIOME_DATABASE, biomeXpForBiomeLevel, biomeLevelCap,
+  NODE_MODIFIERS, PACE_FAMILY_COLORS, PACE_FAMILY_LABELS, PACE_FAMILY_SUMMARIES, DENSITY_LABELS,
+} from '@mmo-idle/shared';
 import { useState, useEffect, useRef } from 'react';
 import { biomeXPAtom, biomeLevelAtom, playerNodeIdAtom, playerTierAtom } from './atoms';
 import './biomeXpBar.css';
@@ -106,6 +109,7 @@ export function BiomeXpBar() {
   if (!biomeGroup || !nodeId) return null;
 
   const biomeName = biome?.name ?? biomeGroup;
+  const modifier  = NODE_MODIFIERS[nodeId];
 
   let levelLabel    = `Lv ${level}`;
   let levelModClass = '';
@@ -137,6 +141,16 @@ export function BiomeXpBar() {
     <div className="biome-xp-bar">
       <div className="biome-xp-bar__header">
         <span className="biome-xp-bar__biome">{biomeName} T{tier}</span>
+        {modifier && (
+          <span
+            className="biome-xp-bar__family"
+            style={{ background: PACE_FAMILY_COLORS[modifier.pace] }}
+            title={PACE_FAMILY_SUMMARIES[modifier.pace]}
+          >
+            {PACE_FAMILY_LABELS[modifier.pace]}
+            {modifier.density ? ` · ${DENSITY_LABELS[modifier.density]}` : ''}
+          </span>
+        )}
         <span className={`biome-xp-bar__level${levelModClass ? ` ${levelModClass}` : ''}`}>
           {levelLabel}
         </span>

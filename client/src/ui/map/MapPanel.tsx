@@ -1,6 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useAtomValue } from 'jotai';
-import { NODE_BIOMES, BIOME_DATABASE, formatRespawnRemaining } from '@mmo-idle/shared';
+import {
+  NODE_BIOMES, BIOME_DATABASE, formatRespawnRemaining,
+  NODE_MODIFIERS, PACE_FAMILIES, PACE_FAMILY_COLORS, PACE_FAMILY_LABELS,
+  PACE_FAMILY_SUMMARIES, DENSITY_LABELS,
+} from '@mmo-idle/shared';
 import { hudBus } from '../../hudBus';
 import { autoPathAtom, bossFelledByNodeAtom, playerNodeIdAtom } from '../../hud/atoms';
 import { MAX_VIEW_C, MAX_VIEW_R, VIEWPORT, dungeonBadgeLabel, tileColor } from './constants';
@@ -124,6 +128,7 @@ export function MapPanel({ onClose, highlightNodes, focusNodeId }: Props) {
                 const isPath        = !isDestination && !isCurrent && pathSet.has(id);
                 const isHighlight   = !!highlightNodes?.includes(id);
                 const tierBadge     = info?.biomeTier === 0 ? '★' : `T${info?.biomeTier ?? '?'}`;
+                const modifier      = NODE_MODIFIERS[id];
                 const felled        = bossFelledByNode[id];
                 const isOverlordFelled =
                   felled?.monsterTypeId === 'void-overlord' && felled.respawnAt > mapNow;
@@ -151,6 +156,23 @@ export function MapPanel({ onClose, highlightNodes, focusNodeId }: Props) {
                     <span className="map-tile__tier">{tierBadge}</span>
                     {info && <BiomeIcon biomeGroup={info.biomeGroup} size={38} className="map-tile__icon" />}
                     <span className="map-tile__name">{biome?.name ?? '?'}</span>
+                    {modifier && (
+                      <span
+                        className="map-tile__family"
+                        style={{ background: PACE_FAMILY_COLORS[modifier.pace] }}
+                        title={`${PACE_FAMILY_LABELS[modifier.pace]} — ${PACE_FAMILY_SUMMARIES[modifier.pace]}`}
+                      >
+                        {PACE_FAMILY_LABELS[modifier.pace].charAt(0)}
+                        {modifier.density && (
+                          <span
+                            className="map-tile__density"
+                            title={DENSITY_LABELS[modifier.density]}
+                          >
+                            {modifier.density === 'swarming' ? '▦' : '◆'}
+                          </span>
+                        )}
+                      </span>
+                    )}
                     {dungeonBadge   && <span className="map-tile__dungeon-badge">{dungeonBadge}</span>}
                     {isOverlordFelled && (
                       <>
@@ -177,6 +199,37 @@ export function MapPanel({ onClose, highlightNodes, focusNodeId }: Props) {
             : <div className="map-info__empty">Select a zone to see details.</div>}
         </div>
       </div>
+
+      <MapLegend />
     </GameDialog>
+  );
+}
+
+/** Compact family/density key beneath the map grid. */
+function MapLegend() {
+  return (
+    <div className="map-legend">
+      {PACE_FAMILIES.map((family) => (
+        <span
+          key={family}
+          className="map-legend__item"
+          title={PACE_FAMILY_SUMMARIES[family]}
+        >
+          <span
+            className="map-legend__chip"
+            style={{ background: PACE_FAMILY_COLORS[family] }}
+          >
+            {PACE_FAMILY_LABELS[family].charAt(0)}
+          </span>
+          {PACE_FAMILY_LABELS[family]}
+        </span>
+      ))}
+      <span className="map-legend__item" title={DENSITY_LABELS.swarming}>
+        <span className="map-legend__marker">▦</span>{DENSITY_LABELS.swarming}
+      </span>
+      <span className="map-legend__item" title={DENSITY_LABELS['elite-ground']}>
+        <span className="map-legend__marker">◆</span>{DENSITY_LABELS['elite-ground']}
+      </span>
+    </div>
   );
 }

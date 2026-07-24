@@ -3,7 +3,9 @@ import { useAtomValue } from 'jotai';
 import type { EssenceType, MonsterDefinition, Recipe } from '@mmo-idle/shared';
 import {
   NODE_BIOMES, BIOME_DATABASE, MONSTER_DATABASE, RECIPE_DATABASE, ESSENCE_COLORS, ESSENCE_LABELS,
-  catalystLabel,
+  catalystLabel, catalystFamilyLabel,
+  NODE_MODIFIERS, PACE_FAMILY_COLORS, PACE_FAMILY_LABELS, PACE_FAMILY_SUMMARIES,
+  DENSITY_LABELS, DENSITY_SUMMARIES,
   biomeLevelCap, biomeXpForBiomeLevel, formatNodeCoord, formatRespawnRemaining, nodeIdToCoord,
 } from '@mmo-idle/shared';
 import { biomeLevelAtom, biomeXPAtom, bossFelledByNodeAtom, playerTierAtom } from '../../hud/atoms';
@@ -169,6 +171,7 @@ export function NodeInfo({ nodeId, playerNodeId, onClose }: NodeInfoProps) {
   const dungeonBadge = dungeonBadgeLabel(info);
   const accentColor  = isDungeon ? '#882222' : tileColor(biomeGroup);
 
+  const modifier = NODE_MODIFIERS[nodeId];
   const monsterIds = biome.monsterPoolByTier[biomeTier] ?? [];
   const monsters   = monsterIds.map(id => MONSTER_DATABASE.get(id)).filter((m): m is MonsterDefinition => m !== undefined);
 
@@ -224,6 +227,34 @@ export function NodeInfo({ nodeId, playerNodeId, onClose }: NodeInfoProps) {
         </div>
       </div>
 
+      {modifier && (
+        <section
+          className="map-modifier"
+          style={{ borderLeftColor: PACE_FAMILY_COLORS[modifier.pace] }}
+        >
+          <div className="map-modifier__head">
+            <span
+              className="map-modifier__chip"
+              style={{ background: PACE_FAMILY_COLORS[modifier.pace] }}
+            >
+              {PACE_FAMILY_LABELS[modifier.pace]}
+            </span>
+            {modifier.density && (
+              <span className="map-modifier__density-tag">{DENSITY_LABELS[modifier.density]}</span>
+            )}
+          </div>
+          <p className="map-modifier__summary">{PACE_FAMILY_SUMMARIES[modifier.pace]}</p>
+          {modifier.density && (
+            <p className="map-modifier__summary map-modifier__summary--density">
+              {DENSITY_SUMMARIES[modifier.density]}
+            </p>
+          )}
+          <div className="map-modifier__grant">
+            Grants: <strong>{catalystFamilyLabel(modifier.pace)}</strong>
+          </div>
+        </section>
+      )}
+
       {isDungeon && <div className="map-dungeon-warning">Altar trial · guardians · boss finale</div>}
 
       {felledMarker && felledMarker.respawnAt > mapNow && felledBoss && (
@@ -257,6 +288,11 @@ export function NodeInfo({ nodeId, playerNodeId, onClose }: NodeInfoProps) {
       {monsters.length > 0 && (
         <section className="map-info-section">
           <div className="map-info-section__title">Monsters</div>
+          {modifier && (
+            <div className="map-monster-note">
+              Stats shown are base — this node’s modifier reshapes them.
+            </div>
+          )}
           {monsters.map(m => (
             <MonsterRow
               key={m.id}

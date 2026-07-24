@@ -980,3 +980,122 @@
     display: none;
   }
 }
+
+/* ── Node modifiers (Map Variety Stage A) ──────────────────────────────────── */
+
+/* Family chip in a grid tile's top-right corner. */
+.map-tile__family {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  min-width: 14px;
+  height: 14px;
+  padding: 0 3px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  border-radius: 3px;
+  font-family: monospace;
+  font-size: 10px;
+  font-weight: 700;
+  color: #0b0b12;
+  line-height: 1;
+}
+
+.map-tile__density {
+  font-size: 9px;
+  color: #0b0b12;
+}
+
+/* Legend strip beneath the grid. */
+.map-legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  margin-top: 8px;
+  border-top: 1px solid rgba(60, 55, 40, 0.30);
+  font-size: 11px;
+  color: rgba(230, 225, 210, 0.75);
+}
+
+.map-legend__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.map-legend__chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  font-family: monospace;
+  font-size: 10px;
+  font-weight: 700;
+  color: #0b0b12;
+}
+
+.map-legend__marker {
+  font-size: 11px;
+  color: rgba(230, 225, 210, 0.9);
+}
+
+/* Modifier section in the node detail panel. */
+.map-modifier {
+  margin: 8px 10px 0;
+  padding: 8px 10px;
+  border-left: 3px solid transparent;
+  border-radius: 4px;
+  background: rgba(20, 20, 28, 0.5);
+}
+
+.map-modifier__head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.map-modifier__chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 8px;
+  border-radius: 3px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #0b0b12;
+}
+
+.map-modifier__density-tag {
+  font-size: 11px;
+  color: rgba(230, 225, 210, 0.8);
+  letter-spacing: 0.03em;
+}
+
+.map-modifier__summary {
+  margin: 6px 0 0;
+  font-size: 12px;
+  line-height: 1.35;
+  color: rgba(220, 215, 200, 0.85);
+}
+
+.map-modifier__summary--density {
+  color: rgba(200, 200, 210, 0.7);
+}
+
+.map-modifier__grant {
+  margin-top: 6px;
+  font-size: 12px;
+  color: rgba(230, 225, 210, 0.9);
+}
+
+.map-monster-note {
+  font-size: 11px;
+  font-style: italic;
+  color: rgba(200, 195, 180, 0.65);
+  margin-bottom: 4px;
+}
