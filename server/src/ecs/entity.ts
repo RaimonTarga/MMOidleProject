@@ -63,6 +63,7 @@ import type {
   UsesSkills,
 } from "@mmo-idle/shared";
 import type { FeatureTarget, Vec2 } from "@mmo-idle/shared";
+import type { PaceFamily, PaceMechanicOverlay } from "@mmo-idle/shared";
 import type { With } from "miniplex";
 import type { ControlsMinion } from "../systems/classes/archetypes/summoner/controlsMinion";
 import type { HasSummonerCommand } from "../systems/classes/archetypes/summoner/command";
@@ -122,6 +123,18 @@ export interface TracksDungeon {
   leashRadius?: number;
   /** Injected opening-strike multiplier (first hit of each aggro session). */
   openingStrikeMult?: number;
+}
+
+/**
+ * Server-only scratch (NOT networked): the pace modifier of the node this
+ * non-boss monster spawned into (Map Variety Stage A). Plain stat scalars are
+ * already baked into the entity at spawn; this carries only the MECHANIC overlays
+ * (added/amplified DoT, opening strike, counted burst) that the existing mechanic
+ * read sites consult. Presence gates behavior — unmodified monsters (bosses,
+ * clearing/test-room spawns) simply never carry it.
+ */
+export interface ModdedByNode extends PaceMechanicOverlay {
+  family: PaceFamily;
 }
 
 /**
@@ -224,6 +237,7 @@ export interface ServerEntity {
   isInvulnerable?: IsInvulnerable;
   isUltimateEngaged?: IsUltimateEngaged;
   tracksDungeon?: TracksDungeon;
+  moddedByNode?: ModdedByNode;
 
   // ── Player (S8) ───────────────────────────────────────────────
   tracksEngagement?: number;

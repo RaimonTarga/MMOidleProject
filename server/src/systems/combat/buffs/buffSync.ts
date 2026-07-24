@@ -16,6 +16,7 @@ import {
   type BuffId,
 } from "@mmo-idle/shared";
 import type { World } from "../../../world/World";
+import { effectiveMonsterDot } from "../engine/monsterMechanics";
 import { recordWorldLogEvent } from "../../../world/worldLog";
 import { actorFromPlayer } from "../../../world/worldLogActors";
 import { collectMechanicBuffs } from "../../classes/registry";
@@ -315,7 +316,7 @@ function monsterDotBuff(effect: StatusEffect, world: World): PlayerBuff {
   const debuff = sourceDef
     ? resolveMonsterDotDebuff({
         monster: sourceDef,
-        dotEffect: source?.scriptsBoss?.dotEffectOverride ?? sourceDef.dotEffect,
+        dotEffect: source ? effectiveMonsterDot(source, sourceDef) : sourceDef.dotEffect,
       })
     : monsterDotFlavorByCode(effect.data["flavorCode"]);
   const totalMs = effect.data["totalMs"] ?? effect.remainingMs;

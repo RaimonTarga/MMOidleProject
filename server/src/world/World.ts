@@ -11,6 +11,8 @@ import {
   BIOME_DATABASE,
   GAME_CONFIG,
   NODE_BIOMES,
+  NODE_MODIFIERS,
+  densitySpawnFactor,
   TEST_ROOM_NODE_ID,
   type DeathCause,
   type NetworkedComponentKey,
@@ -529,11 +531,16 @@ export class World {
 
   getMobDensity(nodeId: string): number {
     const biomeInfo = NODE_BIOMES[nodeId];
-    if (biomeInfo?.mobDensity !== undefined) return biomeInfo.mobDensity;
-    const biome = biomeInfo
-      ? BIOME_DATABASE.get(biomeInfo.biomeGroup)
-      : undefined;
-    return biome?.mobDensity ?? GAME_CONFIG.MONSTERS_PER_NODE;
+    const base =
+      biomeInfo?.mobDensity !== undefined
+        ? biomeInfo.mobDensity
+        : (biomeInfo
+            ? BIOME_DATABASE.get(biomeInfo.biomeGroup)?.mobDensity
+            : undefined) ?? GAME_CONFIG.MONSTERS_PER_NODE;
+    // Map Variety Stage A: a node density modifier scales the population target
+    // (throne stays 0 — 0 × factor = 0). Reward is normalized inversely elsewhere.
+    const density = NODE_MODIFIERS[nodeId]?.density;
+    return Math.round(base * densitySpawnFactor(density));
   }
 
   // ── EVENTS ─────────────────────────────────────────

@@ -11,6 +11,7 @@ import {
 } from "@mmo-idle/shared";
 import type { World } from "../../../world/World";
 import type { MonsterEntity, PlayerEntity } from "../../../ecs/entity";
+import { effectiveMonsterDot } from "../engine/monsterMechanics";
 
 interface DotTickEventOptions {
   sourceType?: DotTickSourceType;
@@ -84,7 +85,7 @@ export function monsterDotElement(
   const monster = world.getMonsterEntity(sourceId);
   if (!monster) return "poison";
   const def = MONSTER_DATABASE.get(monster.isMonster.monsterTypeId);
-  const dotEffect = monster.scriptsBoss?.dotEffectOverride ?? def?.dotEffect;
+  const dotEffect = effectiveMonsterDot(monster, def);
   return resolveMonsterDotFlavor({
     biome: def?.biome,
     attackStyle: def?.attackStyle,

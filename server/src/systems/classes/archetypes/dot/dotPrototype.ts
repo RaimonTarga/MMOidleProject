@@ -8,6 +8,7 @@ import {
   resolveDotClassProfile,
 } from "@mmo-idle/shared";
 import { registerCombatListener } from "../../../combat/engine/combatPipeline";
+import { effectiveMonsterDot } from "../../../combat/engine/monsterMechanics";
 import {
   applyStatusEffect,
   getStatusEffects,
@@ -367,8 +368,8 @@ export function initDotArchetype(): void {
     const monsterDef = MONSTER_DATABASE.get(
       ctx.attacker.isMonster.monsterTypeId,
     );
-    // A boss 'morph' action can override the def's DoT-on-hit at runtime.
-    const dotEffect = ctx.attacker.scriptsBoss?.dotEffectOverride ?? monsterDef?.dotEffect;
+    // Source precedence: boss morph override → node Blight overlay → def DoT.
+    const dotEffect = effectiveMonsterDot(ctx.attacker, monsterDef);
     if (!dotEffect) return;
 
     const player = ctx.defender;

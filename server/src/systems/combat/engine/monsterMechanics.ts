@@ -2,6 +2,7 @@ import {
   getCounter,
   setCounter,
   type MonsterDefinition,
+  type MonsterDotEffect,
 } from "@mmo-idle/shared";
 import type { MonsterEntity } from "../../../ecs/entity";
 
@@ -15,6 +16,9 @@ import type { MonsterEntity } from "../../../ecs/entity";
 // despawn). Keys are private to this module — do not reuse them elsewhere.
 
 const CADENCE_COUNTER_KEY = "t4CadenceCount";
+// Private counter for a node Volatility overlay cadence when the def itself has
+// NO cadenceFinisher (kept separate from CADENCE_COUNTER_KEY so they never mix).
+const VOLATILITY_CADENCE_KEY = "nodeVolatilityCadence";
 const EMP_CD_NEXT_KEY = "t4EmpCooldownNextAt";
 const EMP_CD_SESSION_KEY = "t4EmpCooldownSession";
 const OPENING_FIRED_SESSION_KEY = "openingStrikeFiredSession";
@@ -31,6 +35,23 @@ const CHARGE_SESSION_KEY = "chargeSession"; // combat-session token (re-arm on e
 /** Combat-entry timestamp for the monster's current aggro session (or `now`). */
 function combatSession(monster: MonsterEntity, now: number): number {
   return monster.hasAggroTarget?.sinceMs ?? now;
+}
+
+/**
+ * The DoT effect this monster actually applies on hit, in precedence order:
+ *   boss morph override → node Blight overlay (Map Variety) → the def's own DoT.
+ * Only the SOURCE of the effect changes, so evade rules, shield-bypass, and the
+ * buff UI all flow through unchanged.
+ */
+export function effectiveMonsterDot(
+  monster: MonsterEntity,
+  def: MonsterDefinition | undefined,
+): MonsterDotEffect | undefined {
+  return (
+    monster.scriptsBoss?.dotEffectOverride ??
+    monster.moddedByNode?.dot ??
+    def?.dotEffect
+  );
 }
 
 /**
@@ -58,10 +79,21 @@ export function monsterEmpoweredMultiplier(
   const cs = monster.tracksCombat;
 
   const cadence = def?.cadenceFinisher;
+  const overlayCadence = monster.moddedByNode?.cadence;
   if (cadence && cadence.everyNAttacks > 0) {
     const count = getCounter(cs, CADENCE_COUNTER_KEY) + 1;
-    if (count % cadence.everyNAttacks === 0) mult *= cadence.multiplier;
+    if (count % cadence.everyNAttacks === 0) {
+      // A node Volatility overlay amplifies the def's own cadence on the SAME
+      // beat (never a second independent counter).
+      mult *= cadence.multiplier * (overlayCadence?.multiplier ?? 1);
+    }
     setCounter(cs, CADENCE_COUNTER_KEY, count);
+  } else if (overlayCadence && overlayCadence.everyNAttacks > 0) {
+    // Synthesized Volatility cadence — the def had no cadenceFinisher, so run the
+    // overlay pattern off its own private counter.
+    const count = getCounter(cs, VOLATILITY_CADENCE_KEY) + 1;
+    if (count % overlayCadence.everyNAttacks === 0) mult *= overlayCadence.multiplier;
+    setCounter(cs, VOLATILITY_CADENCE_KEY, count);
   }
 
   const cooldown = def?.empoweredCooldown;
@@ -83,7 +115,11 @@ export function monsterEmpoweredMultiplier(
   // re-engages (a new session). Session-keyed like empoweredCooldown, so it re-arms
   // every fresh aggro rather than once per life. Deterministic (no RNG).
   // Also fires when injected at spawn via tracksDungeon.openingStrikeMult (guardians).
-  const openingMult = monster.tracksDungeon?.openingStrikeMult ?? def?.openingStrike?.multiplier ?? 1;
+  // Existing chain (dungeon injection OR the def's own opener) times the node
+  // Predation overlay, folded in multiplicatively.
+  const baseOpening =
+    monster.tracksDungeon?.openingStrikeMult ?? def?.openingStrike?.multiplier ?? 1;
+  const openingMult = baseOpening * (monster.moddedByNode?.openingStrikeMult ?? 1);
   if (openingMult > 1) {
     const session = combatSession(monster, now);
     if (getCounter(cs, OPENING_FIRED_SESSION_KEY) !== session) {

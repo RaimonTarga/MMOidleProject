@@ -18,6 +18,11 @@ import {
   moverOverlapsBlockShapes,
   navigationBodyHalfExtents,
   nearestWalkableCell,
+  NODE_MODIFIERS,
+  paceStatScalars,
+  paceMechanicOverlay,
+  elitePoolWeight,
+  type DensityModifier,
   type MonsterPatrolRoute,
   type Vec2,
 } from "@mmo-idle/shared";
@@ -238,6 +243,26 @@ export function createMonster(
     !isBoss && isDungeon && !usesGauntlet
       ? Math.round(def.stats.attack * DUNGEON_ATK_MULT)
       : def.stats.attack;
+
+  // Map Variety Stage A: reshape non-boss monster OFFENSE around the node's pace
+  // modifier (threat-budget-neutral; composes on top of dungeon mults). Bosses
+  // are immune (design §1.1). Plain scalars bake into the entity at spawn; the
+  // mechanic overlay rides `moddedByNode` (attached after ecs.add).
+  const nodeModifier = isBoss ? undefined : NODE_MODIFIERS[nodeId];
+  const modBiomeTier = NODE_BIOMES[nodeId]?.biomeTier ?? 0;
+  const paceScalars = nodeModifier
+    ? paceStatScalars(nodeModifier.pace, modBiomeTier)
+    : null;
+  const attack = paceScalars
+    ? Math.max(1, Math.round(atkBase * paceScalars.attackMult))
+    : atkBase;
+  const attackCooldown = paceScalars
+    ? Math.max(1, Math.round(def.stats.attackCooldown * paceScalars.attackCooldownMult))
+    : def.stats.attackCooldown;
+  const speed = paceScalars
+    ? def.stats.speed * paceScalars.moveSpeedMult
+    : def.stats.speed;
+
   const isTestRoom = nodeId === TEST_ROOM_NODE_ID;
   const pullRange = isTestRoom ? 0 : def.stats.pullRange;
   const wanderRadius = isTestRoom ? 0 : def.ai.wanderRadius;
@@ -256,20 +281,20 @@ export function createMonster(
     hasPosition: {
       current: spawnPos,
       nodeId,
-      speed: def.stats.speed,
+      speed,
     },
     hasHealth: {
       hp: hpBase,
       maxHp: hpBase,
     },
     dealsDamage: {
-      attack: atkBase,
+      attack,
       onHitDamage: 0,
       attackStyle: def.attackStyle,
     },
     performsAttack: {
       attackRange: def.stats.attackRange,
-      attackCooldown: def.stats.attackCooldown,
+      attackCooldown,
       lastAttackAt: 0,
     },
     mitigatesDamage: {
@@ -290,7 +315,7 @@ export function createMonster(
       idleMinMs: def.ai.idleMinMs,
       idleMaxMs: def.ai.idleMaxMs,
       lastAggroAt: 0,
-      baseSpeed: def.stats.speed,
+      baseSpeed: speed,
       kiteTimer: 0,
       chargeRemainingMs: 0,
       patrolIndex: 0,
@@ -314,6 +339,14 @@ export function createMonster(
     applyDormantUltimateBoss(world, entity, def);
   }
 
+  if (nodeModifier) {
+    const overlay = paceMechanicOverlay(nodeModifier.pace, modBiomeTier, def);
+    world.ecs.addComponent(entity, "moddedByNode", {
+      family: nodeModifier.pace,
+      ...overlay,
+    });
+  }
+
   world.adjustMonsterCount(nodeId, 1, isBoss);
   return entity;
 }
@@ -332,7 +365,9 @@ export function spawnMonster(world: World, nodeId: string): boolean {
   const pool = biome.monsterPoolByTier[biomeInfo.biomeTier] ?? [];
   if (pool.length === 0) return false;
 
-  const typeId = pool[Math.floor(Math.random() * pool.length)];
+  // A node density modifier biases WHICH type spawns (swarming away from elites,
+  // elite-ground toward them). Composition is pre-combat, so RNG selection is fine.
+  const typeId = weightedPoolPick(pool, NODE_MODIFIERS[nodeId]?.density);
   const typeDef = MONSTER_DATABASE.get(typeId);
   const node = NODE_REGISTRY.get(nodeId) ?? world.node;
   const minDistSq = GAME_CONFIG.MONSTER_MIN_SPAWN_DIST ** 2;
@@ -396,6 +431,31 @@ export function spawnMonster(world: World, nodeId: string): boolean {
   }
 
   return false;
+}
+
+/**
+ * Pick a monster type from the pool, weighted by the node's density modifier
+ * (`elitePoolWeight`). Uniform when there is no density modifier.
+ */
+function weightedPoolPick(
+  pool: string[],
+  density: DensityModifier | undefined,
+): string {
+  if (!density) return pool[Math.floor(Math.random() * pool.length)];
+  const weights: number[] = [];
+  let total = 0;
+  for (const id of pool) {
+    const w = elitePoolWeight(density, MONSTER_DATABASE.get(id)?.elite === true);
+    weights.push(w);
+    total += w;
+  }
+  if (total <= 0) return pool[Math.floor(Math.random() * pool.length)];
+  let r = Math.random() * total;
+  for (let i = 0; i < pool.length; i++) {
+    r -= weights[i];
+    if (r < 0) return pool[i];
+  }
+  return pool[pool.length - 1];
 }
 
 function cavePatrolAssignment(
