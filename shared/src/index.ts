@@ -57,6 +57,8 @@ export * from './protocol/admin';
 export * from './protocol/death';
 export * from './protocol/socketEvents';
 export * from './world/nodeBiomes';
+export * from './world/nodeModifiers';
+export * from './world/nodeModifierMap';
 export * from './world/nodeFeatures';
 export * from './world/trees';
 export * from './quests/questDatabase';
