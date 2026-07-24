@@ -4,8 +4,10 @@
 v2 locked its broad direction; v3 incorporates the second game-design review and user Q&A,
 including reward neutrality, biome-vs-modifier priority, player-facing family names, item-family
 catalyst costs, the Broadsword exception, regional supply, and native-family distribution. See
-§5 for the decision log. **No implementation plan exists yet and none is approved** — files,
-phases, and migration steps get planned separately when the user says go.
+§5 for the decision log. **Implementation plan: `docs/map-variety-implementation-plan.md`.
+Stage A (node modifiers + catalyst re-key on the existing 11×11 grid) SHIPPED 2026-07-24
+(`feat/map-variety-stage-a`); Stage B (regions) is outlined only and unplanned.** All balance
+numbers remain PLACEHOLDER (user-owned tuning).
 
 **Scope: game design only.** Numbers (modifier percentages, mint thresholds, costs) are
 balance-pass territory, not fixed here.

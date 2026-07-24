@@ -56,14 +56,15 @@ export const NODE_MODIFIERS: Record<string, NodeModifierInfo> = {
 
   // ── CAVE (native Volatility; Elite-Ground banned) ───────────────────────────
   'node-1-5': { pace: 'volatility' },
-  'node-1-6': { pace: 'volatility', density: 'swarming' }, // reweight toward small/fast
+  'node-1-6': { pace: 'volatility' }, // (cave T3 pool is all-elite → swarming moved to T1 node-3-5)
   'node-1-7': { pace: 'alacrity' },
   'node-1-8': { pace: 'blight' },
   'node-1-9': { pace: 'volatility' }, // dungeon
   'node-2-5': { pace: 'volatility' },
   'node-2-6': { pace: 'volatility' },
   'node-2-7': { pace: 'volatility' }, // dungeon
-  'node-3-5': { pace: 'volatility' },
+  'node-3-5': { pace: 'volatility', density: 'swarming' }, // cave T1 pool (cave-brute elite + cave-lurker) supports the bias
+
   'node-3-6': { pace: 'volatility' }, // dungeon
   'node-4-5': { pace: 'volatility' },
 
@@ -156,5 +157,9 @@ export const NODE_MODIFIERS: Record<string, NodeModifierInfo> = {
 
   // ── TRENCH (native Predation; Elite-Ground banned) ──────────────────────────
   'node-9-0': { pace: 'predation' }, // dungeon
-  'node-10-1': { pace: 'predation', density: 'swarming' }, // flagship inversion
+  // Trench T4 pool is all-elite (no non-elite mob), so Swarming can't bias
+  // composition — the "flagship inversion" needs a non-elite trench mob authored
+  // first (later mob pass). Density dropped for now to satisfy the pool-composition
+  // invariant; re-add once such a mob exists.
+  'node-10-1': { pace: 'predation' },
 };

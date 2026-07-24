@@ -16,6 +16,10 @@ import type { MonsterDefinition } from '../data/monsters/types';
 import type { MonsterDotEffect } from '../components/targeting/scriptsBoss';
 import { NODE_BIOMES, TEST_ROOM_NODE_ID } from './nodeBiomes';
 import { NODE_MODIFIERS } from './nodeModifierMap';
+// Runtime-only refs used inside validateNodeModifiers (function body, not module
+// top level) — safe despite the biomeDatabase → nodeModifiers import cycle.
+import { BIOME_DATABASE } from '../biomeDatabase';
+import { MONSTER_DATABASE } from '../monsterDatabase';
 
 // ── Vocabulary ────────────────────────────────────────────────────────────────
 
@@ -436,18 +440,19 @@ export function validateNodeModifiers(): string[] {
   for (const [biome, rec] of byBiome) {
     const native = NATIVE_FAMILY[biome];
     if (!native) continue; // Plains — no native to enforce
-    let bestFamily: PaceFamily | null = null;
-    let bestCount = -1;
+    // Native must STRICTLY exceed every other family's count (ties are not enough).
+    const nativeCount = rec.counts.get(native) ?? 0;
+    let tiedOrBeaten: PaceFamily | null = null;
     for (const family of PACE_FAMILIES) {
-      const count = rec.counts.get(family) ?? 0;
-      if (count > bestCount) {
-        bestCount = count;
-        bestFamily = family;
+      if (family === native) continue;
+      if ((rec.counts.get(family) ?? 0) >= nativeCount) {
+        tiedOrBeaten = family;
+        break;
       }
     }
-    if (bestFamily !== native) {
+    if (tiedOrBeaten) {
       violations.push(
-        `biome '${biome}': native family '${native}' is not the most frequent (was '${bestFamily}')`,
+        `biome '${biome}': native family '${native}' (${nativeCount}) does not strictly exceed '${tiedOrBeaten}' (${rec.counts.get(tiedOrBeaten) ?? 0})`,
       );
     }
     for (const band of rec.bands) {
@@ -456,6 +461,31 @@ export function validateNodeModifiers(): string[] {
           `biome '${biome}' tier band ${band}: no non-dungeon node uses native family '${native}'`,
         );
       }
+    }
+  }
+
+  // 5. Density nodes need a spawn pool with BOTH an elite and a non-elite entry,
+  //    or elitePoolWeight cannot bias composition (design §1.6). Future-proofs
+  //    Stage B authoring too.
+  for (const [nodeId, mod] of Object.entries(NODE_MODIFIERS)) {
+    if (!mod.density) continue;
+    const info = NODE_BIOMES[nodeId];
+    if (!info) continue;
+    const pool =
+      BIOME_DATABASE.get(info.biomeGroup)?.monsterPoolByTier[info.biomeTier] ?? [];
+    let hasElite = false;
+    let hasNonElite = false;
+    for (const id of pool) {
+      const def = MONSTER_DATABASE.get(id);
+      if (!def) continue;
+      if (def.elite) hasElite = true;
+      else hasNonElite = true;
+    }
+    if (!hasElite || !hasNonElite) {
+      violations.push(
+        `${nodeId}: density '${mod.density}' needs a pool with both elite and non-elite entries ` +
+          `(biome '${info.biomeGroup}' tier ${info.biomeTier} has elite=${hasElite}, nonElite=${hasNonElite})`,
+      );
     }
   }
 

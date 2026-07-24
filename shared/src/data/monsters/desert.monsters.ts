@@ -95,7 +95,7 @@ export const desertMonsterEntries = [
     // ECOLOGY: the DUEL FINISHER (T3) — alpha-strike opener + cashes the sandweaver's
     // Sun Mark while its root holds you. Last-stand + cleanse is the answer.
     stats: { hp: 700, attack: 46, plating: 0, damageReduction: 0.12, speed: 28, attackRange: 12, attackCooldown: 2600, pullRange: 175 },
-    behavior: 'melee', attackStyle: 'impact', biome: 'desert',
+    behavior: 'melee', attackStyle: 'impact', biome: 'desert', elite: true, // toughest desert T3 mob — the elite for density-node bias (Map Variety)
     rewards: { essence: 45, essenceType: 'yellow', level: 2, biomeXp: 270 },
     ai: { wanderRadius: 180, leashRange: 560, idleMinMs: 2000, idleMaxMs: 5500 },
     slowEffect: { speedMult: 0, durationMs: 1200 },

@@ -49,7 +49,7 @@ export const plainsMonsterEntries = [
     id: 'boar', name: 'Boar', color: 0xcc8844,
     // Swarm-catcher: charges in so the player can't simply walk away from the pack.
     stats: { hp: 100, attack: 18, plating: 0, damageReduction: 0, speed: 50, attackRange: 12, attackCooldown: 1900, pullRange: 205 },
-    behavior: 'melee', attackStyle: 'impact', biome: 'plains',
+    behavior: 'melee', attackStyle: 'impact', biome: 'plains', elite: true, // toughest plains T1 mob — the elite for density-node bias (Map Variety)
     rewards: { essence: 3, essenceType: 'yellow', level: 1, biomeXp: 18 },
     ai: { wanderRadius: 260, leashRange: 660, idleMinMs: 1000, idleMaxMs: 3500 },
     chargeOnAggro: { speedMult: 2.5, durationMs: 1000 },

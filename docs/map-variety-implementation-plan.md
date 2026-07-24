@@ -1,6 +1,7 @@
 # Map Variety — Implementation Plan (Stage A)
 
-**Status: READY TO EXECUTE (written 2026-07-24).** Design authority is
+**Status: Stage A EXECUTED (2026-07-24) on `feat/map-variety-stage-a` — corrections below
+applied; Stage B unplanned.** Design authority is
 `docs/map-variety-plan.md` (v3, direction locked) — if this plan and that doc disagree, the
 design doc wins; if either disagrees with code reality, read the code and adapt while
 preserving design intent. This plan was written against a fresh read of the code; all
@@ -405,3 +406,119 @@ table and validation grouping, not the systems.
 - [ ] Map shows family + density + granted catalyst before travel; node panel has the
       modifier section; HUD shows the current node's chip; CatalystPanel lists five families.
 - [ ] `pnpm typecheck` and `pnpm test` green; docs updated per A5.3.
+
+---
+
+# Stage A audit — correction list (2026-07-24, post-implementation review)
+
+Stage A was implemented on `feat/map-variety-stage-a` (5 commits, A1–A5) and audited against
+this plan + the design doc. **Verdict: faithful and high quality.** Verified clean: reshape
+math and validator semantics; boss immunity; determinism (the only new RNG is pre-combat
+spawn composition); `moddedByNode` server-only and absent from `NETWORKED_MONSTER_KEYS`;
+all three monster-DoT read sites routed through `effectiveMonsterDot` with correct
+precedence; opening-strike and cadence composition (including the separate private counter
+for synthesized Volatility); rewards/bundle re-key with density normalization; party loop
+rides through; hydrate sanitization; drizzle journal + snapshot chain (`prevId` verified);
+sink re-keys with per-item rationale comments (abilityRecipes/evolution had no authored
+costs — nothing was missed); boot invariant severity matches the existing networked-keys
+check; `pnpm typecheck` clean and **28/28 tests pass (re-verified independently, not taken
+from the implementer's report)**; the user's uncommitted art/UI work was not touched.
+
+The following corrections remain, ranked. Fix in order; each is small.
+
+> **Resolution (applied 2026-07-24, same branch):**
+> - **C1** — DONE via option (b): `CatalystPanel.tsx` no longer imports the untracked
+>   `GameIcon`/`economyIcons`; it renders a colored `◇` glyph. Branch is self-contained.
+>   Re-integrate `GameIcon` whenever the icon-overhaul work lands.
+> - **C2** — DONE. Validator now requires every density node's pool to hold ≥1 elite AND
+>   ≥1 non-elite. Authored 7 `elite: true` flags on the genuinely-toughest mob of each
+>   affected pool (**boar**, **wolf**, **ironwood-golem/Ironclaw Badger**, **swamp-hydra/
+>   Moss-Shell Snapper**, **plague-hydra/Plague-Shell Snapper**, **desert-basilisk**,
+>   **magma-brute/Magma Tortoise**) — *player-visible (yellow outline + focus-elites); user
+>   should sanity-check these picks*. Two all-elite pools can't host Swarming: cave Swarming
+>   moved from T3 `node-1-6` to T1 `node-3-5`; trench Swarming (`node-10-1`) dropped (needs a
+>   non-elite trench mob first — recorded as a gap).
+> - **C3** — DONE: `runMigrations()` ran against the local Postgres (`gamedb`); migration
+>   `0002_wipe_catalyst_wallets` applied cleanly (3 migrations recorded) and all 5 character
+>   rows verified `catalysts={}` / `catalystProgress={}`.
+> - **C4** — DONE: native-most-frequent check is now strict (must exceed every other family).
+> - **C5** — DONE: both doc headers reworded.
+> - **C6** — recorded only (no code change), as instructed.
+
+## C1 — BLOCKER (merge/CI): the branch is not self-contained
+
+The committed `client/src/hud/CatalystPanel.tsx` imports `../ui/GameIcon` and
+`../ui/economyIcons` — files that exist **only as untracked working-tree files** (the
+user's in-progress icon-overhaul work; verified absent from both `develop` and the feature
+branch via `git ls-tree`). Typecheck passes locally only because those files happen to sit
+in the working tree; a fresh checkout or CI run of this branch fails.
+
+Resolution is a **user sequencing decision** — ask, then do one of:
+- **(a) Land the icon work first** (commit the UI-icon overhaul to `develop`, rebase/merge
+  the feature branch after). Keeps the GameIcon integration as written.
+- **(b) Make the branch independent**: replace the `GameIcon`/`CATALYST_PLACEHOLDER_ICON`
+  usage in `CatalystPanel.tsx` with a plain colored glyph span (the `◇` fallback it already
+  declares), dropping both imports. ~10 lines; re-integrate icons whenever that work lands.
+
+## C2 — density pool bias silently no-ops in three biomes
+
+`elitePoolWeight` can only bias composition where the pool has `elite: true` entries.
+Plains, forest, and swamp author **zero** elite flags, yet the Stage A map places density
+nodes there: forest `node-4-7` (swarming) + `node-5-8` (elite-ground), swamp `node-8-4`
+(swarming) + `node-9-5` (elite-ground), plains `node-6-3` (swarming). On those nodes only
+the count/reward halves of density work; composition doesn't change — Elite Ground there is
+"fewer of the same mobs," not "the biome's toughest walk."
+
+Fix both halves:
+1. **Validator**: extend `validateNodeModifiers()` — for every node with a `density`
+   modifier, the biome's `monsterPoolByTier[biomeTier]` must contain ≥1 `elite: true` AND
+   ≥1 non-elite entry; violation otherwise. (This also future-proofs Stage B authoring.)
+2. **Data**: satisfy the new check by authoring `elite: true` on the genuinely toughest
+   entries of the affected plains/forest/swamp tier pools (propose the specific monsters
+   from the pool stats and list them for the user's approval — the `elite` flag also feeds
+   bestiary display and the `focus-elites` rune, so it's player-visible), OR re-site those
+   five density placements onto biomes that already have elites. Prefer authoring flags —
+   the placements themselves are well-chosen.
+
+## C3 — migration 0002 has never touched a real database
+
+`0002_wipe_catalyst_wallets.sql` is statically correct (table/column names match
+`0000_groovy_synch.sql`; single statement; snapshot chain verified) but was never executed
+(no Postgres in the implementation environment). Before merge: `pnpm db:up`, then
+`pnpm dev:server`, confirm the boot log applies `0002_wipe_catalyst_wallets`, and
+spot-check one character row shows `"catalysts":{}` / `"catalystProgress":{}`. If the
+local DB was already wiped/reset at some point this is a 2-minute formality.
+
+## C4 — minor: native-most-frequent validator accepts ties
+
+The "single most frequent" check picks the first maximum in `PACE_FAMILIES` order, so a
+native family that TIES another passes when it happens to sort earlier. Make it strict:
+native count must exceed every other family's count for that biome. Re-run the validator;
+adjust `nodeModifierMap.ts` if any biome only passed via the tie laxity.
+
+## C5 — minor: stale doc headers
+
+- `docs/map-variety-plan.md` header still says "**No implementation plan exists yet and
+  none is approved**" — false since this plan was written and executed. Reword to point
+  here with Stage A status.
+- This file's own status header says "READY TO EXECUTE" — flip to
+  "Stage A EXECUTED (2026-07-24) on `feat/map-variety-stage-a`; corrections below; Stage B
+  unplanned."
+
+## C6 — tuning notes for the user's balance pass (record only — do NOT "fix" in code)
+
+- Volatility on monsters that already have a `cadenceFinisher` lands slightly *under*
+  budget: base attack ×(1−M) but the spike only gains ×(1+M) on the def's beats.
+- Blight's synthesized DoT reaches its budgeted throughput only at full stacks — short
+  fights under-deliver.
+- `densityRewardMult` on Elite Ground stacks with elites' already-higher per-kill rewards —
+  elite-ground may overpay as authored.
+- All magnitudes (`PACE_MAGNITUDE_BY_TIER`, opener/spike factors, density factors/weights)
+  are PLACEHOLDER by design; they live in one block in `nodeModifiers.ts`.
+
+## Also not yet verified (cheap, alongside C3)
+
+- `pnpm build` (full production build) hasn't been run by the auditor — typecheck was
+  clean, but run the build once before merge.
+- In-game eyeball of the map badges/legend/NodeInfo section/HUD chip (cosmetic collisions
+  with the dungeon badge are possible; the user will restyle regardless).

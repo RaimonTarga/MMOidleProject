@@ -70,7 +70,7 @@ export const volcanoMonsterEntries = [
     // Slow bruiser that ramps HARDER (cap +60%): kitable alone, but in the swarm you
     // can't kite freely, and a slow kill lets it spiral toward dangerous. Plt 6.
     stats: { hp: 800, attack: 56, plating: 6, damageReduction: 0, speed: 22, attackRange: 15, attackCooldown: 3000, pullRange: 150 },
-    behavior: 'melee', attackStyle: 'fire', biome: 'volcanic',
+    behavior: 'melee', attackStyle: 'fire', biome: 'volcanic', elite: true, // toughest volcanic T3 mob — the elite for density-node bias (Map Variety)
     rewards: { essence: 55, essenceType: 'red', level: 3, biomeXp: 330 },
     ai: { wanderRadius: 120, leashRange: 470, idleMinMs: 3000, idleMaxMs: 8500 },
     rampOnCombat: { stat: 'attack', perTickPct: 0.15, maxPct: 0.75, tickIntervalMs: 2000 },
