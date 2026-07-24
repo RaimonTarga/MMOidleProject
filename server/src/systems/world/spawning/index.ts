@@ -21,8 +21,7 @@ import {
   NODE_MODIFIERS,
   paceStatScalars,
   paceMechanicOverlay,
-  elitePoolWeight,
-  type DensityModifier,
+  respawnNodeIdForNodeId,
   type MonsterPatrolRoute,
   type Vec2,
 } from "@mmo-idle/shared";
@@ -365,9 +364,7 @@ export function spawnMonster(world: World, nodeId: string): boolean {
   const pool = biome.monsterPoolByTier[biomeInfo.biomeTier] ?? [];
   if (pool.length === 0) return false;
 
-  // A node density modifier biases WHICH type spawns (swarming away from elites,
-  // elite-ground toward them). Composition is pre-combat, so RNG selection is fine.
-  const typeId = weightedPoolPick(pool, NODE_MODIFIERS[nodeId]?.density);
+  const typeId = pool[Math.floor(Math.random() * pool.length)];
   const typeDef = MONSTER_DATABASE.get(typeId);
   const node = NODE_REGISTRY.get(nodeId) ?? world.node;
   const minDistSq = GAME_CONFIG.MONSTER_MIN_SPAWN_DIST ** 2;
@@ -431,31 +428,6 @@ export function spawnMonster(world: World, nodeId: string): boolean {
   }
 
   return false;
-}
-
-/**
- * Pick a monster type from the pool, weighted by the node's density modifier
- * (`elitePoolWeight`). Uniform when there is no density modifier.
- */
-function weightedPoolPick(
-  pool: string[],
-  density: DensityModifier | undefined,
-): string {
-  if (!density) return pool[Math.floor(Math.random() * pool.length)];
-  const weights: number[] = [];
-  let total = 0;
-  for (const id of pool) {
-    const w = elitePoolWeight(density, MONSTER_DATABASE.get(id)?.elite === true);
-    weights.push(w);
-    total += w;
-  }
-  if (total <= 0) return pool[Math.floor(Math.random() * pool.length)];
-  let r = Math.random() * total;
-  for (let i = 0; i < pool.length; i++) {
-    r -= weights[i];
-    if (r < 0) return pool[i];
-  }
-  return pool[pool.length - 1];
 }
 
 function cavePatrolAssignment(
@@ -976,7 +948,7 @@ function followerSpawnPos(
 }
 
 /**
- * Teleport a player to the starting clearing (node-5-5), restore full HP,
+ * Teleport a player to their current region's respawn anchor, restore full HP,
  * clear movement and combat state, and drop all monster aggro targeting them.
  */
 export function respawnPlayer(world: World, playerId: string): void {
@@ -991,18 +963,19 @@ export function respawnPlayer(world: World, playerId: string): void {
   };
 
   const fromNodeId = entity.hasPosition.nodeId;
-  if (world.isNodeFrozen("node-5-5")) {
-    thawNode(world, "node-5-5");
+  const respawnNodeId = respawnNodeIdForNodeId(fromNodeId);
+  if (world.isNodeFrozen(respawnNodeId)) {
+    thawNode(world, respawnNodeId);
   }
-  entity.hasPosition.nodeId = "node-5-5";
-  if (fromNodeId !== "node-5-5") {
-    world.movePlayerNode(fromNodeId, "node-5-5", entity.isPlayer.id);
+  entity.hasPosition.nodeId = respawnNodeId;
+  if (fromNodeId !== respawnNodeId) {
+    world.movePlayerNode(fromNodeId, respawnNodeId, entity.isPlayer.id);
   }
   entity.hasPosition.current = spawn;
   // Force the next node:delta for the clearing to be a full snapshot so the
   // respawning client clears render state from the node where they died.
   // Mirrors the gate-transition path in `transitions.ts`.
-  world.resetNodeDeltaState("node-5-5");
+  world.resetNodeDeltaState(respawnNodeId);
   stopEntity(world, entity);
   setAttackTarget(world, entity, null);
   clearAutoTraversePath(world, entity);

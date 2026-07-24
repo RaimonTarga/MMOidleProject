@@ -129,7 +129,9 @@ export function biomeXpForLevel(n: number): number {
 
 /** Maps biomeGroup -> biomeTier, derived from NODE_BIOMES. */
 export const BIOME_TIER_BY_GROUP: Record<string, number> = Object.fromEntries(
-  Object.values(NODE_BIOMES).map((v) => [v.biomeGroup, v.biomeTier]),
+  Object.values(NODE_BIOMES)
+    .filter((node) => node.kind !== 'sanctuary')
+    .map((v) => [v.biomeGroup, v.biomeTier]),
 );
 
 /**
@@ -140,7 +142,8 @@ export const BIOME_TIER_BY_GROUP: Record<string, number> = Object.fromEntries(
  */
 export const BIOME_START_TIER_BY_GROUP: Record<string, number> = (() => {
   const map: Record<string, number> = {};
-  for (const { biomeGroup, biomeTier } of Object.values(NODE_BIOMES)) {
+  for (const { biomeGroup, biomeTier, kind } of Object.values(NODE_BIOMES)) {
+    if (kind !== 'normal' && kind !== 'dungeon') continue;
     if (map[biomeGroup] === undefined || biomeTier < map[biomeGroup]) {
       map[biomeGroup] = biomeTier;
     }
@@ -212,7 +215,7 @@ export function biomeXpForBiomeLevel(biomeGroup: string, n: number): number {
 export function globalMastery(biomeLevel: Record<string, number>): number {
   let total = 0;
   for (const [group, level] of Object.entries(biomeLevel)) {
-    if (group === 'clearing') continue;
+    if (group === 'clearing' || group === 'sanctuary') continue;
     total += Math.max(0, level);
   }
   return total;

@@ -2,47 +2,20 @@ import {
   GAME_CONFIG,
   NODE_BIOMES,
   TEST_ROOM_NODE_ID,
+  directionBetweenWorldNodes,
+  shortestWorldPath,
   type NodeDirection,
   type Vec2,
 } from '@mmo-idle/shared';
 import { NODE_REGISTRY } from './nodeRegistry';
-
-function parseNodeId(id: string): [number, number] | null {
-  const p = id.split('-');
-  if (p.length !== 3) return null;
-  const r = parseInt(p[1], 10);
-  const c = parseInt(p[2], 10);
-  return Number.isNaN(r) || Number.isNaN(c) ? null : [r, c];
-}
 
 function isTraversableMapNode(nodeId: string): boolean {
   return nodeId !== TEST_ROOM_NODE_ID && NODE_BIOMES[nodeId]?.biomeGroup !== 'testroom';
 }
 
 export function findShortestNodePath(fromId: string, toId: string): string[] | null {
-  if (fromId === toId) return [fromId];
-  const parent = new Map<string, string>([[fromId, '']]);
-  const queue: string[] = [fromId];
-  while (queue.length > 0) {
-    const cur = queue.shift()!;
-    const node = NODE_REGISTRY.get(cur);
-    if (!node) continue;
-    for (const nextId of Object.values(node.exits)) {
-      if (!nextId || parent.has(nextId) || !isTraversableMapNode(nextId)) continue;
-      parent.set(nextId, cur);
-      if (nextId === toId) {
-        const path: string[] = [];
-        let n: string = toId;
-        while (n !== '') {
-          path.unshift(n);
-          n = parent.get(n)!;
-        }
-        return path;
-      }
-      queue.push(nextId);
-    }
-  }
-  return null;
+  if (!isTraversableMapNode(fromId) || !isTraversableMapNode(toId)) return null;
+  return shortestWorldPath(fromId, toId);
 }
 
 export function findRegularNodeFor(biomeGroup: string, tier: number): string | null {
@@ -74,16 +47,7 @@ export function findDungeonNodeFor(biomeGroup: string, tier: number): string | n
 }
 
 export function directionFromTo(fromId: string, toId: string): NodeDirection | null {
-  const from = parseNodeId(fromId);
-  const to = parseNodeId(toId);
-  if (!from || !to) return null;
-  const [fr, fc] = from;
-  const [tr, tc] = to;
-  if (fr === tr && tc === fc + 1) return 'east';
-  if (fr === tr && tc === fc - 1) return 'west';
-  if (tr === fr - 1 && fc === tc) return 'north';
-  if (tr === fr + 1 && fc === tc) return 'south';
-  return null;
+  return directionBetweenWorldNodes(fromId, toId);
 }
 
 export function gateTargetForDirection(nodeId: string, direction: NodeDirection): Vec2 {

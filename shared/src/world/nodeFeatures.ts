@@ -1,5 +1,6 @@
 import { GAME_CONFIG } from "../config/gameConfig";
 import type { Vec2 } from "../systems/spatial";
+import { WORLD_NODE_LIST } from "./map/registry";
 
 /** Axis-aligned or circular zone in world pixels (node-local coordinates). */
 export type NodeFeatureShape =
@@ -277,24 +278,12 @@ const MOUNTAIN_LEDGE_VARIANTS: MountainLedgeVariant[] = [
   { entrances: ["northWest", "northEast", "southWest", "southEast", "east", "west"], wobble: 5 },
 ];
 
-export const MOUNTAIN_NODE_LEDGE_VARIANTS: Record<string, number> = {
-  "node-0-3": 0,
-  "node-0-4": 1,
-  "node-0-5": 2,
-  "node-0-6": 3,
-  "node-0-7": 4,
-  "node-0-8": 5,
-  "node-1-2": 2,
-  "node-1-3": 4,
-  "node-1-4": 1,
-  "node-2-2": 5,
-  "node-2-3": 0,
-  "node-2-4": 3,
-  "node-3-2": 1,
-  "node-3-3": 5,
-  "node-3-4": 2,
-  "node-4-4": 0,
-};
+export const MOUNTAIN_NODE_LEDGE_VARIANTS: Record<string, number> =
+  Object.fromEntries(
+    WORLD_NODE_LIST
+      .filter((node) => node.biomeGroup === "mountain")
+      .map((node) => [node.id, node.featureVariant ?? 0]),
+  );
 
 function mountainVariant(variantIndex: number): MountainLedgeVariant {
   return MOUNTAIN_LEDGE_VARIANTS[
@@ -569,7 +558,7 @@ function volcanicHeat(id: string): NodeFeatureSpec {
 }
 
 /** Per-node static hazards and obstacles. */
-export const NODE_FEATURES: Record<string, NodeFeatureSpec[]> = {
+const LEGACY_NODE_FEATURE_TEMPLATES: Record<string, NodeFeatureSpec[]> = {
   // Clearing (T0). Rune altar centerpiece, just north of the player spawn point
   // (node center). Non-blocking on purpose — its hitbox exists only so future
   // interaction logic can detect a player standing at the altar.
@@ -800,5 +789,88 @@ export const NODE_FEATURES: Record<string, NodeFeatureSpec[]> = {
     },
   ],
 };
+
+const SWAMP_NORMAL_TEMPLATES = [
+  "node-6-5",
+  "node-6-6",
+  "node-7-5",
+  "node-7-6",
+  "node-7-7",
+  "node-8-4",
+  "node-8-5",
+  "node-8-7",
+  "node-9-5",
+  "node-9-6",
+  "node-9-7",
+];
+const SWAMP_DUNGEON_TEMPLATES: Record<number, string> = {
+  1: "node-7-4",
+  2: "node-8-6",
+  3: "node-9-4",
+};
+const JUNGLE_NORMAL_TEMPLATES = ["node-3-7", "node-3-8"];
+const VOLCANIC_NORMAL_TEMPLATES = ["node-7-8", "node-8-8"];
+const VOLCANIC_DUNGEON_TEMPLATES: Record<number, string> = {
+  3: "node-8-9",
+  4: "node-10-10",
+};
+
+function templateFeatures(
+  templateId: string | undefined,
+): NodeFeatureSpec[] {
+  if (!templateId) return [];
+  return (LEGACY_NODE_FEATURE_TEMPLATES[templateId] ?? []).map((feature) => ({
+    ...feature,
+  }));
+}
+
+function canonicalFeaturesForNode(
+  node: (typeof WORLD_NODE_LIST)[number],
+): NodeFeatureSpec[] {
+  if (node.id === "node-clearing") {
+    return templateFeatures("node-5-5");
+  }
+  if (node.kind === "sanctuary") return [];
+  if (node.biomeGroup === "mountain") {
+    return mountainLedgeRings(
+      `mountain_${node.id}`,
+      node.featureVariant ?? 0,
+    );
+  }
+  if (node.biomeGroup === "swamp") {
+    if (node.kind === "dungeon") {
+      return templateFeatures(SWAMP_DUNGEON_TEMPLATES[node.biomeTier]);
+    }
+    const index = (node.featureVariant ?? 0) % SWAMP_NORMAL_TEMPLATES.length;
+    return templateFeatures(SWAMP_NORMAL_TEMPLATES[index]);
+  }
+  if (node.biomeGroup === "jungle") {
+    const templateId =
+      node.kind === "dungeon"
+        ? "node-2-8"
+        : JUNGLE_NORMAL_TEMPLATES[
+            (node.featureVariant ?? 0) % JUNGLE_NORMAL_TEMPLATES.length
+          ];
+    return templateFeatures(templateId);
+  }
+  if (node.biomeGroup === "volcanic") {
+    if (node.kind === "dungeon") {
+      return templateFeatures(VOLCANIC_DUNGEON_TEMPLATES[node.biomeTier]);
+    }
+    const index =
+      (node.featureVariant ?? 0) % VOLCANIC_NORMAL_TEMPLATES.length;
+    return templateFeatures(VOLCANIC_NORMAL_TEMPLATES[index]);
+  }
+  return [];
+}
+
+/** Static hazards and obstacles projected from canonical feature metadata. */
+export const NODE_FEATURES: Record<string, NodeFeatureSpec[]> =
+  Object.fromEntries(
+    WORLD_NODE_LIST.map((node) => [
+      node.id,
+      canonicalFeaturesForNode(node),
+    ]),
+  );
 
 export const RESOLVED_NODE_FEATURES = buildResolvedNodeFeatures();

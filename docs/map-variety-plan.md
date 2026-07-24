@@ -1,13 +1,16 @@
-# Map Variety: Node Modifiers, Dual Economy & Regions — Design (v3, direction locked)
+# Map Variety: Node Modifiers, Dual Economy & Regions — Design (v4, direction locked)
 
 **Status: DIRECTION LOCKED at the design level (2026-07-24).** v1 was a pre-decision brainstorm;
-v2 locked its broad direction; v3 incorporates the second game-design review and user Q&A,
-including reward neutrality, biome-vs-modifier priority, player-facing family names, item-family
-catalyst costs, the Broadsword exception, regional supply, and native-family distribution. See
-§5 for the decision log. **Implementation plan: `docs/map-variety-implementation-plan.md`.
-Stage A (node modifiers + catalyst re-key on the existing 11×11 grid) SHIPPED 2026-07-24
-(`feat/map-variety-stage-a`); Stage B (regions) is outlined only and unplanned.** All balance
-numbers remain PLACEHOLDER (user-owned tuning).
+v2 locked its broad direction; v3 incorporated the second game-design review and Stage A Q&A;
+v4 locks the post-Stage-A world-layout pass: exhaustive allowed biome × pace coverage, native
+duplicates, curated density overlays, a single stitched sparse world, organic multi-edge
+frontiers, void negative space, Clearing as the T1 respawn anchor, and append-only T5–T8
+capacity. See §5 for the decision log. **Stage A implementation plan:
+`docs/map-variety-implementation-plan.md`. Stage B implementation plan:
+`docs/map-variety-regions-implementation-plan.md`. Stage A (node modifiers + catalyst re-key on
+the existing 11×11 grid) SHIPPED 2026-07-24 (`feat/map-variety-stage-a`); Stage B shipped
+2026-07-24 and was refined into the four-tier spiral during playtesting.** All balance numbers
+remain PLACEHOLDER (user-owned tuning).
 
 **Scope: game design only.** Numbers (modifier percentages, mint thresholds, costs) are
 balance-pass territory, not fixed here.
@@ -20,7 +23,7 @@ balance-pass territory, not fixed here.
   must be re-authored or removed, and player catalyst wallets/progress are **wiped to zero**
   on migration (placeholder-era playtest earnings, not worth converting).
 - **Resolves "Map traversal"**, currently `⏸️ unresolved` on `docs/system-rework-status.md`
-  (regions + single gate per boundary, §3).
+  (stitched sparse world + organic traversable frontiers, §3).
 - Interacts with the parked **essence drop-volume tension** watch item
   (`BIOME_ESSENCE_TIER_MULT` dampens late-game essence; this adds a second currency stream,
   changing the shape of that tension).
@@ -53,10 +56,10 @@ catalyst-dead node. A **subset of nodes additionally carries one density modifie
 which has no catalyst key of its own and obeys the threat/reward budget in §1.6. So a node is
 e.g. "Blight Forest" or "Blight Forest + Swarming", never bare "Forest" and never density-only.
 
-Excluded from the system entirely: **Clearing** (T0 tutorial, one fixed node), each region's
-**Sanctuary** (special non-combat respawn anchor), and the **Void Overlord throne** (unique fixed
-encounter, `mobDensity: 0`). These nodes carry no pace or density modifier, grant no node-family
-catalyst, and do not count toward regional family supply.
+Excluded from the system entirely: **Clearing** (T0 tutorial, one fixed node) and each region's
+**Sanctuary** (special non-combat respawn anchor). These nodes carry no pace or density modifier,
+grant no node-family catalyst, and do not count toward regional family supply. The former Void
+Overlord throne placeholder is not part of this map and will be redesigned separately.
 
 **Dungeon nodes carry NO modifier** *(revised 2026-07-24, Stage A implementation).* The
 original design had dungeons carry a pace modifier like any node; playtest reversed this —
@@ -185,21 +188,23 @@ biome's core ecology.
 
 **Native distribution rule:**
 
-- Whenever a biome appears in a region, at least one of its **normal** nodes uses its native
-  family. Plains is the exception because it has no native pace family.
-- Across every authored node belonging to that biome over the whole world, the native family
-  is the single most frequent assignment. It need not exceed 50%, and it need not hold a local
-  majority in every region. A two-node Forest cluster may therefore be one Alacrity and one
-  Blight, provided Alacrity remains Forest's most frequent family globally.
+- Every compatible pace family appears exactly once in each active biome-region cluster.
+- The native family appears exactly one additional time in that cluster, making it strictly
+  most frequent locally and globally. Plains is the exception because it has no native family.
 
 **Regional supply rule (replaces v1's supply worry):** every region collectively contains each
 of the five families on at least one **normal, repeatable, progression-accessible node**.
 Dungeon nodes do not count toward this guarantee. Biome hard bans still apply: a region may
 supply Alacrity through Forest or another compatible biome, never through a hard-banned
-Mountain assignment. With ~5–7 active biomes × 2–3 normal nodes, the region has 10–21 normal
-slots, so no family should tier-band-starve.
+Mountain assignment. Exhaustive per-biome coverage now satisfies this rule by construction.
 
 ### 1.6 Density modifiers — optional second slot, threat/reward-budgeted
+
+> **Current implementation status (2026-07-24): dormant.** Swarming and Elite
+> Ground are retained as design vocabulary and dormant helper code, but
+> `DENSITY_MODIFIERS_ENABLED = false` prevents authoring/projection and every
+> population, spawn-pool, reward, and UI effect. The remainder of this section is
+> preserved as the shelved proposal to revisit, not current gameplay behavior.
 
 - **Swarming** — non-elite spawn count way up, pool biased away from elites.
 - **Elite Ground** — spawn count down, pool biased toward the biome's toughest entries.
@@ -252,9 +257,9 @@ Mechanics:
 - **The node's pace family determines which catalyst every kill grants.** All kills in an
   Alacrity node grant Alacrity Catalyst regardless of biome.
 - **Density modifiers have no key or explicit bonus.** Their total reward budget follows §1.6.
-- **Dungeon nodes:** trash kills and the one-time first-clear `catalystBundle` mint the node's
-  family; the boss's immunity (§1.1) affects its own mechanics only, not the node's catalyst
-  identity.
+- **Dungeon nodes:** grant no family catalyst from trash or first-clear bundles because dungeon
+  nodes have no pace family (§1.1). A `catalystBundle` authored on a dungeon boss is inert until
+  a future dungeon-specific catalyst policy is designed.
 - **Current-tier farming normally wins.** Wallets are tier-flat, so an older region remains a
   safe fallback, but a player capable of farming their current tier should ordinarily earn
   family catalyst progress faster there. Exact weights are balance-pass territory; preventing
@@ -308,39 +313,60 @@ currency's new meaning.
 
 ## 3. Regions (replaces the ring-tier grid)
 
-- Full replacement of "tier = Chebyshev distance" with **discrete zones, one per tier** — the
-  themed-acts pattern, well-worn in the genre. Each region contains whichever biome groups are
-  active at that tier per the roster/retirement schedule (design bible §2); a retired biome
-  simply has no node in later regions, dissolving today's "what does a retired ring node even
-  do" ambiguity.
-- Each region is a **recognizable progression chapter**, not merely a smaller ring. It receives
-  a player-facing region name and a unifying landmark/traversal identity anchored by its
-  sanctuary and boundary gates. Constituent biomes keep their own visuals; the region-level
-  identity supplies the memorable frame that says "this is the T2 chapter" rather than
-  pretending all of its biomes share one climate.
-- **Stable compass convention:** each region is laid out with a consistent directional grammar —
-  cold biomes north-ish, jungle east-ish, swamp/wet west-ish, matching the current map's
-  wedges — so "north is cold" intuition survives the act structure. A cheap authoring
-  constraint, not a geography simulation.
-- **Granularity: 2–3 normal nodes per active biome per region.** A biome's dungeon is additional
-  and does not count toward the 2–3. This is enough for an Alacrity Forest and a Blight Forest
-  side by side without today's 24–40-node rings of near-duplicates.
-- **Every region contains all five families on normal nodes** at least once (§1.5). Dungeon,
-  sanctuary, and unique encounter nodes do not satisfy the supply guarantee.
-- **Intra-region topology:** nodes form a compact connected network around the sanctuary and
-  region landmarks, using short branches and/or loops rather than one mandatory corridor
-  through every biome. The exact node graph is an authoring deliverable, but walkability,
-  legible return routes, and more than one useful local farming path are design constraints.
-- **Travel: a single fixed gate per region boundary.** Mirrors today's linear ring progression,
-  trivially answers "where next," keeps auto-traverse simple. More connections can be added
-  later if regions ever branch.
-- **Sanctuary node:** one per region, the region's respawn anchor. That's the entire scope —
-  it is a special non-combat node, additional to biome node counts, and excluded from modifiers
-  and catalyst supply (§1.1). Town and fast-travel stay parked at the same status as Relics /
-  World events.
-- **Map information contract:** before travel, every node exposes its region/tier, biome, pace
-  family and catalyst, optional density modifier, and dungeon/unique status. The map supports
-  informed destination choice; exact UI layout belongs to the later presentation pass.
+- Full replacement of "tier = Chebyshev distance" with **one logical region per tier embedded in
+  a single stitched world**. Regions are progression metadata and content territories, not
+  separate maps, square panels, islands, or visibly outlined game-system boxes. Each region
+  contains whichever biome groups have authored monster pools at that tier; a retired biome
+  simply has no node in later regions.
+- The world remains a **cardinal grid under the hood**, but it is sparse. Only occupied cells are
+  nodes. Missing cells expose the shattered-world **void** as map negative space: irregular
+  coastlines, cracks, bays, and occasional interior holes without fake untraversable sea or
+  mountain nodes. Void cells have no node id, tooltip, pathfinding entry, telemetry, collision,
+  or gameplay semantics.
+- Regions form a **clockwise spiral/ring**: T1 northwest, T2 northeast, T3 southeast, and T4
+  southwest. They meet through organic traversable frontiers with multiple ordinary cardinal
+  adjacencies. There are no boundary gates and no drawn tier borders. The intended frontiers are
+  T1↔T2, T2↔T3, T3↔T4, and T4↔T1; each has at least two cross-region edges. T1↔T3 and T2↔T4
+  may not touch. The T4↔T1 frontier intentionally permits unprepared players to enter dangerous
+  territory and makes late-game backtracking fast.
+- **Coverage is exhaustive by active biome and pace family.** For every active biome in a
+  region, at least one normal repeatable node exists for every pace family not hard-banned for
+  that biome. Every biome with a native family receives one additional native-family node in
+  that region so its native family remains strictly most frequent; Plains receives no duplicate.
+  This stronger rule supersedes the old 2–3-node granularity and automatically guarantees all
+  five catalyst families in every region.
+- **Density overlays are currently dormant.** The authored world contains the exhaustive pace
+  layout only. The previous curated Swarming/Elite Ground assignment algorithm is retained
+  behind a disabled feature flag for a future redesign and creates no current map metadata or
+  gameplay effect.
+- **One modifier-free dungeon per active biome per region** remains additional to normal-node
+  coverage. Dungeons are canonical static exams (§1.1); if the expanded farming world leaves
+  them too weak, they receive a later direct dungeon balance pass rather than node modifiers.
+  Dungeon nodes sit on regional edges and corner-like cells, away from Clearing or the region's
+  sanctuary, directly touch their matching biome territory, and never act as required transit
+  nodes. Biome territories grow from those dungeon anchors as compact irregular clusters rather
+  than row-aligned strips.
+- **Topology:** the whole occupied world and every region must be connected, with useful loops,
+  short branches, multiple routes between major biome clusters, and no forced visit to every
+  node. The broad compass grammar remains stable across the stitched world—cold biomes trend
+  north, jungle east, swamp/wet west—but does not override organic shape or connectivity.
+- **Respawn anchors:** Clearing remains the T0 tutorial combat node (Tiny Wisps, First Blood,
+  starter recipes, rune altar) and also serves as T1's respawn anchor; T1 has no additional
+  sanctuary. T2–T4 each add one true non-combat sanctuary node. Dying in a region returns the
+  player to that region's anchor. `respawnAnchor` is region metadata, separate from node kind,
+  so Clearing need not pretend to be an empty sanctuary.
+- **Scale for implemented content:** exhaustive pace coverage produces 140 normal nodes after
+  native duplicates: T1 27, T2 37, T3 38, T4 38. Add 26 modifier-free dungeons, three T2–T4
+  sanctuaries, and Clearing for **170 authored gameplay nodes**.
+- **Future T5–T8:** no empty nodes or layouts are authored now because their biome rosters are
+  not locked. World coordinates, bounds, rendering, navigation, validation, and region metadata
+  must be append-only and dynamically derived so later regions extend the stitched canvas
+  without relocating or redesigning T1–T4.
+- **Map information contract:** before travel, every real node exposes its region/tier, biome,
+  pace family and catalyst, and dungeon/unique/sanctuary status. The
+  map becomes a drag-pan, wheel/pinch-zoom canvas with selectable nodes, path highlighting,
+  search/filter support, recenter controls, and a fit-to-world overview. Region and node names
+  are editable placeholders for playtest-driven renaming; no large naming pass is required now.
 
 ---
 
@@ -350,19 +376,20 @@ For implementers/reviewers, the locked rules in one place:
 
 1. Compatibility is **allowed unless the combination contradicts pace or erases biome identity**
    (§1.5).
-2. Slot rule made explicit: **pace always + density optional** (§1.1) — no catalyst-dead nodes.
+2. Active slot rule: **one pace family on every normal node** (§1.1); the optional density slot
+   is dormant pending redesign.
 3. Assignment is **static, hand-authored, and visible before travel** (§1.4).
 4. Pace is **aggregate-threat-budget-neutral but deliberately build-relative**; Volatility is
    deterministic (§1.3).
 5. Density has a **comparable neutral-build threat/reward baseline**, with AoE vs. single-target
    matchup advantages (§1.6).
-6. Dungeons: **non-boss enemies modified, boss entity immune**, bundle keyed to node family
-   (§1.1, §2.2).
+6. Dungeons are **modifier-free static exams** and grant no family catalyst (§1.1, §2.2).
 7. Sinks: **premium tier gates keyed by the item's own combat-family tags**; neutral Broadsword
    uses flexible any-family payment (§2.3). Existing sinks are re-authored, and wallets are wiped
    (§2.4).
-8. Regions: **named tier-acts + stable compass, 2–3 normal nodes per biome plus dungeon, all five
-   families on normal nodes, compact intra-region topology, single boundary gate** (§3).
+8. Regions form **one stitched sparse world** with void negative space, exhaustive allowed
+   biome × pace coverage, native duplicates, multiple traversable
+   frontiers, stable compass grammar, and one dungeon per active biome (§3).
 9. Native family appears in every regional biome cluster and is most frequent for that biome
    globally, not necessarily locally (§1.5).
 10. Current-tier catalyst farming normally beats obsolete tiers (§2.2).
@@ -373,8 +400,8 @@ For implementers/reviewers, the locked rules in one place:
 
 | Source | Question | Resolution |
 |---|---|---|
-| 4.1 | Region granularity | 2–3 normal nodes per biome per region; dungeon is additional |
-| 4.2 | Inter-region travel | Single fixed gate per boundary |
+| 4.1 / v4 | Region granularity | Every allowed biome × pace combination, plus one native duplicate; dungeon is additional |
+| 4.2 / v4 | Inter-region travel | Multiple ordinary traversable frontier edges in one stitched world; no boundary gates |
 | 4.3 | Catalyst retrofit scope | Premium tier gates; existing sinks re-keyed, not removed |
 | 4.4 | Jungle second family | Subsumed — allowed-unless-banned gives Jungle its hybrid spread naturally |
 | 4.5 | Tundra Blight secondary | Subsumed — allowed by policy; flagged as especially apt |
@@ -395,6 +422,12 @@ For implementers/reviewers, the locked rules in one place:
 | v2 review | Map visibility | Pace, density, catalyst, biome, tier/region, and dungeon status visible before travel |
 | v2 review | Native frequency | At least one native normal node per regional appearance; native most frequent globally |
 | v2 review | Tier-flat wallet exploit | A capable player normally earns catalysts faster in current-tier content |
+| v4 Q&A | Density coverage | Swarming once per legal biome-tier; Elite Ground once only with a legal authored elite pool; no Cartesian product |
+| v4 Q&A | World silhouette | One global sparse cardinal grid; absent cells render as void negative space, never fake blocked nodes |
+| v4 Q&A | T1 sanctuary | Clearing stays the combat tutorial and serves as T1 respawn anchor; true empty sanctuaries begin at T2 |
+| v4 Q&A | Future tiers | Make the system append-only for T5–T8, but author no placeholder late-tier layouts now |
+| v4 Q&A | Map UX | Replace placeholder tile viewport with drag-pan/zoom stitched-world navigation |
+| v4 Q&A | Naming | Use editable placeholder region/node/landmark names; user renames through playtesting |
 
 ## 6. Remaining open / parked
 
@@ -403,18 +436,18 @@ For implementers/reviewers, the locked rules in one place:
   longer depends on Trench existing (any biome can host Predation nodes), so cutting Trench
   later costs this design nothing.
 - **Exact numbers** — modifier reshape percentages, mint thresholds, which specific recipes get
-  catalyst costs, density reward normalization, and the current-tier earning curve — balance
+  catalyst costs, and the current-tier earning curve — balance
   pass (`docs/system-rework-status.md` Step 15).
-- **Per-node modifier map** — the actual authored assignment of families to nodes/regions —
-  authoring pass, done alongside region layout and checked against the supply/native rules.
+- **Density redesign** — decide whether Swarming/Elite Ground should return and, if so, replace
+  their former population/pool/reward implementation before re-enabling the retained system.
 - **Per-item family tagging** — the actual tag assignment and hybrid splits for every premium
   sink — content-authoring pass governed by §2.3.
-- **Region names, landmark identities, and exact node graphs** — authoring pass governed by §3.
+- **Final region names and landmark identities** — Stage B ships editable placeholders; the
+  user replaces them during playtesting. Exact node coordinates are a Stage B authoring task.
 - **Sanctuary beyond respawn** — town, fast travel, NPCs: parked.
-- **Implementation plan** — `docs/map-variety-implementation-plan.md` (2026-07-24; Stage A in
-  full executable detail, Stage B outline only). **Stage A SHIPPED 2026-07-24** (node modifiers +
-  monster reshaping + catalyst re-key + map information contract on the existing 11×11 grid; all
-  numbers PLACEHOLDER). **Stage B (regions) pending** its own plan after Stage A playtest.
+- **Implementation plans** — `docs/map-variety-implementation-plan.md` is the executed Stage A
+  record. `docs/map-variety-regions-implementation-plan.md` is the dedicated Stage B plan.
+  **Stage A and Stage B SHIPPED 2026-07-24.**
 
 ## 7. Implementation-planning decisions (pre-made, 2026-07-24)
 
@@ -425,22 +458,23 @@ Resolved ahead of the implementation plan so it can be written against them:
   grid** (per-node assignment table authored against current node IDs — small, acknowledged
   throwaway; the systems are not). Stage B replaces the grid with regions. Each stage is
   independently playtestable.
-- **Map data model: region-local grids with masked cells.** Regions stay grids under the hood
-  (absent cells create §3's branches/loops), preserving 4-direction exits, grid-shaped node
-  IDs, and existing map/pathing/ops-map assumptions.
+- **Map data model: one global sparse grid.** Real nodes occupy authored global row/column
+  coordinates; absent cells are void negative space. Region membership is node metadata, not a
+  separate map. Bounds, exits, pathing, player map, analytics, and ops views derive from the
+  authored sparse table rather than 11×11 constants or node-id parsing.
 - **Migration tolerance: keep characters, reset map-keyed state.** Levels, gear, skills, runes,
   essence, biome XP, bestiary, boss first-clears survive. Positions reset to the
-  clearing/first sanctuary; node-keyed oddments reset rather than remap. Catalyst wallets wipe
-  per §2.4.
+  Clearing; node-keyed oddments reset rather than remap. The catalyst wipe already shipped in
+  Stage A and is not repeated.
 - **Visuals: map UI only in v1.** The §1.4/§3 information contract ships as map labels/icons +
   an in-node indicator. In-world modifier treatment (palettes, decor) is a later art pass
   through the PixelLab pipeline.
 
 Working assumptions the implementation plan will adopt unless overridden:
 
-- **Clearing** remains the standalone T0 start, attached to the T1 region's entry gate.
-- **Void Overlord throne** sits at/beyond the T4 region's far gate (exact placement proposed in
-  the plan).
+- **Clearing** remains the T0 combat tutorial and is T1's respawn anchor.
+- **Void Overlord throne** is omitted; its placeholder map node was removed pending redesign.
 - **One dungeon per biome per region**, matching today's one-dungeon-per-biome-per-tier.
-- Stage A's per-node assignment on the current grid follows §1.5's rules (native distribution,
-  five-family supply approximated per ring band).
+- **T2–T4 each have one empty sanctuary; T1 has no additional sanctuary.**
+- **All allowed biome × pace combinations are present per active biome-tier**, plus a native
+  duplicate where applicable; density overlays follow §3's curated coverage rule.

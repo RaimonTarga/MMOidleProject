@@ -25,7 +25,7 @@ function assert(condition: boolean, message: string): void {
 }
 
 const ALTAR = { x: GAME_CONFIG.NODE_WIDTH / 2, y: GAME_CONFIG.NODE_HEIGHT / 2 };
-const SWAMP_NODE = "node-7-4";
+const SWAMP_NODE = "node-t1-swamp-dungeon";
 
 function makePlayerSlices(id: string, nodeId: string): PersistedPlayerSlices {
   return {

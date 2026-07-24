@@ -32,7 +32,7 @@ function assertTerrainSafe(world: World, monster: MonsterEntity): void {
   );
 }
 
-const nodeId = "node-4-6";
+const nodeId = "node-t1-forest-01";
 const world = new World();
 const trunks = world.collision
   .staticRegions(nodeId)

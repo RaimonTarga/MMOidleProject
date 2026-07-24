@@ -20,7 +20,7 @@ function playerSlices(): PersistedPlayerSlices {
     isPlayer: { id: "intent-player", name: "Intent Tester" },
     hasPosition: {
       current: { x: 400, y: 400 },
-      nodeId: "node-5-5",
+      nodeId: "node-clearing",
       speed: GAME_CONFIG.PLAYER_SPEED,
     },
     hasHealth: {
@@ -95,8 +95,8 @@ assert(
 
 setAttackTarget(world, player, null);
 attachComponent(world, player, "hasAutoTraversePath", {
-  targetNodeId: "node-5-4",
-  remainingPath: ["node-5-4"],
+  targetNodeId: "node-t1-forest-01",
+  remainingPath: ["node-t1-forest-01"],
 });
 updateAutoIntent(world);
 assert(player.hasAutoIntent?.kind === "travel", "manual map travel should publish travel intent");

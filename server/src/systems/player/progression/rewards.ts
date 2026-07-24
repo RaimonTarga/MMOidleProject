@@ -1,4 +1,4 @@
-import { NODE_BIOMES, NODE_MODIFIERS, densityRewardMult, MONSTER_DATABASE, RECIPE_DATABASE, biomeLevelCap, biomeXpForBiomeLevel, bossClearKey, BIOME_DATABASE, ULTIMATE_CLEAR_VOID_OVERLORD, GAME_CONFIG } from '@mmo-idle/shared';
+import { NODE_BIOMES, NODE_MODIFIERS, MONSTER_DATABASE, RECIPE_DATABASE, biomeLevelCap, biomeXpForBiomeLevel, bossClearKey, BIOME_DATABASE, ULTIMATE_CLEAR_VOID_OVERLORD, GAME_CONFIG } from '@mmo-idle/shared';
 import type { EssenceType } from '@mmo-idle/shared';
 import type { MonsterEntity, PlayerEntity } from '../../../ecs/entity';
 import type { World } from '../../../world/World';
@@ -183,11 +183,7 @@ function applyKillRewardsToPlayer(
   const biomeInfo = NODE_BIOMES[nodeId];
   const biomeTier = biomeInfo?.biomeTier ?? 1;
   const essenceMult = GAME_CONFIG.BIOME_ESSENCE_TIER_MULT[biomeTier] ?? 1;
-  // Map Variety Stage A: a node density modifier normalizes per-kill reward
-  // throughput inversely to its spawn factor (§1.6). PLACEHOLDER — user tunes the
-  // factors in shared/src/world/nodeModifiers.ts.
-  const rewardMult = densityRewardMult(NODE_MODIFIERS[nodeId]?.density);
-  const scaledEssence = Math.max(1, Math.round(rewards.essence * essenceMult * rewardMult));
+  const scaledEssence = Math.max(1, Math.round(rewards.essence * essenceMult));
   rewardPlayer(recipient, { ...rewards, essence: scaledEssence });
   // Catalyst progress is keyed by the NODE'S pace family (not its biome): every
   // kill in an Alacrity node grants Alacrity Catalyst regardless of biome. The
@@ -195,7 +191,7 @@ function applyKillRewardsToPlayer(
   // toughness number) unless it sets an explicit `catalystWeight`. No modifier
   // (clearing / test room / throne) → no grant.
   const paceFamily = NODE_MODIFIERS[nodeId]?.pace;
-  const catalystWeight = Math.round((def?.rewards.catalystWeight ?? rewards.essence) * rewardMult);
+  const catalystWeight = Math.round(def?.rewards.catalystWeight ?? rewards.essence);
   if (catalystWeight > 0 && paceFamily) {
     grantCatalystProgress(recipient, paceFamily, catalystWeight);
     markSliceDirty(world, recipient, 'tracksProgression');
@@ -204,7 +200,7 @@ function applyKillRewardsToPlayer(
     world,
     recipient,
     nodeId,
-    Math.max(1, Math.round((rewards.biomeXp ?? 1) * rewardMult)),
+    Math.max(1, Math.round(rewards.biomeXp ?? 1)),
   );
   const tierResult = registerKillForQuests(recipient, monster.isMonster.monsterTypeId);
   if (tierResult.advanced && tierResult.prevTier !== undefined && tierResult.newTier !== undefined) {

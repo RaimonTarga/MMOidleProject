@@ -20,33 +20,29 @@ import { NODE_MODIFIERS } from './nodeModifierMap';
 // top level) — safe despite the biomeDatabase → nodeModifiers import cycle.
 import { BIOME_DATABASE } from '../biomeDatabase';
 import { MONSTER_DATABASE } from '../monsterDatabase';
+import {
+  DENSITY_BANS,
+  DENSITY_MODIFIERS_ENABLED,
+  DENSITY_MODIFIERS,
+  NATIVE_FAMILY,
+  PACE_FAMILIES,
+  PACE_HARD_BANS,
+  type DensityModifier,
+  type NodeModifierInfo,
+  type PaceFamily,
+} from './nodeModifierTypes';
+
+export {
+  DENSITY_BANS,
+  DENSITY_MODIFIERS_ENABLED,
+  DENSITY_MODIFIERS,
+  NATIVE_FAMILY,
+  PACE_FAMILIES,
+  PACE_HARD_BANS,
+};
+export type { DensityModifier, NodeModifierInfo, PaceFamily };
 
 // ── Vocabulary ────────────────────────────────────────────────────────────────
-
-export type PaceFamily =
-  | 'alacrity'
-  | 'brutality'
-  | 'blight'
-  | 'volatility'
-  | 'predation';
-
-/** Canonical order — used for fixed UI ordering (catalyst panel, legends). */
-export const PACE_FAMILIES: PaceFamily[] = [
-  'alacrity',
-  'brutality',
-  'blight',
-  'volatility',
-  'predation',
-];
-
-export type DensityModifier = 'swarming' | 'elite-ground';
-
-export const DENSITY_MODIFIERS: DensityModifier[] = ['swarming', 'elite-ground'];
-
-export interface NodeModifierInfo {
-  pace: PaceFamily;
-  density?: DensityModifier;
-}
 
 // ── Labels / player-facing copy ─────────────────────────────────────────────
 
@@ -92,6 +88,89 @@ export const PACE_FAMILY_COLORS: Record<PaceFamily, string> = {
   predation: '#ffb74d', // amber — ambush
 };
 
+export interface PaceModifierDetail {
+  label: string;
+  value: string;
+  direction: 'up' | 'down' | 'neutral';
+}
+
+const compactNumber = (value: number): string =>
+  Number.isInteger(value) ? String(value) : value.toFixed(1);
+
+const signedPercent = (fraction: number): string => {
+  const value = compactNumber(Math.abs(fraction) * 100);
+  return `${fraction >= 0 ? '+' : '−'}${value}%`;
+};
+
+const multiplier = (value: number): string => `×${value.toFixed(2)}`;
+
+/** Exact player-facing values for a pace family at a given biome tier. */
+export function paceModifierDetails(
+  family: PaceFamily,
+  biomeTier: number,
+): PaceModifierDetail[] {
+  const m = magnitudeForTier(biomeTier);
+  switch (family) {
+    case 'alacrity':
+      return [
+        { label: 'Direct attack', value: signedPercent(-m), direction: 'down' },
+        { label: 'Attack interval', value: signedPercent(-m), direction: 'down' },
+        { label: 'Move speed', value: signedPercent(m / 2), direction: 'up' },
+      ];
+    case 'brutality':
+      return [
+        { label: 'Direct attack', value: signedPercent(m), direction: 'up' },
+        { label: 'Attack interval', value: signedPercent(m), direction: 'up' },
+      ];
+    case 'blight':
+      return [
+        { label: 'Direct attack', value: signedPercent(-m), direction: 'down' },
+        {
+          label: 'Existing DoT damage',
+          value: signedPercent(BLIGHT_AMPLIFY_FACTOR * m),
+          direction: 'up',
+        },
+        {
+          label: 'New DoT at full stacks',
+          value: `${compactNumber(m * 100)}% base DPS`,
+          direction: 'up',
+        },
+        {
+          label: 'New DoT shape',
+          value: `${BLIGHT_DOT_MAX_STACKS} stacks · ${BLIGHT_DOT_TICK_MS / 1000}s tick · ${BLIGHT_DOT_DURATION_MS / 1000}s duration`,
+          direction: 'neutral',
+        },
+      ];
+    case 'volatility':
+      return [
+        { label: 'Direct attack', value: signedPercent(-m), direction: 'down' },
+        {
+          label: 'New cadence burst',
+          value: `Every ${VOLATILITY_EVERY_N}rd attack · ${multiplier(1 + VOLATILITY_SPIKE_FACTOR * m)}`,
+          direction: 'up',
+        },
+        {
+          label: 'Authored cadence burst',
+          value: multiplier(1 + m),
+          direction: 'up',
+        },
+      ];
+    case 'predation':
+      return [
+        {
+          label: 'Follow-up attack',
+          value: signedPercent(-m / 2),
+          direction: 'down',
+        },
+        {
+          label: 'Full-HP opening strike',
+          value: multiplier(1 + PREDATION_OPENER_FACTOR * m),
+          direction: 'up',
+        },
+      ];
+  }
+}
+
 /**
  * Player-facing catalyst name for a pace family, e.g. `alacrity` → "Alacrity
  * Catalyst". Falls back to capitalizing an unknown key (mirrors the old
@@ -105,39 +184,6 @@ export function catalystFamilyLabel(family: string): string {
 }
 
 // ── Ban / native tables (design §1.5) ─────────────────────────────────────────
-
-/** Pace families a biome may NEVER carry ("✖ redundant" counts as banned). */
-export const PACE_HARD_BANS: Record<string, PaceFamily[]> = {
-  forest: ['brutality'],
-  mountain: ['alacrity'],
-  jungle: ['brutality'],
-  desert: ['alacrity'],
-  tundra: ['alacrity'],
-};
-
-/** Density modifiers a biome may NEVER carry. */
-export const DENSITY_BANS: Record<string, DensityModifier[]> = {
-  mountain: ['elite-ground'],
-  cave: ['elite-ground'],
-  desert: ['elite-ground'],
-  trench: ['elite-ground'],
-  graveyard: ['swarming'],
-};
-
-/** Each biome's native (most-common) family. `null` = no native (Plains). */
-export const NATIVE_FAMILY: Record<string, PaceFamily | null> = {
-  plains: null,
-  forest: 'alacrity',
-  mountain: 'brutality',
-  swamp: 'blight',
-  cave: 'volatility',
-  jungle: 'alacrity',
-  desert: 'predation',
-  tundra: 'brutality',
-  volcanic: 'blight',
-  graveyard: 'blight',
-  trench: 'predation',
-};
 
 // ── Reshaping magnitudes (PLACEHOLDER — user tunes here) ───────────────────────
 
@@ -306,6 +352,7 @@ export function paceMechanicOverlay(
 // ── Density reshaping (pure) ───────────────────────────────────────────────────
 
 export function densitySpawnFactor(density: DensityModifier | undefined): number {
+  if (!DENSITY_MODIFIERS_ENABLED) return 1;
   if (density === 'swarming') return SWARMING_SPAWN_FACTOR;
   if (density === 'elite-ground') return ELITE_GROUND_SPAWN_FACTOR;
   return 1;
@@ -326,6 +373,7 @@ export function elitePoolWeight(
   density: DensityModifier | undefined,
   isElite: boolean,
 ): number {
+  if (!DENSITY_MODIFIERS_ENABLED) return 1;
   if (density === 'swarming') return isElite ? SWARMING_ELITE_WEIGHT : 1;
   if (density === 'elite-ground') return isElite ? ELITE_GROUND_ELITE_WEIGHT : 1;
   return 1;
@@ -334,17 +382,17 @@ export function elitePoolWeight(
 // ── Exclusions + validation ───────────────────────────────────────────────────
 
 /**
- * Nodes excluded from the modifier system entirely: the clearing, the dev test
- * room, the Void Overlord throne (the `mobDensity: 0` node), and ALL dungeon
- * nodes — dungeons are static hand-designed exams and are never reshaped (user
- * decision 2026-07-24, overriding the original design §1.1).
+ * Nodes excluded from the modifier system entirely: the Clearing, the dev test
+ * room, non-combat nodes (`mobDensity: 0`, currently sanctuaries), and ALL
+ * dungeon nodes — dungeons are static hand-designed exams and are never
+ * reshaped (user decision 2026-07-24, overriding the original design §1.1).
  */
 export function isModifierExcludedNode(nodeId: string): boolean {
   if (nodeId === TEST_ROOM_NODE_ID) return true;
   const info = NODE_BIOMES[nodeId];
   if (!info) return true;
   if (info.biomeGroup === 'clearing') return true;
-  if (info.mobDensity === 0) return true; // throne
+  if (info.mobDensity === 0) return true; // sanctuary or another non-combat node
   if (info.isDungeon) return true; // static exam — no modifier
   return false;
 }
@@ -385,7 +433,9 @@ export function validateNodeModifiers(): string[] {
         `${nodeId}: pace '${mod.pace}' is hard-banned for biome '${info.biomeGroup}'`,
       );
     }
-    if (mod.density) {
+    if (!DENSITY_MODIFIERS_ENABLED && mod.density) {
+      violations.push(`${nodeId}: density modifiers are disabled`);
+    } else if (mod.density) {
       const densityBans = DENSITY_BANS[info.biomeGroup] ?? [];
       if (densityBans.includes(mod.density)) {
         violations.push(
@@ -471,18 +521,20 @@ export function validateNodeModifiers(): string[] {
   //    a biome with no elites in its pool cannot be an Elite Ground candidate.
   //    Swarming raises count regardless of composition, so it carries no such
   //    requirement (user decision 2026-07-24).
-  for (const [nodeId, mod] of Object.entries(NODE_MODIFIERS)) {
-    if (mod.density !== 'elite-ground') continue;
-    const info = NODE_BIOMES[nodeId];
-    if (!info) continue;
-    const pool =
-      BIOME_DATABASE.get(info.biomeGroup)?.monsterPoolByTier[info.biomeTier] ?? [];
-    const hasElite = pool.some((id) => MONSTER_DATABASE.get(id)?.elite);
-    if (!hasElite) {
-      violations.push(
-        `${nodeId}: Elite Ground needs a pool with ≥1 elite entry ` +
-          `(biome '${info.biomeGroup}' tier ${info.biomeTier} has none)`,
-      );
+  if (DENSITY_MODIFIERS_ENABLED) {
+    for (const [nodeId, mod] of Object.entries(NODE_MODIFIERS)) {
+      if (mod.density !== 'elite-ground') continue;
+      const info = NODE_BIOMES[nodeId];
+      if (!info) continue;
+      const pool =
+        BIOME_DATABASE.get(info.biomeGroup)?.monsterPoolByTier[info.biomeTier] ?? [];
+      const hasElite = pool.some((id) => MONSTER_DATABASE.get(id)?.elite);
+      if (!hasElite) {
+        violations.push(
+          `${nodeId}: Elite Ground needs a pool with ≥1 elite entry ` +
+            `(biome '${info.biomeGroup}' tier ${info.biomeTier} has none)`,
+        );
+      }
     }
   }
 

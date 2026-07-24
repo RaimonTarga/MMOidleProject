@@ -11,7 +11,11 @@ export type BiomeProgressInput = Pick<
 const BIOME_GROUPS_BY_TIER = new Map<number, string[]>();
 
 function isProgressionNode(nodeId: string): boolean {
-  return nodeId !== TEST_ROOM_NODE_ID && NODE_BIOMES[nodeId]?.biomeGroup !== 'testroom';
+  const node = NODE_BIOMES[nodeId];
+  return (
+    nodeId !== TEST_ROOM_NODE_ID &&
+    (node?.kind === 'normal' || node?.kind === 'dungeon')
+  );
 }
 
 for (const [nodeId, node] of Object.entries(NODE_BIOMES)) {
@@ -63,7 +67,7 @@ export function listNonBossNodesForBiomeTier(biomeGroup: string, tier: number): 
       isProgressionNode(nodeId) &&
       node.biomeGroup === biomeGroup &&
       node.biomeTier === tier &&
-      !node.isDungeon
+      node.kind === 'normal'
     )
     .map(([nodeId]) => nodeId)
     .sort();

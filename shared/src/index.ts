@@ -59,6 +59,7 @@ export * from './protocol/socketEvents';
 export * from './world/nodeBiomes';
 export * from './world/nodeModifiers';
 export * from './world/nodeModifierMap';
+export * from './world/map/validation';
 export * from './world/nodeFeatures';
 export * from './world/trees';
 export * from './quests/questDatabase';

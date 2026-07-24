@@ -1,8 +1,9 @@
 # Map Variety — Implementation Plan (Stage A)
 
 **Status: Stage A EXECUTED (2026-07-24) on `feat/map-variety-stage-a` — corrections below
-applied; Stage B unplanned.** Design authority is
-`docs/map-variety-plan.md` (v3, direction locked) — if this plan and that doc disagree, the
+applied; Stage B is planned separately in
+`docs/map-variety-regions-implementation-plan.md`.** Design authority is the current living
+`docs/map-variety-plan.md` — if this plan and that doc disagree, the
 design doc wins; if either disagrees with code reality, read the code and adapt while
 preserving design intent. This plan was written against a fresh read of the code; all
 file:line anchors below were verified on 2026-07-24 and may have drifted slightly — treat
@@ -380,18 +381,14 @@ beyond legibility is out of scope — the user will restyle.)
 - If `tools/` (balance TUI, dps-report) hardcodes catalyst/biome assumptions, fix compile
   errors minimally; deep tool support for families is not in scope.
 
-## Stage B — regions (OUTLINE ONLY — do not implement; needs its own plan after Stage A)
+## Stage B — regions
 
-Recorded so Stage A choices don't paint us into corners: region-local masked grids replace
-the 11×11 (`NODE_BIOMES` → per-region node tables + gates; single gate per boundary);
-sanctuary node type (non-combat, respawn anchor — note `respawnPlayer` hardcodes `node-5-5`
-at `spawning/index.ts:922`, and `transitions.ts` handles gate crossings); traversal/pathing
-(`autoTraverse.ts`, `nodePath.ts`, client `bfsPath`/map rendering, ops map); position
-migration (reset to clearing/first sanctuary); clearing/throne placement per design §7;
-2–3 normal nodes per biome per region + all-five-families supply rule moves from "per tier
-band" to "per region" in `validateNodeModifiers`. Stage A deliberately keeps all
-modifier/catalyst logic keyed by opaque `nodeId` strings so Stage B only changes the node
-table and validation grouping, not the systems.
+The former outline is superseded by the dedicated executable plan in
+`docs/map-variety-regions-implementation-plan.md`. Stage B now uses one global sparse stitched
+grid, exhaustive allowed biome × pace coverage plus native duplicates, curated density
+coverage, multiple organic region frontiers, Clearing as T1's respawn anchor, true sanctuaries
+at T2–T4, and dynamic pan/zoom player and ops maps. Do not implement Stage B from this Stage A
+record.
 
 ## Acceptance checklist (Stage A complete)
 

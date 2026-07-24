@@ -3,6 +3,7 @@ import {
   nodeSceneBounds,
   peekSceneBounds,
 } from './gameConfig';
+import { WORLD_NODE_LIST, worldNodeExits } from '../world/nodeBiomes';
 
 function assert(cond: boolean, msg: string): void {
   if (!cond) throw new Error(msg);
@@ -22,7 +23,7 @@ function testNodeSceneBounds(): void {
 function testPeekSceneBoundsCenter(): void {
   const vw = 800;
   const vh = 600;
-  const bounds = peekSceneBounds('node-5-5', vw, vh);
+  const bounds = peekSceneBounds('node-clearing', vw, vh);
   const peekW = vw / 2;
   const peekH = vh / 2;
 
@@ -35,7 +36,14 @@ function testPeekSceneBoundsCenter(): void {
 function testPeekSceneBoundsCorner(): void {
   const vw = 1000;
   const vh = 800;
-  const bounds = peekSceneBounds('node-0-0', vw, vh);
+  const cornerNode = WORLD_NODE_LIST.find((node) => {
+    if (node.regionId !== 't1' || node.kind !== 'normal') return false;
+    const exits = worldNodeExits(node.id);
+    return !exits.west && !exits.north && Boolean(exits.east && exits.south);
+  });
+  assert(Boolean(cornerNode), 'T1 has a northwest corner node');
+  if (!cornerNode) throw new Error('unreachable');
+  const bounds = peekSceneBounds(cornerNode.id, vw, vh);
   const peekW = vw / 2;
   const peekH = vh / 2;
 
@@ -48,7 +56,14 @@ function testPeekSceneBoundsCorner(): void {
 function testPeekSceneBoundsEdge(): void {
   const vw = 1200;
   const vh = 900;
-  const bounds = peekSceneBounds('node-5-0', vw, vh);
+  const edgeNode = WORLD_NODE_LIST.find((node) => {
+    if (node.regionId !== 't1' || node.kind !== 'normal') return false;
+    const exits = worldNodeExits(node.id);
+    return !exits.west && Boolean(exits.north && exits.east && exits.south);
+  });
+  assert(Boolean(edgeNode), 'T1 has a west-edge node');
+  if (!edgeNode) throw new Error('unreachable');
+  const bounds = peekSceneBounds(edgeNode.id, vw, vh);
   const peekW = vw / 2;
   const peekH = vh / 2;
 

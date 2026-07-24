@@ -1,8 +1,11 @@
 import {
   monsterIsRanged,
   monsterKites,
+  paceMechanicOverlay,
+  paceStatScalars,
   resolveMonsterDotDebuff,
   type MonsterDefinition,
+  type PaceFamily,
 } from '@mmo-idle/shared';
 
 // Readable presentation of a monster's combat profile for the map info panel:
@@ -13,23 +16,98 @@ const round1 = (n: number): number => Math.round(n * 10) / 10;
 const pct = (frac: number): string => `${Math.round(frac * 100)}%`;
 const sec = (ms: number): string => `${round1(ms / 1000)}s`;
 
-export interface StatCell { label: string; value: string; }
+export interface StatCell {
+  label: string;
+  value: string;
+  baseValue?: string;
+  direction?: 'up' | 'down';
+}
+
+interface EffectiveMonsterStats {
+  attack: number;
+  attackCooldown: number;
+  speed: number;
+}
+
+function effectiveMonsterStats(
+  def: MonsterDefinition,
+  pace: PaceFamily | undefined,
+  biomeTier: number,
+): EffectiveMonsterStats {
+  if (!pace) {
+    return {
+      attack: def.stats.attack,
+      attackCooldown: def.stats.attackCooldown,
+      speed: def.stats.speed,
+    };
+  }
+  const scalars = paceStatScalars(pace, biomeTier);
+  return {
+    attack: Math.max(1, Math.round(def.stats.attack * scalars.attackMult)),
+    attackCooldown: Math.max(
+      1,
+      Math.round(def.stats.attackCooldown * scalars.attackCooldownMult),
+    ),
+    speed: def.stats.speed * scalars.moveSpeedMult,
+  };
+}
+
+const compact = (value: number): string =>
+  Number.isInteger(value) ? String(value) : round1(value).toFixed(1);
+
+function changedCell(
+  label: string,
+  base: number,
+  effective: number,
+  format: (value: number) => string = compact,
+): StatCell {
+  const value = format(effective);
+  if (effective === base) return { label, value };
+  return {
+    label,
+    value,
+    baseValue: format(base),
+    direction: effective > base ? 'up' : 'down',
+  };
+}
 
 /** Full stat grid for the expanded monster view (APS derived from cooldown). */
-export function monsterStatRows(def: MonsterDefinition): StatCell[] {
+export function monsterStatRows(
+  def: MonsterDefinition,
+  pace?: PaceFamily,
+  biomeTier = 0,
+): StatCell[] {
   const s = def.stats;
-  const aps = s.attackCooldown > 0 ? round1(1000 / s.attackCooldown) : 0;
+  const effective = effectiveMonsterStats(def, pace, biomeTier);
+  const baseAps = s.attackCooldown > 0 ? 1000 / s.attackCooldown : 0;
+  const effectiveAps =
+    effective.attackCooldown > 0 ? 1000 / effective.attackCooldown : 0;
   const rows: StatCell[] = [
     { label: 'HP',   value: String(s.hp) },
-    { label: 'ATK',  value: String(s.attack) },
-    { label: 'APS',  value: aps.toFixed(1) },
+    changedCell('ATK', s.attack, effective.attack),
+    changedCell('APS', baseAps, effectiveAps, value => round1(value).toFixed(1)),
     { label: 'PLT',  value: String(s.plating) },
     { label: 'DR',   value: pct(s.damageReduction) },
-    { label: 'SPD',  value: String(s.speed) },
+    changedCell('SPD', s.speed, effective.speed),
     { label: 'RNG',  value: String(s.attackRange) },
     { label: 'PULL', value: String(s.pullRange) },
   ];
   return rows;
+}
+
+export function monsterQuickStats(
+  def: MonsterDefinition,
+  pace?: PaceFamily,
+  biomeTier = 0,
+): { hp: string; attack: string; attackDirection?: 'up' | 'down' } {
+  const effective = effectiveMonsterStats(def, pace, biomeTier);
+  return {
+    hp: String(def.stats.hp),
+    attack: compact(effective.attack),
+    ...(effective.attack === def.stats.attack
+      ? {}
+      : { attackDirection: effective.attack > def.stats.attack ? 'up' : 'down' }),
+  };
 }
 
 /** Short capability tags shown on the collapsed monster row. */
@@ -72,25 +150,41 @@ function summarizeBossScript(def: MonsterDefinition): string | null {
 }
 
 /** Full plain-English mechanics breakdown for the expanded monster view. */
-export function formatMonsterMechanics(def: MonsterDefinition): string[] {
+export function formatMonsterMechanics(
+  def: MonsterDefinition,
+  pace?: PaceFamily,
+  biomeTier = 0,
+): string[] {
   const lines: string[] = [];
+  const overlay = pace ? paceMechanicOverlay(pace, biomeTier, def) : {};
+  const effectiveDef = overlay.dot ? { ...def, dotEffect: overlay.dot } : def;
 
-  lines.push(monsterKites(def)
-    ? `Kiter — attacks from range (${def.attackStyle} style)`
-    : monsterIsRanged(def)
-    ? `Attacks from range (${def.attackStyle} style)`
-    : `Melee attacker (${def.attackStyle} style)`);
+  lines.push(monsterKites(effectiveDef)
+    ? `Kiter — attacks from range (${effectiveDef.attackStyle} style)`
+    : monsterIsRanged(effectiveDef)
+    ? `Attacks from range (${effectiveDef.attackStyle} style)`
+    : `Melee attacker (${effectiveDef.attackStyle} style)`);
 
   if (def.chargeOnAggro) {
     const c = def.chargeOnAggro;
     lines.push(`Charges at ${round1(c.speedMult)}× speed for ${sec(c.durationMs)} when it first spots you`);
   }
 
-  if (def.dotEffect) {
-    const d = def.dotEffect;
+  if (effectiveDef.dotEffect) {
+    const d = effectiveDef.dotEffect;
     const dur = d.durationMs ? `, lasts ${sec(d.durationMs)}` : '';
-    const debuff = resolveMonsterDotDebuff({ monster: def });
+    const debuff = resolveMonsterDotDebuff({ monster: effectiveDef });
     lines.push(`Applies ${debuff.label} on hit: ${d.damagePerStack}/stack, up to ${d.maxStacks} stacks, ticks every ${sec(d.tickIntervalMs)}${dur}`);
+  }
+
+  if (overlay.openingStrikeMult) {
+    lines.push(`Opening hit against a full-HP target deals ${overlay.openingStrikeMult.toFixed(2)}× damage`);
+  }
+
+  if (overlay.cadence) {
+    lines.push(def.cadenceFinisher
+      ? `Its authored cadence burst is multiplied by ${overlay.cadence.multiplier.toFixed(2)}×`
+      : `Every ${overlay.cadence.everyNAttacks}rd attack deals ${overlay.cadence.multiplier.toFixed(2)}× damage`);
   }
 
   if (def.slowEffect) {

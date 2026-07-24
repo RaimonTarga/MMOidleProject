@@ -1,12 +1,18 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useAtomValue } from 'jotai';
-import type { EssenceType, MonsterDefinition, Recipe } from '@mmo-idle/shared';
+import type {
+  EssenceType,
+  MonsterDefinition,
+  PaceFamily,
+  Recipe,
+} from '@mmo-idle/shared';
 import {
   NODE_BIOMES, BIOME_DATABASE, MONSTER_DATABASE, RECIPE_DATABASE, ESSENCE_COLORS, ESSENCE_LABELS,
   catalystLabel, catalystFamilyLabel,
   NODE_MODIFIERS, PACE_FAMILY_COLORS, PACE_FAMILY_LABELS, PACE_FAMILY_SUMMARIES,
-  DENSITY_LABELS, DENSITY_SUMMARIES,
+  paceModifierDetails,
   biomeLevelCap, biomeXpForBiomeLevel, formatNodeCoord, formatRespawnRemaining, nodeIdToCoord,
+  WORLD_REGIONS,
 } from '@mmo-idle/shared';
 import { biomeLevelAtom, biomeXPAtom, bossFelledByNodeAtom, playerTierAtom } from '../../hud/atoms';
 import { hudBus } from '../../hudBus';
@@ -15,7 +21,13 @@ import { dungeonBadgeLabel, hexDot, tileColor } from './constants';
 import { bfsPath } from './pathing';
 import { useMapClock } from './useMapClock';
 import { BiomeIcon } from './BiomeIcon';
-import { formatMonsterMechanics, monsterStatRows, monsterTags } from './monsterInfo';
+import { PaceIcon } from './PaceIcon';
+import {
+  formatMonsterMechanics,
+  monsterQuickStats,
+  monsterStatRows,
+  monsterTags,
+} from './monsterInfo';
 import { statEntries, formatMechanicEffects, formatWeaponEffects } from '../crafting/itemDisplay';
 
 interface NodeInfoProps {
@@ -25,18 +37,30 @@ interface NodeInfoProps {
 }
 
 // ── Expandable monster row ──────────────────────────────────────────────────────
-function MonsterRow({ m, isBoss, open, onToggle }: {
-  m: MonsterDefinition; isBoss: boolean; open: boolean; onToggle: () => void;
+function MonsterRow({ m, isBoss, pace, biomeTier, open, onToggle }: {
+  m: MonsterDefinition;
+  isBoss: boolean;
+  pace?: PaceFamily;
+  biomeTier: number;
+  open: boolean;
+  onToggle: () => void;
 }) {
+  const effectivePace = isBoss ? undefined : pace;
   const tags  = monsterTags(m);
-  const lines = formatMonsterMechanics(m);
+  const lines = formatMonsterMechanics(m, effectivePace, biomeTier);
+  const quick = monsterQuickStats(m, effectivePace, biomeTier);
   return (
     <div className={`map-monster${isBoss ? ' map-monster--boss' : ''}${open ? ' map-monster--open' : ''}`}>
       <button className="map-monster__row" onClick={onToggle}>
         <span className="map-monster__chevron">{open ? '▾' : '▸'}</span>
         <span className="map-monster-dot" style={{ background: hexDot(m.color) }} />
         <span className={`map-monster-name${isBoss ? ' map-monster-name--boss' : ''}`}>{m.name}</span>
-        <span className="map-monster__quick">HP {m.stats.hp} · ATK {m.stats.attack}</span>
+        <span className="map-monster__quick">
+          HP {quick.hp} · ATK{' '}
+          <span className={quick.attackDirection ? `map-stat-delta--${quick.attackDirection}` : ''}>
+            {quick.attack}
+          </span>
+        </span>
         <span className="map-monster-drop" style={{ color: ESSENCE_COLORS[m.rewards.essenceType as EssenceType] }}>
           +{m.rewards.essence}
         </span>
@@ -51,10 +75,17 @@ function MonsterRow({ m, isBoss, open, onToggle }: {
       {open && (
         <div className="map-monster__detail">
           <div className="map-monster__statgrid">
-            {monsterStatRows(m).map(cell => (
+            {monsterStatRows(m, effectivePace, biomeTier).map(cell => (
               <div key={cell.label} className="map-monster__statcell">
                 <span className="map-monster__statlabel">{cell.label}</span>
-                <span className="map-monster__statvalue">{cell.value}</span>
+                <span className="map-monster__statvalue">
+                  {cell.baseValue && (
+                    <span className="map-monster__statbase">{cell.baseValue} → </span>
+                  )}
+                  <span className={cell.direction ? `map-stat-delta--${cell.direction}` : ''}>
+                    {cell.value}
+                  </span>
+                </span>
               </div>
             ))}
           </div>
@@ -168,6 +199,7 @@ export function NodeInfo({ nodeId, playerNodeId, onClose }: NodeInfoProps) {
 
   const { biomeGroup, biomeTier } = info;
   const isDungeon    = info.isDungeon === true;
+  const isSanctuary  = info.kind === 'sanctuary';
   const dungeonBadge = dungeonBadgeLabel(info);
   const accentColor  = isDungeon ? '#882222' : tileColor(biomeGroup);
 
@@ -185,7 +217,10 @@ export function NodeInfo({ nodeId, playerNodeId, onClose }: NodeInfoProps) {
   const biomeXP    = biomeXPByGroup[biomeGroup] ?? 0;
   const biomeLevel = biomeLevelByGroup[biomeGroup] ?? 0;
   const levelCap   = biomeLevelCap(playerTier, biomeGroup);
-  const tierLabel  = biomeTier === 0 ? 'Starting Zone' : `Tier ${biomeTier}`;
+  const region = info.regionId ? WORLD_REGIONS.get(info.regionId) : undefined;
+  const tierLabel  = biomeTier === 0
+    ? 'Starting Zone'
+    : `${region?.displayName ?? `Tier ${biomeTier}`} · Tier ${biomeTier}`;
   const coord      = nodeIdToCoord(nodeId);
 
   const recipesByLevel = recipes.reduce<Record<number, typeof recipes>>((acc, r) => {
@@ -201,7 +236,7 @@ export function NodeInfo({ nodeId, playerNodeId, onClose }: NodeInfoProps) {
           <BiomeIcon biomeGroup={biomeGroup} size={34} className="map-node-info__icon" />
           <div className="map-node-info__titles">
             <div className="map-node-info__name-row">
-              <span className="map-node-info__name">{biome.name}</span>
+              <span className="map-node-info__name">{info.displayName}</span>
               {dungeonBadge && <span className="map-node-info__dungeon-tag">{dungeonBadge}</span>}
             </div>
             <div className="map-node-info__sub">
@@ -227,6 +262,17 @@ export function NodeInfo({ nodeId, playerNodeId, onClose }: NodeInfoProps) {
         </div>
       </div>
 
+      {isSanctuary && (
+        <section className="map-modifier" style={{ borderLeftColor: accentColor }}>
+          <div className="map-modifier__head">
+            <span className="map-modifier__density-tag">Regional Sanctuary</span>
+          </div>
+          <p className="map-modifier__summary">
+            A quiet, monster-free respawn anchor for this region.
+          </p>
+        </section>
+      )}
+
       {modifier && (
         <section
           className="map-modifier"
@@ -237,18 +283,21 @@ export function NodeInfo({ nodeId, playerNodeId, onClose }: NodeInfoProps) {
               className="map-modifier__chip"
               style={{ background: PACE_FAMILY_COLORS[modifier.pace] }}
             >
-              {PACE_FAMILY_LABELS[modifier.pace]}
+              <PaceIcon pace={modifier.pace} size={16} />
+              <span>{PACE_FAMILY_LABELS[modifier.pace]}</span>
             </span>
-            {modifier.density && (
-              <span className="map-modifier__density-tag">{DENSITY_LABELS[modifier.density]}</span>
-            )}
           </div>
           <p className="map-modifier__summary">{PACE_FAMILY_SUMMARIES[modifier.pace]}</p>
-          {modifier.density && (
-            <p className="map-modifier__summary map-modifier__summary--density">
-              {DENSITY_SUMMARIES[modifier.density]}
-            </p>
-          )}
+          <dl className="map-modifier__values">
+            {paceModifierDetails(modifier.pace, biomeTier).map((detail) => (
+              <div key={detail.label} className="map-modifier__value-row">
+                <dt>{detail.label}</dt>
+                <dd className={`map-modifier__value--${detail.direction}`}>
+                  {detail.value}
+                </dd>
+              </div>
+            ))}
+          </dl>
           <div className="map-modifier__grant">
             Grants: <strong>{catalystFamilyLabel(modifier.pace)}</strong>
           </div>
@@ -278,6 +327,7 @@ export function NodeInfo({ nodeId, playerNodeId, onClose }: NodeInfoProps) {
               key={m.id}
               m={m}
               isBoss
+              biomeTier={biomeTier}
               open={openMonster === m.id}
               onToggle={() => setOpenMonster(prev => prev === m.id ? null : m.id)}
             />
@@ -288,16 +338,13 @@ export function NodeInfo({ nodeId, playerNodeId, onClose }: NodeInfoProps) {
       {monsters.length > 0 && (
         <section className="map-info-section">
           <div className="map-info-section__title">Monsters</div>
-          {modifier && (
-            <div className="map-monster-note">
-              Stats shown are base — this node’s modifier reshapes them.
-            </div>
-          )}
           {monsters.map(m => (
             <MonsterRow
               key={m.id}
               m={m}
               isBoss={false}
+              pace={modifier?.pace}
+              biomeTier={biomeTier}
               open={openMonster === m.id}
               onToggle={() => setOpenMonster(prev => prev === m.id ? null : m.id)}
             />
@@ -357,7 +404,7 @@ export function NodeInfo({ nodeId, playerNodeId, onClose }: NodeInfoProps) {
         </section>
       )}
 
-      {monsters.length === 0 && recipes.length === 0 && !isDungeon && (
+      {monsters.length === 0 && recipes.length === 0 && !isDungeon && !isSanctuary && (
         <div className="map-info__empty">No content in this zone yet.</div>
       )}
     </div>

@@ -1,13 +1,8 @@
 import type { NodeBiomeInfo } from '@mmo-idle/shared';
 
-export const GRID_ROWS = 11;
-export const GRID_COLS = 11;
-export const VIEWPORT = 5;
-export const MAX_VIEW_R = GRID_ROWS - VIEWPORT;
-export const MAX_VIEW_C = GRID_COLS - VIEWPORT;
-
 export const BIOME_TILE_COLORS: Record<string, string> = {
   clearing:   '#2e5e2e',
+  sanctuary:  '#24504a',
   forest:     '#1a4018',
   mountain:   '#3e3e50',
   plains:     '#4e5e1a',
@@ -29,6 +24,7 @@ export function tileColor(biomeGroup: string): string {
 /** Maps a biomeGroup to its frame name in /assets/UI_icons.png. */
 export const BIOME_ICONS: Record<string, string> = {
   clearing:  'UI_icons/clearing_icon.png',
+  sanctuary: 'UI_icons/sanctuary-icon.png',
   forest:    'UI_icons/forest-icon.png',
   mountain:  'UI_icons/mountain-icon.png',
   plains:    'UI_icons/plains-icon.png',
@@ -43,10 +39,28 @@ export const BIOME_ICONS: Record<string, string> = {
   abyss:     'UI_icons/abyss-icon.png',
 };
 
-/** Map badge for dungeon nodes — Void Overlord throne uses a distinct label. */
+export const DUNGEON_ICON = 'UI_icons/map/dungeon-skull-icon.png';
+
+const MAP_TIER_COLORS: Record<number, string> = {
+  0: '#6c6c78',
+  1: '#ff5656',
+  2: '#ff941f',
+  3: '#f3d83b',
+  4: '#4dde83',
+  5: '#25cfc2',
+  6: '#5b91ff',
+  7: '#a66cff',
+  8: '#ef62d6',
+};
+
+export function mapTierColor(tier: number): string {
+  return MAP_TIER_COLORS[tier] ?? MAP_TIER_COLORS[0];
+}
+
+/** Map badge for static dungeon exam nodes. */
 export function dungeonBadgeLabel(info: NodeBiomeInfo | undefined): string | null {
   if (!info?.isDungeon) return null;
-  return info.bossTypeId === 'void-overlord' ? 'THRONE' : 'DUNGEON';
+  return 'DUNGEON';
 }
 export function hexDot(hex: number): string {
   return `#${hex.toString(16).padStart(6, '0')}`;

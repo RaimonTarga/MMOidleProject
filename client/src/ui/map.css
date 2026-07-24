@@ -816,6 +816,13 @@
 }
 .map-monster__statlabel { font-size: 7px; letter-spacing: 0.05em; color: #8888b0; }
 .map-monster__statvalue { font-size: 11px; font-weight: bold; color: #cfd2ee; }
+.map-monster__statbase {
+  color: #777887;
+  font-size: 8px;
+  font-weight: 400;
+}
+.map-stat-delta--up { color: #65dc8d; }
+.map-stat-delta--down { color: #ff6f6f; }
 
 .map-monster__mechanics { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 3px; }
 .map-monster__mechline {
@@ -1026,7 +1033,8 @@
 .map-modifier__chip {
   display: inline-flex;
   align-items: center;
-  padding: 1px 8px;
+  gap: 4px;
+  padding: 1px 5px 1px 3px;
   border-radius: 3px;
   font-size: 12px;
   font-weight: 700;
@@ -1056,9 +1064,425 @@
   color: rgba(230, 225, 210, 0.9);
 }
 
-.map-monster-note {
-  font-size: 11px;
-  font-style: italic;
-  color: rgba(200, 195, 180, 0.65);
-  margin-bottom: 4px;
+.map-modifier__values {
+  margin: 7px 0 0;
+  display: grid;
+  gap: 3px;
+}
+
+.map-modifier__value-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  padding-top: 3px;
+  border-top: 1px solid rgba(190, 183, 210, 0.1);
+  font-size: 10px;
+}
+
+.map-modifier__value-row dt {
+  color: rgba(212, 208, 223, 0.72);
+}
+
+.map-modifier__value-row dd {
+  margin: 0;
+  font-weight: 700;
+  text-align: right;
+}
+
+.map-modifier__value--up { color: #65dc8d; }
+.map-modifier__value--down { color: #ff6f6f; }
+.map-modifier__value--neutral { color: #d4d1df; }
+
+/* ── Sparse stitched world (Map Variety Stage B) ─────────────────────────── */
+
+.game-dialog__panel.map-dialog {
+  width: calc((100vw - 32px) / var(--ui-font-scale, 1));
+  max-width: calc((100vw - 32px) / var(--ui-font-scale, 1));
+  height: min(760px, calc((100vh - 32px) / var(--ui-font-scale, 1)));
+}
+
+.world-map-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 10px;
+  border-bottom: 1px solid rgba(80, 72, 52, 0.32);
+  background: rgba(14, 13, 10, 0.82);
+}
+
+.world-map-toolbar input,
+.world-map-toolbar select {
+  min-width: 0;
+  height: 26px;
+  padding: 3px 7px;
+  border: 1px solid rgba(105, 94, 66, 0.48);
+  border-radius: 2px;
+  color: var(--hud-text);
+  background: #191711;
+  font: 10px monospace;
+}
+
+.world-map-search {
+  flex: 1;
+  max-width: 280px;
+}
+
+.world-map-toolbar__hint {
+  margin-left: auto;
+  color: var(--hud-text-dim);
+  font: 9px monospace;
+  white-space: nowrap;
+}
+
+.map-body--world {
+  background: #08080b;
+}
+
+.world-map-viewport {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  background:
+    radial-gradient(circle at 35% 30%, rgba(66, 54, 96, 0.13), transparent 34%),
+    radial-gradient(circle at 72% 68%, rgba(36, 77, 74, 0.10), transparent 38%),
+    #07070a;
+}
+
+.world-map-viewport:active {
+  cursor: grabbing;
+}
+
+.world-map-void {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.3;
+  background-image:
+    radial-gradient(circle, rgba(166, 146, 210, 0.16) 0 1px, transparent 1.4px),
+    radial-gradient(circle, rgba(92, 119, 131, 0.11) 0 1px, transparent 1.2px);
+  background-position: 0 0, 18px 13px;
+  background-size: 37px 37px, 53px 53px;
+}
+
+.world-map-canvas {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform-origin: 0 0;
+  will-change: transform;
+}
+
+.world-map-routes {
+  position: absolute;
+  inset: 0;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.world-map-route {
+  stroke: rgba(107, 98, 124, 0.34);
+  stroke-width: 7;
+  stroke-linecap: round;
+}
+
+.world-map-route--path {
+  stroke: rgba(76, 174, 255, 0.9);
+  stroke-width: 9;
+  filter: drop-shadow(0 0 3px rgba(62, 151, 255, 0.75));
+}
+
+.world-map-region-label {
+  position: absolute;
+  z-index: 0;
+  transform: translate(-50%, -50%) rotate(-8deg);
+  color: rgba(214, 203, 235, 0.11);
+  font: 700 34px/1 monospace;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.world-map-node {
+  position: absolute;
+  z-index: 2;
+  width: 70px;
+  height: 70px;
+  padding: 5px 4px 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  overflow: hidden;
+  color: #e8e5dc;
+  border: 1px solid rgba(163, 154, 132, 0.28);
+  border-radius: 16px 11px 17px 9px;
+  box-shadow:
+    inset 0 0 18px rgba(0, 0, 0, 0.34),
+    0 2px 7px rgba(0, 0, 0, 0.42);
+  cursor: pointer;
+  transition:
+    opacity 120ms ease,
+    filter 120ms ease,
+    border-color 120ms ease,
+    box-shadow 120ms ease;
+}
+
+.world-map-node:nth-of-type(3n) {
+  border-radius: 10px 18px 11px 16px;
+}
+
+.world-map-node:nth-of-type(5n) {
+  border-radius: 18px 9px 15px 12px;
+}
+
+.world-map-node:hover {
+  z-index: 4;
+  filter: brightness(1.3);
+  border-color: rgba(198, 184, 255, 0.82);
+}
+
+.world-map-node--dungeon {
+  filter: brightness(0.72) saturate(0.82);
+  border-color: rgba(205, 69, 69, 0.72);
+  box-shadow:
+    inset 0 0 0 2px rgba(112, 20, 20, 0.28),
+    inset 0 0 18px rgba(0, 0, 0, 0.52),
+    0 2px 8px rgba(0, 0, 0, 0.48);
+}
+
+.world-map-node--sanctuary {
+  border-color: rgba(114, 235, 211, 0.78);
+  box-shadow:
+    inset 0 0 20px rgba(105, 255, 224, 0.12),
+    0 0 10px rgba(78, 213, 192, 0.22);
+}
+
+.world-map-node--tutorial {
+  border-color: rgba(137, 255, 160, 0.76);
+}
+
+.world-map-node--selected {
+  z-index: 5;
+  border-color: #cfbaff;
+  box-shadow:
+    0 0 0 2px rgba(199, 168, 255, 0.78),
+    0 0 16px rgba(158, 111, 255, 0.55);
+}
+
+.world-map-node--current {
+  z-index: 6;
+  border-color: #64ff9a;
+  box-shadow:
+    0 0 0 2px rgba(69, 255, 139, 0.78),
+    0 0 18px rgba(68, 255, 136, 0.55);
+}
+
+.world-map-node--path {
+  border-color: #4aaeff;
+  box-shadow: 0 0 12px rgba(57, 155, 255, 0.55);
+}
+
+.world-map-node--destination,
+.world-map-node--highlight {
+  border-color: #ffd95a;
+  box-shadow:
+    0 0 0 2px rgba(255, 216, 78, 0.62),
+    0 0 18px rgba(255, 184, 48, 0.56);
+}
+
+.world-map-node--felled {
+  filter: grayscale(0.6) brightness(0.72);
+}
+
+.world-map-node--filtered {
+  opacity: 0.08;
+  pointer-events: none;
+}
+
+.world-map-node__tier {
+  position: absolute;
+  left: 3px;
+  top: 3px;
+  box-sizing: border-box;
+  min-width: 15px;
+  height: 15px;
+  padding: 0 1px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(5, 6, 8, 0.72);
+  border-radius: 3px;
+  font: 700 6px monospace;
+  letter-spacing: 0;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.42);
+}
+
+.world-map-node__name {
+  width: 100%;
+  color: rgba(255, 255, 255, 0.88);
+  font: 8px/1.05 monospace;
+  text-align: center;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+.world-map-node__icon {
+  flex-shrink: 0;
+  image-rendering: pixelated;
+  filter:
+    drop-shadow(1px 0 0 rgba(4, 5, 7, 0.95))
+    drop-shadow(-1px 0 0 rgba(4, 5, 7, 0.95))
+    drop-shadow(0 1px 0 rgba(4, 5, 7, 0.95))
+    drop-shadow(0 -1px 0 rgba(4, 5, 7, 0.95));
+}
+
+.world-map-node__icon--dungeon {
+  filter:
+    drop-shadow(1px 0 0 rgba(255, 58, 58, 0.98))
+    drop-shadow(-1px 0 0 rgba(255, 58, 58, 0.98))
+    drop-shadow(0 1px 0 rgba(255, 58, 58, 0.98))
+    drop-shadow(0 -1px 0 rgba(255, 58, 58, 0.98));
+}
+
+.world-map-node__pace {
+  position: absolute;
+  right: 3px;
+  top: 3px;
+  box-sizing: border-box;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(5, 6, 8, 0.72);
+  border-radius: 4px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.42);
+}
+
+.pace-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  color: #0a0b0e;
+  font-family: Consolas, "Courier New", monospace;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.08em;
+  text-align: center;
+  text-transform: uppercase;
+  user-select: none;
+}
+
+.world-map-node__kind {
+  color: #ff9b8e;
+  font: 6px monospace;
+  letter-spacing: 0.06em;
+}
+
+.world-map-node__dungeon {
+  position: absolute;
+  right: 3px;
+  top: 3px;
+  box-sizing: border-box;
+  width: 18px;
+  height: 18px;
+  display: grid;
+  place-items: center;
+  color: #fff4ec;
+  border: 1px solid rgba(255, 92, 82, 0.82);
+  border-radius: 3px;
+  background: rgba(91, 12, 16, 0.92);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.55);
+}
+
+.world-map-node__you {
+  position: absolute;
+  bottom: 1px;
+  padding: 0 3px;
+  color: #64ff9a;
+  background: rgba(5, 16, 9, 0.8);
+  font: 700 7px monospace;
+  letter-spacing: 0.08em;
+}
+
+.world-map-controls {
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  z-index: 10;
+  display: flex;
+  gap: 3px;
+  padding: 4px;
+  border: 1px solid rgba(115, 104, 80, 0.4);
+  border-radius: 3px;
+  background: rgba(13, 12, 10, 0.9);
+}
+
+.world-map-controls button {
+  min-width: 28px;
+  height: 25px;
+  padding: 0 6px;
+  color: var(--hud-text-muted);
+  border: 1px solid rgba(126, 113, 82, 0.45);
+  border-radius: 2px;
+  background: #262219;
+  font: 700 9px monospace;
+  cursor: pointer;
+}
+
+.world-map-controls button:hover:not(:disabled) {
+  color: var(--hud-primary-strong);
+  border-color: rgba(201, 176, 106, 0.7);
+}
+
+.world-map-info-panel {
+  flex: 0 0 355px;
+  width: 355px;
+}
+
+@media (max-width: 1100px) {
+  .game-dialog__panel.map-dialog {
+    width: 100%;
+    max-width: 100vw;
+  }
+
+  .world-map-toolbar {
+    flex-wrap: wrap;
+  }
+
+  .world-map-search {
+    flex: 1 1 100%;
+    max-width: none;
+  }
+
+  .world-map-toolbar__hint {
+    display: none;
+  }
+
+  .map-body--world {
+    display: grid;
+    grid-template-rows: minmax(340px, 56vh) auto;
+    overflow-y: auto;
+  }
+
+  .world-map-viewport {
+    width: 100%;
+    min-height: 340px;
+  }
+
+  .world-map-info-panel {
+    width: auto;
+    min-height: 260px;
+    overflow: visible;
+  }
+
 }

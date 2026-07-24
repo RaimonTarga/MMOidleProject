@@ -22,6 +22,13 @@
       "when": 1785283200000,
       "tag": "0002_wipe_catalyst_wallets",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1785283200001,
+      "tag": "0003_sparse_world_reset",
+      "breakpoints": true
     }
   ]
 }

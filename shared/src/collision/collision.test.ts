@@ -13,7 +13,6 @@ import {
   minimapProjection,
   projectPoint,
   reachGap,
-  regionsContainingPoint,
   withinReach,
   buildNavGrid,
   clearNavGridCache,
@@ -25,6 +24,7 @@ import {
   cellToWorld,
 } from './index';
 import { moverOverlapsBlockShapes } from '../systems/spatial';
+import { worldNodeExits } from '../world/nodeBiomes';
 
 function assert(cond: boolean, msg: string): void {
   if (!cond) throw new Error(msg);
@@ -46,17 +46,20 @@ assert(
 );
 assert(reachGap(playerBody, monsterBody) === 40, 'reachGap separation');
 
-const clearing = buildStaticCollisionRegions('node-5-5');
+const clearing = buildStaticCollisionRegions('node-clearing');
 assert(clearing.some(r => r.kind === 'gate'), 'clearing has gate regions');
 assert(clearing.length >= 4, 'clearing has four edge bands');
 
-const northExit = exitNodeIdForGate('node-5-5', 'north');
-assert(northExit === 'node-4-5', 'north exit from collision layer');
+const northExit = exitNodeIdForGate('node-clearing', 'north');
+assert(
+  northExit === worldNodeExits('node-clearing').north,
+  'north exit from collision layer',
+);
 
-const westGate = gateDirectionAtPoint('node-5-5', { x: 10, y: 1200 });
+const westGate = gateDirectionAtPoint('node-clearing', { x: 10, y: 1200 });
 assert(westGate === 'west', 'west gate band detection');
 
-const gateEntities = buildNodeGateEntities('node-5-5');
+const gateEntities = buildNodeGateEntities('node-clearing');
 const northEntity = gateEntities.find(g => g.direction === 'north');
 assert(northEntity != null, 'north gate entity exists');
 if (!northEntity) throw new Error('unreachable');
@@ -71,13 +74,6 @@ assert(
   northShape.kind === 'rect' && northShape.halfW === northEntity.bounds.width / 2,
   'gate bounds map to collision half extents',
 );
-
-const throne = buildStaticCollisionRegions('node-10-0');
-const blockers = throne.filter(r => r.kind === 'block');
-assert(blockers.length === 1, 'void throne block region');
-
-const insideThrone = regionsContainingPoint(throne, { x: 1600, y: 1200 });
-assert(insideThrone.some(r => r.id.includes('abyssal_throne')), 'throne point containment');
 
 const identity = identityProjection();
 const projected = projectPoint({ x: 100, y: 200 }, identity);
@@ -144,7 +140,7 @@ if (synthPath) {
 }
 
 const forestPath = findPathForMover(
-  'node-4-6',
+  'node-t1-forest-01',
   'monster',
   { x: 28, y: 28 },
   { x: 400, y: 400 },
@@ -212,7 +208,7 @@ assert(tooNarrow === null, 'padded path rejects corridor narrower than body');
 // From the east corridor (between the inner and outer ledge rings) to the top
 // corridor — forces routing around the inner ring's NE corner. Points keep
 // clearance from the 96px-thick walls plus the 32px mover pad.
-const mountainCornerGrid = buildNavGrid('node-0-3', 'player', { x: 32, y: 32 });
+const mountainCornerGrid = buildNavGrid('node-t1-mountain-01', 'player', { x: 32, y: 32 });
 const mountainCornerFrom = { x: 2520, y: 1600 };
 const mountainCornerGoal = { x: 1040, y: 440 };
 const mountainCornerPath = findPathOnGrid(

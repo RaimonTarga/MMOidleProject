@@ -97,8 +97,8 @@ function spawnBossAfterActivation(world: World, nodeId: string): void {
 }
 
 // Pick the canonical T1 dungeons used as worked examples.
-const EMPOWER_NODE = "node-3-3"; // mountain T1 (empower hook placeholder)
-const JOIN_NODE = "node-3-6"; // cave T1 (default "join" hook)
+const EMPOWER_NODE = "node-t1-mountain-dungeon";
+const JOIN_NODE = "node-t1-cave-dungeon";
 
 const empowerDef = getDungeonGauntletDef(EMPOWER_NODE);
 assert(!!empowerDef, `expected a T1 gauntlet def for ${EMPOWER_NODE}`);

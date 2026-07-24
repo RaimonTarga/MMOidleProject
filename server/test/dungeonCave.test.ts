@@ -32,7 +32,7 @@ function assert(condition: boolean, message: string): void {
 }
 
 const ALTAR = { x: GAME_CONFIG.NODE_WIDTH / 2, y: GAME_CONFIG.NODE_HEIGHT / 2 };
-const CAVE_NODE = "node-3-6"; // Cave T1 dungeon (Obsidian Broodmother)
+const CAVE_NODE = "node-t1-cave-dungeon";
 
 function makePlayerSlices(
   id: string,
@@ -236,7 +236,7 @@ function setupCave(): { world: World; playerId: string } {
 // ── 4. Boss spawns no adds even as its script runs (T1 simplification) ───────
 {
   const world = new World();
-  const node = "node-5-5";
+  const node = "node-clearing";
   const playerId = "brood-target";
   world.attachPlayerEntity(
     makePlayerSlices(playerId, node, { x: 400, y: 400 }, 4000),

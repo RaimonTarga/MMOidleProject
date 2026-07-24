@@ -54,6 +54,14 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
     mobDensity: 12,
   }],
 
+  ['sanctuary', {
+    id: 'sanctuary', name: 'Sanctuary',
+    backgroundColor: 0x101a18,
+    monsterPoolByTier: {},
+    essenceType: 'essence',
+    mobDensity: 0,
+  }],
+
   ['testroom', {
     id: 'testroom', name: 'Test Room',
     backgroundColor: 0x1a1a2a,

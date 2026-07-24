@@ -109,7 +109,7 @@ function resolveDesiredNodeId(
     const currentIsRelevantRegular =
       currentNode?.biomeGroup === biomeGroup &&
       currentNode.biomeTier === biomeTier &&
-      !currentNode.isDungeon;
+      currentNode.kind === "normal";
     const currentBiomeUnlocksDone = areAllBiomeRecipesUnlocked(
       progression,
       biomeGroup,
@@ -179,7 +179,7 @@ function markCurrentNodeClearedIfUnlocksDone(
 ): void {
   const nodeId = player.hasPosition.nodeId;
   const nodeInfo = NODE_BIOMES[nodeId];
-  if (!nodeInfo || nodeInfo.isDungeon) return;
+  if (!nodeInfo || nodeInfo.kind !== "normal") return;
   if (
     !areAllBiomeRecipesUnlocked(player.tracksProgression, nodeInfo.biomeGroup)
   )

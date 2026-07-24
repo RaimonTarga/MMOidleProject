@@ -33,7 +33,7 @@ function assert(condition: boolean, message: string): void {
 }
 
 const ALTAR = { x: GAME_CONFIG.NODE_WIDTH / 2, y: GAME_CONFIG.NODE_HEIGHT / 2 };
-const FOREST_NODE = "node-6-7"; // Forest T1 dungeon (Gnarled Greatbear)
+const FOREST_NODE = "node-t1-forest-dungeon";
 
 function makePlayerSlices(
   id: string,
@@ -215,7 +215,7 @@ function setupForest(): { world: World; playerId: string } {
 // ── 4. Charged Maul telegraphs (cast bar) then lands a spike ─────────────────
 {
   const world = new World();
-  const node = "node-5-5";
+  const node = "node-clearing";
   const playerId = "maul-target";
   // Beefy HP so the spike doesn't kill the player before we can assert it landed.
   world.attachPlayerEntity(

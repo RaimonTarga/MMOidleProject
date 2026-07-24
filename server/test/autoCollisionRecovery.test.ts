@@ -68,7 +68,7 @@ function playerSlices(id: string, nodeId: string): PersistedPlayerSlices {
   };
 }
 
-const nodeId = "node-4-6";
+const nodeId = "node-t1-forest-01";
 const world = new World();
 const player = world.attachPlayerEntity(playerSlices("tree-player", nodeId), "tree-player");
 const trunk = world.collision
@@ -96,7 +96,7 @@ monster.hasPosition.current = {
 
 // Force the close-range branch which previously selected direct steering solely
 // from actor distance, despite the trunk occupying the segment between them.
-player.performsAttack.attackRange = 10;
+player.performsAttack.attackRange = 40;
 steerTowardTarget(world, player, monster, 1_000);
 
 assert(player.isMoving !== undefined, "autoplay should keep moving around a blocking tree");

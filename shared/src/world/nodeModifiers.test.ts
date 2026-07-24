@@ -2,10 +2,12 @@ import {
   validateNodeModifiers,
   paceStatScalars,
   paceMechanicOverlay,
+  paceModifierDetails,
   catalystFamilyLabel,
   densitySpawnFactor,
   densityRewardMult,
   elitePoolWeight,
+  DENSITY_MODIFIERS_ENABLED,
   PACE_FAMILIES,
   PACE_MAGNITUDE_BY_TIER,
   type PaceFamily,
@@ -66,6 +68,23 @@ for (const tier of [1, 2, 3, 4]) {
   );
 }
 
+// Exact player-facing modifier values stay tied to the gameplay formulas.
+const t1Alacrity = paceModifierDetails('alacrity', 1);
+assert(
+  t1Alacrity.some((detail) => detail.label === 'Direct attack' && detail.value === '−15%'),
+  'T1 Alacrity exposes its direct-attack reduction',
+);
+assert(
+  t1Alacrity.some((detail) => detail.label === 'Move speed' && detail.value === '+7.5%'),
+  'T1 Alacrity exposes its move-speed increase',
+);
+assert(
+  paceModifierDetails('predation', 4).some(
+    (detail) => detail.label === 'Full-HP opening strike' && detail.value === '×2.20',
+  ),
+  'T4 Predation exposes its exact opener multiplier',
+);
+
 // ── 3. Blight overlay: preserve debuffId when amplifying ───────────────────────
 const authoredDot = {
   debuffId: 'venom',
@@ -98,19 +117,13 @@ assert(synth.dot!.damagePerStack >= 1, 'synthesized dot has ≥1 per stack');
 assert(catalystFamilyLabel('alacrity') === 'Alacrity Catalyst', 'known label');
 assert(catalystFamilyLabel('mystery') === 'Mystery Catalyst', 'fallback label');
 
-// ── 5. Density helpers ─────────────────────────────────────────────────────────
-assert(densitySpawnFactor(undefined) === 1, 'no density spawn factor');
-assert(densitySpawnFactor('swarming') > 1, 'swarming spawns more');
-assert(densitySpawnFactor('elite-ground') < 1, 'elite-ground spawns fewer');
-assert(
-  Math.abs(densitySpawnFactor('swarming') * densityRewardMult('swarming') - 1) < 1e-9,
-  'swarming reward neutrality',
-);
-assert(
-  elitePoolWeight('elite-ground', true) > elitePoolWeight('swarming', true),
-  'elite-ground favors elites over swarming',
-);
-assert(elitePoolWeight(undefined, true) === 1, 'no density = flat weight');
+// ── 5. Density system is dormant ───────────────────────────────────────────────
+assert(DENSITY_MODIFIERS_ENABLED === false, 'density modifiers stay disabled');
+for (const density of [undefined, 'swarming', 'elite-ground'] as const) {
+  assert(densitySpawnFactor(density) === 1, `${density ?? 'none'} spawn factor is inert`);
+  assert(densityRewardMult(density) === 1, `${density ?? 'none'} reward factor is inert`);
+  assert(elitePoolWeight(density, true) === 1, `${density ?? 'none'} pool weighting is inert`);
+}
 
 // Every family maps to a color/summary/label (sanity over the enum).
 for (const fam of PACE_FAMILIES) {
