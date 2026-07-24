@@ -23,7 +23,7 @@ generate while the review gallery is open).
 | `pnpm art:seed` | Creates/refreshes draft manifest entries in `art/manifests/` from game registries + `art/src`. Never touches existing prompts/statuses. |
 | `pnpm art:generate` | Generates candidates for `pending`/`regen` entries with prompts. Flags: `--dry-run`, `--category=`, `--id=`, `--budget=$`, `--limit=N`, `--force`, `--balance`. |
 | `pnpm art:review` | Gallery at `http://localhost:4114`. Accept → `art/src/<out>` (NN-resized to ship size) + status `accepted`. Reject → status `regen` + note. |
-| `pnpm art:pack` | Repacks atlases + copies `art/src/files/**` into `client/public/assets/`. `--check` = drift detector (writes nothing, exits 1 on diff). |
+| `pnpm art:pack` | Repacks atlases + copies `art/src/files/**` into `client/public/assets/`. `--check` = drift detector (writes nothing, exits 1 on diff); `--atlas=<sprites\|icons\|UI_icons>` limits work to one atlas and skips loose files. |
 | `pnpm art:status` | Coverage report: manifests × registries × art files. `--balance` adds account balance. |
 
 ## Flow
@@ -53,6 +53,8 @@ art/
   review) → `accepted`, or `regen` after a rejection (notes carry guidance).
 - Atlas packing is deterministic (shelf pack, height-desc then name); the JSON
   is tab-indented to match the original free-tex-packer output.
+- `UI_icons` frames receive a 2px transparent gutter during packing so
+  fractional CSS/canvas scaling cannot sample neighboring icons.
 - `shadows.json` is bake output, not art — `bake:hitboxes` rebakes it on server
   boot when the sprites.png hash changes.
 - Endpoint size caps: bitforge 200², pixflux 400², generate-ui 792×688.

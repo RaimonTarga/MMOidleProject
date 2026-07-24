@@ -1341,20 +1341,11 @@ export interface NodeDecorArt {
 }
 
 export const NODE_DECOR: Record<string, NodeDecorArt[]> = {
-  "node-5-5": [
+  "node-clearing": [
     {
       featureId: "rune_altar",
       key: "rune_altar",
       file: "/assets/environment/rune_altar.png",
-    },
-  ],
-  "node-10-0": [
-    {
-      featureId: "abyssal_throne",
-      key: "abyssal_throne",
-      file: "/assets/environment/abyssal_throne.png",
-      openKey: "abyssal_throne_open",
-      openFile: "/assets/environment/void_throne_open.png",
     },
   ],
 };

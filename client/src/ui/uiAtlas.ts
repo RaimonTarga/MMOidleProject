@@ -1,34 +1,8 @@
-export interface AtlasFrame {
-  x: number; y: number; w: number; h: number;
-  atlasW: number; atlasH: number;
-}
+import { loadIconAtlas, UI_ICON_ATLAS, type AtlasFrame } from './iconAtlas';
 
-interface SpritesManifest {
-  textures: Array<{
-    size: { w: number; h: number };
-    frames: Array<{ filename: string; frame: { x: number; y: number; w: number; h: number } }>;
-  }>;
-}
+export type { AtlasFrame } from './iconAtlas';
 
-let manifestPromise: Promise<Map<string, AtlasFrame>> | null = null;
-
+/** Compatibility export for map code that still reads UI-atlas geometry. */
 export function loadUIAtlas(): Promise<Map<string, AtlasFrame>> {
-  if (!manifestPromise) {
-    manifestPromise = fetch('/assets/UI_icons.json')
-      .then(res => (res.ok ? (res.json() as Promise<SpritesManifest>) : Promise.reject()))
-      .then(data => {
-        const texture = data.textures[0];
-        const map = new Map<string, AtlasFrame>();
-        for (const entry of texture.frames) {
-          map.set(entry.filename, {
-            x: entry.frame.x, y: entry.frame.y,
-            w: entry.frame.w, h: entry.frame.h,
-            atlasW: texture.size.w, atlasH: texture.size.h,
-          });
-        }
-        return map;
-      })
-      .catch(() => new Map<string, AtlasFrame>());
-  }
-  return manifestPromise;
+  return loadIconAtlas(UI_ICON_ATLAS);
 }

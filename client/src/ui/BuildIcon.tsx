@@ -1,5 +1,5 @@
 import type { CSSProperties } from 'react';
-import { UIIcon } from './UIIcon';
+import { GameIcon, type IconSource } from './GameIcon';
 
 export type BuildIconKind = 'ability' | 'stance' | 'rite' | 'rune';
 
@@ -25,13 +25,13 @@ export function BuildIcon({
   label,
   muted = false,
   size,
-  iconFrame,
+  icon,
 }: {
   kind: BuildIconKind;
   label: string;
   muted?: boolean;
   size?: number;
-  iconFrame?: string;
+  icon?: IconSource | null;
 }) {
   const style: CSSProperties | undefined = size
     ? { width: size, height: size, fontSize: Math.max(9, Math.round(size * 0.31)) }
@@ -45,12 +45,14 @@ export function BuildIcon({
       title={label}
     >
       <span className="build-icon__fallback">{initials(label)}</span>
-      {iconFrame && (
-        <UIIcon
+      {icon && (
+        <GameIcon
           as="span"
-          frameName={iconFrame}
+          source={icon}
           size={iconSize}
+          fallback={null}
           className="build-icon__art"
+          decorative
         />
       )}
     </span>

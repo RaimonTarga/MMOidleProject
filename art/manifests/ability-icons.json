@@ -121,6 +121,75 @@
         "noBackground": false
       },
       "notes": "R2 KEEPER (user accepted): flat three-layer shield; do not regenerate."
+    },
+    {
+      "id": "bramble-guard",
+      "out": "UI_icons/abilities/bramble-guard.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "full-square fantasy game ability icon for a guard of thorns, three or four thick straight barbed thorn spikes fan outward and upward from a single point at the bottom center of the frame, each thorn is a hard tapered wedge with two or three short sharp barbs jutting off its sides, built from just two flat layers with no shading: a thick dark-forest outer outline and a solid poison-green face, the fan spreads wide and fills about 85 percent of the frame, pure black background, bold old-school game icon readable instantly at 32x32, 64x64 pixel art, limited palette of black dark-forest-green and bright poison-green, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "shield, buckler, armor, leaf, leaves, foliage, tree, bush, hedge, flower, rose, vine curl, spiral, twisting tendril, thin wispy stems, grass blades, wheat, feather, wing, hand, claw, creature, character, face, soft rounded tips, glossy, shiny, gradient, highlight, reflection, realistic plant, botanical illustration, logo, clipart, transparent background, painterly, soft blur, smooth vector art, 3d render, photograph, text, letters, numbers, watermark, decorative frame, badge, cast shadow",
+      "status": "draft",
+      "sources": [
+        "ability:bramble-guard"
+      ],
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2,
+        "noBackground": false
+      },
+      "notes": "R1 DRAFT — not generated yet. T2 Jungle guard (temporary plating + flat thorns). Prompt follows the accepted brace/sweep recipe: two flat layers, hard outline, no gloss."
+    },
+    {
+      "id": "charge",
+      "out": "UI_icons/abilities/charge.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "full-square fantasy game ability icon for charging forward at speed, one bold solid arrowhead points hard to the right, a wide decisive triangular wedge with a short thick tail, three thick horizontal flat speed streaks trail straight back from it toward the left edge with clear black gaps between them, the streaks are simple straight bars that get shorter as they trail away, built from just two flat layers with no shading: a thick dark-rust outer outline and a solid hot-amber face, the whole mark fills about 85 percent of the frame, pure black background, bold old-school game icon readable instantly at 32x32, 64x64 pixel art, limited palette of black dark-rust and hot-amber, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "curved arrow, refresh icon, loading spinner, circular arrow, bow and arrow, arrow shaft with fletching, feathers, crosshair, cursor, mouse pointer, play button, media control, chevron stack, double chevron, lightning bolt, wind swirl, tornado, dust cloud, horse, boar, charging animal, running figure, character, boot, footprint, hand, glossy, shiny, gradient, highlight, motion blur, soft blur, logo, clipart, transparent background, painterly, smooth vector art, 3d render, photograph, text, letters, numbers, watermark, decorative frame, badge, cast shadow",
+      "status": "draft",
+      "sources": [
+        "ability:charge"
+      ],
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2,
+        "noBackground": false
+      },
+      "notes": "R1 DRAFT — not generated yet. T2 Desert reposition technique (gap-close + empowered strike). Explicit bans on curved/refresh arrows, which the reticle round showed this style drifts toward."
+    },
+    {
+      "id": "charged-strike",
+      "out": "UI_icons/abilities/charged-strike.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "full-square fantasy game ability icon for a heavy blow being charged up, one thick blunt wedge-shaped strike mark angles down from upper-left to lower-right through the center of the frame, and three or four short straight charge sparks radiate outward from its widest point like a simple starburst with clear black gaps between them, built from just two flat layers with no shading: a thick deep-indigo outer outline and a solid pale-lightning-white face, the mark fills about 85 percent of the frame, pure black background, bold old-school game icon readable instantly at 32x32, 64x64 pixel art, limited palette of black deep-indigo and pale-lightning-white, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "sword, hammer, mace, axe, weapon, blade, hilt, handle, fist, hand, arm, character, lightning bolt zigzag, storm cloud, battery, plug, power symbol, electrical outlet, gauge, meter, progress bar, hourglass, clock, full starburst, many rays, sunburst, star shape, sparkle cluster, glossy, shiny, gradient, glow, halo, soft blur, logo, clipart, transparent background, painterly, smooth vector art, 3d render, photograph, text, letters, numbers, watermark, decorative frame, badge, cast shadow",
+      "status": "draft",
+      "sources": [
+        "ability:charged-strike"
+      ],
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2,
+        "noBackground": false
+      },
+      "notes": "R1 DRAFT — not generated yet. T2 Mountain casted technique (first player cast). Weapon bans carried over from the sweep round, which repeatedly rendered literal swords."
     }
   ]
 }

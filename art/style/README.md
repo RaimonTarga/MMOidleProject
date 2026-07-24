@@ -83,6 +83,8 @@ The category manifests expect these filenames (see `styleRef` in
 | `creatures.png` | monsters | your favorite existing monster sprite |
 | `characters.png` | players (deferred) | your favorite existing class sprite |
 | `icons.png` | items, ui-icons | your favorite existing item icon |
+| `ui-navigation.png` | Phase 10C system-navigation icons | approved broad Runes keystone glyph |
+| `essence-orbs.png` | Phase 10C essence icons | approved golden Might orb |
 | `terrain.png` | environment, backgrounds | a representative background crop |
 
 ## How to set them

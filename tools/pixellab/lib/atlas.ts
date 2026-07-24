@@ -32,12 +32,20 @@ export interface AtlasDef {
   prefix: string;
   json: string;
   png: string;
+  /** Transparent pixels reserved around every frame to prevent texture bleed. */
+  padding?: number;
 }
 
 export const ATLASES: AtlasDef[] = [
   { name: 'sprites', prefix: 'sprites/', json: 'sprites.json', png: 'sprites.png' },
   { name: 'icons', prefix: 'items/', json: 'icons.json', png: 'icons.png' },
-  { name: 'UI_icons', prefix: 'UI_icons/', json: 'UI_icons.json', png: 'UI_icons.png' },
+  {
+    name: 'UI_icons',
+    prefix: 'UI_icons/',
+    json: 'UI_icons.json',
+    png: 'UI_icons.png',
+    padding: 2,
+  },
 ];
 
 export function readAtlasJson(jsonPath: string): AtlasJson {
@@ -92,12 +100,18 @@ interface PlacedFrame extends PackInput {
 }
 
 /** Deterministic shelf packing: sort by height desc then name, fill rows. */
-function shelfPack(inputs: PackInput[]): { placed: PlacedFrame[]; width: number; height: number } {
+function shelfPack(
+  inputs: PackInput[],
+  padding = 0,
+): { placed: PlacedFrame[]; width: number; height: number } {
   const sorted = [...inputs].sort(
     (a, b) => b.height - a.height || a.filename.localeCompare(b.filename),
   );
-  const totalArea = sorted.reduce((sum, i) => sum + i.width * i.height, 0);
-  const maxFrameWidth = Math.max(...sorted.map((i) => i.width));
+  const totalArea = sorted.reduce(
+    (sum, i) => sum + (i.width + padding * 2) * (i.height + padding * 2),
+    0,
+  );
+  const maxFrameWidth = Math.max(...sorted.map((i) => i.width + padding * 2));
   const minWidth = Math.max(maxFrameWidth, Math.ceil(Math.sqrt(totalArea)));
   const width = [128, 256, 512, 1024, 2048, 4096].find((w) => w >= minWidth) ?? minWidth;
 
@@ -106,14 +120,16 @@ function shelfPack(inputs: PackInput[]): { placed: PlacedFrame[]; width: number;
   let cursorY = 0;
   let shelfHeight = 0;
   for (const input of sorted) {
-    if (cursorX + input.width > width) {
+    const slotWidth = input.width + padding * 2;
+    const slotHeight = input.height + padding * 2;
+    if (cursorX + slotWidth > width) {
       cursorY += shelfHeight;
       cursorX = 0;
       shelfHeight = 0;
     }
-    placed.push({ ...input, x: cursorX, y: cursorY });
-    cursorX += input.width;
-    shelfHeight = Math.max(shelfHeight, input.height);
+    placed.push({ ...input, x: cursorX + padding, y: cursorY + padding });
+    cursorX += slotWidth;
+    shelfHeight = Math.max(shelfHeight, slotHeight);
   }
   return { placed, width, height: cursorY + shelfHeight };
 }
@@ -157,7 +173,7 @@ export async function packAtlas(def: AtlasDef): Promise<{ png: Buffer; json: str
     });
   }
 
-  const { placed, width, height } = shelfPack(inputs);
+  const { placed, width, height } = shelfPack(inputs, def.padding);
   // Raw byte copy instead of sharp.composite: compositing premultiplies alpha
   // and rounds semi-transparent RGB values off by one. Frames never overlap,
   // so a direct copy keeps every source pixel bit-identical.

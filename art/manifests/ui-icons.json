@@ -1,6 +1,6 @@
 {
   "category": "ui-icons",
-  "endpoint": "bitforge",
+  "endpoint": "pixflux",
   "styleRef": "style/icons.png",
   "noBackground": true,
   "candidates": 3,
@@ -62,8 +62,10 @@
         "w": 32,
         "h": 32
       },
-      "prompt": "",
-      "status": "draft"
+      "prompt": "single compact blacksmith anvil in side view with a broad horn pointing right and exactly one small pale-cyan spark above the striking face, charcoal iron with sparse muted-bronze wear, transparent background, bold flat old-school fantasy UI pixel art readable at 18x18, no surrounding plaque button badge border or frame",
+      "status": "accepted",
+      "styleRef": "style/ui-navigation.png",
+      "notes": "Phase 10C system-navigation family; approved 2026-07-22 after built-in generation, chroma-key removal, and nearest-neighbor reduction to 32x32."
     },
     {
       "id": "graveyard-icon",
@@ -82,8 +84,10 @@
         "w": 32,
         "h": 32
       },
-      "prompt": "",
-      "status": "draft"
+      "prompt": "single compact reinforced adventurer inventory case with squared body, short handle, centered flap and one pale-cyan rune clasp, charcoal iron and dark leather with muted-bronze seams, transparent background, bold flat old-school fantasy UI pixel art readable at 18x18, no surrounding plaque button badge border or frame",
+      "status": "accepted",
+      "styleRef": "style/ui-navigation.png",
+      "notes": "Phase 10C system-navigation family; approved 2026-07-22 after built-in generation, chroma-key removal, and nearest-neighbor reduction to 32x32."
     },
     {
       "id": "jungle-icon",
@@ -102,8 +106,10 @@
         "w": 32,
         "h": 32
       },
-      "prompt": "",
-      "status": "draft"
+      "prompt": "single compact three-panel folded expedition map with bold accordion folds, one simple muted-bronze route and exactly one pale-cyan diamond destination marker, charcoal ironcloth, transparent background, bold flat old-school fantasy UI pixel art readable at 18x18, no surrounding plaque button badge border or frame",
+      "status": "accepted",
+      "styleRef": "style/ui-navigation.png",
+      "notes": "Phase 10C system-navigation family; approved 2026-07-22 after built-in generation, chroma-key removal, and nearest-neighbor reduction to 32x32."
     },
     {
       "id": "mountain-icon",
@@ -122,8 +128,10 @@
         "w": 32,
         "h": 32
       },
-      "prompt": "",
-      "status": "draft"
+      "prompt": "single compact branching ironwood passive-tree sigil with one sturdy trunk splitting into exactly three upper branches and three pale-cyan energy nodes, small rooted base, charcoal and muted-bronze joints, transparent background, bold flat old-school fantasy UI pixel art readable at 18x18, no surrounding plaque button badge border or frame",
+      "status": "accepted",
+      "styleRef": "style/ui-navigation.png",
+      "notes": "Phase 10C system-navigation family; approved 2026-07-22 after built-in generation, chroma-key removal, and nearest-neighbor reduction to 32x32."
     },
     {
       "id": "plains-icon",
@@ -142,8 +150,10 @@
         "w": 32,
         "h": 32
       },
-      "prompt": "",
-      "status": "draft"
+      "prompt": "exactly three bold stacked iron chevrons ascending upward, widest at bottom and smallest at top, capped by one compact pale-cyan mastery gem, charcoal iron with muted-bronze edges, transparent background, bold flat old-school fantasy UI pixel art readable at 18x18, no surrounding plaque button badge border or frame",
+      "status": "accepted",
+      "styleRef": "style/ui-navigation.png",
+      "notes": "Phase 10C system-navigation family; approved 2026-07-22 after built-in generation, chroma-key removal, and nearest-neighbor reduction to 32x32."
     },
     {
       "id": "runes-icon",
@@ -152,8 +162,21 @@
         "w": 32,
         "h": 32
       },
-      "prompt": "",
-      "status": "draft"
+      "prompt": "single broad broken keystone-shaped rune shard, front-facing charcoal iron with sparse muted-bronze chipped edges and one large angular pale-cyan engraved sigil, transparent background, bold flat old-school fantasy UI pixel art, crisp stepped pixel clusters, strong silhouette readable at 18x18, no surrounding plaque button badge border or decorative frame",
+      "status": "accepted",
+      "styleRef": "style/ui-navigation.png",
+      "notes": "Phase 10C system-navigation family seed. Broad keystone probe approved 2026-07-22; generated with the built-in image workflow, chroma-keyed to transparency, and nearest-neighbor reduced to 32x32."
+    },
+    {
+      "id": "sanctuary-icon",
+      "out": "UI_icons/sanctuary-icon.png",
+      "size": {
+        "w": 35,
+        "h": 32
+      },
+      "prompt": "two sturdy inward-leaning geometric refuge pillars sheltering a small suspended diamond-shaped light above an open doorway, flat carved elemental rune with deep teal, pale mint, and near-black shapes, transparent background, readable at 25x25, no enclosing badge frame text or religious symbol",
+      "status": "accepted",
+      "notes": "Dedicated Sanctuary biome symbol approved for direct integration 2026-07-24; generated with the built-in image workflow, chroma-keyed to transparency, normalized, and reduced to the established biome-icon frame."
     },
     {
       "id": "settings-icon",
@@ -162,8 +185,10 @@
         "w": 32,
         "h": 32
       },
-      "prompt": "",
-      "status": "draft"
+      "prompt": "single compact forged gear with exactly eight broad square teeth, thick charcoal ring, sparse muted-bronze wear and one pale-cyan center hub, transparent background, bold flat old-school fantasy UI pixel art readable at 18x18, no surrounding plaque button badge border or frame",
+      "status": "accepted",
+      "styleRef": "style/ui-navigation.png",
+      "notes": "Phase 10C system-navigation family; approved 2026-07-22 after built-in generation, chroma-key removal, and nearest-neighbor reduction to 32x32."
     },
     {
       "id": "swamp-icon",
@@ -214,6 +239,235 @@
       },
       "prompt": "",
       "status": "draft"
+    },
+    {
+      "id": "essence-yellow",
+      "out": "UI_icons/essences/yellow.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "one round golden-yellow Might essence orb with a bright square core and exactly four thick angular force rays pressing toward the inner rim, transparent background, crisp stepped old-school fantasy UI pixel art readable at 16x16, no surrounding frame",
+      "status": "accepted",
+      "styleRef": "style/essence-orbs.png",
+      "notes": "Phase 10C economy family; approved 2026-07-22 after built-in generation, chroma-key removal, and nearest-neighbor reduction to 32x32."
+    },
+    {
+      "id": "essence-green",
+      "out": "UI_icons/essences/green.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "one round emerald-green Wild essence orb containing one bold curling vine that splits into exactly two simple leaf tips, transparent background, crisp stepped old-school fantasy UI pixel art readable at 16x16, no surrounding frame",
+      "status": "accepted",
+      "styleRef": "style/essence-orbs.png",
+      "notes": "Phase 10C economy family; approved 2026-07-22 after built-in generation, chroma-key removal, and nearest-neighbor reduction to 32x32."
+    },
+    {
+      "id": "essence-purple",
+      "out": "UI_icons/essences/purple.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "one round violet-purple Rot essence orb with one bold jagged dark decay fissure and exactly three pale-lavender spores, transparent background, crisp stepped old-school fantasy UI pixel art readable at 16x16, no surrounding frame",
+      "status": "accepted",
+      "styleRef": "style/essence-orbs.png",
+      "notes": "Phase 10C economy family; approved 2026-07-22 after built-in generation, chroma-key removal, and nearest-neighbor reduction to 32x32."
+    },
+    {
+      "id": "essence-blue",
+      "out": "UI_icons/essences/blue.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "one round cobalt-and-slate Stone essence orb built from bold angular geode facets with one pale icy-blue fault line splitting the central core, transparent background, crisp stepped old-school fantasy UI pixel art readable at 16x16, no surrounding frame",
+      "status": "accepted",
+      "styleRef": "style/essence-orbs.png",
+      "notes": "Phase 10C economy family; approved 2026-07-22 after built-in generation, chroma-key removal, and nearest-neighbor reduction to 32x32."
+    },
+    {
+      "id": "essence-red",
+      "out": "UI_icons/essences/red.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "one round ruby-red Deep essence orb containing exactly three separate nested V-shaped chevrons pointing downward, largest at top and smallest at bottom, transparent background, crisp stepped old-school fantasy UI pixel art readable at 16x16, no surrounding frame",
+      "status": "accepted",
+      "styleRef": "style/essence-orbs.png",
+      "notes": "Phase 10C economy family; approved 2026-07-22 after built-in generation, chroma-key removal, and nearest-neighbor reduction to 32x32."
+    },
+    {
+      "id": "modifier-alacrity",
+      "out": "UI_icons/modifiers/alacrity-icon.png",
+      "size": {
+        "w": 16,
+        "h": 16
+      },
+      "prompt": "three swept ivory wind-feathers forming one light aerodynamic wing, restrained near-black edge, angular hand-cut fantasy pictogram on transparent background, readable at 16px, no text badge frame or scene",
+      "status": "accepted",
+      "notes": "Retained as an unused approved concept. Runtime modifier badges switched to direct two-letter typography after repeated 16px bitmap readability failures on 2026-07-24."
+    },
+    {
+      "id": "modifier-brutality",
+      "out": "UI_icons/modifiers/brutality-icon.png",
+      "size": {
+        "w": 16,
+        "h": 16
+      },
+      "prompt": "one front-facing clenched ivory armored gauntlet with four broad blocky knuckles, short wrist, and one large angular palm seam, restrained near-black edge, flat fantasy pictogram on transparent background, readable at 16px",
+      "status": "accepted",
+      "notes": "Retained as an unused approved concept. Runtime modifier badges switched to direct two-letter typography after repeated 16px bitmap readability failures on 2026-07-24."
+    },
+    {
+      "id": "modifier-blight",
+      "out": "UI_icons/modifiers/blight-icon.png",
+      "size": {
+        "w": 16,
+        "h": 16
+      },
+      "prompt": "one drooping ivory poisonous mushroom with a broad lopsided cap, short bent stem, and two large decay holes, restrained near-black edge, flat fantasy pictogram on transparent background, readable at 16px",
+      "status": "accepted",
+      "notes": "Retained as an unused approved concept. Runtime modifier badges switched to direct two-letter typography after repeated 16px bitmap readability failures on 2026-07-24."
+    },
+    {
+      "id": "modifier-volatility",
+      "out": "UI_icons/modifiers/volatility-icon.png",
+      "size": {
+        "w": 16,
+        "h": 16
+      },
+      "prompt": "one unmistakable classic ivory lightning bolt made from a single broad zigzag with exactly two sharp bends, restrained near-black edge, flat fantasy pictogram on transparent background, readable at 16px",
+      "status": "accepted",
+      "notes": "Retained as an unused approved concept. Runtime modifier badges switched to direct two-letter typography after repeated 16px bitmap readability failures on 2026-07-24."
+    },
+    {
+      "id": "modifier-predation",
+      "out": "UI_icons/modifiers/predation-icon.png",
+      "size": {
+        "w": 16,
+        "h": 16
+      },
+      "prompt": "one compact ivory predator paw print with one broad angular central pad and exactly three long pointed claw toes, restrained near-black edge, flat fantasy pictogram on transparent background, readable at 16px",
+      "status": "accepted",
+      "notes": "Retained as an unused approved concept. Runtime modifier badges switched to direct two-letter typography after repeated 16px bitmap readability failures on 2026-07-24."
+    },
+    {
+      "id": "dungeon-skull-icon",
+      "out": "UI_icons/map/dungeon-skull-icon.png",
+      "size": {
+        "w": 16,
+        "h": 16
+      },
+      "prompt": "extremely simple front-facing dungeon skull rune with one broad ivory cranium, exactly two large triangular eye voids, and three blocky teeth, thick near-black carved edge, transparent background, bold low-detail fantasy symbol readable at 14x14, no bones flames crown text badge or frame",
+      "status": "accepted",
+      "notes": "Dungeon map marker generated with the built-in image workflow, chroma-keyed, normalized, and reduced on 2026-07-24."
+    },
+    {
+      "id": "catalyst-alacrity",
+      "out": "UI_icons/catalysts/alacrity.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "one tangible tall narrow cyan catalyst crystal with pointed top and lower point, restrained near-black edge, exactly three broad opaque facets, no symbol engraving socket frame particles aura or shadow, transparent background, object-like at 18px",
+      "status": "accepted",
+      "notes": "Symbol-free catalyst object master generated once and approved in literal 18px HUD context on 2026-07-24."
+    },
+    {
+      "id": "catalyst-brutality",
+      "out": "UI_icons/catalysts/brutality.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "one tangible tall narrow red catalyst crystal with pointed top and lower point, restrained near-black edge, exactly three broad opaque facets, no symbol engraving socket frame particles aura or shadow, transparent background, object-like at 18px",
+      "status": "accepted",
+      "notes": "Deterministic red palette rotation of the approved symbol-free catalyst master; identical geometry and facets, approved in literal 18px HUD context on 2026-07-24."
+    },
+    {
+      "id": "catalyst-blight",
+      "out": "UI_icons/catalysts/blight.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "one tangible tall narrow green catalyst crystal with pointed top and lower point, restrained near-black edge, exactly three broad opaque facets, no symbol engraving socket frame particles aura or shadow, transparent background, object-like at 18px",
+      "status": "accepted",
+      "notes": "Deterministic green palette rotation of the approved symbol-free catalyst master; identical geometry and facets, approved in literal 18px HUD context on 2026-07-24."
+    },
+    {
+      "id": "catalyst-volatility",
+      "out": "UI_icons/catalysts/volatility.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "one tangible tall narrow purple catalyst crystal with pointed top and lower point, restrained near-black edge, exactly three broad opaque facets, no symbol engraving socket frame particles aura or shadow, transparent background, object-like at 18px",
+      "status": "accepted",
+      "notes": "Deterministic purple palette rotation of the approved symbol-free catalyst master; identical geometry and facets, approved in literal 18px HUD context on 2026-07-24."
+    },
+    {
+      "id": "catalyst-predation",
+      "out": "UI_icons/catalysts/predation.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "one tangible tall narrow amber catalyst crystal with pointed top and lower point, restrained near-black edge, exactly three broad opaque facets, no symbol engraving socket frame particles aura or shadow, transparent background, object-like at 18px",
+      "status": "accepted",
+      "notes": "Deterministic amber palette rotation of the approved symbol-free catalyst master; identical geometry and facets, approved in literal 18px HUD context on 2026-07-24."
+    },
+    {
+      "id": "catalyst-placeholder",
+      "out": "UI_icons/catalysts/placeholder.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "one neutral biome-agnostic catalyst seed, an upright smoky-silver hexagonal shard with a hollow pale-cyan diamond cut into its center, transparent background, crisp stepped old-school fantasy UI pixel art readable at 16x16, no biome motif and no surrounding frame",
+      "status": "accepted",
+      "styleRef": "style/ui-navigation.png",
+      "notes": "Legacy neutral Phase 10C fallback retained in the source library. The main HUD now uses the five family-specific catalyst icons."
+    },
+    {
+      "id": "craft-upgrade-icon",
+      "out": "UI_icons/craft-upgrade-icon.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "single compact front-facing forged iron item plate with one broad pale-cyan upward chevron rising through its center and two small muted-bronze reinforcement corners, transparent background, bold flat old-school fantasy UI pixel art readable at 18x18, no surrounding control frame text or scene",
+      "status": "accepted",
+      "styleRef": "style/ui-navigation.png",
+      "notes": "Phase 10C crafting family; built-in generation, chroma-key removal, and nearest-neighbor reduction approved at 18px on 2026-07-24."
+    },
+    {
+      "id": "rune-situation-icon",
+      "out": "UI_icons/runes/situation.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "single broad angular charcoal keystone shard containing one pale-cyan open geometric eye rune and exactly two small muted-bronze timing notches on its upper edge, transparent background, bold flat old-school fantasy UI pixel art readable at 18x18, no question mark text frame or scene",
+      "status": "accepted",
+      "styleRef": "style/ui-navigation.png",
+      "notes": "Phase 10C rune family; built-in generation, chroma-key removal, and nearest-neighbor reduction approved at 18px on 2026-07-24."
+    },
+    {
+      "id": "rune-response-icon",
+      "out": "UI_icons/runes/response.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "single broad angular charcoal keystone shard split open by one bold pale-cyan right-pointing energy arrow with exactly two small muted-bronze impact notches on its right edge, transparent background, bold flat old-school fantasy UI pixel art readable at 18x18, no text frame or scene",
+      "status": "accepted",
+      "styleRef": "style/ui-navigation.png",
+      "notes": "Phase 10C rune family; built-in generation, chroma-key removal, and nearest-neighbor reduction approved at 18px on 2026-07-24."
     }
   ]
 }

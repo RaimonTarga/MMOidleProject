@@ -1,45 +1,22 @@
-import { useEffect, useState } from 'react';
-import { loadUIAtlas, type AtlasFrame } from './uiAtlas';
+import type { CSSProperties, ReactNode } from 'react';
+import {
+  atlasIcon,
+  GameIcon,
+  type IconAccessibility,
+  type IconSize,
+} from './GameIcon';
 
-function useUIFrame(frameName: string): AtlasFrame | null {
-  const [frame, setFrame] = useState<AtlasFrame | null>(null);
-  useEffect(() => {
-    let cancelled = false;
-    loadUIAtlas().then(map => {
-      if (!cancelled) setFrame(map.get(frameName) ?? null);
-    });
-    return () => { cancelled = true; };
-  }, [frameName]);
-  return frame;
-}
-
-interface UIIconProps {
+type UIIconProps = IconAccessibility & {
   frameName: string;
-  size?: number;
+  size?: IconSize;
+  fallback?: ReactNode;
   className?: string;
-  style?: React.CSSProperties;
+  style?: CSSProperties;
+  title?: string;
   as?: 'div' | 'span';
-}
+};
 
-export function UIIcon({ frameName, size = 20, className, style, as = 'div' }: UIIconProps) {
-  const rect = useUIFrame(frameName);
-  if (!rect) return null;
-  const scale = size / rect.h;
-  const Tag = as;
-  return (
-    <Tag
-      className={className}
-      style={{
-        display: 'inline-block',
-        flexShrink: 0,
-        width: rect.w * scale,
-        height: rect.h * scale,
-        backgroundImage: 'url(/assets/UI_icons.png)',
-        backgroundSize: `${rect.atlasW * scale}px ${rect.atlasH * scale}px`,
-        backgroundPosition: `-${rect.x * scale}px -${rect.y * scale}px`,
-        backgroundRepeat: 'no-repeat',
-        ...style,
-      }}
-    />
-  );
+/** UI-atlas compatibility wrapper over the Phase 10 icon-source contract. */
+export function UIIcon({ frameName, ...props }: UIIconProps) {
+  return <GameIcon source={atlasIcon(frameName)} {...props} />;
 }

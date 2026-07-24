@@ -1,5 +1,4 @@
-.atlas-sprite,
-.item-icon {
+.atlas-sprite {
   display: block;
   background-repeat: no-repeat;
   image-rendering: pixelated;
