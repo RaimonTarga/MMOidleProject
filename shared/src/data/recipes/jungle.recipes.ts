@@ -10,7 +10,7 @@ export const jungleRecipeEntries = [
   ['jungle-stinger-rapier', {
     id: 'jungle-stinger-rapier', name: 'Stinger Rapier',
     recipeGroup: 'jungle', requiredBiomeLevel: 1, slot: 'weapon',
-    cost: { green: 55}, stats: { attack: 10, onHitDamage: 8 }, attacksPerSecond: 1.55, tier: 2,
+    cost: { green: 55}, catalystCost: { alacrity: 2 }, stats: { attack: 10, onHitDamage: 8 }, attacksPerSecond: 1.55, tier: 2, // family-tag: fast on-hit rapier → Alacrity
     icon: 'items/weapons/jungle-rapier.png',
     description: 'A thin blade kept slick with something the jungle distilled and never named.',
     upgrades: [
@@ -25,7 +25,7 @@ export const jungleRecipeEntries = [
   ['jungle-vest-t2', {
     id: 'jungle-vest-t2', name: 'Verdant Weave',
     recipeGroup: 'jungle', requiredBiomeLevel: 2, slot: 'armor',
-    cost: { green: 48, yellow: 12 }, stats: { maxHp: 44, plating: 6, evasion: 0.15 },
+    cost: { green: 48, yellow: 12 }, catalystCost: { alacrity: 2 }, stats: { maxHp: 44, plating: 6, evasion: 0.15 }, // family-tag: evasion armor (anti-fast-hit) → Alacrity
     tier: 2,
     icon: 'items/armor/leater-armor-2.png',
     description: 'A living mesh of leaf and creeper, too quick and too giving to be struck square.',
@@ -42,7 +42,7 @@ export const jungleRecipeEntries = [
   ['jungle-charm-t2', {
     id: 'jungle-charm-t2', name: 'Canopy Heart',
     recipeGroup: 'jungle', requiredBiomeLevel: 3, slot: 'recovery',
-    cost: { green: 45 }, stats: { hpRegen: 6 },
+    cost: { green: 45 }, catalystCost: { alacrity: 2 }, stats: { hpRegen: 6 }, // family-tag: jungle recovery → Alacrity
     mechanicEffects: {
       'defense.ramp-regen-start-pct': 0.04,
       'defense.ramp-regen-max-pct': 0.10,
@@ -63,7 +63,7 @@ export const jungleRecipeEntries = [
   ['jungle-boots-t2', {
     id: 'jungle-boots-t2', name: 'Vine Wraps',
     recipeGroup: 'jungle', requiredBiomeLevel: 4, slot: 'mobility',
-    cost: { green: 30 }, stats: { speed: 22 }, tier: 2,
+    cost: { green: 30 }, catalystCost: { alacrity: 2 }, stats: { speed: 22 }, tier: 2, // family-tag: jungle mobility → Alacrity
     mechanicEffects: { 'mobility.aggro-pull-pct': 0.50 },
     icon: 'items/boots/wraps-3.png',
     description: 'Springy growth lashed to the feet, always eager to be running.',
@@ -80,7 +80,7 @@ export const jungleRecipeEntries = [
   ['jungle-venomthorn-rapier', {
     id: 'jungle-venomthorn-rapier', name: 'Venomthorn Rapier',
     recipeGroup: 'jungle', requiredBiomeLevel: 7, slot: 'weapon',
-    cost: { green: 120 }, stats: { attack: 22, onHitDamage: 18 }, attacksPerSecond: 1.65, tier: 3,
+    cost: { green: 120 }, catalystCost: { alacrity: 3 }, stats: { attack: 22, onHitDamage: 18 }, attacksPerSecond: 1.65, tier: 3, // family-tag: fast on-hit rapier → Alacrity
     icon: 'items/weapons/jungle-rapier.png',
     description: 'Thin and quick, and slick with a thorn-sap that bites a little more with every touch.',
     upgrades: [
@@ -95,7 +95,7 @@ export const jungleRecipeEntries = [
   ['jungle-vest-t3', {
     id: 'jungle-vest-t3', name: 'Wildgrowth Weave',
     recipeGroup: 'jungle', requiredBiomeLevel: 8, slot: 'armor',
-    cost: { green: 90, yellow: 30 }, stats: { maxHp: 80, plating: 13, evasion: 0.40 },
+    cost: { green: 90, yellow: 30 }, catalystCost: { alacrity: 3 }, stats: { maxHp: 80, plating: 13, evasion: 0.40 }, // family-tag: evasion armor → Alacrity
     tier: 3,
     icon: 'items/armor/jungle-armor-1.png',
     description: 'A living mesh of leaf and vine, too quick and too giving to ever quite be struck square.',
@@ -112,7 +112,7 @@ export const jungleRecipeEntries = [
   ['jungle-charm-t3', {
     id: 'jungle-charm-t3', name: 'Worldvine Heart',
     recipeGroup: 'jungle', requiredBiomeLevel: 9, slot: 'recovery',
-    cost: { green: 100 }, stats: { hpRegen: 11 },
+    cost: { green: 100 }, catalystCost: { alacrity: 3 }, stats: { hpRegen: 11 }, // family-tag: jungle recovery → Alacrity
     mechanicEffects: {
       'defense.ramp-regen-start-pct': 0.05,
       'defense.ramp-regen-max-pct': 0.14,
@@ -133,7 +133,7 @@ export const jungleRecipeEntries = [
   ['jungle-boots-t3', {
     id: 'jungle-boots-t3', name: 'Canopy Striders',
     recipeGroup: 'jungle', requiredBiomeLevel: 10, slot: 'mobility',
-    cost: { green: 90 }, stats: { speed: 44 }, tier: 3,
+    cost: { green: 90 }, catalystCost: { alacrity: 3 }, stats: { speed: 44 }, tier: 3, // family-tag: jungle mobility → Alacrity
     mechanicEffects: { 'mobility.aggro-pull-pct': 0.65 },
     icon: 'items/boots/plate-boots-4.png',
     description: 'They crash through the green loud enough to turn every hungry thing your way.',
@@ -150,7 +150,7 @@ export const jungleRecipeEntries = [
   ['jungle-deathfang-rapier', {
     id: 'jungle-deathfang-rapier', name: 'Deathfang Rapier',
     recipeGroup: 'jungle', requiredBiomeLevel: 13, slot: 'weapon',
-    cost: { green: 264 }, stats: { attack: 34, onHitDamage: 30 }, attacksPerSecond: 1.75, tier: 4,
+    cost: { green: 264 }, catalystCost: { alacrity: 4 }, stats: { attack: 34, onHitDamage: 30 }, attacksPerSecond: 1.75, tier: 4, // family-tag: capstone fast on-hit rapier → Alacrity
     icon: 'items/weapons/rapier-4.png',
     description: 'Quick past seeing, and slick with something the deep jungle spent a long time perfecting.',
     upgrades: [
@@ -165,7 +165,7 @@ export const jungleRecipeEntries = [
   ['jungle-vest-t4', {
     id: 'jungle-vest-t4', name: 'Primal Canopy',
     recipeGroup: 'jungle', requiredBiomeLevel: 14, slot: 'armor',
-    cost: { green: 220, yellow: 55 }, stats: { maxHp: 145, plating: 24, evasion: 0.55 },
+    cost: { green: 220, yellow: 55 }, catalystCost: { alacrity: 4 }, stats: { maxHp: 145, plating: 24, evasion: 0.55 }, // family-tag: evasion armor → Alacrity
     // Bonus evade-mitigation: increases the fraction of damage avoided on an evade
     // (the reload-class mechanic). Stacks on GAME_CONFIG.EVADE_MITIGATION_BASE.
     mechanicEffects: { 'defense.evade-mitigation': 0.2 },
@@ -184,7 +184,7 @@ export const jungleRecipeEntries = [
   ['jungle-charm-t4', {
     id: 'jungle-charm-t4', name: 'Ancient Canopy',
     recipeGroup: 'jungle', requiredBiomeLevel: 15, slot: 'recovery',
-    cost: { green: 200 }, stats: { hpRegen: 16 },
+    cost: { green: 200 }, catalystCost: { alacrity: 4 }, stats: { hpRegen: 16 }, // family-tag: jungle recovery → Alacrity
     mechanicEffects: {
       'defense.ramp-regen-start-pct': 0.04, 'defense.ramp-regen-max-pct': 0.14, 'defense.ramp-regen-ramptime-ms': 9000,
     },
@@ -203,7 +203,7 @@ export const jungleRecipeEntries = [
   ['jungle-charm-t4-overgrowth', {
     id: 'jungle-charm-t4-overgrowth', name: 'Overgrowth Pulse',
     recipeGroup: 'jungle', requiredBiomeLevel: 15, slot: 'recovery',
-    cost: { green: 200 }, stats: { hpRegen: 16 },
+    cost: { green: 200 }, catalystCost: { alacrity: 4 }, stats: { hpRegen: 16 }, // family-tag: jungle recovery → Alacrity
     // † overheal-shield-pct: regen beyond max HP converts to temp shield at 50%.
     mechanicEffects: {
       'defense.ramp-regen-start-pct': 0.04, 'defense.ramp-regen-max-pct': 0.12, 'defense.ramp-regen-ramptime-ms': 9000,
@@ -225,7 +225,7 @@ export const jungleRecipeEntries = [
   ['jungle-boots-t4', {
     id: 'jungle-boots-t4', name: 'Warpath Treads',
     recipeGroup: 'jungle', requiredBiomeLevel: 16, slot: 'mobility',
-    cost: { green: 198 }, stats: { speed: 66 }, tier: 4,
+    cost: { green: 198 }, catalystCost: { alacrity: 4 }, stats: { speed: 66 }, tier: 4, // family-tag: jungle mobility → Alacrity
     mechanicEffects: { 'mobility.aggro-pull-pct': 0.80 },
     icon: 'items/boots/plate-boots-7.png',
     description: 'They tear through the green loud enough to wake the whole canopy — and bring all of it to you at once.',

@@ -83,9 +83,15 @@ export const mountainRecipeEntries = [
   ['quake-hammer', {
     id: 'quake-hammer', name: 'Quake Hammer',
     recipeGroup: 'mountain', requiredBiomeLevel: 7, slot: 'weapon',
-    cost: { blue: 52 }, stats: { attack: 54 }, attacksPerSecond: 0.55, tier: 2,
+    cost: { blue: 52 }, catalystCost: { brutality: 2 }, stats: { attack: 54 }, attacksPerSecond: 0.55, tier: 2, // family-tag: slow heavy hammer → Brutality
     icon: 'items/weapons/hammer-2.png',
-    mechanicEffects: { 'weapon.empowered-mult-bonus': 0.30 },
+    // Cast Speed (abilities evolution §6.1) lives on Mountain's T2 hammer — the
+    // biome that owns Charged Strike, and whose whole identity is the wind-up.
+    // Only affects abilities with a real castTime. PLACEHOLDER magnitude.
+    mechanicEffects: {
+      'weapon.empowered-mult-bonus': 0.30,
+      'technique.cast-speed-pct': 0.15,
+    },
     description: 'When it lands, the ground remembers it longer than the foe does.',
     upgrades: [
       { stats: { attack: 24 }, cost: { blue: 78 }, requiredBiomeLevel: 8 },
@@ -99,7 +105,7 @@ export const mountainRecipeEntries = [
   ['mountain-vest-t2', {
     id: 'mountain-vest-t2', name: 'Iron Crusader Plate',
     recipeGroup: 'mountain', requiredBiomeLevel: 8, slot: 'armor',
-    cost: { blue: 52 }, stats: { maxHp: 29, plating: 12, damageReduction: 0.05 },
+    cost: { blue: 52 }, catalystCost: { brutality: 2 }, stats: { maxHp: 29, plating: 12, damageReduction: 0.05 }, // family-tag: damage-cap plate → Brutality
     mechanicEffects: { 'defense.max-hit-pct': 0.25, 'defense.max-hit-mult': 0.5 },
     tier: 2,
     icon: 'items/armor/plate-armor-3.png',
@@ -117,7 +123,7 @@ export const mountainRecipeEntries = [
   ['mountain-charm-t2', {
     id: 'mountain-charm-t2', name: 'Iron Bulwark',
     recipeGroup: 'mountain', requiredBiomeLevel: 9, slot: 'recovery',
-    cost: { blue: 42 }, stats: { hpRegen: 6 },
+    cost: { blue: 42 }, catalystCost: { brutality: 2 }, stats: { hpRegen: 6 }, // family-tag: periodic shield (anti-spike) → Brutality
     mechanicEffects: { 'defense.shield-pct': 0.12, 'defense.shield-interval-ms': 8000, 'defense.shield-duration-ms': 8000 },
     tier: 2,
     icon: 'items/charms/stone-hand-charm-2.png',
@@ -134,7 +140,7 @@ export const mountainRecipeEntries = [
   ['mountain-boots-t2', {
     id: 'mountain-boots-t2', name: 'Mountain Stride',
     recipeGroup: 'mountain', requiredBiomeLevel: 10, slot: 'mobility',
-    cost: { blue: 42 }, stats: { speed: 29 }, tier: 2,
+    cost: { blue: 42 }, catalystCost: { brutality: 2 }, stats: { speed: 29 }, tier: 2, // family-tag: gap-closer boots serve the heavy-hit identity → Brutality
     mechanicEffects: { 'mobility.acquire-speed-pct': 0.65, 'mobility.acquire-speed-ms': 3000, 'mobility.acquire-cooldown-ms': 6000 },
     icon: 'items/boots/plate-boots-2.png',
     description: 'Forged for those who treat a sheer slope as a road.',
@@ -151,7 +157,7 @@ export const mountainRecipeEntries = [
   ['mountain-avalanche-maul', {
     id: 'mountain-avalanche-maul', name: 'Avalanche Maul',
     recipeGroup: 'mountain', requiredBiomeLevel: 13, slot: 'weapon',
-    cost: { blue: 116 }, stats: { attack: 120 }, attacksPerSecond: 0.55, tier: 3,
+    cost: { blue: 116 }, catalystCost: { brutality: 3 }, stats: { attack: 120 }, attacksPerSecond: 0.55, tier: 3, // family-tag: slow heavy maul → Brutality
     icon: 'items/weapons/hammer-2.png',
     mechanicEffects: { 'weapon.empowered-mult-bonus': 0.50 },
     description: 'It does not so much strike as arrive, the way a slope arrives on a village.',
@@ -167,7 +173,7 @@ export const mountainRecipeEntries = [
   ['mountain-vest-t3', {
     id: 'mountain-vest-t3', name: 'Summit Aegis',
     recipeGroup: 'mountain', requiredBiomeLevel: 14, slot: 'armor',
-    cost: { blue: 116, red: 29 }, stats: { maxHp: 55, plating: 23, damageReduction: 0.10 },
+    cost: { blue: 116, red: 29 }, catalystCost: { brutality: 3 }, stats: { maxHp: 55, plating: 23, damageReduction: 0.10 }, // family-tag: damage-cap plate → Brutality
     mechanicEffects: { 'defense.max-hit-pct': 0.25, 'defense.max-hit-mult': 0.5 },
     tier: 3,
     icon: 'items/armor/plate-armor-3.png',
@@ -185,7 +191,7 @@ export const mountainRecipeEntries = [
   ['mountain-charm-t3', {
     id: 'mountain-charm-t3', name: 'Bastion Heart',
     recipeGroup: 'mountain', requiredBiomeLevel: 15, slot: 'recovery',
-    cost: { blue: 100, red: 25 }, stats: { hpRegen: 11 },
+    cost: { blue: 100, red: 25 }, catalystCost: { brutality: 3 }, stats: { hpRegen: 11 }, // family-tag: periodic shield (anti-spike) → Brutality
     mechanicEffects: { 'defense.shield-pct': 0.17, 'defense.shield-interval-ms': 8000, 'defense.shield-duration-ms': 8000 },
     tier: 3,
     icon: 'items/charms/stone-hand-charm-2.png',
@@ -202,7 +208,7 @@ export const mountainRecipeEntries = [
   ['mountain-boots-t3', {
     id: 'mountain-boots-t3', name: 'Peak Stride',
     recipeGroup: 'mountain', requiredBiomeLevel: 16, slot: 'mobility',
-    cost: { blue: 100 }, stats: { speed: 42 }, tier: 3,
+    cost: { blue: 100 }, catalystCost: { brutality: 3 }, stats: { speed: 42 }, tier: 3, // family-tag: gap-closer boots → Brutality
     mechanicEffects: { 'mobility.acquire-speed-pct': 0.75, 'mobility.acquire-speed-ms': 3000, 'mobility.acquire-cooldown-ms': 6000 },
     icon: 'items/boots/plate-boots-3.png',
     description: 'Not even the mountain can keep you from your prey.',
@@ -220,7 +226,7 @@ export const mountainRecipeEntries = [
   ['mountain-earthsunder-maul', {
     id: 'mountain-earthsunder-maul', name: 'Earthsunder Maul',
     recipeGroup: 'mountain', requiredBiomeLevel: 19, slot: 'weapon',
-    cost: { blue: 256 }, stats: { attack: 280 }, attacksPerSecond: 0.40, tier: 4,
+    cost: { blue: 256 }, catalystCost: { brutality: 4 }, stats: { attack: 280 }, attacksPerSecond: 0.40, tier: 4, // family-tag: capstone heavy maul → Brutality
     icon: 'items/weapons/hammer-2.png',
     description: 'It does not strike the earth so much as remind it of an old grievance.',
     upgrades: [
@@ -235,7 +241,7 @@ export const mountainRecipeEntries = [
   ['mountain-warmaul', {
     id: 'mountain-warmaul', name: 'Warmaul',
     recipeGroup: 'mountain', requiredBiomeLevel: 19, slot: 'weapon',
-    cost: { blue: 240 }, stats: { attack: 180 }, attacksPerSecond: 0.55, tier: 4,
+    cost: { blue: 240 }, catalystCost: { brutality: 4 }, stats: { attack: 180 }, attacksPerSecond: 0.55, tier: 4, // family-tag: capstone hammer → Brutality
     // ⚠⚠ empowered-mult-bonus MUST be implemented MULTIPLICATIVELY, not additively.
     // final empowered mult = base_mult * (1 + 0.25), i.e. a flat +25% to the
     // empowered hit REGARDLESS of the spec's base multiplier.
@@ -257,7 +263,7 @@ export const mountainRecipeEntries = [
   ['mountain-vest-t4', {
     id: 'mountain-vest-t4', name: "Titan's Keep",
     recipeGroup: 'mountain', requiredBiomeLevel: 20, slot: 'armor',
-    cost: { blue: 256, red: 64 }, stats: { maxHp: 100, plating: 40, damageReduction: 0.12 },
+    cost: { blue: 256, red: 64 }, catalystCost: { brutality: 4 }, stats: { maxHp: 100, plating: 40, damageReduction: 0.12 }, // family-tag: capstone damage-cap plate → Brutality
     // † max-hit-rearms-shield: when the damage cap triggers, immediately rearm
     //   the shield charm (resets its interval). (new engine key)
     mechanicEffects: {
@@ -279,7 +285,7 @@ export const mountainRecipeEntries = [
   ['mountain-vest-t4-stormwall', {
     id: 'mountain-vest-t4-stormwall', name: 'Stormwall Plate',
     recipeGroup: 'mountain', requiredBiomeLevel: 20, slot: 'armor',
-    cost: { blue: 256, red: 64 }, stats: { maxHp: 100, plating: 30, damageReduction: 0.14 },
+    cost: { blue: 256, red: 64 }, catalystCost: { brutality: 4 }, stats: { maxHp: 100, plating: 30, damageReduction: 0.14 }, // family-tag: capstone anti-spike plate → Brutality
     // † shield-break-hp-recovery-pct: on shield break, recover 30% of the shield
     //   max value as HP. (new engine key — armor-side variant)
     mechanicEffects: {
@@ -301,7 +307,7 @@ export const mountainRecipeEntries = [
   ['mountain-charm-t4', {
     id: 'mountain-charm-t4', name: 'Fortress Heart',
     recipeGroup: 'mountain', requiredBiomeLevel: 21, slot: 'recovery',
-    cost: { blue: 220, red: 30 }, stats: { hpRegen: 16 },
+    cost: { blue: 220, red: 30 }, catalystCost: { brutality: 4 }, stats: { hpRegen: 16 }, // family-tag: periodic shield (anti-spike) → Brutality
     mechanicEffects: { 'defense.shield-pct': 0.18, 'defense.shield-interval-ms': 8000, 'defense.shield-duration-ms': 8000 },
     tier: 4,
     icon: 'items/charms/stone-hand-charm-2.png',
@@ -318,7 +324,7 @@ export const mountainRecipeEntries = [
   ['mountain-charm-t4-shieldmend', {
     id: 'mountain-charm-t4-shieldmend', name: 'Shieldmend Ward',
     recipeGroup: 'mountain', requiredBiomeLevel: 21, slot: 'recovery',
-    cost: { blue: 220, red: 30 }, stats: { hpRegen: 16 },
+    cost: { blue: 220, red: 30 }, catalystCost: { brutality: 4 }, stats: { hpRegen: 16 }, // family-tag: shield-break survival → Brutality
     // † shield-break-heal-pct: when the shield is fully broken, heal 25% of the
     //   shield's max value as HP. (new engine key)
     mechanicEffects: {
@@ -340,7 +346,7 @@ export const mountainRecipeEntries = [
   ['mountain-boots-t4', {
     id: 'mountain-boots-t4', name: 'Vanguard Stride',
     recipeGroup: 'mountain', requiredBiomeLevel: 22, slot: 'mobility',
-    cost: { blue: 220 }, stats: { speed: 57 }, tier: 4,
+    cost: { blue: 220 }, catalystCost: { brutality: 4 }, stats: { speed: 57 }, tier: 4, // family-tag: gap-closer boots → Brutality
     mechanicEffects: { 'mobility.acquire-speed-pct': 0.90, 'mobility.acquire-speed-ms': 3000, 'mobility.acquire-cooldown-ms': 6000 },
     icon: 'items/boots/plate-boots-4.png',
     description: 'The instant a foe is marked, they close the gap as if the mountain itself leaned them forward.',

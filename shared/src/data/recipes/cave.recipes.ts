@@ -77,7 +77,7 @@ export const caveRecipeEntries = [
   ['ruinous-axe', {
     id: 'ruinous-axe', name: 'Ruinous Axe',
     recipeGroup: 'cave', requiredBiomeLevel: 7, slot: 'weapon',
-    cost: { red: 60 }, stats: { attack: 40 }, attacksPerSecond: 1.20, tier: 2,
+    cost: { red: 60 }, catalystCost: { volatility: 2 }, stats: { attack: 40 }, attacksPerSecond: 1.20, tier: 2, // family-tag: chaotic-axe (counted disruption) → Volatility
     mechanicEffects: { 'weapon.dead-swing-interval': 4 },
     icon: 'items/weapons/axe-2.png',
     description: 'Bigger, meaner, and somehow better balanced — chaos with the faintest thread of discipline.',
@@ -93,7 +93,7 @@ export const caveRecipeEntries = [
   ['cave-vest-t2', {
     id: 'cave-vest-t2', name: 'Dire Bestial Hide',
     recipeGroup: 'cave', requiredBiomeLevel: 8, slot: 'armor',
-    cost: { red: 54 }, stats: { maxHp: 46, plating: 5, damageReduction: 0.12 }, tier: 2,
+    cost: { red: 54 }, catalystCost: { volatility: 2 }, stats: { maxHp: 46, plating: 5, damageReduction: 0.12 }, tier: 2, // family-tag: premium %DR generalist wall → Volatility
     icon: 'items/armor/plate-armor-4.png',
     description: 'From a beast the deep-cavern folk name only in low voices.',
     upgrades: [
@@ -109,7 +109,7 @@ export const caveRecipeEntries = [
   ['cave-charm-t2', {
     id: 'cave-charm-t2', name: 'Resonant Gem',
     recipeGroup: 'cave', requiredBiomeLevel: 9, slot: 'recovery',
-    cost: { red: 44 }, stats: { hpRegen: 6 },
+    cost: { red: 44 }, catalystCost: { volatility: 2 }, stats: { hpRegen: 6 }, // family-tag: reliable generalist recovery → Volatility
     mechanicEffects: { 'defense.regen-burst-pct': 0.06, 'defense.regen-burst-interval-ms': 6000 },
     tier: 2,
     icon: 'items/charms/bright-charm-2.png',
@@ -126,7 +126,7 @@ export const caveRecipeEntries = [
   ['cave-boots-t2', {
     id: 'cave-boots-t2', name: 'Cavern Sprints',
     recipeGroup: 'cave', requiredBiomeLevel: 10, slot: 'mobility',
-    cost: { red: 33 }, stats: { speed: 39 }, tier: 2,
+    cost: { red: 33 }, catalystCost: { volatility: 2 }, stats: { speed: 39 }, tier: 2, // family-tag: cave generalist mobility → Volatility
     mechanicEffects: { 'mobility.stealth-pct': 0.35 },
     icon: 'items/boots/leather-boots-6.png',
     description: 'Worn smooth on tunnel floors no map has ever charted.',
@@ -143,7 +143,7 @@ export const caveRecipeEntries = [
   ['cave-cataclysm-axe', {
     id: 'cave-cataclysm-axe', name: 'Cataclysm Axe',
     recipeGroup: 'cave', requiredBiomeLevel: 13, slot: 'weapon',
-    cost: { red: 120 }, stats: { attack: 82 }, attacksPerSecond: 1.20, tier: 3,
+    cost: { red: 120 }, catalystCost: { volatility: 3 }, stats: { attack: 82 }, attacksPerSecond: 1.20, tier: 3, // family-tag: chaotic-axe → Volatility
     mechanicEffects: { 'weapon.dead-swing-interval': 5 },
     icon: 'items/weapons/whirling-morning-star.png',
     description: 'Chaos given an edge — and, at last, a little rhythm. Every fifth swing still finds only air.',
@@ -159,7 +159,7 @@ export const caveRecipeEntries = [
   ['cave-vest-t3', {
     id: 'cave-vest-t3', name: 'Deepscale Hide',
     recipeGroup: 'cave', requiredBiomeLevel: 14, slot: 'armor',
-    cost: { red: 116, yellow: 29 }, stats: { maxHp: 65, plating: 14, damageReduction: 0.20 },
+    cost: { red: 116, yellow: 29 }, catalystCost: { volatility: 3 }, stats: { maxHp: 65, plating: 14, damageReduction: 0.20 }, // family-tag: premium %DR wall → Volatility
     tier: 3,
     icon: 'items/armor/bone-armor-2.png',
     description: 'Layered scale over thick hide — nothing fancy, just the most of everything that stops a blow.',
@@ -177,7 +177,7 @@ export const caveRecipeEntries = [
   ['cave-charm-t3', {
     id: 'cave-charm-t3', name: 'Echo Geode',
     recipeGroup: 'cave', requiredBiomeLevel: 15, slot: 'recovery',
-    cost: { red: 100, green: 25 }, stats: { hpRegen: 11 },
+    cost: { red: 100, green: 25 }, catalystCost: { volatility: 3 }, stats: { hpRegen: 11 }, // family-tag: reliable generalist recovery → Volatility
     mechanicEffects: { 'defense.regen-burst-pct': 0.07, 'defense.regen-burst-interval-ms': 6000, 'defense.in-combat-regen-pct': 0.02 },
     tier: 3,
     icon: 'items/charms/jewel-charm-3.png',
@@ -195,7 +195,7 @@ export const caveRecipeEntries = [
   ['cave-boots-t3', {
     id: 'cave-boots-t3', name: 'Echostep Treads',
     recipeGroup: 'cave', requiredBiomeLevel: 16, slot: 'mobility',
-    cost: { red: 100 }, stats: { speed: 52 }, tier: 3,
+    cost: { red: 100 }, catalystCost: { volatility: 3 }, stats: { speed: 52 }, tier: 3, // family-tag: cave generalist mobility → Volatility
     mechanicEffects: { 'mobility.stealth-pct': 0.40 },
     icon: 'items/boots/leather-boots-7.png',
     description: 'They give back no sound at all — not even the echo the deep stone expects.',

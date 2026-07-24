@@ -81,6 +81,10 @@ export const plainsRecipeEntries = [
     recipeGroup: 'plains', requiredBiomeLevel: 7, slot: 'weapon',
     cost: { yellow: 45 }, stats: { attack: 25 }, attacksPerSecond: 1.00, tier: 2,
     icon: 'items/weapons/sword-2.png',
+    // Technique cooldown reduction (abilities evolution §6.3): the offensive
+    // sibling of the charm-borne `guard.*` amplifiers. Plains is the generalist
+    // biome, so its T2 sidearm carries the generalist Technique stat. PLACEHOLDER.
+    mechanicEffects: { 'technique.cooldown-reduction-pct': 0.12 },
     description: 'A knight sidearm kept keen by habit and pride — plain, proven, never flashy.',
     upgrades: [
       { stats: { attack: 10 }, cost: { yellow: 45 }, requiredBiomeLevel: 8 },
@@ -94,7 +98,7 @@ export const plainsRecipeEntries = [
   ['plains-vest-t2', {
     id: 'plains-vest-t2', name: 'Enduring Robe',
     recipeGroup: 'plains', requiredBiomeLevel: 8, slot: 'armor',
-    cost: { yellow: 60 }, stats: { maxHp: 24, plating: 16 }, tier: 2,
+    cost: { yellow: 60 }, catalystCost: { alacrity: 2 }, stats: { maxHp: 24, plating: 16 }, tier: 2, // family-tag: plating answers frequent light hits → Alacrity
     icon: 'items/armor/plate-armor-2.png',
     description: 'Plate that has outlasted the wars it was made for, and the smith who made it.',
     upgrades: [
@@ -110,7 +114,7 @@ export const plainsRecipeEntries = [
   ['plains-charm-t2', {
     id: 'plains-charm-t2', name: 'Stalwart Heart',
     recipeGroup: 'plains', requiredBiomeLevel: 9, slot: 'recovery',
-    cost: { yellow: 50 }, stats: { hpRegen: 7 },
+    cost: { yellow: 50 }, catalystCost: { alacrity: 2 }, stats: { hpRegen: 7 }, // family-tag: kill-burst answers swarm attrition → Alacrity
     mechanicEffects: { 'defense.kill-burst-pct': 0.09 },
     tier: 2,
     icon: 'items/charms/jewel-charm-2.png',
@@ -127,7 +131,7 @@ export const plainsRecipeEntries = [
   ['plains-boots-t2', {
     id: 'plains-boots-t2', name: 'Gale Boots',
     recipeGroup: 'plains', requiredBiomeLevel: 10, slot: 'mobility',
-    cost: { yellow: 40 }, stats: { speed: 36 }, tier: 2,
+    cost: { yellow: 40 }, catalystCost: { alacrity: 2 }, stats: { speed: 36 }, tier: 2, // family-tag: plains speed → Alacrity (Broadsword weapon stays neutral — flexible payment, deferred)
     mechanicEffects: { 'mobility.ooc-speed-pct': 0.55 },
     icon: 'items/boots/sandals-2.png',
     description: 'Wind-cured leather that seems to lean into every stride.',
