@@ -2,6 +2,7 @@ import {
   deriveAutoConfigFromRunes,
   getFlag,
   isHarmfulPlayerStatusEffect,
+  MONSTER_DATABASE,
   RUNE_NODE_ACQUIRE_RADIUS,
   setFlag,
   type RuneContext,
@@ -28,6 +29,9 @@ export const RUNE_CAREFUL_PULLING_FLAG = "rune.carefulPulling";
 /** System rework Step 7: a fire-technique / fire-guard rule is active this tick. */
 export const RUNE_FIRE_TECHNIQUE_FLAG = "rune.fireTechnique";
 export const RUNE_FIRE_GUARD_FLAG = "rune.fireGuard";
+/** Abilities evolution §7: the same, for the SECOND slot of each kind. */
+export const RUNE_FIRE_TECHNIQUE_2_FLAG = "rune.fireTechnique2";
+export const RUNE_FIRE_GUARD_2_FLAG = "rune.fireGuard2";
 /** System rework Step 10: a switch-stance rule's condition is active this tick. */
 export const RUNE_SWITCH_STANCE_FLAG = "rune.switchStance";
 
@@ -49,6 +53,15 @@ function aggroStats(
     }
   }
   return { count, charging };
+}
+
+/** Whether the player's current attack target is an elite (or a boss). */
+function isEliteTarget(world: World, targetId: string | undefined): boolean {
+  if (!targetId) return false;
+  const monster = world.getMonsterEntity(targetId);
+  if (!monster) return false;
+  if (monster.isMonster.isBoss) return true;
+  return MONSTER_DATABASE.get(monster.isMonster.monsterTypeId)?.elite === true;
 }
 
 /**
@@ -87,6 +100,9 @@ export function updateRuneDerivedConfig(world: World, now: number): void {
       // Set by each class when its finisher/execution/discharge becomes ready
       // (cadence/cooldown/energy); absent for classes with no empowered attack.
       empoweredImminent: player.hasEmpoweredAttack !== undefined,
+      // Elite-ness is a property of the monster DEFINITION, same source the
+      // `focus-elites` targeting bonus reads.
+      targetIsElite: isEliteTarget(world, attackTargetId),
     };
 
     const d = deriveAutoConfigFromRunes(
@@ -155,7 +171,9 @@ export function updateRuneDerivedConfig(world: World, now: number): void {
     setFlag(player.tracksCombat, RUNE_AVOID_NODE_HAZARDS_FLAG, d.avoidHazards);
     setFlag(player.tracksCombat, RUNE_CAREFUL_PULLING_FLAG, d.carefulPulling);
     setFlag(player.tracksCombat, RUNE_FIRE_TECHNIQUE_FLAG, d.fireTechnique);
+    setFlag(player.tracksCombat, RUNE_FIRE_TECHNIQUE_2_FLAG, d.fireTechnique2);
     setFlag(player.tracksCombat, RUNE_FIRE_GUARD_FLAG, d.fireGuard);
+    setFlag(player.tracksCombat, RUNE_FIRE_GUARD_2_FLAG, d.fireGuard2);
     setFlag(player.tracksCombat, RUNE_SWITCH_STANCE_FLAG, d.switchStance);
   }
 }

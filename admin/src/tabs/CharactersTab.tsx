@@ -129,7 +129,8 @@ function CharacterRow({
         <div>{character.inventoryCount} bag</div>
         <div className="text-xs text-red-200/35">{character.equipmentCount} equipped</div>
         <div className="text-xs text-red-200/35">
-          T:{character.equippedAbilities?.technique ?? '—'} / G:{character.equippedAbilities?.guard ?? '—'}
+          T:{character.equippedAbilities?.techniques?.join(', ') || '—'}
+          {' / G:'}{character.equippedAbilities?.guards?.join(', ') || '—'}
           {` (${character.knownAbilities?.length ?? 0} known)`}
         </div>
         <div className="text-xs text-red-200/35">

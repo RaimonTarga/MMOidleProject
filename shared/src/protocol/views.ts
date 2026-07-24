@@ -12,7 +12,12 @@ import type {
 } from "../types/combat";
 import type { HitboxRect } from "../hitbox/types";
 import type { EquippedRule } from "../runeDatabase";
-import { emptyEquippedAbilities, type EquippedAbilities } from "../abilities";
+import {
+  abilitySlotCount,
+  normalizeEquippedAbilities,
+  type AbilitySlot,
+  type EquippedAbilities,
+} from "../abilities";
 import { emptyEquippedStances, type EquippedStances } from "../stances";
 import { emptyEquippedRites, riteSlotCount, type EquippedRites } from "../rites";
 import {
@@ -132,8 +137,10 @@ export interface PlayerView {
   runesEquipped: EquippedRule[];
   /** Abilities learned (crafted) — the slottable pool (system rework Step 7). */
   knownAbilities: string[];
-  /** Equipped abilities by slot: Technique (offensive) + Guard (defensive). */
+  /** Equipped abilities per slot kind, ordered — list order is fire priority. */
   equippedAbilities: EquippedAbilities;
+  /** Ability slots available at this player tier: `{ technique, guard }`. */
+  abilitySlots: Record<AbilitySlot, number>;
   /** Stances learned (crafted) — the slottable pool (system rework Step 10). */
   knownStances: string[];
   /** Equipped stances by slot: default (active posture) + reactive (auto-switch). */
@@ -386,7 +393,8 @@ export function composePlayerView(entity: NetworkedEntity): PlayerView | null {
     runeRecipesCrafted: progression.runeRecipesCrafted ?? [],
     runesEquipped: progression.runesEquipped ?? [],
     knownAbilities: progression.knownAbilities ?? [],
-    equippedAbilities: progression.equippedAbilities ?? emptyEquippedAbilities(),
+    equippedAbilities: normalizeEquippedAbilities(progression.equippedAbilities),
+    abilitySlots: abilitySlotCount(progression.playerTier),
     knownStances: progression.knownStances ?? [],
     equippedStances: progression.equippedStances ?? emptyEquippedStances(),
     activeStance: progression.activeStance ?? null,

@@ -19,8 +19,15 @@ export type RuneChannel =
   | "CONTROL"
   // System rework Step 7: each ability slot gets its own channel so a Technique
   // override and a Guard override (and taunt in CONTROL) can be equipped at once.
+  //
+  // Abilities evolution §7: one channel per SLOT INDEX, not per slot kind —
+  // channels are single-claim, so a second Technique slot needs its own channel
+  // to carry an independent trigger. The `_2` channels are inert until the
+  // player's tier actually grants that slot.
   | "TECHNIQUE"
+  | "TECHNIQUE_2"
   | "GUARD"
+  | "GUARD_2"
   // System rework Step 10: the stance-switch action gets its own single-claim
   // channel so it coexists with technique/guard overrides and a control taunt.
   | "STANCE";
@@ -42,6 +49,10 @@ export type RuneConditionId =
   // (energy maxed). Inert for classes with no empowered attack (DoT/reload/summoner
   // baseline). Pairs with Fire Technique to land your Technique on the empowered hit.
   | "before-empowered"
+  // Active while your current attack target is an ELITE. Lets two equipped
+  // Techniques specialise against the same enemy — e.g. Expose Weakness to kill
+  // the elite faster vs. Stun Strike to control it (abilities evolution §9).
+  | "target-elite"
   | "n-aggro-3";
 
 export type RuneActionId =
@@ -65,8 +76,11 @@ export type RuneActionId =
   | "lead-the-way"
   | "taunt-current-target"
   // System rework Step 7: override the built-in auto-fire timing of an ability.
+  // Abilities evolution §7: `-2` variants drive the SECOND slot of each kind.
   | "fire-technique"
+  | "fire-technique-2"
   | "fire-guard"
+  | "fire-guard-2"
   // System rework Step 10: auto-switch to the equipped reactive stance.
   | "switch-stance";
 
@@ -105,7 +119,9 @@ export const RUNE_CHANNELS: RuneChannel[] = [
   "PATHING",
   "CONTROL",
   "TECHNIQUE",
+  "TECHNIQUE_2",
   "GUARD",
+  "GUARD_2",
   "STANCE",
 ];
 
@@ -148,6 +164,7 @@ const CONTROL_CONDITIONS: readonly RuneConditionId[] = [
 const TECHNIQUE_CONDITIONS: readonly RuneConditionId[] = [
   "in-combat",
   "before-empowered",
+  "target-elite",
   "n-aggro-3",
 ];
 
@@ -156,6 +173,7 @@ const GUARD_CONDITIONS: readonly RuneConditionId[] = [
   "hp-below-25",
   "has-debuff",
   "target-casting",
+  "target-elite",
   "n-aggro-3",
 ];
 
@@ -265,6 +283,19 @@ export const CONDITION_DATABASE = new Map<string, ConditionDef>([
       // Numbers (cost/tier) are PLACEHOLDERS — user balance pass.
       blurb:
         "Works the instant your next attack becomes empowered — a finisher, execution, or full-energy discharge that is armed and waiting to land.",
+      cost: 2,
+      tier: 2,
+      kind: "state",
+    },
+  ],
+  [
+    "target-elite",
+    {
+      id: "target-elite",
+      name: "Elite Target",
+      // Numbers (cost/tier) are PLACEHOLDERS — user balance pass.
+      blurb:
+        "Works while the enemy you are attacking is an elite — the high-value target worth spending a specialised ability on.",
       cost: 2,
       tier: 2,
       kind: "state",
@@ -520,6 +551,19 @@ export const ACTION_DATABASE = new Map<string, ActionDef>([
     },
   ],
   [
+    "fire-technique-2",
+    {
+      id: "fire-technique-2",
+      name: "Fire Technique II",
+      blurb:
+        "Override the auto-timing of your SECOND Technique. Inert until a second Technique slot is unlocked.",
+      cost: 1,
+      tier: 3,
+      channel: "TECHNIQUE_2",
+      allowedConditionIds: TECHNIQUE_CONDITIONS,
+    },
+  ],
+  [
     "fire-guard",
     {
       id: "fire-guard",
@@ -529,6 +573,19 @@ export const ACTION_DATABASE = new Map<string, ActionDef>([
       cost: 1,
       tier: 1,
       channel: "GUARD",
+      allowedConditionIds: GUARD_CONDITIONS,
+    },
+  ],
+  [
+    "fire-guard-2",
+    {
+      id: "fire-guard-2",
+      name: "Fire Guard II",
+      blurb:
+        "Override the auto-timing of your SECOND Guard. Inert until a second Guard slot is unlocked.",
+      cost: 1,
+      tier: 4,
+      channel: "GUARD_2",
       allowedConditionIds: GUARD_CONDITIONS,
     },
   ],
@@ -574,6 +631,10 @@ export const STARTER_RUNE_IDS: string[] = Array.from(
     // costs RP. The user can move these onto recipes in a later balance pass.
     "fire-technique",
     "fire-guard",
+    // Abilities evolution §7: the slot-2 overrides ride the same reasoning, and
+    // are inert until the player's tier grants a second slot of that kind.
+    "fire-technique-2",
+    "fire-guard-2",
     // Step 10: stance auto-switch is a timing preference for stances you already
     // learned (the stance recipes are the real T2 gate). Equipping still costs RP
     // and is inert with no reactive stance equipped.
@@ -584,6 +645,9 @@ export const STARTER_RUNE_IDS: string[] = Array.from(
     // "Empowered Ready" condition. TEMPORARY starter so it's usable now; intended to
     // become an earned reward later (move it onto a rune recipe in the reward pass).
     "before-empowered",
+    // "Elite Target" condition — the situation that makes a specialised second
+    // Technique worth equipping. Same TEMPORARY-starter caveat as above.
+    "target-elite",
   ]),
 );
 
@@ -665,8 +729,12 @@ export function runeChannelLabel(channel: RuneChannel): string {
       return "Control";
     case "TECHNIQUE":
       return "Technique";
+    case "TECHNIQUE_2":
+      return "Technique II";
     case "GUARD":
       return "Guard";
+    case "GUARD_2":
+      return "Guard II";
     case "STANCE":
       return "Stance";
   }
@@ -928,6 +996,11 @@ export interface RuneContext {
    * have no empowered attack armed.
    */
   empoweredImminent?: boolean;
+  /**
+   * The player's current attack target is an elite. Drives `target-elite`, the
+   * condition that makes a specialised second Technique worth equipping.
+   */
+  targetIsElite?: boolean;
 }
 
 export interface ClaimedRuneAction {
@@ -949,7 +1022,9 @@ export interface DerivedRuneConfig {
   pathingAction: RuneActionId | null;
   controlAction: RuneActionId | null;
   techniqueAction: RuneActionId | null;
+  technique2Action: RuneActionId | null;
   guardAction: RuneActionId | null;
+  guard2Action: RuneActionId | null;
   stanceAction: RuneActionId | null;
   fleeRequested: boolean;
   orbit: boolean;
@@ -966,10 +1041,14 @@ export interface DerivedRuneConfig {
   spreadDots: boolean;
   /** A `focus-elites` rule is active this tick — prioritize elite-tagged enemies. */
   focusElites: boolean;
-  /** A `fire-technique` rule's condition is active this tick (override Technique). */
+  /** A `fire-technique` rule's condition is active this tick (override Technique slot 0). */
   fireTechnique: boolean;
-  /** A `fire-guard` rule's condition is active this tick (override Guard). */
+  /** A `fire-technique-2` rule's condition is active this tick (Technique slot 1). */
+  fireTechnique2: boolean;
+  /** A `fire-guard` rule's condition is active this tick (override Guard slot 0). */
   fireGuard: boolean;
+  /** A `fire-guard-2` rule's condition is active this tick (Guard slot 1). */
+  fireGuard2: boolean;
   /** A `switch-stance` rule's condition is active this tick (use reactive stance). */
   switchStance: boolean;
 }
@@ -984,7 +1063,9 @@ function emptyClaims(): ClaimedRuneChannels {
     PATHING: null,
     CONTROL: null,
     TECHNIQUE: null,
+    TECHNIQUE_2: null,
     GUARD: null,
+    GUARD_2: null,
     STANCE: null,
   };
 }
@@ -1009,6 +1090,8 @@ function isConditionActive(conditionId: string, ctx: RuneContext): boolean {
       return ctx.enemyCharging ?? false;
     case "before-empowered":
       return ctx.empoweredImminent ?? false;
+    case "target-elite":
+      return ctx.targetIsElite ?? false;
     default:
       return false;
   }
@@ -1030,7 +1113,9 @@ export function deriveAutoConfigFromRunes(
     pathingAction: null,
     controlAction: null,
     techniqueAction: null,
+    technique2Action: null,
     guardAction: null,
+    guard2Action: null,
     stanceAction: null,
     fleeRequested: false,
     orbit: false,
@@ -1047,7 +1132,9 @@ export function deriveAutoConfigFromRunes(
     spreadDots: false,
     focusElites: false,
     fireTechnique: false,
+    fireTechnique2: false,
     fireGuard: false,
+    fireGuard2: false,
     switchStance: false,
   };
 
@@ -1087,7 +1174,9 @@ export function deriveAutoConfigFromRunes(
   derived.pathingAction = claimed.PATHING?.action.id ?? null;
   derived.controlAction = claimed.CONTROL?.action.id ?? null;
   derived.techniqueAction = claimed.TECHNIQUE?.action.id ?? null;
+  derived.technique2Action = claimed.TECHNIQUE_2?.action.id ?? null;
   derived.guardAction = claimed.GUARD?.action.id ?? null;
+  derived.guard2Action = claimed.GUARD_2?.action.id ?? null;
   derived.stanceAction = claimed.STANCE?.action.id ?? null;
 
   switch (derived.movementAction) {
@@ -1167,8 +1256,14 @@ export function deriveAutoConfigFromRunes(
   if (derived.techniqueAction === "fire-technique") {
     derived.fireTechnique = true;
   }
+  if (derived.technique2Action === "fire-technique-2") {
+    derived.fireTechnique2 = true;
+  }
   if (derived.guardAction === "fire-guard") {
     derived.fireGuard = true;
+  }
+  if (derived.guard2Action === "fire-guard-2") {
+    derived.fireGuard2 = true;
   }
   if (derived.stanceAction === "switch-stance") {
     derived.switchStance = true;

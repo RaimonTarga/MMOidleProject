@@ -48,8 +48,8 @@ function makePlayerSlices(): PersistedPlayerSlices {
       runesOwned: [...STARTER_RUNE_IDS],
       runeRecipesCrafted: [],
       runesEquipped: [{ conditionId: "in-combat", actionId: "fire-technique" }],
-      knownAbilities: ["heavy-strike"],
-      equippedAbilities: { technique: "heavy-strike", guard: null },
+      knownAbilities: ["expose-weakness"],
+      equippedAbilities: { techniques: ["expose-weakness"], guards: [] },
       knownStances: [],
       equippedStances: { default: null, reactive: null },
       activeStance: null,
@@ -81,10 +81,10 @@ if (!target) throw new Error("failed to create target");
 
 setAttackTarget(world, player, target.isMonster.id);
 updateRuneDerivedConfig(world, 1_000);
-updateAbilityFiring(world);
+updateAbilityFiring(world, Date.now());
 
 assert(
-  player.hasArmedAbility?.abilityId === "heavy-strike",
+  player.hasArmedAbility?.abilityId === "expose-weakness",
   "In Combat -> Fire Technique should arm Expose Weakness when off cooldown",
 );
 
@@ -120,7 +120,7 @@ assert(
 );
 
 updateRuneDerivedConfig(world, 1_200);
-updateAbilityFiring(world);
+updateAbilityFiring(world, Date.now());
 assert(
   player.hasArmedAbility === undefined,
   "Technique should not re-arm again while its cooldown is still running",

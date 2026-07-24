@@ -6,6 +6,7 @@ import {
   NODE_BIOMES,
   TEST_ROOM_NODE_ID,
   globalMastery,
+  normalizeEquippedAbilities,
   runeBudgetForGlobalMastery,
   sanitizeRuneLoadout,
 } from "@mmo-idle/shared";
@@ -395,11 +396,10 @@ export function registerPlayerHandlers(
 
   socket.on("ability:setLoadout", (payload) => {
     const p = liveSelf();
-    if (!p || !payload) return;
-    if (payload.slot !== "technique" && payload.slot !== "guard") return;
-    const abilityId =
-      typeof payload.abilityId === "string" ? payload.abilityId : null;
-    setAbilityLoadout(world, p, payload.slot, abilityId);
+    if (!p || !payload?.equipped) return;
+    // normalize drops non-strings, unknown ids and slot mismatches; the setter
+    // then enforces the learned/slot-count/duplicate rules authoritatively.
+    setAbilityLoadout(world, p, normalizeEquippedAbilities(payload.equipped));
   });
 
   socket.on("stance:craftRecipe", (recipeId: string) => {

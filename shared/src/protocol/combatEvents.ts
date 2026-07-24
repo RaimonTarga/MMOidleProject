@@ -75,4 +75,10 @@ export type CombatEvent =
   // tinted red until the charge is consumed (the consuming `player-hit` carries an
   // ability client-effect tag which clears it). Purely cosmetic — the rider itself
   // is server-authoritative. Shown to the whole node, mirroring `player-guard`.
-  | { kind: 'player-technique-armed'; playerId: string; ability: string };
+  | { kind: 'player-technique-armed'; playerId: string; ability: string }
+  // A casted Technique began its wind-up. Mirrors `monster-cast-start`: the client
+  // shows a cast bar over the player for `castMs` plus a skill-name callout.
+  | { kind: 'player-cast-start'; playerId: string; ability: string; castMs: number }
+  // The wind-up ended. `fired: false` means it was interrupted by hard CC or lost
+  // its target, so the client clears the bar without playing the resolve FX.
+  | { kind: 'player-cast-end'; playerId: string; ability: string; fired: boolean };

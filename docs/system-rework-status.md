@@ -46,15 +46,19 @@ Update this doc at the end of every session. The roadmap says *what and why*; th
 
 ---
 
-Map Variety Stage A log (2026-07-24): shipped node modifiers + catalyst re-key on
-the existing 11×11 grid. Five pace families + two density modifiers authored per
-node (`shared/src/world/nodeModifiers.ts`, `nodeModifierMap.ts`), non-boss monster
+Map Variety Stage A log (2026-07-24): shipped node modifiers + catalyst re-key.
+Five pace families are authored per normal node (`shared/src/world/nodeModifiers.ts`,
+`nodeModifierMap.ts`), non-boss monster
 offense reshaped at the `createMonster` choke point (budget-neutral scalars +
 `moddedByNode` mechanic overlays; bosses immune), catalysts re-keyed from biome
 group to combat family with wallets wiped (migration 0002), and the map
-information contract surfaced client-side. All magnitudes/tags PLACEHOLDER. Stage B
-(regions) is outlined only in `docs/map-variety-implementation-plan.md` and not
-started. Design: `docs/map-variety-plan.md`.
+information contract surfaced client-side. Swarming and Elite Ground were
+deactivated on 2026-07-24 while their design is reconsidered: their vocabulary
+and helper code remain behind `DENSITY_MODIFIERS_ENABLED = false`, but authoring,
+projection, population, spawn selection, rewards, and UI are all inert. All
+magnitudes/tags PLACEHOLDER. Stage B (regions) has shipped; see
+`docs/map-variety-regions-implementation-plan.md`. Design:
+`docs/map-variety-plan.md`.
 
 Step 13 current note: T1 now has an authored `preEncounter` path for worked
 biome exams, replacing generated guardian rings where migrated. Plains, Forest,
@@ -167,7 +171,19 @@ current-state docs are linked where available; the rest are filled at the step's
   forest (flash-rapier base → gale-needle evolved + thorn-needle branch). See `gear-evolution-*.md`.
 - Per-id upgrade model unchanged (item id = recipe id; `itemUpgrades` per-id). Numbers = user pass.
 
-### 7. Skills rework  — 🔨 IMPLEMENTED (system + Sweep/Brace pair; paired docs `abilities-*.md`)
+### 7. Skills rework  — 🔨 IMPLEMENTED (system + T1 roster + abilities-evolution Wave 1; paired docs `abilities-*.md`)
+- **2026-07-24 — abilities-evolution Wave 1 shipped** (plan: `docs/abilities-evolution-implementation-plan.md`,
+  design baseline: `design_docs/abilities-evolution-plan-updated.md`). Engine: `equippedAbilities` became
+  ORDERED LISTS per slot kind (order = fire priority) with `abilitySlotCount(playerTier)` granting
+  T3 → 2 Technique / T4 → 2 Guard; per-ABILITY cooldowns; one offensive channel with deterministic
+  arbitration; one Guard activation per window (buffs still layer); per-slot Guard buff ids
+  (`ability-guard`/`ability-guard-2`, multiplicative DR); player CAST lifecycle (`isCastingAbility`,
+  hard-CC interrupt only, movement continues, cooldown on resolve); `TECHNIQUE_KEYS` offensive stats +
+  the `resolveAbilityEffect` tier-deepening/Technique-Power seam; reposition + reflect primitives;
+  `TECHNIQUE_2`/`GUARD_2` rune channels + `target-elite` condition. Content: T1 re-keyed to
+  Plains/Forest/Mountain/Swamp/Cave, plus T2 Bramble Guard (Jungle) / Charge (Desert) / Charged Strike
+  (Mountain L9). Legacy `{technique,guard}` rows migrate on hydrate (no SQL); `heavy-strike` renamed to
+  `expose-weakness`. 34/34 tests. T2 icon art drafted but NOT generated. Waves 2–3 (T3/T4) not started.
 - Shipped: new Abilities system (Technique + Guard slots). State on `TracksProgression`
   (`knownAbilities` + `equippedAbilities`) — mirrors runes, no new component/DB migration. Technique
   = arm-next-attack via sibling `hasArmedAbility` (separate from the class-owned `hasEmpoweredAttack`);

@@ -18,11 +18,14 @@ import {
   emptyEquippedStances,
   emptyEquippedRites,
   globalMastery,
+  normalizeEquippedAbilities,
   runeIdsFromCraftedRecipes,
   validAbilityIds,
   validStanceIds,
   validRiteIds,
   PACE_FAMILIES,
+  CLEARING_NODE_ID,
+  WORLD_NODES,
   type Vec2,
 } from '@mmo-idle/shared';
 import type { PlayerEntity } from '../ecs/entity';
@@ -203,11 +206,15 @@ function hydratePlayerSlices(row: CharacterRow): PersistedPlayerSlices {
   };
   holdsInventory.itemUpgrades = holdsInventory.itemUpgrades ?? {};
   const tracksProgression = parseSlice<TracksProgression>(row.tracksProgression);
+  const hasPosition = parseSlice<HasPosition>(row.hasPosition);
+  if (!WORLD_NODES.has(hasPosition.nodeId)) {
+    hasPosition.nodeId = CLEARING_NODE_ID;
+  }
   const runeRecipesCrafted = tracksProgression.runeRecipesCrafted ?? [];
 
   return {
     isPlayer:          parseSlice<IsPlayer>(row.isPlayer),
-    hasPosition:       parseSlice<HasPosition>(row.hasPosition),
+    hasPosition,
     hasHealth:         parseSlice<HasHealth>(row.hasHealth),
     tracksProgression: {
       ...tracksProgression,
@@ -222,7 +229,9 @@ function hydratePlayerSlices(row: CharacterRow): PersistedPlayerSlices {
       runesOwned:     runeIdsFromCraftedRecipes(runeRecipesCrafted),
       runesEquipped:  tracksProgression.runesEquipped ?? [],
       knownAbilities: validAbilityIds(tracksProgression.knownAbilities ?? []),
-      equippedAbilities: tracksProgression.equippedAbilities ?? emptyEquippedAbilities(),
+      // Migrates the Step 7 `{technique, guard}` shape to ordered lists and maps
+      // renamed ability ids forward. No SQL migration needed — whole-slice JSON.
+      equippedAbilities: normalizeEquippedAbilities(tracksProgression.equippedAbilities),
       knownStances: validStanceIds(tracksProgression.knownStances ?? []),
       equippedStances: tracksProgression.equippedStances ?? emptyEquippedStances(),
       activeStance:
@@ -253,7 +262,7 @@ function buildFreshSlices(
     },
     hasPosition: {
       current: pos,
-      nodeId:  'node-5-5',
+      nodeId:  CLEARING_NODE_ID,
       speed:   GAME_CONFIG.PLAYER_SPEED,
     },
     hasHealth: {

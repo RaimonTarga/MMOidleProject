@@ -1,20 +1,22 @@
 import { useEffect, useState } from "react";
 import { useAtomValue } from "jotai";
 import {
-  ABILITY_GUARD_EFFECT_ID,
   ABILITY_SECOND_WIND_EFFECT_ID,
   abilityDef,
+  equippedForSlot,
+  guardEffectIdForSlot,
   type AbilityDef,
   type AbilitySlot,
 } from "@mmo-idle/shared";
 import {
+  abilityCastAtom,
   abilityFiredAtAtom,
   abilityCooldownStartedAtAtom,
   activeBuffsAtom,
   equippedAbilitiesAtom,
 } from "./atoms";
-import { UIIcon } from "../ui/UIIcon";
-import { abilityIconFrame } from "../ui/abilityIcons";
+import { GameIcon } from "../ui/GameIcon";
+import { abilityIconSource } from "../ui/abilityIcons";
 import { useIsMobile } from "./useIsMobile";
 import { HudDock } from "./primitives";
 import "./hud.css";
@@ -39,7 +41,7 @@ interface SlotStatus {
   remainingFrac: number;
   /** Brief flash right after the ability fires. */
   justFired: boolean;
-  /** Guard boon is currently active (its buff is up). */
+  /** Guard boon is currently active (its buff is up), or a cast is winding up. */
   active: boolean;
 }
 
@@ -59,6 +61,18 @@ function computeStatus(
   }
   const justFired = firedAt > 0 && now - firedAt < PULSE_MS;
   return { remainingFrac, justFired, active };
+}
+
+/**
+ * A casted Technique shows its WIND-UP in the same sweep the cooldown uses, but
+ * filling instead of draining — the tile reads "something is happening now"
+ * rather than "wait". The in-world cast bar over the player is the primary tell;
+ * this keeps the HUD honest about which of two Techniques is mid-cast.
+ */
+function castStatus(startedAt: number, castMs: number, now: number): SlotStatus {
+  const elapsed = Math.max(0, now - startedAt);
+  const progress = castMs > 0 ? Math.min(1, elapsed / castMs) : 1;
+  return { remainingFrac: 1 - progress, justFired: false, active: true };
 }
 
 function AbilityIcon({ ability, status }: { ability: AbilityDef; status: SlotStatus }) {
@@ -169,7 +183,7 @@ function DesktopAbilitySlot({
   keyHint,
 }: DesktopAbilitySlotProps) {
   const meta = SLOT_META[ability.slot];
-  const iconFrame = abilityIconFrame(ability);
+  const icon = abilityIconSource(ability);
   const remainingPct = Math.max(0, Math.min(100, status.remainingFrac * 100));
   const remainingSeconds = Math.ceil((status.remainingFrac * ability.cooldownMs) / 1000);
   const cooling = remainingPct > 0;
@@ -180,13 +194,6 @@ function DesktopAbilitySlot({
       : cooling
         ? "cooling"
         : "ready";
-  const stateLabel = state === "cooling"
-    ? "COOLING"
-    : state === "triggered"
-      ? "FIRED"
-      : state === "active"
-        ? "ACTIVE"
-        : null;
   const tooltip = `${meta.label}: ${ability.name} — ${
     state === "cooling" ? `cooling, ${remainingSeconds}s remaining` : state
   }`;
@@ -200,13 +207,12 @@ function DesktopAbilitySlot({
       title={tooltip}
     >
       <div className="combat-ability-slot__icon">
-        {/* The glyph remains as a fallback while the atlas loads or for abilities
-            that do not have an icon frame yet. */}
-        <span className="combat-ability-slot__glyph" aria-hidden>{meta.glyph}</span>
-        <UIIcon
-          frameName={iconFrame}
+        <GameIcon
+          source={icon}
           size={44}
+          fallback={<span className="combat-ability-slot__glyph">{meta.glyph}</span>}
           className="combat-ability-slot__art"
+          decorative
         />
         {cooling && (
           <div
@@ -217,11 +223,6 @@ function DesktopAbilitySlot({
           />
         )}
         {cooling && <span className="combat-ability-slot__cooldown-time">{remainingSeconds}</span>}
-        {stateLabel && (
-          <span className="combat-ability-slot__state" aria-hidden="true">
-            {stateLabel}
-          </span>
-        )}
         {keyHint && (
           <span className="combat-ability-slot__key-hint" aria-hidden="true">
             {keyHint}
@@ -240,17 +241,27 @@ export function AbilityBar() {
   const firedAt = useAtomValue(abilityFiredAtAtom);
   const cooldownStartedAt = useAtomValue(abilityCooldownStartedAtAtom);
   const buffs = useAtomValue(activeBuffsAtom);
+  const cast = useAtomValue(abilityCastAtom);
 
   // Tick a wall clock so cooldown sweeps / flashes animate. The bar only mounts
   // content when an ability is equipped, so this stays cheap.
   const [now, setNow] = useState(() => Date.now());
-  const guardActive = buffs.some(
-    (b) => b.id === ABILITY_GUARD_EFFECT_ID || b.id === ABILITY_SECOND_WIND_EFFECT_ID,
-  );
 
-  const technique = abilityDef(equipped.technique);
-  const guard = abilityDef(equipped.guard);
-  const hasAny = !!technique || !!guard;
+  // Guard buffs are per-slot ids, so the tile for guard slot N lights up only
+  // when THAT slot's buff is up. Second Wind has no DR buff of its own, so it
+  // still keys off its dedicated effect id.
+  const activeBuffIds = new Set(buffs.map((b) => b.id));
+
+  // Ordered so every Technique sits left of every Guard.
+  const equippedDefs = SLOT_ORDER.flatMap((slot) =>
+    equippedForSlot(equipped, slot).map((id, index) => ({
+      ability: abilityDef(id),
+      slot,
+      index,
+    })),
+  ).filter((e): e is { ability: AbilityDef; slot: AbilitySlot; index: number } => !!e.ability);
+
+  const hasAny = equippedDefs.length > 0;
 
   useEffect(() => {
     if (!hasAny) return;
@@ -260,22 +271,27 @@ export function AbilityBar() {
 
   if (!hasAny) return null;
 
-  const slots: { ability: AbilityDef; status: SlotStatus }[] = [];
-  for (const slot of SLOT_ORDER) {
-    const ability = slot === "technique" ? technique : guard;
-    if (!ability) continue;
-    const active = slot === "guard" && guardActive;
-    slots.push({
-      ability,
-      status: computeStatus(
-        cooldownStartedAt[slot],
-        firedAt[slot],
-        ability.cooldownMs,
-        now,
-        active,
-      ),
-    });
-  }
+  const slots: { ability: AbilityDef; status: SlotStatus }[] = equippedDefs.map(
+    ({ ability, slot, index }) => {
+      if (cast?.abilityId === ability.id) {
+        return { ability, status: castStatus(cast.startedAt, cast.castMs, now) };
+      }
+      const active =
+        slot === "guard" &&
+        (activeBuffIds.has(guardEffectIdForSlot(index)) ||
+          activeBuffIds.has(ABILITY_SECOND_WIND_EFFECT_ID));
+      return {
+        ability,
+        status: computeStatus(
+          cooldownStartedAt[ability.id] ?? 0,
+          firedAt[ability.id] ?? 0,
+          ability.cooldownMs,
+          now,
+          active,
+        ),
+      };
+    },
+  );
 
   if (isMobile) return (
     <div

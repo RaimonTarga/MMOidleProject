@@ -46,7 +46,7 @@ function makePlayerSlices(): PersistedPlayerSlices {
       runeRecipesCrafted: [],
       runesEquipped: [],
       knownAbilities: ["sweep", "brace"],
-      equippedAbilities: { technique: "sweep", guard: "brace" },
+      equippedAbilities: { techniques: ["sweep"], guards: ["brace"] },
       knownStances: [],
       equippedStances: { default: null, reactive: null },
       activeStance: null,
@@ -77,7 +77,7 @@ const target = world.createMonster("node-5-5", "plains-slime", { x: 430, y: 400 
 if (!target) throw new Error("failed to create target");
 
 setAttackTarget(world, player, target.isMonster.id);
-updateAbilityFiring(world);
+updateAbilityFiring(world, Date.now());
 
 assert(
   player.hasArmedAbility?.abilityId === "sweep",
@@ -110,7 +110,7 @@ assert(
 );
 
 // While the charge is still armed (and cooldowns run), no duplicate telegraphs.
-updateAbilityFiring(world);
+updateAbilityFiring(world, Date.now());
 const repeat = world.takeNodeEvents("node-5-5");
 assert(
   repeat.every(

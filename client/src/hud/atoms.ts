@@ -2,6 +2,7 @@ import { atom, getDefaultStore, type PrimitiveAtom } from 'jotai';
 import { intents } from '../intents';
 import { globalMastery } from '@mmo-idle/shared';
 import type {
+  AbilitySlot,
   CombatArchetype,
   HasAutoIntent,
   EquipmentMap,
@@ -201,34 +202,55 @@ export const catalystProgressAtom = atom<Record<string, number>>({});
 export const activeBuffsAtom = atom<PlayerBuff[]>([]);
 export const autoPathAtom = atom<string[] | null>(null);
 
-/** Last observed ability-effect time per slot; drives the brief HUD pulse. */
-export const abilityFiredAtAtom = atom<{ technique: number; guard: number }>({
-  technique: 0,
-  guard: 0,
-});
+/**
+ * Last observed ability-effect time, keyed by ABILITY ID; drives the brief HUD
+ * pulse. Keyed per ability rather than per slot kind because two Techniques can
+ * be equipped at once — a slot-kind key would pulse whichever tile happened to
+ * be first. Server cooldowns are per-ability for the same reason.
+ */
+export const abilityFiredAtAtom = atom<Record<string, number>>({});
 
-/** Stamp an ability slot as just-fired (called from combat FX, client-side). */
-export function notifyAbilityFired(slot: 'technique' | 'guard'): void {
+/** Stamp an ability as just-fired (called from combat FX, client-side). */
+export function notifyAbilityFired(abilityId: string): void {
   const store = getDefaultStore();
   const prev = store.get(abilityFiredAtAtom);
-  store.set(abilityFiredAtAtom, { ...prev, [slot]: Date.now() });
+  store.set(abilityFiredAtAtom, { ...prev, [abilityId]: Date.now() });
 }
 
 /**
- * Client receipt time for the server event that places an ability on cooldown.
- * This is distinct from `abilityFiredAtAtom`: Techniques enter cooldown when
- * armed, while their visible effect may land on a later attack.
+ * Client receipt time for the server event that places an ability on cooldown,
+ * keyed by ability id. Distinct from `abilityFiredAtAtom`: Techniques enter
+ * cooldown when ARMED, while their visible effect may land on a later attack.
  */
-export const abilityCooldownStartedAtAtom = atom<{ technique: number; guard: number }>({
-  technique: 0,
-  guard: 0,
-});
+export const abilityCooldownStartedAtAtom = atom<Record<string, number>>({});
 
-/** Stamp an ability slot as cooling from the server's fire or arm event. */
-export function notifyAbilityCooldownStarted(slot: 'technique' | 'guard'): void {
+/** Stamp an ability as cooling from the server's fire or arm event. */
+export function notifyAbilityCooldownStarted(abilityId: string): void {
   const store = getDefaultStore();
   const prev = store.get(abilityCooldownStartedAtAtom);
-  store.set(abilityCooldownStartedAtAtom, { ...prev, [slot]: Date.now() });
+  store.set(abilityCooldownStartedAtAtom, { ...prev, [abilityId]: Date.now() });
+}
+
+/**
+ * Live cast progress for the local player's casted Technique, or null when not
+ * casting. Driven by the `player-cast-start` / `player-cast-end` node events.
+ */
+export const abilityCastAtom = atom<{
+  abilityId: string;
+  startedAt: number;
+  castMs: number;
+} | null>(null);
+
+export function notifyAbilityCastStarted(abilityId: string, castMs: number): void {
+  getDefaultStore().set(abilityCastAtom, {
+    abilityId,
+    startedAt: Date.now(),
+    castMs,
+  });
+}
+
+export function notifyAbilityCastEnded(): void {
+  getDefaultStore().set(abilityCastAtom, null);
 }
 
 export interface ZonePlayer {
@@ -280,10 +302,15 @@ export const runesEquippedAtom = atom<EquippedRule[]>([]);
 
 /** Abilities learned (crafted) — the slottable pool (system rework Step 7). */
 export const knownAbilitiesAtom = atom<string[]>([]);
-/** Equipped abilities by slot: Technique + Guard. */
+/** Equipped abilities per slot kind, ordered — list order is fire priority. */
 export const equippedAbilitiesAtom = atom<EquippedAbilities>({
-  technique: null,
-  guard: null,
+  techniques: [],
+  guards: [],
+});
+/** Ability slots unlocked at the player's tier: `{ technique, guard }`. */
+export const abilitySlotsAtom = atom<Record<AbilitySlot, number>>({
+  technique: 1,
+  guard: 1,
 });
 
 /** Stances learned (crafted) — the slottable pool (system rework Step 10). */
@@ -568,10 +595,22 @@ function setRunesEquipped(next: EquippedRule[]): void {
   store.set(runesEquippedAtom, next);
 }
 
+function setAbilitySlots(next: Record<AbilitySlot, number>): void {
+  const store = getDefaultStore();
+  const prev = store.get(abilitySlotsAtom);
+  if (prev.technique === next.technique && prev.guard === next.guard) return;
+  store.set(abilitySlotsAtom, next);
+}
+
 function setEquippedAbilities(next: EquippedAbilities): void {
   const store = getDefaultStore();
   const prev = store.get(equippedAbilitiesAtom);
-  if (prev.technique === next.technique && prev.guard === next.guard) return;
+  if (
+    shallowArrayEqual(prev.techniques, next.techniques) &&
+    shallowArrayEqual(prev.guards, next.guards)
+  ) {
+    return;
+  }
   store.set(equippedAbilitiesAtom, next);
 }
 
@@ -679,7 +718,8 @@ function resetPlayerAtoms(): void {
   setIfShallowArrayEqual(runeRecipesCraftedAtom, []);
   setRunesEquipped([]);
   setIfShallowArrayEqual(knownAbilitiesAtom, []);
-  setEquippedAbilities({ technique: null, guard: null });
+  setEquippedAbilities({ techniques: [], guards: [] });
+  setAbilitySlots({ technique: 1, guard: 1 });
   setIfShallowArrayEqual(knownStancesAtom, []);
   setEquippedStances({ default: null, reactive: null });
   setIfChanged(activeStanceAtom, null);
@@ -690,8 +730,9 @@ function resetPlayerAtoms(): void {
   setIfShallowArrayEqual(unlockedRecipesAtom, []);
   setIfShallowArrayEqual(bossesClearedAtom, []);
   setIfShallowArrayEqual(activeBuffsAtom, []);
-  store.set(abilityFiredAtAtom, { technique: 0, guard: 0 });
-  store.set(abilityCooldownStartedAtAtom, { technique: 0, guard: 0 });
+  store.set(abilityFiredAtAtom, {});
+  store.set(abilityCooldownStartedAtAtom, {});
+  store.set(abilityCastAtom, null);
   setIfShallowObjectEqual(passivesAtom, {});
   setIfShallowObjectEqual(equipmentAtom, { ...DEFAULT_EQUIPMENT });
   setIfShallowObjectEqual(itemUpgradesAtom, {});
@@ -788,6 +829,7 @@ export function syncPlayerAtoms(player: PlayerView | null): void {
   setRunesEquipped(player.runesEquipped);
   setIfShallowArrayEqual(knownAbilitiesAtom, player.knownAbilities);
   setEquippedAbilities(player.equippedAbilities);
+  setAbilitySlots(player.abilitySlots);
   setIfShallowArrayEqual(knownStancesAtom, player.knownStances);
   setEquippedStances(player.equippedStances);
   setIfChanged(activeStanceAtom, player.activeStance);

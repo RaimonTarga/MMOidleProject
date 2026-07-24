@@ -7,6 +7,7 @@ import {
   RUNE_RECIPE_DATABASE,
   TEST_ROOM_NODE_ID,
   abilityDef,
+  equippedForSlot,
   getRuleName,
   isRuneRecipeAvailableForArchetype,
   isRuneRecipeUnlocked,
@@ -16,6 +17,7 @@ import {
   runeLoadoutCost,
   runeRuleCost,
   stanceDef,
+  type AbilitySlot,
   type ActionDef,
   type ConditionDef,
   type EquippedAbilities,
@@ -42,6 +44,11 @@ import {
 import { CostDisplay, EssenceSummary } from "./crafting/shared";
 import { biomeName } from "./crafting/common";
 import { BuildIcon, type BuildIconKind } from "./BuildIcon";
+import { GameIcon } from "./GameIcon";
+import {
+  craftingSectionIconSource,
+  runeFragmentIconSource,
+} from "./systemIcons";
 import { DialogTab, DialogTabs } from "../hud/primitives";
 import "./crafting.css";
 import "./buildPanel.css";
@@ -55,7 +62,9 @@ const CHANNEL_COLOR: Record<string, string> = {
   PATHING: "#8fd48b",
   CONTROL: "#ff7a9a",
   TECHNIQUE: "#ffd76b",
+  TECHNIQUE_2: "#ffd76b",
   GUARD: "#9ad0ff",
+  GUARD_2: "#9ad0ff",
   STANCE: "#c0ff9a",
 };
 
@@ -67,28 +76,35 @@ interface RuneTarget {
   missing: boolean;
 }
 
+/** Which ability slot each `fire-*` rune action drives. */
+const ABILITY_FIRE_ACTIONS: Record<string, { slot: AbilitySlot; index: number }> = {
+  "fire-technique": { slot: "technique", index: 0 },
+  "fire-technique-2": { slot: "technique", index: 1 },
+  "fire-guard": { slot: "guard", index: 0 },
+  "fire-guard-2": { slot: "guard", index: 1 },
+};
+
 function resolveRuneTarget(
   actionId: string,
   equippedAbilities: EquippedAbilities,
   equippedStances: EquippedStances,
 ): RuneTarget | null {
-  if (actionId === "fire-technique") {
-    const ability = abilityDef(equippedAbilities.technique);
+  // Each ability-fire action drives ONE slot index, so the preview has to name
+  // the ability in that exact slot — otherwise a player wiring `fire-guard-2`
+  // could not tell which of two equipped Guards they were actually triggering.
+  const fireTarget = ABILITY_FIRE_ACTIONS[actionId];
+  if (fireTarget) {
+    const { slot, index } = fireTarget;
+    const ability = abilityDef(equippedForSlot(equippedAbilities, slot)[index]);
+    const slotName = slot === "technique" ? "Technique" : "Guard";
+    const ordinal = index === 0 ? slotName : `${slotName} ${index + 1}`;
     return {
       kind: "ability",
-      label: ability?.name ?? "Technique",
-      title: ability ? `Triggers Technique: ${ability.name}` : "No Technique equipped",
-      text: ability?.blurb ?? "Equip a Technique ability to make this rune do something.",
-      missing: !ability,
-    };
-  }
-  if (actionId === "fire-guard") {
-    const ability = abilityDef(equippedAbilities.guard);
-    return {
-      kind: "ability",
-      label: ability?.name ?? "Guard",
-      title: ability ? `Triggers Guard: ${ability.name}` : "No Guard equipped",
-      text: ability?.blurb ?? "Equip a Guard ability to make this rune do something.",
+      label: ability?.name ?? ordinal,
+      title: ability ? `Triggers ${ordinal}: ${ability.name}` : `No ${ordinal} equipped`,
+      text:
+        ability?.blurb ??
+        `Equip an ability in your ${ordinal.toLowerCase()} slot to make this rune do something.`,
       missing: !ability,
     };
   }
@@ -291,10 +307,34 @@ export function BuildRunesTab() {
   return (
     <div className="build-tab-body" style={{ position: "relative" }}>
       <DialogTabs label="Rune sections" className="build-rune-tabs">
-        <DialogTab selected={tab === "loadout"} controls="build-rune-loadout" onSelect={() => setTab("loadout")}>
+        <DialogTab
+          selected={tab === "loadout"}
+          controls="build-rune-loadout"
+          icon={
+            <GameIcon
+              source={runeFragmentIconSource("condition")}
+              size={18}
+              fallback={null}
+              decorative
+            />
+          }
+          onSelect={() => setTab("loadout")}
+        >
           Loadout
         </DialogTab>
-        <DialogTab selected={tab === "forge"} controls="build-rune-forge" onSelect={() => setTab("forge")}>
+        <DialogTab
+          selected={tab === "forge"}
+          controls="build-rune-forge"
+          icon={
+            <GameIcon
+              source={craftingSectionIconSource("forge")}
+              size={18}
+              fallback={null}
+              decorative
+            />
+          }
+          onSelect={() => setTab("forge")}
+        >
           Forge
         </DialogTab>
       </DialogTabs>
@@ -388,7 +428,17 @@ export function BuildRunesTab() {
 
           <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
             <Column<ConditionDef>
-              heading="Situation"
+              heading={
+                <>
+                  <GameIcon
+                    source={runeFragmentIconSource("condition")}
+                    size={18}
+                    fallback={null}
+                    decorative
+                  />
+                  Situation
+                </>
+              }
               items={conditions}
               selectedId={selCond}
               onSelect={(id) => {
@@ -407,7 +457,17 @@ export function BuildRunesTab() {
               renderMeta={(c) => c.blurb}
             />
             <Column<ActionDef>
-              heading="Response"
+              heading={
+                <>
+                  <GameIcon
+                    source={runeFragmentIconSource("action")}
+                    size={18}
+                    fallback={null}
+                    decorative
+                  />
+                  Response
+                </>
+              }
               items={viableActions}
               selectedId={selAction}
               onSelect={setSelAction}
@@ -696,7 +756,14 @@ function RuneForgeTab({ budget }: { budget: number }) {
                     fontSize: 18,
                   }}
                 >
-                  {recipe.runeKind === "condition" ? "?" : ">"}
+                  <GameIcon
+                    source={runeFragmentIconSource(
+                      recipe.runeKind === "condition" ? "condition" : "action",
+                    )}
+                    size={32}
+                    fallback={recipe.runeKind === "condition" ? "?" : ">"}
+                    decorative
+                  />
                 </div>
 
                 <div className="craft-recipe__content">
@@ -805,7 +872,7 @@ function Column<T extends { id: string; name: string }>({
   renderMeta,
   renderExtra,
 }: {
-  heading: string;
+  heading: ReactNode;
   items: T[];
   selectedId: string | null;
   onSelect: (id: string) => void;
@@ -817,7 +884,10 @@ function Column<T extends { id: string; name: string }>({
 }) {
   return (
     <div style={{ flex: "1 1 280px" }}>
-      <div className="build-section-title" style={{ marginBottom: 8 }}>
+      <div
+        className="build-section-title"
+        style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 8 }}
+      >
         {heading}
       </div>
       <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>

@@ -100,6 +100,27 @@ export interface HasArmedAbility {
   abilityId: string;
 }
 
+/**
+ * Server-only (abilities evolution plan §5.2): the player is mid-WIND-UP on a
+ * casted Technique. Mutually exclusive with `hasArmedAbility` — together they
+ * are the single offensive execution channel, so only one Technique can ever be
+ * armed/casting/resolving at a time.
+ *
+ * Normal attacks are suppressed while present; auto-movement deliberately is
+ * NOT, so casting never fights autocombat pathing. Hard CC (stun/freeze) aborts.
+ */
+export interface IsCastingAbility {
+  abilityId: string;
+  /** Loadout index that started the cast, so the resolve credits the right slot. */
+  slotIndex: number;
+  /** Wall-clock ms when the wind-up completes. */
+  endsAt: number;
+  /** Full wind-up length, for the client cast bar's progress fraction. */
+  castMs: number;
+  /** Monster the cast was started against; losing it aborts the cast. */
+  targetId: string;
+}
+
 export type DungeonMonsterSource =
   | "idleDungeonGuardian"
   | "gauntletPhase"
@@ -202,6 +223,7 @@ export interface ServerEntity {
   inAcDischarge?: InAcDischarge;
   hasEmpoweredAttack?: HasEmpoweredAttack;
   hasArmedAbility?: HasArmedAbility;
+  isCastingAbility?: IsCastingAbility;
   hasEnvironmentalDot?: HasEnvironmentalDot;
   hasNodeFeatureEffect?: HasNodeFeatureEffect;
   isDead?: IsDead;

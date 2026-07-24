@@ -11,8 +11,7 @@ import {
   BIOME_DATABASE,
   GAME_CONFIG,
   NODE_BIOMES,
-  NODE_MODIFIERS,
-  densitySpawnFactor,
+  CLEARING_NODE_ID,
   TEST_ROOM_NODE_ID,
   type DeathCause,
   type NetworkedComponentKey,
@@ -31,6 +30,7 @@ export type NodeDeltaState = Map<string, NodeSentSlices>;
 import { updateAutoTargets } from "../systems/combat/ai/autoTarget";
 import { updateRuneDerivedConfig } from "../systems/combat/ai/runeConfig";
 import { updateAbilityFiring, updateAbilityHealing } from "../systems/player/abilities/abilityFiring";
+import { updateAbilityCasts } from "../systems/player/abilities/abilityCasting";
 import { updateStanceSwitch } from "../systems/player/stances/stanceSwitch";
 import { updateAutoTraverse } from "../systems/world/autoTraverse";
 import { updateAutoIntent } from "../systems/world/autoIntent";
@@ -298,7 +298,7 @@ export class World {
   readonly minionById = new Map<EntityId, MinionEntity>();
   private readonly nodeMembership = new Map<string, NodeDeltaState>();
 
-  constructor(nodeId = "node-5-5") {
+  constructor(nodeId = CLEARING_NODE_ID) {
     const node = NODE_REGISTRY.get(nodeId);
     if (!node) throw new Error(`Unknown node id: "${nodeId}"`);
     this.nodeId = nodeId;
@@ -351,7 +351,10 @@ export class World {
     updatePartyFollow(this, now);
     updateAutoTraverse(this);
     updateAutoTargets(this, now);
-    updateAbilityFiring(this);
+    updateAbilityFiring(this, now);
+    // Advances wind-ups started above, so a cast that completes this tick lands
+    // before combat resolves.
+    updateAbilityCasts(this, now);
     updateStanceSwitch(this);
     updateKnockback(this, dt);
     updateMobilityState(this, dt);
@@ -537,10 +540,7 @@ export class World {
         : (biomeInfo
             ? BIOME_DATABASE.get(biomeInfo.biomeGroup)?.mobDensity
             : undefined) ?? GAME_CONFIG.MONSTERS_PER_NODE;
-    // Map Variety Stage A: a node density modifier scales the population target
-    // (throne stays 0 — 0 × factor = 0). Reward is normalized inversely elsewhere.
-    const density = NODE_MODIFIERS[nodeId]?.density;
-    return Math.round(base * densitySpawnFactor(density));
+    return base;
   }
 
   // ── EVENTS ─────────────────────────────────────────

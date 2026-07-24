@@ -259,7 +259,11 @@ export interface TracksProgression {
    * (system rework Step 7). Stored here like runes (build/loadout data).
    */
   knownAbilities: string[];
-  /** Equipped abilities by slot: Technique (offensive) + Guard (defensive). */
+  /**
+   * Equipped abilities as ordered lists per slot kind — Technique (offensive)
+   * and Guard (defensive). List order is arbitration priority; each list's
+   * length is bounded by `abilitySlotCount(playerTier)`.
+   */
   equippedAbilities: EquippedAbilities;
   /**
    * Stances the player has learned (crafted) — the slottable pool

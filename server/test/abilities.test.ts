@@ -17,6 +17,7 @@ import {
 import type { PersistedPlayerSlices } from "../src/db/playerRepo";
 import { updateCombatState } from "../src/systems/combat/engine/combatState";
 import { updateAbilityFiring } from "../src/systems/player/abilities/abilityFiring";
+import { abilityCooldownKey } from "../src/systems/player/abilities/abilityCooldowns";
 import { World } from "../src/world/World";
 
 function assert(condition: boolean, message: string): void {
@@ -55,7 +56,7 @@ function makePlayerSlices(): PersistedPlayerSlices {
       // No fire-guard rune equipped: Brace must fire on its own built-in trigger.
       runesEquipped: [],
       knownAbilities: ["brace"],
-      equippedAbilities: { technique: null, guard: "brace" },
+      equippedAbilities: { techniques: [], guards: ["brace"] },
       knownStances: [],
       equippedStances: { default: null, reactive: null },
       activeStance: null,
@@ -80,11 +81,12 @@ function makePlayerSlices(): PersistedPlayerSlices {
 
 const world = new World();
 const player = world.attachPlayerEntity(makePlayerSlices(), "abilities-player");
-const GUARD_CD_KEY = "ability.guard.cd";
+// Cooldowns are keyed PER ABILITY (two Guard slots can be equipped), not per slot.
+const GUARD_CD_KEY = abilityCooldownKey("brace");
 const BRACE_COOLDOWN_MS = 7000;
 
 // Full HP: Brace's `hp-below 0.5` trigger should not fire.
-updateAbilityFiring(world);
+updateAbilityFiring(world, Date.now());
 assert(
   getStatusEffect(player.tracksCombat, ABILITY_GUARD_EFFECT_ID) === undefined,
   "Brace should not fire on its built-in trigger above the hp-below threshold",
@@ -92,7 +94,7 @@ assert(
 
 // Drop below 50% HP: the built-in trigger (no rune override equipped) should fire.
 player.hasHealth.hp = player.hasHealth.maxHp * 0.4;
-updateAbilityFiring(world);
+updateAbilityFiring(world, Date.now());
 const firstBuff = getStatusEffect(player.tracksCombat, ABILITY_GUARD_EFFECT_ID);
 assert(!!firstBuff, "Brace should fire on its built-in hp-below trigger with no rune override");
 assert(firstBuff.data.drPct === 0.4, "Brace should apply its 40% damage-reduction magnitude");
@@ -105,7 +107,7 @@ assert(
 // must not happen (the cooldown should not reset to a fresh value).
 updateCombatState(world, 100);
 const cooldownAfterOneTick = getCooldown(player.tracksCombat, GUARD_CD_KEY);
-updateAbilityFiring(world);
+updateAbilityFiring(world, Date.now());
 assert(
   getCooldown(player.tracksCombat, GUARD_CD_KEY) === cooldownAfterOneTick,
   "Brace should not re-fire (and reset its cooldown) while its own cooldown is still active",
@@ -118,7 +120,7 @@ assert(
   getCooldown(player.tracksCombat, GUARD_CD_KEY) === 0,
   "Brace's cooldown should fully decay after its cooldown duration elapses",
 );
-updateAbilityFiring(world);
+updateAbilityFiring(world, Date.now());
 assert(
   getCooldown(player.tracksCombat, GUARD_CD_KEY) === BRACE_COOLDOWN_MS,
   "Brace should be able to fire again once its cooldown has fully elapsed",

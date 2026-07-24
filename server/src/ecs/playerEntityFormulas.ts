@@ -12,6 +12,7 @@ import { resetHardening, resetHardeningMaxDr } from '../systems/defense/mitigati
 import { resetStationaryDr } from '../systems/defense/mitigation/stationaryDr';
 import { resetSustainedFightDr } from '../systems/defense/mitigation/sustainedFightDr';
 import { resetReactivePlating } from '../systems/defense/mitigation/reactivePlating';
+import { resetBramblePlating } from '../systems/player/abilities/abilityBramble';
 
 export function recalculatePlayerEntityStats(world: World, entity: PlayerEntity): void {
   resetHardening(entity);
@@ -19,6 +20,7 @@ export function recalculatePlayerEntityStats(world: World, entity: PlayerEntity)
   resetStationaryDr(entity);
   resetSustainedFightDr(entity);
   resetReactivePlating(entity);
+  resetBramblePlating(entity);
   const evadesHits = entity.evadesHits
     ? { ...entity.evadesHits }
     : { dodgeRate: 0, evadeMitigation: 0 };

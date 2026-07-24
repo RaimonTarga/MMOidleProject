@@ -126,6 +126,30 @@ export function applyPlayerKnockback(
   return resolved;
 }
 
+/**
+ * Reposition the player relative to a point — the primitive behind the Charge /
+ * Disengage reposition abilities (abilities evolution §5.3).
+ *
+ * Reuses `applyPlayerKnockback` wholesale (bounds clamping, obstacle resolution,
+ * move-intent cancellation, dirty-slice marking) rather than duplicating it. To
+ * move TOWARD a point, we reflect it through the player: pushing "away from" the
+ * mirrored point is the same vector as pulling toward the real one.
+ */
+export function repositionPlayer(
+  world: World,
+  player: PlayerEntity,
+  anchor: Vec2,
+  distance: number,
+  toward: boolean,
+): Vec2 | null {
+  if (distance <= 0) return null;
+  const from = player.hasPosition.current;
+  const awayFrom: Vec2 = toward
+    ? { x: 2 * from.x - anchor.x, y: 2 * from.y - anchor.y }
+    : anchor;
+  return applyPlayerKnockback(world, player, awayFrom, distance);
+}
+
 /** True while the monster has an active knockback component. */
 export function isMonsterKnockedBack(world: World, monsterId: string): boolean {
   return world.getMonsterKnockback(monsterId) !== undefined;

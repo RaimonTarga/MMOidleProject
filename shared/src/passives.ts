@@ -504,6 +504,24 @@ export const MOBILITY_KEYS = [
 // Guard-ability amplifiers (system rework Step 8). Carried by charms (recovery
 // slot); only do anything while a Guard ability is equipped. Read at fire time in
 // server/src/systems/player/abilities/abilityFiring.ts.
+// Technique-ability amplifiers (abilities evolution §6). The OFFENSIVE sibling of
+// GUARD_KEYS, carried by weapons/offensive gear rather than charms — the two
+// namespaces stay separate so one stat can never buy both offence and defence
+// (plan §3.3). Read at fire/resolve time in
+// server/src/systems/player/abilities/ (abilityCooldowns, abilityCasting,
+// abilityEffects). Deliberately NOT a universal "ability damage" multiplier:
+// Technique Power only touches fields that opt in via TECHNIQUE_POWER_FIELDS.
+export const TECHNIQUE_KEYS = [
+  // Scale explicit offensive Technique payloads (splash, empower, cast damage)
+  // by (1 + X). Never touches stun duration, dash distance, or slow percent.
+  'technique.power-pct',
+  // Shorten the Technique's cooldown by this fraction (capped 0.9).
+  'technique.cooldown-reduction-pct',
+  // Shorten a casted Technique's wind-up by this fraction (capped 0.6 — the
+  // telegraph is the cost that makes casts a fair trade).
+  'technique.cast-speed-pct',
+] as const;
+
 export const GUARD_KEYS = [
   // Shorten the Guard ability's cooldown by this fraction (fire it more often).
   'guard.cooldown-reduction-pct',
@@ -563,6 +581,7 @@ export type DotPassiveKey      = typeof DOT_KEYS[number];
 export type SharedPassiveKey   = typeof SHARED_KEYS[number];
 export type SummonerPassiveKey = typeof SUMMONER_KEYS[number];
 export type MobilityPassiveKey = typeof MOBILITY_KEYS[number];
+export type TechniquePassiveKey = typeof TECHNIQUE_KEYS[number];
 export type GuardPassiveKey    = typeof GUARD_KEYS[number];
 export type CorePassiveKey     = typeof CORE_KEYS[number];
 export type RitePassiveKey     = typeof RITE_KEYS[number];
@@ -571,7 +590,7 @@ export type PassiveKey =
   | DefensePassiveKey | CadencePassiveKey | CooldownPassiveKey
   | ReloadPassiveKey  | EnergyPassiveKey  | DotPassiveKey
   | SharedPassiveKey  | SummonerPassiveKey | MobilityPassiveKey
-  | GuardPassiveKey   | CorePassiveKey    | RitePassiveKey;
+  | GuardPassiveKey   | TechniquePassiveKey | CorePassiveKey | RitePassiveKey;
 
 export type PassiveMap      = Partial<Record<PassiveKey, number>>;
 export type MechanicEffects = Partial<Record<PassiveKey, number>>;
@@ -580,7 +599,7 @@ export type MechanicEffects = Partial<Record<PassiveKey, number>>;
 export const ALL_PASSIVE_KEYS = [
   ...DEFENSE_KEYS, ...CADENCE_KEYS, ...COOLDOWN_KEYS,
   ...RELOAD_KEYS, ...ENERGY_KEYS, ...DOT_KEYS, ...SHARED_KEYS, ...SUMMONER_KEYS,
-  ...MOBILITY_KEYS, ...GUARD_KEYS, ...CORE_KEYS, ...RITE_KEYS,
+  ...MOBILITY_KEYS, ...GUARD_KEYS, ...TECHNIQUE_KEYS, ...CORE_KEYS, ...RITE_KEYS,
 ] as const;
 
 // ── Helpers ───────────────────────────────────────────────────────────────────

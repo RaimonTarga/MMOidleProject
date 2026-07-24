@@ -63,7 +63,12 @@ import { playSfx } from "../audio/audioEngine";
 import type { SfxId } from "../audio/manifest";
 import { startCastBar, endCastBar } from "./castBars";
 import { spawnSkillCallout } from "./skillCallouts";
-import { notifyAbilityCooldownStarted, notifyAbilityFired } from "../hud/atoms";
+import {
+  notifyAbilityCastEnded,
+  notifyAbilityCastStarted,
+  notifyAbilityCooldownStarted,
+  notifyAbilityFired,
+} from "../hud/atoms";
 import type { GameScene } from "../scenes/GameScene";
 import { applyLunge } from "./interpolation";
 import { nodeToScene } from "./sceneCoords";
@@ -567,8 +572,8 @@ export function dispatchCombatEvent(
       }
       if (ev.playerId === scene.myId) {
         playSfx("empowered");
-        notifyAbilityCooldownStarted("guard");
-        notifyAbilityFired("guard");
+        notifyAbilityCooldownStarted(ev.ability);
+        notifyAbilityFired(ev.ability);
       }
     }
     return;
@@ -583,7 +588,7 @@ export function dispatchCombatEvent(
       armedAt: Date.now(),
     });
     if (ev.playerId === scene.myId) {
-      notifyAbilityCooldownStarted("technique");
+      notifyAbilityCooldownStarted(ev.ability);
     }
     if (shouldRunClientFx() && state.sprite.has(ev.playerId)) {
       const name = abilityDef(ev.ability)?.name ?? ev.ability;
@@ -598,6 +603,37 @@ export function dispatchCombatEvent(
     return;
   }
 
+  if (ev.kind === "player-cast-start") {
+    // A casted Technique's wind-up. Reuses the monster charged-attack telegraph
+    // wholesale — `castState` is keyed by entity id and players have sprites, so
+    // the floating skill-name label and the red cooldown-bar tint both apply.
+    startCastBar(
+      state,
+      ev.playerId,
+      ev.castMs,
+      abilityDef(ev.ability)?.name ?? ev.ability,
+    );
+    if (ev.playerId === scene.myId) {
+      notifyAbilityCastStarted(ev.ability, ev.castMs);
+    }
+    return;
+  }
+
+  if (ev.kind === "player-cast-end") {
+    endCastBar(state, ev.playerId);
+    if (ev.playerId === scene.myId) {
+      notifyAbilityCastEnded();
+      // Only a cast that actually RESOLVED pays a cooldown — an interrupted
+      // wind-up costs nothing, so don't start a sweep for it.
+      if (ev.fired) {
+        notifyAbilityCooldownStarted(ev.ability);
+        notifyAbilityFired(ev.ability);
+        playSfx("empowered");
+      }
+    }
+    return;
+  }
+
   // A landed hit tagged with an ability client-effect consumed the armed
   // Technique — clear the armed telegraph. Runs BEFORE the own-player gate so
   // other players' red bars clear too (their hit FX stay snapshot-driven).
@@ -606,6 +642,13 @@ export function dispatchCombatEvent(
     state.techniqueArmed.has(ev.playerId) &&
     ev.effects?.some((fx) => TECHNIQUE_CONSUMED_TAGS.includes(fx))
   ) {
+    // The armed entry is the only place the CONSUMED ability's id is known —
+    // the hit event carries FX tags, not the ability. Pulse the right HUD tile
+    // here, before the entry is dropped; with two Technique slots equipped a
+    // slot-kind guess would pulse the wrong one.
+    if (ev.playerId === scene.myId) {
+      notifyAbilityFired(state.techniqueArmed.get(ev.playerId)!.abilityId);
+    }
     state.techniqueArmed.delete(ev.playerId);
   }
 
@@ -793,17 +836,14 @@ function runFxForAttackStyle(
       // plus a Technique HUD-icon pulse so the fire is visible both in-world and
       // on the ability bar.
       fxSweep(scene, from.x, from.y, to.x, to.y, ev.empowered);
-      notifyAbilityFired("technique");
       continue;
     }
     if (effectId === ABILITY_EXPOSE_WEAKNESS_FX) {
       // Expose Weakness: target-marking impact cue plus a Technique HUD-icon pulse.
       fxExposeWeakness(scene, to.x, to.y, ev.empowered);
-      notifyAbilityFired("technique");
       continue;
     }
     if (effectId === ABILITY_TECHNIQUE_FIRED_FX) {
-      notifyAbilityFired("technique");
       continue;
     }
     if (effectId === FIRST_STRIKE_CLIENT_EFFECT) {

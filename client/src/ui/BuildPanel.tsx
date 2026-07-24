@@ -22,6 +22,7 @@ import {
   type BuildPanelTab,
 } from "../hud/atoms";
 import { resolveSystemVisibility, type SystemVisibility } from "../hud/systemVisibility";
+import type { UiUnlockSystem } from "../hud/uiUnlocks";
 import { AbilitiesPanelContent } from "./AbilitiesPanel";
 import { StancesPanelContent } from "./StancesPanel";
 import { RitesPanelContent } from "./RitesPanel";
@@ -50,15 +51,20 @@ function SummaryCard({
   name,
   text,
   muted = false,
+  unlockSystem,
 }: {
   kind: BuildIconKind;
   eyebrow: string;
   name: string;
   text: string;
   muted?: boolean;
+  unlockSystem?: UiUnlockSystem;
 }) {
   return (
-    <div className="build-summary-card">
+    <div
+      className="build-summary-card"
+      data-ui-unlock-system={unlockSystem}
+    >
       <BuildIcon kind={kind} label={name} muted={muted} />
       <div className="build-summary-card__body">
         <div className="build-summary-card__eyebrow">{eyebrow}</div>
@@ -77,8 +83,12 @@ function BuildOverview({ visibility }: { visibility: SystemVisibility }) {
   const runesEquipped = useAtomValue(runesEquippedAtom);
   const gm = useAtomValue(globalMasteryAtom);
 
-  const technique = abilityDef(equippedAbilities.technique);
-  const guard = abilityDef(equippedAbilities.guard);
+  // The overview shows the HIGHEST-PRIORITY ability of each kind (slot 1); the
+  // Abilities panel is where the full multi-slot loadout lives.
+  const technique = abilityDef(equippedAbilities.techniques[0]);
+  const guard = abilityDef(equippedAbilities.guards[0]);
+  const extraTechniques = Math.max(0, equippedAbilities.techniques.length - 1);
+  const extraGuards = Math.max(0, equippedAbilities.guards.length - 1);
   const defaultStance = stanceDef(equippedStances.default);
   const reactiveStance = stanceDef(equippedStances.reactive);
   const active = stanceDef(activeStance);
@@ -93,17 +103,19 @@ function BuildOverview({ visibility }: { visibility: SystemVisibility }) {
           <>
             <SummaryCard
               kind="ability"
-              eyebrow="Technique"
+              eyebrow={extraTechniques > 0 ? `Technique (+${extraTechniques})` : "Technique"}
               name={technique?.name ?? "Empty Technique"}
               text={technique?.blurb ?? "Equip an offensive ability, then use rune rules to tune when it fires."}
               muted={!technique}
+              unlockSystem="abilities"
             />
             <SummaryCard
               kind="ability"
-              eyebrow="Guard"
+              eyebrow={extraGuards > 0 ? `Guard (+${extraGuards})` : "Guard"}
               name={guard?.name ?? "Empty Guard"}
               text={guard?.blurb ?? "Equip a defensive ability, then bind it to danger conditions in runes."}
               muted={!guard}
+              unlockSystem="abilities"
             />
           </>
         )}
@@ -115,6 +127,7 @@ function BuildOverview({ visibility }: { visibility: SystemVisibility }) {
               name={active?.name ?? defaultStance?.name ?? "No Stance"}
               text={active?.blurb ?? defaultStance?.blurb ?? "Choose a default posture for your baseline stats."}
               muted={!active && !defaultStance}
+              unlockSystem="stances"
             />
             <SummaryCard
               kind="stance"
@@ -125,6 +138,7 @@ function BuildOverview({ visibility }: { visibility: SystemVisibility }) {
                 "Equip a reactive posture, then use a Switch Stance rune to enter it temporarily."
               }
               muted={!reactiveStance}
+              unlockSystem="stances"
             />
           </>
         )}
@@ -139,6 +153,7 @@ function BuildOverview({ visibility }: { visibility: SystemVisibility }) {
                 : "Equip rites for always-on between-fight behavior."
             }
             muted={!firstRite}
+            unlockSystem="rites"
           />
         )}
         <SummaryCard
@@ -194,6 +209,7 @@ export function BuildPanel({ onClose, progressiveDisclosure = false }: Props) {
             key={item.id}
             selected={effectiveTab === item.id}
             controls={`build-panel-${item.id}`}
+            unlockSystems={item.gate ? [item.gate] : undefined}
             onSelect={() => setTab(item.id)}
           >
             {item.label}

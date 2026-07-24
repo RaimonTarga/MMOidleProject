@@ -16,6 +16,10 @@ import { registerHardening, runHardening, resetHardening, runHardeningMaxDr, res
 import { runStationaryDr } from "./mitigation/stationaryDr";
 import { runSustainedFightDr } from "./mitigation/sustainedFightDr";
 import { registerReactivePlating, runReactivePlating } from "./mitigation/reactivePlating";
+import {
+  registerBrambleReflect,
+  runBramblePlating,
+} from "../player/abilities/abilityBramble";
 import { COMBAT_ELAPSED_KEY } from "./core/pools";
 import { runRiteOoc } from "../player/rites/riteOoc";
 
@@ -43,6 +47,7 @@ export function initDefenseSystems(): void {
   registerKillBurst();
   registerHardening();
   registerReactivePlating();
+  registerBrambleReflect();
 }
 
 /**
@@ -96,6 +101,7 @@ export function updateDefensiveSystems(
     runStationaryDr(world, player, dt);
     runSustainedFightDr(world, player);
     runReactivePlating(world, player);
+    runBramblePlating(world, player);
     // Rites (system rework Step 11): OOC cleanse + buff-decay slowdown. Internally
     // gated to out-of-combat, so it self-skips while the player is engaged.
     runRiteOoc(world, player, dt, now);

@@ -2,30 +2,34 @@
  * Ability buff descriptors (system rework Step 7).
  *
  * Guard abilities that grant a lasting boon are EXPLICIT buffs — they show in the
- * buff bar with an icon + timer, like every other buff. One Guard slot ⇒ at most
- * one active guard buff, so a single `ability-guard` descriptor projects whichever
- * Guard ability is active (label/color pulled from the equipped ability def).
+ * buff bar with an icon + timer, like every other buff. One descriptor per GUARD
+ * SLOT: two equipped Guards layer independently, and each tile labels itself from
+ * the ability occupying its own slot.
  */
 import {
-  ABILITY_GUARD_EFFECT_ID,
+  ABILITY_GUARD_EFFECT_IDS,
   ABILITY_SECOND_WIND_EFFECT_ID,
   abilityDef,
   getStatusEffect,
 } from "@mmo-idle/shared";
 import { defineBuff, type BuffDescriptor } from "../../combat/buffs/descriptor";
+import { BRAMBLE_EFFECT_ID } from "./abilityBramble";
 
-export const ABILITY_BUFFS = [
+/** One DR-buff descriptor per Guard slot, reading that slot's effect id. */
+const GUARD_SLOT_BUFFS = ABILITY_GUARD_EFFECT_IDS.map((effectId, slotIndex) =>
   defineBuff(
-    "ability-guard",
+    effectId,
     ({ player, playerCs }) => {
       if (!playerCs) return null;
-      const eff = getStatusEffect(playerCs, ABILITY_GUARD_EFFECT_ID);
+      const eff = getStatusEffect(playerCs, effectId);
       if (!eff || eff.remainingMs <= 0) return null;
       const totalMs = eff.data["totalMs"] ?? eff.remainingMs;
       const drPct = Math.round((eff.data["drPct"] ?? 0) * 100);
-      const def = abilityDef(player.tracksProgression.equippedAbilities?.guard);
+      const def = abilityDef(
+        player.tracksProgression.equippedAbilities?.guards?.[slotIndex],
+      );
       return {
-        id: "ability-guard",
+        id: effectId,
         label: def?.name ?? "Guard",
         stacks: 1,
         durationPct:
@@ -37,6 +41,33 @@ export const ABILITY_BUFFS = [
       };
     },
     { category: "neutral", shape: "square", color: "#9ad0ff", label: "Guard" },
+  ),
+);
+
+export const ABILITY_BUFFS = [
+  ...GUARD_SLOT_BUFFS,
+  defineBuff(
+    "ability-bramble",
+    ({ playerCs }) => {
+      if (!playerCs) return null;
+      const eff = getStatusEffect(playerCs, BRAMBLE_EFFECT_ID);
+      if (!eff || eff.remainingMs <= 0) return null;
+      const totalMs = eff.data["totalMs"] ?? eff.remainingMs;
+      const plating = Math.round(eff.data["platingBonus"] ?? 0);
+      const reflect = Math.round(eff.data["reflectFlat"] ?? 0);
+      return {
+        id: "ability-bramble",
+        label: "Bramble",
+        stacks: 1,
+        durationPct:
+          totalMs > 0 && eff.remainingMs > 0 ? (eff.remainingMs / totalMs) * 100 : -1,
+        color: "#8fd48b",
+        logSourceName: "Bramble Guard",
+        logSourceSide: "ally",
+        logDetail: `+${plating} plating, ${reflect} thorns`,
+      };
+    },
+    { category: "neutral", shape: "square", color: "#8fd48b", label: "Bramble" },
   ),
   defineBuff(
     "ability-second-wind",

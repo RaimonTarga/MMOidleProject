@@ -38,8 +38,8 @@ export function resolveSystemVisibility(
     abilities:
       input.playerTier >= 1 ||
       input.knownAbilities.length > 0 ||
-      input.equippedAbilities.technique !== null ||
-      input.equippedAbilities.guard !== null,
+      input.equippedAbilities.techniques.length > 0 ||
+      input.equippedAbilities.guards.length > 0,
     stances:
       input.playerTier >= 2 ||
       input.knownStances.length > 0 ||

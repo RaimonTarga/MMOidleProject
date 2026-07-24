@@ -1,5 +1,5 @@
 import type { EquipmentSlot } from "../items";
-import type { AbilitySlot } from "../abilities";
+import type { EquippedAbilities } from "../abilities";
 import type { StanceSlot } from "../stances";
 import type { EvolveMode } from "../systems/evolution";
 import type { AutocombatConfig } from "../components/core/networkedSlices";
@@ -98,8 +98,12 @@ export interface ClientToServerEvents {
   "rune:craftRecipe": (recipeId: string) => void;
   /** Learn an ability by crafting its recipe. Server validates gate + cost. */
   "ability:craftRecipe": (recipeId: string) => void;
-  /** Equip/clear an ability in a slot. `abilityId: null` clears the slot. */
-  "ability:setLoadout": (payload: { slot: AbilitySlot; abilityId: string | null }) => void;
+  /**
+   * Set the full equipped-ability loadout. Ordered per slot kind — list order is
+   * fire priority — so equipping, clearing and RE-PRIORITISING are one intent.
+   * Server validates learned / slot-type / slot-count / duplicates.
+   */
+  "ability:setLoadout": (payload: { equipped: EquippedAbilities }) => void;
   /** Learn a stance by crafting its recipe. Server validates gate + cost. */
   "stance:craftRecipe": (recipeId: string) => void;
   /** Equip/clear a stance in a slot. `stanceId: null` clears the slot. */

@@ -1,182 +1,218 @@
-# Step 7 — Abilities — Current State
+# Abilities — Current State
 
-Paired with `docs/archive/abilities-plan.md`. Reflects what shipped this session: the **full
-Abilities system + the Sweep / Brace worked pair**. Authoring more abilities, ability
-evolution, and tuning the numbers are later passes.
+Living truth for the active **Ability** system (Technique / Guard). Paired with
+`docs/archive/abilities-plan.md` (the original Step 7 plan) and
+`design_docs/abilities-evolution-plan-updated.md` (the T2–T4 design baseline).
+Staged work is tracked in `docs/abilities-evolution-implementation-plan.md`.
+
+**Shipped:** Step 7 (the system + 5 T1 abilities), Step 8 (`guard.*` charm amplifiers),
+and **abilities-evolution Wave 1** (the multi-slot engine + cast lifecycle + Technique
+itemization + the T2 trio). Waves 2–3 (T3/T4 rosters) are not started.
 
 > **Name collision (kept distinct).** The passive talent tree (`UsesSkills`, `skillTree/`) is
-> class progression and is **untouched**. "Abilities" is the new active system (Technique / Guard).
+> class progression and is **untouched**. "Abilities" is the active system (Technique / Guard).
+
+**All numbers are PLACEHOLDERS** — the user owns the balance pass.
+
+---
 
 ## Data model — state rides `TracksProgression` (like runes)
 
-**Implementation refinement vs. the plan:** ability state lives on `TracksProgression`, NOT a new
-`UsesAbilities` component. Rationale: it's build/loadout data exactly like runes
-(`runesOwned`/`runeRecipesCrafted`/`runesEquipped` already live there), and this avoids a DB
-migration, a new networked slice + dev-boot invariant churn, a new `ServerEntity` key, and fixture
-churn. Two fields added (`shared/src/components/core/networkedSlices.ts`):
+Ability state lives on `TracksProgression`, NOT a separate component: it is build/loadout
+data exactly like runes, which avoids a DB migration, a new networked slice, a new
+`ServerEntity` key, and fixture churn. Two fields
+(`shared/src/components/core/networkedSlices.ts`):
 - `knownAbilities: string[]` — abilities learned (crafted); the slottable pool.
-- `equippedAbilities: EquippedAbilities` — `{ technique: string | null; guard: string | null }`.
+- `equippedAbilities: EquippedAbilities` — **ordered lists per slot kind**:
+  `{ techniques: string[]; guards: string[] }`. **List order is fire priority.**
 
-Static catalog — `shared/src/abilities.ts`:
-- `AbilitySlot` (`technique` | `guard`), `AbilityTag` (`mobility`, grows), `AbilityTrigger`
-  (`in-combat` | `hp-below` | `n-aggro` | `has-debuff`), `AbilityEffectSpec`
-  (`cleave` | `empower` | `damage-reduction` | `cleanse` | `heal`), `AbilityDef`.
-- `ABILITY_DATABASE` (Sweep, Brace, Cleanse, Heavy Strike, Second Wind), `abilityDef()`,
-  `validAbilityIds()`, `emptyEquippedAbilities()`.
+### Slots are tier-gated
+`abilitySlotCount(playerTier)` (`shared/src/abilities.ts`) mirrors `riteSlotCount`:
+T1–T2 → 1 Technique / 1 Guard, **T3 → 2/1**, **T4+ → 2/2**. Keyed on **player tier**, not
+Global Mastery — Biome Mastery owns ability *unlocks*, tier owns *slots*. Projected on
+`PlayerView` as `abilitySlots`.
 
-Recipes — `shared/src/abilityRecipes.ts` (parallel to `RuneRecipe`):
-- `AbilityRecipe` (essence `cost` + `catalystCost`, `recipeGroup`+`requiredBiomeLevel` gate,
-  `requiredBossClear` reserved), `ABILITY_RECIPE_DATABASE`, `isAbilityRecipeUnlocked()`,
-  `validateAbilityRecipes()`. Crafting LEARNS the ability into `knownAbilities` (permanent).
+### Migration (no SQL)
+`normalizeEquippedAbilities` accepts the legacy Step 7 `{technique, guard}` shape and
+coerces it to lists, dropping unknown ids, slot mismatches and duplicates. Applied in
+`playerRepo` hydrate — the column is whole-slice JSON, so no schema migration was needed.
+`RENAMED_ABILITY_IDS` maps ids that changed after shipping (`heavy-strike` →
+`expose-weakness`); it is **additive-only**, since removing an entry silently strips the
+ability from affected saves.
 
-Persistence: defaulted in `playerRepo` (fresh + hydrate; `knownAbilities` filtered through
-`validAbilityIds`, `equippedAbilities` defaults to empty). Whole-slice JSON write persists them.
-`PlayerView` carries both fields (composer defaults for old/loose rows). 5 bench/test fixtures
-made well-formed.
+### Static catalog — `shared/src/abilities.ts`
+- `AbilitySlot` (`technique` | `guard`), `AbilityShape` (`armed` | `cast` | `reposition` |
+  `instant`), `AbilityTag` (`mobility`), `AbilityTrigger` (`in-combat` | `hp-below` |
+  `n-aggro` | `has-debuff`).
+- `AbilityEffectSpec`: `cleave` | `empower` | `cast-strike` | `expose-weakness` |
+  `reposition` | `bramble` | `damage-reduction` | `cleanse` | `heal`.
+- `AbilityDef` carries `tier` (home tier), `scalePerTierPct`, `lineageId`, `castMs`.
 
-## Firing — built-in heuristic + rune override (server)
+### The scaling seam — `resolveAbilityEffect`
+**Every consumer must resolve effects through this.** Reading `ability.effect` raw
+silently opts an ability out of both scaling layers. It applies:
+- **automatic tier deepening** (`abilityTierScale`) — an owned ability improves as the
+  player advances; same id, same form, no upgrade ritual;
+- **Technique Power** — only on fields listed in `TECHNIQUE_POWER_FIELDS`.
 
-- **`hasArmedAbility` component** (`server/src/ecs/entity.ts`) — server-only `{ abilityId }`,
-  **sibling to `hasEmpoweredAttack`** (kept separate so it never collides with the class-owned
-  empowered flag). NOT networked (the "armed" UI indicator is deferred).
-- **`abilityFiring.ts`** (`server/src/systems/player/abilities/`) — `updateAbilityFiring(world)`,
-  run each tick in `World.tick` after `updateAutoTargets` and before combat resolves. Per equipped
-  ability: gate on a per-ability cooldown (`ability.technique.cd` / `ability.guard.cd` on
-  `TracksCombat`); fire on the built-in trigger UNLESS a `fire-technique`/`fire-guard` rune is
-  equipped, in which case the rune's derived flag drives (override suppresses the built-in). Technique
-  arms `hasArmedAbility`; Guard applies its immediate effect (`applyShieldPercent`).
-- **`abilityEffects.ts`** — `initAbilitySystems()` (registered in `initCombatSystems()` for bench
-  parity) registers TWO listeners: an `onHit` Technique rider (consumes `hasArmedAbility` respecting
-  the chaotic-miss rule; Sweep's `cleave` reuses `applyPlayerAoe` — **archetype-agnostic**, rides
-  `ctx.damage`), and an `onDamageTaken` Guard-buff DR reader (mirrors reload's cover-fire: reduces
-  incoming damage by the active guard buff's `drPct`, capped at 0.9).
+Both are restricted to magnitude fields (`ABILITY_SCALABLE_FIELDS`). Durations, radii,
+stun times and dash distances are **never** scaled. `ABILITY_MULTIHIT_MODE` declares, per
+effect kind, whether a Reload magazine distributes the payload or lands it on the first
+hit only — deliberately per-effect so a 1.5 s stun can't become five 0.3 s stuns.
 
-### Guard abilities are EXPLICIT buffs (buff system)
-Guard boons go through the game's **buff system**, not raw shields — they show in the buff bar with
-icon + timer. A Guard ability with a `damage-reduction` effect applies the
-`ABILITY_GUARD_EFFECT_ID` (`"ability-guard"`) **status effect** on `TracksCombat`
-(`{ totalMs, drPct }`, refreshable; `updateTracksCombat` decrements it). The `onDamageTaken` listener
-reads `drPct`; a buff descriptor (`abilityBuffs.ts` → `ABILITY_BUFFS`, spread into `ALL_BUFFS` in
-`buffSync.ts`) projects it as the `ability-guard` `PlayerBuff` each tick (label/color from the
-equipped ability def). One Guard slot ⇒ at most one active, so a single buff id covers all guard
-buffs. `ability-guard` added to shared `BUFF_IDS`.
+---
 
-## Rune catalog (shared) — dedicated channels
+## Firing — `abilityFiring.ts`
 
-**Refinement vs. the plan's "CONTROL channel":** each ability slot gets its OWN rune channel so a
-Technique override, a Guard override, and a CONTROL taunt can all be equipped at once (CONTROL is
-single-claim). `shared/src/runeDatabase.ts`:
-- New channels `TECHNIQUE` / `GUARD`; new actions `fire-technique` / `fire-guard` (cost 1 RP each).
-- Derive produces `fireTechnique` / `fireGuard` flags; `runeConfig.ts` stamps
-  `RUNE_FIRE_TECHNIQUE_FLAG` / `RUNE_FIRE_GUARD_FLAG` onto `TracksCombat`.
-- Both actions added to `STARTER_RUNE_IDS` (v1: the override is a timing preference for an ability
-  you already unlocked — gating behind another recipe is friction; user can move them to recipes).
+`updateAbilityFiring(world, now)` runs each tick after rune flags + target acquisition,
+before combat resolves.
+
+- **Cooldowns are per ABILITY** (`ability.cd.<abilityId>`), not per slot — a loadout swap
+  must not dodge a cooldown, and two equipped abilities must not share a rhythm.
+- **Techniques share ONE offensive channel** (`hasArmedAbility` and `isCastingAbility`,
+  mutually exclusive and singular). The driver walks the list in order and stops at the
+  first ability that fires. A loser is *not* put on cooldown — it stays eligible.
+- **Guards** activate independently but at most **one activation per decision window**
+  (`ability.guard.window`, one tick). Already-active buffs layer freely, so Ward + a later
+  Brace is legal while an instant defensive combo-dump is not.
+- **Rune overrides are per slot INDEX**: `fire-technique`/`fire-guard` drive slot 0,
+  `fire-technique-2`/`fire-guard-2` drive slot 1 (rune channels are single-claim, so a
+  second slot needs its own channel).
+
+## Execution shapes
+
+| Shape | Mechanism | Worked by |
+|---|---|---|
+| `armed` | attaches `hasArmedAbility`; rider lands in `abilityEffects.ts` on the next hit | Sweep, Expose Weakness |
+| `cast` | attaches `isCastingAbility`; see below | Charged Strike |
+| `reposition` | resolves immediately by moving the player; optionally also arms | Charge |
+| `instant` | immediate self-facing effect | Brace, Cleanse, Second Wind, Bramble Guard |
+
+### Cast lifecycle — `abilityCasting.ts`
+Mirrors the proven monster `chargedAttack` machine: arm → wind-up → resolve, aborting on
+hard CC. Two deliberate differences:
+- **Movement continues.** A monster roots itself while charging; the player does not,
+  because auto-movement is rune-driven and a cast that fought pathing would be unusable in
+  an idle game. Only *normal attacks* are suppressed (the `isCastingAbility` check in
+  `combat.ts`, beside the existing `isChanneling` one).
+- **An aborted cast costs nothing.** The cooldown is charged only on resolve, so losing a
+  target or eating a stun mid-wind-up is not punished twice.
+
+`technique.cast-speed-pct` shortens the wind-up (capped at 60% — the telegraph is the cost
+that makes the payoff fair). Node events `player-cast-start` / `player-cast-end` drive the
+client; the cast bar reuses `castBars.ts` wholesale, since `castState` is keyed by entity
+id and players have sprites.
+
+---
+
+## Guard buffs are EXPLICIT buffs, one id per slot
+
+Guard boons go through the buff system (icon + timer in the buff bar), not raw shields.
+Because two Guards can be equipped, the DR effect id is **per slot**: `ability-guard`
+(slot 0) and `ability-guard-2` (slot 1), each with its own descriptor labelling itself
+from the ability in *its* slot. This shape is forced: `BUFF_IDS` is a fixed const list and
+status-effect `data` is numbers-only, so the owning slot cannot live in effect data.
+
+The `onDamageTaken` reader sums active slots **multiplicatively** (each is a separate
+reduction of what got through), capped at `GUARD_DR_CAP` 0.9. Additive stacking would hit
+the cap far too easily and make the second Guard strictly the best defensive pairing.
+Knockback resist takes the **best** active slot rather than stacking, so a second Guard
+can't make the player immovable.
+
+## Technique itemization — `TECHNIQUE_KEYS`
+
+The offensive sibling of `GUARD_KEYS`, riding the existing equipment
+`mechanicEffects → usesSkills.passives` pipeline (no new state, slice, or migration):
+- `technique.power-pct` — scales opted-in offensive payloads only
+- `technique.cooldown-reduction-pct` (capped 0.9)
+- `technique.cast-speed-pct` (capped 0.6)
+
+Carried by **weapons**; Guard potency stays on the recovery/charm slot. The budgets are
+deliberately not interchangeable. Seeded (PLACEHOLDER magnitudes) on the plains T2 sidearm
+(cooldown), mountain T2 hammer (cast speed), and desert T2 opener (power).
+
+---
+
+## Roster
+
+### T1 — the base vocabulary
+Re-keyed to the design table; safe to move because `knownAbilities` stores ability ids, so
+no save lost an ability. Each sits mid-band (biome level 3 of the L1–6 T1 band) so the
+player meets the biome's challenge before earning its answer.
+
+| Ability | Slot / shape | Biome | Job |
+|---|---|---|---|
+| **Sweep** | Technique / armed | Plains | Next attack cleaves — the density answer |
+| **Second Wind** | Guard / instant | Forest | HoT sustain vs. frequent small hits |
+| **Brace** | Guard / instant | Mountain | DR + knockback resist vs. telegraphed spikes |
+| **Cleanse** | Guard / instant | Swamp | Strip debuff/DoT stacks + short DR |
+| **Expose Weakness** | Technique / armed | Cave | Elite damage amplification |
+
+### T2 — new execution shapes
+Not roster growth for its own sake: these introduce **reflect, repositioning and casting**
+while every T1 ability keeps auto-scaling.
+
+| Ability | Slot / shape | Biome (level) | Job |
+|---|---|---|---|
+| **Bramble Guard** | Guard / instant | Jungle (3) | Temporary plating + flat thorns |
+| **Charge** | Technique / reposition | Desert (3) | Close the gap, land an empowered blow |
+| **Charged Strike** | Technique / **cast** | Mountain (**9**) | The first player cast |
+
+A T2 ability can live in a T1-native biome because `BIOME_LEVELS_PER_TIER = 6` — the T2
+band is levels 7–12. Mountain teaching you to *read* a wind-up and then to *perform* one
+is deliberate.
+
+### Bramble Guard — `abilityBramble.ts`
+The first reflect mechanic. Plating folds into `mitigatesDamage.plating` per tick from the
+status effect (same pattern as reactive plating) and unwinds exactly once. Reflect is
+**flat, never a fraction of damage taken** — a percentage would scale with incoming damage
+and turn "get hit harder" into "deal more damage", the exact offence/defence leak the
+design forbids. It fires on `afterHit` (a resolved hit), skips DoT ticks, and is unmitigated.
+
+---
+
+## Rune layer
+
+Each ability slot index has its own single-claim channel: `TECHNIQUE`, `TECHNIQUE_2`,
+`GUARD`, `GUARD_2` (+ `STANCE`, `CONTROL`). Actions `fire-technique[-2]` /
+`fire-guard[-2]`, all in `STARTER_RUNE_IDS` — the override is a timing preference for an
+ability you already had to unlock. The `-2` actions are inert until the tier grants that slot.
+
+Conditions available to ability channels: `in-combat`, `hp-below-25`, `has-debuff`,
+`n-aggro-3`, `target-casting` (enemy winding up a charged attack — this is what makes a
+future Parry automatic), `before-empowered`, and **`target-elite`** (new: lets two equipped
+Techniques specialise against the same enemy, e.g. Expose Weakness to kill it faster vs. a
+future Stun Strike to control it).
 
 ## Protocol + client
 
-- `socketEvents.ts`: `ability:craftRecipe`, `ability:setLoadout` (client→server),
-  `ability:craftResult` (server→client). Handlers in `index.ts` call
-  `craftAbilityRecipe` / `setAbilityLoadout` (`server/src/systems/player/economy/abilityCrafting.ts`).
-- Client bridge: `hudBus.requestCraftAbilityRecipe` / `requestSetAbilityLoadout` → intents →
-  `net/intents` senders → socket. Atoms `knownAbilitiesAtom` / `equippedAbilitiesAtom` synced from
-  `PlayerView` (+ reset). New `AbilitiesPanel.tsx` (slot selects + Learn list) wired into the desktop
-  sidebar (`MenuButtons`) + Escape handling (`overlayStack`) AND the mobile HUD ("More" sheet →
-  Abilities). RunesPanel surfaces the new actions
-  automatically (it iterates `ACTION_DATABASE`); `CHANNEL_COLOR` got `TECHNIQUE`/`GUARD` entries.
-- Admin: `AdminCharacterRecord` carries `knownAbilities` + `equippedAbilities`; `CharactersTab` shows
-  `T:/G: (n known)`.
-
-## In-combat HUD + Sweep FX (placeholder visuals)
-
-The equipped Technique/Guard now show as a **bottom-left ability bar** (`AbilityBar.tsx`,
-mounted in `#ability-overlay`), styled after the buff bar (colored placeholder shapes + glyph +
-short label + a `T`/`G` slot badge). State is derived **client-side** (no protocol churn):
-- **Cooldown sweep** — a dark conic overlay of the REMAINING cooldown, approximated from the
-  last-fired wall clock (`abilityFiredAtAtom`) + the ability's `cooldownMs`. Approximate (rune
-  timing overrides / Step 8 `guard.*` charms shift the real cd), fine for a placeholder.
-- **Technique fire** is signalled by a new shared client-effect tag `ABILITY_SWEEP_FX`
-  (`"ability-sweep"`): `abilityEffects.ts` stamps it into `ctx.metadata.clientEffects` when
-  Sweep's cleave lands, combat.ts forwards it on the `player-hit` event, and `combatFx.ts` both
-  plays `fxSweep` (a bold horizontal cleave arc laid ON TOP of the normal attack FX, `fx/sweep.ts`)
-  and pulses the Technique icon via `notifyAbilityFired('technique')`.
-- **Guard** derives active-glow + cooldown from the rising/falling edge of its `ability-guard`
-  buff (already in `activeBuffs`); no FX tag needed.
-- Mobile: buffs occupy bottom-left, so the ability bar floats just above them (hud.css media query).
-
-All HUD colors/glyphs are placeholders — swap for real icon textures without touching layout.
-
-### In-world telegraphs (skill callouts + armed bar)
-
-Node-wide cosmetic events (both in `shared/src/protocol/combatEvents.ts`) drive in-world tells,
-mirroring the monster cast-bar telegraph:
-- **`player-technique-armed`** — pushed by `abilityFiring.ts` when a Technique arms. The client
-  (`combatFx.ts`) pops a lingering skill-name callout over the player ("Sweep", amber,
-  `render/skillCallouts.ts`) and tracks the armed state in `RenderState.techniqueArmed`, which
-  tints the player's **cooldown bar red** (`cooldownBars.ts`) until the consuming `player-hit`
-  arrives carrying one of the ability client-effect tags (sweep / expose-weakness /
-  technique-fired). A chaotic miss keeps both the server charge and the red bar armed — correct.
-- **`player-guard`** (pre-existing) — now also pops a callout ("Brace" / "Cleanse" /
-  "Second Wind", tinted to each Guard's FX palette) in addition to the in-world Guard FX.
-
-Callouts pop in, hold ~1.4 s, then drift up and fade (~1.85 s total); one per player, newest wins.
-
-## Worked content (placeholders)
-
-- **Sweep** (Technique, forest): trigger `in-combat`, cleave 60% / radius 90, cd 4 s. Recipe
-  `ability-recipe-sweep` (forest L2, 160 green).
-- **Brace** (Guard, forest): trigger `hp-below 0.5`, **damage-reduction buff** 40% for 5 s (explicit
-  `ability-guard` buff), cd 8 s. Recipe `ability-recipe-brace` (forest L2, 140 green + 60 blue).
-
-### Rough T1 per-biome additions (Step 7 follow-up — placeholder numbers)
-Each is its biome's **mid-biome "answer tool"** — gated at biome level **3** (mid of the L1–4 T1
-band) so the player meets the biome's challenge first and then earns the response. All learned
-**permanently** into `knownAbilities` via the existing AbilityRecipe path (biome-gated by
-`recipeGroup` + `requiredBiomeLevel`, **no boss-clear requirement**), surfaced automatically in the
-Abilities panel's "Learn Abilities" list + the forge (both iterate `ABILITY_RECIPE_DATABASE` and gate
-on `isAbilityRecipeUnlocked`). Costs/levels are PLACEHOLDERS (user balance pass).
-- **Cleanse** (Guard, swamp): trigger `has-debuff`, **strips** up to 3 stacks from each harmful
-  debuff/DoT on the player (rot/slow/antiheal/marks/monster-DoT/node-hazard) AND applies a short
-  post-cleanse `ability-guard` DR buff (20% for 3 s), cd 9 s. Recipe `ability-recipe-cleanse`
-  (**swamp L3**, 150 green). The defensive answer to rot/DoT/debuff pressure.
-- **Heavy Strike** (Technique, mountain): trigger `in-combat`, `empower` rider — next landed hit deals
-  ×1.8 **single-target** damage (no splash; applied in the `onHit` rider, mitigated normally by
-  `onDamageTaken`), cd 5 s. Recipe `ability-recipe-heavy-strike` (**mountain L3**, 150 yellow).
-- **Second Wind** (Guard, cave): trigger `hp-below 0.35`, `heal` — deposits 30% max HP into the
-  recovery burst pool (antiheal applies; shows the **Regen** tile), cd 12 s. Recipe
-  `ability-recipe-second-wind` (**cave L3**, 150 purple). Emergency sustain vs. sparse elite pressure.
-
-> **Deferred (T2 direction):** DoT AoE/spread is reserved for a future **T2 ability** — Sweep
-> remains a **generic cleave** (it does not apply DoTs, and there is no DoT-AoE/spread ability yet).
-> Technique/Guard **rune-override** compatibility (`fire-technique`/`fire-guard`, plus the
-> `before-empowered` condition) is preserved for all of these — they are normal Technique/Guard
-> abilities that the override channels drive like Sweep/Brace.
-
-**Shared authority added:** `isHarmfulPlayerStatusEffect(id, data)` (`shared/src/systems/monsterDebuffs.ts`)
-is now the single definition of "a debuff/DoT on the player" — used by Cleanse, the `has-debuff` trigger,
-AND the Cleansing Breath rite + Lingering Momentum (refactored off their local copy; it also broadened
-the set to cover rot/antiheal/marks/heat/node-hazards, a strict improvement that incidentally stops
-Lingering Momentum from extending those debuffs).
-
-- All numbers are PLACEHOLDERS (user balance pass).
-- **Deferred polish:** Heavy Strike has no client FX tag (so the Technique HUD icon doesn't pulse and
-  its cooldown sweep doesn't animate); Second Wind grants no `ability-guard` buff, so the Guard HUD
-  icon's active-glow/cooldown sweep doesn't run for it (the Regen tile covers it). No target-quality
-  preference on Heavy Strike (fires on plain `in-combat`); "HP low while debuffed" is folded into the
-  plain `has-debuff` trigger for Cleanse. Real DoT-specific resistance (vs. the generic DR stand-in)
-  is deferred.
+- `ability:craftRecipe`, `ability:setLoadout`, `ability:craftResult`.
+  **`ability:setLoadout` carries the WHOLE loadout** — equip, clear and re-prioritise are
+  one intent, and the server validates learned / slot-type / slot-count / duplicates,
+  rejecting the whole request rather than silently dropping entries.
+- **Abilities panel** renders one row per unlocked slot, labels slot 2+ with its priority
+  meaning, and hides abilities already used in another slot of the same kind.
+- **Ability bar** renders every equipped ability. Fired/cooldown timestamps are keyed by
+  **ability id** (not slot kind) so the right tile pulses; the consuming-hit pulse is
+  raised where the armed entry is dropped, since that is the only place the consumed
+  ability's identity is known. A casting tile shows a *filling* sweep.
+- Admin `CharactersTab` lists both loadout lists.
 
 ## Verified
 
-Typecheck clean (4 pkgs); shared rebuilt; `targetPriority` + `runeMaintenance` tests pass; a
-combat bench scenario (`autoCombatSameNode`, 5 players) runs clean (no regression from the new tick +
-listeners + the per-tick buff projection); sanity scripts confirm the ability DB, recipe gating,
-starter availability, the fire-guard hp-threshold override, Technique + taunt coexisting on separate
-channels, and the `ability-guard` buff projecting (label from equipped ability, DR%, duration clock).
+`pnpm typecheck` clean (4 packages); `pnpm test` **34/34**. Ability coverage:
+`abilities`, `abilityMultiSlot`, `abilityCast`, `abilityCharge`, `abilityBramble`,
+`abilitySecondWind`, `abilityTechniqueRune`, `abilityTelegraphEvents`.
 
-## Deferred (not this session)
+## Known gaps
 
-- **Ability evolution** (Sweep→Whirlwind families) + generalizing Step 6's machinery — follow-up.
-- Per-biome ability content beyond the forest Sweep/Brace pair (user content pass).
-- Mobility-tag *movement* effects (Leap Strike etc.) beyond the tag.
-- Admin **grant** action (read-only for now).
-- All numbers/balance; Step 8's charm `guard.*` amplifier keys off the Guard ability shape defined here.
+- **Icons for the T2 trio are drafted but not generated.** `art/manifests/ability-icons.json`
+  has `status: "draft"` entries for bramble-guard / charge / charged-strike; they are NOT in
+  the `abilityIcons.ts` approved allowlist, so those abilities render the placeholder until
+  art is generated and accepted in the gallery.
+- No bespoke in-world FX for Charge / Charged Strike / Bramble (they use the generic
+  technique-fired tag and the reused cast bar).
+- Ability **evolution presentation** (`lineageId` grouping in the panel) is not built yet —
+  the field exists and Sweep carries `lineageId: "sweep"`, but nothing consumes it until
+  Whirlwind lands in Wave 2.
+- All numbers are PLACEHOLDERS.

@@ -10,13 +10,15 @@ import type { EssenceType } from "@mmo-idle/shared";
 import {
   ABILITY_DATABASE,
   ABILITY_RECIPE_DATABASE,
+  ABILITY_SLOTS,
   ESSENCE_TYPES,
   ESSENCE_LABELS,
   TEST_ROOM_NODE_ID,
+  abilitySlotCount,
   catalystLabel,
-  emptyEquippedAbilities,
+  equippedForSlot,
   isAbilityRecipeUnlocked,
-  type AbilitySlot,
+  type EquippedAbilities,
 } from "@mmo-idle/shared";
 import type { World } from "../../../world/World";
 import type { PlayerEntity } from "../../../ecs/entity";
@@ -102,28 +104,46 @@ export interface AbilityLoadoutResult {
   reason?: string;
 }
 
-/** Equip (or clear, with `abilityId: null`) an ability in the given slot. */
+/**
+ * Replace the whole equipped-ability loadout.
+ *
+ * Ordered lists per slot kind — index 0 is highest fire priority — so equipping,
+ * clearing and re-prioritising are all the same operation. Rejects the WHOLE
+ * request rather than silently dropping entries, so the client never ends up
+ * showing a loadout the server didn't accept.
+ */
 export function setAbilityLoadout(
   world: World,
   entity: PlayerEntity,
-  slot: AbilitySlot,
-  abilityId: string | null,
+  equipped: EquippedAbilities,
 ): AbilityLoadoutResult {
   const prog = entity.tracksProgression;
-  if (abilityId !== null) {
-    const ability = ABILITY_DATABASE.get(abilityId);
-    if (!ability) return { success: false, reason: "Unknown ability." };
-    if (ability.slot !== slot) {
-      return { success: false, reason: "Ability does not fit that slot." };
+  const known = new Set(prog.knownAbilities ?? []);
+  const slots = abilitySlotCount(prog.playerTier);
+
+  for (const slot of ABILITY_SLOTS) {
+    const ids = equippedForSlot(equipped, slot);
+    if (ids.length > slots[slot]) {
+      return { success: false, reason: `Only ${slots[slot]} ${slot} slot(s) unlocked.` };
     }
-    if (!(prog.knownAbilities ?? []).includes(abilityId)) {
-      return { success: false, reason: "Ability not learned yet." };
+    if (new Set(ids).size !== ids.length) {
+      return { success: false, reason: "The same ability cannot fill two slots." };
+    }
+    for (const id of ids) {
+      const ability = ABILITY_DATABASE.get(id);
+      if (!ability) return { success: false, reason: "Unknown ability." };
+      if (ability.slot !== slot) {
+        return { success: false, reason: `${ability.name} does not fit a ${slot} slot.` };
+      }
+      if (!known.has(id)) {
+        return { success: false, reason: `${ability.name} is not learned yet.` };
+      }
     }
   }
 
   prog.equippedAbilities = {
-    ...(prog.equippedAbilities ?? emptyEquippedAbilities()),
-    [slot]: abilityId,
+    techniques: [...equipped.techniques],
+    guards: [...equipped.guards],
   };
   markSliceDirty(world, entity, "tracksProgression");
   return { success: true };

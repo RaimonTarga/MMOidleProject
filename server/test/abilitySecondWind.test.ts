@@ -52,7 +52,7 @@ function makePlayerSlices(): PersistedPlayerSlices {
       runeRecipesCrafted: [],
       runesEquipped: [{ conditionId: "in-combat", actionId: "fire-guard" }],
       knownAbilities: ["second-wind"],
-      equippedAbilities: { technique: null, guard: "second-wind" },
+      equippedAbilities: { techniques: [], guards: ["second-wind"] },
       knownStances: [],
       equippedStances: { default: null, reactive: null },
       activeStance: null,
@@ -82,7 +82,7 @@ if (!target) throw new Error("failed to create target");
 setAttackTarget(world, player, target.isMonster.id);
 
 updateRuneDerivedConfig(world, 1_000);
-updateAbilityFiring(world);
+updateAbilityFiring(world, Date.now());
 assert(
   getStatusEffect(player.tracksCombat, ABILITY_SECOND_WIND_EFFECT_ID) === undefined,
   "Second Wind should not spend its cooldown at full HP",
@@ -93,7 +93,7 @@ player.hasHealth.hp = maxHp * 0.7;
 const hpBefore = player.hasHealth.hp;
 
 updateRuneDerivedConfig(world, 1_100);
-updateAbilityFiring(world);
+updateAbilityFiring(world, Date.now());
 const effect = getStatusEffect(player.tracksCombat, ABILITY_SECOND_WIND_EFFECT_ID);
 assert(!!effect, "In Combat -> Fire Guard should activate Second Wind when damaged");
 assert(effect.data.healPct === 0.3, "Second Wind status carries heal metadata");

@@ -67,8 +67,11 @@ export const BUFF_IDS = [
   'summoner-debuff-immune',
   'debuff-stunned',
   // Abilities (system rework Step 7): the active Guard-ability buff (e.g. Brace).
-  // One Guard slot ⇒ at most one active; the descriptor reads the equipped def.
+  // One id per GUARD SLOT — two equipped Guards layer independently and each
+  // descriptor labels itself from the ability in its own slot.
   'ability-guard',
+  'ability-guard-2',
+  'ability-bramble',
   'ability-second-wind',
   // Mobility boots (see server/src/systems/world/mobility/mobilityBoots.ts)
   'mob-sprint',   // Plains — out-of-combat sprint

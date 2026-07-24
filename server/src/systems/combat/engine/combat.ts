@@ -1,6 +1,6 @@
 import type { World } from "../../../world/World";
 import {
-  ABILITY_GUARD_EFFECT_ID,
+  ABILITY_GUARD_EFFECT_IDS,
   applyStatusEffect,
   GAME_CONFIG,
   MONSTER_DATABASE,
@@ -799,15 +799,15 @@ function abortMonsterCast(world: World, monster: MonsterEntity): void {
 }
 
 function playerKnockbackResistPct(player: PlayerEntity): number {
-  const guard = getStatusEffect(player.tracksCombat, ABILITY_GUARD_EFFECT_ID);
-  if (!guard || guard.remainingMs <= 0) return 0;
-  return Math.max(
-    0,
-    Math.min(
-      PLAYER_KNOCKBACK_RESIST_CAP,
-      guard.data["knockbackResistPct"] ?? 0,
-    ),
-  );
+  // Any active Guard slot can carry knockback resist; take the best rather than
+  // stacking, so a second Guard never makes the player immovable outright.
+  let best = 0;
+  for (const effectId of ABILITY_GUARD_EFFECT_IDS) {
+    const guard = getStatusEffect(player.tracksCombat, effectId);
+    if (!guard || guard.remainingMs <= 0) continue;
+    best = Math.max(best, guard.data["knockbackResistPct"] ?? 0);
+  }
+  return Math.max(0, Math.min(PLAYER_KNOCKBACK_RESIST_CAP, best));
 }
 
 /**
@@ -942,6 +942,15 @@ export function updateCombat(world: World, dt: number, now: number) {
 
     // Channeled Beam locks all auto-attacks; the beam system handles targeting + damage.
     if (player.isChanneling) {
+      player.performsAttack.lastAttackAt = now;
+      continue;
+    }
+
+    // A casted Technique's wind-up suppresses normal attacks (abilities evolution
+    // §5.2) — the cost of the burst. MOVEMENT is deliberately NOT suppressed, so
+    // casting never fights rune-driven autocombat pathing. Holding lastAttackAt
+    // means the attack timer resumes from the end of the cast, not mid-swing.
+    if (player.isCastingAbility) {
       player.performsAttack.lastAttackAt = now;
       continue;
     }
