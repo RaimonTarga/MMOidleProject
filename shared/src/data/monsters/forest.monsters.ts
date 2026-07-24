@@ -42,7 +42,7 @@ export const forestMonsterEntries = [
     id: 'wolf', name: 'Wolf', color: 0xaaaacc,
     // Fast baseline speed IS the anti-kite — no charge needed. Frequent light bites.
     stats: { hp: 60, attack: 14, plating: 0, damageReduction: 0, speed: 82, attackRange: 12, attackCooldown: 1200, pullRange: 255 },
-    behavior: 'melee', attackStyle: 'bite', biome: 'forest', elite: true, // pack-alpha standout — the elite for density-node bias (Map Variety)
+    behavior: 'melee', attackStyle: 'bite', biome: 'forest',
     rewards: { essence: 4, essenceType: 'green', level: 1, biomeXp: 25 },
     ai: { wanderRadius: 290, leashRange: 720, idleMinMs: 700, idleMaxMs: 2800 },
     // Forest predator-pack ALPHA: a roaming adult wolf spawns with two young wolves
@@ -91,7 +91,7 @@ export const forestMonsterEntries = [
     // moving but VERY fast-ATTACKING territorial beast — frequency is the threat
     // evasion answers; squishy (no DR) so it still dies to burst.
     stats: { hp: 200, attack: 26, plating: 0, damageReduction: 0, speed: 22, attackRange: 15, attackCooldown: 900, pullRange: 150 },
-    behavior: 'melee', attackStyle: 'impact', biome: 'forest', elite: true, // toughest forest T2 mob — the elite for density-node bias (Map Variety)
+    behavior: 'melee', attackStyle: 'impact', biome: 'forest',
     rewards: { essence: 10, essenceType: 'blue', level: 1, biomeXp: 58 }, // construct → Stone (biome mixture; tunable)
     ai: { wanderRadius: 120, leashRange: 480, idleMinMs: 2500, idleMaxMs: 7000 },
   }],

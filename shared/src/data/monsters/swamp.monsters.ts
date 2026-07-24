@@ -57,7 +57,7 @@ export const swampMonsterEntries = [
     // Giant snapping turtle DoT engine; lives long enough to stack poison deep.
     // Direct bite is almost nothing — the festering venom is the whole fight.
     stats: { hp: 370, attack: 12, plating: 0, damageReduction: 0.10, speed: 28, attackRange: 15, attackCooldown: 2200, pullRange: 185 },
-    behavior: 'melee', attackStyle: 'poison', biome: 'swamp', elite: true, // toughest swamp T2 mob — the elite for density-node bias (Map Variety)
+    behavior: 'melee', attackStyle: 'poison', biome: 'swamp',
     rewards: { essence: 12, essenceType: 'purple', level: 1, biomeXp: 68 },
     ai: { wanderRadius: 170, leashRange: 560, idleMinMs: 2500, idleMaxMs: 7000 },
     dotEffect: { debuffId: 'hydra-venom', label: 'Snapper Venom', damagePerStack: 5, maxStacks: 5, tickIntervalMs: 1000, durationMs: 2400 },
@@ -92,7 +92,7 @@ export const swampMonsterEntries = [
     // Rotting snapper DoT wall: bulky, DR, lives long enough to stack venom deep.
     // The bite is nothing; the poison is the whole fight. Kitable, but DoT ticks regardless.
     stats: { hp: 820, attack: 26, plating: 0, damageReduction: 0.12, speed: 26, attackRange: 15, attackCooldown: 2200, pullRange: 185 },
-    behavior: 'melee', attackStyle: 'poison', biome: 'swamp', elite: true, // toughest swamp T3 mob — the elite for density-node bias (Map Variety)
+    behavior: 'melee', attackStyle: 'poison', biome: 'swamp',
     rewards: { essence: 65, essenceType: 'purple', level: 3, biomeXp: 390 },
     ai: { wanderRadius: 150, leashRange: 520, idleMinMs: 2800, idleMaxMs: 8000 },
     dotEffect: { debuffId: 'plague-venom', label: 'Plague', damagePerStack: 7, maxStacks: 6, tickIntervalMs: 1000, durationMs: 6000 },

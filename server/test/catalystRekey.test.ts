@@ -95,15 +95,24 @@ assert(
   "clearing kill mints no catalyst",
 );
 
-// ── Boss first-clear bundle lands under the node's family key ───────────────────
+// ── Boss first-clear bundle keys by the node's family (when the node has one) ───
 const bossP = world.attachPlayerEntity(makePlayer("p-boss"), "p-boss");
-const boss = world.createMonster("node-6-7", "gnarled-greatbear", { x: 800, y: 800 })!; // alacrity dungeon
+const boss = world.createMonster("node-4-6", "gnarled-greatbear", { x: 800, y: 800 })!; // node-4-6 = alacrity
 assert(boss.isMonster.isBoss, "greatbear is a boss");
 grantMonsterRewards(world, "p-boss", boss);
 const bp = bossP.tracksProgression;
 assert((bp.catalysts["alacrity"] ?? 0) >= 5, "boss bundle (5) minted under the family key");
 assert(bp.catalysts["forest"] === undefined, "boss bundle not keyed by biome");
 assert(bp.bossesCleared.length > 0, "boss clear recorded");
+
+// ── A boss in a dungeon (excluded node) grants no catalyst at all ──────────────
+const dbossP = world.attachPlayerEntity(makePlayer("p-dboss"), "p-dboss");
+const dboss = world.createMonster("node-6-7", "gnarled-greatbear", { x: 800, y: 800 })!; // forest dungeon
+grantMonsterRewards(world, "p-dboss", dboss);
+const dbp = dbossP.tracksProgression;
+assert(Object.keys(dbp.catalysts).length === 0, "dungeon boss mints no catalyst");
+assert(Object.keys(dbp.catalystProgress).length === 0, "dungeon boss adds no catalyst progress");
+assert(dbp.bossesCleared.length > 0, "dungeon boss clear still recorded");
 
 // ── A family-keyed catalyst cost blocks and spends correctly ──────────────────
 const gale = RECIPE_DATABASE.get("gale-needle")!;

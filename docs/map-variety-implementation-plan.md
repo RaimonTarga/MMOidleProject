@@ -444,6 +444,20 @@ The following corrections remain, ranked. Fix in order; each is small.
 > - **C4** — DONE: native-most-frequent check is now strict (must exceed every other family).
 > - **C5** — DONE: both doc headers reworded.
 > - **C6** — recorded only (no code change), as instructed.
+>
+> **Round-2 revisions (2026-07-24, after playtest feedback) — supersede parts of the above:**
+> - **Elite flags reverted.** The 7 `elite: true` flags were removed — the user marks elites
+>   themselves. Instead, **Elite Ground is now only valid on a biome whose pool already has an
+>   elite**; the validator enforces this (Swarming carries no elite requirement — it is count-
+>   only). Forest `node-5-8` and swamp `node-9-5` lost their Elite Ground (those biomes have no
+>   elites); cave `node-1-6` and trench `node-10-1` Swarming were restored (no re-site needed).
+> - **Dungeons are now excluded from the modifier system entirely** (static exams — see design
+>   §1.1 revision). `isModifierExcludedNode` returns true for `isDungeon`; `NODE_MODIFIERS` has
+>   no dungeon entries (93 nodes, down from 118). Consequence: dungeon kills / boss bundles grant
+>   no family catalyst.
+> - **Map legend removed** — the bottom legend strip overlapped the down-navigation arrow. The
+>   per-tile badges, the node-panel Modifier section, and the HUD chip still carry the info; a
+>   legend can return with the Stage-B map/region rework.
 
 ## C1 — BLOCKER (merge/CI): the branch is not self-contained
 

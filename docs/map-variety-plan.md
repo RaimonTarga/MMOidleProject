@@ -58,12 +58,14 @@ Excluded from the system entirely: **Clearing** (T0 tutorial, one fixed node), e
 encounter, `mobDensity: 0`). These nodes carry no pace or density modifier, grant no node-family
 catalyst, and do not count toward regional family supply.
 
-**Dungeon nodes carry a pace modifier like any node.** It affects their non-boss enemies,
-including trash, guardians, and waves, and keys all node catalyst grants, including the
-first-clear `catalystBundle`. **The boss entity itself is immune.** Bosses stay canonical,
-hand-designed exams of the biome's mechanics (Step 13 scaffolding designs against one boss per
-biome, not five pace variants of it). Non-boss enemies do not become immune merely because they
-remain alive or spawn during the boss phase.
+**Dungeon nodes carry NO modifier** *(revised 2026-07-24, Stage A implementation).* The
+original design had dungeons carry a pace modifier like any node; playtest reversed this —
+dungeons are static, hand-designed exams and must stay canonical, so they are excluded from
+the modifier system entirely (no reshaping of trash/guardians/waves, no pace family). **The
+boss entity was already immune.** Consequence: dungeon kills and the first-clear
+`catalystBundle` grant **no** family catalyst (there is no node family to key them to) — a
+`catalystBundle` on a boss def is currently inert. Revisit if dungeons should feed the catalyst
+economy through some other key. Bosses remain one-per-biome exams (Step 13), not pace variants.
 
 ### 1.2 Five combat-pattern families — one player-facing vocabulary
 

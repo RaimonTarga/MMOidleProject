@@ -334,8 +334,10 @@ export function elitePoolWeight(
 // ── Exclusions + validation ───────────────────────────────────────────────────
 
 /**
- * Nodes excluded from the modifier system entirely (design §1.1): the clearing,
- * the dev test room, and the Void Overlord throne (the `mobDensity: 0` node).
+ * Nodes excluded from the modifier system entirely: the clearing, the dev test
+ * room, the Void Overlord throne (the `mobDensity: 0` node), and ALL dungeon
+ * nodes — dungeons are static hand-designed exams and are never reshaped (user
+ * decision 2026-07-24, overriding the original design §1.1).
  */
 export function isModifierExcludedNode(nodeId: string): boolean {
   if (nodeId === TEST_ROOM_NODE_ID) return true;
@@ -343,6 +345,7 @@ export function isModifierExcludedNode(nodeId: string): boolean {
   if (!info) return true;
   if (info.biomeGroup === 'clearing') return true;
   if (info.mobDensity === 0) return true; // throne
+  if (info.isDungeon) return true; // static exam — no modifier
   return false;
 }
 
@@ -464,27 +467,21 @@ export function validateNodeModifiers(): string[] {
     }
   }
 
-  // 5. Density nodes need a spawn pool with BOTH an elite and a non-elite entry,
-  //    or elitePoolWeight cannot bias composition (design §1.6). Future-proofs
-  //    Stage B authoring too.
+  // 5. Elite Ground biases the pool TOWARD elites, so it needs ≥1 elite entry;
+  //    a biome with no elites in its pool cannot be an Elite Ground candidate.
+  //    Swarming raises count regardless of composition, so it carries no such
+  //    requirement (user decision 2026-07-24).
   for (const [nodeId, mod] of Object.entries(NODE_MODIFIERS)) {
-    if (!mod.density) continue;
+    if (mod.density !== 'elite-ground') continue;
     const info = NODE_BIOMES[nodeId];
     if (!info) continue;
     const pool =
       BIOME_DATABASE.get(info.biomeGroup)?.monsterPoolByTier[info.biomeTier] ?? [];
-    let hasElite = false;
-    let hasNonElite = false;
-    for (const id of pool) {
-      const def = MONSTER_DATABASE.get(id);
-      if (!def) continue;
-      if (def.elite) hasElite = true;
-      else hasNonElite = true;
-    }
-    if (!hasElite || !hasNonElite) {
+    const hasElite = pool.some((id) => MONSTER_DATABASE.get(id)?.elite);
+    if (!hasElite) {
       violations.push(
-        `${nodeId}: density '${mod.density}' needs a pool with both elite and non-elite entries ` +
-          `(biome '${info.biomeGroup}' tier ${info.biomeTier} has elite=${hasElite}, nonElite=${hasNonElite})`,
+        `${nodeId}: Elite Ground needs a pool with ≥1 elite entry ` +
+          `(biome '${info.biomeGroup}' tier ${info.biomeTier} has none)`,
       );
     }
   }

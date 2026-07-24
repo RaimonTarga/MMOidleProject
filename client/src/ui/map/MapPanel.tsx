@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useAtomValue } from 'jotai';
 import {
   NODE_BIOMES, BIOME_DATABASE, formatRespawnRemaining,
-  NODE_MODIFIERS, PACE_FAMILIES, PACE_FAMILY_COLORS, PACE_FAMILY_LABELS,
+  NODE_MODIFIERS, PACE_FAMILY_COLORS, PACE_FAMILY_LABELS,
   PACE_FAMILY_SUMMARIES, DENSITY_LABELS,
 } from '@mmo-idle/shared';
 import { hudBus } from '../../hudBus';
@@ -199,37 +199,6 @@ export function MapPanel({ onClose, highlightNodes, focusNodeId }: Props) {
             : <div className="map-info__empty">Select a zone to see details.</div>}
         </div>
       </div>
-
-      <MapLegend />
     </GameDialog>
-  );
-}
-
-/** Compact family/density key beneath the map grid. */
-function MapLegend() {
-  return (
-    <div className="map-legend">
-      {PACE_FAMILIES.map((family) => (
-        <span
-          key={family}
-          className="map-legend__item"
-          title={PACE_FAMILY_SUMMARIES[family]}
-        >
-          <span
-            className="map-legend__chip"
-            style={{ background: PACE_FAMILY_COLORS[family] }}
-          >
-            {PACE_FAMILY_LABELS[family].charAt(0)}
-          </span>
-          {PACE_FAMILY_LABELS[family]}
-        </span>
-      ))}
-      <span className="map-legend__item" title={DENSITY_LABELS.swarming}>
-        <span className="map-legend__marker">▦</span>{DENSITY_LABELS.swarming}
-      </span>
-      <span className="map-legend__item" title={DENSITY_LABELS['elite-ground']}>
-        <span className="map-legend__marker">◆</span>{DENSITY_LABELS['elite-ground']}
-      </span>
-    </div>
   );
 }

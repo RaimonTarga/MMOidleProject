@@ -38,17 +38,21 @@ assert(
   "brutality raises cooldown (slower)",
 );
 
-// ── Boss immunity in a modified dungeon node ───────────────────────────────────
+// ── Boss immunity in a modified (non-dungeon) node ─────────────────────────────
 const bossDef = MONSTER_DATABASE.get("gnarled-greatbear")!;
 assert(bossDef.isBoss === true, "gnarled-greatbear is a boss");
-assert(NODE_MODIFIERS["node-6-7"].pace === "alacrity", "node-6-7 dungeon is modified");
-const boss = world.createMonster("node-6-7", "gnarled-greatbear", POS)!;
+const boss = world.createMonster("node-4-6", "gnarled-greatbear", POS)!; // node-4-6 = alacrity
 assert(boss.dealsDamage.attack === bossDef.stats.attack, "boss keeps def attack");
 assert(
   boss.performsAttack.attackCooldown === bossDef.stats.attackCooldown,
   "boss keeps def cooldown",
 );
 assert(boss.moddedByNode === undefined, "boss carries no moddedByNode");
+
+// ── Dungeons are excluded — no modifier, trash unmodified ──────────────────────
+assert(NODE_MODIFIERS["node-6-7"] === undefined, "dungeon node has no modifier");
+const dungeonMob = world.createMonster("node-6-7", "wolf", POS)!;
+assert(dungeonMob.moddedByNode === undefined, "dungeon trash carries no moddedByNode");
 
 // ── Blight: DoT added to a monster that lacks one ──────────────────────────────
 assert(wolfDef.dotEffect === undefined, "wolf has no authored DoT");

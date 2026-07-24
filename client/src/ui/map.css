@@ -1008,43 +1008,6 @@
   color: #0b0b12;
 }
 
-/* Legend strip beneath the grid. */
-.map-legend {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 10px;
-  padding: 8px 10px;
-  margin-top: 8px;
-  border-top: 1px solid rgba(60, 55, 40, 0.30);
-  font-size: 11px;
-  color: rgba(230, 225, 210, 0.75);
-}
-
-.map-legend__item {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.map-legend__chip {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 14px;
-  height: 14px;
-  border-radius: 3px;
-  font-family: monospace;
-  font-size: 10px;
-  font-weight: 700;
-  color: #0b0b12;
-}
-
-.map-legend__marker {
-  font-size: 11px;
-  color: rgba(230, 225, 210, 0.9);
-}
-
 /* Modifier section in the node detail panel. */
 .map-modifier {
   margin: 8px 10px 0;
