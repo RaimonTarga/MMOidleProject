@@ -14,6 +14,8 @@ import {
   globalMasteryAtom,
 } from '../hud/atoms';
 import { DialogHeader, GameDialog } from '../hud/primitives';
+import { GameIcon } from './GameIcon';
+import { masterySectionIconSource } from './systemIcons';
 import './crafting.css';
 
 interface Props {
@@ -59,7 +61,18 @@ export function MasteryPanel({ onClose }: Props) {
 
   return (
     <GameDialog size="standard" className="mastery-dialog" onClose={onClose}>
-      <DialogHeader title="Global Mastery" closeLabel="Close global mastery" />
+      <DialogHeader
+        title="Global Mastery"
+        icon={
+          <GameIcon
+            source={masterySectionIconSource('summary')}
+            size={22}
+            fallback={null}
+            decorative
+          />
+        }
+        closeLabel="Close global mastery"
+      />
       <div className="mastery-dialog__content">
 
         <div className="mastery-summary">
@@ -74,14 +87,30 @@ export function MasteryPanel({ onClose }: Props) {
                 ? '+0'
                 : unlockedCaps.map(({ tier, cap }) => `T${tier} +${cap}`).join(' ')}
             </span>
-            <span>{runeBudget} RP</span>
+            <span>
+              <GameIcon
+                source={masterySectionIconSource('runes')}
+                size={14}
+                fallback={null}
+                decorative
+              />
+              {runeBudget} RP
+            </span>
           </div>
         </div>
 
         <div className="craft-body">
           <section className="craft-biome-section craft-biome-section--current">
             <div className="craft-biome-section__header">
-              <span className="craft-biome-section__name">Item Upgrades</span>
+              <span className="craft-biome-section__name craft-biome-section__name--icon">
+                <GameIcon
+                  source={masterySectionIconSource('items')}
+                  size={18}
+                  fallback={null}
+                  decorative
+                />
+                Item Upgrades
+              </span>
               <span className="craft-biome-section__level">per item tier</span>
             </div>
             <div className="craft-unlock-path">
@@ -120,7 +149,15 @@ export function MasteryPanel({ onClose }: Props) {
 
           <section className="craft-biome-section">
             <div className="craft-biome-section__header">
-              <span className="craft-biome-section__name">Rune Points</span>
+              <span className="craft-biome-section__name craft-biome-section__name--icon">
+                <GameIcon
+                  source={masterySectionIconSource('runes')}
+                  size={18}
+                  fallback={null}
+                  decorative
+                />
+                Rune Points
+              </span>
               <span className="craft-biome-section__level">
                 every {RUNE_POINT_GLOBAL_MASTERY_STEP} GM
               </span>
@@ -155,7 +192,15 @@ export function MasteryPanel({ onClose }: Props) {
 
           <section className="craft-biome-section">
             <div className="craft-biome-section__header">
-              <span className="craft-biome-section__name">Biome Levels</span>
+              <span className="craft-biome-section__name craft-biome-section__name--icon">
+                <GameIcon
+                  source={masterySectionIconSource('biomes')}
+                  size={18}
+                  fallback={null}
+                  decorative
+                />
+                Biome Levels
+              </span>
               <span className="craft-biome-section__level">{biomeRows.length} biomes</span>
             </div>
             {biomeRows.length === 0 ? (

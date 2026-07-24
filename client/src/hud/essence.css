@@ -11,6 +11,14 @@
   gap: 7px;
 }
 
+.economy-icon {
+  flex: 0 0 16px;
+}
+
+.catalyst-icon {
+  flex-basis: 18px;
+}
+
 .essence-dot {
   width: 10px;
   height: 10px;

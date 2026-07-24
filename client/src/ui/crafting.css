@@ -596,6 +596,12 @@
   flex: 1;
 }
 
+.craft-biome-section__name--icon {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
 .craft-biome-section__tag {
   font-size: 8px;
   font-weight: bold;
@@ -796,6 +802,9 @@
 }
 
 .mastery-summary__stats span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
   padding: 3px 7px;
   border: 1px solid rgba(90, 85, 140, 0.40);
   border-radius: 3px;

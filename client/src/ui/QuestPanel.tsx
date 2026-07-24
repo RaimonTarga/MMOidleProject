@@ -1,5 +1,9 @@
 import { useAtomValue } from 'jotai';
-import { QUEST_DATABASE, NODE_BIOMES } from '@mmo-idle/shared';
+import {
+  QUEST_DATABASE,
+  NODE_BIOMES,
+  shortestWorldPath,
+} from '@mmo-idle/shared';
 import {
   playerIdAtom,
   playerNodeIdAtom,
@@ -12,24 +16,14 @@ interface Props {
   onFindDungeon?: (nodeIds: string[]) => void;
 }
 
-function parseCoords(id: string): [number, number] | null {
-  const p = id.split('-');
-  if (p.length !== 3) return null;
-  const r = parseInt(p[1], 10), c = parseInt(p[2], 10);
-  return isNaN(r) || isNaN(c) ? null : [r, c];
-}
-
 // Returns all dungeon nodes for the given tier, sorted nearest-to-player first.
 function findDungeonsForTier(playerNodeId: string, tier: number): string[] {
-  const playerPos = parseCoords(playerNodeId);
-  if (!playerPos) return [];
-  const [pr, pc] = playerPos;
   const results: { nodeId: string; dist: number }[] = [];
   for (const [nodeId, info] of Object.entries(NODE_BIOMES)) {
     if (!info.isDungeon || info.biomeTier !== tier) continue;
-    const pos = parseCoords(nodeId);
-    if (!pos) continue;
-    results.push({ nodeId, dist: Math.abs(pos[0] - pr) + Math.abs(pos[1] - pc) });
+    const path = shortestWorldPath(playerNodeId, nodeId);
+    if (!path) continue;
+    results.push({ nodeId, dist: path.length - 1 });
   }
   results.sort((a, b) => a.dist - b.dist);
   return results.map(r => r.nodeId);

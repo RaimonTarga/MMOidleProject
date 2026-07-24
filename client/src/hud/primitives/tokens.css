@@ -41,6 +41,9 @@
   --hud-rune-trace: transparent;
   --hud-tier-morph-duration: 0ms;
   --hud-tier-activation-duration: 1ms;
+  --hud-unlock-activation-duration: 1ms;
+  --hud-unlock-flare-opacity: 0;
+  --hud-unlock-lift: 0px;
 
   --hud-minimap-bg: #0c0b09;
   --hud-minimap-edge: #75664d;
@@ -119,6 +122,9 @@
     --hud-rune-trace: transparent;
     --hud-tier-morph-duration: 320ms;
     --hud-tier-activation-duration: 900ms;
+    --hud-unlock-activation-duration: 520ms;
+    --hud-unlock-flare-opacity: 0.12;
+    --hud-unlock-lift: 1px;
     --hud-motion-fast: 90ms;
     --hud-motion-state: 110ms;
     --hud-motion-trigger: 580ms;
@@ -164,6 +170,9 @@
     --hud-rune-trace: rgba(231, 191, 112, 0.03);
     --hud-tier-morph-duration: 360ms;
     --hud-tier-activation-duration: 1000ms;
+    --hud-unlock-activation-duration: 560ms;
+    --hud-unlock-flare-opacity: 0.17;
+    --hud-unlock-lift: 1px;
     --hud-motion-fast: 94ms;
     --hud-motion-state: 114ms;
     --hud-motion-trigger: 610ms;
@@ -209,6 +218,9 @@
     --hud-rune-trace: rgba(235, 203, 127, 0.06);
     --hud-tier-morph-duration: 420ms;
     --hud-tier-activation-duration: 1125ms;
+    --hud-unlock-activation-duration: 610ms;
+    --hud-unlock-flare-opacity: 0.22;
+    --hud-unlock-lift: 1px;
     --hud-motion-fast: 98ms;
     --hud-motion-state: 119ms;
     --hud-motion-trigger: 640ms;
@@ -254,6 +266,9 @@
     --hud-rune-trace: rgba(239, 180, 120, 0.09);
     --hud-tier-morph-duration: 480ms;
     --hud-tier-activation-duration: 1300ms;
+    --hud-unlock-activation-duration: 660ms;
+    --hud-unlock-flare-opacity: 0.27;
+    --hud-unlock-lift: 1px;
     --hud-motion-fast: 102ms;
     --hud-motion-state: 124ms;
     --hud-motion-trigger: 670ms;
@@ -299,6 +314,9 @@
     --hud-rune-trace: rgba(152, 220, 205, 0.14);
     --hud-tier-morph-duration: 540ms;
     --hud-tier-activation-duration: 1500ms;
+    --hud-unlock-activation-duration: 710ms;
+    --hud-unlock-flare-opacity: 0.32;
+    --hud-unlock-lift: 2px;
     --hud-motion-fast: 106ms;
     --hud-motion-state: 129ms;
     --hud-motion-trigger: 700ms;
@@ -344,6 +362,9 @@
     --hud-rune-trace: rgba(170, 202, 240, 0.2);
     --hud-tier-morph-duration: 600ms;
     --hud-tier-activation-duration: 1700ms;
+    --hud-unlock-activation-duration: 760ms;
+    --hud-unlock-flare-opacity: 0.37;
+    --hud-unlock-lift: 2px;
     --hud-motion-fast: 110ms;
     --hud-motion-state: 134ms;
     --hud-motion-trigger: 730ms;
@@ -389,6 +410,9 @@
     --hud-rune-trace: rgba(206, 179, 237, 0.26);
     --hud-tier-morph-duration: 680ms;
     --hud-tier-activation-duration: 1900ms;
+    --hud-unlock-activation-duration: 820ms;
+    --hud-unlock-flare-opacity: 0.42;
+    --hud-unlock-lift: 2px;
     --hud-motion-fast: 114ms;
     --hud-motion-state: 139ms;
     --hud-motion-trigger: 760ms;
@@ -434,6 +458,9 @@
     --hud-rune-trace: rgba(238, 225, 255, 0.34);
     --hud-tier-morph-duration: 760ms;
     --hud-tier-activation-duration: 2100ms;
+    --hud-unlock-activation-duration: 880ms;
+    --hud-unlock-flare-opacity: 0.48;
+    --hud-unlock-lift: 2px;
     --hud-motion-fast: 118ms;
     --hud-motion-state: 144ms;
     --hud-motion-trigger: 790ms;
@@ -452,5 +479,8 @@
     --hud-motion-trigger: 1ms;
     --hud-tier-morph-duration: 0ms;
     --hud-tier-activation-duration: 1ms;
+    --hud-unlock-activation-duration: 1ms;
+    --hud-unlock-flare-opacity: 0;
+    --hud-unlock-lift: 0px;
   }
 }

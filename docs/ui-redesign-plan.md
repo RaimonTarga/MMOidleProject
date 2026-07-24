@@ -1,7 +1,7 @@
 # Desktop UI Redesign Plan
 
 **Status:** approved for incremental implementation; not a broad rewrite  
-**Last reviewed:** 2026-07-21  
+**Last reviewed:** 2026-07-24
 **Scope:** desktop React HUD, rails, overlays, and modal presentation around the
 Phaser game viewport. Mobile is regression-only until the final adaptation phase.
 
@@ -495,12 +495,42 @@ Apparatus escalation added after review feedback (2026-07-21):
 Stabilize a reusable icon API for atlas frames, asset references, or supplied
 nodes, with accessible labels and layout-preserving fallbacks.
 
+Implemented contract (2026-07-22):
+
+- `GameIcon` owns a fixed outer footprint and accepts a discriminated
+  `IconSource` for packed atlas frames, standalone asset URLs, or supplied React
+  nodes. Source changes never determine component dimensions.
+- Direct consumers must explicitly mark an icon decorative or supply an
+  accessible label. Fallbacks occupy the same footprint during loading and for
+  missing/failed sources, then disappear when art is ready.
+- UI and item atlases share one cached, failure-safe manifest loader. `UIIcon`
+  and `ItemIcon` remain thin compatibility wrappers while reusable component
+  props accept `IconSource` directly.
+- Desktop ability slots, Build icons, and right-rail navigation are the first
+  migrated consumers. Existing mappings, interaction, and mobile presentation
+  are unchanged; later art replacement needs no layout-contract change.
+
 #### 10B - Mechanical asset hookup
 
 **Model:** Low - Sonnet/Luna
 
 Replace frame mappings and fallbacks after approved assets exist. Use the art
 pipeline and never edit packed outputs directly.
+
+Implemented hookup policy (2026-07-22):
+
+- Ability art is allowlisted only after gallery approval; file existence alone
+  is not sufficient because `art/src` can retain the previous image while a
+  replacement is pending review.
+- Sweep, Expose Weakness, Cleanse, and Brace resolve to their approved packed
+  32x32 frames. Second Wind remains on the existing Technique/Guard glyph and
+  Build-initial fallback until its pending candidate is approved.
+- The approved mapping was checked against both the ability manifest and the
+  packed UI atlas. All UI-atlas frame references currently used by client code
+  resolve without missing frames.
+- Existing shipped system-navigation and biome frames remain in place until a
+  Phase 10C family is approved. The separate item-icon review batch is not
+  modified by this hookup pass.
 
 #### 10C - Cohesive art direction or generation batches
 
@@ -510,6 +540,53 @@ Use for the visual family definition and review of abilities, system navigation,
 essences, catalysts, mastery, runes, and crafting icons. Once the family and
 prompt/template are locked, batch execution and manifest wiring can move to
 Medium or Low agents.
+
+Direction and first family batch (2026-07-22):
+
+- System-navigation art is locked as a transparent symbol layer; the HUD
+  control continues to own its frame, material, and state styling. Approved
+  ability icons provide the reference for bold pixel clusters, limited palettes,
+  and small-size readability without forcing their black square backgrounds onto
+  navigation controls.
+- The broad Runes keystone-shard probe was approved and promoted to
+  `art/src/UI_icons/runes-icon.png`; the manifest records it as accepted and
+  `art/style/ui-navigation.png` preserves the family seed. Its palette is
+  charcoal iron, restrained bronze wear, and a pale-cyan semantic focus.
+- Passive Tree, Global Mastery, Inventory, Crafting, World Map, and Settings were
+  approved and promoted as transparent 32x32 sources. They deliberately use
+  distinct silhouettes while sharing the seed's outline weight, palette, and
+  flat pixel-cluster discipline.
+- All seven navigation entries are accepted in `ui-icons.json` and the scoped
+  deterministic pack updated `UI_icons.png` without touching the separate item
+  atlas or loose assets. The existing client frame names and component layout
+  remain unchanged; all seven packed frame references resolve.
+- The economy-family follow-on defines five full essence orbs: Might uses a
+  radiant force core, Wild a two-leaf vine, Rot a decay fissure with spores,
+  Stone a fractured geode, and Deep three descending chevrons. Each has a
+  type-specific palette and internal motif so meaning does not depend on color
+  alone.
+- The initial catalyst pass deliberately used one neutral, biome-agnostic
+  placeholder while the system design was unstable. That temporary policy was
+  superseded on 2026-07-24 after the five combat families became authoritative:
+  Alacrity, Brutality, Blight, Volatility, and Predation now use one shared
+  crystal silhouette with deterministic family palettes. The neutral shard
+  remains only as a source-library fallback.
+- The five essence orbs and five family catalyst crystals are approved,
+  promoted, recorded as accepted manifest entries, and packed.
+  `economyIcons.ts` provides exhaustive `EssenceType` and `PaceFamily` mappings;
+  Essence and Catalyst rows render them through `GameIcon` at fixed,
+  layout-stable footprints.
+- The final mastery/rune/crafting pass reuses the approved Progress, Runes, Map,
+  and Forge symbols rather than inventing duplicate art. Three remaining gaps
+  received new family-matched frames: Craft Upgrade, Rune Situation, and Rune
+  Response. Crafting tabs, Mastery summaries/sections, Rune tabs, selector
+  headings, and rune-forge cards now consume those sources through `GameIcon`;
+  no dialog, card, or tab footprint depends on asset loading.
+- The three final frames were generated with the built-in image workflow,
+  chroma-keyed, nearest-neighbor reduced to 32x32, compared alongside the
+  approved family at a literal 18px footprint, recorded in the manifest, and
+  deterministically packed. Live modal review at the standard viewport matrix
+  remains required because the in-app browser connection was unavailable.
 
 Review gate: icon replacement requires no component-layout changes.
 
@@ -539,6 +616,32 @@ Partial pull-forward (2026-07-21): Phase 9 now supplies progressive conduit and
 frame motion plus a document-level tier-up ignition shared by every React root
 and the Phaser minimap. The remaining tasks are per-system unlock activation,
 larger expansion experiments, and any world-scene/event-timed sequence.
+
+Core unlock activation implemented (2026-07-24):
+
+- `installUiUnlockSync()` watches the approved Phase 5 visibility matrix for
+  Mastery, Abilities, Stances, and Rites. It uses the existing authoritative
+  atoms and does not add a protocol field or infer a second unlock policy.
+- A newly visible system wakes its persistent right-rail destination and, when
+  already open, the corresponding Build tab and overview cards. Initial
+  character hydration, downward/unchanged visibility, and later remounts do not
+  replay the effect.
+- `--hud-unlock-*` tokens scale duration, flare opacity, and lift through the
+  eight desktop tiers. The CSS sequence is a short housing settle, one channel
+  sweep, and one icon/rune wake; no component geometry or input behavior
+  changes.
+- Pending frames, element timers, and activation attributes are cleared when
+  the document becomes hidden or reduced motion is enabled. Hidden-tab recovery
+  does not queue or replay the wake.
+- The larger apparatus-expansion reveal and optional
+  `player:ascended`-synchronized Phaser world effect were considered and
+  deliberately deferred until this smaller motion language is visually
+  approved. They are optional escalation work, not dependencies of the core
+  Phase 11 implementation.
+- The pure false-to-true transition seam, focused client typecheck, and
+  production build pass. Live animation review at the standard desktop widths,
+  representative tiers, reduced motion, and background recovery remains
+  required because the in-app browser connection was unavailable.
 
 ### Phase 12 - Mobile adaptation
 
@@ -647,6 +750,6 @@ is visual review and cheap correction before the design propagates.
 | 7. Inventory dialog pilot | Approved (2026-07-21) | Added `GameDialog`, `DialogHeader`, and accessible `DialogTabs`; primary desktop dialogs are mutually exclusive. Inventory now uses the shared portal/backdrop/focus shell, exposes keyboard-operable equipment and backpack slots, preserves its three gameplay columns and mobile sections, and reduces nested card chrome. Client typecheck and production build pass; manual visual and interaction review approved the Inventory pilot. A viewport-scaled internal scrollbar fix for the legacy Global Mastery dialog was also verified during review. |
 | 8. Modal rollout | Accepted to advance (2026-07-21) | Build, Mastery, Crafting, Map, Passive Tree, and Settings use the Phase 7 dialog shell. Build uses the shared tab controls without the Passive Tree/Crafting shell, and Settings preserves Escape-to-cancel during key/gamepad capture. Client typecheck and production build pass. The user advanced to Phase 9 without a separate manual Phase 8 visual pass. |
 | 9. Tier theming | Implemented — pending visual review (2026-07-21) | Document-level T1-T8 projection and eight desktop-only token sets now drive material, clipped-frame complexity, secondary engraving, rune traces, persistent conduit density/speed, energy intensity, and motion. An upward authoritative tier change sends a staggered ignition across rails, panels, dock, Auto Combat, dialogs, and the token-themed Phaser minimap; hydration, reduced motion, and hidden tabs are guarded. Tier selectors contain tokens only; semantic contrast audit minimum is 4.62:1. Client typecheck and production build pass. Manual review at the standard widths and representative tiers remains required. |
-| 10. Asset integration | Not started | Some ability/UI icon asset work is already present in the working tree. |
-| 11. Motion | Partially pulled forward in Phase 9 | Tier-up shell ignition and progressive conduit/frame motion are implemented. Non-tier unlock activations, larger apparatus expansion, and an optional `player:ascended`-synchronized Phaser world effect remain. |
+| 10. Asset integration | Accepted to advance (2026-07-24) | Added the layout-stable, explicitly accessible `GameIcon`/`IconSource` contract; consolidated UI/item atlas loading; migrated desktop abilities, Build icons, system navigation, economy rows, Crafting tabs, Mastery, and Rune surfaces without asset-dependent layout. Four approved ability icons remain explicitly allowlisted; pending Second Wind retains its fallback. The transparent iron/bronze/cyan family covers all seven system destinations, five essence identities, five family catalyst crystals, Craft Upgrade, Rune Situation, and Rune Response. The deterministic atlas check passes and all referenced frames resolve. Isolated 18px family review passed; the user advanced to Phase 11 without a separate live modal viewport pass. |
+| 11. Motion | Implemented — pending live visual review (2026-07-24) | Phase 9 already supplied tier-up shell ignition and persistent apparatus motion. Phase 11 now adds hydration-safe false-to-true activation for Mastery, Abilities, Stances, and Rites across persistent navigation and any open Build surface. Duration, flare opacity, and lift are tier tokens; reduced motion and hidden documents cancel rather than queue the wake. The transition seam, client typecheck, and production build pass. Larger apparatus expansion and the optional Phaser world effect remain deliberately deferred until the restrained wake is visually approved. |
 | 12. Mobile adaptation | Deferred | Regression fixes only until this phase. |

@@ -8,7 +8,7 @@ import { getOwnBase } from "../../render/interpolation";
 import type { GameScene } from "./GameScene";
 
 /** The clearing node holds the rune altar. */
-export const ALTAR_NODE_ID = "node-5-5";
+export const ALTAR_NODE_ID = "node-clearing";
 
 /**
  * The circular altar is split into 4 diagonal wedge arcs, each tied to a pillar

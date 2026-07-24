@@ -6,7 +6,8 @@ import { useAtomValue } from 'jotai';
 import {
   BIOME_DATABASE,
   NODE_BIOMES,
-  ULTIMATE_CLEAR_VOID_OVERLORD,
+  WORLD_MAP_BOUNDS,
+  mapCoordForNodeId,
   bossClearKey,
   type AdminAnalyticsNodeHeatmapRow,
   type AdminAnalyticsSnapshot,
@@ -17,9 +18,14 @@ import { requestAnalytics, requestCharacters } from '../socket';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
-const NODE_GRID_SIZE = 11;
-const NODE_COORD_PATTERN = /^node-(\d+)-(\d+)$/;
-const NODE_AXIS_LABELS = Array.from({ length: NODE_GRID_SIZE }, (_, index) => `${index}`);
+const NODE_X_AXIS_LABELS = Array.from(
+  { length: WORLD_MAP_BOUNDS.cols },
+  (_, index) => `${WORLD_MAP_BOUNDS.minCol + index}`,
+);
+const NODE_Y_AXIS_LABELS = Array.from(
+  { length: WORLD_MAP_BOUNDS.rows },
+  (_, index) => `${WORLD_MAP_BOUNDS.minRow + index}`,
+);
 
 export function AnalyticsTab() {
   const analytics = useAtomValue(analyticsAtom);
@@ -211,7 +217,11 @@ function nodeHeatmapOption(
       const coord = nodeCoord(row.nodeId);
       if (!coord) return null;
       return {
-        value: [coord.col, coord.row, row.accounts],
+        value: [
+          coord.col - WORLD_MAP_BOUNDS.minCol,
+          coord.row - WORLD_MAP_BOUNDS.minRow,
+          row.accounts,
+        ],
         nodeId: row.nodeId,
         biomeName: row.biomeName,
         biomeTier: row.biomeTier,
@@ -242,7 +252,7 @@ function nodeHeatmapOption(
     grid: { left: 34, right: 18, top: 16, bottom: 92, containLabel: false },
     xAxis: {
       type: 'category',
-      data: NODE_AXIS_LABELS,
+      data: NODE_X_AXIS_LABELS,
       splitArea: { show: true },
       axisLabel: { color: '#94a3b8', fontFamily: 'monospace' },
       axisLine: { lineStyle: { color: '#3f1d1b' } },
@@ -250,7 +260,7 @@ function nodeHeatmapOption(
     },
     yAxis: {
       type: 'category',
-      data: NODE_AXIS_LABELS,
+      data: NODE_Y_AXIS_LABELS,
       inverse: true,
       splitArea: { show: true },
       axisLabel: { color: '#94a3b8', fontFamily: 'monospace' },
@@ -307,13 +317,7 @@ function nodeHeatmapOption(
 }
 
 function nodeCoord(nodeId: string): { row: number; col: number } | null {
-  const match = NODE_COORD_PATTERN.exec(nodeId);
-  if (!match) return null;
-  const row = Number(match[1]);
-  const col = Number(match[2]);
-  if (!Number.isInteger(row) || !Number.isInteger(col)) return null;
-  if (row < 0 || row >= NODE_GRID_SIZE || col < 0 || col >= NODE_GRID_SIZE) return null;
-  return { row, col };
+  return mapCoordForNodeId(nodeId);
 }
 
 function buildCompletionHeatmap(
@@ -355,12 +359,6 @@ function completedNodesForCharacter(character: AdminCharacterRecord): Set<string
     if (!info.isDungeon) continue;
     const token = bossClearKey(info.biomeGroup, info.biomeTier);
     if (character.bossesCleared.includes(token)) completed.add(nodeId);
-    if (
-      info.bossTypeId === 'void-overlord' &&
-      character.bossesCleared.includes(ULTIMATE_CLEAR_VOID_OVERLORD)
-    ) {
-      completed.add(nodeId);
-    }
   }
   return completed;
 }

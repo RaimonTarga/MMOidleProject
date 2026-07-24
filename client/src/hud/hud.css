@@ -543,23 +543,6 @@
     pointer-events: auto;
   }
 
-  /* A small edge notch carries Technique/Guard identity without creating
-     separate category trays. */
-  .combat-ability-slot::before {
-    position: absolute;
-    top: 0;
-    left: 4px;
-    z-index: 5;
-    width: 14px;
-    height: 2px;
-    content: "";
-    background: #c77b50;
-  }
-
-  .combat-ability-slot--guard::before {
-    background: #6f9dd4;
-  }
-
   .combat-ability-slot__icon {
     position: relative;
     width: 48px;
@@ -637,22 +620,6 @@
     text-shadow: 1px 1px 2px #000;
   }
 
-  .combat-ability-slot__state {
-    position: absolute;
-    right: 2px;
-    bottom: 2px;
-    left: 2px;
-    z-index: 4;
-    padding: 1px 0;
-    color: #e5d8c1;
-    background: rgba(5, 4, 3, 0.78);
-    font-size: 7px;
-    font-weight: bold;
-    letter-spacing: 0.08em;
-    line-height: 8px;
-    text-shadow: 1px 1px 1px #000;
-  }
-
   .combat-ability-slot__key-hint {
     position: absolute;
     top: 2px;
@@ -677,26 +644,14 @@
     filter: saturate(0.38) brightness(0.7);
   }
 
-  .combat-ability-slot--cooling .combat-ability-slot__state {
-    color: #cdbd9e;
-  }
-
   .combat-ability-slot--active .combat-ability-slot__icon {
     border-top-color: #8ecbff;
     border-left-color: #68b7ff;
     box-shadow: inset 0 0 0 1px #315d86;
   }
 
-  .combat-ability-slot--active .combat-ability-slot__state {
-    color: #bfe4ff;
-  }
-
   .combat-ability-slot--triggered .combat-ability-slot__icon {
     animation: combat-ability-triggered var(--hud-motion-trigger) ease-out;
-  }
-
-  .combat-ability-slot--triggered .combat-ability-slot__state {
-    color: #fff1c8;
   }
 
   @keyframes combat-ability-triggered {

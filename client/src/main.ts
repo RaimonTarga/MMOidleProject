@@ -22,6 +22,7 @@ import { EmoteWheel } from './hud/EmoteWheel';
 import { DungeonAltarOverlay } from './hud/DungeonAltarOverlay';
 import { applyUiFontScale } from './settings/gameplaySettings';
 import { installUiTierSync } from './hud/uiTier';
+import { installUiUnlockSync } from './hud/uiUnlocks';
 import './hud/tierApparatus.css';
 
 if (DEV_TOOLS_ENABLED) {
@@ -30,6 +31,7 @@ if (DEV_TOOLS_ENABLED) {
 
 applyUiFontScale();
 installUiTierSync();
+installUiUnlockSync();
 
 function blockMouseHistoryButtons(event: Event) {
   if (!(event instanceof MouseEvent)) return;

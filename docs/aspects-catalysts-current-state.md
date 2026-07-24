@@ -39,8 +39,9 @@
 > group. The five families, per-node assignment table, and reshaping math live in
 > `shared/src/world/nodeModifiers.ts` + `nodeModifierMap.ts`. Every kill grants the
 > **node's pace family** catalyst (`NODE_MODIFIERS[nodeId].pace`) via
-> `grantCatalystProgress` in `rewards.ts`; density modifiers normalize per-kill reward
-> throughput inversely (`densityRewardMult`). `catalystLabel` delegates to
+> `grantCatalystProgress` in `rewards.ts`. Swarming and Elite Ground are currently
+> dormant behind `DENSITY_MODIFIERS_ENABLED = false`; they have no authoring,
+> runtime, reward, or UI effect. `catalystLabel` delegates to
 > `catalystFamilyLabel`. Authored sinks (forest recipes, stances, rites) were re-tagged
 > by each item's own combat expression. **Player wallets were wiped** (migration
 > `0002_wipe_catalyst_wallets.sql`) and are hydrate-sanitized to family keys on load

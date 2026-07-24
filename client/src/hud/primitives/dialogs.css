@@ -182,6 +182,11 @@
   cursor: pointer;
 }
 
+.dialog-tab__icon {
+  display: inline-flex;
+  flex: 0 0 auto;
+}
+
 .dialog-tab::after {
   content: '';
   position: absolute;

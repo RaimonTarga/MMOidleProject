@@ -1,5 +1,7 @@
 import { useAtomValue } from "jotai";
 import { catalystLabel, GAME_CONFIG, PACE_FAMILIES, PACE_FAMILY_COLORS } from "@mmo-idle/shared";
+import { GameIcon } from "../ui/GameIcon";
+import { catalystIconSource } from "../ui/economyIcons";
 import { catalystsAtom, catalystProgressAtom } from "./atoms";
 import { HudPanel } from "./primitives";
 import "./essence.css";
@@ -31,13 +33,13 @@ export function CatalystPanel() {
           const prog = progress[family] ?? 0;
           return (
             <div key={family} className="essence-row">
-              <span
-                className="economy-icon catalyst-glyph"
-                style={{ color: PACE_FAMILY_COLORS[family] }}
-                aria-hidden="true"
-              >
-                ◇
-              </span>
+              <GameIcon
+                source={catalystIconSource(family)}
+                size={18}
+                fallback={null}
+                decorative
+                className="economy-icon catalyst-icon"
+              />
               <span className="essence-name" style={{ color: PACE_FAMILY_COLORS[family] }}>
                 {catalystLabel(family)}
               </span>

@@ -1,21 +1,25 @@
 import { useMemo, useState } from 'react';
 import { useAtomValue } from 'jotai';
-import { BIOME_DATABASE, NODE_BIOMES, type NodeBiomeInfo } from '@mmo-idle/shared';
+import {
+  BIOME_DATABASE,
+  NODE_BIOMES,
+  WORLD_MAP_BOUNDS,
+  WORLD_NODE_LIST,
+  type NodeBiomeInfo,
+} from '@mmo-idle/shared';
 import { telemetryAtom } from '../state';
 import { TELEMETRY_METRICS, type TelemetryMetric } from '@/lib/telemetry';
 import { NodeTelemetryHistogram3D } from './opsmap/NodeTelemetryHistogram3D';
 import { NodeTelemetryPanel } from './opsmap/NodeTelemetryPanel';
 import '../ops-map.css';
 
-const GRID_ROWS = 11;
-const GRID_COLS = 11;
 const OPS_HEAT_TILE_BACKGROUND = '#100303';
 
 type OpsView = 'heat' | '3d';
 
 function dungeonBadgeLabel(info: NodeBiomeInfo | undefined): string | null {
   if (!info?.isDungeon) return null;
-  return info.bossTypeId === 'void-overlord' ? 'THRONE' : 'DUNGEON';
+  return 'DUNGEON';
 }
 
 function heatOpacity(row: { tickCpuMs: number; idlePopulationMs: number } | undefined, maxCpu: number): number {
@@ -42,19 +46,12 @@ export function OpsMapTab() {
     return max;
   }, [telemetry]);
 
-  const allTiles = useMemo(() =>
-    Array.from({ length: GRID_ROWS * GRID_COLS }, (_, i) => {
-      const r = Math.floor(i / GRID_COLS);
-      const c = i % GRID_COLS;
-      return { r, c, id: `node-${r}-${c}` };
-    }),
-    [],
-  );
+  const allTiles = WORLD_NODE_LIST;
 
   const detailNodeId = pinnedNodeId ?? hoveredId;
   const opsSubtitle = opsView === '3d'
     ? 'Drag to rotate - click bar to pin'
-    : 'Full 11x11 world - click pins stats';
+    : 'Full sparse world - click pins stats';
 
   return (
     <div className="map-panel map-panel--large map-panel--ops">
@@ -97,8 +94,17 @@ export function OpsMapTab() {
       <div className="map-body">
         {opsView === 'heat' ? (
           <div className="map-grid-wrap map-grid-wrap--full">
-            <div className="map-grid map-grid--full">
-              {allTiles.map(({ id }) => {
+            <div
+              className="map-grid map-grid--full"
+              style={{
+                gridTemplateColumns: `repeat(${WORLD_MAP_BOUNDS.cols}, minmax(42px, 1fr))`,
+                gridTemplateRows: `repeat(${WORLD_MAP_BOUNDS.rows}, 48px)`,
+                width: 'max-content',
+                minWidth: '100%',
+              }}
+            >
+              {allTiles.map((node) => {
+                const id = node.id;
                 const info = NODE_BIOMES[id];
                 const biome = info ? BIOME_DATABASE.get(info.biomeGroup) : null;
                 const isHovered = hoveredId === id;
@@ -121,6 +127,8 @@ export function OpsMapTab() {
                     ].filter(Boolean).join(' ')}
                     style={{
                       background: OPS_HEAT_TILE_BACKGROUND,
+                      gridRow: node.map.row - WORLD_MAP_BOUNDS.minRow + 1,
+                      gridColumn: node.map.col - WORLD_MAP_BOUNDS.minCol + 1,
                       ...(heat > 0 ? { ['--heat' as string]: String(heat) } : {}),
                     }}
                     onMouseEnter={() => setHoveredId(id)}
@@ -129,7 +137,7 @@ export function OpsMapTab() {
                     title="Click to pin telemetry"
                   >
                     <span className="map-tile__tier">{tierBadge}</span>
-                    <span className="map-tile__name">{biome?.name ?? '?'}</span>
+                    <span className="map-tile__name">{info?.displayName ?? biome?.name ?? '?'}</span>
                     {dungeonBadge && <span className="map-tile__dungeon-badge">{dungeonBadge}</span>}
                     {isPinned && <span className="map-tile__ops-pin">◆ PIN</span>}
                   </div>

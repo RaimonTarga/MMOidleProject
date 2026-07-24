@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 
 export function DebugTab() {
   const players = useAtomValue(playersAtom);
-  const [nodeId, setNodeId] = useState('node-5-5');
+  const [nodeId, setNodeId] = useState('node-clearing');
   const [targetPlayerId, setTargetPlayerId] = useState('');
   const target = useMemo(
     () => players.find((p) => p.id === targetPlayerId) ?? players[0] ?? null,
@@ -23,7 +23,7 @@ export function DebugTab() {
           <p className="text-sm text-red-100/55">Regenerate monsters and boss state for a node.</p>
         </CardHeader>
         <CardContent className="space-y-3">
-          <Input value={nodeId} onChange={(e) => setNodeId(e.target.value)} placeholder="node-5-5" />
+          <Input value={nodeId} onChange={(e) => setNodeId(e.target.value)} placeholder="node-clearing" />
           <Button variant="destructive" onClick={() => sendAdminAction({ kind: 'respawnNode', nodeId })}>
             Respawn Node
           </Button>

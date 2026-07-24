@@ -1,7 +1,12 @@
 import { useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useAtomValue } from 'jotai';
-import { BIOME_DATABASE, NODE_BIOMES } from '@mmo-idle/shared';
+import {
+  BIOME_DATABASE,
+  NODE_BIOMES,
+  WORLD_MAP_BOUNDS,
+  WORLD_NODE_LIST,
+} from '@mmo-idle/shared';
 import { telemetryAtom } from '../../state';
 import { extractMetric, formatMetricValue, type TelemetryMetric } from '@/lib/telemetry';
 
@@ -11,8 +16,6 @@ interface Props {
   onSelect: (nodeId: string) => void;
 }
 
-const GRID_ROWS = 11;
-const GRID_COLS = 11;
 const MAX_BAR_PX = 120;
 const INITIAL_ROT_X = 58;
 const INITIAL_ROT_Y = -32;
@@ -27,7 +30,7 @@ function nodeLabel(nodeId: string): { name: string; tierLabel: string } {
   const biome = info ? BIOME_DATABASE.get(info.biomeGroup) : null;
   if (!info || !biome) return { name: nodeId, tierLabel: '' };
   const tierLabel = info.biomeTier === 0 ? 'Starting Zone' : `T${info.biomeTier}`;
-  return { name: biome.name, tierLabel };
+  return { name: info.displayName ?? biome.name, tierLabel };
 }
 
 function findBarAt(clientX: number, clientY: number): string | null {
@@ -55,19 +58,16 @@ export function NodeTelemetryHistogram3D({
       orphan: boolean;
     }> = [];
     let max = 0;
-    for (let r = 0; r < GRID_ROWS; r++) {
-      for (let c = 0; c < GRID_COLS; c++) {
-        const id = `node-${r}-${c}`;
-        const row = snap?.nodes[id];
-        const value = row ? extractMetric(row, metric) : 0;
-        if (value > max) max = value;
-        out.push({
-          id,
-          value,
-          flagged: !!row && row.leakFlags.length > 0,
-          orphan: !!row && !row.occupied && row.idlePopulationMs > 0,
-        });
-      }
+    for (const node of WORLD_NODE_LIST) {
+      const row = snap?.nodes[node.id];
+      const value = row ? extractMetric(row, metric) : 0;
+      if (value > max) max = value;
+      out.push({
+        id: node.id,
+        value,
+        flagged: !!row && row.leakFlags.length > 0,
+        orphan: !!row && !row.occupied && row.idlePopulationMs > 0,
+      });
     }
     return { entries: out, maxValue: Math.max(1, max) };
   }, [snap, metric]);
@@ -141,11 +141,25 @@ export function NodeTelemetryHistogram3D({
         style={{ transform: `rotateX(${rotX}deg) rotateY(${rotY}deg)` }}
       >
         <div className="map-histogram-floor" />
-        <div className="map-histogram-grid">
+        <div
+          className="map-histogram-grid"
+          style={{
+            gridTemplateColumns: `repeat(${WORLD_MAP_BOUNDS.cols}, 1fr)`,
+            gridTemplateRows: `repeat(${WORLD_MAP_BOUNDS.rows}, 1fr)`,
+          }}
+        >
           {entries.map(({ id, value, flagged, orphan }) => {
             const h = Math.min(1, value / maxValue) * MAX_BAR_PX;
+            const node = NODE_BIOMES[id];
             return (
-              <div key={id} className="map-histogram-cell">
+              <div
+                key={id}
+                className="map-histogram-cell"
+                style={{
+                  gridRow: node ? node.map.row - WORLD_MAP_BOUNDS.minRow + 1 : undefined,
+                  gridColumn: node ? node.map.col - WORLD_MAP_BOUNDS.minCol + 1 : undefined,
+                }}
+              >
                 <button
                   type="button"
                   data-histogram-node-id={id}

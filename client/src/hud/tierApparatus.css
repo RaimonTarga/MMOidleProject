@@ -3,10 +3,15 @@
 @media (min-width: 1101px) {
   .desktop-hud .sidebar-panel,
   .desktop-hud .combat-log,
+  .desktop-hud .right-system-nav {
+    position: relative;
+  }
+
+  .desktop-hud .sidebar-panel,
+  .desktop-hud .combat-log,
   .desktop-hud .right-system-nav,
   .desktop-hud.hud-dock {
     --hud-apparatus-delay: 90ms;
-    position: relative;
     clip-path: polygon(
       var(--hud-frame-cut) 0,
       calc(100% - var(--hud-frame-cut)) 0,
@@ -137,6 +142,42 @@
       opacity var(--hud-motion-state) ease;
   }
 
+  [data-ui-unlock-system] {
+    position: relative;
+    isolation: isolate;
+  }
+
+  [data-ui-unlock-activating] {
+    z-index: 1;
+    animation: hud-system-unlock-wake var(--hud-unlock-activation-duration) cubic-bezier(0.16, 0.76, 0.22, 1) both;
+  }
+
+  [data-ui-unlock-activating]::before {
+    position: absolute;
+    z-index: 3;
+    inset: 1px;
+    content: '';
+    background: linear-gradient(
+      90deg,
+      transparent 0 8%,
+      var(--hud-rune-trace) 30%,
+      var(--hud-channel-color) 48%,
+      var(--hud-primary-strong) 52%,
+      transparent 78% 100%
+    );
+    mix-blend-mode: screen;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(-48%) scaleX(0.08);
+    transform-origin: left center;
+    animation: hud-system-channel-wake var(--hud-unlock-activation-duration) ease-out both;
+  }
+
+  [data-ui-unlock-activating] .game-icon,
+  [data-ui-unlock-activating] .build-icon {
+    animation: hud-system-rune-wake var(--hud-unlock-activation-duration) cubic-bezier(0.14, 0.78, 0.24, 1) both;
+  }
+
   html[data-ui-tier-activating] .desktop-hud.sidebar {
     animation: hud-tier-rail-ignite var(--hud-tier-activation-duration) cubic-bezier(0.18, 0.72, 0.22, 1) both;
   }
@@ -246,7 +287,11 @@
   html[data-ui-hidden] .desktop-hud *::after,
   html[data-ui-hidden] .game-dialog__panel,
   html[data-ui-hidden] .game-dialog__panel::before,
-  html[data-ui-hidden] .game-dialog__panel::after {
+  html[data-ui-hidden] .game-dialog__panel::after,
+  html[data-ui-hidden] [data-ui-unlock-activating],
+  html[data-ui-hidden] [data-ui-unlock-activating]::before,
+  html[data-ui-hidden] [data-ui-unlock-activating] .game-icon,
+  html[data-ui-hidden] [data-ui-unlock-activating] .build-icon {
     animation-play-state: paused !important;
   }
 }
@@ -282,6 +327,66 @@
   22% { opacity: 1; filter: brightness(3.2); transform: scaleX(1); }
   48% { opacity: 0.82; filter: brightness(1.65); }
   100% { opacity: var(--hud-channel-opacity); filter: brightness(1); transform: scaleX(1); }
+}
+
+@keyframes hud-system-unlock-wake {
+  0% {
+    opacity: 0;
+    filter: brightness(0.72) saturate(0.66);
+    transform: translateY(var(--hud-unlock-lift)) scale(0.985);
+  }
+  24% {
+    opacity: 1;
+    filter: brightness(1.42) saturate(1.18) drop-shadow(0 0 5px var(--hud-accent-shadow));
+    transform: translateY(0) scale(1.008);
+  }
+  52% {
+    filter: brightness(1.1) saturate(1.06) drop-shadow(0 0 3px var(--hud-energy-active));
+    transform: scale(0.998);
+  }
+  100% {
+    opacity: 1;
+    filter: brightness(1) saturate(1);
+    transform: scale(1);
+  }
+}
+
+@keyframes hud-system-channel-wake {
+  0% {
+    opacity: 0;
+    transform: translateX(-48%) scaleX(0.08);
+  }
+  30% {
+    opacity: var(--hud-unlock-flare-opacity);
+    transform: translateX(-8%) scaleX(0.82);
+  }
+  58% {
+    opacity: var(--hud-unlock-flare-opacity);
+    transform: translateX(36%) scaleX(0.5);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(92%) scaleX(0.12);
+  }
+}
+
+@keyframes hud-system-rune-wake {
+  0% {
+    filter: brightness(0.68) saturate(0.64);
+    transform: scale(0.86);
+  }
+  28% {
+    filter: brightness(1.72) saturate(1.28) drop-shadow(0 0 4px var(--hud-channel-color));
+    transform: scale(1.08);
+  }
+  58% {
+    filter: brightness(1.08) saturate(1.06);
+    transform: scale(0.98);
+  }
+  100% {
+    filter: brightness(1) saturate(1);
+    transform: scale(1);
+  }
 }
 
 @keyframes hud-tier-8-capstone-lock {
@@ -325,6 +430,10 @@
   .game-dialog__panel,
   .game-dialog__panel::before,
   .game-dialog__panel::after,
+  [data-ui-unlock-activating],
+  [data-ui-unlock-activating]::before,
+  [data-ui-unlock-activating] .game-icon,
+  [data-ui-unlock-activating] .build-icon,
   #app::before,
   #app::after {
     animation: none !important;

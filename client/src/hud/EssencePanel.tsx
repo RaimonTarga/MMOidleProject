@@ -4,6 +4,8 @@ import { ESSENCE_TYPES, ESSENCE_COLORS, ESSENCE_LABELS } from "@mmo-idle/shared"
 import type { EssenceType } from "@mmo-idle/shared";
 import { essencesAtom } from "./atoms";
 import { HudPanel } from "./primitives";
+import { GameIcon } from "../ui/GameIcon";
+import { essenceIconSource } from "../ui/economyIcons";
 import "./essence.css";
 
 export function EssencePanel() {
@@ -49,7 +51,15 @@ export function EssencePanel() {
               className={`essence-row${flashClass}`}
               style={{ "--flash-color": ESSENCE_COLORS[type] + "44" } as React.CSSProperties}
             >
-              <span className="essence-dot" style={{ background: ESSENCE_COLORS[type] }} />
+              <GameIcon
+                source={essenceIconSource(type)}
+                size={16}
+                fallback={(
+                  <span className="essence-dot" style={{ background: ESSENCE_COLORS[type] }} />
+                )}
+                className="economy-icon"
+                decorative
+              />
               <span className="essence-name">
                 {ESSENCE_LABELS[type]}
               </span>

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useAtom, useAtomValue } from "jotai";
-import { UIIcon } from "../ui/UIIcon";
+import { atlasIcon, GameIcon, type IconSource } from "../ui/GameIcon";
 import { hudBus } from "../hudBus";
 import { SkillTreePanel } from "../ui/SkillTreePanel";
 import { BuildPanel } from "../ui/BuildPanel";
@@ -15,6 +15,7 @@ import { SettingsPanel } from "./settings/SettingsPanel";
 import { QuestOverlay } from "./quest/QuestOverlay";
 import { HudPanel } from "./primitives";
 import { masteryIsVisible } from "./systemVisibility";
+import type { UiUnlockSystem } from "./uiUnlocks";
 import { openPrimaryOverlay, togglePrimaryOverlay } from "../input/overlayStack";
 import {
   craftTabAtom,
@@ -34,24 +35,39 @@ import "./hud.css";
 
 interface RightNavButtonProps {
   label: string;
-  icon: string;
+  icon: IconSource;
   selected: boolean;
   disabled?: boolean;
   badge?: boolean;
+  unlockSystems?: readonly UiUnlockSystem[];
   onClick: () => void;
 }
 
-function RightNavButton({ label, icon, selected, disabled, badge, onClick }: RightNavButtonProps) {
+function RightNavButton({
+  label,
+  icon,
+  selected,
+  disabled,
+  badge,
+  unlockSystems,
+  onClick,
+}: RightNavButtonProps) {
   return (
     <button
       type="button"
       className={`right-nav-button${selected ? " right-nav-button--selected" : ""}`}
       aria-pressed={selected}
+      data-ui-unlock-system={unlockSystems?.join(" ") || undefined}
       disabled={disabled}
       onClick={onClick}
     >
       <span className="right-nav-button__icon" aria-hidden>
-        <UIIcon frameName={icon} size={20} />
+        <GameIcon
+          source={icon}
+          size={20}
+          fallback={label.charAt(0)}
+          decorative
+        />
       </span>
       <span className="right-nav-button__label">{label}</span>
       {badge && <span className="right-nav-button__badge" aria-label="New unlock available" />}
@@ -103,7 +119,7 @@ export function RightSidebar() {
       <nav className="right-system-nav" aria-label="Character systems">
         <RightNavButton
           label="Passive Tree"
-          icon="UI_icons/passives-icon.png"
+          icon={atlasIcon("UI_icons/passives-icon.png")}
           selected={treeOpen}
           badge={!treeOpen && skillPoints > 0}
           onClick={() => togglePrimaryOverlay("skill-tree")}
@@ -111,27 +127,29 @@ export function RightSidebar() {
         {showMastery && (
           <RightNavButton
             label="Mastery"
-            icon="UI_icons/progress-icon.png"
+            icon={atlasIcon("UI_icons/progress-icon.png")}
             selected={masteryOpen}
+            unlockSystems={["mastery"]}
             onClick={() => togglePrimaryOverlay("mastery")}
           />
         )}
         <RightNavButton
           label="Build"
-          icon="UI_icons/runes-icon.png"
+          icon={atlasIcon("UI_icons/runes-icon.png")}
           selected={buildOpen}
+          unlockSystems={["abilities", "stances", "rites"]}
           onClick={() => togglePrimaryOverlay("build")}
         />
         <RightNavButton
           label="Inventory"
-          icon="UI_icons/inventory-icon.png"
+          icon={atlasIcon("UI_icons/inventory-icon.png")}
           selected={invOpen}
           disabled={dead}
           onClick={() => togglePrimaryOverlay("inventory")}
         />
         <RightNavButton
           label="Crafting"
-          icon="UI_icons/forge-icon.png"
+          icon={atlasIcon("UI_icons/forge-icon.png")}
           selected={craftTab !== null}
           disabled={dead}
           badge={forgeBadge > 0 && craftTab === null}
@@ -142,13 +160,13 @@ export function RightSidebar() {
         />
         <RightNavButton
           label="Map"
-          icon="UI_icons/map-icon.png"
+          icon={atlasIcon("UI_icons/map-icon.png")}
           selected={mapOpen}
           onClick={() => togglePrimaryOverlay("map")}
         />
         <RightNavButton
           label="Settings"
-          icon="UI_icons/settings-icon.png"
+          icon={atlasIcon("UI_icons/settings-icon.png")}
           selected={settingsOpen}
           onClick={() => togglePrimaryOverlay("settings")}
         />

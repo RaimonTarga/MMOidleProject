@@ -43,6 +43,7 @@ export interface DialogTabProps {
   onSelect: () => void;
   children: ReactNode;
   icon?: ReactNode;
+  unlockSystems?: readonly string[];
   controls?: string;
   disabled?: boolean;
   className?: string;
@@ -53,6 +54,7 @@ export function DialogTab({
   onSelect,
   children,
   icon,
+  unlockSystems,
   controls,
   disabled,
   className = '',
@@ -64,6 +66,7 @@ export function DialogTab({
       role="tab"
       aria-selected={selected}
       aria-controls={controls}
+      data-ui-unlock-system={unlockSystems?.join(' ') || undefined}
       tabIndex={selected ? 0 : -1}
       disabled={disabled}
       onClick={onSelect}

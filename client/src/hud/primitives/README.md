@@ -35,6 +35,8 @@ Token families live in `tokens.css`:
 - `--hud-focus-*` is the shared keyboard-focus treatment.
 - `--hud-motion-*` controls short state transitions and readiness feedback, and
   collapses under reduced-motion preferences.
+- `--hud-unlock-*` controls the duration, channel-flare opacity, and lift of
+  authoritative system-reveal wakes without changing component geometry.
 
 Phase 9 projects zero-indexed gameplay progression to `data-ui-tier="1"` through
 `data-ui-tier="8"` on `document.documentElement`. The projection lives in
@@ -61,6 +63,15 @@ resets, reduced motion, or while the document is hidden. Persistent CSS channel
 motion pauses while hidden. The short activation state is exposed as
 `data-ui-tier-activating` so independent React roots and the Phaser minimap can
 join the same visual event without a gameplay protocol change.
+
+Phase 11 adds `installUiUnlockSync()` alongside the tier projection. It compares
+the existing Phase 5 visibility matrix for Mastery, Abilities, Stances, and
+Rites, then briefly marks currently mounted matching
+`data-ui-unlock-system` targets. Character hydration, reduced motion, hidden
+documents, and unchanged visibility never replay the wake. Persistent
+navigation can therefore acknowledge a reveal even when the Build dialog is
+closed, while an already-open dialog can wake its newly mounted tab and summary
+cards in the same event.
 
 The Phaser minimap reads the resolved `--hud-minimap-*` colors through the same
 tier projection. Tier overrides are deliberately inside `min-width: 1101px`;

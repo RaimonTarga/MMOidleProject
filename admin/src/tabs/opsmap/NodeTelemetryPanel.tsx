@@ -17,11 +17,6 @@ function leakBadgeClass(flags: string[]): string {
   return 'map-telemetry-flag map-telemetry-flag--bad';
 }
 
-function nodeCoords(nodeId: string): string {
-  const match = /^node-(\d+)-(\d+)$/.exec(nodeId);
-  return match ? `row ${match[1]}, col ${match[2]}` : '-';
-}
-
 export function NodeTelemetryPanel({ nodeId }: Props) {
   const snap = useAtomValue(telemetryAtom);
   const row = snap?.nodes[nodeId];
@@ -36,7 +31,7 @@ export function NodeTelemetryPanel({ nodeId }: Props) {
   return (
     <div className="map-node-telemetry">
       <div className="map-node-telemetry__header">
-        <span className="map-node-telemetry__name">{biome?.name ?? nodeId}</span>
+        <span className="map-node-telemetry__name">{info?.displayName ?? biome?.name ?? nodeId}</span>
         <span className="map-node-telemetry__id">{nodeId}</span>
         {row?.frozen && !row.occupied && (
           <span className="map-telemetry-flag map-telemetry-flag--ok">frozen</span>
@@ -45,7 +40,9 @@ export function NodeTelemetryPanel({ nodeId }: Props) {
 
       <section className="map-telemetry-section">
         <div className="map-node-telemetry__label">Node debug</div>
-        <div className="map-telemetry-row"><span>Coords</span><span>{nodeCoords(nodeId)}</span></div>
+        <div className="map-telemetry-row"><span>Coords</span><span>{info ? `row ${info.map.row}, col ${info.map.col}` : '-'}</span></div>
+        <div className="map-telemetry-row"><span>Region</span><span>{info?.regionId ?? '-'}</span></div>
+        <div className="map-telemetry-row"><span>Kind</span><span>{info?.kind ?? '-'}</span></div>
         <div className="map-telemetry-row"><span>Tier</span><span>{info ? `T${info.biomeTier}` : '-'}</span></div>
         <div className="map-telemetry-row"><span>Biome group</span><span>{info?.biomeGroup ?? '-'}</span></div>
         <div className="map-telemetry-row"><span>Dungeon</span><span>{info?.isDungeon ? 'yes' : 'no'}</span></div>

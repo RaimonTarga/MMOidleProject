@@ -1,7 +1,7 @@
 import { useAtomValue } from 'jotai';
 import {
   NODE_BIOMES, BIOME_DATABASE, biomeXpForBiomeLevel, biomeLevelCap,
-  NODE_MODIFIERS, PACE_FAMILY_COLORS, PACE_FAMILY_LABELS, PACE_FAMILY_SUMMARIES, DENSITY_LABELS,
+  NODE_MODIFIERS, PACE_FAMILY_COLORS, PACE_FAMILY_LABELS, PACE_FAMILY_SUMMARIES,
 } from '@mmo-idle/shared';
 import { useState, useEffect, useRef } from 'react';
 import { biomeXPAtom, biomeLevelAtom, playerNodeIdAtom, playerTierAtom } from './atoms';
@@ -148,7 +148,6 @@ export function BiomeXpBar() {
             title={PACE_FAMILY_SUMMARIES[modifier.pace]}
           >
             {PACE_FAMILY_LABELS[modifier.pace]}
-            {modifier.density ? ` · ${DENSITY_LABELS[modifier.density]}` : ''}
           </span>
         )}
         <span className={`biome-xp-bar__level${levelModClass ? ` ${levelModClass}` : ''}`}>
