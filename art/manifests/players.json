@@ -133,16 +133,23 @@
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "full body 64px pixel art sprite, 3/4 top-down view facing south-east, seen slightly from above, the body is rotated three quarters away from the viewer toward the lower right so we see the front and one side at once, one shoulder nearer the camera than the other, clearly asymmetric turned pose, neutral idle pose, compact readable silhouette, armored knight figure in banded plate, head completely enclosed in a plain iron great helm, the whole face covered by one smooth solid steel faceplate with no opening and no gap, a blank unbroken metal front, no hood, no visible skin, large squared iron pauldrons, plate chestpiece, iron gauntlets, iron boots, pale cloth tabard hanging from the belt, heavy grounded planted stance, empty hands with no weapon",
+      "status": "accepted",
       "sources": [
         "cooldown"
       ],
       "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "view": "low top-down",
+        "direction": "south-east",
         "initImage": "sprites/classes/classless.png",
-        "initImageStrength": 250
+        "initImageStrength": 70
       },
-      "notes": "Author after the Cadence slice is validated — copy the cadence chain recipe. Squire: plate armor, heavy or hooded helm, patient weight, pale iron glow, knightly but not a kingdom soldier."
+      "negative": "front view, straight-on view, facing the viewer, facing the camera, symmetrical pose, square shoulders to camera, flat elevation, side view, profile, back view, dark eye slits, dark opening in the helmet, black gap in the face, open visor, face hole, eye holes, glowing eyes, red eyes, hood, hooded, cowl, ornate armor, gold trim, filigree, crown, helmet plume, heraldry, banner, mage robe, red, visible face, visible skin, bare hands, hair, beard, weapon, sword, mace, spear, staff, bow, gun, shield, holding item",
+      "notes": "candidate 1 is close. Also candidate 2 and 3 are generating sprites that have the wrong perspective, they're facing the camera rather than our 3/4 view. Specify plate helmet that fully covers face: for this one I don't want the dark space in the face, we want a faceplate. ROUND 4 (user note): 'candidate 1 is close; candidates 2 and 3 have the wrong perspective, facing the camera rather than our 3/4 view. Specify a plate helmet that fully covers the face — no dark space in the face, we want a faceplate.' Two changes: (1) the face is now a SOLID unbroken faceplate, with dark eye slits / openings / gaps moved into the negatives — the earlier 'narrow dark empty eye slits' was reading as a black void, the same spookiness source that hurt the Conduit and Spirit; (2) perspective language escalated from a framing sentence to an explicit rotation description (body turned three-quarters toward the lower right, one shoulder nearer the camera, asymmetric), with facing-the-camera terms banned. The direction/view PARAMS plus a framing sentence still were not enough on their own. Candidates bumped to 6 — this is now a taste round, not a direction round. ROUND 4 ACCEPTED — perspective fixed by the explicit rotation language. NOTE: the user accepted a candidate WITHOUT the solid faceplate; a full blank faceplate is parked as a possible LATER-TIER upgrade for this class (T3+ refinement body), not the T1 look.",
+      "candidates": 6
     },
     {
       "id": "cooldown-light",
@@ -205,16 +212,22 @@
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "hooded robed figure, face fully hidden by dark hood shadow, no visible skin, long stained cloth robe with a ragged uneven hem, cloth-wrapped sealed sleeves covering the hands, simple painted sigil marks on the chest and sleeves, small hanging pouches on the belt, still upright ritual stance, empty hands with no weapon",
+      "status": "accepted",
       "sources": [
         "dot"
       ],
       "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "view": "low top-down",
+        "direction": "south-east",
         "initImage": "sprites/classes/classless.png",
-        "initImageStrength": 250
+        "initImageStrength": 70
       },
-      "notes": "Author after the Cadence slice is validated. Apprentice: hooded stained robe, sigils, sealed sleeves, elemental wound marks; ritual not scholarly, no wand/staff."
+      "negative": "visible eyes, visible face, wizard hat, pointed hat, wand, staff, orb, spellbook, scroll, plate armor, metal armor, pauldrons, ornate, gold trim, side view, visible skin, bare hands, hair, beard, weapon, sword, bow, gun, shield, holding item, glowing eyes",
+      "notes": "CHAIN: Stage 1 Apprentice root, derived from accepted classless base. RECIPE = the accepted cadence recipe verbatim. Identity through silhouette + 2-3 color blocks: narrow robed column, ragged hem, sealed sleeves. Dark stained cloth + sickly green sigils. Ritual vessel, NOT a scholarly wizard — no hat, wand, or staff ever."
     },
     {
       "id": "dot-light",
@@ -277,16 +290,20 @@
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "full body 64px pixel art sprite, 3/4 top-down view facing south-east, seen slightly from above, body angled toward the right, neutral idle pose, compact readable silhouette, a standing person-shaped spirit in a pale ash grey and soft off-white hooded robe, the same compact proportions and silhouette as a plain hooded adventurer, clear square shoulders and upper arms so it reads as a body, a soft warm pale blue light glowing gently inside the hood where a face would be, long sleeves hanging down over where the hands would be with soft glowing cuffs, the robe falls straight down to ankle height and ends in a short ragged fringe of mist just above the ground, calm upright stance",
+      "status": "accepted",
       "sources": [
         "energy"
       ],
       "params": {
-        "initImage": "sprites/classes/classless.png",
-        "initImageStrength": 250
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "view": "low top-down",
+        "direction": "south-east"
       },
-      "notes": "Author after the Cadence slice is validated. Spirit: floating robe, no visible feet, hooded void face, energy core, spectral glow — the most non-physical class."
+      "negative": "black void face, pitch black face, empty darkness under the hood, face in deep shadow, creepy, sinister, horror, scary, evil, villain, grim reaper, death, wraith, front view, straight-on view, flat elevation, feet, boots, shoes, toes, legs, knees, trousers, hands, fingers, palms, bare skin, cast shadow, bell shape, cone shape, tapering skirt, ghost tail, glowing chest core, chest orb, amulet, small figure, tiny figure, chibi, short, plate armor, metal armor, pauldrons, wizard hat, pointed hat, staff, wand, skull, skeleton, undead, gore, side view, visible face, visible eyes, hair, beard, weapon, sword, bow, gun, shield, holding item",
+      "notes": "too goofy, off-beat. Honestly I'm thinking about just keeping the current sprite for now, let's not reflag this for regeneration ROUND 6 CLOSED — the friendlier 'glowing face instead of black void' variants came back 'too goofy, off-beat' and the user chose to KEEP THE ACCEPTED r5 SPRITE (pale grey/white robe, dark void, no feet/hands) rather than iterate further. Entry restored to accepted; art/src art was never touched by the rejection. Backup of the live sprite also at art/workbench/_accepted-2026-07-25/energy-ACCEPTED.png. LESSON: removing the void does kill the spookiness, but it also kills what made the sprite read as a spirit — a lit face reads as a helmet or a lightbulb at 64px. If spookiness is revisited, change palette/posture, not the void."
     },
     {
       "id": "energy-light",
@@ -349,16 +366,22 @@
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "hooded figure in light layered armor, hood pulled over a pale cloth face mask painted with a single dark eye symbol, no visible skin, short quick cloak, leather bracers, amber sash across the chest, light boots, alert upright stance, empty hands with no weapon",
+      "status": "accepted",
       "sources": [
         "reload"
       ],
       "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "view": "low top-down",
+        "direction": "south-east",
         "initImage": "sprites/classes/classless.png",
-        "initImageStrength": 250
+        "initImageStrength": 70
       },
-      "notes": "Author after the Cadence slice is validated. Slinger: hood + mask with one painted false eye, ritual archer-like armor, targeting glyph symbolism, NO guns/bows/crossbows."
+      "negative": "bow, quiver, arrows, crossbow, gun, rifle, pistol, scope, goggles, technology, machinery, visible face, human eyes, exposed skin, plate armor, heavy armor, ornate, gold trim, mage robe, side view, bare hands, hair, beard, weapon, sword, staff, shield, holding item, glowing eyes",
+      "notes": "CHAIN: Stage 1 Slinger root, derived from accepted classless base. RECIPE = the accepted cadence recipe verbatim. Identity through silhouette + 2-3 color blocks: light mobile frame, short cloak, amber sash, and the single painted false eye on the mask (bible §18's locked motif). NOTE: 'visible eyes' is deliberately NOT in the negative list — the painted eye symbol is the class read; only real/glowing eyes are banned. NO guns, bows, or crossbows ever."
     },
     {
       "id": "reload-light",
@@ -413,6 +436,31 @@
         "initImageStrength": 300
       },
       "notes": "Chain from reload root once accepted. Artillerist — broader and anchored, still not a gunner."
+    },
+    {
+      "id": "summoner",
+      "out": "sprites/classes/summoner.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "hooded ritual figure in a deep red robe, 3/4 top-down view facing south-east, the whole face covered by a large plain white ceramic mask, the mask is seen at a three quarter angle and sits slightly toward the right side of the head, its right edge catching the light and its left side in soft shadow, the head is clearly turned to the right, no visible skin, two small white masks hanging behind the shoulders, short split cloak, simple cord belt, brown gloves, brown boots, neutral idle stance, empty hands with no weapon",
+      "negative": "mask facing the viewer, flat round mask, face-on mask, symmetrical face, front view, straight-on view, facing the camera, looking at the viewer, side view, profile, dark mask, grey mask, shadow covering the mask, black void face, tiny head, bulky armor, plate armor, heavy armor, spacesuit, helmet, robot, creepy, sinister, horror, evil, cultist, teal, green, blue, purple, feathers, crest, headdress, ornate, gold trim, visible eyes, eye holes, mouth, nose, markings on the mask, visible face, visible skin, bare hands, hair, beard, weapon, sword, bow, gun, shield, staff, wand, holding item, skull, undead, chibi",
+      "status": "accepted",
+      "sources": [
+        "summoner"
+      ],
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "view": "low top-down",
+        "direction": "south-east",
+        "initImage": "sprites/classes/cadence.png",
+        "initImageStrength": 90
+      },
+      "notes": "wrong artstyle, completely off-target, we need to go back one step and see if we can reproduce what we were getting in the last step ROUND 10 — RESET AFTER A COMPLETE MISS. User on r9: 'a complete miss, the style was completely off the mark' (candidates came back bulky, spacesuit-like, desaturated to blue/purple, one with a weapon shape). ROOT CAUSE: PROMPT BLOAT. Across rounds 7-9 this prompt grew to ~120 words juggling mask lighting + explicit rotation geometry + head-size proportions, while EVERY accepted root in this manifest uses a SHORT identity-only prompt with style carried by the params and the chain. The extra instruction crowded out the style. This round returns to the proven shape: short identity prompt, one brief framing clause (as the classless entry has) instead of the rotation paragraph, no head-size clause, initImageStrength back to 70 (the value that held style best across the whole roster). GENERAL RULE FOR THIS CATEGORY: when a player entry drifts off-style, SHORTEN the prompt before adding anything to it — accumulated fixes are themselves a failure mode. Fix proportions with the deterministic retouch script, not with more prompt words. ROUND 11 — PERSPECTIVE, ROOT CAUSE FOUND. User: the accepted r10 sprite is 'almost right but the face is turned toward the camera where it should face right'. DIAGNOSIS: a FEATURELESS OVAL MASK CARRIES NO FACING INFORMATION. Every other class signals its turn through head geometry (hood cavity, angled helm front, the Slinger's painted eye); a blank oval has no front, so the head defaults to face-on however hard the prompt pushes 'south-east' — which is why this entry alone kept regressing on perspective while the Squire's helm fix held. TWO CHANGES: (1) initImage switched from classless.png to cadence.png @ 90 — an initImage asserts structure that negatives cannot outvote, which has been the enemy all session; here it is the TOOL, because the accepted Striker already has exactly the 3/4 turn we want, so it asserts the pose while the prompt supplies the red robe and mask. Watch for Striker identity bleed (grey/brown palette, shoulder guards) and drop toward 70 if it shows. (2) The mask is now described with a front: offset toward the right of the head, seen at a three-quarter angle, right edge lit and left side shaded, so it reads as a turned face rather than a flat disc; 'mask facing the viewer' and 'flat round mask' added as negatives. GENERAL RULE: chain from whichever accepted sibling already has the property you keep failing to get — the chain is a structure lever, not just a style lever.",
+      "candidates": 6
     }
   ]
 }

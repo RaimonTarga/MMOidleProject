@@ -12,6 +12,7 @@ export const PLAYER_FRAMES: Record<string, string> = {
   'dot':      'sprites/classes/dot.png',
   'energy':   'sprites/classes/energy.png',
   'reload':   'sprites/classes/reload.png',
+  'summoner': 'sprites/classes/summoner.png',
 
   'cadence-light':  'sprites/classes/light_cadence.png',
   'cadence-balanced':'sprites/classes/medium_cadence.png',

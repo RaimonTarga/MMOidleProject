@@ -1,5 +1,5 @@
 {
-  "atlasHash": "cffa10eeb09155d3d0af48d02899d9438630b29568ae645819b56fce8400ccb4",
+  "atlasHash": "8bd391ad239db02ce360597958d6abfb3489c78148eda990e6f87e6a30e98391",
   "frames": {
     "sprites/bosses/boss-cave-t1.png": {
       "sourceW": 128,
@@ -184,8 +184,8 @@
     "sprites/classes/cooldown.png": {
       "sourceW": 64,
       "sourceH": 64,
-      "footY": 28,
-      "halfWAtFoot": 12
+      "footY": 29,
+      "halfWAtFoot": 13
     },
     "sprites/classes/deadeye.png": {
       "sourceW": 64,
@@ -196,13 +196,13 @@
     "sprites/classes/dot.png": {
       "sourceW": 64,
       "sourceH": 64,
-      "footY": 28,
-      "halfWAtFoot": 18
+      "footY": 29,
+      "halfWAtFoot": 13.5
     },
     "sprites/classes/energy.png": {
       "sourceW": 64,
       "sourceH": 64,
-      "footY": 27,
+      "footY": 29,
       "halfWAtFoot": 13.5
     },
     "sprites/classes/enforcer.png": {
@@ -346,8 +346,8 @@
     "sprites/classes/reload.png": {
       "sourceW": 64,
       "sourceH": 64,
-      "footY": 28,
-      "halfWAtFoot": 12
+      "footY": 29,
+      "halfWAtFoot": 19.5
     },
     "sprites/classes/sentinel.png": {
       "sourceW": 64,
@@ -360,6 +360,12 @@
       "sourceH": 64,
       "footY": 28,
       "halfWAtFoot": 17
+    },
+    "sprites/classes/summoner.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 30,
+      "halfWAtFoot": 13
     },
     "sprites/classes/vanguard.png": {
       "sourceW": 64,
