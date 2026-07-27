@@ -7,6 +7,7 @@ export * from './monsterDatabase';
 export * from './biomeDatabase';
 export * from './dungeons';
 export * from './runeDatabase';
+export * from './data/runeTuning';
 export * from './runeRecipes';
 export * from './abilities';
 export * from './abilityRecipes';

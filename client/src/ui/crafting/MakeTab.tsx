@@ -39,6 +39,10 @@ import {
 import { ItemIcon } from '../ItemIcon';
 import { BuildIcon } from '../BuildIcon';
 import { abilityIconSource } from '../abilityIcons';
+import { DetailLines } from '../describe/DetailLines';
+import { loadoutLinesFor, ruleLines } from '../describe';
+import { useAbilityContext } from '../describe/useAbilityContext';
+import type { AbilityContext } from '../describe';
 
 const KIND_FACETS: { kind: MakeKind; label: string }[] = [
   { kind: 'weapon', label: 'Weapon' },
@@ -79,7 +83,7 @@ function EntryIcon({ entry, size }: { entry: MakeEntry; size: number }) {
     );
   }
 
-  const ability = entry.abilityId ? abilityDef(entry.abilityId) : null;
+  const ability = entry.kind === 'technique' ? abilityDef(entry.learnedId) : null;
   return (
     <BuildIcon
       kind={entry.kind === 'technique' ? 'ability' : entry.kind === 'stance' ? 'stance' : 'rite'}
@@ -124,6 +128,9 @@ export function MakeTab() {
   const bossesCleared = useAtomValue(bossesClearedAtom);
 
   const isTestRoom = nodeId === TEST_ROOM_NODE_ID;
+  // Techniques deepen with tier and passives, so a recipe quotes what it would
+  // be worth to THIS character rather than its authored baseline.
+  const abilityContext = useAbilityContext();
   const lastAttemptRef = useRef<string | null>(null);
   const resultTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -306,6 +313,7 @@ export function MakeTab() {
             catalysts={catalysts}
             inventory={inventory}
             itemUpgrades={itemUpgrades}
+            abilityContext={abilityContext}
             isTestRoom={isTestRoom}
             result={craftResult?.key === entry.key ? craftResult : null}
             onAttempt={(run) => {
@@ -351,9 +359,26 @@ interface MakeDetailProps {
   catalysts: Record<string, number>;
   inventory: readonly string[];
   itemUpgrades: Record<string, number>;
+  abilityContext: AbilityContext;
   isTestRoom: boolean;
   result: CraftResult | null;
   onAttempt: (run: () => void) => void;
+}
+
+/**
+ * What a non-gear recipe would actually give you. Gear already states its stats
+ * and mechanic effects; techniques, stances, rites and runes used to offer a
+ * blurb and a price, which is not enough to decide whether to spend on one.
+ */
+function madeThingLines(entry: MakeEntry, context: AbilityContext) {
+  if (!entry.learnedId) return [];
+  if (entry.kind === 'rune') {
+    // A rune recipe yields ONE fragment — a condition or an action, not an
+    // assembled rule — so it describes that fragment's own numbers.
+    return ruleLines({ conditionId: entry.learnedId, actionId: entry.learnedId })
+      .filter((line) => line.key !== 'cost');
+  }
+  return loadoutLinesFor(entry.learnedId, context);
 }
 
 function MakeDetail({
@@ -362,6 +387,7 @@ function MakeDetail({
   catalysts,
   inventory,
   itemUpgrades,
+  abilityContext,
   isTestRoom,
   result,
   onAttempt,
@@ -442,6 +468,13 @@ function MakeDetail({
           ))}
         </ul>
       )}
+
+      {/* Non-gear recipes: what learning this would actually give you, at your
+          current tier and passives. */}
+      <DetailLines
+        className="make-detail__lines"
+        lines={madeThingLines(entry, abilityContext)}
+      />
 
       <div className="make-detail__cost-label">Cost</div>
       <CostDisplay

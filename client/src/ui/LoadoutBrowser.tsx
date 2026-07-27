@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import { BrowserPane } from '../hud/primitives';
 import { BuildIcon, type BuildIconKind } from './BuildIcon';
+import { DetailLines } from './describe/DetailLines';
+import { loadoutLinesFor } from './describe';
+import { useAbilityContext } from './describe/useAbilityContext';
 import type { IconSource } from './GameIcon';
 
 export interface LoadoutSlot {
@@ -58,6 +61,9 @@ export function LoadoutBrowser({
 }: LoadoutBrowserProps) {
   const [selectedKey, setSelectedKey] = useState<string | null>(slots[0]?.key ?? null);
   const selected = slots.find((slot) => slot.key === selectedKey) ?? slots[0] ?? null;
+  // Abilities deepen with tier and passives, so "what does this do" is a
+  // question about THIS character, not about the ability in the abstract.
+  const abilityContext = useAbilityContext();
 
   return (
     <BrowserPane
@@ -109,6 +115,10 @@ export function LoadoutBrowser({
                 <>
                   <div className="loadout-detail__current-name">{currentName}</div>
                   <p className="make-detail__blurb">{blurbOf(slot.currentId!)}</p>
+                  <DetailLines
+                    className="loadout-detail__lines"
+                    lines={loadoutLinesFor(slot.currentId!, abilityContext)}
+                  />
                   <button
                     type="button"
                     className="craft-recipe__btn"
@@ -149,6 +159,13 @@ export function LoadoutBrowser({
                         <span className="loadout-candidate__blurb">
                           {candidate.disabledReason || candidate.blurb}
                         </span>
+                        {/* Choosing between two Guards is a numbers question.
+                            The candidate states its own, so the comparison does
+                            not require equipping one and remembering it. */}
+                        <DetailLines
+                          className="loadout-candidate__lines"
+                          lines={loadoutLinesFor(candidate.id, abilityContext)}
+                        />
                       </span>
                       <span className="loadout-candidate__action">
                         {equipped ? 'EQUIPPED' : candidate.disabledReason ? '—' : 'EQUIP'}

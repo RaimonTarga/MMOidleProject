@@ -10,6 +10,11 @@ import {
   pointInNodeFeatureShape,
   posHitboxFromEntity,
   RESOLVED_NODE_FEATURES,
+  RUNE_CAREFUL_PULLING_MAX_THREAT_RADIUS,
+  RUNE_CAREFUL_PULLING_MIN_THREAT_RADIUS,
+  RUNE_CAREFUL_PULLING_SIDE_STEP,
+  RUNE_KEEP_DISTANCE_GAP,
+  RUNE_KEEP_DISTANCE_RANGED_BUFFER,
   setFlag,
   type NodeFeatureShape,
   type Vec2,
@@ -47,8 +52,9 @@ const AUTO_FIRING_FLAG = "autoFiring";
 /**
  * Personal-space gap (edge-to-edge px) for the idle keep-distance "Skittish"
  * behavior: hold position until an enemy is closer than this, then back away.
+ * Authored in shared so the rune's own card can quote the distance it holds.
  */
-const AVOID_GAP = 220;
+const AVOID_GAP = RUNE_KEEP_DISTANCE_GAP;
 
 /**
  * Fraction of attack range an auto-combat approacher settles at when closing on a
@@ -89,10 +95,10 @@ const DIRECT_APPROACH_DIST = 100;
  * parking inside it. Only fully achievable when the player can still fire from
  * that far — i.e. the mob does not outrange the player.
  */
-const RANGED_SAFE_BUFFER = 45;
-const CAREFUL_PULLING_MAX_THREAT_RADIUS = 720;
-const CAREFUL_PULLING_MIN_THREAT_RADIUS = 280;
-const CAREFUL_PULLING_SIDE_STEP = 220;
+const RANGED_SAFE_BUFFER = RUNE_KEEP_DISTANCE_RANGED_BUFFER;
+const CAREFUL_PULLING_MAX_THREAT_RADIUS = RUNE_CAREFUL_PULLING_MAX_THREAT_RADIUS;
+const CAREFUL_PULLING_MIN_THREAT_RADIUS = RUNE_CAREFUL_PULLING_MIN_THREAT_RADIUS;
+const CAREFUL_PULLING_SIDE_STEP = RUNE_CAREFUL_PULLING_SIDE_STEP;
 const HAZARD_PULL_EDGE_BUFFER = 72;
 const HAZARD_PULL_ARRIVE_SQ = 42 * 42;
 const HAZARD_SKIRT_ANGLE = 0.65;

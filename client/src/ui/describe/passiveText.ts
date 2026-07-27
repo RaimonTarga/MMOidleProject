@@ -79,18 +79,46 @@ function stemOf(key: string): { stem: string; suffix: QualifierSuffix | null } {
 /** Words that must not be title-cased naively. */
 const WORD_OVERRIDES: Record<string, string> = {
   aps: 'APS',
-  atk: 'Attack',
-  cd: 'Cooldown',
+  atk: 'attack',
+  cd: 'cooldown',
   dot: 'DoT',
   dr: 'DR',
   hp: 'HP',
-  ooc: 'Out-of-combat',
-  pen: 'Penalty',
-  regen: 'Regen',
+  ooc: 'out-of-combat',
+  pen: 'penalty',
   rp: 'RP',
-  vuln: 'Vulnerability',
+  vuln: 'vulnerability',
   aoe: 'AoE',
 };
+
+/**
+ * Fractions whose key does not end in `-pct`. The naming convention is good but
+ * not total, and reporting a resistance as "+0.18" is exactly the failure this
+ * module exists to prevent. Anything genuinely unit-less stays out of this list.
+ */
+const PERCENT_KEYS = new Set([
+  'cadence.momentum-buildup',
+  'cooldown.reverb-bonus-per-attack',
+  'cooldown.rupture-dr-pierce',
+  'defense.debuff-resist',
+  'defense.debuff-resistance',
+  'defense.dot-resistance',
+  'defense.evade-mitigation',
+  'dot.rimeshatter-dr-reduction',
+  'reload.cannon-charge-fraction',
+  'reload.cannon-damage-per-shot',
+  'reload.hair-trigger-pct-per-shot',
+  'reload.momentum-reload-reduction',
+  'reload.momentum-reload-reduction-floor',
+  'reload.snipe-fullhp-threshold',
+  'summoner.overwhelmed-pct-per-attacker',
+  'weapon.brittle-dr',
+]);
+
+/** Scalars that multiply rather than measure, whatever their suffix reads like. */
+const MULTIPLIER_KEYS = new Set([
+  'reload.snipe-as-to-dmg',
+]);
 
 function humanize(text: string): string {
   return text
@@ -168,6 +196,14 @@ export function formatPassiveValue(
 ): string {
   const { suffix } = stemOf(key);
   const withSign = options.signed ?? false;
+
+  // Keys whose unit the naming convention does not carry.
+  if (PERCENT_KEYS.has(key)) return formatPercent(value, withSign);
+  if (MULTIPLIER_KEYS.has(key) || key.endsWith('-factor') || key.endsWith('-scale')) {
+    return `×${round(value)}`;
+  }
+  if (key.endsWith('-rad')) return `${Math.round((value * 180) / Math.PI)}°`;
+
   switch (suffix) {
     case '-pct':
       return formatPercent(value, withSign);

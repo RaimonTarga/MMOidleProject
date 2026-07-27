@@ -50,8 +50,12 @@ export interface MakeEntry {
   unlockHint: string;
   /** Present for gear only; carries the fields the gear detail pane needs. */
   gear?: Recipe;
-  /** Ability id, for icon resolution. Present on technique entries only. */
-  abilityId?: string;
+  /**
+   * What making this actually gives you — the ability/stance/rite/rune id, which
+   * is NOT the recipe id. Absent for gear, where the recipe id is the item id.
+   * Drives icon resolution and the effect table in the detail pane.
+   */
+  learnedId?: string;
 }
 
 export interface MakeSources {
@@ -162,7 +166,7 @@ function techniqueEntries(spec: TechniqueSpec): MakeEntry[] {
       unlockHint: unlocked || !recipe.recipeGroup
         ? ''
         : `Reach ${recipe.recipeGroup} level ${recipe.requiredBiomeLevel ?? 0}`,
-      abilityId: spec.kind === 'technique' ? learnedId : undefined,
+      learnedId,
     });
   }
   return entries;

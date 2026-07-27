@@ -1191,6 +1191,11 @@
   line-height: 1.45;
 }
 
+/* The effect table for a non-gear recipe, between its flavour and its price. */
+.make-detail__lines:not(:empty) {
+  margin: 0 0 10px;
+}
+
 .make-detail__cost-label {
   margin: 10px 0 4px;
   color: var(--hud-text-dim);

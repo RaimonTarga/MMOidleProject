@@ -52,6 +52,12 @@ export const STAT_HELP: Record<string, string> = {
   'defense.cleanse-stacks': 'Periodically strips debuff stacks off you on a timer.',
   'defense.max-hit-pct':
     'Caps a single hit relative to your max HP, shaving the excess off very large hits.',
+  'defense.kill-burst':
+    'A kill restores this share of your max HP, spread over the next few seconds.',
+  'defense.evade-mitigation':
+    'Added to how much damage an evade avoids, on top of the base. An evade is not automatically a full block — this is what pushes it toward one.',
+  'reload.acquire-radius':
+    'Multiplies how far you look for a target before committing to one.',
 
   // ── Mobility passives ────────────────────────────────────────────────────────
   'mobility.ooc-speed-pct': 'Extra move speed while out of combat — faster travel between fights.',
@@ -192,6 +198,21 @@ export const STAT_HELP: Record<string, string> = {
   'dot.wind-spirit': 'Hits at max stacks leave the target more vulnerable to further damage over time.',
 
   // ── Summoner ───────────────────────────────────────────────────────────────
+  // Keyed on the feature stem as well as the authored key, so a node that tunes
+  // `-mult` and a node that tunes `-pct` both find the same explanation.
+  'summoner.minion-range': 'How far your minions can attack from.',
+  'summoner.minion-size': 'Minion body size. Bigger minions are easier to hit and block more for you; smaller ones slip through crowds.',
+  'summoner.minion-speed': 'How fast your minions move — how quickly the pack reaches the next fight.',
+  'summoner.minion-damage': 'Each minion’s damage, as a share of your own attack.',
+  'summoner.minion-hp': 'Each minion’s health, as a share of your own max HP.',
+  'summoner.minion-attack-cooldown': 'Time between each minion’s attacks. Lower is faster.',
+  'summoner.minion-as-cave-lurker': 'Your minions take the form of Cave Lurkers.',
+  'summoner.minion-as-plains-slime': 'Your minions take the form of plains slimes.',
+  'summoner.minion-as-boar': 'Your minions take the form of boars.',
+  'summoner.minion-as-mud-toad': 'Your minions take the form of Mud Toads.',
+  'summoner.minion-as-cliff-hopper': 'Your minions take the form of Cliff Hoppers.',
+  'summoner.minion-as-ridge-archer': 'Your minions take the form of Ridge Archers — ranged attackers.',
+  'summoner.minion-as-crag-behemoth': 'Your minions take the form of Crag Behemoths — slow and heavy.',
   'summoner.minion-count': 'How many minions you keep alive at once.',
   'summoner.minion-damage-pct': 'Each minion’s damage, as a share of your own attack.',
   'summoner.minion-hp-pct': 'Each minion’s health, as a share of your own max HP.',

@@ -16,6 +16,7 @@ export { passiveLines, passiveSummary, passiveNamespaceLabel, formatPassiveValue
 export type { PassiveLine } from './passiveText';
 export { statEffectLines, statEffectGlyph, statEffectChipValue } from './statEffectText';
 export type { StatEffectLine } from './statEffectText';
+export { actionLines, conditionLines, ruleLines, hasRuneNumbers } from './runeText';
 
 /**
  * The one row shape every "what does this actually do" list renders.

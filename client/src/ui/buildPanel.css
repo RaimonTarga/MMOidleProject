@@ -379,7 +379,7 @@
 
 .loadout-candidate {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 8px;
   padding: 6px 8px;
   background: var(--hud-material-control);
@@ -402,6 +402,23 @@
 .loadout-candidate:disabled {
   opacity: 0.5;
   cursor: default;
+}
+
+/* Effect tables inside a candidate card and under the equipped occupant. Tighter
+   than the standalone block: they are supporting detail on something already
+   named, not a section of their own. */
+.loadout-candidate__lines,
+.loadout-detail__lines {
+  margin-top: 5px;
+}
+
+.loadout-candidate__lines .detail-line {
+  padding: 1px 0;
+  font-size: 10px;
+}
+
+.loadout-detail__lines {
+  margin-bottom: 8px;
 }
 
 .loadout-candidate--equipped {
@@ -541,6 +558,17 @@
   color: var(--hud-text-dim);
   font-family: monospace;
   font-size: 12px;
+}
+
+/* Fragment cards state their own distances. Compact: the card already names the
+   thing, these are its terms. */
+.build-rune-lines:not(:empty) {
+  margin-top: 5px;
+}
+
+.build-rune-lines .detail-line {
+  padding: 1px 0;
+  font-size: 10px;
 }
 
 /* ── Rune budget (V2 bar grammar) ─────────────────────────────────────────────

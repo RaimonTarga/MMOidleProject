@@ -1,5 +1,5 @@
 import type { NodeDirection } from "@mmo-idle/shared";
-import { distanceSq } from "@mmo-idle/shared";
+import { distanceSq, RUNE_FLEE_GATE_CLEAR_MARGIN } from "@mmo-idle/shared";
 import type { PlayerEntity } from "../../../ecs/entity";
 import { attachComponent, detachComponent } from "../../../ecs/markerHelpers";
 import type { World } from "../../../world/World";
@@ -19,8 +19,9 @@ const FULL_HP_EPSILON = 0.01;
  * Distance (px) from any node edge a recovering player must reach before it holds
  * to heal. Parking inside the gate band (~20px) bounces the player back through
  * the gate once the transition cooldown lapses, so it never heals or returns.
+ * Authored in shared so the Retreat rune's card can quote it.
  */
-const GATE_CLEAR_MARGIN = 120;
+const GATE_CLEAR_MARGIN = RUNE_FLEE_GATE_CLEAR_MARGIN;
 
 export function isFleeing(player: PlayerEntity): boolean {
   return player.isFleeing !== undefined;

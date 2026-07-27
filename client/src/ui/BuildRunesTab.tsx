@@ -39,6 +39,8 @@ import {
 } from "../hud/atoms";
 import { BuildIcon, type BuildIconKind } from "./BuildIcon";
 import { GameIcon } from "./GameIcon";
+import { DetailLines } from "./describe/DetailLines";
+import { actionLines, conditionLines } from "./describe";
 import {
   runeFragmentIconSource,
 } from "./systemIcons";
@@ -418,6 +420,9 @@ export function BuildRunesTab() {
               }}
               costFor={(c) => c.cost}
               renderMeta={(c) => c.blurb}
+              renderExtra={(c) => (
+                <DetailLines className="build-rune-lines" lines={conditionLines(c.id)} />
+              )}
             />
             <Column<ActionDef>
               heading={
@@ -440,15 +445,23 @@ export function BuildRunesTab() {
               renderMeta={(a) => `${runeChannelLabel(a.channel)} - ${a.blurb}`}
               renderExtra={(a) => {
                 const target = resolveRuneTarget(a.id, equippedAbilities, equippedStances);
-                return target ? (
-                  <div className="build-rune-target">
-                    <BuildIcon kind={target.kind} label={target.label} muted={target.missing} size={28} />
-                    <div>
-                      <div className="build-rune-target__label">{target.title}</div>
-                      <div className="build-rune-target__text">{target.text}</div>
-                    </div>
-                  </div>
-                ) : null;
+                return (
+                  <>
+                    {target && (
+                      <div className="build-rune-target">
+                        <BuildIcon kind={target.kind} label={target.label} muted={target.missing} size={28} />
+                        <div>
+                          <div className="build-rune-target__label">{target.title}</div>
+                          <div className="build-rune-target__text">{target.text}</div>
+                        </div>
+                      </div>
+                    )}
+                    {/* The distances the response actually moves you — authored
+                        in shared/data/runeTuning so they are the same numbers
+                        the auto-combat systems steer by. */}
+                    <DetailLines className="build-rune-lines" lines={actionLines(a.id)} />
+                  </>
+                );
               }}
             />
           </div>
