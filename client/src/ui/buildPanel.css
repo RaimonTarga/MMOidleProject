@@ -78,9 +78,10 @@
   text-transform: none;
 }
 
+/* Wide enough for a 30px icon plus a two-word ability name without wrapping. */
 .loadout-group__sockets {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(132px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(168px, 1fr));
   gap: 6px;
 }
 
@@ -89,8 +90,8 @@
 .loadout-socket {
   position: relative;
   display: flex;
-  flex-direction: column;
-  gap: 2px;
+  align-items: center;
+  gap: 8px;
   min-height: 54px;
   padding: 7px 9px;
   background: var(--hud-material-inset);
@@ -119,6 +120,14 @@
 .loadout-socket:focus-visible {
   outline: var(--hud-focus-width) solid var(--hud-focus-color);
   outline-offset: var(--hud-focus-offset);
+}
+
+/* Icon leads, label stack follows. */
+.loadout-socket__text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
 }
 
 .loadout-socket__kind {

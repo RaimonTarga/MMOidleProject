@@ -172,7 +172,9 @@ export function MaterialsPanel() {
               </span>
               <span className="essence-value">{catalysts[family] ?? 0}</span>
               <span className="essence-progress">
-                {progress[family] ?? 0}/{perUnit}
+                <span className="essence-progress__value">
+                  {progress[family] ?? 0}/{perUnit}
+                </span>
                 {/* Bounded and static between kills, so engraved rather than
                     conduit — the count above says how many, this says how close
                     the next one is. */}

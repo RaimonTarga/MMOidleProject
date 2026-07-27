@@ -30,19 +30,25 @@
   background: var(--hud-edge-divider);
 }
 
+/* One grid for every material row — essence or catalyst, short name or long.
+   This was a wrapping flex row, which meant the layout depended on the label:
+   "Blight Catalyst" fit beside its count while "Volatility Catalyst" pushed it
+   onto a second line, so the same panel drew two different row shapes and the
+   counts stopped forming a column. Fixed tracks make wrapping a property of the
+   panel rather than of how long a material happens to be called. */
 .essence-row {
-  display: flex;
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr) auto;
   align-items: center;
-  gap: 7px;
-  flex-wrap: wrap;
+  gap: 2px 7px;
 }
 
 .economy-icon {
-  flex: 0 0 16px;
+  justify-self: center;
 }
 
 .catalyst-icon {
-  flex-basis: 18px;
+  justify-self: center;
 }
 
 .essence-dot {
@@ -52,21 +58,19 @@
   flex-shrink: 0;
 }
 
-/* Rail text is content-sized: a long material name wraps and grows the row
-   rather than pushing its own value out of the panel. */
+/* A long material name wraps inside its own track and grows the row, rather
+   than displacing the count. */
 .essence-name {
-  flex: 1 1 auto;
   min-width: 0;
   font-size: 12px;
   color: var(--hud-text-muted, #a7a2d8);
   font-family: monospace;
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
 }
 
 /* Numerals are tabular so the counts form a straight right-aligned column
    instead of jittering as digits change. */
 .essence-value {
-  flex: 0 0 auto;
   min-width: 34px;
   font-size: 13px;
   font-family: monospace;
@@ -77,10 +81,11 @@
 }
 
 /* Catalyst progress toward the next unit (e.g. "40/100"), with a thin engraved
-   meter under the figure so "how close" reads without doing the arithmetic. */
+   meter under the figure so "how close" reads without doing the arithmetic.
+   Always its own row under the name/count pair — a catalyst row is taller than
+   an essence row by construction, not by accident of label length. */
 .essence-progress {
-  flex: 0 0 auto;
-  min-width: 52px;
+  grid-column: 2 / -1;
   font-size: 10px;
   font-family: monospace;
   font-variant-numeric: tabular-nums;
@@ -117,4 +122,10 @@
 
 .essence-progress__meter {
   margin-top: 3px;
+}
+
+/* The progress figure reads as a caption on the count above it, so it gets the
+   same right edge — the meter spans the full remaining width beneath. */
+.essence-progress__value {
+  display: block;
 }

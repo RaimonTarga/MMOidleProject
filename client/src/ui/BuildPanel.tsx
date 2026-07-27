@@ -25,6 +25,9 @@ import {
   type BuildPanelTab,
 } from "../hud/atoms";
 import { resolveSystemVisibility, type SystemVisibility } from "../hud/systemVisibility";
+import { BuildIcon, type BuildIconKind } from "./BuildIcon";
+import { abilityIconSource } from "./abilityIcons";
+import type { IconSource } from "./GameIcon";
 import { AbilitiesPanelContent } from "./AbilitiesPanel";
 import { StancesPanelContent } from "./StancesPanel";
 import { RitesPanelContent } from "./RitesPanel";
@@ -51,6 +54,8 @@ interface Socket {
   kind: string;
   /** Occupant name, or null when the socket is empty. */
   filled: string | null;
+  /** The occupant's art, when the system has any. */
+  icon?: IconSource | null;
   /** Firing order within a kind; a corner engraving, not a sentence. */
   order?: number;
   /** Marks the stance actually in force right now. */
@@ -61,8 +66,22 @@ interface Socket {
  * One socket: a cut-corner cell that is either engraved-hollow or filled. The
  * firing order that used to read "fires first" is a corner numeral, because the
  * order matters for every slot but only needs stating once per cell.
+ *
+ * The occupant is drawn, not just named — the overview is where you check your
+ * build at a glance, and a name in 11px monospace is the slowest possible way to
+ * answer "what have I got equipped". Abilities have art today; stances and rites
+ * fall back to their initials until theirs lands, which is the same fallback the
+ * pickers already use.
  */
-function SocketCell({ socket, onOpen }: { socket: Socket; onOpen: () => void }) {
+function SocketCell({
+  socket,
+  iconKind,
+  onOpen,
+}: {
+  socket: Socket;
+  iconKind: BuildIconKind;
+  onOpen: () => void;
+}) {
   const filled = socket.filled !== null;
   const classes = [
     'loadout-socket',
@@ -82,9 +101,18 @@ function SocketCell({ socket, onOpen }: { socket: Socket; onOpen: () => void }) 
       {socket.order !== undefined && (
         <span className="loadout-socket__order" aria-hidden="true">{socket.order}</span>
       )}
-      <span className="loadout-socket__kind">{socket.kind}</span>
-      <span className={`loadout-socket__name${filled ? '' : ' loadout-socket__name--empty'}`}>
-        {socket.filled ?? 'Empty'}
+      <BuildIcon
+        kind={iconKind}
+        label={socket.filled ?? socket.kind}
+        size={30}
+        muted={!filled}
+        icon={socket.icon}
+      />
+      <span className="loadout-socket__text">
+        <span className="loadout-socket__kind">{socket.kind}</span>
+        <span className={`loadout-socket__name${filled ? '' : ' loadout-socket__name--empty'}`}>
+          {socket.filled ?? 'Empty'}
+        </span>
       </span>
     </button>
   );
@@ -93,11 +121,13 @@ function SocketCell({ socket, onOpen }: { socket: Socket; onOpen: () => void }) 
 function SocketGroup({
   title,
   sockets,
+  iconKind,
   unlockSystem,
   onOpen,
 }: {
   title: string;
   sockets: Socket[];
+  iconKind: BuildIconKind;
   unlockSystem?: UiUnlockSystem;
   onOpen: () => void;
 }) {
@@ -107,7 +137,12 @@ function SocketGroup({
       <div className="loadout-group__title">{title}</div>
       <div className="loadout-group__sockets">
         {sockets.map((socket, index) => (
-          <SocketCell key={`${socket.kind}-${index}`} socket={socket} onOpen={onOpen} />
+          <SocketCell
+            key={`${socket.kind}-${index}`}
+            socket={socket}
+            iconKind={iconKind}
+            onOpen={onOpen}
+          />
         ))}
       </div>
     </section>
@@ -140,17 +175,29 @@ function LoadoutBoard({
   const runeBudget = runeBudgetForGlobalMastery(gm);
   const runePct = runeBudget > 0 ? Math.min(100, (runeSpent / runeBudget) * 100) : 0;
 
+  const abilitySocket = (kind: string, id: string | undefined, order?: number): Socket => {
+    const ability = abilityDef(id);
+    return {
+      kind,
+      filled: ability?.name ?? null,
+      icon: ability ? abilityIconSource(ability) : null,
+      order,
+    };
+  };
+
   const abilitySockets: Socket[] = [
-    ...Array.from({ length: abilitySlots.technique }, (_, index) => ({
-      kind: 'Technique',
-      filled: abilityDef(equippedAbilities.techniques[index])?.name ?? null,
-      order: abilitySlots.technique > 1 ? index + 1 : undefined,
-    })),
-    ...Array.from({ length: abilitySlots.guard }, (_, index) => ({
-      kind: 'Guard',
-      filled: abilityDef(equippedAbilities.guards[index])?.name ?? null,
-      order: abilitySlots.guard > 1 ? index + 1 : undefined,
-    })),
+    ...Array.from({ length: abilitySlots.technique }, (_, index) =>
+      abilitySocket(
+        'Technique',
+        equippedAbilities.techniques[index],
+        abilitySlots.technique > 1 ? index + 1 : undefined,
+      )),
+    ...Array.from({ length: abilitySlots.guard }, (_, index) =>
+      abilitySocket(
+        'Guard',
+        equippedAbilities.guards[index],
+        abilitySlots.guard > 1 ? index + 1 : undefined,
+      )),
   ];
 
   const stanceSockets: Socket[] = [
@@ -178,6 +225,7 @@ function LoadoutBoard({
           <SocketGroup
             title="Abilities"
             sockets={abilitySockets}
+            iconKind="ability"
             unlockSystem="abilities"
             onOpen={() => onOpenTab('abilities')}
           />
@@ -186,6 +234,7 @@ function LoadoutBoard({
           <SocketGroup
             title="Stances"
             sockets={stanceSockets}
+            iconKind="stance"
             unlockSystem="stances"
             onOpen={() => onOpenTab('stances')}
           />
@@ -194,6 +243,7 @@ function LoadoutBoard({
           <SocketGroup
             title="Rites"
             sockets={riteSockets}
+            iconKind="rite"
             unlockSystem="rites"
             onOpen={() => onOpenTab('rites')}
           />
