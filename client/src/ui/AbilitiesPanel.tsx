@@ -111,7 +111,7 @@ export function AbilitiesPanelContent() {
         const { slot, index } = parseSlotKey(key);
         setSlot(slot, index, id);
       }}
-      emptyCandidates="Learn abilities in Crafting → Make to fill this slot."
+      emptyCandidates="Learn abilities in Crafting → Craft to fill this slot."
     />
   );
 }

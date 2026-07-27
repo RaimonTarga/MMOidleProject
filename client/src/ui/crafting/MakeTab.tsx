@@ -11,31 +11,25 @@ import {
 } from '@mmo-idle/shared';
 import { hudBus } from '../../hudBus';
 import {
-  biomeLevelAtom,
-  bossesClearedAtom,
   catalystsAtom,
-  equipmentAtom,
   essencesAtom,
   inventoryAtom,
   itemUpgradesAtom,
-  knownAbilitiesAtom,
-  knownRitesAtom,
-  runesOwnedAtom,
-  knownStancesAtom,
+  playerIdAtom,
   playerNodeIdAtom,
-  unlockedRecipesAtom,
 } from '../../hud/atoms';
 import { BrowserPane } from '../../hud/primitives';
 import { SLOT_ABBR, SLOT_LABELS, biomeName, tierColor } from './common';
 import { CostDisplay, WalletSummary } from './shared';
 import { statEntries, formatMechanicEffects, formatWeaponEffects } from './itemDisplay';
 import {
-  buildMakeEntries,
   entryAffordable,
   TECHNIQUE_KINDS,
   type MakeEntry,
   type MakeKind,
 } from './makeEntries';
+import { useNewEntries } from './useNewEntries';
+import { eligibleMakeKeys, useMakeEntries } from './useMakeEntries';
 import { ItemIcon } from '../ItemIcon';
 import { BuildIcon } from '../BuildIcon';
 import { abilityIconSource } from '../abilityIcons';
@@ -43,6 +37,27 @@ import { DetailLines } from '../describe/DetailLines';
 import { loadoutLinesFor, ruleLines } from '../describe';
 import { useAbilityContext } from '../describe/useAbilityContext';
 import type { AbilityContext } from '../describe';
+
+/**
+ * Ordering the list can take. `default` is new-first — the answer to "what
+ * changed while I was out" — then affordable, then the canonical kind/tier/name
+ * order everything else uses.
+ */
+type MakeSort = 'default' | 'name' | 'tier' | 'cost';
+
+const SORT_FACETS: { sort: MakeSort; label: string }[] = [
+  { sort: 'default', label: 'New first' },
+  { sort: 'name', label: 'Name' },
+  { sort: 'tier', label: 'Tier' },
+  { sort: 'cost', label: 'Cost' },
+];
+
+/** Total essence + catalyst outlay, for the cost sort. */
+function entryCost(entry: MakeEntry): number {
+  const essence = Object.values(entry.cost).reduce<number>((sum, n) => sum + (n ?? 0), 0);
+  const catalyst = Object.values(entry.catalystCost ?? {}).reduce<number>((sum, n) => sum + (n ?? 0), 0);
+  return essence + catalyst;
+}
 
 const KIND_FACETS: { kind: MakeKind; label: string }[] = [
   { kind: 'weapon', label: 'Weapon' },
@@ -109,23 +124,18 @@ export function MakeTab() {
   const [filterBiome, setFilterBiome] = useState<string | null>(null);
   const [filterTier, setFilterTier] = useState<number | null>(null);
   const [hideUnaffordable, setHideUnaffordable] = useState(false);
+  const [showLocked, setShowLocked] = useState(false);
+  const [sort, setSort] = useState<MakeSort>('default');
   const [search, setSearch] = useState('');
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
   const [craftResult, setCraftResult] = useState<CraftResult | null>(null);
 
+  const playerId = useAtomValue(playerIdAtom);
   const nodeId = useAtomValue(playerNodeIdAtom);
-  const unlockedRecipeIds = useAtomValue(unlockedRecipesAtom);
   const essences = useAtomValue(essencesAtom);
   const catalysts = useAtomValue(catalystsAtom);
   const inventory = useAtomValue(inventoryAtom);
-  const equipment = useAtomValue(equipmentAtom);
   const itemUpgrades = useAtomValue(itemUpgradesAtom);
-  const knownAbilities = useAtomValue(knownAbilitiesAtom);
-  const knownStances = useAtomValue(knownStancesAtom);
-  const knownRites = useAtomValue(knownRitesAtom);
-  const ownedRunes = useAtomValue(runesOwnedAtom);
-  const biomeLevel = useAtomValue(biomeLevelAtom);
-  const bossesCleared = useAtomValue(bossesClearedAtom);
 
   const isTestRoom = nodeId === TEST_ROOM_NODE_ID;
   // Techniques deepen with tier and passives, so a recipe quotes what it would
@@ -150,30 +160,9 @@ export function MakeTab() {
     };
   }, []);
 
-  const equippedSet = useMemo(
-    () => new Set(Object.values(equipment).filter((id): id is string => id !== null)),
-    [equipment],
-  );
-  const ownedGearIds = useMemo(
-    () => new Set([...inventory, ...equippedSet]),
-    [inventory, equippedSet],
-  );
-
-  const entries = useMemo(() => buildMakeEntries({
-    unlockedRecipeIds,
-    ownedGearIds,
-    equippedGearIds: equippedSet,
-    knownAbilities,
-    knownStances,
-    knownRites,
-    ownedRunes,
-    biomeLevel,
-    bossesCleared,
-    isTestRoom,
-  }), [
-    unlockedRecipeIds, ownedGearIds, equippedSet, knownAbilities, knownStances,
-    knownRites, ownedRunes, biomeLevel, bossesCleared, isTestRoom,
-  ]);
+  const entries = useMakeEntries();
+  const eligibleKeys = useMemo(() => eligibleMakeKeys(entries), [entries]);
+  const newEntries = useNewEntries('craft', playerId, eligibleKeys);
 
   const biomeGroups = useMemo(() => {
     const groups = new Set<string>();
@@ -190,20 +179,35 @@ export function MakeTab() {
   const filtered = useMemo(() => {
     const needle = search.trim().toLowerCase();
     const matches = entries.filter((entry) =>
-      (!filterKind || entry.kind === filterKind)
+      (showLocked || entry.unlocked)
+      && (!filterKind || entry.kind === filterKind)
       && (!filterBiome || entry.recipeGroup === filterBiome)
       && (!filterTier || entry.tier === filterTier)
       && (!needle || entry.name.toLowerCase().includes(needle))
-      && (!hideUnaffordable || entry.owned || entryAffordable(entry, essences, catalysts)),
+      && (!hideUnaffordable || entryAffordable(entry, essences, catalysts)),
     );
-    // Buildable first: the list answers "what can I make now" before "what
-    // exists". Owned techniques sink to the bottom of their group.
-    return matches.slice().sort((a, b) => {
-      const rank = (entry: MakeEntry) =>
-        entry.owned ? 2 : entryAffordable(entry, essences, catalysts) && entry.unlocked ? 0 : 1;
-      return rank(a) - rank(b);
-    });
-  }, [entries, filterKind, filterBiome, filterTier, hideUnaffordable, search, essences, catalysts]);
+
+    // `entries` already arrives in kind/tier/name order, so every sort below
+    // only has to impose its own key and let that carry the ties.
+    const sorted = matches.slice();
+    if (sort === 'name') sorted.sort((a, b) => a.name.localeCompare(b.name));
+    else if (sort === 'tier') sorted.sort((a, b) => a.tier - b.tier);
+    else if (sort === 'cost') sorted.sort((a, b) => entryCost(a) - entryCost(b));
+    else {
+      // Default: what just became available, then what you can afford right now,
+      // then everything else. Answers "what changed" before "what exists".
+      const rank = (entry: MakeEntry) => {
+        if (newEntries.has(entry.key)) return 0;
+        if (!entry.unlocked) return 3;
+        return entryAffordable(entry, essences, catalysts) ? 1 : 2;
+      };
+      sorted.sort((a, b) => rank(a) - rank(b));
+    }
+    return sorted;
+  }, [
+    entries, filterKind, filterBiome, filterTier, hideUnaffordable, showLocked,
+    search, sort, essences, catalysts, newEntries,
+  ]);
 
   const selected = filtered.find((entry) => entry.key === selectedKey)
     ?? filtered[0]
@@ -226,6 +230,29 @@ export function MakeTab() {
       >
         Affordable
       </button>
+      {/* Locked recipes are hidden by default — the list is for what you can
+          make. The chip brings back the ladder of what is coming, which is the
+          job Crafting's old Progress tab used to do. */}
+      <button
+        type="button"
+        className={`craft-filter-chip${showLocked ? ' craft-filter-chip--active' : ''}`}
+        onClick={() => setShowLocked((value) => !value)}
+      >
+        Show locked
+      </button>
+      <div className="craft-filter-row craft-filter-row--sort">
+        <span className="craft-filter-label">Sort</span>
+        {SORT_FACETS.map((facet) => (
+          <button
+            key={facet.sort}
+            type="button"
+            className={`craft-filter-chip${sort === facet.sort ? ' craft-filter-chip--active' : ''}`}
+            onClick={() => setSort(facet.sort)}
+          >
+            {facet.label}
+          </button>
+        ))}
+      </div>
       <div className="craft-filter-row">
         <button
           type="button"
@@ -294,7 +321,11 @@ export function MakeTab() {
         items={filtered}
         itemKey={(entry) => entry.key}
         selectedKey={selected?.key ?? null}
-        onSelect={setSelectedKey}
+        onSelect={(key) => {
+          // Looking at it is enough to stop it being news.
+          newEntries.clear(key);
+          setSelectedKey(key);
+        }}
         toolbar={toolbar}
         emptyList={entries.length === 0
           ? 'No recipes unlocked yet.'
@@ -304,6 +335,8 @@ export function MakeTab() {
           <MakeRow
             entry={entry}
             affordable={entryAffordable(entry, essences, catalysts)}
+            isNew={newEntries.has(entry.key)}
+            onSeen={() => newEntries.clear(entry.key)}
           />
         )}
         renderDetail={(entry) => (
@@ -318,6 +351,7 @@ export function MakeTab() {
             result={craftResult?.key === entry.key ? craftResult : null}
             onAttempt={(run) => {
               lastAttemptRef.current = entry.key;
+              newEntries.clear(entry.key);
               run();
             }}
           />
@@ -327,15 +361,36 @@ export function MakeTab() {
   );
 }
 
-function MakeRow({ entry, affordable }: { entry: MakeEntry; affordable: boolean }) {
-  const state = entry.owned
-    ? 'owned'
-    : !entry.unlocked
-      ? 'locked'
-      : affordable ? 'ready' : 'short';
-
+/**
+ * A row states what the thing IS and whether it is news. It used to end in a
+ * READY/SHORT/LOCKED/LEARNED chip, which spent the most valuable column in the
+ * list restating what the list already guaranteed: owned and learned recipes are
+ * gone from it entirely, locked ones are hidden unless you ask for them, and
+ * affordability is a property you can see in the cost panel — and is now carried
+ * by the row's own dimming rather than by a word.
+ */
+function MakeRow({
+  entry,
+  affordable,
+  isNew,
+  onSeen,
+}: {
+  entry: MakeEntry;
+  affordable: boolean;
+  isNew: boolean;
+  onSeen: () => void;
+}) {
   return (
-    <>
+    <span
+      className={[
+        'make-row',
+        !entry.unlocked ? 'make-row--locked' : '',
+        entry.unlocked && !affordable ? 'make-row--short' : '',
+      ].filter(Boolean).join(' ')}
+      // Hovering counts as reading it — the badge is a "look here", and it has
+      // done its job the moment you do.
+      onMouseEnter={isNew ? onSeen : undefined}
+    >
       <EntryIcon entry={entry} size={28} />
       <span className="make-row__main">
         <span className="make-row__name">{entry.name}</span>
@@ -344,12 +399,9 @@ function MakeRow({ entry, affordable }: { entry: MakeEntry; affordable: boolean 
           {entry.recipeGroup ? ` · ${biomeName(entry.recipeGroup)}` : ''}
         </span>
       </span>
-      <span className={`make-row__state make-row__state--${state}`}>
-        {state === 'owned' ? entry.ownedLabel ?? 'OWNED'
-          : state === 'locked' ? 'LOCKED'
-            : state === 'ready' ? 'READY' : 'SHORT'}
-      </span>
-    </>
+      {isNew && <span className="make-row__new">NEW</span>}
+      {!entry.unlocked && <span className="make-row__state make-row__state--locked">LOCKED</span>}
+    </span>
   );
 }
 
@@ -427,13 +479,11 @@ function MakeDetail({
     else if (entry.kind === 'rune') hudBus.requestCraftRuneRecipe(entry.recipeId);
   }
 
-  const blocked = entry.owned
-    ? entry.ownedLabel ?? 'Already made'
-    : !entry.unlocked
-      ? entry.unlockHint || 'Not unlocked yet'
-      : !affordable && !isTestRoom
-        ? 'Not enough materials'
-        : '';
+  const blocked = !entry.unlocked
+    ? entry.unlockHint || 'Not unlocked yet'
+    : !affordable && !isTestRoom
+      ? 'Not enough materials'
+      : '';
 
   return (
     <div className="make-detail">
@@ -546,12 +596,10 @@ function MakeDetail({
               else learnIntent();
             })}
           >
-            {entry.owned
-              ? entry.ownedLabel ?? 'Made'
-              : recipe ? 'Craft' : 'Learn'}
+            {recipe ? 'Craft' : 'Learn'}
           </button>
         )}
-        {blocked && !entry.owned && <span className="make-detail__blocked">{blocked}</span>}
+        {blocked && <span className="make-detail__blocked">{blocked}</span>}
       </div>
     </div>
   );

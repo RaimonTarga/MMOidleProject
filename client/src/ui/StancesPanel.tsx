@@ -49,7 +49,7 @@ export function StancesPanelContent() {
       nameOf={(id) => stanceDef(id)?.name ?? null}
       blurbOf={(id) => stanceDef(id)?.blurb ?? ""}
       onEquip={(key, id) => hudBus.requestSetStanceLoadout(key as StanceSlot, id)}
-      emptyCandidates="Learn stances in Crafting → Make to fill this slot."
+      emptyCandidates="Learn stances in Crafting → Craft to fill this slot."
     />
   );
 }

@@ -1,9 +1,12 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
+import { useAtomValue } from 'jotai';
 import { BrowserPane } from '../hud/primitives';
+import { playerIdAtom } from '../hud/atoms';
 import { BuildIcon, type BuildIconKind } from './BuildIcon';
 import { DetailLines } from './describe/DetailLines';
 import { loadoutLinesFor } from './describe';
 import { useAbilityContext } from './describe/useAbilityContext';
+import { useNewEntries } from './crafting/useNewEntries';
 import type { IconSource } from './GameIcon';
 
 export interface LoadoutSlot {
@@ -64,6 +67,21 @@ export function LoadoutBrowser({
   // Abilities deepen with tier and passives, so "what does this do" is a
   // question about THIS character, not about the ability in the abstract.
   const abilityContext = useAbilityContext();
+
+  // Something you learned but have never equipped is easy to forget you own.
+  // Namespaced by icon kind so an ability and a stance can never collide, and
+  // kept in its own channel so it does not inflate the rail's craft count.
+  const playerId = useAtomValue(playerIdAtom);
+  const newKey = (id: string) => `${iconKind}:${id}`;
+  const eligible = useMemo(() => {
+    const ids = new Set<string>();
+    for (const slot of slots) {
+      for (const candidate of candidatesFor(slot.key)) ids.add(newKey(candidate.id));
+    }
+    return [...ids].sort();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [slots, iconKind, candidatesFor]);
+  const newEntries = useNewEntries('loadout', playerId, eligible);
 
   return (
     <BrowserPane
@@ -139,6 +157,7 @@ export function LoadoutBrowser({
               <div className="loadout-candidates">
                 {candidates.map((candidate) => {
                   const equipped = candidate.id === slot.currentId;
+                  const isNew = newEntries.has(newKey(candidate.id));
                   return (
                     <button
                       key={candidate.id}
@@ -146,7 +165,11 @@ export function LoadoutBrowser({
                       className={`loadout-candidate${equipped ? ' loadout-candidate--equipped' : ''}`}
                       disabled={equipped || !!candidate.disabledReason}
                       title={candidate.disabledReason}
-                      onClick={() => onEquip(slot.key, candidate.id)}
+                      onMouseEnter={isNew ? () => newEntries.clear(newKey(candidate.id)) : undefined}
+                      onClick={() => {
+                        newEntries.clear(newKey(candidate.id));
+                        onEquip(slot.key, candidate.id);
+                      }}
                     >
                       <BuildIcon
                         kind={iconKind}
@@ -168,6 +191,7 @@ export function LoadoutBrowser({
                         />
                       </span>
                       <span className="loadout-candidate__action">
+                        {isNew && <span className="make-row__new">NEW</span>}
                         {equipped ? 'EQUIPPED' : candidate.disabledReason ? '—' : 'EQUIP'}
                       </span>
                     </button>

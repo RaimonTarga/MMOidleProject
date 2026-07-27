@@ -49,7 +49,7 @@ export function RitesPanelContent() {
       nameOf={(id) => riteDef(id)?.name ?? null}
       blurbOf={(id) => riteDef(id)?.blurb ?? ""}
       onEquip={(key, id) => setSlot(Number(key), id)}
-      emptyCandidates="Learn rites in Crafting → Make to fill this slot."
+      emptyCandidates="Learn rites in Crafting → Craft to fill this slot."
     />
   );
 }

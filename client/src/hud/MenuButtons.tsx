@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useAtom, useAtomValue } from "jotai";
 import { atlasIcon, GameIcon, type IconSource } from "../ui/GameIcon";
 import { hudBus } from "../hudBus";
@@ -17,6 +17,8 @@ import { useIsMobile } from "./useIsMobile";
 import { masteryIsVisible } from "./systemVisibility";
 import { useSystemVisibility } from "./useSystemVisibility";
 import { useUnlockBadges } from "./unlockBadges";
+import { useNewEntries } from "../ui/crafting/useNewEntries";
+import { eligibleMakeKeys, useMakeEntries } from "../ui/crafting/useMakeEntries";
 import type { UiUnlockSystem } from "./uiUnlocks";
 import {
   closePrimaryOverlays,
@@ -76,6 +78,12 @@ interface RightNavButtonProps {
   badge?: boolean;
   /** An unvisited reveal (§16) reads gold and pulses; other badges stay green. */
   badgeTone?: "action" | "unlock";
+  /**
+   * Turns the pip into a count. A dot says "something is waiting"; a number says
+   * how much, which is the difference between "I'll look later" and "three new
+   * recipes landed".
+   */
+  badgeCount?: number;
   unlockSystems?: readonly UiUnlockSystem[];
   /** Rendered beneath the entry while it is open. Omit for flat destinations. */
   sections?: NavSection[];
@@ -95,6 +103,7 @@ function RightNavButton({
   disabled,
   badge,
   badgeTone = "action",
+  badgeCount,
   unlockSystems,
   sections,
   onClick,
@@ -125,10 +134,19 @@ function RightNavButton({
           <span className="right-nav-button__chevron" aria-hidden>{selected ? "▾" : "▸"}</span>
         )}
         {badge && (
-          <span
-            className={`right-nav-button__badge right-nav-button__badge--${badgeTone}`}
-            aria-label={badgeTone === "unlock" ? "Newly unlocked, not yet opened" : "Action available"}
-          />
+          badgeCount && badgeCount > 0 ? (
+            <span
+              className={`right-nav-button__badge right-nav-button__badge--${badgeTone} right-nav-button__badge--count`}
+              aria-label={`${badgeCount} new`}
+            >
+              {badgeCount > 9 ? '9+' : badgeCount}
+            </span>
+          ) : (
+            <span
+              className={`right-nav-button__badge right-nav-button__badge--${badgeTone}`}
+              aria-label={badgeTone === "unlock" ? "Newly unlocked, not yet opened" : "Action available"}
+            />
+          )
         )}
       </button>
 
@@ -164,18 +182,22 @@ export function RightSidebar() {
   const [mapOpen, setMapOpen] = useAtom(mapOpenAtom);
   const [mapHighlightNodes, setMapHighlightNodes] = useAtom(mapHighlightNodesAtom);
   const [settingsOpen, setSettingsOpen] = useAtom(settingsOpenAtom);
-  const [forgeBadge, setForgeBadge] = useState(0);
   const skillPoints = useAtomValue(skillPointsAtom);
   const playerTier = useAtomValue(playerTierAtom);
   const globalMastery = useAtomValue(globalMasteryAtom);
   const showMastery = masteryIsVisible(playerTier, globalMastery);
   const visibility = useSystemVisibility();
-  const badges = useUnlockBadges(visibility, useAtomValue(playerIdAtom));
+  const playerId = useAtomValue(playerIdAtom);
+  const badges = useUnlockBadges(visibility, playerId);
 
-  useEffect(
-    () => hudBus.subscribeRecipeUnlock(() => setForgeBadge((n) => n + 1)),
-    [],
-  );
+  // How many recipes became makeable and have not been looked at. Replaces a
+  // local counter fed by the gear-unlock toast, which could only ever see gear:
+  // techniques, stances, rites and runes unlock from biome levels and boss
+  // clears, with no event to subscribe to. This shares its state with the craft
+  // list, so looking at an entry there decrements the count here.
+  const makeEntries = useMakeEntries();
+  const eligibleKeys = useMemo(() => eligibleMakeKeys(makeEntries), [makeEntries]);
+  const newRecipes = useNewEntries("craft", playerId, eligibleKeys);
 
   const dead = useAtomValue(deathOverlayAtom).active;
 
@@ -194,7 +216,7 @@ export function RightSidebar() {
   // gated sections reuse the same `data-ui-unlock-system` tokens as the tabs
   // they mirror, so a reveal wakes the rail entry too.
   const craftSections: NavSection[] = [
-    { key: "make", label: "Make", selected: craftTab === "make", onSelect: () => setCraftTab("make") },
+    { key: "make", label: "Craft", selected: craftTab === "make", onSelect: () => setCraftTab("make") },
     { key: "upgrade", label: "Upgrade", selected: craftTab === "upgrade", onSelect: () => setCraftTab("upgrade") },
   ];
 
@@ -281,13 +303,13 @@ export function RightSidebar() {
             icon={atlasIcon("UI_icons/forge-icon.png")}
             selected={craftTab !== null}
             disabled={dead}
-            badge={badges.has("crafting") || (forgeBadge > 0 && craftTab === null)}
+            badge={badges.has("crafting") || newRecipes.count > 0}
+            badgeCount={newRecipes.count}
             unlockSystems={["crafting"]}
             sections={craftSections}
             onClick={() => {
               badges.clear("crafting");
               togglePrimaryOverlay("crafting");
-              setForgeBadge(0);
             }}
           />
         )}

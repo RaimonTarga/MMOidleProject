@@ -8,21 +8,24 @@ import { craftingSectionIconSource, type CraftingSectionIcon } from '../systemIc
 import '../crafting.css';
 
 /**
- * Crafting owns everything the player *makes*. `make` covers gear and technique
- * recipes alike; `upgrade` is separate because it acts on owned items rather
- * than recipes.
+ * Crafting owns everything the player *makes*. The `make` tab covers gear and
+ * technique recipes alike; `upgrade` is separate because it acts on owned items
+ * rather than recipes.
  *
  * A third `progress` tab used to report biome mastery. It went when its two
  * jobs found better homes: biome levels are the Mastery dialog's (V4), and the
- * locked-recipe ladder is Make's, which now lists locked gear with what it is
- * waiting on instead of hiding it. Its third section listed "ultimate" gear, a
- * scrapped feature whose recipes were never registered and have since been
- * deleted outright.
+ * locked-recipe ladder is the craft list's, behind its "Show locked" filter.
+ * Its third section listed "ultimate" gear, a scrapped feature whose recipes
+ * were never registered and have since been deleted outright.
+ *
+ * The tab id stays `make` while the label reads "Craft": the id is persisted in
+ * the craft-tab atom and the overlay stack, and renaming it would buy nothing a
+ * player can see.
  */
 export type CraftTab = 'make' | 'upgrade';
 
 const SECTIONS: { tab: CraftTab; label: string; icon: CraftingSectionIcon }[] = [
-  { tab: 'make', label: 'Make', icon: 'forge' },
+  { tab: 'make', label: 'Craft', icon: 'forge' },
   { tab: 'upgrade', label: 'Upgrade', icon: 'upgrade' },
 ];
 

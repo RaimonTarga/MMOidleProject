@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, type ReactNode } from 'react';
+import { useEffect, useMemo, useState, useRef, type ReactNode } from 'react';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { hudBus } from '../hudBus';
 import { SkillTreePanel } from '../ui/SkillTreePanel';
@@ -17,6 +17,8 @@ import { useIsMobile } from './useIsMobile';
 import { atlasIcon, GameIcon, nodeIcon, type IconSource } from '../ui/GameIcon';
 import { DialogHeader, GameDialog } from './primitives';
 import { useSystemVisibility } from './useSystemVisibility';
+import { useNewEntries } from '../ui/crafting/useNewEntries';
+import { eligibleMakeKeys, useMakeEntries } from '../ui/crafting/useMakeEntries';
 import type { UiUnlockSystem } from './uiUnlocks';
 import {
   activeStanceAtom,
@@ -42,6 +44,7 @@ import {
   maxHpAtom,
   pendingHealAtom,
   playerNameAtom,
+  playerIdAtom,
   playerNodeIdAtom,
   playerTierAtom,
   settingsOpenAtom,
@@ -122,6 +125,13 @@ function MobileHUDContent() {
   // Same resolver, same signals as the rail — the W7 rule that mobile must not
   // grow a second policy.
   const visibility = useSystemVisibility();
+
+  // Same "what became makeable" signal the rail shows, and the same shared
+  // state: clearing an entry in the craft sheet clears the tab's dot too.
+  const makeEntries = useMakeEntries();
+  const eligibleRecipeKeys = useMemo(() => eligibleMakeKeys(makeEntries), [makeEntries]);
+  const playerId = useAtomValue(playerIdAtom);
+  const newRecipes = useNewEntries('craft', playerId, eligibleRecipeKeys);
 
   // ── HP-bar layers (all as % of maxHp), mirroring the desktop StatPanel ──
   const hpPct       = maxHp > 0 ? (hp / maxHp) * 100 : 0;
@@ -210,6 +220,7 @@ function MobileHUDContent() {
         icon: atlasIcon('UI_icons/forge-icon.png'),
         fallback: '⚒',
         label: 'Craft',
+        badge: newRecipes.count > 0,
         disabled: dead,
       }]
       : []),

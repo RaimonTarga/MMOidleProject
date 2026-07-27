@@ -1154,16 +1154,56 @@
   font-size: 9px;
 }
 
+/* The row is its own flex container now: it carries the affordability state as
+   styling rather than as a word, so the space that word used to occupy belongs
+   to the NEW badge. */
+.make-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-width: 0;
+}
+
+/* Can't afford it yet — legible, but visibly not an option right now. */
+.make-row--short { opacity: 0.62; }
+
+/* Only visible with "Show locked"; it is a preview of the ladder, not an offer. */
+.make-row--locked { opacity: 0.45; }
+
 .make-row__state {
   flex: 0 0 auto;
   font-size: 8px;
   letter-spacing: 0.6px;
 }
 
-.make-row__state--ready { color: var(--hud-success); }
-.make-row__state--short { color: var(--hud-danger); }
 .make-row__state--locked { color: var(--hud-text-dim); }
-.make-row__state--owned { color: var(--hud-primary); }
+
+/* Became available while you were out fighting. Gold and slightly loud on
+   purpose: it is the one thing in the list that is time-sensitive. */
+.make-row__new {
+  flex: 0 0 auto;
+  padding: 1px 5px;
+  border: 1px solid var(--hud-primary);
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--hud-primary) 16%, transparent);
+  color: var(--hud-primary-strong);
+  font-size: 8px;
+  font-weight: bold;
+  letter-spacing: 0.8px;
+}
+
+/* The sort row reads as a control, not another facet of the filter. */
+.craft-filter-row--sort {
+  align-items: center;
+}
+
+.craft-filter-label {
+  color: var(--hud-text-dim);
+  font-size: 9px;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
 
 .make-detail__head {
   display: flex;

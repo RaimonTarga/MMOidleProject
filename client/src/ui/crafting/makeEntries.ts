@@ -42,10 +42,11 @@ export interface MakeEntry {
   recipeGroup: string | null;
   cost: Partial<Record<EssenceType, number>>;
   catalystCost?: Partial<Record<string, number>>;
-  /** Already crafted or already learned. */
-  owned: boolean;
-  ownedLabel: string | null;
-  /** Gate satisfied — the recipe may be attempted at all. */
+  /**
+   * Gate satisfied — the recipe may be attempted at all. Locked entries are
+   * hidden by default and revealed by the browser's "Show locked" filter, which
+   * is the only reason they are still built.
+   */
   unlocked: boolean;
   unlockHint: string;
   /** Present for gear only; carries the fields the gear detail pane needs. */
@@ -106,12 +107,11 @@ function gearEntries(sources: MakeSources): MakeEntry[] {
       recipeGroup: recipe.recipeGroup,
       cost: recipe.cost,
       catalystCost: recipe.catalystCost,
-      owned: false,
-      ownedLabel: null,
       unlocked,
-      // Locked gear used to be skipped outright, which left Crafting's Progress
-      // tab as the only place that knew this recipe existed or what it wanted.
-      // Listing it here — locked, with its requirement — is what let that tab go.
+      // Locked gear is built but hidden behind the "Show locked" filter. It used
+      // to be skipped outright, which left Crafting's Progress tab as the only
+      // place that knew this recipe existed or what it wanted; carrying it here
+      // with its requirement is what let that tab go.
       unlockHint: unlocked ? '' : gearUnlockHint(recipe),
       gear: recipe,
     });
@@ -148,7 +148,10 @@ function techniqueEntries(spec: TechniqueSpec): MakeEntry[] {
     const name = spec.displayName(recipe.id, learnedId);
     if (!name) continue;
 
-    const learned = knownSet.has(learnedId);
+    // Already learned leaves the list, the same way crafted gear does: Craft
+    // answers "what can I make", and a technique you own is not an answer to it.
+    if (knownSet.has(learnedId)) continue;
+
     const unlocked = spec.isUnlocked(recipe.id);
     entries.push({
       key: `${spec.kind}:${recipe.id}`,
@@ -160,8 +163,6 @@ function techniqueEntries(spec: TechniqueSpec): MakeEntry[] {
       recipeGroup: recipe.recipeGroup ?? null,
       cost: recipe.cost,
       catalystCost: recipe.catalystCost,
-      owned: learned,
-      ownedLabel: learned ? 'LEARNED' : null,
       unlocked,
       unlockHint: unlocked || !recipe.recipeGroup
         ? ''
