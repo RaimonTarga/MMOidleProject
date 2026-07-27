@@ -203,9 +203,9 @@ function SkillNodeCard({
   player:   SkillPlayer | null;
   compact?: boolean;
   /**
-   * A road not taken: a past-tier sibling the player did not pick. Dimmed and
-   * shrunk rather than hidden — class reset exists, so the alternatives have to
-   * stay legible — and it expands back on hover or tap.
+   * A road not taken: a past-tier sibling the player did not pick. Dimmed rather
+   * than hidden or shrunk — class reset exists, so the alternatives have to stay
+   * legible at a glance — and it returns to full colour on hover or tap.
    */
   faded?: boolean;
   isMobile: boolean;
