@@ -1,0 +1,78 @@
+/* The information layer's row grammar: label on the left, number on the right,
+   qualifiers trailing the number, prose on hover. Shared by skill nodes, loadout
+   slots and recipe details so every "what does this do" list reads the same. */
+
+.detail-lines {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.detail-lines__title {
+  margin-bottom: 2px;
+  color: var(--hud-text-muted);
+  font-family: monospace;
+  font-size: 9px;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+
+.detail-lines__empty {
+  color: var(--hud-text-dim);
+  font-family: monospace;
+  font-size: 11px;
+  font-style: italic;
+}
+
+.detail-line {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 2px 4px;
+  border-radius: 2px;
+  font-family: monospace;
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+/* A row that can explain itself says so, the same way stat rows do. */
+.detail-line--help {
+  cursor: help;
+  text-decoration: underline dotted rgba(200, 168, 96, 0.35);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+.detail-line--help:hover {
+  background: rgba(200, 168, 96, 0.08);
+  text-decoration-color: rgba(200, 168, 96, 0.9);
+}
+
+.detail-line__glyph {
+  align-self: center;
+  flex: 0 0 auto;
+}
+
+.detail-line__label {
+  flex: 1 1 auto;
+  min-width: 0;
+  color: var(--hud-text-muted);
+  overflow-wrap: break-word;
+}
+
+.detail-line__value {
+  flex: 0 0 auto;
+  color: var(--hud-text);
+  font-variant-numeric: tabular-nums;
+  font-weight: bold;
+}
+
+.detail-line--down .detail-line__value {
+  color: var(--hud-danger);
+}
+
+.detail-line__detail {
+  flex: 0 0 auto;
+  color: var(--hud-text-dim);
+  font-size: 10px;
+}
