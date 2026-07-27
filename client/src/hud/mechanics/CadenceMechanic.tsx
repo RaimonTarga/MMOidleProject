@@ -1,10 +1,12 @@
 import { useLayoutEffect, useRef, useState, type CSSProperties } from 'react';
 import { MechanicFrame } from './MechanicFrame';
+import { useMechanicHelp } from './mechanicHelp';
 import type { CadenceMechanicModel } from './types';
 
 type CadenceImpact = 'strike' | 'armed' | 'finisher' | null;
 
 export function CadenceMechanic({ model }: { model: CadenceMechanicModel }) {
+  const help = useMechanicHelp(model);
   const previous = useRef({ count: model.count, armed: model.armed });
   const [impact, setImpact] = useState<CadenceImpact>(null);
   const [struckIndex, setStruckIndex] = useState(-1);
@@ -45,6 +47,7 @@ export function CadenceMechanic({ model }: { model: CadenceMechanicModel }) {
   return (
     <MechanicFrame
       kind="cadence"
+      help={help}
       title="Cadence"
       state={impact === 'finisher' ? 'fired' : model.armed ? 'empowered' : undefined}
     >

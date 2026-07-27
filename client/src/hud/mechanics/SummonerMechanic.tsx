@@ -1,5 +1,6 @@
 import { useLayoutEffect, useRef, useState, type CSSProperties } from 'react';
 import { MechanicFrame } from './MechanicFrame';
+import { useMechanicHelp } from './mechanicHelp';
 import type { SummonerMechanicModel } from './types';
 
 type SummonSlot = SummonerMechanicModel['slots'][number];
@@ -68,8 +69,9 @@ function SummonConduit({ slot, index }: { slot: SummonSlot; index: number }) {
 }
 
 export function SummonerMechanic({ model }: { model: SummonerMechanicModel }) {
+  const help = useMechanicHelp(model);
   return (
-    <MechanicFrame kind="summoner" title="Summons">
+    <MechanicFrame kind="summoner" title="Summons" help={help}>
       <div className="mechanic-summons" aria-label={`${model.activeCount} of ${model.slotCount} summons active`}>
         <span className="mechanic-summons__bus" aria-hidden="true" />
         {model.slots.map((slot, index) => (

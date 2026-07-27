@@ -1,6 +1,7 @@
 import { useAtomValue } from 'jotai';
 import { dodgeRateAtom, evadeChargeAtom, evadeMitigationAtom } from '../atoms';
 import { MechanicFrame } from './MechanicFrame';
+import { useEvasionHelp } from './mechanicHelp';
 
 /**
  * Evasion, in the class-mechanic language. Not a class mechanic — it appears
@@ -20,6 +21,7 @@ export function EvasionInstrument() {
   const dodgeRate = useAtomValue(dodgeRateAtom);
   const charge = useAtomValue(evadeChargeAtom);
   const mitigation = useAtomValue(evadeMitigationAtom);
+  const help = useEvasionHelp();
 
   // dodgeRate > 0 is the client's view of the `evadesHits` component being
   // attached at all — the server only attaches it when the player has evasion.
@@ -35,17 +37,10 @@ export function EvasionInstrument() {
       kind="evasion"
       title="Evasion"
       state={primed ? 'primed' : undefined}
-      status={
-        <span
-          title={
-            `Evasion is deterministic — no dice. Each hit taken adds `
-            + `${Math.round(dodgeRate * 100)}% charge, and at full charge the hit is `
-            + `evaded for ${mitigationPct}% less damage.`
-          }
-        >
-          {mitigationPct}%
-        </span>
-      }
+      // The rules moved into the frame's own hover copy, which has room to
+      // explain the whole mechanic rather than one `title` sentence about it.
+      help={help}
+      status={<span>{mitigationPct}%</span>}
     >
       <div
         className="evasion-gauge"

@@ -1,8 +1,10 @@
 import { useLayoutEffect, useRef, useState, type CSSProperties } from 'react';
 import { MechanicFrame } from './MechanicFrame';
+import { useMechanicHelp } from './mechanicHelp';
 import type { EnergyMechanicModel } from './types';
 
 export function EnergyMechanic({ model }: { model: EnergyMechanicModel }) {
+  const help = useMechanicHelp(model);
   const previousEmpowered = useRef(model.empowered);
   const [discharging, setDischarging] = useState(false);
 
@@ -31,6 +33,7 @@ export function EnergyMechanic({ model }: { model: EnergyMechanicModel }) {
   return (
     <MechanicFrame
       kind="energy"
+      help={help}
       title={model.isFlash ? model.shiftLabel : 'Energy'}
       state={discharging ? 'discharging' : model.empowered && !model.isFlash ? 'empowered' : undefined}
     >

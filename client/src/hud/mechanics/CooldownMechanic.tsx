@@ -1,11 +1,13 @@
 import { useLayoutEffect, useRef, useState } from 'react';
 import { MechanicFrame } from './MechanicFrame';
+import { useMechanicHelp } from './mechanicHelp';
 import type { CooldownMechanicModel } from './types';
 
 const RADIUS = 24;
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 
 export function CooldownMechanic({ model }: { model: CooldownMechanicModel }) {
+  const help = useMechanicHelp(model);
   const previousReady = useRef(model.executionReady);
   const [impact, setImpact] = useState(false);
 
@@ -37,6 +39,7 @@ export function CooldownMechanic({ model }: { model: CooldownMechanicModel }) {
   return (
     <MechanicFrame
       kind="cooldown"
+      help={help}
       title="Execution"
       state={impact ? 'fired' : model.isChanneling ? 'channeling' : model.executionReady ? 'ready' : undefined}
     >

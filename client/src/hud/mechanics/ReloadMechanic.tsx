@@ -1,5 +1,6 @@
 import { useLayoutEffect, useRef, useState, type CSSProperties } from 'react';
 import { MechanicFrame } from './MechanicFrame';
+import { useMechanicHelp } from './mechanicHelp';
 import type { ReloadMechanicModel } from './types';
 
 const AMMO_CENTER = 35;
@@ -109,10 +110,12 @@ function AmmoPolygon({ ammo, max }: { ammo: number; max: number }) {
 }
 
 export function ReloadMechanic({ model }: { model: ReloadMechanicModel }) {
+  const help = useMechanicHelp(model);
   if (model.mode === 'heat') {
     return (
       <MechanicFrame
         kind="reload"
+      help={help}
         title="Heat"
         state={model.overheated ? 'danger' : undefined}
       >

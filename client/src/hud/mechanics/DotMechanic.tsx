@@ -1,14 +1,17 @@
 import type { CSSProperties } from 'react';
 import { MechanicFrame } from './MechanicFrame';
+import { useMechanicHelp } from './mechanicHelp';
 import type { DotMechanicModel } from './types';
 
 export function DotMechanic({ model }: { model: DotMechanicModel }) {
+  const help = useMechanicHelp(model);
   const status = model.hasTarget ? `${model.stacks} / ${model.maxStacks}` : 'No target';
   const useSegments = model.maxStacks <= 10;
   const isActive = model.hasTarget && model.stacks > 0;
   return (
     <MechanicFrame
       kind="dot"
+      help={help}
       title={`${model.stackLabel} stacks`}
       state={model.element}
     >

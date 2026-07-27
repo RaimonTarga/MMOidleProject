@@ -6,6 +6,24 @@
   border-top: 1px solid var(--hud-edge-divider);
 }
 
+/* An instrument that can explain itself says so the same way a stat row does:
+   the title picks up the dotted underline, and hovering anywhere on the frame
+   opens the explanation. */
+.mechanic-frame--help {
+  cursor: help;
+}
+
+.mechanic-frame--help .mechanic-frame__title {
+  text-decoration: underline dotted rgba(200, 168, 96, 0.35);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+.mechanic-frame--help:hover .mechanic-frame__title {
+  color: var(--hud-text);
+  text-decoration-color: rgba(200, 168, 96, 0.9);
+}
+
 .mechanic-frame__header,
 .compact-mechanic .stat-row {
   display: flex;
