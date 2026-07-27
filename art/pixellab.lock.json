@@ -12957,6 +12957,3306 @@
       "candidateFiles": [
         "candidate-6.png"
       ]
+    },
+    {
+      "at": "2026-07-25T01:24:21.006Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cadence-light",
+      "requestHash": "feaf4aaabfd3f7dbe0846f58",
+      "usd": 0.0072441594070858425,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T01:24:39.982Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cadence-light",
+      "requestHash": "feaf4aaabfd3f7dbe0846f58",
+      "usd": 0.006716298739115397,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T01:24:58.565Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cadence-light",
+      "requestHash": "feaf4aaabfd3f7dbe0846f58",
+      "usd": 0.006821237140231662,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T01:25:28.900Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cadence-light",
+      "requestHash": "feaf4aaabfd3f7dbe0846f58",
+      "usd": 0.007083155420091417,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T01:25:44.261Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cadence-light",
+      "requestHash": "feaf4aaabfd3f7dbe0846f58",
+      "usd": 0.006386248615052965,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T01:26:01.726Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cadence-light",
+      "requestHash": "feaf4aaabfd3f7dbe0846f58",
+      "usd": 0.006645939932929145,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T01:26:30.443Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cadence-balanced",
+      "requestHash": "fd9af85b7338db47296522a1",
+      "usd": 0.007050296174155341,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T01:26:47.564Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cadence-balanced",
+      "requestHash": "fd9af85b7338db47296522a1",
+      "usd": 0.006393507613076104,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T01:27:09.028Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cadence-balanced",
+      "requestHash": "fd9af85b7338db47296522a1",
+      "usd": 0.0071808744801415345,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T01:27:32.993Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cadence-balanced",
+      "requestHash": "fd9af85b7338db47296522a1",
+      "usd": 0.007276542769538032,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T01:27:50.168Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cadence-balanced",
+      "requestHash": "fd9af85b7338db47296522a1",
+      "usd": 0.006626896222432455,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T01:28:21.761Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cadence-balanced",
+      "requestHash": "fd9af85b7338db47296522a1",
+      "usd": 0.007058603896035088,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T01:28:50.231Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cadence-heavy",
+      "requestHash": "8edd560e3a93e4efd95528d5",
+      "usd": 0.0074562793837653265,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T01:29:04.683Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cadence-heavy",
+      "requestHash": "8edd560e3a93e4efd95528d5",
+      "usd": 0.006283784495459663,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T01:29:24.984Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cadence-heavy",
+      "requestHash": "8edd560e3a93e4efd95528d5",
+      "usd": 0.0066546449396345355,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T01:29:43.710Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cadence-heavy",
+      "requestHash": "8edd560e3a93e4efd95528d5",
+      "usd": 0.006852950175603231,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T01:30:01.050Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cadence-heavy",
+      "requestHash": "8edd560e3a93e4efd95528d5",
+      "usd": 0.006675881809658475,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T01:30:34.562Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cadence-heavy",
+      "requestHash": "8edd560e3a93e4efd95528d5",
+      "usd": 0.008361474566989475,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T01:39:33.458Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cadence-light",
+      "requestHash": "ac2b0b159726c57f412d9762",
+      "usd": 0.006442020416259766,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T01:39:54.151Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cadence-light",
+      "requestHash": "ac2b0b159726c57f412d9762",
+      "usd": 0.007019529978434245,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T01:40:14.656Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cadence-light",
+      "requestHash": "ac2b0b159726c57f412d9762",
+      "usd": 0.007060954438315498,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T01:40:42.888Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cadence-light",
+      "requestHash": "ac2b0b159726c57f412d9762",
+      "usd": 0.0076251004801856145,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T01:40:59.966Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cadence-light",
+      "requestHash": "ac2b0b159726c57f412d9762",
+      "usd": 0.006651317914326986,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T01:41:17.053Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cadence-light",
+      "requestHash": "ac2b0b159726c57f412d9762",
+      "usd": 0.006503768576516046,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T01:47:07.443Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cadence-light",
+      "requestHash": "b639d39cd9dc5093ec681e0c",
+      "usd": 0.006670675251219008,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T01:47:36.365Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cadence-light",
+      "requestHash": "b639d39cd9dc5093ec681e0c",
+      "usd": 0.007654964791403877,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T01:48:03.477Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cadence-light",
+      "requestHash": "b639d39cd9dc5093ec681e0c",
+      "usd": 0.007481594377093845,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T01:49:03.165Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cadence-light",
+      "requestHash": "b639d39cd9dc5093ec681e0c",
+      "usd": 0.006961618423461914,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T01:49:21.996Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cadence-light",
+      "requestHash": "b639d39cd9dc5093ec681e0c",
+      "usd": 0.006870227257410685,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T01:49:41.990Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cadence-light",
+      "requestHash": "b639d39cd9dc5093ec681e0c",
+      "usd": 0.007017119884490967,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T01:51:31.661Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cadence-balanced",
+      "requestHash": "522806b214a92e37d722fb29",
+      "usd": 0.007663546986050076,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T01:52:15.739Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cadence-balanced",
+      "requestHash": "522806b214a92e37d722fb29",
+      "usd": 0.009692329671647813,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T01:52:37.521Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cadence-balanced",
+      "requestHash": "522806b214a92e37d722fb29",
+      "usd": 0.007201724820666843,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T01:52:56.044Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cadence-balanced",
+      "requestHash": "522806b214a92e37d722fb29",
+      "usd": 0.006889763620164659,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T01:53:09.295Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cadence-balanced",
+      "requestHash": "522806b214a92e37d722fb29",
+      "usd": 0.006167631043328179,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T01:53:26.890Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cadence-balanced",
+      "requestHash": "522806b214a92e37d722fb29",
+      "usd": 0.006633367988798353,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T01:54:20.860Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cadence-heavy",
+      "requestHash": "96735e2d38ff397c0d91f7d5",
+      "usd": 0.010459917889700996,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T01:54:35.461Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cadence-heavy",
+      "requestHash": "96735e2d38ff397c0d91f7d5",
+      "usd": 0.006339870876736112,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T01:54:52.226Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cadence-heavy",
+      "requestHash": "96735e2d38ff397c0d91f7d5",
+      "usd": 0.006483076228035821,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T01:55:07.576Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cadence-heavy",
+      "requestHash": "96735e2d38ff397c0d91f7d5",
+      "usd": 0.00607107663154602,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T01:55:37.112Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cadence-heavy",
+      "requestHash": "96735e2d38ff397c0d91f7d5",
+      "usd": 0.0070501945813496916,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T01:55:56.396Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cadence-heavy",
+      "requestHash": "96735e2d38ff397c0d91f7d5",
+      "usd": 0.00692824199464586,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:03:43.719Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cooldown-light",
+      "requestHash": "a67b4857c530168f85f7612a",
+      "usd": 0.006900074031617907,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:04:01.413Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cooldown-light",
+      "requestHash": "a67b4857c530168f85f7612a",
+      "usd": 0.006741881714926826,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:04:23.880Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cooldown-light",
+      "requestHash": "a67b4857c530168f85f7612a",
+      "usd": 0.007213724056879679,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:04:46.812Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cooldown-light",
+      "requestHash": "a67b4857c530168f85f7612a",
+      "usd": 0.00712586768468221,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:05:12.512Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cooldown-light",
+      "requestHash": "a67b4857c530168f85f7612a",
+      "usd": 0.007649080435434977,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:05:43.194Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cooldown-light",
+      "requestHash": "a67b4857c530168f85f7612a",
+      "usd": 0.007974827872382271,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:06:03.019Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cooldown-balanced",
+      "requestHash": "3f8d8bf7a2478fa26ef45b54",
+      "usd": 0.006968855354521009,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:06:25.160Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cooldown-balanced",
+      "requestHash": "3f8d8bf7a2478fa26ef45b54",
+      "usd": 0.007210250324673123,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:06:46.649Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cooldown-balanced",
+      "requestHash": "3f8d8bf7a2478fa26ef45b54",
+      "usd": 0.0072005021837022575,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:07:24.327Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cooldown-balanced",
+      "requestHash": "3f8d8bf7a2478fa26ef45b54",
+      "usd": 0.00857413313123915,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:07:42.231Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cooldown-balanced",
+      "requestHash": "3f8d8bf7a2478fa26ef45b54",
+      "usd": 0.006743220064375136,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:07:54.938Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cooldown-balanced",
+      "requestHash": "3f8d8bf7a2478fa26ef45b54",
+      "usd": 0.006046018626954821,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:08:10.781Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cooldown-heavy",
+      "requestHash": "7e74ae46184473b9d45ea0d8",
+      "usd": 0.006366943014992608,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:08:29.472Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cooldown-heavy",
+      "requestHash": "7e74ae46184473b9d45ea0d8",
+      "usd": 0.006845514059066773,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:08:46.315Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cooldown-heavy",
+      "requestHash": "7e74ae46184473b9d45ea0d8",
+      "usd": 0.00662476936976115,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:09:04.141Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cooldown-heavy",
+      "requestHash": "7e74ae46184473b9d45ea0d8",
+      "usd": 0.006649752298990886,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:09:22.813Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cooldown-heavy",
+      "requestHash": "7e74ae46184473b9d45ea0d8",
+      "usd": 0.006946755091349284,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:09:43.481Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cooldown-heavy",
+      "requestHash": "7e74ae46184473b9d45ea0d8",
+      "usd": 0.007179647551642524,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:10:19.895Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "dot-light",
+      "requestHash": "8f8a35036023e8b6f9a1025b",
+      "usd": 0.00800280581580268,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:10:48.566Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "dot-light",
+      "requestHash": "8f8a35036023e8b6f9a1025b",
+      "usd": 0.007700132184558445,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:11:08.242Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "dot-light",
+      "requestHash": "8f8a35036023e8b6f9a1025b",
+      "usd": 0.006939994600084093,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:11:21.366Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "dot-light",
+      "requestHash": "8f8a35036023e8b6f9a1025b",
+      "usd": 0.006111722893185086,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:12:11.178Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "dot-light",
+      "requestHash": "8f8a35036023e8b6f9a1025b",
+      "usd": 0.010325801452000936,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:12:37.507Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "dot-light",
+      "requestHash": "8f8a35036023e8b6f9a1025b",
+      "usd": 0.007467462248272366,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:12:57.572Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "dot-balanced",
+      "requestHash": "5dd7b38a044dd16754c1c6d3",
+      "usd": 0.0071116732756296794,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:13:17.445Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "dot-balanced",
+      "requestHash": "5dd7b38a044dd16754c1c6d3",
+      "usd": 0.006596757438447741,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:13:47.030Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "dot-balanced",
+      "requestHash": "5dd7b38a044dd16754c1c6d3",
+      "usd": 0.007936451064215765,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:14:09.054Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "dot-balanced",
+      "requestHash": "5dd7b38a044dd16754c1c6d3",
+      "usd": 0.007278253608279758,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:14:28.532Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "dot-balanced",
+      "requestHash": "5dd7b38a044dd16754c1c6d3",
+      "usd": 0.0069777655866411,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:14:42.848Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "dot-balanced",
+      "requestHash": "5dd7b38a044dd16754c1c6d3",
+      "usd": 0.0063391731845008,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:16:40.499Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "dot-heavy",
+      "requestHash": "aad33c2a86697825fb9ca03e",
+      "usd": 0.008685591459274292,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:17:08.453Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "dot-heavy",
+      "requestHash": "aad33c2a86697825fb9ca03e",
+      "usd": 0.007509258137808906,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:17:39.804Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "dot-heavy",
+      "requestHash": "aad33c2a86697825fb9ca03e",
+      "usd": 0.0077047956254747176,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:17:54.830Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "dot-heavy",
+      "requestHash": "aad33c2a86697825fb9ca03e",
+      "usd": 0.006283669047885471,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:18:18.428Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "dot-heavy",
+      "requestHash": "aad33c2a86697825fb9ca03e",
+      "usd": 0.007498320049709744,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:18:49.098Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "dot-heavy",
+      "requestHash": "aad33c2a86697825fb9ca03e",
+      "usd": 0.007793850633833144,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:19:03.980Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy-light",
+      "requestHash": "1068b10240065618589b4f37",
+      "usd": 0.006351203282674154,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:19:20.817Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy-light",
+      "requestHash": "1068b10240065618589b4f37",
+      "usd": 0.006658033185535007,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:19:46.392Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy-light",
+      "requestHash": "1068b10240065618589b4f37",
+      "usd": 0.007547397640016345,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:20:30.238Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy-light",
+      "requestHash": "1068b10240065618589b4f37",
+      "usd": 0.007322807709376017,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:21:13.908Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy-light",
+      "requestHash": "1068b10240065618589b4f37",
+      "usd": 0.009631027910444472,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:21:26.254Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy-light",
+      "requestHash": "1068b10240065618589b4f37",
+      "usd": 0.005933015134599474,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:21:45.526Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy-balanced",
+      "requestHash": "6aa7077812a17d4c211a37b6",
+      "usd": 0.006880068010754055,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:22:03.621Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy-balanced",
+      "requestHash": "6aa7077812a17d4c211a37b6",
+      "usd": 0.006715567933188544,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:22:25.046Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy-balanced",
+      "requestHash": "6aa7077812a17d4c211a37b6",
+      "usd": 0.007171996752421061,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:22:44.286Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy-balanced",
+      "requestHash": "6aa7077812a17d4c211a37b6",
+      "usd": 0.006871408171123928,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:23:00.257Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy-balanced",
+      "requestHash": "6aa7077812a17d4c211a37b6",
+      "usd": 0.0064952859083811446,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:23:19.669Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy-balanced",
+      "requestHash": "6aa7077812a17d4c211a37b6",
+      "usd": 0.006854668511284722,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:23:38.448Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy-heavy",
+      "requestHash": "1609d352f5682d8a102b1f21",
+      "usd": 0.006660780270894368,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:24:08.604Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy-heavy",
+      "requestHash": "1609d352f5682d8a102b1f21",
+      "usd": 0.00785823678970337,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:24:59.993Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy-heavy",
+      "requestHash": "1609d352f5682d8a102b1f21",
+      "usd": 0.00753344898753696,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:25:17.744Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy-heavy",
+      "requestHash": "1609d352f5682d8a102b1f21",
+      "usd": 0.006601018163892958,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:25:38.723Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy-heavy",
+      "requestHash": "1609d352f5682d8a102b1f21",
+      "usd": 0.007081640217039321,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:26:27.253Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy-heavy",
+      "requestHash": "1609d352f5682d8a102b1f21",
+      "usd": 0.009570989555782741,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:26:55.495Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "reload-light",
+      "requestHash": "99d0dd7f5c50a8ad24cf6e34",
+      "usd": 0.007016112883885702,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:27:17.832Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "reload-light",
+      "requestHash": "99d0dd7f5c50a8ad24cf6e34",
+      "usd": 0.007227431800630358,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:27:31.705Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "reload-light",
+      "requestHash": "99d0dd7f5c50a8ad24cf6e34",
+      "usd": 0.006268253220452203,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:27:50.625Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "reload-light",
+      "requestHash": "99d0dd7f5c50a8ad24cf6e34",
+      "usd": 0.006647745450337728,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:28:17.649Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "reload-light",
+      "requestHash": "99d0dd7f5c50a8ad24cf6e34",
+      "usd": 0.007516511943605211,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:29:14.573Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "reload-light",
+      "requestHash": "99d0dd7f5c50a8ad24cf6e34",
+      "usd": 0.01116032436158922,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:29:35.504Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "reload-balanced",
+      "requestHash": "d9bf9bf7140359d45efb23eb",
+      "usd": 0.006963058259752061,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:30:01.730Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "reload-balanced",
+      "requestHash": "d9bf9bf7140359d45efb23eb",
+      "usd": 0.007415740940305922,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:30:21.041Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "reload-balanced",
+      "requestHash": "d9bf9bf7140359d45efb23eb",
+      "usd": 0.0069173958566453725,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:30:59.962Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "reload-balanced",
+      "requestHash": "d9bf9bf7140359d45efb23eb",
+      "usd": 0.008463867055045234,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:31:18.001Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "reload-balanced",
+      "requestHash": "d9bf9bf7140359d45efb23eb",
+      "usd": 0.006769742488861084,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:31:38.496Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "reload-balanced",
+      "requestHash": "d9bf9bf7140359d45efb23eb",
+      "usd": 0.007106311453713311,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:32:04.944Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "reload-heavy",
+      "requestHash": "9a1f92aea358e755e11d7fe4",
+      "usd": 0.007727579487694635,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:32:30.794Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "reload-heavy",
+      "requestHash": "9a1f92aea358e755e11d7fe4",
+      "usd": 0.007222593678368463,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:32:49.448Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "reload-heavy",
+      "requestHash": "9a1f92aea358e755e11d7fe4",
+      "usd": 0.006842039955986871,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:33:17.361Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "reload-heavy",
+      "requestHash": "9a1f92aea358e755e11d7fe4",
+      "usd": 0.0075848589208390976,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:33:34.073Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "reload-heavy",
+      "requestHash": "9a1f92aea358e755e11d7fe4",
+      "usd": 0.006429495679007636,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:33:47.276Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "reload-heavy",
+      "requestHash": "9a1f92aea358e755e11d7fe4",
+      "usd": 0.0060650202168358695,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:34:05.054Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "summoner-light",
+      "requestHash": "0b5ad51248c42f02c58723d5",
+      "usd": 0.006677656120724148,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:34:26.770Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "summoner-light",
+      "requestHash": "0b5ad51248c42f02c58723d5",
+      "usd": 0.007189773056242202,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:34:47.638Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "summoner-light",
+      "requestHash": "0b5ad51248c42f02c58723d5",
+      "usd": 0.007178393787807888,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:35:00.007Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "summoner-light",
+      "requestHash": "0b5ad51248c42f02c58723d5",
+      "usd": 0.005966250922944811,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:35:17.316Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "summoner-light",
+      "requestHash": "0b5ad51248c42f02c58723d5",
+      "usd": 0.006660681645075481,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:35:37.043Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "summoner-light",
+      "requestHash": "0b5ad51248c42f02c58723d5",
+      "usd": 0.00700146492322286,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:36:01.726Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "summoner-balanced",
+      "requestHash": "ae979dda1e67c0bb91c59c55",
+      "usd": 0.007187352418899536,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:36:15.480Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "summoner-balanced",
+      "requestHash": "ae979dda1e67c0bb91c59c55",
+      "usd": 0.006287108315361871,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:36:43.194Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "summoner-balanced",
+      "requestHash": "ae979dda1e67c0bb91c59c55",
+      "usd": 0.007555076890521579,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:37:01.806Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "summoner-balanced",
+      "requestHash": "ae979dda1e67c0bb91c59c55",
+      "usd": 0.006905265940560235,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:37:20.862Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "summoner-balanced",
+      "requestHash": "ae979dda1e67c0bb91c59c55",
+      "usd": 0.006697355402840509,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:37:41.815Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "summoner-balanced",
+      "requestHash": "ae979dda1e67c0bb91c59c55",
+      "usd": 0.007123630788591173,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:38:42.334Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "summoner-heavy",
+      "requestHash": "6446c2688b6e1c42d36a5097",
+      "usd": 0.011084880140092637,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:38:57.333Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "summoner-heavy",
+      "requestHash": "6446c2688b6e1c42d36a5097",
+      "usd": 0.006207778612772624,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:39:17.064Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "summoner-heavy",
+      "requestHash": "6446c2688b6e1c42d36a5097",
+      "usd": 0.006072901990678576,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:39:41.846Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "summoner-heavy",
+      "requestHash": "6446c2688b6e1c42d36a5097",
+      "usd": 0.006995749288135105,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:40:00.187Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "summoner-heavy",
+      "requestHash": "6446c2688b6e1c42d36a5097",
+      "usd": 0.006815768480300903,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T02:40:41.564Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "summoner-heavy",
+      "requestHash": "6446c2688b6e1c42d36a5097",
+      "usd": 0.008426594389809503,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T10:06:37.938Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cooldown-balanced",
+      "requestHash": "86404665ada88f69d8280be2",
+      "usd": 0.006506665070851644,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T10:07:06.045Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cooldown-balanced",
+      "requestHash": "86404665ada88f69d8280be2",
+      "usd": 0.007529584805170695,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T10:07:23.215Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cooldown-balanced",
+      "requestHash": "86404665ada88f69d8280be2",
+      "usd": 0.006648641109466552,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T10:07:43.765Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cooldown-balanced",
+      "requestHash": "86404665ada88f69d8280be2",
+      "usd": 0.007074882242414687,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T10:08:41.490Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cooldown-balanced",
+      "requestHash": "86404665ada88f69d8280be2",
+      "usd": 0.0066743330160776776,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T10:09:29.818Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cooldown-balanced",
+      "requestHash": "86404665ada88f69d8280be2",
+      "usd": 0.009849394056532118,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T10:09:56.370Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cooldown-heavy",
+      "requestHash": "563c781c80bba5ea3a87f950",
+      "usd": 0.0076216879685719816,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T10:10:34.191Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cooldown-heavy",
+      "requestHash": "563c781c80bba5ea3a87f950",
+      "usd": 0.00857434418466356,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T10:11:47.054Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cooldown-heavy",
+      "requestHash": "563c781c80bba5ea3a87f950",
+      "usd": 0.012723490953445434,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T10:12:07.757Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cooldown-heavy",
+      "requestHash": "563c781c80bba5ea3a87f950",
+      "usd": 0.007131495899624295,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T10:12:26.004Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cooldown-heavy",
+      "requestHash": "563c781c80bba5ea3a87f950",
+      "usd": 0.006570125606324938,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T10:12:52.565Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cooldown-heavy",
+      "requestHash": "563c781c80bba5ea3a87f950",
+      "usd": 0.0074137299855550134,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T10:13:09.679Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy-light",
+      "requestHash": "066bf76f36e6edd30f7c87a6",
+      "usd": 0.006439288218816121,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T10:13:37.967Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy-light",
+      "requestHash": "066bf76f36e6edd30f7c87a6",
+      "usd": 0.006863481336169773,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T10:14:10.922Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy-light",
+      "requestHash": "066bf76f36e6edd30f7c87a6",
+      "usd": 0.007101094563802084,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T10:14:30.423Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy-light",
+      "requestHash": "066bf76f36e6edd30f7c87a6",
+      "usd": 0.006583532200919257,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T10:14:51.399Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy-light",
+      "requestHash": "066bf76f36e6edd30f7c87a6",
+      "usd": 0.006692668014102512,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T10:15:42.336Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy-light",
+      "requestHash": "066bf76f36e6edd30f7c87a6",
+      "usd": 0.009982995854483711,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T10:19:05.720Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy-balanced",
+      "requestHash": "4c85baecc92ff613a80ea8dd",
+      "usd": 0.006990386433071561,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T10:19:31.700Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy-balanced",
+      "requestHash": "4c85baecc92ff613a80ea8dd",
+      "usd": 0.007435192796919081,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T10:19:48.088Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy-balanced",
+      "requestHash": "4c85baecc92ff613a80ea8dd",
+      "usd": 0.006486838128831652,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T10:20:21.341Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy-balanced",
+      "requestHash": "4c85baecc92ff613a80ea8dd",
+      "usd": 0.006050477981567383,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T10:20:42.399Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy-balanced",
+      "requestHash": "4c85baecc92ff613a80ea8dd",
+      "usd": 0.006274436579810249,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T10:21:04.744Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy-balanced",
+      "requestHash": "4c85baecc92ff613a80ea8dd",
+      "usd": 0.007316084702809652,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T10:21:17.497Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy-heavy",
+      "requestHash": "7baad45c758b7efb33c7cf6f",
+      "usd": 0.00612684808837043,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T10:21:42.505Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy-heavy",
+      "requestHash": "7baad45c758b7efb33c7cf6f",
+      "usd": 0.007256532324684991,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T10:22:01.959Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy-heavy",
+      "requestHash": "7baad45c758b7efb33c7cf6f",
+      "usd": 0.006706649541854858,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T10:22:19.468Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy-heavy",
+      "requestHash": "7baad45c758b7efb33c7cf6f",
+      "usd": 0.006755968464745416,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T10:22:39.814Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy-heavy",
+      "requestHash": "7baad45c758b7efb33c7cf6f",
+      "usd": 0.006607012112935384,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T10:22:56.035Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy-heavy",
+      "requestHash": "7baad45c758b7efb33c7cf6f",
+      "usd": 0.006466761006249322,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T10:46:41.133Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cooldown-balanced",
+      "requestHash": "421bf6da94bdee51c77bbe71",
+      "usd": 0.006731230974197388,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T10:47:01.153Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cooldown-balanced",
+      "requestHash": "421bf6da94bdee51c77bbe71",
+      "usd": 0.006970240990320842,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T10:47:14.656Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cooldown-balanced",
+      "requestHash": "421bf6da94bdee51c77bbe71",
+      "usd": 0.006259263594945272,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T10:47:28.163Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cooldown-balanced",
+      "requestHash": "421bf6da94bdee51c77bbe71",
+      "usd": 0.006121002780066597,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T10:47:49.333Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cooldown-balanced",
+      "requestHash": "421bf6da94bdee51c77bbe71",
+      "usd": 0.0071281851397620305,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T10:48:24.407Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cooldown-balanced",
+      "requestHash": "421bf6da94bdee51c77bbe71",
+      "usd": 0.00807706077893575,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T10:48:56.803Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy-light",
+      "requestHash": "91c07875dc9324a0c6d43ca1",
+      "usd": 0.007754017591476441,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T10:49:14.026Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy-light",
+      "requestHash": "91c07875dc9324a0c6d43ca1",
+      "usd": 0.006735404200024075,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T10:49:33.654Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy-light",
+      "requestHash": "91c07875dc9324a0c6d43ca1",
+      "usd": 0.006655781772401598,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T10:49:52.320Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy-light",
+      "requestHash": "91c07875dc9324a0c6d43ca1",
+      "usd": 0.006855561150444878,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T10:50:12.669Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy-light",
+      "requestHash": "91c07875dc9324a0c6d43ca1",
+      "usd": 0.007162348058488635,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T10:50:38.285Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy-light",
+      "requestHash": "91c07875dc9324a0c6d43ca1",
+      "usd": 0.007544265270233155,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T10:50:58.255Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy-balanced",
+      "requestHash": "eb49316a257ca2e3178001d1",
+      "usd": 0.006924936347537571,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T10:51:15.672Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy-balanced",
+      "requestHash": "eb49316a257ca2e3178001d1",
+      "usd": 0.006616503291659885,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T10:51:39.606Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy-balanced",
+      "requestHash": "eb49316a257ca2e3178001d1",
+      "usd": 0.0072642030186123325,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T10:51:58.124Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy-balanced",
+      "requestHash": "eb49316a257ca2e3178001d1",
+      "usd": 0.00679876971244812,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T10:52:10.950Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy-balanced",
+      "requestHash": "eb49316a257ca2e3178001d1",
+      "usd": 0.006145944224463569,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T10:52:33.658Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy-balanced",
+      "requestHash": "eb49316a257ca2e3178001d1",
+      "usd": 0.006891090922885471,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T11:14:59.834Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy",
+      "requestHash": "cf9c05be4cd8d33deef577b7",
+      "usd": 0.007352508836322361,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T11:15:20.791Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy",
+      "requestHash": "cf9c05be4cd8d33deef577b7",
+      "usd": 0.007122970422108969,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T11:15:50.838Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy",
+      "requestHash": "cf9c05be4cd8d33deef577b7",
+      "usd": 0.007778966771231757,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T11:16:04.623Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy",
+      "requestHash": "cf9c05be4cd8d33deef577b7",
+      "usd": 0.006281684848997328,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T11:16:26.238Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy",
+      "requestHash": "cf9c05be4cd8d33deef577b7",
+      "usd": 0.007027353631125556,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T11:16:50.954Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy",
+      "requestHash": "cf9c05be4cd8d33deef577b7",
+      "usd": 0.007201094680362278,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T11:19:00.779Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy",
+      "requestHash": "5c3452d2807e1f2d34d7f062",
+      "usd": 0.009432719733979966,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T11:19:22.949Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy",
+      "requestHash": "5c3452d2807e1f2d34d7f062",
+      "usd": 0.007192155440648397,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T11:19:37.474Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy",
+      "requestHash": "5c3452d2807e1f2d34d7f062",
+      "usd": 0.006354081021414863,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T11:19:54.947Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy",
+      "requestHash": "5c3452d2807e1f2d34d7f062",
+      "usd": 0.0066550658808814155,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T11:20:10.790Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy",
+      "requestHash": "5c3452d2807e1f2d34d7f062",
+      "usd": 0.006349179241392348,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T11:20:25.008Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy",
+      "requestHash": "5c3452d2807e1f2d34d7f062",
+      "usd": 0.00628698303964403,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T11:33:06.016Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy",
+      "requestHash": "3bd69f37eeb71fc7b4fab674",
+      "usd": 0.007595236884223091,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T11:33:23.954Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy",
+      "requestHash": "3bd69f37eeb71fc7b4fab674",
+      "usd": 0.006612138695187039,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T11:33:55.613Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy",
+      "requestHash": "3bd69f37eeb71fc7b4fab674",
+      "usd": 0.008102338473002116,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T11:34:13.805Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy",
+      "requestHash": "3bd69f37eeb71fc7b4fab674",
+      "usd": 0.006843821711010403,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T11:34:26.896Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy",
+      "requestHash": "3bd69f37eeb71fc7b4fab674",
+      "usd": 0.006136240084966024,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T11:34:39.368Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy",
+      "requestHash": "3bd69f37eeb71fc7b4fab674",
+      "usd": 0.005964716699388292,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T11:41:11.141Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy-light",
+      "requestHash": "49a8e2ccf2b8b37c9d68ad46",
+      "usd": 0.008491367207633126,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T11:41:33.565Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy-light",
+      "requestHash": "49a8e2ccf2b8b37c9d68ad46",
+      "usd": 0.007320604589250353,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T11:41:51.173Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy-light",
+      "requestHash": "49a8e2ccf2b8b37c9d68ad46",
+      "usd": 0.006464968866772122,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T11:42:11.818Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy-light",
+      "requestHash": "49a8e2ccf2b8b37c9d68ad46",
+      "usd": 0.007078542444441054,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T11:42:46.642Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy-light",
+      "requestHash": "49a8e2ccf2b8b37c9d68ad46",
+      "usd": 0.008486555947197808,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T11:43:04.178Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy-light",
+      "requestHash": "49a8e2ccf2b8b37c9d68ad46",
+      "usd": 0.006633187611897786,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T11:43:27.128Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy-balanced",
+      "requestHash": "73128ab78e96c3c60dab73f9",
+      "usd": 0.007181657526228163,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T11:43:40.054Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy-balanced",
+      "requestHash": "73128ab78e96c3c60dab73f9",
+      "usd": 0.005999441199832492,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T11:44:25.528Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy-balanced",
+      "requestHash": "73128ab78e96c3c60dab73f9",
+      "usd": 0.009533571481704712,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T11:44:43.706Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy-balanced",
+      "requestHash": "73128ab78e96c3c60dab73f9",
+      "usd": 0.00673150012228224,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T11:44:58.091Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy-balanced",
+      "requestHash": "73128ab78e96c3c60dab73f9",
+      "usd": 0.006340447611278958,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T11:45:26.051Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy-balanced",
+      "requestHash": "73128ab78e96c3c60dab73f9",
+      "usd": 0.006977887762917413,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T11:45:53.455Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy-heavy",
+      "requestHash": "eda6874f5ed684ff234019d3",
+      "usd": 0.007586190541585287,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T11:46:11.926Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy-heavy",
+      "requestHash": "eda6874f5ed684ff234019d3",
+      "usd": 0.0066631227864159485,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T11:46:32.057Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy-heavy",
+      "requestHash": "eda6874f5ed684ff234019d3",
+      "usd": 0.007078815407223172,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T11:46:45.946Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy-heavy",
+      "requestHash": "eda6874f5ed684ff234019d3",
+      "usd": 0.006228465927971734,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T11:47:07.636Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy-heavy",
+      "requestHash": "eda6874f5ed684ff234019d3",
+      "usd": 0.007230602502822876,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T11:47:29.502Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy-heavy",
+      "requestHash": "eda6874f5ed684ff234019d3",
+      "usd": 0.007184827751583523,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T12:04:40.761Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy-light",
+      "requestHash": "10a4082b2b43f080005a8d79",
+      "usd": 0.0070187033812205,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T12:05:04.642Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy-light",
+      "requestHash": "10a4082b2b43f080005a8d79",
+      "usd": 0.007208504968219334,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T12:05:17.529Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy-light",
+      "requestHash": "10a4082b2b43f080005a8d79",
+      "usd": 0.006180126772986518,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T12:05:35.404Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy-light",
+      "requestHash": "10a4082b2b43f080005a8d79",
+      "usd": 0.006654937982559204,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T12:05:53.833Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy-light",
+      "requestHash": "10a4082b2b43f080005a8d79",
+      "usd": 0.006655283768971761,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T12:06:07.449Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy-light",
+      "requestHash": "10a4082b2b43f080005a8d79",
+      "usd": 0.0061236268414391415,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T12:07:00.272Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy-light",
+      "requestHash": "247233b0cde733706ac3ea07",
+      "usd": 0.006293480634689331,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T12:07:14.011Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy-light",
+      "requestHash": "247233b0cde733706ac3ea07",
+      "usd": 0.006261936585108439,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T12:07:35.803Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy-light",
+      "requestHash": "247233b0cde733706ac3ea07",
+      "usd": 0.0067686096297370065,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T12:07:58.665Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy-light",
+      "requestHash": "247233b0cde733706ac3ea07",
+      "usd": 0.006825691567526923,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T12:08:27.832Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy-light",
+      "requestHash": "247233b0cde733706ac3ea07",
+      "usd": 0.0072820409403906924,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T12:08:58.636Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy-light",
+      "requestHash": "247233b0cde733706ac3ea07",
+      "usd": 0.007097534365124173,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T12:26:04.692Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy-light",
+      "requestHash": "153bd098081779e604ad450e",
+      "usd": 0.006834951241811117,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T12:26:23.255Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy-light",
+      "requestHash": "153bd098081779e604ad450e",
+      "usd": 0.0067093882295820445,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T12:27:29.813Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy-light",
+      "requestHash": "153bd098081779e604ad450e",
+      "usd": 0.00780501193470425,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T12:28:40.518Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy-light",
+      "requestHash": "153bd098081779e604ad450e",
+      "usd": 0.00683454089694553,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T12:29:07.412Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy-light",
+      "requestHash": "153bd098081779e604ad450e",
+      "usd": 0.006804231670167711,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-07-25T12:29:44.424Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "energy-light",
+      "requestHash": "153bd098081779e604ad450e",
+      "usd": 0.0064909722805023195,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-07-26T15:28:11.310Z",
+      "endpoint": "pixflux",
+      "category": "ui-icons",
+      "assetId": "stat-attack",
+      "requestHash": "37375d4f4d793bc8430bdbbb",
+      "usd": 0.008753684043884278,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-26T15:28:38.964Z",
+      "endpoint": "pixflux",
+      "category": "ui-icons",
+      "assetId": "stat-attack",
+      "requestHash": "37375d4f4d793bc8430bdbbb",
+      "usd": 0.006986293951670329,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-26T15:28:57.539Z",
+      "endpoint": "pixflux",
+      "category": "ui-icons",
+      "assetId": "stat-attack",
+      "requestHash": "37375d4f4d793bc8430bdbbb",
+      "usd": 0.006910062260097927,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-26T15:29:15.175Z",
+      "endpoint": "pixflux",
+      "category": "ui-icons",
+      "assetId": "stat-dps",
+      "requestHash": "305b59db677df2a6d14fdf6d",
+      "usd": 0.006688211626476712,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-26T15:29:59.085Z",
+      "endpoint": "pixflux",
+      "category": "ui-icons",
+      "assetId": "stat-dps",
+      "requestHash": "305b59db677df2a6d14fdf6d",
+      "usd": 0.008311547676722209,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-26T15:30:26.099Z",
+      "endpoint": "pixflux",
+      "category": "ui-icons",
+      "assetId": "stat-dps",
+      "requestHash": "305b59db677df2a6d14fdf6d",
+      "usd": 0.007658966938654583,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-26T15:30:55.113Z",
+      "endpoint": "pixflux",
+      "category": "ui-icons",
+      "assetId": "stat-plating",
+      "requestHash": "d267e8dae5c0bb6d756d6227",
+      "usd": 0.007740047454833985,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-26T15:31:11.733Z",
+      "endpoint": "pixflux",
+      "category": "ui-icons",
+      "assetId": "stat-plating",
+      "requestHash": "d267e8dae5c0bb6d756d6227",
+      "usd": 0.006498722129397922,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-26T15:31:49.003Z",
+      "endpoint": "pixflux",
+      "category": "ui-icons",
+      "assetId": "stat-plating",
+      "requestHash": "d267e8dae5c0bb6d756d6227",
+      "usd": 0.0067491465409596765,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-26T15:32:12.687Z",
+      "endpoint": "pixflux",
+      "category": "ui-icons",
+      "assetId": "stat-reduction",
+      "requestHash": "41d9079b224d9b6caec9a9ba",
+      "usd": 0.007163103183110555,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-26T15:32:42.007Z",
+      "endpoint": "pixflux",
+      "category": "ui-icons",
+      "assetId": "stat-reduction",
+      "requestHash": "41d9079b224d9b6caec9a9ba",
+      "usd": 0.007026797638999091,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-26T15:32:54.821Z",
+      "endpoint": "pixflux",
+      "category": "ui-icons",
+      "assetId": "stat-reduction",
+      "requestHash": "41d9079b224d9b6caec9a9ba",
+      "usd": 0.0062083064979977075,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-26T15:33:20.584Z",
+      "endpoint": "pixflux",
+      "category": "ui-icons",
+      "assetId": "stat-range",
+      "requestHash": "1a45d57111f4a76adc74fc2c",
+      "usd": 0.007291091177198622,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-26T15:33:43.062Z",
+      "endpoint": "pixflux",
+      "category": "ui-icons",
+      "assetId": "stat-range",
+      "requestHash": "1a45d57111f4a76adc74fc2c",
+      "usd": 0.007234355555640327,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-26T15:34:03.628Z",
+      "endpoint": "pixflux",
+      "category": "ui-icons",
+      "assetId": "stat-range",
+      "requestHash": "1a45d57111f4a76adc74fc2c",
+      "usd": 0.006773284249835544,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-26T15:34:26.844Z",
+      "endpoint": "pixflux",
+      "category": "ui-icons",
+      "assetId": "stat-speed",
+      "requestHash": "ac05ee816672e8b9722359a2",
+      "usd": 0.0070423568354712595,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-26T15:34:53.806Z",
+      "endpoint": "pixflux",
+      "category": "ui-icons",
+      "assetId": "stat-speed",
+      "requestHash": "ac05ee816672e8b9722359a2",
+      "usd": 0.006222894377178616,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-26T15:35:27.408Z",
+      "endpoint": "pixflux",
+      "category": "ui-icons",
+      "assetId": "stat-speed",
+      "requestHash": "ac05ee816672e8b9722359a2",
+      "usd": 0.00819942577679952,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-26T15:36:48.916Z",
+      "endpoint": "pixflux",
+      "category": "ui-icons",
+      "assetId": "stat-regen",
+      "requestHash": "fcdbef3b9cb08ddee004aa8c",
+      "usd": 0.01330009534623888,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-26T15:37:15.058Z",
+      "endpoint": "pixflux",
+      "category": "ui-icons",
+      "assetId": "stat-regen",
+      "requestHash": "fcdbef3b9cb08ddee004aa8c",
+      "usd": 0.007185258176591661,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-26T15:37:33.251Z",
+      "endpoint": "pixflux",
+      "category": "ui-icons",
+      "assetId": "stat-regen",
+      "requestHash": "fcdbef3b9cb08ddee004aa8c",
+      "usd": 0.006830870575375027,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-26T15:38:20.020Z",
+      "endpoint": "pixflux",
+      "category": "ui-icons",
+      "assetId": "stat-evasion",
+      "requestHash": "2b5b46a2f9269b85615b609d",
+      "usd": 0.006982728136910333,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-26T15:38:37.943Z",
+      "endpoint": "pixflux",
+      "category": "ui-icons",
+      "assetId": "stat-evasion",
+      "requestHash": "2b5b46a2f9269b85615b609d",
+      "usd": 0.0068585594230228,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-26T15:38:52.406Z",
+      "endpoint": "pixflux",
+      "category": "ui-icons",
+      "assetId": "stat-evasion",
+      "requestHash": "2b5b46a2f9269b85615b609d",
+      "usd": 0.006213065226872762,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-26T15:39:20.927Z",
+      "endpoint": "pixflux",
+      "category": "ui-icons",
+      "assetId": "stat-empowered",
+      "requestHash": "85f32df2f0fc5257fa0ca74b",
+      "usd": 0.007598994837866889,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-26T15:40:00.473Z",
+      "endpoint": "pixflux",
+      "category": "ui-icons",
+      "assetId": "stat-empowered",
+      "requestHash": "85f32df2f0fc5257fa0ca74b",
+      "usd": 0.006217706918716431,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-26T15:40:13.560Z",
+      "endpoint": "pixflux",
+      "category": "ui-icons",
+      "assetId": "stat-empowered",
+      "requestHash": "85f32df2f0fc5257fa0ca74b",
+      "usd": 0.006056077082951864,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-26T15:40:43.831Z",
+      "endpoint": "pixflux",
+      "category": "ui-icons",
+      "assetId": "stat-shield",
+      "requestHash": "c253ecdb24107bf8b7553d2c",
+      "usd": 0.007324806478288439,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-26T15:40:57.854Z",
+      "endpoint": "pixflux",
+      "category": "ui-icons",
+      "assetId": "stat-shield",
+      "requestHash": "c253ecdb24107bf8b7553d2c",
+      "usd": 0.006297042608261109,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-26T15:41:14.694Z",
+      "endpoint": "pixflux",
+      "category": "ui-icons",
+      "assetId": "stat-shield",
+      "requestHash": "c253ecdb24107bf8b7553d2c",
+      "usd": 0.006458333889643351,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-26T15:41:37.620Z",
+      "endpoint": "pixflux",
+      "category": "ui-icons",
+      "assetId": "action-locate",
+      "requestHash": "7cf6a62c432f221adf25d59a",
+      "usd": 0.006823985550138686,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-26T15:41:50.721Z",
+      "endpoint": "pixflux",
+      "category": "ui-icons",
+      "assetId": "action-locate",
+      "requestHash": "7cf6a62c432f221adf25d59a",
+      "usd": 0.006168409400516086,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-26T15:42:10.313Z",
+      "endpoint": "pixflux",
+      "category": "ui-icons",
+      "assetId": "action-locate",
+      "requestHash": "7cf6a62c432f221adf25d59a",
+      "usd": 0.006581074741151598,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-26T15:42:24.508Z",
+      "endpoint": "pixflux",
+      "category": "ui-icons",
+      "assetId": "action-inspect",
+      "requestHash": "df7167f31a3e47a5f019bb24",
+      "usd": 0.006244926002290514,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-26T15:42:45.850Z",
+      "endpoint": "pixflux",
+      "category": "ui-icons",
+      "assetId": "action-inspect",
+      "requestHash": "df7167f31a3e47a5f019bb24",
+      "usd": 0.007000164190928141,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-26T15:43:34.934Z",
+      "endpoint": "pixflux",
+      "category": "ui-icons",
+      "assetId": "action-inspect",
+      "requestHash": "df7167f31a3e47a5f019bb24",
+      "usd": 0.009230411582522923,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-26T15:43:52.983Z",
+      "endpoint": "pixflux",
+      "category": "ui-icons",
+      "assetId": "action-equip",
+      "requestHash": "d148779bc3c422ab5d19d6c8",
+      "usd": 0.006776376353369819,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-26T15:44:28.414Z",
+      "endpoint": "pixflux",
+      "category": "ui-icons",
+      "assetId": "action-equip",
+      "requestHash": "d148779bc3c422ab5d19d6c8",
+      "usd": 0.007312341954973009,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-26T15:45:07.751Z",
+      "endpoint": "pixflux",
+      "category": "ui-icons",
+      "assetId": "action-equip",
+      "requestHash": "d148779bc3c422ab5d19d6c8",
+      "usd": 0.008721775478786893,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-26T15:45:21.456Z",
+      "endpoint": "pixflux",
+      "category": "ui-icons",
+      "assetId": "action-unequip",
+      "requestHash": "0e08a72f2020faec691f9ffe",
+      "usd": 0.006289272997114394,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-26T15:45:54.450Z",
+      "endpoint": "pixflux",
+      "category": "ui-icons",
+      "assetId": "action-unequip",
+      "requestHash": "0e08a72f2020faec691f9ffe",
+      "usd": 0.006218050532870823,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-26T15:46:21.118Z",
+      "endpoint": "pixflux",
+      "category": "ui-icons",
+      "assetId": "action-unequip",
+      "requestHash": "0e08a72f2020faec691f9ffe",
+      "usd": 0.006464039034313626,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-26T15:46:39.343Z",
+      "endpoint": "pixflux",
+      "category": "ui-icons",
+      "assetId": "action-reorder",
+      "requestHash": "7e437028ae4e696868a949c1",
+      "usd": 0.00674774522251553,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-26T15:47:06.688Z",
+      "endpoint": "pixflux",
+      "category": "ui-icons",
+      "assetId": "action-reorder",
+      "requestHash": "7e437028ae4e696868a949c1",
+      "usd": 0.007925859106911553,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-26T15:47:19.690Z",
+      "endpoint": "pixflux",
+      "category": "ui-icons",
+      "assetId": "action-reorder",
+      "requestHash": "7e437028ae4e696868a949c1",
+      "usd": 0.006072235319349501,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-26T15:47:36.993Z",
+      "endpoint": "pixflux",
+      "category": "ui-icons",
+      "assetId": "action-confirm",
+      "requestHash": "80863d55e374c0dc9e0a818b",
+      "usd": 0.006682739072375828,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-26T15:47:50.782Z",
+      "endpoint": "pixflux",
+      "category": "ui-icons",
+      "assetId": "action-confirm",
+      "requestHash": "80863d55e374c0dc9e0a818b",
+      "usd": 0.0062685860262976754,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-26T15:48:18.537Z",
+      "endpoint": "pixflux",
+      "category": "ui-icons",
+      "assetId": "action-confirm",
+      "requestHash": "80863d55e374c0dc9e0a818b",
+      "usd": 0.006494555764728123,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-26T15:49:07.467Z",
+      "endpoint": "pixflux",
+      "category": "ui-icons",
+      "assetId": "class-cadence",
+      "requestHash": "57d14ba84ab4cba5a3bb6ada",
+      "usd": 0.010184459235933092,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-26T15:50:06.320Z",
+      "endpoint": "pixflux",
+      "category": "ui-icons",
+      "assetId": "class-cadence",
+      "requestHash": "57d14ba84ab4cba5a3bb6ada",
+      "usd": 0.007469939258363512,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-26T15:50:52.993Z",
+      "endpoint": "pixflux",
+      "category": "ui-icons",
+      "assetId": "class-cadence",
+      "requestHash": "57d14ba84ab4cba5a3bb6ada",
+      "usd": 0.009598595354292128,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-26T15:51:15.091Z",
+      "endpoint": "pixflux",
+      "category": "ui-icons",
+      "assetId": "class-cooldown",
+      "requestHash": "afb266b102ef109002f109d9",
+      "usd": 0.007006579187181261,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-26T15:51:40.987Z",
+      "endpoint": "pixflux",
+      "category": "ui-icons",
+      "assetId": "class-cooldown",
+      "requestHash": "afb266b102ef109002f109d9",
+      "usd": 0.006725662178463406,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-26T15:52:10.555Z",
+      "endpoint": "pixflux",
+      "category": "ui-icons",
+      "assetId": "class-cooldown",
+      "requestHash": "afb266b102ef109002f109d9",
+      "usd": 0.006712918255064223,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-26T15:52:47.009Z",
+      "endpoint": "pixflux",
+      "category": "ui-icons",
+      "assetId": "class-dot",
+      "requestHash": "5a25fcf9895074ced84e9455",
+      "usd": 0.008139231575859917,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-26T15:53:05.681Z",
+      "endpoint": "pixflux",
+      "category": "ui-icons",
+      "assetId": "class-dot",
+      "requestHash": "5a25fcf9895074ced84e9455",
+      "usd": 0.0068839803536732995,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-26T15:53:18.476Z",
+      "endpoint": "pixflux",
+      "category": "ui-icons",
+      "assetId": "class-dot",
+      "requestHash": "5a25fcf9895074ced84e9455",
+      "usd": 0.006144805484347873,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-26T15:53:50.773Z",
+      "endpoint": "pixflux",
+      "category": "ui-icons",
+      "assetId": "class-reload",
+      "requestHash": "837d1b2ae11b7c4278dab3f2",
+      "usd": 0.007448941681120131,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-26T15:54:12.561Z",
+      "endpoint": "pixflux",
+      "category": "ui-icons",
+      "assetId": "class-reload",
+      "requestHash": "837d1b2ae11b7c4278dab3f2",
+      "usd": 0.006908129480150011,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-26T15:55:10.352Z",
+      "endpoint": "pixflux",
+      "category": "ui-icons",
+      "assetId": "class-reload",
+      "requestHash": "837d1b2ae11b7c4278dab3f2",
+      "usd": 0.007340973827573988,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-26T15:55:30.458Z",
+      "endpoint": "pixflux",
+      "category": "ui-icons",
+      "assetId": "class-energy",
+      "requestHash": "260ebcc75e95532520519f0c",
+      "usd": 0.0070068837271796336,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-26T15:55:45.084Z",
+      "endpoint": "pixflux",
+      "category": "ui-icons",
+      "assetId": "class-energy",
+      "requestHash": "260ebcc75e95532520519f0c",
+      "usd": 0.006236056062910292,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-26T15:56:27.083Z",
+      "endpoint": "pixflux",
+      "category": "ui-icons",
+      "assetId": "class-energy",
+      "requestHash": "260ebcc75e95532520519f0c",
+      "usd": 0.008442533413569132,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-26T15:56:46.314Z",
+      "endpoint": "pixflux",
+      "category": "ui-icons",
+      "assetId": "class-summoner",
+      "requestHash": "201cba4718a5f289fb1bdc0c",
+      "usd": 0.0067123155064053005,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-26T15:57:06.134Z",
+      "endpoint": "pixflux",
+      "category": "ui-icons",
+      "assetId": "class-summoner",
+      "requestHash": "201cba4718a5f289fb1bdc0c",
+      "usd": 0.006752277427249485,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-26T15:57:37.742Z",
+      "endpoint": "pixflux",
+      "category": "ui-icons",
+      "assetId": "class-summoner",
+      "requestHash": "201cba4718a5f289fb1bdc0c",
+      "usd": 0.007156219535403782,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
     }
   ]
 }

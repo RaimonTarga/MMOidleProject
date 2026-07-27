@@ -9,7 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@mmo-idle/shared": "workspace:*",
+    "@mmo-idle/shared": "link:../shared",
     "jotai": "^2.20.0",
     "phaser": "^3.80.1",
     "react": "^19.2.6",

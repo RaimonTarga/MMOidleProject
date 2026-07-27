@@ -26,6 +26,7 @@ import {
   EMPOWERED_DAMAGE_SIZE_PX,
 } from "../fx/particles";
 import { getDotPath, type DotPath } from "../fx/dot";
+import { PARTIAL_EVADE_COLOR } from "./damageNumberStyle";
 import { fxSlash } from "../fx/slash";
 import { fxImpact } from "../fx/impact";
 import { fxGunshot, fxDuelistShot, fxAltShot, fxDeathMarkBlast } from "../fx/gunshot";
@@ -368,6 +369,62 @@ const TECHNIQUE_CONSUMED_TAGS = [
   ABILITY_TECHNIQUE_FIRED_FX,
 ];
 
+/**
+ * The rising label used for combat outcomes that are not a number: DODGE, MISS,
+ * GRAZE. Three copies of this tween were already written by hand; a fourth for
+ * grazes would have made it four.
+ */
+function floatLabel(
+  scene: GameScene,
+  at: { x: number; y: number },
+  label: string,
+  opts?: { color?: string; sizePx?: number; rise?: number; dx?: number; dy?: number },
+): void {
+  const text = scene.add
+    .text(at.x + (opts?.dx ?? 0), at.y - (opts?.dy ?? 40), label, {
+      fontFamily: "monospace",
+      fontSize: `${opts?.sizePx ?? 14}px`,
+      color: opts?.color ?? "#ddddff",
+      stroke: "#000000",
+      strokeThickness: 3,
+    })
+    .setOrigin(0.5)
+    .setDepth(DEPTH.FX);
+  scene.tweens.add({
+    targets: text,
+    y: text.y - (opts?.rise ?? 28),
+    alpha: 0,
+    duration: 650,
+    onComplete: () => text.destroy(),
+  });
+}
+
+/** Screen position of an entity, from its live sprite. */
+function spritePos(state: RenderState, id: string): { x: number; y: number } | null {
+  const sprite = state.sprite.get(id);
+  return sprite ? { x: sprite.x, y: sprite.y } : null;
+}
+
+/**
+ * A partial evade is a real dodge that happened to be worth half the blow rather
+ * than all of it. Without a label of its own it was only a faintly tinted damage
+ * number — which is why evasion looked like it never fired. Deliberately quieter
+ * than DODGE: smaller, offset off the damage number, and silent, because the hit
+ * it accompanies already played a sound.
+ */
+function spawnGrazeLabel(state: RenderState, scene: GameScene, targetId: string): void {
+  if (!shouldRunClientFx()) return;
+  const at = spritePos(state, targetId);
+  if (!at) return;
+  floatLabel(scene, at, "GRAZE", {
+    color: PARTIAL_EVADE_COLOR,
+    sizePx: 12,
+    dy: 30,
+    dx: -20,
+    rise: 22,
+  });
+}
+
 export function dispatchCombatEvent(
   state: RenderState,
   ev: CombatEvent,
@@ -390,6 +447,7 @@ export function dispatchCombatEvent(
   if (ev.kind === "monster-hit") {
     // The local player took a hit — play the damage cue (own-player only).
     if (ev.targetId === scene.myId && shouldRunClientFx()) playSfx("take-damage");
+    if (ev.evadedPartial) spawnGrazeLabel(state, scene, ev.targetId);
     return;
   }
 
@@ -404,25 +462,7 @@ export function dispatchCombatEvent(
             y: state.sprite.get(ev.monsterId)!.y,
           }
         : null);
-    if (target) {
-      const text = scene.add
-        .text(target.x, target.y - 40, "DODGE", {
-          fontFamily: "monospace",
-          fontSize: "14px",
-          color: "#ddddff",
-          stroke: "#000000",
-          strokeThickness: 3,
-        })
-        .setOrigin(0.5)
-        .setDepth(DEPTH.FX);
-      scene.tweens.add({
-        targets: text,
-        y: text.y - 28,
-        alpha: 0,
-        duration: 650,
-        onComplete: () => text.destroy(),
-      });
-    }
+    if (target) floatLabel(scene, target, "DODGE");
     return;
   }
 
@@ -432,25 +472,7 @@ export function dispatchCombatEvent(
     const sprite = state.sprite.get(ev.playerId);
     const target =
       (sprite ? { x: sprite.x, y: sprite.y } : null) ?? ev.targetPos ?? null;
-    if (target) {
-      const text = scene.add
-        .text(target.x, target.y - 40, "DODGE", {
-          fontFamily: "monospace",
-          fontSize: "14px",
-          color: "#ddddff",
-          stroke: "#000000",
-          strokeThickness: 3,
-        })
-        .setOrigin(0.5)
-        .setDepth(DEPTH.FX);
-      scene.tweens.add({
-        targets: text,
-        y: text.y - 28,
-        alpha: 0,
-        duration: 650,
-        onComplete: () => text.destroy(),
-      });
-    }
+    if (target) floatLabel(scene, target, "DODGE");
     return;
   }
 
@@ -464,25 +486,7 @@ export function dispatchCombatEvent(
             y: state.sprite.get(ev.targetId)!.y,
           }
         : null);
-    if (target) {
-      const text = scene.add
-        .text(target.x, target.y - 40, "MISS", {
-          fontFamily: "monospace",
-          fontSize: "14px",
-          color: "#bbbbbb",
-          stroke: "#000000",
-          strokeThickness: 3,
-        })
-        .setOrigin(0.5)
-        .setDepth(DEPTH.FX);
-      scene.tweens.add({
-        targets: text,
-        y: text.y - 28,
-        alpha: 0,
-        duration: 650,
-        onComplete: () => text.destroy(),
-      });
-    }
+    if (target) floatLabel(scene, target, "MISS", { color: "#bbbbbb" });
     return;
   }
 
@@ -685,6 +689,8 @@ export function dispatchCombatEvent(
     if (shouldRunClientFx() && (player?.summonsMinions ?? 0) === 0) {
       runFxForAttackStyle(state, ev, scene);
     }
+    // The mirror of the player's own graze: the target rolled with the blow.
+    if (ev.evadedPartial) spawnGrazeLabel(state, scene, ev.targetId);
   }
 
   if (ev.kind === "player-kill") {

@@ -31,8 +31,9 @@
 
 .boss-bar__name {
   color: var(--hud-warning, #ffcc55);
+  font-family: var(--hud-font-display);
   font-size: 13px;
-  font-weight: bold;
+  font-weight: var(--hud-font-display-weight);
   text-shadow: 0 0 10px rgba(255, 204, 85, 0.25);
   white-space: nowrap;
   overflow: hidden;

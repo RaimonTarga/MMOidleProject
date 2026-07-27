@@ -21,162 +21,196 @@
   border: 1px solid var(--hud-edge-divider);
 }
 
-.build-rule-remove {
-  width: 24px;
-  min-height: 24px;
-  padding: 0;
-  border: 1px solid var(--hud-edge-dark);
-  border-radius: 2px;
-  background: var(--hud-material-control);
-  color: var(--hud-text-muted);
-  font: bold 13px/1 monospace;
-  cursor: pointer;
-}
-
-.build-rule-remove:hover {
-  color: var(--hud-danger);
-}
-
-.build-rule-remove:focus-visible {
-  outline: var(--hud-focus-width) solid var(--hud-focus-color);
-  outline-offset: var(--hud-focus-offset);
-}
-
 .build-tab-body {
   display: flex;
   flex-direction: column;
   gap: 14px;
 }
 
-.build-overview-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
-}
-
-.build-summary-card,
-.build-loadout-row,
-.build-learn-card,
-.build-rune-target {
-  border: 1px solid rgba(100, 85, 200, 0.24);
-  border-radius: 5px;
-  background: rgba(13, 11, 34, 0.68);
-}
-
-.build-summary-card {
+/* ── Loadout board ────────────────────────────────────────────────────────────
+   Sockets, not a report about sockets. Each cell is either engraved-hollow or
+   filled, and selecting one opens the surface that fills it. Replaces a sheet of
+   label/value rows that was accurate but read as a description of the build
+   rather than as the build. */
+.loadout-board {
   display: flex;
-  gap: 10px;
-  min-height: 76px;
-  padding: 10px;
+  flex-direction: column;
+  gap: 14px;
 }
 
-.build-summary-card__body {
-  min-width: 0;
-  flex: 1;
+.loadout-group__title {
+  display: flex;
+  width: 100%;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 7px;
+  padding: 0;
+  background: none;
+  border: 0;
+  color: var(--hud-primary-strong);
+  font-family: var(--hud-font-display);
+  font-size: 11px;
+  font-weight: var(--hud-font-display-weight);
+  letter-spacing: 1px;
+  text-align: left;
+  text-transform: uppercase;
 }
 
-.build-summary-card__eyebrow,
-.build-section-title,
-.build-field-label {
-  color: #c0aee8;
+.loadout-group__title--link {
+  cursor: pointer;
+}
+
+.loadout-group__title--link:hover {
+  color: var(--hud-text);
+}
+
+.loadout-group__title--link:focus-visible {
+  outline: var(--hud-focus-width) solid var(--hud-focus-color);
+  outline-offset: var(--hud-focus-offset);
+}
+
+.loadout-group__count {
+  margin-left: auto;
+  color: var(--hud-text-muted);
+  font-family: monospace;
+  font-size: 9px;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.loadout-group__sockets {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(132px, 1fr));
+  gap: 6px;
+}
+
+/* The cut corner is the tier-token frame language, so a socket reads as part of
+   the same apparatus as the rail panels. */
+.loadout-socket {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-height: 54px;
+  padding: 7px 9px;
+  background: var(--hud-material-inset);
+  border: 1px solid var(--hud-edge-dark);
+  border-top-color: var(--hud-edge-light);
+  border-left-color: var(--hud-edge-light);
+  border-radius: 2px;
+  clip-path: polygon(
+    0 0, calc(100% - var(--hud-frame-cut, 0px)) 0,
+    100% var(--hud-frame-cut, 0px), 100% 100%, 0 100%
+  );
+  color: inherit;
+  font-family: monospace;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    border-color var(--hud-motion-fast) ease,
+    background var(--hud-motion-fast) ease;
+}
+
+.loadout-socket:hover {
+  border-color: var(--hud-edge-strong);
+  background: var(--hud-material-control);
+}
+
+.loadout-socket:focus-visible {
+  outline: var(--hud-focus-width) solid var(--hud-focus-color);
+  outline-offset: var(--hud-focus-offset);
+}
+
+.loadout-socket__kind {
+  color: var(--hud-text-dim);
+  font-size: 8px;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+}
+
+.loadout-socket__name {
+  overflow-wrap: anywhere;
+  color: var(--hud-text);
+  font-size: 11px;
+}
+
+/* An empty socket says so quietly; it is an invitation, not a warning. */
+.loadout-socket__name--empty {
+  color: var(--hud-text-dim);
+  font-style: italic;
+}
+
+.loadout-socket--empty {
+  background: repeating-linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.012) 0 6px,
+    transparent 6px 12px
+  );
+}
+
+/* The stance actually in force. */
+.loadout-socket--active {
+  border-color: var(--hud-success);
+  box-shadow: inset 0 0 8px color-mix(in srgb, var(--hud-success) 18%, transparent);
+}
+
+/* Firing order as a corner engraving — the "fires first" note said the same
+   thing in four words and only on the first slot. */
+.loadout-socket__order {
+  position: absolute;
+  top: 3px;
+  right: 5px;
+  color: var(--hud-primary);
+  font-size: 9px;
+  font-weight: bold;
+  opacity: 0.75;
+}
+
+.loadout-budget {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.loadout-budget__label {
+  flex: 0 0 auto;
+  color: var(--hud-text-dim);
+  font-family: monospace;
+  font-size: 10px;
+}
+
+.loadout-budget__meter {
+  flex: 1 1 auto;
+}
+
+.loadout-budget__value {
+  flex: 0 0 auto;
+  color: var(--hud-text);
+  font-family: monospace;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
+.loadout-budget__value--over {
+  color: var(--hud-danger);
+}
+
+.build-rune-target {
+  border: 1px solid var(--hud-edge-light);
+  border-radius: 5px;
+  background: var(--hud-material-panel);
+}
+
+.build-section-title {
+  color: var(--hud-primary);
   font-size: 10px;
   font-weight: bold;
   letter-spacing: 1px;
   text-transform: uppercase;
 }
 
-.build-summary-card__name {
-  color: #eadcff;
-  font-size: 14px;
-  font-weight: bold;
-  margin-top: 3px;
-}
-
-.build-summary-card__text {
-  color: #8f8cb8;
-  font-size: 11px;
-  line-height: 1.42;
-  margin-top: 4px;
-}
-
-.build-loadout-list,
-.build-learn-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.build-loadout-row {
-  display: grid;
-  grid-template-columns: 42px minmax(110px, 150px) minmax(0, 1fr);
-  gap: 10px;
-  align-items: center;
-  padding: 9px 10px;
-}
-
-.build-loadout-row__main {
-  min-width: 0;
-}
-
-.build-loadout-row__name {
-  color: #d8caf5;
-  font-size: 13px;
-  font-weight: bold;
-}
-
-.build-loadout-row__hint,
-.build-loadout-row__text {
-  color: #8888b0;
-  font-size: 11px;
-  line-height: 1.38;
-  margin-top: 3px;
-}
-
-.build-select {
-  width: 100%;
-  min-height: 28px;
-  border: 1px solid rgba(100, 85, 200, 0.36);
-  border-radius: 3px;
-  background: rgba(7, 6, 22, 0.9);
-  color: #ddd7f5;
-  font-family: monospace;
-  font-size: 12px;
-  padding: 4px 7px;
-}
-
-.build-learn-card {
-  display: grid;
-  grid-template-columns: 42px minmax(0, 1fr) auto;
-  gap: 10px;
-  align-items: center;
-  padding: 9px 10px;
-}
-
-.build-learn-card--owned {
-  opacity: 0.58;
-}
-
-.build-learn-card__name {
-  color: #d8caf5;
-  font-size: 13px;
-  font-weight: bold;
-}
-
-.build-learn-card__meta {
-  color: #8f8cb8;
-  font-size: 11px;
-  line-height: 1.4;
-  margin-top: 3px;
-}
-
-.build-learn-card__cost {
-  color: #6f6f90;
-  font-size: 10px;
-  margin-top: 4px;
-}
-
 .build-active-chip {
-  color: #55ff99;
+  color: var(--hud-success);
   font-size: 10px;
   font-weight: bold;
   margin-left: 5px;
@@ -255,29 +289,291 @@
 }
 
 .build-rune-target__label {
-  color: #d8caf5;
+  color: var(--hud-text);
   font-size: 11px;
   font-weight: bold;
 }
 
 .build-rune-target__text {
-  color: #8f8cb8;
+  color: var(--hud-text-muted);
   font-size: 10px;
   margin-top: 2px;
 }
 
+/* ── Loadout browser ─────────────────────────────────────────────────────────
+   Slots are the master list; the detail pane holds the choices. Replaces the
+   native selects that used to sit inside each slot row. */
+.build-dialog__body:has(.loadout-browser) {
+  display: flex;
+  padding: 0;
+  overflow: hidden;
+}
+
+.loadout-browser {
+  min-height: 0;
+}
+
+.loadout-row__main {
+  display: flex;
+  flex: 1 1 auto;
+  min-width: 0;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.loadout-row__slot {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+}
+
+.loadout-row__filled {
+  overflow: hidden;
+  color: var(--hud-text-muted);
+  font-size: 9px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.loadout-row__filled--empty {
+  color: var(--hud-text-dim);
+  font-style: italic;
+}
+
+.loadout-detail__head {
+  margin-bottom: 10px;
+}
+
+.loadout-detail__current {
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--hud-edge-divider);
+}
+
+.loadout-detail__current-name {
+  color: var(--hud-primary-strong);
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.loadout-detail__empty {
+  color: var(--hud-text-dim);
+  font-size: 10px;
+  font-style: italic;
+}
+
+.loadout-candidates {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.loadout-candidate {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  background: var(--hud-material-control);
+  border-top: 1px solid var(--hud-edge-light);
+  border-left: 1px solid var(--hud-edge-light);
+  border-right: 1px solid var(--hud-edge-dark);
+  border-bottom: 1px solid var(--hud-edge-dark);
+  border-radius: 2px;
+  color: var(--hud-text);
+  font-family: monospace;
+  text-align: left;
+  cursor: pointer;
+}
+
+.loadout-candidate:not(:disabled):hover {
+  border-top-color: var(--hud-edge-medium);
+  border-left-color: var(--hud-edge-medium);
+}
+
+.loadout-candidate:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.loadout-candidate--equipped {
+  border-color: var(--hud-edge-medium);
+  opacity: 1;
+}
+
+.loadout-candidate:focus-visible {
+  outline: var(--hud-focus-width) solid var(--hud-focus-color);
+  outline-offset: var(--hud-focus-offset);
+}
+
+.loadout-candidate__main {
+  display: flex;
+  flex: 1 1 auto;
+  min-width: 0;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.loadout-candidate__name {
+  font-size: 11px;
+}
+
+.loadout-candidate__blurb {
+  color: var(--hud-text-muted);
+  font-size: 9px;
+  line-height: 1.35;
+}
+
+.loadout-candidate__action {
+  flex: 0 0 auto;
+  color: var(--hud-primary);
+  font-size: 8px;
+  letter-spacing: 0.6px;
+}
+
+.loadout-candidate--equipped .loadout-candidate__action {
+  color: var(--hud-success);
+}
+
+@media (max-width: 1100px) {
+  .loadout-candidate {
+    min-height: var(--hud-hit-target);
+    touch-action: manipulation;
+  }
+}
+
+/* ── Rune budget (V2 bar grammar) ─────────────────────────────────────────────
+   Replaced a hand-rolled pip strip with hardcoded purple/gold/red inline styles.
+   The engraved meter carries the over state, so no warning sentence is needed. */
+.rune-budget {
+  padding: 9px 10px;
+  background: var(--hud-material-inset);
+  border: 1px solid var(--hud-edge-light);
+  border-radius: 4px;
+}
+
+.rune-budget__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 7px;
+}
+
+.rune-budget__value {
+  color: var(--hud-primary-strong);
+  font-family: monospace;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  font-weight: bold;
+}
+
+.rune-budget__value--over {
+  color: var(--hud-danger);
+}
+
+/* ── Rune rule board ──────────────────────────────────────────────────────────
+   A rule is one sentence — WHEN this, DO that — so the card draws it as one,
+   with the arrow between rather than two stacked lines the reader has to infer
+   a relationship from. Replaces inline styles with a hardcoded purple palette. */
+.rule-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  background: var(--hud-material-inset);
+  border: 1px solid var(--hud-edge-light);
+  border-left: 4px solid var(--rule-accent, var(--hud-primary));
+  border-radius: 3px;
+  font-family: monospace;
+}
+
+/* Not merely unsatisfied — this pairing can never fire for the current class. */
+.rule-card--invalid {
+  border-color: var(--hud-danger);
+}
+
+.rule-card__order {
+  flex: 0 0 16px;
+  color: var(--hud-text-dim);
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+}
+
+.rule-card__clause {
+  display: flex;
+  flex: 1 1 auto;
+  min-width: 0;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 8px;
+}
+
+.rule-card__when,
+.rule-card__do {
+  display: flex;
+  min-width: 0;
+  align-items: baseline;
+  gap: 5px;
+}
+
+.rule-card__tag {
+  flex: 0 0 auto;
+  color: var(--hud-text-dim);
+  font-size: 8px;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+
+.rule-card__text {
+  min-width: 0;
+  color: var(--hud-text);
+  font-size: 11px;
+  overflow-wrap: anywhere;
+}
+
+.rule-card--invalid .rule-card__do .rule-card__text {
+  color: var(--hud-danger);
+}
+
+.rule-card__arrow {
+  flex: 0 0 auto;
+  color: var(--rule-accent, var(--hud-primary));
+  font-size: 12px;
+}
+
+.rule-card__target {
+  display: flex;
+  flex: 0 0 auto;
+  max-width: 108px;
+  align-items: center;
+  gap: 5px;
+}
+
+.rule-card__target-name {
+  overflow: hidden;
+  color: var(--hud-text-muted);
+  font-size: 9px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* The rule points at something the player no longer has equipped. */
+.rule-card__target--missing .rule-card__target-name {
+  color: var(--hud-danger);
+}
+
+.rule-card__controls {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 3px;
+}
+
 @media (max-width: 720px) {
-  .build-overview-grid {
-    grid-template-columns: 1fr;
+  .rule-card {
+    flex-wrap: wrap;
   }
 
-  .build-loadout-row,
-  .build-learn-card {
-    grid-template-columns: 36px minmax(0, 1fr);
-  }
-
-  .build-loadout-row .build-select,
-  .build-learn-card .auto-btn {
-    grid-column: 2;
+  .rule-card__clause {
+    flex: 1 1 100%;
   }
 }

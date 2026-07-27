@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAtom, useAtomValue } from 'jotai';
 import { TEST_ROOM_NODE_ID } from '@mmo-idle/shared';
 import { DEV_TOOLS_ENABLED } from '../devTools';
@@ -150,6 +150,8 @@ export function DebugPanel() {
 function DebugPanelContent() {
   const [collapsed, setCollapsed] = useState(new Set<string>());
   const [confirmReset, setConfirmReset] = useState(false);
+  const [tacticalMode, setTacticalMode] = useState(false);
+  useEffect(() => hudBus.subscribeTacticalView(setTacticalMode), []);
   const playerId = useAtomValue(playerIdAtom);
   const playerName = useAtomValue(playerNameAtom);
   const nodeId = useAtomValue(playerNodeIdAtom);
@@ -217,6 +219,17 @@ function DebugPanelContent() {
           </button>
         </div>
       )}
+
+      {/* Moved out of the right rail: this draws attack ranges and hitboxes, which
+          is a debugging overlay rather than a system the player navigates to. */}
+      <div className="debug-section">
+        <button
+          className={`debug-btn${tacticalMode ? ' active' : ''}`}
+          onClick={() => hudBus.toggleTacticalView()}
+        >
+          {tacticalMode ? 'HIDE TACTICAL MODE' : 'TACTICAL MODE'}
+        </button>
+      </div>
 
       {DEV_TOOLS_ENABLED && (
         <div className="debug-section">

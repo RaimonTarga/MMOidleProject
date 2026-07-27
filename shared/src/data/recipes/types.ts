@@ -79,8 +79,6 @@ export interface Recipe {
    * (e.g. ultimate:void-overlord).
    */
   requiredBossClear?: string;
-  /** T4 endgame gear — surfaced in Forge Ultimate filter. */
-  ultimate?: boolean;
   // ── Lineage / evolution (system rework Step 6) ──────────────────────────────
   /** Lineage this recipe belongs to (e.g. `"rapier"`). Shared by base + all branches. */
   lineageId?: string;

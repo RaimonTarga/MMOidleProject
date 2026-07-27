@@ -1,4 +1,4 @@
-import { useState, useRef, type ReactNode } from 'react';
+import { useEffect, useState, useRef, type ReactNode } from 'react';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { hudBus } from '../hudBus';
 import { SkillTreePanel } from '../ui/SkillTreePanel';
@@ -14,18 +14,36 @@ import { ArchetypeMechanics } from './stat/mechanics';
 import { NODE_BIOMES, BIOME_DATABASE } from '@mmo-idle/shared';
 import { SettingsPanel } from './settings/SettingsPanel';
 import { useIsMobile } from './useIsMobile';
+import { atlasIcon, GameIcon, nodeIcon, type IconSource } from '../ui/GameIcon';
+import { DialogHeader, GameDialog } from './primitives';
+import { useSystemVisibility } from './useSystemVisibility';
+import type { UiUnlockSystem } from './uiUnlocks';
 import {
+  activeStanceAtom,
   autoAtom,
+  catalystProgressAtom,
+  catalystsAtom,
+  essencesAtom,
+  passivesAtom,
+  unlockedRecipesAtom,
   bestiaryOpenAtom,
   buildPanelTabAtom,
   type BuildPanelTab,
   deathOverlayAtom,
+  equippedAbilitiesAtom,
+  equippedRitesAtom,
+  equippedStancesAtom,
+  globalMasteryAtom,
   hpAtom,
   incomingDotAtom,
+  knownAbilitiesAtom,
+  knownRitesAtom,
+  knownStancesAtom,
   maxHpAtom,
   pendingHealAtom,
   playerNameAtom,
   playerNodeIdAtom,
+  playerTierAtom,
   settingsOpenAtom,
   shieldsAtom,
   skillPointsAtom,
@@ -53,9 +71,20 @@ type MobileView =
   | 'more'
   | null;
 
+/** One row of the More sheet. `unlockSystem` both gates the row and lets the
+ *  shared Phase 11 unlock sync wake it when the server reveals that system. */
+interface MoreEntry {
+  key: string;
+  label: string;
+  icon: IconSource | null;
+  fallback: ReactNode;
+  unlockSystem?: UiUnlockSystem;
+  onSelect: () => void;
+}
+
 function MobileHUDContent() {
   const [view, setView] = useState<MobileView>(null);
-  const [craftTab, setCraftTab] = useState<'biome' | 'forge' | 'upgrade'>('forge');
+  const [craftTab, setCraftTab] = useState<'make' | 'upgrade'>('make');
   const [settingsOpen, setSettingsOpen] = useAtom(settingsOpenAtom);
   const [, setBuildPanelTab] = useAtom(buildPanelTabAtom);
   const setBestiaryOpen = useSetAtom(bestiaryOpenAtom);
@@ -71,6 +100,28 @@ function MobileHUDContent() {
   const skillPoints = useAtomValue(skillPointsAtom);
   const nodeId = useAtomValue(playerNodeIdAtom);
   const dead = useAtomValue(deathOverlayAtom).active;
+
+  const playerTier = useAtomValue(playerTierAtom);
+  const globalMastery = useAtomValue(globalMasteryAtom);
+  const knownAbilities = useAtomValue(knownAbilitiesAtom);
+  const equippedAbilities = useAtomValue(equippedAbilitiesAtom);
+  const knownStances = useAtomValue(knownStancesAtom);
+  const equippedStances = useAtomValue(equippedStancesAtom);
+  const activeStance = useAtomValue(activeStanceAtom);
+  const knownRites = useAtomValue(knownRitesAtom);
+  const equippedRites = useAtomValue(equippedRitesAtom);
+  const essences = useAtomValue(essencesAtom);
+  const catalysts = useAtomValue(catalystsAtom);
+  const catalystProgress = useAtomValue(catalystProgressAtom);
+  const unlockedRecipes = useAtomValue(unlockedRecipesAtom);
+  const passives = useAtomValue(passivesAtom);
+
+  // Phase 5 approved reveal gates, previously desktop-only. The same resolver
+  // and ownership overrides run here, so a migrated save never loses a
+  // destination it already owns.
+  // Same resolver, same signals as the rail — the W7 rule that mobile must not
+  // grow a second policy.
+  const visibility = useSystemVisibility();
 
   // ── HP-bar layers (all as % of maxHp), mirroring the desktop StatPanel ──
   const hpPct       = maxHp > 0 ? (hp / maxHp) * 100 : 0;
@@ -89,11 +140,28 @@ function MobileHUDContent() {
     return `${biome?.name ?? info.biomeGroup} T${info.biomeTier}`;
   })();
 
+  // A gate can close behind the player (class reset, admin fixture). Fall back
+  // to the base HUD rather than stranding an open dialog with no way back.
+  useEffect(() => {
+    if (!visibility.mastery && view === 'mastery') setView(null);
+    if (!visibility.passiveTree && view === 'skills') setView(null);
+    if (!visibility.inventory && view === 'bag') setView(null);
+    if (!visibility.crafting && view === 'craft') setView(null);
+    if (!visibility.map && view === 'map') setView(null);
+  }, [
+    view,
+    visibility.mastery,
+    visibility.passiveTree,
+    visibility.inventory,
+    visibility.crafting,
+    visibility.map,
+  ]);
+
   const close = () => setView(null);
 
   function toggle(key: Exclude<MobileView, null>) {
     if ((key === 'bag' || key === 'craft') && dead) return;
-    if (key === 'craft' && view !== 'craft') setCraftTab('forge');
+    if (key === 'craft' && view !== 'craft') setCraftTab('make');
     setView(v => (v === key ? null : key));
   }
 
@@ -102,13 +170,140 @@ function MobileHUDContent() {
     setView('build');
   }
 
-  const tabs: { key: Exclude<MobileView, null>; icon: string; label: string; badge?: boolean; disabled?: boolean }[] = [
-    { key: 'character', icon: '📊', label: 'Stats' },
-    { key: 'skills',    icon: '🌳', label: 'Skills', badge: skillPoints > 0 },
-    { key: 'bag',       icon: '🎒', label: 'Bag', disabled: dead },
-    { key: 'craft',     icon: '⚒',  label: 'Craft', disabled: dead },
-    { key: 'map',       icon: '🗺', label: 'Map' },
-    { key: 'more',      icon: '☰',  label: 'More' },
+  // Destinations that share a desktop navigation entry resolve to the same
+  // approved atlas frame; the rest keep a glyph fallback in the identical
+  // footprint, so later art needs no layout change.
+  const tabs: {
+    key: Exclude<MobileView, null>;
+    icon: IconSource | null;
+    fallback: ReactNode;
+    label: string;
+    badge?: boolean;
+    disabled?: boolean;
+  }[] = [
+    // Stats and More have no destination in the approved navigation family, so
+    // their glyph is the icon itself rather than a placeholder fallback.
+    { key: 'character', icon: nodeIcon('📊'), fallback: '📊', label: 'Stats' },
+    // Passive Tree reveals on the first skill point, matching the rail.
+    ...(visibility.passiveTree
+      ? [{
+        key: 'skills' as const,
+        icon: atlasIcon('UI_icons/passives-icon.png'),
+        fallback: '🌳',
+        label: 'Skills',
+        badge: skillPoints > 0,
+      }]
+      : []),
+    // The staged arc governs the tab bar too, from the same resolver.
+    ...(visibility.inventory
+      ? [{
+        key: 'bag' as const,
+        icon: atlasIcon('UI_icons/inventory-icon.png'),
+        fallback: '🎒',
+        label: 'Bag',
+        disabled: dead,
+      }]
+      : []),
+    ...(visibility.crafting
+      ? [{
+        key: 'craft' as const,
+        icon: atlasIcon('UI_icons/forge-icon.png'),
+        fallback: '⚒',
+        label: 'Craft',
+        disabled: dead,
+      }]
+      : []),
+    ...(visibility.map
+      ? [{
+        key: 'map' as const,
+        icon: atlasIcon('UI_icons/map-icon.png'),
+        fallback: '🗺',
+        label: 'Map',
+      }]
+      : []),
+    { key: 'more', icon: nodeIcon('☰'), fallback: '☰', label: 'More' },
+  ];
+
+  const moreEntries: MoreEntry[] = [
+    ...(visibility.loadout
+      ? [{
+        key: 'overview' as const,
+        label: 'Loadout',
+        icon: atlasIcon('UI_icons/runes-icon.png'),
+        fallback: 'B',
+        onSelect: () => openBuildTab('overview'),
+      }]
+      : []),
+    ...(visibility.abilities
+      ? [{
+        key: 'abilities',
+        label: 'Abilities',
+        icon: null,
+        fallback: 'A',
+        unlockSystem: 'abilities' as const,
+        onSelect: () => openBuildTab('abilities'),
+      }]
+      : []),
+    ...(visibility.stances
+      ? [{
+        key: 'stances',
+        label: 'Stances',
+        icon: null,
+        fallback: 'S',
+        unlockSystem: 'stances' as const,
+        onSelect: () => openBuildTab('stances'),
+      }]
+      : []),
+    ...(visibility.rites
+      ? [{
+        key: 'rites',
+        label: 'Rites',
+        icon: null,
+        fallback: 'R',
+        unlockSystem: 'rites' as const,
+        onSelect: () => openBuildTab('rites'),
+      }]
+      : []),
+    {
+      key: 'runes',
+      label: 'Runes',
+      icon: atlasIcon('UI_icons/runes-icon.png'),
+      fallback: 'R',
+      onSelect: () => openBuildTab('runes'),
+    },
+    ...(visibility.mastery
+      ? [{
+        key: 'mastery',
+        label: 'Mastery',
+        icon: atlasIcon('UI_icons/progress-icon.png'),
+        fallback: 'M',
+        unlockSystem: 'mastery' as const,
+        onSelect: () => setView('mastery'),
+      }]
+      : []),
+    ...(visibility.bestiary
+      ? [{
+        key: 'bestiary' as const,
+        label: 'Bestiary',
+        icon: null,
+        fallback: '☠',
+        onSelect: () => { setBestiaryOpen(true); setView(null); },
+      }]
+      : []),
+    {
+      key: 'settings',
+      label: 'Settings',
+      icon: atlasIcon('UI_icons/settings-icon.png'),
+      fallback: '⚙',
+      onSelect: () => { setSettingsOpen(true); setView(null); },
+    },
+    {
+      key: 'tactical',
+      label: 'Tactical Mode',
+      icon: atlasIcon('UI_icons/map-icon.png'),
+      fallback: 'T',
+      onSelect: () => hudBus.toggleTacticalView(),
+    },
   ];
 
   return (
@@ -165,15 +360,23 @@ function MobileHUDContent() {
       {/* ── Bottom region: biome XP bar + tab bar ───────────────────────── */}
       <div className="mhud-bottom">
         <div className="mhud-biomexp"><BiomeXpBar /></div>
-        <nav className="mhud-tabs">
+        <nav className="mhud-tabs" aria-label="Primary destinations">
           {tabs.map(t => (
             <button
               key={t.key}
+              type="button"
               className={`mhud-tab${view === t.key ? ' mhud-tab--active' : ''}${t.badge ? ' mhud-tab--badge' : ''}`}
+              aria-pressed={view === t.key}
               disabled={t.disabled}
               onClick={() => toggle(t.key)}
             >
-              <span className="mhud-tab__icon">{t.icon}</span>
+              <GameIcon
+                className="mhud-tab__icon"
+                source={t.icon}
+                size={22}
+                fallback={t.fallback}
+                decorative
+              />
               <span className="mhud-tab__label">{t.label}</span>
             </button>
           ))}
@@ -194,15 +397,24 @@ function MobileHUDContent() {
       {view === 'more' && (
         <MobileSheet title="More" onClose={close}>
           <div className="mhud-more">
-            <button className="mhud-more__btn" onClick={() => openBuildTab('overview')}>Build Overview</button>
-            <button className="mhud-more__btn" onClick={() => openBuildTab('abilities')}>Abilities</button>
-            <button className="mhud-more__btn" onClick={() => openBuildTab('stances')}>Stances</button>
-            <button className="mhud-more__btn" onClick={() => openBuildTab('rites')}>Rites</button>
-            <button className="mhud-more__btn" onClick={() => openBuildTab('runes')}>Runes</button>
-            <button className="mhud-more__btn" onClick={() => setView('mastery')}>Mastery</button>
-            <button className="mhud-more__btn" onClick={() => { setBestiaryOpen(true); setView(null); }}>Bestiary</button>
-            <button className="mhud-more__btn" onClick={() => { setSettingsOpen(true); setView(null); }}>Settings</button>
-            <button className="mhud-more__btn" onClick={() => hudBus.toggleTacticalView()}>Tactical Mode</button>
+            {moreEntries.map(entry => (
+              <button
+                key={entry.key}
+                type="button"
+                className="mhud-more__btn"
+                data-ui-unlock-system={entry.unlockSystem}
+                onClick={entry.onSelect}
+              >
+                <GameIcon
+                  className="mhud-more__icon"
+                  source={entry.icon}
+                  size={20}
+                  fallback={entry.fallback}
+                  decorative
+                />
+                <span className="mhud-more__label">{entry.label}</span>
+              </button>
+            ))}
           </div>
         </MobileSheet>
       )}
@@ -218,14 +430,20 @@ function MobileHUDContent() {
         />
       )}
       {view === 'map'    && <MapPanel onClose={close} />}
-      {view === 'build' && <BuildPanel onClose={close} />}
+      {view === 'build' && <BuildPanel progressiveDisclosure onClose={close} />}
       {view === 'mastery' && <MasteryPanel onClose={close} />}
       {settingsOpen && <SettingsPanel onClose={() => setSettingsOpen(false)} />}
     </>
   );
 }
 
-/** Bottom sheet: slides up, tap-backdrop / drag-down / ✕ to dismiss. */
+/**
+ * Bottom sheet: slides up, tap-backdrop / drag-down / Escape / ✕ to dismiss.
+ * The boundary itself is the shared `GameDialog` in its `sheet` presentation,
+ * so a sheet gets the same portal, focus entry/return, focus trap, Escape
+ * handling, and `role="dialog"` as every desktop destination. Only the drag
+ * affordance is mobile-specific.
+ */
 function MobileSheet({ title, onClose, children }: { title: string; onClose: () => void; children: ReactNode }) {
   const [dragY, setDragY] = useState(0);
   const startY = useRef<number | null>(null);
@@ -245,26 +463,24 @@ function MobileSheet({ title, onClose, children }: { title: string; onClose: () 
   }
 
   return (
-    <div className="mhud-sheet-backdrop" onClick={onClose}>
+    <GameDialog
+      size="sheet"
+      className="mhud-sheet"
+      onClose={onClose}
+      style={dragY > 0
+        ? { transform: `translateY(${dragY}px)`, transition: 'none', animation: 'none' }
+        : undefined}
+    >
       <div
-        className="mhud-sheet"
-        style={dragY > 0 ? { transform: `translateY(${dragY}px)`, transition: 'none' } : undefined}
-        onClick={e => e.stopPropagation()}
+        className="mhud-sheet__handlebar"
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}
       >
-        <div
-          className="mhud-sheet__handlebar"
-          onTouchStart={onTouchStart}
-          onTouchMove={onTouchMove}
-          onTouchEnd={onTouchEnd}
-        >
-          <div className="mhud-sheet__grip" />
-        </div>
-        <div className="mhud-sheet__head">
-          <span className="mhud-sheet__title">{title}</span>
-          <button className="mhud-sheet__close" onClick={onClose}>✕</button>
-        </div>
-        <div className="mhud-sheet__body">{children}</div>
+        <div className="mhud-sheet__grip" />
       </div>
-    </div>
+      <DialogHeader title={title} closeLabel={`Close ${title}`} />
+      <div className="mhud-sheet__body">{children}</div>
+    </GameDialog>
   );
 }

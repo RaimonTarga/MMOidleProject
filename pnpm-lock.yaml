@@ -13,6 +13,9 @@ importers:
       cross-env:
         specifier: ^10.1.0
         version: 10.1.0
+      playwright:
+        specifier: ^1.62.0
+        version: 1.62.0
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
@@ -20,7 +23,7 @@ importers:
   admin:
     dependencies:
       '@mmo-idle/shared':
-        specifier: workspace:*
+        specifier: link:../shared
         version: link:../shared
       '@radix-ui/react-alert-dialog':
         specifier: ^1.1.15
@@ -105,7 +108,7 @@ importers:
   client:
     dependencies:
       '@mmo-idle/shared':
-        specifier: workspace:*
+        specifier: link:../shared
         version: link:../shared
       jotai:
         specifier: ^2.20.0
@@ -151,7 +154,7 @@ importers:
   server:
     dependencies:
       '@mmo-idle/shared':
-        specifier: workspace:*
+        specifier: link:../shared
         version: link:../shared
       cors:
         specifier: ^2.8.5
@@ -3318,6 +3321,13 @@ packages:
     engines: {node: '>= 0.6'}
     dev: false
 
+  /fsevents@2.3.2:
+    resolution: {integrity: sha512-xiqMQR4xAeHTuB9uWm+fFRcIOgKBMiOBP+eXiyT7jsgVCq1bkVygt00oASowB7EdtpOHaaPgKt812P9ab+DDKA==}
+    engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
+    os: [darwin]
+    dev: true
+    optional: true
+
   /fsevents@2.3.3:
     resolution: {integrity: sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw==}
     engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
@@ -4423,6 +4433,22 @@ packages:
       sonic-boom: 4.2.1
       thread-stream: 4.2.0
     dev: false
+
+  /playwright-core@1.62.0:
+    resolution: {integrity: sha512-nsNRyq0r2zsG8AcRHWknc9QRA5XCueC7gWMrs+Gx2tlZn9hcl8zudfh00lhJPY1DE7NmZ6bDsT9g2yey8mXljA==}
+    engines: {node: '>=20'}
+    hasBin: true
+    dev: true
+
+  /playwright@1.62.0:
+    resolution: {integrity: sha512-Z14dG305dgaLu6foB1TXQagFiW8JfSUIUaUuPaKQ6NtBPKF1P/qXcqfh6c6K/icPqdy37JmjbiBXf6JNg6Sylw==}
+    engines: {node: '>=20'}
+    hasBin: true
+    dependencies:
+      playwright-core: 1.62.0
+    optionalDependencies:
+      fsevents: 2.3.2
+    dev: true
 
   /postcss-value-parser@4.2.0:
     resolution: {integrity: sha512-1NNCs6uurfkVbeXG4S8JFT9t19m45ICnif8zWLd5oPSZ50QnwMfK+H3jv408d4jw/7Bttv5axS5IiHoLaVNHeQ==}

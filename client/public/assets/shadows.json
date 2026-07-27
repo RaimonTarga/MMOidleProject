@@ -1,5 +1,5 @@
 {
-  "atlasHash": "8bd391ad239db02ce360597958d6abfb3489c78148eda990e6f87e6a30e98391",
+  "atlasHash": "43d1931ed5fa87444016d8a7669a616b7a2fe9df072e0fb27c9c64447f0faeed",
   "frames": {
     "sprites/bosses/boss-cave-t1.png": {
       "sourceW": 128,
@@ -184,7 +184,7 @@
     "sprites/classes/cooldown.png": {
       "sourceW": 64,
       "sourceH": 64,
-      "footY": 29,
+      "footY": 30,
       "halfWAtFoot": 13
     },
     "sprites/classes/deadeye.png": {
@@ -202,8 +202,8 @@
     "sprites/classes/energy.png": {
       "sourceW": 64,
       "sourceH": 64,
-      "footY": 29,
-      "halfWAtFoot": 13.5
+      "footY": 27,
+      "halfWAtFoot": 19
     },
     "sprites/classes/enforcer.png": {
       "sourceW": 64,
@@ -226,32 +226,62 @@
     "sprites/classes/heavy_cadence.png": {
       "sourceW": 64,
       "sourceH": 64,
-      "footY": 28,
-      "halfWAtFoot": 12
+      "footY": 29,
+      "halfWAtFoot": 13
     },
     "sprites/classes/heavy_cooldown.png": {
       "sourceW": 64,
       "sourceH": 64,
-      "footY": 28,
+      "footY": 30,
       "halfWAtFoot": 12
+    },
+    "sprites/classes/heavy_dot-variant-2.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 29,
+      "halfWAtFoot": 13
+    },
+    "sprites/classes/heavy_dot-variant-3.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 30,
+      "halfWAtFoot": 14
     },
     "sprites/classes/heavy_dot.png": {
       "sourceW": 64,
       "sourceH": 64,
+      "footY": 29,
+      "halfWAtFoot": 15.5
+    },
+    "sprites/classes/heavy_energy-variant-2.png": {
+      "sourceW": 64,
+      "sourceH": 64,
       "footY": 28,
-      "halfWAtFoot": 20.5
+      "halfWAtFoot": 10.5
+    },
+    "sprites/classes/heavy_energy-variant-3.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 29,
+      "halfWAtFoot": 15.5
     },
     "sprites/classes/heavy_energy.png": {
       "sourceW": 64,
       "sourceH": 64,
-      "footY": 30,
+      "footY": 29,
       "halfWAtFoot": 16
     },
     "sprites/classes/heavy_reload.png": {
       "sourceW": 64,
       "sourceH": 64,
-      "footY": 28,
-      "halfWAtFoot": 12
+      "footY": 29,
+      "halfWAtFoot": 14.5
+    },
+    "sprites/classes/heavy_summoner.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 29,
+      "halfWAtFoot": 14.5
     },
     "sprites/classes/hexblade.png": {
       "sourceW": 64,
@@ -274,61 +304,73 @@
     "sprites/classes/light_cadence.png": {
       "sourceW": 64,
       "sourceH": 64,
-      "footY": 28,
-      "halfWAtFoot": 12
+      "footY": 29,
+      "halfWAtFoot": 16.5
     },
     "sprites/classes/light_cooldown.png": {
       "sourceW": 64,
       "sourceH": 64,
-      "footY": 28,
-      "halfWAtFoot": 12
+      "footY": 29,
+      "halfWAtFoot": 14
     },
     "sprites/classes/light_dot.png": {
       "sourceW": 64,
       "sourceH": 64,
-      "footY": 28,
-      "halfWAtFoot": 12.5
+      "footY": 30,
+      "halfWAtFoot": 13.5
     },
     "sprites/classes/light_energy.png": {
       "sourceW": 64,
       "sourceH": 64,
       "footY": 29,
-      "halfWAtFoot": 18
+      "halfWAtFoot": 16.5
     },
     "sprites/classes/light_reload.png": {
       "sourceW": 64,
       "sourceH": 64,
-      "footY": 28,
-      "halfWAtFoot": 12
+      "footY": 29,
+      "halfWAtFoot": 18.5
+    },
+    "sprites/classes/light_summoner.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 29,
+      "halfWAtFoot": 12.5
     },
     "sprites/classes/medium_cadence.png": {
       "sourceW": 64,
       "sourceH": 64,
-      "footY": 28,
-      "halfWAtFoot": 12
+      "footY": 29,
+      "halfWAtFoot": 14
     },
     "sprites/classes/medium_cooldown.png": {
       "sourceW": 64,
       "sourceH": 64,
-      "footY": 28,
-      "halfWAtFoot": 12
+      "footY": 30,
+      "halfWAtFoot": 14.5
     },
     "sprites/classes/medium_dot.png": {
       "sourceW": 64,
       "sourceH": 64,
       "footY": 28,
-      "halfWAtFoot": 18
+      "halfWAtFoot": 15.5
     },
     "sprites/classes/medium_energy.png": {
       "sourceW": 64,
       "sourceH": 64,
       "footY": 27,
-      "halfWAtFoot": 13.5
+      "halfWAtFoot": 18
     },
     "sprites/classes/medium_reload.png": {
       "sourceW": 64,
       "sourceH": 64,
-      "footY": 28,
+      "footY": 30,
+      "halfWAtFoot": 14
+    },
+    "sprites/classes/medium_summoner.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 29,
       "halfWAtFoot": 12
     },
     "sprites/classes/phalanx.png": {
@@ -361,10 +403,28 @@
       "footY": 28,
       "halfWAtFoot": 17
     },
+    "sprites/classes/summoner-variant-2.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 29,
+      "halfWAtFoot": 14.5
+    },
+    "sprites/classes/summoner-variant-3.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 29,
+      "halfWAtFoot": 12.5
+    },
+    "sprites/classes/summoner-variant-4.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 29,
+      "halfWAtFoot": 11.5
+    },
     "sprites/classes/summoner.png": {
       "sourceW": 64,
       "sourceH": 64,
-      "footY": 30,
+      "footY": 29,
       "halfWAtFoot": 13
     },
     "sprites/classes/vanguard.png": {

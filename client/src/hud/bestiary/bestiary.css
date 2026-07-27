@@ -8,16 +8,14 @@
   padding-right: 6px;
 }
 
+/* No max-height, and so no scrollbar of its own. Capping this made the panel a
+   second scroll region nested inside the rail's, and with the rail already
+   overflowing the roster landed below the fold — you saw one species of three
+   and had to scroll the rail to reach a list that was itself scrollable. The
+   rail is the single scroll context; this simply grows. */
 .bestiary__body {
-  max-height: 220px;
-  overflow-y: auto;
   padding: 2px 0;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(80, 72, 52, 0.40) transparent;
 }
-.bestiary__body::-webkit-scrollbar       { width: 4px; }
-.bestiary__body::-webkit-scrollbar-track { background: transparent; }
-.bestiary__body::-webkit-scrollbar-thumb { background: rgba(80, 72, 52, 0.45); border-radius: 2px; }
 
 .bestiary__row {
   display: flex;
@@ -69,16 +67,6 @@
 .bestiary__tag--boss     { color: #ff6655; background: rgba(150, 40, 40, 0.28); }
 .bestiary__tag--guardian { color: #ffcc44; background: rgba(150, 120, 40, 0.24); }
 
-.bestiary__profile {
-  margin-top: 1px;
-  color: var(--hud-text-dim);
-  font-size: 9px;
-  font-style: italic;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
 .bestiary__row-stats {
   display: flex;
   align-items: center;
@@ -100,8 +88,7 @@
     align-items: flex-start;
   }
 
-  .desktop-hud .bestiary__name,
-  .desktop-hud .bestiary__profile {
+  .desktop-hud .bestiary__name {
     min-width: 0;
     overflow: visible;
     text-overflow: clip;
@@ -113,7 +100,9 @@
 /* ── Bestiary detail overlay (master-detail) ──────────────────────────────── */
 .bestiary-detail__panel {
   max-width: 880px;
-  height: 600px;
+  /* Was a flat 600px, which overflowed a short window before the shared
+     max-height could rescue it. */
+  height: min(600px, 88vh);
 }
 
 .bestiary-detail__body {
@@ -126,7 +115,12 @@
 .bestiary-detail__list {
   flex-shrink: 0;
   width: 200px;
+  /* Without this a flex child refuses to shrink below its content, so a long
+     roster pushed past the panel instead of scrolling inside it. */
+  min-height: 0;
   overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(80, 72, 52, 0.4) transparent;
   display: flex;
   flex-direction: column;
   gap: 2px;
@@ -163,8 +157,25 @@
 
 .bestiary-detail__pane {
   flex: 1;
+  min-height: 0;
   overflow-y: auto;
   padding-right: 4px;
+  /* Both panes in this dialog scrolled with the platform's overlay scrollbar,
+     which draws nothing until you already know to scroll — so a long entry read
+     as simply cut off. Every other scroll region in the app declares this thin
+     thumb; these two were the exceptions. */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(80, 72, 52, 0.4) transparent;
+}
+
+.bestiary-detail__pane::-webkit-scrollbar,
+.bestiary-detail__list::-webkit-scrollbar { width: 4px; }
+.bestiary-detail__pane::-webkit-scrollbar-track,
+.bestiary-detail__list::-webkit-scrollbar-track { background: transparent; }
+.bestiary-detail__pane::-webkit-scrollbar-thumb,
+.bestiary-detail__list::-webkit-scrollbar-thumb {
+  background: rgba(80, 72, 52, 0.45);
+  border-radius: 2px;
 }
 
 .bestiary-detail__hero {

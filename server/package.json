@@ -13,7 +13,7 @@
     "bench:balance": "tsx --conditions=development bench/balanceRun.ts"
   },
   "dependencies": {
-    "@mmo-idle/shared": "workspace:*",
+    "@mmo-idle/shared": "link:../shared",
     "cors": "^2.8.5",
     "drizzle-orm": "^0.45.2",
     "express": "^4.19.2",

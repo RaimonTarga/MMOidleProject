@@ -33,6 +33,10 @@ export const PLAYER_FRAMES: Record<string, string> = {
   'reload-light':  'sprites/classes/light_reload.png',
   'reload-balanced':'sprites/classes/medium_reload.png',
   'reload-heavy':  'sprites/classes/heavy_reload.png',
+
+  'summoner-light':  'sprites/classes/light_summoner.png',
+  'summoner-balanced':'sprites/classes/medium_summoner.png',
+  'summoner-heavy':  'sprites/classes/heavy_summoner.png',
 };
 
 /** Key: monsterTypeId (matches MONSTER_DATABASE keys exactly).

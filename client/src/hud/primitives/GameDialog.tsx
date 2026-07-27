@@ -4,18 +4,23 @@ import {
   useEffect,
   useId,
   useRef,
+  type CSSProperties,
   type PropsWithChildren,
   type ReactNode,
 } from 'react';
 import { createPortal } from 'react-dom';
 import './dialogs.css';
 
-export type GameDialogSize = 'compact' | 'standard' | 'wide';
+/** `sheet` is the touch presentation: bottom-anchored, full-width, dismissable
+ *  by drag. It shares the boundary, focus, and Escape behavior of the others. */
+export type GameDialogSize = 'compact' | 'standard' | 'wide' | 'sheet';
 
 export interface GameDialogProps extends PropsWithChildren {
   onClose: () => void;
   size?: GameDialogSize;
   className?: string;
+  /** Transient presentation only (e.g. a drag offset). Not for layout. */
+  style?: CSSProperties;
   describedBy?: string;
   closeOnBackdrop?: boolean;
   closeOnEscape?: boolean;
@@ -49,6 +54,7 @@ export function GameDialog({
   onClose,
   size = 'standard',
   className = '',
+  style,
   describedBy,
   closeOnBackdrop = true,
   closeOnEscape = true,
@@ -119,9 +125,14 @@ export function GameDialog({
     className,
   ].filter(Boolean).join(' ');
 
+  const backdropClasses = [
+    'game-dialog__backdrop',
+    size === 'sheet' && 'game-dialog__backdrop--sheet',
+  ].filter(Boolean).join(' ');
+
   return createPortal(
     <div
-      className="game-dialog__backdrop"
+      className={backdropClasses}
       onMouseDown={(event) => {
         if (closeOnBackdrop && event.target === event.currentTarget) onClose();
       }}
@@ -130,6 +141,7 @@ export function GameDialog({
         <div
           ref={dialogRef}
           className={classes}
+          style={style}
           role="dialog"
           aria-modal="true"
           aria-labelledby={titleId}

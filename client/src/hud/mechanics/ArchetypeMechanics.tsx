@@ -3,16 +3,13 @@ import { CompactMechanic } from './CompactMechanic';
 import { CooldownMechanic } from './CooldownMechanic';
 import { DotMechanic } from './DotMechanic';
 import { EnergyMechanic } from './EnergyMechanic';
+import { EvasionInstrument } from './EvasionInstrument';
 import { ReloadMechanic } from './ReloadMechanic';
 import { SummonerMechanic } from './SummonerMechanic';
 import { useMechanicViewModel } from './useMechanicViewModel';
 import './mechanics.css';
 
-export function ArchetypeMechanics({ compact = false }: { compact?: boolean }) {
-  const model = useMechanicViewModel();
-  if (!model) return null;
-  if (compact) return <CompactMechanic model={model} />;
-
+function ClassMechanic({ model }: { model: NonNullable<ReturnType<typeof useMechanicViewModel>> }) {
   switch (model.kind) {
     case 'cadence': return <CadenceMechanic model={model} />;
     case 'cooldown': return <CooldownMechanic model={model} />;
@@ -21,4 +18,21 @@ export function ArchetypeMechanics({ compact = false }: { compact?: boolean }) {
     case 'summoner': return <SummonerMechanic model={model} />;
     case 'dot': return <DotMechanic model={model} />;
   }
+}
+
+export function ArchetypeMechanics({ compact = false }: { compact?: boolean }) {
+  const model = useMechanicViewModel();
+
+  // Evasion is not a class mechanic, so it renders on its own presence rather
+  // than the archetype — including for a player with no class selected yet. The
+  // compact mobile strip deliberately does not take it: that renderer exists to
+  // stay dense, and a second frame there would defeat it.
+  if (compact) return model ? <CompactMechanic model={model} /> : null;
+
+  return (
+    <>
+      {model && <ClassMechanic model={model} />}
+      <EvasionInstrument />
+    </>
+  );
 }

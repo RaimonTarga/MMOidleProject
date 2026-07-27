@@ -1,14 +1,30 @@
 import { useAtomValue } from 'jotai';
-import { BiomeTab } from './BiomeTab';
-import { ForgeTab } from './ForgeTab';
+import { MakeTab } from './MakeTab';
 import { UpgradeTab } from './UpgradeTab';
 import { playerIdAtom } from '../../hud/atoms';
 import { DialogHeader, DialogTab, DialogTabs, GameDialog } from '../../hud/primitives';
 import { GameIcon } from '../GameIcon';
-import { craftingSectionIconSource } from '../systemIcons';
+import { craftingSectionIconSource, type CraftingSectionIcon } from '../systemIcons';
 import '../crafting.css';
 
-export type CraftTab = 'biome' | 'forge' | 'upgrade';
+/**
+ * Crafting owns everything the player *makes*. `make` covers gear and technique
+ * recipes alike; `upgrade` is separate because it acts on owned items rather
+ * than recipes.
+ *
+ * A third `progress` tab used to report biome mastery. It went when its two
+ * jobs found better homes: biome levels are the Mastery dialog's (V4), and the
+ * locked-recipe ladder is Make's, which now lists locked gear with what it is
+ * waiting on instead of hiding it. Its third section listed "ultimate" gear, a
+ * scrapped feature whose recipes were never registered and have since been
+ * deleted outright.
+ */
+export type CraftTab = 'make' | 'upgrade';
+
+const SECTIONS: { tab: CraftTab; label: string; icon: CraftingSectionIcon }[] = [
+  { tab: 'make', label: 'Make', icon: 'forge' },
+  { tab: 'upgrade', label: 'Upgrade', icon: 'upgrade' },
+];
 
 interface Props {
   tab: CraftTab;
@@ -20,7 +36,7 @@ export function CraftingPanel({ tab, onTabChange, onClose }: Props) {
   const playerId = useAtomValue(playerIdAtom);
 
   return (
-    <GameDialog size="compact" className="crafting-dialog" onClose={onClose}>
+    <GameDialog size="wide" className="crafting-dialog" onClose={onClose}>
       <DialogHeader
         title="Crafting"
         icon={
@@ -34,60 +50,29 @@ export function CraftingPanel({ tab, onTabChange, onClose }: Props) {
         closeLabel="Close crafting"
       />
       <DialogTabs label="Crafting sections">
-        <DialogTab
-          selected={tab === 'biome'}
-          controls="craft-panel-biome"
-          icon={
-            <GameIcon
-              source={craftingSectionIconSource('biome')}
-              size={18}
-              fallback={null}
-              decorative
-            />
-          }
-          onSelect={() => onTabChange('biome')}
-        >
-          Biome Progress
-        </DialogTab>
-        <DialogTab
-          selected={tab === 'forge'}
-          controls="craft-panel-forge"
-          icon={
-            <GameIcon
-              source={craftingSectionIconSource('forge')}
-              size={18}
-              fallback={null}
-              decorative
-            />
-          }
-          onSelect={() => onTabChange('forge')}
-        >
-          Forge
-        </DialogTab>
-        <DialogTab
-          selected={tab === 'upgrade'}
-          controls="craft-panel-upgrade"
-          icon={
-            <GameIcon
-              source={craftingSectionIconSource('upgrade')}
-              size={18}
-              fallback={null}
-              decorative
-            />
-          }
-          onSelect={() => onTabChange('upgrade')}
-        >
-          Upgrade
-        </DialogTab>
+        {SECTIONS.map((section) => (
+          <DialogTab
+            key={section.tab}
+            selected={tab === section.tab}
+            controls={`craft-panel-${section.tab}`}
+            icon={
+              <GameIcon
+                source={craftingSectionIconSource(section.icon)}
+                size={18}
+                fallback={null}
+                decorative
+              />
+            }
+            onSelect={() => onTabChange(section.tab)}
+          >
+            {section.label}
+          </DialogTab>
+        ))}
       </DialogTabs>
 
       <div id={`craft-panel-${tab}`} className="crafting-dialog__content" role="tabpanel">
         {playerId ? (
-          tab === 'biome'
-            ? <BiomeTab />
-            : tab === 'forge'
-              ? <ForgeTab />
-              : <UpgradeTab />
+          tab === 'make' ? <MakeTab /> : <UpgradeTab />
         ) : (
           <div className="craft-empty">Not connected.</div>
         )}

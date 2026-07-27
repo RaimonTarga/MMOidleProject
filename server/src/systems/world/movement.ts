@@ -12,9 +12,6 @@ import {
   FROST_RAMP_EFFECT_ID,
   frostRampMoveSlowPct,
   slideMoveAgainstBlocks,
-  VOID_CORRUPTION_EFFECT_ID,
-  CORRUPTION_SLOW_PER_STACK,
-  CORRUPTION_MIN_SPEED_MULT,
   type FeatureTarget,
   type Vec2,
 } from '@mmo-idle/shared';
@@ -312,14 +309,7 @@ export function updateMovement(world: World, dt: number, now: number) {
       continue;
     }
 
-    const corruption = getStatusEffect(e.tracksCombat, VOID_CORRUPTION_EFFECT_ID);
-    const corruptionMult = corruption
-      ? Math.max(
-          CORRUPTION_MIN_SPEED_MULT,
-          1 - (corruption.data.slowPerStack ?? CORRUPTION_SLOW_PER_STACK),
-        )
-      : 1;
-    processMoverStep(world, e, dt, corruptionMult, 'monster', now);
+    processMoverStep(world, e, dt, 1, 'monster', now);
 
     const node = NODE_REGISTRY.get(e.hasPosition.nodeId);
     if (node) {

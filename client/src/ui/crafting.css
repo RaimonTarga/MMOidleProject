@@ -95,11 +95,11 @@
   border-radius: 3px;
 }
 
-/* ── Essence summary ─────────────────────────────────────────────────────── */
-.craft-essence-summary {
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
+/* ── Wallet summary ──────────────────────────────────────────────────────────
+   Chip presentation itself lives in materialChip.css; this only frames the
+   strip. Essence and catalyst balances are separated by a hairline so the two
+   wallets stay distinguishable at a glance. */
+.craft-wallet {
   margin-bottom: 14px;
   padding: 8px 10px;
   background: rgba(16, 14, 10, 0.90);
@@ -110,70 +110,16 @@
   border-radius: 2px;
 }
 
-.craft-essence-chip {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  background: rgba(0, 0, 0, 0.30);
-  border-radius: 10px;
-  padding: 2px 8px;
-}
-
-.craft-essence-chip__dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-
-.craft-essence-chip__value {
-  font-size: 12px;
-  font-weight: bold;
-  font-family: monospace;
+.craft-wallet__split {
+  width: 1px;
+  align-self: stretch;
+  min-height: 14px;
+  background: var(--hud-edge-divider);
 }
 
 /* ── Per-recipe cost row ─────────────────────────────────────────────────── */
 .craft-cost {
-  display: flex;
-  gap: 5px;
-  flex-wrap: wrap;
   margin-bottom: 6px;
-}
-
-.craft-cost__chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 3px;
-  font-size: 10px;
-  font-family: monospace;
-  padding: 2px 7px;
-  border-radius: 3px;
-  border: 1px solid transparent;
-}
-
-.craft-cost__chip--ok {
-  border-color: rgba(68, 221, 136, 0.28);
-  background: rgba(68, 221, 136, 0.07);
-}
-
-.craft-cost__chip--low {
-  border-color: rgba(255, 85, 68, 0.38);
-  background: rgba(255, 85, 68, 0.09);
-}
-
-.craft-cost__dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-
-.craft-cost__amount { color: #bbbbd8; }
-.craft-cost__chip--low .craft-cost__amount { color: #ff7766; }
-
-.craft-cost__held {
-  font-size: 9px;
-  color: #aaa8dc;
 }
 
 /* ── Biome progress ──────────────────────────────────────────────────────── */
@@ -588,8 +534,9 @@
 }
 
 .craft-biome-section__name {
+  font-family: var(--hud-font-display);
   font-size: 12px;
-  font-weight: bold;
+  font-weight: var(--hud-font-display-weight);
   color: var(--hud-primary);
   text-transform: uppercase;
   letter-spacing: 0.8px;
@@ -755,10 +702,10 @@
   scrollbar-gutter: stable;
 }
 
+/* Three GlyphTiles, so the panel only says how they share the row. */
 .mastery-summary {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  align-items: stretch;
   gap: 16px;
   margin-bottom: 14px;
   padding: 10px 12px;
@@ -768,47 +715,6 @@
   border-right: 1px solid var(--bevel-light);
   border-bottom: 1px solid var(--bevel-light);
   border-radius: 2px;
-}
-
-.mastery-summary__main {
-  display: flex;
-  align-items: baseline;
-  gap: 10px;
-}
-
-.mastery-summary__label {
-  color: var(--hud-primary);
-  font-size: 11px;
-  font-weight: bold;
-  letter-spacing: 0.8px;
-  text-transform: uppercase;
-}
-
-.mastery-summary__value {
-  color: #d8caf5;
-  font-size: 24px;
-  font-weight: bold;
-  line-height: 1;
-}
-
-.mastery-summary__stats {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-  color: #aaa8dc;
-  font-size: 11px;
-  font-weight: bold;
-}
-
-.mastery-summary__stats span {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 3px 7px;
-  border: 1px solid rgba(90, 85, 140, 0.40);
-  border-radius: 3px;
-  background: rgba(20, 18, 40, 0.70);
 }
 
 .mastery-note {
@@ -825,26 +731,50 @@
   margin-top: 8px;
 }
 
+/* Biome rows carry the map's own colour and icon, so a biome is the same thing
+   in both surfaces, plus a bounded meter against this tier's ceiling — "Lv 4"
+   alone never said how much was left. */
 .mastery-biome-row {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 8px;
   padding: 5px 7px;
   border-top: 1px solid var(--bevel-dark);
-  border-left: 1px solid var(--bevel-dark);
+  border-left: 3px solid var(--biome-accent, var(--hud-edge-medium));
   border-right: 1px solid var(--bevel-light);
   border-bottom: 1px solid var(--bevel-light);
   background: #181510;
   border-radius: 2px;
-  color: #9090c0;
+  color: var(--hud-text-muted);
   font-size: 10px;
 }
 
-.mastery-biome-row strong {
-  color: #b0c8e8;
-  font-size: 10px;
+.mastery-biome-row__icon {
+  flex: 0 0 auto;
+  image-rendering: pixelated;
+}
+
+.mastery-biome-row__name {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.mastery-biome-row__meter {
+  flex: 0 0 44px;
+}
+
+.mastery-biome-row__level {
+  flex: 0 0 auto;
+  color: var(--hud-text);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
   white-space: nowrap;
+}
+
+.mastery-biome-row__cap {
+  color: var(--hud-text-dim);
+  font-size: 9px;
 }
 
 /* ── Filter chips ────────────────────────────────────────────────────────── */
@@ -1156,6 +1086,148 @@
   .craft-recipe__icon  { width: 44px; height: 44px; }
   .craft-recipe__name  { font-size: 11px; }
   .craft-recipe__btn   { padding: 8px 16px; }  /* keep a tappable target */
-  .craft-essence-summary { gap: 5px; margin-bottom: 12px; }
+  .craft-wallet        { gap: 4px 6px; margin-bottom: 12px; }
   .craft-filters       { margin-bottom: 10px; }
+}
+
+/* ── Make: the unified recipe browser ────────────────────────────────────────
+   Gear and technique recipes share one row shape, one detail pane, and one
+   cost grammar. The pane manages its own scrolling, so this section opts out
+   of the dialog content's padding and scroll. */
+.craft-body--make {
+  flex: 1;
+  min-height: 0;
+  margin: -16px -20px -24px;
+}
+
+.craft-body--make .craft-wallet {
+  margin: 0;
+  border-width: 0 0 1px;
+  border-radius: 0;
+}
+
+.make-browser {
+  min-height: 0;
+}
+
+.make-search {
+  flex: 1 1 180px;
+  min-width: 0;
+  max-width: 260px;
+  height: 26px;
+  padding: 3px 7px;
+  background: var(--hud-material-inset);
+  border: 1px solid var(--hud-edge-light);
+  border-radius: 2px;
+  color: var(--hud-text);
+  font: 10px monospace;
+}
+
+.make-icon {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid;
+  border-radius: 2px;
+  font: bold 10px/1 monospace;
+}
+
+.make-row__main {
+  display: flex;
+  flex: 1 1 auto;
+  min-width: 0;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.make-row__name {
+  overflow: hidden;
+  color: inherit;
+  font-size: 11px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.make-row__meta {
+  color: var(--hud-text-dim);
+  font-size: 9px;
+}
+
+.make-row__state {
+  flex: 0 0 auto;
+  font-size: 8px;
+  letter-spacing: 0.6px;
+}
+
+.make-row__state--ready { color: var(--hud-success); }
+.make-row__state--short { color: var(--hud-danger); }
+.make-row__state--locked { color: var(--hud-text-dim); }
+.make-row__state--owned { color: var(--hud-primary); }
+
+.make-detail__head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.make-detail__name {
+  color: var(--hud-primary-strong);
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.make-detail__meta {
+  margin-top: 2px;
+  color: var(--hud-text-dim);
+  font-size: 10px;
+}
+
+.make-detail__blurb {
+  margin: 0 0 10px;
+  color: var(--hud-text-muted);
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.make-detail__cost-label {
+  margin: 10px 0 4px;
+  color: var(--hud-text-dim);
+  font-size: 9px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.make-detail__actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+.make-detail__blocked {
+  color: var(--hud-text-dim);
+  font-size: 10px;
+}
+
+/* Mobile: the Make browser owns its own scrolling inside the sheet/dialog, and
+   the negative margin that lets it bleed to the dialog edges must match the
+   smaller mobile padding. */
+@media (max-width: 1100px) {
+  .craft-body--make {
+    margin: -12px -12px -18px;
+  }
+
+  .make-search {
+    flex: 1 1 100%;
+    max-width: none;
+    min-height: var(--hud-hit-target);
+  }
+
+  .craft-body--make .craft-filter-chip {
+    min-height: var(--hud-hit-target-compact);
+    touch-action: manipulation;
+  }
 }

@@ -23,7 +23,6 @@ import type {
   HasEnvironmentalDot,
   HasNodeFeatureEffect,
   HasWeaponDot,
-  HasVoidCorruption,
   HasAlignment,
   HasAttackTarget,
   HasAutoIntent,
@@ -250,7 +249,6 @@ export interface ServerEntity {
   hasSmolder?: HasSmolder;
   hasEntropy?: HasEntropy;
   hasWeaponDot?: HasWeaponDot;
-  hasVoidCorruption?: HasVoidCorruption;
   scriptsBoss?: ScriptsBoss;
   scriptsUltimate?: ScriptsUltimate;
   isBossEngaged?: IsBossEngaged;

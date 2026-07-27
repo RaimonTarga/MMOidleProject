@@ -1,0 +1,87 @@
+<!doctype html>
+<!--
+  Layout harness for the bestiary DETAIL overlay (the full-screen master/detail
+  dialog), mirroring BestiaryDetailOverlay.tsx. Loads the real stylesheets.
+
+  Usage: pnpm ui:shot --html=tools/uishot/harness/bestiary-detail.html --audit
+         ?rows=N sets the roster size, ?mechs=N the right pane's mechanic count.
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Bestiary detail harness</title>
+  <link rel="stylesheet" href="../../../client/src/hud/primitives/tokens.css" />
+  <link rel="stylesheet" href="../../../client/src/hud/hud.css" />
+  <link rel="stylesheet" href="../../../client/src/ui/inventory.css" />
+  <link rel="stylesheet" href="../../../client/src/hud/bestiary/bestiary.css" />
+  <style>
+    html, body { margin: 0; height: 100%; background: #0b0a08; }
+    .harness-sprite { background: #3a3630; border-radius: 2px; flex-shrink: 0; }
+  </style>
+</head>
+<body>
+  <div class="inv-overlay">
+    <div class="inv-panel bestiary-detail__panel">
+      <div class="inv-header">
+        <span class="inv-title">Bestiary — Plains T1</span>
+        <button type="button" class="inv-close">✕</button>
+      </div>
+      <div class="bestiary-detail__body">
+        <div class="bestiary-detail__list" id="list"></div>
+        <div class="bestiary-detail__pane" id="pane"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(location.search);
+    const rows = Number(params.get('rows') ?? 6);
+    const mechs = Number(params.get('mechs') ?? 4);
+    const names = ['Mire Ooze', 'Field Hare', 'Tiny Wisp', 'Thorn Boar', 'Dust Kite',
+      'Stone Grub', 'Pale Moth', 'Reed Stalker', 'Bog Lurcher', 'Gale Finch'];
+
+    const list = document.getElementById('list');
+    for (let i = 0; i < rows; i++) {
+      const item = document.createElement('button');
+      item.className = 'bestiary-detail__list-item' + (i === 0 ? ' is-selected' : '');
+      item.innerHTML =
+        '<div class="harness-sprite" style="width:32px;height:32px"></div>'
+        + '<span class="bestiary-detail__list-name">' + names[i % names.length] + '</span>';
+      list.appendChild(item);
+    }
+
+    const statRows = [
+      ['HP', '1,240'], ['DPS', '38'], ['Attack', '62'], ['Attack speed', '1.2/s'],
+      ['Plating', '8'], ['Damage reduction', '12%'], ['Evasion', '5%'],
+      ['Move speed', '140'], ['Attack range', '48px'], ['Pull range', '320px'],
+      ['Leash range', '640px'], ['Combat', 'Melee'],
+    ];
+
+    let html =
+      '<div class="bestiary-detail__hero">'
+      + '<div class="harness-sprite bestiary-detail__hero-sprite" style="width:112px;height:112px"></div>'
+      + '<div class="bestiary-detail__hero-text">'
+      + '<div class="bestiary-detail__hero-name">Mire Ooze</div>'
+      + '<div class="bestiary-detail__hero-role">Trash · scaled for this dungeon</div>'
+      + '<div class="bestiary-detail__hero-profile">A slow, corrosive mass that punishes anyone who stands in it.</div>'
+      + '</div></div>'
+      + '<div class="bestiary-detail__stats">';
+    for (const [label, value] of statRows) {
+      html += '<div class="bestiary-detail__stat"><span class="bestiary-detail__stat-label">'
+        + label + '</span><span class="bestiary-detail__stat-value">' + value + '</span></div>';
+    }
+    html += '</div><div class="bestiary-detail__rewards">Rewards: <b>3</b> green essence · <b>12</b> biome XP · level 4</div>';
+    if (mechs > 0) {
+      html += '<div class="bestiary-detail__mechs"><div class="bestiary-detail__section-title">Mechanics</div>';
+      for (let i = 0; i < mechs; i++) {
+        html += '<div class="bestiary-detail__mech"><span class="bestiary-detail__mech-icon">☣</span>'
+          + '<span class="bestiary-detail__mech-text"><b>Corrosive</b> — applies a stacking'
+          + ' poison that ticks for a share of its attack over eight seconds.</span></div>';
+      }
+      html += '</div>';
+    }
+    document.getElementById('pane').innerHTML = html;
+    document.title = `Bestiary detail harness — ${rows} species`;
+  </script>
+</body>
+</html>

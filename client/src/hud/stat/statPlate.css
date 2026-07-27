@@ -1,0 +1,163 @@
+@import "../primitives/tokens.css";
+
+/* One engraved housing for the whole readout. Each figure labels itself, so
+   there are no section headings to spend rail height on. Nothing animates at
+   rest. */
+.stat-plate {
+  margin-top: 7px;
+  padding: 7px 8px;
+  background: var(--hud-material-inset);
+  border-top: 1px solid var(--hud-edge-dark);
+  border-left: 1px solid var(--hud-edge-dark);
+  border-right: 1px solid var(--hud-edge-light);
+  border-bottom: 1px solid var(--hud-edge-light);
+  border-radius: 2px;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.55);
+}
+
+.stat-plate__figures {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 6px;
+}
+
+/* The cell itself is the shared GlyphTile primitive; the plate only says how the
+   figures share the row. */
+.stat-plate__figures > .glyph-tile {
+  flex: 1 1 46px;
+  min-width: 46px;
+}
+
+.stat-plate__lines {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1px 8px;
+  margin-top: 5px;
+  padding-top: 4px;
+  border-top: 1px solid var(--hud-edge-divider);
+  color: var(--hud-text-muted);
+  font-family: monospace;
+  font-size: 10px;
+}
+
+.stat-plate__meter-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+  font-family: monospace;
+}
+
+.stat-plate__meter-label {
+  flex: 0 0 auto;
+  color: var(--hud-text-dim);
+  font-size: 9px;
+}
+
+/* Meters exist only for values with a genuine 0-100% ceiling. The track, fill
+   and sub-pixel floor now come from the shared EngravedMeter; the plate only
+   says how it shares the row. */
+.stat-plate__meter {
+  flex: 1 1 auto;
+}
+
+.stat-plate__meter-value {
+  flex: 0 0 auto;
+  min-width: 30px;
+  color: var(--hud-text);
+  font-size: 10px;
+  text-align: right;
+}
+
+/* Reduced motion for the meter fill now lives with the EngravedMeter itself. */
+
+/* ── Crown ────────────────────────────────────────────────────────────────────
+   Name, connection, and health folded into the top of the plate (§14.1). They
+   used to be two stacked sections above it; one apparatus reads as one thing. */
+.stat-crown {
+  margin: -1px 0 7px;
+  padding-bottom: 7px;
+  border-bottom: 1px solid var(--hud-edge-divider);
+}
+
+.stat-crown__identity {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.stat-crown__name {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--hud-text);
+  font-size: 12px;
+  font-weight: bold;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Numerals right-engraved, so the eye lands on the bar first and the exact
+   figure second. */
+.stat-crown__readout {
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-end;
+  gap: 6px;
+  margin-bottom: 3px;
+  font-family: monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+.stat-crown__hp {
+  color: var(--hud-text);
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.stat-crown__max {
+  color: var(--hud-text-dim);
+  font-size: 10px;
+  font-weight: normal;
+}
+
+/* Shield is a chip, not another line of prose. */
+.stat-crown__shield {
+  padding: 1px 4px;
+  background: rgba(68, 204, 221, 0.14);
+  border: 1px solid rgba(68, 204, 221, 0.4);
+  border-radius: 2px;
+  color: #6fd8e6;
+  font-size: 9px;
+  font-weight: bold;
+}
+
+/* Layers inside the health track. Composed into the conduit rather than stacked
+   around it, so shield, regen and incoming damage read against the same scale. */
+.stat-crown__layer {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+}
+
+.stat-crown__layer--regen {
+  background: repeating-linear-gradient(
+    90deg,
+    rgba(80, 200, 120, 0.32) 0 3px,
+    transparent 3px 6px
+  );
+}
+
+.stat-crown__layer--dot {
+  background: rgba(220, 70, 60, 0.75);
+}
+
+/* A capping band along the top edge: absorb sitting on top of health. */
+.stat-crown__layer--shield {
+  top: 0;
+  bottom: auto;
+  height: 3px;
+  background: #4fc6d8;
+  box-shadow: 0 0 4px rgba(79, 198, 216, 0.5);
+}

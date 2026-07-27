@@ -1,0 +1,17 @@
+/* Self-hosted title face (Wave 3 §15). No CDN: the file lives in
+   client/public/fonts and is served from the app origin.
+
+   Cinzel was chosen on 2026-07-26 after seeing it on real titles in-game; the
+   Alegreya SC and Marcellus candidates were bundled for that comparison and
+   removed once it was settled.
+
+   Titles only. Body text, numerals, and 9px micro-labels keep the existing
+   sans/mono stacks; see --hud-font-display in tokens.css. */
+
+@font-face {
+  font-family: 'Cinzel';
+  src: url('/fonts/cinzel-600.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}

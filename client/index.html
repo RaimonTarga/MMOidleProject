@@ -59,6 +59,24 @@
         height: 100%;
         overflow-y: auto;
         overflow-x: hidden;
+        /* These are the rails' real scroll containers, and they must LOOK it.
+           The UI font scale applies `zoom` to their children, so a rail that
+           fits at 100% overflows at any larger scale — with no scrollbar, the
+           panels below the fold simply read as missing. (The thin scrollbar was
+           previously put on the inner .sidebar-left, which cannot scroll: it is
+           height:100% of this box.) */
+        scrollbar-width: thin;
+        scrollbar-color: var(--hud-edge-medium, #63553e) transparent;
+      }
+
+      #left-sidebar::-webkit-scrollbar,
+      #right-sidebar::-webkit-scrollbar { width: 5px; }
+      #left-sidebar::-webkit-scrollbar-track,
+      #right-sidebar::-webkit-scrollbar-track { background: transparent; }
+      #left-sidebar::-webkit-scrollbar-thumb,
+      #right-sidebar::-webkit-scrollbar-thumb {
+        background: var(--hud-edge-medium, #63553e);
+        border-radius: 3px;
       }
 
       /* Dividing lines between sidebars and canvas */

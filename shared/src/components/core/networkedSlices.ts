@@ -67,13 +67,21 @@ export interface MitigatesDamage {
  * Deterministic evasion. Present only while the player has any evasion.
  *
  * `dodgeRate` is a per-hit rate (NOT a probability — evasion is fully
- * deterministic). A server-side fractional accumulator in `tracksCombat` adds
- * `dodgeRate` each incoming hit and evades when it crosses 1.0. `evadeMitigation`
+ * deterministic). `charge` accumulates `dodgeRate` on each incoming hit and
+ * evades when it crosses 1.0, then wraps by subtracting 1.0. `evadeMitigation`
  * is the fraction of damage avoided on an evaded hit (1.0 = full avoid).
+ *
+ * `charge` is the accumulator itself, not a copy of one — it lives here rather
+ * than in `tracksCombat` because runtime state belongs on the slice that owns
+ * it, and because the HUD cannot show the player when their next dodge lands
+ * without it. Being deterministic, it is genuine anticipation rather than a
+ * prediction: at `charge + dodgeRate >= 1` the next hit taken *will* be evaded.
  */
 export interface EvadesHits {
   dodgeRate: number;
   evadeMitigation: number;
+  /** 0 to just under 1. */
+  charge: number;
 }
 
 /** Presentation-ready objective row for ultimate boss HUD. */

@@ -1,6 +1,12 @@
 import { getDefaultStore } from 'jotai';
 import {
   activeStanceAtom,
+  catalystProgressAtom,
+  catalystsAtom,
+  essencesAtom,
+  passivesAtom,
+  skillPointsAtom,
+  unlockedRecipesAtom,
   equippedAbilitiesAtom,
   equippedRitesAtom,
   equippedStancesAtom,
@@ -10,6 +16,12 @@ import {
   knownStancesAtom,
   playerIdAtom,
   playerTierAtom,
+  biomeLevelAtom,
+  biomeXPAtom,
+  equipmentAtom,
+  inventoryAtom,
+  questProgressAtom,
+  runesOwnedAtom,
 } from './atoms';
 import {
   resolveSystemVisibility,
@@ -23,6 +35,19 @@ const UI_UNLOCK_SYSTEMS: readonly UiUnlockSystem[] = [
   'abilities',
   'stances',
   'rites',
+  'materials',
+  'passiveTree',
+  'party',
+  // Staged arc (§16). Each reveals on its own authoritative trigger and wakes
+  // through the same mechanism — no second animation system.
+  'combatLog',
+  'bestiary',
+  'progression',
+  'inventory',
+  'crafting',
+  'map',
+  'loadout',
+  'abilityDock',
 ];
 const UI_UNLOCK_ACTIVATION_FALLBACK_MS = 700;
 
@@ -67,6 +92,18 @@ export function installUiUnlockSync(): () => void {
       activeStance: store.get(activeStanceAtom),
       knownRites: store.get(knownRitesAtom),
       equippedRites: store.get(equippedRitesAtom),
+      essences: store.get(essencesAtom),
+      catalysts: store.get(catalystsAtom),
+      catalystProgress: store.get(catalystProgressAtom),
+      unlockedRecipes: store.get(unlockedRecipesAtom),
+      skillPoints: store.get(skillPointsAtom),
+      passives: store.get(passivesAtom),
+      biomeXP: store.get(biomeXPAtom),
+      biomeLevel: store.get(biomeLevelAtom),
+      questProgress: store.get(questProgressAtom),
+      inventory: store.get(inventoryAtom),
+      hasEquipment: Object.values(store.get(equipmentAtom)).some((id) => !!id),
+      runesOwned: store.get(runesOwnedAtom),
     });
 
   let previousVisibility = readVisibility();
@@ -162,6 +199,18 @@ export function installUiUnlockSync(): () => void {
     activeStanceAtom,
     knownRitesAtom,
     equippedRitesAtom,
+    essencesAtom,
+    catalystsAtom,
+    catalystProgressAtom,
+    unlockedRecipesAtom,
+    skillPointsAtom,
+    passivesAtom,
+    biomeXPAtom,
+    biomeLevelAtom,
+    questProgressAtom,
+    inventoryAtom,
+    equipmentAtom,
+    runesOwnedAtom,
   ] as const;
   const unsubscribers = visibilityAtoms.map((visibilityAtom) =>
     store.sub(visibilityAtom, syncVisibility),

@@ -14,6 +14,41 @@ content, gameplay state, intent dispatch, placement, or visibility policy.
   control inside a `GameDialog`.
 - `DialogTabs` / `DialogTab` provide compact icon-capable tabs with roving
   arrow-key focus.
+- `BrowserPane` is the master/detail browsing surface extracted from the Map:
+  filter strip, scrollable list, persistent detail pane.
+
+Wave 3 adds the §15 kit, styled in `kit.css`:
+
+- `GradientConduit` is the bar grammar for live accumulation — directional
+  3-stop ramp, shimmer, tick marks, `max`/`capped` ramp swaps. Its continuous
+  motion is licensed *because* the value is genuinely moving.
+- `EngravedMeter` is the bar grammar for every other bounded meter: inset track,
+  flat fill, no shimmer, no ticks. The flatness is what keeps the conduit
+  meaningful.
+- `ActionChip` is the icon-led replacement for a text button. The label is
+  mandatory and always reaches assistive technology and the tooltip; drawing it
+  is the exception.
+- `MilestonePips` replaces textual status markers such as `OK` / `--`. The set
+  carries one accessible label that states the count.
+- `GlyphTile` is the figure cell — value over caption, optionally icon-led —
+  extracted from the shipped `StatPlate` figure, which now renders through it.
+- `useChangeFlash` is the shared one-shot change mark: silent on hydration, on a
+  hidden document, and under reduced motion.
+
+Neither bar may invent a ceiling. A value with no authoritative maximum (attack,
+DPS, plating) is a number, never a part-full track; `GlyphTile` is its home.
+
+`ApparatusPlate` was listed as optional in the V0 kit and deliberately **not**
+built. The two surfaces that could have wanted a standalone cut-corner housing
+already have one: the Character crown folds into `.stat-plate`, and the Evasion
+instrument uses `MechanicFrame`. Extracting the `mechanic-capacitor` recipe with
+no second caller would have added a primitive to own instead of a housing to
+reuse.
+
+The kit is deliberately not scoped to `.desktop-hud` + `min-width: 1101px`,
+unlike `HudPanel` and the rail treatment. A bar or chip must read identically
+inside a mobile sheet, the tier tokens already resolve on both sides of the
+1100px boundary, and only the pointer footprint differs.
 
 Desktop visual rules require both `.desktop-hud` and the `min-width: 1101px`
 media query. Shared components rendered inside `MobileHUD` therefore keep their
@@ -29,6 +64,12 @@ such as ability slots, where a tooltip preserves the full label.
 
 Token families live in `tokens.css`:
 
+- `--hud-font-display` / `--hud-font-display-weight` is the engraved title face,
+  declared in `displayFont.css` and self-hosted from `client/public/fonts`. It
+  applies to dialog titles, rail panel titles, the boss name, and section
+  headings at 11px or larger — never to 9px micro-labels, numerals, body text,
+  tooltips, or the combat log, where a display face stops being readable. Cinzel
+  600 was chosen on 2026-07-26; see that folder's README.
 - `--hud-material-*` describes surface depth and function, not player tier.
 - `--hud-edge-*` forms raised, inset, and engraved boundaries.
 - `--hud-space-*` is the compact HUD spacing scale.

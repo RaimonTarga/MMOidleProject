@@ -1,0 +1,110 @@
+<!doctype html>
+<!--
+  Layout harness for the left rail, used to reproduce the bestiary crop without
+  a server, a login, or a character with discoveries.
+
+  It loads the REAL stylesheets and mirrors the real DOM from HUD.tsx and
+  BestiaryPanel.tsx. The only thing reproduced by hand is the #left-sidebar rule,
+  which lives in client/index.html's inline <style> rather than a stylesheet —
+  kept byte-identical below so the harness cannot drift into a false negative.
+
+  Usage: pnpm ui:shot --html=tools/uishot/harness/bestiary.html --audit
+         add ?rows=8 to vary the roster size.
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Left rail harness — bestiary</title>
+  <link rel="stylesheet" href="../../../client/src/hud/primitives/tokens.css" />
+  <link rel="stylesheet" href="../../../client/src/hud/hud.css" />
+  <link rel="stylesheet" href="../../../client/src/hud/rail.css" />
+  <link rel="stylesheet" href="../../../client/src/hud/bestiary/bestiary.css" />
+  <style>
+    /* Mirrors client/index.html — the app shell, not a stylesheet. */
+    html, body { margin: 0; height: 100%; background: #0b0a08; }
+    #app { display: flex; height: 100%; }
+    #left-sidebar {
+      width: 260px;
+      min-width: 260px;
+      flex-shrink: 0;
+      height: 100%;
+      overflow-y: auto;
+      overflow-x: hidden;
+      scrollbar-width: thin;
+      scrollbar-color: var(--hud-edge-medium, #63553e) transparent;
+      border-right: 1px solid rgba(50, 50, 80, 0.6);
+    }
+    #game-wrapper { flex: 1; min-width: 0; height: 100%; background: #000; }
+    /* Stand-in for MonsterSprite's canvas. */
+    .harness-sprite { width: 28px; height: 28px; background: #3a3630; border-radius: 2px; flex-shrink: 0; }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div id="left-sidebar">
+      <div class="sidebar sidebar-left desktop-hud">
+        <!-- Stand-ins for the panels above the bestiary, so the rail carries a
+             realistic amount of content before the roster starts. -->
+        <div class="sidebar-panel hud-panel">
+          <div class="panel-title">Character</div>
+          <div style="height: var(--fill-char, 168px)"></div>
+        </div>
+        <div class="sidebar-panel hud-panel">
+          <div class="panel-title">Party</div>
+          <div style="height: 52px"></div>
+        </div>
+        <div class="combat-log">
+          <button class="combat-log__header"><span class="combat-log__title">COMBAT LOG</span></button>
+          <div class="combat-log__body" id="log-body"></div>
+        </div>
+
+        <div class="bestiary combat-log">
+          <button class="combat-log__header">
+            <span class="combat-log__title">BESTIARY</span>
+            <span class="bestiary__zone">Plains T1</span>
+            <span class="combat-log__chevron">▼</span>
+          </button>
+          <div class="bestiary__body" id="bestiary-body"></div>
+        </div>
+      </div>
+    </div>
+    <div id="game-wrapper"></div>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(location.search);
+    if (params.get('fill')) {
+      document.documentElement.style.setProperty('--fill-char', params.get('fill') + 'px');
+    }
+    const rows = Number(params.get('rows') ?? 6);
+    const logLines = Number(params.get('log') ?? 8);
+
+    const names = ['Mire Ooze', 'Field Hare', 'Tiny Wisp', 'Thorn Boar', 'Dust Kite',
+      'Stone Grub', 'Pale Moth', 'Reed Stalker', 'Bog Lurcher', 'Gale Finch'];
+
+    const logBody = document.getElementById('log-body');
+    for (let i = 0; i < logLines; i++) {
+      const line = document.createElement('div');
+      line.className = 'combat-log__line';
+      line.textContent = 'You hit Mire Ooze for 42.';
+      logBody.appendChild(line);
+    }
+
+    const body = document.getElementById('bestiary-body');
+    for (let i = 0; i < rows; i++) {
+      const row = document.createElement('button');
+      row.className = 'bestiary__row bestiary__row--trash';
+      row.innerHTML =
+        '<div class="harness-sprite bestiary__sprite"></div>'
+        + '<div class="bestiary__row-body">'
+        + '<div class="bestiary__row-name-line"><span class="bestiary__name">'
+        + names[i % names.length] + '</span></div>'
+        + '<div class="bestiary__row-stats"><span>HP <b>1,240</b></span><span>DPS <b>38</b></span></div>'
+        + '</div>';
+      body.appendChild(row);
+    }
+
+    document.title = `Left rail harness — ${rows} species`;
+  </script>
+</body>
+</html>

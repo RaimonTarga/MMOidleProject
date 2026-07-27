@@ -468,6 +468,446 @@
       "status": "accepted",
       "styleRef": "style/ui-navigation.png",
       "notes": "Phase 10C rune family; built-in generation, chroma-key removal, and nearest-neighbor reduction approved at 18px on 2026-07-24."
+    },
+    {
+      "id": "stat-attack",
+      "out": "UI_icons/stats/attack.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "single compact broad iron blade tip pointing up and to the right, one thick straight edge carrying a single pale-cyan highlight line, blunt cut base with no hilt, charcoal iron with sparse muted-bronze wear, transparent background, bold flat old-school fantasy UI pixel art, crisp intentional pixel clusters, hard chunky outline, flat colors only, limited palette of near-black charcoal muted-bronze and pale-cyan, strong silhouette readable at 18x18, no gradient, no gloss, no shading, minimal detail, no surrounding plaque button badge border or frame",
+      "negative": "full sword, hilt, pommel, crossguard, grip, axe, spear, arrow, two blades, text, letters, numbers, watermark, decorative frame, badge, plaque, button, border, drop shadow, cast shadow, gradient, glow, soft blur, gloss, ornate, realistic, painterly, smooth vector art, 3d render, photograph, character, humanoid figure, face, hand, creature, logo, clipart, scene, landscape, background scenery, multiple objects, cluttered detail",
+      "status": "draft",
+      "styleRef": "style/ui-navigation.png",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "notes": "Wave 3 V0b. Generated 2026-07-26 (3 candidates, $0.02) and rejected: legible at 64px, mush at the 18px HUD footprint, and off-family against the approved charcoal/bronze/cyan navigation set. Superseded by a hand-authored 16x16 pixel map in tools/glyphs/glyphs.ts, rendered by `pnpm art:glyphs`. Status is draft so generation never re-arms; the prompt is kept as a record of the intended subject."
+    },
+    {
+      "id": "stat-dps",
+      "out": "UI_icons/stats/dps.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "exactly three parallel diagonal strike slashes of descending length, the longest at the upper right drawn in pale-cyan and the two shorter ones in charcoal, nothing making them, charcoal iron with sparse muted-bronze wear, transparent background, bold flat old-school fantasy UI pixel art, crisp intentional pixel clusters, hard chunky outline, flat colors only, limited palette of near-black charcoal muted-bronze and pale-cyan, strong silhouette readable at 18x18, no gradient, no gloss, no shading, minimal detail, no surrounding plaque button badge border or frame",
+      "negative": "weapon, blade, sword, single slash, four slashes, five slashes, crossed slashes, X shape, claw marks, text, letters, numbers, watermark, decorative frame, badge, plaque, button, border, drop shadow, cast shadow, gradient, glow, soft blur, gloss, ornate, realistic, painterly, smooth vector art, 3d render, photograph, character, humanoid figure, face, hand, creature, logo, clipart, scene, landscape, background scenery, multiple objects, cluttered detail",
+      "status": "draft",
+      "styleRef": "style/ui-navigation.png",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "notes": "Wave 3 V0b. Generated 2026-07-26 (3 candidates, $0.02) and rejected: legible at 64px, mush at the 18px HUD footprint, and off-family against the approved charcoal/bronze/cyan navigation set. Superseded by a hand-authored 16x16 pixel map in tools/glyphs/glyphs.ts, rendered by `pnpm art:glyphs`. Status is draft so generation never re-arms; the prompt is kept as a record of the intended subject."
+    },
+    {
+      "id": "stat-plating",
+      "out": "UI_icons/stats/plating.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "exactly three stacked horizontal iron armour bands of equal width, each band carrying two small muted-bronze rivets, the topmost band edged pale-cyan, charcoal iron with sparse muted-bronze wear, transparent background, bold flat old-school fantasy UI pixel art, crisp intentional pixel clusters, hard chunky outline, flat colors only, limited palette of near-black charcoal muted-bronze and pale-cyan, strong silhouette readable at 18x18, no gradient, no gloss, no shading, minimal detail, no surrounding plaque button badge border or frame",
+      "negative": "shield, heater shield, breastplate, helmet, four bands, single plate, brick wall, stairs, text, letters, numbers, watermark, decorative frame, badge, plaque, button, border, drop shadow, cast shadow, gradient, glow, soft blur, gloss, ornate, realistic, painterly, smooth vector art, 3d render, photograph, character, humanoid figure, face, hand, creature, logo, clipart, scene, landscape, background scenery, multiple objects, cluttered detail",
+      "status": "draft",
+      "styleRef": "style/ui-navigation.png",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "notes": "Wave 3 V0b. Generated 2026-07-26 (3 candidates, $0.02) and rejected: legible at 64px, mush at the 18px HUD footprint, and off-family against the approved charcoal/bronze/cyan navigation set. Superseded by a hand-authored 16x16 pixel map in tools/glyphs/glyphs.ts, rendered by `pnpm art:glyphs`. Status is draft so generation never re-arms; the prompt is kept as a record of the intended subject."
+    },
+    {
+      "id": "stat-reduction",
+      "out": "UI_icons/stats/reduction.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "one broad pale-cyan downward chevron deflecting one short charcoal impact line that stops dead against its upper face, charcoal iron with sparse muted-bronze wear, transparent background, bold flat old-school fantasy UI pixel art, crisp intentional pixel clusters, hard chunky outline, flat colors only, limited palette of near-black charcoal muted-bronze and pale-cyan, strong silhouette readable at 18x18, no gradient, no gloss, no shading, minimal detail, no surrounding plaque button badge border or frame",
+      "negative": "shield, arrowhead, three chevrons, stacked chevrons, ascending chevrons, letter V, checkmark, text, letters, numbers, watermark, decorative frame, badge, plaque, button, border, drop shadow, cast shadow, gradient, glow, soft blur, gloss, ornate, realistic, painterly, smooth vector art, 3d render, photograph, character, humanoid figure, face, hand, creature, logo, clipart, scene, landscape, background scenery, multiple objects, cluttered detail",
+      "status": "draft",
+      "styleRef": "style/ui-navigation.png",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "notes": "Wave 3 V0b. Generated 2026-07-26 (3 candidates, $0.02) and rejected: legible at 64px, mush at the 18px HUD footprint, and off-family against the approved charcoal/bronze/cyan navigation set. Superseded by a hand-authored 16x16 pixel map in tools/glyphs/glyphs.ts, rendered by `pnpm art:glyphs`. Status is draft so generation never re-arms; the prompt is kept as a record of the intended subject."
+    },
+    {
+      "id": "stat-range",
+      "out": "UI_icons/stats/range.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "exactly two short vertical iron marker posts, one at each side, joined across the middle by one bold pale-cyan double-headed measuring arrow, charcoal iron with sparse muted-bronze wear, transparent background, bold flat old-school fantasy UI pixel art, crisp intentional pixel clusters, hard chunky outline, flat colors only, limited palette of near-black charcoal muted-bronze and pale-cyan, strong silhouette readable at 18x18, no gradient, no gloss, no shading, minimal detail, no surrounding plaque button badge border or frame",
+      "negative": "bow, quiver, ruler with many ticks, three posts, single arrow, crosshair, letter H, text, letters, numbers, watermark, decorative frame, badge, plaque, button, border, drop shadow, cast shadow, gradient, glow, soft blur, gloss, ornate, realistic, painterly, smooth vector art, 3d render, photograph, character, humanoid figure, face, hand, creature, logo, clipart, scene, landscape, background scenery, multiple objects, cluttered detail",
+      "status": "draft",
+      "styleRef": "style/ui-navigation.png",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "notes": "Wave 3 V0b. Generated 2026-07-26 (3 candidates, $0.02) and rejected: legible at 64px, mush at the 18px HUD footprint, and off-family against the approved charcoal/bronze/cyan navigation set. Superseded by a hand-authored 16x16 pixel map in tools/glyphs/glyphs.ts, rendered by `pnpm art:glyphs`. Status is draft so generation never re-arms; the prompt is kept as a record of the intended subject."
+    },
+    {
+      "id": "stat-speed",
+      "out": "UI_icons/stats/speed.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "exactly three horizontal swept pale-cyan motion streaks of descending length stacked one above another, sharp at their right ends, nothing making them, charcoal iron with sparse muted-bronze wear, transparent background, bold flat old-school fantasy UI pixel art, crisp intentional pixel clusters, hard chunky outline, flat colors only, limited palette of near-black charcoal muted-bronze and pale-cyan, strong silhouette readable at 18x18, no gradient, no gloss, no shading, minimal detail, no surrounding plaque button badge border or frame",
+      "negative": "wing, feather, lightning bolt, boot, clock, gear, hourglass, diagonal slashes, four streaks, text, letters, numbers, watermark, decorative frame, badge, plaque, button, border, drop shadow, cast shadow, gradient, glow, soft blur, gloss, ornate, realistic, painterly, smooth vector art, 3d render, photograph, character, humanoid figure, face, hand, creature, logo, clipart, scene, landscape, background scenery, multiple objects, cluttered detail",
+      "status": "draft",
+      "styleRef": "style/ui-navigation.png",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "notes": "Wave 3 V0b. Generated 2026-07-26 (3 candidates, $0.02) and rejected: legible at 64px, mush at the 18px HUD footprint, and off-family against the approved charcoal/bronze/cyan navigation set. Superseded by a hand-authored 16x16 pixel map in tools/glyphs/glyphs.ts, rendered by `pnpm art:glyphs`. Status is draft so generation never re-arms; the prompt is kept as a record of the intended subject."
+    },
+    {
+      "id": "stat-regen",
+      "out": "UI_icons/stats/regen.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "one bold pale-cyan three-quarter renewal arc arrow curling clockwise around one small solid iron droplet at its centre, charcoal iron with sparse muted-bronze wear, transparent background, bold flat old-school fantasy UI pixel art, crisp intentional pixel clusters, hard chunky outline, flat colors only, limited palette of near-black charcoal muted-bronze and pale-cyan, strong silhouette readable at 18x18, no gradient, no gloss, no shading, minimal detail, no surrounding plaque button badge border or frame",
+      "negative": "medical cross, plus sign, heart, leaf, complete circle, refresh spinner, two arrows, spiral, text, letters, numbers, watermark, decorative frame, badge, plaque, button, border, drop shadow, cast shadow, gradient, glow, soft blur, gloss, ornate, realistic, painterly, smooth vector art, 3d render, photograph, character, humanoid figure, face, hand, creature, logo, clipart, scene, landscape, background scenery, multiple objects, cluttered detail",
+      "status": "draft",
+      "styleRef": "style/ui-navigation.png",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "notes": "Wave 3 V0b. Generated 2026-07-26 (3 candidates, $0.02) and rejected: legible at 64px, mush at the 18px HUD footprint, and off-family against the approved charcoal/bronze/cyan navigation set. Superseded by a hand-authored 16x16 pixel map in tools/glyphs/glyphs.ts, rendered by `pnpm art:glyphs`. Status is draft so generation never re-arms; the prompt is kept as a record of the intended subject."
+    },
+    {
+      "id": "stat-evasion",
+      "out": "UI_icons/stats/evasion.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "one bold pale-cyan S-curved swerve arrow with a sharp arrowhead at its upper end, passing clear of one short blunt charcoal strike stub it avoids, charcoal iron with sparse muted-bronze wear, transparent background, bold flat old-school fantasy UI pixel art, crisp intentional pixel clusters, hard chunky outline, flat colors only, limited palette of near-black charcoal muted-bronze and pale-cyan, strong silhouette readable at 18x18, no gradient, no gloss, no shading, minimal detail, no surrounding plaque button badge border or frame",
+      "negative": "humanoid figure, silhouette, footprint, straight arrow, two arrows, spiral, snake, question mark, text, letters, numbers, watermark, decorative frame, badge, plaque, button, border, drop shadow, cast shadow, gradient, glow, soft blur, gloss, ornate, realistic, painterly, smooth vector art, 3d render, photograph, character, humanoid figure, face, hand, creature, logo, clipart, scene, landscape, background scenery, multiple objects, cluttered detail",
+      "status": "draft",
+      "styleRef": "style/ui-navigation.png",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "notes": "Wave 3 V0b. Generated 2026-07-26 (3 candidates, $0.02) and rejected: legible at 64px, mush at the 18px HUD footprint, and off-family against the approved charcoal/bronze/cyan navigation set. Superseded by a hand-authored 16x16 pixel map in tools/glyphs/glyphs.ts, rendered by `pnpm art:glyphs`. Status is draft so generation never re-arms; the prompt is kept as a record of the intended subject."
+    },
+    {
+      "id": "stat-empowered",
+      "out": "UI_icons/stats/empowered.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "one compact solid iron square core with exactly five thick pale-cyan spikes radiating outward from it, the longest spike pointing up, charcoal iron with sparse muted-bronze wear, transparent background, bold flat old-school fantasy UI pixel art, crisp intentional pixel clusters, hard chunky outline, flat colors only, limited palette of near-black charcoal muted-bronze and pale-cyan, strong silhouette readable at 18x18, no gradient, no gloss, no shading, minimal detail, no surrounding plaque button badge border or frame",
+      "negative": "six points, eight points, sun, sunburst filling the frame, orb, sphere, sparkle cluster, snowflake, text, letters, numbers, watermark, decorative frame, badge, plaque, button, border, drop shadow, cast shadow, gradient, glow, soft blur, gloss, ornate, realistic, painterly, smooth vector art, 3d render, photograph, character, humanoid figure, face, hand, creature, logo, clipart, scene, landscape, background scenery, multiple objects, cluttered detail",
+      "status": "draft",
+      "styleRef": "style/ui-navigation.png",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "notes": "Wave 3 V0b. Generated 2026-07-26 (3 candidates, $0.02) and rejected: legible at 64px, mush at the 18px HUD footprint, and off-family against the approved charcoal/bronze/cyan navigation set. Superseded by a hand-authored 16x16 pixel map in tools/glyphs/glyphs.ts, rendered by `pnpm art:glyphs`. Status is draft so generation never re-arms; the prompt is kept as a record of the intended subject."
+    },
+    {
+      "id": "stat-shield",
+      "out": "UI_icons/stats/shield.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "one broad iron heater shield with a flat top and a pointed lower tip, one bold pale-cyan vertical seam down its centre and two small muted-bronze studs, charcoal iron with sparse muted-bronze wear, transparent background, bold flat old-school fantasy UI pixel art, crisp intentional pixel clusters, hard chunky outline, flat colors only, limited palette of near-black charcoal muted-bronze and pale-cyan, strong silhouette readable at 18x18, no gradient, no gloss, no shading, minimal detail, no surrounding plaque button badge border or frame",
+      "negative": "sword, crossed weapons, heraldic crest, animal emblem, round buckler, three studs, cross, text, letters, numbers, watermark, decorative frame, badge, plaque, button, border, drop shadow, cast shadow, gradient, glow, soft blur, gloss, ornate, realistic, painterly, smooth vector art, 3d render, photograph, character, humanoid figure, face, hand, creature, logo, clipart, scene, landscape, background scenery, multiple objects, cluttered detail",
+      "status": "draft",
+      "styleRef": "style/ui-navigation.png",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "notes": "Wave 3 V0b. Generated 2026-07-26 (3 candidates, $0.02) and rejected: legible at 64px, mush at the 18px HUD footprint, and off-family against the approved charcoal/bronze/cyan navigation set. Superseded by a hand-authored 16x16 pixel map in tools/glyphs/glyphs.ts, rendered by `pnpm art:glyphs`. Status is draft so generation never re-arms; the prompt is kept as a record of the intended subject."
+    },
+    {
+      "id": "action-locate",
+      "out": "UI_icons/actions/locate.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "one compact iron compass rose with exactly four broad diamond points, its upward point filled solid pale-cyan, charcoal iron with sparse muted-bronze wear, transparent background, bold flat old-school fantasy UI pixel art, crisp intentional pixel clusters, hard chunky outline, flat colors only, limited palette of near-black charcoal muted-bronze and pale-cyan, strong silhouette readable at 18x18, no gradient, no gloss, no shading, minimal detail, no surrounding plaque button badge border or frame",
+      "negative": "eight points, needle alone, outer dial ring, folded map, crosshair, clock face, star, text, letters, numbers, watermark, decorative frame, badge, plaque, button, border, drop shadow, cast shadow, gradient, glow, soft blur, gloss, ornate, realistic, painterly, smooth vector art, 3d render, photograph, character, humanoid figure, face, hand, creature, logo, clipart, scene, landscape, background scenery, multiple objects, cluttered detail",
+      "status": "draft",
+      "styleRef": "style/ui-navigation.png",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "notes": "Wave 3 V0b. Generated 2026-07-26 (3 candidates, $0.02) and rejected: legible at 64px, mush at the 18px HUD footprint, and off-family against the approved charcoal/bronze/cyan navigation set. Superseded by a hand-authored 16x16 pixel map in tools/glyphs/glyphs.ts, rendered by `pnpm art:glyphs`. Status is draft so generation never re-arms; the prompt is kept as a record of the intended subject."
+    },
+    {
+      "id": "action-inspect",
+      "out": "UI_icons/actions/inspect.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "one thick iron magnifier ring with a short angled muted-bronze handle at its lower right and one small pale-cyan glint inside the otherwise empty lens, charcoal iron with sparse muted-bronze wear, transparent background, bold flat old-school fantasy UI pixel art, crisp intentional pixel clusters, hard chunky outline, flat colors only, limited palette of near-black charcoal muted-bronze and pale-cyan, strong silhouette readable at 18x18, no gradient, no gloss, no shading, minimal detail, no surrounding plaque button badge border or frame",
+      "negative": "eye, eyeball, pupil, iris, question mark, book, scroll, two lenses, spectacles, text, letters, numbers, watermark, decorative frame, badge, plaque, button, border, drop shadow, cast shadow, gradient, glow, soft blur, gloss, ornate, realistic, painterly, smooth vector art, 3d render, photograph, character, humanoid figure, face, hand, creature, logo, clipart, scene, landscape, background scenery, multiple objects, cluttered detail",
+      "status": "draft",
+      "styleRef": "style/ui-navigation.png",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "notes": "Wave 3 V0b. Generated 2026-07-26 (3 candidates, $0.02) and rejected: legible at 64px, mush at the 18px HUD footprint, and off-family against the approved charcoal/bronze/cyan navigation set. Superseded by a hand-authored 16x16 pixel map in tools/glyphs/glyphs.ts, rendered by `pnpm art:glyphs`. Status is draft so generation never re-arms; the prompt is kept as a record of the intended subject."
+    },
+    {
+      "id": "action-equip",
+      "out": "UI_icons/actions/equip.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "one broad pale-cyan arrow pointing straight down into one open square iron socket bracket directly beneath it, charcoal iron with sparse muted-bronze wear, transparent background, bold flat old-school fantasy UI pixel art, crisp intentional pixel clusters, hard chunky outline, flat colors only, limited palette of near-black charcoal muted-bronze and pale-cyan, strong silhouette readable at 18x18, no gradient, no gloss, no shading, minimal detail, no surrounding plaque button badge border or frame",
+      "negative": "upward arrow, two arrows, curved arrow, chest, bag, box with lid, hand, grid of slots, text, letters, numbers, watermark, decorative frame, badge, plaque, button, border, drop shadow, cast shadow, gradient, glow, soft blur, gloss, ornate, realistic, painterly, smooth vector art, 3d render, photograph, character, humanoid figure, face, hand, creature, logo, clipart, scene, landscape, background scenery, multiple objects, cluttered detail",
+      "status": "draft",
+      "styleRef": "style/ui-navigation.png",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "notes": "Wave 3 V0b. Generated 2026-07-26 (3 candidates, $0.02) and rejected: legible at 64px, mush at the 18px HUD footprint, and off-family against the approved charcoal/bronze/cyan navigation set. Superseded by a hand-authored 16x16 pixel map in tools/glyphs/glyphs.ts, rendered by `pnpm art:glyphs`. Status is draft so generation never re-arms; the prompt is kept as a record of the intended subject."
+    },
+    {
+      "id": "action-unequip",
+      "out": "UI_icons/actions/unequip.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "one broad pale-cyan arrow pointing straight up out of one open square iron socket bracket directly beneath it, charcoal iron with sparse muted-bronze wear, transparent background, bold flat old-school fantasy UI pixel art, crisp intentional pixel clusters, hard chunky outline, flat colors only, limited palette of near-black charcoal muted-bronze and pale-cyan, strong silhouette readable at 18x18, no gradient, no gloss, no shading, minimal detail, no surrounding plaque button badge border or frame",
+      "negative": "downward arrow, two arrows, curved arrow, chest, bag, box with lid, hand, grid of slots, text, letters, numbers, watermark, decorative frame, badge, plaque, button, border, drop shadow, cast shadow, gradient, glow, soft blur, gloss, ornate, realistic, painterly, smooth vector art, 3d render, photograph, character, humanoid figure, face, hand, creature, logo, clipart, scene, landscape, background scenery, multiple objects, cluttered detail",
+      "status": "draft",
+      "styleRef": "style/ui-navigation.png",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "notes": "Wave 3 V0b. Generated 2026-07-26 (3 candidates, $0.02) and rejected: legible at 64px, mush at the 18px HUD footprint, and off-family against the approved charcoal/bronze/cyan navigation set. Superseded by a hand-authored 16x16 pixel map in tools/glyphs/glyphs.ts, rendered by `pnpm art:glyphs`. Status is draft so generation never re-arms; the prompt is kept as a record of the intended subject."
+    },
+    {
+      "id": "action-reorder",
+      "out": "UI_icons/actions/reorder.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "exactly two short pale-cyan arrows standing side by side between two vertical iron guide rails, the left arrow pointing up and the right arrow pointing down, charcoal iron with sparse muted-bronze wear, transparent background, bold flat old-school fantasy UI pixel art, crisp intentional pixel clusters, hard chunky outline, flat colors only, limited palette of near-black charcoal muted-bronze and pale-cyan, strong silhouette readable at 18x18, no gradient, no gloss, no shading, minimal detail, no surrounding plaque button badge border or frame",
+      "negative": "single arrow, three arrows, circular arrows, refresh spinner, stacked horizontal lines, list rows, dots, text, letters, numbers, watermark, decorative frame, badge, plaque, button, border, drop shadow, cast shadow, gradient, glow, soft blur, gloss, ornate, realistic, painterly, smooth vector art, 3d render, photograph, character, humanoid figure, face, hand, creature, logo, clipart, scene, landscape, background scenery, multiple objects, cluttered detail",
+      "status": "draft",
+      "styleRef": "style/ui-navigation.png",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "notes": "Wave 3 V0b. Generated 2026-07-26 (3 candidates, $0.02) and rejected: legible at 64px, mush at the 18px HUD footprint, and off-family against the approved charcoal/bronze/cyan navigation set. Superseded by a hand-authored 16x16 pixel map in tools/glyphs/glyphs.ts, rendered by `pnpm art:glyphs`. Status is draft so generation never re-arms; the prompt is kept as a record of the intended subject."
+    },
+    {
+      "id": "action-confirm",
+      "out": "UI_icons/actions/confirm.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "one bold pale-cyan check mark with a short thick left stroke and a long right stroke, backed by one offset charcoal shadow stroke, charcoal iron with sparse muted-bronze wear, transparent background, bold flat old-school fantasy UI pixel art, crisp intentional pixel clusters, hard chunky outline, flat colors only, limited palette of near-black charcoal muted-bronze and pale-cyan, strong silhouette readable at 18x18, no gradient, no gloss, no shading, minimal detail, no surrounding plaque button badge border or frame",
+      "negative": "letter V, letter X, cross, tick inside a circle, checkbox, box, two check marks, text, letters, numbers, watermark, decorative frame, badge, plaque, button, border, drop shadow, cast shadow, gradient, glow, soft blur, gloss, ornate, realistic, painterly, smooth vector art, 3d render, photograph, character, humanoid figure, face, hand, creature, logo, clipart, scene, landscape, background scenery, multiple objects, cluttered detail",
+      "status": "draft",
+      "styleRef": "style/ui-navigation.png",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "notes": "Wave 3 V0b. Generated 2026-07-26 (3 candidates, $0.02) and rejected: legible at 64px, mush at the 18px HUD footprint, and off-family against the approved charcoal/bronze/cyan navigation set. Superseded by a hand-authored 16x16 pixel map in tools/glyphs/glyphs.ts, rendered by `pnpm art:glyphs`. Status is draft so generation never re-arms; the prompt is kept as a record of the intended subject."
+    },
+    {
+      "id": "class-cadence",
+      "out": "UI_icons/classes/cadence.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "exactly four connected iron strike chambers in one horizontal row, the fourth chamber taller than the other three and filled solid pale-cyan, charcoal iron with sparse muted-bronze wear, transparent background, bold flat old-school fantasy UI pixel art, crisp intentional pixel clusters, hard chunky outline, flat colors only, limited palette of near-black charcoal muted-bronze and pale-cyan, strong silhouette readable at 18x18, no gradient, no gloss, no shading, minimal detail, no surrounding plaque button badge border or frame",
+      "negative": "five chambers, three chambers, battery cells, piano keys, fence, bar chart, ascending stairs, text, letters, numbers, watermark, decorative frame, badge, plaque, button, border, drop shadow, cast shadow, gradient, glow, soft blur, gloss, ornate, realistic, painterly, smooth vector art, 3d render, photograph, character, humanoid figure, face, hand, creature, logo, clipart, scene, landscape, background scenery, multiple objects, cluttered detail",
+      "status": "draft",
+      "styleRef": "style/ui-navigation.png",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "notes": "Wave 3 V0b. Generated 2026-07-26 (3 candidates, $0.02) and rejected: legible at 64px, mush at the 18px HUD footprint, and off-family against the approved charcoal/bronze/cyan navigation set. Superseded by a hand-authored 16x16 pixel map in tools/glyphs/glyphs.ts, rendered by `pnpm art:glyphs`. Status is draft so generation never re-arms; the prompt is kept as a record of the intended subject."
+    },
+    {
+      "id": "class-cooldown",
+      "out": "UI_icons/classes/cooldown.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "one round engraved iron seal split by one bold pale-cyan diagonal cleave line running from its lower left to its upper right, charcoal iron with sparse muted-bronze wear, transparent background, bold flat old-school fantasy UI pixel art, crisp intentional pixel clusters, hard chunky outline, flat colors only, limited palette of near-black charcoal muted-bronze and pale-cyan, strong silhouette readable at 18x18, no gradient, no gloss, no shading, minimal detail, no surrounding plaque button badge border or frame",
+      "negative": "gear teeth, clock hands, hourglass, letter O, wax seal with ribbon, two lines, crescent moon, text, letters, numbers, watermark, decorative frame, badge, plaque, button, border, drop shadow, cast shadow, gradient, glow, soft blur, gloss, ornate, realistic, painterly, smooth vector art, 3d render, photograph, character, humanoid figure, face, hand, creature, logo, clipart, scene, landscape, background scenery, multiple objects, cluttered detail",
+      "status": "draft",
+      "styleRef": "style/ui-navigation.png",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "notes": "Wave 3 V0b. Generated 2026-07-26 (3 candidates, $0.02) and rejected: legible at 64px, mush at the 18px HUD footprint, and off-family against the approved charcoal/bronze/cyan navigation set. Superseded by a hand-authored 16x16 pixel map in tools/glyphs/glyphs.ts, rendered by `pnpm art:glyphs`. Status is draft so generation never re-arms; the prompt is kept as a record of the intended subject."
+    },
+    {
+      "id": "class-dot",
+      "out": "UI_icons/classes/dot.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "one broad angular iron droplet with exactly three pale-cyan corrosion pits eaten into its lower half, charcoal iron with sparse muted-bronze wear, transparent background, bold flat old-school fantasy UI pixel art, crisp intentional pixel clusters, hard chunky outline, flat colors only, limited palette of near-black charcoal muted-bronze and pale-cyan, strong silhouette readable at 18x18, no gradient, no gloss, no shading, minimal detail, no surrounding plaque button badge border or frame",
+      "negative": "skull, poison bottle, flask, mushroom, flame, snowflake, four pits, water splash, teardrop eye, text, letters, numbers, watermark, decorative frame, badge, plaque, button, border, drop shadow, cast shadow, gradient, glow, soft blur, gloss, ornate, realistic, painterly, smooth vector art, 3d render, photograph, character, humanoid figure, face, hand, creature, logo, clipart, scene, landscape, background scenery, multiple objects, cluttered detail",
+      "status": "draft",
+      "styleRef": "style/ui-navigation.png",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "notes": "Wave 3 V0b. Generated 2026-07-26 (3 candidates, $0.02) and rejected: legible at 64px, mush at the 18px HUD footprint, and off-family against the approved charcoal/bronze/cyan navigation set. Superseded by a hand-authored 16x16 pixel map in tools/glyphs/glyphs.ts, rendered by `pnpm art:glyphs`. Status is draft so generation never re-arms; the prompt is kept as a record of the intended subject."
+    },
+    {
+      "id": "class-reload",
+      "out": "UI_icons/classes/reload.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "one iron hexagonal ammunition hub with exactly six small pale-cyan vertex markers, one at each corner, around a hollow charcoal centre, charcoal iron with sparse muted-bronze wear, transparent background, bold flat old-school fantasy UI pixel art, crisp intentional pixel clusters, hard chunky outline, flat colors only, limited palette of near-black charcoal muted-bronze and pale-cyan, strong silhouette readable at 18x18, no gradient, no gloss, no shading, minimal detail, no surrounding plaque button badge border or frame",
+      "negative": "gear teeth, revolver cylinder with round chambers, bullet, magazine, clock face, honeycomb, five sides, text, letters, numbers, watermark, decorative frame, badge, plaque, button, border, drop shadow, cast shadow, gradient, glow, soft blur, gloss, ornate, realistic, painterly, smooth vector art, 3d render, photograph, character, humanoid figure, face, hand, creature, logo, clipart, scene, landscape, background scenery, multiple objects, cluttered detail",
+      "status": "draft",
+      "styleRef": "style/ui-navigation.png",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "notes": "Wave 3 V0b. Generated 2026-07-26 (3 candidates, $0.02) and rejected: legible at 64px, mush at the 18px HUD footprint, and off-family against the approved charcoal/bronze/cyan navigation set. Superseded by a hand-authored 16x16 pixel map in tools/glyphs/glyphs.ts, rendered by `pnpm art:glyphs`. Status is draft so generation never re-arms; the prompt is kept as a record of the intended subject."
+    },
+    {
+      "id": "class-energy",
+      "out": "UI_icons/classes/energy.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "one continuous pale-cyan ribbon of energy curving in a single S through the middle of one narrow upright iron focus ring, charcoal iron with sparse muted-bronze wear, transparent background, bold flat old-school fantasy UI pixel art, crisp intentional pixel clusters, hard chunky outline, flat colors only, limited palette of near-black charcoal muted-bronze and pale-cyan, strong silhouette readable at 18x18, no gradient, no gloss, no shading, minimal detail, no surrounding plaque button badge border or frame",
+      "negative": "lightning bolt, battery, cell terminals, flame, snake, two ribbons, orb, sphere, infinity symbol, text, letters, numbers, watermark, decorative frame, badge, plaque, button, border, drop shadow, cast shadow, gradient, glow, soft blur, gloss, ornate, realistic, painterly, smooth vector art, 3d render, photograph, character, humanoid figure, face, hand, creature, logo, clipart, scene, landscape, background scenery, multiple objects, cluttered detail",
+      "status": "draft",
+      "styleRef": "style/ui-navigation.png",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "notes": "Wave 3 V0b. Generated 2026-07-26 (3 candidates, $0.02) and rejected: legible at 64px, mush at the 18px HUD footprint, and off-family against the approved charcoal/bronze/cyan navigation set. Superseded by a hand-authored 16x16 pixel map in tools/glyphs/glyphs.ts, rendered by `pnpm art:glyphs`. Status is draft so generation never re-arms; the prompt is kept as a record of the intended subject."
+    },
+    {
+      "id": "class-summoner",
+      "out": "UI_icons/classes/summoner.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "one narrow iron summoning arch with exactly two small pale-cyan spark motes hovering beneath its opening, charcoal iron with sparse muted-bronze wear, transparent background, bold flat old-school fantasy UI pixel art, crisp intentional pixel clusters, hard chunky outline, flat colors only, limited palette of near-black charcoal muted-bronze and pale-cyan, strong silhouette readable at 18x18, no gradient, no gloss, no shading, minimal detail, no surrounding plaque button badge border or frame",
+      "negative": "portal swirl, doorway with a door, tombstone, three motes, creature, familiar, hand, cauldron, text, letters, numbers, watermark, decorative frame, badge, plaque, button, border, drop shadow, cast shadow, gradient, glow, soft blur, gloss, ornate, realistic, painterly, smooth vector art, 3d render, photograph, character, humanoid figure, face, hand, creature, logo, clipart, scene, landscape, background scenery, multiple objects, cluttered detail",
+      "status": "draft",
+      "styleRef": "style/ui-navigation.png",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "notes": "Wave 3 V0b. Generated 2026-07-26 (3 candidates, $0.02) and rejected: legible at 64px, mush at the 18px HUD footprint, and off-family against the approved charcoal/bronze/cyan navigation set. Superseded by a hand-authored 16x16 pixel map in tools/glyphs/glyphs.ts, rendered by `pnpm art:glyphs`. Status is draft so generation never re-arms; the prompt is kept as a record of the intended subject."
     }
   ]
 }

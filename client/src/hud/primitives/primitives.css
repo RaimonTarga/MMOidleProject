@@ -38,8 +38,9 @@
   font-size: 9px;
 }
 
-/* Desktop frame changes require an explicit owner and the breakpoint.
-   Shared renderers in MobileHUD keep their existing presentation. */
+/* Desktop frame changes require an explicit owner and the breakpoint. Shared
+   renderers in MobileHUD resolve the same tier tokens (Phase 12) but never
+   inherit this desktop density. */
 @media (min-width: 1101px) {
   .desktop-hud .hud-panel {
     padding: 10px var(--hud-space-3);

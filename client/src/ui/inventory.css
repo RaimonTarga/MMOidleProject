@@ -42,8 +42,9 @@
 
 .inv-title {
   flex: 1;
+  font-family: var(--hud-font-display);
   font-size: 12px;
-  font-weight: bold;
+  font-weight: var(--hud-font-display-weight);
   color: var(--hud-primary-strong);
   text-transform: uppercase;
   letter-spacing: 1.5px;

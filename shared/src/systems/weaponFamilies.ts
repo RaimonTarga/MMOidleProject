@@ -4,18 +4,9 @@
  * change both behavior and the stat-sheet description at the same time.
  */
 import { RECIPE_DATABASE, type Recipe } from '../recipeDatabase';
-import { abyssUltimateRecipeEntries } from '../data/recipes/abyssUltimate';
 import type { WeaponDotProfile } from '../data/recipes/types';
 
 // ── Abyss ultimate weapon ───────────────────────────────────────────────────
-
-export const EDGE_OF_OBLIVION_ID = 'edge-of-oblivion';
-
-/** Status effect id for Edge of Oblivion corruption stacks. */
-export const VOID_CORRUPTION_EFFECT_ID = 'void-corruption';
-
-/** Movement speed multiplier floor while corrupted (1 − stacks × slowPerStack, clamped). */
-export const CORRUPTION_MIN_SPEED_MULT = 0.35;
 
 // ── Brittle (Tundra weapon armor-shred) ─────────────────────────────────────
 
@@ -51,14 +42,14 @@ export interface BurnWeaponEntry extends WeaponDotProfile {
 }
 
 // All reservoir-DoT weapons, derived from each recipe's `weaponDot` block — that
-// is the single source of truth (edit the recipe to retune). Includes the abyss
-// ultimate entries, which are not yet registered in RECIPE_DATABASE (T4 WIP), so
-// edge-of-oblivion's corruption reservoir survives until ultimates are wired in.
+// is the single source of truth (edit the recipe to retune). This used to merge
+// in unregistered abyss-ultimate entries so edge-of-oblivion's corruption
+// reservoir would survive until ultimates were wired in; ultimates were scrapped
+// and their recipes deleted on 2026-07-26, so there is nothing left to merge.
 // effectIds are unique per weapon (the tick loop iterates the id set).
 export const BURN_FAMILY: BurnWeaponEntry[] = (() => {
   const recipesById = new Map<string, Recipe>();
   for (const recipe of RECIPE_DATABASE.values()) recipesById.set(recipe.id, recipe);
-  for (const [id, recipe] of abyssUltimateRecipeEntries) recipesById.set(id, recipe);
   return [...recipesById.values()]
     .filter((r): r is Recipe & { weaponDot: WeaponDotProfile } => r.weaponDot !== undefined)
     .map((r) => ({ weaponId: r.id, ...r.weaponDot }));
@@ -71,7 +62,3 @@ export function weaponDotProfileForWeapon(weaponId: string): BurnWeaponEntry | u
 export function weaponDotProfileForEffect(effectId: string): BurnWeaponEntry | undefined {
   return BURN_FAMILY.find((entry) => entry.effectId === effectId);
 }
-
-/** Per-stack move-speed slow of the Edge of Oblivion corruption reservoir. */
-export const CORRUPTION_SLOW_PER_STACK =
-  weaponDotProfileForWeapon(EDGE_OF_OBLIVION_ID)?.slowPerStack ?? 0.05;

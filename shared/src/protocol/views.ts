@@ -52,6 +52,11 @@ export interface PlayerView {
   dodgeRate: number;
   /** Fraction of damage avoided on an evaded hit (0..1; 1 = full avoid). */
   evadeMitigation: number;
+  /**
+   * The live accumulator (0..<1). Deterministic, so `evadeCharge + dodgeRate >= 1`
+   * means the next hit taken WILL be evaded — anticipation, not a prediction.
+   */
+  evadeCharge: number;
   shields: ShieldState[];
   /** Total pending damage-over-time on the player (HP-bar red layer). */
   incomingDot: number;
@@ -293,6 +298,7 @@ export function composePlayerView(entity: NetworkedEntity): PlayerView | null {
     damageReduction: mitigation.damageReduction,
     dodgeRate: entity.evadesHits?.dodgeRate ?? 0,
     evadeMitigation: entity.evadesHits?.evadeMitigation ?? 0,
+    evadeCharge: entity.evadesHits?.charge ?? 0,
     shields: entity.holdsShields?.shields ?? [],
     incomingDot: entity.hasStatus?.incomingDot ?? 0,
     pendingHeal: entity.hasStatus?.pendingHeal ?? 0,

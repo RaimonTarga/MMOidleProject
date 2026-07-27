@@ -4,8 +4,8 @@
 			"image": "UI_icons",
 			"format": "RGBA8888",
 			"size": {
-				"w": 256,
-				"h": 272
+				"w": 512,
+				"h": 164
 			},
 			"scale": 1,
 			"frames": [
@@ -136,6 +136,132 @@
 					}
 				},
 				{
+					"filename": "UI_icons/actions/confirm.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 16,
+						"h": 16
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 16,
+						"h": 16
+					},
+					"frame": {
+						"x": 270,
+						"y": 110,
+						"w": 16,
+						"h": 16
+					}
+				},
+				{
+					"filename": "UI_icons/actions/equip.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 16,
+						"h": 16
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 16,
+						"h": 16
+					},
+					"frame": {
+						"x": 290,
+						"y": 110,
+						"w": 16,
+						"h": 16
+					}
+				},
+				{
+					"filename": "UI_icons/actions/inspect.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 16,
+						"h": 16
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 16,
+						"h": 16
+					},
+					"frame": {
+						"x": 310,
+						"y": 110,
+						"w": 16,
+						"h": 16
+					}
+				},
+				{
+					"filename": "UI_icons/actions/locate.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 16,
+						"h": 16
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 16,
+						"h": 16
+					},
+					"frame": {
+						"x": 330,
+						"y": 110,
+						"w": 16,
+						"h": 16
+					}
+				},
+				{
+					"filename": "UI_icons/actions/reorder.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 16,
+						"h": 16
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 16,
+						"h": 16
+					},
+					"frame": {
+						"x": 350,
+						"y": 110,
+						"w": 16,
+						"h": 16
+					}
+				},
+				{
+					"filename": "UI_icons/actions/unequip.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 16,
+						"h": 16
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 16,
+						"h": 16
+					},
+					"frame": {
+						"x": 370,
+						"y": 110,
+						"w": 16,
+						"h": 16
+					}
+				},
+				{
 					"filename": "UI_icons/catalysts/alacrity.png",
 					"rotated": false,
 					"trimmed": false,
@@ -171,6 +297,153 @@
 						"h": 32
 					},
 					"frame": {
+						"x": 257,
+						"y": 2,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "UI_icons/catalysts/brutality.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 293,
+						"y": 2,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "UI_icons/catalysts/placeholder.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 329,
+						"y": 2,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "UI_icons/catalysts/predation.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 365,
+						"y": 2,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "UI_icons/catalysts/volatility.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 401,
+						"y": 2,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "UI_icons/cave-icon.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 35,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 35,
+						"h": 32
+					},
+					"frame": {
+						"x": 437,
+						"y": 2,
+						"w": 35,
+						"h": 32
+					}
+				},
+				{
+					"filename": "UI_icons/classes/cadence.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 476,
+						"y": 2,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "UI_icons/classes/cooldown.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
 						"x": 2,
 						"y": 38,
 						"w": 32,
@@ -178,7 +451,7 @@
 					}
 				},
 				{
-					"filename": "UI_icons/catalysts/brutality.png",
+					"filename": "UI_icons/classes/dot.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -199,7 +472,7 @@
 					}
 				},
 				{
-					"filename": "UI_icons/catalysts/placeholder.png",
+					"filename": "UI_icons/classes/energy.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -220,7 +493,7 @@
 					}
 				},
 				{
-					"filename": "UI_icons/catalysts/predation.png",
+					"filename": "UI_icons/classes/reload.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -241,7 +514,7 @@
 					}
 				},
 				{
-					"filename": "UI_icons/catalysts/volatility.png",
+					"filename": "UI_icons/classes/summoner.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -262,7 +535,7 @@
 					}
 				},
 				{
-					"filename": "UI_icons/cave-icon.png",
+					"filename": "UI_icons/clearing_icon.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -283,7 +556,154 @@
 					}
 				},
 				{
-					"filename": "UI_icons/clearing_icon.png",
+					"filename": "UI_icons/craft-upgrade-icon.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 221,
+						"y": 38,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "UI_icons/desert-icon.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 35,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 35,
+						"h": 32
+					},
+					"frame": {
+						"x": 257,
+						"y": 38,
+						"w": 35,
+						"h": 32
+					}
+				},
+				{
+					"filename": "UI_icons/essences/blue.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 296,
+						"y": 38,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "UI_icons/essences/green.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 332,
+						"y": 38,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "UI_icons/essences/purple.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 368,
+						"y": 38,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "UI_icons/essences/red.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 404,
+						"y": 38,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "UI_icons/essences/yellow.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 440,
+						"y": 38,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "UI_icons/forest-icon.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -304,7 +724,7 @@
 					}
 				},
 				{
-					"filename": "UI_icons/craft-upgrade-icon.png",
+					"filename": "UI_icons/forge-icon.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -325,7 +745,7 @@
 					}
 				},
 				{
-					"filename": "UI_icons/desert-icon.png",
+					"filename": "UI_icons/graveyard-icon.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -346,7 +766,7 @@
 					}
 				},
 				{
-					"filename": "UI_icons/essences/blue.png",
+					"filename": "UI_icons/inventory-icon.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -367,174 +787,6 @@
 					}
 				},
 				{
-					"filename": "UI_icons/essences/green.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 32,
-						"h": 32
-					},
-					"frame": {
-						"x": 152,
-						"y": 74,
-						"w": 32,
-						"h": 32
-					}
-				},
-				{
-					"filename": "UI_icons/essences/purple.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 32,
-						"h": 32
-					},
-					"frame": {
-						"x": 188,
-						"y": 74,
-						"w": 32,
-						"h": 32
-					}
-				},
-				{
-					"filename": "UI_icons/essences/red.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 32,
-						"h": 32
-					},
-					"frame": {
-						"x": 2,
-						"y": 110,
-						"w": 32,
-						"h": 32
-					}
-				},
-				{
-					"filename": "UI_icons/essences/yellow.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 32,
-						"h": 32
-					},
-					"frame": {
-						"x": 38,
-						"y": 110,
-						"w": 32,
-						"h": 32
-					}
-				},
-				{
-					"filename": "UI_icons/forest-icon.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 35,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 35,
-						"h": 32
-					},
-					"frame": {
-						"x": 74,
-						"y": 110,
-						"w": 35,
-						"h": 32
-					}
-				},
-				{
-					"filename": "UI_icons/forge-icon.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 32,
-						"h": 32
-					},
-					"frame": {
-						"x": 113,
-						"y": 110,
-						"w": 32,
-						"h": 32
-					}
-				},
-				{
-					"filename": "UI_icons/graveyard-icon.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 35,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 35,
-						"h": 32
-					},
-					"frame": {
-						"x": 149,
-						"y": 110,
-						"w": 35,
-						"h": 32
-					}
-				},
-				{
-					"filename": "UI_icons/inventory-icon.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 32,
-						"h": 32
-					},
-					"frame": {
-						"x": 188,
-						"y": 110,
-						"w": 32,
-						"h": 32
-					}
-				},
-				{
 					"filename": "UI_icons/jungle-icon.png",
 					"rotated": false,
 					"trimmed": false,
@@ -549,8 +801,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 2,
-						"y": 146,
+						"x": 152,
+						"y": 74,
 						"w": 36,
 						"h": 32
 					}
@@ -570,8 +822,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 42,
-						"y": 146,
+						"x": 192,
+						"y": 74,
 						"w": 32,
 						"h": 32
 					}
@@ -591,8 +843,8 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 156,
-						"y": 218,
+						"x": 390,
+						"y": 110,
 						"w": 16,
 						"h": 16
 					}
@@ -612,8 +864,8 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 176,
-						"y": 218,
+						"x": 410,
+						"y": 110,
 						"w": 16,
 						"h": 16
 					}
@@ -633,8 +885,8 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 196,
-						"y": 218,
+						"x": 430,
+						"y": 110,
 						"w": 16,
 						"h": 16
 					}
@@ -654,8 +906,8 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 216,
-						"y": 218,
+						"x": 450,
+						"y": 110,
 						"w": 16,
 						"h": 16
 					}
@@ -675,8 +927,8 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 236,
-						"y": 218,
+						"x": 470,
+						"y": 110,
 						"w": 16,
 						"h": 16
 					}
@@ -696,8 +948,8 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 2,
-						"y": 254,
+						"x": 490,
+						"y": 110,
 						"w": 16,
 						"h": 16
 					}
@@ -717,8 +969,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 78,
-						"y": 146,
+						"x": 228,
+						"y": 74,
 						"w": 35,
 						"h": 32
 					}
@@ -738,8 +990,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 117,
-						"y": 146,
+						"x": 267,
+						"y": 74,
 						"w": 32,
 						"h": 32
 					}
@@ -759,8 +1011,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 153,
-						"y": 146,
+						"x": 303,
+						"y": 74,
 						"w": 36,
 						"h": 32
 					}
@@ -780,8 +1032,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 193,
-						"y": 146,
+						"x": 343,
+						"y": 74,
 						"w": 32,
 						"h": 32
 					}
@@ -801,8 +1053,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 2,
-						"y": 182,
+						"x": 379,
+						"y": 74,
 						"w": 32,
 						"h": 32
 					}
@@ -822,8 +1074,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 38,
-						"y": 182,
+						"x": 415,
+						"y": 74,
 						"w": 32,
 						"h": 32
 					}
@@ -843,8 +1095,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 74,
-						"y": 182,
+						"x": 451,
+						"y": 74,
 						"w": 32,
 						"h": 32
 					}
@@ -864,8 +1116,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 110,
-						"y": 182,
+						"x": 2,
+						"y": 110,
 						"w": 35,
 						"h": 32
 					}
@@ -885,10 +1137,220 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 149,
-						"y": 182,
+						"x": 41,
+						"y": 110,
 						"w": 32,
 						"h": 32
+					}
+				},
+				{
+					"filename": "UI_icons/stats/attack.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 16,
+						"h": 16
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 16,
+						"h": 16
+					},
+					"frame": {
+						"x": 2,
+						"y": 146,
+						"w": 16,
+						"h": 16
+					}
+				},
+				{
+					"filename": "UI_icons/stats/dps.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 16,
+						"h": 16
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 16,
+						"h": 16
+					},
+					"frame": {
+						"x": 22,
+						"y": 146,
+						"w": 16,
+						"h": 16
+					}
+				},
+				{
+					"filename": "UI_icons/stats/empowered.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 16,
+						"h": 16
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 16,
+						"h": 16
+					},
+					"frame": {
+						"x": 42,
+						"y": 146,
+						"w": 16,
+						"h": 16
+					}
+				},
+				{
+					"filename": "UI_icons/stats/evasion.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 16,
+						"h": 16
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 16,
+						"h": 16
+					},
+					"frame": {
+						"x": 62,
+						"y": 146,
+						"w": 16,
+						"h": 16
+					}
+				},
+				{
+					"filename": "UI_icons/stats/plating.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 16,
+						"h": 16
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 16,
+						"h": 16
+					},
+					"frame": {
+						"x": 82,
+						"y": 146,
+						"w": 16,
+						"h": 16
+					}
+				},
+				{
+					"filename": "UI_icons/stats/range.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 16,
+						"h": 16
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 16,
+						"h": 16
+					},
+					"frame": {
+						"x": 102,
+						"y": 146,
+						"w": 16,
+						"h": 16
+					}
+				},
+				{
+					"filename": "UI_icons/stats/reduction.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 16,
+						"h": 16
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 16,
+						"h": 16
+					},
+					"frame": {
+						"x": 122,
+						"y": 146,
+						"w": 16,
+						"h": 16
+					}
+				},
+				{
+					"filename": "UI_icons/stats/regen.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 16,
+						"h": 16
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 16,
+						"h": 16
+					},
+					"frame": {
+						"x": 142,
+						"y": 146,
+						"w": 16,
+						"h": 16
+					}
+				},
+				{
+					"filename": "UI_icons/stats/shield.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 16,
+						"h": 16
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 16,
+						"h": 16
+					},
+					"frame": {
+						"x": 162,
+						"y": 146,
+						"w": 16,
+						"h": 16
+					}
+				},
+				{
+					"filename": "UI_icons/stats/speed.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 16,
+						"h": 16
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 16,
+						"h": 16
+					},
+					"frame": {
+						"x": 182,
+						"y": 146,
+						"w": 16,
+						"h": 16
 					}
 				},
 				{
@@ -906,8 +1368,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 185,
-						"y": 182,
+						"x": 77,
+						"y": 110,
 						"w": 35,
 						"h": 32
 					}
@@ -927,8 +1389,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 2,
-						"y": 218,
+						"x": 116,
+						"y": 110,
 						"w": 36,
 						"h": 32
 					}
@@ -948,8 +1410,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 42,
-						"y": 218,
+						"x": 156,
+						"y": 110,
 						"w": 35,
 						"h": 32
 					}
@@ -969,8 +1431,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 81,
-						"y": 218,
+						"x": 195,
+						"y": 110,
 						"w": 32,
 						"h": 32
 					}
@@ -990,8 +1452,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 117,
-						"y": 218,
+						"x": 231,
+						"y": 110,
 						"w": 35,
 						"h": 32
 					}

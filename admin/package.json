@@ -9,7 +9,7 @@
     "preview": "vite preview --port 3001"
   },
   "dependencies": {
-    "@mmo-idle/shared": "workspace:*",
+    "@mmo-idle/shared": "link:../shared",
     "@radix-ui/react-alert-dialog": "^1.1.15",
     "@radix-ui/react-dialog": "^1.1.15",
     "@radix-ui/react-dropdown-menu": "^2.1.16",

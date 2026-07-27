@@ -1,10 +1,11 @@
-import { useMemo } from 'react';
+import { useMemo, type CSSProperties } from 'react';
 import { useAtomValue } from 'jotai';
 import {
   BIOME_DATABASE,
   MAX_ITEM_TIER,
   MAX_UPGRADE,
   RUNE_POINT_GLOBAL_MASTERY_STEP,
+  biomeLevelCap,
   globalMasteryRequiredForUpgrade,
   runeBudgetForGlobalMastery,
   upgradeCeilingFromGlobalMastery,
@@ -12,8 +13,17 @@ import {
 import {
   biomeLevelAtom,
   globalMasteryAtom,
+  playerTierAtom,
 } from '../hud/atoms';
-import { DialogHeader, GameDialog } from '../hud/primitives';
+import {
+  DialogHeader,
+  EngravedMeter,
+  GameDialog,
+  GlyphTile,
+  MilestonePips,
+} from '../hud/primitives';
+import { BiomeIcon } from './map/BiomeIcon';
+import { tileColor } from './map/constants';
 import { GameIcon } from './GameIcon';
 import { masterySectionIconSource } from './systemIcons';
 import './crafting.css';
@@ -22,8 +32,24 @@ interface Props {
   onClose: () => void;
 }
 
-function milestoneStatus(unlocked: boolean): string {
-  return unlocked ? 'OK' : '--';
+/**
+ * A milestone is reached or it is not, so it reads as one filled or hollow pip
+ * rather than the literal 'OK' / '--' this column used to print. The label is
+ * what assistive tech and the tooltip get.
+ */
+function MilestoneStatus({ unlocked, label }: { unlocked: boolean; label: string }) {
+  return (
+    <span
+      className={`craft-unlock-row__status${unlocked ? ' craft-unlock-row__status--ok' : ''}`}
+      title={`${label}: ${unlocked ? 'reached' : 'not yet reached'}`}
+    >
+      <MilestonePips
+        states={[unlocked ? 'done' : 'pending']}
+        label={`${label}: ${unlocked ? 'reached' : 'not yet reached'}`}
+        tone={unlocked ? 'success' : 'primary'}
+      />
+    </span>
+  );
 }
 
 function biomeLabel(group: string): string {
@@ -33,6 +59,7 @@ function biomeLabel(group: string): string {
 export function MasteryPanel({ onClose }: Props) {
   const gm = useAtomValue(globalMasteryAtom);
   const biomeLevel = useAtomValue(biomeLevelAtom);
+  const playerTier = useAtomValue(playerTierAtom);
   const itemCaps = Array.from({ length: MAX_ITEM_TIER }, (_, i) => ({
     tier: i + 1,
     cap: upgradeCeilingFromGlobalMastery(gm, i + 1),
@@ -75,28 +102,32 @@ export function MasteryPanel({ onClose }: Props) {
       />
       <div className="mastery-dialog__content">
 
+        {/* Three self-labelling figures instead of a headline plus a comma-joined
+            sentence of caps. */}
         <div className="mastery-summary">
-          <div className="mastery-summary__main">
-            <span className="mastery-summary__label">Global Mastery</span>
-            <span className="mastery-summary__value">{gm}</span>
-          </div>
-          <div className="mastery-summary__stats">
-            <span>
-              Item cap{' '}
-              {unlockedCaps.length === 0
-                ? '+0'
-                : unlockedCaps.map(({ tier, cap }) => `T${tier} +${cap}`).join(' ')}
-            </span>
-            <span>
-              <GameIcon
-                source={masterySectionIconSource('runes')}
-                size={14}
-                fallback={null}
-                decorative
-              />
-              {runeBudget} RP
-            </span>
-          </div>
+          <GlyphTile
+            value={gm}
+            label="Global Mastery"
+            icon={masterySectionIconSource('summary')}
+            fallback={null}
+          />
+          <GlyphTile
+            value={unlockedCaps.length === 0
+              ? '+0'
+              : `+${Math.max(...unlockedCaps.map(({ cap }) => cap))}`}
+            label="Best item cap"
+            icon={masterySectionIconSource('items')}
+            fallback={null}
+            title={unlockedCaps.length === 0
+              ? 'No item upgrade tiers unlocked yet'
+              : unlockedCaps.map(({ tier, cap }) => `Tier ${tier}: +${cap}`).join(' · ')}
+          />
+          <GlyphTile
+            value={runeBudget}
+            label="Rune points"
+            icon={masterySectionIconSource('runes')}
+            fallback={null}
+          />
         </div>
 
         <div className="craft-body">
@@ -132,9 +163,7 @@ export function MasteryPanel({ onClose }: Props) {
                       Tier {tier} items{maxed ? '' : ` — next +${cap + 1}`}
                     </span>
                     <span className="craft-unlock-row__slot">+{cap}</span>
-                    <span className={`craft-unlock-row__status${maxed ? ' craft-unlock-row__status--ok' : ''}`}>
-                      {milestoneStatus(maxed)}
-                    </span>
+                    <MilestoneStatus unlocked={maxed} label={`Tier ${tier} items`} />
                   </div>
                 );
               })}
@@ -178,9 +207,10 @@ export function MasteryPanel({ onClose }: Props) {
                       {runeBudgetForGlobalMastery(req)} rune points
                     </span>
                     <span className="craft-unlock-row__slot">RP</span>
-                    <span className={`craft-unlock-row__status${unlocked ? ' craft-unlock-row__status--ok' : ''}`}>
-                      {milestoneStatus(unlocked)}
-                    </span>
+                    <MilestoneStatus
+                      unlocked={unlocked}
+                      label={`${runeBudgetForGlobalMastery(req)} rune points`}
+                    />
                   </div>
                 );
               })}
@@ -207,12 +237,33 @@ export function MasteryPanel({ onClose }: Props) {
               <div className="craft-empty">No mastery yet.</div>
             ) : (
               <div className="mastery-biome-grid">
-                {biomeRows.map(([group, level]) => (
-                  <div key={group} className="mastery-biome-row">
-                    <span>{biomeLabel(group)}</span>
-                    <strong>Lv {level}</strong>
-                  </div>
-                ))}
+                {biomeRows.map(([group, level]) => {
+                  const cap = biomeLevelCap(playerTier, group);
+                  const atCap = cap > 0 && level >= cap;
+                  return (
+                    <div
+                      key={group}
+                      className="mastery-biome-row"
+                      style={{ '--biome-accent': tileColor(group) } as CSSProperties}
+                      title={`${biomeLabel(group)}: level ${level} of ${cap} at tier ${playerTier}`}
+                    >
+                      <BiomeIcon biomeGroup={group} size={18} className="mastery-biome-row__icon" />
+                      <span className="mastery-biome-row__name">{biomeLabel(group)}</span>
+                      {/* A level with a tier ceiling is a bounded value, so it
+                          earns the engraved grammar — "Lv 4" alone never said
+                          how much of this biome was left. */}
+                      <EngravedMeter
+                        className="mastery-biome-row__meter"
+                        fraction={cap > 0 ? level / cap : 0}
+                        tone={atCap ? 'warning' : 'primary'}
+                        decorative
+                      />
+                      <strong className="mastery-biome-row__level">
+                        {level}<span className="mastery-biome-row__cap">/{cap}</span>
+                      </strong>
+                    </div>
+                  );
+                })}
               </div>
             )}
           </section>

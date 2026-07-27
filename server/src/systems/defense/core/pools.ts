@@ -7,7 +7,6 @@ import { getResource, type TracksCombat } from '@mmo-idle/shared';
 // `addResource` from the combat-state helpers so they're persisted with the
 // rest of the combat state and observable via `playerCs.resources`.
 
-export const EVASION_KEY     = 'evasionHits';
 export const DEBT_POOL_KEY   = 'damageDebtPool';
 export const ABSORB_POOL_KEY = 'absorbPool';
 export const BURST_POOL_KEY  = 'regenBurstPool';

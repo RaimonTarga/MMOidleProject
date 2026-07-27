@@ -5,7 +5,7 @@
 
 import type { ItemDefinition } from '@mmo-idle/shared';
 import {
-  BURN_FAMILY, EDGE_OF_OBLIVION_ID,
+  BURN_FAMILY,
   upgradeMechanicEffectsTotal, upgradeStatBonusTotal,
 } from '@mmo-idle/shared';
 
@@ -531,18 +531,11 @@ export function formatWeaponEffects(weaponId: string): string[] {
     const tickSec  = burn.tickIntervalMs / 1000;
     const durSec   = burn.drainDurationMs / 1000;
     const mult     = round1(burn.dotMultiplier);
-    const reservoirName = weaponId === EDGE_OF_OBLIVION_ID ? 'corruption reservoir' : 'DoT reservoir';
-    lines.push(`${convPct}% of remaining direct hit damage enters a ${reservoirName}; ${keepPct}% is dealt directly`);
+    lines.push(`${convPct}% of remaining direct hit damage enters a DoT reservoir; ${keepPct}% is dealt directly`);
     lines.push(`Reservoir gains ${mult}x stored DoT value, then drains as ${burn.element} damage every ${tickSec}s over ${durSec}s`);
     lines.push('Class DoT conversion happens first; this weapon converts only the direct damage left afterward');
     lines.push('Empowered hit bonus damage does not increase the stored reservoir value');
     lines.push('Repeated hits refresh the reservoir window; the target badge shows stored damage');
-
-    if (weaponId === EDGE_OF_OBLIVION_ID) {
-      const slowPct = Math.round((burn.slowPerStack ?? 0) * 100);
-      lines.push(`Corruption also slows movement by ${slowPct}% while active`);
-      lines.push('Summoner minion attacks apply Corruption');
-    }
   }
 
   return lines;

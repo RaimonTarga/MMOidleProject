@@ -24,7 +24,7 @@ function BestiaryRow({ entry, onOpen }: { entry: BestiaryEntry; onOpen: () => vo
     <button
       className={`bestiary__row bestiary__row--${entry.role}`}
       onClick={onOpen}
-      title={`${entry.name} — click for details`}
+      title={`${entry.name} — ${entry.profile}`}
     >
       <MonsterSprite
         monsterTypeId={entry.id}
@@ -37,7 +37,6 @@ function BestiaryRow({ entry, onOpen }: { entry: BestiaryEntry; onOpen: () => vo
           <span className="bestiary__name">{entry.name}</span>
           {tag && <span className={`bestiary__tag bestiary__tag--${entry.role}`}>{tag}</span>}
         </div>
-        <div className="bestiary__profile">{entry.profile}</div>
         <div className="bestiary__row-stats">
           <span>HP <b>{entry.stats.hp.toLocaleString()}</b></span>
           <span>DPS <b>{entry.stats.dps}</b></span>

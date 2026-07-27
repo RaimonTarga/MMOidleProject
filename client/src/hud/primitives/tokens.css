@@ -1,4 +1,14 @@
+@import "./displayFont.css";
+
 :root {
+  /* Titles only — the engraved serif is unreadable at the 9px micro-label and
+     numeral sizes, so those keep the sans/mono stacks. These two values plus the
+     @font-face in displayFont.css are the whole switch if the face is ever
+     reconsidered; the fallback stack keeps titles serif before the file lands
+     and if it never does. */
+  --hud-font-display: 'Cinzel', 'Palatino Linotype', Georgia, serif;
+  --hud-font-display-weight: 600;
+
   /* Tier 1 is the fallback before player state arrives. Gameplay tiers are
      zero-indexed; uiTier.ts projects them here as data-ui-tier="1"-"8". */
   --hud-material-rail: rgba(14, 12, 9, 0.97);
@@ -70,6 +80,11 @@
   --hud-focus-width: 1px;
   --hud-focus-offset: 2px;
 
+  /* Minimum comfortable pointer/touch footprint. Desktop controls keep their
+     compact density; the mobile scope below raises them to the touch value. */
+  --hud-hit-target: 0px;
+  --hud-hit-target-compact: 0px;
+
   --hud-motion-fast: 100ms;
   --hud-motion-state: 120ms;
   --hud-motion-trigger: 650ms;
@@ -82,392 +97,414 @@
   --btn-bg: var(--hud-material-control);
 }
 
-/* Phase 9 is desktop-only. The document attribute is global so every React
-   root and Phaser can observe it, but shared mobile renderers retain their
-   existing Tier 1 token values until Phase 12. */
-@media (min-width: 1101px) {
-  :root[data-ui-tier="1"] {
-    --hud-material-rail: rgba(14, 12, 9, 0.97);
-    --hud-material-panel: #221f18;
-    --hud-material-control: #2a2720;
-    --hud-material-dock-top: rgba(43, 38, 29, 0.96);
-    --hud-material-dock-bottom: rgba(20, 17, 13, 0.98);
-    --hud-material-inset: #080706;
-    --hud-edge-light: #3e3a30;
-    --hud-edge-medium: #63553e;
-    --hud-edge-strong: #75664d;
-    --hud-edge-dark: #0c0a07;
-    --hud-edge-divider: rgba(100, 88, 60, 0.4);
-    --hud-primary: #c8a860;
-    --hud-primary-strong: #e0c070;
-    --hud-text: #d2cbbb;
-    --hud-text-muted: #9a8f7a;
-    --hud-text-dim: #706758;
-    --hud-success: #65d184;
-    --hud-warning: #dfa844;
-    --hud-danger: #ef7463;
-    --hud-frame-complexity: 0.18;
-    --hud-ornament-opacity: 0.12;
-    --hud-frame-highlight: rgba(255, 244, 205, 0.025);
-    --hud-energy-saturation: 0.72;
-    --hud-energy-dormant: rgba(200, 168, 96, 0.025);
-    --hud-energy-active: rgba(224, 192, 112, 0.13);
-    --hud-accent-shadow: rgba(200, 168, 96, 0.1);
+/* The document attribute is global so every React root and Phaser observes the
+   same tier. Phase 12 lets these sets resolve on mobile as well; only the
+   apparatus density/motion axes are damped there (see the mobile scope below),
+   so material, semantic, and mechanic meanings stay identical across the
+   1100/1101px boundary. */
+:root[data-ui-tier="1"] {
+  --hud-material-rail: rgba(14, 12, 9, 0.97);
+  --hud-material-panel: #221f18;
+  --hud-material-control: #2a2720;
+  --hud-material-dock-top: rgba(43, 38, 29, 0.96);
+  --hud-material-dock-bottom: rgba(20, 17, 13, 0.98);
+  --hud-material-inset: #080706;
+  --hud-edge-light: #3e3a30;
+  --hud-edge-medium: #63553e;
+  --hud-edge-strong: #75664d;
+  --hud-edge-dark: #0c0a07;
+  --hud-edge-divider: rgba(100, 88, 60, 0.4);
+  --hud-primary: #c8a860;
+  --hud-primary-strong: #e0c070;
+  --hud-text: #d2cbbb;
+  --hud-text-muted: #9a8f7a;
+  --hud-text-dim: #706758;
+  --hud-success: #65d184;
+  --hud-warning: #dfa844;
+  --hud-danger: #ef7463;
+  --hud-frame-complexity: 0.18;
+  --hud-ornament-opacity: 0.12;
+  --hud-frame-highlight: rgba(255, 244, 205, 0.025);
+  --hud-energy-saturation: 0.72;
+  --hud-energy-dormant: rgba(200, 168, 96, 0.025);
+  --hud-energy-active: rgba(224, 192, 112, 0.13);
+  --hud-accent-shadow: rgba(200, 168, 96, 0.1);
+  --hud-frame-cut: 0px;
+  --hud-frame-double-opacity: 0.05;
+  --hud-channel-opacity: 0;
+  --hud-channel-color: rgba(224, 192, 112, 0.64);
+  --hud-channel-step: 96px;
+  --hud-channel-speed: 0s;
+  --hud-rune-trace: transparent;
+  --hud-tier-morph-duration: 320ms;
+  --hud-tier-activation-duration: 900ms;
+  --hud-unlock-activation-duration: 520ms;
+  --hud-unlock-flare-opacity: 0.12;
+  --hud-unlock-lift: 1px;
+  --hud-motion-fast: 90ms;
+  --hud-motion-state: 110ms;
+  --hud-motion-trigger: 580ms;
+  --hud-minimap-bg: #0c0b09;
+  --hud-minimap-edge: #75664d;
+  --hud-minimap-inner-edge: #17130f;
+  --hud-minimap-bg-alpha: 0.9;
+}
+
+:root[data-ui-tier="2"] {
+  --hud-material-rail: rgba(17, 14, 10, 0.97);
+  --hud-material-panel: #272219;
+  --hud-material-control: #302a20;
+  --hud-material-dock-top: rgba(49, 42, 30, 0.97);
+  --hud-material-dock-bottom: rgba(23, 19, 13, 0.98);
+  --hud-material-inset: #0a0806;
+  --hud-edge-light: #484034;
+  --hud-edge-medium: #735f42;
+  --hud-edge-strong: #8a714c;
+  --hud-edge-dark: #0d0a07;
+  --hud-edge-divider: rgba(119, 94, 57, 0.43);
+  --hud-primary: #cfa65d;
+  --hud-primary-strong: #e7bf70;
+  --hud-text: #d6cdbc;
+  --hud-text-muted: #a09580;
+  --hud-text-dim: #756a59;
+  --hud-success: #65d184;
+  --hud-warning: #dfa844;
+  --hud-danger: #ef7463;
+  --hud-frame-complexity: 0.28;
+  --hud-ornament-opacity: 0.18;
+  --hud-frame-highlight: rgba(255, 229, 179, 0.034);
+  --hud-energy-saturation: 0.78;
+  --hud-energy-dormant: rgba(207, 166, 93, 0.035);
+  --hud-energy-active: rgba(231, 191, 112, 0.16);
+  --hud-accent-shadow: rgba(207, 166, 93, 0.13);
+  --hud-frame-cut: 1px;
+  --hud-frame-double-opacity: 0.12;
+  --hud-channel-opacity: 0.06;
+  --hud-channel-color: rgba(231, 191, 112, 0.68);
+  --hud-channel-step: 88px;
+  --hud-channel-speed: 10s;
+  --hud-rune-trace: rgba(231, 191, 112, 0.03);
+  --hud-tier-morph-duration: 360ms;
+  --hud-tier-activation-duration: 1000ms;
+  --hud-unlock-activation-duration: 560ms;
+  --hud-unlock-flare-opacity: 0.17;
+  --hud-unlock-lift: 1px;
+  --hud-motion-fast: 94ms;
+  --hud-motion-state: 114ms;
+  --hud-motion-trigger: 610ms;
+  --hud-minimap-bg: #100d09;
+  --hud-minimap-edge: #8a714c;
+  --hud-minimap-inner-edge: #21190f;
+  --hud-minimap-bg-alpha: 0.9;
+}
+
+:root[data-ui-tier="3"] {
+  --hud-material-rail: rgba(17, 15, 11, 0.97);
+  --hud-material-panel: #29251b;
+  --hud-material-control: #332e22;
+  --hud-material-dock-top: rgba(52, 46, 33, 0.97);
+  --hud-material-dock-bottom: rgba(24, 21, 15, 0.98);
+  --hud-material-inset: #0a0907;
+  --hud-edge-light: #4d4738;
+  --hud-edge-medium: #7b6948;
+  --hud-edge-strong: #978154;
+  --hud-edge-dark: #0d0b08;
+  --hud-edge-divider: rgba(128, 108, 67, 0.46);
+  --hud-primary: #d1ae63;
+  --hud-primary-strong: #ebcb7f;
+  --hud-text: #d9d2c1;
+  --hud-text-muted: #a59b86;
+  --hud-text-dim: #796f5d;
+  --hud-success: #65d184;
+  --hud-warning: #dfa844;
+  --hud-danger: #ef7463;
+  --hud-frame-complexity: 0.4;
+  --hud-ornament-opacity: 0.25;
+  --hud-frame-highlight: rgba(255, 235, 190, 0.045);
+  --hud-energy-saturation: 0.85;
+  --hud-energy-dormant: rgba(209, 174, 99, 0.045);
+  --hud-energy-active: rgba(235, 203, 127, 0.2);
+  --hud-accent-shadow: rgba(209, 174, 99, 0.16);
+  --hud-frame-cut: 2px;
+  --hud-frame-double-opacity: 0.22;
+  --hud-channel-opacity: 0.12;
+  --hud-channel-color: rgba(235, 203, 127, 0.72);
+  --hud-channel-step: 72px;
+  --hud-channel-speed: 8.8s;
+  --hud-rune-trace: rgba(235, 203, 127, 0.06);
+  --hud-tier-morph-duration: 420ms;
+  --hud-tier-activation-duration: 1125ms;
+  --hud-unlock-activation-duration: 610ms;
+  --hud-unlock-flare-opacity: 0.22;
+  --hud-unlock-lift: 1px;
+  --hud-motion-fast: 98ms;
+  --hud-motion-state: 119ms;
+  --hud-motion-trigger: 640ms;
+  --hud-minimap-bg: #11100b;
+  --hud-minimap-edge: #978154;
+  --hud-minimap-inner-edge: #262013;
+  --hud-minimap-bg-alpha: 0.9;
+}
+
+:root[data-ui-tier="4"] {
+  --hud-material-rail: rgba(18, 14, 11, 0.97);
+  --hud-material-panel: #2b211a;
+  --hud-material-control: #35281f;
+  --hud-material-dock-top: rgba(55, 41, 31, 0.97);
+  --hud-material-dock-bottom: rgba(25, 18, 14, 0.98);
+  --hud-material-inset: #0b0807;
+  --hud-edge-light: #524139;
+  --hud-edge-medium: #805b47;
+  --hud-edge-strong: #9d6c50;
+  --hud-edge-dark: #0e0907;
+  --hud-edge-divider: rgba(133, 82, 61, 0.48);
+  --hud-primary: #d08f5f;
+  --hud-primary-strong: #efb478;
+  --hud-text: #ddd0c3;
+  --hud-text-muted: #aa9686;
+  --hud-text-dim: #7c695d;
+  --hud-success: #65d184;
+  --hud-warning: #dfa844;
+  --hud-danger: #ef7463;
+  --hud-frame-complexity: 0.52;
+  --hud-ornament-opacity: 0.33;
+  --hud-frame-highlight: rgba(255, 218, 190, 0.055);
+  --hud-energy-saturation: 0.92;
+  --hud-energy-dormant: rgba(208, 143, 95, 0.055);
+  --hud-energy-active: rgba(239, 180, 120, 0.23);
+  --hud-accent-shadow: rgba(208, 143, 95, 0.2);
+  --hud-frame-cut: 3px;
+  --hud-frame-double-opacity: 0.34;
+  --hud-channel-opacity: 0.19;
+  --hud-channel-color: rgba(239, 180, 120, 0.76);
+  --hud-channel-step: 60px;
+  --hud-channel-speed: 7.5s;
+  --hud-rune-trace: rgba(239, 180, 120, 0.09);
+  --hud-tier-morph-duration: 480ms;
+  --hud-tier-activation-duration: 1300ms;
+  --hud-unlock-activation-duration: 660ms;
+  --hud-unlock-flare-opacity: 0.27;
+  --hud-unlock-lift: 1px;
+  --hud-motion-fast: 102ms;
+  --hud-motion-state: 124ms;
+  --hud-motion-trigger: 670ms;
+  --hud-minimap-bg: #120d0a;
+  --hud-minimap-edge: #9d6c50;
+  --hud-minimap-inner-edge: #291812;
+  --hud-minimap-bg-alpha: 0.89;
+}
+
+:root[data-ui-tier="5"] {
+  --hud-material-rail: rgba(11, 17, 16, 0.97);
+  --hud-material-panel: #192825;
+  --hud-material-control: #20312e;
+  --hud-material-dock-top: rgba(31, 51, 47, 0.97);
+  --hud-material-dock-bottom: rgba(14, 24, 22, 0.98);
+  --hud-material-inset: #060b0a;
+  --hud-edge-light: #354d48;
+  --hud-edge-medium: #47776d;
+  --hud-edge-strong: #57948a;
+  --hud-edge-dark: #07100e;
+  --hud-edge-divider: rgba(70, 132, 119, 0.47);
+  --hud-primary: #71b9aa;
+  --hud-primary-strong: #98dccd;
+  --hud-text: #d1ddd9;
+  --hud-text-muted: #94aaa4;
+  --hud-text-dim: #637d76;
+  --hud-success: #65d184;
+  --hud-warning: #dfa844;
+  --hud-danger: #ef7463;
+  --hud-frame-complexity: 0.65;
+  --hud-ornament-opacity: 0.43;
+  --hud-frame-highlight: rgba(190, 255, 240, 0.06);
+  --hud-energy-saturation: 1;
+  --hud-energy-dormant: rgba(113, 185, 170, 0.065);
+  --hud-energy-active: rgba(152, 220, 205, 0.27);
+  --hud-accent-shadow: rgba(113, 185, 170, 0.22);
+  --hud-frame-cut: 4px;
+  --hud-frame-double-opacity: 0.48;
+  --hud-channel-opacity: 0.28;
+  --hud-channel-color: rgba(152, 220, 205, 0.8);
+  --hud-channel-step: 52px;
+  --hud-channel-speed: 6.4s;
+  --hud-rune-trace: rgba(152, 220, 205, 0.14);
+  --hud-tier-morph-duration: 540ms;
+  --hud-tier-activation-duration: 1500ms;
+  --hud-unlock-activation-duration: 710ms;
+  --hud-unlock-flare-opacity: 0.32;
+  --hud-unlock-lift: 2px;
+  --hud-motion-fast: 106ms;
+  --hud-motion-state: 129ms;
+  --hud-motion-trigger: 700ms;
+  --hud-minimap-bg: #07100e;
+  --hud-minimap-edge: #57948a;
+  --hud-minimap-inner-edge: #102722;
+  --hud-minimap-bg-alpha: 0.89;
+}
+
+:root[data-ui-tier="6"] {
+  --hud-material-rail: rgba(11, 14, 20, 0.97);
+  --hud-material-panel: #1a2230;
+  --hud-material-control: #212b3a;
+  --hud-material-dock-top: rgba(32, 43, 60, 0.97);
+  --hud-material-dock-bottom: rgba(14, 19, 28, 0.98);
+  --hud-material-inset: #07090e;
+  --hud-edge-light: #39465d;
+  --hud-edge-medium: #526b91;
+  --hud-edge-strong: #6685af;
+  --hud-edge-dark: #080b12;
+  --hud-edge-divider: rgba(83, 112, 157, 0.48);
+  --hud-primary: #7ea4d3;
+  --hud-primary-strong: #aacaf0;
+  --hud-text: #d5dce8;
+  --hud-text-muted: #98a7bc;
+  --hud-text-dim: #68778f;
+  --hud-success: #65d184;
+  --hud-warning: #dfa844;
+  --hud-danger: #ef7463;
+  --hud-frame-complexity: 0.77;
+  --hud-ornament-opacity: 0.54;
+  --hud-frame-highlight: rgba(201, 220, 255, 0.07);
+  --hud-energy-saturation: 1.06;
+  --hud-energy-dormant: rgba(126, 164, 211, 0.075);
+  --hud-energy-active: rgba(170, 202, 240, 0.3);
+  --hud-accent-shadow: rgba(126, 164, 211, 0.25);
+  --hud-frame-cut: 5px;
+  --hud-frame-double-opacity: 0.64;
+  --hud-channel-opacity: 0.38;
+  --hud-channel-color: rgba(170, 202, 240, 0.84);
+  --hud-channel-step: 44px;
+  --hud-channel-speed: 5.6s;
+  --hud-rune-trace: rgba(170, 202, 240, 0.2);
+  --hud-tier-morph-duration: 600ms;
+  --hud-tier-activation-duration: 1700ms;
+  --hud-unlock-activation-duration: 760ms;
+  --hud-unlock-flare-opacity: 0.37;
+  --hud-unlock-lift: 2px;
+  --hud-motion-fast: 110ms;
+  --hud-motion-state: 134ms;
+  --hud-motion-trigger: 730ms;
+  --hud-minimap-bg: #080b12;
+  --hud-minimap-edge: #6685af;
+  --hud-minimap-inner-edge: #111a2a;
+  --hud-minimap-bg-alpha: 0.88;
+}
+
+:root[data-ui-tier="7"] {
+  --hud-material-rail: rgba(15, 12, 20, 0.97);
+  --hud-material-panel: #251d30;
+  --hud-material-control: #2e253a;
+  --hud-material-dock-top: rgba(47, 37, 61, 0.97);
+  --hud-material-dock-bottom: rgba(21, 16, 29, 0.98);
+  --hud-material-inset: #0a0710;
+  --hud-edge-light: #4c405c;
+  --hud-edge-medium: #71578f;
+  --hud-edge-strong: #8b6daf;
+  --hud-edge-dark: #0d0913;
+  --hud-edge-divider: rgba(117, 84, 153, 0.5);
+  --hud-primary: #a68acb;
+  --hud-primary-strong: #ceb3ed;
+  --hud-text: #ded7e7;
+  --hud-text-muted: #aa9bb9;
+  --hud-text-dim: #79698a;
+  --hud-success: #65d184;
+  --hud-warning: #dfa844;
+  --hud-danger: #ef7463;
+  --hud-frame-complexity: 0.89;
+  --hud-ornament-opacity: 0.66;
+  --hud-frame-highlight: rgba(232, 211, 255, 0.082);
+  --hud-energy-saturation: 1.12;
+  --hud-energy-dormant: rgba(166, 138, 203, 0.085);
+  --hud-energy-active: rgba(206, 179, 237, 0.34);
+  --hud-accent-shadow: rgba(166, 138, 203, 0.29);
+  --hud-frame-cut: 7px;
+  --hud-frame-double-opacity: 0.82;
+  --hud-channel-opacity: 0.5;
+  --hud-channel-color: rgba(206, 179, 237, 0.88);
+  --hud-channel-step: 36px;
+  --hud-channel-speed: 4.8s;
+  --hud-rune-trace: rgba(206, 179, 237, 0.26);
+  --hud-tier-morph-duration: 680ms;
+  --hud-tier-activation-duration: 1900ms;
+  --hud-unlock-activation-duration: 820ms;
+  --hud-unlock-flare-opacity: 0.42;
+  --hud-unlock-lift: 2px;
+  --hud-motion-fast: 114ms;
+  --hud-motion-state: 139ms;
+  --hud-motion-trigger: 760ms;
+  --hud-minimap-bg: #0d0913;
+  --hud-minimap-edge: #8b6daf;
+  --hud-minimap-inner-edge: #21142f;
+  --hud-minimap-bg-alpha: 0.88;
+}
+
+:root[data-ui-tier="8"] {
+  --hud-material-rail: rgba(16, 14, 22, 0.97);
+  --hud-material-panel: #282332;
+  --hud-material-control: #332d40;
+  --hud-material-dock-top: rgba(52, 45, 66, 0.97);
+  --hud-material-dock-bottom: rgba(22, 19, 30, 0.98);
+  --hud-material-inset: #0a0910;
+  --hud-edge-light: #574f68;
+  --hud-edge-medium: #81739d;
+  --hud-edge-strong: #a092c0;
+  --hud-edge-dark: #0d0b14;
+  --hud-edge-divider: rgba(137, 120, 169, 0.54);
+  --hud-primary: #c2b3df;
+  --hud-primary-strong: #eee1ff;
+  --hud-text: #ebe6f0;
+  --hud-text-muted: #b5aabd;
+  --hud-text-dim: #84778f;
+  --hud-success: #65d184;
+  --hud-warning: #dfa844;
+  --hud-danger: #ef7463;
+  --hud-frame-complexity: 1;
+  --hud-ornament-opacity: 0.78;
+  --hud-frame-highlight: rgba(247, 236, 255, 0.1);
+  --hud-energy-saturation: 1.18;
+  --hud-energy-dormant: rgba(194, 179, 223, 0.1);
+  --hud-energy-active: rgba(238, 225, 255, 0.38);
+  --hud-accent-shadow: rgba(194, 179, 223, 0.34);
+  --hud-frame-cut: 9px;
+  --hud-frame-double-opacity: 1;
+  --hud-channel-opacity: 0.64;
+  --hud-channel-color: rgba(238, 225, 255, 0.94);
+  --hud-channel-step: 28px;
+  --hud-channel-speed: 4s;
+  --hud-rune-trace: rgba(238, 225, 255, 0.34);
+  --hud-tier-morph-duration: 760ms;
+  --hud-tier-activation-duration: 2100ms;
+  --hud-unlock-activation-duration: 880ms;
+  --hud-unlock-flare-opacity: 0.48;
+  --hud-unlock-lift: 2px;
+  --hud-motion-fast: 118ms;
+  --hud-motion-state: 144ms;
+  --hud-motion-trigger: 790ms;
+  --hud-minimap-bg: #0d0b14;
+  --hud-minimap-edge: #a092c0;
+  --hud-minimap-inner-edge: #241d32;
+  --hud-minimap-bg-alpha: 0.87;
+}
+
+/* Mobile scope. The tier palette above still applies, but the desktop
+   apparatus axes are neutralised so a phone never renders clipped frames,
+   secondary engraving, or continuously moving conduits. Touch footprints
+   replace the desktop pointer density. Ordered before reduced motion so that
+   query keeps the final word on every duration. */
+@media (max-width: 1100px) {
+  :root,
+  :root[data-ui-tier] {
     --hud-frame-cut: 0px;
-    --hud-frame-double-opacity: 0.05;
+    --hud-frame-double-opacity: 0;
+    --hud-ornament-opacity: 0;
     --hud-channel-opacity: 0;
-    --hud-channel-color: rgba(224, 192, 112, 0.64);
-    --hud-channel-step: 96px;
     --hud-channel-speed: 0s;
     --hud-rune-trace: transparent;
-    --hud-tier-morph-duration: 320ms;
-    --hud-tier-activation-duration: 900ms;
-    --hud-unlock-activation-duration: 520ms;
-    --hud-unlock-flare-opacity: 0.12;
-    --hud-unlock-lift: 1px;
-    --hud-motion-fast: 90ms;
-    --hud-motion-state: 110ms;
-    --hud-motion-trigger: 580ms;
-    --hud-minimap-bg: #0c0b09;
-    --hud-minimap-edge: #75664d;
-    --hud-minimap-inner-edge: #17130f;
-    --hud-minimap-bg-alpha: 0.9;
-  }
-
-  :root[data-ui-tier="2"] {
-    --hud-material-rail: rgba(17, 14, 10, 0.97);
-    --hud-material-panel: #272219;
-    --hud-material-control: #302a20;
-    --hud-material-dock-top: rgba(49, 42, 30, 0.97);
-    --hud-material-dock-bottom: rgba(23, 19, 13, 0.98);
-    --hud-material-inset: #0a0806;
-    --hud-edge-light: #484034;
-    --hud-edge-medium: #735f42;
-    --hud-edge-strong: #8a714c;
-    --hud-edge-dark: #0d0a07;
-    --hud-edge-divider: rgba(119, 94, 57, 0.43);
-    --hud-primary: #cfa65d;
-    --hud-primary-strong: #e7bf70;
-    --hud-text: #d6cdbc;
-    --hud-text-muted: #a09580;
-    --hud-text-dim: #756a59;
-    --hud-success: #65d184;
-    --hud-warning: #dfa844;
-    --hud-danger: #ef7463;
-    --hud-frame-complexity: 0.28;
-    --hud-ornament-opacity: 0.18;
-    --hud-frame-highlight: rgba(255, 229, 179, 0.034);
-    --hud-energy-saturation: 0.78;
-    --hud-energy-dormant: rgba(207, 166, 93, 0.035);
-    --hud-energy-active: rgba(231, 191, 112, 0.16);
-    --hud-accent-shadow: rgba(207, 166, 93, 0.13);
-    --hud-frame-cut: 1px;
-    --hud-frame-double-opacity: 0.12;
-    --hud-channel-opacity: 0.06;
-    --hud-channel-color: rgba(231, 191, 112, 0.68);
-    --hud-channel-step: 88px;
-    --hud-channel-speed: 10s;
-    --hud-rune-trace: rgba(231, 191, 112, 0.03);
-    --hud-tier-morph-duration: 360ms;
-    --hud-tier-activation-duration: 1000ms;
-    --hud-unlock-activation-duration: 560ms;
-    --hud-unlock-flare-opacity: 0.17;
-    --hud-unlock-lift: 1px;
-    --hud-motion-fast: 94ms;
-    --hud-motion-state: 114ms;
-    --hud-motion-trigger: 610ms;
-    --hud-minimap-bg: #100d09;
-    --hud-minimap-edge: #8a714c;
-    --hud-minimap-inner-edge: #21190f;
-    --hud-minimap-bg-alpha: 0.9;
-  }
-
-  :root[data-ui-tier="3"] {
-    --hud-material-rail: rgba(17, 15, 11, 0.97);
-    --hud-material-panel: #29251b;
-    --hud-material-control: #332e22;
-    --hud-material-dock-top: rgba(52, 46, 33, 0.97);
-    --hud-material-dock-bottom: rgba(24, 21, 15, 0.98);
-    --hud-material-inset: #0a0907;
-    --hud-edge-light: #4d4738;
-    --hud-edge-medium: #7b6948;
-    --hud-edge-strong: #978154;
-    --hud-edge-dark: #0d0b08;
-    --hud-edge-divider: rgba(128, 108, 67, 0.46);
-    --hud-primary: #d1ae63;
-    --hud-primary-strong: #ebcb7f;
-    --hud-text: #d9d2c1;
-    --hud-text-muted: #a59b86;
-    --hud-text-dim: #796f5d;
-    --hud-success: #65d184;
-    --hud-warning: #dfa844;
-    --hud-danger: #ef7463;
-    --hud-frame-complexity: 0.4;
-    --hud-ornament-opacity: 0.25;
-    --hud-frame-highlight: rgba(255, 235, 190, 0.045);
-    --hud-energy-saturation: 0.85;
-    --hud-energy-dormant: rgba(209, 174, 99, 0.045);
-    --hud-energy-active: rgba(235, 203, 127, 0.2);
-    --hud-accent-shadow: rgba(209, 174, 99, 0.16);
-    --hud-frame-cut: 2px;
-    --hud-frame-double-opacity: 0.22;
-    --hud-channel-opacity: 0.12;
-    --hud-channel-color: rgba(235, 203, 127, 0.72);
-    --hud-channel-step: 72px;
-    --hud-channel-speed: 8.8s;
-    --hud-rune-trace: rgba(235, 203, 127, 0.06);
-    --hud-tier-morph-duration: 420ms;
-    --hud-tier-activation-duration: 1125ms;
-    --hud-unlock-activation-duration: 610ms;
-    --hud-unlock-flare-opacity: 0.22;
-    --hud-unlock-lift: 1px;
-    --hud-motion-fast: 98ms;
-    --hud-motion-state: 119ms;
-    --hud-motion-trigger: 640ms;
-    --hud-minimap-bg: #11100b;
-    --hud-minimap-edge: #978154;
-    --hud-minimap-inner-edge: #262013;
-    --hud-minimap-bg-alpha: 0.9;
-  }
-
-  :root[data-ui-tier="4"] {
-    --hud-material-rail: rgba(18, 14, 11, 0.97);
-    --hud-material-panel: #2b211a;
-    --hud-material-control: #35281f;
-    --hud-material-dock-top: rgba(55, 41, 31, 0.97);
-    --hud-material-dock-bottom: rgba(25, 18, 14, 0.98);
-    --hud-material-inset: #0b0807;
-    --hud-edge-light: #524139;
-    --hud-edge-medium: #805b47;
-    --hud-edge-strong: #9d6c50;
-    --hud-edge-dark: #0e0907;
-    --hud-edge-divider: rgba(133, 82, 61, 0.48);
-    --hud-primary: #d08f5f;
-    --hud-primary-strong: #efb478;
-    --hud-text: #ddd0c3;
-    --hud-text-muted: #aa9686;
-    --hud-text-dim: #7c695d;
-    --hud-success: #65d184;
-    --hud-warning: #dfa844;
-    --hud-danger: #ef7463;
-    --hud-frame-complexity: 0.52;
-    --hud-ornament-opacity: 0.33;
-    --hud-frame-highlight: rgba(255, 218, 190, 0.055);
-    --hud-energy-saturation: 0.92;
-    --hud-energy-dormant: rgba(208, 143, 95, 0.055);
-    --hud-energy-active: rgba(239, 180, 120, 0.23);
-    --hud-accent-shadow: rgba(208, 143, 95, 0.2);
-    --hud-frame-cut: 3px;
-    --hud-frame-double-opacity: 0.34;
-    --hud-channel-opacity: 0.19;
-    --hud-channel-color: rgba(239, 180, 120, 0.76);
-    --hud-channel-step: 60px;
-    --hud-channel-speed: 7.5s;
-    --hud-rune-trace: rgba(239, 180, 120, 0.09);
-    --hud-tier-morph-duration: 480ms;
-    --hud-tier-activation-duration: 1300ms;
-    --hud-unlock-activation-duration: 660ms;
-    --hud-unlock-flare-opacity: 0.27;
-    --hud-unlock-lift: 1px;
-    --hud-motion-fast: 102ms;
-    --hud-motion-state: 124ms;
-    --hud-motion-trigger: 670ms;
-    --hud-minimap-bg: #120d0a;
-    --hud-minimap-edge: #9d6c50;
-    --hud-minimap-inner-edge: #291812;
-    --hud-minimap-bg-alpha: 0.89;
-  }
-
-  :root[data-ui-tier="5"] {
-    --hud-material-rail: rgba(11, 17, 16, 0.97);
-    --hud-material-panel: #192825;
-    --hud-material-control: #20312e;
-    --hud-material-dock-top: rgba(31, 51, 47, 0.97);
-    --hud-material-dock-bottom: rgba(14, 24, 22, 0.98);
-    --hud-material-inset: #060b0a;
-    --hud-edge-light: #354d48;
-    --hud-edge-medium: #47776d;
-    --hud-edge-strong: #57948a;
-    --hud-edge-dark: #07100e;
-    --hud-edge-divider: rgba(70, 132, 119, 0.47);
-    --hud-primary: #71b9aa;
-    --hud-primary-strong: #98dccd;
-    --hud-text: #d1ddd9;
-    --hud-text-muted: #94aaa4;
-    --hud-text-dim: #637d76;
-    --hud-success: #65d184;
-    --hud-warning: #dfa844;
-    --hud-danger: #ef7463;
-    --hud-frame-complexity: 0.65;
-    --hud-ornament-opacity: 0.43;
-    --hud-frame-highlight: rgba(190, 255, 240, 0.06);
-    --hud-energy-saturation: 1;
-    --hud-energy-dormant: rgba(113, 185, 170, 0.065);
-    --hud-energy-active: rgba(152, 220, 205, 0.27);
-    --hud-accent-shadow: rgba(113, 185, 170, 0.22);
-    --hud-frame-cut: 4px;
-    --hud-frame-double-opacity: 0.48;
-    --hud-channel-opacity: 0.28;
-    --hud-channel-color: rgba(152, 220, 205, 0.8);
-    --hud-channel-step: 52px;
-    --hud-channel-speed: 6.4s;
-    --hud-rune-trace: rgba(152, 220, 205, 0.14);
-    --hud-tier-morph-duration: 540ms;
-    --hud-tier-activation-duration: 1500ms;
-    --hud-unlock-activation-duration: 710ms;
-    --hud-unlock-flare-opacity: 0.32;
-    --hud-unlock-lift: 2px;
-    --hud-motion-fast: 106ms;
-    --hud-motion-state: 129ms;
-    --hud-motion-trigger: 700ms;
-    --hud-minimap-bg: #07100e;
-    --hud-minimap-edge: #57948a;
-    --hud-minimap-inner-edge: #102722;
-    --hud-minimap-bg-alpha: 0.89;
-  }
-
-  :root[data-ui-tier="6"] {
-    --hud-material-rail: rgba(11, 14, 20, 0.97);
-    --hud-material-panel: #1a2230;
-    --hud-material-control: #212b3a;
-    --hud-material-dock-top: rgba(32, 43, 60, 0.97);
-    --hud-material-dock-bottom: rgba(14, 19, 28, 0.98);
-    --hud-material-inset: #07090e;
-    --hud-edge-light: #39465d;
-    --hud-edge-medium: #526b91;
-    --hud-edge-strong: #6685af;
-    --hud-edge-dark: #080b12;
-    --hud-edge-divider: rgba(83, 112, 157, 0.48);
-    --hud-primary: #7ea4d3;
-    --hud-primary-strong: #aacaf0;
-    --hud-text: #d5dce8;
-    --hud-text-muted: #98a7bc;
-    --hud-text-dim: #68778f;
-    --hud-success: #65d184;
-    --hud-warning: #dfa844;
-    --hud-danger: #ef7463;
-    --hud-frame-complexity: 0.77;
-    --hud-ornament-opacity: 0.54;
-    --hud-frame-highlight: rgba(201, 220, 255, 0.07);
-    --hud-energy-saturation: 1.06;
-    --hud-energy-dormant: rgba(126, 164, 211, 0.075);
-    --hud-energy-active: rgba(170, 202, 240, 0.3);
-    --hud-accent-shadow: rgba(126, 164, 211, 0.25);
-    --hud-frame-cut: 5px;
-    --hud-frame-double-opacity: 0.64;
-    --hud-channel-opacity: 0.38;
-    --hud-channel-color: rgba(170, 202, 240, 0.84);
-    --hud-channel-step: 44px;
-    --hud-channel-speed: 5.6s;
-    --hud-rune-trace: rgba(170, 202, 240, 0.2);
-    --hud-tier-morph-duration: 600ms;
-    --hud-tier-activation-duration: 1700ms;
-    --hud-unlock-activation-duration: 760ms;
-    --hud-unlock-flare-opacity: 0.37;
-    --hud-unlock-lift: 2px;
-    --hud-motion-fast: 110ms;
-    --hud-motion-state: 134ms;
-    --hud-motion-trigger: 730ms;
-    --hud-minimap-bg: #080b12;
-    --hud-minimap-edge: #6685af;
-    --hud-minimap-inner-edge: #111a2a;
-    --hud-minimap-bg-alpha: 0.88;
-  }
-
-  :root[data-ui-tier="7"] {
-    --hud-material-rail: rgba(15, 12, 20, 0.97);
-    --hud-material-panel: #251d30;
-    --hud-material-control: #2e253a;
-    --hud-material-dock-top: rgba(47, 37, 61, 0.97);
-    --hud-material-dock-bottom: rgba(21, 16, 29, 0.98);
-    --hud-material-inset: #0a0710;
-    --hud-edge-light: #4c405c;
-    --hud-edge-medium: #71578f;
-    --hud-edge-strong: #8b6daf;
-    --hud-edge-dark: #0d0913;
-    --hud-edge-divider: rgba(117, 84, 153, 0.5);
-    --hud-primary: #a68acb;
-    --hud-primary-strong: #ceb3ed;
-    --hud-text: #ded7e7;
-    --hud-text-muted: #aa9bb9;
-    --hud-text-dim: #79698a;
-    --hud-success: #65d184;
-    --hud-warning: #dfa844;
-    --hud-danger: #ef7463;
-    --hud-frame-complexity: 0.89;
-    --hud-ornament-opacity: 0.66;
-    --hud-frame-highlight: rgba(232, 211, 255, 0.082);
-    --hud-energy-saturation: 1.12;
-    --hud-energy-dormant: rgba(166, 138, 203, 0.085);
-    --hud-energy-active: rgba(206, 179, 237, 0.34);
-    --hud-accent-shadow: rgba(166, 138, 203, 0.29);
-    --hud-frame-cut: 7px;
-    --hud-frame-double-opacity: 0.82;
-    --hud-channel-opacity: 0.5;
-    --hud-channel-color: rgba(206, 179, 237, 0.88);
-    --hud-channel-step: 36px;
-    --hud-channel-speed: 4.8s;
-    --hud-rune-trace: rgba(206, 179, 237, 0.26);
-    --hud-tier-morph-duration: 680ms;
-    --hud-tier-activation-duration: 1900ms;
-    --hud-unlock-activation-duration: 820ms;
-    --hud-unlock-flare-opacity: 0.42;
-    --hud-unlock-lift: 2px;
-    --hud-motion-fast: 114ms;
-    --hud-motion-state: 139ms;
-    --hud-motion-trigger: 760ms;
-    --hud-minimap-bg: #0d0913;
-    --hud-minimap-edge: #8b6daf;
-    --hud-minimap-inner-edge: #21142f;
-    --hud-minimap-bg-alpha: 0.88;
-  }
-
-  :root[data-ui-tier="8"] {
-    --hud-material-rail: rgba(16, 14, 22, 0.97);
-    --hud-material-panel: #282332;
-    --hud-material-control: #332d40;
-    --hud-material-dock-top: rgba(52, 45, 66, 0.97);
-    --hud-material-dock-bottom: rgba(22, 19, 30, 0.98);
-    --hud-material-inset: #0a0910;
-    --hud-edge-light: #574f68;
-    --hud-edge-medium: #81739d;
-    --hud-edge-strong: #a092c0;
-    --hud-edge-dark: #0d0b14;
-    --hud-edge-divider: rgba(137, 120, 169, 0.54);
-    --hud-primary: #c2b3df;
-    --hud-primary-strong: #eee1ff;
-    --hud-text: #ebe6f0;
-    --hud-text-muted: #b5aabd;
-    --hud-text-dim: #84778f;
-    --hud-success: #65d184;
-    --hud-warning: #dfa844;
-    --hud-danger: #ef7463;
-    --hud-frame-complexity: 1;
-    --hud-ornament-opacity: 0.78;
-    --hud-frame-highlight: rgba(247, 236, 255, 0.1);
-    --hud-energy-saturation: 1.18;
-    --hud-energy-dormant: rgba(194, 179, 223, 0.1);
-    --hud-energy-active: rgba(238, 225, 255, 0.38);
-    --hud-accent-shadow: rgba(194, 179, 223, 0.34);
-    --hud-frame-cut: 9px;
-    --hud-frame-double-opacity: 1;
-    --hud-channel-opacity: 0.64;
-    --hud-channel-color: rgba(238, 225, 255, 0.94);
-    --hud-channel-step: 28px;
-    --hud-channel-speed: 4s;
-    --hud-rune-trace: rgba(238, 225, 255, 0.34);
-    --hud-tier-morph-duration: 760ms;
-    --hud-tier-activation-duration: 2100ms;
-    --hud-unlock-activation-duration: 880ms;
-    --hud-unlock-flare-opacity: 0.48;
-    --hud-unlock-lift: 2px;
-    --hud-motion-fast: 118ms;
-    --hud-motion-state: 144ms;
-    --hud-motion-trigger: 790ms;
-    --hud-minimap-bg: #0d0b14;
-    --hud-minimap-edge: #a092c0;
-    --hud-minimap-inner-edge: #241d32;
-    --hud-minimap-bg-alpha: 0.87;
+    --hud-tier-morph-duration: 0ms;
+    --hud-tier-activation-duration: 1ms;
+    --hud-unlock-lift: 0px;
+    --hud-hit-target: 44px;
+    --hud-hit-target-compact: 40px;
   }
 }
 

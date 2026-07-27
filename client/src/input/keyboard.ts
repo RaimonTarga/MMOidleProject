@@ -23,8 +23,7 @@ import { ALTAR_ARC_CONFIG, getAltarArc } from '../scenes/game/runeAltar';
 import { cycleGroundBakeoff } from '../render/wangGround';
 import { paintActiveNode } from '../scenes/game/overlays';
 import { rebuildNeighborLayer } from '../render/neighborScenes';
-
-const MOBILE_QUERY = '(max-width: 1100px)';
+import { isMobileViewport } from '../breakpoints';
 
 const ARROW_TO_WHEEL: Record<string, EmoteWheelDirection> = {
   ArrowUp: 'up',
@@ -36,7 +35,7 @@ const ARROW_TO_WHEEL: Record<string, EmoteWheelDirection> = {
 const EMOTE_CLIENT_COOLDOWN_MS = 400;
 
 export function attachKeyboard(scene: GameScene): () => void {
-  if (window.matchMedia(MOBILE_QUERY).matches) return () => {};
+  if (isMobileViewport()) return () => {};
 
   const store = getDefaultStore();
   const held = new Set<ActionId>();

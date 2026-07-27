@@ -1,0 +1,111 @@
+<!doctype html>
+<!--
+  Layout harness for the Character crown (V3.2) and the Evasion instrument.
+  Mirrors StatPlate/StatPanel markup against the real stylesheets.
+
+  ?hp=  current health as a percentage (drives the threshold ramp)
+  ?dot= incoming damage, ?heal= pending regen, ?shield= absorb — all percentages
+  ?charge= evasion charge 0-1, ?rate= dodge rate
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Character crown harness</title>
+  <link rel="stylesheet" href="../../../client/src/hud/primitives/tokens.css" />
+  <link rel="stylesheet" href="../../../client/src/hud/primitives/kit.css" />
+  <link rel="stylesheet" href="../../../client/src/hud/hud.css" />
+  <link rel="stylesheet" href="../../../client/src/hud/rail.css" />
+  <link rel="stylesheet" href="../../../client/src/hud/stat/statPlate.css" />
+  <link rel="stylesheet" href="../../../client/src/hud/mechanics/mechanics.css" />
+  <style>
+    html, body { margin: 0; height: 100%; background: #0b0a08; }
+    #app { display: flex; height: 100%; }
+    #left-sidebar {
+      width: 260px; min-width: 260px; flex-shrink: 0; height: 100%;
+      overflow-y: auto; border-right: 1px solid rgba(50, 50, 80, 0.6);
+      scrollbar-width: thin; scrollbar-color: var(--hud-edge-medium, #63553e) transparent;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div id="left-sidebar">
+      <div class="sidebar sidebar-left desktop-hud">
+        <div class="sidebar-panel hud-panel character-panel" id="panel"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const q = new URLSearchParams(location.search);
+    const hp = Number(q.get('hp') ?? 62);
+    const dot = Number(q.get('dot') ?? 12);
+    const heal = Number(q.get('heal') ?? 10);
+    const shield = Number(q.get('shield') ?? 22);
+    const charge = Number(q.get('charge') ?? 0.75);
+    const rate = Number(q.get('rate') ?? 0.25);
+
+    const safe = Math.max(0, hp - dot);
+    const ramp = hp > 50 ? 'vital' : hp > 25 ? 'caution' : 'critical';
+    const primed = charge + rate >= 1;
+    const hitsAway = Math.max(1, Math.ceil((1 - charge) / rate));
+    let ticks = '';
+    for (let i = 0; i < Math.min(8, hitsAway); i++) ticks += '<i class="evasion-gauge__tick"></i>';
+
+    document.getElementById('panel').innerHTML = `
+      <div class="panel-title">Character</div>
+      <section class="stat-plate">
+        <div class="stat-crown">
+          <div class="stat-crown__identity">
+            <span class="stat-crown__name">Raimon</span>
+            <span class="status-dot connected"></span>
+          </div>
+          <div class="stat-crown__readout">
+            <span class="stat-crown__hp">620<span class="stat-crown__max"> / 1000</span></span>
+            ${shield > 0 ? '<span class="stat-crown__shield">+220</span>' : ''}
+          </div>
+          <span class="gradient-conduit stat-crown__track gradient-conduit--${ramp}" style="--conduit-height:9px">
+            <span class="gradient-conduit__track">
+              <span class="gradient-conduit__fill" style="width:${safe}%"></span>
+              <span class="gradient-conduit__layers">
+                ${heal > 0 ? `<span class="stat-crown__layer stat-crown__layer--regen" style="left:${hp}%;width:${heal}%"></span>` : ''}
+                ${dot > 0 ? `<span class="stat-crown__layer stat-crown__layer--dot" style="left:${safe}%;width:${dot}%"></span>` : ''}
+                ${shield > 0 ? `<span class="stat-crown__layer stat-crown__layer--shield" style="width:${shield}%"></span>` : ''}
+              </span>
+            </span>
+          </span>
+        </div>
+
+        <div class="stat-plate__figures">
+          <div class="glyph-tile"><span class="glyph-tile__value">141</span><span class="glyph-tile__label">DPS</span></div>
+          <div class="glyph-tile"><span class="glyph-tile__value">18</span><span class="glyph-tile__label">Plating</span></div>
+        </div>
+        <div class="stat-plate__lines">
+          <span>82 attack</span><span>1.35/s</span><span>60 range</span><span>4/s regen</span><span>210 speed</span>
+        </div>
+        <div class="stat-plate__meter-row">
+          <span class="stat-plate__meter-label">Reduction</span>
+          <span class="engraved-meter stat-plate__meter"><span class="engraved-meter__fill" style="width:24%"></span></span>
+          <span class="stat-plate__meter-value">24%</span>
+        </div>
+      </section>
+
+      <section class="mechanic-frame mechanic-frame--evasion${primed ? ' mechanic-frame--primed' : ''}">
+        <div class="mechanic-frame__header">
+          <span class="mechanic-frame__title">Evasion</span>
+          <span class="mechanic-frame__status">50%</span>
+        </div>
+        <div class="mechanic-frame__body">
+          <div class="evasion-gauge">
+            <span class="evasion-gauge__track">
+              <span class="evasion-gauge__fill" style="width:${charge * 100}%"></span>
+              <span class="evasion-gauge__threshold" style="left:${(1 - rate) * 100}%"></span>
+            </span>
+            <span class="evasion-gauge__ticks">${ticks}</span>
+          </div>
+        </div>
+      </section>
+    `;
+  </script>
+</body>
+</html>

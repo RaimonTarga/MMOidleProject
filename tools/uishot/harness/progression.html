@@ -1,0 +1,82 @@
+<!doctype html>
+<!--
+  Layout harness for the right rail's Progression panel. Reproduces the label
+  wrap that the compass ActionChip triggered ("Progress" breaking to "progres/s")
+  without needing a character at the right tier.
+
+  Usage: pnpm ui:shot --html=tools/uishot/harness/progression.html --audit
+         ?pips=N sets the quest requirement, ?scale= sets the UI font scale.
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Progression panel harness</title>
+  <link rel="stylesheet" href="../../../client/src/hud/primitives/tokens.css" />
+  <link rel="stylesheet" href="../../../client/src/hud/primitives/kit.css" />
+  <link rel="stylesheet" href="../../../client/src/hud/hud.css" />
+  <link rel="stylesheet" href="../../../client/src/hud/rail.css" />
+  <style>
+    /* Mirrors client/index.html. */
+    html, body { margin: 0; height: 100%; background: #0b0a08; }
+    #app { display: flex; height: 100%; justify-content: flex-end; }
+    #right-sidebar {
+      width: 260px; min-width: 260px; flex-shrink: 0; height: 100%;
+      overflow-y: auto; overflow-x: hidden;
+      scrollbar-width: thin; scrollbar-color: var(--hud-edge-medium, #63553e) transparent;
+      border-left: 1px solid rgba(50, 50, 80, 0.6);
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div id="right-sidebar">
+      <div class="sidebar sidebar-right desktop-hud">
+        <div class="sidebar-panel hud-panel quest-panel" id="panel"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(location.search);
+    const required = Number(params.get('pips') ?? 1);
+    const progress = Number(params.get('progress') ?? 0);
+    if (params.get('scale')) {
+      document.documentElement.style.setProperty('--ui-font-scale', params.get('scale'));
+    }
+
+    let pips = '';
+    for (let i = 0; i < required; i++) {
+      pips += `<i class="milestone-pips__pip milestone-pips__pip--${i < progress ? 'done' : 'pending'}"></i>`;
+    }
+
+    document.getElementById('panel').innerHTML = `
+      <div class="panel-title">Progression</div>
+      <div class="quest-tier-row">
+        <span class="stat-label">Tier</span>
+        <span class="stat-value quest-tier-badge">1</span>
+      </div>
+      <div class="quest-name">Dungeon Delver</div>
+      <div class="quest-desc">Seek out a Tier 1 dungeon and slay its guardian boss.</div>
+      <div class="quest-progress-row">
+        <span class="stat-label">Progress</span>
+        <span class="stat-value">${progress} / ${required}</span>
+        <button type="button" class="action-chip action-chip--sm" title="Locate dungeons on map">
+          <span class="game-icon" style="width:13px;height:13px"></span>
+        </button>
+      </div>
+      <span class="milestone-pips quest-pips">${pips}</span>
+      <button type="button" class="mastery-meter mastery-meter--button">
+        <span class="mastery-meter__row">
+          <span class="mastery-meter__label">Mastery</span>
+          <span class="mastery-meter__value">18 / 40</span>
+        </span>
+        <span class="gradient-conduit gradient-conduit--gold">
+          <span class="gradient-conduit__track">
+            <span class="gradient-conduit__fill" style="width:45%"></span>
+          </span>
+        </span>
+      </button>
+    `;
+  </script>
+</body>
+</html>

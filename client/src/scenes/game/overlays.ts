@@ -33,10 +33,10 @@ import type { GameScene } from "./GameScene";
 import { MM_H, MM_PAD, MM_W } from "./nodeExits";
 import { isVoidThroneUnblocked } from "./voidThrone";
 import { resolvedMinimapTierPalette, uiTierActivationIsActive } from "../../hud/uiTier";
+import { isMobileViewport } from "../../breakpoints";
 
 const BG_DEPTH = -11;
 const BOUNDARY_DEPTH = -9.5;
-const MOBILE_HUD_QUERY = "(max-width: 1100px)";
 /**
  * At the largest supported HUD font scale, this leaves room between the 220px
  * minimap and the centered Auto Combat control. The mobile decision itself is
@@ -718,11 +718,7 @@ export function drawMinimap(scene: GameScene): void {
   // Mobile: no minimap — the full Map panel is one tap away in the HUD tab bar.
   // On desktop, keep it hidden only when the rail-narrowed canvas cannot fit it
   // beside the centered Auto Combat control.
-  const isMobileViewport =
-    typeof window !== "undefined" &&
-    typeof window.matchMedia === "function" &&
-    window.matchMedia(MOBILE_HUD_QUERY).matches;
-  if (isMobileViewport || scene.scale.width < MINIMAP_MIN_SCENE_WIDTH) {
+  if (isMobileViewport() || scene.scale.width < MINIMAP_MIN_SCENE_WIDTH) {
     scene.minimap.setVisible(false);
     return;
   }

@@ -57,7 +57,7 @@ export function openPrimaryOverlay(overlay: PrimaryOverlay): void {
     case 'build': store.set(buildOpenAtom, true); break;
     case 'mastery': store.set(masteryOpenAtom, true); break;
     case 'inventory': store.set(inventoryOpenAtom, true); break;
-    case 'crafting': store.set(craftTabAtom, 'forge'); break;
+    case 'crafting': store.set(craftTabAtom, 'make'); break;
     case 'map': store.set(mapOpenAtom, true); break;
     case 'quests': store.set(questOpenAtom, true); break;
     case 'settings': store.set(settingsOpenAtom, true); break;

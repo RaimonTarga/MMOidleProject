@@ -412,6 +412,24 @@
   100% { opacity: 0; transform: translate(-50%, -50%) scale(1.42) rotate(0deg); }
 }
 
+/* Mobile shares the authoritative unlock signal but not the desktop apparatus.
+   A revealed destination gets one restrained housing settle — no channel flare
+   sweep, no icon rune wake, no lift (the token is 0px in the mobile scope). */
+@media (max-width: 1100px) {
+  [data-ui-unlock-system] {
+    position: relative;
+  }
+
+  [data-ui-unlock-activating] {
+    animation: hud-system-unlock-wake var(--hud-unlock-activation-duration)
+      cubic-bezier(0.16, 0.76, 0.22, 1) both;
+  }
+
+  html[data-ui-hidden] [data-ui-unlock-activating] {
+    animation: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .desktop-hud.sidebar,
   .desktop-hud .sidebar-panel,

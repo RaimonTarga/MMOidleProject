@@ -3,7 +3,15 @@ import "./primitives.css";
 
 export interface DisclosureHeaderProps {
   title: ReactNode;
+  /**
+   * A short *readout* shown beside the title — "3 nearby", "18/40". Not a place
+   * for instructions: the chevron and `aria-expanded` already say the section
+   * opens, so copy like "See detailed stats" is the §15 de-texting rule's
+   * example of prose to delete rather than shrink.
+   */
   summary?: ReactNode;
+  /** Overrides the accessible name when the visible title is not enough. */
+  label?: string;
   expanded: boolean;
   controls?: string;
   className?: string;
@@ -14,6 +22,7 @@ export interface DisclosureHeaderProps {
 export function DisclosureHeader({
   title,
   summary,
+  label,
   expanded,
   controls,
   className = "",
@@ -31,6 +40,7 @@ export function DisclosureHeader({
       className={classes}
       aria-expanded={expanded}
       aria-controls={controls}
+      aria-label={label}
       onClick={onToggle}
     >
       <span className="disclosure-header__title">{title}</span>

@@ -73,19 +73,71 @@ function renderDetail(entry: LogEntry): React.ReactNode {
   return null;
 }
 
+/**
+ * Verbosity tiers. Printing every event buried the things that actually change
+ * a decision — a death, a kill, a level — under a per-hit damage stream, so the
+ * log now defaults to the outcomes and lets the exchange detail be opted into.
+ */
+type LogVerbosity = 'key' | 'combat' | 'all';
+
+const KEY_KINDS: ReadonlySet<LogKind> = new Set<LogKind>([
+  'kill', 'death', 'biome-level', 'ascension', 'empowered', 'execution',
+]);
+
+const COMBAT_KINDS: ReadonlySet<LogKind> = new Set<LogKind>([
+  ...KEY_KINDS,
+  'damage-out', 'damage-in', 'dodge', 'heal', 'shield',
+]);
+
+const VERBOSITY_LABELS: { value: LogVerbosity; label: string; title: string }[] = [
+  { value: 'key', label: 'Key', title: 'Kills, deaths and progression only' },
+  { value: 'combat', label: 'Combat', title: 'Adds damage, dodges, heals and shields' },
+  { value: 'all', label: 'All', title: 'Every event, including buffs and info' },
+];
+
+const VERBOSITY_STORAGE_KEY = 'mmo_idle.combat_log.verbosity';
+
+function readVerbosity(): LogVerbosity {
+  try {
+    const stored = window.localStorage.getItem(VERBOSITY_STORAGE_KEY);
+    if (stored === 'key' || stored === 'combat' || stored === 'all') return stored;
+  } catch {
+    // Fall through to the default when storage is unavailable.
+  }
+  return 'key';
+}
+
+function passesVerbosity(kind: LogKind, verbosity: LogVerbosity): boolean {
+  if (verbosity === 'all') return true;
+  return (verbosity === 'key' ? KEY_KINDS : COMBAT_KINDS).has(kind);
+}
+
 export function CombatLogPanel() {
   const [expanded, setExpanded] = useState(true);
   const [entries, setEntries] = useState<LogEntry[]>([]);
+  const [verbosity, setVerbosity] = useState<LogVerbosity>(readVerbosity);
   const [autoScroll, setAutoScroll] = useState(true);
   const listRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => combatLog.subscribe(setEntries), []);
 
+  const visible = entries.filter((entry) => passesVerbosity(entry.kind, verbosity));
+
+  function chooseVerbosity(next: LogVerbosity) {
+    setVerbosity(next);
+    setAutoScroll(true);
+    try {
+      window.localStorage.setItem(VERBOSITY_STORAGE_KEY, next);
+    } catch {
+      // A non-persisted preference is still usable for this session.
+    }
+  }
+
   useEffect(() => {
     if (autoScroll && expanded && listRef.current) {
       listRef.current.scrollTop = listRef.current.scrollHeight;
     }
-  }, [entries, autoScroll, expanded]);
+  }, [entries, autoScroll, expanded, verbosity]);
 
   function handleScroll() {
     const el = listRef.current;
@@ -98,16 +150,35 @@ export function CombatLogPanel() {
     <div className="combat-log">
       <button className="combat-log__header" onClick={() => setExpanded((e) => !e)}>
         <span className="combat-log__title">COMBAT LOG</span>
-        <span className="combat-log__count">{entries.length}</span>
+        <span className="combat-log__count">{visible.length}</span>
         <span className="combat-log__chevron">{expanded ? '▼' : '▶'}</span>
       </button>
 
       {expanded && (
+        <div className="combat-log__filters" role="group" aria-label="Combat log detail">
+          {VERBOSITY_LABELS.map((option) => (
+            <button
+              key={option.value}
+              type="button"
+              className={`combat-log__filter${verbosity === option.value ? ' combat-log__filter--active' : ''}`}
+              aria-pressed={verbosity === option.value}
+              title={option.title}
+              onClick={() => chooseVerbosity(option.value)}
+            >
+              {option.label}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {expanded && (
         <div className="combat-log__body" ref={listRef} onScroll={handleScroll}>
-          {entries.length === 0 ? (
-            <div className="combat-log__empty">No events yet…</div>
+          {visible.length === 0 ? (
+            <div className="combat-log__empty">
+              {entries.length === 0 ? 'No events yet…' : 'Nothing at this detail level.'}
+            </div>
           ) : (
-            entries.map((e) => {
+            visible.map((e) => {
               const detail = renderDetail(e);
               return (
                 <div key={e.id} className="combat-log__row">

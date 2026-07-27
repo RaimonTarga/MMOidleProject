@@ -105,7 +105,10 @@
   min-width: 0;
   margin: 0;
   color: var(--hud-primary-strong);
-  font: bold 12px/1.2 monospace;
+  font-family: var(--hud-font-display);
+  font-size: 12px;
+  font-weight: var(--hud-font-display-weight);
+  line-height: 1.2;
   letter-spacing: 1.5px;
   text-transform: uppercase;
 }
@@ -218,22 +221,93 @@
   .game-dialog__panel--compact,
   .game-dialog__panel--standard,
   .game-dialog__panel--wide {
-    width: 100%;
+    /* Same zoom compensation as the sheet: without it a non-default UI font
+       scale renders a full-width dialog wider than the viewport. */
+    width: calc(100% / var(--ui-font-scale, 1));
     max-width: none;
-    max-height: 94vh;
+    max-height: min(94vh, calc((100vh - 12px) / var(--ui-font-scale, 1)));
   }
 
+  /* Touch footprints. Geometry grows to the hit-target token without changing
+     the information hierarchy the desktop shell established. */
   .dialog-header {
-    min-height: 42px;
+    min-height: calc(var(--hud-hit-target) + 4px);
     padding: 8px 8px 8px 12px;
+  }
+
+  .dialog-header__close {
+    width: var(--hud-hit-target);
+    height: var(--hud-hit-target-compact);
+    font-size: 19px;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
   }
 
   .dialog-tab {
     flex: 1 1 0;
     min-width: 0;
+    min-height: var(--hud-hit-target);
     padding-right: 4px;
     padding-left: 4px;
     touch-action: manipulation;
     -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Touch has no hover; the selected underline stays the only tab affordance. */
+  .dialog-tab:hover {
+    color: var(--hud-text-muted);
+  }
+
+  .dialog-tab--selected,
+  .dialog-tab--selected:hover {
+    color: var(--hud-primary-strong);
+  }
+}
+
+/* ── Sheet presentation ───────────────────────────────────────────────
+   The touch variant of the same boundary: bottom-anchored and full-bleed
+   instead of centered. Only geometry differs — portal, focus entry/return,
+   Escape, and `role="dialog"` come from GameDialog unchanged.
+
+   These rules are authored after the mobile block on purpose: the variant and
+   the base class have equal specificity, so source order is what lets a sheet
+   override the centered-dialog geometry. Keep all sheet geometry here rather
+   than in a consumer stylesheet, where bundle order would decide the winner. */
+.game-dialog__backdrop--sheet {
+  align-items: flex-end;
+  padding: 0;
+}
+
+.game-dialog__panel--sheet {
+  /* `zoom` multiplies the rendered box, so the authored width is pre-divided to
+     keep a full-bleed sheet exactly viewport-wide at every UI font scale. */
+  width: calc(100% / var(--ui-font-scale, 1));
+  max-width: none;
+  max-height: min(85vh, calc((100vh - 24px) / var(--ui-font-scale, 1)));
+  padding-right: env(safe-area-inset-right, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  padding-left: env(safe-area-inset-left, 0px);
+  border-right-width: 0;
+  border-bottom-width: 0;
+  border-left-width: 0;
+  border-radius: 14px 14px 0 0;
+  animation: game-dialog-sheet-up var(--hud-motion-trigger) cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes game-dialog-sheet-up {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+/* Landscape phones: trade sheet margin for viewport height. */
+@media (max-width: 1100px) and (max-height: 480px) {
+  .game-dialog__panel--sheet {
+    max-height: min(94vh, calc((100vh - 8px) / var(--ui-font-scale, 1)));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .game-dialog__panel--sheet {
+    animation: none;
   }
 }

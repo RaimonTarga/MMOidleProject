@@ -23,7 +23,7 @@ export function recalculatePlayerEntityStats(world: World, entity: PlayerEntity)
   resetBramblePlating(entity);
   const evadesHits = entity.evadesHits
     ? { ...entity.evadesHits }
-    : { dodgeRate: 0, evadeMitigation: 0 };
+    : { dodgeRate: 0, evadeMitigation: 0, charge: 0 };
   const { cannotAttack } = recalculatePlayerStats({
     dealsDamage:     entity.dealsDamage,
     mitigatesDamage: entity.mitigatesDamage,

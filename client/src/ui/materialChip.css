@@ -1,0 +1,67 @@
+/* One grammar for every economy quantity: packed icon, amount, and — when the
+   chip states a cost — the held balance and an affordability state. */
+.material-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: monospace;
+  font-size: 11px;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.material-chip__icon {
+  flex: 0 0 auto;
+}
+
+.material-chip__label {
+  color: var(--hud-text-muted);
+}
+
+.material-chip__amount {
+  color: var(--material-accent, var(--hud-text));
+  font-weight: bold;
+}
+
+.material-chip__held {
+  color: var(--hud-text-dim);
+  font-size: 10px;
+}
+
+/* Cost chips sit in a recipe card and need a readable frame of their own. */
+.material-chip--cost {
+  padding: 2px 5px;
+  background: var(--hud-material-inset);
+  border: 1px solid var(--hud-edge-light);
+  border-radius: 2px;
+}
+
+.material-chip--ok .material-chip__held {
+  color: var(--hud-success);
+}
+
+.material-chip--short {
+  border-color: var(--hud-danger);
+}
+
+.material-chip--short .material-chip__amount,
+.material-chip--short .material-chip__held {
+  color: var(--hud-danger);
+}
+
+.material-chip--wallet .material-chip__amount {
+  min-width: 12px;
+}
+
+/* Dim a balance of zero so a full strip still reads as a set without every
+   empty wallet competing for attention. */
+.material-chip--empty {
+  opacity: 0.45;
+}
+
+.material-chip-strip {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+}

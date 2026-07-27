@@ -19,8 +19,8 @@ import {
 } from '../settings/keybinds';
 import { setGamepadVector } from './movement';
 import { closeTopmostOverlay, togglePrimaryOverlay } from './overlayStack';
+import { isMobileViewport } from '../breakpoints';
 
-const MOBILE_QUERY = '(max-width: 1100px)';
 const STICK_DEADZONE = 0.18;
 
 let captureSink: ((buttonIndex: number) => void) | null = null;
@@ -34,7 +34,7 @@ export function clearCaptureSink(): void {
 }
 
 export function attachGamepad(scene: GameScene): () => void {
-  if (window.matchMedia(MOBILE_QUERY).matches) return () => {};
+  if (isMobileViewport()) return () => {};
 
   const plugin = scene.input.gamepad;
   if (!plugin) return () => {};

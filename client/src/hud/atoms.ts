@@ -124,6 +124,12 @@ export const attackCooldownAtom = atom<number>(0);
 export const speedAtom = atom<number>(0);
 export const dodgeRateAtom = atom<number>(0);
 export const evadeMitigationAtom = atom<number>(0);
+/**
+ * The live evasion accumulator (0..<1). Deterministic, so
+ * `evadeCharge + dodgeRate >= 1` means the next hit taken WILL be evaded — the
+ * Evasion instrument shows that as genuine anticipation, not a guess.
+ */
+export const evadeChargeAtom = atom<number>(0);
 
 export const combatArchetypeAtom = atom<CombatArchetype>(null);
 export const attackStyleAtom = atom<string>('');
@@ -333,16 +339,21 @@ export const riteSlotsAtom = atom<number>(0);
 export const skillTreeOpenAtom = atom<boolean>(false);
 export type BuildPanelTab = 'overview' | 'abilities' | 'stances' | 'rites' | 'runes';
 export const buildOpenAtom = atom<boolean>(false);
+/**
+ * The dialog these drive is called **Loadout** in the UI (renamed in V5, when
+ * making moved to Crafting and arranging stayed here). The identifiers keep the
+ * `build*` prefix: renaming them reaches a dozen files and every persisted key
+ * for no player-visible gain.
+ */
 export const buildPanelTabAtom = atom<BuildPanelTab>('overview');
 export const runesOpenAtom = atom<boolean>(false);
 export const abilitiesOpenAtom = atom<boolean>(false);
 export const stancesOpenAtom = atom<boolean>(false);
 export const ritesOpenAtom = atom<boolean>(false);
 export const masteryOpenAtom = atom<boolean>(false);
-export const runePanelTabAtom = atom<'loadout' | 'forge'>('loadout');
 export const inventoryOpenAtom = atom<boolean>(false);
 export const mapOpenAtom = atom<boolean>(false);
-export const craftTabAtom = atom<'biome' | 'forge' | 'upgrade' | null>(null);
+export const craftTabAtom = atom<'make' | 'upgrade' | null>(null);
 export const questOpenAtom = atom<boolean>(false);
 export const settingsOpenAtom = atom<boolean>(false);
 export const debugPanelOpenAtom = atom<boolean>(false);
@@ -674,6 +685,7 @@ function resetPlayerAtoms(): void {
   store.set(speedAtom, 0);
   store.set(dodgeRateAtom, 0);
   store.set(evadeMitigationAtom, 0);
+  store.set(evadeChargeAtom, 0);
 
   store.set(combatArchetypeAtom, null);
   store.set(attackStyleAtom, '');
@@ -785,6 +797,7 @@ export function syncPlayerAtoms(player: PlayerView | null): void {
   setIfChanged(speedAtom, player.speed);
   setIfChanged(dodgeRateAtom, player.dodgeRate);
   setIfChanged(evadeMitigationAtom, player.evadeMitigation);
+  setIfChanged(evadeChargeAtom, player.evadeCharge);
 
   setIfChanged(combatArchetypeAtom, player.combatArchetype);
   setIfChanged(attackStyleAtom, player.attackStyle);

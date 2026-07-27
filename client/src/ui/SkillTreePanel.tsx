@@ -6,6 +6,8 @@ import type { SkillNode, StatEffects, SubVariant } from '@mmo-idle/shared';
 import { hudBus } from '../hudBus';
 import { CONDUIT_ENABLED } from '../featureFlags';
 import { useIsMobile } from '../hud/useIsMobile';
+import { MilestonePips, type PipState } from '../hud/primitives';
+import { atlasIcon, GameIcon } from './GameIcon';
 import {
   currentSkillTierAtom,
   selectedClassAtom,
@@ -40,11 +42,65 @@ const EFFECT_LABELS: Record<string, string> = {
   speed:           'SPD',
 };
 
-function formatEffects(effects: StatEffects): string {
+/** The authored stat glyphs, keyed by the effect they measure (V0b). */
+const EFFECT_GLYPH: Record<string, string> = {
+  attack:          'UI_icons/stats/attack.png',
+  plating:         'UI_icons/stats/plating.png',
+  damageReduction: 'UI_icons/stats/reduction.png',
+  evasion:         'UI_icons/stats/evasion.png',
+  attackRange:     'UI_icons/stats/range.png',
+  attackCooldown:  'UI_icons/stats/speed.png',
+  maxHp:           'UI_icons/stats/shield.png',
+  hpRegen:         'UI_icons/stats/regen.png',
+  speed:           'UI_icons/stats/speed.png',
+};
+
+interface EffectEntry {
+  key: string;
+  value: number;
+  label: string;
+}
+
+function effectEntries(effects: StatEffects): EffectEntry[] {
   return Object.entries(effects)
     .filter(([, v]) => v !== undefined && v !== 0)
-    .map(([k, v]) => `${(v as number) > 0 ? '+' : ''}${v} ${EFFECT_LABELS[k] ?? k}`)
+    .map(([k, v]) => ({ key: k, value: v as number, label: EFFECT_LABELS[k] ?? k }));
+}
+
+function formatEffects(effects: StatEffects): string {
+  return effectEntries(effects)
+    .map((e) => `${e.value > 0 ? '+' : ''}${e.value} ${e.label}`)
     .join('  ');
+}
+
+/**
+ * What a node does, as glyph chips rather than a run-on string of abbreviations
+ * (§14.6). The number still shows — the glyph replaces "ATK", not the value.
+ */
+function EffectChips({ effects }: { effects: StatEffects }) {
+  const entries = effectEntries(effects);
+  if (entries.length === 0) return null;
+  return (
+    <div className="skill-effect-chips">
+      {entries.map((entry) => (
+        <span
+          key={entry.key}
+          className={`skill-effect-chip${entry.value < 0 ? ' skill-effect-chip--down' : ''}`}
+          title={`${entry.value > 0 ? '+' : ''}${entry.value} ${entry.label}`}
+        >
+          <GameIcon
+            source={EFFECT_GLYPH[entry.key] ? atlasIcon(EFFECT_GLYPH[entry.key]) : null}
+            size={14}
+            fallback={entry.label.slice(0, 1)}
+            decorative
+          />
+          <span className="skill-effect-chip__value">
+            {entry.value > 0 ? '+' : ''}{entry.value}
+          </span>
+        </span>
+      ))}
+    </div>
+  );
 }
 
 function tierLabel(tier: number): string {
@@ -137,6 +193,7 @@ function SkillNodeCard({
   node,
   player,
   compact = false,
+  faded = false,
   isMobile,
   selected = false,
   onHover,
@@ -145,6 +202,12 @@ function SkillNodeCard({
   node:     SkillNode;
   player:   SkillPlayer | null;
   compact?: boolean;
+  /**
+   * A road not taken: a past-tier sibling the player did not pick. Dimmed and
+   * shrunk rather than hidden — class reset exists, so the alternatives have to
+   * stay legible — and it expands back on hover or tap.
+   */
+  faded?: boolean;
   isMobile: boolean;
   selected?: boolean;
   onHover:  (node: SkillNode | null) => void;
@@ -167,13 +230,20 @@ function SkillNodeCard({
         'skill-node',
         `skill-node--${status}`,
         compact ? 'skill-node--compact' : '',
+        faded ? 'skill-node--faded' : '',
+        status === 'unlocked' ? 'skill-node--spine' : '',
         selected ? 'skill-node--selected' : '',
       ].filter(Boolean).join(' ')}
       onClick={handleClick}
       onMouseEnter={() => onHover(node)}
       onMouseLeave={() => onHover(null)}
     >
-      <span className="skill-node__cost">{node.cost}pt</span>
+      <MilestonePips
+        className="skill-node__cost"
+        states={Array.from({ length: Math.max(1, node.cost) }, () => 'pending' as PipState)}
+        label={`Costs ${node.cost} skill point${node.cost === 1 ? '' : 's'}`}
+        size="sm"
+      />
       <div className="skill-node__name">{node.name}</div>
       {status === 'unlocked' && !compact && (
         <div className="skill-node__check">✓</div>
@@ -203,7 +273,6 @@ function NodeDesc({
     );
   }
 
-  const effects = formatEffects(node.statEffects);
   const status  = getNodeStatus(node, player);
 
   return (
@@ -213,7 +282,7 @@ function NodeDesc({
         <span className="skill-desc__tier">{tierLabel(node.tier)}</span>
         <span className="skill-desc__cost">{costLabel(node.cost)}</span>
       </div>
-      {effects && <div className="skill-desc__effects">{effects}</div>}
+      <EffectChips effects={node.statEffects} />
       {node.description && <div className="skill-desc__text">{nodeDescription(node)}</div>}
       {isMobile && status === 'available' && (
         <button className="skill-confirm-btn" onClick={() => onUnlock(node)}>
@@ -389,6 +458,7 @@ function ProgressionView({
                       node={node}
                       player={player}
                       compact={isPast}
+                      faded={isPast && !player.unlockedSkills.includes(node.id)}
                       isMobile={isMobile}
                       selected={selectedNode?.id === node.id}
                       onHover={onHover}

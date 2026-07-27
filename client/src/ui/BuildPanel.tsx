@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import type { UiUnlockSystem } from "../hud/uiUnlocks";
 import { useAtom, useAtomValue } from "jotai";
 import {
   abilityDef,
@@ -8,6 +9,7 @@ import {
   stanceDef,
 } from "@mmo-idle/shared";
 import {
+  abilitySlotsAtom,
   activeStanceAtom,
   buildPanelTabAtom,
   equippedAbilitiesAtom,
@@ -18,17 +20,16 @@ import {
   knownRitesAtom,
   knownStancesAtom,
   playerTierAtom,
+  riteSlotsAtom,
   runesEquippedAtom,
   type BuildPanelTab,
 } from "../hud/atoms";
 import { resolveSystemVisibility, type SystemVisibility } from "../hud/systemVisibility";
-import type { UiUnlockSystem } from "../hud/uiUnlocks";
 import { AbilitiesPanelContent } from "./AbilitiesPanel";
 import { StancesPanelContent } from "./StancesPanel";
 import { RitesPanelContent } from "./RitesPanel";
 import { BuildRunesTab } from "./BuildRunesTab";
-import { BuildIcon, type BuildIconKind } from "./BuildIcon";
-import { DialogHeader, DialogTab, DialogTabs, GameDialog } from "../hud/primitives";
+import { DialogHeader, DialogTab, DialogTabs, EngravedMeter, GameDialog } from "../hud/primitives";
 import "./buildPanel.css";
 
 interface Props {
@@ -45,123 +46,181 @@ const TABS: { id: BuildPanelTab; label: string; gate?: keyof SystemVisibility }[
   { id: "runes", label: "Runes" },
 ];
 
-function SummaryCard({
-  kind,
-  eyebrow,
-  name,
-  text,
-  muted = false,
-  unlockSystem,
-}: {
-  kind: BuildIconKind;
-  eyebrow: string;
-  name: string;
-  text: string;
-  muted?: boolean;
-  unlockSystem?: UiUnlockSystem;
-}) {
+interface Socket {
+  /** What goes here, e.g. "Technique". */
+  kind: string;
+  /** Occupant name, or null when the socket is empty. */
+  filled: string | null;
+  /** Firing order within a kind; a corner engraving, not a sentence. */
+  order?: number;
+  /** Marks the stance actually in force right now. */
+  active?: boolean;
+}
+
+/**
+ * One socket: a cut-corner cell that is either engraved-hollow or filled. The
+ * firing order that used to read "fires first" is a corner numeral, because the
+ * order matters for every slot but only needs stating once per cell.
+ */
+function SocketCell({ socket, onOpen }: { socket: Socket; onOpen: () => void }) {
+  const filled = socket.filled !== null;
+  const classes = [
+    'loadout-socket',
+    filled ? 'loadout-socket--filled' : 'loadout-socket--empty',
+    socket.active && 'loadout-socket--active',
+  ].filter(Boolean).join(' ');
+
   return (
-    <div
-      className="build-summary-card"
-      data-ui-unlock-system={unlockSystem}
+    <button
+      type="button"
+      className={classes}
+      onClick={onOpen}
+      title={filled
+        ? `${socket.kind}: ${socket.filled}${socket.active ? ' — active' : ''}`
+        : `${socket.kind}: empty — choose one`}
     >
-      <BuildIcon kind={kind} label={name} muted={muted} />
-      <div className="build-summary-card__body">
-        <div className="build-summary-card__eyebrow">{eyebrow}</div>
-        <div className="build-summary-card__name">{name}</div>
-        <div className="build-summary-card__text">{text}</div>
-      </div>
-    </div>
+      {socket.order !== undefined && (
+        <span className="loadout-socket__order" aria-hidden="true">{socket.order}</span>
+      )}
+      <span className="loadout-socket__kind">{socket.kind}</span>
+      <span className={`loadout-socket__name${filled ? '' : ' loadout-socket__name--empty'}`}>
+        {socket.filled ?? 'Empty'}
+      </span>
+    </button>
   );
 }
 
-function BuildOverview({ visibility }: { visibility: SystemVisibility }) {
+function SocketGroup({
+  title,
+  sockets,
+  unlockSystem,
+  onOpen,
+}: {
+  title: string;
+  sockets: Socket[];
+  unlockSystem?: UiUnlockSystem;
+  onOpen: () => void;
+}) {
+  if (sockets.length === 0) return null;
+  return (
+    <section className="loadout-group" data-ui-unlock-system={unlockSystem}>
+      <div className="loadout-group__title">{title}</div>
+      <div className="loadout-group__sockets">
+        {sockets.map((socket, index) => (
+          <SocketCell key={`${socket.kind}-${index}`} socket={socket} onOpen={onOpen} />
+        ))}
+      </div>
+    </section>
+  );
+}
+
+/**
+ * Loadout IS the overview (V5): a board of sockets showing what is equipped and
+ * what is empty, where picking a socket takes you to the surface that fills it.
+ * It replaces a sheet of label/value rows — accurate, but it read as a report
+ * about the build rather than as the build itself.
+ */
+function LoadoutBoard({
+  visibility,
+  onOpenTab,
+}: {
+  visibility: SystemVisibility;
+  onOpenTab: (tab: BuildPanelTab) => void;
+}) {
   const equippedAbilities = useAtomValue(equippedAbilitiesAtom);
+  const abilitySlots = useAtomValue(abilitySlotsAtom);
   const equippedStances = useAtomValue(equippedStancesAtom);
   const activeStance = useAtomValue(activeStanceAtom);
   const equippedRites = useAtomValue(equippedRitesAtom);
+  const riteSlots = useAtomValue(riteSlotsAtom);
   const runesEquipped = useAtomValue(runesEquippedAtom);
   const gm = useAtomValue(globalMasteryAtom);
 
-  // The overview shows the HIGHEST-PRIORITY ability of each kind (slot 1); the
-  // Abilities panel is where the full multi-slot loadout lives.
-  const technique = abilityDef(equippedAbilities.techniques[0]);
-  const guard = abilityDef(equippedAbilities.guards[0]);
-  const extraTechniques = Math.max(0, equippedAbilities.techniques.length - 1);
-  const extraGuards = Math.max(0, equippedAbilities.guards.length - 1);
-  const defaultStance = stanceDef(equippedStances.default);
-  const reactiveStance = stanceDef(equippedStances.reactive);
-  const active = stanceDef(activeStance);
-  const firstRite = riteDef(equippedRites[0]);
   const runeSpent = runeLoadoutCost(runesEquipped);
   const runeBudget = runeBudgetForGlobalMastery(gm);
+  const runePct = runeBudget > 0 ? Math.min(100, (runeSpent / runeBudget) * 100) : 0;
+
+  const abilitySockets: Socket[] = [
+    ...Array.from({ length: abilitySlots.technique }, (_, index) => ({
+      kind: 'Technique',
+      filled: abilityDef(equippedAbilities.techniques[index])?.name ?? null,
+      order: abilitySlots.technique > 1 ? index + 1 : undefined,
+    })),
+    ...Array.from({ length: abilitySlots.guard }, (_, index) => ({
+      kind: 'Guard',
+      filled: abilityDef(equippedAbilities.guards[index])?.name ?? null,
+      order: abilitySlots.guard > 1 ? index + 1 : undefined,
+    })),
+  ];
+
+  const stanceSockets: Socket[] = [
+    {
+      kind: 'Default',
+      filled: stanceDef(equippedStances.default)?.name ?? null,
+      active: equippedStances.default !== null && equippedStances.default === activeStance,
+    },
+    {
+      kind: 'Reactive',
+      filled: stanceDef(equippedStances.reactive)?.name ?? null,
+      active: equippedStances.reactive !== null && equippedStances.reactive === activeStance,
+    },
+  ];
+
+  const riteSockets: Socket[] = Array.from({ length: riteSlots }, (_, index) => ({
+    kind: `Rite ${index + 1}`,
+    filled: riteDef(equippedRites[index])?.name ?? null,
+  }));
 
   return (
     <div className="build-tab-body">
-      <div className="build-overview-grid">
+      <div className="loadout-board">
         {visibility.abilities && (
-          <>
-            <SummaryCard
-              kind="ability"
-              eyebrow={extraTechniques > 0 ? `Technique (+${extraTechniques})` : "Technique"}
-              name={technique?.name ?? "Empty Technique"}
-              text={technique?.blurb ?? "Equip an offensive ability, then use rune rules to tune when it fires."}
-              muted={!technique}
-              unlockSystem="abilities"
-            />
-            <SummaryCard
-              kind="ability"
-              eyebrow={extraGuards > 0 ? `Guard (+${extraGuards})` : "Guard"}
-              name={guard?.name ?? "Empty Guard"}
-              text={guard?.blurb ?? "Equip a defensive ability, then bind it to danger conditions in runes."}
-              muted={!guard}
-              unlockSystem="abilities"
-            />
-          </>
-        )}
-        {visibility.stances && (
-          <>
-            <SummaryCard
-              kind="stance"
-              eyebrow={active ? "Active Stance" : "Default Stance"}
-              name={active?.name ?? defaultStance?.name ?? "No Stance"}
-              text={active?.blurb ?? defaultStance?.blurb ?? "Choose a default posture for your baseline stats."}
-              muted={!active && !defaultStance}
-              unlockSystem="stances"
-            />
-            <SummaryCard
-              kind="stance"
-              eyebrow="Reactive Stance"
-              name={reactiveStance?.name ?? "No Reactive Stance"}
-              text={
-                reactiveStance?.blurb ??
-                "Equip a reactive posture, then use a Switch Stance rune to enter it temporarily."
-              }
-              muted={!reactiveStance}
-              unlockSystem="stances"
-            />
-          </>
-        )}
-        {visibility.rites && (
-          <SummaryCard
-            kind="rite"
-            eyebrow={`Rites (${equippedRites.length})`}
-            name={firstRite?.name ?? "No Rites Equipped"}
-            text={
-              firstRite
-                ? equippedRites.map((id) => riteDef(id)?.name ?? id).join(", ")
-                : "Equip rites for always-on between-fight behavior."
-            }
-            muted={!firstRite}
-            unlockSystem="rites"
+          <SocketGroup
+            title="Abilities"
+            sockets={abilitySockets}
+            unlockSystem="abilities"
+            onOpen={() => onOpenTab('abilities')}
           />
         )}
-        <SummaryCard
-          kind="rune"
-          eyebrow="Rune Rules"
-          name={`${runesEquipped.length} Rules`}
-          text={`${runeSpent} / ${runeBudget} RP spent. Runes decide movement, targeting, and ability timing.`}
-        />
+        {visibility.stances && (
+          <SocketGroup
+            title="Stances"
+            sockets={stanceSockets}
+            unlockSystem="stances"
+            onOpen={() => onOpenTab('stances')}
+          />
+        )}
+        {visibility.rites && (
+          <SocketGroup
+            title="Rites"
+            sockets={riteSockets}
+            unlockSystem="rites"
+            onOpen={() => onOpenTab('rites')}
+          />
+        )}
+
+        <section className="loadout-group">
+          <button
+            type="button"
+            className="loadout-group__title loadout-group__title--link"
+            onClick={() => onOpenTab('runes')}
+          >
+            Rune Rules
+            <span className="loadout-group__count">{runesEquipped.length} equipped</span>
+          </button>
+          <div className="loadout-budget">
+            <span className="loadout-budget__label">Budget</span>
+            <EngravedMeter
+              className="loadout-budget__meter"
+              fraction={runePct / 100}
+              over={runeSpent > runeBudget}
+              label={`Rune budget: ${runeSpent} of ${runeBudget} points spent`}
+            />
+            <span className={`loadout-budget__value${runeSpent > runeBudget ? ' loadout-budget__value--over' : ''}`}>
+              {runeSpent} / {runeBudget} RP
+            </span>
+          </div>
+        </section>
       </div>
     </div>
   );
@@ -191,7 +250,7 @@ export function BuildPanel({ onClose, progressiveDisclosure = false }: Props) {
   });
   const visibility: SystemVisibility = progressiveDisclosure
     ? resolvedVisibility
-    : { mastery: true, abilities: true, stances: true, rites: true };
+    : { ...resolvedVisibility, mastery: true, abilities: true, stances: true, rites: true };
   const visibleTabs = TABS.filter((item) => !item.gate || visibility[item.gate]);
   const effectiveTab = visibleTabs.some((item) => item.id === tab) ? tab : "overview";
 
@@ -201,9 +260,9 @@ export function BuildPanel({ onClose, progressiveDisclosure = false }: Props) {
 
   return (
     <GameDialog size="wide" className="build-dialog" onClose={onClose}>
-      <DialogHeader title="Build" closeLabel="Close build" />
+      <DialogHeader title="Loadout" closeLabel="Close loadout" />
 
-      <DialogTabs label="Build sections" className="build-dialog__tabs">
+      <DialogTabs label="Loadout sections" className="build-dialog__tabs">
         {visibleTabs.map((item) => (
           <DialogTab
             key={item.id}
@@ -218,7 +277,7 @@ export function BuildPanel({ onClose, progressiveDisclosure = false }: Props) {
       </DialogTabs>
 
       <div id={`build-panel-${effectiveTab}`} className="build-dialog__body" role="tabpanel">
-        {effectiveTab === "overview" && <BuildOverview visibility={visibility} />}
+        {effectiveTab === "overview" && <LoadoutBoard visibility={visibility} onOpenTab={setTab} />}
         {effectiveTab === "abilities" && <AbilitiesPanelContent />}
         {effectiveTab === "stances" && <StancesPanelContent />}
         {effectiveTab === "rites" && <RitesPanelContent />}

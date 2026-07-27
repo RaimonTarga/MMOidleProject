@@ -13,7 +13,6 @@ import {
   BRITTLE_EFFECT_ID,
   BRITTLE_DURATION_MS,
   DR_SHATTER_EFFECT_ID,
-  VOID_CORRUPTION_EFFECT_ID,
   type DamageElement,
 } from "@mmo-idle/shared";
 import { grantMonsterRewards } from "../../player/progression/rewards";
@@ -41,9 +40,7 @@ import { applyMonsterDamageTakenDebuffs } from "../../classes/shared/debuffs";
 const HITS_RECEIVED_KEY = "hitsReceived";
 const FIRST_STRIKE_EFFECT = "first-strike";
 
-const BURN_EFFECT_IDS = BURN_FAMILY
-  .filter((b) => b.effectId !== VOID_CORRUPTION_EFFECT_ID)
-  .map((b) => b.effectId);
+const BURN_EFFECT_IDS = BURN_FAMILY.map((b) => b.effectId);
 const BURN_ELEMENT_BY_EFFECT_ID: Record<string, DamageElement> =
   Object.fromEntries(BURN_FAMILY.map((b) => [b.effectId, b.element]));
 
@@ -227,11 +224,7 @@ export function initWeaponEffects(): void {
     effect.data.dotMultiplier = profile.dotMultiplier;
     effect.data.slowPerStack = profile.slowPerStack ?? 0;
 
-    if (profile.effectId === VOID_CORRUPTION_EFFECT_ID) {
-      attachMarker(world, ctx.defender, "hasVoidCorruption");
-    } else {
-      attachMarker(world, ctx.defender, "hasWeaponDot");
-    }
+    attachMarker(world, ctx.defender, "hasWeaponDot");
 
     ctx.damage = Math.max(1, Math.round(ctx.damage * (1 - profile.convPct)));
   });
@@ -242,7 +235,6 @@ export function initWeaponEffects(): void {
 export function updateWeaponEffects(world: World, dt: number): void {
   updateFlurryBuff(world);
   updateBurnEffects(world, dt);
-  updateCorruptionEffects(world, dt);
 }
 
 // ── Flurry buff: recompute attackCooldown from current stacks each tick ────────
@@ -281,78 +273,6 @@ function updateFlurryBuff(world: World): void {
       player.performsAttack.attackCooldown = next;
       markSliceDirty(world, player, "performsAttack");
     }
-  }
-}
-
-// ── Edge of Oblivion corruption tick ─────────────────────────────────────────
-
-function updateCorruptionEffects(world: World, dt: number): void {
-  const toKill: Array<{ monsterId: string; sourceId: string; damage: number }> = [];
-  const killed = new Set<string>();
-
-  for (const e of world.voidCorruptionMonsters) {
-    if (isInvulnerableMonster(e)) continue;
-    const monsterId = e.isMonster.id;
-    const state = e.tracksCombat;
-    const effect = getStatusEffect(state, VOID_CORRUPTION_EFFECT_ID);
-    if (!effect) {
-      detachMarkerIfNoEffect(
-        world,
-        e,
-        "hasVoidCorruption",
-        state,
-        VOID_CORRUPTION_EFFECT_ID,
-      );
-      continue;
-    }
-
-    effect.data.nextTickIn -= dt;
-    if (effect.data.nextTickIn <= 0) {
-      effect.data.nextTickIn = effect.data.tickIntervalMs;
-      const baseDamage = Math.round(computeReservoirDotTick(
-        effect.data.pool ?? 0,
-        effect.data.tickIntervalMs,
-        effect.data.drainDurationMs,
-      ));
-      if (baseDamage <= 0) {
-        if (effect.remainingMs <= 0) {
-          removeStatusEffect(state, VOID_CORRUPTION_EFFECT_ID);
-          detachMarkerIfNoEffect(world, e, "hasVoidCorruption", state, VOID_CORRUPTION_EFFECT_ID);
-        }
-        continue;
-      }
-      const damage = applyMonsterDamageTakenDebuffs(state, baseDamage);
-      effect.data.pool = Math.max(0, (effect.data.pool ?? 0) - baseDamage);
-      recordMonsterDamagedByPlayer(
-        world,
-        effect.sourceId,
-        actorFromSourceId(world, effect.sourceId),
-        e,
-        damage,
-        "weapon-dot",
-        buildSimpleBreakdown(damage, damage),
-      );
-      e.hasHealth.hp -= damage;
-      pushDotTickEvent(world, e, BURN_ELEMENT_BY_EFFECT_ID[effect.id] ?? "doom", damage, { sourceType: "weapon" });
-
-      if (e.hasHealth.hp <= 0 && !killed.has(monsterId)) {
-        killed.add(monsterId);
-        toKill.push({ monsterId, sourceId: effect.sourceId, damage });
-      } else if (effect.remainingMs <= 0) {
-        removeStatusEffect(state, VOID_CORRUPTION_EFFECT_ID);
-        detachMarkerIfNoEffect(world, e, "hasVoidCorruption", state, VOID_CORRUPTION_EFFECT_ID);
-      }
-    }
-  }
-
-  for (const { monsterId, sourceId, damage } of toKill) {
-    const monster = world.getMonsterEntity(monsterId);
-    if (monster && sourceId) {
-      emitPlayerMonsterOnKill(world, sourceId, monster, damage, "weapon-dot");
-      const rewardInfo = grantMonsterRewards(world, sourceId, monster);
-      recordPlayerKillMonster(world, sourceId, monster, damage, rewardInfo);
-    }
-    world.removeMonsterEntity(monsterId);
   }
 }
 

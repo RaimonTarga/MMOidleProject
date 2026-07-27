@@ -5,10 +5,36 @@
   padding: 2px 0;
 }
 
+/* Collapsed Materials: the whole economy as one dense chip strip, but with the
+   two wallets visibly separated so a catalyst count is never read as essence. */
+.materials-strip {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 18px;
+  padding: 3px 0 1px;
+}
+
+.materials-strip__group {
+  min-width: 0;
+}
+
+/* The two wallets are separated by space alone. A 1px vertical rule was tried
+   first and read as a stray artifact: the strip wraps, and `align-self: stretch`
+   only stretches within a flex LINE, so the rule collapsed to a short stub
+   floating between chips. */
+
+.materials-divider {
+  height: 1px;
+  margin: 3px 0 1px;
+  background: var(--hud-edge-divider);
+}
+
 .essence-row {
   display: flex;
   align-items: center;
   gap: 7px;
+  flex-wrap: wrap;
 }
 
 .economy-icon {
@@ -26,29 +52,40 @@
   flex-shrink: 0;
 }
 
+/* Rail text is content-sized: a long material name wraps and grows the row
+   rather than pushing its own value out of the panel. */
 .essence-name {
-  flex: 1;
+  flex: 1 1 auto;
+  min-width: 0;
   font-size: 12px;
   color: var(--hud-text-muted, #a7a2d8);
   font-family: monospace;
+  overflow-wrap: anywhere;
 }
 
+/* Numerals are tabular so the counts form a straight right-aligned column
+   instead of jittering as digits change. */
 .essence-value {
+  flex: 0 0 auto;
+  min-width: 34px;
   font-size: 13px;
   font-family: monospace;
+  font-variant-numeric: tabular-nums;
   font-weight: bold;
-  min-width: 28px;
   text-align: right;
   color: var(--hud-text, #e5e2ff);
 }
 
-/* Catalyst progress toward the next unit (e.g. "40/100"). */
+/* Catalyst progress toward the next unit (e.g. "40/100"), with a thin engraved
+   meter under the figure so "how close" reads without doing the arithmetic. */
 .essence-progress {
+  flex: 0 0 auto;
+  min-width: 52px;
   font-size: 10px;
   font-family: monospace;
+  font-variant-numeric: tabular-nums;
   color: var(--hud-text-muted, #a7a2d8);
   opacity: 0.7;
-  min-width: 48px;
   text-align: right;
 }
 
@@ -76,4 +113,8 @@
 .essence-row--flash-b {
   border-radius: 3px;
   animation: essence-flash-b 950ms ease-out forwards;
+}
+
+.essence-progress__meter {
+  margin-top: 3px;
 }

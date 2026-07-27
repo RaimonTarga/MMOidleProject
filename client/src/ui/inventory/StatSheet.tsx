@@ -194,7 +194,9 @@ export function StatSheet({ focused, onFocus }: Props) {
           })()}
         </div>
       ) : (
-        <div className="inv-stat-sheet__heading">YOUR STATS</div>
+        // The rail plate is the at-a-glance read; this sheet is the reference
+        // you consult while comparing gear, so it stays an exact table.
+        <div className="inv-stat-sheet__heading">STAT REFERENCE</div>
       )}
 
       {/* ── Stat rows ───────────────────────────────────── */}

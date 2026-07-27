@@ -452,9 +452,10 @@ Implemented token policy (2026-07-21):
 
 - Gameplay `playerTier` remains zero-indexed; the client projects it to
   document-level `data-ui-tier="1"` through `"8"`, clamped at both ends.
-- Tier overrides are desktop-only until Phase 12. Shared mobile renderers keep
-  the stable Tier 1 fallback even though the document attribute remains visible
-  to every root.
+- Tier overrides were desktop-only through Phase 11. Phase 12 lets the token
+  sets resolve on mobile as well, with the apparatus density and continuous
+  motion axes damped there; the document attribute was always visible to every
+  root.
 - The progression moves from nearly dormant iron/brass through warmer worked
   metal, verdigris and cobalt, then restrained amethyst/astral materials. Class
   mechanic and success/warning/danger meanings remain stable across the sets.
@@ -660,6 +661,63 @@ Tasks:
 Review gate: mobile retains its existing functionality and receives the visual
 language without becoming a compressed desktop rail layout.
 
+Primitive sharing audit (2026-07-25):
+
+- Tokens are shareable. Every desktop-only *density* rule already lives behind
+  `.desktop-hud` plus `min-width: 1101px`, so the eight tier sets carry colour
+  and material meaning only. They now resolve on mobile; a mobile scope in
+  `tokens.css` neutralises the apparatus axes (`--hud-frame-cut`,
+  `--hud-frame-double-opacity`, `--hud-ornament-opacity`, `--hud-channel-*`,
+  `--hud-rune-trace`, tier morph/activation durations, unlock lift).
+- `HudPanel`, `DisclosureHeader`, and `HudDock` are shareable unchanged; their
+  desktop treatment is already scoped away.
+- `GameDialog`/`DialogHeader`/`DialogTabs` were already reused by mobile for
+  full-screen destinations, but the bottom sheet was a parallel implementation
+  with no portal, focus trap, Escape, or dialog role. Reconciled.
+- `GameIcon` is shareable as-is and is the correct contract for the mobile tab
+  bar and More list.
+- The class-mechanic and ability renderers are deliberately **not** reconciled.
+  Phase 4 already shipped an explicit compact mobile mechanic renderer and the
+  mobile ability path is separate by design; merging them would add risk
+  without removing duplication that actually hurts.
+
+Implemented adaptation (2026-07-25):
+
+- The tier palette now reaches mobile. Mobile HUD chrome (`.mhud-*`) consumes
+  `--hud-*` tokens instead of fixed hexes, so material and semantic meaning
+  match across the 1100/1101px boundary while ornament and continuous conduit
+  motion stay desktop-only.
+- `GameDialog` gained a `sheet` presentation. `MobileSheet` is now that dialog
+  plus a drag handle, so sheets get the same portal, focus entry/return, focus
+  trap, Escape, `role="dialog"`, and `aria-modal` as every desktop destination.
+  Backdrop tap, drag-down dismissal, and the slide-up remain; reduced motion
+  cancels the slide.
+- `--hud-hit-target` / `--hud-hit-target-compact` are 0 on desktop and 44/40px
+  on mobile. Dialog close buttons, dialog tabs, mobile tabs, and More rows size
+  from them, and mobile tabs drop the hover-only affordance.
+- Full-width mobile dialogs and sheets pre-divide their authored width by
+  `--ui-font-scale`, because `zoom` multiplies the rendered box. This fixes
+  non-default UI font scales rendering a dialog wider than the viewport.
+- Left/right safe-area insets were added to the top strip, tab bar, biome XP
+  row, and both floating buttons; the sheet insets on three sides. A
+  short-viewport scope (`max-height: 480px`) drops tab captions, shrinks the
+  AUTO button, restates `--mhud-bottom-h` so overlay offsets stay truthful, and
+  raises the sheet ceiling. No destination or control is removed.
+- The Phase 5 visibility matrix now governs mobile. The More sheet and the
+  mobile Build dialog use the same `resolveSystemVisibility` resolver with the
+  same ownership overrides, and an open Mastery view closes if its gate ever
+  closes behind the player.
+- Gated More rows carry `data-ui-unlock-system`, so the existing Phase 11
+  `installUiUnlockSync` wakes them with no new protocol or second policy.
+  Mobile gets one restrained housing settle — no channel flare, icon rune wake,
+  or lift.
+- The mobile tab bar and More list render through `GameIcon`. Entries sharing a
+  desktop navigation destination resolve to the approved packed frames;
+  entries with no approved art keep a glyph in the identical footprint.
+- The 1100px breakpoint is now declared once in `client/src/breakpoints.ts` and
+  imported by `useIsMobile`, keyboard, gamepad, and the Phaser minimap, closing
+  the documented drift risk. The stylesheets still mirror the value and say so.
+
 ---
 
 ## 6. Known regression risks
@@ -670,7 +728,14 @@ language without becoming a compressed desktop rail layout.
 - Shared `StatPanel` or mechanic selectors can leak desktop styling into mobile.
 - Independent modal atoms can create stacked same-z-index dialogs and mismatched
   selected navigation states.
-- CSS and Phaser both encode the 1100px breakpoint and can drift.
+- A dialog rendered inside a rail still escapes that rail: `GameDialog` portals
+  to `document.body`, so `display: none` on `#left-sidebar`/`#right-sidebar`
+  does not hide it. Any component mounted in a rail whose open state is a shared
+  atom must be guarded by viewport, not by the rail's visibility. (This produced
+  a duplicate mobile Settings dialog; fixed 2026-07-25.)
+- CSS and Phaser both encode the 1100px breakpoint and can drift. (Mitigated in
+  Phase 12: TypeScript declares it once in `client/src/breakpoints.ts`; the two
+  stylesheets' media queries still mirror the value by hand.)
 - The ability overlay currently uses `pointer-events: none`; future clickable
   slots require deliberate input and server-intent design.
 - Hiding a system without a reliable unlock signal can strand Inventory, Map,
@@ -752,4 +817,732 @@ is visual review and cheap correction before the design propagates.
 | 9. Tier theming | Implemented — pending visual review (2026-07-21) | Document-level T1-T8 projection and eight desktop-only token sets now drive material, clipped-frame complexity, secondary engraving, rune traces, persistent conduit density/speed, energy intensity, and motion. An upward authoritative tier change sends a staggered ignition across rails, panels, dock, Auto Combat, dialogs, and the token-themed Phaser minimap; hydration, reduced motion, and hidden tabs are guarded. Tier selectors contain tokens only; semantic contrast audit minimum is 4.62:1. Client typecheck and production build pass. Manual review at the standard widths and representative tiers remains required. |
 | 10. Asset integration | Accepted to advance (2026-07-24) | Added the layout-stable, explicitly accessible `GameIcon`/`IconSource` contract; consolidated UI/item atlas loading; migrated desktop abilities, Build icons, system navigation, economy rows, Crafting tabs, Mastery, and Rune surfaces without asset-dependent layout. Four approved ability icons remain explicitly allowlisted; pending Second Wind retains its fallback. The transparent iron/bronze/cyan family covers all seven system destinations, five essence identities, five family catalyst crystals, Craft Upgrade, Rune Situation, and Rune Response. The deterministic atlas check passes and all referenced frames resolve. Isolated 18px family review passed; the user advanced to Phase 11 without a separate live modal viewport pass. |
 | 11. Motion | Implemented — pending live visual review (2026-07-24) | Phase 9 already supplied tier-up shell ignition and persistent apparatus motion. Phase 11 now adds hydration-safe false-to-true activation for Mastery, Abilities, Stances, and Rites across persistent navigation and any open Build surface. Duration, flare opacity, and lift are tier tokens; reduced motion and hidden documents cancel rather than queue the wake. The transition seam, client typecheck, and production build pass. Larger apparatus expansion and the optional Phaser world effect remain deliberately deferred until the restrained wake is visually approved. |
-| 12. Mobile adaptation | Deferred | Regression fixes only until this phase. |
+| Cross-phase audit | Done (2026-07-25) | Verified claims: all 45 tier tokens present in every set with a complete `:root` fallback; worst semantic contrast is exactly the documented 4.62:1 (T8 danger on control); all 20 `atlasIcon` references resolve against the packed UI manifest; `HasAutoIntent` carries server-authored reason/source with rune-rule labels; primary dialogs are mutually exclusive and no mobile path can set a primary atom. Fixed: duplicate Settings dialog on mobile (rail dialogs portal past `display: none`), three dead legacy overlay wrappers, stale desktop-only token comments. Repo typecheck, 34/34 tests, and client build pass. |
+| 12. Mobile adaptation | Implemented — pending live device review (2026-07-25) | Tier tokens now resolve on mobile with the apparatus density damped; `.mhud-*` chrome consumes them. Bottom sheets moved onto a new `GameDialog` `sheet` presentation, so every mobile overlay shares the portal/focus-trap/Escape boundary. Touch footprints come from `--hud-hit-target`; full-width dialogs and sheets compensate for `zoom`. Safe-area insets cover all four edges and a short-viewport scope adapts landscape without dropping destinations. The Phase 5 visibility matrix and Phase 11 unlock wake now apply to mobile. Tab bar and More list render through `GameIcon`. The 1100px breakpoint is declared once in `client/src/breakpoints.ts`. Repo typecheck and client production build pass. Live review on a real touch device — sheet drag/focus, notch insets, landscape, and the 1100/1101px boundary — remains required. |
+
+---
+
+# Part II — Wave 2: ergonomics and information architecture
+
+Wave 1 (§5 phases 0-12) rebuilt the *material* of the desktop UI: primitives,
+tokens, dialog shell, tier theming, icons, motion, mobile. Wave 2 changes what
+those surfaces *contain* and how you move between them. Sections 1-4 and 6-8
+above still apply unchanged — same guardrails, same primitive discipline, same
+verification matrix, same handoff contract.
+
+## 10. Approved direction
+
+Eight decisions were taken on 2026-07-25 and are settled. Implementing agents
+must not relitigate them; raise a concern only if the code proves one
+impossible.
+
+1. **Rail navigation — expand as shortcuts, keep modals.** A nav entry with
+   sub-sections expands them inline in the rail; picking one opens the dialog
+   directly on that section. Dialogs keep their own tab strip. Map, Inventory,
+   Passive Tree and Settings stay one click. The rail does not become a
+   docked-panel spine.
+2. **Crafting owns making; Build owns arranging.** Learning abilities, stances
+   and rites moves out of Build into Crafting. Build keeps loadout, runes and
+   overview, and stops costing resources.
+3. **Crafting is organised Make / Upgrade / Progress.** Make is one uniform
+   recipe browser covering items *and* techniques, with a type facet beside the
+   existing biome/slot/tier filters. Upgrade stays separate because it acts on
+   owned items rather than recipes. Progress keeps biome levels.
+4. **One collapsible Materials rail panel.** Essence and Catalysts merge.
+   Collapsed is a dense row of icon+count chips; expanded is named rows with
+   catalyst progress.
+5. **Tier Quest becomes the Progression panel.** It gains a Global Mastery bar
+   reading current against `maxGlobalMasteryAtTier(playerTier)`.
+6. **Character becomes instruments.** Always-visible apparatus per concern in
+   the class-mechanic visual language; exact numbers move to the existing
+   expand and to hover tooltips.
+7. **Inventory keeps the numeric stat sheet.** Character is the glance,
+   Inventory's `StatSheet` is the reference consulted while comparing gear.
+   Neither is deleted; their roles are made explicit.
+8. **Unlock scheme is moderate.** Character, Inventory, Map, Crafting and
+   Settings are always available. Everything else appears on its first
+   authoritative trigger and plays the existing wake.
+   **SUPERSEDED 2026-07-26 by Part III §16:** the user chose a very strict
+   staged tutorial arc — almost everything hidden at start, the HUD assembles
+   on authoritative triggers. The W6 resolver/wake machinery remains the
+   substrate; only the gate matrix changes.
+
+### Golden standards
+
+These are the approved references. Match them; do not invent a third language.
+
+- **Dialog layout: the Map.** Its strength is master/detail — a browsable
+  surface plus a persistent detail pane that tracks selection, with filters
+  above. `MapPanel` + `NodeInfo` is the shape every browsing dialog should
+  take. This is also the answer to the disliked pickers: a slot grid with a
+  detail pane replaces a `<select>`.
+- **Widget language: Summoner and DoT.** Layered housing, a dormant path,
+  readable state travel, a brief confirmed-state impact, and title-only visible
+  text. The Character instruments must read as siblings of these, not as a
+  restyled table.
+
+## 11. Wave 2 phases
+
+Same rules as Wave 1: one reviewable slice at a time, stop at each review gate,
+do not continue automatically.
+
+### W1 - Economy and progression presentation
+
+**Model:** Medium - Terra/Opus
+**Dependencies:** none
+
+The cheapest visible win, and it produces the cost primitives W2 consumes.
+
+1. Add a `MaterialChip` primitive rendering an essence or catalyst through
+   `GameIcon` at a fixed footprint, with held/required states.
+2. Rebuild `CostDisplay` and `EssenceSummary` (`ui/crafting/shared.tsx`) on it.
+   The wallet summary must include catalysts, not essences only. The coloured
+   `craft-cost__dot` / `craft-essence-chip__dot` markers go away.
+3. Apply the same chips to the ability/stance/rite learn lists so every cost in
+   the game reads identically before those lists move in W2.
+4. Merge `EssencePanel` and `CatalystPanel` into one collapsible Materials
+   panel using `HudPanel` + `DisclosureHeader`. Preserve the essence gain flash
+   and the catalyst progress readout.
+5. Fold Global Mastery into `QuestPanel`, retitled Progression: tier badge,
+   quest bar, and a mastery bar against `maxGlobalMasteryAtTier(playerTier)`.
+   Keep the locate-dungeons affordance.
+
+Review gate: no cost or wallet anywhere still draws a coloured dot; the rail is
+shorter than before; mastery progress is readable without opening a dialog.
+
+### W2 - Crafting as the making surface
+
+**Model:** High - ChatGPT 5.6 Sol/Claude Fable 5
+**Dependencies:** W1
+
+The largest structural phase. It also produces the browser primitive W3 reuses,
+so extract it here rather than up front.
+
+1. Extract a `BrowserPane` primitive from the Map pattern: filter strip,
+   scrollable list, persistent detail pane, keyboard selection, empty state.
+   It must know nothing about recipes, nodes, or items.
+2. Restructure `CraftingPanel` into Make / Upgrade / Progress.
+3. Make is one `BrowserPane` over a unified recipe model spanning gear recipes
+   and technique recipes, with a type facet beside biome/slot/tier. One card
+   shape and one detail pane for every recipe kind.
+4. Move ability, stance and rite *learning* here from `AbilitiesPanel`,
+   `StancesPanel` and `RitesPanel`. The `*PanelContent` exports keep their
+   equip halves for W3.
+5. `craftTabAtom` changes shape; update `overlayStack`, the rail entry, and the
+   mobile More menu together. Crafting must still open directly on Make from
+   the rail.
+6. Preserve every server intent path: `crafting:craftRecipe`,
+   `inventory:upgradeItem`, and the ability/stance/rite learn requests.
+
+Review gate: a gear recipe and a technique recipe are indistinguishable in
+shape; Upgrade and Progress are unchanged in behaviour; nothing in Build still
+spends resources.
+
+Escalate only if the unified recipe model needs a shared-package contract
+change rather than a client-side view model.
+
+### W3 - Build as the arranging surface
+
+**Model:** Medium - Terra/Opus (High if slot semantics change)
+**Dependencies:** W2
+
+1. Delete the three `<select className="build-select">` pickers.
+2. Equipping becomes a slot grid plus a `BrowserPane` detail pane: select a
+   slot, see eligible entries as cards with icon, name and blurb, pick one.
+   Duplicate-suppression and fire-priority ordering must survive.
+3. Rework Overview into a build summary that reads as a sheet, not a stack of
+   cards borrowed from other stylesheets.
+4. Keep `BuildRunesTab` behaviour intact; restyle only what the shared
+   primitives cover. It is 938 lines and is not part of this phase's scope.
+5. `buildPanelTabAtom` loses `abilities`/`stances`/`rites` as learning
+   destinations; decide and document whether loadout is one tab or three.
+
+Review gate: no native `<select>` remains in Build; equipping is possible with
+keyboard alone; loadout, priority and rune behaviour are unchanged.
+
+### W4 - Character instruments
+
+**Model:** High for the first instrument; Medium for each after
+**Dependencies:** W1 (tokens/chips), independent of W2/W3
+
+1. Design one instrument first — offense — and get it approved before building
+   the rest. It must sit beside the Summoner widget without looking foreign.
+2. Then defense, sustain, and mobility. Each derives from the same authoritative
+   atoms `StatPanel` already reads; no new server data.
+3. Exact values move to the existing expand and to `useHoverTooltip`. Keep HP,
+   the class mechanic, and Intent where they are.
+4. Restyle Inventory's `StatSheet` as the explicit numeric reference. It stays a
+   table; it does not become instruments.
+5. Keep the mobile compact renderer working — `ArchetypeMechanics compact` and
+   the `.mhud-mech` strip must not inherit desktop instrument density.
+
+Review gate: the Character panel reads as a sibling of the Summoner and DoT
+widgets, no number is lost, and gear comparison in Inventory is not slower.
+
+### W5 - Rail sub-section expansion
+
+**Model:** Medium - Terra/Opus
+**Dependencies:** W2, W3 (the section lists must be final first)
+
+1. Extend `RightNavButton` into an expandable entry with an accessible
+   disclosure and a nested sub-entry list.
+2. Populate from the destinations that have sections: Crafting (Make, Upgrade,
+   Progress), Build (loadout, runes, overview), Mastery, Settings.
+3. Picking a sub-entry opens the dialog on that section in one action.
+4. Entries without sections keep their current single-click behaviour and gain
+   no chevron.
+5. Expansion state is presentation-only; it must not become a second source of
+   truth for which dialog is open.
+
+Review gate: no destination costs more clicks than before; keyboard traversal
+of the nested list works; selected nav state matches the open dialog section.
+
+### W6 - Unlock scheme revision
+
+**Model:** High - ChatGPT 5.6 Sol/Claude Fable 5
+**Dependencies:** W1-W5 (the element inventory must be final)
+
+The approved Phase 5 matrix predates this restructure and will be wrong: its
+`abilities`/`stances`/`rites` keys gate *Build tabs* that no longer exist in
+that form.
+
+1. Re-derive the visibility matrix over the new element inventory, keeping
+   `resolveSystemVisibility` as the single resolver and keeping every ownership
+   override so migrated saves never lose access.
+2. Always available: Character, Inventory, Map, Crafting, Settings.
+3. Gate on first authoritative trigger: Materials (first essence), the catalyst
+   rows (first progress), Passive Tree (first skill point), Mastery (tier 1 or
+   non-zero), technique/stance/rite sections (their existing gates, now applied
+   to Crafting sections and Build slots), Party (first nearby player), Bestiary
+   (first kill), Tactical Mode.
+4. Every reveal plays the existing Phase 11 wake through
+   `data-ui-unlock-system`; no second animation system.
+5. Hidden stale state must fall back safely, exactly as the Build tabs do today.
+
+Review gate: a fresh character sees a small rail that visibly grows; no existing
+character loses a destination; every gate is backed by authoritative state,
+never by incidental client state.
+
+### W7 - Mobile parity
+
+**Model:** Medium - Terra/Opus
+**Dependencies:** W1-W6
+
+Not optional. Crafting, Build and Inventory dialogs are shared surfaces, and the
+mobile More menu currently lists Build sub-tabs that W2 moves.
+
+1. Re-verify every restructured dialog at the mobile widths and in the sheet
+   presentation.
+2. Update the More menu to the new destination set and gates.
+3. Confirm `BrowserPane` degrades to a single column on narrow viewports rather
+   than compressing master and detail side by side.
+4. Re-run the Phase 12 checks: touch targets, safe areas, landscape, the
+   1100/1101px boundary.
+
+Review gate: mobile reaches every new destination, and no browsing surface
+requires horizontal scrolling.
+
+### W8 - Left rail follow-ups
+
+**Model:** Medium - Terra/Opus
+**Dependencies:** W1-W7
+
+The left rail keeps its current destinations — Character, Party, Combat Log,
+Bestiary. Two known defects are deliberately deferred to here so they do not
+compete with the structural phases.
+
+1. Combat Log shows too much irrelevant information. Decide what a player
+   actually needs mid-fight, and filter or tier the rest rather than printing
+   every event.
+2. Bestiary truncates: past a certain entry count the list is simply cut off
+   instead of scrolling or paging. Fix the overflow, not the entry count.
+
+Review gate: the Combat Log is readable during a fight without scrolling back,
+and no bestiary entry is unreachable at any zone size or UI font scale.
+
+## 12. Wave 2 risks
+
+- Moving learning out of Build changes `buildPanelTabAtom`, `craftTabAtom`, the
+  rail, the mobile More menu, and the Phase 5 gates at once. W2 must land those
+  together or the gates will point at destinations that no longer exist.
+- `BuildRunesTab` is 938 lines and is explicitly out of scope for W3 beyond
+  shared-primitive restyling.
+- A unified recipe model must stay a client view model. Gear and technique
+  recipes are separate authoritative databases; do not merge them in `shared/`.
+- Instruments can lose information. Every number visible today must remain
+  reachable in at most one hover or one expand.
+- The Map is the golden standard and is explicitly not being redesigned. Extract
+  from it; do not refactor it beyond what `BrowserPane` extraction requires.
+- Aggressive gating can strand a returning player. Ownership overrides are
+  mandatory, not optional.
+
+## 13. Wave 2 progress tracker
+
+| Phase | Status | Review notes |
+|---|---|---|
+| W1. Economy and progression | Implemented — pending visual review (2026-07-25) | Added `MaterialChip` + `MaterialRef` as the single grammar for every economy quantity (packed icon, amount, held balance, affordable/short state). `CostDisplay` and the new `WalletSummary` are built on it; the wallet now shows catalysts beside essences instead of essences only, and every coloured-dot chip is gone. Ability/stance/rite learn cards dropped their comma-joined cost strings for the same chips. `EssencePanel`+`CatalystPanel` merged into one collapsible `MaterialsPanel` (chip strip collapsed, named rows plus catalyst progress expanded, gain flash preserved). `QuestPanel` is now Progression: tier badge, quest bar, and a Global Mastery bar against `maxGlobalMasteryAtTier(playerTier)` with a ceiling-reached state. Repo typecheck and client build pass. |
+| W2. Crafting as making | Implemented — pending visual review (2026-07-25) | Extracted `BrowserPane` from the Map pattern (filter strip, scrollable master, persistent detail, roving-tabindex listbox, single-column below 1100px). Crafting is now Make / Upgrade / Progress on a `wide` dialog. `makeEntries.ts` is a client view model unifying gear and ability/stance/rite recipes — the authoritative databases stay separate. `MakeTab` browses all of them with a kind facet, biome and tier filters, search, an affordable-only toggle, and buildable-first ordering; gear evolve/reconstruct is preserved. Actions moved out of rows into the detail pane, so a `role="option"` row holds no buttons. Learning left Build: the three `*PanelContent` exports keep only their equip halves. `craftTabAtom`, `overlayStack`, and the mobile craft view were retargeted together; `ForgeTab` deleted. Repo typecheck, 34/34 tests, and client build pass. |
+| W3. Build as arranging | Implemented — pending visual review (2026-07-25) | Overview is now a build sheet: every slot and its occupant as scannable rows, with each section heading acting as the jump to the tab that changes it, plus a rune-budget meter that flags overspend. It replaces the card grid that repeated each entry's blurb, showed only slot 1 of every kind, and offered no way to act on what it reported. `BuildRunesTab` keeps its behaviour and gains the shared restyle: the whole build stylesheet now resolves through tier tokens instead of the hardcoded purple palette, and the dead `build-summary-card`/`build-select`/`build-loadout-row`/`build-learn-*` rules were removed. All three `<select className="build-select">` pickers are gone. New shared `LoadoutBrowser` puts slots in the master list and the eligible entries in the detail pane, on top of W2's `BrowserPane`: the current occupant stays visible while choosing, candidates are cards with their own text, and an entry already used elsewhere is shown with the reason rather than hidden. Abilities, Stances and Rites now share one implementation; fire-priority ordering, dense-list rebuild, and every server intent are unchanged. Loadout stays three tabs. Still open for W3: the Overview rework and the shared-primitive restyle of `BuildRunesTab`. Repo typecheck, 34/34 tests, and client build pass. |
+| W4. Character instruments | Implemented — pending visual review (2026-07-25) | First attempt animated a charge along a conduit once per attack and split the bar by damage composition. Rejected on review as spammy and unreadable — the user could not tell what it depicted. **The lesson, which binds later attempts: the class mechanics animate because their state genuinely moves (summons spawn, DoT ticks land); a stat only changes on a gear swap, so perpetual motion carries no information and reads as flicker. Text-free works for Summoner because the shape *is* the value — four chambers means four strikes — but no shape encodes "82 attack" without inventing a scale to measure it against.** Borrow the material and frame language from the mechanics, not the motion. `StatPanel` was restored to its committed state; the instrument files were deleted. **Second attempt implemented (2026-07-25):** `StatPlate` — one engraved housing carrying the whole readout. It began as four plates titled by concern; on review the per-concern titles were cut as wasted rail height, so the plate now leads with a row of self-labelling figures (DPS, Plating, HP/s, Speed) over a secondary line and the meters. Static at rest. A bar appears **only** where the value has a genuine 0-100% ceiling (damage reduction, dodge); attack, DPS, plating and speed are numbers, never part-full bars. Motion is event-only: `useChangeFlash` marks a value that actually changed and reports the delta once, staying silent on hydration and on any change while the document is hidden or reduced motion is on. The expand became the explained reference — every stat with its `STAT_HELP` tooltip plus the empowered breakdown. Client typecheck and build pass; live review pending. | `StatInstrument` mirrors `MechanicFrame`, so Character reads as a sibling of the class mechanics: titled frame, text-free apparatus, exact values in a readout that is always in the accessibility tree and surfaces on hover. First instrument is Offense — the strike assembly. It deliberately shows **composition and cadence, never magnitude against a bar maximum**: attack has no authoritative ceiling, so a part-full damage bar would be an invented balance claim. The conduit splits by where damage comes from, one charge traverses it per attack (so a fast class visibly strikes more often), and the anvil brightens only with the empowered multiplier. Reduced motion and hidden tabs stop the travel. Attack and DPS moved into the expand; Defense stays a row until its instrument exists. Per the plan this exemplar is reviewed alone before Defense, Sustain and Mobility are built, and before the `StatSheet` split. Client typecheck and build pass. |
+| W5. Rail sub-sections | Implemented — pending visual review (2026-07-25) | `RightNavButton` became an entry that reveals its destination sections while that destination is open, so "Crafting → Upgrade" is one action instead of open-then-tab. Crafting exposes Make/Upgrade/Progress and Build exposes Overview/Abilities/Stances/Rites/Runes, with the gated ones carrying the same `data-ui-unlock-system` tokens as the tabs they mirror. Flat destinations render no chevron and no list, so Map, Inventory, Passive Tree and Settings still cost exactly one click. Expansion is derived from which dialog is open, never a second source of truth. |
+| W6. Unlock scheme | Implemented — pending visual review (2026-07-25) | `SystemVisibility` grew `materials`, `passiveTree` and `party` alongside the four Phase 5 keys, still resolved by the single `resolveSystemVisibility`. Every new gate keeps an ownership override — holding no essence right now cannot hide Materials from a player with unlocked recipes, non-zero mastery or tier ≥ 1; an empty wallet of skill points cannot hide the Passive Tree from someone with allocated passives. The Materials rail panel and the Passive Tree entry are gated accordingly, and `installUiUnlockSync` now subscribes to the economy and progression atoms so a first essence or first skill point plays the existing wake. Always available, per the approved policy: Character, Inventory, Map, Crafting, Settings. |
+| W7. Mobile parity | Implemented — pending live device review (2026-07-25) | MobileHUD feeds the same full matrix into the resolver, so the mobile Skills tab reveals on the first skill point exactly as the rail entry does, and an open view whose gate closes falls back to the base HUD. The Make browser gets mobile rules matching the dialog's smaller padding, a full-width search field, and touch-height filter chips; `BrowserPane` already collapses to a single column below 1100px rather than squeezing master and detail side by side. |
+| W8. Left rail follow-ups | Implemented — pending visual review (2026-07-25) | **Bestiary truncation had two causes.** The left rail scrolled but hid its scrollbar, so a long rail read as cut-off content with nothing to suggest more existed — it now uses the same thin scrollbar as the dialogs. And `.bestiary-detail__list` was missing `min-height: 0`, the flex trap that stops a child shrinking below its content, so a long roster pushed past the panel instead of scrolling inside it; the detail panel also traded its flat 600px height for `min(600px, 88vh)`, and the rail body a flat 220px cap for `clamp(160px, 30vh, 340px)`. **Combat Log** gained three verbosity tiers — Key (kills, deaths, progression, empowered/execution), Combat (adds damage, dodges, heals, shields) and All — defaulting to Key and persisted per player. The per-hit damage stream that buried every outcome is now opt-in. |
+
+---
+
+# Part III — Wave 3: signature apparatus, style codification, staged unlocks
+
+Planned 2026-07-26 in a design session with the user. Sections 1-4 and 6-8 of
+Part I apply unchanged — same guardrails, primitive discipline, verification
+matrix, model bands, and handoff contract. Wave 2's decisions stay settled
+except where §14 explicitly supersedes them. As always: inspect the source
+first; code overrides this plan when they differ.
+
+Wave 3 exists because the user's review of the shipped Waves found the
+remaining laggards: the HP bar predates the apparatus language, the glance
+stats show irrelevant figures, Build/runes were left half-done (the explicit W3
+leftovers), the passive tree is dated, several panels still explain themselves
+in prose, and the unlock scheme is milder than the game the user wants.
+
+## 14. Wave 3 approved decisions
+
+Settled with the user 2026-07-26; do not relitigate.
+
+1. **HP display: integrated plate crown.** Name, status dot, and the HP track
+   fold into the top of `StatPlate` — one apparatus, not stacked sections.
+2. **Glance figures: DPS + Plating; meters: Reduction.** HP/s and Speed demote
+   to the expand. The static Dodge meter dies, replaced by the Evasion
+   instrument (§17 V3). Defense figures show LIVE values; debuff tinting (red +
+   down-glyph when live < base) is the default if base values are cheaply
+   available client-side, otherwise a follow-up.
+3. **Evasion is deterministic and gets an instrument.** The accumulator
+   (`EVASION_KEY` in `tracksCombat`,
+   `server/src/systems/defense/mitigation/evasion.ts`) is server-only today and
+   the UI shows only the static rate — the live charge was never networked.
+   Wave 3 networks it and renders it in the mechanic language.
+   **Corrected 2026-07-26 by `server/test/evasion.test.ts`:** V3 below claims
+   "the dodge event itself already produces the DODGE floater". That is only
+   true at `evadeMitigation >= 1`. `EVADE_MITIGATION_BASE` is `0.5`, so a normal
+   evade is *partial*: it emits `monster-hit` with `evadedPartial`, which draws a
+   tinted damage number with a `~` suffix. The `player-evade` event — the large
+   DODGE floater and its sound — requires full mitigation, reachable only through
+   the `defense.evade-mitigation` passive. The mechanic is correct (the
+   accumulator steps 0.25 and wraps on the fourth hit, all asserted); it was the
+   *presentation* that made dodges look like they never happen.
+   **Resolved 2026-07-26:** partial evades now raise their own `GRAZE` floater on
+   both sides — the player's evasion turning a blow, and a monster rolling with
+   one. It is deliberately quieter than DODGE (smaller, offset off the damage
+   number, and silent, since the hit it accompanies already plays a sound). No
+   protocol change: the client keys off the `evadedPartial` the event already
+   carried, and `evasion.test.ts` now guards that field as a visible behaviour
+   rather than an internal flag. The three hand-copied floater tweens
+   (DODGE ×2, MISS) were collapsed onto one `floatLabel` helper rather than
+   adding a fourth.
+4. **Crafting absorbs rune recipes; Build becomes Loadout.** W2/W3 already
+   moved ability/stance/rite learning to Crafting's Make browser. What remains:
+   rune recipe crafting leaves `BuildRunesTab` for Make (one more kind facet),
+   Build is renamed **Loadout** and rebuilt as a socket surface, and the rune
+   loadout becomes a rule board. Crafting keeps its name.
+5. **Crafting's Progress tab dies.** The Mastery dialog is the single progress
+   surface, reached through a radial mastery dial in the Progression panel. The
+   desktop rail's duplicate Mastery nav entry is removed (mobile keeps a nav
+   destination — it has no rail).
+6. **Passive tree: "the path you walk."** Chosen nodes form a class-toned
+   spine; the frontier's 3 choices are the focal orbs; unpicked past siblings
+   dim + shrink (~40%, desaturated), expandable on hover/tap — never fully
+   hidden (class reset exists). Effects render as glyph chips, not text.
+7. **Distinctiveness via signature elements, not ornament density.** Frames
+   stay restrained ritual-machine. The identity carries through a small set of
+   bespoke set-pieces: the mastery dial, the Evasion instrument, gradient
+   conduit bars, the passive-tree spine, the HP crown, and the existing class
+   mechanics.
+8. **Typography: display face for titles only.** Panel/dialog titles get an
+   engraved small-caps serif; body, numerals, and 9px micro-labels keep the
+   current sans/mono (display faces are unreadable at micro sizes).
+9. **Two bar grammars** (§15). Important accumulation bars use the gradient
+   conduit grammar extracted from the biome XP bar (the user's named "perfect"
+   bar); minor bounded meters stay engraved-minimal.
+10. **Unlock scheme: very strict staged arc** (§16), superseding Part II §10
+    decision 8. Reveal moments become wake + a persistent badge until first
+    visited.
+11. **New UI glyphs come from the PixelLab pipeline**, same family as the
+    approved iron/bronze/cyan navigation set. The user reviews every candidate
+    in the gallery; agents never accept/reject art themselves.
+    **SUPERSEDED 2026-07-26:** small abstract UI symbols are now *hand-authored*
+    as pixel maps in `tools/glyphs/` and rendered by `pnpm art:glyphs`; they
+    still ship through `art:pack`, so nothing downstream changes. The V0b batch
+    (22 entries, 66 candidates, $0.47) proved the generated route unusable at
+    icon size: legible at 64px, mush at the 18px HUD footprint, and off-family.
+    That is the same wall the 16px modifier badges hit twice before becoming
+    typography. Measuring the approved family explained why it was never
+    reproducible — 1041 distinct colours across eight 32×32 icons, i.e.
+    downscale noise rather than an authored palette. PixelLab remains correct
+    for its ~1,280 successful generations (monsters, players, environment,
+    item icons): 64px+ organic subjects where a diffusion prior helps. The
+    user-reviews-the-art rule is unchanged; only the source of the art moved.
+12. **Out of scope:** further combat-log tuning (W8's tiers shipped; any more
+    is log logic, not UI), Tactical Mode (debug, slated for removal), admin
+    styling, balance numbers.
+
+## 15. Style specification
+
+The identity remains Part I's: old-school MMO via a restrained ritual-machine /
+arcane-apparatus reading — opaque iron, worn materials, engraved edges, tactile
+controls, modern information clarity — explicitly WITHOUT the pitfalls of
+clunky legacy UIs (ornate frames that eat space, unreadable bars, prose
+everywhere). Tier tokens keep supplying material progression; Wave 3 adds no
+fixed decoration.
+
+### Bar grammar
+
+Two named grammars. Every bar in the game must be one of them (or the class
+mechanic energy language, which is its own thing and is not restyled).
+
+**Gradient conduit** — for the few important, live-accumulation surfaces.
+Recipe extracted from `client/src/hud/biomeXpBar.css` (the reference
+implementation; do not modify it except the §17 V1 chip removal):
+
+- thin track (~7px) with deep inset shadow and a faint 1px outer keyline;
+- fill is a **3-stop directional gradient brightening toward the leading edge**
+  (reference: `#3344aa → #7766ee → #aabbff`);
+- slow shimmer sweep (~2.8s) across the fill;
+- tick marks segmenting the track;
+- state changes swap the gradient and add a slow pulse (gold MAX, amber
+  CAPPED), never a layout change.
+
+Continuous shimmer is permitted here and only here — reconciled with the W4
+motion lesson because these bars mark live accumulation ("the thing that
+grows"), not static stats. Assigned: biome XP (as-is), the HP crown track
+(threshold-colored: green/amber/red, each its own 3-stop ramp), the Global
+Mastery dial (gold ramp, radial/conic variant), the quest progress bar
+(arcane blue-violet, like XP). Hues are per-meaning, never one signature color.
+
+**Engraved minimal** — every other bounded meter: inset track, flat fill, no
+shimmer, no ticks. Assigned: rune budget, damage reduction, mastery-dialog
+biome rows, catalyst progress, and any future minor bar.
+
+### Signature elements
+
+The distinctiveness budget is spent on set-pieces, each designed once and
+reused nowhere else: HP crown, mastery dial, Evasion instrument, gradient
+conduits, passive-tree spine, and the shipped class mechanics (DoT/Summoner
+remain the benchmark). Panels and dialogs around them stay quiet.
+
+### Typography
+
+- One self-hosted OFL display face for titles. Default candidate: **Cinzel**
+  (carved Roman small-caps); acceptable alternates for the user to eyeball:
+  Alegreya SC, Marcellus. No CDN loading — bundle the font file.
+- Applied to: `DialogHeader` titles, rail `panel-title`, boss bar name, and
+  section headings ≥ 11px. NOT applied to: 9px micro-labels, numerals, body
+  text, tooltips, the combat log.
+- Fallback stack `'Palatino Linotype', Georgia, serif`; FOUT-safe
+  (`font-display: swap`); run `pnpm size:check` after adding the asset.
+
+### De-texting rule
+
+Instructional/status prose inside panels is a defect; flavor text (quest
+descriptions, bestiary lore) is exempt. Standard replacements: text buttons →
+icon `ActionChip`; textual milestone status → `MilestonePips`; disclosure
+summaries ("See detailed stats") → icon-only affordance with an `aria-label`;
+explanatory notes ("Ceiling rises with your tier") → state styling + tooltip.
+
+### Icon needs (PixelLab batch, §17 V0)
+
+Same transparent iron/bronze/cyan family as the shipped navigation set:
+~10 stat glyphs (attack, dps, plating, reduction, range, speed, regen,
+evasion, empowered, shield), ~6 action glyphs (compass/locate, inspect, equip,
+unequip, reorder, confirm), tree root/keystone icons for the 6 classes.
+Standard tree nodes reuse stat glyphs on class-toned orbs — do NOT generate
+unique art per node. Pipeline rules per Part I §1 (dry-run, gallery review,
+pack; never hand-edit atlases).
+
+## 16. Unlock script — staged tutorial arc
+
+Supersedes Part II §10 decision 8 and revises the W6 matrix. The machinery is
+unchanged and mandatory: `resolveSystemVisibility` stays the single resolver,
+`installUiUnlockSync` + `data-ui-unlock-system` stays the single wake system,
+every gate keeps ownership overrides so no migrated save loses a destination.
+Only the matrix widens and tightens.
+
+### The arc
+
+A fresh character boots to a nearly bare HUD: the Phaser viewport with its
+overlays (boss bar, death overlay, buffs), the Character panel core (HP crown,
+class mechanic, Intent), Auto Combat, and Settings. Everything else assembles
+on first authoritative trigger, in the order play naturally produces:
+
+| Element | Reveal trigger (durable, authoritative) | Notes |
+|---|---|---|
+| Character, Auto Combat, Settings, viewport overlays | always | boot core; Settings must never gate (accessibility) |
+| Combat Log | first kill | durable proxy: bestiary discoveries non-empty |
+| Bestiary | first kill | same signal |
+| Progression panel | first kill | purpose appears after first blood |
+| Inventory | first item owned | inventory non-empty OR equipment non-empty OR tier ≥ 1 |
+| Materials rail panel | existing W6 gate | unchanged |
+| Crafting | first material | reuse the `materials` gate — no second policy |
+| Map + biome XP overlay | first biome XP | any `biomeLevel` entry > 0 OR tier ≥ 1 |
+| Passive Tree | existing gate | first skill point / allocated passives / tier ≥ 1 |
+| Loadout (Build) | first thing to arrange | known ability OR owned rune OR tier ≥ 1 |
+| Abilities / Stances / Rites sections | existing tier gates (1/2/3) + ownership | unchanged |
+| Mastery dial + dialog | existing gate (tier ≥ 1 or GM > 0) | dial inherits the rail entry's gate |
+| Party | existing `hasCompany` | unchanged |
+| Evasion instrument | `evadesHits` present | component presence, not part of the arc matrix |
+| Ability dock | `abilities` gate | empty dock before that is noise |
+| Tactical Mode | out of scope | debug, slated for removal |
+
+Implementation notes: exact atoms are verified at implementation time, and any
+trigger lacking a durable authoritative signal must be redesigned, never
+approximated with incidental client state (Part I rule). Tier ≥ 1 acts as a
+master override on the early gates so the core interface fully exists by the
+first tier-up regardless of playstyle. Dev/admin tooling is exempt from gating.
+
+### The reveal moment
+
+Wake + badge:
+
+1. The existing Phase 11 wake plays on the false→true transition (unchanged).
+2. The newly revealed entry then carries a small glowing pip — gold, slow
+   pulse, static under reduced motion — until the player first opens it.
+   Unvisited state is client presentation only: per-character localStorage
+   (`mmo_idle.unlock_badges.<playerId>`), populated when visibility flips true
+   after hydration, cleared on first open. No protocol field. Badges render on
+   rail nav entries, rail panels' headers where relevant, and mobile More rows
+   through the same data-attribute mechanism as the wake.
+
+### Stranding safeguards
+
+- Ownership overrides on every gate (mandatory, as W6 established).
+- Settings and death/session overlays never gate.
+- An open dialog whose gate closes falls back safely (existing pattern).
+- Verification for V7 includes a scripted fresh-character playthrough: every
+  element must appear at its trigger, play one wake, badge until visited, and
+  a migrated mid-progress save must boot with everything it has ever touched.
+
+## 17. Wave 3 phases
+
+Order is small → big (user-chosen). One reviewable slice per phase; stop at
+each gate.
+
+### V0 - Kit deltas and icon batch
+
+**Model:** Medium - Terra/Opus (art direction review stays with the user)
+**Dependencies:** none
+
+1. New primitives (extending, not duplicating, the shipped set): `ActionChip`,
+   `MilestonePips`, `EngravedMeter`, `GradientConduit` (the §15 grammar as a
+   component, tick marks + state variants included), `GlyphTile` (evolving the
+   `StatPlate` figure cell into a shared primitive). `ApparatusPlate` extracts
+   the cut-corner housing recipe from `mechanic-capacitor` if V2/V3 need it
+   standalone; skip it if `HudPanel` + tokens suffice.
+2. Typography: bundle the display face, apply per §15, verify size budget.
+3. Generate the §15 icon manifest through the PixelLab pipeline; user reviews
+   in the gallery; pack on acceptance.
+
+Review gate: mechanics panels unchanged; titles render in the display face at
+all standard widths and UI font scales; icon batch accepted and packed.
+
+### V1 - Quick wins and defect fixes
+
+**Model:** Low - Sonnet/Luna (item 5 Medium if the test finds a real break)
+**Dependencies:** none (V0 for the pip/chip primitives where used)
+
+1. Remove the pace-family modifier chip from the biome XP bar
+   (`BiomeXpBar.tsx` ~112/144-151 and `biomeXpBar.css` `__family` rules). The
+   modifier stays visible on the map only.
+2. Materials panel: divider or ≥10px gap between essence and catalyst groups
+   when collapsed; expanded rows get `tabular-nums`, right-aligned min-width
+   value column, wrap instead of overflow.
+3. Bestiary 3+ entries still crop (W8's fix was insufficient — the user
+   reproduced it after). REPRODUCE FIRST with 3+ discovered species at tall
+   and short windows before touching `bestiary.css` again.
+4. De-text pass per §15: `DisclosureHeader` summary → icon affordance;
+   `MasteryPanel` `'OK'/'--'` → `MilestonePips`; the Progression panel's
+   mastery prose notes → state styling + tooltip.
+5. Evasion smoke test: new `server/test/evasion.test.ts` (construct `World`
+   directly, repo test conventions). Player `evadesHits {dodgeRate: 0.25,
+   evadeMitigation: 0.5}`, four monster hits → hits 1-3 full damage with the
+   accumulator stepping 0.25, hit 4 mitigated 50% with the accumulator
+   wrapping; OOC reset applies `EVADE_OOC_RESET`; an evaded hit applies no
+   debuffs (`evadeBlocksDebuffs`). The user reports dodges not visibly
+   happening; the code reads coherent, so this test is the arbiter — fix
+   whatever it exposes in this task.
+
+Review gate: each item independently visually confirmed; `pnpm typecheck` +
+`pnpm test` green.
+
+### V2 - Bar grammar rollout
+
+**Model:** Low-Medium
+**Dependencies:** V0
+
+Convert per the §15 assignment: quest progress → `GradientConduit`
+(blue-violet); rune budget, reduction, catalyst progress → `EngravedMeter`.
+The biome XP bar itself is untouched (reference implementation). HP and
+mastery convert in V3/V4 with their surfaces.
+
+Review gate: every converted bar side-by-side coherent with the biome XP bar;
+no bar invents a ceiling a stat does not have (W4 rule).
+
+### V3 - Character crown and Evasion instrument
+
+**Model:** High (protocol change)
+**Dependencies:** V0; V1 item 5
+
+1. Network the evasion charge. Shared first: `EvadesHits` in
+   `shared/src/components/core/networkedSlices.ts` gains `charge: number`
+   (0-1). Preferred: the slice field BECOMES the accumulator — evasion
+   listeners and `resetEvadeAccumulator` read/write it via
+   `mutateSlice`/`markSliceDirty`, and the `EVASION_KEY` counter is deleted
+   (matches "runtime state lives on slices"). Fallback if ordering fights
+   back: counter stays truth, mirrored into the slice per change. `evadesHits`
+   is already in `NETWORKED_PLAYER_KEYS`. Recalc already spreads the existing
+   slice, so charge survives — extend the V1 test to assert it, plus a wiring
+   test that the networked charge tracks hits taken.
+2. Crown plate: fold the name row, status dot, and HP block into the top of
+   `StatPlate` per §14.1. HP track = `GradientConduit` with every current
+   layer preserved (shield capping band, regen preview past current HP, DoT
+   preview at the leading edge, threshold hues). Numerals right-engraved;
+   shield as a glyph chip. Glance figures/meters per §14.2; the deleted text
+   lines' data already exists in the expand.
+3. Evasion instrument: new `EvasionInstrument` beside the class mechanics,
+   rendered only when `evadesHits` is present. `MechanicFrame` housing, charge
+   meter fill = `charge`, "primed" glow state when `charge + dodgeRate >= 1`
+   (the next hit dodges), mitigation as a micro-label (`50%` + evasion glyph),
+   tooltip explaining determinism. The dodge event itself already produces the
+   DODGE floater; the instrument shows anticipation, per the mechanics'
+   authoritative-anticipation standard.
+4. Mobile: the crown renders in the mobile sheet; the compact mechanic strip
+   must not inherit desktop instrument density (W4 rule).
+
+Review gate: Character reads as one apparatus and a sibling of the class
+mechanics; the charge visibly steps on hits and discharges on a dodge; no
+number reachable today is lost (≤ one hover or expand away).
+
+### V4 - Progression cluster
+
+**Model:** Medium
+**Dependencies:** V0
+
+1. Progression panel: quest bar per V2; the whole-panel "locate dungeons"
+   affordance becomes a visible compass `ActionChip` on the quest row (the
+   `▶ locate dungeons on map` hint text dies).
+2. Mastery dial: radial gauge (conic-gradient gold ramp on an engraved ring,
+   GM value centered, capped glow) that IS the button opening the Mastery
+   dialog. Largest element after the quest block — mastery is being promoted
+   to a primary progression system.
+3. Single home: remove the desktop rail's Mastery nav entry; mobile keeps a
+   destination. Gate inheritance per §16.
+4. Mastery dialog: biome rows get map-consistent biome colors
+   (`ui/map/constants.ts` + `BiomeIcon`) and `EngravedMeter`s of
+   `biomeLevel / biomeLevelCap(playerTier, group)`; summaries become
+   `GlyphTile`s.
+5. Kill Crafting's Progress tab: remove from `CraftingPanel` `SECTIONS`; diff
+   `BiomeTab` against the dialog first and fold anything unique in before
+   deleting it.
+
+Review gate: mastery reachable in one click from the dial and nowhere else on
+desktop; biome colors match the map; no prose remains.
+
+### V5 - Loadout and the rune rule board
+
+**Model:** High
+**Dependencies:** V0; picks up the explicit W3 leftovers
+
+1. Rune recipes move to Crafting Make as one more kind in the `makeEntries`
+   view model (client-side only — authoritative databases stay separate, W2
+   rule) with a kind facet entry. Crafting becomes Make / Upgrade.
+2. Build → **Loadout** (rename, `MenuButtons` label included). The Overview
+   sheet dies; Loadout IS the overview: socket grid for Techniques/Guards
+   (counts from `abilitySlotsAtom`), the stance pair (active one glowing),
+   rite sockets, and the rule board. A socket is a cut-corner cell — engraved
+   hollow + faint system glyph when empty; icon + name when filled; a tiny
+   `1`/`2` corner engraving replaces the "fires first" note. Selecting a
+   socket drives the existing `LoadoutBrowser` detail pane (W3's approved
+   master/detail pattern — keep it, restyle it).
+3. Rule board (the remaining ~equip half of `BuildRunesTab`): sticky budget
+   `EngravedMeter` at top with an over state — the buried bottom equip button
+   dies. Two panes (stacked on mobile): library grouped by channel using the
+   existing `CHANNEL_COLOR` edges; active loadout as ordered
+   `WHEN [condition glyph] → DO [action glyph]` cards with the
+   `resolveRuneTarget` preview as icon + name and a warning state when the
+   target is missing. Equip/unequip as per-card +/− `ActionChip`s; reorder via
+   up/down chips (drag optional).
+4. `buildPanelTabAtom` / `craftTabAtom` / `overlayStack` / rail sections /
+   mobile More update together (the W2 risk note applies verbatim).
+
+Review gate: every action previously reachable still reachable in ≤ the same
+clicks; no resource is spent inside Loadout; keyboard-only equipping still
+works; mobile sheets verified.
+
+### V6 - Passive tree
+
+**Model:** High for the spine layout; Medium for polish
+**Dependencies:** V0 (icons)
+
+Rebuild `SkillTreePanel` presentation per §14.6: class-toned spine of chosen
+orbs joined by a conduit line; frontier's 3 choices as the focal orbs (icon,
+≤2-word name, effect glyph chips, cost as pips); unpicked past siblings dim +
+shrink with hover/tap expansion. Preserve exactly: unlock logic, desktop
+hover-preview + click-unlock, mobile tap-select + commit, the
+`summoner-root`/`CONDUIT_ENABLED` blocking, and reset behavior.
+
+Review gate: a mid-build character's path is readable at a glance; every
+node's full detail reachable by hover/tap; mobile verified.
+
+### V7 - Staged unlock arc
+
+**Model:** High
+**Dependencies:** V0-V6 (the element inventory must be final — same reason W6
+came last)
+
+Implement §16: extend `SystemVisibility` with the new keys (combat log,
+bestiary, progression, inventory, crafting, map, loadout, ability dock), all
+through the single resolver with ownership overrides; extend
+`UI_UNLOCK_SYSTEMS` and tag the new targets with `data-ui-unlock-system`; add
+the badge layer; apply to mobile (More rows, tab bar) per the W7 pattern.
+
+Review gate: the §16 fresh-character playthrough script passes; a migrated
+save loses nothing; reduced motion and hidden-tab recovery hold.
+
+### V8 - Optional polish (explicit user go-ahead required)
+
+**Model:** Low-Medium
+
+Phaser nametag/HP micro-pass (thinner engraved bars, subtle elite tint,
+explicitly no added detail) and inventory touch-ups (rarity edges, silhouette
+glyphs on empty slots, hover compare deltas).
+
+## 18. Wave 3 risks
+
+- The evasion slice change touches combat hot paths; the smoke test must land
+  before the protocol change, not with it.
+- Renaming Build and moving rune recipes hits `overlayStack`, rail sections,
+  and mobile More simultaneously — the W2 blast-radius rule applies.
+- The strict arc can strand players if any trigger uses non-durable state;
+  every gate must name its authoritative signal in review.
+- Badges are localStorage presentation state — they must never influence
+  gameplay or visibility logic, only decoration.
+- The display font must not leak into micro-labels or numerals; audit at
+  non-default UI font scales.
+- The biome XP bar is the gradient reference and is NOT restyled; only its
+  modifier chip is removed.
+
+## 19. Wave 3 progress tracker
+
+| Phase | Status | Review notes |
+|---|---|---|
+| V0a. Kit + typography | Approved (2026-07-26) | The five §15 primitives live in `hud/primitives/kit.css` + one file each, exported from the primitives index. `GradientConduit` carries the accumulation grammar extracted from `biomeXpBar.css` (3-stop directional ramp, 2.8s shimmer, tick segments, `max`/`capped` ramp swaps, `snap` for resets, a `layers` slot for V3's shield/regen/DoT marks) with six per-meaning ramps; `EngravedMeter` is the deliberately flat counter-grammar and draws no fill at all at zero, so the 2px legibility floor can never turn "none" into "some". `ActionChip` makes the label mandatory — an icon-only control with no accessible name is a defect, not a de-texting — and `MilestonePips` states its count in one label. `GlyphTile` is the figure cell **extracted from** `StatPlate`, which now renders through it: `PlateFigure` became a `Pick` of `GlyphTileProps` so the recipe cannot drift, `useChangeFlash` moved to a shared hook, and `statPlate.css` shed the duplicated rules for one flex-sizing line. The kit is intentionally not `.desktop-hud`-scoped — a bar must read the same in a mobile sheet — and adds its own reduced-motion and `data-ui-hidden` pause rules, which the reference bar never had. `ApparatusPlate` was **skipped by design**: the crown folds into `.stat-plate` and the Evasion instrument uses `MechanicFrame`, so extracting the `mechanic-capacitor` housing would have added a primitive with no second caller. Typography: three candidate faces were self-hosted from `client/public/fonts` for an in-game comparison; **Cinzel 600 was chosen 2026-07-26** and Alegreya SC / Marcellus were deleted. It is switched by the `--hud-font-display` + `--hud-font-display-weight` pair and applied to dialog titles, rail `panel-title`, the boss name, and the live ≥11px section headings (`build-sheet__title`, `craft-biome-section__name`, `inv-title`) — not to 9px labels, numerals, body, tooltips, or the combat log. Repo typecheck, 34/34 tests, and the client build pass; `pnpm size:check` fails on 46 pre-existing unallowlisted files and none of them are V0's. **Approved by visual review 2026-07-26.** One note carried forward: the desktop rail title is 10px, below §15's own 11px floor, and was accepted as-is — revisit only if it reads thin at a non-default UI font scale. |
+| V0b. Icon batch | Approved (2026-07-26) | Generated first, per the original plan: 22 entries × 3 candidates on pixflux at 64px, 0 failures, $0.47, using the proven `items`/`ability-icons` params. Rejected — subjects mostly landed but the surface was glossy, bevelled and teal, and collapsed at the 18px footprint. Root cause is structural, not prompt-level (see §14.11), so the route changed rather than the wording. All 22 are now hand-authored 16×16 pixel maps in `tools/glyphs/glyphs.ts`, in a palette **sampled** from the approved navigation icons, rendered by the new `pnpm art:glyphs` into `art/src/UI_icons/**` and shipped by the existing `art:pack`. `validateGlyphs()` throws on a ragged map since a miscounted row silently shifts a glyph. After a first pass the set read cooler and more geometric than the shipped family, so it was rebalanced to the family formula — charcoal mass, bronze trim, one small cyan spark, with bronze carrying thin strokes that charcoal would lose against the dark rail. The 22 PixelLab entries are `draft` with the rejection recorded, so `art:generate` reports "nothing to generate" and can never overwrite authored art. Cost of the authored set: zero; iteration is a character edit. Two redline rounds followed. Round 1 made the subjects literal (sword, dagger, plate, shield, crosshair, boot, medical cross, boot, bubble, compass) and gave the class sigils real subjects. Round 2 put attack and dps on the diagonal, gave every class sigil one shared circular frame, laid the war hammer diagonally, returned DoT to a plain droplet, and reweighted summoner onto its summons; `class-energy` was named the benchmark and is byte-for-byte unchanged, verified by diff. `stat-evasion` was reconceived rather than redrawn — a human figure cannot survive 16×16, so it now draws the *relationship*: a trajectory bending clear of a marked impact point. Grid size became per-glyph and equals the shipped size: 16×16 for stat/action glyphs the HUD draws at 16px, 32×32 for class sigils, which the passive tree renders on 88px nodes. **Packed and verified:** atlas is 512×164 with 69 frames, all 22 new frames present at their authored sizes, drift-check clean, and all 20 existing `atlasIcon` references still resolve. Sizing note for V3/V4: `GlyphTile`/`ActionChip` should request 16px rather than today's 13–18px to stay pixel-exact. |
+| V1. Quick wins | Implemented — pending visual review (2026-07-26) | **(1)** The pace-family chip is gone from the biome XP bar, with its CSS rule and three now-dead imports; the modifier still shows on the map. **(2)** The collapsed Materials strip splits into two wallets with a 12px gap and an engraved rule, so a catalyst count is no longer read as essence; expanded rows use `tabular-nums` in fixed-width right-aligned columns and wrap long names instead of pushing the value out of the rail. **(3)** The bestiary crop was **reproduced at last** — see the tooling note below. Both surfaces always scrolled; the defect was that the detail dialog's two panes were the only scroll regions in the app declaring neither `scrollbar-width: thin` nor a thumb colour, so the platform drew an overlay scrollbar that appears only once you already know to scroll. Content cut at the panel edge with no affordance reads as cropped. Both panes now carry the standard thin thumb, and `.bestiary-detail__pane` gained the `min-height: 0` its sibling already had. **(4)** De-text pass: Mastery's `OK`/`--` column became `MilestonePips` carrying real labels ("Tier 3 items: reached"), and the Progression panel's two-state ceiling sentence became a warning-coloured figure plus a panel tooltip; the dead `.quest-mastery__note` rule went with it. **(5)** `server/test/evasion.test.ts` added and passing — see the row below. Repo typecheck, 35/35 tests, and the client build pass. |
+| V1 tooling. `pnpm ui:shot` | Added (2026-07-26) | Playwright + Chromium, at the user's direction, after a second round of blind CSS patching on the same report. `tools/uishot/` screenshots any URL or static harness across the plan's viewport matrix and runs a **layout audit** that distinguishes three states: CLIPPED (unreachable content), SILENT (scrolls but renders no visible scrollbar — invisible to a screenshot, and the actual cause of both bestiary reports), and scrolls (working). `harness/*.html` load the real stylesheets and mirror the real DOM so pure-CSS defects reproduce with no server, login, or save state, with query params to push past what a normal save contains. Exits non-zero on a finding, so it can gate a change. Not in CI: the browser binary is never installed there and no `*.test.ts` imports Playwright. **Landmine found while installing:** the workspace packages carry `version: "0.4"`, which is not valid semver, so `workspace:*` cannot resolve and *any* dependency change fails — `pnpm install` only works today because the lockfile short-circuits resolution. **Fixed 2026-07-26:** the three dependents now declare `"@mmo-idle/shared": "link:../shared"`, which resolves by path and never consults a version, so the release script can keep writing `major.minor` forever. `shared` was restored to `0.4`. Verified by a full re-resolution (606 packages), the symlinks in all three packages, `pnpm build` across all four, typecheck, and 35/35 tests. |
+| V2. Bar grammar | Implemented — pending visual review (2026-07-26) | Every bar now belongs to one of the two §15 grammars. `EngravedMeter` took the damage-reduction/dodge meters in `StatPlate`, the rune budget in `BuildRunesTab` (which was a hand-rolled pip strip with hardcoded purple/gold/red inline styles), the Overview sheet's budget meter, and a new catalyst-progress meter under the `40/100` figure in Materials. `GradientConduit` took the quest bar (see V4). The biome XP bar is untouched, as the reference implementation. Four blocks of bespoke track/fill CSS were deleted in favour of the primitives. |
+| V3. Crown + evasion | Implemented — pending visual review (2026-07-26) | **Charge networked, the preferred way:** `EvadesHits.charge` IS the accumulator, not a mirror of one — the combat listeners already received `world`, so they write it through `mutateSlice`, and `EVASION_KEY` plus its `tracksCombat` counter are deleted. Trap avoided: `resetEvadeAccumulator` runs every tick for every out-of-combat player, so it no-ops when the charge already sits at the baseline; writing unconditionally would have broadcast an unchanged slice at 5 Hz forever. `evasion.test.ts` was retargeted onto the slice — it now reads exactly what the client is sent — and gained a section asserting the charge tracks hits and that a 0.5 rate makes the second hit the promised evade. **`EvasionInstrument`** renders beside whichever class mechanic the player has, keyed on `evadesHits` presence rather than archetype, so it shows even before a class is chosen. It draws the charge, a threshold line where the next hit lands, one tick per hit still to take, and a green *primed* state at `charge + dodgeRate >= 1` — a promise, not a probability, because the mechanic is deterministic. `MechanicFrame`'s `kind` widened to an explicit union rather than `string`, and its aria-label no longer calls everything a class mechanic. **Crown:** name, status dot and health folded into the top of `StatPlate`; the HP track is a `GradientConduit` with threshold ramps (vital/caution/critical) and the shield band, regen preview and DoT preview composed into its `layers` slot, so all three read against one scale. Shield became a chip, numerals are right-engraved, glance figures are DPS + Plating with HP/s and Speed demoted to the secondary line, and the static Dodge meter is gone — it stated a rate while saying nothing about when the next dodge lands. Verified in-browser via a new `tools/uishot/harness/crown.html`. Repo typecheck, 35/35 tests, client build pass. |
+| V4. Progression cluster | Implemented — pending visual review (2026-07-26) | **Progression panel:** the quest requirement is now drawn by shape, not a single bar — `MilestonePips` at or below six required units, `GradientConduit` with per-unit segments above. **This is the boss-seal seam:** nothing in the panel knows what a unit *is*, so `killsRequired: 3` with distinct sources draws three trophies with no UI work, and today's one-boss quests already draw as the same shape with N of 1. The whole-panel click target and its `▶ locate dungeons on map` hint became an explicit compass `ActionChip` on the quest row — a panel-sized button hid the action and read as decoration. **Mastery dial:** a conic-gradient gold ring, engraved face, capped pulse, and it *is* the button opening the dialog; the duplicate rail nav entry is gone, so desktop has one home for mastery while mobile keeps its More destination. The dial takes `onOpenMastery`/`showMastery` as props rather than reaching for `masteryOpenAtom`, preserving the rule that no mobile path sets a primary dialog atom. **Mastery dialog:** biome rows carry the map's own `tileColor` and `BiomeIcon` plus an `EngravedMeter` against `biomeLevelCap(playerTier, group)` — "Lv 4" alone never said how much was left — and the summary headline became three `GlyphTile`s. **V4.5 deliberately NOT done:** see the row below. |
+| V4.5. Crafting Progress tab | Done (2026-07-26) | Resolved the way the diff suggested: the information moved rather than the tab. `gearEntries()` no longer skips locked gear — it lists it with `unlocked: false` and a hint naming what it waits on (`Reach Forest level 4`), which `MakeTab` already knew how to render as a LOCKED row with a blocked detail pane. That put the one genuinely unique thing the Progress tab held into Make, where W2 decided recipes live. Its other section listed "ultimate" gear and was **already dead** — the recipes were commented out of the recipe index, so `RECIPE_DATABASE` carried none and the section's `if (recipes.length === 0) return null` always fired. `BiomeTab.tsx` deleted; `CraftTab` is now `make | upgrade`, landed together with `craftTabAtom`, the rail sections and the mobile More menu per the W2 blast-radius rule. **Ultimate recipes deleted outright** at the user's direction as a scrapped-feature artifact: `abyssUltimate.ts`, its commented registration, the `ultimate?: boolean` flag, and `ULTIMATE_RECIPE_GROUP`. Deliberately kept: `ULTIMATE_CLEAR_VOID_OVERLORD`, because the server records that boss clear in `bossesCleared` and ability/rite recipes gate on boss-clear tokens generally; and `requiredBossClear` on gear, which is the same live pattern. **Left standing, flagged:** the Edge of Oblivion corruption reservoir (`VOID_CORRUPTION_EFFECT_ID`, `CORRUPTION_MIN_SPEED_MULT`, `EDGE_OF_OBLIVION_ID`) is now unreachable — no recipe or item defines that weapon — but it threads through `weaponEffects.ts`, `movement.ts`, `markerInvariants.ts` and `itemDisplay.ts`, so removing it is a combat-code change rather than a data one and was not done unasked. |
+| V5.1-5.2. Runes into Make, Build → Loadout | Implemented — pending visual review (2026-07-26) | **Runes moved to Crafting.** They fit the existing `techniqueEntries` spec exactly — same id/name/tier/cost/`recipeGroup`/`requiredBiomeLevel` shape and the same biome-mastery gate — so they became a fourth technique-like kind rather than a special case: one facet chip, one `KIND_ORDER` entry, `ownedRunes` on `MakeSources`. The one real difference is the server intent (`rune:craftRecipe`, not `crafting:craftRecipe`), verified before wiring and dispatched from `learnIntent()` beside ability/stance/rite — the browser is one surface over several authoritative databases, per the W2 rule. **The Forge half of `BuildRunesTab` is gone** now that it would duplicate Make: the sub-tab strip, `RuneForgeTab`, four forge-only helpers, six imports and `runePanelTabAtom` — **313 lines deleted, 23 added**, leaving the file as the equip half V5.3 rebuilds into the rule board. **Renamed to Loadout** across the rail entry, the dialog title and tabs label, and the mobile More menu. Internal `build*` identifiers deliberately keep their names — renaming reaches a dozen files and every persisted key for no player-visible gain — with the split documented at `buildPanelTabAtom`. Repo typecheck, 35/35 tests, client build pass. **Still open in V5:** the socket grid and the `WHEN → DO` rule board (V5.3). |
+| V5.3. Loadout board + rule board | Implemented — pending visual review (2026-07-27) | **Loadout IS the overview.** The label/value sheet became a board of socket cells: cut-corner cells (using the tier `--hud-frame-cut` token) that are engraved-hollow when empty and named when filled, with firing order as a corner numeral rather than a "fires first" note, and the in-force stance edged in success green. Selecting a socket opens the tab that fills it. `SheetSection`/`SheetRow` and their CSS are gone. Sockets are text-led: there is no approved art for ability/stance/rite, and referencing frames that would not resolve is worse than no glyph. **Rule board:** each rule now reads as one sentence — `WHEN … → DO …` with the arrow drawn — instead of two stacked lines the reader had to infer a relationship from. Target preview keeps its icon and gains a name plus a missing state; reorder and remove are `ActionChip`s, retiring the bespoke `PriorityButton`. All of it moved off inline styles with a hardcoded purple palette onto tier tokens. |
+| V6. Passive tree | Implemented — pending visual review (2026-07-27) | "The path you walk" (§14.6). Past tiers now distinguish the spine from the roads not taken: a picked node keeps its size and gains a lit ring, while unpicked siblings shrink to 34px, desaturate and dim to 0.42 — **never hidden**, since class reset exists, and they expand back to full on hover or tap. Node cost became `MilestonePips` (one mark per point) instead of the string "2pt" in a pill, and the detail pane's effects became glyph chips — each authored V0b stat glyph plus its signed value, with negatives in danger red — replacing a run-on string of three-letter abbreviations. The class-orbit view keeps `formatEffects`, where a one-line string is the right shape. Unlock logic, hover-preview/click-unlock, mobile tap-commit, the `summoner-root` blocking and reset behaviour are all untouched. |
+| V7. Staged unlocks | Implemented — pending visual review (2026-07-27) | The §16 arc, with **the resolver moved to `shared/`** — it is pure policy over authoritative state, so it belongs there and, crucially, the repo's test runner only discovers `shared/` and `server/` suites. (A first attempt put the test in shared importing the client resolver; `pnpm typecheck` correctly rejected it under the package-boundary rule. The client keeps a thin re-export.) `SystemVisibility` gained `combatLog`, `bestiary`, `progression`, `inventory`, `crafting`, `map`, `loadout` and `abilityDock`. **First blood** is keyed on biome XP / quest progress / biome level — all kill-derived and persisted — because there is no kill counter and §16 forbids approximating a trigger with incidental client state. Crafting deliberately reuses the Materials gate rather than inventing a second policy. Every gate keeps its ownership override and `playerTier >= 1` is a master override, so the core interface exists in full by the first tier-up. A new `useSystemVisibility()` hook is the single input assembly: three call sites had already drifted into three slightly different signal sets, which is how a gate ends up disagreeing with the wake announcing it. **Badges:** `useUnlockBadges` persists per-character unvisited pips in localStorage, gold and slowly pulsing, static under reduced motion, cleared on first open — decoration only, never feeding visibility. Hydration is explicitly not a reveal: the first resolution per character is recorded as a baseline, or every login would light the whole rail. Mobile takes the same resolver, the same gates on its tab bar and More list, and safe fallbacks when a gate closes behind an open view. **Tested:** `shared/src/systems/systemVisibility.test.ts` asserts a fresh character sees nothing, each trigger reveals only its own element, tier 1 reveals everything, and ten ownership signals each keep their destination — the stranding guard the plan calls mandatory. 36/36 suites pass. |
+| V8. Optional polish | Not started | Requires explicit user go-ahead |

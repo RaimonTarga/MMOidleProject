@@ -24,7 +24,7 @@ import {
   playerNodeIdAtom,
 } from '../../hud/atoms';
 import { SLOT_LABELS, biomeName, tierColor } from './common';
-import { CostDisplay, EssenceSummary } from './shared';
+import { CostDisplay, WalletSummary } from './shared';
 import { computeUpgradeDiff } from './itemDisplay';
 import { ItemIcon } from '../ItemIcon';
 
@@ -115,7 +115,7 @@ export function UpgradeTab() {
 
   return (
     <div className="craft-body">
-      <EssenceSummary essences={essences} />
+      <WalletSummary essences={essences} catalysts={catalysts} />
 
       {/* Filters */}
       {items.length > 0 && (

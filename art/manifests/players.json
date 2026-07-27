@@ -61,22 +61,23 @@
         "w": 64,
         "h": 64
       },
-      "prompt": "the same faceless hooded human rhythm fighter with a lean agile duelist build, same compact stylized proportions, upright straight-backed posture, no skin visible, narrow sharp silhouette, light leather armor with minimal metal, trailing cloth scarf suggesting speed, poised stance, faint crimson motion streaks, no weapons, full body, three-quarter front view angled toward the right, painterly pixel art, soft volumetric shading, minimal outline, steel gray and crimson",
-      "negative": "animal, beast, creature, furry, fur, tail, muzzle, snout, claws, paws, quadruped, hunched, crouching, floating, ghost, wraith, translucent, scary, horror, sinister, undead, face, eyes, exposed skin, bare hands, hair, beard, weapon, sword, staff, gun, bow, shield, bulky armor, heavy pauldrons, male, female, chibi, cute, profile view, side view, facing left, back view, hard black outline, text, watermark, blurry, 3d render, photograph",
-      "status": "draft",
+      "prompt": "the same hooded masked fighter as a lean duelist, 3/4 top-down view facing south-east, the inside of the hood is pure black emptiness with no face and no facial features at all, slimmer narrower build, light leather armor with minimal metal, no shoulder guards, a trailing cloth scarf, brown gloves, brown boots, poised light stance, empty hands with no weapon",
+      "negative": "face, eyes, nose, mouth, lips, chin, cheeks, facial features, human face, visible face, portrait, skin, blue skin, front view, straight-on view, facing the camera, side view, profile, back view, bare hands, hair, beard, weapon, sword, dagger, staff, bow, gun, shield, holding item, glowing eyes, ornate, gold trim, mage robe, chibi, cute, text, watermark, blurry, 3d render",
+      "status": "accepted",
       "sources": [
         "cadence-light"
       ],
       "params": {
-        "outline": "lineless",
-        "shading": "detailed shading",
-        "detail": "medium detail",
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
         "view": "low top-down",
         "direction": "south-east",
         "initImage": "sprites/classes/cadence.png",
-        "initImageStrength": 300
+        "initImageStrength": 80
       },
-      "notes": "CHAIN: flip to pending only after 'cadence' is accepted. Stage 2 light frame (duelist) — same character with visual budget reallocated to speed; must not read weak or regressive."
+      "notes": "Stage 2 light frame (duelist) — same character, budget reallocated to speed; must not read weak or regressive. REPOINTED 2026-07-25 off the stale pre-Stage-1 params (painterly / lineless / detailed shading / strength 300) onto the recipe that actually shipped all six roots: pixflux, selective outline / flat shading / low detail, short identity-only prompt, framing clause in the prompt. STRENGTH PROBE — this is the calibration slice for all 18 frames, so the number is deliberately untested and varies here: balanced and light at 150, heavy at 120. Frames should sit CLOSER to their root than the roots sat to the vagrant (the roots used 70-90 against classless), but nothing above 110 has ever been tried in this style, and 110 is exactly where the Conduit's identity got swamped by its source. Read the results as: does 150 keep the Striker recognisable while still reading as a different build, or does it just reprint the root? Heavy is the deviation end at 120 because it changes silhouette most. Pick the winning number here, then author the remaining 15 frames with it. PROBE ROUND 2: 150 was FAR too strong — user: 'the sprite is too similar to the previous one'. The frame just reprinted the root, which defeats the point of having 18 separate bodies. Dropping to 70 (the value every root used against the vagrant) with the prompt and everything else held IDENTICAL, so strength is the only variable. If 70 still reads as a reprint, the next step down is ~40, not more prompt words about slimness. COUNTER-INTUITIVE NOTE FOR STAGE 2: the original stubs assumed frames should sit CLOSER to their root than roots sat to the vagrant (they specified 300). The opposite is true — a frame has to differ visibly at a glance in a party lineup, so frames need roughly the SAME or LOWER strength than the roots did. PROBE ROUND 3: 70 gave real silhouette variation (properly leaner) but the chain stopped enforcing identity along with it — several candidates grew FACES (hard bible violation) and drifted blue. User asked for ~80 plus explicit emphasis on the black void under the hood. So: strength 70 -> 80, and the void is now stated in the PROMPT rather than left to the chain (at 150 the chain guaranteed it, which is why the original prompt never mentioned it), with face/eyes/nose/mouth/facial-features moved to the FRONT of the negatives. STAGE 2 PRINCIPLE: at frame-level strengths the chain no longer carries identity — anything that must be true of every frame (faceless void, palette, no weapons) has to be restated in each frame's prompt.",
+      "candidates": 6
     },
     {
       "id": "cadence-balanced",
@@ -85,22 +86,23 @@
         "w": 64,
         "h": 64
       },
-      "prompt": "the same faceless hooded human rhythm fighter as a composed skirmisher, same compact stylized proportions, upright straight-backed posture, no skin visible, clean medium armor of leather and banded light metal, chainmail hints at the joints, subtle rhythmic crimson markings on the chest, balanced grounded combat stance, no weapons, full body, three-quarter front view angled toward the right, painterly pixel art, soft volumetric shading, minimal outline, steel gray and warm crimson accents",
-      "negative": "animal, beast, creature, furry, fur, tail, muzzle, snout, claws, paws, quadruped, hunched, crouching, floating, ghost, wraith, translucent, scary, horror, sinister, undead, face, eyes, exposed skin, bare hands, hair, beard, weapon, sword, staff, gun, bow, shield, gold, ornate, male, female, chibi, cute, profile view, side view, facing left, back view, hard black outline, text, watermark, blurry, 3d render, photograph",
-      "status": "draft",
+      "prompt": "the same hooded masked fighter as a composed skirmisher, 3/4 top-down view facing south-east, the inside of the hood is pure black emptiness with no face and no facial features at all, clean medium armor of leather and banded light metal, chainmail at the joints, small metal shoulder guards, a single crimson sash, steel grey palette, brown gloves, brown boots, balanced grounded stance, empty hands with no weapon",
+      "negative": "face, eyes, nose, mouth, lips, chin, cheeks, facial features, human face, visible face, portrait, skin, blue skin, front view, straight-on view, facing the camera, side view, profile, back view, bare hands, hair, beard, weapon, sword, dagger, staff, bow, gun, shield, holding item, glowing eyes, ornate, gold trim, mage robe, chibi, cute, text, watermark, blurry, 3d render",
+      "status": "accepted",
       "sources": [
         "cadence-balanced"
       ],
       "params": {
-        "outline": "lineless",
-        "shading": "detailed shading",
-        "detail": "medium detail",
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
         "view": "low top-down",
         "direction": "south-east",
         "initImage": "sprites/classes/cadence.png",
-        "initImageStrength": 300
+        "initImageStrength": 80
       },
-      "notes": "CHAIN: flip to pending only after 'cadence' is accepted. Stage 2 balanced frame (skirmisher) — the class's most neutral identity; closest to the root."
+      "notes": "Stage 2 balanced frame (skirmisher) — the class's most neutral identity, closest to the root. REPOINTED 2026-07-25 off the stale pre-Stage-1 params (painterly / lineless / detailed shading / strength 300) onto the recipe that actually shipped all six roots: pixflux, selective outline / flat shading / low detail, short identity-only prompt, framing clause in the prompt. STRENGTH STRENGTH PROBE CLOSED — 80 is the Stage 2 number, settled on cadence-light and accepted there. 150 reprinted the root; 70 gave good silhouette variation but let faces and palette drift; 80 holds build variation AND the faceless void. Recipe for every tier-2 frame: chain from the accepted CLASS ROOT at initImageStrength 80, short identity-only prompt, framing clause in the prompt, and RESTATE THE INVARIANTS in each frame prompt (black void under the hood, class palette, no weapons) — at frame-level strengths the chain no longer enforces identity the way it did at 150, which is why the original stubs never needed to mention them. Palette still drifts mildly at 80 (brown/tan or blue creep); if a winner is right in build and face but wrong in colour, fix it with the deterministic hue-shift in art/workbench/classless/retouch.mjs rather than another roll. 'steel grey palette' added to these two prompts as a cheap first defence.",
+      "candidates": 6
     },
     {
       "id": "cadence-heavy",
@@ -109,22 +111,23 @@
         "w": 64,
         "h": 64
       },
-      "prompt": "the same faceless hooded human rhythm fighter as a heavy breaker, same compact stylized proportions, upright straight-backed posture, no skin visible, bulky armored build, large pauldrons and reinforced gauntlets, broad banded-metal chest over leather, weighty grounded stance with slow powerful finisher energy, deep crimson glow lines across the armor, no weapons, full body, three-quarter front view angled toward the right, painterly pixel art, soft volumetric shading, minimal outline, dark steel and deep crimson",
-      "negative": "animal, beast, creature, furry, fur, tail, muzzle, snout, claws, paws, quadruped, hunched, crouching, floating, ghost, wraith, translucent, scary, horror, sinister, undead, face, eyes, exposed skin, bare hands, hair, beard, weapon, sword, staff, gun, bow, shield, knight helmet plume, gold, ornate, male, female, chibi, cute, profile view, side view, facing left, back view, hard black outline, text, watermark, blurry, 3d render, photograph",
-      "status": "draft",
+      "prompt": "the same hooded masked fighter as a heavy breaker, 3/4 top-down view facing south-east, the inside of the hood is pure black emptiness with no face and no facial features at all, bulkier heavier build, large metal pauldrons, reinforced gauntlets, broad banded-metal chest over leather, steel grey palette, brown boots, weighty grounded stance, empty hands with no weapon",
+      "negative": "face, eyes, nose, mouth, lips, chin, cheeks, facial features, human face, visible face, portrait, skin, blue skin, front view, straight-on view, facing the camera, side view, profile, back view, bare hands, hair, beard, weapon, sword, dagger, staff, bow, gun, shield, holding item, glowing eyes, ornate, gold trim, mage robe, chibi, cute, text, watermark, blurry, 3d render",
+      "status": "accepted",
       "sources": [
         "cadence-heavy"
       ],
       "params": {
-        "outline": "lineless",
-        "shading": "detailed shading",
-        "detail": "medium detail",
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
         "view": "low top-down",
         "direction": "south-east",
         "initImage": "sprites/classes/cadence.png",
-        "initImageStrength": 300
+        "initImageStrength": 80
       },
-      "notes": "CHAIN: flip to pending only after 'cadence' is accepted. Stage 2 heavy frame (breaker) — bigger shoulders/gauntlets, but still a Striker: must not drift into generic tank/Squire territory."
+      "notes": "Stage 2 heavy frame (breaker) — bigger shoulders and gauntlets, but still a Striker: must not drift into Squire/tank territory. REPOINTED 2026-07-25 off the stale pre-Stage-1 params (painterly / lineless / detailed shading / strength 300) onto the recipe that actually shipped all six roots: pixflux, selective outline / flat shading / low detail, short identity-only prompt, framing clause in the prompt. STRENGTH STRENGTH PROBE CLOSED — 80 is the Stage 2 number, settled on cadence-light and accepted there. 150 reprinted the root; 70 gave good silhouette variation but let faces and palette drift; 80 holds build variation AND the faceless void. Recipe for every tier-2 frame: chain from the accepted CLASS ROOT at initImageStrength 80, short identity-only prompt, framing clause in the prompt, and RESTATE THE INVARIANTS in each frame prompt (black void under the hood, class palette, no weapons) — at frame-level strengths the chain no longer enforces identity the way it did at 150, which is why the original stubs never needed to mention them. Palette still drifts mildly at 80 (brown/tan or blue creep); if a winner is right in build and face but wrong in colour, fix it with the deterministic hue-shift in art/workbench/classless/retouch.mjs rather than another roll. 'steel grey palette' added to these two prompts as a cheap first defence.",
+      "candidates": 6
     },
     {
       "id": "cooldown",
@@ -158,16 +161,23 @@
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "armored knight figure in lighter plate, 3/4 top-down view facing south-east, head fully enclosed in a plain iron great helm with no hood, no opening in the face, slimmer more mobile build, smaller pauldrons, iron gauntlets, iron boots, pale cloth tabard, alert forward stance, empty hands with no weapon",
+      "status": "accepted",
       "sources": [
         "cooldown-light"
       ],
       "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "view": "low top-down",
+        "direction": "south-east",
         "initImage": "sprites/classes/cooldown.png",
-        "initImageStrength": 300
+        "initImageStrength": 80
       },
-      "notes": "Chain from cooldown root once accepted. Still armored, but more aggressive and mobile."
+      "notes": "Stage 2 tier-2 frame. RECIPE (settled by the cadence-light probe, accepted 2026-07-25): chain from the accepted CLASS ROOT at initImageStrength 80, short identity-only prompt, framing clause in the prompt, and invariants RESTATED in the prompt. 150 reprinted the root; 70 gave good silhouette variation but let faces and palette drift; 80 holds both. At this strength the chain no longer enforces identity, so anything that must be true of every frame (faceless void / great helm / painted eye / no feet or hands / turned mask, class palette, no weapons) is restated per prompt. Palette still drifts mildly at 80 — if a winner is right in build and face but wrong in colour, use the deterministic hue-shift in art/workbench/classless/retouch.mjs rather than another roll. AUTHORED UNREVIEWED as a bulk batch while the user slept: the cadence balanced/heavy sets were still awaiting review, so if those are rejected for a systematic reason, re-check these before accepting.",
+      "negative": "face, eyes, nose, mouth, lips, chin, cheeks, facial features, human face, visible face, portrait, skin, visible skin, bare hands, hair, beard, hood, hooded, cowl, mask, open visor, face hole, red eyes, front view, straight-on view, facing the camera, side view, profile, back view, weapon, sword, dagger, staff, bow, gun, shield, holding item, glowing eyes, ornate, gold trim, chibi, cute, text, watermark, blurry, 3d render",
+      "candidates": 6
     },
     {
       "id": "cooldown-balanced",
@@ -176,16 +186,23 @@
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "armored knight figure in banded plate, 3/4 top-down view facing south-east, the body is rotated three quarters away from the viewer toward the lower right so we see the front and one side at once, one shoulder nearer the camera than the other, clearly asymmetric turned pose, head fully enclosed in a plain iron great helm with no hood, the whole face covered by one smooth solid steel faceplate with no opening and no gap, the helm seen at a three quarter angle with its left side catching the light and its right side in shadow, squared iron pauldrons, plate chestpiece, iron gauntlets, iron boots, pale cloth tabard, grounded planted stance, empty hands with no weapon",
+      "status": "accepted",
       "sources": [
         "cooldown-balanced"
       ],
       "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "view": "low top-down",
+        "direction": "south-east",
         "initImage": "sprites/classes/cooldown.png",
-        "initImageStrength": 300
+        "initImageStrength": 120
       },
-      "notes": "Chain from cooldown root once accepted. Classic knight/squire identity."
+      "notes": "wrong angle, again, 5/6 of these sprites aren't usable because they're facing the wrong way ROUND 3 (user): 'wrong angle, again, 5/6 of these sprites aren't usable because they're facing the wrong way.' Light and heavy both landed at 80-90, so the recipe is fine and this frame is losing a coin flip repeatedly — a featureless symmetric great helm gives the model no facing cue, so it defaults to face-on. Strength 80 -> 120 to inherit the accepted root's pose outright. This is NOT a general recipe change: it is correct for BALANCED specifically, because the balanced frame is defined as the class's most neutral identity and therefore SHOULD sit closest to the root. Do not copy 120 to light or heavy frames, where it would just reprint the root.",
+      "negative": "face, eyes, nose, mouth, lips, chin, cheeks, facial features, human face, visible face, portrait, skin, visible skin, bare hands, hair, beard, hood, hooded, cowl, mask, open visor, face hole, red eyes, front view, straight-on view, facing the camera, side view, profile, back view, weapon, sword, dagger, staff, bow, gun, shield, holding item, glowing eyes, ornate, gold trim, chibi, cute, text, watermark, blurry, 3d render",
+      "candidates": 6
     },
     {
       "id": "cooldown-heavy",
@@ -194,16 +211,23 @@
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "armored knight figure as an immovable fortress bulwark, 3/4 top-down view facing south-east, the body is rotated three quarters away from the viewer toward the lower right so we see the front and one side at once, one shoulder nearer the camera than the other, clearly asymmetric turned pose, head fully enclosed in a plain iron great helm with no hood, the whole face covered by one smooth solid steel faceplate with no opening and no gap, the helm seen at a three quarter angle with its left side catching the light and its right side in shadow, hugely broad heavy build, enormous squared pauldrons far wider than the hips, thick layered plate slabs, a heavy skirt of banded plate over the legs, iron gauntlets, iron boots, short heavy tabard, immovable planted stance, empty hands with no weapon",
+      "status": "accepted",
       "sources": [
         "cooldown-heavy"
       ],
       "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "view": "low top-down",
+        "direction": "south-east",
         "initImage": "sprites/classes/cooldown.png",
-        "initImageStrength": 300
+        "initImageStrength": 90
       },
-      "notes": "Chain from cooldown root once accepted. Fortress/bulwark silhouette."
+      "notes": "they don't look different enough. This one should definitely have the fulll faceplate. Also mostly wrong angle ROUND 2 (user): 'they don't look different enough. This one should definitely have the full faceplate. Also mostly wrong angle.' Three changes: same rotation + asymmetric-helm-lighting fix as cooldown-balanced; the SOLID FACEPLATE is now mandatory here (the user parked the faceplate as a later-tier/heavier look when accepting the T1 root, and this is where it belongs); and the bulk is pushed much harder — pauldrons wider than the hips, plate slabs, a banded plate skirt — because 'bulkier' as an adjective produced almost no silhouette separation from balanced. Differentiate by naming DIFFERENT PARTS, not by intensifying adjectives.",
+      "negative": "face, eyes, nose, mouth, lips, chin, cheeks, facial features, human face, visible face, portrait, skin, visible skin, bare hands, hair, beard, hood, hooded, cowl, mask, open visor, face hole, red eyes, front view, straight-on view, facing the camera, side view, profile, back view, weapon, sword, dagger, staff, bow, gun, shield, holding item, glowing eyes, ornate, gold trim, chibi, cute, text, watermark, blurry, 3d render",
+      "candidates": 6
     },
     {
       "id": "dot",
@@ -236,16 +260,23 @@
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "the same hooded ritual figure as an agile venom vessel, 3/4 top-down view facing south-east, the inside of the hood is pure black emptiness with no face and no facial features at all, slimmer narrower build, short stained robe over light cloth, cloth-wrapped sealed sleeves, small sharp green sigil marks, quick light stance, empty hands with no weapon",
+      "status": "accepted",
       "sources": [
         "dot-light"
       ],
       "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "view": "low top-down",
+        "direction": "south-east",
         "initImage": "sprites/classes/dot.png",
-        "initImageStrength": 300
+        "initImageStrength": 80
       },
-      "notes": "Chain from dot root once accepted."
+      "notes": "Stage 2 tier-2 frame. RECIPE (settled by the cadence-light probe, accepted 2026-07-25): chain from the accepted CLASS ROOT at initImageStrength 80, short identity-only prompt, framing clause in the prompt, and invariants RESTATED in the prompt. 150 reprinted the root; 70 gave good silhouette variation but let faces and palette drift; 80 holds both. At this strength the chain no longer enforces identity, so anything that must be true of every frame (faceless void / great helm / painted eye / no feet or hands / turned mask, class palette, no weapons) is restated per prompt. Palette still drifts mildly at 80 — if a winner is right in build and face but wrong in colour, use the deterministic hue-shift in art/workbench/classless/retouch.mjs rather than another roll. AUTHORED UNREVIEWED as a bulk batch while the user slept: the cadence balanced/heavy sets were still awaiting review, so if those are rejected for a systematic reason, re-check these before accepting.",
+      "negative": "face, eyes, nose, mouth, lips, chin, cheeks, facial features, human face, visible face, portrait, skin, visible skin, bare hands, hair, beard, wizard hat, pointed hat, wand, orb, spellbook, plate armor, metal armor, front view, straight-on view, facing the camera, side view, profile, back view, weapon, sword, dagger, staff, bow, gun, shield, holding item, glowing eyes, ornate, gold trim, chibi, cute, text, watermark, blurry, 3d render",
+      "candidates": 6
     },
     {
       "id": "dot-balanced",
@@ -254,16 +285,23 @@
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "the same hooded ritual figure as a composed ember vessel, 3/4 top-down view facing south-east, the inside of the hood is pure black emptiness with no face and no facial features at all, stained cloth robe with a ragged hem, cloth-wrapped sealed sleeves, painted sigil marks on the chest, small belt pouches, still upright ritual stance, empty hands with no weapon",
+      "status": "accepted",
       "sources": [
         "dot-balanced"
       ],
       "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "view": "low top-down",
+        "direction": "south-east",
         "initImage": "sprites/classes/dot.png",
-        "initImageStrength": 300
+        "initImageStrength": 80
       },
-      "notes": "Chain from dot root once accepted."
+      "notes": "Stage 2 tier-2 frame. RECIPE (settled by the cadence-light probe, accepted 2026-07-25): chain from the accepted CLASS ROOT at initImageStrength 80, short identity-only prompt, framing clause in the prompt, and invariants RESTATED in the prompt. 150 reprinted the root; 70 gave good silhouette variation but let faces and palette drift; 80 holds both. At this strength the chain no longer enforces identity, so anything that must be true of every frame (faceless void / great helm / painted eye / no feet or hands / turned mask, class palette, no weapons) is restated per prompt. Palette still drifts mildly at 80 — if a winner is right in build and face but wrong in colour, use the deterministic hue-shift in art/workbench/classless/retouch.mjs rather than another roll. AUTHORED UNREVIEWED as a bulk batch while the user slept: the cadence balanced/heavy sets were still awaiting review, so if those are rejected for a systematic reason, re-check these before accepting.",
+      "negative": "face, eyes, nose, mouth, lips, chin, cheeks, facial features, human face, visible face, portrait, skin, visible skin, bare hands, hair, beard, wizard hat, pointed hat, wand, orb, spellbook, plate armor, metal armor, front view, straight-on view, facing the camera, side view, profile, back view, weapon, sword, dagger, staff, bow, gun, shield, holding item, glowing eyes, ornate, gold trim, chibi, cute, text, watermark, blurry, 3d render",
+      "candidates": 6
     },
     {
       "id": "dot-heavy",
@@ -272,16 +310,23 @@
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "the same hooded ritual figure as a heavy rime vessel, 3/4 top-down view facing south-east, the inside of the hood is pure black emptiness with no face and no facial features at all, bulkier build, thick layered stained robe, heavy cloth mantle over the shoulders, cloth-wrapped sealed sleeves, pale frost-toned sigil marks, slow weighty stance, empty hands with no weapon",
+      "status": "accepted",
       "sources": [
         "dot-heavy"
       ],
       "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "view": "low top-down",
+        "direction": "south-east",
         "initImage": "sprites/classes/dot.png",
-        "initImageStrength": 300
+        "initImageStrength": 80
       },
-      "notes": "Chain from dot root once accepted."
+      "notes": "Stage 2 tier-2 frame. RECIPE (settled by the cadence-light probe, accepted 2026-07-25): chain from the accepted CLASS ROOT at initImageStrength 80, short identity-only prompt, framing clause in the prompt, and invariants RESTATED in the prompt. 150 reprinted the root; 70 gave good silhouette variation but let faces and palette drift; 80 holds both. At this strength the chain no longer enforces identity, so anything that must be true of every frame (faceless void / great helm / painted eye / no feet or hands / turned mask, class palette, no weapons) is restated per prompt. Palette still drifts mildly at 80 — if a winner is right in build and face but wrong in colour, use the deterministic hue-shift in art/workbench/classless/retouch.mjs rather than another roll. AUTHORED UNREVIEWED as a bulk batch while the user slept: the cadence balanced/heavy sets were still awaiting review, so if those are rejected for a systematic reason, re-check these before accepting.",
+      "negative": "face, eyes, nose, mouth, lips, chin, cheeks, facial features, human face, visible face, portrait, skin, visible skin, bare hands, hair, beard, wizard hat, pointed hat, wand, orb, spellbook, plate armor, metal armor, front view, straight-on view, facing the camera, side view, profile, back view, weapon, sword, dagger, staff, bow, gun, shield, holding item, glowing eyes, ornate, gold trim, chibi, cute, text, watermark, blurry, 3d render",
+      "candidates": 6
     },
     {
       "id": "energy",
@@ -290,7 +335,7 @@
         "w": 64,
         "h": 64
       },
-      "prompt": "full body 64px pixel art sprite, 3/4 top-down view facing south-east, seen slightly from above, body angled toward the right, neutral idle pose, compact readable silhouette, a standing person-shaped spirit in a pale ash grey and soft off-white hooded robe, the same compact proportions and silhouette as a plain hooded adventurer, clear square shoulders and upper arms so it reads as a body, a soft warm pale blue light glowing gently inside the hood where a face would be, long sleeves hanging down over where the hands would be with soft glowing cuffs, the robe falls straight down to ankle height and ends in a short ragged fringe of mist just above the ground, calm upright stance",
+      "prompt": "hooded spirit in black grey and white only, 3/4 top-down view facing south-east, a monochrome figure with no colour anywhere in the cloth, near-black short cloak over a charcoal grey tunic, a pale grey sash at the waist, cloth-wrapped arms, the inside of the hood is pure black emptiness with a thin white glow around its rim, no face and no facial features, the lower hem of the tunic fades away into thin white mist, a cold white glow along every edge of the figure, the white light is the only bright thing in the sprite, calm upright stance, empty hands with no weapon",
       "status": "accepted",
       "sources": [
         "energy"
@@ -300,10 +345,13 @@
         "shading": "flat shading",
         "detail": "low detail",
         "view": "low top-down",
-        "direction": "south-east"
+        "direction": "south-east",
+        "initImage": "sprites/classes/classless.png",
+        "initImageStrength": 45
       },
-      "negative": "black void face, pitch black face, empty darkness under the hood, face in deep shadow, creepy, sinister, horror, scary, evil, villain, grim reaper, death, wraith, front view, straight-on view, flat elevation, feet, boots, shoes, toes, legs, knees, trousers, hands, fingers, palms, bare skin, cast shadow, bell shape, cone shape, tapering skirt, ghost tail, glowing chest core, chest orb, amulet, small figure, tiny figure, chibi, short, plate armor, metal armor, pauldrons, wizard hat, pointed hat, staff, wand, skull, skeleton, undead, gore, side view, visible face, visible eyes, hair, beard, weapon, sword, bow, gun, shield, holding item",
-      "notes": "too goofy, off-beat. Honestly I'm thinking about just keeping the current sprite for now, let's not reflag this for regeneration ROUND 6 CLOSED — the friendlier 'glowing face instead of black void' variants came back 'too goofy, off-beat' and the user chose to KEEP THE ACCEPTED r5 SPRITE (pale grey/white robe, dark void, no feet/hands) rather than iterate further. Entry restored to accepted; art/src art was never touched by the rejection. Backup of the live sprite also at art/workbench/_accepted-2026-07-25/energy-ACCEPTED.png. LESSON: removing the void does kill the spookiness, but it also kills what made the sprite read as a spirit — a lit face reads as a helmet or a lightbulb at 64px. If spookiness is revisited, change palette/posture, not the void."
+      "negative": "colour, colourful, saturated colours, warm colours, green, brown, tan, beige, blue, teal, purple, red, gold, face, eyes, nose, mouth, facial features, human face, visible face, portrait, visible skin, bare hands, hair, beard, grim reaper, skull, skeleton, undead, gore, horror, scary, evil, villain, black robe, dark robe, bell shape, cone shape, tapering skirt, glowing chest core, chest orb, amulet, plate armor, metal armor, pauldrons, wizard hat, pointed hat, staff, wand, front view, straight-on view, facing the camera, side view, profile, back view, weapon, sword, bow, gun, shield, holding item, chibi, cute, text, watermark, blurry, 3d render",
+      "notes": "Too close to original, reduce strength\nREBUILD ROUND 2: user on r1 — 'strength too high, too close to the original'. 80 -> 60, PROMPT HELD IDENTICAL so strength is the only variable. Note 80 was the value that read as correct roster proportions, so the useful band for this entry is narrow: below ~50 expect the vagrant's green/brown palette and body plan to stop being enforced at all (at frame level, 70 was already where faces started appearing). If 60 reads proportionally right but still not spectral enough, the NEXT lever is contrast, not strength and not more description: desaturate the cloth so the rim glow and mist hem are the only saturated elements ('colourless grey cloth, the only colour is the pale blue glow'). Contrast is what sells spectral at 64px.\nREBUILD ROUND 3: user — 'still not good, we need to move further away. Shift the colour scheme to black, grey and white for this one.' Two user-directed changes: strength 60 -> 45 (further from the vagrant's body plan and palette) and a hard MONOCHROME palette. The r2 experiment was informative: holding the prompt fixed while dropping 80 -> 60 proved that lower strength buys PALETTE FREEDOM, NOT SPECTRALNESS — the set went bluer, not ghostlier. The spectral read was never losing to chain strength; it was losing because everything in the sprite was equally coloured, so a glow had nothing to stand out against. Monochrome cloth fixes that for free: with no colour anywhere else, the white rim glow and mist hem become the only luminous elements. Contrast sells 'spectral' at 64px; description never has. WATCH AT 45: the vagrant's body plan is only weakly enforced this low — check roster proportions first, and if the build drifts, come back up to ~55 rather than adding proportion words.",
+      "candidates": 6
     },
     {
       "id": "energy-light",
@@ -312,16 +360,23 @@
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "full body sprite seen head to toe, the whole figure fits inside the frame, a white spirit as a lean quick duelist, 3/4 top-down view facing south-east, the inside of the hood is pure black emptiness with no face and no facial features at all, a person-shaped hooded figure with a narrow lean build, a short bright white tunic with a torn ragged hem, dark charcoal cloth wraps on the forearms, a dark charcoal sash tied at the waist, a long white scarf trailing behind the shoulder, the cloth is white and the wraps and sash are the only dark parts, the lower hem fades away into thin mist, soft white glow along the edges, light poised stance, empty hands with no weapon",
+      "status": "accepted",
       "sources": [
         "energy-light"
       ],
       "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "view": "low top-down",
+        "direction": "south-east",
         "initImage": "sprites/classes/energy.png",
-        "initImageStrength": 300
+        "initImageStrength": 55
       },
-      "notes": "Chain from energy root once accepted. Spark — fast, small, high motion/glow."
+      "notes": "bad iteration, all of these suck, let's redo it\nVALUE RAMP ROUND 4 — REDESIGN after 'bad iteration, all of these suck'. DIAGNOSIS: I stacked THREE SUBTRACTIONS on one sprite — plainer garment (no trim, no ornament) + paler value + lower strength. Each removes visual information, so at 64px the result was a featureless blob with no internal contrast: the 'empty robe with nobody inside' mistake in different clothes. FIX: light means a lighter BUILD, not a less DESIGNED one. Every accepted light frame on the other classes differentiates by having small sharp parts, not fewer parts (the Striker duelist has a scarf and lean armour; the Slinger scout has bracers and a sash). This frame now gets lean parts with DARK ACCENTS INSIDE a white garment — charcoal forearm wraps and waist sash, trailing white scarf, torn ragged hem — which restores internal contrast and, as a bonus, fixes biome legibility (a white figure with dark anchor pixels survives tundra snow). Strength 40 -> 55 for silhouette quality; the dark bans now apply to the GARMENT only, not to accents. Blob/puffy/snowsuit terms added to negatives. GENERAL RULE: never subtract on more than one axis at a time — at 64px, absence reads as 'unfinished', not as 'light'.",
+      "negative": "featureless, plain blob, shapeless, puffy, marshmallow, snowsuit, hazmat suit, no detail, bulky, wide, heavy build, cropped, close up, bust, portrait crop, zoomed in, half body, black robe, black cloak, dark robe, dark cloak, black tunic, night, shadowy figure, colour, colourful, saturated colours, warm colours, green, brown, tan, beige, blue, teal, purple, red, gold, face, eyes, nose, mouth, facial features, human face, visible face, portrait, visible skin, bare hands, hair, beard, grim reaper, skull, skeleton, undead, gore, horror, scary, evil, villain, bell shape, cone shape, tapering skirt, glowing chest core, chest orb, amulet, wizard hat, pointed hat, staff, wand, front view, straight-on view, facing the camera, side view, profile, back view, weapon, sword, bow, gun, shield, holding item, chibi, cute, text, watermark, blurry, 3d render",
+      "candidates": 6
     },
     {
       "id": "energy-balanced",
@@ -330,16 +385,23 @@
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a grey spirit in a detailed layered tunic, 3/4 top-down view facing south-east, the inside of the hood is pure black emptiness with no face and no facial features at all, a person-shaped hooded figure with clear square shoulders and upper arms, a mid grey tunic with visible layered cloth folds, a pale grey sash at the waist, a short shoulder mantle and darker grey trim along the edges, the lower hem of the tunic fades away into thin mist, a settled solid form, cold white glow along the edges, calm upright stance",
+      "status": "accepted",
       "sources": [
         "energy-balanced"
       ],
       "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "view": "low top-down",
+        "direction": "south-east",
         "initImage": "sprites/classes/energy.png",
-        "initImageStrength": 300
+        "initImageStrength": 70
       },
-      "notes": "Chain from energy root once accepted. Wraith — clean spectral body."
+      "notes": "BALANCED = mid grey, detailed garment, settled form. The class's neutral body and the reference the other two depart from.\nStage 2 Spirit frame — WHITE / GREY / BLACK VALUE RAMP (user's idea, 2026-07-25): light = white, balanced = grey, heavy = black, on the rebuilt monochrome root. Value contrast is the most legible signal at 64px — far stronger than shape detail, which is what failed in rounds 1-3 — and it maps onto the density axis (white = barely materialised, black = dense and almost physical) while keeping all three unmistakably one family. Garment axis from the user still applies underneath: plain tunic -> detailed tunic -> armour worked into the tunic.\nLEGIBILITY GUARD (deliberate, do not strip): the player body must stay readable on all eleven biomes. A white sprite can vanish on tundra snow and a black one on cave/abyss ground, so each frame keeps anchor pixels of the OPPOSITE value — the white frame keeps dark charcoal shadows in hood and folds, the black frame keeps a white rim glow and lit seams. Verify in-game on tundra and cave specifically.\nSTRENGTH VARIES BY FRAME ON PURPOSE: palette is chain-anchored (img2img anchors colour as hard as structure), so the further a frame's value moves from the root, the more freedom it needs. Root is dark charcoal with pale panels, hence light 55 / balanced 70 / heavy 80. This is a per-entry exception to the flat strength-80 frame recipe, not a change to it.\nNOTE: the Spirit loses bible 13's cyan/violet on the body by going monochrome — let that hue live in the class VFX and its identity accent instead, so the class still has a colour identity in HUD and combat.",
+      "negative": "colour, colourful, saturated colours, warm colours, green, brown, tan, beige, blue, teal, purple, red, gold, face, eyes, nose, mouth, facial features, human face, visible face, portrait, visible skin, bare hands, hair, beard, grim reaper, skull, skeleton, undead, gore, horror, scary, evil, villain, bell shape, cone shape, tapering skirt, glowing chest core, chest orb, amulet, wizard hat, pointed hat, staff, wand, front view, straight-on view, facing the camera, side view, profile, back view, weapon, sword, bow, gun, shield, holding item, chibi, cute, text, watermark, blurry, 3d render",
+      "candidates": 6
     },
     {
       "id": "energy-heavy",
@@ -348,16 +410,23 @@
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "a black spirit in armour worked over its tunic, 3/4 top-down view facing south-east, the inside of the hood is pure black emptiness with no face and no facial features at all, a person-shaped hooded figure, near-black charcoal tunic under dark spectral plate, broad dark pauldrons on both shoulders, a tall stiff collar rising behind the head, a thick layered mantle across the chest, much wider and heavier than a plain robe, the lower hem of the tunic fades away into thin mist, a cold white glow burning along the armour seams and edges, dense and almost physical, slow weighty stance",
+      "status": "accepted",
       "sources": [
         "energy-heavy"
       ],
       "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "view": "low top-down",
+        "direction": "south-east",
         "initImage": "sprites/classes/energy.png",
-        "initImageStrength": 300
+        "initImageStrength": 80
       },
-      "notes": "Chain from energy root once accepted. Phantasm — denser robe mass, heavier aura."
+      "notes": "HEAVY = black, armour worked into the tunic, densest. Closest to the root's dark palette, so highest strength.\nStage 2 Spirit frame — WHITE / GREY / BLACK VALUE RAMP (user's idea, 2026-07-25): light = white, balanced = grey, heavy = black, on the rebuilt monochrome root. Value contrast is the most legible signal at 64px — far stronger than shape detail, which is what failed in rounds 1-3 — and it maps onto the density axis (white = barely materialised, black = dense and almost physical) while keeping all three unmistakably one family. Garment axis from the user still applies underneath: plain tunic -> detailed tunic -> armour worked into the tunic.\nLEGIBILITY GUARD (deliberate, do not strip): the player body must stay readable on all eleven biomes. A white sprite can vanish on tundra snow and a black one on cave/abyss ground, so each frame keeps anchor pixels of the OPPOSITE value — the white frame keeps dark charcoal shadows in hood and folds, the black frame keeps a white rim glow and lit seams. Verify in-game on tundra and cave specifically.\nSTRENGTH VARIES BY FRAME ON PURPOSE: palette is chain-anchored (img2img anchors colour as hard as structure), so the further a frame's value moves from the root, the more freedom it needs. Root is dark charcoal with pale panels, hence light 55 / balanced 70 / heavy 80. This is a per-entry exception to the flat strength-80 frame recipe, not a change to it.\nNOTE: the Spirit loses bible 13's cyan/violet on the body by going monochrome — let that hue live in the class VFX and its identity accent instead, so the class still has a colour identity in HUD and combat.",
+      "negative": "colour, colourful, saturated colours, warm colours, green, brown, tan, beige, blue, teal, purple, red, gold, face, eyes, nose, mouth, facial features, human face, visible face, portrait, visible skin, bare hands, hair, beard, grim reaper, skull, skeleton, undead, gore, horror, scary, evil, villain, bell shape, cone shape, tapering skirt, glowing chest core, chest orb, amulet, wizard hat, pointed hat, staff, wand, front view, straight-on view, facing the camera, side view, profile, back view, weapon, sword, bow, gun, shield, holding item, chibi, cute, text, watermark, blurry, 3d render",
+      "candidates": 6
     },
     {
       "id": "reload",
@@ -390,16 +459,23 @@
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "the same hooded masked figure as a light scout, 3/4 top-down view facing south-east, hood pulled over a pale cloth face mask painted with a single dark eye symbol, slimmer build, light leather armor, short quick cloak, leather bracers, amber sash, light boots, alert ready stance, empty hands with no weapon",
+      "status": "accepted",
       "sources": [
         "reload-light"
       ],
       "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "view": "low top-down",
+        "direction": "south-east",
         "initImage": "sprites/classes/reload.png",
-        "initImageStrength": 300
+        "initImageStrength": 80
       },
-      "notes": "Chain from reload root once accepted. Scout — sharp and mobile."
+      "notes": "Stage 2 tier-2 frame. RECIPE (settled by the cadence-light probe, accepted 2026-07-25): chain from the accepted CLASS ROOT at initImageStrength 80, short identity-only prompt, framing clause in the prompt, and invariants RESTATED in the prompt. 150 reprinted the root; 70 gave good silhouette variation but let faces and palette drift; 80 holds both. At this strength the chain no longer enforces identity, so anything that must be true of every frame (faceless void / great helm / painted eye / no feet or hands / turned mask, class palette, no weapons) is restated per prompt. Palette still drifts mildly at 80 — if a winner is right in build and face but wrong in colour, use the deterministic hue-shift in art/workbench/classless/retouch.mjs rather than another roll. AUTHORED UNREVIEWED as a bulk batch while the user slept: the cadence balanced/heavy sets were still awaiting review, so if those are rejected for a systematic reason, re-check these before accepting.",
+      "negative": "face, eyes, nose, mouth, lips, chin, cheeks, facial features, human face, visible face, portrait, skin, visible skin, bare hands, hair, beard, bow, quiver, arrows, crossbow, rifle, scope, goggles, technology, plate armor, front view, straight-on view, facing the camera, side view, profile, back view, weapon, sword, dagger, staff, bow, gun, shield, holding item, glowing eyes, ornate, gold trim, chibi, cute, text, watermark, blurry, 3d render",
+      "candidates": 6
     },
     {
       "id": "reload-balanced",
@@ -408,16 +484,23 @@
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "the same hooded masked figure as a steady marksman, 3/4 top-down view facing south-east, hood pulled over a pale cloth face mask painted with a single dark eye symbol, light layered armor, short cloak, leather bracers, amber sash, light boots, composed upright stance, empty hands with no weapon",
+      "status": "accepted",
       "sources": [
         "reload-balanced"
       ],
       "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "view": "low top-down",
+        "direction": "south-east",
         "initImage": "sprites/classes/reload.png",
-        "initImageStrength": 300
+        "initImageStrength": 80
       },
-      "notes": "Chain from reload root once accepted. Marksman — steady and composed."
+      "notes": "Stage 2 tier-2 frame. RECIPE (settled by the cadence-light probe, accepted 2026-07-25): chain from the accepted CLASS ROOT at initImageStrength 80, short identity-only prompt, framing clause in the prompt, and invariants RESTATED in the prompt. 150 reprinted the root; 70 gave good silhouette variation but let faces and palette drift; 80 holds both. At this strength the chain no longer enforces identity, so anything that must be true of every frame (faceless void / great helm / painted eye / no feet or hands / turned mask, class palette, no weapons) is restated per prompt. Palette still drifts mildly at 80 — if a winner is right in build and face but wrong in colour, use the deterministic hue-shift in art/workbench/classless/retouch.mjs rather than another roll. AUTHORED UNREVIEWED as a bulk batch while the user slept: the cadence balanced/heavy sets were still awaiting review, so if those are rejected for a systematic reason, re-check these before accepting.",
+      "negative": "face, eyes, nose, mouth, lips, chin, cheeks, facial features, human face, visible face, portrait, skin, visible skin, bare hands, hair, beard, bow, quiver, arrows, crossbow, rifle, scope, goggles, technology, plate armor, front view, straight-on view, facing the camera, side view, profile, back view, weapon, sword, dagger, staff, bow, gun, shield, holding item, glowing eyes, ornate, gold trim, chibi, cute, text, watermark, blurry, 3d render",
+      "candidates": 6
     },
     {
       "id": "reload-heavy",
@@ -426,16 +509,23 @@
         "w": 64,
         "h": 64
       },
-      "prompt": "",
-      "status": "draft",
+      "prompt": "the same hooded masked figure as an anchored artillerist, 3/4 top-down view facing south-east, hood pulled over a pale cloth face mask painted with a single dark eye symbol, broader heavier build, reinforced layered armor over the chest and shoulders, heavy cloak, amber sash, boots, braced grounded stance, empty hands with no weapon",
+      "status": "accepted",
       "sources": [
         "reload-heavy"
       ],
       "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "view": "low top-down",
+        "direction": "south-east",
         "initImage": "sprites/classes/reload.png",
-        "initImageStrength": 300
+        "initImageStrength": 80
       },
-      "notes": "Chain from reload root once accepted. Artillerist — broader and anchored, still not a gunner."
+      "notes": "Stage 2 tier-2 frame. RECIPE (settled by the cadence-light probe, accepted 2026-07-25): chain from the accepted CLASS ROOT at initImageStrength 80, short identity-only prompt, framing clause in the prompt, and invariants RESTATED in the prompt. 150 reprinted the root; 70 gave good silhouette variation but let faces and palette drift; 80 holds both. At this strength the chain no longer enforces identity, so anything that must be true of every frame (faceless void / great helm / painted eye / no feet or hands / turned mask, class palette, no weapons) is restated per prompt. Palette still drifts mildly at 80 — if a winner is right in build and face but wrong in colour, use the deterministic hue-shift in art/workbench/classless/retouch.mjs rather than another roll. AUTHORED UNREVIEWED as a bulk batch while the user slept: the cadence balanced/heavy sets were still awaiting review, so if those are rejected for a systematic reason, re-check these before accepting.",
+      "negative": "face, eyes, nose, mouth, lips, chin, cheeks, facial features, human face, visible face, portrait, skin, visible skin, bare hands, hair, beard, bow, quiver, arrows, crossbow, rifle, scope, goggles, technology, plate armor, front view, straight-on view, facing the camera, side view, profile, back view, weapon, sword, dagger, staff, bow, gun, shield, holding item, glowing eyes, ornate, gold trim, chibi, cute, text, watermark, blurry, 3d render",
+      "candidates": 6
     },
     {
       "id": "summoner",
@@ -461,6 +551,81 @@
       },
       "notes": "wrong artstyle, completely off-target, we need to go back one step and see if we can reproduce what we were getting in the last step ROUND 10 — RESET AFTER A COMPLETE MISS. User on r9: 'a complete miss, the style was completely off the mark' (candidates came back bulky, spacesuit-like, desaturated to blue/purple, one with a weapon shape). ROOT CAUSE: PROMPT BLOAT. Across rounds 7-9 this prompt grew to ~120 words juggling mask lighting + explicit rotation geometry + head-size proportions, while EVERY accepted root in this manifest uses a SHORT identity-only prompt with style carried by the params and the chain. The extra instruction crowded out the style. This round returns to the proven shape: short identity prompt, one brief framing clause (as the classless entry has) instead of the rotation paragraph, no head-size clause, initImageStrength back to 70 (the value that held style best across the whole roster). GENERAL RULE FOR THIS CATEGORY: when a player entry drifts off-style, SHORTEN the prompt before adding anything to it — accumulated fixes are themselves a failure mode. Fix proportions with the deterministic retouch script, not with more prompt words. ROUND 11 — PERSPECTIVE, ROOT CAUSE FOUND. User: the accepted r10 sprite is 'almost right but the face is turned toward the camera where it should face right'. DIAGNOSIS: a FEATURELESS OVAL MASK CARRIES NO FACING INFORMATION. Every other class signals its turn through head geometry (hood cavity, angled helm front, the Slinger's painted eye); a blank oval has no front, so the head defaults to face-on however hard the prompt pushes 'south-east' — which is why this entry alone kept regressing on perspective while the Squire's helm fix held. TWO CHANGES: (1) initImage switched from classless.png to cadence.png @ 90 — an initImage asserts structure that negatives cannot outvote, which has been the enemy all session; here it is the TOOL, because the accepted Striker already has exactly the 3/4 turn we want, so it asserts the pose while the prompt supplies the red robe and mask. Watch for Striker identity bleed (grey/brown palette, shoulder guards) and drop toward 70 if it shows. (2) The mask is now described with a front: offset toward the right of the head, seen at a three-quarter angle, right edge lit and left side shaded, so it reads as a turned face rather than a flat disc; 'mask facing the viewer' and 'flat round mask' added as negatives. GENERAL RULE: chain from whichever accepted sibling already has the property you keep failing to get — the chain is a structure lever, not just a style lever.",
       "candidates": 6
+    },
+    {
+      "id": "summoner-light",
+      "out": "sprites/classes/light_summoner.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "sources": [
+        "summoner-light"
+      ],
+      "prompt": "the same mask bearer in a deep red robe as a light swarm conduit, 3/4 top-down view facing south-east, the whole face covered by a large plain white ceramic mask seen at a three quarter angle, offset toward the right of the head, the head clearly turned to the right, slimmer build, short split cloak, three small white masks hanging behind the shoulders, brown gloves, brown boots, light ready stance, empty hands with no weapon",
+      "negative": "face, eyes, nose, mouth, lips, chin, cheeks, facial features, human face, visible face, portrait, skin, visible skin, bare hands, hair, beard, mask facing the viewer, flat round mask, face-on mask, dark mask, grey mask, hood covering the mask, tiny head, bulky armor, plate armor, spacesuit, helmet, robot, teal, green, blue, purple, front view, straight-on view, facing the camera, side view, profile, back view, weapon, sword, dagger, staff, bow, gun, shield, holding item, glowing eyes, ornate, gold trim, chibi, cute, text, watermark, blurry, 3d render",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "view": "low top-down",
+        "direction": "south-east",
+        "initImage": "sprites/classes/summoner.png",
+        "initImageStrength": 80
+      },
+      "candidates": 6,
+      "status": "accepted",
+      "notes": "Stage 2 tier-2 frame. RECIPE (settled by the cadence-light probe, accepted 2026-07-25): chain from the accepted CLASS ROOT at initImageStrength 80, short identity-only prompt, framing clause in the prompt, and invariants RESTATED in the prompt. 150 reprinted the root; 70 gave good silhouette variation but let faces and palette drift; 80 holds both. At this strength the chain no longer enforces identity, so anything that must be true of every frame (faceless void / great helm / painted eye / no feet or hands / turned mask, class palette, no weapons) is restated per prompt. Palette still drifts mildly at 80 — if a winner is right in build and face but wrong in colour, use the deterministic hue-shift in art/workbench/classless/retouch.mjs rather than another roll. AUTHORED UNREVIEWED as a bulk batch while the user slept: the cadence balanced/heavy sets were still awaiting review, so if those are rejected for a systematic reason, re-check these before accepting."
+    },
+    {
+      "id": "summoner-balanced",
+      "out": "sprites/classes/medium_summoner.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "sources": [
+        "summoner-balanced"
+      ],
+      "prompt": "the same mask bearer in a deep red robe as a stable conduit, 3/4 top-down view facing south-east, the whole face covered by a large plain white ceramic mask seen at a three quarter angle, offset toward the right of the head, the head clearly turned to the right, short split cloak, two small white masks hanging behind the shoulders, simple cord belt, brown gloves, brown boots, calm upright stance, empty hands with no weapon",
+      "negative": "face, eyes, nose, mouth, lips, chin, cheeks, facial features, human face, visible face, portrait, skin, visible skin, bare hands, hair, beard, mask facing the viewer, flat round mask, face-on mask, dark mask, grey mask, hood covering the mask, tiny head, bulky armor, plate armor, spacesuit, helmet, robot, teal, green, blue, purple, front view, straight-on view, facing the camera, side view, profile, back view, weapon, sword, dagger, staff, bow, gun, shield, holding item, glowing eyes, ornate, gold trim, chibi, cute, text, watermark, blurry, 3d render",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "view": "low top-down",
+        "direction": "south-east",
+        "initImage": "sprites/classes/summoner.png",
+        "initImageStrength": 80
+      },
+      "candidates": 6,
+      "status": "accepted",
+      "notes": "Stage 2 tier-2 frame. RECIPE (settled by the cadence-light probe, accepted 2026-07-25): chain from the accepted CLASS ROOT at initImageStrength 80, short identity-only prompt, framing clause in the prompt, and invariants RESTATED in the prompt. 150 reprinted the root; 70 gave good silhouette variation but let faces and palette drift; 80 holds both. At this strength the chain no longer enforces identity, so anything that must be true of every frame (faceless void / great helm / painted eye / no feet or hands / turned mask, class palette, no weapons) is restated per prompt. Palette still drifts mildly at 80 — if a winner is right in build and face but wrong in colour, use the deterministic hue-shift in art/workbench/classless/retouch.mjs rather than another roll. AUTHORED UNREVIEWED as a bulk batch while the user slept: the cadence balanced/heavy sets were still awaiting review, so if those are rejected for a systematic reason, re-check these before accepting."
+    },
+    {
+      "id": "summoner-heavy",
+      "out": "sprites/classes/heavy_summoner.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "sources": [
+        "summoner-heavy"
+      ],
+      "prompt": "the same mask bearer in a deep red robe as a heavy conductor, 3/4 top-down view facing south-east, the whole face covered by a large plain white ceramic mask seen at a three quarter angle, offset toward the right of the head, the head clearly turned to the right, broader heavier build, thick layered robe and mantle, one large white mask hanging behind the shoulders, brown gloves, brown boots, weighty grounded stance, empty hands with no weapon",
+      "negative": "face, eyes, nose, mouth, lips, chin, cheeks, facial features, human face, visible face, portrait, skin, visible skin, bare hands, hair, beard, mask facing the viewer, flat round mask, face-on mask, dark mask, grey mask, hood covering the mask, tiny head, bulky armor, plate armor, spacesuit, helmet, robot, teal, green, blue, purple, front view, straight-on view, facing the camera, side view, profile, back view, weapon, sword, dagger, staff, bow, gun, shield, holding item, glowing eyes, ornate, gold trim, chibi, cute, text, watermark, blurry, 3d render",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "view": "low top-down",
+        "direction": "south-east",
+        "initImage": "sprites/classes/summoner.png",
+        "initImageStrength": 80
+      },
+      "candidates": 6,
+      "status": "accepted",
+      "notes": "Stage 2 tier-2 frame. RECIPE (settled by the cadence-light probe, accepted 2026-07-25): chain from the accepted CLASS ROOT at initImageStrength 80, short identity-only prompt, framing clause in the prompt, and invariants RESTATED in the prompt. 150 reprinted the root; 70 gave good silhouette variation but let faces and palette drift; 80 holds both. At this strength the chain no longer enforces identity, so anything that must be true of every frame (faceless void / great helm / painted eye / no feet or hands / turned mask, class palette, no weapons) is restated per prompt. Palette still drifts mildly at 80 — if a winner is right in build and face but wrong in colour, use the deterministic hue-shift in art/workbench/classless/retouch.mjs rather than another roll. AUTHORED UNREVIEWED as a bulk batch while the user slept: the cadence balanced/heavy sets were still awaiting review, so if those are rejected for a systematic reason, re-check these before accepting."
     }
   ]
 }

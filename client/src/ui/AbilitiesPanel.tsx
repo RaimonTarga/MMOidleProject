@@ -1,36 +1,22 @@
-import { createPortal } from "react-dom";
 import { useAtomValue } from "jotai";
 import {
   ABILITY_DATABASE,
-  ABILITY_RECIPE_DATABASE,
   ABILITY_SLOTS,
-  ESSENCE_LABELS,
   abilityDef,
-  catalystLabel,
   equippedForSlot,
-  isAbilityRecipeUnlocked,
   type AbilityDef,
   type AbilitySlot,
   type EquippedAbilities,
-  type EssenceType,
 } from "@mmo-idle/shared";
 import { hudBus } from "../hudBus";
 import {
   abilitySlotsAtom,
-  biomeLevelAtom,
-  bossesClearedAtom,
-  catalystsAtom,
   equippedAbilitiesAtom,
-  essencesAtom,
   knownAbilitiesAtom,
 } from "../hud/atoms";
-import { BuildIcon } from "./BuildIcon";
+import { LoadoutBrowser, type LoadoutSlot } from "./LoadoutBrowser";
 import { abilityIconSource } from "./abilityIcons";
 import "./buildPanel.css";
-
-interface Props {
-  onClose: () => void;
-}
 
 const SLOT_META: Record<AbilitySlot, { label: string; hint: string }> = {
   technique: { label: "Technique", hint: "Offensive timing for your next attack." },
@@ -45,22 +31,16 @@ function slotHint(slot: AbilitySlot, index: number, total: number): string {
     : `${SLOT_META[slot].hint} Fires only when the first is unavailable.`;
 }
 
+/** `technique:0` etc. — the slot kind plus its index in fire priority. */
+function parseSlotKey(key: string): { slot: AbilitySlot; index: number } {
+  const [slot, index] = key.split(":");
+  return { slot: slot as AbilitySlot, index: Number(index) };
+}
+
 export function AbilitiesPanelContent() {
   const known = useAtomValue(knownAbilitiesAtom);
   const equipped = useAtomValue(equippedAbilitiesAtom);
-  const slots = useAtomValue(abilitySlotsAtom);
-  const essences = useAtomValue(essencesAtom);
-  const catalysts = useAtomValue(catalystsAtom);
-  const biomeLevel = useAtomValue(biomeLevelAtom);
-  const bossesCleared = useAtomValue(bossesClearedAtom);
-
-  const knownSet = new Set(known);
-
-  function knownForSlot(slot: AbilitySlot): AbilityDef[] {
-    return known
-      .map((id) => ABILITY_DATABASE.get(id))
-      .filter((a): a is AbilityDef => !!a && a.slot === slot);
-  }
+  const slotCounts = useAtomValue(abilitySlotsAtom);
 
   /**
    * Rebuild the WHOLE loadout for one slot index and send it — the server takes
@@ -81,155 +61,57 @@ export function AbilitiesPanelContent() {
     hudBus.requestSetAbilityLoadout(next);
   }
 
-  const recipes = [...ABILITY_RECIPE_DATABASE.values()];
-
-  const slotRows = ABILITY_SLOTS.flatMap((slot) =>
-    Array.from({ length: slots[slot] }, (_, index) => ({ slot, index })),
+  const slots: LoadoutSlot[] = ABILITY_SLOTS.flatMap((slot) =>
+    Array.from({ length: slotCounts[slot] }, (_, index) => {
+      const total = slotCounts[slot];
+      return {
+        key: `${slot}:${index}`,
+        label: total > 1 ? `${SLOT_META[slot].label} ${index + 1}` : SLOT_META[slot].label,
+        hint: slotHint(slot, index, total),
+        currentId: equippedForSlot(equipped, slot)[index] ?? null,
+      };
+    }),
   );
 
-  return (
-    <div className="build-tab-body">
-      <div className="build-loadout-list">
-        {slotRows.map(({ slot, index }) => {
-          const total = slots[slot];
-          const options = knownForSlot(slot);
-          const current = equippedForSlot(equipped, slot)[index] ?? null;
-          const currentDef = abilityDef(current);
-          const label = total > 1
-            ? `${SLOT_META[slot].label} ${index + 1}`
-            : SLOT_META[slot].label;
-          // An ability already in another slot of the same kind can't be picked
-          // twice — the server rejects duplicates, so don't offer them.
-          const takenElsewhere = new Set(
-            equippedForSlot(equipped, slot).filter((_, i) => i !== index),
-          );
-          return (
-            <div key={`${slot}-${index}`} className="build-loadout-row">
-              <BuildIcon
-                kind="ability"
-                label={currentDef?.name ?? label}
-                muted={!currentDef}
-                icon={currentDef ? abilityIconSource(currentDef) : undefined}
-              />
-              <div className="build-loadout-row__main">
-                <div className="build-field-label">{label}</div>
-                <div className="build-loadout-row__hint">
-                  {slotHint(slot, index, total)}
-                </div>
-              </div>
-              <div>
-                <select
-                  className="build-select"
-                  value={current ?? ""}
-                  onChange={(e) => setSlot(slot, index, e.target.value || null)}
-                >
-                  <option value="">empty</option>
-                  {options
-                    .filter((a) => !takenElsewhere.has(a.id))
-                    .map((a) => (
-                      <option key={a.id} value={a.id}>
-                        {a.name}
-                      </option>
-                    ))}
-                </select>
-                <div className="build-loadout-row__text">
-                  {currentDef?.blurb ?? "No ability equipped in this slot."}
-                </div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-
-      <div>
-        <div className="build-section-title" style={{ marginBottom: 8 }}>
-          Learn Abilities
-        </div>
-        <div className="build-learn-list">
-          {recipes.map((recipe) => {
-            const ability = ABILITY_DATABASE.get(recipe.abilityId);
-            if (!ability) return null;
-            const learned = knownSet.has(recipe.abilityId);
-            const unlocked = isAbilityRecipeUnlocked(recipe, {
-              biomeLevel,
-              bossesCleared,
-            });
-            const essenceCost = Object.entries(recipe.cost) as [EssenceType, number][];
-            const catalystCost = Object.entries(recipe.catalystCost ?? {}) as [
-              string,
-              number,
-            ][];
-            const affordable =
-              essenceCost.every(([t, amt]) => (essences[t] ?? 0) >= amt) &&
-              catalystCost.every(([g, amt]) => (catalysts[g] ?? 0) >= amt);
-            const canLearn = !learned && unlocked && affordable;
-            const reason = learned
-              ? "Already learned"
-              : !unlocked
-                ? `Reach ${recipe.recipeGroup} level ${recipe.requiredBiomeLevel}`
-                : !affordable
-                  ? "Not enough materials"
-                  : "";
-            const costText = [
-              ...essenceCost.map(([t, amt]) => `${amt} ${ESSENCE_LABELS[t]}`),
-              ...catalystCost.map(([g, amt]) => `${amt} ${catalystLabel(g)}`),
-            ].join(", ");
-            return (
-              <div
-                key={recipe.id}
-                className={`build-learn-card${learned ? " build-learn-card--owned" : ""}`}
-              >
-                <BuildIcon
-                  kind="ability"
-                  label={ability.name}
-                  icon={abilityIconSource(ability)}
-                />
-                <div>
-                  <div className="build-learn-card__name">
-                    {ability.name}{" "}
-                    <span className="build-learn-card__meta">({ability.slot})</span>
-                  </div>
-                  <div className="build-learn-card__meta">{ability.blurb}</div>
-                  <div className="build-learn-card__cost">{costText}</div>
-                </div>
-                <button
-                  className="auto-btn"
-                  disabled={!canLearn}
-                  title={reason}
-                  onClick={() => hudBus.requestCraftAbilityRecipe(recipe.id)}
-                  style={{ width: "auto", whiteSpace: "nowrap" }}
-                >
-                  {learned ? "Learned" : "Learn"}
-                </button>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-export function AbilitiesPanel({ onClose }: Props) {
-  function handleOverlayClick(e: React.MouseEvent) {
-    if (e.target === e.currentTarget) onClose();
+  function candidatesFor(key: string) {
+    const { slot, index } = parseSlotKey(key);
+    // The server rejects the same ability in two slots of one kind, so an
+    // ability already placed elsewhere is offered but explained, not hidden —
+    // hiding it reads as "I never learned this".
+    const takenElsewhere = new Set(
+      equippedForSlot(equipped, slot).filter((_, i) => i !== index),
+    );
+    return known
+      .map((id) => ABILITY_DATABASE.get(id))
+      .filter((ability): ability is AbilityDef => !!ability && ability.slot === slot)
+      .map((ability) => ({
+        id: ability.id,
+        name: ability.name,
+        blurb: ability.blurb,
+        icon: abilityIconSource(ability),
+        disabledReason: takenElsewhere.has(ability.id)
+          ? "Already in another slot of this kind"
+          : undefined,
+      }));
   }
 
-  return createPortal(
-    <div className="skill-tree-overlay" onClick={handleOverlayClick}>
-      <div className="skill-tree-panel" style={{ maxWidth: 640, position: "relative" }}>
-        <div className="skill-tree-header">
-          <span className="skill-tree-title">Abilities</span>
-          <button className="skill-tree-close" onClick={onClose}>
-            x
-          </button>
-        </div>
-
-        <div className="skill-tree-body">
-          <AbilitiesPanelContent />
-        </div>
-      </div>
-    </div>,
-    document.body,
+  return (
+    <LoadoutBrowser
+      label="Ability slots"
+      iconKind="ability"
+      slots={slots}
+      candidatesFor={candidatesFor}
+      nameOf={(id) => abilityDef(id)?.name ?? null}
+      blurbOf={(id) => abilityDef(id)?.blurb ?? ""}
+      iconOf={(id) => {
+        const ability = abilityDef(id);
+        return ability ? abilityIconSource(ability) : undefined;
+      }}
+      onEquip={(key, id) => {
+        const { slot, index } = parseSlotKey(key);
+        setSlot(slot, index, id);
+      }}
+      emptyCandidates="Learn abilities in Crafting → Make to fill this slot."
+    />
   );
 }

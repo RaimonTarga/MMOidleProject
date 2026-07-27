@@ -1834,3 +1834,85 @@
     animation: none;
   }
 }
+
+/* ── Evasion instrument ───────────────────────────────────────────────────────
+   Not a class mechanic: it sits beside whichever one the player has, whenever
+   they have any evasion. Deterministic, so the gauge is a promise rather than a
+   probability — at full charge the next hit taken IS evaded. */
+.evasion-gauge {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 2px 0 1px;
+}
+
+.evasion-gauge__track {
+  position: relative;
+  display: block;
+  height: 8px;
+  overflow: hidden;
+  background: var(--hud-material-inset);
+  border: 1px solid var(--hud-edge-dark);
+  border-radius: 2px;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.6);
+}
+
+.evasion-gauge__fill {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg,
+    color-mix(in srgb, var(--hud-primary) 45%, transparent),
+    var(--hud-primary));
+  transition: width var(--hud-motion-state) ease;
+}
+
+/* Where the next hit's charge would land — the line the fill is climbing to. */
+.evasion-gauge__threshold {
+  position: absolute;
+  top: -1px;
+  bottom: -1px;
+  width: 1px;
+  background: var(--hud-edge-strong);
+  opacity: 0.75;
+}
+
+/* One tick per hit still to take before the evade. */
+.evasion-gauge__ticks {
+  display: flex;
+  gap: 3px;
+  min-height: 4px;
+}
+
+.evasion-gauge__tick {
+  width: 4px;
+  height: 4px;
+  background: var(--hud-edge-medium);
+  border-radius: 1px;
+}
+
+/* Primed: the next hit taken will be evaded. Stated, not hinted. */
+.mechanic-frame--primed .evasion-gauge__fill {
+  background: linear-gradient(90deg,
+    color-mix(in srgb, var(--hud-success) 55%, transparent),
+    var(--hud-success));
+}
+
+.mechanic-frame--primed .evasion-gauge__track {
+  border-color: var(--hud-success);
+  box-shadow:
+    inset 0 1px 3px rgba(0, 0, 0, 0.6),
+    0 0 6px color-mix(in srgb, var(--hud-success) 35%, transparent);
+}
+
+.mechanic-frame--primed .evasion-gauge__tick {
+  background: var(--hud-success);
+}
+
+@media (min-width: 1101px) {
+  /* The 96px floor exists so the six class widgets share one rail footprint.
+     Evasion is not a class apparatus — it is a bar and a tick row — so the floor
+     left roughly sixty pixels of dead space under it. */
+  .desktop-hud .mechanic-frame--evasion {
+    min-height: 0;
+  }
+}

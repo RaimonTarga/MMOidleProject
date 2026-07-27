@@ -37,7 +37,8 @@ export const SHIELD_DAMAGE_SYMBOL = '🛡';
 /** Damage-cap trip — desaturated slate with a "clamped" down-marker. */
 const CAPPED_DAMAGE_COLOR = '#9aa6bf';
 /** Partial evade (glancing blow) — pale blue with a "graze" tilde. */
-const PARTIAL_EVADE_COLOR = '#bcd2ff';
+/** Shared by the tinted damage number and the GRAZE floater beside it. */
+export const PARTIAL_EVADE_COLOR = '#bcd2ff';
 
 /**
  * Shared mitigation styling applied to the HP-delta number, ahead of the

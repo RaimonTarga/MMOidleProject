@@ -5,6 +5,7 @@ import { DefensePassivesSection, MobilityPassivesSection, StatRow } from './comp
 import { ArchetypeMechanics } from './mechanics';
 import { useHoverTooltip } from './tooltip';
 import { STAT_HELP } from './statHelp';
+import { StatPlate } from './StatPlate';
 import { DisclosureHeader, HudPanel } from '../primitives';
 import { useIsMobile } from '../useIsMobile';
 import { composeIntentPresentation } from '../intentPresentation';
@@ -175,72 +176,73 @@ export function StatPanel() {
       <DisclosureHeader
         className="panel-title panel-title--collapsible"
         title="Character"
-        summary={expanded ? 'Hide detailed stats' : 'See detailed stats'}
+        // No summary: the chevron and aria-expanded already say this opens, and
+        // the copy that used to sit here squeezed the title until "Character"
+        // broke mid-word against the rail's 45% label cap.
+        label={expanded ? 'Hide detailed character stats' : 'Show detailed character stats'}
         expanded={expanded}
         controls={characterDetailsId}
         onToggle={toggleExpanded}
       />
 
-      {/* Name + connection dot */}
-      <div className="stat-row name-row">
-        <span>{player?.name ?? '—'}</span>
-        <span className={`status-dot ${status}`} title={status} />
-      </div>
-
-      {/* HP bar */}
-      <div className="stat-section">
-        <div className="stat-row stat-row--help" {...hpTip.handlers}>
-          <span className="stat-label">HP</span>
-          <span className="stat-value">
-            {player
-              ? totalShield > 0
-                ? `${Math.ceil(player.hp)} / ${player.maxHp}  (+${Math.ceil(totalShield)} shield)`
-                : `${Math.ceil(player.hp)} / ${player.maxHp}`
-              : '— / —'}
-          </span>
-          {hpTip.node}
-        </div>
-        {/* Shield strip — above the HP bar, always visible (even at full HP) */}
-        {shieldPct > 0 && (
-          <div className="hp-shield-strip">
-            <div className="hp-shield-strip__fill" style={{ width: `${shieldPct}%` }} />
-          </div>
-        )}
-        <div className="hp-bar-track">
-          {/* expected regen — dark-green layer extending past current HP */}
-          {healPct > 0 && (
-            <div className="hp-layer hp-layer--regen" style={{ left: `${hpPct}%`, width: `${healPct}%` }} />
-          )}
-          {/* safe HP */}
-          <div className="hp-layer hp-layer--hp" style={{ width: `${safePct}%`, background: hpBarColor }} />
-          {/* pending DoT — red layer at the right edge of current HP */}
-          {dotPct > 0 && (
-            <div className="hp-layer hp-layer--dot" style={{ left: `${safePct}%`, width: `${dotPct}%` }} />
-          )}
-        </div>
-      </div>
-
-      {/* Core combat stats */}
-      <div className="stat-section">
-        <StatRow label="Attack"     value={player?.attack    ?? '—'} help={STAT_HELP.attack} />
-        <StatRow label="DPS"        value={dps} help={STAT_HELP.dps} />
-        <StatRow
-          label="Defense"
-          value={player ? `${player.plating} plating · ${Math.round(player.damageReduction * 100)}% DR` : '—'}
-          help={STAT_HELP.plating}
+      {/* One engraved plate for the whole readout. Each figure labels itself,
+          and a bar appears only where the value has a real 0-100% ceiling. */}
+      {player && (
+        <StatPlate
+          crown={{
+            name: player.name ?? '—',
+            status,
+            hp: player.hp,
+            maxHp: player.maxHp,
+            shield: totalShield,
+            incomingDot: player.incomingDot,
+            pendingHeal: player.pendingHeal,
+            hpTip,
+          }}
+          // Glance figures are the two that decide a fight (§14.2). HP/s and
+          // Speed demote to the expand, where they already had rows.
+          figures={[
+            { value: dps, label: 'DPS', watch: Number(dps) },
+            { value: String(player.plating), label: 'Plating', watch: player.plating },
+          ]}
+          lines={[
+            `${player.attack} attack`,
+            `${aps}/s`,
+            `${player.attackRange} range`,
+            ...(player.onHitDamage > 0 ? [`+${player.onHitDamage} on-hit`] : []),
+            ...(empMult ? [`×${empMult.effective.toFixed(2)} empowered`] : []),
+            `${player.hpRegen}/s regen`,
+            `${player.speed} speed`,
+          ]}
+          // Reduction is the only genuine 0-100% ceiling left here. The static
+          // Dodge meter is gone: it stated a rate while saying nothing about
+          // when the next dodge lands, which is what the Evasion instrument now
+          // shows from the live authoritative charge.
+          meters={[
+            {
+              label: 'Reduction',
+              fraction: player.damageReduction,
+              value: `${Math.round(player.damageReduction * 100)}%`,
+            },
+          ]}
         />
-      </div>
+      )}
 
       {expanded && (
         <div id={characterDetailsId} className="character-panel__details">
+          {/* The plates already carry every headline number, so the expand is
+              the explained reference: what a stat means, and the detail a
+              plate has no room for. */}
           <div className="stat-section">
+            <StatRow label="Attack" value={player?.attack ?? '—'} help={STAT_HELP.attack} />
+            <StatRow label="DPS" value={dps} help={STAT_HELP.dps} />
+            <StatRow label="Attack Speed" value={player ? `${aps} APS (${cdSec}s)` : '—'} help={STAT_HELP.atkSpeed} />
             {player && player.onHitDamage > 0 && (
               <StatRow label="On-Hit Dmg" value={`+${player.onHitDamage}`} help={STAT_HELP.onHitDamage} />
             )}
             {empMult && (
               <StatRow label="Empowered" value={`×${empMult.effective.toFixed(2)}`} help={empMultTip} />
             )}
-            <StatRow label="Attack Speed" value={player ? `${aps} APS (${cdSec}s)` : '—'} help={STAT_HELP.atkSpeed} />
             <StatRow label="Plating" value={player?.plating ?? '—'} help={STAT_HELP.plating} />
             <StatRow
               label="Damage Reduction"

@@ -393,16 +393,12 @@
   cursor: default;
 }
 
-/* Cost badge — top-right of circle */
+/* Cost pips — top-right of circle. One mark per point to spend; it used to be
+   the string "2pt" in a pill, which cost the same space to say less. */
 .skill-node__cost {
   position: absolute;
   top: 6px;
   right: 6px;
-  font-size: 8px;
-  line-height: 1;
-  padding: 2px 4px;
-  border-radius: 8px;
-  background: rgba(0, 0, 0, 0.55);
   pointer-events: none;
 }
 
@@ -448,9 +444,8 @@
   transform: scale(1.07);
 }
 
-.skill-node--available .skill-node__cost {
-  color: #88ccff;
-  background: rgba(0, 20, 65, 0.75);
+.skill-node--available .skill-node__cost .milestone-pips__pip {
+  border-color: #88ccff;
 }
 
 .skill-node--unlocked {
@@ -497,7 +492,7 @@
 }
 
 .skill-node--compact .skill-node__name { font-size: 9px; max-width: 50px; }
-.skill-node--compact .skill-node__cost { font-size: 7px; top: 3px; right: 3px; }
+.skill-node--compact .skill-node__cost { top: 3px; right: 3px; }
 .skill-node--compact .skill-node__check { font-size: 11px; }
 
 /* ── Upcoming hint (fallback text) ───────────────────────────────────────── */
@@ -567,15 +562,8 @@
 
 .skill-desc--unlocked .skill-desc__cost { color: #44cc77; }
 
-.skill-desc__effects {
-  font-size: 11px;
-  color: #8898cc;
-  margin-bottom: 4px;
-  letter-spacing: 0.2px;
-}
-
-.skill-desc--unlocked  .skill-desc__effects { color: #33cc77; }
-.skill-desc--available .skill-desc__effects { color: #88aaee; }
+/* The node detail's effects are chips now; formatEffects still serves the class
+   orbit, where a one-line string is the right shape. */
 
 .skill-desc__text {
   font-size: 10px;
@@ -636,7 +624,7 @@
   }
   .skill-class-orbit::before { inset: 42px 50px; }
   .skill-class-orbit__slot .skill-node { width: 64px; height: 64px; }
-  .skill-class-orbit__slot .skill-node__cost { top: 4px; right: 4px; font-size: 7px; }
+  .skill-class-orbit__slot .skill-node__cost { top: 4px; right: 4px; }
   .skill-class-orbit__slot .skill-node__name { font-size: 8px; max-width: 50px; }
   .skill-class-orbit__sigil { inset: 0 6px; font-size: 8px; }
   .skill-class-orbit__info { width: 150px; min-height: 118px; padding: 10px; gap: 5px; }
@@ -648,7 +636,7 @@
   /* Progression tiers — smaller nodes + tighter spacing */
   .skill-node { width: 64px; height: 64px; padding: 7px 5px; }
   .skill-node__name { font-size: 9px; max-width: 50px; }
-  .skill-node__cost { font-size: 7px; top: 4px; right: 4px; }
+  .skill-node__cost { top: 4px; right: 4px; }
   .skill-node--compact { width: 48px; height: 48px; }
   .skill-tier-nodes { gap: 12px; }
   .skill-tier-section { gap: 8px; }
@@ -664,4 +652,86 @@
   .game-dialog__panel.skill-tree-dialog {
     max-width: none;
   }
+}
+
+/* ── The path you walk (V6) ───────────────────────────────────────────────────
+   Picked nodes form the spine; the siblings you passed over shrink and desature
+   but stay reachable, because class reset exists and the alternatives have to
+   remain legible. */
+.skill-node--spine {
+  box-shadow: 0 0 10px color-mix(in srgb, var(--hud-primary) 22%, transparent);
+}
+
+.skill-node--faded {
+  width: 34px;
+  height: 34px;
+  opacity: 0.42;
+  filter: grayscale(0.75);
+  transition:
+    width var(--hud-motion-state) ease,
+    height var(--hud-motion-state) ease,
+    opacity var(--hud-motion-state) ease,
+    filter var(--hud-motion-state) ease;
+}
+
+/* The road not taken, on demand. */
+.skill-node--faded:hover,
+.skill-node--faded.skill-node--selected {
+  width: 62px;
+  height: 62px;
+  opacity: 1;
+  filter: none;
+}
+
+.skill-node--faded .skill-node__name {
+  overflow: hidden;
+  max-width: 30px;
+  font-size: 7px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.skill-node--faded:hover .skill-node__name,
+.skill-node--faded.skill-node--selected .skill-node__name {
+  max-width: 50px;
+  font-size: 9px;
+}
+
+.skill-node--faded .skill-node__cost {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skill-node--faded {
+    transition: none;
+  }
+}
+
+/* Effect chips — glyph plus number, instead of a run-on string of three-letter
+   abbreviations the reader had to decode ("+4 ATK  +2 PLT  -50 ms CD"). */
+.skill-effect-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 6px;
+  margin-bottom: 6px;
+}
+
+.skill-effect-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 6px;
+  background: var(--hud-material-inset);
+  border: 1px solid var(--hud-edge-light);
+  border-radius: 2px;
+  color: var(--hud-success);
+  font-family: monospace;
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* A negative effect is a real trade, not a smaller gain. */
+.skill-effect-chip--down {
+  color: var(--hud-danger);
+  border-color: color-mix(in srgb, var(--hud-danger) 45%, var(--hud-edge-light));
 }

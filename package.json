@@ -44,6 +44,8 @@
     "art:review": "pnpm --dir server exec tsx --conditions=development ../tools/pixellab/review.ts",
     "art:pack": "pnpm --dir server exec tsx --conditions=development ../tools/pixellab/pack.ts",
     "art:status": "pnpm --dir server exec tsx --conditions=development ../tools/pixellab/status.ts",
+    "art:glyphs": "pnpm --dir server exec tsx --conditions=development ../tools/glyphs/draw.ts",
+    "ui:shot": "pnpm --dir server exec tsx --conditions=development ../tools/uishot/shot.ts",
     "test": "node scripts/run-tests.mjs",
     "test:spatial": "pnpm --filter @mmo-idle/server exec tsx ../shared/src/systems/spatialHitbox.test.ts && pnpm --filter @mmo-idle/server exec tsx ../shared/src/collision/collision.test.ts",
     "bake:hitboxes": "pnpm --filter @mmo-idle/server bake:hitboxes",
@@ -54,6 +56,7 @@
   },
   "devDependencies": {
     "cross-env": "^10.1.0",
+    "playwright": "^1.62.0",
     "typescript": "^5.9.3"
   }
 }

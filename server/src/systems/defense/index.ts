@@ -71,7 +71,7 @@ export function updateDefensiveSystems(
     // Deterministic dodge accumulator resets while out of combat (single balance
     // lever via GAME_CONFIG.EVADE_OOC_RESET).
     if (!inCombat) {
-      resetEvadeAccumulator(player);
+      resetEvadeAccumulator(world, player);
       resetCheatDeath(player);
       resetDebtCheatDeath(player);
       resetRampRegen(player);

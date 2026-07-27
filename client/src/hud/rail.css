@@ -122,7 +122,6 @@
 
   .desktop-hud .combat-log__header:focus-visible,
   .desktop-hud .bestiary__row:focus-visible,
-  .desktop-hud .quest-panel--clickable:focus-visible,
   .desktop-hud .auto-btn:focus-visible,
   .desktop-hud .debug-panel button:focus-visible {
     outline: var(--hud-focus-width) solid var(--hud-focus-color);
@@ -187,19 +186,6 @@
     padding-bottom: 11px;
   }
 
-  .desktop-hud .quest-panel--clickable:hover {
-    border-color: var(--hud-edge-medium);
-    box-shadow:
-      inset 0 0 0 1px rgba(255, 244, 205, 0.045),
-      inset 0 -1px 0 rgba(0, 0, 0, 0.55),
-      0 2px 6px rgba(0, 0, 0, 0.38);
-  }
-
-  .desktop-hud .quest-panel--clickable:active {
-    transform: translateY(1px);
-    box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.62);
-  }
-
   .desktop-hud .quest-tier-badge {
     color: var(--hud-primary-strong);
     text-shadow: none;
@@ -209,7 +195,6 @@
     color: var(--hud-text);
   }
 
-  .desktop-hud .quest-bar-track,
   .desktop-hud .hp-bar-track,
   .desktop-hud .hp-shield-strip {
     border: 1px solid rgba(5, 4, 3, 0.78);
@@ -218,16 +203,11 @@
     box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.7);
   }
 
-  .desktop-hud .quest-bar-fill {
-    background: linear-gradient(90deg, color-mix(in srgb, var(--hud-primary) 58%, var(--hud-material-inset)), var(--hud-primary-strong));
-  }
-
   .desktop-hud .essence-row + .essence-row {
     padding-top: 3px;
     border-top: 1px solid rgba(117, 102, 77, 0.14);
   }
 
-  .desktop-hud .tactical-mode-panel .auto-btn,
   .desktop-hud .party-panel .auto-btn {
     margin-top: 7px;
     padding: 8px 9px;
@@ -240,26 +220,18 @@
     box-shadow: inset 0 1px rgba(255, 245, 218, 0.035);
   }
 
-  .desktop-hud .tactical-mode-panel .auto-btn:hover,
   .desktop-hud .party-panel .auto-btn:hover {
     color: var(--hud-text);
     background: linear-gradient(145deg, color-mix(in srgb, var(--hud-material-control) 68%, var(--hud-edge-strong)), color-mix(in srgb, var(--hud-material-control) 90%, var(--hud-primary)) 58%, var(--hud-material-control));
   }
 
-  .desktop-hud .tactical-mode-panel .auto-btn:active,
-  .desktop-hud .party-panel .auto-btn:active,
-  .desktop-hud .tactical-mode-panel .auto-btn.active {
+  .desktop-hud .party-panel .auto-btn:active {
     transform: translateY(1px);
     border-top-color: var(--hud-edge-dark);
     border-left-color: var(--hud-edge-dark);
     border-right-color: #5a5142;
     border-bottom-color: #5a5142;
     box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.55);
-  }
-
-  .desktop-hud .tactical-mode-panel .auto-btn.active {
-    color: var(--hud-success);
-    background: linear-gradient(145deg, #1d281c, #172014);
   }
 
   .desktop-hud .combat-log__count {
@@ -270,5 +242,64 @@
 
   .desktop-hud .combat-log__row:nth-child(even) {
     background: rgba(255, 247, 218, 0.018);
+  }
+}
+
+/* ── Nav section shortcuts ───────────────────────────────────────────────────
+   A destination's sections appear in the rail while it is open, so jumping to
+   one is a single action. Flat destinations render no chevron and no list. */
+@media (min-width: 1101px) {
+  .desktop-hud .right-nav-entry {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .desktop-hud .right-nav-button__chevron {
+    flex: 0 0 auto;
+    margin-left: auto;
+    color: var(--hud-text-dim);
+    font-size: 9px;
+  }
+
+  .desktop-hud .right-nav-button--selected .right-nav-button__chevron {
+    color: var(--hud-primary);
+  }
+
+  .desktop-hud .right-nav-sections {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: 2px 0 3px;
+    list-style: none;
+  }
+
+  .desktop-hud .right-nav-section {
+    display: block;
+    width: 100%;
+    padding: 4px 8px 4px 30px;
+    background: transparent;
+    border: 0;
+    border-left: 2px solid var(--hud-edge-light);
+    color: var(--hud-text-muted);
+    font: 10px/1.3 monospace;
+    letter-spacing: 0.4px;
+    text-align: left;
+    cursor: pointer;
+    transition: color var(--hud-motion-fast) ease, border-color var(--hud-motion-fast) ease;
+  }
+
+  .desktop-hud .right-nav-section:hover {
+    color: var(--hud-text);
+    border-left-color: var(--hud-edge-medium);
+  }
+
+  .desktop-hud .right-nav-section--selected {
+    color: var(--hud-primary-strong);
+    border-left-color: var(--hud-primary);
+  }
+
+  .desktop-hud .right-nav-section:focus-visible {
+    outline: var(--hud-focus-width) solid var(--hud-focus-color);
+    outline-offset: calc(var(--hud-focus-offset) * -1);
   }
 }

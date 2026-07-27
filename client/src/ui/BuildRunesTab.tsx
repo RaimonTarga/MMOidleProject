@@ -1,5 +1,6 @@
-import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type CSSProperties, type ReactNode } from "react";
 import { useAtom, useAtomValue } from "jotai";
+import { ActionChip, EngravedMeter } from "../hud/primitives";
 import {
   ACTION_DATABASE,
   CONDITION_DATABASE,
@@ -9,8 +10,6 @@ import {
   abilityDef,
   equippedForSlot,
   getRuleName,
-  isRuneRecipeAvailableForArchetype,
-  isRuneRecipeUnlocked,
   isRuneRuleCompatibleForArchetype,
   runeBudgetForGlobalMastery,
   runeChannelLabel,
@@ -24,7 +23,6 @@ import {
   type EquippedRule,
   type EquippedStances,
   type EssenceType,
-  type RuneRecipe,
 } from "@mmo-idle/shared";
 import { hudBus } from "../hudBus";
 import {
@@ -36,17 +34,12 @@ import {
   essencesAtom,
   globalMasteryAtom,
   playerNodeIdAtom,
-  runePanelTabAtom,
-  runeRecipesCraftedAtom,
   runesEquippedAtom,
   runesOwnedAtom,
 } from "../hud/atoms";
-import { CostDisplay, EssenceSummary } from "./crafting/shared";
-import { biomeName } from "./crafting/common";
 import { BuildIcon, type BuildIconKind } from "./BuildIcon";
 import { GameIcon } from "./GameIcon";
 import {
-  craftingSectionIconSource,
   runeFragmentIconSource,
 } from "./systemIcons";
 import { DialogTab, DialogTabs } from "../hud/primitives";
@@ -169,56 +162,33 @@ function rpBadge(cost: number, tone: "normal" | "danger" = "normal") {
   );
 }
 
+/**
+ * The rune budget: a bounded meter, so it takes the engraved grammar rather than
+ * the conduit's motion. Over-spending turns the trough itself danger-red, which
+ * is why the caller no longer needs a sentence of warning text beside it.
+ *
+ * V5 rebuilds this into the sticky header of the rule board; the grammar chosen
+ * here is what it will inherit.
+ */
 function RunePointMeter({ spent, budget }: { spent: number; budget: number }) {
   const over = Math.max(0, spent - budget);
+  const fraction = budget > 0 ? Math.min(1, spent / budget) : 0;
   return (
-    <div
-      style={{
-        border: "1px solid rgba(100, 85, 200, 0.25)",
-        borderRadius: 6,
-        padding: "9px 10px",
-        background: "rgba(13, 11, 34, 0.7)",
-      }}
-    >
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
+    <div className="rune-budget">
+      <div className="rune-budget__row">
         <span className="build-section-title">Rune Points</span>
-        <span style={{ color: over > 0 ? "#ff7a7a" : "#ffe084", fontSize: 12, fontWeight: "bold" }}>
+        <span className={`rune-budget__value${over > 0 ? ' rune-budget__value--over' : ''}`}>
           {spent} / {budget}
         </span>
       </div>
-      <div style={{ display: "flex", gap: 4, marginTop: 8, flexWrap: "wrap" }}>
-        {Array.from({ length: budget }, (_, i) => {
-          const used = i < Math.min(spent, budget);
-          return (
-            <span
-              key={i}
-              title={used ? "Spent rune point" : "Available rune point"}
-              style={{
-                width: 18,
-                height: 10,
-                borderRadius: 2,
-                border: `1px solid ${used ? "#e0c15c" : "#46d8a4"}`,
-                background: used ? "rgba(224, 193, 92, 0.9)" : "rgba(70, 216, 164, 0.18)",
-                boxShadow: used ? "0 0 8px rgba(224, 193, 92, 0.22)" : "none",
-              }}
-            />
-          );
-        })}
-        {Array.from({ length: over }, (_, i) => (
-          <span
-            key={`over-${i}`}
-            title="Over budget"
-            style={{
-              width: 18,
-              height: 10,
-              borderRadius: 2,
-              border: "1px solid #ff7a7a",
-              background: "rgba(255, 122, 122, 0.85)",
-              boxShadow: "0 0 8px rgba(255, 122, 122, 0.28)",
-            }}
-          />
-        ))}
-      </div>
+      <EngravedMeter
+        className="rune-budget__meter"
+        fraction={fraction}
+        over={over > 0}
+        label={over > 0
+          ? `Rune points: ${spent} spent of ${budget}, ${over} over budget`
+          : `Rune points: ${spent} spent of ${budget}`}
+      />
     </div>
   );
 }
@@ -231,7 +201,6 @@ export function BuildRunesTab() {
   const equippedAbilities = useAtomValue(equippedAbilitiesAtom);
   const equippedStances = useAtomValue(equippedStancesAtom);
 
-  const [tab, setTab] = useAtom(runePanelTabAtom);
   const [loadout, setLoadout] = useState<EquippedRule[]>(equipped);
   const [selCond, setSelCond] = useState<string | null>(null);
   const [selAction, setSelAction] = useState<string | null>(null);
@@ -306,41 +275,8 @@ export function BuildRunesTab() {
 
   return (
     <div className="build-tab-body" style={{ position: "relative" }}>
-      <DialogTabs label="Rune sections" className="build-rune-tabs">
-        <DialogTab
-          selected={tab === "loadout"}
-          controls="build-rune-loadout"
-          icon={
-            <GameIcon
-              source={runeFragmentIconSource("condition")}
-              size={18}
-              fallback={null}
-              decorative
-            />
-          }
-          onSelect={() => setTab("loadout")}
-        >
-          Loadout
-        </DialogTab>
-        <DialogTab
-          selected={tab === "forge"}
-          controls="build-rune-forge"
-          icon={
-            <GameIcon
-              source={craftingSectionIconSource("forge")}
-              size={18}
-              fallback={null}
-              decorative
-            />
-          }
-          onSelect={() => setTab("forge")}
-        >
-          Forge
-        </DialogTab>
-      </DialogTabs>
-
-      {tab === "loadout" ? (
-        <div id="build-rune-loadout" role="tabpanel">
+      {(
+        <div id="build-rune-loadout">
           <RunePointMeter spent={spent} budget={budget} />
 
           <div>
@@ -380,45 +316,66 @@ export function BuildRunesTab() {
                   return (
                     <div
                       key={`${rule.conditionId}:${rule.actionId}:${i}`}
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 10,
-                        border: `1px solid ${compatible ? "rgba(100, 85, 200, 0.22)" : "rgba(255, 122, 122, 0.5)"}`,
-                        borderLeft: `4px solid ${compatible ? accent : "#ff7a7a"}`,
-                        borderRadius: 5,
-                        padding: "8px 10px",
-                        background: "rgba(13, 11, 34, 0.7)",
-                      }}
+                      className={`rule-card${compatible ? '' : ' rule-card--invalid'}`}
+                      style={{ '--rule-accent': compatible ? accent : 'var(--hud-danger)' } as CSSProperties}
                     >
-                      <span style={{ color: "#6868a8", fontSize: 11, width: 18 }}>{i + 1}</span>
-                      {target ? (
-                        <BuildIcon kind={target.kind} label={target.label} muted={target.missing} />
-                      ) : (
-                        rpBadge(runeRuleCost(rule), compatible ? "normal" : "danger")
-                      )}
-                      <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ color: "#d8caf5", fontWeight: "bold", fontSize: 13 }}>{title}</div>
-                        <div style={{ color: compatible ? "#8888b0" : "#ffaaa0", fontSize: 11, marginTop: 2 }}>
-                          {compatible ? subtitle : "Invalid pairing. Remove or replace this rule."}
-                        </div>
+                      <span className="rule-card__order">{i + 1}</span>
+
+                      {/* WHEN this holds → DO that. The arrow is the rule, so it
+                          is drawn rather than implied by two stacked lines. */}
+                      <div className="rule-card__clause">
+                        <span className="rule-card__when">
+                          <span className="rule-card__tag">When</span>
+                          <span className="rule-card__text">{title}</span>
+                        </span>
+                        <span className="rule-card__arrow" aria-hidden="true">→</span>
+                        <span className="rule-card__do">
+                          <span className="rule-card__tag">Do</span>
+                          <span className="rule-card__text">
+                            {compatible ? subtitle : 'Invalid pairing — remove or replace'}
+                          </span>
+                        </span>
                       </div>
+
+                      {/* The rule's target, when it names one. Muted means the
+                          thing it points at is not equipped. */}
+                      {target && (
+                        <span
+                          className={`rule-card__target${target.missing ? ' rule-card__target--missing' : ''}`}
+                          title={target.missing
+                            ? `${target.label} is not equipped — this rule cannot fire`
+                            : target.label}
+                        >
+                          <BuildIcon kind={target.kind} label={target.label} muted={target.missing} size={20} />
+                          <span className="rule-card__target-name">{target.label}</span>
+                        </span>
+                      )}
+
                       {rpBadge(runeRuleCost(rule), compatible ? "normal" : "danger")}
-                      <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
-                        <PriorityButton label="Move rule higher" disabled={i === 0} onClick={() => moveRule(i, -1)}>
-                          ^
-                        </PriorityButton>
-                        <PriorityButton
+
+                      <span className="rule-card__controls">
+                        <ActionChip
+                          label="Move rule higher"
+                          fallback="▲"
+                          size="sm"
+                          disabled={i === 0}
+                          onClick={() => moveRule(i, -1)}
+                        />
+                        <ActionChip
                           label="Move rule lower"
+                          fallback="▼"
+                          size="sm"
                           disabled={i === loadout.length - 1}
                           onClick={() => moveRule(i, 1)}
-                        >
-                          v
-                        </PriorityButton>
-                      </div>
-                      <button className="build-rule-remove" onClick={() => removeRule(i)} title="Remove rule">
-                        x
-                      </button>
+                        />
+                        <ActionChip
+                          label="Remove rule"
+                          fallback="−"
+                          size="sm"
+                          tone="danger"
+                          onClick={() => removeRule(i)}
+                        />
+                      </span>
                     </div>
                   );
                 })}
@@ -538,10 +495,6 @@ export function BuildRunesTab() {
             )}
           </div>
         </div>
-      ) : (
-        <div id="build-rune-forge" role="tabpanel">
-          <RuneForgeTab budget={budget} />
-        </div>
       )}
 
       {confirmReset && (
@@ -597,267 +550,6 @@ export function BuildRunesTab() {
         </div>
       )}
     </div>
-  );
-}
-
-function canAffordRecipe(
-  recipe: RuneRecipe,
-  essences: Record<EssenceType, number>,
-): boolean {
-  return (Object.entries(recipe.cost) as [EssenceType, number][]).every(
-    ([type, amount]) => (essences[type] ?? 0) >= amount,
-  );
-}
-
-function recipeRuneLabel(recipe: RuneRecipe): string {
-  if (!recipe.runeId) return "Rune";
-  return (
-    CONDITION_DATABASE.get(recipe.runeId)?.name ??
-    ACTION_DATABASE.get(recipe.runeId)?.name ??
-    recipe.runeId
-  );
-}
-
-function recipeTypeLabel(recipe: RuneRecipe): string {
-  return recipe.runeKind === "condition" ? "Situation" : "Response";
-}
-
-function recipeRequirementLabel(recipe: RuneRecipe): string {
-  if (recipe.recipeGroup && recipe.requiredBiomeLevel !== undefined) {
-    return `Reach ${biomeName(recipe.recipeGroup)} Lv ${recipe.requiredBiomeLevel}`;
-  }
-  if (recipe.requiredBossClear) {
-    const [group, tier] = recipe.requiredBossClear.split(":");
-    if (group && tier) return `Defeat ${biomeName(group)} T${tier} boss`;
-    return recipe.requiredBossClear;
-  }
-  return "Unlocked";
-}
-
-function RuneForgeTab({ budget }: { budget: number }) {
-  const nodeId = useAtomValue(playerNodeIdAtom);
-  const combatArchetype = useAtomValue(combatArchetypeAtom);
-  const essences = useAtomValue(essencesAtom);
-  const bossesCleared = useAtomValue(bossesClearedAtom);
-  const biomeLevel = useAtomValue(biomeLevelAtom);
-  const craftedRecipeIds = useAtomValue(runeRecipesCraftedAtom);
-  const ownedRuneIds = useAtomValue(runesOwnedAtom);
-  const [craftResult, setCraftResult] = useState<{
-    recipeId: string;
-    success: boolean;
-    reason?: string;
-  } | null>(null);
-
-  useEffect(() => {
-    let timer: ReturnType<typeof setTimeout> | null = null;
-    const handler = (e: Event) => {
-      const result = (e as CustomEvent<{
-        recipeId: string;
-        success: boolean;
-        reason?: string;
-      }>).detail;
-      if (timer) clearTimeout(timer);
-      setCraftResult(result);
-      timer = setTimeout(() => setCraftResult(null), 2200);
-    };
-    window.addEventListener("hud:runeCraftResult", handler);
-    return () => {
-      window.removeEventListener("hud:runeCraftResult", handler);
-      if (timer) clearTimeout(timer);
-    };
-  }, []);
-
-  const isTestRoom = nodeId === TEST_ROOM_NODE_ID;
-  const craftedSet = useMemo(() => new Set(craftedRecipeIds), [craftedRecipeIds]);
-  const ownedSet = useMemo(() => new Set(ownedRuneIds), [ownedRuneIds]);
-
-  const visibleRecipes = useMemo(() => {
-    return [...RUNE_RECIPE_DATABASE.values()]
-      .filter((recipe) => recipe.runeKind !== "condition")
-      .filter((recipe) =>
-        isRuneRecipeAvailableForArchetype(recipe, combatArchetype),
-      )
-      .sort((a, b) => {
-        const unlocked = (recipe: RuneRecipe) => {
-          if (craftedSet.has(recipe.id)) return true;
-          return recipe.runeId !== undefined && ownedSet.has(recipe.runeId);
-        };
-        const unlockedDelta = Number(unlocked(a)) - Number(unlocked(b));
-        if (unlockedDelta !== 0) return unlockedDelta;
-        return (
-          a.tier - b.tier ||
-          recipeTypeLabel(a).localeCompare(recipeTypeLabel(b)) ||
-          a.name.localeCompare(b.name)
-        );
-      });
-  }, [combatArchetype, craftedSet, ownedSet]);
-
-  return (
-    <div className="craft-body" style={{ padding: 0 }}>
-      <EssenceSummary essences={essences} />
-      <div
-        style={{
-          border: "1px solid rgba(100, 85, 200, 0.25)",
-          borderRadius: 6,
-          padding: "9px 10px",
-          background: "rgba(13, 11, 34, 0.7)",
-          color: "#c0aee8",
-          fontSize: 12,
-          display: "flex",
-          justifyContent: "space-between",
-          gap: 12,
-          marginBottom: 12,
-        }}
-      >
-        <span>Rune Points</span>
-        <strong style={{ color: "#ffe084" }}>{budget} max</strong>
-      </div>
-
-      {visibleRecipes.length === 0 ? (
-        <div className="craft-empty">No rune recipes available for this class.</div>
-      ) : (
-        <div className="craft-list">
-          {visibleRecipes.map((recipe) => {
-            const crafted = craftedSet.has(recipe.id);
-            const alreadyOwned = recipe.runeId !== undefined && ownedSet.has(recipe.runeId);
-            const locked =
-              !isTestRoom &&
-              !isRuneRecipeUnlocked(recipe, { biomeLevel, bossesCleared });
-            const canAfford = isTestRoom || canAffordRecipe(recipe, essences);
-            const canCraft = !crafted && !alreadyOwned && !locked && canAfford;
-            const result = craftResult?.recipeId === recipe.id ? craftResult : null;
-            const accent = recipe.runeKind === "condition" ? "#7ab8ff" : "#7affc0";
-
-            return (
-              <div
-                key={recipe.id}
-                className={[
-                  "craft-recipe",
-                  crafted || alreadyOwned ? "craft-recipe--owned" : "",
-                  locked ? "craft-recipe--locked" : "",
-                  !crafted && !alreadyOwned && !locked && !canAfford ? "craft-recipe--unaffordable" : "",
-                ].filter(Boolean).join(" ")}
-              >
-                {result && (
-                  <div className={`craft-card-result craft-card-result--${result.success ? "ok" : "err"}`}>
-                    <span className="craft-card-result__icon">{result.success ? "+" : "x"}</span>
-                    <span className="craft-card-result__text">
-                      {result.success ? "Forged!" : result.reason ?? "Could not forge"}
-                    </span>
-                  </div>
-                )}
-
-                <div
-                  className="craft-recipe__icon"
-                  style={{
-                    borderColor: `${accent}77`,
-                    background: `${accent}14`,
-                    color: accent,
-                    fontSize: 18,
-                  }}
-                >
-                  <GameIcon
-                    source={runeFragmentIconSource(
-                      recipe.runeKind === "condition" ? "condition" : "action",
-                    )}
-                    size={32}
-                    fallback={recipe.runeKind === "condition" ? "?" : ">"}
-                    decorative
-                  />
-                </div>
-
-                <div className="craft-recipe__content">
-                  <div className="craft-recipe__header">
-                    <span className="craft-recipe__name">{recipe.name}</span>
-                    <span className="craft-recipe__tier-badge">T{recipe.tier}</span>
-                    <span className="craft-recipe__owned-badge" style={{ color: accent }}>
-                      {recipeTypeLabel(recipe)}
-                    </span>
-                    {locked && <span className="craft-recipe__source">LOCKED</span>}
-                    {(crafted || alreadyOwned) && (
-                      <span className="craft-recipe__owned-badge">UNLOCKED</span>
-                    )}
-                  </div>
-
-                  <div className="craft-recipe__stats">
-                    <span className="craft-stat-pill">
-                      <span className="craft-stat-pill__value">{recipeRuneLabel(recipe)}</span>
-                      <span className="craft-stat-pill__label">Unlock</span>
-                    </span>
-                  </div>
-
-                  <ul className="craft-recipe__effects">
-                    <li className="craft-recipe__effect-line">{recipe.description}</li>
-                  </ul>
-
-                  <CostDisplay cost={recipe.cost} essences={essences} />
-
-                  <div className="craft-recipe__footer">
-                    <span
-                      className={`craft-recipe__desc${locked ? " craft-recipe__locked-label" : ""}`}
-                    >
-                      {crafted || alreadyOwned ? "Unlocked" : recipeRequirementLabel(recipe)}
-                    </span>
-                    <button
-                      className="craft-recipe__btn"
-                      disabled={!canCraft}
-                      onClick={() => hudBus.requestCraftRuneRecipe(recipe.id)}
-                    >
-                      {crafted || alreadyOwned
-                        ? "Unlocked"
-                        : locked
-                          ? "Locked"
-                          : canAfford
-                            ? "Forge"
-                            : "Insufficient"}
-                    </button>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      )}
-    </div>
-  );
-}
-
-function PriorityButton({
-  children,
-  disabled,
-  label,
-  onClick,
-}: {
-  children: string;
-  disabled: boolean;
-  label: string;
-  onClick: () => void;
-}) {
-  return (
-    <button
-      type="button"
-      aria-label={label}
-      title={label}
-      disabled={disabled}
-      onClick={onClick}
-      style={{
-        width: 24,
-        height: 20,
-        borderRadius: 3,
-        border: `1px solid ${disabled ? "rgba(100, 85, 200, 0.16)" : "rgba(122, 184, 255, 0.48)"}`,
-        background: disabled ? "rgba(13, 11, 34, 0.35)" : "rgba(24, 31, 62, 0.9)",
-        color: disabled ? "#4a466f" : "#bcd8ff",
-        cursor: disabled ? "default" : "pointer",
-        fontSize: 12,
-        lineHeight: 1,
-        display: "inline-flex",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: 0,
-      }}
-    >
-      {children}
-    </button>
   );
 }
 
