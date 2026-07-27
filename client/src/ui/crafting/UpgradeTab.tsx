@@ -196,6 +196,8 @@ export function UpgradeTab() {
 
             const cardResult = result?.itemId === def.id ? result : null;
 
+            const equipped = equippedSet.has(def.id);
+
             return (
               <div
                 key={def.id}
@@ -203,6 +205,10 @@ export function UpgradeTab() {
                   'craft-recipe',
                   'craft-upgrade',
                   isMaxed ? 'craft-upgrade--maxed' : '',
+                  // Equipped gear is what an upgrade actually changes about your
+                  // character right now, so the card says so with its whole
+                  // frame rather than with one grey chip among four badges.
+                  equipped ? 'craft-upgrade--equipped' : '',
                 ].filter(Boolean).join(' ')}
               >
                 {cardResult && (
@@ -234,7 +240,12 @@ export function UpgradeTab() {
                     {currentPlus > 0 && <span className="craft-upgrade__level">+{currentPlus}</span>}
                     <span className="craft-recipe__slot-badge" data-slot={slot}>{SLOT_LABELS[slot] ?? slot}</span>
                     <span className="craft-recipe__tier-badge">T{def.tier}</span>
-                    {equippedSet.has(def.id) && <span className="craft-recipe__owned-badge">EQUIPPED</span>}
+                    {equipped && (
+                      <span className="craft-recipe__equipped-badge">
+                        <span className="craft-recipe__equipped-dot" aria-hidden="true" />
+                        EQUIPPED
+                      </span>
+                    )}
                   </div>
 
                   {isMaxed ? (

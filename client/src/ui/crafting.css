@@ -326,17 +326,9 @@
   flex-shrink: 0;
 }
 
-.craft-recipe__owned-badge {
-  font-size: 8px;
-  font-weight: bold;
-  letter-spacing: 0.5px;
-  padding: 1px 5px;
-  border-radius: 3px;
-  flex-shrink: 0;
-  color: #8888aa;
-  border: 1px solid rgba(90, 85, 140, 0.40);
-  background: rgba(20, 18, 40, 0.70);
-}
+/* The grey "OWNED / EQUIPPED" chip is gone: owned recipes no longer appear in
+   the craft list at all, and Upgrade's equipped state is carried by the card's
+   own frame (`.craft-upgrade--equipped`). */
 
 /* ── Stat pills ──────────────────────────────────────────────────────────── */
 .craft-recipe__stats {
@@ -901,6 +893,38 @@
 .craft-upgrade--maxed {
   border-color: rgba(200, 165, 60, 0.45);
   background: rgba(24, 19, 6, 0.85);
+}
+
+/* Equipped: upgrading this changes your character right now, rather than
+   improving something sitting in the bag. Carried by the card's own edge —
+   a lit left rule plus a tinted frame — because a single grey chip lost among
+   the slot and tier badges is exactly what was too easy to miss. */
+.craft-upgrade--equipped {
+  border-color: color-mix(in srgb, var(--hud-success) 42%, var(--hud-edge-dark));
+  box-shadow: inset 3px 0 0 var(--hud-success);
+}
+
+.craft-recipe__equipped-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+  padding: 1px 6px;
+  border: 1px solid color-mix(in srgb, var(--hud-success) 55%, transparent);
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--hud-success) 15%, transparent);
+  color: var(--hud-success);
+  font-size: 8px;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+}
+
+.craft-recipe__equipped-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--hud-success);
+  box-shadow: 0 0 4px var(--hud-success);
 }
 
 /* ── Upgrade diff block (per-stat / per-mechanic change list) ─────────────── */
