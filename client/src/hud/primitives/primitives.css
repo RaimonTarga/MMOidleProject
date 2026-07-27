@@ -56,10 +56,13 @@
     transition: color var(--hud-motion-fast) ease;
   }
 
+  /* Between words only. A panel title is one or two known words; breaking
+     "Character" into "Characte"/"r" to satisfy the rail was never the right
+     trade. */
   .desktop-hud .disclosure-header__title {
     flex: 0 1 auto;
     min-width: 0;
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
   }
 
   .desktop-hud .disclosure-header__summary {

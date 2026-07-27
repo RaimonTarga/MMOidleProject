@@ -138,7 +138,7 @@
 }
 
 .loadout-socket__name {
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
   color: var(--hud-text);
   font-size: 11px;
 }

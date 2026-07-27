@@ -138,11 +138,16 @@
   background: rgba(10, 8, 5, 0.28);
 }
 
+/* `anywhere` let the rail break a word mid-letter to satisfy the two-column
+   grid — "Crafting" rendered as "Craftin" / "g". A label may wrap between words
+   and may overflow its box as a last resort, but it may never be cut mid-word:
+   a broken word is harder to read than a slightly wide one. */
 .right-nav-button__label {
   min-width: 0;
   line-height: 1.15;
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
   white-space: normal;
+  hyphens: none;
 }
 
 .right-nav-button__badge {
