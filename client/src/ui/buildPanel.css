@@ -450,6 +450,99 @@
   }
 }
 
+/* ── Rune board layout ────────────────────────────────────────────────────────
+   The Runes tab owns its own scrolling so the composer can be pinned: the
+   dialog body normally scrolls the whole tab, which pushed ADD RULE off the
+   bottom of the screen behind the two fragment columns. Same escape the loadout
+   browser takes, for the same reason. */
+.build-dialog__body:has(.build-rune-board) {
+  display: flex;
+  overflow: hidden;
+}
+
+.build-rune-board {
+  flex: 1 1 auto;
+  min-height: 0;
+  gap: 10px;
+}
+
+.build-rune-board__header,
+.rune-composer {
+  flex: 0 0 auto;
+}
+
+.build-rune-board__scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--hud-edge-medium) transparent;
+}
+
+.build-rune-board__scroll::-webkit-scrollbar {
+  width: 5px;
+}
+
+.build-rune-board__scroll::-webkit-scrollbar-thumb {
+  background: var(--hud-edge-medium);
+  border-radius: 3px;
+}
+
+.build-rune-board__scroll #build-rune-loadout {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* ── Rune composer (pinned) ─────────────────────────────────────────────────── */
+.rune-composer {
+  padding: 10px 12px;
+  background: var(--hud-material-panel);
+  border: 1px solid var(--hud-edge-light);
+  border-radius: 4px;
+  box-shadow: 0 -6px 14px rgba(0, 0, 0, 0.35);
+}
+
+.rune-composer__row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.rune-composer__text {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.rune-composer__title {
+  color: var(--hud-text);
+  font-family: monospace;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.rune-composer__blurb {
+  margin-top: 3px;
+  color: var(--hud-text-muted);
+  font-family: monospace;
+  font-size: 11px;
+}
+
+.rune-composer__blurb--bad {
+  color: var(--hud-danger);
+}
+
+.rune-composer__commit {
+  width: auto;
+  padding: 6px 14px;
+}
+
+.rune-composer__hint {
+  color: var(--hud-text-dim);
+  font-family: monospace;
+  font-size: 12px;
+}
+
 /* ── Rune budget (V2 bar grammar) ─────────────────────────────────────────────
    Replaced a hand-rolled pip strip with hardcoded purple/gold/red inline styles.
    The engraved meter carries the over state, so no warning sentence is needed. */

@@ -274,11 +274,17 @@ export function BuildRunesTab() {
   const previewAction = selAction ? ACTION_DATABASE.get(selAction) : null;
 
   return (
-    <div className="build-tab-body" style={{ position: "relative" }}>
-      {(
-        <div id="build-rune-loadout">
-          <RunePointMeter spent={spent} budget={budget} />
+    // Three bands: the budget you are spending against, a scrolling board, and a
+    // composer pinned to the bottom. The whole tab used to scroll as one column
+    // with ADD RULE at the very end, so building a rule meant scrolling past the
+    // fragment lists to commit it and back up to see what you had made.
+    <div className="build-tab-body build-rune-board" style={{ position: "relative" }}>
+      <div className="build-rune-board__header">
+        <RunePointMeter spent={spent} budget={budget} />
+      </div>
 
+      <div className="build-rune-board__scroll">
+        <div id="build-rune-loadout">
           <div>
             <div
               style={{
@@ -447,55 +453,48 @@ export function BuildRunesTab() {
             />
           </div>
 
-          <div
-            style={{
-              border: "1px solid rgba(100, 85, 200, 0.25)",
-              borderRadius: 6,
-              padding: "10px 12px",
-              background: "rgba(20, 16, 45, 0.5)",
-            }}
-          >
-            {selCond && selAction ? (
-              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                {pendingTarget ? (
-                  <BuildIcon kind={pendingTarget.kind} label={pendingTarget.label} muted={pendingTarget.missing} />
-                ) : (
-                  rpBadge(pendingCost, pendingOverBudget ? "danger" : "normal")
-                )}
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ color: "#c0aee8", fontWeight: "bold", fontSize: 14 }}>
-                    {pendingTarget?.title ??
-                      preview?.name ??
-                      `${previewCond?.name ?? selCond} -> ${previewAction?.name ?? selAction}`}
-                  </div>
-                  <div style={{ color: pendingCompatible ? "#8888b0" : "#ffaaa0", fontSize: 11, marginTop: 3 }}>
-                    {!pendingCompatible
-                      ? "That response does not make sense for this situation."
-                      : pendingOverBudget
-                        ? "This rule exceeds your current rune point budget."
-                        : pendingTarget?.text ??
-                          preview?.blurb ??
-                          `${previewCond?.name ?? selCond} -> ${previewAction?.name ?? selAction}`}
-                  </div>
-                </div>
-                {rpBadge(pendingCost, pendingOverBudget ? "danger" : "normal")}
-                <button
-                  className="auto-btn"
-                  style={{ width: "auto", padding: "6px 14px" }}
-                  onClick={addRule}
-                  disabled={!pendingCompatible || pendingOverBudget}
-                >
-                  ADD RULE
-                </button>
-              </div>
-            ) : (
-              <div style={{ color: "#6868a8", fontSize: 12 }}>
-                Pick a situation and a response.
-              </div>
-            )}
-          </div>
         </div>
-      )}
+      </div>
+
+      {/* Pinned: the thing you are building and the button that commits it stay
+          on screen while you scroll the fragments you are building it from. */}
+      <div className="rune-composer">
+        {selCond && selAction ? (
+          <div className="rune-composer__row">
+            {pendingTarget ? (
+              <BuildIcon kind={pendingTarget.kind} label={pendingTarget.label} muted={pendingTarget.missing} />
+            ) : (
+              rpBadge(pendingCost, pendingOverBudget ? "danger" : "normal")
+            )}
+            <div className="rune-composer__text">
+              <div className="rune-composer__title">
+                {pendingTarget?.title ??
+                  preview?.name ??
+                  `${previewCond?.name ?? selCond} -> ${previewAction?.name ?? selAction}`}
+              </div>
+              <div className={`rune-composer__blurb${pendingCompatible ? '' : ' rune-composer__blurb--bad'}`}>
+                {!pendingCompatible
+                  ? "That response does not make sense for this situation."
+                  : pendingOverBudget
+                    ? "This rule exceeds your current rune point budget."
+                    : pendingTarget?.text ??
+                      preview?.blurb ??
+                      `${previewCond?.name ?? selCond} -> ${previewAction?.name ?? selAction}`}
+              </div>
+            </div>
+            {rpBadge(pendingCost, pendingOverBudget ? "danger" : "normal")}
+            <button
+              className="auto-btn rune-composer__commit"
+              onClick={addRule}
+              disabled={!pendingCompatible || pendingOverBudget}
+            >
+              ADD RULE
+            </button>
+          </div>
+        ) : (
+          <div className="rune-composer__hint">Pick a situation and a response.</div>
+        )}
+      </div>
 
       {confirmReset && (
         <div
