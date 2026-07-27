@@ -374,6 +374,8 @@
 }
 
 /* ── Node (circular) ─────────────────────────────────────────────────────── */
+/* A node is a button: every node is selectable, whatever its status, because
+   inspecting one is how you read the tree. Only the confirm button spends. */
 .skill-node {
   width: 88px;
   height: 88px;
@@ -390,7 +392,14 @@
   text-align: center;
   padding: 10px 8px;
   box-sizing: border-box;
-  cursor: default;
+  font-family: inherit;
+  cursor: pointer;
+  appearance: none;
+}
+
+.skill-node:focus-visible {
+  outline: var(--hud-focus-width) solid var(--hud-focus-color);
+  outline-offset: var(--hud-focus-offset);
 }
 
 /* Cost pips — top-right of circle. One mark per point to spend; it used to be
@@ -504,22 +513,61 @@
   padding: 6px 0;
 }
 
-/* ── Node description panel (sticky bottom) ──────────────────────────────── */
+/* ── Node detail panel (docked bottom) ───────────────────────────────────────
+   Three bands: a header that always states what you are looking at, a scrolling
+   body carrying the full effect table, and a footer that owns the commit. The
+   panel used to be a fixed 116px scroller holding a chip strip and one line of
+   flavour; it now has to fit every stat and mechanic a node grants, so it takes
+   a share of the dialog and scrolls the body rather than the whole block —
+   otherwise the Unlock button scrolls out of reach exactly when it matters. */
 .skill-desc {
+  display: flex;
+  flex-direction: column;
   flex-shrink: 0;
+  gap: 8px;
   border-top: 1px solid rgba(80, 72, 52, 0.35);
   padding: 11px 20px 14px;
   background: #1a1812;
   box-sizing: border-box;
-  height: 116px;
+  min-height: 132px;
+  max-height: 46%;
+}
+
+.skill-desc__body {
+  flex: 1 1 auto;
+  min-height: 0;
   overflow-y: auto;
   scrollbar-width: thin;
   scrollbar-color: rgba(80, 72, 52, 0.45) transparent;
 }
 
-.skill-desc::-webkit-scrollbar       { width: 5px; }
-.skill-desc::-webkit-scrollbar-track { background: transparent; }
-.skill-desc::-webkit-scrollbar-thumb { background: rgba(80, 72, 52, 0.45); border-radius: 3px; }
+.skill-desc__body::-webkit-scrollbar       { width: 5px; }
+.skill-desc__body::-webkit-scrollbar-track { background: transparent; }
+.skill-desc__body::-webkit-scrollbar-thumb { background: rgba(80, 72, 52, 0.45); border-radius: 3px; }
+
+/* Stats and mechanics side by side while there is room: a node grants both, and
+   stacking them pushed the mechanics below the fold on the taller nodes. */
+.skill-desc__effects {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 4px 20px;
+  margin-top: 8px;
+}
+
+.skill-desc__footer {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  min-height: 26px;
+}
+
+.skill-desc__state {
+  font-size: 11px;
+  font-family: monospace;
+}
+
+.skill-desc__state--owned   { color: #55cc77; }
+.skill-desc__state--blocked { color: var(--hud-text-muted); font-style: italic; }
 
 .skill-desc--empty {
   display: flex;
@@ -572,9 +620,8 @@
   font-style: italic;
 }
 
-/* ── Touch confirm button (tap-to-select then commit) ────────────────────── */
+/* ── Confirm button (select then commit — every input model) ─────────────── */
 .skill-confirm-btn {
-  margin-top: 10px;
   width: 100%;
   padding: 11px 14px;
   background: linear-gradient(135deg, rgba(40, 80, 150, 0.92), rgba(24, 48, 100, 0.95));
@@ -600,12 +647,8 @@
   border-bottom-color: rgba(130, 180, 255, 0.55);
 }
 
-/* In the class orbit, the info box is pointer-events:none — the button opts in. */
-.skill-confirm-btn--orbit {
-  margin-top: 4px;
-  width: auto;
-  padding: 9px 14px;
-  pointer-events: auto;
+.skill-confirm-btn:hover {
+  filter: brightness(1.12);
 }
 
 @media (max-width: 620px) {
@@ -687,31 +730,7 @@
   }
 }
 
-/* Effect chips — glyph plus number, instead of a run-on string of three-letter
-   abbreviations the reader had to decode ("+4 ATK  +2 PLT  -50 ms CD"). */
-.skill-effect-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px 6px;
-  margin-bottom: 6px;
-}
-
-.skill-effect-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 2px 6px;
-  background: var(--hud-material-inset);
-  border: 1px solid var(--hud-edge-light);
-  border-radius: 2px;
-  color: var(--hud-success);
-  font-family: monospace;
-  font-size: 10px;
-  font-variant-numeric: tabular-nums;
-}
-
-/* A negative effect is a real trade, not a smaller gain. */
-.skill-effect-chip--down {
-  color: var(--hud-danger);
-  border-color: color-mix(in srgb, var(--hud-danger) 45%, var(--hud-edge-light));
-}
+/* The effect chips that used to live here are gone: a chip strip could carry a
+   node's stat deltas but had nowhere to put the mechanic keys, the units, or the
+   explanation. The detail panel renders `DetailLines` instead — one shared row
+   grammar across the tree, the loadout and crafting. */

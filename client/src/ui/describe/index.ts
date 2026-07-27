@@ -61,6 +61,21 @@ function fromMechanicEffects(effects: Record<string, number> | undefined): Detai
   }));
 }
 
+/**
+ * A skill node's full effect, split into the two things it can grant. Kept
+ * separate rather than concatenated so the tree can title them — a node's stat
+ * deltas and its mechanic changes are different kinds of promise.
+ */
+export function skillNodeLines(node: {
+  statEffects?: StatEffectsInput;
+  mechanicEffects?: Record<string, number>;
+}): { stats: DetailLine[]; mechanics: DetailLine[] } {
+  return {
+    stats: fromStatEffects(node.statEffects),
+    mechanics: fromMechanicEffects(node.mechanicEffects),
+  };
+}
+
 /** Everything a stance does while it is the active posture. */
 export function stanceLines(stance: StanceDef | undefined): DetailLine[] {
   if (!stance) return [];

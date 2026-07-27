@@ -5,9 +5,9 @@ import type { CSSProperties } from 'react';
 import type { SkillNode, StatEffects, SubVariant } from '@mmo-idle/shared';
 import { hudBus } from '../hudBus';
 import { CONDUIT_ENABLED } from '../featureFlags';
-import { useIsMobile } from '../hud/useIsMobile';
 import { MilestonePips, type PipState } from '../hud/primitives';
-import { atlasIcon, GameIcon } from './GameIcon';
+import { DetailLines } from './describe/DetailLines';
+import { skillNodeLines, statEffectLines } from './describe';
 import {
   currentSkillTierAtom,
   selectedClassAtom,
@@ -30,77 +30,15 @@ const CLASS_ROOTS = [
   'summoner-root',
 ];
 
-const EFFECT_LABELS: Record<string, string> = {
-  attack:          'ATK',
-  plating:         'PLT',
-  damageReduction: '% DR',
-  evasion:         'EVA',
-  attackRange:     'RNG',
-  attackCooldown:  'ms CD',
-  maxHp:           'HP',
-  hpRegen:         'REGEN',
-  speed:           'SPD',
-};
-
-/** The authored stat glyphs, keyed by the effect they measure (V0b). */
-const EFFECT_GLYPH: Record<string, string> = {
-  attack:          'UI_icons/stats/attack.png',
-  plating:         'UI_icons/stats/plating.png',
-  damageReduction: 'UI_icons/stats/reduction.png',
-  evasion:         'UI_icons/stats/evasion.png',
-  attackRange:     'UI_icons/stats/range.png',
-  attackCooldown:  'UI_icons/stats/speed.png',
-  maxHp:           'UI_icons/stats/shield.png',
-  hpRegen:         'UI_icons/stats/regen.png',
-  speed:           'UI_icons/stats/speed.png',
-};
-
-interface EffectEntry {
-  key: string;
-  value: number;
-  label: string;
-}
-
-function effectEntries(effects: StatEffects): EffectEntry[] {
-  return Object.entries(effects)
-    .filter(([, v]) => v !== undefined && v !== 0)
-    .map(([k, v]) => ({ key: k, value: v as number, label: EFFECT_LABELS[k] ?? k }));
-}
-
-function formatEffects(effects: StatEffects): string {
-  return effectEntries(effects)
-    .map((e) => `${e.value > 0 ? '+' : ''}${e.value} ${e.label}`)
-    .join('  ');
-}
-
 /**
- * What a node does, as glyph chips rather than a run-on string of abbreviations
- * (§14.6). The number still shows — the glyph replaces "ATK", not the value.
+ * The one-line form, for the class orbit's centre — the only place in the tree
+ * too small for the full table. Same labels and units as the detail panel below
+ * it, so the summary and the table never disagree.
  */
-function EffectChips({ effects }: { effects: StatEffects }) {
-  const entries = effectEntries(effects);
-  if (entries.length === 0) return null;
-  return (
-    <div className="skill-effect-chips">
-      {entries.map((entry) => (
-        <span
-          key={entry.key}
-          className={`skill-effect-chip${entry.value < 0 ? ' skill-effect-chip--down' : ''}`}
-          title={`${entry.value > 0 ? '+' : ''}${entry.value} ${entry.label}`}
-        >
-          <GameIcon
-            source={EFFECT_GLYPH[entry.key] ? atlasIcon(EFFECT_GLYPH[entry.key]) : null}
-            size={14}
-            fallback={entry.label.slice(0, 1)}
-            decorative
-          />
-          <span className="skill-effect-chip__value">
-            {entry.value > 0 ? '+' : ''}{entry.value}
-          </span>
-        </span>
-      ))}
-    </div>
-  );
+function effectSummary(effects: StatEffects): string {
+  return statEffectLines(effects)
+    .map((line) => `${line.value} ${line.label}`)
+    .join(' · ');
 }
 
 function tierLabel(tier: number): string {
@@ -138,10 +76,9 @@ interface SkillPlayer {
   currentSkillTier: number;
 }
 
-function getNodeStatus(node: SkillNode, player: SkillPlayer | null): NodeStatus {
-  if (!player) return 'locked';
-  if (isBlockedConduit(node)) return 'locked';
-  if (player.unlockedSkills.includes(node.id)) return 'unlocked';
+function unlockCheck(node: SkillNode, player: SkillPlayer | null) {
+  if (!player) return { ok: false, reason: 'Not connected' };
+  if (isBlockedConduit(node)) return { ok: false, reason: CONDUIT_BLOCKED_DESC };
   return canUnlockSkill(
     {
       usesSkills: {
@@ -156,7 +93,14 @@ function getNodeStatus(node: SkillNode, player: SkillPlayer | null): NodeStatus 
       },
     },
     node.id,
-  ).ok ? 'available' : 'locked';
+  );
+}
+
+function getNodeStatus(node: SkillNode, player: SkillPlayer | null): NodeStatus {
+  if (!player) return 'locked';
+  if (isBlockedConduit(node)) return 'locked';
+  if (player.unlockedSkills.includes(node.id)) return 'unlocked';
+  return unlockCheck(node, player).ok ? 'available' : 'locked';
 }
 
 function getVisibleNodes(player: SkillPlayer): Map<number, SkillNode[]> {
@@ -183,20 +127,18 @@ function getVisibleNodes(player: SkillPlayer): Map<number, SkillNode[]> {
 
 // ── Node card (circular) ───────────────────────────────────────────────────────
 //
-// Interaction differs by input model:
-//  • Desktop (hover): hovering previews details; a click unlocks immediately.
-//  • Mobile (touch, no hover): a tap only *selects* the node (driving the same
-//    preview); committing happens via the explicit Unlock/Choose button. This
-//    lets you inspect a node before spending points on it.
+// One interaction, every input model: a click (or tap) SELECTS the node and
+// drives the detail panel; spending points always goes through the explicit
+// confirm button down there. Desktop used to unlock on click, which meant the
+// most irreversible decisions in the game — your class, your sub-variant — were
+// one stray click away, and the only way to read a node was to hover it.
 
 function SkillNodeCard({
   node,
   player,
   compact = false,
   faded = false,
-  isMobile,
   selected = false,
-  onHover,
   onSelect,
 }: {
   node:     SkillNode;
@@ -208,24 +150,14 @@ function SkillNodeCard({
    * legible at a glance — and it returns to full colour on hover or tap.
    */
   faded?: boolean;
-  isMobile: boolean;
   selected?: boolean;
-  onHover:  (node: SkillNode | null) => void;
   onSelect: (node: SkillNode) => void;
 }) {
   const status = getNodeStatus(node, player);
 
-  function handleClick() {
-    if (isMobile) {
-      onSelect(node);
-      return;
-    }
-    if (status !== 'available') return;
-    hudBus.requestSkillUnlock(node.id);
-  }
-
   return (
-    <div
+    <button
+      type="button"
       className={[
         'skill-node',
         `skill-node--${status}`,
@@ -234,9 +166,8 @@ function SkillNodeCard({
         status === 'unlocked' ? 'skill-node--spine' : '',
         selected ? 'skill-node--selected' : '',
       ].filter(Boolean).join(' ')}
-      onClick={handleClick}
-      onMouseEnter={() => onHover(node)}
-      onMouseLeave={() => onHover(null)}
+      aria-pressed={selected}
+      onClick={() => onSelect(node)}
     >
       <MilestonePips
         className="skill-node__cost"
@@ -248,32 +179,38 @@ function SkillNodeCard({
       {status === 'unlocked' && !compact && (
         <div className="skill-node__check">✓</div>
       )}
-    </div>
+    </button>
   );
 }
 
-// ── Description panel (sticky bottom) ─────────────────────────────────────────
+// ── Detail panel (docked bottom) ──────────────────────────────────────────────
+//
+// The whole node, not a teaser: every stat delta and every mechanic it changes,
+// each with its own value and — where the copy exists — the same hover
+// explanation the character sheet gives. Spending points happens here and
+// nowhere else, so the numbers are always in front of you when you commit.
 
 function NodeDesc({
   node,
   player,
-  isMobile,
   onUnlock,
 }: {
   node: SkillNode | null;
   player: SkillPlayer | null;
-  isMobile: boolean;
   onUnlock: (node: SkillNode) => void;
 }) {
   if (!node) {
     return (
       <div className="skill-desc skill-desc--empty">
-        {isMobile ? 'Tap a node to see details' : 'Hover a node to see details'}
+        Select a node to see exactly what it does
       </div>
     );
   }
 
-  const status  = getNodeStatus(node, player);
+  const status = getNodeStatus(node, player);
+  const { stats, mechanics } = skillNodeLines(node);
+  const check = status === 'locked' ? unlockCheck(node, player) : null;
+  const blocked = check && !check.ok ? check.reason : undefined;
 
   return (
     <div className={`skill-desc skill-desc--${status}`}>
@@ -282,13 +219,32 @@ function NodeDesc({
         <span className="skill-desc__tier">{tierLabel(node.tier)}</span>
         <span className="skill-desc__cost">{costLabel(node.cost)}</span>
       </div>
-      <EffectChips effects={node.statEffects} />
-      {node.description && <div className="skill-desc__text">{nodeDescription(node)}</div>}
-      {isMobile && status === 'available' && (
-        <button className="skill-confirm-btn" onClick={() => onUnlock(node)}>
-          Unlock — {costLabel(node.cost)}
-        </button>
-      )}
+
+      <div className="skill-desc__body">
+        {node.description && <div className="skill-desc__text">{nodeDescription(node)}</div>}
+        <div className="skill-desc__effects">
+          <DetailLines
+            title="Stats"
+            lines={stats}
+            empty={mechanics.length === 0 ? 'No direct stat changes.' : undefined}
+          />
+          <DetailLines title="Mechanics" lines={mechanics} />
+        </div>
+      </div>
+
+      <div className="skill-desc__footer">
+        {status === 'unlocked' && (
+          <span className="skill-desc__state skill-desc__state--owned">✓ Unlocked</span>
+        )}
+        {status === 'available' && (
+          <button type="button" className="skill-confirm-btn" onClick={() => onUnlock(node)}>
+            Unlock {node.name} — {costLabel(node.cost)}
+          </button>
+        )}
+        {status === 'locked' && blocked && (
+          <span className="skill-desc__state skill-desc__state--blocked">{blocked}</span>
+        )}
+      </div>
     </div>
   );
 }
@@ -297,30 +253,19 @@ function NodeDesc({
 
 function ClassSelectionView({
   player,
-  isMobile,
   selectedNode,
-  onHover,
   onSelect,
-  onUnlock,
 }: {
   player:  SkillPlayer | null;
-  isMobile: boolean;
   selectedNode: SkillNode | null;
-  onHover: (node: SkillNode | null) => void;
   onSelect: (node: SkillNode) => void;
-  onUnlock: (node: SkillNode) => void;
 }) {
   const pts = player?.skillPoints ?? 0;
-  const [hoveredClass, setHoveredClass] = useState<SkillNode | null>(null);
-  // On touch there's no hover, so the selected orb drives the center info.
-  const displayClass = isMobile ? selectedNode : hoveredClass;
+  // The orbit's centre is a summary; the full table lives in the detail panel
+  // below, which has room for it and is where the class is actually committed.
+  const displayClass = selectedNode;
   const displayStatus = displayClass ? getNodeStatus(displayClass, player) : null;
-  const displayEffects = displayClass ? formatEffects(displayClass.statEffects) : '';
-
-  function setHover(node: SkillNode | null) {
-    setHoveredClass(node);
-    onHover(node);
-  }
+  const displayEffects = displayClass ? effectSummary(displayClass.statEffects) : '';
 
   return (
     <div className="skill-class-view">
@@ -346,22 +291,12 @@ function ClassSelectionView({
                 <span className="skill-class-orbit__info-effects">{displayEffects}</span>
               )}
               <span className="skill-class-orbit__info-text">{nodeDescription(displayClass)}</span>
-              {isMobile && displayStatus === 'available' && (
-                <button
-                  className="skill-confirm-btn skill-confirm-btn--orbit"
-                  onClick={() => onUnlock(displayClass)}
-                >
-                  Choose {displayClass.name}
-                </button>
-              )}
             </>
           ) : (
             <>
               <span className="skill-class-orbit__info-title">Choose a Class</span>
               <span className="skill-class-orbit__info-text">
-                {isMobile
-                  ? 'Tap an orb to inspect it, then confirm to unlock.'
-                  : 'Hover an orb to inspect it, then click to unlock.'}
+                Select an orb to see everything it grants, then confirm below.
               </span>
             </>
           )}
@@ -380,9 +315,7 @@ function ClassSelectionView({
               <SkillNodeCard
                 node={root}
                 player={player}
-                isMobile={isMobile}
                 selected={selectedNode?.id === root.id}
-                onHover={setHover}
                 onSelect={onSelect}
               />
               <span className="skill-class-orbit__sigil">{root.name}</span>
@@ -398,15 +331,11 @@ function ClassSelectionView({
 
 function ProgressionView({
   player,
-  isMobile,
   selectedNode,
-  onHover,
   onSelect,
 }: {
   player:  SkillPlayer;
-  isMobile: boolean;
   selectedNode: SkillNode | null;
-  onHover: (node: SkillNode | null) => void;
   onSelect: (node: SkillNode) => void;
 }) {
   const classId     = player.selectedClass!;
@@ -459,9 +388,7 @@ function ProgressionView({
                       player={player}
                       compact={isPast}
                       faded={isPast && !player.unlockedSkills.includes(node.id)}
-                      isMobile={isMobile}
                       selected={selectedNode?.id === node.id}
-                      onHover={onHover}
                       onSelect={onSelect}
                     />
                   ))}
@@ -501,7 +428,6 @@ export function SkillTreePanel({ onClose }: Props) {
   const unlockedSkills = useAtomValue(unlockedSkillsAtom);
   const skillPoints = useAtomValue(skillPointsAtom);
   const currentSkillTier = useAtomValue(currentSkillTierAtom);
-  const isMobile = useIsMobile();
   const player: SkillPlayer = {
     selectedClass,
     selectedSubVariant,
@@ -510,12 +436,8 @@ export function SkillTreePanel({ onClose }: Props) {
     skillPoints,
     currentSkillTier,
   };
-  const [hoveredNode, setHoveredNode] = useState<SkillNode | null>(null);
   const [selectedNode, setSelectedNode] = useState<SkillNode | null>(null);
   const classChosen = player.selectedClass !== null;
-
-  // The node shown in the detail panel: hover on desktop, tap-selection on touch.
-  const activeNode = isMobile ? selectedNode : hoveredNode;
 
   function handleUnlock(node: SkillNode) {
     if (getNodeStatus(node, player) !== 'available') return;
@@ -540,25 +462,21 @@ export function SkillTreePanel({ onClose }: Props) {
         <div className="skill-tree-body">
           {classChosen
             ? <ProgressionView
-                player={player!}
-                isMobile={isMobile}
+                player={player}
                 selectedNode={selectedNode}
-                onHover={setHoveredNode}
                 onSelect={setSelectedNode}
               />
             : <ClassSelectionView
                 player={player}
-                isMobile={isMobile}
                 selectedNode={selectedNode}
-                onHover={setHoveredNode}
                 onSelect={setSelectedNode}
-                onUnlock={handleUnlock}
               />}
         </div>
 
-      {classChosen && (
-        <NodeDesc node={activeNode} player={player} isMobile={isMobile} onUnlock={handleUnlock} />
-      )}
+      {/* Rendered in both views: choosing a class is the most irreversible
+          decision in the tree, so it gets the same full readout and the same
+          confirm step as every node after it. */}
+      <NodeDesc node={selectedNode} player={player} onUnlock={handleUnlock} />
     </GameDialog>
   );
 }
