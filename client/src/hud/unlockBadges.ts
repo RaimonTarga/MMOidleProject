@@ -60,7 +60,13 @@ export function useUnlockBadges(
     if (!playerId) {
       baselineFor.current = null;
       previous.current = null;
-      setBadges(new Set());
+      // Functional, and identity-stable when already empty. `visibility` is a
+      // fresh object on every render, so this effect runs on every render —
+      // handing it an unconditional `new Set()` made every render schedule the
+      // next one, which React eventually killed with "Maximum update depth
+      // exceeded". That window is the whole pre-login boot, when playerId is
+      // null and this branch is the one that runs.
+      setBadges((current) => (current.size === 0 ? current : new Set()));
       return;
     }
 
