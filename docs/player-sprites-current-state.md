@@ -35,24 +35,49 @@ compositing, not a paper-doll.
 tier, so the class-frame body stays visible after a range choice. The old range
 PNGs still sit in `art/src/sprites/classes/` — unreferenced; delete whenever.
 
-**Stage 1 is COMPLETE as of 2026-07-25** — all six class roots are accepted,
-packed, and mapped in `PLAYER_FRAMES`:
+**Stages 1 AND 2 are COMPLETE as of 2026-07-25.** All 6 roots and all 18
+tier-2 frames are accepted, packed, and mapped — every one of the 25
+`PLAYER_FRAMES` targets resolves to a real atlas frame.
 
-| Entry | Class | Read |
-|---|---|---|
-| `cadence` | Striker | dark hooded fighter, chainmail, shoulder guards |
-| `cooldown` | Squire | full-face iron great helm, **no hood**, plate + tabard |
-| `dot` | Apprentice | stained ragged robe, sealed sleeves, sigils |
-| `reload` | Slinger | hood over pale mask, short cloak, amber sash |
-| `energy` | Spirit | pale grey/white robe, no feet, no hands, smoke hem |
-| `summoner` | Conduit | deep red robe, blank off-white mask, **no hood**, spare masks |
+| Entry | Class | Root read | Frame axis (light → balanced → heavy) |
+|---|---|---|---|
+| `cadence` | Striker | dark hooded fighter, chainmail, shoulder guards | lean duelist → skirmisher → breaker |
+| `cooldown` | Squire | iron great helm, **no hood**, plate + tabard | mobile → knight → fortress (heavy gets the solid faceplate) |
+| `dot` | Apprentice | stained ragged robe, sealed sleeves, sigils | venom → ember → rime |
+| `reload` | Slinger | hood over pale mask w/ painted eye, amber sash | scout → marksman → artillerist |
+| `energy` | Spirit | **monochrome** hooded tunic, void hood, mist hem | **white → grey → black** value ramp |
+| `summoner` | Conduit | deep red robe, blank white mask, **no hood** | swarm → stable → conductor |
 
-Summoner/Conduit was **un-deferred** at the user's call — the bible still says
-its identity pass is pending, but the body is now authored (mask-bearer
-direction, chosen from four pitched options). Summon-family lore stays open,
-and its minions still alias to the Tiny Wisp placeholder. Its three tier-2
-frame entries do not exist yet in the manifest; `resolvePlayerFrame` falls back
-from `summoner-{variant}` to the root, so this renders correctly meanwhile.
+Two classes deliberately break the shared hooded silhouette at the head — the
+Squire (great helm) and the Conduit (blank mask). That is what makes them
+readable next to four hooded classes; see the lessons below.
+
+Summoner/Conduit was **un-deferred** at the user's call. The body is authored
+(mask-bearer direction, chosen from four pitched options), but summon-family
+lore stays open and its minions still alias to the Tiny Wisp placeholder.
+
+### The Spirit rebuild (why it cost the most rounds)
+
+The original Spirit root encoded its identity as **absence** — no feet, no
+hands, no colour, no parts — and every downstream failure traced back to that:
+
+- Absence fought the chain. `classless.png` asserts a booted, gloved body, so
+  the entry had to go off-chain to lose them, which cost it roster proportions.
+- A smooth featureless robe column gave its **frames nothing to modify**, so
+  light/balanced/heavy came out identical no matter how the adjectives changed.
+
+It was rebuilt as a **garment with parts** (tunic, short cloak, sash, wrapped
+arms) whose ghostliness lives on the **surface** — monochrome palette, rim
+glow, hem dissolving into mist — rather than in the silhouette. That let it
+chain from the vagrant like every other root, and gave the frames the
+white/grey/black value ramp. Value contrast is the strongest differentiator at
+64px, far stronger than shape detail.
+
+**Legibility guard, deliberate:** the white frame keeps dark charcoal wraps and
+sash; the black frame keeps a white rim glow and lit seams. Each holds anchor
+pixels of the opposite value so the body stays readable on tundra snow and cave
+floor alike. **This has not yet been verified in-game — do it before trusting
+it.**
 
 ## Chain recipe (per class) — CORRECTED 2026-07-25
 
@@ -64,10 +89,9 @@ the prompt language and params.
 
 > **This section previously documented a painterly / `lineless` /
 > `detailed shading` / strength-250–300 recipe. That recipe never shipped a
-> single accepted player sprite.** The six accepted roots all use the recipe
-> below, extracted from the accepted `cadence` entry. The 18 tier-2 frame stubs
-> in the manifest still carry the old painterly params — **repoint them before
-> generating any frame**, or Stage 2 will not match Stage 1.
+> single accepted player sprite.** Everything accepted uses the recipe below,
+> extracted from the accepted `cadence` entry. (The tier-2 stubs carried the
+> stale painterly params too; they were repointed during the Stage 2 run.)
 
 **The recipe that works:**
 
@@ -95,15 +119,31 @@ bible §13.
 2. **Class root.** Flip the entry to `pending` only after its `initImage`
    predecessor is accepted. Strength **70**; go to **90** only when the class
    must break the shared head silhouette.
-3. **Frames.** Three entries img2img from the accepted class root — same
-   params, higher strength (they should stay close to their root).
+3. **Frames.** Three entries img2img from the accepted class root at
+   **strength 80** — *not* higher. This was measured, and the original stubs
+   had it backwards: 150 simply reprints the root, 70 gives good silhouette
+   variation but lets faces and palette drift, **80 holds both**. Exceptions
+   are per-frame and principled, not recipe changes:
+   - **Balanced frames may go to ~120** — balanced is defined as the class's
+     most neutral identity, so inheriting the root closely is correct. This is
+     how the Squire's stubborn face-on angle was finally fixed.
+   - **Big palette moves need 30–55 or no chain at all.** Palette is
+     chain-anchored as hard as structure. The Spirit's white frame had to drop
+     to 55 (30 lost framing entirely) while its black frame stayed at 80,
+     because black is where the root already was.
 4. Stash candidate sets to `art/workbench/<id>/` **before** review. Rejecting
    in the gallery deletes the candidates, and "candidate 3 was best" is
    worthless if candidate 3 is gone.
+5. **At frame strength the chain no longer enforces identity.** Anything that
+   must be true of every frame — faceless void, great helm, painted eye,
+   turned mask, class palette, no weapons — has to be **restated in each
+   frame's prompt**. At 150 the chain gave it for free, which is why the
+   original stubs never mentioned any of it.
 
-### Prompt-engineering lessons (2026-07-25 Stage 1 run)
+### Prompt-engineering lessons (2026-07-25 Stage 1 + 2 run)
 
-Hard-won across ~$0.30 and six rounds; they generalize to every future body.
+Hard-won across ~$2.20 and roughly forty rounds; they generalize to every
+future body.
 
 - **An `initImage` asserts structure that negatives cannot outvote.** The
   Spirit kept growing feet and hands through three escalating ban-lists,
@@ -125,13 +165,41 @@ Hard-won across ~$0.30 and six rounds; they generalize to every future body.
   helm survives a plain chain because it occupies the same head volume as a
   hood; a bare masked head does not, which is why the Conduit needed strength
   90 and lost its mask entirely at 110.
-- **Palette is only free off-chain.** img2img anchors color as well as
-  structure. The Spirit's dark→pale-grey recolor was possible because that
-  entry carries no `initImage`.
+- **Palette is chain-anchored; big colour moves need low strength or no chain.**
+  Small moves ride along fine (the Spirit's black frame kept the root's
+  darkness at 80 because that is where it was already going); large ones do
+  not (its white frame needed 55, and monochrome only took hold once the root
+  itself was regenerated low). Corollary: **negatives must ban the value, not
+  just the hue** — banning colours while leaving black/charcoal unbanned let
+  the root's darkness walk straight into a frame that was supposed to be white.
+- **Use the chain as a structure lever, not just a style anchor.** When an
+  entry keeps failing to acquire a property, chain it from whichever accepted
+  sibling already *has* that property. The Conduit's face kept rendering
+  face-on because a featureless oval mask carries no facing information; the
+  fix was chaining it off `cadence.png`, which already had the 3/4 turn. This
+  is the single highest-leverage trick in the whole run.
+- **Framing is not held by params.** `view`/`direction` alone produced the
+  Squire's flat elevation and, at low strength, half-body crops. The framing
+  sentence has to live in the prompt, as it does in the accepted vagrant's.
+- **Differentiate by naming different PARTS, not by intensifying adjectives.**
+  "Bulkier"/"slimmer" produced nothing across two rounds; "pauldrons wider than
+  the hips, a banded plate skirt" produced it immediately.
+- **Never subtract on more than one axis at once.** The Spirit's light frame
+  got a plainer garment *and* a paler value *and* a lower strength, and came
+  back a featureless blob. At 64px absence reads as "unfinished", not as
+  "light". Light means a lighter *build*, not a less *designed* one.
+- **When a prompt drifts off-style, SHORTEN it before adding to it.** Three
+  rounds of individually reasonable additions grew the Conduit prompt to ~120
+  words and produced a complete miss; cutting it back to the short
+  identity-only shape recovered the style in one round.
 - **`generationScale: 2` changes more than resolution.** It shifted framing to
   half-body crops and raised detail past the flat 64px house style. Use it only
   when fine detail genuinely needs the pixels, and expect to re-roll at native
   scale afterward.
+- **Batch size: 6 for taste rounds, 3 while direction-finding.** Every failure
+  in this run was systematic rather than stochastic — all candidates failed
+  identically — so extra candidates only pay off once the recipe is right and
+  the remaining choice is preference.
 
 ## Identity accents (wired, no art yet)
 
@@ -175,14 +243,25 @@ apply to every future player sprite:
 
 ## Next up
 
-- **Stage 2: the 18 tier-2 frame bodies.** Before generating any of them,
-  repoint the manifest stubs from the stale painterly params to the corrected
-  recipe above — the stubs were written before Stage 1 proved the recipe and
-  would produce off-style frames. Summoner has no frame entries yet; author
-  three (`summoner-light/-balanced/-heavy`) and add their `PLAYER_FRAMES` keys
-  once the art exists.
-- **In-game check** of all six roots at gameplay scale — occupancy/width
-  against each other, and the Spirit's pale robe against light biome ground.
+Stages 0–2 are done. In rough priority order:
+
+1. **In-game verification at gameplay scale — never yet done for the full
+   roster.** Two specific things: relative size/occupancy across all 24 bodies
+   (the Spirit is narrowest, the Squire bulkiest), and the Spirit value-ramp
+   legibility guard — white frame on tundra snow, black frame on cave/abyss
+   floor. If a body fails, that is a retouch job, not a regeneration.
+2. **A deterministic colour/retouch pass across the whole roster**, in one
+   sitting, with all 24 side by side. Deferred here on purpose: palette is
+   code (`art/workbench/classless/retouch.mjs`), costs nothing, and is
+   reversible — whereas steering colour through generation is the slowest and
+   least reliable path we have. Bible §13 calls class colours "directional,
+   not locked", so this is also where they actually get decided. Do it before
+   accent art, since accents are tinted and would otherwise be tuned twice.
+3. **Stage 3: identity accents** (see below) — the registry is empty and the
+   render path is live, so this is data-only work.
+4. **Prune the retired range bodies** (`in-fighter`, `lancer`,
+   `phantom-blade`, `vanguard`, …) and the loose `summoner-variant-*` frames
+   kept as spares — all unreferenced, all still packed into the atlas.
 
 ## Deferred
 
