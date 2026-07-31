@@ -1,0 +1,56 @@
+{
+  "category": "accents",
+  "endpoint": "pixflux",
+  "styleRef": null,
+  "noBackground": true,
+  "candidates": 6,
+  "notes": "RETIRED — DO NOT REGENERATE. Identity-accent props are authored in CODE (art/workbench/accents/build.mjs), not generated. PIPELINE LIMIT LEARNED HERE: PixelLab is excellent at whole characters (it produced all 24 accepted player bodies) but cannot produce a small standalone PART of a character. Asked for a 32px 'crest ornament' with 'helmet, head, face' in the negatives, all six candidates came back as complete horned helmets — asking for a part of a thing summons the whole thing, the same failure class as the Conduit's mask. At 12-20px a crest is a few dozen pixels, which is precisely the scale where hand-placed pixels beat any generator. The rest of the accent system is real and stays: baked head anchors (art/workbench/accents/anchors.mjs -> shared/src/sprites/headAnchors.ts, ~3px spread across all 25 bodies), client seating in client/src/fx/identityAccent.ts, and the PLAYER_ACCENTS registry. Kept as a record of the limit; delete the file if it ever becomes confusing.",
+  "entries": [
+    {
+      "id": "crest-close",
+      "out": "sprites/accents/crest-close.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "a small blunt metal helmet crest ornament, two short stubby curved horns angled forward and outward from a low banded base, heavy and compact, 3/4 top-down view facing south-east, clean readable game sprite, limited palette, simple cel shading, clear outline, low-detail readable forms, plain pale grey metal, nothing else in the frame",
+      "negative": "helmet, head, face, skull, person, character, body, shoulders, tall, thin, delicate, feather, plume, wings, halo, ring, glow, text, watermark, background, ground, shadow, blurry, 3d render, photograph",
+      "status": "draft",
+      "sources": [
+        "crest-close"
+      ],
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "view": "low top-down",
+        "direction": "south-east",
+        "generationScale": 2
+      },
+      "notes": "RETIRED — generation cannot make this asset; it is drawn in art/workbench/accents/build.mjs. (user: will not work)"
+    },
+    {
+      "id": "crest-far",
+      "out": "sprites/accents/crest-far.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "prompt": "a tall slender ornament, one long thin upright spine or quill rising from a small narrow base with a tiny open ring near its tip, light and elegant, 3/4 top-down view facing south-east, clean readable game sprite, limited palette, simple cel shading, clear outline, low-detail readable forms, plain pale grey metal, nothing else in the frame",
+      "negative": "helmet, head, face, skull, person, character, body, shoulders, bulky, heavy, horns, thick, glow, text, watermark, background, ground, shadow, blurry, 3d render, photograph",
+      "status": "draft",
+      "sources": [
+        "crest-far"
+      ],
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "view": "low top-down",
+        "direction": "south-east",
+        "generationScale": 2
+      },
+      "notes": "RETIRED — generation cannot make this asset; it is drawn in art/workbench/accents/build.mjs. (user: will not work)"
+    }
+  ]
+}

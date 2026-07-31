@@ -10,6 +10,384 @@
 			"scale": 1,
 			"frames": [
 				{
+					"filename": "sprites/accents/crest-close-cadence.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 560,
+						"y": 512,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "sprites/accents/crest-close-cooldown.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 592,
+						"y": 512,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "sprites/accents/crest-close-dot.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 624,
+						"y": 512,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "sprites/accents/crest-close-energy.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 656,
+						"y": 512,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "sprites/accents/crest-close-reload.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 688,
+						"y": 512,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "sprites/accents/crest-close-summoner.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 720,
+						"y": 512,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "sprites/accents/crest-far-cadence.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 752,
+						"y": 512,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "sprites/accents/crest-far-cooldown.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 784,
+						"y": 512,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "sprites/accents/crest-far-dot.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 816,
+						"y": 512,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "sprites/accents/crest-far-energy.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 848,
+						"y": 512,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "sprites/accents/crest-far-reload.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 880,
+						"y": 512,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "sprites/accents/crest-far-summoner.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 912,
+						"y": 512,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "sprites/accents/crest-mid-cadence.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 944,
+						"y": 512,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "sprites/accents/crest-mid-cooldown.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 976,
+						"y": 512,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "sprites/accents/crest-mid-dot.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 1008,
+						"y": 512,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "sprites/accents/crest-mid-energy.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 1040,
+						"y": 512,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "sprites/accents/crest-mid-reload.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 1072,
+						"y": 512,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "sprites/accents/crest-mid-summoner.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 1104,
+						"y": 512,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
 					"filename": "sprites/bosses/boss-cave-t1.png",
 					"rotated": false,
 					"trimmed": false,

@@ -16257,6 +16257,138 @@
       "candidateFiles": [
         "candidate-3.png"
       ]
+    },
+    {
+      "at": "2026-07-31T16:21:37.136Z",
+      "endpoint": "pixflux",
+      "category": "accents",
+      "assetId": "crest-close",
+      "requestHash": "84817aa22ad8e2d037844199",
+      "usd": 0.006655473364724053,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-31T16:21:57.744Z",
+      "endpoint": "pixflux",
+      "category": "accents",
+      "assetId": "crest-close",
+      "requestHash": "84817aa22ad8e2d037844199",
+      "usd": 0.007020471784803603,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-31T16:22:17.029Z",
+      "endpoint": "pixflux",
+      "category": "accents",
+      "assetId": "crest-close",
+      "requestHash": "84817aa22ad8e2d037844199",
+      "usd": 0.006517653147379557,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-31T16:22:35.664Z",
+      "endpoint": "pixflux",
+      "category": "accents",
+      "assetId": "crest-close",
+      "requestHash": "84817aa22ad8e2d037844199",
+      "usd": 0.006857310162650215,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-07-31T16:22:54.589Z",
+      "endpoint": "pixflux",
+      "category": "accents",
+      "assetId": "crest-close",
+      "requestHash": "84817aa22ad8e2d037844199",
+      "usd": 0.006478257947497898,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-07-31T16:23:14.277Z",
+      "endpoint": "pixflux",
+      "category": "accents",
+      "assetId": "crest-close",
+      "requestHash": "84817aa22ad8e2d037844199",
+      "usd": 0.0066572225093841555,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-07-31T16:23:35.224Z",
+      "endpoint": "pixflux",
+      "category": "accents",
+      "assetId": "crest-far",
+      "requestHash": "cd520f039858cb2e41e12ce4",
+      "usd": 0.0071473288006252715,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-31T16:23:52.965Z",
+      "endpoint": "pixflux",
+      "category": "accents",
+      "assetId": "crest-far",
+      "requestHash": "cd520f039858cb2e41e12ce4",
+      "usd": 0.006627504587173462,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-31T16:24:20.720Z",
+      "endpoint": "pixflux",
+      "category": "accents",
+      "assetId": "crest-far",
+      "requestHash": "cd520f039858cb2e41e12ce4",
+      "usd": 0.00770731192164951,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-31T16:24:41.899Z",
+      "endpoint": "pixflux",
+      "category": "accents",
+      "assetId": "crest-far",
+      "requestHash": "cd520f039858cb2e41e12ce4",
+      "usd": 0.007208402103847928,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-07-31T16:25:02.219Z",
+      "endpoint": "pixflux",
+      "category": "accents",
+      "assetId": "crest-far",
+      "requestHash": "cd520f039858cb2e41e12ce4",
+      "usd": 0.00705336226357354,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-07-31T16:25:20.097Z",
+      "endpoint": "pixflux",
+      "category": "accents",
+      "assetId": "crest-far",
+      "requestHash": "cd520f039858cb2e41e12ce4",
+      "usd": 0.006626244280073378,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
     }
   ]
 }

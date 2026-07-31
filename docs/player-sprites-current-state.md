@@ -201,21 +201,73 @@ future body.
   identically — so extra candidates only pay off once the recipe is right and
   the remaining choice is preference.
 
-## Identity accents (wired, no art yet)
+## Identity accents — SHIPPED 2026-07-25 (Stage 3)
 
-- `PLAYER_ACCENTS` + `resolvePlayerAccent` in
-  `shared/src/sprites/frameMaps.ts`. Registry keys are **skill node ids**
-  (range choice, T3 path node, spec node); value = atlas frame + optional
-  tint. Most recently unlocked registered skill wins, so deeper choices
-  naturally take precedence.
-- Client layer: `client/src/fx/identityAccent.ts` (sibling of `fx/aura.ts` —
-  auras are transient combat-state glows driven by the networked `aura` id;
-  accents are persistent and derived from skills). Ticked in
-  `sceneSetup.ts` next to `updatePlayerAuras`; tracks the y-sorted body,
-  additive blend, hidden on death.
-- Adding an accent is data-only: author a small near-white overlay sprite
-  (new `sprites/accents/` frames via the normal pipeline), register it in
-  `PLAYER_ACCENTS` with a color. Zero further code.
+Range identity renders as a small forged **ring seated on the head**, one per
+class per range: **18 props**, all drawn in code by
+`art/workbench/accents/build.mjs`.
+
+**How it renders.** `resolvePlayerAccent` (`shared/src/sprites/frameMaps.ts`)
+maps a skill node id to `{ frame, color }`; the most recently unlocked
+registered skill wins, so a future T3 path will outrank a range pick with no
+code change. `client/src/fx/identityAccent.ts` draws it as a **separate Phaser
+image** from the same atlas — never composited into the body — tinted per class
+(props are authored near-white so the multiply produces the hue), positioned by
+the baked head anchor, mirrored with the body's flip, at `depth + 0.5` (above
+the body, below HUD), and destroyed on death or when no accent applies. Nothing
+new crosses the wire: it derives from `unlockedSkills`, already networked.
+
+**Head anchors are baked, not guessed.** `art/workbench/accents/anchors.mjs`
+scans each body's alpha for its crown and writes
+`shared/src/sprites/headAnchors.ts` (25 entries; head centre spread 3px, crown
+spread 3px, because every body came from the same chain at the same framing).
+Props are drawn with their base on the frame's bottom row, so putting the
+frame's bottom-centre on the anchor seats them — no per-body offsets. **Re-run
+that script after adding bodies.**
+
+**The model: shape language (class) × treatment (range).**
+
+| | close | mid | far |
+|---|---|---|---|
+| treatment | heavy solid band | open notched ring | shattered ring |
+
+Class drives the *outline itself*: Striker geometric (hexagonal facets), Squire
+squared (hard corners, extra-heavy band), Apprentice wild (regular ring with
+uneven spikes and dents punched inward), Slinger regular (true ellipse, even
+ticks), Spirit spiky (radiating thorns), Conduit solemn (plain, unadorned).
+An earlier version made class a small mark stuck on a shared ring; that read as
+texture, not identity.
+
+### What Stage 3 established (three designs were rejected first)
+
+- **Generation has a hard floor at part-scale assets.** PixelLab produced all 24
+  bodies, then could not produce a 32px ornament: asked for a "crest" with
+  *helmet, head, face* banned, all six candidates were complete horned helmets.
+  **Asking for a part of a character summons the whole character.** These props
+  are drawn in code instead; `art/manifests/accents.json` is retired and records
+  the limit. Bespoke per-class art then costs the same as shared art.
+- **Do not use the body-glow channel.** `fx/aura.ts` owns glow+tint on the body
+  for transient combat state (surge, channel stages, equinox, storm). A
+  permanent glow competes with the vocabulary for "something is happening now" —
+  and it covers the bodies this overhaul exists to show off. *(Rejected design 1:
+  glowing overlay.)*
+- **At ~20px only silhouette CLASS reads** — solid vs open vs broken. Attempts
+  to differentiate by detail all collapsed: a 3px sighting ring rendered as a
+  plain T, a shallow crescent quantised into a flat bar. Curves need pixels; an
+  ellipse is legible, a small arc is not.
+- **The 0°/180° antenna trap.** Anything protruding horizontally at the ring's
+  sides reads as insect antennae. Additions there must go *downward* (mass — the
+  close ring's clamp fangs) or stay *flush* (surface detail). Three separate
+  designs failed on this before it was named.
+- **Ground decals read as clutter.** *(Rejected design 2: stance rings under the
+  feet — unobtrusive, but too easy to miss.)*
+- **Deform by damage, not by geometry.** Making the Apprentice's ring irregular
+  looked like a badly drawn ellipse; keeping the ring regular and applying dents
+  and uneven spikes read as chaos.
+
+Adding an accent is still data-only: draw a prop, register it in
+`PLAYER_ACCENTS` under a skill node id with a colour. T3 path accents are the
+natural next use of the registry.
 
 ## Stage 0 production log (2026-07-12, 9 iterations)
 
@@ -280,16 +332,18 @@ the colour identity afterward.
 
 ## Next up
 
-Stages 0–2 and the colour pass are done. In rough priority order:
-2. **Stage 3: identity accents** (see below) — the registry is empty and the
-   render path is live, so this is data-only work.
-4. **Prune the retired range bodies** (`in-fighter`, `lancer`,
+Stages 0–3 and the colour pass are all done. Remaining, in rough priority
+order:
+
+1. **T3 path accents** — same registry, same mechanism, new skill-node keys; the
+   natural next use now that range is covered. Bible §12 wants paths expressed
+   as overlays and VFX rather than new bodies.
+2. **Prune the retired range bodies** (`in-fighter`, `lancer`,
    `phantom-blade`, `vanguard`, …) and the loose `summoner-variant-*` frames
    kept as spares — all unreferenced, all still packed into the atlas.
 
 ## Deferred
 
-- Accent art (range/path/tier) — registry is empty; the render path is live.
 - T3+ refinement bodies — `resolvePlayerFrame` still honors
   `{archetype}-{variant}-t3` keys when frames appear.
 - Paradigm-shift full-body specs (bible §25) — same chain mechanism, img2img

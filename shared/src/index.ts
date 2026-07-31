@@ -44,6 +44,7 @@ export * from './hitbox/types';
 export * from './hitbox/constants';
 export * from './hitbox/resolveHitbox';
 export * from './sprites/frameMaps';
+export * from './sprites/headAnchors';
 export * from './sprites/voidOverlordLayout';
 export * from './types/combat';
 export * from './components';

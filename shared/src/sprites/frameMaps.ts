@@ -280,11 +280,54 @@ export interface PlayerAccent {
 
 /**
  * Key: skill node id (range choice, T3 path node, spec node — anything in
- * unlockedSkills). Empty until the path/range identity art pass; the resolver
- * and client layer are wired so entries here show up with zero further code.
- * Example: 'cadence-range-far': { frame: 'sprites/accents/targeting-glyph.png', color: 0xffd27a }.
+ * unlockedSkills). The resolver and client layer are wired so entries here show
+ * up with zero further code.
+ *
+ * RANGE (bible §11): range choice never swaps the body, it renders as a small
+ * prop seated on the head. All three carry one: a forged RING whose treatment
+ * says the range — close is a heavy solid band, mid an open notched ring, far
+ * a shattered one. The headpiece loses material as range grows.
+ *
+ * There are 18 props, not 3: every class gets its own asymmetric signature
+ * mark on the ring (Striker beat-marks, Squire rivet plate, Apprentice
+ * drooping venom thorns, Slinger sight-pin, Spirit dissolving back arc,
+ * Conduit tethered fragment). Bespoke art per class costs the same as shared
+ * art when it is drawn in code rather than generated — see
+ * art/workbench/accents/build.mjs.
+ * Overlays are authored near-white in code (`art/workbench/accents/build.mjs`,
+ * not generated — they are abstract glows, not character art) and coloured here
+ * per class, so the same two frames serve twelve entries.
+ *
+ * Tints follow each class's identity hue after the 2026-07-25 colour pass. The
+ * Conduit is the one deliberate mismatch: its body is red, so its accent takes
+ * bible §21's teal/lantern light instead — two-tone identity, and it keeps the
+ * accent from colliding with the Striker's crimson.
  */
-export const PLAYER_ACCENTS: Record<string, PlayerAccent> = {};
+export const PLAYER_ACCENTS: Record<string, PlayerAccent> = {
+  // Close — a heavy solid ring: most material, clamped on the head.
+  'cadence-range-close':    { frame: 'sprites/accents/crest-close-cadence.png', color: 0xd94b4b },
+  'cooldown-range-close':   { frame: 'sprites/accents/crest-close-cooldown.png', color: 0xc9d8e8 },
+  'dot-range-close':        { frame: 'sprites/accents/crest-close-dot.png', color: 0x7fd05a },
+  'reload-range-close':     { frame: 'sprites/accents/crest-close-reload.png', color: 0xe8b44a },
+  'energy-range-close':     { frame: 'sprites/accents/crest-close-energy.png', color: 0xdcecff },
+  'summoner-range-close':   { frame: 'sprites/accents/crest-close-summoner.png', color: 0x4ad4c8 },
+
+  // Mid — an open notched ring.
+  'cadence-range-mid':      { frame: 'sprites/accents/crest-mid-cadence.png', color: 0xd94b4b },
+  'cooldown-range-mid':     { frame: 'sprites/accents/crest-mid-cooldown.png', color: 0xc9d8e8 },
+  'dot-range-mid':          { frame: 'sprites/accents/crest-mid-dot.png', color: 0x7fd05a },
+  'reload-range-mid':       { frame: 'sprites/accents/crest-mid-reload.png', color: 0xe8b44a },
+  'energy-range-mid':       { frame: 'sprites/accents/crest-mid-energy.png', color: 0xdcecff },
+  'summoner-range-mid':     { frame: 'sprites/accents/crest-mid-summoner.png', color: 0x4ad4c8 },
+
+  // Far — a shattered ring: arcs with jagged shard ends.
+  'cadence-range-far':      { frame: 'sprites/accents/crest-far-cadence.png', color: 0xd94b4b },
+  'cooldown-range-far':     { frame: 'sprites/accents/crest-far-cooldown.png', color: 0xc9d8e8 },
+  'dot-range-far':          { frame: 'sprites/accents/crest-far-dot.png', color: 0x7fd05a },
+  'reload-range-far':       { frame: 'sprites/accents/crest-far-reload.png', color: 0xe8b44a },
+  'energy-range-far':       { frame: 'sprites/accents/crest-far-energy.png', color: 0xdcecff },
+  'summoner-range-far':     { frame: 'sprites/accents/crest-far-summoner.png', color: 0x4ad4c8 },
+};
 
 /**
  * Returns the identity accent for a player, or null. The most recently
