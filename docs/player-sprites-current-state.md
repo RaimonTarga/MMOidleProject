@@ -330,14 +330,66 @@ than the Striker's or Squire's, which cost many generation rounds to separate
 by silhouette. Prefer to spend generation on silhouette and let a code pass do
 the colour identity afterward.
 
+## Tier 3 — SHIPPED 2026-08-01
+
+**45 T3 bodies, zero generation.** `art/workbench/roster/t3.mjs` recolours each
+accepted tier-2 frame to a per-spec hue: 5 classes × 3 frames × 3 specs. One
+contact sheet to review instead of ~90 gallery candidates.
+
+**Why not generate 15 T3 bodies.** A generated T3 body would be img2img from its
+own T2 frame, and we measured what that does: at the strength that keeps a body
+recognisable (~150) it reprints the source. Hours of review for a delta nobody
+would see at 64px, on a character whose T2 and T3 selves are never side by side.
+
+**Rules the recolour follows:**
+
+- **Colourise, don't rotate.** v1 rotated each sprite's hue by a delta; the
+  middle spec (delta 0) barely changed, and the Squire — 41% neutral steel — had
+  nothing to rotate. Assigning the hue outright makes every spec deliberate.
+- **Saturation only rises** (`max(existing, floor)`), so garment/trim contrast
+  survives; **value is never rewritten**, so silhouette and shading survive.
+- **T3 reads darker and richer, not brighter.** Lifting value produced pastels
+  that looked toy-like against a muted roster.
+- **Two exceptions prove the rule.** The Spirit keeps a high value ceiling —
+  darkening a spirit toward mid-grey fights its "barely material" identity. The
+  Apprentice's *ember* frame needs its own high value and saturation, because
+  **orange at 80% value is brown by definition** and fire must be bright to read
+  as fire; its hues are also spread wider, since reds-through-oranges are where
+  hue discrimination is weakest.
+- **Apprentice hues stay inside the frame's element** (venom / ember / rime),
+  because the colour pass already made its frames elemental.
+- **Conduit is excluded entirely** — placeholder class pending a major rework.
+
+`resolvePlayerFrame` now resolves T3 by **full spec node id**
+(`{archetype}-{variant}-t3-{a|b|c}`) before the generic
+`{archetype}-{variant}-t3` key, so two specs on the same class-frame (Berserker
+vs Hemomancer, both Striker heavy) can differ. A class with no T3 art falls
+through to its root body.
+
+**Berserker Rampage aura** (`rampage-1/2/3`, staged by stack count like the
+Channeler's upkeep stages) establishes the channel split that the whole system
+now follows:
+
+| channel | expresses |
+|---|---|
+| body silhouette | class + frame |
+| body colour | class hue, per-spec at T3 |
+| head ring | range |
+| aura | live combat state only |
+
+**Still to come:** bespoke generated bodies for the ~11 specs that genuinely
+break the class silhouette (Assassin, Devout Priest, Voidwalker, Hemomancer,
+Cultist, Berserker, Sniper, Desperado, Melter, Destroyer, + a frost pick).
+They slot in by overriding the same `PLAYER_FRAMES` spec keys — no code change.
+
 ## Next up
 
-Stages 0–3 and the colour pass are all done. Remaining, in rough priority
-order:
+Stages 0–3, the colour pass and tier 3 are all done. Remaining, in rough
+priority order:
 
-1. **T3 path accents** — same registry, same mechanism, new skill-node keys; the
-   natural next use now that range is covered. Bible §12 wants paths expressed
-   as overlays and VFX rather than new bodies.
+1. **Bespoke T3 bodies** for the ~11 silhouette-breaking specs listed above —
+   generated from each class-frame body with the proven chain recipe, and
+   overriding the existing spec keys.
 2. **Prune the retired range bodies** (`in-fighter`, `lancer`,
    `phantom-blade`, `vanguard`, …) and the loose `summoner-variant-*` frames
    kept as spares — all unreferenced, all still packed into the atlas.

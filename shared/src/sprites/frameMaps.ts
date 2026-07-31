@@ -34,6 +34,72 @@ export const PLAYER_FRAMES: Record<string, string> = {
   'reload-balanced':'sprites/classes/medium_reload.png',
   'reload-heavy':  'sprites/classes/heavy_reload.png',
 
+  // ── Tier 3 ───────────────────────────────────────────────────────────────
+  // One frame per SPEC (45 = 5 classes x 3 frames x 3 specs), produced
+  // deterministically from the tier-2 bodies by art/workbench/roster/t3.mjs:
+  // same silhouette, recoloured to a per-spec hue. Generating 15 T3 bodies was
+  // considered and dropped — img2img at the strength that keeps a body
+  // recognisable just reprints it, so it would have cost hours of review for a
+  // barely visible delta. The specs that genuinely break the class silhouette
+  // (Assassin, Devout Priest, Voidwalker, ...) are meant to get real generated
+  // bodies later; they slot in here by overriding these same keys.
+  // Conduit is absent on purpose: placeholder class pending rework.
+
+  // Striker
+  'cadence-light-t3-a':         'sprites/classes/light_cadence_t3a.png',
+  'cadence-light-t3-b':         'sprites/classes/light_cadence_t3b.png',
+  'cadence-light-t3-c':         'sprites/classes/light_cadence_t3c.png',
+  'cadence-balanced-t3-a':      'sprites/classes/medium_cadence_t3a.png',
+  'cadence-balanced-t3-b':      'sprites/classes/medium_cadence_t3b.png',
+  'cadence-balanced-t3-c':      'sprites/classes/medium_cadence_t3c.png',
+  'cadence-heavy-t3-a':         'sprites/classes/heavy_cadence_t3a.png',
+  'cadence-heavy-t3-b':         'sprites/classes/heavy_cadence_t3b.png',
+  'cadence-heavy-t3-c':         'sprites/classes/heavy_cadence_t3c.png',
+
+  // Squire
+  'cooldown-light-t3-a':        'sprites/classes/light_cooldown_t3a.png',
+  'cooldown-light-t3-b':        'sprites/classes/light_cooldown_t3b.png',
+  'cooldown-light-t3-c':        'sprites/classes/light_cooldown_t3c.png',
+  'cooldown-balanced-t3-a':     'sprites/classes/medium_cooldown_t3a.png',
+  'cooldown-balanced-t3-b':     'sprites/classes/medium_cooldown_t3b.png',
+  'cooldown-balanced-t3-c':     'sprites/classes/medium_cooldown_t3c.png',
+  'cooldown-heavy-t3-a':        'sprites/classes/heavy_cooldown_t3a.png',
+  'cooldown-heavy-t3-b':        'sprites/classes/heavy_cooldown_t3b.png',
+  'cooldown-heavy-t3-c':        'sprites/classes/heavy_cooldown_t3c.png',
+
+  // Apprentice
+  'dot-light-t3-a':             'sprites/classes/light_dot_t3a.png',
+  'dot-light-t3-b':             'sprites/classes/light_dot_t3b.png',
+  'dot-light-t3-c':             'sprites/classes/light_dot_t3c.png',
+  'dot-balanced-t3-a':          'sprites/classes/medium_dot_t3a.png',
+  'dot-balanced-t3-b':          'sprites/classes/medium_dot_t3b.png',
+  'dot-balanced-t3-c':          'sprites/classes/medium_dot_t3c.png',
+  'dot-heavy-t3-a':             'sprites/classes/heavy_dot_t3a.png',
+  'dot-heavy-t3-b':             'sprites/classes/heavy_dot_t3b.png',
+  'dot-heavy-t3-c':             'sprites/classes/heavy_dot_t3c.png',
+
+  // Slinger
+  'reload-light-t3-a':          'sprites/classes/light_reload_t3a.png',
+  'reload-light-t3-b':          'sprites/classes/light_reload_t3b.png',
+  'reload-light-t3-c':          'sprites/classes/light_reload_t3c.png',
+  'reload-balanced-t3-a':       'sprites/classes/medium_reload_t3a.png',
+  'reload-balanced-t3-b':       'sprites/classes/medium_reload_t3b.png',
+  'reload-balanced-t3-c':       'sprites/classes/medium_reload_t3c.png',
+  'reload-heavy-t3-a':          'sprites/classes/heavy_reload_t3a.png',
+  'reload-heavy-t3-b':          'sprites/classes/heavy_reload_t3b.png',
+  'reload-heavy-t3-c':          'sprites/classes/heavy_reload_t3c.png',
+
+  // Spirit
+  'energy-light-t3-a':          'sprites/classes/light_energy_t3a.png',
+  'energy-light-t3-b':          'sprites/classes/light_energy_t3b.png',
+  'energy-light-t3-c':          'sprites/classes/light_energy_t3c.png',
+  'energy-balanced-t3-a':       'sprites/classes/medium_energy_t3a.png',
+  'energy-balanced-t3-b':       'sprites/classes/medium_energy_t3b.png',
+  'energy-balanced-t3-c':       'sprites/classes/medium_energy_t3c.png',
+  'energy-heavy-t3-a':          'sprites/classes/heavy_energy_t3a.png',
+  'energy-heavy-t3-b':          'sprites/classes/heavy_energy_t3b.png',
+  'energy-heavy-t3-c':          'sprites/classes/heavy_energy_t3c.png',
+
   'summoner-light':  'sprites/classes/light_summoner.png',
   'summoner-balanced':'sprites/classes/medium_summoner.png',
   'summoner-heavy':  'sprites/classes/heavy_summoner.png',
@@ -230,7 +296,8 @@ const VARIANTS = ['light', 'balanced', 'heavy'] as const;
 
 /**
  * Returns the atlas frame name for a player.
- * Resolution order: '{archetype}-{variant}-t3' → '{archetype}-{variant}' → '{archetype}' → 'default' → null.
+ * Resolution order: '{archetype}-{variant}-t3-{spec}' → '{archetype}-{variant}-t3'
+ * → '{archetype}-{variant}' → '{archetype}' → 'default' → null.
  * Range choice deliberately does NOT swap the body (class-frame identity stays
  * visible); it may register an identity accent instead.
  */
@@ -243,10 +310,15 @@ export function resolvePlayerFrame(input: {
       input.unlockedSkills.includes(`${input.combatArchetype}-${v}`),
     );
     if (variant) {
-      const hasT3 = input.unlockedSkills.some(s =>
+      // T3 resolves by the full spec node id first, so two specs on the same
+      // class-frame (Berserker vs Hemomancer, both Striker heavy) can differ.
+      // Falls back to a generic per-class-frame T3 key if one is ever authored.
+      const t3Node = input.unlockedSkills.find(s =>
         s.startsWith(`${input.combatArchetype}-${variant}-t3`),
       );
-      if (hasT3) {
+      if (t3Node) {
+        const specFrame = PLAYER_FRAMES[t3Node];
+        if (specFrame) return specFrame;
         const t3Frame = PLAYER_FRAMES[`${input.combatArchetype}-${variant}-t3`];
         if (t3Frame) return t3Frame;
       }

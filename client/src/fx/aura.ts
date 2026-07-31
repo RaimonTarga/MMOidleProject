@@ -22,6 +22,12 @@ export const AURA_REGISTRY: Record<string, { color: number; tint: number; intens
   'equinox-discharge': { color: 0xdd44cc, tint: 0xf0a8e6, intensity: 1.1 },
   // Stormbringer — electric indigo crackle while the empowered strikes last.
   'storm': { color: 0x8a5cff, tint: 0xc2aaff, intensity: 1.3 },
+  // Berserker — Rampage, 3 stages by stack count (same staging as Channeler).
+  // Deepening blood-red into hot orange as the stacks climb, so the ramp reads
+  // as heat building rather than as a different state.
+  'rampage-1': { color: 0xd23b3b, tint: 0xf0a8a8, intensity: 0.7 },
+  'rampage-2': { color: 0xe8502a, tint: 0xf7b48f, intensity: 1.1 },
+  'rampage-3': { color: 0xff7a1a, tint: 0xffcf9a, intensity: 1.6 },
 };
 
 interface AuraColors { color: number; tint: number; intensity: number }
