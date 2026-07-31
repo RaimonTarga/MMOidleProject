@@ -241,23 +241,47 @@ apply to every future player sprite:
 - Rejecting in the gallery **deletes the candidates** — copy keepers to
   `art/workbench/` first if they might seed an img2img round.
 
+## Colour pass — DONE 2026-07-25
+
+Applied deterministically in code, **no regeneration**. Tools live in
+`art/workbench/roster/`:
+
+- `sheet.mjs` — renders the whole roster as one contact sheet (rows = classes,
+  columns = root/light/balanced/heavy) at 4× plus a palette report (neutral /
+  dark / light coverage and dominant hues per sprite). `--src=` points it at a
+  preview dir. Run it before and after any palette work.
+- `recolour.mjs` — per-class **or per-file** hue rules; `--preview` writes to
+  `preview/`, `--apply` edits `art/src` after backing originals up to
+  `pre-colourpass/`. Generalises the old one-off `classless/retouch.mjs`.
+
+**Why it was needed:** the contact sheet showed five of six classes sitting in
+the same cool blue-violet band (Striker 65% blue, Squire 66%, Slinger 49%
+violet, Spirit 83% blue, Apprentice 42% violet). Class colour identity was
+effectively absent — invisible in-game, where classes are rarely seen side by
+side, and obvious the moment they are.
+
+| Class | Change |
+|---|---|
+| Striker | untouched — steel + crimson was already on-identity |
+| Squire | untouched — iron *is* its identity |
+| Apprentice | root → poison green; **frames are elemental** (bible §20 paths): light Venom, balanced Ember, heavy Rime |
+| Slinger | → amber/ivory; the amber was previously only trim |
+| Spirit | → true neutral; the monochrome intent had leaked blue |
+| Conduit | → deeper crimson, pulling magenta back toward red |
+
+Striker and Conduit both carry red and stay distinct **by area** — steel body
+with a red sash vs a fully red robe.
+
+**The lesson worth reusing:** the Apprentice's three frames now differ by hue
+alone and are the most instantly distinguishable set in the roster — more so
+than the Striker's or Squire's, which cost many generation rounds to separate
+by silhouette. Prefer to spend generation on silhouette and let a code pass do
+the colour identity afterward.
+
 ## Next up
 
-Stages 0–2 are done. In rough priority order:
-
-1. **In-game verification at gameplay scale — never yet done for the full
-   roster.** Two specific things: relative size/occupancy across all 24 bodies
-   (the Spirit is narrowest, the Squire bulkiest), and the Spirit value-ramp
-   legibility guard — white frame on tundra snow, black frame on cave/abyss
-   floor. If a body fails, that is a retouch job, not a regeneration.
-2. **A deterministic colour/retouch pass across the whole roster**, in one
-   sitting, with all 24 side by side. Deferred here on purpose: palette is
-   code (`art/workbench/classless/retouch.mjs`), costs nothing, and is
-   reversible — whereas steering colour through generation is the slowest and
-   least reliable path we have. Bible §13 calls class colours "directional,
-   not locked", so this is also where they actually get decided. Do it before
-   accent art, since accents are tinted and would otherwise be tuned twice.
-3. **Stage 3: identity accents** (see below) — the registry is empty and the
+Stages 0–2 and the colour pass are done. In rough priority order:
+2. **Stage 3: identity accents** (see below) — the registry is empty and the
    render path is live, so this is data-only work.
 4. **Prune the retired range bodies** (`in-fighter`, `lancer`,
    `phantom-blade`, `vanguard`, …) and the loose `summoner-variant-*` frames
