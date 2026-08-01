@@ -1,0 +1,34 @@
+{
+  "assetId": "berserker-t3",
+  "category": "players",
+  "requestHash": "773200e8e57dadbaad6182d1",
+  "endpoint": "pixflux",
+  "at": "2026-08-01T16:36:48.252Z",
+  "prompt": "armored fighter in battered dented plate and chainmail, 3/4 top-down view facing south-east, head fully enclosed in a dark iron mask with no opening and no face, thick quilted cloth padding visible beneath the torn outer layers, one shoulder stripped of its plate down to the padding underneath, hanging leather straps and torn tabard strips at the waist, streaks of dried blood red across the dark iron, hunched forward aggressive stance, empty hands with no weapon",
+  "files": [
+    {
+      "file": "candidate-1.png",
+      "seed": 1593508725
+    },
+    {
+      "file": "candidate-2.png",
+      "seed": 551708067
+    },
+    {
+      "file": "candidate-3.png",
+      "seed": 760699673
+    },
+    {
+      "file": "candidate-4.png",
+      "seed": 2012790481
+    },
+    {
+      "file": "candidate-5.png",
+      "seed": 1746202833
+    },
+    {
+      "file": "candidate-6.png",
+      "seed": 2094861599
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "assetId": "desperado-t3",
+  "category": "players",
+  "requestHash": "f186f67187216215b2615b4d",
+  "endpoint": "pixflux",
+  "at": "2026-08-01T00:21:59.739Z",
+  "prompt": "outlaw gunslinger, 3/4 top-down view facing south-east, flat wide-brimmed hat worn over a pale ivory mask with a single painted eye, no hood, long open coat with the front panels swept back, bandolier straps crossing the chest, tall boots, deep crimson and ivory palette, ready stance, empty hands with no weapon",
+  "files": [
+    {
+      "file": "candidate-1.png",
+      "seed": 922130445
+    },
+    {
+      "file": "candidate-2.png",
+      "seed": 969340691
+    },
+    {
+      "file": "candidate-3.png",
+      "seed": 126877341
+    },
+    {
+      "file": "candidate-4.png",
+      "seed": 327429480
+    },
+    {
+      "file": "candidate-5.png",
+      "seed": 99405474
+    },
+    {
+      "file": "candidate-6.png",
+      "seed": 1326931653
+    }
+  ]
+}

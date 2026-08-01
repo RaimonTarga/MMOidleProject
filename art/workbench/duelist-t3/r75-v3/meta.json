@@ -1,0 +1,34 @@
+{
+  "assetId": "duelist-t3",
+  "category": "players",
+  "requestHash": "9abf7c500b79cc31828acf06",
+  "endpoint": "pixflux",
+  "at": "2026-08-01T19:55:03.177Z",
+  "prompt": "poised formal figure in fitted eveningwear, 3/4 top-down view facing south-east, pale ivory mask with a single painted eye covering the whole face, a tall stiff standing collar rising behind the head in place of any hood, fitted waistcoat, a half-cape draped over one shoulder only, ornately embroidered gloves fully covering both hands, narrow refined build, garment covering the entire body with no exposed skin anywhere, amber and ivory palette, poised upright stance, empty hands with no weapon",
+  "files": [
+    {
+      "file": "candidate-1.png",
+      "seed": 1913417412
+    },
+    {
+      "file": "candidate-2.png",
+      "seed": 276044902
+    },
+    {
+      "file": "candidate-3.png",
+      "seed": 646987205
+    },
+    {
+      "file": "candidate-4.png",
+      "seed": 2066082315
+    },
+    {
+      "file": "candidate-5.png",
+      "seed": 732044309
+    },
+    {
+      "file": "candidate-6.png",
+      "seed": 292706790
+    }
+  ]
+}

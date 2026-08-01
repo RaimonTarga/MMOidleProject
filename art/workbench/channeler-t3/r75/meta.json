@@ -1,0 +1,34 @@
+{
+  "assetId": "channeler-t3",
+  "category": "players",
+  "requestHash": "41f16eba8c402d5af29c9b4b",
+  "endpoint": "pixflux",
+  "at": "2026-08-01T19:07:23.011Z",
+  "prompt": "still ascetic spirit, 3/4 top-down view facing south-east, void hood with the face hidden in black shadow, a long unbroken robe falling in straight vertical folds, both arms bound across the body in wrapped cloth, a single pale gold sash crossing one shoulder, robe covering the entire body with no exposed skin anywhere, white and pale gold, a perfectly still upright column, empty hands with no weapon",
+  "files": [
+    {
+      "file": "candidate-1.png",
+      "seed": 1921019060
+    },
+    {
+      "file": "candidate-2.png",
+      "seed": 1934138100
+    },
+    {
+      "file": "candidate-3.png",
+      "seed": 1235934504
+    },
+    {
+      "file": "candidate-4.png",
+      "seed": 606145199
+    },
+    {
+      "file": "candidate-5.png",
+      "seed": 378303116
+    },
+    {
+      "file": "candidate-6.png",
+      "seed": 2121050606
+    }
+  ]
+}

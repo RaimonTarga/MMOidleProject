@@ -1,0 +1,34 @@
+{
+  "assetId": "dualslinger-t3",
+  "category": "players",
+  "requestHash": "212c531d1a239431c63a3b05",
+  "endpoint": "pixflux",
+  "at": "2026-08-01T18:47:44.687Z",
+  "prompt": "perfectly symmetrical mirrored figure, 3/4 top-down view facing south-east, pale mask split precisely down the centre line into two different colours covering the whole face, under a low hood, twin strap harnesses crossing the chest in exact mirror image, mirrored shoulder pads, a long coat split down the centre line into violet on one side and amber on the other, garment covering the entire body with no exposed skin anywhere, violet and amber palette, balanced even stance, empty hands with no weapon",
+  "files": [
+    {
+      "file": "candidate-1.png",
+      "seed": 2091807461
+    },
+    {
+      "file": "candidate-2.png",
+      "seed": 322392182
+    },
+    {
+      "file": "candidate-3.png",
+      "seed": 1515337777
+    },
+    {
+      "file": "candidate-4.png",
+      "seed": 380649227
+    },
+    {
+      "file": "candidate-5.png",
+      "seed": 1590236335
+    },
+    {
+      "file": "candidate-6.png",
+      "seed": 484559779
+    }
+  ]
+}

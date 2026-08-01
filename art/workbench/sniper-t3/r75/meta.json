@@ -1,0 +1,34 @@
+{
+  "assetId": "sniper-t3",
+  "category": "players",
+  "requestHash": "06f914f2aff98a8c56733f7f",
+  "endpoint": "pixflux",
+  "at": "2026-08-01T00:24:21.231Z",
+  "prompt": "long-range marksman, 3/4 top-down view facing south-east, a cluster of round glowing compound lenses set into a pale mask covering the whole face, cryptic and unreadable as either arcane or mechanical, hood pulled back into a long trailing drape down the back, cloak binding the arms close to the body, narrow still silhouette, dark muted plum and ivory palette, empty hands with no weapon",
+  "files": [
+    {
+      "file": "candidate-1.png",
+      "seed": 849397550
+    },
+    {
+      "file": "candidate-2.png",
+      "seed": 1469934831
+    },
+    {
+      "file": "candidate-3.png",
+      "seed": 762795638
+    },
+    {
+      "file": "candidate-4.png",
+      "seed": 1178640217
+    },
+    {
+      "file": "candidate-5.png",
+      "seed": 1799714345
+    },
+    {
+      "file": "candidate-6.png",
+      "seed": 765138766
+    }
+  ]
+}

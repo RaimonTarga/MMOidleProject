@@ -1,0 +1,34 @@
+{
+  "assetId": "shockblade-t3",
+  "category": "players",
+  "requestHash": "a7cd494c39da56ef0b80ba2b",
+  "endpoint": "pixflux",
+  "at": "2026-08-01T18:03:17.021Z",
+  "prompt": "lightning-charged duelist, 3/4 top-down view facing south-east, dark hood over a faceted steel visor covering the whole face, coiled conductor wire running along both arms, small arcing nodes at the shoulders, segmented steel plates over a fitted tunic, lean build, steel and storm blue palette, alert forward stance, empty hands with no weapon",
+  "files": [
+    {
+      "file": "candidate-1.png",
+      "seed": 699768270
+    },
+    {
+      "file": "candidate-2.png",
+      "seed": 38000942
+    },
+    {
+      "file": "candidate-3.png",
+      "seed": 123074828
+    },
+    {
+      "file": "candidate-4.png",
+      "seed": 1369715047
+    },
+    {
+      "file": "candidate-5.png",
+      "seed": 1293649643
+    },
+    {
+      "file": "candidate-6.png",
+      "seed": 1921249372
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "assetId": "cinder-lord-t3",
+  "category": "players",
+  "requestHash": "7a5b3c334f2724a4f98ddaa2",
+  "endpoint": "pixflux",
+  "at": "2026-08-01T16:48:49.690Z",
+  "prompt": "molten crowned lord, 3/4 top-down view facing south-east, jagged blackened crown fully enclosing the head with no face opening, heavy mantle of charred cloth across the shoulders, long robe with glowing molten cracks running through it, ember orange and charcoal black palette, imposing upright stance, empty hands with no weapon",
+  "files": [
+    {
+      "file": "candidate-1.png",
+      "seed": 978870707
+    },
+    {
+      "file": "candidate-2.png",
+      "seed": 22900811
+    },
+    {
+      "file": "candidate-3.png",
+      "seed": 951733071
+    },
+    {
+      "file": "candidate-4.png",
+      "seed": 1355780781
+    },
+    {
+      "file": "candidate-5.png",
+      "seed": 423663783
+    },
+    {
+      "file": "candidate-6.png",
+      "seed": 1301405594
+    }
+  ]
+}

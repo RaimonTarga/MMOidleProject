@@ -1,0 +1,34 @@
+{
+  "assetId": "dynamo-t3",
+  "category": "players",
+  "requestHash": "01925f370b53ae6b7dd7b1db",
+  "endpoint": "pixflux",
+  "at": "2026-08-01T18:29:58.533Z",
+  "prompt": "accumulator knight, 3/4 top-down view facing south-east, head fully enclosed in an iron great helm with a single lit slit and no face opening, coiled cabling wrapped around the torso, one glowing core disc set into the chest plate, segmented overlapping lames, plate armor covering the entire body with no exposed skin anywhere, amber and iron palette, upright stance, empty hands with no weapon",
+  "files": [
+    {
+      "file": "candidate-1.png",
+      "seed": 1000185097
+    },
+    {
+      "file": "candidate-2.png",
+      "seed": 1936022506
+    },
+    {
+      "file": "candidate-3.png",
+      "seed": 835354578
+    },
+    {
+      "file": "candidate-4.png",
+      "seed": 1629546621
+    },
+    {
+      "file": "candidate-5.png",
+      "seed": 1886142205
+    },
+    {
+      "file": "candidate-6.png",
+      "seed": 1177458844
+    }
+  ]
+}

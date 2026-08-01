@@ -29,9 +29,22 @@ const ALPHA = 40;          // treat >40 as opaque; ignores faint glow fringes
 const HEAD_PROBE_ROWS = 4; // rows below the crown used to find the head's width
 
 const CLASSES = ['cadence', 'cooldown', 'dot', 'reload', 'energy', 'summoner'];
-const FILES = ['classless.png', ...CLASSES.flatMap((c) => [
-  `${c}.png`, `light_${c}.png`, `medium_${c}.png`, `heavy_${c}.png`,
-])];
+// Summoner/Conduit is excluded from T3: placeholder class pending a major rework.
+const T3_CLASSES = ['cadence', 'cooldown', 'dot', 'reload', 'energy'];
+const FRAMES = ['light', 'medium', 'heavy'];
+const SPECS = ['a', 'b', 'c'];
+
+const FILES = [
+  'classless.png',
+  ...CLASSES.flatMap((c) => [
+    `${c}.png`, `light_${c}.png`, `medium_${c}.png`, `heavy_${c}.png`,
+  ]),
+  // The 45 bespoke T3 spec bodies. These are real rendered bodies, so they need
+  // real anchors — without them every T3 player fell back to the roster average
+  // and wore their range ring at a slightly wrong height.
+  ...T3_CLASSES.flatMap((c) =>
+    FRAMES.flatMap((f) => SPECS.map((s) => `${f}_${c}_t3${s}.png`))),
+];
 
 async function anchorOf(file) {
   const { data, info } = await sharp(file).ensureAlpha().raw()

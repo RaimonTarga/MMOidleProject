@@ -1,0 +1,22 @@
+{
+  "assetId": "melter-t3",
+  "category": "players",
+  "requestHash": "5fb2d5efc772e0c36cfe2eab",
+  "endpoint": "pixflux",
+  "at": "2026-08-01T00:03:23.433Z",
+  "prompt": "heat-rigged artillerist, 3/4 top-down view facing south-east, pale mask with a single painted eye under a hood, back-mounted tank rig rising above the shoulder line with coiled hoses, chest plate with open glowing vent slats, one arm in a bulky bracer, hot amber and glowing white palette, braced stance, empty hands with no weapon",
+  "files": [
+    {
+      "file": "candidate-1.png",
+      "seed": 1023594923
+    },
+    {
+      "file": "candidate-2.png",
+      "seed": 38509708
+    },
+    {
+      "file": "candidate-3.png",
+      "seed": 808905831
+    }
+  ]
+}

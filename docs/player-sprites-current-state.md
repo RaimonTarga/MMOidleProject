@@ -377,22 +377,76 @@ now follows:
 | head ring | range |
 | aura | live combat state only |
 
-**Still to come:** bespoke generated bodies for the ~11 specs that genuinely
-break the class silhouette (Assassin, Devout Priest, Voidwalker, Hemomancer,
-Cultist, Berserker, Sniper, Desperado, Melter, Destroyer, + a frost pick).
-They slot in by overriding the same `PLAYER_FRAMES` spec keys — no code change.
+## Tier 3 bespoke bodies — SHIPPED 2026-08-01 (all 45)
+
+The 45 recolours above were **fully replaced by generated bodies**. Every T3
+spec now has bespoke art, produced in five batches for ~$3.10 and packed.
+Conduit/Summoner remains excluded (placeholder class pending rework).
+
+**The grammar evolved rather than breaking:** T1/T2 silhouette encodes
+**class + frame** (24 bodies); T3 silhouette encodes **spec**. Class family
+resemblance survives for free because every T3 body is an img2img chain from
+its own class-frame parent, and the palette stays in the class band.
+
+**The recipe, validated across 45 bodies:**
+
+```jsonc
+"params": {
+  "outline": "selective outline", "shading": "flat shading",
+  "detail": "low detail", "view": "low top-down", "direction": "south-east",
+  "initImage": "sprites/classes/<frame>_<class>.png",  // T2 frame, ORIGINAL colours
+  "initImageStrength": 75
+}
+```
+
+- **Chain from the T2 frame, never the recolour.** Palette is authored in the
+  prompt; `t3.mjs` does not touch these.
+- **75 is the floor.** 65 let the frame's build drift; **below ~75 the garment
+  loses its anchor entirely** — the Duelist at 68 returned bare heads and two
+  effectively nude figures. 85 over-anchors and kills the concept (Berserker).
+- **Design rule: spec archetype first.** Each spec is its own character concept;
+  class DNA rides on the chain and the palette.
+- **Batch by class**, reviewing each trio against its own siblings — collisions
+  happen inside a trio, and colour reads faster than construction at 64px.
+
+### Prompt rules this pass established
+
+- **Bare skin is the #1 failure and negatives never fix it.** Any wording implying
+  reduced/improvised/minimal clothing ("brawler", "minimal kit", "torn rags")
+  returns bare arms and chests regardless of ban-list length. The fix is a
+  **positive coverage clause** in every prompt — "garment covering the entire body
+  with no exposed skin anywhere". Once added, the Squire batch came back clean
+  across all 30 candidates.
+- **`bare hands` must stay in every negative list**, and gloves stated positively.
+  Dropping it left gloves unenforced for a whole wave.
+- **Archetype nouns summon their props.** Three Slinger specs are named after guns;
+  none of those words appear in their prompts, and no firearms were generated.
+- **Removing what the parent body has is the most expensive ask in the pipeline.**
+  Berserker (bare skin, 4 rounds) and Duelist (no hood, 3 rounds) were the only
+  two specs asked to subtract, and burned the most rounds by far. Banning a
+  material doesn't work either — Juggernaut banned `plate` and got plate knights.
+  Give a **positive substitute** or redesign the spec to keep the feature.
+- **An abstract mechanic works when it becomes one bold object, and fails when it
+  becomes surface texture.** Dynamo's glowing core disc read instantly; Reverb's
+  ring embossing, Avenger's cracks and Warmonger's pennants washed out.
+- **A two-colour split needs two hues, not two values.** Dualslinger's
+  violet/amber split landed cleanly; Equinox's white/black split mostly didn't.
+
+**Head anchors:** `art/workbench/accents/anchors.mjs` now bakes **70** anchors
+(25 base + 45 T3). Its file list was hardcoded to the original 25, so every T3
+body silently fell back to the roster average — re-run it after adding bodies,
+and extend the list when a new family appears.
 
 ## Next up
 
-Stages 0–3, the colour pass and tier 3 are all done. Remaining, in rough
-priority order:
+Stages 0–3, the colour pass, and all 45 T3 bodies are done.
 
-1. **Bespoke T3 bodies** for the ~11 silhouette-breaking specs listed above —
-   generated from each class-frame body with the proven chain recipe, and
-   overriding the existing spec keys.
-2. **Prune the retired range bodies** (`in-fighter`, `lancer`,
-   `phantom-blade`, `vanguard`, …) and the loose `summoner-variant-*` frames
-   kept as spares — all unreferenced, all still packed into the atlas.
+1. **Prune the retired range bodies** (`in-fighter`, `lancer`, `phantom-blade`,
+   `vanguard`, …) and the loose `summoner-variant-*` frames kept as spares — all
+   unreferenced, all still packed into the atlas.
+2. **T5/T6 will be additive accents**, in the same vein as the T2 range rings —
+   overlay props drawn in code, never new bodies. See "Accent slots" below.
+3. Conduit/Summoner bodies, whenever that class gets its rework.
 
 ## Deferred
 
@@ -400,3 +454,79 @@ priority order:
   `{archetype}-{variant}-t3` keys when frames appear.
 - Paradigm-shift full-body specs (bible §25) — same chain mechanism, img2img
   from the class-frame body.
+
+## Accent slots — design space for T5/T6 (not built)
+
+T5/T6 are planned as **additive accents** in the same vein as the T2 range rings:
+overlay props drawn in code, layered on the body at runtime, never new bodies.
+This section records the design space and the constraints, so the next pass
+doesn't rediscover them.
+
+### What real estate is already spoken for
+
+| Channel | Owner |
+|---|---|
+| body silhouette | class + frame (T1/T2), spec (T3) |
+| body colour | class hue; per-spec at T3 |
+| crown of the head | **range** (T2 rings) |
+| body glow / tint | **live combat state only** (`fx/aura.ts`) — keep it free |
+| ground under the feet | rejected: ground decals read as clutter |
+
+Free: **shoulders**, **behind the body**, and **the orbit around the body**.
+
+### The proposal: the accent stack grows OUTWARD as tier rises
+
+crown (T2) → shoulder (T5) → trailing/orbit (T6). Spatially non-overlapping,
+each independently readable, and a maxed character reads as decorated in three
+distinct places without any of them fighting.
+
+1. **Shoulder mantle / pauldron (T5).** The second-most readable location after
+   the head, and inherently **asymmetric**, which may also help the persistent
+   front-on facing drift. Same technique as the head rings: bake a shoulder
+   anchor by alpha-scanning, draw props in code.
+   *Risk:* the shoulder line varies more across bodies than the crown does
+   (crown spread is 4px across 70 bodies; shoulders will be worse). **Measure
+   the spread before committing** — if it is large, the prop needs to sit on a
+   measured shoulder box rather than a single point.
+2. **Trailing back element (T6)** — banner, pennon, tail, or wing, rendered
+   *behind* the body at `depth - 0.5`. Its unique property: it **changes the
+   outline**, and outline is the only thing that reliably reads at ~20px —
+   every accent so far has been interior detail. Rendering behind also means it
+   never occludes the bodies this overhaul exists to show off.
+3. **Orbiting motes** — 1–3 discrete satellites on a slow orbit. Countable, so
+   it encodes a tier count with no new art per tier.
+   *Risk:* competes with combat VFX. Only viable if the motion is **slow and
+   steady** where combat VFX is fast and transient.
+
+### Constraints any accent pass must respect
+
+- **Draw props in code** (`art/workbench/accents/build.mjs`). Generation has a
+  hard floor at part-scale assets — asking for a 32px ornament returns a whole
+  character. `art/manifests/accents.json` is retired and records this.
+- **Bake anchors, don't guess**, and remember to extend the file list in
+  `anchors.mjs` — it was hardcoded to 25 bodies and silently gave all 45 T3
+  bodies the fallback anchor.
+- **~3 accent slots is the budget** at 64px before the sprite reads as noise.
+  The proposal above lands at exactly 3.
+- **Props are authored near-white** so a per-slot tint multiplies to the hue.
+
+### The one real code change required
+
+`resolvePlayerAccent` currently returns a **single** accent — it walks
+`unlockedSkills` backwards and the most recent match wins. That was correct when
+range was the only accent, but it means a T5 accent would **replace** the range
+ring rather than stack with it. Supporting simultaneous slots needs the resolver
+to return a **slot-keyed set** (`{ head, shoulder, trail }`) and
+`fx/identityAccent.ts` to manage one sprite per slot. Everything else — atlas
+frames, tinting, mirroring with body flip, depth ordering, destroy-on-death — is
+already in place and generalises.
+
+### A design caution worth more than the mechanics
+
+The range rings work because they encode a **choice** — they tell you something
+about how that player plays. An accent that only encodes *tier* says merely
+"this player is far along", which is weaker. If T5/T6 involve a real branch,
+encode the branch. If they are pure progression, consider spending the slot on
+**spec identity instead**: all 45 T3 specs currently have zero accent
+representation, so a shoulder prop keyed to the spec family would add
+information rather than decoration.

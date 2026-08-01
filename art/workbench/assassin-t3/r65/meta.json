@@ -1,0 +1,22 @@
+{
+  "assetId": "assassin-t3",
+  "category": "players",
+  "requestHash": "fd591e7712208589941d4987",
+  "endpoint": "pixflux",
+  "at": "2026-07-31T23:32:34.720Z",
+  "prompt": "armored assassin knight, 3/4 top-down view facing south-east, dark hood pulled low over a narrow iron half-mask fully covering the face, blackened steel cuirass, both pauldrons kept, iron bracers, dark wrapped cloak pinned at one shoulder, short hem cut at the knee, charcoal and cold steel palette, crouched forward stance, empty hands with no weapon",
+  "files": [
+    {
+      "file": "candidate-1.png",
+      "seed": 349012143
+    },
+    {
+      "file": "candidate-2.png",
+      "seed": 62493272
+    },
+    {
+      "file": "candidate-3.png",
+      "seed": 1018089318
+    }
+  ]
+}

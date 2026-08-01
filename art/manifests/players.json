@@ -626,6 +626,1131 @@
       "candidates": 6,
       "status": "accepted",
       "notes": "Stage 2 tier-2 frame. RECIPE (settled by the cadence-light probe, accepted 2026-07-25): chain from the accepted CLASS ROOT at initImageStrength 80, short identity-only prompt, framing clause in the prompt, and invariants RESTATED in the prompt. 150 reprinted the root; 70 gave good silhouette variation but let faces and palette drift; 80 holds both. At this strength the chain no longer enforces identity, so anything that must be true of every frame (faceless void / great helm / painted eye / no feet or hands / turned mask, class palette, no weapons) is restated per prompt. Palette still drifts mildly at 80 — if a winner is right in build and face but wrong in colour, use the deterministic hue-shift in art/workbench/classless/retouch.mjs rather than another roll. AUTHORED UNREVIEWED as a bulk batch while the user slept: the cadence balanced/heavy sets were still awaiting review, so if those are rejected for a systematic reason, re-check these before accepting."
+    },
+    {
+      "id": "assassin-t3",
+      "out": "sprites/classes/light_cooldown_t3a.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "armored assassin knight, 3/4 top-down view facing south-east, dark hood pulled low over a narrow iron half-mask fully covering the face, blackened steel cuirass, both pauldrons kept, iron bracers, dark wrapped cloak pinned at one shoulder, short hem cut at the knee, charcoal and cold steel palette, crouched forward stance, empty hands with no weapon",
+      "status": "accepted",
+      "sources": [
+        "assassin-t3"
+      ],
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "view": "low top-down",
+        "direction": "south-east",
+        "initImage": "sprites/classes/light_cooldown.png",
+        "initImageStrength": 75
+      },
+      "notes": "Bespoke T3 body (bible S25 full-sprite exception). Draft + rationale: art/workbench/roster/bespoke-t3-draft.md. Chains from the T2 frame in its ORIGINAL colours (NOT the t3.mjs recolour) at initImageStrength 65 - lower than the tier-2 recipe 80 because this is a concept iteration, not a reprint. At 65 the chain enforces nothing, so faceless / no-weapon / three-quarter south-east framing / palette are all restated in the prompt, and the per-class negative was rewritten where the spec needs something the class template bans. ROUND 1 (strength 65, rejected 2026-08-01): all six candidates rejected. Two systematic drifts, both consistent with too little chain adherence — the light frame GAINED BULK on 2 of 3 Assassins (the frame build is not held by the chain at 65), and the Melter palette overshot well past the muted house palette into saturated orange, losing the Slinger pale-mask identity. Round 2 raises initImageStrength 65 -> 75 and changes NOTHING ELSE, so the strength lever can be read on its own. Round-1 candidates archived at art/workbench/<id>/r65/.",
+      "negative": "face, eyes, nose, mouth, lips, chin, cheeks, facial features, human face, visible face, portrait, skin, visible skin, bare hands, hair, beard, glowing eyes, great helm, tabard, sash, cloth robe, unarmored, light armor, bare arms, bright colors, gold trim, front view, straight-on view, facing the camera, side view, profile, back view, weapon, sword, dagger, staff, bow, gun, shield, holding item, chibi, cute, text, watermark, blurry, 3d render, painterly, lineless, high detail texture noise",
+      "candidates": 3
+    },
+    {
+      "id": "destroyer-t3",
+      "out": "sprites/classes/heavy_cooldown_t3b.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "colossal armored juggernaut knight, 3/4 top-down view facing south-east, head fully enclosed in a broad blunt faceplate with a single narrow eye slit, no hood, pauldrons wider than the hips, banded plate skirt reaching the floor, chain-hung plates at the waist, dark iron armor with molten orange glowing seams in the plate joins, heavy planted stance, empty hands with no weapon",
+      "status": "accepted",
+      "sources": [
+        "destroyer-t3"
+      ],
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "view": "low top-down",
+        "direction": "south-east",
+        "initImage": "sprites/classes/heavy_cooldown.png",
+        "initImageStrength": 75
+      },
+      "notes": "Bespoke T3 body (bible S25 full-sprite exception). Draft + rationale: art/workbench/roster/bespoke-t3-draft.md. Chains from the T2 frame in its ORIGINAL colours (NOT the t3.mjs recolour) at initImageStrength 65 - lower than the tier-2 recipe 80 because this is a concept iteration, not a reprint. At 65 the chain enforces nothing, so faceless / no-weapon / three-quarter south-east framing / palette are all restated in the prompt, and the per-class negative was rewritten where the spec needs something the class template bans. ROUND 2 RECIPE (validated 2026-08-01 on the assassin-t3 + melter-t3 slice): initImageStrength 75, chaining from the T2 frame in its ORIGINAL colours. 65 let the frame build drift (2 of 3 Assassins gained bulk); 75 held it. MEASURED TRADE-OFF: 75 buys structure and COSTS PALETTE — at 75 two of three Assassins were pulled back toward the source pale steel, and the Melter stayed more saturated than the muted house palette. So if a candidate here is right in build but wrong in colour, that is the known cost of this strength, not a prompt bug. Generated as a bulk batch (6 candidates each) while the user slept, AFTER the slice was accepted in the gallery: assassin-t3 took r75 candidate 2 and melter-t3 took r75 candidate 3, so this recipe is confirmed by two real acceptances rather than assumed. TASTE SIGNAL from those picks: the user chose the PALER, MORE ARMORED Assassin over the dark charcoal one, i.e. visible class DNA outranks spec palette darkness — worth weighing on the dark specs here (Hemomancer, Voidwalker, Cultist), which may come back darker than the roster wants.",
+      "negative": "face, eyes, nose, mouth, lips, chin, cheeks, facial features, human face, visible face, portrait, skin, visible skin, bare hands, hair, beard, glowing eyes, hood, cowl, robe, cloth, slim, gold trim, halo, front view, straight-on view, facing the camera, side view, profile, back view, weapon, sword, dagger, staff, bow, gun, shield, holding item, chibi, cute, text, watermark, blurry, 3d render, painterly, lineless, high detail texture noise",
+      "candidates": 6
+    },
+    {
+      "id": "devout-priest-t3",
+      "out": "sprites/classes/heavy_cooldown_t3c.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "armored warrior priest, 3/4 top-down view facing south-east, tall crowned golden headpiece fully enclosing the head with no face opening, heavy ceremonial vestment layered over plate armor, long stole hanging from the collar to the hem, wide bell sleeves, gold and ivory palette, upright solemn stance, empty hands with no weapon",
+      "status": "accepted",
+      "sources": [
+        "devout-priest-t3"
+      ],
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "view": "low top-down",
+        "direction": "south-east",
+        "initImage": "sprites/classes/heavy_cooldown.png",
+        "initImageStrength": 75
+      },
+      "notes": "Bespoke T3 body (bible S25 full-sprite exception). Draft + rationale: art/workbench/roster/bespoke-t3-draft.md. Chains from the T2 frame in its ORIGINAL colours (NOT the t3.mjs recolour) at initImageStrength 65 - lower than the tier-2 recipe 80 because this is a concept iteration, not a reprint. At 65 the chain enforces nothing, so faceless / no-weapon / three-quarter south-east framing / palette are all restated in the prompt, and the per-class negative was rewritten where the spec needs something the class template bans. ROUND 2 RECIPE (validated 2026-08-01 on the assassin-t3 + melter-t3 slice): initImageStrength 75, chaining from the T2 frame in its ORIGINAL colours. 65 let the frame build drift (2 of 3 Assassins gained bulk); 75 held it. MEASURED TRADE-OFF: 75 buys structure and COSTS PALETTE — at 75 two of three Assassins were pulled back toward the source pale steel, and the Melter stayed more saturated than the muted house palette. So if a candidate here is right in build but wrong in colour, that is the known cost of this strength, not a prompt bug. Generated as a bulk batch (6 candidates each) while the user slept, AFTER the slice was accepted in the gallery: assassin-t3 took r75 candidate 2 and melter-t3 took r75 candidate 3, so this recipe is confirmed by two real acceptances rather than assumed. TASTE SIGNAL from those picks: the user chose the PALER, MORE ARMORED Assassin over the dark charcoal one, i.e. visible class DNA outranks spec palette darkness — worth weighing on the dark specs here (Hemomancer, Voidwalker, Cultist), which may come back darker than the roster wants.",
+      "negative": "face, eyes, nose, mouth, lips, chin, cheeks, facial features, human face, visible face, portrait, skin, visible skin, bare hands, hair, beard, glowing eyes, halo, floating ring, glowing ring above the head, hood, cowl, great helm, dark armor, front view, straight-on view, facing the camera, side view, profile, back view, weapon, sword, dagger, staff, bow, gun, shield, holding item, chibi, cute, text, watermark, blurry, 3d render, painterly, lineless, high detail texture noise",
+      "candidates": 6
+    },
+    {
+      "id": "berserker-t3",
+      "out": "sprites/classes/heavy_cadence_t3a.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "armored fighter in battered dented plate and chainmail, 3/4 top-down view facing south-east, head fully enclosed in a dark iron mask with no opening and no face, thick quilted cloth padding visible beneath the torn outer layers, one shoulder stripped of its plate down to the padding underneath, hanging leather straps and torn tabard strips at the waist, streaks of dried blood red across the dark iron, hunched forward aggressive stance, empty hands with no weapon",
+      "status": "accepted",
+      "sources": [
+        "berserker-t3"
+      ],
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "view": "low top-down",
+        "direction": "south-east",
+        "initImage": "sprites/classes/heavy_cadence.png",
+        "initImageStrength": 85
+      },
+      "notes": "still showing skin ROUND 3 REJECTED: still leaked bare chest on 2 of 6. ROUND 4 goes FULLY ARMORED — the stripped read now comes from a shoulder stripped down to QUILTED PADDING (never to skin), plus dents, straps and torn tabard strips — and raises initImageStrength 75 -> 85 so the fully-covered chainmail source argues against skin structurally. Round-3 candidates: art/workbench/berserker-t3/r75-v3/.",
+      "negative": "bare skin, visible skin, exposed skin, bare chest, bare torso, bare arms, bare shoulders, exposed flesh, muscles, abs, pectorals, shirtless, topless, nude, face, eyes, nose, mouth, lips, chin, cheeks, facial features, human face, visible face, hair, beard, glowing eyes, hood, cowl, open head, uncovered head, axe, club, hammer, mace, blade, holding, weapon in hand, front view, straight-on view, facing the camera, side view, profile, back view, weapon, sword, dagger, staff, bow, gun, shield, holding item, chibi, cute, text, watermark, blurry, 3d render, painterly, lineless, high detail texture noise",
+      "candidates": 6
+    },
+    {
+      "id": "hemomancer-t3",
+      "out": "sprites/classes/heavy_cadence_t3b.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "blood ritualist warrior, 3/4 top-down view facing south-east, deep low hood with the face hidden in black shadow, heavy mantle draped over one shoulder, long ragged wraps down both forearms, tattered hem, dark wine and near black robe with bone white accents and thin bright red lines, still upright stance, empty hands with no weapon",
+      "status": "accepted",
+      "sources": [
+        "hemomancer-t3"
+      ],
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "view": "low top-down",
+        "direction": "south-east",
+        "initImage": "sprites/classes/heavy_cadence.png",
+        "initImageStrength": 75
+      },
+      "notes": "Bespoke T3 body (bible S25 full-sprite exception). Draft + rationale: art/workbench/roster/bespoke-t3-draft.md. Chains from the T2 frame in its ORIGINAL colours (NOT the t3.mjs recolour) at initImageStrength 65 - lower than the tier-2 recipe 80 because this is a concept iteration, not a reprint. At 65 the chain enforces nothing, so faceless / no-weapon / three-quarter south-east framing / palette are all restated in the prompt, and the per-class negative was rewritten where the spec needs something the class template bans. ROUND 2 RECIPE (validated 2026-08-01 on the assassin-t3 + melter-t3 slice): initImageStrength 75, chaining from the T2 frame in its ORIGINAL colours. 65 let the frame build drift (2 of 3 Assassins gained bulk); 75 held it. MEASURED TRADE-OFF: 75 buys structure and COSTS PALETTE — at 75 two of three Assassins were pulled back toward the source pale steel, and the Melter stayed more saturated than the muted house palette. So if a candidate here is right in build but wrong in colour, that is the known cost of this strength, not a prompt bug. Generated as a bulk batch (6 candidates each) while the user slept, AFTER the slice was accepted in the gallery: assassin-t3 took r75 candidate 2 and melter-t3 took r75 candidate 3, so this recipe is confirmed by two real acceptances rather than assumed. TASTE SIGNAL from those picks: the user chose the PALER, MORE ARMORED Assassin over the dark charcoal one, i.e. visible class DNA outranks spec palette darkness — worth weighing on the dark specs here (Hemomancer, Voidwalker, Cultist), which may come back darker than the roster wants.",
+      "negative": "face, eyes, nose, mouth, lips, chin, cheeks, facial features, human face, visible face, portrait, skin, visible skin, bare hands, hair, beard, glowing eyes, bare chest, bright red, orange, plate armor, helmet, chainmail, front view, straight-on view, facing the camera, side view, profile, back view, weapon, sword, dagger, staff, bow, gun, shield, holding item, chibi, cute, text, watermark, blurry, 3d render, painterly, lineless, high detail texture noise",
+      "candidates": 6
+    },
+    {
+      "id": "cultist-t3",
+      "out": "sprites/classes/light_dot_t3b.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "plague cultist devotee, 3/4 top-down view facing south-east, deep pointed cowl swallowing the head with the face hidden in black shadow, rope-bound waist with small hanging fetishes, sleeves bound tight with cord wraps, irregular layered hem, dark robe with acid yellow-green glowing sigils along the seams, stooped stance, empty hands with no weapon",
+      "status": "accepted",
+      "sources": [
+        "cultist-t3"
+      ],
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "view": "low top-down",
+        "direction": "south-east",
+        "initImage": "sprites/classes/light_dot.png",
+        "initImageStrength": 75
+      },
+      "notes": "Bespoke T3 body (bible S25 full-sprite exception). Draft + rationale: art/workbench/roster/bespoke-t3-draft.md. Chains from the T2 frame in its ORIGINAL colours (NOT the t3.mjs recolour) at initImageStrength 65 - lower than the tier-2 recipe 80 because this is a concept iteration, not a reprint. At 65 the chain enforces nothing, so faceless / no-weapon / three-quarter south-east framing / palette are all restated in the prompt, and the per-class negative was rewritten where the spec needs something the class template bans. ROUND 2 RECIPE (validated 2026-08-01 on the assassin-t3 + melter-t3 slice): initImageStrength 75, chaining from the T2 frame in its ORIGINAL colours. 65 let the frame build drift (2 of 3 Assassins gained bulk); 75 held it. MEASURED TRADE-OFF: 75 buys structure and COSTS PALETTE — at 75 two of three Assassins were pulled back toward the source pale steel, and the Melter stayed more saturated than the muted house palette. So if a candidate here is right in build but wrong in colour, that is the known cost of this strength, not a prompt bug. Generated as a bulk batch (6 candidates each) while the user slept, AFTER the slice was accepted in the gallery: assassin-t3 took r75 candidate 2 and melter-t3 took r75 candidate 3, so this recipe is confirmed by two real acceptances rather than assumed. TASTE SIGNAL from those picks: the user chose the PALER, MORE ARMORED Assassin over the dark charcoal one, i.e. visible class DNA outranks spec palette darkness — worth weighing on the dark specs here (Hemomancer, Voidwalker, Cultist), which may come back darker than the roster wants.",
+      "negative": "face, eyes, nose, mouth, lips, chin, cheeks, facial features, human face, visible face, portrait, skin, visible skin, bare hands, hair, beard, glowing eyes, plain hood, bright robe, armor, helmet, plate, front view, straight-on view, facing the camera, side view, profile, back view, weapon, sword, dagger, staff, bow, gun, shield, holding item, chibi, cute, text, watermark, blurry, 3d render, painterly, lineless, high detail texture noise",
+      "candidates": 6
+    },
+    {
+      "id": "desperado-t3",
+      "out": "sprites/classes/light_reload_t3b.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "outlaw gunslinger, 3/4 top-down view facing south-east, flat wide-brimmed hat worn over a pale ivory mask with a single painted eye, no hood, long open coat with the front panels swept back, bandolier straps crossing the chest, tall boots, deep crimson and ivory palette, ready stance, empty hands with no weapon",
+      "status": "accepted",
+      "sources": [
+        "desperado-t3"
+      ],
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "view": "low top-down",
+        "direction": "south-east",
+        "initImage": "sprites/classes/light_reload.png",
+        "initImageStrength": 75
+      },
+      "notes": "Bespoke T3 body (bible S25 full-sprite exception). Draft + rationale: art/workbench/roster/bespoke-t3-draft.md. Chains from the T2 frame in its ORIGINAL colours (NOT the t3.mjs recolour) at initImageStrength 65 - lower than the tier-2 recipe 80 because this is a concept iteration, not a reprint. At 65 the chain enforces nothing, so faceless / no-weapon / three-quarter south-east framing / palette are all restated in the prompt, and the per-class negative was rewritten where the spec needs something the class template bans. ROUND 2 RECIPE (validated 2026-08-01 on the assassin-t3 + melter-t3 slice): initImageStrength 75, chaining from the T2 frame in its ORIGINAL colours. 65 let the frame build drift (2 of 3 Assassins gained bulk); 75 held it. MEASURED TRADE-OFF: 75 buys structure and COSTS PALETTE — at 75 two of three Assassins were pulled back toward the source pale steel, and the Melter stayed more saturated than the muted house palette. So if a candidate here is right in build but wrong in colour, that is the known cost of this strength, not a prompt bug. Generated as a bulk batch (6 candidates each) while the user slept, AFTER the slice was accepted in the gallery: assassin-t3 took r75 candidate 2 and melter-t3 took r75 candidate 3, so this recipe is confirmed by two real acceptances rather than assumed. TASTE SIGNAL from those picks: the user chose the PALER, MORE ARMORED Assassin over the dark charcoal one, i.e. visible class DNA outranks spec palette darkness — worth weighing on the dark specs here (Hemomancer, Voidwalker, Cultist), which may come back darker than the roster wants.",
+      "negative": "face, eyes, nose, mouth, lips, chin, cheeks, facial features, human face, visible face, portrait, skin, visible skin, bare hands, hair, beard, glowing eyes, hood, cowl, pointed hat, wizard hat, robe, armor, holster, revolver, rifle, front view, straight-on view, facing the camera, side view, profile, back view, weapon, sword, dagger, staff, bow, gun, shield, holding item, chibi, cute, text, watermark, blurry, 3d render, painterly, lineless, high detail texture noise",
+      "candidates": 6
+    },
+    {
+      "id": "sniper-t3",
+      "out": "sprites/classes/light_reload_t3c.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "long-range marksman, 3/4 top-down view facing south-east, a cluster of round glowing compound lenses set into a pale mask covering the whole face, cryptic and unreadable as either arcane or mechanical, hood pulled back into a long trailing drape down the back, cloak binding the arms close to the body, narrow still silhouette, dark muted plum and ivory palette, empty hands with no weapon",
+      "status": "accepted",
+      "sources": [
+        "sniper-t3"
+      ],
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "view": "low top-down",
+        "direction": "south-east",
+        "initImage": "sprites/classes/light_reload.png",
+        "initImageStrength": 75
+      },
+      "notes": "Bespoke T3 body (bible S25 full-sprite exception). Draft + rationale: art/workbench/roster/bespoke-t3-draft.md. Chains from the T2 frame in its ORIGINAL colours (NOT the t3.mjs recolour) at initImageStrength 65 - lower than the tier-2 recipe 80 because this is a concept iteration, not a reprint. At 65 the chain enforces nothing, so faceless / no-weapon / three-quarter south-east framing / palette are all restated in the prompt, and the per-class negative was rewritten where the spec needs something the class template bans. ROUND 2 RECIPE (validated 2026-08-01 on the assassin-t3 + melter-t3 slice): initImageStrength 75, chaining from the T2 frame in its ORIGINAL colours. 65 let the frame build drift (2 of 3 Assassins gained bulk); 75 held it. MEASURED TRADE-OFF: 75 buys structure and COSTS PALETTE — at 75 two of three Assassins were pulled back toward the source pale steel, and the Melter stayed more saturated than the muted house palette. So if a candidate here is right in build but wrong in colour, that is the known cost of this strength, not a prompt bug. Generated as a bulk batch (6 candidates each) while the user slept, AFTER the slice was accepted in the gallery: assassin-t3 took r75 candidate 2 and melter-t3 took r75 candidate 3, so this recipe is confirmed by two real acceptances rather than assumed. TASTE SIGNAL from those picks: the user chose the PALER, MORE ARMORED Assassin over the dark charcoal one, i.e. visible class DNA outranks spec palette darkness — worth weighing on the dark specs here (Hemomancer, Voidwalker, Cultist), which may come back darker than the roster wants.",
+      "negative": "face, eyes, nose, mouth, lips, chin, cheeks, facial features, human face, visible face, portrait, skin, visible skin, bare hands, hair, beard, glowing eyes, scope, rifle, telescope, single lens, monocle, bright colors, bulky, armor, front view, straight-on view, facing the camera, side view, profile, back view, weapon, sword, dagger, staff, bow, gun, shield, holding item, chibi, cute, text, watermark, blurry, 3d render, painterly, lineless, high detail texture noise",
+      "candidates": 6
+    },
+    {
+      "id": "melter-t3",
+      "out": "sprites/classes/heavy_reload_t3a.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "heat-rigged artillerist, 3/4 top-down view facing south-east, pale mask with a single painted eye under a hood, back-mounted tank rig rising above the shoulder line with coiled hoses, chest plate with open glowing vent slats, one arm in a bulky bracer, hot amber and glowing white palette, braced stance, empty hands with no weapon",
+      "status": "accepted",
+      "sources": [
+        "melter-t3"
+      ],
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "view": "low top-down",
+        "direction": "south-east",
+        "initImage": "sprites/classes/heavy_reload.png",
+        "initImageStrength": 75
+      },
+      "notes": "Bespoke T3 body (bible S25 full-sprite exception). Draft + rationale: art/workbench/roster/bespoke-t3-draft.md. Chains from the T2 frame in its ORIGINAL colours (NOT the t3.mjs recolour) at initImageStrength 65 - lower than the tier-2 recipe 80 because this is a concept iteration, not a reprint. At 65 the chain enforces nothing, so faceless / no-weapon / three-quarter south-east framing / palette are all restated in the prompt, and the per-class negative was rewritten where the spec needs something the class template bans. ROUND 1 (strength 65, rejected 2026-08-01): all six candidates rejected. Two systematic drifts, both consistent with too little chain adherence — the light frame GAINED BULK on 2 of 3 Assassins (the frame build is not held by the chain at 65), and the Melter palette overshot well past the muted house palette into saturated orange, losing the Slinger pale-mask identity. Round 2 raises initImageStrength 65 -> 75 and changes NOTHING ELSE, so the strength lever can be read on its own. Round-1 candidates archived at art/workbench/<id>/r65/.",
+      "negative": "face, eyes, nose, mouth, lips, chin, cheeks, facial features, human face, visible face, portrait, skin, visible skin, bare hands, hair, beard, glowing eyes, nozzle, barrel, emitter, muzzle, flamethrower, gun, hose ending in a nozzle, front view, straight-on view, facing the camera, side view, profile, back view, weapon, sword, dagger, staff, bow, gun, shield, holding item, chibi, cute, text, watermark, blurry, 3d render, painterly, lineless, high detail texture noise",
+      "candidates": 3
+    },
+    {
+      "id": "voidwalker-t3",
+      "out": "sprites/classes/heavy_energy_t3a.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "void-touched phantasm, 3/4 top-down view facing south-east, void hood with the face hidden in black shadow, a bright ringed aperture set into the chest with a lit glowing edge, complete cloak drawn inward toward that point, hem lifted clear of the ground with a gap of air and a small shadow cast below, near black garment with cyan rim light along every edge, empty hands with no weapon",
+      "status": "accepted",
+      "sources": [
+        "voidwalker-t3"
+      ],
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "view": "low top-down",
+        "direction": "south-east",
+        "initImage": "sprites/classes/heavy_energy.png",
+        "initImageStrength": 75
+      },
+      "notes": "Bespoke T3 body (bible S25 full-sprite exception). Draft + rationale: art/workbench/roster/bespoke-t3-draft.md. Chains from the T2 frame in its ORIGINAL colours (NOT the t3.mjs recolour) at initImageStrength 65 - lower than the tier-2 recipe 80 because this is a concept iteration, not a reprint. At 65 the chain enforces nothing, so faceless / no-weapon / three-quarter south-east framing / palette are all restated in the prompt, and the per-class negative was rewritten where the spec needs something the class template bans. ROUND 2 RECIPE (validated 2026-08-01 on the assassin-t3 + melter-t3 slice): initImageStrength 75, chaining from the T2 frame in its ORIGINAL colours. 65 let the frame build drift (2 of 3 Assassins gained bulk); 75 held it. MEASURED TRADE-OFF: 75 buys structure and COSTS PALETTE — at 75 two of three Assassins were pulled back toward the source pale steel, and the Melter stayed more saturated than the muted house palette. So if a candidate here is right in build but wrong in colour, that is the known cost of this strength, not a prompt bug. Generated as a bulk batch (6 candidates each) while the user slept, AFTER the slice was accepted in the gallery: assassin-t3 took r75 candidate 2 and melter-t3 took r75 candidate 3, so this recipe is confirmed by two real acceptances rather than assumed. TASTE SIGNAL from those picks: the user chose the PALER, MORE ARMORED Assassin over the dark charcoal one, i.e. visible class DNA outranks spec palette darkness — worth weighing on the dark specs here (Hemomancer, Voidwalker, Cultist), which may come back darker than the roster wants.",
+      "negative": "face, eyes, nose, mouth, lips, chin, cheeks, facial features, human face, visible face, portrait, skin, visible skin, bare hands, hair, beard, glowing eyes, hole in the body, missing torso, empty robe with nobody inside, torn open, incomplete, unfinished, featureless blob, bell shape, bright colors, front view, straight-on view, facing the camera, side view, profile, back view, weapon, sword, dagger, staff, bow, gun, shield, holding item, chibi, cute, text, watermark, blurry, 3d render, painterly, lineless, high detail texture noise",
+      "candidates": 6
+    },
+    {
+      "id": "wind-spirit-t3",
+      "out": "sprites/classes/heavy_dot_t3c.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "frost windcaller, 3/4 top-down view facing south-east, hood pressed flat against the skull by wind with the face hidden in black shadow, robe and a long scarf swept hard to one side as in a gale, sleeves trailing into ribbon tails, hard crystalline ice crust on the windward shoulder and hem, saturated frost teal and bright white ice palette, leaning into the wind, empty hands with no weapon",
+      "status": "accepted",
+      "sources": [
+        "wind-spirit-t3"
+      ],
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "view": "low top-down",
+        "direction": "south-east",
+        "initImage": "sprites/classes/heavy_dot.png",
+        "initImageStrength": 75
+      },
+      "notes": "Bespoke T3 body (bible S25 full-sprite exception). Draft + rationale: art/workbench/roster/bespoke-t3-draft.md. Chains from the T2 frame in its ORIGINAL colours (NOT the t3.mjs recolour) at initImageStrength 65 - lower than the tier-2 recipe 80 because this is a concept iteration, not a reprint. At 65 the chain enforces nothing, so faceless / no-weapon / three-quarter south-east framing / palette are all restated in the prompt, and the per-class negative was rewritten where the spec needs something the class template bans. ROUND 2 RECIPE (validated 2026-08-01 on the assassin-t3 + melter-t3 slice): initImageStrength 75, chaining from the T2 frame in its ORIGINAL colours. 65 let the frame build drift (2 of 3 Assassins gained bulk); 75 held it. MEASURED TRADE-OFF: 75 buys structure and COSTS PALETTE — at 75 two of three Assassins were pulled back toward the source pale steel, and the Melter stayed more saturated than the muted house palette. So if a candidate here is right in build but wrong in colour, that is the known cost of this strength, not a prompt bug. Generated as a bulk batch (6 candidates each) while the user slept, AFTER the slice was accepted in the gallery: assassin-t3 took r75 candidate 2 and melter-t3 took r75 candidate 3, so this recipe is confirmed by two real acceptances rather than assumed. TASTE SIGNAL from those picks: the user chose the PALER, MORE ARMORED Assassin over the dark charcoal one, i.e. visible class DNA outranks spec palette darkness — worth weighing on the dark specs here (Hemomancer, Voidwalker, Cultist), which may come back darker than the roster wants.",
+      "negative": "face, eyes, nose, mouth, lips, chin, cheeks, facial features, human face, visible face, portrait, skin, visible skin, bare hands, hair, beard, glowing eyes, grey, monochrome, desaturated, misty, smoke, fog, dissolving, translucent, ghost, wispy, mist hem, front view, straight-on view, facing the camera, side view, profile, back view, weapon, sword, dagger, staff, bow, gun, shield, holding item, chibi, cute, text, watermark, blurry, 3d render, painterly, lineless, high detail texture noise",
+      "candidates": 6
+    },
+    {
+      "id": "equinox-t3",
+      "out": "sprites/classes/medium_energy_t3a.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "spirit of duality, 3/4 top-down view facing south-east, void hood with the face hidden in black shadow, the garment split precisely down the centre line, one half bright white and one half deep black, mirrored trim on each side, hem dissolving into mist, still balanced stance, empty hands with no weapon",
+      "status": "accepted",
+      "sources": [
+        "equinox-t3"
+      ],
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "view": "low top-down",
+        "direction": "south-east",
+        "initImage": "sprites/classes/medium_energy.png",
+        "initImageStrength": 75
+      },
+      "notes": "Bespoke T3 body, WAVE 2 (bible S25 full-sprite exception). Draft: art/workbench/roster/bespoke-t3-draft.md. Recipe validated by wave 1 (10 of 11 accepted first pass): chain from the T2 frame in its ORIGINAL colours, initImageStrength 75, palette authored in the prompt, 6 candidates. SELECTION RULE: a spec earns a body only when it changes what the character is MADE OF, not how intense it is; and every trio keeps at least one recolour, so body silhouette still encodes class + frame.",
+      "negative": "face, eyes, nose, mouth, lips, chin, cheeks, facial features, human face, visible face, portrait, bare skin, visible skin, exposed skin, bare arms, bare chest, hair, beard, glowing eyes, single colour robe, uniform colour, asymmetric mess, armor, plate, front view, straight-on view, facing the camera, side view, profile, back view, weapon, sword, dagger, staff, bow, gun, shield, holding item, chibi, cute, text, watermark, blurry, 3d render, painterly, lineless, high detail texture noise",
+      "candidates": 6
+    },
+    {
+      "id": "winter-warden-t3",
+      "out": "sprites/classes/heavy_dot_t3b.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "frost warden, 3/4 top-down view facing south-east, tall crown of jagged ice fully enclosing the head with no face opening, heavy frost-plated mantle across the shoulders, long layered robe with a rime-crusted hem, deep glacial blue and pale ice palette, upright commanding stance, empty hands with no weapon",
+      "status": "accepted",
+      "sources": [
+        "winter-warden-t3"
+      ],
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "view": "low top-down",
+        "direction": "south-east",
+        "initImage": "sprites/classes/heavy_dot.png",
+        "initImageStrength": 75
+      },
+      "notes": "Bespoke T3 body, WAVE 2 (bible S25 full-sprite exception). Draft: art/workbench/roster/bespoke-t3-draft.md. Recipe validated by wave 1 (10 of 11 accepted first pass): chain from the T2 frame in its ORIGINAL colours, initImageStrength 75, palette authored in the prompt, 6 candidates. SELECTION RULE: a spec earns a body only when it changes what the character is MADE OF, not how intense it is; and every trio keeps at least one recolour, so body silhouette still encodes class + frame.",
+      "negative": "face, eyes, nose, mouth, lips, chin, cheeks, facial features, human face, visible face, portrait, bare skin, visible skin, exposed skin, bare arms, bare chest, hair, beard, glowing eyes, hood, cowl, streaming cloth, wind, scarf, teal, grey, monochrome, misty, translucent, ghost, front view, straight-on view, facing the camera, side view, profile, back view, weapon, sword, dagger, staff, bow, gun, shield, holding item, chibi, cute, text, watermark, blurry, 3d render, painterly, lineless, high detail texture noise",
+      "candidates": 6
+    },
+    {
+      "id": "bounty-hunter-t3",
+      "out": "sprites/classes/medium_reload_t3a.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "armored bounty hunter, 3/4 top-down view facing south-east, pale mask with a single painted eye under a low hood, segmented armor plates worn over a long coat, hanging tokens and straps across the chest, heavy belt with pouches, tall boots, dark leather and amber palette, watchful stance, empty hands with no weapon",
+      "status": "accepted",
+      "sources": [
+        "bounty-hunter-t3"
+      ],
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "view": "low top-down",
+        "direction": "south-east",
+        "initImage": "sprites/classes/medium_reload.png",
+        "initImageStrength": 75
+      },
+      "notes": "Bespoke T3 body, WAVE 2 (bible S25 full-sprite exception). Draft: art/workbench/roster/bespoke-t3-draft.md. Recipe validated by wave 1 (10 of 11 accepted first pass): chain from the T2 frame in its ORIGINAL colours, initImageStrength 75, palette authored in the prompt, 6 candidates. SELECTION RULE: a spec earns a body only when it changes what the character is MADE OF, not how intense it is; and every trio keeps at least one recolour, so body silhouette still encodes class + frame.",
+      "negative": "face, eyes, nose, mouth, lips, chin, cheeks, facial features, human face, visible face, portrait, bare skin, visible skin, exposed skin, bare arms, bare chest, hair, beard, glowing eyes, wide-brimmed hat, skull, bones, holster, rifle, revolver, crossbow, front view, straight-on view, facing the camera, side view, profile, back view, weapon, sword, dagger, staff, bow, gun, shield, holding item, chibi, cute, text, watermark, blurry, 3d render, painterly, lineless, high detail texture noise",
+      "candidates": 6
+    },
+    {
+      "id": "transcendant-t3",
+      "out": "sprites/classes/light_cooldown_t3b.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "ascended ascetic, 3/4 top-down view facing south-east, smooth featureless golden faceplate fully enclosing the head, plate armor replaced by layered flowing light robes, wide sash at the waist, bands of soft glowing script along the hem and sleeves, pale gold and white palette, serene upright stance, empty hands with no weapon",
+      "status": "accepted",
+      "sources": [
+        "transcendant-t3"
+      ],
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "view": "low top-down",
+        "direction": "south-east",
+        "initImage": "sprites/classes/light_cooldown.png",
+        "initImageStrength": 75
+      },
+      "notes": "Bespoke T3 body, WAVE 2 (bible S25 full-sprite exception). Draft: art/workbench/roster/bespoke-t3-draft.md. Recipe validated by wave 1 (10 of 11 accepted first pass): chain from the T2 frame in its ORIGINAL colours, initImageStrength 75, palette authored in the prompt, 6 candidates. SELECTION RULE: a spec earns a body only when it changes what the character is MADE OF, not how intense it is; and every trio keeps at least one recolour, so body silhouette still encodes class + frame.",
+      "negative": "face, eyes, nose, mouth, lips, chin, cheeks, facial features, human face, visible face, portrait, bare skin, visible skin, exposed skin, bare arms, bare chest, hair, beard, glowing eyes, great helm, heavy plate armor, crown, mitre, halo, floating ring, stole, dark colours, front view, straight-on view, facing the camera, side view, profile, back view, weapon, sword, dagger, staff, bow, gun, shield, holding item, chibi, cute, text, watermark, blurry, 3d render, painterly, lineless, high detail texture noise",
+      "candidates": 6
+    },
+    {
+      "id": "cinder-lord-t3",
+      "out": "sprites/classes/medium_dot_t3c.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "molten crowned lord, 3/4 top-down view facing south-east, jagged blackened crown fully enclosing the head with no face opening, heavy mantle of charred cloth across the shoulders, long robe with glowing molten cracks running through it, ember orange and charcoal black palette, imposing upright stance, empty hands with no weapon",
+      "status": "accepted",
+      "sources": [
+        "cinder-lord-t3"
+      ],
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "view": "low top-down",
+        "direction": "south-east",
+        "initImage": "sprites/classes/medium_dot.png",
+        "initImageStrength": 75
+      },
+      "notes": "Bespoke T3 body, WAVE 2 (bible S25 full-sprite exception). Draft: art/workbench/roster/bespoke-t3-draft.md. Recipe validated by wave 1 (10 of 11 accepted first pass): chain from the T2 frame in its ORIGINAL colours, initImageStrength 75, palette authored in the prompt, 6 candidates. SELECTION RULE: a spec earns a body only when it changes what the character is MADE OF, not how intense it is; and every trio keeps at least one recolour, so body silhouette still encodes class + frame.",
+      "negative": "face, eyes, nose, mouth, lips, chin, cheeks, facial features, human face, visible face, portrait, bare skin, visible skin, exposed skin, bare arms, bare chest, hair, beard, glowing eyes, hood, cowl, plain robe, bright yellow, pastel, gold armor, plate armor, front view, straight-on view, facing the camera, side view, profile, back view, weapon, sword, dagger, staff, bow, gun, shield, holding item, chibi, cute, text, watermark, blurry, 3d render, painterly, lineless, high detail texture noise",
+      "candidates": 6
+    },
+    {
+      "id": "shockblade-t3",
+      "out": "sprites/classes/light_cadence_t3a.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "lightning-charged duelist, 3/4 top-down view facing south-east, dark hood over a faceted steel visor covering the whole face, coiled conductor wire running along both arms, small arcing nodes at the shoulders, segmented steel plates over a fitted tunic, lean build, steel and storm blue palette, alert forward stance, empty hands with no weapon",
+      "status": "accepted",
+      "sources": [
+        "shockblade-t3"
+      ],
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "view": "low top-down",
+        "direction": "south-east",
+        "initImage": "sprites/classes/light_cadence.png",
+        "initImageStrength": 75
+      },
+      "notes": "Bespoke T3 body, WAVE 3 (full T3 coverage — every spec gets a body). Design: art/workbench/roster/bespoke-t3-draft.md \"WAVE 3\". Recipe validated across waves 1-2 (15 of 16 accepted): chain from the T2 frame in its ORIGINAL colours, initImageStrength 75, palette authored in the prompt, 6 candidates. GRAMMAR: T1/T2 silhouette encodes class+frame, T3 silhouette encodes SPEC; class resemblance survives because every body chains from its class-frame parent. Design rule: SPEC ARCHETYPE FIRST — each spec is its own character concept, class DNA rides on the chain and palette.",
+      "negative": "face, eyes, nose, mouth, lips, chin, cheeks, facial features, human face, visible face, portrait, bare skin, visible skin, exposed skin, bare arms, bare chest, bare shoulders, muscles, hair, beard, glowing eyes, robe, cloak tails, scrap, patchwork, bulky armor, front view, straight-on view, facing the camera, side view, profile, back view, weapon, sword, dagger, staff, bow, gun, shield, holding item, holding, chibi, cute, text, watermark, blurry, 3d render, painterly, lineless, high detail texture noise",
+      "candidates": 6
+    },
+    {
+      "id": "scrapper-t3",
+      "out": "sprites/classes/light_cadence_t3b.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "scavenger brawler, 3/4 top-down view facing south-east, dark hood over a riveted iron nose-guard mask covering the face, mismatched salvaged armor plates strapped on at odd angles, cloth-wrapped fists, patchwork asymmetric kit, rust brown and crimson palette, low ready stance, empty hands with no weapon",
+      "status": "accepted",
+      "sources": [
+        "scrapper-t3"
+      ],
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "view": "low top-down",
+        "direction": "south-east",
+        "initImage": "sprites/classes/light_cadence.png",
+        "initImageStrength": 75
+      },
+      "notes": "Bespoke T3 body, WAVE 3 (full T3 coverage — every spec gets a body). Design: art/workbench/roster/bespoke-t3-draft.md \"WAVE 3\". Recipe validated across waves 1-2 (15 of 16 accepted): chain from the T2 frame in its ORIGINAL colours, initImageStrength 75, palette authored in the prompt, 6 candidates. GRAMMAR: T1/T2 silhouette encodes class+frame, T3 silhouette encodes SPEC; class resemblance survives because every body chains from its class-frame parent. Design rule: SPEC ARCHETYPE FIRST — each spec is its own character concept, class DNA rides on the chain and palette.",
+      "negative": "face, eyes, nose, mouth, lips, chin, cheeks, facial features, human face, visible face, portrait, bare skin, visible skin, exposed skin, bare arms, bare chest, bare shoulders, muscles, hair, beard, glowing eyes, matched armor, clean plate, symmetrical, polished, robe, wire, glowing, front view, straight-on view, facing the camera, side view, profile, back view, weapon, sword, dagger, staff, bow, gun, shield, holding item, holding, chibi, cute, text, watermark, blurry, 3d render, painterly, lineless, high detail texture noise",
+      "candidates": 6
+    },
+    {
+      "id": "swiftblade-t3",
+      "out": "sprites/classes/light_cadence_t3c.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "twin-strike skirmisher, 3/4 top-down view facing south-east, dark hood over a narrow slit visor covering the face, streamlined minimal kit, split cloak with two long trailing tails, two sashes trailing behind, very lean silhouette, steel and pale crimson palette, poised forward stance, empty hands with no weapon",
+      "status": "accepted",
+      "sources": [
+        "swiftblade-t3"
+      ],
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "view": "low top-down",
+        "direction": "south-east",
+        "initImage": "sprites/classes/light_cadence.png",
+        "initImageStrength": 75
+      },
+      "notes": "Bespoke T3 body, WAVE 3 (full T3 coverage — every spec gets a body). Design: art/workbench/roster/bespoke-t3-draft.md \"WAVE 3\". Recipe validated across waves 1-2 (15 of 16 accepted): chain from the T2 frame in its ORIGINAL colours, initImageStrength 75, palette authored in the prompt, 6 candidates. GRAMMAR: T1/T2 silhouette encodes class+frame, T3 silhouette encodes SPEC; class resemblance survives because every body chains from its class-frame parent. Design rule: SPEC ARCHETYPE FIRST — each spec is its own character concept, class DNA rides on the chain and palette.",
+      "negative": "face, eyes, nose, mouth, lips, chin, cheeks, facial features, human face, visible face, portrait, bare skin, visible skin, exposed skin, bare arms, bare chest, bare shoulders, muscles, hair, beard, glowing eyes, bulky, heavy armor, scrap, patchwork, wire, single cloak, robe, front view, straight-on view, facing the camera, side view, profile, back view, weapon, sword, dagger, staff, bow, gun, shield, holding item, holding, chibi, cute, text, watermark, blurry, 3d render, painterly, lineless, high detail texture noise",
+      "candidates": 6
+    },
+    {
+      "id": "maestro-t3",
+      "out": "sprites/classes/medium_cadence_t3a.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "conductor duelist, 3/4 top-down view facing south-east, dark hood over an ornate half-mask with a decorated brow, covering the face, long tailed coat with a high stiff collar, one ornately embroidered gauntlet raised, layered cuffs, deep crimson and gold palette, poised upright stance, empty hands with no weapon",
+      "status": "accepted",
+      "sources": [
+        "maestro-t3"
+      ],
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "view": "low top-down",
+        "direction": "south-east",
+        "initImage": "sprites/classes/medium_cadence.png",
+        "initImageStrength": 75
+      },
+      "notes": "Bespoke T3 body, WAVE 3 (full T3 coverage — every spec gets a body). Design: art/workbench/roster/bespoke-t3-draft.md \"WAVE 3\". Recipe validated across waves 1-2 (15 of 16 accepted): chain from the T2 frame in its ORIGINAL colours, initImageStrength 75, palette authored in the prompt, 6 candidates. GRAMMAR: T1/T2 silhouette encodes class+frame, T3 silhouette encodes SPEC; class resemblance survives because every body chains from its class-frame parent. Design rule: SPEC ARCHETYPE FIRST — each spec is its own character concept, class DNA rides on the chain and palette.",
+      "negative": "face, eyes, nose, mouth, lips, chin, cheeks, facial features, human face, visible face, portrait, bare skin, visible skin, exposed skin, bare arms, bare chest, bare shoulders, muscles, hair, beard, glowing eyes, baton, wand, blindfold, stole, tabard, scale armor, plain clothes, front view, straight-on view, facing the camera, side view, profile, back view, weapon, sword, dagger, staff, bow, gun, shield, holding item, holding, chibi, cute, text, watermark, blurry, 3d render, painterly, lineless, high detail texture noise",
+      "candidates": 6
+    },
+    {
+      "id": "wavecrest-t3",
+      "out": "sprites/classes/medium_cadence_t3b.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "tidal skirmisher, 3/4 top-down view facing south-east, dark hood over a smooth curved visor covering the face, overlapping curved scale plates layered like breaking water, a raised crest ridge across the shoulders, a sash sweeping in an arc across the body, blue-steel and white palette, flowing forward stance, empty hands with no weapon",
+      "status": "accepted",
+      "sources": [
+        "wavecrest-t3"
+      ],
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "view": "low top-down",
+        "direction": "south-east",
+        "initImage": "sprites/classes/medium_cadence.png",
+        "initImageStrength": 75
+      },
+      "notes": "Bespoke T3 body, WAVE 3 (full T3 coverage — every spec gets a body). Design: art/workbench/roster/bespoke-t3-draft.md \"WAVE 3\". Recipe validated across waves 1-2 (15 of 16 accepted): chain from the T2 frame in its ORIGINAL colours, initImageStrength 75, palette authored in the prompt, 6 candidates. GRAMMAR: T1/T2 silhouette encodes class+frame, T3 silhouette encodes SPEC; class resemblance survives because every body chains from its class-frame parent. Design rule: SPEC ARCHETYPE FIRST — each spec is its own character concept, class DNA rides on the chain and palette.",
+      "negative": "face, eyes, nose, mouth, lips, chin, cheeks, facial features, human face, visible face, portrait, bare skin, visible skin, exposed skin, bare arms, bare chest, bare shoulders, muscles, hair, beard, glowing eyes, coat tails, gold, blindfold, chainmail, water, waves in the air, splashes, front view, straight-on view, facing the camera, side view, profile, back view, weapon, sword, dagger, staff, bow, gun, shield, holding item, holding, chibi, cute, text, watermark, blurry, 3d render, painterly, lineless, high detail texture noise",
+      "candidates": 6
+    },
+    {
+      "id": "justicar-t3",
+      "out": "sprites/classes/medium_cadence_t3c.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "judicial enforcer, 3/4 top-down view facing south-east, head bound in a solid iron blindfold mask with no eye openings, under a dark hood, heavy tabard bearing a wax seal emblem, one pauldron bound in chain, a long stole hanging to the hem, crimson and white palette, upright solemn stance, empty hands with no weapon",
+      "status": "accepted",
+      "sources": [
+        "justicar-t3"
+      ],
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "view": "low top-down",
+        "direction": "south-east",
+        "initImage": "sprites/classes/medium_cadence.png",
+        "initImageStrength": 75
+      },
+      "notes": "Bespoke T3 body, WAVE 3 (full T3 coverage — every spec gets a body). Design: art/workbench/roster/bespoke-t3-draft.md \"WAVE 3\". Recipe validated across waves 1-2 (15 of 16 accepted): chain from the T2 frame in its ORIGINAL colours, initImageStrength 75, palette authored in the prompt, 6 candidates. GRAMMAR: T1/T2 silhouette encodes class+frame, T3 silhouette encodes SPEC; class resemblance survives because every body chains from its class-frame parent. Design rule: SPEC ARCHETYPE FIRST — each spec is its own character concept, class DNA rides on the chain and palette.",
+      "negative": "face, eyes, nose, mouth, lips, chin, cheeks, facial features, human face, visible face, portrait, bare skin, visible skin, exposed skin, bare arms, bare chest, bare shoulders, muscles, hair, beard, glowing eyes, visor, eye slit, scales of justice, gold, coat tails, scale armor, crown, front view, straight-on view, facing the camera, side view, profile, back view, weapon, sword, dagger, staff, bow, gun, shield, holding item, holding, chibi, cute, text, watermark, blurry, 3d render, painterly, lineless, high detail texture noise",
+      "candidates": 6
+    },
+    {
+      "id": "juggernaut-t3",
+      "out": "sprites/classes/heavy_cadence_t3c.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "unstoppable charging fighter, 3/4 top-down view facing south-east, head fully enclosed in a heavy iron mask with a low brow ridge and no opening, built-up layered chainmail over broad shoulders, thick banded greaves, weight thrown forward in a charging lean, dark steel and deep violet palette, empty hands with no weapon",
+      "status": "accepted",
+      "sources": [
+        "juggernaut-t3"
+      ],
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "view": "low top-down",
+        "direction": "south-east",
+        "initImage": "sprites/classes/heavy_cadence.png",
+        "initImageStrength": 75
+      },
+      "notes": "Bespoke T3 body, WAVE 3 (full T3 coverage — every spec gets a body). Design: art/workbench/roster/bespoke-t3-draft.md \"WAVE 3\". Recipe validated across waves 1-2 (15 of 16 accepted): chain from the T2 frame in its ORIGINAL colours, initImageStrength 75, palette authored in the prompt, 6 candidates. GRAMMAR: T1/T2 silhouette encodes class+frame, T3 silhouette encodes SPEC; class resemblance survives because every body chains from its class-frame parent. Design rule: SPEC ARCHETYPE FIRST — each spec is its own character concept, class DNA rides on the chain and palette.",
+      "negative": "face, eyes, nose, mouth, lips, chin, cheeks, facial features, human face, visible face, portrait, bare skin, visible skin, exposed skin, bare arms, bare chest, bare shoulders, muscles, hair, beard, glowing eyes, plate armor, plate skirt, molten, glowing seams, great helm, faceplate, tabard, upright stance, front view, straight-on view, facing the camera, side view, profile, back view, weapon, sword, dagger, staff, bow, gun, shield, holding item, holding, chibi, cute, text, watermark, blurry, 3d render, painterly, lineless, high detail texture noise",
+      "candidates": 6
+    },
+    {
+      "id": "sunderer-t3",
+      "out": "sprites/classes/light_cooldown_t3c.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "armor-breaking knight, 3/4 top-down view facing south-east, head fully enclosed in a wedge-prowed iron great helm with no face opening, reinforced gauntlets with chisel-shaped knuckle edges, one deeply fractured pauldron, plate armor covering the entire body with no exposed skin anywhere, steel and verdigris green palette, braced forward stance, empty hands with no weapon",
+      "status": "accepted",
+      "sources": [
+        "sunderer-t3"
+      ],
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "view": "low top-down",
+        "direction": "south-east",
+        "initImage": "sprites/classes/light_cooldown.png",
+        "initImageStrength": 75
+      },
+      "notes": "Bespoke T3 body, WAVE 3 batch 2 (Squire). Design: art/workbench/roster/bespoke-t3-draft.md \"WAVE 3\". Recipe: chain from the T2 frame in ORIGINAL colours, initImageStrength 75, palette in the prompt, 6 candidates. CARRIES THE STANDING COVERAGE CLAUSE introduced after the Striker batch: bare skin leaked on Scrapper/Shockblade/Swiftblade because \"brawler\"/\"minimal kit\" imply less clothing and the ban-list always loses to that — so coverage is now stated POSITIVELY in every prompt. Second Striker lesson applied here too: a material ban needs a positive substitute (Juggernaut banned \"plate\" and still returned plate knights).",
+      "negative": "face, eyes, nose, mouth, lips, chin, cheeks, facial features, human face, visible face, portrait, bare skin, visible skin, exposed skin, bare arms, bare chest, bare shoulders, bare midriff, muscles, hair, beard, glowing eyes, hood, cowl, robe, gold faceplate, cloth, molten, glowing, front view, straight-on view, facing the camera, side view, profile, back view, weapon, sword, dagger, staff, bow, gun, shield, holding item, holding, chibi, cute, text, watermark, blurry, 3d render, painterly, lineless, high detail texture noise",
+      "candidates": 6
+    },
+    {
+      "id": "reverb-t3",
+      "out": "sprites/classes/medium_cooldown_t3a.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "resonance knight, 3/4 top-down view facing south-east, head fully enclosed in a banded iron great helm with no face opening, bell-flared pauldrons widening outward, concentric ring motifs embossed across the breastplate, plate armor covering the entire body with no exposed skin anywhere, pale blue and steel palette, upright stance, empty hands with no weapon",
+      "status": "accepted",
+      "sources": [
+        "reverb-t3"
+      ],
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "view": "low top-down",
+        "direction": "south-east",
+        "initImage": "sprites/classes/medium_cooldown.png",
+        "initImageStrength": 75
+      },
+      "notes": "Bespoke T3 body, WAVE 3 batch 2 (Squire). Design: art/workbench/roster/bespoke-t3-draft.md \"WAVE 3\". Recipe: chain from the T2 frame in ORIGINAL colours, initImageStrength 75, palette in the prompt, 6 candidates. CARRIES THE STANDING COVERAGE CLAUSE introduced after the Striker batch: bare skin leaked on Scrapper/Shockblade/Swiftblade because \"brawler\"/\"minimal kit\" imply less clothing and the ban-list always loses to that — so coverage is now stated POSITIVELY in every prompt. Second Striker lesson applied here too: a material ban needs a positive substitute (Juggernaut banned \"plate\" and still returned plate knights).",
+      "negative": "face, eyes, nose, mouth, lips, chin, cheeks, facial features, human face, visible face, portrait, bare skin, visible skin, exposed skin, bare arms, bare chest, bare shoulders, bare midriff, muscles, hair, beard, glowing eyes, glowing, lit core, cables, wires, hood, robe, tower shape, square shoulders, front view, straight-on view, facing the camera, side view, profile, back view, weapon, sword, dagger, staff, bow, gun, shield, holding item, holding, chibi, cute, text, watermark, blurry, 3d render, painterly, lineless, high detail texture noise",
+      "candidates": 6
+    },
+    {
+      "id": "dynamo-t3",
+      "out": "sprites/classes/medium_cooldown_t3b.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "accumulator knight, 3/4 top-down view facing south-east, head fully enclosed in an iron great helm with a single lit slit and no face opening, coiled cabling wrapped around the torso, one glowing core disc set into the chest plate, segmented overlapping lames, plate armor covering the entire body with no exposed skin anywhere, amber and iron palette, upright stance, empty hands with no weapon",
+      "status": "accepted",
+      "sources": [
+        "dynamo-t3"
+      ],
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "view": "low top-down",
+        "direction": "south-east",
+        "initImage": "sprites/classes/medium_cooldown.png",
+        "initImageStrength": 75
+      },
+      "notes": "Bespoke T3 body, WAVE 3 batch 2 (Squire). Design: art/workbench/roster/bespoke-t3-draft.md \"WAVE 3\". Recipe: chain from the T2 frame in ORIGINAL colours, initImageStrength 75, palette in the prompt, 6 candidates. CARRIES THE STANDING COVERAGE CLAUSE introduced after the Striker batch: bare skin leaked on Scrapper/Shockblade/Swiftblade because \"brawler\"/\"minimal kit\" imply less clothing and the ban-list always loses to that — so coverage is now stated POSITIVELY in every prompt. Second Striker lesson applied here too: a material ban needs a positive substitute (Juggernaut banned \"plate\" and still returned plate knights).",
+      "negative": "face, eyes, nose, mouth, lips, chin, cheeks, facial features, human face, visible face, portrait, bare skin, visible skin, exposed skin, bare arms, bare chest, bare shoulders, bare midriff, muscles, hair, beard, glowing eyes, bell pauldrons, concentric rings, hood, robe, tabard to the floor, molten cracks, front view, straight-on view, facing the camera, side view, profile, back view, weapon, sword, dagger, staff, bow, gun, shield, holding item, holding, chibi, cute, text, watermark, blurry, 3d render, painterly, lineless, high detail texture noise",
+      "candidates": 6
+    },
+    {
+      "id": "stalwart-t3",
+      "out": "sprites/classes/medium_cooldown_t3c.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "immovable bulwark knight, 3/4 top-down view facing south-east, head fully enclosed in a flat-topped squared great helm with no face opening, tower-squared plate with hard corners, overlapping lames layered down the torso, a tabard reaching the floor, heavy planted greaves, plate armor covering the entire body with no exposed skin anywhere, deep green and steel palette, planted immovable stance, empty hands with no weapon",
+      "status": "accepted",
+      "sources": [
+        "stalwart-t3"
+      ],
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "view": "low top-down",
+        "direction": "south-east",
+        "initImage": "sprites/classes/medium_cooldown.png",
+        "initImageStrength": 75
+      },
+      "notes": "Bespoke T3 body, WAVE 3 batch 2 (Squire). Design: art/workbench/roster/bespoke-t3-draft.md \"WAVE 3\". Recipe: chain from the T2 frame in ORIGINAL colours, initImageStrength 75, palette in the prompt, 6 candidates. CARRIES THE STANDING COVERAGE CLAUSE introduced after the Striker batch: bare skin leaked on Scrapper/Shockblade/Swiftblade because \"brawler\"/\"minimal kit\" imply less clothing and the ban-list always loses to that — so coverage is now stated POSITIVELY in every prompt. Second Striker lesson applied here too: a material ban needs a positive substitute (Juggernaut banned \"plate\" and still returned plate knights).",
+      "negative": "face, eyes, nose, mouth, lips, chin, cheeks, facial features, human face, visible face, portrait, bare skin, visible skin, exposed skin, bare arms, bare chest, bare shoulders, bare midriff, muscles, hair, beard, glowing eyes, molten, glowing, cables, bell pauldrons, hood, robe, cape, forward lean, front view, straight-on view, facing the camera, side view, profile, back view, weapon, sword, dagger, staff, bow, gun, shield, holding item, holding, chibi, cute, text, watermark, blurry, 3d render, painterly, lineless, high detail texture noise",
+      "candidates": 6
+    },
+    {
+      "id": "avenger-t3",
+      "out": "sprites/classes/heavy_cooldown_t3a.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "retribution knight, 3/4 top-down view facing south-east, head fully enclosed in a great helm with a cross-shaped slit and a broken crest, no face opening, cracked and battle-scarred plate with visible rivets, a torn ragged cape, chains binding both shoulders, plate armor covering the entire body with no exposed skin anywhere, pale blue and iron palette, upright defiant stance, empty hands with no weapon",
+      "status": "accepted",
+      "sources": [
+        "avenger-t3"
+      ],
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "view": "low top-down",
+        "direction": "south-east",
+        "initImage": "sprites/classes/heavy_cooldown.png",
+        "initImageStrength": 75
+      },
+      "notes": "Bespoke T3 body, WAVE 3 batch 2 (Squire). Design: art/workbench/roster/bespoke-t3-draft.md \"WAVE 3\". Recipe: chain from the T2 frame in ORIGINAL colours, initImageStrength 75, palette in the prompt, 6 candidates. CARRIES THE STANDING COVERAGE CLAUSE introduced after the Striker batch: bare skin leaked on Scrapper/Shockblade/Swiftblade because \"brawler\"/\"minimal kit\" imply less clothing and the ban-list always loses to that — so coverage is now stated POSITIVELY in every prompt. Second Striker lesson applied here too: a material ban needs a positive substitute (Juggernaut banned \"plate\" and still returned plate knights).",
+      "negative": "face, eyes, nose, mouth, lips, chin, cheeks, facial features, human face, visible face, portrait, bare skin, visible skin, exposed skin, bare arms, bare chest, bare shoulders, bare midriff, muscles, hair, beard, glowing eyes, molten, glowing seams, gold, crown, mitre, vestment, stole, hood, pristine armor, front view, straight-on view, facing the camera, side view, profile, back view, weapon, sword, dagger, staff, bow, gun, shield, holding item, holding, chibi, cute, text, watermark, blurry, 3d render, painterly, lineless, high detail texture noise",
+      "candidates": 6
+    },
+    {
+      "id": "duelist-t3",
+      "out": "sprites/classes/light_reload_t3a.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "poised formal figure in fitted eveningwear, 3/4 top-down view facing south-east, pale ivory mask with a single painted eye covering the whole face, a tall stiff standing collar rising behind the head in place of any hood, fitted waistcoat, a half-cape draped over one shoulder only, ornately embroidered gloves fully covering both hands, narrow refined build, garment covering the entire body with no exposed skin anywhere, amber and ivory palette, poised upright stance, empty hands with no weapon",
+      "status": "accepted",
+      "sources": [
+        "duelist-t3"
+      ],
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "view": "low top-down",
+        "direction": "south-east",
+        "initImage": "sprites/classes/light_reload.png",
+        "initImageStrength": 75
+      },
+      "notes": "refine the concept: these are too far off. Might need to increase the strength for this one, it's drifting way too far away from the original concept ROUND 3: round 2 failed hard (bare heads with faces on all 6, 2 of 6 effectively NUDE) because it dropped strength to 68 AND removed the hood at the same time. Below ~75 the garment loses its anchor. Round 3 keeps the standing-collar substitute but returns strength to 75, so only the prompt differs from round 1. Also restores hand coverage: round 2 asked for ONE glove, leaving the other hand bare. Round-2 candidates: art/workbench/duelist-t3/r68-v2/.",
+      "negative": "face, eyes, nose, mouth, lips, chin, cheeks, facial features, human face, visible face, portrait, bare skin, visible skin, exposed skin, bare arms, bare chest, bare shoulders, bare midriff, muscles, hair, beard, glowing eyes, bare hands, exposed hands, visible hands, skin on the hands, fingers, bare fingers, weapon, sword, dagger, staff, wand, bow, gun, shield, holding item, holding, weapon in hand, hood, hooded, cowl, hat, wide-brimmed hat, bald head, bare head, uncovered head, nude, naked, compound lenses, goggles, bandolier, long coat to the floor, front view, straight-on view, facing the camera, symmetrical front pose, side view, profile, back view, chibi, cute, text, watermark, blurry, 3d render, painterly, lineless, high detail texture noise",
+      "candidates": 6
+    },
+    {
+      "id": "blunderbuss-t3",
+      "out": "sprites/classes/medium_reload_t3b.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "close-quarters brawler in heavy padded gear, 3/4 top-down view facing south-east, pale mask with a single painted eye under a low hood, heavily padded coat, an oversized reinforced brace strapped over one shoulder, thick bracers on both forearms, rows of small pouches along the belt, wide planted stance, garment covering the entire body with no exposed skin anywhere, crimson and brown palette, empty hands with no weapon",
+      "status": "accepted",
+      "sources": [
+        "blunderbuss-t3"
+      ],
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "view": "low top-down",
+        "direction": "south-east",
+        "initImage": "sprites/classes/medium_reload.png",
+        "initImageStrength": 75
+      },
+      "notes": "Bespoke T3 body, WAVE 3 batch 3 (Slinger). Design: art/workbench/roster/bespoke-t3-draft.md \"WAVE 3\". Recipe: T2 frame in ORIGINAL colours, initImageStrength 75, 6 candidates, standing positive COVERAGE clause (validated on the Squire batch: zero skin across 30 candidates). SPECIAL RISK FOR THIS CLASS: three specs are named after firearms (Blunderbuss, Dualslinger, Cannoneer) and one after a sword-fighter (Duelist). Per the documented rule that archetype nouns summon their props regardless of ban-lists, NONE of those words appear in their prompts — each spec is described purely by CONSTRUCTION, with an expanded firearm/blade ban-list on top. \"No visible weapons ever\" is bible-locked.",
+      "negative": "face, eyes, nose, mouth, lips, chin, cheeks, facial features, human face, visible face, portrait, bare skin, visible skin, exposed skin, bare arms, bare chest, bare shoulders, bare midriff, muscles, hair, beard, glowing eyes, gun, pistol, revolver, rifle, musket, firearm, barrel, muzzle, holster, cannon, artillery, sword, dagger, rapier, foil, cane, spear, pole, staff, bow, shield, holding item, holding, weapon in hand, segmented plate armor, hanging trophies, tokens, pennants, symmetrical twin rig, split colours, counterweight, front view, straight-on view, facing the camera, side view, profile, back view, chibi, cute, text, watermark, blurry, 3d render, painterly, lineless, high detail texture noise",
+      "candidates": 6
+    },
+    {
+      "id": "dualslinger-t3",
+      "out": "sprites/classes/medium_reload_t3c.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "perfectly symmetrical mirrored figure, 3/4 top-down view facing south-east, pale mask split precisely down the centre line into two different colours covering the whole face, under a low hood, twin strap harnesses crossing the chest in exact mirror image, mirrored shoulder pads, a long coat split down the centre line into violet on one side and amber on the other, garment covering the entire body with no exposed skin anywhere, violet and amber palette, balanced even stance, empty hands with no weapon",
+      "status": "accepted",
+      "sources": [
+        "dualslinger-t3"
+      ],
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "view": "low top-down",
+        "direction": "south-east",
+        "initImage": "sprites/classes/medium_reload.png",
+        "initImageStrength": 75
+      },
+      "notes": "Bespoke T3 body, WAVE 3 batch 3 (Slinger). Design: art/workbench/roster/bespoke-t3-draft.md \"WAVE 3\". Recipe: T2 frame in ORIGINAL colours, initImageStrength 75, 6 candidates, standing positive COVERAGE clause (validated on the Squire batch: zero skin across 30 candidates). SPECIAL RISK FOR THIS CLASS: three specs are named after firearms (Blunderbuss, Dualslinger, Cannoneer) and one after a sword-fighter (Duelist). Per the documented rule that archetype nouns summon their props regardless of ban-lists, NONE of those words appear in their prompts — each spec is described purely by CONSTRUCTION, with an expanded firearm/blade ban-list on top. \"No visible weapons ever\" is bible-locked.",
+      "negative": "face, eyes, nose, mouth, lips, chin, cheeks, facial features, human face, visible face, portrait, bare skin, visible skin, exposed skin, bare arms, bare chest, bare shoulders, bare midriff, muscles, hair, beard, glowing eyes, gun, pistol, revolver, rifle, musket, firearm, barrel, muzzle, holster, cannon, artillery, sword, dagger, rapier, foil, cane, spear, pole, staff, bow, shield, holding item, holding, weapon in hand, asymmetric, lopsided, monochrome, black and white, padded brace, counterweight, pennants, trophies, front view, straight-on view, facing the camera, side view, profile, back view, chibi, cute, text, watermark, blurry, 3d render, painterly, lineless, high detail texture noise",
+      "candidates": 6
+    },
+    {
+      "id": "warmonger-t3",
+      "out": "sprites/classes/heavy_reload_t3b.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "war-torn veteran, 3/4 top-down view facing south-east, pale mask with a single painted eye under a hood with a battered brow plate, tattered pennant strips hanging from both shoulders and down the back, layered war-worn coat, small metal tokens hanging at the belt, garment covering the entire body with no exposed skin anywhere, crimson and dark iron palette, braced stance, empty hands with no weapon",
+      "status": "accepted",
+      "sources": [
+        "warmonger-t3"
+      ],
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "view": "low top-down",
+        "direction": "south-east",
+        "initImage": "sprites/classes/heavy_reload.png",
+        "initImageStrength": 75
+      },
+      "notes": "Bespoke T3 body, WAVE 3 batch 3 (Slinger). Design: art/workbench/roster/bespoke-t3-draft.md \"WAVE 3\". Recipe: T2 frame in ORIGINAL colours, initImageStrength 75, 6 candidates, standing positive COVERAGE clause (validated on the Squire batch: zero skin across 30 candidates). SPECIAL RISK FOR THIS CLASS: three specs are named after firearms (Blunderbuss, Dualslinger, Cannoneer) and one after a sword-fighter (Duelist). Per the documented rule that archetype nouns summon their props regardless of ban-lists, NONE of those words appear in their prompts — each spec is described purely by CONSTRUCTION, with an expanded firearm/blade ban-list on top. \"No visible weapons ever\" is bible-locked.",
+      "negative": "face, eyes, nose, mouth, lips, chin, cheeks, facial features, human face, visible face, portrait, bare skin, visible skin, exposed skin, bare arms, bare chest, bare shoulders, bare midriff, muscles, hair, beard, glowing eyes, gun, pistol, revolver, rifle, musket, firearm, barrel, muzzle, holster, cannon, artillery, sword, dagger, rapier, foil, cane, spear, pole, staff, bow, shield, holding item, holding, weapon in hand, flagpole, banner pole, tank, hoses, vents, glowing, backpack rig, counterweight, bracing struts, split colours, front view, straight-on view, facing the camera, side view, profile, back view, chibi, cute, text, watermark, blurry, 3d render, painterly, lineless, high detail texture noise",
+      "candidates": 6
+    },
+    {
+      "id": "cannoneer-t3",
+      "out": "sprites/classes/heavy_reload_t3c.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "siege-braced figure, 3/4 top-down view facing south-east, pale mask with a single painted eye under a hood, an enormous solid mechanical counterweight block mounted on one shoulder, rigid bracing struts running down the back and the legs, a reinforced stance harness across the torso, thick leg bracing plates, garment covering the entire body with no exposed skin anywhere, violet and iron palette, braced planted stance, empty hands with no weapon",
+      "status": "accepted",
+      "sources": [
+        "cannoneer-t3"
+      ],
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "view": "low top-down",
+        "direction": "south-east",
+        "initImage": "sprites/classes/heavy_reload.png",
+        "initImageStrength": 75
+      },
+      "notes": "Bespoke T3 body, WAVE 3 batch 3 (Slinger). Design: art/workbench/roster/bespoke-t3-draft.md \"WAVE 3\". Recipe: T2 frame in ORIGINAL colours, initImageStrength 75, 6 candidates, standing positive COVERAGE clause (validated on the Squire batch: zero skin across 30 candidates). SPECIAL RISK FOR THIS CLASS: three specs are named after firearms (Blunderbuss, Dualslinger, Cannoneer) and one after a sword-fighter (Duelist). Per the documented rule that archetype nouns summon their props regardless of ban-lists, NONE of those words appear in their prompts — each spec is described purely by CONSTRUCTION, with an expanded firearm/blade ban-list on top. \"No visible weapons ever\" is bible-locked.",
+      "negative": "face, eyes, nose, mouth, lips, chin, cheeks, facial features, human face, visible face, portrait, bare skin, visible skin, exposed skin, bare arms, bare chest, bare shoulders, bare midriff, muscles, hair, beard, glowing eyes, gun, pistol, revolver, rifle, musket, firearm, barrel, muzzle, holster, cannon, artillery, sword, dagger, rapier, foil, cane, spear, pole, staff, bow, shield, holding item, holding, weapon in hand, tank, hoses, coiled tubes, vents, glowing, molten, pennants, banners, tattered strips, front view, straight-on view, facing the camera, side view, profile, back view, chibi, cute, text, watermark, blurry, 3d render, painterly, lineless, high detail texture noise",
+      "candidates": 6
+    },
+    {
+      "id": "stormdancer-t3",
+      "out": "sprites/classes/light_energy_t3a.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "dancing storm spirit, 3/4 top-down view facing south-east, void hood with the face hidden in black shadow, layered ribbons and weightless streamers trailing from the shoulders and sleeves, one arm raised and the other lowered in an asymmetric dancing pose, hem lifting off the ground, robe covering the entire body with no exposed skin anywhere, white robe with shifting blue and red accents, empty hands with no weapon",
+      "status": "accepted",
+      "sources": [
+        "stormdancer-t3"
+      ],
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "view": "low top-down",
+        "direction": "south-east",
+        "initImage": "sprites/classes/light_energy.png",
+        "initImageStrength": 75
+      },
+      "notes": "Bespoke T3 body, WAVE 3 final batch. Design: art/workbench/roster/bespoke-t3-draft.md \"WAVE 3\". Recipe: T2 frame in ORIGINAL colours, initImageStrength 75, 6 candidates, standing positive COVERAGE clause. NEW THIS BATCH — ASYMMETRY CLAUSE: every prompt names one asymmetric element (one sleeve longer, mantle heavier on one side, hem sweeping to one side). A perfectly symmetric design carries NO facing information, so the model defaults to a front-on view; asymmetry is what holds the 3/4 south-east turn. Same root cause as the Conduit rendering face-on because a featureless oval mask had no facing cue.",
+      "negative": "face, eyes, nose, mouth, lips, chin, cheeks, facial features, human face, visible face, portrait, bare skin, visible skin, exposed skin, bare arms, bare chest, bare shoulders, bare midriff, muscles, hair, beard, glowing eyes, weapon, sword, dagger, staff, wand, bow, gun, shield, scythe, whip, scourge, chains, holding item, holding, weapon in hand, cloud mantle, spiral wrap, cyclone, static pose, straight vertical folds, bound arms, front view, straight-on view, facing the camera, symmetrical front pose, side view, profile, back view, chibi, cute, text, watermark, blurry, 3d render, painterly, lineless, high detail texture noise",
+      "candidates": 6
+    },
+    {
+      "id": "surge-t3",
+      "out": "sprites/classes/light_energy_t3b.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "overcharged spirit, 3/4 top-down view facing south-east, void hood with the face hidden in black shadow, a tightly wrapped taut garment, jagged lightning-fracture patterns splitting across the cloth, a high raised collar behind the head, one shoulder wrapped heavier than the other, robe covering the entire body with no exposed skin anywhere, white with electric blue crackling seams, tense upright stance, empty hands with no weapon",
+      "status": "accepted",
+      "sources": [
+        "surge-t3"
+      ],
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "view": "low top-down",
+        "direction": "south-east",
+        "initImage": "sprites/classes/light_energy.png",
+        "initImageStrength": 75
+      },
+      "notes": "Bespoke T3 body, WAVE 3 final batch. Design: art/workbench/roster/bespoke-t3-draft.md \"WAVE 3\". Recipe: T2 frame in ORIGINAL colours, initImageStrength 75, 6 candidates, standing positive COVERAGE clause. NEW THIS BATCH — ASYMMETRY CLAUSE: every prompt names one asymmetric element (one sleeve longer, mantle heavier on one side, hem sweeping to one side). A perfectly symmetric design carries NO facing information, so the model defaults to a front-on view; asymmetry is what holds the 3/4 south-east turn. Same root cause as the Conduit rendering face-on because a featureless oval mask had no facing cue.",
+      "negative": "face, eyes, nose, mouth, lips, chin, cheeks, facial features, human face, visible face, portrait, bare skin, visible skin, exposed skin, bare arms, bare chest, bare shoulders, bare midriff, muscles, hair, beard, glowing eyes, weapon, sword, dagger, staff, wand, bow, gun, shield, scythe, whip, scourge, chains, holding item, holding, weapon in hand, ribbons, streamers, flowing, cloud mantle, spiral wrap, wave bands, loose robe, front view, straight-on view, facing the camera, symmetrical front pose, side view, profile, back view, chibi, cute, text, watermark, blurry, 3d render, painterly, lineless, high detail texture noise",
+      "candidates": 6
+    },
+    {
+      "id": "channeler-t3",
+      "out": "sprites/classes/light_energy_t3c.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "still ascetic spirit, 3/4 top-down view facing south-east, void hood with the face hidden in black shadow, a long unbroken robe falling in straight vertical folds, both arms bound across the body in wrapped cloth, a single pale gold sash crossing one shoulder, robe covering the entire body with no exposed skin anywhere, white and pale gold, a perfectly still upright column, empty hands with no weapon",
+      "status": "accepted",
+      "sources": [
+        "channeler-t3"
+      ],
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "view": "low top-down",
+        "direction": "south-east",
+        "initImage": "sprites/classes/light_energy.png",
+        "initImageStrength": 75
+      },
+      "notes": "Bespoke T3 body, WAVE 3 final batch. Design: art/workbench/roster/bespoke-t3-draft.md \"WAVE 3\". Recipe: T2 frame in ORIGINAL colours, initImageStrength 75, 6 candidates, standing positive COVERAGE clause. NEW THIS BATCH — ASYMMETRY CLAUSE: every prompt names one asymmetric element (one sleeve longer, mantle heavier on one side, hem sweeping to one side). A perfectly symmetric design carries NO facing information, so the model defaults to a front-on view; asymmetry is what holds the 3/4 south-east turn. Same root cause as the Conduit rendering face-on because a featureless oval mask had no facing cue.",
+      "negative": "face, eyes, nose, mouth, lips, chin, cheeks, facial features, human face, visible face, portrait, bare skin, visible skin, exposed skin, bare arms, bare chest, bare shoulders, bare midriff, muscles, hair, beard, glowing eyes, weapon, sword, dagger, staff, wand, bow, gun, shield, scythe, whip, scourge, chains, holding item, holding, weapon in hand, ribbons, streamers, motion, wind, cloud mantle, spiral, fracture patterns, jagged hem, front view, straight-on view, facing the camera, symmetrical front pose, side view, profile, back view, chibi, cute, text, watermark, blurry, 3d render, painterly, lineless, high detail texture noise",
+      "candidates": 6
+    },
+    {
+      "id": "stormbringer-t3",
+      "out": "sprites/classes/medium_energy_t3b.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "storm-calling spirit, 3/4 top-down view facing south-east, void hood with the face hidden in black shadow, a heavy billowing cloud-like mantle piled across the shoulders, a cloak with a jagged torn hem, a high raised collar, the mantle heavier on one side than the other, robe covering the entire body with no exposed skin anywhere, grey and deep violet, heavy static stance, empty hands with no weapon",
+      "status": "accepted",
+      "sources": [
+        "stormbringer-t3"
+      ],
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "view": "low top-down",
+        "direction": "south-east",
+        "initImage": "sprites/classes/medium_energy.png",
+        "initImageStrength": 75
+      },
+      "notes": "Bespoke T3 body, WAVE 3 final batch. Design: art/workbench/roster/bespoke-t3-draft.md \"WAVE 3\". Recipe: T2 frame in ORIGINAL colours, initImageStrength 75, 6 candidates, standing positive COVERAGE clause. NEW THIS BATCH — ASYMMETRY CLAUSE: every prompt names one asymmetric element (one sleeve longer, mantle heavier on one side, hem sweeping to one side). A perfectly symmetric design carries NO facing information, so the model defaults to a front-on view; asymmetry is what holds the 3/4 south-east turn. Same root cause as the Conduit rendering face-on because a featureless oval mask had no facing cue.",
+      "negative": "face, eyes, nose, mouth, lips, chin, cheeks, facial features, human face, visible face, portrait, bare skin, visible skin, exposed skin, bare arms, bare chest, bare shoulders, bare midriff, muscles, hair, beard, glowing eyes, weapon, sword, dagger, staff, wand, bow, gun, shield, scythe, whip, scourge, chains, holding item, holding, weapon in hand, ribbons, streamers, dancing, spiral wrap, cyclone, wave bands, split colours, teal, front view, straight-on view, facing the camera, symmetrical front pose, side view, profile, back view, chibi, cute, text, watermark, blurry, 3d render, painterly, lineless, high detail texture noise",
+      "candidates": 6
+    },
+    {
+      "id": "aetherist-t3",
+      "out": "sprites/classes/medium_energy_t3c.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "oscillating aether spirit, 3/4 top-down view facing south-east, void hood with the face hidden in black shadow, concentric wave bands rippling around the robe, a single sash spiralling diagonally around the body from one shoulder to the opposite hip, smooth flowing form, robe covering the entire body with no exposed skin anywhere, grey and teal, calm upright stance, empty hands with no weapon",
+      "status": "accepted",
+      "sources": [
+        "aetherist-t3"
+      ],
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "view": "low top-down",
+        "direction": "south-east",
+        "initImage": "sprites/classes/medium_energy.png",
+        "initImageStrength": 75
+      },
+      "notes": "Bespoke T3 body, WAVE 3 final batch. Design: art/workbench/roster/bespoke-t3-draft.md \"WAVE 3\". Recipe: T2 frame in ORIGINAL colours, initImageStrength 75, 6 candidates, standing positive COVERAGE clause. NEW THIS BATCH — ASYMMETRY CLAUSE: every prompt names one asymmetric element (one sleeve longer, mantle heavier on one side, hem sweeping to one side). A perfectly symmetric design carries NO facing information, so the model defaults to a front-on view; asymmetry is what holds the 3/4 south-east turn. Same root cause as the Conduit rendering face-on because a featureless oval mask had no facing cue.",
+      "negative": "face, eyes, nose, mouth, lips, chin, cheeks, facial features, human face, visible face, portrait, bare skin, visible skin, exposed skin, bare arms, bare chest, bare shoulders, bare midriff, muscles, hair, beard, glowing eyes, weapon, sword, dagger, staff, wand, bow, gun, shield, scythe, whip, scourge, chains, holding item, holding, weapon in hand, cloud mantle, ribbons, streamers, jagged hem, fracture patterns, violet, split colours, front view, straight-on view, facing the camera, symmetrical front pose, side view, profile, back view, chibi, cute, text, watermark, blurry, 3d render, painterly, lineless, high detail texture noise",
+      "candidates": 6
+    },
+    {
+      "id": "invoker-t3",
+      "out": "sprites/classes/heavy_energy_t3b.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "ritual invoker spirit, 3/4 top-down view facing south-east, void hood with the face hidden in black shadow, a heavy layered ceremonial robe with wide sleeves, thick dark gloves fully covering both hands, small glowing sigil rings orbiting at the waist and around the gloved hands, one sleeve longer than the other, robe covering the entire body with no exposed skin anywhere, black and deep violet, solemn upright stance, empty hands with no weapon",
+      "status": "accepted",
+      "sources": [
+        "invoker-t3"
+      ],
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "view": "low top-down",
+        "direction": "south-east",
+        "initImage": "sprites/classes/heavy_energy.png",
+        "initImageStrength": 75
+      },
+      "notes": "Fix the hands showing and this is a very cool concept. Add gloves maybe: I'd rather have gloves  ROUND 2: orientation and design were called strong; rejected ONLY for visible bare hands on all 6. Root cause was a regression in my own ban-list — `bare hands` existed in the tier-2 template and was dropped when the wave-3 negative list was rewritten, so gloves were unenforced across the whole wave. Fix is gloves stated POSITIVELY (per the coverage rule) plus the restored hand bans. Strength unchanged at 75 — nothing else about this spec was wrong. Round-1 candidates: art/workbench/invoker-t3/r75/.",
+      "negative": "face, eyes, nose, mouth, lips, chin, cheeks, facial features, human face, visible face, portrait, bare skin, visible skin, exposed skin, bare arms, bare chest, bare shoulders, bare midriff, muscles, hair, beard, glowing eyes, bare hands, exposed hands, visible hands, skin on the hands, fingers, bare fingers, weapon, sword, dagger, staff, wand, bow, gun, shield, holding item, holding, weapon in hand, halo, floating ring above the head, ring around the head, crown, chest aperture, spiral wrap, cyclone, teal, front view, straight-on view, facing the camera, symmetrical front pose, side view, profile, back view, chibi, cute, text, watermark, blurry, 3d render, painterly, lineless, high detail texture noise",
+      "candidates": 6
+    },
+    {
+      "id": "tempest-t3",
+      "out": "sprites/classes/heavy_energy_t3c.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "cyclone-wrapped spirit, 3/4 top-down view facing south-east, void hood with the face hidden in black shadow, the robe wrapped in spiralling banded layers winding around the body, the hem spiralling outward to one side, robe covering the entire body with no exposed skin anywhere, black and teal, swept diagonal stance, empty hands with no weapon",
+      "status": "accepted",
+      "sources": [
+        "tempest-t3"
+      ],
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "view": "low top-down",
+        "direction": "south-east",
+        "initImage": "sprites/classes/heavy_energy.png",
+        "initImageStrength": 75
+      },
+      "notes": "Bespoke T3 body, WAVE 3 final batch. Design: art/workbench/roster/bespoke-t3-draft.md \"WAVE 3\". Recipe: T2 frame in ORIGINAL colours, initImageStrength 75, 6 candidates, standing positive COVERAGE clause. NEW THIS BATCH — ASYMMETRY CLAUSE: every prompt names one asymmetric element (one sleeve longer, mantle heavier on one side, hem sweeping to one side). A perfectly symmetric design carries NO facing information, so the model defaults to a front-on view; asymmetry is what holds the 3/4 south-east turn. Same root cause as the Conduit rendering face-on because a featureless oval mask had no facing cue.",
+      "negative": "face, eyes, nose, mouth, lips, chin, cheeks, facial features, human face, visible face, portrait, bare skin, visible skin, exposed skin, bare arms, bare chest, bare shoulders, bare midriff, muscles, hair, beard, glowing eyes, weapon, sword, dagger, staff, wand, bow, gun, shield, scythe, whip, scourge, chains, holding item, holding, weapon in hand, cloud mantle, ribbons, streamers, sigil rings, chest aperture, violet, straight folds, front view, straight-on view, facing the camera, symmetrical front pose, side view, profile, back view, chibi, cute, text, watermark, blurry, 3d render, painterly, lineless, high detail texture noise",
+      "candidates": 6
+    },
+    {
+      "id": "venomslinger-t3",
+      "out": "sprites/classes/light_dot_t3a.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "venom alchemist, 3/4 top-down view facing south-east, deep hood with the face hidden in black shadow, a bandolier of small corked vials across the chest, thick gloves, an apron-layered robe, a dripping ragged hem, one sleeve rolled and bound at the elbow, robe covering the entire body with no exposed skin anywhere, bright venom green and dark leather, empty hands with no weapon",
+      "status": "accepted",
+      "sources": [
+        "venomslinger-t3"
+      ],
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "view": "low top-down",
+        "direction": "south-east",
+        "initImage": "sprites/classes/light_dot.png",
+        "initImageStrength": 75
+      },
+      "notes": "Bespoke T3 body, WAVE 3 final batch. Design: art/workbench/roster/bespoke-t3-draft.md \"WAVE 3\". Recipe: T2 frame in ORIGINAL colours, initImageStrength 75, 6 candidates, standing positive COVERAGE clause. NEW THIS BATCH — ASYMMETRY CLAUSE: every prompt names one asymmetric element (one sleeve longer, mantle heavier on one side, hem sweeping to one side). A perfectly symmetric design carries NO facing information, so the model defaults to a front-on view; asymmetry is what holds the 3/4 south-east turn. Same root cause as the Conduit rendering face-on because a featureless oval mask had no facing cue.",
+      "negative": "face, eyes, nose, mouth, lips, chin, cheeks, facial features, human face, visible face, portrait, bare skin, visible skin, exposed skin, bare arms, bare chest, bare shoulders, bare midriff, muscles, hair, beard, glowing eyes, weapon, sword, dagger, staff, wand, bow, gun, shield, scythe, whip, scourge, chains, holding item, holding, weapon in hand, deep pointed cowl, prayer strips, hanging fetishes, rope belt, ice, fire, front view, straight-on view, facing the camera, symmetrical front pose, side view, profile, back view, chibi, cute, text, watermark, blurry, 3d render, painterly, lineless, high detail texture noise",
+      "candidates": 6
+    },
+    {
+      "id": "zealot-t3",
+      "out": "sprites/classes/light_dot_t3c.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "frenzied flagellant, 3/4 top-down view facing south-east, a tattered hood with the face hidden in black shadow, the whole body bound in tight cloth wraps, narrow written prayer strips hanging from the shoulders and belt, a torn uneven hem longer on one side, hunched forward, robe covering the entire body with no exposed skin anywhere, jade green and bone white, empty hands with no weapon",
+      "status": "accepted",
+      "sources": [
+        "zealot-t3"
+      ],
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "view": "low top-down",
+        "direction": "south-east",
+        "initImage": "sprites/classes/light_dot.png",
+        "initImageStrength": 75
+      },
+      "notes": "Bespoke T3 body, WAVE 3 final batch. Design: art/workbench/roster/bespoke-t3-draft.md \"WAVE 3\". Recipe: T2 frame in ORIGINAL colours, initImageStrength 75, 6 candidates, standing positive COVERAGE clause. NEW THIS BATCH — ASYMMETRY CLAUSE: every prompt names one asymmetric element (one sleeve longer, mantle heavier on one side, hem sweeping to one side). A perfectly symmetric design carries NO facing information, so the model defaults to a front-on view; asymmetry is what holds the 3/4 south-east turn. Same root cause as the Conduit rendering face-on because a featureless oval mask had no facing cue.",
+      "negative": "face, eyes, nose, mouth, lips, chin, cheeks, facial features, human face, visible face, portrait, bare skin, visible skin, exposed skin, bare arms, bare chest, bare shoulders, bare midriff, muscles, hair, beard, glowing eyes, weapon, sword, dagger, staff, wand, bow, gun, shield, scythe, whip, scourge, chains, holding item, holding, weapon in hand, vials, bottles, bandolier, deep pointed cowl, hanging fetishes, rope belt, apron, ice, fire, front view, straight-on view, facing the camera, symmetrical front pose, side view, profile, back view, chibi, cute, text, watermark, blurry, 3d render, painterly, lineless, high detail texture noise",
+      "candidates": 6
+    },
+    {
+      "id": "pyromancer-t3",
+      "out": "sprites/classes/medium_dot_t3a.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "fire scholar, 3/4 top-down view facing south-east, deep hood with the face hidden in black shadow, a layered robe with one sleeve rolled and bound at the elbow, a scorched blackened hem, small ember motes glowing at the cuffs, a satchel at one hip, robe covering the entire body with no exposed skin anywhere, red and orange, empty hands with no weapon",
+      "status": "accepted",
+      "sources": [
+        "pyromancer-t3"
+      ],
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "view": "low top-down",
+        "direction": "south-east",
+        "initImage": "sprites/classes/medium_dot.png",
+        "initImageStrength": 75
+      },
+      "notes": "Bespoke T3 body, WAVE 3 final batch. Design: art/workbench/roster/bespoke-t3-draft.md \"WAVE 3\". Recipe: T2 frame in ORIGINAL colours, initImageStrength 75, 6 candidates, standing positive COVERAGE clause. NEW THIS BATCH — ASYMMETRY CLAUSE: every prompt names one asymmetric element (one sleeve longer, mantle heavier on one side, hem sweeping to one side). A perfectly symmetric design carries NO facing information, so the model defaults to a front-on view; asymmetry is what holds the 3/4 south-east turn. Same root cause as the Conduit rendering face-on because a featureless oval mask had no facing cue.",
+      "negative": "face, eyes, nose, mouth, lips, chin, cheeks, facial features, human face, visible face, portrait, bare skin, visible skin, exposed skin, bare arms, bare chest, bare shoulders, bare midriff, muscles, hair, beard, glowing eyes, weapon, sword, dagger, staff, wand, bow, gun, shield, scythe, whip, scourge, chains, holding item, holding, weapon in hand, crown, horns, molten cracks, brand sigil on the chest, leather apron, ice, poison, front view, straight-on view, facing the camera, symmetrical front pose, side view, profile, back view, chibi, cute, text, watermark, blurry, 3d render, painterly, lineless, high detail texture noise",
+      "candidates": 6
+    },
+    {
+      "id": "firebrand-t3",
+      "out": "sprites/classes/medium_dot_t3b.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "branded fire bearer, 3/4 top-down view facing south-east, deep hood with the face hidden in black shadow, one large glowing brand sigil burned into the chest of the robe, a scorch-blackened shoulder on one side only, a heavy leather apron worn over the robe, robe covering the entire body with no exposed skin anywhere, bright orange and charcoal, empty hands with no weapon",
+      "status": "accepted",
+      "sources": [
+        "firebrand-t3"
+      ],
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "view": "low top-down",
+        "direction": "south-east",
+        "initImage": "sprites/classes/medium_dot.png",
+        "initImageStrength": 75
+      },
+      "notes": "Bespoke T3 body, WAVE 3 final batch. Design: art/workbench/roster/bespoke-t3-draft.md \"WAVE 3\". Recipe: T2 frame in ORIGINAL colours, initImageStrength 75, 6 candidates, standing positive COVERAGE clause. NEW THIS BATCH — ASYMMETRY CLAUSE: every prompt names one asymmetric element (one sleeve longer, mantle heavier on one side, hem sweeping to one side). A perfectly symmetric design carries NO facing information, so the model defaults to a front-on view; asymmetry is what holds the 3/4 south-east turn. Same root cause as the Conduit rendering face-on because a featureless oval mask had no facing cue.",
+      "negative": "face, eyes, nose, mouth, lips, chin, cheeks, facial features, human face, visible face, portrait, bare skin, visible skin, exposed skin, bare arms, bare chest, bare shoulders, bare midriff, muscles, hair, beard, glowing eyes, weapon, sword, dagger, staff, wand, bow, gun, shield, scythe, whip, scourge, chains, holding item, holding, weapon in hand, crown, horns, molten cracks all over, vials, satchel, rolled sleeves, ice, poison, front view, straight-on view, facing the camera, symmetrical front pose, side view, profile, back view, chibi, cute, text, watermark, blurry, 3d render, painterly, lineless, high detail texture noise",
+      "candidates": 6
+    },
+    {
+      "id": "icebreaker-t3",
+      "out": "sprites/classes/heavy_dot_t3a.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "shattering frost mage, 3/4 top-down view facing south-east, deep hood with the face hidden in black shadow, the robe encased in cracked and fractured ice plates, jagged broken ice shards forming one oversized pauldron on a single shoulder, a splintered uneven hem, robe covering the entire body with no exposed skin anywhere, bright cyan and white, empty hands with no weapon",
+      "status": "accepted",
+      "sources": [
+        "icebreaker-t3"
+      ],
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "view": "low top-down",
+        "direction": "south-east",
+        "initImage": "sprites/classes/heavy_dot.png",
+        "initImageStrength": 75
+      },
+      "notes": "Bespoke T3 body, WAVE 3 final batch. Design: art/workbench/roster/bespoke-t3-draft.md \"WAVE 3\". Recipe: T2 frame in ORIGINAL colours, initImageStrength 75, 6 candidates, standing positive COVERAGE clause. NEW THIS BATCH — ASYMMETRY CLAUSE: every prompt names one asymmetric element (one sleeve longer, mantle heavier on one side, hem sweeping to one side). A perfectly symmetric design carries NO facing information, so the model defaults to a front-on view; asymmetry is what holds the 3/4 south-east turn. Same root cause as the Conduit rendering face-on because a featureless oval mask had no facing cue.",
+      "negative": "face, eyes, nose, mouth, lips, chin, cheeks, facial features, human face, visible face, portrait, bare skin, visible skin, exposed skin, bare arms, bare chest, bare shoulders, bare midriff, muscles, hair, beard, glowing eyes, weapon, sword, dagger, staff, wand, bow, gun, shield, scythe, whip, scourge, chains, holding item, holding, weapon in hand, ice crown, smooth plate, mantle, scarf, streaming cloth, wind, deep glacial blue, teal, fire, poison, front view, straight-on view, facing the camera, symmetrical front pose, side view, profile, back view, chibi, cute, text, watermark, blurry, 3d render, painterly, lineless, high detail texture noise",
+      "candidates": 6
     }
   ]
 }

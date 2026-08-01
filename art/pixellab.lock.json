@@ -16389,6 +16389,3306 @@
       "candidateFiles": [
         "candidate-6.png"
       ]
+    },
+    {
+      "at": "2026-07-31T23:32:53.165Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "assassin-t3",
+      "requestHash": "fd591e7712208589941d4987",
+      "usd": 0.006696352216932509,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-31T23:33:12.420Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "assassin-t3",
+      "requestHash": "fd591e7712208589941d4987",
+      "usd": 0.006644351800282796,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-31T23:33:32.859Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "assassin-t3",
+      "requestHash": "fd591e7712208589941d4987",
+      "usd": 0.00700109879175822,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-07-31T23:33:50.112Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "melter-t3",
+      "requestHash": "a6532dc8ee14724104e09f90",
+      "usd": 0.006495195627212525,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-07-31T23:34:21.471Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "melter-t3",
+      "requestHash": "a6532dc8ee14724104e09f90",
+      "usd": 0.006846204280853272,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-07-31T23:35:10.560Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "melter-t3",
+      "requestHash": "a6532dc8ee14724104e09f90",
+      "usd": 0.008160629908243816,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T00:02:25.069Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "assassin-t3",
+      "requestHash": "b941c6980e2c54177cf95635",
+      "usd": 0.006620145824220445,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T00:02:44.557Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "assassin-t3",
+      "requestHash": "b941c6980e2c54177cf95635",
+      "usd": 0.006623656537797716,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T00:03:23.422Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "assassin-t3",
+      "requestHash": "b941c6980e2c54177cf95635",
+      "usd": 0.006787255234188504,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T00:04:01.095Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "melter-t3",
+      "requestHash": "5fb2d5efc772e0c36cfe2eab",
+      "usd": 0.006740726629892986,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T00:06:57.078Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "melter-t3",
+      "requestHash": "5fb2d5efc772e0c36cfe2eab",
+      "usd": 0.006816567685869005,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T00:07:23.503Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "melter-t3",
+      "requestHash": "5fb2d5efc772e0c36cfe2eab",
+      "usd": 0.005999006854163276,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T00:12:05.570Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "destroyer-t3",
+      "requestHash": "257d0c14bfeeb2b86bb2e08d",
+      "usd": 0.008263763454225328,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T00:12:27.040Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "destroyer-t3",
+      "requestHash": "257d0c14bfeeb2b86bb2e08d",
+      "usd": 0.007202642387813992,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T00:12:47.224Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "destroyer-t3",
+      "requestHash": "257d0c14bfeeb2b86bb2e08d",
+      "usd": 0.0070235757827758795,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T00:13:06.986Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "destroyer-t3",
+      "requestHash": "257d0c14bfeeb2b86bb2e08d",
+      "usd": 0.006980339871512519,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T00:13:28.174Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "destroyer-t3",
+      "requestHash": "257d0c14bfeeb2b86bb2e08d",
+      "usd": 0.007180239650938246,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T00:14:04.817Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "destroyer-t3",
+      "requestHash": "257d0c14bfeeb2b86bb2e08d",
+      "usd": 0.008921053753958809,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T00:14:25.964Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "devout-priest-t3",
+      "requestHash": "7ac5e2fab7891f998fa8f3ba",
+      "usd": 0.007017746263080173,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T00:14:43.145Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "devout-priest-t3",
+      "requestHash": "7ac5e2fab7891f998fa8f3ba",
+      "usd": 0.006436731788847181,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T00:15:02.117Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "devout-priest-t3",
+      "requestHash": "7ac5e2fab7891f998fa8f3ba",
+      "usd": 0.0066385946538713245,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T00:15:16.412Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "devout-priest-t3",
+      "requestHash": "7ac5e2fab7891f998fa8f3ba",
+      "usd": 0.0061987783908844,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T00:15:37.652Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "devout-priest-t3",
+      "requestHash": "7ac5e2fab7891f998fa8f3ba",
+      "usd": 0.0071599663363562695,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T00:15:55.937Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "devout-priest-t3",
+      "requestHash": "7ac5e2fab7891f998fa8f3ba",
+      "usd": 0.006595267454783122,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T00:16:16.333Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "berserker-t3",
+      "requestHash": "b7548651e4a398a5f0d0d34e",
+      "usd": 0.007102174785402086,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T00:16:34.210Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "berserker-t3",
+      "requestHash": "b7548651e4a398a5f0d0d34e",
+      "usd": 0.0065779425832960346,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T00:16:55.371Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "berserker-t3",
+      "requestHash": "b7548651e4a398a5f0d0d34e",
+      "usd": 0.007152241786321005,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T00:17:14.470Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "berserker-t3",
+      "requestHash": "b7548651e4a398a5f0d0d34e",
+      "usd": 0.006550643073187934,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T00:17:35.648Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "berserker-t3",
+      "requestHash": "b7548651e4a398a5f0d0d34e",
+      "usd": 0.007031169997321235,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T00:17:52.866Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "berserker-t3",
+      "requestHash": "b7548651e4a398a5f0d0d34e",
+      "usd": 0.006692001395755345,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T00:18:07.524Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "hemomancer-t3",
+      "requestHash": "020a4f19ce4c9cbc48c495a7",
+      "usd": 0.006318687200546265,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T00:18:22.219Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "hemomancer-t3",
+      "requestHash": "020a4f19ce4c9cbc48c495a7",
+      "usd": 0.006334021859698826,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T00:18:56.540Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "hemomancer-t3",
+      "requestHash": "020a4f19ce4c9cbc48c495a7",
+      "usd": 0.008667688184314303,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T00:19:26.536Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "hemomancer-t3",
+      "requestHash": "020a4f19ce4c9cbc48c495a7",
+      "usd": 0.007815922578175863,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T00:19:49.255Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "hemomancer-t3",
+      "requestHash": "020a4f19ce4c9cbc48c495a7",
+      "usd": 0.007190434985690647,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T00:20:06.776Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "hemomancer-t3",
+      "requestHash": "020a4f19ce4c9cbc48c495a7",
+      "usd": 0.006758888430065579,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T00:20:23.993Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cultist-t3",
+      "requestHash": "293b16953f64c0b580635c4d",
+      "usd": 0.006634918318854438,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T00:20:37.547Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cultist-t3",
+      "requestHash": "293b16953f64c0b580635c4d",
+      "usd": 0.006219879627227783,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T00:20:55.101Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cultist-t3",
+      "requestHash": "293b16953f64c0b580635c4d",
+      "usd": 0.006767098241382176,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T00:21:18.924Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cultist-t3",
+      "requestHash": "293b16953f64c0b580635c4d",
+      "usd": 0.007320547448264228,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T00:21:45.514Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cultist-t3",
+      "requestHash": "293b16953f64c0b580635c4d",
+      "usd": 0.007420532464981079,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T00:21:59.728Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cultist-t3",
+      "requestHash": "293b16953f64c0b580635c4d",
+      "usd": 0.006171462403403388,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T00:22:18.397Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "desperado-t3",
+      "requestHash": "f186f67187216215b2615b4d",
+      "usd": 0.006849695179197523,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T00:22:38.232Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "desperado-t3",
+      "requestHash": "f186f67187216215b2615b4d",
+      "usd": 0.006979071060816447,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T00:22:57.343Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "desperado-t3",
+      "requestHash": "f186f67187216215b2615b4d",
+      "usd": 0.006927515321307713,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T00:23:43.782Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "desperado-t3",
+      "requestHash": "f186f67187216215b2615b4d",
+      "usd": 0.009656100696987576,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T00:24:00.370Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "desperado-t3",
+      "requestHash": "f186f67187216215b2615b4d",
+      "usd": 0.006382520172331069,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T00:24:21.225Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "desperado-t3",
+      "requestHash": "f186f67187216215b2615b4d",
+      "usd": 0.007196621523963081,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T00:24:40.705Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "sniper-t3",
+      "requestHash": "06f914f2aff98a8c56733f7f",
+      "usd": 0.006946004046334161,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T00:24:58.071Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "sniper-t3",
+      "requestHash": "06f914f2aff98a8c56733f7f",
+      "usd": 0.0064576702647738985,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T00:25:20.718Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "sniper-t3",
+      "requestHash": "06f914f2aff98a8c56733f7f",
+      "usd": 0.007289174927605523,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T00:25:42.721Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "sniper-t3",
+      "requestHash": "06f914f2aff98a8c56733f7f",
+      "usd": 0.00695429089334276,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T00:26:05.093Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "sniper-t3",
+      "requestHash": "06f914f2aff98a8c56733f7f",
+      "usd": 0.007257400724622939,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T00:26:18.327Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "sniper-t3",
+      "requestHash": "06f914f2aff98a8c56733f7f",
+      "usd": 0.006128658162222968,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T00:26:40.597Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "voidwalker-t3",
+      "requestHash": "43357ef522185b8b94156ddf",
+      "usd": 0.007250858147939047,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T00:26:52.323Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "voidwalker-t3",
+      "requestHash": "43357ef522185b8b94156ddf",
+      "usd": 0.006029874139361912,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T00:27:13.566Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "voidwalker-t3",
+      "requestHash": "43357ef522185b8b94156ddf",
+      "usd": 0.007163579093085395,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T00:27:33.820Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "voidwalker-t3",
+      "requestHash": "43357ef522185b8b94156ddf",
+      "usd": 0.0070506566100650364,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T00:27:53.643Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "voidwalker-t3",
+      "requestHash": "43357ef522185b8b94156ddf",
+      "usd": 0.006921749247445001,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T00:28:11.106Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "voidwalker-t3",
+      "requestHash": "43357ef522185b8b94156ddf",
+      "usd": 0.006627499103546142,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T00:28:35.334Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "wind-spirit-t3",
+      "requestHash": "562c0690609cdcf45d732fb5",
+      "usd": 0.007088755634095934,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T00:28:57.239Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "wind-spirit-t3",
+      "requestHash": "562c0690609cdcf45d732fb5",
+      "usd": 0.007200036843617757,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T00:29:22.557Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "wind-spirit-t3",
+      "requestHash": "562c0690609cdcf45d732fb5",
+      "usd": 0.007360735999213325,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T00:30:08.446Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "wind-spirit-t3",
+      "requestHash": "562c0690609cdcf45d732fb5",
+      "usd": 0.008352698034710355,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T00:30:27.959Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "wind-spirit-t3",
+      "requestHash": "562c0690609cdcf45d732fb5",
+      "usd": 0.006954783068762885,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T00:30:54.298Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "wind-spirit-t3",
+      "requestHash": "562c0690609cdcf45d732fb5",
+      "usd": 0.007535171005460951,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T16:31:33.268Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "berserker-t3",
+      "requestHash": "3e7a94f56286b6420b5e0f79",
+      "usd": 0.008399441719055177,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T16:31:52.228Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "berserker-t3",
+      "requestHash": "3e7a94f56286b6420b5e0f79",
+      "usd": 0.006608098533418444,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T16:32:09.420Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "berserker-t3",
+      "requestHash": "3e7a94f56286b6420b5e0f79",
+      "usd": 0.00675862619611952,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T16:32:36.900Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "berserker-t3",
+      "requestHash": "3e7a94f56286b6420b5e0f79",
+      "usd": 0.007555400186114841,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T16:32:55.148Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "berserker-t3",
+      "requestHash": "3e7a94f56286b6420b5e0f79",
+      "usd": 0.006799499988555909,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T16:33:09.569Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "berserker-t3",
+      "requestHash": "3e7a94f56286b6420b5e0f79",
+      "usd": 0.006237599823209975,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T16:37:06.709Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "berserker-t3",
+      "requestHash": "773200e8e57dadbaad6182d1",
+      "usd": 0.006674549367692736,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T16:37:28.033Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "berserker-t3",
+      "requestHash": "773200e8e57dadbaad6182d1",
+      "usd": 0.006973551697201199,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T16:38:00.522Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "berserker-t3",
+      "requestHash": "773200e8e57dadbaad6182d1",
+      "usd": 0.007475469536251492,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T16:38:26.658Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "berserker-t3",
+      "requestHash": "773200e8e57dadbaad6182d1",
+      "usd": 0.007011899338828193,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T16:38:44.346Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "berserker-t3",
+      "requestHash": "773200e8e57dadbaad6182d1",
+      "usd": 0.006816983699798584,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T16:39:06.341Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "berserker-t3",
+      "requestHash": "773200e8e57dadbaad6182d1",
+      "usd": 0.0072133586936526835,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T16:39:30.154Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "equinox-t3",
+      "requestHash": "34a70285f47a87ff25c3dd98",
+      "usd": 0.007446246306101481,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T16:40:02.018Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "equinox-t3",
+      "requestHash": "34a70285f47a87ff25c3dd98",
+      "usd": 0.008072169118457371,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T16:40:20.276Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "equinox-t3",
+      "requestHash": "34a70285f47a87ff25c3dd98",
+      "usd": 0.00659181727303399,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T16:40:50.557Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "equinox-t3",
+      "requestHash": "34a70285f47a87ff25c3dd98",
+      "usd": 0.0078030227025349935,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T16:41:08.231Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "equinox-t3",
+      "requestHash": "34a70285f47a87ff25c3dd98",
+      "usd": 0.006790921529134115,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T16:41:41.000Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "equinox-t3",
+      "requestHash": "34a70285f47a87ff25c3dd98",
+      "usd": 0.008353166951073542,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T16:42:00.599Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "winter-warden-t3",
+      "requestHash": "6562f997d4db645088ef7048",
+      "usd": 0.006650719033347236,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T16:42:18.712Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "winter-warden-t3",
+      "requestHash": "6562f997d4db645088ef7048",
+      "usd": 0.006748369057973226,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T16:43:01.498Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "winter-warden-t3",
+      "requestHash": "6562f997d4db645088ef7048",
+      "usd": 0.008904446416431004,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T16:43:18.607Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "winter-warden-t3",
+      "requestHash": "6562f997d4db645088ef7048",
+      "usd": 0.006685634083218045,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T16:43:38.630Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "winter-warden-t3",
+      "requestHash": "6562f997d4db645088ef7048",
+      "usd": 0.006963689062330458,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T16:44:02.180Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "winter-warden-t3",
+      "requestHash": "6562f997d4db645088ef7048",
+      "usd": 0.0071715234120686856,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T16:44:32.167Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "bounty-hunter-t3",
+      "requestHash": "d8549e414ee4b01b846f1f16",
+      "usd": 0.00791538421312968,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T16:44:47.388Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "bounty-hunter-t3",
+      "requestHash": "d8549e414ee4b01b846f1f16",
+      "usd": 0.00620399464501275,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T16:45:13.110Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "bounty-hunter-t3",
+      "requestHash": "d8549e414ee4b01b846f1f16",
+      "usd": 0.007414091348648072,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T16:45:32.409Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "bounty-hunter-t3",
+      "requestHash": "d8549e414ee4b01b846f1f16",
+      "usd": 0.006715143256717258,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T16:46:25.780Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "bounty-hunter-t3",
+      "requestHash": "d8549e414ee4b01b846f1f16",
+      "usd": 0.009729483683904012,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T16:46:44.953Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "bounty-hunter-t3",
+      "requestHash": "d8549e414ee4b01b846f1f16",
+      "usd": 0.006897145297792223,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T16:47:04.711Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "transcendant-t3",
+      "requestHash": "533c103f28450cdbe1f9a903",
+      "usd": 0.006941966533660889,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T16:47:22.738Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "transcendant-t3",
+      "requestHash": "533c103f28450cdbe1f9a903",
+      "usd": 0.006810190253787571,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T16:47:43.572Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "transcendant-t3",
+      "requestHash": "533c103f28450cdbe1f9a903",
+      "usd": 0.007074202961391873,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T16:47:59.036Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "transcendant-t3",
+      "requestHash": "533c103f28450cdbe1f9a903",
+      "usd": 0.006331192493438721,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T16:48:29.199Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "transcendant-t3",
+      "requestHash": "533c103f28450cdbe1f9a903",
+      "usd": 0.007875995132658218,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T16:48:49.679Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "transcendant-t3",
+      "requestHash": "533c103f28450cdbe1f9a903",
+      "usd": 0.007129978974660238,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T16:49:16.824Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cinder-lord-t3",
+      "requestHash": "7a5b3c334f2724a4f98ddaa2",
+      "usd": 0.007203578657574124,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T16:49:33.380Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cinder-lord-t3",
+      "requestHash": "7a5b3c334f2724a4f98ddaa2",
+      "usd": 0.006505129628711277,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T16:49:51.294Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cinder-lord-t3",
+      "requestHash": "7a5b3c334f2724a4f98ddaa2",
+      "usd": 0.0068371275001102025,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T16:50:09.601Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cinder-lord-t3",
+      "requestHash": "7a5b3c334f2724a4f98ddaa2",
+      "usd": 0.006700127389695909,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T16:50:28.657Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cinder-lord-t3",
+      "requestHash": "7a5b3c334f2724a4f98ddaa2",
+      "usd": 0.006626366880204943,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T16:51:18.047Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cinder-lord-t3",
+      "requestHash": "7a5b3c334f2724a4f98ddaa2",
+      "usd": 0.010004788663652208,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:03:33.137Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "shockblade-t3",
+      "requestHash": "a7cd494c39da56ef0b80ba2b",
+      "usd": 0.006322928296195136,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:04:17.681Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "shockblade-t3",
+      "requestHash": "a7cd494c39da56ef0b80ba2b",
+      "usd": 0.006892766131295098,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:04:59.965Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "shockblade-t3",
+      "requestHash": "a7cd494c39da56ef0b80ba2b",
+      "usd": 0.006610698011186388,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:05:47.875Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "shockblade-t3",
+      "requestHash": "a7cd494c39da56ef0b80ba2b",
+      "usd": 0.00735250441233317,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:06:20.050Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "shockblade-t3",
+      "requestHash": "a7cd494c39da56ef0b80ba2b",
+      "usd": 0.007323679155773586,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:06:40.933Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "shockblade-t3",
+      "requestHash": "a7cd494c39da56ef0b80ba2b",
+      "usd": 0.007207403871748183,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:06:52.987Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "scrapper-t3",
+      "requestHash": "3b78c74952d28c5c1c6355e5",
+      "usd": 0.00604201783074273,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:07:32.071Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "scrapper-t3",
+      "requestHash": "3b78c74952d28c5c1c6355e5",
+      "usd": 0.00760140946176317,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:07:49.223Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "scrapper-t3",
+      "requestHash": "3b78c74952d28c5c1c6355e5",
+      "usd": 0.006035375462638008,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:08:06.162Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "scrapper-t3",
+      "requestHash": "3b78c74952d28c5c1c6355e5",
+      "usd": 0.006314659012688531,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:08:25.594Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "scrapper-t3",
+      "requestHash": "3b78c74952d28c5c1c6355e5",
+      "usd": 0.006690010044309828,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:08:48.537Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "scrapper-t3",
+      "requestHash": "3b78c74952d28c5c1c6355e5",
+      "usd": 0.007338985257678562,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:09:08.705Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "swiftblade-t3",
+      "requestHash": "b1a3819c43f5e971a11dc6ec",
+      "usd": 0.007062828328874376,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:09:23.364Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "swiftblade-t3",
+      "requestHash": "b1a3819c43f5e971a11dc6ec",
+      "usd": 0.006304571628570557,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:09:37.601Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "swiftblade-t3",
+      "requestHash": "b1a3819c43f5e971a11dc6ec",
+      "usd": 0.006176971011691623,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:09:54.435Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "swiftblade-t3",
+      "requestHash": "b1a3819c43f5e971a11dc6ec",
+      "usd": 0.0066106760501861575,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:10:15.991Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "swiftblade-t3",
+      "requestHash": "b1a3819c43f5e971a11dc6ec",
+      "usd": 0.007101969162623088,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:10:36.287Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "swiftblade-t3",
+      "requestHash": "b1a3819c43f5e971a11dc6ec",
+      "usd": 0.006991881052652995,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:10:58.497Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "maestro-t3",
+      "requestHash": "e5a999004f19cddac332280f",
+      "usd": 0.007295422077178955,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:11:18.103Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "maestro-t3",
+      "requestHash": "e5a999004f19cddac332280f",
+      "usd": 0.00696415834956699,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:11:49.939Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "maestro-t3",
+      "requestHash": "e5a999004f19cddac332280f",
+      "usd": 0.00774306419160631,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:12:11.303Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "maestro-t3",
+      "requestHash": "e5a999004f19cddac332280f",
+      "usd": 0.007009280125300089,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:12:36.187Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "maestro-t3",
+      "requestHash": "e5a999004f19cddac332280f",
+      "usd": 0.006590138567818536,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:12:52.697Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "maestro-t3",
+      "requestHash": "e5a999004f19cddac332280f",
+      "usd": 0.006370774136649238,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:13:10.674Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "wavecrest-t3",
+      "requestHash": "b964a494d40d86d5b216f677",
+      "usd": 0.00681523076693217,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:13:29.586Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "wavecrest-t3",
+      "requestHash": "b964a494d40d86d5b216f677",
+      "usd": 0.006914168437321981,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:13:46.895Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "wavecrest-t3",
+      "requestHash": "b964a494d40d86d5b216f677",
+      "usd": 0.006461099730597602,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:14:18.795Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "wavecrest-t3",
+      "requestHash": "b964a494d40d86d5b216f677",
+      "usd": 0.007672772937350803,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:14:36.484Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "wavecrest-t3",
+      "requestHash": "b964a494d40d86d5b216f677",
+      "usd": 0.006466433895958795,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:14:55.117Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "wavecrest-t3",
+      "requestHash": "b964a494d40d86d5b216f677",
+      "usd": 0.006557415167490642,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:15:13.628Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "justicar-t3",
+      "requestHash": "47487af384564062ab644c59",
+      "usd": 0.006775221003426446,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:15:27.815Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "justicar-t3",
+      "requestHash": "47487af384564062ab644c59",
+      "usd": 0.0062825340959760875,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:15:45.531Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "justicar-t3",
+      "requestHash": "47487af384564062ab644c59",
+      "usd": 0.00683108655611674,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:16:01.349Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "justicar-t3",
+      "requestHash": "47487af384564062ab644c59",
+      "usd": 0.0063581701384650335,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:16:34.668Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "justicar-t3",
+      "requestHash": "47487af384564062ab644c59",
+      "usd": 0.008132950835757786,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:16:53.670Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "justicar-t3",
+      "requestHash": "47487af384564062ab644c59",
+      "usd": 0.006855725314882067,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:17:28.298Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "juggernaut-t3",
+      "requestHash": "cf25ce529a3d49b75b718013",
+      "usd": 0.008300220198101468,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:17:45.921Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "juggernaut-t3",
+      "requestHash": "cf25ce529a3d49b75b718013",
+      "usd": 0.006388372156355116,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:18:03.938Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "juggernaut-t3",
+      "requestHash": "cf25ce529a3d49b75b718013",
+      "usd": 0.006789727820290459,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:18:20.622Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "juggernaut-t3",
+      "requestHash": "cf25ce529a3d49b75b718013",
+      "usd": 0.006549562401241727,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:18:33.555Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "juggernaut-t3",
+      "requestHash": "cf25ce529a3d49b75b718013",
+      "usd": 0.006146877368291219,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:19:04.057Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "juggernaut-t3",
+      "requestHash": "cf25ce529a3d49b75b718013",
+      "usd": 0.007933658785290188,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:25:28.050Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "sunderer-t3",
+      "requestHash": "8fb91fdf8e8f7a6997d1de91",
+      "usd": 0.007905746512942844,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:25:50.806Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "sunderer-t3",
+      "requestHash": "8fb91fdf8e8f7a6997d1de91",
+      "usd": 0.0073494325478871666,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:26:08.970Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "sunderer-t3",
+      "requestHash": "8fb91fdf8e8f7a6997d1de91",
+      "usd": 0.006538904852337307,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:26:29.480Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "sunderer-t3",
+      "requestHash": "8fb91fdf8e8f7a6997d1de91",
+      "usd": 0.007124853372573852,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:26:48.162Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "sunderer-t3",
+      "requestHash": "8fb91fdf8e8f7a6997d1de91",
+      "usd": 0.00669001242849562,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:27:12.644Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "sunderer-t3",
+      "requestHash": "8fb91fdf8e8f7a6997d1de91",
+      "usd": 0.006748890823788113,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:27:33.548Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "reverb-t3",
+      "requestHash": "ee3ae74602e0518519dcf8ba",
+      "usd": 0.007139034218258328,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:28:04.227Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "reverb-t3",
+      "requestHash": "ee3ae74602e0518519dcf8ba",
+      "usd": 0.00795030493206448,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:28:24.800Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "reverb-t3",
+      "requestHash": "ee3ae74602e0518519dcf8ba",
+      "usd": 0.006922398858600192,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:28:55.105Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "reverb-t3",
+      "requestHash": "ee3ae74602e0518519dcf8ba",
+      "usd": 0.0073232800430721706,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:29:12.469Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "reverb-t3",
+      "requestHash": "ee3ae74602e0518519dcf8ba",
+      "usd": 0.00665757597817315,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:29:58.524Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "reverb-t3",
+      "requestHash": "ee3ae74602e0518519dcf8ba",
+      "usd": 0.007411968469619751,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:30:49.153Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "dynamo-t3",
+      "requestHash": "01925f370b53ae6b7dd7b1db",
+      "usd": 0.008215983867645264,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:31:12.802Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "dynamo-t3",
+      "requestHash": "01925f370b53ae6b7dd7b1db",
+      "usd": 0.006599511384963989,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:31:32.877Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "dynamo-t3",
+      "requestHash": "01925f370b53ae6b7dd7b1db",
+      "usd": 0.007051612165239122,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:31:50.448Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "dynamo-t3",
+      "requestHash": "01925f370b53ae6b7dd7b1db",
+      "usd": 0.006725797176361084,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:32:28.500Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "dynamo-t3",
+      "requestHash": "01925f370b53ae6b7dd7b1db",
+      "usd": 0.00857568441496955,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:32:52.701Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "dynamo-t3",
+      "requestHash": "01925f370b53ae6b7dd7b1db",
+      "usd": 0.006789531336890327,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:33:37.164Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "stalwart-t3",
+      "requestHash": "f43bf05725ea7ef933568847",
+      "usd": 0.008418888648351034,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:34:25.381Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "stalwart-t3",
+      "requestHash": "f43bf05725ea7ef933568847",
+      "usd": 0.009873502731323243,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:34:46.959Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "stalwart-t3",
+      "requestHash": "f43bf05725ea7ef933568847",
+      "usd": 0.007156635257932875,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:35:08.685Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "stalwart-t3",
+      "requestHash": "f43bf05725ea7ef933568847",
+      "usd": 0.006901356511645847,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:35:28.020Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "stalwart-t3",
+      "requestHash": "f43bf05725ea7ef933568847",
+      "usd": 0.0065946641763051355,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:35:52.985Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "stalwart-t3",
+      "requestHash": "f43bf05725ea7ef933568847",
+      "usd": 0.007051183117760552,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:36:30.887Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "avenger-t3",
+      "requestHash": "9d79c10bb1bee7d2036f390a",
+      "usd": 0.008451958576838175,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:36:51.114Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "avenger-t3",
+      "requestHash": "9d79c10bb1bee7d2036f390a",
+      "usd": 0.006429448710547553,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:37:10.083Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "avenger-t3",
+      "requestHash": "9d79c10bb1bee7d2036f390a",
+      "usd": 0.006879837459988065,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:37:24.887Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "avenger-t3",
+      "requestHash": "9d79c10bb1bee7d2036f390a",
+      "usd": 0.006245697127448188,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:37:44.562Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "avenger-t3",
+      "requestHash": "9d79c10bb1bee7d2036f390a",
+      "usd": 0.006583637078603109,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:38:03.750Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "avenger-t3",
+      "requestHash": "9d79c10bb1bee7d2036f390a",
+      "usd": 0.006880780670377944,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:43:54.053Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "duelist-t3",
+      "requestHash": "6d2966c4e453be575496f673",
+      "usd": 0.00792213699552748,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:44:11.422Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "duelist-t3",
+      "requestHash": "6d2966c4e453be575496f673",
+      "usd": 0.0064733375178443065,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:44:31.652Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "duelist-t3",
+      "requestHash": "6d2966c4e453be575496f673",
+      "usd": 0.007066841681798299,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:44:51.694Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "duelist-t3",
+      "requestHash": "6d2966c4e453be575496f673",
+      "usd": 0.007071943283081055,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:45:13.221Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "duelist-t3",
+      "requestHash": "6d2966c4e453be575496f673",
+      "usd": 0.006942204475402832,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:45:33.697Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "duelist-t3",
+      "requestHash": "6d2966c4e453be575496f673",
+      "usd": 0.007016058180067274,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:45:51.515Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "blunderbuss-t3",
+      "requestHash": "ffde7b7930ef9ccd6a428234",
+      "usd": 0.006752517196867201,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:46:18.820Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "blunderbuss-t3",
+      "requestHash": "ffde7b7930ef9ccd6a428234",
+      "usd": 0.00774537984530131,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:46:41.048Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "blunderbuss-t3",
+      "requestHash": "ffde7b7930ef9ccd6a428234",
+      "usd": 0.0072527598010169135,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:46:53.975Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "blunderbuss-t3",
+      "requestHash": "ffde7b7930ef9ccd6a428234",
+      "usd": 0.006050224463144938,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:47:21.869Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "blunderbuss-t3",
+      "requestHash": "ffde7b7930ef9ccd6a428234",
+      "usd": 0.0061235623094770646,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:47:44.678Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "blunderbuss-t3",
+      "requestHash": "ffde7b7930ef9ccd6a428234",
+      "usd": 0.007125184350543552,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:48:18.535Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "dualslinger-t3",
+      "requestHash": "212c531d1a239431c63a3b05",
+      "usd": 0.008390469868977865,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:48:38.171Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "dualslinger-t3",
+      "requestHash": "212c531d1a239431c63a3b05",
+      "usd": 0.006638090478049384,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:48:56.862Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "dualslinger-t3",
+      "requestHash": "212c531d1a239431c63a3b05",
+      "usd": 0.006872503386603461,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:49:19.089Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "dualslinger-t3",
+      "requestHash": "212c531d1a239431c63a3b05",
+      "usd": 0.006926654524273343,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:49:48.348Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "dualslinger-t3",
+      "requestHash": "212c531d1a239431c63a3b05",
+      "usd": 0.007719672547446358,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:50:15.673Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "dualslinger-t3",
+      "requestHash": "212c531d1a239431c63a3b05",
+      "usd": 0.0074808577166663275,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:50:37.676Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "warmonger-t3",
+      "requestHash": "7b5053e4b0bbe70d069879dd",
+      "usd": 0.006858639982011583,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:50:57.839Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "warmonger-t3",
+      "requestHash": "7b5053e4b0bbe70d069879dd",
+      "usd": 0.006639438655641344,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:51:16.105Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "warmonger-t3",
+      "requestHash": "7b5053e4b0bbe70d069879dd",
+      "usd": 0.006874102460013496,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:51:33.933Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "warmonger-t3",
+      "requestHash": "7b5053e4b0bbe70d069879dd",
+      "usd": 0.006657239066229927,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:51:48.040Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "warmonger-t3",
+      "requestHash": "7b5053e4b0bbe70d069879dd",
+      "usd": 0.006253148900138008,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:52:08.574Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "warmonger-t3",
+      "requestHash": "7b5053e4b0bbe70d069879dd",
+      "usd": 0.007048532538943821,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:52:21.455Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cannoneer-t3",
+      "requestHash": "f93807e014faaa4bc79d747e",
+      "usd": 0.006132272587882149,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:52:42.715Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cannoneer-t3",
+      "requestHash": "f93807e014faaa4bc79d747e",
+      "usd": 0.006854470544391209,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:53:06.286Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cannoneer-t3",
+      "requestHash": "f93807e014faaa4bc79d747e",
+      "usd": 0.007256440798441569,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:53:22.930Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cannoneer-t3",
+      "requestHash": "f93807e014faaa4bc79d747e",
+      "usd": 0.0061992035706837974,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:53:47.846Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cannoneer-t3",
+      "requestHash": "f93807e014faaa4bc79d747e",
+      "usd": 0.007121001879374186,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T18:54:18.046Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "cannoneer-t3",
+      "requestHash": "f93807e014faaa4bc79d747e",
+      "usd": 0.007877959489822388,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T19:00:58.596Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "duelist-t3",
+      "requestHash": "a8875ea73663179003166d53",
+      "usd": 0.007350830872853598,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T19:01:16.059Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "duelist-t3",
+      "requestHash": "a8875ea73663179003166d53",
+      "usd": 0.00664308778444926,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T19:01:38.229Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "duelist-t3",
+      "requestHash": "a8875ea73663179003166d53",
+      "usd": 0.007291667037540013,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T19:02:00.492Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "duelist-t3",
+      "requestHash": "a8875ea73663179003166d53",
+      "usd": 0.006060757822460599,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T19:02:22.135Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "duelist-t3",
+      "requestHash": "a8875ea73663179003166d53",
+      "usd": 0.007132901191711426,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T19:02:57.481Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "duelist-t3",
+      "requestHash": "a8875ea73663179003166d53",
+      "usd": 0.0068724369208017985,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T19:03:23.494Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "stormdancer-t3",
+      "requestHash": "78d3458bbcdcb18051cca8d5",
+      "usd": 0.007414954132503934,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T19:03:43.721Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "stormdancer-t3",
+      "requestHash": "78d3458bbcdcb18051cca8d5",
+      "usd": 0.006798992077509562,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T19:04:04.040Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "stormdancer-t3",
+      "requestHash": "78d3458bbcdcb18051cca8d5",
+      "usd": 0.006893362522125244,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T19:04:23.752Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "stormdancer-t3",
+      "requestHash": "78d3458bbcdcb18051cca8d5",
+      "usd": 0.0069520607789357505,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T19:04:41.957Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "stormdancer-t3",
+      "requestHash": "78d3458bbcdcb18051cca8d5",
+      "usd": 0.0066927788257598875,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T19:05:07.603Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "stormdancer-t3",
+      "requestHash": "78d3458bbcdcb18051cca8d5",
+      "usd": 0.00739108067088657,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T19:05:39.756Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "surge-t3",
+      "requestHash": "747b995cc98f94d6852b380d",
+      "usd": 0.008027968168258667,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T19:06:00.036Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "surge-t3",
+      "requestHash": "747b995cc98f94d6852b380d",
+      "usd": 0.006945083220799764,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T19:06:17.682Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "surge-t3",
+      "requestHash": "747b995cc98f94d6852b380d",
+      "usd": 0.0066436799897087945,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T19:06:44.744Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "surge-t3",
+      "requestHash": "747b995cc98f94d6852b380d",
+      "usd": 0.007564830991956923,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T19:07:02.735Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "surge-t3",
+      "requestHash": "747b995cc98f94d6852b380d",
+      "usd": 0.006795131338967217,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T19:07:23.003Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "surge-t3",
+      "requestHash": "747b995cc98f94d6852b380d",
+      "usd": 0.006960766739315457,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T19:08:12.022Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "channeler-t3",
+      "requestHash": "41f16eba8c402d5af29c9b4b",
+      "usd": 0.010334534009297689,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T19:08:32.880Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "channeler-t3",
+      "requestHash": "41f16eba8c402d5af29c9b4b",
+      "usd": 0.007103693087895711,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T19:09:25.543Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "channeler-t3",
+      "requestHash": "41f16eba8c402d5af29c9b4b",
+      "usd": 0.0099360654619005,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T19:09:39.404Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "channeler-t3",
+      "requestHash": "41f16eba8c402d5af29c9b4b",
+      "usd": 0.006165920681423611,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T19:09:57.911Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "channeler-t3",
+      "requestHash": "41f16eba8c402d5af29c9b4b",
+      "usd": 0.006874680784013537,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T19:10:27.204Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "channeler-t3",
+      "requestHash": "41f16eba8c402d5af29c9b4b",
+      "usd": 0.007608491924073962,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T19:10:45.953Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "stormbringer-t3",
+      "requestHash": "3cd0cda4245b8285ecf1f615",
+      "usd": 0.006746643092897204,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T19:10:59.566Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "stormbringer-t3",
+      "requestHash": "3cd0cda4245b8285ecf1f615",
+      "usd": 0.00620829627248976,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T19:11:24.600Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "stormbringer-t3",
+      "requestHash": "3cd0cda4245b8285ecf1f615",
+      "usd": 0.007128590027491251,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T19:11:42.876Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "stormbringer-t3",
+      "requestHash": "3cd0cda4245b8285ecf1f615",
+      "usd": 0.0067603807184431295,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T19:12:05.349Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "stormbringer-t3",
+      "requestHash": "3cd0cda4245b8285ecf1f615",
+      "usd": 0.007178310924106174,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T19:12:28.997Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "stormbringer-t3",
+      "requestHash": "3cd0cda4245b8285ecf1f615",
+      "usd": 0.0073503988318973125,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T19:12:45.947Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "aetherist-t3",
+      "requestHash": "d1afb5ed1c25d31c0836e006",
+      "usd": 0.006476705312728882,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T19:13:08.392Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "aetherist-t3",
+      "requestHash": "d1afb5ed1c25d31c0836e006",
+      "usd": 0.006999059147304958,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T19:13:38.738Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "aetherist-t3",
+      "requestHash": "d1afb5ed1c25d31c0836e006",
+      "usd": 0.006677927282121446,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T19:14:10.272Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "aetherist-t3",
+      "requestHash": "d1afb5ed1c25d31c0836e006",
+      "usd": 0.007117718405193753,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T19:14:36.130Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "aetherist-t3",
+      "requestHash": "d1afb5ed1c25d31c0836e006",
+      "usd": 0.007062558756934272,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T19:14:54.386Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "aetherist-t3",
+      "requestHash": "d1afb5ed1c25d31c0836e006",
+      "usd": 0.0067853890524970165,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T19:15:12.654Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "invoker-t3",
+      "requestHash": "91681e670b500a5615a933f0",
+      "usd": 0.006687573777304756,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T19:15:42.162Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "invoker-t3",
+      "requestHash": "91681e670b500a5615a933f0",
+      "usd": 0.006804613881640964,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T19:16:03.968Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "invoker-t3",
+      "requestHash": "91681e670b500a5615a933f0",
+      "usd": 0.006977181805504693,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T19:16:20.729Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "invoker-t3",
+      "requestHash": "91681e670b500a5615a933f0",
+      "usd": 0.00657923075887892,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T19:16:46.805Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "invoker-t3",
+      "requestHash": "91681e670b500a5615a933f0",
+      "usd": 0.007074286752276951,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T19:17:18.402Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "invoker-t3",
+      "requestHash": "91681e670b500a5615a933f0",
+      "usd": 0.00812126832538181,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T19:17:36.051Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "tempest-t3",
+      "requestHash": "d73bc1ed88c85cd812d194c0",
+      "usd": 0.006844710456000434,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T19:17:56.149Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "tempest-t3",
+      "requestHash": "d73bc1ed88c85cd812d194c0",
+      "usd": 0.006954501549402873,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T19:18:13.430Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "tempest-t3",
+      "requestHash": "d73bc1ed88c85cd812d194c0",
+      "usd": 0.00665774499045478,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T19:18:34.256Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "tempest-t3",
+      "requestHash": "d73bc1ed88c85cd812d194c0",
+      "usd": 0.007062805440690783,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T19:18:52.744Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "tempest-t3",
+      "requestHash": "d73bc1ed88c85cd812d194c0",
+      "usd": 0.006798006269666884,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T19:19:11.393Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "tempest-t3",
+      "requestHash": "d73bc1ed88c85cd812d194c0",
+      "usd": 0.006873027271694607,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T19:19:30.824Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "venomslinger-t3",
+      "requestHash": "8893a53731f1c7ccf1552228",
+      "usd": 0.007005669991175334,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T19:19:49.150Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "venomslinger-t3",
+      "requestHash": "8893a53731f1c7ccf1552228",
+      "usd": 0.006843515078226725,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T19:20:16.721Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "venomslinger-t3",
+      "requestHash": "8893a53731f1c7ccf1552228",
+      "usd": 0.007272286521063911,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T19:20:37.903Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "venomslinger-t3",
+      "requestHash": "8893a53731f1c7ccf1552228",
+      "usd": 0.0070825344721476245,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T19:21:03.598Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "venomslinger-t3",
+      "requestHash": "8893a53731f1c7ccf1552228",
+      "usd": 0.007394604365030925,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T19:21:20.815Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "venomslinger-t3",
+      "requestHash": "8893a53731f1c7ccf1552228",
+      "usd": 0.0064786775641971165,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T19:21:42.367Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "zealot-t3",
+      "requestHash": "aeed5f2c3ccd3171b167feee",
+      "usd": 0.007133530934651693,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T19:22:05.603Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "zealot-t3",
+      "requestHash": "aeed5f2c3ccd3171b167feee",
+      "usd": 0.007457695298724705,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T19:22:25.047Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "zealot-t3",
+      "requestHash": "aeed5f2c3ccd3171b167feee",
+      "usd": 0.006776715570025974,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T19:22:41.528Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "zealot-t3",
+      "requestHash": "aeed5f2c3ccd3171b167feee",
+      "usd": 0.006657531897226969,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T19:24:24.112Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "zealot-t3",
+      "requestHash": "aeed5f2c3ccd3171b167feee",
+      "usd": 0.016075124714109632,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T19:24:50.264Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "zealot-t3",
+      "requestHash": "aeed5f2c3ccd3171b167feee",
+      "usd": 0.00706169867515564,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T19:25:18.049Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "pyromancer-t3",
+      "requestHash": "4c568eeb5696d024942149f1",
+      "usd": 0.007309476561016506,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T19:25:37.181Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "pyromancer-t3",
+      "requestHash": "4c568eeb5696d024942149f1",
+      "usd": 0.006818277915318807,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T19:26:10.189Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "pyromancer-t3",
+      "requestHash": "4c568eeb5696d024942149f1",
+      "usd": 0.008174464384714763,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T19:26:30.348Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "pyromancer-t3",
+      "requestHash": "4c568eeb5696d024942149f1",
+      "usd": 0.0070892520745595294,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T19:26:50.629Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "pyromancer-t3",
+      "requestHash": "4c568eeb5696d024942149f1",
+      "usd": 0.006946758164299859,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T19:27:01.993Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "pyromancer-t3",
+      "requestHash": "4c568eeb5696d024942149f1",
+      "usd": 0.005921661350462172,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T19:27:21.416Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "firebrand-t3",
+      "requestHash": "305a53eb27c17f910006f0b5",
+      "usd": 0.006590041955312093,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T19:27:39.736Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "firebrand-t3",
+      "requestHash": "305a53eb27c17f910006f0b5",
+      "usd": 0.00671835928493076,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T19:27:57.623Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "firebrand-t3",
+      "requestHash": "305a53eb27c17f910006f0b5",
+      "usd": 0.006662122037675646,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T19:28:20.286Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "firebrand-t3",
+      "requestHash": "305a53eb27c17f910006f0b5",
+      "usd": 0.007378634426328872,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T19:28:37.842Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "firebrand-t3",
+      "requestHash": "305a53eb27c17f910006f0b5",
+      "usd": 0.006759615235858493,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T19:29:01.881Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "firebrand-t3",
+      "requestHash": "305a53eb27c17f910006f0b5",
+      "usd": 0.0075033345752292206,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T19:29:23.242Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "icebreaker-t3",
+      "requestHash": "155d618aa7dd844d6ca25c1f",
+      "usd": 0.006954209327697754,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T19:29:45.424Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "icebreaker-t3",
+      "requestHash": "155d618aa7dd844d6ca25c1f",
+      "usd": 0.007215442286597358,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T19:30:04.181Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "icebreaker-t3",
+      "requestHash": "155d618aa7dd844d6ca25c1f",
+      "usd": 0.0068794096575842964,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T19:30:23.875Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "icebreaker-t3",
+      "requestHash": "155d618aa7dd844d6ca25c1f",
+      "usd": 0.006516567044787936,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T19:30:43.615Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "icebreaker-t3",
+      "requestHash": "155d618aa7dd844d6ca25c1f",
+      "usd": 0.006980921427408854,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T19:31:08.266Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "icebreaker-t3",
+      "requestHash": "155d618aa7dd844d6ca25c1f",
+      "usd": 0.007287672095828587,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T19:57:23.516Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "duelist-t3",
+      "requestHash": "9abf7c500b79cc31828acf06",
+      "usd": 0.006742602427800497,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T19:57:45.643Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "duelist-t3",
+      "requestHash": "9abf7c500b79cc31828acf06",
+      "usd": 0.007025392903221978,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T19:58:05.606Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "duelist-t3",
+      "requestHash": "9abf7c500b79cc31828acf06",
+      "usd": 0.006887411647372776,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T19:58:35.116Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "duelist-t3",
+      "requestHash": "9abf7c500b79cc31828acf06",
+      "usd": 0.0067091203000810415,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T19:58:52.365Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "duelist-t3",
+      "requestHash": "9abf7c500b79cc31828acf06",
+      "usd": 0.006601993560791016,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T19:59:12.789Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "duelist-t3",
+      "requestHash": "9abf7c500b79cc31828acf06",
+      "usd": 0.0069795832633972165,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T19:59:30.828Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "invoker-t3",
+      "requestHash": "c8a7e2e784addd539f36e8ab",
+      "usd": 0.0068113693131340875,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T19:59:45.722Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "invoker-t3",
+      "requestHash": "c8a7e2e784addd539f36e8ab",
+      "usd": 0.006245505279964871,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T20:00:04.558Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "invoker-t3",
+      "requestHash": "c8a7e2e784addd539f36e8ab",
+      "usd": 0.006951451222101847,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T20:00:34.004Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "invoker-t3",
+      "requestHash": "c8a7e2e784addd539f36e8ab",
+      "usd": 0.007677430709203084,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T20:00:55.530Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "invoker-t3",
+      "requestHash": "c8a7e2e784addd539f36e8ab",
+      "usd": 0.007166873746448093,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T20:01:13.440Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "invoker-t3",
+      "requestHash": "c8a7e2e784addd539f36e8ab",
+      "usd": 0.006662251578436957,
+      "candidateFiles": [
+        "candidate-6.png"
+      ]
     }
   ]
 }

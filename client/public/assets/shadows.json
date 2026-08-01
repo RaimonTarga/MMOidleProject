@@ -1,6 +1,114 @@
 {
-  "atlasHash": "43d1931ed5fa87444016d8a7669a616b7a2fe9df072e0fb27c9c64447f0faeed",
+  "atlasHash": "46723121cc8ff7cbf9b75b17ff3975adddd1be152d35e206727efe3adfc3c293",
   "frames": {
+    "sprites/accents/crest-close-cadence.png": {
+      "sourceW": 32,
+      "sourceH": 32,
+      "footY": 15,
+      "halfWAtFoot": 9.5
+    },
+    "sprites/accents/crest-close-cooldown.png": {
+      "sourceW": 32,
+      "sourceH": 32,
+      "footY": 15,
+      "halfWAtFoot": 9.5
+    },
+    "sprites/accents/crest-close-dot.png": {
+      "sourceW": 32,
+      "sourceH": 32,
+      "footY": 15,
+      "halfWAtFoot": 11
+    },
+    "sprites/accents/crest-close-energy.png": {
+      "sourceW": 32,
+      "sourceH": 32,
+      "footY": 15,
+      "halfWAtFoot": 11.5
+    },
+    "sprites/accents/crest-close-reload.png": {
+      "sourceW": 32,
+      "sourceH": 32,
+      "footY": 15,
+      "halfWAtFoot": 9.5
+    },
+    "sprites/accents/crest-close-summoner.png": {
+      "sourceW": 32,
+      "sourceH": 32,
+      "footY": 15,
+      "halfWAtFoot": 9.5
+    },
+    "sprites/accents/crest-far-cadence.png": {
+      "sourceW": 32,
+      "sourceH": 32,
+      "footY": 15,
+      "halfWAtFoot": 10.5
+    },
+    "sprites/accents/crest-far-cooldown.png": {
+      "sourceW": 32,
+      "sourceH": 32,
+      "footY": 15,
+      "halfWAtFoot": 10.5
+    },
+    "sprites/accents/crest-far-dot.png": {
+      "sourceW": 32,
+      "sourceH": 32,
+      "footY": 15,
+      "halfWAtFoot": 12.5
+    },
+    "sprites/accents/crest-far-energy.png": {
+      "sourceW": 32,
+      "sourceH": 32,
+      "footY": 15,
+      "halfWAtFoot": 13.5
+    },
+    "sprites/accents/crest-far-reload.png": {
+      "sourceW": 32,
+      "sourceH": 32,
+      "footY": 15,
+      "halfWAtFoot": 10.5
+    },
+    "sprites/accents/crest-far-summoner.png": {
+      "sourceW": 32,
+      "sourceH": 32,
+      "footY": 15,
+      "halfWAtFoot": 10.5
+    },
+    "sprites/accents/crest-mid-cadence.png": {
+      "sourceW": 32,
+      "sourceH": 32,
+      "footY": 15,
+      "halfWAtFoot": 10.5
+    },
+    "sprites/accents/crest-mid-cooldown.png": {
+      "sourceW": 32,
+      "sourceH": 32,
+      "footY": 15,
+      "halfWAtFoot": 10.5
+    },
+    "sprites/accents/crest-mid-dot.png": {
+      "sourceW": 32,
+      "sourceH": 32,
+      "footY": 15,
+      "halfWAtFoot": 12.5
+    },
+    "sprites/accents/crest-mid-energy.png": {
+      "sourceW": 32,
+      "sourceH": 32,
+      "footY": 15,
+      "halfWAtFoot": 12.5
+    },
+    "sprites/accents/crest-mid-reload.png": {
+      "sourceW": 32,
+      "sourceH": 32,
+      "footY": 15,
+      "halfWAtFoot": 10.5
+    },
+    "sprites/accents/crest-mid-summoner.png": {
+      "sourceW": 32,
+      "sourceH": 32,
+      "footY": 15,
+      "halfWAtFoot": 10.5
+    },
     "sprites/bosses/boss-cave-t1.png": {
       "sourceW": 128,
       "sourceH": 128,
@@ -223,10 +331,52 @@
       "footY": 27,
       "halfWAtFoot": 13.5
     },
+    "sprites/classes/heavy_cadence_t3a.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 30,
+      "halfWAtFoot": 12.5
+    },
+    "sprites/classes/heavy_cadence_t3b.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 29,
+      "halfWAtFoot": 13
+    },
+    "sprites/classes/heavy_cadence_t3c.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 26,
+      "halfWAtFoot": 13.5
+    },
     "sprites/classes/heavy_cadence.png": {
       "sourceW": 64,
       "sourceH": 64,
       "footY": 29,
+      "halfWAtFoot": 13
+    },
+    "sprites/classes/heavy_cooldown_t3a-variant-2.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 27,
+      "halfWAtFoot": 12
+    },
+    "sprites/classes/heavy_cooldown_t3a.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 29,
+      "halfWAtFoot": 12.5
+    },
+    "sprites/classes/heavy_cooldown_t3b.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 29,
+      "halfWAtFoot": 11
+    },
+    "sprites/classes/heavy_cooldown_t3c.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 30,
       "halfWAtFoot": 13
     },
     "sprites/classes/heavy_cooldown.png": {
@@ -234,6 +384,24 @@
       "sourceH": 64,
       "footY": 30,
       "halfWAtFoot": 12
+    },
+    "sprites/classes/heavy_dot_t3a.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 30,
+      "halfWAtFoot": 14.5
+    },
+    "sprites/classes/heavy_dot_t3b.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 28,
+      "halfWAtFoot": 15.5
+    },
+    "sprites/classes/heavy_dot_t3c.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 29,
+      "halfWAtFoot": 14
     },
     "sprites/classes/heavy_dot-variant-2.png": {
       "sourceW": 64,
@@ -253,6 +421,36 @@
       "footY": 29,
       "halfWAtFoot": 15.5
     },
+    "sprites/classes/heavy_energy_t3a.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 29,
+      "halfWAtFoot": 16
+    },
+    "sprites/classes/heavy_energy_t3b-variant-2.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 28,
+      "halfWAtFoot": 21
+    },
+    "sprites/classes/heavy_energy_t3b.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 29,
+      "halfWAtFoot": 15
+    },
+    "sprites/classes/heavy_energy_t3c-variant-2.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 28,
+      "halfWAtFoot": 18
+    },
+    "sprites/classes/heavy_energy_t3c.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 28,
+      "halfWAtFoot": 19
+    },
     "sprites/classes/heavy_energy-variant-2.png": {
       "sourceW": 64,
       "sourceH": 64,
@@ -270,6 +468,24 @@
       "sourceH": 64,
       "footY": 29,
       "halfWAtFoot": 16
+    },
+    "sprites/classes/heavy_reload_t3a.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 29,
+      "halfWAtFoot": 13.5
+    },
+    "sprites/classes/heavy_reload_t3b.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 29,
+      "halfWAtFoot": 16
+    },
+    "sprites/classes/heavy_reload_t3c.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 29,
+      "halfWAtFoot": 12
     },
     "sprites/classes/heavy_reload.png": {
       "sourceW": 64,
@@ -301,16 +517,88 @@
       "footY": 28,
       "halfWAtFoot": 12
     },
+    "sprites/classes/light_cadence_t3a-variant-2.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 29,
+      "halfWAtFoot": 18
+    },
+    "sprites/classes/light_cadence_t3a.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 29,
+      "halfWAtFoot": 17.5
+    },
+    "sprites/classes/light_cadence_t3b-variant-2.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 29,
+      "halfWAtFoot": 12
+    },
+    "sprites/classes/light_cadence_t3b.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 28,
+      "halfWAtFoot": 13
+    },
+    "sprites/classes/light_cadence_t3c.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 29,
+      "halfWAtFoot": 12.5
+    },
     "sprites/classes/light_cadence.png": {
       "sourceW": 64,
       "sourceH": 64,
       "footY": 29,
       "halfWAtFoot": 16.5
     },
+    "sprites/classes/light_cooldown_t3a.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 29,
+      "halfWAtFoot": 16.5
+    },
+    "sprites/classes/light_cooldown_t3b.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 27,
+      "halfWAtFoot": 11
+    },
+    "sprites/classes/light_cooldown_t3c-variant-2.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 28,
+      "halfWAtFoot": 13
+    },
+    "sprites/classes/light_cooldown_t3c.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 29,
+      "halfWAtFoot": 14
+    },
     "sprites/classes/light_cooldown.png": {
       "sourceW": 64,
       "sourceH": 64,
       "footY": 29,
+      "halfWAtFoot": 14
+    },
+    "sprites/classes/light_dot_t3a.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 30,
+      "halfWAtFoot": 13.5
+    },
+    "sprites/classes/light_dot_t3b.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 29,
+      "halfWAtFoot": 13.5
+    },
+    "sprites/classes/light_dot_t3c.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 30,
       "halfWAtFoot": 14
     },
     "sprites/classes/light_dot.png": {
@@ -319,11 +607,47 @@
       "footY": 30,
       "halfWAtFoot": 13.5
     },
+    "sprites/classes/light_energy_t3a.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 27,
+      "halfWAtFoot": 9
+    },
+    "sprites/classes/light_energy_t3b.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 30,
+      "halfWAtFoot": 15
+    },
+    "sprites/classes/light_energy_t3c.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 28,
+      "halfWAtFoot": 9.5
+    },
     "sprites/classes/light_energy.png": {
       "sourceW": 64,
       "sourceH": 64,
       "footY": 29,
       "halfWAtFoot": 16.5
+    },
+    "sprites/classes/light_reload_t3a.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 29,
+      "halfWAtFoot": 22
+    },
+    "sprites/classes/light_reload_t3b.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 29,
+      "halfWAtFoot": 15
+    },
+    "sprites/classes/light_reload_t3c.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 30,
+      "halfWAtFoot": 14.5
     },
     "sprites/classes/light_reload.png": {
       "sourceW": 64,
@@ -337,11 +661,59 @@
       "footY": 29,
       "halfWAtFoot": 12.5
     },
+    "sprites/classes/medium_cadence_t3a.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 29,
+      "halfWAtFoot": 18
+    },
+    "sprites/classes/medium_cadence_t3b.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 29,
+      "halfWAtFoot": 18.5
+    },
+    "sprites/classes/medium_cadence_t3c-variant-2.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 29,
+      "halfWAtFoot": 10
+    },
+    "sprites/classes/medium_cadence_t3c.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 29,
+      "halfWAtFoot": 17
+    },
     "sprites/classes/medium_cadence.png": {
       "sourceW": 64,
       "sourceH": 64,
       "footY": 29,
       "halfWAtFoot": 14
+    },
+    "sprites/classes/medium_cooldown_t3a.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 30,
+      "halfWAtFoot": 12.5
+    },
+    "sprites/classes/medium_cooldown_t3b-variant-2.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 29,
+      "halfWAtFoot": 13
+    },
+    "sprites/classes/medium_cooldown_t3b.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 30,
+      "halfWAtFoot": 12
+    },
+    "sprites/classes/medium_cooldown_t3c.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 30,
+      "halfWAtFoot": 12
     },
     "sprites/classes/medium_cooldown.png": {
       "sourceW": 64,
@@ -349,17 +721,101 @@
       "footY": 30,
       "halfWAtFoot": 14.5
     },
+    "sprites/classes/medium_dot_t3a.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 28,
+      "halfWAtFoot": 14
+    },
+    "sprites/classes/medium_dot_t3b.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 28,
+      "halfWAtFoot": 10.5
+    },
+    "sprites/classes/medium_dot_t3c-variant-2.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 28,
+      "halfWAtFoot": 19
+    },
+    "sprites/classes/medium_dot_t3c.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 29,
+      "halfWAtFoot": 15
+    },
     "sprites/classes/medium_dot.png": {
       "sourceW": 64,
       "sourceH": 64,
       "footY": 28,
       "halfWAtFoot": 15.5
     },
+    "sprites/classes/medium_energy_t3a.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 27,
+      "halfWAtFoot": 23
+    },
+    "sprites/classes/medium_energy_t3b.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 27,
+      "halfWAtFoot": 18
+    },
+    "sprites/classes/medium_energy_t3c-variant-2.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 27,
+      "halfWAtFoot": 13.5
+    },
+    "sprites/classes/medium_energy_t3c.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 29,
+      "halfWAtFoot": 21
+    },
     "sprites/classes/medium_energy.png": {
       "sourceW": 64,
       "sourceH": 64,
       "footY": 27,
       "halfWAtFoot": 18
+    },
+    "sprites/classes/medium_reload_t3a.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 30,
+      "halfWAtFoot": 12.5
+    },
+    "sprites/classes/medium_reload_t3b-variant-2.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 30,
+      "halfWAtFoot": 13
+    },
+    "sprites/classes/medium_reload_t3b-variant-3.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 28,
+      "halfWAtFoot": 14.5
+    },
+    "sprites/classes/medium_reload_t3b-variant-4.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 29,
+      "halfWAtFoot": 14
+    },
+    "sprites/classes/medium_reload_t3b.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 30,
+      "halfWAtFoot": 12
+    },
+    "sprites/classes/medium_reload_t3c.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 30,
+      "halfWAtFoot": 11
     },
     "sprites/classes/medium_reload.png": {
       "sourceW": 64,

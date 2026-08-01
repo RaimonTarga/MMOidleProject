@@ -1,0 +1,34 @@
+{
+  "assetId": "berserker-t3",
+  "category": "players",
+  "requestHash": "b7548651e4a398a5f0d0d34e",
+  "endpoint": "pixflux",
+  "at": "2026-08-01T00:15:55.947Z",
+  "prompt": "hulking berserker warrior, 3/4 top-down view facing south-east, hood thrown back to a rag-bound head with the face wrapped in dark cloth, no chainmail on the torso, bare shoulders and chest wraps, torn tabard strips hanging at the waist, blood red and dark leather palette, hunched forward aggressive stance, empty hands with no weapon",
+  "files": [
+    {
+      "file": "candidate-1.png",
+      "seed": 1985446297
+    },
+    {
+      "file": "candidate-2.png",
+      "seed": 484215584
+    },
+    {
+      "file": "candidate-3.png",
+      "seed": 1120413936
+    },
+    {
+      "file": "candidate-4.png",
+      "seed": 1536001817
+    },
+    {
+      "file": "candidate-5.png",
+      "seed": 185713697
+    },
+    {
+      "file": "candidate-6.png",
+      "seed": 1424366100
+    }
+  ]
+}

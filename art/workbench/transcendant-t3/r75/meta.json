@@ -1,0 +1,34 @@
+{
+  "assetId": "transcendant-t3",
+  "category": "players",
+  "requestHash": "533c103f28450cdbe1f9a903",
+  "endpoint": "pixflux",
+  "at": "2026-08-01T16:46:44.962Z",
+  "prompt": "ascended ascetic, 3/4 top-down view facing south-east, smooth featureless golden faceplate fully enclosing the head, plate armor replaced by layered flowing light robes, wide sash at the waist, bands of soft glowing script along the hem and sleeves, pale gold and white palette, serene upright stance, empty hands with no weapon",
+  "files": [
+    {
+      "file": "candidate-1.png",
+      "seed": 1044495832
+    },
+    {
+      "file": "candidate-2.png",
+      "seed": 415633863
+    },
+    {
+      "file": "candidate-3.png",
+      "seed": 413540645
+    },
+    {
+      "file": "candidate-4.png",
+      "seed": 981679231
+    },
+    {
+      "file": "candidate-5.png",
+      "seed": 289914419
+    },
+    {
+      "file": "candidate-6.png",
+      "seed": 1358289269
+    }
+  ]
+}

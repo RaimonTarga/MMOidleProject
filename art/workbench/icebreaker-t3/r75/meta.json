@@ -1,0 +1,34 @@
+{
+  "assetId": "icebreaker-t3",
+  "category": "players",
+  "requestHash": "155d618aa7dd844d6ca25c1f",
+  "endpoint": "pixflux",
+  "at": "2026-08-01T19:29:01.888Z",
+  "prompt": "shattering frost mage, 3/4 top-down view facing south-east, deep hood with the face hidden in black shadow, the robe encased in cracked and fractured ice plates, jagged broken ice shards forming one oversized pauldron on a single shoulder, a splintered uneven hem, robe covering the entire body with no exposed skin anywhere, bright cyan and white, empty hands with no weapon",
+  "files": [
+    {
+      "file": "candidate-1.png",
+      "seed": 642368051
+    },
+    {
+      "file": "candidate-2.png",
+      "seed": 1038106621
+    },
+    {
+      "file": "candidate-3.png",
+      "seed": 2147029584
+    },
+    {
+      "file": "candidate-4.png",
+      "seed": 1689351387
+    },
+    {
+      "file": "candidate-5.png",
+      "seed": 1735521272
+    },
+    {
+      "file": "candidate-6.png",
+      "seed": 963521876
+    }
+  ]
+}

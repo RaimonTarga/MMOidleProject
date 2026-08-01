@@ -1,0 +1,34 @@
+{
+  "assetId": "blunderbuss-t3",
+  "category": "players",
+  "requestHash": "ffde7b7930ef9ccd6a428234",
+  "endpoint": "pixflux",
+  "at": "2026-08-01T18:45:33.709Z",
+  "prompt": "close-quarters brawler in heavy padded gear, 3/4 top-down view facing south-east, pale mask with a single painted eye under a low hood, heavily padded coat, an oversized reinforced brace strapped over one shoulder, thick bracers on both forearms, rows of small pouches along the belt, wide planted stance, garment covering the entire body with no exposed skin anywhere, crimson and brown palette, empty hands with no weapon",
+  "files": [
+    {
+      "file": "candidate-1.png",
+      "seed": 878414144
+    },
+    {
+      "file": "candidate-2.png",
+      "seed": 2069185370
+    },
+    {
+      "file": "candidate-3.png",
+      "seed": 204467942
+    },
+    {
+      "file": "candidate-4.png",
+      "seed": 893580218
+    },
+    {
+      "file": "candidate-5.png",
+      "seed": 1478971234
+    },
+    {
+      "file": "candidate-6.png",
+      "seed": 47174925
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "assetId": "bounty-hunter-t3",
+  "category": "players",
+  "requestHash": "d8549e414ee4b01b846f1f16",
+  "endpoint": "pixflux",
+  "at": "2026-08-01T16:44:02.190Z",
+  "prompt": "armored bounty hunter, 3/4 top-down view facing south-east, pale mask with a single painted eye under a low hood, segmented armor plates worn over a long coat, hanging tokens and straps across the chest, heavy belt with pouches, tall boots, dark leather and amber palette, watchful stance, empty hands with no weapon",
+  "files": [
+    {
+      "file": "candidate-1.png",
+      "seed": 426584951
+    },
+    {
+      "file": "candidate-2.png",
+      "seed": 1400530117
+    },
+    {
+      "file": "candidate-3.png",
+      "seed": 116369164
+    },
+    {
+      "file": "candidate-4.png",
+      "seed": 674791465
+    },
+    {
+      "file": "candidate-5.png",
+      "seed": 428135686
+    },
+    {
+      "file": "candidate-6.png",
+      "seed": 344061260
+    }
+  ]
+}

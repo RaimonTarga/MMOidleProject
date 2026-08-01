@@ -1,0 +1,34 @@
+{
+  "assetId": "invoker-t3",
+  "category": "players",
+  "requestHash": "c8a7e2e784addd539f36e8ab",
+  "endpoint": "pixflux",
+  "at": "2026-08-01T19:59:12.799Z",
+  "prompt": "ritual invoker spirit, 3/4 top-down view facing south-east, void hood with the face hidden in black shadow, a heavy layered ceremonial robe with wide sleeves, thick dark gloves fully covering both hands, small glowing sigil rings orbiting at the waist and around the gloved hands, one sleeve longer than the other, robe covering the entire body with no exposed skin anywhere, black and deep violet, solemn upright stance, empty hands with no weapon",
+  "files": [
+    {
+      "file": "candidate-1.png",
+      "seed": 219474886
+    },
+    {
+      "file": "candidate-2.png",
+      "seed": 1188444487
+    },
+    {
+      "file": "candidate-3.png",
+      "seed": 1911039671
+    },
+    {
+      "file": "candidate-4.png",
+      "seed": 555539131
+    },
+    {
+      "file": "candidate-5.png",
+      "seed": 783016588
+    },
+    {
+      "file": "candidate-6.png",
+      "seed": 675684845
+    }
+  ]
+}

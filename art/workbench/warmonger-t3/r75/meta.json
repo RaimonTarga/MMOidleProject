@@ -1,0 +1,34 @@
+{
+  "assetId": "warmonger-t3",
+  "category": "players",
+  "requestHash": "7b5053e4b0bbe70d069879dd",
+  "endpoint": "pixflux",
+  "at": "2026-08-01T18:50:15.688Z",
+  "prompt": "war-torn veteran, 3/4 top-down view facing south-east, pale mask with a single painted eye under a hood with a battered brow plate, tattered pennant strips hanging from both shoulders and down the back, layered war-worn coat, small metal tokens hanging at the belt, garment covering the entire body with no exposed skin anywhere, crimson and dark iron palette, braced stance, empty hands with no weapon",
+  "files": [
+    {
+      "file": "candidate-1.png",
+      "seed": 53306650
+    },
+    {
+      "file": "candidate-2.png",
+      "seed": 872160234
+    },
+    {
+      "file": "candidate-3.png",
+      "seed": 47892343
+    },
+    {
+      "file": "candidate-4.png",
+      "seed": 239320664
+    },
+    {
+      "file": "candidate-5.png",
+      "seed": 1623991278
+    },
+    {
+      "file": "candidate-6.png",
+      "seed": 797047266
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "assetId": "berserker-t3",
+  "category": "players",
+  "requestHash": "3e7a94f56286b6420b5e0f79",
+  "endpoint": "pixflux",
+  "at": "2026-08-01T16:30:57.450Z",
+  "prompt": "frenzied fighter in torn layered rags, 3/4 top-down view facing south-east, head and face completely bound in dark cloth wraps with no opening and no hood, torso and arms fully covered in torn cloth strips and leather straps over dark padding, hanging tabard strips at the waist, blood red and dark leather palette, hunched forward aggressive stance, empty hands with no weapon",
+  "files": [
+    {
+      "file": "candidate-1.png",
+      "seed": 2049039754
+    },
+    {
+      "file": "candidate-2.png",
+      "seed": 448583730
+    },
+    {
+      "file": "candidate-3.png",
+      "seed": 889437558
+    },
+    {
+      "file": "candidate-4.png",
+      "seed": 508692728
+    },
+    {
+      "file": "candidate-5.png",
+      "seed": 137307202
+    },
+    {
+      "file": "candidate-6.png",
+      "seed": 937328110
+    }
+  ]
+}

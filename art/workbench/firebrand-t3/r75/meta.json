@@ -1,0 +1,34 @@
+{
+  "assetId": "firebrand-t3",
+  "category": "players",
+  "requestHash": "305a53eb27c17f910006f0b5",
+  "endpoint": "pixflux",
+  "at": "2026-08-01T19:27:02.004Z",
+  "prompt": "branded fire bearer, 3/4 top-down view facing south-east, deep hood with the face hidden in black shadow, one large glowing brand sigil burned into the chest of the robe, a scorch-blackened shoulder on one side only, a heavy leather apron worn over the robe, robe covering the entire body with no exposed skin anywhere, bright orange and charcoal, empty hands with no weapon",
+  "files": [
+    {
+      "file": "candidate-1.png",
+      "seed": 610767195
+    },
+    {
+      "file": "candidate-2.png",
+      "seed": 2010997244
+    },
+    {
+      "file": "candidate-3.png",
+      "seed": 1319566570
+    },
+    {
+      "file": "candidate-4.png",
+      "seed": 239059377
+    },
+    {
+      "file": "candidate-5.png",
+      "seed": 1488811181
+    },
+    {
+      "file": "candidate-6.png",
+      "seed": 2142213777
+    }
+  ]
+}

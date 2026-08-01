@@ -1,0 +1,34 @@
+{
+  "assetId": "wavecrest-t3",
+  "category": "players",
+  "requestHash": "b964a494d40d86d5b216f677",
+  "endpoint": "pixflux",
+  "at": "2026-08-01T18:12:52.707Z",
+  "prompt": "tidal skirmisher, 3/4 top-down view facing south-east, dark hood over a smooth curved visor covering the face, overlapping curved scale plates layered like breaking water, a raised crest ridge across the shoulders, a sash sweeping in an arc across the body, blue-steel and white palette, flowing forward stance, empty hands with no weapon",
+  "files": [
+    {
+      "file": "candidate-1.png",
+      "seed": 1342670545
+    },
+    {
+      "file": "candidate-2.png",
+      "seed": 1166737981
+    },
+    {
+      "file": "candidate-3.png",
+      "seed": 483224143
+    },
+    {
+      "file": "candidate-4.png",
+      "seed": 1151351525
+    },
+    {
+      "file": "candidate-5.png",
+      "seed": 35178861
+    },
+    {
+      "file": "candidate-6.png",
+      "seed": 2055246304
+    }
+  ]
+}

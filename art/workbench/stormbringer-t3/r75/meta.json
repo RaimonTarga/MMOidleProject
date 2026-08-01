@@ -1,0 +1,34 @@
+{
+  "assetId": "stormbringer-t3",
+  "category": "players",
+  "requestHash": "3cd0cda4245b8285ecf1f615",
+  "endpoint": "pixflux",
+  "at": "2026-08-01T19:10:27.212Z",
+  "prompt": "storm-calling spirit, 3/4 top-down view facing south-east, void hood with the face hidden in black shadow, a heavy billowing cloud-like mantle piled across the shoulders, a cloak with a jagged torn hem, a high raised collar, the mantle heavier on one side than the other, robe covering the entire body with no exposed skin anywhere, grey and deep violet, heavy static stance, empty hands with no weapon",
+  "files": [
+    {
+      "file": "candidate-1.png",
+      "seed": 656418828
+    },
+    {
+      "file": "candidate-2.png",
+      "seed": 605710795
+    },
+    {
+      "file": "candidate-3.png",
+      "seed": 261619709
+    },
+    {
+      "file": "candidate-4.png",
+      "seed": 2092633705
+    },
+    {
+      "file": "candidate-5.png",
+      "seed": 592220149
+    },
+    {
+      "file": "candidate-6.png",
+      "seed": 2093632200
+    }
+  ]
+}
