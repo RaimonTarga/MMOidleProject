@@ -44,6 +44,7 @@
     "art:review": "pnpm --dir server exec tsx --conditions=development ../tools/pixellab/review.ts",
     "art:pack": "pnpm --dir server exec tsx --conditions=development ../tools/pixellab/pack.ts",
     "art:status": "pnpm --dir server exec tsx --conditions=development ../tools/pixellab/status.ts",
+    "art:wire": "node tools/pixellab/wire-items.mjs",
     "art:glyphs": "pnpm --dir server exec tsx --conditions=development ../tools/glyphs/draw.ts",
     "ui:shot": "pnpm --dir server exec tsx --conditions=development ../tools/uishot/shot.ts",
     "test": "node scripts/run-tests.mjs",

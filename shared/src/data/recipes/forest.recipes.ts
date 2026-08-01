@@ -13,7 +13,7 @@ export const forestRecipeEntries = [
     recipeGroup: 'forest', requiredBiomeLevel: 1, slot: 'weapon',
     lineageId: 'rapier',
     cost: { green: 20 }, stats: { attack: 5 }, attacksPerSecond: 1.50, tier: 1,
-    icon: 'items/weapons/rapier-1.png',
+    icon: 'items/weapons/flash-rapier.png',
     description: 'Forged thin as a reed by duelists who prized speed above all.',
     upgrades: [
       { stats: { attack: 2 }, cost: { green: 30 }, requiredBiomeLevel: 2 },
@@ -84,7 +84,7 @@ export const forestRecipeEntries = [
     cost: { green: 60 }, catalystCost: { alacrity: 2 },           // family-tag: fast rapier → Alacrity
     reconstructCost: { green: 240 }, reconstructCatalystCost: { alacrity: 5 }, // RECONSTRUCT (no predecessor)
     stats: { attack: 18 }, attacksPerSecond: 1.60, tier: 2,
-    icon: 'items/weapons/rapier-2.png',
+    icon: 'items/weapons/gale-needle.png',
     description: 'A fencing blade machined to an impossible point, humming faintly when drawn.',
     upgrades: [
       { stats: { attack: 6 }, cost: { green: 60 }, requiredBiomeLevel: 8 },
@@ -102,7 +102,7 @@ export const forestRecipeEntries = [
     cost: { green: 50, purple: 20 }, catalystCost: { alacrity: 2 }, // family-tag: rapid on-hit rapier → Alacrity (bleed flavor could argue Blight)
     reconstructCost: { green: 200, purple: 80 }, reconstructCatalystCost: { alacrity: 5 },
     stats: { attack: 13, onHitDamage: 4 }, attacksPerSecond: 1.50, tier: 2,
-    icon: 'items/weapons/rapier-2.png',
+    icon: 'items/weapons/thorn-needle.png',
     description: 'The same blade, barbed — it bites and lets the wound do the rest.',
     upgrades: [
       { stats: { onHitDamage: 2 }, cost: { green: 60, purple: 20 }, requiredBiomeLevel: 8 },

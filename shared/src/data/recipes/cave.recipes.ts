@@ -13,7 +13,7 @@ export const caveRecipeEntries = [
     recipeGroup: 'cave', requiredBiomeLevel: 1, slot: 'weapon',
     cost: { red: 26 }, stats: { attack: 24 }, attacksPerSecond: 1.10, tier: 1,
     mechanicEffects: { 'weapon.dead-swing-interval': 3 },
-    icon: 'items/weapons/axe-1.png',
+    icon: 'items/weapons/chaotic-axe.png',
     description: 'A wild, top-heavy thing that fights as much as it is wielded.',
     upgrades: [
       { stats: { attack: 7 }, cost: { red: 30 }, requiredBiomeLevel: 2 },
@@ -79,7 +79,7 @@ export const caveRecipeEntries = [
     recipeGroup: 'cave', requiredBiomeLevel: 7, slot: 'weapon',
     cost: { red: 60 }, catalystCost: { volatility: 2 }, stats: { attack: 40 }, attacksPerSecond: 1.20, tier: 2, // family-tag: chaotic-axe (counted disruption) → Volatility
     mechanicEffects: { 'weapon.dead-swing-interval': 4 },
-    icon: 'items/weapons/axe-2.png',
+    icon: 'items/weapons/ruinous-axe.png',
     description: 'Bigger, meaner, and somehow better balanced — chaos with the faintest thread of discipline.',
     upgrades: [
       { stats: { attack: 14 }, cost: { red: 78 }, requiredBiomeLevel: 8 },
@@ -145,7 +145,7 @@ export const caveRecipeEntries = [
     recipeGroup: 'cave', requiredBiomeLevel: 13, slot: 'weapon',
     cost: { red: 120 }, catalystCost: { volatility: 3 }, stats: { attack: 82 }, attacksPerSecond: 1.20, tier: 3, // family-tag: chaotic-axe → Volatility
     mechanicEffects: { 'weapon.dead-swing-interval': 5 },
-    icon: 'items/weapons/whirling-morning-star.png',
+    icon: 'items/weapons/cataclysm-axe.png',
     description: 'Chaos given an edge — and, at last, a little rhythm. Every fifth swing still finds only air.',
     upgrades: [
       { stats: { attack: 16 }, cost: { red: 174 },  requiredBiomeLevel: 14 },

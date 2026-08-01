@@ -1,8 +1,15 @@
 # Item Icon Generation Plan (Phase 2)
 
-**Status:** proposed; not started. Follows the locked `item-identity-audit.md` (Phase 1,
-shipped). This is the original goal of the item overhaul: replace every hand-drawn item
-icon with a coherent PixelLab-generated family.
+**Status:** in progress — **weapons complete (32/32 generated, accepted, packed and wired
+as of 2026-08-01)**; armor, charms and boots not started (their 96 manifest entries are
+still `draft` imports of the legacy hand-drawn frames). Follows the locked
+`item-identity-audit.md` (Phase 1, shipped). This is the original goal of the item
+overhaul: replace every hand-drawn item icon with a coherent PixelLab-generated family.
+
+Decisions taken: **naming option B** (identity-matching frame names, one icon per item);
+ship size **32×32**; same flat bold pixel-art language as the ability/monster work;
+**slot-family** batch order. Frame slugs follow the item *name*, not the recipe id — the
+swamp T1 recipe id stays `ashbrand-blade` while its frame is `poison-dagger.png`.
 
 **Depends on:** the settled roster (names, slots, damage-profile motifs) from the audit —
 those are locked, so no icon generated here will need to be redone for an identity change.
@@ -17,10 +24,10 @@ language), and `biome-palette-bible.md`. The `art/manifests/ability-icons.json` 
 
 ## What exists today
 
-- **~101 unique item icon frames** referenced by recipes via each recipe's `icon:` field
-  (e.g. `items/weapons/rune-sword-hot-1.png`), pointing at the old hand-drawn atlas frames
-  in `client/public/assets`. Several are semantically wrong for the reworked items (the new
-  Poison Dagger still points at a fire-rune sword frame).
+- **126 recipe `icon:` fields.** All 32 weapon fields now point at bespoke generated frames
+  (`items/weapons/poison-dagger.png`, …). The remaining 94 armor/charm/boot fields still
+  point at the old hand-drawn atlas frames in `client/public/assets`, and many are shared
+  across several items (e.g. four mountain recipes on `hammer-2.png` before the weapon pass).
 - **The pipeline** (`art:import|seed|generate|review|pack|status`): `art/src/` is the
   committed source of truth; `art/manifests/*.json` holds one entry per asset;
   `client/public/assets` atlases are build output of `art:pack`. `art:generate` spends real
@@ -190,18 +197,138 @@ the predecessor's *accepted* art on disk, so chains span batches.
   Optionally add one clean T1 root (plains broadsword, forest rapier) to exercise a non-DoT
   weapon. **Gate: user reviews the pilot in the gallery and signs off on the family (and the
   style anchor) before any further generation.**
-- **Then roll out by slot family**, one reviewable batch each (weapons → armor → charms →
-  boots → cores), covering all biomes/tiers within the slot. Within a slot batch, generate
-  each line's root first, then walk that line upward via img2img (respecting the tier
-  dependency). Slot-family batches (rather than the per-biome monster methodology) keep one
-  object-language template per batch; biome palette varies inside it. Each slot batch is its
-  own review gate.
+- **Weapons — DONE.** Batches 0–2 covered all 32 weapon recipes across the 12 biome groups;
+  all accepted, packed, and wired. See "Phase 2b" below for the remaining slots.
+- **Then roll out by slot family**, covering all biomes/tiers within the slot. Within a slot
+  batch, generate each line's root first, then walk that line upward via img2img (respecting
+  the tier dependency). Slot-family batches (rather than the per-biome monster methodology)
+  keep one object-language template per batch; biome palette varies inside it.
 - **Relics/ultimates last** — relic identity is still unlocked (bible §14) and the abyss
   ultimate is WIP; icon them only once their concepts settle.
 
-Rough scale: ~100–110 distinct icons × 3 candidates ≈ ~300+ generations. Budget with
-`--budget=$` / `--limit=N`, always `--dry-run` first, and spread across sessions to respect
-the subscription cap. Pilot (~30 generations) proves the template before the bulk spend.
+Measured scale (from the weapon pass): **~$0.007 per generation**. 126 calls covered all 32
+weapons including re-rolls — **$0.88 total**. Money is not the constraint; review bandwidth
+is. Still `--dry-run` first and cap with `--budget=$` / `--limit=N` as a guard against a
+runaway loop, not as a cost control.
+
+---
+
+## Phase 2b — armor, charms, boots (89 icons)
+
+**Prerequisite already met:** the flavor/identity pass is DONE for these slots. The identity
+audit tagged the large majority of the roster `keep` — names, mechanics and descriptions all
+fit — and every armor/charm/boot recipe already carries a bespoke name and a mechanic-tied
+description (*Bestial Hide*, *Duneplate of the Last Stand*, *Echo Geode*, *Gravewalker
+Boots*). **No recipe rewriting is in scope. This is art + wiring only.**
+
+The one open mechanical item, the **mountain armor damage-cap → defensive-cooldown
+redesign**, is explicitly *not* an icon blocker: the stone-plate silhouette and the names
+survive it, so those five icons generate against the current identity.
+
+### Scope
+
+| Recipe slot | Art folder | Count | Notes |
+|---|---|---|---|
+| `armor` | `art/src/items/armor/` | 30 | 12 line roots + 18 tier followers |
+| `recovery` | `art/src/items/charms/` | 31 | 12 line roots + 19 followers |
+| `mobility` | `art/src/items/boots/` | 28 | 12 line roots + 16 followers |
+| `core` | — | *(5, excluded)* | **Cores are still being designed. Separate pass later.** |
+
+⚠️ The recipe slot names and the art folder names differ: `recovery` → `charms/`,
+`mobility` → `boots/`. A naive slot→folder mapper will create the wrong directories.
+
+### What the art has to fix
+
+Beyond "the icons are hand-drawn", **14 legacy frames are shared by 2–4 items each** — the
+single most visible problem in the inventory today:
+
+| Shared frame | Items collapsed onto it |
+|---|---|
+| `stone-hand-charm-2.png` | Iron Bulwark · Bastion Heart · Fortress Heart · Frostward Charm |
+| `plate-armor-3.png` | Iron Crusader Plate · Summit Aegis · Titan's Keep |
+| `plate-armor-1.png` | Fallen Knight Plate · Stormwall Plate · Deep Sea Carapace |
+| `plate-boots-4.png` | Canopy Striders · Vanguard Stride · Glacier Striders |
+| `stone-hand-charm-1.png` | Granite Barrier · Shieldmend Ward · Deepfreeze Ward |
+| …9 more at ×2 | volcano-armor-1, volcano-crystal, wood-charm-2, leather-boots-6, … |
+
+Option-B naming resolves all of these by construction: one item, one frame.
+
+### Mechanic-symbol vocabulary for the new slots
+
+Weapons drew their "+ what it does" hint from the damage profile. These slots draw it from
+`mechanicEffects`, whose key prefixes give a clean symbol mapping:
+
+| Effect family | Reads as | Symbol cue |
+|---|---|---|
+| `defense.max-hit-*`, `hardening-*` | damage cap / hardening | thick reinforced band, threshold line across the plate |
+| `defense.hit-plating-*` | stacking plating | layered overlapping scales |
+| `defense.stationary-dr-*`, `sustained-fight-*` | ramp while holding ground | creeping crust/ice/moss spreading from the edges |
+| `defense.cheat-death`, `debt-cheat-death` | survive the killing blow | a single crack that stops short, faint second outline |
+| `defense.dot-resistance`, `cleanse-*` | purge/resist rot | ward glyph, droplets beading off and falling away |
+| `defense.regen-*`, `in-combat-regen-*` | steady mending | soft concentric pulse ring |
+| `defense.shield-*`, `absorb-*` | ward/absorb | a thin hovering plate or ice sheet in front of the object |
+| `guard.*` | Guard-ability amplifier | carved sigil on the charm face |
+| `mobility.passive-speed`, `kite-*` | plain speed | one clean motion streak |
+| `mobility.ramp-*`, `kill-stack-*` | accelerating | 2–3 stacked streaks, longest at the back |
+| `mobility.stealth-*`, `suppress-*` | unseen | faded/ghosted heel, partial afterimage |
+| `mobility.tenacity-*` | shrugs off slows | broken chain link or shattered ice at the sole |
+| `mobility.aggro-pull-*` | loud/provoking | crushed ground, radiating impact marks |
+
+Slot object language is bible §8: armor = wrap/vest/hide/plate/mantle/shell/ward/cuirass;
+charm = amulet/charm/eye/gem/idol/knot/pouch/bell; boots = boots/wraps/treads/greaves/
+sandals/steps. Everything else (style tail, base negative, per-biome palette, 32×32,
+`pixflux`, locked `params`) is reused verbatim from the accepted weapon entries.
+
+### Wave structure (7 review gates)
+
+Waves are **tier-dependency-aware**: an img2img follower can never sit in the same wave as
+its root, because the seed must be *accepted* art on disk. Roots therefore front-load.
+
+| Wave | Contents | Items | Candidates |
+|---|---|---|---|
+| **P — pilot** | 3 armor + 3 charm + 3 boot roots, spread across contrasting biomes (e.g. mountain/swamp/jungle) | 9 | 27 |
+| **A1** | remaining 9 armor roots + followers of the pilot's armor lines | ~15 | ~45 |
+| **A2** | remaining armor followers | ~14 | ~42 |
+| **C1** | remaining 9 charm roots + followers of the pilot's charm lines | ~15 | ~45 |
+| **C2** | remaining charm followers | ~15 | ~45 |
+| **B1** | remaining 9 boot roots + followers of the pilot's boot lines | ~14 | ~42 |
+| **B2** | remaining boot followers | ~13 | ~39 |
+
+**Pilot gate:** nothing past wave P generates until the pilot is reviewed and the three new
+object languages are signed off. This exists because weapon Batch 1 ran img2img at strength
+200 and **10 of 12 candidates were rejected** as "too similar to the original".
+
+Total ≈ 89 items / ~267 candidates / **~$1.90**, or ~$2.50 with a 30% re-roll allowance.
+
+### Naming: author frame names explicitly, wire off `sources`
+
+Frame slugs follow the item *name*, but four names don't slug cleanly — author these by
+hand in the manifest rather than letting a mechanical slugger decide:
+
+| Item | Naive slug | Authored frame |
+|---|---|---|
+| Titan's Keep | `titan-s-keep` | `titans-keep.png` |
+| Survivor's Robe | `survivor-s-robe` | `survivors-robe.png` |
+| Duneplate of the Last Stand | `duneplate-of-the-last-stand` | `duneplate-last-stand.png` |
+| Lava-Tempered Hide | `lava-tempered-hide` | `lava-tempered-hide.png` (fine as-is) |
+
+Verified: **no slug collisions** across the 89 names.
+
+**Wire off `sources`, not slugs.** Every manifest entry carries `sources: ["item:<recipeId>"]`
+(all 32 weapons do, with zero gaps). That makes the wiring pass a deterministic
+manifest-entry → recipe-id join instead of a name-slug guess — no apostrophe special-casing,
+no fallback chain. This is the improvement over how the weapon pass was wired.
+
+### Per-wave loop
+
+1. Author manifest entries (`status: "draft"`, so they cannot spend), then flip to `pending`.
+2. `pnpm art:generate --dry-run` → confirm the entry set and cost → run for real.
+3. Hand off to `pnpm art:review`. **I never accept or reject candidates — the user picks.**
+   Never run `art:generate` while the gallery is open.
+4. `pnpm art:pack` (`--check` first).
+5. Wiring pass: join accepted entries to recipes via `sources`, rewrite `icon:`.
+6. `pnpm typecheck`, `pnpm test`, and the frame-resolution audit (every recipe `icon:`
+   resolves to a packed frame — currently 126/126 with zero unresolved).
 
 ---
 
@@ -216,15 +343,18 @@ the subscription cap. Pilot (~30 generations) proves the template before the bul
 
 ---
 
-## Open decisions (for the user, before Batch 0)
+## Decisions (settled during the weapon batches)
 
-1. **Frame naming:** option A (keep names) or B (clean names, recommended).
-2. **Icon ship size:** match the existing item frame size, or standardize (e.g. 48×48) for
-   more detail than the 32×32 ability icons. Needs a look at the current item frame size.
-3. **Style direction:** same flat bold pixel-art language as the ability/monster work, or a
-   distinct inventory-icon treatment. (Recommend same language for one coherent UI.)
-4. **Batch order:** slot-family rollout (recommended) vs per-biome.
-5. **Scope of this phase:** weapons + armor + charms + boots now; cores/relics deferred?
+1. **Frame naming:** option B — clean identity-matching frame names, slugged from the item
+   *name*. Recipe ids are persisted and stay frozen where they diverge (`ashbrand-blade`).
+2. **Icon ship size:** 32×32, matching the existing item frames and the ability icons.
+3. **Style direction:** same flat bold pixel-art language as the ability/monster work.
+4. **Batch order:** slot-family rollout.
+5. **Scope of this phase:** weapons + armor + charms + boots. **Cores are excluded — they
+   are still being designed and get their own pass later.** Relics likewise deferred.
+6. **Review cadence** (2026-08-02): half-slot waves, ~15 items / ~45 candidates per gallery
+   sitting; 7 gates total including the pilot.
+7. **Pilot gate** (2026-08-02): a 9-icon cross-slot pilot precedes bulk generation.
 
 ---
 

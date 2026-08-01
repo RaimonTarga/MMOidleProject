@@ -11,7 +11,7 @@ export const jungleRecipeEntries = [
     id: 'jungle-stinger-rapier', name: 'Stinger Rapier',
     recipeGroup: 'jungle', requiredBiomeLevel: 1, slot: 'weapon',
     cost: { green: 55}, catalystCost: { alacrity: 2 }, stats: { attack: 10, onHitDamage: 8 }, attacksPerSecond: 1.55, tier: 2, // family-tag: fast on-hit rapier → Alacrity
-    icon: 'items/weapons/jungle-rapier.png',
+    icon: 'items/weapons/stinger-rapier.png',
     description: 'A thin blade kept slick with something the jungle distilled and never named.',
     upgrades: [
       { stats: { attack: 4, onHitDamage: 3 }, cost: { green: 66 }, requiredBiomeLevel: 2 },
@@ -81,7 +81,7 @@ export const jungleRecipeEntries = [
     id: 'jungle-venomthorn-rapier', name: 'Venomthorn Rapier',
     recipeGroup: 'jungle', requiredBiomeLevel: 7, slot: 'weapon',
     cost: { green: 120 }, catalystCost: { alacrity: 3 }, stats: { attack: 22, onHitDamage: 18 }, attacksPerSecond: 1.65, tier: 3, // family-tag: fast on-hit rapier → Alacrity
-    icon: 'items/weapons/jungle-rapier.png',
+    icon: 'items/weapons/venomthorn-rapier.png',
     description: 'Thin and quick, and slick with a thorn-sap that bites a little more with every touch.',
     upgrades: [
       { stats: { attack: 4, onHitDamage: 4 }, cost: { green: 180 },  requiredBiomeLevel: 8 },
@@ -151,7 +151,7 @@ export const jungleRecipeEntries = [
     id: 'jungle-deathfang-rapier', name: 'Deathfang Rapier',
     recipeGroup: 'jungle', requiredBiomeLevel: 13, slot: 'weapon',
     cost: { green: 264 }, catalystCost: { alacrity: 4 }, stats: { attack: 34, onHitDamage: 30 }, attacksPerSecond: 1.75, tier: 4, // family-tag: capstone fast on-hit rapier → Alacrity
-    icon: 'items/weapons/rapier-4.png',
+    icon: 'items/weapons/deathfang-rapier.png',
     description: 'Quick past seeing, and slick with something the deep jungle spent a long time perfecting.',
     upgrades: [
       { stats: { attack: 10, onHitDamage: 8 }, cost: { green: 396 }, requiredBiomeLevel: 14 },

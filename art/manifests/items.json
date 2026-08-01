@@ -2076,6 +2076,222 @@
         "item:trench-abyssal-axe"
       ],
       "notes": "Batch 1. Flat generation - new line root or distinct object, no accepted predecessor to seed from."
+    },
+    {
+      "id": "fallen-knight-plate",
+      "out": "items/armor/fallen-knight-plate.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a dented steel knight's cuirass, a front-facing empty chest plate with squared pauldron edges and one heavy reinforced band running straight across the chest, a faint impact crack that stops short against the band, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of iron grey stone grey and weathered brown, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, person wearing it, mannequin, full body, helmet, boots, gloves, weapon, sword, shield, cloth robe, wrappings, leather, green, gold",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "status": "accepted",
+      "sources": [
+        "item:mountain-vest-t1"
+      ],
+      "notes": "Phase 2b wave P (pilot). Cross-slot style probe locking the armor/charm/boots object language before the bulk waves. pixflux, no anchor, no img2img (line roots)."
+    },
+    {
+      "id": "arcane-wrappings",
+      "out": "items/armor/arcane-wrappings.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a wrapped marsh-cloth chest binding, front-facing and empty, layered strips of dull grey-green cloth bound across the torso with one small carved warding glyph at the centre, two or three toxic green droplets beading off the cloth and falling away, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of dull steel swamp purple and toxic green, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, person wearing it, mannequin, full body, helmet, boots, gloves, weapon, metal plate armour, steel cuirass, gold, fire, flame, orange",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "status": "accepted",
+      "sources": [
+        "item:swamp-vest-t1"
+      ],
+      "notes": "Phase 2b wave P (pilot). Cross-slot style probe locking the armor/charm/boots object language before the bulk waves. pixflux, no anchor, no img2img (line roots)."
+    },
+    {
+      "id": "duneplate-last-stand",
+      "out": "items/armor/duneplate-last-stand.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a sand-scoured desert war cuirass, front-facing and empty, pale steel plate with a gold trim band and one deep crack across the chest that stops short of splitting it, a faint second outline haloing the plate, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of gold warm sand and pale steel, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, person wearing it, mannequin, full body, helmet, boots, gloves, weapon, cloth robe, wrappings, green, blue, purple",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "status": "accepted",
+      "sources": [
+        "item:desert-vest-t2"
+      ],
+      "notes": "Phase 2b wave P (pilot). Cross-slot style probe locking the armor/charm/boots object language before the bulk waves. pixflux, no anchor, no img2img (line roots)."
+    },
+    {
+      "id": "granite-barrier",
+      "out": "items/charms/granite-barrier.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a small carved granite ward-stone idol shaped like an open palm, hung on a short leather cord, a thin flat slab of stone hovering just in front of it like a raised shield, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of iron grey stone grey and weathered brown, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, weapon, armour, armor, boots, long necklace chain, full chain, gemstone jewellery, gold, green, glowing crystal",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "status": "accepted",
+      "sources": [
+        "item:mountain-charm-t1"
+      ],
+      "notes": "Phase 2b wave P (pilot). Cross-slot style probe locking the armor/charm/boots object language before the bulk waves. pixflux, no anchor, no img2img (line roots)."
+    },
+    {
+      "id": "murk-eye",
+      "out": "items/charms/murk-eye.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a single preserved golem eye charm, a pale round eye set in a tarnished metal rim and hung on a short cord, weeping two faint green tears, a thin green absorbing haze curling around the rim, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of dull steel swamp purple and toxic green, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, weapon, armour, armor, boots, long necklace chain, full chain, human face, portrait, head, skull, fire, orange, gold",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "status": "accepted",
+      "sources": [
+        "item:swamp-charm-t1"
+      ],
+      "notes": "Phase 2b wave P (pilot). Cross-slot style probe locking the armor/charm/boots object language before the bulk waves. pixflux, no anchor, no img2img (line roots)."
+    },
+    {
+      "id": "mirage-talisman",
+      "out": "items/charms/mirage-talisman.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a shard of cooled desert glass hung as a pendant on a short cord, a flat translucent pale-gold shard cut with one small carved warding glyph, three sand-coloured droplets beading off its lower edge and falling away, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of gold warm sand and pale steel, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, weapon, armour, armor, boots, long necklace chain, full chain, green, purple, blue, water, ocean, ice",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "status": "accepted",
+      "sources": [
+        "item:desert-charm-t2"
+      ],
+      "notes": "Phase 2b wave P (pilot). Cross-slot style probe locking the armor/charm/boots object language before the bulk waves. pixflux, no anchor, no img2img (line roots)."
+    },
+    {
+      "id": "iron-treads",
+      "out": "items/boots/iron-treads.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a pair of heavy iron-shod boots seen from the side, thick studded soles and riveted grey leather uppers, one clean short motion streak trailing behind the heel, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of iron grey stone grey and weathered brown, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, single boot, one boot, legs, feet, person, full body, socks, weapon, armour, armor, green, gold, cloth wrappings",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "status": "accepted",
+      "sources": [
+        "item:mountain-boots-t1"
+      ],
+      "notes": "Phase 2b wave P (pilot). Cross-slot style probe locking the armor/charm/boots object language before the bulk waves. pixflux, no anchor, no img2img (line roots)."
+    },
+    {
+      "id": "marsh-treads",
+      "out": "items/boots/marsh-treads.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a pair of broad flat-soled marsh treads seen from the side, wide woven reed and grey hide boots with cloth bindings at the ankle, one snapped mud-caked chain link breaking apart at the sole, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of dull steel swamp purple and toxic green, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, single boot, one boot, legs, feet, person, full body, socks, weapon, armour, armor, metal plate, greaves, gold, fire, orange",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "status": "accepted",
+      "sources": [
+        "item:swamp-boots-t1"
+      ],
+      "notes": "Phase 2b wave P (pilot). Cross-slot style probe locking the armor/charm/boots object language before the bulk waves. pixflux, no anchor, no img2img (line roots)."
+    },
+    {
+      "id": "sand-sprint",
+      "out": "items/boots/sand-sprint.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a pair of wide light desert running boots seen from the side, pale sand-cloth uppers with gold strap buckles and broad flat soles, one clean motion streak trailing behind the heel with a puff of loose sand, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of gold warm sand and pale steel, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, single boot, one boot, legs, feet, person, full body, socks, weapon, armour, armor, heavy metal plate, greaves, green, blue",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "status": "accepted",
+      "sources": [
+        "item:desert-boots-t2"
+      ],
+      "notes": "Phase 2b wave P (pilot). Cross-slot style probe locking the armor/charm/boots object language before the bulk waves. pixflux, no anchor, no img2img (line roots)."
     }
   ]
 }

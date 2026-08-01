@@ -16,7 +16,7 @@ export const mountainRecipeEntries = [
     id: 'heavy-hammer', name: 'Heavy Hammer',
     recipeGroup: 'mountain', requiredBiomeLevel: 1, slot: 'weapon',
     cost: { blue: 22 }, stats: { attack: 26 }, attacksPerSecond: 0.55, tier: 1,
-    icon: 'items/weapons/hammer-2.png',
+    icon: 'items/weapons/heavy-hammer.png',
     mechanicEffects: { 'weapon.empowered-mult-bonus': 0.15 },
     description: 'Two-handed, brutal, and honest. It asks only that you find the time to swing it.',
     upgrades: [
@@ -34,7 +34,7 @@ export const mountainRecipeEntries = [
     cost: { blue: 22 }, stats: { maxHp: 22, plating: 7 },
     mechanicEffects: { 'defense.max-hit-pct': 0.25, 'defense.max-hit-mult': 0.5 },
     tier: 1,
-    icon: 'items/armor/plate-armor-1.png',
+    icon: 'items/armor/fallen-knight-plate.png',
     description: 'Stripped from a knight who fell at the high pass and was never named.',
     upgrades: [
       { stats: { maxHp: 6, plating: 2 }, cost: { blue: 30 }, requiredBiomeLevel: 3 },
@@ -52,7 +52,7 @@ export const mountainRecipeEntries = [
     cost: { blue: 18 }, stats: { hpRegen: 3 },
     mechanicEffects: { 'defense.shield-pct': 0.09, 'defense.shield-interval-ms': 10000, 'defense.shield-duration-ms': 10000 },
     tier: 1,
-    icon: 'items/charms/stone-hand-charm-1.png',
+    icon: 'items/charms/granite-barrier.png',
     description: 'A palm of carved granite, cold and patient as the peak it came from.',
     upgrades: [
       { mechanicEffects: { 'defense.shield-pct': 0.01 }, cost: { blue: 15 }, requiredBiomeLevel: 4 },
@@ -68,7 +68,7 @@ export const mountainRecipeEntries = [
     recipeGroup: 'mountain', requiredBiomeLevel: 4, slot: 'mobility',
     cost: { blue: 18 }, stats: { speed: 18 }, tier: 1,
     mechanicEffects: { 'mobility.acquire-speed-pct': 0.50, 'mobility.acquire-speed-ms': 3000, 'mobility.acquire-cooldown-ms': 6000 },
-    icon: 'items/boots/knight-boots-1.png',
+    icon: 'items/boots/iron-treads.png',
     description: 'Heavy soles that bite into scree and loose rock alike.',
     upgrades: [
       { stats: { speed: 3 }, cost: { blue: 10 }, requiredBiomeLevel: 4 },
@@ -84,7 +84,7 @@ export const mountainRecipeEntries = [
     id: 'quake-hammer', name: 'Quake Hammer',
     recipeGroup: 'mountain', requiredBiomeLevel: 7, slot: 'weapon',
     cost: { blue: 52 }, catalystCost: { brutality: 2 }, stats: { attack: 54 }, attacksPerSecond: 0.55, tier: 2, // family-tag: slow heavy hammer → Brutality
-    icon: 'items/weapons/hammer-2.png',
+    icon: 'items/weapons/quake-hammer.png',
     // Cast Speed (abilities evolution §6.1) lives on Mountain's T2 hammer — the
     // biome that owns Charged Strike, and whose whole identity is the wind-up.
     // Only affects abilities with a real castTime. PLACEHOLDER magnitude.
@@ -158,7 +158,7 @@ export const mountainRecipeEntries = [
     id: 'mountain-avalanche-maul', name: 'Avalanche Maul',
     recipeGroup: 'mountain', requiredBiomeLevel: 13, slot: 'weapon',
     cost: { blue: 116 }, catalystCost: { brutality: 3 }, stats: { attack: 120 }, attacksPerSecond: 0.55, tier: 3, // family-tag: slow heavy maul → Brutality
-    icon: 'items/weapons/hammer-2.png',
+    icon: 'items/weapons/avalanche-maul.png',
     mechanicEffects: { 'weapon.empowered-mult-bonus': 0.50 },
     description: 'It does not so much strike as arrive, the way a slope arrives on a village.',
     upgrades: [
@@ -227,7 +227,7 @@ export const mountainRecipeEntries = [
     id: 'mountain-earthsunder-maul', name: 'Earthsunder Maul',
     recipeGroup: 'mountain', requiredBiomeLevel: 19, slot: 'weapon',
     cost: { blue: 256 }, catalystCost: { brutality: 4 }, stats: { attack: 280 }, attacksPerSecond: 0.40, tier: 4, // family-tag: capstone heavy maul → Brutality
-    icon: 'items/weapons/hammer-2.png',
+    icon: 'items/weapons/earthsunder-maul.png',
     description: 'It does not strike the earth so much as remind it of an old grievance.',
     upgrades: [
       { stats: { attack: 60 }, cost: { blue: 384 },  requiredBiomeLevel: 20 },
@@ -249,7 +249,7 @@ export const mountainRecipeEntries = [
     // specs (1.5→1.75 = +17%) and barely help high-mult specs (4.0→4.25 = +6%).
     // Multiplicative gives every spec the same %, which is the design intent.
     mechanicEffects: { 'weapon.empowered-mult-bonus': 0.60 },
-    icon: 'items/weapons/hammer-1.png',
+    icon: 'items/weapons/warmaul.png',
     description: 'Lighter in the haft, quicker to the shoulder — it rewards the soldier who already knows when to swing.',
     upgrades: [
       { stats: { attack: 50 }, cost: { blue: 360 },  requiredBiomeLevel: 20 },

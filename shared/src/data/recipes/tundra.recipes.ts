@@ -13,7 +13,7 @@ export const tundraRecipeEntries = [
     recipeGroup: 'tundra', requiredBiomeLevel: 1, slot: 'weapon',
     cost: { blue: 124 }, catalystCost: { brutality: 3 }, stats: { attack: 120 }, attacksPerSecond: 0.50, tier: 3, // family-tag: slow heavy maul → Brutality
     mechanicEffects: { 'weapon.brittle-plating': 2, 'weapon.brittle-dr': 0.01, 'weapon.brittle-stacks': 8 },
-    icon: 'items/weapons/frozen-hammer.png',
+    icon: 'items/weapons/permafrost-maul.png',
     description: 'Each blow leaves a deep frost-crack; armor that takes enough of them simply gives.',
     upgrades: [
       { stats: { attack: 30 }, cost: { blue: 186 },  requiredBiomeLevel: 2 },
@@ -32,7 +32,7 @@ export const tundraRecipeEntries = [
     recipeGroup: 'tundra', requiredBiomeLevel: 3, slot: 'weapon',
     cost: { blue: 120 }, catalystCost: { blight: 3 }, stats: { attack: 96 }, attacksPerSecond: 0.60, tier: 3, // family-tag: frost DoT-conversion weapon → Blight
     weaponDot: { effectId: 'tundra-rimebrand-burn', convPct: 0.70, tickIntervalMs: 1000, drainDurationMs: 4500, dotMultiplier: 1.50, element: 'frost' },
-    icon: 'items/weapons/rune-sword-cold-2.png',
+    icon: 'items/weapons/rimebrand.png',
     description: 'The first true frost-brand — slow and heavy, planting a cold in the wound that goes on biting after the blade is gone.',
     upgrades: [
       { stats: { attack: 24 }, cost: { blue: 180 }, requiredBiomeLevel: 3 },
@@ -111,7 +111,7 @@ export const tundraRecipeEntries = [
       'weapon.brittle-plating': 3, 'weapon.brittle-dr': 0.015, 'weapon.brittle-stacks': 8,
       'weapon.brittle-shatter-threshold': 8, 'weapon.brittle-shatter-dr-strip-ms': 2000,
     },
-    icon: 'items/weapons/frozen-hammer.png',
+    icon: 'items/weapons/glacial-tyrant-maul.png',
     description: 'Every blow leaves a deeper frost-crack; the eighth simply ends the argument about whether armor holds.',
     upgrades: [
       { stats: { attack: 50 }, cost: { blue: 410 },  requiredBiomeLevel: 8 },
@@ -129,7 +129,7 @@ export const tundraRecipeEntries = [
     //   scaled from a T3 ancestor. VERIFY in the DoT-conversion budget pass.
     cost: { blue: 258 }, catalystCost: { blight: 4 }, stats: { attack: 155 }, attacksPerSecond: 0.60, tier: 4, // family-tag: frost DoT-conversion weapon → Blight
     weaponDot: { effectId: 'rimebrand-burn', convPct: 0.70, tickIntervalMs: 1000, drainDurationMs: 4500, dotMultiplier: 1.50, element: 'frost' },
-    icon: 'items/weapons/frozen-sword.png',
+    icon: 'items/weapons/glacial-rimebrand.png',
     description: 'It does not cut so much as plant a cold that goes on spreading after the blade is gone.',
     upgrades: [
       { stats: { attack: 35 }, cost: { blue: 387 },  requiredBiomeLevel: 8 },

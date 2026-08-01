@@ -19689,6 +19689,303 @@
       "candidateFiles": [
         "candidate-6.png"
       ]
+    },
+    {
+      "at": "2026-08-01T23:05:53.830Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "fallen-knight-plate",
+      "requestHash": "cc1da68b65d90d5cc46a56bb",
+      "usd": 0.0073505746788448765,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T23:06:12.002Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "fallen-knight-plate",
+      "requestHash": "cc1da68b65d90d5cc46a56bb",
+      "usd": 0.006776535987854004,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T23:06:28.405Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "fallen-knight-plate",
+      "requestHash": "cc1da68b65d90d5cc46a56bb",
+      "usd": 0.006502801444795397,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T23:07:15.068Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "arcane-wrappings",
+      "requestHash": "dc7002bf8dd53b9f345b72b9",
+      "usd": 0.00949415487713284,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T23:07:33.563Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "arcane-wrappings",
+      "requestHash": "dc7002bf8dd53b9f345b72b9",
+      "usd": 0.006526026752259996,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T23:07:54.314Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "arcane-wrappings",
+      "requestHash": "dc7002bf8dd53b9f345b72b9",
+      "usd": 0.007177074352900187,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T23:08:15.879Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "duneplate-last-stand",
+      "requestHash": "17b6265b4b90869719e551eb",
+      "usd": 0.007228864828745524,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T23:08:35.944Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "duneplate-last-stand",
+      "requestHash": "17b6265b4b90869719e551eb",
+      "usd": 0.0070642338063981805,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T23:09:11.498Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "duneplate-last-stand",
+      "requestHash": "17b6265b4b90869719e551eb",
+      "usd": 0.008798085663053725,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T23:09:38.272Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "granite-barrier",
+      "requestHash": "91a8ae0e1c69a357a41c4cc1",
+      "usd": 0.007343421247270372,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T23:10:01.944Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "granite-barrier",
+      "requestHash": "91a8ae0e1c69a357a41c4cc1",
+      "usd": 0.007150805287890964,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T23:10:42.716Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "granite-barrier",
+      "requestHash": "91a8ae0e1c69a357a41c4cc1",
+      "usd": 0.008771336264080472,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T23:11:01.969Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "murk-eye",
+      "requestHash": "b854163ac41819e4e3c537bc",
+      "usd": 0.006797432316674127,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T23:11:26.136Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "murk-eye",
+      "requestHash": "b854163ac41819e4e3c537bc",
+      "usd": 0.0068964951568179665,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T23:11:46.017Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "murk-eye",
+      "requestHash": "b854163ac41819e4e3c537bc",
+      "usd": 0.006768552356296116,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T23:11:58.553Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "mirage-talisman",
+      "requestHash": "22fbe26ca5910053ba8aa9da",
+      "usd": 0.006072027153438992,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T23:12:23.084Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "mirage-talisman",
+      "requestHash": "22fbe26ca5910053ba8aa9da",
+      "usd": 0.007288298156526354,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T23:12:43.090Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "mirage-talisman",
+      "requestHash": "22fbe26ca5910053ba8aa9da",
+      "usd": 0.006711923334333632,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T23:13:06.643Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "iron-treads",
+      "requestHash": "43bf2aaa77b6b97419b87d80",
+      "usd": 0.007195325162675646,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T23:13:25.543Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "iron-treads",
+      "requestHash": "43bf2aaa77b6b97419b87d80",
+      "usd": 0.0066727708180745445,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T23:13:43.607Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "iron-treads",
+      "requestHash": "43bf2aaa77b6b97419b87d80",
+      "usd": 0.006713425212436252,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T23:13:58.368Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "marsh-treads",
+      "requestHash": "64defa062d7234bb291c15c3",
+      "usd": 0.006251866552564833,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T23:14:17.084Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "marsh-treads",
+      "requestHash": "64defa062d7234bb291c15c3",
+      "usd": 0.006789273315005832,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T23:14:47.440Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "marsh-treads",
+      "requestHash": "64defa062d7234bb291c15c3",
+      "usd": 0.007897863414552477,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T23:15:04.619Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "sand-sprint",
+      "requestHash": "73ddd67d66a5d1e8366fd434",
+      "usd": 0.0064288984934488935,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T23:15:24.124Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "sand-sprint",
+      "requestHash": "73ddd67d66a5d1e8366fd434",
+      "usd": 0.006925899028778076,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-01T23:15:44.561Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "sand-sprint",
+      "requestHash": "73ddd67d66a5d1e8366fd434",
+      "usd": 0.007072001377741496,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
     }
   ]
 }

@@ -20,7 +20,7 @@ export const trenchRecipeEntries = [
       'weapon.dead-swing-interval': 4,
       'weapon.execute-threshold-pct': 0.20, 'weapon.execute-dmg-mult': 2.5,
     },
-    icon: 'items/weapons/dark-blade.png',
+    icon: 'items/weapons/abyssal-axe.png',
     description: 'Patient through the long fight, merciless at the end of it: when the abyss-thing finally weakens, it disappears.',
     upgrades: [
       { stats: { attack: 24 }, cost: { green: 405 }, requiredBiomeLevel: 2 },

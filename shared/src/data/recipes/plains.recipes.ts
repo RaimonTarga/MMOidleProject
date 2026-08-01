@@ -13,7 +13,7 @@ export const plainsRecipeEntries = [
     id: 'iron-broadsword', name: 'Iron Broadsword',
     recipeGroup: 'plains', requiredBiomeLevel: 1, slot: 'weapon',
     cost: { yellow: 10 }, stats: { attack: 10 }, attacksPerSecond: 0.75, tier: 1,
-    icon: 'items/weapons/sword-1.png',
+    icon: 'items/weapons/iron-broadsword.png',
     description: 'Mass-forged for the ranks, dependable as sunrise. Ten thousand like it have won quiet wars.',
     upgrades: [
       { stats: { attack: 4 }, cost: { yellow: 20 }, requiredBiomeLevel: 2 },
@@ -80,7 +80,7 @@ export const plainsRecipeEntries = [
     id: 'knight-steelsword', name: "Knight's Steelsword",
     recipeGroup: 'plains', requiredBiomeLevel: 7, slot: 'weapon',
     cost: { yellow: 45 }, stats: { attack: 25 }, attacksPerSecond: 1.00, tier: 2,
-    icon: 'items/weapons/sword-2.png',
+    icon: 'items/weapons/knight-steelsword.png',
     // Technique cooldown reduction (abilities evolution §6.3): the offensive
     // sibling of the charm-borne `guard.*` amplifiers. Plains is the generalist
     // biome, so its T2 sidearm carries the generalist Technique stat. PLACEHOLDER.

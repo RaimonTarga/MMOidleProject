@@ -18,7 +18,7 @@ export const desertRecipeEntries = [
       'weapon.first-strike-mult': 2.0,
       'technique.power-pct': 0.20,
     },
-    icon: 'items/weapons/cross-1.png',
+    icon: 'items/weapons/sunsteel-falchion.png',
     description: 'Sun-forged and ward-etched, it strikes the first blow as if it waited years for it.',
     upgrades: [
       { stats: { attack: 9 }, cost: { yellow: 100 }, requiredBiomeLevel: 2 },
@@ -35,7 +35,7 @@ export const desertRecipeEntries = [
     cost: { yellow: 35, purple: 25 }, catalystCost: { predation: 2 }, stats: { maxHp: 44, plating: 10 }, // family-tag: last-stand (cheat-death) armor → Predation
     mechanicEffects: { 'defense.cheat-death': 1, 'defense.cleanse-stacks': 1, 'defense.cleanse-interval-ms': 8000 },
     tier: 2,
-    icon: 'items/armor/plate-armor-6.png',
+    icon: 'items/armor/duneplate-last-stand.png',
     description: 'Plate of the standfast dead, who are said to have refused to fall even once.',
     upgrades: [
       { stats: { maxHp: 12, plating: 3 }, cost: { yellow: 75, purple: 25 }, requiredBiomeLevel: 3 },
@@ -53,7 +53,7 @@ export const desertRecipeEntries = [
     cost: { yellow: 50, purple: 25 }, catalystCost: { predation: 2 }, stats: { hpRegen: 6 }, // family-tag: cleanse/last-stand recovery → Predation
     mechanicEffects: { 'defense.cleanse-stacks': 1, 'defense.cleanse-interval-ms': 6000, 'defense.cleanse-empty-heal-pct': 0.03 },
     tier: 2,
-    icon: 'items/charms/tear-charm-1.png',
+    icon: 'items/charms/mirage-talisman.png',
     description: 'A shard of cooled glass that shows you water which is not there, and mends what is.',
     upgrades: [
       { mechanicEffects: { 'defense.cleanse-empty-heal-pct': 0.01 }, cost: { yellow: 25, purple: 15 }, requiredBiomeLevel: 4 },
@@ -69,7 +69,7 @@ export const desertRecipeEntries = [
     recipeGroup: 'desert', requiredBiomeLevel: 4, slot: 'mobility',
     cost: { yellow: 58 }, catalystCost: { predation: 2 }, stats: { speed: 58 }, tier: 2, // family-tag: desert kite mobility → Predation
     mechanicEffects: { 'mobility.kite-speed-pct': 0.20 },
-    icon: 'items/boots/mage-boots-1.png',
+    icon: 'items/boots/sand-sprint.png',
     description: 'Wide and light, made to outpace a storm across open dune.',
     upgrades: [
       { stats: { speed: 8 },  cost: { yellow: 28 }, requiredBiomeLevel: 4 },
@@ -86,7 +86,7 @@ export const desertRecipeEntries = [
     recipeGroup: 'desert', requiredBiomeLevel: 7, slot: 'weapon',
     cost: { yellow: 116 }, catalystCost: { predation: 3 }, stats: { attack: 42 }, attacksPerSecond: 0.80, tier: 3, // family-tag: opening-strike weapon → Predation
     mechanicEffects: { 'weapon.first-strike-mult': 2.5 },
-    icon: 'items/weapons/cross-1.png',
+    icon: 'items/weapons/solar-falchion.png',
     description: 'It saves its fury for the opening blow, and spends it all at once.',
     upgrades: [
       { stats: { attack: 12 }, cost: { yellow: 170 },  requiredBiomeLevel: 8 },
@@ -156,7 +156,7 @@ export const desertRecipeEntries = [
     cost: { yellow: 255 }, stats: { attack: 110 }, attacksPerSecond: 0.80, tier: 4,
     // first-strike-mult progressed: T2 2.0 → T3 2.5 → T4 3.0 (doc said 2.5, = T3)
     mechanicEffects: { 'weapon.first-strike-mult': 3.0 },
-    icon: 'items/weapons/cross-2.png',
+    icon: 'items/weapons/zenith-falchion.png',
     description: 'At the sun\'s height it draws all that light into a single, opening cut.',
     upgrades: [
       { stats: { attack: 20 }, cost: { yellow: 383 }, requiredBiomeLevel: 14 },

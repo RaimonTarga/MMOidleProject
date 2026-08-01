@@ -25,12 +25,14 @@ generate while the review gallery is open).
 | `pnpm art:review` | Gallery at `http://localhost:4114`. Accept → `art/src/<out>` (NN-resized to ship size) + status `accepted`. Reject → status `regen` + note. |
 | `pnpm art:pack` | Repacks atlases + copies `art/src/files/**` into `client/public/assets/`. `--check` = drift detector (writes nothing, exits 1 on diff); `--atlas=<sprites\|icons\|UI_icons>` limits work to one atlas and skips loose files. |
 | `pnpm art:status` | Coverage report: manifests × registries × art files. `--balance` adds account balance. |
+| `pnpm art:wire` | Items only: rewrites recipe `icon:` fields to the accepted frames, joining manifest→recipe via each entry's `sources: ["item:<recipeId>"]`. Dry run by default; `--apply` writes. Packing does **not** wire — this is the separate step. |
 
 ## Flow
 
 ```text
 art:import → art:seed → [write prompts, flip status to pending]
    → art:generate --dry-run → art:generate → art:review → art:pack
+   → art:wire --apply   (items only)
 ```
 
 ## Layout

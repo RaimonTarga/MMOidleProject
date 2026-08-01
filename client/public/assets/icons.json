@@ -5,10 +5,31 @@
 			"format": "RGBA8888",
 			"size": {
 				"w": 512,
-				"h": 320
+				"h": 352
 			},
 			"scale": 1,
 			"frames": [
+				{
+					"filename": "items/armor/arcane-wrappings.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					}
+				},
 				{
 					"filename": "items/armor/bone-armor-1.png",
 					"rotated": false,
@@ -24,7 +45,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 0,
+						"x": 32,
 						"y": 0,
 						"w": 32,
 						"h": 32
@@ -45,7 +66,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 32,
+						"x": 64,
 						"y": 0,
 						"w": 32,
 						"h": 32
@@ -66,7 +87,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 64,
+						"x": 96,
 						"y": 0,
 						"w": 32,
 						"h": 32
@@ -87,7 +108,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 96,
+						"x": 128,
 						"y": 0,
 						"w": 32,
 						"h": 32
@@ -108,7 +129,49 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 128,
+						"x": 160,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "items/armor/duneplate-last-stand.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 192,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "items/armor/fallen-knight-plate.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 224,
 						"y": 0,
 						"w": 32,
 						"h": 32
@@ -129,7 +192,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 160,
+						"x": 256,
 						"y": 0,
 						"w": 32,
 						"h": 32
@@ -150,7 +213,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 192,
+						"x": 288,
 						"y": 0,
 						"w": 32,
 						"h": 32
@@ -171,7 +234,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 224,
+						"x": 320,
 						"y": 0,
 						"w": 32,
 						"h": 32
@@ -192,7 +255,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 256,
+						"x": 352,
 						"y": 0,
 						"w": 32,
 						"h": 32
@@ -213,7 +276,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 288,
+						"x": 384,
 						"y": 0,
 						"w": 32,
 						"h": 32
@@ -234,7 +297,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 320,
+						"x": 416,
 						"y": 0,
 						"w": 32,
 						"h": 32
@@ -255,7 +318,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 352,
+						"x": 448,
 						"y": 0,
 						"w": 32,
 						"h": 32
@@ -276,7 +339,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 384,
+						"x": 480,
 						"y": 0,
 						"w": 32,
 						"h": 32
@@ -297,8 +360,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 416,
-						"y": 0,
+						"x": 0,
+						"y": 32,
 						"w": 32,
 						"h": 32
 					}
@@ -318,8 +381,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 448,
-						"y": 0,
+						"x": 32,
+						"y": 32,
 						"w": 32,
 						"h": 32
 					}
@@ -339,8 +402,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 480,
-						"y": 0,
+						"x": 64,
+						"y": 32,
 						"w": 32,
 						"h": 32
 					}
@@ -360,7 +423,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 0,
+						"x": 96,
 						"y": 32,
 						"w": 32,
 						"h": 32
@@ -381,7 +444,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 32,
+						"x": 128,
 						"y": 32,
 						"w": 32,
 						"h": 32
@@ -402,7 +465,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 64,
+						"x": 160,
 						"y": 32,
 						"w": 32,
 						"h": 32
@@ -423,7 +486,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 96,
+						"x": 192,
 						"y": 32,
 						"w": 32,
 						"h": 32
@@ -444,7 +507,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 128,
+						"x": 224,
 						"y": 32,
 						"w": 32,
 						"h": 32
@@ -465,7 +528,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 160,
+						"x": 256,
 						"y": 32,
 						"w": 32,
 						"h": 32
@@ -486,7 +549,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 192,
+						"x": 288,
 						"y": 32,
 						"w": 32,
 						"h": 32
@@ -507,7 +570,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 224,
+						"x": 320,
 						"y": 32,
 						"w": 32,
 						"h": 32
@@ -528,7 +591,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 256,
+						"x": 352,
 						"y": 32,
 						"w": 32,
 						"h": 32
@@ -549,7 +612,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 288,
+						"x": 384,
 						"y": 32,
 						"w": 32,
 						"h": 32
@@ -570,7 +633,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 320,
+						"x": 416,
 						"y": 32,
 						"w": 32,
 						"h": 32
@@ -591,7 +654,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 352,
+						"x": 448,
 						"y": 32,
 						"w": 32,
 						"h": 32
@@ -612,7 +675,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 384,
+						"x": 480,
 						"y": 32,
 						"w": 32,
 						"h": 32
@@ -633,8 +696,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 416,
-						"y": 32,
+						"x": 0,
+						"y": 64,
 						"w": 32,
 						"h": 32
 					}
@@ -654,8 +717,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 448,
-						"y": 32,
+						"x": 32,
+						"y": 64,
 						"w": 32,
 						"h": 32
 					}
@@ -675,8 +738,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 480,
-						"y": 32,
+						"x": 64,
+						"y": 64,
 						"w": 32,
 						"h": 32
 					}
@@ -696,7 +759,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 0,
+						"x": 96,
 						"y": 64,
 						"w": 32,
 						"h": 32
@@ -717,7 +780,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 32,
+						"x": 128,
 						"y": 64,
 						"w": 32,
 						"h": 32
@@ -738,7 +801,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 64,
+						"x": 160,
 						"y": 64,
 						"w": 32,
 						"h": 32
@@ -759,7 +822,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 96,
+						"x": 192,
 						"y": 64,
 						"w": 32,
 						"h": 32
@@ -780,7 +843,28 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 128,
+						"x": 224,
+						"y": 64,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "items/boots/iron-treads.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 256,
 						"y": 64,
 						"w": 32,
 						"h": 32
@@ -801,7 +885,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 160,
+						"x": 288,
 						"y": 64,
 						"w": 32,
 						"h": 32
@@ -822,7 +906,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 192,
+						"x": 320,
 						"y": 64,
 						"w": 32,
 						"h": 32
@@ -843,7 +927,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 224,
+						"x": 352,
 						"y": 64,
 						"w": 32,
 						"h": 32
@@ -864,7 +948,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 256,
+						"x": 384,
 						"y": 64,
 						"w": 32,
 						"h": 32
@@ -885,7 +969,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 288,
+						"x": 416,
 						"y": 64,
 						"w": 32,
 						"h": 32
@@ -906,7 +990,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 320,
+						"x": 448,
 						"y": 64,
 						"w": 32,
 						"h": 32
@@ -927,7 +1011,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 352,
+						"x": 480,
 						"y": 64,
 						"w": 32,
 						"h": 32
@@ -948,8 +1032,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 384,
-						"y": 64,
+						"x": 0,
+						"y": 96,
 						"w": 32,
 						"h": 32
 					}
@@ -969,8 +1053,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 416,
-						"y": 64,
+						"x": 32,
+						"y": 96,
 						"w": 32,
 						"h": 32
 					}
@@ -990,8 +1074,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 448,
-						"y": 64,
+						"x": 64,
+						"y": 96,
 						"w": 32,
 						"h": 32
 					}
@@ -1011,8 +1095,29 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 480,
-						"y": 64,
+						"x": 96,
+						"y": 96,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "items/boots/marsh-treads.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 128,
+						"y": 96,
 						"w": 32,
 						"h": 32
 					}
@@ -1032,7 +1137,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 0,
+						"x": 160,
 						"y": 96,
 						"w": 32,
 						"h": 32
@@ -1053,7 +1158,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 32,
+						"x": 192,
 						"y": 96,
 						"w": 32,
 						"h": 32
@@ -1074,7 +1179,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 64,
+						"x": 224,
 						"y": 96,
 						"w": 32,
 						"h": 32
@@ -1095,7 +1200,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 96,
+						"x": 256,
 						"y": 96,
 						"w": 32,
 						"h": 32
@@ -1116,7 +1221,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 128,
+						"x": 288,
 						"y": 96,
 						"w": 32,
 						"h": 32
@@ -1137,7 +1242,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 160,
+						"x": 320,
 						"y": 96,
 						"w": 32,
 						"h": 32
@@ -1158,7 +1263,28 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 192,
+						"x": 352,
+						"y": 96,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "items/boots/sand-sprint.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 384,
 						"y": 96,
 						"w": 32,
 						"h": 32
@@ -1179,7 +1305,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 224,
+						"x": 416,
 						"y": 96,
 						"w": 32,
 						"h": 32
@@ -1200,7 +1326,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 256,
+						"x": 448,
 						"y": 96,
 						"w": 32,
 						"h": 32
@@ -1221,7 +1347,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 288,
+						"x": 480,
 						"y": 96,
 						"w": 32,
 						"h": 32
@@ -1242,8 +1368,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 320,
-						"y": 96,
+						"x": 0,
+						"y": 128,
 						"w": 32,
 						"h": 32
 					}
@@ -1263,8 +1389,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 352,
-						"y": 96,
+						"x": 32,
+						"y": 128,
 						"w": 32,
 						"h": 32
 					}
@@ -1284,8 +1410,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 384,
-						"y": 96,
+						"x": 64,
+						"y": 128,
 						"w": 32,
 						"h": 32
 					}
@@ -1305,8 +1431,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 416,
-						"y": 96,
+						"x": 96,
+						"y": 128,
 						"w": 32,
 						"h": 32
 					}
@@ -1326,8 +1452,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 448,
-						"y": 96,
+						"x": 128,
+						"y": 128,
 						"w": 32,
 						"h": 32
 					}
@@ -1347,8 +1473,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 480,
-						"y": 96,
+						"x": 160,
+						"y": 128,
 						"w": 32,
 						"h": 32
 					}
@@ -1368,7 +1494,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 0,
+						"x": 192,
 						"y": 128,
 						"w": 32,
 						"h": 32
@@ -1389,7 +1515,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 32,
+						"x": 224,
 						"y": 128,
 						"w": 32,
 						"h": 32
@@ -1410,7 +1536,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 64,
+						"x": 256,
 						"y": 128,
 						"w": 32,
 						"h": 32
@@ -1431,7 +1557,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 96,
+						"x": 288,
 						"y": 128,
 						"w": 32,
 						"h": 32
@@ -1452,7 +1578,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 128,
+						"x": 320,
 						"y": 128,
 						"w": 32,
 						"h": 32
@@ -1473,7 +1599,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 160,
+						"x": 352,
 						"y": 128,
 						"w": 32,
 						"h": 32
@@ -1494,7 +1620,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 192,
+						"x": 384,
 						"y": 128,
 						"w": 32,
 						"h": 32
@@ -1515,7 +1641,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 224,
+						"x": 416,
 						"y": 128,
 						"w": 32,
 						"h": 32
@@ -1536,7 +1662,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 256,
+						"x": 448,
 						"y": 128,
 						"w": 32,
 						"h": 32
@@ -1557,7 +1683,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 288,
+						"x": 480,
 						"y": 128,
 						"w": 32,
 						"h": 32
@@ -1578,8 +1704,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 320,
-						"y": 128,
+						"x": 0,
+						"y": 160,
 						"w": 32,
 						"h": 32
 					}
@@ -1599,8 +1725,29 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 352,
-						"y": 128,
+						"x": 32,
+						"y": 160,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "items/charms/granite-barrier.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 64,
+						"y": 160,
 						"w": 32,
 						"h": 32
 					}
@@ -1620,8 +1767,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 384,
-						"y": 128,
+						"x": 96,
+						"y": 160,
 						"w": 32,
 						"h": 32
 					}
@@ -1641,8 +1788,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 416,
-						"y": 128,
+						"x": 128,
+						"y": 160,
 						"w": 32,
 						"h": 32
 					}
@@ -1662,8 +1809,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 448,
-						"y": 128,
+						"x": 160,
+						"y": 160,
 						"w": 32,
 						"h": 32
 					}
@@ -1683,8 +1830,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 480,
-						"y": 128,
+						"x": 192,
+						"y": 160,
 						"w": 32,
 						"h": 32
 					}
@@ -1704,7 +1851,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 0,
+						"x": 224,
 						"y": 160,
 						"w": 32,
 						"h": 32
@@ -1725,7 +1872,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 32,
+						"x": 256,
 						"y": 160,
 						"w": 32,
 						"h": 32
@@ -1746,7 +1893,49 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 64,
+						"x": 288,
+						"y": 160,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "items/charms/mirage-talisman.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 320,
+						"y": 160,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "items/charms/murk-eye.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 352,
 						"y": 160,
 						"w": 32,
 						"h": 32
@@ -1767,7 +1956,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 96,
+						"x": 384,
 						"y": 160,
 						"w": 32,
 						"h": 32
@@ -1788,7 +1977,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 128,
+						"x": 416,
 						"y": 160,
 						"w": 32,
 						"h": 32
@@ -1809,7 +1998,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 160,
+						"x": 448,
 						"y": 160,
 						"w": 32,
 						"h": 32
@@ -1830,7 +2019,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 192,
+						"x": 480,
 						"y": 160,
 						"w": 32,
 						"h": 32
@@ -1851,8 +2040,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 224,
-						"y": 160,
+						"x": 0,
+						"y": 192,
 						"w": 32,
 						"h": 32
 					}
@@ -1872,8 +2061,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 256,
-						"y": 160,
+						"x": 32,
+						"y": 192,
 						"w": 32,
 						"h": 32
 					}
@@ -1893,8 +2082,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 288,
-						"y": 160,
+						"x": 64,
+						"y": 192,
 						"w": 32,
 						"h": 32
 					}
@@ -1914,8 +2103,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 320,
-						"y": 160,
+						"x": 96,
+						"y": 192,
 						"w": 32,
 						"h": 32
 					}
@@ -1935,8 +2124,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 352,
-						"y": 160,
+						"x": 128,
+						"y": 192,
 						"w": 32,
 						"h": 32
 					}
@@ -1956,8 +2145,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 384,
-						"y": 160,
+						"x": 160,
+						"y": 192,
 						"w": 32,
 						"h": 32
 					}
@@ -1977,8 +2166,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 416,
-						"y": 160,
+						"x": 192,
+						"y": 192,
 						"w": 32,
 						"h": 32
 					}
@@ -1998,8 +2187,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 448,
-						"y": 160,
+						"x": 224,
+						"y": 192,
 						"w": 32,
 						"h": 32
 					}
@@ -2019,8 +2208,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 480,
-						"y": 160,
+						"x": 256,
+						"y": 192,
 						"w": 32,
 						"h": 32
 					}
@@ -2040,7 +2229,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 0,
+						"x": 288,
 						"y": 192,
 						"w": 32,
 						"h": 32
@@ -2061,7 +2250,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 32,
+						"x": 320,
 						"y": 192,
 						"w": 32,
 						"h": 32
@@ -2082,7 +2271,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 64,
+						"x": 352,
 						"y": 192,
 						"w": 32,
 						"h": 32
@@ -2103,7 +2292,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 96,
+						"x": 384,
 						"y": 192,
 						"w": 32,
 						"h": 32
@@ -2124,7 +2313,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 128,
+						"x": 416,
 						"y": 192,
 						"w": 32,
 						"h": 32
@@ -2145,7 +2334,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 160,
+						"x": 448,
 						"y": 192,
 						"w": 32,
 						"h": 32
@@ -2166,7 +2355,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 192,
+						"x": 480,
 						"y": 192,
 						"w": 32,
 						"h": 32
@@ -2187,8 +2376,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 224,
-						"y": 192,
+						"x": 0,
+						"y": 224,
 						"w": 32,
 						"h": 32
 					}
@@ -2208,8 +2397,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 256,
-						"y": 192,
+						"x": 32,
+						"y": 224,
 						"w": 32,
 						"h": 32
 					}
@@ -2229,8 +2418,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 288,
-						"y": 192,
+						"x": 64,
+						"y": 224,
 						"w": 32,
 						"h": 32
 					}
@@ -2250,8 +2439,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 320,
-						"y": 192,
+						"x": 96,
+						"y": 224,
 						"w": 32,
 						"h": 32
 					}
@@ -2271,8 +2460,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 352,
-						"y": 192,
+						"x": 128,
+						"y": 224,
 						"w": 32,
 						"h": 32
 					}
@@ -2292,8 +2481,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 384,
-						"y": 192,
+						"x": 160,
+						"y": 224,
 						"w": 32,
 						"h": 32
 					}
@@ -2313,8 +2502,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 416,
-						"y": 192,
+						"x": 192,
+						"y": 224,
 						"w": 32,
 						"h": 32
 					}
@@ -2334,8 +2523,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 448,
-						"y": 192,
+						"x": 224,
+						"y": 224,
 						"w": 32,
 						"h": 32
 					}
@@ -2355,8 +2544,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 480,
-						"y": 192,
+						"x": 256,
+						"y": 224,
 						"w": 32,
 						"h": 32
 					}
@@ -2376,7 +2565,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 0,
+						"x": 288,
 						"y": 224,
 						"w": 32,
 						"h": 32
@@ -2397,7 +2586,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 32,
+						"x": 320,
 						"y": 224,
 						"w": 32,
 						"h": 32
@@ -2418,7 +2607,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 64,
+						"x": 352,
 						"y": 224,
 						"w": 32,
 						"h": 32
@@ -2439,7 +2628,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 96,
+						"x": 384,
 						"y": 224,
 						"w": 32,
 						"h": 32
@@ -2460,7 +2649,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 128,
+						"x": 416,
 						"y": 224,
 						"w": 32,
 						"h": 32
@@ -2481,7 +2670,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 160,
+						"x": 448,
 						"y": 224,
 						"w": 32,
 						"h": 32
@@ -2502,7 +2691,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 192,
+						"x": 480,
 						"y": 224,
 						"w": 32,
 						"h": 32
@@ -2523,8 +2712,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 224,
-						"y": 224,
+						"x": 0,
+						"y": 256,
 						"w": 32,
 						"h": 32
 					}
@@ -2544,8 +2733,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 256,
-						"y": 224,
+						"x": 32,
+						"y": 256,
 						"w": 32,
 						"h": 32
 					}
@@ -2565,8 +2754,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 288,
-						"y": 224,
+						"x": 64,
+						"y": 256,
 						"w": 32,
 						"h": 32
 					}
@@ -2586,8 +2775,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 320,
-						"y": 224,
+						"x": 96,
+						"y": 256,
 						"w": 32,
 						"h": 32
 					}
@@ -2607,8 +2796,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 352,
-						"y": 224,
+						"x": 128,
+						"y": 256,
 						"w": 32,
 						"h": 32
 					}
@@ -2628,8 +2817,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 384,
-						"y": 224,
+						"x": 160,
+						"y": 256,
 						"w": 32,
 						"h": 32
 					}
@@ -2649,8 +2838,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 416,
-						"y": 224,
+						"x": 192,
+						"y": 256,
 						"w": 32,
 						"h": 32
 					}
@@ -2670,8 +2859,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 448,
-						"y": 224,
+						"x": 224,
+						"y": 256,
 						"w": 32,
 						"h": 32
 					}
@@ -2691,8 +2880,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 480,
-						"y": 224,
+						"x": 256,
+						"y": 256,
 						"w": 32,
 						"h": 32
 					}
@@ -2712,7 +2901,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 0,
+						"x": 288,
 						"y": 256,
 						"w": 32,
 						"h": 32
@@ -2733,7 +2922,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 32,
+						"x": 320,
 						"y": 256,
 						"w": 32,
 						"h": 32
@@ -2754,7 +2943,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 64,
+						"x": 352,
 						"y": 256,
 						"w": 32,
 						"h": 32
@@ -2775,7 +2964,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 96,
+						"x": 384,
 						"y": 256,
 						"w": 32,
 						"h": 32
@@ -2796,7 +2985,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 128,
+						"x": 416,
 						"y": 256,
 						"w": 32,
 						"h": 32
@@ -2817,7 +3006,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 160,
+						"x": 448,
 						"y": 256,
 						"w": 32,
 						"h": 32
@@ -2838,7 +3027,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 192,
+						"x": 480,
 						"y": 256,
 						"w": 32,
 						"h": 32
@@ -2859,195 +3048,6 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 224,
-						"y": 256,
-						"w": 32,
-						"h": 32
-					}
-				},
-				{
-					"filename": "items/weapons/rapier-2.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 32,
-						"h": 32
-					},
-					"frame": {
-						"x": 256,
-						"y": 256,
-						"w": 32,
-						"h": 32
-					}
-				},
-				{
-					"filename": "items/weapons/rapier-3.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 32,
-						"h": 32
-					},
-					"frame": {
-						"x": 288,
-						"y": 256,
-						"w": 32,
-						"h": 32
-					}
-				},
-				{
-					"filename": "items/weapons/rapier-4.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 32,
-						"h": 32
-					},
-					"frame": {
-						"x": 320,
-						"y": 256,
-						"w": 32,
-						"h": 32
-					}
-				},
-				{
-					"filename": "items/weapons/rimebrand.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 32,
-						"h": 32
-					},
-					"frame": {
-						"x": 352,
-						"y": 256,
-						"w": 32,
-						"h": 32
-					}
-				},
-				{
-					"filename": "items/weapons/ruinous-axe.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 32,
-						"h": 32
-					},
-					"frame": {
-						"x": 384,
-						"y": 256,
-						"w": 32,
-						"h": 32
-					}
-				},
-				{
-					"filename": "items/weapons/rune-sword-cold-1.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 32,
-						"h": 32
-					},
-					"frame": {
-						"x": 416,
-						"y": 256,
-						"w": 32,
-						"h": 32
-					}
-				},
-				{
-					"filename": "items/weapons/rune-sword-cold-2.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 32,
-						"h": 32
-					},
-					"frame": {
-						"x": 448,
-						"y": 256,
-						"w": 32,
-						"h": 32
-					}
-				},
-				{
-					"filename": "items/weapons/rune-sword-hot-1.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 32,
-						"h": 32
-					},
-					"frame": {
-						"x": 480,
-						"y": 256,
-						"w": 32,
-						"h": 32
-					}
-				},
-				{
-					"filename": "items/weapons/rune-sword-hot-2.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 32,
-						"h": 32
-					},
-					"frame": {
 						"x": 0,
 						"y": 288,
 						"w": 32,
@@ -3055,7 +3055,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/simple-axe.png",
+					"filename": "items/weapons/rapier-2.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -3076,7 +3076,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/solar-falchion.png",
+					"filename": "items/weapons/rapier-3.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -3097,7 +3097,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/spear-1.png",
+					"filename": "items/weapons/rapier-4.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -3118,7 +3118,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/stinger-rapier.png",
+					"filename": "items/weapons/rimebrand.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -3139,7 +3139,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/sunsteel-falchion.png",
+					"filename": "items/weapons/ruinous-axe.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -3160,7 +3160,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/sword-1.png",
+					"filename": "items/weapons/rune-sword-cold-1.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -3181,7 +3181,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/sword-2.png",
+					"filename": "items/weapons/rune-sword-cold-2.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -3202,7 +3202,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/sword-3.png",
+					"filename": "items/weapons/rune-sword-hot-1.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -3223,7 +3223,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/sword-4.png",
+					"filename": "items/weapons/rune-sword-hot-2.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -3244,7 +3244,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/thorn-needle.png",
+					"filename": "items/weapons/simple-axe.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -3265,7 +3265,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/venom-knife.png",
+					"filename": "items/weapons/solar-falchion.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -3286,7 +3286,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/venomthorn-rapier.png",
+					"filename": "items/weapons/spear-1.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -3307,7 +3307,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/warmaul.png",
+					"filename": "items/weapons/stinger-rapier.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -3328,7 +3328,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/whirling-morning-star.png",
+					"filename": "items/weapons/sunsteel-falchion.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -3349,7 +3349,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/zenith-falchion.png",
+					"filename": "items/weapons/sword-1.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -3365,6 +3365,195 @@
 					"frame": {
 						"x": 480,
 						"y": 288,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "items/weapons/sword-2.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 0,
+						"y": 320,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "items/weapons/sword-3.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 32,
+						"y": 320,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "items/weapons/sword-4.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 64,
+						"y": 320,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "items/weapons/thorn-needle.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 96,
+						"y": 320,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "items/weapons/venom-knife.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 128,
+						"y": 320,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "items/weapons/venomthorn-rapier.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 160,
+						"y": 320,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "items/weapons/warmaul.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 192,
+						"y": 320,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "items/weapons/whirling-morning-star.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 224,
+						"y": 320,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "items/weapons/zenith-falchion.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 256,
+						"y": 320,
 						"w": 32,
 						"h": 32
 					}

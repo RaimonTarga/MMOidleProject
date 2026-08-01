@@ -20,7 +20,7 @@ export const graveyardRecipeEntries = [
       'weapon.dead-swing-interval': 3,
       'weapon.dead-swing-vuln-pct': 0.20, 'weapon.dead-swing-vuln-ms': 4000,
     },
-    icon: 'items/weapons/graveyard-axe.png',
+    icon: 'items/weapons/plague-axe.png',
     description: 'Every third stroke lands flat and harmless — and leaves the rot to make the next one count double.',
     upgrades: [
       { stats: { attack: 30 }, cost: { purple: 405 }, requiredBiomeLevel: 2 },

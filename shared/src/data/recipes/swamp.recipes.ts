@@ -16,7 +16,7 @@ export const swampRecipeEntries = [
     recipeGroup: 'swamp', requiredBiomeLevel: 1, slot: 'weapon',
     cost: { purple: 22 }, stats: { attack: 10 }, attacksPerSecond: 0.85, tier: 1,
     weaponDot: { effectId: 'poison-dagger-burn', convPct: 0.50, tickIntervalMs: 1000, drainDurationMs: 4500, dotMultiplier: 1.50, element: 'poison' },
-    icon: 'items/weapons/rune-sword-hot-1.png',
+    icon: 'items/weapons/poison-dagger.png',
     description: 'A short blade kept slick with mire-venom that refuses to dry.',
     upgrades: [
       { stats: { attack: 4 }, cost: { purple: 30 }, requiredBiomeLevel: 2 },
@@ -33,7 +33,7 @@ export const swampRecipeEntries = [
     cost: { purple: 22 }, stats: { maxHp: 24, plating: 6 },
     mechanicEffects: { 'defense.dot-resistance': 0.18 },
     tier: 1,
-    icon: 'items/armor/leather-armor-4.png',
+    icon: 'items/armor/arcane-wrappings.png',
     description: 'Marsh-cloth steeped in old wardings against rot and fume.',
     upgrades: [
       { stats: { maxHp: 6, plating: 2 }, cost: { purple: 30 }, requiredBiomeLevel: 3 },
@@ -51,7 +51,7 @@ export const swampRecipeEntries = [
     cost: { purple: 18 }, stats: { hpRegen: 3 },
     mechanicEffects: { 'defense.absorb-pct': 0.07 },
     tier: 1,
-    icon: 'items/charms/eye-charm-1.png',
+    icon: 'items/charms/murk-eye.png',
     description: 'A preserved golem eye, still weeping faint green light.',
     upgrades: [
       { mechanicEffects: { 'defense.absorb-pct': 0.01 }, cost: { purple: 15 }, requiredBiomeLevel: 4 },
@@ -67,7 +67,7 @@ export const swampRecipeEntries = [
     recipeGroup: 'swamp', requiredBiomeLevel: 4, slot: 'mobility',
     cost: { purple: 18 }, stats: { speed: 20 }, tier: 1,
     mechanicEffects: { 'mobility.tenacity-pct': 0.20 },
-    icon: 'items/boots/wraps-1.png',
+    icon: 'items/boots/marsh-treads.png',
     description: 'Broad soles that ride the surface of soft, sucking ground.',
     upgrades: [
       { stats: { speed: 3 }, cost: { purple: 10 }, requiredBiomeLevel: 4 },
@@ -85,7 +85,7 @@ export const swampRecipeEntries = [
     recipeGroup: 'swamp', requiredBiomeLevel: 7, slot: 'weapon',
     cost: { purple: 52 }, catalystCost: { blight: 2 }, stats: { attack: 22 }, attacksPerSecond: 1.0, tier: 2, // family-tag: poison DoT-conversion weapon → Blight
     weaponDot: { effectId: 'swamp-mirebrand-burn', convPct: 0.50, tickIntervalMs: 1000, drainDurationMs: 4500, dotMultiplier: 1.50, element: 'poison' },
-    icon: 'items/weapons/rune-sword-hot-1.png',
+    icon: 'items/weapons/venom-knife.png',
     description: 'The venom runs deeper now; what it touches keeps rotting.',
     upgrades: [
       { stats: { attack: 10 }, cost: { purple: 78 }, requiredBiomeLevel: 8 },
@@ -157,7 +157,7 @@ export const swampRecipeEntries = [
     recipeGroup: 'swamp', requiredBiomeLevel: 13, slot: 'weapon',
     cost: { purple: 116 }, catalystCost: { blight: 3 }, stats: { attack: 46 }, attacksPerSecond: 1.00, tier: 3, // family-tag: poison DoT weapon → Blight
     weaponDot: { effectId: 'swamp-blightbrand-burn', convPct: 0.50, tickIntervalMs: 1000, drainDurationMs: 4500, dotMultiplier: 1.50, element: 'poison' },
-    icon: 'items/weapons/rune-sword-hot-2.png',
+    icon: 'items/weapons/plague-fang.png',
     description: 'The rot it carries does more work than the edge ever could.',
     upgrades: [
       { stats: { attack: 14 }, cost: { purple: 170 },  requiredBiomeLevel: 14 },
