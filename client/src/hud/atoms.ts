@@ -196,6 +196,7 @@ export const equipmentAtom = atom<EquipmentMap>({ ...DEFAULT_EQUIPMENT });
 export const itemUpgradesAtom = atom<Record<string, number>>({});
 export const unlockedRecipesAtom = atom<string[]>([]);
 export const bossesClearedAtom = atom<string[]>([]);
+export const visitedNodesAtom = atom<string[]>([]);
 export const biomeLevelAtom = atom<Record<string, number>>({});
 /** Derived sum of all biome levels (system rework Step 4) — RP budget + upgrade ceiling. */
 export const globalMasteryAtom = atom((get) => globalMastery(get(biomeLevelAtom)));
@@ -741,6 +742,7 @@ function resetPlayerAtoms(): void {
   setIfShallowArrayEqual(inventoryAtom, []);
   setIfShallowArrayEqual(unlockedRecipesAtom, []);
   setIfShallowArrayEqual(bossesClearedAtom, []);
+  setIfShallowArrayEqual(visitedNodesAtom, []);
   setIfShallowArrayEqual(activeBuffsAtom, []);
   store.set(abilityFiredAtAtom, {});
   store.set(abilityCooldownStartedAtAtom, {});
@@ -852,6 +854,7 @@ export function syncPlayerAtoms(player: PlayerView | null): void {
   setIfShallowArrayEqual(inventoryAtom, player.inventory);
   setIfShallowArrayEqual(unlockedRecipesAtom, player.unlockedRecipes);
   setIfShallowArrayEqual(bossesClearedAtom, player.bossesCleared);
+  setIfShallowArrayEqual(visitedNodesAtom, player.visitedNodes);
   setIfBuffsEqual(activeBuffsAtom, player.activeBuffs);
   setIfShallowObjectEqual(passivesAtom, player.passives);
   setIfShallowObjectEqual(equipmentAtom, player.equipment);

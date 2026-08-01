@@ -97,7 +97,10 @@ export function MaterialsPanel() {
   };
 
   return (
-    <HudPanel className="sidebar-panel economy-panel materials-panel">
+    <HudPanel
+      className="sidebar-panel economy-panel materials-panel"
+      data-ui-unlock-system="materials"
+    >
       <DisclosureHeader
         className="panel-title panel-title--collapsible"
         title="Materials"

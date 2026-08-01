@@ -256,6 +256,11 @@ export interface TracksProgression {
   bossesCleared: string[];
   /** Persisted non-boss map clears keyed by node id. */
   clearedNodes: string[];
+  /**
+   * Persisted nodes the player has entered through a world gate. Optional for
+   * JSON-save compatibility; hydration normalizes old saves to an array.
+   */
+  visitedNodes?: string[];
   /** Every rune condition + action fragment id the player has found. */
   runesOwned: string[];
   /** One-time rune forge recipes the player has crafted. */

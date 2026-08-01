@@ -3,9 +3,8 @@ import type { EquippedStances } from "../stances";
 import type { EssenceType } from "../items";
 
 /**
- * Lives in shared because it is pure policy over authoritative progression
- * state — no React, no DOM, no atoms. That also lets it be tested directly by
- * the repo's test runner, which only discovers shared/ and server/ suites.
+ * Pure visibility policy over authoritative progression state. Keeping this in
+ * shared lets every client surface use one tested unlock schedule.
  */
 export interface SystemVisibilityInput {
   playerTier: number;
@@ -17,30 +16,20 @@ export interface SystemVisibilityInput {
   activeStance: string | null;
   knownRites: readonly string[];
   equippedRites: readonly string[];
-  /** Economy wallets and progression, for the elements gated on first use. */
   essences?: Partial<Record<EssenceType, number>>;
   catalysts?: Record<string, number>;
   catalystProgress?: Record<string, number>;
   unlockedRecipes?: readonly string[];
+  runeRecipesCrafted?: readonly string[];
+  /** Nodes entered through a world transition; Map unlocks on first travel. */
+  visitedNodes?: readonly string[];
   skillPoints?: number;
-  /** Allocated passives; a non-empty record means the tree has been used. */
   passives?: Record<string, number>;
-  /** True while grouped, or while another player shares the node. */
-  hasCompany?: boolean;
-  /**
-   * Biome XP earned. This is the durable proxy for "has killed something":
-   * §16 wants first-blood triggers, and there is no persisted kill counter, but
-   * biome XP only ever accrues from kills and is saved with progression. An
-   * in-memory "saw a kill this session" flag would be exactly the incidental
-   * client state §16 forbids.
-   */
   biomeXP?: Record<string, number>;
   biomeLevel?: Record<string, number>;
   questProgress?: Record<string, number>;
-  /** Item ownership, for the Inventory reveal. */
   inventory?: readonly string[];
   hasEquipment?: boolean;
-  /** Runes owned, one half of the Loadout reveal. */
   runesOwned?: readonly string[];
 }
 
@@ -49,28 +38,26 @@ export interface SystemVisibility {
   abilities: boolean;
   stances: boolean;
   rites: boolean;
-  /** The Materials rail panel — revealed by the first essence or catalyst. */
+  /** Materials reveal when the player first receives economy currency. */
   materials: boolean;
-  /** Passive Tree navigation — revealed by the first skill point. */
+  /** Passive Tree reveals on its first point or an existing allocation. */
   passiveTree: boolean;
-  /** Party panel — revealed when grouping first becomes possible. */
+  /** Always visible so a solo player has the controls needed to join a party. */
   party: boolean;
-
-  // ── Staged arc (§16). A fresh character boots to Character, Auto Combat and
-  // Settings; everything below assembles on its first authoritative trigger.
-  /** Combat Log, Bestiary and Progression all reveal on first blood. */
+  /** Combat Log and Bestiary reveal on first blood. */
   combatLog: boolean;
   bestiary: boolean;
+  /** Tier quest/progression exists from the beginning. */
   progression: boolean;
-  /** Inventory — the first item owned. */
+  /** Inventory reveals with the first owned or equipped item. */
   inventory: boolean;
-  /** Crafting — reuses the Materials gate rather than inventing a second one. */
+  /** Crafting reveals at the minimum payable essence balance: four of one type. */
   crafting: boolean;
-  /** World map and the biome XP overlay — the first biome level. */
+  /** Map reveals after the first world-gate crossing. */
   map: boolean;
-  /** Loadout — the first thing there is to arrange. */
+  /** Loadout reveals when there is something to arrange. */
   loadout: boolean;
-  /** The ability dock; an empty dock before this is noise. */
+  /** Ability dock shares the crafted-ability gate. */
   abilityDock: boolean;
 }
 
@@ -80,23 +67,18 @@ function anyPositive(values: Record<string, number> | undefined): boolean {
   return false;
 }
 
-export function masteryIsVisible(
-  playerTier: number,
-  globalMastery: number,
-): boolean {
-  return playerTier >= 1 || globalMastery > 0;
+export function masteryIsVisible(globalMastery: number): boolean {
+  return globalMastery >= 1;
 }
 
 /**
- * Every gate keeps an ownership override, so no migrated save can lose a
- * destination it has already used. `playerTier >= 1` acts as a master override
- * on the early gates: whatever the playstyle, the core interface exists in full
- * by the first tier-up.
+ * Ownership fallbacks keep an already-used destination from disappearing.
+ * Explicit milestones (Map, Crafting, Mastery, Abilities) do not use the old
+ * player-tier master override.
  */
 export function resolveSystemVisibility(
   input: SystemVisibilityInput,
 ): SystemVisibility {
-  // First blood. Biome XP and quest progress are both kill-derived and durable.
   const hasFought =
     anyPositive(input.biomeXP) ||
     anyPositive(input.questProgress) ||
@@ -112,27 +94,36 @@ export function resolveSystemVisibility(
     input.playerTier >= 1;
 
   const abilities =
-    input.playerTier >= 1 ||
     input.knownAbilities.length > 0 ||
     input.equippedAbilities.techniques.length > 0 ||
     input.equippedAbilities.guards.length > 0;
 
+  const hasCraftingEssence = Object.values(input.essences ?? {})
+    .some((amount) => amount >= 4);
+  const hasCraftedSomething =
+    (input.inventory?.length ?? 0) > 0 ||
+    input.hasEquipment === true ||
+    input.knownAbilities.length > 0 ||
+    input.knownStances.length > 0 ||
+    input.knownRites.length > 0 ||
+    (input.runeRecipesCrafted?.length ?? 0) > 0;
+
   return {
     combatLog: hasFought,
     bestiary: hasFought,
-    progression: hasFought,
+    progression: true,
     inventory:
       (input.inventory?.length ?? 0) > 0 ||
       input.hasEquipment === true ||
       input.playerTier >= 1,
-    crafting: materials,
-    map: anyPositive(input.biomeLevel) || anyPositive(input.biomeXP) || input.playerTier >= 1,
+    crafting: hasCraftingEssence || hasCraftedSomething,
+    map: (input.visitedNodes?.length ?? 0) > 0,
     loadout:
       abilities ||
       (input.runesOwned?.length ?? 0) > 0 ||
       input.playerTier >= 1,
     abilityDock: abilities,
-    mastery: masteryIsVisible(input.playerTier, input.globalMastery),
+    mastery: masteryIsVisible(input.globalMastery),
     abilities,
     stances:
       input.playerTier >= 2 ||
@@ -144,13 +135,11 @@ export function resolveSystemVisibility(
       input.playerTier >= 3 ||
       input.knownRites.length > 0 ||
       input.equippedRites.length > 0,
-    // Every economy gate keeps an ownership override: holding nothing right now
-    // must not hide a system from a player who has clearly already used it.
     materials,
     passiveTree:
       (input.skillPoints ?? 0) > 0 ||
       anyPositive(input.passives) ||
       input.playerTier >= 1,
-    party: input.hasCompany === true,
+    party: true,
   };
 }

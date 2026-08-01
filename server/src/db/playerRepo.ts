@@ -225,6 +225,11 @@ function hydratePlayerSlices(row: CharacterRow): PersistedPlayerSlices {
       catalystProgress: sanitizeFamilyWallet(tracksProgression.catalystProgress),
       bossesCleared: tracksProgression.bossesCleared ?? [],
       clearedNodes:   tracksProgression.clearedNodes ?? [],
+      visitedNodes:
+        tracksProgression.visitedNodes ??
+        (hasPosition.nodeId !== CLEARING_NODE_ID
+          ? [hasPosition.nodeId]
+          : tracksProgression.clearedNodes ?? []),
       runeRecipesCrafted,
       runesOwned:     runeIdsFromCraftedRecipes(runeRecipesCrafted),
       runesEquipped:  tracksProgression.runesEquipped ?? [],
@@ -284,6 +289,7 @@ function buildFreshSlices(
       currentSkillTier: 0,
       bossesCleared:    [],
       clearedNodes:     [],
+      visitedNodes:     [],
       runesOwned:       runeIdsFromCraftedRecipes([]),
       runeRecipesCrafted: [],
       runesEquipped:    [...DEFAULT_RUNE_LOADOUT],

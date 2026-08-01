@@ -44,7 +44,7 @@ export function PartyPanel() {
     : "None";
 
   return (
-    <HudPanel className="sidebar-panel party-panel">
+    <HudPanel className="sidebar-panel party-panel" data-ui-unlock-system="party">
       <DisclosureHeader
         className="panel-title panel-title--collapsible party-panel__header"
         title="Party"

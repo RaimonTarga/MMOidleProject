@@ -296,6 +296,7 @@ export function AbilityBar() {
   if (isMobile) return (
     <div
       className="ability-bar-root"
+      data-ui-unlock-system="abilityDock"
       style={{
         position: "absolute",
         bottom: 16,
@@ -317,6 +318,7 @@ export function AbilityBar() {
   return (
     <HudDock
       className="desktop-hud desktop-combat-abilities"
+      data-ui-unlock-system="abilityDock"
       role="group"
       aria-label="Automatic abilities"
     >

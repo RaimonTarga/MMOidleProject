@@ -142,7 +142,11 @@
       opacity var(--hud-motion-state) ease;
   }
 
-  [data-ui-unlock-system] {
+  /* Keep the unlock housing available for ordinary flow content without
+     overriding a component's own anchored placement. `:where()` deliberately
+     contributes zero specificity, so docks such as the bottom-left ability
+     bar retain their absolute/fixed positioning. */
+  :where([data-ui-unlock-system]) {
     position: relative;
     isolation: isolate;
   }
@@ -332,17 +336,33 @@
 @keyframes hud-system-unlock-wake {
   0% {
     opacity: 0;
-    filter: brightness(0.72) saturate(0.66);
-    transform: translateY(var(--hud-unlock-lift)) scale(0.985);
+    filter: brightness(0.58) saturate(0.48);
+    transform: translateY(calc(var(--hud-unlock-lift) * 2)) scale(0.965);
   }
-  24% {
+  9% {
     opacity: 1;
-    filter: brightness(1.42) saturate(1.18) drop-shadow(0 0 5px var(--hud-accent-shadow));
-    transform: translateY(0) scale(1.008);
+    filter: brightness(2.25) saturate(1.65) drop-shadow(0 0 12px var(--hud-channel-color));
+    transform: translateY(0) scale(1.025);
   }
-  52% {
-    filter: brightness(1.1) saturate(1.06) drop-shadow(0 0 3px var(--hud-energy-active));
+  20% {
+    filter: brightness(1.12) saturate(1.08) drop-shadow(0 0 4px var(--hud-energy-active));
+    transform: scale(0.995);
+  }
+  36% {
+    filter: brightness(1.72) saturate(1.32) drop-shadow(0 0 9px var(--hud-channel-color));
+    transform: scale(1.012);
+  }
+  50% {
+    filter: brightness(1.04) saturate(1.03) drop-shadow(0 0 3px var(--hud-energy-active));
     transform: scale(0.998);
+  }
+  67% {
+    filter: brightness(1.42) saturate(1.2) drop-shadow(0 0 7px var(--hud-accent-shadow));
+    transform: scale(1.006);
+  }
+  82% {
+    filter: brightness(1.02) saturate(1.02);
+    transform: scale(0.999);
   }
   100% {
     opacity: 1;
@@ -356,18 +376,39 @@
     opacity: 0;
     transform: translateX(-48%) scaleX(0.08);
   }
-  30% {
+  10% {
+    opacity: var(--hud-unlock-flare-opacity);
+    transform: translateX(-18%) scaleX(0.7);
+  }
+  25% {
+    opacity: 0;
+    transform: translateX(92%) scaleX(0.12);
+  }
+  34% {
+    opacity: 0;
+    transform: translateX(-48%) scaleX(0.08);
+  }
+  43% {
     opacity: var(--hud-unlock-flare-opacity);
     transform: translateX(-8%) scaleX(0.82);
   }
   58% {
-    opacity: var(--hud-unlock-flare-opacity);
-    transform: translateX(36%) scaleX(0.5);
-  }
-  100% {
     opacity: 0;
     transform: translateX(92%) scaleX(0.12);
   }
+  67% {
+    opacity: 0;
+    transform: translateX(-48%) scaleX(0.08);
+  }
+  76% {
+    opacity: var(--hud-unlock-flare-opacity);
+    transform: translateX(18%) scaleX(0.62);
+  }
+  91% {
+    opacity: 0;
+    transform: translateX(92%) scaleX(0.12);
+  }
+  100% { opacity: 0; }
 }
 
 @keyframes hud-system-rune-wake {
@@ -375,13 +416,29 @@
     filter: brightness(0.68) saturate(0.64);
     transform: scale(0.86);
   }
-  28% {
-    filter: brightness(1.72) saturate(1.28) drop-shadow(0 0 4px var(--hud-channel-color));
-    transform: scale(1.08);
+  9% {
+    filter: brightness(2.05) saturate(1.45) drop-shadow(0 0 7px var(--hud-channel-color));
+    transform: scale(1.12);
   }
-  58% {
+  22% {
     filter: brightness(1.08) saturate(1.06);
     transform: scale(0.98);
+  }
+  38% {
+    filter: brightness(1.64) saturate(1.24) drop-shadow(0 0 5px var(--hud-channel-color));
+    transform: scale(1.06);
+  }
+  52% {
+    filter: brightness(1.04) saturate(1.03);
+    transform: scale(0.995);
+  }
+  69% {
+    filter: brightness(1.38) saturate(1.16) drop-shadow(0 0 4px var(--hud-channel-color));
+    transform: scale(1.035);
+  }
+  84% {
+    filter: brightness(1.02) saturate(1.02);
+    transform: scale(0.998);
   }
   100% {
     filter: brightness(1) saturate(1);
@@ -416,7 +473,7 @@
    A revealed destination gets one restrained housing settle — no channel flare
    sweep, no icon rune wake, no lift (the token is 0px in the mobile scope). */
 @media (max-width: 1100px) {
-  [data-ui-unlock-system] {
+  :where([data-ui-unlock-system]) {
     position: relative;
   }
 

@@ -35,7 +35,6 @@ import {
   equippedAbilitiesAtom,
   equippedRitesAtom,
   equippedStancesAtom,
-  globalMasteryAtom,
   hpAtom,
   incomingDotAtom,
   knownAbilitiesAtom,
@@ -46,7 +45,6 @@ import {
   playerNameAtom,
   playerIdAtom,
   playerNodeIdAtom,
-  playerTierAtom,
   settingsOpenAtom,
   shieldsAtom,
   skillPointsAtom,
@@ -104,8 +102,6 @@ function MobileHUDContent() {
   const nodeId = useAtomValue(playerNodeIdAtom);
   const dead = useAtomValue(deathOverlayAtom).active;
 
-  const playerTier = useAtomValue(playerTierAtom);
-  const globalMastery = useAtomValue(globalMasteryAtom);
   const knownAbilities = useAtomValue(knownAbilitiesAtom);
   const equippedAbilities = useAtomValue(equippedAbilitiesAtom);
   const knownStances = useAtomValue(knownStancesAtom);
@@ -190,6 +186,7 @@ function MobileHUDContent() {
     label: string;
     badge?: boolean;
     disabled?: boolean;
+    unlockSystems?: readonly UiUnlockSystem[];
   }[] = [
     // Stats and More have no destination in the approved navigation family, so
     // their glyph is the icon itself rather than a placeholder fallback.
@@ -202,6 +199,7 @@ function MobileHUDContent() {
         fallback: '🌳',
         label: 'Skills',
         badge: skillPoints > 0,
+        unlockSystems: ['passiveTree'] as const,
       }]
       : []),
     // The staged arc governs the tab bar too, from the same resolver.
@@ -212,6 +210,7 @@ function MobileHUDContent() {
         fallback: '🎒',
         label: 'Bag',
         disabled: dead,
+        unlockSystems: ['inventory'] as const,
       }]
       : []),
     ...(visibility.crafting
@@ -222,6 +221,7 @@ function MobileHUDContent() {
         label: 'Craft',
         badge: newRecipes.count > 0,
         disabled: dead,
+        unlockSystems: ['materials', 'crafting'] as const,
       }]
       : []),
     ...(visibility.map
@@ -230,9 +230,25 @@ function MobileHUDContent() {
         icon: atlasIcon('UI_icons/map-icon.png'),
         fallback: '🗺',
         label: 'Map',
+        unlockSystems: ['map'] as const,
       }]
       : []),
-    { key: 'more', icon: nodeIcon('☰'), fallback: '☰', label: 'More' },
+    {
+      key: 'more',
+      icon: nodeIcon('☰'),
+      fallback: '☰',
+      label: 'More',
+      unlockSystems: [
+        'loadout',
+        'abilities',
+        'stances',
+        'rites',
+        'mastery',
+        'combatLog',
+        'bestiary',
+        'abilityDock',
+      ] as const,
+    },
   ];
 
   const moreEntries: MoreEntry[] = [
@@ -242,6 +258,7 @@ function MobileHUDContent() {
         label: 'Loadout',
         icon: atlasIcon('UI_icons/runes-icon.png'),
         fallback: 'B',
+        unlockSystem: 'loadout' as const,
         onSelect: () => openBuildTab('overview'),
       }]
       : []),
@@ -298,6 +315,7 @@ function MobileHUDContent() {
         label: 'Bestiary',
         icon: null,
         fallback: '☠',
+        unlockSystem: 'bestiary' as const,
         onSelect: () => { setBestiaryOpen(true); setView(null); },
       }]
       : []),
@@ -362,6 +380,7 @@ function MobileHUDContent() {
       {/* ── Floating quest button (bottom-left) ─────────────────────────── */}
       <button
         className={`mhud-quest${view === 'quests' ? ' mhud-quest--active' : ''}`}
+        data-ui-unlock-system="progression"
         aria-label="Current quest"
         onClick={() => setView(v => (v === 'quests' ? null : 'quests'))}
       >
@@ -377,6 +396,7 @@ function MobileHUDContent() {
               key={t.key}
               type="button"
               className={`mhud-tab${view === t.key ? ' mhud-tab--active' : ''}${t.badge ? ' mhud-tab--badge' : ''}`}
+              data-ui-unlock-system={t.unlockSystems?.join(' ') || undefined}
               aria-pressed={view === t.key}
               disabled={t.disabled}
               onClick={() => toggle(t.key)}

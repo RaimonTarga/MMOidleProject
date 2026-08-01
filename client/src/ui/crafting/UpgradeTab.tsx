@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
 import { useAtomValue } from 'jotai';
 import type { EquipmentSlot } from '@mmo-idle/shared';
 import {
@@ -29,10 +29,60 @@ import { computeUpgradeDiff } from './itemDisplay';
 import { ItemIcon } from '../ItemIcon';
 
 interface UpgradeResult {
+  id: number;
   itemId: string;
   success: boolean;
   newLevel: number;
   reason?: string;
+}
+
+type UpgradeItem = NonNullable<ReturnType<typeof ITEM_DATABASE.get>>;
+
+const UPGRADE_REVEAL_MS = 3_200;
+const UPGRADE_FAILURE_MS = 2_200;
+
+/**
+ * A restrained version of the forge reveal. The charge and lock stay clipped
+ * to the upgraded item's card, so repeated progression feels tactile without
+ * interrupting the rest of the crafting panel.
+ */
+function UpgradeReveal({ item, result }: { item: UpgradeItem; result: UpgradeResult }) {
+  const style = {
+    '--upgrade-reveal-tone': tierColor(item.tier),
+  } as CSSProperties;
+
+  return (
+    <div
+      className="craft-upgrade-reveal"
+      style={style}
+      role="status"
+      aria-live="polite"
+      aria-label={`${item.name} upgraded to plus ${result.newLevel}`}
+    >
+      <span className="craft-upgrade-reveal__veil" aria-hidden="true" />
+      <span className="craft-upgrade-reveal__rail" aria-hidden="true">
+        <i className="craft-upgrade-reveal__charge" />
+        <i className="craft-upgrade-reveal__current" />
+      </span>
+
+      <span className="craft-upgrade-reveal__socket" aria-hidden="true">
+        <i className="craft-upgrade-reveal__ring" />
+        <span className="craft-upgrade-reveal__icon">
+          {item.icon
+            ? <ItemIcon frameName={item.icon} scale={1.4} />
+            : SLOT_LABELS[item.slot]?.slice(0, 3).toUpperCase()}
+        </span>
+        <i className="craft-upgrade-reveal__lock" />
+      </span>
+
+      <span className="craft-upgrade-reveal__copy">
+        <small>Enhancement locked</small>
+        <strong>+{result.newLevel}</strong>
+        <span>{item.name}</span>
+      </span>
+      <span className="craft-upgrade-reveal__edge" aria-hidden="true" />
+    </div>
+  );
 }
 
 export function UpgradeTab() {
@@ -51,18 +101,36 @@ export function UpgradeTab() {
   const [filterTier,  setFilterTier]  = useState<number | null>(null);
 
   const [result, setResult] = useState<UpgradeResult | null>(null);
+  const resultIdRef = useRef(0);
   const resultTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    const handler = (e: Event) => {
-      const detail = (e as CustomEvent<UpgradeResult>).detail;
+    const clearResult = () => {
       if (resultTimerRef.current) clearTimeout(resultTimerRef.current);
-      setResult(detail);
-      resultTimerRef.current = setTimeout(() => setResult(null), detail.success ? 1500 : 2200);
+      resultTimerRef.current = null;
+      setResult(null);
+    };
+    const handler = (e: Event) => {
+      const detail = (e as CustomEvent<Omit<UpgradeResult, 'id'>>).detail;
+      if (document.hidden) {
+        clearResult();
+        return;
+      }
+      if (resultTimerRef.current) clearTimeout(resultTimerRef.current);
+      setResult({ ...detail, id: ++resultIdRef.current });
+      resultTimerRef.current = setTimeout(
+        () => setResult(null),
+        detail.success ? UPGRADE_REVEAL_MS : UPGRADE_FAILURE_MS,
+      );
+    };
+    const cancelHiddenReveal = () => {
+      if (document.hidden) clearResult();
     };
     window.addEventListener('hud:upgradeResult', handler);
+    document.addEventListener('visibilitychange', cancelHiddenReveal);
     return () => {
       window.removeEventListener('hud:upgradeResult', handler);
+      document.removeEventListener('visibilitychange', cancelHiddenReveal);
       if (resultTimerRef.current) clearTimeout(resultTimerRef.current);
     };
   }, []);
@@ -83,13 +151,16 @@ export function UpgradeTab() {
       .filter((def): def is NonNullable<typeof def> =>
         !!def
         && (isTestRoom || !!def.biomeGroup)
-        && (itemUpgrades[def.id] ?? 0) < getMaxUpgrade(def))
+        && (
+          (itemUpgrades[def.id] ?? 0) < getMaxUpgrade(def)
+          || (result?.success === true && result.itemId === def.id)
+        ))
       .sort((a, b) => {
         const aEq = equippedSet.has(a.id) ? 0 : 1;
         const bEq = equippedSet.has(b.id) ? 0 : 1;
         return aEq - bEq || a.tier - b.tier || a.name.localeCompare(b.name);
       });
-  }, [inventory, equippedSet, isTestRoom, itemUpgrades]);
+  }, [inventory, equippedSet, isTestRoom, itemUpgrades, result]);
 
   const biomeGroups = useMemo(() => {
     const groups = new Set<string>();
@@ -205,17 +276,22 @@ export function UpgradeTab() {
                   'craft-recipe',
                   'craft-upgrade',
                   isMaxed ? 'craft-upgrade--maxed' : '',
+                  cardResult?.success ? 'craft-upgrade--revealing' : '',
                   // Equipped gear is what an upgrade actually changes about your
                   // character right now, so the card says so with its whole
                   // frame rather than with one grey chip among four badges.
                   equipped ? 'craft-upgrade--equipped' : '',
                 ].filter(Boolean).join(' ')}
+                style={{ '--upgrade-reveal-tone': tierColor(def.tier) } as CSSProperties}
               >
-                {cardResult && (
-                  <div className={`craft-card-result craft-card-result--${cardResult.success ? 'ok' : 'err'}`}>
-                    <span className="craft-card-result__icon">{cardResult.success ? '✦' : '✗'}</span>
+                {cardResult?.success && (
+                  <UpgradeReveal key={cardResult.id} item={def} result={cardResult} />
+                )}
+                {cardResult && !cardResult.success && (
+                  <div className="craft-card-result craft-card-result--err">
+                    <span className="craft-card-result__icon">✗</span>
                     <span className="craft-card-result__text">
-                      {cardResult.success ? `Upgraded to +${cardResult.newLevel}!` : (cardResult.reason ?? 'Upgrade failed')}
+                      {cardResult.reason ?? 'Upgrade failed'}
                     </span>
                   </div>
                 )}
@@ -290,8 +366,12 @@ export function UpgradeTab() {
                       )}
                       <button
                         className="craft-recipe__btn"
-                        disabled={!canUpgrade}
-                        onClick={() => { if (canUpgrade) hudBus.requestUpgradeItem(def.id); }}
+                        disabled={!canUpgrade || cardResult?.success === true}
+                        onClick={() => {
+                          if (canUpgrade && cardResult?.success !== true) {
+                            hudBus.requestUpgradeItem(def.id);
+                          }
+                        }}
                       >
                         {canUpgrade
                           ? `Upgrade +${currentPlus + 1}`

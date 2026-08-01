@@ -15,13 +15,14 @@ import {
   knownAbilitiesAtom,
   knownRitesAtom,
   knownStancesAtom,
-  partyAtom,
   passivesAtom,
   playerTierAtom,
   questProgressAtom,
+  runeRecipesCraftedAtom,
   runesOwnedAtom,
   skillPointsAtom,
   unlockedRecipesAtom,
+  visitedNodesAtom,
 } from './atoms';
 import { resolveSystemVisibility, type SystemVisibility } from './systemVisibility';
 
@@ -48,6 +49,8 @@ export function useSystemVisibility(): SystemVisibility {
     catalysts: useAtomValue(catalystsAtom),
     catalystProgress: useAtomValue(catalystProgressAtom),
     unlockedRecipes: useAtomValue(unlockedRecipesAtom),
+    runeRecipesCrafted: useAtomValue(runeRecipesCraftedAtom),
+    visitedNodes: useAtomValue(visitedNodesAtom),
     skillPoints: useAtomValue(skillPointsAtom),
     passives: useAtomValue(passivesAtom),
     biomeXP: useAtomValue(biomeXPAtom),
@@ -56,8 +59,5 @@ export function useSystemVisibility(): SystemVisibility {
     inventory: useAtomValue(inventoryAtom),
     hasEquipment: Object.values(useAtomValue(equipmentAtom)).some((id) => !!id),
     runesOwned: useAtomValue(runesOwnedAtom),
-    // Party is the one gate with no ownership override in §16: it is about who
-    // is here now, not what you have earned.
-    hasCompany: (useAtomValue(partyAtom)?.members.length ?? 0) > 0,
   });
 }

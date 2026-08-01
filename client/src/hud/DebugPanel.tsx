@@ -257,7 +257,7 @@ function DebugPanelContent() {
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
             <div className="debug-div" style={{ padding: '4px 0', color: '#ff9944' }}>
-              Wipes skills, items &amp; biome XP. Confirm?
+              Wipes skills, items, currencies &amp; all progression. Confirm?
             </div>
             <div style={{ display: 'flex', gap: 4 }}>
               <button

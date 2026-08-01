@@ -76,8 +76,13 @@ export function resetPlayerClass(
 }
 
 export function resetPlayerProgress(world: World, player: PlayerEntity): GameActionResult {
-  player.tracksProgression.level = 1;
+  player.tracksProgression.level = 0;
   player.tracksProgression.skillPoints = 0;
+  player.tracksProgression.essences = Object.fromEntries(
+    ESSENCE_TYPES.map((type) => [type, 0]),
+  ) as typeof player.tracksProgression.essences;
+  player.tracksProgression.catalysts = {};
+  player.tracksProgression.catalystProgress = {};
   player.tracksProgression.biomeXP = {};
   player.tracksProgression.biomeLevel = {};
   player.tracksProgression.unlockedRecipes = [];
@@ -86,6 +91,7 @@ export function resetPlayerProgress(world: World, player: PlayerEntity): GameAct
   player.tracksProgression.currentSkillTier = 0;
   player.tracksProgression.bossesCleared = [];
   player.tracksProgression.clearedNodes = [];
+  player.tracksProgression.visitedNodes = [];
   player.tracksProgression.runeRecipesCrafted = [];
   player.tracksProgression.runesOwned = runeIdsFromCraftedRecipes([]);
   player.tracksProgression.runesEquipped = DEFAULT_RUNE_LOADOUT.map((rule) => ({ ...rule }));
@@ -96,10 +102,6 @@ export function resetPlayerProgress(world: World, player: PlayerEntity): GameAct
   player.tracksProgression.activeStance = null;
   player.tracksProgression.knownRites = [];
   player.tracksProgression.equippedRites = emptyEquippedRites();
-  for (const type of ESSENCE_TYPES) {
-    player.tracksProgression.essences[type] = 0;
-  }
-
   player.holdsInventory.inventory = [];
   player.holdsInventory.equipment = emptyEquipment();
   player.holdsInventory.itemUpgrades = {};

@@ -1263,7 +1263,7 @@ pack; never hand-edit atlases).
 Supersedes Part II §10 decision 8 and revises the W6 matrix. The machinery is
 unchanged and mandatory: `resolveSystemVisibility` stays the single resolver,
 `installUiUnlockSync` + `data-ui-unlock-system` stays the single wake system,
-every gate keeps ownership overrides so no migrated save loses a destination.
+used systems keep ownership overrides so no migrated save loses a destination.
 Only the matrix widens and tightens.
 
 ### The arc
@@ -1278,25 +1278,27 @@ on first authoritative trigger, in the order play naturally produces:
 | Character, Auto Combat, Settings, viewport overlays | always | boot core; Settings must never gate (accessibility) |
 | Combat Log | first kill | durable proxy: bestiary discoveries non-empty |
 | Bestiary | first kill | same signal |
-| Progression panel | first kill | purpose appears after first blood |
+| Progression panel | always | the tier quest exists from the first frame |
 | Inventory | first item owned | inventory non-empty OR equipment non-empty OR tier ≥ 1 |
 | Materials rail panel | existing W6 gate | unchanged |
-| Crafting | first material | reuse the `materials` gate — no second policy |
-| Map + biome XP overlay | first biome XP | any `biomeLevel` entry > 0 OR tier ≥ 1 |
+| Crafting | 4 essence of one type | minimum payable clearing-recipe balance; crafted ownership keeps it visible after spending |
+| Map | first world-gate crossing | persisted `visitedNodes`; returning to the clearing does not hide it |
+| Biome XP overlay | always | viewport feedback, independent of the Map destination |
 | Passive Tree | existing gate | first skill point / allocated passives / tier ≥ 1 |
 | Loadout (Build) | first thing to arrange | known ability OR owned rune OR tier ≥ 1 |
-| Abilities / Stances / Rites sections | existing tier gates (1/2/3) + ownership | unchanged |
-| Mastery dial + dialog | existing gate (tier ≥ 1 or GM > 0) | dial inherits the rail entry's gate |
-| Party | existing `hasCompany` | unchanged |
+| Abilities | first crafted ability | known/equipped ability; tier alone does not reveal it |
+| Stances / Rites sections | existing tier gates (2/3) + ownership | unchanged |
+| Mastery dial + dialog | Global Mastery 1 | tier alone does not reveal it |
+| Party | always | joining requires the panel, so it cannot depend on already having company |
 | Evasion instrument | `evadesHits` present | component presence, not part of the arc matrix |
 | Ability dock | `abilities` gate | empty dock before that is noise |
 | Tactical Mode | out of scope | debug, slated for removal |
 
 Implementation notes: exact atoms are verified at implementation time, and any
 trigger lacking a durable authoritative signal must be redesigned, never
-approximated with incidental client state (Part I rule). Tier ≥ 1 acts as a
-master override on the early gates so the core interface fully exists by the
-first tier-up regardless of playstyle. Dev/admin tooling is exempt from gating.
+approximated with incidental client state (Part I rule). Tier fallbacks remain
+only on the older unchanged gates; Map, Crafting, Mastery, and Abilities use
+their explicit milestones. Dev/admin tooling is exempt from gating.
 
 ### The reveal moment
 
@@ -1544,5 +1546,5 @@ glyphs on empty slots, hover compare deltas).
 | V5.1-5.2. Runes into Make, Build → Loadout | Implemented — pending visual review (2026-07-26) | **Runes moved to Crafting.** They fit the existing `techniqueEntries` spec exactly — same id/name/tier/cost/`recipeGroup`/`requiredBiomeLevel` shape and the same biome-mastery gate — so they became a fourth technique-like kind rather than a special case: one facet chip, one `KIND_ORDER` entry, `ownedRunes` on `MakeSources`. The one real difference is the server intent (`rune:craftRecipe`, not `crafting:craftRecipe`), verified before wiring and dispatched from `learnIntent()` beside ability/stance/rite — the browser is one surface over several authoritative databases, per the W2 rule. **The Forge half of `BuildRunesTab` is gone** now that it would duplicate Make: the sub-tab strip, `RuneForgeTab`, four forge-only helpers, six imports and `runePanelTabAtom` — **313 lines deleted, 23 added**, leaving the file as the equip half V5.3 rebuilds into the rule board. **Renamed to Loadout** across the rail entry, the dialog title and tabs label, and the mobile More menu. Internal `build*` identifiers deliberately keep their names — renaming reaches a dozen files and every persisted key for no player-visible gain — with the split documented at `buildPanelTabAtom`. Repo typecheck, 35/35 tests, client build pass. **Still open in V5:** the socket grid and the `WHEN → DO` rule board (V5.3). |
 | V5.3. Loadout board + rule board | Implemented — pending visual review (2026-07-27) | **Loadout IS the overview.** The label/value sheet became a board of socket cells: cut-corner cells (using the tier `--hud-frame-cut` token) that are engraved-hollow when empty and named when filled, with firing order as a corner numeral rather than a "fires first" note, and the in-force stance edged in success green. Selecting a socket opens the tab that fills it. `SheetSection`/`SheetRow` and their CSS are gone. Sockets are text-led: there is no approved art for ability/stance/rite, and referencing frames that would not resolve is worse than no glyph. **Rule board:** each rule now reads as one sentence — `WHEN … → DO …` with the arrow drawn — instead of two stacked lines the reader had to infer a relationship from. Target preview keeps its icon and gains a name plus a missing state; reorder and remove are `ActionChip`s, retiring the bespoke `PriorityButton`. All of it moved off inline styles with a hardcoded purple palette onto tier tokens. |
 | V6. Passive tree | Implemented — pending visual review (2026-07-27) | "The path you walk" (§14.6). Past tiers now distinguish the spine from the roads not taken: a picked node keeps its size and gains a lit ring, while unpicked siblings shrink to 34px, desaturate and dim to 0.42 — **never hidden**, since class reset exists, and they expand back to full on hover or tap. Node cost became `MilestonePips` (one mark per point) instead of the string "2pt" in a pill, and the detail pane's effects became glyph chips — each authored V0b stat glyph plus its signed value, with negatives in danger red — replacing a run-on string of three-letter abbreviations. The class-orbit view keeps `formatEffects`, where a one-line string is the right shape. Unlock logic, hover-preview/click-unlock, mobile tap-commit, the `summoner-root` blocking and reset behaviour are all untouched. |
-| V7. Staged unlocks | Implemented — pending visual review (2026-07-27) | The §16 arc, with **the resolver moved to `shared/`** — it is pure policy over authoritative state, so it belongs there and, crucially, the repo's test runner only discovers `shared/` and `server/` suites. (A first attempt put the test in shared importing the client resolver; `pnpm typecheck` correctly rejected it under the package-boundary rule. The client keeps a thin re-export.) `SystemVisibility` gained `combatLog`, `bestiary`, `progression`, `inventory`, `crafting`, `map`, `loadout` and `abilityDock`. **First blood** is keyed on biome XP / quest progress / biome level — all kill-derived and persisted — because there is no kill counter and §16 forbids approximating a trigger with incidental client state. Crafting deliberately reuses the Materials gate rather than inventing a second policy. Every gate keeps its ownership override and `playerTier >= 1` is a master override, so the core interface exists in full by the first tier-up. A new `useSystemVisibility()` hook is the single input assembly: three call sites had already drifted into three slightly different signal sets, which is how a gate ends up disagreeing with the wake announcing it. **Badges:** `useUnlockBadges` persists per-character unvisited pips in localStorage, gold and slowly pulsing, static under reduced motion, cleared on first open — decoration only, never feeding visibility. Hydration is explicitly not a reveal: the first resolution per character is recorded as a baseline, or every login would light the whole rail. Mobile takes the same resolver, the same gates on its tab bar and More list, and safe fallbacks when a gate closes behind an open view. **Tested:** `shared/src/systems/systemVisibility.test.ts` asserts a fresh character sees nothing, each trigger reveals only its own element, tier 1 reveals everything, and ten ownership signals each keep their destination — the stranding guard the plan calls mandatory. 36/36 suites pass. |
+| V7. Staged unlocks | Implemented — pending visual review (updated 2026-07-30) | The §16 arc is resolved once in shared code and consumed by desktop, mobile, badges, and the 3.6-second wake. The reviewed schedule now keeps Progression and Party available from the start; unlocks Crafting at four essence of one type; unlocks Mastery at Global Mastery 1; unlocks Abilities from known/equipped ability ownership; and unlocks Map through persisted world travel. `TracksProgression.visitedNodes` records actual gate crossings, with hydration fallbacks for old saves, so Map stays available after returning to the clearing. Combat Log/Bestiary, Inventory, Materials, Passive Tree, Loadout, Stances, and Rites retain their prior rules. Explicit Map/Crafting/Mastery/Abilities milestones no longer inherit the tier-1 master override. Hydration remains a baseline rather than a reveal, and mobile uses the same resolver. The pure-policy suite covers every reviewed trigger and the server transition suite smoke-tests durable travel discovery. |
 | V8. Optional polish | Not started | Requires explicit user go-ahead |

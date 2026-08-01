@@ -217,6 +217,11 @@ function performCrossing(
 
   position.nodeId = targetNodeId;
   world.movePlayerNode(fromNodeId, targetNodeId, entity.isPlayer.id);
+  entity.tracksProgression.visitedNodes ??= [];
+  if (!entity.tracksProgression.visitedNodes.includes(targetNodeId)) {
+    entity.tracksProgression.visitedNodes.push(targetNodeId);
+    markSliceDirty(world, entity, "tracksProgression");
+  }
 
   // Thaw frozen destinations; node:preparing is only for long loads, not every gate cross.
   if (world.isNodeFrozen(targetNodeId)) {

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
 import { useAtomValue } from 'jotai';
 import type { EssenceType } from '@mmo-idle/shared';
 import {
@@ -92,7 +92,7 @@ function EntryIcon({ entry, size }: { entry: MakeEntry; size: number }) {
         }}
       >
         {entry.gear.icon
-          ? <ItemIcon frameName={entry.gear.icon} />
+          ? <ItemIcon frameName={entry.gear.icon} scale={Math.min(1.6, size / 32)} />
           : SLOT_ABBR[entry.gear.slot] ?? entry.gear.slot.slice(0, 3).toUpperCase()}
       </span>
     );
@@ -101,7 +101,15 @@ function EntryIcon({ entry, size }: { entry: MakeEntry; size: number }) {
   const ability = entry.kind === 'technique' ? abilityDef(entry.learnedId) : null;
   return (
     <BuildIcon
-      kind={entry.kind === 'technique' ? 'ability' : entry.kind === 'stance' ? 'stance' : 'rite'}
+      kind={
+        entry.kind === 'technique'
+          ? 'ability'
+          : entry.kind === 'stance'
+            ? 'stance'
+            : entry.kind === 'rune'
+              ? 'rune'
+              : 'rite'
+      }
       label={entry.name}
       size={size}
       muted={!entry.unlocked}
@@ -110,7 +118,80 @@ function EntryIcon({ entry, size }: { entry: MakeEntry; size: number }) {
   );
 }
 
-interface CraftResult { key: string; success: boolean; }
+interface CraftResult {
+  id: number;
+  entry: MakeEntry;
+  success: boolean;
+  reason?: string;
+}
+
+const CRAFT_REVEAL_MS = 4_950;
+const CRAFT_FAILURE_MS = 2_200;
+
+/**
+ * Successful recipes leave the Make list as soon as the authoritative player
+ * delta arrives. This reveal owns a snapshot of the attempted entry, so the
+ * forge sequence cannot disappear with its recipe row.
+ */
+function CraftReveal({ result }: { result: CraftResult }) {
+  const { entry } = result;
+  const style = {
+    '--craft-reveal-tone': tierColor(entry.tier),
+  } as CSSProperties;
+
+  return (
+    <div
+      className="craft-forge-reveal"
+      style={style}
+      role="status"
+      aria-live="assertive"
+      aria-label={`${entry.name} crafted`}
+    >
+      <span className="craft-forge-reveal__scrim" aria-hidden="true" />
+      <div className="craft-forge-reveal__chamber">
+        <span className="craft-forge-reveal__frame" aria-hidden="true" />
+        <div className="craft-forge-reveal__header">
+          <span>Forge channel</span>
+          <span className="craft-forge-reveal__status">Complete</span>
+        </div>
+
+        <div className="craft-forge-reveal__rig" aria-hidden="true">
+          <span className="craft-forge-reveal__ward craft-forge-reveal__ward--upper" />
+          <span className="craft-forge-reveal__ward craft-forge-reveal__ward--lower" />
+          <span className="craft-forge-reveal__runes">
+            {Array.from({ length: 6 }, (_, index) => <i key={index} />)}
+          </span>
+          <span className="craft-forge-reveal__channel">
+            <i className="craft-forge-reveal__charge" />
+            <i className="craft-forge-reveal__wake" />
+            <i className="craft-forge-reveal__discharge" />
+          </span>
+          <span className="craft-forge-reveal__core">
+            <i className="craft-forge-reveal__orbit craft-forge-reveal__orbit--outer" />
+            <i className="craft-forge-reveal__orbit craft-forge-reveal__orbit--inner" />
+            <span className="craft-forge-reveal__icon">
+              <EntryIcon entry={entry} size={64} />
+            </span>
+            <i className="craft-forge-reveal__impact" />
+          </span>
+        </div>
+
+        <div className="craft-forge-reveal__copy">
+          <strong>{entry.name}</strong>
+          <span>
+            {kindLabel(entry.kind)} · T{entry.tier}
+            {entry.recipeGroup ? ` · ${biomeName(entry.recipeGroup)}` : ''}
+          </span>
+        </div>
+        <div className="craft-forge-reveal__seal" aria-hidden="true">
+          <i />
+          <span>Crafted</span>
+          <i />
+        </div>
+      </div>
+    </div>
+  );
+}
 
 /**
  * The single making surface. Gear recipes and technique recipes come from
@@ -141,21 +222,48 @@ export function MakeTab() {
   // Techniques deepen with tier and passives, so a recipe quotes what it would
   // be worth to THIS character rather than its authored baseline.
   const abilityContext = useAbilityContext();
-  const lastAttemptRef = useRef<string | null>(null);
+  const lastAttemptRef = useRef<MakeEntry | null>(null);
+  const resultIdRef = useRef(0);
   const resultTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    const handler = (event: Event) => {
-      const detail = (event as CustomEvent<{ success: boolean }>).detail;
-      const key = lastAttemptRef.current;
-      if (!key) return;
+    const clearResult = () => {
       if (resultTimerRef.current) clearTimeout(resultTimerRef.current);
-      setCraftResult({ key, success: detail.success });
-      resultTimerRef.current = setTimeout(() => setCraftResult(null), 2200);
+      resultTimerRef.current = null;
+      setCraftResult(null);
+    };
+    const handler = (event: Event) => {
+      const detail = (event as CustomEvent<{ success: boolean; reason?: string }>).detail;
+      const entry = lastAttemptRef.current;
+      if (!entry) return;
+      // A result received after the tab was backgrounded is authoritative, but
+      // replaying its forge ignition later would be stale presentation.
+      if (document.hidden) {
+        lastAttemptRef.current = null;
+        clearResult();
+        return;
+      }
+      if (resultTimerRef.current) clearTimeout(resultTimerRef.current);
+      setCraftResult({
+        id: ++resultIdRef.current,
+        entry,
+        success: detail.success,
+        reason: detail.reason,
+      });
+      resultTimerRef.current = setTimeout(
+        () => setCraftResult(null),
+        detail.success ? CRAFT_REVEAL_MS : CRAFT_FAILURE_MS,
+      );
+      lastAttemptRef.current = null;
+    };
+    const cancelHiddenReveal = () => {
+      if (document.hidden) clearResult();
     };
     window.addEventListener('hud:craftResult', handler);
+    document.addEventListener('visibilitychange', cancelHiddenReveal);
     return () => {
       window.removeEventListener('hud:craftResult', handler);
+      document.removeEventListener('visibilitychange', cancelHiddenReveal);
       if (resultTimerRef.current) clearTimeout(resultTimerRef.current);
     };
   }, []);
@@ -314,6 +422,7 @@ export function MakeTab() {
 
   return (
     <div className="craft-body craft-body--make">
+      {craftResult?.success && <CraftReveal key={craftResult.id} result={craftResult} />}
       <WalletSummary essences={essences} catalysts={catalysts} />
       <BrowserPane
         label="Recipes"
@@ -348,9 +457,13 @@ export function MakeTab() {
             itemUpgrades={itemUpgrades}
             abilityContext={abilityContext}
             isTestRoom={isTestRoom}
-            result={craftResult?.key === entry.key ? craftResult : null}
+            result={
+              craftResult && !craftResult.success && craftResult.entry.key === entry.key
+                ? craftResult
+                : null
+            }
             onAttempt={(run) => {
-              lastAttemptRef.current = entry.key;
+              lastAttemptRef.current = entry;
               newEntries.clear(entry.key);
               run();
             }}
@@ -552,11 +665,11 @@ function MakeDetail({
         </>
       )}
 
-      {result && (
-        <div className={`craft-card-result craft-card-result--${result.success ? 'ok' : 'err'}`}>
-          <span className="craft-card-result__icon">{result.success ? '✓' : '✗'}</span>
+      {result && !result.success && (
+        <div className="craft-card-result craft-card-result--err">
+          <span className="craft-card-result__icon">✗</span>
           <span className="craft-card-result__text">
-            {result.success ? 'Made!' : 'Not enough materials'}
+            {result.reason ?? 'Crafting failed'}
           </span>
         </div>
       )}

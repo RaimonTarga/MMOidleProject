@@ -117,13 +117,18 @@ function MasteryMeter({
   );
 
   if (!onOpen) {
-    return <div className="mastery-meter" title={title}>{body}</div>;
+    return (
+      <div className="mastery-meter" data-ui-unlock-system="mastery" title={title}>
+        {body}
+      </div>
+    );
   }
 
   return (
     <button
       type="button"
       className="mastery-meter mastery-meter--button"
+      data-ui-unlock-system="mastery"
       onClick={onOpen}
       title={title}
       aria-label={`${title} Opens the mastery breakdown.`}
@@ -148,7 +153,10 @@ export function QuestPanel({ onFindDungeon, onOpenMastery, showMastery = true }:
 
   if (!playerId || !nodeId) {
     return (
-      <HudPanel className="sidebar-panel quest-panel">
+      <HudPanel
+        className="sidebar-panel quest-panel"
+        data-ui-unlock-system="progression"
+      >
         <div className="panel-title">Progression</div>
         <div className="quest-empty">Connecting…</div>
       </HudPanel>
@@ -173,7 +181,10 @@ export function QuestPanel({ onFindDungeon, onOpenMastery, showMastery = true }:
   const masteryCap = maxGlobalMasteryAtTier(playerTier);
 
   return (
-    <HudPanel className="sidebar-panel quest-panel">
+    <HudPanel
+      className="sidebar-panel quest-panel"
+      data-ui-unlock-system="progression"
+    >
       <div className="panel-title">Progression</div>
 
       <div className="quest-tier-row">

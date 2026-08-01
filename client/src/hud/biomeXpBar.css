@@ -1,10 +1,8 @@
 /* ── Biome XP Bar overlay ────────────────────────────────────────────────── */
 
 .biome-xp-bar {
-  position: absolute;
-  top: 12px;
-  right: 12px;
   width: 268px;
+  box-sizing: border-box;
   font-family: monospace;
   user-select: none;
   pointer-events: none;
@@ -16,6 +14,27 @@
   border-radius: 2px;
   padding: 8px 10px;
   box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.5);
+}
+
+/*
+ * The overlay owns desktop placement. Keeping the bar in flex flow avoids the
+ * absolute-position/zoom coordinate bug that moved it to the viewport's left
+ * edge. Padding supplies a real unclipped inset; scaling grows inward from the
+ * fixed top-right corner and composes with unlock `transform` animations.
+ */
+#biome-xp-overlay {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+  box-sizing: border-box;
+  padding: 12px;
+}
+
+#biome-xp-overlay > .biome-xp-bar {
+  position: relative;
+  flex: 0 0 auto;
+  scale: var(--ui-font-scale);
+  transform-origin: top right;
 }
 
 /* ── Header row ──────────────────────────────────────────────────────────── */

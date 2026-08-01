@@ -93,19 +93,11 @@ export const GROUND_LAYOUTS: Partial<Record<string, GroundStyleConfig[]>> = {
     },
   ],
   cave: [
-    {
-      material: 'rubble',
-      weight: 3,
-      patterns: [
-        { pattern: 'off-center-patch', weight: 3 },
-        { pattern: 'scatter', weight: 2 },
-      ],
-    },
-    // Worn trail material: only path-shaped patterns, tying into the cave's
-    // patrol/ambush domain law.
+    // Patrol path is the canonical cavern floor. Rubble remains available in
+    // the developer ground bake-off, but is no longer selected by default.
     {
       material: 'patrol-path',
-      weight: 2,
+      weight: 1,
       patterns: [
         { pattern: 'loose-center-path', weight: 2 },
         { pattern: 'ring-path', weight: 1 },

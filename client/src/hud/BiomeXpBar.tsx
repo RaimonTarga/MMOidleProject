@@ -136,7 +136,7 @@ export function BiomeXpBar() {
   ].filter(Boolean).join(' ');
 
   return (
-    <div className="biome-xp-bar">
+    <div className="biome-xp-bar" data-ui-unlock-system="map">
       <div className="biome-xp-bar__header">
         <span className="biome-xp-bar__biome">{biomeName} T{tier}</span>
         <span className={`biome-xp-bar__level${levelModClass ? ` ${levelModClass}` : ''}`}>

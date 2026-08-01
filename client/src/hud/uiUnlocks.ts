@@ -21,7 +21,9 @@ import {
   equipmentAtom,
   inventoryAtom,
   questProgressAtom,
+  runeRecipesCraftedAtom,
   runesOwnedAtom,
+  visitedNodesAtom,
 } from './atoms';
 import {
   resolveSystemVisibility,
@@ -49,7 +51,12 @@ const UI_UNLOCK_SYSTEMS: readonly UiUnlockSystem[] = [
   'loadout',
   'abilityDock',
 ];
-const UI_UNLOCK_ACTIVATION_FALLBACK_MS = 700;
+const UI_UNLOCK_ACTIVATION_FALLBACK_MS = 3_600;
+/**
+ * React roots commit independently. Keep looking briefly after a visibility
+ * flip so a newly mounted rail/tab target cannot miss the wake by one frame.
+ */
+const UI_UNLOCK_TARGET_SETTLE_MS = 600;
 
 function cssTimeMs(value: string, fallback: number): number {
   const match = /^([\d.]+)(ms|s)$/.exec(value.trim());
@@ -70,7 +77,7 @@ export function newlyVisibleUiSystems(
 
 /**
  * Projects authoritative reveal transitions onto every currently mounted
- * desktop target carrying a matching `data-ui-unlock-system` token.
+ * desktop or mobile target carrying a matching `data-ui-unlock-system` token.
  */
 export function installUiUnlockSync(): () => void {
   const store = getDefaultStore();
@@ -96,6 +103,8 @@ export function installUiUnlockSync(): () => void {
       catalysts: store.get(catalystsAtom),
       catalystProgress: store.get(catalystProgressAtom),
       unlockedRecipes: store.get(unlockedRecipesAtom),
+      runeRecipesCrafted: store.get(runeRecipesCraftedAtom),
+      visitedNodes: store.get(visitedNodesAtom),
       skillPoints: store.get(skillPointsAtom),
       passives: store.get(passivesAtom),
       biomeXP: store.get(biomeXPAtom),
@@ -129,15 +138,15 @@ export function installUiUnlockSync(): () => void {
     }
     if (document.hidden || reducedMotion.matches) return;
 
-    const frame = window.requestAnimationFrame(() => {
+    const seenTargets = new Set<HTMLElement>();
+    const settleUntil = window.performance.now() + UI_UNLOCK_TARGET_SETTLE_MS;
+    const scanForTargets = () => {
       pendingFrames.delete(system);
       if (document.hidden || reducedMotion.matches) return;
 
       const targets = document.querySelectorAll<HTMLElement>(
         `[data-ui-unlock-system~="${system}"]`,
       );
-      if (targets.length === 0) return;
-
       const duration = cssTimeMs(
         getComputedStyle(document.documentElement).getPropertyValue(
           '--hud-unlock-activation-duration',
@@ -146,6 +155,8 @@ export function installUiUnlockSync(): () => void {
       );
 
       for (const target of targets) {
+        if (seenTargets.has(target)) continue;
+        seenTargets.add(target);
         clearTarget(target);
         // Restart the wake sequence when dev tools cross multiple reveal gates
         // quickly. Reflow is limited to this rare progression path.
@@ -156,8 +167,12 @@ export function installUiUnlockSync(): () => void {
           window.setTimeout(() => clearTarget(target), duration + 150),
         );
       }
-    });
-    pendingFrames.set(system, frame);
+
+      if (window.performance.now() < settleUntil) {
+        pendingFrames.set(system, window.requestAnimationFrame(scanForTargets));
+      }
+    };
+    pendingFrames.set(system, window.requestAnimationFrame(scanForTargets));
   };
 
   const syncVisibility = () => {
@@ -203,6 +218,8 @@ export function installUiUnlockSync(): () => void {
     catalystsAtom,
     catalystProgressAtom,
     unlockedRecipesAtom,
+    runeRecipesCraftedAtom,
+    visitedNodesAtom,
     skillPointsAtom,
     passivesAtom,
     biomeXPAtom,

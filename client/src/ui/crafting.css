@@ -881,6 +881,486 @@
 .craft-card-result--ok  .craft-card-result__text { color: #77eebb; }
 .craft-card-result--err .craft-card-result__text { color: #ff8877; }
 
+/* ── Successful make: forge apparatus reveal ──────────────────────────────
+   The sequence borrows the class-mechanic grammar: a housed channel charges,
+   the lock discharges through the core, then the crafted thing is named and
+   sealed. It lives above the Make browser so the recipe may safely disappear
+   from the authoritative list without taking its own reveal with it. */
+.craft-body--make {
+  position: relative;
+}
+
+.craft-forge-reveal {
+  --craft-reveal-tone: var(--hud-primary);
+  --craft-reveal-duration: 4.8s;
+  position: absolute;
+  z-index: 30;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  box-sizing: border-box;
+  overflow: hidden;
+  padding: 24px;
+  pointer-events: none;
+  isolation: isolate;
+  animation: craft-forge-reveal-life var(--craft-reveal-duration) linear both;
+}
+
+.craft-forge-reveal__scrim {
+  position: absolute;
+  z-index: -2;
+  inset: 0;
+  background:
+    radial-gradient(circle at 50% 45%, color-mix(in srgb, var(--craft-reveal-tone) 23%, transparent), transparent 48%),
+    rgba(7, 6, 4, 0.97);
+  backdrop-filter: blur(3px);
+  animation: craft-forge-scrim var(--craft-reveal-duration) ease both;
+}
+
+.craft-forge-reveal__chamber {
+  position: relative;
+  width: min(420px, 92%);
+  box-sizing: border-box;
+  overflow: hidden;
+  padding: 12px 18px 16px;
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--craft-reveal-tone) 7%, transparent), transparent 36%),
+    linear-gradient(180deg, #211e17, #12100d 68%, #0b0a08);
+  border: 1px solid color-mix(in srgb, var(--craft-reveal-tone) 58%, var(--hud-edge-dark));
+  clip-path: polygon(
+    14px 0,
+    calc(100% - 14px) 0,
+    100% 14px,
+    100% calc(100% - 14px),
+    calc(100% - 14px) 100%,
+    14px 100%,
+    0 calc(100% - 14px),
+    0 14px
+  );
+  box-shadow:
+    inset 0 0 0 3px rgba(5, 4, 3, 0.74),
+    inset 0 0 38px color-mix(in srgb, var(--craft-reveal-tone) 9%, transparent),
+    0 0 26px rgba(0, 0, 0, 0.72);
+  animation: craft-forge-chamber-lock var(--craft-reveal-duration) cubic-bezier(0.18, 0.72, 0.22, 1) both;
+}
+
+.craft-forge-reveal__frame {
+  position: absolute;
+  z-index: 7;
+  inset: 4px;
+  border: 1px solid color-mix(in srgb, var(--craft-reveal-tone) 28%, var(--hud-edge-dark));
+  clip-path: inherit;
+  opacity: 0.82;
+}
+
+.craft-forge-reveal__frame::before,
+.craft-forge-reveal__frame::after {
+  position: absolute;
+  top: -1px;
+  width: 28%;
+  height: 2px;
+  content: "";
+  background: linear-gradient(90deg, transparent, var(--craft-reveal-tone), transparent);
+  box-shadow: 0 0 8px color-mix(in srgb, var(--craft-reveal-tone) 70%, transparent);
+  animation: craft-forge-frame-current var(--craft-reveal-duration) ease both;
+}
+
+.craft-forge-reveal__frame::before { left: 8%; }
+.craft-forge-reveal__frame::after { right: 8%; animation-delay: 90ms; }
+
+.craft-forge-reveal__header {
+  position: relative;
+  z-index: 8;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 7px;
+  border-bottom: 1px solid var(--hud-edge-divider);
+  color: var(--hud-text-muted);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+}
+
+.craft-forge-reveal__status {
+  color: var(--craft-reveal-tone);
+  text-shadow: 0 0 7px color-mix(in srgb, var(--craft-reveal-tone) 62%, transparent);
+  animation: craft-forge-status var(--craft-reveal-duration) ease both;
+}
+
+.craft-forge-reveal__rig {
+  position: relative;
+  height: 142px;
+  margin: 7px 0 3px;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 50%, color-mix(in srgb, var(--craft-reveal-tone) 18%, transparent), transparent 43%),
+    linear-gradient(180deg, rgba(7, 6, 4, 0.55), rgba(7, 6, 4, 0.92));
+  border-bottom: 1px solid color-mix(in srgb, var(--craft-reveal-tone) 24%, var(--hud-edge-dark));
+  border-radius: 0 0 50% 50%;
+}
+
+.craft-forge-reveal__ward {
+  position: absolute;
+  z-index: 3;
+  right: 8%;
+  left: 8%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--craft-reveal-tone) 62%, transparent) 20%,
+    transparent 42% 58%,
+    color-mix(in srgb, var(--craft-reveal-tone) 62%, transparent) 80%,
+    transparent
+  );
+  animation: craft-forge-ward var(--craft-reveal-duration) ease both;
+}
+
+.craft-forge-reveal__ward::before,
+.craft-forge-reveal__ward::after {
+  position: absolute;
+  top: -4px;
+  width: 7px;
+  height: 7px;
+  content: "";
+  background: #15120d;
+  border: 1px solid color-mix(in srgb, var(--craft-reveal-tone) 76%, var(--hud-edge-dark));
+  box-shadow: 0 0 7px color-mix(in srgb, var(--craft-reveal-tone) 26%, transparent);
+  transform: rotate(45deg);
+}
+
+.craft-forge-reveal__ward::before { left: 2%; }
+.craft-forge-reveal__ward::after { right: 2%; }
+.craft-forge-reveal__ward--upper { top: 18px; }
+.craft-forge-reveal__ward--lower { bottom: 16px; animation-delay: 80ms; }
+
+.craft-forge-reveal__channel {
+  position: absolute;
+  z-index: 3;
+  top: 50%;
+  right: 9%;
+  left: 9%;
+  height: 16px;
+  overflow: hidden;
+  background: linear-gradient(180deg, #070605, #131008 48%, #070605);
+  border-top: 1px solid color-mix(in srgb, var(--craft-reveal-tone) 48%, var(--hud-edge-dark));
+  border-bottom: 1px solid #050403;
+  clip-path: polygon(8px 0, calc(100% - 8px) 0, 100% 50%, calc(100% - 8px) 100%, 8px 100%, 0 50%);
+  box-shadow:
+    inset 0 2px 6px rgba(0, 0, 0, 0.92),
+    0 0 8px color-mix(in srgb, var(--craft-reveal-tone) 18%, transparent);
+  transform: translateY(-50%);
+}
+
+.craft-forge-reveal__charge {
+  position: absolute;
+  inset: 0;
+  display: block;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.48), transparent 28%, rgba(0, 0, 0, 0.34) 82%),
+    linear-gradient(
+      100deg,
+      color-mix(in srgb, var(--craft-reveal-tone) 22%, #17120a),
+      var(--craft-reveal-tone) 43%,
+      #fff4c6 54%,
+      var(--craft-reveal-tone) 68%,
+      color-mix(in srgb, var(--craft-reveal-tone) 28%, #17120a)
+    );
+  background-size: 100% 100%, 180% 100%;
+  box-shadow: 3px 0 10px color-mix(in srgb, var(--craft-reveal-tone) 70%, transparent);
+  transform-origin: left center;
+  animation: craft-forge-charge 1.04s cubic-bezier(0.22, 0.72, 0.2, 1) 160ms both;
+}
+
+.craft-forge-reveal__wake {
+  position: absolute;
+  z-index: 2;
+  top: 50%;
+  left: 0;
+  width: 9px;
+  height: 9px;
+  background: #fff7d7;
+  border: 1px solid #fff;
+  border-radius: 50% 50% 50% 12%;
+  box-shadow:
+    0 0 4px #fff,
+    0 0 11px color-mix(in srgb, var(--craft-reveal-tone) 82%, transparent);
+  transform: translate(-50%, -50%) rotate(45deg);
+  animation: craft-forge-wake 1.04s cubic-bezier(0.22, 0.72, 0.2, 1) 160ms both;
+}
+
+.craft-forge-reveal__discharge {
+  position: absolute;
+  z-index: 4;
+  top: -4px;
+  bottom: -4px;
+  left: -34%;
+  width: 34%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--craft-reveal-tone) 28%,
+    #fff 52%,
+    #fff1b7 67%,
+    transparent
+  );
+  filter: blur(1px);
+  opacity: 0;
+  transform: skewX(-18deg);
+  animation: craft-forge-discharge 580ms cubic-bezier(0.25, 0.65, 0.35, 1) 1s both;
+}
+
+.craft-forge-reveal__runes {
+  position: absolute;
+  z-index: 4;
+  inset: 12px 15%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.craft-forge-reveal__runes i {
+  width: 7px;
+  height: 7px;
+  background: #15120d;
+  border: 1px solid color-mix(in srgb, var(--craft-reveal-tone) 62%, var(--hud-edge-dark));
+  box-shadow: 0 0 5px color-mix(in srgb, var(--craft-reveal-tone) 20%, transparent);
+  transform: translateY(var(--craft-rune-y, 0)) rotate(45deg);
+  animation: craft-forge-rune-lock var(--craft-reveal-duration) ease both;
+}
+
+.craft-forge-reveal__runes i:nth-child(1) { --craft-rune-y: 11px; }
+.craft-forge-reveal__runes i:nth-child(2) { --craft-rune-y: 86px; animation-delay: 35ms; }
+.craft-forge-reveal__runes i:nth-child(3) { --craft-rune-y: 4px; animation-delay: 70ms; }
+.craft-forge-reveal__runes i:nth-child(4) { --craft-rune-y: 91px; animation-delay: 105ms; }
+.craft-forge-reveal__runes i:nth-child(5) { --craft-rune-y: 7px; animation-delay: 140ms; }
+.craft-forge-reveal__runes i:nth-child(6) { --craft-rune-y: 84px; animation-delay: 175ms; }
+
+.craft-forge-reveal__core {
+  position: absolute;
+  z-index: 8;
+  top: 50%;
+  left: 50%;
+  display: grid;
+  width: 88px;
+  height: 88px;
+  place-items: center;
+  transform: translate(-50%, -50%);
+}
+
+.craft-forge-reveal__orbit {
+  position: absolute;
+  inset: 3px;
+  border: 1px solid color-mix(in srgb, var(--craft-reveal-tone) 70%, transparent);
+  border-radius: 50%;
+  box-shadow:
+    inset 0 0 12px color-mix(in srgb, var(--craft-reveal-tone) 18%, transparent),
+    0 0 9px color-mix(in srgb, var(--craft-reveal-tone) 20%, transparent);
+  animation: craft-forge-orbit var(--craft-reveal-duration) cubic-bezier(0.16, 0.76, 0.22, 1) both;
+}
+
+.craft-forge-reveal__orbit--outer {
+  clip-path: polygon(0 0, 42% 0, 50% 15%, 58% 0, 100% 0, 100% 42%, 85% 50%, 100% 58%, 100% 100%, 58% 100%, 50% 85%, 42% 100%, 0 100%, 0 58%, 15% 50%, 0 42%);
+}
+
+.craft-forge-reveal__orbit--inner {
+  inset: 12px;
+  border-style: dashed;
+  opacity: 0.72;
+  animation-direction: reverse;
+}
+
+.craft-forge-reveal__icon {
+  position: relative;
+  z-index: 3;
+  display: grid;
+  width: 64px;
+  height: 64px;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, var(--craft-reveal-tone) 74%, var(--hud-edge-dark));
+  border-radius: 3px;
+  background:
+    radial-gradient(circle, color-mix(in srgb, var(--craft-reveal-tone) 28%, #17130d), #090806 72%);
+  box-shadow:
+    inset 0 0 15px rgba(0, 0, 0, 0.78),
+    0 0 18px color-mix(in srgb, var(--craft-reveal-tone) 42%, transparent);
+  animation: craft-forge-item-lock var(--craft-reveal-duration) cubic-bezier(0.16, 0.78, 0.22, 1) both;
+}
+
+.craft-forge-reveal__icon > .make-icon,
+.craft-forge-reveal__icon > .build-icon {
+  border: 0 !important;
+  background: transparent !important;
+  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--craft-reveal-tone) 72%, transparent));
+}
+
+.craft-forge-reveal__impact {
+  position: absolute;
+  z-index: 5;
+  inset: -7px;
+  border: 1px solid #fff5cf;
+  border-radius: 50%;
+  box-shadow:
+    inset 0 0 22px color-mix(in srgb, var(--craft-reveal-tone) 72%, transparent),
+    0 0 15px color-mix(in srgb, var(--craft-reveal-tone) 64%, transparent);
+  opacity: 0;
+  animation: craft-forge-impact 840ms ease-out 980ms both;
+}
+
+.craft-forge-reveal__copy {
+  position: relative;
+  z-index: 8;
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  text-align: center;
+  animation: craft-forge-copy var(--craft-reveal-duration) ease both;
+}
+
+.craft-forge-reveal__copy strong {
+  max-width: 100%;
+  overflow: hidden;
+  color: var(--hud-text);
+  font-size: 17px;
+  letter-spacing: 0.5px;
+  text-overflow: ellipsis;
+  text-shadow: 0 0 10px color-mix(in srgb, var(--craft-reveal-tone) 38%, transparent);
+  white-space: nowrap;
+}
+
+.craft-forge-reveal__copy span {
+  color: var(--hud-text-muted);
+  font-size: 9px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.craft-forge-reveal__seal {
+  position: relative;
+  z-index: 8;
+  display: grid;
+  grid-template-columns: minmax(20px, 1fr) auto minmax(20px, 1fr);
+  align-items: center;
+  gap: 8px;
+  margin: 10px auto 0;
+  color: var(--craft-reveal-tone);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  animation: craft-forge-seal var(--craft-reveal-duration) ease both;
+}
+
+.craft-forge-reveal__seal i {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--craft-reveal-tone));
+  box-shadow: 0 0 5px color-mix(in srgb, var(--craft-reveal-tone) 54%, transparent);
+}
+
+.craft-forge-reveal__seal i:last-child {
+  background: linear-gradient(90deg, var(--craft-reveal-tone), transparent);
+}
+
+@keyframes craft-forge-reveal-life {
+  0%, 2% { opacity: 0; }
+  7%, 92% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@keyframes craft-forge-scrim {
+  0% { opacity: 0; backdrop-filter: blur(0); }
+  9%, 100% { opacity: 1; backdrop-filter: blur(3px); }
+}
+
+@keyframes craft-forge-chamber-lock {
+  0% { opacity: 0; filter: brightness(0.54); transform: translateY(14px) scale(0.93); }
+  7% { opacity: 1; filter: brightness(1.32); transform: translateY(0) scale(1.012); }
+  16% { filter: brightness(1); transform: scale(1); }
+  22% { filter: brightness(1.74) drop-shadow(0 0 8px color-mix(in srgb, var(--craft-reveal-tone) 48%, transparent)); transform: scale(1.008); }
+  31%, 100% { opacity: 1; filter: brightness(1); transform: scale(1); }
+}
+
+@keyframes craft-forge-frame-current {
+  0%, 10% { opacity: 0; transform: scaleX(0.08); }
+  24% { opacity: 1; transform: scaleX(1); }
+  41% { opacity: 0.55; }
+  92%, 100% { opacity: 0.82; }
+}
+
+@keyframes craft-forge-status {
+  0%, 20% { opacity: 0.24; color: var(--hud-text-dim); }
+  24% { opacity: 1; color: #fff4c6; filter: brightness(2); }
+  34%, 100% { opacity: 1; color: var(--craft-reveal-tone); filter: brightness(1); }
+}
+
+@keyframes craft-forge-charge {
+  0% { transform: scaleX(0); filter: brightness(0.7); }
+  78% { filter: brightness(1.2); }
+  100% { transform: scaleX(1); filter: brightness(1.7); }
+}
+
+@keyframes craft-forge-wake {
+  0% { left: 0; opacity: 0; }
+  7% { opacity: 1; }
+  100% { left: 100%; opacity: 1; }
+}
+
+@keyframes craft-forge-discharge {
+  0% { left: -34%; opacity: 0; }
+  12% { opacity: 1; }
+  68% { opacity: 0.92; }
+  100% { left: 108%; opacity: 0; }
+}
+
+@keyframes craft-forge-ward {
+  0%, 8% { opacity: 0.22; transform: scaleX(0.7); }
+  22% { opacity: 1; filter: brightness(2); transform: scaleX(1.03); }
+  32%, 100% { opacity: 0.84; filter: brightness(1); transform: scaleX(1); }
+}
+
+@keyframes craft-forge-rune-lock {
+  0%, 6% { opacity: 0.18; filter: brightness(0.6); transform: translateY(var(--craft-rune-y)) rotate(0deg) scale(0.62); }
+  22% { opacity: 1; filter: brightness(2.4); transform: translateY(var(--craft-rune-y)) rotate(135deg) scale(1.7); }
+  34%, 100% { opacity: 0.88; filter: brightness(1); transform: translateY(var(--craft-rune-y)) rotate(225deg) scale(1); }
+}
+
+@keyframes craft-forge-orbit {
+  0%, 8% { opacity: 0; transform: rotate(-90deg) scale(0.62); }
+  22% { opacity: 1; filter: brightness(2); transform: rotate(45deg) scale(1.08); }
+  36% { filter: brightness(1); transform: rotate(135deg) scale(1); }
+  92%, 100% { opacity: 0.92; filter: brightness(1); transform: rotate(220deg) scale(1); }
+}
+
+@keyframes craft-forge-item-lock {
+  0%, 14% { opacity: 0; filter: brightness(0.45) saturate(0.45); transform: scale(0.42); }
+  20% { opacity: 0.72; filter: brightness(1.1) saturate(0.8); transform: scale(0.72); }
+  24% { opacity: 1; filter: brightness(2.8) saturate(1.5); transform: scale(1.18); }
+  30% { filter: brightness(1.25) saturate(1.14); transform: scale(0.96); }
+  36%, 100% { opacity: 1; filter: brightness(1) saturate(1); transform: scale(1); }
+}
+
+@keyframes craft-forge-impact {
+  0% { opacity: 0; transform: scale(0.32); }
+  18% { opacity: 1; transform: scale(0.74); }
+  54% { opacity: 0.62; transform: scale(1.1); }
+  100% { opacity: 0; transform: scale(1.72); }
+}
+
+@keyframes craft-forge-copy {
+  0%, 24% { opacity: 0; transform: translateY(7px); }
+  32%, 100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes craft-forge-seal {
+  0%, 30% { opacity: 0; filter: brightness(0.7); transform: scaleX(0.68); }
+  36% { opacity: 1; filter: brightness(2); transform: scaleX(1.04); }
+  44%, 100% { opacity: 1; filter: brightness(1); transform: scaleX(1); }
+}
+
 /* ── Upgrade tab ─────────────────────────────────────────────────────────── */
 .craft-upgrade__level {
   font-size: 11px;
@@ -1021,24 +1501,254 @@
 .craft-upgrade__req--ok  { color: #66bb88; }
 .craft-upgrade__req--bad { color: #cc7766; }
 
-/* Fancier success burst for upgrades. */
-@keyframes craft-upgrade-burst {
-  0%   { opacity: 0; transform: scale(0.85); }
-  18%  { opacity: 1; transform: scale(1.04); }
-  70%  { opacity: 1; transform: scale(1); }
-  100% { opacity: 0; transform: scale(1); }
+/* Inline upgrade lock-in. Unlike the full Make reveal, every moving part is
+   clipped by its own card-sized overlay: a quiet current feeds the existing
+   icon slot, seals the new level, then leaves the live card layout untouched. */
+.craft-upgrade {
+  --upgrade-reveal-tone: var(--hud-primary);
+  isolation: isolate;
 }
 
-.craft-upgrade .craft-card-result--ok {
-  animation: craft-upgrade-burst 1.5s ease-out forwards;
-  background: radial-gradient(circle at center, rgba(40, 70, 30, 0.95), rgba(8, 28, 14, 0.95));
-  border-color: rgba(120, 230, 130, 0.65);
-  box-shadow: inset 0 0 32px rgba(110, 240, 150, 0.20), 0 0 18px rgba(90, 220, 120, 0.30);
+.craft-upgrade-reveal {
+  position: absolute;
+  z-index: 4;
+  inset: 0;
+  display: grid;
+  grid-template-columns: 76px minmax(0, 1fr);
+  align-items: center;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+  color: var(--upgrade-reveal-tone);
+  animation: craft-upgrade-reveal-life 3.05s ease both;
 }
 
-.craft-upgrade .craft-card-result--ok .craft-card-result__icon {
-  color: #8effb0;
-  text-shadow: 0 0 12px rgba(120, 255, 160, 0.70);
+.craft-upgrade-reveal__veil {
+  position: absolute;
+  z-index: -2;
+  inset: 0;
+  background:
+    linear-gradient(90deg, color-mix(in srgb, var(--upgrade-reveal-tone) 12%, #12100c), #11100c 34%, #0d0d0a),
+    rgba(10, 9, 7, 0.96);
+  border: 1px solid color-mix(in srgb, var(--upgrade-reveal-tone) 48%, var(--hud-edge-dark));
+  box-shadow:
+    inset 3px 0 0 color-mix(in srgb, var(--upgrade-reveal-tone) 68%, transparent),
+    inset 0 0 22px color-mix(in srgb, var(--upgrade-reveal-tone) 8%, transparent);
+}
+
+.craft-upgrade-reveal__rail {
+  position: absolute;
+  z-index: -1;
+  top: 50%;
+  right: 16px;
+  left: 48px;
+  height: 7px;
+  overflow: hidden;
+  background: #090806;
+  border-top: 1px solid color-mix(in srgb, var(--upgrade-reveal-tone) 34%, var(--hud-edge-dark));
+  border-bottom: 1px solid #050403;
+  clip-path: polygon(5px 0, calc(100% - 5px) 0, 100% 50%, calc(100% - 5px) 100%, 5px 100%, 0 50%);
+  transform: translateY(-50%);
+}
+
+.craft-upgrade-reveal__charge,
+.craft-upgrade-reveal__current {
+  position: absolute;
+  inset: 0;
+  display: block;
+}
+
+.craft-upgrade-reveal__charge {
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--upgrade-reveal-tone) 28%, #17130c),
+    var(--upgrade-reveal-tone) 72%,
+    #fff2c4
+  );
+  box-shadow: 0 0 7px color-mix(in srgb, var(--upgrade-reveal-tone) 58%, transparent);
+  transform-origin: right center;
+  animation: craft-upgrade-charge 820ms cubic-bezier(0.2, 0.7, 0.2, 1) 120ms both;
+}
+
+.craft-upgrade-reveal__current {
+  width: 22%;
+  background: linear-gradient(90deg, transparent, #fff5d6, transparent);
+  filter: blur(0.5px);
+  opacity: 0;
+  animation: craft-upgrade-current 520ms ease-out 720ms both;
+}
+
+.craft-upgrade-reveal__socket {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  width: 58px;
+  height: 58px;
+  place-items: center;
+  justify-self: center;
+}
+
+.craft-upgrade-reveal__socket::before,
+.craft-upgrade-reveal__socket::after,
+.craft-upgrade-reveal__ring {
+  position: absolute;
+  inset: 2px;
+  content: "";
+  border: 1px solid color-mix(in srgb, var(--upgrade-reveal-tone) 58%, transparent);
+  border-radius: 5px;
+}
+
+.craft-upgrade-reveal__socket::before {
+  animation: craft-upgrade-socket 3.05s cubic-bezier(0.16, 0.74, 0.22, 1) both;
+}
+
+.craft-upgrade-reveal__socket::after {
+  inset: 7px;
+  border-style: dashed;
+  opacity: 0.62;
+  animation: craft-upgrade-ring 3.05s ease both;
+}
+
+.craft-upgrade-reveal__ring {
+  inset: -2px;
+  border-color: color-mix(in srgb, var(--upgrade-reveal-tone) 28%, transparent);
+  opacity: 0;
+  animation: craft-upgrade-ring-impact 720ms ease-out 760ms both;
+}
+
+.craft-upgrade-reveal__icon {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  width: 48px;
+  height: 48px;
+  place-items: center;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--upgrade-reveal-tone) 14%, #0b0907);
+  border: 1px solid color-mix(in srgb, var(--upgrade-reveal-tone) 56%, var(--hud-edge-dark));
+  border-radius: 4px;
+  box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.74);
+  animation: craft-upgrade-item-lock 3.05s cubic-bezier(0.16, 0.78, 0.22, 1) both;
+}
+
+.craft-upgrade-reveal__lock {
+  position: absolute;
+  z-index: 3;
+  inset: -4px;
+  border: 1px solid #fff4c6;
+  border-radius: 7px;
+  opacity: 0;
+  animation: craft-upgrade-lock-pulse 620ms ease-out 790ms both;
+}
+
+.craft-upgrade-reveal__copy {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  min-width: 0;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  align-items: baseline;
+  column-gap: 9px;
+  justify-self: start;
+  animation: craft-upgrade-copy 3.05s ease both;
+}
+
+.craft-upgrade-reveal__copy small {
+  grid-column: 1 / -1;
+  color: color-mix(in srgb, var(--upgrade-reveal-tone) 72%, var(--hud-text-muted));
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+}
+
+.craft-upgrade-reveal__copy strong {
+  color: #fff0b9;
+  font-size: 22px;
+  line-height: 1;
+  text-shadow: 0 0 9px color-mix(in srgb, var(--upgrade-reveal-tone) 54%, transparent);
+}
+
+.craft-upgrade-reveal__copy span {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--hud-text);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.craft-upgrade-reveal__edge {
+  position: absolute;
+  right: 10%;
+  bottom: 5px;
+  left: 22%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--upgrade-reveal-tone), transparent);
+  box-shadow: 0 0 5px color-mix(in srgb, var(--upgrade-reveal-tone) 42%, transparent);
+  animation: craft-upgrade-edge 3.05s ease both;
+}
+
+@keyframes craft-upgrade-reveal-life {
+  0%, 3% { opacity: 0; }
+  12%, 88% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@keyframes craft-upgrade-charge {
+  0% { filter: brightness(0.65); transform: scaleX(0); }
+  76% { filter: brightness(1.08); }
+  100% { filter: brightness(1.42); transform: scaleX(1); }
+}
+
+@keyframes craft-upgrade-current {
+  0% { left: 78%; opacity: 0; }
+  18% { opacity: 0.9; }
+  100% { left: -20%; opacity: 0; }
+}
+
+@keyframes craft-upgrade-socket {
+  0%, 12% { opacity: 0.35; filter: brightness(0.7); transform: scale(0.92); }
+  30% { opacity: 1; filter: brightness(1.8); transform: scale(1.035); }
+  44%, 100% { opacity: 0.84; filter: brightness(1); transform: scale(1); }
+}
+
+@keyframes craft-upgrade-ring {
+  0%, 12% { transform: rotate(0deg) scale(0.9); }
+  32% { filter: brightness(1.8); transform: rotate(90deg) scale(1.05); }
+  48%, 100% { filter: brightness(1); transform: rotate(180deg) scale(1); }
+}
+
+@keyframes craft-upgrade-ring-impact {
+  0% { opacity: 0; transform: scale(0.7); }
+  26% { opacity: 0.7; }
+  100% { opacity: 0; transform: scale(1.18); }
+}
+
+@keyframes craft-upgrade-item-lock {
+  0%, 14% { opacity: 0.55; filter: brightness(0.65) saturate(0.7); transform: scale(0.9); }
+  30% { opacity: 1; filter: brightness(1.85) saturate(1.2); transform: scale(1.08); }
+  42%, 100% { opacity: 1; filter: brightness(1) saturate(1); transform: scale(1); }
+}
+
+@keyframes craft-upgrade-lock-pulse {
+  0% { opacity: 0; transform: scale(0.72); }
+  24% { opacity: 0.8; }
+  100% { opacity: 0; transform: scale(1.18); }
+}
+
+@keyframes craft-upgrade-copy {
+  0%, 26% { opacity: 0; transform: translateX(-5px); }
+  38%, 100% { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes craft-upgrade-edge {
+  0%, 24% { opacity: 0; transform: scaleX(0); }
+  40% { opacity: 0.9; transform: scaleX(1); }
+  58%, 100% { opacity: 0.48; transform: scaleX(1); }
 }
 
 /* ── Ultimate gear ───────────────────────────────────────────────────────── */
@@ -1289,6 +1999,33 @@
     margin: -12px -12px -18px;
   }
 
+  .craft-forge-reveal {
+    padding: 12px;
+  }
+
+  .craft-forge-reveal__chamber {
+    width: min(360px, 96%);
+    padding: 10px 13px 13px;
+  }
+
+  .craft-forge-reveal__rig {
+    height: 126px;
+  }
+
+  .craft-forge-reveal__core {
+    width: 78px;
+    height: 78px;
+  }
+
+  .craft-forge-reveal__icon {
+    width: 58px;
+    height: 58px;
+  }
+
+  .craft-forge-reveal__copy strong {
+    font-size: 15px;
+  }
+
   .make-search {
     flex: 1 1 100%;
     max-width: none;
@@ -1298,5 +2035,58 @@
   .craft-body--make .craft-filter-chip {
     min-height: var(--hud-hit-target-compact);
     touch-action: manipulation;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .craft-upgrade-reveal,
+  .craft-upgrade-reveal *,
+  .craft-upgrade-reveal *::before,
+  .craft-upgrade-reveal *::after,
+  .craft-forge-reveal,
+  .craft-forge-reveal *,
+  .craft-forge-reveal *::before,
+  .craft-forge-reveal *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .craft-upgrade-reveal,
+  .craft-upgrade-reveal__veil,
+  .craft-upgrade-reveal__socket::before,
+  .craft-upgrade-reveal__socket::after,
+  .craft-upgrade-reveal__icon,
+  .craft-upgrade-reveal__copy,
+  .craft-upgrade-reveal__edge,
+  .craft-forge-reveal__scrim,
+  .craft-forge-reveal__chamber,
+  .craft-forge-reveal__frame,
+  .craft-forge-reveal__status,
+  .craft-forge-reveal__ward,
+  .craft-forge-reveal__orbit,
+  .craft-forge-reveal__icon,
+  .craft-forge-reveal__copy,
+  .craft-forge-reveal__seal {
+    opacity: 1;
+    filter: none;
+    transform: none;
+  }
+
+  .craft-upgrade-reveal__charge {
+    transform: scaleX(1);
+  }
+
+  .craft-forge-reveal__charge {
+    transform: scaleX(1);
+  }
+
+  .craft-upgrade-reveal__current,
+  .craft-upgrade-reveal__ring,
+  .craft-upgrade-reveal__lock,
+  .craft-forge-reveal__wake,
+  .craft-forge-reveal__discharge,
+  .craft-forge-reveal__impact,
+  .craft-forge-reveal__runes {
+    display: none;
   }
 }

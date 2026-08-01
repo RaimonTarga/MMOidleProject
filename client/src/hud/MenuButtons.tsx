@@ -54,7 +54,6 @@ import {
   mapOpenAtom,
   masteryOpenAtom,
   playerIdAtom,
-  playerTierAtom,
   settingsOpenAtom,
   skillPointsAtom,
   skillTreeOpenAtom,
@@ -183,9 +182,8 @@ export function RightSidebar() {
   const [mapHighlightNodes, setMapHighlightNodes] = useAtom(mapHighlightNodesAtom);
   const [settingsOpen, setSettingsOpen] = useAtom(settingsOpenAtom);
   const skillPoints = useAtomValue(skillPointsAtom);
-  const playerTier = useAtomValue(playerTierAtom);
   const globalMastery = useAtomValue(globalMasteryAtom);
-  const showMastery = masteryIsVisible(playerTier, globalMastery);
+  const showMastery = masteryIsVisible(globalMastery);
   const visibility = useSystemVisibility();
   const playerId = useAtomValue(playerIdAtom);
   const badges = useUnlockBadges(visibility, playerId);
@@ -274,7 +272,7 @@ export function RightSidebar() {
             selected={buildOpen}
             badge={badges.has("loadout")}
             badgeTone="unlock"
-            unlockSystems={["loadout", "abilities", "stances", "rites"]}
+            unlockSystems={["loadout", "abilities", "stances", "rites", "abilityDock"]}
             sections={buildSections}
             onClick={() => {
               badges.clear("loadout");

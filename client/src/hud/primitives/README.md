@@ -106,13 +106,14 @@ motion pauses while hidden. The short activation state is exposed as
 join the same visual event without a gameplay protocol change.
 
 Phase 11 adds `installUiUnlockSync()` alongside the tier projection. It compares
-the existing Phase 5 visibility matrix for Mastery, Abilities, Stances, and
-Rites, then briefly marks currently mounted matching
-`data-ui-unlock-system` targets. Character hydration, reduced motion, hidden
-documents, and unchanged visibility never replay the wake. Persistent
-navigation can therefore acknowledge a reveal even when the Build dialog is
-closed, while an already-open dialog can wake its newly mounted tab and summary
-cards in the same event.
+the shared visibility matrix for every staged system, then marks currently
+mounted matching `data-ui-unlock-system` targets for a 3.6-second, three-pulse
+wake. A short post-transition settle scan also catches targets mounted by an
+independent React root just after the visibility flip. Character hydration,
+reduced motion, hidden documents, and unchanged
+visibility never replay the wake. Persistent navigation can therefore
+acknowledge a reveal even when its dialog is closed, while an already-open
+dialog can wake its newly mounted tab and summary cards in the same event.
 
 The Phaser minimap reads the resolved `--hud-minimap-*` colors through the same
 tier projection. Tier overrides are deliberately inside `min-width: 1101px`;
