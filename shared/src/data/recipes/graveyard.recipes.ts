@@ -42,7 +42,7 @@ export const graveyardRecipeEntries = [
       'defense.hit-plating-per-stack': 1, 'defense.hit-plating-max-stacks': 5, 'defense.hit-plating-duration-ms': 4000,
     },
     tier: 4,
-    icon: 'items/armor/plate-armor-9.png',
+    icon: 'items/armor/plaguebound-mantle.png',
     description: 'The denser the swarm, the thicker the crust of clinging filth — and the harder you are to bite.',
     upgrades: [
       { stats: { maxHp: 36, plating: 6 }, cost: { purple: 200 }, requiredBiomeLevel: 3 },
@@ -64,7 +64,7 @@ export const graveyardRecipeEntries = [
       'defense.debt-cheat-death': 1,
     },
     tier: 4,
-    icon: 'items/armor/plate-armor-5.png',
+    icon: 'items/armor/grave-ward.png',
     description: 'It lets the debt of a hundred small wounds come due all at once — and then forgives it, once.',
     upgrades: [
       { stats: { maxHp: 36, plating: 4 }, cost: { purple: 200 }, requiredBiomeLevel: 3 },
@@ -81,7 +81,7 @@ export const graveyardRecipeEntries = [
     cost: { purple: 150 }, stats: { hpRegen: 16 },
     mechanicEffects: { 'defense.regen-burst-pct': 0.11, 'defense.regen-burst-interval-ms': 6000 },
     tier: 4,
-    icon: 'items/charms/eye-charm-4.png',
+    icon: 'items/charms/necrotic-pulse.png',
     description: 'A slow, certain throb of returning life, timed like a tired heart that refuses to stop.',
     upgrades: [
       { mechanicEffects: { 'defense.regen-burst-pct': 0.03 }, cost: { purple: 100 }, requiredBiomeLevel: 4 },
@@ -102,7 +102,7 @@ export const graveyardRecipeEntries = [
       'defense.in-combat-regen-pct': 0.04,
     },
     tier: 4,
-    icon: 'items/charms/eye-charm-5.png',
+    icon: 'items/charms/grave-tide-pulse.png',
     description: 'A tide that never fully goes out — it gives back in a steady seep between the larger swells.',
     upgrades: [
       { mechanicEffects: { 'defense.regen-burst-pct': 0.01, 'defense.in-combat-regen-pct': 0.01 }, cost: { purple: 100 }, requiredBiomeLevel: 4 },
@@ -123,7 +123,7 @@ export const graveyardRecipeEntries = [
       'mobility.kill-stack-tenacity-pct': 0.12,
       'mobility.kill-stack-ms': 4000,
     },
-    icon: 'items/boots/graveyard-boots-1.png',
+    icon: 'items/boots/gravewalker-boots.png',
     description: 'Each fallen foe lends a little of its lingering haste — and the more that fall, the harder it becomes to hold you down.',
     upgrades: [
       { stats: { speed: 8 },  cost: { purple: 40 },  requiredBiomeLevel: 4 },

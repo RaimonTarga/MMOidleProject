@@ -28,7 +28,7 @@ export const caveRecipeEntries = [
     id: 'cave-vest-t1', name: 'Bestial Hide',
     recipeGroup: 'cave', requiredBiomeLevel: 2, slot: 'armor',
     cost: { red: 22 }, stats: { maxHp: 28, plating: 2, damageReduction: 0.06 }, tier: 1,
-    icon: 'items/armor/bone-armor-1.png',
+    icon: 'items/armor/bestial-hide.png',
     description: 'The hide of something large and unlucky, cured to a stubborn toughness.',
     upgrades: [
       { stats: { maxHp: 7, plating: 1, damageReduction: 0.02 }, cost: { red: 50 }, requiredBiomeLevel: 3 },
@@ -46,7 +46,7 @@ export const caveRecipeEntries = [
     cost: { red: 18 }, stats: { hpRegen: 3 },
     mechanicEffects: { 'defense.regen-burst-pct': 0.05, 'defense.regen-burst-interval-ms': 6000 },
     tier: 1,
-    icon: 'items/charms/bright-charm-1.png',
+    icon: 'items/charms/pulse-stone.png',
     description: 'A cave-crystal that beats, slow and steady, like a sleeping heart.',
     upgrades: [
       { mechanicEffects: { 'defense.regen-burst-pct': 0.01 }, cost: { red: 15 }, requiredBiomeLevel: 4 },
@@ -62,7 +62,7 @@ export const caveRecipeEntries = [
     recipeGroup: 'cave', requiredBiomeLevel: 4, slot: 'mobility',
     cost: { red: 18 }, stats: { speed: 28 }, tier: 1,
     mechanicEffects: { 'mobility.stealth-pct': 0.30 },
-    icon: 'items/boots/leather-boots-5.png',
+    icon: 'items/boots/bat-wing-boots.png',
     description: 'Stretched membrane that falls on stone without a whisper.',
     upgrades: [
       { stats: { speed: 3 }, cost: { red: 10 }, requiredBiomeLevel: 4 },
@@ -94,7 +94,7 @@ export const caveRecipeEntries = [
     id: 'cave-vest-t2', name: 'Dire Bestial Hide',
     recipeGroup: 'cave', requiredBiomeLevel: 8, slot: 'armor',
     cost: { red: 54 }, catalystCost: { volatility: 2 }, stats: { maxHp: 46, plating: 5, damageReduction: 0.12 }, tier: 2, // family-tag: premium %DR generalist wall → Volatility
-    icon: 'items/armor/plate-armor-4.png',
+    icon: 'items/armor/dire-bestial-hide.png',
     description: 'From a beast the deep-cavern folk name only in low voices.',
     upgrades: [
       { stats: { maxHp: 10, plating: 2, damageReduction: 0.02 }, cost: { red: 80 }, requiredBiomeLevel: 9 },
@@ -112,7 +112,7 @@ export const caveRecipeEntries = [
     cost: { red: 44 }, catalystCost: { volatility: 2 }, stats: { hpRegen: 6 }, // family-tag: reliable generalist recovery → Volatility
     mechanicEffects: { 'defense.regen-burst-pct': 0.06, 'defense.regen-burst-interval-ms': 6000 },
     tier: 2,
-    icon: 'items/charms/bright-charm-2.png',
+    icon: 'items/charms/resonant-gem.png',
     description: 'A gem that rings on its own in the dark, answering a song no one else hears.',
     upgrades: [
       { mechanicEffects: { 'defense.regen-burst-pct': 0.02 }, cost: { red: 33 }, requiredBiomeLevel: 10 },
@@ -128,7 +128,7 @@ export const caveRecipeEntries = [
     recipeGroup: 'cave', requiredBiomeLevel: 10, slot: 'mobility',
     cost: { red: 33 }, catalystCost: { volatility: 2 }, stats: { speed: 39 }, tier: 2, // family-tag: cave generalist mobility → Volatility
     mechanicEffects: { 'mobility.stealth-pct': 0.35 },
-    icon: 'items/boots/leather-boots-6.png',
+    icon: 'items/boots/cavern-sprints.png',
     description: 'Worn smooth on tunnel floors no map has ever charted.',
     upgrades: [
       { stats: { speed: 3 }, cost: { red: 22 }, requiredBiomeLevel: 10 },
@@ -161,7 +161,7 @@ export const caveRecipeEntries = [
     recipeGroup: 'cave', requiredBiomeLevel: 14, slot: 'armor',
     cost: { red: 116, yellow: 29 }, catalystCost: { volatility: 3 }, stats: { maxHp: 65, plating: 14, damageReduction: 0.20 }, // family-tag: premium %DR wall → Volatility
     tier: 3,
-    icon: 'items/armor/bone-armor-2.png',
+    icon: 'items/armor/deepscale-hide.png',
     description: 'Layered scale over thick hide — nothing fancy, just the most of everything that stops a blow.',
     upgrades: [
       { stats: { maxHp: 15, plating: 2, damageReduction: 0.02 }, cost: { red: 135, yellow: 45 },  requiredBiomeLevel: 15 },
@@ -180,7 +180,7 @@ export const caveRecipeEntries = [
     cost: { red: 100, green: 25 }, catalystCost: { volatility: 3 }, stats: { hpRegen: 11 }, // family-tag: reliable generalist recovery → Volatility
     mechanicEffects: { 'defense.regen-burst-pct': 0.07, 'defense.regen-burst-interval-ms': 6000, 'defense.in-combat-regen-pct': 0.02 },
     tier: 3,
-    icon: 'items/charms/jewel-charm-3.png',
+    icon: 'items/charms/echo-geode.png',
     description: 'It pulses on its own clock, and hums a low, steady mending between the beats.',
     upgrades: [
       { mechanicEffects: { 'defense.regen-burst-pct': 0.02, 'defense.in-combat-regen-pct': 0.01 }, cost: { red: 50, green: 25 },  requiredBiomeLevel: 16 },
@@ -197,7 +197,7 @@ export const caveRecipeEntries = [
     recipeGroup: 'cave', requiredBiomeLevel: 16, slot: 'mobility',
     cost: { red: 100 }, catalystCost: { volatility: 3 }, stats: { speed: 52 }, tier: 3, // family-tag: cave generalist mobility → Volatility
     mechanicEffects: { 'mobility.stealth-pct': 0.40 },
-    icon: 'items/boots/leather-boots-7.png',
+    icon: 'items/boots/echostep-treads.png',
     description: 'They give back no sound at all — not even the echo the deep stone expects.',
     upgrades: [
       { stats: { speed: 4 }, cost: { red: 30 },  requiredBiomeLevel: 16 },

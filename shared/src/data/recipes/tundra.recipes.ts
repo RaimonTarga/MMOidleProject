@@ -52,7 +52,7 @@ export const tundraRecipeEntries = [
       'defense.max-hit-pct': 0.25, 'defense.max-hit-mult': 0.5,
     },
     tier: 3,
-    icon: 'items/armor/frozen-armor-1.png',
+    icon: 'items/armor/glacial-bulwark.png',
     description: 'Stand still and the ice creeps over the plate, until you are part of the glacier itself.',
     upgrades: [
       { stats: { maxHp: 22, plating: 4 }, cost: { blue: 90, red: 40 },  requiredBiomeLevel: 3 },
@@ -73,7 +73,7 @@ export const tundraRecipeEntries = [
       'defense.absorb-pct': 0.08,
     },
     tier: 3,
-    icon: 'items/charms/stone-hand-charm-2.png',
+    icon: 'items/charms/frostward-charm.png',
     description: 'A rime-cold ward that throws up a sheet of ice, and drinks the blows that get through.',
     upgrades: [
       { mechanicEffects: { 'defense.shield-pct': 0.02, 'defense.absorb-pct': 0.02 }, cost: { blue: 50, purple: 25 },  requiredBiomeLevel: 4 },
@@ -89,7 +89,7 @@ export const tundraRecipeEntries = [
     recipeGroup: 'tundra', requiredBiomeLevel: 4, slot: 'mobility',
     cost: { blue: 80 }, catalystCost: { brutality: 3 }, stats: { speed: 30 }, tier: 3, // family-tag: tundra momentum mobility → Brutality
     mechanicEffects: { 'mobility.ramp-speed-pct': 0.60, 'mobility.ramp-rate': 0.30 },
-    icon: 'items/boots/plate-boots-4.png',
+    icon: 'items/boots/glacier-striders.png',
     description: 'They gather momentum across the ice and are loath to give it back.',
     upgrades: [
       { stats: { speed: 8 },  cost: { blue: 30 },  requiredBiomeLevel: 4 },
@@ -149,7 +149,7 @@ export const tundraRecipeEntries = [
       'defense.max-hit-pct': 0.25, 'defense.max-hit-mult': 0.5,
     },
     tier: 4,
-    icon: 'items/armor/tundra-armor-1.png',
+    icon: 'items/armor/permafrost-sovereign.png',
     description: 'Hold your ground and the glacier claims you for its own — and nothing moves a glacier.',
     upgrades: [
       { stats: { maxHp: 42, plating: 7 }, cost: { blue: 290, red: 96 },  requiredBiomeLevel: 9 },
@@ -169,7 +169,7 @@ export const tundraRecipeEntries = [
       'defense.absorb-pct': 0.12,
     },
     tier: 4,
-    icon: 'items/charms/frozen-crystal.png',
+    icon: 'items/charms/glacial-ward.png',
     description: 'A sheet of ice thrown up against the blow, and a slow cold that drinks whatever slips past it.',
     upgrades: [
       { mechanicEffects: { 'defense.shield-pct': 0.03, 'defense.absorb-pct': 0.03 }, cost: { blue: 110, purple: 30 }, requiredBiomeLevel: 10 },
@@ -191,7 +191,7 @@ export const tundraRecipeEntries = [
       'defense.absorb-ramp-start-pct': 0.04, 'defense.absorb-ramp-max-pct': 0.18, 'defense.absorb-ramptime-ms': 12000,
     },
     tier: 4,
-    icon: 'items/charms/stone-hand-charm-1.png',
+    icon: 'items/charms/deepfreeze-ward.png',
     description: 'The longer the cold has to settle in, the more of the blow it swallows whole.',
     upgrades: [
       { mechanicEffects: { 'defense.shield-pct': 0.03, 'defense.absorb-ramp-max-pct': 0.03 }, cost: { blue: 110, purple: 30 }, requiredBiomeLevel: 10 },
@@ -208,7 +208,7 @@ export const tundraRecipeEntries = [
     recipeGroup: 'tundra', requiredBiomeLevel: 10, slot: 'mobility',
     cost: { blue: 176 }, catalystCost: { brutality: 4 }, stats: { speed: 42 }, tier: 4, // family-tag: tundra momentum mobility → Brutality
     mechanicEffects: { 'mobility.ramp-speed-pct': 0.75, 'mobility.ramp-rate': 0.35 },
-    icon: 'items/boots/ice-boots-1.png',
+    icon: 'items/boots/avalanche-striders.png',
     description: 'Slow to start and impossible to stop — by the far end of the ice you are a thing that simply happens to whatever is in the way.',
     upgrades: [
       { stats: { speed: 10 }, cost: { blue: 66 },  requiredBiomeLevel: 10 },

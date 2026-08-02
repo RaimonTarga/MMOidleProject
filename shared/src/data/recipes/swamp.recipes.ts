@@ -104,7 +104,7 @@ export const swampRecipeEntries = [
     cost: { purple: 54 }, catalystCost: { blight: 2 }, stats: { maxHp: 44, plating: 6 }, // family-tag: dot-resistance armor → Blight
     mechanicEffects: { 'defense.dot-resistance': 0.30, 'defense.hit-to-dot-pct': 0.08 },
     tier: 2,
-    icon: 'items/armor/leather-armor-5.png',
+    icon: 'items/armor/bog-wrappings.png',
     description: 'Cloth drawn from the deepest mire, where even the water has forgotten the sun.',
     upgrades: [
       { stats: { maxHp: 12, plating: 2 }, cost: { purple: 75 }, requiredBiomeLevel: 9 },
@@ -122,7 +122,7 @@ export const swampRecipeEntries = [
     cost: { purple: 44 }, catalystCost: { blight: 2 }, stats: { hpRegen: 6 }, // family-tag: absorb charm (attrition answer) → Blight
     mechanicEffects: { 'defense.absorb-pct': 0.09 },
     tier: 2,
-    icon: 'items/charms/eye-charm-2.png',
+    icon: 'items/charms/bog-eye.png',
     description: 'A bog-touched eye that drinks deep and gives quietly back.',
     upgrades: [
       { mechanicEffects: { 'defense.absorb-pct': 0.02 }, cost: { purple: 30 }, requiredBiomeLevel: 10 },
@@ -138,7 +138,7 @@ export const swampRecipeEntries = [
     recipeGroup: 'swamp', requiredBiomeLevel: 10, slot: 'mobility',
     cost: { purple: 44 }, catalystCost: { blight: 2 }, stats: { speed: 31 }, tier: 2, // family-tag: swamp mobility → Blight
     mechanicEffects: { 'mobility.tenacity-pct': 0.25 },
-    icon: 'items/boots/wraps-2.png',
+    icon: 'items/boots/wetland-wraps.png',
     description: 'Enchanted bindings that find footing where there should be none.',
     upgrades: [
       { stats: { speed: 3 }, cost: { purple: 22 }, requiredBiomeLevel: 10 },
@@ -177,7 +177,7 @@ export const swampRecipeEntries = [
     cost: { purple: 140 }, catalystCost: { blight: 3 }, stats: { maxHp: 86, plating: 12 }, // family-tag: dot-resistance armor → Blight
     mechanicEffects: { 'defense.dot-resistance': 0.35, 'defense.hit-to-dot-pct': 0.10, 'defense.debuff-resistance': 0.20 },
     tier: 3,
-    icon: 'items/armor/dark-armor-1.png',
+    icon: 'items/armor/plaguebound-shroud.png',
     description: 'It turns the blows you take into a slow ache it then refuses to feel.',
     upgrades: [
       { stats: { maxHp: 18, plating: 3 }, cost: { purple: 180 },  requiredBiomeLevel: 15 },
@@ -195,7 +195,7 @@ export const swampRecipeEntries = [
     cost: { purple: 100 }, catalystCost: { blight: 3 }, stats: { hpRegen: 11 }, // family-tag: absorb charm → Blight
     mechanicEffects: { 'defense.absorb-pct': 0.18 },
     tier: 3,
-    icon: 'items/charms/eye-charm-3.png',
+    icon: 'items/charms/sorrow-eye.png',
     description: 'It weeps for every wound, and gives the tears back as strength.',
     upgrades: [
       { mechanicEffects: { 'defense.absorb-pct': 0.04 }, cost: { purple: 75 },  requiredBiomeLevel: 16 },
@@ -211,7 +211,7 @@ export const swampRecipeEntries = [
     recipeGroup: 'swamp', requiredBiomeLevel: 16, slot: 'mobility',
     cost: { purple: 100 }, catalystCost: { blight: 3 }, stats: { speed: 44 }, tier: 3, // family-tag: swamp mobility → Blight
     mechanicEffects: { 'mobility.tenacity-pct': 0.30 },
-    icon: 'items/boots/leather-boots-6.png',
+    icon: 'items/boots/mire-striders.png',
     description: 'Nothing the bog grips holds them; they walk free of any mire that tries to keep them.',
     upgrades: [
       { stats: { speed: 4 }, cost: { purple: 30 },  requiredBiomeLevel: 16 },

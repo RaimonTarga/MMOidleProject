@@ -41,7 +41,7 @@ export const trenchRecipeEntries = [
       'defense.sustained-fight-dr-bonus': 0.01, 'defense.sustained-fight-dr-max': 0.05, 'defense.sustained-fight-ramptime-ms': 10000,
     },
     tier: 4,
-    icon: 'items/armor/plate-armor-1.png',
+    icon: 'items/armor/deep-sea-carapace.png',
     description: 'Pressure-forged over an age in the dark; the longer the fight, the more of the deep\'s weight it turns against your foe.',
     upgrades: [
       { stats: { maxHp: 22, plating: 6, damageReduction: 0.02 }, cost: { green: 200 }, requiredBiomeLevel: 3 },
@@ -61,7 +61,7 @@ export const trenchRecipeEntries = [
       'defense.regen-burst-pct': 0.10, 'defense.regen-burst-interval-ms': 8000,
     },
     tier: 4,
-    icon: 'items/charms/depths-charm-1.png',
+    icon: 'items/charms/pressure-vessel.png',
     description: 'Built to hold against a crushing deep — it softens the one enormous blow and breathes life back on a slow count.',
     upgrades: [
       { mechanicEffects: { 'defense.absorb-pct': 0.03, 'defense.regen-burst-pct': 0.02 }, cost: { green: 100 }, requiredBiomeLevel: 4 },
@@ -78,7 +78,7 @@ export const trenchRecipeEntries = [
     // Cave stealth-boot inheritor — soft stealth: reduces enemy detection radius.
     cost: { green: 80 }, stats: { speed: 52 }, tier: 4,
     mechanicEffects: { 'mobility.stealth-pct': 0.72 },
-    icon: 'items/boots/dark-boots-1.png',
+    icon: 'items/boots/abyssal-stalkers.png',
     description: 'They take you past the great blind hunters unseen — and lend the first strike, when it comes, a killing edge.',
     upgrades: [
       { stats: { speed: 6 }, cost: { green: 40 },  requiredBiomeLevel: 4 },
@@ -96,7 +96,7 @@ export const trenchRecipeEntries = [
     //   Graveyard's kill-stack tenacity). Suits the Trench's slow heavy hitters.
     cost: { green: 80 }, stats: { speed: 48 }, tier: 4,
     mechanicEffects: { 'mobility.tenacity-pct': 0.55 },
-    icon: 'items/boots/trench-boots-1.png',
+    icon: 'items/boots/abyssal-treaders.png',
     description: 'Ballasted for the deep — slows and snares and stuns wash over them and recede twice as fast.',
     upgrades: [
       { stats: { speed: 5 }, cost: { green: 40 },  requiredBiomeLevel: 4 },

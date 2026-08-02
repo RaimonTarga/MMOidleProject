@@ -2292,6 +2292,2091 @@
         "item:desert-boots-t2"
       ],
       "notes": "Phase 2b wave P (pilot). Cross-slot style probe locking the armor/charm/boots object language before the bulk waves. pixflux, no anchor, no img2img (line roots)."
+    },
+    {
+      "id": "bestial-hide",
+      "out": "items/armor/bestial-hide.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a cured beast-hide chest covering, front-facing and empty, thick shaggy brown hide laced together across the torso with rawhide cord and one crude iron ring at the collar, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of dark iron deep red-brown and cave grey, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, person wearing it, mannequin, full body, helmet, boots, gloves, weapon, metal plate armour, steel cuirass, cloth robe, animal head, fur trim collar, green, gold, blue",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "status": "accepted",
+      "sources": [
+        "item:cave-vest-t1"
+      ],
+      "notes": "Phase 2b wave A1 (armor line roots). Flat generation, no img2img — these are the lowest tier of their biome armor line and seed the rest."
+    },
+    {
+      "id": "bark-wrap",
+      "out": "items/armor/bark-wrap.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a sleeveless torso vest made of bound bark strips, front-facing and empty with the shoulder openings visible, flat pale tree-bark plates lashed edge to edge with coarse twine over a plain cloth backing, crude and homemade body armour, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of soft sage green hazel brown and cream, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, person wearing it, mannequin, full body, helmet, boots, gloves, weapon, treasure chest, wooden chest, box, crate, container, barrel, hood, cloak, robe on a figure, standing figure, treasure chest, chest of drawers, wooden box, lid, hinges, lock, metal plate armour, steel, leaves, foliage, tree, saturated colour, red",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "status": "accepted",
+      "sources": [
+        "item:clearing-vest-t1"
+      ],
+      "notes": "Phase 2b overnight batch — re-roll after rejection; prompt rewritten against the reviewer note.",
+      "candidates": 4
+    },
+    {
+      "id": "shaded-bindings",
+      "out": "items/armor/shaded-bindings.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of woven forest chest bindings, front-facing and empty, layered strips of dark dappled green cloth wound across the torso with a pale silver clasp at the centre, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of pale silver forest green and muted brown, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, person wearing it, mannequin, full body, helmet, boots, gloves, weapon, metal plate armour, steel cuirass, heavy armour, leaves, tree, gold, red, purple",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "status": "accepted",
+      "sources": [
+        "item:forest-vest-t1"
+      ],
+      "notes": "Phase 2b wave A1 (armor line roots). Flat generation, no img2img — these are the lowest tier of their biome armor line and seed the rest."
+    },
+    {
+      "id": "plaguebound-mantle",
+      "out": "items/armor/plaguebound-mantle.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a heavy grave-mantle, front-facing and empty, a bone-white shoulder mantle over a chest piece built from five layered overlapping plates crusted with clinging grey filth, two or three sickly droplets beading off the lowest plate and falling away, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of bone white necrotic purple and grave grey, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, person wearing it, mannequin, full body, helmet, boots, gloves, weapon, skull, skeleton, ribcage, hood, cape flowing, green, gold, fire, orange",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "status": "accepted",
+      "sources": [
+        "item:graveyard-vest-t4"
+      ],
+      "notes": "Phase 2b wave A1 (armor line roots). Flat generation, no img2img — these are the lowest tier of their biome armor line and seed the rest."
+    },
+    {
+      "id": "verdant-weave",
+      "out": "items/armor/verdant-weave.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a living jungle chest weave, front-facing and empty, a supple mesh of broad green leaves and braided creeper vine with small red thorns along the shoulders, loose and springy rather than rigid, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of vivid green bark brown and thorn red, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, person wearing it, mannequin, full body, helmet, boots, gloves, weapon, metal plate armour, steel cuirass, rigid armour, flower, tree, blue, purple, gold",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "status": "accepted",
+      "sources": [
+        "item:jungle-vest-t2"
+      ],
+      "notes": "Phase 2b wave A1 (armor line roots). Flat generation, no img2img — these are the lowest tier of their biome armor line and seed the rest."
+    },
+    {
+      "id": "survivors-robe",
+      "out": "items/armor/survivors-robe.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a patched field cuirass, front-facing and empty, a dull steel breastplate mended with mismatched riveted patches and a strip of warm brown cloth binding at the waist, plainly repaired many times, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of steel warm brown and dull gold, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, person wearing it, mannequin, full body, helmet, boots, gloves, weapon, pristine armour, ornate armour, cloth robe only, wrappings, green, blue, purple",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "status": "accepted",
+      "sources": [
+        "item:plains-vest-t1"
+      ],
+      "notes": "Phase 2b wave A1 (armor line roots). Flat generation, no img2img — these are the lowest tier of their biome armor line and seed the rest."
+    },
+    {
+      "id": "deep-sea-carapace",
+      "out": "items/armor/deep-sea-carapace.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a deep-sea shell carapace, front-facing and empty, a thick pressure-forged chest shell of blue-black plating with a ridged spine, a creeping crust of hardened growth spreading inward from the edges and thin bioluminescent teal seams between the ridges, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of abyssal blue-black deep violet-blue and bioluminescent teal, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, person wearing it, mannequin, full body, helmet, boots, gloves, weapon, crab, animal, creature, shell on a beach, warm colours, orange, red, gold, brown",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "status": "accepted",
+      "sources": [
+        "item:trench-vest-t4"
+      ],
+      "notes": "Phase 2b wave A1 (armor line roots). Flat generation, no img2img — these are the lowest tier of their biome armor line and seed the rest."
+    },
+    {
+      "id": "glacial-bulwark",
+      "out": "items/armor/glacial-bulwark.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a frost-clad bulwark cuirass, front-facing and empty, a heavy cold-steel breastplate with one thick reinforced band across the chest and a sheath of pale ice creeping inward over the plate from every edge, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of ice blue frost white and cold steel, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, person wearing it, mannequin, full body, helmet, boots, gloves, weapon, snowflake, icicle spikes, cloth, fur, warm colours, orange, red, gold, green",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "status": "accepted",
+      "sources": [
+        "item:tundra-vest-t3"
+      ],
+      "notes": "Phase 2b wave A1 (armor line roots). Flat generation, no img2img — these are the lowest tier of their biome armor line and seed the rest."
+    },
+    {
+      "id": "emberforge-plate",
+      "out": "items/armor/emberforge-plate.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a lava-quenched emberforge cuirass, front-facing and empty, a dark steel breastplate whose surface has hardened into a thick blackened crust with glowing ember-red cracks running through it and one clean split near the collar, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of dark steel ember red and hot orange, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, person wearing it, mannequin, full body, helmet, boots, gloves, weapon, open flame, fire, campfire, lava pool, smoke, blue, green, purple",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "status": "accepted",
+      "sources": [
+        "item:volcanic-vest-t3"
+      ],
+      "notes": "Phase 2b wave A1 (armor line roots). Flat generation, no img2img — these are the lowest tier of their biome armor line and seed the rest."
+    },
+    {
+      "id": "iron-crusader-plate",
+      "out": "items/armor/iron-crusader-plate.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a masterwork crusader cuirass, front-facing and empty, a heavier and more finely made steel chest plate than a common knight's, dented in a hundred small places but breached nowhere, one thick reinforced band running straight across the chest, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of iron grey stone grey and weathered brown, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, person wearing it, mannequin, full body, helmet, boots, gloves, weapon, sword, shield, cloth robe, wrappings, leather, green, gold, pristine undamaged plate",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2,
+        "initImage": "items/armor/fallen-knight-plate.png",
+        "initImageStrength": 65
+      },
+      "status": "accepted",
+      "sources": [
+        "item:mountain-vest-t2"
+      ],
+      "notes": "Phase 2b wave A1 A/B: img2img follower at initImageStrength 65 (NOT the 300 default; Batch 1 ran 200 and 10/12 were rejected as too similar). Paired against a flat-generated sibling in the same line to decide the technique for waves A2 onward."
+    },
+    {
+      "id": "bog-wrappings",
+      "out": "items/armor/bog-wrappings.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of deep-mire chest wrappings, front-facing and empty, heavier and darker layered strips of sodden grey-green bog cloth bound across the torso with two carved warding glyphs, four or five toxic green droplets beading off the cloth and falling away, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of dull steel swamp purple and toxic green, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, person wearing it, mannequin, full body, helmet, boots, gloves, weapon, metal plate armour, steel cuirass, gold, fire, flame, orange, clean dry cloth",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2,
+        "initImage": "items/armor/arcane-wrappings.png",
+        "initImageStrength": 65
+      },
+      "status": "accepted",
+      "sources": [
+        "item:swamp-vest-t2"
+      ],
+      "notes": "Phase 2b wave A1 A/B: img2img follower at initImageStrength 65 (NOT the 300 default; Batch 1 ran 200 and 10/12 were rejected as too similar). Paired against a flat-generated sibling in the same line to decide the technique for waves A2 onward."
+    },
+    {
+      "id": "eternal-duneplate",
+      "out": "items/armor/eternal-duneplate.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of an eternal desert war cuirass, front-facing and empty, pale steel plate with broader gold trim than a common duneplate, two deep cracks across the chest that both stop short of splitting it, loose sand shedding from the lower edge, a faint second outline haloing the plate, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of gold warm sand and pale steel, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, person wearing it, mannequin, full body, helmet, boots, gloves, weapon, cloth robe, wrappings, green, blue, purple, shattered armour, broken in half",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2,
+        "initImage": "items/armor/duneplate-last-stand.png",
+        "initImageStrength": 65
+      },
+      "status": "accepted",
+      "sources": [
+        "item:desert-vest-t3"
+      ],
+      "notes": "Phase 2b wave A1 A/B: img2img follower at initImageStrength 65 (NOT the 300 default; Batch 1 ran 200 and 10/12 were rejected as too similar). Paired against a flat-generated sibling in the same line to decide the technique for waves A2 onward."
+    },
+    {
+      "id": "summit-aegis",
+      "out": "items/armor/summit-aegis.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a massive summit aegis cuirass, front-facing and empty, an enormously thick slab-like steel chest plate built to absorb a house-sized blow, squared heavy pauldron edges and two thick reinforced bands running across the chest, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of iron grey stone grey and weathered brown, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, person wearing it, mannequin, full body, helmet, boots, gloves, weapon, sword, shield, cloth robe, wrappings, leather, thin armour, green, gold",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "status": "accepted",
+      "sources": [
+        "item:mountain-vest-t3"
+      ],
+      "notes": "Phase 2b wave A1 A/B: flat-generated follower, no seed — escalation carried by the prompt alone. Paired against an img2img sibling in the same line to decide the technique for waves A2 onward."
+    },
+    {
+      "id": "plaguebound-shroud",
+      "out": "items/armor/plaguebound-shroud.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of heavy plaguebound torso wrappings, front-facing and empty with the shoulder openings visible, thick blackened mire-cloth strips wound in layered folds across the torso only, three carved warding glyphs down the centre, a sickly green stain spreading inward from the lower hem, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of dull steel swamp purple and toxic green, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, person wearing it, mannequin, full body, helmet, boots, gloves, weapon, treasure chest, wooden chest, box, crate, container, barrel, hood, cloak, robe on a figure, standing figure, ghost, wraith, spectre, person, figure, hooded figure, robe, cloak, full-length garment, legs, metal plate armour, gold, fire, orange",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2,
+        "initImage": "items/armor/bog-wrappings.png",
+        "initImageStrength": 65
+      },
+      "status": "accepted",
+      "sources": [
+        "item:swamp-vest-t3"
+      ],
+      "notes": "Phase 2b overnight batch — re-roll after rejection; prompt rewritten against the reviewer note.",
+      "candidates": 4
+    },
+    {
+      "id": "deathless-duneplate",
+      "out": "items/armor/deathless-duneplate.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a deathless desert war cuirass, front-facing and empty, the grandest pale steel plate of its line under heavy gold trim, three old chest cracks visibly sealed shut with veins of poured gold, a faint second outline haloing the plate, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of gold warm sand and pale steel, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, person wearing it, mannequin, full body, helmet, boots, gloves, weapon, cloth robe, wrappings, green, blue, purple, shattered armour, open wound, blood",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "status": "accepted",
+      "sources": [
+        "item:desert-vest-t4"
+      ],
+      "notes": "Phase 2b wave A1 A/B: flat-generated follower, no seed — escalation carried by the prompt alone. Paired against an img2img sibling in the same line to decide the technique for waves A2 onward."
+    },
+    {
+      "id": "dire-bestial-hide",
+      "out": "items/armor/dire-bestial-hide.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a dire beast-hide torso armour, front-facing and empty, thicker and darker shaggy hide than a common pelt, doubled over itself and laced with heavy rawhide cord, two crude iron rings at the collar, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of dark iron deep red-brown and cave grey, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, person wearing it, mannequin, full body, helmet, boots, gloves, weapon, treasure chest, wooden chest, box, crate, container, barrel, hood, cloak, robe on a figure, standing figure, metal plate armour, steel cuirass, cloth robe, animal head, green, gold, blue",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2,
+        "initImage": "items/armor/bestial-hide.png",
+        "initImageStrength": 65
+      },
+      "candidates": 4,
+      "status": "accepted",
+      "sources": [
+        "item:cave-vest-t2"
+      ],
+      "notes": "Phase 2b overnight batch — img2img follower at initImageStrength 65, seeded from the nearest ACCEPTED predecessor in its line. The A1 A/B showed img2img holds tier continuity where flat prompting drifts."
+    },
+    {
+      "id": "deepscale-hide",
+      "out": "items/armor/deepscale-hide.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a deepscale torso armour, front-facing and empty, rows of overlapping dark horn scales riveted over thick brown hide, plain and brutally practical with no ornament, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of dark iron deep red-brown and cave grey, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, person wearing it, mannequin, full body, helmet, boots, gloves, weapon, treasure chest, wooden chest, box, crate, container, barrel, hood, cloak, robe on a figure, standing figure, fish, dragon, animal, cloth robe, ornate armour, green, gold, blue",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2,
+        "initImage": "items/armor/bestial-hide.png",
+        "initImageStrength": 65
+      },
+      "candidates": 4,
+      "status": "accepted",
+      "sources": [
+        "item:cave-vest-t3"
+      ],
+      "notes": "Phase 2b overnight batch — img2img follower at initImageStrength 65, seeded from the nearest ACCEPTED predecessor in its line. The A1 A/B showed img2img holds tier continuity where flat prompting drifts."
+    },
+    {
+      "id": "phantom-bindings",
+      "out": "items/armor/phantom-bindings.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of phantom forest torso bindings, front-facing and empty, layered strips of dark green cloth whose outer edges fade to pale silver as if half not there, a pale silver clasp at the centre, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of pale silver forest green and muted brown, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, person wearing it, mannequin, full body, helmet, boots, gloves, weapon, treasure chest, wooden chest, box, crate, container, barrel, hood, cloak, robe on a figure, standing figure, ghost, spectre, transparent see-through hole, metal plate armour, heavy armour, gold, red, purple",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2,
+        "initImage": "items/armor/shaded-bindings.png",
+        "initImageStrength": 65
+      },
+      "candidates": 4,
+      "status": "accepted",
+      "sources": [
+        "item:forest-vest-t2"
+      ],
+      "notes": "Phase 2b overnight batch — img2img follower at initImageStrength 65, seeded from the nearest ACCEPTED predecessor in its line. The A1 A/B showed img2img holds tier continuity where flat prompting drifts."
+    },
+    {
+      "id": "grave-ward",
+      "out": "items/armor/grave-ward.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a grave ward torso armour, front-facing and empty, a smooth bone-white breastplate with one large carved ward sigil filling the centre and a single deep crack running to the sigil and stopping dead at it, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of bone white necrotic purple and grave grey, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, person wearing it, mannequin, full body, helmet, boots, gloves, weapon, treasure chest, wooden chest, box, crate, container, barrel, hood, cloak, robe on a figure, standing figure, shoulder mantle, layered overlapping plates, crust, filth, skull, skeleton, ribcage, green, gold, fire",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2,
+        "initImage": "items/armor/plaguebound-mantle.png",
+        "initImageStrength": 65
+      },
+      "candidates": 4,
+      "status": "accepted",
+      "sources": [
+        "item:graveyard-vest-t4-debtward"
+      ],
+      "notes": "Phase 2b overnight batch — img2img follower at initImageStrength 65, seeded from the nearest ACCEPTED predecessor in its line. The A1 A/B showed img2img holds tier continuity where flat prompting drifts."
+    },
+    {
+      "id": "wildgrowth-weave",
+      "out": "items/armor/wildgrowth-weave.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a wildgrowth torso weave, front-facing and empty, a denser and more tangled mesh of broad leaves and braided creeper than a common weave, red thorns along both shoulders, still loose and springy rather than rigid, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of vivid green bark brown and thorn red, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, person wearing it, mannequin, full body, helmet, boots, gloves, weapon, treasure chest, wooden chest, box, crate, container, barrel, hood, cloak, robe on a figure, standing figure, metal plate armour, steel cuirass, rigid armour, flower, tree, blue, purple, gold",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2,
+        "initImage": "items/armor/verdant-weave.png",
+        "initImageStrength": 65
+      },
+      "candidates": 4,
+      "status": "accepted",
+      "sources": [
+        "item:jungle-vest-t3"
+      ],
+      "notes": "Phase 2b overnight batch — img2img follower at initImageStrength 65, seeded from the nearest ACCEPTED predecessor in its line. The A1 A/B showed img2img holds tier continuity where flat prompting drifts."
+    },
+    {
+      "id": "primal-canopy",
+      "out": "items/armor/primal-canopy.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a sleeveless torso vest woven from jungle growth, front-facing and empty with both shoulder openings clearly visible and a waist hem at the bottom, the vest body is a thick mat of dark overlapping leaves and heavy braided vine forming an unmistakable armour silhouette, one very faint green offset echo just behind its right edge, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of vivid green bark brown and thorn red, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, person wearing it, mannequin, full body, helmet, boots, gloves, weapon, treasure chest, wooden chest, box, crate, container, barrel, hood, cloak, robe on a figure, standing figure, loose foliage, pile of leaves, bush, plant, wreath, garland, abstract shape, metal plate armour, motion blur, double image, blue, purple, gold",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2,
+        "initImage": "items/armor/verdant-weave.png",
+        "initImageStrength": 65
+      },
+      "candidates": 4,
+      "status": "accepted",
+      "sources": [
+        "item:jungle-vest-t4"
+      ],
+      "notes": "Phase 2b FINAL wave — re-roll after rejection (\"doesn't look like a chest armor\"); silhouette clause rewritten to lead with the sleeveless torso-vest shape."
+    },
+    {
+      "id": "titans-keep",
+      "out": "items/armor/titans-keep.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a fortress-like titan cuirass, front-facing and empty, an immense slab steel breastplate built like a keep wall with two thick reinforced bands and small crenellations along the collar, one thin stone plate hovering just in front of it, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of iron grey stone grey and weathered brown, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, person wearing it, mannequin, full body, helmet, boots, gloves, weapon, treasure chest, wooden chest, box, crate, container, barrel, hood, cloak, robe on a figure, standing figure, storm, lightning, blue seam, sword, shield, cloth robe, thin armour, green, gold",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2,
+        "initImage": "items/armor/summit-aegis.png",
+        "initImageStrength": 65
+      },
+      "candidates": 4,
+      "status": "accepted",
+      "sources": [
+        "item:mountain-vest-t4"
+      ],
+      "notes": "Phase 2b overnight batch — img2img follower at initImageStrength 65, seeded from the nearest ACCEPTED predecessor in its line. The A1 A/B showed img2img holds tier continuity where flat prompting drifts."
+    },
+    {
+      "id": "stormwall-plate",
+      "out": "items/armor/stormwall-plate.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a stormwall cuirass, front-facing and empty, a broad heavy steel breastplate with one thick reinforced band and a single jagged pale storm-blue seam running down from the collar, the seam glowing faintly where it splits the steel, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of iron grey stone grey and weathered brown, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, person wearing it, mannequin, full body, helmet, boots, gloves, weapon, treasure chest, wooden chest, box, crate, container, barrel, hood, cloak, robe on a figure, standing figure, crenellations, castle, tower, hovering plate, sword, shield, cloth robe, green, gold",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2,
+        "initImage": "items/armor/summit-aegis.png",
+        "initImageStrength": 65
+      },
+      "candidates": 4,
+      "status": "accepted",
+      "sources": [
+        "item:mountain-vest-t4-stormwall"
+      ],
+      "notes": "Phase 2b overnight batch — img2img follower at initImageStrength 65, seeded from the nearest ACCEPTED predecessor in its line. The A1 A/B showed img2img holds tier continuity where flat prompting drifts."
+    },
+    {
+      "id": "enduring-robe",
+      "out": "items/armor/enduring-robe.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of an enduring field cuirass, front-facing and empty, an old dull steel breastplate worn smooth and darkened with age, fewer patches than a survivor's plate and a faded warm brown cloth binding at the waist, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of steel warm brown and dull gold, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, person wearing it, mannequin, full body, helmet, boots, gloves, weapon, treasure chest, wooden chest, box, crate, container, barrel, hood, cloak, robe on a figure, standing figure, pristine armour, ornate armour, many patches, cloth robe only, green, blue, purple",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2,
+        "initImage": "items/armor/survivors-robe.png",
+        "initImageStrength": 65
+      },
+      "candidates": 4,
+      "status": "accepted",
+      "sources": [
+        "item:plains-vest-t2"
+      ],
+      "notes": "Phase 2b overnight batch — img2img follower at initImageStrength 65, seeded from the nearest ACCEPTED predecessor in its line. The A1 A/B showed img2img holds tier continuity where flat prompting drifts."
+    },
+    {
+      "id": "permafrost-sovereign",
+      "out": "items/armor/permafrost-sovereign.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a permafrost sovereign cuirass, front-facing and empty, a heavy cold-steel breastplate almost entirely claimed by thick pale ice, only a narrow band of bare steel left showing across the chest, small regal ice ridges at the shoulders, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of ice blue frost white and cold steel, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, person wearing it, mannequin, full body, helmet, boots, gloves, weapon, treasure chest, wooden chest, box, crate, container, barrel, hood, cloak, robe on a figure, standing figure, crown, snowflake, icicle spikes, cloth, fur, warm colours, orange, red, gold, green",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2,
+        "initImage": "items/armor/glacial-bulwark.png",
+        "initImageStrength": 65
+      },
+      "candidates": 4,
+      "status": "accepted",
+      "sources": [
+        "item:tundra-vest-t4"
+      ],
+      "notes": "Phase 2b overnight batch — img2img follower at initImageStrength 65, seeded from the nearest ACCEPTED predecessor in its line. The A1 A/B showed img2img holds tier continuity where flat prompting drifts."
+    },
+    {
+      "id": "pyroclasm-mantle",
+      "out": "items/armor/pyroclasm-mantle.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a pyroclasm cuirass, front-facing and empty, a dark steel breastplate buried under the thickest blackened ash crust of its line with only thin ember-red cracks left showing, heavy squared shoulder plates, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of dark steel ember red and hot orange, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, person wearing it, mannequin, full body, helmet, boots, gloves, weapon, treasure chest, wooden chest, box, crate, container, barrel, hood, cloak, robe on a figure, standing figure, hide, leather, fur, open flame, campfire, lava pool, smoke, blue, green, purple",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2,
+        "initImage": "items/armor/emberforge-plate.png",
+        "initImageStrength": 65
+      },
+      "candidates": 4,
+      "status": "accepted",
+      "sources": [
+        "item:volcanic-vest-t4"
+      ],
+      "notes": "Phase 2b overnight batch — img2img follower at initImageStrength 65, seeded from the nearest ACCEPTED predecessor in its line. The A1 A/B showed img2img holds tier continuity where flat prompting drifts."
+    },
+    {
+      "id": "lava-tempered-hide",
+      "out": "items/armor/lava-tempered-hide.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a lava-tempered torso hide, front-facing and empty, thick scorched leather hide rather than metal plate, its surface glazed to a hard blackened crust with ember-red seams between the panels and a fresh pale crust forming along one shoulder, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of dark steel ember red and hot orange, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, person wearing it, mannequin, full body, helmet, boots, gloves, weapon, treasure chest, wooden chest, box, crate, container, barrel, hood, cloak, robe on a figure, standing figure, metal plate armour, steel cuirass, squared shoulder plates, open flame, campfire, lava pool, blue, green",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2,
+        "initImage": "items/armor/emberforge-plate.png",
+        "initImageStrength": 65
+      },
+      "candidates": 4,
+      "status": "accepted",
+      "sources": [
+        "item:volcanic-vest-t4-lavatempered"
+      ],
+      "notes": "Phase 2b overnight batch — img2img follower at initImageStrength 65, seeded from the nearest ACCEPTED predecessor in its line. The A1 A/B showed img2img holds tier continuity where flat prompting drifts."
+    },
+    {
+      "id": "pulse-stone",
+      "out": "items/charms/pulse-stone.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a cave-crystal pulse stone charm, a rough dark red-brown crystal shard bound in iron wire and hung on a short cord, one soft concentric pulse ring radiating from its centre, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of dark iron deep red-brown and cave grey, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, weapon, armour, armor, boots, long necklace chain, full chain, treasure chest, box, heart organ, blood, green, gold, blue",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "candidates": 4,
+      "status": "accepted",
+      "sources": [
+        "item:cave-charm-t1"
+      ],
+      "notes": "Phase 2b overnight batch — line root, flat generation (no accepted predecessor to seed from)."
+    },
+    {
+      "id": "herb-pouch",
+      "out": "items/charms/herb-pouch.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a small drawstring herb pouch charm, a plain cream cloth bag cinched with twine and hung on a short cord, two or three bruised green leaves poking out of the neck, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of soft sage green hazel brown and cream, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, weapon, armour, armor, boots, long necklace chain, full chain, treasure chest, box, coin purse, money, gold, gem, crystal, saturated colour, red, glowing",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "candidates": 4,
+      "status": "accepted",
+      "sources": [
+        "item:clearing-charm-t1"
+      ],
+      "notes": "Phase 2b overnight batch — line root, flat generation (no accepted predecessor to seed from)."
+    },
+    {
+      "id": "heartroot-amulet",
+      "out": "items/charms/heartroot-amulet.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a heartroot amulet, a knot of pale warm-toned tree root carved into a rounded amulet and hung on a short cord, one carved ward sigil cut into its face, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of pale silver forest green and muted brown, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, weapon, armour, armor, boots, long necklace chain, full chain, treasure chest, box, heart organ, blood, flower, whole tree, gold, red, purple",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "candidates": 4,
+      "status": "accepted",
+      "sources": [
+        "item:forest-charm-t1"
+      ],
+      "notes": "Phase 2b overnight batch — line root, flat generation (no accepted predecessor to seed from)."
+    },
+    {
+      "id": "necrotic-pulse",
+      "out": "items/charms/necrotic-pulse.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a necrotic pulse charm, a carved bone-white idol shaped like a clenched knot and hung on a short cord, two strong concentric pulse rings radiating outward from it in necrotic purple, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of bone white necrotic purple and grave grey, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, weapon, armour, armor, boots, long necklace chain, full chain, treasure chest, box, skull, skeleton, ribcage, tide, ripple, water, wave, green, gold, fire",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "candidates": 4,
+      "status": "accepted",
+      "sources": [
+        "item:graveyard-charm-t4"
+      ],
+      "notes": "Phase 2b overnight batch — line root, flat generation (no accepted predecessor to seed from)."
+    },
+    {
+      "id": "grave-tide-pulse",
+      "out": "items/charms/grave-tide-pulse.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a grave-tide charm, a flat tide-worn grave-grey stone disc hung on a short cord, four fine evenly spaced ripple lines washing steadily across its face, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of bone white necrotic purple and grave grey, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, weapon, armour, armor, boots, long necklace chain, full chain, treasure chest, box, idol, clenched knot, strong pulse ring, skull, skeleton, ocean scene, green, gold, fire",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "candidates": 4,
+      "status": "accepted",
+      "sources": [
+        "item:graveyard-charm-t4-gravetide"
+      ],
+      "notes": "Phase 2b overnight batch — line root, flat generation (no accepted predecessor to seed from)."
+    },
+    {
+      "id": "canopy-heart",
+      "out": "items/charms/canopy-heart.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a canopy heart charm, a tight knot of ancient woody vine coiled into a rounded amulet and hung on a short cord, small fresh green shoots creeping outward from the knot along the cord, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of vivid green bark brown and thorn red, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, weapon, armour, armor, boots, long necklace chain, full chain, treasure chest, box, heart organ, blood, flower, whole tree, blue, purple, gold",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "candidates": 4,
+      "status": "accepted",
+      "sources": [
+        "item:jungle-charm-t2"
+      ],
+      "notes": "Phase 2b overnight batch — line root, flat generation (no accepted predecessor to seed from)."
+    },
+    {
+      "id": "plains-stone",
+      "out": "items/charms/plains-stone.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a sun-warmed plains stone charm, a smooth rounded warm-brown river stone bound in a simple leather cradle and hung on a short cord, one carved dull-gold sigil on its face, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of steel warm brown and dull gold, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, weapon, armour, armor, boots, long necklace chain, full chain, treasure chest, box, crystal, gemstone, faceted jewel, green, blue, purple",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "candidates": 4,
+      "status": "accepted",
+      "sources": [
+        "item:plains-charm-t1"
+      ],
+      "notes": "Phase 2b overnight batch — line root, flat generation (no accepted predecessor to seed from)."
+    },
+    {
+      "id": "pressure-vessel",
+      "out": "items/charms/pressure-vessel.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a deep-sea pressure vessel charm, a small squat sealed flask of blue-black metal banded with heavy rivets and hung on a short cord, thin bioluminescent teal seams glowing between the bands, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of abyssal blue-black deep violet-blue and bioluminescent teal, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, weapon, armour, armor, boots, long necklace chain, full chain, treasure chest, box, potion bottle, cork, liquid inside, glass, warm colours, orange, red, gold, brown",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "candidates": 4,
+      "status": "accepted",
+      "sources": [
+        "item:trench-charm-t4"
+      ],
+      "notes": "Phase 2b overnight batch — line root, flat generation (no accepted predecessor to seed from)."
+    },
+    {
+      "id": "frostward-charm",
+      "out": "items/charms/frostward-charm.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a frostward charm, a pale rime-crusted ward stone hung on a short cord with a thin flat sheet of ice raised in front of it like a small shield, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of ice blue frost white and cold steel, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, weapon, armour, armor, boots, long necklace chain, full chain, treasure chest, box, snowflake, icicle spikes, warm colours, orange, red, gold, green",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "candidates": 4,
+      "status": "accepted",
+      "sources": [
+        "item:tundra-charm-t3"
+      ],
+      "notes": "Phase 2b overnight batch — line root, flat generation (no accepted predecessor to seed from)."
+    },
+    {
+      "id": "magmaheart-stone",
+      "out": "items/charms/magmaheart-stone.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a magmaheart stone charm, a dark blackened stone hung on a short cord and split open to show a still-molten ember-red core, faint heat cracks running out across its surface, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of dark steel ember red and hot orange, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, weapon, armour, armor, boots, long necklace chain, full chain, treasure chest, box, heart organ, blood, open flame, campfire, lava pool, smoke, blue, green",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "candidates": 4,
+      "status": "accepted",
+      "sources": [
+        "item:volcanic-charm-t3"
+      ],
+      "notes": "Phase 2b overnight batch — line root, flat generation (no accepted predecessor to seed from)."
+    },
+    {
+      "id": "iron-bulwark",
+      "out": "items/charms/iron-bulwark.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of an iron bulwark ward-stone, a carved grey stone idol banded with dark iron and hung on a short leather cord, a thicker stone slab hovering just in front of it like a raised shield, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of iron grey stone grey and weathered brown, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, weapon, armour, armor, boots, long necklace chain, full chain, treasure chest, box, gemstone jewellery, gold, green, glowing crystal",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2,
+        "initImage": "items/charms/granite-barrier.png",
+        "initImageStrength": 65
+      },
+      "candidates": 4,
+      "status": "accepted",
+      "sources": [
+        "item:mountain-charm-t2"
+      ],
+      "notes": "Phase 2b overnight batch — img2img follower at initImageStrength 65, seeded from the nearest ACCEPTED predecessor in its line. The A1 A/B showed img2img holds tier continuity where flat prompting drifts."
+    },
+    {
+      "id": "bastion-heart",
+      "out": "items/charms/bastion-heart.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a bastion heart ward-stone, a dense core of grey mountain stone cut into a blocky heart-shaped idol on a short cord, two stone slabs stacked and hovering in front of it like a doubled wall, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of iron grey stone grey and weathered brown, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, weapon, armour, armor, boots, long necklace chain, full chain, treasure chest, box, heart organ, blood, open palm, gemstone jewellery, gold, green",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2,
+        "initImage": "items/charms/granite-barrier.png",
+        "initImageStrength": 65
+      },
+      "candidates": 4,
+      "status": "accepted",
+      "sources": [
+        "item:mountain-charm-t3"
+      ],
+      "notes": "Phase 2b overnight batch — img2img follower at initImageStrength 65, seeded from the nearest ACCEPTED predecessor in its line. The A1 A/B showed img2img holds tier continuity where flat prompting drifts."
+    },
+    {
+      "id": "fortress-heart",
+      "out": "items/charms/fortress-heart.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a fortress heart ward-stone, a miniature keep carved from grey mountain stone with tiny crenellated walls, hung on a short cord, one intact stone slab hovering in front of it, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of iron grey stone grey and weathered brown, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, weapon, armour, armor, boots, long necklace chain, full chain, treasure chest, box, cracked slab, shattered stone, falling shards, open palm, gold, green",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2,
+        "initImage": "items/charms/granite-barrier.png",
+        "initImageStrength": 65
+      },
+      "candidates": 4,
+      "status": "accepted",
+      "sources": [
+        "item:mountain-charm-t4"
+      ],
+      "notes": "Phase 2b overnight batch — img2img follower at initImageStrength 65, seeded from the nearest ACCEPTED predecessor in its line. The A1 A/B showed img2img holds tier continuity where flat prompting drifts."
+    },
+    {
+      "id": "shieldmend-ward",
+      "out": "items/charms/shieldmend-ward.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a shieldmend ward-stone, a smooth grey stone ward disc on a short cord with a cracked stone slab breaking apart in front of it, three small shards flying free and one soft pulse ring returning inward, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of iron grey stone grey and weathered brown, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, weapon, armour, armor, boots, long necklace chain, full chain, treasure chest, box, castle, keep, crenellations, tower, intact slab, open palm, gold, green",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2,
+        "initImage": "items/charms/granite-barrier.png",
+        "initImageStrength": 65
+      },
+      "candidates": 4,
+      "status": "accepted",
+      "sources": [
+        "item:mountain-charm-t4-shieldmend"
+      ],
+      "notes": "Phase 2b overnight batch — img2img follower at initImageStrength 65, seeded from the nearest ACCEPTED predecessor in its line. The A1 A/B showed img2img holds tier continuity where flat prompting drifts."
+    },
+    {
+      "id": "bog-eye",
+      "out": "items/charms/bog-eye.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a bog-touched eye charm, a swollen dark green eye set in a corroded metal rim and hung on a short cord, drinking in a thick green haze that spirals inward toward the pupil, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of dull steel swamp purple and toxic green, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, weapon, armour, armor, boots, long necklace chain, full chain, treasure chest, box, human face, portrait, head, skull, tears, weeping, fire, orange, gold",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2,
+        "initImage": "items/charms/murk-eye.png",
+        "initImageStrength": 65
+      },
+      "candidates": 4,
+      "status": "accepted",
+      "sources": [
+        "item:swamp-charm-t2"
+      ],
+      "notes": "Phase 2b overnight batch — img2img follower at initImageStrength 65, seeded from the nearest ACCEPTED predecessor in its line. The A1 A/B showed img2img holds tier continuity where flat prompting drifts."
+    },
+    {
+      "id": "sorrow-eye",
+      "out": "items/charms/sorrow-eye.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a sorrow eye charm, a pale heavy-lidded eye set in a blackened metal rim and hung on a short cord, four green tears falling from it in a line and turning brighter as they fall, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of dull steel swamp purple and toxic green, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, weapon, armour, armor, boots, long necklace chain, full chain, treasure chest, box, human face, portrait, head, skull, inward spiral haze, fire, orange, gold",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2,
+        "initImage": "items/charms/murk-eye.png",
+        "initImageStrength": 65
+      },
+      "candidates": 4,
+      "status": "accepted",
+      "sources": [
+        "item:swamp-charm-t3"
+      ],
+      "notes": "Phase 2b overnight batch — img2img follower at initImageStrength 65, seeded from the nearest ACCEPTED predecessor in its line. The A1 A/B showed img2img holds tier continuity where flat prompting drifts."
+    },
+    {
+      "id": "oasis-heart",
+      "out": "items/charms/oasis-heart.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of an oasis heart pendant, a rounded shard of pale desert glass on a short cord holding a single clear drop of water at its centre, three sand-coloured droplets beading off its lower edge and falling away, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of gold warm sand and pale steel, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, weapon, armour, armor, boots, long necklace chain, full chain, treasure chest, box, heart organ, blood, palm tree, oasis scene, green, purple, blue, ocean",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2,
+        "initImage": "items/charms/mirage-talisman.png",
+        "initImageStrength": 65
+      },
+      "candidates": 4,
+      "status": "accepted",
+      "sources": [
+        "item:desert-charm-t3"
+      ],
+      "notes": "Phase 2b overnight batch — img2img follower at initImageStrength 65, seeded from the nearest ACCEPTED predecessor in its line. The A1 A/B showed img2img holds tier continuity where flat prompting drifts."
+    },
+    {
+      "id": "last-oasis",
+      "out": "items/charms/last-oasis.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a last oasis pendant, a large gold-rimmed shard of desert glass on a short cord cradling a still pool of clear water, two carved warding glyphs on the rim and five droplets beading off the lower edge and falling away, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of gold warm sand and pale steel, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, weapon, armour, armor, boots, long necklace chain, full chain, treasure chest, box, heart organ, palm tree, oasis scene, green, purple, blue, ocean wave",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2,
+        "initImage": "items/charms/mirage-talisman.png",
+        "initImageStrength": 65
+      },
+      "candidates": 4,
+      "status": "accepted",
+      "sources": [
+        "item:desert-charm-t4"
+      ],
+      "notes": "Phase 2b overnight batch — img2img follower at initImageStrength 65, seeded from the nearest ACCEPTED predecessor in its line. The A1 A/B showed img2img holds tier continuity where flat prompting drifts."
+    },
+    {
+      "id": "bat-wing-boots",
+      "out": "items/boots/bat-wing-boots.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a pair of bat-wing boots seen from the side, soft dark stretched-membrane uppers with thin rib struts and quiet padded soles, the heel of the rear boot fading to a faint ghosted outline, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of dark iron deep red-brown and cave grey, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, single boot, one boot, legs, feet, person, full body, socks, weapon, armour, armor, treasure chest, box, bat, wings spread, animal, creature, flying, green, gold, blue",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "candidates": 4,
+      "status": "accepted",
+      "sources": [
+        "item:cave-boots-t1"
+      ],
+      "notes": "Phase 2b overnight batch — line root, flat generation (no accepted predecessor to seed from)."
+    },
+    {
+      "id": "soft-boots",
+      "out": "items/boots/soft-boots.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a pair of plain soft leather boots seen from the side, simple hazel-brown uppers gone soft and creased with wear, a single lace tie at each ankle, nothing decorative, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of soft sage green hazel brown and cream, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, single boot, one boot, legs, feet, person, full body, socks, weapon, armour, armor, treasure chest, box, metal plate, greaves, armour, buckles, saturated colour, red, glowing, magical",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "candidates": 4,
+      "status": "accepted",
+      "sources": [
+        "item:clearing-boots-t1"
+      ],
+      "notes": "Phase 2b overnight batch — line root, flat generation (no accepted predecessor to seed from)."
+    },
+    {
+      "id": "sprinter-wraps",
+      "out": "items/boots/sprinter-wraps.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a pair of sprinter foot wraps seen from the side, strips of supple green-brown hide wound tight around the foot and ankle with no hard sole, one clean short motion streak trailing behind the heel, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of pale silver forest green and muted brown, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, single boot, one boot, legs, feet, person, full body, socks, weapon, armour, armor, treasure chest, box, metal plate, greaves, heavy boot, bandage, gold, red, purple",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "candidates": 4,
+      "status": "accepted",
+      "sources": [
+        "item:forest-boots-t1"
+      ],
+      "notes": "Phase 2b overnight batch — line root, flat generation (no accepted predecessor to seed from)."
+    },
+    {
+      "id": "gravewalker-boots",
+      "out": "items/boots/gravewalker-boots.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a pair of gravewalker boots seen from the side, bone-white plated uppers over grave-grey leather, three stacked motion streaks trailing behind the heel with the longest at the back and a snapped chain link breaking apart at the sole, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of bone white necrotic purple and grave grey, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, single boot, one boot, legs, feet, person, full body, socks, weapon, armour, armor, treasure chest, box, skull, skeleton, bones as decoration, green, gold, fire, orange",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "candidates": 4,
+      "status": "accepted",
+      "sources": [
+        "item:graveyard-boots-t4"
+      ],
+      "notes": "Phase 2b overnight batch — line root, flat generation (no accepted predecessor to seed from)."
+    },
+    {
+      "id": "vine-wraps",
+      "out": "items/boots/vine-wraps.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a pair of vine-wrapped boots seen from the side, springy green creeper lashed around bark-brown foot coverings, short radiating impact marks breaking outward from beneath each sole, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of vivid green bark brown and thorn red, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, single boot, one boot, legs, feet, person, full body, socks, weapon, armour, armor, treasure chest, box, flower, whole tree, metal plate, greaves, blue, purple, gold",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "candidates": 4,
+      "status": "accepted",
+      "sources": [
+        "item:jungle-boots-t2"
+      ],
+      "notes": "Phase 2b overnight batch — line root, flat generation (no accepted predecessor to seed from)."
+    },
+    {
+      "id": "fleet-boots",
+      "out": "items/boots/fleet-boots.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a pair of open running sandals seen from the side, warm-brown leather straps over thin flat soles with a dull gold buckle at each ankle, one clean motion streak trailing behind the heel, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of steel warm brown and dull gold, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, single boot, one boot, legs, feet, person, full body, socks, weapon, armour, armor, treasure chest, box, closed boot, tall boot, metal plate, greaves, green, blue, purple",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "candidates": 4,
+      "status": "accepted",
+      "sources": [
+        "item:plains-boots-t1"
+      ],
+      "notes": "Phase 2b overnight batch — line root, flat generation (no accepted predecessor to seed from)."
+    },
+    {
+      "id": "abyssal-stalkers",
+      "out": "items/boots/abyssal-stalkers.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a pair of abyssal stalker boots seen from the side, slender blue-black scaled uppers with soft clawed soles and thin bioluminescent teal seams, the rear boot faded to a half-ghosted outline, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of abyssal blue-black deep violet-blue and bioluminescent teal, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, single boot, one boot, legs, feet, person, full body, socks, weapon, armour, armor, treasure chest, box, heavy boot, thick sole, ballast weights, chain, warm colours, orange, red, gold, brown",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "candidates": 4,
+      "status": "accepted",
+      "sources": [
+        "item:trench-boots-t4-stalkers"
+      ],
+      "notes": "Phase 2b overnight batch — line root, flat generation (no accepted predecessor to seed from)."
+    },
+    {
+      "id": "abyssal-treaders",
+      "out": "items/boots/abyssal-treaders.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a pair of abyssal treader boots seen from the side, squat heavy blue-black boots with thick ballasted soles and iron ankle weights, a snapped chain link breaking apart at the sole, thin teal seams along the weights, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of abyssal blue-black deep violet-blue and bioluminescent teal, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, single boot, one boot, legs, feet, person, full body, socks, weapon, armour, armor, treasure chest, box, slender boot, clawed sole, ghosted outline, faded, stealth, warm colours, orange, red, gold",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "candidates": 4,
+      "status": "accepted",
+      "sources": [
+        "item:trench-boots-t4-treaders"
+      ],
+      "notes": "Phase 2b overnight batch — line root, flat generation (no accepted predecessor to seed from)."
+    },
+    {
+      "id": "glacier-striders",
+      "out": "items/boots/glacier-striders.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a pair of glacier strider boots seen from the side, cold-steel plated uppers rimed with pale ice and broad flat soles, three stacked motion streaks trailing behind the heel with the longest at the back, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of ice blue frost white and cold steel, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, single boot, one boot, legs, feet, person, full body, socks, weapon, armour, armor, treasure chest, box, snowflake, icicle spikes, fur, warm colours, orange, red, gold, green",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "candidates": 4,
+      "status": "accepted",
+      "sources": [
+        "item:tundra-boots-t3"
+      ],
+      "notes": "Phase 2b overnight batch — line root, flat generation (no accepted predecessor to seed from)."
+    },
+    {
+      "id": "magma-walkers",
+      "out": "items/boots/magma-walkers.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a pair of magma walker boots seen from the side, dark steel uppers with ember-red cracks glowing through the blackened soles, one clean motion streak trailing behind the heel with a single spark thrown from it, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of dark steel ember red and hot orange, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, single boot, one boot, legs, feet, person, full body, socks, weapon, armour, armor, treasure chest, box, open flame, campfire, lava pool, smoke, blue, green, purple",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "candidates": 4,
+      "status": "accepted",
+      "sources": [
+        "item:volcanic-boots-t3"
+      ],
+      "notes": "Phase 2b overnight batch — line root, flat generation (no accepted predecessor to seed from)."
+    },
+    {
+      "id": "mountain-stride",
+      "out": "items/boots/mountain-stride.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a pair of mountain stride boots seen from the side, heavier riveted grey leather uppers with deep cleated soles built to bite sheer rock, two clean motion streaks trailing behind the heel, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of iron grey stone grey and weathered brown, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, single boot, one boot, legs, feet, person, full body, socks, weapon, armour, armor, treasure chest, box, green, gold, cloth wrappings, sandals",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2,
+        "initImage": "items/boots/iron-treads.png",
+        "initImageStrength": 65
+      },
+      "candidates": 4,
+      "status": "accepted",
+      "sources": [
+        "item:mountain-boots-t2"
+      ],
+      "notes": "Phase 2b overnight batch — img2img follower at initImageStrength 65, seeded from the nearest ACCEPTED predecessor in its line. The A1 A/B showed img2img holds tier continuity where flat prompting drifts."
+    },
+    {
+      "id": "peak-stride",
+      "out": "items/boots/peak-stride.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a pair of peak stride boots seen from the side, tall iron-plated uppers over grey leather with heavy spiked soles, three clean motion streaks trailing behind the heel, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of iron grey stone grey and weathered brown, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, single boot, one boot, legs, feet, person, full body, socks, weapon, armour, armor, treasure chest, box, green, gold, cloth wrappings, sandals, low boot",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2,
+        "initImage": "items/boots/iron-treads.png",
+        "initImageStrength": 65
+      },
+      "candidates": 4,
+      "status": "accepted",
+      "sources": [
+        "item:mountain-boots-t3"
+      ],
+      "notes": "Phase 2b overnight batch — img2img follower at initImageStrength 65, seeded from the nearest ACCEPTED predecessor in its line. The A1 A/B showed img2img holds tier continuity where flat prompting drifts."
+    },
+    {
+      "id": "vanguard-stride",
+      "out": "items/boots/vanguard-stride.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a pair of vanguard stride greaves seen from the side, full iron-plated boots with articulated shin plates and heavy spiked soles, four sharp motion streaks trailing behind the heel with the longest at the back, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of iron grey stone grey and weathered brown, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, single boot, one boot, legs, feet, person, full body, socks, weapon, armour, armor, treasure chest, box, green, gold, cloth wrappings, sandals, soft leather",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2,
+        "initImage": "items/boots/iron-treads.png",
+        "initImageStrength": 65
+      },
+      "candidates": 4,
+      "status": "accepted",
+      "sources": [
+        "item:mountain-boots-t4"
+      ],
+      "notes": "Phase 2b overnight batch — img2img follower at initImageStrength 65, seeded from the nearest ACCEPTED predecessor in its line. The A1 A/B showed img2img holds tier continuity where flat prompting drifts."
+    },
+    {
+      "id": "wetland-wraps",
+      "out": "items/boots/wetland-wraps.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a pair of wetland wrap boots seen from the side, woven reed and grey hide uppers bound with enchanted cloth strips carrying one small green warding glyph, a snapped mud-caked chain link breaking apart at the sole, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of dull steel swamp purple and toxic green, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, single boot, one boot, legs, feet, person, full body, socks, weapon, armour, armor, treasure chest, box, metal plate, greaves, gold, fire, orange",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2,
+        "initImage": "items/boots/marsh-treads.png",
+        "initImageStrength": 65
+      },
+      "candidates": 4,
+      "status": "accepted",
+      "sources": [
+        "item:swamp-boots-t2"
+      ],
+      "notes": "Phase 2b overnight batch — img2img follower at initImageStrength 65, seeded from the nearest ACCEPTED predecessor in its line. The A1 A/B showed img2img holds tier continuity where flat prompting drifts."
+    },
+    {
+      "id": "mire-striders",
+      "out": "items/boots/mire-striders.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a pair of mire strider boots seen from the side, tall blackened hide uppers with broad flat soles shedding clinging bog muck, two snapped chain links breaking apart at the sole, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of dull steel swamp purple and toxic green, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, single boot, one boot, legs, feet, person, full body, socks, weapon, armour, armor, treasure chest, box, metal plate, greaves, gold, fire, orange, clean dry boot",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2,
+        "initImage": "items/boots/marsh-treads.png",
+        "initImageStrength": 65
+      },
+      "candidates": 4,
+      "status": "accepted",
+      "sources": [
+        "item:swamp-boots-t3"
+      ],
+      "notes": "Phase 2b overnight batch — img2img follower at initImageStrength 65, seeded from the nearest ACCEPTED predecessor in its line. The A1 A/B showed img2img holds tier continuity where flat prompting drifts."
+    },
+    {
+      "id": "mirage-striders",
+      "out": "items/boots/mirage-striders.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a pair of mirage strider boots seen from the side, pale sand-cloth uppers with gold strap buckles and broad flat soles, two motion streaks trailing behind the heel and the rear boot's outline faintly doubled as though it had already moved, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of gold warm sand and pale steel, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, single boot, one boot, legs, feet, person, full body, socks, weapon, armour, armor, treasure chest, box, heavy metal plate, greaves, green, blue, purple",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2,
+        "initImage": "items/boots/sand-sprint.png",
+        "initImageStrength": 65
+      },
+      "candidates": 4,
+      "status": "accepted",
+      "sources": [
+        "item:desert-boots-t3"
+      ],
+      "notes": "Phase 2b overnight batch — img2img follower at initImageStrength 65, seeded from the nearest ACCEPTED predecessor in its line. The A1 A/B showed img2img holds tier continuity where flat prompting drifts."
+    },
+    {
+      "id": "simoom-striders",
+      "out": "items/boots/simoom-striders.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a pair of simoom strider boots seen from the side, light gold-trimmed sand-cloth uppers with broad flat soles, three long motion streaks trailing behind the heel and a trailing plume of blown dust behind them, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of gold warm sand and pale steel, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, single boot, one boot, legs, feet, person, full body, socks, weapon, armour, armor, treasure chest, box, heavy metal plate, greaves, green, blue, purple, sandstorm scene",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2,
+        "initImage": "items/boots/sand-sprint.png",
+        "initImageStrength": 65
+      },
+      "candidates": 4,
+      "status": "accepted",
+      "sources": [
+        "item:desert-boots-t4"
+      ],
+      "notes": "Phase 2b overnight batch — img2img follower at initImageStrength 65, seeded from the nearest ACCEPTED predecessor in its line. The A1 A/B showed img2img holds tier continuity where flat prompting drifts."
+    },
+    {
+      "id": "resonant-gem",
+      "out": "items/charms/resonant-gem.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a resonant gem charm, a cleanly faceted dark red-brown cave gem bound in iron wire on a short cord, two soft concentric pulse rings radiating out from it, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of dark iron deep red-brown and cave grey, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, weapon, armour, armor, boots, long necklace chain, full chain, treasure chest, box, heart organ, blood, rough uncut rock, green, gold, blue",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2,
+        "initImage": "items/charms/pulse-stone.png",
+        "initImageStrength": 65
+      },
+      "candidates": 4,
+      "status": "accepted",
+      "sources": [
+        "item:cave-charm-t2"
+      ],
+      "notes": "Phase 2b FINAL wave — img2img follower at initImageStrength 65, seeded from its accepted line root. Closes armor+charms+boots at 89/89."
+    },
+    {
+      "id": "echo-geode",
+      "out": "items/charms/echo-geode.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of an echo geode charm, a split-open stone geode on a short cord showing a hollow crystal-lined core, two strong concentric pulse rings radiating out with finer ripples in between them, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of dark iron deep red-brown and cave grey, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, weapon, armour, armor, boots, long necklace chain, full chain, treasure chest, box, heart organ, blood, solid stone, green, gold, blue",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2,
+        "initImage": "items/charms/pulse-stone.png",
+        "initImageStrength": 65
+      },
+      "candidates": 4,
+      "status": "accepted",
+      "sources": [
+        "item:cave-charm-t3"
+      ],
+      "notes": "Phase 2b FINAL wave — img2img follower at initImageStrength 65, seeded from its accepted line root. Closes armor+charms+boots at 89/89."
+    },
+    {
+      "id": "ancient-heartroot-amulet",
+      "out": "items/charms/ancient-heartroot-amulet.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of an ancient heartroot amulet, a gnarled dark old tree-root knot carved into a rounded amulet on a short cord, its outer surface charred and grey while a living pale-green core still shows through the cracks, two carved ward sigils on its face, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of pale silver forest green and muted brown, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, weapon, armour, armor, boots, long necklace chain, full chain, treasure chest, box, heart organ, blood, flower, whole tree, fire, flame, gold, red, purple",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2,
+        "initImage": "items/charms/heartroot-amulet.png",
+        "initImageStrength": 65
+      },
+      "candidates": 4,
+      "status": "accepted",
+      "sources": [
+        "item:forest-charm-t2"
+      ],
+      "notes": "Phase 2b FINAL wave — img2img follower at initImageStrength 65, seeded from its accepted line root. Closes armor+charms+boots at 89/89."
+    },
+    {
+      "id": "worldvine-heart",
+      "out": "items/charms/worldvine-heart.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a worldvine heart charm, a large tight knot of ancient woody vine on a short cord with bright green shoots creeping well out along the cord in both directions, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of vivid green bark brown and thorn red, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, weapon, armour, armor, boots, long necklace chain, full chain, treasure chest, box, heart organ, blood, flower, whole tree, hardened shell, crust, blue, purple, gold",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2,
+        "initImage": "items/charms/canopy-heart.png",
+        "initImageStrength": 65
+      },
+      "candidates": 4,
+      "status": "accepted",
+      "sources": [
+        "item:jungle-charm-t3"
+      ],
+      "notes": "Phase 2b FINAL wave — img2img follower at initImageStrength 65, seeded from its accepted line root. Closes armor+charms+boots at 89/89."
+    },
+    {
+      "id": "ancient-canopy",
+      "out": "items/charms/ancient-canopy.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of an ancient canopy charm, a massive gnarled knot of blackened old vine on a short cord, bare and weathered with deep grooves, a few small stubborn green leaves pushing out from between the coils, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of vivid green bark brown and thorn red, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, weapon, armour, armor, boots, long necklace chain, full chain, treasure chest, box, hardened shell, protective crust, encasing bark, smooth surface, heart organ, flower, whole tree, blue, purple, gold",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2,
+        "initImage": "items/charms/canopy-heart.png",
+        "initImageStrength": 65
+      },
+      "candidates": 4,
+      "status": "accepted",
+      "sources": [
+        "item:jungle-charm-t4"
+      ],
+      "notes": "Phase 2b FINAL wave — img2img follower at initImageStrength 65, seeded from its accepted line root. Closes armor+charms+boots at 89/89."
+    },
+    {
+      "id": "overgrowth-pulse",
+      "out": "items/charms/overgrowth-pulse.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of an overgrowth pulse charm, a vine knot on a short cord almost completely encased in a smooth hardened shell of fresh green growth that has grown over and sealed it, one soft pulse ring radiating out from the shell, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of vivid green bark brown and thorn red, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, weapon, armour, armor, boots, long necklace chain, full chain, treasure chest, box, bare gnarled knot, exposed coils, deep grooves, weathered wood, heart organ, flower, whole tree, blue, purple, gold",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2,
+        "initImage": "items/charms/canopy-heart.png",
+        "initImageStrength": 65
+      },
+      "candidates": 4,
+      "status": "accepted",
+      "sources": [
+        "item:jungle-charm-t4-overgrowth"
+      ],
+      "notes": "Phase 2b FINAL wave — img2img follower at initImageStrength 65, seeded from its accepted line root. Closes armor+charms+boots at 89/89."
+    },
+    {
+      "id": "stalwart-heart",
+      "out": "items/charms/stalwart-heart.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a stalwart heart stone charm, a larger smooth warm-brown stone in a reinforced leather cradle on a short cord, two carved dull-gold sigils on its face and a warm inner light showing through a hairline seam, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of steel warm brown and dull gold, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, weapon, armour, armor, boots, long necklace chain, full chain, treasure chest, box, heart organ, blood, crystal, gemstone, faceted jewel, green, blue, purple",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2,
+        "initImage": "items/charms/plains-stone.png",
+        "initImageStrength": 65
+      },
+      "candidates": 4,
+      "status": "accepted",
+      "sources": [
+        "item:plains-charm-t2"
+      ],
+      "notes": "Phase 2b FINAL wave — img2img follower at initImageStrength 65, seeded from its accepted line root. Closes armor+charms+boots at 89/89."
+    },
+    {
+      "id": "glacial-ward",
+      "out": "items/charms/glacial-ward.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a glacial ward charm, a pale rime-crusted ward stone on a short cord with one large clean sheet of ice raised in front of it like a shield, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of ice blue frost white and cold steel, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, weapon, armour, armor, boots, long necklace chain, full chain, treasure chest, box, thick layered frost buildup, many stacked ice layers, snowflake, icicle spikes, warm colours, orange, red, gold, green",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2,
+        "initImage": "items/charms/frostward-charm.png",
+        "initImageStrength": 65
+      },
+      "candidates": 4,
+      "status": "accepted",
+      "sources": [
+        "item:tundra-charm-t4"
+      ],
+      "notes": "Phase 2b FINAL wave — img2img follower at initImageStrength 65, seeded from its accepted line root. Closes armor+charms+boots at 89/89."
+    },
+    {
+      "id": "deepfreeze-ward",
+      "out": "items/charms/deepfreeze-ward.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a deepfreeze ward charm, a ward stone on a short cord buried under many thick layers of accumulated frost that have settled over it in stages, only a small patch of the bare stone still showing, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of ice blue frost white and cold steel, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, weapon, armour, armor, boots, long necklace chain, full chain, treasure chest, box, single clean ice sheet, raised shield, clear ice pane, snowflake, icicle spikes, warm colours, orange, red, gold, green",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2,
+        "initImage": "items/charms/frostward-charm.png",
+        "initImageStrength": 65
+      },
+      "candidates": 4,
+      "status": "accepted",
+      "sources": [
+        "item:tundra-charm-t4-deepfreeze"
+      ],
+      "notes": "Phase 2b FINAL wave — img2img follower at initImageStrength 65, seeded from its accepted line root. Closes armor+charms+boots at 89/89."
+    },
+    {
+      "id": "inferno-heart",
+      "out": "items/charms/inferno-heart.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of an inferno heart charm, a blackened stone on a short cord split wide open to show a fiercely bright molten orange core, deep heat cracks spreading right across its whole surface, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of dark steel ember red and hot orange, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, weapon, armour, armor, boots, long necklace chain, full chain, treasure chest, box, heart organ, blood, open flame, campfire, lava pool, smoke, blue, green",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2,
+        "initImage": "items/charms/magmaheart-stone.png",
+        "initImageStrength": 65
+      },
+      "candidates": 4,
+      "status": "accepted",
+      "sources": [
+        "item:volcanic-charm-t4"
+      ],
+      "notes": "Phase 2b FINAL wave — img2img follower at initImageStrength 65, seeded from its accepted line root. Closes armor+charms+boots at 89/89."
+    },
+    {
+      "id": "cavern-sprints",
+      "out": "items/boots/cavern-sprints.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a pair of cavern sprint boots seen from the side, dark membrane uppers worn smooth with soft padded soles, the rear boot faded to a faint ghosted outline, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of dark iron deep red-brown and cave grey, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, single boot, one boot, legs, feet, person, full body, socks, weapon, armour, armor, treasure chest, box, bat, wings spread, animal, creature, flying, heavy boot, green, gold, blue",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2,
+        "initImage": "items/boots/bat-wing-boots.png",
+        "initImageStrength": 65
+      },
+      "candidates": 4,
+      "status": "accepted",
+      "sources": [
+        "item:cave-boots-t2"
+      ],
+      "notes": "Phase 2b FINAL wave — img2img follower at initImageStrength 65, seeded from its accepted line root. Closes armor+charms+boots at 89/89."
+    },
+    {
+      "id": "echostep-treads",
+      "out": "items/boots/echostep-treads.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a pair of echostep boots seen from the side, sleek dark membrane uppers with thick silent padded soles, the rear boot almost entirely faded to a ghost outline and the front boot's heel fading too, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of dark iron deep red-brown and cave grey, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, single boot, one boot, legs, feet, person, full body, socks, weapon, armour, armor, treasure chest, box, bat, wings spread, animal, creature, flying, heavy boot, motion streak, green, gold, blue",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2,
+        "initImage": "items/boots/bat-wing-boots.png",
+        "initImageStrength": 65
+      },
+      "candidates": 4,
+      "status": "accepted",
+      "sources": [
+        "item:cave-boots-t3"
+      ],
+      "notes": "Phase 2b FINAL wave — img2img follower at initImageStrength 65, seeded from its accepted line root. Closes armor+charms+boots at 89/89."
+    },
+    {
+      "id": "windstep-wraps",
+      "out": "items/boots/windstep-wraps.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a pair of windstep foot wraps seen from the side, fine pale-silver and green hide strips wound tight around foot and ankle with no hard sole, two clean motion streaks trailing behind the heel, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of pale silver forest green and muted brown, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, single boot, one boot, legs, feet, person, full body, socks, weapon, armour, armor, treasure chest, box, metal plate, greaves, heavy boot, bandage, gold, red, purple",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2,
+        "initImage": "items/boots/sprinter-wraps.png",
+        "initImageStrength": 65
+      },
+      "candidates": 4,
+      "status": "accepted",
+      "sources": [
+        "item:forest-boots-t2"
+      ],
+      "notes": "Phase 2b FINAL wave — img2img follower at initImageStrength 65, seeded from its accepted line root. Closes armor+charms+boots at 89/89."
+    },
+    {
+      "id": "canopy-striders",
+      "out": "items/boots/canopy-striders.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a pair of canopy strider boots seen from the side, heavy green creeper lashed over bark-brown boots with broad soles, long radiating impact marks breaking outward from beneath both soles, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of vivid green bark brown and thorn red, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, single boot, one boot, legs, feet, person, full body, socks, weapon, armour, armor, treasure chest, box, flower, whole tree, metal plate, greaves, quiet, subtle, blue, purple, gold",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2,
+        "initImage": "items/boots/vine-wraps.png",
+        "initImageStrength": 65
+      },
+      "candidates": 4,
+      "status": "accepted",
+      "sources": [
+        "item:jungle-boots-t3"
+      ],
+      "notes": "Phase 2b FINAL wave — img2img follower at initImageStrength 65, seeded from its accepted line root. Closes armor+charms+boots at 89/89."
+    },
+    {
+      "id": "warpath-treads",
+      "out": "items/boots/warpath-treads.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a pair of warpath tread boots seen from the side, thick thorned vine bound over heavy bark-brown boots, wide violent radiating impact marks breaking outward beneath them and torn green leaves thrown up around the soles, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of vivid green bark brown and thorn red, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, single boot, one boot, legs, feet, person, full body, socks, weapon, armour, armor, treasure chest, box, flower, whole tree, metal plate, greaves, quiet, subtle, blue, purple, gold",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2,
+        "initImage": "items/boots/vine-wraps.png",
+        "initImageStrength": 65
+      },
+      "candidates": 4,
+      "status": "accepted",
+      "sources": [
+        "item:jungle-boots-t4"
+      ],
+      "notes": "Phase 2b FINAL wave — img2img follower at initImageStrength 65, seeded from its accepted line root. Closes armor+charms+boots at 89/89."
+    },
+    {
+      "id": "gale-boots",
+      "out": "items/boots/gale-boots.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a pair of gale boots seen from the side, low wind-cured warm-brown leather boots with dull gold ankle buckles and thin flat soles, two clean motion streaks trailing behind the heel, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of steel warm brown and dull gold, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, single boot, one boot, legs, feet, person, full body, socks, weapon, armour, armor, treasure chest, box, tall boot, metal plate, greaves, sandal straps only, green, blue, purple",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2,
+        "initImage": "items/boots/fleet-boots.png",
+        "initImageStrength": 65
+      },
+      "candidates": 4,
+      "status": "accepted",
+      "sources": [
+        "item:plains-boots-t2"
+      ],
+      "notes": "Phase 2b FINAL wave — img2img follower at initImageStrength 65, seeded from its accepted line root. Closes armor+charms+boots at 89/89."
+    },
+    {
+      "id": "avalanche-striders",
+      "out": "items/boots/avalanche-striders.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a pair of avalanche strider boots seen from the side, heavy cold-steel plated uppers thickly rimed with pale ice and broad flat soles, four stacked motion streaks trailing behind the heel with the longest at the back, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of ice blue frost white and cold steel, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, single boot, one boot, legs, feet, person, full body, socks, weapon, armour, armor, treasure chest, box, snowflake, icicle spikes, fur, warm colours, orange, red, gold, green",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2,
+        "initImage": "items/boots/glacier-striders.png",
+        "initImageStrength": 65
+      },
+      "candidates": 4,
+      "status": "accepted",
+      "sources": [
+        "item:tundra-boots-t4"
+      ],
+      "notes": "Phase 2b FINAL wave — img2img follower at initImageStrength 65, seeded from its accepted line root. Closes armor+charms+boots at 89/89."
+    },
+    {
+      "id": "pyroclast-treads",
+      "out": "items/boots/pyroclast-treads.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a pair of pyroclast tread boots seen from the side, dark steel uppers with bright ember-red cracks running through blackened heavy soles, one long motion streak trailing behind the heel throwing off three sparks, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of dark steel ember red and hot orange, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, single boot, one boot, legs, feet, person, full body, socks, weapon, armour, armor, treasure chest, box, open flame, campfire, lava pool, smoke, blue, green, purple",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2,
+        "initImage": "items/boots/magma-walkers.png",
+        "initImageStrength": 65
+      },
+      "candidates": 4,
+      "status": "accepted",
+      "sources": [
+        "item:volcanic-boots-t4"
+      ],
+      "notes": "Phase 2b FINAL wave — img2img follower at initImageStrength 65, seeded from its accepted line root. Closes armor+charms+boots at 89/89."
     }
   ]
 }

@@ -103,7 +103,7 @@ export const desertRecipeEntries = [
     cost: { yellow: 120, purple: 30 }, catalystCost: { predation: 3 }, stats: { maxHp: 90, plating: 20 }, // family-tag: last-stand armor → Predation
     mechanicEffects: { 'defense.cheat-death': 1, 'defense.cleanse-stacks': 1, 'defense.cleanse-interval-ms': 8000, 'defense.debuff-resistance': 0.20 },
     tier: 3,
-    icon: 'items/armor/plate-armor-7.png',
+    icon: 'items/armor/eternal-duneplate.png',
     description: 'Worn by the standfast dead, who shed curses like sand and refused, once, to die.',
     upgrades: [
       { stats: { maxHp: 20, plating: 5 }, cost: { yellow: 100, purple: 50 },  requiredBiomeLevel: 9 },
@@ -121,7 +121,7 @@ export const desertRecipeEntries = [
     cost: { yellow: 100, purple: 25 }, catalystCost: { predation: 3 }, stats: { hpRegen: 11 }, // family-tag: cleanse recovery → Predation
     mechanicEffects: { 'defense.cleanse-stacks': 1, 'defense.cleanse-interval-ms': 6000, 'defense.cleanse-empty-heal-pct': 0.05 },
     tier: 3,
-    icon: 'items/charms/tear-charm-2.png',
+    icon: 'items/charms/oasis-heart.png',
     description: 'It strips the curse from your blood, or — finding none — gives you a swallow of water instead.',
     upgrades: [
       { mechanicEffects: { 'defense.cleanse-empty-heal-pct': 0.01 }, cost: { yellow: 35, purple: 25 },  requiredBiomeLevel: 10 },
@@ -137,7 +137,7 @@ export const desertRecipeEntries = [
     recipeGroup: 'desert', requiredBiomeLevel: 10, slot: 'mobility',
     cost: { yellow: 90 }, catalystCost: { predation: 3 }, stats: { speed: 96 }, tier: 3, // family-tag: desert kite mobility → Predation
     mechanicEffects: { 'mobility.kite-speed-pct': 0.30 },
-    icon: 'items/boots/leather-boots-8.png',
+    icon: 'items/boots/mirage-striders.png',
     description: 'By the time the storm reaches where you stood, you are already a rumor on the next dune.',
     upgrades: [
       { stats: { speed: 10 }, cost: { yellow: 40 },  requiredBiomeLevel: 10 },
@@ -178,7 +178,7 @@ export const desertRecipeEntries = [
       'defense.post-cheat-death-heal-pct': 0.30, 'defense.post-cheat-death-heal-ms': 4000,
     },
     tier: 4,
-    icon: 'items/armor/plate-armor-8.png',
+    icon: 'items/armor/deathless-duneplate.png',
     description: 'The standfast dead refused to fall — and the wounds closed as the refusal held.',
     upgrades: [
       { stats: { maxHp: 40, plating: 9 }, cost: { yellow: 200, purple: 100 }, requiredBiomeLevel: 15 },
@@ -199,7 +199,7 @@ export const desertRecipeEntries = [
       'defense.cleanse-empty-heal-pct': 0.07, 'defense.cleanse-per-stack-heal-pct': 0.02,
     },
     tier: 4,
-    icon: 'items/charms/pearl-1.png',
+    icon: 'items/charms/last-oasis.png',
     description: 'It draws the poison out and, finding the wound clean, leaves a swallow of cool water in its place.',
     upgrades: [
       { mechanicEffects: { 'defense.cleanse-empty-heal-pct': 0.015 }, cost: { yellow: 100, purple: 40 }, requiredBiomeLevel: 16 },
@@ -216,7 +216,7 @@ export const desertRecipeEntries = [
     recipeGroup: 'desert', requiredBiomeLevel: 16, slot: 'mobility',
     cost: { yellow: 198 }, stats: { speed: 134 }, tier: 4,
     mechanicEffects: { 'mobility.kite-speed-pct': 0.40 },
-    icon: 'items/boots/lightning-boots-1.png',
+    icon: 'items/boots/simoom-striders.png',
     description: 'Named for the desert wind that arrives only as the dust it already left behind.',
     upgrades: [
       { stats: { speed: 14 }, cost: { yellow: 88 },  requiredBiomeLevel: 16 },

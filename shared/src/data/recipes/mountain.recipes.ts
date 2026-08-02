@@ -108,7 +108,7 @@ export const mountainRecipeEntries = [
     cost: { blue: 52 }, catalystCost: { brutality: 2 }, stats: { maxHp: 29, plating: 12, damageReduction: 0.05 }, // family-tag: damage-cap plate → Brutality
     mechanicEffects: { 'defense.max-hit-pct': 0.25, 'defense.max-hit-mult': 0.5 },
     tier: 2,
-    icon: 'items/armor/plate-armor-3.png',
+    icon: 'items/armor/iron-crusader-plate.png',
     description: 'Masterwork plate of the old crusades, dented in a hundred places, breached in none.',
     upgrades: [
       { stats: { maxHp: 8, plating: 3 }, cost: { blue: 78 }, requiredBiomeLevel: 9 },
@@ -126,7 +126,7 @@ export const mountainRecipeEntries = [
     cost: { blue: 42 }, catalystCost: { brutality: 2 }, stats: { hpRegen: 6 }, // family-tag: periodic shield (anti-spike) → Brutality
     mechanicEffects: { 'defense.shield-pct': 0.12, 'defense.shield-interval-ms': 8000, 'defense.shield-duration-ms': 8000 },
     tier: 2,
-    icon: 'items/charms/stone-hand-charm-2.png',
+    icon: 'items/charms/iron-bulwark.png',
     description: 'A ward-stone the mountainfolk pass down, hand to weathered hand.',
     upgrades: [
       { mechanicEffects: { 'defense.shield-pct': 0.02 }, cost: { blue: 30 }, requiredBiomeLevel: 10 },
@@ -142,7 +142,7 @@ export const mountainRecipeEntries = [
     recipeGroup: 'mountain', requiredBiomeLevel: 10, slot: 'mobility',
     cost: { blue: 42 }, catalystCost: { brutality: 2 }, stats: { speed: 29 }, tier: 2, // family-tag: gap-closer boots serve the heavy-hit identity → Brutality
     mechanicEffects: { 'mobility.acquire-speed-pct': 0.65, 'mobility.acquire-speed-ms': 3000, 'mobility.acquire-cooldown-ms': 6000 },
-    icon: 'items/boots/plate-boots-2.png',
+    icon: 'items/boots/mountain-stride.png',
     description: 'Forged for those who treat a sheer slope as a road.',
     upgrades: [
       { stats: { speed: 3 }, cost: { blue: 20 }, requiredBiomeLevel: 10 },
@@ -176,7 +176,7 @@ export const mountainRecipeEntries = [
     cost: { blue: 116, red: 29 }, catalystCost: { brutality: 3 }, stats: { maxHp: 55, plating: 23, damageReduction: 0.10 }, // family-tag: damage-cap plate → Brutality
     mechanicEffects: { 'defense.max-hit-pct': 0.25, 'defense.max-hit-mult': 0.5 },
     tier: 3,
-    icon: 'items/armor/plate-armor-3.png',
+    icon: 'items/armor/summit-aegis.png',
     description: 'Forged for those who plan to be hit by something the size of a house and walk on.',
     upgrades: [
       { stats: { maxHp: 14, plating: 6 }, cost: { blue: 130, red: 44},  requiredBiomeLevel: 15 },
@@ -194,7 +194,7 @@ export const mountainRecipeEntries = [
     cost: { blue: 100, red: 25 }, catalystCost: { brutality: 3 }, stats: { hpRegen: 11 }, // family-tag: periodic shield (anti-spike) → Brutality
     mechanicEffects: { 'defense.shield-pct': 0.17, 'defense.shield-interval-ms': 8000, 'defense.shield-duration-ms': 8000 },
     tier: 3,
-    icon: 'items/charms/stone-hand-charm-2.png',
+    icon: 'items/charms/bastion-heart.png',
     description: 'A core of mountain-heart stone that raises a wall of itself, over and over.',
     upgrades: [
       { mechanicEffects: { 'defense.shield-pct': 0.03 }, cost: { blue: 50, red: 25 },  requiredBiomeLevel: 16 },
@@ -210,7 +210,7 @@ export const mountainRecipeEntries = [
     recipeGroup: 'mountain', requiredBiomeLevel: 16, slot: 'mobility',
     cost: { blue: 100 }, catalystCost: { brutality: 3 }, stats: { speed: 42 }, tier: 3, // family-tag: gap-closer boots → Brutality
     mechanicEffects: { 'mobility.acquire-speed-pct': 0.75, 'mobility.acquire-speed-ms': 3000, 'mobility.acquire-cooldown-ms': 6000 },
-    icon: 'items/boots/plate-boots-3.png',
+    icon: 'items/boots/peak-stride.png',
     description: 'Not even the mountain can keep you from your prey.',
     upgrades: [
       { stats: { speed: 3 }, cost: { blue: 20 }, requiredBiomeLevel: 16 },
@@ -271,7 +271,7 @@ export const mountainRecipeEntries = [
       'defense.max-hit-rearms-shield': 1,
     },
     tier: 4,
-    icon: 'items/armor/plate-armor-3.png',
+    icon: 'items/armor/titans-keep.png',
     description: 'The blow that should have ended you instead rings the walls — and the walls answer by standing back up.',
     upgrades: [
       { stats: { maxHp: 25, plating: 10 }, cost: { blue: 290, red: 96 },  requiredBiomeLevel: 21 },
@@ -293,7 +293,7 @@ export const mountainRecipeEntries = [
       'defense.shield-break-hp-recovery-pct': 0.30,
     },
     tier: 4,
-    icon: 'items/armor/plate-armor-1.png',
+    icon: 'items/armor/stormwall-plate.png',
     description: 'Built to take the storm head-on and turn what it absorbs back into a second wind.',
     upgrades: [
       { stats: { maxHp: 25, plating: 8 }, cost: { blue: 290, red: 96 },  requiredBiomeLevel: 21 },
@@ -310,7 +310,7 @@ export const mountainRecipeEntries = [
     cost: { blue: 220, red: 30 }, catalystCost: { brutality: 4 }, stats: { hpRegen: 16 }, // family-tag: periodic shield (anti-spike) → Brutality
     mechanicEffects: { 'defense.shield-pct': 0.18, 'defense.shield-interval-ms': 8000, 'defense.shield-duration-ms': 8000 },
     tier: 4,
-    icon: 'items/charms/stone-hand-charm-2.png',
+    icon: 'items/charms/fortress-heart.png',
     description: 'A keep in miniature: it throws up a wall, lets it fall, and throws up another, tireless as siegework.',
     upgrades: [
       { mechanicEffects: { 'defense.shield-pct': 0.04 }, cost: { blue: 110, red: 30 }, requiredBiomeLevel: 22 },
@@ -332,7 +332,7 @@ export const mountainRecipeEntries = [
       'defense.shield-break-heal-pct': 0.25,
     },
     tier: 4,
-    icon: 'items/charms/stone-hand-charm-1.png',
+    icon: 'items/charms/shieldmend-ward.png',
     description: 'When the ward shatters, it gives back a little of the blow it ate.',
     upgrades: [
       { mechanicEffects: { 'defense.shield-pct': 0.03 }, cost: { blue: 110, red: 30 }, requiredBiomeLevel: 22 },
@@ -348,7 +348,7 @@ export const mountainRecipeEntries = [
     recipeGroup: 'mountain', requiredBiomeLevel: 22, slot: 'mobility',
     cost: { blue: 220 }, catalystCost: { brutality: 4 }, stats: { speed: 57 }, tier: 4, // family-tag: gap-closer boots → Brutality
     mechanicEffects: { 'mobility.acquire-speed-pct': 0.90, 'mobility.acquire-speed-ms': 3000, 'mobility.acquire-cooldown-ms': 6000 },
-    icon: 'items/boots/plate-boots-4.png',
+    icon: 'items/boots/vanguard-stride.png',
     description: 'The instant a foe is marked, they close the gap as if the mountain itself leaned them forward.',
     upgrades: [
       { stats: { speed: 4 }, cost: { blue: 44 },  requiredBiomeLevel: 22 },

@@ -23,7 +23,7 @@ export const clearingRecipeEntries = [
     id: 'clearing-vest-t1', name: 'Bark Wrap',
     recipeGroup: 'clearing', requiredBiomeLevel: 2, slot: 'armor',
     cost: { green: 4 }, stats: { maxHp: 4, plating: 4 }, tier: 0,
-    icon: 'items/armor/rags-1.png',
+    icon: 'items/armor/bark-wrap.png',
     description: 'Bound bark and twine, smelling of sap and rain — the first armor any wanderer learns to make.',
     upgrades: [
       { stats: { maxHp: 1, plating: 1 }, cost: { green: 2 }, requiredBiomeLevel: 3 },
@@ -39,7 +39,7 @@ export const clearingRecipeEntries = [
     id: 'clearing-charm-t1', name: 'Herb Pouch',
     recipeGroup: 'clearing', requiredBiomeLevel: 3, slot: 'recovery',
     cost: { green: 3 }, stats: { hpRegen: 2 }, tier: 0,
-    icon: 'items/charms/wood-charm-1.png',
+    icon: 'items/charms/herb-pouch.png',
     description: 'A drawstring pouch of bruised green leaves, gathered at the forest edge.',
     upgrades: [
       { stats: { hpRegen: 1 }, cost: { green: 1 }, requiredBiomeLevel: 4 },
@@ -54,7 +54,7 @@ export const clearingRecipeEntries = [
     id: 'clearing-boots-t1', name: 'Soft Boots',
     recipeGroup: 'clearing', requiredBiomeLevel: 4, slot: 'mobility',
     cost: { green: 3 }, stats: { speed: 12 }, tier: 0,
-    icon: 'items/boots/leather-boots-1.png',
+    icon: 'items/boots/soft-boots.png',
     description: 'Worn soft by a hundred miles of easy trail.',
     upgrades: [
       { stats: { speed: 3 }, cost: { green: 1 }, requiredBiomeLevel: 4 },

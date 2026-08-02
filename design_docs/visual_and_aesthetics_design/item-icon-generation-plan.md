@@ -1,10 +1,10 @@
 # Item Icon Generation Plan (Phase 2)
 
-**Status:** in progress — **weapons complete (32/32 generated, accepted, packed and wired
-as of 2026-08-01)**; armor, charms and boots not started (their 96 manifest entries are
-still `draft` imports of the legacy hand-drawn frames). Follows the locked
-`item-identity-audit.md` (Phase 1, shipped). This is the original goal of the item
-overhaul: replace every hand-drawn item icon with a coherent PixelLab-generated family.
+**Status: COMPLETE for weapons + armor + charms + boots as of 2026-08-02.** 121 bespoke
+icons generated, accepted, packed and wired — weapons 32/32, armor 30/30, charms 31/31,
+boots 28/28. Total spend **$2.45**. The only crafted items still on borrowed hand-drawn
+frames are the **5 cores**, deliberately deferred to their own pass (they are still being
+designed), plus relics. Follows the locked `item-identity-audit.md` (Phase 1, shipped).
 
 Decisions taken: **naming option B** (identity-matching frame names, one icon per item);
 ship size **32×32**; same flat bold pixel-art language as the ability/monster work;
@@ -318,6 +318,31 @@ Verified: **no slug collisions** across the 89 names.
 (all 32 weapons do, with zero gaps). That makes the wiring pass a deterministic
 manifest-entry → recipe-id join instead of a name-slug guess — no apostrophe special-casing,
 no fallback chain. This is the improvement over how the weapon pass was wired.
+
+### How it actually ran (2026-08-02) — findings worth reusing
+
+Five waves, not seven: pilot (9) → A1 (15) → overnight (49) → final (19), plus the weapon
+wiring. What the campaign measured, as opposed to what it assumed:
+
+- **img2img at strength 65 beats flat prompting for tier followers.** An explicit A/B in
+  wave A1 (3 img2img vs 3 flat, same three lines) went 3/3 for img2img on line continuity;
+  the flat controls drifted in palette and silhouette, and one (`plaguebound-shroud`)
+  failed outright — a hooded robe in all three candidates despite `hood`, `cloak`,
+  `humanoid figure` and `character` all being banned. Seed from the **nearest accepted
+  predecessor**, not always the root.
+- **Therefore the chain dependency is real and it, not budget, paces the campaign.** A
+  follower cannot generate until its root is accepted, so waves must front-load roots.
+- **Never use the word "chest" in an armor prompt.** `bark-wrap` rendered a literal
+  treasure chest. Say "torso armour"/"torso vest" and ban `treasure chest, box, crate,
+  container, barrel`. Equally, avoid garment-on-a-person nouns (shroud, robe, cloak) —
+  they invite a wearer into an icon that should be an empty object.
+- **Siblings sharing a seed converge.** Ban each other's signature feature explicitly
+  (Titan's Keep bans storm seams, Stormwall Plate bans crenellations; Ancient Canopy bans
+  the hardened shell, Overgrowth Pulse bans the bare gnarled knot).
+- **The generator's cost estimate runs 6–8x high.** Real rate is ~$0.007/call. It quoted
+  $11.76 for the 49-entry overnight batch that actually cost $1.39.
+- **4 candidates instead of 3** is worth it whenever a rejection costs a round-trip
+  measured in hours rather than minutes.
 
 ### Per-wave loop
 

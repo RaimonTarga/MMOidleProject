@@ -29,7 +29,7 @@ export const plainsRecipeEntries = [
     id: 'plains-vest-t1', name: "Survivor's Robe",
     recipeGroup: 'plains', requiredBiomeLevel: 2, slot: 'armor',
     cost: { yellow: 20 }, stats: { maxHp: 14, plating: 9 }, tier: 1,
-    icon: 'items/armor/leather-armor-1.png',
+    icon: 'items/armor/survivors-robe.png',
     description: 'Field plate patched and repatched by those who lived to patch it.',
     upgrades: [
       { stats: { maxHp: 4, plating: 3 }, cost: { yellow: 30 }, requiredBiomeLevel: 3 },
@@ -48,7 +48,7 @@ export const plainsRecipeEntries = [
     cost: { yellow: 10 }, stats: { hpRegen: 4 },
     mechanicEffects: { 'defense.kill-burst-pct': 0.05, 'guard.potency-pct': 0.20 },
     tier: 1,
-    icon: 'items/charms/jewel-charm-1.png',
+    icon: 'items/charms/plains-stone.png',
     description: 'A sun-warmed stone from the heart of the grasslands, humming with quiet vigor.',
     upgrades: [
       { mechanicEffects: { 'defense.kill-burst-pct': 0.01 }, cost: { yellow: 12 }, requiredBiomeLevel: 4 },
@@ -64,7 +64,7 @@ export const plainsRecipeEntries = [
     recipeGroup: 'plains', requiredBiomeLevel: 4, slot: 'mobility',
     cost: { yellow: 10 }, stats: { speed: 25 }, tier: 1,
     mechanicEffects: { 'mobility.ooc-speed-pct': 0.40 },
-    icon: 'items/boots/sandals-1.png',
+    icon: 'items/boots/fleet-boots.png',
     description: 'Open sandals built for crossing flat ground at a dead run.',
     upgrades: [
       { stats: { speed: 3 }, cost: { yellow: 10 }, requiredBiomeLevel: 4 },
@@ -99,7 +99,7 @@ export const plainsRecipeEntries = [
     id: 'plains-vest-t2', name: 'Enduring Robe',
     recipeGroup: 'plains', requiredBiomeLevel: 8, slot: 'armor',
     cost: { yellow: 60 }, catalystCost: { alacrity: 2 }, stats: { maxHp: 24, plating: 16 }, tier: 2, // family-tag: plating answers frequent light hits → Alacrity
-    icon: 'items/armor/plate-armor-2.png',
+    icon: 'items/armor/enduring-robe.png',
     description: 'Plate that has outlasted the wars it was made for, and the smith who made it.',
     upgrades: [
       { stats: { maxHp: 6, plating: 4 }, cost: { yellow: 60 }, requiredBiomeLevel: 9 },
@@ -117,7 +117,7 @@ export const plainsRecipeEntries = [
     cost: { yellow: 50 }, catalystCost: { alacrity: 2 }, stats: { hpRegen: 7 }, // family-tag: kill-burst answers swarm attrition → Alacrity
     mechanicEffects: { 'defense.kill-burst-pct': 0.09 },
     tier: 2,
-    icon: 'items/charms/jewel-charm-2.png',
+    icon: 'items/charms/stalwart-heart.png',
     description: 'A greater plains-stone, its warmth swelling with every foe laid low.',
     upgrades: [
       { mechanicEffects: { 'defense.kill-burst-pct': 0.01 }, cost: { yellow: 30 }, requiredBiomeLevel: 10 },
@@ -133,7 +133,7 @@ export const plainsRecipeEntries = [
     recipeGroup: 'plains', requiredBiomeLevel: 10, slot: 'mobility',
     cost: { yellow: 40 }, catalystCost: { alacrity: 2 }, stats: { speed: 36 }, tier: 2, // family-tag: plains speed → Alacrity (Broadsword weapon stays neutral — flexible payment, deferred)
     mechanicEffects: { 'mobility.ooc-speed-pct': 0.55 },
-    icon: 'items/boots/sandals-2.png',
+    icon: 'items/boots/gale-boots.png',
     description: 'Wind-cured leather that seems to lean into every stride.',
     upgrades: [
       { stats: { speed: 3 }, cost: { yellow: 20 }, requiredBiomeLevel: 10 },
