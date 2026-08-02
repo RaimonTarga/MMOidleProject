@@ -1,4 +1,5 @@
 import {
+  CLEARING_NODE_ID,
   MONSTER_DATABASE,
   NODE_BIOMES,
   RECIPE_DATABASE,
@@ -95,10 +96,16 @@ function coreScore(recipe: Recipe): number {
   return total;
 }
 
-/** Is this recipe equippable by a fresh bench bot (not gated behind a boss clear)? */
+/**
+ * Is this recipe equippable by a fresh bench bot (not gated behind a boss clear)?
+ *
+ * `requiredBossClear` is the only gate needed: ultimate gear is expressed as an
+ * `ultimate:<boss>` clear token, so it is already excluded. (A second
+ * `recipe.ultimate` check used to sit here — `Recipe` has no such field, so it
+ * was dead. Removed 2026-08-02 when the benches were first typechecked.)
+ */
 function isBenchEquippable(recipe: Recipe, playerTier: number): boolean {
   if (recipe.requiredBossClear) return false;
-  if (recipe.ultimate) return false;
   // Cap is a flat function of player tier, so this gate is biome-independent.
   return recipe.requiredBiomeLevel <= biomeLevelCap(playerTier, recipe.recipeGroup);
 }
@@ -294,6 +301,31 @@ export function enumerateBuildsForContentTier(
 }
 
 /**
+ * One representative build per class root — the deepest path whose range node
+ * best fits that archetype, breaking ties on build id so the pick is stable.
+ *
+ * Farm income is dominated by clear speed, so the useful per-class question
+ * ("does any class farm dramatically faster than the others?") is answered
+ * without the ~25x cost of running the whole perk matrix for hours of sim time
+ * per entry. `--all-builds` opts into the full enumeration.
+ */
+export function representativeBuildsPerClass(
+  contentTier: number,
+  biomeGroup: string,
+  filter?: MatrixFilter,
+): BuildSpec[] {
+  const builds = enumerateBuildsForContentTier(contentTier, biomeGroup, filter);
+  const picks: BuildSpec[] = [];
+  for (const group of groupBuildsByClass(builds)) {
+    const best = [...group.builds].sort(
+      (a, b) => rangeFitScore(b) - rangeFitScore(a) || a.id.localeCompare(b.id),
+    )[0];
+    if (best) picks.push(best);
+  }
+  return picks;
+}
+
+/**
  * Every overlord encounter in the world: a dungeon node whose boss is an
  * objective-driven `ultimateEncounter`. Currently just the void-overlord
  * (`node-10-0`, abyss T4), but new overlords are picked up automatically.
@@ -479,11 +511,19 @@ function mulberry32(seed: number): () => number {
 const MELEE_PREFIXES = new Set(['cadence', 'cooldown']);
 const RANGED_PREFIXES = new Set(['energy', 'reload']);
 
+/**
+ * The range choice as a bare `range-<kind>` tag.
+ *
+ * Real skill ids are class-prefixed (`cadence-range-close`), so comparing a path
+ * entry against the bare suffix matched NOTHING: every build scored "neutral"
+ * and the optimized-first party ordering below was silently a no-op. Same root
+ * cause as the `unlock failed: range-close` crash. Fixed 2026-08-02.
+ */
 function rangeNodeOf(build: BuildSpec): string | null {
-  for (const id of build.skillPath) {
-    if (id === 'range-close' || id === 'range-mid' || id === 'range-far') {
-      return id;
-    }
+  const id = selectedRangeFromSkillPath(build.skillPath);
+  if (!id) return null;
+  for (const range of RANGES) {
+    if (id.endsWith(`-${range}`)) return range;
   }
   return null;
 }
@@ -608,7 +648,10 @@ export function enumerateContentTargets(
     if (tier === 0) {
       if (filter?.biome && filter.biome !== 'clearing') continue;
       targets.push({
-        nodeId: 'node-5-5',
+        // Was the pre-map-rework `node-5-5`, an id that no longer exists — the
+        // node resolved to nothing, so every tier-0 match reported an instant
+        // `clear` against an empty arena. Fixed 2026-08-02.
+        nodeId: CLEARING_NODE_ID,
         biomeGroup: 'clearing',
         contentTier: 0,
         isDungeon: false,

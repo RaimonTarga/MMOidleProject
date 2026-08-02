@@ -4,8 +4,12 @@ export const BALANCE_JSONL_SCHEMA_VERSION = 1;
 
 export type BalanceOutputFormat = 'csv' | 'jsonl';
 
-/** Which kind of content the bench is exercising. */
-export type BenchMode = 'boss' | 'overlord';
+/**
+ * Which kind of content the bench is exercising.
+ * `boss` / `overlord` measure a FIGHT (clear one node, once). `farm` measures a
+ * RUN: repopulation on, no clear-break, income ledgered per simulated hour.
+ */
+export type BenchMode = 'boss' | 'overlord' | 'farm';
 
 /** Party size used for overlord runs. */
 export const OVERLORD_PARTY_SIZE = 4;
@@ -65,6 +69,63 @@ export interface BalanceRunResult {
   partyBuildIds?: string[];
   partyDeaths?: number;
   fightLog?: FightLogLine[];
+}
+
+/**
+ * One farm run: a single build farming a single open-world node for a stretch of
+ * simulated time, with everything it earned expressed as a per-hour rate.
+ *
+ * Rates are the deliverable — totals are kept alongside them so a short run can
+ * be sanity-checked against the wall it was measured over.
+ */
+export interface FarmRunResult {
+  buildId: string;
+  classRoot: string;
+  biomeGroup: string;
+  contentTier: number;
+  nodeId: string;
+  /** The node's pace family — its catalyst key. Absent on excluded nodes. */
+  pace?: string;
+  density?: string;
+  /** Target monster population the node repopulates back to. */
+  mobDensity: number;
+  simDurationMs: number;
+  ticks: number;
+  timeScale: number;
+
+  kills: number;
+  killsPerHour: number;
+  deaths: number;
+  deathsPerHour: number;
+
+  essenceTotal: Record<EssenceType, number>;
+  essencePerHour: Record<EssenceType, number>;
+  essenceSum: number;
+  essenceSumPerHour: number;
+
+  /** Catalysts by pace family, counting banked partial progress fractionally. */
+  catalystTotal: Record<string, number>;
+  catalystPerHour: Record<string, number>;
+  catalystSum: number;
+  catalystSumPerHour: number;
+
+  /**
+   * Biome XP for the farmed biome. `biomeXpPerHour` is measured over the window
+   * BEFORE the level cap was reached — past the cap `applyBiomeXP` early-returns
+   * and the raw average would decay toward zero for a reason that has nothing to
+   * do with the node's income.
+   */
+  biomeXpTotal: number;
+  biomeXpPerHour: number;
+  biomeLevelStart: number;
+  biomeLevelEnd: number;
+  biomeLevelCap: number;
+  /** Sim hours taken to reach the tier's biome-level cap; null if never reached. */
+  hoursToBiomeCap: number | null;
+  recipesUnlocked: number;
+
+  damageDealt: number;
+  damageTaken: number;
 }
 
 /** Composite difficulty bucket for a match. */
@@ -146,10 +207,25 @@ export interface BalanceCliArgs {
    * and `--log`). When set, the matrix is skipped entirely.
    */
   partyIds?: string[];
+  /** Farm-only: farm this exact node instead of the per-biome representatives. */
+  farmNodeId?: string;
+  /**
+   * Farm-only: run the full build enumeration instead of one representative
+   * build per class root.
+   */
+  allBuilds: boolean;
+  /**
+   * Farm-only: re-run the same (build × node) at each of these time scales and
+   * report how far the rates drift. `dt = 100ms × timeScale`, so a fast run
+   * resolves attack timers, DoT ticks, movement and repop in coarser lumps —
+   * this is the check that the fast runs are not lying.
+   */
+  scaleSweep?: number[];
 }
 
 export interface BalanceJsonlMeta {
-  schemaVersion: typeof BALANCE_JSONL_SCHEMA_VERSION;
+  /** Always {@link BALANCE_JSONL_SCHEMA_VERSION}; typed as `number` so producers can build records incrementally. */
+  schemaVersion: number;
   kind: 'run_meta';
   mode: BenchMode;
   expectedMatches: number;
@@ -158,6 +234,17 @@ export interface BalanceJsonlMeta {
   classRoot?: string;
   timeScale: number;
   maxSimSeconds: number;
+}
+
+/** One farm run as a JSONL record, with the build resolved to readable names. */
+export interface BalanceJsonlFarm extends FarmRunResult {
+  /** Always {@link BALANCE_JSONL_SCHEMA_VERSION}; typed as `number` so producers can build records incrementally. */
+  schemaVersion: number;
+  kind: 'farm';
+  skillPath: string[];
+  perks: BalancePerkInfo[];
+  gearItemIds: Partial<Record<GearSlot, string>>;
+  gear: BalanceGearInfo[];
 }
 
 /** One unlocked skill node, resolved to its human-readable name + description. */
@@ -202,7 +289,8 @@ export interface BalancePartyMemberInfo {
 }
 
 export interface BalanceJsonlMatch extends BalanceRunResult {
-  schemaVersion: typeof BALANCE_JSONL_SCHEMA_VERSION;
+  /** Always {@link BALANCE_JSONL_SCHEMA_VERSION}; typed as `number` so producers can build records incrementally. */
+  schemaVersion: number;
   kind: 'match';
   classRoot: string;
   skillPath: string[];

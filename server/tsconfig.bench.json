@@ -1,0 +1,13 @@
+{
+  // `tsconfig.json` includes only `src` (it drives the emitted build, which is
+  // rooted there), so the benches were never typechecked by `pnpm typecheck` or
+  // CI. This config covers them. `test/` is deliberately still excluded — those
+  // files carry a large backlog of pre-existing strictness errors and run fine
+  // under tsx; cleaning them up is its own job.
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "rootDir": "."
+  },
+  "include": ["src", "bench"]
+}

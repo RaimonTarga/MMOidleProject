@@ -99,7 +99,10 @@ function buildBenchPlayer(
       runeRecipesCrafted: [],
       runesEquipped: [],
       knownAbilities: [],
-      equippedAbilities: { technique: null, guard: null },
+      // Multi-slot shape (`techniques`/`guards` arrays). This was still the old
+      // single-slot `{ technique, guard }` until the benches were typechecked
+      // (2026-08-02) — a malformed slice that no type ever saw.
+      equippedAbilities: { techniques: [], guards: [] },
       knownStances: [],
       equippedStances: { default: null, reactive: null },
       activeStance: null,
