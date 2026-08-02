@@ -18,7 +18,13 @@ export function coreIsActive(
   selectedRange: string | null,
 ): boolean {
   if (!rangeTag || rangeTag === 'universal' || rangeTag === 'party') return true;
-  return rangeTag === selectedRange;
+  // `selectedRange` holds the full tier-2 skill id (e.g. `cadence-range-close`),
+  // not a bare `close|mid|far` — see progression/skills.ts where it is assigned.
+  // Every other consumer matches it with `endsWith('-range-<kind>')`; a strict
+  // `rangeTag === selectedRange` never matched, so EVERY directional core was
+  // permanently inactive (server gate and both client indicators agreed, which
+  // is why it read as intended behavior). Fixed 2026-08-02.
+  return selectedRange?.endsWith(`-range-${rangeTag}`) ?? false;
 }
 
 /** Whether a range tag is directional (gated by range match). */

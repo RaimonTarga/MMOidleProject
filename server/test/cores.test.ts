@@ -59,7 +59,12 @@ function makePlayerSlices(): PersistedPlayerSlices {
       passives: {},
       selectedClass: null,
       selectedSubVariant: null,
-      selectedRange: "far",
+      // `selectedRange` holds the FULL tier-2 skill id, not a bare `far` — see
+      // progression/skills.ts where it is assigned. This fixture used to say
+      // "far", which made the (then strict-equality) range gate look correct
+      // against state the real game never produces, and hid the fact that no
+      // directional core ever activated in play. Keep these realistic.
+      selectedRange: "reload-range-far",
       combatArchetype: null,
     },
   };
@@ -83,7 +88,7 @@ assert(
 
 // The one genuinely new mechanic (per docs/cores-current-state.md): a directional
 // core contributes NOTHING once selectedRange no longer matches its rangeTag.
-player.usesSkills.selectedRange = "close";
+player.usesSkills.selectedRange = "reload-range-close";
 recalculatePlayerEntityStats(world, player);
 assert(
   player.usesSkills.passives["core.attack-mult"] === undefined,
