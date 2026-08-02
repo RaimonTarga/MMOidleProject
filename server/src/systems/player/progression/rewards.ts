@@ -3,7 +3,7 @@ import type { EssenceType } from '@mmo-idle/shared';
 import type { MonsterEntity, PlayerEntity } from '../../../ecs/entity';
 import type { World } from '../../../world/World';
 import { markSliceDirty } from '../../../ecs/dirtyHelpers';
-import { registerKillForQuests } from './questSystem';
+import { checkSealTierAdvance, registerKillForQuests } from './questSystem';
 import { recordWorldLogEvent } from '../../../world/worldLog';
 import { actorFromPlayer } from '../../../world/worldLogActors';
 import { notifyVoidOverlordDeath } from '../../combat/ai/ultimateEncounter';
@@ -202,33 +202,7 @@ function applyKillRewardsToPlayer(
     nodeId,
     Math.max(1, Math.round(rewards.biomeXp ?? 1)),
   );
-  const tierResult = registerKillForQuests(recipient, monster.isMonster.monsterTypeId);
-  if (tierResult.advanced && tierResult.prevTier !== undefined && tierResult.newTier !== undefined) {
-    recordWorldLogEvent(
-      world,
-      {
-        kind: 'player-tier-up',
-        nodeId: monster.hasPosition.nodeId,
-        player: actorFromPlayer(recipient),
-        prevTier: tierResult.prevTier,
-        newTier: tierResult.newTier,
-        questId: tierResult.questId,
-        questName: tierResult.questName,
-      },
-      {
-        visibility: 'node',
-        relatedPlayerIds: [recipient.isPlayer.id],
-        nodeId: monster.hasPosition.nodeId,
-      },
-    );
-    world.analyticsProgression?.(
-      recipient.isPlayer.id,
-      monster.hasPosition.nodeId,
-      'player-tier-up',
-      tierResult.newTier,
-    );
-    world.pendingAscensions.push(recipient.isPlayer.id);
-  }
+  const questResult = registerKillForQuests(recipient, monster.isMonster.monsterTypeId);
   if (monster.isMonster.isBoss && !monster.isEncounterAdd) {
     if (!options.suppressBossRespawn) {
       scheduleBossRespawn(world, monster);
@@ -257,6 +231,40 @@ function applyKillRewardsToPlayer(
         markSliceDirty(world, recipient, 'tracksProgression');
       }
     }
+  }
+  // Seals ARE boss first-clears, so this must run AFTER the block above records
+  // one: the boss whose clear completes the requirement has to advance the player
+  // on that same kill, not the next one. Tier 0 still advances by quest (no
+  // bosses exist at tier 0), which is why the quest result short-circuits.
+  const tierResult = questResult.advanced
+    ? questResult
+    : checkSealTierAdvance(recipient);
+  if (tierResult.advanced && tierResult.prevTier !== undefined && tierResult.newTier !== undefined) {
+    markSliceDirty(world, recipient, 'tracksProgression');
+    recordWorldLogEvent(
+      world,
+      {
+        kind: 'player-tier-up',
+        nodeId: monster.hasPosition.nodeId,
+        player: actorFromPlayer(recipient),
+        prevTier: tierResult.prevTier,
+        newTier: tierResult.newTier,
+        questId: tierResult.questId,
+        questName: tierResult.questName,
+      },
+      {
+        visibility: 'node',
+        relatedPlayerIds: [recipient.isPlayer.id],
+        nodeId: monster.hasPosition.nodeId,
+      },
+    );
+    world.analyticsProgression?.(
+      recipient.isPlayer.id,
+      monster.hasPosition.nodeId,
+      'player-tier-up',
+      tierResult.newTier,
+    );
+    world.pendingAscensions.push(recipient.isPlayer.id);
   }
   checkRecipeUnlocks(recipient);
   return {

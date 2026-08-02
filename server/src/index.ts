@@ -12,6 +12,7 @@ import {
   ITEM_DATABASE,
   NODE_BIOMES,
   validateNodeModifiers,
+  validateTierAdvancement,
   pointInNodeFeatureShape,
   registerDevItems,
   resetTracksCombat,
@@ -260,6 +261,12 @@ async function boot(): Promise<void> {
       log.error({ modifierViolations }, "node modifier assignment invalid");
     } else {
       log.info("node modifiers OK");
+    }
+    const sealViolations = validateTierAdvancement();
+    if (sealViolations.length > 0) {
+      log.error({ sealViolations }, "tier advancement seal requirement unreachable");
+    } else {
+      log.info("tier advancement OK");
     }
   }
 

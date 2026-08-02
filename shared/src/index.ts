@@ -29,6 +29,7 @@ export * from './systems/energyMax';
 export * from './systems/spatial';
 export * from './collision';
 export * from './systems/biomeProgress';
+export * from './systems/tierAdvancement';
 export * from './systems/itemUpgrades';
 export * from './systems/evolution';
 export * from './systems/cores';
