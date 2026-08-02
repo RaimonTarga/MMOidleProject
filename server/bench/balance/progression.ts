@@ -4,6 +4,8 @@ import {
   RECIPE_DATABASE,
   type Recipe,
   biomeLevelCap,
+  coreIsActive,
+  isDirectionalCore,
   listBiomeGroupsAtTier,
 } from '@mmo-idle/shared';
 import { findDungeonNodeFor } from '../../src/world/nodePath';
@@ -25,10 +27,16 @@ const CLASS_ROOTS = [
 ] as const;
 
 const VARIANTS = ['light', 'balanced', 'heavy'] as const;
+/**
+ * Range-node SUFFIXES. Real skill ids are class-prefixed (`cadence-range-close`),
+ * so these are always emitted as `${prefix}-${range}` — pushing the bare suffix
+ * threw `unlock failed: range-close` and crashed every run deep enough to pick a
+ * range, i.e. all of `--all-paths` and ALL content tiers >= 3. Fixed 2026-08-02.
+ */
 const RANGES = ['range-close', 'range-mid', 'range-far'] as const;
 const T3_CHOICES = ['a', 'b', 'c'] as const;
 
-const GEAR_SLOTS: GearSlot[] = ['weapon', 'armor', 'recovery', 'mobility'];
+const GEAR_SLOTS: GearSlot[] = ['weapon', 'armor', 'recovery', 'mobility', 'core'];
 
 /** Cooldown heavy T3 has no server logic yet. Reload T3 is fully implemented. */
 export const UNIMPLEMENTED_T3_IDS = new Set<string>([
@@ -45,8 +53,14 @@ function classPrefixFromRoot(classRoot: string): string {
   return classRoot.replace(/-root$/, '');
 }
 
-/** The headline stat each slot is ranked by when choosing the "best" item. */
-const SLOT_PRIMARY_STAT: Record<GearSlot, string> = {
+/**
+ * The headline stat each slot is ranked by when choosing the "best" item.
+ *
+ * `core` is absent on purpose: cores carry `stats: {}` and express all of their
+ * power through `mechanicEffects` (`core.*` multipliers), so they are scored by
+ * {@link coreScore} instead of {@link gearScore}.
+ */
+const SLOT_PRIMARY_STAT: Record<Exclude<GearSlot, 'core'>, string> = {
   weapon: 'attack',
   armor: 'damageReduction',
   recovery: 'hpRegen',
@@ -58,12 +72,27 @@ const SLOT_PRIMARY_STAT: Record<GearSlot, string> = {
  * a tiebreaker so a richer item wins when primaries tie. (Bench bots run fully
  * upgraded, so base stats are a faithful proxy for final power.)
  */
-function gearScore(recipe: Recipe, slot: GearSlot): number {
+function gearScore(recipe: Recipe, slot: Exclude<GearSlot, 'core'>): number {
   const stats = recipe.stats as Record<string, number>;
   const primary = stats[SLOT_PRIMARY_STAT[slot]] ?? 0;
   let total = 0;
   for (const v of Object.values(stats)) total += v;
   return primary * 1000 + total;
+}
+
+/**
+ * Rank a core by the total budget it spends, using ABSOLUTE magnitudes.
+ *
+ * Cores are authored with deliberate tradeoffs — the Sniper Core's `-15% maxHp`
+ * is *paying for* its `+25% attack`, not a penalty. Summing signed values would
+ * rank tradeoff cores far below pure-upside ones and systematically dress every
+ * bot in defensive cores, biasing the whole DPS matrix. Absolute magnitude is the
+ * closest available proxy for "how much power this core is allowed to move".
+ */
+function coreScore(recipe: Recipe): number {
+  let total = 0;
+  for (const v of Object.values(recipe.mechanicEffects ?? {})) total += Math.abs(v);
+  return total;
 }
 
 /** Is this recipe equippable by a fresh bench bot (not gated behind a boss clear)? */
@@ -83,7 +112,7 @@ function isBenchEquippable(recipe: Recipe, playerTier: number): boolean {
  * could realistically bring into the fight.
  */
 function bestGearForSlot(
-  slot: GearSlot,
+  slot: Exclude<GearSlot, 'core'>,
   gearTier: number,
   biomeGroup: string,
   playerTier: number,
@@ -109,14 +138,62 @@ function bestGearForSlot(
   return (nativeBest ?? anyBest)?.id;
 }
 
+/**
+ * Pick the core this build would actually wear.
+ *
+ * A core only contributes if `coreIsActive` says so, so an off-range core is
+ * worth exactly nothing — equipping one would silently under-power the bot. We
+ * therefore filter to active cores first, then prefer a DIRECTIONAL match over a
+ * universal one (matching your range is the entire point of the system;
+ * universal is the deliberately weaker always-on fallback), and only then rank by
+ * budget. A build with no range node yet (T1 runs are root-only) can wear
+ * universal cores alone, which is correct.
+ */
+function bestCoreForBuild(
+  gearTier: number,
+  biomeGroup: string,
+  playerTier: number,
+  selectedRange: string | null,
+): string | undefined {
+  let best: Recipe | undefined;
+  let bestRank = -1;
+
+  for (const recipe of RECIPE_DATABASE.values()) {
+    if (recipe.slot !== 'core') continue;
+    if (recipe.tier !== gearTier) continue;
+    if (!isBenchEquippable(recipe, playerTier)) continue;
+    if (!coreIsActive(recipe.rangeTag, selectedRange)) continue;
+
+    // Rank: native+directional > directional > native universal > universal.
+    const rank =
+      (isDirectionalCore(recipe.rangeTag) ? 2 : 0) +
+      (recipe.recipeGroup === biomeGroup ? 1 : 0);
+    if (rank > bestRank || (rank === bestRank && best && coreScore(recipe) > coreScore(best))) {
+      best = recipe;
+      bestRank = rank;
+    }
+  }
+
+  return best?.id;
+}
+
+/** The tier-2 range node in a skill path, in the same form `selectedRange` holds. */
+export function selectedRangeFromSkillPath(skillPath: string[]): string | null {
+  return skillPath.find((id) => id.includes('-range-')) ?? null;
+}
+
 export function resolveGearLoadout(
   biomeGroup: string,
   gearTier: number,
   playerTier: number,
+  selectedRange: string | null = null,
 ): Partial<Record<GearSlot, string>> {
   const loadout: Partial<Record<GearSlot, string>> = {};
   for (const slot of GEAR_SLOTS) {
-    const id = bestGearForSlot(slot, gearTier, biomeGroup, playerTier);
+    const id =
+      slot === 'core'
+        ? bestCoreForBuild(gearTier, biomeGroup, playerTier, selectedRange)
+        : bestGearForSlot(slot, gearTier, biomeGroup, playerTier);
     if (id) loadout[slot] = id;
   }
   return loadout;
@@ -137,7 +214,12 @@ function makeBuildSpec(
     contentTier,
     playerTier,
     gearTier,
-    gearItemIds: resolveGearLoadout(biomeGroup, gearTier, playerTier),
+    gearItemIds: resolveGearLoadout(
+      biomeGroup,
+      gearTier,
+      playerTier,
+      selectedRangeFromSkillPath(skillPath),
+    ),
   };
 }
 
@@ -171,7 +253,7 @@ export function enumerateBuildsForContentTier(
             const skillPath = [
               classRoot,
               `${prefix}-${variant}`,
-              range,
+              `${prefix}-${range}`,
               t3Id,
             ];
             builds.push(
@@ -183,7 +265,7 @@ export function enumerateBuildsForContentTier(
     } else if (maxSkillTier >= 2) {
       for (const variant of VARIANTS) {
         for (const range of RANGES) {
-          const skillPath = [classRoot, `${prefix}-${variant}`, range];
+          const skillPath = [classRoot, `${prefix}-${variant}`, `${prefix}-${range}`];
           builds.push(
             makeBuildSpec(skillPath, classRoot, contentTier, biomeGroup),
           );

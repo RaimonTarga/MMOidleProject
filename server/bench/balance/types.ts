@@ -12,7 +12,7 @@ export const OVERLORD_PARTY_SIZE = 4;
 
 export type BalanceOutcome = 'clear' | 'bot_died' | 'timeout';
 
-export type GearSlot = 'weapon' | 'armor' | 'recovery' | 'mobility';
+export type GearSlot = 'weapon' | 'armor' | 'recovery' | 'mobility' | 'core';
 
 export interface BuildSpec {
   id: string;
