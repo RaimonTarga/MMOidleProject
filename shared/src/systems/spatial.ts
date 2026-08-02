@@ -172,6 +172,20 @@ export const MELEE_STANDOFF_FRAC = 0.5;
  * makes the approacher stop cleanly in range no matter how large its per-tick
  * step is. The standoff also leaves a margin so small per-tick drift doesn't
  * immediately drop the approacher back out of range.
+ *
+ * POSTCONDITION: when a reachable standoff exists, `hitboxGap(dest, toPH)` is
+ * `<= attackRange`. Callers rely on this to decide whether a target is
+ * *engageable at all*, not just to steer — see `pathEndsInAttackRange`.
+ *
+ * That postcondition used to hold only for axis-aligned approaches. The advance
+ * was `gap - desiredGap` measured along the CENTRE-to-centre ray, but `gap` is
+ * the EDGE-to-edge hitbox gap; for rectangles those shrink at the same rate only
+ * when the approach runs along an axis. Off-axis the destination landed short —
+ * 17.2 px against a 12 px melee range at 30° — so `pathEndsInAttackRange` was
+ * false for every candidate and `nearestEngageableMonster` reported a node full
+ * of reachable monsters as having none, freezing auto-combat permanently. The
+ * existing tests only ever approached at 0°, so they passed throughout.
+ * Fixed 2026-08-02; see the off-axis cases below it in `spatialHitbox.test.ts`.
  */
 export function approachPoint(
   from: Vec2,
@@ -192,13 +206,41 @@ export function approachPoint(
     attackRange - MELEE_CONTACT_MARGIN,
     attackRange * MELEE_STANDOFF_FRAC,
   );
-  // gap > attackRange ≥ desiredGap here, so advance is always positive; clamp to
-  // [0, dist] so we never step past the target center (or backward).
-  const advance = Math.max(0, Math.min(gap - desiredGap, dist));
-  return {
-    inRange: false,
-    dest: { x: from.x + (dx / dist) * advance, y: from.y + (dy / dist) * advance },
-  };
+
+  const ux = dx / dist;
+  const uy = dy / dist;
+  const gapAfter = (advance: number): number =>
+    hitboxGap(
+      { pos: { x: from.x + ux * advance, y: from.y + uy * advance }, rects: fromPH.rects },
+      toPH,
+    );
+
+  // The straight-line estimate is exact on-axis and short otherwise, so it is a
+  // safe lower bound to start from.
+  let lo = Math.max(0, Math.min(gap - desiredGap, dist));
+  if (gapAfter(lo) <= desiredGap) {
+    return { inRange: false, dest: { x: from.x + ux * lo, y: from.y + uy * lo } };
+  }
+
+  // Walk forward to an advance that overshoots the standoff, capped at the
+  // target centre (never step past it — that is the tunnelling this avoids).
+  let hi = dist;
+  if (gapAfter(hi) > desiredGap) {
+    // Cannot satisfy the standoff even at the centre (targets whose hitboxes
+    // cannot overlap enough); return the closest legal point.
+    return { inRange: false, dest: { x: from.x + ux * hi, y: from.y + uy * hi } };
+  }
+
+  // Bisect for the SMALLEST advance meeting the standoff: closing further than
+  // necessary is what tunnels. Hitbox gap is monotonic along the ray, so ~24
+  // halvings resolve any node-sized distance to well under a pixel.
+  for (let i = 0; i < 24; i++) {
+    const mid = (lo + hi) / 2;
+    if (gapAfter(mid) <= desiredGap) hi = mid;
+    else lo = mid;
+  }
+
+  return { inRange: false, dest: { x: from.x + ux * hi, y: from.y + uy * hi } };
 }
 
 /** True when `point` lies inside any rect of `ph`. */

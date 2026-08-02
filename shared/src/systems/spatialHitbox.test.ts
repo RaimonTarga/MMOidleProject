@@ -109,6 +109,41 @@ const smallBox = (pos: { x: number; y: number }): PosHitbox => ({
   assert(Math.abs(newGap - 192) < 1e-6, `approach: ranged standoff gap ~192 got ${newGap}`);
 }
 
+// OFF-AXIS approaches must land in reach too.
+//
+// WHY THIS EXISTS: every case above approaches at 0°, and that was the only angle
+// the old implementation got right. It advanced along the CENTRE-to-centre ray by
+// the EDGE-to-edge gap deficit, which are equal only on-axis; at 30° a 12-reach
+// melee attacker stopped 17.2px out. `pathEndsInAttackRange` therefore returned
+// false for every candidate, `nearestEngageableMonster` reported reachable nodes
+// as empty, and auto-combat froze permanently at full HP (plan §5.8). The tests
+// passed the whole time because none of them ever turned a corner.
+{
+  const tallBox = (pos: { x: number; y: number }): PosHitbox => ({
+    pos,
+    rects: [{ offsetX: 0, offsetY: 0, halfW: 16, halfH: 24 }],
+  });
+
+  for (let deg = 0; deg <= 350; deg += 10) {
+    const rad = (deg * Math.PI) / 180;
+    const from = { x: 0, y: 0 };
+    const to = { x: Math.cos(rad) * 400, y: Math.sin(rad) * 400 };
+    for (const attackRange of [12, 40, 200]) {
+      const r = approachPoint(from, tallBox(from), to, tallBox(to), attackRange);
+      const newGap = hitboxGap(tallBox(r.dest), tallBox(to));
+      assert(
+        newGap <= attackRange + 1e-6,
+        `approach: ${deg}° range ${attackRange} lands out of reach (gap ${newGap.toFixed(1)})`,
+      );
+      // Still never targets the centre — that is the tunnelling the standoff avoids.
+      assert(
+        Math.hypot(r.dest.x - to.x, r.dest.y - to.y) > 1e-6,
+        `approach: ${deg}° range ${attackRange} walked onto the target centre`,
+      );
+    }
+  }
+}
+
 // Terrain depenetration: a player wedged into the top-right corner of an inflated
 // rect should be projected just outside the blocker.
 {
