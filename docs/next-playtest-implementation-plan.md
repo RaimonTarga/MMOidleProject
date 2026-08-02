@@ -255,14 +255,63 @@ T4, and `--all-paths`.
 literal `3`. **Not runtime-verified** — neither report executes (§5.7). The
 canonical core/stance/rite context layer is still outstanding.
 
-**0.4 — The farming loop.**
-Open-world node, repopulation on, no clear-break, run for simulated hours, ledger
-the `tracksProgression` deltas. Validate rate stability across `timeScale` before
-trusting long runs.
-`touches:` `server/bench/balance/{worldFactory,runMatch}.ts`, a new ledger
-reader, a new CLI mode.
-`done when:` kills/hr, essence/hr, catalysts/hr print per node × build × tier,
-and the numbers hold across at least three time scales.
+**0.4 — The farming loop.** ✅ **DONE 2026-08-02.**
+`--mode farm` on the balance bench: `createFarmWorld` leaves repopulation on, the
+loop has no clear-break, and `ledger.ts` diffs `tracksProgression` before/after
+into kills/hr, essence/hr (per colour), catalysts/hr (per pace family), and
+biome XP/hr. Targets are one representative open-world node per (biome × tier),
+preferring the biome's native pace family; builds are one representative per
+class root (`--all-builds` for the full matrix). Full sweep = 162 runs.
+
+Two shaping decisions, both deliberate:
+- **Death does not end the run.** The bot is revived in place through the live
+  `respawnPlayer` and put back in the node; deaths are counted and reported as
+  `deaths/hr`, so rates stay comparable across builds while a build that cannot
+  hold the node still shows up.
+- **The farmed biome starts at level 0.** `materializeBot` caps every reachable
+  biome, and `applyBiomeXP` early-returns at the cap — a canonical bot would
+  report exactly 0 XP/hour by construction. Starting at 0 also measures
+  `hoursToBiomeCap`, which is the recipe-unlock pacing number.
+
+⚠️ **The time-scale warning was justified: rates are NOT stable.** See §5.5b —
+the fidelity ceiling is `timeScale ≤ 2`, and the *fight* bench's default of 5 is
+distorted too.
+
+⚠️ **And the tool immediately earned its keep: auto-combat can wedge forever.**
+See §5.8. Mountain nodes at every tier report 5–300 kills/hr against 900–1500
+elsewhere, because the bot stops moving and never restarts. Live gameplay defect,
+tagged blocker, handed to 0.5.
+
+**First numbers (partial sweep, 65 of 162 cells, `timeScale 2`, 1 sim hour each,
+mean across the six class builds).** Treat as provisional — mountain is wedged
+(§5.8) and the sweep could not finish because of it.
+
+| biome · tier | kills/hr | essence/hr | catalysts/hr |
+| ------------ | -------: | ---------: | -----------: |
+| clearing T0  |      848 |        848 |          0.0 |
+| plains T1    |     1220 |       3050 |         30.5 |
+| forest T1    |      975 |       2683 |         26.8 |
+| swamp T1     |      620 |       3250 |         32.5 |
+| cave T1      |      429 |       4911 |         49.1 |
+| mountain T1  |  **272** |       1822 |         18.2 |
+| forest T2    |     1243 |       7448 |         82.8 |
+| jungle T2    |     1110 |       6598 |         76.6 |
+| desert T2    |      872 |       5811 |         66.8 |
+| cave T2      |      490 |       7789 |         90.9 |
+| mountain T2  |   **59** |        655 |          7.7 |
+
+**Catalysts are not an independent wallet today.** `catalystWeight` defaults to
+the monster's *base* essence reward and `CATALYST_PROGRESS_PER_UNIT` is 100, so
+catalysts/hr is essence/hr ÷ 100 divided by the tier's essence multiplier —
+exactly ×100 at T1 (mult 1.0) and ×86–90 at T2 (mult 0.85). Pricing anything in
+catalysts is therefore pricing it in essence with a rename, unless monsters start
+carrying explicit `catalystWeight` values that diverge from their essence. Worth
+settling in Phase 3 before costs are authored. The clearing mints none at all by
+design (modifier-excluded).
+
+`done when:` ✅ rates print per node × build × tier; ✅ stability measured across
+six time scales at two tiers — and it failed, which is why farm mode now has a
+measured fidelity ceiling instead of an assumption.
 `unblocks:` authoring T5/T6 costs against measured income instead of guesses —
 which is the main lever on how big Phase 5 ends up being.
 
@@ -271,6 +320,10 @@ Walk a character T0→T4 and record every blocker, empty slot, dead recipe, and
 unreachable unlock.
 `done when:` a written defect list, each item tagged blocker / content / polish.
 `unblocks:` 1.6 (you'll be fixing from this list, not from guesses).
+
+> **Starts with one entry already on it — see §5.8, the auto-combat wedge.** It is
+> a live gameplay defect, it is tagged **blocker**, and it is the reason the 0.4
+> sweep's mountain numbers are meaningless.
 
 > **Railway is not a Phase 0 item.** The deployment works today, running the
 > **release** branch, and stays there deliberately. It is not updated until this
@@ -643,17 +696,43 @@ new loop mode and a ledger reader.
 **Do this before the agent harness.** It is the cheapest item in the whole
 tooling track and it unblocks the economy pass on its own.
 
-⚠️ **Validate rate stability against `timeScale` first.** `dt = BENCH_DT_MS ×
-timeScale` = 100 ms × scale, so `timeScale: 10` means a **one-second tick** —
-attack timers, DoT ticks, movement, aggro, and respawn cadence all resolve in one
-lump. Run the same node at several time scales and confirm essence/hour holds. If
-the rate moves with the scale, the fast runs are lying and you need a fidelity
-ceiling before trusting long sims.
+### 5.5b The time-scale result (measured 2026-08-02) — **the fast runs were lying**
 
-### 5.7 Defects found while doing 0.2 / 0.3 (2026-08-02)
+`--scale-sweep` re-runs one fixed (build × node) at several time scales and
+reports the drift. Over **1 simulated hour**, baseline `timeScale: 1`:
 
-All three were confirmed pre-existing by stashing the session's changes and
-reproducing on clean `master`.
+| scale | plains T1 kills/hr | drift | cave T3 kills/hr | drift |
+| ----- | -----------------: | ----: | ---------------: | ----: |
+| 1     |               1063 |     — |              489 |     — |
+| 2     |               1052 | −1.0% |              486 | −0.6% |
+| 3     |                994 | −6.5% |              458 | −6.3% |
+| 4     |                955 | −10%  |                — |     — |
+| 5     |               1015 | −4.5% |              402 | −18%  |
+| 10    |                758 | −29%  |              332 | −32%  |
+
+Run-to-run noise at 1 sim hour is ~1–2% (measured by repeating scale 1), so
+everything from scale 3 up is a real, **one-directional understatement**, not
+variance. Essence, catalysts, and biome XP all track kills within a point.
+
+**Cause:** `dt = 100 ms × timeScale`, and a coarse tick quantizes attack cadence
+downward — a 700 ms swing resolves once per 1000 ms tick instead of ~1.4 times.
+Throughput can only lose, never gain, so the error compounds with the scale.
+
+**Ceiling: `timeScale ≤ 2`.** Farm mode now defaults to 2 (not the fight bench's
+5) and warns on stdout when pushed higher outside a sweep.
+
+> ⚠️ **This is not only a farm-mode problem.** `--mode boss` and `--mode
+> overlord` default to `--time-scale 5`, where T3 throughput measured ~18% low.
+> Every clear time, `dps`, and difficulty rating collected at scale 5 is
+> distorted in the "harder than reality" direction. Not changed here — dropping
+> the fight bench's default invalidates previously-collected matrices and is a
+> balance call, not a tooling one. **Decide before the next difficulty pass.**
+
+### 5.7 Defects found while doing 0.2 / 0.3 / 0.4 (2026-08-02)
+
+All pre-existing. A–C were confirmed by stashing the session's changes and
+reproducing on clean `master`; D–F surfaced when the benches were typechecked and
+run for the first time in farm mode.
 
 **A. Every directional core was permanently inactive. FIXED.** *(gameplay, not
 tooling — this one shipped to players.)*
@@ -688,17 +767,183 @@ directory, walks up from `tools/` to the repo root, and finds no
 it. **Fix:** add `@mmo-idle/shared` as a root workspace dependency and reinstall.
 Left undone because it touches the lockfile.
 
-**The pattern worth noting:** all three are silent. Nothing threw in the live
-game, the failing bench modes were simply never run, and the one test that
-covered the core gate passed while asserting fictional state. Treat "the tool ran
-and produced numbers" as weak evidence until 0.2–0.4 are complete.
+**D. The bench had never been typechecked at all. FIXED.**
+`server/tsconfig.json` includes only `src` (it drives the emitted build, rooted
+there), so `pnpm typecheck` and CI never looked at `bench/`. New
+`server/tsconfig.bench.json` covers `src` + `bench`, wired into the root
+`typecheck` script. It immediately surfaced three latent bugs, all now fixed:
+- `bench/harness.ts` built players with the pre-multi-slot
+  `equippedAbilities: { technique: null, guard: null }` — a malformed slice the
+  load bench had been writing since the Wave 1 ability rework.
+- `isBenchEquippable` gated on `recipe.ultimate`, a field `Recipe` does not have,
+  so the check was dead. (`requiredBossClear` already covers ultimate gear.)
+- `BALANCE_JSONL_SCHEMA_VERSION`'s literal type made `toJsonlMatch` unassignable
+  to its own return type.
+
+`test/` is deliberately still outside that config — those files carry a large
+backlog of pre-existing strictness errors (~60) and run fine under tsx. Worth its
+own cleanup pass; not this one.
+
+**E. Every tier-0 bench match was fake. FIXED.**
+`enumerateContentTargets` hard-coded `node-5-5` as the tier-0 target — a node id
+that stopped existing at the map rework. The node resolved to nothing, so
+`isNodeCleared` was true on tick one and every tier-0 row reported
+`outcome: clear` with `initial_mob_count: 0`. Now `CLEARING_NODE_ID`; a T0 clear
+takes ~67 s against 12 real mobs.
+
+**F. Overlord party sampling never prioritized anything. FIXED.**
+`rangeNodeOf` compared skill-path entries against the bare `range-close` — the
+same wrong id shape as defect B. It matched nothing, so `rangeFitScore` returned
+"neutral" for every build and `--sample`'s advertised "optimized builds first"
+ordering was a no-op; samples were effectively arbitrary. Now matched by suffix.
+
+**The pattern worth noting:** all six are silent. Nothing threw in the live game,
+the failing bench modes were simply never run, the one test that covered the core
+gate passed while asserting fictional state, and the whole bench tree sat outside
+the typechecker. Treat "the tool ran and produced numbers" as weak evidence.
+
+### 5.8 The first thing the farm loop found: auto-combat can wedge forever
+
+**This is a live gameplay defect, not a bench artifact** — the farm loop runs the
+same `updateAutoTargets` the real server does. Tagged **blocker** for 0.5.
+
+**Symptom.** On `node-t1-mountain-01`, a T1 cadence bot stops moving ~15 sim
+minutes in and never moves again. Probe output, one line per 5 sim minutes:
+
+```
+t=15min kills=8 hp=182/182 pos=(2672,1872) still atk=none aggro=none mobs=12 nearest=687px
+t=20min kills=0 hp=182/182 pos=(2672,1872) still atk=none aggro=none mobs=12 nearest=687px
+…unchanged through t=60min…
+```
+
+Full HP, no attack target, no aggro target, twelve live monsters ~690 px away,
+zero kills for 45 simulated minutes. A real player idling on auto-combat in that
+node parks permanently.
+
+**Mechanism.** `nearestEngageableMonster` (`targetPriority.ts:491`) returns
+`null` when **no** candidate passes `canReach` *or* `findPathForMover` +
+`pathEndsInAttackRange`. The idle branch of `updateAutoTargets`
+(`autoTarget.ts:322`) treats that as "node empty" and calls `stopEntity` — with
+no wander, no re-path, no retry, and no node change. The state is absorbing.
+
+**Ruled out by probing (`_probeMountain.ts`), in this order:**
+- *Lodged in geometry* — `movement.ts:126` already depenetrates every tick.
+- *Broken terrain topology* — all **140** open-world nodes have exactly **one**
+  connected player-walkable region, and the recorded wedge cell is walkable.
+- *Mover asymmetry* — the `player` and `monster` nav grids are byte-identical
+  (5719 walkable cells on `node-t1-mountain-01`); only 1–2 of 12 monsters spawn
+  on a blocked cell, nowhere near enough.
+- *Candidate filters* — at wedge time all 8 live monsters were `awareness=idle`,
+  well inside leash (spawnDist 10–23 vs leashRange 460–640), not invulnerable.
+  Every one reached the path check.
+- *Route existence* — pathing straight at each monster succeeds with `endGap=0`.
+
+#### Cause 1 — `approachPoint` returned out-of-range destinations. **FIXED.**
+
+A step-by-step replay of `nearestEngageableMonster` inside a single wedge
+instance settled it. Every monster's route landed **exactly** on the requested
+approach goal (`endOffGoal=0`) — so grid snapping was innocent — but that goal sat
+**14–18 px** from the target against a **12 px** melee `attackRange`, so
+`endsInRange` was false for all twelve.
+
+`approachPoint` (`shared/src/systems/spatial.ts`) advanced along the
+**centre-to-centre** ray by the **edge-to-edge** gap deficit. For rectangles those
+shrink at the same rate only when the approach runs along an axis. Reproduced in
+pure geometry with no simulation — a 12-reach attacker closing on an identical
+hitbox:
+
+| approach angle | 0° | 10° | 20° | 30° | 40° | 50°+ |
+| -------------- | -: | --: | --: | --: | --: | ---: |
+| gap at destination | 6.0 | 10.8 | **15.8** | **17.2** | **14.7** | 8.7 → 6.0 |
+
+Three of ten angles land outside a 12 px reach. Fixed by bisecting along the ray
+for the smallest advance that actually achieves the standoff; all angles now
+resolve to exactly 6.0. Postcondition documented on the function.
+
+**Why it survived:** every existing `approachPoint` case in
+`spatialHitbox.test.ts` approached at **0°** — `{x:100,y:0}`, `{x:400,y:0}`,
+`{x:25,y:0}` — the one angle the old code got right. Same shape as defect A: the
+tests covered only the case that worked. Now swept over 36 angles × 3 ranges.
+
+**Effect:** mountain T1 cadence went 17 → 302 kills/hr, cooldown 160 → 323.
+
+#### Cause 2 — steering can produce no motion with a valid target. **OPEN.**
+
+Mountain is still not healthy, so cause 1 was not the whole story. Repeat runs of
+mountain T1 cadence after the fix: **302, 188, 34, 57** kills/hr — wildly erratic
+and still far under the ~1000 that plains/forest post.
+
+Probing `energy-root` (ranged, `attackRange` 142) caught the distinct failure:
+
+```
+WEDGED at 9 sim-min, pos=(2128,1712), attackRange=142
+  nearestEngageableMonster -> node-t1-mountain-01_monster-101   <-- NOT null
+  ridge-archer  gap=507  goal=(2449,1905) path=1pts endOffGoal=0 endGapToMob=134 endsInRange=Y
+  …8 more with endsInRange=Y…
+```
+
+Target acquisition now **succeeds** — nine monsters pass, the chosen one is 507 px
+away with a clear single-waypoint route and an in-range approach goal — and the
+player still does not move for 2+ simulated minutes. So the failure has moved
+downstream into `steerTowardTarget` / `requestNavMotion`: a valid target is
+selected and no motion results.
+
+Not diagnosed. Bench bots carry no runes, so the keep-distance and hazard
+branches are inert and it falls to the melee/no-keep-distance path at
+`autoTarget.ts:496`. That is where to start.
+
+**Blast radius.** Mountain kills/hr across every class, vs 900–1500 on
+plains/forest/jungle at the same tier:
+
+| class | mountain T1 | mountain T2 |
+| ----- | ----------: | ----------: |
+| cadence | 17 | 19 |
+| cooldown | 160 | 5 |
+| reload | 193 | 161 |
+| energy | 298 | — |
+| dot | 143 | — |
+| summoner | 826 | — |
+
+Summoner is the tell: it scores near-normal because it fights *through minions*,
+which roam independently of the player's own pathing.
+
+It is also non-deterministic — the identical config produced 486 kills/hr over
+20 sim minutes and 11 kills/hr over 60. **Any single farm run on an affected node
+is worthless**, and the variance is a wedge, not noise.
+
+**It was also a server CPU hazard — and that half is already fixed.** When *no*
+candidate passes, `nearestEngageableMonster` pathfinds every live monster and
+fails on all of them, every tick, forever (the nav grid is cached; the search is
+not). Measured before the fix: **3.27 ms/tick moving vs 48.7 ms/tick wedged, 14.9x**
+— roughly half the 100 ms logic tick burnt by one idle player. After the cause-1
+fix, acquisition succeeds and returns on the first candidate, so the same probe
+now reads **2.18 ms moving vs 0.44 ms wedged (0.2x)**. The cause-2 wedge is cheap.
+The CPU hazard was specific to the empty-candidate path.
+
+**Worth doing as defence in depth, no longer urgent:** throttle the idle
+re-check. The measured hazard is gone, but the shape that produced it remains — an
+empty candidate list still means a full per-monster pathfind sweep at 10 Hz, so
+any future bug that empties it re-creates the same 15x cost silently.
+
+**Repro scripts** (leading `_` = skipped by the test runner):
+- `server/test/_probeMountain.ts` — ticks a real node until the bot is motionless
+  for 2 sim minutes, then replays `nearestEngageableMonster` per monster
+  (`canReach`, approach goal, path, `endsInRange`) and times wedged vs moving
+  ticks. Takes `[nodeId] [classRoot]`. Retries up to 8 times, since the wedge is
+  stochastic at roughly 50/50 per run — **do not mix evidence across runs, they
+  are different worlds.**
+- `server/test/_probeApproach.ts` — the pure-geometry `approachPoint` check that
+  isolated cause 1. No world, no RNG.
+
+**Repro:** `server/test/_probeMountain.ts` (leading `_` = skipped by the test
+runner). It ticks the node until the bot is motionless for 2 sim minutes, then
+dumps per-mob pathability and whether the bot can path anywhere at all.
 
 ### 5.6 Recommended tooling order
 
-1. **Fix `botFactory` blind spots + the `+3`/`+5` staleness.** Cheap; everything
-   downstream is wrong without it.
-2. **The farming loop** (§5.5). Two flags and a ledger reader; unblocks the
-   economy pass on its own, and becomes the substrate the agent harness runs on.
+1. ✅ **Fix `botFactory` blind spots + the `+3`/`+5` staleness.** (0.2 / 0.3)
+2. ✅ **The farming loop** (§5.5). Shipped as `--mode farm`; see §5.5b for the
+   time-scale result, which is the part that mattered.
 3. **Layered-sweep mode** (`--sweep <axis>` + baseline + delta column). Design it
    before the content lands.
 4. **Agent harness** (§6) — the decision layer on top of #2. Independent of #1
