@@ -11,6 +11,7 @@ import {
   GAME_CONFIG,
   getMaxUpgrade,
   ITEM_DATABASE,
+  MAX_UPGRADE,
   MONSTER_DATABASE,
   recalculatePlayerStats,
   resolveUpkeepConfig,
@@ -47,7 +48,10 @@ const REPORT_PATH = path.join(
 );
 type RangeKind = 'close' | 'mid' | 'far';
 const RANGE_CHOICES = ['close', 'far'] as const satisfies readonly RangeKind[];
-const WEAPON_UPGRADE_LEVEL = 3;
+// Fully-upgraded weapon. Tracks the shared cap so the report never drifts behind
+// it again — this was a literal `3` after MAX_UPGRADE moved 3 → 5, which
+// silently under-reported every weapon by two upgrade levels.
+const WEAPON_UPGRADE_LEVEL = MAX_UPGRADE;
 const REPORT_HORIZON_SEC = 60;
 const TUTORIAL_WEAPON_IDS = new Set(['primordial-club']);
 const TUTORIAL_MONSTER_IDS = new Set(['tiny-slime']);
