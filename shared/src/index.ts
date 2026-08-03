@@ -33,6 +33,7 @@ export * from './systems/tierAdvancement';
 export * from './systems/itemUpgrades';
 export * from './systems/evolution';
 export * from './systems/cores';
+export * from './systems/debuffScaling';
 export * from './systems/summonerHud';
 export * from './systems/weaponFamilies';
 export * from './systems/monsterDebuffs';

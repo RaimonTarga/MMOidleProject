@@ -13,6 +13,7 @@ import { initRuneTauntSystem } from "./combat/ai/taunt";
 import { initDungeonGauntletCombatHooks } from "./world/dungeons/gauntlet";
 import { initAbilitySystems } from "./player/abilities/abilityEffects";
 import { initRiteListeners } from "./player/rites/riteOoc";
+import { initCoreCombatEffects } from "./combat/cores";
 
 let initialized = false;
 
@@ -59,6 +60,8 @@ export function initCombatSystems(): void {
   initAbilitySystems();
   // Rites (Step 11): Hunter's Instinct onKill movement-haste buff.
   initRiteListeners();
+  // Cores: Duelist elite/boss damage (onHit) + Bruiser mobility refund (onKill).
+  initCoreCombatEffects();
   // Summoner mountain-path cover + damage sponge (after defense systems).
   registerMountainPathHooks();
   registerSummonerDamageSponge();

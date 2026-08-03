@@ -4,6 +4,7 @@ import {
 } from '@mmo-idle/shared';
 import { attachMarker, detachMarker } from '../../../../../../ecs/markerHelpers';
 import { applyKnockback } from '../../../../../combat/damage/knockback';
+import { applyPlayerDebuff } from '../../../../shared/applyPlayerDebuff';
 import {
   DOT_EFFECT_ID, CHILL_EFFECT, FROZEN_EFFECT, FREEZE_MS, FREEZE_BONUS,
   FROSTBITE_DOT_TAKEN_PER_STACK, FROSTBITE_EFFECT, FROSTBITE_MS,
@@ -42,7 +43,7 @@ export function tryRimeshatter(pc: DotT3PathContext): boolean {
     const existing = getStatusEffect(monsterState, DOT_EFFECT_ID);
     if (existing) existing.remainingMs = durationMs;
     // DR debuff via the brittle effect (read by effectiveDamageReductionAfterBrittle).
-    applyStatusEffect(monsterState, {
+    applyPlayerDebuff(player, monsterState, {
       id: BRITTLE_EFFECT_ID, instanced: false, maxStacks: 1, refreshable: true,
       remainingMs: debuffMs, sourceId: player.isPlayer.id,
       data: { platingPerStack: 0, drPerStack: drReduction, totalMs: debuffMs },
@@ -78,7 +79,7 @@ export function tryWindSpirit(pc: DotT3PathContext): boolean {
     const frostbiteMaxStacks = Math.max(1, Math.round(passives['dot.frostbite-max-stacks'] ?? FROSTBITE_MAX_STACKS));
     const frostbiteMs = Math.max(100, Math.round(passives['dot.frostbite-duration-ms'] ?? FROSTBITE_MS));
     const frostbiteDotTaken = Math.max(0, passives['dot.frostbite-dot-taken-pct'] ?? FROSTBITE_DOT_TAKEN_PER_STACK);
-    applyStatusEffect(monsterState, {
+    applyPlayerDebuff(player, monsterState, {
       id: FROSTBITE_EFFECT, maxStacks: frostbiteMaxStacks, instanced: false,
       remainingMs: frostbiteMs, refreshable: true, sourceId: player.isPlayer.id,
       data: { dotTakenPerStack: frostbiteDotTaken, totalMs: frostbiteMs },
@@ -159,7 +160,7 @@ export function tryFreezingCold(pc: DotT3PathContext): boolean {
   fc.data.tickOnExpire = 1;
 
   if (!hasStatusEffect(monsterState, FROZEN_EFFECT)) {
-    applyStatusEffect(monsterState, {
+    applyPlayerDebuff(player, monsterState, {
       id: CHILL_EFFECT, maxStacks: chillMax, instanced: false,
       remainingMs: chillMs, refreshable: true, sourceId: player.isPlayer.id,
       data: { moveSlowPerStack: chillMoveSlow, attackSlowPerStack: chillAttackSlow, totalMs: chillMs },

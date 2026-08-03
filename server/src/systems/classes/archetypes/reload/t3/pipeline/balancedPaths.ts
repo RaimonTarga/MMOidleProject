@@ -1,5 +1,6 @@
 import { applyStatusEffect } from '@mmo-idle/shared';
 import { registerCombatListener } from '../../../../../combat/engine/combatPipeline';
+import { applyPlayerDebuff } from '../../../../shared/applyPlayerDebuff';
 import { evadeBlocksDebuffs } from '../../../../../defense/mitigation/evasion';
 import {
   DEATH_MARK_EFFECT_ID,
@@ -46,7 +47,7 @@ export function registerReloadBalancedT3(): void {
     if ((passives['reload.suppressing-fire'] ?? 0) > 0) {
       const shred =
         passives['reload.suppress-shred'] ?? DEFAULT_SUPPRESS_SHRED;
-      applyStatusEffect(monsterState, {
+      applyPlayerDebuff(player, monsterState, {
         id: SUPPRESS_SHRED_EFFECT_ID,
         maxStacks: Math.round(
           passives['reload.suppress-max-stacks'] ?? DEFAULT_SUPPRESS_MAX,

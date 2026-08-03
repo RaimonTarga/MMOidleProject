@@ -1,5 +1,6 @@
 import { applyStatusEffect, removeStatusEffect } from '@mmo-idle/shared';
 import { registerCombatListener } from '../../../../../combat/engine/combatPipeline';
+import { applyPlayerDebuff } from '../../../../shared/applyPlayerDebuff';
 import { attachMarker } from '../../../../../../ecs/markerHelpers';
 import { evadeBlocksDebuffs } from '../../../../../defense/mitigation/evasion';
 import {
@@ -120,7 +121,7 @@ export function registerCadenceEmpoweredHit(): void {
     if ((vulnPct > 0 || platingShred > 0) && ctx.defenderType === 'monster' && !evadeBlocksDebuffs(ctx)) {
       const monsterState = ctx.defender.tracksCombat;
       if (vulnPct > 0) {
-        applyStatusEffect(monsterState, {
+        applyPlayerDebuff(player, monsterState, {
           id: 'vulnerability',
           instanced: false,
           refreshable: true,
@@ -131,8 +132,10 @@ export function registerCadenceEmpoweredHit(): void {
       }
       if (platingShred > 0) {
         // Total shred = stacks × platingReduction; cap by clamping the stack count.
+        // The cap is computed from the UNSCALED shred so a Controller core raises
+        // per-stack strip without also raising the ceiling it was capped at.
         const maxStacks = shredCap > 0 ? Math.max(1, Math.floor(shredCap / platingShred)) : 0;
-        applyStatusEffect(monsterState, {
+        applyPlayerDebuff(player, monsterState, {
           id: 'plating-shred',
           instanced: false,
           maxStacks,

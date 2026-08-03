@@ -116,7 +116,20 @@ That is the actual guarantee; the helper is just the safe fallback.
 
 ---
 
-## Phase B — Passive keys and their consumers
+## Phase B — Passive keys and their consumers ✅ DONE
+
+**Shipped.** `pnpm typecheck` clean, `pnpm test` 45/45. New tests:
+`coreMechanics.test.ts` (debuff scaler, pure) and `coreCombat.test.ts` (recovery
+funnel, elite damage, both mobility clauses, against a real `World`).
+
+Two traps found while implementing, both now covered by tests:
+- **`vulnerability` stores `1 + magnitude`, not the magnitude.** Scaling it directly
+  turns a +12% core into a +34% debuff. `SCALABLE_DEBUFFS` therefore tags each field
+  as `fraction` or `multiplier`, and multiplier fields scale only their excess over 1.
+- **The weapon brittle listener writes its per-stack values back after applying**, to
+  keep them current with the equipped weapon. Writing the raw numbers there undid the
+  core's scaling one tick later — invisible to any test that only checks the first
+  application. Hence `playerDebuffConfig()` alongside `applyPlayerDebuff()`.
 
 ### B1. `CORE_KEYS` after this pass
 

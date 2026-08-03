@@ -23,6 +23,7 @@ import {
   type AbilityEffectSpec,
 } from "@mmo-idle/shared";
 import { registerCombatListener } from "../../combat/engine/combatPipeline";
+import { applyPlayerDebuff } from "../../classes/shared/applyPlayerDebuff";
 import { applyPlayerAoe } from "../../combat/damage/aoeDamage";
 import { detachComponent } from "../../../ecs/markerHelpers";
 import type { CombatContext } from "../../combat/engine/combatPipeline";
@@ -163,7 +164,7 @@ function applyTechniqueRider(
     ctx.metadata["clientEffects"] = Array.isArray(existing)
       ? [...existing, ABILITY_EXPOSE_WEAKNESS_FX]
       : [ABILITY_EXPOSE_WEAKNESS_FX];
-    applyStatusEffect(ctx.defender.tracksCombat, {
+    applyPlayerDebuff(ctx.attacker, ctx.defender.tracksCombat, {
       id: EXPOSE_WEAKNESS_EFFECT_ID,
       instanced: false,
       maxStacks: 1,

@@ -34,6 +34,7 @@ import { evadeBlocksDebuffs } from "../../defense/mitigation/evasion";
 import { pushDotTickEvent } from "./dotTickEvent";
 import { emitPlayerMonsterOnKill } from "./killHooks";
 import { applyMonsterDamageTakenDebuffs } from "../../classes/shared/debuffs";
+import { applyPlayerDebuff, playerDebuffConfig } from "../../classes/shared/applyPlayerDebuff";
 
 // ── Internal combat state keys ────────────────────────────────────────────────
 
@@ -89,7 +90,9 @@ export function initWeaponEffects(): void {
     if (evadeBlocksDebuffs(ctx)) return; // dodged hit applies no brittle
     const maxStacks = Math.max(1, Math.round(p["weapon.brittle-stacks"] ?? 1));
 
-    const effect = applyStatusEffect(ctx.defender.tracksCombat, {
+    // Scale once, then reuse — the writeback below MUST use the scaled values or it
+    // undoes the Controller core's potency one tick after applying it.
+    const brittleCfg = playerDebuffConfig(ctx.attacker, {
       id: BRITTLE_EFFECT_ID,
       maxStacks,
       instanced: false,
@@ -98,15 +101,16 @@ export function initWeaponEffects(): void {
       refreshable: true,
       data: { platingPerStack, drPerStack },
     });
+    const effect = applyStatusEffect(ctx.defender.tracksCombat, brittleCfg);
     // Keep per-stack values current with the equipped weapon (buffs apply immediately).
-    effect.data.platingPerStack = platingPerStack;
-    effect.data.drPerStack = drPerStack;
+    effect.data.platingPerStack = brittleCfg.data!.platingPerStack;
+    effect.data.drPerStack = brittleCfg.data!.drPerStack;
 
     // Brittle shatter: at the shatter threshold, strip the target's DR for a window.
     const shatterThreshold = p["weapon.brittle-shatter-threshold"] ?? 0;
     const stripMs = p["weapon.brittle-shatter-dr-strip-ms"] ?? 0;
     if (shatterThreshold > 0 && stripMs > 0 && effect.stacks >= shatterThreshold) {
-      applyStatusEffect(ctx.defender.tracksCombat, {
+      applyPlayerDebuff(ctx.attacker, ctx.defender.tracksCombat, {
         id: DR_SHATTER_EFFECT_ID,
         instanced: false,
         refreshable: true,
@@ -171,7 +175,7 @@ export function initWeaponEffects(): void {
     if (evadeBlocksDebuffs(ctx)) return; // a monster-evaded swing applies no debuff
 
     const vulnMs = ctx.attacker.usesSkills.passives["weapon.dead-swing-vuln-ms"] ?? 4000;
-    applyStatusEffect(ctx.defender.tracksCombat, {
+    applyPlayerDebuff(ctx.attacker, ctx.defender.tracksCombat, {
       id: "vulnerability",
       instanced: false,
       refreshable: true,

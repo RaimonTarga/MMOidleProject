@@ -246,9 +246,19 @@ export const STAT_HELP: Record<string, string> = {
   'core.plating-mult': 'Percentage multiplier on your final plating.',
   'core.speed-mult': 'Percentage multiplier on your final move speed.',
   'core.attack-speed-mult': 'Percentage multiplier on your final attack speed.',
-  'core.hpregen-mult': 'Percentage multiplier on your final HP regen.',
+  'core.recovery-mult':
+    'Percentage multiplier on ALL of your recovery — passive HP regen plus every heal you receive, including regen bursts and healing from abilities.',
   'core.dr-layer-pct':
     'A SEPARATE multiplicative damage-reduction layer, applied after your normal DR rather than added to it. Capped at 90%.',
+  'core.elite-damage-mult': 'Extra damage against elite monsters and bosses.',
+  'core.onhit-mult':
+    'Percentage multiplier on your flat on-hit damage. On-hit ignores enemy plating and damage reduction, so this is separate from your attack.',
+  'core.debuff-duration-mult': 'Debuffs you apply to enemies last longer.',
+  'core.debuff-potency-mult': 'Debuffs you apply to enemies hit harder.',
+  'core.mobility-cooldown-reduction-pct':
+    'Shortens the cooldown of mobility abilities. Does nothing unless you have one equipped.',
+  'core.mobility-refund-on-kill-pct':
+    'Each kill returns part of your mobility ability’s cooldown. Does nothing unless you have one equipped.',
 
   // ── Rites (between-fight behavior) ─────────────────────────────────────────
   'rite.ooc-regen-delay-reduction-pct': 'Health regeneration resumes sooner after a fight ends.',

@@ -284,7 +284,14 @@ export function runPlayerAttack(
     const onHitMult = typeof ctx.metadata['onHitDamageMult'] === 'number'
       ? (ctx.metadata['onHitDamageMult'] as number)
       : 1;
-    ctx.damage += Math.round(player.dealsDamage.onHitDamage * onHitMult);
+    // Catalyst core. Multiplied in rather than added to onHitMult so the two
+    // COMPOSE: a shot that Alternating Cadence zeroed stays zero, and one it
+    // doubled gets the core bonus on top instead of overwriting it.
+    const coreOnHit = 1 + (player.usesSkills.passives['core.onhit-mult'] ?? 0);
+    // NOTE this term lands AFTER plating and DR above — that unmitigated placement
+    // is what makes core.onhit-mult a distinct axis from core.attack-mult and not a
+    // re-skin of it. Keep it on this side of the formula.
+    ctx.damage += Math.round(player.dealsDamage.onHitDamage * onHitMult * coreOnHit);
   }
 
   const isEmpowered = !!ctx.metadata["empoweredAttack"];

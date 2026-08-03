@@ -494,7 +494,11 @@ export function formatMechanicEffects(fx: Record<string, number> | undefined): s
     ['core.plating-mult',      'plating'],
     ['core.speed-mult',        'move speed'],
     ['core.attack-speed-mult', 'attack speed'],
-    ['core.hpregen-mult',      'HP regen'],
+    ['core.recovery-mult',     'healing and HP regen'],
+    ['core.elite-damage-mult', 'damage vs elites and bosses'],
+    ['core.onhit-mult',        'on-hit damage'],
+    ['core.debuff-duration-mult', 'duration of debuffs you apply'],
+    ['core.debuff-potency-mult',  'strength of debuffs you apply'],
   ];
   for (const [k, label] of coreMults) {
     if (has(k)) { lines.push(`${signedPctK(k)} ${label}`); mark(k); }
@@ -502,6 +506,17 @@ export function formatMechanicEffects(fx: Record<string, number> | undefined): s
   if (has('core.dr-layer-pct')) {
     lines.push(`${pctK('core.dr-layer-pct')} damage reduction (separate multiplicative layer)`);
     mark('core.dr-layer-pct');
+  }
+  // Both mobility keys read as a REDUCTION at a positive value, so they are phrased
+  // rather than run through the signed-percent helper (which would print "+20%
+  // cooldown" for what is a 20% cut).
+  if (has('core.mobility-cooldown-reduction-pct')) {
+    lines.push(`${pctK('core.mobility-cooldown-reduction-pct')} shorter mobility ability cooldown`);
+    mark('core.mobility-cooldown-reduction-pct');
+  }
+  if (has('core.mobility-refund-on-kill-pct')) {
+    lines.push(`Kills refund ${pctK('core.mobility-refund-on-kill-pct')} of your mobility ability's cooldown`);
+    mark('core.mobility-refund-on-kill-pct');
   }
 
   // Burn-DoT weapons describe their effect via formatWeaponEffects (BURN_FAMILY,

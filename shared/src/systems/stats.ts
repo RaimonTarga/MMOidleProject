@@ -323,7 +323,9 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
   const maxHpMult     = passives['core.maxhp-mult']         ?? 0;
   const platMult      = passives['core.plating-mult']       ?? 0;
   const speedMult     = passives['core.speed-mult']         ?? 0;
-  const hpRegenMult   = passives['core.hpregen-mult']       ?? 0;
+  // Recovery scales BOTH halves of sustain. This is the passive-stat half; the
+  // active half (every heal) is applied in defense/regen/healing.ts.
+  const hpRegenMult   = passives['core.recovery-mult']       ?? 0;
   const atkSpeedMult  = passives['core.attack-speed-mult']  ?? 0;
   if (attackMult !== 0)
     p.dealsDamage.attack = Math.max(1, Math.round(p.dealsDamage.attack * (1 + attackMult)));

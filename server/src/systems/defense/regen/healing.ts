@@ -27,6 +27,15 @@ export function getDebuffResistanceMult(player: PlayerEntity): number {
 /**
  * Apply healing to a player with antiheal and maxHp cap applied.
  * When `world` is provided, emits a heal log event for applied HP.
+ *
+ * This is the single funnel for every player heal — regen burst, in-combat regen,
+ * ramp regen, kill burst, guard.heal-on-fire, ability heals, the post-cheat-death
+ * HoT — which is what makes `core.recovery-mult` a one-line change rather than a
+ * subsystem. Route new healing through here; anything that writes `hasHealth.hp`
+ * directly silently opts out of antiheal, overheal-shield AND core recovery.
+ *
+ * Deliberately NOT applied to applyHealToMinion: minion sustain is the summoner's
+ * budget, not the core slot's.
  */
 export function applyHealToPlayer(
   player: PlayerEntity,
@@ -38,7 +47,11 @@ export function applyHealToPlayer(
   if (amount <= 0) return;
   const before = player.hasHealth.hp;
   const maxHp = player.hasHealth.maxHp;
-  const raw = before + amount * getAntiHealMult(cs);
+  // Core recovery scales the heal BEFORE antiheal, so an antiheal debuff still
+  // counters a Survivalist rather than being outrun by one.
+  const recoveryMult = 1 + (player.usesSkills.passives['core.recovery-mult'] ?? 0);
+  const scaled = Math.max(0, amount * recoveryMult);
+  const raw = before + scaled * getAntiHealMult(cs);
   player.hasHealth.hp = Math.min(maxHp, raw);
   const applied = Math.round(player.hasHealth.hp - before);
 

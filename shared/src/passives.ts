@@ -533,20 +533,50 @@ export const GUARD_KEYS = [
   'guard.heal-on-fire-pct',
 ] as const;
 
-// Core amplifiers (system rework Step 9). Carried by the `core` equipment slot.
-// Percentage multipliers on the FINAL summed stat — sources add (e.g. two +10%
-// = +20%), applied once in recalculatePlayerStats' core-multiplier pass. Negative
-// values reduce (e.g. -0.15 = -15%). `core.dr-layer-pct` is the exception: it is a
-// SEPARATE multiplicative damage-reduction layer applied in the combat pipeline
-// (final = base × (1 − DR) × (1 − dr-layer)), clamped to 0.9, NOT a stat multiplier.
+// Core amplifiers. Carried by the `core` equipment slot (one core, always).
+//
+// The `*-mult` keys are percentage multipliers on the FINAL summed stat — sources
+// add (two +10% = +20%), applied once in recalculatePlayerStats' core-multiplier
+// pass. Negative values reduce (-0.15 = -15%).
+//
+// Keys whose consumer is NOT the stat rebuild are called out individually below.
+// `core.dr-layer-pct` is a SEPARATE multiplicative damage-reduction layer applied
+// in the combat pipeline (final = base × (1 − DR) × (1 − dr-layer)), clamped 0.9.
+//
+// NOTE there is deliberately no `core.dot-mult`. DoT damage per stack derives from
+// `dealsDamage.attack`, which `core.attack-mult` already multiplies — so a DoT
+// potency core is a second multiplier on the same number and lands as either a trap
+// or a mandatory pick. See "Why there is no DoT core" in
+// docs/cores-rework-implementation-plan.md before proposing one.
 export const CORE_KEYS = [
   'core.attack-mult',
   'core.maxhp-mult',
   'core.plating-mult',
   'core.speed-mult',
   'core.attack-speed-mult',
-  'core.hpregen-mult',
   'core.dr-layer-pct',
+  // Survivalist: ONE recovery number covering both halves of sustain — the passive
+  // hpRegen stat (stat rebuild) and every heal routed through applyHealToPlayer
+  // (regen burst, in-combat regen, ramp regen, kill burst, guard.heal-on-fire,
+  // ability heals, the post-cheat-death HoT). Scaling only the passive stat would
+  // make a Survivalist core read as a trap: the stat is the small half.
+  'core.recovery-mult',
+  // Duelist: extra damage vs monsters flagged `elite` or `isBoss`. Applied on the
+  // player->monster onHit, after the base damage formula.
+  'core.elite-damage-mult',
+  // Catalyst: scales the flat on-hit term, which is added AFTER plating and DR.
+  // That unmitigated placement is exactly why this is a real axis and not a
+  // re-skin of core.attack-mult.
+  'core.onhit-mult',
+  // Controller: scales debuffs the player applies to monsters — duration, and the
+  // potency fields explicitly listed in SCALABLE_DEBUFFS. Never a blanket
+  // multiplier over every status effect; see systems/debuffScaling.ts for why.
+  'core.debuff-duration-mult',
+  'core.debuff-potency-mult',
+  // Scout / Bruiser: both act on abilities tagged `mobility`, so both are inert
+  // for a build carrying none. That is the magnifier rule, not an oversight.
+  'core.mobility-cooldown-reduction-pct',
+  'core.mobility-refund-on-kill-pct',
 ] as const;
 
 // Rite OOC behaviors (system rework Step 11). Carried by equipped rites (always-on
