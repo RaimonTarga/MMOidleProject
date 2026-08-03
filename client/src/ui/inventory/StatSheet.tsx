@@ -5,7 +5,7 @@ import {
   GAME_CONFIG,
   ITEM_DATABASE, RECIPE_DATABASE, upgradeStatBonusTotal,
   resolveEmpoweredMultiplier,
-  coreIsActive, isDirectionalCore,
+  coreEligibilityLabel, coreIsActive, isRestrictedCore,
 } from '@mmo-idle/shared';
 import { hudBus } from '../../hudBus';
 import {
@@ -179,13 +179,11 @@ export function StatSheet({ focused, onFocus }: Props) {
           {info.recipe?.recipeGroup && (
             <div className="inv-stat-sheet__biome">{biomeName(info.recipe.recipeGroup)}</div>
           )}
-          {info.slot === 'core' && info.itemDef.rangeTag && (() => {
-            const tag      = info.itemDef.rangeTag;
-            const active   = coreIsActive(tag, selectedRange);
-            const gated    = isDirectionalCore(tag);
-            const label    = gated
-              ? `${tag.toUpperCase()} range`
-              : tag === 'universal' ? 'Universal (any range)' : 'Party (any range)';
+          {info.slot === 'core' && info.itemDef.coreEligibility && (() => {
+            const elig   = info.itemDef.coreEligibility;
+            const active = coreIsActive(elig, selectedRange);
+            const gated  = isRestrictedCore(elig);
+            const label  = coreEligibilityLabel(elig);
             return (
               <div className={`inv-stat-sheet__core-range${active ? '' : ' inv-stat-sheet__core-range--inactive'}`}>
                 {label}{gated ? (active ? ' · active' : ' · inactive') : ''}

@@ -63,7 +63,7 @@ function makePlayerSlices(): PersistedPlayerSlices {
       // progression/skills.ts where it is assigned. This fixture used to say
       // "far", which made the (then strict-equality) range gate look correct
       // against state the real game never produces, and hid the fact that no
-      // directional core ever activated in play. Keep these realistic.
+      // restricted core ever activated in play. Keep these realistic.
       selectedRange: "reload-range-far",
       combatArchetype: null,
     },
@@ -74,45 +74,55 @@ const world = new World();
 const player = world.attachPlayerEntity(makePlayerSlices(), "core-player");
 const baseAttack = GAME_CONFIG.PLAYER_ATTACK;
 
-// A directional core (rangeTag "far") whose tag matches the player's selectedRange
+// A restricted core (`ranged`) whose category admits the player's selectedRange
 // applies its full mechanicEffects — the core-slot equip/recalc wiring.
 recalculatePlayerEntityStats(world, player);
 assert(
   player.usesSkills.passives["core.attack-mult"] === 0.25,
-  "matching-range core should fold its core.attack-mult passive",
+  "eligible core should fold its core.attack-mult passive",
 );
 assert(
   player.usesSkills.passives["core.maxhp-mult"] === -0.15,
-  "matching-range core should fold its core.maxhp-mult passive",
+  "eligible core should fold its core.maxhp-mult passive",
 );
 
-// The one genuinely new mechanic (per docs/cores-current-state.md): a directional
-// core contributes NOTHING once selectedRange no longer matches its rangeTag.
+// `ranged` is ONE pool spanning mid AND far, so the same core stays live on a mid
+// build. Under the old close/mid/far axis this exact swap DEACTIVATED the core;
+// this assertion is the behaviour change, not a restatement of the one above.
+player.usesSkills.selectedRange = "dot-range-mid";
+recalculatePlayerEntityStats(world, player);
+assert(
+  player.usesSkills.passives["core.attack-mult"] === 0.25,
+  "a ranged core must stay active across both mid and far builds",
+);
+
+// Eligibility is BINARY: an ineligible core contributes nothing — and that means
+// its TRADEOFFS vanish too, not just its upsides. The -0.15 maxhp must not linger.
 player.usesSkills.selectedRange = "reload-range-close";
 recalculatePlayerEntityStats(world, player);
 assert(
   player.usesSkills.passives["core.attack-mult"] === undefined,
-  "a directional core should be inactive once selectedRange no longer matches its rangeTag",
+  "a ranged core should be inactive for a close build",
 );
 assert(
   player.usesSkills.passives["core.maxhp-mult"] === undefined,
-  "an inactive core's stat-mult passives should not linger after a range change",
+  "an inactive core's tradeoffs must not linger after a range change",
 );
 assert(
   player.dealsDamage.attack === baseAttack,
-  "an inactive directional core should not apply any attack delta",
+  "an inactive restricted core should not apply any attack delta",
 );
 
-// A universal core applies regardless of selectedRange.
+// An unrestricted core applies regardless of selectedRange.
 player.holdsInventory.equipment.core = "forest-core-universal";
 recalculatePlayerEntityStats(world, player);
 assert(
   player.usesSkills.passives["core.attack-mult"] === 0.08,
-  "a universal core should apply while selectedRange is 'close'",
+  "an unrestricted core should apply while the build is close-range",
 );
 assert(
   player.usesSkills.passives["core.maxhp-mult"] === 0.08,
-  "a universal core's maxhp-mult passive should also apply regardless of range",
+  "an unrestricted core's maxhp-mult passive should also apply regardless of range",
 );
 
 console.log("cores.test.ts: ok");

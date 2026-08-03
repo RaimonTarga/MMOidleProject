@@ -165,18 +165,22 @@ export const forestRecipeEntries = [
   // MULTIPLIERS on your overall stats (`core.*-mult`, summed across sources then
   // applied once), plus a SEPARATE multiplicative damage-reduction layer
   // (`core.dr-layer-pct`: final = base × (1−DR) × (1−layer), so 50%+50% ⇒ 25% taken).
-  // Negative multipliers reduce a stat (tradeoffs). Directional cores (close/mid/far)
-  // deliver their FULL effect ONLY when the player's selectedRange matches — otherwise
-  // they contribute nothing (dimmed in the UI). Universal cores are weaker but
-  // always-on. Cores are OFF the +N upgrade track — they rank up via the evolution
-  // chain (rank 2 evolvesFrom rank 1; consumes the owned predecessor, no +3 needed).
-  // T2-gated by biome-level placement (level 7+). ALL numbers are PLACEHOLDERS for
-  // the balance pass. One core per band + a Bastion rank chain to exercise rank-up.
+  // Negative multipliers reduce a stat (tradeoffs). Restricted cores (melee/ranged)
+  // deliver their FULL effect ONLY when the player's selectedRange qualifies —
+  // otherwise they contribute nothing at all (dimmed in the UI). Unrestricted cores
+  // are weaker but always-on. Cores are OFF the +N upgrade track.
+  //
+  // ⚠ SUPERSEDED — these five are the original placeholder cast and are scheduled for
+  // deletion in Phase C of `docs/cores-rework-implementation-plan.md`. They are also
+  // TIER-MISPLACED: they sit in the T2 biome-level band, but a range is not chosen
+  // until player tier 3, so the three restricted ones are craftable-but-inert for the
+  // whole of T2. Do not author new cores against this block — the replacement cast is
+  // spread one core per biome with correct tier bands.
 
   // Close — Bastion: durability under melee risk (the anti-ranged-dominance lever).
   ['forest-core-bastion', {
     id: 'forest-core-bastion', name: 'Bastion Core',
-    recipeGroup: 'forest', requiredBiomeLevel: 7, slot: 'core', rangeTag: 'close',
+    recipeGroup: 'forest', requiredBiomeLevel: 7, slot: 'core', coreEligibility: 'melee',
     lineageId: 'forest-core-bastion',
     cost: { green: 60 }, catalystCost: { brutality: 2 }, // family-tag: anti-spike durability wall → Brutality
     stats: {}, tier: 2,
@@ -188,7 +192,7 @@ export const forestRecipeEntries = [
   // Far — Sniper: ranged offence with a real tradeoff (lower HP).
   ['forest-core-sniper', {
     id: 'forest-core-sniper', name: 'Sniper Core',
-    recipeGroup: 'forest', requiredBiomeLevel: 7, slot: 'core', rangeTag: 'far',
+    recipeGroup: 'forest', requiredBiomeLevel: 7, slot: 'core', coreEligibility: 'ranged',
     cost: { green: 60 }, catalystCost: { predation: 2 }, // family-tag: ranged alpha-strike amplifier → Predation
     stats: {}, tier: 2,
     mechanicEffects: { 'core.attack-mult': 0.25, 'core.maxhp-mult': -0.15 },
@@ -199,7 +203,7 @@ export const forestRecipeEntries = [
   // Mid — Arcanist: tempo (faster attacks) for the hybrid/skill range.
   ['forest-core-arcanist', {
     id: 'forest-core-arcanist', name: 'Arcanist Core',
-    recipeGroup: 'forest', requiredBiomeLevel: 8, slot: 'core', rangeTag: 'mid',
+    recipeGroup: 'forest', requiredBiomeLevel: 8, slot: 'core', coreEligibility: 'ranged',
     cost: { green: 50, purple: 15 }, catalystCost: { alacrity: 2 }, // family-tag: attack-speed tempo core → Alacrity
     stats: {}, tier: 2,
     mechanicEffects: { 'core.attack-speed-mult': 0.15, 'core.attack-mult': 0.05 },
@@ -210,7 +214,7 @@ export const forestRecipeEntries = [
   // Universal — weaker, always-on regardless of range.
   ['forest-core-universal', {
     id: 'forest-core-universal', name: 'Tempered Core',
-    recipeGroup: 'forest', requiredBiomeLevel: 8, slot: 'core', rangeTag: 'universal',
+    recipeGroup: 'forest', requiredBiomeLevel: 8, slot: 'core', coreEligibility: 'unrestricted',
     cost: { green: 45 }, catalystCost: { volatility: 1 }, // family-tag: reliable always-on generalist → Volatility
     stats: {}, tier: 2,
     mechanicEffects: { 'core.attack-mult': 0.08, 'core.maxhp-mult': 0.08 },
@@ -222,7 +226,7 @@ export const forestRecipeEntries = [
   // Reconstruct skips the chain for a higher cost. "Improved budget" per the rank model.
   ['forest-core-bastion-2', {
     id: 'forest-core-bastion-2', name: 'Bastion Core II',
-    recipeGroup: 'forest', requiredBiomeLevel: 10, slot: 'core', rangeTag: 'close',
+    recipeGroup: 'forest', requiredBiomeLevel: 10, slot: 'core', coreEligibility: 'melee',
     lineageId: 'forest-core-bastion', evolvesFrom: 'forest-core-bastion',
     cost: { green: 90 }, catalystCost: { brutality: 3 }, // family-tag: anti-spike durability wall (rank 2) → Brutality
     reconstructCost: { green: 300 }, reconstructCatalystCost: { brutality: 7 },

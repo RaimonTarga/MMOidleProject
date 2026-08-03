@@ -7,7 +7,9 @@ import {
   abilityDef,
   checkEvolve,
   checkReconstruct,
+  coreEligibilityLabel,
   isEvolvedRecipe,
+  isRestrictedCore,
 } from '@mmo-idle/shared';
 import { hudBus } from '../../hudBus';
 import {
@@ -573,10 +575,10 @@ function MakeDetail({
     : [];
   const effectLines = recipe
     ? [
-      ...(recipe.slot === 'core' && recipe.rangeTag
-        ? [recipe.rangeTag === 'universal' || recipe.rangeTag === 'party'
-          ? `Works at any range (${recipe.rangeTag})`
-          : `Full effect only at ${recipe.rangeTag.toUpperCase()} range`]
+      ...(recipe.slot === 'core' && recipe.coreEligibility
+        ? [isRestrictedCore(recipe.coreEligibility)
+          ? `Full effect only for ${coreEligibilityLabel(recipe.coreEligibility).toLowerCase()}`
+          : 'Works for any build']
         : []),
       ...formatMechanicEffects(recipe.mechanicEffects),
       ...(recipe.slot === 'weapon' ? formatWeaponEffects(recipe.id) : []),

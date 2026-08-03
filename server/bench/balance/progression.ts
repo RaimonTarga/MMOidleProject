@@ -6,7 +6,7 @@ import {
   type Recipe,
   biomeLevelCap,
   coreIsActive,
-  isDirectionalCore,
+  isRestrictedCore,
   listBiomeGroupsAtTier,
 } from '@mmo-idle/shared';
 import { findDungeonNodeFor } from '../../src/world/nodePath';
@@ -148,13 +148,13 @@ function bestGearForSlot(
 /**
  * Pick the core this build would actually wear.
  *
- * A core only contributes if `coreIsActive` says so, so an off-range core is
- * worth exactly nothing — equipping one would silently under-power the bot. We
- * therefore filter to active cores first, then prefer a DIRECTIONAL match over a
- * universal one (matching your range is the entire point of the system;
- * universal is the deliberately weaker always-on fallback), and only then rank by
- * budget. A build with no range node yet (T1 runs are root-only) can wear
- * universal cores alone, which is correct.
+ * A core only contributes if `coreIsActive` says so, so an ineligible core is worth
+ * exactly nothing — equipping one would silently under-power the bot. We therefore
+ * filter to eligible cores first, then prefer a RESTRICTED core (melee/ranged) over an
+ * unrestricted one — matching your build is the entire point of the system, and
+ * unrestricted is the deliberately weaker always-on fallback — and only then rank by
+ * budget. A build with no range node yet (T1/T2 runs) can wear unrestricted cores
+ * alone, which is correct: restricted cores do not unlock until player tier 3.
  */
 function bestCoreForBuild(
   gearTier: number,
@@ -169,11 +169,11 @@ function bestCoreForBuild(
     if (recipe.slot !== 'core') continue;
     if (recipe.tier !== gearTier) continue;
     if (!isBenchEquippable(recipe, playerTier)) continue;
-    if (!coreIsActive(recipe.rangeTag, selectedRange)) continue;
+    if (!coreIsActive(recipe.coreEligibility, selectedRange)) continue;
 
-    // Rank: native+directional > directional > native universal > universal.
+    // Rank: native+restricted > restricted > native unrestricted > unrestricted.
     const rank =
-      (isDirectionalCore(recipe.rangeTag) ? 2 : 0) +
+      (isRestrictedCore(recipe.coreEligibility) ? 2 : 0) +
       (recipe.recipeGroup === biomeGroup ? 1 : 0);
     if (rank > bestRank || (rank === bestRank && best && coreScore(recipe) > coreScore(best))) {
       best = recipe;

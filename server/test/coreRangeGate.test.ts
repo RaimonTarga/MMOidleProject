@@ -1,11 +1,15 @@
-// Regression test for the core range gate + the bench bot's canonical loadout.
+// Regression test for the core eligibility gate + the bench bot's canonical loadout.
 //
-// WHY THIS EXISTS: `coreIsActive` compared its `close|mid|far` range tag against
+// WHY THIS EXISTS: `coreIsActive` compared its range tag against
 // `usesSkills.selectedRange` with strict equality, but selectedRange holds the
-// FULL tier-2 skill id (`cadence-range-close`) — so no directional core ever
+// FULL tier-2 skill id (`cadence-range-close`) — so no restricted core ever
 // activated. The server gate and both client indicators read the same helper, so
 // they agreed with each other and the bug read as intended behaviour for as long
 // as cores have existed. Nothing covered it. Now something does.
+//
+// The eligibility axis is now melee | ranged | unrestricted (the close/mid/far tags
+// were collapsed, see docs/cores-rework-implementation-plan.md Phase A), but the
+// underlying trap is unchanged: the gate still reads a full skill id by suffix.
 //
 // Run: pnpm --filter @mmo-idle/server exec tsx --conditions=development test/coreRangeGate.test.ts
 
@@ -15,7 +19,7 @@ import {
   abilitySlotCount,
   coreIsActive,
   globalMastery,
-  isDirectionalCore,
+  isRestrictedCore,
 } from "@mmo-idle/shared";
 import { enumerateBuildsForContentTier } from "../bench/balance/progression";
 
@@ -25,46 +29,76 @@ function assert(condition: boolean, message: string): void {
 
 // ── The gate itself ──────────────────────────────────────────────────────────
 
-// A directional core matches the full skill id, not a bare range word.
+// A restricted core matches the full skill id, not a bare range word.
 assert(
-  coreIsActive("close", "cadence-range-close"),
-  "close core must activate for a close build",
+  coreIsActive("melee", "cadence-range-close"),
+  "melee core must activate for a close build",
 );
 assert(
-  coreIsActive("far", "reload-range-far"),
-  "far core must activate for a far build, on any class",
+  !coreIsActive("melee", "cadence-range-far"),
+  "melee core must NOT activate for a far build",
 );
 assert(
-  !coreIsActive("close", "cadence-range-far"),
-  "close core must NOT activate for a far build",
-);
-assert(
-  !coreIsActive("mid", null),
-  "a directional core cannot be active before a range is chosen",
+  !coreIsActive("melee", "dot-range-mid"),
+  "melee core must NOT activate for a mid build",
 );
 
-// Universal/party ignore range entirely, including before a range is picked.
-assert(coreIsActive("universal", null), "universal core is always active");
-assert(coreIsActive("party", "dot-range-mid"), "party core is always active");
+// Ranged is ONE pool covering both mid and far — that is the whole point of the
+// collapse. If these ever diverge, the design has silently regressed to close/mid/far.
+assert(
+  coreIsActive("ranged", "dot-range-mid"),
+  "ranged core must activate for a mid build",
+);
+assert(
+  coreIsActive("ranged", "reload-range-far"),
+  "ranged core must activate for a far build, on any class",
+);
+assert(
+  !coreIsActive("ranged", "cadence-range-close"),
+  "ranged core must NOT activate for a close build",
+);
+
+// Restricted cores do not unlock until a range is chosen (player tier 3).
+assert(
+  !coreIsActive("melee", null) && !coreIsActive("ranged", null),
+  "a restricted core cannot be active before a range is chosen",
+);
+
+// Unrestricted ignores range entirely, including before a range is picked.
+assert(coreIsActive("unrestricted", null), "unrestricted core is always active");
+assert(
+  coreIsActive("unrestricted", "dot-range-mid"),
+  "unrestricted core stays active once a range exists",
+);
+// Missing eligibility is an authoring bug, not a design state — the gate fails OPEN
+// so a bad recipe can't brick a save. coreAuthoring.test.ts is what forbids it.
 assert(coreIsActive(undefined, null), "an untagged item is never gated");
 
-assert(isDirectionalCore("close") && !isDirectionalCore("universal"),
-  "only close/mid/far are directional");
+assert(
+  isRestrictedCore("melee") && isRestrictedCore("ranged") && !isRestrictedCore("unrestricted"),
+  "only melee/ranged are restricted",
+);
 
 // Guard against the original bug shape returning: a bare range word must not match.
-assert(!coreIsActive("close", "close"),
-  "a bare range word is not a selectedRange value and must not match");
-
-// ── Every authored directional core is reachable by some build ───────────────
-
-const directionalCores = [...RECIPE_DATABASE.values()].filter(
-  (r) => r.slot === "core" && isDirectionalCore(r.rangeTag),
+assert(
+  !coreIsActive("melee", "close") && !coreIsActive("ranged", "far"),
+  "a bare range word is not a selectedRange value and must not match",
 );
-assert(directionalCores.length > 0, "expected at least one directional core authored");
-for (const core of directionalCores) {
+
+// ── Every authored restricted core is reachable by some build ───────────────
+
+const restrictedCores = [...RECIPE_DATABASE.values()].filter(
+  (r) => r.slot === "core" && isRestrictedCore(r.coreEligibility),
+);
+assert(restrictedCores.length > 0, "expected at least one restricted core authored");
+for (const core of restrictedCores) {
+  const reachable = core.coreEligibility === "melee"
+    ? coreIsActive(core.coreEligibility, "cadence-range-close")
+    : coreIsActive(core.coreEligibility, "dot-range-mid")
+      && coreIsActive(core.coreEligibility, "reload-range-far");
   assert(
-    coreIsActive(core.rangeTag, `cadence-range-${core.rangeTag}`),
-    `directional core ${core.id} (${core.rangeTag}) is unreachable by any build`,
+    reachable,
+    `restricted core ${core.id} (${core.coreEligibility}) is unreachable by its own builds`,
   );
 }
 
@@ -91,8 +125,8 @@ for (const build of builds) {
   const recipe = RECIPE_DATABASE.get(coreId);
   assert(!!recipe, `core ${coreId} missing from RECIPE_DATABASE`);
   assert(
-    coreIsActive(recipe!.rangeTag, range),
-    `bench build ${build.id} equipped ${coreId} (${recipe!.rangeTag}) which is INACTIVE for ${range}`,
+    coreIsActive(recipe!.coreEligibility, range),
+    `bench build ${build.id} equipped ${coreId} (${recipe!.coreEligibility}) which is INACTIVE for ${range}`,
   );
 }
 
@@ -100,7 +134,7 @@ for (const build of builds) {
 // legitimately finds none. Assert the selector at least ran rather than silently
 // skipping — if this ever fires, cores stopped resolving, not stopped existing.
 assert(
-  sawCore || directionalCores.every((c) => c.tier !== 3),
+  sawCore || restrictedCores.every((c) => c.tier !== 3),
   "no bench build equipped a core despite T3 cores being authored",
 );
 

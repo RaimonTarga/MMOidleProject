@@ -211,9 +211,10 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
     if (!defId) continue;
     const def = ITEM_DATABASE.get(defId);
     if (!def) continue;
-    // Core slot (Step 9): a directional core contributes nothing unless its range
-    // tag matches the player's selectedRange. Universal/party cores always apply.
-    if (slot === 'core' && !coreIsActive(def.rangeTag, p.usesSkills.selectedRange)) continue;
+    // Core slot: a restricted core (melee/ranged) contributes NOTHING — neither its
+    // upsides nor its tradeoffs — unless the player's selectedRange qualifies.
+    // Unrestricted cores always apply. Eligibility is binary; see systems/cores.ts.
+    if (slot === 'core' && !coreIsActive(def.coreEligibility, p.usesSkills.selectedRange)) continue;
     for (const [stat, value] of Object.entries(def.statModifiers)) {
       if (stat === 'evasion') {
         if (value > 0) evasionChance += value;

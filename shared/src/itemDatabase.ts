@@ -21,6 +21,6 @@ for (const recipe of RECIPE_DATABASE.values()) {
     icon: recipe.icon,
     lineageId: recipe.lineageId,
     evolvesFrom: recipe.evolvesFrom,
-    rangeTag: recipe.rangeTag,
+    coreEligibility: recipe.coreEligibility,
   });
 }

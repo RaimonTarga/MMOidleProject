@@ -64,13 +64,24 @@ export function emptyEquipment(): EquipmentMap {
 // ─── Cores (system rework Step 9) ───────────────────────────────────────────────
 
 /**
- * Range tag for a core (the 5th equipment slot's role/range amplifier).
- *   close/mid/far — full effect ONLY when the player's selectedRange matches; off otherwise.
- *   universal     — weaker but always-on, regardless of range.
- *   party         — role-flavored, always-on in v1 (cross-range party roles may deepen later).
- * See systems/cores.ts `coreIsActive`.
+ * Eligibility category for a core (the 5th equipment slot's build amplifier).
+ *   melee        — CLOSE range builds only. Compensates for the structural cost of
+ *                  staying in contact range, so it may combine offence, bulk and
+ *                  threat control more aggressively. Dedicated tanking lives here.
+ *   ranged       — MID and FAR builds. "Ranged" means non-melee positional combat,
+ *                  not maximum distance: mid and far share one pool and differ by
+ *                  how well their class exploits it.
+ *   unrestricted — every build. Lower raw-stat ceiling than a restricted core, but
+ *                  may still be build-defining through synergy.
+ *
+ * Eligibility is BINARY: an eligible core applies its full effect, an ineligible one
+ * applies nothing at all — no half-strength off-category scaling. That keeps tooltips,
+ * simulation and build comparison honest.
+ *
+ * See systems/cores.ts `coreIsActive` (the single authority) and
+ * `design_docs/CORE_DESIGN_PHILOSOPHY.md` §3–4.
  */
-export type CoreRange = 'close' | 'mid' | 'far' | 'universal' | 'party';
+export type CoreEligibility = 'melee' | 'ranged' | 'unrestricted';
 
 // ─── Item stat modifiers ──────────────────────────────────────────────────────
 
@@ -167,10 +178,10 @@ export interface ItemDefinition {
   /** Predecessor recipe/item id this evolved from. Mirrors Recipe.evolvesFrom. */
   evolvesFrom?: string;
   /**
-   * Core slot only (system rework Step 9). Range tag gating the core's effect:
-   * close/mid/far apply their stats/mechanicEffects ONLY when selectedRange matches;
-   * universal/party always apply. Read by systems/cores.ts `coreIsActive` in the
-   * stat rebuild. Mirrors Recipe.rangeTag.
+   * Core slot only. Eligibility category gating the core's effect: melee/ranged apply
+   * their stats/mechanicEffects ONLY when the player's selectedRange qualifies;
+   * unrestricted always applies. Read by systems/cores.ts `coreIsActive` in the stat
+   * rebuild. Mirrors Recipe.coreEligibility.
    */
-  rangeTag?: CoreRange;
+  coreEligibility?: CoreEligibility;
 }

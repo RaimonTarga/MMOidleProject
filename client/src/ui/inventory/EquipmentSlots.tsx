@@ -1,5 +1,5 @@
 import { useAtomValue } from 'jotai';
-import { EQUIPMENT_SLOTS, ITEM_DATABASE, coreIsActive, isDirectionalCore } from '@mmo-idle/shared';
+import { EQUIPMENT_SLOTS, ITEM_DATABASE, coreEligibilityLabel, coreIsActive, isRestrictedCore } from '@mmo-idle/shared';
 import { hudBus } from '../../hudBus';
 import { equipmentAtom, itemUpgradesAtom, selectedRangeAtom } from '../../hud/atoms';
 import { SLOT_LABELS, tierColor } from './constants';
@@ -28,8 +28,8 @@ export function EquipmentSlots({ focused, onFocus }: Props) {
           const color = filled ? tierColor(def.tier) : null;
           const plus = defId ? (itemUpgrades[defId] ?? 0) : 0;
           const coreInactive = filled && slot === 'core'
-            && isDirectionalCore(def.rangeTag)
-            && !coreIsActive(def.rangeTag, selectedRange);
+            && isRestrictedCore(def.coreEligibility)
+            && !coreIsActive(def.coreEligibility, selectedRange);
 
           return (
             <button
@@ -42,7 +42,9 @@ export function EquipmentSlots({ focused, onFocus }: Props) {
                 coreInactive ? 'inv-equip-slot--inactive' : '',
               ].filter(Boolean).join(' ')}
               style={color ? { borderColor: `${color}88` } : undefined}
-              title={coreInactive ? `Inactive — needs ${def.rangeTag} range` : undefined}
+              title={coreInactive
+                ? `Inactive — ${coreEligibilityLabel(def.coreEligibility).toLowerCase()}`
+                : undefined}
               aria-label={filled ? `Unequip ${def.name}` : `${SLOT_LABELS[slot]} slot empty`}
               disabled={!filled}
               onMouseEnter={() => {

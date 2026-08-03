@@ -1,4 +1,4 @@
-import type { EquipmentSlot, ItemStats, EssenceType, UpgradeStep, CoreRange } from '../../items';
+import type { EquipmentSlot, ItemStats, EssenceType, UpgradeStep, CoreEligibility } from '../../items';
 import type { DamageElement } from '../../systems/dotElements';
 
 /**
@@ -98,9 +98,15 @@ export interface Recipe {
   reconstructCatalystCost?: Partial<Record<string, number>>;
   // ── Cores (system rework Step 9) ────────────────────────────────────────────
   /**
-   * Core slot only. Range tag gating the core's effect — close/mid/far apply only
-   * when the player's selectedRange matches; universal/party always apply. Carried
-   * to ItemDefinition.rangeTag and read by systems/cores.ts `coreIsActive`.
+   * REQUIRED on `slot: 'core'` recipes, and must be absent on every other slot.
+   * Gates the core's effect — melee/ranged apply only when the player's selectedRange
+   * qualifies; unrestricted always applies. Carried to ItemDefinition.coreEligibility
+   * and read by systems/cores.ts `coreIsActive`.
+   *
+   * The type cannot express "required for one slot" (Recipe is one shape for every
+   * slot), so the guarantee is enforced by `server/test/coreAuthoring.test.ts`.
+   * `coreIsActive` treats a missing value as unrestricted so nothing crashes — but a
+   * core reaching players untagged is an authoring bug, not an always-on core.
    */
-  rangeTag?: CoreRange;
+  coreEligibility?: CoreEligibility;
 }
