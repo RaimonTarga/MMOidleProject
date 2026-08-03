@@ -227,4 +227,22 @@ export const desertRecipeEntries = [
     ],
   }],
 
+  // ── Cores ───────────────────────────────────────────────────────────────────────
+  // See the CORES header in plains.recipes.ts. Desert owns DISTANCE AND SIGHTLINES —
+  // it teaches Charge and the kiting boot, so it is where the ranged glass cannon lives.
+
+  // T3 ranged — Sniper: the largest raw damage number in the T3 cast, paid for in
+  // eHP twice over. Struggles the moment anything closes the gap.
+  ['core-sniper', {
+    id: 'core-sniper', name: 'Sniper Core',
+    recipeGroup: 'desert', requiredBiomeLevel: 9, slot: 'core', coreEligibility: 'ranged',
+    lineageId: 'core-sniper',
+    cost: { yellow: 110 }, catalystCost: { predation: 3 }, // family-tag: ranged alpha-strike → Predation
+    stats: {}, tier: 3,
+    // Deliberately no mobility bonus — the Scout core is the one that buys spacing.
+    mechanicEffects: { 'core.attack-mult': 0.26, 'core.maxhp-mult': -0.20, 'core.plating-mult': -0.15 },
+    icon: 'items/charms/eye-charm-2.png',
+    description: 'Focuses the eye to a needlepoint, and leaves the body that much more exposed.',
+  }],
+
 ] satisfies [string, Recipe][];

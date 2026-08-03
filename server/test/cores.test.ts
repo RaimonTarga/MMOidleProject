@@ -1,5 +1,6 @@
 import {
   GAME_CONFIG,
+  RECIPE_DATABASE,
   STARTER_RUNE_IDS,
   emptyEquipment,
 } from "@mmo-idle/shared";
@@ -51,7 +52,7 @@ function makePlayerSlices(): PersistedPlayerSlices {
     },
     holdsInventory: {
       inventory: [],
-      equipment: { ...emptyEquipment(), core: "forest-core-sniper" },
+      equipment: { ...emptyEquipment(), core: "core-sniper" },
       itemUpgrades: {},
     },
     usesSkills: {
@@ -76,13 +77,23 @@ const baseAttack = GAME_CONFIG.PLAYER_ATTACK;
 
 // A restricted core (`ranged`) whose category admits the player's selectedRange
 // applies its full mechanicEffects — the core-slot equip/recalc wiring.
+// Values are read from the recipe rather than hardcoded — this file tests the GATE,
+// and hardcoding the cast's numbers here would make every balance edit a test failure.
+const sniper = RECIPE_DATABASE.get("core-sniper")!;
+const sniperAttack = sniper.mechanicEffects!["core.attack-mult"]!;
+const sniperMaxHp = sniper.mechanicEffects!["core.maxhp-mult"]!;
+assert(
+  sniper.coreEligibility === "ranged" && sniperAttack > 0 && sniperMaxHp < 0,
+  "fixture expects core-sniper to be a ranged core with an attack upside and an HP tradeoff",
+);
+
 recalculatePlayerEntityStats(world, player);
 assert(
-  player.usesSkills.passives["core.attack-mult"] === 0.25,
+  player.usesSkills.passives["core.attack-mult"] === sniperAttack,
   "eligible core should fold its core.attack-mult passive",
 );
 assert(
-  player.usesSkills.passives["core.maxhp-mult"] === -0.15,
+  player.usesSkills.passives["core.maxhp-mult"] === sniperMaxHp,
   "eligible core should fold its core.maxhp-mult passive",
 );
 
@@ -92,7 +103,7 @@ assert(
 player.usesSkills.selectedRange = "dot-range-mid";
 recalculatePlayerEntityStats(world, player);
 assert(
-  player.usesSkills.passives["core.attack-mult"] === 0.25,
+  player.usesSkills.passives["core.attack-mult"] === sniperAttack,
   "a ranged core must stay active across both mid and far builds",
 );
 
@@ -114,14 +125,19 @@ assert(
 );
 
 // An unrestricted core applies regardless of selectedRange.
-player.holdsInventory.equipment.core = "forest-core-universal";
+const tempered = RECIPE_DATABASE.get("core-tempered")!;
+assert(
+  tempered.coreEligibility === "unrestricted",
+  "fixture expects core-tempered to be unrestricted",
+);
+player.holdsInventory.equipment.core = "core-tempered";
 recalculatePlayerEntityStats(world, player);
 assert(
-  player.usesSkills.passives["core.attack-mult"] === 0.08,
+  player.usesSkills.passives["core.attack-mult"] === tempered.mechanicEffects!["core.attack-mult"],
   "an unrestricted core should apply while the build is close-range",
 );
 assert(
-  player.usesSkills.passives["core.maxhp-mult"] === 0.08,
+  player.usesSkills.passives["core.maxhp-mult"] === tempered.mechanicEffects!["core.maxhp-mult"],
   "an unrestricted core's maxhp-mult passive should also apply regardless of range",
 );
 

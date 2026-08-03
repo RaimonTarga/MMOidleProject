@@ -219,4 +219,26 @@ export const tundraRecipeEntries = [
     ],
   }],
 
+  // ── Cores ───────────────────────────────────────────────────────────────────────
+  // See the CORES header in plains.recipes.ts. Tundra owns MOVEMENT — its boot
+  // ramps speed over sustained travel, so it is where the spacing core comes from.
+
+  // T3 ranged — Scout: reliable uptime instead of peak damage. Where Sniper wants
+  // the fight to never reach it, Scout assumes it will and keeps moving.
+  ['core-scout', {
+    id: 'core-scout', name: 'Scout Core',
+    recipeGroup: 'tundra', requiredBiomeLevel: 3, slot: 'core', coreEligibility: 'ranged',
+    lineageId: 'core-scout',
+    cost: { blue: 110 }, catalystCost: { alacrity: 3 }, // family-tag: mobility/tempo → Alacrity
+    stats: {}, tier: 3,
+    // The cooldown clause is INERT without an ability tagged `mobility` (today:
+    // Charge); the damage and movement halves are always on.
+    mechanicEffects: {
+      'core.attack-mult': 0.14, 'core.speed-mult': 0.16,
+      'core.mobility-cooldown-reduction-pct': 0.20, 'core.maxhp-mult': -0.15,
+    },
+    icon: 'items/charms/bright-charm-1.png',
+    description: 'Open ground and a long horizon. Nothing here helps you win a stand — only avoid one.',
+  }],
+
 ] satisfies [string, Recipe][];

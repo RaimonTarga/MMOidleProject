@@ -209,4 +209,34 @@ export const caveRecipeEntries = [
   }],
 
 
+  // ── Cores ───────────────────────────────────────────────────────────────────────
+  // See the CORES header in plains.recipes.ts. Cave owns SINGLE-TARGET PRESSURE —
+  // it teaches Expose Weakness, so it is where the elite-killer core comes from.
+
+  // T2 starter — Force: the first real tradeoff a player is offered. All upside is
+  // paid for in HP, which is the lesson the whole restricted tier is built on.
+  ['core-force', {
+    id: 'core-force', name: 'Force Core',
+    recipeGroup: 'cave', requiredBiomeLevel: 8, slot: 'core', coreEligibility: 'unrestricted',
+    lineageId: 'core-force',
+    cost: { red: 45 }, catalystCost: { predation: 1 }, // family-tag: raw offence → Predation
+    stats: {}, tier: 2,
+    mechanicEffects: { 'core.attack-mult': 0.13, 'core.maxhp-mult': -0.07 },
+    icon: 'items/charms/jewel-charm-2.png',
+    description: 'It gives you the strike you wanted and takes the margin you were counting on.',
+  }],
+
+  // T3 melee — Duelist: commitment to one big target. Its opportunity cost is
+  // structural rather than a stated penalty: it does very little against a crowd.
+  ['core-duelist', {
+    id: 'core-duelist', name: 'Duelist Core',
+    recipeGroup: 'cave', requiredBiomeLevel: 15, slot: 'core', coreEligibility: 'melee',
+    lineageId: 'core-duelist',
+    cost: { red: 110 }, catalystCost: { predation: 3 }, // family-tag: single-target alpha → Predation
+    stats: {}, tier: 3,
+    mechanicEffects: { 'core.attack-mult': 0.12, 'core.maxhp-mult': 0.10, 'core.elite-damage-mult': 0.15 },
+    icon: 'items/charms/eye-charm-1.png',
+    description: 'Nothing here helps against a crowd. Against the one thing worth killing, it is everything.',
+  }],
+
 ] satisfies [string, Recipe][];

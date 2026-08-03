@@ -160,80 +160,38 @@ export const forestRecipeEntries = [
     ],
   }],
 
-  // ── T2 — Cores (system rework Step 9, worked examples) ─────────────────────
-  // The 5th equipment slot: a role/range amplifier. Cores apply as PERCENTAGE
-  // MULTIPLIERS on your overall stats (`core.*-mult`, summed across sources then
-  // applied once), plus a SEPARATE multiplicative damage-reduction layer
-  // (`core.dr-layer-pct`: final = base × (1−DR) × (1−layer), so 50%+50% ⇒ 25% taken).
-  // Negative multipliers reduce a stat (tradeoffs). Restricted cores (melee/ranged)
-  // deliver their FULL effect ONLY when the player's selectedRange qualifies —
-  // otherwise they contribute nothing at all (dimmed in the UI). Unrestricted cores
-  // are weaker but always-on. Cores are OFF the +N upgrade track.
+  // ── Cores ───────────────────────────────────────────────────────────────────
+  // The 5th equipment slot. See the CORES header in plains.recipes.ts for how the
+  // slot works and how eligibility/tier placement is decided.
   //
-  // ⚠ SUPERSEDED — these five are the original placeholder cast and are scheduled for
-  // deletion in Phase C of `docs/cores-rework-implementation-plan.md`. They are also
-  // TIER-MISPLACED: they sit in the T2 biome-level band, but a range is not chosen
-  // until player tier 3, so the three restricted ones are craftable-but-inert for the
-  // whole of T2. Do not author new cores against this block — the replacement cast is
-  // spread one core per biome with correct tier bands.
+  // Forest owns SUSTAIN — it is where Second Wind is learned, so it is also where
+  // the recovery core comes from.
 
-  // Close — Bastion: durability under melee risk (the anti-ranged-dominance lever).
-  ['forest-core-bastion', {
-    id: 'forest-core-bastion', name: 'Bastion Core',
-    recipeGroup: 'forest', requiredBiomeLevel: 7, slot: 'core', coreEligibility: 'melee',
-    lineageId: 'forest-core-bastion',
-    cost: { green: 60 }, catalystCost: { brutality: 2 }, // family-tag: anti-spike durability wall → Brutality
+  // T2 starter — Survivalist: outlast rather than out-trade.
+  ['core-survivalist', {
+    id: 'core-survivalist', name: 'Survivalist Core',
+    recipeGroup: 'forest', requiredBiomeLevel: 7, slot: 'core', coreEligibility: 'unrestricted',
+    lineageId: 'core-survivalist',
+    cost: { green: 45 }, catalystCost: { blight: 1 }, // family-tag: attrition survival → Blight
     stats: {}, tier: 2,
-    mechanicEffects: { 'core.maxhp-mult': 0.20, 'core.plating-mult': 0.30, 'core.dr-layer-pct': 0.10 },
-    icon: 'items/charms/jewel-charm-1.png',
-    description: 'A dense knot of heartwood that drinks blows meant for the one who carries it.',
+    // recovery-mult scales the passive regen stat AND every heal, so this is real
+    // sustain rather than the near-nothing a regen-stat-only core would give.
+    mechanicEffects: { 'core.recovery-mult': 0.20, 'core.maxhp-mult': 0.10 },
+    icon: 'items/charms/heart-charm-1.png',
+    description: 'Wound-knit heartwood. It does not stop the blow — it shortens the time you spend regretting it.',
   }],
 
-  // Far — Sniper: ranged offence with a real tradeoff (lower HP).
-  ['forest-core-sniper', {
-    id: 'forest-core-sniper', name: 'Sniper Core',
-    recipeGroup: 'forest', requiredBiomeLevel: 7, slot: 'core', coreEligibility: 'ranged',
-    cost: { green: 60 }, catalystCost: { predation: 2 }, // family-tag: ranged alpha-strike amplifier → Predation
-    stats: {}, tier: 2,
-    mechanicEffects: { 'core.attack-mult': 0.25, 'core.maxhp-mult': -0.15 },
-    icon: 'items/charms/eye-charm-1.png',
-    description: 'Focuses the eye to a needlepoint — and leaves the body that much more exposed.',
-  }],
-
-  // Mid — Arcanist: tempo (faster attacks) for the hybrid/skill range.
-  ['forest-core-arcanist', {
-    id: 'forest-core-arcanist', name: 'Arcanist Core',
-    recipeGroup: 'forest', requiredBiomeLevel: 8, slot: 'core', coreEligibility: 'ranged',
-    cost: { green: 50, purple: 15 }, catalystCost: { alacrity: 2 }, // family-tag: attack-speed tempo core → Alacrity
-    stats: {}, tier: 2,
-    mechanicEffects: { 'core.attack-speed-mult': 0.15, 'core.attack-mult': 0.05 },
-    icon: 'items/charms/jewel-charm-2.png',
-    description: 'Keeps a rhythm in the wielder’s hands that the battle has to match.',
-  }],
-
-  // Universal — weaker, always-on regardless of range.
-  ['forest-core-universal', {
-    id: 'forest-core-universal', name: 'Tempered Core',
-    recipeGroup: 'forest', requiredBiomeLevel: 8, slot: 'core', coreEligibility: 'unrestricted',
-    cost: { green: 45 }, catalystCost: { volatility: 1 }, // family-tag: reliable always-on generalist → Volatility
-    stats: {}, tier: 2,
-    mechanicEffects: { 'core.attack-mult': 0.08, 'core.maxhp-mult': 0.08 },
-    icon: 'items/charms/pearl-1.png',
-    description: 'Balanced for any hand — it asks no commitment, and rewards none in particular.',
-  }],
-
-  // Bastion rank 2 — evolves from the rank-1 Bastion Core (own it, no +N required).
-  // Reconstruct skips the chain for a higher cost. "Improved budget" per the rank model.
-  ['forest-core-bastion-2', {
-    id: 'forest-core-bastion-2', name: 'Bastion Core II',
-    recipeGroup: 'forest', requiredBiomeLevel: 10, slot: 'core', coreEligibility: 'melee',
-    lineageId: 'forest-core-bastion', evolvesFrom: 'forest-core-bastion',
-    cost: { green: 90 }, catalystCost: { brutality: 3 }, // family-tag: anti-spike durability wall (rank 2) → Brutality
-    reconstructCost: { green: 300 }, reconstructCatalystCost: { brutality: 7 },
-    stats: {}, tier: 2,
-    mechanicEffects: { 'core.maxhp-mult': 0.30, 'core.plating-mult': 0.45, 'core.dr-layer-pct': 0.15 },
-    icon: 'items/charms/jewel-charm-3.png',
-    description: 'The heartwood, hardened by a second season of storms — and a second of scars.',
+  // T3 unrestricted — Accelerant: tempo. Trades hit size for hit count, which is
+  // why it reads so differently on an on-hit build than on a big-swing one.
+  ['core-accelerant', {
+    id: 'core-accelerant', name: 'Accelerant Core',
+    recipeGroup: 'forest', requiredBiomeLevel: 15, slot: 'core', coreEligibility: 'unrestricted',
+    lineageId: 'core-accelerant',
+    cost: { green: 90 }, catalystCost: { alacrity: 2 }, // family-tag: attack-speed tempo → Alacrity
+    stats: {}, tier: 3,
+    mechanicEffects: { 'core.attack-speed-mult': 0.25, 'core.attack-mult': -0.12 },
+    icon: 'items/charms/bright-charm-2.png',
+    description: 'The forest keeps a fast rhythm. Match it, and you will find you are swinging before you decide to.',
   }],
 
 

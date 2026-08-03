@@ -238,4 +238,27 @@ export const jungleRecipeEntries = [
     ],
   }],
 
+  // ── Cores ───────────────────────────────────────────────────────────────────────
+  // See the CORES header in plains.recipes.ts. Jungle owns MOMENTUM — dense packs
+  // and ambushes, so it is where the kill-chain core comes from.
+
+  // T3 melee — Bruiser: offence, bulk and movement, paid off by chaining kills.
+  // Structurally weak against bosses, where there is no next kill to chain into.
+  ['core-bruiser', {
+    id: 'core-bruiser', name: 'Bruiser Core',
+    recipeGroup: 'jungle', requiredBiomeLevel: 9, slot: 'core', coreEligibility: 'melee',
+    lineageId: 'core-bruiser',
+    cost: { green: 110 }, catalystCost: { brutality: 3 }, // family-tag: sustained melee pressure → Brutality
+    stats: {}, tier: 3,
+    // The refund is INERT without an ability tagged `mobility` (today: Charge). The
+    // stat half is always on, so the slot is never dead — and the clause widens for
+    // free as more mobility abilities are authored.
+    mechanicEffects: {
+      'core.attack-mult': 0.20, 'core.maxhp-mult': 0.15, 'core.speed-mult': 0.12,
+      'core.mobility-refund-on-kill-pct': 0.40,
+    },
+    icon: 'items/charms/stone-hand-charm-1.png',
+    description: 'Kill, and the jungle opens. Stop, and it closes. The core only knows how to do the first one.',
+  }],
+
 ] satisfies [string, Recipe][];

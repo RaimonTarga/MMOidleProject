@@ -8,7 +8,13 @@
 //
 // Run: pnpm --filter @mmo-idle/server exec tsx --conditions=development test/coreAuthoring.test.ts
 
-import { RECIPE_DATABASE, getMaxUpgrade, ITEM_DATABASE } from "@mmo-idle/shared";
+import {
+  RECIPE_DATABASE,
+  biomeLevelCap,
+  getMaxUpgrade,
+  isRestrictedCore,
+  ITEM_DATABASE,
+} from "@mmo-idle/shared";
 
 function assert(condition: boolean, message: string): void {
   if (!condition) throw new Error(message);
@@ -57,6 +63,57 @@ for (const core of cores) {
   assert(
     getMaxUpgrade(item) === 0,
     `core ${core.id} reports a max upgrade of ${getMaxUpgrade(item)}; cores are off the +N track`,
+  );
+}
+
+// ── Tier placement: a restricted core must not be craftable before T3 ───────
+
+// THE BUG THIS REWORK STARTED FROM. A range is not selected until PLAYER TIER 3
+// (skill-tree tier 2), so a melee/ranged core placed in a T2 biome-level band is
+// craftable, equippable — and permanently inert. The original cast shipped three
+// such cores and nothing caught it, because every test only ever asked whether the
+// GATE worked, never whether the CONTENT was reachable at a tier that could use it.
+for (const core of cores) {
+  if (!isRestrictedCore(core.coreEligibility)) continue;
+
+  const capAtT2 = biomeLevelCap(2, core.recipeGroup);
+  assert(
+    core.requiredBiomeLevel > capAtT2,
+    `restricted core ${core.id} is reachable at player tier 2 ` +
+      `(${core.recipeGroup} level ${core.requiredBiomeLevel} <= T2 cap ${capAtT2}), ` +
+      `but no range is chosen until tier 3 — it would be craftable and inert`,
+  );
+
+  const capAtT3 = biomeLevelCap(3, core.recipeGroup);
+  assert(
+    core.requiredBiomeLevel <= capAtT3,
+    `restricted core ${core.id} is unreachable even at player tier 3 ` +
+      `(${core.recipeGroup} level ${core.requiredBiomeLevel} > T3 cap ${capAtT3})`,
+  );
+}
+
+// The starter cores exist to introduce the SLOT, so they must be reachable in T2 —
+// otherwise the slot sits empty for a whole tier.
+const starters = cores.filter((c) => c.tier === 2);
+assert(starters.length > 0, "expected T2 starter cores");
+for (const core of starters) {
+  assert(
+    !isRestrictedCore(core.coreEligibility),
+    `T2 starter ${core.id} is restricted; no range exists yet at tier 2`,
+  );
+  assert(
+    core.requiredBiomeLevel <= biomeLevelCap(2, core.recipeGroup),
+    `T2 starter ${core.id} is not reachable at player tier 2`,
+  );
+}
+
+// ── Every core carries a lineage for its future evolution branches ─────────
+
+for (const core of cores) {
+  assert(
+    !!core.lineageId,
+    `core ${core.id} has no lineageId; cores grow by evolving into named branches, ` +
+      `and a branch needs a lineage to hang from`,
   );
 }
 

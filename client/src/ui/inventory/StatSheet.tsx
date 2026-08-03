@@ -185,7 +185,7 @@ export function StatSheet({ focused, onFocus }: Props) {
             const gated  = isRestrictedCore(elig);
             const label  = coreEligibilityLabel(elig);
             return (
-              <div className={`inv-stat-sheet__core-range${active ? '' : ' inv-stat-sheet__core-range--inactive'}`}>
+              <div className={`inv-stat-sheet__core-eligibility${active ? '' : ' inv-stat-sheet__core-eligibility--inactive'}`}>
                 {label}{gated ? (active ? ' · active' : ' · inactive') : ''}
               </div>
             );

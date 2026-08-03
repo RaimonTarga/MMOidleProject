@@ -144,4 +144,54 @@ export const plainsRecipeEntries = [
     ],
   }],
 
+  // ── Cores ───────────────────────────────────────────────────────────────────
+  //
+  // CANONICAL HEADER FOR THE WHOLE CORE CAST — other biomes' core blocks point here.
+  // Design source: design_docs/CORE_DESIGN_PHILOSOPHY.md + CORE_CAST_REVIEW_DRAFT.md.
+  //
+  // WHAT A CORE IS: the 5th equipment slot, one at a time. A core MAGNIFIES what a
+  // build already does — it does not add a new attack, resource, or payoff loop
+  // (those belong to Techniques and Paths). Effects are percentage multipliers on
+  // your FINAL summed stats (`core.*-mult`, summed across sources, applied once),
+  // plus a few keys with their own consumers. Negative values are tradeoffs.
+  //
+  // ELIGIBILITY is binary — full effect or nothing at all, including the tradeoffs:
+  //   melee        — close-range builds only
+  //   ranged       — mid AND far builds (one pool)
+  //   unrestricted — every build; lower ceiling, no commitment
+  //
+  // TIER PLACEMENT IS LOad-BEARING. A range is not chosen until PLAYER TIER 3, so a
+  // restricted core placed in a T2 biome-level band is craftable but permanently
+  // inert — which is exactly the bug the original placeholder cast shipped with.
+  //   T2 starters   -> unrestricted only, T1 biomes at level 7-8
+  //   T3 cores      -> T1 biomes level 13-18 | T2 biomes level 7-12 | T3 biomes level 1-6
+  // Each T3 core sits MID-band so the biome's challenge is met before its answer is
+  // earned (same convention as ability placement).
+  //
+  // Cores are OFF the +N upgrade track. They grow by EVOLVING into one of several
+  // named branches at the next tier — one evolve, one decision. Every core therefore
+  // carries a `lineageId` for those future branches to hang from.
+  //
+  // ALL NUMBERS ARE PLACEHOLDERS inside the design doc's bands, pending the balance pass.
+  //
+  // The cast, one core per biome (forest/cave/mountain carry two):
+  //   plains   Tempered      swamp    Controller     tundra   Scout
+  //   forest   Survivalist   jungle   Bruiser        volcanic Catalyst
+  //            Accelerant    desert   Sniper
+  //   cave     Force         mountain Juggernaut
+  //            Duelist                Arcanist
+
+  // T2 starter — Tempered: the benchmark. Deliberately simple and never a trap,
+  // so specialising stays a choice rather than a requirement.
+  ['core-tempered', {
+    id: 'core-tempered', name: 'Tempered Core',
+    recipeGroup: 'plains', requiredBiomeLevel: 7, slot: 'core', coreEligibility: 'unrestricted',
+    lineageId: 'core-tempered',
+    cost: { yellow: 45 }, catalystCost: { volatility: 1 }, // family-tag: reliable always-on generalist → Volatility
+    stats: {}, tier: 2,
+    mechanicEffects: { 'core.attack-mult': 0.09, 'core.maxhp-mult': 0.09 },
+    icon: 'items/charms/jewel-charm-1.png',
+    description: 'Balanced for any hand. It asks no commitment, and rewards none in particular.',
+  }],
+
 ] satisfies [string, Recipe][];

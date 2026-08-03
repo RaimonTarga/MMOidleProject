@@ -12,7 +12,9 @@ import type {
 } from '@mmo-idle/shared';
 import {
   DEFAULT_RUNE_LOADOUT,
+  EQUIPMENT_SLOTS,
   GAME_CONFIG,
+  ITEM_DATABASE,
   emptyEquipment,
   emptyEquippedAbilities,
   emptyEquippedStances,
@@ -198,6 +200,31 @@ function sanitizeFamilyWallet(
   return out;
 }
 
+/**
+ * Drop item ids that no longer exist in ITEM_DATABASE.
+ *
+ * Recipes get retired (the placeholder core cast was deleted outright), and a save
+ * written before that still names them. The stat rebuild already skips unknown ids,
+ * so this is not a correctness fix — it is a presentation one: an unknown id left in
+ * an equipment slot renders as an occupied-but-blank slot the player cannot clear,
+ * because the unequip path looks the definition up too.
+ *
+ * Runs on every load and is idempotent. Bag entries are dropped the same way, along
+ * with any orphaned upgrade levels.
+ */
+function pruneUnknownItems(inv: HoldsInventory): void {
+  inv.inventory = inv.inventory.filter((id) => ITEM_DATABASE.has(id));
+
+  for (const slot of EQUIPMENT_SLOTS) {
+    const id = inv.equipment[slot];
+    if (id && !ITEM_DATABASE.has(id)) inv.equipment[slot] = null;
+  }
+
+  for (const id of Object.keys(inv.itemUpgrades)) {
+    if (!ITEM_DATABASE.has(id)) delete inv.itemUpgrades[id];
+  }
+}
+
 function hydratePlayerSlices(row: CharacterRow): PersistedPlayerSlices {
   const holdsInventory = parseSlice<HoldsInventory>(row.holdsInventory);
   holdsInventory.equipment = {
@@ -205,6 +232,8 @@ function hydratePlayerSlices(row: CharacterRow): PersistedPlayerSlices {
     ...holdsInventory.equipment,
   };
   holdsInventory.itemUpgrades = holdsInventory.itemUpgrades ?? {};
+  holdsInventory.inventory = holdsInventory.inventory ?? [];
+  pruneUnknownItems(holdsInventory);
   const tracksProgression = parseSlice<TracksProgression>(row.tracksProgression);
   const hasPosition = parseSlice<HasPosition>(row.hasPosition);
   if (!WORLD_NODES.has(hasPosition.nodeId)) {

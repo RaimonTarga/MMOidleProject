@@ -187,4 +187,25 @@ export const volcanicRecipeEntries = [
     ],
   }],
 
+  // ── Cores ───────────────────────────────────────────────────────────────────────
+  // See the CORES header in plains.recipes.ts. Volcanic owns THE STRIKE ITSELF —
+  // burn weapons and heat, so it is where the on-hit amplifier comes from.
+
+  // T3 unrestricted — Catalyst: scales the flat on-hit term, which lands AFTER
+  // plating and DR. That unmitigated placement is what makes it a real axis rather
+  // than a second attack multiplier, and it is why it shines against armour.
+  ['core-catalyst', {
+    id: 'core-catalyst', name: 'Catalyst Core',
+    recipeGroup: 'volcanic', requiredBiomeLevel: 3, slot: 'core', coreEligibility: 'unrestricted',
+    lineageId: 'core-catalyst',
+    cost: { red: 90 }, catalystCost: { volatility: 2 }, // family-tag: on-hit proc amplifier → Volatility
+    stats: {}, tier: 3,
+    // Trading attack (mitigated) for on-hit (unmitigated) is the actual shape here:
+    // better against heavily armoured targets, worse against soft ones. Worth little
+    // to a build carrying no on-hit damage — the specialisation is the cost.
+    mechanicEffects: { 'core.onhit-mult': 0.28, 'core.attack-mult': -0.12 },
+    icon: 'items/charms/volcano-crystal.png',
+    description: 'Heat finds the seams that force cannot. Armour is no comfort against something already inside it.',
+  }],
+
 ] satisfies [string, Recipe][];

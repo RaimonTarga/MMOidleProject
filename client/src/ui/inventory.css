@@ -410,7 +410,7 @@
 }
 
 /* Core range tag (Step 9) */
-.inv-stat-sheet__core-range {
+.inv-stat-sheet__core-eligibility {
   margin-top: 2px;
   font-size: 9px;
   color: #6fd0ff;
@@ -418,7 +418,7 @@
   letter-spacing: 0.7px;
 }
 
-.inv-stat-sheet__core-range--inactive {
+.inv-stat-sheet__core-eligibility--inactive {
   color: #cc6655;
 }
 

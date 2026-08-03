@@ -360,4 +360,45 @@ export const mountainRecipeEntries = [
   }],
 
 
+  // ── Cores ───────────────────────────────────────────────────────────────────────
+  // See the CORES header in plains.recipes.ts. Mountain owns ENDURANCE AND
+  // PREPARATION — Brace and Charged Strike are both learned here, so it carries
+  // both the tank core and the ability core.
+
+  // T3 melee — Juggernaut: the dedicated tank, and melee-exclusive by design.
+  // Other ranges may buy survivability, but never this whole package.
+  ['core-juggernaut', {
+    id: 'core-juggernaut', name: 'Juggernaut Core',
+    recipeGroup: 'mountain', requiredBiomeLevel: 14, slot: 'core', coreEligibility: 'melee',
+    lineageId: 'core-juggernaut',
+    cost: { blue: 110 }, catalystCost: { brutality: 3 }, // family-tag: durability wall → Brutality
+    stats: {}, tier: 3,
+    // HP, plating and the separate DR layer COMPOUND, so this must be judged as a
+    // whole survivability package rather than three numbers. It clears slowly —
+    // that is the cost, and it is paid in attack speed and movement, not in eHP.
+    mechanicEffects: {
+      'core.maxhp-mult': 0.25, 'core.plating-mult': 0.32, 'core.dr-layer-pct': 0.12,
+      'core.attack-speed-mult': -0.20, 'core.speed-mult': -0.07,
+    },
+    icon: 'items/charms/shield-charm-1.png',
+    description: 'The mountain does not dodge. It simply outlasts whatever is thrown at it, and so will you.',
+  }],
+
+  // T3 unrestricted — Arcanist: abilities come back faster and hit harder.
+  // TECHNIQUE-ONLY on purpose: `technique.*` (offence) and `guard.*` (defence) are
+  // separate budgets so one item can never buy both. A Guard-flavoured branch is
+  // where the defensive half belongs.
+  ['core-arcanist', {
+    id: 'core-arcanist', name: 'Arcanist Core',
+    recipeGroup: 'mountain', requiredBiomeLevel: 17, slot: 'core', coreEligibility: 'unrestricted',
+    lineageId: 'core-arcanist',
+    cost: { blue: 90 }, catalystCost: { volatility: 2 }, // family-tag: ability tempo → Volatility
+    stats: {}, tier: 3,
+    // Worth little when abilities are a minor part of the build — the specialisation
+    // IS the opportunity cost, so no explicit penalty is authored.
+    mechanicEffects: { 'technique.cooldown-reduction-pct': 0.18, 'technique.power-pct': 0.08 },
+    icon: 'items/charms/jewel-charm-3.png',
+    description: 'Thin air, long thoughts. The gap between what you can do and how often shrinks.',
+  }],
+
 ] satisfies [string, Recipe][];

@@ -273,7 +273,7 @@ broaden for free as abilities Waves 2–3 add mobility abilities.
 
 ---
 
-## Phase C — The cast
+## Phase C — The cast ✅ DONE
 
 Delete all five recipes from `shared/src/data/recipes/forest.recipes.ts`
 (`forest-core-bastion`, `-bastion-2`, `-sniper`, `-arcanist`, `-universal`).
@@ -330,7 +330,7 @@ one T3), which also gives those biomes a reason to be revisited at T3.
 
 ---
 
-## Phase D — Presentation
+## Phase D — Presentation ✅ DONE
 
 - `client/src/ui/crafting/itemDisplay.ts` (~L491–504) — the `coreMults` table needs
   the renamed and new keys, each with a readable line. `core.dr-layer-pct` keeps
@@ -345,7 +345,7 @@ one T3), which also gives those biomes a reason to be revisited at T3.
 
 ---
 
-## Phase E — Tests
+## Phase E — Tests ✅ DONE
 
 Repo style: plain `tsx` scripts constructing a real `World`, hand-rolled `assert`,
 trailing `console.log("<name>: ok")`. Run with
@@ -379,7 +379,7 @@ cast feeds it for free. `pnpm typecheck` and `pnpm test` must both be green.
 
 ---
 
-## Phase F — Docs
+## Phase F — Docs ✅ DONE
 
 - Rewrite `docs/cores-current-state.md`. It currently describes the state *before*
   Step 9 ("There is no core system") and is stale twice over.
