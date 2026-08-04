@@ -23,6 +23,7 @@ import {
   tickSummonReconstruction,
 } from './reconstruction';
 import { onSummonDeath, tickSummonerSpecializations } from './specs';
+import { syncSummonerFormationTarget } from './formationTarget';
 
 type SummonerPlayerEntity = PlayerEntity & {
   summonsMinions: NonNullable<PlayerEntity['summonsMinions']>;
@@ -226,5 +227,6 @@ export function updateSummonerArchetype(world: World, dt: number, now: number): 
       runMinionRegen(world, summoner, minion, dt, now);
       driveMinion(world, minion, summoner, now);
     }
+    syncSummonerFormationTarget(world, summoner);
   }
 }

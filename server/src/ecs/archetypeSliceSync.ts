@@ -111,5 +111,6 @@ export function syncArchetypeSlices(world: World, entity: PlayerEntity): void {
     summons.slotRoles ??= new Array(summons.targetCount).fill('normal');
     summons.reconstructionQueue ??= [];
     summons.redirectCursor ??= 0;
+    summons.formationTargetId ??= null;
   }
 }

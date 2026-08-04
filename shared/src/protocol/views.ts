@@ -307,7 +307,9 @@ export function composePlayerView(entity: NetworkedEntity): PlayerView | null {
     attackRange: attack.attackRange,
     attackCooldown: attack.attackCooldown,
     lastAttackAt: attack.lastAttackAt,
-    attackTargetId: entity.hasAttackTarget?.targetId ?? null,
+    attackTargetId: entity.hasAttackTarget?.targetId
+      ?? entity.summonsMinions?.formationTargetId
+      ?? null,
     auto: entity.usesAutocombat?.auto ?? false,
     autoTraverse: entity.usesAutocombat?.autoTraverse ?? false,
     autoIntent: entity.hasAutoIntent ?? null,

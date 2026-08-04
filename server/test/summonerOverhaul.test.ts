@@ -1,6 +1,8 @@
 import {
   GAME_CONFIG,
   STARTER_RUNE_IDS,
+  applyStatusEffect,
+  composePlayerView,
   emptyEquipment,
   projectSummonSlots,
   resolveSummonerProfile,
@@ -12,6 +14,13 @@ import { recalculatePlayerEntityStats } from '../src/ecs/playerEntityFormulas';
 import { updateSummonerArchetype } from '../src/systems/classes/archetypes/summoner/summonerPrototype';
 import { consumeWeightedProc } from '../src/systems/classes/archetypes/summoner/formationAttack';
 import type { CombatContext } from '../src/systems/combat/engine/combatPipeline';
+import {
+  applySummonerCommand,
+  clearSummonerCommand,
+} from '../src/systems/classes/archetypes/summoner/command';
+import { syncSummonerFormationTarget } from '../src/systems/classes/archetypes/summoner/formationTarget';
+import { mirrorTargetStatus } from '../src/systems/combat/targetStatus';
+import { setAttackTarget } from '../src/systems/combat/ai/targeting';
 
 function assert(condition: boolean, message: string): void {
   if (!condition) throw new Error(message);
@@ -115,6 +124,68 @@ function attachSummoner(world: World, persisted: PersistedPlayerSlices) {
 
   const views = projectSummonSlots(summons, player.usesSkills.passives);
   assert(views[1]?.queuePosition === 0, 'HUD must identify the one active reconstruction');
+}
+
+// The owner target frame follows summon combat without borrowing HasAttackTarget.
+{
+  const world = new World();
+  const player = attachSummoner(world, slices('formation-target'));
+  updateSummonerArchetype(world, 0, 1_000);
+  const summoner = player as typeof player & {
+    summonsMinions: NonNullable<typeof player.summonsMinions>;
+  };
+  const minions = summoner.summonsMinions.minionIds.map((id) => world.getMinionEntity(id)!);
+  const targetA = world.createMonster('node-clearing', 'plains-slime', { x: 520, y: 400 });
+  const targetB = world.createMonster('node-clearing', 'plains-slime', { x: 760, y: 400 });
+  assert(targetA !== null && targetB !== null, 'formation target fixtures must spawn');
+
+  setAttackTarget(world, minions[0]!, targetB.isMonster.id);
+  syncSummonerFormationTarget(world, summoner);
+  assert(summoner.summonsMinions.formationTargetId === targetB.isMonster.id,
+    'formation target should follow a summon attack target');
+  assert(composePlayerView(player)?.attackTargetId === targetB.isMonster.id,
+    'player view should project the formation target into the existing target frame');
+  assert(player.hasAttackTarget === undefined,
+    'formation targeting must not give an ordinary Conduit a direct attack target');
+
+  // A split formation retains its previous valid target rather than flickering
+  // back to whichever logical slot happens to be evaluated first.
+  setAttackTarget(world, minions[0]!, targetA.isMonster.id);
+  setAttackTarget(world, minions[1]!, targetB.isMonster.id);
+  syncSummonerFormationTarget(world, summoner);
+  assert(summoner.summonsMinions.formationTargetId === targetB.isMonster.id,
+    'split-target formations should retain the previous active display target');
+
+  applySummonerCommand(world, player, targetA.hasPosition.current);
+  syncSummonerFormationTarget(world, summoner);
+  assert(summoner.summonsMinions.formationTargetId === targetA.isMonster.id,
+    'manual focus should immediately override the displayed formation target');
+
+  applyStatusEffect(targetA.tracksCombat, {
+    id: 'test-formation-debuff',
+    sourceId: player.isPlayer.id,
+    remainingMs: 5_000,
+    data: { totalMs: 5_000 },
+  });
+  mirrorTargetStatus(world);
+  assert(targetA.hasStatus.targetStatus?.some((status) => status.id === 'test-formation-debuff') === true,
+    'formation target debuffs should be mirrored into the target-frame status list');
+
+  applySummonerCommand(world, player, { x: 700, y: 700 });
+  syncSummonerFormationTarget(world, summoner);
+  assert(summoner.summonsMinions.formationTargetId === null,
+    'a formation move command should clear the displayed combat target');
+
+  clearSummonerCommand(world, player);
+  setAttackTarget(world, minions[0]!, targetA.isMonster.id);
+  targetA.hasHealth.hp = 0;
+  syncSummonerFormationTarget(world, summoner);
+  assert(summoner.summonsMinions.formationTargetId === targetB.isMonster.id,
+    'a dead displayed target should fall back to another summon target');
+  setAttackTarget(world, minions[1]!, null);
+  syncSummonerFormationTarget(world, summoner);
+  assert(summoner.summonsMinions.formationTargetId === null,
+    'the formation target should clear when no living summon has a valid target');
 }
 
 // Grand Ritual grants finite charges only to slots alive at the trigger.

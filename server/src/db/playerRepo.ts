@@ -374,6 +374,7 @@ export async function saveCharacter(
         ...entity.summonsMinions,
         minionIds: new Array(entity.summonsMinions.targetCount).fill(''),
         respawnTimers: new Array(entity.summonsMinions.targetCount).fill(0),
+        formationTargetId: null,
       }) : null,
       lastPlayedAt:      now,
       updatedAt:         now,

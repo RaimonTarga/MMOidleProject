@@ -7,7 +7,7 @@ import {
 } from '@mmo-idle/shared';
 import type { World } from '../../world/World';
 
-// Mirrors the full debuff list of each player's current attack target onto the
+// Mirrors the full debuff list of each player's current displayed target onto the
 // monster's networked hasStatus.targetStatus, so the HUD target frame can show
 // what's afflicting the thing you're fighting. Scoped to targeted monsters only
 // (bounded by player count) — not every monster every tick. Stale lists are
@@ -18,7 +18,8 @@ export function mirrorTargetStatus(world: World): void {
   const nowTargeted = new Set<string>();
 
   for (const player of world.livePlayers) {
-    const targetId = player.hasAttackTarget?.targetId;
+    const targetId = player.hasAttackTarget?.targetId
+      ?? player.summonsMinions?.formationTargetId;
     if (!targetId || nowTargeted.has(targetId)) continue;
     const monster = world.getMonsterEntity(targetId);
     if (!monster?.hasStatus || !monster.tracksCombat) continue;

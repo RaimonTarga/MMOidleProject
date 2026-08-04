@@ -23,6 +23,12 @@ export interface SummonsMinions {
   reconstructionQueue: string[];
   activeReconstruction?: ActiveSummonReconstruction;
   redirectCursor: number;
+  /**
+   * Server-selected monster represented by the owner's target frame. This is
+   * deliberately separate from HasAttackTarget: most Conduits cannot attack,
+   * while their independently-targeting summons can.
+   */
+  formationTargetId: string | null;
   volatileMarkedSlotId?: string;
   ritualCharges?: number[];
   bondCharge?: number;
@@ -45,5 +51,6 @@ export function initSummonsMinions(args: {
     targetCount,
     reconstructionQueue: [],
     redirectCursor: 0,
+    formationTargetId: null,
   };
 }
