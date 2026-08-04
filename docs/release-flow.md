@@ -8,6 +8,23 @@
 
 Railway should be configured to deploy from `master`.
 
+## Railway Runtime Configuration
+
+The application service needs `DATABASE_URL`, `LOG_DATABASE_URL`, and `REDIS_URL`
+pointing at the game Postgres, log Postgres, and Redis services. Discord player login
+also requires:
+
+| Variable | Railway value |
+|---|---|
+| `DISCORD_CLIENT_ID` | Discord application client ID |
+| `DISCORD_CLIENT_SECRET` | Discord application secret |
+| `DISCORD_REDIRECT_URI` | Public Railway origin + `/auth/discord/callback` |
+| `CLIENT_URL` | Public player origin, without a trailing fragment |
+
+The redirect URI must be registered exactly in the Discord developer portal. Never
+set `AUTH_DEV_BYPASS` in production. Discord player login does not secure `/admin`;
+keep the dashboard and admin namespace behind trusted access until admin auth lands.
+
 Release versions use `X.Y` major.minor semantics. Patch fixes are rolled into the
 next minor release rather than cut as separate three-segment releases.
 

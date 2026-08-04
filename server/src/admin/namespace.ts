@@ -19,6 +19,7 @@ import { queryAnalyticsSnapshot } from '../logdb/analyticsRepo';
 import { runAdminAction } from './actions';
 import { buildPlayerSummaries } from './playerSummaries';
 import { listCharacters } from '../db/playerRepo';
+import type { PlayerSocketSession } from '../net/socketSession';
 
 export interface AdminNamespaceControls {
   emitPlayerSummaries: () => void;
@@ -29,7 +30,7 @@ export function registerAdminNamespace(
   io: Server<ClientToServerEvents, ServerToClientEvents>,
   world: World,
   gameDb: DB,
-  socketByAccount: ReadonlyMap<string, string>,
+  sessionsBySocket: ReadonlyMap<string, PlayerSocketSession>,
   inactiveSockets: ReadonlySet<string>,
 ): AdminNamespaceControls {
   const admin = io.of('/admin') as unknown as Namespace<
@@ -43,7 +44,7 @@ export function registerAdminNamespace(
   const emitPlayerSummaries = () => {
     admin.emit(
       'admin:players',
-      buildPlayerSummaries(world, socketByAccount, inactiveSockets),
+      buildPlayerSummaries(world, sessionsBySocket, inactiveSockets),
     );
   };
 
@@ -60,7 +61,7 @@ export function registerAdminNamespace(
     log.info({ adminSocketId: socket.id }, 'admin dashboard connected');
     socket.emit(
       'admin:players',
-      buildPlayerSummaries(world, socketByAccount, inactiveSockets),
+      buildPlayerSummaries(world, sessionsBySocket, inactiveSockets),
     );
     void emitCharacters(socket);
     socket.emit('admin:logs', recentAdminLogs());
@@ -69,7 +70,7 @@ export function registerAdminNamespace(
     socket.on('admin:requestPlayers', () => {
       socket.emit(
         'admin:players',
-        buildPlayerSummaries(world, socketByAccount, inactiveSockets),
+        buildPlayerSummaries(world, sessionsBySocket, inactiveSockets),
       );
     });
 

@@ -120,6 +120,13 @@ Game DB migrations live in `server/src/db/migrations`; operational log migration
 live in `server/src/logdb/migrations`. Both run at boot. Log retention defaults to
 7 days via `LOG_RETENTION_DAYS`.
 
+Discord login additionally uses `DISCORD_CLIENT_ID`, `DISCORD_CLIENT_SECRET`,
+`DISCORD_REDIRECT_URI`, and `CLIENT_URL`. `AUTH_DEV_BYPASS=1` enables explicit
+`devAccountId` socket auth only when `NODE_ENV !== production`; production always
+requires an opaque session token.
+Set `VITE_AUTH_DEV_ACCOUNT_ID` to the same development account ID when the browser
+should use that explicit bypass instead of Discord login.
+
 ## Package Boundaries
 
 - `shared/` contains component shapes, protocol DTOs, socket maps, pure formulas,
@@ -216,6 +223,8 @@ Important formula conventions:
 - Structured logs use `server/src/log.ts` and persist/query via `server/src/logdb/`.
 - Telemetry is published through `server/src/broker/` using Redis and consumed by
   clients/admin as `world:telemetry` / `admin:telemetry`.
+- Discord player authentication does not cover `/admin` or the `/admin` Socket.IO
+  namespace. Keep them behind trusted access until separate admin auth exists.
 
 ## Socket Surface
 
@@ -223,12 +232,15 @@ Do not hand-write parallel socket types. Update shared protocol first.
 
 Player server-to-client highlights:
 - `state:sync`, `node:delta`, `node:preparing`
+- `account:characters`, `character:createResult`, `character:deleteResult`,
+  `character:selectResult`
 - `crafting:result`, `inventory:upgradeResult`
 - `player:died`, `player:ascended`, `overlord:felled`
 - `world:events`, `world:telemetry`, `world:bossFelled`
 - `session:kicked`
 
 Player client-to-server highlights:
+- Lobby: `character:create`, `character:select`, `character:delete`
 - Movement/AI: `player:move`, `player:navigateTo`, `player:setAuto`,
   `player:setAutoTraverse`, `player:setAutocombatConfig`, `player:commandSummons`
 - Sync/session: `player:requestSync`, `player:setActive`, `player:ackDeath`

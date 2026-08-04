@@ -17,6 +17,7 @@ type WorldLogRow = typeof worldLogEntries.$inferSelect;
 export interface WorldLogInsertEntry {
   viewerId: string;
   viewerAccountId?: string;
+  viewerCharacterId?: string;
   viewerName: string;
   event: WorldLogEvent;
 }
@@ -32,6 +33,7 @@ export async function insertWorldLogEntries(
     nodeId: entry.event.nodeId,
     viewerId: entry.viewerId,
     viewerAccountId: entry.viewerAccountId ?? null,
+    viewerCharacterId: entry.viewerCharacterId ?? null,
     viewerName: entry.viewerName,
     event: entry.event as unknown as Record<string, unknown>,
   }));
@@ -50,7 +52,9 @@ export async function queryWorldLogEntries(
   );
   const clauses: SQL<unknown>[] = [];
   if (typeof query.beforeTs === 'number') clauses.push(lt(worldLogEntries.ts, query.beforeTs));
-  if (query.viewerId && query.viewerAccountId) {
+  if (query.viewerCharacterId) {
+    clauses.push(eq(worldLogEntries.viewerCharacterId, query.viewerCharacterId));
+  } else if (query.viewerId && query.viewerAccountId) {
     const viewerClause = or(
       eq(worldLogEntries.viewerId, query.viewerId),
       eq(worldLogEntries.viewerAccountId, query.viewerAccountId),
@@ -91,6 +95,7 @@ function rowToEntry(row: WorldLogRow): AdminWorldLogEntry {
     id: row.id,
     viewerId: row.viewerId,
     viewerAccountId: row.viewerAccountId ?? undefined,
+    viewerCharacterId: row.viewerCharacterId ?? undefined,
     viewerName: row.viewerName,
     event: row.event as unknown as WorldLogEvent,
   };

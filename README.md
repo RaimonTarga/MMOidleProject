@@ -26,7 +26,7 @@ Browser-based hobbyist MMORPG / idle game built for a small group of friends (~1
 | ECS | miniplex (server-side entity/component model) |
 | Database | PostgreSQL (game DB :5432, log DB :5433) + Drizzle ORM |
 | Cache / pub-sub | Redis :6379 |
-| Auth | localStorage UUID (Discord OAuth is a TODO) |
+| Auth | Discord OAuth + opaque 30-day localStorage session token |
 | Packages | pnpm workspaces monorepo |
 
 ---
@@ -231,6 +231,21 @@ pnpm size:check             # bundle size check
 | `LOG_DATABASE_URL` | PostgreSQL log DB connection string |
 | `REDIS_URL` | Redis connection string |
 | `LOG_RETENTION_DAYS` | Log retention (default 7) |
+| `DISCORD_CLIENT_ID` | Discord OAuth application client ID |
+| `DISCORD_CLIENT_SECRET` | Discord OAuth application client secret |
+| `DISCORD_REDIRECT_URI` | Exact registered callback URL, ending in `/auth/discord/callback` |
+| `CLIENT_URL` | Player-client URL receiving the minted session fragment |
+| `AUTH_DEV_BYPASS` | Set to `1` for explicit `devAccountId` socket auth outside production only |
+| `VITE_AUTH_DEV_ACCOUNT_ID` | Optional matching account ID for the Vite client when the server dev bypass is enabled |
+
+Discord login uses the OAuth2 authorization-code flow with the `identify` scope.
+Register every callback URL exactly in the Discord developer portal; localhost,
+LAN/tunnel, and deployed URLs are separate redirect entries.
+
+These credentials protect the player session only. They do not protect `/admin` or
+the `/admin` Socket.IO namespace; keep both behind trusted access until separate
+admin authentication is implemented. See
+[`docs/auth-and-characters-current-state.md`](docs/auth-and-characters-current-state.md).
 
 ---
 
@@ -240,5 +255,5 @@ pnpm size:check             # bundle size check
 - Admin auth not implemented — keep admin behind trusted-dev access only
 - Continue T4 balance and playtest passes
 - Some T3+ monster balance still placeholder
-- Discord OAuth / login screen / character select
+- Pre-login spectator presentation
 - Mobile HUD panel internals (desktop-styled panels need portrait redesign)

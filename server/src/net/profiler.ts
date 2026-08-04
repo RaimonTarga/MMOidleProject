@@ -1,6 +1,6 @@
 import type { DeltaSnapshot } from '@mmo-idle/shared';
 
-export type BroadcastKind = 'state:sync' | 'node:delta';
+export type BroadcastKind = 'state:sync' | 'node:delta' | 'spectate:snapshot';
 
 const ENABLED = process.env.NETCODE_PROFILE === '1';
 

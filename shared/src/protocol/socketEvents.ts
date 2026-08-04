@@ -10,6 +10,7 @@ import type { PlayerDeathPayload } from "./death";
 import type { NodeTelemetrySnapshot } from "./nodeTelemetry";
 import type { WorldLogEvent } from "./worldLogEvents";
 import type { Vec2 } from "../systems/spatial";
+import type { CharacterSummary } from "./characters";
 
 export type PlayerMoveMode = "path" | "direct";
 export interface PlayerMoveOptions {
@@ -23,8 +24,39 @@ export interface ReleaseAnnouncementPayload {
   markdown: string;
 }
 
+export interface CharacterActionResult {
+  success: boolean;
+  reason?: string;
+}
+
+export interface CharacterCreateResult extends CharacterActionResult {
+  characterId?: string;
+}
+
+export interface SpectateStatus {
+  mode: "player" | "clearing";
+  nodeId: string;
+  targetId?: string;
+  targetName?: string;
+  paused: boolean;
+}
+
 /** Events the server sends to clients */
 export interface ServerToClientEvents {
+  /** Anonymous, privacy-filtered world stream. */
+  "spectate:snapshot": (snapshot: DeltaSnapshot) => void;
+  /** Current follow target or Clearing fallback. */
+  "spectate:status": (status: SpectateStatus) => void;
+  /** Admission/stream failure for anonymous spectators. */
+  "spectate:error": (payload: { reason: string }) => void;
+  /** Current non-deleted characters for the authenticated account. */
+  "account:characters": (payload: { characters: CharacterSummary[] }) => void;
+  /** Authoritative result of a lobby character-creation request. */
+  "character:createResult": (result: CharacterCreateResult) => void;
+  /** Authoritative result of a lobby character-deletion request. */
+  "character:deleteResult": (result: CharacterActionResult) => void;
+  /** Failure/success acknowledgement for entering the world as a character. */
+  "character:selectResult": (result: CharacterActionResult) => void;
   /** Full component resync sent to a newly connected player */
   "state:sync": (snapshot: DeltaSnapshot) => void;
   /** Component-level authoritative world delta broadcast every server tick. */
@@ -67,6 +99,16 @@ export interface ServerToClientEvents {
 
 /** Events clients send to the server */
 export interface ClientToServerEvents {
+  /** Pause anonymous high-volume streaming while the tab is hidden. */
+  "spectate:setActive": (active: boolean) => void;
+  /** Resume a spectator paused by the idle guardrail. */
+  "spectate:resume": () => void;
+  /** Create an isolated character for the authenticated account. */
+  "character:create": (payload: { name: string }) => void;
+  /** Enter the world as one owned, non-deleted character. */
+  "character:select": (payload: { characterId: string }) => void;
+  /** Soft-delete one owned character while idling in the lobby. */
+  "character:delete": (payload: { characterId: string }) => void;
   /** Set the player's movement destination. Clicks pathfind; keyboard/gamepad slides directly. */
   "player:move": (pos: Vec2, opts?: PlayerMoveOptions) => void;
   /** Summoner: shift+click command — focus a clicked enemy or move minions to a point. */

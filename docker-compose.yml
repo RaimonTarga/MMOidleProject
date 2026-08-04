@@ -88,6 +88,11 @@ services:
       LOG_DATABASE_URL: postgresql://postgres:postgres@logdb:5432/logdb
       REDIS_URL: redis://redis:6379
       LOG_RETENTION_DAYS: "7"
+      DISCORD_CLIENT_ID: ${DISCORD_CLIENT_ID:-}
+      DISCORD_CLIENT_SECRET: ${DISCORD_CLIENT_SECRET:-}
+      DISCORD_REDIRECT_URI: ${DISCORD_REDIRECT_URI:-http://localhost:4000/auth/discord/callback}
+      CLIENT_URL: ${CLIENT_URL:-http://localhost:4000}
+      AUTH_DEV_BYPASS: ${AUTH_DEV_BYPASS:-0}
       PORT: "4000"
       NODE_ENV: production
       # Runtime flag that turns on the server's dev tooling (test room, dev items)
@@ -114,6 +119,11 @@ services:
       LOG_DATABASE_URL: postgresql://postgres:postgres@logdb:5432/logdb
       REDIS_URL: redis://redis:6379
       LOG_RETENTION_DAYS: "7"
+      DISCORD_CLIENT_ID: ${DISCORD_CLIENT_ID:-}
+      DISCORD_CLIENT_SECRET: ${DISCORD_CLIENT_SECRET:-}
+      DISCORD_REDIRECT_URI: ${DISCORD_REDIRECT_URI:-http://localhost:4000/auth/discord/callback}
+      CLIENT_URL: ${CLIENT_URL:-http://localhost:3000}
+      AUTH_DEV_BYPASS: ${AUTH_DEV_BYPASS:-0}
       PORT: "4000"
       NODE_ENV: development
       DEV_TOOLS: "true"

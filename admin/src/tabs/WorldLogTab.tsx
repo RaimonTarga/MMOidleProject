@@ -34,6 +34,7 @@ type TargetOption = {
   label: string;
   viewerId?: string;
   viewerAccountId?: string;
+  viewerCharacterId?: string;
 };
 
 export function WorldLogTab() {
@@ -48,22 +49,22 @@ export function WorldLogTab() {
 
   const targetOptions = useMemo<TargetOption[]>(() => {
     const options: TargetOption[] = [{ key: 'all', label: 'All viewers' }];
+    const characterById = new Map(characters.map((character) => [character.id, character]));
     for (const player of players) {
+      const character = characterById.get(player.characterId);
       options.push({
-        key: `online:${player.id}`,
-        label: `Online · ${player.name} · ${player.accountId ?? player.id}`,
-        // Prefer the stable account id so the query includes logs from prior sockets.
-        viewerId: player.accountId ? undefined : player.id,
-        viewerAccountId: player.accountId ?? undefined,
+        key: `character:${player.characterId}`,
+        label: `Online · ${player.name} · ${character?.accountDisplayName ?? player.accountId ?? 'unknown account'}`,
+        viewerCharacterId: player.characterId,
       });
     }
-    const liveAccounts = new Set(players.map((player) => player.accountId).filter(Boolean));
+    const liveCharacters = new Set(players.map((player) => player.characterId));
     for (const character of characters) {
-      if (liveAccounts.has(character.accountId)) continue;
+      if (liveCharacters.has(character.id)) continue;
       options.push({
-        key: `account:${character.accountId}`,
-        label: `Saved · ${character.name} · ${character.accountId}`,
-        viewerAccountId: character.accountId,
+        key: `character:${character.id}`,
+        label: `Saved · ${character.name} · ${character.accountDisplayName}`,
+        viewerCharacterId: character.id,
       });
     }
     return options;
@@ -79,6 +80,7 @@ export function WorldLogTab() {
       kind: kind === 'all' ? undefined : kind,
       viewerId: selectedTarget.viewerId,
       viewerAccountId: selectedTarget.viewerAccountId,
+      viewerCharacterId: selectedTarget.viewerCharacterId,
     };
     setHasQueried(true);
     requestWorldLog(payload);
@@ -178,7 +180,10 @@ function WorldLogRow({
       </div>
       {formatted.detail && <div className="text-red-100/55">{formatted.detail}</div>}
       <div className="mt-1 text-xs text-red-200/25">
-        viewer {entry.viewerName} · {entry.viewerAccountId ?? entry.viewerId}
+        viewer {entry.viewerName}
+        {' · character '}{entry.viewerCharacterId ?? 'legacy/unknown'}
+        {' · account '}{entry.viewerAccountId ?? 'unknown'}
+        {' · socket '}{entry.viewerId}
       </div>
     </div>
   );

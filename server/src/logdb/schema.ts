@@ -37,6 +37,7 @@ export const worldLogEntries = pgTable(
     nodeId: text('node_id').notNull(),
     viewerId: text('viewer_id').notNull(),
     viewerAccountId: text('viewer_account_id'),
+    viewerCharacterId: text('viewer_character_id'),
     viewerName: text('viewer_name').notNull(),
     event: jsonb('event_json').$type<Record<string, unknown>>().notNull(),
   },
@@ -44,6 +45,7 @@ export const worldLogEntries = pgTable(
     tsIdx: index('world_log_entries_ts_idx').on(table.ts),
     viewerTsIdx: index('world_log_entries_viewer_ts_idx').on(table.viewerId, table.ts),
     viewerAccountTsIdx: index('world_log_entries_viewer_account_ts_idx').on(table.viewerAccountId, table.ts),
+    viewerCharacterTsIdx: index('world_log_entries_viewer_character_ts_idx').on(table.viewerCharacterId, table.ts),
     nodeTsIdx: index('world_log_entries_node_ts_idx').on(table.nodeId, table.ts),
   }),
 );

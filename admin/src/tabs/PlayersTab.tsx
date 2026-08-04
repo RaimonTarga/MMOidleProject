@@ -28,7 +28,7 @@ export function PlayersTab() {
     const q = search.trim().toLowerCase();
     if (!q) return players;
     return players.filter((p) =>
-      [p.id, p.accountId, p.name, p.nodeId, p.combatArchetype]
+      [p.id, p.characterId, p.accountId, p.name, p.nodeId, p.combatArchetype]
         .filter(Boolean)
         .some((v) => String(v).toLowerCase().includes(q)),
     );
@@ -100,8 +100,9 @@ function PlayerRow({ player }: { player: AdminPlayerSummary }) {
     <tr className="border-t border-red-950/70 align-top">
       <td className="px-3 py-3">
         <div className="font-medium">{player.name}</div>
-        <div className="text-xs text-red-200/35">{player.id}</div>
-        <div className="text-xs text-red-200/25">{player.accountId ?? 'no account id'}</div>
+        <div className="text-xs text-red-200/35">character {player.characterId}</div>
+        <div className="text-xs text-red-200/25">account {player.accountId ?? 'none'}</div>
+        <div className="text-xs text-red-200/20">socket {player.id}</div>
       </td>
       <td className="px-3 py-3">{player.nodeId}</td>
       <td className="px-3 py-3">

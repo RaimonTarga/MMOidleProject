@@ -3,6 +3,7 @@ import { createRenderState, type RenderState } from '../../render/state';
 import type { NeighborLayer } from '../../render/neighborScenes';
 import type { AltarPromptHandle } from '../../render/altarPrompt';
 import type { GameSocket } from '../../net/socket';
+import { isSpectatorSession } from '../../net/session';
 import {
   createGameScene,
   preloadGameAssets,
@@ -17,6 +18,10 @@ export class GameScene extends Phaser.Scene {
   socket!: GameSocket;
   readonly state: RenderState = createRenderState();
   myId = '';
+  readonly spectatorMode = isSpectatorSession();
+  spectatorTargetId: string | null = null;
+  spectatorPaused = false;
+  spectatorSnapshotNodeId: string | null = null;
 
   lastDrawnNodeId = '';
   /** True while a Link's-Awakening-style map slide is in progress. */

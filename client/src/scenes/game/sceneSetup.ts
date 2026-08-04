@@ -25,9 +25,21 @@ import {
   sendSetAutocombatConfig,
   sendSetAutoTraverse,
 } from "../../net/intents";
-import { accountId, displayName } from "../../clientAuth";
 import { connectGameSocket, wireSocketHandlers } from "../../net/socket";
+import {
+  bindLobbySocket,
+  handleCharacterList,
+  handleCreateResult,
+  handleDeleteResult,
+  handleInitialStateSync,
+  handleSelectResult,
+  handleSocketConnected,
+  handleSocketUnauthorized,
+  handleSpectateError,
+  handleSpectateStatus,
+} from "../../auth/lobbyState";
 import { applyDelta } from "../../net/deltaApplier";
+import { hydrateSpectatorSnapshot } from "../../net/spectatorSnapshot";
 import {
   ATLAS_KEY,
   BIOME_DECOR,
@@ -272,7 +284,14 @@ export function createGameScene(scene: GameScene): void {
   initEffectFrames(scene);
   initVoidOverlordSheet(scene);
   initMistPostFx(scene);
-  initAudio(scene);
+  if (scene.spectatorMode) {
+    // The landing preview is intentionally silent. Muting Phaser itself is the
+    // final backstop, while skipping initAudio also prevents music subscriptions
+    // and synthesized fallback cues from ever starting for anonymous viewers.
+    scene.sound.mute = true;
+  } else {
+    initAudio(scene);
+  }
 
   const cam = scene.cameras.main;
   // Snap the camera scroll to whole pixels. A fractional scroll during motion
@@ -299,32 +318,50 @@ export function createGameScene(scene: GameScene): void {
   scene.minimap = scene.add
     .graphics()
     .setScrollFactor(0)
-    .setDepth(DEPTH.MINIMAP);
+    .setDepth(DEPTH.MINIMAP)
+    .setVisible(!scene.spectatorMode);
 
-  attachHudEvents(scene);
-  attachClickToMove(scene);
-  const detachKb = attachKeyboard(scene);
-  const detachPad = attachGamepad(scene);
-  const stopMove = startMovementTick(scene);
+  if (!scene.spectatorMode) {
+    attachHudEvents(scene);
+    attachClickToMove(scene);
+  }
+  const detachKb = scene.spectatorMode ? () => {} : attachKeyboard(scene);
+  const detachPad = scene.spectatorMode ? () => {} : attachGamepad(scene);
+  const stopMove = scene.spectatorMode ? () => {} : startMovementTick(scene);
 
   function onVisibilityChange(): void {
     if (document.hidden) {
       abortMapSlide(scene);
-      if (scene.socket.connected) sendSetActive(scene.socket, false);
+      if (scene.socket.connected) {
+        if (scene.spectatorMode) scene.socket.emit("spectate:setActive", false);
+        else sendSetActive(scene.socket, false);
+      }
       onDocumentHidden();
       return;
     }
     if (scene.socket.connected) {
-      sendSetActive(scene.socket, true);
-      sendRequestSync(scene.socket);
+      if (scene.spectatorMode) scene.socket.emit("spectate:setActive", true);
+      else {
+        sendSetActive(scene.socket, true);
+        sendRequestSync(scene.socket);
+      }
     }
     abortMapSlide(scene);
     beginTabResync(scene.state, scene);
   }
   document.addEventListener("visibilitychange", onVisibilityChange);
+  const resumeSpectator = (): void => {
+    if (scene.spectatorMode && scene.spectatorPaused && scene.socket.connected) {
+      scene.socket.emit("spectate:resume");
+    }
+  };
+  document.addEventListener("pointerdown", resumeSpectator);
+  document.addEventListener("keydown", resumeSpectator);
 
   scene.events.once("shutdown", () => {
     document.removeEventListener("visibilitychange", onVisibilityChange);
+    document.removeEventListener("pointerdown", resumeSpectator);
+    document.removeEventListener("keydown", resumeSpectator);
     detachKb();
     detachPad();
     stopMove();
@@ -354,11 +391,15 @@ export function updateGameScene(scene: GameScene, delta: number): void {
       instantReskinNode(scene, scene.state.ownNodeId);
     }
   } else if (scene.state.ownNodeId !== scene.lastDrawnNodeId) {
+    if (scene.spectatorMode) {
+      instantReskinNode(scene, scene.state.ownNodeId);
+    } else {
     const dir = directionBetweenNodes(scene.lastDrawnNodeId, scene.state.ownNodeId);
     if (dir) {
       beginMapSlide(scene, dir, scene.state.ownNodeId);
     } else {
       instantReskinNode(scene, scene.state.ownNodeId);
+    }
     }
   }
 
@@ -387,7 +428,7 @@ export function updateGameScene(scene: GameScene, delta: number): void {
     updateAltarGlow(scene, dt);
     updateAltarPrompt(scene);
     drawExitMarkers(scene);
-    drawMinimap(scene);
+    if (!scene.spectatorMode) drawMinimap(scene);
   }
 
   // The camera follows the own player every frame — including during a map
@@ -395,7 +436,14 @@ export function updateGameScene(scene: GameScene, delta: number): void {
   // lerp used for normal world movement, so the camera tracks the player across
   // the transition instead of running a separate time-based tween that freezes
   // at the boundary and then snaps onto the moved player.
-  const base = getOwnBase(scene.state);
+  const spectatorBase = scene.spectatorTargetId
+    ? scene.state.interpolation.get(scene.spectatorTargetId)?.base
+    : undefined;
+  const base = scene.spectatorMode
+    ? (spectatorBase
+        ? { x: spectatorBase.x, y: spectatorBase.y }
+        : { x: GAME_CONFIG.NODE_WIDTH / 2, y: GAME_CONFIG.NODE_HEIGHT / 2 })
+    : getOwnBase(scene.state);
   if (base) {
     const scenePos = nodeToSceneCoords(base.x, base.y);
     const shouldHoldCamera =
@@ -440,29 +488,64 @@ export function updateGameScene(scene: GameScene, delta: number): void {
 }
 
 function connectSocket(scene: GameScene): void {
-  scene.socket = connectGameSocket({ accountId, displayName });
+  scene.socket = connectGameSocket();
+  bindLobbySocket(scene.socket);
   const atomStore = getDefaultStore();
 
   wireSocketHandlers(scene.socket, {
     onConnect: (socket) => {
+      handleSocketConnected();
       scene.myId = socket.id ?? "";
       atomStore.set(statusAtom, "connected");
       // Re-assert tab focus so a reconnect while hidden doesn't resume streaming.
-      sendSetActive(socket, !document.hidden);
-      const gameplaySettings = loadGameplaySettings();
-      sendSetAutoTraverse(socket, gameplaySettings.autoTraverseEnabled);
-      sendSetAutocombatConfig(socket, gameplaySettings.autocombat);
+      if (scene.spectatorMode) {
+        socket.emit("spectate:setActive", !document.hidden);
+      } else {
+        sendSetActive(socket, !document.hidden);
+        const gameplaySettings = loadGameplaySettings();
+        sendSetAutoTraverse(socket, gameplaySettings.autoTraverseEnabled);
+        sendSetAutocombatConfig(socket, gameplaySettings.autocombat);
+      }
     },
+    onUnauthorized: handleSocketUnauthorized,
     onDisconnect: () => {
       atomStore.set(statusAtom, "disconnected");
       syncPlayerAtoms(null);
       scene.state.gameplaySettingsSynced = false;
       scene.myId = "";
       scene.state.ownId = null;
+      scene.spectatorTargetId = null;
+      scene.spectatorSnapshotNodeId = null;
       scene.cameraScrollReady = false;
       scene.cameras.main.stopFollow();
     },
+    onCharacterList: handleCharacterList,
+    onCharacterCreateResult: handleCreateResult,
+    onCharacterDeleteResult: handleDeleteResult,
+    onCharacterSelectResult: handleSelectResult,
+    onStateSync: (snapshot) => {
+      applyDelta(scene.state, snapshot, scene);
+      handleInitialStateSync();
+    },
     onDelta: (snapshot) => applyDelta(scene.state, snapshot, scene),
+    onSpectateSnapshot: (snapshot) => {
+      const nodeChanged = scene.state.ownNodeId !== snapshot.nodeId;
+      scene.state.ownNodeId = snapshot.nodeId;
+      if (nodeChanged) scene.cameraScrollReady = false;
+      const hydrated = hydrateSpectatorSnapshot(
+        snapshot,
+        scene.spectatorSnapshotNodeId,
+        scene.state.ids,
+      );
+      scene.spectatorSnapshotNodeId = snapshot.nodeId;
+      applyDelta(scene.state, hydrated, scene);
+    },
+    onSpectateStatus: (status) => {
+      scene.spectatorTargetId = status.targetId ?? null;
+      scene.spectatorPaused = status.paused;
+      handleSpectateStatus(status);
+    },
+    onSpectateError: handleSpectateError,
     onNodePreparing: ({ nodeId }) => {
       if (nodeId === scene.state.ownNodeId || nodeId === scene.lastDrawnNodeId) return;
       const dir = directionBetweenNodes(scene.state.ownNodeId, nodeId);

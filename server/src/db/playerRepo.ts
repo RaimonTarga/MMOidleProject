@@ -1,8 +1,9 @@
-import { eq } from 'drizzle-orm';
+import { and, desc, eq, isNull } from 'drizzle-orm';
 import { randomUUID } from 'crypto';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import type {
   AdminCharacterRecord,
+  CharacterSummary,
   HasHealth,
   HasPosition,
   HoldsInventory,
@@ -15,6 +16,7 @@ import {
   EQUIPMENT_SLOTS,
   GAME_CONFIG,
   ITEM_DATABASE,
+  normalizeEquipment,
   emptyEquipment,
   emptyEquippedAbilities,
   emptyEquippedStances,
@@ -28,6 +30,8 @@ import {
   PACE_FAMILIES,
   CLEARING_NODE_ID,
   WORLD_NODES,
+  buildCharacterSummary,
+  validateCharacterName,
   type Vec2,
 } from '@mmo-idle/shared';
 import type { PlayerEntity } from '../ecs/entity';
@@ -50,9 +54,11 @@ export interface PersistedPlayerSlices {
 export interface AccountLoginResult {
   previousLoginAt: number | null;
   currentLoginAt: number;
+  displayName: string;
 }
 
-export async function findOrCreateAccount(
+/** Provision the explicitly configured, non-production development identity. */
+export async function findOrCreateDevAccount(
   db: DB,
   accountId: string,
   displayName: string,
@@ -67,7 +73,7 @@ export async function findOrCreateAccount(
       createdAt:   now,
       lastLoginAt: now,
     });
-    return { previousLoginAt: null, currentLoginAt: now };
+    return { previousLoginAt: null, currentLoginAt: now, displayName };
   }
 
   const previousLoginAt = existing[0].lastLoginAt || existing[0].createdAt;
@@ -77,25 +83,125 @@ export async function findOrCreateAccount(
       lastLoginAt: now,
     })
     .where(eq(accounts.id, accountId));
-  return { previousLoginAt, currentLoginAt: now };
+  return { previousLoginAt, currentLoginAt: now, displayName };
+}
+
+/** Record a socket login for an account that was already authenticated. */
+export async function touchAccountLogin(
+  db: DB,
+  accountId: string,
+): Promise<AccountLoginResult> {
+  const rows = await db.select().from(accounts)
+    .where(eq(accounts.id, accountId))
+    .limit(1);
+  const account = rows[0];
+  if (!account) throw new Error('Authenticated account no longer exists.');
+
+  const now = Date.now();
+  await db.update(accounts)
+    .set({ lastLoginAt: now })
+    .where(eq(accounts.id, accountId));
+
+  return {
+    previousLoginAt: account.lastLoginAt > 0 ? account.lastLoginAt : null,
+    currentLoginAt: now,
+    displayName: account.displayName,
+  };
+}
+
+/** Upsert Discord identity without consuming the gameplay-login timestamp. */
+export async function upsertDiscordAccount(
+  db: DB,
+  discordId: string,
+  displayName: string,
+): Promise<string> {
+  const now = Date.now();
+  const rows = await db.insert(accounts)
+    .values({
+      id: randomUUID(),
+      displayName,
+      discordId,
+      createdAt: now,
+      lastLoginAt: 0,
+    })
+    .onConflictDoUpdate({
+      target: accounts.discordId,
+      set: { displayName },
+    })
+    .returning({ id: accounts.id });
+
+  const account = rows[0];
+  if (!account) throw new Error('Discord account upsert returned no row.');
+  return account.id;
 }
 
 // ── Character ─────────────────────────────────────────────────────────────────
 
-export async function getOrCreateCharacter(
+export async function listAccountCharacters(
+  db: DB,
+  accountId: string,
+): Promise<CharacterSummary[]> {
+  const rows = await db.select().from(characters)
+    .where(and(
+      eq(characters.accountId, accountId),
+      isNull(characters.deletedAt),
+    ))
+    .orderBy(desc(characters.lastPlayedAt), desc(characters.updatedAt));
+
+  return rows.map((row) => buildCharacterSummary(hydratePlayerSlices(row), row));
+}
+
+export async function createCharacter(
+  db: DB,
+  accountId: string,
+  requestedName: string,
+): Promise<string> {
+  const validation = validateCharacterName(requestedName);
+  if (!validation.ok) throw new Error(validation.reason);
+
+  const fresh = await insertCharacter(db, accountId, validation.name);
+  return fresh.isPlayer.id;
+}
+
+export async function loadCharacter(
+  db: DB,
+  accountId: string,
+  characterId: string,
+): Promise<PersistedPlayerSlices | null> {
+  const rows = await db.update(characters)
+    .set({ lastPlayedAt: Date.now() })
+    .where(and(
+      eq(characters.id, characterId),
+      eq(characters.accountId, accountId),
+      isNull(characters.deletedAt),
+    ))
+    .returning();
+
+  return rows[0] ? hydratePlayerSlices(rows[0]) : null;
+}
+
+export async function softDeleteCharacter(
+  db: DB,
+  accountId: string,
+  characterId: string,
+): Promise<boolean> {
+  const rows = await db.update(characters)
+    .set({ deletedAt: Date.now(), updatedAt: Date.now() })
+    .where(and(
+      eq(characters.id, characterId),
+      eq(characters.accountId, accountId),
+      isNull(characters.deletedAt),
+    ))
+    .returning({ id: characters.id });
+
+  return rows.length > 0;
+}
+
+async function insertCharacter(
   db: DB,
   accountId: string,
   characterName: string,
 ): Promise<PersistedPlayerSlices> {
-  const rows = await db.select().from(characters)
-    .where(eq(characters.accountId, accountId))
-    .limit(1);
-
-  const row = rows[0];
-  if (row) {
-    return hydratePlayerSlices(row);
-  }
-
   const charId = randomUUID();
   const spawn: Vec2 = {
     x: GAME_CONFIG.NODE_WIDTH  / 2,
@@ -103,6 +209,7 @@ export async function getOrCreateCharacter(
   };
   const fresh = buildFreshSlices(charId, characterName, spawn);
 
+  const now = Date.now();
   await db.insert(characters).values({
     id:                charId,
     accountId,
@@ -112,16 +219,22 @@ export async function getOrCreateCharacter(
     tracksProgression: JSON.stringify(fresh.tracksProgression),
     holdsInventory:    JSON.stringify(fresh.holdsInventory),
     usesSkills:        JSON.stringify(fresh.usesSkills),
-    updatedAt:         Date.now(),
+    lastPlayedAt:      now,
+    updatedAt:         now,
   });
 
   return fresh;
 }
 
-export async function saveCharacter(db: DB, accountId: string, entity: PlayerEntity): Promise<void> {
+export async function saveCharacter(
+  db: DB,
+  characterId: string,
+  entity: PlayerEntity,
+): Promise<void> {
+  const now = Date.now();
   await db.update(characters)
     .set({
-      isPlayer:          JSON.stringify(entity.isPlayer),
+      isPlayer:          JSON.stringify({ ...entity.isPlayer, id: characterId }),
       hasPosition:       JSON.stringify(entity.hasPosition),
       hasHealth:         JSON.stringify(entity.hasHealth),
       tracksProgression: JSON.stringify(entity.tracksProgression),
@@ -130,9 +243,13 @@ export async function saveCharacter(db: DB, accountId: string, entity: PlayerEnt
         ...entity.usesSkills,
         passives: {},
       }),
-      updatedAt:         Date.now(),
+      lastPlayedAt:      now,
+      updatedAt:         now,
     })
-    .where(eq(characters.accountId, accountId));
+    .where(and(
+      eq(characters.id, characterId),
+      isNull(characters.deletedAt),
+    ));
 }
 
 export async function listCharacters(db: DB): Promise<AdminCharacterRecord[]> {
@@ -142,7 +259,8 @@ export async function listCharacters(db: DB): Promise<AdminCharacterRecord[]> {
       accountDisplayName: accounts.displayName,
     })
     .from(characters)
-    .leftJoin(accounts, eq(characters.accountId, accounts.id));
+    .leftJoin(accounts, eq(characters.accountId, accounts.id))
+    .where(isNull(characters.deletedAt));
 
   return rows.map(({ character, accountDisplayName }) => {
     const slices = hydratePlayerSlices(character);
@@ -178,6 +296,7 @@ export async function listCharacters(db: DB): Promise<AdminCharacterRecord[]> {
       activeStance: slices.tracksProgression.activeStance,
       knownRites: slices.tracksProgression.knownRites,
       equippedRites: slices.tracksProgression.equippedRites,
+      lastPlayedAt: character.lastPlayedAt,
       updatedAt: character.updatedAt,
     };
   });
@@ -227,10 +346,7 @@ function pruneUnknownItems(inv: HoldsInventory): void {
 
 function hydratePlayerSlices(row: CharacterRow): PersistedPlayerSlices {
   const holdsInventory = parseSlice<HoldsInventory>(row.holdsInventory);
-  holdsInventory.equipment = {
-    ...emptyEquipment(),
-    ...holdsInventory.equipment,
-  };
+  holdsInventory.equipment = normalizeEquipment(holdsInventory.equipment);
   holdsInventory.itemUpgrades = holdsInventory.itemUpgrades ?? {};
   holdsInventory.inventory = holdsInventory.inventory ?? [];
   pruneUnknownItems(holdsInventory);
@@ -242,7 +358,10 @@ function hydratePlayerSlices(row: CharacterRow): PersistedPlayerSlices {
   const runeRecipesCrafted = tracksProgression.runeRecipesCrafted ?? [];
 
   return {
-    isPlayer:          parseSlice<IsPlayer>(row.isPlayer),
+    isPlayer:          {
+      ...parseSlice<IsPlayer>(row.isPlayer),
+      id: row.id,
+    },
     hasPosition,
     hasHealth:         parseSlice<HasHealth>(row.hasHealth),
     tracksProgression: {

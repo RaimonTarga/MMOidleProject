@@ -384,6 +384,22 @@ export function SettingsPanel({ onClose }: Props) {
             >
               SEND TEST NOTIFICATION
             </button>
+
+            <div className="settings-session-actions">
+              <div>
+                <strong>Character</strong>
+                <p className="settings-help">
+                  Save your progress and return to character select.
+                </p>
+              </div>
+              <button
+                type="button"
+                className="auto-btn settings-reset"
+                onClick={() => window.location.reload()}
+              >
+                SWITCH CHARACTER
+              </button>
+            </div>
           </div>
         ) : (
           <div className="settings-gameplay">

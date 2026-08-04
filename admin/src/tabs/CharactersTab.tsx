@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { Fragment, useMemo, useState } from 'react';
 import { useAtomValue } from 'jotai';
 import type { AdminCharacterRecord } from '@mmo-idle/shared';
 import { ESSENCE_TYPES, ESSENCE_LABELS } from '@mmo-idle/shared';
@@ -15,7 +15,7 @@ export function CharactersTab() {
   const [search, setSearch] = useState('');
 
   const onlineByCharacterId = useMemo(
-    () => new Set(players.map((player) => player.id)),
+    () => new Set(players.map((player) => player.characterId)),
     [players],
   );
 
@@ -36,6 +36,22 @@ export function CharactersTab() {
         .some((value) => String(value).toLowerCase().includes(q)),
     );
   }, [characters, search]);
+
+  const grouped = useMemo(() => {
+    const byAccount = new Map<string, AdminCharacterRecord[]>();
+    for (const character of filtered) {
+      const group = byAccount.get(character.accountId) ?? [];
+      group.push(character);
+      byAccount.set(character.accountId, group);
+    }
+    return [...byAccount.entries()]
+      .map(([accountId, records]) => ({
+        accountId,
+        accountDisplayName: records[0]?.accountDisplayName ?? accountId,
+        characters: records.sort((a, b) => b.lastPlayedAt - a.lastPlayedAt),
+      }))
+      .sort((a, b) => a.accountDisplayName.localeCompare(b.accountDisplayName));
+  }, [filtered]);
 
   return (
     <Card>
@@ -69,12 +85,25 @@ export function CharactersTab() {
               </tr>
             </thead>
             <tbody>
-              {filtered.map((character) => (
-                <CharacterRow
-                  key={character.id}
-                  character={character}
-                  online={onlineByCharacterId.has(character.id)}
-                />
+              {grouped.map((group) => (
+                <Fragment key={group.accountId}>
+                  <tr className="border-t border-red-900/80 bg-red-950/35">
+                    <td colSpan={7} className="px-3 py-2">
+                      <span className="font-medium text-orange-100">{group.accountDisplayName}</span>
+                      <span className="ml-2 text-xs text-red-200/35">{group.accountId}</span>
+                      <Badge variant="secondary" className="ml-2">
+                        {group.characters.length} {group.characters.length === 1 ? 'character' : 'characters'}
+                      </Badge>
+                    </td>
+                  </tr>
+                  {group.characters.map((character) => (
+                    <CharacterRow
+                      key={character.id}
+                      character={character}
+                      online={onlineByCharacterId.has(character.id)}
+                    />
+                  ))}
+                </Fragment>
               ))}
             </tbody>
           </table>
@@ -105,7 +134,7 @@ function CharacterRow({
         </div>
         <div className="text-xs text-red-200/35">{character.id}</div>
         <div className="text-xs text-red-200/25">
-          {character.accountDisplayName} · {character.accountId}
+          last played {character.lastPlayedAt > 0 ? new Date(character.lastPlayedAt).toLocaleString() : 'never'}
         </div>
       </td>
       <td className="px-3 py-3">{character.nodeId}</td>

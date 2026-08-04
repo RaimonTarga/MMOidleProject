@@ -1,6 +1,6 @@
 import express from "express";
 import { createServer } from "http";
-import { Server } from "socket.io";
+import { Server, type Socket } from "socket.io";
 import cors from "cors";
 import path from "path";
 
@@ -19,6 +19,7 @@ import {
   RESOLVED_NODE_FEATURES,
   RUNE_ALTAR_FEATURE_ID,
   SKILL_TREE,
+  validateCharacterName,
 } from "@mmo-idle/shared";
 import { checkRecipeUnlocks } from "./systems/player/progression/rewards";
 import { grantDevLoadout } from "./systems/player/economy/grantDevWeapon";
@@ -41,9 +42,13 @@ import {
 } from "./hitbox/cache";
 import { getAtlasPaths } from "./hitbox/paths";
 import {
-  findOrCreateAccount,
-  getOrCreateCharacter,
+  createCharacter,
+  findOrCreateDevAccount,
+  listAccountCharacters,
+  loadCharacter,
   saveCharacter,
+  softDeleteCharacter,
+  touchAccountLogin,
 } from "./db/playerRepo";
 import { currentReleaseAnnouncement } from "./updates/releaseAnnouncements";
 import { recordBroadcast } from "./net/profiler";
@@ -77,6 +82,15 @@ import {
 import { registerAdminNamespace } from "./admin/namespace";
 import { onTelemetry, publishTelemetry } from "./broker";
 import { registerPlayerHandlers } from "./net/playerHandlers";
+import {
+  discordAuthIsConfigured,
+  registerDiscordAuthRoutes,
+} from "./auth/discordOAuth";
+import { authenticateSocketHandshake } from "./auth/socketAuth";
+import { pruneExpiredSessions } from "./auth/sessionRepo";
+import type { PlayerSocketSession } from "./net/socketSession";
+import { SpectatorManager } from "./net/spectatorManager";
+import { buildSpectatorNodeSnapshot } from "./world/spectatorSnapshot";
 
 export { IS_DEV };
 
@@ -97,6 +111,8 @@ app.get("/healthz", (_req, res) => {
   res.status(200).json({ status: "ok" });
 });
 
+registerDiscordAuthRoutes(app, db);
+
 // Serve built client/admin only in production so dev doesn't expose a stale
 // client/dist on :4000 while the live Vite app runs on :3000.
 if (process.env.NODE_ENV === "production") {
@@ -115,6 +131,22 @@ const io = new Server<ClientToServerEvents, ServerToClientEvents>(httpServer, {
   cors: { origin: true },
 });
 
+io.use(async (socket, next) => {
+  try {
+    const identity = await authenticateSocketHandshake(db, socket.handshake.auth);
+    if (!identity) {
+      next(new Error("unauthorized"));
+      return;
+    }
+    if ("accountId" in identity) socket.data.accountId = identity.accountId;
+    socket.data.authKind = identity.kind;
+    next();
+  } catch (err) {
+    log.warn({ err }, "socket authentication failed");
+    next(new Error("unauthorized"));
+  }
+});
+
 // ── COMBAT SYSTEMS BOOTSTRAP ──────────────────────────────────────────────────
 // Registers every combat-pipeline listener and per-system hook (class mechanics,
 // weapon effects, defense, debuffs, invulnerability/dead-player guards, summoner
@@ -131,6 +163,7 @@ initCombatSystems();
 
 // accountId → socketId map for the auto-save interval
 const socketByAccount = new Map<string, string>();
+const sessionsBySocket = new Map<string, PlayerSocketSession>();
 const sessionStartedAtBySocket = new Map<string, number>();
 
 // Sockets whose tab is currently hidden/backgrounded. While a socket is here,
@@ -139,10 +172,7 @@ const sessionStartedAtBySocket = new Map<string, number>();
 const inactiveSockets = new Set<string>();
 
 function accountIdForSocket(socketId: string): string | undefined {
-  for (const [accountId, mappedSocketId] of socketByAccount) {
-    if (mappedSocketId === socketId) return accountId;
-  }
-  return undefined;
+  return sessionsBySocket.get(socketId)?.accountId;
 }
 
 /** Server-global key for the persisted Void Overlord respawn cooldown. */
@@ -178,17 +208,29 @@ async function restoreOverlordRespawn(world: World): Promise<void> {
 async function boot(): Promise<void> {
   await runMigrations();
   await runLogMigrations();
+  await pruneExpiredSessions(db);
   await pruneExpiredLogs();
   await pruneExpiredWorldLogEntries();
   await pruneExpiredAnalyticsEvents();
   const pruneTimer = setInterval(() => {
     void Promise.all([
+      pruneExpiredSessions(db),
       pruneExpiredLogs(),
       pruneExpiredWorldLogEntries(),
       pruneExpiredAnalyticsEvents(),
     ]).catch((err) => log.warn({ err }, "log retention prune failed"));
   }, 60 * 60 * 1000);
   pruneTimer.unref?.();
+
+  if (!discordAuthIsConfigured()) {
+    const level = process.env.NODE_ENV === "production" ? "error" : "warn";
+    log[level](
+      "Discord OAuth is not configured; /auth/discord/login is unavailable",
+    );
+  }
+  if (process.env.NODE_ENV === "production" && process.env.AUTH_DEV_BYPASS === "1") {
+    log.warn("AUTH_DEV_BYPASS is ignored in production");
+  }
 
   if (process.env.NODE_ENV === "production") {
     const artifactCount = hydrateHitboxCacheFromArtifact();
@@ -211,6 +253,10 @@ async function boot(): Promise<void> {
   // ── WORLD ─────────────────────────────────────────────
 
   const world = new World();
+  const spectatorManager = new SpectatorManager(world, {
+    isPlayerConnected: (playerId) => io.sockets.sockets.has(playerId),
+    isPlayerInactive: (playerId) => inactiveSockets.has(playerId),
+  });
 
   world.nodePreparingEmitter = (playerId, nodeId) => {
     io.sockets.sockets.get(playerId)?.emit("node:preparing", { nodeId });
@@ -234,7 +280,7 @@ async function boot(): Promise<void> {
     io,
     world,
     db,
-    socketByAccount,
+    sessionsBySocket,
     inactiveSockets,
   );
   onTelemetry((telemetry) => {
@@ -317,6 +363,7 @@ async function boot(): Promise<void> {
       nodeId: p.hasPosition.nodeId,
       value: Math.max(0, Date.now() - startedAt),
       meta: {
+        characterId: sessionsBySocket.get(socketId)?.characterId,
         level: p.tracksProgression.level,
         playerTier: p.tracksProgression.playerTier,
         selectedClass: p.usesSkills.selectedClass,
@@ -395,6 +442,9 @@ async function boot(): Promise<void> {
     last = now;
 
     world.tick(dt, now);
+    // Reconcile after simulation so a target crossing a node boundary updates
+    // spectator status and broadcast routing against the same authoritative tick.
+    spectatorManager.reconcile(now);
 
     // Emit death events immediately so the client overlay shows before the next snapshot.
     for (const pending of world.pendingDeaths) {
@@ -454,16 +504,27 @@ async function boot(): Promise<void> {
       const logEvents = takeWorldLogEvents(world, player.isPlayer.id);
       if (logEvents.length > 0) {
         const viewerAccountId = accountIdForSocket(player.isPlayer.id);
+        const viewerCharacterId = sessionsBySocket.get(player.isPlayer.id)?.characterId ?? undefined;
         for (const event of logEvents) {
           queuedWorldLogEntries.push({
             viewerId: player.isPlayer.id,
             viewerAccountId,
+            viewerCharacterId,
             viewerName: player.isPlayer.name,
             event,
           });
         }
         sock.emit("world:events", logEvents);
       }
+    }
+
+    // Anonymous viewers receive a separate privacy-filtered projection. Build
+    // once per watched node so additional spectators do not multiply ECS work.
+    for (const [nodeId, sockets] of spectatorManager.recipientsByNode()) {
+      const events = nodeSnaps.get(nodeId)?.events ?? world.takeNodeEvents(nodeId);
+      const snapshot = buildSpectatorNodeSnapshot(world, nodeId, events);
+      recordBroadcast(snapshot, "spectate:snapshot");
+      for (const socket of sockets) socket.emit("spectate:snapshot", snapshot);
     }
 
     // Drain transient combat events for occupied nodes that no active viewer
@@ -495,11 +556,15 @@ async function boot(): Promise<void> {
   // ── AUTO-SAVE ─────────────────────────────────────────
   // Persist every connected player every 30 s as a crash safety net.
   setInterval(() => {
-    for (const [accountId, socketId] of socketByAccount) {
+    for (const [socketId, session] of sessionsBySocket) {
       const player = world.getPlayerEntity(socketId);
-      if (player) {
-        void saveCharacter(db, accountId, player).catch((err) =>
-          log.error({ err, accountId, playerId: socketId }, "autosave failed"),
+      const { accountId, characterId } = session;
+      if (player && characterId) {
+        void saveCharacter(db, characterId, player).catch((err) =>
+          log.error(
+            { err, accountId, characterId, playerId: socketId },
+            "autosave failed",
+          ),
         );
       }
     }
@@ -507,81 +572,185 @@ async function boot(): Promise<void> {
 
   // ── SOCKETS ──────────────────────────────────────────
 
-  io.on("connection", async (socket) => {
-    const auth = socket.handshake.auth as {
-      accountId?: string;
-      displayName?: string;
-    };
-    const accId = auth.accountId ?? socket.id;
-    const playerName = (
-      auth.displayName ?? `Hero_${socket.id.slice(0, 5)}`
-    ).slice(0, 32);
+  async function setupPlayerSocket(
+    socket: Socket<ClientToServerEvents, ServerToClientEvents>,
+  ): Promise<void> {
+    const accId = socket.data.accountId as string;
+    const authKind = socket.data.authKind as "session" | "dev";
+    const accountLogin = authKind === "session"
+      ? await touchAccountLogin(db, accId)
+      : await findOrCreateDevAccount(
+          db,
+          accId,
+          `Dev_${accId.slice(0, 8)}`,
+        );
 
-    const accountLogin = await findOrCreateAccount(db, accId, playerName);
-    const updateAnnouncement = currentReleaseAnnouncement();
-
-    // Kick any existing session for this account (e.g. duplicate tab).
-    // Save + clean up the old entity before the new one attaches so there's
-    // never two live PlayerEntities for the same account.
+    // Duplicate-session ownership is account-wide, including lobby sockets.
     const existingSocketId = socketByAccount.get(accId);
     if (existingSocketId) {
+      const existingSession = sessionsBySocket.get(existingSocketId);
       const existingPlayer = world.getPlayerEntity(existingSocketId);
       if (existingPlayer?.isDead) world.respawnPlayer(existingSocketId);
-      if (existingPlayer) {
+      if (existingPlayer && existingSession?.characterId) {
         recordSessionEnd(existingSocketId, accId, existingPlayer);
-        await saveCharacter(db, accId, existingPlayer);
+        await saveCharacter(db, existingSession.characterId, existingPlayer);
       }
       handlePartyDisconnect(world, existingSocketId);
       world.detachPlayerEntity(existingSocketId);
+      sessionsBySocket.delete(existingSocketId);
+      inactiveSockets.delete(existingSocketId);
       const existingSock = io.sockets.sockets.get(existingSocketId);
       existingSock?.emit("session:kicked", { reason: "duplicate_session" });
       existingSock?.disconnect(true);
     }
 
-    const player = await getOrCreateCharacter(db, accId, playerName);
-
-    const spawnNodeId = player.hasPosition.nodeId;
-    if (world.isNodeFrozen(spawnNodeId)) {
-      socket.emit("node:preparing", { nodeId: spawnNodeId });
-      thawNode(world, spawnNodeId);
-    }
-
+    const session: PlayerSocketSession = { accountId: accId, characterId: null };
+    sessionsBySocket.set(socket.id, session);
     socketByAccount.set(accId, socket.id);
-    const entity = world.attachPlayerEntity(player, socket.id);
-    syncArchetypeSlices(world, entity);
-    recalculatePlayerEntityStats(world, entity);
-    syncArchetypeSlices(world, entity);
-    entity.hasHealth.hp = entity.hasHealth.maxHp;
-    sessionStartedAtBySocket.set(socket.id, Date.now());
-    queueAnalyticsEvent({
-      kind: "session-start",
-      accountId: accId,
-      playerId: socket.id,
-      nodeId: entity.hasPosition.nodeId,
-      meta: {
-        level: entity.tracksProgression.level,
-        playerTier: entity.tracksProgression.playerTier,
-      },
-    });
-    queueAnalyticsEvent({
-      kind: "node-enter",
-      accountId: accId,
-      playerId: socket.id,
-      nodeId: entity.hasPosition.nodeId,
-      meta: {
-        biomeGroup: NODE_BIOMES[entity.hasPosition.nodeId]?.biomeGroup,
-        biomeTier: NODE_BIOMES[entity.hasPosition.nodeId]?.biomeTier,
-        fromNodeId: null,
-      },
+
+    registerPlayerHandlers(socket, {
+      world,
+      db,
+      session,
+      sessionsBySocket,
+      adminControls,
+      socketByAccount,
+      inactiveSockets,
+      sessionStartedAtBySocket,
+      recordSessionEnd,
+      emitBossFelledState,
     });
 
-    const syncSnap = world.buildNodeDelta(
-      entity.hasPosition.nodeId,
-      { patched: new Map(), detached: new Map() },
-      { resync: true },
-    );
-    recordBroadcast(syncSnap, "state:sync");
-    socket.emit("state:sync", syncSnap);
+    let selectingCharacter = false;
+    let mutatingCharacters = false;
+
+    const emitCharacterList = async (): Promise<void> => {
+      socket.emit("account:characters", {
+        characters: await listAccountCharacters(db, accId),
+      });
+    };
+
+    const enterCharacterWorld = async (
+      characterId: string,
+      emitResult = true,
+    ): Promise<boolean> => {
+      if (selectingCharacter || mutatingCharacters || session.characterId !== null) {
+        if (emitResult) {
+          socket.emit("character:selectResult", {
+            success: false,
+            reason: "A character is already entering or in the world.",
+          });
+        }
+        return false;
+      }
+
+      selectingCharacter = true;
+      try {
+        const player = await loadCharacter(db, accId, characterId);
+        if (!player) {
+          if (emitResult) {
+            socket.emit("character:selectResult", {
+              success: false,
+              reason: "Character not found.",
+            });
+          }
+          return false;
+        }
+
+        // A duplicate login can disconnect this socket while the DB load is pending.
+        if (!socket.connected || socketByAccount.get(accId) !== socket.id) return false;
+
+        const spawnNodeId = player.hasPosition.nodeId;
+        if (world.isNodeFrozen(spawnNodeId)) {
+          socket.emit("node:preparing", { nodeId: spawnNodeId });
+          thawNode(world, spawnNodeId);
+        }
+
+        if (!socket.connected || socketByAccount.get(accId) !== socket.id) return false;
+
+        session.characterId = characterId;
+        const entity = world.attachPlayerEntity(player, socket.id);
+        syncArchetypeSlices(world, entity);
+        recalculatePlayerEntityStats(world, entity);
+        syncArchetypeSlices(world, entity);
+        entity.hasHealth.hp = entity.hasHealth.maxHp;
+        sessionStartedAtBySocket.set(socket.id, Date.now());
+        queueAnalyticsEvent({
+          kind: "session-start",
+          accountId: accId,
+          playerId: socket.id,
+          nodeId: entity.hasPosition.nodeId,
+          meta: {
+            characterId,
+            level: entity.tracksProgression.level,
+            playerTier: entity.tracksProgression.playerTier,
+          },
+        });
+        queueAnalyticsEvent({
+          kind: "node-enter",
+          accountId: accId,
+          playerId: socket.id,
+          nodeId: entity.hasPosition.nodeId,
+          meta: {
+            characterId,
+            biomeGroup: NODE_BIOMES[entity.hasPosition.nodeId]?.biomeGroup,
+            biomeTier: NODE_BIOMES[entity.hasPosition.nodeId]?.biomeTier,
+            fromNodeId: null,
+          },
+        });
+
+        const syncSnap = world.buildNodeDelta(
+          entity.hasPosition.nodeId,
+          { patched: new Map(), detached: new Map() },
+          { resync: true },
+        );
+        recordBroadcast(syncSnap, "state:sync");
+        socket.emit("state:sync", syncSnap);
+        if (emitResult) socket.emit("character:selectResult", { success: true });
+        emitBossFelledState();
+        world.syncTelemetryOccupancy();
+        socket.emit("world:telemetry", world.telemetry.flush(world.tickCounter));
+        adminControls.emitPlayerSummaries();
+        return true;
+      } catch (err) {
+        if (session.characterId === characterId) {
+          world.detachPlayerEntity(socket.id);
+          session.characterId = null;
+        }
+        log.error({ err, accountId: accId, characterId }, "character select failed");
+        if (emitResult) {
+          socket.emit("character:selectResult", {
+            success: false,
+            reason: "Unable to enter the world.",
+          });
+        }
+        return false;
+      } finally {
+        selectingCharacter = false;
+      }
+    };
+
+    socket.on("character:select", (payload) => {
+      const characterId = payload?.characterId;
+      if (typeof characterId !== "string" || characterId.length === 0) {
+        socket.emit("character:selectResult", {
+          success: false,
+          reason: "Invalid character selection.",
+        });
+        return;
+      }
+      void enterCharacterWorld(characterId);
+    });
+
+    socket.on("character:create", (payload) => {
+      void createLobbyCharacter(payload?.name);
+    });
+
+    socket.on("character:delete", (payload) => {
+      void deleteLobbyCharacter(payload?.characterId);
+    });
+
+    const updateAnnouncement = currentReleaseAnnouncement();
     if (
       updateAnnouncement &&
       accountLogin.previousLoginAt !== null &&
@@ -589,21 +758,138 @@ async function boot(): Promise<void> {
     ) {
       socket.emit("game:updateAnnouncement", updateAnnouncement);
     }
-    emitBossFelledState();
-    world.syncTelemetryOccupancy();
-    socket.emit("world:telemetry", world.telemetry.flush(world.tickCounter));
-    adminControls.emitPlayerSummaries();
 
-    registerPlayerHandlers(socket, {
-      world,
-      db,
-      accId,
-      adminControls,
-      socketByAccount,
-      inactiveSockets,
-      sessionStartedAtBySocket,
-      recordSessionEnd,
-      emitBossFelledState,
+    await emitCharacterList();
+
+    async function createLobbyCharacter(requestedName: unknown): Promise<void> {
+      if (session.characterId !== null) {
+        socket.emit("character:createResult", {
+          success: false,
+          reason: "Return to character select before creating a character.",
+        });
+        return;
+      }
+      if (mutatingCharacters || selectingCharacter) {
+        socket.emit("character:createResult", {
+          success: false,
+          reason: "Another character action is already in progress.",
+        });
+        return;
+      }
+
+      const validation = validateCharacterName(
+        typeof requestedName === "string" ? requestedName : "",
+      );
+      if (!validation.ok) {
+        socket.emit("character:createResult", {
+          success: false,
+          reason: validation.reason,
+        });
+        return;
+      }
+
+      mutatingCharacters = true;
+      try {
+        const characterId = await createCharacter(db, accId, validation.name);
+        socket.emit("character:createResult", { success: true, characterId });
+        await emitCharacterList();
+      } catch (err) {
+        log.error({ err, accountId: accId }, "character create failed");
+        socket.emit("character:createResult", {
+          success: false,
+          reason: "Unable to create character.",
+        });
+      } finally {
+        mutatingCharacters = false;
+      }
+    }
+
+    async function deleteLobbyCharacter(characterId: unknown): Promise<void> {
+      if (session.characterId !== null) {
+        socket.emit("character:deleteResult", {
+          success: false,
+          reason: "Return to character select before deleting a character.",
+        });
+        return;
+      }
+      if (mutatingCharacters || selectingCharacter) {
+        socket.emit("character:deleteResult", {
+          success: false,
+          reason: "Another character action is already in progress.",
+        });
+        return;
+      }
+      if (typeof characterId !== "string" || characterId.length === 0) {
+        socket.emit("character:deleteResult", {
+          success: false,
+          reason: "Invalid character selection.",
+        });
+        return;
+      }
+
+      mutatingCharacters = true;
+      try {
+        const deleted = await softDeleteCharacter(db, accId, characterId);
+        socket.emit("character:deleteResult", deleted
+          ? { success: true }
+          : { success: false, reason: "Character not found." });
+        await emitCharacterList();
+      } catch (err) {
+        log.error({ err, accountId: accId, characterId }, "character delete failed");
+        socket.emit("character:deleteResult", {
+          success: false,
+          reason: "Unable to delete character.",
+        });
+      } finally {
+        mutatingCharacters = false;
+      }
+    }
+  }
+
+  function setupSpectatorSocket(
+    socket: Socket<ClientToServerEvents, ServerToClientEvents>,
+  ): void {
+    if (!spectatorManager.admit(socket, socket.handshake.address)) {
+      socket.emit("spectate:error", {
+        reason: "The live view is at capacity. Please try again soon.",
+      });
+      setTimeout(() => socket.disconnect(true), 0);
+      return;
+    }
+    socket.on("spectate:setActive", (active) => {
+      spectatorManager.setActive(socket.id, active === true);
+    });
+    socket.on("spectate:resume", () => spectatorManager.resume(socket.id));
+    const refuseCharacterAction = (): void => {
+      socket.emit("character:selectResult", {
+        success: false,
+        reason: "Sign in before choosing a character.",
+      });
+    };
+    socket.on("character:select", refuseCharacterAction);
+    socket.on("character:create", () => {
+      socket.emit("character:createResult", {
+        success: false,
+        reason: "Sign in before creating a character.",
+      });
+    });
+    socket.on("character:delete", () => {
+      socket.emit("character:deleteResult", {
+        success: false,
+        reason: "Sign in before deleting a character.",
+      });
+    });
+    socket.on("disconnect", () => spectatorManager.remove(socket.id));
+  }
+
+  io.on("connection", (socket) => {
+    if (socket.data.authKind === "spectator") {
+      setupSpectatorSocket(socket);
+      return;
+    }
+    void setupPlayerSocket(socket).catch((err) => {
+      log.error({ err, socketId: socket.id }, "socket connection setup failed");
+      socket.disconnect(true);
     });
   });
 
@@ -616,6 +902,7 @@ async function boot(): Promise<void> {
 
   const shutdown = (signal: string) => {
     log.info({ signal }, "shutting down");
+    spectatorManager.shutdown();
     io.close();
     httpServer.closeAllConnections?.();
     httpServer.close(() => process.exit(0));

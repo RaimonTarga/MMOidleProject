@@ -333,6 +333,7 @@ export function upsertPlayer(
 
   if (
     !isOwn &&
+    !(scene.spectatorMode && player.id === scene.spectatorTargetId) &&
     (player.summonsMinions ?? 0) === 0 &&
     player.lastAttackAt > prevAttackAt &&
     player.attackTargetId

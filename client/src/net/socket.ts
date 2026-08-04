@@ -7,24 +7,36 @@ import type {
   WorldLogEvent,
   BossFelledMarker,
   ReleaseAnnouncementPayload,
+  CharacterActionResult,
+  CharacterCreateResult,
+  CharacterSummary,
+  SpectateStatus,
 } from '@mmo-idle/shared';
+import { getSessionToken } from './session';
+import { SERVER_URL } from './serverUrl';
 
 export type GameSocket = Socket<ServerToClientEvents, ClientToServerEvents>;
 
-const SERVER_URL = import.meta.env.DEV
-  ? 'http://localhost:4000'
-  : window.location.origin;
-
-export function connectGameSocket(auth: {
-  accountId: string;
-  displayName: string;
-}): GameSocket {
+export function connectGameSocket(): GameSocket {
+  const token = getSessionToken();
+  const devAccountId = import.meta.env.VITE_AUTH_DEV_ACCOUNT_ID as string | undefined;
+  const auth = token
+    ? { token }
+    : devAccountId
+      ? { devAccountId }
+      : { spectate: true };
   return io(SERVER_URL, { auth }) as GameSocket;
 }
 
 export interface SocketHandlers {
   onConnect(socket: GameSocket): void;
+  onUnauthorized(): void;
   onDisconnect(): void;
+  onCharacterList(characters: CharacterSummary[]): void;
+  onCharacterCreateResult(result: CharacterCreateResult): void;
+  onCharacterDeleteResult(result: CharacterActionResult): void;
+  onCharacterSelectResult(result: CharacterActionResult): void;
+  onStateSync(snapshot: DeltaSnapshot): void;
   onDelta(snapshot: DeltaSnapshot): void;
   onNodePreparing(payload: { nodeId: string }): void;
   onCraftResult(result: { success: boolean; reason?: string }): void;
@@ -40,6 +52,9 @@ export interface SocketHandlers {
   onWorldEvents(events: WorldLogEvent[]): void;
   onUpdateAnnouncement(payload: ReleaseAnnouncementPayload): void;
   onSessionKicked(): void;
+  onSpectateSnapshot(snapshot: DeltaSnapshot): void;
+  onSpectateStatus(status: SpectateStatus): void;
+  onSpectateError(reason: string): void;
 }
 
 export function wireSocketHandlers(
@@ -47,9 +62,19 @@ export function wireSocketHandlers(
   h: SocketHandlers,
 ): void {
   socket.on('connect', () => h.onConnect(socket));
+  socket.on('connect_error', (error) => {
+    if (error.message === 'unauthorized') h.onUnauthorized();
+  });
   socket.on('disconnect', () => h.onDisconnect());
-  socket.on('state:sync', (s) => h.onDelta(s));
+  socket.on('account:characters', (p) => h.onCharacterList(p.characters));
+  socket.on('character:createResult', (r) => h.onCharacterCreateResult(r));
+  socket.on('character:deleteResult', (r) => h.onCharacterDeleteResult(r));
+  socket.on('character:selectResult', (r) => h.onCharacterSelectResult(r));
+  socket.on('state:sync', (s) => h.onStateSync(s));
   socket.on('node:delta', (s) => h.onDelta(s));
+  socket.on('spectate:snapshot', (s) => h.onSpectateSnapshot(s));
+  socket.on('spectate:status', (s) => h.onSpectateStatus(s));
+  socket.on('spectate:error', (p) => h.onSpectateError(p.reason));
   socket.on('node:preparing', (p) => h.onNodePreparing(p));
   socket.on('crafting:result', (r) => h.onCraftResult(r));
   socket.on('rune:craftResult', (r) => h.onRuneCraftResult(r));

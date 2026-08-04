@@ -186,20 +186,22 @@ const SUN_MARK_PULSE_COLOR = 0xffcc33;
 // Tundra ice-armor shatter — an icy blue burst when a frost shell breaks.
 const FROST_SHATTER_PULSE_COLOR = 0x88ddff;
 
-function snapOwnPlayerToServerTarget(
+function snapPlayerToServerTarget(
   state: RenderState,
   scene: GameScene,
+  playerId: string,
   targetId: string,
   playerPos?: Vec2,
 ): void {
-  if (!state.ownId) return;
-  const transform = state.transform.get(state.ownId);
-  const interp = state.interpolation.get(state.ownId);
-  const sprite = state.sprite.get(state.ownId);
+  const transform = state.transform.get(playerId);
+  const interp = state.interpolation.get(playerId);
+  const sprite = state.sprite.get(playerId);
   if (!transform || !interp || !sprite) return;
 
-  scene.flashCameraHold = scene.flashCameraHoldTargetId === targetId;
-  scene.flashCameraHoldTargetId = targetId;
+  if (playerId === state.ownId) {
+    scene.flashCameraHold = scene.flashCameraHoldTargetId === targetId;
+    scene.flashCameraHoldTargetId = targetId;
+  }
   scene.tweens.killTweensOf(interp.lungeOffset);
   interp.lungeOffset.x = 0;
   interp.lungeOffset.y = 0;
@@ -656,12 +658,16 @@ export function dispatchCombatEvent(
     state.techniqueArmed.delete(ev.playerId);
   }
 
-  if (ev.playerId !== scene.myId) return;
+  const isOwnPlayerEvent = ev.playerId === scene.myId;
+  const isWatchedPlayerEvent =
+    scene.spectatorMode && ev.playerId === scene.spectatorTargetId;
+  if (!isOwnPlayerEvent && !isWatchedPlayerEvent) return;
+  const actorId = isOwnPlayerEvent ? state.ownId : ev.playerId;
 
   if (ev.kind === "player-knockback") {
-    if (!state.ownId) return;
-    const transform = state.transform.get(state.ownId);
-    const interp = state.interpolation.get(state.ownId);
+    if (!actorId) return;
+    const transform = state.transform.get(actorId);
+    const interp = state.interpolation.get(actorId);
     if (!transform || !interp) return;
     // The client owns own-player prediction and glides toward `transform.target`,
     // so a small authoritative backward shift is invisible while moving. Snap the
@@ -677,8 +683,8 @@ export function dispatchCombatEvent(
   }
 
   if (ev.kind === "player-hit") {
-    const player = state.ownId
-      ? (state.view.get(state.ownId) as PlayerView | undefined)
+    const player = actorId
+      ? (state.view.get(actorId) as PlayerView | undefined)
       : undefined;
     if (shouldRunClientFx()) {
       // Throttled in the engine, so pellet bursts collapse to one cue.
@@ -724,11 +730,10 @@ function runFxForAttackStyle(
   ev: PlayerHitEvent,
   scene: GameScene,
 ): void {
-  const ownSprite = state.ownId ? state.sprite.get(state.ownId) : undefined;
+  const actorId = ev.playerId;
+  const actorSprite = state.sprite.get(actorId);
   const targetSprite = state.sprite.get(ev.targetId);
-  const player = state.ownId
-    ? (state.view.get(state.ownId) as PlayerView | undefined)
-    : undefined;
+  const player = state.view.get(actorId) as PlayerView | undefined;
   const targetInterp = state.interpolation.get(ev.targetId);
   const isFlashTeleport = ev.effects?.includes(FLASH_CLIENT_EFFECT) ?? false;
   const isSwiftblade = ev.effects?.includes(SWIFTBLADE_CLIENT_EFFECT) ?? false;
@@ -742,12 +747,12 @@ function runFxForAttackStyle(
 
   if (!targetSprite) {
     if (isFlashTeleport) {
-      snapOwnPlayerToServerTarget(state, scene, ev.targetId, ev.playerPos);
+      snapPlayerToServerTarget(state, scene, actorId, ev.targetId, ev.playerPos);
     }
     return;
   }
 
-  if (!ownSprite || !player) return;
+  if (!actorSprite || !player) return;
 
   const dotPath =
     player.combatArchetype === "dot" ? getDotPath(player) : undefined;
@@ -760,7 +765,7 @@ function runFxForAttackStyle(
     player.combatArchetype === "reload" &&
     (player.passives["reload.laser"] ?? 0) > 0;
 
-  const from = { x: ownSprite.x, y: ownSprite.y };
+  const from = { x: actorSprite.x, y: actorSprite.y };
   const to = ev.targetPos
     ? nodeToScene(ev.targetPos.x, ev.targetPos.y)
     : { x: targetSprite.x, y: targetSprite.y };
@@ -824,7 +829,7 @@ function runFxForAttackStyle(
   }
 
   if (isFlashTeleport) {
-    snapOwnPlayerToServerTarget(state, scene, ev.targetId, ev.playerPos);
+    snapPlayerToServerTarget(state, scene, actorId, ev.targetId, ev.playerPos);
   }
 
   for (const effectId of ev.effects ?? []) {
@@ -877,10 +882,9 @@ function runFxForAttackStyle(
     !isHolyFlash &&
     !isFlashTeleport &&
     !isRangedPlayerView(player) &&
-    state.ownId &&
     targetInterp
   ) {
-    applyLunge(state, state.ownId, { ...targetInterp.base }, scene);
+    applyLunge(state, actorId, { ...targetInterp.base }, scene);
   }
 }
 

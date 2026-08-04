@@ -20,6 +20,7 @@ import { BossBar } from './hud/BossBar';
 import { TargetFrame } from './hud/TargetFrame';
 import { EmoteWheel } from './hud/EmoteWheel';
 import { DungeonAltarOverlay } from './hud/DungeonAltarOverlay';
+import { AuthGate } from './auth/AuthGate';
 import { applyUiFontScale } from './settings/gameplaySettings';
 import { installUiTierSync } from './hud/uiTier';
 import { installUiUnlockSync } from './hud/uiUnlocks';
@@ -90,3 +91,4 @@ createRoot(document.getElementById('boss-bar-overlay')!).render(createElement(Bo
 createRoot(document.getElementById('target-frame-overlay')!).render(createElement(TargetFrame));
 createRoot(document.getElementById('emote-wheel-overlay')!).render(createElement(EmoteWheel));
 createRoot(document.getElementById('dungeon-altar-overlay')!).render(createElement(DungeonAltarOverlay));
+createRoot(document.getElementById('auth-gate')!).render(createElement(AuthGate));

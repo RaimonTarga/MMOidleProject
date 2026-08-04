@@ -251,3 +251,25 @@
   color: var(--hud-warning);
   margin-top: 8px;
 }
+
+.settings-session-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid var(--hud-edge-divider);
+}
+
+.settings-session-actions strong {
+  color: var(--hud-primary-strong);
+  font: var(--hud-font-display-weight) 13px/1.4 var(--hud-font-display);
+}
+
+@media (max-width: 520px) {
+  .settings-session-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+}

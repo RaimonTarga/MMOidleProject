@@ -62,6 +62,7 @@ export * from './protocol/nodeTelemetry';
 export * from './protocol/admin';
 export * from './protocol/death';
 export * from './protocol/socketEvents';
+export * from './protocol/characters';
 export * from './world/nodeBiomes';
 export * from './world/nodeModifiers';
 export * from './world/nodeModifierMap';

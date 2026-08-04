@@ -22,6 +22,7 @@ import type { DB } from "../db/playerRepo";
 import type { PlayerEntity } from "../ecs/entity";
 import type { AdminNamespaceControls } from "../admin/namespace";
 import { saveCharacter } from "../db/playerRepo";
+import type { PlayerSocketSession } from "./socketSession";
 import { log } from "../log";
 import { IS_DEV } from "../env";
 import { recordBroadcast } from "./profiler";
@@ -138,7 +139,8 @@ function clampNumber(
 export interface PlayerHandlerDeps {
   world: World;
   db: DB;
-  accId: string;
+  session: PlayerSocketSession;
+  sessionsBySocket: Map<string, PlayerSocketSession>;
   adminControls: AdminNamespaceControls;
   socketByAccount: Map<string, string>;
   inactiveSockets: Set<string>;
@@ -160,7 +162,8 @@ export function registerPlayerHandlers(
   const {
     world,
     db,
-    accId,
+    session,
+    sessionsBySocket,
     adminControls,
     socketByAccount,
     inactiveSockets,
@@ -514,20 +517,25 @@ export function registerPlayerHandlers(
   socket.on("disconnect", () => {
     const p = world.getPlayerEntity(socket.id);
     if (p?.isDead) world.respawnPlayer(socket.id);
-    if (p) {
-      recordSessionEnd(socket.id, accId, p);
-      void saveCharacter(db, accId, p).catch((err) =>
-        log.error({ err, accountId: accId, playerId: socket.id }, "disconnect save failed"),
+    const characterId = session.characterId;
+    if (p && characterId) {
+      recordSessionEnd(socket.id, session.accountId, p);
+      void saveCharacter(db, characterId, p).catch((err) =>
+        log.error(
+          { err, accountId: session.accountId, characterId, playerId: socket.id },
+          "disconnect save failed",
+        ),
       );
     }
     handlePartyDisconnect(world, socket.id);
     inactiveSockets.delete(socket.id);
+    sessionsBySocket.delete(socket.id);
     sessionStartedAtBySocket.delete(socket.id);
     // Only remove the account entry if it still points to this socket.
     // A kicked socket's disconnect fires after the new session has already
     // overwritten the entry — deleting it would silently log out the new tab.
-    if (socketByAccount.get(accId) === socket.id)
-      socketByAccount.delete(accId);
+    if (socketByAccount.get(session.accountId) === socket.id)
+      socketByAccount.delete(session.accountId);
     world.detachPlayerEntity(socket.id);
     adminControls.emitPlayerSummaries();
   });

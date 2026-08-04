@@ -5,7 +5,7 @@
   "scripts": {
     "bake:hitboxes": "tsx --conditions=development src/hitbox/bakeCli.ts",
     "bake:tree-hitboxes": "tsx --conditions=development src/hitbox/bakeTreeHitboxCli.ts",
-    "dev": "pnpm run bake:hitboxes && tsx watch --conditions=development src/index.ts",
+    "dev": "pnpm run bake:hitboxes && tsx --env-file=../.env watch --conditions=development src/index.ts",
     "dev:docker": "pnpm run bake:hitboxes && nodemon --config nodemon.docker.json",
     "build": "tsc && tsx --conditions=development src/hitbox/bakeArtifactCli.ts",
     "start": "NODE_ENV=production node dist/index.js",

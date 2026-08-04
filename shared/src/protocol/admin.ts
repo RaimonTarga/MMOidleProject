@@ -20,7 +20,10 @@ export interface AdminLogEntry {
 }
 
 export interface AdminPlayerSummary {
+  /** Runtime socket/entity id used by admin actions. */
   id: string;
+  /** Stable persisted character id. */
+  characterId: string;
   accountId: string | null;
   name: string;
   nodeId: string;
@@ -74,6 +77,7 @@ export interface AdminCharacterRecord {
   /** Rites learned + equipped (system rework Step 11). */
   knownRites: string[];
   equippedRites: string[];
+  lastPlayedAt: number;
   updatedAt: number;
 }
 
@@ -110,6 +114,7 @@ export interface AdminWorldLogEntry {
   id: number;
   viewerId: string;
   viewerAccountId?: string;
+  viewerCharacterId?: string;
   viewerName: string;
   event: WorldLogEvent;
 }
@@ -119,6 +124,7 @@ export interface AdminWorldLogQuery {
   beforeTs?: number;
   viewerId?: string;
   viewerAccountId?: string;
+  viewerCharacterId?: string;
   nodeId?: string;
   kind?: WorldLogEvent['kind'];
 }
