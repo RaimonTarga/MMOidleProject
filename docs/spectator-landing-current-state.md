@@ -44,6 +44,14 @@ fallback viewer leaves or pauses, provided no real player occupies it.
 
 ## Client behavior
 
+The spectator boot preloads only the shared sprite/effect/decor set plus the
+clearing's ground art (the fallback view and spawn node) — a fraction of the full
+asset payload — so the pane paints quickly. The remaining biomes, trees, and
+overlord art stream in the background from `create()`; a retarget into a
+not-yet-loaded biome falls back to the flat biome fill until the deferred pass
+completes and re-skins the current node. Audio files are never fetched for
+spectators.
+
 The spectator client does not attach keyboard, gamepad, click-to-move, movement-tick,
 HUD intent, or audio handlers; Phaser's sound manager is muted as a final backstop.
 Sidebar and React HUD roots are hidden. The camera follows the

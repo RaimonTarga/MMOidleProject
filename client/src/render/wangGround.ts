@@ -271,18 +271,31 @@ export function cycleGroundBakeoff(
   return { label, index: idx, total };
 }
 
-export function preloadWangGround(scene: Phaser.Scene): void {
+/**
+ * Queue Wang ground sheets, optionally restricted to a set of biome groups
+ * (the spectator boot loads only the clearing's; a later unfiltered call
+ * streams the rest — already-loaded sheets are skipped so re-invocation is
+ * cheap and idempotent).
+ */
+export function preloadWangGround(
+  scene: Phaser.Scene,
+  biomes: ReadonlySet<string> | null = null,
+): void {
   const seen = new Set<string>();
   const queue = (sheet: WangSheet): void => {
-    if (seen.has(sheet.key)) return;
+    if (seen.has(sheet.key) || scene.textures.exists(sheet.key)) return;
     seen.add(sheet.key);
     scene.load.image(sheet.key, sheet.file);
   };
-  for (const cfg of Object.values(WANG_GROUND)) {
+  for (const [biomeGroup, cfg] of Object.entries(WANG_GROUND)) {
     if (!cfg) continue;
+    if (biomes && !biomes.has(biomeGroup)) continue;
     for (const sheet of Object.values(cfg.sheets)) queue(sheet);
     if (cfg.functional) queue(cfg.functional);
   }
+  // Bakeoff variants are a dev comparison tool; a filtered (spectator boot)
+  // pass skips them and the deferred unfiltered pass picks them up.
+  if (biomes) return;
   for (const entries of Object.values(GROUND_BAKEOFF)) {
     for (const v of entries ?? []) queue(v);
   }

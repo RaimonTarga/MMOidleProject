@@ -207,6 +207,38 @@ function instantReskinNode(scene: GameScene, nodeId: string): void {
   syncSceneBackdrop(scene, nodeId);
 }
 
+/** The clearing-cam's biome — all a landing spectator needs before first paint. */
+const SPECTATOR_BOOT_BIOMES: ReadonlySet<string> = new Set(["clearing"]);
+
+/**
+ * Queue biome ground textures, Wang sheets, and biome decor, optionally
+ * restricted to a set of biome groups. Already-loaded textures are skipped, so
+ * the spectator's deferred unfiltered pass only fetches what its slim boot
+ * pass left out.
+ */
+function queueBiomeAssets(
+  scene: GameScene,
+  biomes: ReadonlySet<string> | null,
+): void {
+  for (const [biomeGroup, key] of Object.entries(BIOME_TEXTURES)) {
+    if (key === PLAINS_GROUND_TEXTURE_KEY) continue;
+    if (biomes && !biomes.has(biomeGroup)) continue;
+    if (scene.textures.exists(key)) continue;
+    scene.load.image(key, `/assets/${key}.png`);
+  }
+  preloadWangGround(scene, biomes);
+  const biomeDecorKeysSeen = new Set<string>();
+  for (const [biomeGroup, specs] of Object.entries(BIOME_DECOR)) {
+    if (!specs) continue;
+    if (biomes && !biomes.has(biomeGroup)) continue;
+    for (const s of specs) {
+      if (biomeDecorKeysSeen.has(s.key) || scene.textures.exists(s.key)) continue;
+      biomeDecorKeysSeen.add(s.key);
+      scene.load.image(s.key, s.file);
+    }
+  }
+}
+
 export function preloadGameAssets(scene: GameScene): void {
   scene.load.atlas(ATLAS_KEY, "/assets/sprites.png", "/assets/sprites.json");
   scene.load.spritesheet(GRAVES_KEY, "/assets/environment/graves.png", {
@@ -214,13 +246,7 @@ export function preloadGameAssets(scene: GameScene): void {
     frameHeight: GRAVE_FRAME_SIZE,
   });
   scene.load.json(SHADOW_DEFS_KEY, "/assets/shadows.json");
-  scene.load.image(VOID_OVERLORD_TEXTURE_KEY, VOID_OVERLORD_FILE);
-  scene.load.image(VOID_TOMB_TEXTURE_KEY, VOID_TOMB_FILE);
   scene.load.image(THOUGHT_BUBBLE_KEY, THOUGHT_BUBBLE_FILE);
-  scene.load.spritesheet(TREES_KEY, TREES_FILE, {
-    frameWidth: TREE_CELL_PX,
-    frameHeight: TREE_CELL_PX,
-  });
   for (const [emoteId, sheet] of Object.entries(EMOTE_SPRITESHEETS)) {
     scene.load.spritesheet(emoteTextureKey(emoteId), sheet.file, {
       frameWidth: sheet.frameWidth,
@@ -237,30 +263,6 @@ export function preloadGameAssets(scene: GameScene): void {
       });
     }
   }
-  for (const key of Object.values(BIOME_TEXTURES)) {
-    if (key === PLAINS_GROUND_TEXTURE_KEY) continue;
-    scene.load.image(key, `/assets/${key}.png`);
-  }
-  preloadWangGround(scene);
-  const biomeDecorKeysSeen = new Set<string>();
-  for (const specs of Object.values(BIOME_DECOR)) {
-    if (!specs) continue;
-    for (const s of specs) {
-      if (biomeDecorKeysSeen.has(s.key)) continue;
-      biomeDecorKeysSeen.add(s.key);
-      scene.load.image(s.key, s.file);
-    }
-  }
-  // Audio: only entries with a real file are registered (manifest files are
-  // undefined until assets land, so the engine synthesizes fallbacks meanwhile).
-  for (const id of Object.keys(SFX_MANIFEST) as SfxId[]) {
-    sfxFiles(SFX_MANIFEST[id]).forEach((file, i) => {
-      scene.load.audio(sfxKey(id, i), file);
-    });
-  }
-  for (const [group, file] of Object.entries(MUSIC_MANIFEST)) {
-    if (file) scene.load.audio(musicKey(group), file);
-  }
   const decorKeysSeen = new Set<string>();
   for (const specs of Object.values(NODE_DECOR)) {
     for (const s of specs) {
@@ -274,6 +276,57 @@ export function preloadGameAssets(scene: GameScene): void {
       }
     }
   }
+
+  if (scene.spectatorMode) {
+    // Landing spectate: first paint is the whole point of the pane, so boot
+    // with only the clearing-cam's biome (the fallback view and spawn node)
+    // and stream the other biomes, trees, and overlord art in the background
+    // from create() — see startDeferredSpectatorAssets. Audio never loads for
+    // spectators: initAudio is skipped and the sound manager is muted.
+    queueBiomeAssets(scene, SPECTATOR_BOOT_BIOMES);
+    return;
+  }
+
+  scene.load.image(VOID_OVERLORD_TEXTURE_KEY, VOID_OVERLORD_FILE);
+  scene.load.image(VOID_TOMB_TEXTURE_KEY, VOID_TOMB_FILE);
+  scene.load.spritesheet(TREES_KEY, TREES_FILE, {
+    frameWidth: TREE_CELL_PX,
+    frameHeight: TREE_CELL_PX,
+  });
+  queueBiomeAssets(scene, null);
+  // Audio: only entries with a real file are registered (manifest files are
+  // undefined until assets land, so the engine synthesizes fallbacks meanwhile).
+  for (const id of Object.keys(SFX_MANIFEST) as SfxId[]) {
+    sfxFiles(SFX_MANIFEST[id]).forEach((file, i) => {
+      scene.load.audio(sfxKey(id, i), file);
+    });
+  }
+  for (const [group, file] of Object.entries(MUSIC_MANIFEST)) {
+    if (file) scene.load.audio(musicKey(group), file);
+  }
+}
+
+/**
+ * Stream everything the slim spectator boot skipped, now that the pane is
+ * already live. Un-arrived art degrades gracefully behind the render layer's
+ * textures.exists guards (a retarget to an unloaded biome shows the flat
+ * biome fill), and the completion hook re-skins the current node so late
+ * textures replace their fallbacks.
+ */
+function startDeferredSpectatorAssets(scene: GameScene): void {
+  scene.load.image(VOID_OVERLORD_TEXTURE_KEY, VOID_OVERLORD_FILE);
+  scene.load.image(VOID_TOMB_TEXTURE_KEY, VOID_TOMB_FILE);
+  scene.load.spritesheet(TREES_KEY, TREES_FILE, {
+    frameWidth: TREE_CELL_PX,
+    frameHeight: TREE_CELL_PX,
+  });
+  queueBiomeAssets(scene, null);
+  scene.load.once("complete", () => {
+    initVoidOverlordSheet(scene);
+    const nodeId = scene.state.ownNodeId || scene.lastDrawnNodeId;
+    if (nodeId && !scene.transitioning) instantReskinNode(scene, nodeId);
+  });
+  scene.load.start();
 }
 
 export function createGameScene(scene: GameScene): void {
@@ -282,7 +335,9 @@ export function createGameScene(scene: GameScene): void {
   initEmoteAnimations(scene);
   initParticleTextures(scene);
   initEffectFrames(scene);
-  initVoidOverlordSheet(scene);
+  // Spectators load the overlord texture in the deferred pass; its completion
+  // hook runs this init instead.
+  if (!scene.spectatorMode) initVoidOverlordSheet(scene);
   initMistPostFx(scene);
   if (scene.spectatorMode) {
     // The landing preview is intentionally silent. Muting Phaser itself is the
@@ -367,6 +422,7 @@ export function createGameScene(scene: GameScene): void {
     stopMove();
   });
   connectSocket(scene);
+  if (scene.spectatorMode) startDeferredSpectatorAssets(scene);
 
   const applyPeekBoundsOnResize = (): void => {
     const nodeId = scene.state.ownNodeId || scene.lastDrawnNodeId;
