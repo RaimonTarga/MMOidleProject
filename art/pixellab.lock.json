@@ -23473,6 +23473,798 @@
       "candidateFiles": [
         "candidate-4.png"
       ]
+    },
+    {
+      "at": "2026-08-03T20:45:01.274Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "core-tempered",
+      "requestHash": "b9128986e96d8af571dc8881",
+      "usd": 0.00626274315516154,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-03T20:45:17.855Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "core-tempered",
+      "requestHash": "b9128986e96d8af571dc8881",
+      "usd": 0.00660062919722663,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-03T20:45:37.940Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "core-tempered",
+      "requestHash": "b9128986e96d8af571dc8881",
+      "usd": 0.007046512709723579,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-03T20:46:07.817Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "core-juggernaut",
+      "requestHash": "9a881d846024ac045410f2dc",
+      "usd": 0.007646234962675307,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-03T20:46:23.525Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "core-juggernaut",
+      "requestHash": "9a881d846024ac045410f2dc",
+      "usd": 0.006317893134223091,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-03T20:46:42.645Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "core-juggernaut",
+      "requestHash": "9a881d846024ac045410f2dc",
+      "usd": 0.0066989959875742595,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-03T20:47:13.464Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "core-sniper",
+      "requestHash": "4a8eb82df0e8825e03c48cd0",
+      "usd": 0.008044432454639011,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-03T20:47:32.249Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "core-sniper",
+      "requestHash": "4a8eb82df0e8825e03c48cd0",
+      "usd": 0.0065646792252858485,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-03T20:48:03.390Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "core-sniper",
+      "requestHash": "4a8eb82df0e8825e03c48cd0",
+      "usd": 0.00790266063478258,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T00:05:39.535Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "core-tempered",
+      "requestHash": "cc635ff869bb1f0868dc6039",
+      "usd": 0.007448188543319702,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T00:06:07.472Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "core-tempered",
+      "requestHash": "cc635ff869bb1f0868dc6039",
+      "usd": 0.007560057216220432,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T00:06:37.578Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "core-tempered",
+      "requestHash": "cc635ff869bb1f0868dc6039",
+      "usd": 0.007903616587320963,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T00:07:04.710Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "core-juggernaut",
+      "requestHash": "e8c5db22be3d39eea2f98313",
+      "usd": 0.007586144579781426,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T00:07:46.245Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "core-juggernaut",
+      "requestHash": "e8c5db22be3d39eea2f98313",
+      "usd": 0.009084830416573418,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T00:08:21.684Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "core-juggernaut",
+      "requestHash": "e8c5db22be3d39eea2f98313",
+      "usd": 0.008496345493528578,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T00:08:38.397Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "core-sniper",
+      "requestHash": "612a2b64fae718d9594b7615",
+      "usd": 0.006630880461798774,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T00:08:56.098Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "core-sniper",
+      "requestHash": "612a2b64fae718d9594b7615",
+      "usd": 0.0067167382770114475,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T00:09:24.042Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "core-sniper",
+      "requestHash": "612a2b64fae718d9594b7615",
+      "usd": 0.007604468690024482,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T00:18:18.420Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "core-survivalist",
+      "requestHash": "a28cfe456dde445689d832b4",
+      "usd": 0.008132058805889554,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T00:18:46.767Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "core-survivalist",
+      "requestHash": "a28cfe456dde445689d832b4",
+      "usd": 0.007670448064804077,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T00:19:17.248Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "core-survivalist",
+      "requestHash": "a28cfe456dde445689d832b4",
+      "usd": 0.007776801983515422,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T00:19:35.976Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "core-force",
+      "requestHash": "69016db7fbf8b2bf0f2d3d69",
+      "usd": 0.006614569558037652,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T00:19:53.199Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "core-force",
+      "requestHash": "69016db7fbf8b2bf0f2d3d69",
+      "usd": 0.0065831466250949435,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T00:20:12.285Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "core-force",
+      "requestHash": "69016db7fbf8b2bf0f2d3d69",
+      "usd": 0.006849815871980455,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T00:20:34.670Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "core-arcanist",
+      "requestHash": "071acc0585982c1bd9a6e96c",
+      "usd": 0.00707187377081977,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T00:21:04.460Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "core-arcanist",
+      "requestHash": "071acc0585982c1bd9a6e96c",
+      "usd": 0.0075176710022820375,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T00:21:27.742Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "core-arcanist",
+      "requestHash": "071acc0585982c1bd9a6e96c",
+      "usd": 0.006978841622670492,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T00:21:44.976Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "core-controller",
+      "requestHash": "3edde0a1044a7793edf9b52d",
+      "usd": 0.006640392594867282,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T00:22:24.054Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "core-controller",
+      "requestHash": "3edde0a1044a7793edf9b52d",
+      "usd": 0.009219961139890882,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T00:22:42.131Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "core-controller",
+      "requestHash": "3edde0a1044a7793edf9b52d",
+      "usd": 0.006503307713402642,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T00:23:01.069Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "core-accelerant",
+      "requestHash": "9b009a5c0c975bcbc159ec11",
+      "usd": 0.006713643127017551,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T00:23:18.429Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "core-accelerant",
+      "requestHash": "9b009a5c0c975bcbc159ec11",
+      "usd": 0.006719824340608385,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T00:23:38.383Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "core-accelerant",
+      "requestHash": "9b009a5c0c975bcbc159ec11",
+      "usd": 0.006915404346254137,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T00:24:12.534Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "core-catalyst",
+      "requestHash": "13d51a521b8b962d575d4e44",
+      "usd": 0.008096860541237726,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T00:24:33.981Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "core-catalyst",
+      "requestHash": "13d51a521b8b962d575d4e44",
+      "usd": 0.0072696718109978575,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T00:25:02.691Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "core-catalyst",
+      "requestHash": "13d51a521b8b962d575d4e44",
+      "usd": 0.007795934624142117,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T00:25:28.295Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "core-bruiser",
+      "requestHash": "32eb3a1f27cb594398c196d4",
+      "usd": 0.007337361415227254,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T00:25:46.978Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "core-bruiser",
+      "requestHash": "32eb3a1f27cb594398c196d4",
+      "usd": 0.006820776568518745,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T00:26:03.591Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "core-bruiser",
+      "requestHash": "32eb3a1f27cb594398c196d4",
+      "usd": 0.006494594017664591,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T00:26:20.990Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "core-duelist",
+      "requestHash": "ec0fe1e5679981cc513cbcaf",
+      "usd": 0.006509215222464668,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T00:27:06.790Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "core-duelist",
+      "requestHash": "ec0fe1e5679981cc513cbcaf",
+      "usd": 0.009673983097076417,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T00:27:29.568Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "core-duelist",
+      "requestHash": "ec0fe1e5679981cc513cbcaf",
+      "usd": 0.007117870304319594,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T00:27:46.939Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "core-scout",
+      "requestHash": "338b84b7cc4f9b874e3050f9",
+      "usd": 0.00675256790055169,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T00:28:00.692Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "core-scout",
+      "requestHash": "338b84b7cc4f9b874e3050f9",
+      "usd": 0.006231513155831231,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T00:28:27.716Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "core-scout",
+      "requestHash": "338b84b7cc4f9b874e3050f9",
+      "usd": 0.0072030924161275225,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T00:33:01.302Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "core-survivalist",
+      "requestHash": "efdafb2aaf9b3cccaae4c327",
+      "usd": 0.006441983037524753,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T00:33:22.177Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "core-survivalist",
+      "requestHash": "efdafb2aaf9b3cccaae4c327",
+      "usd": 0.0069927311473422585,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T00:33:40.917Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "core-survivalist",
+      "requestHash": "efdafb2aaf9b3cccaae4c327",
+      "usd": 0.006893026245964898,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T00:34:08.934Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "core-force",
+      "requestHash": "d187b5b8dc2de5a420f70274",
+      "usd": 0.007781941678788927,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T00:34:30.461Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "core-force",
+      "requestHash": "d187b5b8dc2de5a420f70274",
+      "usd": 0.006904829740524292,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T00:34:57.275Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "core-force",
+      "requestHash": "d187b5b8dc2de5a420f70274",
+      "usd": 0.007453413327534994,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T00:35:24.034Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "core-arcanist",
+      "requestHash": "63e75fab96d8f8b701c3f46d",
+      "usd": 0.007574125687281291,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T00:35:43.145Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "core-arcanist",
+      "requestHash": "63e75fab96d8f8b701c3f46d",
+      "usd": 0.006602661053339641,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T00:35:57.181Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "core-arcanist",
+      "requestHash": "63e75fab96d8f8b701c3f46d",
+      "usd": 0.006306759701834785,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T00:36:14.973Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "core-controller",
+      "requestHash": "5f7d091b2b0d3237ace21b49",
+      "usd": 0.006672167963451809,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T00:37:08.838Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "core-controller",
+      "requestHash": "5f7d091b2b0d3237ace21b49",
+      "usd": 0.010753657552931044,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T00:37:31.285Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "core-controller",
+      "requestHash": "5f7d091b2b0d3237ace21b49",
+      "usd": 0.006893871386845907,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T00:37:45.833Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "core-accelerant",
+      "requestHash": "534dc9acc92a7324ff7faa4e",
+      "usd": 0.006320170799891154,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T00:38:08.845Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "core-accelerant",
+      "requestHash": "534dc9acc92a7324ff7faa4e",
+      "usd": 0.007105166117350261,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T00:38:43.112Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "core-accelerant",
+      "requestHash": "534dc9acc92a7324ff7faa4e",
+      "usd": 0.008118524842792088,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T00:39:06.742Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "core-catalyst",
+      "requestHash": "471db6259fe69af0cac7637a",
+      "usd": 0.007409279372957018,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T00:39:24.208Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "core-catalyst",
+      "requestHash": "471db6259fe69af0cac7637a",
+      "usd": 0.006534749454922146,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T00:39:43.485Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "core-catalyst",
+      "requestHash": "471db6259fe69af0cac7637a",
+      "usd": 0.006569686518775092,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T00:40:06.357Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "core-bruiser",
+      "requestHash": "6041393cda3bbb5f6b00bba3",
+      "usd": 0.007293203194936117,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T00:40:24.193Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "core-bruiser",
+      "requestHash": "6041393cda3bbb5f6b00bba3",
+      "usd": 0.006786670525868734,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T00:40:52.131Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "core-bruiser",
+      "requestHash": "6041393cda3bbb5f6b00bba3",
+      "usd": 0.0075588036378224695,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T00:41:14.668Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "core-duelist",
+      "requestHash": "74d4f81a73c0d202e83940a1",
+      "usd": 0.006499795940187242,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T00:41:35.412Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "core-duelist",
+      "requestHash": "74d4f81a73c0d202e83940a1",
+      "usd": 0.0070864856772952615,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T00:41:53.596Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "core-duelist",
+      "requestHash": "74d4f81a73c0d202e83940a1",
+      "usd": 0.006804473002751669,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T00:42:38.345Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "core-scout",
+      "requestHash": "fc46d44502d0d33da00a4980",
+      "usd": 0.009211975283092923,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T00:43:02.695Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "core-scout",
+      "requestHash": "fc46d44502d0d33da00a4980",
+      "usd": 0.006709776745902168,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T00:43:19.733Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "core-scout",
+      "requestHash": "fc46d44502d0d33da00a4980",
+      "usd": 0.006779064151975844,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
     }
   ]
 }

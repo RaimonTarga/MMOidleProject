@@ -4377,6 +4377,285 @@
         "item:volcanic-boots-t4"
       ],
       "notes": "Phase 2b FINAL wave — img2img follower at initImageStrength 65, seeded from its accepted line root. Closes armor+charms+boots at 89/89."
+    },
+    {
+      "id": "core-tempered",
+      "out": "items/cores/tempered.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a perfectly circular cut gemstone core, a round brilliant-cut gem with fine radial facet lines running from its centre out to its rim, its face clean and unmarked, held in a plain thin metal bezel, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of warm brass, pale gold and dark iron, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, dagger, rapier, thin blade, curved blade, scimitar, katana, axe, hammer, mace, spear, bow, fire, flame, ember, frost, ice, green venom, glowing runes, jewelled ornate hilt, cord, string, leather thong, necklace, chain, pendant, amulet, locket, hung, dangling, jewellery, eye, heart, potion, bottle, vial, coin, ring on a finger, cube, box, crate, wooden block, brick, square, rectangular, slab, smooth pebble, river stone, uncut rock, egg, sphere, ball, marble, orb, pedestal, floating shards, sparkles, star",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "sources": [
+        "item:core-tempered"
+      ],
+      "status": "accepted",
+      "notes": "I want all cores to be a circle"
+    },
+    {
+      "id": "core-juggernaut",
+      "out": "items/cores/juggernaut.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a perfectly circular cut gemstone core, a round brilliant-cut gem with fine radial facet lines running from its centre out to its rim, set into a thick heavy riveted iron collar, the collar broad and blunt with four heavy rivets, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of slate blue, iron grey and dull steel, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, dagger, rapier, thin blade, curved blade, scimitar, katana, axe, hammer, mace, spear, bow, fire, flame, ember, frost, ice, green venom, glowing runes, jewelled ornate hilt, cord, string, leather thong, necklace, chain, pendant, amulet, locket, hung, dangling, jewellery, eye, heart, potion, bottle, vial, coin, ring on a finger, cube, box, crate, wooden block, brick, square, rectangular, slab, smooth pebble, river stone, uncut rock, egg, sphere, ball, marble, orb, pedestal, floating shards, sparkles, star",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "sources": [
+        "item:core-juggernaut"
+      ],
+      "status": "accepted",
+      "notes": "I want all cores to be a circle"
+    },
+    {
+      "id": "core-sniper",
+      "out": "items/cores/sniper.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a perfectly circular cut gemstone core, a round brilliant-cut gem with fine radial facet lines running from its centre out to its rim, flanked above and below by two thin curved arcs that do not touch the gem, one fine crosshair line across its centre, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of pale gold, warm sand and dark bronze, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, dagger, rapier, thin blade, curved blade, scimitar, katana, axe, hammer, mace, spear, bow, fire, flame, ember, frost, ice, green venom, glowing runes, jewelled ornate hilt, cord, string, leather thong, necklace, chain, pendant, amulet, locket, hung, dangling, jewellery, eye, heart, potion, bottle, vial, coin, ring on a finger, cube, box, crate, wooden block, brick, square, rectangular, slab, smooth pebble, river stone, uncut rock, egg, sphere, ball, marble, orb, pedestal, floating shards, sparkles, star",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "sources": [
+        "item:core-sniper"
+      ],
+      "status": "accepted",
+      "notes": "I want all cores to be a circle"
+    },
+    {
+      "id": "core-survivalist",
+      "out": "items/cores/survivalist.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a perfectly circular cut gemstone core, a round brilliant-cut pale moss green gem with fine radial facet lines running from its centre out to its rim, a sealed knot of heartwood sap at its centre, held in a plain thin metal bezel, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of pale wood, moss green and dark bark, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, dagger, rapier, thin blade, curved blade, scimitar, katana, axe, hammer, mace, spear, bow, fire, flame, ember, frost, ice, green venom, glowing runes, jewelled ornate hilt, cord, string, leather thong, necklace, chain, pendant, amulet, locket, hung, dangling, jewellery, eye, heart, potion, bottle, vial, coin, ring on a finger, cube, box, crate, wooden block, brick, square, rectangular, slab, smooth pebble, river stone, uncut rock, egg, sphere, ball, marble, orb, pedestal, floating shards, sparkles, star",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "sources": [
+        "item:core-survivalist"
+      ],
+      "status": "accepted"
+    },
+    {
+      "id": "core-force",
+      "out": "items/cores/force.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a perfectly circular cut gemstone core, a round brilliant-cut dull basalt red gem with fine radial facet lines running from its centre out to its rim, one deep crack splitting across its face, held in a plain thin metal bezel, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of dark basalt, deep red and dull iron, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, dagger, rapier, thin blade, curved blade, scimitar, katana, axe, hammer, mace, spear, bow, fire, flame, ember, frost, ice, green venom, glowing runes, jewelled ornate hilt, cord, string, leather thong, necklace, chain, pendant, amulet, locket, hung, dangling, jewellery, eye, heart, potion, bottle, vial, coin, ring on a finger, cube, box, crate, wooden block, brick, square, rectangular, slab, smooth pebble, river stone, uncut rock, egg, sphere, ball, marble, orb, pedestal, floating shards, sparkles, star",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "sources": [
+        "item:core-force"
+      ],
+      "status": "accepted"
+    },
+    {
+      "id": "core-arcanist",
+      "out": "items/cores/arcanist.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a perfectly circular cut gemstone core, a round brilliant-cut pale ice blue gem with fine radial facet lines running from its centre out to its rim, three thin concentric rings incised into its face, held in a plain thin metal bezel, the gem held clear of its setting by three fine prongs with a visible gap behind it, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of pale blue, cold white and dark steel, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, dagger, rapier, thin blade, curved blade, scimitar, katana, axe, hammer, mace, spear, bow, fire, flame, ember, frost, ice, green venom, glowing runes, jewelled ornate hilt, cord, string, leather thong, necklace, chain, pendant, amulet, locket, hung, dangling, jewellery, eye, heart, potion, bottle, vial, coin, ring on a finger, cube, box, crate, wooden block, brick, square, rectangular, slab, smooth pebble, river stone, uncut rock, egg, sphere, ball, marble, orb, pedestal, floating shards, sparkles, star",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "sources": [
+        "item:core-arcanist"
+      ],
+      "status": "accepted"
+    },
+    {
+      "id": "core-controller",
+      "out": "items/cores/controller.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a perfectly circular cut gemstone core, a round brilliant-cut murky bruised purple gem with fine radial facet lines running from its centre out to its rim, fine dark veins webbing outward from its centre, held in a plain thin metal bezel, the gem held clear of its setting by three fine prongs with a visible gap behind it, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of murky purple, bruised violet and dark iron, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, dagger, rapier, thin blade, curved blade, scimitar, katana, axe, hammer, mace, spear, bow, fire, flame, ember, frost, ice, green venom, glowing runes, jewelled ornate hilt, cord, string, leather thong, necklace, chain, pendant, amulet, locket, hung, dangling, jewellery, eye, heart, potion, bottle, vial, coin, ring on a finger, cube, box, crate, wooden block, brick, square, rectangular, slab, smooth pebble, river stone, uncut rock, egg, sphere, ball, marble, orb, pedestal, floating shards, sparkles, star",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "sources": [
+        "item:core-controller"
+      ],
+      "status": "accepted"
+    },
+    {
+      "id": "core-accelerant",
+      "out": "items/cores/accelerant.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a perfectly circular cut gemstone core, a round brilliant-cut bright lime green gem with fine radial facet lines running from its centre out to its rim, three steep slanted grooves raked across its face, held in a plain thin metal bezel, the gem held clear of its setting by three fine prongs with a visible gap behind it, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of bright lime green, pale mint and dark iron, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, dagger, rapier, thin blade, curved blade, scimitar, katana, axe, hammer, mace, spear, bow, fire, flame, ember, frost, ice, green venom, glowing runes, jewelled ornate hilt, cord, string, leather thong, necklace, chain, pendant, amulet, locket, hung, dangling, jewellery, eye, heart, potion, bottle, vial, coin, ring on a finger, cube, box, crate, wooden block, brick, square, rectangular, slab, smooth pebble, river stone, uncut rock, egg, sphere, ball, marble, orb, pedestal, floating shards, sparkles, star",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "sources": [
+        "item:core-accelerant"
+      ],
+      "status": "accepted"
+    },
+    {
+      "id": "core-catalyst",
+      "out": "items/cores/catalyst.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a perfectly circular cut gemstone core, a round brilliant-cut black volcanic glass gem with fine radial facet lines running from its centre out to its rim, a single molten orange seam running across its middle, held in a plain thin metal bezel, the gem held clear of its setting by three fine prongs with a visible gap behind it, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of black glass, ember orange and dark red, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, dagger, rapier, thin blade, curved blade, scimitar, katana, axe, hammer, mace, spear, bow, fire, flame, ember, frost, ice, green venom, glowing runes, jewelled ornate hilt, cord, string, leather thong, necklace, chain, pendant, amulet, locket, hung, dangling, jewellery, eye, heart, potion, bottle, vial, coin, ring on a finger, cube, box, crate, wooden block, brick, square, rectangular, slab, smooth pebble, river stone, uncut rock, egg, sphere, ball, marble, orb, pedestal, floating shards, sparkles, star",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "sources": [
+        "item:core-catalyst"
+      ],
+      "status": "accepted"
+    },
+    {
+      "id": "core-bruiser",
+      "out": "items/cores/bruiser.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a perfectly circular cut gemstone core, a round brilliant-cut dark jungle green gem with fine radial facet lines running from its centre out to its rim, one rivet missing and the collar dented, set into a thick heavy riveted iron collar, the gem held clear of its setting by three fine prongs with a visible gap behind it, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of dark jungle green, dark stone and dull iron, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, dagger, rapier, thin blade, curved blade, scimitar, katana, axe, hammer, mace, spear, bow, fire, flame, ember, frost, ice, green venom, glowing runes, jewelled ornate hilt, cord, string, leather thong, necklace, chain, pendant, amulet, locket, hung, dangling, jewellery, eye, heart, potion, bottle, vial, coin, ring on a finger, cube, box, crate, wooden block, brick, square, rectangular, slab, smooth pebble, river stone, uncut rock, egg, sphere, ball, marble, orb, pedestal, floating shards, sparkles, star",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "sources": [
+        "item:core-bruiser"
+      ],
+      "status": "accepted"
+    },
+    {
+      "id": "core-duelist",
+      "out": "items/cores/duelist.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a perfectly circular cut gemstone core, a round brilliant-cut deep crimson gem with fine radial facet lines running from its centre out to its rim, one narrow slit cut clean through the gem, set into a thick heavy riveted iron collar, the gem held clear of its setting by three fine prongs with a visible gap behind it, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of deep crimson, dark stone and dull steel, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, dagger, rapier, thin blade, curved blade, scimitar, katana, axe, hammer, mace, spear, bow, fire, flame, ember, frost, ice, green venom, glowing runes, jewelled ornate hilt, cord, string, leather thong, necklace, chain, pendant, amulet, locket, hung, dangling, jewellery, eye, heart, potion, bottle, vial, coin, ring on a finger, cube, box, crate, wooden block, brick, square, rectangular, slab, smooth pebble, river stone, uncut rock, egg, sphere, ball, marble, orb, pedestal, floating shards, sparkles, star",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "sources": [
+        "item:core-duelist"
+      ],
+      "status": "accepted"
+    },
+    {
+      "id": "core-scout",
+      "out": "items/cores/scout.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a perfectly circular cut gemstone core, a round brilliant-cut frost white-blue gem with fine radial facet lines running from its centre out to its rim, three small chips missing from its rim, in a segmented metal rim, the gem held clear of its setting by three fine prongs with a visible gap behind it, centered and filling about 85 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of frost white, pale ice blue and dark steel, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, dagger, rapier, thin blade, curved blade, scimitar, katana, axe, hammer, mace, spear, bow, fire, flame, ember, frost, ice, green venom, glowing runes, jewelled ornate hilt, cord, string, leather thong, necklace, chain, pendant, amulet, locket, hung, dangling, jewellery, eye, heart, potion, bottle, vial, coin, ring on a finger, cube, box, crate, wooden block, brick, square, rectangular, slab, smooth pebble, river stone, uncut rock, egg, sphere, ball, marble, orb, pedestal, floating shards, sparkles, star",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "sources": [
+        "item:core-scout"
+      ],
+      "status": "accepted"
     }
   ]
 }
