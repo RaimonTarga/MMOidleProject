@@ -21,7 +21,6 @@ const LOOSE_EXCLUDE = [
   /^UI_icons\.(png|json)$/,
   /^shadows\.json$/, // bake:hitboxes output, regenerated on server boot
   /^\.gitkeep$/,
-  /^old_backgrounds\//, // superseded art kept for reference only
   /^audio\//, // not visual art; out of pipeline scope
   /\.gif$/,
 ];
