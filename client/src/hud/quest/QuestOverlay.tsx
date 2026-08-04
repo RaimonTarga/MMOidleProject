@@ -1,15 +1,10 @@
 import { createPortal } from 'react-dom';
-import { useAtom, useSetAtom } from 'jotai';
-import {
-  mapHighlightNodesAtom,
-  questOpenAtom,
-} from '../atoms';
+import { useAtom } from 'jotai';
+import { questOpenAtom } from '../atoms';
 import { QuestPanel } from '../../ui/QuestPanel';
-import { openPrimaryOverlay } from '../../input/overlayStack';
 
 export function QuestOverlay() {
   const [open, setOpen] = useAtom(questOpenAtom);
-  const setMapHighlight = useSetAtom(mapHighlightNodesAtom);
 
   if (!open) return null;
 
@@ -32,12 +27,7 @@ export function QuestOverlay() {
             ✕
           </button>
         </div>
-        <QuestPanel
-          onFindDungeon={(nodeIds) => {
-            setMapHighlight(nodeIds);
-            openPrimaryOverlay('map');
-          }}
-        />
+        <QuestPanel />
       </div>
     </div>,
     document.body,

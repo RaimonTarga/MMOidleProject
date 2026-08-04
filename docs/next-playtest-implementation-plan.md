@@ -5,7 +5,7 @@
 code, which run in parallel, and what the offline design sessions must produce.
 
 Grounded in a code read on 2026-08-02. Where this doc and the code disagree, the
-code wins.
+code wins. Progress last synchronized on 2026-08-04.
 
 ---
 
@@ -15,10 +15,10 @@ The sketch was written without a code read. Five findings change the plan.
 
 | Roadmap item | Reality in the repo | Effect on the plan |
 |---|---|---|
-| "Change tier advancement to seals" | `QUEST_DATABASE` (5 quests, `tierRequired` 0–4) + `registerKillForQuests` (45 lines) is the *entire* mechanism. The progression panel's `MilestonePips` was **deliberately built as the seal seam** — `killsRequired: 3` from distinct sources already draws three trophies with no UI work. | Smallest item on the list. ~1 session once the design lands. **Not** a big refactor. |
-| "Implement the relic system / add the relic slot" | **SHIPPED 2026-08-04.** `relic` is the sixth equipment slot; one shared resolver maps four universal ratings across all six root mechanics. Eight T4 mastery recipes, persistence compatibility, server equip authority, Forge/tooltip previews, and origin-scoped buff/debuff scaling are live. | Final balance, art, and T5/T6 evolutions remain; see `docs/relics-current-state.md`. |
+| "Change tier advancement to seals" | **SHIPPED.** T1–T4 advancement derives seals from distinct same-tier boss first-clears (2026-08-02), with source/progress presentation on desktop and mobile (2026-08-04). | Only T5/T6 rows remain, to land alongside those tiers' bosses. |
+| "Implement the relic system / add the relic slot" | **SHIPPED 2026-08-04.** `relic` is the sixth equipment slot; one shared resolver maps four universal ratings across all six root mechanics. Eight T4 mastery recipes, persistence compatibility, server equip authority, Forge/tooltip previews, origin-scoped buff/debuff scaling, and bespoke icons are live. | Final balance and T5/T6 evolutions remain; see `docs/relics-current-state.md`. |
 | "Author T5 and T6 biome content" | Regions are now data: `shared/src/world/map/regionT{1..4}.ts`, ~45 lines each (mask grid + biome list + dungeon cells + sanctuary). Adding `regionT5.ts` is trivial. But **every biome×tier needs a monster pool or the world throws at boot** (`nodeModifiers.ts:530`). | Structure is cheap; *content* is the whole cost. Roster choice is the biggest scope lever in the program. |
-| "T1–T4 must be stable" | Monster/boss coverage for T1–T4 is complete and boot-validated (the `⚠ T4 trash not authored` comments on forest/plains are stale — those biomes retire before T3). But **abilities stop at T2**: 8 abilities exist (5×T1, 3×T2) while `abilitySlotCount` grants a T4 player **4 slots**. Cores = 4 items, forest only. Stances = 3. Rites = 4. | The real T1–T4 blocker isn't monsters — it's **empty build slots at T3/T4**. This outranks T5/T6 content. |
+| "T1–T4 must be stable" | Monster/boss coverage for T1–T4 is complete and boot-validated (the `⚠ T4 trash not authored` comments on forest/plains are stale — those biomes retire before T3). The twelve-core cast is now complete, but **abilities stop at T2**: 8 abilities exist (5×T1, 3×T2) while `abilitySlotCount` grants a T4 player **4 slots**. Stances = 3. Rites = 4. | The real T1–T4 blocker isn't monsters — it's **empty ability slots and thin stance/rite choices at T3/T4**. This outranks T5/T6 content. |
 | "Decide whether Summoner is included" | Summoner has an archetype, 3 T3 paths (plains/mountain/cave), and 9 T3 specs authored as data. Minions still alias the Tiny Wisp placeholder; T3 bodies are the only sprite work left. | The decision is real and it's a *fork in the schedule*, not a footnote. Put it early. |
 
 **Bottom line:** the roadmap's ordering is roughly inverted. Sections 1–2
@@ -30,44 +30,29 @@ smaller than it reads once you know it's really "fill the T3/T4 build slots."
 
 ## 1. The decisions that gate everything
 
-Three offline design sessions (D2 relics, D3 T5/T6, D4 summoner) plus one item
-that turned out **not** to need one (D1 seals — decided; its open work is UI).
-Nothing downstream of each brief can start until its answer returns. **Write and
-export the three briefs before starting implementation work** — the offline
-turnaround is the long pole, and Tracks E/F/G (art, deploy, tooling) can absorb
-the wait.
+D2 (Relics) is complete. D3 (T5/T6) and D4 (Summoner) remain the external design
+sessions that gate their respective implementation and art; D1 (Seals) did not
+need one and its mechanism is implemented. All three export briefs already exist,
+so the remaining external sessions can start without another preparation pass.
 
 Each brief follows the same shape: **grounding facts → the questions → the
 return format**. The return format matters most: specify the exact table/schema
 you want back so the answer is directly implementable rather than prose you have
 to re-interpret.
 
-### D1 — Seals — **NOT a design brief**
+### D1 — Seals — **IMPLEMENTED**
 
-The design is settled (user, 2026-08-02). What's actually open is **presentation**:
-conveying to the player what they need to advance, where to get it, and how far
-along they are. So D1 is a UI/information-design task in Track A, not an offline
-session.
+The mechanism shipped 2026-08-02 and presentation shipped 2026-08-04. Seals are
+derived from `bossesCleared`; there is no parallel seal wallet, migration, or
+second source of truth. See `docs/seals-current-state.md`.
 
-**Implementation shape (≈1 session):** add a `seals` record to
-`TracksProgression` (same pattern as `catalysts` — whole-slice JSON, `{}` default
-for old rows, no migration); replace the tier-advance branch in `questSystem.ts`
-with a seal check against a new `TIER_ADVANCEMENT` table; grant seals in the boss
-first-clear path; thread through `PlayerView` + admin grant/reset.
-
-**The presentation work — the part that actually needs care:**
-- The progression panel's `MilestonePips` were built *as the seal seam* —
-  `killsRequired: 3` from distinct sources already draws three trophies with no
-  UI work, and switches to a segmented `GradientConduit` above six units. The
-  container exists; what it lacks is **source attribution**: a pip that says
-  "obtained" doesn't say *where the unobtained ones come from*.
-- Three questions the UI must answer without the player leaving the panel:
-  *what do I need*, *where is it*, *how close am I*. The panel answers the first
-  and third today.
-- The map already carries boss-respawn markers and a discovery/unlock layer —
-  that's the natural home for "where", and the quest row's existing compass
-  `ActionChip` (`▶ locate dungeons on map`) is already the seam for wiring pip →
-  map location.
+At seal-gated tiers the Progression panel now replaces the obsolete kill-quest
+display with the actual seal requirement, countable progress pips, and every
+biome boss that can supply a seal. Each source is visibly obtained or available.
+The full Mastery meter remains anchored below both collapsed and expanded views,
+while a separate ledger shows every configured tier. Provisional small seal
+glyphs and map-locate actions were removed pending a deliberate seal symbol and
+a better navigation affordance.
 
 ### D2 — Relics
 
@@ -201,11 +186,11 @@ alongside from day one.
 
 | Track | Content | Blocked by | Runs |
 |---|---|---|---|
-| **A — Progression spine** | Seals; relic machinery + slot; relic catalogue | D1, D2 | Phase 1–2 |
-| **B — Build content** | Abilities T3/T4 rosters; cores catalogue; stances; rites | nothing (D2 for relic interactions) | Phase 1–2 |
+| **A — Progression spine** | Seal mechanism/presentation and relic machinery/T4 catalogue **done**; T5/T6 extension remains | D3 for T5/T6 | Phase 3 |
+| **B — Build content** | Abilities T3/T4 rosters; stances; rites; core catalogue **done** | nothing | Phase 1–2 |
 | **C — T1–T4 stability** | Progression walk-through, placeholder purge, boss/dungeon pass | nothing | Phase 0 audit, fixes throughout |
 | **D — T5/T6** | Regions, biome rosters, monsters, bosses, dungeons, recipes, equipment | D3, and A+B landing first | Phase 3 |
-| **E — Art** | Summoner bodies, T5/T6 biomes + monsters, relic/ability icons, tier aura | D3, D4 per-item | continuous |
+| **E — Art** | Summoner bodies, T5/T6 biomes + monsters, ability icons, tier aura; core/relic icons **done** | D3, D4 per-item | continuous |
 | **F — Deploy & ops** | New deployment, test accounts, reset tools, admin lockdown | the whole roadmap | Phase 6 only |
 | **G — Balance & tooling** | eHP report, farming loop, bench updates; then your numbers pass | the systems it measures | tooling continuous, pass last |
 
@@ -384,13 +369,14 @@ reason.
 
 Verified: 41/41 tests, typecheck clean, new `server/test/tierSeals.test.ts`.
 
-**1.2 — Seals: presentation.**
-Source attribution on the milestone pips (an unobtained pip must say where it
-comes from), and pip → map location wiring through the existing compass
-`ActionChip`.
-`touches:` the progression cluster, map layer.
-`done when:` a player who has never seen the game can answer *what do I need*,
-*where is it*, *how close am I* without leaving the panel.
+**1.2 — Seals: presentation.** ✅ **DONE 2026-08-04.** The Progression panel
+shows the real derived seal total instead of the non-authoritative legacy quest,
+lists every biome source with obtained/available state, and keeps the mastery bar
+visible below its collapsed summary. That summary expands into current-tier detail,
+while the separate Boss Seal Ledger records every configured tier and its
+optional trophies. Small placeholder seal pips and the ineffective map-locate
+actions were removed pending dedicated designs. Both maximum-source layouts are
+covered by static UI harnesses.
 
 **1.3 — Abilities Wave 2 (T3 roster).** *(2 sessions)*
 Six abilities per the shipped plan §5: Whirlwind (Volcanic), Stun Strike (Cave),
@@ -429,12 +415,10 @@ real catalogue. Order matters — each later system is authored knowing what the
 earlier ones already cover, or you get four systems that all say "more damage,
 less defense."*
 
-**2.1 — Cores catalogue.** *(2–3 sessions)*
-Today: 4 items, forest only. Needs a family per biome across the range axis
-(close / mid / far / universal / party), plus rank chains via the evolution
-machinery (`requiredPlus 0`).
-`done when:` every biome a T1–T4 player farms offers a core that rewards their
-range choice.
+**2.1 — Cores catalogue.** ✅ **DONE 2026-08-04.** Twelve authored cores across
+the T2/T3 biome bands, with melee/ranged/unrestricted eligibility, dedicated
+mechanic hooks, presentation, tests, and bespoke icons. See
+`docs/cores-current-state.md`.
 
 **2.2 — Stances.** *(1–2 sessions)*
 Today: 3 generic (Offensive / Defensive / Tanking). These are the most
@@ -526,6 +510,11 @@ feedback, and 0.4 should have removed most of the guesswork from the economy hal
 *The only phase where the live deployment is touched. Everything before this runs
 locally; the release-branch deployment stays untouched as a stable reference.*
 
+**Player account prerequisite — DONE 2026-08-04.** Discord OAuth and the
+character create/select/switch/delete flow are implemented locally. Phase 6 must
+still configure and verify the OAuth credentials and callback on the new
+deployment. Admin authentication remains separate and open.
+
 **6.1** — Cut the new deployment: new build to Railway, production game DB, log
 DB, and Redis verified, persistence across reconnect and restart confirmed.
 **6.2** — Multiplayer smoke: sessions, parties, travel, combat, rewards, deaths,
@@ -552,9 +541,10 @@ visual / future).
 | 5 — Balance | yours |
 | 6 — Deploy + playtest prep | 4–6 |
 
-≈45–70 sessions to playtest, with Phase 3 carrying roughly half the risk and most
-of the compressibility. Art (Track E) runs alongside throughout and is the
-long-lead item inside Phase 3.
+The original full-roadmap estimate was ≈45–70 sessions. It has not been rebased
+after the completed seal mechanism, cores, relics, tooling, and account flow;
+Phase 3 still carries roughly half the risk and most of the compressibility. Art
+(Track E) runs alongside throughout and is the long-lead item inside Phase 3.
 
 **Optional multiplayer boss** slots between Phases 3 and 6 if there's room. It is
 the correct thing to cut first — parties, shared nodes, and same-node reward

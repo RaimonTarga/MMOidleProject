@@ -1137,7 +1137,137 @@
 /* ── Quest / Tier panel ──────────────────────────────────────────────────── */
 
 .quest-panel {
-  /* same shell as sidebar-panel — no extra overrides needed */
+  overflow: hidden;
+}
+
+.progression-summary {
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.progression-summary__heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 7px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid var(--hud-edge-divider);
+}
+
+.progression-summary .panel-title,
+.desktop-hud .progression-summary .panel-title {
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+}
+
+.progression-summary__chevron {
+  display: grid;
+  width: 18px;
+  height: 18px;
+  place-items: center;
+  color: var(--hud-primary);
+  font-size: 15px;
+  line-height: 1;
+  transition: transform var(--hud-motion-fast) ease, color var(--hud-motion-fast) ease;
+}
+
+.progression-summary[aria-expanded='true'] .progression-summary__chevron {
+  color: var(--hud-primary-strong);
+  transform: rotate(180deg);
+}
+
+.progression-summary__body {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 3px 9px;
+  align-items: center;
+}
+
+.progression-summary__tier {
+  display: grid;
+  width: 54px;
+  height: 54px;
+  place-items: center;
+  align-content: center;
+  border: 1px solid rgba(214, 170, 75, 0.52);
+  background:
+    radial-gradient(circle at 50% 42%, rgba(231, 192, 102, 0.2), transparent 58%),
+    rgba(27, 20, 12, 0.82);
+  clip-path: polygon(50% 0, 88% 18%, 100% 58%, 74% 100%, 26% 100%, 0 58%, 12% 18%);
+  box-shadow: inset 0 0 10px rgba(219, 174, 76, 0.12);
+}
+
+.progression-summary__tier small {
+  color: var(--hud-text-dim);
+  font-size: 8px;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.progression-summary__tier strong {
+  color: #f0ca69;
+  font-family: var(--hud-font-display);
+  font-size: 21px;
+  line-height: 1.15;
+}
+
+.progression-summary__copy {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.progression-summary__copy strong {
+  overflow: hidden;
+  color: var(--hud-text);
+  font-size: 10px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.progression-summary__copy span {
+  color: var(--hud-text-dim);
+  font-size: 8px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.progression-summary:hover .progression-summary__heading,
+.progression-summary:focus-visible .progression-summary__heading {
+  border-bottom-color: var(--hud-edge-strong);
+}
+
+.progression-summary:focus-visible {
+  outline: var(--hud-focus-width) solid var(--hud-focus-color);
+  outline-offset: var(--hud-focus-offset);
+}
+
+.progression-details {
+  margin-top: 9px;
+  padding-top: 9px;
+  border-top: 1px solid rgba(216, 174, 84, 0.18);
+  animation: progression-details-reveal var(--hud-motion-state) ease-out both;
+}
+
+@keyframes progression-details-reveal {
+  from { opacity: 0; transform: translateY(-3px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .quest-tier-row {
@@ -1272,8 +1402,73 @@
   margin-top: 2px;
 }
 
-/* The whole-panel click target and its '▶ locate dungeons on map' hint were
-   replaced by an explicit compass ActionChip on the quest row. */
+.seal-sources {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 7px;
+}
+
+.seal-sources__heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  color: var(--hud-text-dim);
+  font-size: 8px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.seal-sources__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 3px;
+}
+
+.seal-source {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 4px;
+  border: 1px solid var(--hud-edge-divider);
+  background: rgba(7, 8, 12, 0.32);
+}
+
+.seal-source--obtained {
+  border-color: rgba(85, 204, 119, 0.26);
+  background: rgba(38, 88, 52, 0.12);
+}
+
+.seal-source__name {
+  min-width: 0;
+  flex: 1 1 auto;
+  color: var(--hud-text-muted);
+  font-size: 9px;
+  line-height: 1.15;
+}
+
+.seal-source--obtained .seal-source__name {
+  color: var(--hud-success);
+}
+
+.seal-ledger-trigger {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 8px;
+}
+
+.seal-ledger-trigger .action-chip__label {
+  font-size: 8px;
+  letter-spacing: 0.03em;
+}
+
+@media (max-width: 600px) {
+  .seal-sources__grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
 
 /* ── Debug panel (click header to expand) ───────────────────────────────── */
 
@@ -1889,6 +2084,14 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .progression-summary__chevron {
+    transition: none;
+  }
+
+  .progression-details {
+    animation: none;
+  }
+
   .right-nav-button__badge--unlock {
     animation: none;
     opacity: 1;

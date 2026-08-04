@@ -155,10 +155,15 @@ undo the core one tick later.
   buff-potency layer that does not exist in any form.
 - **`party` eligibility was removed.** It gated nothing.
 
+## Presentation
+
+All twelve cores have bespoke PixelLab icons in `art/src/items/cores/`, wired to
+their recipes and packed into the client icon atlas. The slot uses a circular cut
+gemstone set in metal as its shared visual language, with material T2 designs and
+an added arcane cue at T3.
+
 ## Known gaps
 
-- **Icons are placeholders** — reused charm art. A core icon pass is its own PixelLab
-  session.
 - **Bruiser and Scout's mobility clauses are inert without a mobility ability**, and
   Charge is the only one tagged today. Both cores keep an always-on stat base, and
   the clauses widen for free as more are authored.

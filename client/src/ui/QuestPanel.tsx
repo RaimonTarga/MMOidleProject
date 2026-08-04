@@ -1,11 +1,12 @@
 import { useAtomValue } from 'jotai';
+import { useState } from 'react';
 import {
   QUEST_DATABASE,
-  NODE_BIOMES,
   maxGlobalMasteryAtTier,
-  shortestWorldPath,
+  tierAdvancementProgress,
 } from '@mmo-idle/shared';
 import {
+  bossesClearedAtom,
   globalMasteryAtom,
   playerIdAtom,
   playerNodeIdAtom,
@@ -20,9 +21,10 @@ import {
   type PipState,
 } from '../hud/primitives';
 import { atlasIcon } from './GameIcon';
+import { SealLedgerPanel } from './SealLedgerPanel';
+import { sealSourceViewsAtTier, type SealSourceView } from './sealPresentation';
 
 interface Props {
-  onFindDungeon?: (nodeIds: string[]) => void;
   /** Desktop only: the dial opens the Mastery dialog through the rail's toggler. */
   onOpenMastery?: () => void;
   /** Mirrors the Mastery visibility gate; the dial inherits it (§16). */
@@ -42,29 +44,24 @@ interface Props {
  */
 const PIP_LIMIT = 6;
 
-// Returns all dungeon nodes for the given tier, sorted nearest-to-player first.
-function findDungeonsForTier(playerNodeId: string, tier: number): string[] {
-  const results: { nodeId: string; dist: number }[] = [];
-  for (const [nodeId, info] of Object.entries(NODE_BIOMES)) {
-    if (!info.isDungeon || info.biomeTier !== tier) continue;
-    const path = shortestWorldPath(playerNodeId, nodeId);
-    if (!path) continue;
-    results.push({ nodeId, dist: path.length - 1 });
-  }
-  results.sort((a, b) => a.dist - b.dist);
-  return results.map(r => r.nodeId);
-}
-
 /** Countable requirements draw as trophies; tallies draw as a filling conduit. */
-function QuestProgress({ progress, required }: { progress: number; required: number }) {
-  const label = `Quest progress: ${progress} of ${required}`;
+function ProgressMeter({
+  label,
+  progress,
+  required,
+}: {
+  label: string;
+  progress: number;
+  required: number;
+}) {
+  const accessibleLabel = `${label}: ${progress} of ${required}`;
 
   if (required <= PIP_LIMIT) {
     const states: PipState[] = Array.from(
       { length: required },
       (_, i) => (i < progress ? 'done' : 'pending'),
     );
-    return <MilestonePips className="quest-pips" states={states} label={label} />;
+    return <MilestonePips className="quest-pips" states={states} label={accessibleLabel} />;
   }
 
   return (
@@ -73,9 +70,42 @@ function QuestProgress({ progress, required }: { progress: number; required: num
       fraction={required > 0 ? progress / required : 0}
       ramp="arcane"
       segments={required <= 12 ? required : 0}
-      label={label}
+      label={accessibleLabel}
       valueText={`${progress} of ${required}`}
     />
+  );
+}
+
+function SealSources({
+  sources,
+  tier,
+  required,
+}: {
+  sources: SealSourceView[];
+  tier: number;
+  required: number;
+}) {
+  return (
+    <div className="seal-sources">
+      <div className="seal-sources__heading">
+        <span>Boss sources</span>
+        <span>Choose {required} of {sources.length}</span>
+      </div>
+      <div className="seal-sources__grid">
+        {sources.map((source) => {
+          const status = source.obtained ? 'obtained' : 'available';
+          return (
+            <div
+              key={source.biomeGroup}
+              className={`seal-source${source.obtained ? ' seal-source--obtained' : ''}`}
+              title={`${source.name} T${tier} seal: ${status}`}
+            >
+              <span className="seal-source__name">{source.name}</span>
+            </div>
+          );
+        })}
+      </div>
+    </div>
   );
 }
 
@@ -144,11 +174,14 @@ function MasteryMeter({
  * `playerTier`, so reading them apart invited the wrong conclusion — a full
  * quest bar means nothing if mastery is still short of the upgrade thresholds.
  */
-export function QuestPanel({ onFindDungeon, onOpenMastery, showMastery = true }: Props) {
+export function QuestPanel({ onOpenMastery, showMastery = true }: Props) {
+  const [detailsOpen, setDetailsOpen] = useState(false);
+  const [sealLedgerOpen, setSealLedgerOpen] = useState(false);
   const playerId = useAtomValue(playerIdAtom);
   const nodeId = useAtomValue(playerNodeIdAtom);
   const playerTier = useAtomValue(playerTierAtom);
   const questProgress = useAtomValue(questProgressAtom);
+  const bossesCleared = useAtomValue(bossesClearedAtom);
   const globalMastery = useAtomValue(globalMasteryAtom);
 
   if (!playerId || !nodeId) {
@@ -174,25 +207,73 @@ export function QuestPanel({ onFindDungeon, onOpenMastery, showMastery = true }:
   const progress = activeQuest ? (questProgress[activeQuest.id] ?? 0) : 0;
   const required = activeQuest?.killsRequired ?? 1;
 
-  const dungeons = (activeQuest && onFindDungeon)
-    ? findDungeonsForTier(nodeId, playerTier)
-    : [];
+  const sealProgress = tierAdvancementProgress(bossesCleared, playerTier);
+  const sealSources = sealSourceViewsAtTier(bossesCleared, playerTier);
+  const usesSeals = sealProgress.required > 0;
 
   const masteryCap = maxGlobalMasteryAtTier(playerTier);
 
+  const summaryProgress = usesSeals
+    ? `${sealProgress.held} / ${sealProgress.required} seals`
+    : activeQuest
+      ? `${progress} / ${required} quest`
+      : 'Content ceiling reached';
   return (
-    <HudPanel
-      className="sidebar-panel quest-panel"
-      data-ui-unlock-system="progression"
-    >
-      <div className="panel-title">Progression</div>
+    <>
+      <HudPanel
+        className={`sidebar-panel quest-panel${detailsOpen ? ' quest-panel--expanded' : ''}`}
+        data-ui-unlock-system="progression"
+      >
+        <button
+          type="button"
+          className="progression-summary"
+          aria-expanded={detailsOpen}
+          onClick={() => setDetailsOpen((open) => !open)}
+        >
+          <span className="progression-summary__heading">
+            <span className="panel-title">Progression</span>
+            <span className="progression-summary__chevron" aria-hidden="true">⌄</span>
+          </span>
+          <span className="progression-summary__body">
+            <span className="progression-summary__tier" aria-label={`Tier ${playerTier}`}>
+              <small>Tier</small>
+              <strong>{playerTier}</strong>
+            </span>
+            <span className="progression-summary__copy">
+              <strong>{summaryProgress}</strong>
+            </span>
+          </span>
+        </button>
 
-      <div className="quest-tier-row">
-        <span className="stat-label">Tier</span>
-        <span className="stat-value quest-tier-badge">{playerTier}</span>
-      </div>
+        {detailsOpen && (
+          <div className="progression-details">
+          {usesSeals ? (
+        <>
+          <div className="quest-name">Seals of Tier {playerTier}</div>
+          <div className="quest-desc">
+            Defeat {sealProgress.required} distinct Tier {playerTier} biome bosses.
+            Each boss grants its seal only on the first clear at this tier.
+          </div>
 
-      {activeQuest ? (
+          <div className="quest-progress-row">
+            <span className="stat-label">Seals</span>
+            <span className="stat-value">
+              {sealProgress.held} / {sealProgress.required}
+            </span>
+          </div>
+
+          <ProgressMeter
+            label={`Tier ${playerTier} seals`}
+            progress={sealProgress.held}
+            required={sealProgress.required}
+          />
+          <SealSources
+            sources={sealSources}
+            tier={playerTier}
+            required={sealProgress.required}
+          />
+        </>
+      ) : activeQuest ? (
         <>
           <div className="quest-name">{activeQuest.name}</div>
           <div className="quest-desc">{activeQuest.description}</div>
@@ -200,20 +281,9 @@ export function QuestPanel({ onFindDungeon, onOpenMastery, showMastery = true }:
           <div className="quest-progress-row">
             <span className="stat-label">Progress</span>
             <span className="stat-value">{progress} / {required}</span>
-            {/* Was a whole-panel click target with a '▶ locate dungeons on map'
-                hint. A panel-sized button hid the action and read as decoration;
-                this states it where the quest is. */}
-            {dungeons.length > 0 && onFindDungeon && (
-              <ActionChip
-                label="Locate dungeons on map"
-                icon={atlasIcon('UI_icons/actions/locate.png')}
-                size="sm"
-                onClick={() => onFindDungeon(dungeons)}
-              />
-            )}
           </div>
 
-          <QuestProgress progress={progress} required={required} />
+          <ProgressMeter label="Quest progress" progress={progress} required={required} />
         </>
       ) : (
         <div className="quest-complete">
@@ -221,9 +291,30 @@ export function QuestPanel({ onFindDungeon, onOpenMastery, showMastery = true }:
         </div>
       )}
 
-      {showMastery && (
-        <MasteryMeter value={globalMastery} cap={masteryCap} onOpen={onOpenMastery} />
+            <div className="seal-ledger-trigger">
+              <ActionChip
+                label="Open the boss seal ledger for every tier"
+                showLabel
+                icon={atlasIcon('UI_icons/progress-icon.png')}
+                tone="primary"
+                size="sm"
+                onClick={() => setSealLedgerOpen(true)}
+              />
+            </div>
+
+          </div>
+        )}
+
+        {showMastery && (
+          <MasteryMeter value={globalMastery} cap={masteryCap} onOpen={onOpenMastery} />
+        )}
+      </HudPanel>
+
+      {sealLedgerOpen && (
+        <SealLedgerPanel
+          onClose={() => setSealLedgerOpen(false)}
+        />
       )}
-    </HudPanel>
+    </>
   );
 }

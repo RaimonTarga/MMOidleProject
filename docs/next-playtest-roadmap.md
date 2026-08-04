@@ -1,10 +1,37 @@
 # Next Multiplayer Playtest Roadmap
 
-> Rough implementation sketch for the next multiplayer playtest.
+> Living implementation sketch for the next multiplayer playtest.
 >
 > This is a list of gameplay, content, visual, and readiness work. It does not
 > describe implementation architecture, refactoring strategy, or technical
 > solutions. Those decisions come later.
+
+Last reviewed: 2026-08-04. Completed items are marked inline; unmarked items are
+still open.
+
+## Current progress
+
+- **Cores complete:** the system, authored twelve-core catalogue, presentation,
+  tests, and bespoke icon set are implemented.
+- **Relics complete for T4:** the sixth equipment slot, eight-relic launch cast,
+  shared mechanic resolver, presentation, tests, and bespoke icon set are
+  implemented. T5/T6 evolutions and final balance remain future content work.
+- **Player account flow complete:** Discord authentication plus character create,
+  select, switch, and soft-delete are implemented. Admin authentication remains
+  a separate deployment blocker.
+- **Seal progression complete for authored tiers:** T1–T4 advancement uses
+  distinct boss first-clears, and the Progression panel exposes the requirement,
+  every biome source, and an all-tier ledger. T5/T6 rows wait for those tiers'
+  bosses.
+- **Summoner remains the largest class decision:** its current implementation is
+  not the intended final design. Reworking it requires a dedicated external
+  design session before implementation; decide early whether it makes this
+  playtest or is temporarily disabled.
+
+The main remaining sequence is: settle the Summoner decision; finish the T3/T4
+build-content gaps; verify T1–T4 end to end; author T5/T6 (including their seal
+rows); then perform the multiplayer, balance, visual-readability, Railway, and
+playtest-preparation passes.
 
 ## Playtest goal
 
@@ -27,16 +54,20 @@ tiers.
   final release-level polish.
 - Multiplayer content is optional and must not block normal progression.
 - T7–T8 are outside the scope of this playtest.
-- Character selection is a later convenience feature, not a prerequisite.
+- Discord authentication and character selection are already implemented.
 - Final visual polish and complete animation coverage are not prerequisites.
 
 ## 1. Progression and core systems
 
 - Implement the relic system. **Done 2026-08-04.**
 - Add the relic equipment slot. **Done 2026-08-04.**
-- Introduce relics as a T4 progression system. **Done 2026-08-04.**
-- Change tier advancement from boss kills to seals.
-- Ensure seals support progression through T4, T5, and T6.
+- Introduce the eight-relic launch cast as a T4 progression system, including
+  bespoke icons. **Done 2026-08-04.**
+- Change tier advancement from quest boss kills to derived first-clear seals for
+  T1–T4. **Done 2026-08-02.**
+- Complete seal progress, biome-source attribution, persistent mastery meter,
+  and all-tier ledger presentation. **Done 2026-08-04.**
+- Extend the seal table and sources through T5 and T6 as those tiers are authored.
 - Ensure relics, gear, cores, stances, rites, abilities, and runes work as a
   coherent build system.
 - Review progression unlocks and rewards across T1–T6.
@@ -45,15 +76,17 @@ tiers.
 
 ## 2. Authored build content
 
-- Author the core item catalogue for the tiers in scope.
+- Implement and author the twelve-core catalogue for the tiers in scope,
+  including bespoke icons. **Done 2026-08-04.**
 - Author stances rather than relying on AI-generated content.
 - Author rites rather than relying on AI-generated content.
 - Review abilities, runes, charms, and gear so they fit the finalized build
   direction.
 - Author T5 and T6 equipment, relics, and other progression rewards.
 - Review class and item identities that no longer fit the ability system.
-- Decide whether Summoner is included in this playtest or remains disabled until
-  its rework is complete.
+- Hold the dedicated external Summoner design session, then decide whether the
+  reworked class is included in this playtest or the current class is temporarily
+  disabled. **Outstanding; external-session dependency.**
 
 ## 3. T1–T4 stability and content pass
 
@@ -102,7 +135,8 @@ After the gameplay systems and in-scope content are in place:
 - Review biome XP, mastery, seals, and tier advancement pacing.
 - Check that no class, build, item, or progression route is mandatory.
 - Preserve enough power headroom for future T7 and T8 content.
-- Rework Summoner as part of this pass if it is included in the playtest.
+- If Summoner is included, implement its external-session design before this pass
+  and balance the completed rework here.
 - Redesign classes or items where the finalized systems require it.
 
 Before the playtest, perform only enough tuning to prevent impossible,
@@ -115,6 +149,7 @@ after playtest feedback.
 
 - Complete enough player character sprite work to distinguish players and
   classes during multiplayer play.
+- Complete the bespoke core and relic icon sets. **Done 2026-08-04.**
 - Complete readable item icons for inventory and loadout decisions.
 - Ensure new T5/T6 content has a distinct visual identity.
 - Ensure no missing or misleading visual assets obscure gameplay information.
@@ -130,7 +165,10 @@ after playtest feedback.
 
 This is a separate deployment/readiness track from the gameplay roadmap.
 
+- Implement Discord player authentication and character selection. **Done
+  2026-08-04.**
 - Restore the Railway deployment to a usable development state.
+- Configure and verify Discord authentication in the deployed environment.
 - Confirm production game DB, log DB, and Redis operation.
 - Confirm persistence across reconnects and server restarts.
 - Confirm multiplayer sessions, parties, travel, combat, rewards, and deaths.
@@ -153,7 +191,6 @@ This is a separate deployment/readiness track from the gameplay roadmap.
 
 - T7 and T8 content.
 - Additional tiers beyond T8.
-- Character selection and multiple-character convenience features.
 - Final player sprite overhaul and complete animation coverage.
 - Final tier aura and presentation polish.
 - Full failure-diagnosis and onboarding polish.

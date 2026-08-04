@@ -1,11 +1,11 @@
 <!doctype html>
 <!--
-  Layout harness for the right rail's Progression panel. Reproduces the label
-  wrap that the compass ActionChip triggered ("Progress" breaking to "progres/s")
-  without needing a character at the right tier.
+  Layout harness for the right rail's seal-gated Progression panel, including
+  the maximum seven biome sources.
 
   Usage: pnpm ui:shot --html=tools/uishot/harness/progression.html --audit
-         ?pips=N sets the quest requirement, ?scale= sets the UI font scale.
+         ?details=1 opens the detailed view, ?pips=N sets the seal requirement,
+         ?sources=N sets source count, ?scale= sets the UI font scale.
 -->
 <html lang="en">
 <head>
@@ -38,8 +38,10 @@
 
   <script>
     const params = new URLSearchParams(location.search);
-    const required = Number(params.get('pips') ?? 1);
-    const progress = Number(params.get('progress') ?? 0);
+    const required = Number(params.get('pips') ?? 5);
+    const progress = Number(params.get('progress') ?? 2);
+    const sourceCount = Number(params.get('sources') ?? 7);
+    const details = params.get('details') === '1';
     if (params.get('scale')) {
       document.documentElement.style.setProperty('--ui-font-scale', params.get('scale'));
     }
@@ -49,31 +51,65 @@
       pips += `<i class="milestone-pips__pip milestone-pips__pip--${i < progress ? 'done' : 'pending'}"></i>`;
     }
 
+    const biomeNames = ['Forest', 'Mountain', 'Plains', 'Swamp', 'Caverns', 'Jungle', 'Graveyard'];
+    const sourceRows = biomeNames.slice(0, sourceCount).map((name, index) => {
+      const obtained = index < progress;
+      return `
+        <div class="seal-source${obtained ? ' seal-source--obtained' : ''}" title="${name} T4 seal">
+          <span class="seal-source__name">${name}</span>
+        </div>
+      `;
+    }).join('');
+
+    const detailMarkup = details ? `
+      <div class="progression-details">
+        <div class="quest-name">Seals of Tier 4</div>
+        <div class="quest-desc">Defeat ${required} distinct Tier 4 biome bosses. Each boss grants its seal only on the first clear at this tier.</div>
+        <div class="quest-progress-row">
+          <span class="stat-label">Seals</span>
+          <span class="stat-value">${progress} / ${required}</span>
+        </div>
+        <span class="milestone-pips quest-pips">${pips}</span>
+        <div class="seal-sources">
+          <div class="seal-sources__heading">
+            <span>Boss sources</span>
+            <span>Choose ${required} of ${sourceCount}</span>
+          </div>
+          <div class="seal-sources__grid">${sourceRows}</div>
+        </div>
+        <div class="seal-ledger-trigger">
+          <button type="button" class="action-chip action-chip--primary action-chip--labelled action-chip--sm">
+            <span class="game-icon" style="width:15px;height:15px"></span>
+            <span class="action-chip__label">Open boss seal ledger</span>
+          </button>
+        </div>
+      </div>
+    ` : '';
+
+    document.getElementById('panel').classList.toggle('quest-panel--expanded', details);
     document.getElementById('panel').innerHTML = `
-      <div class="panel-title">Progression</div>
-      <div class="quest-tier-row">
-        <span class="stat-label">Tier</span>
-        <span class="stat-value quest-tier-badge">1</span>
-      </div>
-      <div class="quest-name">Dungeon Delver</div>
-      <div class="quest-desc">Seek out a Tier 1 dungeon and slay its guardian boss.</div>
-      <div class="quest-progress-row">
-        <span class="stat-label">Progress</span>
-        <span class="stat-value">${progress} / ${required}</span>
-        <button type="button" class="action-chip action-chip--sm" title="Locate dungeons on map">
-          <span class="game-icon" style="width:13px;height:13px"></span>
-        </button>
-      </div>
-      <span class="milestone-pips quest-pips">${pips}</span>
+      <button type="button" class="progression-summary" aria-expanded="${details}">
+        <span class="progression-summary__heading">
+          <span class="panel-title">Progression</span>
+          <span class="progression-summary__chevron">⌄</span>
+        </span>
+        <span class="progression-summary__body">
+          <span class="progression-summary__tier"><small>Tier</small><strong>4</strong></span>
+          <span class="progression-summary__copy">
+            <strong>${progress} / ${required} seals</strong>
+          </span>
+        </span>
+      </button>
+      ${detailMarkup}
       <button type="button" class="mastery-meter mastery-meter--button">
         <span class="mastery-meter__row">
           <span class="mastery-meter__label">Mastery</span>
           <span class="mastery-meter__value">18 / 40</span>
         </span>
         <span class="gradient-conduit gradient-conduit--gold">
-          <span class="gradient-conduit__track">
-            <span class="gradient-conduit__fill" style="width:45%"></span>
-          </span>
+            <span class="gradient-conduit__track">
+              <span class="gradient-conduit__fill" style="width:45%"></span>
+            </span>
         </span>
       </button>
     `;

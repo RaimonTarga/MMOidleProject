@@ -1,0 +1,71 @@
+<!doctype html>
+<!-- Maximum-content harness for the all-tier Boss Seal Ledger dialog. -->
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Boss seal ledger harness</title>
+  <link rel="stylesheet" href="../../../client/src/hud/primitives/tokens.css" />
+  <link rel="stylesheet" href="../../../client/src/hud/primitives/kit.css" />
+  <link rel="stylesheet" href="../../../client/src/hud/primitives/dialogs.css" />
+  <link rel="stylesheet" href="../../../client/src/ui/sealLedger.css" />
+  <style>
+    html, body { margin: 0; height: 100%; background: #090908; }
+    .harness-biome-icon { width: 18px; height: 18px; border-radius: 50%; background: #597852; box-shadow: inset 0 0 0 1px #91a47d; }
+  </style>
+</head>
+<body>
+  <div class="game-dialog__backdrop">
+    <div class="game-dialog__panel game-dialog__panel--standard seal-ledger" role="dialog">
+      <header class="dialog-header">
+        <span class="dialog-header__icon"><span class="seal-ledger__header-mark">◆</span></span>
+        <h2 class="dialog-header__title">Boss Seal Ledger</h2>
+        <button type="button" class="dialog-header__close">×</button>
+      </header>
+      <div class="seal-ledger__content">
+        <div class="seal-ledger__intro">
+          <div>
+            <div class="seal-ledger__eyebrow">Passage record</div>
+            <p>Every biome guardian carries one seal per tier. Earn the required number from distinct bosses; the rest remain optional trophies.</p>
+          </div>
+          <div class="seal-ledger__summary">
+            <div class="glyph-tile glyph-tile--sm"><span class="glyph-tile__value">11</span><span class="glyph-tile__label">Seals held</span></div>
+            <div class="glyph-tile glyph-tile--sm"><span class="glyph-tile__value">2/4</span><span class="glyph-tile__label">Passages</span></div>
+          </div>
+        </div>
+        <div class="seal-ledger__tiers" id="tiers"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const tiers = [
+      { tier: 1, required: 2, held: 4, names: ['Forest', 'Mountain', 'Plains', 'Swamp', 'Caverns'] },
+      { tier: 2, required: 3, held: 3, names: ['Forest', 'Mountain', 'Plains', 'Swamp', 'Caverns', 'Jungle', 'Desert'] },
+      { tier: 3, required: 4, held: 3, names: ['Mountain', 'Swamp', 'Caverns', 'Jungle', 'Desert', 'Tundra', 'Volcanic'] },
+      { tier: 4, required: 5, held: 1, names: ['Mountain', 'Swamp', 'Jungle', 'Desert', 'Tundra', 'Graveyard', 'Trench'] },
+    ];
+
+    document.getElementById('tiers').innerHTML = tiers.map(({ tier, required, held, names }) => {
+      const complete = held >= required;
+      const sources = names.map((name, index) => {
+        const obtained = index < held;
+        const optional = complete && !obtained;
+        return `
+          <div class="seal-ledger-source${obtained ? ' seal-ledger-source--obtained' : ''}${optional ? ' seal-ledger-source--optional' : ''}">
+            <span class="seal-ledger-source__icon"><span class="harness-biome-icon"></span></span>
+            <span class="seal-ledger-source__copy"><strong>${name}</strong><small>${obtained ? 'Obtained' : optional ? 'Optional' : 'Available'}</small></span>
+          </div>`;
+      }).join('');
+      return `
+        <section class="seal-ledger-tier${complete ? ' seal-ledger-tier--complete' : ''}${tier === 3 ? ' seal-ledger-tier--current' : ''}">
+          <header class="seal-ledger-tier__header">
+            <div class="seal-ledger-tier__crest"><span>T${tier}</span></div>
+            <div class="seal-ledger-tier__title"><span>Tier ${tier} Passage</span><small>${complete ? 'Passage secured' : `${required - held} still required`}</small></div>
+            <div class="seal-ledger-tier__progress"><strong>${held} held / ${required} need</strong></div>
+          </header>
+          <div class="seal-ledger-tier__sources">${sources}</div>
+        </section>`;
+    }).join('');
+  </script>
+</body>
+</html>

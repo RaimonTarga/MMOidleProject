@@ -242,10 +242,6 @@ export function RightSidebar() {
     <div className="sidebar sidebar-right desktop-hud">
       {visibility.progression && (
       <QuestPanel
-        onFindDungeon={(nodeIds) => {
-          setMapHighlightNodes(nodeIds);
-          openPrimaryOverlay("map");
-        }}
         showMastery={showMastery}
         onOpenMastery={() => togglePrimaryOverlay("mastery")}
       />
