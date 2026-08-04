@@ -865,8 +865,42 @@
 .map-recipe__row:hover { background: rgba(255, 255, 255, 0.03); }
 .map-recipe__chevron { flex-shrink: 0; width: 10px; color: #7a78a8; font-size: 9px; }
 .map-recipe--locked .map-recipe-name { color: #aaa6cf; }
-.map-recipe .map-recipe-name { flex: 1; }
+/* The kind tag and cost are fixed-width, so the name is what gives way on a
+   narrow info panel rather than pushing the cost out of the row. */
+.map-recipe .map-recipe-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 .map-recipe__row .map-recipe-cost { min-width: 50px; text-align: right; }
+
+/* A biome pays out of five different systems, so every row has to say which
+   one it came from — otherwise a core, a relic and a sword read alike. */
+.map-recipe__kind {
+  flex-shrink: 0;
+  min-width: 56px;
+  white-space: nowrap;
+  padding: 0 4px;
+  border: 1px solid rgba(90, 88, 150, 0.35);
+  border-radius: 2px;
+  font-size: 8px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  text-align: center;
+  color: #9a97c8;
+}
+.map-recipe__kind[data-slot="weapon"]    { color: #cc7730; border-color: rgba(180, 100, 40, 0.40); }
+.map-recipe__kind[data-slot="armor"]     { color: #4488bb; border-color: rgba(50, 100, 190, 0.40); }
+.map-recipe__kind[data-slot="recovery"]  { color: #44aa66; border-color: rgba(40, 150, 90, 0.40); }
+.map-recipe__kind[data-slot="mobility"]  { color: #8855cc; border-color: rgba(130, 70, 210, 0.40); }
+.map-recipe__kind[data-slot="core"]      { color: #3fb8d0; border-color: rgba(40, 170, 200, 0.40); }
+.map-recipe__kind[data-slot="relic"]     { color: #cba53a; border-color: rgba(200, 160, 55, 0.40); }
+.map-recipe__kind[data-slot="technique"] { color: #e0685c; border-color: rgba(200, 80, 70, 0.40); }
+.map-recipe__kind[data-slot="stance"]    { color: #d08fd8; border-color: rgba(190, 120, 200, 0.40); }
+.map-recipe__kind[data-slot="rite"]      { color: #8fc7d8; border-color: rgba(120, 180, 200, 0.40); }
+.map-recipe__kind[data-slot="rune"]      { color: #b9a76a; border-color: rgba(170, 150, 90, 0.40); }
 
 .map-recipe__detail {
   padding: 2px 8px 8px 20px;

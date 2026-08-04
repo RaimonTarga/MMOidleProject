@@ -173,11 +173,29 @@ function techniqueEntries(spec: TechniqueSpec): MakeEntry[] {
   return entries;
 }
 
-/** Sort so the same kind stays together and cheaper tiers come first. */
-const KIND_ORDER: MakeKind[] = [
-  'weapon', 'armor', 'recovery', 'mobility', 'core',
+/**
+ * Sort so the same kind stays together and cheaper tiers come first. Every
+ * `MakeKind` must be listed — a missing kind resolves to `indexOf` -1 and sorts
+ * ahead of weapons, which is how relics used to lead the recipe list.
+ */
+export const KIND_ORDER: MakeKind[] = [
+  'weapon', 'armor', 'recovery', 'mobility', 'core', 'relic',
   'technique', 'stance', 'rite', 'rune',
 ];
+
+/** One name per kind, for every surface that has to say what a recipe makes. */
+export const MAKE_KIND_LABELS: Record<MakeKind, string> = {
+  weapon: 'Weapon',
+  armor: 'Armor',
+  recovery: 'Recovery',
+  mobility: 'Boots',
+  core: 'Core',
+  relic: 'Relic',
+  technique: 'Technique',
+  stance: 'Stance',
+  rite: 'Rite',
+  rune: 'Rune',
+};
 
 export function buildMakeEntries(sources: MakeSources): MakeEntry[] {
   const entries = [

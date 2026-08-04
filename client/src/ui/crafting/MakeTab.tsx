@@ -25,11 +25,13 @@ import {
   selectedSubVariantAtom,
 } from '../../hud/atoms';
 import { BrowserPane } from '../../hud/primitives';
-import { SLOT_ABBR, SLOT_LABELS, biomeName, tierColor } from './common';
+import { SLOT_ABBR, biomeName, tierColor } from './common';
 import { CostDisplay, WalletSummary } from './shared';
 import { statEntries, formatMechanicEffects, formatResolvedRelicProfile, formatWeaponEffects } from './itemDisplay';
 import {
   entryAffordable,
+  KIND_ORDER,
+  MAKE_KIND_LABELS,
   TECHNIQUE_KINDS,
   type MakeEntry,
   type MakeKind,
@@ -65,22 +67,13 @@ function entryCost(entry: MakeEntry): number {
   return essence + catalyst;
 }
 
-const KIND_FACETS: { kind: MakeKind; label: string }[] = [
-  { kind: 'weapon', label: 'Weapon' },
-  { kind: 'armor', label: 'Armor' },
-  { kind: 'recovery', label: 'Recovery' },
-  { kind: 'mobility', label: 'Mobility' },
-  { kind: 'core', label: 'Core' },
-  { kind: 'technique', label: 'Technique' },
-  { kind: 'stance', label: 'Stance' },
-  { kind: 'rite', label: 'Rite' },
-  { kind: 'rune', label: 'Rune' },
-];
+const KIND_FACETS: { kind: MakeKind; label: string }[] = KIND_ORDER.map((kind) => ({
+  kind,
+  label: kind === 'mobility' ? 'Mobility' : MAKE_KIND_LABELS[kind],
+}));
 
 function kindLabel(kind: MakeKind): string {
-  return SLOT_LABELS[kind as keyof typeof SLOT_LABELS]
-    ?? KIND_FACETS.find((facet) => facet.kind === kind)?.label
-    ?? kind;
+  return MAKE_KIND_LABELS[kind] ?? kind;
 }
 
 function EntryIcon({ entry, size }: { entry: MakeEntry; size: number }) {

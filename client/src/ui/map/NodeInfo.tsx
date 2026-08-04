@@ -1,20 +1,28 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useAtomValue } from 'jotai';
 import type {
   EssenceType,
   MonsterDefinition,
   PaceFamily,
-  Recipe,
 } from '@mmo-idle/shared';
 import {
-  NODE_BIOMES, BIOME_DATABASE, MONSTER_DATABASE, RECIPE_DATABASE, ESSENCE_COLORS, ESSENCE_LABELS,
+  NODE_BIOMES, BIOME_DATABASE, MONSTER_DATABASE, ESSENCE_COLORS, ESSENCE_LABELS,
   catalystLabel, catalystFamilyLabel,
+  coreEligibilityLabel, isRestrictedCore,
+  relicRatingsFromEffects, resolveRelicPreview,
   NODE_MODIFIERS, PACE_FAMILY_COLORS, PACE_FAMILY_LABELS, PACE_FAMILY_SUMMARIES,
   paceModifierDetails,
   biomeLevelCap, biomeXpForBiomeLevel, formatNodeCoord, formatRespawnRemaining, nodeIdToCoord,
   WORLD_REGIONS,
 } from '@mmo-idle/shared';
-import { biomeLevelAtom, biomeXPAtom, bossFelledByNodeAtom, playerTierAtom } from '../../hud/atoms';
+import {
+  biomeLevelAtom,
+  biomeXPAtom,
+  bossFelledByNodeAtom,
+  combatArchetypeAtom,
+  playerTierAtom,
+  selectedSubVariantAtom,
+} from '../../hud/atoms';
 import { hudBus } from '../../hudBus';
 import { DEV_TOOLS_ENABLED } from '../../devTools';
 import { dungeonBadgeLabel, hexDot, tileColor } from './constants';
@@ -28,7 +36,18 @@ import {
   monsterStatRows,
   monsterTags,
 } from './monsterInfo';
-import { statEntries, formatMechanicEffects, formatWeaponEffects } from '../crafting/itemDisplay';
+import {
+  statEntries,
+  formatMechanicEffects,
+  formatResolvedRelicProfile,
+  formatWeaponEffects,
+} from '../crafting/itemDisplay';
+import { MAKE_KIND_LABELS } from '../crafting/makeEntries';
+import { DetailLines } from '../describe/DetailLines';
+import { loadoutLinesFor, ruleLines } from '../describe';
+import { useAbilityContext } from '../describe/useAbilityContext';
+import type { AbilityContext } from '../describe';
+import { biomeUnlocksByLevel, type BiomeUnlock } from './biomeUnlocks';
 
 interface NodeInfoProps {
   nodeId: string;
@@ -104,27 +123,59 @@ function MonsterRow({ m, isBoss, pace, biomeTier, open, onToggle }: {
   );
 }
 
-// ── Expandable recipe row ───────────────────────────────────────────────────────
-function RecipeRow({ r, unlocked, open, onToggle }: {
-  r: Recipe; unlocked: boolean; open: boolean; onToggle: () => void;
+// ── Expandable unlock row ───────────────────────────────────────────────────────
+/**
+ * One rung of a biome's reward ladder, whichever database authored it. Gear
+ * states its stats and effects; a technique, stance, rite or rune states what
+ * learning it would do for THIS character, the same way the Craft browser does.
+ */
+function UnlockRow({ unlock, unlocked, open, onToggle, relicPreview, abilityContext }: {
+  unlock: BiomeUnlock;
+  unlocked: boolean;
+  open: boolean;
+  onToggle: () => void;
+  relicPreview: (unlock: BiomeUnlock) => string[];
+  abilityContext: AbilityContext;
 }) {
-  const stats   = statEntries(r.stats, r.slot === 'weapon' ? r.attacksPerSecond : undefined);
-  const effects = [
-    ...formatMechanicEffects(r.mechanicEffects),
-    ...(r.slot === 'weapon' ? formatWeaponEffects(r.id) : []),
-  ];
-  const costs = Object.entries(r.cost) as [EssenceType, number][];
+  const gear = unlock.gear;
+  const stats = gear
+    ? statEntries(gear.stats, gear.slot === 'weapon' ? gear.attacksPerSecond : undefined)
+    : [];
+  const effects = gear
+    ? [
+      ...(gear.slot === 'core' && gear.coreEligibility
+        ? [isRestrictedCore(gear.coreEligibility)
+          ? `Full effect only for ${coreEligibilityLabel(gear.coreEligibility).toLowerCase()}`
+          : 'Works for any build']
+        : []),
+      ...formatMechanicEffects(gear.mechanicEffects),
+      ...(gear.slot === 'relic' ? relicPreview(unlock) : []),
+      ...(gear.slot === 'weapon' ? formatWeaponEffects(gear.id) : []),
+    ]
+    : [];
+  // A rune recipe yields one fragment, so it describes that fragment's own
+  // numbers rather than an assembled rule's.
+  const learnedLines = unlock.learnedId
+    ? unlock.kind === 'rune'
+      ? ruleLines({ conditionId: unlock.learnedId, actionId: unlock.learnedId })
+        .filter((line) => line.key !== 'cost')
+      : loadoutLinesFor(unlock.learnedId, abilityContext)
+    : [];
+  const costs = Object.entries(unlock.cost) as [EssenceType, number][];
 
   return (
     <div className={`map-recipe${unlocked ? '' : ' map-recipe--locked'}${open ? ' map-recipe--open' : ''}`}>
       <button className="map-recipe__row" onClick={onToggle}>
         <span className="map-recipe__chevron">{open ? '▾' : '▸'}</span>
-        <span className="map-recipe-name">{r.name}</span>
+        <span className="map-recipe__kind" data-slot={unlock.kind}>
+          {MAKE_KIND_LABELS[unlock.kind]}
+        </span>
+        <span className="map-recipe-name">{unlock.name}</span>
         <span className="map-recipe-cost">
           {costs.map(([type, amt]) => (
             <span key={type} style={{ color: ESSENCE_COLORS[type], marginLeft: 4 }}>{amt} {ESSENCE_LABELS[type]}</span>
           ))}
-          {(Object.entries(r.catalystCost ?? {}) as [string, number][]).map(([group, amt]) => (
+          {(Object.entries(unlock.catalystCost ?? {}) as [string, number][]).map(([group, amt]) => (
             <span key={group} style={{ marginLeft: 4 }}>{amt} {catalystLabel(group)}</span>
           ))}
         </span>
@@ -147,7 +198,10 @@ function RecipeRow({ r, unlocked, open, onToggle }: {
               {effects.map((line, i) => <li key={i} className="map-recipe__effectline">{line}</li>)}
             </ul>
           )}
-          {r.description && <p className="map-recipe__desc">{r.description}</p>}
+          {learnedLines.length > 0 && (
+            <DetailLines className="map-recipe__lines" lines={learnedLines} />
+          )}
+          {unlock.description && <p className="map-recipe__desc">{unlock.description}</p>}
         </div>
       )}
     </div>
@@ -159,6 +213,9 @@ export function NodeInfo({ nodeId, playerNodeId, onClose }: NodeInfoProps) {
   const biomeXPByGroup    = useAtomValue(biomeXPAtom);
   const biomeLevelByGroup = useAtomValue(biomeLevelAtom);
   const bossFelledByNode  = useAtomValue(bossFelledByNodeAtom);
+  const combatArchetype   = useAtomValue(combatArchetypeAtom);
+  const selectedSubVariant = useAtomValue(selectedSubVariantAtom);
+  const abilityContext    = useAbilityContext();
   const mapNow = useMapClock();
 
   const [openMonster, setOpenMonster] = useState<string | null>(null);
@@ -170,11 +227,23 @@ export function NodeInfo({ nodeId, playerNodeId, onClose }: NodeInfoProps) {
   const info  = NODE_BIOMES[nodeId];
   const biome = info ? BIOME_DATABASE.get(info.biomeGroup) : null;
 
-  const recipes = useMemo(() =>
-    Array.from(RECIPE_DATABASE.values())
-      .filter(r => r.recipeGroup === info?.biomeGroup)
-      .sort((a, b) => a.requiredBiomeLevel - b.requiredBiomeLevel || a.slot.localeCompare(b.slot)),
-    [info?.biomeGroup],
+  // Every reward this biome pays out, from all five recipe databases — gear,
+  // techniques, stances, rites and runes — grouped by the level that opens it.
+  const unlockLevels = useMemo(
+    () => (info ? biomeUnlocksByLevel(info.biomeGroup) : []),
+    [info?.biomeGroup], // eslint-disable-line react-hooks/exhaustive-deps
+  );
+
+  // A relic's authored ratings mean nothing on their own; what they do depends
+  // on the reader's class mechanic, exactly as in the Craft browser.
+  const relicPreview = useCallback(
+    (unlock: BiomeUnlock) => formatResolvedRelicProfile(resolveRelicPreview(
+      combatArchetype,
+      abilityContext.passives,
+      relicRatingsFromEffects(unlock.gear?.mechanicEffects),
+      { subVariant: selectedSubVariant, playerTier: abilityContext.playerTier },
+    )),
+    [combatArchetype, abilityContext.passives, abilityContext.playerTier, selectedSubVariant],
   );
 
   // Travel path (computed regardless of biome resolution so the button always works).
@@ -222,11 +291,6 @@ export function NodeInfo({ nodeId, playerNodeId, onClose }: NodeInfoProps) {
     ? 'Starting Zone'
     : `${region?.displayName ?? `Tier ${biomeTier}`} · Tier ${biomeTier}`;
   const coord      = nodeIdToCoord(nodeId);
-
-  const recipesByLevel = recipes.reduce<Record<number, typeof recipes>>((acc, r) => {
-    (acc[r.requiredBiomeLevel] ??= []).push(r);
-    return acc;
-  }, {});
 
   return (
     <div className="map-node-info">
@@ -352,7 +416,7 @@ export function NodeInfo({ nodeId, playerNodeId, onClose }: NodeInfoProps) {
         </section>
       )}
 
-      {recipes.length > 0 && (
+      {unlockLevels.length > 0 && (
         <section className="map-info-section">
           <div className="map-info-section__title">
             Biome Progress
@@ -378,24 +442,25 @@ export function NodeInfo({ nodeId, playerNodeId, onClose }: NodeInfoProps) {
         </section>
       )}
 
-      {recipes.length > 0 && (
+      {unlockLevels.length > 0 && (
         <section className="map-info-section">
-          <div className="map-info-section__title">Recipes</div>
-          {Object.entries(recipesByLevel).map(([lvlStr, group]) => {
-            const reqLevel    = Number(lvlStr);
+          <div className="map-info-section__title">Unlocks</div>
+          {unlockLevels.map(([reqLevel, group]) => {
             const lvlUnlocked = biomeLevel >= reqLevel;
             return (
               <div key={reqLevel} className="map-recipe-group">
                 <div className={`map-recipe-group__header${lvlUnlocked ? ' unlocked' : ''}`}>
                   {lvlUnlocked ? `Lv ${reqLevel} — Unlocked` : `Lv ${reqLevel} required`}
                 </div>
-                {group.map(r => (
-                  <RecipeRow
-                    key={r.id}
-                    r={r}
+                {group.map(unlock => (
+                  <UnlockRow
+                    key={unlock.key}
+                    unlock={unlock}
                     unlocked={lvlUnlocked}
-                    open={openRecipe === r.id}
-                    onToggle={() => setOpenRecipe(prev => prev === r.id ? null : r.id)}
+                    open={openRecipe === unlock.key}
+                    onToggle={() => setOpenRecipe(prev => prev === unlock.key ? null : unlock.key)}
+                    relicPreview={relicPreview}
+                    abilityContext={abilityContext}
                   />
                 ))}
               </div>
@@ -404,7 +469,7 @@ export function NodeInfo({ nodeId, playerNodeId, onClose }: NodeInfoProps) {
         </section>
       )}
 
-      {monsters.length === 0 && recipes.length === 0 && !isDungeon && !isSanctuary && (
+      {monsters.length === 0 && unlockLevels.length === 0 && !isDungeon && !isSanctuary && (
         <div className="map-info__empty">No content in this zone yet.</div>
       )}
     </div>
