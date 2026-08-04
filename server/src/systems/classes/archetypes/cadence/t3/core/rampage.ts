@@ -1,5 +1,6 @@
 import type { PlayerEntity } from '../../../../../../ecs/entity';
 import { RAMPAGE_THRESHOLD_FLOOR, RAMPAGE_APS_PER_STACK_MS } from './constants';
+import { relicRatingsFromPassives, resolveCadenceRelicProfile } from '@mmo-idle/shared';
 
 const CADENCE_THRESHOLD_DEFAULT = 5;
 const ATTACK_COOLDOWN_FLOOR_MS = 200;
@@ -22,13 +23,18 @@ export function recomputeRampageStats(player: PlayerEntity): void {
   const thresholdFloor = Math.max(1, Math.round(passives['cadence.rampage-threshold-floor'] ?? RAMPAGE_THRESHOLD_FLOOR));
   const apsPerStackMs  = passives['cadence.rampage-aps-per-stack-ms'] ?? RAMPAGE_APS_PER_STACK_MS;
 
-  const baseThreshold = Math.max(
+  const preRelicThreshold = Math.max(
     thresholdFloor,
     Math.round(
       (passives['cadence.empowered-threshold'] ?? CADENCE_THRESHOLD_DEFAULT) +
         (passives['cadence.threshold-mod'] ?? 0),
     ),
   );
+  const baseThreshold = resolveCadenceRelicProfile(
+    preRelicThreshold,
+    passives['cadence.empowered-mult'] ?? 2,
+    relicRatingsFromPassives(passives),
+  ).threshold.after;
 
   player.performsAttack.attackCooldown += cadence.rampageCdReduction;
   const desired = cadence.rampageStacks * apsPerStackMs;

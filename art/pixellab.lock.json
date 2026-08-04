@@ -24265,6 +24265,336 @@
       "candidateFiles": [
         "candidate-3.png"
       ]
+    },
+    {
+      "at": "2026-08-04T13:48:26.725Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "relic-colossus-heart",
+      "requestHash": "9da3bf68dca5af750e4a6467",
+      "usd": 0.006530656205283271,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T13:48:50.029Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "relic-colossus-heart",
+      "requestHash": "9da3bf68dca5af750e4a6467",
+      "usd": 0.0073768667380015055,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T13:49:08.511Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "relic-colossus-heart",
+      "requestHash": "9da3bf68dca5af750e4a6467",
+      "usd": 0.006634420739279853,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T13:49:35.296Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "relic-virulent-hourglass",
+      "requestHash": "c81ab218f5802da11eae6f38",
+      "usd": 0.007279192739062839,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T13:50:40.651Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "relic-virulent-hourglass",
+      "requestHash": "c81ab218f5802da11eae6f38",
+      "usd": 0.006219925085703532,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T13:51:23.260Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "relic-virulent-hourglass",
+      "requestHash": "c81ab218f5802da11eae6f38",
+      "usd": 0.006663396384980943,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T13:58:09.907Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "relic-hastebound-dial",
+      "requestHash": "155004f839426a955e70c9d0",
+      "usd": 0.007000829246309069,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T13:58:56.057Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "relic-hastebound-dial",
+      "requestHash": "155004f839426a955e70c9d0",
+      "usd": 0.007442489729987251,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T13:59:36.509Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "relic-hastebound-dial",
+      "requestHash": "155004f839426a955e70c9d0",
+      "usd": 0.007037480804655287,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T13:59:59.761Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "relic-colossus-heart",
+      "requestHash": "b9d4e1d784cd7b53e7c0aa10",
+      "usd": 0.006075302229987251,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T14:00:29.749Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "relic-colossus-heart",
+      "requestHash": "b9d4e1d784cd7b53e7c0aa10",
+      "usd": 0.0070290993054707845,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T14:01:17.153Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "relic-colossus-heart",
+      "requestHash": "b9d4e1d784cd7b53e7c0aa10",
+      "usd": 0.0069742370711432565,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T14:01:44.092Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "relic-equilibrium-shard",
+      "requestHash": "25371555c84c1b4cc8f28e24",
+      "usd": 0.006957705153359308,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T14:02:14.342Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "relic-equilibrium-shard",
+      "requestHash": "25371555c84c1b4cc8f28e24",
+      "usd": 0.007353935930464003,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T14:03:22.998Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "relic-equilibrium-shard",
+      "requestHash": "25371555c84c1b4cc8f28e24",
+      "usd": 0.007714282406700982,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T14:03:42.195Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "relic-verdant-flywheel",
+      "requestHash": "f9c7029937d084c4545f7152",
+      "usd": 0.006902836905585396,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T14:04:06.409Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "relic-verdant-flywheel",
+      "requestHash": "f9c7029937d084c4545f7152",
+      "usd": 0.006985842148462932,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T14:04:29.707Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "relic-verdant-flywheel",
+      "requestHash": "f9c7029937d084c4545f7152",
+      "usd": 0.007016838047239515,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T14:04:44.972Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "relic-glacial-bell",
+      "requestHash": "e17efdf40ba8a606eb27d6be",
+      "usd": 0.006258864588207669,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T14:05:05.428Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "relic-glacial-bell",
+      "requestHash": "e17efdf40ba8a606eb27d6be",
+      "usd": 0.007029981507195367,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T14:05:35.462Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "relic-glacial-bell",
+      "requestHash": "e17efdf40ba8a606eb27d6be",
+      "usd": 0.007520552343792386,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T14:05:59.887Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "relic-virulent-hourglass",
+      "requestHash": "fdd0f83d87342fa3bc07b8c7",
+      "usd": 0.006810388406117757,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T14:06:42.059Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "relic-virulent-hourglass",
+      "requestHash": "fdd0f83d87342fa3bc07b8c7",
+      "usd": 0.006585019164615208,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T14:07:15.417Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "relic-virulent-hourglass",
+      "requestHash": "fdd0f83d87342fa3bc07b8c7",
+      "usd": 0.0066843258539835615,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T14:07:45.211Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "relic-withering-lens",
+      "requestHash": "8eee0aba40ef8aebbd75bc70",
+      "usd": 0.007578977372911242,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T14:08:17.702Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "relic-withering-lens",
+      "requestHash": "8eee0aba40ef8aebbd75bc70",
+      "usd": 0.008078795194625855,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T14:09:01.564Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "relic-withering-lens",
+      "requestHash": "8eee0aba40ef8aebbd75bc70",
+      "usd": 0.009104353374905057,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T14:11:44.536Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "relic-haunted-prism",
+      "requestHash": "4aa0b8e5f3ca7e00c722a9ce",
+      "usd": 0.006776896741655138,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T14:12:17.401Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "relic-haunted-prism",
+      "requestHash": "4aa0b8e5f3ca7e00c722a9ce",
+      "usd": 0.006666913933224148,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-04T14:12:32.470Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "relic-haunted-prism",
+      "requestHash": "4aa0b8e5f3ca7e00c722a9ce",
+      "usd": 0.006317607959111532,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
     }
   ]
 }

@@ -2,6 +2,7 @@ import { registerCombatListener } from '../../../combat/engine/combatPipeline';
 import { registerEmpoweredMultiplier, setEmpoweredAttack, isEmpoweredAttack } from '../../../combat/engine/empoweredAttacks';
 import type { World } from '../../../../world/World';
 import { initCadenceT3 } from './t3';
+import { relicRatingsFromPassives, resolveCadenceRelicProfile } from '@mmo-idle/shared';
 
 const CADENCE_THRESHOLD_DEFAULT   = 5;   // cycle length: (N-1) normal hits + 1 empowered
 const CADENCE_DAMAGE_MULT_DEFAULT = 2.0;
@@ -37,7 +38,11 @@ export function initCadenceArchetype(): void {
     if (cadence.threshold === 0) {
       const base = Math.round(passives['cadence.empowered-threshold'] ?? CADENCE_THRESHOLD_DEFAULT);
       const mod  = Math.round(passives['cadence.threshold-mod'] ?? 0);
-      cadence.threshold = Math.max(2, base + mod);
+      cadence.threshold = resolveCadenceRelicProfile(
+        Math.max(2, base + mod),
+        passives['cadence.empowered-mult'] ?? CADENCE_DAMAGE_MULT_DEFAULT,
+        relicRatingsFromPassives(passives),
+      ).threshold.after;
     }
 
     cadence.count++;

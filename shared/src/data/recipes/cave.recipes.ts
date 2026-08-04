@@ -222,7 +222,7 @@ export const caveRecipeEntries = [
     cost: { red: 45 }, catalystCost: { predation: 1 }, // family-tag: raw offence → Predation
     stats: {}, tier: 2,
     mechanicEffects: { 'core.attack-mult': 0.13, 'core.maxhp-mult': -0.07 },
-    icon: 'items/charms/jewel-charm-2.png',
+    icon: 'items/cores/force.png',
     description: 'It gives you the strike you wanted and takes the margin you were counting on.',
   }],
 
@@ -235,7 +235,7 @@ export const caveRecipeEntries = [
     cost: { red: 110 }, catalystCost: { predation: 3 }, // family-tag: single-target alpha → Predation
     stats: {}, tier: 3,
     mechanicEffects: { 'core.attack-mult': 0.12, 'core.maxhp-mult': 0.10, 'core.elite-damage-mult': 0.15 },
-    icon: 'items/charms/eye-charm-1.png',
+    icon: 'items/cores/duelist.png',
     description: 'Nothing here helps against a crowd. Against the one thing worth killing, it is everything.',
   }],
 

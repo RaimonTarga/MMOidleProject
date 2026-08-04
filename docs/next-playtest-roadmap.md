@@ -32,9 +32,9 @@ tiers.
 
 ## 1. Progression and core systems
 
-- Implement the relic system.
-- Add the relic equipment slot.
-- Introduce relics as a T4 progression system.
+- Implement the relic system. **Done 2026-08-04.**
+- Add the relic equipment slot. **Done 2026-08-04.**
+- Introduce relics as a T4 progression system. **Done 2026-08-04.**
 - Change tier advancement from boss kills to seals.
 - Ensure seals support progression through T4, T5, and T6.
 - Ensure relics, gear, cores, stances, rites, abilities, and runes work as a

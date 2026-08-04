@@ -48,17 +48,24 @@ import type { MechanicEffects } from './passives';
 
 // ─── Equipment slots ──────────────────────────────────────────────────────────
 
-export type EquipmentSlot = 'weapon' | 'armor' | 'recovery' | 'mobility' | 'core';
+export type EquipmentSlot = 'weapon' | 'armor' | 'recovery' | 'mobility' | 'core' | 'relic';
 
 export const EQUIPMENT_SLOTS: EquipmentSlot[] = [
-  'weapon', 'armor', 'recovery', 'mobility', 'core',
+  'weapon', 'armor', 'recovery', 'mobility', 'core', 'relic',
 ];
 
 /** Null in a slot means nothing is equipped there. */
 export type EquipmentMap = Record<EquipmentSlot, string | null>;
 
 export function emptyEquipment(): EquipmentMap {
-  return { weapon: null, armor: null, recovery: null, mobility: null, core: null };
+  return { weapon: null, armor: null, recovery: null, mobility: null, core: null, relic: null };
+}
+
+/** Hydration-safe normalization for saves written before newer slots existed. */
+export function normalizeEquipment(
+  stored: Partial<Record<EquipmentSlot, string | null>> | undefined,
+): EquipmentMap {
+  return { ...emptyEquipment(), ...(stored ?? {}) };
 }
 
 // ─── Cores (system rework Step 9) ───────────────────────────────────────────────

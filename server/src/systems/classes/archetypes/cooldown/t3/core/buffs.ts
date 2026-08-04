@@ -20,15 +20,19 @@ import {
   TEMPORAL_FLAT_DMG,
   BEAM_TICK_MS,
 } from './constants';
+import { playerMechanicBuffMagnitude } from '../../../../shared/applyPlayerMechanicBuff';
 
 const COOLDOWN_OPTS = { category: 'cooldown' as const, shape: 'square' as const };
 
 export const COOLDOWN_T3_BUFFS = [
   defineBuff('cooldown-overdrive', ({ player }) => {
     const pct = getOverdrivePct(player);
-    const attackSpeedPct = Math.round(
-      Math.max(0, player.usesSkills.passives['cooldown.overdrive-attack-speed-pct'] ?? OVERDRIVE_ATTACK_SPEED_PCT) * 100,
-    );
+    const attackSpeedPct = Math.round(Math.max(0, playerMechanicBuffMagnitude(
+      player,
+      'cooldown-overdrive',
+      'attackSpeedPct',
+      player.usesSkills.passives['cooldown.overdrive-attack-speed-pct'] ?? OVERDRIVE_ATTACK_SPEED_PCT,
+    )) * 100);
     return pct > 0
       ? { id: 'cooldown-overdrive', label: 'Burst', stacks: 1, durationPct: pct, color: '#ff6622', logDetail: `+${attackSpeedPct}% attack speed` }
       : null;

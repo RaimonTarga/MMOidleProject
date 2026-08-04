@@ -1,5 +1,9 @@
 import {
   applyStatusEffect,
+  SCALABLE_MECHANIC_DEBUFFS,
+  relicRatingsFromPassives,
+  resolveRelicMagnitudeMultiplier,
+  scaleMechanicEffectConfig,
   scaleDebuffConfig,
   type StatusEffect,
   type StatusEffectConfig,
@@ -24,8 +28,9 @@ export function applyPlayerDebuff(
   player: PlayerEntity,
   targetState: TracksCombat,
   config: StatusEffectConfig,
+  options: { origin?: 'mechanic' } = {},
 ): StatusEffect {
-  return applyStatusEffect(targetState, playerDebuffConfig(player, config));
+  return applyStatusEffect(targetState, playerDebuffConfig(player, config, options));
 }
 
 /**
@@ -41,11 +46,21 @@ export function applyPlayerDebuff(
 export function playerDebuffConfig(
   player: PlayerEntity,
   config: StatusEffectConfig,
+  options: { origin?: 'mechanic' } = {},
 ): StatusEffectConfig {
   const passives = player.usesSkills.passives;
   const durationMult = 1 + (passives["core.debuff-duration-mult"] ?? 0);
   const potencyMult = 1 + (passives["core.debuff-potency-mult"] ?? 0);
 
-  if (durationMult === 1 && potencyMult === 1) return config;
-  return scaleDebuffConfig(config, durationMult, potencyMult);
+  let scaled = durationMult === 1 && potencyMult === 1
+    ? config
+    : scaleDebuffConfig(config, durationMult, potencyMult);
+  if (options.origin === 'mechanic') {
+    scaled = scaleMechanicEffectConfig(
+      scaled,
+      resolveRelicMagnitudeMultiplier(relicRatingsFromPassives(passives).debuffEffect),
+      SCALABLE_MECHANIC_DEBUFFS,
+    );
+  }
+  return scaled;
 }

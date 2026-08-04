@@ -1,6 +1,5 @@
 import {
   MONSTER_DATABASE,
-  applyStatusEffect,
   distanceSq,
   getFlag,
   getStatusEffect,
@@ -20,6 +19,7 @@ import {
 } from '../core/constants';
 import { minionBuffRadius } from '../../range';
 import { livingMinionsOfType } from '../core/helpers';
+import { applyPlayerDebuff } from '../../../../shared/applyPlayerDebuff';
 
 function findRockslideHopperForVictim(
   world: World,
@@ -106,15 +106,19 @@ export function tickStoneSentinelAura(world: World): void {
 
       const cs = monster.tracksCombat;
       removeStatusEffect(cs, SENTINEL_SLOW_EFFECT);
-      applyStatusEffect(cs, {
+      const slow = applyPlayerDebuff(owner, cs, {
         id:          SENTINEL_SLOW_EFFECT,
         maxStacks:   1,
         remainingMs: SENTINEL_REFRESH_MS,
         refreshable: true,
         sourceId:    owner.isPlayer.id,
         data:        { speedMult, atkCdMult },
-      });
-      applySentinelSlowStats(monster, speedMult, atkCdMult);
+      }, { origin: 'mechanic' });
+      applySentinelSlowStats(
+        monster,
+        slow.data.speedMult ?? speedMult,
+        slow.data.atkCdMult ?? atkCdMult,
+      );
       if (!getFlag(cs, SENTINEL_SLOW_FLAG)) {
         setFlag(cs, SENTINEL_SLOW_FLAG, true);
       }

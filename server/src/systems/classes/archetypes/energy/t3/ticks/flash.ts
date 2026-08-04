@@ -1,4 +1,8 @@
-import { GAME_CONFIG } from '@mmo-idle/shared';
+import {
+  GAME_CONFIG,
+  relicRatingsFromPassives,
+  resolveEnergyRelicProfile,
+} from '@mmo-idle/shared';
 import { detachComponent } from '../../../../../../ecs/markerHelpers';
 import { markSliceDirty } from '../../../../../../ecs/dirtyHelpers';
 import type { PlayerEntity } from '../../../../../../ecs/entity';
@@ -121,7 +125,14 @@ export function applyFlashSpeedGain(world: World, player: PlayerEntity): void {
     energy.flashBaseMoveSpeed = player.hasPosition.speed;
   }
 
-  const energyPerHit = Math.max(0, player.usesSkills.passives['energy.flash-energy-per-hit'] ?? FLASH_ENERGY_PER_HIT);
+  const passives = player.usesSkills.passives;
+  const baseGain = Math.max(0, passives['energy.flash-energy-per-hit'] ?? FLASH_ENERGY_PER_HIT);
+  const energyPerHit = resolveEnergyRelicProfile(
+    baseGain,
+    Math.max(1, energy.energyMax),
+    passives['energy.empowered-mult'] ?? 2,
+    relicRatingsFromPassives(passives),
+  ).gainPerHit.after;
   energy.energy = Math.min(energy.energy + energyPerHit, energy.energyMax);
   applyFlashShiftStats(world, player);
 }

@@ -1,4 +1,5 @@
 import type { PassiveMap } from '../passives';
+import { relicRatingsFromPassives, resolveEnergyRelicProfile } from './relics';
 
 /**
  * Base energy pool and the Voidwalker (singularity-execute) max-energy scaling.
@@ -13,7 +14,7 @@ import type { PassiveMap } from '../passives';
 export const ENERGY_MAX_BASE = 100;
 export const ENERGY_VOID_UNLOCK_TIER = 4;
 
-export function resolveEnergyMax(passives: PassiveMap, playerTier: number): number {
+export function resolveEnergyMaxBeforeRelic(passives: PassiveMap, playerTier: number): number {
   const perTier = passives['energy.max-bonus'] ?? 0;
   let max = ENERGY_MAX_BASE;
   if (perTier > 0) {
@@ -21,4 +22,14 @@ export function resolveEnergyMax(passives: PassiveMap, playerTier: number): numb
     max += Math.round(perTier * tierMult);
   }
   return max;
+}
+
+export function resolveEnergyMax(passives: PassiveMap, playerTier: number): number {
+  const base = resolveEnergyMaxBeforeRelic(passives, playerTier);
+  return resolveEnergyRelicProfile(
+    passives['energy.per-hit'] ?? 14,
+    base,
+    passives['energy.empowered-mult'] ?? 2,
+    relicRatingsFromPassives(passives),
+  ).maxEnergy.after;
 }

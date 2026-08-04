@@ -9,6 +9,7 @@ import {
   MOMENTUM_RELOAD_REDUCTION_FLOOR,
   DEFAULT_SNIPE_FULL_HP_MULT,
 } from './constants';
+import { playerMechanicBuffMagnitude } from '../../../../shared/applyPlayerMechanicBuff';
 
 export const RELOAD_T3_BUFFS = [
   defineBuff('reload-snipe-ready', ({ player, world }) => {
@@ -23,7 +24,12 @@ export const RELOAD_T3_BUFFS = [
     if ((player.usesSkills.passives['reload.hair-trigger'] ?? 0) <= 0) return null;
     const stacks = player.usesReload?.clipSpeedStacks ?? 0;
     if (stacks <= 0) return null;
-    const pct = player.usesSkills.passives['reload.hair-trigger-pct-per-shot'] ?? DEFAULT_HAIR_TRIGGER_PCT;
+    const pct = playerMechanicBuffMagnitude(
+      player,
+      'reload-hair-trigger',
+      'attackSpeedPctPerShot',
+      player.usesSkills.passives['reload.hair-trigger-pct-per-shot'] ?? DEFAULT_HAIR_TRIGGER_PCT,
+    );
     return {
       id: 'reload-hair-trigger',
       label: 'Rev',

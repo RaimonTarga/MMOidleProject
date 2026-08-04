@@ -1,5 +1,4 @@
 import {
-  applyStatusEffect,
   distanceSq,
   getCounter,
   getCooldown,
@@ -30,6 +29,7 @@ import {
   cleanseAllyDebuffs,
   grantDebuffImmunity,
 } from '../core/debuffGuard';
+import { applyPlayerMechanicBuff } from '../../../../shared/applyPlayerMechanicBuff';
 import {
   computeMinionAttackRange,
   minionBuffRadius,
@@ -127,7 +127,7 @@ export function tickTrampleAura(world: World): void {
         continue;
       }
       removeStatusEffect(ally.tracksCombat, TRAMPLE_BOON_EFFECT);
-      applyStatusEffect(ally.tracksCombat, {
+      applyPlayerMechanicBuff(owner, ally.tracksCombat, {
         id:           TRAMPLE_BOON_EFFECT,
         maxStacks:    1,
         remainingMs:  TRAMPLE_REFRESH_MS,

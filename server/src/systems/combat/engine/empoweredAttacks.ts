@@ -1,4 +1,11 @@
-import type { PassiveKey } from '@mmo-idle/shared';
+import {
+  relicRatingsFromPassives,
+  resolveCadenceRelicProfile,
+  resolveCooldownRelicProfile,
+  resolveEnergyMaxBeforeRelic,
+  resolveEnergyRelicProfile,
+  type PassiveKey,
+} from '@mmo-idle/shared';
 import { registerCombatListener } from './combatPipeline';
 import { isClassActive } from '../../classes/shared/classActive';
 import type { ServerEntity } from '../../../ecs/entity';
@@ -130,6 +137,21 @@ export function registerEmpoweredMultiplier(
       // its base multiplier. e.g. 2.5x base with +0.5 → 3.75x (NOT additive 3.0x).
       const multBonus = ctx.attacker.usesSkills.passives['weapon.empowered-mult-bonus'] ?? 0;
       if (multBonus !== 0) effectiveMult *= 1 + multBonus;
+
+      const passives = ctx.attacker.usesSkills.passives;
+      const ratings = relicRatingsFromPassives(passives);
+      if (options.attackerSlice === 'usesCadence') {
+        effectiveMult = resolveCadenceRelicProfile(5, effectiveMult, ratings).empoweredMultiplier.after;
+      } else if (options.attackerSlice === 'usesCooldown') {
+        effectiveMult = resolveCooldownRelicProfile(7000, effectiveMult, ratings).empoweredMultiplier.after;
+      } else if (options.attackerSlice === 'usesEnergy') {
+        effectiveMult = resolveEnergyRelicProfile(
+          passives['energy.per-hit'] ?? 14,
+          resolveEnergyMaxBeforeRelic(passives, ctx.attacker.tracksProgression.playerTier),
+          effectiveMult,
+          ratings,
+        ).dischargeMultiplier.after;
+      }
     }
 
     const base     = ctx.damage;

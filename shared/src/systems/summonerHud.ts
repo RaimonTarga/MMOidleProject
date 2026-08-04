@@ -1,5 +1,6 @@
 import type { SummonsMinions } from '../components/archetypes/summoner/summonsMinions';
 import type { PassiveMap } from '../passives';
+import { relicRatingsFromPassives, resolveSummonerRelicProfile } from './relics';
 
 const DEFAULT_RESPAWN_MS = 5000;
 
@@ -13,6 +14,11 @@ export interface SummonSlotView {
 
 export function computeSummonRespawnMaxMs(passives: PassiveMap): number {
   let respawnMs = Math.max(0, Math.round(passives['summoner.minion-respawn-ms'] ?? DEFAULT_RESPAWN_MS));
+  respawnMs = resolveSummonerRelicProfile(
+    respawnMs,
+    1,
+    relicRatingsFromPassives(passives),
+  ).respawnMs.after;
   if (passives['summoner.stone-sentinel']) {
     respawnMs = Math.max(
       0,

@@ -13,6 +13,13 @@
  * other archetypes return null.
  */
 import type { PassiveMap } from '../passives';
+import {
+  relicRatingsFromPassives,
+  resolveCadenceRelicProfile,
+  resolveCooldownRelicProfile,
+  resolveEnergyRelicProfile,
+} from './relics';
+import { resolveEnergyMaxBeforeRelic } from './energyMax';
 
 export type EmpoweredArchetype = 'cadence' | 'cooldown' | 'energy' | 'reload';
 
@@ -49,6 +56,7 @@ function isEmpoweredArchetype(a: string | null | undefined): a is EmpoweredArche
 export function resolveEmpoweredMultiplier(
   passives: PassiveMap,
   archetype: string | null | undefined,
+  playerTier = 0,
 ): EmpoweredMultBreakdown | null {
   if (!isEmpoweredArchetype(archetype)) return null;
 
@@ -61,6 +69,20 @@ export function resolveEmpoweredMultiplier(
 
   let effective = base + archetypeAdd + sharedAdd;
   if (multBonus !== 0) effective *= 1 + multBonus;
+
+  const ratings = relicRatingsFromPassives(passives);
+  if (archetype === 'cadence') {
+    effective = resolveCadenceRelicProfile(5, effective, ratings).empoweredMultiplier.after;
+  } else if (archetype === 'cooldown') {
+    effective = resolveCooldownRelicProfile(7000, effective, ratings).empoweredMultiplier.after;
+  } else if (archetype === 'energy') {
+    effective = resolveEnergyRelicProfile(
+      passives['energy.per-hit'] ?? 14,
+      resolveEnergyMaxBeforeRelic(passives, playerTier),
+      effective,
+      ratings,
+    ).dischargeMultiplier.after;
+  }
 
   return { base, archetypeAdd, sharedAdd, multBonus, effective };
 }

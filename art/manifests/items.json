@@ -4656,6 +4656,198 @@
         "item:core-scout"
       ],
       "status": "accepted"
+    },
+    {
+      "id": "relic-hastebound-dial",
+      "out": "items/relics/hastebound-dial.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a square relic plate, a solid square plate of blackened iron filling the whole frame, a heavy bar across its top and bottom and a stout column down each side, its frame narrow and finely notched with many small evenly spaced ticks along every edge, its centre opening holding a fan-shaped gauge arc with one long matte bramble-red needle swung hard past its top tick, centered and filling about 95 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of blackened iron, dark pewter and matte bramble red, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, circle, circular, round disc, sphere, orb, ball, marble, gemstone, cut gem, brilliant cut, faceted gem, jewel, bezel, prong setting, ring setting, smooth pebble, river stone, cord, string, leather thong, necklace, chain, pendant, amulet, locket, hung, dangling, jewellery, eye, eyeball, iris, pupil, heart symbol, potion, bottle, vial, coin, wooden crate, box, cardboard, brick, wall tile, window, picture frame, painting, mirror, screen, book cover, treasure chest, heraldic crest, coat of arms, shield, road sign, warning sign, freestanding object, object on a stand, pedestal, plinth, legs, feet, tabletop ornament, product shot, dagger, blade, sword, axe, hammer, mace, spear, bow, clock face, roman numerals, wristwatch, pocket watch, compass, sundial",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "sources": [
+        "item:relic-hastebound-dial"
+      ],
+      "status": "accepted",
+      "notes": "Relic slot (6th slot, T4). Shared visual language, settled 2026-08-04 after the round-0 shape probe: SQUARE blackened-iron plate + ONE biome-coloured working part held in its opening. Rhomboid was tried first and abandoned - 'turned forty-five degrees' produced axis-aligned squares 3/3, the same failure class as the cores pass's octahedron->cube. Square is a primitive the model nails, so the shared shape is reliable instead of fought for. NO gemstone may appear on a relic - the cut gem is the core slot's language and the gem/bezel bans are the load-bearing separation (they held 6/6 in round 0). Rim encodes the trade: fine ticks = frequency-forward, corner blocks = potency-forward, smooth = no trade, broken = both down. Accent colour is named inline in the subject, never in the trailing palette clause. Frame is described as four explicit members because a strong working-part silhouette ate the plate outright in round 0. Corner caps reserved as the T5/T6 lever. Generated FLAT, never img2img off a sibling - img2img transfers colour far harder than form and would collapse the biome accents."
+    },
+    {
+      "id": "relic-colossus-heart",
+      "out": "items/relics/colossus-heart.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a square relic plate, a solid square plate of blackened iron filling the whole frame, a heavy bar across its top and bottom and a stout column down each side, its frame thick and heavy with one large blunt block at each of the four corners, its centre opening holding a heavy chambered valve of horn ivory, one deep crack splitting across it, centered and filling about 95 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of blackened iron, dark pewter and horn ivory and pale bone, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, circle, circular, round disc, sphere, orb, ball, marble, gemstone, cut gem, brilliant cut, faceted gem, jewel, bezel, prong setting, ring setting, smooth pebble, river stone, cord, string, leather thong, necklace, chain, pendant, amulet, locket, hung, dangling, jewellery, eye, eyeball, iris, pupil, heart symbol, potion, bottle, vial, coin, wooden crate, box, cardboard, brick, wall tile, window, picture frame, painting, mirror, screen, book cover, treasure chest, heraldic crest, coat of arms, shield, road sign, warning sign, freestanding object, object on a stand, pedestal, plinth, legs, feet, tabletop ornament, product shot, dagger, blade, sword, axe, hammer, mace, spear, bow, anatomical heart, organ, blood, veins, ribcage, cardiac, love heart",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "sources": [
+        "item:relic-colossus-heart"
+      ],
+      "status": "accepted",
+      "notes": "Relic slot (6th slot, T4). Shared visual language, settled 2026-08-04 after the round-0 shape probe: SQUARE blackened-iron plate + ONE biome-coloured working part held in its opening. Rhomboid was tried first and abandoned - 'turned forty-five degrees' produced axis-aligned squares 3/3, the same failure class as the cores pass's octahedron->cube. Square is a primitive the model nails, so the shared shape is reliable instead of fought for. NO gemstone may appear on a relic - the cut gem is the core slot's language and the gem/bezel bans are the load-bearing separation (they held 6/6 in round 0). Rim encodes the trade: fine ticks = frequency-forward, corner blocks = potency-forward, smooth = no trade, broken = both down. Accent colour is named inline in the subject, never in the trailing palette clause. Frame is described as four explicit members because a strong working-part silhouette ate the plate outright in round 0. Corner caps reserved as the T5/T6 lever. Generated FLAT, never img2img off a sibling - img2img transfers colour far harder than form and would collapse the biome accents."
+    },
+    {
+      "id": "relic-equilibrium-shard",
+      "out": "items/relics/equilibrium-shard.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a square relic plate, a solid square plate of blackened iron filling the whole frame, a heavy bar across its top and bottom and a stout column down each side, its frame a plain smooth unbroken border of even thickness, its centre opening holding one clean vertical seam splitting the face into two perfectly identical halves of pale polished steel, centered and filling about 95 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of blackened iron, dark pewter and pale polished steel and warm brass, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, circle, circular, round disc, sphere, orb, ball, marble, gemstone, cut gem, brilliant cut, faceted gem, jewel, bezel, prong setting, ring setting, smooth pebble, river stone, cord, string, leather thong, necklace, chain, pendant, amulet, locket, hung, dangling, jewellery, eye, eyeball, iris, pupil, heart symbol, potion, bottle, vial, coin, wooden crate, box, cardboard, brick, wall tile, window, picture frame, painting, mirror, screen, book cover, treasure chest, heraldic crest, coat of arms, shield, road sign, warning sign, freestanding object, object on a stand, pedestal, plinth, legs, feet, tabletop ornament, product shot, dagger, blade, sword, axe, hammer, mace, spear, bow, broken shard, shattered fragment, jagged piece, chipped edge, scales, balance beam, weighing scales",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "sources": [
+        "item:relic-equilibrium-shard"
+      ],
+      "status": "accepted",
+      "notes": "Relic slot (6th slot, T4). Shared visual language, settled 2026-08-04 after the round-0 shape probe: SQUARE blackened-iron plate + ONE biome-coloured working part held in its opening. Rhomboid was tried first and abandoned - 'turned forty-five degrees' produced axis-aligned squares 3/3, the same failure class as the cores pass's octahedron->cube. Square is a primitive the model nails, so the shared shape is reliable instead of fought for. NO gemstone may appear on a relic - the cut gem is the core slot's language and the gem/bezel bans are the load-bearing separation (they held 6/6 in round 0). Rim encodes the trade: fine ticks = frequency-forward, corner blocks = potency-forward, smooth = no trade, broken = both down. Accent colour is named inline in the subject, never in the trailing palette clause. Frame is described as four explicit members because a strong working-part silhouette ate the plate outright in round 0. Corner caps reserved as the T5/T6 lever. Generated FLAT, never img2img off a sibling - img2img transfers colour far harder than form and would collapse the biome accents."
+    },
+    {
+      "id": "relic-verdant-flywheel",
+      "out": "items/relics/verdant-flywheel.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a square relic plate, a solid square plate of blackened iron filling the whole frame, a heavy bar across its top and bottom and a stout column down each side, its frame narrow and finely notched with many small evenly spaced ticks along every edge, its centre opening holding a heavy spoked flywheel whose six spokes are dusky crimson vine, centered and filling about 95 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of blackened iron, dark pewter and dusky crimson and dark bronze, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, circle, circular, round disc, sphere, orb, ball, marble, gemstone, cut gem, brilliant cut, faceted gem, jewel, bezel, prong setting, ring setting, smooth pebble, river stone, cord, string, leather thong, necklace, chain, pendant, amulet, locket, hung, dangling, jewellery, eye, eyeball, iris, pupil, heart symbol, potion, bottle, vial, coin, wooden crate, box, cardboard, brick, wall tile, window, picture frame, painting, mirror, screen, book cover, treasure chest, heraldic crest, coat of arms, shield, road sign, warning sign, freestanding object, object on a stand, pedestal, plinth, legs, feet, tabletop ornament, product shot, dagger, blade, sword, axe, hammer, mace, spear, bow, leaves, foliage, flower, tree, jungle plants, ship wheel, steering wheel, wagon wheel",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "sources": [
+        "item:relic-verdant-flywheel"
+      ],
+      "status": "accepted",
+      "notes": "Relic slot (6th slot, T4). Shared visual language, settled 2026-08-04 after the round-0 shape probe: SQUARE blackened-iron plate + ONE biome-coloured working part held in its opening. Rhomboid was tried first and abandoned - 'turned forty-five degrees' produced axis-aligned squares 3/3, the same failure class as the cores pass's octahedron->cube. Square is a primitive the model nails, so the shared shape is reliable instead of fought for. NO gemstone may appear on a relic - the cut gem is the core slot's language and the gem/bezel bans are the load-bearing separation (they held 6/6 in round 0). Rim encodes the trade: fine ticks = frequency-forward, corner blocks = potency-forward, smooth = no trade, broken = both down. Accent colour is named inline in the subject, never in the trailing palette clause. Frame is described as four explicit members because a strong working-part silhouette ate the plate outright in round 0. Corner caps reserved as the T5/T6 lever. Generated FLAT, never img2img off a sibling - img2img transfers colour far harder than form and would collapse the biome accents."
+    },
+    {
+      "id": "relic-glacial-bell",
+      "out": "items/relics/glacial-bell.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a square relic plate, a solid square plate of blackened iron filling the whole frame, a heavy bar across its top and bottom and a stout column down each side, its frame thick and heavy with one large blunt block at each of the four corners, its centre opening holding a hanging bell of pale glacial cyan with one heavy clapper beneath it, centered and filling about 95 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of blackened iron, dark pewter and pale glacial cyan and cold white, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, circle, circular, round disc, sphere, orb, ball, marble, gemstone, cut gem, brilliant cut, faceted gem, jewel, bezel, prong setting, ring setting, smooth pebble, river stone, cord, string, leather thong, necklace, chain, pendant, amulet, locket, hung, dangling, jewellery, eye, eyeball, iris, pupil, heart symbol, potion, bottle, vial, coin, wooden crate, box, cardboard, brick, wall tile, window, picture frame, painting, mirror, screen, book cover, treasure chest, heraldic crest, coat of arms, shield, road sign, warning sign, freestanding object, object on a stand, pedestal, plinth, legs, feet, tabletop ornament, product shot, dagger, blade, sword, axe, hammer, mace, spear, bow, bell tower, church, belfry, rope, handle, jingle bell, snow, icicles",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "sources": [
+        "item:relic-glacial-bell"
+      ],
+      "status": "accepted",
+      "notes": "Relic slot (6th slot, T4). Shared visual language, settled 2026-08-04 after the round-0 shape probe: SQUARE blackened-iron plate + ONE biome-coloured working part held in its opening. Rhomboid was tried first and abandoned - 'turned forty-five degrees' produced axis-aligned squares 3/3, the same failure class as the cores pass's octahedron->cube. Square is a primitive the model nails, so the shared shape is reliable instead of fought for. NO gemstone may appear on a relic - the cut gem is the core slot's language and the gem/bezel bans are the load-bearing separation (they held 6/6 in round 0). Rim encodes the trade: fine ticks = frequency-forward, corner blocks = potency-forward, smooth = no trade, broken = both down. Accent colour is named inline in the subject, never in the trailing palette clause. Frame is described as four explicit members because a strong working-part silhouette ate the plate outright in round 0. Corner caps reserved as the T5/T6 lever. Generated FLAT, never img2img off a sibling - img2img transfers colour far harder than form and would collapse the biome accents."
+    },
+    {
+      "id": "relic-virulent-hourglass",
+      "out": "items/relics/virulent-hourglass.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a square relic plate, a solid square plate of blackened iron filling the whole frame, a heavy bar across its top and bottom and a stout column down each side, its frame narrow and finely notched with many small evenly spaced ticks along every edge, its centre opening holding a pinched hourglass whose lower bulb is full of sickly chartreuse sand, centered and filling about 95 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of blackened iron, dark pewter and sickly chartreuse and olive brown, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, circle, circular, round disc, sphere, orb, ball, marble, gemstone, cut gem, brilliant cut, faceted gem, jewel, bezel, prong setting, ring setting, smooth pebble, river stone, cord, string, leather thong, necklace, chain, pendant, amulet, locket, hung, dangling, jewellery, eye, eyeball, iris, pupil, heart symbol, potion, bottle, vial, coin, wooden crate, box, cardboard, brick, wall tile, window, picture frame, painting, mirror, screen, book cover, treasure chest, heraldic crest, coat of arms, shield, road sign, warning sign, freestanding object, object on a stand, pedestal, plinth, legs, feet, tabletop ornament, product shot, dagger, blade, sword, axe, hammer, mace, spear, bow, wooden frame, sand dune, egg timer, liquid drip, skull, bones",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "sources": [
+        "item:relic-virulent-hourglass"
+      ],
+      "status": "accepted",
+      "notes": "Relic slot (6th slot, T4). Shared visual language, settled 2026-08-04 after the round-0 shape probe: SQUARE blackened-iron plate + ONE biome-coloured working part held in its opening. Rhomboid was tried first and abandoned - 'turned forty-five degrees' produced axis-aligned squares 3/3, the same failure class as the cores pass's octahedron->cube. Square is a primitive the model nails, so the shared shape is reliable instead of fought for. NO gemstone may appear on a relic - the cut gem is the core slot's language and the gem/bezel bans are the load-bearing separation (they held 6/6 in round 0). Rim encodes the trade: fine ticks = frequency-forward, corner blocks = potency-forward, smooth = no trade, broken = both down. Accent colour is named inline in the subject, never in the trailing palette clause. Frame is described as four explicit members because a strong working-part silhouette ate the plate outright in round 0. Corner caps reserved as the T5/T6 lever. Generated FLAT, never img2img off a sibling - img2img transfers colour far harder than form and would collapse the biome accents."
+    },
+    {
+      "id": "relic-withering-lens",
+      "out": "items/relics/withering-lens.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a square relic plate, a solid square plate of blackened iron filling the whole frame, a heavy bar across its top and bottom and a stout column down each side, its frame thick and heavy with one large blunt block at each of the four corners, its centre opening holding a narrowed aperture of six overlapping angular sun-amber shutter blades closing to a small opening, centered and filling about 95 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of blackened iron, dark pewter and regal sun-amber and dark bronze, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, circle, circular, round disc, sphere, orb, ball, marble, gemstone, cut gem, brilliant cut, faceted gem, jewel, bezel, prong setting, ring setting, smooth pebble, river stone, cord, string, leather thong, necklace, chain, pendant, amulet, locket, hung, dangling, jewellery, eye, eyeball, iris, pupil, heart symbol, potion, bottle, vial, coin, wooden crate, box, cardboard, brick, wall tile, window, picture frame, painting, mirror, screen, book cover, treasure chest, heraldic crest, coat of arms, shield, road sign, warning sign, freestanding object, object on a stand, pedestal, plinth, legs, feet, tabletop ornament, product shot, dagger, blade, sword, axe, hammer, mace, spear, bow, crosshair, reticle, scope, telescope, magnifying glass, camera, curved arcs, glass lens, eyeglasses",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "sources": [
+        "item:relic-withering-lens"
+      ],
+      "status": "accepted",
+      "notes": "Relic slot (6th slot, T4). Shared visual language, settled 2026-08-04 after the round-0 shape probe: SQUARE blackened-iron plate + ONE biome-coloured working part held in its opening. Rhomboid was tried first and abandoned - 'turned forty-five degrees' produced axis-aligned squares 3/3, the same failure class as the cores pass's octahedron->cube. Square is a primitive the model nails, so the shared shape is reliable instead of fought for. NO gemstone may appear on a relic - the cut gem is the core slot's language and the gem/bezel bans are the load-bearing separation (they held 6/6 in round 0). Rim encodes the trade: fine ticks = frequency-forward, corner blocks = potency-forward, smooth = no trade, broken = both down. Accent colour is named inline in the subject, never in the trailing palette clause. Frame is described as four explicit members because a strong working-part silhouette ate the plate outright in round 0. Corner caps reserved as the T5/T6 lever. Generated FLAT, never img2img off a sibling - img2img transfers colour far harder than form and would collapse the biome accents."
+    },
+    {
+      "id": "relic-haunted-prism",
+      "out": "items/relics/haunted-prism.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a square relic plate, a solid square plate of blackened iron filling the whole frame, a heavy bar across its top and bottom and a stout column down each side, its frame cracked and broken open with visible gaps along two of its edges, its centre opening holding a hard-edged triangle splitting one pale line into three plague-green bands, centered and filling about 95 percent of the frame, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of blackened iron, dark pewter and plague green and bruised violet, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, circle, circular, round disc, sphere, orb, ball, marble, gemstone, cut gem, brilliant cut, faceted gem, jewel, bezel, prong setting, ring setting, smooth pebble, river stone, cord, string, leather thong, necklace, chain, pendant, amulet, locket, hung, dangling, jewellery, eye, eyeball, iris, pupil, heart symbol, potion, bottle, vial, coin, wooden crate, box, cardboard, brick, wall tile, window, picture frame, painting, mirror, screen, book cover, treasure chest, heraldic crest, coat of arms, shield, road sign, warning sign, freestanding object, object on a stand, pedestal, plinth, legs, feet, tabletop ornament, product shot, dagger, blade, sword, axe, hammer, mace, spear, bow, rainbow, full colour spectrum, light beam glow, ghost, skull, tombstone, crystal cluster",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "sources": [
+        "item:relic-haunted-prism"
+      ],
+      "status": "accepted",
+      "notes": "Relic slot (6th slot, T4). Shared visual language, settled 2026-08-04 after the round-0 shape probe: SQUARE blackened-iron plate + ONE biome-coloured working part held in its opening. Rhomboid was tried first and abandoned - 'turned forty-five degrees' produced axis-aligned squares 3/3, the same failure class as the cores pass's octahedron->cube. Square is a primitive the model nails, so the shared shape is reliable instead of fought for. NO gemstone may appear on a relic - the cut gem is the core slot's language and the gem/bezel bans are the load-bearing separation (they held 6/6 in round 0). Rim encodes the trade: fine ticks = frequency-forward, corner blocks = potency-forward, smooth = no trade, broken = both down. Accent colour is named inline in the subject, never in the trailing palette clause. Frame is described as four explicit members because a strong working-part silhouette ate the plate outright in round 0. Corner caps reserved as the T5/T6 lever. Generated FLAT, never img2img off a sibling - img2img transfers colour far harder than form and would collapse the biome accents."
     }
   ]
 }

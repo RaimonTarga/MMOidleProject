@@ -147,6 +147,7 @@ const NAMESPACE_LABELS: Record<string, string> = {
   guard: 'Guard',
   mobility: 'Mobility',
   reload: 'Reload',
+  relic: 'Relic',
   rite: 'Rite',
   shared: 'General',
   summoner: 'Summoner',

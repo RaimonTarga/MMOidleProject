@@ -1,9 +1,9 @@
 import { useMemo, useState } from 'react';
 import { useAtomValue } from 'jotai';
 import type { EquipmentSlot } from '@mmo-idle/shared';
-import { ITEM_DATABASE, RECIPE_DATABASE } from '@mmo-idle/shared';
+import { ITEM_DATABASE, RECIPE_DATABASE, TEST_ROOM_NODE_ID, relicIsUnlocked } from '@mmo-idle/shared';
 import { hudBus } from '../../hudBus';
-import { inventoryAtom, itemUpgradesAtom } from '../../hud/atoms';
+import { inventoryAtom, itemUpgradesAtom, playerNodeIdAtom, playerTierAtom } from '../../hud/atoms';
 import { SLOT_LABELS, biomeName, tierColor } from './constants';
 import { ItemIcon } from '../ItemIcon';
 import type { FocusedItem } from './useFocus';
@@ -19,6 +19,8 @@ interface Props {
 export function BackpackGrid({ focused, onFocus }: Props) {
   const inventory    = useAtomValue(inventoryAtom);
   const itemUpgrades = useAtomValue(itemUpgradesAtom);
+  const playerTier = useAtomValue(playerTierAtom);
+  const playerNodeId = useAtomValue(playerNodeIdAtom);
   const [filterBiome, setFilterBiome] = useState<string | null>(null);
   const [filterSlot,  setFilterSlot]  = useState<EquipmentSlot | null>(null);
   const [filterTier,  setFilterTier]  = useState<number | null>(null);
@@ -150,6 +152,8 @@ export function BackpackGrid({ focused, onFocus }: Props) {
             const isFocused = focused?.source === 'backpack' && focused.invIndex === invIndex;
             const color     = def ? tierColor(def.tier) : null;
             const plus      = defId ? (itemUpgrades[defId] ?? 0) : 0;
+            const relicLocked = def?.slot === 'relic'
+              && !relicIsUnlocked(playerTier, playerNodeId === TEST_ROOM_NODE_ID);
 
             return (
               <button
@@ -161,8 +165,8 @@ export function BackpackGrid({ focused, onFocus }: Props) {
                   isFocused ? 'inv-item-slot--focused' : '',
                 ].filter(Boolean).join(' ')}
                 style={color ? { borderColor: `${color}77` } : undefined}
-                aria-label={def ? `Equip ${def.name}` : 'Empty backpack slot'}
-                disabled={!defId || !def}
+                aria-label={relicLocked ? `${def?.name ?? 'Relic'} locked until Tier 4` : def ? `Equip ${def.name}` : 'Empty backpack slot'}
+                disabled={!defId || !def || relicLocked}
                 onMouseEnter={() => {
                   if (def && defId) onFocus({ defId, source: 'backpack', invIndex: invIndex ?? i });
                 }}

@@ -18,6 +18,11 @@ import {
   BINARY_DISCHARGE_GAIN_MULT,
   CRITICAL_MASS_GAIN_PER_STACK,
 } from "../core/constants";
+import {
+  relicRatingsFromPassives,
+  resolveEnergyMaxBeforeRelic,
+  resolveEnergyRelicProfile,
+} from '@mmo-idle/shared';
 
 /**
  * Energy T3 afterHit listener — custom energy gain for T3 mechanics.
@@ -48,7 +53,12 @@ export function registerAfterHit(): void {
 
     if (energy.energyMax === 0) energy.energyMax = 100;
 
-    const baseGain = Math.round(passives["energy.per-hit"] ?? 14);
+    const baseGain = resolveEnergyRelicProfile(
+      Math.max(1, Math.round(passives['energy.per-hit'] ?? 14)),
+      resolveEnergyMaxBeforeRelic(passives, player.tracksProgression.playerTier),
+      passives['energy.empowered-mult'] ?? 2,
+      relicRatingsFromPassives(passives),
+    ).gainPerHit.after;
 
     if (hasPassive(player, "energy.flash")) {
       applyFlashSpeedGain(world, player);

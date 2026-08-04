@@ -14,7 +14,11 @@
  *     splash and boss-script `slam`). Dead minions are detached here on the next
  *     tick — AoE only drops their HP.
  */
-import { GAME_CONFIG } from '@mmo-idle/shared';
+import {
+  GAME_CONFIG,
+  relicRatingsFromPassives,
+  resolveSummonerRelicProfile,
+} from '@mmo-idle/shared';
 import type { World } from '../../../../world/World';
 import type { MinionEntity, PlayerEntity } from '../../../../ecs/entity';
 import { markSliceDirty } from '../../../../ecs/dirtyHelpers';
@@ -53,7 +57,12 @@ function desiredMinionCount(owner: SummonerPlayerEntity): number {
   if (cap !== undefined && cap > 0) {
     count = Math.min(count, Math.floor(cap));
   }
-  return Math.max(1, count);
+  return resolveSummonerRelicProfile(
+    DEFAULT_RESPAWN_MS,
+    Math.max(1, count),
+    relicRatingsFromPassives(passives),
+    cap,
+  ).summonCount.after;
 }
 
 function isStoneSentinelOwner(owner: SummonerPlayerEntity): boolean {
@@ -193,6 +202,11 @@ export function updateSummonerArchetype(world: World, dt: number, now: number): 
     let respawnMs = Math.max(0, Math.round(
       summoner.usesSkills.passives['summoner.minion-respawn-ms'] ?? DEFAULT_RESPAWN_MS,
     ));
+    respawnMs = resolveSummonerRelicProfile(
+      respawnMs,
+      Math.max(1, summons.targetCount),
+      relicRatingsFromPassives(summoner.usesSkills.passives),
+    ).respawnMs.after;
     const stoneSentinel = isStoneSentinelOwner(summoner);
     if (stoneSentinel) {
       respawnMs = Math.max(0, Math.round(
@@ -244,6 +258,9 @@ export function updateSummonerArchetype(world: World, dt: number, now: number): 
         summons.respawnTimers[slot] = respawnMs;
         continue;
       }
+      // Equipping a frequency Relic while a summon is down takes effect now,
+      // rather than leaving the old, longer timer running to completion.
+      summons.respawnTimers[slot] = Math.min(summons.respawnTimers[slot], respawnMs);
       summons.respawnTimers[slot] = Math.max(0, summons.respawnTimers[slot] - dt);
       if (summons.respawnTimers[slot] === 0) {
         spawnMinionForOwner(world, summoner, slot);

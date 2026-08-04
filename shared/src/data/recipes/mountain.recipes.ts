@@ -380,7 +380,7 @@ export const mountainRecipeEntries = [
       'core.maxhp-mult': 0.25, 'core.plating-mult': 0.32, 'core.dr-layer-pct': 0.12,
       'core.attack-speed-mult': -0.20, 'core.speed-mult': -0.07,
     },
-    icon: 'items/charms/shield-charm-1.png',
+    icon: 'items/cores/juggernaut.png',
     description: 'The mountain does not dodge. It simply outlasts whatever is thrown at it, and so will you.',
   }],
 
@@ -397,8 +397,22 @@ export const mountainRecipeEntries = [
     // Worth little when abilities are a minor part of the build — the specialisation
     // IS the opportunity cost, so no explicit penalty is authored.
     mechanicEffects: { 'technique.cooldown-reduction-pct': 0.18, 'technique.power-pct': 0.08 },
-    icon: 'items/charms/jewel-charm-3.png',
+    icon: 'items/cores/arcanist.png',
     description: 'Thin air, long thoughts. The gap between what you can do and how often shrinks.',
+  }],
+
+  ['relic-colossus-heart', {
+    id: 'relic-colossus-heart', name: 'Colossus Heart',
+    recipeGroup: 'mountain', requiredBiomeLevel: 24, slot: 'relic',
+    lineageId: 'relic-colossus-heart',
+    cost: { blue: 240 }, catalystCost: { brutality: 4 },
+    stats: {}, tier: 4,
+    mechanicEffects: {
+      'relic.mechanic-frequency': -0.30,
+      'relic.mechanic-potency': 0.40,
+    },
+    icon: 'items/relics/colossus-heart.png',
+    description: 'A mountain heartbeat: slow enough to feel inevitable, heavy enough to end the argument.',
   }],
 
 ] satisfies [string, Recipe][];

@@ -241,8 +241,23 @@ export const desertRecipeEntries = [
     stats: {}, tier: 3,
     // Deliberately no mobility bonus — the Scout core is the one that buys spacing.
     mechanicEffects: { 'core.attack-mult': 0.26, 'core.maxhp-mult': -0.20, 'core.plating-mult': -0.15 },
-    icon: 'items/charms/eye-charm-2.png',
+    icon: 'items/cores/sniper.png',
     description: 'Focuses the eye to a needlepoint, and leaves the body that much more exposed.',
+  }],
+
+  ['relic-withering-lens', {
+    id: 'relic-withering-lens', name: 'Withering Lens',
+    recipeGroup: 'desert', requiredBiomeLevel: 18, slot: 'relic',
+    lineageId: 'relic-withering-lens',
+    cost: { yellow: 220 }, catalystCost: { predation: 4 },
+    stats: {}, tier: 4,
+    mechanicEffects: {
+      'relic.mechanic-frequency': -0.20,
+      'relic.mechanic-potency': 0.25,
+      'relic.mechanic-debuff-effect': 0.25,
+    },
+    icon: 'items/relics/withering-lens.png',
+    description: 'It takes its time finding the flaw, then makes the flaw impossible to ignore.',
   }],
 
 ] satisfies [string, Recipe][];

@@ -42,6 +42,7 @@ const DEFAULT_EQUIPMENT: EquipmentMap = {
   recovery: null,
   mobility: null,
   core: null,
+  relic: null,
 };
 
 export const statusAtom = atom<HudConnectionStatus>('connecting');

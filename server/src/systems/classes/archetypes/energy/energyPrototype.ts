@@ -2,6 +2,11 @@ import { registerCombatListener } from '../../../combat/engine/combatPipeline';
 import { setEmpoweredAttack, registerEmpoweredMultiplier, isEmpoweredAttack } from '../../../combat/engine/empoweredAttacks';
 import { initEnergyT3 } from './t3';
 import type { World } from '../../../../world/World';
+import {
+  relicRatingsFromPassives,
+  resolveEnergyMaxBeforeRelic,
+  resolveEnergyRelicProfile,
+} from '@mmo-idle/shared';
 
 // ── Energy mechanic constants ─────────────────────────────────────────────────
 
@@ -65,7 +70,13 @@ export function initEnergyArchetype(): void {
 
     if (energy.energyMax === 0) energy.energyMax = ENERGY_MAX_DEFAULT;
 
-    const energyPerHit = Math.round(entity.usesSkills.passives['energy.per-hit'] ?? ENERGY_PER_HIT_DEFAULT);
+    const passives = entity.usesSkills.passives;
+    const energyPerHit = resolveEnergyRelicProfile(
+      Math.max(1, Math.round(passives['energy.per-hit'] ?? ENERGY_PER_HIT_DEFAULT)),
+      resolveEnergyMaxBeforeRelic(passives, entity.tracksProgression.playerTier),
+      passives['energy.empowered-mult'] ?? EMPOWERED_MULT_DEFAULT,
+      relicRatingsFromPassives(passives),
+    ).gainPerHit.after;
     energy.energy = Math.min(energy.energy + energyPerHit, energy.energyMax);
 
     if (energy.energy >= energy.energyMax) {

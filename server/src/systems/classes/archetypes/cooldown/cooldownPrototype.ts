@@ -2,11 +2,22 @@ import { registerCombatListener } from '../../../combat/engine/combatPipeline';
 import { setEmpoweredAttack, isEmpoweredAttack, registerEmpoweredMultiplier } from '../../../combat/engine/empoweredAttacks';
 import { initCooldownT3 } from './t3';
 import type { World } from '../../../../world/World';
+import { relicRatingsFromPassives, resolveCooldownRelicProfile } from '@mmo-idle/shared';
 
 // ── Fallback constants (balanced-frame values, used when no frame is unlocked) ─
 
 export const EXECUTION_COOLDOWN_MS = 7_000;  // ms between execution windows
 const EXECUTION_MULTIPLIER         = 2.0;    // damage multiplier on execution strike
+
+function resolveExecutionCooldownMs(entity: { usesSkills: { passives: import('@mmo-idle/shared').PassiveMap } }): number {
+  const passives = entity.usesSkills.passives;
+  const base = Math.max(100, Math.round(passives['cooldown.empowered-cd-ms'] ?? EXECUTION_COOLDOWN_MS));
+  return resolveCooldownRelicProfile(
+    base,
+    passives['cooldown.empowered-mult'] ?? EXECUTION_MULTIPLIER,
+    relicRatingsFromPassives(passives),
+  ).cooldownMs.after;
+}
 
 // ── Tick-driven readiness check ───────────────────────────────────────────────
 
@@ -30,7 +41,7 @@ export function updateCooldownArchetype(world: World, dt: number): void {
     // First encounter (or after respawn):
     // start the preparation cycle. Read cd duration from passives.
     if (!cd.initialized) {
-      const cdMs = entity.usesSkills.passives['cooldown.empowered-cd-ms'] ?? EXECUTION_COOLDOWN_MS;
+      const cdMs = resolveExecutionCooldownMs(entity);
       cd.executionCooldownMs = cdMs;
       cd.initialized         = true;
       cd.executionCooldownPct = 0;
@@ -48,7 +59,7 @@ export function updateCooldownArchetype(world: World, dt: number): void {
     }
 
     // Mirror to the entity slice so projection can expose preparation progress.
-    const cdMs = entity.usesSkills.passives['cooldown.empowered-cd-ms'] ?? EXECUTION_COOLDOWN_MS;
+    const cdMs = resolveExecutionCooldownMs(entity);
     cd.executionCooldownPct = isEmpoweredAttack(entity)
       ? 100
       : Math.round((1 - cd.executionCooldownMs / cdMs) * 100);
@@ -96,7 +107,7 @@ export function initCooldownArchetype(): void {
 
     const cd     = entity.usesCooldown;
 
-    const cdMs = entity.usesSkills.passives['cooldown.empowered-cd-ms'] ?? EXECUTION_COOLDOWN_MS;
+    const cdMs = resolveExecutionCooldownMs(entity);
     cd.executionCooldownMs = cdMs;
   });
 }

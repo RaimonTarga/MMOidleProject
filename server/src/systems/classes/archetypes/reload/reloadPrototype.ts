@@ -1,7 +1,7 @@
 import { registerCombatListener } from '../../../combat/engine/combatPipeline';
 import { registerEmpoweredMultiplier, setEmpoweredAttack } from '../../../combat/engine/empoweredAttacks';
 import type { World } from '../../../../world/World';
-import { getFlag, resetCounter } from '@mmo-idle/shared';
+import { getFlag, relicRatingsFromPassives, resolveReloadRelicProfile, resetCounter } from '@mmo-idle/shared';
 import { isPlayerActivelyInCombat } from '../../../combat/ai/engagement';
 import { RUNE_TACTICAL_RELOAD_FLAG } from '../../../combat/ai/runeConfig';
 import { initReloadT3 } from './t3';
@@ -25,7 +25,12 @@ export function updateReloadArchetype(world: World, dt: number): void {
   for (const entity of world.reloadPlayers) {
     const reload = entity.usesReload;
 
-    const maxAmmo = Math.round(entity.usesSkills.passives['reload.max-ammo'] ?? RELOAD_MAX_AMMO);
+    const baseMaxAmmo = Math.max(1, Math.round(entity.usesSkills.passives['reload.max-ammo'] ?? RELOAD_MAX_AMMO));
+    const maxAmmo = resolveReloadRelicProfile(
+      1600,
+      baseMaxAmmo,
+      relicRatingsFromPassives(entity.usesSkills.passives),
+    ).ammoMax.after;
 
     if (reload.ammoMax !== maxAmmo) {
       const isFirstInit = reload.ammoMax === 0;

@@ -3,7 +3,7 @@
 // StatSheet. Keeps stat labels/formatters and the mechanic-effect vocabulary in
 // one place so every surface reads the same way.
 
-import type { ItemDefinition } from '@mmo-idle/shared';
+import type { ItemDefinition, ResolvedRelicProfile } from '@mmo-idle/shared';
 import {
   BURN_FAMILY,
   upgradeMechanicEffectsTotal, upgradeStatBonusTotal,
@@ -254,6 +254,19 @@ export function formatMechanicEffects(fx: Record<string, number> | undefined): s
   const pctK  = (k: string) => `${Math.round((fx[k] ?? 0) * 100)}%`;
   const secK  = (k: string) => `${Math.round((fx[k] ?? 0) / 1000)}s`;
   const mark  = (...keys: string[]) => keys.forEach(k => seen.add(k));
+
+  const relicRatings: [string, string][] = [
+    ['relic.mechanic-frequency', 'Mechanic Frequency'],
+    ['relic.mechanic-potency', 'Mechanic Potency'],
+    ['relic.mechanic-buff-effect', 'Mechanic Buff Effect'],
+    ['relic.mechanic-debuff-effect', 'Mechanic Debuff Effect'],
+  ];
+  for (const [key, label] of relicRatings) {
+    if (!has(key)) continue;
+    const value = Math.round((fx[key] ?? 0) * 100);
+    lines.push(`${label}: ${value >= 0 ? '+' : ''}${value}%`);
+    mark(key);
+  }
 
   if (has('defense.shield-pct')) {
     const interval = fx['defense.shield-interval-ms'];
@@ -528,6 +541,47 @@ export function formatMechanicEffects(fx: Record<string, number> | undefined): s
   }
 
   return lines;
+}
+
+const seconds = (ms: number): string => `${round1(ms / 1000)}s`;
+const beforeAfter = (before: string | number, after: string | number): string => `${before} â†’ ${after}`;
+
+/** Human-readable rendering of the shared character-specific Relic preview. */
+export function formatResolvedRelicProfile(profile: ResolvedRelicProfile | null): string[] {
+  if (!profile) return ['Current class: effect preview unavailable'];
+  switch (profile.archetype) {
+    case 'cadence':
+      return [
+        `For Striker: finisher every ${beforeAfter(profile.threshold.before, profile.threshold.after)} hits`,
+        `Finisher damage ${beforeAfter(`${round1(profile.empoweredMultiplier.before)}Ã—`, `${round1(profile.empoweredMultiplier.after)}Ã—`)}`,
+      ];
+    case 'cooldown':
+      return [
+        `For Squire: execution cooldown ${beforeAfter(seconds(profile.cooldownMs.before), seconds(profile.cooldownMs.after))}`,
+        `Execution damage ${beforeAfter(`${round1(profile.empoweredMultiplier.before)}Ã—`, `${round1(profile.empoweredMultiplier.after)}Ã—`)}`,
+      ];
+    case 'reload':
+      return [
+        `For Slinger: reload ${beforeAfter(seconds(profile.reloadMs.before), seconds(profile.reloadMs.after))}`,
+        `Magazine ${beforeAfter(profile.ammoMax.before, profile.ammoMax.after)} rounds`,
+      ];
+    case 'dot':
+      return [
+        `For DoT: tick interval ${beforeAfter(seconds(profile.tickIntervalMs.before), seconds(profile.tickIntervalMs.after))}`,
+        `Stack cap ${beforeAfter(profile.maxStacks.before, profile.maxStacks.after)}`,
+      ];
+    case 'energy':
+      return [
+        `For Energy: gain ${beforeAfter(profile.gainPerHit.before, profile.gainPerHit.after)} per hit`,
+        `Capacity ${beforeAfter(profile.maxEnergy.before, profile.maxEnergy.after)}`,
+        `Discharge ${beforeAfter(`${round1(profile.dischargeMultiplier.before)}Ã—`, `${round1(profile.dischargeMultiplier.after)}Ã—`)}`,
+      ];
+    case 'summoner':
+      return [
+        `For Summoner: resummon ${beforeAfter(seconds(profile.respawnMs.before), seconds(profile.respawnMs.after))}`,
+        `Summon cap ${beforeAfter(profile.summonCount.before, profile.summonCount.after)}`,
+      ];
+  }
 }
 
 // Generates human-readable effect lines for weapon families (Chaotic / Burn).

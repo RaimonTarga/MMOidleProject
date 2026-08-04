@@ -237,8 +237,23 @@ export const tundraRecipeEntries = [
       'core.attack-mult': 0.14, 'core.speed-mult': 0.16,
       'core.mobility-cooldown-reduction-pct': 0.20, 'core.maxhp-mult': -0.15,
     },
-    icon: 'items/charms/bright-charm-1.png',
+    icon: 'items/cores/scout.png',
     description: 'Open ground and a long horizon. Nothing here helps you win a stand — only avoid one.',
+  }],
+
+  ['relic-glacial-bell', {
+    id: 'relic-glacial-bell', name: 'Glacial Bell',
+    recipeGroup: 'tundra', requiredBiomeLevel: 12, slot: 'relic',
+    lineageId: 'relic-glacial-bell',
+    cost: { blue: 220 }, catalystCost: { brutality: 4 },
+    stats: {}, tier: 4,
+    mechanicEffects: {
+      'relic.mechanic-frequency': -0.20,
+      'relic.mechanic-potency': 0.25,
+      'relic.mechanic-buff-effect': 0.25,
+    },
+    icon: 'items/relics/glacial-bell.png',
+    description: 'It rings only when the moment is ready, and every boon carries the note.',
   }],
 
 ] satisfies [string, Recipe][];

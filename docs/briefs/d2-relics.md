@@ -1,5 +1,10 @@
 # Design Brief D2 — Relics
 
+> **FULFILLED (2026-08-04):** settled decisions live in
+> `docs/relics-design.md`; the shipped system is recorded in
+> `docs/relics-current-state.md`. The historical build sequence is archived at
+> `docs/archive/relics-implementation-plan.md`.
+
 **For:** an external design session. Self-contained — assume no prior knowledge
 of this project.
 **Returns to:** `docs/next-playtest-implementation-plan.md` steps 1.5 and 2.4.

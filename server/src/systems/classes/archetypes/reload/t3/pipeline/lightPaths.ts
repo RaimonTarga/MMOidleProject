@@ -9,6 +9,7 @@ import {
   ALT_CADENCE_ATTACK_MULT,
   ALT_CADENCE_ONHIT_MULT,
 } from '../core/constants';
+import { playerMechanicBuffMagnitude } from '../../../../shared/applyPlayerMechanicBuff';
 
 function usesStandardMagazine(passives: Record<string, number | undefined>): boolean {
   if ((passives['reload.laser'] ?? 0) > 0) return false;
@@ -82,8 +83,12 @@ export function registerReloadLightT3(): void {
     if (reload.clipSpeedStacks >= maxStacks) return;
 
     reload.clipSpeedStacks++;
-    const pct =
-      passives['reload.hair-trigger-pct-per-shot'] ?? DEFAULT_HAIR_TRIGGER_PCT;
+    const pct = playerMechanicBuffMagnitude(
+      player,
+      'reload-hair-trigger',
+      'attackSpeedPctPerShot',
+      passives['reload.hair-trigger-pct-per-shot'] ?? DEFAULT_HAIR_TRIGGER_PCT,
+    );
     player.performsAttack.attackCooldown = Math.max(
       200,
       Math.round(

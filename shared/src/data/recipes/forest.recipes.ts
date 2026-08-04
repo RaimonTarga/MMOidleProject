@@ -177,7 +177,7 @@ export const forestRecipeEntries = [
     // recovery-mult scales the passive regen stat AND every heal, so this is real
     // sustain rather than the near-nothing a regen-stat-only core would give.
     mechanicEffects: { 'core.recovery-mult': 0.20, 'core.maxhp-mult': 0.10 },
-    icon: 'items/charms/heart-charm-1.png',
+    icon: 'items/cores/survivalist.png',
     description: 'Wound-knit heartwood. It does not stop the blow — it shortens the time you spend regretting it.',
   }],
 
@@ -190,8 +190,22 @@ export const forestRecipeEntries = [
     cost: { green: 90 }, catalystCost: { alacrity: 2 }, // family-tag: attack-speed tempo → Alacrity
     stats: {}, tier: 3,
     mechanicEffects: { 'core.attack-speed-mult': 0.25, 'core.attack-mult': -0.12 },
-    icon: 'items/charms/bright-charm-2.png',
+    icon: 'items/cores/accelerant.png',
     description: 'The forest keeps a fast rhythm. Match it, and you will find you are swinging before you decide to.',
+  }],
+
+  ['relic-hastebound-dial', {
+    id: 'relic-hastebound-dial', name: 'Hastebound Dial',
+    recipeGroup: 'forest', requiredBiomeLevel: 24, slot: 'relic',
+    lineageId: 'relic-hastebound-dial',
+    cost: { green: 220 }, catalystCost: { alacrity: 4 },
+    stats: {}, tier: 4,
+    mechanicEffects: {
+      'relic.mechanic-frequency': 0.35,
+      'relic.mechanic-potency': -0.25,
+    },
+    icon: 'items/relics/hastebound-dial.png',
+    description: 'The dial runs ahead of every rhythm, trading weight for relentless motion.',
   }],
 
 

@@ -6,6 +6,7 @@ import {
   RAMPAGE_MULT_PER_STACK,
 } from './constants';
 import { crescendoMultiplier } from './crescendo';
+import { playerMechanicBuffMagnitude } from '../../../../shared/applyPlayerMechanicBuff';
 
 export const CADENCE_T3_BUFFS = [
   defineBuff(
@@ -29,7 +30,12 @@ export const CADENCE_T3_BUFFS = [
     'cadence-echo',
     ({ player }) => {
       const echo = player.usesCadence?.echo ?? 0;
-      const echoBonus = player.usesSkills.passives['cadence.momentum-echo-bonus'] ?? MOMENTUM_ECHO_BONUS;
+      const echoBonus = playerMechanicBuffMagnitude(
+        player,
+        'cadence-echo',
+        'damageBonus',
+        player.usesSkills.passives['cadence.momentum-echo-bonus'] ?? MOMENTUM_ECHO_BONUS,
+      );
       return echo > 0
         ? {
             id: 'cadence-echo',

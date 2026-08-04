@@ -17,6 +17,7 @@ import {
   IT_ATK_PER_STACK, IT_SPEED_CAP, IT_SPEED_PER_STACK,
   FRENZY_FX, FRENZY_DURATION_MS, FRENZY_APS, FRENZY_ONHIT_PER_TIER, FRENZY_UNLOCK_TIER,
 } from '../paths/_constants';
+import { playerMechanicBuffMagnitude } from '../../../../shared/applyPlayerMechanicBuff';
 
 export const DOT_T3_BUFFS = [
   defineBuff('dot-frenzy', ({ player }) => {
@@ -28,8 +29,18 @@ export const DOT_T3_BUFFS = [
     const total = fx.data['totalMs'] ?? Math.max(100, passives['dot.frenzy-duration-ms'] ?? FRENZY_DURATION_MS);
     const pct = total > 0 ? Math.round((fx.remainingMs / total) * 100) : 0;
     const tierMult = Math.max(1, (player.tracksProgression?.playerTier ?? FRENZY_UNLOCK_TIER) - FRENZY_UNLOCK_TIER + 1);
-    const attackSpeedPct = Math.max(0, passives['dot.frenzy-attack-speed-pct'] ?? FRENZY_APS);
-    const onHitPerTier = Math.max(0, passives['dot.frenzy-onhit-per-tier'] ?? FRENZY_ONHIT_PER_TIER);
+    const attackSpeedPct = Math.max(0, playerMechanicBuffMagnitude(
+      player,
+      'dot-frenzy',
+      'attackSpeedPct',
+      passives['dot.frenzy-attack-speed-pct'] ?? FRENZY_APS,
+    ));
+    const onHitPerTier = Math.max(0, playerMechanicBuffMagnitude(
+      player,
+      'dot-frenzy',
+      'onHitPerTier',
+      passives['dot.frenzy-onhit-per-tier'] ?? FRENZY_ONHIT_PER_TIER,
+    ));
     return {
       id: 'dot-frenzy', label: 'Frenzy', stacks: 1, durationPct: pct, color: '#ff3355',
       logDetail: `+${Math.round(attackSpeedPct * 100)}% attack speed, +${Math.round(onHitPerTier * tierMult)} on-hit damage`,

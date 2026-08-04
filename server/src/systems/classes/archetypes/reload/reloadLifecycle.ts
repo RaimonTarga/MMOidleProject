@@ -7,6 +7,7 @@ import {
   DEFAULT_MOMENTUM_RELOAD_REDUCTION,
   MOMENTUM_RELOAD_REDUCTION_FLOOR,
 } from './t3/core/constants';
+import { relicRatingsFromPassives, resolveReloadRelicProfile } from '@mmo-idle/shared';
 
 const RELOAD_TIME_MS = 1600;
 
@@ -44,7 +45,11 @@ export function resolveReloadTimeMs(player: PlayerEntity): number {
     ms = Math.max(100, Math.round(ms * factor));
   }
 
-  return ms;
+  return resolveReloadRelicProfile(
+    ms,
+    Math.max(1, Math.round(player.usesSkills.passives['reload.max-ammo'] ?? 10)),
+    relicRatingsFromPassives(player.usesSkills.passives),
+  ).reloadMs.after;
 }
 
 /** Start reload timer only — no lifecycle hooks. */

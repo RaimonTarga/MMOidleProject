@@ -204,7 +204,7 @@ export const volcanicRecipeEntries = [
     // better against heavily armoured targets, worse against soft ones. Worth little
     // to a build carrying no on-hit damage — the specialisation is the cost.
     mechanicEffects: { 'core.onhit-mult': 0.28, 'core.attack-mult': -0.12 },
-    icon: 'items/charms/volcano-crystal.png',
+    icon: 'items/cores/catalyst.png',
     description: 'Heat finds the seams that force cannot. Armour is no comfort against something already inside it.',
   }],
 

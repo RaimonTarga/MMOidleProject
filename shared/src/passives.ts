@@ -600,6 +600,14 @@ export const RITE_KEYS = [
   'rite.on-kill-haste-ms',
 ] as const;
 
+/** Universal Relic ratings. Resolved per root class in systems/relics.ts. */
+export const RELIC_KEYS = [
+  'relic.mechanic-frequency',
+  'relic.mechanic-potency',
+  'relic.mechanic-buff-effect',
+  'relic.mechanic-debuff-effect',
+] as const;
+
 // ── Derived types (zero duplication) ──────────────────────────────────────────
 
 export type DefensePassiveKey  = typeof DEFENSE_KEYS[number];
@@ -615,12 +623,14 @@ export type TechniquePassiveKey = typeof TECHNIQUE_KEYS[number];
 export type GuardPassiveKey    = typeof GUARD_KEYS[number];
 export type CorePassiveKey     = typeof CORE_KEYS[number];
 export type RitePassiveKey     = typeof RITE_KEYS[number];
+export type RelicPassiveKey    = typeof RELIC_KEYS[number];
 
 export type PassiveKey =
   | DefensePassiveKey | CadencePassiveKey | CooldownPassiveKey
   | ReloadPassiveKey  | EnergyPassiveKey  | DotPassiveKey
   | SharedPassiveKey  | SummonerPassiveKey | MobilityPassiveKey
-  | GuardPassiveKey   | TechniquePassiveKey | CorePassiveKey | RitePassiveKey;
+  | GuardPassiveKey   | TechniquePassiveKey | CorePassiveKey | RitePassiveKey
+  | RelicPassiveKey;
 
 export type PassiveMap      = Partial<Record<PassiveKey, number>>;
 export type MechanicEffects = Partial<Record<PassiveKey, number>>;
@@ -630,6 +640,7 @@ export const ALL_PASSIVE_KEYS = [
   ...DEFENSE_KEYS, ...CADENCE_KEYS, ...COOLDOWN_KEYS,
   ...RELOAD_KEYS, ...ENERGY_KEYS, ...DOT_KEYS, ...SHARED_KEYS, ...SUMMONER_KEYS,
   ...MOBILITY_KEYS, ...GUARD_KEYS, ...TECHNIQUE_KEYS, ...CORE_KEYS, ...RITE_KEYS,
+  ...RELIC_KEYS,
 ] as const;
 
 // ── Helpers ───────────────────────────────────────────────────────────────────

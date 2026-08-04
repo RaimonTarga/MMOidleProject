@@ -102,6 +102,9 @@ primitive design + art direction are not.
 
 ---
 
-## 3. (reserved)
+## 3. Relics
 
-User had a third idea, not yet recalled. Placeholder so it lands here.
+**IMPLEMENTED (2026-08-04):** the settled philosophy and evolution direction
+remain in `docs/relics-design.md`; shipped behavior and the eight-item base cast
+live in `docs/relics-current-state.md`. The completed build plan is archived at
+`docs/archive/relics-implementation-plan.md`.

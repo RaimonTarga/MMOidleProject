@@ -5,6 +5,7 @@ import {
   METRONOME_UNLOCK_TIER,
   RAMPAGE_ATK_PEN_PER_STACK,
 } from '../core/constants';
+import { playerMechanicBuffMagnitude } from '../../../../shared/applyPlayerMechanicBuff';
 
 export function registerCadenceNormalHit(): void {
   registerCombatListener('onHit', (ctx, _world) => {
@@ -46,7 +47,12 @@ export function registerCadenceNormalHit(): void {
 
     // Rising Tide echo bonus: boost this hit if the echo counter is running.
     if (cadence.echo > 0 && (passives['cadence.momentum-echo'] ?? 0) > 0) {
-      const echoBonus = passives['cadence.momentum-echo-bonus'] ?? MOMENTUM_ECHO_BONUS;
+      const echoBonus = playerMechanicBuffMagnitude(
+        entity,
+        'cadence-echo',
+        'damageBonus',
+        passives['cadence.momentum-echo-bonus'] ?? MOMENTUM_ECHO_BONUS,
+      );
       ctx.damage = Math.round(ctx.damage * (1 + echoBonus));
       cadence.echo--;
     }

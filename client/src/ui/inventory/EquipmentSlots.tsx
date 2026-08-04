@@ -1,7 +1,7 @@
 import { useAtomValue } from 'jotai';
-import { EQUIPMENT_SLOTS, ITEM_DATABASE, coreEligibilityLabel, coreIsActive, isRestrictedCore } from '@mmo-idle/shared';
+import { EQUIPMENT_SLOTS, ITEM_DATABASE, TEST_ROOM_NODE_ID, coreEligibilityLabel, coreIsActive, isRestrictedCore, relicIsUnlocked } from '@mmo-idle/shared';
 import { hudBus } from '../../hudBus';
-import { equipmentAtom, itemUpgradesAtom, selectedRangeAtom } from '../../hud/atoms';
+import { equipmentAtom, itemUpgradesAtom, playerNodeIdAtom, playerTierAtom, selectedRangeAtom } from '../../hud/atoms';
 import { SLOT_LABELS, tierColor } from './constants';
 import { ItemIcon } from '../ItemIcon';
 import type { FocusedItem } from './useFocus';
@@ -15,6 +15,8 @@ export function EquipmentSlots({ focused, onFocus }: Props) {
   const equipment = useAtomValue(equipmentAtom);
   const itemUpgrades = useAtomValue(itemUpgradesAtom);
   const selectedRange = useAtomValue(selectedRangeAtom);
+  const playerTier = useAtomValue(playerTierAtom);
+  const playerNodeId = useAtomValue(playerNodeIdAtom);
 
   return (
     <div className="inv-equip">
@@ -30,6 +32,8 @@ export function EquipmentSlots({ focused, onFocus }: Props) {
           const coreInactive = filled && slot === 'core'
             && isRestrictedCore(def.coreEligibility)
             && !coreIsActive(def.coreEligibility, selectedRange);
+          const relicLocked = slot === 'relic'
+            && !relicIsUnlocked(playerTier, playerNodeId === TEST_ROOM_NODE_ID);
 
           return (
             <button
@@ -40,13 +44,14 @@ export function EquipmentSlots({ focused, onFocus }: Props) {
                 filled ? 'inv-equip-slot--filled' : 'inv-equip-slot--empty',
                 isFocused ? 'inv-equip-slot--focused' : '',
                 coreInactive ? 'inv-equip-slot--inactive' : '',
+                relicLocked ? 'inv-equip-slot--inactive' : '',
               ].filter(Boolean).join(' ')}
               style={color ? { borderColor: `${color}88` } : undefined}
-              title={coreInactive
+              title={relicLocked ? 'Relics unlock at Tier 4' : coreInactive
                 ? `Inactive — ${coreEligibilityLabel(def.coreEligibility).toLowerCase()}`
                 : undefined}
               aria-label={filled ? `Unequip ${def.name}` : `${SLOT_LABELS[slot]} slot empty`}
-              disabled={!filled}
+              disabled={!filled || relicLocked}
               onMouseEnter={() => {
                 if (filled && defId) onFocus({ defId, source: 'equipped', equipSlot: slot });
               }}

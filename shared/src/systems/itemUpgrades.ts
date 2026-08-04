@@ -50,6 +50,7 @@ export const UPGRADE_STAT_BY_SLOT: Record<EquipmentSlot, string> = {
   mobility: 'speed',
   recovery: 'hpRegen',
   core:     'attack',
+  relic:    'attack',
 };
 
 // ─── Generic formula tuning (fallback for items without explicit upgrades) ────
@@ -60,6 +61,7 @@ const BONUS_PER_LEVEL: Record<EquipmentSlot, number> = {
   mobility: 5,
   recovery: 1,
   core:     0,
+  relic:    0,
 };
 
 const COST_PER_LEVEL = 20;
@@ -69,7 +71,7 @@ const COST_PER_LEVEL = 20;
 /** Per-item max upgrade level — upgrades[].length or MAX_UPGRADE for generic items.
  *  Cores (Step 9) are off the +N track entirely — they rank up via the evolution chain. */
 export function getMaxUpgrade(item: ItemDefinition): number {
-  if (item.slot === 'core') return 0;
+  if (item.slot === 'core' || item.slot === 'relic') return 0;
   return item.upgrades ? item.upgrades.length : MAX_UPGRADE;
 }
 

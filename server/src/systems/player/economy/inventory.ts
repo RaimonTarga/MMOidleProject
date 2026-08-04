@@ -1,5 +1,5 @@
 import type { EquipmentSlot } from '@mmo-idle/shared';
-import { ITEM_DATABASE } from '@mmo-idle/shared';
+import { ITEM_DATABASE, TEST_ROOM_NODE_ID, relicIsUnlocked } from '@mmo-idle/shared';
 import type { World } from '../../../world/World';
 import type { PlayerEntity } from '../../../ecs/entity';
 import { syncArchetypeSlices } from '../../../ecs/archetypeSliceSync';
@@ -8,6 +8,10 @@ import { recalculatePlayerEntityStats } from '../../../ecs/playerEntityFormulas'
 export function equipItem(world: World, entity: PlayerEntity, definitionId: string): boolean {
   const def = ITEM_DATABASE.get(definitionId);
   if (!def) return false;
+  if (def.slot === 'relic' && !relicIsUnlocked(
+    entity.tracksProgression.playerTier,
+    entity.hasPosition.nodeId === TEST_ROOM_NODE_ID,
+  )) return false;
 
   const idx = entity.holdsInventory.inventory.indexOf(definitionId);
   if (idx === -1) return false;

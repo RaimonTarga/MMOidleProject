@@ -1,11 +1,11 @@
 import { BIOME_DATABASE } from '@mmo-idle/shared';
 
 export const SLOT_LABELS: Record<string, string> = {
-  weapon: 'Weapon', armor: 'Armor', recovery: 'Recovery', mobility: 'Boots', core: 'Core',
+  weapon: 'Weapon', armor: 'Armor', recovery: 'Recovery', mobility: 'Boots', core: 'Core', relic: 'Relic',
 };
 
 export const SLOT_ABBR: Record<string, string> = {
-  weapon: 'WPN', armor: 'ARM', recovery: 'RCV', mobility: 'MOB', core: 'COR',
+  weapon: 'WPN', armor: 'ARM', recovery: 'RCV', mobility: 'MOB', core: 'COR', relic: 'RLC',
 };
 
 // Stat labels/formatting live in ./itemDisplay (STAT_META) — the single source

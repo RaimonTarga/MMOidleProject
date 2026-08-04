@@ -20,6 +20,7 @@ import {
   CHARGE_STATE_MIN, CHARGE_STATE_MAX,
   STORM_FX, ENDLESS_STORM_EXTEND_MS, ENDLESS_STORM_MAX_MS,
 } from '../core/constants';
+import { playerMechanicBuffMagnitude } from '../../../../shared/applyPlayerMechanicBuff';
 
 /**
  * Energy T3 non-empowered onHit listener.
@@ -109,7 +110,12 @@ export function registerNormalHit(): void {
 
     // Overdrive: +ATK% while the mode is active (energy decaying in the tick).
     if (hasPassive(player, 'energy.overdrive') && energy.overdriveActive) {
-      const attackBonus = Math.max(0, passives['energy.overdrive-attack-damage-pct'] ?? ENERGY_OVERDRIVE_ATK_PCT);
+      const attackBonus = Math.max(0, playerMechanicBuffMagnitude(
+        player,
+        'energy-overdrive',
+        'attackDamagePct',
+        passives['energy.overdrive-attack-damage-pct'] ?? ENERGY_OVERDRIVE_ATK_PCT,
+      ));
       ctx.damage = Math.round(ctx.damage * (1 + attackBonus));
       // Aesthetic-only crits while Surge is active: yellow "!" styling.
       ctx.metadata['empoweredAttack'] = true;

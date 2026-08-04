@@ -56,7 +56,7 @@ export function registerReloadBalancedT3(): void {
         remainingMs: -1,
         sourceId,
         data: { platingReduction: shred },
-      });
+      }, { origin: 'mechanic' });
     }
   });
 }

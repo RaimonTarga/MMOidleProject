@@ -4,9 +4,13 @@ import {
   applyStatusEffect,
   getTotalStacks,
   resolveDotClassProfile,
+  relicRatingsFromPassives,
+  resolveDotRelicDeliveryProfile,
 } from '@mmo-idle/shared';
 import { registerCombatListener } from '../../../../combat/engine/combatPipeline';
 import type { World } from '../../../../../world/World';
+import { playerDebuffConfig } from '../../../shared/applyPlayerDebuff';
+import { playerMechanicBuffMagnitude } from '../../../shared/applyPlayerMechanicBuff';
 import {
   DOT_EFFECT_ID,
   SMOLDER_EFFECT, FROZEN_EFFECT,
@@ -66,10 +70,22 @@ export function initDotT3(): void {
     const monsterState = monster.tracksCombat;
 
     const profile = resolveDotClassProfile(passives, player.usesSkills.selectedSubVariant);
-    const { maxStacks, conversionPct: convPct, tickIntervalMs, durationMs } = profile;
+    const delivery = resolveDotRelicDeliveryProfile(
+      profile.tickIntervalMs,
+      profile.maxStacks,
+      relicRatingsFromPassives(passives),
+    );
+    const maxStacks = delivery.maxStacks.after;
+    const tickIntervalMs = delivery.tickIntervalMs.after;
+    const { conversionPct: convPct, durationMs } = profile;
     // Class DoT stack value is generated from base attack, not final ctx.damage.
     // T3 specs may transform stack behavior, but they share the base profile contract.
-    const dmgPerStack = computeDotClassDamagePerStack(player.dealsDamage.attack, profile);
+    const rawDamagePerStack = computeDotClassDamagePerStack(player.dealsDamage.attack, profile);
+    const dmgPerStack = playerDebuffConfig(player, {
+      id: DOT_EFFECT_ID,
+      sourceId: player.isPlayer.id,
+      data: { damagePerStack: rawDamagePerStack },
+    }, { origin: 'mechanic' }).data?.damagePerStack ?? rawDamagePerStack;
 
     // Redirect convPct of direct hit damage into DoT ticks.
     // Flag prevents the base handler from double-applying this reduction for
@@ -107,7 +123,12 @@ export function initDotT3(): void {
     if ((player.usesSkills.passives['dot.frenzy'] ?? 0) <= 0) return;
 
     const passives = player.usesSkills.passives;
-    const maxStacks = Math.round(passives['dot.max-stacks'] ?? 6);
+    const profile = resolveDotClassProfile(passives, player.usesSkills.selectedSubVariant);
+    const maxStacks = resolveDotRelicDeliveryProfile(
+      profile.tickIntervalMs,
+      profile.maxStacks,
+      relicRatingsFromPassives(passives),
+    ).maxStacks.after;
     const frenzyDurationMs = Math.max(100, Math.round(
       passives['dot.frenzy-duration-ms'] ?? FRENZY_DURATION_MS,
     ));
@@ -121,7 +142,12 @@ export function initDotT3(): void {
     }
     if (getStatusEffect(player.tracksCombat, FRENZY_FX)) {
       const tierMult = Math.max(1, (player.tracksProgression?.playerTier ?? FRENZY_UNLOCK_TIER) - FRENZY_UNLOCK_TIER + 1);
-      const onHitPerTier = Math.max(0, passives['dot.frenzy-onhit-per-tier'] ?? FRENZY_ONHIT_PER_TIER);
+      const onHitPerTier = Math.max(0, playerMechanicBuffMagnitude(
+        player,
+        'dot-frenzy',
+        'onHitPerTier',
+        passives['dot.frenzy-onhit-per-tier'] ?? FRENZY_ONHIT_PER_TIER,
+      ));
       ctx.damage += Math.round(onHitPerTier * tierMult);
     }
   });

@@ -1,5 +1,4 @@
 import {
-  applyStatusEffect,
   distanceSq,
   getStatusEffect,
   removeStatusEffect,
@@ -26,6 +25,8 @@ import {
   minionBuffRadius,
 } from '../../range';
 import { livingMinions } from '../core/helpers';
+import { applyPlayerDebuff } from '../../../../shared/applyPlayerDebuff';
+import { applyPlayerMechanicBuff } from '../../../../shared/applyPlayerMechanicBuff';
 
 type AggroSourceMeta = { id: string; kind: AggroTargetKind };
 
@@ -45,15 +46,15 @@ function applyCorrosionStacks(
   const platingPerStack = passives['summoner.acid-plating-per-stack'] ?? 2;
 
   for (let i = 0; i < stackCount; i++) {
-    const eff = applyStatusEffect(monsterCs, {
+    const eff = applyPlayerDebuff(owner, monsterCs, {
       id:           CORROSION_EFFECT,
       maxStacks:    cap,
       remainingMs:  durationMs,
       refreshable:  true,
       sourceId:     owner.isPlayer.id,
       data:         { platingPerStack },
-    });
-    eff.data.platingPerStack = platingPerStack;
+    }, { origin: 'mechanic' });
+    eff.data.platingPerStack = eff.data.platingPerStack ?? platingPerStack;
   }
 }
 
@@ -214,7 +215,7 @@ export function tickPredatorsHowl(world: World): void {
       const baseCd = resolveHowlBaseAttackCooldown(ally);
 
       removeStatusEffect(ally.tracksCombat, BANNER_EFFECT);
-      applyStatusEffect(ally.tracksCombat, {
+      const banner = applyPlayerMechanicBuff(owner, ally.tracksCombat, {
         id:           BANNER_EFFECT,
         maxStacks:    cap,
         remainingMs:  BANNER_REFRESH_MS,
@@ -222,7 +223,13 @@ export function tickPredatorsHowl(world: World): void {
         sourceId:     owner.isPlayer.id,
         data:         { stacks: effectiveStacks, perStack, baseCd },
       });
-      applyHowlAttackSpeed(world, ally, effectiveStacks, perStack, baseCd);
+      applyHowlAttackSpeed(
+        world,
+        ally,
+        effectiveStacks,
+        banner.data.perStack ?? perStack,
+        baseCd,
+      );
     }
   }
 }
@@ -266,14 +273,14 @@ export function tickSwarmOverwhelmed(world: World): void {
       removeStatusEffect(monster.tracksCombat, OVERWHELMED_EFFECT);
       if (attackers <= 0) continue;
 
-      const eff = applyStatusEffect(monster.tracksCombat, {
+      const eff = applyPlayerDebuff(owner, monster.tracksCombat, {
         id:           OVERWHELMED_EFFECT,
         maxStacks:    attackers,
         remainingMs:  refreshMs,
         refreshable:  true,
         sourceId:     owner.isPlayer.id,
         data:         { perAttacker },
-      });
+      }, { origin: 'mechanic' });
       eff.stacks = attackers;
     }
   }

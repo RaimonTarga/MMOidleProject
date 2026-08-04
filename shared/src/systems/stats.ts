@@ -17,6 +17,7 @@ import { riteDef } from '../rites';
 import { upgradeMechanicEffectsTotal, upgradeStatBonusTotal } from './itemUpgrades';
 import { GAME_CONFIG } from '../index';
 import { mergePassives, makeBurstAccumulator, finalizeBurst } from '../passives';
+import { relicRatingsFromPassives, resolveCadenceRelicProfile } from './relics';
 
 /**
  * Map a raw evasion rating (Σ 1/N across all evasion sources) to a deterministic
@@ -198,13 +199,6 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
     }
   }
 
-  // 2c. Cadence threshold via callback (optional usesCadence slice on server)
-  if (p.usesSkills.combatArchetype === 'cadence' && p.resetCadenceCounters) {
-    const base = Math.round(p.usesSkills.passives['cadence.empowered-threshold'] ?? 5);
-    const mod  = Math.round(p.usesSkills.passives['cadence.threshold-mod']        ?? 0);
-    p.resetCadenceCounters(Math.max(2, base + mod));
-  }
-
   // 3. Apply equipped item stat modifiers and mechanic effects
   for (const slot of EQUIPMENT_SLOTS) {
     const defId = p.holdsInventory.equipment[slot];
@@ -236,6 +230,19 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
     }
   }
   finalizeBurst(burstAcc, p.usesSkills.passives);
+
+  // Cadence must resolve after equipment is folded so item/relic threshold
+  // changes are live. The old pre-equipment callback made those values inert.
+  if (p.usesSkills.combatArchetype === 'cadence' && p.resetCadenceCounters) {
+    const base = Math.round(p.usesSkills.passives['cadence.empowered-threshold'] ?? 5);
+    const mod  = Math.round(p.usesSkills.passives['cadence.threshold-mod'] ?? 0);
+    const profile = resolveCadenceRelicProfile(
+      Math.max(2, base + mod),
+      p.usesSkills.passives['cadence.empowered-mult'] ?? 2,
+      relicRatingsFromPassives(p.usesSkills.passives),
+    );
+    p.resetCadenceCounters(profile.threshold.after);
+  }
 
   // 3a. Shockblade (cadence-light-t3-a): flat on-hit damage scaling with the
   // player's tier, always active while the passive is unlocked. The per-tier

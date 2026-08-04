@@ -4735,7 +4735,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/abyssal-axe.png",
+					"filename": "items/relics/colossus-heart.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -4750,6 +4750,279 @@
 					},
 					"frame": {
 						"x": 32,
+						"y": 224,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "items/relics/equilibrium-shard-variant-2.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 64,
+						"y": 224,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "items/relics/equilibrium-shard-variant-3.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 96,
+						"y": 224,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "items/relics/equilibrium-shard.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 128,
+						"y": 224,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "items/relics/glacial-bell.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 160,
+						"y": 224,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "items/relics/hastebound-dial.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 192,
+						"y": 224,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "items/relics/haunted-prism.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 224,
+						"y": 224,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "items/relics/verdant-flywheel-variant-2.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 256,
+						"y": 224,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "items/relics/verdant-flywheel.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 288,
+						"y": 224,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "items/relics/virulent-hourglass-variant-2.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 320,
+						"y": 224,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "items/relics/virulent-hourglass.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 352,
+						"y": 224,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "items/relics/withering-lens-variant-2.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 384,
+						"y": 224,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "items/relics/withering-lens.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 416,
+						"y": 224,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "items/weapons/abyssal-axe.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 448,
 						"y": 224,
 						"w": 32,
 						"h": 32
@@ -4770,7 +5043,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 64,
+						"x": 480,
 						"y": 224,
 						"w": 32,
 						"h": 32
@@ -4791,7 +5064,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 96,
+						"x": 512,
 						"y": 224,
 						"w": 32,
 						"h": 32
@@ -4812,7 +5085,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 128,
+						"x": 544,
 						"y": 224,
 						"w": 32,
 						"h": 32
@@ -4833,7 +5106,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 160,
+						"x": 576,
 						"y": 224,
 						"w": 32,
 						"h": 32
@@ -4854,7 +5127,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 192,
+						"x": 608,
 						"y": 224,
 						"w": 32,
 						"h": 32
@@ -4875,7 +5148,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 224,
+						"x": 640,
 						"y": 224,
 						"w": 32,
 						"h": 32
@@ -4896,7 +5169,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 256,
+						"x": 672,
 						"y": 224,
 						"w": 32,
 						"h": 32
@@ -4917,7 +5190,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 288,
+						"x": 704,
 						"y": 224,
 						"w": 32,
 						"h": 32
@@ -4938,7 +5211,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 320,
+						"x": 736,
 						"y": 224,
 						"w": 32,
 						"h": 32
@@ -4959,7 +5232,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 352,
+						"x": 768,
 						"y": 224,
 						"w": 32,
 						"h": 32
@@ -4980,7 +5253,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 384,
+						"x": 800,
 						"y": 224,
 						"w": 32,
 						"h": 32
@@ -5001,7 +5274,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 416,
+						"x": 832,
 						"y": 224,
 						"w": 32,
 						"h": 32
@@ -5022,7 +5295,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 448,
+						"x": 864,
 						"y": 224,
 						"w": 32,
 						"h": 32
@@ -5043,7 +5316,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 480,
+						"x": 896,
 						"y": 224,
 						"w": 32,
 						"h": 32
@@ -5064,7 +5337,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 512,
+						"x": 928,
 						"y": 224,
 						"w": 32,
 						"h": 32
@@ -5085,7 +5358,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 544,
+						"x": 960,
 						"y": 224,
 						"w": 32,
 						"h": 32
@@ -5106,7 +5379,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 576,
+						"x": 992,
 						"y": 224,
 						"w": 32,
 						"h": 32
@@ -5127,279 +5400,6 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 608,
-						"y": 224,
-						"w": 32,
-						"h": 32
-					}
-				},
-				{
-					"filename": "items/weapons/frozen-hammer.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 32,
-						"h": 32
-					},
-					"frame": {
-						"x": 640,
-						"y": 224,
-						"w": 32,
-						"h": 32
-					}
-				},
-				{
-					"filename": "items/weapons/frozen-sword.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 32,
-						"h": 32
-					},
-					"frame": {
-						"x": 672,
-						"y": 224,
-						"w": 32,
-						"h": 32
-					}
-				},
-				{
-					"filename": "items/weapons/gale-needle.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 32,
-						"h": 32
-					},
-					"frame": {
-						"x": 704,
-						"y": 224,
-						"w": 32,
-						"h": 32
-					}
-				},
-				{
-					"filename": "items/weapons/glacial-rimebrand.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 32,
-						"h": 32
-					},
-					"frame": {
-						"x": 736,
-						"y": 224,
-						"w": 32,
-						"h": 32
-					}
-				},
-				{
-					"filename": "items/weapons/glacial-tyrant-maul.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 32,
-						"h": 32
-					},
-					"frame": {
-						"x": 768,
-						"y": 224,
-						"w": 32,
-						"h": 32
-					}
-				},
-				{
-					"filename": "items/weapons/graveyard-axe.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 32,
-						"h": 32
-					},
-					"frame": {
-						"x": 800,
-						"y": 224,
-						"w": 32,
-						"h": 32
-					}
-				},
-				{
-					"filename": "items/weapons/hammer-1.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 32,
-						"h": 32
-					},
-					"frame": {
-						"x": 832,
-						"y": 224,
-						"w": 32,
-						"h": 32
-					}
-				},
-				{
-					"filename": "items/weapons/hammer-2.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 32,
-						"h": 32
-					},
-					"frame": {
-						"x": 864,
-						"y": 224,
-						"w": 32,
-						"h": 32
-					}
-				},
-				{
-					"filename": "items/weapons/heavy-hammer.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 32,
-						"h": 32
-					},
-					"frame": {
-						"x": 896,
-						"y": 224,
-						"w": 32,
-						"h": 32
-					}
-				},
-				{
-					"filename": "items/weapons/iron-broadsword.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 32,
-						"h": 32
-					},
-					"frame": {
-						"x": 928,
-						"y": 224,
-						"w": 32,
-						"h": 32
-					}
-				},
-				{
-					"filename": "items/weapons/jungle-rapier.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 32,
-						"h": 32
-					},
-					"frame": {
-						"x": 960,
-						"y": 224,
-						"w": 32,
-						"h": 32
-					}
-				},
-				{
-					"filename": "items/weapons/knight-steelsword.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 32,
-						"h": 32
-					},
-					"frame": {
-						"x": 992,
-						"y": 224,
-						"w": 32,
-						"h": 32
-					}
-				},
-				{
-					"filename": "items/weapons/lava-blade.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 32,
-						"h": 32
-					},
-					"frame": {
 						"x": 0,
 						"y": 256,
 						"w": 32,
@@ -5407,7 +5407,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/lava-rapier.png",
+					"filename": "items/weapons/frozen-hammer.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -5428,7 +5428,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/permafrost-maul.png",
+					"filename": "items/weapons/frozen-sword.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -5449,7 +5449,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/plague-axe.png",
+					"filename": "items/weapons/gale-needle.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -5470,7 +5470,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/plague-fang.png",
+					"filename": "items/weapons/glacial-rimebrand.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -5491,7 +5491,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/poison-dagger.png",
+					"filename": "items/weapons/glacial-tyrant-maul.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -5512,7 +5512,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/primordial-club.png",
+					"filename": "items/weapons/graveyard-axe.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -5533,7 +5533,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/quake-hammer.png",
+					"filename": "items/weapons/hammer-1.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -5554,7 +5554,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/rapier-1.png",
+					"filename": "items/weapons/hammer-2.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -5575,7 +5575,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/rapier-2.png",
+					"filename": "items/weapons/heavy-hammer.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -5596,7 +5596,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/rapier-3.png",
+					"filename": "items/weapons/iron-broadsword.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -5617,7 +5617,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/rapier-4.png",
+					"filename": "items/weapons/jungle-rapier.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -5638,7 +5638,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/rimebrand.png",
+					"filename": "items/weapons/knight-steelsword.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -5659,7 +5659,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/ruinous-axe.png",
+					"filename": "items/weapons/lava-blade.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -5680,7 +5680,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/rune-sword-cold-1.png",
+					"filename": "items/weapons/lava-rapier.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -5701,7 +5701,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/rune-sword-cold-2.png",
+					"filename": "items/weapons/permafrost-maul.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -5722,7 +5722,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/rune-sword-hot-1.png",
+					"filename": "items/weapons/plague-axe.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -5743,7 +5743,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/rune-sword-hot-2.png",
+					"filename": "items/weapons/plague-fang.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -5764,7 +5764,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/simple-axe.png",
+					"filename": "items/weapons/poison-dagger.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -5785,7 +5785,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/solar-falchion.png",
+					"filename": "items/weapons/primordial-club.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -5806,7 +5806,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/spear-1.png",
+					"filename": "items/weapons/quake-hammer.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -5827,7 +5827,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/stinger-rapier.png",
+					"filename": "items/weapons/rapier-1.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -5848,7 +5848,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/sunsteel-falchion.png",
+					"filename": "items/weapons/rapier-2.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -5869,7 +5869,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/sword-1.png",
+					"filename": "items/weapons/rapier-3.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -5890,7 +5890,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/sword-2.png",
+					"filename": "items/weapons/rapier-4.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -5911,7 +5911,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/sword-3.png",
+					"filename": "items/weapons/rimebrand.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -5932,7 +5932,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/sword-4.png",
+					"filename": "items/weapons/ruinous-axe.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -5953,7 +5953,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/thorn-needle.png",
+					"filename": "items/weapons/rune-sword-cold-1.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -5974,7 +5974,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/venom-knife.png",
+					"filename": "items/weapons/rune-sword-cold-2.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -5995,7 +5995,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/venomthorn-rapier.png",
+					"filename": "items/weapons/rune-sword-hot-1.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -6016,7 +6016,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/warmaul.png",
+					"filename": "items/weapons/rune-sword-hot-2.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -6037,7 +6037,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/whirling-morning-star.png",
+					"filename": "items/weapons/simple-axe.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -6058,7 +6058,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/zenith-falchion.png",
+					"filename": "items/weapons/solar-falchion.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -6073,6 +6073,279 @@
 					},
 					"frame": {
 						"x": 0,
+						"y": 288,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "items/weapons/spear-1.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 32,
+						"y": 288,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "items/weapons/stinger-rapier.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 64,
+						"y": 288,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "items/weapons/sunsteel-falchion.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 96,
+						"y": 288,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "items/weapons/sword-1.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 128,
+						"y": 288,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "items/weapons/sword-2.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 160,
+						"y": 288,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "items/weapons/sword-3.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 192,
+						"y": 288,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "items/weapons/sword-4.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 224,
+						"y": 288,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "items/weapons/thorn-needle.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 256,
+						"y": 288,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "items/weapons/venom-knife.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 288,
+						"y": 288,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "items/weapons/venomthorn-rapier.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 320,
+						"y": 288,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "items/weapons/warmaul.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 352,
+						"y": 288,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "items/weapons/whirling-morning-star.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 384,
+						"y": 288,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "items/weapons/zenith-falchion.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 416,
 						"y": 288,
 						"w": 32,
 						"h": 32

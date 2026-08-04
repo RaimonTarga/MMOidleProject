@@ -16,7 +16,7 @@ The sketch was written without a code read. Five findings change the plan.
 | Roadmap item | Reality in the repo | Effect on the plan |
 |---|---|---|
 | "Change tier advancement to seals" | `QUEST_DATABASE` (5 quests, `tierRequired` 0–4) + `registerKillForQuests` (45 lines) is the *entire* mechanism. The progression panel's `MilestonePips` was **deliberately built as the seal seam** — `killsRequired: 3` from distinct sources already draws three trophies with no UI work. | Smallest item on the list. ~1 session once the design lands. **Not** a big refactor. |
-| "Implement the relic system / add the relic slot" | Nothing exists. `EQUIPMENT_SLOTS = [weapon, armor, recovery, mobility, core]` — cores took the fifth slot. **The axes are already separate and settled (user, 2026-08-02): cores are stat amplifiers that reinforce your *role*; relics operate at the *mechanic* level and reinforce your class mechanic.** | No design collision. The relic brief is narrower than it looked: the job is decided, so the open questions are where state lives, which mechanics each relic hooks, and acquisition. |
+| "Implement the relic system / add the relic slot" | **SHIPPED 2026-08-04.** `relic` is the sixth equipment slot; one shared resolver maps four universal ratings across all six root mechanics. Eight T4 mastery recipes, persistence compatibility, server equip authority, Forge/tooltip previews, and origin-scoped buff/debuff scaling are live. | Final balance, art, and T5/T6 evolutions remain; see `docs/relics-current-state.md`. |
 | "Author T5 and T6 biome content" | Regions are now data: `shared/src/world/map/regionT{1..4}.ts`, ~45 lines each (mask grid + biome list + dungeon cells + sanctuary). Adding `regionT5.ts` is trivial. But **every biome×tier needs a monster pool or the world throws at boot** (`nodeModifiers.ts:530`). | Structure is cheap; *content* is the whole cost. Roster choice is the biggest scope lever in the program. |
 | "T1–T4 must be stable" | Monster/boss coverage for T1–T4 is complete and boot-validated (the `⚠ T4 trash not authored` comments on forest/plains are stale — those biomes retire before T3). But **abilities stop at T2**: 8 abilities exist (5×T1, 3×T2) while `abilitySlotCount` grants a T4 player **4 slots**. Cores = 4 items, forest only. Stances = 3. Rites = 4. | The real T1–T4 blocker isn't monsters — it's **empty build slots at T3/T4**. This outranks T5/T6 content. |
 | "Decide whether Summoner is included" | Summoner has an archetype, 3 T3 paths (plains/mountain/cave), and 9 T3 specs authored as data. Minions still alias the Tiny Wisp placeholder; T3 bodies are the only sprite work left. | The decision is real and it's a *fork in the schedule*, not a footnote. Put it early. |
@@ -70,6 +70,10 @@ first-clear path; thread through `PlayerView` + admin grant/reset.
   map location.
 
 ### D2 — Relics
+
+**IMPLEMENTED (2026-08-04):** `docs/relics-current-state.md` is the live system
+record; `docs/relics-design.md` remains the design authority and the completed
+plan is archived at `docs/archive/relics-implementation-plan.md`.
 
 *Narrower than it first looked — the design axis is settled.*
 
@@ -405,11 +409,10 @@ open items **O4** (T4 third-cast identity) and **Weakening Strike's biome**
 closed first — they're small calls, not a brief.
 `done when:` 2/2 slots at T4, all four fillable with T3/T4-tier content.
 
-**1.5 — Relic machinery.** `needs:` D2.
-Slot or `TracksProgression` state per D2's Q1, recipe type, biome/boss gating,
-equip + persistence + network + PlayerView, panel UI. Machinery only.
-`done when:` a hand-granted relic equips, persists across restart, and visibly
-modifies its class mechanic. Catalogue is Phase 2.
+**1.5 — Relic machinery.** ✅ **DONE 2026-08-04.** Sixth equipment slot,
+old-save normalization, server-authoritative T4 equip gate, universal resolver,
+all six root integrations, and resolved UI previews shipped. See
+`docs/relics-current-state.md`.
 
 **1.6 — Track C blocker fixes.** *(1–3 sessions, sized by 0.6)*
 Only the items tagged *blocker*. Content and polish items wait for Phase 4.
@@ -444,10 +447,10 @@ reactively.
 Today: 4. Always-on out-of-combat passives, T3 gate, 2 fixed slots.
 `done when:` enough rites that the 2 slots are a choice.
 
-**2.4 — Relic catalogue.** `needs:` 1.5. *(2–3 sessions)*
-The archetypes and their boss-unlocked lines from D2's return table.
-`done when:` each T4 dungeon boss unlocks a distinct relic line — "why kill *this*
-one" has an answer per boss.
+**2.4 — Relic catalogue.** ✅ **DONE 2026-08-04.** Eight universal base Relics
+ship as mastery rewards across Forest, Mountain, Plains, Jungle, Tundra, Swamp,
+Desert, and Wasteland. Cave, Volcanic, and Trench remain intentionally open for
+future distinct lines, per the approved design.
 
 **2.5 — Coherence review.** *(1–2 sessions)*
 The roadmap's "review abilities, runes, charms, and gear so they fit the finalized

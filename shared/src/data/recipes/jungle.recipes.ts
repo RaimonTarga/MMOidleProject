@@ -257,8 +257,23 @@ export const jungleRecipeEntries = [
       'core.attack-mult': 0.20, 'core.maxhp-mult': 0.15, 'core.speed-mult': 0.12,
       'core.mobility-refund-on-kill-pct': 0.40,
     },
-    icon: 'items/charms/stone-hand-charm-1.png',
+    icon: 'items/cores/bruiser.png',
     description: 'Kill, and the jungle opens. Stop, and it closes. The core only knows how to do the first one.',
+  }],
+
+  ['relic-verdant-flywheel', {
+    id: 'relic-verdant-flywheel', name: 'Verdant Flywheel',
+    recipeGroup: 'jungle', requiredBiomeLevel: 18, slot: 'relic',
+    lineageId: 'relic-verdant-flywheel',
+    cost: { green: 220 }, catalystCost: { alacrity: 4 },
+    stats: {}, tier: 4,
+    mechanicEffects: {
+      'relic.mechanic-frequency': 0.20,
+      'relic.mechanic-potency': -0.20,
+      'relic.mechanic-buff-effect': 0.25,
+    },
+    icon: 'items/relics/verdant-flywheel.png',
+    description: 'Its living spokes turn faster with every gift the mechanic gives back.',
   }],
 
 ] satisfies [string, Recipe][];

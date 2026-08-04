@@ -190,8 +190,22 @@ export const plainsRecipeEntries = [
     cost: { yellow: 45 }, catalystCost: { volatility: 1 }, // family-tag: reliable always-on generalist → Volatility
     stats: {}, tier: 2,
     mechanicEffects: { 'core.attack-mult': 0.09, 'core.maxhp-mult': 0.09 },
-    icon: 'items/charms/jewel-charm-1.png',
+    icon: 'items/cores/tempered.png',
     description: 'Balanced for any hand. It asks no commitment, and rewards none in particular.',
+  }],
+
+  ['relic-equilibrium-shard', {
+    id: 'relic-equilibrium-shard', name: 'Equilibrium Shard',
+    recipeGroup: 'plains', requiredBiomeLevel: 24, slot: 'relic',
+    lineageId: 'relic-equilibrium-shard',
+    cost: { yellow: 200 }, catalystCost: { volatility: 4 },
+    stats: {}, tier: 4,
+    mechanicEffects: {
+      'relic.mechanic-frequency': 0.10,
+      'relic.mechanic-potency': 0.10,
+    },
+    icon: 'items/relics/equilibrium-shard.png',
+    description: 'A clean answer with no hidden edge: a little more rhythm, a little more force.',
   }],
 
 ] satisfies [string, Recipe][];

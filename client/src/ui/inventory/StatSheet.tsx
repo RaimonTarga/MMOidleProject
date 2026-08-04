@@ -5,6 +5,8 @@ import {
   GAME_CONFIG,
   ITEM_DATABASE, RECIPE_DATABASE, upgradeStatBonusTotal,
   resolveEmpoweredMultiplier,
+  relicRatingsFromEffects,
+  resolveRelicPreview,
   coreEligibilityLabel, coreIsActive, isRestrictedCore,
 } from '@mmo-idle/shared';
 import { hudBus } from '../../hudBus';
@@ -24,10 +26,12 @@ import {
   passivesAtom,
   platingAtom,
   selectedRangeAtom,
+  selectedSubVariantAtom,
   speedAtom,
+  playerTierAtom,
 } from '../../hud/atoms';
 import { SLOT_LABELS, biomeName, tierColor } from './constants';
-import { STAT_META, formatMechanicEffects, formatWeaponEffects } from '../crafting/itemDisplay';
+import { STAT_META, formatMechanicEffects, formatResolvedRelicProfile, formatWeaponEffects } from '../crafting/itemDisplay';
 import type { FocusedItem } from './useFocus';
 
 // Player-stat rows, in display order. Labels/formatters come from the shared
@@ -79,8 +83,10 @@ export function StatSheet({ focused, onFocus }: Props) {
   const passives        = useAtomValue(passivesAtom);
   const combatArchetype = useAtomValue(combatArchetypeAtom);
   const selectedRange   = useAtomValue(selectedRangeAtom);
+  const selectedSubVariant = useAtomValue(selectedSubVariantAtom);
+  const playerTier = useAtomValue(playerTierAtom);
 
-  const empMult = resolveEmpoweredMultiplier(passives, combatArchetype);
+  const empMult = resolveEmpoweredMultiplier(passives, combatArchetype, playerTier);
 
   const playerStats: Record<string, number> = {
     attack, maxHp, hpRegen, plating, damageReduction, speed, onHitDamage, attackRange,
@@ -296,6 +302,14 @@ export function StatSheet({ focused, onFocus }: Props) {
         if (!info) return null;
         const lines = [
           ...formatMechanicEffects(info.itemDef.mechanicEffects),
+          ...(info.itemDef.slot === 'relic'
+            ? formatResolvedRelicProfile(resolveRelicPreview(
+                combatArchetype,
+                passives,
+                relicRatingsFromEffects(info.itemDef.mechanicEffects),
+                { subVariant: selectedSubVariant, playerTier },
+              ))
+            : []),
           ...(info.itemDef.slot === 'weapon' ? formatWeaponEffects(info.itemDef.id) : []),
         ];
         if (lines.length === 0) return null;

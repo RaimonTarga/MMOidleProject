@@ -33,6 +33,7 @@ import {
   CHARGE_STATE_MIN,
   CHARGE_STATE_MAX,
 } from './constants';
+import { playerMechanicBuffMagnitude } from '../../../../shared/applyPlayerMechanicBuff';
 
 const ENERGY_OPTS = { category: 'energy' as const, shape: 'square' as const };
 
@@ -43,7 +44,12 @@ export const ENERGY_T3_BUFFS = [
     if (!energy || !energy.overdriveActive) return null;
     // Energy decays 100→0 over the Overdrive window, so energy% doubles as the timer.
     const pct = Math.round(energyPercent(energy) * 100);
-    const atkPct = Math.round(Math.max(0, player.usesSkills.passives['energy.overdrive-attack-damage-pct'] ?? ENERGY_OVERDRIVE_ATK_PCT) * 100);
+    const atkPct = Math.round(Math.max(0, playerMechanicBuffMagnitude(
+      player,
+      'energy-overdrive',
+      'attackDamagePct',
+      player.usesSkills.passives['energy.overdrive-attack-damage-pct'] ?? ENERGY_OVERDRIVE_ATK_PCT,
+    )) * 100);
     return { id: 'energy-overdrive', label: 'Surge', stacks: 1, durationPct: pct, color: '#ffdd33', logDetail: `+${atkPct}% attack damage` };
   }, ENERGY_OPTS),
   defineBuff('energy-channel', ({ player }) => {

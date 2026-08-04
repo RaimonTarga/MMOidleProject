@@ -6,6 +6,7 @@ import {
   OVERDRIVE_BUFF_MS, OVERDRIVE_ATTACK_SPEED_PCT,
   BEAM_DURATION_MS,
 } from '../core/constants';
+import { playerMechanicBuffMagnitude } from '../../../../shared/applyPlayerMechanicBuff';
 
 /**
  * onHit listener for cooldown T3 empowered attacks. Each path with a unique
@@ -28,10 +29,12 @@ export function registerEmpoweredHit(): void {
       const overdriveMs = Math.max(100, Math.round(
         player.usesSkills.passives['cooldown.overdrive-duration-ms'] ?? OVERDRIVE_BUFF_MS,
       ));
-      const attackSpeedPct = Math.max(
-        0,
+      const attackSpeedPct = Math.max(0, playerMechanicBuffMagnitude(
+        player,
+        'cooldown-overdrive',
+        'attackSpeedPct',
         player.usesSkills.passives['cooldown.overdrive-attack-speed-pct'] ?? OVERDRIVE_ATTACK_SPEED_PCT,
-      );
+      ));
       const active = player.hasOverdrive;
       if (!active) {
         // "Burst": a flat +OVERDRIVE_ATTACK_SPEED_PCT attack-speed buff. Applied as

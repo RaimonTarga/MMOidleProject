@@ -1,4 +1,4 @@
-import { applyStatusEffect, removeStatusEffect } from '@mmo-idle/shared';
+import { removeStatusEffect } from '@mmo-idle/shared';
 import { registerCombatListener } from '../../../../../combat/engine/combatPipeline';
 import { applyPlayerDebuff } from '../../../../shared/applyPlayerDebuff';
 import { attachMarker } from '../../../../../../ecs/markerHelpers';
@@ -93,7 +93,7 @@ export function registerCadenceEmpoweredHit(): void {
       const hemoTickMs = passives['cadence.hemorrhage-tick-ms'] ?? HEMORRHAGE_TICK_MS;
       const damagePerTick = Math.max(1, Math.round(ctx.damage * hemoMult / hemoTicks));
       removeStatusEffect(monsterState, 'cadence-hemorrhage');
-      const bleed = applyStatusEffect(monsterState, {
+      const bleed = applyPlayerDebuff(player, monsterState, {
         id:          'cadence-hemorrhage',
         instanced:   false,
         remainingMs: -1,
@@ -103,7 +103,7 @@ export function registerCadenceEmpoweredHit(): void {
           nextTickIn:     hemoTickMs,
           tickIntervalMs: hemoTickMs,
         },
-      });
+      }, { origin: 'mechanic' });
       bleed.stacks = hemoTicks; // one stack per remaining tick
       attachMarker(world, ctx.defender, 'hasHemorrhage');
       ctx.damage = 0;
@@ -128,7 +128,7 @@ export function registerCadenceEmpoweredHit(): void {
           remainingMs: vulnMs,
           sourceId: player.isPlayer.id,
           data: { damageMultiplier: 1 + vulnPct / 100 },
-        });
+        }, { origin: 'mechanic' });
       }
       if (platingShred > 0) {
         // Total shred = stacks × platingReduction; cap by clamping the stack count.
@@ -142,7 +142,7 @@ export function registerCadenceEmpoweredHit(): void {
           remainingMs: -1,
           sourceId: player.isPlayer.id,
           data: { platingReduction: platingShred },
-        });
+        }, { origin: 'mechanic' });
       }
     }
 

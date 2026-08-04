@@ -47,7 +47,7 @@ export function tryRimeshatter(pc: DotT3PathContext): boolean {
       id: BRITTLE_EFFECT_ID, instanced: false, maxStacks: 1, refreshable: true,
       remainingMs: debuffMs, sourceId: player.isPlayer.id,
       data: { platingPerStack: 0, drPerStack: drReduction, totalMs: debuffMs },
-    });
+    }, { origin: 'mechanic' });
   } else {
     const eff = applyStatusEffect(monsterState, {
       id: DOT_EFFECT_ID, maxStacks, instanced: false,
@@ -83,7 +83,7 @@ export function tryWindSpirit(pc: DotT3PathContext): boolean {
       id: FROSTBITE_EFFECT, maxStacks: frostbiteMaxStacks, instanced: false,
       remainingMs: frostbiteMs, refreshable: true, sourceId: player.isPlayer.id,
       data: { dotTakenPerStack: frostbiteDotTaken, totalMs: frostbiteMs },
-    });
+    }, { origin: 'mechanic' });
   }
 
   const eff = applyStatusEffect(monsterState, {
@@ -164,7 +164,7 @@ export function tryFreezingCold(pc: DotT3PathContext): boolean {
       id: CHILL_EFFECT, maxStacks: chillMax, instanced: false,
       remainingMs: chillMs, refreshable: true, sourceId: player.isPlayer.id,
       data: { moveSlowPerStack: chillMoveSlow, attackSlowPerStack: chillAttackSlow, totalMs: chillMs },
-    });
+    }, { origin: 'mechanic' });
     attachMarker(world, monster, 'hasChill');
     if (getTotalStacks(monsterState, CHILL_EFFECT) >= chillMax) {
       const chillEffect = getStatusEffect(monsterState, CHILL_EFFECT);

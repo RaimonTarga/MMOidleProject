@@ -24,7 +24,7 @@ export const EVOLUTION_REQUIRED_PLUS = 3;
  * rank-up only requires *owning* the predecessor rank (+0).
  */
 export function requiredPlusFor(recipe: Recipe): number {
-  return recipe.slot === 'core' ? 0 : EVOLUTION_REQUIRED_PLUS;
+  return recipe.slot === 'core' || recipe.slot === 'relic' ? 0 : EVOLUTION_REQUIRED_PLUS;
 }
 
 export type EvolveMode = 'evolve' | 'reconstruct';

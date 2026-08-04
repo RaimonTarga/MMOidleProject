@@ -2,6 +2,7 @@ import { getStatusEffect } from '@mmo-idle/shared';
 import type { World } from '../../../../../../world/World';
 import { markSliceDirty } from '../../../../../../ecs/dirtyHelpers';
 import { FRENZY_FX, FRENZY_APS } from '../paths/_constants';
+import { playerMechanicBuffMagnitude } from '../../../../shared/applyPlayerMechanicBuff';
 
 /**
  * Frenzy (Zealot) attack-speed half. While the Frenzy buff (FRENZY_FX, applied on
@@ -17,10 +18,12 @@ export function updateFrenzy(world: World): void {
     const active = getStatusEffect(player.tracksCombat, FRENZY_FX) !== undefined;
 
     if (active) {
-      const apsBonus = Math.max(
-        0,
+      const apsBonus = Math.max(0, playerMechanicBuffMagnitude(
+        player,
+        'dot-frenzy',
+        'attackSpeedPct',
         player.usesSkills.passives['dot.frenzy-attack-speed-pct'] ?? FRENZY_APS,
-      ); // flat — attack speed does NOT scale per tier
+      )); // flat — attack speed does NOT scale per tier
       if (player.performsAttack.attackCooldown !== dots.frenzyAppliedCd) {
         dots.frenzyBaseCd = player.performsAttack.attackCooldown; // clean base (post-recalc)
       }

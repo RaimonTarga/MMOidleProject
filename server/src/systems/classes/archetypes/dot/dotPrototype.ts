@@ -6,6 +6,8 @@ import {
   isMonsterDotStatusEffectId,
   resolveMonsterDotDebuff,
   resolveDotClassProfile,
+  relicRatingsFromPassives,
+  resolveDotRelicDeliveryProfile,
 } from "@mmo-idle/shared";
 import { registerCombatListener } from "../../../combat/engine/combatPipeline";
 import { effectiveMonsterDot } from "../../../combat/engine/monsterMechanics";
@@ -24,6 +26,7 @@ import {
 } from "./t3";
 import type { DeathCause } from "@mmo-idle/shared";
 import type { World } from "../../../../world/World";
+import { playerDebuffConfig } from '../../shared/applyPlayerDebuff';
 import {
   attachMarker,
   detachComponent,
@@ -327,10 +330,24 @@ export function initDotArchetype(): void {
       attacker.usesSkills.passives,
       attacker.usesSkills.selectedSubVariant,
     );
-    const { maxStacks, conversionPct: convPct, tickIntervalMs, durationMs } = profile;
+    const delivery = resolveDotRelicDeliveryProfile(
+      profile.tickIntervalMs,
+      profile.maxStacks,
+      relicRatingsFromPassives(attacker.usesSkills.passives),
+    );
+    const maxStacks = delivery.maxStacks.after;
+    const tickIntervalMs = delivery.tickIntervalMs.after;
+    const { conversionPct: convPct, durationMs } = profile;
     // Class DoT stack value is generated from base attack, not final ctx.damage.
     // Final-hit multipliers still affect the direct portion before this reduction.
-    const damagePerStack = computeDotClassDamagePerStack(attacker.dealsDamage.attack, profile);
+    // Relic delivery changes happen after this reference calculation so faster
+    // ticks and a higher cap are real throughput rather than normalized away.
+    const rawDamagePerStack = computeDotClassDamagePerStack(attacker.dealsDamage.attack, profile);
+    const damagePerStack = playerDebuffConfig(attacker, {
+      id: 'dot',
+      sourceId: attacker.isPlayer.id,
+      data: { damagePerStack: rawDamagePerStack },
+    }, { origin: 'mechanic' }).data?.damagePerStack ?? rawDamagePerStack;
 
     // Apply conversion reduction only if the T3 handler hasn't already done so.
     if (!ctx.metadata["dotConvApplied"]) {

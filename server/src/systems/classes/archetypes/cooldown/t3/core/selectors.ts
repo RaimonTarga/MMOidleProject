@@ -1,4 +1,10 @@
-import { getStatusEffect, type TracksCombat, type UsesCooldown } from '@mmo-idle/shared';
+import {
+  getStatusEffect,
+  relicRatingsFromPassives,
+  resolveCooldownRelicProfile,
+  type TracksCombat,
+  type UsesCooldown,
+} from '@mmo-idle/shared';
 import type { PlayerEntity } from '../../../../../../ecs/entity';
 import {
   OVERDRIVE_BUFF_MS, ALIGNMENT_BUFF_MS, TEMPORAL_MAX_MS,
@@ -19,7 +25,12 @@ export function rampFactorFor(cd: UsesCooldown, player: PlayerEntity): number {
     100,
     player.usesSkills.passives['cooldown.patience-ramp-ms'] ?? PATIENCE_PAID_RAMP_MS,
   );
-  const cdMs = player.usesSkills.passives['cooldown.empowered-cd-ms'] ?? rampMs;
+  const passives = player.usesSkills.passives;
+  const cdMs = resolveCooldownRelicProfile(
+    passives['cooldown.empowered-cd-ms'] ?? rampMs,
+    passives['cooldown.empowered-mult'] ?? 2,
+    relicRatingsFromPassives(passives),
+  ).cooldownMs.after;
   const elapsed = cdMs - cd.executionCooldownMs;
   return Math.max(0, Math.min(1, elapsed / rampMs));
 }

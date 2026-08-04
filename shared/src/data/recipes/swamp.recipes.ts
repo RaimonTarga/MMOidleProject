@@ -238,8 +238,23 @@ export const swampRecipeEntries = [
     // Does nothing for a build that applies no debuffs. That is the intended
     // opportunity cost, so no direct-damage penalty is authored on top of it.
     mechanicEffects: { 'core.debuff-duration-mult': 0.25, 'core.debuff-potency-mult': 0.12 },
-    icon: 'items/charms/depths-charm-1.png',
+    icon: 'items/cores/controller.png',
     description: 'The swamp never kills quickly. It simply makes sure nothing leaves the way it came in.',
+  }],
+
+  ['relic-virulent-hourglass', {
+    id: 'relic-virulent-hourglass', name: 'Virulent Hourglass',
+    recipeGroup: 'swamp', requiredBiomeLevel: 24, slot: 'relic',
+    lineageId: 'relic-virulent-hourglass',
+    cost: { purple: 220 }, catalystCost: { blight: 4 },
+    stats: {}, tier: 4,
+    mechanicEffects: {
+      'relic.mechanic-frequency': 0.20,
+      'relic.mechanic-potency': -0.20,
+      'relic.mechanic-debuff-effect': 0.25,
+    },
+    icon: 'items/relics/virulent-hourglass.png',
+    description: 'The sand falls quickly; what it leaves behind grows harder to escape.',
   }],
 
 ] satisfies [string, Recipe][];
