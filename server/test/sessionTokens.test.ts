@@ -2,6 +2,7 @@ import {
   generateSessionToken,
   hashSessionToken,
   isPlausibleSessionToken,
+  sessionHasExpired,
 } from '../src/auth/sessionRepo';
 
 function assert(condition: boolean, message: string): void {
@@ -19,5 +20,8 @@ assert(hashSessionToken(first) !== hashSessionToken(second), 'distinct tokens sh
 assert(!isPlausibleSessionToken(''), 'empty token should fail validation');
 assert(!isPlausibleSessionToken('a'.repeat(42)), 'short token should fail validation');
 assert(!isPlausibleSessionToken(`${'a'.repeat(42)}!`), 'invalid base64url characters should fail');
+assert(!sessionHasExpired(null, Date.now()), 'persistent guest sessions should never expire');
+assert(sessionHasExpired(100, 100), 'standard sessions should expire at their deadline');
+assert(!sessionHasExpired(101, 100), 'standard sessions should remain valid before their deadline');
 
 console.log('sessionTokens.test.ts: ok');

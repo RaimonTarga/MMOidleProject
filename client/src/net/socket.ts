@@ -10,6 +10,7 @@ import type {
   CharacterActionResult,
   CharacterCreateResult,
   CharacterSummary,
+  AccountCharactersPayload,
   SpectateStatus,
 } from '@mmo-idle/shared';
 import { getSessionToken } from './session';
@@ -32,7 +33,7 @@ export interface SocketHandlers {
   onConnect(socket: GameSocket): void;
   onUnauthorized(): void;
   onDisconnect(): void;
-  onCharacterList(characters: CharacterSummary[]): void;
+  onCharacterList(payload: AccountCharactersPayload): void;
   onCharacterCreateResult(result: CharacterCreateResult): void;
   onCharacterDeleteResult(result: CharacterActionResult): void;
   onCharacterSelectResult(result: CharacterActionResult): void;
@@ -66,7 +67,7 @@ export function wireSocketHandlers(
     if (error.message === 'unauthorized') h.onUnauthorized();
   });
   socket.on('disconnect', () => h.onDisconnect());
-  socket.on('account:characters', (p) => h.onCharacterList(p.characters));
+  socket.on('account:characters', (p) => h.onCharacterList(p));
   socket.on('character:createResult', (r) => h.onCharacterCreateResult(r));
   socket.on('character:deleteResult', (r) => h.onCharacterDeleteResult(r));
   socket.on('character:selectResult', (r) => h.onCharacterSelectResult(r));

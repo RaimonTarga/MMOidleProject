@@ -48,6 +48,7 @@ export interface AdminCharacterRecord {
   id: string;
   accountId: string;
   accountDisplayName: string;
+  accountIsGuest: boolean;
   name: string;
   nodeId: string;
   hp: number;

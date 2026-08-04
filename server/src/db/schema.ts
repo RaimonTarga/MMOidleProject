@@ -30,7 +30,7 @@ export const sessions = pgTable('sessions', {
   tokenHash:  text('token_hash').primaryKey(),
   accountId:  text('account_id').notNull().references(() => accounts.id, { onDelete: 'cascade' }),
   createdAt:  bigint('created_at', { mode: 'number' }).notNull(),
-  expiresAt:  bigint('expires_at', { mode: 'number' }).notNull(),
+  expiresAt:  bigint('expires_at', { mode: 'number' }),
   lastSeenAt: bigint('last_seen_at', { mode: 'number' }).notNull(),
 });
 

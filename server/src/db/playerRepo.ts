@@ -35,7 +35,7 @@ import {
   type Vec2,
 } from '@mmo-idle/shared';
 import type { PlayerEntity } from '../ecs/entity';
-import { accounts, characters } from './schema';
+import { accounts, characters, sessions } from './schema';
 import type * as schema from './schema';
 
 export type DB = NodePgDatabase<typeof schema>;
@@ -55,6 +55,7 @@ export interface AccountLoginResult {
   previousLoginAt: number | null;
   currentLoginAt: number;
   displayName: string;
+  isGuest: boolean;
 }
 
 /** Provision the explicitly configured, non-production development identity. */
@@ -73,7 +74,7 @@ export async function findOrCreateDevAccount(
       createdAt:   now,
       lastLoginAt: now,
     });
-    return { previousLoginAt: null, currentLoginAt: now, displayName };
+    return { previousLoginAt: null, currentLoginAt: now, displayName, isGuest: false };
   }
 
   const previousLoginAt = existing[0].lastLoginAt || existing[0].createdAt;
@@ -83,7 +84,7 @@ export async function findOrCreateDevAccount(
       lastLoginAt: now,
     })
     .where(eq(accounts.id, accountId));
-  return { previousLoginAt, currentLoginAt: now, displayName };
+  return { previousLoginAt, currentLoginAt: now, displayName, isGuest: false };
 }
 
 /** Record a socket login for an account that was already authenticated. */
@@ -106,7 +107,131 @@ export async function touchAccountLogin(
     previousLoginAt: account.lastLoginAt > 0 ? account.lastLoginAt : null,
     currentLoginAt: now,
     displayName: account.displayName,
+    isGuest: account.discordId === null,
   };
+}
+
+export interface GuestAccount {
+  id: string;
+  displayName: string;
+}
+
+export interface AccountIdentity {
+  id: string;
+  displayName: string;
+  discordId: string | null;
+}
+
+export async function createGuestAccount(db: DB): Promise<GuestAccount> {
+  const id = randomUUID();
+  const displayName = `Guest-${id.replace(/-/g, '').slice(0, 6).toUpperCase()}`;
+  const now = Date.now();
+  await db.insert(accounts).values({
+    id,
+    displayName,
+    discordId: null,
+    createdAt: now,
+    lastLoginAt: 0,
+  });
+  return { id, displayName };
+}
+
+export async function findAccountById(
+  db: DB,
+  accountId: string,
+): Promise<AccountIdentity | null> {
+  const rows = await db.select({
+    id: accounts.id,
+    displayName: accounts.displayName,
+    discordId: accounts.discordId,
+  }).from(accounts).where(eq(accounts.id, accountId)).limit(1);
+  return rows[0] ?? null;
+}
+
+export async function findAccountByDiscordId(
+  db: DB,
+  discordId: string,
+): Promise<AccountIdentity | null> {
+  const rows = await db.select({
+    id: accounts.id,
+    displayName: accounts.displayName,
+    discordId: accounts.discordId,
+  }).from(accounts).where(eq(accounts.discordId, discordId)).limit(1);
+  return rows[0] ?? null;
+}
+
+/** Claim a Discord identity only while the source account is still a guest. */
+export async function stampGuestDiscordIdentity(
+  db: DB,
+  accountId: string,
+  discordId: string,
+  displayName: string,
+  persistentSessionsExpireAt: number,
+): Promise<boolean> {
+  return db.transaction(async (tx) => {
+    const rows = await tx.update(accounts)
+      .set({ discordId, displayName })
+      .where(and(
+        eq(accounts.id, accountId),
+        isNull(accounts.discordId),
+      ))
+      .returning({ id: accounts.id });
+    if (rows.length !== 1) return false;
+
+    await tx.update(sessions)
+      .set({ expiresAt: persistentSessionsExpireAt })
+      .where(and(
+        eq(sessions.accountId, accountId),
+        isNull(sessions.expiresAt),
+      ));
+    return true;
+  });
+}
+
+export interface MergeTargetSession {
+  tokenHash: string;
+  createdAt: number;
+  expiresAt: number;
+  lastSeenAt: number;
+}
+
+/** Move every character to the Discord account and hard-delete the guest account. */
+export async function mergeGuestAccount(
+  db: DB,
+  guestAccountId: string,
+  targetAccountId: string,
+  targetDisplayName: string,
+  targetSession: MergeTargetSession,
+): Promise<void> {
+  if (guestAccountId === targetAccountId) return;
+
+  await db.transaction(async (tx) => {
+    const guestRows = await tx.select({ discordId: accounts.discordId })
+      .from(accounts)
+      .where(eq(accounts.id, guestAccountId))
+      .limit(1);
+    if (!guestRows[0] || guestRows[0].discordId !== null) {
+      throw new Error('Guest account is no longer eligible for merge.');
+    }
+
+    const targetRows = await tx.select({ id: accounts.id })
+      .from(accounts)
+      .where(eq(accounts.id, targetAccountId))
+      .limit(1);
+    if (!targetRows[0]) throw new Error('Discord merge target no longer exists.');
+
+    await tx.update(characters)
+      .set({ accountId: targetAccountId })
+      .where(eq(characters.accountId, guestAccountId));
+    await tx.update(accounts)
+      .set({ displayName: targetDisplayName })
+      .where(eq(accounts.id, targetAccountId));
+    await tx.delete(accounts).where(eq(accounts.id, guestAccountId));
+    await tx.insert(sessions).values({
+      ...targetSession,
+      accountId: targetAccountId,
+    });
+  });
 }
 
 /** Upsert Discord identity without consuming the gameplay-login timestamp. */
@@ -257,12 +382,13 @@ export async function listCharacters(db: DB): Promise<AdminCharacterRecord[]> {
     .select({
       character: characters,
       accountDisplayName: accounts.displayName,
+      accountDiscordId: accounts.discordId,
     })
     .from(characters)
     .leftJoin(accounts, eq(characters.accountId, accounts.id))
     .where(isNull(characters.deletedAt));
 
-  return rows.map(({ character, accountDisplayName }) => {
+  return rows.map(({ character, accountDisplayName, accountDiscordId }) => {
     const slices = hydratePlayerSlices(character);
     const equipmentCount = Object.values(slices.holdsInventory.equipment)
       .filter((itemId): itemId is string => typeof itemId === 'string')
@@ -271,6 +397,7 @@ export async function listCharacters(db: DB): Promise<AdminCharacterRecord[]> {
       id: character.id,
       accountId: character.accountId,
       accountDisplayName: accountDisplayName ?? slices.isPlayer.name,
+      accountIsGuest: accountDiscordId === null,
       name: slices.isPlayer.name,
       nodeId: slices.hasPosition.nodeId,
       hp: slices.hasHealth.hp,

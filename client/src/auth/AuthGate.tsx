@@ -8,12 +8,16 @@ import {
 } from '@mmo-idle/shared';
 import { loginWithDiscord } from '../net/session';
 import {
+  accountSummaryAtom,
   authMessageAtom,
   authPhaseAtom,
+  beginDiscordLink,
+  beginGuestPlay,
   characterActionBusyAtom,
   charactersAtom,
   createLobbyCharacter,
   deleteLobbyCharacter,
+  guestFirstRunPendingAtom,
   selectLobbyCharacter,
   spectatorStatusAtom,
 } from './lobbyState';
@@ -136,12 +140,20 @@ function CharacterCard({
 
 export function AuthGate() {
   const phase = useAtomValue(authPhaseAtom);
+  const account = useAtomValue(accountSummaryAtom);
   const characters = useAtomValue(charactersAtom);
   const busy = useAtomValue(characterActionBusyAtom);
   const message = useAtomValue(authMessageAtom);
   const spectatorStatus = useAtomValue(spectatorStatusAtom);
+  const guestFirstRunPending = useAtomValue(guestFirstRunPendingAtom);
   const [name, setName] = useState('');
+  const [guestName, setGuestName] = useState('');
+  const [guestNamePromptOpen, setGuestNamePromptOpen] = useState(false);
   const validation = useMemo(() => validateCharacterName(name), [name]);
+  const guestNameValidation = useMemo(
+    () => guestName.trim() ? validateCharacterName(guestName) : { ok: true as const, name: '' },
+    [guestName],
+  );
 
   if (phase === 'in-world') return null;
 
@@ -166,6 +178,57 @@ export function AuthGate() {
             <span>Always moving</span>
           </div>
           {message && <div className="auth-message auth-message--error">{message}</div>}
+          {guestNamePromptOpen ? (
+            <form
+              className="auth-guest-name-prompt"
+              onSubmit={(event) => {
+                event.preventDefault();
+                if (!guestNameValidation.ok || busy) return;
+                void beginGuestPlay(guestNameValidation.name);
+              }}
+            >
+              <label htmlFor="guest-character-name">Name your first character</label>
+              <p>Leave it blank and fate will choose an adjective and spirit name for you.</p>
+              <input
+                id="guest-character-name"
+                value={guestName}
+                onChange={(event) => setGuestName(event.target.value)}
+                placeholder="Optional character name"
+                maxLength={24}
+                autoComplete="off"
+                autoFocus
+              />
+              {guestName && !guestNameValidation.ok && (
+                <span className="auth-form-error">{guestNameValidation.reason}</span>
+              )}
+              <div className="auth-guest-name-prompt__actions">
+                <button
+                  type="button"
+                  className="auth-button auth-button--quiet"
+                  onClick={() => { setGuestNamePromptOpen(false); setGuestName(''); }}
+                  disabled={busy}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="auth-button auth-button--primary"
+                  disabled={!guestNameValidation.ok || busy}
+                >
+                  {busy ? 'Opening the way…' : 'Enter the world'}
+                </button>
+              </div>
+            </form>
+          ) : (
+            <button
+              type="button"
+              className="auth-button auth-button--primary auth-button--play-now"
+              onClick={() => setGuestNamePromptOpen(true)}
+              disabled={busy}
+            >
+              Play now
+            </button>
+          )}
           <button type="button" className="auth-button auth-button--discord" onClick={loginWithDiscord}>
             <img className="auth-button__discord-logo" src="/discord-symbol.svg" alt="" width="24" height="18" />
             <span>Sign in with Discord</span>
@@ -178,11 +241,20 @@ export function AuthGate() {
   }
 
   if (phase === 'connecting' || phase === 'entering') {
+    const loadingTitle = phase === 'entering'
+      ? 'Entering the world'
+      : guestFirstRunPending
+        ? 'Preparing your first adventure'
+        : 'Opening your roster';
+    const loadingDetail = guestFirstRunPending
+      ? 'Awakening a new spirit in the Clearing…'
+      : null;
     return (
       <div className="auth-gate">
         <div className="auth-loading" role="status" aria-live="polite">
           <div className="auth-loading__sigil" aria-hidden="true">◇</div>
-          <h1>{phase === 'entering' ? 'Entering the world' : 'Opening your roster'}</h1>
+          <h1>{loadingTitle}</h1>
+          {loadingDetail && <p className="auth-loading__detail">{loadingDetail}</p>}
           <div className="auth-gate__conduit auth-gate__conduit--active" />
         </div>
       </div>
@@ -200,6 +272,24 @@ export function AuthGate() {
           <span>{characters.length} {characters.length === 1 ? 'hero' : 'heroes'}</span>
         </header>
         <div className="auth-gate__conduit" />
+
+        {account?.isGuest && (
+          <aside className="auth-guest-notice">
+            <div>
+              <strong>{account.displayName}</strong>
+              <span>Guest progress lives in this browser. Link Discord to protect it.</span>
+            </div>
+            <button
+              type="button"
+              className="auth-button auth-button--discord auth-button--discord-compact"
+              onClick={() => void beginDiscordLink()}
+              disabled={busy}
+            >
+              <img className="auth-button__discord-logo" src="/discord-symbol.svg" alt="" width="20" height="15" />
+              <span>Link Discord</span>
+            </button>
+          </aside>
+        )}
 
         {message && <div className="auth-message" role="status">{message}</div>}
 

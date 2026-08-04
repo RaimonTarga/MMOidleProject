@@ -173,6 +173,64 @@ html[data-spectator="true"] #game-wrapper > div {
   letter-spacing: 0.06em;
 }
 
+.auth-button--play-now {
+  display: block;
+  width: 230px;
+  min-height: 48px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  font-size: 14px;
+  box-shadow: 0 10px 26px rgba(190, 151, 63, 0.22);
+}
+
+.auth-guest-name-prompt {
+  display: grid;
+  width: min(360px, 100%);
+  gap: 9px;
+  margin-bottom: 12px;
+  padding: 14px;
+  border: 1px solid rgba(154, 126, 222, 0.32);
+  border-radius: 8px;
+  background: rgba(9, 7, 16, 0.42);
+}
+
+.auth-guest-name-prompt label {
+  color: var(--hud-primary-strong);
+  font: 600 12px/1.2 monospace;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.auth-guest-name-prompt > p {
+  margin: 0;
+  color: var(--hud-text-muted);
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.auth-guest-name-prompt input {
+  width: 100%;
+  min-height: 40px;
+  padding: 9px 11px;
+  color: var(--hud-text);
+  background: rgba(7, 6, 12, 0.78);
+  border: 1px solid var(--hud-edge-medium);
+  border-radius: 4px;
+  font: 13px/1.2 monospace;
+}
+
+.auth-guest-name-prompt input:focus {
+  border-color: var(--hud-primary);
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(139, 109, 214, 0.14);
+}
+
+.auth-guest-name-prompt__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
 .auth-live-label {
   position: fixed;
   right: 22px;
@@ -279,6 +337,12 @@ html[data-spectator="true"] #game-wrapper > div {
   border-color: #4752c4;
   box-shadow: 0 11px 28px rgba(61, 73, 205, 0.34);
 }
+.auth-button--discord-compact {
+  min-width: 0;
+  min-height: 38px;
+  padding: 8px 13px;
+  font-size: 12px;
+}
 .auth-button__discord-logo {
   display: block;
   width: 24px;
@@ -304,9 +368,49 @@ html[data-spectator="true"] #game-wrapper > div {
   animation: auth-pulse 1.2s ease-in-out infinite alternate;
 }
 
+.auth-loading__detail {
+  margin: 10px 0 0;
+  color: var(--hud-text-muted);
+  font-size: 13px;
+}
+
 .auth-roster { width: min(980px, 100%); margin: auto; }
 .auth-roster__header { display: flex; align-items: end; justify-content: space-between; gap: 20px; }
 .auth-roster__header > span { color: var(--hud-text-muted); font: 11px monospace; text-transform: uppercase; }
+
+.auth-guest-notice {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin: -8px 0 18px;
+  padding: 12px 14px;
+  border: 1px solid rgba(119, 96, 180, 0.36);
+  border-radius: 8px;
+  background: rgba(35, 28, 53, 0.72);
+}
+
+.auth-guest-notice > div {
+  display: grid;
+  gap: 2px;
+}
+
+.auth-guest-notice strong {
+  color: var(--hud-primary-strong);
+  font: 600 11px/1.3 monospace;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.auth-guest-notice span {
+  color: var(--hud-text-muted);
+  font-size: 12px;
+}
+
+@media (max-width: 620px) {
+  .auth-guest-notice { align-items: stretch; flex-direction: column; }
+  .auth-button--discord-compact { width: 100%; }
+}
 
 .auth-character-list {
   display: grid;

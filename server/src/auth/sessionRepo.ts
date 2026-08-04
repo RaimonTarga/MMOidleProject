@@ -1,5 +1,5 @@
 import { createHash, randomBytes } from 'crypto';
-import { eq, lte } from 'drizzle-orm';
+import { and, eq, isNull, lte } from 'drizzle-orm';
 import type { DB } from '../db/playerRepo';
 import { sessions } from '../db/schema';
 
@@ -22,14 +22,24 @@ export function isPlausibleSessionToken(token: string): boolean {
   return token.length === SESSION_TOKEN_LENGTH && SESSION_TOKEN_PATTERN.test(token);
 }
 
-export async function mintSession(db: DB, accountId: string): Promise<string> {
+export function sessionHasExpired(expiresAt: number | null, now: number): boolean {
+  return expiresAt !== null && expiresAt <= now;
+}
+
+export type SessionLifetime = 'standard' | 'persistent';
+
+export async function mintSession(
+  db: DB,
+  accountId: string,
+  lifetime: SessionLifetime = 'standard',
+): Promise<string> {
   const token = generateSessionToken();
   const now = Date.now();
   await db.insert(sessions).values({
     tokenHash: hashSessionToken(token),
     accountId,
     createdAt: now,
-    expiresAt: now + SESSION_TTL_MS,
+    expiresAt: lifetime === 'persistent' ? null : now + SESSION_TTL_MS,
     lastSeenAt: now,
   });
   return token;
@@ -49,7 +59,7 @@ export async function validateSessionToken(
   if (!session) return null;
 
   const now = Date.now();
-  if (session.expiresAt <= now) {
+  if (sessionHasExpired(session.expiresAt, now)) {
     await db.delete(sessions).where(eq(sessions.tokenHash, tokenHash));
     return null;
   }
@@ -61,6 +71,20 @@ export async function validateSessionToken(
   }
 
   return session.accountId;
+}
+
+/** Convert permanent guest credentials into ordinary Discord session lifetimes. */
+export async function expirePersistentSessionsForAccount(
+  db: DB,
+  accountId: string,
+  now = Date.now(),
+): Promise<void> {
+  await db.update(sessions)
+    .set({ expiresAt: now + SESSION_TTL_MS })
+    .where(and(
+      eq(sessions.accountId, accountId),
+      isNull(sessions.expiresAt),
+    ));
 }
 
 export async function revokeSessionToken(db: DB, token: string): Promise<void> {

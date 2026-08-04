@@ -20,6 +20,16 @@ export interface CharacterSummary {
   lastPlayedAt: number;
 }
 
+export interface AccountSummary {
+  displayName: string;
+  isGuest: boolean;
+}
+
+export interface AccountCharactersPayload {
+  account: AccountSummary;
+  characters: CharacterSummary[];
+}
+
 export type CharacterSummarySlices = {
   isPlayer: IsPlayer;
   hasPosition: HasPosition;
@@ -35,6 +45,41 @@ const CHARACTER_NAME_MIN_LENGTH = 2;
 const CHARACTER_NAME_MAX_LENGTH = 24;
 const CHARACTER_NAME_PATTERN = /^[\p{L}\p{N} '-]+$/u;
 const CHARACTER_NAME_ALPHANUMERIC_PATTERN = /[\p{L}\p{N}]/u;
+
+const GUEST_NAME_ADJECTIVES = [
+  'Ancient',
+  'Brave',
+  'Fleeting',
+  'Gentle',
+  'Hollow',
+  'Luminous',
+  'Radiant',
+  'Restless',
+  'Silent',
+  'Stalwart',
+  'Wandering',
+] as const;
+
+const GUEST_NAME_SOULS = [
+  'Apparition',
+  'Essence',
+  'Phantom',
+  'Shade',
+  'Soul',
+  'Spirit',
+  'Wraith',
+] as const;
+
+/** Generate an adjective + soul-synonym name suitable for a first-run guest. */
+export function generateGuestName(random: () => number = Math.random): string {
+  const adjective = GUEST_NAME_ADJECTIVES[
+    Math.floor(random() * GUEST_NAME_ADJECTIVES.length) % GUEST_NAME_ADJECTIVES.length
+  ];
+  const soul = GUEST_NAME_SOULS[
+    Math.floor(random() * GUEST_NAME_SOULS.length) % GUEST_NAME_SOULS.length
+  ];
+  return `${adjective} ${soul}`;
+}
 
 /**
  * Resolve the latest authored class identity in a character's unlocked path.

@@ -48,6 +48,7 @@ export function CharactersTab() {
       .map(([accountId, records]) => ({
         accountId,
         accountDisplayName: records[0]?.accountDisplayName ?? accountId,
+        accountIsGuest: records[0]?.accountIsGuest ?? false,
         characters: records.sort((a, b) => b.lastPlayedAt - a.lastPlayedAt),
       }))
       .sort((a, b) => a.accountDisplayName.localeCompare(b.accountDisplayName));
@@ -90,6 +91,11 @@ export function CharactersTab() {
                   <tr className="border-t border-red-900/80 bg-red-950/35">
                     <td colSpan={7} className="px-3 py-2">
                       <span className="font-medium text-orange-100">{group.accountDisplayName}</span>
+                      {group.accountIsGuest && (
+                        <Badge variant="secondary" className="ml-2 border border-violet-400/35 text-violet-200/75">
+                          Guest
+                        </Badge>
+                      )}
                       <span className="ml-2 text-xs text-red-200/35">{group.accountId}</span>
                       <Badge variant="secondary" className="ml-2">
                         {group.characters.length} {group.characters.length === 1 ? 'character' : 'characters'}

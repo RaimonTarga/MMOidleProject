@@ -86,6 +86,7 @@ import {
   discordAuthIsConfigured,
   registerDiscordAuthRoutes,
 } from "./auth/discordOAuth";
+import { registerGuestAuthRoute } from "./auth/guestAuth";
 import { authenticateSocketHandshake } from "./auth/socketAuth";
 import { pruneExpiredSessions } from "./auth/sessionRepo";
 import type { PlayerSocketSession } from "./net/socketSession";
@@ -100,6 +101,7 @@ if (IS_DEV) registerDevItems(ITEM_DATABASE);
 
 const app = express();
 // Allow all origins — this is a private LAN/friends game, no auth tokens in cookies.
+if (process.env.NODE_ENV === "production") app.set("trust proxy", 1);
 app.use(cors({ origin: true }));
 app.use(express.json());
 
@@ -110,8 +112,6 @@ app.use(express.json());
 app.get("/healthz", (_req, res) => {
   res.status(200).json({ status: "ok" });
 });
-
-registerDiscordAuthRoutes(app, db);
 
 // Serve built client/admin only in production so dev doesn't expose a stale
 // client/dist on :4000 while the live Vite app runs on :3000.
@@ -572,10 +572,64 @@ async function boot(): Promise<void> {
 
   // ── SOCKETS ──────────────────────────────────────────
 
+  const accountsInTransition = new Set<string>();
+
+  async function saveAndDisconnectAccount(
+    accountId: string,
+    reason: string,
+  ): Promise<void> {
+    const socketId = socketByAccount.get(accountId);
+    if (!socketId) return;
+
+    const session = sessionsBySocket.get(socketId);
+    const player = world.getPlayerEntity(socketId);
+    if (player?.isDead) world.respawnPlayer(socketId);
+    if (player && session?.characterId) {
+      recordSessionEnd(socketId, accountId, player);
+      await saveCharacter(db, session.characterId, player);
+    }
+
+    handlePartyDisconnect(world, socketId);
+    world.detachPlayerEntity(socketId);
+    sessionsBySocket.delete(socketId);
+    sessionStartedAtBySocket.delete(socketId);
+    inactiveSockets.delete(socketId);
+    if (socketByAccount.get(accountId) === socketId) socketByAccount.delete(accountId);
+
+    const existingSocket = io.sockets.sockets.get(socketId);
+    existingSocket?.emit("session:kicked", { reason });
+    existingSocket?.disconnect(true);
+    adminControls.emitPlayerSummaries();
+  }
+
+  registerGuestAuthRoute(app, db);
+  registerDiscordAuthRoutes(app, db, {
+    async withQuiescedAccounts<T>(
+      accountIds: readonly string[],
+      work: () => Promise<T>,
+    ): Promise<T> {
+      const uniqueAccountIds = [...new Set(accountIds)];
+      for (const accountId of uniqueAccountIds) accountsInTransition.add(accountId);
+      try {
+        for (const accountId of uniqueAccountIds) {
+          await saveAndDisconnectAccount(accountId, "account_linked");
+        }
+        return await work();
+      } finally {
+        for (const accountId of uniqueAccountIds) accountsInTransition.delete(accountId);
+      }
+    },
+  });
+
   async function setupPlayerSocket(
     socket: Socket<ClientToServerEvents, ServerToClientEvents>,
   ): Promise<void> {
     const accId = socket.data.accountId as string;
+    if (accountsInTransition.has(accId)) {
+      socket.emit("session:kicked", { reason: "account_linked" });
+      socket.disconnect(true);
+      return;
+    }
     const authKind = socket.data.authKind as "session" | "dev";
     const accountLogin = authKind === "session"
       ? await touchAccountLogin(db, accId)
@@ -588,20 +642,7 @@ async function boot(): Promise<void> {
     // Duplicate-session ownership is account-wide, including lobby sockets.
     const existingSocketId = socketByAccount.get(accId);
     if (existingSocketId) {
-      const existingSession = sessionsBySocket.get(existingSocketId);
-      const existingPlayer = world.getPlayerEntity(existingSocketId);
-      if (existingPlayer?.isDead) world.respawnPlayer(existingSocketId);
-      if (existingPlayer && existingSession?.characterId) {
-        recordSessionEnd(existingSocketId, accId, existingPlayer);
-        await saveCharacter(db, existingSession.characterId, existingPlayer);
-      }
-      handlePartyDisconnect(world, existingSocketId);
-      world.detachPlayerEntity(existingSocketId);
-      sessionsBySocket.delete(existingSocketId);
-      inactiveSockets.delete(existingSocketId);
-      const existingSock = io.sockets.sockets.get(existingSocketId);
-      existingSock?.emit("session:kicked", { reason: "duplicate_session" });
-      existingSock?.disconnect(true);
+      await saveAndDisconnectAccount(accId, "duplicate_session");
     }
 
     const session: PlayerSocketSession = { accountId: accId, characterId: null };
@@ -626,6 +667,10 @@ async function boot(): Promise<void> {
 
     const emitCharacterList = async (): Promise<void> => {
       socket.emit("account:characters", {
+        account: {
+          displayName: accountLogin.displayName,
+          isGuest: accountLogin.isGuest,
+        },
         characters: await listAccountCharacters(db, accId),
       });
     };

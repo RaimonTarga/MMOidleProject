@@ -48,6 +48,8 @@ import {
 } from '../../notifications/deathNotification';
 import { hudBus } from '../../hudBus';
 import { clearCaptureSink, setCaptureSink } from '../../input/gamepad';
+import { accountSummaryAtom } from '../../auth/lobbyState';
+import { linkDiscord } from '../../net/session';
 import '../hud.css';
 import './settings.css';
 
@@ -59,6 +61,9 @@ interface Props {
 
 export function SettingsPanel({ onClose }: Props) {
   const [tab, setTab] = useState<SettingsTab>('controls');
+  const account = useAtomValue(accountSummaryAtom);
+  const [linkingDiscord, setLinkingDiscord] = useState(false);
+  const [linkError, setLinkError] = useState<string | null>(null);
   const [bindings, setBindings] = useAtom(keybindsAtom);
   const [capture, setCapture] = useAtom(captureModeAtom);
   const padStatus = useAtomValue(gamepadStatusAtom);
@@ -234,9 +239,39 @@ export function SettingsPanel({ onClose }: Props) {
     }
   }
 
+  async function handleDiscordLink(): Promise<void> {
+    setLinkingDiscord(true);
+    setLinkError(null);
+    try {
+      await linkDiscord();
+    } catch (err) {
+      setLinkingDiscord(false);
+      setLinkError(err instanceof Error ? err.message : 'Unable to link Discord.');
+    }
+  }
+
   return (
     <GameDialog size="standard" className="settings-dialog" onClose={handleClose} onEscape={handleEscape}>
       <DialogHeader title="Settings" closeLabel="Close settings" />
+
+      {account?.isGuest && (
+        <div className="settings-guest-account">
+          <div>
+            <strong>{account.displayName}</strong>
+            <span>Guest progress lives in this browser. Link Discord to protect it.</span>
+            {linkError && <span className="settings-guest-account__error">{linkError}</span>}
+          </div>
+          <button
+            type="button"
+            className="settings-discord-link"
+            onClick={() => void handleDiscordLink()}
+            disabled={linkingDiscord}
+          >
+            <img src="/discord-symbol.svg" alt="" width="20" height="15" />
+            {linkingDiscord ? 'Opening…' : 'Link Discord'}
+          </button>
+        </div>
+      )}
 
       <DialogTabs label="Settings sections">
         <DialogTab selected={tab === 'controls'} controls="settings-panel-controls" onSelect={() => setTab('controls')}>

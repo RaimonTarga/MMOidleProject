@@ -10,7 +10,7 @@ import type { PlayerDeathPayload } from "./death";
 import type { NodeTelemetrySnapshot } from "./nodeTelemetry";
 import type { WorldLogEvent } from "./worldLogEvents";
 import type { Vec2 } from "../systems/spatial";
-import type { CharacterSummary } from "./characters";
+import type { AccountCharactersPayload } from "./characters";
 
 export type PlayerMoveMode = "path" | "direct";
 export interface PlayerMoveOptions {
@@ -50,7 +50,7 @@ export interface ServerToClientEvents {
   /** Admission/stream failure for anonymous spectators. */
   "spectate:error": (payload: { reason: string }) => void;
   /** Current non-deleted characters for the authenticated account. */
-  "account:characters": (payload: { characters: CharacterSummary[] }) => void;
+  "account:characters": (payload: AccountCharactersPayload) => void;
   /** Authoritative result of a lobby character-creation request. */
   "character:createResult": (result: CharacterCreateResult) => void;
   /** Authoritative result of a lobby character-deletion request. */
