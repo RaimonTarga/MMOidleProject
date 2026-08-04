@@ -53,6 +53,21 @@ interface CombatContextBase<
    * extending the interface for every future mechanic.
    */
   metadata: Record<string, unknown>;
+  /** Typed Summoner/Battle-Bond contribution for a physical formation hit. */
+  formation?: FormationAttackContribution;
+}
+
+export interface FormationAttackContribution {
+  ownerId: string;
+  physicalEntityId: string;
+  slotId: string;
+  directDamageWeight: number;
+  onHitMagnitudeWeight: number;
+  procWeight: number;
+  targetId: string;
+  cycleSerial: number;
+  cycleCompleted: boolean;
+  side: 'summon' | 'conduit';
 }
 
 /**

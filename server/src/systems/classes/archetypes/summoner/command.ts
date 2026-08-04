@@ -7,6 +7,7 @@ import {
   distanceSq,
   pointInHitbox,
   posHitboxFromEntity,
+  resolveSummonerProfile,
   type Vec2,
 } from '@mmo-idle/shared';
 import type { World } from '../../../../world/World';
@@ -18,8 +19,12 @@ const ARRIVE_TOL = 10;
 const ARRIVE_TOL_SQ = ARRIVE_TOL * ARRIVE_TOL;
 
 function computeLeashRadius(owner: PlayerEntity): number {
-  const mult = owner.usesSkills.passives['summoner.leash-mult'] ?? 2.0;
-  return Math.max(40, owner.performsAttack.attackRange * mult);
+  return resolveSummonerProfile({
+    selectedSubVariant: owner.usesSkills.selectedSubVariant,
+    selectedRange: owner.usesSkills.selectedRange,
+    unlockedSkills: owner.usesSkills.unlockedSkills,
+    passives: owner.usesSkills.passives,
+  }).leashRadius;
 }
 
 export interface HasSummonerCommand {

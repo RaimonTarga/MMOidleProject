@@ -1,5 +1,5 @@
 import { useAtomValue } from 'jotai';
-import { dotElementForPlayer, resolveDotClassProfile } from '@mmo-idle/shared';
+import { dotElementForPlayer, resolveDotClassProfile, summonerSpecializationFor } from '@mmo-idle/shared';
 import {
   ammoCountAtom,
   ammoMaxAtom,
@@ -28,6 +28,7 @@ import {
   targetDotStacksAtom,
   targetDotTickPctAtom,
   targetDotTickSerialAtom,
+  unlockedSkillsAtom,
 } from '../atoms';
 import type { MechanicViewModel } from './types';
 
@@ -45,6 +46,7 @@ export function useMechanicViewModel(): MechanicViewModel | null {
   const combatArchetype = useAtomValue(combatArchetypeAtom);
   const passives = useAtomValue(passivesAtom);
   const selectedSubVariant = useAtomValue(selectedSubVariantAtom);
+  const unlockedSkills = useAtomValue(unlockedSkillsAtom);
   const ammo = useAtomValue(ammoCountAtom);
   const ammoMax = useAtomValue(ammoMaxAtom);
   const heatPct = useAtomValue(heatPctAtom);
@@ -118,6 +120,7 @@ export function useMechanicViewModel(): MechanicViewModel | null {
     case 'summoner':
       return {
         kind: 'summoner',
+        specialization: summonerSpecializationFor(selectedSubVariant ?? 'root', unlockedSkills),
         activeCount,
         slotCount,
         slots: summonSlots.map((slot, index) => ({

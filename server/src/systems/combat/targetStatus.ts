@@ -1,5 +1,7 @@
 import {
   weaponDotProfileForEffect,
+  SUMMONER_CHORUS_EFFECT_ID,
+  SUMMONER_HARRIER_EFFECT_ID,
   type TargetStatusView,
   type TracksCombat,
 } from '@mmo-idle/shared';
@@ -42,6 +44,17 @@ function buildTargetStatus(tracksCombat: TracksCombat): TargetStatusView[] {
   for (const fx of tracksCombat.statusEffects) {
     if (fx.remainingMs === 0) continue; // expired this tick
     const weaponDotProfile = weaponDotProfileForEffect(fx.id);
+    const aggregateSummonerEffect = fx.id === SUMMONER_HARRIER_EFFECT_ID
+      || fx.id === SUMMONER_CHORUS_EFFECT_ID;
+    const existing = aggregateSummonerEffect
+      ? out.find((status) => status.id === fx.id)
+      : undefined;
+    if (existing) {
+      existing.stacks += fx.stacks;
+      existing.remainingMs = Math.max(existing.remainingMs, fx.remainingMs);
+      existing.totalMs = Math.max(existing.totalMs, fx.data.totalMs ?? 0);
+      continue;
+    }
     out.push({
       id: fx.id,
       stacks: weaponDotProfile ? Math.max(0, Math.round(fx.data.pool ?? 0)) : fx.stacks,

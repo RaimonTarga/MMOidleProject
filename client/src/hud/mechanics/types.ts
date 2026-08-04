@@ -1,4 +1,4 @@
-import type { SummonSlotView } from '@mmo-idle/shared';
+import type { SummonerSpecialization, SummonSlotView } from '@mmo-idle/shared';
 import type { SummonHealthView } from '../atoms';
 
 export type CadenceMechanicModel = {
@@ -38,6 +38,7 @@ export type ReloadMechanicModel = {
 
 export type SummonerMechanicModel = {
   kind: 'summoner';
+  specialization: SummonerSpecialization | null;
   activeCount: number;
   slotCount: number;
   slots: Array<SummonSlotView & { health: SummonHealthView | null }>;

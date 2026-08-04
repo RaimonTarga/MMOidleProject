@@ -1,24 +1,5 @@
-/**
- * Summoner archetype tick driver.
- *
- * Each summoner player tick does, per slot:
- *   - If alive   → run minion AI (see `ai.ts`).
- *   - If empty   → run respawn timer; spawn when it expires.
- *   - If just died (slot id present but entity gone) → start respawn timer.
- *
- * Damage to slimes happens elsewhere:
- *   - From monster melee/ranged: minions are not currently valid aggro
- *     targets for monsters; in v1 they take damage only via the
- *     damage-sponge listener (`damageSponge.ts`).
- *   - From AoE: `applyMonsterAoe` damages minions in radius (monster `aoeAttack`
- *     splash and boss-script `slam`). Dead minions are detached here on the next
- *     tick — AoE only drops their HP.
- */
-import {
-  GAME_CONFIG,
-  relicRatingsFromPassives,
-  resolveSummonerRelicProfile,
-} from '@mmo-idle/shared';
+/** Server-authoritative tick driver for the persistent summon formation. */
+import { GAME_CONFIG } from '@mmo-idle/shared';
 import type { World } from '../../../../world/World';
 import type { MinionEntity, PlayerEntity } from '../../../../ecs/entity';
 import { markSliceDirty } from '../../../../ecs/dirtyHelpers';
@@ -35,91 +16,75 @@ import {
 import { applyOwnerStatShare } from './statShare';
 import { driveMinion } from './ai';
 import { validateSummonerCommand } from './command';
-import { tickAcidLurkerLifetime, tryAcidBroodMinionExplosion } from './t3/paths/cave';
-import { tryVitalBurst } from './t3/paths/plains';
 import { applyHealToMinion } from '../../../defense/regen/healing';
-
-const DEFAULT_RESPAWN_MS = 5000;
+import { summonerProfileFor } from './profile';
+import {
+  enqueueSummonReconstruction,
+  tickSummonReconstruction,
+} from './reconstruction';
+import { onSummonDeath, tickSummonerSpecializations } from './specs';
 
 type SummonerPlayerEntity = PlayerEntity & {
   summonsMinions: NonNullable<PlayerEntity['summonsMinions']>;
 };
 
-function desiredMinionCount(owner: SummonerPlayerEntity): number {
-  const passives = owner.usesSkills.passives;
-  const baseCount = passives['summoner.minion-count'] ?? 3;
-  const countMult = passives['summoner.minion-count-mult'] ?? 1.0;
-  let count = Math.max(1, Math.floor(baseCount * countMult));
-  if (passives['summoner.stone-sentinel']) {
-    count = Math.max(count, Math.floor(passives['summoner.stone-sentinel-count'] ?? 2));
-  }
-  const cap = passives['summoner.minion-count-cap'];
-  if (cap !== undefined && cap > 0) {
-    count = Math.min(count, Math.floor(cap));
-  }
-  return resolveSummonerRelicProfile(
-    DEFAULT_RESPAWN_MS,
-    Math.max(1, count),
-    relicRatingsFromPassives(passives),
-    cap,
-  ).summonCount.after;
-}
-
-function isStoneSentinelOwner(owner: SummonerPlayerEntity): boolean {
-  return !!owner.usesSkills.passives['summoner.stone-sentinel'];
-}
-
-/**
- * Stone Sentinel: only one empty slot may run a respawn timer at a time so
- * sentries spawn sequentially at different follow offsets instead of stacking.
- */
-function stoneSentinelActiveRespawnSlot(
-  world: World,
-  summons: SummonerPlayerEntity['summonsMinions'],
-): number | null {
-  for (let i = 0; i < summons.targetCount; i++) {
-    if (summons.respawnTimers[i] > 0) return i;
-  }
-  for (let i = 0; i < summons.targetCount; i++) {
-    const id = summons.minionIds[i];
-    if (!id) return i;
-    const minion = world.getMinionEntity(id);
-    if (!minion || minion.hasHealth.hp <= 0) return i;
-  }
-  return null;
-}
-
+/** Preserve matching logical slots and cleanly replace only changed layouts. */
 function reconcileMinionSlots(world: World, owner: SummonerPlayerEntity): void {
   const summons = owner.summonsMinions;
-  const targetCount = desiredMinionCount(owner);
-  if (summons.targetCount === targetCount) return;
+  const desired = summonerProfileFor(owner).slots;
+  const sameLayout = desired.length === summons.slotIds.length
+    && desired.every((slot, index) => (
+      summons.slotIds[index] === slot.slotId && summons.slotRoles[index] === slot.role
+    ));
+  if (sameLayout) return;
 
-  if (summons.targetCount > targetCount) {
-    for (let slot = targetCount; slot < summons.targetCount; slot++) {
-      const id = summons.minionIds[slot];
-      const minion = id ? world.getMinionEntity(id) : undefined;
-      if (minion) despawnMinion(world, minion);
-    }
-    summons.minionIds.length = targetCount;
-    summons.respawnTimers.length = targetCount;
-  } else {
-    while (summons.minionIds.length < targetCount) summons.minionIds.push('');
-    while (summons.respawnTimers.length < targetCount) summons.respawnTimers.push(0);
+  const oldIndexBySlot = new Map(summons.slotIds.map((slotId, index) => [slotId, index]));
+  const desiredIds = new Set(desired.map((slot) => slot.slotId));
+  for (let oldIndex = 0; oldIndex < summons.slotIds.length; oldIndex++) {
+    if (desiredIds.has(summons.slotIds[oldIndex]!)) continue;
+    const entityId = summons.minionIds[oldIndex];
+    const minion = entityId ? world.getMinionEntity(entityId) : undefined;
+    if (minion) despawnMinion(world, minion);
   }
 
-  summons.targetCount = targetCount;
+  const nextMinionIds = desired.map((slot, index) => {
+    const oldIndex = oldIndexBySlot.get(slot.slotId);
+    const id = oldIndex === undefined ? '' : (summons.minionIds[oldIndex] ?? '');
+    const minion = id ? world.getMinionEntity(id) : undefined;
+    if (minion) {
+      minion.isMinion.slot = index;
+      minion.isMinion.slotId = slot.slotId;
+      minion.isMinion.role = slot.role;
+      markSliceDirty(world, minion, 'isMinion');
+    }
+    return minion ? id : '';
+  });
+
+  summons.minionIds = nextMinionIds;
+  summons.respawnTimers = new Array(desired.length).fill(0);
+  summons.slotIds = desired.map((slot) => slot.slotId);
+  summons.slotRoles = desired.map((slot) => slot.role);
+  summons.targetCount = desired.length;
+  summons.reconstructionQueue = summons.reconstructionQueue.filter((slotId) => desiredIds.has(slotId));
+  if (summons.activeReconstruction && !desiredIds.has(summons.activeReconstruction.slotId)) {
+    summons.activeReconstruction = undefined;
+  }
+  summons.ritualCharges = undefined;
+  if (owner.controlsSummons) owner.controlsSummons.pendingDeadSlotIds = [];
   markSliceDirty(world, owner, 'summonsMinions');
 }
 
 function syncLiveMinionFrameStats(world: World, owner: SummonerPlayerEntity): void {
+  const profile = summonerProfileFor(owner);
   const desiredSpeed = computeMinionSpeed(owner);
-  const desiredSizeMult = computeMinionSizeMult(owner);
-  const desiredMaxHp = computeMinionMaxHp(owner);
   const desiredHpRegen = owner.hasHealth.hpRegen;
-  const desiredType = resolveMinionType(owner);
-  for (const id of owner.summonsMinions.minionIds) {
+  for (let index = 0; index < owner.summonsMinions.minionIds.length; index++) {
+    const id = owner.summonsMinions.minionIds[index];
     const minion = id ? world.getMinionEntity(id) : undefined;
     if (!minion) continue;
+    const slot = profile.slots[index] ?? profile.slots[0]!;
+    const desiredType = resolveMinionType(owner, index);
+    const desiredSizeMult = computeMinionSizeMult(owner, index);
     if (minion.isMinion.monsterTypeId !== desiredType) {
       despawnMinion(world, minion);
       continue;
@@ -133,10 +98,33 @@ function syncLiveMinionFrameStats(world: World, owner: SummonerPlayerEntity): vo
       markSliceDirty(world, minion, 'isMinion');
       syncMinionHitbox(world, minion, desiredSizeMult);
     }
-    syncMinionMaxHp(world, minion, desiredMaxHp);
+    if (minion.isMinion.slotId !== slot.slotId || minion.isMinion.role !== slot.role) {
+      minion.isMinion.slotId = slot.slotId;
+      minion.isMinion.role = slot.role;
+      markSliceDirty(world, minion, 'isMinion');
+    }
+    syncMinionMaxHp(world, minion, computeMinionMaxHp(owner, index));
     if (minion.hasHealth.hpRegen !== desiredHpRegen) {
       minion.hasHealth.hpRegen = desiredHpRegen;
       markSliceDirty(world, minion, 'hasHealth');
+    }
+    const desiredAttack = Math.max(
+      1,
+      Math.round(owner.dealsDamage.attack * profile.formationOffenseMult * slot.offenseWeight),
+    );
+    if (minion.dealsDamage.attack !== desiredAttack) {
+      minion.dealsDamage.attack = desiredAttack;
+      markSliceDirty(world, minion, 'dealsDamage');
+    }
+    const desiredCooldown = Math.max(
+      100,
+      Math.round(owner.performsAttack.attackCooldown * profile.summonAttackCooldownMult),
+    );
+    if (minion.performsAttack.attackCooldown !== desiredCooldown
+      || minion.performsAttack.attackRange !== profile.attackRange) {
+      minion.performsAttack.attackCooldown = desiredCooldown;
+      minion.performsAttack.attackRange = profile.attackRange;
+      markSliceDirty(world, minion, 'performsAttack');
     }
     applyOwnerStatShare(world, owner, minion);
   }
@@ -149,22 +137,12 @@ function isMinionInCombat(
   now: number,
 ): boolean {
   if (minion.hasAttackTarget !== undefined) return true;
-  const lastCombatAt = owner.tracksEngagement;
-  if (
-    lastCombatAt !== undefined &&
-    now - lastCombatAt < GAME_CONFIG.COMBAT_REGEN_DELAY
-  ) {
-    return true;
-  }
-  for (const monster of world.aggroedMonsters) {
-    if (
-      monster.hasAggroTarget.targetKind === 'minion' &&
-      monster.hasAggroTarget.targetId === minion.isMinion.id
-    ) {
-      return true;
-    }
-  }
-  return false;
+  if (owner.tracksEngagement !== undefined
+    && now - owner.tracksEngagement < GAME_CONFIG.COMBAT_REGEN_DELAY) return true;
+  return [...world.aggroedMonsters].some((monster) => (
+    monster.hasAggroTarget.targetKind === 'minion'
+    && monster.hasAggroTarget.targetId === minion.isMinion.id
+  ));
 }
 
 function runMinionRegen(
@@ -176,95 +154,77 @@ function runMinionRegen(
 ): void {
   if (minion.hasHealth.hp >= minion.hasHealth.maxHp) return;
   const hpRegen = minion.hasHealth.hpRegen ?? 0;
-  if (hpRegen <= 0) return;
-  if (isMinionInCombat(world, owner, minion, now)) return;
-
-  const healAmount = minion.hasHealth.maxHp * (hpRegen / 100) * (dt / 1000);
-  applyHealToMinion(minion, owner.isPlayer.id, healAmount, world);
+  if (hpRegen <= 0 || isMinionInCombat(world, owner, minion, now)) return;
+  applyHealToMinion(
+    minion,
+    owner.isPlayer.id,
+    minion.hasHealth.maxHp * (hpRegen / 100) * (dt / 1_000),
+    world,
+  );
 }
 
-export function initSummonerArchetype(): void {
-  // No combat-pipeline listeners are needed here — minion attacks route through
-  // `runPlayerAttack`, which already runs the full pipeline as the owner. The
-  // damage sponge is registered separately so init order vs other defense
-  // listeners can be controlled from `server/src/index.ts`.
+function collectDeaths(world: World, owner: SummonerPlayerEntity): void {
+  const summons = owner.summonsMinions;
+  for (let index = 0; index < summons.targetCount; index++) {
+    const id = summons.minionIds[index];
+    if (!id) continue;
+    const minion = world.getMinionEntity(id);
+    if (minion && minion.hasHealth.hp > 0) continue;
+    enqueueSummonReconstruction(world, owner, summons.slotIds[index]!);
+    if (minion) {
+      if (owner.controlsSummons) {
+        onSummonDeath(
+          world,
+          owner as SummonerPlayerEntity & { controlsSummons: NonNullable<PlayerEntity['controlsSummons']> },
+          minion,
+        );
+      }
+      despawnMinion(world, minion);
+    }
+    else summons.minionIds[index] = '';
+  }
 }
+
+function spawnFreshSlots(world: World, owner: SummonerPlayerEntity): void {
+  const summons = owner.summonsMinions;
+  for (let index = 0; index < summons.targetCount; index++) {
+    if (summons.minionIds[index]) continue;
+    const slotId = summons.slotIds[index]!;
+    const owesReconstruction = summons.activeReconstruction?.slotId === slotId
+      || summons.reconstructionQueue.includes(slotId)
+      || owner.controlsSummons?.pendingDeadSlotIds.includes(slotId);
+    if (!owesReconstruction) spawnMinionForOwner(world, owner, index);
+  }
+}
+
+export function initSummonerArchetype(): void {}
 
 export function updateSummonerArchetype(world: World, dt: number, now: number): void {
   for (const owner of world.summonerPlayers) {
     const summoner = owner as SummonerPlayerEntity;
     reconcileMinionSlots(world, summoner);
+    if (summoner.controlsSummons) {
+      tickSummonerSpecializations(
+        world,
+        summoner as SummonerPlayerEntity & { controlsSummons: NonNullable<PlayerEntity['controlsSummons']> },
+        now,
+      );
+    }
+    collectDeaths(world, summoner);
+    spawnFreshSlots(world, summoner);
+    tickSummonReconstruction(world, summoner, dt, now);
     syncLiveMinionFrameStats(world, summoner);
     validateSummonerCommand(world, summoner);
 
-    const summons = summoner.summonsMinions;
-    const targetCount = summons.targetCount;
-    let respawnMs = Math.max(0, Math.round(
-      summoner.usesSkills.passives['summoner.minion-respawn-ms'] ?? DEFAULT_RESPAWN_MS,
-    ));
-    respawnMs = resolveSummonerRelicProfile(
-      respawnMs,
-      Math.max(1, summons.targetCount),
-      relicRatingsFromPassives(summoner.usesSkills.passives),
-    ).respawnMs.after;
-    const stoneSentinel = isStoneSentinelOwner(summoner);
-    if (stoneSentinel) {
-      respawnMs = Math.max(0, Math.round(
-        respawnMs * (summoner.usesSkills.passives['summoner.sentinel-respawn-mult'] ?? 0.5),
-      ));
-    }
-    const staggeredRespawnSlot = stoneSentinel
-      ? stoneSentinelActiveRespawnSlot(world, summons)
-      : null;
-
-    for (let slot = 0; slot < targetCount; slot++) {
-      const id = summons.minionIds[slot];
+    for (const id of summoner.summonsMinions.minionIds) {
       const minion = id ? world.getMinionEntity(id) : undefined;
-
-      if (minion && minion.hasHealth.hp > 0) {
-        // Keep minions in the owner's node (gate transitions relocate via
-        // `relocateMinionsForOwner`; this covers any other teleport edge cases).
-        if (minion.hasPosition.nodeId !== summoner.hasPosition.nodeId) {
-          minion.hasPosition.nodeId = summoner.hasPosition.nodeId;
-          markSliceDirty(world, minion, 'hasPosition');
-        }
-        if (tickAcidLurkerLifetime(world, summoner, minion, dt)) {
-          tryVitalBurst(world, summoner, minion, now);
-          despawnMinion(world, minion);
-        } else {
-          runMinionRegen(world, summoner, minion, dt, now);
-          driveMinion(world, minion, summoner, now);
-        }
-        continue;
+      if (!minion || minion.hasHealth.hp <= 0) continue;
+      if (minion.hasPosition.nodeId !== summoner.hasPosition.nodeId) {
+        minion.hasPosition.nodeId = summoner.hasPosition.nodeId;
+        markSliceDirty(world, minion, 'hasPosition');
       }
-
-      // Dead or vanished — make sure the entity is gone and start a timer.
-      if (minion) {
-        if (minion.hasHealth.hp <= 0) {
-          tryAcidBroodMinionExplosion(world, summoner, minion);
-          tryVitalBurst(world, summoner, minion, now);
-        }
-        despawnMinion(world, minion);
-      } else if (id) {
-        summons.minionIds[slot] = '';
-      }
-
-      if (stoneSentinel && staggeredRespawnSlot !== slot) {
-        summons.respawnTimers[slot] = 0;
-        continue;
-      }
-
-      if (summons.respawnTimers[slot] <= 0) {
-        summons.respawnTimers[slot] = respawnMs;
-        continue;
-      }
-      // Equipping a frequency Relic while a summon is down takes effect now,
-      // rather than leaving the old, longer timer running to completion.
-      summons.respawnTimers[slot] = Math.min(summons.respawnTimers[slot], respawnMs);
-      summons.respawnTimers[slot] = Math.max(0, summons.respawnTimers[slot] - dt);
-      if (summons.respawnTimers[slot] === 0) {
-        spawnMinionForOwner(world, summoner, slot);
-      }
+      runMinionRegen(world, summoner, minion, dt, now);
+      driveMinion(world, minion, summoner, now);
     }
   }
 }

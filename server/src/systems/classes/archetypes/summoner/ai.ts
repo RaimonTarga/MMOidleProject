@@ -21,12 +21,13 @@ import type { MinionEntity, MonsterEntity, PlayerEntity } from '../../../../ecs/
 import { markSliceDirty } from '../../../../ecs/dirtyHelpers';
 import { setEntityMotion, stopEntity } from '../../../world/movement';
 import { setAttackTarget } from '../../../combat/ai/targeting';
-import { runPlayerAttack } from '../../../combat/engine/combat';
+import { runFormationAttack } from './formationAttack';
 import { computeMinionSpeed, despawnMinion, getFollowOffset } from './spawn';
 import {
   resolveCommandedFocusTarget,
   resolveCommandedMoveDestination,
 } from './command';
+import { summonerProfileFor } from './profile';
 
 // Pixels — how close to the follow offset is "close enough" to idle.
 const FOLLOW_HOVER_TOL = 10;
@@ -38,8 +39,7 @@ const LEASH_MARGIN = 4;
  * can shift it without touching the AI body.
  */
 export function computeLeashRadius(owner: PlayerEntity): number {
-  const mult = owner.usesSkills.passives['summoner.leash-mult'] ?? 2.0;
-  return Math.max(40, owner.performsAttack.attackRange * mult);
+  return summonerProfileFor(owner).leashRadius;
 }
 
 function isStoneSentinelArcher(owner: PlayerEntity, minion: MinionEntity): boolean {
@@ -111,10 +111,7 @@ function driveStoneSentinel(
     cm.currentTargetId = target.isMonster.id;
 
     if (now - minion.performsAttack.lastAttackAt >= minion.performsAttack.attackCooldown) {
-      const outcome = runPlayerAttack(world, owner, target, now, {
-        attackOrigin: minion.hasPosition.current,
-        aggroSource:  { id: minion.isMinion.id, kind: 'minion' },
-      });
+      const outcome = runFormationAttack(world, owner, minion, target, now);
       if (outcome !== 'cancelled') {
         minion.performsAttack.lastAttackAt = now;
       }
@@ -140,6 +137,7 @@ function findMinionTarget(
   let best: MonsterEntity | null = null;
   let bestDistSq = Infinity;
   for (const m of world.monsterEntitiesInNode(owner.hasPosition.nodeId)) {
+    if (m.hasHealth.hp <= 0) continue;
     const distSq = distanceSq(m.hasPosition.current, owner.hasPosition.current);
     if (distSq > leashSq) continue;
     if (distSq < bestDistSq) {
@@ -281,8 +279,9 @@ export function driveMinion(
   }
 
   const leashRadius = computeLeashRadius(owner);
+  const profile = summonerProfileFor(owner);
   const passives = owner.usesSkills.passives;
-  const isSwarm = !!passives['summoner.swarm'];
+  const isSwarm = profile.specialization === 'endless-swarm';
   const focusOverride = resolveCommandedFocusTarget(world, owner);
   const moveDest = resolveCommandedMoveDestination(owner, leashRadius);
   const isTrampleBoar =
@@ -313,8 +312,21 @@ export function driveMinion(
     }
 
     if (world.collision.canReach(minion, target, minion.performsAttack.attackRange)) {
-      // In range — stop and attack on cooldown.
-      stopEntity(world, minion);
+      // Harriers keep moving away when crowded; guardian/escort formations hold.
+      const targetDistance = distance(minion.hasPosition.current, target.hasPosition.current);
+      if (profile.formationPolicy === 'harrier'
+        && targetDistance < profile.preferredDistance * 0.65) {
+        const dx = minion.hasPosition.current.x - target.hasPosition.current.x;
+        const dy = minion.hasPosition.current.y - target.hasPosition.current.y;
+        const length = Math.sqrt(dx * dx + dy * dy) || 1;
+        const retreat = profile.preferredDistance - targetDistance;
+        setEntityMotion(world, minion, clampToLeash(owner, {
+          x: minion.hasPosition.current.x + (dx / length) * retreat,
+          y: minion.hasPosition.current.y + (dy / length) * retreat,
+        }, leashRadius));
+      } else {
+        stopEntity(world, minion);
+      }
       if (!stickyTarget) {
         setAttackTarget(world, minion, target.isMonster.id);
         cm.currentTargetId = target.isMonster.id;
@@ -333,11 +345,14 @@ export function driveMinion(
             passives['summoner.trample-charge-cd-ms'] ?? 10_000,
           );
         }
-        const outcome = runPlayerAttack(world, owner, target, now, {
-          attackOrigin: minion.hasPosition.current,
-          aggroSource:  { id: minion.isMinion.id, kind: 'minion' },
-          metadata:     Object.keys(attackMetadata).length > 0 ? attackMetadata : undefined,
-        });
+        const outcome = runFormationAttack(
+          world,
+          owner,
+          minion,
+          target,
+          now,
+          Object.keys(attackMetadata).length > 0 ? attackMetadata : undefined,
+        );
         if (outcome !== 'cancelled') {
           minion.performsAttack.lastAttackAt = now;
         }

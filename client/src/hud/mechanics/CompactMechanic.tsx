@@ -1,5 +1,17 @@
 import type { MechanicViewModel } from './types';
 
+const SUMMONER_COMPACT_LABELS = {
+  'volatile-brood': 'Volatile Brood',
+  'endless-swarm': 'Endless Swarm',
+  'harrier-brood': 'Harrier Brood',
+  'coordinated-hunt': 'Coordinated Hunt',
+  'withering-chorus': 'Withering Chorus',
+  'grand-ritual': 'Grand Ritual',
+  colossus: 'Colossus',
+  'battle-bond': 'Battle Bond',
+  'twin-covenant': 'Twin Covenant',
+} as const;
+
 function compactState(model: MechanicViewModel): { label: string; value: string; pct: number } {
   switch (model.kind) {
     case 'cadence':
@@ -23,7 +35,11 @@ function compactState(model: MechanicViewModel): { label: string; value: string;
         ? { label: 'Heat', value: model.overheated ? `Cooling ${model.heatPct}%` : `${model.heatPct}%`, pct: model.heatPct }
         : { label: 'Ammo', value: model.ammo === 0 ? 'Reloading…' : `${model.ammo} / ${model.ammoMax}`, pct: model.ammoMax > 0 ? model.ammo / model.ammoMax * 100 : 0 };
     case 'summoner':
-      return { label: 'Summons', value: `${model.activeCount} / ${model.slotCount} active`, pct: model.slotCount > 0 ? model.activeCount / model.slotCount * 100 : 0 };
+      return {
+        label: model.specialization ? SUMMONER_COMPACT_LABELS[model.specialization] : 'Summons',
+        value: `${model.activeCount} / ${model.slotCount} active`,
+        pct: model.slotCount > 0 ? model.activeCount / model.slotCount * 100 : 0,
+      };
     case 'dot':
       return { label: `${model.stackLabel} stacks`, value: model.hasTarget ? `${model.stacks} / ${model.maxStacks}` : 'No target', pct: model.stackPct };
   }
@@ -36,7 +52,9 @@ export function CompactMechanic({ model }: { model: MechanicViewModel }) {
     ? model.element
     : model.kind === 'reload' && model.mode === 'heat'
       ? 'heat'
-      : model.kind;
+      : model.kind === 'summoner' && model.specialization
+        ? `summoner-${model.specialization}`
+        : model.kind;
   return (
     <div className={`compact-mechanic compact-mechanic--${tone}`}>
       <div className="stat-row">

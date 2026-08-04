@@ -18,6 +18,7 @@ import { upgradeMechanicEffectsTotal, upgradeStatBonusTotal } from './itemUpgrad
 import { GAME_CONFIG } from '../index';
 import { mergePassives, makeBurstAccumulator, finalizeBurst } from '../passives';
 import { relicRatingsFromPassives, resolveCadenceRelicProfile } from './relics';
+import { summonerSpecializationFor } from '../data/summoner';
 
 /**
  * Map a raw evasion rating (Σ 1/N across all evasion sources) to a deterministic
@@ -357,8 +358,13 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
     p.performsAttack.attackRange,
   );
 
-  // Summoners never attack directly (their minions do), so they can't.
-  const cannotAttack = p.usesSkills.combatArchetype === 'summoner';
+  // Battle Bond is the sole transformative exception to the Conduit contract.
+  const summonerFrame = p.usesSkills.selectedSubVariant ?? 'root';
+  const battleBond = summonerSpecializationFor(
+    summonerFrame,
+    p.usesSkills.unlockedSkills,
+  ) === 'battle-bond';
+  const cannotAttack = p.usesSkills.combatArchetype === 'summoner' && !battleBond;
 
   // 5. Clamp current hp to the new max
   p.hasHealth.hp = Math.max(1, Math.min(p.hasHealth.hp, p.hasHealth.maxHp));

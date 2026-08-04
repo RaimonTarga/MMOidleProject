@@ -389,6 +389,11 @@ function summonSlotsEqual(a: SummonSlotView[], b: SummonSlotView[]): boolean {
       a[i].active !== b[i].active
       || a[i].respawnPct !== b[i].respawnPct
       || a[i].respawnRemainingMs !== b[i].respawnRemainingMs
+      || a[i].slotId !== b[i].slotId
+      || a[i].role !== b[i].role
+      || a[i].queuePosition !== b[i].queuePosition
+      || a[i].marked !== b[i].marked
+      || a[i].ritualCharges !== b[i].ritualCharges
     ) {
       return false;
     }

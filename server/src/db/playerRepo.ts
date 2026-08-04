@@ -10,6 +10,7 @@ import type {
   IsPlayer,
   TracksProgression,
   UsesSkills,
+  SummonsMinions,
 } from '@mmo-idle/shared';
 import {
   DEFAULT_RUNE_LOADOUT,
@@ -47,6 +48,7 @@ export interface PersistedPlayerSlices {
   tracksProgression: TracksProgression;
   holdsInventory:    HoldsInventory;
   usesSkills:        UsesSkills;
+  summonerState?:    SummonsMinions;
 }
 
 // ── Account ───────────────────────────────────────────────────────────────────
@@ -368,6 +370,11 @@ export async function saveCharacter(
         ...entity.usesSkills,
         passives: {},
       }),
+      summonerState: entity.summonsMinions ? JSON.stringify({
+        ...entity.summonsMinions,
+        minionIds: new Array(entity.summonsMinions.targetCount).fill(''),
+        respawnTimers: new Array(entity.summonsMinions.targetCount).fill(0),
+      }) : null,
       lastPlayedAt:      now,
       updatedAt:         now,
     })
@@ -525,6 +532,39 @@ function hydratePlayerSlices(row: CharacterRow): PersistedPlayerSlices {
       ...parseSlice<UsesSkills>(row.usesSkills),
       passives: {},
     },
+    summonerState: row.summonerState
+      ? sanitizePersistedSummonerState(parseSlice<SummonsMinions>(row.summonerState))
+      : undefined,
+  };
+}
+
+function sanitizePersistedSummonerState(state: SummonsMinions): SummonsMinions {
+  const targetCount = Math.max(1, Math.min(9, Math.round(state.targetCount ?? state.slotIds?.length ?? 1)));
+  const slotIds = Array.from({ length: targetCount }, (_, index) => (
+    state.slotIds?.[index] ?? `normal:${index}`
+  ));
+  const validIds = new Set(slotIds);
+  const reconstructionQueue = (state.reconstructionQueue ?? [])
+    .filter((slotId, index, all) => validIds.has(slotId) && all.indexOf(slotId) === index);
+  const active = state.activeReconstruction && validIds.has(state.activeReconstruction.slotId)
+    ? {
+      slotId: state.activeReconstruction.slotId,
+      elapsedMs: Math.max(0, state.activeReconstruction.elapsedMs ?? 0),
+      durationMs: Math.max(1, state.activeReconstruction.durationMs ?? 5_000),
+    }
+    : undefined;
+  return {
+    ...state,
+    targetCount,
+    slotIds,
+    slotRoles: Array.from({ length: targetCount }, (_, index) => state.slotRoles?.[index] ?? 'normal'),
+    minionIds: new Array(targetCount).fill(''),
+    respawnTimers: new Array(targetCount).fill(0),
+    reconstructionQueue: active
+      ? reconstructionQueue.filter((slotId) => slotId !== active.slotId)
+      : reconstructionQueue,
+    activeReconstruction: active,
+    redirectCursor: Math.max(0, Math.round(state.redirectCursor ?? 0)),
   };
 }
 

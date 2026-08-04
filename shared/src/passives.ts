@@ -408,6 +408,7 @@ export const SHARED_KEYS = [
 ] as const;
 
 export const SUMMONER_KEYS = [
+  'summoner.reconstruction-interval-mult',
   'summoner.minion-count',
   'summoner.minion-count-mult',
   'summoner.minion-count-cap',

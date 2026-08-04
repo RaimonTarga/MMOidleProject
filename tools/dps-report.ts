@@ -18,6 +18,8 @@ import {
   resolveDotClassProfile,
   resolveEmpoweredMultiplier,
   resolveEnergyMax,
+  resolveSummonerProfile,
+  SUMMONER_SPECIALIZATION_TUNING,
   SKILL_TREE,
   upgradeMechanicEffectsTotal,
   upgradeStatBonusTotal,
@@ -1142,21 +1144,56 @@ function estimateClassDamage(
       notes.push(`sniper full-HP ${fullHpMult}x on top ${Math.round((1 - threshold) * 100)}% HP: ${bonusShots} bonus shot(s)/kill, +${Math.round((killSpeedup - 1) * 100)}% direct vs avg tier HP`);
     }
   } else if (archetype === 'summoner') {
-    const baseCount = p['summoner.minion-count'] ?? 3;
-    const countMult = p['summoner.minion-count-mult'] ?? 1;
-    const countCap = p['summoner.minion-count-cap'];
-    let count = Math.max(1, Math.floor(baseCount * countMult));
-    if ((p['summoner.stone-sentinel'] ?? 0) > 0) count = Math.max(count, Math.round(p['summoner.stone-sentinel-count'] ?? 2));
-    if (countCap && countCap > 0) count = Math.min(count, Math.floor(countCap));
-    const minionMult = (p['summoner.minion-damage-pct'] ?? 1) * (p['summoner.minion-damage-mult'] ?? 1);
-    const minionCd = Math.max(100, p['summoner.minion-attack-cooldown'] ?? 1000);
-    let mult = 1;
-    if ((p['summoner.swarm'] ?? 0) > 0) mult += count * (p['summoner.overwhelmed-pct-per-attacker'] ?? 0.1);
-    const minionHit = directNoOnHit(stats.dealsDamage.attack * minionMult * mult, targetWithDebuffs, platingMult);
+    const profile = resolveSummonerProfile({
+      selectedSubVariant: stats.usesSkills.selectedSubVariant,
+      selectedRange: stats.usesSkills.selectedRange,
+      unlockedSkills: stats.usesSkills.unlockedSkills,
+      passives: p,
+    });
+    const minionCd = Math.max(100, Math.round(
+      stats.performsAttack.attackCooldown * profile.summonAttackCooldownMult,
+    ));
+    const slotAps = 1000 / minionCd;
+    const harrierMult = profile.specialization === 'harrier-brood'
+      ? 1 + profile.slots.length * SUMMONER_SPECIALIZATION_TUNING.harrierBrood.damageTakenPctPerSlot
+      : 1;
+    let formationDirect = 0;
+    for (const slot of profile.slots) {
+      formationDirect += directNoOnHit(
+        stats.dealsDamage.attack * profile.formationOffenseMult * slot.offenseWeight * harrierMult,
+        targetWithDebuffs,
+        platingMult,
+      ) * slotAps;
+    }
+    if (profile.battleBondConduitOffenseWeight > 0) {
+      formationDirect += directNoOnHit(
+        stats.dealsDamage.attack * profile.battleBondConduitOffenseWeight,
+        targetWithDebuffs,
+        platingMult,
+      ) * slotAps;
+    }
     directPerHit = 0;
-    effectiveHitRate = count * (1000 / minionCd);
-    classMechanicPerSec += minionHit * effectiveHitRate;
-    notes.push(`${count} minions at ${(1000 / minionCd).toFixed(2)} APS each`);
+    effectiveHitRate = slotAps;
+    classMechanicPerSec += formationDirect + stats.dealsDamage.onHitDamage * slotAps;
+    if (profile.specialization === 'volatile-brood') {
+      const slot = profile.slots[0]!;
+      classMechanicPerSec += stats.dealsDamage.attack * profile.formationOffenseMult
+        * slot.offenseWeight * SUMMONER_SPECIALIZATION_TUNING.volatileBrood.explosionDamageMult
+        / (SUMMONER_SPECIALIZATION_TUNING.volatileBrood.detonationIntervalMs / 1000);
+    } else if (profile.specialization === 'withering-chorus') {
+      dotPerSec += stats.dealsDamage.attack
+        * SUMMONER_SPECIALIZATION_TUNING.witheringChorus.damagePctPerSlot
+        * profile.slots.length;
+    } else if (profile.specialization === 'grand-ritual') {
+      const ritual = SUMMONER_SPECIALIZATION_TUNING.grandRitual;
+      classMechanicPerSec += stats.dealsDamage.attack * profile.formationOffenseMult
+        * (ritual.damageMult - 1) * ritual.chargesPerLivingSlot
+        / (ritual.intervalMs / 1000);
+    } else if (profile.specialization === 'battle-bond') {
+      const bond = SUMMONER_SPECIALIZATION_TUNING.battleBond;
+      classMechanicPerSec += stats.dealsDamage.attack * 0.5 * (slotAps * 2 / bond.threshold);
+    }
+    notes.push(`${profile.slots.length} ${profile.frame} ${profile.range} summons at ${slotAps.toFixed(2)} APS; formation budget normalized`);
   }
 
   const encounter = applyEncounterAverages(directPerHit, p, targetWithDebuffs);
@@ -1642,14 +1679,13 @@ function mechanicFrequency(stats: PlayerStatsTarget): string {
     return `${ammo} shots, ${asNumber(reloadMs)}ms reload, ${asNumber(hitRate)} effective shots/s`;
   }
   if (archetype === 'summoner') {
-    const baseCount = p['summoner.minion-count'] ?? 3;
-    const countMult = p['summoner.minion-count-mult'] ?? 1;
-    const countCap = p['summoner.minion-count-cap'];
-    let count = Math.max(1, Math.floor(baseCount * countMult));
-    if ((p['summoner.stone-sentinel'] ?? 0) > 0) count = Math.max(count, Math.round(p['summoner.stone-sentinel-count'] ?? 2));
-    if (countCap && countCap > 0) count = Math.min(count, Math.floor(countCap));
-    const minionCd = Math.max(100, p['summoner.minion-attack-cooldown'] ?? 1000);
-    return `${count} minions at ${asNumber(1000 / minionCd)} APS each`;
+    const profile = resolveSummonerProfile({
+      selectedSubVariant: stats.usesSkills.selectedSubVariant,
+      selectedRange: stats.usesSkills.selectedRange,
+      unlockedSkills: stats.usesSkills.unlockedSkills,
+      passives: p,
+    });
+    return `${profile.slots.length} ${profile.frame}/${profile.range} summons at ${asNumber(hitRate)} APS each; one formation budget`;
   }
   return `${asNumber(hitRate)} hits/s`;
 }
@@ -1801,7 +1837,7 @@ function reportFormulaForSubclass(node: SkillNode, rows: ReportRow[]): string {
     archetype === 'dot' ? 'DoT DPS = computeScaledDotDamage(max stacks) / tick interval; direct reduced by conversion pct' :
     archetype === 'energy' ? 'cycle average over energy charge hits plus empowered discharge' :
     archetype === 'reload' ? 'effective shots/s = ammo / (shot time + reload time); spec branches override as needed' :
-    archetype === 'summoner' ? 'minion count * minion APS * inherited attack; minion survival/pathing omitted' :
+    archetype === 'summoner' ? 'sum of weighted slot hits at inherited weapon APS; formation proc/on-hit budget normalized; reconstruction uptime omitted' :
     'steady-state hit estimate';
   const notes = best ? formulaLabel(best) : '';
   return notes && !notes.includes('steady-state hit estimate')

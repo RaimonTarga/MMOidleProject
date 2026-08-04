@@ -81,6 +81,7 @@ export function attachPlayerEntity(
       ...player.usesSkills,
       passives: {},
     },
+    ...(player.summonerState ? { summonsMinions: player.summonerState } : {}),
   };
   entity.hasHitbox = resolvePlayerHitbox(entity);
   world.ecs.add(entity);

@@ -9,7 +9,7 @@ type SlotTransition = 'arrived' | 'lost' | null;
 
 function stateFor(slot: SummonSlot): SlotState {
   if (slot.active) return 'active';
-  return slot.respawnRemainingMs > 0 ? 'respawning' : 'waiting';
+  return slot.queuePosition === 0 ? 'respawning' : 'waiting';
 }
 
 function SummonConduit({ slot, index }: { slot: SummonSlot; index: number }) {
@@ -21,10 +21,12 @@ function SummonConduit({ slot, index }: { slot: SummonSlot; index: number }) {
     : slot.active ? 100 : 0;
   const progress = slot.active ? hpPct : slot.respawnPct;
   const description = slot.active
-    ? `Summon ${index + 1}, active, ${Math.round(hpPct)} percent health`
+    ? `${slot.role} summon ${index + 1}, active, ${Math.round(hpPct)} percent health${slot.marked ? ', marked for detonation' : ''}${slot.ritualCharges > 0 ? `, ${slot.ritualCharges} ritual charges` : ''}`
     : state === 'respawning'
-      ? `Summon ${index + 1}, respawning, ${Math.round(slot.respawnPct)} percent complete`
-      : `Summon ${index + 1}, waiting to spawn`;
+      ? `${slot.role} summon ${index + 1}, reconstructing, ${Math.round(slot.respawnPct)} percent complete`
+      : slot.queuePosition > 0
+        ? `${slot.role} summon ${index + 1}, waiting at queue position ${slot.queuePosition}`
+        : `${slot.role} summon ${index + 1}, waiting to spawn`;
 
   useLayoutEffect(() => {
     const previous = previousState.current;
@@ -43,7 +45,8 @@ function SummonConduit({ slot, index }: { slot: SummonSlot; index: number }) {
 
   return (
     <div
-      className={`mechanic-summon mechanic-summon--${state}${transition ? ` mechanic-summon--${transition}` : ''}`}
+      className={`mechanic-summon mechanic-summon--${state}${slot.marked ? ' mechanic-summon--marked' : ''}${transition ? ` mechanic-summon--${transition}` : ''}`}
+      data-role={slot.role}
       style={{
         '--summon-health': `${hpPct}%`,
         '--summon-progress': `${progress}%`,
@@ -60,6 +63,7 @@ function SummonConduit({ slot, index }: { slot: SummonSlot; index: number }) {
         </span>
         <span className="mechanic-summon__contact" />
         <span className="mechanic-summon__impact" />
+        {slot.ritualCharges > 0 && <span className="mechanic-summon__ritual" aria-hidden="true">{slot.ritualCharges}</span>}
       </span>
       <span className="mechanic-summon__track" aria-hidden="true">
         <span className="mechanic-summon__fill" />
@@ -70,12 +74,20 @@ function SummonConduit({ slot, index }: { slot: SummonSlot; index: number }) {
 
 export function SummonerMechanic({ model }: { model: SummonerMechanicModel }) {
   const help = useMechanicHelp(model);
+  const specializationClass = model.specialization
+    ? ` mechanic-summons--${model.specialization}`
+    : '';
   return (
     <MechanicFrame kind="summoner" title="Summons" help={help}>
-      <div className="mechanic-summons" aria-label={`${model.activeCount} of ${model.slotCount} summons active`}>
+      <div
+        className={`mechanic-summons${specializationClass}`}
+        data-specialization={model.specialization ?? 'baseline'}
+        aria-label={`${model.activeCount} of ${model.slotCount} summons active${model.specialization ? `, ${model.specialization.replace(/-/g, ' ')}` : ''}`}
+      >
+        <span className="mechanic-summons__crest" aria-hidden="true" />
         <span className="mechanic-summons__bus" aria-hidden="true" />
         {model.slots.map((slot, index) => (
-          <SummonConduit key={index} slot={slot} index={index} />
+          <SummonConduit key={slot.slotId} slot={slot} index={index} />
         ))}
       </div>
     </MechanicFrame>

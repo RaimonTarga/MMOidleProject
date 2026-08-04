@@ -65,6 +65,15 @@ export const BUFF_IDS = [
   'summoner-howl-banner',
   'summoner-trample-boon',
   'summoner-debuff-immune',
+  'summoner-volatile-brood',
+  'summoner-endless-swarm',
+  'summoner-harrier-brood',
+  'summoner-coordinated-hunt',
+  'summoner-withering-chorus',
+  'summoner-grand-ritual',
+  'summoner-colossus',
+  'summoner-battle-bond',
+  'summoner-twin-covenant',
   'debuff-stunned',
   // Abilities (system rework Step 7): the active Guard-ability buff (e.g. Brace).
   // One id per GUARD SLOT — two equipped Guards layer independently and each

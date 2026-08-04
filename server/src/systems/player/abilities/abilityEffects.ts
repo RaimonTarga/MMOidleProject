@@ -19,6 +19,7 @@ import {
   applyStatusEffect,
   getStatusEffect,
   resolveAbilityEffect,
+  resolveSummonerProfile,
   type AbilityDef,
   type AbilityEffectSpec,
 } from "@mmo-idle/shared";
@@ -127,6 +128,16 @@ function applyTechniqueRider(
   if (ctx.attackerType !== "player" || ctx.defenderType !== "monster") return;
 
   const effect = techniqueEffect(ctx.attacker, ability);
+  const formationBasis = ctx.formation
+    ? Math.max(1, Math.round(
+      ctx.attacker.dealsDamage.attack * resolveSummonerProfile({
+        selectedSubVariant: ctx.attacker.usesSkills.selectedSubVariant,
+        selectedRange: ctx.attacker.usesSkills.selectedRange,
+        unlockedSkills: ctx.attacker.usesSkills.unlockedSkills,
+        passives: ctx.attacker.usesSkills.passives,
+      }).formationOffenseMult,
+    ))
+    : ctx.damage;
   if (effect.kind === "cleave") {
     // Tag this landed hit so the client overlays the Sweep slash FX on the normal
     // attack and pulses the Technique HUD icon. Stamped before the splash check so
@@ -137,7 +148,7 @@ function applyTechniqueRider(
       ? [...existing, ABILITY_SWEEP_FX]
       : [ABILITY_SWEEP_FX];
 
-    const splash = Math.floor(ctx.damage * effect.splashPct);
+    const splash = Math.floor(formationBasis * effect.splashPct);
     if (splash <= 0) return;
     applyPlayerAoe(
       world,
@@ -158,7 +169,9 @@ function applyTechniqueRider(
       : [ABILITY_TECHNIQUE_FIRED_FX];
     // Scale the landed hit's damage; no splash. Runs in onHit so onDamageTaken
     // still mitigates the boosted value.
-    ctx.damage = Math.max(0, Math.round(ctx.damage * mult));
+    ctx.damage = Math.max(0, Math.round(
+      ctx.damage + formationBasis * Math.max(0, mult - 1),
+    ));
   } else if (effect.kind === "expose-weakness") {
     const existing = ctx.metadata["clientEffects"];
     ctx.metadata["clientEffects"] = Array.isArray(existing)

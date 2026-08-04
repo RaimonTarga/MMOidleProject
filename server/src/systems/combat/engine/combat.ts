@@ -6,10 +6,11 @@ import {
   MONSTER_DATABASE,
   TEST_ROOM_NODE_ID,
   distanceSq,
+  resolveSummonerProfile,
 } from "@mmo-idle/shared";
 import type { AggroTargetKind, MonsterDefinition, Vec2 } from "@mmo-idle/shared";
 import { grantMonsterRewards } from "../../player/progression/rewards";
-import { makeCombatContext, emitCombatEvent } from "./combatPipeline";
+import { makeCombatContext, emitCombatEvent, type FormationAttackContribution } from "./combatPipeline";
 import {
   monsterEmpoweredMultiplier,
   applyEnemySoftCap,
@@ -146,9 +147,35 @@ export function runPlayerAttack(
     attackOrigin: Vec2;
     aggroSource: { id: string; kind: AggroTargetKind };
     metadata?: Record<string, unknown>;
+    /** Optional caller-owned result flags for mechanics that consume only landed attacks. */
+    resultMetadata?: Record<string, unknown>;
+    formation?: FormationAttackContribution;
   },
 ): PlayerAttackOutcome {
   const ctx = makeCombatContext(player, "player", target, "monster");
+  const directSummonerProfile = !opts.formation && player.usesSkills.combatArchetype === 'summoner'
+    ? resolveSummonerProfile({
+      selectedSubVariant: player.usesSkills.selectedSubVariant,
+      selectedRange: player.usesSkills.selectedRange,
+      unlockedSkills: player.usesSkills.unlockedSkills,
+      passives: player.usesSkills.passives,
+    })
+    : null;
+  const battleBondProfile = directSummonerProfile?.specialization === 'battle-bond'
+    ? directSummonerProfile
+    : null;
+  ctx.formation = opts.formation ?? (battleBondProfile ? {
+    ownerId: player.isPlayer.id,
+    physicalEntityId: player.isPlayer.id,
+    slotId: 'conduit:0',
+    directDamageWeight: battleBondProfile.battleBondConduitOffenseWeight,
+    onHitMagnitudeWeight: battleBondProfile.battleBondConduitOffenseWeight,
+    procWeight: battleBondProfile.battleBondConduitOffenseWeight,
+    targetId: target.isMonster.id,
+    cycleSerial: 0,
+    cycleCompleted: false,
+    side: 'conduit',
+  } : undefined);
   ctx.metadata.aggroSource = opts.aggroSource;
   if (opts.metadata) {
     Object.assign(ctx.metadata, opts.metadata);
@@ -170,20 +197,35 @@ export function runPlayerAttack(
   // `weapon.dead-swing-interval` mechanic (authored on the recipe).
   const deadSwingInterval = player.usesSkills.passives["weapon.dead-swing-interval"] ?? 0;
   const chaoticMissEvery = deadSwingInterval > 0 ? Math.round(deadSwingInterval) : 0;
+  const chaoticProgressKey = 'weapon.chaotic-logical-hit';
+  const previousChaoticProgress = ctx.formation && player.controlsSummons
+    ? (player.controlsSummons.procProgress[chaoticProgressKey] ?? 0)
+    : 0;
+  const nextChaoticProgress = previousChaoticProgress + (ctx.formation?.procWeight ?? 1);
+  const chaoticLogicalHits = Math.floor(nextChaoticProgress + 1e-9);
   if (
     chaoticMissEvery &&
-    (getCounter(player.tracksCombat, CHAOTIC_HIT_COUNTER_KEY) + 1) %
+    chaoticLogicalHits > 0 &&
+    (getCounter(player.tracksCombat, CHAOTIC_HIT_COUNTER_KEY) + chaoticLogicalHits) %
       chaoticMissEvery ===
       0
   ) {
     ctx.metadata.chaoticMiss = true;
+  }
+  if (opts.resultMetadata) {
+    opts.resultMetadata.chaoticMiss = ctx.metadata.chaoticMiss === true;
   }
 
   emitCombatEvent("beforeAttack", ctx, world);
   if (ctx.cancelled) return "cancelled";
 
   if (chaoticMissEvery) {
-    addCounter(player.tracksCombat, CHAOTIC_HIT_COUNTER_KEY, 1);
+    if (ctx.formation && player.controlsSummons) {
+      player.controlsSummons.procProgress[chaoticProgressKey] = nextChaoticProgress - chaoticLogicalHits;
+    }
+    if (chaoticLogicalHits > 0) {
+      addCounter(player.tracksCombat, CHAOTIC_HIT_COUNTER_KEY, chaoticLogicalHits);
+    }
   }
 
   emitCombatEvent("onAttack", ctx, world);
@@ -257,10 +299,11 @@ export function runPlayerAttack(
       monsterCombatState,
     ) * (1 - Math.max(0, Math.min(1, ctx.drPierce)));
 
-  const minionDamageMult =
+  const minionDamageMult = ctx.formation?.directDamageWeight ?? (
     opts.aggroSource.kind === "minion"
       ? (player.usesSkills.passives["summoner.minion-damage-mult"] ?? 1.0)
-      : 1.0;
+      : 1.0
+  );
   ctx.damage = Math.max(
     1,
     Math.round(
@@ -291,7 +334,10 @@ export function runPlayerAttack(
     // NOTE this term lands AFTER plating and DR above — that unmitigated placement
     // is what makes core.onhit-mult a distinct axis from core.attack-mult and not a
     // re-skin of it. Keep it on this side of the formula.
-    ctx.damage += Math.round(player.dealsDamage.onHitDamage * onHitMult * coreOnHit);
+    const formationOnHitWeight = ctx.formation?.onHitMagnitudeWeight ?? 1;
+    ctx.damage += Math.round(
+      player.dealsDamage.onHitDamage * onHitMult * coreOnHit * formationOnHitWeight,
+    );
   }
 
   const isEmpowered = !!ctx.metadata["empoweredAttack"];

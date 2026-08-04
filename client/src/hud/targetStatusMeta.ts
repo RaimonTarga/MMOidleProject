@@ -31,6 +31,8 @@ const STATUS_META: Record<string, StatusMeta> = {
   vuln:            { label: 'Vuln',    color: '#ff5577' },
   vulnerability:   { label: 'Vuln',    color: '#ff5577' },
   'expose-weakness': { label: 'Exposed', color: '#ff5577' },
+  'summoner-harried': { label: 'Harried', color: '#e6c35c' },
+  'summoner-withering-chorus': { label: 'Chorus', color: '#9d6ad6' },
   // Pre-encounter aura SOURCE (pack caller / den alpha) — "this one buffs its allies".
   'pre-encounter-aura': { label: 'Rally', color: '#ff9944' },
 };

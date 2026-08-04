@@ -12,8 +12,10 @@ import {
   initUsesCooldown,
   initUsesEnergy,
   initUsesReload,
+  resolveSummonerProfile,
 } from '@mmo-idle/shared';
 import { attachComponent, detachComponent } from './markerHelpers';
+import { initControlsSummons } from '../systems/classes/archetypes/summoner/controlsSummons';
 
 function syncArchetypeSlice<K extends keyof ServerEntity>(
   world: World,
@@ -83,16 +85,31 @@ export function syncArchetypeSlices(world: World, entity: PlayerEntity): void {
     () => initUsesReload({ ammoMax: entity.usesReload?.ammoMax ?? 0 }),
   );
 
-  // The summoner archetype attaches `summonsMinions`. Initial slot count uses the
-  // passive value if available (post-recalc) and defaults to 3 otherwise.
-  const minionBaseCount = passives['summoner.minion-count'] ?? 3;
-  const minionCountMult = passives['summoner.minion-count-mult'] ?? 1.0;
-  const minionCount = Math.max(1, Math.floor(minionBaseCount * minionCountMult));
+  const summonerProfile = resolveSummonerProfile({
+    selectedSubVariant: entity.usesSkills.selectedSubVariant,
+    selectedRange: entity.usesSkills.selectedRange,
+    unlockedSkills: entity.usesSkills.unlockedSkills,
+    passives,
+  });
   syncArchetypeSlice(
     world,
     entity,
     archetype === 'summoner',
     'summonsMinions',
-    () => entity.summonsMinions ?? initSummonsMinions({ targetCount: minionCount }),
+    () => entity.summonsMinions ?? initSummonsMinions({ slots: summonerProfile.slots }),
   );
+  syncArchetypeSlice(
+    world,
+    entity,
+    archetype === 'summoner',
+    'controlsSummons',
+    () => entity.controlsSummons ?? initControlsSummons(),
+  );
+  if (archetype === 'summoner' && entity.summonsMinions) {
+    const summons = entity.summonsMinions;
+    summons.slotIds ??= Array.from({ length: summons.targetCount }, (_, index) => `normal:${index}`);
+    summons.slotRoles ??= new Array(summons.targetCount).fill('normal');
+    summons.reconstructionQueue ??= [];
+    summons.redirectCursor ??= 0;
+  }
 }

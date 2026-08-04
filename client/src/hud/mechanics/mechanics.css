@@ -1089,6 +1089,353 @@
   box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.8);
 }
 
+.mechanic-summons__crest {
+  position: absolute;
+  z-index: 3;
+  top: -4px;
+  left: 50%;
+  display: none;
+  width: 16px;
+  height: 7px;
+  pointer-events: none;
+  transform: translateX(-50%);
+}
+
+.mechanic-summons[data-specialization]:not([data-specialization='baseline']) .mechanic-summons__crest {
+  display: block;
+}
+
+/* Light paths: unstable embers, dense motes, and aerodynamic hunter sockets. */
+.mechanic-summons--volatile-brood {
+  --summon-tone: #ef693f;
+  --summon-bright: #ffd0a6;
+  --summon-dark: #5e2116;
+  --summon-glow: rgba(239, 80, 42, 0.62);
+  background:
+    repeating-linear-gradient(118deg, transparent 0 9px, rgba(255, 91, 41, 0.045) 9px 12px),
+    radial-gradient(circle at 50% 55%, rgba(151, 42, 22, 0.2), transparent 58%),
+    linear-gradient(180deg, #1d1511, #100c0a);
+}
+
+.mechanic-summons--volatile-brood .mechanic-summons__crest {
+  height: 8px;
+  background: #ff7b43;
+  clip-path: polygon(50% 0, 100% 100%, 64% 78%, 50% 100%, 36% 78%, 0 100%);
+  filter: drop-shadow(0 0 3px rgba(255, 88, 40, 0.9));
+}
+
+.mechanic-summons--volatile-brood .mechanic-summon__vessel {
+  border-color: #6f3829;
+  clip-path: polygon(50% 0, 94% 13%, 100% 67%, 72% 100%, 50% 84%, 28% 100%, 0 67%, 6% 13%);
+}
+
+.mechanic-summons--volatile-brood .mechanic-summon__core {
+  border-radius: 1px;
+  clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
+}
+
+.mechanic-summons--endless-swarm {
+  --summon-tone: #64b979;
+  --summon-bright: #c8f0bd;
+  --summon-dark: #153c25;
+  --summon-glow: rgba(85, 195, 113, 0.48);
+  gap: 1px;
+  padding-right: 3px;
+  padding-left: 3px;
+  background:
+    radial-gradient(circle at 18% 32%, rgba(95, 194, 113, 0.12) 0 2px, transparent 3px),
+    radial-gradient(circle at 72% 68%, rgba(95, 194, 113, 0.09) 0 2px, transparent 3px),
+    linear-gradient(180deg, #131b13, #0c100c);
+}
+
+.mechanic-summons--endless-swarm .mechanic-summons__crest {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #bde8b6;
+  box-shadow: -6px 2px 0 #64b979, 6px 2px 0 #64b979, 0 0 5px rgba(91, 206, 116, 0.8);
+}
+
+.mechanic-summons--endless-swarm .mechanic-summon__socket {
+  width: 27px;
+}
+
+.mechanic-summons--endless-swarm .mechanic-summon__ring {
+  width: 25px;
+  height: 25px;
+}
+
+.mechanic-summons--endless-swarm .mechanic-summon__vessel {
+  top: 3px;
+  width: 13px;
+  height: 21px;
+}
+
+.mechanic-summons--endless-swarm .mechanic-summon__core {
+  width: 5px;
+  height: 7px;
+}
+
+.mechanic-summons--endless-swarm .mechanic-summon--active:nth-of-type(even) .mechanic-summon__socket {
+  animation: summon-swarm-drift 1.9s ease-in-out infinite alternate;
+}
+
+.mechanic-summons--harrier-brood {
+  --summon-tone: #d6b750;
+  --summon-bright: #fff0a8;
+  --summon-dark: #493711;
+  --summon-glow: rgba(230, 195, 92, 0.56);
+  background:
+    linear-gradient(135deg, transparent 22%, rgba(231, 196, 88, 0.055) 22% 25%, transparent 25% 75%, rgba(231, 196, 88, 0.04) 75% 78%, transparent 78%),
+    linear-gradient(180deg, #1b1910, #100f0b);
+}
+
+.mechanic-summons--harrier-brood .mechanic-summons__crest {
+  width: 20px;
+  border-top: 2px solid #f2da77;
+  border-right: 5px solid transparent;
+  border-left: 5px solid transparent;
+  transform: translateX(-50%) skewX(-18deg);
+  filter: drop-shadow(0 0 3px rgba(230, 195, 92, 0.65));
+}
+
+.mechanic-summons--harrier-brood .mechanic-summon__vessel {
+  width: 18px;
+  clip-path: polygon(50% 0, 100% 32%, 72% 79%, 50% 100%, 28% 79%, 0 32%);
+}
+
+.mechanic-summons--harrier-brood .mechanic-summon__core {
+  clip-path: polygon(0 35%, 40% 35%, 50% 0, 60% 35%, 100% 35%, 62% 58%, 50% 100%, 38% 58%);
+}
+
+/* Balanced paths: synchronized circuitry, a persistent curse, and ritual geometry. */
+.mechanic-summons--coordinated-hunt {
+  --summon-tone: #e39a48;
+  --summon-bright: #ffe0a1;
+  --summon-dark: #4d2d12;
+  --summon-glow: rgba(227, 154, 72, 0.55);
+  background:
+    linear-gradient(90deg, transparent 49%, rgba(230, 159, 76, 0.08) 50%, transparent 51%),
+    linear-gradient(180deg, #1c1710, #100e0b);
+}
+
+.mechanic-summons--coordinated-hunt .mechanic-summons__crest {
+  width: 7px;
+  height: 7px;
+  border: 1px solid #ffd68d;
+  background: #6b3d18;
+  box-shadow: -7px 0 0 -2px #e39a48, 7px 0 0 -2px #e39a48, 0 0 5px rgba(227, 154, 72, 0.7);
+  transform: translateX(-50%) rotate(45deg);
+}
+
+.mechanic-summons--coordinated-hunt .mechanic-summons__bus {
+  background: linear-gradient(90deg, #17201b 20%, #a56a31 50%, #17201b 80%);
+  background-size: 200% 100%;
+  animation: summon-coordinated-link 2.2s linear infinite;
+}
+
+.mechanic-summons--coordinated-hunt .mechanic-summon__core {
+  border-radius: 1px;
+}
+
+.mechanic-summons--coordinated-hunt .mechanic-summon--active .mechanic-summon__ring {
+  animation: summon-coordinated-pulse 2.2s ease-in-out infinite;
+}
+
+.mechanic-summons--withering-chorus {
+  --summon-tone: #8e61bb;
+  --summon-bright: #d8b5f0;
+  --summon-dark: #2d183e;
+  --summon-glow: rgba(145, 86, 196, 0.58);
+  background:
+    radial-gradient(ellipse at 50% 105%, rgba(117, 59, 159, 0.24), transparent 64%),
+    linear-gradient(180deg, #18121d, #0e0b11);
+}
+
+.mechanic-summons--withering-chorus .mechanic-summons__crest {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  box-shadow: inset 3px -1px 0 #c99dea, 0 0 5px rgba(157, 106, 214, 0.8);
+}
+
+.mechanic-summons--withering-chorus .mechanic-summon__vessel {
+  border-color: #54346d;
+  border-radius: 45% 45% 28% 28%;
+  clip-path: none;
+}
+
+.mechanic-summons--withering-chorus .mechanic-summon__core {
+  border-radius: 70% 30% 65% 35%;
+}
+
+.mechanic-summons--withering-chorus .mechanic-summon--active .mechanic-summon__core {
+  animation: summon-chorus-sway 2.6s ease-in-out infinite;
+}
+
+.mechanic-summons--grand-ritual {
+  --summon-tone: #55b8c8;
+  --summon-bright: #c9f8fb;
+  --summon-dark: #163a43;
+  --summon-glow: rgba(80, 197, 214, 0.58);
+  background:
+    linear-gradient(30deg, transparent 47%, rgba(93, 201, 215, 0.06) 48% 52%, transparent 53%),
+    linear-gradient(150deg, transparent 47%, rgba(93, 201, 215, 0.04) 48% 52%, transparent 53%),
+    radial-gradient(circle at 50% 50%, rgba(63, 166, 181, 0.16), transparent 61%),
+    #0d1415;
+}
+
+.mechanic-summons--grand-ritual .mechanic-summons__crest {
+  width: 11px;
+  height: 11px;
+  border: 1px solid #9eeaf1;
+  border-top-color: transparent;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 2px #173e45, 0 0 5px rgba(85, 184, 200, 0.8);
+  animation: summon-ritual-turn 5s linear infinite;
+}
+
+.mechanic-summons--grand-ritual .mechanic-summon__ring {
+  filter: drop-shadow(0 0 2px var(--summon-glow));
+}
+
+.mechanic-summons--grand-ritual .mechanic-summon__core {
+  border-radius: 0;
+  clip-path: polygon(50% 0, 64% 34%, 100% 50%, 64% 66%, 50% 100%, 36% 66%, 0 50%, 36% 34%);
+}
+
+/* Heavy paths: one stone engine, a paired bond, and visibly asymmetric twins. */
+.mechanic-summons--colossus {
+  --summon-tone: #a47c4f;
+  --summon-bright: #e2c497;
+  --summon-dark: #392919;
+  --summon-glow: rgba(181, 138, 88, 0.5);
+  min-height: 62px;
+  background:
+    repeating-linear-gradient(90deg, transparent 0 18px, rgba(189, 151, 99, 0.035) 18px 19px),
+    linear-gradient(180deg, #1d1914, #100e0b);
+}
+
+.mechanic-summons--colossus .mechanic-summons__crest {
+  width: 18px;
+  height: 6px;
+  border: 1px solid #c09b6d;
+  border-radius: 1px;
+  background: #3d2c1b;
+  box-shadow: inset 4px 0 0 #7c5938, inset -4px 0 0 #7c5938, 0 0 4px rgba(181, 138, 88, 0.5);
+}
+
+.mechanic-summons--colossus .mechanic-summon {
+  max-width: 58px;
+}
+
+.mechanic-summons--colossus .mechanic-summon__socket {
+  width: 42px;
+  height: 43px;
+}
+
+.mechanic-summons--colossus .mechanic-summon__ring {
+  width: 38px;
+  height: 38px;
+  border-radius: 18%;
+}
+
+.mechanic-summons--colossus .mechanic-summon__vessel {
+  top: 4px;
+  width: 23px;
+  height: 32px;
+  border-width: 2px;
+  clip-path: polygon(22% 0, 78% 0, 100% 20%, 92% 82%, 68% 100%, 32% 100%, 8% 82%, 0 20%);
+}
+
+.mechanic-summons--colossus .mechanic-summon__core {
+  width: 10px;
+  height: 15px;
+  border-radius: 2px;
+}
+
+.mechanic-summons--battle-bond {
+  --summon-tone: #d0b455;
+  --summon-bright: #fff0a6;
+  --summon-dark: #3d3416;
+  --summon-glow: rgba(238, 207, 104, 0.56);
+  background:
+    linear-gradient(115deg, rgba(76, 166, 169, 0.1) 0 48%, transparent 49% 51%, rgba(208, 180, 85, 0.1) 52% 100%),
+    linear-gradient(180deg, #181713, #0f0f0c);
+}
+
+.mechanic-summons--battle-bond .mechanic-summons__crest {
+  width: 7px;
+  height: 7px;
+  border: 1px solid #f5de7d;
+  background: #574719;
+  box-shadow: -8px 0 0 -1px #62afb2, 8px 0 0 -1px #d0b455, 0 0 5px rgba(238, 207, 104, 0.7);
+  transform: translateX(-50%) rotate(45deg);
+}
+
+.mechanic-summons--battle-bond .mechanic-summons__bus {
+  height: 5px;
+  background: linear-gradient(180deg, #37787a 0 1px, #121714 1px 3px, #927c35 3px 4px, #080a09 4px);
+}
+
+.mechanic-summons--battle-bond .mechanic-summon__vessel {
+  border-right-color: #9d8439;
+  border-left-color: #4b979a;
+}
+
+.mechanic-summons--battle-bond .mechanic-summon__core {
+  border-radius: 1px;
+  background: linear-gradient(90deg, #8ed7d5 0 48%, #ffe28a 52% 100%);
+  clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
+}
+
+.mechanic-summons--twin-covenant {
+  --summon-tone: #a989b5;
+  --summon-bright: #ebd5ef;
+  --summon-dark: #36233c;
+  --summon-glow: rgba(195, 133, 190, 0.48);
+  background:
+    linear-gradient(90deg, rgba(190, 91, 123, 0.11), transparent 48% 52%, rgba(84, 145, 183, 0.12)),
+    linear-gradient(180deg, #191318, #0f0c10);
+}
+
+.mechanic-summons--twin-covenant .mechanic-summons__crest {
+  width: 6px;
+  height: 6px;
+  border: 1px solid #f2b5cb;
+  border-radius: 50%;
+  background: #6f2f4b;
+  box-shadow: 9px 0 0 -1px #4f8fb4, 4px 0 5px rgba(188, 134, 194, 0.6);
+  transform: translateX(calc(-50% - 4px));
+}
+
+.mechanic-summons--twin-covenant .mechanic-summons__bus {
+  background: linear-gradient(90deg, #5f293f, #35233b 48%, #243b4c 52%, #396b88);
+}
+
+.mechanic-summons--twin-covenant .mechanic-summon[data-role='offense-twin'] {
+  --summon-tone: #c65d82;
+  --summon-bright: #ffd0df;
+  --summon-dark: #501d31;
+  --summon-glow: rgba(211, 81, 125, 0.58);
+}
+
+.mechanic-summons--twin-covenant .mechanic-summon[data-role='defense-twin'] {
+  --summon-tone: #5795bb;
+  --summon-bright: #ccecff;
+  --summon-dark: #1e3c50;
+  --summon-glow: rgba(75, 152, 197, 0.58);
+}
+
+.mechanic-summons--twin-covenant .mechanic-summon[data-role='offense-twin'] .mechanic-summon__vessel {
+  clip-path: polygon(50% 0, 100% 25%, 76% 100%, 24% 100%, 0 25%);
+}
+
+.mechanic-summons--twin-covenant .mechanic-summon[data-role='defense-twin'] .mechanic-summon__vessel {
+  width: 19px;
+  clip-path: polygon(20% 0, 80% 0, 100% 18%, 88% 86%, 50% 100%, 12% 86%, 0 18%);
+}
+
 .mechanic-summon {
   position: relative;
   z-index: 1;
@@ -1204,6 +1551,34 @@
   pointer-events: none;
 }
 
+.mechanic-summon__ritual {
+  position: absolute;
+  top: -5px;
+  right: -3px;
+  z-index: 2;
+  min-width: 12px;
+  height: 12px;
+  padding: 0 2px;
+  border: 1px solid #baf5ff;
+  border-radius: 6px;
+  background: #17343a;
+  color: #d9fbff;
+  font: 700 8px/10px var(--hud-font-mono);
+  text-align: center;
+  box-shadow: 0 0 6px rgba(102, 199, 215, 0.85);
+}
+
+.mechanic-summon--marked {
+  --summon-tone: #ff7043;
+  --summon-bright: #ffd0b8;
+  --summon-dark: #622613;
+  --summon-glow: rgba(255, 80, 40, 0.8);
+}
+
+.mechanic-summon--marked .mechanic-summon__ring {
+  animation: summon-volatile-pulse 700ms ease-in-out infinite;
+}
+
 .mechanic-summon__track {
   width: 100%;
   height: 4px;
@@ -1280,6 +1655,36 @@
 @keyframes summon-core-breathe {
   0%, 100% { filter: brightness(1); transform: translate(-50%, -50%) scale(0.94); }
   50% { filter: brightness(1.45); transform: translate(-50%, -50%) scale(1.08); }
+}
+
+@keyframes summon-volatile-pulse {
+  0%, 100% { filter: brightness(0.9); }
+  50% { filter: brightness(1.55); }
+}
+
+@keyframes summon-swarm-drift {
+  from { transform: translateY(1px); }
+  to { transform: translateY(-2px); }
+}
+
+@keyframes summon-coordinated-link {
+  from { background-position: 100% 0; }
+  to { background-position: -100% 0; }
+}
+
+@keyframes summon-coordinated-pulse {
+  0%, 72%, 100% { filter: brightness(0.9); }
+  82% { filter: brightness(1.55); }
+}
+
+@keyframes summon-chorus-sway {
+  0%, 100% { transform: translate(-50%, -50%) rotate(-7deg) scale(0.95); }
+  50% { transform: translate(-50%, -50%) rotate(7deg) scale(1.08); }
+}
+
+@keyframes summon-ritual-turn {
+  from { transform: translateX(-50%) rotate(0deg); }
+  to { transform: translateX(-50%) rotate(360deg); }
 }
 
 @keyframes summon-rebuild-current {
@@ -1676,6 +2081,15 @@
 .compact-mechanic--energy .compact-mechanic__track > span { background: var(--hud-mechanic-energy); }
 .compact-mechanic--reload .compact-mechanic__track > span { background: var(--hud-mechanic-reload); }
 .compact-mechanic--summoner .compact-mechanic__track > span { background: var(--hud-mechanic-summoner); }
+.compact-mechanic--summoner-volatile-brood .compact-mechanic__track > span { background: #ef693f; }
+.compact-mechanic--summoner-endless-swarm .compact-mechanic__track > span { background: #64b979; }
+.compact-mechanic--summoner-harrier-brood .compact-mechanic__track > span { background: #d6b750; }
+.compact-mechanic--summoner-coordinated-hunt .compact-mechanic__track > span { background: #e39a48; }
+.compact-mechanic--summoner-withering-chorus .compact-mechanic__track > span { background: #8e61bb; }
+.compact-mechanic--summoner-grand-ritual .compact-mechanic__track > span { background: #55b8c8; }
+.compact-mechanic--summoner-colossus .compact-mechanic__track > span { background: #a47c4f; }
+.compact-mechanic--summoner-battle-bond .compact-mechanic__track > span { background: linear-gradient(90deg, #62afb2, #d0b455); }
+.compact-mechanic--summoner-twin-covenant .compact-mechanic__track > span { background: linear-gradient(90deg, #c65d82, #5795bb); }
 .compact-mechanic--heat .compact-mechanic__track > span { background: var(--hud-warning); }
 .compact-mechanic--poison .compact-mechanic__track > span { background: var(--hud-mechanic-poison); }
 .compact-mechanic--fire .compact-mechanic__track > span { background: var(--hud-mechanic-fire); }
@@ -1844,6 +2258,12 @@
   }
 
   .mechanic-summon--active .mechanic-summon__core,
+  .mechanic-summons--endless-swarm .mechanic-summon__socket,
+  .mechanic-summons--coordinated-hunt .mechanic-summons__bus,
+  .mechanic-summons--coordinated-hunt .mechanic-summon__ring,
+  .mechanic-summons--withering-chorus .mechanic-summon__core,
+  .mechanic-summons--grand-ritual .mechanic-summons__crest,
+  .mechanic-summon--marked .mechanic-summon__ring,
   .mechanic-summon--respawning .mechanic-summon__charge,
   .mechanic-summon--respawning .mechanic-summon__core,
   .mechanic-summon--arrived .mechanic-summon__impact,

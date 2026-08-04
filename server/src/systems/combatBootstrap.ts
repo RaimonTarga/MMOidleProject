@@ -5,7 +5,6 @@ import { initDebuffMechanics } from "./classes/shared/debuffs";
 import { initInvulnerabilityGuard } from "./combat/invulnerability";
 import { initDeadPlayerGuard } from "./world/playerIncapacitation";
 import {
-  registerMountainPathHooks,
   registerSummonerDamageSponge,
 } from "./classes/archetypes/summoner";
 import { initMobilityBoots } from "./world/mobility/mobilityBoots";
@@ -63,7 +62,6 @@ export function initCombatSystems(): void {
   // Cores: Duelist elite/boss damage (onHit) + Bruiser mobility refund (onKill).
   initCoreCombatEffects();
   // Summoner mountain-path cover + damage sponge (after defense systems).
-  registerMountainPathHooks();
   registerSummonerDamageSponge();
   // Mobility boots: on-kill / on-acquire / on-hit speed & tenacity hooks.
   // Order-independent — these listeners only apply status effects, never touch ctx.damage.

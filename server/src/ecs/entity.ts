@@ -65,6 +65,7 @@ import type { FeatureTarget, Vec2 } from "@mmo-idle/shared";
 import type { PaceFamily, PaceMechanicOverlay } from "@mmo-idle/shared";
 import type { With } from "miniplex";
 import type { ControlsMinion } from "../systems/classes/archetypes/summoner/controlsMinion";
+import type { ControlsSummons } from "../systems/classes/archetypes/summoner/controlsSummons";
 import type { HasSummonerCommand } from "../systems/classes/archetypes/summoner/command";
 
 export type EntityId = string;
@@ -208,6 +209,7 @@ export interface ServerEntity {
   holdsInventory?: HoldsInventory;
   usesSkills?: UsesSkills;
   summonsMinions?: SummonsMinions;
+  controlsSummons?: ControlsSummons;
   inParty?: InParty;
   usesCadence?: UsesCadence;
   usesEnergy?: UsesEnergy;

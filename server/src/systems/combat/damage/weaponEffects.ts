@@ -35,6 +35,7 @@ import { pushDotTickEvent } from "./dotTickEvent";
 import { emitPlayerMonsterOnKill } from "./killHooks";
 import { applyMonsterDamageTakenDebuffs } from "../../classes/shared/debuffs";
 import { applyPlayerDebuff, playerDebuffConfig } from "../../classes/shared/applyPlayerDebuff";
+import { consumeWeightedProc } from '../../classes/archetypes/summoner/formationAttack';
 
 // ── Internal combat state keys ────────────────────────────────────────────────
 
@@ -88,6 +89,8 @@ export function initWeaponEffects(): void {
     const drPerStack = p["weapon.brittle-dr"] ?? 0;
     if (platingPerStack <= 0 && drPerStack <= 0) return;
     if (evadeBlocksDebuffs(ctx)) return; // dodged hit applies no brittle
+    const triggers = consumeWeightedProc(ctx, 'weapon.brittle', { targetSpecific: true });
+    if (triggers <= 0) return;
     const maxStacks = Math.max(1, Math.round(p["weapon.brittle-stacks"] ?? 1));
 
     // Scale once, then reuse — the writeback below MUST use the scaled values or it
@@ -101,7 +104,10 @@ export function initWeaponEffects(): void {
       refreshable: true,
       data: { platingPerStack, drPerStack },
     });
-    const effect = applyStatusEffect(ctx.defender.tracksCombat, brittleCfg);
+    let effect = applyStatusEffect(ctx.defender.tracksCombat, brittleCfg);
+    for (let trigger = 1; trigger < triggers; trigger++) {
+      effect = applyStatusEffect(ctx.defender.tracksCombat, brittleCfg);
+    }
     // Keep per-stack values current with the equipped weapon (buffs apply immediately).
     effect.data.platingPerStack = brittleCfg.data!.platingPerStack;
     effect.data.drPerStack = brittleCfg.data!.drPerStack;
@@ -146,17 +152,21 @@ export function initWeaponEffects(): void {
 
     const p = ctx.attacker.usesSkills.passives;
     if ((p["weapon.flurry-pct"] ?? 0) <= 0) return;
+    const triggers = consumeWeightedProc(ctx, 'weapon.flurry');
+    if (triggers <= 0) return;
     const maxStacks = Math.max(1, Math.round(p["weapon.flurry-stacks"] ?? 1));
 
-    applyStatusEffect(ctx.attacker.tracksCombat, {
-      id: FLURRY_EFFECT_ID,
-      maxStacks,
-      instanced: false,
-      sourceId: ctx.attacker.isPlayer.id,
-      remainingMs: FLURRY_DURATION_MS,
-      refreshable: true,
-      data: { totalMs: FLURRY_DURATION_MS },
-    });
+    for (let trigger = 0; trigger < triggers; trigger++) {
+      applyStatusEffect(ctx.attacker.tracksCombat, {
+        id: FLURRY_EFFECT_ID,
+        maxStacks,
+        instanced: false,
+        sourceId: ctx.attacker.isPlayer.id,
+        remainingMs: FLURRY_DURATION_MS,
+        refreshable: true,
+        data: { totalMs: FLURRY_DURATION_MS },
+      });
+    }
   });
 
   // ── Chaotic family: every Nth hit misses (0 damage, on-hit effects still fire) ─

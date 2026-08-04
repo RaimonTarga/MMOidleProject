@@ -21,12 +21,12 @@ import type { World } from '../../../../world/World';
 import type { MinionEntity, PlayerEntity, ServerEntity } from '../../../../ecs/entity';
 import { initControlsMinion } from './controlsMinion';
 import { getStoneSentinelSpawnPos } from './sentinelPlacement';
-import { computeMinionAttackRange } from './range';
 import { resolveMinionHitbox, syncEntityHitbox } from '../../../../hitbox/resolve';
 import { markSliceDirty } from '../../../../ecs/dirtyHelpers';
 import { attachComponent, detachComponent } from '../../../../ecs/markerHelpers';
 import { setAttackTarget } from '../../../combat/ai/targeting';
 import { stopEntity } from '../../../world/movement';
+import { summonerProfileFor } from './profile';
 
 const MINION_BASE_HP_MIN = 10;
 const FOLLOW_RADIUS = 44;
@@ -54,20 +54,26 @@ export function getMinionIdlePos(owner: PlayerEntity, slot: number): Vec2 {
 }
 
 export function computeMinionSpeed(owner: PlayerEntity): number {
-  if (owner.usesSkills.passives['summoner.stone-sentinel']) return 0;
+  const profile = summonerProfileFor(owner);
   const speedMult = owner.usesSkills.passives['summoner.minion-speed-mult'] ?? 1.0;
-  return Math.max(180, Math.round((owner.hasPosition.speed + 40) * speedMult));
+  return Math.max(160, Math.round((owner.hasPosition.speed + 40) * speedMult * profile.summonMoveSpeedMult));
 }
 
-export function computeMinionSizeMult(owner: PlayerEntity): number {
-  return Math.max(0.1, owner.usesSkills.passives['summoner.minion-size-mult'] ?? 1.0);
+export function computeMinionSizeMult(owner: PlayerEntity, slot = 0): number {
+  const profile = summonerProfileFor(owner);
+  const slotProfile = profile.slots[slot] ?? profile.slots[0];
+  return Math.max(0.1, slotProfile.sizeMult * (owner.usesSkills.passives['summoner.minion-size-mult'] ?? 1.0));
 }
 
 /** Owner HP pool (× hpPct passive) split evenly across all minion slots. */
-export function computeMinionMaxHp(owner: PlayerEntity): number {
-  const count = Math.max(1, owner.summonsMinions?.targetCount ?? 1);
-  const hpPct = owner.usesSkills.passives['summoner.minion-hp-pct'] ?? 1.0;
-  return Math.max(MINION_BASE_HP_MIN, Math.round(owner.hasHealth.maxHp * hpPct / count));
+export function computeMinionMaxHp(owner: PlayerEntity, slot = 0): number {
+  const profile = summonerProfileFor(owner);
+  const slotProfile = profile.slots[slot] ?? profile.slots[0];
+  const legacyHpMult = owner.usesSkills.passives['summoner.minion-hp-pct'] ?? 1.0;
+  return Math.max(
+    MINION_BASE_HP_MIN,
+    Math.round(owner.hasHealth.maxHp * profile.totalSummonHpPct * slotProfile.defenseWeight * legacyHpMult),
+  );
 }
 
 export function syncMinionMaxHp(
@@ -110,11 +116,19 @@ const MINION_TYPE_PASSIVE_MAP: Array<[PassiveKey, MinionMonsterType]> = [
 ];
 
 /** Resolves which creature sprite/hitbox to use from unlocked T3 passives. */
-export function resolveMinionType(owner: PlayerEntity): MinionMonsterType {
+export function resolveMinionType(owner: PlayerEntity, slot = 0): MinionMonsterType {
   const passives = owner.usesSkills.passives;
   for (const [key, type] of MINION_TYPE_PASSIVE_MAP) {
     if (passives[key]) return type;
   }
+  const profile = summonerProfileFor(owner);
+  const role = profile.slots[slot]?.role;
+  if (role === 'colossus') return 'crag-behemoth';
+  if (role === 'offense-twin') return 'cliff-hopper';
+  if (role === 'defense-twin') return 'mud-toad';
+  if (role === 'bonded') return profile.range === 'far' ? 'ridge-archer' : 'boar';
+  if (profile.range === 'far') return 'ridge-archer';
+  if (profile.range === 'mid') return 'plains-slime';
   return 'slime';
 }
 
@@ -127,16 +141,25 @@ export function spawnMinionForOwner(
   if (slot < 0 || slot >= owner.summonsMinions.targetCount) return null;
 
   const passives = owner.usesSkills.passives;
-  const damagePct  = passives['summoner.minion-damage-pct']      ?? 1.0;
-  const attackRange = computeMinionAttackRange(passives);
-  const attackCooldown = Math.max(200, Math.round(passives['summoner.minion-attack-cooldown'] ?? 1000));
-  const sizeMult = computeMinionSizeMult(owner);
-  const monsterTypeId = resolveMinionType(owner);
+  const profile = summonerProfileFor(owner);
+  const slotProfile = profile.slots[slot] ?? profile.slots[0];
+  const damagePct = passives['summoner.minion-damage-pct'] ?? 1.0;
+  const attackRange = profile.attackRange;
+  const attackCooldown = Math.max(
+    100,
+    Math.round(owner.performsAttack.attackCooldown * profile.summonAttackCooldownMult),
+  );
+  const sizeMult = computeMinionSizeMult(owner, slot);
+  const monsterTypeId = resolveMinionType(owner, slot);
   const monsterDef = MONSTER_DATABASE.get(monsterTypeId);
-  const attackStyle = monsterDef?.attackStyle ?? 'impact';
+  const attackStyle = profile.attackMode === 'ranged'
+    ? 'magic'
+    : (monsterDef?.attackStyle ?? 'impact');
 
-  const maxHp = computeMinionMaxHp(owner);
-  const attack = Math.max(1, Math.round(owner.dealsDamage.attack * damagePct));
+  const maxHp = computeMinionMaxHp(owner, slot);
+  const attack = Math.max(1, Math.round(
+    owner.dealsDamage.attack * damagePct * profile.formationOffenseMult * slotProfile.offenseWeight,
+  ));
 
   const id = world.allocMinionId(owner.isPlayer.id);
   const minionHitbox = resolveMinionHitbox(monsterTypeId, sizeMult);
@@ -151,6 +174,8 @@ export function spawnMinionForOwner(
       id,
       ownerPlayerId: owner.isPlayer.id,
       slot,
+      slotId: slotProfile.slotId,
+      role: slotProfile.role,
       sizeMult,
       monsterTypeId,
     }),

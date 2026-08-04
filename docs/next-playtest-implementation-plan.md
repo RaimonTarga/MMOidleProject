@@ -19,7 +19,7 @@ The sketch was written without a code read. Five findings change the plan.
 | "Implement the relic system / add the relic slot" | **SHIPPED 2026-08-04.** `relic` is the sixth equipment slot; one shared resolver maps four universal ratings across all six root mechanics. Eight T4 mastery recipes, persistence compatibility, server equip authority, Forge/tooltip previews, origin-scoped buff/debuff scaling, and bespoke icons are live. | Final balance and T5/T6 evolutions remain; see `docs/relics-current-state.md`. |
 | "Author T5 and T6 biome content" | Regions are now data: `shared/src/world/map/regionT{1..4}.ts`, ~45 lines each (mask grid + biome list + dungeon cells + sanctuary). Adding `regionT5.ts` is trivial. But **every biome×tier needs a monster pool or the world throws at boot** (`nodeModifiers.ts:530`). | Structure is cheap; *content* is the whole cost. Roster choice is the biggest scope lever in the program. |
 | "T1–T4 must be stable" | Monster/boss coverage for T1–T4 is complete and boot-validated (the `⚠ T4 trash not authored` comments on forest/plains are stale — those biomes retire before T3). The twelve-core cast is now complete, but **abilities stop at T2**: 8 abilities exist (5×T1, 3×T2) while `abilitySlotCount` grants a T4 player **4 slots**. Stances = 3. Rites = 4. | The real T1–T4 blocker isn't monsters — it's **empty ability slots and thin stance/rite choices at T3/T4**. This outranks T5/T6 content. |
-| "Decide whether Summoner is included" | Summoner has an archetype, 3 T3 paths (plains/mountain/cave), and 9 T3 specs authored as data. Minions still alias the Tiny Wisp placeholder; T3 bodies are the only sprite work left. | The decision is real and it's a *fork in the schedule*, not a footnote. Put it early. |
+| "Decide whether Summoner is included" | **OVERHAUL IMPLEMENTED BEHIND THE PRODUCTION FLAG 2026-08-04.** Conduit now uses normalized persistent formations, HP-costed FIFO reconstruction, Light/Balanced/Heavy frames, Close/Mid/Far policies, and all nine frame-locked specializations. Existing persisted node IDs map forward. | Multiplayer entity/network profiling, placeholder balance, and production feature-gate approval remain; see `docs/summoner-overhaul-plan.md`. |
 
 **Bottom line:** the roadmap's ordering is roughly inverted. Sections 1–2
 (progression spine + build content) are the critical path; section 4 (T5/T6) is
@@ -143,6 +143,13 @@ bare list of biome ids per region.
 ### D4 — Summoner
 
 *A fork in the schedule, not a detail.*
+
+**Status 2026-08-04:** the locked design has returned in
+`design_docs/summoner-overhaul-design-source.md`. The repository audit,
+compatibility decisions, staged implementation, test matrix, UI-preservation
+approach, and performance gates are in `docs/summoner-overhaul-plan.md`.
+Conduit remains feature-gated until that plan's core, vertical-slice, and
+performance gates pass.
 
 **Grounding to include:** `server/src/systems/classes/archetypes/summoner/` file
 list, `shared/src/data/skillTree/t3Summoner.ts` (the 9 authored specs and their
