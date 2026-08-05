@@ -1,0 +1,256 @@
+{
+  "category": "conduit-summons",
+  "endpoint": "pixflux",
+  "styleRef": "style/creatures.png",
+  "noBackground": true,
+  "candidates": 3,
+  "entries": [
+    {
+      "id": "conduit-summon-splinter",
+      "out": "sprites/monsters/conduit-summon-splinter.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "status": "regen",
+      "prompt": "a small floating human skull, clean dry bone and nothing else, hovering in the air with empty space beneath it, a narrow tapered cranium with a small sharp-featured face, deep hollow eye sockets in shadow, a triangular nasal opening, an even row of small teeth, pale ivory bone with soft grey shading in the recesses, three-quarter view, painterly pixel art, soft volumetric shading, minimal outline, ivory and pale grey bone only, no coloured light",
+      "negative": "glow, glowing eyes, teal, cyan, green light, coloured light, blood, bloody, gore, red, crimson, dripping, drips, drip, liquid, ichor, flesh, meat, tissue, sinew, muscle, skin, cloth, fabric, scraps, ribbon, tassel, spine, vertebrae, spinal column, neck, torso, ribcage, skeleton body, animal skull, beast skull, muzzle, snout, long jaw, fangs, horns, antlers, ears, person, body, hands, arms, figure, standing, walking, hooded figure, robed figure, ground, floor, terrain, pedestal, base, perch, cast shadow, drop shadow, standing on anything, scenery, background elements, environment, full character, held, worn, cute, cartoon mascot, smiling, chibi, anthropomorphic, weapon, 3d render, photograph, hard black outline, text, watermark",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "too similar to the original"
+    },
+    {
+      "id": "conduit-summon-inquisitor",
+      "out": "sprites/monsters/conduit-summon-inquisitor.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "status": "regen",
+      "prompt": "a small floating human skull, clean dry bone and nothing else, hovering in the air with empty space beneath it, a cranium tilted sharply forward as if leaning in to accuse, one eye socket noticeably larger and deeper than the other, a triangular nasal opening, an even row of small teeth, pale ivory bone with soft grey shading in the recesses, three-quarter view, painterly pixel art, soft volumetric shading, minimal outline, ivory and pale grey bone only, no coloured light",
+      "negative": "glow, glowing eyes, teal, cyan, green light, coloured light, blood, bloody, gore, red, crimson, dripping, drips, drip, liquid, ichor, flesh, meat, tissue, sinew, muscle, skin, cloth, fabric, scraps, ribbon, tassel, spine, vertebrae, spinal column, neck, torso, ribcage, skeleton body, animal skull, beast skull, muzzle, snout, long jaw, fangs, horns, antlers, ears, person, body, hands, arms, figure, standing, walking, hooded figure, robed figure, ground, floor, terrain, pedestal, base, perch, cast shadow, drop shadow, standing on anything, scenery, background elements, environment, full character, held, worn, cute, cartoon mascot, smiling, chibi, anthropomorphic, weapon, 3d render, photograph, hard black outline, text, watermark",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "too similar to the original"
+    },
+    {
+      "id": "conduit-summon-kilnmaster",
+      "out": "sprites/monsters/conduit-summon-kilnmaster.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "status": "regen",
+      "prompt": "a small floating human skull, clean dry bone and nothing else, hovering in the air with empty space beneath it, a very simple compact rounded cranium, smooth and almost featureless, two plain deep eye sockets and a small nasal opening, minimal detail, strong clean silhouette, pale ivory bone with soft grey shading in the recesses, three-quarter view, painterly pixel art, soft volumetric shading, minimal outline, ivory and pale grey bone only, no coloured light",
+      "negative": "glow, glowing eyes, teal, cyan, green light, coloured light, blood, bloody, gore, red, crimson, dripping, drips, drip, liquid, ichor, flesh, meat, tissue, sinew, muscle, skin, cloth, fabric, scraps, ribbon, tassel, spine, vertebrae, spinal column, neck, torso, ribcage, skeleton body, animal skull, beast skull, muzzle, snout, long jaw, fangs, horns, antlers, ears, person, body, hands, arms, figure, standing, walking, hooded figure, robed figure, ground, floor, terrain, pedestal, base, perch, cast shadow, drop shadow, standing on anything, scenery, background elements, environment, full character, held, worn, cute, cartoon mascot, smiling, chibi, anthropomorphic, weapon, 3d render, photograph, hard black outline, text, watermark",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "too similar to the original"
+    },
+    {
+      "id": "conduit-summon-iconoclast",
+      "out": "sprites/monsters/conduit-summon-iconoclast.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "status": "regen",
+      "prompt": "a small floating human skull, clean dry bone and nothing else, hovering in the air with empty space beneath it, a cracked and broken skull with a large piece of the cranium sheared clean away leaving a jagged edge, a long fracture running across the remaining bone, deep hollow eye sockets, an uneven broken row of teeth, pale ivory bone with soft grey shading in the recesses, three-quarter view, painterly pixel art, soft volumetric shading, minimal outline, ivory and pale grey bone only, no coloured light",
+      "negative": "glow, glowing eyes, teal, cyan, green light, coloured light, blood, bloody, gore, red, crimson, dripping, drips, drip, liquid, ichor, flesh, meat, tissue, sinew, muscle, skin, cloth, fabric, scraps, ribbon, tassel, spine, vertebrae, spinal column, neck, torso, ribcage, skeleton body, animal skull, beast skull, muzzle, snout, long jaw, fangs, horns, antlers, ears, person, body, hands, arms, figure, standing, walking, hooded figure, robed figure, ground, floor, terrain, pedestal, base, perch, cast shadow, drop shadow, standing on anything, scenery, background elements, environment, full character, held, worn, cute, cartoon mascot, smiling, chibi, anthropomorphic, weapon, 3d render, photograph, hard black outline, text, watermark",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "too similar to the original"
+    },
+    {
+      "id": "conduit-summon-consort",
+      "out": "sprites/monsters/conduit-summon-consort.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "status": "regen",
+      "prompt": "a small floating human skull, clean dry bone and nothing else, hovering in the air with empty space beneath it, a rounded human cranium with a high smooth brow, deep hollow eye sockets in shadow, a triangular nasal opening, an even row of small teeth, pale ivory bone with soft grey shading in the recesses, three-quarter view, painterly pixel art, soft volumetric shading, minimal outline, ivory and pale grey bone only, no coloured light",
+      "negative": "glow, glowing eyes, teal, cyan, green light, coloured light, blood, bloody, gore, red, crimson, dripping, drips, drip, liquid, ichor, flesh, meat, tissue, sinew, muscle, skin, cloth, fabric, scraps, ribbon, tassel, spine, vertebrae, spinal column, neck, torso, ribcage, skeleton body, animal skull, beast skull, muzzle, snout, long jaw, fangs, horns, antlers, ears, person, body, hands, arms, figure, standing, walking, hooded figure, robed figure, ground, floor, terrain, pedestal, base, perch, cast shadow, drop shadow, standing on anything, scenery, background elements, environment, full character, held, worn, cute, cartoon mascot, smiling, chibi, anthropomorphic, weapon, 3d render, photograph, hard black outline, text, watermark",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "too similar to the original"
+    },
+    {
+      "id": "conduit-summon-marshal",
+      "out": "sprites/monsters/conduit-summon-marshal.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "status": "regen",
+      "prompt": "a small floating human skull, clean dry bone and nothing else, hovering in the air with empty space beneath it, a perfectly symmetrical upright cranium with a flat square brow, both eye sockets identical and evenly placed, a triangular nasal opening, a precise even row of teeth, rigid and formal, pale ivory bone with soft grey shading in the recesses, three-quarter view, painterly pixel art, soft volumetric shading, minimal outline, ivory and pale grey bone only, no coloured light",
+      "negative": "glow, glowing eyes, teal, cyan, green light, coloured light, blood, bloody, gore, red, crimson, dripping, drips, drip, liquid, ichor, flesh, meat, tissue, sinew, muscle, skin, cloth, fabric, scraps, ribbon, tassel, spine, vertebrae, spinal column, neck, torso, ribcage, skeleton body, animal skull, beast skull, muzzle, snout, long jaw, fangs, horns, antlers, ears, person, body, hands, arms, figure, standing, walking, hooded figure, robed figure, ground, floor, terrain, pedestal, base, perch, cast shadow, drop shadow, standing on anything, scenery, background elements, environment, full character, held, worn, cute, cartoon mascot, smiling, chibi, anthropomorphic, weapon, 3d render, photograph, hard black outline, text, watermark",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "too similar to the original"
+    },
+    {
+      "id": "conduit-summon-chorister",
+      "out": "sprites/monsters/conduit-summon-chorister.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "status": "regen",
+      "prompt": "a small floating human skull, clean dry bone and nothing else, hovering in the air with empty space beneath it, a cranium with its lower jaw hanging wide open in a silent cry, a tall open mouth cavity, deep hollow eye sockets, a triangular nasal opening, pale ivory bone with soft grey shading in the recesses, three-quarter view, painterly pixel art, soft volumetric shading, minimal outline, ivory and pale grey bone only, no coloured light",
+      "negative": "glow, glowing eyes, teal, cyan, green light, coloured light, blood, bloody, gore, red, crimson, dripping, drips, drip, liquid, ichor, flesh, meat, tissue, sinew, muscle, skin, cloth, fabric, scraps, ribbon, tassel, spine, vertebrae, spinal column, neck, torso, ribcage, skeleton body, animal skull, beast skull, muzzle, snout, long jaw, fangs, horns, antlers, ears, person, body, hands, arms, figure, standing, walking, hooded figure, robed figure, ground, floor, terrain, pedestal, base, perch, cast shadow, drop shadow, standing on anything, scenery, background elements, environment, full character, held, worn, cute, cartoon mascot, smiling, chibi, anthropomorphic, weapon, 3d render, photograph, hard black outline, text, watermark",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "too similar to the original"
+    },
+    {
+      "id": "conduit-summon-ritualist",
+      "out": "sprites/monsters/conduit-summon-ritualist.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "status": "regen",
+      "prompt": "a small floating human skull, clean dry bone and nothing else, hovering in the air with empty space beneath it, a cranium covered in carved ritual markings and engraved lines across the brow and crown, deep hollow eye sockets, a triangular nasal opening, an even row of small teeth, pale ivory bone with soft grey shading in the recesses, three-quarter view, painterly pixel art, soft volumetric shading, minimal outline, ivory and pale grey bone only, no coloured light",
+      "negative": "glow, glowing eyes, teal, cyan, green light, coloured light, blood, bloody, gore, red, crimson, dripping, drips, drip, liquid, ichor, flesh, meat, tissue, sinew, muscle, skin, cloth, fabric, scraps, ribbon, tassel, spine, vertebrae, spinal column, neck, torso, ribcage, skeleton body, animal skull, beast skull, muzzle, snout, long jaw, fangs, horns, antlers, ears, person, body, hands, arms, figure, standing, walking, hooded figure, robed figure, ground, floor, terrain, pedestal, base, perch, cast shadow, drop shadow, standing on anything, scenery, background elements, environment, full character, held, worn, cute, cartoon mascot, smiling, chibi, anthropomorphic, weapon, 3d render, photograph, hard black outline, text, watermark",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "too similar to the original"
+    },
+    {
+      "id": "conduit-summon-effigy",
+      "out": "sprites/monsters/conduit-summon-effigy.png",
+      "size": {
+        "w": 96,
+        "h": 96
+      },
+      "status": "regen",
+      "prompt": "a small floating human skull, clean dry bone and nothing else, hovering in the air with empty space beneath it, a heavy thick-boned cranium with a broad deep brow ridge and a massive jaw, weighty and solid, deep hollow eye sockets, a triangular nasal opening, a row of thick teeth, pale ivory bone with soft grey shading in the recesses, three-quarter view, painterly pixel art, soft volumetric shading, minimal outline, ivory and pale grey bone only, no coloured light",
+      "negative": "glow, glowing eyes, teal, cyan, green light, coloured light, blood, bloody, gore, red, crimson, dripping, drips, drip, liquid, ichor, flesh, meat, tissue, sinew, muscle, skin, cloth, fabric, scraps, ribbon, tassel, spine, vertebrae, spinal column, neck, torso, ribcage, skeleton body, animal skull, beast skull, muzzle, snout, long jaw, fangs, horns, antlers, ears, person, body, hands, arms, figure, standing, walking, hooded figure, robed figure, ground, floor, terrain, pedestal, base, perch, cast shadow, drop shadow, standing on anything, scenery, background elements, environment, full character, held, worn, cute, cartoon mascot, smiling, chibi, anthropomorphic, weapon, 3d render, photograph, hard black outline, text, watermark",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "too similar to the original"
+    },
+    {
+      "id": "conduit-summon-covenanter-offense",
+      "out": "sprites/monsters/conduit-summon-covenanter-offense.png",
+      "size": {
+        "w": 96,
+        "h": 96
+      },
+      "status": "regen",
+      "prompt": "a small floating human skull, clean dry bone and nothing else, hovering in the air with empty space beneath it, a narrow angular cranium with sharp cheekbones and a lean pointed jaw, aggressive and keen, deep hollow eye sockets, a triangular nasal opening, a row of sharp even teeth, pale ivory bone with soft grey shading in the recesses, three-quarter view, painterly pixel art, soft volumetric shading, minimal outline, ivory and pale grey bone only, no coloured light",
+      "negative": "glow, glowing eyes, teal, cyan, green light, coloured light, blood, bloody, gore, red, crimson, dripping, drips, drip, liquid, ichor, flesh, meat, tissue, sinew, muscle, skin, cloth, fabric, scraps, ribbon, tassel, spine, vertebrae, spinal column, neck, torso, ribcage, skeleton body, animal skull, beast skull, muzzle, snout, long jaw, fangs, horns, antlers, ears, person, body, hands, arms, figure, standing, walking, hooded figure, robed figure, ground, floor, terrain, pedestal, base, perch, cast shadow, drop shadow, standing on anything, scenery, background elements, environment, full character, held, worn, cute, cartoon mascot, smiling, chibi, anthropomorphic, weapon, 3d render, photograph, hard black outline, text, watermark",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "too similar to the original"
+    },
+    {
+      "id": "conduit-summon-covenanter-defense",
+      "out": "sprites/monsters/conduit-summon-covenanter-defense.png",
+      "size": {
+        "w": 96,
+        "h": 96
+      },
+      "status": "regen",
+      "prompt": "a small floating human skull, clean dry bone and nothing else, hovering in the air with empty space beneath it, a broad blunt heavy cranium with a thick rounded brow and a wide solid jaw, armoured and stolid, deep hollow eye sockets, a triangular nasal opening, a row of thick blunt teeth, pale ivory bone with soft grey shading in the recesses, three-quarter view, painterly pixel art, soft volumetric shading, minimal outline, ivory and pale grey bone only, no coloured light",
+      "negative": "glow, glowing eyes, teal, cyan, green light, coloured light, blood, bloody, gore, red, crimson, dripping, drips, drip, liquid, ichor, flesh, meat, tissue, sinew, muscle, skin, cloth, fabric, scraps, ribbon, tassel, spine, vertebrae, spinal column, neck, torso, ribcage, skeleton body, animal skull, beast skull, muzzle, snout, long jaw, fangs, horns, antlers, ears, person, body, hands, arms, figure, standing, walking, hooded figure, robed figure, ground, floor, terrain, pedestal, base, perch, cast shadow, drop shadow, standing on anything, scenery, background elements, environment, full character, held, worn, cute, cartoon mascot, smiling, chibi, anthropomorphic, weapon, 3d render, photograph, hard black outline, text, watermark",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "too similar to the original"
+    },
+    {
+      "id": "conduit-summon-champion",
+      "out": "sprites/monsters/conduit-summon-champion.png",
+      "size": {
+        "w": 96,
+        "h": 96
+      },
+      "status": "regen",
+      "prompt": "a small floating human skull, clean dry bone and nothing else, hovering in the air with empty space beneath it, a cranium with its entire left half sheared away in a clean vertical cut revealing the hollow interior, the intact right half showing a deep eye socket and a row of teeth, pale ivory bone with soft grey shading in the recesses, three-quarter view, painterly pixel art, soft volumetric shading, minimal outline, ivory and pale grey bone only, no coloured light",
+      "negative": "glow, glowing eyes, teal, cyan, green light, coloured light, blood, bloody, gore, red, crimson, dripping, drips, drip, liquid, ichor, flesh, meat, tissue, sinew, muscle, skin, cloth, fabric, scraps, ribbon, tassel, spine, vertebrae, spinal column, neck, torso, ribcage, skeleton body, animal skull, beast skull, muzzle, snout, long jaw, fangs, horns, antlers, ears, person, body, hands, arms, figure, standing, walking, hooded figure, robed figure, ground, floor, terrain, pedestal, base, perch, cast shadow, drop shadow, standing on anything, scenery, background elements, environment, full character, held, worn, cute, cartoon mascot, smiling, chibi, anthropomorphic, weapon, 3d render, photograph, hard black outline, text, watermark",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "too similar to the original"
+    },
+    {
+      "id": "conduit-summon-idolwright",
+      "out": "sprites/monsters/conduit-summon-idolwright.png",
+      "size": {
+        "w": 96,
+        "h": 96
+      },
+      "status": "regen",
+      "prompt": "a small floating human skull, clean dry bone and nothing else, hovering in the air with empty space beneath it, an enormous weathered votive skull worn smooth by age, monumental and carved rather than grown, softened eroded edges, deep hollow eye sockets, a triangular nasal opening, a worn row of teeth, pale ivory bone with soft grey shading in the recesses, three-quarter view, painterly pixel art, soft volumetric shading, minimal outline, ivory and pale grey bone only, no coloured light",
+      "negative": "glow, glowing eyes, teal, cyan, green light, coloured light, blood, bloody, gore, red, crimson, dripping, drips, drip, liquid, ichor, flesh, meat, tissue, sinew, muscle, skin, cloth, fabric, scraps, ribbon, tassel, spine, vertebrae, spinal column, neck, torso, ribcage, skeleton body, animal skull, beast skull, muzzle, snout, long jaw, fangs, horns, antlers, ears, person, body, hands, arms, figure, standing, walking, hooded figure, robed figure, ground, floor, terrain, pedestal, base, perch, cast shadow, drop shadow, standing on anything, scenery, background elements, environment, full character, held, worn, cute, cartoon mascot, smiling, chibi, anthropomorphic, weapon, 3d render, photograph, hard black outline, text, watermark",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "too similar to the original"
+    }
+  ]
+}
