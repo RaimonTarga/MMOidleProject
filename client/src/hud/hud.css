@@ -601,7 +601,6 @@
     inset: 0;
     z-index: 1;
     margin: auto;
-    image-rendering: pixelated;
   }
 
   .combat-ability-slot__name {

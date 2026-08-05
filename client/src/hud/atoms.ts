@@ -647,6 +647,8 @@ function buffsEqual(a: readonly PlayerBuff[], b: readonly PlayerBuff[]): boolean
     const y = b[i];
     if (
       x.id !== y.id ||
+      x.iconKey !== y.iconKey ||
+      x.instanceKey !== y.instanceKey ||
       x.stacks !== y.stacks ||
       x.durationPct !== y.durationPct ||
       x.label !== y.label

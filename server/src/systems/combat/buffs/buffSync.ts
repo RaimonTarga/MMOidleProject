@@ -331,7 +331,12 @@ function monsterDotBuff(effect: StatusEffect, world: World): PlayerBuff {
         : -1,
     color: debuff.color,
     category: "neutral",
-    iconKey: effect.id,
+    // Poison has many authored identities (swamp hexes, spider venoms, boss
+    // plagues, ...), but they intentionally share one visual vocabulary.
+    // Keep the runtime effect id separately so simultaneous poisons still have
+    // stable React/log identities instead of collapsing onto the shared art key.
+    iconKey: debuff.id === "poison" ? "debuff-poison" : effect.id,
+    instanceKey: effect.id,
     shape: "diamond",
     logSourceName: source?.isMonster.name ?? "Monster debuff",
     logSourceSide: "enemy",
@@ -483,7 +488,7 @@ function signedNumber(value: number): string {
 }
 
 function buffLogKey(buff: PlayerBuff): string {
-  return `${buff.iconKey}:${buff.id}:${buff.logTargetId ?? "self"}`;
+  return `${buff.instanceKey ?? buff.iconKey}:${buff.id}:${buff.logTargetId ?? "self"}`;
 }
 
 function buffLogTarget(
@@ -594,12 +599,6 @@ function buffEffectText(buff: PlayerBuff): string {
       return "regen burst pool active";
     case "defense-debt":
       return "deferred damage pool";
-    case "summoner-howl-banner":
-      return "+summoner banner stacks";
-    case "summoner-trample-boon":
-      return "trample boon active";
-    case "summoner-debuff-immune":
-      return "debuff immunity";
     case "debuff-stunned":
       return "actions disabled";
     default:

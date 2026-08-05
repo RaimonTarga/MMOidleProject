@@ -3,6 +3,7 @@ import { RITE_DATABASE, riteDef, type RiteDef } from "@mmo-idle/shared";
 import { hudBus } from "../hudBus";
 import { equippedRitesAtom, knownRitesAtom, riteSlotsAtom } from "../hud/atoms";
 import { LoadoutBrowser, type LoadoutSlot } from "./LoadoutBrowser";
+import { riteIconSource } from "./conceptIcons";
 import "./buildPanel.css";
 
 export function RitesPanelContent() {
@@ -36,6 +37,7 @@ export function RitesPanelContent() {
         id: rite.id,
         name: rite.name,
         blurb: rite.blurb,
+        icon: riteIconSource(rite.id),
         disabledReason: usedElsewhere.has(rite.id) ? "Already in another slot" : undefined,
       }));
   }
@@ -48,6 +50,7 @@ export function RitesPanelContent() {
       candidatesFor={candidatesFor}
       nameOf={(id) => riteDef(id)?.name ?? null}
       blurbOf={(id) => riteDef(id)?.blurb ?? ""}
+      iconOf={riteIconSource}
       onEquip={(key, id) => setSlot(Number(key), id)}
       emptyCandidates="Learn rites in Crafting → Craft to fill this slot."
     />

@@ -12,6 +12,7 @@ import {
   knownStancesAtom,
 } from "../hud/atoms";
 import { LoadoutBrowser, type LoadoutSlot } from "./LoadoutBrowser";
+import { stanceIconSource } from "./conceptIcons";
 import "./buildPanel.css";
 
 const SLOTS: { slot: StanceSlot; label: string; hint: string }[] = [
@@ -38,7 +39,12 @@ export function StancesPanelContent() {
   const candidates = known
     .map((id) => STANCE_DATABASE.get(id))
     .filter((stance): stance is StanceDef => !!stance)
-    .map((stance) => ({ id: stance.id, name: stance.name, blurb: stance.blurb }));
+    .map((stance) => ({
+      id: stance.id,
+      name: stance.name,
+      blurb: stance.blurb,
+      icon: stanceIconSource(stance.id),
+    }));
 
   return (
     <LoadoutBrowser
@@ -48,6 +54,7 @@ export function StancesPanelContent() {
       candidatesFor={() => candidates}
       nameOf={(id) => stanceDef(id)?.name ?? null}
       blurbOf={(id) => stanceDef(id)?.blurb ?? ""}
+      iconOf={stanceIconSource}
       onEquip={(key, id) => hudBus.requestSetStanceLoadout(key as StanceSlot, id)}
       emptyCandidates="Learn stances in Crafting → Craft to fill this slot."
     />

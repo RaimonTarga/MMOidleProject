@@ -395,6 +395,7 @@
   font-family: inherit;
   cursor: pointer;
   appearance: none;
+  overflow: hidden;
 }
 
 .skill-node:focus-visible {
@@ -409,6 +410,34 @@
   top: 6px;
   right: 6px;
   pointer-events: none;
+  z-index: 3;
+}
+
+.skill-node__art {
+  position: absolute;
+  inset: 4px;
+  width: calc(100% - 8px) !important;
+  height: calc(100% - 8px) !important;
+  border-radius: 50%;
+  opacity: 0.82;
+}
+
+.skill-node__art-shade {
+  position: absolute;
+  inset: 3px;
+  z-index: 1;
+  border-radius: 50%;
+  background: linear-gradient(
+    180deg,
+    rgba(4, 5, 14, 0.16) 0%,
+    rgba(4, 5, 14, 0.4) 52%,
+    rgba(4, 5, 14, 0.86) 100%
+  );
+  pointer-events: none;
+}
+
+.skill-node--locked .skill-node__art {
+  filter: grayscale(0.65) brightness(0.58);
 }
 
 .skill-node__name {
@@ -419,12 +448,18 @@
   hyphens: auto;
   max-width: 68px;
   text-align: center;
+  position: relative;
+  z-index: 2;
+  color: #fff;
+  text-shadow: 0 1px 2px #000, 0 0 4px #000;
 }
 
 .skill-node__check {
   font-size: 13px;
   margin-top: 3px;
   opacity: 0.75;
+  position: relative;
+  z-index: 2;
 }
 
 /* ── Status variants ─────────────────────────────────────────────────────── */

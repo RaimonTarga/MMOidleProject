@@ -1,6 +1,8 @@
 import { useAtomValue } from "jotai";
-import type { PlayerBuff, BuffShape } from "@mmo-idle/shared";
+import type { BuffCategory, PlayerBuff, BuffShape } from "@mmo-idle/shared";
 import { activeBuffsAtom } from "./atoms";
+import { GameIcon } from "../ui/GameIcon";
+import { statusIconSource } from "../ui/conceptIcons";
 import "../hud/hud.css";
 
 const ICON_SIZE = 52;
@@ -16,8 +18,30 @@ const SHAPE_STYLE: Record<BuffShape, React.CSSProperties> = {
   "small-square": { borderRadius: 1 },
 };
 
+const CATEGORY_TONE: Record<BuffCategory, string> = {
+  cadence: "#ff7043",
+  cooldown: "#66aaff",
+  energy: "#b56cff",
+  "dot-poison": "#75d13b",
+  "dot-fire": "#ff6633",
+  "dot-frost": "#73d7ff",
+  "dot-frozen": "#b9efff",
+  weapon: "#ffad42",
+  neutral: "#aaa4bc",
+  summoner: "#d9b44a",
+};
+
+function displayTone(buff: PlayerBuff): string {
+  return buff.color.toLowerCase() === "#888888"
+    ? CATEGORY_TONE[buff.category]
+    : buff.color;
+}
+
 function BuffIcon({ buff }: { buff: PlayerBuff }) {
   const shapeStyle = SHAPE_STYLE[buff.shape];
+  const icon = statusIconSource(buff.iconKey);
+  const hasArt = icon !== null;
+  const tone = displayTone(buff);
   const catClass =
     buff.category === "neutral"
       ? "buff-icon"
@@ -54,13 +78,27 @@ function BuffIcon({ buff }: { buff: PlayerBuff }) {
           style={{
             position: "absolute",
             inset: 0,
-            backgroundColor: buff.color,
-            border: "1.5px solid rgba(255,255,255,0.22)",
-            boxShadow: `0 0 10px ${buff.color}99, 0 0 3px rgba(0,0,0,0.7)`,
-            ...shapeStyle,
+            backgroundColor: hasArt ? "transparent" : tone,
+            border: hasArt ? "none" : "1.5px solid rgba(255,255,255,0.22)",
+            borderRadius: hasArt ? 7 : shapeStyle.borderRadius,
+            clipPath: hasArt ? undefined : shapeStyle.clipPath,
+            boxShadow: `0 0 8px ${tone}66, 0 0 3px rgba(0,0,0,0.7)`,
+            overflow: "hidden",
           }}
         >
           {/* Clockface darkening overlay — grows clockwise from the top as time elapses */}
+          <GameIcon
+            source={icon}
+            size={ICON_SIZE - 4}
+            fit="cover"
+            fallback={null}
+            style={{
+              position: "absolute",
+              inset: 2,
+              borderRadius: 6,
+            }}
+            decorative
+          />
           {hasDuration && (
             <div
               style={{
@@ -68,7 +106,6 @@ function BuffIcon({ buff }: { buff: PlayerBuff }) {
                 inset: 0,
                 background: `conic-gradient(from -90deg, rgba(0,0,0,0.68) ${elapsed}%, transparent ${elapsed}%)`,
                 borderRadius: "inherit",
-                clipPath: shapeStyle.clipPath as string | undefined,
                 pointerEvents: "none",
               }}
             />
@@ -111,7 +148,7 @@ function BuffIcon({ buff }: { buff: PlayerBuff }) {
         style={{
           fontSize: 10,
           fontFamily: "monospace",
-          color: buff.color,
+          color: tone,
           textShadow: "1px 1px 0 #000",
           lineHeight: 1,
           whiteSpace: "nowrap",
@@ -144,7 +181,7 @@ export function BuffBar() {
       }}
     >
       {buffs.map((buff) => (
-        <BuffIcon key={`${buff.iconKey}:${buff.id}`} buff={buff} />
+        <BuffIcon key={`${buff.instanceKey ?? buff.iconKey}:${buff.id}`} buff={buff} />
       ))}
     </div>
   );

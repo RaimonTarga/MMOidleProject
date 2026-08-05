@@ -41,6 +41,11 @@ import { eligibleMakeKeys, useMakeEntries } from './useMakeEntries';
 import { ItemIcon } from '../ItemIcon';
 import { BuildIcon } from '../BuildIcon';
 import { abilityIconSource } from '../abilityIcons';
+import {
+  riteIconSource,
+  runeFragmentConceptIconSource,
+  stanceIconSource,
+} from '../conceptIcons';
 import { DetailLines } from '../describe/DetailLines';
 import { loadoutLinesFor, ruleLines } from '../describe';
 import { useAbilityContext } from '../describe/useAbilityContext';
@@ -98,6 +103,15 @@ function EntryIcon({ entry, size }: { entry: MakeEntry; size: number }) {
   }
 
   const ability = entry.kind === 'technique' ? abilityDef(entry.learnedId) : null;
+  const conceptIcon = ability
+    ? abilityIconSource(ability)
+    : entry.learnedId && entry.kind === 'stance'
+      ? stanceIconSource(entry.learnedId)
+      : entry.learnedId && entry.kind === 'rite'
+        ? riteIconSource(entry.learnedId)
+        : entry.learnedId && entry.kind === 'rune'
+          ? runeFragmentConceptIconSource(entry.learnedId)
+          : null;
   return (
     <BuildIcon
       kind={
@@ -112,7 +126,7 @@ function EntryIcon({ entry, size }: { entry: MakeEntry; size: number }) {
       label={entry.name}
       size={size}
       muted={!entry.unlocked}
-      icon={ability ? abilityIconSource(ability) : undefined}
+      icon={conceptIcon}
     />
   );
 }

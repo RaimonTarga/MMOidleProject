@@ -17,6 +17,8 @@ import {
   unlockedSkillsAtom,
 } from '../hud/atoms';
 import { DialogHeader, GameDialog } from '../hud/primitives';
+import { GameIcon } from './GameIcon';
+import { skillVocabularyIconSource } from './conceptIcons';
 import './skillTree.css';
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
@@ -154,6 +156,7 @@ function SkillNodeCard({
   onSelect: (node: SkillNode) => void;
 }) {
   const status = getNodeStatus(node, player);
+  const icon = skillVocabularyIconSource(node);
 
   return (
     <button
@@ -169,6 +172,19 @@ function SkillNodeCard({
       aria-pressed={selected}
       onClick={() => onSelect(node)}
     >
+      {icon && (
+        <>
+          <GameIcon
+            source={icon}
+            size={compact ? 54 : 80}
+            fit="cover"
+            fallback={null}
+            className="skill-node__art"
+            decorative
+          />
+          <span className="skill-node__art-shade" aria-hidden="true" />
+        </>
+      )}
       <MilestonePips
         className="skill-node__cost"
         states={Array.from({ length: Math.max(1, node.cost) }, () => 'pending' as PipState)}

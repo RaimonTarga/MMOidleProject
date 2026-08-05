@@ -77,6 +77,7 @@ function castStatus(startedAt: number, castMs: number, now: number): SlotStatus 
 
 function AbilityIcon({ ability, status }: { ability: AbilityDef; status: SlotStatus }) {
   const meta = SLOT_META[ability.slot];
+  const icon = abilityIconSource(ability);
   const remainingPct = Math.max(0, Math.min(100, status.remainingFrac * 100));
   const cooling = remainingPct > 0;
   const glowClass = status.justFired
@@ -114,7 +115,14 @@ function AbilityIcon({ ability, status }: { ability: AbilityDef; status: SlotSta
             filter: cooling ? "saturate(0.7) brightness(0.85)" : undefined,
           }}
         >
-          <span style={{ textShadow: "0 1px 2px rgba(0,0,0,0.8)" }}>{meta.glyph}</span>
+          <GameIcon
+            source={icon}
+            size={44}
+            fit="cover"
+            fallback={<span style={{ textShadow: "0 1px 2px rgba(0,0,0,0.8)" }}>{meta.glyph}</span>}
+            style={{ borderRadius: 5 }}
+            decorative
+          />
           {/* Cooldown sweep: darkens the REMAINING fraction, shrinking clockwise to ready. */}
           {cooling && (
             <div
@@ -129,7 +137,7 @@ function AbilityIcon({ ability, status }: { ability: AbilityDef; status: SlotSta
           )}
         </div>
 
-        {/* Slot badge (placeholder until real icons land). */}
+        {/* Slot badge remains readable over either artwork or the fallback glyph. */}
         <span
           style={{
             position: "absolute",

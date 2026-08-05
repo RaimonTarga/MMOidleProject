@@ -1,5 +1,6 @@
 import type { AbilityDef } from "@mmo-idle/shared";
-import { atlasIcon, type AtlasIconSource } from "./GameIcon";
+import { atlasIcon, type IconSource } from "./GameIcon";
+import { conceptAbilityIconSource } from "./conceptIcons";
 
 /**
  * Art is intentionally allowlisted after gallery approval. A generated file
@@ -24,7 +25,10 @@ export function abilityIconFrame(
 /** Resolve ability metadata directly to the shared icon-source contract. */
 export function abilityIconSource(
   ability: Pick<AbilityDef, "id" | "icon">,
-): AtlasIconSource | null {
+): IconSource | null {
+  const icon = ability.icon?.trim() || ability.id;
+  const concept = conceptAbilityIconSource(icon);
+  if (concept) return concept;
   const frameName = abilityIconFrame(ability);
   return frameName ? atlasIcon(frameName) : null;
 }

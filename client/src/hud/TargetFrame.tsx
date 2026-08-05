@@ -3,6 +3,8 @@ import { useAtomValue } from 'jotai';
 import { dotElementForPlayer, weaponDotProfileForEffect } from '@mmo-idle/shared';
 import { targetFrameAtom, zoneBossAtom, combatArchetypeAtom, passivesAtom, selectedSubVariantAtom, type TargetFrameData } from './atoms';
 import { statusMeta, bossEffectMeta } from './targetStatusMeta';
+import { GameIcon } from '../ui/GameIcon';
+import { bossEffectIconSource, targetStatusIconSource } from '../ui/conceptIcons';
 
 // The base DoT stack ('dot') tile should reflect YOUR chosen element instead of a
 // fixed green — green (poison/light), red (fire/balanced), light-blue (frost/heavy).
@@ -27,9 +29,17 @@ interface TileData {
   stacks: number;
   remainingMs: number;
   totalMs: number;
+  iconId?: string;
 }
 
-function StatusTile({ id, label, color, stacks, remainingMs, totalMs }: Omit<TileData, 'key'>) {
+const DOT_ELEMENT_ICON: Record<string, string> = {
+  poison: 'debuff-poison',
+  fire: 'dot-conflag',
+  frost: 'dot-chill',
+  doom: 'debuff-antiheal',
+};
+
+function StatusTile({ id, iconId, label, color, stacks, remainingMs, totalMs, bossEffect = false }: Omit<TileData, 'key'> & { bossEffect?: boolean }) {
   const permanent = remainingMs < 0;
   const durationPct = !permanent && totalMs > 0
     ? Math.max(0, Math.min(100, (remainingMs / totalMs) * 100))
@@ -47,10 +57,22 @@ function StatusTile({ id, label, color, stacks, remainingMs, totalMs }: Omit<Til
   const tip = `${label}${stackText}`
     + (permanent ? ' — permanent' : secs ? ` — ${secs} left` : '');
   const { handlers, node } = useHoverTooltip(tip);
+  const icon = bossEffect ? bossEffectIconSource(id) : targetStatusIconSource(iconId ?? id);
 
   return (
     <div className="tf-tile-wrap" {...handlers}>
-      <div className="tf-tile" style={{ backgroundColor: color, boxShadow: `0 0 8px ${color}88` }}>
+      <div
+        className={`tf-tile${icon ? ' tf-tile--art' : ''}`}
+        style={{ backgroundColor: color, boxShadow: `0 0 8px ${color}66` }}
+      >
+        <GameIcon
+          source={icon}
+          size={28}
+          fit="cover"
+          fallback={null}
+          className="tf-tile__art"
+          decorative
+        />
         {durationPct >= 0 && (
           <div
             className="tf-tile__sweep"
@@ -106,6 +128,9 @@ export function TargetFrame() {
       return {
         key: `s-${s.id}`,
         id: s.id,
+        iconId: s.id === 'dot'
+          ? DOT_ELEMENT_ICON[dotElementForPlayer(passives, subVariant)]
+          : s.id,
         ...meta,
         color: s.id === 'dot' && dotColor ? dotColor : meta.color,
         stacks: s.stacks,
@@ -150,10 +175,12 @@ export function TargetFrame() {
               key={t.key}
               label={t.label}
               id={t.id}
+              iconId={t.iconId}
               color={t.color}
               stacks={t.stacks}
               remainingMs={t.remainingMs}
               totalMs={t.totalMs}
+              bossEffect={t.key.startsWith('b-')}
             />
           ))}
         </div>

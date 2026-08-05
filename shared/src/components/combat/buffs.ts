@@ -62,9 +62,6 @@ export const BUFF_IDS = [
   'defense-sustained-dr',    // sustained-fight DR ramp
   'defense-hardening-maxdr', // max-hardening DR pulse
   'defense-reactive-plating',// on-hit stacking plating buff
-  'summoner-howl-banner',
-  'summoner-trample-boon',
-  'summoner-debuff-immune',
   'summoner-volatile-brood',
   'summoner-endless-swarm',
   'summoner-harrier-brood',
@@ -115,7 +112,8 @@ export type BuffShape = 'square' | 'circle' | 'diamond' | 'small-square';
  * are server-only.
  *
  * Resilience notes:
- *   - `iconKey` is the unique entry/sprite key; it defaults to `id`.
+ *   - `iconKey` selects the artwork; it defaults to `id`.
+ *   - `instanceKey` distinguishes concurrent entries that share artwork.
  *   - `durationPct` of -1 means the buff has no timer (permanent or count-based).
  *   - `stacks` of 1 means no stack badge is shown.
  *   - `color` is a CSS hex string used for the placeholder shape; replace with
@@ -141,8 +139,13 @@ export interface PlayerBuff {
   color: string;
   /** Buff bar category for CSS animation class. */
   category: BuffCategory;
-  /** Unique icon/sprite key for this active entry; defaults to `id`. */
+  /** Icon/sprite artwork key; defaults to `id`. */
   iconKey: string;
+  /**
+   * Stable identity for one runtime entry when several effects share an icon.
+   * Omitted for ordinary descriptor-backed buffs, whose `iconKey` is unique.
+   */
+  instanceKey?: string;
   /** Placeholder shape token for inline CSS styling. */
   shape: BuffShape;
   /** Optional world-log source label, e.g. "Cooldown", "Ridge Boar". */

@@ -27,6 +27,7 @@ import {
 import { resolveSystemVisibility, type SystemVisibility } from "../hud/systemVisibility";
 import { BuildIcon, type BuildIconKind } from "./BuildIcon";
 import { abilityIconSource } from "./abilityIcons";
+import { riteIconSource, stanceIconSource } from "./conceptIcons";
 import type { IconSource } from "./GameIcon";
 import { AbilitiesPanelContent } from "./AbilitiesPanel";
 import { StancesPanelContent } from "./StancesPanel";
@@ -204,11 +205,13 @@ function LoadoutBoard({
     {
       kind: 'Default',
       filled: stanceDef(equippedStances.default)?.name ?? null,
+      icon: equippedStances.default ? stanceIconSource(equippedStances.default) : null,
       active: equippedStances.default !== null && equippedStances.default === activeStance,
     },
     {
       kind: 'Reactive',
       filled: stanceDef(equippedStances.reactive)?.name ?? null,
+      icon: equippedStances.reactive ? stanceIconSource(equippedStances.reactive) : null,
       active: equippedStances.reactive !== null && equippedStances.reactive === activeStance,
     },
   ];
@@ -216,6 +219,7 @@ function LoadoutBoard({
   const riteSockets: Socket[] = Array.from({ length: riteSlots }, (_, index) => ({
     kind: `Rite ${index + 1}`,
     filled: riteDef(equippedRites[index])?.name ?? null,
+    icon: equippedRites[index] ? riteIconSource(equippedRites[index]) : null,
   }));
 
   return (

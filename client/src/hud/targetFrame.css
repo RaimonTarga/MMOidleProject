@@ -116,6 +116,19 @@
   flex-shrink: 0;
 }
 
+.tf-tile--art {
+  border: 0;
+  overflow: hidden;
+}
+
+.tf-tile__art {
+  position: absolute;
+  inset: 0;
+  width: 100% !important;
+  height: 100% !important;
+  border-radius: 4px;
+}
+
 .tf-tile__sweep {
   position: absolute;
   inset: 0;

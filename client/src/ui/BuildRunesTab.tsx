@@ -38,7 +38,8 @@ import {
   runesOwnedAtom,
 } from "../hud/atoms";
 import { BuildIcon, type BuildIconKind } from "./BuildIcon";
-import { GameIcon } from "./GameIcon";
+import { GameIcon, type IconSource } from "./GameIcon";
+import { runeActionIconSource, runeConditionIconSource } from "./conceptIcons";
 import { DetailLines } from "./describe/DetailLines";
 import { actionLines, conditionLines } from "./describe";
 import {
@@ -419,6 +420,7 @@ export function BuildRunesTab() {
                 }
               }}
               costFor={(c) => c.cost}
+              iconFor={(c) => runeConditionIconSource(c.id)}
               renderMeta={(c) => c.blurb}
               renderExtra={(c) => (
                 <DetailLines className="build-rune-lines" lines={conditionLines(c.id)} />
@@ -440,6 +442,7 @@ export function BuildRunesTab() {
               selectedId={selAction}
               onSelect={setSelAction}
               costFor={(a) => a.cost}
+              iconFor={(a) => runeActionIconSource(a.id)}
               accentFor={(a) => CHANNEL_COLOR[a.channel]}
               emptyText={selCond ? "No responses fit this situation." : "Pick a situation first."}
               renderMeta={(a) => `${runeChannelLabel(a.channel)} - ${a.blurb}`}
@@ -572,6 +575,7 @@ function Column<T extends { id: string; name: string }>({
   onSelect,
   accentFor,
   costFor,
+  iconFor,
   emptyText,
   renderMeta,
   renderExtra,
@@ -582,6 +586,7 @@ function Column<T extends { id: string; name: string }>({
   onSelect: (id: string) => void;
   accentFor?: (item: T) => string | undefined;
   costFor: (item: T) => number;
+  iconFor?: (item: T) => IconSource | null;
   emptyText?: string;
   renderMeta?: (item: T) => string;
   renderExtra?: (item: T) => ReactNode;
@@ -623,6 +628,16 @@ function Column<T extends { id: string; name: string }>({
                 boxShadow: selected ? `0 0 0 1px ${accent}` : "none",
               }}
             >
+              {iconFor && (
+                <GameIcon
+                  source={iconFor(item)}
+                  size={32}
+                  fit="cover"
+                  fallback={null}
+                  style={{ borderRadius: 4 }}
+                  decorative
+                />
+              )}
               {rpBadge(costFor(item))}
               <span style={{ flex: 1, minWidth: 0 }}>
                 <span style={{ display: "block", fontWeight: "bold", fontSize: 13 }}>{item.name}</span>
