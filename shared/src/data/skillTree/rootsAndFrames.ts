@@ -128,25 +128,25 @@ export const rootsAndFramesEntries = [
   //            lowest sustained DPS, biggest burst.
 
   ['summoner-light', {
-    id: 'summoner-light', name: 'Light Frame', tier: 1,
+    id: 'summoner-light', name: 'Splinter', tier: 1,
     classId: 'summoner-root', subVariantId: 'light',
     parent: 'summoner-root', children: ['summoner-light-t3-a', 'summoner-light-t3-b', 'summoner-light-t3-c'],
-    description: 'Six small, fast summons spread the formation budget across many bodies. Each loss costs little offense and reconstruction HP, but the formation is vulnerable to plating and area damage.',
+    description: 'Your presence splinters across six small, fast summons. The formation budget spreads over many bodies, so each loss costs little offense and little reconstruction HP — but the swarm is vulnerable to plating and area damage.',
     cost: 1, statEffects: { speed: 12 },
     mechanicEffects: {} as Record<string, number>,
   }],
 
   ['summoner-balanced', {
-    id: 'summoner-balanced', name: 'Balanced Frame', tier: 1,
+    id: 'summoner-balanced', name: 'Consort', tier: 1,
     classId: 'summoner-root', subVariantId: 'balanced',
     parent: 'summoner-root', children: ['summoner-balanced-t3-a', 'summoner-balanced-t3-b', 'summoner-balanced-t3-c'],
-    description: 'Five medium summons form a stable reference formation with moderate damage, durability, and reconstruction pressure.',
+    description: 'Five medium summons hold a formal, stable ensemble. The reference formation: moderate damage, durability, and reconstruction pressure.',
     cost: 1, statEffects: { maxHp: 12 },
     mechanicEffects: {} as Record<string, number>,
   }],
 
   ['summoner-heavy', {
-    id: 'summoner-heavy', name: 'Heavy Frame', tier: 1,
+    id: 'summoner-heavy', name: 'Effigy', tier: 1,
     classId: 'summoner-root', subVariantId: 'heavy',
     parent: 'summoner-root', children: ['summoner-heavy-t3-a', 'summoner-heavy-t3-b', 'summoner-heavy-t3-c'],
     description: 'Two large, slow summons concentrate the formation budget into consequential bodies. Each loss removes major offense and is expensive to reconstruct.',
@@ -431,25 +431,25 @@ export const rootsAndFramesEntries = [
   }],
 
   ['summoner-range-close', {
-    id: 'summoner-range-close', name: 'Close Range', tier: 2,
+    id: 'summoner-range-close', name: 'Vigil', tier: 2,
     classId: 'summoner-root', subVariantId: null,
     parent: null, children: [],
-    description: 'Guardian formation. Durable melee summons provide the strongest interception, so each reconstructed body is expensive. The Conduit keeps the smallest share of the defensive budget.',
+    description: 'Your summons keep watch at your shoulder. Durable melee bodies provide the strongest interception, so each reconstruction is expensive. The Conduit keeps the smallest share of the defensive budget.',
     cost: 1, statEffects: { maxHp: 8, plating: 1 },
     mechanicEffects: {} as Record<string, number>,
   }],
   ['summoner-range-mid', {
-    id: 'summoner-range-mid', name: 'Mid Range', tier: 2,
+    id: 'summoner-range-mid', name: 'Procession', tier: 2,
     classId: 'summoner-root', subVariantId: null,
     parent: null, children: [],
-    description: 'Escort formation. Short-ranged summons maintain a reliable orbit with moderate durability, interception, and reconstruction cost.',
+    description: 'Your summons move with you in ordered formation. Short-ranged bodies maintain a reliable orbit with moderate durability, interception, and reconstruction cost.',
     cost: 1, statEffects: { maxHp: 18, plating: 2 },
   }],
   ['summoner-range-far', {
-    id: 'summoner-range-far', name: 'Far Range', tier: 2,
+    id: 'summoner-range-far', name: 'Harrier', tier: 2,
     classId: 'summoner-root', subVariantId: null,
     parent: null, children: [],
-    description: 'Harrier formation. Fragile ranged summons kite at distance and offer little interception. Cheap bodies leave more of the defensive budget on the Conduit.',
+    description: 'Your summons are cast out ahead. Fragile ranged bodies kite at distance and offer little interception. Cheap bodies leave more of the defensive budget on the Conduit.',
     cost: 1, statEffects: { speed: 30, maxHp: 30, plating: 4, damageReduction: 0.04 },
   }],
 ] satisfies [string, SkillNode][];

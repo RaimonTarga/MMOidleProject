@@ -30,24 +30,24 @@ export const SUMMONER_T4_BUFFS = [
       const remaining = nextAt > 0 ? Math.max(0, nextAt - now) : interval;
       const marked = player.summonsMinions.volatileMarkedSlotId ? 1 : 0;
       return {
-        id: 'summoner-volatile-brood', label: 'VOLAT', stacks: Math.max(1, marked),
+        id: 'summoner-volatile-brood', label: 'SHARD', stacks: Math.max(1, marked),
         durationPct: Math.min(100, (remaining / interval) * 100), color: '#ff7043',
-        logSourceName: 'Volatile Brood', logSourceSide: 'ally',
+        logSourceName: 'Iconoclast', logSourceSide: 'ally',
         logDetail: marked ? 'one summon is armed for detonation' : 'preparing the next detonation',
       };
     },
-    { category: 'summoner', shape: 'diamond', color: '#ff7043', label: 'VOLAT' },
+    { category: 'summoner', shape: 'diamond', color: '#ff7043', label: 'SHARD' },
   ),
   defineBuff(
     'summoner-endless-swarm',
     ({ player, world }) => ownsSpecialization(player, 'endless-swarm') && player.summonsMinions
       ? {
-          id: 'summoner-endless-swarm', label: 'SWARM', stacks: Math.max(1, livingCount(world, player)),
-          durationPct: -1, color: '#7bd389', logSourceName: 'Endless Swarm', logSourceSide: 'ally',
+          id: 'summoner-endless-swarm', label: 'KILN', stacks: Math.max(1, livingCount(world, player)),
+          durationPct: -1, color: '#7bd389', logSourceName: 'Kilnmaster', logSourceSide: 'ally',
           logDetail: `${livingCount(world, player)}/${player.summonsMinions.targetCount} summons active`,
         }
       : null,
-    { category: 'summoner', shape: 'circle', color: '#7bd389', label: 'SWARM' },
+    { category: 'summoner', shape: 'circle', color: '#7bd389', label: 'KILN' },
   ),
   defineBuff(
     'summoner-harrier-brood',
@@ -55,13 +55,13 @@ export const SUMMONER_T4_BUFFS = [
       if (!ownsSpecialization(player, 'harrier-brood') || !player.controlsSummons || !target) return null;
       const state = player.controlsSummons.harrierMarksByTarget[target.isMonster.id];
       return {
-        id: 'summoner-harrier-brood', label: 'HARRY', stacks: Math.max(1, state?.slotIds.length ?? 0),
-        durationPct: -1, color: '#e6c35c', logSourceName: 'Harrier Brood', logSourceSide: 'ally',
+        id: 'summoner-harrier-brood', label: 'ACCUSE', stacks: Math.max(1, state?.slotIds.length ?? 0),
+        durationPct: -1, color: '#e6c35c', logSourceName: 'Inquisitor', logSourceSide: 'ally',
         logDetail: `${state?.slotIds.length ?? 0} unique summons marking ${target.isMonster.name}`,
         logTargetId: target.isMonster.id, logTargetName: target.isMonster.name, logTargetType: 'monster',
       };
     },
-    { category: 'summoner', shape: 'diamond', color: '#e6c35c', label: 'HARRY' },
+    { category: 'summoner', shape: 'diamond', color: '#e6c35c', label: 'ACCUSE' },
   ),
   defineBuff(
     'summoner-coordinated-hunt',
@@ -72,13 +72,13 @@ export const SUMMONER_T4_BUFFS = [
       const contributors = targetId ? (player.controlsSummons.cycleContributorsByTarget[targetId]?.length ?? 0) : 0;
       const needed = SUMMONER_SPECIALIZATION_TUNING.coordinatedHunt.cyclesRequired;
       return {
-        id: 'summoner-coordinated-hunt', label: 'HUNT', stacks: Math.max(1, contributors),
+        id: 'summoner-coordinated-hunt', label: 'ORDER', stacks: Math.max(1, contributors),
         durationPct: 100 - ((serial % needed) / needed) * 100, color: '#f3aa52',
-        logSourceName: 'Coordinated Hunt', logSourceSide: 'ally',
+        logSourceName: 'Marshal', logSourceSide: 'ally',
         logDetail: `formation cycle ${serial % needed}/${needed}; ${contributors} current contributors`,
       };
     },
-    { category: 'summoner', shape: 'square', color: '#f3aa52', label: 'HUNT' },
+    { category: 'summoner', shape: 'square', color: '#f3aa52', label: 'ORDER' },
   ),
   defineBuff(
     'summoner-withering-chorus',
@@ -86,13 +86,13 @@ export const SUMMONER_T4_BUFFS = [
       if (!ownsSpecialization(player, 'withering-chorus') || !player.controlsSummons || !target) return null;
       const voices = player.controlsSummons.chorusByTarget[target.isMonster.id]?.slotIds.length ?? 0;
       return {
-        id: 'summoner-withering-chorus', label: 'CHORUS', stacks: Math.max(1, voices),
-        durationPct: -1, color: '#9d6ad6', logSourceName: 'Withering Chorus', logSourceSide: 'ally',
+        id: 'summoner-withering-chorus', label: 'WITHER', stacks: Math.max(1, voices),
+        durationPct: -1, color: '#9d6ad6', logSourceName: 'Chorister', logSourceSide: 'ally',
         logDetail: `${voices} unique voices established on ${target.isMonster.name}`,
         logTargetId: target.isMonster.id, logTargetName: target.isMonster.name, logTargetType: 'monster',
       };
     },
-    { category: 'summoner', shape: 'diamond', color: '#9d6ad6', label: 'CHORUS' },
+    { category: 'summoner', shape: 'diamond', color: '#9d6ad6', label: 'WITHER' },
   ),
   defineBuff(
     'summoner-grand-ritual',
@@ -106,7 +106,7 @@ export const SUMMONER_T4_BUFFS = [
       return {
         id: 'summoner-grand-ritual', label: 'RITUAL', stacks: Math.max(1, charges),
         durationPct: charges > 0 ? -1 : Math.min(100, (remaining / interval) * 100), color: '#66c7d7',
-        logSourceName: 'Grand Ritual', logSourceSide: 'ally',
+        logSourceName: 'Ritualist', logSourceSide: 'ally',
         logDetail: charges > 0 ? `${charges} empowered summon attacks remain` : 'awaiting the next ritual',
       };
     },
@@ -116,12 +116,12 @@ export const SUMMONER_T4_BUFFS = [
     'summoner-colossus',
     ({ player, world }) => ownsSpecialization(player, 'colossus')
       ? {
-          id: 'summoner-colossus', label: 'COLOSS', stacks: 1, durationPct: -1, color: '#b58a58',
-          logSourceName: 'Colossus', logSourceSide: 'ally',
+          id: 'summoner-colossus', label: 'IDOL', stacks: 1, durationPct: -1, color: '#b58a58',
+          logSourceName: 'Idolwright', logSourceSide: 'ally',
           logDetail: livingCount(world, player) > 0 ? 'the condensed formation is active' : 'the condensed formation is reconstructing',
         }
       : null,
-    { category: 'summoner', shape: 'circle', color: '#b58a58', label: 'COLOSS' },
+    { category: 'summoner', shape: 'circle', color: '#b58a58', label: 'IDOL' },
   ),
   defineBuff(
     'summoner-battle-bond',
@@ -132,7 +132,7 @@ export const SUMMONER_T4_BUFFS = [
       return {
         id: 'summoner-battle-bond', label: 'BOND', stacks: Math.max(1, progress),
         durationPct: 100 - (progress / threshold) * 100, color: '#f0d878',
-        logSourceName: 'Battle Bond', logSourceSide: 'ally',
+        logSourceName: 'Champion', logSourceSide: 'ally',
         logDetail: `${progress}/${threshold} fixed contributions toward a linked strike`,
       };
     },
@@ -145,7 +145,7 @@ export const SUMMONER_T4_BUFFS = [
       const living = livingCount(world, player);
       return {
         id: 'summoner-twin-covenant', label: 'TWINS', stacks: Math.max(1, living),
-        durationPct: -1, color: '#d28fca', logSourceName: 'Twin Covenant', logSourceSide: 'ally',
+        durationPct: -1, color: '#d28fca', logSourceName: 'Covenanter', logSourceSide: 'ally',
         logDetail: living === 1 ? 'one twin survives with a bounded fallback' : `${living}/2 complementary twins active`,
       };
     },
