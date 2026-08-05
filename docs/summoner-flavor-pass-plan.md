@@ -5,8 +5,13 @@ already (`docs/summoner-overhaul-plan.md`); the design source deliberately
 excluded "final names, visuals, or sprite prompts" (§ line 65), and this is that
 pass.
 
-Revision 3 — all naming and art decisions settled with the user 2026-08-05.
-Ready to implement; §9 records the decisions rather than open questions.
+Revision 4 (2026-08-05). Phases 1-3 and the range layer have SHIPPED, in three
+commits on `feat/conduit-flavor-pass`. Section 3's mask recommendation was
+tested and LOST — see §3 for what actually happened and why. Only the 13
+per-frame/per-spec bodies remain.
+
+Live state is `docs/conduit-current-state.md`; this doc is the plan and the
+record of how the decisions were reached.
 
 ## 1. Problem
 
@@ -95,9 +100,45 @@ Accent hue locked: deep red body, **teal lantern light** (`0x4ad4c8`), the
 roster's one deliberate two-tone class, chosen so it does not collide with the
 Striker's crimson ([frameMaps.ts:373-376](../shared/src/sprites/frameMaps.ts#L373-L376)).
 
-## 3. Masks vs skulls — and the generation risk
+## 3. Masks vs skulls — RESOLVED: skulls
 
-Decision: **masks**, de-risked by a bakeoff at phase 3.
+**Outcome: skulls, over three bake-off rounds and ~$0.18.** The mask
+recommendation below was mine, was tested properly, and lost. What the rounds
+established, in order:
+
+- **Round 1 (mask on prompt / mask chained / skull control).** Skulls worked
+  first try, all three candidates usable. Prompt-only masks came back as
+  sculpted human faces. The chained arm was worst: the accepted Conduit body's
+  deep red robe became long red hair.
+- **Round 2 (blank faceplate / funerary plate / ceramic skull-mask).** Stripping
+  every facial landmark — the fix for round 1 — produced featureless eggs with
+  two gems. "Funerary plate" produced bathtubs and a sink.
+- **Round 3 (human skull, bone / skull-mask / no glow).** All three clean. The
+  user picked the no-glow bone skull.
+
+Three transferable lessons, recorded in `art/manifests/conduit-bakeoff.json`:
+
+1. **A mask is not a reachable silhouette at 64px in this style.** Face anatomy
+   makes it a face; zero anatomy makes it a blob. Only skull geometry carries a
+   three-quarter facing for free (sockets, nasal void, jaw) — which is exactly
+   what the players-manifest round-11 note said a blank oval lacks.
+2. **The chaining rule has a limit.** "Chain from whichever accepted sibling
+   already has the property you keep failing to get" only holds when that
+   property is the SUBJECT of the source image. The mask is a small feature on a
+   robed body, so the chain asserted the body. Not fixable by lowering strength.
+3. **Do not name an object after a household form.** "Plate" won over every
+   other term in the prompt.
+
+Consequences accepted: the undead paradigm-shift card is spent at baseline, and
+the masks hanging on the player sprite no longer pay off as a promise. The nine
+tier-4 names are noun-agnostic and needed no change.
+
+The original argument for masks is kept below, because the reasoning was sound
+even though the generator disagreed.
+
+---
+
+Original recommendation: **masks**, de-risked by a bakeoff at phase 3.
 
 The concern that a mask is harder to generate than a skull is correct and
 **already measured in this repo**. The Conduit class sprite took eleven rounds,
@@ -420,21 +461,45 @@ deletion regression from a rename regression.
 
 ## 7. Sequencing
 
-| Phase | Work | Cost | Gate |
+| Phase | Work | Cost | Status |
 |---|---|---|---|
-| 1 | Dead code removal (§6.3) | — | `pnpm typecheck`, `pnpm test` |
-| 2 | Naming (§6.1) | — | typecheck, test, skill tree panel at desktop + mobile |
-| 3 | **Mask-vs-skull bakeoff**: 1 entry, ~6 candidates | small | **user picks in gallery** |
-| 4 | Author 13 entries against the winner, `art:generate --dry-run` | — | user approves spend |
-| 5 | `art:generate` → `art:review` | real | **user accepts/rejects — never me** |
-| 6 | Regen rejects from gallery notes | real | repeat |
-| 7 | `art:pack` → `bake:hitboxes` → wire §6.2 (sprites, tint, scale) | — | typecheck, test, play a Conduit across 3 frames × 3 ranges × 9 specs |
-| 8 | Docs (§6.4) | — | — |
+| 1 | Dead code removal (§6.3) | — | ✅ `c8e419c` |
+| 2 | Naming (§6.1) | — | ✅ `7e40cba` |
+| 3 | Mask-vs-skull bake-off | $0.18 | ✅ 3 rounds, skulls won (§3) |
+| 4-6 | **13 per-frame/per-spec bodies** | ~$0.27 | ⬜ **the only work left** |
+| 7 | Wire sprites, tint, scale | — | ◐ range layer + one shared body shipped (`fa4514a`); per-spec bodies pending phase 4-6 |
+| 8 | Docs (§6.4) | — | ✅ |
 
-Phases 1-2 land and are playable before any art exists; summons keep their
-borrowed wildlife sprites until phase 7.
+Phases 1-2 landed playable before any art existed. The tier-4 player-body phase
+from revision 3 is removed — §5.4.
 
-The tier-4 player-body phase from revision 3 is **removed** — §5.4.
+### Shipped beyond the original plan
+
+Things the plan did not anticipate, all in `fa4514a` unless noted:
+
+- **Base display size 48 → 32 → 28.** Two user-driven passes. Shrinks hitboxes
+  too, since `MINION_BASE_DISPLAY_SIZE` feeds `resolveMinionHitbox`.
+- **1px `#14181a` outline**, baked deterministically by
+  `art/workbench/outline-summons.mjs` from preserved raw art. Colour chosen by
+  testing against the eight real wang ground colours (`#bea581` desert down to
+  `#212b1f` jungle): a pale skull only fails to read on the LIGHT biomes, so a
+  dark outline works where it is needed and vanishes where it is not. The
+  Conduit's own accent teal was tested and rejected — at luminance ~0.75 it
+  barely separates from desert or tundra.
+- **Per-range attack FX** (`client/src/fx/conduitSummon.ts`): Procession fires a
+  fast red orb (120ms), Harrier a red beam (140ms), Vigil the melee thump. Both
+  ranged styles share one red ramp — shape separates them better than hue.
+- **Lunge gate.** Summons lunged unconditionally because `minions.ts` hardcoded
+  `monsterIsRanged: false`. Now derived from attack style via a shared
+  predicate, refreshed every tick because unlocking a range does not respawn
+  live summons.
+- **DEV skin switcher**, Shift+[ / Shift+] (`client/src/render/summonSkins.ts`).
+  Plain brackets stay on the ground bake-off. The two losing round-3 candidates
+  stay in the atlas, reachable only here, until a winner is picked.
+- **Clamp floor raised 0.45 → 0.6.** The planned floor assumed a 48px base; at
+  28px it landed at 12.6px. 0.6 gives ~17px.
+- **Range size multipliers shifted up one step** (1.25/1.0/0.75 →
+  1.5/1.25/1.0) after playtest.
 
 Standing rule throughout: I generate and hand off to the gallery; I never accept
 or reject candidates myself. `art:generate` spends real credits — always
@@ -442,9 +507,12 @@ or reject candidates myself. `art:generate` spends real credits — always
 
 ## 8. Cost
 
-Unpriced until phase 4's dry run. Shape: ~6 bakeoff images, then 13 entries × 3
-candidates ≈ 39 images at 64-128 px, plus regen rounds. Check
-`pnpm art:status --balance` before and after.
+**Spent so far: ~$0.18** across three bake-off rounds (27 images). Estimates
+from `art:generate --dry-run` ran ~9x high — it quoted $0.54 per round against
+$0.06 actual — so price from the lock file, not the estimate.
+
+**Remaining: ~$0.27** for 13 entries × 3 candidates at roughly $0.007/image,
+plus regen rounds. Balance was $1.94 after round 3.
 
 ## 9. Decisions on record
 
@@ -459,6 +527,10 @@ candidates ≈ 39 images at 64-128 px, plus regen rounds. Check
 | 7 | Dead `t3/` path system removed | 2026-08-05 |
 | 8 | **Recolours/hue shifts affect summons only.** The Conduit body is never recoloured; no tier-4 player bodies (§5.4) | 2026-08-05 |
 | 9 | 13 summon sprites (frame × spec, +1 for the Covenanter split) | 2026-08-05 |
+| 10 | **Skulls, not masks** — decision 1 reversed by three bake-off rounds (§3) | 2026-08-05 |
+| 11 | Base display size 28px; range multipliers 1.5 / 1.25 / 1.0; clamp floor 0.6 | 2026-08-05 |
+| 12 | Outline `#14181a`, chosen against real ground colours, not the class accent | 2026-08-05 |
+| 13 | Procession tint `#cdbde8` — a warm/violet/cool triad, separable at 20px | 2026-08-05 |
 
 Decision 8 supersedes revision 3's tier-4 player-body phase and its per-spec hue
 table. Summon hue stays allocated to **range**; summon spec identity is carried

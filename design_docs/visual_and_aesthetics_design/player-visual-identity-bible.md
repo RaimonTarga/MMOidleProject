@@ -669,11 +669,32 @@ No wand, staff, or visible weapon required.
 **Mechanic identity:** minions, splitting pressure, damage redirection, command through summoned bodies.  
 **Visual fantasy:** spirit conductor / echo binder / vessel that projects lesser forms.
 
-Summoner is not fully locked and needs its own identity pass later.
+**LOCKED 2026-08-05.** The identity pass this section asked for has happened.
+Live state: `docs/conduit-current-state.md`. What follows the lock note is the
+original exploratory direction, kept for rationale.
 
-The current slime-minion identity should not be treated as final lore.
+Settled:
 
-Recommended direction:
+- **Summons are floating human skulls** — pure bone, no glow, 1px `#14181a`
+  outline for legibility on pale biomes. Masks were the first proposal and lost
+  a three-round bake-off: the generator reads "ceramic mask" as a sculpted human
+  face, and stripping the facial landmarks yields a featureless egg. At 64px
+  this object is only legible with skull geometry.
+- **The bearer never changes.** The Conduit is the one class with no tier-4
+  player body, and that is deliberate — it does not fight, so its specialization
+  reads on what it sends out. It is excluded from `art/workbench/roster/t3.mjs`
+  by decision, not by omission.
+- **Range is tint + scale + attack FX, never a body swap** — the same rule the
+  player bodies follow. Vigil warm/×1.5/melee, Procession violet/×1.25/red bolt,
+  Harrier teal/×1.0/red beam.
+- The deep red robe, white ceramic mask, and teal accent (`0x4ad4c8`) on the
+  player body are unchanged and remain locked.
+
+Undead was permitted below only as a tier-4 paradigm-shift exception; in
+practice the baseline is now bone, so that card is spent. Iconoclast remains the
+candidate if a genuine full-body break is ever wanted.
+
+Original recommended direction (superseded, kept for rationale):
 
 > The Conduit begins by summoning wisps or lesser vessels, then later specializes into different summoned families.
 
@@ -716,6 +737,8 @@ Attack expression:
 - spirit-body projection.
 
 Do not lock Summoner into slimes as its long-term visual identity.
+(Resolved: it is not. Summons are the Conduit's own conjured bone, not borrowed
+wildlife of any kind.)
 
 ---
 

@@ -75,9 +75,9 @@ it is one mob and shares the wisp concept.
 
 - `plains-slime` → display **Field Hare**, new frame `field-hare.png`.
 - `tinyslime` → display **Tiny Wisp**, new frame `tiny-wisp.png`.
-- Summoner minion sprites currently reuse slimes — swap minion visuals to the
-  wisp family in the same change so no slime survives outside the bog
-  (player-visual-identity-bible §21–22 direction, final Conduit pass later).
+- ✅ DONE 2026-08-05. Summoner minions no longer borrow wildlife at all: they
+  use the Conduit's own conjured body (`conduit-summon`). See
+  `docs/conduit-current-state.md` §6.
 
 **Sprite batch (~7 mobs × up to 3 candidate rounds):**
 
@@ -160,7 +160,10 @@ then. Scope per player-visual-identity-bible:
    production anchor. Faceless, genderless, weaponless prompts.
 5. Path/tier overlays + range-as-VFX (client work: collapse the 15
    range-variant PLAYER_FRAMES into VFX accents).
-6. Summoner/Conduit identity pass (minions already de-slimed in Phase 1).
+6. ✅ Summoner/Conduit identity pass — DONE 2026-08-05. Summons carry the class
+   identity (bone skull, range as tint + scale + attack FX); the Conduit body
+   itself is deliberately NOT recoloured per spec, so it is the one class with
+   no tier-4 player body. `docs/conduit-current-state.md`.
 7. Rare full-body spec exceptions only where the bible's §25 rule justifies.
 
 ## Phase 5 — UI Overhaul

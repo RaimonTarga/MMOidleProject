@@ -37,8 +37,13 @@ const PREVIEW = process.argv.includes('--preview');
 const SRC = 'art/src/sprites/classes';
 const OUT = PREVIEW ? 'art/workbench/roster/t3-preview' : SRC;
 
-// Conduit is EXCLUDED on purpose: the class is a placeholder pending a major
-// rework, so no T3 art is produced for it.
+// Conduit is EXCLUDED on purpose — and as of 2026-08-05 that is a DECISION, not
+// a holding pattern. The class does not fight: recalculatePlayerStats returns
+// cannotAttack, and its summons do everything. So its tier-4 identity lives on
+// the summons (bespoke bodies, range tint/scale/FX) and the bearer stays a
+// constant. Recolouring the body would also tint the shaded side of the white
+// ceramic mask, which is the class's locked identity. See
+// docs/summoner-flavor-pass-plan.md section 5.4.
 // ── Every class colourises to ABSOLUTE per-spec hues ────────────────────────
 // v1 rotated each sprite's existing hue by a delta. Two problems: the middle
 // spec (delta 0) barely changed at all, and classes with little colour to begin
@@ -154,4 +159,4 @@ for (const [cls, cfg] of Object.entries(CLASSES)) {
   }
 }
 console.log(`\nwrote ${n} T3 frames to ${OUT}${PREVIEW ? '  (preview only)' : ''}`);
-console.log('Conduit excluded: placeholder class pending rework.');
+console.log('Conduit excluded by design: its tier-4 identity lives on the summons.');
