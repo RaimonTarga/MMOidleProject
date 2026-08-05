@@ -111,7 +111,6 @@ const PERCENT_KEYS = new Set([
   'reload.momentum-reload-reduction',
   'reload.momentum-reload-reduction-floor',
   'reload.snipe-fullhp-threshold',
-  'summoner.overwhelmed-pct-per-attacker',
   'weapon.brittle-dr',
 ]);
 

@@ -32,7 +32,7 @@ import {
   detachComponent,
   detachMarkerIfNoEffect,
 } from "../../../../ecs/markerHelpers";
-import { canApplyPlayerDebuff } from "../summoner/t3/core/debuffGuard";
+import { canApplyPlayerDebuff } from "../../../combat/status/debuffGuard";
 import { evadeBlocksDebuffs } from "../../../defense/mitigation/evasion";
 import {
   pushDotTickEvent,

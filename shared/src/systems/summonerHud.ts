@@ -28,12 +28,6 @@ export function computeSummonRespawnMaxMs(passives: PassiveMap): number {
     1,
     relicRatingsFromPassives(passives),
   ).respawnMs.after;
-  if (passives['summoner.stone-sentinel']) {
-    respawnMs = Math.max(
-      0,
-      Math.round(respawnMs * (passives['summoner.sentinel-respawn-mult'] ?? 0.5)),
-    );
-  }
   return respawnMs;
 }
 

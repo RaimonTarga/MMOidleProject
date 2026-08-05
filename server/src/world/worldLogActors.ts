@@ -1,5 +1,4 @@
 import type { WorldLogActor } from '@mmo-idle/shared';
-import { MONSTER_DATABASE } from '@mmo-idle/shared';
 import type { MinionMonsterType } from '@mmo-idle/shared';
 import type { MinionEntity, MonsterEntity, PlayerEntity } from '../ecs/entity';
 import type { World } from './World';
@@ -33,25 +32,9 @@ export function actorFromMinion(
 }
 
 function minionDisplayName(monsterTypeId: MinionMonsterType): string {
-  const monsterName = MONSTER_DATABASE.get(monsterTypeId)?.name;
-  if (monsterName) return monsterName;
   switch (monsterTypeId) {
-    case 'slime':
-      return 'Wisp';
-    case 'plains-slime':
-      return 'Plains Slime';
-    case 'cave-lurker':
-      return 'Cave Lurker';
-    case 'boar':
-      return 'Boar';
-    case 'mud-toad':
-      return 'Mud Toad';
-    case 'cliff-hopper':
-      return 'Cliff Hopper';
-    case 'ridge-archer':
-      return 'Ridge Ambusher';
-    case 'crag-behemoth':
-      return 'Crag Behemoth';
+    case 'conduit-summon':
+      return 'Summon';
   }
 }
 

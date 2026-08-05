@@ -1,5 +1,5 @@
 {
-  "atlasHash": "46723121cc8ff7cbf9b75b17ff3975adddd1be152d35e206727efe3adfc3c293",
+  "atlasHash": "b275a2ba4bcc6b0c3610a261deb511af8d0875a7586d32698f11bb04f1ebfb22",
   "frames": {
     "sprites/accents/crest-close-cadence.png": {
       "sourceW": 32,
@@ -1068,6 +1068,24 @@
       "sourceH": 64,
       "footY": 27,
       "halfWAtFoot": 8
+    },
+    "sprites/monsters/conduit-summon-porcelain.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 22,
+      "halfWAtFoot": 13
+    },
+    "sprites/monsters/conduit-summon-teal.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 24,
+      "halfWAtFoot": 11
+    },
+    "sprites/monsters/conduit-summon.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 15,
+      "halfWAtFoot": 8.5
     },
     "sprites/monsters/crag-mortar.png": {
       "sourceW": 64,

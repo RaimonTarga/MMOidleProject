@@ -10,14 +10,6 @@ export interface ControlsMinion {
   followOffset: Vec2;
   /** Cached current attack target monster id (mirrors hasAttackTarget). */
   currentTargetId: string | null;
-  /** Trampled Path: ms remaining before Charge is ready again (0 = ready). */
-  chargeCooldownMs: number;
-  /** Trampled Path: sprinting toward target to close distance before the stunning hit. */
-  isCharging: boolean;
-  /** Acid Brood: ms until this lurker decays and detonates (undefined = not an acid lurker). */
-  lifetimeRemainingMs?: number;
-  /** Acid Brood: prevents double explosion if hp hits 0 and despawn in the same tick. */
-  acidDetonated?: boolean;
 }
 
 export function initControlsMinion(args: {
@@ -28,7 +20,5 @@ export function initControlsMinion(args: {
     ownerPlayerId:   args.ownerPlayerId,
     followOffset:    { ...args.followOffset },
     currentTargetId: null,
-    chargeCooldownMs: 0,
-    isCharging:       false,
   };
 }

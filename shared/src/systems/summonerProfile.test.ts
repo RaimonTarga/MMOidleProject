@@ -1,4 +1,11 @@
 import { resolveSummonerProfile, summonerProfileWeightTotals } from './summonerProfile';
+import {
+  SUMMON_ATTACK_STYLE,
+  SUMMON_SIZE_MULT_MAX,
+  SUMMON_SIZE_MULT_MIN,
+  isRangedSummonStyle,
+} from '../data/summoner';
+import { resolveSummonTint } from '../sprites/frameMaps';
 
 function assert(condition: boolean, message: string): void {
   if (!condition) throw new Error(message);
@@ -74,6 +81,56 @@ for (const [frame, expected] of [
   assert(closeRange.redirectionPct > farRange.redirectionPct, 'Close protects more strongly');
   assert(closeRange.conduitDefenseShare < farRange.conduitDefenseShare, 'Far shifts defense to Conduit');
   close(closeRange.formationOffenseMult, farRange.formationOffenseMult, 'range does not change offense');
+}
+
+{
+  // Range scales the summon body it never swaps, and the clamp keeps the
+  // compounded extremes readable.
+  const closeRange = profile('balanced', 'summoner-range-close');
+  const midRange = profile('balanced', 'summoner-range-mid');
+  const farRange = profile('balanced', 'summoner-range-far');
+  assert(closeRange.slots[0]!.sizeMult > midRange.slots[0]!.sizeMult, 'Vigil enlarges summons');
+  assert(farRange.slots[0]!.sizeMult < midRange.slots[0]!.sizeMult, 'Harrier shrinks summons');
+
+  // Kilnmaster at Harrier range compounds to 0.389 before clamping; Idolwright
+  // at Vigil range to 3.28. Both must land inside the readable band.
+  const swarmFar = profile('light', 'summoner-range-far', 'summoner-light-t3-b');
+  const idolClose = profile('heavy', 'summoner-range-close', 'summoner-heavy-t3-c');
+  for (const p of [swarmFar, idolClose]) {
+    for (const slot of p.slots) {
+      assert(slot.sizeMult >= SUMMON_SIZE_MULT_MIN, 'summon size never falls below the floor');
+      assert(slot.sizeMult <= SUMMON_SIZE_MULT_MAX, 'summon size never exceeds the ceiling');
+    }
+  }
+}
+
+{
+  // Tint is range-derived and resolves from the owner's unlocked skills. All
+  // three ranges carry their own hue, and the three must stay distinguishable —
+  // the point of the tint is telling formations apart at a glance.
+  assert(resolveSummonTint([]) === 0xffffff, 'no range unlocked leaves summons untinted');
+  const tints = (['close', 'mid', 'far'] as const).map((r) =>
+    resolveSummonTint([`summoner-range-${r}`]));
+  for (const tint of tints) {
+    assert(tint !== 0xffffff, 'every range tints its summons');
+  }
+  assert(new Set(tints).size === 3, 'the three range tints are distinct');
+}
+
+{
+  // Only the melee formation lunges; the client gates its lunge on this, so a
+  // Procession bolt or Harrier beam must never report itself as melee.
+  const profiles = {
+    close: profile('balanced', 'summoner-range-close'),
+    mid:   profile('balanced', 'summoner-range-mid'),
+    far:   profile('balanced', 'summoner-range-far'),
+  };
+  assert(!isRangedSummonStyle(SUMMON_ATTACK_STYLE[profiles.close.attackMode]),
+    'Vigil summons attack in melee and may lunge');
+  assert(isRangedSummonStyle(SUMMON_ATTACK_STYLE[profiles.mid.attackMode]),
+    'Procession summons fire at reach and must not lunge');
+  assert(isRangedSummonStyle(SUMMON_ATTACK_STYLE[profiles.far.attackMode]),
+    'Harrier summons fire at range and must not lunge');
 }
 
 console.log('summonerProfile.test.ts: ok');

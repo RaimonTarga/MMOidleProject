@@ -37,7 +37,7 @@ import {
 import { getAntiHealMult } from "../../defense";
 import { applyMonsterAoe } from "../damage/aoeDamage";
 import { applyPlayerKnockback } from "../damage/knockback";
-import { canApplyPlayerDebuff } from "../../classes/archetypes/summoner/t3/core/debuffGuard";
+import { canApplyPlayerDebuff } from "../status/debuffGuard";
 import { evadeBlocksDebuffs } from "../../defense/mitigation/evasion";
 import { isMonsterStunned, applyStun } from "../status/stun";
 import { setAggroTarget, setAttackTarget } from "../ai/targeting";

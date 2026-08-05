@@ -1,0 +1,182 @@
+{
+  "category": "conduit-bakeoff",
+  "endpoint": "pixflux",
+  "styleRef": "style/creatures.png",
+  "noBackground": true,
+  "candidates": 3,
+  "entries": [
+    {
+      "id": "arm-a-skull",
+      "out": "files/_bakeoff/conduit/arm-a-skull.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "status": "draft",
+      "prompt": "a small floating conjured skull, pale bone-white, hovering in the air with no body and no legs, deep empty eye sockets lit from within by cold teal light, a defined brow ridge and a fixed jaw, a few tattered deep-red cloth scraps trailing beneath it, three-quarter view facing right, painterly pixel art, soft volumetric shading, minimal outline, bone-white and pale grey with deep red cloth and teal socket light",
+      "negative": "person, body, head, neck, shoulders, hands, arms, figure, standing, walking, ground, floor, terrain, pedestal, base, perch, cast shadow, drop shadow, standing on anything, scenery, background elements, environment, hood, robe, cloak worn, full character, cute, cartoon mascot, smiling, chibi, anthropomorphic, weapon, 3d render, photograph, hard black outline, text, watermark",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "RETIRED 2026-08-05 \u2014 BAKEOFF WON. User picked skulls. The winning art was copied to art/src/sprites/monsters/conduit-summon.png (the real atlas frame) and wired as the Conduit's summon body for every slot. Set to draft so it never re-enters the generate queue; no file under files/_bakeoff on disk. RESULT: a skull generates correctly on prompt alone, first try, all three candidates usable \u2014 sockets, brow and jaw carry the three-quarter facing for free."
+    },
+    {
+      "id": "arm-b-mask-prompt",
+      "out": "files/_bakeoff/conduit/arm-b-mask-prompt.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "status": "draft",
+      "prompt": "a small floating conjured ceramic mask, plain fired white clay, hovering in the air with no body and no legs, the mask seen at a three quarter angle turned to the right with its right edge catching the light and its left side in soft shadow, deep hollow eye sockets lit from within by cold teal light, a defined brow ridge and a narrow mouth aperture, a few tattered deep-red cloth scraps trailing beneath it, three-quarter view facing right, painterly pixel art, soft volumetric shading, minimal outline, white ceramic and pale grey with deep red cloth and teal socket light",
+      "negative": "mask facing the viewer, flat round mask, flat disc, featureless oval, blank oval, front view, facing camera, person, body, head, neck, shoulders, hands, arms, figure, standing, walking, ground, floor, terrain, pedestal, base, perch, cast shadow, drop shadow, standing on anything, scenery, background elements, environment, hood, robe, cloak worn, full character, held mask, worn mask, cute, cartoon mascot, smiling, chibi, anthropomorphic, weapon, 3d render, photograph, hard black outline, text, watermark",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "RETIRED 2026-08-05 \u2014 BAKEOFF LOST. Every candidate came back as a sculpted HUMAN FACE (nose, lips, cheekbones), mostly face-on, not as a mask object. ROOT CAUSE, and it is the opposite of the round-11 diagnosis in players.json: that note says a blank oval carries no facing information, so this prompt was given a landmark budget (brow ridge, mouth aperture, eye sockets) to break the oval \u2014 but those landmarks ARE face anatomy, so the model drew a face. A mask has to be specified as an ABSENCE of face (smooth featureless fired plate, no nose, no lips, no cheekbones, with all of those as hard negatives) and given its front through LIGHTING and RIM GEOMETRY instead. Untested; this is the arm to run if masks are ever revisited."
+    },
+    {
+      "id": "arm-c-mask-chained",
+      "out": "files/_bakeoff/conduit/arm-c-mask-chained.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "status": "draft",
+      "prompt": "a small floating conjured ceramic mask, plain fired white clay, hovering in the air with no body and no legs, the mask seen at a three quarter angle turned to the right with its right edge catching the light and its left side in soft shadow, deep hollow eye sockets lit from within by cold teal light, a defined brow ridge and a narrow mouth aperture, a few tattered deep-red cloth scraps trailing beneath it, three-quarter view facing right, painterly pixel art, soft volumetric shading, minimal outline, white ceramic and pale grey with deep red cloth and teal socket light",
+      "negative": "mask facing the viewer, flat round mask, flat disc, featureless oval, blank oval, front view, facing camera, person, body, head, neck, shoulders, hands, arms, figure, standing, walking, hooded figure, robed figure, ground, floor, terrain, pedestal, base, perch, cast shadow, drop shadow, standing on anything, scenery, background elements, environment, hood, robe, cloak worn, full character, held mask, worn mask, cute, cartoon mascot, smiling, chibi, anthropomorphic, weapon, 3d render, photograph, hard black outline, text, watermark",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east",
+        "initImage": "sprites/classes/summoner.png",
+        "initImageStrength": 45
+      },
+      "notes": "RETIRED 2026-08-05 \u2014 BAKEOFF LOST, WORST ARM. Chaining from sprites/classes/summoner.png at strength 45 imported the FIGURE, not the mask: candidate 2 came back as a woman with long red hair (the deep-red robe became hair), the others got a cowl and a headwrap. GENERAL RULE LEARNED: the players.json advice 'chain from whichever accepted sibling already has the property you keep failing to get' only holds when the property is the SUBJECT of the source image. Here the mask is a small feature on a robed body, so the chain asserts the body. This is not fixable by lowering strength \u2014 it is the wrong anchor. A mask chain would need a source image whose subject is a mask."
+    },
+    {
+      "id": "arm-d-plate",
+      "out": "files/_bakeoff/conduit/arm-d-plate.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "status": "draft",
+      "prompt": "a small floating conjured faceplate of plain fired white clay, a smooth blank curved ceramic shell with no features on it at all, hovering in the air with no body and no legs, tilted three quarters so its right rim catches a bright highlight and its left half falls into soft shadow, two deep hollow eye openings cut clean through the shell glowing cold teal from inside, a thick visible ceramic rim along its edge, a few tattered deep-red cloth scraps trailing beneath it, painterly pixel art, soft volumetric shading, minimal outline, white ceramic and pale grey with deep red cloth and teal light",
+      "negative": "nose, lips, mouth, teeth, chin, cheeks, cheekbones, jawline, human face, human features, portrait, bust, statue head, sculpture of a person, realistic face, skin, eyeballs, pupils, hair, wig, long hair, front view, facing camera, person, body, head, neck, shoulders, hands, arms, figure, standing, walking, hooded figure, robed figure, ground, floor, terrain, pedestal, base, perch, cast shadow, drop shadow, standing on anything, scenery, background elements, environment, hood, robe, cloak worn, full character, held mask, worn mask, cute, cartoon mascot, smiling, chibi, anthropomorphic, weapon, 3d render, photograph, hard black outline, text, watermark",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "RETIRED 2026-08-05 \u2014 ROUND 2 LOSS. Removing ALL facial landmarks (the fix for round 1's face problem) produced smooth featureless eggs/pebbles with two teal gems: no facing, no character. LESSON, paired with arm B: face anatomy makes it a face, but zero anatomy makes it a blob. There is no middle setting that yields a readable 'mask' at 64px \u2014 giving the object SKULL geometry is the only thing that works, which is what arm F does."
+    },
+    {
+      "id": "arm-e-funerary",
+      "out": "files/_bakeoff/conduit/arm-e-funerary.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "status": "draft",
+      "prompt": "a small floating conjured funerary plate of glazed white porcelain, an oval slab of fired clay with a thick heavy rim, hovering in the air with no body and no legs, tilted three quarters with a bright glaze highlight down its right edge and its left half in soft shadow, exactly two round holes cut through the slab glowing cold teal from within, a long hairline crack running across the glaze and one chipped corner, a few tattered deep-red cloth scraps trailing beneath it, painterly pixel art, soft volumetric shading, minimal outline, white porcelain and pale grey with deep red cloth and teal light",
+      "negative": "nose, lips, mouth, teeth, chin, cheeks, cheekbones, jawline, human face, human features, portrait, bust, statue head, sculpture of a person, realistic face, skin, eyeballs, pupils, hair, wig, long hair, front view, facing camera, person, body, head, neck, shoulders, hands, arms, figure, standing, walking, hooded figure, robed figure, ground, floor, terrain, pedestal, base, perch, cast shadow, drop shadow, standing on anything, scenery, background elements, environment, hood, robe, cloak worn, full character, held mask, worn mask, cute, cartoon mascot, smiling, chibi, anthropomorphic, weapon, 3d render, photograph, hard black outline, text, watermark",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "RETIRED 2026-08-05 \u2014 ROUND 2 LOSS, worst of the three. 'Funerary plate / oval slab' produced bathtubs, serving trays and a sink in 3/4 isometric \u2014 the word 'plate' dominated every other term. LESSON: do not name the object after a household form; the model will draw the household object."
+    },
+    {
+      "id": "arm-f-skull-mask",
+      "out": "files/_bakeoff/conduit/arm-f-skull-mask.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "status": "draft",
+      "prompt": "a small floating ceremonial mask carved in the shape of a stylised animal skull, glazed white porcelain rather than bone, hovering in the air with no body and no legs, hollow eye sockets glowing cold teal from within, a smooth stylised muzzle and a carved geometric tooth pattern along its lower rim, a visible glaze sheen and a thick ceramic edge, a few tattered deep-red cloth scraps trailing beneath it, three-quarter view, painterly pixel art, soft volumetric shading, minimal outline, glazed white porcelain and pale grey with deep red cloth and teal socket light",
+      "negative": "nose, lips, mouth, teeth, chin, cheeks, cheekbones, jawline, human face, human features, portrait, bust, statue head, sculpture of a person, realistic face, skin, eyeballs, pupils, hair, wig, long hair, front view, facing camera, person, body, head, neck, shoulders, hands, arms, figure, standing, walking, hooded figure, robed figure, ground, floor, terrain, pedestal, base, perch, cast shadow, drop shadow, standing on anything, scenery, background elements, environment, hood, robe, cloak worn, full character, held mask, worn mask, cute, cartoon mascot, smiling, chibi, anthropomorphic, weapon, 3d render, photograph, hard black outline, text, watermark",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "RETIRED 2026-08-05 \u2014 ROUND 2 WINNER, wired. Two candidates were accepted and copied to art/src/sprites/monsters/conduit-summon.png and conduit-summon-b.png (the real atlas frames); resolveMinionType alternates them by slot parity so a formation is not identical clones. Set to draft so it never re-enters the generate queue; no file under files/_bakeoff on disk. RESULT: skull geometry carries three-quarter facing for free, and unlike round 1 these generated RIGHT-facing, so no flop was needed. The 'ceramic mask' reading did not really survive \u2014 they read as skulls with a porcelain palette \u2014 but rounds D and E proved that is the best available: this object is only legible at 64px when it has skull geometry."
+    },
+    {
+      "id": "arm-g-bone-skull",
+      "out": "files/_bakeoff/conduit/arm-g-bone-skull.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "status": "draft",
+      "prompt": "a small floating human skull, clean dry bone and nothing else, hovering in the air with empty space beneath it, a rounded human cranium with a high smooth brow, deep hollow eye sockets lit faintly from within by cold teal light, a triangular nasal opening, an even row of small human teeth, pale ivory bone with soft grey shading in the recesses, three-quarter view, painterly pixel art, soft volumetric shading, minimal outline, ivory and pale grey bone with cold teal light in the sockets",
+      "negative": "blood, bloody, gore, red, crimson, dripping, drips, drip, liquid, ichor, flesh, meat, tissue, sinew, muscle, skin, cloth, fabric, scraps, ribbon, tassel, spine, vertebrae, spinal column, neck, torso, ribcage, skeleton body, animal skull, beast skull, muzzle, snout, long jaw, fangs, horns, antlers, ears, person, body, hands, arms, figure, standing, walking, hooded figure, robed figure, ground, floor, terrain, pedestal, base, perch, cast shadow, drop shadow, standing on anything, scenery, background elements, environment, full character, held, worn, cute, cartoon mascot, smiling, chibi, anthropomorphic, weapon, 3d render, photograph, hard black outline, text, watermark",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "ROUND 3 \u2014 kept as sprites/monsters/conduit-summon-teal.png, reachable only via the DEV summon skin switcher (Shift+[ / Shift+]). Set to draft so it never re-enters the generate queue; no file under files/_bakeoff on disk."
+    },
+    {
+      "id": "arm-h-bone-skull-mask",
+      "out": "files/_bakeoff/conduit/arm-h-bone-skull-mask.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "status": "draft",
+      "prompt": "a small floating ceremonial mask carved in the shape of a human skull, glazed bone-white porcelain, hovering in the air with empty space beneath it, a rounded cranium with a high smooth brow, hollow eye sockets lit faintly from within by cold teal light, a carved triangular nasal opening, a geometric carved row of teeth along its lower rim, a visible glaze sheen and a thick ceramic edge where the shell ends, three-quarter view, painterly pixel art, soft volumetric shading, minimal outline, bone-white glazed porcelain and pale grey with cold teal light in the sockets",
+      "negative": "blood, bloody, gore, red, crimson, dripping, drips, drip, liquid, ichor, flesh, meat, tissue, sinew, muscle, skin, cloth, fabric, scraps, ribbon, tassel, spine, vertebrae, spinal column, neck, torso, ribcage, skeleton body, animal skull, beast skull, muzzle, snout, long jaw, fangs, horns, antlers, ears, person, body, hands, arms, figure, standing, walking, hooded figure, robed figure, ground, floor, terrain, pedestal, base, perch, cast shadow, drop shadow, standing on anything, scenery, background elements, environment, full character, held, worn, cute, cartoon mascot, smiling, chibi, anthropomorphic, weapon, 3d render, photograph, hard black outline, text, watermark",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "ROUND 3 \u2014 kept as sprites/monsters/conduit-summon-porcelain.png, reachable only via the DEV summon skin switcher. The ceramic EDGE did not survive at 64px; across three rounds 'mask' never became a readable silhouette, only a palette shift. Set to draft so it never re-enters the generate queue; no file under files/_bakeoff on disk."
+    },
+    {
+      "id": "arm-i-bone-skull-noglow",
+      "out": "files/_bakeoff/conduit/arm-i-bone-skull-noglow.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "status": "draft",
+      "prompt": "a small floating human skull, clean dry bone and nothing else, hovering in the air with empty space beneath it, a rounded human cranium with a high smooth brow, deep hollow eye sockets in complete shadow, a triangular nasal opening, an even row of small human teeth, pale ivory bone with soft grey shading in the recesses, three-quarter view, painterly pixel art, soft volumetric shading, minimal outline, ivory and pale grey bone only, no coloured light",
+      "negative": "glow, glowing eyes, teal, cyan, green light, coloured light, blood, bloody, gore, red, crimson, dripping, drips, drip, liquid, ichor, flesh, meat, tissue, sinew, muscle, skin, cloth, fabric, scraps, ribbon, tassel, spine, vertebrae, spinal column, neck, torso, ribcage, skeleton body, animal skull, beast skull, muzzle, snout, long jaw, fangs, horns, antlers, ears, person, body, hands, arms, figure, standing, walking, hooded figure, robed figure, ground, floor, terrain, pedestal, base, perch, cast shadow, drop shadow, standing on anything, scenery, background elements, environment, full character, held, worn, cute, cartoon mascot, smiling, chibi, anthropomorphic, weapon, 3d render, photograph, hard black outline, text, watermark",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "notes": "ROUND 3 WINNER \u2014 SHIPPED as sprites/monsters/conduit-summon.png. User: 'I do kinda like no-glow.' Human skull, pure bone, no teal. Generated right-facing, no flop needed. Set to draft so it never re-enters the generate queue; no file under files/_bakeoff on disk."
+    }
+  ]
+}

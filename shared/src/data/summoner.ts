@@ -34,6 +34,17 @@ export interface SummonerFrameTuning {
 export interface SummonerRangeTuning {
   attackMode: SummonerAttackMode;
   policy: SummonerFormationPolicy;
+  /**
+   * Range's visual signature, alongside the hue tint in `SUMMON_RANGE_TINT`.
+   * Range never swaps the summon body (mirroring the player rule in
+   * frameMaps.ts) — it colours and sizes it.
+   *
+   * NOT purely cosmetic: `sizeMult` feeds `resolveMinionHitbox`, so a Vigil
+   * summon is genuinely easier for monster AoE to catch and a Harrier summon
+   * genuinely harder. That matches what the rest of the tuning already says —
+   * Vigil soaks (summonHpMult 1.25, redirect 0.55), Harrier kites (0.7, 0.08).
+   */
+  sizeMult: number;
   attackRange: number;
   preferredDistance: number;
   summonHpMult: number;
@@ -98,6 +109,7 @@ export const SUMMONER_RANGE_TUNING: Record<SummonerRange, SummonerRangeTuning> =
   close: {
     attackMode: 'melee',
     policy: 'guardian',
+    sizeMult: 1.5,
     attackRange: 18,
     preferredDistance: 12,
     summonHpMult: 1.25,
@@ -108,6 +120,7 @@ export const SUMMONER_RANGE_TUNING: Record<SummonerRange, SummonerRangeTuning> =
   mid: {
     attackMode: 'reach',
     policy: 'escort',
+    sizeMult: 1.25,
     attackRange: 96,
     preferredDistance: 72,
     summonHpMult: 1,
@@ -118,6 +131,7 @@ export const SUMMONER_RANGE_TUNING: Record<SummonerRange, SummonerRangeTuning> =
   far: {
     attackMode: 'ranged',
     policy: 'harrier',
+    sizeMult: 1.0,
     attackRange: 190,
     preferredDistance: 165,
     summonHpMult: 0.7,
@@ -126,6 +140,37 @@ export const SUMMONER_RANGE_TUNING: Record<SummonerRange, SummonerRangeTuning> =
     moveSpeedMult: 1.12,
   },
 };
+
+/**
+ * Clamp on the final per-slot size multiplier, after frame x spec x range.
+ *
+ * Floor raised from the originally planned 0.45 because MINION_BASE_DISPLAY_SIZE
+ * dropped 48 -> 28: at 28px base, 0.6 is ~17px, which is about the smallest a
+ * summon can be and still read as a skull. The binding case is Kilnmaster at
+ * Harrier range (0.72 x 0.72 x 0.75 = 0.389), which the floor rescues.
+ */
+export const SUMMON_ATTACK_STYLE: Record<SummonerAttackMode, string> = {
+  melee:  'impact',
+  reach:  'conduit-bolt',
+  ranged: 'conduit-beam',
+};
+
+/**
+ * Summon styles that fire from a distance. Drives the client's lunge gate the
+ * same way `MonsterView.isRanged` does for monsters: a Procession bolt or a
+ * Harrier beam must NOT animate a melee lunge into the target.
+ */
+export const SUMMON_RANGED_STYLES: ReadonlySet<string> = new Set([
+  SUMMON_ATTACK_STYLE.reach,
+  SUMMON_ATTACK_STYLE.ranged,
+]);
+
+export function isRangedSummonStyle(style: string): boolean {
+  return SUMMON_RANGED_STYLES.has(style);
+}
+
+export const SUMMON_SIZE_MULT_MIN = 0.6;
+export const SUMMON_SIZE_MULT_MAX = 3.0;
 
 /** Existing persisted ids intentionally map to the new locked cast. */
 export const SUMMONER_SPECIALIZATION_BY_SKILL_ID = new Map<string, SummonerSpecialization>([

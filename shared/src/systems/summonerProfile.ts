@@ -2,6 +2,8 @@ import type { PassiveMap } from '../passives';
 import type { SubVariant } from '../data/skillTree';
 import { relicRatingsFromPassives, resolveSummonerRelicProfile } from './relics';
 import {
+  SUMMON_SIZE_MULT_MAX,
+  SUMMON_SIZE_MULT_MIN,
   SUMMONER_CORE_TUNING,
   SUMMONER_FRAME_TUNING,
   SUMMONER_RANGE_TUNING,
@@ -131,7 +133,16 @@ export function resolveSummonerProfile(input: SummonerProfileInput): SummonerPro
   const frameTuning = SUMMONER_FRAME_TUNING[frame];
   const rangeTuning = SUMMONER_RANGE_TUNING[range];
   const passives = input.passives ?? {};
-  const slots = resolveSlots(frame, specialization);
+  // Range scales the body it never swaps (see SummonerRangeTuning.sizeMult).
+  // Clamped so the extremes stay readable: Kilnmaster at Harrier range would
+  // otherwise compound to 0.389, and Idolwright at Vigil range to 3.28.
+  const slots = resolveSlots(frame, specialization).map((slot) => ({
+    ...slot,
+    sizeMult: Math.min(
+      SUMMON_SIZE_MULT_MAX,
+      Math.max(SUMMON_SIZE_MULT_MIN, slot.sizeMult * rangeTuning.sizeMult),
+    ),
+  }));
   const colossusReconstructionMult = specialization === 'colossus'
     ? SUMMONER_SPECIALIZATION_TUNING.colossus.reconstructionIntervalMult
     : 1;

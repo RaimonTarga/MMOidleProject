@@ -21,8 +21,6 @@ export const SCALABLE_MECHANIC_BUFFS: Readonly<Record<string, ScalableMechanicEf
   'reload-hair-trigger': { fields: { attackSpeedPctPerShot: 'fraction' } },
   'dot-frenzy': { fields: { attackSpeedPct: 'fraction', onHitPerTier: 'flat' } },
   'energy-overdrive': { fields: { attackDamagePct: 'fraction' } },
-  'summoner-howl-banner': { fields: { perStack: 'fraction' } },
-  'summoner-trample-boon': { fields: { speedPct: 'fraction' } },
 } as const;
 
 /** Explicit opt-in registry for harmful class-mechanic effects. */
@@ -35,9 +33,6 @@ export const SCALABLE_MECHANIC_DEBUFFS: Readonly<Record<string, ScalableMechanic
   'dot-chill': { fields: { moveSlowPerStack: 'fraction', attackSlowPerStack: 'fraction' } },
   'dot-frostbite': { fields: { dotTakenPerStack: 'fraction' } },
   'reload-suppress-shred': { fields: { platingReduction: 'fraction' } },
-  'summoner-sentinel-slow': { fields: { speedMult: 'multiplier', atkCdMult: 'multiplier' } },
-  'summoner-overwhelmed': { fields: { perAttacker: 'fraction' } },
-  'summoner-corrosion': { fields: { platingPerStack: 'flat' } },
 } as const;
 
 export function scaleMechanicEffectConfig(

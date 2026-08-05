@@ -107,9 +107,9 @@ export const PLAYER_FRAMES: Record<string, string> = {
 
 /** Key: monsterTypeId (matches MONSTER_DATABASE keys exactly).
  *
- * Note: `slime` is the summoner-archetype minion. It is not a `MonsterDefinition`
- * entry — it is rendered as a minion entity, aliased to the Tiny Wisp sprite
- * (a conjured spirit mote; a placeholder until the Conduit identity pass).
+ * Note: the `conduit-summon*` keys are the Conduit's summons. They are NOT
+ * `MonsterDefinition` entries — they render as minion entities and their attack
+ * style comes from the formation's attack mode, not a monster lookup.
  *
  * Frame names must match the keys in sprites.json exactly (free-tex-packer
  * preserves the full relative path including the `sprites/` folder prefix).
@@ -287,9 +287,17 @@ export const MONSTER_FRAMES: Record<string, string> = {
   // elder-trench-serpent-warden: intentionally unmapped — Void Overlord fight
   // scrapped pending redesign; no sprite until the rework lands.
 
-  // ── Summoner minion ──────────────────────────────────────────────────────────
-  'slime':      'sprites/monsters/tiny-wisp.png', // de-slimed: conjured spirit mote
-  'tiny-slime': 'sprites/monsters/tiny-wisp.png', // display: Tiny Wisp (T0 tutorial)
+  // ── Conduit summons ──────────────────────────────────────────────────────────
+  // The Conduit's own conjured body, not borrowed wildlife. One skull for every
+  // slot for now; per-frame and per-spec bodies are phase 7 of
+  // docs/summoner-flavor-pass-plan.md.
+  // A human skull, pure bone, no glow. The two alternate candidates
+  // (conduit-summon-teal / -porcelain) are in the atlas but not mapped here:
+  // they are reachable only through the DEV skin switcher in
+  // client/src/render/summonSkins.ts. Retire them once a winner is picked.
+  'conduit-summon': 'sprites/monsters/conduit-summon.png',
+
+  'tiny-slime': 'sprites/monsters/tiny-wisp.png', // display: Tiny Wisp (T0 tutorial monster)
 };
 
 const VARIANTS = ['light', 'balanced', 'heavy'] as const;
@@ -400,6 +408,35 @@ export const PLAYER_ACCENTS: Record<string, PlayerAccent> = {
   'energy-range-far':       { frame: 'sprites/accents/crest-far-energy.png', color: 0xdcecff },
   'summoner-range-far':     { frame: 'sprites/accents/crest-far-summoner.png', color: 0x4ad4c8 },
 };
+
+/**
+ * Range's hue signature on the Conduit's summons, the colour half of the
+ * treatment whose size half is `SummonerRangeTuning.sizeMult`.
+ *
+ * A warm / violet / cool triad, chosen to be separable at 20px rather than to
+ * sit on a gradient. Vigil warms toward the Conduit's deep red robe (he keeps
+ * his summons close); Procession takes a ceremonial pale violet; Harrier cools
+ * toward the teal lantern light (he casts them out). Deliberately light
+ * multiplicative tints — the summon body is near-white bone, so anything
+ * saturated would swamp it.
+ *
+ * Resolved client-side from the OWNER's unlocked skills; tint is pure
+ * presentation, so it needs no protocol field.
+ */
+export const SUMMON_RANGE_TINT: Record<string, number> = {
+  'summoner-range-close': 0xffd0bc, // Vigil — warm, lit by the bearer
+  'summoner-range-mid':   0xcdbde8, // Procession — ceremonial pale violet
+  'summoner-range-far':   0xa8e8e0, // Harrier — cool, lit only by its own light
+};
+
+/** Tint for an owner's summons; white (no tint) when no range is unlocked. */
+export function resolveSummonTint(unlockedSkills: readonly string[]): number {
+  for (let i = unlockedSkills.length - 1; i >= 0; i--) {
+    const tint = SUMMON_RANGE_TINT[unlockedSkills[i]!];
+    if (tint !== undefined) return tint;
+  }
+  return 0xffffff;
+}
 
 /**
  * Returns the identity accent for a player, or null. The most recently

@@ -58,11 +58,11 @@ function assert(condition: boolean, message: string): void {
 
 {
   const scaled = scaleMechanicEffectConfig(
-    { id: 'summoner-howl-banner', sourceId: 'player', data: { perStack: 0.05, baseCd: 1000 } },
+    { id: 'cadence-echo', sourceId: 'player', data: { damageBonus: 0.05, baseCd: 1000 } },
     1.25,
     SCALABLE_MECHANIC_BUFFS,
   );
-  assert(scaled.data?.perStack === 0.0625, 'registered mechanic buff scales');
+  assert(scaled.data?.damageBonus === 0.0625, 'registered mechanic buff scales');
   assert(scaled.data?.baseCd === 1000, 'unregistered buff field stays unchanged');
 }
 

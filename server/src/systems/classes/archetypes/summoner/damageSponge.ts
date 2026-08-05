@@ -33,27 +33,6 @@ export function pickLivingMinion(world: World, owner: PlayerEntity): MinionEntit
   return candidates[index]!;
 }
 
-export function pickLivingMinionOfType(
-  world: World,
-  owner: PlayerEntity,
-  type: MinionMonsterType,
-): MinionEntity | null {
-  if (!owner.summonsMinions) return null;
-  const candidates: MinionEntity[] = [];
-  for (const id of owner.summonsMinions.minionIds) {
-    if (!id) continue;
-    const m = world.getMinionEntity(id);
-    if (m && m.hasHealth.hp > 0 && m.isMinion.monsterTypeId === type) {
-      candidates.push(m);
-    }
-  }
-  if (candidates.length === 0) return null;
-  const cursor = owner.summonsMinions.redirectCursor % candidates.length;
-  owner.summonsMinions.redirectCursor = (owner.summonsMinions.redirectCursor + 1)
-    % Math.max(1, owner.summonsMinions.targetCount);
-  return candidates[cursor]!;
-}
-
 /** Raw HP subtraction on a minion; death is handled by the summoner tick. */
 export function redirectDamageToMinion(minion: MinionEntity, amount: number, world?: World): void {
   minion.hasHealth.hp -= amount;

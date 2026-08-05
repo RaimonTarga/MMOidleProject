@@ -47,11 +47,6 @@ function clampToLeash(owner: PlayerEntity, desired: Vec2, leashRadius: number): 
   };
 }
 
-function isStoneSentinelMinion(owner: PlayerEntity, minion: MinionEntity): boolean {
-  return !!owner.usesSkills.passives['summoner.stone-sentinel']
-    && minion.isMinion.monsterTypeId === 'ridge-archer';
-}
-
 export function findMonsterAtPoint(
   world: World,
   nodeId: string,
@@ -143,7 +138,6 @@ export function validateSummonerCommand(world: World, owner: PlayerEntity): void
     if (!id) continue;
     const minion = world.getMinionEntity(id);
     if (!minion || minion.hasHealth.hp <= 0) continue;
-    if (isStoneSentinelMinion(owner, minion)) continue;
     if (distanceSq(minion.hasPosition.current, desired) > ARRIVE_TOL_SQ) {
       return;
     }

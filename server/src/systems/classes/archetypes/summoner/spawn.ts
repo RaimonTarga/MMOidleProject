@@ -11,8 +11,8 @@ import {
   initIsMinion,
   makeTracksCombat,
   MINION_BASE_DISPLAY_SIZE,
-  MONSTER_DATABASE,
   resolveMonsterFrame,
+  SUMMON_ATTACK_STYLE,
   type MinionMonsterType,
   type PassiveKey,
   type Vec2,
@@ -20,7 +20,6 @@ import {
 import type { World } from '../../../../world/World';
 import type { MinionEntity, PlayerEntity, ServerEntity } from '../../../../ecs/entity';
 import { initControlsMinion } from './controlsMinion';
-import { getStoneSentinelSpawnPos } from './sentinelPlacement';
 import { resolveMinionHitbox, syncEntityHitbox } from '../../../../hitbox/resolve';
 import { markSliceDirty } from '../../../../ecs/dirtyHelpers';
 import { attachComponent, detachComponent } from '../../../../ecs/markerHelpers';
@@ -105,31 +104,14 @@ export function syncMinionHitbox(world: World, minion: MinionEntity, sizeMult: n
   });
 }
 
-const MINION_TYPE_PASSIVE_MAP: Array<[PassiveKey, MinionMonsterType]> = [
-  ['summoner.minion-as-cave-lurker',       'cave-lurker'],
-  ['summoner.minion-as-plains-slime',      'plains-slime'],
-  ['summoner.minion-as-boar',              'boar'],
-  ['summoner.minion-as-mud-toad',          'mud-toad'],
-  ['summoner.minion-as-cliff-hopper',      'cliff-hopper'],
-  ['summoner.minion-as-ridge-archer',      'ridge-archer'],
-  ['summoner.minion-as-crag-behemoth', 'crag-behemoth'],
-];
-
-/** Resolves which creature sprite/hitbox to use from unlocked T3 passives. */
-export function resolveMinionType(owner: PlayerEntity, slot = 0): MinionMonsterType {
-  const passives = owner.usesSkills.passives;
-  for (const [key, type] of MINION_TYPE_PASSIVE_MAP) {
-    if (passives[key]) return type;
-  }
-  const profile = summonerProfileFor(owner);
-  const role = profile.slots[slot]?.role;
-  if (role === 'colossus') return 'crag-behemoth';
-  if (role === 'offense-twin') return 'cliff-hopper';
-  if (role === 'defense-twin') return 'mud-toad';
-  if (role === 'bonded') return profile.range === 'far' ? 'ridge-archer' : 'boar';
-  if (profile.range === 'far') return 'ridge-archer';
-  if (profile.range === 'mid') return 'plains-slime';
-  return 'slime';
+/**
+ * Resolves which sprite/hitbox a summon uses. Every slot shares the Conduit's
+ * conjured body; frame and specialization currently read through `sizeMult`
+ * alone. Per-frame and per-spec bodies are phase 7 of
+ * `docs/summoner-flavor-pass-plan.md`.
+ */
+export function resolveMinionType(_owner: PlayerEntity, _slot = 0): MinionMonsterType {
+  return 'conduit-summon';
 }
 
 export function spawnMinionForOwner(
@@ -151,10 +133,9 @@ export function spawnMinionForOwner(
   );
   const sizeMult = computeMinionSizeMult(owner, slot);
   const monsterTypeId = resolveMinionType(owner, slot);
-  const monsterDef = MONSTER_DATABASE.get(monsterTypeId);
-  const attackStyle = profile.attackMode === 'ranged'
-    ? 'magic'
-    : (monsterDef?.attackStyle ?? 'impact');
+  // Range is legible from what the summons throw: Harrier snaps a short beam,
+  // Procession lobs a fast red bolt, Vigil lands a melee thump.
+  const attackStyle = SUMMON_ATTACK_STYLE[profile.attackMode];
 
   const maxHp = computeMinionMaxHp(owner, slot);
   const attack = Math.max(1, Math.round(
@@ -163,9 +144,7 @@ export function spawnMinionForOwner(
 
   const id = world.allocMinionId(owner.isPlayer.id);
   const minionHitbox = resolveMinionHitbox(monsterTypeId, sizeMult);
-  const spawnPos = passives['summoner.stone-sentinel'] && monsterTypeId === 'ridge-archer'
-    ? getStoneSentinelSpawnPos(world, owner, slot, attackRange, minionHitbox)
-    : getMinionIdlePos(owner, slot);
+  const spawnPos = getMinionIdlePos(owner, slot);
   const followOffset = getFollowOffset(slot, owner.summonsMinions.targetCount);
 
   const entity: MinionEntity = {
@@ -179,18 +158,10 @@ export function spawnMinionForOwner(
       sizeMult,
       monsterTypeId,
     }),
-    controlsMinion: (() => {
-      const cm = initControlsMinion({
-        ownerPlayerId: owner.isPlayer.id,
-        followOffset,
-      });
-      if (monsterTypeId === 'cave-lurker' && passives['summoner.acid-brood']) {
-        cm.lifetimeRemainingMs = Math.round(
-          passives['summoner.acid-lurker-lifetime-ms'] ?? 12_000,
-        );
-      }
-      return cm;
-    })(),
+    controlsMinion: initControlsMinion({
+      ownerPlayerId: owner.isPlayer.id,
+      followOffset,
+    }),
     hasPosition: {
       current: spawnPos,
       nodeId:  owner.hasPosition.nodeId,
@@ -260,8 +231,6 @@ function dropMonsterAggroOnMinion(world: World, minionId: string): void {
  */
 export function relocateMinionsForOwner(world: World, owner: PlayerEntity): void {
   if (!owner.summonsMinions) return;
-  const passives = owner.usesSkills.passives;
-  const stoneSentinel = !!passives['summoner.stone-sentinel'];
   const nodeId = owner.hasPosition.nodeId;
 
   for (const id of owner.summonsMinions.minionIds) {
@@ -270,23 +239,11 @@ export function relocateMinionsForOwner(world: World, owner: PlayerEntity): void
     if (!minion || minion.hasHealth.hp <= 0) continue;
 
     minion.hasPosition.nodeId = nodeId;
-
-    if (stoneSentinel && minion.isMinion.monsterTypeId === 'ridge-archer') {
-      minion.hasPosition.current = getStoneSentinelSpawnPos(
-        world,
-        owner,
-        minion.isMinion.slot,
-        minion.performsAttack.attackRange,
-        minion.hasHitbox,
-      );
-    } else {
-      minion.hasPosition.current = getMinionIdlePos(owner, minion.isMinion.slot);
-    }
+    minion.hasPosition.current = getMinionIdlePos(owner, minion.isMinion.slot);
 
     stopEntity(world, minion);
     setAttackTarget(world, minion, null);
     minion.controlsMinion.currentTargetId = null;
-    minion.controlsMinion.isCharging = false;
     markSliceDirty(world, minion, 'hasPosition');
   }
 }

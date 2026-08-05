@@ -5,16 +5,13 @@ import type { SummonerSlotRole } from '../../../data/summoner';
  *
  * `monsterTypeId` drives client sprite lookup via `frameMaps.ts` and server
  * hitbox resolution via `resolveMinionHitbox`.
+ *
+ * Summons used to borrow wildlife sprites (hare, boar, frog, goat, a T1 boss).
+ * They now use the Conduit's own conjured body. Per-frame and per-spec bodies
+ * land in phase 7 of `docs/summoner-flavor-pass-plan.md`; until then every slot
+ * shares one skull, differentiated by `sizeMult`.
  */
-export type MinionMonsterType =
-  | 'slime'
-  | 'cave-lurker'
-  | 'plains-slime'
-  | 'boar'
-  | 'mud-toad'
-  | 'cliff-hopper'
-  | 'ridge-archer'
-  | 'crag-behemoth';
+export type MinionMonsterType = 'conduit-summon';
 
 export interface IsMinion {
   id: string;
@@ -41,7 +38,7 @@ export function initIsMinion(args: {
     slot:          args.slot,
     slotId:        args.slotId ?? `normal:${args.slot}`,
     role:          args.role ?? 'normal',
-    monsterTypeId: args.monsterTypeId ?? 'slime',
+    monsterTypeId: args.monsterTypeId ?? 'conduit-summon',
     sizeMult:      args.sizeMult ?? 1.0,
   };
 }

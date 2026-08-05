@@ -344,7 +344,13 @@ function minions(world: World, player: ReturnType<typeof attach>) {
   const colossus = minions(world, player)[0]!;
   assert(player.summonsMinions!.targetCount === 1 && colossus.isMinion.role === 'colossus',
     'Colossus must replace both old Heavy slots with one logical and physical entity');
-  assert(colossus.isMinion.sizeMult > 2 && colossus.dealsDamage.attack > 0,
+  // Measured against an unspecialised Heavy formation at the SAME range, not a
+  // fixed number: range now scales summon size too (SummonerRangeTuning.sizeMult),
+  // so an absolute threshold would encode one range's tuning as a rule.
+  const heavyBaseline = resolveSummonerProfile({
+    selectedSubVariant: 'heavy', selectedRange: 'summoner-range-far', unlockedSkills: [],
+  });
+  assert(colossus.isMinion.sizeMult > heavyBaseline.slots[0]!.sizeMult && colossus.dealsDamage.attack > 0,
     'Colossus must have distinct visual scale and concentrated attack behavior');
   assert(profile.slots[0]!.offenseWeight === 1 && profile.slots[0]!.defenseWeight === 1,
     'Colossus must own the full transformed formation budgets');

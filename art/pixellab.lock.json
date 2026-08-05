@@ -24595,6 +24595,303 @@
       "candidateFiles": [
         "candidate-3.png"
       ]
+    },
+    {
+      "at": "2026-08-05T15:38:57.912Z",
+      "endpoint": "pixflux",
+      "category": "conduit-bakeoff",
+      "assetId": "arm-a-skull",
+      "requestHash": "9b96099b8773ee9d1d2b923f",
+      "usd": 0.0071185358630286326,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-05T15:39:13.273Z",
+      "endpoint": "pixflux",
+      "category": "conduit-bakeoff",
+      "assetId": "arm-a-skull",
+      "requestHash": "9b96099b8773ee9d1d2b923f",
+      "usd": 0.0063702039453718395,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-05T15:39:47.340Z",
+      "endpoint": "pixflux",
+      "category": "conduit-bakeoff",
+      "assetId": "arm-a-skull",
+      "requestHash": "9b96099b8773ee9d1d2b923f",
+      "usd": 0.008306203100416396,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-05T15:40:07.539Z",
+      "endpoint": "pixflux",
+      "category": "conduit-bakeoff",
+      "assetId": "arm-b-mask-prompt",
+      "requestHash": "b56b7f7bf12e985732b04a04",
+      "usd": 0.007048696968290542,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-05T15:40:26.218Z",
+      "endpoint": "pixflux",
+      "category": "conduit-bakeoff",
+      "assetId": "arm-b-mask-prompt",
+      "requestHash": "b56b7f7bf12e985732b04a04",
+      "usd": 0.006550084246529473,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-05T15:40:47.824Z",
+      "endpoint": "pixflux",
+      "category": "conduit-bakeoff",
+      "assetId": "arm-b-mask-prompt",
+      "requestHash": "b56b7f7bf12e985732b04a04",
+      "usd": 0.007266977839999729,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-05T15:41:13.652Z",
+      "endpoint": "pixflux",
+      "category": "conduit-bakeoff",
+      "assetId": "arm-c-mask-chained",
+      "requestHash": "75467bb01297a739693776dd",
+      "usd": 0.006176309638553196,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-05T15:41:33.428Z",
+      "endpoint": "pixflux",
+      "category": "conduit-bakeoff",
+      "assetId": "arm-c-mask-chained",
+      "requestHash": "75467bb01297a739693776dd",
+      "usd": 0.006757859600914849,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-05T15:41:54.742Z",
+      "endpoint": "pixflux",
+      "category": "conduit-bakeoff",
+      "assetId": "arm-c-mask-chained",
+      "requestHash": "75467bb01297a739693776dd",
+      "usd": 0.006281756295098199,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-05T16:01:04.725Z",
+      "endpoint": "pixflux",
+      "category": "conduit-bakeoff",
+      "assetId": "arm-d-plate",
+      "requestHash": "b168eca345d4e5ca1f59b43c",
+      "usd": 0.006934100177552965,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-05T16:01:24.258Z",
+      "endpoint": "pixflux",
+      "category": "conduit-bakeoff",
+      "assetId": "arm-d-plate",
+      "requestHash": "b168eca345d4e5ca1f59b43c",
+      "usd": 0.006655433575312297,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-05T16:01:44.738Z",
+      "endpoint": "pixflux",
+      "category": "conduit-bakeoff",
+      "assetId": "arm-d-plate",
+      "requestHash": "b168eca345d4e5ca1f59b43c",
+      "usd": 0.00712744516796536,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-05T16:02:00.991Z",
+      "endpoint": "pixflux",
+      "category": "conduit-bakeoff",
+      "assetId": "arm-e-funerary",
+      "requestHash": "d670c196efc82cee169779bc",
+      "usd": 0.006354848278893365,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-05T16:02:21.835Z",
+      "endpoint": "pixflux",
+      "category": "conduit-bakeoff",
+      "assetId": "arm-e-funerary",
+      "requestHash": "d670c196efc82cee169779bc",
+      "usd": 0.006146778424580892,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-05T16:02:39.290Z",
+      "endpoint": "pixflux",
+      "category": "conduit-bakeoff",
+      "assetId": "arm-e-funerary",
+      "requestHash": "d670c196efc82cee169779bc",
+      "usd": 0.006065229389402601,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-05T16:03:00.847Z",
+      "endpoint": "pixflux",
+      "category": "conduit-bakeoff",
+      "assetId": "arm-f-skull-mask",
+      "requestHash": "4dee56a3654362aadc49d854",
+      "usd": 0.007240502860811022,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-05T16:03:13.578Z",
+      "endpoint": "pixflux",
+      "category": "conduit-bakeoff",
+      "assetId": "arm-f-skull-mask",
+      "requestHash": "4dee56a3654362aadc49d854",
+      "usd": 0.006052489492628309,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-05T16:03:44.387Z",
+      "endpoint": "pixflux",
+      "category": "conduit-bakeoff",
+      "assetId": "arm-f-skull-mask",
+      "requestHash": "4dee56a3654362aadc49d854",
+      "usd": 0.007995316108067831,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-05T16:18:08.164Z",
+      "endpoint": "pixflux",
+      "category": "conduit-bakeoff",
+      "assetId": "arm-g-bone-skull",
+      "requestHash": "25c0f173bd2196e10dc8ee0f",
+      "usd": 0.007142737785975139,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-05T16:18:36.122Z",
+      "endpoint": "pixflux",
+      "category": "conduit-bakeoff",
+      "assetId": "arm-g-bone-skull",
+      "requestHash": "25c0f173bd2196e10dc8ee0f",
+      "usd": 0.007554589192072551,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-05T16:18:58.450Z",
+      "endpoint": "pixflux",
+      "category": "conduit-bakeoff",
+      "assetId": "arm-g-bone-skull",
+      "requestHash": "25c0f173bd2196e10dc8ee0f",
+      "usd": 0.007245565626356337,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-05T16:19:18.594Z",
+      "endpoint": "pixflux",
+      "category": "conduit-bakeoff",
+      "assetId": "arm-h-bone-skull-mask",
+      "requestHash": "74644e9dfb13fd2a8bf9b13c",
+      "usd": 0.006275409460067749,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-05T16:19:52.618Z",
+      "endpoint": "pixflux",
+      "category": "conduit-bakeoff",
+      "assetId": "arm-h-bone-skull-mask",
+      "requestHash": "74644e9dfb13fd2a8bf9b13c",
+      "usd": 0.008203911940256756,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-05T16:20:12.527Z",
+      "endpoint": "pixflux",
+      "category": "conduit-bakeoff",
+      "assetId": "arm-h-bone-skull-mask",
+      "requestHash": "74644e9dfb13fd2a8bf9b13c",
+      "usd": 0.006603157255384657,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-05T16:20:29.905Z",
+      "endpoint": "pixflux",
+      "category": "conduit-bakeoff",
+      "assetId": "arm-i-bone-skull-noglow",
+      "requestHash": "5677b3e6dc0ae0bd368d3819",
+      "usd": 0.006431926118002997,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-05T16:20:47.256Z",
+      "endpoint": "pixflux",
+      "category": "conduit-bakeoff",
+      "assetId": "arm-i-bone-skull-noglow",
+      "requestHash": "5677b3e6dc0ae0bd368d3819",
+      "usd": 0.0066372730202145045,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-05T16:21:06.933Z",
+      "endpoint": "pixflux",
+      "category": "conduit-bakeoff",
+      "assetId": "arm-i-bone-skull-noglow",
+      "requestHash": "5677b3e6dc0ae0bd368d3819",
+      "usd": 0.0063209953573015,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
     }
   ]
 }

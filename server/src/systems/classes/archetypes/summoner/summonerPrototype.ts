@@ -13,7 +13,6 @@ import {
   syncMinionHitbox,
   syncMinionMaxHp,
 } from './spawn';
-import { applyOwnerStatShare } from './statShare';
 import { driveMinion } from './ai';
 import { validateSummonerCommand } from './command';
 import { applyHealToMinion } from '../../../defense/regen/healing';
@@ -90,7 +89,7 @@ function syncLiveMinionFrameStats(world: World, owner: SummonerPlayerEntity): vo
       despawnMinion(world, minion);
       continue;
     }
-    if (!minion.controlsMinion.isCharging && minion.hasPosition.speed !== desiredSpeed) {
+    if (minion.hasPosition.speed !== desiredSpeed) {
       minion.hasPosition.speed = desiredSpeed;
       markSliceDirty(world, minion, 'hasPosition');
     }
@@ -127,7 +126,6 @@ function syncLiveMinionFrameStats(world: World, owner: SummonerPlayerEntity): vo
       minion.performsAttack.attackRange = profile.attackRange;
       markSliceDirty(world, minion, 'performsAttack');
     }
-    applyOwnerStatShare(world, owner, minion);
   }
 }
 

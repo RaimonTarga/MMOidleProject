@@ -290,14 +290,12 @@ export function updateMovement(world: World, dt: number, now: number) {
     const slowMult = slow ? Math.max(0, slow.data['speedMult'] ?? 1) : 1;
     const frostRamp = getStatusEffect(entity.tracksCombat, FROST_RAMP_EFFECT_ID);
     const frostRampMult = frostRamp ? 1 - frostRampMoveSlowPct(frostRamp) : 1;
-    const trample = getStatusEffect(entity.tracksCombat, 'summoner-trample-boon');
-    const trampleMult = trample ? 1 + (trample.data.speedPct ?? 0.25) : 1;
     const bootMult = bootSpeedMultiplier(world, entity, now);
     processMoverStep(
       world,
       entity,
       dt,
-      slowMult * frostRampMult * trampleMult * bootMult,
+      slowMult * frostRampMult * bootMult,
       'player',
       now,
     );

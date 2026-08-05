@@ -42,91 +42,6 @@ export function computeLeashRadius(owner: PlayerEntity): number {
   return summonerProfileFor(owner).leashRadius;
 }
 
-function isStoneSentinelArcher(owner: PlayerEntity, minion: MinionEntity): boolean {
-  return !!owner.usesSkills.passives['summoner.stone-sentinel']
-    && minion.isMinion.monsterTypeId === 'ridge-archer';
-}
-
-function computeSentinelTetherRadius(owner: PlayerEntity): number {
-  const mult = owner.usesSkills.passives['summoner.sentinel-tether-mult'] ?? 2.0;
-  return Math.max(40, owner.performsAttack.attackRange * mult);
-}
-
-/** Closest monster in this sentry's attack range (from the sentry, not the owner leash). */
-function findStoneSentinelTarget(
-  world: World,
-  minion: MinionEntity,
-  currentTargetId: string | null,
-): MonsterEntity | null {
-  const nodeId = minion.hasPosition.nodeId;
-  const range = minion.performsAttack.attackRange;
-
-  if (currentTargetId) {
-    const current = world.getMonsterEntity(currentTargetId);
-    if (current && current.hasPosition.nodeId === nodeId && current.hasHealth.hp > 0) {
-      if (world.collision.canReach(minion, current, range)) {
-        return current;
-      }
-    }
-  }
-
-  const mp = minion.hasPosition.current;
-  let best: MonsterEntity | null = null;
-  let bestDistSq = Infinity;
-  for (const m of world.monsterEntitiesInNode(nodeId)) {
-    if (m.hasHealth.hp <= 0) continue;
-    if (!world.collision.canReach(minion, m, range)) continue;
-    const distSq = distanceSq(m.hasPosition.current, mp);
-    if (distSq < bestDistSq) {
-      bestDistSq = distSq;
-      best = m;
-    }
-  }
-  return best;
-}
-
-/** Stone Sentinel ridge-archers: stationary, ranged-only, despawn when owner drifts away. */
-function driveStoneSentinel(
-  world: World,
-  minion: MinionEntity,
-  owner: PlayerEntity,
-  now: number,
-): void {
-  stopEntity(world, minion);
-
-  const cm = minion.controlsMinion;
-  const commanded = resolveCommandedFocusTarget(world, owner);
-  let target: MonsterEntity | null = null;
-  if (commanded) {
-    if (world.collision.canReach(minion, commanded, minion.performsAttack.attackRange)) {
-      target = commanded;
-    }
-  }
-  if (!target) {
-    target = findStoneSentinelTarget(world, minion, cm.currentTargetId);
-  }
-
-  if (target) {
-    setAttackTarget(world, minion, target.isMonster.id);
-    cm.currentTargetId = target.isMonster.id;
-
-    if (now - minion.performsAttack.lastAttackAt >= minion.performsAttack.attackCooldown) {
-      const outcome = runFormationAttack(world, owner, minion, target, now);
-      if (outcome !== 'cancelled') {
-        minion.performsAttack.lastAttackAt = now;
-      }
-    }
-  } else {
-    setAttackTarget(world, minion, null);
-    cm.currentTargetId = null;
-  }
-
-  const tetherSq = computeSentinelTetherRadius(owner) ** 2;
-  if (distanceSq(minion.hasPosition.current, owner.hasPosition.current) > tetherSq) {
-    despawnMinion(world, minion);
-  }
-}
-
 /** Pick the closest in-leash monster. Returns null if none in range. */
 function findMinionTarget(
   world: World,
@@ -236,56 +151,17 @@ function clampToLeash(
   };
 }
 
-function restoreBoarSpeed(world: World, minion: MinionEntity, owner: PlayerEntity): void {
-  const base = computeMinionSpeed(owner);
-  if (minion.hasPosition.speed !== base) {
-    minion.hasPosition.speed = base;
-    markSliceDirty(world, minion, 'hasPosition');
-  }
-}
-
-/** Trampled Path: sprint toward the target while gap-closing charge is active. */
-function applyBoarChargeMotion(
-  world: World,
-  minion: MinionEntity,
-  owner: PlayerEntity,
-  target: MonsterEntity,
-  leashRadius: number,
-): void {
-  const cm = minion.controlsMinion;
-  const passives = owner.usesSkills.passives;
-  const base = computeMinionSpeed(owner);
-  const speedMult = passives['summoner.trample-charge-speed-mult'] ?? 3.5;
-  const chargeSpeed = Math.round(base * speedMult);
-  if (minion.hasPosition.speed !== chargeSpeed) {
-    minion.hasPosition.speed = chargeSpeed;
-    markSliceDirty(world, minion, 'hasPosition');
-  }
-  const desired = clampToLeash(owner, target.hasPosition.current, leashRadius);
-  setEntityMotion(world, minion, desired);
-  setAttackTarget(world, minion, target.isMonster.id);
-  cm.currentTargetId = target.isMonster.id;
-}
-
 export function driveMinion(
   world: World,
   minion: MinionEntity,
   owner: PlayerEntity,
   now: number,
 ): void {
-  if (isStoneSentinelArcher(owner, minion)) {
-    driveStoneSentinel(world, minion, owner, now);
-    return;
-  }
-
   const leashRadius = computeLeashRadius(owner);
   const profile = summonerProfileFor(owner);
-  const passives = owner.usesSkills.passives;
   const isSwarm = profile.specialization === 'endless-swarm';
   const focusOverride = resolveCommandedFocusTarget(world, owner);
   const moveDest = resolveCommandedMoveDestination(owner, leashRadius);
-  const isTrampleBoar =
-    passives['summoner.trampled-path'] && minion.isMinion.monsterTypeId === 'boar';
   const cm = minion.controlsMinion;
 
   if (moveDest) {
@@ -332,38 +208,12 @@ export function driveMinion(
         cm.currentTargetId = target.isMonster.id;
       }
 
-      if (isTrampleBoar && cm.isCharging) {
-        cm.isCharging = false;
-        restoreBoarSpeed(world, minion, owner);
-      }
-
       if (now - minion.performsAttack.lastAttackAt >= minion.performsAttack.attackCooldown) {
-        const attackMetadata: Record<string, unknown> = {};
-        if (isTrampleBoar && cm.chargeCooldownMs <= 0) {
-          attackMetadata.boarCharge = 1;
-          cm.chargeCooldownMs = Math.round(
-            passives['summoner.trample-charge-cd-ms'] ?? 10_000,
-          );
-        }
-        const outcome = runFormationAttack(
-          world,
-          owner,
-          minion,
-          target,
-          now,
-          Object.keys(attackMetadata).length > 0 ? attackMetadata : undefined,
-        );
+        const outcome = runFormationAttack(world, owner, minion, target, now);
         if (outcome !== 'cancelled') {
           minion.performsAttack.lastAttackAt = now;
         }
       }
-      return;
-    }
-
-    // Out of range — begin or continue a gap-closing charge when off cooldown.
-    if (isTrampleBoar && (cm.isCharging || cm.chargeCooldownMs <= 0)) {
-      if (!cm.isCharging) cm.isCharging = true;
-      applyBoarChargeMotion(world, minion, owner, target, leashRadius);
       return;
     }
 
@@ -380,11 +230,6 @@ export function driveMinion(
       cm.currentTargetId = null;
     }
     return;
-  }
-
-  if (isTrampleBoar && cm.isCharging) {
-    cm.isCharging = false;
-    restoreBoarSpeed(world, minion, owner);
   }
 
   // No in-range target — return to follow offset around the owner.
