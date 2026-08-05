@@ -1,4 +1,11 @@
-import { MINION_BASE_DISPLAY_SIZE, type MinionView } from '@mmo-idle/shared';
+import Phaser from 'phaser';
+import {
+  MINION_BASE_DISPLAY_SIZE,
+  isRangedSummonStyle,
+  resolveSummonTint,
+  type MinionView,
+  type PlayerView,
+} from '@mmo-idle/shared';
 import type { RenderState } from './state';
 import type { GameScene } from '../scenes/GameScene';
 import { ensureSprite, updateSpriteFrame } from './sprites';
@@ -14,7 +21,27 @@ function minionScale(minion: MinionView): number {
 }
 
 /**
- * Render a summoner minion (slime). Reuses the monster rendering primitives
+ * Range's hue signature, resolved from the OWNER's unlocked skills rather than
+ * sent over the wire — tint is pure presentation, so the client is the right
+ * place to decide it. Falls back to untinted while the owner's view is absent
+ * (spectating a node the owner is not projected into).
+ */
+function summonTint(state: RenderState, minion: MinionView): number {
+  if (state.kind.get(minion.ownerPlayerId) !== 'player') return 0xffffff;
+  const owner = state.view.get(minion.ownerPlayerId) as PlayerView | undefined;
+  return owner ? resolveSummonTint(owner.unlockedSkills) : 0xffffff;
+}
+
+/** Phaser Images take a tint; the coloured-rectangle fallback does not. */
+function applySummonTint(state: RenderState, minion: MinionView): void {
+  const sprite = state.sprite.get(minion.id);
+  if (sprite && 'setTint' in sprite) {
+    (sprite as Phaser.GameObjects.Image).setTint(summonTint(state, minion));
+  }
+}
+
+/**
+ * Render a Conduit summon. Reuses the monster rendering primitives
  * — sprite, shadow, hp bar, cooldown bar, lunge animation — but does NOT
  * register a debug-range entry since minions don't have a pull/leash radius
  * of their own (the leash radius is rendered around the owning player in
@@ -39,7 +66,7 @@ export function upsertMinion(
       barOffsetY: 32,
       entityName: '',
       monsterBehavior: 'aggressive',
-      monsterIsRanged: false,
+      monsterIsRanged: isRangedSummonStyle(minion.attackStyle),
     });
 
     state.transform.set(minion.id, {
@@ -67,7 +94,8 @@ export function upsertMinion(
       fallbackColor: 0x55cc66,
       isPlayer: false,
     });
-    // Slimes are anonymous — no label.
+    applySummonTint(state, minion);
+    // Summons are anonymous — no label.
     ensureHpBar(state, minion.id, scene);
     ensureCdBar(state, minion.id, scene);
     return;
@@ -100,7 +128,10 @@ export function upsertMinion(
     isPlayer: false,
   });
 
+  applySummonTint(state, minion);
+
   const meta = state.spriteMeta.get(minion.id);
+  if (meta) meta.monsterIsRanged = isRangedSummonStyle(minion.attackStyle);
   if (minion.hp < prevHp) {
     const sprite = state.sprite.get(minion.id);
     if (sprite && meta) {
@@ -125,8 +156,11 @@ export function upsertMinion(
         { x: vmSprite.x, y: vmSprite.y },
         { x: targetSprite.x, y: targetSprite.y },
       );
-      // Slimes always lunge (no isRanged tag).
-      applyLunge(state, minion.id, { ...targetInterp.base }, scene);
+      // Only Vigil's melee summons lunge; Procession bolts and Harrier beams
+      // fire from where they stand, exactly like ranged monsters.
+      if (!isRangedSummonStyle(minion.attackStyle)) {
+        applyLunge(state, minion.id, { ...targetInterp.base }, scene);
+      }
     }
   }
 }

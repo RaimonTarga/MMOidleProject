@@ -21,6 +21,7 @@ import { cancelActiveMove, setHoldStill, setKeyboardVector } from './movement';
 import { closeTopmostOverlay, togglePrimaryOverlay } from './overlayStack';
 import { ALTAR_ARC_CONFIG, getAltarArc } from '../scenes/game/runeAltar';
 import { cycleGroundBakeoff } from '../render/wangGround';
+import { cycleSummonSkin } from '../render/summonSkins';
 import { paintActiveNode } from '../scenes/game/overlays';
 import { rebuildNeighborLayer } from '../render/neighborScenes';
 import { isMobileViewport } from '../breakpoints';
@@ -43,7 +44,7 @@ export function attachKeyboard(scene: GameScene): () => void {
   let lastEmoteAt = 0;
   // DEV-only ground bake-off label (see the [ / ] handler below).
   let groundLabel: Phaser.GameObjects.Text | null = null;
-  function showGroundLabel(text: string): void {
+  function showDevLabel(text: string): void {
     if (!groundLabel) {
       groundLabel = scene.add
         .text(14, 14, '', {
@@ -141,10 +142,25 @@ export function attachKeyboard(scene: GameScene): () => void {
     }
     if (event.repeat) return;
 
+    // DEV: cycle the Conduit's summon skin with Shift+[ and Shift+] to compare
+    // accepted candidates live in-game. Checked before the ground bake-off
+    // below, which does not inspect shiftKey and would otherwise swallow these.
+    if (
+      import.meta.env.DEV &&
+      event.shiftKey &&
+      (event.code === 'BracketRight' || event.code === 'BracketLeft')
+    ) {
+      event.preventDefault();
+      const s = cycleSummonSkin(event.code === 'BracketRight' ? 1 : -1);
+      showDevLabel(`summon skin ${s.index + 1}/${s.total}  —  ${s.label}`);
+      return;
+    }
+
     // DEV: cycle the current biome's ground bake-off sheets with [ and ] to
     // compare candidate tilesets live in-game (0 = the real per-node styles).
     if (
       import.meta.env.DEV &&
+      !event.shiftKey &&
       (event.code === 'BracketRight' || event.code === 'BracketLeft')
     ) {
       event.preventDefault();
@@ -154,14 +170,14 @@ export function attachKeyboard(scene: GameScene): () => void {
         ? cycleGroundBakeoff(biomeGroup, event.code === 'BracketRight' ? 1 : -1)
         : null;
       if (!r) {
-        showGroundLabel(`No ground bake-off for biome "${biomeGroup ?? '?'}"`);
+        showDevLabel(`No ground bake-off for biome "${biomeGroup ?? '?'}"`);
         return;
       }
       if (nodeId) {
         paintActiveNode(scene, nodeId);
         rebuildNeighborLayer(scene, nodeId);
       }
-      showGroundLabel(`${biomeGroup} ground ${r.index + 1}/${r.total}  —  ${r.label}`);
+      showDevLabel(`${biomeGroup} ground ${r.index + 1}/${r.total}  —  ${r.label}`);
       return;
     }
 

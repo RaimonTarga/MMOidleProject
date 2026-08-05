@@ -1,5 +1,6 @@
 import type { PlayerView } from "@mmo-idle/shared";
 import { PLAINS_GROUND_TEXTURE_KEY } from './render/proceduralGround';
+import { activeSummonFrame } from './render/summonSkins';
 import {
   MONSTER_FRAMES,
   PLAYER_FRAMES,
@@ -70,6 +71,11 @@ export function getPlayerFrame(player: PlayerView): string | null {
 
 /** Returns the atlas frame name for a monster type, or null if no sprite exists. */
 export function getMonsterFrame(monsterTypeId: string): string | null {
+  // DEV: the Conduit summon skin switcher (Shift+[ / Shift+]) overrides the
+  // authored frame so accepted candidates can be compared live in-game.
+  if (import.meta.env.DEV && monsterTypeId.startsWith('conduit-summon')) {
+    return activeSummonFrame();
+  }
   return resolveMonsterFrame(monsterTypeId);
 }
 

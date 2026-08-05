@@ -12,6 +12,7 @@ import {
   type Vec2,
 } from "@mmo-idle/shared";
 import { activateLaserBeam } from "../fx/laser";
+import { fxConduitBeam, fxConduitBolt } from "../fx/conduitSummon";
 import { activateHolyBeam, fxHolyFlash } from "../fx/holyBeam";
 import { fxCannonBlast } from "../fx/cannonFx";
 import { fxVoidDischarge } from "../fx/voidDischarge";
@@ -79,7 +80,10 @@ import { DEPTH } from "./depth";
 type NonNullArchetype = Exclude<CombatArchetype, null>;
 
 const RANGED_ATTACK_STYLES = new Set(["gunshot", "boulder"]);
-const MAGIC_ATTACK_STYLES = new Set(["magic", "fire", "frost", "poison", "void"]);
+const MAGIC_ATTACK_STYLES = new Set([
+  "magic", "fire", "frost", "poison", "void",
+  "conduit-beam", "conduit-bolt",
+]);
 
 /** Pick the SFX cue for the local player's attack from archetype/style. */
 function attackSfxFor(archetype: CombatArchetype, style: string): SfxId {
@@ -319,6 +323,11 @@ const ATTACK_FX_BY_STYLE: Record<string, AttackFxFn> = {
     fxSlash(scene, from.x, from.y, to.x, to.y, ev.empowered),
   poison: ({ scene, to }) => fxPoison(scene, to.x, to.y),
   magic: ({ scene, from, to }) => fxMagic(scene, from.x, from.y, to.x, to.y),
+  // Conduit summons — range picks which of these their attacks use.
+  'conduit-beam': ({ scene, from, to }) =>
+    fxConduitBeam(scene, from.x, from.y, to.x, to.y),
+  'conduit-bolt': ({ scene, from, to }) =>
+    fxConduitBolt(scene, from.x, from.y, to.x, to.y),
   frost: ({ scene, to }) => fxFrost(scene, to.x, to.y),
   fire: ({ scene, to }) => fxFire(scene, to.x, to.y),
   void: ({ scene, to }) => fxVoid(scene, to.x, to.y),
