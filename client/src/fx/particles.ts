@@ -3,6 +3,18 @@ import type { GameScene } from '../scenes/GameScene';
 import { shouldRunClientFx } from './guard';
 import { DEPTH } from '../render/depth';
 
+type ParticleConfig = Phaser.Types.GameObjects.Particles.ParticleEmitterConfig;
+
+interface PooledEmitter {
+  key: string;
+  emitter: Phaser.GameObjects.Particles.ParticleEmitter;
+  lastUsed: number;
+}
+
+const MAX_POOLED_EMITTERS = 32;
+const emitterPools = new WeakMap<GameScene, PooledEmitter[]>();
+let emitterUseCounter = 0;
+
 /** Shared empowered/"critical" damage-number styling (gold, enlarged, '!'). */
 export const EMPOWERED_DAMAGE_COLOR = '#ffd23f';
 export const EMPOWERED_DAMAGE_SIZE_PX = 22;
@@ -39,6 +51,71 @@ export function initEffectFrames(scene: GameScene): void {
   }
 }
 
+function emitterKey(texture: string, lifespan: number, config: ParticleConfig): string {
+  // Burst configs are data-only object literals. Including the configuration in
+  // the key lets overlapping bursts share an emitter without changing the ops
+  // used by particles that are already alive.
+  return `${texture}:${lifespan}:${JSON.stringify(config)}`;
+}
+
+function emitterPool(scene: GameScene): PooledEmitter[] {
+  const existing = emitterPools.get(scene);
+  if (existing) return existing;
+
+  const pool: PooledEmitter[] = [];
+  emitterPools.set(scene, pool);
+  scene.events.once('shutdown', () => {
+    for (const entry of pool) {
+      if (entry.emitter.active) entry.emitter.destroy();
+    }
+    pool.length = 0;
+    emitterPools.delete(scene);
+  });
+  return pool;
+}
+
+function acquireEmitter(
+  scene: GameScene,
+  texture: string,
+  lifespan: number,
+  config: ParticleConfig,
+): Phaser.GameObjects.Particles.ParticleEmitter | null {
+  const pool = emitterPool(scene);
+  const key = emitterKey(texture, lifespan, config);
+  const cached = pool.find((entry) => entry.key === key);
+  if (cached) {
+    cached.lastUsed = ++emitterUseCounter;
+    return cached.emitter;
+  }
+
+  if (pool.length >= MAX_POOLED_EMITTERS) {
+    let idleIndex = -1;
+    let oldestUse = Number.POSITIVE_INFINITY;
+    for (let i = 0; i < pool.length; i++) {
+      const entry = pool[i];
+      if (entry.emitter.getAliveParticleCount() === 0 && entry.lastUsed < oldestUse) {
+        idleIndex = i;
+        oldestUse = entry.lastUsed;
+      }
+    }
+
+    // Prefer dropping a cosmetic burst under extreme load to allocating beyond
+    // the cap or reconfiguring an emitter whose particles are still visible.
+    if (idleIndex < 0) return null;
+    const [evicted] = pool.splice(idleIndex, 1);
+    evicted.emitter.destroy();
+  }
+
+  const emitter = scene.add.particles(0, 0, texture, {
+    ...config,
+    lifespan,
+    emitting: false,
+  });
+  emitter.setDepth(DEPTH.FX);
+  pool.push({ key, emitter, lastUsed: ++emitterUseCounter });
+  return emitter;
+}
+
 export function burstFx(
   scene: GameScene,
   texture: string,
@@ -46,18 +123,10 @@ export function burstFx(
   y: number,
   count: number,
   lifespan: number,
-  config: Phaser.Types.GameObjects.Particles.ParticleEmitterConfig,
+  config: ParticleConfig,
 ): void {
   if (!shouldRunClientFx()) return;
-  const emitter = scene.add.particles(x, y, texture, {
-    ...config,
-    lifespan,
-    quantity: count,
-    emitting: false,
-  });
-  emitter.setDepth(DEPTH.FX);
-  emitter.explode(count);
-  scene.time.delayedCall(lifespan + 200, () => { if (emitter.active) emitter.destroy(); });
+  acquireEmitter(scene, texture, lifespan, config)?.explode(count, x, y);
 }
 
 export function playOneShotEffect(scene: GameScene, id: string, pos: Vec2, opts?: { scale?: number; depth?: number }): void {

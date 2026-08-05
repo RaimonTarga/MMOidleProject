@@ -1,6 +1,6 @@
 import { isDeathOverlayActive, setAutoPath } from "../hud/atoms";
 import { hudBus } from "../hudBus";
-import { intents } from "../intents";
+import { intents as intentBus, type IntentMap } from "../intents";
 import {
   sendCraftRecipe,
   sendEvolveItem,
@@ -35,7 +35,17 @@ import {
 import type { GameScene } from "../scenes/GameScene";
 import { setAutoMode } from "./autoPath";
 
-export function attachHudEvents(scene: GameScene): void {
+export function attachHudEvents(scene: GameScene): () => void {
+  const disposers: Array<() => void> = [];
+  const intents = {
+    on<K extends keyof IntentMap>(
+      kind: K,
+      handler: (payload: IntentMap[K]) => void,
+    ): void {
+      disposers.push(intentBus.on(kind, handler));
+    },
+  };
+
   intents.on("toggleAuto", () => {
     setAutoMode(scene, !scene.autoMode);
   });
@@ -180,4 +190,8 @@ export function attachHudEvents(scene: GameScene): void {
     if (isDeathOverlayActive()) return;
     sendEmote(scene.socket, emoteId);
   });
+
+  return () => {
+    for (const dispose of disposers.splice(0)) dispose();
+  };
 }

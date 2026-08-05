@@ -16,8 +16,8 @@ function showTargetMarker(scene: GameScene, nodeDest: Vec2): void {
   scene.targetMarker.setPosition(scenePos.x, scenePos.y).setVisible(true);
 }
 
-export function attachClickToMove(scene: GameScene): void {
-  scene.input.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
+export function attachClickToMove(scene: GameScene): () => void {
+  const onPointerDown = (pointer: Phaser.Input.Pointer): void => {
     if (!scene.myId || isDeathOverlayActive() || scene.transitioning) return;
 
     const nodeDest = sceneToNode(pointer.worldX, pointer.worldY);
@@ -51,5 +51,7 @@ export function attachClickToMove(scene: GameScene): void {
     }
 
     showTargetMarker(scene, clamped);
-  });
+  };
+  scene.input.on('pointerdown', onPointerDown);
+  return () => scene.input.off('pointerdown', onPointerDown);
 }

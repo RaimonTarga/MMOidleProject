@@ -42,6 +42,10 @@ export function bindLobbySocket(next: GameSocket): void {
   socket = next;
 }
 
+export function unbindLobbySocket(bound: GameSocket): void {
+  if (socket === bound) socket = null;
+}
+
 export function handleSocketConnected(): void {
   if (store.get(authPhaseAtom) === 'login' && hasCredential) {
     store.set(authPhaseAtom, 'connecting');

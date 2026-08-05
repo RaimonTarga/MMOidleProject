@@ -61,7 +61,7 @@ export interface SocketHandlers {
 export function wireSocketHandlers(
   socket: GameSocket,
   h: SocketHandlers,
-): void {
+): () => void {
   socket.on('connect', () => h.onConnect(socket));
   socket.on('connect_error', (error) => {
     if (error.message === 'unauthorized') h.onUnauthorized();
@@ -93,4 +93,33 @@ export function wireSocketHandlers(
     socket.io.reconnection(false);
     h.onSessionKicked();
   });
+
+  return () => {
+    socket.off('connect');
+    socket.off('connect_error');
+    socket.off('disconnect');
+    socket.off('account:characters');
+    socket.off('character:createResult');
+    socket.off('character:deleteResult');
+    socket.off('character:selectResult');
+    socket.off('state:sync');
+    socket.off('node:delta');
+    socket.off('spectate:snapshot');
+    socket.off('spectate:status');
+    socket.off('spectate:error');
+    socket.off('node:preparing');
+    socket.off('crafting:result');
+    socket.off('rune:craftResult');
+    socket.off('ability:craftResult');
+    socket.off('stance:craftResult');
+    socket.off('rite:craftResult');
+    socket.off('inventory:upgradeResult');
+    socket.off('player:died');
+    socket.off('player:ascended');
+    socket.off('overlord:felled');
+    socket.off('world:bossFelled');
+    socket.off('world:events');
+    socket.off('game:updateAnnouncement');
+    socket.off('session:kicked');
+  };
 }

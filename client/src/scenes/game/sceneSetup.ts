@@ -37,6 +37,7 @@ import {
   handleSocketUnauthorized,
   handleSpectateError,
   handleSpectateStatus,
+  unbindLobbySocket,
 } from "../../auth/lobbyState";
 import { applyDelta } from "../../net/deltaApplier";
 import { hydrateSpectatorSnapshot } from "../../net/spectatorSnapshot";
@@ -376,13 +377,12 @@ export function createGameScene(scene: GameScene): void {
     .setDepth(DEPTH.MINIMAP)
     .setVisible(!scene.spectatorMode);
 
-  if (!scene.spectatorMode) {
-    attachHudEvents(scene);
-    attachClickToMove(scene);
-  }
+  const detachHud = scene.spectatorMode ? () => {} : attachHudEvents(scene);
+  const detachClick = scene.spectatorMode ? () => {} : attachClickToMove(scene);
   const detachKb = scene.spectatorMode ? () => {} : attachKeyboard(scene);
   const detachPad = scene.spectatorMode ? () => {} : attachGamepad(scene);
   const stopMove = scene.spectatorMode ? () => {} : startMovementTick(scene);
+  const detachSocket = connectSocket(scene);
 
   function onVisibilityChange(): void {
     if (document.hidden) {
@@ -420,8 +420,10 @@ export function createGameScene(scene: GameScene): void {
     detachKb();
     detachPad();
     stopMove();
+    detachHud();
+    detachClick();
+    detachSocket();
   });
-  connectSocket(scene);
   if (scene.spectatorMode) startDeferredSpectatorAssets(scene);
 
   const applyPeekBoundsOnResize = (): void => {
@@ -543,12 +545,13 @@ export function updateGameScene(scene: GameScene, delta: number): void {
   drawTacticalMode(scene);
 }
 
-function connectSocket(scene: GameScene): void {
-  scene.socket = connectGameSocket();
-  bindLobbySocket(scene.socket);
+function connectSocket(scene: GameScene): () => void {
+  const socket = connectGameSocket();
+  scene.socket = socket;
+  bindLobbySocket(socket);
   const atomStore = getDefaultStore();
 
-  wireSocketHandlers(scene.socket, {
+  const unwireSocket = wireSocketHandlers(socket, {
     onConnect: (socket) => {
       handleSocketConnected();
       scene.myId = socket.id ?? "";
@@ -684,4 +687,9 @@ function connectSocket(scene: GameScene): void {
       document.body.appendChild(overlay);
     },
   });
+  return () => {
+    unwireSocket();
+    unbindLobbySocket(socket);
+    socket.disconnect();
+  };
 }
