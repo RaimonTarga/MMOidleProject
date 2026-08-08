@@ -1,9 +1,9 @@
 # Biome Ecology Pass 2 — Implementation Plan
 
-**Status:** 🚧 in progress — Session 1 ✅ shipped 2026-08-08, plus the Jungle art/terrain
-slice pulled forward out of Session 6. Sessions 2–5 not started. **Start here: §5.**
-**Companion:** `docs/biome-ecology-current-state.md` (refreshed 2026-08-08 in Session 1; its
-sections 8–9 are the living record of what P1/P2 actually became).
+**Status:** 🚧 in progress — Sessions 1–2 ✅ shipped 2026-08-08, plus the Jungle art/terrain
+slice pulled forward out of Session 6. Sessions 3–5 not started. **Start here: §6.**
+**Companion:** `docs/biome-ecology-current-state.md` (refreshed through Session 2; its
+sections 8–10 are the living record of the shipped primitives and consumers).
 **Predecessor:** `docs/archive/biome-ecology-plan.md` (Step 12 program plan).
 
 Scope: deepen the T2+ biomes past the "gloss-over" pass — Cave, Desert, Jungle, Volcano,
@@ -149,7 +149,7 @@ zone; stun mid-cast likewise; a completed cast damages every player in radius.
 > **Keep this session alone.** It is the only one adding networked surface, and the
 > allowlist + dev-boot invariant is where the surprises live. Do not pad it.
 
-### Session 2 — Cave T2 sequence + Wasteland death triggers
+### Session 2 — Cave T2 sequence + Wasteland death triggers ✅ SHIPPED 2026-08-08
 Both are pure consumers of P1 with no new protocol, which is why they share a session.
 
 - Cave T2: gap-close charge → root + attack lockout (~1s) → the Session-1 slam. A small
@@ -159,6 +159,14 @@ Both are pure consumers of P1 with no new protocol, which is why they share a se
   from the existing `onKill` pipeline
   ([killHooks.ts:21](../server/src/systems/combat/damage/killHooks.ts#L21)). Toxic pool =
   P1 hazard mode; ally-empower = a radius buff on death.
+
+> **Outcome.** The cave opener is session-keyed on `tracksCombat` and hands its final beat
+> to the existing committed slam. Its instanced lockdown owns only the ECS markers it added,
+> so interruption/expiry cannot strip an intrinsic Summoner `cannotAttack`. Wasteland death
+> effects run from one centralized `onKill` listener; proc, player-AoE, and Alternating
+> Currents kill paths were closed so they cannot bypass the hooks. Toxic pools are expiry-
+> owned and survive their monster's removal; charnel-brute death empowerment is a timed,
+> capped stacking damage status. `pnpm typecheck` and all 68 tests passed.
 
 ### Session 3 — P5: corpse registry + raises
 Own session — the only monster-lifecycle work in the program, and the only place a rewards
@@ -325,3 +333,25 @@ via `pnpm --filter @mmo-idle/server bake:tree-hitboxes`.
 ahead of the subcommand, so tsx resolves `server/watch` as the entry module and dies. Docker
 runs `dev:docker` (nodemon) instead, which is why it has gone unnoticed — but `pnpm dev:server`
 fails on the host. Left alone as out of scope.
+
+---
+
+## 6. Handover — state at the end of Session 2 (2026-08-08)
+
+**Next session is Session 3** (P5 corpse registry + raises). Keep it isolated as §3 requires:
+death triggers are now stable, while corpse recording/consumption and zero-reward raised mobs
+are the only new lifecycle/reward surface.
+
+Session 2 landed on `feat/biome-ecology-pass2` as two implementation commits after the
+Session-1/Jungle/housekeeping tip:
+
+- `feat(biome-ecology): add monster death effects`
+- `feat(biome-ecology): complete cave and wasteland session`
+
+The working tree was clean at handoff. Verification after rebasing over the concurrent Jungle
+commit: `pnpm typecheck` green; `pnpm test` **68/68**; focused cave-sequence, committed-slam,
+and monster-death-effect tests green again after integration.
+
+The original persistent-zone ownership distinction is load-bearing for future work:
+`slam-telegraph` circles die with their cast owner, while `toxic-pool` circles die only on
+expiry or node freeze. Do not reintroduce a blanket owner cleanup when extending P1.
