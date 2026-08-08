@@ -34,14 +34,14 @@ export const jungleMonsterEntries = [
     id: 'jungle-snake', name: 'Jungle Snake', color: 0x33cc44,
     // The frantic frequent-attacker: low per-hit but strikes constantly (frequency
     // is what evasion answers), plus a light creeping venom. Squishy, very fast.
-    // ECOLOGY: pack FOLLOWER + ambush POUNCE — bursts from the bush alongside its
-    // ape alpha (call-allies linked), the first strike out of concealment amplified.
+    // ECOLOGY: ambush POUNCE — the first strike out of concealment is amplified.
+    // Solo: jungle carries NO pack mechanics (user call) — the thicket's detection
+    // radius is what gathers a fight, not an alpha calling followers.
     stats: { hp: 200, attack: 16, plating: 0, damageReduction: 0, speed: 76, attackRange: 12, attackCooldown: 1100, pullRange: 270 },
     behavior: 'melee', attackStyle: 'poison', biome: 'jungle',
     rewards: { essence: 7, essenceType: 'green', level: 1, biomeXp: 38 },
     ai: { wanderRadius: 290, leashRange: 740, idleMinMs: 600, idleMaxMs: 2600 },
     dotEffect: { debuffId: 'snake-venom', label: 'Snake Venom', damagePerStack: 6, maxStacks: 3, tickIntervalMs: 1000, durationMs: 1500 },
-    pack: { role: 'follower', callRange: 260 },
     openingStrike: { multiplier: 2.2 },   // placeholder — user balance pass
   }],
 
@@ -49,15 +49,14 @@ export const jungleMonsterEntries = [
     id: 'jungle-ape', name: 'Jungle Ape', color: 0xaa6633,
     // Fast charging bruiser — closes the gap, hits a bit harder. DR removed: Jungle
     // is the evasion biome (squishy like Forest), not a DR biome.
-    // ECOLOGY: pack ALPHA (leads a 2-snake hunting pack) + ambush pounce + HARDENING
-    // ramp — the bush-seeded ambusher whose attack grows the longer the fight drags
-    // (the slow keeps you in it), the pressure Jungle's hardening charm answers.
+    // ECOLOGY: solo bruiser + ambush pounce + HARDENING ramp — its attack grows the
+    // longer the fight drags (the thicket's slow keeps you in it), the pressure
+    // Jungle's hardening charm answers. No pack: it leads nothing.
     stats: { hp: 250, attack: 26, plating: 0, damageReduction: 0, speed: 62, attackRange: 12, attackCooldown: 1700, pullRange: 240 },
     behavior: 'melee', attackStyle: 'impact', biome: 'jungle', elite: true,
     rewards: { essence: 8, essenceType: 'green', level: 1, biomeXp: 44 },
     ai: { wanderRadius: 250, leashRange: 660, idleMinMs: 1000, idleMaxMs: 3800 },
     chargeOnAggro: { speedMult: 2.8, durationMs: 1000 },
-    pack: { role: 'alpha', callRange: 260, followers: [{ typeId: 'jungle-snake', count: 2 }] },
     openingStrike: { multiplier: 2.5 },   // placeholder — user balance pass
     rampOnCombat: { stat: 'attack', perTickPct: 0.03, maxPct: 0.45, tickIntervalMs: 1000 },
   }],
@@ -74,6 +73,10 @@ export const jungleMonsterEntries = [
   }],
 
   // ══════════════════ JUNGLE — fast aggressive evasive swarm (Forest successor) ══════════════════
+  // NO PACK MECHANICS anywhere in this biome (user call): no alphas, no followers,
+  // no call-allies. Jungle groups fights through TERRAIN — a thicket multiplies every
+  // monster's detection radius while the player stands in it — not through monster
+  // coordination. Do not reintroduce `pack` here without revisiting that.
   // 2nd tier. Fast, frequent, low-per-hit, high density; raw speed catches kiters
   // (anti-Far). Answer: evasion + raw-regen. Frequency is the threat evasion eats.
   ['jungle-stalker', {
@@ -87,7 +90,6 @@ export const jungleMonsterEntries = [
     rewards: { essence: 25, essenceType: 'green', level: 2, biomeXp: 150 },
     ai: { wanderRadius: 300, leashRange: 760, idleMinMs: 600, idleMaxMs: 2600 },
     dotEffect: { debuffId: 'stalker-venom', label: 'Stalker Venom', damagePerStack: 4, maxStacks: 3, tickIntervalMs: 1200, durationMs: 3600 },
-    pack: { role: 'follower', callRange: 260 },
     openingStrike: { multiplier: 2.2 },   // placeholder — user balance pass
   }],
 
@@ -100,7 +102,6 @@ export const jungleMonsterEntries = [
     rewards: { essence: 35, essenceType: 'green', level: 2, biomeXp: 210 },
     ai: { wanderRadius: 250, leashRange: 660, idleMinMs: 1000, idleMaxMs: 3800 },
     chargeOnAggro: { speedMult: 2.8, durationMs: 1100 },
-    pack: { role: 'alpha', callRange: 260, followers: [{ typeId: 'jungle-stalker', count: 2 }] },
     openingStrike: { multiplier: 2.5 },   // placeholder — user balance pass
     rampOnCombat: { stat: 'attack', perTickPct: 0.03, maxPct: 0.45, tickIntervalMs: 1000 },
   }],
@@ -126,7 +127,6 @@ export const jungleMonsterEntries = [
     behavior: 'melee', attackStyle: 'slash', biome: 'jungle',
     rewards: { essence: 45, essenceType: 'green', level: 3, biomeXp: 270 },
     ai: { wanderRadius: 320, leashRange: 800, idleMinMs: 600, idleMaxMs: 2400 },
-    pack: { role: 'follower', callRange: 280 },
     openingStrike: { multiplier: 2.2 },   // placeholder — user balance pass
   }],
 
@@ -141,7 +141,6 @@ export const jungleMonsterEntries = [
     ai: { wanderRadius: 260, leashRange: 680, idleMinMs: 1000, idleMaxMs: 3600 },
     chargeOnAggro: { speedMult: 2.8, durationMs: 1000 },
     evasion: 0.25,
-    pack: { role: 'alpha', callRange: 280, followers: [{ typeId: 'hunting-panther', count: 2 }] },
     openingStrike: { multiplier: 2.5 },   // placeholder — user balance pass
     rampOnCombat: { stat: 'attack', perTickPct: 0.03, maxPct: 0.45, tickIntervalMs: 1000 },
   }],

@@ -1,6 +1,7 @@
 import {
   buildFeatureCollisionRegions,
   GAME_CONFIG,
+  RESOLVED_NODE_FEATURES,
   minimapProjection,
   projectShape,
   type CollisionRegion,
@@ -29,6 +30,49 @@ const KIND_COLORS: Partial<Record<CollisionRegionKind, number>> = {
   reach: 0xff4444,
   spawn: 0xaa88ff,
 };
+
+/**
+ * Jungle thickets on the minimap. Foliage green so the marker matches what the
+ * player sees on the ground, rather than joining the red/amber hazard palette —
+ * the thicket is not damaging, it just gives your position away.
+ */
+const THICKET_AREA_COLOR = 0x3f6b34;
+const THICKET_ICON_COLOR = 0x8fd46a;
+
+/**
+ * The feature behind a `status` region, when that feature broadcasts the player.
+ *
+ * Resolved by parsing the region id (`<nodeId>:<featureId>:status`, built by
+ * `buildFeatureCollisionRegions`) rather than by threading a new field through the
+ * shared region `data`. Neither a node id nor a feature id contains a colon, so the
+ * split is stable — and keeping the lookup here means the minimap can distinguish a
+ * thicket from any other status zone without the collision layer having to care.
+ */
+function broadcastingFeature(region: CollisionRegion) {
+  const [nodeId, featureId] = region.id.split(':');
+  const feature = (RESOLVED_NODE_FEATURES[nodeId] ?? []).find((f) => f.id === featureId);
+  if (!feature || (feature.detectionMultWhileInside ?? 1) <= 1) return null;
+  return feature;
+}
+
+/**
+ * A three-lobed foliage glyph, drawn at a fixed pixel size so it stays legible
+ * regardless of how large the thicket projects. Sized against the 220x165 minimap.
+ */
+function drawThicketIcon(
+  gfx: Phaser.GameObjects.Graphics,
+  cx: number,
+  cy: number,
+): void {
+  const r = 2.6;
+  gfx.fillStyle(THICKET_ICON_COLOR, 0.95);
+  gfx.fillCircle(cx - r * 1.1, cy + r * 0.45, r);
+  gfx.fillCircle(cx + r * 1.1, cy + r * 0.45, r);
+  gfx.fillCircle(cx, cy - r * 0.75, r * 1.15);
+  // Short stem so the cluster reads as a plant rather than three dots.
+  gfx.fillStyle(THICKET_ICON_COLOR, 0.75);
+  gfx.fillRect(cx - 0.6, cy + r * 0.8, 1.2, r * 1.1);
+}
 
 function hitboxRectsToBodyRegions(
   id: string,
@@ -242,6 +286,19 @@ export function paintCollisionLayer(
         fillProjectedShape(gfx, region.shape, projection, color, 1);
       } else if (region.kind === 'block' || region.kind === 'damage') {
         fillProjectedShape(gfx, region.shape, projection, color, 0.12);
+      } else if (region.kind === 'status') {
+        // Only terrain that broadcasts the player earns a minimap marker. Swamp rot
+        // pools also raise a status region but already draw via their `damage` one,
+        // so this deliberately skips them instead of double-painting.
+        const feature = broadcastingFeature(region);
+        if (feature) {
+          fillProjectedShape(gfx, region.shape, projection, THICKET_AREA_COLOR, 0.22);
+          const centre = projectShape(
+            { kind: 'circle', x: feature.shape.x, y: feature.shape.y, radius: 0 },
+            projection,
+          );
+          if (centre.kind === 'circle') drawThicketIcon(gfx, centre.x, centre.y);
+        }
       }
       continue;
     }
@@ -334,5 +391,7 @@ export function tacticalKinds(): CollisionRegionKind[] {
 }
 
 export function minimapStaticKinds(): CollisionRegionKind[] {
-  return ['gate', 'block', 'damage'];
+  // 'status' is filtered again at paint time to just the broadcasting terrain
+  // (jungle thickets) — see the minimap branch of paintCollisionLayer.
+  return ['gate', 'block', 'damage', 'status'];
 }

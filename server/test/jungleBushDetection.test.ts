@@ -7,6 +7,7 @@
 
 import {
   GAME_CONFIG,
+  BIOME_DATABASE,
   MONSTER_DATABASE,
   NODE_FEATURES,
   STARTER_RUNE_IDS,
@@ -231,6 +232,31 @@ initCombatSystems();
     apeSeesPlayer(true),
     `an ape SHOULD notice a player ${gap}px away once they stand in a thicket`,
   );
+}
+
+// ── 4. Jungle carries NO pack mechanics ─────────────────────────────────────
+// The T3 silverback used to arrive flanked by two stalkers, which read in-game as
+// the boss summoning adds. Jungle groups fights through TERRAIN now, not through
+// monster coordination, so no jungle definition may declare a pack.
+{
+  const jungleMobs = [...MONSTER_DATABASE.values()].filter((m) => m.biome === "jungle");
+  assert(jungleMobs.length > 0, "expected jungle monsters in the database");
+
+  for (const mob of jungleMobs) {
+    assert(
+      mob.pack === undefined,
+      `${mob.id} still declares a pack (${JSON.stringify(mob.pack)}) — jungle carries none`,
+    );
+  }
+
+  // Removing the packs must not have removed the mobs: every one still has to be
+  // reachable through its tier's normal spawn pool, or the biome quietly loses mobs.
+  const jungle = BIOME_DATABASE.get("jungle");
+  assert(!!jungle, "expected a jungle biome entry");
+  const pooled = new Set(Object.values(jungle!.monsterPoolByTier ?? {}).flat());
+  for (const id of ["jungle-snake", "jungle-stalker", "hunting-panther", "silverback"]) {
+    assert(pooled.has(id), `${id} lost its only spawn route when its pack was removed`);
+  }
 }
 
 console.log("jungleBushDetection: ok");
