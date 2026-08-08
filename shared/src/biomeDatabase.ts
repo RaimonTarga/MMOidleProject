@@ -184,7 +184,13 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
       4: ['verdant-crown-predator'],
     },
     essenceType: 'essence',
-    mobDensity: 15,
+    // Jungle bills itself as the Forest successor and a SWARM biome, but sat below
+    // Forest (18). Raised past it: the biome now groups fights through terrain rather
+    // than packs, so the mobs that used to arrive clumped three-at-a-time are spread
+    // out and the node read thin. At 20 on a 3200x2400 node the mean spacing is ~620px,
+    // so a thicket's doubled detection (480-580px) gathers roughly three mobs — a
+    // fight, not a wipe. Balance-pass number: this is the dial to turn.
+    mobDensity: 20,
   }],
 
   ['tundra', {
