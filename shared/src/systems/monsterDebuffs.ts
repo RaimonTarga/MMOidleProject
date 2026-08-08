@@ -30,6 +30,9 @@ export const SUN_MARK_EFFECT_ID = 'sun-mark';
  */
 export const VOLCANIC_HEAT_EFFECT_ID = 'volcanic-heat';
 
+/** Cave troll opener: a short, source-owned root plus attack lockout. */
+export const CAVE_LOCKDOWN_EFFECT_ID = 'cave-lockdown';
+
 /** Movement-slow fraction (0..moveSlowMaxPct) from the current frost-ramp stacks. */
 export function frostRampMoveSlowPct(effect: StatusEffect): number {
   const perHit = effect.data['moveSlowPerHit'] ?? 0;
@@ -79,6 +82,7 @@ export function isHarmfulPlayerStatusEffect(
 ): boolean {
   if (id === 'slow' || id === FROST_RAMP_EFFECT_ID) return true;
   if (id === SUN_MARK_EFFECT_ID || id === VOLCANIC_HEAT_EFFECT_ID) return true;
+  if (id === CAVE_LOCKDOWN_EFFECT_ID) return true;
   if (id === 'antiheal' || id === 'swamp-rot') return true;
   if (isMonsterDotStatusEffectId(id)) return true;
   if ((data['isDot'] ?? 0) !== 0) return true;

@@ -14,6 +14,10 @@ import {
   DEATH_EMPOWER_EFFECT_ID,
 } from '../src/systems/combat/damage/monsterDeathEffects';
 import { runMonsterAttack } from '../src/systems/combat/engine/combat';
+import {
+  buildGroundZoneViews,
+  updateGroundZones,
+} from '../src/systems/world/groundZones';
 import { World } from '../src/world/World';
 
 function assert(condition: boolean, message: string): void {
@@ -104,6 +108,44 @@ initCombatSystems();
   assert(
     empoweredDamage > baselineDamage,
     `the death surge should increase direct monster damage (${empoweredDamage} <= ${baselineDamage})`,
+  );
+}
+
+// A death pool owns its expiry, not the dead monster. It persists after removal,
+// ticks only bodies inside at its authored cadence, and expires cleanly.
+{
+  const world = new World();
+  const player = world.attachPlayerEntity(makePlayerSlices('pool-killer', 400, 400), 'pool-killer');
+  const outside = world.attachPlayerEntity(makePlayerSlices('pool-outside', 700, 400), 'pool-outside');
+  const hound = world.createMonster(NODE, 'plague-hound', { x: 400, y: 400 });
+  assert(!!hound, 'plague hound should spawn');
+
+  applyPlayerProcDamage(world, player, hound!, hound!.hasHealth.maxHp * 2);
+  assert(!world.hasMonster(hound!.isMonster.id), 'the pool owner should already be removed');
+  const bornAt = Date.now();
+  const views = buildGroundZoneViews(world, NODE, bornAt) ?? [];
+  const pool = views.find((zone) => zone.kind === 'toxic-pool');
+  assert(!!pool, 'a proc-killed plague hound should leave a toxic pool');
+
+  const insideHp = player.hasHealth.hp;
+  const outsideHp = outside.hasHealth.hp;
+  updateGroundZones(world, bornAt);
+  assert(player.hasHealth.hp < insideHp, 'a player inside the toxic pool should take a tick');
+  assert(outside.hasHealth.hp === outsideHp, 'a player outside the toxic pool should take no damage');
+  assert(!!getStatusEffect(player.tracksCombat, 'slow'), 'the toxic pool should apply its slow while inside');
+
+  const afterFirstTick = player.hasHealth.hp;
+  updateGroundZones(world, bornAt + 500);
+  assert(player.hasHealth.hp === afterFirstTick, 'the pool must respect its per-player tick cadence');
+  updateGroundZones(world, bornAt + 1_001);
+  assert(player.hasHealth.hp < afterFirstTick, 'the pool should tick again after its interval');
+
+  updateGroundZones(world, bornAt + 7_000);
+  assert(
+    !(buildGroundZoneViews(world, NODE, bornAt + 7_000) ?? []).some(
+      (zone) => zone.kind === 'toxic-pool',
+    ),
+    'the toxic pool should disappear after its authored lifetime',
   );
 }
 

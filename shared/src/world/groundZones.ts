@@ -1,21 +1,19 @@
 /**
  * GROUND ZONES — node-scoped runtime circles, the shared primitive behind
- * telegraphed slams (Cave) and, later, lingering death pools (Wasteland).
+ * telegraphed slams (Cave) and lingering death pools (Wasteland).
  *
  * Deliberately NOT a node feature: `NodeFeatureSpec` is static authored terrain
  * that lives for the life of the node. Ground zones are spawned by combat, live
  * for seconds, and are never persisted — they die with the node on freeze.
  *
  * Modes:
- *   'telegraph' — cosmetic while it fills; the SERVER resolves the damage when
- *                 the owning cast completes. The zone itself deals nothing.
+ *   'slam-telegraph' — cosmetic while it fills; the SERVER resolves the damage
+ *                      when the owning cast completes. The zone deals nothing.
  *
- * (The 'hazard' mode — ticking damage/status while a body is inside — arrives
- * with its first consumer, Wasteland death pools. Adding it here without a
- * caller would ship an untuned damage cadence nothing exercises.)
+ *   'toxic-pool' — expiry-lived server hazard; ticks damage and slow inside.
  */
 
-export type GroundZoneKind = 'slam-telegraph';
+export type GroundZoneKind = 'slam-telegraph' | 'toxic-pool';
 
 /**
  * Client-facing view of one zone. Mirrors the shape of the gauntlet's
@@ -32,8 +30,8 @@ export interface GroundZoneView {
   x: number;
   y: number;
   radius: number;
-  /** Full wind-up the fill animates over (the owning cast's `castMs`). */
+  /** Full wind-up or hazard lifetime. */
   durationMs: number;
-  /** Time left before the zone resolves; 0 on the resolving tick. */
+  /** Time left before the zone resolves/expires. */
   remainingMs: number;
 }

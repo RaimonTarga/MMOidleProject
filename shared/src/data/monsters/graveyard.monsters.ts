@@ -31,6 +31,14 @@ export const graveyardMonsterEntries = [
     ai: { wanderRadius: 290, leashRange: 750, idleMinMs: 700, idleMaxMs: 3000 },
     chargeOnAggro: { speedMult: 2.5, durationMs: 900 },
     dotEffect: { debuffId: 'hound-plague', label: 'Hound Plague', damagePerStack: 8, maxStacks: 5, tickIntervalMs: 1100, durationMs: 2500 },
+    // Its ruptured carcass leaves a short-lived toxic denial circle. Placeholder
+    // values â€” the balance pass owns damage, footprint, and lifetime.
+    onDeath: {
+      spawnHazard: {
+        kind: 'toxic-pool', radius: 78, durationMs: 6000,
+        damagePerTick: 18, tickIntervalMs: 1000, slowSpeedMult: 0.7,
+      },
+    },
   }],
 
   ['carrion-vulture', {

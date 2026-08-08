@@ -50,6 +50,12 @@ import { evadeBlocksDebuffs } from "../../defense/mitigation/evasion";
 import { isMonsterStunned, applyStun } from "../status/stun";
 import { setAggroTarget, setAttackTarget } from "../ai/targeting";
 import { markEngaged } from "../ai/engagement";
+import {
+  abortEngageSequence,
+  completeEngageSequence,
+  engageSequenceHoldsAttack,
+  engageSequenceSlamReady,
+} from '../ai/engageSequence';
 import { oocRegenDelay } from "../../player/rites/riteOoc";
 import { mobilityTenacityDurationMult } from "../../world/mobility/mobilityBoots";
 import type {
@@ -1175,6 +1181,16 @@ export function updateCombat(world: World, dt: number, now: number) {
       setAttackTarget(world, e, null);
       continue;
     }
+    if (engageSequenceHoldsAttack(e)) {
+      if (
+        isMonsterStunned(world, e.isMonster.id) ||
+        isMonsterFrozen(world, e.isMonster.id)
+      ) {
+        abortEngageSequence(world, e);
+      }
+      // The lockdown beat deliberately suppresses the troll's basic attack.
+      continue;
+    }
     if (e.hasAwareness.state !== "attacking") {
       abortMonsterCast(world, e);
       continue;
@@ -1274,10 +1290,14 @@ export function updateCombat(world: World, dt: number, now: number) {
         const attackDue =
           now - e.performsAttack.lastAttackAt >= e.performsAttack.attackCooldown;
         const initialCd = charged.initialCooldownMs ?? charged.cooldownMs;
+        const forcedByEngageSequence = engageSequenceSlamReady(e);
+        // Initialize the ordinary charge session before the forced opener so
+        // completeCharge's recurring cooldown is not overwritten next tick.
+        const normallyReady = chargeReady(e, now, initialCd);
         if (
-          attackDue &&
-          chargeReady(e, now, initialCd) &&
-          !isMonsterStunned(world, e.isMonster.id)
+          (forcedByEngageSequence || (attackDue && normallyReady)) &&
+          !isMonsterStunned(world, e.isMonster.id) &&
+          !isMonsterFrozen(world, e.isMonster.id)
         ) {
           beginCharge(e, now, charged.castMs);
           if (charged.aoe) {
@@ -1295,6 +1315,7 @@ export function updateCombat(world: World, dt: number, now: number) {
             });
           }
           applyChargedAttackMark(world, e, target, charged);
+          if (forcedByEngageSequence) completeEngageSequence(e);
           world.pushEvent(e.hasPosition.nodeId, {
             kind: "monster-cast-start",
             monsterId: e.isMonster.id,

@@ -1,27 +1,40 @@
-import type { GroundZoneKind, GroundZoneView, Vec2 } from "@mmo-idle/shared";
-import type { World } from "../../world/World";
+import {
+  applyStatusEffect,
+  distanceSq,
+  type DeathKiller,
+  type GroundZoneView,
+  type Vec2,
+} from '@mmo-idle/shared';
+import type { World } from '../../world/World';
+import { markSliceDirty } from '../../ecs/dirtyHelpers';
+import { isInvulnerablePlayer } from '../combat/invulnerability';
 
-/**
- * Server-side ground zone. Runtime-only: never persisted, never rebuilt on thaw.
- * Generalised from `RuntimeDungeonHazard` (dungeons/gauntlet.ts), which stays as
- * the gauntlet's own thing — it carries rot-pool damage bookkeeping this doesn't.
- */
-export interface RuntimeGroundZone {
+interface RuntimeGroundZoneBase {
   id: string;
-  kind: GroundZoneKind;
   pos: Vec2;
   radius: number;
-  /** When the zone was published — the fill animates from here. */
   startedAtMs: number;
-  /** When the owning cast resolves; the zone is dropped at/after this. */
+}
+
+export interface RuntimeSlamTelegraph extends RuntimeGroundZoneBase {
+  kind: 'slam-telegraph';
   resolvesAtMs: number;
-  /**
-   * Monster whose cast owns this zone. Every abort path (interrupt, target lost,
-   * out of range, death) clears by owner, so a telegraph can never outlive the
-   * cast that drew it.
-   */
+  /** Owning monster; every cast-abort path clears its telegraph by this id. */
   ownerId: string;
 }
+
+export interface RuntimeToxicPool extends RuntimeGroundZoneBase {
+  kind: 'toxic-pool';
+  expiresAtMs: number;
+  damagePerTick: number;
+  tickIntervalMs: number;
+  slowSpeedMult?: number;
+  tickTimersByPlayerId: Map<string, number>;
+  killer: DeathKiller;
+}
+
+/** Node-scoped, runtime-only circles. Never persisted or rebuilt on thaw. */
+export type RuntimeGroundZone = RuntimeSlamTelegraph | RuntimeToxicPool;
 
 function zonesFor(world: World, nodeId: string): RuntimeGroundZone[] {
   let list = world.groundZones.get(nodeId);
@@ -32,17 +45,14 @@ function zonesFor(world: World, nodeId: string): RuntimeGroundZone[] {
   return list;
 }
 
-/**
- * Publish a telegraph circle. The caller owns resolution — this only draws.
- * Replaces any zone the same owner already had, so a re-cast can't stack rings.
- */
+/** Publish a cosmetic cast telegraph. The owning combat state resolves damage. */
 export function publishGroundZone(
   world: World,
   nodeId: string,
-  zone: Omit<RuntimeGroundZone, "id">,
-): RuntimeGroundZone {
+  zone: Omit<RuntimeSlamTelegraph, 'id'>,
+): RuntimeSlamTelegraph {
   clearGroundZonesByOwner(world, nodeId, zone.ownerId);
-  const published: RuntimeGroundZone = {
+  const published: RuntimeSlamTelegraph = {
     ...zone,
     id: `gz-${nodeId}-${world.groundZoneSeq++}`,
   };
@@ -50,7 +60,22 @@ export function publishGroundZone(
   return published;
 }
 
-/** Drop every zone owned by a monster. Safe to call when it owns none. */
+/** Publish an expiry-owned hazard. It deliberately outlives the monster that made it. */
+export function publishToxicPool(
+  world: World,
+  nodeId: string,
+  zone: Omit<RuntimeToxicPool, 'id' | 'tickTimersByPlayerId'>,
+): RuntimeToxicPool {
+  const published: RuntimeToxicPool = {
+    ...zone,
+    id: `gz-${nodeId}-${world.groundZoneSeq++}`,
+    tickTimersByPlayerId: new Map(),
+  };
+  zonesFor(world, nodeId).push(published);
+  return published;
+}
+
+/** Drop telegraphs owned by a monster; expiry-owned hazards are unaffected. */
 export function clearGroundZonesByOwner(
   world: World,
   nodeId: string,
@@ -58,34 +83,97 @@ export function clearGroundZonesByOwner(
 ): void {
   const list = world.groundZones.get(nodeId);
   if (!list) return;
-  const kept = list.filter((zone) => zone.ownerId !== ownerId);
+  const kept = list.filter(
+    (zone) => zone.kind !== 'slam-telegraph' || zone.ownerId !== ownerId,
+  );
   if (kept.length === list.length) return;
   if (kept.length === 0) world.groundZones.delete(nodeId);
   else world.groundZones.set(nodeId, kept);
 }
 
-/** Drop every zone in a node. Called on freeze — zones are never persisted. */
+/** Drop every runtime circle in a node on freeze. */
 export function clearGroundZonesForNode(world: World, nodeId: string): void {
   world.groundZones.delete(nodeId);
 }
 
-/**
- * Sweep zones whose owner is gone or whose deadline passed without the owner
- * resolving them. Normal completion clears its own zone; this is the safety net
- * for the paths that don't run (owner despawned mid-cast, node emptied).
- *
- * The grace window keeps a zone alive for one broadcast past its deadline so the
- * client sees the ring reach full before it vanishes — at 5 Hz a same-tick delete
- * makes the impact pop out of existence early.
- */
 const RESOLVE_GRACE_MS = 250;
+const HAZARD_SLOW_REFRESH_MS = 1_200;
 
+function tickToxicPool(
+  world: World,
+  nodeId: string,
+  pool: RuntimeToxicPool,
+  now: number,
+): void {
+  const radiusSq = pool.radius * pool.radius;
+  for (const player of world.livePlayersInNode(nodeId)) {
+    if (distanceSq(player.hasPosition.current, pool.pos) > radiusSq) continue;
+
+    if (pool.slowSpeedMult !== undefined) {
+      applyStatusEffect(player.tracksCombat, {
+        id: 'slow',
+        maxStacks: 1,
+        remainingMs: HAZARD_SLOW_REFRESH_MS,
+        refreshable: true,
+        sourceId: `ground-zone:${pool.id}`,
+        data: {
+          speedMult: pool.slowSpeedMult,
+          totalMs: HAZARD_SLOW_REFRESH_MS,
+        },
+      });
+    }
+
+    const nextAt = pool.tickTimersByPlayerId.get(player.isPlayer.id) ?? now;
+    if (now < nextAt || isInvulnerablePlayer(player)) continue;
+    pool.tickTimersByPlayerId.set(player.isPlayer.id, now + pool.tickIntervalMs);
+
+    const dotResist = Math.min(
+      0.9,
+      Math.max(0, player.usesSkills.passives['defense.dot-resistance'] ?? 0),
+    );
+    const damage = Math.max(
+      1,
+      Math.round(
+        pool.damagePerTick *
+          (1 - player.mitigatesDamage.damageReduction) *
+          (1 - dotResist),
+      ),
+    );
+    player.hasHealth.hp -= damage;
+    markSliceDirty(world, player, 'hasHealth');
+    world.pushEvent(nodeId, {
+      kind: 'dot-tick',
+      targetId: player.isPlayer.id,
+      targetPos: { ...player.hasPosition.current },
+      amount: damage,
+      element: 'poison',
+      sourceType: 'special',
+    });
+
+    if (player.hasHealth.hp <= 0) {
+      world.killPlayer(player.isPlayer.id, {
+        kind: 'dot',
+        killer: pool.killer,
+        damage,
+        stacks: 1,
+      });
+    }
+  }
+}
+
+/** Tick hazards, then sweep expired/abandoned circles. */
 export function updateGroundZones(world: World, now: number): void {
   for (const [nodeId, list] of [...world.groundZones]) {
-    const kept = list.filter(
-      (zone) =>
-        world.hasMonster(zone.ownerId) &&
-        now < zone.resolvesAtMs + RESOLVE_GRACE_MS,
+    for (const zone of list) {
+      if (zone.kind === 'toxic-pool' && now < zone.expiresAtMs) {
+        tickToxicPool(world, nodeId, zone, now);
+      }
+    }
+
+    const kept = list.filter((zone) =>
+      zone.kind === 'slam-telegraph'
+        ? world.hasMonster(zone.ownerId) && now < zone.resolvesAtMs + RESOLVE_GRACE_MS
+        : now < zone.expiresAtMs,
     );
     if (kept.length === 0) world.groundZones.delete(nodeId);
     else if (kept.length !== list.length) world.groundZones.set(nodeId, kept);
@@ -100,13 +188,16 @@ export function buildGroundZoneViews(
 ): GroundZoneView[] | undefined {
   const list = world.groundZones.get(nodeId);
   if (!list || list.length === 0) return undefined;
-  return list.map((zone) => ({
-    id: zone.id,
-    kind: zone.kind,
-    x: zone.pos.x,
-    y: zone.pos.y,
-    radius: zone.radius,
-    durationMs: Math.max(1, zone.resolvesAtMs - zone.startedAtMs),
-    remainingMs: Math.max(0, zone.resolvesAtMs - now),
-  }));
+  return list.map((zone) => {
+    const endsAtMs = zone.kind === 'slam-telegraph' ? zone.resolvesAtMs : zone.expiresAtMs;
+    return {
+      id: zone.id,
+      kind: zone.kind,
+      x: zone.pos.x,
+      y: zone.pos.y,
+      radius: zone.radius,
+      durationMs: Math.max(1, endsAtMs - zone.startedAtMs),
+      remainingMs: Math.max(0, endsAtMs - now),
+    };
+  });
 }

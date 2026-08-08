@@ -1,5 +1,6 @@
 import type { World } from "../../../world/World";
 import { tickCooldowns, tickStatusEffectDurations } from "@mmo-idle/shared";
+import { updatePlayerControlLockouts } from "../status/playerControlLockout";
 
 /**
  * Run at the top of every world tick so cooldowns and status effect durations are
@@ -14,4 +15,5 @@ export function updateCombatState(world: World, dt: number): void {
     tickCooldowns(e.tracksCombat, dt);
     tickStatusEffectDurations(e.tracksCombat, dt);
   }
+  updatePlayerControlLockouts(world);
 }

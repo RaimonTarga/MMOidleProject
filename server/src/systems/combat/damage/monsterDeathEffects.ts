@@ -8,6 +8,7 @@ import type { MonsterEntity } from '../../../ecs/entity';
 import type { World } from '../../../world/World';
 import { onPackAlphaDead } from '../ai/packs';
 import { registerCombatListener } from '../engine/combatPipeline';
+import { publishToxicPool } from '../../world/groundZones';
 
 export const DEATH_EMPOWER_EFFECT_ID = 'monster-death-empower';
 
@@ -48,11 +49,34 @@ function empowerNearbyAllies(world: World, dead: MonsterEntity): void {
   }
 }
 
+function spawnDeathHazard(world: World, dead: MonsterEntity): void {
+  const hazard = MONSTER_DATABASE.get(dead.isMonster.monsterTypeId)?.onDeath?.spawnHazard;
+  if (!hazard || hazard.kind !== 'toxic-pool') return;
+  const now = Date.now();
+  publishToxicPool(world, dead.hasPosition.nodeId, {
+    kind: 'toxic-pool',
+    pos: { ...dead.hasPosition.current },
+    radius: hazard.radius,
+    startedAtMs: now,
+    expiresAtMs: now + hazard.durationMs,
+    damagePerTick: hazard.damagePerTick,
+    tickIntervalMs: hazard.tickIntervalMs,
+    slowSpeedMult: hazard.slowSpeedMult,
+    killer: {
+      monsterTypeId: dead.isMonster.monsterTypeId,
+      monsterName: dead.isMonster.name,
+      isBoss: dead.isMonster.isBoss,
+      nodeId: dead.hasPosition.nodeId,
+    },
+  });
+}
+
 /** Register definition-authored monster death effects exactly once at combat bootstrap. */
 export function initMonsterDeathEffects(): void {
   registerCombatListener('onKill', (ctx, world) => {
     if (ctx.defenderType !== 'monster') return;
     onPackAlphaDead(world, ctx.defender);
+    spawnDeathHazard(world, ctx.defender);
     empowerNearbyAllies(world, ctx.defender);
   });
 }

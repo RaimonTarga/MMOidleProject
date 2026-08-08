@@ -312,6 +312,18 @@ export interface MonsterDefinition {
    */
   chargeOnAggro?: { speedMult: number; durationMs: number };
   /**
+   * Multi-step opener run once per fresh player-aggro session. The monster
+   * charges to contact, briefly locks the player in place and out of attacks,
+   * then immediately starts its authored chargedAttack. Every stage is
+   * interruptible; the existing charged-attack controller owns the final cast.
+   */
+  engageSequence?: {
+    kind: 'charge-lock-charged-attack';
+    speedMult: number;
+    maxChargeMs: number;
+    lockoutMs: number;
+  };
+  /**
    * Fixed patrol route. Presence replaces random wander: while un-aggroed the
    * monster walks a deterministic path of waypoints (relative to its spawn, so one
    * def works at any spawn anchor) instead of picking random wander points. Aggro

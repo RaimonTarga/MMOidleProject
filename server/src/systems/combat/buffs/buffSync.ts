@@ -1,6 +1,7 @@
 import {
   formatLogNumber,
   getStatusEffect,
+  getStatusEffects,
   isMonsterDotStatusEffectId,
   MONSTER_DATABASE,
   monsterDotFlavorByCode,
@@ -8,6 +9,7 @@ import {
   FROST_RAMP_EFFECT_ID,
   SUN_MARK_EFFECT_ID,
   VOLCANIC_HEAT_EFFECT_ID,
+  CAVE_LOCKDOWN_EFFECT_ID,
   frostRampMoveSlowPct,
   frostRampAtkSlowPct,
   type StatusEffect,
@@ -57,23 +59,29 @@ const DEBUFF_BUFFS = [
     "debuff-root",
     ({ playerCs, world }) => {
       if (!playerCs) return null;
+      const caveLock = getStatusEffects(playerCs, CAVE_LOCKDOWN_EFFECT_ID)
+        .sort((a, b) => b.remainingMs - a.remainingMs)[0];
       const slow = getStatusEffect(playerCs, "slow");
-      if (!slow || (slow.data["speedMult"] ?? 1) > 0) return null;
-      const totalMs = slow.data["totalMs"] ?? slow.remainingMs;
-      const source = world.getMonsterEntity(slow.sourceId);
+      const root = caveLock ??
+        (slow && (slow.data["speedMult"] ?? 1) <= 0 ? slow : undefined);
+      if (!root) return null;
+      const totalMs = root.data["totalMs"] ?? root.remainingMs;
+      const source = world.getMonsterEntity(root.sourceId);
       return {
         id: "debuff-root",
-        label: "ROOT",
-        stacks: slow.stacks,
+        label: caveLock ? "PINNED" : "ROOT",
+        stacks: getStatusEffects(playerCs, CAVE_LOCKDOWN_EFFECT_ID).length || root.stacks,
         durationPct:
-          totalMs > 0 && slow.remainingMs > 0
-            ? (slow.remainingMs / totalMs) * 100
+          totalMs > 0 && root.remainingMs > 0
+            ? (root.remainingMs / totalMs) * 100
             : -1,
         speedMult: 0,
         color: "#aa66ff",
         logSourceName: source?.isMonster.name ?? "Monster debuff",
         logSourceSide: "enemy",
-        logDetail: "movement speed 0%",
+        logDetail: caveLock
+          ? "movement and attacks disabled"
+          : "movement speed 0%",
       };
     },
     { category: "neutral", shape: "diamond", color: "#aa66ff", label: "ROOT" },

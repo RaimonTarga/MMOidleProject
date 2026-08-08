@@ -17,6 +17,7 @@ import {
 import type { ControlsMonster } from "@mmo-idle/shared";
 import { NODE_REGISTRY } from "../../../world/nodeRegistry";
 import { isMonsterStunned } from "../status/stun";
+import { isMonsterFrozen } from "../../classes/archetypes/dot/t3/core/selectors";
 import {
   isChargeAoePlanted,
   isMonsterCharging,
@@ -29,6 +30,11 @@ import {
   selectMonsterAggroCandidate,
   type MonsterAggroCandidate,
 } from "./monsterTargeting";
+import {
+  abortEngageSequence,
+  beginEngageLock,
+  engageSequenceStage,
+} from './engageSequence';
 
 const KITE_GRACE_MS = 500; // ms chasing before speed ramp begins
 const KITE_RAMP_RATE = 1.5; // speed multiplier gain per second past grace (no cap — ramps forever)
@@ -184,11 +190,13 @@ export function updateMonsters(world: World, dt: number, now: number) {
   for (const e of world.monsterEntities) {
     const ai = e.controlsMonster;
     const id = e.isMonster.id;
+    const monsterDef = MONSTER_DATABASE.get(e.isMonster.monsterTypeId);
 
     // Stun is full CC (movement halt). Frozen is only a severe slow (handled via
     // reduced speed/attack-cooldown in updateChillAndFreeze), so frozen monsters
     // keep pathing normally — they just crawl.
     if (isMonsterStunned(world, id)) {
+      abortEngageSequence(world, e);
       stopMonster(world, e);
       e.performsAttack.lastAttackAt = now;
       ai.kiteTimer = 0;
@@ -198,9 +206,16 @@ export function updateMonsters(world: World, dt: number, now: number) {
     // Knockback owns position, target, speed, and state for the duration of the
     // slide. AI resumes naturally once the component clears.
     if (isMonsterKnockedBack(world, id)) {
+      abortEngageSequence(world, e);
       e.performsAttack.lastAttackAt = now;
       ai.kiteTimer = 0;
       continue;
+    }
+
+    // Freeze normally remains a severe slow, but it interrupts every beat of
+    // the cave opener just as it interrupts the final charged wind-up.
+    if (isMonsterFrozen(world, id)) {
+      abortEngageSequence(world, e);
     }
 
     // Only scan for pull-range aggro when we have no current target.
@@ -218,6 +233,7 @@ export function updateMonsters(world: World, dt: number, now: number) {
     // Drop it only if the target left the node, disconnected, or (for minions) died.
     const target = resolveAggroTarget(world, e);
     if (e.hasAggroTarget && !target) {
+      abortEngageSequence(world, e);
       setAggroTarget(world, e, null, now);
     }
 
@@ -229,6 +245,7 @@ export function updateMonsters(world: World, dt: number, now: number) {
         distanceSq(e.hasPosition.current, ai.spawn) >
         ai.leashRange * ai.leashRange
       ) {
+        abortEngageSequence(world, e);
         setAggroTarget(world, e, null, now);
         ai.kiteTimer = 0;
         resetCombatRamp(e);
@@ -254,7 +271,6 @@ export function updateMonsters(world: World, dt: number, now: number) {
         continue;
       }
 
-      const monsterDef = MONSTER_DATABASE.get(e.isMonster.monsterTypeId);
       // A boss 'morph' action can flip the kite flag at runtime.
       const isKiter =
         e.scriptsBoss?.kiteOverride ??
@@ -275,6 +291,53 @@ export function updateMonsters(world: World, dt: number, now: number) {
             targetPos,
             'monster',
           ) === targetPos);
+
+      const sequenceStage = engageSequenceStage(e, monsterDef, now);
+      if (sequenceStage === 'charge') {
+        if (target.kind !== 'player') {
+          abortEngageSequence(world, e);
+        } else if (hasLine) {
+          beginEngageLock(
+            world,
+            e,
+            target.entity,
+            monsterDef!.engageSequence!.lockoutMs,
+            now,
+          );
+          e.hasPosition.speed = ai.baseSpeed;
+          e.hasAwareness.state = 'attacking';
+          setAttackTarget(world, e, target.entity.isPlayer.id);
+          stopMonster(world, e);
+          continue;
+        } else {
+          e.hasPosition.speed = Math.round(
+            ai.baseSpeed * monsterDef!.engageSequence!.speedMult,
+          );
+          e.hasAwareness.state = 'chasing';
+          setAttackTarget(world, e, target.entity.isPlayer.id);
+          setMonsterTarget(world, e, targetPos);
+          continue;
+        }
+      }
+
+      if (sequenceStage === 'lock') {
+        e.hasPosition.speed = ai.baseSpeed;
+        e.hasAwareness.state = 'attacking';
+        setAttackTarget(world, e, aggroAttackTargetId(target));
+        stopMonster(world, e);
+        continue;
+      }
+
+      if (sequenceStage === 'slam-ready') {
+        if (hasLine) {
+          e.hasPosition.speed = ai.baseSpeed;
+          e.hasAwareness.state = 'attacking';
+          setAttackTarget(world, e, aggroAttackTargetId(target));
+          stopMonster(world, e);
+          continue;
+        }
+        abortEngageSequence(world, e);
+      }
 
       if (hasLine) {
         // Only pre-load the attack timer when first stumbling onto a target (idle/wander/return),
@@ -336,7 +399,6 @@ export function updateMonsters(world: World, dt: number, now: number) {
       setAttackTarget(world, e, null);
 
       // Fixed patrol route (if any) replaces random wander while un-aggroed.
-      const monsterDef = MONSTER_DATABASE.get(e.isMonster.monsterTypeId);
       const patrol = ai.patrolOverride ?? monsterDef?.patrol;
       const holdPost = ai.holdPost;
       if (holdPost) {

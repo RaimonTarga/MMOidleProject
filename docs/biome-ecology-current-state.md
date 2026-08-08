@@ -159,8 +159,8 @@ combat.
 - **Client** — `client/src/render/groundZones.ts` (`syncGroundZones` on delta,
   `drawGroundZones` per frame). Lifted from `render/dungeonHazards.ts`, which stays as the
   gauntlet's own thing.
-- **Only `'slam-telegraph'` mode exists.** A ticking `hazard` mode arrives with its first
-  consumer (Wasteland death pools) rather than shipping untuned with no caller.
+- **`'slam-telegraph'` is cast-owner-lived.** Session 2 added an expiry-owned
+  `'toxic-pool'` mode; owner cleanup cannot erase a pool after its monster dies.
 
 `chargedAttack.aoe = { radius, damageMult? }` (`shared/src/data/monsters/types.ts`) turns a
 charge into a **committed ground slam**:
@@ -180,7 +180,30 @@ charge into a **committed ground slam**:
 
 Pinned by `server/test/caveGroundSlam.test.ts`.
 
-Everything the remaining Pass 2 biomes need beyond section 9 (terrain, hazards, ranged/kite,
+## 10. Engage sequences + monster death ecology (Pass 2, Session 2 — SHIPPED)
+
+`MonsterDefinition.engageSequence` provides the first small, server-authoritative multi-beat
+monster opener. `cave-troll` authors `charge-lock-charged-attack`: it gap-closes at a fixed
+speed multiplier, applies a one-second source-owned player lockdown, then immediately hands
+off to the existing committed `chargedAttack.aoe` slam. State is session-keyed on
+`tracksCombat`; stun, freeze, knockback, target loss and leash break abort every pre-slam
+stage. Lock markers track ownership so cleanup cannot remove an intrinsic Summoner
+`cannotAttack` marker. Pinned by `server/test/caveEngageSequence.test.ts`.
+
+`MonsterDefinition.onDeath` now authors two reusable death effects through the centralized
+`onKill` pipeline:
+
+- **`spawnHazard`** — `plague-hound` leaves an expiry-owned toxic pool. The server ticks
+  per-player damage/slow cadence and kill attribution; the client renders a persistent fading
+  circle. The pool survives owner removal and dies on expiry or node freeze.
+- **`empowerAllies`** — `charnel-brute` buffs living monsters in its death radius with a timed,
+  capped stacking outgoing-damage status and emits the `death-empower` ecology pulse.
+
+The centralized listener also wires pack-alpha cleanup in production. Player AoE, proc damage,
+and Alternating Currents now emit `onKill`, closing the indirect-kill paths these effects need.
+Pinned by `server/test/monsterDeathEffects.test.ts`.
+
+Everything the remaining Pass 2 biomes need beyond sections 9–10 (terrain, ranged/kite,
 charge, DoT, boss scripts, gauntlet) **already exists** and is authored, not engineered. The
-three outstanding primitives — player damage amplifiers (P3), the ambient node ramp (P4) and
-the corpse registry (P5) — are scoped in `docs/biome-ecology-pass2-plan.md`.
+remaining primitives — player damage amplifiers (P3), the ambient node ramp (P4), and the
+corpse registry (P5) — are scoped in `docs/biome-ecology-pass2-plan.md`.

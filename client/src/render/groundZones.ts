@@ -1,12 +1,12 @@
-import type { GroundZoneView } from "@mmo-idle/shared";
+import type { GroundZoneKind, GroundZoneView } from "@mmo-idle/shared";
 import type { GameScene } from "../scenes/GameScene";
 import { DEPTH } from "./depth";
 
 /**
- * Telegraphed combat circles (the Cave slam). Lifted from `dungeonHazards.ts` —
- * same "reconcile a keyed map of Graphics against a server list" shape — but the
- * fill here is a WIND-UP: it grows toward the rim as the cast completes, so the
- * ring reads as a countdown rather than a standing pool.
+ * Runtime combat circles: Cave slam telegraphs and Wasteland toxic pools. Lifted
+ * from `dungeonHazards.ts` with the same keyed reconciliation shape. A slam fill
+ * grows toward the rim as its cast completes; a pool remains filled and fades
+ * near expiry.
  *
  * `remainingMs` only refreshes at the 5 Hz broadcast, so the progress is advanced
  * locally each frame from the client clock and re-anchored whenever a fresh
@@ -15,9 +15,12 @@ import { DEPTH } from "./depth";
 
 const SLAM_FILL = 0xc25b2a;
 const SLAM_LINE = 0xffb066;
+const TOXIC_FILL = 0x63852c;
+const TOXIC_LINE = 0xb8dc56;
 
 export interface GroundZoneSprite {
   graphic: Phaser.GameObjects.Graphics;
+  kind: GroundZoneKind;
   /** Client timestamp the current `remainingMs` was received at. */
   syncedAtMs: number;
   remainingMs: number;
@@ -46,6 +49,7 @@ export function syncGroundZones(
     if (!sprite) {
       sprite = {
         graphic: scene.add.graphics().setDepth(DEPTH.BG_DECOR + 0.3),
+        kind: zone.kind,
         syncedAtMs: now,
         remainingMs: zone.remainingMs,
         durationMs: zone.durationMs,
@@ -57,6 +61,7 @@ export function syncGroundZones(
     }
     // Re-anchor to the authoritative remainder on every packet.
     sprite.syncedAtMs = now;
+    sprite.kind = zone.kind;
     sprite.remainingMs = zone.remainingMs;
     sprite.durationMs = zone.durationMs;
     sprite.radius = zone.radius;
@@ -79,6 +84,17 @@ export function drawGroundZones(scene: GameScene): void {
 function drawZone(sprite: GroundZoneSprite, progress: number): void {
   const { graphic, x, y, radius } = sprite;
   graphic.clear();
+
+  if (sprite.kind === 'toxic-pool') {
+    const remainingAlpha = Math.min(1, Math.max(0, (1 - progress) * 4));
+    graphic.fillStyle(TOXIC_FILL, 0.3 * remainingAlpha);
+    graphic.fillCircle(x, y, radius);
+    graphic.lineStyle(3, TOXIC_LINE, 0.8 * remainingAlpha);
+    graphic.strokeCircle(x, y, radius);
+    graphic.lineStyle(2, TOXIC_LINE, 0.25 * remainingAlpha);
+    graphic.strokeCircle(x, y, radius * 0.68);
+    return;
+  }
 
   // Outer rim: the committed footprint. Solid from the first frame so the player
   // can read where NOT to stand before the fill tells them how long they have.
