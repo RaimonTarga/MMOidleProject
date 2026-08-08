@@ -36,3 +36,6 @@ desktop.ini
 
 # Browser screenshots and layout audits from `pnpm ui:shot` (diagnostic output).
 .uishot/
+
+# Local agent/tool scratch output (generation logs, review renders, calibration files).
+tmp/
