@@ -138,7 +138,7 @@
         "view": "low top-down",
         "direction": "east"
       },
-      "notes": "ROUND 3 \u2014 kept as sprites/monsters/conduit-summon-teal.png, reachable only via the DEV summon skin switcher (Shift+[ / Shift+]). Set to draft so it never re-enters the generate queue; no file under files/_bakeoff on disk."
+      "notes": "ROUND 3 \u2014 rejected bake-off alternate. Retired from art/src and the atlas when the final familiar set shipped; the DEV summon skin switcher was removed. Set to draft so it never re-enters the generate queue."
     },
     {
       "id": "arm-h-bone-skull-mask",
@@ -157,7 +157,7 @@
         "view": "low top-down",
         "direction": "east"
       },
-      "notes": "ROUND 3 \u2014 kept as sprites/monsters/conduit-summon-porcelain.png, reachable only via the DEV summon skin switcher. The ceramic EDGE did not survive at 64px; across three rounds 'mask' never became a readable silhouette, only a palette shift. Set to draft so it never re-enters the generate queue; no file under files/_bakeoff on disk."
+      "notes": "ROUND 3 \u2014 rejected bake-off alternate. The ceramic edge did not survive at 64px; across three rounds 'mask' never became a readable silhouette, only a palette shift. Retired from art/src and the atlas; set to draft so it never re-enters the generate queue."
     },
     {
       "id": "arm-i-bone-skull-noglow",

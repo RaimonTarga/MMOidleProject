@@ -35,6 +35,32 @@ function minionDisplayName(monsterTypeId: MinionMonsterType): string {
   switch (monsterTypeId) {
     case 'conduit-summon':
       return 'Summon';
+    case 'conduit-summon-splinter':
+      return 'Splinter';
+    case 'conduit-summon-inquisitor':
+      return 'Inquisitor';
+    case 'conduit-summon-kilnmaster':
+      return 'Kilnmaster';
+    case 'conduit-summon-iconoclast':
+      return 'Iconoclast';
+    case 'conduit-summon-consort':
+      return 'Consort';
+    case 'conduit-summon-marshal':
+      return 'Marshal';
+    case 'conduit-summon-chorister':
+      return 'Chorister';
+    case 'conduit-summon-ritualist':
+      return 'Ritualist';
+    case 'conduit-summon-effigy':
+      return 'Effigy';
+    case 'conduit-summon-covenanter-offense':
+      return 'Covenanter Offense';
+    case 'conduit-summon-covenanter-defense':
+      return 'Covenanter Defense';
+    case 'conduit-summon-champion':
+      return 'Champion';
+    case 'conduit-summon-idolwright':
+      return 'Idolwright';
   }
 }
 

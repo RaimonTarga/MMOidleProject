@@ -63,7 +63,7 @@ art/
   Generation is proportionally clamped; accept NN-resizes to the manifest size.
 - Useful entry `params` (camelCase, passed through to the API):
   `outline`, `shading`, `detail`, `view`, `direction`, `seed`,
-  `textGuidanceScale`, `styleStrength` (0–100, default 65 with a style anchor),
+  `textGuidanceScale`, `styleStrength` (Bitforge only; 0–100, default 65 with a style anchor),
   `colorPalette`, `frameCount`, `noBackground`, and for img2img:
   `initImage` (art/src-relative path, or `"self"` = this entry's current art —
   "same sprite, regenerated cleanly") with `initImageStrength` (1–999,

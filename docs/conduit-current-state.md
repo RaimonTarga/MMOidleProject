@@ -3,7 +3,7 @@
 Objective snapshot of the Conduit (summoner) as it is implemented today. Not a
 balance assessment and not a proposal.
 
-Rewritten 2026-08-05 against the shipped code. The previous version described
+Updated 2026-08-08 against the shipped code. The previous version described
 the pre-overhaul tier-3 path system (Predator's Howl, Acid Brood, Stone
 Sentinel, Mountain Guardian, ...), which no longer exists — see §9.
 
@@ -127,15 +127,33 @@ Summons no longer borrow wildlife sprites. Before this pass they rendered as a
 field hare (mid), a ridge ambusher (far), a boar, a cliff hopper, a frog, and
 the T1 mountain boss sprite for Colossus.
 
-- `MinionMonsterType` is now the single id `conduit-summon`, mapped in
-  `MONSTER_FRAMES` to `sprites/monsters/conduit-summon.png` — a floating human
-  skull, pure bone, no glow, with a baked 1px `#14181a` outline.
+- Root keeps `conduit-summon`, the original floating bone skull. The three
+  frames and all nine specializations resolve to their own bound familiar
+  bodies; Covenanter uses separate offense and defense twins.
 - Base display size is `MINION_BASE_DISPLAY_SIZE` = **28** (was 48).
-- Frame and specialization currently read through `sizeMult` alone. Per-frame
-  and per-spec bodies are still outstanding.
+- All 13 variant originals are preserved under
+  `art/workbench/conduit-summon-raw/`; the shipped sources have a deterministic
+  1px `#14181a` outline. Directional bodies face right/east.
 - Range renders as a hue tint (`SUMMON_RANGE_TINT`, resolved client-side from
   the owner's unlocked skills, no protocol field) plus the size multiplier
   above. Range never swaps the body, mirroring the player-sprite rule.
+
+| Formation | `MinionMonsterType` |
+|---|---|
+| Root | `conduit-summon` |
+| Splinter, no specialization | `conduit-summon-splinter` |
+| Inquisitor | `conduit-summon-inquisitor` |
+| Kilnmaster | `conduit-summon-kilnmaster` |
+| Iconoclast | `conduit-summon-iconoclast` |
+| Consort, no specialization | `conduit-summon-consort` |
+| Marshal | `conduit-summon-marshal` |
+| Chorister | `conduit-summon-chorister` |
+| Ritualist | `conduit-summon-ritualist` |
+| Effigy, no specialization | `conduit-summon-effigy` |
+| Covenanter offense twin | `conduit-summon-covenanter-offense` |
+| Covenanter defense twin | `conduit-summon-covenanter-defense` |
+| Champion | `conduit-summon-champion` |
+| Idolwright | `conduit-summon-idolwright` |
 
 | Range | Tint |
 |---|---|
@@ -156,11 +174,9 @@ old lookup silently fell through to `impact`):
 `isRangedSummonStyle` gates the lunge, the same way `MonsterView.isRanged` does
 for monsters.
 
-Two further accepted candidates (`conduit-summon-teal`,
-`conduit-summon-porcelain`) are in the atlas but not in `MONSTER_FRAMES`. They
-are reachable only through the DEV skin switcher — **Shift+[ / Shift+]**, see
-`client/src/render/summonSkins.ts`. Plain `[` / `]` remain the ground bake-off.
-They are shipped atlas weight until a winner is picked.
+The temporary DEV summon-skin switcher and its losing teal/porcelain frames
+were removed when the familiar set shipped. Plain `[` / `]` still controls the
+unrelated ground bake-off in development.
 
 ## 7. Targeting, Leash, Commands
 
@@ -229,15 +245,15 @@ Server:
 Client:
 
 - `client/src/render/minions.ts` — sprite, tint, lunge gate
-- `client/src/render/summonSkins.ts` — DEV skin switcher
 - `client/src/fx/conduitSummon.ts` — bolt and beam
 - `client/src/hud/stat/mechanics.tsx` — Summons section
 
 ## 11. Outstanding
 
-- Per-frame and per-spec summon bodies (13 sprites) — `docs/summoner-flavor-pass-plan.md`.
 - Kilnmaster reads at ~17 px even after the clamp; that spec may need its own
   floor or a deliberately simplified body.
 - `conduitDefenseShare` has no consumer (§4).
-- The Conduit is the only class with no tier-4 player body, by decision — its
-  identity is carried by the summons, not the bearer.
+- Nine bespoke tier-4 Conduit player bodies remain outstanding: one for each
+  specialization. The first Inquisitor/Marshal/Idolwright calibration was
+  rejected as too similar to its parent frames; continuation details are in
+  `docs/conduit-player-specialization-sprites-handoff.md`.

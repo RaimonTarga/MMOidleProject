@@ -1751,6 +1751,81 @@
       "notes": "Bespoke T3 body, WAVE 3 final batch. Design: art/workbench/roster/bespoke-t3-draft.md \"WAVE 3\". Recipe: T2 frame in ORIGINAL colours, initImageStrength 75, 6 candidates, standing positive COVERAGE clause. NEW THIS BATCH — ASYMMETRY CLAUSE: every prompt names one asymmetric element (one sleeve longer, mantle heavier on one side, hem sweeping to one side). A perfectly symmetric design carries NO facing information, so the model defaults to a front-on view; asymmetry is what holds the 3/4 south-east turn. Same root cause as the Conduit rendering face-on because a featureless oval mask had no facing cue.",
       "negative": "face, eyes, nose, mouth, lips, chin, cheeks, facial features, human face, visible face, portrait, bare skin, visible skin, exposed skin, bare arms, bare chest, bare shoulders, bare midriff, muscles, hair, beard, glowing eyes, weapon, sword, dagger, staff, wand, bow, gun, shield, scythe, whip, scourge, chains, holding item, holding, weapon in hand, ice crown, smooth plate, mantle, scarf, streaming cloth, wind, deep glacial blue, teal, fire, poison, front view, straight-on view, facing the camera, symmetrical front pose, side view, profile, back view, chibi, cute, text, watermark, blurry, 3d render, painterly, lineless, high detail texture noise",
       "candidates": 6
+    },
+    {
+      "id": "inquisitor-t3",
+      "out": "sprites/classes/light_summoner_t3a.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "tribunal mask-bearer, 3/4 top-down view facing south-east, large plain white ceramic mask angled right, slim deep-red robe covering the entire body with no exposed skin anywhere, one tall layered ivory collar rising behind the left shoulder, three small white masks hanging in a curved line behind the right shoulder, brown gloves and boots, empty hands with no weapon",
+      "negative": "face, eyes, eye holes, nose, mouth, lips, facial features, human face, visible face, visible skin, bare skin, exposed skin, bare arms, bare hands, hair, beard, dark mask, grey mask, mask markings, hood covering the mask, skull, undead, weapon, sword, dagger, staff, wand, book, scroll, shield, holding item, plate armor, helmet, robot, crown, symmetrical collar, tall collar on both shoulders, front view, straight-on view, facing the camera, symmetrical front pose, side view, profile, back view, chibi, cute, text, watermark, blurry, 3d render, painterly, lineless, high detail texture noise",
+      "status": "regen",
+      "sources": [
+        "inquisitor-t3"
+      ],
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "view": "low top-down",
+        "direction": "south-east",
+        "initImage": "sprites/classes/light_summoner.png",
+        "initImageStrength": 75
+      },
+      "notes": "too similar to the original",
+      "candidates": 3
+    },
+    {
+      "id": "marshal-t3",
+      "out": "sprites/classes/medium_summoner_t3a.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "procession commander mask-bearer, 3/4 top-down view facing south-east, large plain white ceramic mask angled right, structured deep-red robe covering the entire body with no exposed skin anywhere, one broad squared mantle over the left shoulder with two split cloth tails sweeping behind, two small white masks hanging behind the right shoulder, cord belt, brown gloves and boots, empty hands with no weapon",
+      "negative": "face, eyes, eye holes, nose, mouth, lips, facial features, human face, visible face, visible skin, bare skin, exposed skin, bare arms, bare hands, hair, beard, dark mask, grey mask, mask markings, hood covering the mask, skull, undead, weapon, sword, dagger, spear, staff, wand, shield, flag, banner, pole, holding item, plate armor, helmet, robot, crown, symmetrical pauldrons, matching shoulder armor, front view, straight-on view, facing the camera, symmetrical front pose, side view, profile, back view, chibi, cute, text, watermark, blurry, 3d render, painterly, lineless, high detail texture noise",
+      "status": "regen",
+      "sources": [
+        "marshal-t3"
+      ],
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "view": "low top-down",
+        "direction": "south-east",
+        "initImage": "sprites/classes/medium_summoner.png",
+        "initImageStrength": 75
+      },
+      "notes": "too similar to the original",
+      "candidates": 3
+    },
+    {
+      "id": "idolwright-t3",
+      "out": "sprites/classes/heavy_summoner_t3c.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "ritual idol-maker mask-bearer, 3/4 top-down view facing south-east, large plain white ceramic mask angled right, broad heavy deep-red robe covering the entire body with no exposed skin anywhere, one oversized pauldron built from stacked blank ivory faceplates on the left shoulder, one large white mask hanging behind the right shoulder, thick clay-stained apron, brown gloves and boots, empty hands with no weapon",
+      "negative": "face, eyes, eye holes, nose, mouth, lips, facial features, carved faces, human face, visible face, visible skin, bare skin, exposed skin, bare arms, bare hands, hair, beard, dark mask, grey mask, mask markings, hood covering the mask, skull, undead, weapon, hammer, chisel, sword, staff, wand, shield, holding item, stone golem, statue body, plate armor, helmet, robot, crown, symmetrical pauldrons, matching shoulder armor, front view, straight-on view, facing the camera, symmetrical front pose, side view, profile, back view, chibi, cute, text, watermark, blurry, 3d render, painterly, lineless, high detail texture noise",
+      "status": "regen",
+      "sources": [
+        "idolwright-t3"
+      ],
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "view": "low top-down",
+        "direction": "south-east",
+        "initImage": "sprites/classes/heavy_summoner.png",
+        "initImageStrength": 75
+      },
+      "notes": "too similar to the original",
+      "candidates": 3
     }
   ]
 }

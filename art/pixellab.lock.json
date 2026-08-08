@@ -25321,6 +25321,1029 @@
       "candidateFiles": [
         "candidate-3.png"
       ]
+    },
+    {
+      "at": "2026-08-05T23:52:53.109Z",
+      "endpoint": "pixflux",
+      "category": "conduit-summons",
+      "assetId": "conduit-summon-chorister",
+      "requestHash": "99ae4ef0a7af88564e20eb1d",
+      "usd": 0.007055368635389541,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-05T23:53:23.672Z",
+      "endpoint": "pixflux",
+      "category": "conduit-summons",
+      "assetId": "conduit-summon-chorister",
+      "requestHash": "99ae4ef0a7af88564e20eb1d",
+      "usd": 0.007922242800394694,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-05T23:53:42.291Z",
+      "endpoint": "pixflux",
+      "category": "conduit-summons",
+      "assetId": "conduit-summon-chorister",
+      "requestHash": "99ae4ef0a7af88564e20eb1d",
+      "usd": 0.0068607870737711595,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-05T23:54:04.737Z",
+      "endpoint": "pixflux",
+      "category": "conduit-summons",
+      "assetId": "conduit-summon-covenanter-defense",
+      "requestHash": "1e3635fdf0e327fbd1f71ad3",
+      "usd": 0.006974614037407769,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-05T23:54:54.938Z",
+      "endpoint": "pixflux",
+      "category": "conduit-summons",
+      "assetId": "conduit-summon-covenanter-defense",
+      "requestHash": "1e3635fdf0e327fbd1f71ad3",
+      "usd": 0.010175552023781672,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-05T23:55:42.068Z",
+      "endpoint": "pixflux",
+      "category": "conduit-summons",
+      "assetId": "conduit-summon-covenanter-defense",
+      "requestHash": "1e3635fdf0e327fbd1f71ad3",
+      "usd": 0.009052314890755548,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-05T23:56:07.840Z",
+      "endpoint": "pixflux",
+      "category": "conduit-summons",
+      "assetId": "conduit-summon-idolwright",
+      "requestHash": "d1c379283ad2bd1ea0ad63a0",
+      "usd": 0.007070269054836697,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-05T23:56:32.324Z",
+      "endpoint": "pixflux",
+      "category": "conduit-summons",
+      "assetId": "conduit-summon-idolwright",
+      "requestHash": "d1c379283ad2bd1ea0ad63a0",
+      "usd": 0.007254754198922051,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-05T23:57:04.558Z",
+      "endpoint": "pixflux",
+      "category": "conduit-summons",
+      "assetId": "conduit-summon-idolwright",
+      "requestHash": "d1c379283ad2bd1ea0ad63a0",
+      "usd": 0.008088151348961724,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-06T00:10:27.932Z",
+      "endpoint": "pixflux",
+      "category": "conduit-summons",
+      "assetId": "conduit-summon-inquisitor",
+      "requestHash": "5d8e3eca7458cccf8d741257",
+      "usd": 0.00843052421675788,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-06T00:10:52.299Z",
+      "endpoint": "pixflux",
+      "category": "conduit-summons",
+      "assetId": "conduit-summon-inquisitor",
+      "requestHash": "5d8e3eca7458cccf8d741257",
+      "usd": 0.007298660039901733,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-06T00:11:34.582Z",
+      "endpoint": "pixflux",
+      "category": "conduit-summons",
+      "assetId": "conduit-summon-inquisitor",
+      "requestHash": "5d8e3eca7458cccf8d741257",
+      "usd": 0.009200846062766182,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-06T00:12:11.727Z",
+      "endpoint": "pixflux",
+      "category": "conduit-summons",
+      "assetId": "conduit-summon-chorister",
+      "requestHash": "f651d8de74fb5f1106086507",
+      "usd": 0.008398870786031087,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-06T00:12:47.901Z",
+      "endpoint": "pixflux",
+      "category": "conduit-summons",
+      "assetId": "conduit-summon-chorister",
+      "requestHash": "f651d8de74fb5f1106086507",
+      "usd": 0.008413849300808377,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-06T00:13:10.017Z",
+      "endpoint": "pixflux",
+      "category": "conduit-summons",
+      "assetId": "conduit-summon-chorister",
+      "requestHash": "f651d8de74fb5f1106086507",
+      "usd": 0.0070864145755767825,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-06T00:13:45.976Z",
+      "endpoint": "pixflux",
+      "category": "conduit-summons",
+      "assetId": "conduit-summon-idolwright",
+      "requestHash": "f1099046df09be68de1d770b",
+      "usd": 0.008778854078716702,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-06T00:14:12.594Z",
+      "endpoint": "pixflux",
+      "category": "conduit-summons",
+      "assetId": "conduit-summon-idolwright",
+      "requestHash": "f1099046df09be68de1d770b",
+      "usd": 0.007405726565255059,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-06T00:14:47.746Z",
+      "endpoint": "pixflux",
+      "category": "conduit-summons",
+      "assetId": "conduit-summon-idolwright",
+      "requestHash": "f1099046df09be68de1d770b",
+      "usd": 0.00831854157977634,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-06T00:35:48.057Z",
+      "endpoint": "pixflux",
+      "category": "conduit-summons",
+      "assetId": "conduit-summon-idolwright",
+      "requestHash": "3425c51a8df1bcb87ba76faa",
+      "usd": 0.0069692240291171605,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-06T00:36:14.765Z",
+      "endpoint": "pixflux",
+      "category": "conduit-summons",
+      "assetId": "conduit-summon-idolwright",
+      "requestHash": "3425c51a8df1bcb87ba76faa",
+      "usd": 0.007480614264806112,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-06T00:36:52.682Z",
+      "endpoint": "pixflux",
+      "category": "conduit-summons",
+      "assetId": "conduit-summon-idolwright",
+      "requestHash": "3425c51a8df1bcb87ba76faa",
+      "usd": 0.00840408648384942,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-06T00:44:12.436Z",
+      "endpoint": "pixflux",
+      "category": "conduit-summons",
+      "assetId": "conduit-summon-idolwright",
+      "requestHash": "ec63df798fba3175ad1fdab2",
+      "usd": 0.006678502957026164,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-06T00:44:39.297Z",
+      "endpoint": "pixflux",
+      "category": "conduit-summons",
+      "assetId": "conduit-summon-idolwright",
+      "requestHash": "ec63df798fba3175ad1fdab2",
+      "usd": 0.007277249919043647,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-06T00:45:04.949Z",
+      "endpoint": "pixflux",
+      "category": "conduit-summons",
+      "assetId": "conduit-summon-idolwright",
+      "requestHash": "ec63df798fba3175ad1fdab2",
+      "usd": 0.00712607823477851,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-06T00:53:48.787Z",
+      "endpoint": "pixflux",
+      "category": "conduit-summons",
+      "assetId": "conduit-summon-root",
+      "requestHash": "3dfc80f2042325e5f9346fb6",
+      "usd": 0.007083227104610868,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-06T00:54:34.096Z",
+      "endpoint": "pixflux",
+      "category": "conduit-summons",
+      "assetId": "conduit-summon-root",
+      "requestHash": "3dfc80f2042325e5f9346fb6",
+      "usd": 0.009640098624759251,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-06T00:54:57.544Z",
+      "endpoint": "pixflux",
+      "category": "conduit-summons",
+      "assetId": "conduit-summon-root",
+      "requestHash": "3dfc80f2042325e5f9346fb6",
+      "usd": 0.007097483237584432,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-06T00:55:22.364Z",
+      "endpoint": "pixflux",
+      "category": "conduit-summons",
+      "assetId": "conduit-summon-splinter",
+      "requestHash": "0ed3cc90831c865f7e1ed344",
+      "usd": 0.007129127820332846,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-06T00:55:50.498Z",
+      "endpoint": "pixflux",
+      "category": "conduit-summons",
+      "assetId": "conduit-summon-splinter",
+      "requestHash": "0ed3cc90831c865f7e1ed344",
+      "usd": 0.007523310846752591,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-06T00:56:21.733Z",
+      "endpoint": "pixflux",
+      "category": "conduit-summons",
+      "assetId": "conduit-summon-splinter",
+      "requestHash": "0ed3cc90831c865f7e1ed344",
+      "usd": 0.00788294145796034,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-06T00:56:47.055Z",
+      "endpoint": "pixflux",
+      "category": "conduit-summons",
+      "assetId": "conduit-summon-kilnmaster",
+      "requestHash": "559a23e4f3118fc6d7f0b825",
+      "usd": 0.007490265157487658,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-06T00:57:08.128Z",
+      "endpoint": "pixflux",
+      "category": "conduit-summons",
+      "assetId": "conduit-summon-kilnmaster",
+      "requestHash": "559a23e4f3118fc6d7f0b825",
+      "usd": 0.007170152319802179,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-06T00:57:32.340Z",
+      "endpoint": "pixflux",
+      "category": "conduit-summons",
+      "assetId": "conduit-summon-kilnmaster",
+      "requestHash": "559a23e4f3118fc6d7f0b825",
+      "usd": 0.006757206175062392,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-06T00:57:53.777Z",
+      "endpoint": "pixflux",
+      "category": "conduit-summons",
+      "assetId": "conduit-summon-iconoclast",
+      "requestHash": "a0716bdfa10a3e90c2363a42",
+      "usd": 0.006895608266194662,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-06T00:58:25.610Z",
+      "endpoint": "pixflux",
+      "category": "conduit-summons",
+      "assetId": "conduit-summon-iconoclast",
+      "requestHash": "a0716bdfa10a3e90c2363a42",
+      "usd": 0.008064001242319744,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-06T00:59:24.032Z",
+      "endpoint": "pixflux",
+      "category": "conduit-summons",
+      "assetId": "conduit-summon-iconoclast",
+      "requestHash": "a0716bdfa10a3e90c2363a42",
+      "usd": 0.008307599729961819,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-06T00:59:51.573Z",
+      "endpoint": "pixflux",
+      "category": "conduit-summons",
+      "assetId": "conduit-summon-consort",
+      "requestHash": "84bc980399527ff2cef4d7bb",
+      "usd": 0.006612269507514106,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-06T01:00:16.887Z",
+      "endpoint": "pixflux",
+      "category": "conduit-summons",
+      "assetId": "conduit-summon-consort",
+      "requestHash": "84bc980399527ff2cef4d7bb",
+      "usd": 0.007418875614802043,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-06T01:00:34.081Z",
+      "endpoint": "pixflux",
+      "category": "conduit-summons",
+      "assetId": "conduit-summon-consort",
+      "requestHash": "84bc980399527ff2cef4d7bb",
+      "usd": 0.0066034543779161245,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-06T01:01:01.914Z",
+      "endpoint": "pixflux",
+      "category": "conduit-summons",
+      "assetId": "conduit-summon-marshal",
+      "requestHash": "81157a5bf9654777216dd94d",
+      "usd": 0.007645150634977553,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-06T01:01:38.661Z",
+      "endpoint": "pixflux",
+      "category": "conduit-summons",
+      "assetId": "conduit-summon-marshal",
+      "requestHash": "81157a5bf9654777216dd94d",
+      "usd": 0.008499844233194987,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-06T01:02:25.597Z",
+      "endpoint": "pixflux",
+      "category": "conduit-summons",
+      "assetId": "conduit-summon-marshal",
+      "requestHash": "81157a5bf9654777216dd94d",
+      "usd": 0.009748486412896051,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-06T01:03:18.434Z",
+      "endpoint": "pixflux",
+      "category": "conduit-summons",
+      "assetId": "conduit-summon-ritualist",
+      "requestHash": "da35bc555f8a05390fffa0a8",
+      "usd": 0.009888555394278633,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-06T01:04:12.651Z",
+      "endpoint": "pixflux",
+      "category": "conduit-summons",
+      "assetId": "conduit-summon-ritualist",
+      "requestHash": "da35bc555f8a05390fffa0a8",
+      "usd": 0.010616036838955348,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-06T01:04:41.370Z",
+      "endpoint": "pixflux",
+      "category": "conduit-summons",
+      "assetId": "conduit-summon-ritualist",
+      "requestHash": "da35bc555f8a05390fffa0a8",
+      "usd": 0.007799710830052694,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-06T01:05:03.172Z",
+      "endpoint": "pixflux",
+      "category": "conduit-summons",
+      "assetId": "conduit-summon-effigy",
+      "requestHash": "09bb2d175222d66ea579d3ab",
+      "usd": 0.00725084392229716,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-06T01:05:18.036Z",
+      "endpoint": "pixflux",
+      "category": "conduit-summons",
+      "assetId": "conduit-summon-effigy",
+      "requestHash": "09bb2d175222d66ea579d3ab",
+      "usd": 0.00631425060166253,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-06T01:05:59.058Z",
+      "endpoint": "pixflux",
+      "category": "conduit-summons",
+      "assetId": "conduit-summon-effigy",
+      "requestHash": "09bb2d175222d66ea579d3ab",
+      "usd": 0.0085870430999332,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-06T01:06:18.622Z",
+      "endpoint": "pixflux",
+      "category": "conduit-summons",
+      "assetId": "conduit-summon-covenanter-offense",
+      "requestHash": "5d9d6b329f45c0a2e5ad7533",
+      "usd": 0.007008718199200101,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-06T01:06:47.625Z",
+      "endpoint": "pixflux",
+      "category": "conduit-summons",
+      "assetId": "conduit-summon-covenanter-offense",
+      "requestHash": "5d9d6b329f45c0a2e5ad7533",
+      "usd": 0.007424938996632894,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-06T01:07:07.464Z",
+      "endpoint": "pixflux",
+      "category": "conduit-summons",
+      "assetId": "conduit-summon-covenanter-offense",
+      "requestHash": "5d9d6b329f45c0a2e5ad7533",
+      "usd": 0.0068158208794063995,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-06T01:07:28.104Z",
+      "endpoint": "pixflux",
+      "category": "conduit-summons",
+      "assetId": "conduit-summon-covenanter-defense",
+      "requestHash": "9d674763edc59923c4fd1221",
+      "usd": 0.006980366759830051,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-06T01:07:48.789Z",
+      "endpoint": "pixflux",
+      "category": "conduit-summons",
+      "assetId": "conduit-summon-covenanter-defense",
+      "requestHash": "9d674763edc59923c4fd1221",
+      "usd": 0.007146874189376831,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-06T01:08:15.192Z",
+      "endpoint": "pixflux",
+      "category": "conduit-summons",
+      "assetId": "conduit-summon-covenanter-defense",
+      "requestHash": "9d674763edc59923c4fd1221",
+      "usd": 0.006972858985265096,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-06T01:08:59.247Z",
+      "endpoint": "pixflux",
+      "category": "conduit-summons",
+      "assetId": "conduit-summon-champion",
+      "requestHash": "4aaa4a027304379cfaea7df1",
+      "usd": 0.00935078697734409,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-06T01:09:22.792Z",
+      "endpoint": "pixflux",
+      "category": "conduit-summons",
+      "assetId": "conduit-summon-champion",
+      "requestHash": "4aaa4a027304379cfaea7df1",
+      "usd": 0.006997262822257148,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-06T01:09:43.028Z",
+      "endpoint": "pixflux",
+      "category": "conduit-summons",
+      "assetId": "conduit-summon-champion",
+      "requestHash": "4aaa4a027304379cfaea7df1",
+      "usd": 0.006851202196545071,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-06T18:51:35.320Z",
+      "endpoint": "pixflux",
+      "category": "conduit-summons",
+      "assetId": "conduit-summon-kilnmaster",
+      "requestHash": "63747e190e23d5f28ad9ab80",
+      "usd": 0.008016257815890843,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-06T18:52:04.258Z",
+      "endpoint": "pixflux",
+      "category": "conduit-summons",
+      "assetId": "conduit-summon-kilnmaster",
+      "requestHash": "63747e190e23d5f28ad9ab80",
+      "usd": 0.007851178381178114,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-06T18:52:40.920Z",
+      "endpoint": "pixflux",
+      "category": "conduit-summons",
+      "assetId": "conduit-summon-kilnmaster",
+      "requestHash": "63747e190e23d5f28ad9ab80",
+      "usd": 0.008624694718254937,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-06T18:53:10.566Z",
+      "endpoint": "pixflux",
+      "category": "conduit-summons",
+      "assetId": "conduit-summon-iconoclast",
+      "requestHash": "4dae6a8a27c234ef10d75f4e",
+      "usd": 0.007544923464457194,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-06T18:53:46.224Z",
+      "endpoint": "pixflux",
+      "category": "conduit-summons",
+      "assetId": "conduit-summon-iconoclast",
+      "requestHash": "4dae6a8a27c234ef10d75f4e",
+      "usd": 0.008365114212036133,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-06T18:54:08.929Z",
+      "endpoint": "pixflux",
+      "category": "conduit-summons",
+      "assetId": "conduit-summon-iconoclast",
+      "requestHash": "4dae6a8a27c234ef10d75f4e",
+      "usd": 0.007265529102749295,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-06T18:54:32.889Z",
+      "endpoint": "pixflux",
+      "category": "conduit-summons",
+      "assetId": "conduit-summon-consort",
+      "requestHash": "51a91341b8a534495c627c44",
+      "usd": 0.007153909047444662,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-06T18:54:51.952Z",
+      "endpoint": "pixflux",
+      "category": "conduit-summons",
+      "assetId": "conduit-summon-consort",
+      "requestHash": "51a91341b8a534495c627c44",
+      "usd": 0.006997560077243382,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-06T18:55:22.189Z",
+      "endpoint": "pixflux",
+      "category": "conduit-summons",
+      "assetId": "conduit-summon-consort",
+      "requestHash": "51a91341b8a534495c627c44",
+      "usd": 0.007566176626417372,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-06T18:55:50.423Z",
+      "endpoint": "pixflux",
+      "category": "conduit-summons",
+      "assetId": "conduit-summon-marshal",
+      "requestHash": "871f6297dd75a4a72decc0cc",
+      "usd": 0.0074824411339230006,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-06T18:56:12.450Z",
+      "endpoint": "pixflux",
+      "category": "conduit-summons",
+      "assetId": "conduit-summon-marshal",
+      "requestHash": "871f6297dd75a4a72decc0cc",
+      "usd": 0.007256385882695516,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-06T18:56:42.679Z",
+      "endpoint": "pixflux",
+      "category": "conduit-summons",
+      "assetId": "conduit-summon-marshal",
+      "requestHash": "871f6297dd75a4a72decc0cc",
+      "usd": 0.008015865988201566,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-06T18:57:22.255Z",
+      "endpoint": "pixflux",
+      "category": "conduit-summons",
+      "assetId": "conduit-summon-chorister",
+      "requestHash": "d207168a99cd7425546ec775",
+      "usd": 0.009164911402596367,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-06T18:57:53.736Z",
+      "endpoint": "pixflux",
+      "category": "conduit-summons",
+      "assetId": "conduit-summon-chorister",
+      "requestHash": "d207168a99cd7425546ec775",
+      "usd": 0.00801055982377794,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-06T18:58:26.184Z",
+      "endpoint": "pixflux",
+      "category": "conduit-summons",
+      "assetId": "conduit-summon-chorister",
+      "requestHash": "d207168a99cd7425546ec775",
+      "usd": 0.008218530204561023,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-06T18:58:48.159Z",
+      "endpoint": "pixflux",
+      "category": "conduit-summons",
+      "assetId": "conduit-summon-ritualist",
+      "requestHash": "77fc2187b12fea61cc56a6dc",
+      "usd": 0.007279507610532972,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-06T18:59:14.828Z",
+      "endpoint": "pixflux",
+      "category": "conduit-summons",
+      "assetId": "conduit-summon-ritualist",
+      "requestHash": "77fc2187b12fea61cc56a6dc",
+      "usd": 0.007281450404061212,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-06T18:59:46.593Z",
+      "endpoint": "pixflux",
+      "category": "conduit-summons",
+      "assetId": "conduit-summon-ritualist",
+      "requestHash": "77fc2187b12fea61cc56a6dc",
+      "usd": 0.007475115882025825,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-06T19:00:03.629Z",
+      "endpoint": "pixflux",
+      "category": "conduit-summons",
+      "assetId": "conduit-summon-effigy",
+      "requestHash": "7b9f712b8f01faef36db436c",
+      "usd": 0.0065668429268731015,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-06T19:00:29.316Z",
+      "endpoint": "pixflux",
+      "category": "conduit-summons",
+      "assetId": "conduit-summon-effigy",
+      "requestHash": "7b9f712b8f01faef36db436c",
+      "usd": 0.007474807898203532,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-06T19:00:48.185Z",
+      "endpoint": "pixflux",
+      "category": "conduit-summons",
+      "assetId": "conduit-summon-effigy",
+      "requestHash": "7b9f712b8f01faef36db436c",
+      "usd": 0.006921258899900648,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-06T19:03:44.501Z",
+      "endpoint": "pixflux",
+      "category": "conduit-summons",
+      "assetId": "conduit-summon-covenanter-offense",
+      "requestHash": "e7cdaf109a266a7d55b04773",
+      "usd": 0.010086474895477295,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-06T19:04:25.690Z",
+      "endpoint": "pixflux",
+      "category": "conduit-summons",
+      "assetId": "conduit-summon-covenanter-offense",
+      "requestHash": "e7cdaf109a266a7d55b04773",
+      "usd": 0.00942811942100525,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-06T19:04:47.691Z",
+      "endpoint": "pixflux",
+      "category": "conduit-summons",
+      "assetId": "conduit-summon-covenanter-offense",
+      "requestHash": "e7cdaf109a266a7d55b04773",
+      "usd": 0.007186726623111301,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-06T19:06:01.534Z",
+      "endpoint": "pixflux",
+      "category": "conduit-summons",
+      "assetId": "conduit-summon-champion",
+      "requestHash": "83ece03eec18000b3fd1848a",
+      "usd": 0.007620813502205743,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-06T19:06:30.472Z",
+      "endpoint": "pixflux",
+      "category": "conduit-summons",
+      "assetId": "conduit-summon-champion",
+      "requestHash": "83ece03eec18000b3fd1848a",
+      "usd": 0.007205573770734999,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-06T19:07:41.382Z",
+      "endpoint": "pixflux",
+      "category": "conduit-summons",
+      "assetId": "conduit-summon-champion",
+      "requestHash": "83ece03eec18000b3fd1848a",
+      "usd": 0.011707068973117404,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-08T00:41:19.537Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "inquisitor-t3",
+      "requestHash": "d5cda8f9da3c42ba6df184a7",
+      "usd": 0.007186307377285428,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-08T00:41:38.018Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "inquisitor-t3",
+      "requestHash": "d5cda8f9da3c42ba6df184a7",
+      "usd": 0.0069112704065110945,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-08T00:41:56.958Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "inquisitor-t3",
+      "requestHash": "d5cda8f9da3c42ba6df184a7",
+      "usd": 0.0066658990383148195,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-08T00:42:26.226Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "marshal-t3",
+      "requestHash": "305b2926788704beeee28aac",
+      "usd": 0.00782853232489692,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-08T00:42:43.287Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "marshal-t3",
+      "requestHash": "305b2926788704beeee28aac",
+      "usd": 0.006484268797768487,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-08T00:43:33.946Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "marshal-t3",
+      "requestHash": "305b2926788704beeee28aac",
+      "usd": 0.009574346118503146,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-08T00:43:55.108Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "idolwright-t3",
+      "requestHash": "13abbf03c524ec844787ea9f",
+      "usd": 0.007156246688630847,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-08T00:44:18.477Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "idolwright-t3",
+      "requestHash": "13abbf03c524ec844787ea9f",
+      "usd": 0.007039760377671984,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-08T00:44:43.246Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "idolwright-t3",
+      "requestHash": "13abbf03c524ec844787ea9f",
+      "usd": 0.007383358240127563,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
     }
   ]
 }

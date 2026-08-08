@@ -3,10 +3,15 @@
 import sharp from '../../server/node_modules/sharp/lib/index.js';
 import fs from 'node:fs';
 
-const BASE = 28, MN = 0.6, MX = 3.0;
+const BASE = 28, MN = 0.6, MX = 3.0, PROCESSION_SIZE = 1.25;
 const clamp = (m) => Math.min(MX, Math.max(MN, m));
 // [id, sizeMult before range, label]
 const FAMILIES = {
+  calibration: [
+    ['inquisitor', 0.72,       'Inquisitor · judgment eye'],
+    ['chorister',  1.0,        'Chorister · funeral bell'],
+    ['idolwright', 1.75 * 1.5, 'Idolwright · stone idol'],
+  ],
   splinter: [
     ['splinter',   0.72,        'Splinter (frame)'],
     ['inquisitor', 0.72,        'Inquisitor'],
@@ -31,7 +36,7 @@ const FAMILIES = {
 const CELL = 224, PAD = 12, HDR = 34, GAP = 6, TRUE_MAG = 2;
 
 for (const [family, rows] of Object.entries(FAMILIES)) {
-  const maxTrue = Math.max(...rows.map(([, m]) => Math.round(BASE * clamp(m) * 1.25))) * TRUE_MAG;
+  const maxTrue = Math.max(...rows.map(([, m]) => Math.round(BASE * clamp(m * PROCESSION_SIZE)))) * TRUE_MAG;
   const rowH = CELL + GAP + maxTrue;
   const W = 190 + 3 * (CELL + PAD) + PAD;
   const H = HDR + rows.length * (rowH + HDR + PAD);
@@ -39,7 +44,8 @@ for (const [family, rows] of Object.entries(FAMILIES)) {
 
   for (let r = 0; r < rows.length; r++) {
     const [id, mult] = rows[r];
-    const truePx = Math.round(BASE * clamp(mult) * 1.25); // Procession, the middle range
+    // Runtime clamps the complete frame Ã— specialization Ã— range product.
+    const truePx = Math.round(BASE * clamp(mult * PROCESSION_SIZE));
     for (let c = 0; c < 3; c++) {
       const f = `art/candidates/conduit-summons/conduit-summon-${id}/candidate-${c + 1}.png`;
       if (!fs.existsSync(f)) continue;
@@ -56,7 +62,7 @@ for (const [family, rows] of Object.entries(FAMILIES)) {
 
   const svg = `<svg width="${W}" height="${H}"><rect width="${W}" height="${H}" fill="#131317"/>
 ${rows.map(([id, m, label], r) => {
-  const px = Math.round(BASE * clamp(m) * 1.25);
+  const px = Math.round(BASE * clamp(m * PROCESSION_SIZE));
   const y = HDR + r * (rowH + HDR + PAD) + HDR;
   return `<text x="14" y="${y + 26}" font-family="monospace" font-size="15" fill="#e8e8ec">${label}</text>
 <text x="14" y="${y + 48}" font-family="monospace" font-size="12" fill="#8f8f99">${px}px in play</text>`;

@@ -1,3 +1,5 @@
+> **ARCHIVED — implemented 2026-08-08.** Live state: [`../conduit-current-state.md`](../conduit-current-state.md).
+
 # Conduit Flavor Pass — Plan
 
 Naming and art pass for the Summoner/Conduit. The mechanical overhaul shipped

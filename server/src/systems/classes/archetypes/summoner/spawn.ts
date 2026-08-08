@@ -1,7 +1,7 @@
 /**
  * Minion spawn / despawn helpers for the summoner archetype.
  *
- * Slimes are full miniplex entities with their own combat state. They are
+ * Summons are full miniplex entities with their own combat state. They are
  * attributed to a player owner via `IsMinion.ownerPlayerId`, and damage
  * routed through the player so all player modifiers (cadence, energy, dot,
  * weapon effects) apply naturally.
@@ -105,13 +105,45 @@ export function syncMinionHitbox(world: World, minion: MinionEntity, sizeMult: n
 }
 
 /**
- * Resolves which sprite/hitbox a summon uses. Every slot shares the Conduit's
- * conjured body; frame and specialization currently read through `sizeMult`
- * alone. Per-frame and per-spec bodies are phase 7 of
- * `docs/summoner-flavor-pass-plan.md`.
+ * Resolves the body used by a logical summon slot. Range deliberately does not
+ * participate: it remains a tint/scale layer. Covenanter is the only formation
+ * whose slot role selects between two bodies.
  */
-export function resolveMinionType(_owner: PlayerEntity, _slot = 0): MinionMonsterType {
-  return 'conduit-summon';
+export function resolveMinionType(owner: PlayerEntity, slot = 0): MinionMonsterType {
+  const profile = summonerProfileFor(owner);
+  switch (profile.specialization) {
+    case 'harrier-brood':
+      return 'conduit-summon-inquisitor';
+    case 'endless-swarm':
+      return 'conduit-summon-kilnmaster';
+    case 'volatile-brood':
+      return 'conduit-summon-iconoclast';
+    case 'coordinated-hunt':
+      return 'conduit-summon-marshal';
+    case 'withering-chorus':
+      return 'conduit-summon-chorister';
+    case 'grand-ritual':
+      return 'conduit-summon-ritualist';
+    case 'twin-covenant':
+      return profile.slots[slot]?.role === 'defense-twin'
+        ? 'conduit-summon-covenanter-defense'
+        : 'conduit-summon-covenanter-offense';
+    case 'battle-bond':
+      return 'conduit-summon-champion';
+    case 'colossus':
+      return 'conduit-summon-idolwright';
+  }
+
+  switch (profile.frame) {
+    case 'light':
+      return 'conduit-summon-splinter';
+    case 'balanced':
+      return 'conduit-summon-consort';
+    case 'heavy':
+      return 'conduit-summon-effigy';
+    default:
+      return 'conduit-summon';
+  }
 }
 
 export function spawnMinionForOwner(

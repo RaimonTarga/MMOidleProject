@@ -7,11 +7,24 @@ import type { SummonerSlotRole } from '../../../data/summoner';
  * hitbox resolution via `resolveMinionHitbox`.
  *
  * Summons used to borrow wildlife sprites (hare, boar, frog, goat, a T1 boss).
- * They now use the Conduit's own conjured body. Per-frame and per-spec bodies
- * land in phase 7 of `docs/summoner-flavor-pass-plan.md`; until then every slot
- * shares one skull, differentiated by `sizeMult`.
+ * The root formation keeps the baseline Conduit summon, while each frame and
+ * specialization resolves to its own conjured familiar body.
  */
-export type MinionMonsterType = 'conduit-summon';
+export type MinionMonsterType =
+  | 'conduit-summon'
+  | 'conduit-summon-splinter'
+  | 'conduit-summon-inquisitor'
+  | 'conduit-summon-kilnmaster'
+  | 'conduit-summon-iconoclast'
+  | 'conduit-summon-consort'
+  | 'conduit-summon-marshal'
+  | 'conduit-summon-chorister'
+  | 'conduit-summon-ritualist'
+  | 'conduit-summon-effigy'
+  | 'conduit-summon-covenanter-offense'
+  | 'conduit-summon-covenanter-defense'
+  | 'conduit-summon-champion'
+  | 'conduit-summon-idolwright';
 
 export interface IsMinion {
   id: string;

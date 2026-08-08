@@ -21,7 +21,6 @@ import { cancelActiveMove, setHoldStill, setKeyboardVector } from './movement';
 import { closeTopmostOverlay, togglePrimaryOverlay } from './overlayStack';
 import { ALTAR_ARC_CONFIG, getAltarArc } from '../scenes/game/runeAltar';
 import { cycleGroundBakeoff } from '../render/wangGround';
-import { cycleSummonSkin } from '../render/summonSkins';
 import { paintActiveNode } from '../scenes/game/overlays';
 import { rebuildNeighborLayer } from '../render/neighborScenes';
 import { isMobileViewport } from '../breakpoints';
@@ -141,20 +140,6 @@ export function attachKeyboard(scene: GameScene): () => void {
       }
     }
     if (event.repeat) return;
-
-    // DEV: cycle the Conduit's summon skin with Shift+[ and Shift+] to compare
-    // accepted candidates live in-game. Checked before the ground bake-off
-    // below, which does not inspect shiftKey and would otherwise swallow these.
-    if (
-      import.meta.env.DEV &&
-      event.shiftKey &&
-      (event.code === 'BracketRight' || event.code === 'BracketLeft')
-    ) {
-      event.preventDefault();
-      const s = cycleSummonSkin(event.code === 'BracketRight' ? 1 : -1);
-      showDevLabel(`summon skin ${s.index + 1}/${s.total}  —  ${s.label}`);
-      return;
-    }
 
     // DEV: cycle the current biome's ground bake-off sheets with [ and ] to
     // compare candidate tilesets live in-game (0 = the real per-node styles).

@@ -17,7 +17,8 @@ export const PLAYER_DISPLAY_SIZE = 64;
  *
  * 28 is close to the floor. Kilnmaster (8 summons at 0.52x) lands at ~15px,
  * below the ~18px readability threshold, so that spec needs its own size floor
- * or a deliberately simplified body — see docs/summoner-flavor-pass-plan.md.
+ * or a deliberately simplified body; the final familiar art does not change
+ * that lower-bound readability constraint.
  */
 export const MINION_BASE_DISPLAY_SIZE = 28;
 

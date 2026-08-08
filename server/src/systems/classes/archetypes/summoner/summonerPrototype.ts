@@ -85,17 +85,21 @@ function syncLiveMinionFrameStats(world: World, owner: SummonerPlayerEntity): vo
     const slot = profile.slots[index] ?? profile.slots[0]!;
     const desiredType = resolveMinionType(owner, index);
     const desiredSizeMult = computeMinionSizeMult(owner, index);
-    if (minion.isMinion.monsterTypeId !== desiredType) {
-      despawnMinion(world, minion);
-      continue;
+    const typeChanged = minion.isMinion.monsterTypeId !== desiredType;
+    const sizeChanged = minion.isMinion.sizeMult !== desiredSizeMult;
+    if (typeChanged) {
+      minion.isMinion.monsterTypeId = desiredType;
+      markSliceDirty(world, minion, 'isMinion');
     }
     if (minion.hasPosition.speed !== desiredSpeed) {
       minion.hasPosition.speed = desiredSpeed;
       markSliceDirty(world, minion, 'hasPosition');
     }
-    if (minion.isMinion.sizeMult !== desiredSizeMult) {
+    if (sizeChanged) {
       minion.isMinion.sizeMult = desiredSizeMult;
       markSliceDirty(world, minion, 'isMinion');
+    }
+    if (typeChanged || sizeChanged) {
       syncMinionHitbox(world, minion, desiredSizeMult);
     }
     if (minion.isMinion.slotId !== slot.slotId || minion.isMinion.role !== slot.role) {

@@ -1,5 +1,5 @@
 {
-  "atlasHash": "b275a2ba4bcc6b0c3610a261deb511af8d0875a7586d32698f11bb04f1ebfb22",
+  "atlasHash": "e4cda47918f6f3d1ab8d3d4dc367d12314a8128c97c19b363878484c05ad9d3c",
   "frames": {
     "sprites/accents/crest-close-cadence.png": {
       "sourceW": 32,
@@ -1069,17 +1069,83 @@
       "footY": 27,
       "halfWAtFoot": 8
     },
-    "sprites/monsters/conduit-summon-porcelain.png": {
+    "sprites/monsters/conduit-summon-champion.png": {
+      "sourceW": 96,
+      "sourceH": 96,
+      "footY": 41,
+      "halfWAtFoot": 14.5
+    },
+    "sprites/monsters/conduit-summon-chorister.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 26,
+      "halfWAtFoot": 10.5
+    },
+    "sprites/monsters/conduit-summon-consort.png": {
       "sourceW": 64,
       "sourceH": 64,
       "footY": 22,
-      "halfWAtFoot": 13
+      "halfWAtFoot": 19
     },
-    "sprites/monsters/conduit-summon-teal.png": {
+    "sprites/monsters/conduit-summon-covenanter-defense.png": {
+      "sourceW": 96,
+      "sourceH": 96,
+      "footY": 46,
+      "halfWAtFoot": 4.5
+    },
+    "sprites/monsters/conduit-summon-covenanter-offense.png": {
+      "sourceW": 96,
+      "sourceH": 96,
+      "footY": 40,
+      "halfWAtFoot": 8
+    },
+    "sprites/monsters/conduit-summon-effigy.png": {
+      "sourceW": 96,
+      "sourceH": 96,
+      "footY": 25,
+      "halfWAtFoot": 19.5
+    },
+    "sprites/monsters/conduit-summon-iconoclast.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 28,
+      "halfWAtFoot": 15
+    },
+    "sprites/monsters/conduit-summon-idolwright.png": {
+      "sourceW": 128,
+      "sourceH": 128,
+      "footY": 48,
+      "halfWAtFoot": 10
+    },
+    "sprites/monsters/conduit-summon-inquisitor.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 15,
+      "halfWAtFoot": 11
+    },
+    "sprites/monsters/conduit-summon-kilnmaster.png": {
       "sourceW": 64,
       "sourceH": 64,
       "footY": 24,
-      "halfWAtFoot": 11
+      "halfWAtFoot": 12
+    },
+    "sprites/monsters/conduit-summon-marshal.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 16,
+      "halfWAtFoot": 17.5
+    },
+    "sprites/monsters/conduit-summon-ritualist.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 20,
+      "halfWAtFoot": 14.5
+    },
+    "sprites/monsters/conduit-summon-splinter.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 23,
+      "halfWAtFoot": 5
     },
     "sprites/monsters/conduit-summon.png": {
       "sourceW": 64,

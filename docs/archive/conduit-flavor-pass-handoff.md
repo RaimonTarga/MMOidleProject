@@ -1,3 +1,5 @@
+> **ARCHIVED — handoff completed 2026-08-08.** Live state: [`../conduit-current-state.md`](../conduit-current-state.md).
+
 # Conduit Flavor Pass — Handoff
 
 Written 2026-08-06 for a cold start in a new session. Assumes no memory of the

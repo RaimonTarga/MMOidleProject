@@ -288,14 +288,22 @@ export const MONSTER_FRAMES: Record<string, string> = {
   // scrapped pending redesign; no sprite until the rework lands.
 
   // ── Conduit summons ──────────────────────────────────────────────────────────
-  // The Conduit's own conjured body, not borrowed wildlife. One skull for every
-  // slot for now; per-frame and per-spec bodies are phase 7 of
-  // docs/summoner-flavor-pass-plan.md.
-  // A human skull, pure bone, no glow. The two alternate candidates
-  // (conduit-summon-teal / -porcelain) are in the atlas but not mapped here:
-  // they are reachable only through the DEV skin switcher in
-  // client/src/render/summonSkins.ts. Retire them once a winner is picked.
-  'conduit-summon': 'sprites/monsters/conduit-summon.png',
+  // Root keeps the original body. Frames and specializations resolve to their
+  // own bound familiar; range remains a tint/scale layer and never swaps art.
+  'conduit-summon':                    'sprites/monsters/conduit-summon.png',
+  'conduit-summon-splinter':           'sprites/monsters/conduit-summon-splinter.png',
+  'conduit-summon-inquisitor':         'sprites/monsters/conduit-summon-inquisitor.png',
+  'conduit-summon-kilnmaster':         'sprites/monsters/conduit-summon-kilnmaster.png',
+  'conduit-summon-iconoclast':         'sprites/monsters/conduit-summon-iconoclast.png',
+  'conduit-summon-consort':            'sprites/monsters/conduit-summon-consort.png',
+  'conduit-summon-marshal':            'sprites/monsters/conduit-summon-marshal.png',
+  'conduit-summon-chorister':          'sprites/monsters/conduit-summon-chorister.png',
+  'conduit-summon-ritualist':          'sprites/monsters/conduit-summon-ritualist.png',
+  'conduit-summon-effigy':             'sprites/monsters/conduit-summon-effigy.png',
+  'conduit-summon-covenanter-offense': 'sprites/monsters/conduit-summon-covenanter-offense.png',
+  'conduit-summon-covenanter-defense': 'sprites/monsters/conduit-summon-covenanter-defense.png',
+  'conduit-summon-champion':           'sprites/monsters/conduit-summon-champion.png',
+  'conduit-summon-idolwright':         'sprites/monsters/conduit-summon-idolwright.png',
 
   'tiny-slime': 'sprites/monsters/tiny-wisp.png', // display: Tiny Wisp (T0 tutorial monster)
 };

@@ -322,6 +322,9 @@ async function wangTilesetSheet(response: unknown, tileSize: number): Promise<Bu
 
 async function callEndpoint(r: ResolvedEntry, seed: number): Promise<{ images: Buffer[]; usage: Usage | null }> {
   const params = passthroughParams(r.entry.params);
+  // style_strength is a Bitforge-only control. Sending it to PixFlux makes
+  // that endpoint reject the entire request with HTTP 422.
+  const { style_strength: styleStrength, ...commonParams } = params;
   const genSize = genSizeFor(r);
   const common = {
     description: r.entry.prompt,
@@ -329,7 +332,7 @@ async function callEndpoint(r: ResolvedEntry, seed: number): Promise<{ images: B
     image_size: genSize,
     no_background: r.noBackground,
     seed,
-    ...params,
+    ...commonParams,
   };
   const init =
     r.endpoint === 'bitforge' || r.endpoint === 'pixflux' ? await initImageFor(r) : null;
@@ -343,7 +346,7 @@ async function callEndpoint(r: ResolvedEntry, seed: number): Promise<{ images: B
         ...common,
         ...initFields,
         ...(style
-          ? { style_image: style, style_strength: (params.style_strength as number) ?? 65 }
+          ? { style_image: style, style_strength: (styleStrength as number) ?? 65 }
           : {}),
       });
       return { images: [Buffer.from(res.image.base64, 'base64')], usage: res.usage ?? null };

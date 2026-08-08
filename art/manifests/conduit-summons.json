@@ -1,7 +1,7 @@
 {
   "category": "conduit-summons",
   "endpoint": "pixflux",
-  "styleRef": "style/creatures.png",
+  "styleRef": null,
   "noBackground": true,
   "candidates": 3,
   "entries": [
@@ -12,17 +12,18 @@
         "w": 64,
         "h": 64
       },
-      "status": "regen",
-      "prompt": "a small floating human skull, clean dry bone and nothing else, hovering in the air with empty space beneath it, a narrow tapered cranium with a small sharp-featured face, deep hollow eye sockets in shadow, a triangular nasal opening, an even row of small teeth, pale ivory bone with soft grey shading in the recesses, three-quarter view, painterly pixel art, soft volumetric shading, minimal outline, ivory and pale grey bone only, no coloured light",
-      "negative": "glow, glowing eyes, teal, cyan, green light, coloured light, blood, bloody, gore, red, crimson, dripping, drips, drip, liquid, ichor, flesh, meat, tissue, sinew, muscle, skin, cloth, fabric, scraps, ribbon, tassel, spine, vertebrae, spinal column, neck, torso, ribcage, skeleton body, animal skull, beast skull, muzzle, snout, long jaw, fangs, horns, antlers, ears, person, body, hands, arms, figure, standing, walking, hooded figure, robed figure, ground, floor, terrain, pedestal, base, perch, cast shadow, drop shadow, standing on anything, scenery, background elements, environment, full character, held, worn, cute, cartoon mascot, smiling, chibi, anthropomorphic, weapon, 3d render, photograph, hard black outline, text, watermark",
+      "status": "accepted",
+      "prompt": "A tiny floating razor wisp: one sharp diamond-shaped spirit core with two broad swept-back ectoplasm fins and a short pointed tail, no face or limbs; pale ash-white, angular painterly pixel-art game summon.",
+      "negative": "skull, skeleton, human face, humanoid, hands, feet, animal, bird, thin smoke, round blob, ground, pedestal, cast shadow, scenery, front view, cute, cartoon, 3d render, photograph, text, watermark",
       "params": {
         "outline": "lineless",
         "shading": "highly detailed shading",
         "detail": "highly detailed",
         "view": "low top-down",
-        "direction": "east"
+        "direction": "east",
+        "generationScale": 2
       },
-      "notes": "too similar to the original"
+      "notes": "Splinter frame: a simple angular silhouette that can survive 20-30px display. Held until calibration passes."
     },
     {
       "id": "conduit-summon-inquisitor",
@@ -31,17 +32,18 @@
         "w": 64,
         "h": 64
       },
-      "status": "regen",
-      "prompt": "a small floating human skull, clean dry bone and nothing else, hovering in the air with empty space beneath it, a cranium tilted sharply forward as if leaning in to accuse, one eye socket noticeably larger and deeper than the other, a triangular nasal opening, an even row of small teeth, pale ivory bone with soft grey shading in the recesses, three-quarter view, painterly pixel art, soft volumetric shading, minimal outline, ivory and pale grey bone only, no coloured light",
-      "negative": "glow, glowing eyes, teal, cyan, green light, coloured light, blood, bloody, gore, red, crimson, dripping, drips, drip, liquid, ichor, flesh, meat, tissue, sinew, muscle, skin, cloth, fabric, scraps, ribbon, tassel, spine, vertebrae, spinal column, neck, torso, ribcage, skeleton body, animal skull, beast skull, muzzle, snout, long jaw, fangs, horns, antlers, ears, person, body, hands, arms, figure, standing, walking, hooded figure, robed figure, ground, floor, terrain, pedestal, base, perch, cast shadow, drop shadow, standing on anything, scenery, background elements, environment, full character, held, worn, cute, cartoon mascot, smiling, chibi, anthropomorphic, weapon, 3d render, photograph, hard black outline, text, watermark",
+      "status": "accepted",
+      "prompt": "A floating judgment-eye spirit: one enormous almond-shaped ivory eye around a deep black iris, with three thick flame-like tails streaming behind it; no body or eyelids, stark painterly pixel-art game summon.",
+      "negative": "human face, skull, skeleton, humanoid body, eyelashes, wings, bird, multiple eyes, thin smoke, ground, pedestal, cast shadow, scenery, front view, cute, cartoon, 3d render, photograph, text, watermark",
       "params": {
         "outline": "lineless",
         "shading": "highly detailed shading",
         "detail": "highly detailed",
         "view": "low top-down",
-        "direction": "east"
+        "direction": "east",
+        "generationScale": 2
       },
-      "notes": "too similar to the original"
+      "notes": "Calibration concept 1: Inquisitor marks targets, so its entire silhouette is a single accusing eye. No img2img."
     },
     {
       "id": "conduit-summon-kilnmaster",
@@ -50,17 +52,19 @@
         "w": 64,
         "h": 64
       },
-      "status": "regen",
-      "prompt": "a small floating human skull, clean dry bone and nothing else, hovering in the air with empty space beneath it, a very simple compact rounded cranium, smooth and almost featureless, two plain deep eye sockets and a small nasal opening, minimal detail, strong clean silhouette, pale ivory bone with soft grey shading in the recesses, three-quarter view, painterly pixel art, soft volumetric shading, minimal outline, ivory and pale grey bone only, no coloured light",
-      "negative": "glow, glowing eyes, teal, cyan, green light, coloured light, blood, bloody, gore, red, crimson, dripping, drips, drip, liquid, ichor, flesh, meat, tissue, sinew, muscle, skin, cloth, fabric, scraps, ribbon, tassel, spine, vertebrae, spinal column, neck, torso, ribcage, skeleton body, animal skull, beast skull, muzzle, snout, long jaw, fangs, horns, antlers, ears, person, body, hands, arms, figure, standing, walking, hooded figure, robed figure, ground, floor, terrain, pedestal, base, perch, cast shadow, drop shadow, standing on anything, scenery, background elements, environment, full character, held, worn, cute, cartoon mascot, smiling, chibi, anthropomorphic, weapon, 3d render, photograph, hard black outline, text, watermark",
+      "status": "accepted",
+      "prompt": "A tiny living emberling familiar: compact dark spirit core with one ivory eye, one broad flame-shaped head crest, two short side fins, and three thick ectoplasm tails; airborne creature anatomy, centered small, painterly pixel art.",
+      "negative": "coal, rock, cauldron, brazier, pot, candle, campfire, object, skull, skeleton, human body, hands, feet, animal, thin smoke, ground, pedestal, cast shadow, scenery, filling the frame, cute, cartoon, 3d render, photograph, text, watermark",
       "params": {
         "outline": "lineless",
         "shading": "highly detailed shading",
         "detail": "highly detailed",
         "view": "low top-down",
-        "direction": "east"
+        "direction": "east",
+        "colorImage": "sprites/monsters/conduit-summon-inquisitor.png",
+        "generationScale": 2
       },
-      "notes": "too similar to the original"
+      "notes": "Living-familiar pass: replace the accepted coal/brazier object with a tiny eye-core emberling whose flame and tails are anatomy."
     },
     {
       "id": "conduit-summon-iconoclast",
@@ -69,17 +73,19 @@
         "w": 64,
         "h": 64
       },
-      "status": "regen",
-      "prompt": "a small floating human skull, clean dry bone and nothing else, hovering in the air with empty space beneath it, a cracked and broken skull with a large piece of the cranium sheared clean away leaving a jagged edge, a long fracture running across the remaining bone, deep hollow eye sockets, an uneven broken row of teeth, pale ivory bone with soft grey shading in the recesses, three-quarter view, painterly pixel art, soft volumetric shading, minimal outline, ivory and pale grey bone only, no coloured light",
-      "negative": "glow, glowing eyes, teal, cyan, green light, coloured light, blood, bloody, gore, red, crimson, dripping, drips, drip, liquid, ichor, flesh, meat, tissue, sinew, muscle, skin, cloth, fabric, scraps, ribbon, tassel, spine, vertebrae, spinal column, neck, torso, ribcage, skeleton body, animal skull, beast skull, muzzle, snout, long jaw, fangs, horns, antlers, ears, person, body, hands, arms, figure, standing, walking, hooded figure, robed figure, ground, floor, terrain, pedestal, base, perch, cast shadow, drop shadow, standing on anything, scenery, background elements, environment, full character, held, worn, cute, cartoon mascot, smiling, chibi, anthropomorphic, weapon, 3d render, photograph, hard black outline, text, watermark",
+      "status": "accepted",
+      "prompt": "A compact living shardling familiar: one oval dark face-core with a single ivory eye, four large jagged shard-fins attached around its body, and three short spirit tails; airborne creature anatomy, painterly pixel art.",
+      "negative": "detached debris, orbiting objects, platform, pedestal, intact statue, mask, skull, skeleton, human body, hands, feet, round orb, dust cloud, ground, cast shadow, scenery, filling the frame, cute, cartoon, 3d render, photograph, text, watermark",
       "params": {
         "outline": "lineless",
         "shading": "highly detailed shading",
         "detail": "highly detailed",
         "view": "low top-down",
-        "direction": "east"
+        "direction": "east",
+        "colorImage": "sprites/monsters/conduit-summon-inquisitor.png",
+        "generationScale": 2
       },
-      "notes": "too similar to the original"
+      "notes": "Living-familiar pass: shards must be attached fins around a face-core, never disconnected objects around an empty platform."
     },
     {
       "id": "conduit-summon-consort",
@@ -88,17 +94,19 @@
         "w": 64,
         "h": 64
       },
-      "status": "regen",
-      "prompt": "a small floating human skull, clean dry bone and nothing else, hovering in the air with empty space beneath it, a rounded human cranium with a high smooth brow, deep hollow eye sockets in shadow, a triangular nasal opening, an even row of small teeth, pale ivory bone with soft grey shading in the recesses, three-quarter view, painterly pixel art, soft volumetric shading, minimal outline, ivory and pale grey bone only, no coloured light",
-      "negative": "glow, glowing eyes, teal, cyan, green light, coloured light, blood, bloody, gore, red, crimson, dripping, drips, drip, liquid, ichor, flesh, meat, tissue, sinew, muscle, skin, cloth, fabric, scraps, ribbon, tassel, spine, vertebrae, spinal column, neck, torso, ribcage, skeleton body, animal skull, beast skull, muzzle, snout, long jaw, fangs, horns, antlers, ears, person, body, hands, arms, figure, standing, walking, hooded figure, robed figure, ground, floor, terrain, pedestal, base, perch, cast shadow, drop shadow, standing on anything, scenery, background elements, environment, full character, held, worn, cute, cartoon mascot, smiling, chibi, anthropomorphic, weapon, 3d render, photograph, hard black outline, text, watermark",
+      "status": "accepted",
+      "prompt": "A compact floating shroud-ray familiar: small dark face-core beneath a rounded ivory brow, two broad cloak-like side fins, and a short body ending in three wide spirit tails; living airborne creature, centered small, painterly pixel art.",
+      "negative": "long robe, tall hooded figure, person, humanoid torso, arms, hands, legs, feet, bedsheet ghost, object, skull, skeleton, thin smoke, ground, pedestal, cast shadow, scenery, filling the frame, cropped, cute, cartoon, 3d render, photograph, text, watermark",
       "params": {
         "outline": "lineless",
         "shading": "highly detailed shading",
         "detail": "highly detailed",
         "view": "low top-down",
-        "direction": "east"
+        "direction": "east",
+        "colorImage": "sprites/monsters/conduit-summon-inquisitor.png",
+        "generationScale": 2
       },
-      "notes": "too similar to the original"
+      "notes": "Living-familiar pass: previous wraith was too large and long. Use a compact ray-like familiar with attached fins and short tails."
     },
     {
       "id": "conduit-summon-marshal",
@@ -107,17 +115,19 @@
         "w": 64,
         "h": 64
       },
-      "status": "regen",
-      "prompt": "a small floating human skull, clean dry bone and nothing else, hovering in the air with empty space beneath it, a perfectly symmetrical upright cranium with a flat square brow, both eye sockets identical and evenly placed, a triangular nasal opening, a precise even row of teeth, rigid and formal, pale ivory bone with soft grey shading in the recesses, three-quarter view, painterly pixel art, soft volumetric shading, minimal outline, ivory and pale grey bone only, no coloured light",
-      "negative": "glow, glowing eyes, teal, cyan, green light, coloured light, blood, bloody, gore, red, crimson, dripping, drips, drip, liquid, ichor, flesh, meat, tissue, sinew, muscle, skin, cloth, fabric, scraps, ribbon, tassel, spine, vertebrae, spinal column, neck, torso, ribcage, skeleton body, animal skull, beast skull, muzzle, snout, long jaw, fangs, horns, antlers, ears, person, body, hands, arms, figure, standing, walking, hooded figure, robed figure, ground, floor, terrain, pedestal, base, perch, cast shadow, drop shadow, standing on anything, scenery, background elements, environment, full character, held, worn, cute, cartoon mascot, smiling, chibi, anthropomorphic, weapon, 3d render, photograph, hard black outline, text, watermark",
+      "status": "accepted",
+      "prompt": "A compact living bannerfin familiar: oval dark face-core with one ivory eye, one tall folded dorsal crest, two rigid side fins, and three short spirit tails; upright airborne creature anatomy, painterly pixel art.",
+      "negative": "banner, flag, standard, flagpole, fabric object, emblem, text, person, soldier, humanoid body, hands, feet, skull, skeleton, thin smoke, ground, pedestal, cast shadow, scenery, filling the frame, cute, cartoon, 3d render, photograph, watermark",
       "params": {
         "outline": "lineless",
         "shading": "highly detailed shading",
         "detail": "highly detailed",
         "view": "low top-down",
-        "direction": "east"
+        "direction": "east",
+        "colorImage": "sprites/monsters/conduit-summon-inquisitor.png",
+        "generationScale": 2
       },
-      "notes": "too similar to the original"
+      "notes": "Living-familiar pass: replace the literal banner with a creature whose dorsal and side fins carry the formal standard silhouette."
     },
     {
       "id": "conduit-summon-chorister",
@@ -126,17 +136,19 @@
         "w": 64,
         "h": 64
       },
-      "status": "regen",
-      "prompt": "a small floating human skull, clean dry bone and nothing else, hovering in the air with empty space beneath it, a cranium with its lower jaw hanging wide open in a silent cry, a tall open mouth cavity, deep hollow eye sockets, a triangular nasal opening, pale ivory bone with soft grey shading in the recesses, three-quarter view, painterly pixel art, soft volumetric shading, minimal outline, ivory and pale grey bone only, no coloured light",
-      "negative": "glow, glowing eyes, teal, cyan, green light, coloured light, blood, bloody, gore, red, crimson, dripping, drips, drip, liquid, ichor, flesh, meat, tissue, sinew, muscle, skin, cloth, fabric, scraps, ribbon, tassel, spine, vertebrae, spinal column, neck, torso, ribcage, skeleton body, animal skull, beast skull, muzzle, snout, long jaw, fangs, horns, antlers, ears, person, body, hands, arms, figure, standing, walking, hooded figure, robed figure, ground, floor, terrain, pedestal, base, perch, cast shadow, drop shadow, standing on anything, scenery, background elements, environment, full character, held, worn, cute, cartoon mascot, smiling, chibi, anthropomorphic, weapon, 3d render, photograph, hard black outline, text, watermark",
+      "status": "accepted",
+      "prompt": "A compact living howler familiar: rounded ivory head-body with one enormous dark flared singing mouth, two small side fins, and three thick spirit tendrils beneath; the lower jaw suggests a bell shape without becoming an object, painterly pixel art.",
+      "negative": "bell object, handbell, church bell, handle, clapper, bell stand, tower, person, humanoid body, skull, skeleton, hands, feet, thin smoke, ground, pedestal, cast shadow, scenery, filling the frame, cute, cartoon, 3d render, photograph, text, watermark",
       "params": {
         "outline": "lineless",
         "shading": "highly detailed shading",
         "detail": "highly detailed",
         "view": "low top-down",
-        "direction": "east"
+        "direction": "east",
+        "colorImage": "sprites/monsters/conduit-summon-inquisitor.png",
+        "generationScale": 2
       },
-      "notes": "too similar to the original"
+      "notes": "Living-familiar pass: preserve the fun bell-mouth motif, but replace the accepted literal bell with a face, fins, and tendrils."
     },
     {
       "id": "conduit-summon-ritualist",
@@ -145,17 +157,19 @@
         "w": 64,
         "h": 64
       },
-      "status": "regen",
-      "prompt": "a small floating human skull, clean dry bone and nothing else, hovering in the air with empty space beneath it, a cranium covered in carved ritual markings and engraved lines across the brow and crown, deep hollow eye sockets, a triangular nasal opening, an even row of small teeth, pale ivory bone with soft grey shading in the recesses, three-quarter view, painterly pixel art, soft volumetric shading, minimal outline, ivory and pale grey bone only, no coloured light",
-      "negative": "glow, glowing eyes, teal, cyan, green light, coloured light, blood, bloody, gore, red, crimson, dripping, drips, drip, liquid, ichor, flesh, meat, tissue, sinew, muscle, skin, cloth, fabric, scraps, ribbon, tassel, spine, vertebrae, spinal column, neck, torso, ribcage, skeleton body, animal skull, beast skull, muzzle, snout, long jaw, fangs, horns, antlers, ears, person, body, hands, arms, figure, standing, walking, hooded figure, robed figure, ground, floor, terrain, pedestal, base, perch, cast shadow, drop shadow, standing on anything, scenery, background elements, environment, full character, held, worn, cute, cartoon mascot, smiling, chibi, anthropomorphic, weapon, 3d render, photograph, hard black outline, text, watermark",
+      "status": "accepted",
+      "prompt": "A compact living ritual familiar: round ivory belly marked by three large breathing vents, one dark face-core beneath a pointed brow crest, two broad smoke-fins, and three short spirit tails; airborne creature anatomy, painterly pixel art.",
+      "negative": "censer object, incense burner, lantern, teapot, pot, lid, chains, held object, person, humanoid body, skull, skeleton, hands, feet, thin smoke cloud, fire, ground, pedestal, cast shadow, scenery, filling the frame, cute, cartoon, 3d render, photograph, text, watermark",
       "params": {
         "outline": "lineless",
         "shading": "highly detailed shading",
         "detail": "highly detailed",
         "view": "low top-down",
-        "direction": "east"
+        "direction": "east",
+        "colorImage": "sprites/monsters/conduit-summon-inquisitor.png",
+        "generationScale": 2
       },
-      "notes": "too similar to the original"
+      "notes": "Living-familiar pass: ritual vents and smoke become creature anatomy, replacing the literal censer and hanging chains."
     },
     {
       "id": "conduit-summon-effigy",
@@ -164,17 +178,18 @@
         "w": 96,
         "h": 96
       },
-      "status": "regen",
-      "prompt": "a small floating human skull, clean dry bone and nothing else, hovering in the air with empty space beneath it, a heavy thick-boned cranium with a broad deep brow ridge and a massive jaw, weighty and solid, deep hollow eye sockets, a triangular nasal opening, a row of thick teeth, pale ivory bone with soft grey shading in the recesses, three-quarter view, painterly pixel art, soft volumetric shading, minimal outline, ivory and pale grey bone only, no coloured light",
-      "negative": "glow, glowing eyes, teal, cyan, green light, coloured light, blood, bloody, gore, red, crimson, dripping, drips, drip, liquid, ichor, flesh, meat, tissue, sinew, muscle, skin, cloth, fabric, scraps, ribbon, tassel, spine, vertebrae, spinal column, neck, torso, ribcage, skeleton body, animal skull, beast skull, muzzle, snout, long jaw, fangs, horns, antlers, ears, person, body, hands, arms, figure, standing, walking, hooded figure, robed figure, ground, floor, terrain, pedestal, base, perch, cast shadow, drop shadow, standing on anything, scenery, background elements, environment, full character, held, worn, cute, cartoon mascot, smiling, chibi, anthropomorphic, weapon, 3d render, photograph, hard black outline, text, watermark",
+      "status": "accepted",
+      "prompt": "A large compact shellback spirit familiar: broad oval ivory shell-body, small dark face-core tucked beneath its front rim, two thick flipper-like arms, and three heavy spirit tails; simple airborne creature anatomy, centered with empty space, painterly pixel art.",
+      "negative": "standing golem, humanoid torso, knight, person, shoulders, chest armor, hands, legs, feet, turtle legs, weapon, skull, skeleton, complex armor, thin smoke, ground, pedestal, cast shadow, scenery, filling the frame, cropped, cute, cartoon, 3d render, photograph, text, watermark",
       "params": {
         "outline": "lineless",
         "shading": "highly detailed shading",
         "detail": "highly detailed",
         "view": "low top-down",
-        "direction": "east"
+        "direction": "east",
+        "colorImage": "sprites/monsters/conduit-summon-inquisitor.png"
       },
-      "notes": "too similar to the original"
+      "notes": "Living-familiar pass: replace the large humanoid guardian with a simple compact floating shellback creature."
     },
     {
       "id": "conduit-summon-covenanter-offense",
@@ -183,17 +198,18 @@
         "w": 96,
         "h": 96
       },
-      "status": "regen",
-      "prompt": "a small floating human skull, clean dry bone and nothing else, hovering in the air with empty space beneath it, a narrow angular cranium with sharp cheekbones and a lean pointed jaw, aggressive and keen, deep hollow eye sockets, a triangular nasal opening, a row of sharp even teeth, pale ivory bone with soft grey shading in the recesses, three-quarter view, painterly pixel art, soft volumetric shading, minimal outline, ivory and pale grey bone only, no coloured light",
-      "negative": "glow, glowing eyes, teal, cyan, green light, coloured light, blood, bloody, gore, red, crimson, dripping, drips, drip, liquid, ichor, flesh, meat, tissue, sinew, muscle, skin, cloth, fabric, scraps, ribbon, tassel, spine, vertebrae, spinal column, neck, torso, ribcage, skeleton body, animal skull, beast skull, muzzle, snout, long jaw, fangs, horns, antlers, ears, person, body, hands, arms, figure, standing, walking, hooded figure, robed figure, ground, floor, terrain, pedestal, base, perch, cast shadow, drop shadow, standing on anything, scenery, background elements, environment, full character, held, worn, cute, cartoon mascot, smiling, chibi, anthropomorphic, weapon, 3d render, photograph, hard black outline, text, watermark",
+      "status": "accepted",
+      "prompt": "A living bladefin twin familiar: narrow dark eye-core enclosed by a tapered ivory body, one long forward crest, two hooked side fins, and three streaming spirit tails; predatory airborne creature anatomy, painterly pixel art.",
+      "negative": "sword, dagger, spear, weapon object, hilt, handle, blade held by hand, person, humanoid body, skull, skeleton, feet, feathered wings, thin smoke, ground, pedestal, cast shadow, scenery, filling the frame, cute, cartoon, 3d render, photograph, text, watermark",
       "params": {
         "outline": "lineless",
         "shading": "highly detailed shading",
         "detail": "highly detailed",
         "view": "low top-down",
-        "direction": "east"
+        "direction": "east",
+        "colorImage": "sprites/monsters/conduit-summon-inquisitor.png"
       },
-      "notes": "too similar to the original"
+      "notes": "Living-familiar pass: replace the accepted literal blade with a narrow eye-core creature whose crest and fins only imply a weapon."
     },
     {
       "id": "conduit-summon-covenanter-defense",
@@ -202,9 +218,9 @@
         "w": 96,
         "h": 96
       },
-      "status": "regen",
-      "prompt": "a small floating human skull, clean dry bone and nothing else, hovering in the air with empty space beneath it, a broad blunt heavy cranium with a thick rounded brow and a wide solid jaw, armoured and stolid, deep hollow eye sockets, a triangular nasal opening, a row of thick blunt teeth, pale ivory bone with soft grey shading in the recesses, three-quarter view, painterly pixel art, soft volumetric shading, minimal outline, ivory and pale grey bone only, no coloured light",
-      "negative": "glow, glowing eyes, teal, cyan, green light, coloured light, blood, bloody, gore, red, crimson, dripping, drips, drip, liquid, ichor, flesh, meat, tissue, sinew, muscle, skin, cloth, fabric, scraps, ribbon, tassel, spine, vertebrae, spinal column, neck, torso, ribcage, skeleton body, animal skull, beast skull, muzzle, snout, long jaw, fangs, horns, antlers, ears, person, body, hands, arms, figure, standing, walking, hooded figure, robed figure, ground, floor, terrain, pedestal, base, perch, cast shadow, drop shadow, standing on anything, scenery, background elements, environment, full character, held, worn, cute, cartoon mascot, smiling, chibi, anthropomorphic, weapon, 3d render, photograph, hard black outline, text, watermark",
+      "status": "accepted",
+      "prompt": "A floating shield-bound spirit: an enormous round ivory shield-shell enclosing a black spirit core, split by one vertical slit with three broad ectoplasm tails beneath; no bearer, face, hands, or legs, painterly pixel-art game summon.",
+      "negative": "person, soldier, hand holding shield, ordinary shield item, skull, skeleton, humanoid body, feet, wings, thin smoke, ground, pedestal, cast shadow, scenery, front view, cute, cartoon, 3d render, photograph, text, watermark",
       "params": {
         "outline": "lineless",
         "shading": "highly detailed shading",
@@ -212,7 +228,7 @@
         "view": "low top-down",
         "direction": "east"
       },
-      "notes": "too similar to the original"
+      "notes": "Covenanter defense twin: broad, round, and protective. Held until calibration passes."
     },
     {
       "id": "conduit-summon-champion",
@@ -221,28 +237,29 @@
         "w": 96,
         "h": 96
       },
-      "status": "regen",
-      "prompt": "a small floating human skull, clean dry bone and nothing else, hovering in the air with empty space beneath it, a cranium with its entire left half sheared away in a clean vertical cut revealing the hollow interior, the intact right half showing a deep eye socket and a row of teeth, pale ivory bone with soft grey shading in the recesses, three-quarter view, painterly pixel art, soft volumetric shading, minimal outline, ivory and pale grey bone only, no coloured light",
-      "negative": "glow, glowing eyes, teal, cyan, green light, coloured light, blood, bloody, gore, red, crimson, dripping, drips, drip, liquid, ichor, flesh, meat, tissue, sinew, muscle, skin, cloth, fabric, scraps, ribbon, tassel, spine, vertebrae, spinal column, neck, torso, ribcage, skeleton body, animal skull, beast skull, muzzle, snout, long jaw, fangs, horns, antlers, ears, person, body, hands, arms, figure, standing, walking, hooded figure, robed figure, ground, floor, terrain, pedestal, base, perch, cast shadow, drop shadow, standing on anything, scenery, background elements, environment, full character, held, worn, cute, cartoon mascot, smiling, chibi, anthropomorphic, weapon, 3d render, photograph, hard black outline, text, watermark",
+      "status": "accepted",
+      "prompt": "A compact floating guardian familiar: one dark face-core beneath a blunt ivory brow, two oversized plated forearms attached directly at its sides, and three heavy spirit tails beneath; no torso or legs, simple living creature anatomy, painterly pixel art.",
+      "negative": "full character, knight, humanoid torso, shoulders, chest, waist, person, hands holding objects, legs, feet, standing pose, sword, shield, weapon, skull, skeleton, complex armor, thin smoke, ground, pedestal, cast shadow, scenery, filling the frame, cropped, cute, cartoon, 3d render, photograph, text, watermark",
       "params": {
         "outline": "lineless",
         "shading": "highly detailed shading",
         "detail": "highly detailed",
         "view": "low top-down",
-        "direction": "east"
+        "direction": "east",
+        "colorImage": "sprites/monsters/conduit-summon-inquisitor.png"
       },
-      "notes": "too similar to the original"
+      "notes": "Living-familiar pass: keep only a face-core, two attached forearms, and three tails; no standalone humanoid character."
     },
     {
       "id": "conduit-summon-idolwright",
       "out": "sprites/monsters/conduit-summon-idolwright.png",
       "size": {
-        "w": 96,
-        "h": 96
+        "w": 128,
+        "h": 128
       },
-      "status": "regen",
-      "prompt": "a small floating human skull, clean dry bone and nothing else, hovering in the air with empty space beneath it, an enormous weathered votive skull worn smooth by age, monumental and carved rather than grown, softened eroded edges, deep hollow eye sockets, a triangular nasal opening, a worn row of teeth, pale ivory bone with soft grey shading in the recesses, three-quarter view, painterly pixel art, soft volumetric shading, minimal outline, ivory and pale grey bone only, no coloured light",
-      "negative": "glow, glowing eyes, teal, cyan, green light, coloured light, blood, bloody, gore, red, crimson, dripping, drips, drip, liquid, ichor, flesh, meat, tissue, sinew, muscle, skin, cloth, fabric, scraps, ribbon, tassel, spine, vertebrae, spinal column, neck, torso, ribcage, skeleton body, animal skull, beast skull, muzzle, snout, long jaw, fangs, horns, antlers, ears, person, body, hands, arms, figure, standing, walking, hooded figure, robed figure, ground, floor, terrain, pedestal, base, perch, cast shadow, drop shadow, standing on anything, scenery, background elements, environment, full character, held, worn, cute, cartoon mascot, smiling, chibi, anthropomorphic, weapon, 3d render, photograph, hard black outline, text, watermark",
+      "status": "accepted",
+      "prompt": "A floating stone apparition made only of one rounded carved face with a tapered chin, heavy brow, hollow eyes, blunt nose, and calm mouth; three broad pale spirit wisps curl beneath it, centered small with generous empty space, painterly pixel art with soft violet-grey shading.",
+      "negative": "square head, cube, cuboid, rectangular slab, monolith, voxel art, isometric building, temple, shrine, tower, columns, doorway, windows, separate blocks, floating debris, skull, skeleton, realistic skin, cranium, neck, shoulders, arms, legs, golem body, pedestal, ground, cast shadow, scenery, filling the frame, cropped, cute, cartoon, 3d render, photograph, text, watermark",
       "params": {
         "outline": "lineless",
         "shading": "highly detailed shading",
@@ -250,7 +267,7 @@
         "view": "low top-down",
         "direction": "east"
       },
-      "notes": "too similar to the original"
+      "notes": "Regen 2: previous set was too square-headed, too large, off-style, and did not float. Use one smaller rounded/tapered carved face, generous padding, soft painterly shading, and three broad lifting wisps."
     }
   ]
 }
