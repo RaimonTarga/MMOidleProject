@@ -12,10 +12,12 @@ import {
 import { actorFromPlayer } from '../../../../../../world/worldLogActors';
 import { isInvulnerableMonster } from '../../../../../combat/invulnerability';
 import { applyMonsterDamageTakenDebuffs } from '../../../../shared/debuffs';
+import { emitPlayerMonsterOnKill } from '../../../../../combat/damage/killHooks';
 
 interface PendingKill {
   monsterId: string;
   sourceId: string;
+  damage: number;
 }
 
 /**
@@ -70,7 +72,9 @@ export function updateAlternatingCurrents(world: World, dt: number): void {
             buildSimpleBreakdown(tickDmg, tickDmg),
           );
           monster.hasHealth.hp -= tickDmg;
-          if (monster.hasHealth.hp <= 0) toKill.push({ monsterId: targetId, sourceId: player.isPlayer.id });
+          if (monster.hasHealth.hp <= 0) {
+            toKill.push({ monsterId: targetId, sourceId: player.isPlayer.id, damage: tickDmg });
+          }
         }
       }
     } else {
@@ -80,11 +84,12 @@ export function updateAlternatingCurrents(world: World, dt: number): void {
     if (newMs <= 0) endACDischarge(world, player);
   }
 
-  for (const { monsterId, sourceId } of toKill) {
+  for (const { monsterId, sourceId, damage } of toKill) {
     const monster = world.getMonsterEntity(monsterId);
     if (monster && sourceId) {
+      emitPlayerMonsterOnKill(world, sourceId, monster, damage, 'proc');
       const rewardInfo = grantMonsterRewards(world, sourceId, monster);
-      recordPlayerKillMonster(world, sourceId, monster, 0, rewardInfo);
+      recordPlayerKillMonster(world, sourceId, monster, damage, rewardInfo);
     }
     world.removeMonsterEntity(monsterId);
   }

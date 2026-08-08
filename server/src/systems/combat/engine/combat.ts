@@ -43,6 +43,7 @@ import {
   publishGroundZone,
   clearGroundZonesByOwner,
 } from "../../world/groundZones";
+import { monsterDeathEmpowerMult } from "../damage/monsterDeathEffects";
 import { applyPlayerKnockback } from "../damage/knockback";
 import { canApplyPlayerDebuff } from "../status/debuffGuard";
 import { evadeBlocksDebuffs } from "../../defense/mitigation/evasion";
@@ -620,6 +621,13 @@ export function runMonsterAttack(
 
   const def = MONSTER_DATABASE.get(monster.isMonster.monsterTypeId);
 
+  // Wasteland death-empower is a normal outgoing-damage layer, not an empowered
+  // strike: it scales every direct hit without changing cadence/charge metadata.
+  const deathEmpowerMult = monsterDeathEmpowerMult(monster);
+  if (deathEmpowerMult > 1) {
+    ctx.damage = Math.max(1, Math.round(ctx.damage * deathEmpowerMult));
+  }
+
   // T4 monster empowered attacks (cadence finisher / cooldown spike / opening
   // strike). Multiply the already-mitigated damage BEFORE onHit/onDamageTaken so
   // the player's damage-cap, shields, plating and DR all apply to the boosted hit —
@@ -654,7 +662,7 @@ export function runMonsterAttack(
   // off the raw hit rather than the mitigated HP loss (e.g. Avenger/Vengeance), so
   // building defenses doesn't shrink the payoff.
   ctx.metadata["incomingGross"] = Math.round(
-    monster.dealsDamage.attack * (empoweredMult > 1 ? empoweredMult : 1),
+    monster.dealsDamage.attack * deathEmpowerMult * (empoweredMult > 1 ? empoweredMult : 1),
   );
 
   emitCombatEvent("onHit", ctx, world);

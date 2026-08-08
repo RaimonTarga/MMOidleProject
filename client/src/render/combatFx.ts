@@ -189,6 +189,7 @@ const ECOLOGY_PULSE_COLOR = 0xff7733;
 const SUN_MARK_PULSE_COLOR = 0xffcc33;
 // Tundra ice-armor shatter — an icy blue burst when a frost shell breaks.
 const FROST_SHATTER_PULSE_COLOR = 0x88ddff;
+const DEATH_EMPOWER_PULSE_COLOR = 0xcc66dd;
 
 function snapPlayerToServerTarget(
   state: RenderState,
@@ -515,7 +516,9 @@ export function dispatchCombatEvent(
           ? SUN_MARK_PULSE_COLOR
           : ev.pulse === "frost-shatter"
             ? FROST_SHATTER_PULSE_COLOR
-            : ECOLOGY_PULSE_COLOR;
+            : ev.pulse === "death-empower"
+              ? DEATH_EMPOWER_PULSE_COLOR
+              : ECOLOGY_PULSE_COLOR;
       fxAoeRing(scene, ev.pos, 70, color);
     }
     return;

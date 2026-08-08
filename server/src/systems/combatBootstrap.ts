@@ -13,6 +13,7 @@ import { initDungeonGauntletCombatHooks } from "./world/dungeons/gauntlet";
 import { initAbilitySystems } from "./player/abilities/abilityEffects";
 import { initRiteListeners } from "./player/rites/riteOoc";
 import { initCoreCombatEffects } from "./combat/cores";
+import { initMonsterDeathEffects } from "./combat/damage/monsterDeathEffects";
 
 let initialized = false;
 
@@ -55,6 +56,8 @@ export function initCombatSystems(): void {
   initRuneTauntSystem();
   // Dungeon gauntlet participant tracking.
   initDungeonGauntletCombatHooks();
+  // Definition-authored monster death triggers (and pack-alpha cleanup).
+  initMonsterDeathEffects();
   // Abilities (Step 7): Technique rider applied on hit (consumes hasArmedAbility).
   initAbilitySystems();
   // Rites (Step 11): Hunter's Instinct onKill movement-haste buff.

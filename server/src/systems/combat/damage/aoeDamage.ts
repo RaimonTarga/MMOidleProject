@@ -16,6 +16,7 @@ import {
 import { recordWorldLogEvent } from "../../../world/worldLog";
 import { isInvulnerableMonster, isInvulnerablePlayer } from "../invulnerability";
 import { applyMonsterDamageTakenDebuffs } from "../../classes/shared/debuffs";
+import { emitPlayerMonsterOnKill } from "./killHooks";
 
 /**
  * Apply splash AoE damage from a player to all monsters within radius of a
@@ -29,7 +30,7 @@ export function applyPlayerAoe(
   baseDamage: number,
   excludeId?: string,
 ): void {
-  const toKill: MonsterEntity[] = [];
+  const toKill: Array<{ monster: MonsterEntity; damage: number }> = [];
   const attackerNodeId = attacker.hasPosition.nodeId;
   const attackerId = attacker.isPlayer.id;
   const source = actorFromPlayer(attacker);
@@ -65,10 +66,11 @@ export function applyPlayerAoe(
 
     monster.hasHealth.hp -= effectiveDmg;
 
-    if (monster.hasHealth.hp <= 0) toKill.push(monster);
+    if (monster.hasHealth.hp <= 0) toKill.push({ monster, damage: effectiveDmg });
   }
 
-  for (const monster of toKill) {
+  for (const { monster, damage } of toKill) {
+    emitPlayerMonsterOnKill(world, attackerId, monster, damage, "aoe");
     const rewardInfo = grantMonsterRewards(world, attackerId, monster);
     recordWorldLogEvent(
       world,
@@ -77,7 +79,7 @@ export function applyPlayerAoe(
         nodeId: attackerNodeId,
         killer: source,
         victim: actorFromMonster(monster),
-        damage: 0,
+        damage,
         essenceGained: rewardInfo?.essenceGained ?? 0,
         essenceType: rewardInfo?.essenceType ?? "green",
         biomeXpGained: rewardInfo?.biomeXpGained ?? 0,

@@ -56,6 +56,9 @@ export const graveyardMonsterEntries = [
     ai: { wanderRadius: 110, leashRange: 460, idleMinMs: 4000, idleMaxMs: 11000 },
     cadenceFinisher: { everyNAttacks: 4, multiplier: 2.4 },   // 216
     dotEffect: { debuffId: 'charnel-decay', label: 'Decay', damagePerStack: 10, maxStacks: 5, tickIntervalMs: 1000, durationMs: 3500 },
+    // Killing the swarm's anchor sends a short necrotic surge through nearby undead.
+    // Placeholder values â€” the balance pass owns radius, duration, and cap.
+    onDeath: { empowerAllies: { radius: 220, damagePct: 0.12, durationMs: 6000, maxStacks: 3 } },
   }],
 
   ['gravewright', {

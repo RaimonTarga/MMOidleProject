@@ -210,6 +210,26 @@ export function describeMonsterMechanics(
     });
   }
 
+  if (def.onDeath?.spawnHazard) {
+    const hazard = def.onDeath.spawnHazard;
+    lines.push({
+      id: 'death-hazard',
+      icon: 'â˜£',
+      label: 'Toxic remains',
+      detail: `Leaves a ${hazard.radius}px toxic pool for ${fmtMs(hazard.durationMs)} when killed.`,
+    });
+  }
+
+  if (def.onDeath?.empowerAllies) {
+    const empower = def.onDeath.empowerAllies;
+    lines.push({
+      id: 'death-empower',
+      icon: 'â†‘',
+      label: 'Death surge',
+      detail: `On death, monsters within ${empower.radius}px gain +${fmtPct(empower.damagePct)} damage for ${fmtMs(empower.durationMs)} (up to ${empower.maxStacks ?? 3} stacks).`,
+    });
+  }
+
   if (def.targeting?.mode === 'lowest-hp') {
     lines.push({
       id: 'targeting',

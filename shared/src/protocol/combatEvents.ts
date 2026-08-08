@@ -47,7 +47,7 @@ export type CombatEvent =
   // (call-allies); `sun-mark` = a Desert marker painting its target; `frost-shatter` =
   // a Tundra ice-armor shell breaking (freezing shockwave). Purely cosmetic — the
   // underlying aggro/debuff/freeze is server-authoritative.
-  | { kind: 'ecology-pulse'; monsterId: string; pos: Vec2; pulse: 'pack-call' | 'sun-mark' | 'frost-shatter' }
+  | { kind: 'ecology-pulse'; monsterId: string; pos: Vec2; pulse: 'pack-call' | 'sun-mark' | 'frost-shatter' | 'death-empower' }
   // Monster charged (cast-time) attack telegraph, shown to the whole node. `start`
   // opens a `castMs` cast bar over the monster (label = ability name). `end` clears
   // it: `fired` true ⇒ the charged shot landed (play the flashy FX toward `targetId`),

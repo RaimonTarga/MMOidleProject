@@ -213,6 +213,26 @@ export interface MonsterTargeting {
   ignoresTaunts?: boolean;
 }
 
+/** Effects a monster can leave behind when a player kills it. */
+export interface MonsterOnDeath {
+  /** Lingering runtime pool. Ground-zone authority is implemented by the server. */
+  spawnHazard?: {
+    kind: 'toxic-pool';
+    radius: number;
+    durationMs: number;
+    damagePerTick: number;
+    tickIntervalMs: number;
+    slowSpeedMult?: number;
+  };
+  /** Timed, stacking damage buff applied to living monsters in the radius. */
+  empowerAllies?: {
+    radius: number;
+    damagePct: number;
+    durationMs: number;
+    maxStacks?: number;
+  };
+}
+
 export interface MonsterDefinition {
   id: string;
   name: string;
@@ -283,6 +303,8 @@ export interface MonsterDefinition {
   ultimateEncounter?: UltimateEncounter;
   /** How this monster chooses an aggro target when first pulled. Defaults to closest. */
   targeting?: MonsterTargeting;
+  /** Optional player-kill trigger. Fires before the dead monster is removed. */
+  onDeath?: MonsterOnDeath;
   /**
    * If set, the monster bursts at speedMult x base speed for durationMs when it
    * first acquires an aggro target (both pull-range and retaliation aggro).

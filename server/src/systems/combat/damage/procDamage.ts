@@ -17,6 +17,7 @@ import {
   recordPlayerKillMonster,
 } from '../../../world/worldLogCombat';
 import { applyMonsterDamageTakenDebuffs } from '../../classes/shared/debuffs';
+import { emitPlayerMonsterOnKill } from './killHooks';
 
 export interface PlayerProcDamageOpts {
   tags?: string[];
@@ -86,6 +87,7 @@ export function applyPlayerProcDamage(
   });
 
   if (target.hasHealth.hp <= 0) {
+    emitPlayerMonsterOnKill(world, playerId, target, hpDamage, 'proc');
     const rewardInfo = grantMonsterRewards(world, playerId, target);
     recordPlayerKillMonster(world, playerId, target, hpDamage, rewardInfo);
     recordWorldLogEvent(
