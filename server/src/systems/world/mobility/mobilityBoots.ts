@@ -25,6 +25,7 @@ import {
   getCooldown,
   getCounter,
   getStatusEffect,
+  detectionMultForPoint,
   getString,
   hasStatusEffect,
   setCooldown,
@@ -57,6 +58,11 @@ const ACQUIRE_CD = "mobAcquireCd"; // cooldown — Mountain re-trigger gate
 // ── Tuning floors/caps (structural, not balance) ────────────────────────────────
 const TENACITY_CAP = 0.9; // CC duration can be cut at most 90% — never fully nullified
 const DETECTION_FLOOR = 0.1; // a stealthed player is never fully invisible to pull aggro
+// Guard on the compound case only. Jungle aggro-pull boots reach +0.80, so boots
+// alone top out at 1.8 and are UNAFFECTED by this cap; it exists so boots stacked
+// with a thicket's 2x cannot reach 3.6 (~1044px on a 3200px node) and pull the
+// whole node at once.
+const DETECTION_CAP = 3;
 
 // ── Defaults for timed effects when the boot omits an explicit duration ─────────
 const DEFAULT_KILL_SPEED_MS = 3000;
@@ -130,14 +136,26 @@ function isMovingAwayFromTarget(world: World, player: PlayerEntity): boolean {
 /**
  * Player-side multiplier on a monster's effective pull/detection radius.
  * < 1 for Cave stealth, > 1 for Jungle aggro-pull — one field, two signs. Floored
- * so a stealthed player is never fully undetectable. Used in ai.ts findAggro.
+ * so a stealthed player is never fully undetectable, and capped so the compound
+ * case (pull boots inside a jungle thicket) cannot pull an entire node.
+ * Used in ai.ts findAggro.
  */
 export function playerDetectionMult(player: PlayerEntity): number {
   const p = player.usesSkills.passives;
   const stealth = p["mobility.stealth-pct"] ?? 0;
   const pull = p["mobility.aggro-pull-pct"] ?? 0;
-  if (stealth <= 0 && pull <= 0) return 1;
-  return Math.max(DETECTION_FLOOR, (1 - stealth) * (1 + pull));
+  // Terrain can broadcast the player (jungle thicket). Read straight off the node
+  // feature rather than a status effect — see the note on `detectionMultWhileInside`.
+  // Never below 1: terrain only makes you LOUDER here, so it cannot be used to hide.
+  const zoneMult = Math.max(
+    1,
+    detectionMultForPoint(player.hasPosition.nodeId, player.hasPosition.current),
+  );
+  if (stealth <= 0 && pull <= 0 && zoneMult === 1) return 1;
+  return Math.min(
+    DETECTION_CAP,
+    Math.max(DETECTION_FLOOR, (1 - stealth) * (1 + pull) * zoneMult),
+  );
 }
 
 /**

@@ -1,5 +1,5 @@
 import { GAME_CONFIG } from "../config/gameConfig";
-import type { Vec2 } from "../systems/spatial";
+import { pointInNodeFeatureShape, type Vec2 } from "../systems/spatial";
 import { WORLD_NODE_LIST } from "./map/registry";
 
 /** Axis-aligned or circular zone in world pixels (node-local coordinates). */
@@ -53,6 +53,15 @@ export interface NodeFeatureSpec {
     refreshMs: number;
     targets: FeatureTarget[];
   };
+  /**
+   * While inside: multiply every monster's detection radius against this entity
+   * (jungle thicket). Read straight off the feature by `detectionMultForPoint`
+   * rather than carried on a status effect — `applyStatusEffect` refreshes an
+   * existing effect's duration but NEVER replaces its `data`, so a bush that
+   * piggybacked on the shared 'slow' id would silently do nothing whenever any
+   * other slow happened to land first. Terrain-derived, so it cannot desync.
+   */
+  detectionMultWhileInside?: number;
   /** While inside: heal as a fraction of max HP per second. */
   healWhileInside?: {
     hpPctPerSec: number;
@@ -174,19 +183,36 @@ function rotPool(
 /**
  * Jungle "dense bush": a non-blocking overgrowth thicket. Walking through SLOWS the
  * player (players-only, like the Swamp rot pool — mobs move through their own bush
- * freely) and conceals a dormant ambush. When `ambushPackAlpha` is set, the bush is
- * also a capped spawner: it seeds a small dormant pack (low `pullRange`) inside the
- * thicket that only wakes — and pounces — when the player steps in. `maxAlive` caps
- * how many bush mobs can be hidden at once (so the node never fills with ambushers).
- * Placeholder toxic-green fill renders until real foliage sprites (add NODE_DECOR).
- * Placeholder values — user balance pass (Step 15).
+ * freely) and, crucially, BROADCASTS them: every monster's detection radius is
+ * multiplied while the player stands inside.
+ *
+ * That radius IS the mechanic. The thicket used to also seed a dormant ambush pack
+ * with a deliberately short `pullRange` (150) — below the entire jungle roster's
+ * 240–290 — which meant the hidden mobs noticed you LATER than an ordinary mob
+ * standing in the open, and the ambush read as dead in playtest. The spawner is gone;
+ * `jungle-ape` still populates the node through the normal pool (it is in
+ * `monsterPoolByTier`, and `ensurePopulation` spawns its pack via `spawnPack`).
+ *
+ * The multiplier is a FEATURE field, not status data. Riding the shared 'slow'
+ * status looked cheaper, but `applyStatusEffect` only refreshes an existing effect's
+ * duration and never replaces its `data` — so any other slow landing first would have
+ * left the thicket silently inert. Reading terrain directly cannot desync.
+ *
+ * Values are placeholders — user balance pass.
  */
+
+/**
+ * How far a thicket throws the player's position. Jungle pull ranges run 240–290, so
+ * 2x puts effective detection at 480–580px — well outside the 300px bush radius, so
+ * mobs standing in the open pull the moment the player enters cover.
+ */
+const BUSH_DETECTION_MULT = 2;
+
 function denseBush(
   id: string,
   x: number,
   y: number,
   radius: number,
-  ambush?: { packAlpha: string; maxAlive: number; intervalMs: number; pullRange: number },
 ): NodeFeatureSpec {
   return {
     id,
@@ -195,24 +221,13 @@ function denseBush(
     displayW: radius * 2,
     displayH: radius * 2,
     shape: { kind: "circle", x, y, radius },
+    detectionMultWhileInside: BUSH_DETECTION_MULT,
     statusWhileInside: {
       effectId: "slow",
       data: { speedMult: 0.55, totalMs: 1000 },
       refreshMs: 1000,
       targets: ["player"],
     },
-    ...(ambush
-      ? {
-          spawns: {
-            monsterTypeId: ambush.packAlpha,
-            intervalMs: ambush.intervalMs,
-            maxAlive: ambush.maxAlive,
-            count: 1,
-            requiresPlayerInNode: true,
-            pullRange: ambush.pullRange,
-          },
-        }
-      : {}),
   };
 }
 
@@ -699,22 +714,20 @@ const LEGACY_NODE_FEATURE_TEMPLATES: Record<string, NodeFeatureSpec[]> = {
     rotPool("rot_pool_d", 820, 620, 160, 3),
     rotPool("rot_pool_e", 2360, 1780, 170, 3),
   ],
-  // JUNGLE T2 (node-3-7, node-3-8) — "ambush ecology": dense overgrowth thickets
-  // that slow the player AND conceal a dormant hunting pack (jungle-ape + 2 snakes,
-  // call-allies linked). The pack only wakes — and pounces (openingStrike) — when
-  // the player steps into the thicket; `maxAlive` caps hidden bush mobs so the node
-  // never fills with ambushers. Open lanes between bushes are the safe read; evasion
-  // + hardening is the build answer. Non-blocking → no passability concern.
-  // Placeholder toxic-green fills until real foliage sprites (add NODE_DECOR).
+  // JUNGLE — "ambush ecology": dense overgrowth thickets that slow the player and
+  // multiply every monster's detection radius while they are inside, so stepping into
+  // cover is what pulls the pack rather than hiding from it. Open lanes between bushes
+  // are the safe read (the ground layout routes its open floor around the thickets);
+  // evasion + hardening is the build answer. Non-blocking → no passability concern.
   "node-3-7": [
-    denseBush("jungle_bush_a", 820, 720, 300, { packAlpha: "jungle-ape", maxAlive: 3, intervalMs: 12000, pullRange: 150 }),
+    denseBush("jungle_bush_a", 820, 720, 300),
     denseBush("jungle_bush_b", 2360, 780, 280),
-    denseBush("jungle_bush_c", 1600, 1720, 320, { packAlpha: "jungle-ape", maxAlive: 3, intervalMs: 12000, pullRange: 150 }),
+    denseBush("jungle_bush_c", 1600, 1720, 320),
     denseBush("jungle_bush_d", 2420, 1800, 260),
   ],
   "node-3-8": [
-    denseBush("jungle_bush_a", 760, 800, 300, { packAlpha: "jungle-ape", maxAlive: 3, intervalMs: 12000, pullRange: 150 }),
-    denseBush("jungle_bush_b", 2300, 1640, 300, { packAlpha: "jungle-ape", maxAlive: 3, intervalMs: 12000, pullRange: 150 }),
+    denseBush("jungle_bush_a", 760, 800, 300),
+    denseBush("jungle_bush_b", 2300, 1640, 300),
     denseBush("jungle_bush_c", 1500, 760, 260),
   ],
   // JUNGLE T2 dungeon (node-2-8, Jungle Dread-Gorger) — the boss exam adds an ambush
@@ -874,3 +887,33 @@ export const NODE_FEATURES: Record<string, NodeFeatureSpec[]> =
   );
 
 export const RESOLVED_NODE_FEATURES = buildResolvedNodeFeatures();
+
+/**
+ * Nodes that have at least one detection-multiplying feature. `playerDetectionMult`
+ * runs per aggro candidate, so the overwhelmingly common case (a node with no such
+ * feature) has to cost one Set probe rather than a feature scan.
+ */
+const DETECTION_FEATURE_NODES: ReadonlySet<string> = new Set(
+  Object.entries(RESOLVED_NODE_FEATURES)
+    .filter(([, features]) =>
+      features.some((f) => (f.detectionMultWhileInside ?? 1) > 1),
+    )
+    .map(([nodeId]) => nodeId),
+);
+
+/**
+ * Combined detection multiplier of every detection feature containing `pos`.
+ * 1 when the node has none or the point is outside them all. Overlapping thickets
+ * take the STRONGEST rather than compounding — two bushes touching should not make
+ * the player four times as loud.
+ */
+export function detectionMultForPoint(nodeId: string, pos: Vec2): number {
+  if (!DETECTION_FEATURE_NODES.has(nodeId)) return 1;
+  let mult = 1;
+  for (const feature of RESOLVED_NODE_FEATURES[nodeId] ?? []) {
+    const m = feature.detectionMultWhileInside ?? 1;
+    if (m <= mult) continue;
+    if (pointInNodeFeatureShape(pos, feature.shape)) mult = m;
+  }
+  return mult;
+}
