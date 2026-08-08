@@ -26740,6 +26740,248 @@
       "candidateFiles": [
         "candidate-3.png"
       ]
+    },
+    {
+      "at": "2026-08-08T11:04:04.363Z",
+      "endpoint": "pixflux",
+      "category": "environment",
+      "assetId": "jungle-ambush-bush",
+      "requestHash": "669a51579bb8b7820bc2be62",
+      "usd": 0.0071874057981703016,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-08T11:04:33.196Z",
+      "endpoint": "pixflux",
+      "category": "environment",
+      "assetId": "jungle-ambush-bush",
+      "requestHash": "669a51579bb8b7820bc2be62",
+      "usd": 0.007427141984303793,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-08T11:04:51.471Z",
+      "endpoint": "pixflux",
+      "category": "environment",
+      "assetId": "jungle-ambush-bush",
+      "requestHash": "669a51579bb8b7820bc2be62",
+      "usd": 0.006907504134707981,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-08T11:05:15.417Z",
+      "endpoint": "pixflux",
+      "category": "environment",
+      "assetId": "jungle-ambush-bush",
+      "requestHash": "669a51579bb8b7820bc2be62",
+      "usd": 0.007348686059316,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-08-08T11:56:54.660Z",
+      "endpoint": "pixflux",
+      "category": "environment",
+      "assetId": "jungle-tree-kapok",
+      "requestHash": "34dcbfcbf0d41bddd23d86bd",
+      "usd": 0.00810662243101332,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-08T11:57:32.370Z",
+      "endpoint": "pixflux",
+      "category": "environment",
+      "assetId": "jungle-tree-kapok",
+      "requestHash": "34dcbfcbf0d41bddd23d86bd",
+      "usd": 0.008499672810236614,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-08T11:58:27.095Z",
+      "endpoint": "pixflux",
+      "category": "environment",
+      "assetId": "jungle-tree-kapok",
+      "requestHash": "34dcbfcbf0d41bddd23d86bd",
+      "usd": 0.010764356851577759,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-08T11:59:20.473Z",
+      "endpoint": "pixflux",
+      "category": "environment",
+      "assetId": "jungle-tree-kapok",
+      "requestHash": "34dcbfcbf0d41bddd23d86bd",
+      "usd": 0.01045317644543118,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-08-08T12:00:03.511Z",
+      "endpoint": "pixflux",
+      "category": "environment",
+      "assetId": "jungle-tree-strangler-fig",
+      "requestHash": "9b5e327435c28f7270e6fc72",
+      "usd": 0.008767879433102078,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-08T12:00:34.866Z",
+      "endpoint": "pixflux",
+      "category": "environment",
+      "assetId": "jungle-tree-strangler-fig",
+      "requestHash": "9b5e327435c28f7270e6fc72",
+      "usd": 0.008048405938678317,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-08T12:01:13.350Z",
+      "endpoint": "pixflux",
+      "category": "environment",
+      "assetId": "jungle-tree-strangler-fig",
+      "requestHash": "9b5e327435c28f7270e6fc72",
+      "usd": 0.00858498607741462,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-08T12:02:02.531Z",
+      "endpoint": "pixflux",
+      "category": "environment",
+      "assetId": "jungle-tree-strangler-fig",
+      "requestHash": "9b5e327435c28f7270e6fc72",
+      "usd": 0.009226889212926229,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-08-08T12:02:44.406Z",
+      "endpoint": "pixflux",
+      "category": "environment",
+      "assetId": "jungle-tree-palm-cluster",
+      "requestHash": "f8759154baa580b6459797c5",
+      "usd": 0.008646083381440905,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-08T12:03:18.848Z",
+      "endpoint": "pixflux",
+      "category": "environment",
+      "assetId": "jungle-tree-palm-cluster",
+      "requestHash": "f8759154baa580b6459797c5",
+      "usd": 0.008363183233473036,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-08T12:03:56.611Z",
+      "endpoint": "pixflux",
+      "category": "environment",
+      "assetId": "jungle-tree-palm-cluster",
+      "requestHash": "f8759154baa580b6459797c5",
+      "usd": 0.008708477391137018,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-08T12:04:45.178Z",
+      "endpoint": "pixflux",
+      "category": "environment",
+      "assetId": "jungle-tree-palm-cluster",
+      "requestHash": "f8759154baa580b6459797c5",
+      "usd": 0.009545868476231893,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-08-08T12:05:26.432Z",
+      "endpoint": "pixflux",
+      "category": "environment",
+      "assetId": "jungle-tree-liana-draped",
+      "requestHash": "48a759e0dad6f5c933d61279",
+      "usd": 0.008629784292644925,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-08T12:06:08.004Z",
+      "endpoint": "pixflux",
+      "category": "environment",
+      "assetId": "jungle-tree-liana-draped",
+      "requestHash": "48a759e0dad6f5c933d61279",
+      "usd": 0.009019631279839409,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-08T12:07:17.431Z",
+      "endpoint": "pixflux",
+      "category": "environment",
+      "assetId": "jungle-tree-liana-draped",
+      "requestHash": "48a759e0dad6f5c933d61279",
+      "usd": 0.012008493158552382,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-08T12:07:18.870Z",
+      "endpoint": "pixflux",
+      "category": "environment",
+      "assetId": "jungle-tree-liana-draped",
+      "requestHash": "48a759e0dad6f5c933d61279",
+      "usd": 0.008739038546880087,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-08T12:08:25.195Z",
+      "endpoint": "pixflux",
+      "category": "environment",
+      "assetId": "jungle-tree-liana-draped",
+      "requestHash": "48a759e0dad6f5c933d61279",
+      "usd": 0.011730942302280003,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-08-08T12:08:25.720Z",
+      "endpoint": "pixflux",
+      "category": "environment",
+      "assetId": "jungle-tree-liana-draped",
+      "requestHash": "48a759e0dad6f5c933d61279",
+      "usd": 0.011829911973741319,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
     }
   ]
 }

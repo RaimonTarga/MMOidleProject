@@ -22,7 +22,13 @@ import {
 } from "../../render/collisionLayer";
 import { DEPTH } from "../../render/depth";
 import { sceneDepthY } from "../../render/sceneCoords";
-import { BIOME_DECOR, BIOME_TEXTURES, NODE_DECOR, TREES_KEY } from "../../sprites";
+import {
+  BIOME_DECOR,
+  BIOME_TEXTURES,
+  FEATURE_SCATTER,
+  NODE_DECOR,
+  TREES_KEY,
+} from "../../sprites";
 import { computeGroundLayout } from "../../render/groundLayout";
 import { drawMountainElevation } from "../../render/mountainLedges";
 import {
@@ -335,6 +341,81 @@ function buildBiomeDecorImages(
   return out;
 }
 
+
+/** The scatter spec covering a feature, if any of its textures are loaded. */
+function featureScatterFor(scene: GameScene, featureId: string) {
+  return FEATURE_SCATTER.find(
+    (spec) =>
+      featureId.startsWith(spec.featureIdPrefix) &&
+      spec.variants.some((v) => scene.textures.exists(v.key)),
+  );
+}
+
+/**
+ * Fill a scatter-dressed feature footprint with overlapping props.
+ *
+ * Placement is a JITTERED GRID rather than the blue-noise rejection sampling the
+ * biome dressing uses: dressing wants props spread apart, a thicket wants them
+ * touching and evenly dense with no bald patches. Props are allowed to overhang
+ * the shape edge, which is what keeps the silhouette ragged instead of tracing a
+ * visible circle. Deterministic per node+feature, so the same bush looks the same
+ * on every visit and across clients.
+ */
+function buildFeatureScatterImages(
+  scene: GameScene,
+  nodeId: string,
+  offsetX: number,
+  offsetY: number,
+  depthBias: number,
+  preview: boolean,
+): Phaser.GameObjects.Image[] {
+  const features = NODE_FEATURES[nodeId];
+  if (!features) return [];
+  const out: Phaser.GameObjects.Image[] = [];
+
+  for (const feature of features) {
+    const spec = featureScatterFor(scene, feature.id);
+    if (!spec) continue;
+    const loaded = spec.variants.filter((v) => scene.textures.exists(v.key));
+    if (loaded.length === 0) continue;
+
+    const shape = resolveFeatureShape(feature);
+    const rng = mulberry32(hashString(`${nodeId}:${feature.id}:scatter:v1`));
+    const step = Math.max(24, spec.displayW * spec.spacing);
+    // Half a prop of slop so the outermost ring can hang over the boundary.
+    const reach = spec.displayW * 0.5;
+    const halfW = shape.kind === "circle" ? shape.radius : shape.halfW;
+    const halfH = shape.kind === "circle" ? shape.radius : shape.halfH;
+
+    for (let gy = -halfH - reach; gy <= halfH + reach; gy += step) {
+      for (let gx = -halfW - reach; gx <= halfW + reach; gx += step) {
+        // Jitter each cell by up to half a step so no row or column lines up.
+        const x = shape.x + gx + (rng() - 0.5) * step;
+        const y = shape.y + gy + (rng() - 0.5) * step;
+        // Keep a prop when its CENTRE is within the shape plus the overhang.
+        if (!nearFeatureShape(shape, x, y, reach)) continue;
+
+        const variant = loaded[Math.floor(rng() * loaded.length) % loaded.length];
+        const scale = 0.78 + rng() * 0.46;
+        const image = scene.add
+          .image(offsetX + x, offsetY + y, variant.key)
+          .setOrigin(0.5, 0.5)
+          .setDisplaySize(spec.displayW * scale, spec.displayH * scale)
+          .setDepth(
+            (spec.ySort && !preview ? DEPTH.SPRITE + sceneDepthY(y) : DEPTH.BG_DECOR) +
+              depthBias,
+          );
+        if (rng() < 0.5) image.setFlipX(true);
+        if (spec.alpha != null) image.setAlpha(spec.alpha);
+        image.setData("featureId", feature.id);
+        out.push(image);
+      }
+    }
+  }
+
+  return out;
+}
+
 const PLACEHOLDER_BLOCK_FILL = 0x4a4640;
 const PLACEHOLDER_BLOCK_LINE = 0x6f6a60;
 // Hazard zones (damage / status) render as a translucent toxic splotch so the
@@ -389,6 +470,8 @@ function buildNodePlaceholderFeatures(
       (a) => a.featureId === feature.id && scene.textures.exists(a.key),
     );
     if (hasSprite) continue;
+    // …or if scattered props dress it (jungle ambush bushes).
+    if (featureScatterFor(scene, feature.id)) continue;
 
     const shape = resolveFeatureShape(feature);
     const g = scene.add.graphics().setDepth(DEPTH.BG_DECOR + depthBias);
@@ -522,14 +605,12 @@ export function paintNodeStatic(
     shade: preview
       ? buildPreviewShade(scene, offsetX, offsetY, depthBias)
       : null,
-    biomeDecor: buildBiomeDecorImages(
-      scene,
-      nodeId,
-      offsetX,
-      offsetY,
-      depthBias,
-      preview,
-    ),
+    // Scattered feature dressing rides in the biomeDecor bucket: same lifetime,
+    // same teardown, no extra scene field to keep in sync.
+    biomeDecor: [
+      ...buildBiomeDecorImages(scene, nodeId, offsetX, offsetY, depthBias, preview),
+      ...buildFeatureScatterImages(scene, nodeId, offsetX, offsetY, depthBias, preview),
+    ],
     decor: buildNodeDecorImages(
       scene,
       nodeId,
@@ -662,7 +743,10 @@ function updateNodeDecorForNode(scene: GameScene, nodeId: string): void {
 
   const throneOpen =
     nodeId === scene.state.ownNodeId && isVoidThroneUnblocked(scene);
-  scene.nodeBiomeDecor = buildBiomeDecorImages(scene, nodeId, 0, 0, 0, false);
+  scene.nodeBiomeDecor = [
+    ...buildBiomeDecorImages(scene, nodeId, 0, 0, 0, false),
+    ...buildFeatureScatterImages(scene, nodeId, 0, 0, 0, false),
+  ];
   scene.nodeDecor = buildNodeDecorImages(
     scene,
     nodeId,

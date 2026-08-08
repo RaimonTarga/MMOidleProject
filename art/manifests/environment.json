@@ -1084,6 +1084,25 @@
       }
     },
     {
+      "id": "jungle-ambush-bush",
+      "out": "files/environment/jungle/ambush-bush.png",
+      "size": {
+        "w": 96,
+        "h": 96
+      },
+      "prompt": "dense clump of thick concealing jungle undergrowth, a deep mass of tangled layered leaves heavy enough to hide something inside, dark shadowed hollow gaps between the fronds, ragged irregular organic outline that breaks up when repeated, isolated high top-down decorative prop, transparent background, painterly pixel art, soft volumetric shading, minimal outline, deep muted jungle green going almost black in the interior shadow, not bright, no vivid green",
+      "negative": "ground rectangle, neat hedge, trimmed shrub, topiary, solid opaque blob, flat silhouette, single plant, sparse leaves, thin stems, grass tuft, fern, flowers, berries, palm, banana tree, tree trunk, branch, vines hanging, rock, creature, character, eyes, face, text, watermark, hard black outline, oversaturated, neon, bright green, saturated green, glow",
+      "status": "accepted",
+      "candidates": 4,
+      "notes": "Jungle AMBUSH BUSH — the functional concealment region's overlay prop (biome-ecology-pass2, Session 6 wires it; replaces the placeholder toxic-green fill on denseBush). Scattered to fill a 600px-diameter circle, so the outline must be RAGGED and read fine overlapping itself. Must look walk-into-able and concealing, NOT a solid wall or a tidy shrub, and must not be confusable with the small jungle-fern-clump / jungle-broadleaf-plant decor props. Probe pass: prop-first per user call; a functional wang sheet remains the fallback if scattering reads badly.",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "high top-down"
+      }
+    },
+    {
       "id": "desert-stone-cluster",
       "out": "files/environment/desert/stone-cluster.png",
       "size": {
@@ -1679,6 +1698,82 @@
       },
       "prompt": "",
       "status": "draft"
+    },
+    {
+      "id": "jungle-tree-kapok",
+      "out": "files/environment/trees/jungle/kapok.png",
+      "size": {
+        "w": 400,
+        "h": 400
+      },
+      "prompt": "colossal rainforest kapok tree with enormous thin fin-like buttress roots flaring far out from the base like standing walls, tall straight pale trunk, high wide spreading crown, front elevation view, whole tree from trunk base to crown, trunk centered at the bottom of the frame with visible flaring surface roots gripping the ground, isolated single tree on a fully transparent background, painterly pixel art, layered canopy clumps with soft volumetric shading, rich dark bark with strong vertical striations, deep muted jungle greens with almost black shadowed undersides, not bright, no vivid green",
+      "negative": "ground rectangle, grass patch, soil, shadow on the ground, scenery, background, horizon, sky, multiple trees, forest, row of trees, cropped trunk, cut off roots, floating tree, top-down view, birds eye view, canopy from above, acorns, oak, autumn, orange leaves, snow, flowers, fruit, creature, character, monkey, bird, text, watermark, hard black outline, oversaturated, neon, bright green, saturated green, glow, blurry, 3d render, photograph",
+      "status": "draft",
+      "candidates": 4,
+      "notes": "Jungle tree 1/4. The SILHOUETTE ANCHOR: giant buttress fins are the one shape no forest tree has, so this is the variant that sells the biome at a glance. Wide root flare gives the fattest trunk hitbox of the set. Authored at 400px (the pixflux cap) and DISPLAYED at 400px 1:1 — the forest sheet's 1024px cells cannot be reproduced by the API, and 1:1 beats a fake upscale. Trunk must sit centered at the bottom of the frame: the y-sort base and the baked trunk hitbox both key off it. PARKED 2026-08-08 as `draft` so a bare `pnpm art:generate --category=environment` cannot re-spend on it. The prompt is kept deliberately (draft normally means no prompt) so the wording survives for whoever picks this up. DO NOT flip back to `pending` without reading the tree section of docs/biome-ecology-pass2-plan.md: the first batch failed on a RESOLUTION CEILING, not on wording, and re-running it as-is will just buy the same result again.",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "side"
+      }
+    },
+    {
+      "id": "jungle-tree-strangler-fig",
+      "out": "files/environment/trees/jungle/strangler-fig.png",
+      "size": {
+        "w": 400,
+        "h": 400
+      },
+      "prompt": "strangler fig whose trunk is a braided lattice cage of fused aerial roots with dark hollow gaps showing through the weave, gnarled and knotted, dense heavy crown above, front elevation view, whole tree from trunk base to crown, trunk centered at the bottom of the frame with visible flaring surface roots gripping the ground, isolated single tree on a fully transparent background, painterly pixel art, layered canopy clumps with soft volumetric shading, rich dark bark with strong vertical striations, deep muted jungle greens with almost black shadowed undersides, not bright, no vivid green",
+      "negative": "ground rectangle, grass patch, soil, shadow on the ground, scenery, background, horizon, sky, multiple trees, forest, row of trees, cropped trunk, cut off roots, floating tree, top-down view, birds eye view, canopy from above, acorns, oak, autumn, orange leaves, snow, flowers, fruit, creature, character, monkey, bird, text, watermark, hard black outline, oversaturated, neon, bright green, saturated green, glow, blurry, 3d render, photograph",
+      "status": "draft",
+      "candidates": 4,
+      "notes": "Jungle tree 2/4. Reads as menacing/overgrown rather than pastoral — supports the ambush identity. The see-through root cage keeps it from being a solid mass. Authored at 400px (the pixflux cap) and DISPLAYED at 400px 1:1 — the forest sheet's 1024px cells cannot be reproduced by the API, and 1:1 beats a fake upscale. Trunk must sit centered at the bottom of the frame: the y-sort base and the baked trunk hitbox both key off it. PARKED 2026-08-08 as `draft` so a bare `pnpm art:generate --category=environment` cannot re-spend on it. The prompt is kept deliberately (draft normally means no prompt) so the wording survives for whoever picks this up. DO NOT flip back to `pending` without reading the tree section of docs/biome-ecology-pass2-plan.md: the first batch failed on a RESOLUTION CEILING, not on wording, and re-running it as-is will just buy the same result again.",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "side"
+      }
+    },
+    {
+      "id": "jungle-tree-palm-cluster",
+      "out": "files/environment/trees/jungle/palm-cluster.png",
+      "size": {
+        "w": 400,
+        "h": 400
+      },
+      "prompt": "cluster of three slender curving rainforest palm trunks rising from one base, ringed bark, topped with long arching feather-shaped fronds, front elevation view, whole tree from trunk base to crown, trunk centered at the bottom of the frame with visible flaring surface roots gripping the ground, isolated single tree on a fully transparent background, painterly pixel art, layered canopy clumps with soft volumetric shading, rich dark bark with strong vertical striations, deep muted jungle greens with almost black shadowed undersides, not bright, no vivid green",
+      "negative": "ground rectangle, grass patch, soil, shadow on the ground, scenery, background, horizon, sky, multiple trees, forest, row of trees, cropped trunk, cut off roots, floating tree, top-down view, birds eye view, canopy from above, acorns, oak, autumn, orange leaves, snow, flowers, fruit, creature, character, monkey, bird, text, watermark, hard black outline, oversaturated, neon, bright green, saturated green, glow, blurry, 3d render, photograph",
+      "status": "draft",
+      "candidates": 4,
+      "notes": "Jungle tree 3/4. The vertical//skinny counterpoint to the two heavy trunks — keeps the scatter from reading as one repeated blob. Narrow hitbox. Authored at 400px (the pixflux cap) and DISPLAYED at 400px 1:1 — the forest sheet's 1024px cells cannot be reproduced by the API, and 1:1 beats a fake upscale. Trunk must sit centered at the bottom of the frame: the y-sort base and the baked trunk hitbox both key off it. PARKED 2026-08-08 as `draft` so a bare `pnpm art:generate --category=environment` cannot re-spend on it. The prompt is kept deliberately (draft normally means no prompt) so the wording survives for whoever picks this up. DO NOT flip back to `pending` without reading the tree section of docs/biome-ecology-pass2-plan.md: the first batch failed on a RESOLUTION CEILING, not on wording, and re-running it as-is will just buy the same result again.",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "side"
+      }
+    },
+    {
+      "id": "jungle-tree-liana-draped",
+      "out": "files/environment/trees/jungle/liana-draped-emergent.png",
+      "size": {
+        "w": 400,
+        "h": 400
+      },
+      "prompt": "broad emergent rainforest tree with wide horizontal boughs and long thick woody lianas hanging straight down from the branches in heavy curtains, thick mossy trunk, front elevation view, whole tree from trunk base to crown, trunk centered at the bottom of the frame with visible flaring surface roots gripping the ground, isolated single tree on a fully transparent background, painterly pixel art, layered canopy clumps with soft volumetric shading, rich dark bark with strong vertical striations, deep muted jungle greens with almost black shadowed undersides, not bright, no vivid green",
+      "negative": "ground rectangle, grass patch, soil, shadow on the ground, scenery, background, horizon, sky, multiple trees, forest, row of trees, cropped trunk, cut off roots, floating tree, top-down view, birds eye view, canopy from above, acorns, oak, autumn, orange leaves, snow, flowers, fruit, creature, character, monkey, bird, text, watermark, hard black outline, oversaturated, neon, bright green, saturated green, glow, blurry, 3d render, photograph",
+      "status": "draft",
+      "candidates": 4,
+      "notes": "Jungle tree 4/4. Hanging lianas break the canopy outline and give vertical interest when the player walks behind it. Authored at 400px (the pixflux cap) and DISPLAYED at 400px 1:1 — the forest sheet's 1024px cells cannot be reproduced by the API, and 1:1 beats a fake upscale. Trunk must sit centered at the bottom of the frame: the y-sort base and the baked trunk hitbox both key off it. PARKED 2026-08-08 as `draft` so a bare `pnpm art:generate --category=environment` cannot re-spend on it. The prompt is kept deliberately (draft normally means no prompt) so the wording survives for whoever picks this up. DO NOT flip back to `pending` without reading the tree section of docs/biome-ecology-pass2-plan.md: the first batch failed on a RESOLUTION CEILING, not on wording, and re-running it as-is will just buy the same result again.",
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "side"
+      }
     }
   ]
 }

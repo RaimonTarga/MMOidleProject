@@ -1,4 +1,9 @@
-import { GAME_CONFIG, getNodeTrees } from '@mmo-idle/shared';
+import {
+  GAME_CONFIG,
+  RESOLVED_NODE_FEATURES,
+  getNodeTrees,
+  type NodeFeatureShape,
+} from '@mmo-idle/shared';
 
 /**
  * Deterministic per-node ground layout: which parts of a node are "dirt"
@@ -58,6 +63,18 @@ export interface GroundStyleConfig {
   patterns: Array<{ pattern: DirtPatternName; weight: number }>;
   /** See GroundLayout.invert: discs become pockets of the BASE material. */
   invert?: boolean;
+  /**
+   * Route the discs AROUND this node's authored features instead of letting them
+   * land on top.
+   *
+   * Only meaningful where a feature is dressed by its own art and the ground is
+   * supposed to stay out of its way — jungle, where the discs are open floor and
+   * the features are bush thickets, so an overlap paints walkable-looking ground
+   * inside a slow/conceal/ambush zone. Deliberately OFF elsewhere: swamp rot
+   * pools are painted BY the functional Wang sheet and need the ground to cover
+   * them, not dodge them.
+   */
+  avoidsFeatures?: boolean;
 }
 
 export const GROUND_LAYOUTS: Partial<Record<string, GroundStyleConfig[]>> = {
@@ -146,6 +163,9 @@ export const GROUND_LAYOUTS: Partial<Record<string, GroundStyleConfig[]>> = {
       material: 'overgrowth',
       weight: 1,
       invert: true,
+      // The open floor is the SAFE LANE the ambush ecology is read against, so
+      // it has to thread between the thickets rather than through them.
+      avoidsFeatures: true,
       patterns: [
         { pattern: 'off-center-patch', weight: 3 },
         { pattern: 'loose-center-path', weight: 2 },
@@ -397,6 +417,107 @@ function pickWeighted<T extends { weight: number }>(rng: Rng, options: T[]): T {
  * The deterministic dirt layout for one node, or null when the biome has no
  * layered ground. Cheap enough to recompute on every node repaint.
  */
+
+/** Distance from a point to a feature shape's edge (negative = inside). */
+function shapeClearance(shape: NodeFeatureShape, x: number, y: number): number {
+  switch (shape.kind) {
+    case 'circle':
+      return Math.hypot(x - shape.x, y - shape.y) - shape.radius;
+    case 'ellipse': {
+      // Cheap conservative read: treat it as its larger axis. Ground discs are
+      // coarse, so over-avoiding by a few px is invisible and always safe.
+      const r = Math.max(shape.halfW, shape.halfH);
+      return Math.hypot(x - shape.x, y - shape.y) - r;
+    }
+    default: {
+      const dx = Math.max(Math.abs(x - shape.x) - shape.halfW, 0);
+      const dy = Math.max(Math.abs(y - shape.y) - shape.halfH, 0);
+      return Math.hypot(dx, dy);
+    }
+  }
+}
+
+/** The centre a shape pushes away from. */
+function shapeCentre(shape: NodeFeatureShape): { x: number; y: number } {
+  return { x: shape.x, y: shape.y };
+}
+
+const FEATURE_CLEAR_PAD = 40;
+const MIN_DISC_R = 60;
+const RELAX_PASSES = 4;
+
+/**
+ * Push ground discs out of the node's authored feature footprints.
+ *
+ * A post-pass over whatever the pattern generated, rather than a constraint
+ * threaded through every generator: the patterns stay pure shape-makers, and
+ * there is exactly one place that reasons about features. Discs are PUSHED
+ * first and only shrunk or dropped when they cannot be moved clear, so a
+ * "path in from the edge" still arrives — it just bends around the thicket
+ * instead of vanishing.
+ */
+function routeDiscsAroundFeatures(
+  discs: DirtDisc[],
+  nodeId: string,
+  W: number,
+  H: number,
+): DirtDisc[] {
+  const shapes = (RESOLVED_NODE_FEATURES[nodeId] ?? []).map((f) => f.shape);
+  if (shapes.length === 0) return discs;
+
+  const out: DirtDisc[] = [];
+  for (const disc of discs) {
+    let { x, y, r } = disc;
+
+    for (let pass = 0; pass < RELAX_PASSES; pass++) {
+      let worst: { shape: NodeFeatureShape; overlap: number } | null = null;
+      for (const shape of shapes) {
+        const overlap = r + FEATURE_CLEAR_PAD - shapeClearance(shape, x, y);
+        if (overlap > 0 && (!worst || overlap > worst.overlap)) {
+          worst = { shape, overlap };
+        }
+      }
+      if (!worst) break;
+
+      const c = shapeCentre(worst.shape);
+      let vx = x - c.x;
+      let vy = y - c.y;
+      const len = Math.hypot(vx, vy);
+      if (len < 1e-3) {
+        // Concentric with the thicket — pick a stable direction from the disc's
+        // own coordinates so the result stays deterministic across clients.
+        vx = 1;
+        vy = 0;
+      } else {
+        vx /= len;
+        vy /= len;
+      }
+      x += vx * worst.overlap;
+      y += vy * worst.overlap;
+
+      // A disc shoved past the node edge is worse than a smaller one, so clamp
+      // back inside and let the next pass trade radius for fit instead.
+      const cx = Math.min(W, Math.max(0, x));
+      const cy = Math.min(H, Math.max(0, y));
+      if (cx !== x || cy !== y) {
+        x = cx;
+        y = cy;
+        r = Math.max(MIN_DISC_R, r * 0.8);
+      }
+    }
+
+    // Still buried after relaxing? Shrink to whatever actually fits, and drop it
+    // only if even the floor size cannot clear the thicket.
+    let clear = Math.min(...shapes.map((sh) => shapeClearance(sh, x, y)));
+    if (clear < r + FEATURE_CLEAR_PAD) {
+      r = clear - FEATURE_CLEAR_PAD;
+    }
+    if (r >= MIN_DISC_R) out.push({ x, y, r });
+  }
+
+  return out;
+}
+
 export function computeGroundLayout(biomeGroup: string, nodeId: string): GroundLayout | null {
   const styles = GROUND_LAYOUTS[biomeGroup];
   if (!styles || styles.length === 0) return null;
@@ -405,7 +526,10 @@ export function computeGroundLayout(biomeGroup: string, nodeId: string): GroundL
   const rng = mulberry32(hashString(`${nodeId}:ground-layout:v1`));
   const style = pickWeighted(rng, styles);
   const pattern = pickWeighted(rng, style.patterns).pattern;
-  const discs = PATTERN_GENERATORS[pattern](rng, W, H, nodeId);
+  const generated = PATTERN_GENERATORS[pattern](rng, W, H, nodeId);
+  const discs = style.avoidsFeatures
+    ? routeDiscsAroundFeatures(generated, nodeId, W, H)
+    : generated;
   const invert = style.invert ?? false;
   const isDirt = (x: number, y: number): boolean => {
     for (const d of discs) {
