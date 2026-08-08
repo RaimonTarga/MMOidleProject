@@ -10,6 +10,7 @@ import { entityNetworkId } from "../ecs/entity";
 import { componentsForEntity } from "../ecs/deltaEncoder";
 import type { DirtyDrain } from "../ecs/dirtyTracker";
 import type { BroadcastStats } from "../telemetry/nodeTelemetry";
+import { buildGroundZoneViews } from "../systems/world/groundZones";
 
 export interface NodeDeltaResult {
   snapshot: DeltaSnapshot;
@@ -84,6 +85,9 @@ export function buildNodeDelta(
 
   const dungeonGauntlet = world.buildDungeonGauntletView(nodeId);
   if (dungeonGauntlet) snapshot.dungeonGauntlet = dungeonGauntlet;
+
+  const groundZones = buildGroundZoneViews(world, nodeId, Date.now());
+  if (groundZones) snapshot.groundZones = groundZones;
 
   let deltaBytes = 0;
   try {

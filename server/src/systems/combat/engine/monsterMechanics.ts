@@ -3,6 +3,7 @@ import {
   setCounter,
   type MonsterDefinition,
   type MonsterDotEffect,
+  type Vec2,
 } from "@mmo-idle/shared";
 import type { MonsterEntity } from "../../../ecs/entity";
 
@@ -31,6 +32,14 @@ const SHIELD_SESSION_KEY = "t4EnemyShieldSession";
 const CHARGE_CAST_ENDS_KEY = "chargeCastEndsAt"; // >now while winding up (0 = idle)
 const CHARGE_CD_NEXT_KEY = "chargeCdNextAt"; // earliest time the next cast may begin
 const CHARGE_SESSION_KEY = "chargeSession"; // combat-session token (re-arm on engage)
+// Planted impact point of an `aoe` charge. Captured once at cast start and never
+// re-read from the target, which is what makes the slam COMMITTED: the circle
+// lands where it was drawn, so walking out of it is real counterplay.
+const CHARGE_AOE_X_KEY = "chargeAoeX";
+const CHARGE_AOE_Y_KEY = "chargeAoeY";
+// Marks that the pending cast is a planted ground slam (1) rather than a
+// target-following power shot (0). Read on the out-of-range bail path.
+const CHARGE_AOE_ACTIVE_KEY = "chargeAoeActive";
 
 /** Combat-entry timestamp for the monster's current aggro session (or `now`). */
 function combatSession(monster: MonsterEntity, now: number): number {
@@ -178,6 +187,30 @@ export function beginCharge(
   castMs: number,
 ): void {
   setCounter(monster.tracksCombat, CHARGE_CAST_ENDS_KEY, now + castMs);
+  setCounter(monster.tracksCombat, CHARGE_AOE_ACTIVE_KEY, 0);
+}
+
+/**
+ * Plant the impact point of an `aoe` charge. Called once, immediately after
+ * `beginCharge`, with the target's position AT CAST START.
+ */
+export function plantChargeAoe(monster: MonsterEntity, at: Vec2): void {
+  const cs = monster.tracksCombat;
+  setCounter(cs, CHARGE_AOE_ACTIVE_KEY, 1);
+  setCounter(cs, CHARGE_AOE_X_KEY, at.x);
+  setCounter(cs, CHARGE_AOE_Y_KEY, at.y);
+}
+
+/** True while the pending cast is a planted ground slam. */
+export function isChargeAoePlanted(monster: MonsterEntity): boolean {
+  return getCounter(monster.tracksCombat, CHARGE_AOE_ACTIVE_KEY) === 1;
+}
+
+/** The planted impact point, or null when the pending cast isn't a slam. */
+export function chargeAoeImpactPoint(monster: MonsterEntity): Vec2 | null {
+  const cs = monster.tracksCombat;
+  if (getCounter(cs, CHARGE_AOE_ACTIVE_KEY) !== 1) return null;
+  return { x: getCounter(cs, CHARGE_AOE_X_KEY), y: getCounter(cs, CHARGE_AOE_Y_KEY) };
 }
 
 /** Consume a completed cast and put the charged attack on cooldown. */
@@ -187,6 +220,7 @@ export function completeCharge(
   cooldownMs: number,
 ): void {
   setCounter(monster.tracksCombat, CHARGE_CAST_ENDS_KEY, 0);
+  setCounter(monster.tracksCombat, CHARGE_AOE_ACTIVE_KEY, 0);
   setCounter(monster.tracksCombat, CHARGE_CD_NEXT_KEY, now + cooldownMs);
 }
 
@@ -194,6 +228,7 @@ export function completeCharge(
  *  the cooldown untouched so it retries once the situation allows. */
 export function cancelCharge(monster: MonsterEntity): void {
   setCounter(monster.tracksCombat, CHARGE_CAST_ENDS_KEY, 0);
+  setCounter(monster.tracksCombat, CHARGE_AOE_ACTIVE_KEY, 0);
 }
 
 /**

@@ -2,6 +2,7 @@ import { TEST_ROOM_NODE_ID } from '@mmo-idle/shared';
 import type { World } from './World';
 import { removeMonsterEntity } from './monsterLifecycle';
 import { ensurePopulation, ensureBoss } from '../systems/world/spawning';
+import { clearGroundZonesForNode } from '../systems/world/groundZones';
 import {
   clearDungeonGauntletRuntime,
   ensureDungeonGauntlet,
@@ -16,6 +17,7 @@ export function freezeNode(world: World, nodeId: string): void {
     removeMonsterEntity(world, m.isMonster.id);
   }
   clearDungeonGauntletRuntime(world, nodeId);
+  clearGroundZonesForNode(world, nodeId);
   world.nextMonsterIdByNode.delete(nodeId);
   world.reconcileMonsterCounts();
 

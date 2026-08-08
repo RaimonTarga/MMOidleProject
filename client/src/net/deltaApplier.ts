@@ -28,6 +28,7 @@ import { refreshNodeDecorState } from "../scenes/game/overlays";
 import { setVoidThroneHazardLifted } from "../scenes/game/voidThrone";
 import { syncVoidOverlordRespawn } from "../render/voidOverlordTomb";
 import { syncDungeonHazards } from "../render/dungeonHazards";
+import { syncGroundZones } from "../render/groundZones";
 
 // Last frame's resolved target — lets us detect when a target dies (its id
 // vanishes from view) so the target frame can drain HP to 0 before fading.
@@ -159,6 +160,7 @@ export function applyDelta(
   syncVoidOverlordRespawn(state, snapshot.voidOverlordRespawn, scene);
   setDungeonGauntlet(snapshot.dungeonGauntlet ?? null);
   syncDungeonHazards(scene, snapshot.dungeonGauntlet);
+  syncGroundZones(scene, snapshot.groundZones);
   refreshMonsterTints(state);
   if (snapshot.voidOverlordRespawn) {
     setVoidThroneHazardLifted(scene, true);

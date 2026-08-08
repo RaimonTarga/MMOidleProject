@@ -8,6 +8,7 @@ import {
 import { entityNetworkId } from "../ecs/entity";
 import { componentsForEntity, pickComponents } from "../ecs/deltaEncoder";
 import type { World } from "./World";
+import { buildGroundZoneViews } from "../systems/world/groundZones";
 
 /**
  * Build a full, privacy-filtered node projection for anonymous viewers.
@@ -72,6 +73,9 @@ export function buildSpectatorNodeSnapshot(
       remainingMs: Math.max(0, marker.respawnAt - Date.now()),
     };
   }
+
+  const groundZones = buildGroundZoneViews(world, nodeId, Date.now());
+  if (groundZones) snapshot.groundZones = groundZones;
 
   return snapshot;
 }

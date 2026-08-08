@@ -39,6 +39,10 @@ import { updatePartyFollow } from "../systems/world/partyFollow";
 import { updateMovement } from "../systems/world/movement";
 import { updateMobilityState } from "../systems/world/mobility/mobilityBoots";
 import { updateNodeFeatures } from "../systems/world/nodeFeatures";
+import {
+  updateGroundZones,
+  type RuntimeGroundZone,
+} from "../systems/world/groundZones";
 import { updateMonsters } from "../systems/combat/ai/ai";
 import { updatePacks } from "../systems/combat/ai/packs";
 import { updateSwarm } from "../systems/combat/ai/swarm";
@@ -229,6 +233,13 @@ export class World {
   /** Client-facing boss death markers keyed by node id. */
   bossRespawnMarkers = new Map<string, BossRespawnMarker>();
   /**
+   * Runtime-only combat circles keyed by node id (telegraphed slams). Cleared on
+   * node freeze and never persisted — same lifetime rule as monsters.
+   */
+  groundZones = new Map<string, RuntimeGroundZone[]>();
+  /** Monotonic id source for ground zones. */
+  groundZoneSeq = 0;
+  /**
    * Persist (marker) or clear (null) the server-global Void Overlord respawn
    * cooldown so it survives node freeze/thaw and server restarts. Set by
    * index.ts at boot; left null in benchmarks/tests (no DB).
@@ -359,6 +370,7 @@ export class World {
     updateMobilityState(this, dt);
     updateMovement(this, dt, now);
     updateNodeFeatures(this, dt);
+    updateGroundZones(this, now);
     updateTransitions(this);
     if (IS_DEV) updateTestRoomInteract(this, now);
     updatePacks(this, now);

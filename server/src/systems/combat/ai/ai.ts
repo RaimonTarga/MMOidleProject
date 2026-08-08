@@ -17,6 +17,10 @@ import {
 import type { ControlsMonster } from "@mmo-idle/shared";
 import { NODE_REGISTRY } from "../../../world/nodeRegistry";
 import { isMonsterStunned } from "../status/stun";
+import {
+  isChargeAoePlanted,
+  isMonsterCharging,
+} from "../engine/monsterMechanics";
 import { isMonsterKnockedBack } from "../damage/knockback";
 import { setEntityMotion, stopEntity } from "../../world/movement";
 import { resolveObstaclesForNode } from "../../world/nodeFeatures";
@@ -237,6 +241,18 @@ export function updateMonsters(world: World, dt: number, now: number) {
 
       // In-combat attack ramp (Volcano) advances while a target is held.
       tickCombatRamp(e, dt);
+
+      // COMMITTED GROUND SLAM: while a planted `chargedAttack.aoe` wind-up is
+      // pending the monster is locked in its swing — it neither chases nor
+      // re-standoffs, and it holds the "attacking" state so the combat loop
+      // resolves the cast instead of aborting it. Without this hold, a player
+      // stepping out of the telegraph would flip the mob to "chasing" and
+      // cancel the very slam they were supposed to be dodging.
+      if (isChargeAoePlanted(e) && isMonsterCharging(e, now)) {
+        e.hasAwareness.state = "attacking";
+        stopMonster(world, e);
+        continue;
+      }
 
       const monsterDef = MONSTER_DATABASE.get(e.isMonster.monsterTypeId);
       // A boss 'morph' action can flip the kite flag at runtime.

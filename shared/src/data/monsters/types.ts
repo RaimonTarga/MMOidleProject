@@ -562,5 +562,22 @@ export interface MonsterDefinition {
      * Scent-of-Blood → Savage Maul predator sequence.
      */
     marksTarget?: { durationMs: number };
+    /**
+     * GROUND-SLAM rider. Turns the charge from a target-following power shot into
+     * a COMMITTED circle: the impact point is planted at the target's position
+     * when the cast BEGINS, a telegraph zone is broadcast for the wind-up, and on
+     * completion everyone standing inside `radius` is hit — the original target
+     * included only if they are still in it. Walking out is the counterplay, so
+     * the cast deliberately does NOT abort when the target leaves attack range
+     * (a stun, freeze or knockback still interrupts it).
+     *
+     * Each victim resolves through the full `runMonsterAttack` pipeline rather
+     * than the raw `applyMonsterAoe` splash path, so the player damage-cap, DR
+     * and Brace apply to the slam exactly as they do to a normal charged hit.
+     *
+     * `damageMult` stacks on top of `multiplier` (default 1) — use it when the
+     * splash should hit softer than a single-target spike of the same charge.
+     */
+    aoe?: { radius: number; damageMult?: number };
   };
 }

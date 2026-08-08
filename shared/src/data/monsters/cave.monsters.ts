@@ -51,6 +51,16 @@ export const caveMonsterEntries = [
     rewards: { essence: 13, essenceType: 'red', level: 1, biomeXp: 90 },
     ai: { wanderRadius: 130, leashRange: 460, idleMinMs: 3000, idleMaxMs: 8000 },
     chargeOnAggro: { speedMult: 2.5, durationMs: 1200 },
+    // GROUND SLAM — the cave's readable "get out of the circle" beat. A long
+    // wind-up plants a wide circle on the ground; it lands there whether or not
+    // you are still in it, so footwork (not mitigation) is the answer. Generous
+    // initialCooldownMs keeps it off the opener — you meet the brute first, the
+    // slam second. PLACEHOLDER numbers — balance pass owns them.
+    chargedAttack: {
+      name: 'Ground Slam', castMs: 1800, cooldownMs: 12000, initialCooldownMs: 9000,
+      multiplier: 2.2, fx: 'strong-kick',
+      aoe: { radius: 110 },
+    },
     // Cave elite: patrols a fixed loop around its territory (predictable route the
     // player can time fights against / avoid overpulling). Waypoints relative to
     // spawn; placeholder shape + holds — user balance pass.
@@ -85,6 +95,14 @@ export const caveMonsterEntries = [
     rewards: { essence: 23, essenceType: 'red', level: 1, biomeXp: 145 },
     ai: { wanderRadius: 130, leashRange: 470, idleMinMs: 3000, idleMaxMs: 8500 },
     chargeOnAggro: { speedMult: 2.0, durationMs: 1200 },
+    // GROUND SLAM — wider and slower than the brute's; the T2 escalation is
+    // FOOTPRINT, not speed, so the tell stays readable while the safe ground
+    // shrinks. PLACEHOLDER numbers — balance pass owns them.
+    chargedAttack: {
+      name: 'Ground Slam', castMs: 2000, cooldownMs: 13000, initialCooldownMs: 9500,
+      multiplier: 2.4, fx: 'strong-kick',
+      aoe: { radius: 130 },
+    },
     // The "brute" that holds territory on a fixed patrol (lurkers/spiders roam solo).
     patrol: { waypoints: [ { x: 140, y: -70 }, { x: 140, y: 130 }, { x: -130, y: 90 } ], mode: 'loop', holdMinMs: 1800, holdMaxMs: 4000 },
   }],
@@ -124,6 +142,14 @@ export const caveMonsterEntries = [
     rewards: { essence: 83, essenceType: 'red', level: 3, biomeXp: 500 },
     ai: { wanderRadius: 120, leashRange: 460, idleMinMs: 3000, idleMaxMs: 8500 },
     chargeOnAggro: { speedMult: 2.0, durationMs: 1200 },
+    // GROUND SLAM — the elite ceiling's version: widest footprint, longest tell.
+    // Still escapable on foot at player base speed; that is the contract.
+    // PLACEHOLDER numbers — balance pass owns them.
+    chargedAttack: {
+      name: 'Ground Slam', castMs: 2200, cooldownMs: 14000, initialCooldownMs: 10000,
+      multiplier: 2.6, fx: 'strong-kick',
+      aoe: { radius: 145 },
+    },
     // T3 brute — patrols its territory (the elite ceiling holding the deep caverns).
     patrol: { waypoints: [ { x: 130, y: -60 }, { x: 130, y: 120 }, { x: -120, y: 80 } ], mode: 'loop', holdMinMs: 2000, holdMaxMs: 4500 },
   }],

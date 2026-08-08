@@ -47,6 +47,7 @@ import {
   BIOME_TEXTURES,
   GRAVES_KEY,
   GRAVE_FRAME_SIZE,
+  FEATURE_SCATTER,
   NODE_DECOR,
   emoteAnimKey,
   emoteTextureKey,
@@ -123,6 +124,7 @@ import {
   fastForwardMapSlide,
   tickMapSlide,
 } from "./mapTransition";
+import { drawGroundZones } from "../../render/groundZones";
 
 const CAMERA_HOLD_MARGIN = 80;
 const CAMERA_LERP = 0.1;
@@ -275,6 +277,16 @@ export function preloadGameAssets(scene: GameScene): void {
         decorKeysSeen.add(s.openKey);
         scene.load.image(s.openKey, s.openFile);
       }
+    }
+  }
+  // Feature scatter props (jungle ambush bushes) load with the decor above
+  // rather than per-biome: they dress authored NODE_FEATURES, which are not
+  // gated on the biome-streaming path.
+  for (const spec of FEATURE_SCATTER) {
+    for (const variant of spec.variants) {
+      if (decorKeysSeen.has(variant.key)) continue;
+      decorKeysSeen.add(variant.key);
+      scene.load.image(variant.key, variant.file);
     }
   }
 
@@ -473,6 +485,7 @@ export function updateGameScene(scene: GameScene, delta: number): void {
     drawTargetIndicator(scene.state, scene);
     drawCooldownBars(scene.state);
     drawCastBars(scene.state, scene);
+    drawGroundZones(scene);
     drawSkillCallouts(scene.state);
     updateEffectOverlays(scene.state, scene, dt);
     updateMovementEffects(scene.state, scene);

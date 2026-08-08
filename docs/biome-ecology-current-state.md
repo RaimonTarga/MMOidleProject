@@ -1,10 +1,16 @@
-# Biome Identity / Combat Ecology — Current State (audited 2026-06-24)
+# Biome Identity / Combat Ecology — Current State (audited 2026-08-08)
 
-**Companion to:** `docs/archive/biome-ecology-plan.md` (the program plan).
-**Roadmap step:** 12. **Status:** 📋 spec'd, primitives not yet built.
+**Companion to:** `docs/archive/biome-ecology-plan.md` (the Step 12 program plan) and
+`docs/biome-ecology-pass2-plan.md` (the in-flight Pass 2 program).
+**Roadmap step:** 12. **Status:** ✅ Step 12 primitives shipped; Pass 2 in progress.
 
-This captures what exists in code today before the Step 12 program touches it. Read source
-when it disagrees with this doc.
+Read source when it disagrees with this doc.
+
+> **Audit note 2026-08-08:** this doc previously claimed "spec'd, primitives not yet built".
+> That was stale by roughly six weeks — packs/call-allies, fixed patrol routes and swarm
+> convergence had all shipped, and `server/test/biomeEcology.test.ts` pins them. Sections 2,
+> 3 and 8 are corrected accordingly; the old "net-new for Step 12" list is now an inventory
+> of what exists.
 
 > **Update 2026-06-28:** monster attack-mode was refactored — `ranged`/`kite` are no longer
 > separate booleans but derive from a single `behavior: 'melee' | 'ranged' | 'kiter'` field, and
@@ -50,7 +56,9 @@ or are folded into it.
   `minionEntitiesInNode` within `hasAwareness.pullRange` (× `playerDetectionMult(player)` from
   mobility boots — stealth already reduces effective pull). `bestCandidate` picks by
   `targeting.mode` (`closest` | `lowest-hp`).
-- **No "call allies" / shared aggro / alert propagation.** Each monster aggros independently.
+- **Call-allies SHIPPED** (`ai/packs.ts`): `updatePacks` propagates a pack alpha's aggro target
+  onto nearby un-aggroed followers and emits an `ecology-pulse` (`pulse: 'pack-call'`) telegraph.
+  Monsters outside a pack still aggro independently.
 - `targeting.ignoresTaunts` exists as a hook; taunt system partial.
 
 `setAggroTarget` / `setAttackTarget` (`ai/targeting.ts`) are the only sanctioned mutators.
@@ -65,7 +73,12 @@ or are folded into it.
 - Uses `Math.random()` freely — **the world/spawn layer is NOT deterministic** (only combat
   *outcomes* are deterministic: evasion accumulator, cadence counters, etc.). So group spawning
   and patrol-anchor placement may use RNG like the rest of spawning.
-- **No group/pack spawning, no patrol-route anchors, no formation placement.**
+- `spawnPack(world, nodeId, alphaTypeId, pos)` (spawning/index.ts:892) — clustered alpha +
+  typed followers sharing a `packId` via the `inPack` component. Survivors scatter (are
+  removed) when the alpha dies (`onPackAlphaDead`).
+- Fixed patrol routes SHIPPED — `patrol: { waypoints, mode, holdMinMs, holdMaxMs }` on the
+  monster def replaces random wander while un-aggroed. Waypoints are relative to spawn.
+- Swarm convergence SHIPPED — `ai/swarm.ts` `updateSwarm`.
 
 ## 4. Terrain / hazards (already built — do NOT rebuild)
 
@@ -76,6 +89,9 @@ or are folded into it.
 - Runtime toggle via boss `set-feature-block`. `updateNodeFeatures` ticks them.
 
 Swamp pools, Mountain chokepoints, Volcanic vents = **authoring on this**, not new tech.
+
+Node features are STATIC authored terrain living for the life of the node. Their runtime
+counterpart is section 9's ground zones — circles spawned by combat that live for seconds.
 
 ## 5. Boss / encounter expression (already built)
 
@@ -94,8 +110,13 @@ Swamp pools, Mountain chokepoints, Volcanic vents = **authoring on this**, not n
   hasHealth, dealsDamage, performsAttack, mitigatesDamage, hasAwareness, hasStatus`.
 - Monsters are **ephemeral** (node freeze/thaw) — never persisted. So any new networked monster
   field is runtime-only: **no DB migration**, just allowlist + dev-boot invariant + client render.
-- Dev boot runs marker/network invariants — adding a networked component means updating the
+- Dev boot runs marker/network invariants — adding a networked COMPONENT means updating the
   allowlist and passing the invariant (fix the invariant, not the check).
+- **Node-scoped payloads are a different seam and touch neither.** `DeltaSnapshot`
+  (`shared/src/protocol/delta.ts`) carries per-node, non-entity state alongside the entity
+  deltas — `voidOverlordRespawn`, `dungeonGauntlet`, and now `groundZones`. They are built in
+  `server/src/world/nodeDelta.ts` (and `spectatorSnapshot.ts`) and read straight off the
+  snapshot client-side. Reach for this before inventing a component.
 
 ## 7. Existing starter-biome mobs (retrofit targets)
 
@@ -105,19 +126,61 @@ Swamp pools, Mountain chokepoints, Volcanic vents = **authoring on this**, not n
 | Forest | `forest-slime`, `wolf`, `ancient-wolf` (chargeOnAggro 3×), `ironwood-golem`, `canopy-sprite` | wolf charge; golem tank; sprite ranged |
 | Swamp | `bog-slime`, `mud-toad`, `swamp-hydra`, `bog-witch`, `mire-stalker` | witch caster; hydra; pools via dotEffect |
 | Mountain | `cliff-hopper`, `ridge-archer`, `granite-titan`, `stone-eagle`, `peak-archer`/Boulder Thrower | archers ranged; titan tank |
-| Cave | `cave-lurker`, `cave-brute`, `giant-spider`, `cave-troll`, `cave-gargoyle` | brute bruiser; gargoyle ranged |
+| Cave | `cave-lurker`, `cave-brute`, `giant-spider`, `cave-troll`, `cave-gargoyle`, `deep-spider`, `cavern-troll`, `crystal-gargoyle` | brute/troll GROUND SLAM (section 9); gargoyle ranged; spider evasion + venom |
 
 Advanced biomes exist as data sets: Jungle, Desert, Volcano, Tundra, Graveyard, Trench
 (`shared/src/data/monsters/*.monsters.ts`, `advancedBiomesB.ts`).
 
-## 8. Net-new for Step 12
+## 8. Step 12 inventory (SHIPPED — do not rebuild)
 
-Only **coordinated multi-monster AI** + its **telegraphs** are new:
-1. **Packs + call-allies** — alpha↔follower grouping, assist, alert propagation / shared aggro.
-2. **Fixed patrol routes** — deterministic-path patrol vs random wander.
-3. **Swarm convergence** — group spawning + clustering / convergence pressure.
-4. **Light telegraphs** — networked hints (alpha indicator, call-allies ping, patrol state) so
-   players can read & counter the ecology.
+The coordinated multi-monster AI and its telegraphs all landed:
 
-Everything else the biomes need (terrain, hazards, ranged/kite, charge, DoT, boss scripts,
-gauntlet) **already exists** and is authored, not engineered.
+1. **Packs + call-allies** — `inPack` component, `spawnPack`, `updatePacks`, `onPackAlphaDead`.
+   Alpha aggro propagates to followers; survivors scatter on alpha death.
+2. **Fixed patrol routes** — `patrol` on the monster def; a deterministic route replaces random
+   wander while un-aggroed.
+3. **Swarm convergence** — `ai/swarm.ts`.
+4. **Telegraphs** — the `ecology-pulse` combat event (`pack-call` | `sun-mark` | `frost-shatter`).
+
+Pinned by `server/test/biomeEcology.test.ts`.
+
+## 9. Ground zones + the charged-slam rider (Pass 2, Session 1 — SHIPPED)
+
+The runtime counterpart to section 4's static node features: node-scoped circles spawned by
+combat.
+
+- **Shared** — `shared/src/world/groundZones.ts` defines `GroundZoneKind` and `GroundZoneView`
+  (`durationMs` + `remainingMs`, so the client tweens the fill locally between 5 Hz packets
+  instead of stepping four times). Rides `DeltaSnapshot.groundZones`; no allowlist change.
+- **Server** — `server/src/systems/world/groundZones.ts`. `world.groundZones: Map<nodeId, ...>`,
+  ticked by `updateGroundZones` beside `updateNodeFeatures`, cleared by `freezeNode`.
+  Runtime-only, never persisted. Zones are keyed by OWNER so every cast-abort path retires its
+  own circle; the tick is only a sweeper for owners that vanished mid-cast.
+- **Client** — `client/src/render/groundZones.ts` (`syncGroundZones` on delta,
+  `drawGroundZones` per frame). Lifted from `render/dungeonHazards.ts`, which stays as the
+  gauntlet's own thing.
+- **Only `'slam-telegraph'` mode exists.** A ticking `hazard` mode arrives with its first
+  consumer (Wasteland death pools) rather than shipping untuned with no caller.
+
+`chargedAttack.aoe = { radius, damageMult? }` (`shared/src/data/monsters/types.ts`) turns a
+charge into a **committed ground slam**:
+
+- The impact point is planted at the target's position when the wind-up BEGINS
+  (`plantChargeAoe`, stored as counters on `tracksCombat`) and is never re-read from the target.
+- The cast deliberately does **not** abort when the target leaves attack range, and
+  `updateMonsters` holds the mob in `attacking` for the duration instead of letting it chase.
+  Without both, stepping out of the circle would cancel the very slam you were dodging.
+- Stun, freeze and knockback still interrupt it — those paths are untouched.
+- Resolution goes through `runMonsterAttack` **per victim**, not `applyMonsterAoe`. That path
+  applies only plating + flat DR; a cap-tripping slam has to fold `chargeMult` into the
+  empowered-spike path so the player damage-cap, Brace and shields apply, exactly as they do
+  for a single-target charged hit.
+- Consumers: `cave-brute` (T1), `cave-troll` (T2), `cavern-troll` (T3). **Every slam number is
+  a placeholder** — castMs / radius / multiplier / cooldowns belong to the balance pass.
+
+Pinned by `server/test/caveGroundSlam.test.ts`.
+
+Everything the remaining Pass 2 biomes need beyond section 9 (terrain, hazards, ranged/kite,
+charge, DoT, boss scripts, gauntlet) **already exists** and is authored, not engineered. The
+three outstanding primitives — player damage amplifiers (P3), the ambient node ramp (P4) and
+the corpse registry (P5) — are scoped in `docs/biome-ecology-pass2-plan.md`.

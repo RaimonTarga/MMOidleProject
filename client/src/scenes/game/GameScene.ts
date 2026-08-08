@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { createRenderState, type RenderState } from '../../render/state';
 import type { NeighborLayer } from '../../render/neighborScenes';
 import type { AltarPromptHandle } from '../../render/altarPrompt';
+import type { GroundZoneSprite } from '../../render/groundZones';
 import type { GameSocket } from '../../net/socket';
 import { isSpectatorSession } from '../../net/session';
 import {
@@ -47,6 +48,8 @@ export class GameScene extends Phaser.Scene {
   nodeBiomeDecor: Phaser.GameObjects.Image[] = [];
   nodePlaceholders: Phaser.GameObjects.Graphics[] = [];
   dungeonHazards: Map<string, Phaser.GameObjects.Graphics> = new Map();
+  /** Telegraphed combat circles (slam wind-ups), keyed by server zone id. */
+  groundZones: Map<string, GroundZoneSprite> = new Map();
   /** Scattered forest trees in the active node, depth-sorted for walk-behind. */
   nodeTrees: Phaser.GameObjects.Image[] = [];
   debugGraphics!: Phaser.GameObjects.Graphics;

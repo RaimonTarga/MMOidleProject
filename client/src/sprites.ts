@@ -1327,6 +1327,56 @@ export const BIOME_DECOR: Partial<Record<string, BiomeDecorArt[]>> = {
   ],
 };
 
+/**
+ * Client-only fill for a node feature whose footprint is dressed by MANY scattered
+ * props instead of one stretched sprite. `NODE_DECOR` stretches a single image to
+ * `displayW x displayH`, which is right for an altar and wrong for a 600px-wide
+ * thicket — a 96px bush blown up 6x is mush. This scatters instead, so the region
+ * reads as dense undergrowth and its edge stays ragged rather than a clean circle.
+ *
+ * Purely visual: the authoritative slow/conceal geometry is the shared
+ * `NODE_FEATURES` shape and is untouched by anything here.
+ */
+export interface FeatureScatterArt {
+  /** Every feature whose id starts with this gets this scatter. */
+  featureIdPrefix: string;
+  /** Cycled per-prop; more variants means less obvious repetition. */
+  variants: Array<{ key: string; file: string }>;
+  /** World-pixel size before a deterministic per-prop scale jitter. */
+  displayW: number;
+  displayH: number;
+  /**
+   * Grid step as a fraction of `displayW`. Below 1 the props overlap, which is
+   * what turns discrete sprites into a continuous mass. ~0.6 is a dense thicket.
+   */
+  spacing: number;
+  /** Keep props y-sorted with entities so the player is occluded inside them. */
+  ySort?: boolean;
+  alpha?: number;
+}
+
+/**
+ * Jungle ambush bush — the concealment region the Jungle identity is built on.
+ * Four accepted variants, flipped and scale-jittered, because the generated art
+ * is radially symmetric and a single stamp repeated would read as a grid.
+ */
+export const FEATURE_SCATTER: FeatureScatterArt[] = [
+  {
+    featureIdPrefix: 'jungle_bush',
+    variants: [
+      { key: 'jungle_ambush_bush', file: '/assets/environment/jungle/ambush-bush.png' },
+      { key: 'jungle_ambush_bush_2', file: '/assets/environment/jungle/ambush-bush-variant-2.png' },
+      { key: 'jungle_ambush_bush_3', file: '/assets/environment/jungle/ambush-bush-variant-3.png' },
+      { key: 'jungle_ambush_bush_4', file: '/assets/environment/jungle/ambush-bush-variant-4.png' },
+    ],
+    displayW: 150,
+    displayH: 150,
+    spacing: 0.7,
+    ySort: true,
+    alpha: 0.95,
+  },
+];
+
 /** Client-only visual art for a shared NODE_FEATURES entry. */
 export interface NodeDecorArt {
   featureId: string;

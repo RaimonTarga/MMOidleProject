@@ -1,5 +1,6 @@
 import type { CombatEvent } from '../index';
 import type { DungeonGauntletView } from '../dungeons';
+import type { GroundZoneView } from '../world/groundZones';
 import type { Vec2 } from '../systems/spatial';
 import type {
   EntityKind,
@@ -41,4 +42,9 @@ export interface DeltaSnapshot {
   events: CombatEvent[];
   voidOverlordRespawn?: VoidOverlordRespawnState;
   dungeonGauntlet?: DungeonGauntletView;
+  /**
+   * Node-scoped combat circles (telegraphed slams). Runtime-only and omitted
+   * entirely when the node has none, so quiet nodes pay nothing for it.
+   */
+  groundZones?: GroundZoneView[];
 }

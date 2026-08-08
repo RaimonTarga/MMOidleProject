@@ -20,6 +20,9 @@ import {
   beginCharge,
   completeCharge,
   cancelCharge,
+  plantChargeAoe,
+  isChargeAoePlanted,
+  chargeAoeImpactPoint,
 } from "./monsterMechanics";
 import { isMonsterFrozen } from "../../classes/archetypes/dot/t3/core/selectors";
 import {
@@ -36,6 +39,10 @@ import {
 } from "@mmo-idle/shared";
 import { getAntiHealMult } from "../../defense";
 import { applyMonsterAoe } from "../damage/aoeDamage";
+import {
+  publishGroundZone,
+  clearGroundZonesByOwner,
+} from "../../world/groundZones";
 import { applyPlayerKnockback } from "../damage/knockback";
 import { canApplyPlayerDebuff } from "../status/debuffGuard";
 import { evadeBlocksDebuffs } from "../../defense/mitigation/evasion";
@@ -844,6 +851,9 @@ export function runMonsterAttack(
 function abortMonsterCast(world: World, monster: MonsterEntity): void {
   if (chargedCastEndsAt(monster) <= 0) return; // no pending cast
   cancelCharge(monster);
+  // A telegraph must never outlive the cast that drew it — an abandoned circle
+  // would promise an impact that is no longer coming.
+  clearGroundZonesByOwner(world, monster.hasPosition.nodeId, monster.isMonster.id);
   world.pushEvent(monster.hasPosition.nodeId, {
     kind: "monster-cast-end",
     monsterId: monster.isMonster.id,
@@ -969,6 +979,70 @@ function applyMonsterAttackSplash(
     monster.dealsDamage.attack * (aoe.damageMult ?? 1),
     primaryId,
   );
+}
+
+/**
+ * Resolve a completed COMMITTED ground slam at its planted point.
+ *
+ * Deliberately NOT `applyMonsterAoe`: that path applies only plating + flat DR,
+ * bypassing the combat pipeline. A slam authored to trip the player damage-cap
+ * has to go through `runMonsterAttack` per victim — that is where `chargeMult`
+ * folds into the empowered-spike path so the cap, Brace and shields all apply,
+ * exactly as they do for a single-target charged hit. Minions take the same raw
+ * mitigated damage they take from any monster swing.
+ *
+ * Everyone inside the circle is hit, the original target included only if they
+ * are still standing in it. Nobody inside is excluded — walking out is the
+ * counterplay, not being the primary target.
+ */
+function resolveChargedSlam(
+  world: World,
+  monster: MonsterEntity,
+  charged: NonNullable<MonsterDefinition["chargedAttack"]>,
+  aoe: NonNullable<NonNullable<MonsterDefinition["chargedAttack"]>["aoe"]>,
+  impact: Vec2,
+  now: number,
+): void {
+  const nodeId = monster.hasPosition.nodeId;
+  // The telegraph resolved — retire it before anything can kill the owner and
+  // leave the circle stranded for the sweeper to collect.
+  clearGroundZonesByOwner(world, nodeId, monster.isMonster.id);
+
+  const slamMult = charged.multiplier * (aoe.damageMult ?? 1);
+
+  const victims = world.collision.bodiesInCircle(
+    world.livePlayersInNode(nodeId),
+    impact,
+    aoe.radius,
+  );
+  for (const victim of victims) {
+    // Each victim re-checked for liveness: an earlier victim's death can drain
+    // the node (party wipe) and invalidate the rest of the list.
+    if (!world.getPlayerEntity(victim.isPlayer.id)) continue;
+    const outcome = runMonsterAttack(world, monster, victim, now, slamMult);
+    if (outcome === "hit") {
+      applyChargedAttackKnockback(world, monster, victim, charged);
+      const refreshed = world.getPlayerEntity(victim.isPlayer.id);
+      if (refreshed) markEngaged(world, refreshed, now);
+    }
+    if (!world.hasMonster(monster.isMonster.id)) return; // reflected to death
+  }
+
+  const minions = world.collision.bodiesInCircle(
+    world.minionEntitiesInNode(nodeId),
+    impact,
+    aoe.radius,
+  );
+  for (const minion of minions) {
+    runMonsterAttackOnMinion(world, monster, minion, now);
+  }
+
+  world.pushEvent(nodeId, {
+    kind: "monster-cast-end",
+    monsterId: monster.isMonster.id,
+    fired: true,
+    fx: charged.fx,
+  });
 }
 
 export function updateCombat(world: World, dt: number, now: number) {
@@ -1106,7 +1180,14 @@ export function updateCombat(world: World, dt: number, now: number) {
         setAttackTarget(world, e, null);
         continue;
       }
-      if (!world.collision.canReach(e, target, e.performsAttack.attackRange)) {
+      // A planted ground slam is COMMITTED: the circle was drawn on the ground,
+      // so the swing lands whether or not the target is still standing in it.
+      // Every other charge still breaks when the target slips out of reach.
+      const slamCommitted = chargedCastEndsAt(e) > 0 && isChargeAoePlanted(e);
+      if (
+        !slamCommitted &&
+        !world.collision.canReach(e, target, e.performsAttack.attackRange)
+      ) {
         // Target slipped out of range — drop any wind-up (the telegraph is broken).
         abortMonsterCast(world, e);
         setAttackTarget(world, e, null);
@@ -1133,8 +1214,14 @@ export function updateCombat(world: World, dt: number, now: number) {
             continue;
           }
           if (now < chargedCastEndsAt(e)) continue; // still winding up — hold
-          // Wind-up complete → resolve the ×multiplier shot and put it on cooldown.
+          // Wind-up complete → resolve the shot and put it on cooldown. Read the
+          // planted point BEFORE completeCharge clears it.
+          const impact = chargeAoeImpactPoint(e);
           completeCharge(e, now, charged.cooldownMs);
+          if (charged.aoe && impact) {
+            resolveChargedSlam(world, e, charged, charged.aoe, impact, now);
+            continue;
+          }
           // The pounce caught the marked prey: consume the Scent-of-Blood mark so the
           // MARKED tell clears once the Maul resolves (it expires on its own if the
           // wind-up was interrupted instead).
@@ -1185,6 +1272,20 @@ export function updateCombat(world: World, dt: number, now: number) {
           !isMonsterStunned(world, e.isMonster.id)
         ) {
           beginCharge(e, now, charged.castMs);
+          if (charged.aoe) {
+            // Plant the circle where the target stands RIGHT NOW and broadcast it.
+            // Everything after this reads the planted point, never the target.
+            const impactPoint = { ...target.hasPosition.current };
+            plantChargeAoe(e, impactPoint);
+            publishGroundZone(world, e.hasPosition.nodeId, {
+              kind: "slam-telegraph",
+              pos: impactPoint,
+              radius: charged.aoe.radius,
+              startedAtMs: now,
+              resolvesAtMs: now + charged.castMs,
+              ownerId: e.isMonster.id,
+            });
+          }
           applyChargedAttackMark(world, e, target, charged);
           world.pushEvent(e.hasPosition.nodeId, {
             kind: "monster-cast-start",
