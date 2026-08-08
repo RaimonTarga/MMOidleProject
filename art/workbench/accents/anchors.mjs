@@ -27,10 +27,20 @@ const SRC = 'art/src/sprites/classes';
 const OUT = 'shared/src/sprites/headAnchors.ts';
 const ALPHA = 40;          // treat >40 as opaque; ignores faint glow fringes
 const HEAD_PROBE_ROWS = 4; // rows below the crown used to find the head's width
+// Bodies with a raised prop — the Conduit Marshal's back crest, a shoulder
+// yoke, a banner — put their topmost opaque pixel on the PROP, not the head.
+// Marshal's crest occupies rows 2-7 at x=8..21 while its head only begins at
+// row 8; naively taking the topmost row anchored it at x=15, 17px off centre.
+// Two guards: locate the head only inside a NARROW central band, then expand
+// CONTIGUOUSLY from there, so a disconnected prop on the same row can never be
+// merged into the head's width.
+const HEAD_BAND_MIN = 26;
+const HEAD_BAND_MAX = 38;
 
 const CLASSES = ['cadence', 'cooldown', 'dot', 'reload', 'energy', 'summoner'];
-// Summoner/Conduit is excluded from T3: placeholder class pending a major rework.
-const T3_CLASSES = ['cadence', 'cooldown', 'dot', 'reload', 'energy'];
+// All six classes now have T3 bodies. Conduit was excluded while it was a
+// placeholder; its nine specialization bodies landed 2026-08-08.
+const T3_CLASSES = ['cadence', 'cooldown', 'dot', 'reload', 'energy', 'summoner'];
 const FRAMES = ['light', 'medium', 'heavy'];
 const SPECS = ['a', 'b', 'c'];
 
@@ -53,18 +63,23 @@ async function anchorOf(file) {
 
   let topY = -1;
   for (let y = 0; y < info.height && topY < 0; y++) {
-    for (let x = 0; x < info.width; x++) if (at(x, y) > ALPHA) { topY = y; break; }
+    for (let x = HEAD_BAND_MIN; x <= HEAD_BAND_MAX; x++) {
+      if (at(x, y) > ALPHA) { topY = y; break; }
+    }
   }
   if (topY < 0) return null;
 
   // Head width is measured a few rows down: the crown itself is often a single
   // stray pixel, which would bias the centre.
   const probe = Math.min(info.height - 1, topY + HEAD_PROBE_ROWS);
-  let minX = info.width, maxX = -1;
-  for (let x = 0; x < info.width; x++) {
-    if (at(x, probe) > ALPHA) { if (x < minX) minX = x; if (x > maxX) maxX = x; }
+  let seed = -1;
+  for (let x = HEAD_BAND_MIN; x <= HEAD_BAND_MAX; x++) {
+    if (at(x, probe) > ALPHA) { seed = x; break; }
   }
-  if (maxX < 0) return null;
+  if (seed < 0) return null;
+  let minX = seed, maxX = seed;
+  while (minX - 1 >= 0 && at(minX - 1, probe) > ALPHA) minX--;
+  while (maxX + 1 < info.width && at(maxX + 1, probe) > ALPHA) maxX++;
   return { x: Math.round(((minX + maxX) / 2) * 10) / 10, y: topY };
 }
 

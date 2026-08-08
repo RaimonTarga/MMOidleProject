@@ -103,6 +103,21 @@ export const PLAYER_FRAMES: Record<string, string> = {
   'summoner-light':  'sprites/classes/light_summoner.png',
   'summoner-balanced':'sprites/classes/medium_summoner.png',
   'summoner-heavy':  'sprites/classes/heavy_summoner.png',
+
+  // Conduit tier-3 specializations. Generated bodies like the other five
+  // classes, but chained at initImageStrength 65 rather than 75: the Conduit
+  // parents are a plain robe column with no internal parts to reinterpret, so
+  // at 75 the chain reprinted the robe and two rounds were rejected as
+  // "too similar to the original".
+  'summoner-light-t3-a':        'sprites/classes/light_summoner_t3a.png',
+  'summoner-light-t3-b':        'sprites/classes/light_summoner_t3b.png',
+  'summoner-light-t3-c':        'sprites/classes/light_summoner_t3c.png',
+  'summoner-balanced-t3-a':     'sprites/classes/medium_summoner_t3a.png',
+  'summoner-balanced-t3-b':     'sprites/classes/medium_summoner_t3b.png',
+  'summoner-balanced-t3-c':     'sprites/classes/medium_summoner_t3c.png',
+  'summoner-heavy-t3-a':        'sprites/classes/heavy_summoner_t3a.png',
+  'summoner-heavy-t3-b':        'sprites/classes/heavy_summoner_t3b.png',
+  'summoner-heavy-t3-c':        'sprites/classes/heavy_summoner_t3c.png',
 };
 
 /** Key: monsterTypeId (matches MONSTER_DATABASE keys exactly).

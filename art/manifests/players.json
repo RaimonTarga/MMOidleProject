@@ -1759,9 +1759,9 @@
         "w": 64,
         "h": 64
       },
-      "prompt": "tribunal mask-bearer, 3/4 top-down view facing south-east, large plain white ceramic mask angled right, slim deep-red robe covering the entire body with no exposed skin anywhere, one tall layered ivory collar rising behind the left shoulder, three small white masks hanging in a curved line behind the right shoulder, brown gloves and boots, empty hands with no weapon",
-      "negative": "face, eyes, eye holes, nose, mouth, lips, facial features, human face, visible face, visible skin, bare skin, exposed skin, bare arms, bare hands, hair, beard, dark mask, grey mask, mask markings, hood covering the mask, skull, undead, weapon, sword, dagger, staff, wand, book, scroll, shield, holding item, plate armor, helmet, robot, crown, symmetrical collar, tall collar on both shoulders, front view, straight-on view, facing the camera, symmetrical front pose, side view, profile, back view, chibi, cute, text, watermark, blurry, 3d render, painterly, lineless, high detail texture noise",
-      "status": "regen",
+      "prompt": "tribunal mask-bearer, 3/4 top-down view facing south-east, large plain white ceramic mask angled right fully covering the head, deep hood up, a wide rigid horizontal timber yoke spanning both shoulders and extending far past the body on both sides, three large white ceramic masks mounted along the yoke facing outward, slim deep-red robe covering the entire body with no exposed skin anywhere, brown gloves and boots, empty hands with no weapon",
+      "negative": "bare face, eyes, nose, mouth, facial features, human face, visible face, bare head, uncovered head, hood down, hair, beard, bare skin, visible skin, exposed skin, bare arms, bare chest, bare hands, exposed hands, nude, weapon, sword, dagger, staff, wand, spear, pole, flagpole, bow, gun, shield, holding item, holding, weapon in hand, collar, shoulder mantle, cape, banner, standard, wings, halo, floating ring, bulky robe, tiered slabs, heavy build, front view, straight-on view, facing the camera, side view, profile, back view, chibi, cute, text, watermark, blurry, 3d render, painterly, lineless, high detail texture noise",
+      "status": "accepted",
       "sources": [
         "inquisitor-t3"
       ],
@@ -1772,9 +1772,9 @@
         "view": "low top-down",
         "direction": "south-east",
         "initImage": "sprites/classes/light_summoner.png",
-        "initImageStrength": 75
+        "initImageStrength": 65
       },
-      "notes": "too similar to the original",
+      "notes": "too similar to the original ROUND 2 (2026-08-08). Round 1 was rejected as \"too similar to the original\", and the diagnosis is CONCEPTUAL, not parametric: the Conduit locks the two channels that normally carry a tier-3 read — the ceramic mask owns the head and the deep-red robe owns garment shape and colour — so all three round-1 concepts fell back on a SHOULDER ACCESSORY (collar / mantle / faceplate pauldron). At 64px that is ~8px of trim on an otherwise identical silhouette. Every body that succeeded in the main 45-spec pass changed the HEAD SHAPE, the GARMENT SHAPE, or EXTENDED THE OUTLINE. Levers still legal under the invariants: the hood is not an invariant (only the mask is), the robe SHAPE is free, and the hanging masks scale/placement are free (only the count is frame-linked). Round 2 gives the trio three distinct silhouette DIRECTIONS — wide / tall / massive — the same way the Spirit trio separated by motion. initImageStrength stays 75 deliberately: it is a documented floor (below it the garment loses its anchor and returns bare bodies), and changing strength AND concept at once would make the result unreadable. ROUND 3 — LOWER STRENGTH PROBE (75 -> 65). Round 2 kept the concept but the structural mass never appeared: the Conduit parents are a plain robe COLUMN with no internal parts to reinterpret, unlike every other class parent (plate, tabard, chainmail, hood-plus-painted-mask), so at 75 the chain just reprints the robe and varies the surface. The documented \"75 is a floor\" rule was derived from parents that do not resemble this one. Guard against the Duelist collapse at 68: that failure combined low strength WITH removing the hood, so here the hood stays UP, the positive coverage clause stays, and gloves/boots are restated. If the garment destabilises anyway, go back to 75 and import mass by chaining from a sibling instead.",
       "candidates": 3
     },
     {
@@ -1784,9 +1784,9 @@
         "w": 64,
         "h": 64
       },
-      "prompt": "procession commander mask-bearer, 3/4 top-down view facing south-east, large plain white ceramic mask angled right, structured deep-red robe covering the entire body with no exposed skin anywhere, one broad squared mantle over the left shoulder with two split cloth tails sweeping behind, two small white masks hanging behind the right shoulder, cord belt, brown gloves and boots, empty hands with no weapon",
-      "negative": "face, eyes, eye holes, nose, mouth, lips, facial features, human face, visible face, visible skin, bare skin, exposed skin, bare arms, bare hands, hair, beard, dark mask, grey mask, mask markings, hood covering the mask, skull, undead, weapon, sword, dagger, spear, staff, wand, shield, flag, banner, pole, holding item, plate armor, helmet, robot, crown, symmetrical pauldrons, matching shoulder armor, front view, straight-on view, facing the camera, symmetrical front pose, side view, profile, back view, chibi, cute, text, watermark, blurry, 3d render, painterly, lineless, high detail texture noise",
-      "status": "regen",
+      "prompt": "procession commander mask-bearer, 3/4 top-down view facing south-east, large plain white ceramic mask angled right fully covering the head, deep hood up, a tall rigid fan-shaped standard mounted on the upper back and rising high above the shoulder line, two white ceramic masks mounted on the standard, structured deep-red coat with a stiff flared skirt, brown gloves and boots, empty hands with no weapon",
+      "negative": "bare face, eyes, nose, mouth, facial features, human face, visible face, bare head, uncovered head, hood down, hair, beard, bare skin, visible skin, exposed skin, bare arms, bare chest, bare hands, exposed hands, nude, weapon, sword, dagger, staff, wand, spear, pole, flagpole, bow, gun, shield, holding item, holding, weapon in hand, shoulder yoke, horizontal beam, wings, halo, floating ring, tiered slabs, plain cape, hanging masks on cords, front view, straight-on view, facing the camera, side view, profile, back view, chibi, cute, text, watermark, blurry, 3d render, painterly, lineless, high detail texture noise",
+      "status": "accepted",
       "sources": [
         "marshal-t3"
       ],
@@ -1797,9 +1797,9 @@
         "view": "low top-down",
         "direction": "south-east",
         "initImage": "sprites/classes/medium_summoner.png",
-        "initImageStrength": 75
+        "initImageStrength": 65
       },
-      "notes": "too similar to the original",
+      "notes": "too similar to the original ROUND 2 (2026-08-08). Round 1 was rejected as \"too similar to the original\", and the diagnosis is CONCEPTUAL, not parametric: the Conduit locks the two channels that normally carry a tier-3 read — the ceramic mask owns the head and the deep-red robe owns garment shape and colour — so all three round-1 concepts fell back on a SHOULDER ACCESSORY (collar / mantle / faceplate pauldron). At 64px that is ~8px of trim on an otherwise identical silhouette. Every body that succeeded in the main 45-spec pass changed the HEAD SHAPE, the GARMENT SHAPE, or EXTENDED THE OUTLINE. Levers still legal under the invariants: the hood is not an invariant (only the mask is), the robe SHAPE is free, and the hanging masks scale/placement are free (only the count is frame-linked). Round 2 gives the trio three distinct silhouette DIRECTIONS — wide / tall / massive — the same way the Spirit trio separated by motion. initImageStrength stays 75 deliberately: it is a documented floor (below it the garment loses its anchor and returns bare bodies), and changing strength AND concept at once would make the result unreadable. ROUND 3 — LOWER STRENGTH PROBE (75 -> 65). Round 2 kept the concept but the structural mass never appeared: the Conduit parents are a plain robe COLUMN with no internal parts to reinterpret, unlike every other class parent (plate, tabard, chainmail, hood-plus-painted-mask), so at 75 the chain just reprints the robe and varies the surface. The documented \"75 is a floor\" rule was derived from parents that do not resemble this one. Guard against the Duelist collapse at 68: that failure combined low strength WITH removing the hood, so here the hood stays UP, the positive coverage clause stays, and gloves/boots are restated. If the garment destabilises anyway, go back to 75 and import mass by chaining from a sibling instead.",
       "candidates": 3
     },
     {
@@ -1809,9 +1809,9 @@
         "w": 64,
         "h": 64
       },
-      "prompt": "ritual idol-maker mask-bearer, 3/4 top-down view facing south-east, large plain white ceramic mask angled right, broad heavy deep-red robe covering the entire body with no exposed skin anywhere, one oversized pauldron built from stacked blank ivory faceplates on the left shoulder, one large white mask hanging behind the right shoulder, thick clay-stained apron, brown gloves and boots, empty hands with no weapon",
-      "negative": "face, eyes, eye holes, nose, mouth, lips, facial features, carved faces, human face, visible face, visible skin, bare skin, exposed skin, bare arms, bare hands, hair, beard, dark mask, grey mask, mask markings, hood covering the mask, skull, undead, weapon, hammer, chisel, sword, staff, wand, shield, holding item, stone golem, statue body, plate armor, helmet, robot, crown, symmetrical pauldrons, matching shoulder armor, front view, straight-on view, facing the camera, symmetrical front pose, side view, profile, back view, chibi, cute, text, watermark, blurry, 3d render, painterly, lineless, high detail texture noise",
-      "status": "regen",
+      "prompt": "idol-maker mask-bearer, 3/4 top-down view facing south-east, large plain white ceramic mask angled right fully covering the head, deep hood up, one enormous white ceramic mask worn flat across the chest as a breastplate, heavy deep-red cloth robe built from wide tiered slabs stacked from the shoulders downward and widening toward the floor into a broad monolithic base, brown gloves and boots, empty hands with no weapon",
+      "negative": "bare face, eyes, nose, mouth, facial features, human face, visible face, bare head, uncovered head, hood down, hair, beard, bare skin, visible skin, exposed skin, bare arms, bare chest, bare hands, exposed hands, nude, weapon, sword, dagger, staff, wand, spear, pole, flagpole, bow, gun, shield, holding item, holding, weapon in hand, great helm, iron faceplate, eye slit, steel armor, iron armor, plate armor, molten, glowing seams, orange, grey, slim, narrow, shoulder yoke, standard, banner, front view, straight-on view, facing the camera, side view, profile, back view, chibi, cute, text, watermark, blurry, 3d render, painterly, lineless, high detail texture noise",
+      "status": "accepted",
       "sources": [
         "idolwright-t3"
       ],
@@ -1821,10 +1821,160 @@
         "detail": "low detail",
         "view": "low top-down",
         "direction": "south-east",
-        "initImage": "sprites/classes/heavy_summoner.png",
+        "initImage": "sprites/classes/heavy_cooldown_t3b.png",
         "initImageStrength": 75
       },
-      "notes": "too similar to the original",
+      "notes": "too similar to the original ROUND 2 (2026-08-08). Round 1 was rejected as \"too similar to the original\", and the diagnosis is CONCEPTUAL, not parametric: the Conduit locks the two channels that normally carry a tier-3 read — the ceramic mask owns the head and the deep-red robe owns garment shape and colour — so all three round-1 concepts fell back on a SHOULDER ACCESSORY (collar / mantle / faceplate pauldron). At 64px that is ~8px of trim on an otherwise identical silhouette. Every body that succeeded in the main 45-spec pass changed the HEAD SHAPE, the GARMENT SHAPE, or EXTENDED THE OUTLINE. Levers still legal under the invariants: the hood is not an invariant (only the mask is), the robe SHAPE is free, and the hanging masks scale/placement are free (only the count is frame-linked). Round 2 gives the trio three distinct silhouette DIRECTIONS — wide / tall / massive — the same way the Spirit trio separated by motion. initImageStrength stays 75 deliberately: it is a documented floor (below it the garment loses its anchor and returns bare bodies), and changing strength AND concept at once would make the result unreadable. ROUND 3 — SIBLING-CHAIN PROBE. Chains from the ACCEPTED Destroyer body (heavy_cooldown_t3b) rather than heavy_summoner, because Destroyer already HAS the property this spec kept failing to grow: pauldrons wider than the hips and a banded plate skirt to the floor. This is the highest-leverage trick in the project history — the Conduit face only stopped rendering front-on once it was chained off cadence.png, which already had the 3/4 turn. Strength stays 75; the donor supplies structure the prompt could not conjure, and the prompt restores Conduit identity. Palette is the risk: dark iron to deep red is a moderate hue move and palette is chain-anchored, so Destroyer steel/molten is banned explicitly.",
+      "candidates": 3
+    },
+    {
+      "id": "kilnmaster-t3",
+      "out": "sprites/classes/light_summoner_t3b.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "kiln-tender mask-bearer, 3/4 top-down view facing south-east, large plain white ceramic mask angled right fully covering the head, deep hood up, many tiny white ceramic masks packed in dense rows across the chest and both sleeves, a heavy scorched leather apron, thick heat-scarred gauntlets, slim build, deep-red robe covering the entire body with no exposed skin anywhere, deep red with soot black and ash grey, brown boots, empty hands with no weapon",
+      "status": "accepted",
+      "sources": [
+        "kilnmaster-t3"
+      ],
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "view": "low top-down",
+        "direction": "south-east",
+        "initImage": "sprites/classes/light_summoner.png",
+        "initImageStrength": 65
+      },
+      "notes": "Conduit tier-3 player body, batch 2 (the remaining six). RECIPE settled by the Inquisitor/Marshal/Idolwright calibration: chain from the OWN Conduit frame parent at initImageStrength 65 - NOT 75. Rounds 1 and 2 both failed at 75 with the user note \"too similar to the original\", because the Conduit parents are a plain robe COLUMN with no internal parts for the model to reinterpret, unlike every other class parent (plate, tabard, chainmail, hood-plus-painted-mask). At 75 the chain simply reprints the robe. 65 gives structure room to grow, and the Duelist collapse at 68 is avoided by keeping the hood UP and restating the positive coverage clause. A sibling-chain probe (Idolwright from the accepted Destroyer) FAILED for an avoidable reason worth recording: the prompt said \"cloth robe\" and banned \"plate armor\", which suppressed the exact donor structure it was trying to import. TRIO SEPARATION: light-a Inquisitor owns the chest/shoulder mask CLUSTER; balanced-a Marshal owns gold armour plus a back CREST; heavy-c Idolwright owns the white chest PANEL and blocky mass. Each entry here bans the others so the nine stay distinct.",
+      "negative": "bare face, eyes, nose, mouth, facial features, human face, visible face, bare head, uncovered head, hood down, hair, beard, bare skin, visible skin, exposed skin, bare arms, bare chest, bare hands, exposed hands, nude, weapon, sword, dagger, axe, staff, wand, spear, pole, flagpole, bow, gun, shield, holding item, holding, weapon in hand, few large masks, mask cluster at the shoulder, shoulder yoke, timber beam, back crest, gold armour, white chest panel, cracked masks, front view, straight-on view, facing the camera, side view, profile, back view, chibi, cute, text, watermark, blurry, 3d render, painterly, lineless, high detail texture noise",
+      "candidates": 3
+    },
+    {
+      "id": "iconoclast-t3",
+      "out": "sprites/classes/light_summoner_t3c.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "idol-breaker mask-bearer, 3/4 top-down view facing south-east, large white ceramic mask angled right fully covering the head with a jagged crack across it and one shard missing, deep hood up, broken white mask fragments hanging on short cords at the hip, a torn ragged asymmetric hem, slim build, deep-red robe covering the entire body with no exposed skin anywhere, deep red with sharp white shards, brown gloves and boots, empty hands with no weapon",
+      "status": "accepted",
+      "sources": [
+        "iconoclast-t3"
+      ],
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "view": "low top-down",
+        "direction": "south-east",
+        "initImage": "sprites/classes/light_summoner.png",
+        "initImageStrength": 65
+      },
+      "notes": "Conduit tier-3 player body, batch 2 (the remaining six). RECIPE settled by the Inquisitor/Marshal/Idolwright calibration: chain from the OWN Conduit frame parent at initImageStrength 65 - NOT 75. Rounds 1 and 2 both failed at 75 with the user note \"too similar to the original\", because the Conduit parents are a plain robe COLUMN with no internal parts for the model to reinterpret, unlike every other class parent (plate, tabard, chainmail, hood-plus-painted-mask). At 75 the chain simply reprints the robe. 65 gives structure room to grow, and the Duelist collapse at 68 is avoided by keeping the hood UP and restating the positive coverage clause. A sibling-chain probe (Idolwright from the accepted Destroyer) FAILED for an avoidable reason worth recording: the prompt said \"cloth robe\" and banned \"plate armor\", which suppressed the exact donor structure it was trying to import. TRIO SEPARATION: light-a Inquisitor owns the chest/shoulder mask CLUSTER; balanced-a Marshal owns gold armour plus a back CREST; heavy-c Idolwright owns the white chest PANEL and blocky mass. Each entry here bans the others so the nine stay distinct.",
+      "negative": "bare face, eyes, nose, mouth, facial features, human face, visible face, bare head, uncovered head, hood down, hair, beard, bare skin, visible skin, exposed skin, bare arms, bare chest, bare hands, exposed hands, nude, weapon, sword, dagger, axe, staff, wand, spear, pole, flagpole, bow, gun, shield, holding item, holding, weapon in hand, intact masks in rows, tiny masks, apron, shoulder yoke, timber beam, back crest, gold armour, white chest panel, front view, straight-on view, facing the camera, side view, profile, back view, chibi, cute, text, watermark, blurry, 3d render, painterly, lineless, high detail texture noise",
+      "candidates": 3
+    },
+    {
+      "id": "chorister-t3",
+      "out": "sprites/classes/medium_summoner_t3b.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "choir mask-bearer, 3/4 top-down view facing south-east, large plain white ceramic mask angled right fully covering the head, deep hood up, a wide flat pleated ivory ruff collar standing out behind the head like a disc, two white ceramic masks with open singing mouths mounted in a vertical line down the chest, deep-red robe covering the entire body with no exposed skin anywhere, deep red with ivory, brown gloves and boots, empty hands with no weapon",
+      "status": "accepted",
+      "sources": [
+        "chorister-t3"
+      ],
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "view": "low top-down",
+        "direction": "south-east",
+        "initImage": "sprites/classes/medium_summoner.png",
+        "initImageStrength": 65
+      },
+      "notes": "Conduit tier-3 player body, batch 2 (the remaining six). RECIPE settled by the Inquisitor/Marshal/Idolwright calibration: chain from the OWN Conduit frame parent at initImageStrength 65 - NOT 75. Rounds 1 and 2 both failed at 75 with the user note \"too similar to the original\", because the Conduit parents are a plain robe COLUMN with no internal parts for the model to reinterpret, unlike every other class parent (plate, tabard, chainmail, hood-plus-painted-mask). At 75 the chain simply reprints the robe. 65 gives structure room to grow, and the Duelist collapse at 68 is avoided by keeping the hood UP and restating the positive coverage clause. A sibling-chain probe (Idolwright from the accepted Destroyer) FAILED for an avoidable reason worth recording: the prompt said \"cloth robe\" and banned \"plate armor\", which suppressed the exact donor structure it was trying to import. TRIO SEPARATION: light-a Inquisitor owns the chest/shoulder mask CLUSTER; balanced-a Marshal owns gold armour plus a back CREST; heavy-c Idolwright owns the white chest PANEL and blocky mass. Each entry here bans the others so the nine stay distinct.",
+      "negative": "bare face, eyes, nose, mouth, facial features, human face, visible face, bare head, uncovered head, hood down, hair, beard, bare skin, visible skin, exposed skin, bare arms, bare chest, bare hands, exposed hands, nude, weapon, sword, dagger, axe, staff, wand, spear, pole, flagpole, bow, gun, shield, holding item, holding, weapon in hand, back crest, standard, banner, gold armour, pauldrons, pooling train, bell sleeves, shoulder yoke, halo, floating ring, front view, straight-on view, facing the camera, side view, profile, back view, chibi, cute, text, watermark, blurry, 3d render, painterly, lineless, high detail texture noise",
+      "candidates": 3
+    },
+    {
+      "id": "ritualist-t3",
+      "out": "sprites/classes/medium_summoner_t3c.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "rite-caller mask-bearer, 3/4 top-down view facing south-east, large plain white ceramic mask angled right fully covering the head, deep hood up, a long ceremonial train pooling wide across the ground behind and around the feet, very wide bell sleeves hanging well past the hands, ivory ritual bands around the cuffs and hem, deep-red robe covering the entire body with no exposed skin anywhere, deep red with ivory, brown boots, empty hands with no weapon",
+      "status": "accepted",
+      "sources": [
+        "ritualist-t3"
+      ],
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "view": "low top-down",
+        "direction": "south-east",
+        "initImage": "sprites/classes/medium_summoner.png",
+        "initImageStrength": 65
+      },
+      "notes": "Conduit tier-3 player body, batch 2 (the remaining six). RECIPE settled by the Inquisitor/Marshal/Idolwright calibration: chain from the OWN Conduit frame parent at initImageStrength 65 - NOT 75. Rounds 1 and 2 both failed at 75 with the user note \"too similar to the original\", because the Conduit parents are a plain robe COLUMN with no internal parts for the model to reinterpret, unlike every other class parent (plate, tabard, chainmail, hood-plus-painted-mask). At 75 the chain simply reprints the robe. 65 gives structure room to grow, and the Duelist collapse at 68 is avoided by keeping the hood UP and restating the positive coverage clause. A sibling-chain probe (Idolwright from the accepted Destroyer) FAILED for an avoidable reason worth recording: the prompt said \"cloth robe\" and banned \"plate armor\", which suppressed the exact donor structure it was trying to import. TRIO SEPARATION: light-a Inquisitor owns the chest/shoulder mask CLUSTER; balanced-a Marshal owns gold armour plus a back CREST; heavy-c Idolwright owns the white chest PANEL and blocky mass. Each entry here bans the others so the nine stay distinct.",
+      "negative": "bare face, eyes, nose, mouth, facial features, human face, visible face, bare head, uncovered head, hood down, hair, beard, bare skin, visible skin, exposed skin, bare arms, bare chest, bare hands, exposed hands, nude, weapon, sword, dagger, axe, staff, wand, spear, pole, flagpole, bow, gun, shield, holding item, holding, weapon in hand, ruff collar, singing masks, back crest, standard, gold armour, pauldrons, short hem, armoured limbs, front view, straight-on view, facing the camera, side view, profile, back view, chibi, cute, text, watermark, blurry, 3d render, painterly, lineless, high detail texture noise",
+      "candidates": 3
+    },
+    {
+      "id": "covenanter-t3",
+      "out": "sprites/classes/heavy_summoner_t3a.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "twin-covenant mask-bearer, 3/4 top-down view facing south-east, large plain white ceramic mask angled right fully covering the head, deep hood up, the body split precisely down the centre line into two different treatments, one half heavy layered dark plating and the other half loose pale draped cloth, one white ceramic mask on each shoulder, one dark toned and one pale, heavy build, deep-red robe covering the entire body with no exposed skin anywhere, deep red throughout, brown gloves and boots, empty hands with no weapon",
+      "status": "accepted",
+      "sources": [
+        "covenanter-t3"
+      ],
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "view": "low top-down",
+        "direction": "south-east",
+        "initImage": "sprites/classes/heavy_summoner.png",
+        "initImageStrength": 65
+      },
+      "notes": "Conduit tier-3 player body, batch 2 (the remaining six). RECIPE settled by the Inquisitor/Marshal/Idolwright calibration: chain from the OWN Conduit frame parent at initImageStrength 65 - NOT 75. Rounds 1 and 2 both failed at 75 with the user note \"too similar to the original\", because the Conduit parents are a plain robe COLUMN with no internal parts for the model to reinterpret, unlike every other class parent (plate, tabard, chainmail, hood-plus-painted-mask). At 75 the chain simply reprints the robe. 65 gives structure room to grow, and the Duelist collapse at 68 is avoided by keeping the hood UP and restating the positive coverage clause. A sibling-chain probe (Idolwright from the accepted Destroyer) FAILED for an avoidable reason worth recording: the prompt said \"cloth robe\" and banned \"plate armor\", which suppressed the exact donor structure it was trying to import. TRIO SEPARATION: light-a Inquisitor owns the chest/shoulder mask CLUSTER; balanced-a Marshal owns gold armour plus a back CREST; heavy-c Idolwright owns the white chest PANEL and blocky mass. Each entry here bans the others so the nine stay distinct.",
+      "negative": "bare face, eyes, nose, mouth, facial features, human face, visible face, bare head, uncovered head, hood down, hair, beard, bare skin, visible skin, exposed skin, bare arms, bare chest, bare hands, exposed hands, nude, weapon, sword, dagger, axe, staff, wand, spear, pole, flagpole, bow, gun, shield, holding item, holding, weapon in hand, white chest panel, blocky monolith, tiered slabs, short hem, back crest, uniform robe, symmetrical, front view, straight-on view, facing the camera, side view, profile, back view, chibi, cute, text, watermark, blurry, 3d render, painterly, lineless, high detail texture noise",
+      "candidates": 3
+    },
+    {
+      "id": "champion-t3",
+      "out": "sprites/classes/heavy_summoner_t3b.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "front-line mask-bearer, 3/4 top-down view facing south-east, large plain white ceramic mask angled right fully covering the head, deep hood up, the robe hitched and belted short at the knees for fighting, heavy dark iron greaves and bracers over the covered limbs, one white ceramic mask mounted on a broad shoulder guard, weight thrown forward in a fighting stance, heavy build, deep-red robe covering the entire body with no exposed skin anywhere, deep red with dark iron, brown gloves and boots, empty hands with no weapon",
+      "status": "accepted",
+      "sources": [
+        "champion-t3"
+      ],
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "view": "low top-down",
+        "direction": "south-east",
+        "initImage": "sprites/classes/heavy_summoner.png",
+        "initImageStrength": 65
+      },
+      "notes": "Conduit tier-3 player body, batch 2 (the remaining six). RECIPE settled by the Inquisitor/Marshal/Idolwright calibration: chain from the OWN Conduit frame parent at initImageStrength 65 - NOT 75. Rounds 1 and 2 both failed at 75 with the user note \"too similar to the original\", because the Conduit parents are a plain robe COLUMN with no internal parts for the model to reinterpret, unlike every other class parent (plate, tabard, chainmail, hood-plus-painted-mask). At 75 the chain simply reprints the robe. 65 gives structure room to grow, and the Duelist collapse at 68 is avoided by keeping the hood UP and restating the positive coverage clause. A sibling-chain probe (Idolwright from the accepted Destroyer) FAILED for an avoidable reason worth recording: the prompt said \"cloth robe\" and banned \"plate armor\", which suppressed the exact donor structure it was trying to import. TRIO SEPARATION: light-a Inquisitor owns the chest/shoulder mask CLUSTER; balanced-a Marshal owns gold armour plus a back CREST; heavy-c Idolwright owns the white chest PANEL and blocky mass. Each entry here bans the others so the nine stay distinct.",
+      "negative": "bare face, eyes, nose, mouth, facial features, human face, visible face, bare head, uncovered head, hood down, hair, beard, bare skin, visible skin, exposed skin, bare arms, bare chest, bare hands, exposed hands, nude, weapon, sword, dagger, axe, staff, wand, spear, pole, flagpole, bow, gun, shield, holding item, holding, weapon in hand, long robe, floor-length hem, pooling train, white chest panel, tiered slabs, split body, bell sleeves, ruff collar, front view, straight-on view, facing the camera, side view, profile, back view, chibi, cute, text, watermark, blurry, 3d render, painterly, lineless, high detail texture noise",
       "candidates": 3
     }
   ]

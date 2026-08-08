@@ -1,0 +1,22 @@
+{
+  "assetId": "chorister-t3",
+  "category": "players",
+  "requestHash": "49ef00ebf697192a52cd7f42",
+  "endpoint": "pixflux",
+  "at": "2026-08-08T09:32:01.352Z",
+  "prompt": "choir mask-bearer, 3/4 top-down view facing south-east, large plain white ceramic mask angled right fully covering the head, deep hood up, a wide flat pleated ivory ruff collar standing out behind the head like a disc, two white ceramic masks with open singing mouths mounted in a vertical line down the chest, deep-red robe covering the entire body with no exposed skin anywhere, deep red with ivory, brown gloves and boots, empty hands with no weapon",
+  "files": [
+    {
+      "file": "candidate-1.png",
+      "seed": 1118621300
+    },
+    {
+      "file": "candidate-2.png",
+      "seed": 1590715772
+    },
+    {
+      "file": "candidate-3.png",
+      "seed": 603645658
+    }
+  ]
+}

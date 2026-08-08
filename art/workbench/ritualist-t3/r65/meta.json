@@ -1,0 +1,22 @@
+{
+  "assetId": "ritualist-t3",
+  "category": "players",
+  "requestHash": "bc431976bf6781052ee80f68",
+  "endpoint": "pixflux",
+  "at": "2026-08-08T09:32:53.350Z",
+  "prompt": "rite-caller mask-bearer, 3/4 top-down view facing south-east, large plain white ceramic mask angled right fully covering the head, deep hood up, a long ceremonial train pooling wide across the ground behind and around the feet, very wide bell sleeves hanging well past the hands, ivory ritual bands around the cuffs and hem, deep-red robe covering the entire body with no exposed skin anywhere, deep red with ivory, brown boots, empty hands with no weapon",
+  "files": [
+    {
+      "file": "candidate-1.png",
+      "seed": 1868945858
+    },
+    {
+      "file": "candidate-2.png",
+      "seed": 1219309571
+    },
+    {
+      "file": "candidate-3.png",
+      "seed": 121310631
+    }
+  ]
+}

@@ -446,7 +446,11 @@ Stages 0–3, the colour pass, and all 45 T3 bodies are done.
    unreferenced, all still packed into the atlas.
 2. **T5/T6 will be additive accents**, in the same vein as the T2 range rings —
    overlay props drawn in code, never new bodies. See "Accent slots" below.
-3. Conduit/Summoner bodies, whenever that class gets its rework.
+3. ~~Conduit/Summoner bodies~~ — **DONE 2026-08-08**, all nine specializations.
+   They needed `initImageStrength` **65** rather than 75, because the Conduit parents
+   are a plain robe column with no internal parts to reinterpret; see
+   `docs/conduit-current-state.md` §10b. All six classes now have full T3 coverage:
+   **54 bespoke T3 bodies**.
 
 ## Deferred
 

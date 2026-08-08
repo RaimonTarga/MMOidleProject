@@ -1,0 +1,22 @@
+{
+  "assetId": "marshal-t3",
+  "category": "players",
+  "requestHash": "d9681300bf2ddd43a8c54161",
+  "endpoint": "pixflux",
+  "at": "2026-08-08T01:18:29.222Z",
+  "prompt": "procession commander mask-bearer, 3/4 top-down view facing south-east, large plain white ceramic mask angled right fully covering the head, deep hood up, a tall rigid fan-shaped standard rising from the upper back high above the shoulders, two white ceramic masks mounted on the standard, structured deep-red coat with a stiff flared skirt, brown gloves and boots, empty hands with no weapon",
+  "files": [
+    {
+      "file": "candidate-1.png",
+      "seed": 1284609763
+    },
+    {
+      "file": "candidate-2.png",
+      "seed": 1093236830
+    },
+    {
+      "file": "candidate-3.png",
+      "seed": 1927394737
+    }
+  ]
+}

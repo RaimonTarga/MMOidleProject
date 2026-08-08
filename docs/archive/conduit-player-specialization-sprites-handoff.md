@@ -1,3 +1,7 @@
+> **ARCHIVED — implemented.** All nine Conduit specialization player bodies
+> shipped 2026-08-08. Live state: `docs/conduit-current-state.md` §10b, which
+> also records why the strength-75 recipe in this doc had to become 65.
+
 # Conduit Player Specialization Sprites — Handoff
 
 Written 2026-08-08 for continuation in the earlier Claude session that already

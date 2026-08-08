@@ -61,7 +61,7 @@ export const HEAD_ANCHORS: Record<string, HeadAnchor> = {
   'sprites/classes/light_dot_t3c.png': { x: 31, y: 1 },
   'sprites/classes/medium_dot_t3a.png': { x: 32, y: 3 },
   'sprites/classes/medium_dot_t3b.png': { x: 32, y: 3 },
-  'sprites/classes/medium_dot_t3c.png': { x: 29, y: 2 },
+  'sprites/classes/medium_dot_t3c.png': { x: 31, y: 2 },
   'sprites/classes/heavy_dot_t3a.png': { x: 33.5, y: 1 },
   'sprites/classes/heavy_dot_t3b.png': { x: 32.5, y: 2 },
   'sprites/classes/heavy_dot_t3c.png': { x: 33, y: 2 },
@@ -83,6 +83,15 @@ export const HEAD_ANCHORS: Record<string, HeadAnchor> = {
   'sprites/classes/heavy_energy_t3a.png': { x: 32.5, y: 2 },
   'sprites/classes/heavy_energy_t3b.png': { x: 34, y: 2 },
   'sprites/classes/heavy_energy_t3c.png': { x: 34, y: 3 },
+  'sprites/classes/light_summoner_t3a.png': { x: 30.5, y: 2 },
+  'sprites/classes/light_summoner_t3b.png': { x: 32.5, y: 4 },
+  'sprites/classes/light_summoner_t3c.png': { x: 31.5, y: 2 },
+  'sprites/classes/medium_summoner_t3a.png': { x: 36, y: 8 },
+  'sprites/classes/medium_summoner_t3b.png': { x: 32.5, y: 2 },
+  'sprites/classes/medium_summoner_t3c.png': { x: 32.5, y: 3 },
+  'sprites/classes/heavy_summoner_t3a.png': { x: 31, y: 1 },
+  'sprites/classes/heavy_summoner_t3b.png': { x: 33, y: 2 },
+  'sprites/classes/heavy_summoner_t3c.png': { x: 32, y: 1 },
 };
 
 /** Anchor for a body frame, falling back to the roster average if unknown. */

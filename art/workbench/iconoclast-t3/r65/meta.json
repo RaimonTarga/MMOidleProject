@@ -1,0 +1,22 @@
+{
+  "assetId": "iconoclast-t3",
+  "category": "players",
+  "requestHash": "da4a9965d5b75c0ef910c7cb",
+  "endpoint": "pixflux",
+  "at": "2026-08-08T09:30:48.517Z",
+  "prompt": "idol-breaker mask-bearer, 3/4 top-down view facing south-east, large white ceramic mask angled right fully covering the head with a jagged crack across it and one shard missing, deep hood up, broken white mask fragments hanging on short cords at the hip, a torn ragged asymmetric hem, slim build, deep-red robe covering the entire body with no exposed skin anywhere, deep red with sharp white shards, brown gloves and boots, empty hands with no weapon",
+  "files": [
+    {
+      "file": "candidate-1.png",
+      "seed": 544495808
+    },
+    {
+      "file": "candidate-2.png",
+      "seed": 1087277886
+    },
+    {
+      "file": "candidate-3.png",
+      "seed": 1120096966
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "assetId": "covenanter-t3",
+  "category": "players",
+  "requestHash": "c114ed36433b51482c3d96dc",
+  "endpoint": "pixflux",
+  "at": "2026-08-08T09:34:21.834Z",
+  "prompt": "twin-covenant mask-bearer, 3/4 top-down view facing south-east, large plain white ceramic mask angled right fully covering the head, deep hood up, the body split precisely down the centre line into two different treatments, one half heavy layered dark plating and the other half loose pale draped cloth, one white ceramic mask on each shoulder, one dark toned and one pale, heavy build, deep-red robe covering the entire body with no exposed skin anywhere, deep red throughout, brown gloves and boots, empty hands with no weapon",
+  "files": [
+    {
+      "file": "candidate-1.png",
+      "seed": 243841251
+    },
+    {
+      "file": "candidate-2.png",
+      "seed": 822802615
+    },
+    {
+      "file": "candidate-3.png",
+      "seed": 885262004
+    }
+  ]
+}

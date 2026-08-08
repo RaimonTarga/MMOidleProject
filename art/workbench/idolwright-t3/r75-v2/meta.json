@@ -1,0 +1,22 @@
+{
+  "assetId": "idolwright-t3",
+  "category": "players",
+  "requestHash": "84a0905db786e8c342bb7c90",
+  "endpoint": "pixflux",
+  "at": "2026-08-08T01:19:30.019Z",
+  "prompt": "idol-maker mask-bearer, 3/4 top-down view facing south-east, large plain white ceramic mask angled right fully covering the head, deep hood up, one enormous white ceramic mask worn flat across the chest as a breastplate, heavy deep-red robe built from wide tiered slabs stacked from the shoulders downward and widening toward the floor into a broad monolithic base, brown gloves and boots, empty hands with no weapon",
+  "files": [
+    {
+      "file": "candidate-1.png",
+      "seed": 1701976663
+    },
+    {
+      "file": "candidate-2.png",
+      "seed": 531006852
+    },
+    {
+      "file": "candidate-3.png",
+      "seed": 674457281
+    }
+  ]
+}

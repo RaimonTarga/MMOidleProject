@@ -248,12 +248,62 @@ Client:
 - `client/src/fx/conduitSummon.ts` — bolt and beam
 - `client/src/hud/stat/mechanics.tsx` — Summons section
 
+## 10b. Specialization Player Bodies — SHIPPED 2026-08-08
+
+All nine specializations have bespoke generated player bodies, mapped under
+`summoner-{light,balanced,heavy}-t3-{a,b,c}` in `PLAYER_FRAMES`, packed, anchored,
+and covered by `server/test/conduitPlayerBodies.test.ts`.
+
+| Frame | Spec | Body | Silhouette direction |
+|---|---|---|---|
+| Splinter | Inquisitor | `light_summoner_t3a` | chest/shoulder mask cluster |
+| Splinter | Kilnmaster | `light_summoner_t3b` | many small masks, scorched apron |
+| Splinter | Iconoclast | `light_summoner_t3c` | cracked mask, hanging shards |
+| Consort | Marshal | `medium_summoner_t3a` | gold armour, raised back crest |
+| Consort | Chorister | `medium_summoner_t3b` | wide pleated ruff, singing masks |
+| Consort | Ritualist | `medium_summoner_t3c` | long ceremonial vestment |
+| Effigy | Covenanter | `heavy_summoner_t3a` | paired shoulder masks |
+| Effigy | Champion | `heavy_summoner_t3b` | hitched robe, armoured limbs |
+| Effigy | Idolwright | `heavy_summoner_t3c` | white chest panel, blocky mass |
+
+**The recipe differs from every other class, and this is the load-bearing
+finding.** Conduit bodies chain from their own frame parent at
+`initImageStrength` **65**, not the 75 that produced all 45 non-Conduit T3
+bodies. Two rounds at 75 were rejected as *"too similar to the original"*.
+
+The reason is structural: every other class parent has **internal parts to
+reinterpret** — plate, tabard, chainmail, hood-plus-painted-mask — whereas the
+Conduit parents are a plain robe **column**. With nothing to reshape, the chain
+at 75 simply reprints the robe and varies the surface. 65 gives structure room
+to grow. The documented "75 is a floor" rule was derived from parents that do
+not resemble this one.
+
+Two failures worth not repeating:
+
+- **A shoulder accessory is not a tier-3 read.** The rejected calibration gave
+  each spec a collar / mantle / faceplate pauldron. At 64px that is ~8px of trim
+  on an identical silhouette. Bodies that work change the head shape, the garment
+  shape, or extend the outline.
+- **Do not cancel your own idea in the same prompt.** A sibling-chain probe
+  (Idolwright from the accepted Destroyer, to import its mass) said "cloth robe"
+  and banned `plate armor`, suppressing the exact donor structure it was
+  borrowing. Covenanter asked for a centre-line split *and* "deep red throughout",
+  so the split had no colour to express and never appeared.
+
+**Head anchors:** Marshal's raised back crest broke `anchors.mjs` — its topmost
+opaque pixel is the crest, not the head, so the probe row measured the crest and
+anchored it 17px off centre. The script now locates the head inside a narrow
+central band and expands **contiguously**, so a disconnected prop can never be
+merged into the head's width. Re-run it after adding any body with a raised prop.
+
 ## 11. Outstanding
 
 - Kilnmaster reads at ~17 px even after the clamp; that spec may need its own
   floor or a deliberately simplified body.
 - `conduitDefenseShare` has no consumer (§4).
-- Nine bespoke tier-4 Conduit player bodies remain outstanding: one for each
-  specialization. The first Inquisitor/Marshal/Idolwright calibration was
-  rejected as too similar to its parent frames; continuation details are in
-  `docs/conduit-player-specialization-sprites-handoff.md`.
+- The nine specialization player bodies read as a **somewhat samey set**. This is
+  structural, not a production failure: the identity invariants lock the deep-red
+  robe, the white ceramic mask and the hood across all nine, which are exactly the
+  channels the other five classes use to differentiate their specs. Any future
+  push on Conduit variety has to come from a channel the invariants leave free —
+  the accent slots (see `player-sprites-current-state.md`) are the obvious one.

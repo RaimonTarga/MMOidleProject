@@ -1,0 +1,22 @@
+{
+  "assetId": "inquisitor-t3",
+  "category": "players",
+  "requestHash": "cbbd93505cb70fe178db1036",
+  "endpoint": "pixflux",
+  "at": "2026-08-08T01:17:14.169Z",
+  "prompt": "tribunal mask-bearer, 3/4 top-down view facing south-east, large plain white ceramic mask angled right fully covering the head, hood thrown back and lying flat behind the shoulders, a wide rigid horizontal timber yoke spanning both shoulders far past the body, three large white ceramic masks mounted along the yoke facing outward, slim deep-red robe covering the entire body with no exposed skin anywhere, brown gloves and boots, empty hands with no weapon",
+  "files": [
+    {
+      "file": "candidate-1.png",
+      "seed": 1797617345
+    },
+    {
+      "file": "candidate-2.png",
+      "seed": 1794073452
+    },
+    {
+      "file": "candidate-3.png",
+      "seed": 667808810
+    }
+  ]
+}

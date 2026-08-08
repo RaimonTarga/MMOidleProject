@@ -26344,6 +26344,402 @@
       "candidateFiles": [
         "candidate-3.png"
       ]
+    },
+    {
+      "at": "2026-08-08T01:17:45.668Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "inquisitor-t3",
+      "requestHash": "cbbd93505cb70fe178db1036",
+      "usd": 0.008045613368352255,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-08T01:18:13.505Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "inquisitor-t3",
+      "requestHash": "cbbd93505cb70fe178db1036",
+      "usd": 0.00699446972211202,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-08T01:18:29.211Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "inquisitor-t3",
+      "requestHash": "cbbd93505cb70fe178db1036",
+      "usd": 0.006340746853086684,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-08T01:18:47.934Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "marshal-t3",
+      "requestHash": "d9681300bf2ddd43a8c54161",
+      "usd": 0.006735344012578329,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-08T01:19:06.199Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "marshal-t3",
+      "requestHash": "d9681300bf2ddd43a8c54161",
+      "usd": 0.00662989158100552,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-08T01:19:30.010Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "marshal-t3",
+      "requestHash": "d9681300bf2ddd43a8c54161",
+      "usd": 0.007257599592208863,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-08T01:19:47.975Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "idolwright-t3",
+      "requestHash": "84a0905db786e8c342bb7c90",
+      "usd": 0.006443955951266818,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-08T01:20:06.902Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "idolwright-t3",
+      "requestHash": "84a0905db786e8c342bb7c90",
+      "usd": 0.006915794716940986,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-08T01:20:25.805Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "idolwright-t3",
+      "requestHash": "84a0905db786e8c342bb7c90",
+      "usd": 0.006848842885759142,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-08T09:14:31.119Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "inquisitor-t3",
+      "requestHash": "720e532cd403b1afcb665b41",
+      "usd": 0.007823237631056044,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-08T09:14:49.308Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "inquisitor-t3",
+      "requestHash": "720e532cd403b1afcb665b41",
+      "usd": 0.006832051462597318,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-08T09:15:06.473Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "inquisitor-t3",
+      "requestHash": "720e532cd403b1afcb665b41",
+      "usd": 0.006460902372996013,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-08T09:15:22.395Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "marshal-t3",
+      "requestHash": "e7c874ac4e43b74b1d4d2d39",
+      "usd": 0.00648886873986986,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-08T09:15:39.696Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "marshal-t3",
+      "requestHash": "e7c874ac4e43b74b1d4d2d39",
+      "usd": 0.006478545294867622,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-08T09:15:56.397Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "marshal-t3",
+      "requestHash": "e7c874ac4e43b74b1d4d2d39",
+      "usd": 0.006756584405899048,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-08T09:16:16.316Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "idolwright-t3",
+      "requestHash": "218b9dfb18af3403d4e8a2a2",
+      "usd": 0.007036114189359877,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-08T09:16:45.684Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "idolwright-t3",
+      "requestHash": "218b9dfb18af3403d4e8a2a2",
+      "usd": 0.00764022429784139,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-08T09:17:29.028Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "idolwright-t3",
+      "requestHash": "218b9dfb18af3403d4e8a2a2",
+      "usd": 0.009585433297687107,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-08T09:30:07.943Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "kilnmaster-t3",
+      "requestHash": "379505d13a864f8869f3c656",
+      "usd": 0.0069910174210866295,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-08T09:30:25.548Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "kilnmaster-t3",
+      "requestHash": "379505d13a864f8869f3c656",
+      "usd": 0.006760832256740994,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-08T09:30:48.508Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "kilnmaster-t3",
+      "requestHash": "379505d13a864f8869f3c656",
+      "usd": 0.006959698014789158,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-08T09:31:05.989Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "iconoclast-t3",
+      "requestHash": "da4a9965d5b75c0ef910c7cb",
+      "usd": 0.006805089288287693,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-08T09:31:43.014Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "iconoclast-t3",
+      "requestHash": "da4a9965d5b75c0ef910c7cb",
+      "usd": 0.008948631021711562,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-08T09:32:01.342Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "iconoclast-t3",
+      "requestHash": "da4a9965d5b75c0ef910c7cb",
+      "usd": 0.006917069567574395,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-08T09:32:18.787Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "chorister-t3",
+      "requestHash": "49ef00ebf697192a52cd7f42",
+      "usd": 0.0066663761933644615,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-08T09:32:35.764Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "chorister-t3",
+      "requestHash": "49ef00ebf697192a52cd7f42",
+      "usd": 0.006624387608634101,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-08T09:32:53.339Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "chorister-t3",
+      "requestHash": "49ef00ebf697192a52cd7f42",
+      "usd": 0.006811338212754992,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-08T09:33:11.899Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "ritualist-t3",
+      "requestHash": "bc431976bf6781052ee80f68",
+      "usd": 0.006646325084898207,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-08T09:33:30.265Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "ritualist-t3",
+      "requestHash": "bc431976bf6781052ee80f68",
+      "usd": 0.006596202108595107,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-08T09:34:21.823Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "ritualist-t3",
+      "requestHash": "bc431976bf6781052ee80f68",
+      "usd": 0.010160896248287626,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-08T09:34:40.397Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "covenanter-t3",
+      "requestHash": "c114ed36433b51482c3d96dc",
+      "usd": 0.006860421763526069,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-08T09:34:56.911Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "covenanter-t3",
+      "requestHash": "c114ed36433b51482c3d96dc",
+      "usd": 0.006579108662075467,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-08T09:35:15.339Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "covenanter-t3",
+      "requestHash": "c114ed36433b51482c3d96dc",
+      "usd": 0.006680794027116564,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-08-08T09:35:30.630Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "champion-t3",
+      "requestHash": "29715a2b88702808a62be0f3",
+      "usd": 0.006326016028722127,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-08-08T09:35:50.704Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "champion-t3",
+      "requestHash": "29715a2b88702808a62be0f3",
+      "usd": 0.007053138971328735,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-08-08T09:36:03.509Z",
+      "endpoint": "pixflux",
+      "category": "players",
+      "assetId": "champion-t3",
+      "requestHash": "29715a2b88702808a62be0f3",
+      "usd": 0.006211684942245483,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
     }
   ]
 }

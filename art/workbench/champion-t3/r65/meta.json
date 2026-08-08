@@ -1,0 +1,22 @@
+{
+  "assetId": "champion-t3",
+  "category": "players",
+  "requestHash": "29715a2b88702808a62be0f3",
+  "endpoint": "pixflux",
+  "at": "2026-08-08T09:35:15.348Z",
+  "prompt": "front-line mask-bearer, 3/4 top-down view facing south-east, large plain white ceramic mask angled right fully covering the head, deep hood up, the robe hitched and belted short at the knees for fighting, heavy dark iron greaves and bracers over the covered limbs, one white ceramic mask mounted on a broad shoulder guard, weight thrown forward in a fighting stance, heavy build, deep-red robe covering the entire body with no exposed skin anywhere, deep red with dark iron, brown gloves and boots, empty hands with no weapon",
+  "files": [
+    {
+      "file": "candidate-1.png",
+      "seed": 1067056613
+    },
+    {
+      "file": "candidate-2.png",
+      "seed": 1409155079
+    },
+    {
+      "file": "candidate-3.png",
+      "seed": 1608540512
+    }
+  ]
+}

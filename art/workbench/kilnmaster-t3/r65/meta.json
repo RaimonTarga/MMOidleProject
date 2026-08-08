@@ -1,0 +1,22 @@
+{
+  "assetId": "kilnmaster-t3",
+  "category": "players",
+  "requestHash": "379505d13a864f8869f3c656",
+  "endpoint": "pixflux",
+  "at": "2026-08-08T09:29:47.295Z",
+  "prompt": "kiln-tender mask-bearer, 3/4 top-down view facing south-east, large plain white ceramic mask angled right fully covering the head, deep hood up, many tiny white ceramic masks packed in dense rows across the chest and both sleeves, a heavy scorched leather apron, thick heat-scarred gauntlets, slim build, deep-red robe covering the entire body with no exposed skin anywhere, deep red with soot black and ash grey, brown boots, empty hands with no weapon",
+  "files": [
+    {
+      "file": "candidate-1.png",
+      "seed": 398797448
+    },
+    {
+      "file": "candidate-2.png",
+      "seed": 2095092981
+    },
+    {
+      "file": "candidate-3.png",
+      "seed": 792333578
+    }
+  ]
+}

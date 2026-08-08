@@ -1,5 +1,5 @@
 {
-  "atlasHash": "e4cda47918f6f3d1ab8d3d4dc367d12314a8128c97c19b363878484c05ad9d3c",
+  "atlasHash": "fac1477f68a3370b0d970f35ae81da13f13d4dd353d7999978cc48b280d0917b",
   "frames": {
     "sprites/accents/crest-close-cadence.png": {
       "sourceW": 32,
@@ -493,6 +493,24 @@
       "footY": 29,
       "halfWAtFoot": 14.5
     },
+    "sprites/classes/heavy_summoner_t3a.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 30,
+      "halfWAtFoot": 14.5
+    },
+    "sprites/classes/heavy_summoner_t3b.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 29,
+      "halfWAtFoot": 14.5
+    },
+    "sprites/classes/heavy_summoner_t3c.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 30,
+      "halfWAtFoot": 11.5
+    },
     "sprites/classes/heavy_summoner.png": {
       "sourceW": 64,
       "sourceH": 64,
@@ -654,6 +672,24 @@
       "sourceH": 64,
       "footY": 29,
       "halfWAtFoot": 18.5
+    },
+    "sprites/classes/light_summoner_t3a.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 29,
+      "halfWAtFoot": 10.5
+    },
+    "sprites/classes/light_summoner_t3b.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 27,
+      "halfWAtFoot": 13
+    },
+    "sprites/classes/light_summoner_t3c.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 29,
+      "halfWAtFoot": 15
     },
     "sprites/classes/light_summoner.png": {
       "sourceW": 64,
@@ -822,6 +858,24 @@
       "sourceH": 64,
       "footY": 30,
       "halfWAtFoot": 14
+    },
+    "sprites/classes/medium_summoner_t3a.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 29,
+      "halfWAtFoot": 12
+    },
+    "sprites/classes/medium_summoner_t3b.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 29,
+      "halfWAtFoot": 15
+    },
+    "sprites/classes/medium_summoner_t3c.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 28,
+      "halfWAtFoot": 15.5
     },
     "sprites/classes/medium_summoner.png": {
       "sourceW": 64,
