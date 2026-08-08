@@ -5,7 +5,7 @@ Each entry captures the feasibility verdict and the chosen direction so a future
 session doesn't re-derive it. When an entry gets scheduled, promote it to a full
 `docs/<feature>-plan.md` and mark the entry here as promoted.
 
-Status: current as of 2026-07-05.
+Status: current as of 2026-08-08.
 
 ---
 
@@ -108,3 +108,80 @@ primitive design + art direction are not.
 remain in `docs/relics-design.md`; shipped behavior and the eight-item base cast
 live in `docs/relics-current-state.md`. The completed build plan is archived at
 `docs/archive/relics-implementation-plan.md`.
+
+---
+
+## 4. Goal-driven agent playtesting harness
+
+**DEFERRED (2026-08-08):** useful but non-essential, and operating LLM agents
+through model APIs would add ongoing cost. Do not implement or schedule this
+until that cost is explicitly accepted or a satisfactory no-cost/local-model
+route is available. This supplements human playtesting; it never replaces it.
+
+**Verdict: technically very feasible.** The server already exposes typed player
+intents for navigation, auto-combat/traverse, dungeon altar activation,
+equipment, crafting, skills, and death recovery. Authoritative deltas already
+contain progression and inventory state, while `DungeonGauntletView` exposes
+altar, guardian, phase, hazard, boss, and cooldown state. The existing bench
+harness remains the preferred no-API-cost tool for numerical balance work.
+
+**Chosen architecture if revisited:**
+
+```text
+infrequent LLM strategist
+  -> durable run plan
+  -> deterministic TypeScript executor
+  -> headless typed Socket.IO client
+  -> real authoritative server
+
+server deltas/events
+  -> local state reducer
+  -> compact semantic observations / decision triggers
+  -> strategist only when judgment is needed
+```
+
+- The model makes sparse strategic choices: zone order, farm/advance decisions,
+  equipment/build choices, dungeon policy, and replanning after failures.
+- A deterministic coordinator owns connections, waiting, navigation, auto mode,
+  stop conditions, reconnection, death acknowledgement, dungeon movement, and
+  logging. Ten minutes of uninterrupted farming must require zero model calls.
+- The core is provider-neutral. A direct model SDK/API is the intended automated
+  runtime; Codex or Claude Code are for building, debugging, trace review, and
+  occasional manual exploration. An optional MCP adapter may expose the same
+  tools, but MCP is not the core control layer.
+- Agents receive a versioned player-visible briefing and semantic observations,
+  not repository access, hidden formulas, raw tick streams, or privileged state
+  mutation. All gameplay actions go through ordinary player intents.
+- The minimal agent surface is `get_briefing`, `observe`, `submit_plan`, a narrow
+  choice/action tool, and `get_run_report`.
+- Equipment decisions receive compact player-visible comparisons. Keep a
+  deterministic `equip_best` policy as a baseline rather than silently giving
+  every reasoning agent an oracle.
+- Dungeon execution composes normal navigation, movement, auto-combat, and altar
+  intents. It may react mechanically to visible telegraphs, but must not expose
+  a privileged `winDungeon` action.
+
+**Concurrency and experiment modes:** one unique account, socket, reducer, plan,
+and decision history per logical agent (the server permits only one live socket
+per account). Support both isolated cohorts for fair strategy comparisons and a
+shared-world mode for parties, competition, boss interactions, and load tests.
+
+**Testing layers:** keep the existing accelerated bench for numbers; use semantic
+socket agents for progression/economy/behavior; retain a small browser/Playwright
+track for UI, visual telegraphs, and discoverability. Agent results are not a
+proxy for fun, emotion, representative human behavior, or interface usability.
+
+**Implementation order if unblocked:**
+
+1. Build one no-LLM scripted headless client with JSONL tracing.
+2. Add a compact reducer and durable condition-based plan executor.
+3. Add sparse model decisions behind a provider-neutral adapter.
+4. Add equipment summaries and the generic dungeon state machine.
+5. Add concurrent run manifests, unique accounts, party coordination, and
+   isolated/shared experiment modes.
+6. Compare scripted, random, cautious, exploratory, and optimization policies
+   against human playtest evidence.
+
+Before trusting accelerated dungeon journeys, replace or inject the remaining
+wall-clock `Date.now()` reads in dungeon runtime code so fast-forwarded ticks and
+dungeon timers use one clock authority.
