@@ -203,7 +203,76 @@ The centralized listener also wires pack-alpha cleanup in production. Player AoE
 and Alternating Currents now emit `onKill`, closing the indirect-kill paths these effects need.
 Pinned by `server/test/monsterDeathEffects.test.ts`.
 
-Everything the remaining Pass 2 biomes need beyond sections 9–10 (terrain, ranged/kite,
+## 11. Corpse registry + raises (Pass 2, Session 3 — SHIPPED)
+
+The wasteland necromancer no longer conjures its swarm from nothing — it raises **the
+player's own kills**.
+
+- **Corpse registry** — `server/src/systems/world/corpses.ts`. `world.corpses:
+  Map<nodeId, RuntimeCorpse[]>` (`{ monsterTypeId, pos, diedAtMs }`), a per-node ring buffer
+  capped at `MAX_CORPSES_PER_NODE` (16) with a `CORPSE_TTL_MS` (15 s) sweep in `updateCorpses`,
+  ticked beside `updateGroundZones` and cleared by `freezeNode`. Runtime-only, never persisted.
+  Recorded from the centralized `onKill` listener, so every kill path (attack, AoE, proc, DoT,
+  beam, laser) feeds it. **Bosses and risen mobs leave no corpse** — that is what stops a tide
+  from re-raising itself forever.
+- **`MonsterDefinition.raisesDead`** — `{ intervalMs, initialDelayMs?, corpseRange, maxAlive,
+  hpMult?, damageMult? }`. `updateRaisers` (`server/src/systems/combat/ai/raiseDead.ts`) runs
+  before `updateMonsters` with the other ecology coordinators: it only creates entities and
+  sets intent. A raiser works **only while it holds an aggro target**, and the cadence is keyed
+  to that aggro SESSION — leashing out and re-pulling restarts the initial delay instead of
+  firing a banked timer on re-engage. No corpse in `corpseRange` means no raise.
+- **`isRaised { raiserId }`** — server-only marker (not in any networked allowlist). Its
+  presence is the reward gate: `grantMonsterRewards` returns null for a risen mob, which zeroes
+  essence, biome XP, catalyst progress, quest credit, party share and dungeon credit in one
+  place because every kill path funnels through it. It also keys the raiser's `maxAlive` cap
+  and the crumble sweep.
+- **Client tell without new protocol** — the risen copy is renamed `Risen <Name>` on the
+  already-networked `isMonster` slice, and the raise emits a `raise-dead` ecology pulse
+  (plague-green ring, deliberately a different family from the purple `death-empower` surge).
+- **`onRaiserDead`** runs from the same centralized `onKill` listener and *removes* (never
+  kills) every risen mob owned by the dead raiser — mirroring `onPackAlphaDead`, so the sweep
+  can never become a reward path.
+
+`gravewright` is re-authored off its old `spawn-adds` boss script onto the real raise
+(placeholder numbers: 5 s cadence, 2.5 s initial delay, 280 px reach, 4 alive, 0.7 HP / 0.8
+damage). Risen mobs count toward node density like any other monster, so the tide suppresses
+ambient respawn while it is up. Pinned by `server/test/corpseRaise.test.ts`.
+
+## 12. Jungle brush trees (Pass 2 art follow-up — SHIPPED)
+
+Four 1254×1254 transparent jungle trees now live under
+`art/src/files/environment/trees/jungle/`: kapok, strangler fig, palm cluster, and a
+liana-draped emergent. They were generated with ChatGPT image generation using the forest
+sheet as the style/scale reference; PixelLab was not used.
+
+`shared/src/world/jungleTrees.ts` scatters trees deterministically on open ground only. Each
+candidate must clear every authored brush radius by an additional 490 px, keeping the large
+tree art and thicket art out of the same depth stack entirely. Open-world nodes target at most
+three trees (and may use fewer when the brush layout leaves less room); dungeons target two
+and also preserve the altar clearing. Each tree uses the
+forest trees' split canopy/root render treatment and a smooth trunk ellipse blocking both
+players and monsters. `shared/src/collision/collision.test.ts` checks the one-or-two density,
+brush clearance, both collision targets, and one connected walkable region for every T2–T4
+jungle node and dungeon.
+
+Everything the remaining Pass 2 biomes need beyond sections 9–12 (terrain, ranged/kite,
 charge, DoT, boss scripts, gauntlet) **already exists** and is authored, not engineered. The
-remaining primitives — player damage amplifiers (P3), the ambient node ramp (P4), and the
-corpse registry (P5) — are scoped in `docs/biome-ecology-pass2-plan.md`.
+remaining primitives — player damage amplifiers (P3) and the ambient node ramp (P4) — are
+scoped in `docs/biome-ecology-pass2-plan.md`.
+
+## 13. Swamp dead trees (Pass 2 art follow-up — SHIPPED)
+
+Four 1254×1254 transparent dead-tree sprites now live under
+`art/src/files/environment/trees/swamp/`: a hollow cypress snag, twisted mangrove, split
+swamp oak, and leaning drowned snag. They were generated with ChatGPT image generation using
+the forest tree sheet as the rendering reference and the swamp ground as a palette reference;
+PixelLab was not used.
+
+`shared/src/world/swampTrees.ts` scatters one to three trees deterministically on dry open
+ground (up to two in dungeons). Every trunk anchor must clear each authored rot pool radius by
+an additional 490 px, which conservatively keeps the complete rendered sprite — branches and
+roots included — off the pool art. The densely pooled T2/T3 dungeon layouts intentionally
+receive no tree when no position can also preserve the altar clearing and image bounds. Trees
+reuse the split canopy/root depth treatment and smooth dual-target trunk collision.
+`shared/src/collision/collision.test.ts` pins pool clearance, collision ownership, sparse
+density, and a connected walkable region across every canonical swamp node.

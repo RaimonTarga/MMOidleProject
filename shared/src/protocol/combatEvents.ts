@@ -45,9 +45,11 @@ export type CombatEvent =
   // Biome-ecology telegraph: a one-shot ring pulse at a monster's position, shown to
   // the whole node (not player-scoped). `pack-call` = a pack member alerting allies
   // (call-allies); `sun-mark` = a Desert marker painting its target; `frost-shatter` =
-  // a Tundra ice-armor shell breaking (freezing shockwave). Purely cosmetic — the
+  // a Tundra ice-armor shell breaking (freezing shockwave); `death-empower` = a fallen
+  // ally's necrotic surge; `raise-dead` = a necromancer pulling a corpse back up.
+  // Purely cosmetic — the
   // underlying aggro/debuff/freeze is server-authoritative.
-  | { kind: 'ecology-pulse'; monsterId: string; pos: Vec2; pulse: 'pack-call' | 'sun-mark' | 'frost-shatter' | 'death-empower' }
+  | { kind: 'ecology-pulse'; monsterId: string; pos: Vec2; pulse: 'pack-call' | 'sun-mark' | 'frost-shatter' | 'death-empower' | 'raise-dead' }
   // Monster charged (cast-time) attack telegraph, shown to the whole node. `start`
   // opens a `castMs` cast bar over the monster (label = ability name). `end` clears
   // it: `fired` true ⇒ the charged shot landed (play the flashy FX toward `targetId`),

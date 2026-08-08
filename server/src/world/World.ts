@@ -43,8 +43,13 @@ import {
   updateGroundZones,
   type RuntimeGroundZone,
 } from "../systems/world/groundZones";
+import {
+  updateCorpses,
+  type RuntimeCorpse,
+} from "../systems/world/corpses";
 import { updateMonsters } from "../systems/combat/ai/ai";
 import { updatePacks } from "../systems/combat/ai/packs";
+import { updateRaisers } from "../systems/combat/ai/raiseDead";
 import { updateSwarm } from "../systems/combat/ai/swarm";
 import { updateCombat } from "../systems/combat/engine/combat";
 import { updateTransitions } from "../systems/world/transitions";
@@ -240,6 +245,12 @@ export class World {
   /** Monotonic id source for ground zones. */
   groundZoneSeq = 0;
   /**
+   * Runtime-only raisable corpses keyed by node id, newest last (ring buffer).
+   * Same lifetime rule as monsters: TTL-swept, cleared on node freeze, never
+   * persisted. Read by `raisesDead` necromancers.
+   */
+  corpses = new Map<string, RuntimeCorpse[]>();
+  /**
    * Persist (marker) or clear (null) the server-global Void Overlord respawn
    * cooldown so it survives node freeze/thaw and server restarts. Set by
    * index.ts at boot; left null in benchmarks/tests (no DB).
@@ -371,9 +382,11 @@ export class World {
     updateMovement(this, dt, now);
     updateNodeFeatures(this, dt);
     updateGroundZones(this, now);
+    updateCorpses(this, now);
     updateTransitions(this);
     if (IS_DEV) updateTestRoomInteract(this, now);
     updatePacks(this, now);
+    updateRaisers(this, now);
     updateMonsters(this, dt, now);
     updateSwarm(this);
     updateCombat(this, dt, now);

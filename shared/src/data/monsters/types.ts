@@ -233,6 +233,29 @@ export interface MonsterOnDeath {
   };
 }
 
+/**
+ * Necromancy: while engaged, the monster reaches for a nearby CORPSE (recorded by
+ * the server's per-node corpse registry when a player kills something) and raises
+ * it as a risen copy of whatever died. No corpse in reach means no raise — the
+ * tide is fed by the player's own kills, never conjured from nothing.
+ *
+ * Risen mobs carry the `isRaised` marker: zero rewards, capped population, and
+ * they crumble the moment the raiser dies. That is the whole counterplay.
+ */
+export interface MonsterRaisesDead {
+  /** Cadence between raise attempts once the first one has come due. */
+  intervalMs: number;
+  /** Delay after the aggro session starts, so a raise is never the opener. */
+  initialDelayMs?: number;
+  /** How far it will reach for a corpse. */
+  corpseRange: number;
+  /** Hard cap on simultaneously-living risen mobs from this raiser. */
+  maxAlive: number;
+  /** Scalars on the risen copy (default 1) — the dead come back diminished. */
+  hpMult?: number;
+  damageMult?: number;
+}
+
 export interface MonsterDefinition {
   id: string;
   name: string;
@@ -305,6 +328,8 @@ export interface MonsterDefinition {
   targeting?: MonsterTargeting;
   /** Optional player-kill trigger. Fires before the dead monster is removed. */
   onDeath?: MonsterOnDeath;
+  /** Raises corpses of the recently killed as zero-reward risen mobs. */
+  raisesDead?: MonsterRaisesDead;
   /**
    * If set, the monster bursts at speedMult x base speed for durationMs when it
    * first acquires an aggro target (both pull-range and retaliation aggro).

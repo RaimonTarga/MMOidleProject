@@ -40,6 +40,7 @@ import type {
   IsChanneling,
   IsEncounterAdd,
   IsNodeFeatureSpawn,
+  IsRaised,
   IsInvulnerable,
   IsMinion,
   IsMonster,
@@ -256,6 +257,7 @@ export interface ServerEntity {
   isBossEngaged?: IsBossEngaged;
   isEncounterAdd?: IsEncounterAdd;
   isNodeFeatureSpawn?: IsNodeFeatureSpawn;
+  isRaised?: IsRaised;
   isInvulnerable?: IsInvulnerable;
   isUltimateEngaged?: IsUltimateEngaged;
   tracksDungeon?: TracksDungeon;

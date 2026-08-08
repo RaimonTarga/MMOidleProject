@@ -74,8 +74,9 @@ export const graveyardMonsterEntries = [
     // Skeletal shaman-elk (undead stag whose antlers drip plague-light — no zombies,
     // no humanoids: the wasteland is all undead BEASTS).
     // ELITE backline NECROMANCER — the graveyard rework's centerpiece. Hangs back and
-    // RAISES UNDEAD on a timer (capped at 4 alive); its risen dead CRUMBLE the instant
-    // it dies (rewards.ts despawns tracked spawn-adds), so killing it stems the tide.
+    // RAISES THE PLAYER'S OWN KILLS: each raise claims a real corpse from the node's
+    // corpse registry, so the tide is whatever you just killed, capped at 4 alive and
+    // worth ZERO rewards. Its risen dead crumble the instant it dies.
     // Squishy + ranged → reachable and dies fast once you commit. Yellow elite outline;
     // the `focus-elites` rune (taught by the graveyard recipe) is the intended counter.
     stats: { hp: 720, attack: 40, plating: 0, damageReduction: 0, speed: 40, attackRange: 200, attackCooldown: 1900, pullRange: 300 },
@@ -84,12 +85,12 @@ export const graveyardMonsterEntries = [
     rewards: { essence: 70, essenceType: 'purple', level: 3, biomeXp: 420 },
     ai: { wanderRadius: 200, leashRange: 640, idleMinMs: 1500, idleMaxMs: 4500 },
     dotEffect: { debuffId: 'grave-curse', label: 'Grave Curse', damagePerStack: 6, maxStacks: 4, tickIntervalMs: 1000, durationMs: 2500 },
-    bossScript: {
-      repeating: [
-        // Raise undead every 5s, capped at 4 living (the cap = no flood). Placeholder
-        // numbers — user balance pass (Step 15) owns rate/count/cap vs base density.
-        { intervalMs: 5000, initialDelayMs: 2500, actions: [{ type: 'spawn-adds', monsterTypeId: 'plague-rat', count: 2, offsetRange: 180, maxAlive: 4 }] },
-      ],
+    // Raise on a 5s cadence while engaged, capped at 4 living (the cap = no flood).
+    // No corpse in reach = no raise. Placeholder numbers — the balance pass owns
+    // rate/reach/cap and the risen scalars vs base node density.
+    raisesDead: {
+      intervalMs: 5000, initialDelayMs: 2500, corpseRange: 280, maxAlive: 4,
+      hpMult: 0.7, damageMult: 0.8,
     },
   }],
 

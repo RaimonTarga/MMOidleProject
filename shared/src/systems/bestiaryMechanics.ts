@@ -220,6 +220,19 @@ export function describeMonsterMechanics(
     });
   }
 
+  if (def.raisesDead) {
+    const raise = def.raisesDead;
+    lines.push({
+      id: 'raises-dead',
+      icon: '☠',
+      label: 'Raises the dead',
+      detail:
+        `Every ${fmtMs(raise.intervalMs)} while fighting, it re-animates a corpse within ` +
+        `${raise.corpseRange}px (up to ${raise.maxAlive} at once). Its risen dead grant ` +
+        `NO rewards and crumble when it dies.`,
+    });
+  }
+
   if (def.onDeath?.empowerAllies) {
     const empower = def.onDeath.empowerAllies;
     lines.push({

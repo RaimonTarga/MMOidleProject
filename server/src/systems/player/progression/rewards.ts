@@ -282,6 +282,11 @@ export function grantMonsterRewards(
 ): KillRewardInfo | null {
   const killer = world.getPlayerEntity(killerPlayerId);
   if (!killer) return null;
+  // A necromancer's risen dead are worth NOTHING: no essence, biome XP, catalyst
+  // progress, quest credit or party share. This single gate covers every kill
+  // path because they all funnel through here, and it is why the raise loop can
+  // never be farmed — killing the raiser is the only way to stop the tide.
+  if (monster.isRaised) return null;
 
   const suppressBossRespawn = monster.tracksDungeon?.source === 'gauntletBoss';
   const killerInfo = applyKillRewardsToPlayer(world, killer, monster, {

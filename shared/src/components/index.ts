@@ -18,6 +18,7 @@ export * from "./targeting/hasKnockback";
 export * from "./targeting/isBossEngaged";
 export * from "./targeting/isEncounterAdd";
 export * from "./targeting/isNodeFeatureSpawn";
+export * from "./targeting/isRaised";
 export * from "./targeting/isInvulnerable";
 export * from "./targeting/isRooted";
 export * from "./targeting/isUltimateEngaged";

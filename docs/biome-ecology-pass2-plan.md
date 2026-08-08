@@ -1,9 +1,9 @@
 # Biome Ecology Pass 2 — Implementation Plan
 
-**Status:** 🚧 in progress — Sessions 1–2 ✅ shipped 2026-08-08, plus the Jungle art/terrain
-slice pulled forward out of Session 6. Sessions 3–5 not started. **Start here: §6.**
-**Companion:** `docs/biome-ecology-current-state.md` (refreshed through Session 2; its
-sections 8–10 are the living record of the shipped primitives and consumers).
+**Status:** 🚧 in progress — Sessions 1–3 ✅ shipped 2026-08-08, plus the Jungle art/terrain
+slice pulled forward out of Session 6. Sessions 4–5 not started. **Start here: §7.**
+**Companion:** `docs/biome-ecology-current-state.md` (refreshed through Session 3; its
+sections 8–11 are the living record of the shipped primitives and consumers).
 **Predecessor:** `docs/archive/biome-ecology-plan.md` (Step 12 program plan).
 
 Scope: deepen the T2+ biomes past the "gloss-over" pass — Cave, Desert, Jungle, Volcano,
@@ -97,8 +97,8 @@ a node-wide, in-combat-gated stack counter with a per-stack payload of
 decay cadence. Volcano and Tundra then become pure data. Volcano's `burn` payload is
 dropped per the user's ask.
 
-Plus one net-new subsystem that isn't shared: **P5 — corpse registry + `onDeath` hooks**
-(Wasteland only, §Session 3).
+Plus one net-new subsystem that isn't shared: **P5 — corpse registry + raises**
+(Wasteland only, §Session 3). ✅ shipped — see §7.
 
 ---
 
@@ -168,7 +168,7 @@ Both are pure consumers of P1 with no new protocol, which is why they share a se
 > owned and survive their monster's removal; charnel-brute death empowerment is a timed,
 > capped stacking damage status. `pnpm typecheck` and all 68 tests passed.
 
-### Session 3 — P5: corpse registry + raises
+### Session 3 — P5: corpse registry + raises ✅ SHIPPED 2026-08-08
 Own session — the only monster-lifecycle work in the program, and the only place a rewards
 exploit can appear.
 
@@ -179,6 +179,19 @@ Fold the existing `gravewright` off `spawn-adds` onto the real raise.
 
 > **Do not merge into Session 2.** Death triggers and the corpse registry both touch
 > monster death and rewards; combined they make a diff that can't be reviewed cleanly.
+
+> **Outcome.** Landed as specced. Three things worth carrying forward:
+>
+> 1. **The rewards exploit closes in exactly one line**, because every kill path in the game
+>    funnels through `grantMonsterRewards`. An `isRaised` early-return there zeroes essence,
+>    biome XP, catalyst progress, quest credit, the party share and dungeon-gauntlet credit
+>    at once. Do not add a second gate anywhere else — there is no other reward entry point.
+> 2. **The loop has to be proven to terminate, not just capped.** Bosses and risen mobs leave
+>    no corpse, and a risen necromancer never raises. Without those three gates a tide can
+>    re-raise itself forever — zero-reward, but permanent.
+> 3. **No new protocol.** The risen copy is renamed `Risen <Name>` on the already-networked
+>    `isMonster` slice, which is the whole client tell, plus a `raise-dead` ecology pulse.
+>    `isRaised` itself stays a server-only marker and trips no invariant.
 
 ### Session 4 — P3 + Desert pairs
 The amplifiers, proven against one consumer before Volcano takes a dependency on them.
@@ -287,7 +300,7 @@ the proper fix is a regen with the interior shadow pushed much harder.
 
 ### Jungle trees — DO NOT retry with PixelLab
 
-Asked for, attempted, and abandoned on evidence. **The user is handling tree art elsewhere.**
+PixelLab was abandoned on evidence. **The replacement ChatGPT-generated tree set is now shipped.**
 
 PixelLab cannot produce this asset class:
 
@@ -305,27 +318,23 @@ The failed batch cost $0.15 and came back 100% opaque (pixflux ignored `no_backg
 and hard outlines despite `outline: lineless`. **The scale/pixel-density mismatch is the
 disqualifier**, not the wording: 400px of detail cannot sit beside 1024px art.
 
-The four entries are parked at `status: draft` **with their prompts intact** so a bare
-`art:generate` cannot re-spend on them. Candidates are archived under
-`art/candidates/_finished/environment/`.
+The four replacement entries are `accepted` at 1254×1254 under
+`art/src/files/environment/trees/jungle/`. They were generated with ChatGPT image generation
+using the forest sheet as the style/scale reference, then locally chroma-keyed to alpha.
 
-### Tree code work — NOT started, and cheap when art exists
+### Tree code work — SHIPPED
 
-`getNodeTrees` gates on a single constant, `TREE_BIOME_GROUP = "forest"`
-([trees.ts:19](../shared/src/world/trees.ts#L19)), so extending trees to a second biome is a
-one-line generalization into a per-biome record of `{ sheetKey, cellPx, displayBase,
-hitboxRects }`. Trees are deterministic from the node id and shared, so server movement
-blocking and client rendering agree with no network traffic; trunk hitboxes bake from a mask
-via `pnpm --filter @mmo-idle/server bake:tree-hitboxes`.
+`getNodeTrees` now dispatches jungle placement to `shared/src/world/jungleTrees.ts`. Trees are
+deterministically scattered on open ground, with a 490 px clearance beyond every authored
+brush radius so tree and thicket art never share a depth stack. Open-world nodes target at
+most three trees (fewer where the dense brush layout leaves less room); dungeons target two
+and also preserve the altar clearing.
+The client reuses the forest split canopy/root y-sort treatment; shared smooth trunk ellipses
+block both players and monsters with no network traffic.
 
-> **Before shipping collidable jungle trees, re-run the connectivity probe.** §5.8 of
-> `docs/next-playtest-implementation-plan.md` is an OPEN blocker: auto-combat wedges forever
-> when `nearestEngageableMonster` finds nothing pathable, found on a heavy-blocking-geometry
-> mountain node. That probe cleared the current world ("all 140 open-world nodes have exactly
-> one connected walkable region"); jungle nodes already carry 3–4 × 600px thickets, and
-> adding trunks is exactly the stress that could break the invariant. Deriving jungle trees
-> from the forest sheet would reuse the baked hitboxes verbatim and add no new footprints —
-> the lowest-risk art route by some margin.
+> **Connectivity probe passed.** `shared/src/collision/collision.test.ts` now checks every
+> canonical T2–T4 jungle node and dungeon after tree collision is added. Each remains exactly
+> one connected walkable region for the player navigation body.
 
 ### Unrelated bug found, not fixed
 
@@ -355,3 +364,58 @@ and monster-death-effect tests green again after integration.
 The original persistent-zone ownership distinction is load-bearing for future work:
 `slam-telegraph` circles die with their cast owner, while `toxic-pool` circles die only on
 expiry or node freeze. Do not reintroduce a blanket owner cleanup when extending P1.
+
+---
+
+## 7. Handover — state at the end of Session 3 (2026-08-08)
+
+**Next session is Session 4** (P3 player damage amplifiers + Desert pairs). §3 still describes
+Sessions 4–6 accurately; nothing about them changed. Session 4 must land P3 against the Desert
+consumer **before** Session 5's Volcano takes a dependency on it — that ordering constraint in
+§4 is still live.
+
+Session 3's work sits on `feat/biome-ecology-pass2` on top of the Session-2 tip.
+`pnpm typecheck` green; `pnpm test` **69/69** (Session 2 closed at 68 — the new file is
+`server/test/corpseRaise.test.ts`).
+
+### What shipped
+
+Shared contract → server authority → client presentation, as §4 requires:
+
+- `MonsterRaisesDead` on `MonsterDefinition`, `IsRaised { raiserId }` marker,
+  `'raise-dead'` ecology pulse, and a bestiary mechanic line.
+- `server/src/systems/world/corpses.ts` (registry) and
+  `server/src/systems/combat/ai/raiseDead.ts` (`updateRaisers`, `onRaiserDead`,
+  `countRaisedBy`), wired into `World.tick` next to `updateGroundZones` / `updatePacks` and
+  into `freezeNode`.
+- The `isRaised` reward gate in `grantMonsterRewards`, and corpse recording +
+  raiser-death cleanup added to the Session-2 centralized `onKill` listener.
+- `gravewright` re-authored off `spawn-adds`. **All numbers are placeholders** — cadence,
+  reach, cap and the risen HP/damage scalars belong to the balance pass, and they interact
+  with wasteland's authored EXTREME density.
+
+Full mechanical detail lives in §11 of `docs/biome-ecology-current-state.md`.
+
+### Judgement calls a later session should know about
+
+- **Risen mobs count toward node density.** They suppress ambient respawn while the tide is
+  up, exactly as the old `spawn-adds` swarm did. That is a deliberate keep, not an oversight:
+  it bounds total node pressure. If a playtest says the wasteland feels starved of *rewarding*
+  mobs mid-fight, excluding `isRaised` from `getMonsterCountInNode` is the one-line lever.
+- **The raise is instant — no cast, no telegraph beyond the pulse.** A wind-up would make the
+  necromancer interruptible mid-raise, which is a nicer fight but a bigger diff; it was left
+  out deliberately. `chargedAttack` / `engageSequence` are the precedents if it is ever wanted.
+- **A corpse claimed by a failed spawn is lost.** `takeNearestCorpse` removes before
+  `createMonster` runs, so a terrain-blocked spawn burns the corpse. Harmless in practice (the
+  corpse sits where a monster legally stood) and TTL-bounded, but it is not a bug if observed.
+
+### Not touched, still open
+
+The Session-1 handover's two loose ends are unchanged and still worth a later session:
+
+- `server/package.json`'s `dev` script is broken (`tsx --env-file=... watch` puts the flag
+  ahead of the subcommand, so `pnpm dev:server` dies on the host; Docker's nodemon path hides
+  it).
+- Jungle trees shipped through the ChatGPT image-generation track; PixelLab remains the wrong
+  tool for this asset class. Density, dual-target collision, brush clearance, and jungle
+  connectivity are pinned in `shared/src/collision/collision.test.ts`.

@@ -3,6 +3,7 @@ import type { World } from './World';
 import { removeMonsterEntity } from './monsterLifecycle';
 import { ensurePopulation, ensureBoss } from '../systems/world/spawning';
 import { clearGroundZonesForNode } from '../systems/world/groundZones';
+import { clearCorpsesForNode } from '../systems/world/corpses';
 import {
   clearDungeonGauntletRuntime,
   ensureDungeonGauntlet,
@@ -18,6 +19,7 @@ export function freezeNode(world: World, nodeId: string): void {
   }
   clearDungeonGauntletRuntime(world, nodeId);
   clearGroundZonesForNode(world, nodeId);
+  clearCorpsesForNode(world, nodeId);
   world.nextMonsterIdByNode.delete(nodeId);
   world.reconcileMonsterCounts();
 

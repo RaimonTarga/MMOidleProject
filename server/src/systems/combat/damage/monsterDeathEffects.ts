@@ -7,8 +7,10 @@ import {
 import type { MonsterEntity } from '../../../ecs/entity';
 import type { World } from '../../../world/World';
 import { onPackAlphaDead } from '../ai/packs';
+import { onRaiserDead } from '../ai/raiseDead';
 import { registerCombatListener } from '../engine/combatPipeline';
 import { publishToxicPool } from '../../world/groundZones';
+import { recordCorpse } from '../../world/corpses';
 
 export const DEATH_EMPOWER_EFFECT_ID = 'monster-death-empower';
 
@@ -76,7 +78,11 @@ export function initMonsterDeathEffects(): void {
   registerCombatListener('onKill', (ctx, world) => {
     if (ctx.defenderType !== 'monster') return;
     onPackAlphaDead(world, ctx.defender);
+    onRaiserDead(world, ctx.defender);
     spawnDeathHazard(world, ctx.defender);
     empowerNearbyAllies(world, ctx.defender);
+    // Last: the corpse this kill leaves behind must not be raisable by the very
+    // sweep above, and a risen mob leaves nothing (`recordCorpse` gates on that).
+    recordCorpse(world, ctx.defender);
   });
 }

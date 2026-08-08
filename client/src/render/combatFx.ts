@@ -190,6 +190,10 @@ const SUN_MARK_PULSE_COLOR = 0xffcc33;
 // Tundra ice-armor shatter — an icy blue burst when a frost shell breaks.
 const FROST_SHATTER_PULSE_COLOR = 0x88ddff;
 const DEATH_EMPOWER_PULSE_COLOR = 0xcc66dd;
+// Wasteland raise — a sickly plague-green ring at the corpse a necromancer just
+// pulled back up. Deliberately a different family from the purple death-empower
+// surge so the two wasteland death tells never read as the same event.
+const RAISE_DEAD_PULSE_COLOR = 0x88dd66;
 
 function snapPlayerToServerTarget(
   state: RenderState,
@@ -518,7 +522,9 @@ export function dispatchCombatEvent(
             ? FROST_SHATTER_PULSE_COLOR
             : ev.pulse === "death-empower"
               ? DEATH_EMPOWER_PULSE_COLOR
-              : ECOLOGY_PULSE_COLOR;
+              : ev.pulse === "raise-dead"
+                ? RAISE_DEAD_PULSE_COLOR
+                : ECOLOGY_PULSE_COLOR;
       fxAoeRing(scene, ev.pos, 70, color);
     }
     return;
