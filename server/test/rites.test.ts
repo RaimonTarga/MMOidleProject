@@ -3,186 +3,84 @@ import {
   STARTER_RUNE_IDS,
   applyStatusEffect,
   emptyEquipment,
-  getStatusEffect,
+  runeBudgetForGlobalMastery,
+  runicPointLoadoutCost,
+  initUsesEnergy,
   validRiteIds,
 } from "@mmo-idle/shared";
 import type { PersistedPlayerSlices } from "../src/db/playerRepo";
-import { recalculatePlayerEntityStats } from "../src/ecs/playerEntityFormulas";
-import { updateCombatState } from "../src/systems/combat/engine/combatState";
-import { FOREST_HASTE } from "../src/systems/world/mobility/mobilityBoots";
-import {
-  oocRegenDelay,
-  runRiteOoc,
-} from "../src/systems/player/rites/riteOoc";
+import { abilityCooldownKey } from "../src/systems/player/abilities/abilityCooldowns";
+import { applyCombatEndRites, combatExitDelay, initRiteListeners } from "../src/systems/player/rites/riteOoc";
+import { markEngaged, updateCombatTransitions } from "../src/systems/combat/ai/engagement";
 import { World } from "../src/world/World";
+import { emitCombatEvent, makeCombatContext } from "../src/systems/combat/engine/combatPipeline";
 
-function assert(condition: boolean, message: string): void {
-  if (!condition) throw new Error(message);
-}
+function assert(condition: boolean, message: string): void { if (!condition) throw new Error(message); }
 
 function makePlayerSlices(): PersistedPlayerSlices {
   return {
     isPlayer: { id: "rite-player", name: "Rite Tester" },
-    hasPosition: {
-      current: { x: 400, y: 400 },
-      nodeId: "node-5-5",
-      speed: GAME_CONFIG.PLAYER_SPEED,
-    },
-    hasHealth: {
-      hp: GAME_CONFIG.PLAYER_MAX_HP,
-      maxHp: GAME_CONFIG.PLAYER_MAX_HP,
-      hpRegen: GAME_CONFIG.PLAYER_HP_REGEN,
-    },
+    hasPosition: { current: { x: 400, y: 400 }, nodeId: "node-5-5", speed: GAME_CONFIG.PLAYER_SPEED },
+    hasHealth: { hp: GAME_CONFIG.PLAYER_MAX_HP, maxHp: GAME_CONFIG.PLAYER_MAX_HP, hpRegen: GAME_CONFIG.PLAYER_HP_REGEN },
     tracksProgression: {
-      level: 0,
-      skillPoints: 0,
-      essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
-      catalysts: {},
-      catalystProgress: {},
-      biomeXP: {},
-      biomeLevel: {},
-      unlockedRecipes: [],
-      questProgress: {},
-      playerTier: 0,
-      currentSkillTier: 0,
-      bossesCleared: [],
-      clearedNodes: [],
-      runesOwned: [...STARTER_RUNE_IDS],
-      runeRecipesCrafted: [],
-      runesEquipped: [],
-      knownAbilities: [],
-      equippedAbilities: { technique: null, guard: null },
-      knownStances: [],
-      equippedStances: { default: null, reactive: null },
-      activeStance: null,
-      knownRites: ["cleansing-breath", "lingering-momentum", "quickened-breath"],
-      equippedRites: ["cleansing-breath", "lingering-momentum"],
+      level: 0, skillPoints: 0,
+      essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 }, catalysts: {}, catalystProgress: {},
+      biomeXP: {}, biomeLevel: {}, unlockedRecipes: [], questProgress: {}, playerTier: 0, currentSkillTier: 0,
+      bossesCleared: [], clearedNodes: [], runesOwned: [...STARTER_RUNE_IDS], runeRecipesCrafted: [], runesEquipped: [],
+      knownAbilities: ["brace"], equippedAbilities: { techniques: [], guards: ["brace"] },
+      knownStances: [], equippedStances: { default: null }, activeStance: null,
+      knownRites: [...validRiteIds(["lingering-battle", "swift-repose", "purification", "mechanic-renewal", "ability-reprieve", "blood-offering"])],
+      equippedRites: [],
     },
-    holdsInventory: {
-      inventory: [],
-      equipment: emptyEquipment(),
-      itemUpgrades: {},
-    },
-    usesSkills: {
-      unlockedSkills: [],
-      passives: {},
-      selectedClass: null,
-      selectedSubVariant: null,
-      selectedRange: null,
-      combatArchetype: null,
-    },
+    holdsInventory: { inventory: [], equipment: emptyEquipment(), itemUpgrades: {} },
+    usesSkills: { unlockedSkills: [], passives: {}, selectedClass: null, selectedSubVariant: null, selectedRange: null, combatArchetype: "energy" },
   };
 }
 
 const world = new World();
 const player = world.attachPlayerEntity(makePlayerSlices(), "rite-player");
+player.usesEnergy = initUsesEnergy();
 
-// Equipping rites folds their `rite.*` mechanicEffects into passives via
-// recalculatePlayerStats, the same recalc path craft/equip already use.
-recalculatePlayerEntityStats(world, player);
-assert(
-  player.usesSkills.passives["rite.ooc-cleanse-stacks"] === 1,
-  "Cleansing Breath should fold its cleanse-stacks passive",
-);
-assert(
-  player.usesSkills.passives["rite.ooc-cleanse-interval-ms"] === 1000,
-  "Cleansing Breath should fold its cleanse-interval passive",
-);
-assert(
-  player.usesSkills.passives["rite.ooc-buff-decay-slowdown-pct"] === 0.5,
-  "Lingering Momentum should fold its buff-decay-slowdown passive",
-);
-assert(
-  player.usesSkills.passives["rite.ooc-regen-delay-reduction-pct"] === undefined,
-  "an unequipped rite (Quickened Breath) should not fold its passives",
-);
+player.tracksProgression.equippedRites = ["swift-repose"];
+assert(combatExitDelay(player, 5_000) === 2_500, "Swift Repose should halve the shared boundary timer");
+player.tracksProgression.equippedRites = ["lingering-battle"];
+assert(combatExitDelay(player, 5_000) === 7_500, "Lingering Battle should extend the shared boundary timer");
+player.tracksProgression.equippedRites = ["swift-repose", "lingering-battle"];
+assert(combatExitDelay(player, 5_000) === 5_000, "opposed timing rites should cancel cleanly");
 
-// Cleansing Breath: pulse-strips a harmful debuff's stacks on an interval while
-// out of combat, gated by its own cooldown (not just presence of the passive).
-applyStatusEffect(player.tracksCombat, {
-  id: "slow",
-  maxStacks: 5,
-  remainingMs: -1,
-  data: {},
-});
-applyStatusEffect(player.tracksCombat, { id: "slow", maxStacks: 5, remainingMs: -1, data: {} });
-applyStatusEffect(player.tracksCombat, { id: "slow", maxStacks: 5, remainingMs: -1, data: {} });
-assert(getStatusEffect(player.tracksCombat, "slow")?.stacks === 3, "setup: slow should carry 3 stacks");
+applyStatusEffect(player.tracksCombat, { id: "slow", maxStacks: 5, remainingMs: -1, sourceId: "monster", data: {} });
+applyStatusEffect(player.tracksCombat, { id: "antiheal", maxStacks: 1, remainingMs: -1, sourceId: "monster", data: {} });
+applyStatusEffect(player.tracksCombat, { id: "slow", maxStacks: 1, remainingMs: 1_000, sourceId: "node-feature:pool", data: { isNodeFeature: 1 } });
+player.tracksProgression.equippedRites = ["purification", "mechanic-renewal", "ability-reprieve"];
+player.usesEnergy!.energy = 0;
+player.tracksCombat.cooldowns[abilityCooldownKey("brace")] = 10_000;
+applyCombatEndRites(world, player);
+assert(!player.tracksCombat.statusEffects.some((e) => e.sourceId === "monster"), "Purification should remove all carried harmful instances");
+assert(player.tracksCombat.statusEffects.some((e) => e.sourceId.startsWith("node-feature:")), "active source-owned hazards should remain authoritative");
+assert(player.usesEnergy!.energy === player.usesEnergy!.energyMax * 0.3, "Mechanic Renewal should restore class readiness");
+assert(player.tracksCombat.cooldowns[abilityCooldownKey("brace")] === 7_000, "Ability Reprieve should reduce remaining cooldown by 30%");
 
-let now = 0;
-function advance(ms: number): void {
-  now += ms;
-  updateCombatState(world, ms);
-}
+// The transition owns one-shot combat-end execution and clears its marker.
+player.tracksProgression.equippedRites = ["ability-reprieve"];
+player.tracksCombat.cooldowns[abilityCooldownKey("brace")] = 10_000;
+markEngaged(world, player, 1_000);
+updateCombatTransitions(world, 7_000);
+const afterFirst = player.tracksCombat.cooldowns[abilityCooldownKey("brace")];
+updateCombatTransitions(world, 8_000);
+assert(afterFirst === 7_000 && player.tracksCombat.cooldowns[abilityCooldownKey("brace")] === afterFirst, "combat-end effects should fire exactly once");
 
-runRiteOoc(world, player, 500, now);
-assert(
-  getStatusEffect(player.tracksCombat, "slow")?.stacks === 2,
-  "Cleansing Breath should strip a stack the first time it runs",
-);
+const victim = world.createMonster("node-5-5", "plains-slime", { x: 450, y: 400 });
+if (!victim) throw new Error("setup: victim missing");
+initRiteListeners();
+player.tracksProgression.equippedRites = ["blood-offering"];
+player.hasHealth.hp = player.hasHealth.maxHp * 0.5;
+const beforeOffering = player.hasHealth.hp;
+const kill = makeCombatContext(player, "player", victim, "monster");
+emitCombatEvent("onKill", kill, world);
+assert(player.hasHealth.hp === beforeOffering + player.hasHealth.maxHp * 0.05, "Blood Offering should heal through credited onKill events");
 
-advance(500);
-runRiteOoc(world, player, 500, now);
-assert(
-  getStatusEffect(player.tracksCombat, "slow")?.stacks === 2,
-  "Cleansing Breath should respect its own pulse cooldown between strips",
-);
-
-advance(600);
-runRiteOoc(world, player, 600, now);
-assert(
-  getStatusEffect(player.tracksCombat, "slow")?.stacks === 1,
-  "Cleansing Breath should strip another stack once its cooldown clears",
-);
-
-// Lingering Momentum: slows the OOC decay of a beneficial, non-harmful timed
-// buff by adding back a fraction of the elapsed dt after the duration ticks
-// down (net decay = (1 - slowdown) * dt).
-applyStatusEffect(player.tracksCombat, {
-  id: FOREST_HASTE,
-  maxStacks: 1,
-  remainingMs: 1000,
-  refreshable: true,
-  sourceId: player.isPlayer.id,
-  data: { speedPct: 0.3, totalMs: 1000 },
-});
-advance(400);
-runRiteOoc(world, player, 400, now);
-const haste = getStatusEffect(player.tracksCombat, FOREST_HASTE);
-assert(
-  haste !== undefined && Math.abs(haste.remainingMs - 800) < 0.001,
-  `Lingering Momentum should net-decay the buff by (1 - 0.5) * 400ms (got ${haste?.remainingMs})`,
-);
-
-// Quickened Breath: shortens the OOC regen delay read by combat.ts. Swap the
-// loadout (both rites share the same folding path) and recalc.
-player.tracksProgression.equippedRites = ["quickened-breath"];
-recalculatePlayerEntityStats(world, player);
-assert(
-  player.usesSkills.passives["rite.ooc-regen-delay-reduction-pct"] === 0.5,
-  "Quickened Breath should fold its regen-delay-reduction passive",
-);
-assert(
-  Math.abs(oocRegenDelay(player) - GAME_CONFIG.COMBAT_REGEN_DELAY * 0.5) < 0.001,
-  "Quickened Breath should halve the effective OOC regen delay",
-);
-
-// Persistence: knownRites/equippedRites are filtered through validRiteIds on
-// hydrate (server/src/db/playerRepo.ts) so a stale/removed id from an old save
-// is dropped instead of surviving the round-trip.
-const storedKnown = ["cleansing-breath", "some-retired-rite-id"];
-const storedEquipped = ["cleansing-breath", "some-retired-rite-id"];
-assert(
-  JSON.stringify(validRiteIds(storedKnown)) === JSON.stringify(["cleansing-breath"]),
-  "hydrate should drop unknown/retired rite ids from knownRites",
-);
-assert(
-  JSON.stringify(validRiteIds(storedEquipped)) === JSON.stringify(["cleansing-breath"]),
-  "hydrate should drop unknown/retired rite ids from equippedRites",
-);
-assert(
-  JSON.stringify(validRiteIds([])) === JSON.stringify([]),
-  "hydrate should default a missing/empty rite list to an empty array",
-);
+const budget = runeBudgetForGlobalMastery(0);
+assert(runicPointLoadoutCost({ rules: [], rites: ["mechanic-renewal", "ability-reprieve"] }) > budget, "expensive rites should compete in the shared RP pool");
+assert(JSON.stringify(validRiteIds(["purification", "retired"])) === JSON.stringify(["purification"]), "unknown rites should be filtered");
 
 console.log("rites.test.ts: ok");

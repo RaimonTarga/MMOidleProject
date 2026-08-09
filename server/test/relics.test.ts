@@ -37,7 +37,7 @@ function slices(id: string, tier: number, nodeId = 'node-clearing'): PersistedPl
       bossesCleared: [], clearedNodes: [],
       runesOwned: [...STARTER_RUNE_IDS], runeRecipesCrafted: [], runesEquipped: [],
       knownAbilities: [], equippedAbilities: { technique: null, guard: null },
-      knownStances: [], equippedStances: { default: null, reactive: null }, activeStance: null,
+      knownStances: [], equippedStances: { default: null }, activeStance: null,
       knownRites: [], equippedRites: [],
     },
     holdsInventory: { inventory: [], equipment: emptyEquipment(), itemUpgrades: {} },

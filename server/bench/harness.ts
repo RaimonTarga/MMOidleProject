@@ -104,7 +104,7 @@ function buildBenchPlayer(
       // (2026-08-02) — a malformed slice that no type ever saw.
       equippedAbilities: { techniques: [], guards: [] },
       knownStances: [],
-      equippedStances: { default: null, reactive: null },
+      equippedStances: { default: null },
       activeStance: null,
       knownRites: [],
       equippedRites: [],

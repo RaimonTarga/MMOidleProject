@@ -8,6 +8,7 @@
  */
 import type { AutocombatConfig } from "./components/core/networkedSlices";
 import type { CombatArchetype } from "./types/combat";
+import { NO_STANCE_ID, stanceDef } from "./stances";
 
 export type RuneChannel =
   | "MOVEMENT"
@@ -37,6 +38,8 @@ export type RuneConditionId =
   | "in-combat"
   | "when-idle"
   | "hp-below-25"
+  | "hp-above-90"
+  | "target-hp-below-25"
   | "has-debuff"
   | "in-party"
   // Reactive telegraph hook: active while an enemy attacking you is charging a
@@ -81,7 +84,7 @@ export type RuneActionId =
   | "fire-technique-2"
   | "fire-guard"
   | "fire-guard-2"
-  // System rework Step 10: auto-switch to the equipped reactive stance.
+  // Switch to a destination stance authored on the assembled rule.
   | "switch-stance";
 
 export interface ConditionDef {
@@ -108,6 +111,8 @@ export interface ActionDef {
 export interface EquippedRule {
   conditionId: string;
   actionId: string;
+  /** Required destination for switch-stance; invalid and ignored on other actions. */
+  targetStanceId?: string;
 }
 
 export const RUNE_CHANNELS: RuneChannel[] = [
@@ -179,8 +184,12 @@ const GUARD_CONDITIONS: readonly RuneConditionId[] = [
 
 // System rework Step 10: situations a player can wire to a stance auto-switch.
 const STANCE_CONDITIONS: readonly RuneConditionId[] = [
+  "always",
   "in-combat",
+  "when-idle",
   "hp-below-25",
+  "hp-above-90",
+  "target-hp-below-25",
   "has-debuff",
   "target-casting",
   "n-aggro-3",
@@ -228,6 +237,28 @@ export const CONDITION_DATABASE = new Map<string, ConditionDef>([
       blurb: "Works while your health is at or under 25%.",
       cost: 1,
       tier: 1,
+      kind: "state",
+    },
+  ],
+  [
+    "hp-above-90",
+    {
+      id: "hp-above-90",
+      name: "HP Above 90%",
+      blurb: "Works while your health is at or above 90%.",
+      cost: 1,
+      tier: 2,
+      kind: "state",
+    },
+  ],
+  [
+    "target-hp-below-25",
+    {
+      id: "target-hp-below-25",
+      name: "Target HP Below 25%",
+      blurb: "Works while your current target is at or under 25% health.",
+      cost: 1,
+      tier: 2,
       kind: "state",
     },
   ],
@@ -595,7 +626,7 @@ export const ACTION_DATABASE = new Map<string, ActionDef>([
       id: "switch-stance",
       name: "Switch Stance",
       blurb:
-        "Switch to your reactive stance while this situation holds, reverting to your default otherwise.",
+        "Switch to a chosen learned stance while this situation holds, reverting to your default otherwise.",
       cost: 2,
       tier: 2,
       channel: "STANCE",
@@ -635,9 +666,7 @@ export const STARTER_RUNE_IDS: string[] = Array.from(
     // are inert until the player's tier grants a second slot of that kind.
     "fire-technique-2",
     "fire-guard-2",
-    // Step 10: stance auto-switch is a timing preference for stances you already
-    // learned (the stance recipes are the real T2 gate). Equipping still costs RP
-    // and is inert with no reactive stance equipped.
+    // Stance auto-switch is a timing preference for a learned destination.
     "switch-stance",
     // Reactive "enemy is charging a cast" condition — available from the start so
     // players can answer telegraphed casts once they meet a charging mob.
@@ -668,6 +697,9 @@ export function normalizeRuneRule(rule: EquippedRule): EquippedRule {
   return {
     conditionId: LEGACY_CONDITION_IDS[rule.conditionId] ?? rule.conditionId,
     actionId: LEGACY_ACTION_IDS[rule.actionId] ?? rule.actionId,
+    ...(rule.actionId === "switch-stance" && typeof rule.targetStanceId === "string"
+      ? { targetStanceId: rule.targetStanceId }
+      : {}),
   };
 }
 
@@ -704,7 +736,10 @@ export function runeRuleCost(rule: EquippedRule): number {
   const condition = CONDITION_DATABASE.get(rule.conditionId);
   const action = ACTION_DATABASE.get(rule.actionId);
   if (!condition || !action) return 0;
-  return condition.cost + action.cost;
+  const destinationCost = action.id === "switch-stance"
+    ? (stanceDef(rule.targetStanceId)?.runeCost ?? 0)
+    : 0;
+  return condition.cost + action.cost + destinationCost;
 }
 
 export function runeLoadoutCost(rules: EquippedRule[]): number {
@@ -782,6 +817,7 @@ export function sanitizeRuneLoadout(
   owned: ReadonlySet<string>,
   budget: number,
   combatArchetype?: CombatArchetype,
+  knownStances?: ReadonlySet<string>,
 ): EquippedRule[] {
   const sanitized: EquippedRule[] = [];
   let spent = 0;
@@ -796,11 +832,19 @@ export function sanitizeRuneLoadout(
     ) {
       continue;
     }
+    if (
+      raw.actionId === "switch-stance" &&
+      (!raw.targetStanceId ||
+        (raw.targetStanceId !== NO_STANCE_ID &&
+          (!stanceDef(raw.targetStanceId) ||
+            (knownStances !== undefined && !knownStances.has(raw.targetStanceId)))))
+    ) continue;
     const cost = runeRuleCost(raw);
     if (spent + cost > budget) continue;
     sanitized.push({
       conditionId: raw.conditionId,
       actionId: raw.actionId,
+      ...(raw.targetStanceId ? { targetStanceId: raw.targetStanceId } : {}),
     });
     spent += cost;
   }
@@ -982,6 +1026,7 @@ export const BASELINE_RUNE_CONFIG: AutocombatConfig = {
 
 export interface RuneContext {
   hpPct: number;
+  targetHpPct?: number;
   inCombat: boolean;
   inParty: boolean;
   aggroCount: number;
@@ -1026,6 +1071,7 @@ export interface DerivedRuneConfig {
   guardAction: RuneActionId | null;
   guard2Action: RuneActionId | null;
   stanceAction: RuneActionId | null;
+  stanceTargetId: string | null;
   fleeRequested: boolean;
   orbit: boolean;
   autoPathEnemy: boolean;
@@ -1049,7 +1095,7 @@ export interface DerivedRuneConfig {
   fireGuard: boolean;
   /** A `fire-guard-2` rule's condition is active this tick (Guard slot 1). */
   fireGuard2: boolean;
-  /** A `switch-stance` rule's condition is active this tick (use reactive stance). */
+  /** A valid `switch-stance` rule claims the Stance channel this tick. */
   switchStance: boolean;
 }
 
@@ -1080,6 +1126,10 @@ function isConditionActive(conditionId: string, ctx: RuneContext): boolean {
       return !ctx.inCombat;
     case "hp-below-25":
       return ctx.hpPct <= 0.25;
+    case "hp-above-90":
+      return ctx.hpPct >= 0.9;
+    case "target-hp-below-25":
+      return ctx.targetHpPct !== undefined && ctx.targetHpPct <= 0.25;
     case "has-debuff":
       return ctx.debuffed ?? false;
     case "in-party":
@@ -1117,6 +1167,7 @@ export function deriveAutoConfigFromRunes(
     guardAction: null,
     guard2Action: null,
     stanceAction: null,
+    stanceTargetId: null,
     fleeRequested: false,
     orbit: false,
     autoPathEnemy: false,
@@ -1161,7 +1212,11 @@ export function deriveAutoConfigFromRunes(
     if (claimed[action.channel]) continue;
     if (!isConditionActive(condition.id, ctx)) continue;
 
-    const rule = { conditionId: condition.id, actionId: action.id };
+    const rule: EquippedRule = {
+      conditionId: condition.id,
+      actionId: action.id,
+      ...(raw.targetStanceId ? { targetStanceId: raw.targetStanceId } : {}),
+    };
     claimed[action.channel] = { rule, action, condition };
   }
 
@@ -1178,6 +1233,7 @@ export function deriveAutoConfigFromRunes(
   derived.guardAction = claimed.GUARD?.action.id ?? null;
   derived.guard2Action = claimed.GUARD_2?.action.id ?? null;
   derived.stanceAction = claimed.STANCE?.action.id ?? null;
+  derived.stanceTargetId = claimed.STANCE?.rule.targetStanceId ?? null;
 
   switch (derived.movementAction) {
     case "flee":

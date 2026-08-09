@@ -54,7 +54,7 @@ function makePlayerSlices(): PersistedPlayerSlices {
       knownAbilities: ["second-wind"],
       equippedAbilities: { techniques: [], guards: ["second-wind"] },
       knownStances: [],
-      equippedStances: { default: null, reactive: null },
+      equippedStances: { default: null },
       activeStance: null,
       knownRites: [],
       equippedRites: [],

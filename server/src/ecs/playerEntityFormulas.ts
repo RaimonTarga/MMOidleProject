@@ -86,6 +86,48 @@ export function recalculatePlayerEntityStats(world: World, entity: PlayerEntity)
   }
 }
 
+/**
+ * Stance switches rebuild derived stats while preserving unrelated live combat
+ * state. Max-HP changes preserve current HP percentage instead of healing or
+ * chopping off a flat amount.
+ */
+export function recalculatePlayerStanceStats(world: World, entity: PlayerEntity): void {
+  const hpPct = entity.hasHealth.hp / Math.max(1, entity.hasHealth.maxHp);
+  const cs = entity.tracksCombat;
+  const combatSnapshot = {
+    counters: { ...cs.counters },
+    resources: { ...cs.resources },
+    resourceMaxes: { ...cs.resourceMaxes },
+    cooldowns: { ...cs.cooldowns },
+    flags: { ...cs.flags },
+    strings: { ...cs.strings },
+    statusEffects: cs.statusEffects.map((effect) => ({ ...effect, data: { ...effect.data } })),
+  };
+  const cadenceSnapshot = entity.usesCadence ? { ...entity.usesCadence } : undefined;
+
+  recalculatePlayerEntityStats(world, entity);
+
+  cs.counters = combatSnapshot.counters;
+  cs.resources = combatSnapshot.resources;
+  cs.resourceMaxes = combatSnapshot.resourceMaxes;
+  cs.cooldowns = combatSnapshot.cooldowns;
+  cs.flags = combatSnapshot.flags;
+  cs.strings = combatSnapshot.strings;
+  cs.statusEffects = combatSnapshot.statusEffects;
+  if (entity.usesCadence && cadenceSnapshot) {
+    Object.assign(entity.usesCadence, cadenceSnapshot);
+    if (cadenceSnapshot.rampageCdReduction > 0) {
+      entity.performsAttack.attackCooldown = Math.max(
+        100,
+        entity.performsAttack.attackCooldown - cadenceSnapshot.rampageCdReduction,
+      );
+    }
+    markSliceDirty(world, entity, "usesCadence");
+  }
+  entity.hasHealth.hp = Math.max(1, Math.min(entity.hasHealth.maxHp, entity.hasHealth.maxHp * hpPct));
+  markSliceDirty(world, entity, "hasHealth");
+}
+
 export function canUnlockEntitySkill(
   entity: PlayerEntity,
   skillId: string,

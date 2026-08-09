@@ -8,6 +8,7 @@ import {
   runeBudgetForGlobalMastery,
   globalMastery,
   sanitizeRuneLoadout,
+  runicPointLoadoutCost,
 } from "@mmo-idle/shared";
 import type { World } from "./World";
 import type { PlayerEntity } from "../ecs/entity";
@@ -40,9 +41,19 @@ export function attachPlayerEntity(
     owned,
     budget,
     player.usesSkills.combatArchetype,
+    new Set(player.tracksProgression.knownStances ?? []),
   );
   player.tracksProgression.runesEquipped =
     sanitizedRules.length > 0 ? sanitizedRules : [...DEFAULT_RUNE_LOADOUT];
+  const legalRites: string[] = [];
+  for (const riteId of player.tracksProgression.equippedRites ?? []) {
+    const proposed = [...legalRites, riteId];
+    if (runicPointLoadoutCost({ rules: player.tracksProgression.runesEquipped, rites: proposed }) <= budget) {
+      legalRites.push(riteId);
+    }
+  }
+  player.tracksProgression.equippedRites = legalRites;
+  player.tracksProgression.activeStance = player.tracksProgression.equippedStances?.default ?? null;
 
   const entity: PlayerEntity = {
     entityId: socketId,

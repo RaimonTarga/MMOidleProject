@@ -66,7 +66,7 @@ function makePlayerSlices(id: string, nodeId: string): PersistedPlayerSlices {
       knownAbilities: [],
       equippedAbilities: { technique: null, guard: null },
       knownStances: [],
-      equippedStances: { default: null, reactive: null },
+      equippedStances: { default: null },
       activeStance: null,
       knownRites: [],
       equippedRites: [],

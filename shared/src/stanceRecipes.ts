@@ -1,106 +1,33 @@
-/**
- * Stance recipes (system rework Step 10) — parallel to `RuneRecipe` / `AbilityRecipe`.
- *
- * Crafting a stance recipe LEARNS the stance permanently (adds its id to
- * `TracksProgression.knownStances`); the player then freely slots it into the
- * default / reactive stance slot. Stances are a T2 system, gated by Biome Mastery
- * placement in the T2 level band (`recipeGroup` + `requiredBiomeLevel` ≥ 7, which
- * `biomeLevelCap()` tier-gates). The boss channel (`requiredBossClear`) is reserved
- * for signature stance variants (Step 13).
- */
 import type { EssenceType } from "./items";
 import { STANCE_DATABASE } from "./stances";
 
 export interface StanceRecipe {
-  id: string;
-  name: string;
-  description: string;
-  /** The stance learned when this recipe is crafted. */
-  stanceId: string;
-  tier: number;
+  id: string; name: string; description: string; stanceId: string; tier: number;
   cost: Partial<Record<EssenceType, number>>;
-  /** Catalyst cost, parallel to `cost` (mirrors gear/rune/ability catalyst gating). */
   catalystCost?: Partial<Record<string, number>>;
-  /** Biome-mastery gate (T2 band: requiredBiomeLevel ≥ 7). */
-  recipeGroup?: string;
-  requiredBiomeLevel?: number;
-  /** Boss gate (reserved for signature stance variants). */
-  requiredBossClear?: string;
+  recipeGroup?: string; requiredBiomeLevel?: number; requiredBossClear?: string;
 }
 
-// requiredBiomeLevel + costs are PLACEHOLDERS — user balance pass owns the numbers.
 const recipes: StanceRecipe[] = [
-  {
-    id: "stance-recipe-offensive",
-    name: "Offensive Stance",
-    description: "Learn the Offensive Stance: trade defense for damage and tempo.",
-    stanceId: "offensive-stance",
-    tier: 2,
-    recipeGroup: "forest",
-    requiredBiomeLevel: 7,
-    cost: { green: 60 },
-    catalystCost: { alacrity: 2 }, // family-tag: damage + tempo → Alacrity
-  },
-  {
-    id: "stance-recipe-defensive",
-    name: "Defensive Stance",
-    description: "Learn the Defensive Stance: trade offense for damage reduction.",
-    stanceId: "defensive-stance",
-    tier: 2,
-    recipeGroup: "forest",
-    requiredBiomeLevel: 7,
-    cost: { green: 60, blue: 20 },
-    catalystCost: { volatility: 2 }, // family-tag: reliable generalist %DR wall → Volatility
-  },
-  {
-    id: "stance-recipe-tanking",
-    name: "Tanking Stance",
-    description: "Learn the Tanking Stance: bulk up to hold the line.",
-    stanceId: "tanking-stance",
-    tier: 2,
-    recipeGroup: "forest",
-    requiredBiomeLevel: 8,
-    cost: { green: 70, blue: 30 },
-    catalystCost: { brutality: 3 }, // family-tag: bulk/hold-the-line anti-spike → Brutality
-  },
+  { id: "stance-recipe-offensive", name: "Offensive Stance", description: "Trade defense for damage and tempo.", stanceId: "offensive-stance", tier: 2, recipeGroup: "forest", requiredBiomeLevel: 7, cost: { green: 60 }, catalystCost: { alacrity: 2 } },
+  { id: "stance-recipe-defensive", name: "Defensive Stance", description: "Trade offense for dependable protection.", stanceId: "defensive-stance", tier: 2, recipeGroup: "forest", requiredBiomeLevel: 7, cost: { green: 60, blue: 20 }, catalystCost: { volatility: 2 } },
+  { id: "stance-recipe-tanking", name: "Tanking Stance", description: "Become dramatically safer and dramatically slower.", stanceId: "tanking-stance", tier: 2, recipeGroup: "forest", requiredBiomeLevel: 8, cost: { green: 70, blue: 30 }, catalystCost: { brutality: 3 } },
+  { id: "stance-recipe-enraged", name: "Enraged Stance", description: "Answer danger with finishing pressure.", stanceId: "enraged-stance", tier: 2, recipeGroup: "desert", requiredBiomeLevel: 8, cost: { red: 80, yellow: 30 }, catalystCost: { brutality: 3 } },
+  { id: "stance-recipe-perfection", name: "Perfection Stance", description: "Reward near-perfect control.", stanceId: "perfection-stance", tier: 2, recipeGroup: "plains", requiredBiomeLevel: 8, cost: { yellow: 80, green: 30 }, catalystCost: { alacrity: 3 } },
+  { id: "stance-recipe-fleeting", name: "Fleeting Stance", description: "Abandon pressure to reposition and escape.", stanceId: "fleeting-stance", tier: 2, recipeGroup: "tundra", requiredBiomeLevel: 8, cost: { blue: 80, green: 30 }, catalystCost: { alacrity: 3 } },
+  { id: "stance-recipe-berserker", name: "Berserker Stance", description: "Gain tempo while bleeding your own life away.", stanceId: "berserker-stance", tier: 3, recipeGroup: "desert", requiredBiomeLevel: 13, cost: { red: 140, purple: 40 }, catalystCost: { brutality: 5 } },
+  { id: "stance-recipe-predator", name: "Predator Stance", description: "Stalk enemies and empower the opening strike.", stanceId: "predator-stance", tier: 3, recipeGroup: "jungle", requiredBiomeLevel: 13, cost: { green: 130, red: 50 }, catalystCost: { predation: 5 } },
+  { id: "stance-recipe-brawler", name: "Brawler Stance", description: "Endure the pressure of many attackers.", stanceId: "brawler-stance", tier: 3, recipeGroup: "plains", requiredBiomeLevel: 13, cost: { yellow: 130, red: 50 }, catalystCost: { volatility: 5 } },
+  { id: "stance-recipe-execute", name: "Execute Stance", description: "Finish wounded prey at the cost of neutral pressure.", stanceId: "execute-stance", tier: 3, recipeGroup: "swamp", requiredBiomeLevel: 13, cost: { purple: 130, red: 50 }, catalystCost: { predation: 5 } },
+  { id: "stance-recipe-recuperating", name: "Recuperating Stance", description: "Surrender offense to regenerate during combat.", stanceId: "recuperating-stance", tier: 4, recipeGroup: "forest", requiredBiomeLevel: 19, cost: { green: 220, blue: 100 }, catalystCost: { blight: 7 } },
 ];
 
-export const STANCE_RECIPE_DATABASE = new Map<string, StanceRecipe>(
-  recipes.map((r) => [r.id, r]),
-);
-
-/** Progression inputs that gate whether a stance recipe is unlocked yet. */
-export interface StanceRecipeGateInput {
-  biomeLevel: Record<string, number>;
-  bossesCleared: readonly string[];
+export const STANCE_RECIPE_DATABASE = new Map<string, StanceRecipe>(recipes.map((r) => [r.id, r]));
+export interface StanceRecipeGateInput { biomeLevel: Record<string, number>; bossesCleared: readonly string[]; }
+export function isStanceRecipeUnlocked(recipe: StanceRecipe, input: StanceRecipeGateInput): boolean {
+  if (recipe.recipeGroup && recipe.requiredBiomeLevel !== undefined && (input.biomeLevel[recipe.recipeGroup] ?? 0) < recipe.requiredBiomeLevel) return false;
+  return !recipe.requiredBossClear || input.bossesCleared.includes(recipe.requiredBossClear);
 }
-
-/**
- * Whether the recipe's unlock requirements are met. Biome-mastery recipes gate on
- * `requiredBiomeLevel` in `recipeGroup`; signature recipes gate on `requiredBossClear`.
- * A recipe carrying both must satisfy both. Recipes with neither are always unlocked.
- */
-export function isStanceRecipeUnlocked(
-  recipe: StanceRecipe,
-  input: StanceRecipeGateInput,
-): boolean {
-  if (recipe.recipeGroup && recipe.requiredBiomeLevel !== undefined) {
-    if ((input.biomeLevel[recipe.recipeGroup] ?? 0) < recipe.requiredBiomeLevel) {
-      return false;
-    }
-  }
-  if (recipe.requiredBossClear) {
-    if (!input.bossesCleared.includes(recipe.requiredBossClear)) return false;
-  }
-  return true;
-}
-
 export function validateStanceRecipes(): string[] {
-  const errors: string[] = [];
-  for (const recipe of STANCE_RECIPE_DATABASE.values()) {
-    if (!STANCE_DATABASE.has(recipe.stanceId)) {
-      errors.push(`${recipe.id} points at unknown stance ${recipe.stanceId}.`);
-    }
-  }
-  return errors;
+  return [...STANCE_RECIPE_DATABASE.values()].filter((r) => !STANCE_DATABASE.has(r.stanceId)).map((r) => `${r.id} points at unknown stance ${r.stanceId}.`);
 }

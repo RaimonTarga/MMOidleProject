@@ -4,8 +4,7 @@
  * Crafting a rite recipe LEARNS the rite (adds it to `TracksProgression.knownRites`),
  * spending essence + catalysts and gating on Biome Mastery (T3 band) — mirroring rune /
  * ability / stance crafting. Equipping is free slotting of learned rites into the
- * interchangeable rite list (length ≤ `riteSlotCount`). Rites are always-on OOC
- * passives, so changing the loadout just recalcs stats (the `rite.*` keys re-fold).
+ * shared-RP-constrained Rite list. Rites are passive combat-boundary rules.
  */
 import type { EssenceType } from "@mmo-idle/shared";
 import {
@@ -17,13 +16,13 @@ import {
   catalystLabel,
   globalMastery,
   isRiteRecipeUnlocked,
-  riteSlotCount,
+  runeBudgetForGlobalMastery,
+  runicPointLoadoutCost,
   validRiteIds,
 } from "@mmo-idle/shared";
 import type { World } from "../../../world/World";
 import type { PlayerEntity } from "../../../ecs/entity";
 import { markSliceDirty } from "../../../ecs/dirtyHelpers";
-import { recalculatePlayerEntityStats } from "../../../ecs/playerEntityFormulas";
 
 const TEST_ROOM_ESSENCE_AMOUNT = 1_000_000_000;
 
@@ -127,9 +126,15 @@ export function setRiteLoadout(
     cleaned.push(id);
   }
 
-  const slots = riteSlotCount(globalMastery(prog.biomeLevel));
-  prog.equippedRites = cleaned.slice(0, slots);
+  if (cleaned.length !== new Set(riteIds).size) {
+    return { success: false, reason: "One or more Rites are invalid." };
+  }
+  const budget = runeBudgetForGlobalMastery(globalMastery(prog.biomeLevel));
+  const total = runicPointLoadoutCost({ rules: prog.runesEquipped ?? [], rites: cleaned });
+  if (total > budget) {
+    return { success: false, reason: `This build costs ${total} RP, but only ${budget} RP is available.` };
+  }
+  prog.equippedRites = cleaned;
   markSliceDirty(world, entity, "tracksProgression");
-  recalculatePlayerEntityStats(world, entity);
   return { success: true };
 }

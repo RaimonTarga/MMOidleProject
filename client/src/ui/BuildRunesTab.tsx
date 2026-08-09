@@ -5,7 +5,9 @@ import {
   ACTION_DATABASE,
   CONDITION_DATABASE,
   DEFAULT_RUNE_LOADOUT,
+  NO_STANCE_ID,
   RUNE_RECIPE_DATABASE,
+  STANCE_DATABASE,
   TEST_ROOM_NODE_ID,
   abilityDef,
   equippedForSlot,
@@ -13,7 +15,7 @@ import {
   isRuneRuleCompatibleForArchetype,
   runeBudgetForGlobalMastery,
   runeChannelLabel,
-  runeLoadoutCost,
+  runicPointLoadoutCost,
   runeRuleCost,
   stanceDef,
   type AbilitySlot,
@@ -21,7 +23,6 @@ import {
   type ConditionDef,
   type EquippedAbilities,
   type EquippedRule,
-  type EquippedStances,
   type EssenceType,
 } from "@mmo-idle/shared";
 import { hudBus } from "../hudBus";
@@ -30,16 +31,17 @@ import {
   bossesClearedAtom,
   combatArchetypeAtom,
   equippedAbilitiesAtom,
-  equippedStancesAtom,
+  equippedRitesAtom,
   essencesAtom,
   globalMasteryAtom,
+  knownStancesAtom,
   playerNodeIdAtom,
   runesEquippedAtom,
   runesOwnedAtom,
 } from "../hud/atoms";
 import { BuildIcon, type BuildIconKind } from "./BuildIcon";
 import { GameIcon, type IconSource } from "./GameIcon";
-import { runeActionIconSource, runeConditionIconSource } from "./conceptIcons";
+import { runeActionIconSource, runeConditionIconSource, stanceIconSource } from "./conceptIcons";
 import { DetailLines } from "./describe/DetailLines";
 import { actionLines, conditionLines } from "./describe";
 import {
@@ -83,7 +85,7 @@ const ABILITY_FIRE_ACTIONS: Record<string, { slot: AbilitySlot; index: number }>
 function resolveRuneTarget(
   actionId: string,
   equippedAbilities: EquippedAbilities,
-  equippedStances: EquippedStances,
+  targetStanceId?: string,
 ): RuneTarget | null {
   // Each ability-fire action drives ONE slot index, so the preview has to name
   // the ability in that exact slot — otherwise a player wiring `fire-guard-2`
@@ -105,12 +107,21 @@ function resolveRuneTarget(
     };
   }
   if (actionId === "switch-stance") {
-    const stance = stanceDef(equippedStances.reactive);
+    if (targetStanceId === NO_STANCE_ID) {
+      return {
+        kind: "stance",
+        label: "No Stance",
+        title: "Switches to: No Stance",
+        text: "Drop the current stance and fight without stance bonuses or penalties.",
+        missing: false,
+      };
+    }
+    const stance = stanceDef(targetStanceId);
     return {
       kind: "stance",
-      label: stance?.name ?? "Reactive Stance",
-      title: stance ? `Switches to: ${stance.name}` : "No reactive stance equipped",
-      text: stance?.blurb ?? "Equip a reactive stance to make this rune switch posture.",
+      label: stance?.name ?? "Choose a stance",
+      title: stance ? `Switches to: ${stance.name}` : "No destination chosen",
+      text: stance?.blurb ?? "Choose a learned stance from the destination wheel.",
       missing: !stance,
     };
   }
@@ -120,9 +131,8 @@ function resolveRuneTarget(
 function ruleLabel(
   rule: EquippedRule,
   equippedAbilities: EquippedAbilities,
-  equippedStances: EquippedStances,
 ): { title: string; subtitle: string; target: RuneTarget | null } {
-  const target = resolveRuneTarget(rule.actionId, equippedAbilities, equippedStances);
+  const target = resolveRuneTarget(rule.actionId, equippedAbilities, rule.targetStanceId);
   const named = getRuleName(rule.conditionId, rule.actionId);
   const cond = CONDITION_DATABASE.get(rule.conditionId);
   const action = ACTION_DATABASE.get(rule.actionId);
@@ -202,15 +212,26 @@ export function BuildRunesTab() {
   const gm = useAtomValue(globalMasteryAtom);
   const combatArchetype = useAtomValue(combatArchetypeAtom);
   const equippedAbilities = useAtomValue(equippedAbilitiesAtom);
-  const equippedStances = useAtomValue(equippedStancesAtom);
+  const knownStances = useAtomValue(knownStancesAtom);
+  const equippedRites = useAtomValue(equippedRitesAtom);
 
   const [loadout, setLoadout] = useState<EquippedRule[]>(equipped);
   const [selCond, setSelCond] = useState<string | null>(null);
   const [selAction, setSelAction] = useState<string | null>(null);
+  const [selStance, setSelStance] = useState<string | null>(null);
   const [confirmReset, setConfirmReset] = useState(false);
 
   useEffect(() => {
     setLoadout(equipped);
+  }, [equipped]);
+
+  useEffect(() => {
+    const handler = (event: Event) => {
+      const result = (event as CustomEvent<{ system: string; success: boolean }>).detail;
+      if (result.system === "runes" && !result.success) setLoadout(equipped);
+    };
+    window.addEventListener("hud:loadoutResult", handler);
+    return () => window.removeEventListener("hud:loadoutResult", handler);
   }, [equipped]);
 
   const ownedSet = new Set(owned);
@@ -229,17 +250,25 @@ export function BuildRunesTab() {
       )
     : [];
 
-  const pendingRule =
-    selCond && selAction ? { conditionId: selCond, actionId: selAction } : null;
+  const pendingRule: EquippedRule | null = selCond && selAction
+    ? {
+        conditionId: selCond,
+        actionId: selAction,
+        ...(selAction === "switch-stance" && selStance ? { targetStanceId: selStance } : {}),
+      }
+    : null;
   const pendingCompatible = pendingRule
     ? isRuneRuleCompatibleForArchetype(pendingRule, combatArchetype)
+      && (pendingRule.actionId !== "switch-stance" || !!pendingRule.targetStanceId)
     : false;
   const pendingCost = pendingRule ? runeRuleCost(pendingRule) : 0;
   const budget = runeBudgetForGlobalMastery(gm);
-  const spent = runeLoadoutCost(loadout);
-  const pendingOverBudget = pendingRule ? spent + pendingCost > budget : false;
+  const spent = runicPointLoadoutCost({ rules: loadout, rites: equippedRites });
+  const pendingOverBudget = pendingRule
+    ? runicPointLoadoutCost({ rules: [...loadout, pendingRule], rites: equippedRites }) > budget
+    : false;
   const pendingTarget = selAction
-    ? resolveRuneTarget(selAction, equippedAbilities, equippedStances)
+    ? resolveRuneTarget(selAction, equippedAbilities, selStance ?? undefined)
     : null;
 
   function commit(next: EquippedRule[]): void {
@@ -269,6 +298,7 @@ export function BuildRunesTab() {
     commit(DEFAULT_RUNE_LOADOUT.map((rule) => ({ ...rule })));
     setSelCond(null);
     setSelAction(null);
+    setSelStance(null);
     setConfirmReset(false);
   }
 
@@ -318,13 +348,16 @@ export function BuildRunesTab() {
             ) : (
               <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
                 {loadout.map((rule, i) => {
-                  const { title, subtitle, target } = ruleLabel(rule, equippedAbilities, equippedStances);
+                  const { title, subtitle, target } = ruleLabel(rule, equippedAbilities);
                   const action = ACTION_DATABASE.get(rule.actionId);
                   const accent = action ? CHANNEL_COLOR[action.channel] : "#7a7ad0";
-                  const compatible = isRuneRuleCompatibleForArchetype(rule, combatArchetype);
+                  const compatible = isRuneRuleCompatibleForArchetype(rule, combatArchetype)
+                    && (rule.actionId !== "switch-stance"
+                      || rule.targetStanceId === NO_STANCE_ID
+                      || knownStances.includes(rule.targetStanceId ?? ""));
                   return (
                     <div
-                      key={`${rule.conditionId}:${rule.actionId}:${i}`}
+                      key={`${rule.conditionId}:${rule.actionId}:${rule.targetStanceId ?? ""}:${i}`}
                       className={`rule-card${compatible ? '' : ' rule-card--invalid'}`}
                       style={{ '--rule-accent': compatible ? accent : 'var(--hud-danger)' } as CSSProperties}
                     >
@@ -440,14 +473,17 @@ export function BuildRunesTab() {
               }
               items={viableActions}
               selectedId={selAction}
-              onSelect={setSelAction}
+              onSelect={(id) => {
+                setSelAction(id);
+                if (id !== "switch-stance") setSelStance(null);
+              }}
               costFor={(a) => a.cost}
               iconFor={(a) => runeActionIconSource(a.id)}
               accentFor={(a) => CHANNEL_COLOR[a.channel]}
               emptyText={selCond ? "No responses fit this situation." : "Pick a situation first."}
               renderMeta={(a) => `${runeChannelLabel(a.channel)} - ${a.blurb}`}
               renderExtra={(a) => {
-                const target = resolveRuneTarget(a.id, equippedAbilities, equippedStances);
+                const target = resolveRuneTarget(a.id, equippedAbilities, selStance ?? undefined);
                 return (
                   <>
                     {target && (
@@ -468,6 +504,35 @@ export function BuildRunesTab() {
               }}
             />
           </div>
+
+          {selAction === "switch-stance" && (
+            <div className="stance-destination-wheel">
+              <div className="stance-destination-wheel__title">Choose destination sigil</div>
+              <div className="stance-destination-wheel__track">
+                <button
+                  type="button"
+                  className={`stance-destination-token${selStance === NO_STANCE_ID ? " stance-destination-token--selected" : ""}`}
+                  onClick={() => setSelStance(NO_STANCE_ID)}
+                  title="Drop the current stance and fight without stance bonuses or penalties."
+                >
+                  <GameIcon source={null} size={32} fallback="Ø" decorative />
+                  <span>No Stance<small>+0 RP</small></span>
+                </button>
+                {knownStances.map((id) => STANCE_DATABASE.get(id)).filter(Boolean).map((stance) => (
+                  <button
+                    key={stance!.id}
+                    type="button"
+                    className={`stance-destination-token${selStance === stance!.id ? " stance-destination-token--selected" : ""}`}
+                    onClick={() => setSelStance(stance!.id)}
+                    title={stance!.blurb}
+                  >
+                    <GameIcon source={stanceIconSource(stance!.id)} size={32} fallback={stance!.name.slice(0, 1)} decorative />
+                    <span>{stance!.name}<small>+{stance!.runeCost} RP</small></span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
 
         </div>
       </div>

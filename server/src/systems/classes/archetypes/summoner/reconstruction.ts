@@ -4,6 +4,7 @@ import { markSliceDirty } from '../../../../ecs/dirtyHelpers';
 import { applyHealToPlayer } from '../../../defense/regen/healing';
 import { computeMinionMaxHp, spawnMinionForOwner } from './spawn';
 import { summonerProfileFor } from './profile';
+import { isPlayerInCombat } from '../../../combat/ai/engagement';
 
 type SummonerOwner = PlayerEntity & {
   summonsMinions: NonNullable<PlayerEntity['summonsMinions']>;
@@ -56,8 +57,7 @@ function applyQueueScopedCombatRecovery(
   now: number,
 ): void {
   if (!hasReconstructionDebt(owner)) return;
-  const lastCombatAt = owner.tracksEngagement;
-  if (lastCombatAt === undefined || now - lastCombatAt >= 5_000) return;
+  if (!isPlayerInCombat(owner, now)) return;
   const regenPctPerSecond = owner.hasHealth.hpRegen ?? 0;
   if (regenPctPerSecond <= 0) return;
   const recoveryRatio = summonerProfileFor(owner).reconstructionCombatRegenPct;

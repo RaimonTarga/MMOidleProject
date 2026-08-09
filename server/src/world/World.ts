@@ -32,6 +32,7 @@ import { updateRuneDerivedConfig } from "../systems/combat/ai/runeConfig";
 import { updateAbilityFiring, updateAbilityHealing } from "../systems/player/abilities/abilityFiring";
 import { updateAbilityCasts } from "../systems/player/abilities/abilityCasting";
 import { updateStanceSwitch } from "../systems/player/stances/stanceSwitch";
+import { updateCombatTransitions } from "../systems/combat/ai/engagement";
 import { updateAutoTraverse } from "../systems/world/autoTraverse";
 import { updateAutoIntent } from "../systems/world/autoIntent";
 import { updateExpiredEmotes } from "../systems/player/emotes";
@@ -376,7 +377,7 @@ export class World {
     // Advances wind-ups started above, so a cast that completes this tick lands
     // before combat resolves.
     updateAbilityCasts(this, now);
-    updateStanceSwitch(this);
+    updateStanceSwitch(this, dt, now);
     updateKnockback(this, dt);
     updateMobilityState(this, dt);
     updateMovement(this, dt, now);
@@ -390,6 +391,7 @@ export class World {
     updateMonsters(this, dt, now);
     updateSwarm(this);
     updateCombat(this, dt, now);
+    updateCombatTransitions(this, now);
     updateDefensiveSystems(this, dt, now);
     updateAbilityHealing(this, dt);
     syncPlayerBuffs(this, now);

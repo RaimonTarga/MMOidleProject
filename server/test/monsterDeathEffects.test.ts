@@ -51,7 +51,7 @@ function makePlayerSlices(id: string, x: number, y: number): PersistedPlayerSlic
       knownAbilities: [],
       equippedAbilities: { technique: null, guard: null },
       knownStances: [],
-      equippedStances: { default: null, reactive: null },
+      equippedStances: { default: null },
       activeStance: null,
       knownRites: [],
       equippedRites: [],

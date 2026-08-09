@@ -1,86 +1,60 @@
-/**
- * Rites catalog (system rework Step 11).
- *
- * Rites are T3, OUT-OF-COMBAT / between-fight passive behaviors — they shape the
- * recovery/transition rhythm after a fight ends (OOC regen delay, debuff decay,
- * buff decay, post-kill momentum). Unlike stances they are ALWAYS-ON while equipped:
- * there is no active posture, no rune action, no per-tick reconciler. Every equipped
- * rite folds its `mechanicEffects` into `usesSkills.passives` during
- * `recalculatePlayerStats`; the OOC systems read those `rite.*` keys at runtime.
- *
- * State (the learned pool + equipped slots) lives on `TracksProgression`, exactly
- * like runes / abilities / stances — rites are build/loadout data, not a recalculated
- * component. Crafting logic lives in `server/src/systems/player/economy/riteCrafting.ts`;
- * the OOC readers live in `server/src/systems/player/rites/riteOoc.ts`.
- */
-import type { MechanicEffects } from "./passives";
-
+/** Rites are passive combat-boundary rules paid from the shared Runic Point pool. */
 export interface RiteDef {
   id: string;
   name: string;
   blurb: string;
-  /**
-   * Passive mechanic-effect deltas applied while this rite is equipped (via
-   * `mergePassives`). Rites carry ONLY `rite.*` OOC keys — no in-combat `statEffects`.
-   */
-  mechanicEffects?: MechanicEffects;
+  runeCost: number;
   icon?: string;
 }
 
-/** Equipped rites: an interchangeable list (no named slots), length ≤ slot count. */
 export type EquippedRites = string[];
 
 export function emptyEquippedRites(): EquippedRites {
   return [];
 }
 
-/**
- * Number of rite slots available. Stubbed flat at 2 for v1 (system rework Step 11
- * locked decision); the GM parameter exists so "Global Mastery unlocks additional
- * slots" can grow the curve later without re-plumbing callers. The user owns the
- * eventual curve (balance pass, Step 15).
- */
-export const RITE_SLOTS_BASE = 2;
-export function riteSlotCount(_globalMastery: number): number {
-  return RITE_SLOTS_BASE;
-}
-
-// ── Worked content (Step 11): the four brainstorm rites. ──────────────────────
-// Magnitudes are PLACEHOLDERS — user balance pass (Step 15) owns the numbers.
 const rites: RiteDef[] = [
   {
-    id: "quickened-breath",
-    name: "Quickened Breath",
-    blurb: "Catch your breath faster — health regeneration resumes sooner after combat.",
-    mechanicEffects: { "rite.ooc-regen-delay-reduction-pct": 0.5 },
-    icon: "quickened-breath",
+    id: "lingering-battle",
+    name: "Lingering Battle",
+    blurb: "Remain in the post-combat state 50% longer, preserving combat continuity.",
+    runeCost: 2,
+    icon: "lingering-battle",
   },
   {
-    id: "cleansing-breath",
-    name: "Cleansing Breath",
-    blurb: "Shake off lingering ailments — debuffs and damage-over-time decay out of combat.",
-    mechanicEffects: {
-      "rite.ooc-cleanse-stacks": 1,
-      "rite.ooc-cleanse-interval-ms": 1000,
-    },
-    icon: "cleansing-breath",
+    id: "swift-repose",
+    name: "Swift Repose",
+    blurb: "Reach out-of-combat recovery 50% sooner after hostile contact ends.",
+    runeCost: 2,
+    icon: "swift-repose",
   },
   {
-    id: "lingering-momentum",
-    name: "Lingering Momentum",
-    blurb: "Ride the high — beneficial buffs fade more slowly once a fight ends.",
-    mechanicEffects: { "rite.ooc-buff-decay-slowdown-pct": 0.5 },
-    icon: "lingering-momentum",
+    id: "purification",
+    name: "Purification",
+    blurb: "When combat ends, remove all qualifying harmful effects and player DoTs.",
+    runeCost: 3,
+    icon: "purification",
   },
   {
-    id: "hunters-instinct",
-    name: "Hunter's Instinct",
-    blurb: "Press the hunt — a fresh kill grants a brief burst of speed toward the next target.",
-    mechanicEffects: {
-      "rite.on-kill-haste-pct": 0.3,
-      "rite.on-kill-haste-ms": 2000,
-    },
-    icon: "hunters-instinct",
+    id: "mechanic-renewal",
+    name: "Mechanic Renewal",
+    blurb: "When combat ends, partially prepare your class mechanic for the next fight.",
+    runeCost: 5,
+    icon: "mechanic-renewal",
+  },
+  {
+    id: "ability-reprieve",
+    name: "Ability Reprieve",
+    blurb: "When combat ends, reduce every equipped ability's remaining cooldown by 30%.",
+    runeCost: 5,
+    icon: "ability-reprieve",
+  },
+  {
+    id: "blood-offering",
+    name: "Blood Offering",
+    blurb: "Recover 5% of maximum health whenever you receive kill credit.",
+    runeCost: 3,
+    icon: "blood-offering",
   },
 ];
 
@@ -90,7 +64,10 @@ export function riteDef(id: string | null | undefined): RiteDef | undefined {
   return id ? RITE_DATABASE.get(id) : undefined;
 }
 
-/** All known-rite ids that resolve to a real def (filters stale/removed ids). */
 export function validRiteIds(ids: readonly string[]): string[] {
-  return ids.filter((id) => RITE_DATABASE.has(id));
+  return [...new Set(ids.filter((id) => RITE_DATABASE.has(id)))];
+}
+
+export function riteLoadoutCost(ids: readonly string[]): number {
+  return validRiteIds(ids).reduce((sum, id) => sum + (RITE_DATABASE.get(id)?.runeCost ?? 0), 0);
 }

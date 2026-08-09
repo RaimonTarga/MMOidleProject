@@ -5,7 +5,7 @@ import {
   abilityDef,
   riteDef,
   runeBudgetForGlobalMastery,
-  runeLoadoutCost,
+  runicPointLoadoutCost,
   stanceDef,
 } from "@mmo-idle/shared";
 import {
@@ -20,7 +20,6 @@ import {
   knownRitesAtom,
   knownStancesAtom,
   playerTierAtom,
-  riteSlotsAtom,
   runesEquippedAtom,
   type BuildPanelTab,
 } from "../hud/atoms";
@@ -168,11 +167,10 @@ function LoadoutBoard({
   const equippedStances = useAtomValue(equippedStancesAtom);
   const activeStance = useAtomValue(activeStanceAtom);
   const equippedRites = useAtomValue(equippedRitesAtom);
-  const riteSlots = useAtomValue(riteSlotsAtom);
   const runesEquipped = useAtomValue(runesEquippedAtom);
   const gm = useAtomValue(globalMasteryAtom);
 
-  const runeSpent = runeLoadoutCost(runesEquipped);
+  const runeSpent = runicPointLoadoutCost({ rules: runesEquipped, rites: equippedRites });
   const runeBudget = runeBudgetForGlobalMastery(gm);
   const runePct = runeBudget > 0 ? Math.min(100, (runeSpent / runeBudget) * 100) : 0;
 
@@ -208,18 +206,12 @@ function LoadoutBoard({
       icon: equippedStances.default ? stanceIconSource(equippedStances.default) : null,
       active: equippedStances.default !== null && equippedStances.default === activeStance,
     },
-    {
-      kind: 'Reactive',
-      filled: stanceDef(equippedStances.reactive)?.name ?? null,
-      icon: equippedStances.reactive ? stanceIconSource(equippedStances.reactive) : null,
-      active: equippedStances.reactive !== null && equippedStances.reactive === activeStance,
-    },
   ];
 
-  const riteSockets: Socket[] = Array.from({ length: riteSlots }, (_, index) => ({
+  const riteSockets: Socket[] = equippedRites.map((riteId, index) => ({
     kind: `Rite ${index + 1}`,
-    filled: riteDef(equippedRites[index])?.name ?? null,
-    icon: equippedRites[index] ? riteIconSource(equippedRites[index]) : null,
+    filled: riteDef(riteId)?.name ?? null,
+    icon: riteIconSource(riteId),
   }));
 
   return (
@@ -268,7 +260,7 @@ function LoadoutBoard({
               className="loadout-budget__meter"
               fraction={runePct / 100}
               over={runeSpent > runeBudget}
-              label={`Rune budget: ${runeSpent} of ${runeBudget} points spent`}
+              label={`Shared Runic budget: ${runeSpent} of ${runeBudget} points spent`}
             />
             <span className={`loadout-budget__value${runeSpent > runeBudget ? ' loadout-budget__value--over' : ''}`}>
               {runeSpent} / {runeBudget} RP

@@ -1,7 +1,6 @@
 import type { World } from "../../../world/World";
 import type { MonsterEntity, PlayerEntity } from "../../../ecs/entity";
 import {
-  GAME_CONFIG,
   MONSTER_DATABASE,
   distanceSq,
   getFlag,
@@ -38,6 +37,7 @@ import {
   RUNE_WAIT_FOR_EXECUTION_FLAG,
   RUNE_WAIT_FOR_REGEN_FLAG,
 } from "./runeConfig";
+import { isPlayerInCombat } from "./engagement";
 
 const NODE_MARGIN = 40;
 
@@ -142,12 +142,6 @@ function clampToNode(world: World, nodeId: string, pos: Vec2): Vec2 {
  * arbitration uses active targets/aggro instead, so it can claim movement while
  * this post-combat cooldown is still running.
  */
-function isPlayerInCombat(player: PlayerEntity, now: number): boolean {
-  if (player.hasAttackTarget !== undefined) return true;
-  const last = player.tracksEngagement;
-  return last !== undefined && now - last < GAME_CONFIG.COMBAT_REGEN_DELAY;
-}
-
 function playerHazardContainingPoint(nodeId: string, pos: Vec2): NodeFeatureShape | null {
   const features = RESOLVED_NODE_FEATURES[nodeId];
   if (!features) return null;

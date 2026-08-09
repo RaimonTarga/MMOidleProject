@@ -709,6 +709,9 @@ function connectSocket(scene: GameScene): () => void {
         new CustomEvent("hud:craftResult", { detail: result }),
       );
     },
+    onBuildLoadoutResult: (result) => {
+      window.dispatchEvent(new CustomEvent("hud:loadoutResult", { detail: result }));
+    },
     onUpgradeResult: (result) => {
       window.dispatchEvent(
         new CustomEvent("hud:upgradeResult", { detail: result }),

@@ -45,6 +45,7 @@ export interface SocketHandlers {
   onAbilityCraftResult(result: { recipeId: string; success: boolean; reason?: string }): void;
   onStanceCraftResult(result: { recipeId: string; success: boolean; reason?: string }): void;
   onRiteCraftResult(result: { recipeId: string; success: boolean; reason?: string }): void;
+  onBuildLoadoutResult(result: { system: "runes" | "stances" | "rites"; success: boolean; reason?: string }): void;
   onUpgradeResult(result: { success: boolean; reason?: string; itemId: string; newLevel: number }): void;
   onPlayerDied(payload: PlayerDeathPayload): void;
   onPlayerAscended(tier: number): void;
@@ -82,6 +83,7 @@ export function wireSocketHandlers(
   socket.on('ability:craftResult', (r) => h.onAbilityCraftResult(r));
   socket.on('stance:craftResult', (r) => h.onStanceCraftResult(r));
   socket.on('rite:craftResult', (r) => h.onRiteCraftResult(r));
+  socket.on('build:loadoutResult', (r) => h.onBuildLoadoutResult(r));
   socket.on('inventory:upgradeResult', (r) => h.onUpgradeResult(r));
   socket.on('player:died', (p) => h.onPlayerDied(p));
   socket.on('player:ascended', (t) => h.onPlayerAscended(t));
@@ -113,6 +115,7 @@ export function wireSocketHandlers(
     socket.off('ability:craftResult');
     socket.off('stance:craftResult');
     socket.off('rite:craftResult');
+    socket.off('build:loadoutResult');
     socket.off('inventory:upgradeResult');
     socket.off('player:died');
     socket.off('player:ascended');

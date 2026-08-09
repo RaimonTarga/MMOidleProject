@@ -1,117 +1,28 @@
-/**
- * Rite recipes (system rework Step 11) — parallel to `StanceRecipe` / `AbilityRecipe`.
- *
- * Crafting a rite recipe LEARNS the rite permanently (adds its id to
- * `TracksProgression.knownRites`); the player then freely slots it into a rite slot.
- * Rites are a T3 system, gated by Biome Mastery placement in the T3 level band
- * (`recipeGroup` + `requiredBiomeLevel`, which `biomeLevelCap()` tier-gates). The boss
- * channel (`requiredBossClear`) is reserved for signature rite variants (Step 13).
- */
 import type { EssenceType } from "./items";
 import { RITE_DATABASE } from "./rites";
 
 export interface RiteRecipe {
-  id: string;
-  name: string;
-  description: string;
-  /** The rite learned when this recipe is crafted. */
-  riteId: string;
-  tier: number;
+  id: string; name: string; description: string; riteId: string; tier: number;
   cost: Partial<Record<EssenceType, number>>;
-  /** Catalyst cost, parallel to `cost` (mirrors gear/rune/ability/stance catalyst gating). */
   catalystCost?: Partial<Record<string, number>>;
-  /** Biome-mastery gate (T3 band). */
-  recipeGroup?: string;
-  requiredBiomeLevel?: number;
-  /** Boss gate (reserved for signature rite variants). */
-  requiredBossClear?: string;
+  recipeGroup?: string; requiredBiomeLevel?: number; requiredBossClear?: string;
 }
 
-// requiredBiomeLevel + costs are PLACEHOLDERS — user balance pass owns the numbers.
-// T3 band: stances placed at forest L7-8 (T2); rites land one tier-band higher (L13-14).
 const recipes: RiteRecipe[] = [
-  {
-    id: "rite-recipe-quickened-breath",
-    name: "Quickened Breath",
-    description: "Learn Quickened Breath: health regeneration resumes sooner after combat.",
-    riteId: "quickened-breath",
-    tier: 3,
-    recipeGroup: "forest",
-    requiredBiomeLevel: 13,
-    cost: { green: 120 },
-    catalystCost: { alacrity: 4 }, // family-tag: faster recovery tempo → Alacrity
-  },
-  {
-    id: "rite-recipe-cleansing-breath",
-    name: "Cleansing Breath",
-    description: "Learn Cleansing Breath: debuffs and DoTs decay out of combat.",
-    riteId: "cleansing-breath",
-    tier: 3,
-    recipeGroup: "forest",
-    requiredBiomeLevel: 13,
-    cost: { green: 120, purple: 40 },
-    catalystCost: { blight: 4 }, // family-tag: cleanses DoTs/debuffs → Blight (the DoT answer)
-  },
-  {
-    id: "rite-recipe-lingering-momentum",
-    name: "Lingering Momentum",
-    description: "Learn Lingering Momentum: beneficial buffs fade more slowly out of combat.",
-    riteId: "lingering-momentum",
-    tier: 3,
-    recipeGroup: "forest",
-    requiredBiomeLevel: 14,
-    cost: { green: 130, yellow: 40 },
-    catalystCost: { alacrity: 5 }, // family-tag: momentum/uptime → Alacrity
-  },
-  {
-    id: "rite-recipe-hunters-instinct",
-    name: "Hunter's Instinct",
-    description: "Learn Hunter's Instinct: a fresh kill grants a brief speed burst.",
-    riteId: "hunters-instinct",
-    tier: 3,
-    recipeGroup: "forest",
-    requiredBiomeLevel: 14,
-    cost: { green: 130, red: 40 },
-    catalystCost: { predation: 5 }, // family-tag: hunter / on-kill predator → Predation
-  },
+  { id: "rite-recipe-swift-repose", name: "Swift Repose", description: "Leave combat sooner and begin recovery earlier.", riteId: "swift-repose", tier: 3, recipeGroup: "forest", requiredBiomeLevel: 13, cost: { green: 120 }, catalystCost: { alacrity: 4 } },
+  { id: "rite-recipe-purification", name: "Purification", description: "Remove harmful carryover when combat ends.", riteId: "purification", tier: 3, recipeGroup: "forest", requiredBiomeLevel: 13, cost: { green: 120, purple: 40 }, catalystCost: { blight: 4 } },
+  { id: "rite-recipe-lingering-battle", name: "Lingering Battle", description: "Remain in combat state longer between engagements.", riteId: "lingering-battle", tier: 3, recipeGroup: "forest", requiredBiomeLevel: 14, cost: { green: 130, yellow: 40 }, catalystCost: { alacrity: 5 } },
+  { id: "rite-recipe-blood-offering", name: "Blood Offering", description: "Recover health from credited kills.", riteId: "blood-offering", tier: 3, recipeGroup: "forest", requiredBiomeLevel: 14, cost: { green: 130, red: 40 }, catalystCost: { predation: 5 } },
+  { id: "rite-recipe-mechanic-renewal", name: "Mechanic Renewal", description: "Prepare your class mechanic when combat ends.", riteId: "mechanic-renewal", tier: 3, recipeGroup: "tundra", requiredBiomeLevel: 14, cost: { blue: 160, yellow: 60 }, catalystCost: { alacrity: 6 } },
+  { id: "rite-recipe-ability-reprieve", name: "Ability Reprieve", description: "Reduce equipped ability cooldowns when combat ends.", riteId: "ability-reprieve", tier: 3, recipeGroup: "desert", requiredBiomeLevel: 14, cost: { red: 160, purple: 60 }, catalystCost: { volatility: 6 } },
 ];
 
-export const RITE_RECIPE_DATABASE = new Map<string, RiteRecipe>(
-  recipes.map((r) => [r.id, r]),
-);
-
-/** Progression inputs that gate whether a rite recipe is unlocked yet. */
-export interface RiteRecipeGateInput {
-  biomeLevel: Record<string, number>;
-  bossesCleared: readonly string[];
+export const RITE_RECIPE_DATABASE = new Map<string, RiteRecipe>(recipes.map((r) => [r.id, r]));
+export interface RiteRecipeGateInput { biomeLevel: Record<string, number>; bossesCleared: readonly string[]; }
+export function isRiteRecipeUnlocked(recipe: RiteRecipe, input: RiteRecipeGateInput): boolean {
+  if (recipe.recipeGroup && recipe.requiredBiomeLevel !== undefined && (input.biomeLevel[recipe.recipeGroup] ?? 0) < recipe.requiredBiomeLevel) return false;
+  return !recipe.requiredBossClear || input.bossesCleared.includes(recipe.requiredBossClear);
 }
-
-/**
- * Whether the recipe's unlock requirements are met. Biome-mastery recipes gate on
- * `requiredBiomeLevel` in `recipeGroup`; signature recipes gate on `requiredBossClear`.
- * A recipe carrying both must satisfy both. Recipes with neither are always unlocked.
- */
-export function isRiteRecipeUnlocked(
-  recipe: RiteRecipe,
-  input: RiteRecipeGateInput,
-): boolean {
-  if (recipe.recipeGroup && recipe.requiredBiomeLevel !== undefined) {
-    if ((input.biomeLevel[recipe.recipeGroup] ?? 0) < recipe.requiredBiomeLevel) {
-      return false;
-    }
-  }
-  if (recipe.requiredBossClear) {
-    if (!input.bossesCleared.includes(recipe.requiredBossClear)) return false;
-  }
-  return true;
-}
-
 export function validateRiteRecipes(): string[] {
-  const errors: string[] = [];
-  for (const recipe of RITE_RECIPE_DATABASE.values()) {
-    if (!RITE_DATABASE.has(recipe.riteId)) {
-      errors.push(`${recipe.id} points at unknown rite ${recipe.riteId}.`);
-    }
-  }
-  return errors;
+  return [...RITE_RECIPE_DATABASE.values()].filter((r) => !RITE_DATABASE.has(r.riteId)).map((r) => `${r.id} points at unknown rite ${r.riteId}.`);
 }

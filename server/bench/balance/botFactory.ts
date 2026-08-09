@@ -11,7 +11,8 @@ import {
   getMaxUpgrade,
   globalMastery,
   listBiomeGroupsAtTier,
-  riteSlotCount,
+  runeBudgetForGlobalMastery,
+  runicPointLoadoutCost,
   ITEM_DATABASE,
   type EquippedAbilities,
   type Vec2,
@@ -70,7 +71,7 @@ function canonicalLoadout(playerTier: number): {
   knownAbilities: string[];
   equippedAbilities: EquippedAbilities;
   knownStances: string[];
-  equippedStances: { default: string | null; reactive: string | null };
+  equippedStances: { default: string | null };
   activeStance: string | null;
   knownRites: string[];
   equippedRites: string[];
@@ -88,9 +89,12 @@ function canonicalLoadout(playerTier: number): {
 
   const stances = [...STANCE_DATABASE.keys()].sort();
   const rites = [...RITE_DATABASE.keys()].sort();
-  // GM is derived from biome levels; rite slots ignore it today, but pass the
-  // real value so this keeps working if riteSlotCount ever starts reading it.
-  const riteSlots = riteSlotCount(globalMastery(canonicalBiomeLevels(playerTier)));
+  // Admit deterministic Rites until the shared RP pool is full.
+  const runeBudget = runeBudgetForGlobalMastery(globalMastery(canonicalBiomeLevels(playerTier)));
+  const equippedRites: string[] = [];
+  for (const riteId of rites) {
+    if (runicPointLoadoutCost({ rules: [], rites: [...equippedRites, riteId] }) <= runeBudget) equippedRites.push(riteId);
+  }
 
   return {
     knownAbilities: [...techniques, ...guards],
@@ -101,11 +105,10 @@ function canonicalLoadout(playerTier: number): {
     knownStances: stances,
     equippedStances: {
       default: stances[0] ?? null,
-      reactive: stances[1] ?? null,
     },
     activeStance: stances[0] ?? null,
     knownRites: rites,
-    equippedRites: rites.slice(0, riteSlots),
+    equippedRites,
   };
 }
 

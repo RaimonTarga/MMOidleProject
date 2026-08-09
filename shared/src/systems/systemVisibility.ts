@@ -129,7 +129,6 @@ export function resolveSystemVisibility(
       input.playerTier >= 2 ||
       input.knownStances.length > 0 ||
       input.equippedStances.default !== null ||
-      input.equippedStances.reactive !== null ||
       input.activeStance !== null,
     rites:
       input.playerTier >= 3 ||

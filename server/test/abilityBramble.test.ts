@@ -68,7 +68,7 @@ function makePlayerSlices(): PersistedPlayerSlices {
       knownAbilities: ["bramble-guard"],
       equippedAbilities: { techniques: [], guards: ["bramble-guard"] },
       knownStances: [],
-      equippedStances: { default: null, reactive: null },
+      equippedStances: { default: null },
       activeStance: null,
       knownRites: [],
       equippedRites: [],

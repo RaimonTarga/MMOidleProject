@@ -83,4 +83,7 @@ export type CombatEvent =
   | { kind: 'player-cast-start'; playerId: string; ability: string; castMs: number }
   // The wind-up ended. `fired: false` means it was interrupted by hard CC or lost
   // its target, so the client clears the bar without playing the resolve FX.
-  | { kind: 'player-cast-end'; playerId: string; ability: string; fired: boolean };
+  | { kind: 'player-cast-end'; playerId: string; ability: string; fired: boolean }
+  // A Rune changed the player's active posture. The authoritative progression
+  // delta carries the state; this event exists for immediate visual feedback.
+  | { kind: 'stance-switch'; playerId: string; stanceId: string | null };

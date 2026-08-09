@@ -2,8 +2,6 @@ import {
   ESSENCE_TYPES,
   GAME_CONFIG,
   biomeLevelCap,
-  globalMastery,
-  riteSlotCount,
   type EssenceType,
 } from '@mmo-idle/shared';
 import { BENCH_DT_MS } from '../harness';
@@ -55,10 +53,7 @@ function monsterIdsInNode(world: World, nodeId: string): Set<EntityId> {
  * fully upgraded: `materializeBot` writes `itemUpgrades` directly and the stat
  * recalc applies them without a biome-level gate.
  *
- * Rite slots are budgeted from Global Mastery, so the equipped rites are
- * re-trimmed to what the lowered GM affords. `riteSlotCount` currently ignores
- * its argument and returns a flat base, so this is a no-op today — it is here so
- * the bot stays honest if that ever starts reading GM for real.
+ * The benchmark loadout is rebuilt independently; this helper only resets farm state.
  */
 function resetFarmedBiome(
   world: World,
@@ -68,11 +63,6 @@ function resetFarmedBiome(
   const prog = bot.tracksProgression;
   prog.biomeLevel[biomeGroup] = 0;
   prog.biomeXP[biomeGroup] = 0;
-
-  const slots = riteSlotCount(globalMastery(prog.biomeLevel));
-  if (prog.equippedRites.length > slots) {
-    prog.equippedRites = prog.equippedRites.slice(0, slots);
-  }
 
   // Every kill runs an unfiltered `checkRecipeUnlocks`, so the bot's other
   // (capped) biomes would all unlock on the first kill and swamp the count.

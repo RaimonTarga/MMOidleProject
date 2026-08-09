@@ -74,7 +74,7 @@ function makePlayer(id: string, nodeId: string, name: string): PersistedPlayerSl
       knownAbilities: [],
       equippedAbilities: { technique: null, guard: null },
       knownStances: [],
-      equippedStances: { default: null, reactive: null },
+      equippedStances: { default: null },
       activeStance: null,
       knownRites: [],
       equippedRites: [],

@@ -13,7 +13,6 @@ import { ITEM_DATABASE } from '../itemDatabase';
 import { EQUIPMENT_SLOTS } from '../items';
 import { coreIsActive } from './cores';
 import { stanceDef } from '../stances';
-import { riteDef } from '../rites';
 import { upgradeMechanicEffectsTotal, upgradeStatBonusTotal } from './itemUpgrades';
 import { GAME_CONFIG } from '../index';
 import { mergePassives, makeBurstAccumulator, finalizeBurst } from '../passives';
@@ -171,18 +170,6 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
   }
   if (stance?.mechanicEffects) {
     mergePassives(p.usesSkills.passives, stance.mechanicEffects, burstAcc);
-  }
-
-  // 2b. Fold equipped rites (system rework Step 11). Rites are always-on OOC
-  // passives: every equipped rite contributes only `rite.*` mechanic keys (no
-  // in-combat stat deltas), read later by the out-of-combat systems.
-  if (p.equippedRites) {
-    for (const id of p.equippedRites) {
-      const rite = riteDef(id);
-      if (rite?.mechanicEffects) {
-        mergePassives(p.usesSkills.passives, rite.mechanicEffects, burstAcc);
-      }
-    }
   }
 
   p.performsAttack.attackCooldown = Math.round(

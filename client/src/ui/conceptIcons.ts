@@ -67,6 +67,26 @@ const RITE_IDS = new Set([
   'quickened-breath',
 ]);
 
+const STANCE_ICON_ALIASES: Record<string, string> = {
+  'enraged-stance': 'offensive-stance',
+  'perfection-stance': 'offensive-stance',
+  'berserker-stance': 'offensive-stance',
+  'execute-stance': 'offensive-stance',
+  'fleeting-stance': 'defensive-stance',
+  'predator-stance': 'defensive-stance',
+  'brawler-stance': 'tanking-stance',
+  'recuperating-stance': 'tanking-stance',
+};
+
+const RITE_ICON_ALIASES: Record<string, string> = {
+  'swift-repose': 'quickened-breath',
+  purification: 'cleansing-breath',
+  'lingering-battle': 'lingering-momentum',
+  'blood-offering': 'hunters-instinct',
+  'mechanic-renewal': 'lingering-momentum',
+  'ability-reprieve': 'quickened-breath',
+};
+
 const BUFF_IDS = new Set([
   'ability-bramble',
   'ability-guard',
@@ -165,6 +185,7 @@ export function conceptAbilityIconSource(id: string): AssetIconSource | null {
 }
 
 export function runeConditionIconSource(id: string): AssetIconSource | null {
+  if (id === 'hp-above-90' || id === 'target-hp-below-25') return source('runes/conditions', 'hp-below-25');
   return CONDITION_IDS.has(id) ? source('runes/conditions', id) : null;
 }
 
@@ -177,11 +198,13 @@ export function runeFragmentConceptIconSource(id: string): AssetIconSource | nul
 }
 
 export function stanceIconSource(id: string): AssetIconSource | null {
-  return STANCE_IDS.has(id) ? source('stances', id) : null;
+  const iconId = STANCE_ICON_ALIASES[id] ?? id;
+  return STANCE_IDS.has(iconId) ? source('stances', iconId) : null;
 }
 
 export function riteIconSource(id: string): AssetIconSource | null {
-  return RITE_IDS.has(id) ? source('rites', id) : null;
+  const iconId = RITE_ICON_ALIASES[id] ?? id;
+  return RITE_IDS.has(iconId) ? source('rites', iconId) : null;
 }
 
 export function statusIconSource(id: string): AssetIconSource | null {

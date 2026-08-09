@@ -199,7 +199,7 @@ export function emptyEquippedAbilities(): EquippedAbilities {
  * Number of ability slots at a given player tier (abilities evolution plan §7).
  *
  * Deliberately keyed on PLAYER TIER, not Global Mastery — Biome Mastery owns
- * ability unlocks, tier owns slots (§3.1). Mirrors `riteSlotCount`.
+ * ability unlocks; tier owns ability slots (§3.1).
  *
  * T1–T2 → 1/1 (learn the fundamentals), T3 → 2/1 (offensive repertoire),
  * T4+ → 2/2 (full tactical loadout). A third slot is deliberately NOT assumed.

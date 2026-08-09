@@ -66,7 +66,7 @@ function makePlayerSlices(id: string): PersistedPlayerSlices {
       knownAbilities: ["charged-strike"],
       equippedAbilities: { techniques: ["charged-strike"], guards: [] },
       knownStances: [],
-      equippedStances: { default: null, reactive: null },
+      equippedStances: { default: null },
       activeStance: null,
       knownRites: [],
       equippedRites: [],

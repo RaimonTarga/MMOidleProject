@@ -27,7 +27,7 @@ data exactly like runes, which avoids a DB migration, a new networked slice, a n
   `{ techniques: string[]; guards: string[] }`. **List order is fire priority.**
 
 ### Slots are tier-gated
-`abilitySlotCount(playerTier)` (`shared/src/abilities.ts`) mirrors `riteSlotCount`:
+`abilitySlotCount(playerTier)` (`shared/src/abilities.ts`) independently defines Ability slots:
 T1–T2 → 1 Technique / 1 Guard, **T3 → 2/1**, **T4+ → 2/2**. Keyed on **player tier**, not
 Global Mastery — Biome Mastery owns ability *unlocks*, tier owns *slots*. Projected on
 `PlayerView` as `abilitySlots`.

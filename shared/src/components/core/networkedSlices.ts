@@ -283,7 +283,7 @@ export interface TracksProgression {
    * (system rework Step 10). Stored here like runes/abilities (build/loadout data).
    */
   knownStances: string[];
-  /** Equipped stances by slot: default (active posture) + reactive (auto-switch target). */
+  /** Free default stance; automated destinations are stored on Rune rules. */
   equippedStances: EquippedStances;
   /**
    * Runtime: which posture is currently folded into stats. Initialized to
@@ -297,9 +297,7 @@ export interface TracksProgression {
    */
   knownRites: string[];
   /**
-   * Equipped rites — an interchangeable list (length ≤ `riteSlotCount`). Rites are
-   * always-on OOC passives, so there is no active/slot-role distinction. Their
-   * `mechanicEffects` fold into stats on recalc; the OOC systems read the `rite.*` keys.
+   * Equipped Rites. Shared Runic Points are the sole loadout constraint.
    */
   equippedRites: EquippedRites;
 }

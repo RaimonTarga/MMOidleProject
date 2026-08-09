@@ -5,12 +5,14 @@ import {
   MONSTER_DATABASE,
   RUNE_NODE_ACQUIRE_RADIUS,
   setFlag,
+  setString,
   type RuneContext,
 } from "@mmo-idle/shared";
 import type { World } from "../../../world/World";
 import type { PlayerEntity } from "../../../ecs/entity";
 import { markSliceDirty } from "../../../ecs/dirtyHelpers";
 import { isMonsterCharging } from "../engine/monsterMechanics";
+import { isPlayerInCombat } from "./engagement";
 
 /** Server-only runtime flags read by the auto-combat systems. */
 export const RUNE_FLEE_FLAG = "rune.flee";
@@ -34,6 +36,7 @@ export const RUNE_FIRE_TECHNIQUE_2_FLAG = "rune.fireTechnique2";
 export const RUNE_FIRE_GUARD_2_FLAG = "rune.fireGuard2";
 /** System rework Step 10: a switch-stance rule's condition is active this tick. */
 export const RUNE_SWITCH_STANCE_FLAG = "rune.switchStance";
+export const RUNE_STANCE_TARGET_KEY = "rune.stanceTarget";
 
 /** Count enemies aggroed onto this player and whether any is winding up a cast. */
 function aggroStats(
@@ -80,15 +83,14 @@ export function updateRuneDerivedConfig(world: World, now: number): void {
       now,
     );
     const attackTargetId = player.hasAttackTarget?.targetId;
+    const attackTarget = attackTargetId ? world.getMonsterEntity(attackTargetId) : undefined;
     const ctx: RuneContext = {
       hpPct:
         player.hasHealth.hp / Math.max(1, player.hasHealth.maxHp),
-      // Rune "in combat" means an active fight, not the post-fight regen
-      // cooldown. Recovery actions can therefore stop scouting immediately
-      // while HP regeneration itself still observes COMBAT_REGEN_DELAY.
-      inCombat:
-        (attackTargetId !== undefined && world.hasMonster(attackTargetId)) ||
-        currentAggroCount > 0,
+      targetHpPct: attackTarget
+        ? attackTarget.hasHealth.hp / Math.max(1, attackTarget.hasHealth.maxHp)
+        : undefined,
+      inCombat: currentAggroCount > 0 || isPlayerInCombat(player, now),
       inParty: player.inParty !== undefined,
       aggroCount: currentAggroCount,
       combatArchetype: player.usesSkills.combatArchetype,
@@ -175,5 +177,6 @@ export function updateRuneDerivedConfig(world: World, now: number): void {
     setFlag(player.tracksCombat, RUNE_FIRE_GUARD_FLAG, d.fireGuard);
     setFlag(player.tracksCombat, RUNE_FIRE_GUARD_2_FLAG, d.fireGuard2);
     setFlag(player.tracksCombat, RUNE_SWITCH_STANCE_FLAG, d.switchStance);
+    setString(player.tracksCombat, RUNE_STANCE_TARGET_KEY, d.stanceTargetId ?? "");
   }
 }

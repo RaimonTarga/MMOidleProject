@@ -89,7 +89,7 @@ export function stanceLines(stance: StanceDef | undefined): DetailLine[] {
 /** Everything a rite does while equipped. Rites are OOC-only by construction. */
 export function riteLines(rite: RiteDef | undefined): DetailLine[] {
   if (!rite) return [];
-  return fromMechanicEffects(rite.mechanicEffects);
+  return [{ key: `rite:${rite.id}:rp`, label: "Shared Runic cost", value: `${rite.runeCost} RP`, help: rite.blurb }];
 }
 
 /** Everything an ability does for THIS character, tier and passives included. */

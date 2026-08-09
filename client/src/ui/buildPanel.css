@@ -709,3 +709,80 @@
     flex: 1 1 100%;
   }
 }
+
+/* Stance sanctum: learned postures are crests, not form controls. */
+.stance-sanctum__altar,
+.rite-circle__header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  margin-bottom: 14px;
+  border: 1px solid rgba(224, 193, 92, .35);
+  background: radial-gradient(circle at 20% 0, rgba(101, 72, 26, .35), rgba(13, 11, 34, .88) 58%);
+  color: #b8a8e0;
+}
+.stance-sanctum__altar strong { color: #ffe084; }
+.stance-sanctum__rp,
+.rite-circle__budget { margin-left: auto; color: #ffe084; white-space: nowrap; }
+.stance-sigil-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; }
+.stance-sigil {
+  position: relative;
+  display: grid;
+  grid-template-columns: 58px 1fr;
+  grid-template-areas: "crest name" "crest cost" "blurb blurb" "effects effects" "state state";
+  gap: 4px 10px;
+  min-height: 178px;
+  padding: 12px;
+  text-align: left;
+  color: #b8a8e0;
+  border: 1px solid rgba(100, 85, 200, .28);
+  border-radius: 8px;
+  background: linear-gradient(145deg, rgba(28, 20, 61, .92), rgba(9, 8, 27, .95));
+  cursor: pointer;
+}
+.stance-sigil:hover { border-color: rgba(192, 255, 154, .65); transform: translateY(-1px); }
+.stance-sigil--default { border-color: #e0c15c; box-shadow: inset 0 0 24px rgba(224, 193, 92, .1); }
+.stance-sigil--active { box-shadow: 0 0 0 1px #9affc8, 0 0 22px rgba(91, 255, 174, .18); }
+.stance-sigil__crest { grid-area: crest; width: 54px; height: 54px; display: grid; place-items: center; border: 1px solid rgba(224,193,92,.45); transform: rotate(45deg); background: rgba(6,5,20,.85); }
+.stance-sigil__crest > * { transform: rotate(-45deg); }
+.stance-sigil__name { grid-area: name; align-self: end; color: #f2e9ff; font-size: 14px; font-weight: 700; }
+.stance-sigil__cost { grid-area: cost; color: #e0c15c; font-size: 10px; }
+.stance-sigil__blurb { grid-area: blurb; font-size: 11px; line-height: 1.45; }
+.stance-sigil__effects { grid-area: effects; }
+.stance-sigil__state { grid-area: state; align-self: end; color: #9affc8; font-size: 10px; font-weight: 800; letter-spacing: .12em; }
+
+.rite-circle__header p { margin: 4px 0 0; color: #8f82b9; font-size: 11px; }
+.rite-circle__budget--over { color: #ff8f9b; }
+.rite-glyph-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 10px; }
+.rite-glyph {
+  display: grid;
+  grid-template-columns: 58px 1fr auto;
+  grid-template-areas: "ring copy cost" "ring copy seal";
+  align-items: center;
+  gap: 4px 10px;
+  padding: 12px;
+  text-align: left;
+  color: #aea0d2;
+  border: 1px solid rgba(116, 94, 190, .28);
+  border-radius: 28px 7px 7px 28px;
+  background: linear-gradient(90deg, rgba(39, 24, 68, .92), rgba(10, 8, 29, .95));
+  cursor: pointer;
+}
+.rite-glyph:disabled { opacity: .42; cursor: not-allowed; filter: grayscale(.6); }
+.rite-glyph--bound { border-color: #d0a8ff; box-shadow: inset 0 0 24px rgba(170, 105, 255, .16); }
+.rite-glyph__ring { grid-area: ring; width: 52px; height: 52px; display: grid; place-items: center; border: 2px double #8262b0; border-radius: 50%; background: rgba(7, 5, 20, .88); }
+.rite-glyph--bound .rite-glyph__ring { border-color: #e0c15c; box-shadow: 0 0 14px rgba(224,193,92,.25); }
+.rite-glyph__copy { grid-area: copy; display: flex; flex-direction: column; gap: 4px; }
+.rite-glyph__copy strong { color: #f1e7ff; font-size: 13px; }
+.rite-glyph__copy small { line-height: 1.4; }
+.rite-glyph__cost { grid-area: cost; color: #ffe084; font-size: 11px; font-weight: 700; }
+.rite-glyph__seal { grid-area: seal; color: #bfa6df; font-size: 9px; font-weight: 800; letter-spacing: .12em; }
+
+/* In-composer destination wheel: a row of tangible stance sigils. */
+.stance-destination-wheel { grid-column: 1 / -1; padding: 10px; border: 1px solid rgba(192,255,154,.25); background: rgba(10,16,24,.78); }
+.stance-destination-wheel__title { color: #c0ff9a; font-size: 10px; text-transform: uppercase; letter-spacing: .12em; margin-bottom: 8px; }
+.stance-destination-wheel__track { display: flex; gap: 8px; overflow-x: auto; padding: 2px; }
+.stance-destination-token { min-width: 132px; display: grid; grid-template-columns: 34px 1fr; gap: 7px; align-items: center; padding: 7px; border: 1px solid rgba(130,170,105,.3); background: rgba(18,30,26,.85); color: #bcd2b1; cursor: pointer; }
+.stance-destination-token--selected { border-color: #c0ff9a; color: #efffe7; box-shadow: 0 0 10px rgba(192,255,154,.18); }
+.stance-destination-token small { display: block; color: #e0c15c; margin-top: 2px; }

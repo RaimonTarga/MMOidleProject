@@ -479,6 +479,17 @@ function pruneUnknownItems(inv: HoldsInventory): void {
   }
 }
 
+const LEGACY_RITE_IDS: Record<string, string> = {
+  "quickened-breath": "swift-repose",
+  "cleansing-breath": "purification",
+  "lingering-momentum": "lingering-battle",
+  "hunters-instinct": "blood-offering",
+};
+
+function migrateRiteIds(ids: readonly string[] | undefined): string[] {
+  return validRiteIds((ids ?? []).map((id) => LEGACY_RITE_IDS[id] ?? id));
+}
+
 function hydratePlayerSlices(row: CharacterRow): PersistedPlayerSlices {
   const holdsInventory = parseSlice<HoldsInventory>(row.holdsInventory);
   holdsInventory.equipment = normalizeEquipment(holdsInventory.equipment);
@@ -491,6 +502,25 @@ function hydratePlayerSlices(row: CharacterRow): PersistedPlayerSlices {
     hasPosition.nodeId = CLEARING_NODE_ID;
   }
   const runeRecipesCrafted = tracksProgression.runeRecipesCrafted ?? [];
+  const rawStances = (tracksProgression.equippedStances ?? {}) as {
+    default?: string | null;
+    reactive?: string | null;
+  };
+  const knownStances = validStanceIds(tracksProgression.knownStances ?? []);
+  const defaultStance = rawStances.default && knownStances.includes(rawStances.default)
+    ? rawStances.default
+    : null;
+  const legacyReactive = rawStances.reactive && knownStances.includes(rawStances.reactive)
+    ? rawStances.reactive
+    : undefined;
+  const migratedRules = (tracksProgression.runesEquipped ?? []).map((rule) => (
+    rule.actionId === "switch-stance" && !rule.targetStanceId && legacyReactive
+      ? { ...rule, targetStanceId: legacyReactive }
+      : rule
+  ));
+  const knownRites = migrateRiteIds(tracksProgression.knownRites);
+  const equippedRites = migrateRiteIds(tracksProgression.equippedRites)
+    .filter((id) => knownRites.includes(id));
 
   return {
     isPlayer:          {
@@ -515,18 +545,16 @@ function hydratePlayerSlices(row: CharacterRow): PersistedPlayerSlices {
           : tracksProgression.clearedNodes ?? []),
       runeRecipesCrafted,
       runesOwned:     runeIdsFromCraftedRecipes(runeRecipesCrafted),
-      runesEquipped:  tracksProgression.runesEquipped ?? [],
+      runesEquipped:  migratedRules,
       knownAbilities: validAbilityIds(tracksProgression.knownAbilities ?? []),
       // Migrates the Step 7 `{technique, guard}` shape to ordered lists and maps
       // renamed ability ids forward. No SQL migration needed — whole-slice JSON.
       equippedAbilities: normalizeEquippedAbilities(tracksProgression.equippedAbilities),
-      knownStances: validStanceIds(tracksProgression.knownStances ?? []),
-      equippedStances: tracksProgression.equippedStances ?? emptyEquippedStances(),
-      activeStance:
-        tracksProgression.activeStance ??
-        (tracksProgression.equippedStances ?? emptyEquippedStances()).default,
-      knownRites: validRiteIds(tracksProgression.knownRites ?? []),
-      equippedRites: validRiteIds(tracksProgression.equippedRites ?? []),
+      knownStances,
+      equippedStances: { default: defaultStance },
+      activeStance: defaultStance,
+      knownRites,
+      equippedRites,
     },
     holdsInventory,
     usesSkills:        {

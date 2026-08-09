@@ -15,6 +15,7 @@ import { initRiteListeners } from "./player/rites/riteOoc";
 import { initCoreCombatEffects } from "./combat/cores";
 import { initMonsterDeathEffects } from "./combat/damage/monsterDeathEffects";
 import { initPlayerAmplifiers } from "./combat/damage/playerAmplifiers";
+import { initStanceCombatEffects } from "./player/stances/stanceSwitch";
 
 let initialized = false;
 
@@ -50,6 +51,7 @@ export function initCombatSystems(): void {
   // Player damage amplifiers (P3): must register BEFORE defense so the incoming
   // multiplier lands ahead of evasion / damage-cap / shields.
   initPlayerAmplifiers();
+  initStanceCombatEffects();
   // Evasion + shield absorption onDamageTaken listeners (after weapon effects).
   initDefenseSystems();
   // Vulnerability/debuff multipliers applied on damage taken.

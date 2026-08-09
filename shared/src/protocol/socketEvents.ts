@@ -70,6 +70,7 @@ export interface ServerToClientEvents {
   "stance:craftResult": (result: { recipeId: string; success: boolean; reason?: string }) => void;
   /** Immediate result of learning a rite (crafting a rite recipe). */
   "rite:craftResult": (result: { recipeId: string; success: boolean; reason?: string }) => void;
+  "build:loadoutResult": (result: { system: "runes" | "stances" | "rites"; success: boolean; reason?: string }) => void;
   /** Immediate result of an item upgrade attempt. */
   "inventory:upgradeResult": (result: {
     success: boolean;

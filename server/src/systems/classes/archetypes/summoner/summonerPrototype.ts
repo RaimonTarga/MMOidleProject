@@ -1,5 +1,4 @@
 /** Server-authoritative tick driver for the persistent summon formation. */
-import { GAME_CONFIG } from '@mmo-idle/shared';
 import type { World } from '../../../../world/World';
 import type { MinionEntity, PlayerEntity } from '../../../../ecs/entity';
 import { markSliceDirty } from '../../../../ecs/dirtyHelpers';
@@ -23,6 +22,7 @@ import {
 } from './reconstruction';
 import { onSummonDeath, tickSummonerSpecializations } from './specs';
 import { syncSummonerFormationTarget } from './formationTarget';
+import { isPlayerInCombat } from '../../../combat/ai/engagement';
 
 type SummonerPlayerEntity = PlayerEntity & {
   summonsMinions: NonNullable<PlayerEntity['summonsMinions']>;
@@ -140,8 +140,7 @@ function isMinionInCombat(
   now: number,
 ): boolean {
   if (minion.hasAttackTarget !== undefined) return true;
-  if (owner.tracksEngagement !== undefined
-    && now - owner.tracksEngagement < GAME_CONFIG.COMBAT_REGEN_DELAY) return true;
+  if (isPlayerInCombat(owner, now)) return true;
   return [...world.aggroedMonsters].some((monster) => (
     monster.hasAggroTarget.targetKind === 'minion'
     && monster.hasAggroTarget.targetId === minion.isMinion.id

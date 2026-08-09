@@ -1,4 +1,4 @@
-import { GAME_CONFIG, getResource, setResource } from "@mmo-idle/shared";
+import { getResource, setResource } from "@mmo-idle/shared";
 import type { World } from "../../world/World";
 import { registerEvasion, resetEvadeAccumulator } from "./mitigation/evasion";
 import { registerDamageCap } from "./mitigation/damageCap";
@@ -21,7 +21,8 @@ import {
   runBramblePlating,
 } from "../player/abilities/abilityBramble";
 import { COMBAT_ELAPSED_KEY } from "./core/pools";
-import { runRiteOoc } from "../player/rites/riteOoc";
+import { isPlayerInCombat } from "../combat/ai/engagement";
+import { applyHealToPlayer } from "./regen/healing";
 
 /**
  * Register all defense-layer combat pipeline listeners.
@@ -62,11 +63,7 @@ export function updateDefensiveSystems(
   now: number,
 ): void {
   for (const player of world.livePlayers) {
-    const lastCombatAt = player.tracksEngagement;
-    const inCombat =
-      player.hasAttackTarget !== undefined ||
-      (lastCombatAt !== undefined &&
-        now - lastCombatAt < GAME_CONFIG.COMBAT_REGEN_DELAY);
+    const inCombat = isPlayerInCombat(player, now);
 
     // Deterministic dodge accumulator resets while out of combat (single balance
     // lever via GAME_CONFIG.EVADE_OOC_RESET).
@@ -102,9 +99,12 @@ export function updateDefensiveSystems(
     runSustainedFightDr(world, player);
     runReactivePlating(world, player);
     runBramblePlating(world, player);
-    // Rites (system rework Step 11): OOC cleanse + buff-decay slowdown. Internally
-    // gated to out-of-combat, so it self-skips while the player is engaged.
-    runRiteOoc(world, player, dt, now);
+    if (!inCombat && !player.hasNodeFeatureEffect) {
+      const amount = player.hasHealth.maxHp
+        * ((player.hasHealth.hpRegen ?? 0) / 100)
+        * (dt / 1000);
+      applyHealToPlayer(player, player.tracksCombat, amount, world);
+    }
   }
 }
 

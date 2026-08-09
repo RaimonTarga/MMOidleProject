@@ -9,6 +9,7 @@ import {
   normalizeEquippedAbilities,
   runeBudgetForGlobalMastery,
   sanitizeRuneLoadout,
+  runicPointLoadoutCost,
 } from "@mmo-idle/shared";
 import type {
   AutocombatConfig,
@@ -349,11 +350,22 @@ export function registerPlayerHandlers(
     const valid = sanitizeRuneLoadout(
       rules,
       owned,
-      budget,
+      Number.POSITIVE_INFINITY,
       p.usesSkills.combatArchetype,
+      new Set(p.tracksProgression.knownStances ?? []),
     );
+    if (valid.length !== rules.length) {
+      socket.emit("build:loadoutResult", { system: "runes", success: false, reason: "One or more Rune rules are invalid, unowned, or target an unlearned stance." });
+      return;
+    }
+    const total = runicPointLoadoutCost({ rules: valid, rites: p.tracksProgression.equippedRites ?? [] });
+    if (total > budget) {
+      socket.emit("build:loadoutResult", { system: "runes", success: false, reason: `This build costs ${total} RP, but only ${budget} RP is available.` });
+      return;
+    }
     p.tracksProgression.runesEquipped = valid;
     markSliceDirty(world, p, "tracksProgression");
+    socket.emit("build:loadoutResult", { system: "runes", success: true });
   });
 
   socket.on("inventory:equipItem", (definitionId) => {
@@ -415,10 +427,11 @@ export function registerPlayerHandlers(
   socket.on("stance:setLoadout", (payload) => {
     const p = liveSelf();
     if (!p || !payload) return;
-    if (payload.slot !== "default" && payload.slot !== "reactive") return;
+    if (payload.slot !== "default") return;
     const stanceId =
       typeof payload.stanceId === "string" ? payload.stanceId : null;
-    setStanceLoadout(world, p, payload.slot, stanceId);
+    const result = setStanceLoadout(world, p, payload.slot, stanceId);
+    socket.emit("build:loadoutResult", { system: "stances", ...result });
   });
 
   socket.on("rite:craftRecipe", (recipeId: string) => {
@@ -434,7 +447,8 @@ export function registerPlayerHandlers(
     const riteIds = payload.riteIds.filter(
       (id): id is string => typeof id === "string",
     );
-    setRiteLoadout(world, p, riteIds);
+    const result = setRiteLoadout(world, p, riteIds);
+    socket.emit("build:loadoutResult", { system: "rites", ...result });
   });
 
   socket.on("inventory:upgradeItem", (itemId: string) => {

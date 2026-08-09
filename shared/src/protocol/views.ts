@@ -19,7 +19,7 @@ import {
   type EquippedAbilities,
 } from "../abilities";
 import { emptyEquippedStances, type EquippedStances } from "../stances";
-import { emptyEquippedRites, riteSlotCount, type EquippedRites } from "../rites";
+import { emptyEquippedRites, type EquippedRites } from "../rites";
 import {
   FALLBACK_MONSTER_AABB,
   FALLBACK_PLAYER_AABB,
@@ -150,7 +150,7 @@ export interface PlayerView {
   abilitySlots: Record<AbilitySlot, number>;
   /** Stances learned (crafted) — the slottable pool (system rework Step 10). */
   knownStances: string[];
-  /** Equipped stances by slot: default (active posture) + reactive (auto-switch). */
+  /** Free default posture; Rune rules carry automated destinations. */
   equippedStances: EquippedStances;
   /** Which posture is currently active (folded into stats). */
   activeStance: string | null;
@@ -421,7 +421,8 @@ export function composePlayerView(entity: NetworkedEntity): PlayerView | null {
     activeStance: progression.activeStance ?? null,
     knownRites: progression.knownRites ?? [],
     equippedRites: progression.equippedRites ?? emptyEquippedRites(),
-    riteSlots: riteSlotCount(globalMastery(progression.biomeLevel)),
+    // Compatibility field for older clients; Rites are RP-capped, not slot-capped.
+    riteSlots: (progression.knownRites ?? []).length,
     hitboxRects: entity.hasHitbox?.rects ?? [FALLBACK_PLAYER_AABB],
     summonsMinions: entity.summonsMinions?.targetCount ?? 0,
     summonActiveCount,

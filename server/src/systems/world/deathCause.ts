@@ -59,7 +59,7 @@ export function buildPlayerDeathPayload(
   const diedAtNodeId =
     cause.kind === "debt"
       ? cause.nodeId
-      : (cause.killer?.nodeId ?? player.hasPosition.nodeId);
+      : (cause.kind === "stance" ? player.hasPosition.nodeId : cause.killer.nodeId);
   return {
     cause,
     diedAtNodeId,

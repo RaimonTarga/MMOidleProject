@@ -35,6 +35,7 @@ function formatClock(ms: number): string {
 
 function getKiller(payload: NonNullable<ReturnType<typeof useAtomValue<typeof deathOverlayAtom>>['payload']>): DeathKiller | null {
   const { cause } = payload;
+  if (cause.kind === 'stance') return null;
   if (cause.kind === 'debt') return cause.killer ?? null;
   return cause.killer;
 }

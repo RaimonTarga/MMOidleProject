@@ -323,10 +323,9 @@ export const abilitySlotsAtom = atom<Record<AbilitySlot, number>>({
 
 /** Stances learned (crafted) — the slottable pool (system rework Step 10). */
 export const knownStancesAtom = atom<string[]>([]);
-/** Equipped stances by slot: default (active posture) + reactive (auto-switch). */
+/** Free default posture. Automated destinations live on individual Rune rules. */
 export const equippedStancesAtom = atom<EquippedStances>({
   default: null,
-  reactive: null,
 });
 /** Which posture is currently active (folded into stats). */
 export const activeStanceAtom = atom<string | null>(null);
@@ -635,7 +634,7 @@ function setEquippedAbilities(next: EquippedAbilities): void {
 function setEquippedStances(next: EquippedStances): void {
   const store = getDefaultStore();
   const prev = store.get(equippedStancesAtom);
-  if (prev.default === next.default && prev.reactive === next.reactive) return;
+  if (prev.default === next.default) return;
   store.set(equippedStancesAtom, next);
 }
 
@@ -742,7 +741,7 @@ function resetPlayerAtoms(): void {
   setEquippedAbilities({ techniques: [], guards: [] });
   setAbilitySlots({ technique: 1, guard: 1 });
   setIfShallowArrayEqual(knownStancesAtom, []);
-  setEquippedStances({ default: null, reactive: null });
+  setEquippedStances({ default: null });
   setIfChanged(activeStanceAtom, null);
   setIfShallowArrayEqual(knownRitesAtom, []);
   setIfShallowArrayEqual(equippedRitesAtom, []);

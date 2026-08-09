@@ -4,7 +4,7 @@
  * Crafting a stance recipe LEARNS the stance (adds it to
  * `TracksProgression.knownStances`), spending essence + catalysts and gating on
  * Biome Mastery — mirroring rune / ability crafting. Equipping is free slotting from
- * the learned pool into the default / reactive stance slot. Changing the loadout
+ * the learned pool as a free default; Rune rules name their own destinations.
  * resets the active posture to the (new) default and recalcs stats.
  */
 import type { EssenceType } from "@mmo-idle/shared";
@@ -22,7 +22,7 @@ import {
 import type { World } from "../../../world/World";
 import type { PlayerEntity } from "../../../ecs/entity";
 import { markSliceDirty } from "../../../ecs/dirtyHelpers";
-import { recalculatePlayerEntityStats } from "../../../ecs/playerEntityFormulas";
+import { recalculatePlayerStanceStats } from "../../../ecs/playerEntityFormulas";
 
 const TEST_ROOM_ESSENCE_AMOUNT = 1_000_000_000;
 
@@ -121,14 +121,10 @@ export function setStanceLoadout(
     }
   }
 
-  prog.equippedStances = {
-    ...(prog.equippedStances ?? emptyEquippedStances()),
-    [slot]: stanceId,
-  };
-  // Reset the active posture to the (new) default; the switch system reconciles the
-  // reactive posture from the next tick. Recalc folds the new default into stats now.
+  prog.equippedStances = { default: stanceId };
+  // Reset immediately to the new free default. Rune arbitration may move away later.
   prog.activeStance = prog.equippedStances.default;
   markSliceDirty(world, entity, "tracksProgression");
-  recalculatePlayerEntityStats(world, entity);
+  recalculatePlayerStanceStats(world, entity);
   return { success: true };
 }

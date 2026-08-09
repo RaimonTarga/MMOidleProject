@@ -51,7 +51,7 @@ const slices: PersistedPlayerSlices = {
     knownAbilities: ["whirlwind"],
     equippedAbilities: { techniques: ["whirlwind"], guards: [] },
     knownStances: ["offensive-stance"],
-    equippedStances: { default: "offensive-stance", reactive: null },
+    equippedStances: { default: "offensive-stance" },
     activeStance: "offensive-stance",
     knownRites: ["rite-a"],
     equippedRites: ["rite-a"],
