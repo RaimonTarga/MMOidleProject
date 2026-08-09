@@ -10,6 +10,9 @@ import {
   SUN_MARK_EFFECT_ID,
   VOLCANIC_HEAT_EFFECT_ID,
   CAVE_LOCKDOWN_EFFECT_ID,
+  SUNDERED_EFFECT_ID,
+  DAMAGE_TAKEN_PCT_KEY,
+  MAX_DAMAGE_TAKEN_PCT,
   frostRampMoveSlowPct,
   frostRampAtkSlowPct,
   type StatusEffect,
@@ -211,6 +214,36 @@ const DEBUFF_BUFFS = [
       };
     },
     { category: "neutral", shape: "diamond", color: "#ff5522", label: "HEAT" },
+  ),
+  defineBuff(
+    "debuff-sundered",
+    ({ playerCs, world }) => {
+      if (!playerCs) return null;
+      const sundered = getStatusEffect(playerCs, SUNDERED_EFFECT_ID);
+      if (!sundered || sundered.stacks <= 0) return null;
+      const totalMs = sundered.data["totalMs"] ?? sundered.remainingMs;
+      const source = world.getMonsterEntity(sundered.sourceId);
+      const takenPct = Math.round(
+        Math.min(
+          MAX_DAMAGE_TAKEN_PCT,
+          sundered.stacks * (sundered.data[DAMAGE_TAKEN_PCT_KEY] ?? 0),
+        ) * 100,
+      );
+      return {
+        id: "debuff-sundered",
+        label: "SUNDERED",
+        stacks: sundered.stacks,
+        durationPct:
+          totalMs > 0 && sundered.remainingMs > 0
+            ? (sundered.remainingMs / totalMs) * 100
+            : -1,
+        color: "#dd7744",
+        logSourceName: source?.isMonster.name ?? "Monster debuff",
+        logSourceSide: "enemy",
+        logDetail: `+${takenPct}% damage taken from every source — cleanse it or break away`,
+      };
+    },
+    { category: "neutral", shape: "diamond", color: "#dd7744", label: "SUNDERED" },
   ),
   defineBuff(
     "debuff-antiheal",
@@ -601,6 +634,8 @@ function buffEffectText(buff: PlayerBuff): string {
       return "movement and attack speed reduced";
     case "debuff-dot":
       return "taking damage over time";
+    case "debuff-sundered":
+      return "increased damage taken";
     case "defense-absorb":
       return "healing pool active";
     case "defense-burst":

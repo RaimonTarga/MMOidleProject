@@ -276,3 +276,65 @@ receive no tree when no position can also preserve the altar clearing and image 
 reuse the split canopy/root depth treatment and smooth dual-target trunk collision.
 `shared/src/collision/collision.test.ts` pins pool clearance, collision ownership, sparse
 density, and a connected walkable region across every canonical swamp node.
+
+## 18. Player damage amplifiers + Desert pairs (Pass 2, Session 4 — SHIPPED)
+
+P3, the last shared primitive, plus its first consumer. Volcano (Session 5) takes a
+dependency on both halves, so they land here proven against Desert first.
+
+**The amplifiers** — `shared/src/systems/playerAmplifiers.ts`. Two capped, status-driven
+multipliers on the player, the mirror of `getAntiHealMult`:
+
+- Neither is owned by a status id. **Any** status on the player contributes by carrying
+  `damageTakenPct` / `damageDealtPct` in its `data` (`Record<string, number>` only, so a
+  per-stack fraction is all it can be). That genericity is the point: one Volcano heat
+  effect can drive both dimensions at once, exactly as `frost-ramp` carries move-slow and
+  attack-slow together.
+- `playerIncomingDamageMult` is read by an `onDamageTaken` listener
+  (`server/src/systems/combat/damage/playerAmplifiers.ts`) registered in `combatBootstrap`
+  **before `initDefenseSystems()`**. ⚠ That order is load-bearing: the amplifier runs ahead
+  of evasion, the damage-cap and shields, so an amplified spike is still clipped by the cap
+  the player paid for and the shield absorbs the amplified amount. Registering it after the
+  cap would walk a stacking vulnerability straight through the one layer that answers spikes.
+- `playerOutgoingDamageMult` is read **once**, inline in `runPlayerAttack` next to
+  `shared.damage-mult`, as a plain outgoing layer that never touches empowered/charge
+  metadata. It has no authored consumer until Volcano; the seam is live and tested.
+- A pipeline listener rather than an inline read in `runMonsterAttack` on purpose: every
+  path that resolves a player hit through the pipeline is covered, and
+  `ctx.metadata.incomingGross` stays honest as "what the monster swung for" (Avenger /
+  Vengeance scale off it and shouldn't be paid twice for a debuff).
+- Caps are `MAX_DAMAGE_TAKEN_PCT` (1.0) and `MAX_DAMAGE_DEALT_PCT` (0.5). Placeholders.
+
+**`MonsterDefinition.appliesVulnerability`** — `{ damageTakenPct, maxStacks, durationMs }`.
+Stacks the cleansable `sundered` status on every landed hit, applied next to
+`appliesAntiheal` with the standard `canApplyPlayerDebuff` + `evadeBlocksDebuffs` +
+`mobilityTenacityDurationMult` gates. Feeds a `debuff-sundered` buff tile.
+
+**Desert re-authored into controller/dealer pairs.** The biome was three independent
+debuff-appliers plus a Sun Mark duel; it is now one relationship, tiered:
+
+| Role | Line | Shape |
+|------|------|-------|
+| Controller (pack alpha) | basilisk | High HP, low offense, full root, sunders from T3 |
+| Dealer (pack follower) | scarab | Low HP, fast, `kiter`, high damage |
+| Harasser (solo) | scorpion | Unchanged — catches you when you disengage |
+
+The exam is target priority, which the biome previously lacked: burst the squishy dealer and
+the controller is a harmless rock; kill the controller instead and `onPackAlphaDead` scatters
+the dealers with **no rewards** — fast, but you leave essence on the sand. `dune-tyrant` is
+the T4 apex controller and inverts the trade: a light sunder behind a real slam, so its
+cooldown spike lands into its own sundering, straight at the damage cap.
+
+**Sun Mark is gone from every desert trash mob** (locked decision 3). The engine survives on
+the T2 boss, which now **paints its own mark** — the phase-2 `dust-djinn` adds used to be the
+only painters, so `markedStrike` could never fire before 50% HP and never at all if the adds
+died on arrival. This is the one boss line Session 4 touched.
+
+⚠ Self-marking exposed an engine ordering bug that is now closed: `markedStrike` consumes the
+mark *before* damage while `appliesMark` repaints *after* it, so a monster carrying both
+would have repainted on the very hit that cashed the mark and landed every hit from the
+second onward amplified, forever. The applier now skips when `ctx.metadata.sunMarkConsumed`
+is set, making a self-marker **alternate** — paint, cash, paint, cash.
+
+Every desert number is a placeholder; the stat *shapes* (controller HP↑/attack↓, dealer
+HP↓/attack↑/speed↑) are the authored intent. Pinned by `server/test/desertPairs.test.ts`.

@@ -124,6 +124,18 @@ export function describeMonsterMechanics(
     });
   }
 
+  if (def.appliesVulnerability) {
+    const vuln = def.appliesVulnerability;
+    lines.push({
+      id: 'sunder',
+      icon: '🩸',
+      label: 'Sunder',
+      detail:
+        `Each hit stacks +${fmtPct(vuln.damageTakenPct)} damage TAKEN from every source ` +
+        `(up to ${vuln.maxStacks} stacks); decays ${fmtMs(vuln.durationMs)} after the last hit. Cleansable.`,
+    });
+  }
+
   if (def.aoeAttack) {
     lines.push({
       id: 'aoe',

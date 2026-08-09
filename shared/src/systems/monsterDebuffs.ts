@@ -33,6 +33,14 @@ export const VOLCANIC_HEAT_EFFECT_ID = 'volcanic-heat';
 /** Cave troll opener: a short, source-owned root plus attack lockout. */
 export const CAVE_LOCKDOWN_EFFECT_ID = 'cave-lockdown';
 
+/**
+ * Desert sundering (MonsterDefinition.appliesVulnerability) — a stacking,
+ * cleansable status that raises the damage the player takes from every source.
+ * Carries `damageTakenPct` so `playerIncomingDamageMult` picks it up generically;
+ * see `systems/playerAmplifiers.ts`.
+ */
+export const SUNDERED_EFFECT_ID = 'sundered';
+
 /** Movement-slow fraction (0..moveSlowMaxPct) from the current frost-ramp stacks. */
 export function frostRampMoveSlowPct(effect: StatusEffect): number {
   const perHit = effect.data['moveSlowPerHit'] ?? 0;
@@ -73,7 +81,8 @@ export function frostRampMaxStacks(def: {
  * guard buffs, shields) are left alone.
  *
  * Covers the explicit debuff ids (slow/root, frost-ramp, Sun Mark, volcanic heat,
- * antiheal, swamp rot) plus the generic markers any DoT/node-hazard status carries
+ * cave lockdown, sundered, antiheal, swamp rot) plus the generic markers any
+ * DoT/node-hazard status carries
  * (`data.isDot`, `data.isNodeFeature`) and monster-inflicted DoT ids.
  */
 export function isHarmfulPlayerStatusEffect(
@@ -82,7 +91,7 @@ export function isHarmfulPlayerStatusEffect(
 ): boolean {
   if (id === 'slow' || id === FROST_RAMP_EFFECT_ID) return true;
   if (id === SUN_MARK_EFFECT_ID || id === VOLCANIC_HEAT_EFFECT_ID) return true;
-  if (id === CAVE_LOCKDOWN_EFFECT_ID) return true;
+  if (id === CAVE_LOCKDOWN_EFFECT_ID || id === SUNDERED_EFFECT_ID) return true;
   if (id === 'antiheal' || id === 'swamp-rot') return true;
   if (isMonsterDotStatusEffectId(id)) return true;
   if ((data['isDot'] ?? 0) !== 0) return true;

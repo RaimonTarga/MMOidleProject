@@ -14,6 +14,7 @@ import { initAbilitySystems } from "./player/abilities/abilityEffects";
 import { initRiteListeners } from "./player/rites/riteOoc";
 import { initCoreCombatEffects } from "./combat/cores";
 import { initMonsterDeathEffects } from "./combat/damage/monsterDeathEffects";
+import { initPlayerAmplifiers } from "./combat/damage/playerAmplifiers";
 
 let initialized = false;
 
@@ -32,6 +33,8 @@ let initialized = false;
  * invulnerability guard was missed from the bench).
  *
  * Ordering matters — registration order is pipeline priority:
+ *  - the player incoming amplifier must register BEFORE defense (so the cap and
+ *    shields act on the amplified hit)
  *  - defense systems must register AFTER weapon effects (run later in the chain)
  *  - the summoner damage sponge must register AFTER defense (shields/absorb get
  *    first crack at incoming damage; whatever remains is siphoned to a slime)
@@ -44,6 +47,9 @@ export function initCombatSystems(): void {
   initAllMechanics();
   // Weapon-specific hooks (first-strike, brittle, flurry, reservoir DoTs, ...).
   initWeaponEffects();
+  // Player damage amplifiers (P3): must register BEFORE defense so the incoming
+  // multiplier lands ahead of evasion / damage-cap / shields.
+  initPlayerAmplifiers();
   // Evasion + shield absorption onDamageTaken listeners (after weapon effects).
   initDefenseSystems();
   // Vulnerability/debuff multipliers applied on damage taken.

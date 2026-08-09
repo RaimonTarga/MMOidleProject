@@ -33,6 +33,9 @@ import {
   removeStatusEffect,
   FROST_RAMP_EFFECT_ID,
   SUN_MARK_EFFECT_ID,
+  SUNDERED_EFFECT_ID,
+  DAMAGE_TAKEN_PCT_KEY,
+  playerOutgoingDamageMult,
   frostRampMaxStacks,
   frostRampAtkSlowPct,
   CHAOTIC_HIT_COUNTER_KEY,
@@ -332,6 +335,12 @@ export function runPlayerAttack(
 
   const damageMult = player.usesSkills.passives['shared.damage-mult'] ?? 0;
   if (damageMult > 0) ctx.damage = Math.round(ctx.damage * (1 + damageMult));
+
+  // P3 outgoing amplifier — status-driven +damage-dealt (Volcano's heat is the
+  // consumer). Read ONCE here, next to shared.damage-mult, so it composes as a
+  // plain outgoing layer and never touches empowered/charge metadata.
+  const outgoingMult = playerOutgoingDamageMult(player.tracksCombat);
+  if (outgoingMult > 1) ctx.damage = Math.round(ctx.damage * outgoingMult);
 
   emitCombatEvent("onHit", ctx, world);
 
@@ -752,8 +761,19 @@ export function runMonsterAttack(
   // Sun Mark setup (Desert): the marker paints a cleansable mark the finisher cashes
   // in. Edge-triggered telegraph — a one-shot pulse only when the mark is freshly
   // applied (not on every refresh). Skipped on an evaded hit, like every debuff.
+  //
+  // A SELF-MARKING monster (both `appliesMark` and `markedStrike` — the T2 Desert
+  // Emperor) must not repaint on the very hit that just cashed the mark: the
+  // finisher check runs before damage and this applier runs after it, so without
+  // this guard every hit from the second onward would land amplified forever.
+  // Skipping the repaint makes it ALTERNATE — paint, cash, paint, cash.
   const mark = def?.appliesMark;
-  if (mark && canApplyPlayerDebuff(target) && !evadeBlocksDebuffs(ctx)) {
+  if (
+    mark &&
+    ctx.metadata["sunMarkConsumed"] !== true &&
+    canApplyPlayerDebuff(target) &&
+    !evadeBlocksDebuffs(ctx)
+  ) {
     const fresh = !getStatusEffect(target.tracksCombat, SUN_MARK_EFFECT_ID);
     const markMs = Math.round(
       mark.durationMs * mobilityTenacityDurationMult(target),
@@ -810,6 +830,28 @@ export function runMonsterAttack(
       refreshable: true,
       sourceId: monster.isMonster.id,
       data: { reductionPerStack: antiheal.reductionPerStack, totalMs: durMs },
+    });
+  }
+
+  // Desert sundering — stack the player's `sundered` status (+damage TAKEN from
+  // every source via playerIncomingDamageMult). The controller half of the Desert
+  // pair: the pinning mob barely scratches you, it just makes its kiting dealer's
+  // shots land harder. Decays after the last hit. Skipped on an evaded hit.
+  const vulnerability = def?.appliesVulnerability;
+  if (vulnerability && canApplyPlayerDebuff(target) && !evadeBlocksDebuffs(ctx)) {
+    const durMs = Math.round(
+      vulnerability.durationMs * mobilityTenacityDurationMult(target),
+    );
+    applyStatusEffect(target.tracksCombat, {
+      id: SUNDERED_EFFECT_ID,
+      maxStacks: vulnerability.maxStacks,
+      remainingMs: durMs,
+      refreshable: true,
+      sourceId: monster.isMonster.id,
+      data: {
+        [DAMAGE_TAKEN_PCT_KEY]: vulnerability.damageTakenPct,
+        totalMs: durMs,
+      },
     });
   }
 

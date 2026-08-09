@@ -168,9 +168,17 @@ export const bossMonsterEntriesT2 = [
   }],
 
   // DESERT (debut T2) — the DUEL exam "win the duel". The Emperor opens with a lethal
-  // alpha strike (openingStrike → last-stand answers); at 50% it summons Dust-Djinn
-  // painters that paint Sun Mark, and the Emperor's markedStrike cashes the mark for
-  // an amplified hit (cleanse the mark or eat it). Keeps its slow. Single-target.
+  // alpha strike (openingStrike → last-stand answers), then runs the Sun Mark cycle
+  // ITSELF: its hits paint the mark (appliesMark) and its next heavy blow cashes it
+  // (markedStrike) — cleanse the mark or eat it. At 50% it summons Sun Scarabs as
+  // extra standoff pressure. Keeps its slow. Single-target.
+  //
+  // Biome Ecology Pass 2 (Session 4) moved the painting onto the boss. Sun Mark was
+  // stripped from all desert trash (locked decision 3), and the phase-2 adds used to
+  // be the only painters — which meant markedStrike could never fire before 50% HP,
+  // and never at all if the adds were killed on arrival. Self-marking makes the duel
+  // a real 1v1 mark/cleanse race that does not depend on adds surviving. This is the
+  // ONE boss line Session 4 touched.
   ['dune-stalker-emperor', {
     id: 'dune-stalker-emperor', name: 'Dune-Stalker Emperor', color: 0xddcc44,
     isBoss: true,
@@ -180,6 +188,7 @@ export const bossMonsterEntriesT2 = [
     ai: { wanderRadius: 140, leashRange: 880, idleMinMs: 2000, idleMaxMs: 5500 },
     slowEffect: { speedMult: 0.6, durationMs: 2000 }, // debuff identity
     openingStrike: { multiplier: 2.5 },   // placeholder — user balance pass
+    appliesMark: { durationMs: 4000 },    // placeholder — user balance pass
     markedStrike: { multiplier: 2.0 },    // placeholder — user balance pass
     bossScript: {
       phases: [

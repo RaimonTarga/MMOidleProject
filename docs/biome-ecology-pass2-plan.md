@@ -1,9 +1,10 @@
 # Biome Ecology Pass 2 — Implementation Plan
 
-**Status:** 🚧 in progress — Sessions 1–3 ✅ shipped 2026-08-08, plus the Jungle art/terrain
-slice pulled forward out of Session 6. Sessions 4–5 not started. **Start here: §7.**
-**Companion:** `docs/biome-ecology-current-state.md` (refreshed through Session 3; its
-sections 8–11 are the living record of the shipped primitives and consumers).
+**Status:** 🚧 in progress — Sessions 1–4 ✅ shipped (1–3 on 2026-08-08, 4 on 2026-08-09),
+plus the Jungle art/terrain slice pulled forward out of Session 6. Sessions 5–6 not started.
+**Start here: §8.**
+**Companion:** `docs/biome-ecology-current-state.md` (refreshed through Session 4; its
+sections 8–11 and 18 are the living record of the shipped primitives and consumers).
 **Predecessor:** `docs/archive/biome-ecology-plan.md` (Step 12 program plan).
 
 Scope: deepen the T2+ biomes past the "gloss-over" pass — Cave, Desert, Jungle, Volcano,
@@ -78,7 +79,7 @@ gauntlet view.
 cast start; resolves through the existing `applyMonsterAoe` on completion. A rider on the
 *charge* specifically — reusing the def-level `aoeAttack` would splash every normal attack.
 
-### P3 — Player damage amplifiers
+### P3 — Player damage amplifiers ✅ SHIPPED (Session 4)
 **Consumers:** Desert vulnerability debuff, Volcano heat.
 
 Two status-driven multipliers with helper accessors mirroring `getAntiHealMult`:
@@ -193,7 +194,7 @@ Fold the existing `gravewright` off `spawn-adds` onto the real raise.
 >    `isMonster` slice, which is the whole client tell, plus a `raise-dead` ecology pulse.
 >    `isRaised` itself stays a server-only marker and trips no invariant.
 
-### Session 4 — P3 + Desert pairs
+### Session 4 — P3 + Desert pairs ✅ SHIPPED 2026-08-09
 The amplifiers, proven against one consumer before Volcano takes a dependency on them.
 
 - P3 incoming/outgoing multipliers + an `appliesVulnerability` monster field.
@@ -419,3 +420,63 @@ The Session-1 handover's two loose ends are unchanged and still worth a later se
 - Jungle trees shipped through the ChatGPT image-generation track; PixelLab remains the wrong
   tool for this asset class. Density, dual-target collision, brush clearance, and jungle
   connectivity are pinned in `shared/src/collision/collision.test.ts`.
+
+---
+
+## 8. Handover — state at the end of Session 4 (2026-08-09)
+
+**Next session is Session 5** (P4 ambient ramp + Volcano + the slow clamp). §3 still describes
+Sessions 5–6 accurately. The §4 ordering constraint that gated Session 4 is now **discharged**:
+P3 exists and has a proven consumer, so Volcano may depend on it.
+
+Session 4 sits on `feat/biome-ecology-pass2` on top of the Session-3 tip. `pnpm typecheck`
+green; `pnpm test` **72/72**. Session 3 closed at 69 — one of the three new files is
+`server/test/desertPairs.test.ts`, the other two came from the concurrent art/altar track
+that landed in the same working tree.
+
+### What shipped
+
+Full mechanical detail is in §18 of `docs/biome-ecology-current-state.md`. In short: the two
+capped amplifier helpers, an `appliesVulnerability` monster field and its `sundered` status +
+buff tile, the Desert roster re-authored into controller/dealer packs across T2–T4, and Sun
+Mark stripped from all desert trash.
+
+### Judgement calls a later session should know about
+
+- **The incoming amplifier registers BEFORE `initDefenseSystems()`.** This is the single
+  fragile thing in P3. If it ever drifts after the damage-cap registration, a stacking
+  vulnerability bypasses the cap entirely. `server/test/desertPairs.test.ts` asserts the
+  order, not just the effect — it sets `defense.max-hit-mult` to 0 so a clipped-then-amplified
+  pipeline would read differently from an amplified-then-clipped one. Note that
+  `defense.max-hit-pct` alone does nothing: `max-hit-mult` defaults to 1, so the "cap" is a
+  no-op until a reduction multiplier is set. That surprised this session; it will surprise
+  the next one.
+- **Amplifiers are keyed off status `data`, not status id.** Volcano should therefore author
+  ONE heat status carrying both `damageTakenPct` and `damageDealtPct` rather than two effects.
+  No new engine work is needed for it — Session 5's P4 payload just has to write those keys.
+- **The outgoing multiplier currently has no authored consumer.** It is read live in
+  `runPlayerAttack` and covered by a synthetic-status test. Do not "clean it up" as dead code;
+  it is Volcano's landing pad.
+- **The T2 Emperor was re-authored** (self-marks) against locked decision 3's "no boss
+  re-authoring", with the user's explicit call. The decision assumed desert trash and the boss
+  were separable; they were not, because the boss's phase-2 adds *are* desert trash.
+- **Self-marking exposed a real engine bug**, now fixed: `appliesMark` skips the repaint when
+  `ctx.metadata.sunMarkConsumed` is set. Before this, any monster with both fields would have
+  perma-amplified. No shipped monster had both, so nothing was previously broken.
+- **Killing a desert controller destroys its dealers' rewards.** `onPackAlphaDead` removes
+  followers without granting anything. That is the intended target-priority trade, not an
+  oversight — but it is the first biome where the tanky mob is the alpha AND the squishy mobs
+  carry the essence, so it is the biome most likely to generate "my rewards vanished" reports.
+- **Desert density interacts with the packs.** `mobDensity` is 8 and a controller pull is 3
+  bodies, so a node is roughly two packs plus two harassers. If desert feels crowded after the
+  balance pass, the lever is density, not the follower counts.
+
+### Not touched, still open
+
+- `debuff-sundered` has **no icon art**. Every other id in `conceptIcons.ts`'s `DEBUFF_IDS`
+  has a PNG, so it is deliberately left out of that set and renders as the orange diamond
+  shape fallback. An art pass should generate it into
+  `client/public/assets/concept-icons/statuses/debuffs/` in the same family as the others.
+- Both long-standing loose ends from earlier handovers are unchanged: `server/package.json`'s
+  `dev` script is still broken (`tsx --env-file=... watch` puts the flag ahead of the
+  subcommand), and PixelLab remains the wrong tool for tree-class assets.
