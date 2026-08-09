@@ -488,6 +488,19 @@ export interface MonsterDefinition {
     tickIntervalMs: number;
   };
   /**
+   * Tundra capstone — this monster's outgoing damage scales with the AMBIENT NODE RAMP
+   * its target is carrying (`NodeFeatureSpec.ambientRamp`): +`perStackPct` per stack,
+   * capped at `maxPct`. A plain outgoing-damage layer like the Wasteland death-empower,
+   * not an empowered spike, so it does not touch cadence/charge metadata and resolves
+   * through the player's full defensive pipeline.
+   *
+   * Locked decision 5 keeps this to ONE T4 elite per biome: the chill that slows
+   * everyone also feeds the apex, which is a reason to cleanse it and a reason not to
+   * plant-and-outlast the one fight where outlasting is worst. A roster-wide version
+   * would just be a second difficulty knob on the ramp payload.
+   */
+  scalesWithAmbientRamp?: { perStackPct: number; maxPct: number };
+  /**
    * Stacking debuff applied to the PLAYER on every landed hit: a movement slow and
    * an attack-speed slow, each accumulating per hit and clamped at its own MaxPct.
    * The whole debuff decays stackDurationMs after the last hit taken (refreshed each

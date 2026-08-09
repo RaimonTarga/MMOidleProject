@@ -20,8 +20,8 @@ import { DAMAGE_DEALT_PCT_KEY, DAMAGE_TAKEN_PCT_KEY } from './playerAmplifiers';
  *     exactly as `frost-ramp` carries move-slow and attack-slow together.
  *   - `moveSlowPct` is folded into `playerMoveSpeedMult` beside every other slow.
  *
- * Consumers: Volcano heat (`{ outgoing, incoming }` — the greed ramp), Tundra chill
- * (`{ moveSlowPct }` — Session 6).
+ * Consumers: Volcano heat (`{ outgoing, incoming }` — the greed ramp) and Tundra chill
+ * (`{ moveSlowPct }` — all cost, no upside).
  */
 export interface AmbientRampPayload {
   /** Per stack: added fraction of damage the player TAKES (P3 incoming amplifier). */
@@ -87,6 +87,31 @@ export function ambientRampMoveMult(effect: StatusEffect): number {
   const maxStacks = effect.data['maxStacks'] ?? effect.stacks;
   const stacks = Math.min(effect.stacks, maxStacks);
   return Math.max(0.05, 1 - perStack * stacks);
+}
+
+/**
+ * Outgoing-damage multiplier for a monster that FEEDS on the node ramp
+ * (`MonsterDefinition.scalesWithAmbientRamp`): `perStackPct` per stack the target is
+ * carrying, capped at `maxPct`. 1 when the monster has no such scaling or the target
+ * carries no ramp.
+ *
+ * Deliberately keyed off the generic ramp marker rather than one biome's effect id:
+ * the mechanic is "this thing grows on whatever the room is doing to you", and the
+ * ramp a player carries in a node is by construction that node's own (one per node,
+ * shed on leaving). Locked decision 5 keeps the CONSUMER rare — one T4 elite — so
+ * this stays a capstone tell rather than a roster-wide damage ramp.
+ */
+export function ambientRampScalingMult(
+  scaling: { perStackPct: number; maxPct: number } | undefined,
+  cs: TracksCombat,
+): number {
+  if (!scaling) return 1;
+  const effect = ambientRampStatus(cs);
+  if (!effect) return 1;
+  const maxStacks = effect.data['maxStacks'] ?? effect.stacks;
+  const stacks = Math.min(effect.stacks, maxStacks);
+  if (stacks <= 0) return 1;
+  return 1 + Math.min(scaling.maxPct, stacks * scaling.perStackPct);
 }
 
 /** Fill fraction (0..1) toward full stacks — the soft-timer read for the buff tile. */

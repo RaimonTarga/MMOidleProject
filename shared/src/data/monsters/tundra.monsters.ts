@@ -31,6 +31,7 @@ import type { MonsterDefinition } from './types';
 //   behavior: 'kiter'     — ranged AI maintains standoff (see monsterKites)
 //   rampOnCombat: {...}    — Volcano: attack ramps while in combat, capped
 //   rampDebuff: {...}      — Tundra: stacking slow/atk-slow on the PLAYER, capped
+//   scalesWithAmbientRamp  — Tundra apex only: damage scales with the node chill
 // Existing/reused: chargeOnAggro, behavior: 'ranged', dotEffect, evasion, slowEffect.
 // Costs/essence/biomeXp = placeholder (economy deferred).
 // ─────────────────────────────────────────────────────────────────────────
@@ -156,6 +157,12 @@ export const tundraMonsterEntries = [
     chargeOnAggro: { speedMult: 2.0, durationMs: 1400 },
     empoweredCooldown: { cooldownMs: 9000, multiplier: 3.0 },  // 300
     enemySoftCap: { capPct: 0.25, capMult: 0.5 },
+    // ECOLOGY: the apex FEEDS ON THE COLD. Every stack of the node's ambient chill
+    // (which is already taking your movement) also makes this thing hit harder, so
+    // the biome's plant-and-outlast answer is exactly wrong against its capstone:
+    // arrive cold and the 9s slam lands on a target that cannot walk out of it.
+    // The one chill-scaling mob in the roster (locked decision 5).
+    scalesWithAmbientRamp: { perStackPct: 0.06, maxPct: 0.36 },
   }],
 
   

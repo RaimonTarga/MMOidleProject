@@ -33,6 +33,17 @@ export const SUN_MARK_EFFECT_ID = 'sun-mark';
  */
 export const VOLCANIC_HEAT_EFFECT_ID = 'volcanic-heat';
 
+/**
+ * Tundra ambient chill — the tundra's `ambientRamp` (P4) effect id. Same counter as
+ * the volcanic heat, opposite payload: pure move slow, no upside at all. Stacks grow
+ * with combat dwell time in a tundra node and shed out of combat / on leaving.
+ *
+ * It is also what `scalesWithAmbientRamp` reads: the Tundra capstone hits harder the
+ * colder the room has made its target, so cleansing the chill is worth more against
+ * the apex than against anything else in the biome.
+ */
+export const TUNDRA_CHILL_EFFECT_ID = 'tundra-chill';
+
 /** Cave troll opener: a short, source-owned root plus attack lockout. */
 export const CAVE_LOCKDOWN_EFFECT_ID = 'cave-lockdown';
 

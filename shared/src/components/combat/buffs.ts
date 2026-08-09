@@ -52,6 +52,7 @@ export const BUFF_IDS = [
   'debuff-swamp-rot',
   'debuff-sun-mark',
   'debuff-volcanic-heat',
+  'debuff-tundra-chill',
   'debuff-sundered',
   'debuff-antiheal',
   'defense-absorb',

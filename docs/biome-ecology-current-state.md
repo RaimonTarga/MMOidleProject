@@ -2,7 +2,8 @@
 
 **Companion to:** `docs/archive/biome-ecology-plan.md` (the Step 12 program plan) and
 `docs/biome-ecology-pass2-plan.md` (the in-flight Pass 2 program).
-**Roadmap step:** 12. **Status:** ✅ Step 12 primitives shipped; Pass 2 in progress.
+**Roadmap step:** 12. **Status:** ✅ Step 12 primitives shipped; Pass 2 complete (all six
+sessions, 2026-08-08/09) — see §§9–11 and 18–20.
 
 Read source when it disagrees with this doc.
 
@@ -471,3 +472,85 @@ in `volcanicHeat()` is the one knob if that lift is too generous.
 Pinned by `server/test/ambientRamp.test.ts` (ramp cadence, cap, both amplifiers, taken >
 dealt, no burn damage, gradual decay, shedding after leaving the node, the buff tile, the
 clamp helper, and the clamp's wiring into real movement).
+
+---
+
+## 20. Tundra chill + Jungle thickets (Pass 2, Session 6 — SHIPPED)
+
+The last session. Both biomes are consumers of primitives that already existed; between
+them they add exactly one new engine field.
+
+### Tundra — the chill, and the one thing that feeds on it
+
+**The chill is P4 with the payload inverted.** `tundraChill()` in
+`shared/src/world/nodeFeatures.ts` authors an `ambientRamp` with
+`payload: { moveSlowPct: 0.05 }`, 6 stacks at 4000 ms — non-positional and invisible,
+exactly like `volcanicHeat()`. Where the caldera pays you damage for overstaying and
+charges you damage back, the tundra pays nothing: every stack is 5% of your movement and
+that is the whole payload. At full chill you move at 70%, and the shared
+`playerMoveSpeedMult` floor (§19) is what stops that from compounding with a roster
+`slowEffect` and a `frost-ramp` into a root nobody authored.
+
+`canonicalFeaturesForNode` gives it to **every** tundra node, dungeons included — tundra
+authors no positional terrain at all, so the ramp *is* the node feature, and in a dungeon
+it turns the boss exam into "kill it before the room takes your legs". No server code was
+touched: this is the "adding a biome ramp is pure data" claim in §19, cashed.
+
+**`MonsterDefinition.scalesWithAmbientRamp`** — `{ perStackPct, maxPct }`, the one new
+field. The monster's outgoing damage grows with the ramp stacks **its target** is
+carrying, capped. Applied in `runMonsterAttack` beside `monsterDeathEmpowerMult` as a
+plain outgoing-damage layer, not an empowered spike: it does not claim
+`empoweredAttack` metadata (so it never masquerades as the spike the player's damage-cap
+armor is built to answer), and it is folded into `incomingGross` so Avenger/Vengeance
+scale off what was actually swung. The pure read is `ambientRampScalingMult` in
+`shared/src/systems/ambientRamp.ts`.
+
+It keys off the **generic** ramp marker, not the tundra effect id — the mechanic is "this
+thing grows on whatever the room is doing to you", and a node has one ramp by
+construction.
+
+**Exactly one carrier: `permafrost-behemoth`** (`{ perStackPct: 0.06, maxPct: 0.36 }`),
+the T4 apex — locked decision 5's "capstone tell, not a roster-wide ramp". The pairing is
+the point: the chill that takes your movement also feeds the one thing you cannot walk
+away from, so Tundra's plant-and-outlast answer is precisely wrong against its capstone,
+and cleansing the chill is worth more there than anywhere else in the biome. A test pins
+the count at one — a second carrier is a design decision, not a data edit.
+
+Client tell: the `debuff-tundra-chill` buff tile (stacks, fill toward full, and
+`speedMult`, which own-player extrapolation reads through the same shared clamp), plus a
+bestiary line on the apex — a hidden damage multiplier would be a bug.
+
+### Jungle — the thicket broadcast (shipped mid-pass, recorded here)
+
+Locked decision 4 was only half true in code until `d3632c3`: the dormant ambush spawner
+was still there and the large aggro radius did not exist. Worse, the spawner was
+*inverted* — it seeded its pack at `pullRange` 150, below the entire jungle roster's
+240–290, so hidden mobs noticed the player **later** than one standing in the open.
+
+Now `denseBush` carries `detectionMultWhileInside: 2` and no `spawns`.
+`detectionMultForPoint` reads it straight off terrain and `playerDetectionMult`
+multiplies each aggro candidate's pull range by it (capped at 3, so boots + thicket
+cannot pull a whole node). Effective detection inside a thicket is 480–580px against a
+300px bush radius: mobs standing in the open pull the moment you enter cover.
+
+The multiplier is a **feature field, not status data**, and that is load-bearing:
+`applyStatusEffect` refreshes an existing effect's duration but never replaces its
+`data`, so riding the shared `slow` id would have left the thicket silently inert
+whenever any other slow landed first.
+
+Jungle also lost every pack declaration (`bf50ffe`) — the silverback arriving flanked by
+two stalkers read in-game as a boss summoning adds. The biome groups fights through
+terrain now. No mob was lost with its pack; all of them still spawn through
+`monsterPoolByTier`.
+
+The thicket remains a hazard for `avoid-hazards` routing purely through its
+`statusWhileInside` slow (players only — monsters live there), which is now pinned by a
+test, because dropping that slow in a balance pass would silently un-hazard the bush and
+send autopathing players straight through the one place that gives them away.
+
+Pinned by `server/test/tundraChill.test.ts` (every tundra node authors exactly one
+all-cost ramp, the chill climbs/caps/sheds and drives neither damage amplifier, the slow
+reaches real movement and meets the floor, the apex hits a fully chilled target harder
+through the real attack path while an ordinary tundra mob does not, and the carrier count
+is exactly one) and `server/test/jungleBushDetection.test.ts` (the broadcast, the cap, the
+absent spawner, no jungle packs, and hazard-avoidance routing).

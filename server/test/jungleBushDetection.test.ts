@@ -13,6 +13,8 @@ import {
   STARTER_RUNE_IDS,
   applyStatusEffect,
   detectionMultForPoint,
+  hazardAvoidanceShapesForMover,
+  pointInNodeFeatureShape,
   removeStatusEffect,
   emptyEquipment,
 } from "@mmo-idle/shared";
@@ -257,6 +259,29 @@ initCombatSystems();
   for (const id of ["jungle-snake", "jungle-stalker", "hunting-panther", "silverback"]) {
     assert(pooled.has(id), `${id} lost its only spawn route when its pack was removed`);
   }
+}
+
+// ── 5. `avoid-hazards` still routes around a thicket ────────────────────────
+// A thicket is not a damage zone, so nothing in it announces itself to hazard
+// avoidance except its `statusWhileInside`. The slow could look droppable in a
+// later pass — dropping it would silently un-hazard the bush, and an autopathing
+// player would walk straight through the one place that broadcasts them.
+{
+  const bush = firstBushCentre();
+  const shapes = hazardAvoidanceShapesForMover(NODE, "player");
+  assert(shapes.length > 0, "the jungle node must expose hazard shapes to avoid");
+  assert(
+    shapes.some((shape) => pointInNodeFeatureShape(bush, shape)),
+    "a thicket must be returned by hazardAvoidanceShapesForMover so avoid-hazards routes around it",
+  );
+
+  // Monsters move through their own undergrowth freely — the slow is players-only,
+  // so their avoidance set must not pick the thickets up.
+  const monsterShapes = hazardAvoidanceShapesForMover(NODE, "monster");
+  assert(
+    !monsterShapes.some((shape) => pointInNodeFeatureShape(bush, shape)),
+    "thickets must not be hazards for monsters — they live there",
+  );
 }
 
 console.log("jungleBushDetection: ok");

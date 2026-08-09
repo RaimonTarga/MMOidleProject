@@ -213,6 +213,18 @@ export function describeMonsterMechanics(
     });
   }
 
+  if (def.scalesWithAmbientRamp) {
+    const fed = def.scalesWithAmbientRamp;
+    lines.push({
+      id: 'ambient-fed',
+      icon: '❆',
+      label: 'Feeds on the cold',
+      detail:
+        `Hits +${fmtPct(fed.perStackPct)} harder for every stack of the node's ambient ramp YOU are carrying ` +
+        `(up to +${fmtPct(fed.maxPct)}). Cleanse the ramp, or fight it early.`,
+    });
+  }
+
   if (def.chargeOnAggro) {
     lines.push({
       id: 'charge',

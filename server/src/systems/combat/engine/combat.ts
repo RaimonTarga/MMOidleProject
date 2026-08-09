@@ -38,6 +38,7 @@ import {
   playerOutgoingDamageMult,
   frostRampMaxStacks,
   frostRampAtkSlowPct,
+  ambientRampScalingMult,
   CHAOTIC_HIT_COUNTER_KEY,
 } from "@mmo-idle/shared";
 import { getAntiHealMult } from "../../defense";
@@ -643,6 +644,19 @@ export function runMonsterAttack(
     ctx.damage = Math.max(1, Math.round(ctx.damage * deathEmpowerMult));
   }
 
+  // Tundra capstone: the apex feeds on the node's ambient chill the target is
+  // carrying. Like the death-empower above this is a plain outgoing-damage layer,
+  // NOT an empowered spike — it scales every hit without claiming the cadence/charge
+  // metadata that the player's spike-answering defenses key off.
+  const ambientFedMult = ambientRampScalingMult(
+    def?.scalesWithAmbientRamp,
+    target.tracksCombat,
+  );
+  if (ambientFedMult > 1) {
+    ctx.damage = Math.max(1, Math.round(ctx.damage * ambientFedMult));
+    ctx.metadata["ambientRampFed"] = true;
+  }
+
   // T4 monster empowered attacks (cadence finisher / cooldown spike / opening
   // strike). Multiply the already-mitigated damage BEFORE onHit/onDamageTaken so
   // the player's damage-cap, shields, plating and DR all apply to the boosted hit —
@@ -677,7 +691,10 @@ export function runMonsterAttack(
   // off the raw hit rather than the mitigated HP loss (e.g. Avenger/Vengeance), so
   // building defenses doesn't shrink the payoff.
   ctx.metadata["incomingGross"] = Math.round(
-    monster.dealsDamage.attack * deathEmpowerMult * (empoweredMult > 1 ? empoweredMult : 1),
+    monster.dealsDamage.attack *
+      deathEmpowerMult *
+      ambientFedMult *
+      (empoweredMult > 1 ? empoweredMult : 1),
   );
 
   emitCombatEvent("onHit", ctx, world);

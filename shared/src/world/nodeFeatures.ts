@@ -577,6 +577,43 @@ function volcanicHeat(id: string): NodeFeatureSpec {
   };
 }
 
+/**
+ * Tundra "chill": the node-wide ambient ramp, same non-positional shape as the
+ * volcanic heat. Invisible; the buff tile is the whole tell.
+ *
+ * The mirror image of the caldera's greed ramp — this one is ALL cost. Every stack
+ * takes a slice of movement speed and nothing else, so a long tundra fight ends with
+ * you unable to reposition or walk away from the thing that is still hitting you.
+ * The pressure is legible because the roster already slows you: the chill is the
+ * floor those slows sit on, and the shared `playerMoveSpeedMult` clamp is what keeps
+ * chill + frost-ramp + a slowEffect from compounding into an unauthored root.
+ *
+ * The chill is also the fuel for the Tundra capstone: `permafrost-behemoth` carries
+ * `scalesWithAmbientRamp`, so the colder the room has made you, the harder the apex
+ * hits. That pairing (locked decision 5) is deliberately ONE mob, not the roster —
+ * a capstone tell, not a biome-wide damage ramp.
+ *
+ * Placeholder values — user balance pass (Step 15).
+ */
+function tundraChill(id: string): NodeFeatureSpec {
+  const cx = GAME_CONFIG.NODE_WIDTH / 2;
+  const cy = GAME_CONFIG.NODE_HEIGHT / 2;
+  return {
+    id,
+    x: cx,
+    y: cy,
+    displayW: 0,
+    displayH: 0,
+    shape: { kind: "circle", x: cx, y: cy, radius: 1 },
+    ambientRamp: {
+      effectId: "tundra-chill",
+      maxStacks: 6,
+      rampMs: 4000,
+      payload: { moveSlowPct: 0.05 },
+    },
+  };
+}
+
 /** Per-node static hazards and obstacles. */
 const LEGACY_NODE_FEATURE_TEMPLATES: Record<string, NodeFeatureSpec[]> = {
   // Clearing/sanctuary rune altar, just north of the player spawn point (node
@@ -872,6 +909,12 @@ function canonicalFeaturesForNode(
             (node.featureVariant ?? 0) % JUNGLE_NORMAL_TEMPLATES.length
           ];
     return templateFeatures(templateId);
+  }
+  if (node.biomeGroup === "tundra") {
+    // Every tundra node — normal AND dungeon — carries the chill and nothing else.
+    // The biome authors no positional terrain, so the ramp IS the node feature; in a
+    // dungeon it turns the boss exam into "kill it before the room takes your legs".
+    return [tundraChill("tundra_chill")];
   }
   if (node.biomeGroup === "volcanic") {
     if (node.kind === "dungeon") {

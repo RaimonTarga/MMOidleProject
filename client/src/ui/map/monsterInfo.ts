@@ -122,7 +122,7 @@ export function monsterTags(def: MonsterDefinition): string[] {
   if (def.slowEffect)    tags.push(def.slowEffect.speedMult === 0 ? 'ROOT' : 'SLOW');
   if (def.aoeAttack)     tags.push('AOE');
   if (def.evasion)       tags.push('EVADE');
-  if (def.rampOnCombat || def.rampDebuff) tags.push('RAMP');
+  if (def.rampOnCombat || def.rampDebuff || def.scalesWithAmbientRamp) tags.push('RAMP');
   return tags;
 }
 
@@ -216,6 +216,11 @@ export function formatMonsterMechanics(
   if (def.rampDebuff) {
     const r = def.rampDebuff;
     lines.push(`Each hit stacks a move slow (max ${pct(r.moveSlowMaxPct)}) and attack-speed slow (max ${pct(r.atkSlowMaxPct)}); decays ${sec(r.stackDurationMs)} after the last hit`);
+  }
+
+  if (def.scalesWithAmbientRamp) {
+    const r = def.scalesWithAmbientRamp;
+    lines.push(`Feeds on the node's ambient ramp — +${pct(r.perStackPct)} damage per stack you carry, up to +${pct(r.maxPct)}`);
   }
 
   if (def.evasion) {

@@ -1,10 +1,10 @@
 # Biome Ecology Pass 2 — Implementation Plan
 
-**Status:** 🚧 in progress — Sessions 1–5 ✅ shipped (1–3 on 2026-08-08, 4–5 on 2026-08-09),
-plus the Jungle art/terrain slice pulled forward out of Session 6. Only Session 6 remains.
-**Start here: §9.**
-**Companion:** `docs/biome-ecology-current-state.md` (refreshed through Session 5; its
-sections 8–11 and 18–19 are the living record of the shipped primitives and consumers).
+**Status:** ✅ COMPLETE — all six sessions shipped (1–3 on 2026-08-08, 4–6 on 2026-08-09).
+**Start here: §10** (the closing handover) — or go straight to the current-state doc, which
+is now the living truth for everything below.
+**Companion:** `docs/biome-ecology-current-state.md` (refreshed through Session 6; its
+sections 8–11 and 18–20 are the living record of the shipped primitives and consumers).
 **Predecessor:** `docs/archive/biome-ecology-plan.md` (Step 12 program plan).
 
 Scope: deepen the T2+ biomes past the "gloss-over" pass — Cave, Desert, Jungle, Volcano,
@@ -219,21 +219,28 @@ The ambient ramp plus its first payload, and the slow-clamp cleanup.
 > farm-rate verification came back with a real +8–24% lift on volcano — measured, attributed,
 > and left for the balance pass. See §9.
 
-### Session 6 — Tundra + Jungle
+### Session 6 — Tundra + Jungle ✅ SHIPPED 2026-08-09
 The lightest pair, and where the async art lands.
 
 - Tundra: `ambientRamp` payload `{ moveSlowPct }`, capped, no upside; plus **one T4 elite**
   that scales damage off chill stacks.
 - Jungle: ~~wire the accepted bush art as node decor~~ **DONE in Session 1** (see §5).
-  Still open: add a detection multiplier to the bush `statusWhileInside` and teach
-  `playerDetectionMult` to read it; reduce the slow; **remove the dormant-ambush spawner**;
-  test that the bush is still returned by `hazardAvoidanceShapesForMover` so
-  `avoid-hazards` routes around it.
+  ~~Add a detection multiplier to the bush and teach `playerDetectionMult` to read it;
+  remove the dormant-ambush spawner~~ **DONE mid-pass** (`d3632c3`, `bf50ffe`) — as a
+  feature field rather than status data, and the packs went with it.
+  Still open: test that the bush is still returned by `hazardAvoidanceShapesForMover` so
+  `avoid-hazards` routes around it. ~~reduce the slow~~ — dropped: the user playtested and
+  tuned the thicket radii directly, and balance numbers are theirs, not an agent's.
 
 > **Jungle is schedule-flexible.** It shares nothing with the other biomes and is gated
 > only on art acceptance. Pull it forward into any earlier session with room as soon as the
 > gallery review clears; it is parked in Session 6 only because that's the latest the art
 > can arrive without stalling anything.
+
+> **Outcome.** Tundra's half was pure data exactly as §9 predicted — one feature factory,
+> one branch, one buff tile — and the only engine surface the whole session added was
+> `MonsterDefinition.scalesWithAmbientRamp` for the capstone. Jungle's half was already
+> live except the routing test. See §10 and §20 of the current-state doc.
 
 ---
 
@@ -551,3 +558,65 @@ the compounded slows, used by the server and the client alike.
 - Both long-standing loose ends are unchanged: `server/package.json`'s `dev` script is still
   broken (`tsx --env-file=... watch` puts the flag ahead of the subcommand), and PixelLab
   remains the wrong tool for tree-class assets.
+
+---
+
+## 10. Handover — Pass 2 CLOSED (2026-08-09)
+
+**There is no Session 7.** Every session in §3 has shipped; the living record is
+`docs/biome-ecology-current-state.md` §§9–11, 18–20. This plan is now history and should
+be moved to `docs/archive/` with the usual header once someone is doing a docs pass.
+
+Session 6 sits on `feat/biome-ecology-pass2` on top of the Session-5 tip. `pnpm typecheck`
+green; `pnpm test` **74/74** (Session 5 closed at 73 — the new file is
+`server/test/tundraChill.test.ts`).
+
+### What shipped
+
+Full mechanical detail is in §20 of the current-state doc. In short: the Tundra chill
+(P4 with an all-cost payload, on every tundra node including dungeons), one new monster
+field `scalesWithAmbientRamp` carried by exactly one mob, and the `avoid-hazards` routing
+test that was Jungle's last open item.
+
+### Judgement calls a later session should know about
+
+- **The capstone is the existing apex, not a new mob.** `permafrost-behemoth` was already
+  `elite: true`, already the T4 weapon-matchup exam (plating 20 + soft-cap + a 9s slam),
+  and already in the T4 pool. Giving the chill scaling to a NEW mob would have cost a
+  sprite and a roster slot to say the same thing. The consequence is that the apex now
+  carries four mechanics at once — if it plays as overloaded, `scalesWithAmbientRamp` is
+  the newest and the cheapest to move to `glacial-direbear`.
+- **A test pins the carrier count at exactly one.** That is locked decision 5 made
+  mechanical: a second chill-scaling mob fails `tundraChill.test.ts` rather than silently
+  becoming the roster-wide ramp the decision rules out. If a later design genuinely wants
+  two, change the assertion deliberately — do not delete it.
+- **The chill deliberately carries no damage dimension.** Volcano proved (§19) that
+  `outgoingDamagePct` is the farm-rate knob; putting one on tundra would have re-run that
+  experiment on a biome whose identity is control, not greed. The elite scaling is the
+  damage expression, and it is scoped to one fight.
+- **Numbers are placeholders and were not benched.** `{ moveSlowPct: 0.05 } × 6` (−30%
+  movement at full) and the apex's `{ 0.06, 0.36 }` (+36% at full chill, on a mob whose
+  cooldown slam is already 300) are authored, not measured. The volcano lift in §19 says
+  the honest read on a damage amplifier only comes from a human playtest on an
+  under-geared character — bench bots do not die. Per the standing rule, the balance pass
+  is the user's.
+- **`ambientRampScalingMult` reads the generic ramp marker, not `tundra-chill`.** So a
+  chill-scaling mob dropped into a volcanic node would feed on heat instead. That is
+  intended ("it grows on whatever the room is doing to you") and is safe because a node
+  authors one ramp and mobs stay in their biome — but it is a real coupling if a future
+  biome ever gives a mob to another biome's node.
+- **The jungle slow was left at 0.55.** §3 listed "reduce the slow" as a Session 6 item;
+  the user playtested the thickets and tuned their radii directly in between sessions, so
+  the slow is where they want it. The new hazard-avoidance test exists precisely because
+  that number is user-owned: if a later pass drops the slow to zero, the thicket stops
+  being a hazard for autopathing and the test says so instead of the bug shipping.
+
+### Not touched, still open
+
+- **Debuff icon art**: `debuff-tundra-chill` has none (it renders the fallback glyph,
+  like `debuff-sundered`), and `debuff-volcanic-heat`'s existing icon still depicts the
+  burn that Session 5 deleted. Three tiles, one art pass.
+- **Trench** was out of scope for the whole pass and is still unreviewed.
+- Both long-standing loose ends are unchanged: `server/package.json`'s `dev` script is
+  still broken (`tsx --env-file=... watch` puts the flag ahead of the subcommand), and
+  PixelLab remains the wrong tool for tree-class assets.

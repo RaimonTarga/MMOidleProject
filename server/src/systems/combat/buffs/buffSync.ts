@@ -9,6 +9,7 @@ import {
   FROST_RAMP_EFFECT_ID,
   SUN_MARK_EFFECT_ID,
   VOLCANIC_HEAT_EFFECT_ID,
+  TUNDRA_CHILL_EFFECT_ID,
   CAVE_LOCKDOWN_EFFECT_ID,
   SUNDERED_EFFECT_ID,
   DAMAGE_DEALT_PCT_KEY,
@@ -231,6 +232,32 @@ const DEBUFF_BUFFS = [
       };
     },
     { category: "neutral", shape: "diamond", color: "#ff5522", label: "HEAT" },
+  ),
+  defineBuff(
+    "debuff-tundra-chill",
+    ({ playerCs }) => {
+      if (!playerCs) return null;
+      const chill = getStatusEffect(playerCs, TUNDRA_CHILL_EFFECT_ID);
+      if (!chill || chill.stacks <= 0) return null;
+      const speedMult = ambientRampMoveMult(chill);
+      return {
+        id: "debuff-tundra-chill",
+        label: "CHILL",
+        stacks: chill.stacks,
+        // A ramp fills rather than expires: the tile reads progress to full stacks.
+        durationPct: ambientRampFillPct(chill) * 100,
+        // Load-bearing, not decoration: own-player extrapolation in
+        // client/src/render/players.ts collapses PlayerBuff.speedMult through the
+        // same shared clamp the server uses, so a slow that is not published here
+        // makes the client over-extrapolate and snap back.
+        speedMult,
+        color: "#88ccff",
+        logSourceName: "Tundra chill",
+        logSourceSide: "enemy",
+        logDetail: `movement speed ${Math.round(speedMult * 100)}% — the cold takes your legs, and feeds what hunts you`,
+      };
+    },
+    { category: "neutral", shape: "diamond", color: "#88ccff", label: "CHILL" },
   ),
   defineBuff(
     "debuff-sundered",
@@ -655,6 +682,8 @@ function buffEffectText(buff: PlayerBuff): string {
       return "increased damage taken";
     case "debuff-volcanic-heat":
       return "increased damage dealt and taken";
+    case "debuff-tundra-chill":
+      return "movement speed reduced; the tundra apex hits harder";
     case "defense-absorb":
       return "healing pool active";
     case "defense-burst":
