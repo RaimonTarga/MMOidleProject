@@ -1,4 +1,5 @@
 import type { StatusEffect } from '../components/combat/effects';
+import { AMBIENT_RAMP_KEY } from './ambientRamp';
 import { isMonsterDotStatusEffectId } from './monsterDotFlavor';
 
 /**
@@ -23,10 +24,12 @@ export const FROST_RAMP_EFFECT_ID = 'frost-ramp';
 export const SUN_MARK_EFFECT_ID = 'sun-mark';
 
 /**
- * Volcanic ambient heat (nodeFeatures.ambientHeat) — a node-wide escalating burn
- * status the heat system ramps on players who fight in a volcanic node. Stacks grow
- * with combat dwell time and ramp the burn ticks; decays out of combat / on leaving.
- * Self-managed by the server heat pass (NOT a node-feature damage status).
+ * Volcanic ambient heat — the volcano's `ambientRamp` (P4) effect id. Stacks grow
+ * with combat dwell time in a volcanic node and shed out of combat / on leaving.
+ * Self-managed by the server ambient-ramp pass (NOT a node-feature damage status).
+ *
+ * NET HARMFUL despite paying out `damageDealtPct`: the taken side climbs faster.
+ * A cleanse strips the upside with it, which is the intended trade.
  */
 export const VOLCANIC_HEAT_EFFECT_ID = 'volcanic-heat';
 
@@ -82,8 +85,10 @@ export function frostRampMaxStacks(def: {
  *
  * Covers the explicit debuff ids (slow/root, frost-ramp, Sun Mark, volcanic heat,
  * cave lockdown, sundered, antiheal, swamp rot) plus the generic markers any
- * DoT/node-hazard status carries
- * (`data.isDot`, `data.isNodeFeature`) and monster-inflicted DoT ids.
+ * DoT/node-hazard/ambient-ramp status carries
+ * (`data.isDot`, `data.isNodeFeature`, `data.isAmbientRamp`) and monster-inflicted
+ * DoT ids. The ambient-ramp marker is what makes a NEW biome ramp cleansable
+ * without editing this function.
  */
 export function isHarmfulPlayerStatusEffect(
   id: string,
@@ -96,5 +101,6 @@ export function isHarmfulPlayerStatusEffect(
   if (isMonsterDotStatusEffectId(id)) return true;
   if ((data['isDot'] ?? 0) !== 0) return true;
   if ((data['isNodeFeature'] ?? 0) !== 0) return true;
+  if ((data[AMBIENT_RAMP_KEY] ?? 0) !== 0) return true;
   return false;
 }

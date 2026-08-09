@@ -11,8 +11,12 @@ import {
   VOLCANIC_HEAT_EFFECT_ID,
   CAVE_LOCKDOWN_EFFECT_ID,
   SUNDERED_EFFECT_ID,
+  DAMAGE_DEALT_PCT_KEY,
   DAMAGE_TAKEN_PCT_KEY,
+  MAX_DAMAGE_DEALT_PCT,
   MAX_DAMAGE_TAKEN_PCT,
+  ambientRampFillPct,
+  ambientRampMoveMult,
   frostRampMoveSlowPct,
   frostRampAtkSlowPct,
   type StatusEffect,
@@ -199,18 +203,31 @@ const DEBUFF_BUFFS = [
       if (!playerCs) return null;
       const heat = getStatusEffect(playerCs, VOLCANIC_HEAT_EFFECT_ID);
       if (!heat || heat.stacks <= 0) return null;
-      const maxStacks = heat.data["maxStacks"] ?? 0;
-      const perStack = Math.round(heat.data["damagePerStack"] ?? 0);
+      const dealtPct = Math.round(
+        Math.min(
+          MAX_DAMAGE_DEALT_PCT,
+          heat.stacks * (heat.data[DAMAGE_DEALT_PCT_KEY] ?? 0),
+        ) * 100,
+      );
+      const takenPct = Math.round(
+        Math.min(
+          MAX_DAMAGE_TAKEN_PCT,
+          heat.stacks * (heat.data[DAMAGE_TAKEN_PCT_KEY] ?? 0),
+        ) * 100,
+      );
       return {
         id: "debuff-volcanic-heat",
         label: "HEAT",
         stacks: heat.stacks,
         // Fill toward max stacks (the soft-timer read), not a fixed duration.
-        durationPct: maxStacks > 0 ? (heat.stacks / maxStacks) * 100 : -1,
+        durationPct: ambientRampFillPct(heat) * 100,
+        // Volcano's payload carries no move slow; Tundra's chill (Session 6) will,
+        // and the client extrapolation reads this to stay in step with the server.
+        speedMult: ambientRampMoveMult(heat),
         color: "#ff5522",
         logSourceName: "Volcanic heat",
         logSourceSide: "enemy",
-        logDetail: `the node heats up — ${perStack} burn/stack per tick (burst it or out-regen)`,
+        logDetail: `+${dealtPct}% damage dealt, +${takenPct}% damage taken — the room pays you to overstay, then collects`,
       };
     },
     { category: "neutral", shape: "diamond", color: "#ff5522", label: "HEAT" },
@@ -636,6 +653,8 @@ function buffEffectText(buff: PlayerBuff): string {
       return "taking damage over time";
     case "debuff-sundered":
       return "increased damage taken";
+    case "debuff-volcanic-heat":
+      return "increased damage dealt and taken";
     case "defense-absorb":
       return "healing pool active";
     case "defense-burst":

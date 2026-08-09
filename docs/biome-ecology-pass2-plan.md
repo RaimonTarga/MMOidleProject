@@ -1,10 +1,10 @@
 # Biome Ecology Pass 2 — Implementation Plan
 
-**Status:** 🚧 in progress — Sessions 1–4 ✅ shipped (1–3 on 2026-08-08, 4 on 2026-08-09),
-plus the Jungle art/terrain slice pulled forward out of Session 6. Sessions 5–6 not started.
-**Start here: §8.**
-**Companion:** `docs/biome-ecology-current-state.md` (refreshed through Session 4; its
-sections 8–11 and 18 are the living record of the shipped primitives and consumers).
+**Status:** 🚧 in progress — Sessions 1–5 ✅ shipped (1–3 on 2026-08-08, 4–5 on 2026-08-09),
+plus the Jungle art/terrain slice pulled forward out of Session 6. Only Session 6 remains.
+**Start here: §9.**
+**Companion:** `docs/biome-ecology-current-state.md` (refreshed through Session 5; its
+sections 8–11 and 18–19 are the living record of the shipped primitives and consumers).
 **Predecessor:** `docs/archive/biome-ecology-plan.md` (Step 12 program plan).
 
 Scope: deepen the T2+ biomes past the "gloss-over" pass — Cave, Desert, Jungle, Volcano,
@@ -88,7 +88,7 @@ Two status-driven multipliers with helper accessors mirroring `getAntiHealMult`:
 buff-UI tiles (status `data` is `Record<string, number>` only — store `pct` and `totalMs`).
 There is no monster→player damage-taken amplifier today; `vulnerability` is player→monster.
 
-### P4 — Ambient node ramp
+### P4 — Ambient node ramp ✅ SHIPPED (Session 5)
 **Consumers:** Volcano, Tundra.
 
 Generalize the hard-coded `ambientHeat`
@@ -203,7 +203,7 @@ The amplifiers, proven against one consumer before Volcano takes a dependency on
   `kiter`, high damage).
 - Strip `appliesMark`/`markedStrike` from desert trash; leave the T2 boss untouched.
 
-### Session 5 — P4 + Volcano
+### Session 5 — P4 + Volcano ✅ SHIPPED 2026-08-09
 The ambient ramp plus its first payload, and the slow-clamp cleanup.
 
 - `ambientRamp` generalization; volcano payload ≈ `{ outgoingDamagePct: 0.05,
@@ -212,6 +212,12 @@ The ambient ramp plus its first payload, and the slow-clamp cleanup.
   through it — landing here so Tundra's new source arrives into a clamped world.
 - Buff-UI tiles for the heat.
 - Verify farm rate against `pnpm bench:balance`.
+
+> **Outcome.** Landed as specced. The clamp helper shipped as `playerMoveSpeedMult` (it
+> returns the full speed multiplier, not just the slow half) and is called by BOTH the server
+> movement pass and the client's own-player extrapolation, so the two cannot drift. The
+> farm-rate verification came back with a real +8–24% lift on volcano — measured, attributed,
+> and left for the balance pass. See §9.
 
 ### Session 6 — Tundra + Jungle
 The lightest pair, and where the async art lands.
@@ -480,3 +486,68 @@ Mark stripped from all desert trash.
 - Both long-standing loose ends from earlier handovers are unchanged: `server/package.json`'s
   `dev` script is still broken (`tsx --env-file=... watch` puts the flag ahead of the
   subcommand), and PixelLab remains the wrong tool for tree-class assets.
+
+---
+
+## 9. Handover — state at the end of Session 5 (2026-08-09)
+
+**Next session is Session 6** (Tundra + Jungle) — the last one. §3 still describes it
+accurately, and P4 landed exactly so that Tundra's half is **pure data**: a
+`payload: { moveSlowPct }` on a `tundra` branch in `canonicalFeaturesForNode`, plus one
+`debuff-tundra-chill` buff descriptor and a `T4` elite that scales damage off the ramp's
+stacks. No server code. The move-slow clamp Session 5 shipped is what makes that new slow
+source safe to add.
+
+Session 5 sits on `feat/biome-ecology-pass2` on top of the Session-4 tip. `pnpm typecheck`
+green; `pnpm test` **73/73** (Session 4 closed at 72 — the new file is
+`server/test/ambientRamp.test.ts`).
+
+### What shipped
+
+Full mechanical detail is in §19 of `docs/biome-ecology-current-state.md`. In short: the
+`ambientRamp` node-feature primitive with a data-authored payload, Volcano re-authored from
+a burn into a capped greed ramp (+damage dealt AND +damage taken, taken climbing faster),
+and `playerMoveSpeedMult` — one shared collapse of every speed multiplier, with a floor on
+the compounded slows, used by the server and the client alike.
+
+### Judgement calls a later session should know about
+
+- **Volcano's farm rate went UP 8–24%, and it is the greed ramp, not the burn removal.** A
+  control run with `payload: {}` reproduced the old burn heat within ±0.6% on every class
+  root, which means the burn had **no measurable farm-rate effect at all** — a fact worth
+  keeping, because it retires the §1 worry that the burn was load-bearing. The lift is
+  entirely `outgoingDamagePct`, and that is the single knob to turn. Left untouched per the
+  standing rule that numerical balance passes are the user's, not an agent's.
+- **The taken side does not bite in the bench, and it structurally can't.** Bench bots are
+  geared for their tier and rarely die (T4 summoner deaths actually fell 12/hr → 9/hr), so
+  the +48% incoming converts into nothing while the +30% outgoing converts into kills every
+  fight. Do NOT read "deaths didn't rise" as "the asymmetry works" — that has to come from a
+  human playtest on an under-geared character.
+- **Summoner is flat (±1%) on volcano at both tiers.** Not a structural exclusion: minion
+  attacks route through `runPlayerAttack` (they carry `aggroSource.kind === 'minion'`), so
+  they DO get the outgoing amplifier, and they DO mark the owner engaged so the ramp builds.
+  Its runs are also the noisiest in the sweep (a death appears and disappears between runs).
+  If volcano gets retuned, re-measure summoner rather than assuming it scales with the rest.
+- **A root is not a slow, and the clamp knows it.** Roots ride the shared `slow` id at
+  `speedMult: 0` (desert basilisk, cave lockdown, ground zones). `playerMoveSpeedMult`
+  short-circuits on 0 — without that, the 0.35 floor would have handed every rooted player a
+  third of their speed back. That case is pinned by a test; do not "simplify" the
+  short-circuit away.
+- **The client calls the same shared collapse.** `client/src/render/players.ts` no longer
+  multiplies `PlayerBuff.speedMult` locally. Any NEW server-side slow must publish a buff
+  carrying `speedMult` or own-player prediction will over-extrapolate and snap back — that is
+  why the volcano heat tile publishes `speedMult` even though its payload has no move slow
+  (it reads 1, and Tundra's will not).
+- **`ambientRamp` is one-per-node by construction.** The pass takes the FIRST feature
+  carrying one, and `ambientRampStatus` finds the FIRST ramp status on the player. A node
+  authoring two ramps would silently run only one. That is deliberate — a second ramp is
+  another payload key, not another feature.
+
+### Not touched, still open
+
+- `debuff-sundered` still has no icon art (Session 4's loose end); `debuff-volcanic-heat`
+  has the same gap and now shows a very different effect, so an art pass should treat them
+  together.
+- Both long-standing loose ends are unchanged: `server/package.json`'s `dev` script is still
+  broken (`tsx --env-file=... watch` puts the flag ahead of the subcommand), and PixelLab
+  remains the wrong tool for tree-class assets.

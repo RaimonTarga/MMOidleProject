@@ -1,4 +1,5 @@
 import { GAME_CONFIG } from "../config/gameConfig";
+import type { AmbientRampPayload } from "../systems/ambientRamp";
 import { pointInNodeFeatureShape, type Vec2 } from "../systems/spatial";
 import { WORLD_NODE_LIST } from "./map/registry";
 
@@ -85,20 +86,18 @@ export interface NodeFeatureSpec {
     pullRange?: number;
   };
   /**
-   * Volcanic "ambient heat" — a NODE-WIDE escalating burn (the shape is ignored;
-   * it is not positional). While a player is in this node AND in combat, heat
-   * stacks ramp every `rampMs` up to `maxStacks`; each stack adds `perStackDamage`
-   * to a burn ticking every `tickIntervalMs` (mitigated by dot-resistance + DR like
-   * a lava vent). Out of combat (or after leaving the node) the heat decays at the
-   * same cadence. The soft timer: BURST the fight or OUT-REGEN the rising heat —
-   * the in-combat-regen answer is the only build that beats "the room cooks you".
+   * P4 — the NODE-WIDE ambient ramp (the shape is ignored; it is not positional).
+   * While a player is in this node AND in combat, stacks ramp every `rampMs` up to
+   * `maxStacks`; out of combat — or once they leave — the stacks shed at the same
+   * cadence. What a stack DOES is entirely `payload` (see `AmbientRampPayload`), so
+   * a biome's soft timer is data: Volcano ramps damage dealt AND taken, Tundra
+   * ramps a move slow. One per node.
    */
-  ambientHeat?: {
+  ambientRamp?: {
     effectId: string;
-    perStackDamage: number;
     maxStacks: number;
     rampMs: number;
-    tickIntervalMs: number;
+    payload: AmbientRampPayload;
   };
 }
 
@@ -546,10 +545,18 @@ function lavaVent(id: string, x: number, y: number, radius: number): NodeFeature
 }
 
 /**
- * Volcanic "heat" emitter: a node-wide ambient escalating burn (the soft timer).
- * Invisible + non-positional (the shape is a formality — the system applies it to
- * every player in the node, gated on in-combat). One per volcanic node. Placeholder
- * values — user balance pass (Step 15).
+ * Volcanic "heat" emitter: the node-wide ambient ramp (the soft timer). Invisible +
+ * non-positional (the shape is a formality — the system applies it to every player
+ * in the node, gated on in-combat). One per volcanic node.
+ *
+ * The caldera is a GREED ramp, not a burn: every stack makes you hit harder AND
+ * makes everything hit you harder, and the taken side climbs faster than the dealt
+ * side, so overstaying is self-limiting rather than free. That asymmetry is the
+ * whole guard — volcano mobs already carry `rampOnCombat`, so the dealt half
+ * compounds with monsters that are themselves getting hotter. Positional fire
+ * damage stays where it always was: the lava vents.
+ *
+ * Placeholder values — user balance pass (Step 15).
  */
 function volcanicHeat(id: string): NodeFeatureSpec {
   const cx = GAME_CONFIG.NODE_WIDTH / 2;
@@ -561,12 +568,11 @@ function volcanicHeat(id: string): NodeFeatureSpec {
     displayW: 0,
     displayH: 0,
     shape: { kind: "circle", x: cx, y: cy, radius: 1 },
-    ambientHeat: {
+    ambientRamp: {
       effectId: "volcanic-heat",
-      perStackDamage: 4,
       maxStacks: 6,
       rampMs: 3000,
-      tickIntervalMs: 1000,
+      payload: { outgoingDamagePct: 0.05, incomingDamagePct: 0.08 },
     },
   };
 }
@@ -736,11 +742,12 @@ const LEGACY_NODE_FEATURE_TEMPLATES: Record<string, NodeFeatureSpec[]> = {
     denseBush("boss_bush_b", 2300, 900, 280),
     denseBush("boss_bush_c", 1640, 1760, 300),
   ],
-  // VOLCANIC T3 (node-7-8, node-8-8) — "escalating heat": a node-wide ambient burn
-  // (the soft timer — ramps while you fight, decays when you disengage/leave) layered
+  // VOLCANIC T3 (node-7-8, node-8-8) — "escalating heat": a node-wide ambient ramp
+  // (the soft timer — climbs while you fight, sheds when you disengage/leave) layered
   // over scattered lava vents (positional fire DoT). You weave the vents while a
-  // ramping fire swarm chases AND the room cooks — burst it fast or out-regen the
-  // heat (the in-combat-regen answer). Non-blocking → no passability concern.
+  // ramping fire swarm chases AND the room heats: every heat stack pays you more
+  // damage dealt but charges you more damage taken, so a long fight is a bet you
+  // can only win by ending it. Non-blocking → no passability concern.
   "node-7-8": [
     volcanicHeat("volcanic_heat"),
     lavaVent("lava_vent_a", 820, 720, 280),
@@ -756,8 +763,8 @@ const LEGACY_NODE_FEATURE_TEMPLATES: Record<string, NodeFeatureSpec[]> = {
   ],
   // VOLCANIC T3 dungeon (node-8-9, Cinder-Shell Magma-Salamander) + T4 dungeon
   // (node-10-10, Caldera Sovereign) — the heat soft-timer becomes the boss exam: the
-  // arena cooks during the fight (vents ring the edges, center clear for the boss), so
-  // a slow attrition kill out-paces your regen unless you bring the in-combat-regen answer.
+  // arena heats during the fight (vents ring the edges, center clear for the boss), so
+  // a slow attrition kill walks into the damage cap on a boss that is itself ramping.
   "node-8-9": [
     volcanicHeat("volcanic_heat"),
     lavaVent("boss_vent_a", 900, 800, 260),

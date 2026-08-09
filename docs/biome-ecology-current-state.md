@@ -396,3 +396,78 @@ is set, making a self-marker **alternate** — paint, cash, paint, cash.
 
 Every desert number is a placeholder; the stat *shapes* (controller HP↑/attack↓, dealer
 HP↓/attack↑/speed↑) are the authored intent. Pinned by `server/test/desertPairs.test.ts`.
+
+## 19. Ambient node ramp + the move-slow clamp (Pass 2, Session 5 — SHIPPED)
+
+P4, the last shared primitive, plus its first consumer and a standing hazard cleaned up.
+
+**`NodeFeatureSpec.ambientRamp`** — `{ effectId, maxStacks, rampMs, payload }`, the
+generalization of the old volcano-only `ambientHeat` (which only knew how to burn). One
+per node, non-positional (its shape is a formality). `updateAmbientRamp` in
+`server/src/systems/world/nodeFeatures.ts` owns the COUNTER only: a stack every `rampMs`
+while the player is in the node AND in combat, one shed per `rampMs` out of combat or
+after leaving, cleared at zero. Locked decision 1's gradual decay, not a cliff.
+
+What a stack DOES is entirely the authored payload (`AmbientRampPayload` in
+`shared/src/systems/ambientRamp.ts`), read by systems that key off status `data` rather
+than status ids:
+
+| Payload key | Read by |
+|-------------|---------|
+| `incomingDamagePct` | P3 `playerIncomingDamageMult` |
+| `outgoingDamagePct` | P3 `playerOutgoingDamageMult` |
+| `moveSlowPct` | `playerMoveSpeedMult`, via `ambientRampMoveMult` |
+
+**Adding a biome ramp is therefore pure data.** Tundra's chill (Session 6) needs a
+`payload: { moveSlowPct }` and a `canonicalFeaturesForNode` branch — no server code. The
+status carries a generic `isAmbientRamp` marker in its `data`, which is how the pass finds
+a ramp to shed on a player who has already left the node, and how
+`isHarmfulPlayerStatusEffect` counts any future ramp as cleansable without an edit.
+
+**Volcano is now a GREED ramp, not a burn.** `{ outgoingDamagePct: 0.05,
+incomingDamagePct: 0.08 }` × 6 stacks: every stack pays you more damage dealt and charges
+you more damage taken, and the taken side climbs faster so overstaying is self-limiting.
+The burn is gone entirely (`tickHeatBurn` deleted) — positional fire damage stays where it
+always was, on the lava vents. One status carries both dimensions, exactly as §18 predicted
+it should.
+
+**The move-slow clamp** — `playerMoveSpeedMult` in `shared/src/systems/playerMoveSpeed.ts`,
+the single authority collapsing every speed multiplier on a player:
+
+- Slows multiply against each other and the product is floored at
+  `MIN_PLAYER_MOVE_SLOW_MULT` (0.35, placeholder). Hastes multiply on top of the floor, so
+  mobility boots still help a fully-slowed player.
+- A **root is not a slow**: `speedMult` 0 short-circuits and passes straight through, or
+  the clamp would hand rooted players 35% of their speed back. Roots ride the shared `slow`
+  id at `speedMult: 0`, so this case is live today, not hypothetical.
+- The reason it exists: same-id effects overwrite, but DIFFERENT ids multiply, and the
+  ecology pass keeps adding ids. A hazard slow, a frost ramp and an ambient chill at 0.6
+  each compound to 0.216 — a soft root nobody authored, from three effects each of which
+  reads as "slowed a bit" in the HUD.
+- `server/src/systems/world/movement.ts` collects its inputs in `playerSpeedMults`;
+  `client/src/render/players.ts` calls the SAME shared function over `PlayerBuff.speedMult`,
+  so own-player extrapolation cannot drift from the server the way a locally-inlined clamp
+  would.
+
+**Farm-rate measurement** (`pnpm bench:balance --mode farm --biome volcanic`, 1 sim hour,
+scale 2, one build per class root). Essence/hr vs the pre-session burn heat:
+
+| Root | T3 Δ | T4 Δ |
+|------|------|------|
+| cadence | +8.9% | +15.2% |
+| cooldown | +7.4% | +11.9% |
+| reload | +24.1% | +11.9% |
+| energy | +18.0% | +17.7% |
+| dot | +9.2% | +3.8% |
+| summoner | −1.0% | −0.4% |
+
+A control run with an inert payload (`payload: {}`) landed within ±0.6% of the old burn
+heat on every root, so **the entire lift is the greed ramp — removing the burn was worth
+nothing**. The burn was never a farm-rate factor. Deaths did not rise (T4 summoner fell
+12/hr → 9/hr): bench bots are geared for their tier, so the +48% taken side rarely converts
+into a death, while the +30% dealt side converts into kills every fight. `outgoingDamagePct`
+in `volcanicHeat()` is the one knob if that lift is too generous.
+
+Pinned by `server/test/ambientRamp.test.ts` (ramp cadence, cap, both amplifiers, taken >
+dealt, no burn damage, gradual decay, shedding after leaving the node, the buff tile, the
+clamp helper, and the clamp's wiring into real movement).

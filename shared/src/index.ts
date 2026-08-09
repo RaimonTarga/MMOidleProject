@@ -42,6 +42,8 @@ export * from './data/summoner';
 export * from './systems/weaponFamilies';
 export * from './systems/monsterDebuffs';
 export * from './systems/playerAmplifiers';
+export * from './systems/playerMoveSpeed';
+export * from './systems/ambientRamp';
 export * from './systems/dotElements';
 export * from './systems/dotClassProfile';
 export * from './systems/monsterDotFlavor';

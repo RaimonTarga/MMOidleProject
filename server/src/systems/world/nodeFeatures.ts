@@ -11,7 +11,8 @@ import {
   removeStatusEffect,
   resolveMoveAgainstBlocks,
   RESOLVED_NODE_FEATURES,
-  VOLCANIC_HEAT_EFFECT_ID,
+  ambientRampData,
+  ambientRampStatus,
   type DeathKiller,
   type FeatureTarget,
   type NodeFeatureShape,
@@ -181,69 +182,66 @@ export function updateNodeFeatures(world: World, dt: number): void {
     }
   }
 
-  updateAmbientHeat(world, dt, now);
+  updateAmbientRamp(world, dt, now);
 
   cleanupExpiredNodeFeatureMarkers(world);
 }
 
 /**
- * Volcanic ambient heat — the node-wide soft timer. For every live player: if their
- * node has an `ambientHeat` feature AND they are in combat, heat stacks ramp every
- * `rampMs` up to `maxStacks` and a stack-scaled burn ticks (mitigated by dot-resistance
- * + DR). Out of combat — or once they leave the heat node — the heat decays at the same
- * cadence and clears. Self-managed (not a positional node-feature damage status), so the
- * burn keeps building wherever the player stands in the caldera. Deterministic per dt.
+ * P4 — the ambient node ramp. For every live player: if their node authors an
+ * `ambientRamp` feature AND they are in combat, the ramp status gains a stack every
+ * `rampMs` up to `maxStacks`. Out of combat — or once they leave the node — it sheds
+ * a stack at the same cadence and clears at zero (locked decision 1: gradual decay,
+ * not a cliff).
+ *
+ * The pass owns the COUNTER only. What a stack does is the authored payload, read
+ * wherever it is relevant by systems that key off status `data` rather than status
+ * ids: `playerIncomingDamageMult` / `playerOutgoingDamageMult` (P3) and
+ * `playerMoveSpeedMult`. Adding a biome ramp therefore touches no server code.
+ *
+ * Self-managed rather than a positional node-feature status, so the ramp keeps
+ * climbing wherever the player stands in the node. Deterministic per dt.
  */
-function updateAmbientHeat(world: World, dt: number, now: number): void {
+function updateAmbientRamp(world: World, dt: number, now: number): void {
   for (const player of world.livePlayers) {
     const features = RESOLVED_NODE_FEATURES[player.hasPosition.nodeId];
-    const heat = features?.find((f) => f.ambientHeat)?.ambientHeat;
+    const ramp = features?.find((f) => f.ambientRamp)?.ambientRamp;
     const cs = player.tracksCombat;
-    const effect = getStatusEffect(cs, VOLCANIC_HEAT_EFFECT_ID);
+    // Found by the generic marker, not by id: a player who walked out of the
+    // caldera still has to shed the heat they are carrying.
+    const effect = ambientRampStatus(cs);
 
-    if (!heat) {
-      if (effect) decayAmbientHeat(cs, effect, dt);
+    if (!ramp || !isPlayerInCombat(player, now)) {
+      if (effect) decayAmbientRamp(cs, effect, dt);
       continue;
     }
 
-    if (!isPlayerInCombat(player, now)) {
-      if (effect) decayAmbientHeat(cs, effect, dt);
-      continue;
-    }
-
-    // In a heat node and in combat → ramp + burn.
-    let active = effect;
-    if (!active) {
-      active = applyStatusEffect(cs, {
-        id: VOLCANIC_HEAT_EFFECT_ID,
-        maxStacks: 0, // 0 = linear burn (stacks × perStackDamage), capped manually
+    if (!effect) {
+      applyStatusEffect(cs, {
+        id: ramp.effectId,
+        maxStacks: ramp.maxStacks,
         instanced: false,
-        sourceId: 'node-feature:volcanic-heat',
+        sourceId: `node-feature:${ramp.effectId}`,
         remainingMs: -1,
         refreshable: false,
-        data: {
-          damagePerStack: heat.perStackDamage,
-          nextTickIn: heat.tickIntervalMs,
-          tickIntervalMs: heat.tickIntervalMs,
-          rampMs: heat.rampMs,
-          rampAccum: 0,
-          maxStacks: heat.maxStacks,
-          totalMs: heat.rampMs * heat.maxStacks,
-        },
+        data: ambientRampData(ramp.payload, ramp),
       });
-    } else {
-      active.data.rampAccum = (active.data.rampAccum ?? 0) + dt;
-      while (active.data.rampAccum >= heat.rampMs && active.stacks < heat.maxStacks) {
-        active.stacks++;
-        active.data.rampAccum -= heat.rampMs;
-      }
+      continue;
     }
-    tickHeatBurn(world, player, active, dt);
+
+    effect.data.rampAccum = (effect.data.rampAccum ?? 0) + dt;
+    while (effect.data.rampAccum >= ramp.rampMs && effect.stacks < ramp.maxStacks) {
+      effect.stacks++;
+      effect.data.rampAccum -= ramp.rampMs;
+    }
+    // At full stacks the accumulator would otherwise run away and make the first
+    // decay step instant.
+    if (effect.stacks >= ramp.maxStacks) effect.data.rampAccum = 0;
   }
 }
 
-/** Cool down: shed one heat stack per `rampMs` of elapsed time; clear at zero. */
-function decayAmbientHeat(
+/** Cool down: shed one stack per `rampMs` of elapsed time; clear the status at zero. */
+function decayAmbientRamp(
   cs: PlayerEntity['tracksCombat'],
   effect: PlayerEntity['tracksCombat']['statusEffects'][number],
   dt: number,
@@ -254,54 +252,7 @@ function decayAmbientHeat(
     effect.stacks--;
     effect.data.rampAccum -= rampMs;
   }
-  if (effect.stacks <= 0) removeStatusEffect(cs, VOLCANIC_HEAT_EFFECT_ID);
-}
-
-/** Stack-scaled burn tick (linear), mitigated by dot-resistance + DR; can kill. */
-function tickHeatBurn(
-  world: World,
-  player: PlayerEntity,
-  effect: PlayerEntity['tracksCombat']['statusEffects'][number],
-  dt: number,
-): void {
-  effect.data.nextTickIn = (effect.data.nextTickIn ?? effect.data.tickIntervalMs) - dt;
-  if (effect.data.nextTickIn > 0) return;
-  effect.data.nextTickIn = effect.data.tickIntervalMs;
-  if (isInvulnerablePlayer(player)) return;
-
-  const base = effect.stacks * (effect.data.damagePerStack ?? 0);
-  if (base <= 0) return;
-  const dotResist = Math.min(
-    0.9,
-    player.usesSkills.passives['defense.dot-resistance'] ?? 0,
-  );
-  const damage = Math.max(
-    1,
-    Math.round(
-      base * (1 - player.mitigatesDamage.damageReduction) * (1 - dotResist),
-    ),
-  );
-
-  recordPlayerDamaged(
-    world,
-    player,
-    ENV_FEATURE_ACTOR,
-    damage,
-    0,
-    'dot',
-    buildSimpleBreakdown(base, damage),
-  );
-
-  player.hasHealth.hp -= damage;
-  markSliceDirty(world, player, 'hasHealth');
-  if (player.hasHealth.hp <= 0) {
-    world.killPlayer(player.isPlayer.id, {
-      kind: 'dot',
-      killer: deathKillerForNode(player.hasPosition.nodeId),
-      damage,
-      stacks: effect.stacks,
-    });
-  }
+  if (effect.stacks <= 0) removeStatusEffect(cs, effect.id);
 }
 
 function isPreFinalUltimateStage(world: World, nodeId: string): boolean {

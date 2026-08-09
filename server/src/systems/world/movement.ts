@@ -11,13 +11,16 @@ import {
   nearestWalkableCell,
   FROST_RAMP_EFFECT_ID,
   frostRampMoveSlowPct,
+  ambientRampMoveMult,
+  ambientRampStatus,
+  playerMoveSpeedMult,
   slideMoveAgainstBlocks,
   type FeatureTarget,
   type Vec2,
 } from '@mmo-idle/shared';
 import type { World } from '../../world/World';
 import { NODE_REGISTRY } from '../../world/nodeRegistry';
-import type { ServerEntity } from '../../ecs/entity';
+import type { PlayerEntity, ServerEntity } from '../../ecs/entity';
 import { detachComponent } from '../../ecs/markerHelpers';
 import { markSliceDirty } from '../../ecs/dirtyHelpers';
 import { resolveObstaclesForNode } from './nodeFeatures';
@@ -267,6 +270,41 @@ function processMoverStep(
   }
 }
 
+/**
+ * Every move-speed multiplier acting on `player`, for `playerMoveSpeedMult` to
+ * collapse. Distinct effect ids MULTIPLY, so this list is the whole reason the
+ * clamp exists — a hazard slow, a frost ramp and an ambient chill can all be live
+ * at once and each reads as "slowed a bit" on its own.
+ *
+ * The clamp is only applied to the slows; `bootSpeedMultiplier` is always >= 1 and
+ * lands on top of the floor, so mobility boots still help a player being slowed by
+ * everything at once.
+ */
+function playerSpeedMults(
+  world: World,
+  player: PlayerEntity,
+  now: number,
+): number[] {
+  const cs = player.tracksCombat;
+  const mults: number[] = [];
+
+  // Shared 'slow' id — monster slowEffects, hazard/ground-zone pools, dungeon
+  // hazards. speedMult 0 is a ROOT and short-circuits the whole product.
+  const slow = getStatusEffect(cs, 'slow');
+  if (slow) mults.push(Math.max(0, slow.data['speedMult'] ?? 1));
+
+  // Tundra rampDebuff — stacking, self-capped.
+  const frostRamp = getStatusEffect(cs, FROST_RAMP_EFFECT_ID);
+  if (frostRamp) mults.push(1 - frostRampMoveSlowPct(frostRamp));
+
+  // P4 ambient node ramp, when its payload carries a move slow (Tundra chill).
+  const ambient = ambientRampStatus(cs);
+  if (ambient) mults.push(ambientRampMoveMult(ambient));
+
+  mults.push(bootSpeedMultiplier(world, player, now));
+  return mults;
+}
+
 export function updateMovement(world: World, dt: number, now: number) {
   for (const entity of world.livePlayers) {
     depenetrateIfWedged(world, entity, 'player');
@@ -286,16 +324,11 @@ export function updateMovement(world: World, dt: number, now: number) {
       continue;
     }
 
-    const slow = getStatusEffect(entity.tracksCombat, 'slow');
-    const slowMult = slow ? Math.max(0, slow.data['speedMult'] ?? 1) : 1;
-    const frostRamp = getStatusEffect(entity.tracksCombat, FROST_RAMP_EFFECT_ID);
-    const frostRampMult = frostRamp ? 1 - frostRampMoveSlowPct(frostRamp) : 1;
-    const bootMult = bootSpeedMultiplier(world, entity, now);
     processMoverStep(
       world,
       entity,
       dt,
-      slowMult * frostRampMult * bootMult,
+      playerMoveSpeedMult(playerSpeedMults(world, entity, now)),
       'player',
       now,
     );

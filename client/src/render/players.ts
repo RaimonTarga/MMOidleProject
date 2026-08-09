@@ -1,5 +1,5 @@
 import type { PlayerView } from "@mmo-idle/shared";
-import { isRangedPlayerView } from "@mmo-idle/shared";
+import { isRangedPlayerView, playerMoveSpeedMult } from "@mmo-idle/shared";
 import { getDefaultStore } from "jotai";
 import { autoPathAtom, setAutoPath } from "../hud/atoms";
 import type { RenderState } from "./state";
@@ -45,17 +45,22 @@ import { auraTint } from "../fx/aura";
 const RECONCILE_SNAP_SQ = 220 * 220;
 
 /**
- * Combined movement-speed multiplier from any movement-affecting buffs the
- * player has (slow, root, trample boon, …). Mirrors the server's
- * `slowMult * trampleMult` so client extrapolation runs at the same effective
- * speed. Buffs without a `speedMult` (the common case) are ignored.
+ * Combined movement-speed multiplier from any movement-affecting buffs the player
+ * has (slow, root, frost ramp, ambient chill, boot haste, …). Buffs without a
+ * `speedMult` (the common case) are ignored.
+ *
+ * Both sides call the SAME shared collapse (`playerMoveSpeedMult`), so the slow
+ * floor the server applies is the floor the client extrapolates at. A local
+ * product here would over-slow the prediction the moment two slows stacked and
+ * make the own-player sprite crawl behind the authoritative position until the
+ * next snapshot snapped it forward.
  */
 function moveSpeedMult(player: PlayerView): number {
-  let mult = 1;
+  const mults: number[] = [];
   for (const buff of player.activeBuffs) {
-    if (buff.speedMult !== undefined) mult *= buff.speedMult;
+    if (buff.speedMult !== undefined) mults.push(buff.speedMult);
   }
-  return mult;
+  return playerMoveSpeedMult(mults);
 }
 
 export function upsertPlayer(
