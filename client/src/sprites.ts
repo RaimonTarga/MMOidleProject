@@ -1510,6 +1510,25 @@ export interface DungeonAltarArt {
   file: string;
 }
 
+export interface HazardPoolArt {
+  key: string;
+  file: string;
+}
+
+/** Runtime ground-effect art. Magma is preloaded for a future volcano boss pass. */
+export const HAZARD_POOL_ART: Readonly<
+  Record<"poison" | "magma", HazardPoolArt>
+> = {
+  poison: {
+    key: "hazard_pool_poison",
+    file: "/assets/environment/hazards/poison-pool.png",
+  },
+  magma: {
+    key: "hazard_pool_magma",
+    file: "/assets/environment/hazards/magma-pool.png",
+  },
+};
+
 /** One encounter altar per canonical dungeon biome family. */
 export const DUNGEON_ALTAR_ART: Readonly<
   Record<DungeonBiomeGroup, DungeonAltarArt>

@@ -2107,6 +2107,24 @@
       "negative": "ground patch, scenery, living leaves, multiple trees, fire, smoke, character, text, cast shadow, cropped, photograph, 3d render, neon",
       "status": "accepted", "candidates": 1,
       "notes": "ChatGPT image generation with swamp dead-tree rendering and wasteland ground/shrub palette references; magenta chroma key removed and normalized to transparent 1254px."
+    },
+    {
+      "id": "hazard-pool-poison",
+      "out": "files/environment/hazards/poison-pool.png",
+      "size": { "w": 1024, "h": 1024 },
+      "prompt": "one temporary swamp boss poison rot pool, flat irregular circular puddle of thick toxic bog liquid with dark olive center, sickly chartreuse highlights, small bubbles and spiral surface currents, polished painterly top-down game sprite matching the swamp ground and dungeon altar palette, isolated on flat magenta chroma key",
+      "negative": "ground plane, cast shadow, tall objects, reeds, rocks, altar, container, character, text, border, watermark, neon slime, sci-fi, transparency, perfect geometric circle, side view",
+      "status": "accepted", "candidates": 1,
+      "notes": "Built-in ChatGPT image generation using swamp bog-pool Wang ground and swamp dungeon altar as palette/rendering references; magenta chroma key removed locally, alpha bounds normalized to a circular 1024px gameplay footprint. Replaces the toxic-pool circle placeholder."
+    },
+    {
+      "id": "hazard-pool-magma",
+      "out": "files/environment/hazards/magma-pool.png",
+      "size": { "w": 1024, "h": 1024 },
+      "prompt": "one temporary volcano boss magma pool, flat irregular circular puddle of molten magma with black basalt cooling crust, glowing red-orange fissures, amber-hot seams and restrained molten bubbles, polished painterly top-down game sprite matching the volcanic ground and dungeon altar palette, isolated on flat green chroma key",
+      "negative": "ground plane, cast shadow, tall rocks, altar, crater, container, character, text, border, smoke, sparks, watermark, sci-fi, transparency, perfect geometric circle, side view",
+      "status": "accepted", "candidates": 1,
+      "notes": "Built-in ChatGPT image generation using basalt-lava Wang ground and volcanic dungeon altar as palette/rendering references; green chroma key removed locally, alpha bounds normalized to a circular 1024px gameplay footprint. Preloaded resource only; no volcano boss functionality added."
     }
   ]
 }

@@ -47,7 +47,7 @@ export class GameScene extends Phaser.Scene {
   /** Deterministically scattered, non-gameplay decoration for the active biome. */
   nodeBiomeDecor: Phaser.GameObjects.Image[] = [];
   nodePlaceholders: Phaser.GameObjects.Graphics[] = [];
-  dungeonHazards: Map<string, Phaser.GameObjects.Graphics> = new Map();
+  dungeonHazards: Map<string, Phaser.GameObjects.Image> = new Map();
   /** Telegraphed combat circles (slam wind-ups), keyed by server zone id. */
   groundZones: Map<string, GroundZoneSprite> = new Map();
   /** Biome trees in the active node, depth-sorted for walk-behind. */

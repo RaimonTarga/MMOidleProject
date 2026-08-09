@@ -50,6 +50,7 @@ import {
   DESERT_ROCK_FILES,
   DESERT_ROCK_KEYS,
   DUNGEON_ALTAR_ART,
+  HAZARD_POOL_ART,
   GRAVES_KEY,
   GRAVE_FRAME_SIZE,
   FEATURE_SCATTER,
@@ -309,6 +310,9 @@ export function preloadGameAssets(scene: GameScene): void {
   });
   scene.load.json(SHADOW_DEFS_KEY, "/assets/shadows.json");
   scene.load.image(THOUGHT_BUBBLE_KEY, THOUGHT_BUBBLE_FILE);
+  for (const art of Object.values(HAZARD_POOL_ART)) {
+    scene.load.image(art.key, art.file);
+  }
   for (const [emoteId, sheet] of Object.entries(EMOTE_SPRITESHEETS)) {
     scene.load.spritesheet(emoteTextureKey(emoteId), sheet.file, {
       frameWidth: sheet.frameWidth,
